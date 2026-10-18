@@ -42,7 +42,7 @@
     if (pick && pick.hreflang.toLowerCase() !== current) {
       banner.querySelector("[data-banner-text]").textContent = pick.dataset.suggest;
       const a = banner.querySelector("[data-banner-link]");
-      a.href = pick.href;
+      a.href = pick.getAttribute("href");
       a.lang = pick.lang;
       a.textContent = pick.dataset.open;
       banner.lang = pick.lang;
