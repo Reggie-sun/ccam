@@ -417,3 +417,14 @@ history = "local"
 
 4. Phase가 끝날 때마다 커밋하고, 다음 Phase는 새 세션에서 "docs/PLAN.md의 Phase N을 진행해줘"로 이어갑니다. 진행 중 바뀐 결정은 PLAN.md에 바로 반영하게 하면 세션이 바뀌어도 맥락이 유지됩니다.
 
+
+## 진행 기록과 결정
+
+구현 중 계획과 달라진 점이나 계획에 없던 결정을 여기에 기록합니다.
+
+- Phase 0: `ccam add`/`login`은 Claude Code 화면을 여는 대신 `claude auth login`을 실행합니다 (CLI 하위 명령으로 로그인 가능 확인).
+- Phase 0: `mcp_strategy` 기본값은 `flag`. `--mcp-config`는 여러 번 줘도 모두 적용되고 `.claude.json`의 사용자 MCP와도 함께 로드됩니다.
+- Phase 0: 기본 위치에서는 `.claude.json`이 `~/.claude` 안이 아니라 `~/.claude.json`에 있으므로, `import`는 이 파일을 프로필 폴더로 복사해야 합니다.
+- Phase 1: 슬롯 번호는 비어 있는 가장 작은 번호를 씁니다 (삭제한 번호를 재사용).
+- Phase 1: Phase 5 전까지 `ccam`만 입력하면 선택 화면 대신 목록을 보여줍니다.
+- Phase 1: 실행 경로 측정 결과 프로세스 전체 2.5 ms (p95 3.0 ms), 바이너리 4.1 MB.

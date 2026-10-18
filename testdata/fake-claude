@@ -1,0 +1,17 @@
+#!/bin/sh
+# Stand-in for claude in tests: records env + argv (NUL separated) and
+# fakes `auth login` by writing an oauthAccount into .claude.json.
+log="${FAKE_CLAUDE_LOG:?FAKE_CLAUDE_LOG not set}"
+{
+  printf 'CLAUDE_CONFIG_DIR=%s\0' "$CLAUDE_CONFIG_DIR"
+  printf 'CCAM_PROFILE=%s\0' "$CCAM_PROFILE"
+  for a in "$@"; do printf '%s\0' "$a"; done
+} > "$log"
+if [ "$1" = auth ] && [ "$2" = login ]; then
+  printf '{"numStartups":1,"oauthAccount":{"emailAddress":"%s"}}' "${FAKE_EMAIL:-user@example.com}" > "$CLAUDE_CONFIG_DIR/.claude.json"
+fi
+if [ "$1" = auth ] && [ "$2" = logout ]; then
+  printf '{}' > "$CLAUDE_CONFIG_DIR/.claude.json"
+fi
+if [ -n "$FAKE_CLAUDE_STDIN" ]; then cat > "$FAKE_CLAUDE_STDIN"; fi
+exit "${FAKE_EXIT:-0}"
