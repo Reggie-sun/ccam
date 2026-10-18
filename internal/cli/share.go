@@ -144,12 +144,14 @@ func changeShare(e *env, cfg *config.Config, prof *config.Profile, target config
 			return nil
 		}
 	}
-	if err := pl.Apply(); err != nil {
-		return fmt.Errorf("적용 중 실패 (원본은 %s/%s 에 있습니다): %w", dir, share.BackupDir, err)
-	}
+	// Save the target first: if Apply stops halfway, doctor --fix and a
+	// rerun build their plan toward it and finish the change.
 	prof.Share = target
 	if err := e.save(cfg); err != nil {
 		return err
+	}
+	if err := pl.Apply(); err != nil {
+		return fmt.Errorf("적용 중 실패: %w\n원본은 %s/%s 에 있습니다. 원인을 고친 뒤 `ccam doctor --fix` 로 마저 진행하세요", err, dir, share.BackupDir)
 	}
 	e.printf("✓ %s 공유 설정을 바꿨습니다\n", prof.Name)
 	return nil

@@ -13,19 +13,22 @@ import (
 
 	"github.com/jhyunwoo/ccam/internal/config"
 	"github.com/jhyunwoo/ccam/internal/fsutil"
+	"github.com/jhyunwoo/ccam/internal/profile"
 )
 
 type Op int
 
 const (
-	OpAdopt       Op = iota // move mine into an empty group slot (first sharer)
-	OpMergeDir              // move my files the group lacks into the group dir
-	OpWriteGroup            // write the resolved conflict content into the group
-	OpBackup                // move mine into .ccam-backup/<stamp>/
-	OpUnlink                // remove the link
-	OpLink                  // create the link (and the group dir for dir entries)
-	OpCopyBack              // copy the group content into the profile (sharing off)
-	OpCopyToGroup           // copy a foreign link's target into an empty group slot
+	OpAdopt          Op = iota // move mine into an empty group slot (first sharer)
+	OpMergeDir                 // move my files the group lacks into the group dir
+	OpWriteGroup               // write the resolved conflict content into the group
+	OpBackup                   // move mine into .ccam-backup/<stamp>/
+	OpUnlink                   // remove the link
+	OpLink                     // create the link (and the group dir for dir entries)
+	OpCopyBack                 // copy the group content into the profile (sharing off)
+	OpCopyToGroup              // copy a foreign link's target into an empty group slot
+	OpMergeRegistry            // merge my plugin registry JSON into the group's (group backed up)
+	OpRewritePlugins           // point plugin registry paths at the group folder
 )
 
 // Resolution decides a file conflict when turning sharing on.
@@ -140,14 +143,30 @@ func Build(dir, groupsRoot string, current, target config.Share, opt Options) (*
 
 // planAdopt handles a real file/dir in the profile that should become shared.
 func planAdopt(pl *Plan, item string, e Entry, mine, grp string) error {
+	// Plugin registries hold absolute paths through this profile folder.
+	rewrite := Step{Op: OpRewritePlugins, Item: item, Entry: e, From: mine + string(filepath.Separator), To: grp}
 	if !fsutil.Exists(grp) {
 		pl.Steps = append(pl.Steps, Step{Op: OpAdopt, Item: item, Entry: e, From: mine, To: grp})
+		if e.Name == "plugins" {
+			pl.Steps = append(pl.Steps, rewrite)
+		}
 		return nil
 	}
 	if e.Dir {
-		pl.Steps = append(pl.Steps,
-			Step{Op: OpMergeDir, Item: item, Entry: e, From: mine, To: grp},
-			Step{Op: OpBackup, Item: item, Entry: e, From: mine, To: pl.backupPath(e)})
+		pl.Steps = append(pl.Steps, Step{Op: OpMergeDir, Item: item, Entry: e, From: mine, To: grp})
+		if e.Name == "plugins" {
+			for _, name := range profile.PluginFiles {
+				if fsutil.Exists(filepath.Join(mine, name)) && fsutil.Exists(filepath.Join(grp, name)) {
+					pl.Steps = append(pl.Steps, Step{Op: OpMergeRegistry, Item: item, Entry: e,
+						From: filepath.Join(mine, name), To: filepath.Join(grp, name),
+						Conflict: &Conflict{GroupSave: filepath.Join(pl.Dir, BackupDir, pl.stamp, "group", e.Name, name)}})
+				}
+			}
+		}
+		pl.Steps = append(pl.Steps, Step{Op: OpBackup, Item: item, Entry: e, From: mine, To: pl.backupPath(e)})
+		if e.Name == "plugins" {
+			pl.Steps = append(pl.Steps, rewrite)
+		}
 		return nil
 	}
 	same, err := sameFile(mine, grp)
@@ -212,6 +231,10 @@ func (pl *Plan) Describe(w io.Writer) {
 			line = fmt.Sprintf("링크     %s → %s", s.To, s.From)
 		case OpCopyBack, OpCopyToGroup:
 			line = fmt.Sprintf("복사     %s → %s", s.From, s.To)
+		case OpMergeRegistry:
+			line = fmt.Sprintf("합치기   %s → %s (플러그인 목록)", s.From, s.To)
+		case OpRewritePlugins:
+			line = fmt.Sprintf("경로     %s 의 플러그인 경로를 그룹 폴더로", s.To)
 		}
 		fmt.Fprintln(w, "  "+line)
 	}
@@ -247,6 +270,26 @@ func apply(s Step) error {
 		return linkEntry(s.Entry, s.From, s.To)
 	case OpCopyBack, OpCopyToGroup:
 		return fsutil.CopyTree(s.From, s.To)
+	case OpMergeRegistry:
+		if err := fsutil.CopyFile(s.To, s.Conflict.GroupSave); err != nil {
+			return err
+		}
+		mine, err := os.ReadFile(s.From)
+		if err != nil {
+			return err
+		}
+		grp, err := os.ReadFile(s.To)
+		if err != nil {
+			return err
+		}
+		merged, err := MergeJSONBytes(grp, mine)
+		if err != nil {
+			return err
+		}
+		return fsutil.AtomicWrite(s.To, merged, 0o600)
+	case OpRewritePlugins:
+		_, err := profile.RewritePluginPaths(s.To, s.From, s.To+string(filepath.Separator))
+		return err
 	}
 	return nil
 }

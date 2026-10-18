@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"strings"
 	"testing"
 
 	"github.com/jhyunwoo/ccam/internal/config"
@@ -302,5 +303,40 @@ func TestForeignLinkContentIsAdopted(t *testing.T) {
 	}
 	if links, _ := filepath.Glob(filepath.Join(dir, BackupDir, "*", "CLAUDE.md")); len(links) != 1 {
 		t.Fatal("the old link should be kept in the backup")
+	}
+}
+
+// A second account joining extension sharing keeps its plugins: the plugin
+// registries are merged and its paths point at the group folder.
+func TestJoiningMergesPluginRegistry(t *testing.T) {
+	f := newFixture(t)
+	ext := config.Share{Extensions: "default"}
+	a := f.profile(t, "a", nil)
+	os.MkdirAll(filepath.Join(a, "plugins", "cache", "mk", "one"), 0o700)
+	os.WriteFile(filepath.Join(a, "plugins", "installed_plugins.json"),
+		[]byte(`{"version":2,"plugins":{"one@mk":[{"installPath":"`+a+`/plugins/cache/mk/one"}]}}`), 0o600)
+	share(t, f, a, config.Share{}, ext, Options{})
+
+	b := f.profile(t, "b", nil)
+	os.MkdirAll(filepath.Join(b, "plugins", "cache", "mk", "two"), 0o700)
+	os.WriteFile(filepath.Join(b, "plugins", "installed_plugins.json"),
+		[]byte(`{"version":2,"plugins":{"two@mk":[{"installPath":"`+b+`/plugins/cache/mk/two"}]}}`), 0o600)
+	share(t, f, b, config.Share{}, ext, Options{})
+
+	grp := filepath.Join(f.groups, "default", "plugins")
+	data := read(t, filepath.Join(grp, "installed_plugins.json"))
+	for _, want := range []string{`"one@mk"`, `"two@mk"`, grp + "/cache/mk/one", grp + "/cache/mk/two"} {
+		if !strings.Contains(data, want) {
+			t.Errorf("registry lacks %s:\n%s", want, data)
+		}
+	}
+	if strings.Contains(data, a+"/plugins") || strings.Contains(data, b+"/plugins") {
+		t.Errorf("paths still run through an account folder:\n%s", data)
+	}
+	if _, err := os.Stat(filepath.Join(grp, "cache", "mk", "two")); err != nil {
+		t.Fatal("b's plugin files not in the group")
+	}
+	if saved, _ := filepath.Glob(filepath.Join(b, BackupDir, "*", "group", "plugins", "installed_plugins.json")); len(saved) != 1 {
+		t.Fatal("group registry must be backed up before merging")
 	}
 }

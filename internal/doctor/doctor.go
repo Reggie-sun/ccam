@@ -279,7 +279,7 @@ func checkPlugins(r *report, p paths.Paths, cfg *config.Config, fix bool) {
 
 func countPrefix(pluginsDir, prefix string) int {
 	n := 0
-	for _, name := range []string{"installed_plugins.json", "known_marketplaces.json"} {
+	for _, name := range profile.PluginFiles {
 		data, err := os.ReadFile(filepath.Join(pluginsDir, name))
 		if err != nil {
 			continue

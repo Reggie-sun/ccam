@@ -11,13 +11,13 @@ import (
 
 // pluginFiles store absolute paths under the config dir that installed them
 // (docs/claude-layout.md), so they break when that folder moves.
-var pluginFiles = []string{"installed_plugins.json", "known_marketplaces.json"}
+var PluginFiles = []string{"installed_plugins.json", "known_marketplaces.json"}
 
 // RewritePluginPaths replaces oldPrefix with newPrefix in the plugin
 // registry files of pluginsDir and reports how many paths changed.
 func RewritePluginPaths(pluginsDir, oldPrefix, newPrefix string) (int, error) {
 	total := 0
-	for _, name := range pluginFiles {
+	for _, name := range PluginFiles {
 		file := filepath.Join(pluginsDir, name)
 		data, err := os.ReadFile(file)
 		if err != nil {
