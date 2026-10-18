@@ -1,0 +1,139 @@
+{
+  "site": {
+    "name": "ccam",
+    "title": "ccam: use several Claude Code accounts on one computer",
+    "description": "ccam is a free, open-source command-line tool that lets you use several Claude Code accounts on one computer and switch between them with one command."
+  },
+  "nav": {
+    "docs": "Docs",
+    "guides": "Guides",
+    "faq": "FAQ",
+    "changelog": "Changelog",
+    "github": "GitHub",
+    "menu": "Menu",
+    "skip": "Skip to content",
+    "language": "Language",
+    "theme": "Switch light or dark theme"
+  },
+  "facts": {
+    "what": "ccam is a free, open-source command-line tool that lets you use several Claude Code accounts on one computer and switch between them with one command.",
+    "how": "Each account keeps its own login in a separate CLAUDE_CONFIG_DIR, while MCP servers, settings, CLAUDE.md, extensions and conversation history can be shared between accounts, so you can continue a conversation on another account when one reaches its usage limit.",
+    "install": "Install it on Linux or macOS with one command, then run ccam add for each account.",
+    "official": "ccam is an unofficial project and is not affiliated with or endorsed by Anthropic."
+  },
+  "landing": {
+    "headline": "Several Claude Code accounts. One terminal.",
+    "lede": "Add each account once. Switch with claude2 or ccs work. When one account hits its limit, carry on in the next with the same conversation.",
+    "installLabel": "Install on Linux or macOS",
+    "thenAdd": "Then add your first account with {command}.",
+    "readDocs": "Read the quick start",
+    "boardLabel": "Example output of ccs usage: every account's limits at once",
+    "board": {
+      "account": "Account",
+      "fiveHour": "5-hour",
+      "weekly": "Weekly",
+      "resets": "resets in {time}",
+      "mostRoom": "Most room left: {name}"
+    },
+    "flowTitle": "How it works",
+    "flow": [
+      {
+        "command": "ccam add work",
+        "body": "Creates a separate config folder for the account, opens the Claude login in your browser and gives the account a shortcut: claude1, claude2 and so on."
+      },
+      {
+        "command": "claude2",
+        "also": "ccs work --resume",
+        "body": "Starts Claude Code as that account. Everything after the name goes to Claude Code unchanged, and ccam adds about 4 milliseconds before it starts."
+      },
+      {
+        "command": "ccam share work --history on",
+        "body": "Chooses what the account shares with your other accounts. MCP servers, settings, CLAUDE.md and extensions are shared from the start; logins never are."
+      },
+      {
+        "command": "ccs usage",
+        "body": "Shows the 5-hour and weekly usage of every account at once, so you know which one has room left."
+      },
+      {
+        "command": "ccs next --continue",
+        "body": "Opens the same conversation in the next account when the current one reaches its limit."
+      },
+      {
+        "command": "ccam doctor --fix",
+        "body": "Checks links, permissions and logins, and repairs what it safely can. Every change to your files keeps a backup."
+      }
+    ],
+    "guidesTitle": "Guides",
+    "factsTitle": "In short"
+  },
+  "docs": {
+    "updated": "Last updated {date}",
+    "versions": "Checked with ccam {ccam} and Claude Code {claude}",
+    "prev": "Previous",
+    "next": "Next",
+    "edit": "Edit this page on GitHub",
+    "machine": "This page was machine-translated from English. Corrections are welcome.",
+    "related": "Related guides",
+    "sections": {
+      "docs": "Documentation",
+      "guides": "Guides",
+      "compare": "Comparisons",
+      "blog": "Blog"
+    },
+    "commandsTable": {
+      "command": "Command",
+      "does": "What it does"
+    }
+  },
+  "commands": {
+    "ccs": "Open the account picker",
+    "name": "Start Claude Code as that account; arguments are passed through unchanged",
+    "add": "Add an account: config folder, login and shortcut",
+    "list": "List accounts",
+    "use": "Set the default account",
+    "next": "Open the next account; --continue keeps the conversation, --auto picks the most room",
+    "usage": "Show 5-hour and weekly usage of every account",
+    "share": "Change what an account shares, after showing the plan",
+    "mcp": "Manage shared MCP servers",
+    "login": "Log an account in again",
+    "logout": "Remove an account's login",
+    "rename": "Rename an account and its shortcut",
+    "remove": "Remove an account; its folder goes to the trash folder",
+    "import": "Register an existing ~/.claude folder in place",
+    "doctor": "Check links, permissions, logins and versions, and repair",
+    "statusline": "Show the account and usage in Claude Code's status line",
+    "shims": "Recreate claude1…claudeN and ccs",
+    "completion": "Print bash or zsh completion"
+  },
+  "copy": {
+    "copy": "Copy",
+    "copied": "Copied"
+  },
+  "banner": {
+    "suggest": "This page is also available in {language}.",
+    "open": "Open in {language}",
+    "dismiss": "Dismiss"
+  },
+  "footer": {
+    "unofficial": "ccam is an unofficial open-source tool. It is not affiliated with or endorsed by Anthropic. Claude and Claude Code are trademarks of Anthropic.",
+    "terms": "Whether you may use several accounts depends on each account's terms. Check them before you do.",
+    "license": "Source on GitHub",
+    "languages": "All languages"
+  },
+  "changelog": {
+    "title": "Changelog",
+    "description": "Every ccam release and what changed in it.",
+    "empty": "No releases have been published yet. Builds from the main branch are listed on GitHub."
+  },
+  "languages": {
+    "title": "Languages",
+    "description": "ccam.dev is available in {count, plural, one {# language} other {# languages}}.",
+    "coverage": "By Unicode CLDR population data, people who speak at least one of these languages make up {low} to {high} of the world's population.",
+    "method": "The lower number counts each country's single most-spoken supported language; the higher one adds up every supported language and caps each country at 100%."
+  },
+  "notFound": {
+    "title": "Page not found",
+    "body": "This address does not exist on ccam.dev. The documentation starts here:",
+    "home": "Home"
+  }
+}

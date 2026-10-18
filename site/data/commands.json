@@ -1,0 +1,74 @@
+[
+  {
+    "key": "ccs",
+    "usage": "ccs"
+  },
+  {
+    "key": "name",
+    "usage": "ccs <name|number> [claude arguments]"
+  },
+  {
+    "key": "add",
+    "usage": "ccam add [name]"
+  },
+  {
+    "key": "completion",
+    "usage": "ccam completion bash|zsh"
+  },
+  {
+    "key": "doctor",
+    "usage": "ccam doctor"
+  },
+  {
+    "key": "import",
+    "usage": "ccam import [folder]"
+  },
+  {
+    "key": "list",
+    "usage": "ccam list"
+  },
+  {
+    "key": "login",
+    "usage": "ccam login <name|number>"
+  },
+  {
+    "key": "logout",
+    "usage": "ccam logout <name|number>"
+  },
+  {
+    "key": "mcp",
+    "usage": "ccam mcp [command]"
+  },
+  {
+    "key": "next",
+    "usage": "ccam next [--auto] [--continue] [-- claude args]"
+  },
+  {
+    "key": "remove",
+    "usage": "ccam remove <name|number>"
+  },
+  {
+    "key": "rename",
+    "usage": "ccam rename <name> <new name>"
+  },
+  {
+    "key": "share",
+    "usage": "ccam share <name|number> [--mcp on|off|<group>] [--history …]"
+  },
+  {
+    "key": "shims",
+    "usage": "ccam shims [command]"
+  },
+  {
+    "key": "statusline",
+    "usage": "ccam statusline"
+  },
+  {
+    "key": "usage",
+    "usage": "ccam usage"
+  },
+  {
+    "key": "use",
+    "usage": "ccam use <name|number>"
+  }
+]

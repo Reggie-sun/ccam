@@ -1,6 +1,11 @@
 # ccam — Claude Code multi-account manager
 
-[한국어](README.md)
+[한국어](README.md) · Website: https://ccam.dev
+
+- ccam is a free, open-source command-line tool that lets you use several Claude Code accounts on one computer and switch between them with one command.
+- Each account keeps its own login in a separate CLAUDE_CONFIG_DIR, while MCP servers, settings, CLAUDE.md, extensions and conversation history can be shared between accounts, so you can continue a conversation on another account when one reaches its usage limit.
+- Install it on Linux or macOS with one command, then run ccam add for each account.
+- ccam is an unofficial project and is not affiliated with or endorsed by Anthropic.
 
 `ccam` (short alias `ccs`) is a single Go binary for adding and switching between several Claude Code accounts in an Ubuntu terminal. Each account gets its own `CLAUDE_CONFIG_DIR`, so logins stay separate, and you choose per item whether MCP servers, settings, the global CLAUDE.md, extensions and conversation history are shared.
 

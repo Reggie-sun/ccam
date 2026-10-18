@@ -1,0 +1,53 @@
+import type { Metadata } from "next";
+import { getLocale, locales, type Locale } from "../i18n/locales";
+import { abs, SITE } from "./paths";
+
+type SeoInput = {
+  locale: string;
+  title: string;
+  description: string;
+  path: string; // this page's path
+  /** Paths of this page in every locale it exists in (code → path). */
+  alternates: Record<string, string>;
+  og: string; // OG image path
+  type?: "website" | "article";
+};
+
+/** Canonical, hreflang (both directions, only existing locales plus
+ *  x-default) and Open Graph for one page. */
+export function seo({ locale, title, description, path, alternates, og, type = "article" }: SeoInput): Metadata {
+  const languages: Record<string, string> = {};
+  for (const l of locales) {
+    if (alternates[l.code]) languages[l.lang] = abs(alternates[l.code]);
+  }
+  if (alternates.en) languages["x-default"] = abs(alternates.en);
+  const current = getLocale(locale)!;
+  return {
+    metadataBase: new URL(SITE),
+    title,
+    description,
+    alternates: { canonical: abs(path), languages, types: markdownAlternate(path) },
+    openGraph: {
+      type,
+      title,
+      description,
+      url: abs(path),
+      siteName: "ccam",
+      locale: current.og,
+      alternateLocale: locales.filter((l) => alternates[l.code] && l.code !== locale).map((l) => l.og),
+      images: [{ url: abs(og), width: 1200, height: 630, alt: title }],
+    },
+    twitter: { card: "summary_large_image", title, description, images: [abs(og)] },
+  };
+}
+
+/** Docs pages also exist as plain Markdown next to the HTML (for LLMs). */
+function markdownAlternate(path: string): Record<string, string> | undefined {
+  const m = /^\/([^/]+)\/(docs|guides|compare|blog)\/([^/]+)\/$/.exec(path);
+  return m ? { "text/markdown": abs(`/${m[1]}/${m[2]}/${m[3]}.md`) } : undefined;
+}
+
+export function ogPath(locale: Locale | string, key: string): string {
+  const code = typeof locale === "string" ? locale : locale.code;
+  return `/og/${code}/${key}.png`;
+}

@@ -1,0 +1,19 @@
+{
+  // Lives outside the Vite root so vinext does not treat the static export as a
+  // Worker application (see vinext's static-export example).
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "ccam-site",
+  "main": "../worker/index.ts",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "../dist/client",
+    "binding": "ASSETS",
+    // trailingSlash: true in next.config.mjs writes directory-style pages.
+    "html_handling": "force-trailing-slash",
+    "not_found_handling": "404-page",
+    "run_worker_first": ["/install.sh", "/latest", "/latest/*"]
+  },
+  "routes": [{ "pattern": "ccam.dev", "custom_domain": true }],
+  "observability": { "enabled": true },
+  "preview_urls": true
+}

@@ -1,0 +1,114 @@
+name: site
+
+on:
+  push:
+    branches: [main]
+    paths: ["site/**", "cmd/**", "internal/cli/**", ".github/workflows/site.yml"]
+  pull_request:
+    paths: ["site/**", "cmd/**", "internal/cli/**", ".github/workflows/site.yml"]
+
+defaults:
+  run:
+    working-directory: site
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+        with:
+          version: 12.14.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+          cache-dependency-path: site/pnpm-lock.yaml
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - uses: actions/cache@v4
+        with:
+          path: site/node_modules/.cache/og-fonts
+          key: og-fonts-v1
+      - run: pnpm install --frozen-lockfile
+      - name: Build (commands from ccam --help, changelog, coverage, pages, OG images)
+        run: pnpm build
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+      - name: Static, budget, hreflang, links, HTML, translations
+        run: pnpm check
+      - run: node --test tests/worker.test.ts
+      - run: pnpm exec playwright install --with-deps chromium
+      - name: Browser tests (CSP, axe, overflow, controls)
+        run: pnpm exec playwright test
+      - name: Lighthouse (mobile)
+        run: npx --yes @lhci/cli@0.15.1 autorun --config=lighthouserc.json
+      - uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
+        with:
+          args: --no-progress --root-dir site/dist/client --exclude ccam.dev 'site/dist/client/en/**/*.html'
+          fail: false
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: site/dist/client
+          retention-days: 7
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-24.04
+    # Needs the CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID repository secrets.
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+        with:
+          version: 12.14.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+          cache-dependency-path: site/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - uses: actions/download-artifact@v4
+        with:
+          name: site
+          path: site/dist/client
+      - name: Deploy to Cloudflare Workers
+        if: env.CLOUDFLARE_API_TOKEN != ''
+        run: pnpm exec wrangler deploy --config deploy/wrangler.jsonc
+      - name: Tell search engines about changed pages (IndexNow)
+        if: env.CLOUDFLARE_API_TOKEN != ''
+        run: node scripts/indexnow.ts
+        env:
+          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+
+  preview:
+    needs: build
+    runs-on: ubuntu-24.04
+    if: github.event_name == 'pull_request'
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+        with:
+          version: 12.14.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+          cache-dependency-path: site/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - uses: actions/download-artifact@v4
+        with:
+          name: site
+          path: site/dist/client
+      - name: Upload a preview version
+        if: env.CLOUDFLARE_API_TOKEN != ''
+        run: pnpm exec wrangler versions upload --config deploy/wrangler.jsonc

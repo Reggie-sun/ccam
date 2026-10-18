@@ -1,0 +1,24 @@
+# Terms that stay exactly as written in every language (docs/WEBSITE_PLAN.md 5.4).
+# i18n-check fails when an English page uses one of these and its translation does not.
+keep:
+  - ccam
+  - ccs
+  - Claude Code
+  - Anthropic
+  - MCP
+  - CLAUDE_CONFIG_DIR
+  - CLAUDE.md
+  - settings.json
+  - .claude.json
+  - .credentials.json
+  - history.jsonl
+  - GitHub
+  - Linux
+  - macOS
+  - WSL
+# Never translated, but not enforced word by word:
+# - anything inside `inline code` or fenced code blocks (commands, options, paths, output)
+# - account names in examples: personal, work, side
+# Translate normally, following the platform's own wording:
+# - "Keychain" (use Apple's localized name where it has one)
+# - "status line", "usage limit", "conversation history"

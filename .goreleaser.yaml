@@ -35,6 +35,9 @@ changelog:
   use: git
 
 release:
+  # ccam.dev/install.sh serves the copy attached to the latest release.
+  extra_files:
+    - glob: ./install.sh
   github:
     owner: jhyunwoo
     name: ccam

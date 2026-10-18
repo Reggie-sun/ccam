@@ -1,0 +1,33 @@
+# Register and conventions per language. Translators: match the tone of good
+# developer documentation in that language (e.g. MDN, Microsoft Learn, GitHub Docs).
+default: Plain, direct, friendly developer documentation. Short sentences. No marketing tone.
+en: Source language.
+zh-hans: 简体中文，技术文档语气，用"你"。中英文之间加空格。
+zh-hant: 繁體中文（台灣用語），技術文件語氣，用「你」。中英文之間加空格。
+hi: सरल, औपचारिक हिंदी; तकनीकी शब्द (terminal, command) वहीं रखें जहाँ हिंदी में वही प्रचलित हों। "आप" का प्रयोग करें।
+es: Español neutro, tuteo ("tú"), como la documentación de GitHub y MDN.
+ar: العربية الفصحى المبسطة بأسلوب التوثيق التقني، المخاطب بصيغة "أنت".
+fr: Français, vouvoiement, style de la documentation MDN.
+bn: সহজ, প্রমিত বাংলা; "আপনি" সম্বোধন।
+pt-br: Português do Brasil, "você", estilo da documentação do GitHub.
+ru: Русский, обращение на «вы» (со строчной буквы), стиль технической документации.
+id: Bahasa Indonesia baku tetapi santai, "Anda".
+ur: سادہ اردو، "آپ" سے خطاب، تکنیکی دستاویزات کا انداز۔
+de: Deutsch, "du", Stil der GitHub- und MDN-Dokumentation.
+ja: です・ます調。技術文書として自然な表現。英数字の前後に半角スペースは入れない。
+ko: 합니다체. 개발 문서에서 흔히 쓰는 자연스러운 표현.
+vi: Tiếng Việt, xưng "bạn", văn phong tài liệu kỹ thuật.
+tr: Türkçe, "siz" hitabı, teknik belge üslubu.
+it: Italiano, "tu", stile della documentazione MDN.
+mr: सोपी मराठी, "तुम्ही" संबोधन.
+te: సరళమైన తెలుగు, "మీరు" సంబోధన.
+ta: எளிய தமிழ், "நீங்கள்" விளிப்பு.
+gu: સરળ ગુજરાતી, "તમે" સંબોધન.
+kn: ಸರಳ ಕನ್ನಡ, "ನೀವು" ಸಂಬೋಧನೆ.
+fa: فارسی ساده و رسمی، خطاب «شما»، سبک مستندات فنی.
+sw: Kiswahili sanifu, rahisi, cha nyaraka za kiufundi.
+fil: Filipino (Tagalog) na karaniwang ginagamit ng mga developer; puwedeng panatilihin ang mga teknikal na terminong Ingles.
+th: ภาษาไทยสุภาพ เป็นกันเอง แบบเอกสารเทคนิค
+pl: Polski, forma "ty", styl dokumentacji MDN.
+uk: Українська, звертання на «ви», стиль технічної документації.
+ha: Hausa mai sauƙi, mai kama da takardun fasaha.
