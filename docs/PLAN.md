@@ -1,0 +1,419 @@
+# ccam 개발 계획 — Claude Code 다중 계정 관리 도구
+
+2026-10-18 작성
+
+## 개요와 목표
+
+`ccam`(Claude Code Account Manager, 짧은 별칭 `ccs`)은 우분투 터미널에서 Claude Code 계정 여러 개를 추가하고 전환하는 Go 단일 바이너리 CLI/TUI 도구입니다. 계정마다 `CLAUDE_CONFIG_DIR`을 따로 두어 로그인 정보를 분리하고, MCP·설정·대화 내역은 계정별로 공유할지 고를 수 있게 합니다.
+
+핵심 요구사항은 세 가지입니다.
+
+1. **쉬운 추가**: `ccam add` 한 번으로 프로필 생성, 로그인, 단축 명령(`claude1`…) 생성까지 끝납니다.
+2. **쉬운 전환**: `claude2`, `ccs work`, 또는 `ccam` 한 단어로 뜨는 선택 화면에서 계정을 고릅니다. `ccam next --continue`로 한도에 걸린 대화를 다음 계정에서 이어갑니다.
+3. **공유 선택**: MCP 서버, 설정, 전역 CLAUDE.md, 에이전트·명령·스킬, 대화 내역을 항목별·계정별로 공유 또는 분리합니다.
+
+범위 밖: Claude Code 자체 수정, 사용량 한도 우회 자동화, macOS/Windows 지원(v1은 우분투 22.04/24.04 기준).
+
+## 전제: Claude Code가 저장하는 것
+
+`CLAUDE_CONFIG_DIR`을 지정하면 기본 `~/.claude` 대신 그 폴더에 설정과 로그인 정보가 저장됩니다([Maestro 문서](https://docs.runmaestro.ai/multi-claude)). 이 폴더 안의 항목은 "분리 필수"와 "공유 가능"으로 나뉘고, ccam 설계는 이 구분을 따릅니다.
+
+| 경로 (프로필 폴더 기준) | 내용 | ccam 처리 |
+| --- | --- | --- |
+| `.credentials.json` | OAuth 토큰(리눅스) | 항상 분리, 권한 0600 |
+| `.claude.json` | 계정 정보(`oauthAccount`), 사용자 범위 MCP(`mcpServers`), 프로젝트별 상태 | 파일은 분리, MCP 키만 선택 공유 |
+| `settings.json` | 권한, 훅, 모델, env | 선택 공유 (심볼릭 링크) |
+| `CLAUDE.md` | 전역 메모리 | 선택 공유 (심볼릭 링크) |
+| `agents/` `commands/` `skills/` `plugins/` | 확장 기능 | 선택 공유 (심볼릭 링크) |
+| `projects/` | 프로젝트별 대화 기록(`.jsonl`) | 선택 공유 (심볼릭 링크) |
+| `history.jsonl` | 입력 프롬프트 기록 | 대화 내역과 함께 선택 공유 |
+| `todos/` `shell-snapshots/` `statsig/` 등 | 실행 중 상태·캐시 | 항상 분리 |
+
+핵심 제약: MCP 서버 목록은 계정 정보와 같은 `.claude.json`에 들어 있어서 파일째 공유할 수 없습니다. 그래서 MCP만 별도 방식(공유 설계 섹션)이 필요합니다.
+
+버전마다 파일 구성이 바뀔 수 있으므로 위 표는 Phase 0에서 설치된 Claude Code로 직접 확인하고, 확인 결과를 `docs/claude-layout.md`에 기록합니다. 과거에 `CLAUDE_CONFIG_DIR` 사용 시 MCP가 로드되지 않던 버그가 보고된 적도 있습니다([이슈](https://claudeissues.com/issue/42217-mcp-servers-from-mcp-json-not-loaded-when-claude-config-dir-is-set), 2026년 6월 해결로 표시).
+
+## 사용자 경험과 명령어
+
+사용자는 처음에 `ccam add`만 알면 되고, 이후에는 `claude1`·`claude2` 같은 단축 명령이나 `ccam` 선택 화면으로 전환합니다. 단축 명령은 셸 별칭이 아니라 `~/.local/bin`에 ccam 바이너리를 가리키는 심볼릭 링크로 만들어서 bash·zsh·스크립트 어디서나 동작하게 합니다.
+
+`ccs`는 `ccam`과 똑같이 동작하는 짧은 별칭입니다. `ccs add`, `ccs next`처럼 어느 명령에서나 바꿔 쓸 수 있고, 설치할 때 `~/.local/bin/ccs` 심볼릭 링크로 함께 만들어집니다.
+
+가장 자주 쓰는 형태는 `ccs <이름>`입니다. 하위 명령 없이 이름이나 번호만 주면 그 계정으로 Claude Code가 바로 열리고, 뒤에 붙인 인자는 그대로 `claude`에 전달됩니다(예: `ccs work --continue`). 이름과 하위 명령이 헷갈리지 않도록 `add`, `list`, `run` 같은 하위 명령 이름은 프로필 이름으로 쓸 수 없게 `ccs add`에서 막습니다.
+
+**인자 전달 규칙**: 프로필 이름(또는 번호) 뒤의 모든 인자는 ccam이 해석하지 않고 순서 그대로 `claude`에 넘깁니다. 그래서 `claude`로 하던 일은 앞부분만 바꾸면 똑같이 됩니다.
+
+| 입력 | 실제 실행 |
+| --- | --- |
+| `ccs work --resume` | work 계정으로 `claude --resume` |
+| `ccs work -p "테스트 고쳐줘" --output-format json` | work 계정으로 `claude -p "테스트 고쳐줘" --output-format json` |
+| `claude2 --model opus --continue` | 2번 계정으로 `claude --model opus --continue` |
+| `ccs work --help` | `claude --help` (ccam 도움말이 아님) |
+| `ccs -p "요약해줘"` | 기본 계정으로 `claude -p "요약해줘"` |
+| `ccs work -- --version` | `claude --version` (`--`는 생략 가능, 넣어도 동작) |
+| `cat log.txt \| ccs work -p "원인 찾아줘"` | 표준 입력도 그대로 전달 |
+
+세부 규칙:
+
+- 첫 인자가 `-`로 시작하면 ccam 자체 옵션(`--help`, `--version`), 실행할 명령만 출력하고 멈추는 `--dry-run`인지만 확인하고, 아니면 기본 계정으로 `claude`에 넘깁니다.
+- 인자 배열은 셸 문자열로 합치지 않고 배열 그대로 `exec`합니다. 따옴표, 공백, 한글 인자가 깨지지 않고, 종료 코드와 시그널도 `claude`의 것이 그대로 남습니다.
+- MCP flag 전략이 붙이는 `--mcp-config`는 사용자 인자 앞에 넣어서, 사용자가 직접 준 `--mcp-config`·`--strict-mcp-config`가 함께 적용되게 합니다. Phase 0에서 여러 개를 줬을 때의 동작을 확인합니다.
+- `ccs run <이름> [인자]`도 같은 규칙을 따릅니다.
+
+| 명령 | 동작 |
+| --- | --- |
+| `ccam` | TUI 선택 화면: 계정 목록, 이메일, 공유 상태, 마지막 사용 시각. Enter로 실행 |
+| `ccam <이름\|번호> [claude 인자]` | 그 계정으로 Claude Code를 바로 엽니다 (예: `ccs work`, `ccs 2`). `run`의 줄임 |
+| `ccam add [이름]` | 대화형 마법사: 이름 → 공유 항목 선택 → Claude Code 실행해 로그인 → 이메일 확인 → 단축 명령 생성 |
+| `ccam list` | 표 출력 (`--json` 지원) |
+| `ccam run <이름\|번호> [-- claude 인자]` | 해당 계정으로 `claude` 실행 (`exec`로 교체) |
+| `ccam use <이름>` | 기본 계정 지정. `ccam run`에 이름이 없으면 이 계정 사용 |
+| `ccam next [--auto] [--continue]` | 다음 계정으로 실행. `--continue`면 대화 내역 공유 시 마지막 대화를 이어감 |
+| `ccam usage [--watch] [--json]` | 모든 계정의 5시간·주간 사용률과 초기화 시각을 한 번에 조회 (줄임: `ccs u`) |
+| `ccam share <이름> --mcp on --history off …` | 공유 항목 변경 (데이터 이전 포함) |
+| `ccam mcp add\|list\|remove` | 공유 MCP 저장소 관리 |
+| `ccam login <이름>` / `ccam logout <이름>` | 재로그인 / 토큰 삭제 |
+| `ccam rename` / `ccam remove` | 이름 변경 (단축 명령 갱신) / 삭제 (확인 후 휴지통 폴더로 이동) |
+| `ccam import` | 기존 `~/.claude`나 `~/.claude-N` 폴더를 프로필로 가져오기 |
+| `ccam doctor` | 링크 깨짐, 권한, 로그인 만료, Claude Code 버전 점검 및 자동 수리 |
+| `ccam shims install` | `claude1`…`claudeN` 재생성. 번호는 추가 순서, 이름 단축 명령(`claude-work`)도 선택 |
+| `ccam completion bash\|zsh` | 자동완성 스크립트 출력 |
+
+`ccam add` 화면 예시:
+
+```
+$ ccam add work
+? 공유할 항목을 고르세요 (스페이스로 선택)
+  [x] MCP 서버
+  [x] settings.json
+  [x] 전역 CLAUDE.md
+  [x] 에이전트·명령·스킬
+  [ ] 대화 내역
+→ Claude Code를 엽니다. /login 으로 로그인한 뒤 /exit 하세요.
+✓ work (dev@company.com) 추가됨 — 단축 명령: claude3
+```
+
+실행할 때는 Claude Code 화면 위에 계정 이름이 보이도록 터미널 제목(`\e]0;claude · work\a`)을 바꾸고, 선택적으로 Claude Code 상태줄(statusline)에 계정명을 표시하는 스크립트를 함께 설치합니다.
+
+## 사용량 조회
+
+`ccs usage`(줄여서 `ccs u`)는 모든 프로필의 5시간·주간 사용률과 초기화 시각을 한 화면에 보여줍니다. 각 계정에 동시에 요청하고, 응답이 늦거나 실패한 계정은 마지막으로 저장해 둔 값을 기준 시각과 함께 표시합니다.
+
+```
+$ ccs usage
+ 계정            5시간               초기화     주간                초기화       기준
+ 1 personal     ███████░░░  72%    1시간 40분  ████░░░░░░  41%    3일 6시간    방금
+ 2 work         █░░░░░░░░░   8%    4시간 12분  ██░░░░░░░░  19%    5일 2시간    방금
+ 3 side         ██████████ 100%    22분        ███████░░░  68%    1일 9시간    12분 전 (캐시)
+→ 여유가 가장 많은 계정: work   (ccs next --auto 로 바로 열기)
+```
+
+데이터 출처는 두 가지이고, 실시간 조회가 기본입니다.
+
+| 출처 | 방식 | 장점 | 한계 |
+| --- | --- | --- | --- |
+| 실시간 조회 | 각 프로필의 `.credentials.json` 토큰으로 `GET https://api.anthropic.com/api/oauth/usage` 호출 ([ccusage](https://pypi.org/project/ccusage/)가 쓰는 방식) | Claude Code를 켜지 않아도 지금 값을 받음 | 공개 문서가 없는 엔드포인트라 예고 없이 바뀔 수 있음 |
+| 상태줄 캐시 | ccam이 설치하는 상태줄 스크립트가 Claude Code가 넘겨주는 `rate_limits.five_hour`·`seven_day` 값을 프로필별 파일에 저장 ([설명](https://wmedia.es/en/tips/claude-code-usage-limit-status-line)) | Claude Code가 직접 주는 값이라 안정적 | 그 계정을 마지막으로 쓴 시점의 값, 세션의 첫 응답 이후에만 생김 |
+
+표시 규칙:
+
+- 실시간 응답의 새 형식(`limits` 배열의 `session`·`weekly_all`·`weekly_scoped`)과 예전 형식(`five_hour`·`seven_day`)을 모두 읽습니다. 모델별 주간 한도가 있으면 `ccs usage -v`에서 따로 보여줍니다.
+- 토큰이 만료됐으면 ccam이 직접 갱신하지 않고 "로그인 만료, `ccs <이름>`을 한 번 실행하면 갱신"이라고 표시합니다. 실행 중인 Claude Code와 동시에 토큰 파일을 고쳐 쓰는 일을 막기 위해서입니다. 갱신을 원하면 `--refresh`를 붙입니다(파일 잠금 후 갱신).
+- API 키로 로그인한 계정처럼 구독 한도가 없는 계정은 "한도 없음(API)"으로 표시합니다.
+- 같은 계정을 60초 안에 다시 조회하면 저장된 값을 씁니다. `--no-cache`로 무시할 수 있습니다.
+- 80% 이상은 노란색, 100%는 빨간색으로 표시합니다. 색만으로 구분하지 않도록 퍼센트 숫자도 항상 함께 씁니다.
+
+옵션: `--json`(스크립트용), `--watch [초]`(주기적으로 새로 고침, 기본 60초), `-v`(모델별 한도와 출처 표시), `--source live|cache`.
+
+다른 기능과의 연결:
+
+- `ccs` 선택 화면의 계정 목록에 5시간 사용률을 함께 표시합니다.
+- `ccs next --auto [--continue]`는 5시간 사용률이 가장 낮은 계정을 골라 엽니다. 100%인 계정은 건너뜁니다.
+
+## 공유 설계
+
+공유는 "공유 그룹" 단위로 동작합니다. 항목마다 프로필 값이 `local`(분리)이거나 그룹 이름(기본 `default`)이고, 같은 그룹의 프로필끼리만 내용을 함께 씁니다. 예를 들어 1~3번은 대화 내역을 `team` 그룹으로 공유하고 4~5번은 분리할 수 있습니다.
+
+```
+토큰은 계정마다 따로, 나머지는 그룹 폴더로 링크
+
+  claude1 · personal ──┐
+  claude2 · work ──────┼──▶  default 그룹
+  claude3 · side ──────┘      settings.json · CLAUDE.md
+                              mcp.json (MCP 서버)
+                              agents · commands · skills
+
+  claude2 · work ──────┬──▶  team 그룹
+  claude3 · side ──────┘      projects/ (대화 기록)
+                              history.jsonl
+
+  각 계정의 .credentials.json · .claude.json 은 항상 분리
+```
+
+세 계정 모두 설정·MCP·확장 기능은 default 그룹을 쓰고, 대화 내역은 2·3번만 team 그룹으로 공유합니다. 로그인 파일은 어떤 그룹에도 연결되지 않습니다.
+
+| 항목 | 공유 방식 | 비고 |
+| --- | --- | --- |
+| MCP 서버 | 기본: 실행 시 `--mcp-config <그룹>/mcp.json` 전달. 대안: 실행 전 `.claude.json`의 `mcpServers` 키 동기화 | 둘 중 무엇을 기본으로 할지 Phase 0에서 결정 |
+| settings.json | 그룹 폴더 파일로 심볼릭 링크 | |
+| 전역 CLAUDE.md | 심볼릭 링크 | |
+| 에이전트·명령·스킬·플러그인 | 폴더 단위 심볼릭 링크 | 항목 하나로 묶어 토글 |
+| 대화 내역 | `projects/`와 `history.jsonl`을 심볼릭 링크 | 공유하면 다른 계정에서 `--continue`/`--resume` 가능 |
+
+MCP 두 방식의 차이:
+
+- **실행 플래그 방식**은 `.claude.json`을 전혀 건드리지 않아 안전합니다. 대신 세션 안에서 `claude mcp add`로 추가한 서버는 그 계정에만 저장되므로, ccam이 다음 실행 때 새 서버를 감지해 "공유 저장소로 옮길까요?"를 묻습니다.
+- **동기화 방식**은 `/mcp` 화면에 서버가 원래처럼 보이지만, Claude Code가 수시로 다시 쓰는 파일을 수정하므로 파일 잠금, 백업, 같은 프로필이 실행 중인지 확인이 필요합니다.
+
+공유를 켜고 끌 때의 데이터 이전 규칙:
+
+1. **켜기 (local → 그룹)**: 프로필의 기존 내용을 그룹 폴더로 복사합니다. 대화 파일은 세션 ID가 파일명이라 그냥 합치고, `settings.json`·`CLAUDE.md`가 다르면 차이를 보여주고 "그룹 것 유지 / 내 것으로 덮기 / JSON 병합" 중 고르게 합니다. 그다음 원본을 `.ccam-backup/<시각>/`로 옮기고 링크를 겁니다.
+2. **끄기 (그룹 → local)**: 링크를 지우고 그룹 내용을 복사해 둡니다. `--fresh`를 주면 빈 상태로 시작합니다.
+3. 모든 이전 작업은 먼저 계획을 출력하고(`--dry-run`과 같음) 확인을 받은 뒤 실행합니다.
+
+동시 실행 주의: 대화 내역을 공유하는 두 계정이 같은 프로젝트 폴더에서 동시에 돌면 같은 세션 파일을 놓고 충돌할 수 있습니다. ccam은 `(그룹, 작업 폴더)`마다 잠금 파일을 두고, 이미 실행 중이면 경고 후 계속할지 묻습니다.
+
+## 아키텍처
+
+Go로 작성한 단일 바이너리입니다. 단축 명령이 매번 ccam을 거쳐 `claude`를 띄우므로 시작 속도가 중요하고, 의존성 없는 바이너리 하나라 설치도 쉽습니다.
+
+| 영역 | 선택 |
+| --- | --- |
+| 언어 | Go 1.23 이상 |
+| CLI | `spf13/cobra` |
+| TUI | `charmbracelet/bubbletea`, `bubbles`, `lipgloss`, 입력 폼은 `charmbracelet/huh` |
+| 설정 파일 | TOML (`pelletier/go-toml/v2`) |
+| 파일 잠금 | `gofrs/flock` |
+| 배포 | `goreleaser`로 `.deb`와 `tar.gz`, `install.sh` |
+
+파일 위치 (XDG 규칙):
+
+```
+~/.config/ccam/config.toml            # 프로필 목록과 공유 설정
+~/.local/share/ccam/profiles/<이름>/   # 각 계정의 CLAUDE_CONFIG_DIR
+~/.local/share/ccam/groups/<그룹>/     # 공유 저장소
+    settings.json  CLAUDE.md  mcp.json
+    agents/ commands/ skills/ plugins/
+    projects/  history.jsonl
+~/.local/state/ccam/locks/  logs/  usage/   # 잠금, 로그, 사용량 캐시
+~/.local/bin/claude1 … claudeN       # 단축 명령 (ccam을 가리키는 링크)
+~/.local/bin/ccs -> ccam             # 짧은 별칭
+```
+
+`config.toml` 예시:
+
+```toml
+version = 1
+default = "personal"
+claude_bin = "claude"
+mcp_strategy = "flag"        # flag | sync
+
+[[profile]]
+name = "personal"
+slot = 1                      # claude1
+email = "me@example.com"     # .claude.json에서 읽어 캐시
+# dir = "/home/me/.claude"   # import한 기존 폴더는 제자리 등록
+[profile.share]
+mcp = "default"
+settings = "default"
+memory = "default"
+extensions = "default"
+history = "local"
+```
+
+모듈 구성 (`internal/` 아래):
+
+- `config`: TOML 읽기·쓰기, 스키마 버전, 원자적 저장
+- `profile`: 생성·이름 변경·삭제·가져오기, `.claude.json`에서 이메일 읽기
+- `share`: 심볼릭 링크 관리, 이전 계획 생성(plan)과 실행(apply) 분리
+- `mcp`: 그룹 `mcp.json` 관리, flag/sync 두 전략을 같은 인터페이스로
+- `launcher`: 환경변수 구성, 잠금, 터미널 제목, `syscall.Exec`로 `claude` 실행
+- `shim`: `~/.local/bin` 심볼릭 링크(claude1…, ccs) 생성·정리
+- `tui`: 선택 화면과 추가 마법사
+- `doctor`: 점검과 자동 수리
+- `usage`: 계정별 사용량 병렬 조회, 60초 캐시, 상태줄 수집기
+- `fsutil`: 원자적 쓰기, 백업, 경로 유틸
+
+`ccam run` 실행 순서:
+
+1. 프로필 결정: 첫 인자가 하위 명령이 아니면 프로필 이름이나 슬롯 번호로 해석 (`ccs work`, `ccs 2`), `run`에 이름이 없으면 기본 계정, 인자가 아예 없으면 TUI
+2. 공유 링크 상태 확인, 깨졌으면 수리하거나 중단
+3. MCP 전략 적용 (flag면 인자 추가, sync면 키 병합)
+4. 대화 내역 공유 시 `(그룹, 작업 폴더)` 잠금 확인
+5. `CLAUDE_CONFIG_DIR` 설정, 터미널 제목 변경, `last_used` 기록
+6. `claude`로 `exec` (항상 프로세스 교체, 끝난 뒤 할 일은 다음 실행 때 처리)
+
+단축 명령은 셸 스크립트 없이 ccam 바이너리를 가리키는 심볼릭 링크이고, 실행된 이름으로 계정을 고릅니다(성능 설계 2번).
+
+## 성능 설계
+
+가장 자주 실행되는 `ccs <이름>`과 `claude2`는 ccam이 붙이는 지연을 10 ms 이하로 유지합니다. 사용자는 이 시간을 매번 기다리므로, 이 경로를 가장 가볍게 만드는 것이 성능 목표의 중심입니다.
+
+| 작업 | 목표 (p95, 일반 노트북) | 측정 방법 |
+| --- | --- | --- |
+| `ccs <이름>` → `claude` 실행 직전까지 | 10 ms 이하 | `hyperfine 'ccs --dry-run work'` |
+| `ccs list` | 30 ms 이하 | hyperfine |
+| `ccs usage` 실시간 조회, 계정 5개 | 1.5 s 이하 (계정당 제한 3 s) | 통합 테스트에서 지연을 넣은 가짜 서버로 측정 |
+| `ccs usage` 캐시만 사용 | 30 ms 이하 | hyperfine |
+| `ccs` 선택 화면 첫 표시 | 100 ms 이하 | teatest 타이머 |
+| 메모리 (실행 직전) | 15 MB 이하 | `/usr/bin/time -v` |
+
+**실행 경로 최적화**
+
+1. **cobra를 거치지 않는 빠른 경로**: `main()`이 먼저 `os.Args`를 보고 `ccs <이름>`, `ccs run`, 단축 명령이면 바로 실행 경로로 갑니다. 이 경로에서는 cobra, bubbletea, lipgloss, HTTP 패키지를 초기화하지 않습니다.
+2. **단축 명령은 심볼릭 링크**: `claude2`는 셸 스크립트가 아니라 ccam 바이너리를 가리키는 링크이고, 실행된 이름(`argv[0]`)으로 계정을 고릅니다. 셸을 한 번 더 띄우는 비용(약 1~2 ms)이 없어집니다.
+3. **`exec`로 교체**: 항상 `syscall.Exec`로 `claude` 프로세스로 바뀝니다. ccam이 메모리에 남지 않고, 키 입력·시그널·종료 코드에 끼어들지 않습니다. MCP 새 서버 감지처럼 "끝난 뒤" 할 일은 다음 ccam 실행 때 `.claude.json` 수정 시각을 비교해서 처리합니다.
+4. **최소한의 파일 접근**: 실행 경로에서 읽는 파일은 `config.toml` 하나입니다. 공유 링크는 `lstat`만으로 확인하고(항목당 시스템 호출 1번), 폴더 전체를 훑는 점검은 `doctor`에서만 합니다.
+5. **`claude` 경로 캐시**: `claude` 실행 파일의 절대 경로와 수정 시각을 상태 파일에 저장해 매번 `PATH`를 뒤지지 않습니다. 파일이 바뀌거나 없어지면 다시 찾습니다.
+6. **큰 파일은 통째로 읽지 않음**: `.claude.json`은 프로젝트 기록이 쌓여 수 MB가 될 수 있습니다. 이메일 같은 값은 `config.toml`에 캐시하고, 꼭 읽어야 할 때는 스트리밍 JSON 디코더로 필요한 키만 꺼냅니다.
+7. **쓰기 최소화**: `last_used` 기록은 작은 상태 파일 하나에 `fsync` 없이 씁니다. 설정 변경처럼 잃으면 안 되는 쓰기만 임시 파일 + `fsync` + `rename`을 거칩니다.
+8. **잠금 파일은 메모리 파일시스템에**: 잠금은 `$XDG_RUNTIME_DIR`(`/run/user/<uid>`, tmpfs)에 두고 기다리지 않는 `flock`을 씁니다.
+
+**그 밖의 최적화**
+
+- **사용량 조회**: 계정마다 goroutine을 하나씩 띄우고 하나의 HTTP 클라이언트(keep-alive, HTTP/2)를 공유합니다. 접속 2 s, 전체 3 s 제한을 두고, 도착한 계정부터 화면에 표시합니다.
+- **데이터 이전**: 같은 파일시스템이면 복사 대신 `rename`으로 옮깁니다. 복사가 필요하면 Go의 `io.Copy`가 리눅스에서 쓰는 `copy_file_range`를 그대로 활용합니다. 폴더 순회는 `fs.WalkDir`로 해서 항목마다 `stat`을 부르지 않습니다.
+- **TUI**: 첫 화면은 `config.toml`만으로 그리고, 사용량은 뒤이어 비동기로 채웁니다. 스타일 객체는 한 번만 만들어 재사용합니다.
+- **빌드**: `CGO_ENABLED=0`, `-trimpath -ldflags "-s -w"`로 정적·경량 바이너리를 만듭니다(목표 10 MB 이하). Phase 6에서 실행 경로 프로파일로 PGO(`default.pgo`)를 적용합니다.
+
+**측정과 회귀 방지**
+
+- `CCAM_TRACE=1`이면 실행 경로 단계별 소요 시간을 표준 에러에 출력합니다.
+- `CCAM_PPROF=<파일>`이면 CPU 프로파일을 남깁니다.
+- 실행 경로, 설정 파싱, 링크 확인, 사용량 파서에 `go test -bench` 벤치마크를 둡니다.
+- CI에서 `benchstat`으로 이전 커밋과 비교해 20% 넘게 느려지거나 위 목표를 넘으면 실패시킵니다.
+
+## 단계별 개발 로드맵
+
+여덟 단계로 나누고, Phase 1이 끝나면 `claude1`·`claude2`가 실제로 동작하는 상태가 됩니다. 각 단계는 Claude Code에 프롬프트 하나로 맡길 수 있는 크기이고, 완료 기준을 통과해야 다음 단계로 넘어갑니다.
+
+**Phase 0 — 조사 스파이크 (코드 없음)**
+
+- 확인: 사용량 엔드포인트와 상태줄 `rate_limits` 응답 형식, 프로필 폴더의 실제 파일 구성, `--mcp-config` 동작, 심볼릭 링크한 `projects/`로 다른 계정에서 `--continue`가 되는지, 로그인을 CLI 하위 명령으로 할 수 있는지(`claude --help`)
+- 완료 기준: `docs/claude-layout.md` 작성, `mcp_strategy` 기본값 결정
+- 프롬프트: "임시 폴더 두 개를 CLAUDE_CONFIG_DIR로 써서 Claude Code의 설정 폴더 구성을 조사해줘. docs/PLAN.md의 Phase 0 확인 항목을 하나씩 실험하고 결과를 docs/claude-layout.md에 표로 정리해줘. 내 실제 ~/.claude는 건드리지 마."
+
+**Phase 1 — 뼈대와 프로필 (MVP)**
+
+- 구현: `go mod init`, cobra 골격, `config`, `profile`, `launcher`, `shim` / 명령 `add`(대화형 아님), `list`, `run`, `use`, `remove`, `shims install`
+- 완료 기준: 두 계정으로 각각 로그인 후 `claude1`·`claude2`가 서로 다른 이메일로 뜸, `ccs <이름>`으로도 같은 계정이 열림, 실행 경로 10 ms 이하(hyperfine), 단위 테스트 통과
+- 프롬프트: "docs/PLAN.md의 Phase 1을 구현해줘. 먼저 plan 모드로 파일 구조와 인터페이스를 제안하고, 승인하면 테스트부터 작성해. 모든 파일 경로는 CCAM_HOME 환경변수로 바꿀 수 있게 해서 테스트가 실제 홈 폴더를 건드리지 않게 해줘. 실행 경로는 PLAN.md의 성능 설계대로 cobra를 거치지 않게 만들고 벤치마크도 함께 작성해줘."
+
+**Phase 2 — 공유 엔진**
+
+- 구현: `share` 패키지(그룹, 링크, 이전 plan/apply, 백업), `ccam share`, `doctor` 기본 점검
+- 완료 기준: settings·CLAUDE.md·확장 기능을 켜고 끄기를 반복해도 데이터 손실 없음 (통합 테스트)
+- 프롬프트: "Phase 2를 구현해줘. 이전 작업은 반드시 Plan 구조체를 먼저 만들고 출력한 뒤 Apply하도록 분리해. 켜기→끄기→켜기 왕복 테스트와 충돌 케이스 테스트를 넣어줘."
+
+**Phase 3 — MCP 공유**
+
+- 구현: 그룹 `mcp.json`, flag 전략(과 Phase 0 결과에 따라 sync 전략), `ccam mcp add|list|remove`, 다음 실행 때 새 서버 감지
+- 완료 기준: 그룹에 추가한 MCP 서버가 같은 그룹의 모든 계정 `/mcp`에 보임
+- 프롬프트: "Phase 3을 구현해줘. docs/claude-layout.md에서 정한 MCP 전략을 따르고, .claude.json을 수정해야 하면 flock과 백업을 반드시 거쳐."
+
+**Phase 4 — 대화 내역 공유와 계정 이어달리기**
+
+- 구현: `projects/`·`history.jsonl` 공유, `(그룹, 작업 폴더)` 잠금, `ccam next [--auto] [--continue]`
+- 완료 기준: 1번 계정 대화를 종료하고 `ccam next --continue`로 2번 계정에서 같은 대화가 이어짐
+
+**Phase 4.5 — 사용량 조회**
+
+- 구현: `usage` 패키지(실시간 조회, 상태줄 캐시, 두 응답 형식 파서), `ccs usage`, `ccs next --auto`, 상태줄 수집 스크립트
+- 완료 기준: 계정 5개 조회가 3초 안에 끝나고, 한 계정이 실패해도 나머지는 표시됨. 녹화해 둔 응답 JSON으로 파서 테스트 통과
+- 프롬프트: "Phase 4.5를 구현해줘. 사용량 조회는 docs/claude-layout.md에 기록한 응답 형식을 따르고, 실제 API 대신 httptest 서버와 녹화한 JSON으로 테스트해. 토큰 파일은 읽기만 하고 --refresh일 때만 잠금 후 갱신해."
+
+**Phase 5 — TUI**
+
+- 구현: `ccam` 선택 화면, `ccam add` 마법사, 공유 항목 토글 화면
+- 완료 기준: 키보드만으로 추가·전환·공유 변경 가능, 80열 터미널에서 깨지지 않음
+- 프롬프트: "Phase 5를 bubbletea와 huh로 구현해줘. 화면 로직은 모델 함수로 분리해서 teatest로 테스트해줘."
+
+**Phase 6 — 마감과 배포**
+
+- 구현: `import`, `doctor` 자동 수리, 자동완성, 상태줄 스크립트, PGO 적용, CI 성능 회귀 검사, goreleaser(.deb), `install.sh`, README(한국어/영어)
+- 완료 기준: 새 우분투 24.04 컨테이너에서 `install.sh` 한 줄로 설치하고 계정 2개 추가까지 5분 이내
+
+## 테스트와 위험 요소
+
+테스트는 실제 홈 폴더와 실제 Claude 계정 없이 돌아가야 합니다. 그래서 모든 경로를 `CCAM_HOME`으로 바꿀 수 있게 하고, `claude` 대신 받은 인자와 환경변수를 기록만 하는 가짜 실행 파일(`testdata/fake-claude`)을 씁니다.
+
+- **단위 테스트**: 인자 전달(위 표의 모든 입력을 fake-claude가 받은 배열과 비교), config 읽기·쓰기, 슬롯 번호 배정, 이전 계획 생성, MCP JSON 병합
+- **통합 테스트**: 임시 `CCAM_HOME`에서 add → share on/off 왕복 → remove 후 파일 상태 비교
+- **TUI 테스트**: `teatest`로 키 입력 시나리오 재생
+- **수동 점검**: Phase마다 실제 계정 2개로 확인 (체크리스트를 `docs/manual-qa.md`에 유지)
+- **CI**: GitHub Actions에서 `go test ./...`, `golangci-lint`, Ubuntu 22.04/24.04, 벤치마크 비교(benchstat)
+
+| 위험 | 대응 |
+| --- | --- |
+| Claude Code 업데이트로 파일 구성 변경 | `doctor`가 알려진 구성과 비교해 경고, 레이아웃 정의를 코드 한 곳(`layout.go`)에 모음 |
+| `.claude.json` 동시 수정으로 손상 | 기본은 flag 전략, sync는 flock + 백업 + 실행 중 확인 |
+| 공유 대화 내역 동시 쓰기 충돌 | `(그룹, 작업 폴더)` 잠금과 경고 |
+| 토큰 파일 노출 | 프로필 폴더 0700, 토큰 0600, 공유 그룹에 토큰이 링크되지 않도록 허용 목록 방식 |
+| 이전 중 데이터 손실 | plan/apply 분리, 항상 백업 후 링크, 삭제는 휴지통 폴더로 이동 |
+| 계정 여러 개 사용 조건 | 각 계정의 Anthropic 이용약관을 사용자가 확인하도록 README에 명시 |
+| 사용량 엔드포인트 변경·중단 | 상태줄 캐시로 자동 대체, 응답 파서를 한 파일에 두고 형식이 바뀌면 doctor가 알림 |
+
+## Claude Code로 개발 시작하기
+
+이 파일을 `docs/PLAN.md`로 저장하고, 아래 CLAUDE.md를 둔 뒤 Phase 0 프롬프트로 시작합니다.
+
+1. 준비
+
+   ```bash
+   sudo snap install go --classic        # 또는 공식 tarball
+   go version                            # 1.23 이상
+   mkdir -p ~/dev/ccam && cd ~/dev/ccam
+   git init && mkdir docs
+   # 이 파일을 docs/PLAN.md로 저장
+   ```
+
+2. 프로젝트 루트에 `CLAUDE.md` 작성
+
+   ```markdown
+   # ccam — Claude Code 다중 계정 관리 도구
+
+   전체 계획은 docs/PLAN.md, Claude Code 폴더 조사 결과는 docs/claude-layout.md를 먼저 읽는다.
+
+   ## 규칙
+   - 실행 파일은 ccam, 짧은 별칭 ccs(심볼릭 링크)로 실행해도 똑같이 동작한다
+   - ccam <이름|번호>는 run의 줄임이다. 프로필 이름은 하위 명령 이름과 겹칠 수 없다
+   - 프로필 이름 뒤의 인자는 파싱하지 않고 배열 그대로 claude에 넘긴다 (cobra의 DisableFlagParsing 또는 cobra 이전에 os.Args 직접 처리)
+   - Go 1.23, 모듈 경로 github.com/<내아이디>/ccam
+   - 코드는 internal/ 아래 패키지로 나누고 cmd/ccam/main.go는 얇게 유지
+   - 모든 경로는 CCAM_HOME(테스트용)과 XDG 변수를 따른다
+   - 사용자의 실제 ~/.claude, ~/.local/share/ccam은 절대 수정하지 않는다
+   - 파일 쓰기는 fsutil.AtomicWrite, 데이터 이전은 Plan → Apply 순서
+   - 토큰 파일(.credentials.json)은 어떤 경우에도 공유 그룹에 링크하지 않는다
+   - 사용자에게 보이는 메시지는 한국어, 코드·주석·커밋은 영어
+
+   ## 명령
+   - 빌드: go build ./cmd/ccam
+   - 테스트: go test ./...
+   - 린트: golangci-lint run
+   - 벤치마크: go test -bench=. -benchmem ./...
+   - 실행 경로 측정: hyperfine 'ccs --dry-run work'
+
+   ## 작업 방식
+   - 한 번에 한 Phase만 진행하고, 끝나면 완료 기준을 직접 확인해 보고한다
+   - 새 기능은 테스트를 먼저 작성한다
+
+   ## 성능 규칙 (docs/PLAN.md의 성능 설계)
+   - ccs <이름> 실행 경로는 10 ms 이하. 이 경로에서는 cobra·bubbletea·lipgloss·net/http를 쓰지 않는다
+   - 패키지 init()에서 파일·터미널·네트워크에 접근하지 않는다. 무거운 초기화는 처음 쓸 때 한다
+   - 실행 경로에서 읽는 파일은 config.toml 하나, 링크 확인은 lstat만
+   - claude 실행은 항상 syscall.Exec, 후처리는 다음 실행 때
+   - .claude.json은 통째로 파싱하지 않는다 (캐시 또는 스트리밍 디코더)
+   - 네트워크 호출은 병렬 + 제한 시간 + 캐시
+   - 실행 경로나 사용량 조회를 바꾸면 benchstat 결과를 커밋 메시지에 남긴다
+   ```
+
+3. Claude Code 실행 후 첫 프롬프트
+
+   ```
+   docs/PLAN.md와 CLAUDE.md를 읽고 Phase 0부터 시작해줘.
+   실험은 /tmp 아래 임시 CLAUDE_CONFIG_DIR로만 하고,
+   로그인이 필요한 단계에서는 멈추고 나에게 직접 로그인하라고 알려줘.
+   ```
+
+4. Phase가 끝날 때마다 커밋하고, 다음 Phase는 새 세션에서 "docs/PLAN.md의 Phase N을 진행해줘"로 이어갑니다. 진행 중 바뀐 결정은 PLAN.md에 바로 반영하게 하면 세션이 바뀌어도 맥락이 유지됩니다.
+
