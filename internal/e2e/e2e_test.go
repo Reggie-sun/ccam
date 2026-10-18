@@ -37,7 +37,8 @@ func TestMain(m *testing.M) {
 func buildCcam(t *testing.T) {
 	buildOnce.Do(func() {
 		touchSources()
-		build := exec.Command("go", "build", "-o", ccamBin, "./cmd/ccam")
+		// -buildvcs=false: CI containers may refuse git on the checkout (ownership check).
+		build := exec.Command("go", "build", "-buildvcs=false", "-o", ccamBin, "./cmd/ccam")
 		build.Dir = repoRoot()
 		if out, err := build.CombinedOutput(); err != nil {
 			buildErr = fmt.Errorf("build failed: %v\n%s", err, out)
