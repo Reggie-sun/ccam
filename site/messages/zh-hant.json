@@ -1,0 +1,139 @@
+{
+  "site": {
+    "name": "ccam",
+    "title": "ccam：在一台電腦上使用多個 Claude Code 帳號",
+    "description": "ccam 是免費的開放原始碼命令列工具，讓你在一台電腦上使用多個 Claude Code 帳號，並用一個指令在帳號之間切換。"
+  },
+  "nav": {
+    "docs": "文件",
+    "guides": "指南",
+    "faq": "常見問題",
+    "changelog": "變更紀錄",
+    "github": "GitHub",
+    "menu": "選單",
+    "skip": "跳至主要內容",
+    "language": "語言",
+    "theme": "切換淺色或深色主題"
+  },
+  "facts": {
+    "what": "ccam 是免費的開放原始碼命令列工具，讓你在一台電腦上使用多個 Claude Code 帳號，並用一個指令在帳號之間切換。",
+    "how": "每個帳號的登入資訊各自保存在獨立的 CLAUDE_CONFIG_DIR 中，而 MCP 伺服器、設定、CLAUDE.md、擴充功能和對話記錄可以在帳號之間共用，因此當某個帳號達到用量限制時，你可以在另一個帳號繼續同一段對話。",
+    "install": "在 Linux 或 macOS 上用一個指令安裝，然後為每個帳號執行 ccam add。",
+    "official": "ccam 是非官方專案，與 Anthropic 沒有關聯，也未獲得 Anthropic 認可。"
+  },
+  "landing": {
+    "headline": "多個 Claude Code 帳號，一個終端機。",
+    "lede": "每個帳號只需新增一次。用 claude2 或 ccs work 切換。某個帳號達到限制時，在下一個帳號繼續同一段對話。",
+    "installLabel": "在 Linux 或 macOS 上安裝",
+    "thenAdd": "接著用 {command} 新增第一個帳號。",
+    "readDocs": "閱讀快速入門",
+    "boardLabel": "ccs usage 的輸出範例：一次查看所有帳號的限制",
+    "board": {
+      "account": "帳號",
+      "fiveHour": "5 小時",
+      "weekly": "每週",
+      "resets": "{time} 後重設",
+      "mostRoom": "剩餘額度最多：{name}"
+    },
+    "flowTitle": "運作方式",
+    "flow": [
+      {
+        "command": "ccam add work",
+        "body": "為帳號建立獨立的設定資料夾，在瀏覽器中開啟 Claude 登入頁面，並給帳號一個快捷指令：claude1、claude2，依此類推。"
+      },
+      {
+        "command": "claude2",
+        "also": "ccs work --resume",
+        "body": "以該帳號啟動 Claude Code。名稱後面的所有內容都會原封不動地傳給 Claude Code，ccam 在啟動前大約只增加 4 毫秒。"
+      },
+      {
+        "command": "ccam share work --history on",
+        "body": "選擇這個帳號要和其他帳號共用哪些項目。MCP 伺服器、設定、CLAUDE.md 和擴充功能從一開始就會共用；登入資訊則永遠不會共用。"
+      },
+      {
+        "command": "ccs usage",
+        "body": "一次顯示所有帳號的 5 小時用量和每週用量，讓你知道哪個帳號還有剩餘額度。"
+      },
+      {
+        "command": "ccs next --continue",
+        "body": "目前的帳號達到限制時，在下一個帳號開啟同一段對話。"
+      },
+      {
+        "command": "ccam doctor --fix",
+        "body": "檢查連結、權限和登入狀態，並修復可以安全修復的部分。對你的檔案所做的每項變更都會保留備份。"
+      }
+    ],
+    "guidesTitle": "指南",
+    "factsTitle": "重點摘要"
+  },
+  "docs": {
+    "updated": "最後更新：{date}",
+    "versions": "已使用 ccam {ccam} 和 Claude Code {claude} 驗證",
+    "prev": "上一頁",
+    "next": "下一頁",
+    "edit": "在 GitHub 上編輯此頁",
+    "machine": "本頁由英文機器翻譯而成，歡迎提供修正。",
+    "related": "相關指南",
+    "sections": {
+      "docs": "文件",
+      "guides": "指南",
+      "compare": "比較",
+      "blog": "部落格"
+    },
+    "commandsTable": {
+      "command": "指令",
+      "does": "用途"
+    }
+  },
+  "commands": {
+    "ccs": "開啟帳號選擇器",
+    "name": "以該帳號啟動 Claude Code；參數會原封不動地傳遞",
+    "add": "新增帳號：設定資料夾、登入和快捷指令",
+    "list": "列出帳號",
+    "use": "設定預設帳號",
+    "next": "開啟下一個帳號；--continue 保留對話，--auto 選擇剩餘額度最多的帳號",
+    "usage": "顯示所有帳號的 5 小時用量和每週用量",
+    "share": "先顯示計畫，再變更帳號共用的項目",
+    "mcp": "管理共用的 MCP 伺服器",
+    "login": "重新登入帳號",
+    "logout": "移除帳號的登入資訊",
+    "rename": "重新命名帳號及其快捷指令",
+    "remove": "移除帳號；其資料夾會移到垃圾桶資料夾",
+    "import": "在原位置登錄現有的 ~/.claude 資料夾",
+    "doctor": "檢查連結、權限、登入狀態和版本，並進行修復",
+    "statusline": "在 Claude Code 的狀態列顯示帳號和用量",
+    "shims": "重新建立 claude1…claudeN 和 ccs",
+    "completion": "輸出 bash 或 zsh 的自動補齊腳本"
+  },
+  "copy": {
+    "copy": "複製",
+    "copied": "已複製"
+  },
+  "banner": {
+    "suggest": "本頁也提供 {language} 版本。",
+    "open": "以 {language} 開啟",
+    "dismiss": "關閉"
+  },
+  "footer": {
+    "unofficial": "ccam 是非官方的開放原始碼工具，與 Anthropic 沒有關聯，也未獲得 Anthropic 認可。Claude 和 Claude Code 是 Anthropic 的商標。",
+    "terms": "能否使用多個帳號取決於各帳號的條款。使用前請先確認。",
+    "license": "GitHub 上的原始碼",
+    "languages": "所有語言"
+  },
+  "changelog": {
+    "title": "變更紀錄",
+    "description": "ccam 的每個版本及其變更內容。",
+    "empty": "目前尚未發布任何版本。main 分支的建置版本列在 GitHub 上。"
+  },
+  "languages": {
+    "title": "語言",
+    "description": "ccam.dev 提供 {count, plural, other {# 種語言}}。",
+    "coverage": "根據 Unicode CLDR 人口資料，至少會說其中一種語言的人占世界人口的 {low} 到 {high}。",
+    "method": "較低的數字只計算每個國家最常用的一種支援語言；較高的數字則加總所有支援語言，並將每個國家的上限定為 100%。"
+  },
+  "notFound": {
+    "title": "找不到頁面",
+    "body": "ccam.dev 上沒有這個網址。文件從這裡開始：",
+    "home": "首頁"
+  }
+}

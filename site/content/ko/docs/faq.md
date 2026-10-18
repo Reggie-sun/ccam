@@ -1,0 +1,56 @@
+---
+title: 자주 묻는 질문
+description: ccam, Claude Code 계정, 사용량 한도, 공유, 개인정보, 지원하는 시스템에 관한 질문과 답변입니다.
+updated: 2026-10-19
+order: 6
+translation: machine
+sourceHash: 12ad0faef2ce
+---
+
+## ccam은 Anthropic의 공식 도구인가요?
+
+아닙니다. ccam은 비공식 오픈소스 프로젝트이며 Anthropic과 제휴하거나 Anthropic의 보증을 받은 것이 아닙니다. 여러 계정을 나란히 쓰는 방법으로 Claude Code 문서에 나와 있는 `CLAUDE_CONFIG_DIR` 설정을 사용합니다.
+
+## Claude Code 계정을 여러 개 써도 되나요?
+
+각 계정의 약관과, 회사 계정이라면 소속 조직의 정책에 따라 다릅니다. 계정을 여러 개 쓰기 전에 확인하세요. ccam은 이미 가진 계정 사이의 전환을 쉽게 해 줄 뿐입니다.
+
+## ccam으로 사용량 한도를 우회할 수 있나요?
+
+아닙니다. 계정마다 자기 한도가 그대로 적용됩니다. ccam은 한도를 보여 주고, 한 계정의 한도가 다 차면 본인이 가진 다른 계정에서 이어서 작업하게 해 줍니다.
+
+## 컴퓨터 한 대에서 Claude Code 계정 두 개를 어떻게 쓰나요?
+
+`CLAUDE_CONFIG_DIR`로 계정마다 설정 폴더를 따로 둡니다. ccam이 이 작업을 대신 해 줍니다. 계정마다 `ccam add`를 실행한 뒤 `claude1`과 `claude2`로 시작하세요. [가이드](/guides/multiple-claude-code-accounts)에서는 손으로 설정하는 방법도 설명합니다.
+
+## 다른 계정에서 대화를 어떻게 이어 가나요?
+
+`ccam share <name> --history on`으로 두 계정이 대화 내역을 공유하게 한 뒤 `ccs next --continue`를 실행합니다. 그러면 Claude Code가 다음 계정에서 현재 폴더의 가장 최근 대화를 엽니다.
+
+## ccam이 제 로그인 정보를 보거나 전송하나요?
+
+ccam은 로그인을 절대 복사하거나 공유하지 않습니다. `ccs usage`, `ccs next --auto`, `ccam doctor`를 실행할 때, 계정의 사용량을 Anthropic의 사용량 엔드포인트에 요청하기 위해서만 그 계정의 액세스 토큰을 읽습니다. ccam에는 원격 측정(telemetry)이 없으며, 그 밖의 어디로도 아무것도 보내지 않습니다.
+
+## 계정은 어디에 저장되나요?
+
+`~/.local/share/ccam/profiles/<name>/`에 계정마다 폴더 하나씩 저장됩니다. macOS에서는 Claude Code가 로그인 자체를 그 폴더에서 만든 이름으로 키체인에 보관합니다.
+
+## 기존 ~/.claude는 어떻게 되나요?
+
+`ccam import`를 실행하지 않으면 아무 일도 일어나지 않습니다. 가져오기는 폴더를 제자리에서 등록하므로, 그냥 `claude`를 실행해도, `ccs <name>`으로 실행해도 같은 계정과 설정을 계속 씁니다.
+
+## ccam은 어떤 시스템을 지원하나요?
+
+Linux(Ubuntu, Debian, Fedora, Arch, Alpine 등)와 macOS를 지원합니다. Windows에서는 WSL 안에서 사용하세요.
+
+## MCP 서버가 왜 한 계정에만 보이나요?
+
+세션 안에서 `claude mcp add`로 추가한 서버는 그 계정에만 저장됩니다. 다음에 그 계정을 시작할 때 ccam이 알려 주며, `ccam mcp import <account> <server>`로 서버를 공유 그룹으로 옮길 수 있습니다.
+
+## ccam 때문에 Claude Code가 느려지나요?
+
+ccam을 거쳐 Claude Code를 시작하면 약 4밀리초가 더해집니다. 노트북에서 `scripts/perf-check.sh`로 측정한 값입니다. ccam은 작은 파일 하나를 읽고 공유 링크를 확인한 뒤 자기 자신을 `claude`로 바꾸므로, 작업하는 동안에는 실행되고 있지 않습니다.
+
+## ccam은 어떻게 삭제하나요?
+
+`~/.local/bin`에서 `ccam`, `ccs`, `claude1`… 링크를 지우고, 계정이 더 이상 필요 없다면 `~/.config/ccam`, `~/.local/share/ccam`, `~/.local/state/ccam`도 지웁니다. [설치](/docs/install#uninstall)를 참고하세요.

@@ -1,0 +1,63 @@
+---
+title: Límites de uso y cambio de cuenta
+description: Consulta el uso de 5 horas y semanal de cada cuenta de Claude Code con ccs usage, y abre la cuenta con más margen con ccs next --auto.
+updated: 2026-10-19
+order: 5
+translation: machine
+sourceHash: a9ee77936668
+---
+
+`ccs usage` muestra cuánto ha usado cada cuenta de sus límites de 5 horas y semanal. `ccs next --auto` abre la cuenta con más margen, y `--continue` lleva consigo la conversación actual.
+
+```console
+$ ccs usage
+ 계정        5시간         초기화      주간          초기화      기준
+ 1 personal  ██████░░  72% 1시간 40분  ███░░░░░  41% 3일 6시간   방금
+ 2 work      █░░░░░░░   8% 4시간 12분  ██░░░░░░  19% 5일 2시간   방금
+ 3 side      ████████ 100% 22분        █████░░░  68% 1일 9시간   12분 전 (캐시)
+→ 여유가 가장 많은 계정: work   (ccs next --auto 로 바로 열기)
+```
+
+Las columnas son: cuenta, uso de 5 horas, tiempo hasta que se restablece, uso semanal, tiempo hasta que se restablece y la antigüedad de las cifras.
+
+## De dónde salen las cifras
+
+ccam consulta el endpoint de uso de Anthropic para todas las cuentas al mismo tiempo, con el inicio de sesión propio de cada cuenta. Espera como máximo 3 segundos por cuenta y muestra cada cuenta en cuanto responde.
+
+Este endpoint no está documentado públicamente y puede cambiar. Cuando una solicitud falla, ccam muestra las últimas cifras conocidas y las marca como almacenadas en caché. `ccam doctor` te avisa si el formato de la respuesta cambió.
+
+Las cifras obtenidas hace menos de 60 segundos se reutilizan. Opciones:
+
+| Opción | Efecto |
+| --- | --- |
+| `--watch [seconds]` | Actualiza de forma continua, cada 60 segundos de forma predeterminada |
+| `--json` | Salida legible por máquinas |
+| `-v` | Muestra también los límites semanales por modelo y de dónde salió cada cifra |
+| `--no-cache` | Siempre vuelve a consultar |
+| `--source cache` | Nunca consulta; solo muestra las cifras guardadas |
+
+## Inicios de sesión vencidos
+
+Cuando el token de acceso de una cuenta venció, ccam no lo renueva, porque renovarlo mientras una sesión de Claude Code usa el mismo inicio de sesión podría cerrar esa sesión. Inicia la cuenta una vez con `ccs <name>` y Claude Code lo renueva.
+
+`ccs usage --refresh` renueva por sí mismo los tokens vencidos, pero solo de las cuentas que no se están ejecutando. Nunca renueva inicios de sesión guardados en el Llavero de macOS ni en un `~/.claude` importado.
+
+## Uso en la línea de estado
+
+```sh
+ccam statusline install
+```
+
+Entonces Claude Code muestra el nombre de la cuenta y su uso en la línea de estado, por ejemplo `[work] · Opus · 5h 24% · 7d 41%`. Si ya tienes un comando de línea de estado, ccam lo conserva y pone el nombre de la cuenta delante. La línea de estado también guarda sus cifras, que `ccs usage` usa cuando el endpoint no responde.
+
+## Cambiar de cuenta
+
+```sh
+ccs next              # the account after the one you used last
+ccs next --auto       # the account with the lowest 5-hour usage
+ccs next --continue   # the next account that shares your conversation history
+```
+
+`ccs next` omite las cuentas que no tienen sesión iniciada, y `--auto` omite las cuentas al 100 %. Para continuar una conversación, ambas cuentas deben compartir el historial de conversaciones; consulta [compartir](/docs/sharing).
+
+La [guía del flujo de trabajo con límites de uso](/guides/usage-limit-workflow) recorre un ejemplo completo.

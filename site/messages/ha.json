@@ -1,0 +1,139 @@
+{
+  "site": {
+    "name": "ccam",
+    "title": "ccam: yi amfani da asusun Claude Code da dama a kwamfuta ɗaya",
+    "description": "ccam kayan aikin command-line ne kyauta kuma open-source wanda ke ba ka damar amfani da asusun Claude Code da dama a kwamfuta ɗaya, ka kuma sauya tsakaninsu da umarni ɗaya."
+  },
+  "nav": {
+    "docs": "Takardu",
+    "guides": "Jagorori",
+    "faq": "Tambayoyi",
+    "changelog": "Tarihin canje-canje",
+    "github": "GitHub",
+    "menu": "Menu",
+    "skip": "Tsallaka zuwa abin da ke ciki",
+    "language": "Harshe",
+    "theme": "Sauya jigo mai haske ko mai duhu"
+  },
+  "facts": {
+    "what": "ccam kayan aikin command-line ne kyauta kuma open-source wanda ke ba ka damar amfani da asusun Claude Code da dama a kwamfuta ɗaya, ka kuma sauya tsakaninsu da umarni ɗaya.",
+    "how": "Kowane asusu yana riƙe bayanan shigarsa a CLAUDE_CONFIG_DIR daban, yayin da za a iya raba sabobin MCP, saituna, CLAUDE.md, extensions da tarihin tattaunawa tsakanin asusai, don haka za ka iya ci gaba da tattaunawa a wani asusu idan ɗaya ya kai iyakar amfaninsa.",
+    "install": "Girka shi a Linux ko macOS da umarni ɗaya, sannan ka gudanar da ccam add ga kowane asusu.",
+    "official": "ccam aiki ne da ba na hukuma ba, ba shi da alaƙa da Anthropic, kuma Anthropic ba ta amince da shi ba."
+  },
+  "landing": {
+    "headline": "Asusun Claude Code da dama. Terminal ɗaya.",
+    "lede": "Ka ƙara kowane asusu sau ɗaya. Ka sauya da claude2 ko ccs work. Idan wani asusu ya kai iyakarsa, ka ci gaba a na gaba da wannan tattaunawar.",
+    "installLabel": "Girka a Linux ko macOS",
+    "thenAdd": "Sannan ka ƙara asusunka na farko da {command}.",
+    "readDocs": "Karanta jagorar farawa da sauri",
+    "boardLabel": "Misalin sakamakon ccs usage: iyakokin kowane asusu a lokaci ɗaya",
+    "board": {
+      "account": "Asusu",
+      "fiveHour": "Awa 5",
+      "weekly": "Mako",
+      "resets": "sake saitawa cikin {time}",
+      "mostRoom": "Wanda ya fi sauran sarari: {name}"
+    },
+    "flowTitle": "Yadda yake aiki",
+    "flow": [
+      {
+        "command": "ccam add work",
+        "body": "Yana ƙirƙirar folda ta saituna daban don asusun, yana buɗe shigar Claude a burauzarka, kuma yana ba asusun gajeren umarni: claude1, claude2 da sauransu."
+      },
+      {
+        "command": "claude2",
+        "also": "ccs work --resume",
+        "body": "Yana fara Claude Code a matsayin wannan asusun. Duk abin da ke bayan sunan yana zuwa Claude Code ba tare da canji ba, kuma ccam yana ƙara kusan millisecond 4 kafin ya fara."
+      },
+      {
+        "command": "ccam share work --history on",
+        "body": "Yana zaɓar abin da asusun zai raba da sauran asusunka. Ana raba sabobin MCP, saituna, CLAUDE.md da extensions tun daga farko; ba a taɓa raba bayanan shiga ba."
+      },
+      {
+        "command": "ccs usage",
+        "body": "Yana nuna amfanin awa 5 da na mako na kowane asusu a lokaci ɗaya, don ka san wanne ne yake da sauran sarari."
+      },
+      {
+        "command": "ccs next --continue",
+        "body": "Yana buɗe wannan tattaunawar a asusu na gaba idan na yanzu ya kai iyakarsa."
+      },
+      {
+        "command": "ccam doctor --fix",
+        "body": "Yana duba mahaɗai, izini da bayanan shiga, kuma yana gyara abin da zai iya gyarawa lafiya. Kowane canji ga fayilolinka yana ajiye kwafin ajiya."
+      }
+    ],
+    "guidesTitle": "Jagorori",
+    "factsTitle": "A taƙaice"
+  },
+  "docs": {
+    "updated": "An sabunta a ƙarshe {date}",
+    "versions": "An duba da ccam {ccam} da Claude Code {claude}",
+    "prev": "Na baya",
+    "next": "Na gaba",
+    "edit": "Gyara wannan shafin a GitHub",
+    "machine": "Na'ura ce ta fassara wannan shafin daga Turanci. Ana maraba da gyare-gyare.",
+    "related": "Jagorori masu alaƙa",
+    "sections": {
+      "docs": "Takardun bayani",
+      "guides": "Jagorori",
+      "compare": "Kwatance",
+      "blog": "Blog"
+    },
+    "commandsTable": {
+      "command": "Umarni",
+      "does": "Abin da yake yi"
+    }
+  },
+  "commands": {
+    "ccs": "Buɗe mai zaɓar asusu",
+    "name": "Fara Claude Code a matsayin wannan asusun; ana miƙa arguments ba tare da canji ba",
+    "add": "Ƙara asusu: folda ta saituna, shiga da gajeren umarni",
+    "list": "Jera asusai",
+    "use": "Saita asusun tsoho",
+    "next": "Buɗe asusu na gaba; --continue yana riƙe tattaunawar, --auto yana zaɓar wanda ya fi sarari",
+    "usage": "Nuna amfanin awa 5 da na mako na kowane asusu",
+    "share": "Canza abin da asusu ke rabawa, bayan nuna shirin",
+    "mcp": "Sarrafa sabobin MCP da aka raba",
+    "login": "Sake shiga da asusu",
+    "logout": "Cire bayanan shigar asusu",
+    "rename": "Sauya sunan asusu da na gajeren umarninsa",
+    "remove": "Cire asusu; foldarsa tana komawa foldar shara",
+    "import": "Yi rajistar foldar ~/.claude da ke akwai a inda take",
+    "doctor": "Duba mahaɗai, izini, bayanan shiga da sigogi, sannan ka gyara",
+    "statusline": "Nuna asusun da amfaninsa a layin matsayi na Claude Code",
+    "shims": "Sake ƙirƙirar claude1…claudeN da ccs",
+    "completion": "Buga completion na bash ko zsh"
+  },
+  "copy": {
+    "copy": "Kwafa",
+    "copied": "An kwafa"
+  },
+  "banner": {
+    "suggest": "Akwai wannan shafin a {language} ma.",
+    "open": "Buɗe a {language}",
+    "dismiss": "Rufe"
+  },
+  "footer": {
+    "unofficial": "ccam kayan aikin open-source ne da ba na hukuma ba. Ba shi da alaƙa da Anthropic, kuma Anthropic ba ta amince da shi ba. Claude da Claude Code alamomin kasuwanci ne na Anthropic.",
+    "terms": "Ko an yarda ka yi amfani da asusai da dama ya dogara ne da sharuɗɗan kowane asusu. Ka duba su kafin ka yi haka.",
+    "license": "Lambar tushe a GitHub",
+    "languages": "Dukan harsuna"
+  },
+  "changelog": {
+    "title": "Tarihin canje-canje",
+    "description": "Kowane sakin ccam da abin da ya canza a cikinsa.",
+    "empty": "Ba a fitar da wani saki ba tukuna. Ana jera ginin da aka yi daga reshen main a GitHub."
+  },
+  "languages": {
+    "title": "Harsuna",
+    "description": "Akwai ccam.dev a {count, plural, one {harshe #} other {harsuna #}}.",
+    "coverage": "Bisa ga bayanan yawan jama'a na Unicode CLDR, mutanen da ke magana aƙalla ɗaya daga cikin waɗannan harsunan sun kai daga {low} zuwa {high} na yawan mutanen duniya.",
+    "method": "Ƙaramin adadin yana ƙidaya harshe ɗaya da aka fi magana a kowace ƙasa daga cikin waɗanda ake tallafawa; babban adadin yana haɗa dukan harsunan da ake tallafawa kuma yana iyakance kowace ƙasa a 100%."
+  },
+  "notFound": {
+    "title": "Ba a sami shafin ba",
+    "body": "Babu wannan adireshin a ccam.dev. Takardun bayani suna farawa a nan:",
+    "home": "Gida"
+  }
+}

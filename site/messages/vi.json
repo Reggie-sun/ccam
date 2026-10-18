@@ -1,0 +1,139 @@
+{
+  "site": {
+    "name": "ccam",
+    "title": "ccam: dùng nhiều tài khoản Claude Code trên một máy tính",
+    "description": "ccam là công cụ dòng lệnh miễn phí, mã nguồn mở, giúp bạn dùng nhiều tài khoản Claude Code trên một máy tính và chuyển đổi giữa chúng bằng một lệnh."
+  },
+  "nav": {
+    "docs": "Tài liệu",
+    "guides": "Hướng dẫn",
+    "faq": "Hỏi đáp",
+    "changelog": "Nhật ký thay đổi",
+    "github": "GitHub",
+    "menu": "Menu",
+    "skip": "Chuyển đến nội dung",
+    "language": "Ngôn ngữ",
+    "theme": "Chuyển giao diện sáng hoặc tối"
+  },
+  "facts": {
+    "what": "ccam là công cụ dòng lệnh miễn phí, mã nguồn mở, giúp bạn dùng nhiều tài khoản Claude Code trên một máy tính và chuyển đổi giữa chúng bằng một lệnh.",
+    "how": "Mỗi tài khoản giữ thông tin đăng nhập riêng trong một CLAUDE_CONFIG_DIR riêng, còn máy chủ MCP, cài đặt, CLAUDE.md, tiện ích mở rộng và lịch sử hội thoại có thể dùng chung giữa các tài khoản, nên bạn có thể tiếp tục một cuộc hội thoại trên tài khoản khác khi một tài khoản chạm giới hạn sử dụng.",
+    "install": "Cài đặt trên Linux hoặc macOS bằng một lệnh, sau đó chạy ccam add cho từng tài khoản.",
+    "official": "ccam là dự án không chính thức, không liên kết với Anthropic và không được Anthropic xác nhận."
+  },
+  "landing": {
+    "headline": "Nhiều tài khoản Claude Code. Một terminal.",
+    "lede": "Thêm mỗi tài khoản một lần. Chuyển đổi bằng claude2 hoặc ccs work. Khi một tài khoản chạm giới hạn, hãy tiếp tục ở tài khoản kế tiếp với cùng cuộc hội thoại.",
+    "installLabel": "Cài đặt trên Linux hoặc macOS",
+    "thenAdd": "Sau đó thêm tài khoản đầu tiên bằng {command}.",
+    "readDocs": "Đọc phần bắt đầu nhanh",
+    "boardLabel": "Ví dụ đầu ra của ccs usage: giới hạn của mọi tài khoản cùng lúc",
+    "board": {
+      "account": "Tài khoản",
+      "fiveHour": "5 giờ",
+      "weekly": "Hàng tuần",
+      "resets": "đặt lại sau {time}",
+      "mostRoom": "Còn nhiều hạn mức nhất: {name}"
+    },
+    "flowTitle": "Cách hoạt động",
+    "flow": [
+      {
+        "command": "ccam add work",
+        "body": "Tạo một thư mục cấu hình riêng cho tài khoản, mở trang đăng nhập Claude trong trình duyệt và gán cho tài khoản một lệnh tắt: claude1, claude2, v.v."
+      },
+      {
+        "command": "claude2",
+        "also": "ccs work --resume",
+        "body": "Khởi động Claude Code bằng tài khoản đó. Mọi thứ sau tên tài khoản được chuyển nguyên vẹn cho Claude Code, và ccam thêm khoảng 4 mili giây trước khi Claude Code khởi động."
+      },
+      {
+        "command": "ccam share work --history on",
+        "body": "Chọn những gì tài khoản dùng chung với các tài khoản khác của bạn. Máy chủ MCP, cài đặt, CLAUDE.md và tiện ích mở rộng được dùng chung ngay từ đầu; thông tin đăng nhập thì không bao giờ."
+      },
+      {
+        "command": "ccs usage",
+        "body": "Hiển thị mức sử dụng 5 giờ và hàng tuần của mọi tài khoản cùng lúc, để bạn biết tài khoản nào còn hạn mức."
+      },
+      {
+        "command": "ccs next --continue",
+        "body": "Mở cùng cuộc hội thoại ở tài khoản kế tiếp khi tài khoản hiện tại chạm giới hạn."
+      },
+      {
+        "command": "ccam doctor --fix",
+        "body": "Kiểm tra liên kết, quyền truy cập và thông tin đăng nhập, rồi sửa những gì có thể sửa an toàn. Mọi thay đổi trên tệp của bạn đều có bản sao lưu."
+      }
+    ],
+    "guidesTitle": "Hướng dẫn",
+    "factsTitle": "Tóm tắt"
+  },
+  "docs": {
+    "updated": "Cập nhật lần cuối {date}",
+    "versions": "Đã kiểm tra với ccam {ccam} và Claude Code {claude}",
+    "prev": "Trước",
+    "next": "Tiếp",
+    "edit": "Sửa trang này trên GitHub",
+    "machine": "Trang này được dịch máy từ tiếng Anh. Mọi góp ý chỉnh sửa đều được hoan nghênh.",
+    "related": "Hướng dẫn liên quan",
+    "sections": {
+      "docs": "Tài liệu",
+      "guides": "Hướng dẫn",
+      "compare": "So sánh",
+      "blog": "Blog"
+    },
+    "commandsTable": {
+      "command": "Lệnh",
+      "does": "Chức năng"
+    }
+  },
+  "commands": {
+    "ccs": "Mở trình chọn tài khoản",
+    "name": "Khởi động Claude Code bằng tài khoản đó; các đối số được chuyển nguyên vẹn",
+    "add": "Thêm tài khoản: thư mục cấu hình, đăng nhập và lệnh tắt",
+    "list": "Liệt kê các tài khoản",
+    "use": "Đặt tài khoản mặc định",
+    "next": "Mở tài khoản kế tiếp; --continue giữ cuộc hội thoại, --auto chọn tài khoản còn nhiều hạn mức nhất",
+    "usage": "Hiển thị mức sử dụng 5 giờ và hàng tuần của mọi tài khoản",
+    "share": "Thay đổi những gì một tài khoản dùng chung, sau khi hiển thị kế hoạch",
+    "mcp": "Quản lý các máy chủ MCP dùng chung",
+    "login": "Đăng nhập lại một tài khoản",
+    "logout": "Xóa thông tin đăng nhập của một tài khoản",
+    "rename": "Đổi tên một tài khoản và lệnh tắt của nó",
+    "remove": "Xóa một tài khoản; thư mục của nó được chuyển vào thư mục thùng rác",
+    "import": "Đăng ký tại chỗ một thư mục ~/.claude có sẵn",
+    "doctor": "Kiểm tra liên kết, quyền truy cập, đăng nhập và phiên bản, rồi sửa chữa",
+    "statusline": "Hiển thị tài khoản và mức sử dụng trên dòng trạng thái của Claude Code",
+    "shims": "Tạo lại claude1…claudeN và ccs",
+    "completion": "In mã tự động hoàn thành cho bash hoặc zsh"
+  },
+  "copy": {
+    "copy": "Sao chép",
+    "copied": "Đã sao chép"
+  },
+  "banner": {
+    "suggest": "Trang này cũng có bằng {language}.",
+    "open": "Mở bằng {language}",
+    "dismiss": "Đóng"
+  },
+  "footer": {
+    "unofficial": "ccam là công cụ mã nguồn mở không chính thức. Công cụ này không liên kết với Anthropic và không được Anthropic xác nhận. Claude và Claude Code là nhãn hiệu của Anthropic.",
+    "terms": "Việc bạn có được dùng nhiều tài khoản hay không phụ thuộc vào điều khoản của từng tài khoản. Hãy kiểm tra trước khi làm vậy.",
+    "license": "Mã nguồn trên GitHub",
+    "languages": "Tất cả ngôn ngữ"
+  },
+  "changelog": {
+    "title": "Nhật ký thay đổi",
+    "description": "Mọi bản phát hành của ccam và những thay đổi trong từng bản.",
+    "empty": "Chưa có bản phát hành nào. Các bản dựng từ nhánh main được liệt kê trên GitHub."
+  },
+  "languages": {
+    "title": "Ngôn ngữ",
+    "description": "ccam.dev có sẵn bằng {count, plural, other {# ngôn ngữ}}.",
+    "coverage": "Theo dữ liệu dân số của Unicode CLDR, những người nói ít nhất một trong các ngôn ngữ này chiếm từ {low} đến {high} dân số thế giới.",
+    "method": "Con số thấp hơn chỉ tính ngôn ngữ được hỗ trợ có nhiều người nói nhất ở mỗi quốc gia; con số cao hơn cộng tất cả ngôn ngữ được hỗ trợ và giới hạn mỗi quốc gia ở mức 100%."
+  },
+  "notFound": {
+    "title": "Không tìm thấy trang",
+    "body": "Địa chỉ này không tồn tại trên ccam.dev. Tài liệu bắt đầu từ đây:",
+    "home": "Trang chủ"
+  }
+}

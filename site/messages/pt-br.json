@@ -1,0 +1,139 @@
+{
+  "site": {
+    "name": "ccam",
+    "title": "ccam: use várias contas do Claude Code no mesmo computador",
+    "description": "ccam é uma ferramenta de linha de comando gratuita e de código aberto que permite usar várias contas do Claude Code no mesmo computador e trocar entre elas com um comando."
+  },
+  "nav": {
+    "docs": "Documentação",
+    "guides": "Guias",
+    "faq": "Perguntas frequentes",
+    "changelog": "Histórico de alterações",
+    "github": "GitHub",
+    "menu": "Menu",
+    "skip": "Pular para o conteúdo",
+    "language": "Idioma",
+    "theme": "Alternar entre tema claro e escuro"
+  },
+  "facts": {
+    "what": "ccam é uma ferramenta de linha de comando gratuita e de código aberto que permite usar várias contas do Claude Code no mesmo computador e trocar entre elas com um comando.",
+    "how": "Cada conta mantém o próprio login em um CLAUDE_CONFIG_DIR separado, enquanto servidores MCP, configurações, CLAUDE.md, extensões e histórico de conversas podem ser compartilhados entre as contas, para que você possa continuar uma conversa em outra conta quando uma delas atingir o limite de uso.",
+    "install": "Instale no Linux ou no macOS com um comando e depois execute ccam add para cada conta.",
+    "official": "ccam é um projeto não oficial e não é afiliado à Anthropic nem endossado por ela."
+  },
+  "landing": {
+    "headline": "Várias contas do Claude Code. Um terminal.",
+    "lede": "Adicione cada conta uma vez. Troque com claude2 ou ccs work. Quando uma conta atingir o limite, continue na próxima com a mesma conversa.",
+    "installLabel": "Instalar no Linux ou no macOS",
+    "thenAdd": "Depois adicione sua primeira conta com {command}.",
+    "readDocs": "Leia o início rápido",
+    "boardLabel": "Exemplo de saída do ccs usage: os limites de todas as contas de uma vez",
+    "board": {
+      "account": "Conta",
+      "fiveHour": "5 horas",
+      "weekly": "Semanal",
+      "resets": "reinicia em {time}",
+      "mostRoom": "Mais espaço livre: {name}"
+    },
+    "flowTitle": "Como funciona",
+    "flow": [
+      {
+        "command": "ccam add work",
+        "body": "Cria uma pasta de configuração separada para a conta, abre o login do Claude no navegador e dá um atalho à conta: claude1, claude2 e assim por diante."
+      },
+      {
+        "command": "claude2",
+        "also": "ccs work --resume",
+        "body": "Inicia o Claude Code como essa conta. Tudo o que vem depois do nome vai para o Claude Code sem alterações, e o ccam acrescenta cerca de 4 milissegundos antes da inicialização."
+      },
+      {
+        "command": "ccam share work --history on",
+        "body": "Escolhe o que a conta compartilha com suas outras contas. Servidores MCP, configurações, CLAUDE.md e extensões são compartilhados desde o início; logins nunca são."
+      },
+      {
+        "command": "ccs usage",
+        "body": "Mostra o uso de 5 horas e o uso semanal de todas as contas de uma vez, para você saber qual delas ainda tem espaço."
+      },
+      {
+        "command": "ccs next --continue",
+        "body": "Abre a mesma conversa na próxima conta quando a atual atinge o limite."
+      },
+      {
+        "command": "ccam doctor --fix",
+        "body": "Verifica links, permissões e logins, e corrige o que puder corrigir com segurança. Toda alteração nos seus arquivos mantém um backup."
+      }
+    ],
+    "guidesTitle": "Guias",
+    "factsTitle": "Em resumo"
+  },
+  "docs": {
+    "updated": "Última atualização: {date}",
+    "versions": "Verificado com ccam {ccam} e Claude Code {claude}",
+    "prev": "Anterior",
+    "next": "Próximo",
+    "edit": "Editar esta página no GitHub",
+    "machine": "Esta página foi traduzida automaticamente do inglês. Correções são bem-vindas.",
+    "related": "Guias relacionados",
+    "sections": {
+      "docs": "Documentação",
+      "guides": "Guias",
+      "compare": "Comparações",
+      "blog": "Blog"
+    },
+    "commandsTable": {
+      "command": "Comando",
+      "does": "O que faz"
+    }
+  },
+  "commands": {
+    "ccs": "Abrir o seletor de contas",
+    "name": "Iniciar o Claude Code como essa conta; os argumentos são repassados sem alterações",
+    "add": "Adicionar uma conta: pasta de configuração, login e atalho",
+    "list": "Listar as contas",
+    "use": "Definir a conta padrão",
+    "next": "Abrir a próxima conta; --continue mantém a conversa, --auto escolhe a que tem mais espaço",
+    "usage": "Mostrar o uso de 5 horas e o uso semanal de todas as contas",
+    "share": "Alterar o que uma conta compartilha, depois de mostrar o plano",
+    "mcp": "Gerenciar servidores MCP compartilhados",
+    "login": "Fazer login em uma conta novamente",
+    "logout": "Remover o login de uma conta",
+    "rename": "Renomear uma conta e seu atalho",
+    "remove": "Remover uma conta; a pasta dela vai para a pasta de lixeira",
+    "import": "Registrar uma pasta ~/.claude existente no lugar onde ela está",
+    "doctor": "Verificar links, permissões, logins e versões, e corrigir",
+    "statusline": "Mostrar a conta e o uso na linha de status do Claude Code",
+    "shims": "Recriar claude1…claudeN e ccs",
+    "completion": "Imprimir o preenchimento automático para bash ou zsh"
+  },
+  "copy": {
+    "copy": "Copiar",
+    "copied": "Copiado"
+  },
+  "banner": {
+    "suggest": "Esta página também está disponível em {language}.",
+    "open": "Abrir em {language}",
+    "dismiss": "Dispensar"
+  },
+  "footer": {
+    "unofficial": "ccam é uma ferramenta de código aberto não oficial. Ela não é afiliada à Anthropic nem endossada por ela. Claude e Claude Code são marcas registradas da Anthropic.",
+    "terms": "Se você pode usar várias contas depende dos termos de cada conta. Verifique-os antes de fazer isso.",
+    "license": "Código-fonte no GitHub",
+    "languages": "Todos os idiomas"
+  },
+  "changelog": {
+    "title": "Histórico de alterações",
+    "description": "Todas as versões do ccam e o que mudou em cada uma.",
+    "empty": "Nenhuma versão foi publicada ainda. As builds do branch principal estão listadas no GitHub."
+  },
+  "languages": {
+    "title": "Idiomas",
+    "description": "O ccam.dev está disponível em {count, plural, one {# idioma} many {# de idiomas} other {# idiomas}}.",
+    "coverage": "Segundo os dados de população do Unicode CLDR, as pessoas que falam pelo menos um destes idiomas representam de {low} a {high} da população mundial.",
+    "method": "O número menor conta apenas o idioma suportado mais falado de cada país; o maior soma todos os idiomas suportados e limita cada país a 100%."
+  },
+  "notFound": {
+    "title": "Página não encontrada",
+    "body": "Este endereço não existe no ccam.dev. A documentação começa aqui:",
+    "home": "Início"
+  }
+}

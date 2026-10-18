@@ -1,0 +1,139 @@
+{
+  "site": {
+    "name": "ccam",
+    "title": "ccam：在一台电脑上使用多个 Claude Code 账号",
+    "description": "ccam 是一个免费的开源命令行工具，让你在一台电脑上使用多个 Claude Code 账号，并用一条命令在它们之间切换。"
+  },
+  "nav": {
+    "docs": "文档",
+    "guides": "指南",
+    "faq": "常见问题",
+    "changelog": "更新日志",
+    "github": "GitHub",
+    "menu": "菜单",
+    "skip": "跳到正文",
+    "language": "语言",
+    "theme": "切换浅色或深色主题"
+  },
+  "facts": {
+    "what": "ccam 是一个免费的开源命令行工具，让你在一台电脑上使用多个 Claude Code 账号，并用一条命令在它们之间切换。",
+    "how": "每个账号的登录信息保存在各自独立的 CLAUDE_CONFIG_DIR 中，而 MCP 服务器、设置、CLAUDE.md、扩展和对话历史可以在账号之间共享，因此当一个账号达到用量限制时，你可以在另一个账号上继续对话。",
+    "install": "在 Linux 或 macOS 上用一条命令安装，然后为每个账号运行 ccam add。",
+    "official": "ccam 是一个非官方项目，与 Anthropic 没有关联，也未获得 Anthropic 的认可。"
+  },
+  "landing": {
+    "headline": "多个 Claude Code 账号，一个终端。",
+    "lede": "每个账号只需添加一次。用 claude2 或 ccs work 切换。一个账号达到用量限制时，在下一个账号中继续同一段对话。",
+    "installLabel": "在 Linux 或 macOS 上安装",
+    "thenAdd": "然后用 {command} 添加你的第一个账号。",
+    "readDocs": "阅读快速入门",
+    "boardLabel": "ccs usage 的输出示例：一次查看所有账号的用量限制",
+    "board": {
+      "account": "账号",
+      "fiveHour": "5 小时",
+      "weekly": "每周",
+      "resets": "{time} 后重置",
+      "mostRoom": "余量最多：{name}"
+    },
+    "flowTitle": "工作原理",
+    "flow": [
+      {
+        "command": "ccam add work",
+        "body": "为该账号创建单独的配置文件夹，在浏览器中打开 Claude 登录页面，并为账号分配一个快捷命令：claude1、claude2，依此类推。"
+      },
+      {
+        "command": "claude2",
+        "also": "ccs work --resume",
+        "body": "以该账号启动 Claude Code。账号名之后的所有内容都原样传给 Claude Code，ccam 在启动前只增加约 4 毫秒。"
+      },
+      {
+        "command": "ccam share work --history on",
+        "body": "选择该账号与其他账号共享哪些内容。MCP 服务器、设置、CLAUDE.md 和扩展从一开始就共享；登录信息永远不共享。"
+      },
+      {
+        "command": "ccs usage",
+        "body": "一次显示所有账号的 5 小时用量和每周用量，让你知道哪个账号还有余量。"
+      },
+      {
+        "command": "ccs next --continue",
+        "body": "当前账号达到用量限制时，在下一个账号中打开同一段对话。"
+      },
+      {
+        "command": "ccam doctor --fix",
+        "body": "检查链接、权限和登录状态，并修复可以安全修复的问题。对文件的每次更改都会保留备份。"
+      }
+    ],
+    "guidesTitle": "指南",
+    "factsTitle": "简介"
+  },
+  "docs": {
+    "updated": "最后更新于 {date}",
+    "versions": "已使用 ccam {ccam} 和 Claude Code {claude} 核实",
+    "prev": "上一页",
+    "next": "下一页",
+    "edit": "在 GitHub 上编辑此页",
+    "machine": "本页由英文机器翻译而来，欢迎指正。",
+    "related": "相关指南",
+    "sections": {
+      "docs": "文档",
+      "guides": "指南",
+      "compare": "对比",
+      "blog": "博客"
+    },
+    "commandsTable": {
+      "command": "命令",
+      "does": "作用"
+    }
+  },
+  "commands": {
+    "ccs": "打开账号选择器",
+    "name": "以该账号启动 Claude Code；参数原样传递",
+    "add": "添加账号：配置文件夹、登录和快捷命令",
+    "list": "列出账号",
+    "use": "设置默认账号",
+    "next": "打开下一个账号；--continue 保留对话，--auto 选择余量最多的账号",
+    "usage": "显示所有账号的 5 小时用量和每周用量",
+    "share": "更改账号的共享内容，先显示计划",
+    "mcp": "管理共享的 MCP 服务器",
+    "login": "重新登录账号",
+    "logout": "删除账号的登录信息",
+    "rename": "重命名账号及其快捷命令",
+    "remove": "删除账号；其文件夹会移到回收文件夹",
+    "import": "在原位置注册已有的 ~/.claude 文件夹",
+    "doctor": "检查链接、权限、登录和版本，并进行修复",
+    "statusline": "在 Claude Code 的状态栏中显示账号和用量",
+    "shims": "重新创建 claude1…claudeN 和 ccs",
+    "completion": "输出 bash 或 zsh 的补全脚本"
+  },
+  "copy": {
+    "copy": "复制",
+    "copied": "已复制"
+  },
+  "banner": {
+    "suggest": "本页也提供 {language} 版本。",
+    "open": "以 {language} 打开",
+    "dismiss": "关闭"
+  },
+  "footer": {
+    "unofficial": "ccam 是一个非官方的开源工具，与 Anthropic 没有关联，也未获得 Anthropic 的认可。Claude 和 Claude Code 是 Anthropic 的商标。",
+    "terms": "你能否使用多个账号，取决于每个账号适用的条款。使用前请先确认。",
+    "license": "GitHub 上的源代码",
+    "languages": "所有语言"
+  },
+  "changelog": {
+    "title": "更新日志",
+    "description": "ccam 的每个版本及其变更内容。",
+    "empty": "尚未发布任何版本。main 分支的构建列在 GitHub 上。"
+  },
+  "languages": {
+    "title": "语言",
+    "description": "ccam.dev 提供 {count, plural, other {# 种语言}}版本。",
+    "coverage": "根据 Unicode CLDR 人口数据，至少会说其中一种语言的人占世界人口的 {low} 到 {high}。",
+    "method": "较低的数字只计算每个国家使用人数最多的一种受支持语言；较高的数字把所有受支持语言相加，并将每个国家的上限设为 100%。"
+  },
+  "notFound": {
+    "title": "找不到页面",
+    "body": "ccam.dev 上不存在这个地址。文档从这里开始：",
+    "home": "首页"
+  }
+}

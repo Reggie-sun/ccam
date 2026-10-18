@@ -1,0 +1,56 @@
+---
+title: 常见问题
+description: 关于 ccam、Claude Code 账号、用量限制、共享、隐私和支持系统的解答。
+updated: 2026-10-19
+order: 6
+translation: machine
+sourceHash: 12ad0faef2ce
+---
+
+## ccam 是 Anthropic 的官方工具吗？
+
+不是。ccam 是一个非官方的开源项目，与 Anthropic 没有关联，也未获得 Anthropic 的认可。它使用的是 Claude Code 文档中说明的 `CLAUDE_CONFIG_DIR` 设置，用于并行运行多个账号。
+
+## 使用多个 Claude Code 账号是否被允许？
+
+这取决于每个账号适用的条款；如果是工作账号，还取决于你所在组织的政策。在使用多个账号之前，请先确认这些规定。ccam 只是让你在已有的账号之间切换起来更方便。
+
+## ccam 能绕过用量限制吗？
+
+不能。每个账号都保留各自的用量限制。ccam 会显示这些限制，并在某个账号用完时，让你在自己拥有的另一个账号上继续。
+
+## 如何在一台电脑上使用两个 Claude Code 账号？
+
+用 `CLAUDE_CONFIG_DIR` 为每个账号指定单独的配置文件夹。ccam 会替你完成这件事：为每个账号运行 `ccam add`，然后用 `claude1` 和 `claude2` 启动它们。[指南](/guides/multiple-claude-code-accounts)也介绍了如何手动设置。
+
+## 如何在另一个账号上继续对话？
+
+用 `ccam share <name> --history on` 在两个账号之间共享对话历史，然后运行 `ccs next --continue`。Claude Code 会在下一个账号中打开当前文件夹最近的一次对话。
+
+## ccam 会查看或发送我的登录信息吗？
+
+ccam 从不复制或共享登录信息。它读取账号的访问令牌，只是为了在你运行 `ccs usage`、`ccs next --auto` 或 `ccam doctor` 时，向 Anthropic 的用量接口查询该账号的用量。ccam 没有遥测，也不会向其他任何地方发送数据。
+
+## 我的账号存储在哪里？
+
+在 `~/.local/share/ccam/profiles/<name>/` 中，每个账号一个文件夹。在 macOS 上，Claude Code 把登录信息本身保存在钥匙串中，条目名称由该文件夹推导而来。
+
+## 我现有的 ~/.claude 会怎样？
+
+不会有任何变化，除非你运行 `ccam import`。导入会在原位置注册该文件夹，因此直接运行 `claude` 和 `ccs <name>` 都会继续使用同一个账号和同一套设置。
+
+## ccam 支持哪些系统？
+
+Linux（Ubuntu、Debian、Fedora、Arch、Alpine 等）和 macOS。在 Windows 上，请在 WSL 中使用。
+
+## 为什么某个 MCP 服务器只出现在一个账号中？
+
+在会话中用 `claude mcp add` 添加的服务器只为该账号保存。下次启动该账号时，ccam 会提醒你；用 `ccam mcp import <account> <server>` 把服务器移到共享组。
+
+## ccam 会拖慢 Claude Code 吗？
+
+通过 ccam 启动 Claude Code 大约增加 4 毫秒，这是在一台笔记本电脑上用 `scripts/perf-check.sh` 测得的。ccam 读取一个小文件，检查共享链接，然后用 `claude` 替换自身，所以在你工作时它并不在运行。
+
+## 如何卸载 ccam？
+
+从 `~/.local/bin` 中删除 `ccam`、`ccs` 和 `claude1`… 这些链接；如果不再需要这些账号，再删除 `~/.config/ccam`、`~/.local/share/ccam` 和 `~/.local/state/ccam`。参见[安装](/docs/install#uninstall)。

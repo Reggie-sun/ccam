@@ -1,0 +1,139 @@
+{
+  "site": {
+    "name": "ccam",
+    "title": "ccam: tek bilgisayarda birden fazla Claude Code hesabı kullanın",
+    "description": "ccam, tek bilgisayarda birden fazla Claude Code hesabı kullanmanızı ve hesaplar arasında tek komutla geçiş yapmanızı sağlayan ücretsiz, açık kaynaklı bir komut satırı aracıdır."
+  },
+  "nav": {
+    "docs": "Belgeler",
+    "guides": "Kılavuzlar",
+    "faq": "SSS",
+    "changelog": "Sürüm notları",
+    "github": "GitHub",
+    "menu": "Menü",
+    "skip": "İçeriğe geç",
+    "language": "Dil",
+    "theme": "Açık veya koyu temaya geç"
+  },
+  "facts": {
+    "what": "ccam, tek bilgisayarda birden fazla Claude Code hesabı kullanmanızı ve hesaplar arasında tek komutla geçiş yapmanızı sağlayan ücretsiz, açık kaynaklı bir komut satırı aracıdır.",
+    "how": "Her hesabın giriş bilgileri ayrı bir CLAUDE_CONFIG_DIR klasöründe kalır; MCP sunucuları, ayarlar, CLAUDE.md, uzantılar ve konuşma geçmişi ise hesaplar arasında paylaşılabilir. Böylece bir hesap kullanım limitine ulaştığında konuşmaya başka bir hesapta devam edebilirsiniz.",
+    "install": "Linux veya macOS üzerinde tek komutla kurun, ardından her hesap için ccam add komutunu çalıştırın.",
+    "official": "ccam resmi olmayan bir projedir; Anthropic ile bağlantılı değildir ve Anthropic tarafından onaylanmamıştır."
+  },
+  "landing": {
+    "headline": "Birden fazla Claude Code hesabı. Tek terminal.",
+    "lede": "Her hesabı bir kez ekleyin. claude2 veya ccs work ile geçiş yapın. Bir hesap limitine ulaştığında aynı konuşmayla bir sonraki hesapta devam edin.",
+    "installLabel": "Linux veya macOS üzerine kurun",
+    "thenAdd": "Ardından ilk hesabınızı {command} ile ekleyin.",
+    "readDocs": "Hızlı başlangıcı okuyun",
+    "boardLabel": "ccs usage çıktısı örneği: tüm hesapların limitleri bir arada",
+    "board": {
+      "account": "Hesap",
+      "fiveHour": "5 saatlik",
+      "weekly": "Haftalık",
+      "resets": "{time} sonra sıfırlanır",
+      "mostRoom": "En çok pay kalan: {name}"
+    },
+    "flowTitle": "Nasıl çalışır",
+    "flow": [
+      {
+        "command": "ccam add work",
+        "body": "Hesap için ayrı bir yapılandırma klasörü oluşturur, Claude girişini tarayıcınızda açar ve hesaba bir kısayol verir: claude1, claude2 ve devamı."
+      },
+      {
+        "command": "claude2",
+        "also": "ccs work --resume",
+        "body": "Claude Code'u o hesapla başlatır. Addan sonra gelen her şey Claude Code'a değiştirilmeden iletilir ve ccam, başlatmadan önce yaklaşık 4 milisaniye ekler."
+      },
+      {
+        "command": "ccam share work --history on",
+        "body": "Hesabın diğer hesaplarınızla neyi paylaşacağını seçer. MCP sunucuları, ayarlar, CLAUDE.md ve uzantılar baştan paylaşılır; giriş bilgileri hiçbir zaman paylaşılmaz."
+      },
+      {
+        "command": "ccs usage",
+        "body": "Tüm hesapların 5 saatlik ve haftalık kullanımını bir arada gösterir; böylece hangisinde pay kaldığını bilirsiniz."
+      },
+      {
+        "command": "ccs next --continue",
+        "body": "Geçerli hesap limitine ulaştığında aynı konuşmayı bir sonraki hesapta açar."
+      },
+      {
+        "command": "ccam doctor --fix",
+        "body": "Bağlantıları, izinleri ve girişleri kontrol eder ve güvenle onarabildiklerini onarır. Dosyalarınızdaki her değişiklik için bir yedek tutulur."
+      }
+    ],
+    "guidesTitle": "Kılavuzlar",
+    "factsTitle": "Kısaca"
+  },
+  "docs": {
+    "updated": "Son güncelleme: {date}",
+    "versions": "ccam {ccam} ve Claude Code {claude} ile kontrol edildi",
+    "prev": "Önceki",
+    "next": "Sonraki",
+    "edit": "Bu sayfayı GitHub üzerinde düzenleyin",
+    "machine": "Bu sayfa İngilizceden makine çevirisiyle çevrilmiştir. Düzeltmelere açığız.",
+    "related": "İlgili kılavuzlar",
+    "sections": {
+      "docs": "Belgeler",
+      "guides": "Kılavuzlar",
+      "compare": "Karşılaştırmalar",
+      "blog": "Blog"
+    },
+    "commandsTable": {
+      "command": "Komut",
+      "does": "Ne yapar"
+    }
+  },
+  "commands": {
+    "ccs": "Hesap seçiciyi açar",
+    "name": "Claude Code'u o hesapla başlatır; argümanlar değiştirilmeden iletilir",
+    "add": "Hesap ekler: yapılandırma klasörü, giriş ve kısayol",
+    "list": "Hesapları listeler",
+    "use": "Varsayılan hesabı ayarlar",
+    "next": "Bir sonraki hesabı açar; --continue konuşmayı korur, --auto en çok pay kalanı seçer",
+    "usage": "Tüm hesapların 5 saatlik ve haftalık kullanımını gösterir",
+    "share": "Planı gösterdikten sonra bir hesabın neyi paylaştığını değiştirir",
+    "mcp": "Paylaşılan MCP sunucularını yönetir",
+    "login": "Bir hesapta yeniden giriş yapar",
+    "logout": "Bir hesabın giriş bilgilerini kaldırır",
+    "rename": "Bir hesabı ve kısayolunu yeniden adlandırır",
+    "remove": "Bir hesabı kaldırır; klasörü çöp klasörüne taşınır",
+    "import": "Mevcut bir ~/.claude klasörünü yerinde kaydeder",
+    "doctor": "Bağlantıları, izinleri, girişleri ve sürümleri kontrol eder ve onarır",
+    "statusline": "Hesabı ve kullanımı Claude Code'un durum satırında gösterir",
+    "shims": "claude1…claudeN ve ccs komutlarını yeniden oluşturur",
+    "completion": "bash veya zsh tamamlama betiğini yazdırır"
+  },
+  "copy": {
+    "copy": "Kopyala",
+    "copied": "Kopyalandı"
+  },
+  "banner": {
+    "suggest": "Bu sayfanın {language} sürümü de var.",
+    "open": "{language} sürümünü aç",
+    "dismiss": "Kapat"
+  },
+  "footer": {
+    "unofficial": "ccam resmi olmayan, açık kaynaklı bir araçtır. Anthropic ile bağlantılı değildir ve Anthropic tarafından onaylanmamıştır. Claude ve Claude Code, Anthropic'in ticari markalarıdır.",
+    "terms": "Birden fazla hesap kullanıp kullanamayacağınız her hesabın koşullarına bağlıdır. Bunu yapmadan önce koşulları kontrol edin.",
+    "license": "Kaynak kodu GitHub üzerinde",
+    "languages": "Tüm diller"
+  },
+  "changelog": {
+    "title": "Sürüm notları",
+    "description": "Tüm ccam sürümleri ve her birinde nelerin değiştiği.",
+    "empty": "Henüz yayımlanmış bir sürüm yok. main dalından yapılan derlemeler GitHub üzerinde listelenir."
+  },
+  "languages": {
+    "title": "Diller",
+    "description": "ccam.dev {count, plural, one {# dilde} other {# dilde}} kullanılabilir.",
+    "coverage": "Unicode CLDR nüfus verilerine göre, bu dillerden en az birini konuşan insanlar dünya nüfusunun {low} ile {high} arasındaki bir bölümünü oluşturur.",
+    "method": "Düşük sayı, her ülkede desteklenen diller arasında en çok konuşulan tek dili sayar; yüksek sayı ise desteklenen tüm dilleri toplar ve her ülkeyi %100 ile sınırlar."
+  },
+  "notFound": {
+    "title": "Sayfa bulunamadı",
+    "body": "Bu adres ccam.dev üzerinde mevcut değil. Belgeler buradan başlıyor:",
+    "home": "Ana sayfa"
+  }
+}

@@ -1,0 +1,139 @@
+{
+  "site": {
+    "name": "ccam",
+    "title": "ccam: gumamit ng maraming Claude Code account sa iisang computer",
+    "description": "Ang ccam ay libre at open-source na command-line tool para gumamit ng maraming Claude Code account sa iisang computer at lumipat sa pagitan nila gamit ang isang command."
+  },
+  "nav": {
+    "docs": "Docs",
+    "guides": "Mga gabay",
+    "faq": "FAQ",
+    "changelog": "Changelog",
+    "github": "GitHub",
+    "menu": "Menu",
+    "skip": "Lumaktaw sa nilalaman",
+    "language": "Wika",
+    "theme": "Lumipat sa light o dark na tema"
+  },
+  "facts": {
+    "what": "Ang ccam ay libre at open-source na command-line tool para gumamit ng maraming Claude Code account sa iisang computer at lumipat sa pagitan nila gamit ang isang command.",
+    "how": "May sariling login ang bawat account sa hiwalay na CLAUDE_CONFIG_DIR, habang puwedeng i-share sa pagitan ng mga account ang mga MCP server, settings, CLAUDE.md, extension at kasaysayan ng usapan, kaya maipagpapatuloy mo ang isang usapan sa ibang account kapag naabot na ng isa ang usage limit nito.",
+    "install": "I-install ito sa Linux o macOS gamit ang isang command, saka patakbuhin ang ccam add para sa bawat account.",
+    "official": "Ang ccam ay hindi opisyal na proyekto at hindi kaanib o inendorso ng Anthropic."
+  },
+  "landing": {
+    "headline": "Maraming Claude Code account. Iisang terminal.",
+    "lede": "Idagdag nang isang beses ang bawat account. Lumipat gamit ang claude2 o ccs work. Kapag naabot ng isang account ang limit nito, ituloy sa susunod na account ang parehong usapan.",
+    "installLabel": "I-install sa Linux o macOS",
+    "thenAdd": "Pagkatapos, idagdag ang una mong account gamit ang {command}.",
+    "readDocs": "Basahin ang quick start",
+    "boardLabel": "Halimbawang output ng ccs usage: ang mga limit ng lahat ng account nang sabay-sabay",
+    "board": {
+      "account": "Account",
+      "fiveHour": "5 oras",
+      "weekly": "Lingguhan",
+      "resets": "magre-reset sa loob ng {time}",
+      "mostRoom": "Pinakamaraming natitira: {name}"
+    },
+    "flowTitle": "Paano ito gumagana",
+    "flow": [
+      {
+        "command": "ccam add work",
+        "body": "Gumagawa ng hiwalay na config folder para sa account, binubuksan ang Claude login sa iyong browser at binibigyan ang account ng shortcut: claude1, claude2 at iba pa."
+      },
+      {
+        "command": "claude2",
+        "also": "ccs work --resume",
+        "body": "Sinisimulan ang Claude Code bilang account na iyon. Ipinapasa nang walang pagbabago sa Claude Code ang lahat ng kasunod ng pangalan, at nagdadagdag ang ccam ng mga 4 millisecond bago ito magsimula."
+      },
+      {
+        "command": "ccam share work --history on",
+        "body": "Pinipili kung ano ang ishe-share ng account sa iba mo pang account. Shared na mula sa simula ang mga MCP server, settings, CLAUDE.md at extension; hindi kailanman ang mga login."
+      },
+      {
+        "command": "ccs usage",
+        "body": "Ipinapakita nang sabay-sabay ang 5-oras at lingguhang usage ng bawat account, para malaman mo kung alin ang may natitira pa."
+      },
+      {
+        "command": "ccs next --continue",
+        "body": "Binubuksan ang parehong usapan sa susunod na account kapag naabot na ng kasalukuyang account ang limit nito."
+      },
+      {
+        "command": "ccam doctor --fix",
+        "body": "Sinusuri ang mga link, permission at login, at inaayos ang kayang ayusin nang ligtas. May backup ang bawat pagbabago sa iyong mga file."
+      }
+    ],
+    "guidesTitle": "Mga gabay",
+    "factsTitle": "Sa madaling salita"
+  },
+  "docs": {
+    "updated": "Huling na-update noong {date}",
+    "versions": "Sinubukan gamit ang ccam {ccam} at Claude Code {claude}",
+    "prev": "Nakaraan",
+    "next": "Susunod",
+    "edit": "I-edit ang pahinang ito sa GitHub",
+    "machine": "Machine translation mula sa Ingles ang pahinang ito. Malugod naming tinatanggap ang mga pagwawasto.",
+    "related": "Kaugnay na mga gabay",
+    "sections": {
+      "docs": "Dokumentasyon",
+      "guides": "Mga gabay",
+      "compare": "Mga paghahambing",
+      "blog": "Blog"
+    },
+    "commandsTable": {
+      "command": "Utos",
+      "does": "Ano ang ginagawa nito"
+    }
+  },
+  "commands": {
+    "ccs": "Buksan ang pagpili ng account",
+    "name": "Simulan ang Claude Code bilang account na iyon; ipinapasa nang walang pagbabago ang mga argument",
+    "add": "Magdagdag ng account: config folder, login at shortcut",
+    "list": "Ilista ang mga account",
+    "use": "Itakda ang default na account",
+    "next": "Buksan ang susunod na account; pinapanatili ng --continue ang usapan, pinipili ng --auto ang may pinakamaraming natitira",
+    "usage": "Ipakita ang 5-oras at lingguhang usage ng bawat account",
+    "share": "Baguhin kung ano ang ishe-share ng account, pagkatapos ipakita ang plano",
+    "mcp": "Pamahalaan ang mga shared na MCP server",
+    "login": "Mag-log in muli sa isang account",
+    "logout": "Alisin ang login ng isang account",
+    "rename": "Palitan ang pangalan ng account at ng shortcut nito",
+    "remove": "Mag-alis ng account; mapupunta ang folder nito sa trash folder",
+    "import": "Irehistro ang umiiral na ~/.claude folder kung nasaan ito",
+    "doctor": "Suriin ang mga link, permission, login at bersyon, at mag-ayos",
+    "statusline": "Ipakita ang account at usage sa status line ng Claude Code",
+    "shims": "Gawin muli ang claude1…claudeN at ccs",
+    "completion": "I-print ang bash o zsh completion"
+  },
+  "copy": {
+    "copy": "Kopyahin",
+    "copied": "Nakopya na"
+  },
+  "banner": {
+    "suggest": "Mababasa rin ang pahinang ito sa {language}.",
+    "open": "Buksan sa {language}",
+    "dismiss": "Isara"
+  },
+  "footer": {
+    "unofficial": "Ang ccam ay hindi opisyal na open-source tool. Hindi ito kaanib o inendorso ng Anthropic. Ang Claude at Claude Code ay mga trademark ng Anthropic.",
+    "terms": "Nakadepende sa terms ng bawat account kung puwede kang gumamit ng maraming account. Suriin muna ang mga ito bago mo gawin iyon.",
+    "license": "Source sa GitHub",
+    "languages": "Lahat ng wika"
+  },
+  "changelog": {
+    "title": "Changelog",
+    "description": "Bawat release ng ccam at kung ano ang nagbago rito.",
+    "empty": "Wala pang na-publish na release. Nakalista sa GitHub ang mga build mula sa main branch."
+  },
+  "languages": {
+    "title": "Mga wika",
+    "description": "Available ang ccam.dev sa {count, plural, one {# wika} other {# wika}}.",
+    "coverage": "Ayon sa population data ng Unicode CLDR, ang mga taong nagsasalita ng kahit isa sa mga wikang ito ay bumubuo ng {low} hanggang {high} ng populasyon ng mundo.",
+    "method": "Binibilang ng mas mababang numero ang iisang pinakaginagamit na suportadong wika ng bawat bansa; pinagsasama naman ng mas mataas ang lahat ng suportadong wika at nililimitahan sa 100% ang bawat bansa."
+  },
+  "notFound": {
+    "title": "Hindi nahanap ang pahina",
+    "body": "Walang ganitong address sa ccam.dev. Dito nagsisimula ang dokumentasyon:",
+    "home": "Home"
+  }
+}

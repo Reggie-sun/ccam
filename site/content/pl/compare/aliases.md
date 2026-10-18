@@ -1,0 +1,28 @@
+---
+title: ccam w porównaniu z aliasami powłoki
+description: Aliasy powłoki z CLAUDE_CONFIG_DIR i ccam do uruchamiania kilku kont Claude Code, porównane obok siebie.
+updated: 2026-10-19
+order: 1
+translation: machine
+sourceHash: e9902676e0ed
+---
+
+Alias powłoki dla każdego konta to najprostszy sposób na uruchamianie kilku kont Claude Code. ccam robi pod spodem to samo i dodaje współdzielenie, przełączanie oraz śledzenie użycia.
+
+| | Alias powłoki | ccam |
+| --- | --- | --- |
+| Osobne loginy | Tak | Tak |
+| Konfiguracja każdego konta | Edycja `~/.bashrc`, logowanie | `ccam add` |
+| Działa w skryptach i innych programach | Nie, aliasy działają tylko w powłoce | Tak, `claude2` to prawdziwe polecenie |
+| Współdzielone ustawienia, `CLAUDE.md`, rozszerzenia | Ręczne kopiowanie lub linkowanie | Dla każdego elementu, z kopiami zapasowymi |
+| Współdzielone serwery MCP | Ręcznie, na każdym koncie | Raz przez `ccam mcp add` |
+| Kontynuacja rozmowy na innym koncie | Nie | `ccs next --continue` |
+| Użycie wszystkich kont | Nie | `ccs usage` |
+| Wybór konta z największym zapasem | Nie | `ccs next --auto` |
+| Nazwa konta na pasku stanu | Nie | `ccam statusline install` |
+| Naprawa zepsutych linków | Ręcznie | `ccam doctor --fix` |
+| Dodatkowe oprogramowanie | Brak | Jeden statyczny plik binarny |
+
+Wybierz aliasy, jeśli masz dwa konta i nie chcesz niczego między nimi współdzielić. Wybierz ccam, jeśli chcesz, żeby konta działały jak jedna konfiguracja. Możesz zacząć od aliasów i przejść na ccam później: `ccam import` rejestruje istniejące foldery `~/.claude-*` tam, gdzie są.
+
+[Jak używać dwóch kont na jednym komputerze](/guides/multiple-claude-code-accounts) wyjaśnia oba podejścia krok po kroku.

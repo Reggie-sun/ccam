@@ -1,0 +1,139 @@
+{
+  "site": {
+    "name": "ccam",
+    "title": "ccam: 1台のコンピューターで複数のClaude Codeアカウントを使う",
+    "description": "ccamは、1台のコンピューターで複数のClaude Codeアカウントを使い、1つのコマンドで切り替えられる無料のオープンソースのコマンドラインツールです。"
+  },
+  "nav": {
+    "docs": "ドキュメント",
+    "guides": "ガイド",
+    "faq": "よくある質問",
+    "changelog": "変更履歴",
+    "github": "GitHub",
+    "menu": "メニュー",
+    "skip": "本文へスキップ",
+    "language": "言語",
+    "theme": "ライトテーマとダークテーマを切り替える"
+  },
+  "facts": {
+    "what": "ccamは、1台のコンピューターで複数のClaude Codeアカウントを使い、1つのコマンドで切り替えられる無料のオープンソースのコマンドラインツールです。",
+    "how": "各アカウントのログインはそれぞれ別のCLAUDE_CONFIG_DIRに保存されます。一方、MCPサーバー、設定、CLAUDE.md、拡張機能、会話履歴はアカウント間で共有できるため、あるアカウントが使用量の上限に達したら、別のアカウントで会話を続けられます。",
+    "install": "LinuxまたはmacOSに1つのコマンドでインストールし、アカウントごとにccam addを実行します。",
+    "official": "ccamは非公式のプロジェクトであり、Anthropicとは提携しておらず、Anthropicの承認も受けていません。"
+  },
+  "landing": {
+    "headline": "複数のClaude Codeアカウントを、1つのターミナルで。",
+    "lede": "各アカウントを一度追加すれば、claude2やccs workで切り替えられます。あるアカウントが上限に達したら、次のアカウントで同じ会話を続けられます。",
+    "installLabel": "LinuxまたはmacOSにインストール",
+    "thenAdd": "次に、{command}で最初のアカウントを追加します。",
+    "readDocs": "クイックスタートを読む",
+    "boardLabel": "ccs usageの出力例: すべてのアカウントの上限を一度に表示",
+    "board": {
+      "account": "アカウント",
+      "fiveHour": "5時間",
+      "weekly": "週間",
+      "resets": "{time}後にリセット",
+      "mostRoom": "最も余裕があるアカウント: {name}"
+    },
+    "flowTitle": "しくみ",
+    "flow": [
+      {
+        "command": "ccam add work",
+        "body": "アカウント用の設定フォルダーを個別に作成し、ブラウザーでClaudeのログインを開き、claude1、claude2といったショートカットをアカウントに割り当てます。"
+      },
+      {
+        "command": "claude2",
+        "also": "ccs work --resume",
+        "body": "そのアカウントでClaude Codeを起動します。名前の後に続くものはすべてそのままClaude Codeに渡され、ccamが起動までに加える時間は約4ミリ秒です。"
+      },
+      {
+        "command": "ccam share work --history on",
+        "body": "そのアカウントがほかのアカウントと何を共有するかを選びます。MCPサーバー、設定、CLAUDE.md、拡張機能は最初から共有されます。ログインが共有されることはありません。"
+      },
+      {
+        "command": "ccs usage",
+        "body": "すべてのアカウントの5時間と週間の使用量を一度に表示するので、どのアカウントに余裕があるかがわかります。"
+      },
+      {
+        "command": "ccs next --continue",
+        "body": "現在のアカウントが上限に達したら、次のアカウントで同じ会話を開きます。"
+      },
+      {
+        "command": "ccam doctor --fix",
+        "body": "リンク、権限、ログインを確認し、安全に修復できるものを修復します。ファイルへの変更はすべてバックアップが残ります。"
+      }
+    ],
+    "guidesTitle": "ガイド",
+    "factsTitle": "要点"
+  },
+  "docs": {
+    "updated": "最終更新日: {date}",
+    "versions": "ccam {ccam}とClaude Code {claude}で確認済み",
+    "prev": "前へ",
+    "next": "次へ",
+    "edit": "GitHubでこのページを編集",
+    "machine": "このページは英語から機械翻訳されています。修正を歓迎します。",
+    "related": "関連ガイド",
+    "sections": {
+      "docs": "ドキュメント",
+      "guides": "ガイド",
+      "compare": "比較",
+      "blog": "ブログ"
+    },
+    "commandsTable": {
+      "command": "コマンド",
+      "does": "説明"
+    }
+  },
+  "commands": {
+    "ccs": "アカウント選択画面を開く",
+    "name": "そのアカウントでClaude Codeを起動する。引数はそのまま渡される",
+    "add": "アカウントを追加する（設定フォルダー、ログイン、ショートカット）",
+    "list": "アカウントを一覧表示する",
+    "use": "デフォルトのアカウントを設定する",
+    "next": "次のアカウントを開く。--continueは会話を引き継ぎ、--autoは最も余裕があるアカウントを選ぶ",
+    "usage": "すべてのアカウントの5時間と週間の使用量を表示する",
+    "share": "計画を表示したうえで、アカウントが共有する項目を変更する",
+    "mcp": "共有MCPサーバーを管理する",
+    "login": "アカウントに再度ログインする",
+    "logout": "アカウントのログインを削除する",
+    "rename": "アカウントとそのショートカットの名前を変更する",
+    "remove": "アカウントを削除する。フォルダーはゴミ箱フォルダーに移動する",
+    "import": "既存の~/.claudeフォルダーをその場所のまま登録する",
+    "doctor": "リンク、権限、ログイン、バージョンを確認して修復する",
+    "statusline": "Claude Codeのステータスラインにアカウントと使用量を表示する",
+    "shims": "claude1…claudeNとccsを作り直す",
+    "completion": "bashまたはzshの補完スクリプトを出力する"
+  },
+  "copy": {
+    "copy": "コピー",
+    "copied": "コピーしました"
+  },
+  "banner": {
+    "suggest": "このページは{language}でも読めます。",
+    "open": "{language}で開く",
+    "dismiss": "閉じる"
+  },
+  "footer": {
+    "unofficial": "ccamは非公式のオープンソースツールです。Anthropicとは提携しておらず、Anthropicの承認も受けていません。ClaudeおよびClaude CodeはAnthropicの商標です。",
+    "terms": "複数のアカウントを使ってよいかどうかは、各アカウントの規約によります。使う前に確認してください。",
+    "license": "GitHubのソースコード",
+    "languages": "すべての言語"
+  },
+  "changelog": {
+    "title": "変更履歴",
+    "description": "ccamの各リリースとその変更内容。",
+    "empty": "まだリリースは公開されていません。mainブランチのビルドはGitHubに掲載されています。"
+  },
+  "languages": {
+    "title": "言語",
+    "description": "ccam.devは{count, plural, other {#言語}}で利用できます。",
+    "coverage": "Unicode CLDRの人口データによると、これらの言語のうち少なくとも1つを話す人は、世界人口の{low}から{high}を占めます。",
+    "method": "低いほうの数値は、各国で最も話されている対応言語を1つだけ数えたものです。高いほうの数値は、対応するすべての言語を合計し、各国の上限を100%としたものです。"
+  },
+  "notFound": {
+    "title": "ページが見つかりません",
+    "body": "このアドレスはccam.devに存在しません。ドキュメントはこちらから始まります:",
+    "home": "ホーム"
+  }
+}

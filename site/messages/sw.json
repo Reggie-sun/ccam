@@ -1,0 +1,139 @@
+{
+  "site": {
+    "name": "ccam",
+    "title": "ccam: tumia akaunti kadhaa za Claude Code kwenye kompyuta moja",
+    "description": "ccam ni zana ya bure ya mstari wa amri (open source) inayokuwezesha kutumia akaunti kadhaa za Claude Code kwenye kompyuta moja na kubadili kati yao kwa amri moja."
+  },
+  "nav": {
+    "docs": "Nyaraka",
+    "guides": "Miongozo",
+    "faq": "Maswali",
+    "changelog": "Mabadiliko",
+    "github": "GitHub",
+    "menu": "Menyu",
+    "skip": "Ruka hadi maudhui",
+    "language": "Lugha",
+    "theme": "Badili mandhari ya mwanga au giza"
+  },
+  "facts": {
+    "what": "ccam ni zana ya bure ya mstari wa amri (open source) inayokuwezesha kutumia akaunti kadhaa za Claude Code kwenye kompyuta moja na kubadili kati yao kwa amri moja.",
+    "how": "Kila akaunti huhifadhi taarifa zake za kuingia katika CLAUDE_CONFIG_DIR tofauti, huku seva za MCP, mipangilio, CLAUDE.md, viendelezi na historia ya mazungumzo vikiweza kushirikiwa kati ya akaunti, ili uweze kuendelea na mazungumzo kwenye akaunti nyingine pale moja inapofikia kikomo chake cha matumizi.",
+    "install": "Isakinishe kwenye Linux au macOS kwa amri moja, kisha endesha ccam add kwa kila akaunti.",
+    "official": "ccam ni mradi usio rasmi na hauhusiani na Anthropic wala haujaidhinishwa nayo."
+  },
+  "landing": {
+    "headline": "Akaunti kadhaa za Claude Code. Terminal moja.",
+    "lede": "Ongeza kila akaunti mara moja. Badili kwa claude2 au ccs work. Akaunti moja ikifikia kikomo chake, endelea kwenye inayofuata na mazungumzo yale yale.",
+    "installLabel": "Sakinisha kwenye Linux au macOS",
+    "thenAdd": "Kisha ongeza akaunti yako ya kwanza kwa {command}.",
+    "readDocs": "Soma mwongozo wa kuanza haraka",
+    "boardLabel": "Mfano wa matokeo ya ccs usage: vikomo vya kila akaunti kwa pamoja",
+    "board": {
+      "account": "Akaunti",
+      "fiveHour": "Saa 5",
+      "weekly": "Wiki",
+      "resets": "inaanza upya baada ya {time}",
+      "mostRoom": "Yenye nafasi kubwa zaidi: {name}"
+    },
+    "flowTitle": "Jinsi inavyofanya kazi",
+    "flow": [
+      {
+        "command": "ccam add work",
+        "body": "Huunda folda tofauti ya usanidi kwa ajili ya akaunti, hufungua ukurasa wa kuingia wa Claude kwenye kivinjari chako na huipa akaunti njia fupi: claude1, claude2 na kadhalika."
+      },
+      {
+        "command": "claude2",
+        "also": "ccs work --resume",
+        "body": "Huanzisha Claude Code kama akaunti hiyo. Kila kitu baada ya jina hupelekwa kwa Claude Code bila kubadilishwa, na ccam huongeza takriban milisekunde 4 kabla ya kuanza."
+      },
+      {
+        "command": "ccam share work --history on",
+        "body": "Huchagua kile ambacho akaunti inashiriki na akaunti zako nyingine. Seva za MCP, mipangilio, CLAUDE.md na viendelezi hushirikiwa tangu mwanzo; taarifa za kuingia hazishirikiwi kamwe."
+      },
+      {
+        "command": "ccs usage",
+        "body": "Huonyesha matumizi ya saa 5 na ya wiki ya kila akaunti kwa pamoja, ili ujue ipi bado ina nafasi."
+      },
+      {
+        "command": "ccs next --continue",
+        "body": "Hufungua mazungumzo yale yale kwenye akaunti inayofuata pale akaunti ya sasa inapofikia kikomo chake."
+      },
+      {
+        "command": "ccam doctor --fix",
+        "body": "Hukagua viungo, ruhusa na taarifa za kuingia, na hurekebisha kile kinachoweza kurekebishwa kwa usalama. Kila badiliko kwenye faili zako huweka nakala rudufu."
+      }
+    ],
+    "guidesTitle": "Miongozo",
+    "factsTitle": "Kwa ufupi"
+  },
+  "docs": {
+    "updated": "Ilisasishwa mwisho {date}",
+    "versions": "Imekaguliwa kwa ccam {ccam} na Claude Code {claude}",
+    "prev": "Iliyotangulia",
+    "next": "Inayofuata",
+    "edit": "Hariri ukurasa huu kwenye GitHub",
+    "machine": "Ukurasa huu umetafsiriwa kwa mashine kutoka Kiingereza. Marekebisho yanakaribishwa.",
+    "related": "Miongozo inayohusiana",
+    "sections": {
+      "docs": "Nyaraka",
+      "guides": "Miongozo",
+      "compare": "Ulinganisho",
+      "blog": "Blogu"
+    },
+    "commandsTable": {
+      "command": "Amri",
+      "does": "Inachofanya"
+    }
+  },
+  "commands": {
+    "ccs": "Fungua kichaguzi cha akaunti",
+    "name": "Anzisha Claude Code kama akaunti hiyo; hoja hupitishwa bila kubadilishwa",
+    "add": "Ongeza akaunti: folda ya usanidi, kuingia na njia fupi",
+    "list": "Orodhesha akaunti",
+    "use": "Weka akaunti chaguo-msingi",
+    "next": "Fungua akaunti inayofuata; --continue huhifadhi mazungumzo, --auto huchagua yenye nafasi kubwa zaidi",
+    "usage": "Onyesha matumizi ya saa 5 na ya wiki ya kila akaunti",
+    "share": "Badilisha kile ambacho akaunti inashiriki, baada ya kuonyesha mpango",
+    "mcp": "Simamia seva za MCP zinazoshirikiwa",
+    "login": "Ingiza akaunti tena",
+    "logout": "Ondoa taarifa za kuingia za akaunti",
+    "rename": "Badilisha jina la akaunti na njia yake fupi",
+    "remove": "Ondoa akaunti; folda yake huhamishiwa kwenye folda ya taka",
+    "import": "Sajili folda iliyopo ya ~/.claude pale ilipo",
+    "doctor": "Kagua viungo, ruhusa, taarifa za kuingia na matoleo, na urekebishe",
+    "statusline": "Onyesha akaunti na matumizi kwenye mstari wa hali (status line) wa Claude Code",
+    "shims": "Unda upya claude1…claudeN na ccs",
+    "completion": "Chapisha ukamilishaji wa bash au zsh"
+  },
+  "copy": {
+    "copy": "Nakili",
+    "copied": "Imenakiliwa"
+  },
+  "banner": {
+    "suggest": "Ukurasa huu unapatikana pia kwa {language}.",
+    "open": "Fungua kwa {language}",
+    "dismiss": "Funga"
+  },
+  "footer": {
+    "unofficial": "ccam ni zana isiyo rasmi ya open source. Haihusiani na Anthropic wala haijaidhinishwa nayo. Claude na Claude Code ni alama za biashara za Anthropic.",
+    "terms": "Iwapo unaruhusiwa kutumia akaunti kadhaa inategemea masharti ya kila akaunti. Yakague kabla ya kufanya hivyo.",
+    "license": "Msimbo chanzo kwenye GitHub",
+    "languages": "Lugha zote"
+  },
+  "changelog": {
+    "title": "Mabadiliko",
+    "description": "Kila toleo la ccam na kilichobadilika ndani yake.",
+    "empty": "Bado hakuna toleo lililochapishwa. Matoleo yaliyojengwa kutoka tawi kuu yameorodheshwa kwenye GitHub."
+  },
+  "languages": {
+    "title": "Lugha",
+    "description": "ccam.dev inapatikana kwa lugha {count, plural, one {#} other {#}}.",
+    "coverage": "Kwa mujibu wa data ya idadi ya watu ya Unicode CLDR, watu wanaozungumza angalau moja ya lugha hizi ni kati ya {low} na {high} ya idadi ya watu duniani.",
+    "method": "Namba ya chini huhesabu lugha moja inayozungumzwa zaidi kati ya zinazotumika katika kila nchi; namba ya juu hujumlisha kila lugha inayotumika na huweka kikomo cha 100% kwa kila nchi."
+  },
+  "notFound": {
+    "title": "Ukurasa haukupatikana",
+    "body": "Anwani hii haipo kwenye ccam.dev. Nyaraka zinaanzia hapa:",
+    "home": "Mwanzo"
+  }
+}
