@@ -82,6 +82,7 @@ func usageAccounts(e *env, cfg *config.Config) []usage.Account {
 		out = append(out, usage.Account{
 			Name: p.Name, Slot: p.Slot, Dir: profile.Dir(e.paths, p),
 			LockPath: launcher.ProfileLockPath(e.paths, p.Name),
+			Imported: p.Dir != "",
 		})
 	}
 	return out

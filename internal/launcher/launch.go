@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 
 	"github.com/jhyunwoo/ccam/internal/config"
@@ -52,7 +53,9 @@ func LaunchWith(p paths.Paths, cfg *config.Config, sel string, args []string, dr
 			return err
 		}
 	}
-	return pl.Exec(p)
+	err = pl.Exec(p)
+	runtime.KeepAlive(held) // a finalizer must not close the lock fds before exec
+	return err
 }
 
 // ProfileLockPath is held by a running Claude Code session of that profile.

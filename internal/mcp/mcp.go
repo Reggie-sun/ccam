@@ -51,11 +51,11 @@ func Load(path string) (*Store, error) {
 
 // Save writes with 0600: server entries often carry API keys.
 func (s *Store) Save(path string) error {
-	data, err := json.MarshalIndent(s, "", "  ")
+	data, err := fsutil.MarshalJSON(s)
 	if err != nil {
 		return err
 	}
-	return fsutil.AtomicWrite(path, append(data, '\n'), 0o600)
+	return fsutil.AtomicWrite(path, data, 0o600)
 }
 
 func (s *Store) Names() []string { return sortedKeys(s.Servers) }
@@ -110,7 +110,9 @@ func FlagArgs(groupDir string) []string {
 	if _, err := os.Stat(path); err != nil {
 		return nil
 	}
-	return []string{"--mcp-config", path}
+	// One argument: claude's --mcp-config is variadic, so "--mcp-config X"
+	// would also eat a following prompt or subcommand as a config file.
+	return []string{"--mcp-config=" + path}
 }
 
 // NewLocal reports servers that appeared in the profile's .claude.json
@@ -215,7 +217,7 @@ func Sync(profileDir, groupDir, stateDir string) error {
 		return err
 	}
 	doc["mcpServers"] = raw
-	out, err := json.MarshalIndent(doc, "", "  ")
+	out, err := fsutil.MarshalJSON(doc)
 	if err != nil {
 		return err
 	}
@@ -257,7 +259,7 @@ func RemoveLocal(profileDir, stateDir string, names []string) error {
 	}
 	raw, _ := json.Marshal(servers)
 	doc["mcpServers"] = raw
-	out, err := json.MarshalIndent(doc, "", "  ")
+	out, err := fsutil.MarshalJSON(doc)
 	if err != nil {
 		return err
 	}

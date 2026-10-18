@@ -18,13 +18,14 @@ import (
 type Op int
 
 const (
-	OpAdopt      Op = iota // move mine into an empty group slot (first sharer)
-	OpMergeDir             // move my files the group lacks into the group dir
-	OpWriteGroup           // write the resolved conflict content into the group
-	OpBackup               // move mine into .ccam-backup/<stamp>/
-	OpUnlink               // remove the link
-	OpLink                 // create the link (and the group dir for dir entries)
-	OpCopyBack             // copy the group content into the profile (sharing off)
+	OpAdopt       Op = iota // move mine into an empty group slot (first sharer)
+	OpMergeDir              // move my files the group lacks into the group dir
+	OpWriteGroup            // write the resolved conflict content into the group
+	OpBackup                // move mine into .ccam-backup/<stamp>/
+	OpUnlink                // remove the link
+	OpLink                  // create the link (and the group dir for dir entries)
+	OpCopyBack              // copy the group content into the profile (sharing off)
+	OpCopyToGroup           // copy a foreign link's target into an empty group slot
 )
 
 // Resolution decides a file conflict when turning sharing on.
@@ -47,6 +48,7 @@ type Conflict struct {
 	Entry      Entry
 	Mine       string
 	Group      string
+	GroupSave  string // where the group copy is saved before it is overwritten
 	Choice     Resolution
 	Candidates []Resolution
 }
@@ -107,14 +109,25 @@ func Build(dir, groupsRoot string, current, target config.Share, opt Options) (*
 			if isLink && linkTarget == grp {
 				continue
 			}
-			if isLink {
-				// Linked elsewhere (another group or a foreign path): relink.
-				// The old target is left as it is.
+			foreign := isLink && !strings.HasPrefix(linkTarget, groupsRoot+string(filepath.Separator))
+			resolved, rerr := filepath.EvalSymlinks(mine)
+			switch {
+			case foreign && rerr == nil && !fsutil.Exists(grp):
+				// A user-managed link (dotfiles): its content seeds the group,
+				// the link itself goes to the backup, the target is untouched.
+				pl.Steps = append(pl.Steps,
+					Step{Op: OpCopyToGroup, Item: item, Entry: e, From: resolved, To: grp},
+					Step{Op: OpBackup, Item: item, Entry: e, From: mine, To: pl.backupPath(e)})
+			case foreign:
+				pl.Steps = append(pl.Steps, Step{Op: OpBackup, Item: item, Entry: e, From: mine, To: pl.backupPath(e)})
+				pl.Notes = append(pl.Notes, fmt.Sprintf("%s: 기존 링크(→ %s)는 백업하고 %s 그룹 내용을 씁니다", e.Name, linkTarget, to))
+			case isLink:
+				// Linked to another group: relink, leaving that group as it is.
 				pl.Steps = append(pl.Steps, Step{Op: OpUnlink, Item: item, Entry: e, From: mine})
 				if from != config.Local && from != to {
 					pl.Notes = append(pl.Notes, fmt.Sprintf("%s: %s 그룹 내용은 그대로 두고 %s 그룹으로 연결합니다", e.Name, from, to))
 				}
-			} else if exists {
+			case exists:
 				if err := planAdopt(pl, item, e, mine, grp); err != nil {
 					return nil, err
 				}
@@ -142,7 +155,8 @@ func planAdopt(pl *Plan, item string, e Entry, mine, grp string) error {
 		return err
 	}
 	if !same {
-		c := &Conflict{Item: item, Entry: e, Mine: mine, Group: grp}
+		c := &Conflict{Item: item, Entry: e, Mine: mine, Group: grp,
+			GroupSave: filepath.Join(pl.Dir, BackupDir, pl.stamp, "group", e.Name)}
 		switch {
 		case e.Name == "history.jsonl":
 			c.Candidates = []Resolution{MergeLines, KeepGroup, UseMine}
@@ -196,7 +210,7 @@ func (pl *Plan) Describe(w io.Writer) {
 			line = fmt.Sprintf("링크 해제 %s", s.From)
 		case OpLink:
 			line = fmt.Sprintf("링크     %s → %s", s.To, s.From)
-		case OpCopyBack:
+		case OpCopyBack, OpCopyToGroup:
 			line = fmt.Sprintf("복사     %s → %s", s.From, s.To)
 		}
 		fmt.Fprintln(w, "  "+line)
@@ -231,7 +245,7 @@ func apply(s Step) error {
 		return os.Remove(s.From)
 	case OpLink:
 		return linkEntry(s.Entry, s.From, s.To)
-	case OpCopyBack:
+	case OpCopyBack, OpCopyToGroup:
 		return fsutil.CopyTree(s.From, s.To)
 	}
 	return nil
@@ -263,9 +277,15 @@ func mergeDir(src, dst string) error {
 }
 
 func resolve(c *Conflict) error {
-	switch c.Choice {
-	case KeepGroup:
+	if c.Choice == KeepGroup {
 		return nil
+	}
+	// Every other choice rewrites the shared file; keep what other
+	// accounts had.
+	if err := fsutil.CopyFile(c.Group, c.GroupSave); err != nil {
+		return err
+	}
+	switch c.Choice {
 	case UseMine:
 		data, err := os.ReadFile(c.Mine)
 		if err != nil {

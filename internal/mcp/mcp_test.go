@@ -65,7 +65,7 @@ func TestFlagArgs(t *testing.T) {
 		t.Fatal("no mcp.json → no args")
 	}
 	os.WriteFile(Path(g), []byte(`{"mcpServers":{}}`), 0o600)
-	if got := FlagArgs(g); !reflect.DeepEqual(got, []string{"--mcp-config", Path(g)}) {
+	if got := FlagArgs(g); !reflect.DeepEqual(got, []string{"--mcp-config=" + Path(g)}) {
 		t.Fatalf("%v", got)
 	}
 }
@@ -170,5 +170,28 @@ func TestBackupRotation(t *testing.T) {
 	}
 	if b, _ := filepath.Glob(filepath.Join(dir, ".claude.json.*")); len(b) != keepBackups {
 		t.Fatalf("kept %d", len(b))
+	}
+}
+
+// An imported ~/.claude links .claude.json to ~/.claude.json; editing it
+// must keep the link so plain `claude` and ccam stay one account.
+func TestRemoveLocalAndSyncKeepSymlinkedClaudeJSON(t *testing.T) {
+	home, prof, state, group := t.TempDir(), t.TempDir(), t.TempDir(), t.TempDir()
+	real := filepath.Join(home, ".claude.json")
+	os.WriteFile(real, []byte(`{"mcpServers":{"x":{"command":"x"}}}`), 0o600)
+	os.Symlink(real, filepath.Join(prof, ".claude.json"))
+	if err := RemoveLocal(prof, state, []string{"x"}); err != nil {
+		t.Fatal(err)
+	}
+	(&Store{Servers: map[string]json.RawMessage{"g": json.RawMessage(`{"command":"g"}`)}}).Save(Path(group))
+	if err := Sync(prof, group, state); err != nil {
+		t.Fatal(err)
+	}
+	if info, _ := os.Lstat(filepath.Join(prof, ".claude.json")); info.Mode()&os.ModeSymlink == 0 {
+		t.Fatal("link replaced")
+	}
+	data, _ := os.ReadFile(real)
+	if strings.Contains(string(data), `"x"`) || !strings.Contains(string(data), `"g"`) {
+		t.Fatalf("real file: %s", data)
 	}
 }

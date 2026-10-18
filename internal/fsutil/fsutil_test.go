@@ -52,3 +52,35 @@ func TestMove(t *testing.T) {
 		t.Fatal("move did not happen")
 	}
 }
+
+func TestAtomicWriteKeepsSymlink(t *testing.T) {
+	dir := t.TempDir()
+	target := filepath.Join(dir, "real.json")
+	link := filepath.Join(dir, "link.json")
+	os.WriteFile(target, []byte("old"), 0o600)
+	os.Symlink(target, link)
+	if err := AtomicWrite(link, []byte("new"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if info, _ := os.Lstat(link); info.Mode()&os.ModeSymlink == 0 {
+		t.Fatal("link replaced by a regular file")
+	}
+	if b, _ := os.ReadFile(target); string(b) != "new" {
+		t.Fatalf("target %q", b)
+	}
+	dangling := filepath.Join(dir, "d.json")
+	os.Symlink("sub/missing.json", dangling) // relative, target dir missing
+	if err := AtomicWrite(dangling, []byte("x"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if b, _ := os.ReadFile(filepath.Join(dir, "sub", "missing.json")); string(b) != "x" {
+		t.Fatal("dangling relative link not followed")
+	}
+}
+
+func TestMarshalJSONKeepsShellCharacters(t *testing.T) {
+	out, err := MarshalJSON(map[string]string{"command": "a && b > c"})
+	if err != nil || string(out) != "{\n  \"command\": \"a && b > c\"\n}\n" {
+		t.Fatalf("%q %v", out, err)
+	}
+}

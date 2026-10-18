@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"reflect"
+
+	"github.com/jhyunwoo/ccam/internal/fsutil"
 )
 
 // MergeJSONBytes deep-merges two JSON objects: objects merge recursively,
@@ -17,11 +19,7 @@ func MergeJSONBytes(base, overlay []byte) ([]byte, error) {
 	if err := json.Unmarshal(overlay, &b); err != nil {
 		return nil, fmt.Errorf("내 JSON 을 읽지 못했습니다: %w", err)
 	}
-	out, err := json.MarshalIndent(mergeValue(a, b), "", "  ")
-	if err != nil {
-		return nil, err
-	}
-	return append(out, '\n'), nil
+	return fsutil.MarshalJSON(mergeValue(a, b))
 }
 
 func mergeValue(base, overlay any) any {

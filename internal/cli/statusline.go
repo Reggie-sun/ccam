@@ -103,9 +103,9 @@ func installStatusLine(path, self string) (bool, error) {
 		}
 	}
 	doc["statusLine"] = map[string]any{"type": "command", "command": command}
-	out, err := json.MarshalIndent(doc, "", "  ")
+	out, err := fsutil.MarshalJSON(doc)
 	if err != nil {
 		return false, err
 	}
-	return true, fsutil.AtomicWrite(path, append(out, '\n'), 0o600)
+	return true, fsutil.AtomicWrite(path, out, 0o600)
 }

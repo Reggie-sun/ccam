@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strconv"
 	"text/tabwriter"
 	"time"
@@ -294,6 +295,15 @@ func removeCmd(e *env) *cobra.Command {
 			if !yes && !e.confirm(fmt.Sprintf("%s (%s) 계정을 삭제할까요?", prof.Name, profile.Dir(e.paths, &prof))) {
 				e.printf("취소했습니다.\n")
 				return nil
+			}
+			if g := prof.Share.Get("extensions"); g != config.Local {
+				// Other accounts' plugin paths may run through this folder.
+				sep := string(filepath.Separator)
+				groupPlugins := filepath.Join(e.paths.GroupDir(g), "plugins")
+				if _, err := profile.RewritePluginPaths(groupPlugins,
+					filepath.Join(profile.Dir(e.paths, &prof), "plugins")+sep, groupPlugins+sep); err != nil {
+					return err
+				}
 			}
 			trashed, err := profile.Trash(e.paths, &prof)
 			if err != nil {

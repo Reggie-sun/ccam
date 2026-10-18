@@ -27,9 +27,15 @@ func TestMCPFlagStrategy(t *testing.T) {
 	}
 	h.ok("ccs", "work", "--mcp-config", "mine.json", "-c")
 	_, args := h.called()
-	want := []string{"--mcp-config", groupMCP, "--mcp-config", "mine.json", "-c"}
+	want := []string{"--mcp-config=" + groupMCP, "--mcp-config", "mine.json", "-c"}
 	if !reflect.DeepEqual(args, want) {
 		t.Fatalf("args %q", args)
+	}
+	// --mcp-config is variadic in claude: the space form would swallow a
+	// following prompt or subcommand as another config file.
+	h.ok("ccs", "work", "fix the bug")
+	if _, args := h.called(); !reflect.DeepEqual(args, []string{"--mcp-config=" + groupMCP, "fix the bug"}) {
+		t.Fatalf("prompt after flag: %q", args)
 	}
 	var store struct {
 		Servers map[string]map[string]any `json:"mcpServers"`

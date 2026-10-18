@@ -76,6 +76,11 @@ func Rename(p paths.Paths, cfg *config.Config, oldName, newName string) error {
 		if err := os.Rename(p.ProfileDir(oldName), p.ProfileDir(newName)); err != nil && !errors.Is(err, fs.ErrNotExist) {
 			return err
 		}
+		sep := string(filepath.Separator)
+		if _, err := RewritePluginPaths(filepath.Join(p.ProfileDir(newName), "plugins"),
+			p.ProfileDir(oldName)+sep, p.ProfileDir(newName)+sep); err != nil {
+			return err
+		}
 	}
 	prof.Name = newName
 	if cfg.Default == oldName {

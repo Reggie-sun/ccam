@@ -43,7 +43,8 @@ type Account struct {
 	Name     string
 	Slot     int
 	Dir      string // CLAUDE_CONFIG_DIR
-	LockPath string // held while a session of this profile runs
+	LockPath string // held while a session started by ccam runs
+	Imported bool   // registered in place; plain `claude` may use it without ccam's lock
 }
 
 // Report is one account's result.

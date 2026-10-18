@@ -267,3 +267,40 @@ func TestDescribe(t *testing.T) {
 		t.Fatalf("describe:\n%s", buf.String())
 	}
 }
+
+func TestOverwritingGroupFileBacksItUp(t *testing.T) {
+	for _, choice := range []Resolution{UseMine, MergeJSON} {
+		f := newFixture(t)
+		os.MkdirAll(filepath.Join(f.groups, "default"), 0o700)
+		os.WriteFile(filepath.Join(f.groups, "default", "settings.json"), []byte(`{"a":1}`), 0o600)
+		dir := f.profile(t, "b", map[string]string{"settings.json": `{"b":2}`})
+		pl, _ := Build(dir, f.groups, config.Share{}, config.Share{Settings: "default"}, Options{})
+		pl.Conflicts[0].Choice = choice
+		if err := pl.Apply(); err != nil {
+			t.Fatal(err)
+		}
+		saved, _ := filepath.Glob(filepath.Join(dir, BackupDir, "*", "group", "settings.json"))
+		if len(saved) != 1 || read(t, saved[0]) != `{"a":1}` {
+			t.Fatalf("%v: group copy not backed up: %v", choice, saved)
+		}
+	}
+}
+
+func TestForeignLinkContentIsAdopted(t *testing.T) {
+	f := newFixture(t)
+	dotfiles := filepath.Join(f.root, "dotfiles")
+	os.MkdirAll(dotfiles, 0o700)
+	os.WriteFile(filepath.Join(dotfiles, "CLAUDE.md"), []byte("from dotfiles"), 0o600)
+	dir := f.profile(t, "a", nil)
+	os.Symlink(filepath.Join(dotfiles, "CLAUDE.md"), filepath.Join(dir, "CLAUDE.md"))
+	share(t, f, dir, config.Share{}, config.Share{Memory: "default"}, Options{})
+	if read(t, filepath.Join(dir, "CLAUDE.md")) != "from dotfiles" {
+		t.Fatal("dotfiles content must become the group's")
+	}
+	if read(t, filepath.Join(dotfiles, "CLAUDE.md")) != "from dotfiles" {
+		t.Fatal("dotfiles file must stay")
+	}
+	if links, _ := filepath.Glob(filepath.Join(dir, BackupDir, "*", "CLAUDE.md")); len(links) != 1 {
+		t.Fatal("the old link should be kept in the backup")
+	}
+}

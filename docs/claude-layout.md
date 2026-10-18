@@ -45,6 +45,9 @@ so a shared MCP server that needs OAuth must be authorised once per account.
 - Servers from `--mcp-config` are loaded **in addition to** user servers in `.claude.json`.
   On a name clash the `.claude.json` entry wins (only one `demo` appears).
 - `--strict-mcp-config` given by the user still works (it only drops non-flag sources).
+- **Variadic gotcha:** `claude --mcp-config a.json "prompt"` treats the prompt as another config file
+  ("MCP config file not found"). ccam therefore passes `--mcp-config=<path>` as one argument, which
+  stops there; a following prompt, subcommand (`mcp list`) or the user's own `--mcp-config` all work.
 
 **Decision: `mcp_strategy = "flag"` by default.** It never touches `.claude.json`, and stacking with
 user-given `--mcp-config` works. `sync` stays available as an opt-in.

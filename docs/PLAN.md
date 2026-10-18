@@ -456,3 +456,4 @@ history = "local"
 - Phase 6: hyperfine 2.0은 JSON 형식이 바뀌어 `scripts/perf-check.sh`가 두 형식을 모두 읽습니다. 측정 결과 p95 `ccs --dry-run work` 4.2 ms, `ccs work` 4.4 ms, `ccs list` 3.9 ms, 최대 메모리 8 MB.
 - Phase 6: Docker가 없어 우분투 24.04 컨테이너 대신 빈 HOME과 로컬 릴리스 서버로 `install.sh`를 확인했습니다 (설치 + 계정 2개 추가 0.2초, 체크섬 위조 시 설치 거부). 실제 컨테이너 확인은 남은 일입니다.
 - Phase 6: `doctor`가 사용량 응답 형식 변경과, 확인된 Claude Code 버전(2.1.302)과 다른 버전을 알려 줍니다.
+- 최종 검토: ccam이 붙이는 `--mcp-config <경로>`가 뒤따르는 프롬프트·하위 명령을 설정 파일로 삼키는 문제를 실제 Claude Code로 재현하고, `--mcp-config=<경로>` 한 인자로 바꿔 해결했습니다. 함께 고친 것: "내 것으로 덮기·병합" 전에 그룹 파일 백업, `AtomicWrite`가 심볼릭 링크를 따라가 씀(가져온 `~/.claude/.claude.json` 링크 유지), 가져온 계정은 `--refresh` 거부, `rename`·`remove` 때 플러그인 경로 갱신, dotfiles 같은 외부 링크 내용을 그룹으로 복사, JSON을 쓸 때 `&&`·`>`를 이스케이프하지 않음.

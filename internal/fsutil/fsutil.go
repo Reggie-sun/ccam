@@ -2,6 +2,8 @@
 package fsutil
 
 import (
+	"bytes"
+	"encoding/json"
 	"errors"
 	"io"
 	"io/fs"
@@ -11,7 +13,9 @@ import (
 )
 
 // AtomicWrite writes data via temp file + fsync + rename so readers never see a half file.
+// If path is a symlink, the file it points to is written and the link kept.
 func AtomicWrite(path string, data []byte, perm fs.FileMode) error {
+	path = resolveLink(path)
 	if err := os.MkdirAll(filepath.Dir(path), 0o700); err != nil {
 		return err
 	}
@@ -37,6 +41,35 @@ func AtomicWrite(path string, data []byte, perm fs.FileMode) error {
 		return err
 	}
 	return os.Rename(tmp, path)
+}
+
+// resolveLink follows symlinks at path (even dangling ones) so a rename
+// replaces the target, not the link. Gives up after a few hops.
+func resolveLink(path string) string {
+	for i := 0; i < 8; i++ {
+		target, err := os.Readlink(path)
+		if err != nil {
+			return path
+		}
+		if !filepath.IsAbs(target) {
+			target = filepath.Join(filepath.Dir(path), target)
+		}
+		path = target
+	}
+	return path
+}
+
+// MarshalJSON indents like the files Claude Code writes and keeps shell
+// characters such as && and > readable (json.Marshal escapes them).
+func MarshalJSON(v any) ([]byte, error) {
+	var buf bytes.Buffer
+	enc := json.NewEncoder(&buf)
+	enc.SetEscapeHTML(false)
+	enc.SetIndent("", "  ")
+	if err := enc.Encode(v); err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
 }
 
 // WriteFast is for state that is cheap to lose (last_used, caches): no fsync.

@@ -225,3 +225,13 @@ func TestFormatChangeIsFlagged(t *testing.T) {
 		t.Fatal("HTTP 500 is not a format change")
 	}
 }
+
+func TestRefreshRefusedForImportedProfile(t *testing.T) {
+	e := newEnv(t)
+	a := e.account("x", "stale", time.Now().Add(-time.Hour).UnixMilli())
+	a.Imported = true
+	r := e.f.Fetch(context.Background(), a, Options{Refresh: true})
+	if r.Status != StatusExpired || e.refresh.Load() != 0 || !strings.Contains(r.Err, "claude") {
+		t.Fatalf("%+v", r)
+	}
+}

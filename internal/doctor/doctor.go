@@ -14,7 +14,6 @@ import (
 	"time"
 
 	"github.com/jhyunwoo/ccam/internal/config"
-	"github.com/jhyunwoo/ccam/internal/fsutil"
 	"github.com/jhyunwoo/ccam/internal/launcher"
 	"github.com/jhyunwoo/ccam/internal/mcp"
 	"github.com/jhyunwoo/ccam/internal/paths"
@@ -248,65 +247,55 @@ func checkUnknownEntries(r *report, prof *config.Profile, dir string) {
 	}
 }
 
-// checkPlugins finds plugin install paths that point through one profile's
-// folder into a shared group. They break when that profile is removed, so
-// --fix rewrites them to the group folder itself.
+// checkPlugins finds plugin paths that point through one profile's folder
+// into a shared group. They break when that profile is removed or renamed,
+// so --fix rewrites them to the group folder itself.
 func checkPlugins(r *report, p paths.Paths, cfg *config.Config, fix bool) {
 	groups, _ := os.ReadDir(p.GroupsRoot())
+	sep := string(filepath.Separator)
 	for _, g := range groups {
-		file := filepath.Join(p.GroupDir(g.Name()), "plugins", "installed_plugins.json")
-		data, err := os.ReadFile(file)
-		if err != nil {
-			continue
-		}
-		var doc any
-		if err := json.Unmarshal(data, &doc); err != nil {
-			r.add(Warn, "", "%s 를 읽지 못했습니다: %v", file, err)
-			continue
-		}
-		groupPlugins := filepath.Join(p.GroupDir(g.Name()), "plugins") + string(filepath.Separator)
-		var prefixes []string
-		for i := range cfg.Profiles {
-			prefixes = append(prefixes, filepath.Join(profile.Dir(p, &cfg.Profiles[i]), "plugins")+string(filepath.Separator))
-		}
+		pluginsDir := filepath.Join(p.GroupDir(g.Name()), "plugins")
 		n := 0
-		doc = rewriteStrings(doc, func(s string) string {
-			for _, pre := range prefixes {
-				if strings.HasPrefix(s, pre) {
-					n++
-					return groupPlugins + strings.TrimPrefix(s, pre)
-				}
-			}
-			return s
-		})
+		for i := range cfg.Profiles {
+			pre := filepath.Join(profile.Dir(p, &cfg.Profiles[i]), "plugins") + sep
+			n += countPrefix(pluginsDir, pre)
+		}
 		if n == 0 {
 			continue
 		}
 		f := r.add(Warn, "", "%s 그룹의 플러그인 경로 %d개가 특정 계정 폴더를 거칩니다", g.Name(), n)
-		if fix {
-			out, err := json.MarshalIndent(doc, "", "  ")
-			if err == nil {
-				err = fsutil.AtomicWrite(file, append(out, '\n'), 0o600)
+		if !fix {
+			continue
+		}
+		f.Fixed = true
+		for i := range cfg.Profiles {
+			pre := filepath.Join(profile.Dir(p, &cfg.Profiles[i]), "plugins") + sep
+			if _, err := profile.RewritePluginPaths(pluginsDir, pre, pluginsDir+sep); err != nil {
+				f.Fixed = false
 			}
-			f.Fixed = err == nil
 		}
 	}
 }
 
-func rewriteStrings(v any, fn func(string) string) any {
-	switch x := v.(type) {
-	case string:
-		return fn(x)
-	case []any:
-		for i := range x {
-			x[i] = rewriteStrings(x[i], fn)
+func countPrefix(pluginsDir, prefix string) int {
+	n := 0
+	for _, name := range []string{"installed_plugins.json", "known_marketplaces.json"} {
+		data, err := os.ReadFile(filepath.Join(pluginsDir, name))
+		if err != nil {
+			continue
 		}
-	case map[string]any:
-		for k := range x {
-			x[k] = rewriteStrings(x[k], fn)
+		var doc any
+		if json.Unmarshal(data, &doc) != nil {
+			continue
 		}
+		profile.RewriteStrings(doc, func(s string) string {
+			if strings.HasPrefix(s, prefix) {
+				n++
+			}
+			return s
+		})
 	}
-	return v
+	return n
 }
 
 func checkMCP(r *report, p paths.Paths, cfg *config.Config) {

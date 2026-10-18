@@ -93,3 +93,20 @@ func TestReadEmailStreams(t *testing.T) {
 		t.Fatalf("logged-out file: %q %v", email, err)
 	}
 }
+
+func TestRenameRewritesPluginPaths(t *testing.T) {
+	p := testPaths(t)
+	cfg := &config.Config{}
+	Add(p, cfg, "work", config.Share{})
+	old := p.ProfileDir("work")
+	os.MkdirAll(filepath.Join(old, "plugins"), 0o700)
+	os.WriteFile(filepath.Join(old, "plugins", "installed_plugins.json"),
+		[]byte(`{"plugins":{"x@m":[{"installPath":"`+old+`/plugins/cache/m/x/1"}]}}`), 0o600)
+	if err := Rename(p, cfg, "work", "job"); err != nil {
+		t.Fatal(err)
+	}
+	data, _ := os.ReadFile(filepath.Join(p.ProfileDir("job"), "plugins", "installed_plugins.json"))
+	if !strings.Contains(string(data), p.ProfileDir("job")+"/plugins/cache/m/x/1") {
+		t.Fatalf("%s", data)
+	}
+}
