@@ -24,6 +24,7 @@ var Version = "dev"
 type env struct {
 	paths  paths.Paths
 	stdin  io.Reader
+	in     *bufio.Reader // the one buffered reader over stdin, shared by all prompts
 	stdout io.Writer
 	stderr io.Writer
 	dryRun bool
@@ -38,7 +39,7 @@ func (e *env) printf(format string, a ...any) { fmt.Fprintf(e.stdout, format, a.
 // confirm asks a yes/no question; anything but y/yes is no.
 func (e *env) confirm(question string) bool {
 	fmt.Fprintf(e.stdout, "%s [y/N] ", question)
-	line, _ := bufio.NewReader(e.stdin).ReadString('\n')
+	line, _ := e.in.ReadString('\n')
 	ans := strings.ToLower(strings.TrimSpace(line))
 	return ans == "y" || ans == "yes"
 }
@@ -71,7 +72,7 @@ func newRoot(e *env) *cobra.Command {
 	root.CompletionOptions.DisableDefaultCmd = true
 	root.AddCommand(
 		addCmd(e), listCmd(e), runCmd(e), useCmd(e), removeCmd(e), renameCmd(e),
-		loginCmd(e), logoutCmd(e), shimsCmd(e), versionCmd(e),
+		loginCmd(e), logoutCmd(e), shimsCmd(e), versionCmd(e), shareCmd(e), doctorCmd(e),
 	)
 	return root
 }
@@ -91,7 +92,7 @@ func Execute(args []string) int {
 }
 
 func ExecuteWith(args []string, p paths.Paths, stdin io.Reader, stdout, stderr io.Writer) int {
-	e := &env{paths: p, stdin: stdin, stdout: stdout, stderr: stderr}
+	e := &env{paths: p, stdin: stdin, in: bufio.NewReader(stdin), stdout: stdout, stderr: stderr}
 	root := newRoot(e)
 	root.SetArgs(args)
 	if err := root.Execute(); err != nil {

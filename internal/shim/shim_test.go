@@ -30,7 +30,7 @@ func TestInstallSyncsLinks(t *testing.T) {
 	os.WriteFile(ccam, []byte("x"), 0o755)
 	os.MkdirAll(bin, 0o755)
 	os.WriteFile(filepath.Join(bin, "claude9"), []byte("user file"), 0o755) // not ours
-	os.Symlink(ccam, filepath.Join(bin, "claude7"))                      // stale, ours
+	os.Symlink(ccam, filepath.Join(bin, "claude7"))                         // stale, ours
 
 	cfg := &config.Config{NameShims: true, Profiles: []config.Profile{{Name: "a", Slot: 1}, {Name: "b", Slot: 2}}}
 	created, err := Install(bin, ccam, cfg)

@@ -11,10 +11,15 @@ import (
 	"reflect"
 	"runtime"
 	"strings"
+	"sync"
 	"testing"
 )
 
-var ccamBin string
+var (
+	ccamBin   string
+	buildOnce sync.Once
+	buildErr  error
+)
 
 func TestMain(m *testing.M) {
 	dir, err := os.MkdirTemp("", "ccam-e2e")
@@ -22,15 +27,38 @@ func TestMain(m *testing.M) {
 		panic(err)
 	}
 	ccamBin = filepath.Join(dir, "ccam")
-	build := exec.Command("go", "build", "-o", ccamBin, "./cmd/ccam")
-	build.Dir = repoRoot()
-	if out, err := build.CombinedOutput(); err != nil {
-		fmt.Fprintf(os.Stderr, "build failed: %v\n%s", err, out)
-		os.Exit(1)
-	}
 	code := m.Run()
 	os.RemoveAll(dir)
 	os.Exit(code)
+}
+
+// buildCcam runs inside a test (not TestMain) so the files it reads are
+// recorded by the go test cache.
+func buildCcam(t *testing.T) {
+	buildOnce.Do(func() {
+		touchSources()
+		build := exec.Command("go", "build", "-o", ccamBin, "./cmd/ccam")
+		build.Dir = repoRoot()
+		if out, err := build.CombinedOutput(); err != nil {
+			buildErr = fmt.Errorf("build failed: %v\n%s", err, out)
+		}
+	})
+	if buildErr != nil {
+		t.Fatal(buildErr)
+	}
+}
+
+// touchSources opens every Go source file so the go test cache, which tracks
+// files a test reads, invalidates this package when the binary would change.
+func touchSources() {
+	filepath.WalkDir(repoRoot(), func(path string, d os.DirEntry, err error) error {
+		if err == nil && !d.IsDir() && (strings.HasSuffix(path, ".go") || d.Name() == "go.mod" || d.Name() == "go.sum") {
+			if f, err := os.Open(path); err == nil {
+				f.Close()
+			}
+		}
+		return nil
+	})
 }
 
 func repoRoot() string {
@@ -48,6 +76,7 @@ type harness struct {
 
 func newHarness(t *testing.T) *harness {
 	t.Helper()
+	buildCcam(t)
 	home := t.TempDir()
 	h := &harness{t: t, home: home, log: filepath.Join(home, "claude.log")}
 	fake := filepath.Join(repoRoot(), "testdata", "fake-claude")

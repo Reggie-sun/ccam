@@ -25,6 +25,12 @@ So `ccam import ~/.claude` must copy `~/.claude.json` into the profile folder; r
 **Gotcha: MCP OAuth.** OAuth tokens for remote MCP servers live in `.credentials.json` (`mcpOAuth`),
 so a shared MCP server that needs OAuth must be authorised once per account.
 
+## Symlinks and plugins
+
+- Claude Code writes through a symlinked `settings.json` (checked with `claude plugin install/disable`); the link stays a link.
+- `plugins/installed_plugins.json` stores absolute `installPath`s under the config dir that installed the plugin,
+  e.g. `<profile>/plugins/cache/<marketplace>/<plugin>/<version>`. `known_marketplaces.json` stores the marketplace source path.
+
 ## Login
 
 - `claude auth login [--claudeai|--console] [--email <e>] [--sso]` logs in without opening a session.

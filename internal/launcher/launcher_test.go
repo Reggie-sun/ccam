@@ -2,6 +2,7 @@ package launcher
 
 import (
 	"bytes"
+	"io"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -20,6 +21,8 @@ func setup(t testing.TB) (paths.Paths, *config.Config) {
 	p := paths.FromEnv()
 	fake := filepath.Join(root, "fake-claude")
 	os.WriteFile(fake, []byte("#!/bin/sh\n"), 0o755)
+	os.MkdirAll(p.ProfileDir("personal"), 0o700)
+	os.MkdirAll(p.ProfileDir("work"), 0o700)
 	cfg := &config.Config{Version: 1, Default: "work", ClaudeBin: fake, Profiles: []config.Profile{
 		{Name: "personal", Slot: 1},
 		{Name: "work", Slot: 2},
@@ -129,16 +132,19 @@ func TestLastUsed(t *testing.T) {
 
 func BenchmarkLaunchPath(b *testing.B) {
 	p, cfg := setup(b)
+	for i := range cfg.Profiles {
+		cfg.Profiles[i].Share = config.DefaultShare()
+	}
 	if err := cfg.Save(p.ConfigFile()); err != nil {
+		b.Fatal(err)
+	}
+	// First run creates the share links; the loop measures the steady state.
+	if err := Launch(p, "work", []string{"--continue"}, true, io.Discard); err != nil {
 		b.Fatal(err)
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		c, err := config.Load(p.ConfigFile())
-		if err != nil {
-			b.Fatal(err)
-		}
-		if _, err := Prepare(p, c, "work", []string{"--continue"}); err != nil {
+		if err := Launch(p, "work", []string{"--continue"}, true, io.Discard); err != nil {
 			b.Fatal(err)
 		}
 	}

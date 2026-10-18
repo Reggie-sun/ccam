@@ -19,6 +19,7 @@ import (
 	"github.com/jhyunwoo/ccam/internal/fsutil"
 	"github.com/jhyunwoo/ccam/internal/paths"
 	"github.com/jhyunwoo/ccam/internal/profile"
+	"github.com/jhyunwoo/ccam/internal/share"
 	"github.com/jhyunwoo/ccam/internal/trace"
 )
 
@@ -52,6 +53,9 @@ func Prepare(p paths.Paths, cfg *config.Config, sel string, args []string) (*Pla
 		return nil, err
 	}
 	dir := profile.Dir(p, prof)
+	if _, err := os.Stat(dir); err != nil {
+		return nil, fmt.Errorf("%s 계정 폴더가 없습니다 (%s). `ccam doctor` 로 확인하세요", prof.Name, dir)
+	}
 	argv := make([]string, 0, len(args)+1)
 	argv = append(argv, "claude")
 	argv = append(argv, args...)
@@ -191,9 +195,34 @@ func Launch(p paths.Paths, sel string, args []string, dry bool, stdout io.Writer
 		return err
 	}
 	trace.Step("prepare")
+	if err := checkLinks(p, pl); err != nil {
+		return err
+	}
+	trace.Step("check links")
 	if dry {
 		pl.DryRun(stdout)
 		return nil
 	}
 	return pl.Exec(p)
+}
+
+// checkLinks verifies share links with lstat only. Missing links are created
+// on the spot; anything that could lose data is left for `ccam doctor --fix`.
+func checkLinks(p paths.Paths, pl *Plan) error {
+	problems := share.Check(pl.Dir, pl.Profile.Share, p.GroupsRoot())
+	if len(problems) == 0 {
+		return nil
+	}
+	rest, err := share.QuickFix(problems)
+	if err != nil {
+		return err
+	}
+	if len(rest) == 0 {
+		return nil
+	}
+	msg := make([]string, 0, len(rest))
+	for _, pr := range rest {
+		msg = append(msg, "  "+pr.String())
+	}
+	return fmt.Errorf("공유 링크에 문제가 있어 실행을 멈췄습니다:\n%s\n`ccam doctor --fix` 로 고친 뒤 다시 실행하세요", strings.Join(msg, "\n"))
 }

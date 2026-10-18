@@ -52,7 +52,8 @@ func xdg(env, home, def string) string {
 	return filepath.Join(home, def)
 }
 
-func (p Paths) ConfigFile() string        { return filepath.Join(p.Config, "config.toml") }
+func (p Paths) ConfigFile() string            { return filepath.Join(p.Config, "config.toml") }
 func (p Paths) ProfileDir(name string) string { return filepath.Join(p.Data, "profiles", name) }
-func (p Paths) GroupDir(name string) string   { return filepath.Join(p.Data, "groups", name) }
+func (p Paths) GroupsRoot() string            { return filepath.Join(p.Data, "groups") }
+func (p Paths) GroupDir(name string) string   { return filepath.Join(p.GroupsRoot(), name) }
 func (p Paths) TrashDir() string              { return filepath.Join(p.Data, "trash") }
