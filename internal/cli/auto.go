@@ -32,7 +32,7 @@ func pickAuto(e *env, cfg *config.Config, cands []next.Candidate, sameHistory bo
 	if len(accts) == 0 {
 		return nil, nil, fmt.Errorf("고를 수 있는 로그인된 계정이 없습니다")
 	}
-	reports := newFetcher(usageStateDir(e)).FetchAll(context.Background(), accts, usage.Options{}, nil)
+	reports := e.fetcher().FetchAll(context.Background(), accts, usage.Options{}, nil)
 	view := make([]*usage.Report, len(reports))
 	for i := range reports {
 		view[i] = &reports[i]

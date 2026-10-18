@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -146,9 +147,8 @@ func TestStatuslineInstallKeepsSymlinkAndWraps(t *testing.T) {
 
 func TestNextAutoPicksLowest(t *testing.T) {
 	c := newTestCLI(t, map[string]int{"personal": 72, "work": 100, "side": 30})
-	t.Setenv("PATH", "")
 	cfg, _ := config.Load(c.p.ConfigFile())
-	cfg.ClaudeBin = "/bin/true"
+	cfg.ClaudeBin, _ = exec.LookPath("true") // /bin/true does not exist on macOS
 	cfg.Save(c.p.ConfigFile())
 	out, errOut, code := c.run("", "--dry-run", "next", "--auto")
 	if code != 0 || !strings.Contains(out, c.p.ProfileDir("side")) {

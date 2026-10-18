@@ -13,6 +13,9 @@ import (
 // `doctor --fix` (or running the same command again) finishes the change
 // instead of undoing the half that was done.
 func TestFailedShareChangeCanBeFinished(t *testing.T) {
+	if os.Geteuid() == 0 {
+		t.Skip("root ignores the read-only folder this test relies on")
+	}
 	c := newTestCLI(t, nil)
 	work := c.p.ProfileDir("work")
 	os.WriteFile(filepath.Join(work, "CLAUDE.md"), []byte("mine"), 0o600)

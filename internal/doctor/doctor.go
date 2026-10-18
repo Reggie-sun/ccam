@@ -4,6 +4,7 @@ package doctor
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -14,6 +15,7 @@ import (
 	"time"
 
 	"github.com/jhyunwoo/ccam/internal/config"
+	"github.com/jhyunwoo/ccam/internal/creds"
 	"github.com/jhyunwoo/ccam/internal/launcher"
 	"github.com/jhyunwoo/ccam/internal/mcp"
 	"github.com/jhyunwoo/ccam/internal/paths"
@@ -146,7 +148,7 @@ func checkProfile(r *report, p paths.Paths, prof *config.Profile, fix bool) {
 			f.Fixed = true
 		}
 	}
-	checkCredentials(r, prof, dir, fix)
+	checkCredentials(r, prof, dir, p.Home, fix)
 
 	problems := share.Check(dir, prof.Share, p.GroupsRoot())
 	if len(problems) == 0 {
@@ -178,26 +180,27 @@ func checkProfile(r *report, p paths.Paths, prof *config.Profile, fix bool) {
 	checkUnknownEntries(r, prof, dir)
 }
 
-func checkCredentials(r *report, prof *config.Profile, dir string, fix bool) {
-	cred := filepath.Join(dir, ".credentials.json")
-	info, err := os.Lstat(cred)
-	if err != nil {
+func checkCredentials(r *report, prof *config.Profile, dir, home string, fix bool) {
+	cred := creds.FilePath(dir)
+	if info, err := os.Lstat(cred); err == nil {
+		if info.Mode()&os.ModeSymlink != 0 {
+			r.add(Error, prof.Name, ".credentials.json 이 심볼릭 링크입니다. 토큰은 계정마다 따로 있어야 합니다")
+			return
+		}
+		if info.Mode().Perm() != 0o600 {
+			f := r.add(Warn, prof.Name, ".credentials.json 권한이 %o 입니다 (0600 이어야 함)", info.Mode().Perm())
+			if fix && os.Chmod(cred, 0o600) == nil {
+				f.Fixed = true
+			}
+		}
+	}
+	data, _, err := creds.Read(dir, home)
+	if errors.Is(err, creds.ErrNone) {
 		r.add(Warn, prof.Name, "로그인 정보가 없습니다 → `ccam login %s`", prof.Name)
 		return
 	}
-	if info.Mode()&os.ModeSymlink != 0 {
-		r.add(Error, prof.Name, ".credentials.json 이 심볼릭 링크입니다. 토큰은 계정마다 따로 있어야 합니다")
-		return
-	}
-	if info.Mode().Perm() != 0o600 {
-		f := r.add(Warn, prof.Name, ".credentials.json 권한이 %o 입니다 (0600 이어야 함)", info.Mode().Perm())
-		if fix && os.Chmod(cred, 0o600) == nil {
-			f.Fixed = true
-		}
-	}
-	data, err := os.ReadFile(cred)
 	if err != nil {
-		r.add(Error, prof.Name, ".credentials.json 읽기 실패: %v", err)
+		r.add(Error, prof.Name, "로그인 정보 읽기 실패: %v", err)
 		return
 	}
 	var c struct {

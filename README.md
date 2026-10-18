@@ -12,7 +12,7 @@
 curl -fsSL https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.sh | sh
 ```
 
-`~/.local/bin/ccam`과 `ccs` 링크가 생깁니다. 체크섬을 확인한 뒤 설치하고, `~/.local/bin`이 `PATH`에 없으면 알려 줍니다. 그 밖의 방법:
+리눅스(우분투·데비안·페도라·아치·알파인 등)와 macOS를 지원합니다. `~/.local/bin/ccam`과 `ccs` 링크가 생깁니다. 체크섬을 확인한 뒤 설치하고, `~/.local/bin`이 `PATH`에 없으면 알려 줍니다. 그 밖의 방법:
 
 - `.deb`: [릴리스](https://github.com/jhyunwoo/ccam/releases)에서 받아 `sudo apt install ./ccam_*.deb`
 - 소스: `go install github.com/jhyunwoo/ccam/cmd/ccam@latest` (Go 1.26 이상, `ccs`는 `ln -s ccam ~/go/bin/ccs`)

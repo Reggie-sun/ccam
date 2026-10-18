@@ -31,6 +31,20 @@ so a shared MCP server that needs OAuth must be authorised once per account.
 - `plugins/installed_plugins.json` stores absolute `installPath`s under the config dir that installed the plugin,
   e.g. `<profile>/plugins/cache/<marketplace>/<plugin>/<version>`. `known_marketplaces.json` stores the marketplace source path.
 
+## macOS credentials
+
+Read from the Claude Code 2.1.302 binary (the same JavaScript runs on every platform):
+
+- Service name: `"Claude Code" + OAUTH_FILE_SUFFIX + "-credentials" + suffix`. `OAUTH_FILE_SUFFIX` is `""` in production.
+  `suffix` is `"-" + sha256(configDir)[:8]` (hex, NFC-normalized path) when `CLAUDE_CONFIG_DIR` is set, else `""`.
+- `CLAUDE_SECURESTORAGE_CONFIG_DIR` overrides the path used for the suffix; set to `""` it selects the unsuffixed
+  default item. ccam sets it to `""` for an imported `~/.claude` on macOS so `ccs main` and plain `claude` share one login.
+- Account: `$USER` if it matches `^[a-zA-Z0-9._-]+$`, else `claude-code-user`.
+- Read with `security find-generic-password -a <account> -w -s <service>`; when the Keychain rejects writes,
+  Claude Code falls back to `<config dir>/.credentials.json`.
+- ccam only reads the Keychain (usage lookup, doctor, `next`); `--refresh` is refused for Keychain logins.
+  Not yet checked on a real Mac with a real login.
+
 ## Login
 
 - `claude auth login [--claudeai|--console] [--email <e>] [--sso]` logs in without opening a session.

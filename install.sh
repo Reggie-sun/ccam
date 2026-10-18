@@ -1,5 +1,5 @@
 #!/bin/sh
-# Installs ccam (and the ccs alias) into ~/.local/bin.
+# Installs ccam (and the ccs alias) into ~/.local/bin on Linux or macOS.
 #
 #   curl -fsSL https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.sh | sh
 #
@@ -16,7 +16,11 @@ dir="${CCAM_INSTALL_DIR:-$HOME/.local/bin}"
 say() { printf '%s\n' "$*"; }
 die() { printf 'ccam 설치 실패: %s\n' "$*" >&2; exit 1; }
 
-[ "$(uname -s)" = Linux ] || die "리눅스만 지원합니다"
+case "$(uname -s)" in
+  Linux) os=linux ;;
+  Darwin) os=darwin ;;
+  *) die "리눅스와 macOS 만 지원합니다" ;;
+esac
 case "$(uname -m)" in
   x86_64 | amd64) arch=amd64 ;;
   aarch64 | arm64) arch=arm64 ;;
@@ -25,7 +29,7 @@ esac
 
 tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
-asset="ccam_linux_${arch}.tar.gz"
+asset="ccam_${os}_${arch}.tar.gz"
 
 fetch() {
   if command -v curl >/dev/null 2>&1; then
@@ -48,7 +52,12 @@ else
   say "→ $base/$asset 내려받는 중"
   fetch "$base/$asset" "$tmp/$asset" || die "내려받기 실패"
   fetch "$base/checksums.txt" "$tmp/checksums.txt" || die "checksums.txt 내려받기 실패"
-  (cd "$tmp" && grep " $asset\$" checksums.txt | sha256sum -c --quiet -) || die "체크섬이 맞지 않습니다"
+  grep " $asset\$" "$tmp/checksums.txt" > "$tmp/sum.txt" || die "checksums.txt 에 $asset 이 없습니다"
+  if command -v sha256sum >/dev/null 2>&1; then
+    (cd "$tmp" && sha256sum -c --quiet sum.txt) || die "체크섬이 맞지 않습니다"
+  else # macOS
+    (cd "$tmp" && shasum -a 256 -c -s sum.txt) || die "체크섬이 맞지 않습니다"
+  fi
 fi
 
 tar -xzf "$tmp/$asset" -C "$tmp" ccam || die "압축을 풀 수 없습니다"

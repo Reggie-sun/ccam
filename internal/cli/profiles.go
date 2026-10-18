@@ -119,7 +119,7 @@ func runClaude(e *env, cfg *config.Config, prof *config.Profile, args ...string)
 		return err
 	}
 	c := exec.Command(bin, args...)
-	c.Env = append(os.Environ(), "CLAUDE_CONFIG_DIR="+profile.Dir(e.paths, prof), "CCAM_PROFILE="+prof.Name)
+	c.Env = launcher.ProfileEnv(e.paths, os.Environ(), profile.Dir(e.paths, prof), prof.Name)
 	c.Stdin, c.Stdout, c.Stderr = e.stdin, e.stdout, e.stderr
 	return c.Run()
 }

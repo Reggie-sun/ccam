@@ -72,7 +72,7 @@ func pick(e *env, cfg *config.Config) (tui.Result, error) {
 		}
 		rows = append(rows, tui.Row{Name: p.Name, Slot: p.Slot, Email: p.Email, Share: p.Share, LastUsed: last, Default: def == p})
 	}
-	f := newFetcher(usageStateDir(e))
+	f := e.fetcher()
 	fetch := func(ctx context.Context, name string) usage.Report {
 		return f.Fetch(ctx, accts[name], usage.Options{})
 	}

@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/fs"
 	"net"
 	"net/http"
 	"os"
@@ -14,6 +13,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/jhyunwoo/ccam/internal/creds"
 	"github.com/jhyunwoo/ccam/internal/fsutil"
 	"github.com/jhyunwoo/ccam/internal/profile"
 )
@@ -73,6 +73,7 @@ type Fetcher struct {
 	URL      string
 	TokenURL string
 	StateDir string // ~/.local/state/ccam/usage
+	Home     string // names the macOS Keychain item of an imported ~/.claude
 	Now      func() time.Time
 }
 
@@ -129,7 +130,7 @@ func (f *Fetcher) Fetch(ctx context.Context, a Account, opt Options) Report {
 			return r
 		}
 	}
-	cred, err := readCredentials(a.Dir)
+	cred, src, err := readCredentials(a.Dir, f.Home)
 	switch {
 	case errors.Is(err, errNoOAuth):
 		if hasAPIKey(a.Dir) {
@@ -144,6 +145,9 @@ func (f *Fetcher) Fetch(ctx context.Context, a Account, opt Options) Report {
 	if cred.expired(f.Now()) {
 		if !opt.Refresh {
 			return f.fallback(a, r, StatusExpired, "")
+		}
+		if src == creds.Keychain {
+			return f.fallback(a, r, StatusExpired, "macOS 키체인 로그인은 갱신하지 않습니다")
 		}
 		if cred, err = f.refresh(ctx, a); err != nil {
 			return f.fallback(a, r, StatusExpired, err.Error())
@@ -275,13 +279,23 @@ func (c oauthCred) expired(now time.Time) bool {
 
 // readCredentials reads only; ccam never rewrites the token file except
 // for an explicit --refresh.
-func readCredentials(dir string) (oauthCred, error) {
+func readCredentials(dir, home string) (oauthCred, creds.Source, error) {
 	var c oauthCred
-	ok, err := profile.DecodeFileKey(filepath.Join(dir, ".credentials.json"), "claudeAiOauth", &c)
-	if errors.Is(err, fs.ErrNotExist) || (err == nil && (!ok || c.AccessToken == "")) {
-		return c, errNoOAuth
+	data, src, err := creds.Read(dir, home)
+	if errors.Is(err, creds.ErrNone) {
+		return c, src, errNoOAuth
 	}
-	return c, err
+	if err != nil {
+		return c, src, err
+	}
+	raw, ok, err := profile.TopLevelValue(data, "claudeAiOauth")
+	if err == nil && ok {
+		err = json.Unmarshal(raw, &c)
+	}
+	if err == nil && c.AccessToken == "" {
+		err = errNoOAuth
+	}
+	return c, src, err
 }
 
 func hasAPIKey(dir string) bool {

@@ -2,12 +2,11 @@ package cli
 
 import (
 	"fmt"
-	"path/filepath"
 
 	"github.com/spf13/cobra"
 
 	"github.com/jhyunwoo/ccam/internal/config"
-	"github.com/jhyunwoo/ccam/internal/fsutil"
+	"github.com/jhyunwoo/ccam/internal/creds"
 	"github.com/jhyunwoo/ccam/internal/launcher"
 	"github.com/jhyunwoo/ccam/internal/next"
 	"github.com/jhyunwoo/ccam/internal/profile"
@@ -58,7 +57,7 @@ func candidates(e *env, cfg *config.Config) []next.Candidate {
 		out = append(out, next.Candidate{
 			Profile:  p,
 			LastUsed: launcher.LastUsed(e.paths, p.Name),
-			LoggedIn: fsutil.Exists(filepath.Join(profile.Dir(e.paths, p), ".credentials.json")),
+			LoggedIn: creds.Has(profile.Dir(e.paths, p), e.paths.Home),
 		})
 	}
 	return out

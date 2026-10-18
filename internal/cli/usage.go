@@ -39,7 +39,7 @@ func usageCmd(e *env) *cobra.Command {
 				e.printf("등록된 계정이 없습니다. `ccam add <이름>` 으로 추가하세요.\n")
 				return nil
 			}
-			f := newFetcher(usageStateDir(e))
+			f := e.fetcher()
 			if !cmd.Flags().Changed("watch") {
 				return showUsage(e, f, cfg, opt, asJSON, verbose, false)
 			}
@@ -72,6 +72,12 @@ func usageCmd(e *env) *cobra.Command {
 
 // newFetcher is replaced in tests to point at a fake server.
 var newFetcher = usage.NewFetcher
+
+func (e *env) fetcher() *usage.Fetcher {
+	f := newFetcher(usageStateDir(e))
+	f.Home = e.paths.Home
+	return f
+}
 
 func usageStateDir(e *env) string { return filepath.Join(e.paths.State, "usage") }
 

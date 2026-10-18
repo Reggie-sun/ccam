@@ -10,12 +10,14 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strconv"
 	"strings"
 	"syscall"
 	"time"
 
 	"github.com/jhyunwoo/ccam/internal/config"
+	"github.com/jhyunwoo/ccam/internal/creds"
 	"github.com/jhyunwoo/ccam/internal/fsutil"
 	"github.com/jhyunwoo/ccam/internal/paths"
 	"github.com/jhyunwoo/ccam/internal/profile"
@@ -58,7 +60,7 @@ func Prepare(p paths.Paths, cfg *config.Config, sel string, args []string) (*Pla
 	argv := make([]string, 0, len(args)+1)
 	argv = append(argv, "claude")
 	argv = append(argv, args...)
-	return &Plan{Profile: prof, Dir: dir, Bin: bin, Argv: argv, Env: buildEnv(os.Environ(), dir, prof.Name)}, nil
+	return &Plan{Profile: prof, Dir: dir, Bin: bin, Argv: argv, Env: ProfileEnv(p, os.Environ(), dir, prof.Name)}, nil
 }
 
 // InsertArgs puts ccam-generated args (e.g. --mcp-config) before the user's,
@@ -70,15 +72,27 @@ func (pl *Plan) InsertArgs(extra ...string) {
 	pl.Argv = append(argv, pl.Argv[1:]...)
 }
 
-func buildEnv(environ []string, dir, name string) []string {
-	env := make([]string, 0, len(environ)+2)
+// ProfileEnv is the environment claude runs with for a profile.
+func ProfileEnv(p paths.Paths, environ []string, dir, name string) []string {
+	return buildEnv(environ, dir, name, runtime.GOOS == "darwin" && creds.DefaultStore(dir, p.Home))
+}
+
+// buildEnv sets CLAUDE_CONFIG_DIR. defaultStore keeps an imported ~/.claude
+// on the unsuffixed macOS Keychain item that plain `claude` uses.
+func buildEnv(environ []string, dir, name string, defaultStore bool) []string {
+	env := make([]string, 0, len(environ)+3)
 	for _, kv := range environ {
-		if strings.HasPrefix(kv, "CLAUDE_CONFIG_DIR=") || strings.HasPrefix(kv, "CCAM_PROFILE=") {
+		if strings.HasPrefix(kv, "CLAUDE_CONFIG_DIR=") || strings.HasPrefix(kv, "CCAM_PROFILE=") ||
+			strings.HasPrefix(kv, "CLAUDE_SECURESTORAGE_CONFIG_DIR=") {
 			continue
 		}
 		env = append(env, kv)
 	}
-	return append(env, "CLAUDE_CONFIG_DIR="+dir, "CCAM_PROFILE="+name)
+	env = append(env, "CLAUDE_CONFIG_DIR="+dir, "CCAM_PROFILE="+name)
+	if defaultStore {
+		env = append(env, "CLAUDE_SECURESTORAGE_CONFIG_DIR=")
+	}
+	return env
 }
 
 // DryRun prints what would be executed.

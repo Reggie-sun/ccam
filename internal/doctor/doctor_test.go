@@ -42,7 +42,7 @@ func TestCredentialsChecks(t *testing.T) {
 	cred := filepath.Join(dir, ".credentials.json")
 	os.WriteFile(cred, []byte(`{"claudeAiOauth":{"expiresAt":1,"refreshTokenExpiresAt":2}}`), 0o644)
 	r := &report{}
-	checkCredentials(r, prof, dir, true)
+	checkCredentials(r, prof, dir, "/nonexistent-home", true)
 	if len(r.out) != 2 || !r.out[0].Fixed || r.out[1].Level != Error {
 		t.Fatalf("%v", r.out)
 	}

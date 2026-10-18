@@ -8,8 +8,9 @@ on:
 jobs:
   test:
     strategy:
+      fail-fast: false
       matrix:
-        os: [ubuntu-22.04, ubuntu-24.04]
+        os: [ubuntu-22.04, ubuntu-24.04, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -21,6 +22,33 @@ jobs:
       - uses: golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a # v9.3.0
         with:
           version: v2.15.0
+
+  # Other Linux distributions, including musl (Alpine). The binary is
+  # static, but the tests also exercise each distro's shell and coreutils.
+  distro:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: debian
+            image: golang:1.26-bookworm
+            setup: "true"
+          - name: alpine
+            image: golang:1.26-alpine
+            setup: "true"
+          - name: fedora
+            image: fedora:latest
+            setup: dnf install -y golang tar gzip
+          - name: arch
+            image: archlinux:latest
+            setup: pacman -Sy --noconfirm go
+    runs-on: ubuntu-24.04
+    container: ${{ matrix.image }}
+    name: test (${{ matrix.name }})
+    steps:
+      - uses: actions/checkout@v4
+      - run: ${{ matrix.setup }}
+      - run: go test ./...
 
   perf:
     runs-on: ubuntu-24.04

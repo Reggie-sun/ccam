@@ -68,10 +68,15 @@ func TestPrepareUnknownProfile(t *testing.T) {
 }
 
 func TestEnvReplacesConfigDir(t *testing.T) {
-	env := buildEnv([]string{"A=1", "CLAUDE_CONFIG_DIR=/old", "CCAM_PROFILE=x"}, "/new", "work")
+	env := buildEnv([]string{"A=1", "CLAUDE_CONFIG_DIR=/old", "CCAM_PROFILE=x", "CLAUDE_SECURESTORAGE_CONFIG_DIR=/y"}, "/new", "work", false)
 	want := []string{"A=1", "CLAUDE_CONFIG_DIR=/new", "CCAM_PROFILE=work"}
 	if !reflect.DeepEqual(env, want) {
 		t.Fatalf("%q", env)
+	}
+	env = buildEnv(nil, "/h/.claude", "main", true)
+	want = []string{"CLAUDE_CONFIG_DIR=/h/.claude", "CCAM_PROFILE=main", "CLAUDE_SECURESTORAGE_CONFIG_DIR="}
+	if !reflect.DeepEqual(env, want) {
+		t.Fatalf("default store: %q", env)
 	}
 }
 
