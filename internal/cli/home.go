@@ -50,7 +50,7 @@ func runHome(e *env) error {
 				return err
 			}
 			e.printf("Enter 를 누르면 목록으로 돌아갑니다.")
-			e.in.ReadString('\n')
+			_, _ = e.in.ReadString('\n')
 		default:
 			return nil
 		}

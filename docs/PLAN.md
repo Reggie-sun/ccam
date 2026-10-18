@@ -451,3 +451,8 @@ history = "local"
 - Phase 5: `huh`는 쓰지 않습니다. huh가 끌어오는 클립보드 패키지의 `init()`이 PATH를 뒤져 WSL에서 모든 실행에 약 110 ms를 더했습니다. 추가 마법사는 Bubble Tea로 직접 만들었고, 패키지 init 비용이 5 ms를 넘으면 실패하는 테스트를 넣었습니다.
 - Phase 5: 선택 화면에서 고른 동작(실행·추가·공유 변경)은 화면을 닫은 뒤 실행합니다. 공유 변경은 일반 터미널에서 이전 계획을 보여주고 확인을 받습니다.
 - Phase 5: 확인 — 80×20 tmux에서 선택 화면·공유 화면·추가 마법사·번호 키 실행을 키보드만으로 확인. 첫 화면 100 ms 이내(teatest).
+- Phase 6: `import`는 폴더를 옮기거나 복사하지 않고 제자리에 등록합니다. 토큰을 복사하면 refresh token이 바뀔 때 서로 로그아웃시키기 때문입니다. 기본 `~/.claude`를 가져오면 `~/.claude/.claude.json` → `~/.claude.json` 링크를 만들어 그냥 `claude`와 `ccs <이름>`이 같은 계정을 보게 합니다 (Claude Code가 이 링크를 유지하며 쓰는 것을 확인).
+- Phase 6: PGO는 실행 경로 벤치마크 프로파일(`cmd/ccam/default.pgo`)로 적용했고 3% 빨라졌습니다. `CCAM_PPROF`는 `exec` 직전에 프로파일을 닫습니다.
+- Phase 6: hyperfine 2.0은 JSON 형식이 바뀌어 `scripts/perf-check.sh`가 두 형식을 모두 읽습니다. 측정 결과 p95 `ccs --dry-run work` 4.2 ms, `ccs work` 4.4 ms, `ccs list` 3.9 ms, 최대 메모리 8 MB.
+- Phase 6: Docker가 없어 우분투 24.04 컨테이너 대신 빈 HOME과 로컬 릴리스 서버로 `install.sh`를 확인했습니다 (설치 + 계정 2개 추가 0.2초, 체크섬 위조 시 설치 거부). 실제 컨테이너 확인은 남은 일입니다.
+- Phase 6: `doctor`가 사용량 응답 형식 변경과, 확인된 Claude Code 버전(2.1.302)과 다른 버전을 알려 줍니다.

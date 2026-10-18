@@ -70,10 +70,17 @@ func newRoot(e *env) *cobra.Command {
 	root.SetErr(e.stderr)
 	root.PersistentFlags().BoolVar(&e.dryRun, "dry-run", false, "실행하지 않고 할 일만 출력")
 	root.CompletionOptions.DisableDefaultCmd = true
+	root.ValidArgsFunction = profileNames(e) // `ccs <tab>` lists accounts
 	root.AddCommand(
 		addCmd(e), listCmd(e), runCmd(e), useCmd(e), removeCmd(e), renameCmd(e),
-		loginCmd(e), logoutCmd(e), shimsCmd(e), versionCmd(e), shareCmd(e), doctorCmd(e), mcpCmd(e), nextCmd(e), usageCmd(e), statuslineCmd(e),
+		loginCmd(e), logoutCmd(e), shimsCmd(e), versionCmd(e), shareCmd(e), doctorCmd(e), mcpCmd(e), nextCmd(e), usageCmd(e), statuslineCmd(e), importCmd(e), completionCmd(e),
 	)
+	for _, c := range root.Commands() {
+		switch c.Name() {
+		case "run", "use", "remove", "rename", "login", "logout", "share":
+			c.ValidArgsFunction = profileNames(e)
+		}
+	}
 	return root
 }
 

@@ -30,14 +30,14 @@ func newShareEdit(s config.Share) shareEdit { return shareEdit{orig: s, next: s}
 func (e *shareEdit) toggle() {
 	item := config.Items[e.cursor]
 	if e.next.Get(item) != config.Local {
-		e.next.Set(item, config.Local)
+		_ = e.next.Set(item, config.Local)
 		return
 	}
 	// Turning back on restores the original group, else "default".
 	if g := e.orig.Get(item); g != config.Local {
-		e.next.Set(item, g)
+		_ = e.next.Set(item, g)
 	} else {
-		e.next.Set(item, "default")
+		_ = e.next.Set(item, "default")
 	}
 }
 

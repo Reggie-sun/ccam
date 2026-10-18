@@ -114,7 +114,7 @@ func describeServer(raw json.RawMessage) string {
 		Args    []string `json:"args"`
 		URL     string   `json:"url"`
 	}
-	json.Unmarshal(raw, &v)
+	_ = json.Unmarshal(raw, &v) // unknown shapes render as empty
 	if v.URL != "" {
 		t := v.Type
 		if t == "" {

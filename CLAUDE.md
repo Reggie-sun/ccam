@@ -63,3 +63,37 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 ---
 
 **These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
+
+---
+
+# ccam — Claude Code 다중 계정 관리 도구
+
+전체 계획과 결정 기록은 docs/PLAN.md, Claude Code 폴더 조사 결과는 docs/claude-layout.md를 먼저 읽는다.
+
+## 규칙
+- 실행 파일은 ccam, 짧은 별칭 ccs(심볼릭 링크)로 실행해도 똑같이 동작한다
+- ccam <이름|번호>는 run의 줄임이다. 프로필 이름은 하위 명령 이름(config.Reserved)과 겹칠 수 없다
+- 프로필 이름 뒤의 인자는 파싱하지 않고 배열 그대로 claude에 넘긴다 (internal/app이 cobra 이전에 os.Args 처리)
+- Go 1.26 (Charm v2 요구), 모듈 경로 github.com/jhyunwoo/ccam
+- 코드는 internal/ 아래 패키지로 나누고 cmd/ccam/main.go는 얇게 유지
+- 모든 경로는 CCAM_HOME(테스트용)과 XDG 변수를 따른다
+- 사용자의 실제 ~/.claude, ~/.local/share/ccam은 절대 수정하지 않는다
+- 파일 쓰기는 fsutil.AtomicWrite, 데이터 이전은 share.Build → Apply 순서
+- 토큰 파일(.credentials.json)은 어떤 경우에도 공유 그룹에 링크하지 않는다 (share.Layout 허용 목록)
+- 사용자에게 보이는 메시지는 한국어, 코드·주석·커밋은 영어
+
+## 명령
+- 빌드: go build ./cmd/ccam
+- 테스트: go test ./...  (internal/e2e는 실제 바이너리를 빌드해 fake claude로 돌린다)
+- 린트: golangci-lint run
+- 벤치마크: go test -bench=. -benchmem ./...
+- 실행 경로 측정: scripts/perf-check.sh (hyperfine), 회귀 비교: scripts/bench-compare.sh <base>
+
+## 성능 규칙 (docs/PLAN.md의 성능 설계)
+- ccs <이름> 실행 경로는 10 ms 이하. 이 경로에서는 cobra·bubbletea·lipgloss·net/http를 쓰지 않는다
+- 패키지 init()에서 파일·터미널·네트워크에 접근하지 않는다. 의존성 추가 후 TestPackageInitIsCheap 확인 (huh는 이 이유로 뺐다)
+- 실행 경로에서 읽는 파일은 config.toml 하나, 링크 확인은 lstat만
+- claude 실행은 항상 syscall.Exec, 후처리는 다음 실행 때
+- .claude.json은 통째로 파싱하지 않는다 (profile.TopLevelValue 스캐너)
+- 네트워크 호출은 병렬 + 제한 시간 + 캐시
+- 실행 경로나 사용량 조회를 바꾸면 benchstat 결과를 커밋 메시지에 남긴다

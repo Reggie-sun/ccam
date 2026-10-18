@@ -6,6 +6,7 @@ package app
 import (
 	"fmt"
 	"os"
+	"runtime/pprof"
 	"strings"
 
 	"github.com/jhyunwoo/ccam/internal/cli"
@@ -54,7 +55,7 @@ func parse(argv []string) route {
 		return route{kind: routeCLI, args: withDry(rest, dry)}
 	case strings.HasPrefix(rest[0], "-"):
 		return route{kind: routeLaunch, args: rest, dry: dry}
-	case config.Reserved[rest[0]]:
+	case config.Reserved[rest[0]] || strings.HasPrefix(rest[0], "__"): // __complete is cobra's
 		return route{kind: routeCLI, args: withDry(rest, dry)}
 	default:
 		return route{kind: routeLaunch, sel: rest[0], args: rest[1:], dry: dry}
@@ -70,6 +71,12 @@ func withDry(args []string, dry bool) []string {
 
 // Main runs ccam and returns the process exit code.
 func Main(argv []string) int {
+	if path := os.Getenv("CCAM_PPROF"); path != "" {
+		if stop := startProfile(path); stop != nil {
+			defer stop()
+			launcher.BeforeExec = stop
+		}
+	}
 	r := parse(argv)
 	if r.kind == routeCLI {
 		return cli.Execute(r.args)
@@ -79,4 +86,26 @@ func Main(argv []string) int {
 		return 1
 	}
 	return 0
+}
+
+// startProfile writes a CPU profile to path (CCAM_PPROF) until stop is called.
+func startProfile(path string) (stop func()) {
+	f, err := os.Create(path)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "ccam: CCAM_PPROF:", err)
+		return nil
+	}
+	if err := pprof.StartCPUProfile(f); err != nil {
+		f.Close()
+		fmt.Fprintln(os.Stderr, "ccam: CCAM_PPROF:", err)
+		return nil
+	}
+	done := false
+	return func() {
+		if !done {
+			done = true
+			pprof.StopCPUProfile()
+			f.Close()
+		}
+	}
 }

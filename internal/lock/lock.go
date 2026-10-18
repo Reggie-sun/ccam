@@ -64,7 +64,7 @@ func (l *Flock) KeepAcrossExec() error {
 }
 
 func (l *Flock) Unlock() {
-	syscall.Flock(int(l.f.Fd()), syscall.LOCK_UN)
+	_ = syscall.Flock(int(l.f.Fd()), syscall.LOCK_UN) // closing releases it anyway
 	l.f.Close()
 }
 

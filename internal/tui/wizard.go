@@ -36,7 +36,7 @@ func ValidateNewName(cfg *config.Config) func(string) error {
 func ShareFromItems(items []string) config.Share {
 	var s config.Share
 	for _, item := range items {
-		s.Set(item, "default")
+		_ = s.Set(item, "default")
 	}
 	return s
 }

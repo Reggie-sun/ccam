@@ -25,6 +25,7 @@ func TestParse(t *testing.T) {
 		{[]string{"ccam", "list", "--json"}, route{kind: routeCLI, args: []string{"list", "--json"}}},
 		{[]string{"ccam", "--help"}, route{kind: routeCLI, args: []string{"--help"}}},
 		{[]string{"ccam", "--version"}, route{kind: routeCLI, args: []string{"--version"}}},
+		{[]string{"ccs", "__complete", "w"}, route{kind: routeCLI, args: []string{"__complete", "w"}}},
 		{[]string{"ccs", "--dry-run", "next"}, route{kind: routeCLI, args: []string{"--dry-run", "next"}, dry: false}},
 	}
 	for _, c := range cases {

@@ -90,10 +90,16 @@ func (pl *Plan) DryRun(w io.Writer) {
 	fmt.Fprintln(w, strings.Join(parts, " "))
 }
 
+// BeforeExec runs right before exec, e.g. to flush a CPU profile.
+var BeforeExec func()
+
 // Exec replaces the current process with claude. It only returns on error.
 func (pl *Plan) Exec(p paths.Paths) error {
 	setTitle(pl.Profile.Name)
 	MarkUsed(p, pl.Profile.Name)
+	if BeforeExec != nil {
+		BeforeExec()
+	}
 	return syscall.Exec(pl.Bin, pl.Argv, pl.Env)
 }
 

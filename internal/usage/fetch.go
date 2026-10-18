@@ -55,6 +55,9 @@ type Report struct {
 	Source string    `json:"source,omitempty"` // live | cache | statusline
 	At     time.Time `json:"at,omitempty"`     // when the values were measured
 	Err    string    `json:"error,omitempty"`
+	// FormatChanged means the endpoint answered but the parser did not
+	// understand it; doctor reports this.
+	FormatChanged bool `json:"format_changed,omitempty"`
 }
 
 type Options struct {
@@ -149,6 +152,7 @@ func (f *Fetcher) Fetch(ctx context.Context, a Account, opt Options) Report {
 	defer cancel()
 	limits, status, err := f.live(ctx, cred.AccessToken)
 	if err != nil {
+		r.FormatChanged = errors.Is(err, errFormat)
 		return f.fallback(a, r, status, err.Error())
 	}
 	r.Status, r.Limits, r.Source, r.At = StatusOK, &limits, "live", f.Now()
@@ -184,7 +188,7 @@ func (f *Fetcher) live(ctx context.Context, token string) (Limits, Status, error
 	}
 	l, err := ParseLive(body)
 	if err != nil {
-		return Limits{}, StatusError, err
+		return Limits{}, StatusError, fmt.Errorf("%w: %v", errFormat, err)
 	}
 	return l, StatusOK, nil
 }
@@ -253,7 +257,10 @@ func SaveStatusLine(stateDir, name string, l Limits, at time.Time) error {
 	return fsutil.WriteFast(filepath.Join(stateDir, name+".statusline.json"), data)
 }
 
-var errNoOAuth = errors.New("no subscription login")
+var (
+	errNoOAuth = errors.New("no subscription login")
+	errFormat  = errors.New("사용량 응답 형식이 바뀌었습니다")
+)
 
 type oauthCred struct {
 	AccessToken  string `json:"accessToken"`

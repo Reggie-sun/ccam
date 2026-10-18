@@ -18,7 +18,7 @@ func doctorCmd(e *env) *cobra.Command {
 				return err
 			}
 			self, _ := ccamPath()
-			findings := doctor.Run(e.paths, cfg, doctor.Options{Fix: fix, CcamPath: self})
+			findings := doctor.Run(e.paths, cfg, doctor.Options{Fix: fix, CcamPath: self, Usage: newFetcher(usageStateDir(e))})
 			for _, f := range findings {
 				e.printf("%s\n", f)
 			}

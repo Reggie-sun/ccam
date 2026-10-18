@@ -2,6 +2,7 @@
 package doctor
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -20,6 +21,7 @@ import (
 	"github.com/jhyunwoo/ccam/internal/profile"
 	"github.com/jhyunwoo/ccam/internal/share"
 	"github.com/jhyunwoo/ccam/internal/shim"
+	"github.com/jhyunwoo/ccam/internal/usage"
 )
 
 type Level int
@@ -53,8 +55,12 @@ func (f Finding) String() string {
 
 type Options struct {
 	Fix      bool
-	CcamPath string // the real ccam binary, for shim checks
+	CcamPath string         // the real ccam binary, for shim checks
+	Usage    *usage.Fetcher // nil skips the live usage-format check
 }
+
+// LayoutVersion is the Claude Code version docs/claude-layout.md was checked with.
+const LayoutVersion = "2.1.302"
 
 type report struct {
 	out []Finding
@@ -74,6 +80,7 @@ func Run(p paths.Paths, cfg *config.Config, opt Options) []Finding {
 	}
 	checkPlugins(r, p, cfg, opt.Fix)
 	checkMCP(r, p, cfg)
+	checkUsageFormat(r, p, cfg, opt.Usage)
 	checkShims(r, p, cfg, opt)
 	return r.out
 }
@@ -99,7 +106,32 @@ func checkClaude(r *report, p paths.Paths, cfg *config.Config) {
 		r.add(Error, "", "%s --version 실패: %v", bin, err)
 		return
 	}
-	r.add(OK, "", "Claude Code %s (%s)", strings.TrimSpace(string(out)), bin)
+	version := strings.TrimSpace(string(out))
+	r.add(OK, "", "Claude Code %s (%s)", version, bin)
+	if !strings.HasPrefix(version, LayoutVersion) {
+		r.add(Info, "", "ccam 은 Claude Code %s 의 폴더 구성으로 확인됐습니다. 아래 '알려지지 않은 항목'이 있으면 구성이 바뀐 것일 수 있습니다", LayoutVersion)
+	}
+}
+
+// checkUsageFormat queries one logged-in account so a changed response
+// format of the undocumented usage endpoint is noticed.
+func checkUsageFormat(r *report, p paths.Paths, cfg *config.Config, f *usage.Fetcher) {
+	if f == nil {
+		return
+	}
+	for i := range cfg.Profiles {
+		prof := &cfg.Profiles[i]
+		a := usage.Account{Name: prof.Name, Slot: prof.Slot, Dir: profile.Dir(p, prof), LockPath: launcher.ProfileLockPath(p, prof.Name)}
+		rep := f.Fetch(context.Background(), a, usage.Options{NoCache: true})
+		switch {
+		case rep.FormatChanged:
+			r.add(Warn, prof.Name, "사용량 응답 형식이 바뀌었습니다. `ccam usage` 는 상태줄 캐시로 대신 보여줍니다 (%s)", rep.Err)
+			return
+		case rep.Status == usage.StatusOK:
+			r.add(OK, prof.Name, "사용량 조회 정상")
+			return
+		}
+	}
 }
 
 func checkProfile(r *report, p paths.Paths, prof *config.Profile, fix bool) {

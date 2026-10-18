@@ -1,0 +1,35 @@
+version: 2
+project_name: ccam
+
+builds:
+  - main: ./cmd/ccam
+    binary: ccam
+    env: [CGO_ENABLED=0]
+    goos: [linux]
+    goarch: [amd64, arm64]
+    flags: [-trimpath]
+    ldflags:
+      - -s -w -X github.com/jhyunwoo/ccam/internal/cli.Version={{ .Version }}
+
+archives:
+  - formats: [tar.gz]
+    name_template: "ccam_{{ .Os }}_{{ .Arch }}"
+    files: [README.md, README.en.md]
+
+checksum:
+  name_template: checksums.txt
+
+nfpms:
+  - package_name: ccam
+    homepage: https://github.com/jhyunwoo/ccam
+    maintainer: jhyunwoo <jhyunwoo@users.noreply.github.com>
+    description: Claude Code multi-account manager (ccam / ccs)
+    formats: [deb]
+    bindir: /usr/bin
+    contents:
+      - src: /usr/bin/ccam
+        dst: /usr/bin/ccs
+        type: symlink
+
+changelog:
+  use: git

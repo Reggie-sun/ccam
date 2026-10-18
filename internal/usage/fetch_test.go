@@ -54,6 +54,8 @@ func newEnv(t *testing.T) *env {
 			case <-r.Context().Done():
 			case <-time.After(10 * time.Second):
 			}
+		case tok == "weird":
+			fmt.Fprint(w, `{"brand_new_shape":true}`)
 		case tok == "bad":
 			w.WriteHeader(401)
 		default:
@@ -210,5 +212,16 @@ func TestRefreshOnlyWhenNotRunning(t *testing.T) {
 	}
 	if info, _ := os.Stat(filepath.Join(a.Dir, ".credentials.json")); info.Mode().Perm() != 0o600 {
 		t.Fatal("perm")
+	}
+}
+
+func TestFormatChangeIsFlagged(t *testing.T) {
+	e := newEnv(t)
+	r := e.f.Fetch(context.Background(), e.account("w", "weird", future), Options{})
+	if !r.FormatChanged || r.Status != StatusError {
+		t.Fatalf("%+v", r)
+	}
+	if r := e.f.Fetch(context.Background(), e.account("b", "boom", future), Options{}); r.FormatChanged {
+		t.Fatal("HTTP 500 is not a format change")
 	}
 }
