@@ -11,7 +11,8 @@
 import { createHash } from "node:crypto";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { parse } from "yaml";
+import { parse as parseYaml } from "yaml";
+import { parse, type MessageFormatElement } from "@formatjs/icu-messageformat-parser";
 import { locales } from "../i18n/locales.ts";
 import { splitFrontMatter } from "../lib/frontmatter.ts";
 import { fail } from "./lib.ts";
@@ -25,16 +26,32 @@ if (args[0] === "--hash") {
 }
 const only = args.includes("--locale") ? args[args.indexOf("--locale") + 1] : undefined;
 const strict = args.includes("--strict");
-const glossary: string[] = parse(readFileSync("i18n/glossary.yaml", "utf8")).keep;
+const glossary: string[] = parseYaml(readFileSync("i18n/glossary.yaml", "utf8")).keep;
 
 const errors: string[] = [];
 const warnings: string[] = [];
-const placeholders = (s: string) => [...s.matchAll(/\{(\w+)/g)].map((m) => m[1]).sort().join(",");
+// Argument names from the real ICU parser, so plural branch text is not
+// mistaken for a placeholder.
+function placeholders(s: string): string {
+  const names = new Set<string>();
+  const walk = (els: MessageFormatElement[]) => {
+    for (const el of els) {
+      if ("value" in el && typeof el.value === "string" && el.type !== 0 && el.type !== 7) names.add(el.value);
+      if ("options" in el) for (const o of Object.values(el.options)) walk((o as { value: MessageFormatElement[] }).value);
+    }
+  };
+  try {
+    walk(parse(s));
+  } catch {
+    return "(unparseable)";
+  }
+  return [...names].sort().join(",");
+}
 
 function compare(en: unknown, tr: unknown, path: string, code: string): void {
   if (typeof en === "string") {
     if (typeof tr !== "string") return void errors.push(`${code}: ${path} should be a string`);
-    if (/\.(command|also)$/.test(path) && tr !== en) errors.push(`${code}: ${path} is a command and must stay "${en}"`);
+    if (/^landing\.flow\[\d+\]\.(command|also)$/.test(path) && tr !== en) errors.push(`${code}: ${path} is a command and must stay "${en}"`);
     if (placeholders(en) !== placeholders(tr)) errors.push(`${code}: ${path} placeholders {${placeholders(en)}} ≠ {${placeholders(tr)}}`);
     if (!tr.trim()) errors.push(`${code}: ${path} is empty`);
     return;
@@ -77,6 +94,8 @@ for (const l of locales.filter((l) => l.code !== "en" && (!only || l.code === on
       if (codeBlocks(src.body).join("\n") !== codeBlocks(tr.body).join("\n")) errors.push(`${file}: code blocks differ from the English source`);
       if (inlineCode(src.body).join("\n") !== inlineCode(tr.body).join("\n")) errors.push(`${file}: inline code differs (${inlineCode(src.body).length} vs ${inlineCode(tr.body).length})`);
       if (links(src.body).join(" ") !== links(tr.body).join(" ")) errors.push(`${file}: links differ: ${links(src.body).join(" ")} ≠ ${links(tr.body).join(" ")}`);
+      const levels = (md: string) => [...md.replace(/```[\s\S]*?```/g, "").matchAll(/^(#{1,6}) /gm)].map((m) => m[1].length).join(",");
+      if (levels(src.body) !== levels(tr.body)) errors.push(`${file}: headings differ from the English source (anchors are matched by position)`);
       if (src.body.includes("<!-- commands -->") !== tr.body.includes("<!-- commands -->")) errors.push(`${file}: <!-- commands --> marker missing`);
       const visible = (s: string) => s.replace(/```[\s\S]*?```/g, "").replace(/`[^`]+`/g, "");
       for (const term of glossary) {

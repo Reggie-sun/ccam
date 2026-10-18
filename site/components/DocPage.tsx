@@ -70,7 +70,7 @@ export function DocPage({ page }: { page: Page }) {
             </p>
           )}
           <div className="prose" dangerouslySetInnerHTML={{ __html: html }} />
-          <nav className="pager" aria-label={sectionName}>
+          <nav className="pager" aria-label={`${m.docs.prev}, ${m.docs.next}`}>
             {prev && (
               <a href={pagePath(page.locale, page.section, prev.slug)}>
                 <small>{m.docs.prev}</small>

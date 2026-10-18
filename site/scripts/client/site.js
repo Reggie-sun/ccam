@@ -46,6 +46,7 @@
       a.lang = pick.lang;
       a.textContent = pick.dataset.open;
       banner.lang = pick.lang;
+      banner.dir = pick.dataset.dir; // an English suggestion on an Arabic page reads left to right
       banner.hidden = false;
       banner.querySelector("[data-banner-dismiss]").addEventListener("click", () => {
         banner.hidden = true;

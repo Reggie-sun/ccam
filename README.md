@@ -1,6 +1,11 @@
 # ccam — Claude Code 다중 계정 관리
 
-[English](README.en.md)
+[English](README.en.md) · 웹사이트: https://ccam.dev
+
+- ccam은 컴퓨터 한 대에서 Claude Code 계정 여러 개를 쓰고 명령 하나로 바꿀 수 있게 해 주는 무료 오픈소스 명령줄 도구입니다.
+- 계정마다 별도의 CLAUDE_CONFIG_DIR에 자기 로그인을 따로 두고, MCP 서버, 설정, CLAUDE.md, 확장 기능, 대화 내역은 계정끼리 공유할 수 있습니다. 그래서 한 계정이 사용량 한도에 도달하면 다른 계정에서 대화를 이어 갈 수 있습니다.
+- Linux나 macOS에서 명령 하나로 설치한 뒤, 계정마다 ccam add를 실행합니다.
+- ccam은 비공식 프로젝트이며 Anthropic과 제휴하거나 Anthropic의 보증을 받은 것이 아닙니다.
 
 `ccam`(짧게 `ccs`)은 우분투 터미널에서 Claude Code 계정 여러 개를 추가하고 바꿔 쓰게 해 주는 단일 바이너리 도구입니다. 계정마다 `CLAUDE_CONFIG_DIR`을 따로 두어 로그인을 분리하고, MCP 서버·설정·전역 CLAUDE.md·확장 기능·대화 내역은 항목별로 공유할지 고릅니다.
 

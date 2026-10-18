@@ -62,14 +62,23 @@ function slugify(text: string): string {
 
 /** Internal links go to the same locale when the page exists there, else to
  *  English. Code stays left-to-right inside right-to-left pages. */
-export function renderMarkdown(page: Pick<Page, "locale" | "markdown">, labels: { copy: string; copied: string }): { html: string; headings: Heading[] } {
+/** Heading anchors come from the English heading at the same position, so
+ *  "/docs/install#uninstall" works in every language. */
+function englishIds(page: Pick<Page, "section" | "slug">): string[] {
+  const en = getPage("en", page.section, page.slug);
+  if (!en) return [];
+  return new Marked().lexer(en.markdown).filter((t) => t.type === "heading").map((t) => slugify((t as Tokens.Heading).text.replace(/`/g, "")));
+}
+
+export function renderMarkdown(page: Pick<Page, "locale" | "markdown" | "section" | "slug">, labels: { copy: string; copied: string }): { html: string; headings: Heading[] } {
   const headings: Heading[] = [];
+  const ids = englishIds(page);
   const marked = new Marked({
     gfm: true,
     renderer: {
       heading({ tokens, depth }: Tokens.Heading) {
         const text = this.parser.parseInline(tokens);
-        const id = slugify(text);
+        const id = ids[headings.length] ?? slugify(text);
         headings.push({ id, text: text.replace(/<[^>]+>/g, ""), depth });
         return `<h${depth} id="${id}">${text}</h${depth}>\n`;
       },

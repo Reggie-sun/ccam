@@ -22,3 +22,15 @@ Priority follows the rule tier: Hard Gate = HIGH, Purpose-Gate = MEDIUM, Quality
 | 12 | HIGH | R-35 | site | No recorded click-through of the interactive elements. | Fixed: `tests/site.spec.ts` clicks every control in both themes and on mobile; results below. |
 
 Checked and passing: no em dashes in agent-written text (the one in `quick-start.md` is ccam's own Korean output, quoted verbatim); no R-16 buzzwords; no generic CTAs; FAQ questions are about ccam specifically (R-28); the changelog has an empty state that names the next step (R-27); no fake testimonials, logo bars or statistics; dark mode passes every contrast pair.
+
+## Audit 002, 2026-10-19 (changes after audit 001 and the 30 translations)
+
+| # | Priority | Rule | File | Finding | Action |
+|---|---|---|---|---|---|
+| 13 | HIGH | R-32 | `components/InstallCommand.tsx`, `lib/content.ts` | Code blocks, tables and the install command scroll sideways on narrow screens but could not be reached by keyboard (axe `scrollable-region-focusable`, found in CI). | Fixed: `tabindex="0"` on scrollable `pre`, `table` and the install command. |
+| 14 | HIGH | R-24 | `lib/content.ts` | Heading anchors came from the translated heading text, so `/docs/install#uninstall` led nowhere on 29 of 30 languages (reported by several translators). | Fixed: anchors come from the English heading at the same position; `check-links` now verifies `#fragments`; `i18n-check` requires the same heading structure. |
+| 15 | MEDIUM | R-32 | `components/DocPage.tsx` | Sidebar and pager navigation could get the same accessible name in some languages (French, Hindi). | Fixed: the pager is named after its links ("Previous, Next"). |
+| 16 | LOW | C-4 | `scripts/client/site.js` | The language banner inherited the page direction, so an English suggestion on an Arabic page put its period on the wrong side. | Fixed: the banner takes the direction of the suggested language. |
+| 17 | LOW | R-31 | `scripts/i18n-check.ts` | The command-name rule also matched the translatable table header `docs.commandsTable.command`, so 17 languages kept "Command" in English. | Fixed: the rule only covers `landing.flow[].command/also`; the headers were translated. |
+
+Translations: all 29 were made against the reviewed English source, pass `i18n-check --strict` (code, links, glossary, placeholders, headings, source hash), and each translator back-translated three paragraphs; drifts they found are fixed. Pages are marked `translation: machine` until a native speaker reviews them.

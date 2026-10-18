@@ -67,6 +67,7 @@ export function Shell({ locale, alternates, active, children }: Props) {
                           href={href}
                           hrefLang={x.lang}
                           lang={x.lang}
+                          data-dir={x.dir}
                           aria-current={x.code === locale ? "true" : undefined}
                           data-same={alternates[x.code] ? "" : undefined}
                           data-suggest={format(x, xm.banner.suggest, { language: name })}
