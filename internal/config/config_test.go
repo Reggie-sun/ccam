@@ -123,3 +123,9 @@ func TestShareSet(t *testing.T) {
 		t.Fatal("bad input accepted")
 	}
 }
+
+func TestShareEqual(t *testing.T) {
+	if !(Share{History: Local}).Equal(Share{}) || (Share{MCP: "default"}).Equal(Share{}) {
+		t.Fatal("Equal")
+	}
+}

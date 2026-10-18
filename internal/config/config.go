@@ -100,6 +100,16 @@ func (s *Share) Set(item, group string) error {
 	return nil
 }
 
+// Equal compares by meaning: "" and "local" are the same.
+func (s Share) Equal(o Share) bool {
+	for _, item := range Items {
+		if s.Get(item) != o.Get(item) {
+			return false
+		}
+	}
+	return true
+}
+
 // DefaultShare is what `ccam add` uses unless told otherwise.
 func DefaultShare() Share {
 	return Share{MCP: "default", Settings: "default", Memory: "default", Extensions: "default", History: Local}

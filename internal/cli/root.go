@@ -110,8 +110,3 @@ func ExecuteWith(args []string, p paths.Paths, stdin io.Reader, stdout, stderr i
 type exitError int
 
 func (e exitError) Error() string { return fmt.Sprintf("exit %d", int(e)) }
-
-// runHome is what bare `ccam` does.
-func runHome(e *env) error {
-	return listProfiles(e, false)
-}

@@ -15,16 +15,35 @@ import (
 	"github.com/jhyunwoo/ccam/internal/launcher"
 	"github.com/jhyunwoo/ccam/internal/profile"
 	"github.com/jhyunwoo/ccam/internal/shim"
+	"github.com/jhyunwoo/ccam/internal/tui"
 )
 
 func addCmd(e *env) *cobra.Command {
 	var noLogin bool
 	var shares []string
 	cmd := &cobra.Command{
-		Use:   "add <이름>",
+		Use:   "add [이름]",
 		Short: "계정 추가: 프로필 생성 → 로그인 → 단축 명령",
-		Args:  cobra.ExactArgs(1),
+		Long:  "터미널에서 옵션 없이 실행하면 마법사가 이름과 공유 항목을 묻습니다.",
+		Args:  cobra.MaximumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
+			if interactive(e) && !cmd.Flags().Changed("share") && !noLogin {
+				cfg, err := e.load()
+				if err != nil {
+					return err
+				}
+				name := ""
+				if len(args) == 1 {
+					if err := tui.ValidateNewName(cfg)(args[0]); err != nil {
+						return err
+					}
+					name = args[0]
+				}
+				return addInteractive(e, cfg, name)
+			}
+			if len(args) == 0 {
+				return fmt.Errorf("계정 이름이 필요합니다: ccam add <이름>")
+			}
 			share := config.DefaultShare()
 			for _, s := range shares {
 				item, group, ok := cutEq(s)
