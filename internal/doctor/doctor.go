@@ -120,7 +120,7 @@ func checkUsageFormat(r *report, p paths.Paths, cfg *config.Config, f *usage.Fet
 	}
 	for i := range cfg.Profiles {
 		prof := &cfg.Profiles[i]
-		a := usage.Account{Name: prof.Name, Slot: prof.Slot, Dir: profile.Dir(p, prof), LockPath: launcher.ProfileLockPath(p, prof.Name)}
+		a := usage.Account{Name: prof.Name, Slot: prof.Slot, Dir: profile.Dir(p, prof), SessionDir: launcher.SessionDir(p, prof.Name)}
 		rep := f.Fetch(context.Background(), a, usage.Options{NoCache: true})
 		switch {
 		case rep.FormatChanged:

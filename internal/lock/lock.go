@@ -1,9 +1,7 @@
-// Package lock provides the two kinds of locks ccam needs.
-//
-// Flock locks can be handed over to the exec'd claude process, so they stay
-// held exactly as long as that Claude Code session runs. DirLock speaks
-// Claude Code's own `.claude.json.lock` convention (a directory created
-// with mkdir, considered stale after 10 seconds).
+// Package lock provides the two kinds of locks ccam needs: a non-blocking
+// flock for ccam's own critical sections, and DirLock, which speaks Claude
+// Code's `.claude.json.lock` convention (a directory created with mkdir,
+// considered stale after 10 seconds).
 package lock
 
 import (
@@ -41,26 +39,6 @@ func TryFlock(path string) (*Flock, error) {
 		return nil, err
 	}
 	return &Flock{f: f}, nil
-}
-
-// Held reports whether someone currently holds the lock at path.
-func Held(path string) bool {
-	l, err := TryFlock(path)
-	if err != nil {
-		return errors.Is(err, ErrBusy)
-	}
-	l.Unlock()
-	return false
-}
-
-// KeepAcrossExec clears close-on-exec so the lock survives syscall.Exec and
-// is released only when the new program (claude) exits.
-func (l *Flock) KeepAcrossExec() error {
-	_, _, errno := syscall.Syscall(syscall.SYS_FCNTL, l.f.Fd(), syscall.F_SETFD, 0)
-	if errno != 0 {
-		return errno
-	}
-	return nil
 }
 
 func (l *Flock) Unlock() {

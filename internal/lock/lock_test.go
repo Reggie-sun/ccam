@@ -2,7 +2,6 @@ package lock
 
 import (
 	"os"
-	"os/exec"
 	"path/filepath"
 	"testing"
 	"time"
@@ -17,39 +16,12 @@ func TestFlockExclusive(t *testing.T) {
 	if _, err := TryFlock(path); err != ErrBusy {
 		t.Fatalf("second lock: %v", err)
 	}
-	if !Held(path) {
-		t.Fatal("Held should be true")
-	}
 	a.Unlock()
-	if Held(path) {
-		t.Fatal("Held after unlock")
-	}
-}
-
-// TestLockFollowsOpenFile shows the flock lives as long as any process keeps
-// the file open. The syscall.Exec hand-over itself is covered in e2e.
-func TestLockFollowsOpenFile(t *testing.T) {
-	path := filepath.Join(t.TempDir(), "x.lock")
-	l, err := TryFlock(path)
+	b, err := TryFlock(path)
 	if err != nil {
-		t.Fatal(err)
+		t.Fatalf("after unlock: %v", err)
 	}
-	if err := l.KeepAcrossExec(); err != nil {
-		t.Fatal(err)
-	}
-	child := exec.Command("sleep", "0.5")
-	child.ExtraFiles = []*os.File{l.f}
-	if err := child.Start(); err != nil {
-		t.Fatal(err)
-	}
-	l.f.Close() // parent lets go; the child still holds the open file description
-	if !Held(path) {
-		t.Fatal("lock should be held by the child")
-	}
-	child.Wait()
-	if Held(path) {
-		t.Fatal("lock should be released when the child exits")
-	}
+	b.Unlock()
 }
 
 func TestDirLock(t *testing.T) {

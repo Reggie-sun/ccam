@@ -6,13 +6,12 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 
 	"github.com/jhyunwoo/ccam/internal/config"
-	"github.com/jhyunwoo/ccam/internal/lock"
 	"github.com/jhyunwoo/ccam/internal/mcp"
 	"github.com/jhyunwoo/ccam/internal/paths"
+	"github.com/jhyunwoo/ccam/internal/session"
 	"github.com/jhyunwoo/ccam/internal/trace"
 )
 
@@ -39,8 +38,7 @@ func LaunchWith(p paths.Paths, cfg *config.Config, sel string, args []string, dr
 		return err
 	}
 	trace.Step("check links")
-	held, err := prelaunch(p, cfg, pl, dry)
-	if err != nil {
+	if err := prelaunch(p, cfg, pl, dry); err != nil {
 		return err
 	}
 	trace.Step("prelaunch")
@@ -48,85 +46,59 @@ func LaunchWith(p paths.Paths, cfg *config.Config, sel string, args []string, dr
 		pl.DryRun(stdout)
 		return nil
 	}
-	for _, l := range held {
-		if err := l.KeepAcrossExec(); err != nil {
-			return err
-		}
-	}
-	err = pl.Exec(p)
-	runtime.KeepAlive(held) // a finalizer must not close the lock fds before exec
-	return err
+	return pl.Exec(p)
 }
 
-// ProfileLockPath is held by a running Claude Code session of that profile.
-func ProfileLockPath(p paths.Paths, name string) string {
-	return filepath.Join(p.Runtime, "profile-"+name+".lock")
+// SessionDir holds markers of running sessions of a profile.
+func SessionDir(p paths.Paths, name string) string {
+	return filepath.Join(p.Runtime, "profile-"+name)
 }
 
-// Running reports whether a Claude Code session of the profile is running.
-func Running(p paths.Paths, name string) bool { return lock.Held(ProfileLockPath(p, name)) }
+// Running reports whether a Claude Code session of the profile, started by
+// ccam, is running.
+func Running(p paths.Paths, name string) bool { return session.Active(SessionDir(p, name)) }
 
-// prelaunch takes the locks that the claude process will hold and applies
-// MCP sharing. It returns the locks to hand over across exec.
-func prelaunch(p paths.Paths, cfg *config.Config, pl *Plan, dry bool) ([]*lock.Flock, error) {
-	var held []*lock.Flock
-	running := false
-	if !dry {
-		l, err := lock.TryFlock(ProfileLockPath(p, pl.Profile.Name))
-		switch {
-		case err == lock.ErrBusy:
-			running = true
-		case err != nil:
-			return nil, err
-		default:
-			held = append(held, l)
-		}
-	}
+// prelaunch registers the session (the marker then names the exec'd claude
+// process) and applies MCP sharing.
+func prelaunch(p paths.Paths, cfg *config.Config, pl *Plan, dry bool) error {
+	running := Running(p, pl.Profile.Name)
 	if err := applyMCP(p, cfg, pl, dry, running); err != nil {
-		return nil, err
+		return err
 	}
-	if !dry {
-		l, err := historyLock(p, pl)
-		if err != nil {
-			return nil, err
-		}
-		if l != nil {
-			held = append(held, l)
-		}
+	if dry {
+		return nil
 	}
-	return held, nil
+	if err := historyCheck(p, pl); err != nil {
+		return err
+	}
+	return session.Register(SessionDir(p, pl.Profile.Name))
 }
 
-// HistoryLockPath guards one (history group, working dir) pair: two
-// accounts sharing conversations in the same folder would write the same
-// session files.
-func HistoryLockPath(p paths.Paths, group, cwd string) string {
+// HistoryDir guards one (history group, working dir) pair: two accounts
+// sharing conversations in the same folder would write the same session files.
+func HistoryDir(p paths.Paths, group, cwd string) string {
 	h := fnv.New64a()
 	h.Write([]byte(cwd))
-	return filepath.Join(p.Runtime, fmt.Sprintf("history-%s-%016x.lock", group, h.Sum64()))
+	return filepath.Join(p.Runtime, fmt.Sprintf("history-%s-%016x", group, h.Sum64()))
 }
 
-func historyLock(p paths.Paths, pl *Plan) (*lock.Flock, error) {
+func historyCheck(p paths.Paths, pl *Plan) error {
 	group := pl.Profile.Share.Get("history")
 	if group == config.Local {
-		return nil, nil
+		return nil
 	}
 	cwd, err := os.Getwd()
 	if err != nil {
-		return nil, nil
+		return nil
 	}
-	l, err := lock.TryFlock(HistoryLockPath(p, group, cwd))
-	if err == nil {
-		return l, nil
+	dir := HistoryDir(p, group, cwd)
+	if session.Active(dir) {
+		fmt.Fprintf(os.Stderr, "ccam: 이 폴더에서 대화 내역을 공유하는 다른 Claude Code(%s 그룹)가 실행 중입니다.\n      같은 대화를 동시에 이어 쓰면 기록이 섞일 수 있습니다.\n", group)
+		if !askTTY("그래도 실행할까요?") {
+			return fmt.Errorf("취소했습니다")
+		}
 	}
-	if err != lock.ErrBusy {
-		return nil, err
-	}
-	fmt.Fprintf(os.Stderr, "ccam: 이 폴더에서 대화 내역을 공유하는 다른 Claude Code(%s 그룹)가 실행 중입니다.\n      같은 대화를 동시에 이어 쓰면 기록이 섞일 수 있습니다.\n", group)
-	if !askTTY("그래도 실행할까요?") {
-		return nil, fmt.Errorf("취소했습니다")
-	}
-	return nil, nil
+	return session.Register(dir)
 }
 
 // askTTY asks on the terminal; without one it proceeds (the warning is shown).

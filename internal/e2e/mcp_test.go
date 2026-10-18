@@ -104,16 +104,17 @@ func TestMCPSyncStrategy(t *testing.T) {
 	}
 }
 
-func TestProfileLockHeldWhileClaudeRuns(t *testing.T) {
+func TestSessionMarkerNamesTheClaudeProcess(t *testing.T) {
 	h := newHarness(t)
 	h.addAccounts()
-	lockPath := filepath.Join(h.home, "run", "profile-work.lock")
-	h.run("", []string{"FAKE_LOCK_PROBE=" + lockPath}, "ccs", "work")
-	if b, _ := os.ReadFile(lockPath + ".result"); strings.TrimSpace(string(b)) != "held" {
-		t.Fatalf("lock while running: %q", b)
+	dir := filepath.Join(h.home, "run", "profile-work")
+	h.run("", []string{"FAKE_SESSION_PROBE=" + dir}, "ccs", "work")
+	if b, _ := os.ReadFile(dir + ".result"); strings.TrimSpace(string(b)) != "held" {
+		t.Fatalf("marker while running: %q", b)
 	}
-	h.run("", []string{"FAKE_LOCK_PROBE=" + filepath.Join(h.home, "run", "profile-personal.lock")}, "ccs", "work")
-	if b, _ := os.ReadFile(filepath.Join(h.home, "run", "profile-personal.lock.result")); strings.TrimSpace(string(b)) != "free" {
-		t.Fatalf("other profile lock: %q", b)
+	other := filepath.Join(h.home, "run", "profile-personal")
+	h.run("", []string{"FAKE_SESSION_PROBE=" + other}, "ccs", "work")
+	if b, _ := os.ReadFile(other + ".result"); strings.TrimSpace(string(b)) != "free" {
+		t.Fatalf("other profile: %q", b)
 	}
 }

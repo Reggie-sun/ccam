@@ -15,9 +15,12 @@ fi
 if [ "$1" = auth ] && [ "$2" = logout ]; then
   printf '{}' > "$CLAUDE_CONFIG_DIR/.claude.json"
 fi
-if [ -n "$FAKE_LOCK_PROBE" ]; then
-  if flock -n "$FAKE_LOCK_PROBE" true; then echo free; else echo held; fi > "$FAKE_LOCK_PROBE.result"
+if [ -n "$FAKE_SESSION_PROBE" ]; then
+  # exec keeps the PID, so ccam's marker carries this process's PID.
+  if [ -f "$FAKE_SESSION_PROBE/$$" ]; then echo held; else echo free; fi > "$FAKE_SESSION_PROBE.result"
 fi
 if [ -n "$FAKE_CLAUDE_STDIN" ]; then cat > "$FAKE_CLAUDE_STDIN"; fi
 [ -n "$FAKE_SLEEP" ] && sleep "$FAKE_SLEEP"
+# A child that outlives claude, like a Bash-tool background job.
+[ -n "$FAKE_BG" ] && { sleep "$FAKE_BG" </dev/null >/dev/null 2>&1 & }
 exit "${FAKE_EXIT:-0}"

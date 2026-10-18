@@ -12,6 +12,7 @@ import (
 
 	"github.com/jhyunwoo/ccam/internal/fsutil"
 	"github.com/jhyunwoo/ccam/internal/lock"
+	"github.com/jhyunwoo/ccam/internal/session"
 )
 
 // TokenURL and clientID are what Claude Code uses to refresh its OAuth
@@ -24,14 +25,18 @@ const (
 
 // refresh renews an expired access token. Refresh tokens rotate, so doing
 // this while a Claude Code session of the profile runs would log that
-// session out: the profile lock must be free, and is held meanwhile.
+// session out: it is refused while any session is registered.
 func (f *Fetcher) refresh(ctx context.Context, a Account) (oauthCred, error) {
 	if a.Imported {
 		return oauthCred{}, fmt.Errorf("제자리 등록한 계정은 그냥 claude 로도 실행될 수 있어 갱신하지 않습니다")
 	}
-	l, err := lock.TryFlock(a.LockPath)
-	if err == lock.ErrBusy {
+	if session.Active(a.SessionDir) {
 		return oauthCred{}, fmt.Errorf("실행 중인 세션이 있어 갱신하지 않았습니다")
+	}
+	// Serialize ccam's own refreshes of this account.
+	l, err := lock.TryFlock(a.SessionDir + ".refresh.lock")
+	if err == lock.ErrBusy {
+		return oauthCred{}, fmt.Errorf("다른 ccam 이 이미 갱신 중입니다")
 	}
 	if err != nil {
 		return oauthCred{}, err

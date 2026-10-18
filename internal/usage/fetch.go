@@ -40,11 +40,11 @@ const (
 
 // Account is one profile to query.
 type Account struct {
-	Name     string
-	Slot     int
-	Dir      string // CLAUDE_CONFIG_DIR
-	LockPath string // held while a session started by ccam runs
-	Imported bool   // registered in place; plain `claude` may use it without ccam's lock
+	Name       string
+	Slot       int
+	Dir        string // CLAUDE_CONFIG_DIR
+	SessionDir string // markers of running sessions started by ccam
+	Imported   bool   // registered in place; plain `claude` may use it without ccam's lock
 }
 
 // Report is one account's result.

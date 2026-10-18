@@ -68,3 +68,20 @@ func fileExists(p string) bool {
 	_, err := os.Stat(p)
 	return err == nil
 }
+
+// A background job started inside the session must not keep the account
+// looking "running" after claude itself exits.
+func TestLeftoverChildDoesNotHoldSession(t *testing.T) {
+	h := newHarness(t)
+	h.addAccounts()
+	h.ok("ccam", "share", "personal", "--history", "on", "--yes")
+	h.ok("ccam", "share", "work", "--history", "on", "--yes")
+	r := h.run("", []string{"FAKE_BG=3"}, "ccs", "personal")
+	if r.code != 0 {
+		t.Fatalf("%+v", r)
+	}
+	r = h.run("", nil, "ccs", "work")
+	if strings.Contains(r.stderr, "다른 Claude Code") {
+		t.Fatalf("finished session still counted as running: %s", r.stderr)
+	}
+}

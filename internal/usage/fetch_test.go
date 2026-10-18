@@ -13,7 +13,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jhyunwoo/ccam/internal/lock"
+	"github.com/jhyunwoo/ccam/internal/session"
 )
 
 type env struct {
@@ -76,7 +76,7 @@ func (e *env) account(name, token string, expiresAt int64) Account {
 		cred := fmt.Sprintf(`{"claudeAiOauth":{"accessToken":%q,"refreshToken":"rt-old","expiresAt":%d},"mcpOAuth":{"x":"keep"}}`, token, expiresAt)
 		os.WriteFile(filepath.Join(dir, ".credentials.json"), []byte(cred), 0o600)
 	}
-	return Account{Name: name, Dir: dir, LockPath: filepath.Join(e.root, "run", name+".lock")}
+	return Account{Name: name, Dir: dir, SessionDir: filepath.Join(e.root, "run", name)}
 }
 
 var future = time.Now().Add(time.Hour).UnixMilli()
@@ -184,15 +184,15 @@ func TestRefreshOnlyWhenNotRunning(t *testing.T) {
 	past := time.Now().Add(-time.Hour).UnixMilli()
 	a := e.account("x", "stale", past)
 
-	held, err := lock.TryFlock(a.LockPath)
-	if err != nil {
+	// This test process stands in for a running claude.
+	if err := session.Register(a.SessionDir); err != nil {
 		t.Fatal(err)
 	}
 	r := e.f.Fetch(context.Background(), a, Options{Refresh: true})
 	if r.Status != StatusExpired || e.refresh.Load() != 0 || !strings.Contains(r.Err, "실행 중") {
 		t.Fatalf("refresh while running: %+v", r)
 	}
-	held.Unlock()
+	os.RemoveAll(a.SessionDir)
 
 	r = e.f.Fetch(context.Background(), a, Options{Refresh: true})
 	if r.Status != StatusOK || e.refresh.Load() != 1 {
