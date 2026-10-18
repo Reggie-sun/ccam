@@ -80,7 +80,8 @@ async function main() {
   const styleSrc = [styleHashes.size ? "" : "'self'", ...[...styleHashes, ...attrHashes].map((h) => `'sha256-${h}'`)].filter(Boolean).join(" ");
   const csp = [
     "default-src 'self'",
-    `script-src 'self' ${scriptHashes}`,
+    // Cloudflare Web Analytics, injected at the edge (plan section 9); it reports to same-origin /cdn-cgi/rum.
+    `script-src 'self' https://static.cloudflareinsights.com ${scriptHashes}`,
     `style-src ${styleSrc} 'unsafe-hashes'`,
     "img-src 'self' data:",
     "font-src 'self'",
