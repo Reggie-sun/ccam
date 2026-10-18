@@ -34,6 +34,7 @@ const placeholders = (s: string) => [...s.matchAll(/\{(\w+)/g)].map((m) => m[1])
 function compare(en: unknown, tr: unknown, path: string, code: string): void {
   if (typeof en === "string") {
     if (typeof tr !== "string") return void errors.push(`${code}: ${path} should be a string`);
+    if (/\.(command|also)$/.test(path) && tr !== en) errors.push(`${code}: ${path} is a command and must stay "${en}"`);
     if (placeholders(en) !== placeholders(tr)) errors.push(`${code}: ${path} placeholders {${placeholders(en)}} ≠ {${placeholders(tr)}}`);
     if (!tr.trim()) errors.push(`${code}: ${path} is empty`);
     return;

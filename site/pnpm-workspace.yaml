@@ -1,0 +1,4 @@
+# esbuild (bundles the Worker) and workerd (wrangler dev) download platform binaries on install.
+allowBuilds:
+  esbuild: true
+  workerd: true
