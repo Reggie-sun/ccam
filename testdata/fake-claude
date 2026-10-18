@@ -9,6 +9,8 @@ log="${FAKE_CLAUDE_LOG:?FAKE_CLAUDE_LOG not set}"
 } > "$log"
 if [ "$1" = auth ] && [ "$2" = login ]; then
   printf '{"numStartups":1,"oauthAccount":{"emailAddress":"%s"}}' "${FAKE_EMAIL:-user@example.com}" > "$CLAUDE_CONFIG_DIR/.claude.json"
+  printf '{"claudeAiOauth":{"accessToken":"fake","expiresAt":4102444800000}}' > "$CLAUDE_CONFIG_DIR/.credentials.json"
+  chmod 600 "$CLAUDE_CONFIG_DIR/.credentials.json"
 fi
 if [ "$1" = auth ] && [ "$2" = logout ]; then
   printf '{}' > "$CLAUDE_CONFIG_DIR/.claude.json"
@@ -17,4 +19,5 @@ if [ -n "$FAKE_LOCK_PROBE" ]; then
   if flock -n "$FAKE_LOCK_PROBE" true; then echo free; else echo held; fi > "$FAKE_LOCK_PROBE.result"
 fi
 if [ -n "$FAKE_CLAUDE_STDIN" ]; then cat > "$FAKE_CLAUDE_STDIN"; fi
+[ -n "$FAKE_SLEEP" ] && sleep "$FAKE_SLEEP"
 exit "${FAKE_EXIT:-0}"

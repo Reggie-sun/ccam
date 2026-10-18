@@ -440,3 +440,6 @@ history = "local"
 - Phase 3: 이름이 겹치면 `.claude.json`의 계정 서버가 `--mcp-config`보다 우선하므로, `mcp import`는 그룹으로 복사한 뒤 계정 쪽 항목을 지웁니다 (백업 후, 실행 중이면 건너뜀).
 - Phase 3: `.claude.json`의 키 하나만 꺼내는 바이트 스캐너를 만들었습니다. 1.6 MB 파일에서 json.Decoder보다 6.4배 빠르고(0.77 ms), 퍼징으로 encoding/json과 결과를 대조했습니다. `.claude.json`이 바뀐 직후 실행도 p95 5.5 ms.
 - Phase 3: 완료 기준 확인 — 실제 Claude Code 2.1.302로 두 계정 모두 그룹 MCP 서버가 보임 (flag, sync 둘 다).
+- Phase 4: `ccam next`는 마지막으로 쓴 계정의 다음 번호(순환)로 갑니다. 로그인 안 된 계정(`.credentials.json` 없음)은 건너뛰고, `--continue`면 같은 대화 내역 그룹의 계정만 고른 뒤 `claude --continue`를 붙입니다.
+- Phase 4: `(그룹, 작업 폴더)` 잠금도 claude 프로세스가 쥡니다. 이미 잡혀 있으면 경고하고, 터미널이면 계속할지 묻고, 파이프 입력(`-p` 스크립트 등)이면 경고만 하고 진행합니다.
+- Phase 4: 완료 기준 확인 — 실제 Claude Code로 1번 계정에서 시작한 대화를 `ccs next --continue`로 2번 계정에서 이어감.

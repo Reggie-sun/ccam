@@ -2,6 +2,7 @@ package launcher
 
 import (
 	"fmt"
+	"hash/fnv"
 	"io"
 	"os"
 	"path/filepath"
@@ -81,7 +82,61 @@ func prelaunch(p paths.Paths, cfg *config.Config, pl *Plan, dry bool) ([]*lock.F
 	if err := applyMCP(p, cfg, pl, dry, running); err != nil {
 		return nil, err
 	}
+	if !dry {
+		l, err := historyLock(p, pl)
+		if err != nil {
+			return nil, err
+		}
+		if l != nil {
+			held = append(held, l)
+		}
+	}
 	return held, nil
+}
+
+// HistoryLockPath guards one (history group, working dir) pair: two
+// accounts sharing conversations in the same folder would write the same
+// session files.
+func HistoryLockPath(p paths.Paths, group, cwd string) string {
+	h := fnv.New64a()
+	h.Write([]byte(cwd))
+	return filepath.Join(p.Runtime, fmt.Sprintf("history-%s-%016x.lock", group, h.Sum64()))
+}
+
+func historyLock(p paths.Paths, pl *Plan) (*lock.Flock, error) {
+	group := pl.Profile.Share.Get("history")
+	if group == config.Local {
+		return nil, nil
+	}
+	cwd, err := os.Getwd()
+	if err != nil {
+		return nil, nil
+	}
+	l, err := lock.TryFlock(HistoryLockPath(p, group, cwd))
+	if err == nil {
+		return l, nil
+	}
+	if err != lock.ErrBusy {
+		return nil, err
+	}
+	fmt.Fprintf(os.Stderr, "ccam: 이 폴더에서 대화 내역을 공유하는 다른 Claude Code(%s 그룹)가 실행 중입니다.\n      같은 대화를 동시에 이어 쓰면 기록이 섞일 수 있습니다.\n", group)
+	if !askTTY("그래도 실행할까요?") {
+		return nil, fmt.Errorf("취소했습니다")
+	}
+	return nil, nil
+}
+
+// askTTY asks on the terminal; without one it proceeds (the warning is shown).
+func askTTY(question string) bool {
+	fi, err := os.Stdin.Stat()
+	if err != nil || fi.Mode()&os.ModeCharDevice == 0 {
+		return true
+	}
+	fmt.Fprintf(os.Stderr, "%s [y/N] ", question)
+	var buf [16]byte
+	n, _ := os.Stdin.Read(buf[:])
+	ans := strings.ToLower(strings.TrimSpace(string(buf[:n])))
+	return ans == "y" || ans == "yes"
 }
 
 func applyMCP(p paths.Paths, cfg *config.Config, pl *Plan, dry, running bool) error {
