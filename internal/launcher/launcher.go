@@ -83,9 +83,9 @@ func buildEnv(environ []string, dir, name string) []string {
 
 // DryRun prints what would be executed.
 func (pl *Plan) DryRun(w io.Writer) {
-	parts := []string{"CLAUDE_CONFIG_DIR=" + shellQuote(pl.Dir), shellQuote(pl.Bin)}
+	parts := []string{"CLAUDE_CONFIG_DIR=" + ShellQuote(pl.Dir), ShellQuote(pl.Bin)}
 	for _, a := range pl.Argv[1:] {
-		parts = append(parts, shellQuote(a))
+		parts = append(parts, ShellQuote(a))
 	}
 	fmt.Fprintln(w, strings.Join(parts, " "))
 }
@@ -168,7 +168,8 @@ func isSelf(path string) bool {
 	return err1 == nil && err2 == nil && a == b
 }
 
-func shellQuote(s string) string {
+// ShellQuote quotes s for sh when needed.
+func ShellQuote(s string) string {
 	if s == "" {
 		return "''"
 	}

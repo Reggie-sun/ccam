@@ -72,7 +72,7 @@ func newRoot(e *env) *cobra.Command {
 	root.CompletionOptions.DisableDefaultCmd = true
 	root.AddCommand(
 		addCmd(e), listCmd(e), runCmd(e), useCmd(e), removeCmd(e), renameCmd(e),
-		loginCmd(e), logoutCmd(e), shimsCmd(e), versionCmd(e), shareCmd(e), doctorCmd(e), mcpCmd(e), nextCmd(e),
+		loginCmd(e), logoutCmd(e), shimsCmd(e), versionCmd(e), shareCmd(e), doctorCmd(e), mcpCmd(e), nextCmd(e), usageCmd(e), statuslineCmd(e),
 	)
 	return root
 }

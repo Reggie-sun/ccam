@@ -1,0 +1,10 @@
+{
+  "hook_event_name": "Status",
+  "session_id": "abc",
+  "model": {"id": "claude-opus-5-5", "display_name": "Opus"},
+  "workspace": {"current_dir": "/home/u/code", "project_dir": "/home/u/code"},
+  "rate_limits": {
+    "five_hour": {"used_percentage": 23.5, "resets_at": 1792346400},
+    "seven_day": {"used_percentage": 41, "resets_at": 1792634400}
+  }
+}

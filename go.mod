@@ -8,6 +8,8 @@ require (
 )
 
 require (
+	github.com/clipperhouse/uax29/v2 v2.2.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
+	github.com/mattn/go-runewidth v0.0.31 // indirect
 	github.com/spf13/pflag v1.0.9 // indirect
 )

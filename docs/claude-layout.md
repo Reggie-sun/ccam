@@ -89,4 +89,13 @@ Claude Code pipes JSON to the `statusLine` command. `rate_limits` appears only f
 subscribers and only after the first API response:
 `rate_limits.five_hour.used_percentage` (0-100), `rate_limits.five_hour.resets_at` (Unix seconds),
 same for `seven_day`. Each window may be absent. The command inherits Claude Code's environment,
-so `CLAUDE_CONFIG_DIR` identifies the profile.
+so `CLAUDE_CONFIG_DIR` (and ccam's `CCAM_PROFILE`) identifies the profile.
+Verified end to end: `ccam statusline` inside a real session received `rate_limits.five_hour` after the
+first reply (`seven_day` was absent on that account, matching the live endpoint's null `seven_day`).
+
+### Token refresh (unverified)
+
+`ccam usage --refresh` posts `grant_type=refresh_token` to `https://console.anthropic.com/v1/oauth/token`
+with Claude Code's public client id. This was **not** exercised against the live service: refresh tokens
+rotate, so a test refresh would log out the running session that owns the token. Only unit-tested
+against a fake server; it refuses to run while a session of that profile holds the profile lock.
