@@ -13,5 +13,8 @@ fi
 if [ "$1" = auth ] && [ "$2" = logout ]; then
   printf '{}' > "$CLAUDE_CONFIG_DIR/.claude.json"
 fi
+if [ -n "$FAKE_LOCK_PROBE" ]; then
+  if flock -n "$FAKE_LOCK_PROBE" true; then echo free; else echo held; fi > "$FAKE_LOCK_PROBE.result"
+fi
 if [ -n "$FAKE_CLAUDE_STDIN" ]; then cat > "$FAKE_CLAUDE_STDIN"; fi
 exit "${FAKE_EXIT:-0}"

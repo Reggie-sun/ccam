@@ -15,6 +15,7 @@ import (
 	"github.com/jhyunwoo/ccam/internal/config"
 	"github.com/jhyunwoo/ccam/internal/fsutil"
 	"github.com/jhyunwoo/ccam/internal/launcher"
+	"github.com/jhyunwoo/ccam/internal/mcp"
 	"github.com/jhyunwoo/ccam/internal/paths"
 	"github.com/jhyunwoo/ccam/internal/profile"
 	"github.com/jhyunwoo/ccam/internal/share"
@@ -72,6 +73,7 @@ func Run(p paths.Paths, cfg *config.Config, opt Options) []Finding {
 		checkProfile(r, p, &cfg.Profiles[i], opt.Fix)
 	}
 	checkPlugins(r, p, cfg, opt.Fix)
+	checkMCP(r, p, cfg)
 	checkShims(r, p, cfg, opt)
 	return r.out
 }
@@ -273,6 +275,27 @@ func rewriteStrings(v any, fn func(string) string) any {
 		}
 	}
 	return v
+}
+
+func checkMCP(r *report, p paths.Paths, cfg *config.Config) {
+	seen := map[string]bool{}
+	for _, prof := range cfg.Profiles {
+		g := prof.Share.Get("mcp")
+		if g == config.Local || seen[g] {
+			continue
+		}
+		seen[g] = true
+		store, err := mcp.Load(mcp.Path(p.GroupDir(g)))
+		if err != nil {
+			r.add(Error, "", "%v", err)
+			continue
+		}
+		for _, n := range store.Names() {
+			if err := mcp.Validate(store.Servers[n]); err != nil {
+				r.add(Warn, "", "%s 그룹 MCP 서버 %s: %v", g, n, err)
+			}
+		}
+	}
 }
 
 func checkShims(r *report, p paths.Paths, cfg *config.Config, opt Options) {

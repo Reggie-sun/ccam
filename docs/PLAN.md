@@ -434,3 +434,9 @@ history = "local"
 - Phase 2: JSON 병합은 객체는 재귀 병합, 배열은 합집합, 값이 충돌하면 그룹 값을 유지합니다. `history.jsonl` 충돌은 줄 단위 병합이 기본입니다.
 - Phase 2: 플러그인 `installPath`는 설치한 계정 폴더 경로로 저장됩니다. 그 계정을 지우면 다른 계정의 플러그인 경로가 깨지므로 `doctor --fix`가 그룹 폴더 경로로 바꿉니다.
 - Phase 2: 실행 시 링크가 없기만 하면 바로 만들고, 실제 파일이 있는 등 데이터가 걸린 문제는 실행을 멈추고 `ccam doctor --fix`를 안내합니다. 실행 경로 벤치마크 63 µs/op (링크 확인 포함).
+- Phase 3: 파일 잠금은 `gofrs/flock` 대신 `syscall.Flock`을 씁니다 (리눅스 전용이라 의존성 불필요). 잠금 fd의 close-on-exec를 풀어 `exec`된 claude 프로세스가 잠금을 계속 쥐게 하므로, 잠금이 잡혀 있으면 "그 계정이 실행 중"이라는 뜻입니다.
+- Phase 3: `.claude.json` 잠금은 Claude Code와 같은 방식(`.claude.json.lock` 디렉터리, 10초 지나면 오래된 잠금)으로 잡습니다.
+- Phase 3: 세션 안에서 `claude mcp add`로 추가된 서버는 실행 때 묻지 않고 한 줄 안내(`ccam mcp import <계정> <서버>`)만 보여줍니다. 실행 경로에서 입력을 기다리지 않기 위해서입니다.
+- Phase 3: 이름이 겹치면 `.claude.json`의 계정 서버가 `--mcp-config`보다 우선하므로, `mcp import`는 그룹으로 복사한 뒤 계정 쪽 항목을 지웁니다 (백업 후, 실행 중이면 건너뜀).
+- Phase 3: `.claude.json`의 키 하나만 꺼내는 바이트 스캐너를 만들었습니다. 1.6 MB 파일에서 json.Decoder보다 6.4배 빠르고(0.77 ms), 퍼징으로 encoding/json과 결과를 대조했습니다. `.claude.json`이 바뀐 직후 실행도 p95 5.5 ms.
+- Phase 3: 완료 기준 확인 — 실제 Claude Code 2.1.302로 두 계정 모두 그룹 MCP 서버가 보임 (flag, sync 둘 다).

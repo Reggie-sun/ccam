@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -86,41 +85,26 @@ func Rename(p paths.Paths, cfg *config.Config, oldName, newName string) error {
 }
 
 // ReadEmail pulls oauthAccount.emailAddress out of <dir>/.claude.json.
-// The file can be several MB, so it streams and only decodes the one key.
+// The file can be several MB, so only the one key is decoded.
 func ReadEmail(dir string) (string, error) {
-	f, err := os.Open(filepath.Join(dir, ".claude.json"))
-	if err != nil {
-		return "", err
-	}
-	defer f.Close()
 	var acct struct {
 		EmailAddress string `json:"emailAddress"`
 	}
-	found, err := DecodeKey(f, "oauthAccount", &acct)
-	if err != nil || !found {
+	if _, err := DecodeFileKey(filepath.Join(dir, ".claude.json"), "oauthAccount", &acct); err != nil {
 		return "", err
 	}
 	return acct.EmailAddress, nil
 }
 
-// DecodeKey decodes one top-level key of a JSON object into v, skipping the rest.
-func DecodeKey(r io.Reader, key string, v any) (bool, error) {
-	dec := json.NewDecoder(r)
-	if tok, err := dec.Token(); err != nil || tok != json.Delim('{') {
-		return false, fmt.Errorf("JSON 객체가 아닙니다")
+// DecodeFileKey decodes one top-level key of a JSON file into v.
+func DecodeFileKey(path, key string, v any) (bool, error) {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return false, err
 	}
-	for dec.More() {
-		tok, err := dec.Token()
-		if err != nil {
-			return false, err
-		}
-		if tok == key {
-			return true, dec.Decode(v)
-		}
-		var skip json.RawMessage
-		if err := dec.Decode(&skip); err != nil {
-			return false, err
-		}
+	raw, ok, err := TopLevelValue(data, key)
+	if err != nil || !ok {
+		return false, err
 	}
-	return false, nil
+	return true, json.Unmarshal(raw, v)
 }

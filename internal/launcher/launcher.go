@@ -20,7 +20,6 @@ import (
 	"github.com/jhyunwoo/ccam/internal/paths"
 	"github.com/jhyunwoo/ccam/internal/profile"
 	"github.com/jhyunwoo/ccam/internal/share"
-	"github.com/jhyunwoo/ccam/internal/trace"
 )
 
 type Plan struct {
@@ -179,31 +178,6 @@ func shellQuote(s string) string {
 		return s
 	}
 	return "'" + strings.ReplaceAll(s, "'", `'\''`) + "'"
-}
-
-// Launch is the whole `ccs <name>` sequence: load config, prepare, then exec
-// (or print the plan when dry).
-func Launch(p paths.Paths, sel string, args []string, dry bool, stdout io.Writer) error {
-	trace.Step("start")
-	cfg, err := config.Load(p.ConfigFile())
-	if err != nil {
-		return err
-	}
-	trace.Step("load config")
-	pl, err := Prepare(p, cfg, sel, args)
-	if err != nil {
-		return err
-	}
-	trace.Step("prepare")
-	if err := checkLinks(p, pl); err != nil {
-		return err
-	}
-	trace.Step("check links")
-	if dry {
-		pl.DryRun(stdout)
-		return nil
-	}
-	return pl.Exec(p)
 }
 
 // checkLinks verifies share links with lstat only. Missing links are created
