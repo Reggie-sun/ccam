@@ -30,7 +30,7 @@ func pickAuto(e *env, cfg *config.Config, cands []next.Candidate, sameHistory bo
 		byName[c.Profile.Name] = c.Profile
 	}
 	if len(accts) == 0 {
-		return nil, nil, fmt.Errorf("고를 수 있는 로그인된 계정이 없습니다")
+		return nil, nil, fmt.Errorf("no logged-in account to pick")
 	}
 	reports := e.fetcher().FetchAll(context.Background(), accts, usage.Options{}, nil)
 	view := make([]*usage.Report, len(reports))
@@ -39,7 +39,7 @@ func pickAuto(e *env, cfg *config.Config, cands []next.Candidate, sameHistory bo
 	}
 	best := usage.Best(view)
 	if best == nil {
-		return nil, nil, fmt.Errorf("사용량을 알 수 있는 여유 계정이 없습니다 (`ccam usage` 로 확인)")
+		return nil, nil, fmt.Errorf("no account with known usage and headroom (see `ccam usage`)")
 	}
 	return from, byName[best.Name], nil
 }

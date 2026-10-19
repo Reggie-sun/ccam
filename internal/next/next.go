@@ -22,7 +22,7 @@ type Candidate struct {
 // qualify, so `--continue` can find the conversation.
 func Rotate(cands []Candidate, sameHistory bool) (from, to *config.Profile, err error) {
 	if len(cands) == 0 {
-		return nil, nil, fmt.Errorf("등록된 계정이 없습니다")
+		return nil, nil, fmt.Errorf("no accounts yet")
 	}
 	sorted := append([]Candidate(nil), cands...)
 	sort.Slice(sorted, func(i, j int) bool { return sorted[i].Profile.Slot < sorted[j].Profile.Slot })
@@ -45,7 +45,7 @@ func Rotate(cands []Candidate, sameHistory bool) (from, to *config.Profile, err 
 		return from, c.Profile, nil
 	}
 	if sameHistory {
-		return from, nil, fmt.Errorf("%s 와 대화 내역을 공유하는 다른 계정이 없습니다. `ccam share <이름> --history on` 으로 켜세요", from.Name)
+		return from, nil, fmt.Errorf("no other account shares conversation history with %s. Turn it on with `ccam share <name> --history on`", from.Name)
 	}
-	return from, nil, fmt.Errorf("%s 말고 로그인된 계정이 없습니다", from.Name)
+	return from, nil, fmt.Errorf("no logged-in account other than %s", from.Name)
 }

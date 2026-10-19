@@ -56,8 +56,8 @@ func ccamPath() (string, error) {
 func newRoot(e *env) *cobra.Command {
 	root := &cobra.Command{
 		Use:           "ccam",
-		Short:         "Claude Code 다중 계정 관리 도구",
-		Long:          "ccam은 Claude Code 계정 여러 개를 추가하고 전환합니다.\n\n  ccam <이름|번호> [claude 인자]  그 계정으로 Claude Code 실행\n  claude1, claude2 …            번호로 바로 실행",
+		Short:         "Claude Code multi-account manager",
+		Long:          "ccam adds and switches between several Claude Code accounts.\n\n  ccam <name|slot> [claude args]  run Claude Code as that account\n  claude1, claude2 …              run by slot number",
 		Version:       Version,
 		SilenceUsage:  true,
 		SilenceErrors: true,
@@ -68,7 +68,7 @@ func newRoot(e *env) *cobra.Command {
 	root.SetIn(e.stdin)
 	root.SetOut(e.stdout)
 	root.SetErr(e.stderr)
-	root.PersistentFlags().BoolVar(&e.dryRun, "dry-run", false, "실행하지 않고 할 일만 출력")
+	root.PersistentFlags().BoolVar(&e.dryRun, "dry-run", false, "print what would happen without doing it")
 	root.CompletionOptions.DisableDefaultCmd = true
 	root.ValidArgsFunction = profileNames(e) // `ccam <tab>` lists accounts
 	root.AddCommand(
@@ -87,7 +87,7 @@ func newRoot(e *env) *cobra.Command {
 func versionCmd(e *env) *cobra.Command {
 	return &cobra.Command{
 		Use:   "version",
-		Short: "버전 출력",
+		Short: "Print the version",
 		Args:  cobra.NoArgs,
 		Run:   func(cmd *cobra.Command, args []string) { e.printf("ccam %s\n", Version) },
 	}

@@ -40,10 +40,10 @@ func TestPrepareSelectsProfile(t *testing.T) {
 	}{
 		{"work", []string{"--resume"}, "work", []string{"claude", "--resume"}},
 		{"1", []string{"--model", "opus", "--continue"}, "personal", []string{"claude", "--model", "opus", "--continue"}},
-		{"", []string{"-p", "요약해줘"}, "work", []string{"claude", "-p", "요약해줘"}},
+		{"", []string{"-p", "résume ça"}, "work", []string{"claude", "-p", "résume ça"}},
 		{"work", []string{"--", "--version"}, "work", []string{"claude", "--version"}},
 		{"work", []string{"--help"}, "work", []string{"claude", "--help"}},
-		{"work", []string{"-p", "테스트 고쳐줘", "--output-format", "json"}, "work", []string{"claude", "-p", "테스트 고쳐줘", "--output-format", "json"}},
+		{"work", []string{"-p", "corrige les tests — ü", "--output-format", "json"}, "work", []string{"claude", "-p", "corrige les tests — ü", "--output-format", "json"}},
 		{"work", []string{"a", "--", "b"}, "work", []string{"claude", "a", "--", "b"}},
 	}
 	for _, c := range cases {
@@ -90,10 +90,10 @@ func TestInsertArgsGoesBeforeUserArgs(t *testing.T) {
 }
 
 func TestDryRunQuotes(t *testing.T) {
-	pl := &Plan{Dir: "/d", Bin: "/bin/claude", Argv: []string{"claude", "-p", "it's 한글", "--x"}}
+	pl := &Plan{Dir: "/d", Bin: "/bin/claude", Argv: []string{"claude", "-p", "it's ünïcode", "--x"}}
 	var buf bytes.Buffer
 	pl.DryRun(&buf)
-	want := `CLAUDE_CONFIG_DIR=/d /bin/claude -p 'it'\''s 한글' --x` + "\n"
+	want := `CLAUDE_CONFIG_DIR=/d /bin/claude -p 'it'\''s ünïcode' --x` + "\n"
 	if buf.String() != want {
 		t.Fatalf("got %s", buf.String())
 	}

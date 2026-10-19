@@ -42,7 +42,7 @@ const (
 )
 
 func (r Resolution) String() string {
-	return [...]string{"그룹 것 유지", "내 것으로 덮기", "JSON 병합", "줄 단위 병합"}[r]
+	return [...]string{"keep group", "use mine", "merge JSON", "merge by line"}[r]
 }
 
 // Conflict is a file that exists in both places with different content.
@@ -87,7 +87,7 @@ func Build(dir, groupsRoot string, current, target config.Share, opt Options) (*
 		from, to := current.Get(item), target.Get(item)
 		for _, e := range Layout[item] {
 			if Never[e.Name] {
-				return nil, fmt.Errorf("내부 오류: %s 는 공유할 수 없습니다", e.Name)
+				return nil, fmt.Errorf("internal error: %s cannot be shared", e.Name)
 			}
 			mine := filepath.Join(dir, e.Name)
 			info, err := os.Lstat(mine)
@@ -123,12 +123,12 @@ func Build(dir, groupsRoot string, current, target config.Share, opt Options) (*
 					Step{Op: OpBackup, Item: item, Entry: e, From: mine, To: pl.backupPath(e)})
 			case foreign:
 				pl.Steps = append(pl.Steps, Step{Op: OpBackup, Item: item, Entry: e, From: mine, To: pl.backupPath(e)})
-				pl.Notes = append(pl.Notes, fmt.Sprintf("%s: 기존 링크(→ %s)는 백업하고 %s 그룹 내용을 씁니다", e.Name, linkTarget, to))
+				pl.Notes = append(pl.Notes, fmt.Sprintf("%s: backing up the existing link (→ %s) and using group %s", e.Name, linkTarget, to))
 			case isLink:
 				// Linked to another group: relink, leaving that group as it is.
 				pl.Steps = append(pl.Steps, Step{Op: OpUnlink, Item: item, Entry: e, From: mine})
 				if from != config.Local && from != to {
-					pl.Notes = append(pl.Notes, fmt.Sprintf("%s: %s 그룹 내용은 그대로 두고 %s 그룹으로 연결합니다", e.Name, from, to))
+					pl.Notes = append(pl.Notes, fmt.Sprintf("%s: leaving group %s as it is and linking to group %s", e.Name, from, to))
 				}
 			case exists:
 				if err := planAdopt(pl, item, e, mine, grp); err != nil {
@@ -208,38 +208,38 @@ func sameFile(a, b string) (bool, error) {
 	return bytes.Equal(x, y), err
 }
 
-// Describe writes the plan in plain Korean, one step per line.
+// Describe writes the plan in plain words, one step per line.
 func (pl *Plan) Describe(w io.Writer) {
 	if pl.Empty() {
-		fmt.Fprintln(w, "  바꿀 것이 없습니다.")
+		fmt.Fprintln(w, "  Nothing to change.")
 		return
 	}
 	for _, s := range pl.Steps {
 		var line string
 		switch s.Op {
 		case OpAdopt:
-			line = fmt.Sprintf("옮기기   %s → %s (그룹의 첫 내용)", s.From, s.To)
+			line = fmt.Sprintf("move     %s → %s (first content of the group)", s.From, s.To)
 		case OpMergeDir:
-			line = fmt.Sprintf("합치기   %s 의 새 파일 → %s", s.From, s.To)
+			line = fmt.Sprintf("merge    new files in %s → %s", s.From, s.To)
 		case OpWriteGroup:
-			line = fmt.Sprintf("충돌     %s ↔ %s: %s", s.From, s.To, s.Conflict.Choice)
+			line = fmt.Sprintf("conflict %s ↔ %s: %s", s.From, s.To, s.Conflict.Choice)
 		case OpBackup:
-			line = fmt.Sprintf("백업     %s → %s", s.From, s.To)
+			line = fmt.Sprintf("back up  %s → %s", s.From, s.To)
 		case OpUnlink:
-			line = fmt.Sprintf("링크 해제 %s", s.From)
+			line = fmt.Sprintf("unlink   %s", s.From)
 		case OpLink:
-			line = fmt.Sprintf("링크     %s → %s", s.To, s.From)
+			line = fmt.Sprintf("link     %s → %s", s.To, s.From)
 		case OpCopyBack, OpCopyToGroup:
-			line = fmt.Sprintf("복사     %s → %s", s.From, s.To)
+			line = fmt.Sprintf("copy     %s → %s", s.From, s.To)
 		case OpMergeRegistry:
-			line = fmt.Sprintf("합치기   %s → %s (플러그인 목록)", s.From, s.To)
+			line = fmt.Sprintf("merge    %s → %s (plugin list)", s.From, s.To)
 		case OpRewritePlugins:
-			line = fmt.Sprintf("경로     %s 의 플러그인 경로를 그룹 폴더로", s.To)
+			line = fmt.Sprintf("paths    plugin paths in %s → the group folder", s.To)
 		}
 		fmt.Fprintln(w, "  "+line)
 	}
 	for _, n := range pl.Notes {
-		fmt.Fprintln(w, "  참고: "+n)
+		fmt.Fprintln(w, "  Note: "+n)
 	}
 }
 

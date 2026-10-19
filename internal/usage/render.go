@@ -18,22 +18,25 @@ type RenderOptions struct {
 
 const barWidth = 8
 
+// resetWidth fits the longest Duration below a week, "23h 59m".
+const resetWidth = 8
+
 // width measures terminal columns. Box-drawing blocks are "ambiguous width";
 // Korean locales would count them as 2, but terminals draw them as 1.
 var width = &runewidth.Condition{EastAsianWidth: false}
 
 // Table renders reports as aligned lines: header first, one line per
 // account (plus model-specific lines with Verbose). Pending reports render
-// as "조회 중…" so a live view can redraw in place.
+// as "fetching…" so a live view can redraw in place.
 func Table(reports []*Report, o RenderOptions) []string {
-	nameW := 4
+	nameW := 5 // fits the "Account" header with the slot column
 	for _, r := range reports {
 		if r != nil {
 			nameW = max(nameW, width.StringWidth(r.Name))
 		}
 	}
 	lines := []string{fmt.Sprintf(" %s  %s %s  %s %s  %s",
-		pad("계정", nameW+2), pad("5시간", barWidth+5), pad("초기화", 10), pad("주간", barWidth+5), pad("초기화", 10), "기준")}
+		pad("Account", nameW+2), pad("5-hour", barWidth+5), pad("Resets", resetWidth), pad("Weekly", barWidth+5), pad("Resets", resetWidth), "As of")}
 	for _, r := range reports {
 		if r == nil {
 			continue
@@ -48,29 +51,29 @@ func row(r *Report, nameW int, o RenderOptions) []string {
 	var body string
 	switch {
 	case r.Status == StatusPending:
-		body = "조회 중…"
+		body = "fetching…"
 	case r.Status == StatusAPI:
-		body = "한도 없음 (API)"
+		body = "no limits (API)"
 	case r.Status == StatusLoggedOut:
-		body = fmt.Sprintf("로그인 안 됨 → ccam login %s", r.Name)
+		body = fmt.Sprintf("not logged in → ccam login %s", r.Name)
 	case r.Limits == nil && r.Status == StatusExpired:
-		body = fmt.Sprintf("로그인 만료, `ccam %s` 를 한 번 실행하면 갱신", r.Name)
+		body = fmt.Sprintf("login expired, run `ccam %s` once to refresh", r.Name)
 	case r.Limits == nil:
-		body = "조회 실패: " + r.Err
+		body = "lookup failed: " + r.Err
 	default:
 		l := r.Limits
 		body = fmt.Sprintf("%s %s  %s %s  %s",
-			gauge(l.FiveHour, o), pad(until(l.FiveHour, o.Now), 10),
-			gauge(l.Weekly, o), pad(until(l.Weekly, o.Now), 10), basis(r, o.Now))
+			gauge(l.FiveHour, o), pad(until(l.FiveHour, o.Now), resetWidth),
+			gauge(l.Weekly, o), pad(until(l.Weekly, o.Now), resetWidth), basis(r, o.Now))
 	}
 	out := []string{head + "  " + body}
 	if o.Verbose && r.Limits != nil {
 		for _, s := range r.Limits.Scoped {
-			out = append(out, fmt.Sprintf(" %s  %s  %s", pad("", nameW+2), pad("· "+s.Name+" 주간", barWidth+5+1+10),
+			out = append(out, fmt.Sprintf(" %s  %s  %s", pad("", nameW+2), pad("· "+s.Name+" weekly", barWidth+5+1+resetWidth),
 				gauge(s.Window, o)+" "+until(s.Window, o.Now)))
 		}
 		if r.Source != "" {
-			out = append(out, fmt.Sprintf(" %s  출처: %s", pad("", nameW+2), r.Source))
+			out = append(out, fmt.Sprintf(" %s  source: %s", pad("", nameW+2), r.Source))
 		}
 	}
 	return out
@@ -101,34 +104,34 @@ func until(w Window, now time.Time) string {
 	return Duration(w.ResetsAt.Sub(now))
 }
 
-// Duration renders a short Korean duration: "1시간 40분", "3일 6시간", "22분".
+// Duration renders a short duration: "1h 40m", "3d 6h", "22m".
 func Duration(d time.Duration) string {
 	if d <= 0 {
-		return "곧"
+		return "soon"
 	}
 	mins := int(d.Minutes())
 	days, hours, m := mins/1440, mins%1440/60, mins%60
 	switch {
 	case days > 0:
-		return fmt.Sprintf("%d일 %d시간", days, hours)
+		return fmt.Sprintf("%dd %dh", days, hours)
 	case hours > 0:
-		return fmt.Sprintf("%d시간 %d분", hours, m)
+		return fmt.Sprintf("%dh %dm", hours, m)
 	default:
-		return fmt.Sprintf("%d분", max(m, 1))
+		return fmt.Sprintf("%dm", max(m, 1))
 	}
 }
 
 func basis(r *Report, now time.Time) string {
 	ago := now.Sub(r.At)
-	s := "방금"
+	s := "just now"
 	if ago >= time.Minute {
-		s = Duration(ago) + " 전"
+		s = Duration(ago) + " ago"
 	}
 	switch {
 	case r.Source == "cache" || r.Source == "statusline":
-		s += " (캐시)"
+		s += " (cached)"
 	case r.Status == StatusExpired:
-		s += " (만료)"
+		s += " (expired)"
 	}
 	return s
 }

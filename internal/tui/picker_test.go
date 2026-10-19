@@ -18,8 +18,8 @@ import (
 
 func rows() []Row {
 	return []Row{
-		{Name: "personal", Slot: 1, Email: "me@example.com", Share: config.DefaultShare(), LastUsed: "방금", Default: true},
-		{Name: "work", Slot: 2, Email: "dev@company.com", Share: config.DefaultShare(), LastUsed: "2시간 전"},
+		{Name: "personal", Slot: 1, Email: "me@example.com", Share: config.DefaultShare(), LastUsed: "just now", Default: true},
+		{Name: "work", Slot: 2, Email: "dev@company.com", Share: config.DefaultShare(), LastUsed: "2h ago"},
 		{Name: "side", Slot: 3, Share: config.Share{}, LastUsed: "-"},
 	}
 }
@@ -100,7 +100,7 @@ func TestPickerShareToggle(t *testing.T) {
 	if r.Action != Share || r.Profile != "personal" || r.Share.Get("history") != "default" || r.Share.Get("mcp") != "default" {
 		t.Fatalf("%+v", r)
 	}
-	if !strings.Contains(out, "대화 내역") {
+	if !strings.Contains(out, "conversation history") {
 		t.Fatal("share screen not shown")
 	}
 	// Toggling off and on again is no change: Enter just goes back.
@@ -177,7 +177,7 @@ func TestWizardNameThenItems(t *testing.T) {
 	tm := teatest.NewTestModel(t, NewWizard(cfg, ""), teatest.WithInitialTermSize(80, 24))
 	tm.Type("work")
 	tm.Send(key("enter"))
-	teatest.WaitFor(t, tm.Output(), func(b []byte) bool { return bytes.Contains(b, []byte("이미 있는")) },
+	teatest.WaitFor(t, tm.Output(), func(b []byte) bool { return bytes.Contains(b, []byte("already exists")) },
 		teatest.WithDuration(2*time.Second))
 	for i := 0; i < 4; i++ {
 		tm.Send(tea.KeyPressMsg{Code: tea.KeyBackspace})

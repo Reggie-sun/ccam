@@ -14,17 +14,17 @@ repo="jhyunwoo/ccam"
 dir="${CCAM_INSTALL_DIR:-$HOME/.local/bin}"
 
 say() { printf '%s\n' "$*"; }
-die() { printf 'ccam 설치 실패: %s\n' "$*" >&2; exit 1; }
+die() { printf 'ccam install failed: %s\n' "$*" >&2; exit 1; }
 
 case "$(uname -s)" in
   Linux) os=linux ;;
   Darwin) os=darwin ;;
-  *) die "리눅스와 macOS 만 지원합니다" ;;
+  *) die "only Linux and macOS are supported" ;;
 esac
 case "$(uname -m)" in
   x86_64 | amd64) arch=amd64 ;;
   aarch64 | arm64) arch=arm64 ;;
-  *) die "지원하지 않는 CPU: $(uname -m)" ;;
+  *) die "unsupported CPU: $(uname -m)" ;;
 esac
 
 tmp=$(mktemp -d)
@@ -37,7 +37,7 @@ fetch() {
   elif command -v wget >/dev/null 2>&1; then
     wget -q "$1" -O "$2"
   else
-    die "curl 이나 wget 이 필요합니다"
+    die "curl or wget is required"
   fi
 }
 
@@ -49,18 +49,18 @@ else
   else
     base="${CCAM_BASE_URL:-https://github.com/$repo/releases/latest/download}"
   fi
-  say "→ $base/$asset 내려받는 중"
-  fetch "$base/$asset" "$tmp/$asset" || die "내려받기 실패"
-  fetch "$base/checksums.txt" "$tmp/checksums.txt" || die "checksums.txt 내려받기 실패"
-  grep " $asset\$" "$tmp/checksums.txt" > "$tmp/sum.txt" || die "checksums.txt 에 $asset 이 없습니다"
+  say "→ downloading $base/$asset"
+  fetch "$base/$asset" "$tmp/$asset" || die "download failed"
+  fetch "$base/checksums.txt" "$tmp/checksums.txt" || die "could not download checksums.txt"
+  grep " $asset\$" "$tmp/checksums.txt" > "$tmp/sum.txt" || die "$asset is not in checksums.txt"
   if command -v sha256sum >/dev/null 2>&1; then
-    (cd "$tmp" && sha256sum -c --quiet sum.txt) || die "체크섬이 맞지 않습니다"
+    (cd "$tmp" && sha256sum -c --quiet sum.txt) || die "checksum mismatch"
   else # macOS
-    (cd "$tmp" && shasum -a 256 -c -s sum.txt) || die "체크섬이 맞지 않습니다"
+    (cd "$tmp" && shasum -a 256 -c -s sum.txt) || die "checksum mismatch"
   fi
 fi
 
-tar -xzf "$tmp/$asset" -C "$tmp" ccam || die "압축을 풀 수 없습니다"
+tar -xzf "$tmp/$asset" -C "$tmp" ccam || die "could not extract the archive"
 mkdir -p "$dir"
 install -m 0755 "$tmp/ccam" "$dir/ccam"
 # Older versions linked a ccs alias to ccam; drop it, but never a foreign ccs.
@@ -73,13 +73,13 @@ case ":$PATH:" in
   *":$dir:"*) ;;
   *)
     say ""
-    say "참고: $dir 가 PATH 에 없습니다. ~/.bashrc 나 ~/.zshrc 에 추가하세요:"
+    say "Note: $dir is not in PATH. Add it to ~/.bashrc or ~/.zshrc:"
     say "  export PATH=\"$dir:\$PATH\""
     ;;
 esac
 if ! command -v claude >/dev/null 2>&1; then
   say ""
-  say "참고: Claude Code(claude)가 없습니다. 먼저 설치하세요: https://docs.claude.com/claude-code"
+  say "Note: Claude Code (claude) is not installed. Install it first: https://docs.claude.com/claude-code"
 fi
 say ""
-say "다음: ccam add  (첫 계정 추가)"
+say "Next: ccam add  (add your first account)"

@@ -12,10 +12,10 @@ func importCmd(e *env) *cobra.Command {
 	var name string
 	var yes bool
 	cmd := &cobra.Command{
-		Use:   "import [폴더]",
-		Short: "기존 ~/.claude 나 ~/.claude-N 폴더를 그대로 계정으로 등록",
-		Long: "폴더를 옮기거나 복사하지 않고 제자리에 등록합니다 (토큰을 복사하면 서로 로그아웃시킵니다).\n" +
-			"폴더를 주지 않으면 ~/.claude 와 ~/.claude-* 중 등록되지 않은 것을 찾아 하나씩 묻습니다.",
+		Use:   "import [folder]",
+		Short: "Register an existing ~/.claude or ~/.claude-N folder as an account, in place",
+		Long: "The folder is registered where it is, never moved or copied (copied tokens log each other out).\n" +
+			"Without a folder, finds unregistered ~/.claude and ~/.claude-* folders and asks about each.",
 		Args: cobra.MaximumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg, err := e.load()
@@ -30,15 +30,15 @@ func importCmd(e *env) *cobra.Command {
 			} else {
 				cands := profile.FindCandidates(e.paths, cfg)
 				if len(cands) == 0 {
-					e.printf("가져올 폴더가 없습니다 (~/.claude, ~/.claude-*).\n")
+					e.printf("No folders to import (~/.claude, ~/.claude-*).\n")
 					return nil
 				}
 				for _, c := range cands {
 					label := c.Name
 					if label == "" {
-						label = "(이름 필요: ccam import " + c.Path + " --name <이름>)"
+						label = "(needs a name: ccam import " + c.Path + " --name <name>)"
 					}
-					q := fmt.Sprintf("%s (%s) → %s 로 가져올까요?", c.Path, orNone(c.Email), label)
+					q := fmt.Sprintf("Import %s (%s) as %s?", c.Path, orNone(c.Email), label)
 					if c.Name != "" && (yes || e.confirm(q)) {
 						paths = append(paths, c.Path)
 					} else if c.Name == "" {
@@ -54,7 +54,7 @@ func importCmd(e *env) *cobra.Command {
 				for _, n := range notes {
 					e.printf("· %s\n", n)
 				}
-				e.printf("✓ %s (%s) 등록 — 단축 명령: claude%d\n", prof.Name, orNone(prof.Email), prof.Slot)
+				e.printf("✓ %s (%s) registered — shortcut: claude%d\n", prof.Name, orNone(prof.Email), prof.Slot)
 			}
 			if len(paths) == 0 {
 				return nil
@@ -63,20 +63,20 @@ func importCmd(e *env) *cobra.Command {
 				return err
 			}
 			if _, err := installShims(e, cfg); err != nil {
-				fmt.Fprintln(e.stderr, "단축 명령을 만들지 못했습니다:", err)
+				fmt.Fprintln(e.stderr, "Could not create shortcuts:", err)
 			}
-			e.printf("가져온 계정은 공유 없이 시작합니다. 공유하려면 `ccam share <이름> --settings on …`\n")
+			e.printf("Imported accounts start with nothing shared. To share: `ccam share <name> --settings on …`\n")
 			return nil
 		},
 	}
-	cmd.Flags().StringVar(&name, "name", "", "계정 이름 (기본: 폴더 이름에서 만듦)")
-	cmd.Flags().BoolVarP(&yes, "yes", "y", false, "찾은 폴더를 묻지 않고 모두 가져오기")
+	cmd.Flags().StringVar(&name, "name", "", "account name (default: derived from the folder name)")
+	cmd.Flags().BoolVarP(&yes, "yes", "y", false, "import every folder found without asking")
 	return cmd
 }
 
 func orNone(s string) string {
 	if s == "" {
-		return "로그인 정보 없음"
+		return "not logged in"
 	}
 	return s
 }

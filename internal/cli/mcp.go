@@ -18,10 +18,10 @@ import (
 func mcpCmd(e *env) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "mcp",
-		Short: "공유 MCP 서버 관리 (그룹의 mcp.json)",
+		Short: "Manage shared MCP servers (the group's mcp.json)",
 	}
 	var group string
-	cmd.PersistentFlags().StringVarP(&group, "group", "g", "", "대상 그룹 (기본: MCP를 공유하는 그룹이 하나면 그 그룹, 아니면 default)")
+	cmd.PersistentFlags().StringVarP(&group, "group", "g", "", "target group (default: the only group sharing MCP, otherwise default)")
 	cmd.AddCommand(mcpListCmd(e), mcpAddCmd(e, &group), mcpAddJSONCmd(e, &group), mcpRemoveCmd(e, &group), mcpImportCmd(e))
 	return cmd
 }
@@ -53,7 +53,7 @@ func pickGroup(cfg *config.Config, flag string) string {
 func mcpListCmd(e *env) *cobra.Command {
 	return &cobra.Command{
 		Use:   "list",
-		Short: "그룹별 공유 MCP 서버와 계정에만 있는 서버",
+		Short: "Shared MCP servers per group, and servers only one account has",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg, err := e.load()
@@ -62,7 +62,7 @@ func mcpListCmd(e *env) *cobra.Command {
 			}
 			groups := mcpGroups(cfg)
 			if len(groups) == 0 {
-				e.printf("MCP를 공유하는 계정이 없습니다. `ccam share <이름> --mcp on` 으로 켜세요.\n")
+				e.printf("No account shares MCP. Turn it on with `ccam share <name> --mcp on`.\n")
 			}
 			shared := map[string]map[string]json.RawMessage{}
 			for _, g := range groups {
@@ -77,9 +77,9 @@ func mcpListCmd(e *env) *cobra.Command {
 						members = append(members, p.Name)
 					}
 				}
-				e.printf("%s 그룹 (%s)\n", g, strings.Join(members, ", "))
+				e.printf("group %s (%s)\n", g, strings.Join(members, ", "))
 				if len(store.Servers) == 0 {
-					e.printf("  (없음) `ccam mcp add` 로 추가\n")
+					e.printf("  (none) add one with `ccam mcp add`\n")
 				}
 				for _, n := range store.Names() {
 					e.printf("  %-20s %s\n", n, describeServer(store.Servers[n]))
@@ -99,7 +99,7 @@ func mcpListCmd(e *env) *cobra.Command {
 				}
 				if len(only) > 0 {
 					sort.Strings(only)
-					e.printf("%s 계정에만 있음: %s\n", p.Name, strings.Join(only, ", "))
+					e.printf("only in account %s: %s\n", p.Name, strings.Join(only, ", "))
 				}
 			}
 			return nil
@@ -129,8 +129,8 @@ func mcpAddCmd(e *env, group *string) *cobra.Command {
 	var envs, headers []string
 	var transport, url string
 	cmd := &cobra.Command{
-		Use:   "add <이름> [-- 명령 인자…] | add <이름> --url <주소>",
-		Short: "그룹에 MCP 서버 추가",
+		Use:   "add <name> [-- command args…] | add <name> --url <url>",
+		Short: "Add an MCP server to a group",
 		Example: "  ccam mcp add fs -- npx -y @modelcontextprotocol/server-filesystem ~/code\n" +
 			"  ccam mcp add ctx --url https://mcp.context7.com/mcp --header 'Authorization: Bearer …'",
 		Args: cobra.MinimumNArgs(1),
@@ -147,7 +147,7 @@ func mcpAddCmd(e *env, group *string) *cobra.Command {
 					for _, kv := range headers {
 						k, v, ok := strings.Cut(kv, ":")
 						if !ok {
-							return fmt.Errorf("--header 는 '이름: 값' 형식입니다: %q", kv)
+							return fmt.Errorf("--header takes 'Name: value': %q", kv)
 						}
 						h[strings.TrimSpace(k)] = strings.TrimSpace(v)
 					}
@@ -160,30 +160,30 @@ func mcpAddCmd(e *env, group *string) *cobra.Command {
 					for _, kv := range envs {
 						k, v, ok := strings.Cut(kv, "=")
 						if !ok {
-							return fmt.Errorf("--env 는 KEY=VALUE 형식입니다: %q", kv)
+							return fmt.Errorf("--env takes KEY=VALUE: %q", kv)
 						}
 						m[k] = v
 					}
 					def["env"] = m
 				}
 			default:
-				return fmt.Errorf("실행할 명령(-- 뒤) 이나 --url 이 필요합니다")
+				return fmt.Errorf("a command to run (after --) or --url is required")
 			}
 			raw, _ := json.Marshal(def)
 			return addServer(e, *group, args[0], raw)
 		},
 	}
-	cmd.Flags().StringArrayVarP(&envs, "env", "e", nil, "환경변수 KEY=VALUE (stdio)")
-	cmd.Flags().StringVar(&url, "url", "", "원격 서버 주소 (http/sse)")
+	cmd.Flags().StringArrayVarP(&envs, "env", "e", nil, "environment variable KEY=VALUE (stdio)")
+	cmd.Flags().StringVar(&url, "url", "", "remote server URL (http/sse)")
 	cmd.Flags().StringVar(&transport, "transport", "", "stdio|http|sse")
-	cmd.Flags().StringArrayVar(&headers, "header", nil, "HTTP 헤더 '이름: 값'")
+	cmd.Flags().StringArrayVar(&headers, "header", nil, "HTTP header 'Name: value'")
 	return cmd
 }
 
 func mcpAddJSONCmd(e *env, group *string) *cobra.Command {
 	return &cobra.Command{
-		Use:   "add-json <이름> <json>",
-		Short: "JSON 정의로 MCP 서버 추가 (claude mcp add-json 과 같은 형식)",
+		Use:   "add-json <name> <json>",
+		Short: "Add an MCP server from a JSON definition (same format as claude mcp add-json)",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return addServer(e, *group, args[0], json.RawMessage(args[1]))
@@ -210,21 +210,21 @@ func addServer(e *env, groupFlag, name string, def json.RawMessage) error {
 	if err := store.Save(path); err != nil {
 		return err
 	}
-	verb := "추가"
+	verb := "added"
 	if existed {
-		verb = "갱신"
+		verb = "updated"
 	}
-	e.printf("✓ %s 그룹에 %s %s — 다음 실행부터 적용\n", g, name, verb)
+	e.printf("✓ %s %s in group %s — applies from the next launch\n", name, verb, g)
 	if len(mcpGroups(cfg)) == 0 {
-		e.printf("참고: 아직 MCP를 공유하는 계정이 없습니다. `ccam share <이름> --mcp %s`\n", g)
+		e.printf("Note: no account shares MCP yet. `ccam share <name> --mcp %s`\n", g)
 	}
 	return nil
 }
 
 func mcpRemoveCmd(e *env, group *string) *cobra.Command {
 	return &cobra.Command{
-		Use:   "remove <이름>",
-		Short: "그룹에서 MCP 서버 삭제",
+		Use:   "remove <name>",
+		Short: "Remove an MCP server from a group",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg, err := e.load()
@@ -238,13 +238,13 @@ func mcpRemoveCmd(e *env, group *string) *cobra.Command {
 				return err
 			}
 			if _, ok := store.Servers[args[0]]; !ok {
-				return fmt.Errorf("%s 그룹에 %q 서버가 없습니다", g, args[0])
+				return fmt.Errorf("group %s has no server %q", g, args[0])
 			}
 			delete(store.Servers, args[0])
 			if err := store.Save(path); err != nil {
 				return err
 			}
-			e.printf("✓ %s 그룹에서 %s 삭제\n", g, args[0])
+			e.printf("✓ %s removed from group %s\n", args[0], g)
 			return nil
 		},
 	}
@@ -253,8 +253,8 @@ func mcpRemoveCmd(e *env, group *string) *cobra.Command {
 func mcpImportCmd(e *env) *cobra.Command {
 	var keepLocal bool
 	cmd := &cobra.Command{
-		Use:   "import <계정> [서버…]",
-		Short: "계정에만 있는 MCP 서버를 그 계정의 공유 그룹으로 옮기기",
+		Use:   "import <account> [server…]",
+		Short: "Move MCP servers only one account has into that account's shared group",
 		Args:  cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg, err := e.load()
@@ -267,7 +267,7 @@ func mcpImportCmd(e *env) *cobra.Command {
 			}
 			g := prof.Share.Get("mcp")
 			if g == config.Local {
-				return fmt.Errorf("%s 계정은 MCP 공유가 꺼져 있습니다. `ccam share %s --mcp on` 먼저", prof.Name, prof.Name)
+				return fmt.Errorf("account %s does not share MCP. Run `ccam share %s --mcp on` first", prof.Name, prof.Name)
 			}
 			dir := profile.Dir(e.paths, prof)
 			local, err := mcp.LocalServers(dir)
@@ -282,7 +282,7 @@ func mcpImportCmd(e *env) *cobra.Command {
 				sort.Strings(names)
 			}
 			if len(names) == 0 {
-				e.printf("%s 계정에만 있는 MCP 서버가 없습니다.\n", prof.Name)
+				e.printf("Account %s has no MCP servers of its own.\n", prof.Name)
 				return nil
 			}
 			path := mcp.Path(e.paths.GroupDir(g))
@@ -293,29 +293,29 @@ func mcpImportCmd(e *env) *cobra.Command {
 			for _, n := range names {
 				def, ok := local[n]
 				if !ok {
-					return fmt.Errorf("%s 계정에 %q 서버가 없습니다", prof.Name, n)
+					return fmt.Errorf("account %s has no server %q", prof.Name, n)
 				}
 				store.Servers[n] = def
 			}
 			if err := store.Save(path); err != nil {
 				return err
 			}
-			e.printf("✓ %s 그룹으로 복사: %s\n", g, strings.Join(names, ", "))
+			e.printf("✓ Copied to group %s: %s\n", g, strings.Join(names, ", "))
 			if keepLocal {
 				return nil
 			}
 			// Local entries win over --mcp-config on name clashes, so drop them.
 			if launcher.Running(e.paths, prof.Name) {
-				e.printf("참고: %s 계정이 실행 중이라 계정 쪽 항목은 그대로 둡니다. 종료 후 다시 실행하면 지웁니다.\n", prof.Name)
+				e.printf("Note: account %s is running, so its own entries stay. Run this again after it exits to remove them.\n", prof.Name)
 				return nil
 			}
 			if err := mcp.RemoveLocal(dir, filepath.Join(e.paths.State, "mcp", prof.Name), names); err != nil {
-				return fmt.Errorf("계정 쪽 항목 삭제 실패: %w", err)
+				return fmt.Errorf("could not remove the account's entries: %w", err)
 			}
-			e.printf("✓ %s 계정의 개별 항목 삭제 (.claude.json 백업함)\n", prof.Name)
+			e.printf("✓ Removed account %s's own entries (.claude.json backed up)\n", prof.Name)
 			return nil
 		},
 	}
-	cmd.Flags().BoolVar(&keepLocal, "keep-local", false, "계정의 .claude.json 에서는 지우지 않음")
+	cmd.Flags().BoolVar(&keepLocal, "keep-local", false, "keep the entries in the account's .claude.json")
 	return cmd
 }

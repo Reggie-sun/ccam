@@ -10,11 +10,11 @@ import (
 )
 
 var itemLabels = map[string]string{
-	"mcp":        "MCP 서버",
+	"mcp":        "MCP servers",
 	"settings":   "settings.json",
-	"memory":     "전역 CLAUDE.md",
-	"extensions": "에이전트·명령·스킬",
-	"history":    "대화 내역",
+	"memory":     "global CLAUDE.md",
+	"extensions": "agents, commands, skills",
+	"history":    "conversation history",
 }
 
 // shareEdit toggles share items on a copy; nothing moves until the caller
@@ -69,22 +69,22 @@ func (m Model) updateShare(k tea.KeyPressMsg) (tea.Model, tea.Cmd) {
 }
 
 func (m Model) viewShare(b *strings.Builder) {
-	fmt.Fprintf(b, "%s\n\n", titleStyle.Render(" "+m.rows[m.cursor].Name+" 의 공유 설정"))
+	fmt.Fprintf(b, "%s\n\n", titleStyle.Render(" Sharing for "+m.rows[m.cursor].Name))
 	for i, item := range config.Items {
 		marker := "  "
 		if i == m.share.cursor {
 			marker = cursorStyle.Render("› ")
 		}
 		g := m.share.next.Get(item)
-		box, state := "[x]", g+" 그룹"
+		box, state := "[x]", "group "+g
 		if g == config.Local {
-			box, state = "[ ]", "분리"
+			box, state = "[ ]", "local"
 		}
 		changed := ""
 		if g != m.share.orig.Get(item) {
-			changed = warnStyle.Render(" (변경)")
+			changed = warnStyle.Render(" (changed)")
 		}
-		fmt.Fprintf(b, "%s%s %s %s%s\n", marker, box, padRight(itemLabels[item], 20), dimStyle.Render(state), changed)
+		fmt.Fprintf(b, "%s%s %s %s%s\n", marker, box, padRight(itemLabels[item], 24), dimStyle.Render(state), changed)
 	}
-	b.WriteString("\n" + dimStyle.Render(" 스페이스 켜기/끄기 · Enter 적용(이전 계획을 보여준 뒤 확인) · Esc 취소") + "\n")
+	b.WriteString("\n" + dimStyle.Render(" Space on/off · Enter apply (shows the migration plan, then asks) · Esc cancel") + "\n")
 }

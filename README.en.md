@@ -11,7 +11,7 @@
 
 > **Check the terms first.** Whether using several accounts is allowed depends on each account's Anthropic terms and your organization's policy. ccam makes switching convenient; it does not work around usage limits.
 
-User-facing messages are in Korean.
+All program output (messages, prompts, help) is in English.
 
 ## Install
 

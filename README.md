@@ -11,6 +11,8 @@
 
 > **이용약관을 먼저 확인하세요.** 계정을 여러 개 쓰는 것이 허용되는지는 각 계정의 Anthropic 이용약관과 소속 조직의 정책에 따릅니다. ccam은 계정 전환을 편하게 할 뿐, 사용량 한도를 우회하지 않습니다.
 
+프로그램 출력(메시지, 질문, 도움말)은 모두 영어입니다.
+
 ## 설치
 
 ```bash
@@ -57,7 +59,7 @@ ccam next --continue # 한도에 걸리면 다음 계정에서 같은 대화 이
 | `ccam rename` / `ccam remove` | 이름 변경 / 삭제 (폴더는 휴지통으로) |
 | `ccam import [폴더]` | 기존 폴더 등록 |
 | `ccam doctor [--fix]` | 링크·권한·로그인·버전·사용량 형식 점검과 수리 |
-| `ccam statusline install` | Claude Code 상태줄에 `[계정] · 모델 · 5h N%` 표시 |
+| `ccam statusline install` | Claude Code 상태줄에 `[account] · model · 5h N%` 표시 |
 | `ccam completion bash\|zsh` | 자동완성 |
 
 어느 명령이든 앞에 `--dry-run`을 붙이면 실행하지 않고 할 일만 보여줍니다 (`ccam --dry-run work`).
@@ -73,7 +75,7 @@ ccam next --continue # 한도에 걸리면 다음 계정에서 같은 대화 이
 | 에이전트·명령·스킬·플러그인 | `agents/ commands/ skills/ plugins/ output-styles/ rules/` 폴더 링크 |
 | 대화 내역 | `projects/`와 `history.jsonl` 링크 → 다른 계정에서 `--continue`/`--resume` |
 
-로그인 파일(`.credentials.json`, `.claude.json`)은 어떤 경우에도 공유되지 않습니다. 공유를 켜고 끌 때는 원본을 `.ccam-backup/<시각>/`에 남기고, 파일이 서로 다르면 "그룹 것 유지 / 내 것으로 덮기 / JSON 병합" 중에서 고르게 합니다.
+로그인 파일(`.credentials.json`, `.claude.json`)은 어떤 경우에도 공유되지 않습니다. 공유를 켜고 끌 때는 원본을 `.ccam-backup/<시각>/`에 남기고, 파일이 서로 다르면 "keep group / use mine / merge JSON" 중에서 고르게 합니다.
 
 세션 안에서 `claude mcp add`로 넣은 서버는 그 계정에만 저장됩니다. 다음 실행 때 ccam이 알려 주면 `ccam mcp import <계정> <서버>`로 그룹에 옮기세요. `.claude.json`을 직접 고치는 방식이 필요하면 `config.toml`에 `mcp_strategy = "sync"`를 둡니다.
 
@@ -83,11 +85,11 @@ ccam next --continue # 한도에 걸리면 다음 계정에서 같은 대화 이
 
 ```
 $ ccam usage
- 계정        5시간         초기화      주간          초기화      기준
- 1 personal  ██████░░  72% 1시간 40분  ███░░░░░  41% 3일 6시간   방금
- 2 work      █░░░░░░░   8% 4시간 12분  ██░░░░░░  19% 5일 2시간   방금
- 3 side      ████████ 100% 22분        █████░░░  68% 1일 9시간   12분 전 (캐시)
-→ 여유가 가장 많은 계정: work   (ccam next --auto 로 바로 열기)
+ Account     5-hour        Resets    Weekly        Resets    As of
+ 1 personal  ██████░░  72% 1h 40m    ███░░░░░  41% 3d 6h     just now
+ 2 work      █░░░░░░░   8% 4h 12m    ██░░░░░░  19% 5d 2h     just now
+ 3 side      ████████ 100% 22m       █████░░░  68% 1d 9h     12m ago (cached)
+→ Most headroom: work   (open it with ccam next --auto)
 ```
 
 각 계정의 토큰으로 사용량 API를 동시에 조회합니다 (계정당 3초 제한, 60초 캐시). 이 API는 공개 문서가 없어 바뀔 수 있습니다. 실패하면 마지막 값이나 상태줄이 모아 둔 값을 보여주고, `ccam doctor`가 형식 변경을 알려 줍니다. 만료된 토큰은 직접 갱신하지 않습니다 (`--refresh`는 그 계정이 실행 중이 아닐 때만).

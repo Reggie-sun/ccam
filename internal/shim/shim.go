@@ -66,7 +66,7 @@ func Install(binDir, ccamPath string, cfg *config.Config) (created []string, err
 			continue
 		}
 		if _, err := os.Lstat(link); err == nil {
-			return created, fmt.Errorf("%s 가 이미 있고 ccam 링크가 아니라서 건드리지 않았습니다", link)
+			return created, fmt.Errorf("%s already exists and is not a ccam link, so it was left alone", link)
 		}
 		if err := os.Symlink(ccamPath, link); err != nil {
 			return created, err

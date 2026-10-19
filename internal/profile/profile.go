@@ -30,11 +30,11 @@ func Add(p paths.Paths, cfg *config.Config, name string, share config.Share) (*c
 		return nil, err
 	}
 	if _, ok := cfg.Find(name); ok {
-		return nil, fmt.Errorf("이미 있는 계정 이름입니다: %q", name)
+		return nil, fmt.Errorf("an account named %q already exists", name)
 	}
 	dir := p.ProfileDir(name)
 	if fsutil.Exists(dir) {
-		return nil, fmt.Errorf("폴더가 이미 있습니다: %s (`ccam import` 를 쓰거나 폴더를 정리하세요)", dir)
+		return nil, fmt.Errorf("folder already exists: %s (use `ccam import`, or clean up the folder)", dir)
 	}
 	if err := os.MkdirAll(dir, 0o700); err != nil {
 		return nil, err
@@ -70,7 +70,7 @@ func Rename(p paths.Paths, cfg *config.Config, oldName, newName string) error {
 		return err
 	}
 	if _, ok := cfg.Find(newName); ok {
-		return fmt.Errorf("이미 있는 계정 이름입니다: %q", newName)
+		return fmt.Errorf("an account named %q already exists", newName)
 	}
 	if prof.Dir == "" {
 		if err := os.Rename(p.ProfileDir(oldName), p.ProfileDir(newName)); err != nil && !errors.Is(err, fs.ErrNotExist) {

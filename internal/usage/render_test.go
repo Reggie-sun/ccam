@@ -18,13 +18,13 @@ func TestTableMatchesPlanExample(t *testing.T) {
 	}
 	lines := Table(reports, RenderOptions{Now: now})
 	want := []string{
-		"██████░░  72% 1시간 40분",
-		"█░░░░░░░   8% 4시간 12분",
-		"████████ 100% 22분",
-		"3일 6시간",
-		"12분 전 (캐시)",
-		"한도 없음 (API)",
-		"로그인 만료, `ccam old`",
+		"██████░░  72% 1h 40m",
+		"█░░░░░░░   8% 4h 12m",
+		"████████ 100% 22m",
+		"3d 6h",
+		"12m ago (cached)",
+		"no limits (API)",
+		"login expired, run `ccam old`",
 	}
 	all := strings.Join(lines, "\n")
 	for _, s := range want {
@@ -62,18 +62,18 @@ func TestVerboseShowsScoped(t *testing.T) {
 		Scoped:   []Scoped{{Name: "Fable", Window: Window{Percent: 88, Known: true}}},
 	}}
 	out := strings.Join(Table([]*Report{r}, RenderOptions{Verbose: true, Now: time.Now()}), "\n")
-	if !strings.Contains(out, "Fable 주간") || !strings.Contains(out, "88%") || !strings.Contains(out, "출처: live") {
+	if !strings.Contains(out, "Fable weekly") || !strings.Contains(out, "88%") || !strings.Contains(out, "source: live") {
 		t.Fatal(out)
 	}
 }
 
 func TestDuration(t *testing.T) {
 	cases := map[time.Duration]string{
-		100 * time.Minute: "1시간 40분",
-		78 * time.Hour:    "3일 6시간",
-		22 * time.Minute:  "22분",
-		10 * time.Second:  "1분",
-		-time.Minute:      "곧",
+		100 * time.Minute: "1h 40m",
+		78 * time.Hour:    "3d 6h",
+		22 * time.Minute:  "22m",
+		10 * time.Second:  "1m",
+		-time.Minute:      "soon",
 	}
 	for d, want := range cases {
 		if got := Duration(d); got != want {

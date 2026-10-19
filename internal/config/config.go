@@ -81,7 +81,7 @@ func (s *Share) Set(item, group string) error {
 		group = "default"
 	}
 	if group != Local && !nameRe.MatchString(group) {
-		return fmt.Errorf("그룹 이름이 올바르지 않습니다: %q", group)
+		return fmt.Errorf("invalid group name: %q", group)
 	}
 	switch item {
 	case "mcp":
@@ -95,7 +95,7 @@ func (s *Share) Set(item, group string) error {
 	case "history":
 		s.History = group
 	default:
-		return fmt.Errorf("알 수 없는 공유 항목: %q (mcp, settings, memory, extensions, history)", item)
+		return fmt.Errorf("unknown share item: %q (mcp, settings, memory, extensions, history)", item)
 	}
 	return nil
 }
@@ -128,13 +128,13 @@ var nameRe = regexp.MustCompile(`^[a-z0-9][a-z0-9_-]{0,31}$`)
 
 func ValidateName(name string) error {
 	if !nameRe.MatchString(name) {
-		return fmt.Errorf("프로필 이름은 영문 소문자·숫자·-·_ 로 1~32자여야 합니다: %q", name)
+		return fmt.Errorf("profile names are 1-32 characters of a-z, 0-9, - and _: %q", name)
 	}
 	if _, err := strconv.Atoi(name); err == nil {
-		return fmt.Errorf("숫자만으로 된 이름은 쓸 수 없습니다 (번호와 헷갈립니다): %q", name)
+		return fmt.Errorf("names cannot be all digits (they look like slot numbers): %q", name)
 	}
 	if Reserved[name] {
-		return fmt.Errorf("%q 는 ccam 명령 이름이라 프로필 이름으로 쓸 수 없습니다", name)
+		return fmt.Errorf("%q is a ccam command, so it cannot be a profile name", name)
 	}
 	return nil
 }
@@ -150,10 +150,10 @@ func Load(path string) (*Config, error) {
 	}
 	var c Config
 	if err := toml.Unmarshal(data, &c); err != nil {
-		return nil, fmt.Errorf("%s 읽기 실패: %w", path, err)
+		return nil, fmt.Errorf("could not read %s: %w", path, err)
 	}
 	if c.Version > CurrentVersion {
-		return nil, fmt.Errorf("%s 는 더 새 버전(%d)의 ccam이 만든 파일입니다", path, c.Version)
+		return nil, fmt.Errorf("%s was written by a newer ccam (format version %d)", path, c.Version)
 	}
 	if c.Version == 0 {
 		c.Version = CurrentVersion
@@ -193,9 +193,9 @@ func (c *Config) MustFind(sel string) (*Profile, error) {
 		return p, nil
 	}
 	if len(c.Profiles) == 0 {
-		return nil, fmt.Errorf("등록된 계정이 없습니다. `ccam add <이름>` 으로 먼저 추가하세요")
+		return nil, fmt.Errorf("no accounts yet. Add one first with `ccam add <name>`")
 	}
-	return nil, fmt.Errorf("계정 %q 를 찾을 수 없습니다 (`ccam list` 로 확인)", sel)
+	return nil, fmt.Errorf("no account %q (see `ccam list`)", sel)
 }
 
 // DefaultProfile returns the default profile, or the lowest slot if none is set.
@@ -204,7 +204,7 @@ func (c *Config) DefaultProfile() (*Profile, error) {
 		return c.MustFind(c.Default)
 	}
 	if len(c.Profiles) == 0 {
-		return nil, fmt.Errorf("등록된 계정이 없습니다. `ccam add <이름>` 으로 먼저 추가하세요")
+		return nil, fmt.Errorf("no accounts yet. Add one first with `ccam add <name>`")
 	}
 	best := &c.Profiles[0]
 	for i := range c.Profiles {

@@ -14,10 +14,10 @@ import (
 func MergeJSONBytes(base, overlay []byte) ([]byte, error) {
 	var a, b map[string]any
 	if err := json.Unmarshal(base, &a); err != nil {
-		return nil, fmt.Errorf("그룹 JSON 을 읽지 못했습니다: %w", err)
+		return nil, fmt.Errorf("could not read the group JSON: %w", err)
 	}
 	if err := json.Unmarshal(overlay, &b); err != nil {
-		return nil, fmt.Errorf("내 JSON 을 읽지 못했습니다: %w", err)
+		return nil, fmt.Errorf("could not read my JSON: %w", err)
 	}
 	return fsutil.MarshalJSON(mergeValue(a, b))
 }

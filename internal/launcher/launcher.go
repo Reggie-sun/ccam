@@ -55,7 +55,7 @@ func Prepare(p paths.Paths, cfg *config.Config, sel string, args []string) (*Pla
 	}
 	dir := profile.Dir(p, prof)
 	if _, err := os.Stat(dir); err != nil {
-		return nil, fmt.Errorf("%s 계정 폴더가 없습니다 (%s). `ccam doctor` 로 확인하세요", prof.Name, dir)
+		return nil, fmt.Errorf("the folder of account %s is missing (%s). Check with `ccam doctor`", prof.Name, dir)
 	}
 	argv := make([]string, 0, len(args)+1)
 	argv = append(argv, "claude")
@@ -166,11 +166,11 @@ func ResolveClaude(p paths.Paths, bin string) (string, error) {
 	}
 	path, err := exec.LookPath(bin)
 	if err != nil {
-		return "", fmt.Errorf("claude 실행 파일을 찾을 수 없습니다 (%s). Claude Code를 설치했는지 확인하세요", bin)
+		return "", fmt.Errorf("cannot find the claude executable (%s). Is Claude Code installed?", bin)
 	}
 	path, _ = filepath.Abs(path)
 	if isSelf(path) {
-		return "", fmt.Errorf("%s 가 ccam 자신을 가리킵니다. config.toml 의 claude_bin 을 확인하세요", path)
+		return "", fmt.Errorf("%s points to ccam itself. Check claude_bin in config.toml", path)
 	}
 	if fi, err := os.Stat(path); err == nil {
 		_ = fsutil.WriteFast(cache, []byte(path+"\t"+strconv.FormatInt(fi.ModTime().UnixNano(), 10)))
@@ -219,5 +219,5 @@ func checkLinks(p paths.Paths, pl *Plan) error {
 	for _, pr := range rest {
 		msg = append(msg, "  "+pr.String())
 	}
-	return fmt.Errorf("공유 링크에 문제가 있어 실행을 멈췄습니다:\n%s\n`ccam doctor --fix` 로 고친 뒤 다시 실행하세요", strings.Join(msg, "\n"))
+	return fmt.Errorf("stopped because of share link problems:\n%s\nRepair them with `ccam doctor --fix`, then run again", strings.Join(msg, "\n"))
 }

@@ -49,7 +49,7 @@ func (f Finding) String() string {
 	}
 	suffix := ""
 	if f.Fixed {
-		suffix = " → 고침"
+		suffix = " → fixed"
 	}
 	return fmt.Sprintf("%s %s%s%s", mark, prefix, f.Msg, suffix)
 }
@@ -104,13 +104,13 @@ func checkClaude(r *report, p paths.Paths, cfg *config.Config) {
 	}
 	out, err := exec.Command(bin, "--version").Output()
 	if err != nil {
-		r.add(Error, "", "%s --version 실패: %v", bin, err)
+		r.add(Error, "", "%s --version failed: %v", bin, err)
 		return
 	}
 	version := strings.TrimSpace(string(out))
 	r.add(OK, "", "Claude Code %s (%s)", version, bin)
 	if !strings.HasPrefix(version, LayoutVersion) {
-		r.add(Info, "", "ccam 은 Claude Code %s 의 폴더 구성으로 확인됐습니다. 아래 '알려지지 않은 항목'이 있으면 구성이 바뀐 것일 수 있습니다", LayoutVersion)
+		r.add(Info, "", "ccam was verified against the folder layout of Claude Code %s. Any 'unknown entries' below may mean the layout changed", LayoutVersion)
 	}
 }
 
@@ -126,10 +126,10 @@ func checkUsageFormat(r *report, p paths.Paths, cfg *config.Config, f *usage.Fet
 		rep := f.Fetch(context.Background(), a, usage.Options{NoCache: true})
 		switch {
 		case rep.FormatChanged:
-			r.add(Warn, prof.Name, "사용량 응답 형식이 바뀌었습니다. `ccam usage` 는 상태줄 캐시로 대신 보여줍니다 (%s)", rep.Err)
+			r.add(Warn, prof.Name, "the usage response format changed. `ccam usage` falls back to the status line cache (%s)", rep.Err)
 			return
 		case rep.Status == usage.StatusOK:
-			r.add(OK, prof.Name, "사용량 조회 정상")
+			r.add(OK, prof.Name, "usage lookup OK")
 			return
 		}
 	}
@@ -139,11 +139,11 @@ func checkProfile(r *report, p paths.Paths, prof *config.Profile, fix bool) {
 	dir := profile.Dir(p, prof)
 	info, err := os.Stat(dir)
 	if err != nil {
-		r.add(Error, prof.Name, "프로필 폴더가 없습니다: %s", dir)
+		r.add(Error, prof.Name, "profile folder is missing: %s", dir)
 		return
 	}
 	if info.Mode().Perm()&0o077 != 0 {
-		f := r.add(Warn, prof.Name, "폴더 권한이 %o 입니다 (0700 이어야 함)", info.Mode().Perm())
+		f := r.add(Warn, prof.Name, "folder permissions are %o (should be 0700)", info.Mode().Perm())
 		if fix && os.Chmod(dir, 0o700) == nil {
 			f.Fixed = true
 		}
@@ -152,7 +152,7 @@ func checkProfile(r *report, p paths.Paths, prof *config.Profile, fix bool) {
 
 	problems := share.Check(dir, prof.Share, p.GroupsRoot())
 	if len(problems) == 0 {
-		r.add(OK, prof.Name, "공유 링크 정상")
+		r.add(OK, prof.Name, "share links OK")
 	}
 	for _, pr := range problems {
 		level := Error
@@ -170,7 +170,7 @@ func checkProfile(r *report, p paths.Paths, prof *config.Profile, fix bool) {
 			err = pl.Apply()
 		}
 		if err != nil {
-			r.add(Error, prof.Name, "공유 링크 수리 실패: %v", err)
+			r.add(Error, prof.Name, "could not repair share links: %v", err)
 			return
 		}
 		for i := len(r.out) - len(problems); i < len(r.out); i++ {
@@ -184,11 +184,11 @@ func checkCredentials(r *report, prof *config.Profile, dir, home string, fix boo
 	cred := creds.FilePath(dir)
 	if info, err := os.Lstat(cred); err == nil {
 		if info.Mode()&os.ModeSymlink != 0 {
-			r.add(Error, prof.Name, ".credentials.json 이 심볼릭 링크입니다. 토큰은 계정마다 따로 있어야 합니다")
+			r.add(Error, prof.Name, ".credentials.json is a symlink. Each account must have its own token")
 			return
 		}
 		if info.Mode().Perm() != 0o600 {
-			f := r.add(Warn, prof.Name, ".credentials.json 권한이 %o 입니다 (0600 이어야 함)", info.Mode().Perm())
+			f := r.add(Warn, prof.Name, ".credentials.json permissions are %o (should be 0600)", info.Mode().Perm())
 			if fix && os.Chmod(cred, 0o600) == nil {
 				f.Fixed = true
 			}
@@ -196,11 +196,11 @@ func checkCredentials(r *report, prof *config.Profile, dir, home string, fix boo
 	}
 	data, _, err := creds.Read(dir, home)
 	if errors.Is(err, creds.ErrNone) {
-		r.add(Warn, prof.Name, "로그인 정보가 없습니다 → `ccam login %s`", prof.Name)
+		r.add(Warn, prof.Name, "not logged in → `ccam login %s`", prof.Name)
 		return
 	}
 	if err != nil {
-		r.add(Error, prof.Name, "로그인 정보 읽기 실패: %v", err)
+		r.add(Error, prof.Name, "could not read login: %v", err)
 		return
 	}
 	var c struct {
@@ -210,17 +210,17 @@ func checkCredentials(r *report, prof *config.Profile, dir, home string, fix boo
 		} `json:"claudeAiOauth"`
 	}
 	if err := json.Unmarshal(data, &c); err != nil || c.OAuth == nil {
-		r.add(Info, prof.Name, "구독 로그인 토큰이 없습니다 (API 키 계정일 수 있음)")
+		r.add(Info, prof.Name, "no subscription login token (may be an API key account)")
 		return
 	}
 	now := time.Now().UnixMilli()
 	switch {
 	case c.OAuth.RefreshTokenExpiresAt > 0 && c.OAuth.RefreshTokenExpiresAt < now:
-		r.add(Error, prof.Name, "로그인이 만료됐습니다 → `ccam login %s`", prof.Name)
+		r.add(Error, prof.Name, "login expired → `ccam login %s`", prof.Name)
 	case c.OAuth.ExpiresAt < now:
-		r.add(Info, prof.Name, "접속 토큰이 만료됐습니다. 다음에 실행하면 Claude Code가 갱신합니다")
+		r.add(Info, prof.Name, "access token expired. Claude Code refreshes it on the next launch")
 	default:
-		r.add(OK, prof.Name, "로그인 유효 (%s)", orDash(prof.Email))
+		r.add(OK, prof.Name, "login valid (%s)", orDash(prof.Email))
 	}
 }
 
@@ -246,7 +246,7 @@ func checkUnknownEntries(r *report, prof *config.Profile, dir string) {
 	}
 	if len(unknown) > 0 {
 		sort.Strings(unknown)
-		r.add(Info, prof.Name, "알려지지 않은 항목 (Claude Code 구성이 바뀌었을 수 있음): %s", strings.Join(unknown, ", "))
+		r.add(Info, prof.Name, "unknown entries (Claude Code layout may have changed): %s", strings.Join(unknown, ", "))
 	}
 }
 
@@ -266,7 +266,7 @@ func checkPlugins(r *report, p paths.Paths, cfg *config.Config, fix bool) {
 		if n == 0 {
 			continue
 		}
-		f := r.add(Warn, "", "%s 그룹의 플러그인 경로 %d개가 특정 계정 폴더를 거칩니다", g.Name(), n)
+		f := r.add(Warn, "", "%d plugin paths in group %s go through one account's folder", n, g.Name())
 		if !fix {
 			continue
 		}
@@ -316,7 +316,7 @@ func checkMCP(r *report, p paths.Paths, cfg *config.Config) {
 		}
 		for _, n := range store.Names() {
 			if err := mcp.Validate(store.Servers[n]); err != nil {
-				r.add(Warn, "", "%s 그룹 MCP 서버 %s: %v", g, n, err)
+				r.add(Warn, "", "group %s MCP server %s: %v", g, n, err)
 			}
 		}
 	}
@@ -334,15 +334,15 @@ func checkShims(r *report, p paths.Paths, cfg *config.Config, opt Options) {
 		}
 	}
 	if len(missing) == 0 {
-		r.add(OK, "", "단축 명령 정상 (%s)", p.Bin)
+		r.add(OK, "", "shortcuts OK (%s)", p.Bin)
 	} else {
-		f := r.add(Warn, "", "단축 명령 없음: %s", strings.Join(missing, ", "))
+		f := r.add(Warn, "", "missing shortcuts: %s", strings.Join(missing, ", "))
 		if opt.Fix {
 			_, err := shim.Install(p.Bin, opt.CcamPath, cfg)
 			f.Fixed = err == nil
 		}
 	}
 	if !shim.InPath(p.Bin) {
-		r.add(Warn, "", "%s 가 PATH 에 없습니다", p.Bin)
+		r.add(Warn, "", "%s is not in PATH", p.Bin)
 	}
 }

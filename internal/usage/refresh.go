@@ -28,15 +28,15 @@ const (
 // session out: it is refused while any session is registered.
 func (f *Fetcher) refresh(ctx context.Context, a Account) (oauthCred, error) {
 	if a.Imported {
-		return oauthCred{}, fmt.Errorf("제자리 등록한 계정은 그냥 claude 로도 실행될 수 있어 갱신하지 않습니다")
+		return oauthCred{}, fmt.Errorf("not refreshing an account registered in place, since plain claude may also be using it")
 	}
 	if session.Active(a.SessionDir) {
-		return oauthCred{}, fmt.Errorf("실행 중인 세션이 있어 갱신하지 않았습니다")
+		return oauthCred{}, fmt.Errorf("not refreshed: a session is running")
 	}
 	// Serialize ccam's own refreshes of this account.
 	l, err := lock.TryFlock(a.SessionDir + ".refresh.lock")
 	if err == lock.ErrBusy {
-		return oauthCred{}, fmt.Errorf("다른 ccam 이 이미 갱신 중입니다")
+		return oauthCred{}, fmt.Errorf("another ccam is already refreshing")
 	}
 	if err != nil {
 		return oauthCred{}, err
@@ -58,7 +58,7 @@ func (f *Fetcher) refresh(ctx context.Context, a Account) (oauthCred, error) {
 	}
 	rt, _ := oauth["refreshToken"].(string)
 	if rt == "" {
-		return oauthCred{}, fmt.Errorf("refresh token 이 없습니다")
+		return oauthCred{}, fmt.Errorf("no refresh token")
 	}
 	body, _ := json.Marshal(map[string]string{"grant_type": "refresh_token", "refresh_token": rt, "client_id": clientID})
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, f.TokenURL, bytes.NewReader(body))
@@ -72,7 +72,7 @@ func (f *Fetcher) refresh(ctx context.Context, a Account) (oauthCred, error) {
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
-		return oauthCred{}, fmt.Errorf("토큰 갱신 실패 (HTTP %d) → `ccam login %s`", resp.StatusCode, a.Name)
+		return oauthCred{}, fmt.Errorf("token refresh failed (HTTP %d) → `ccam login %s`", resp.StatusCode, a.Name)
 	}
 	var tok struct {
 		AccessToken  string `json:"access_token"`
@@ -80,7 +80,7 @@ func (f *Fetcher) refresh(ctx context.Context, a Account) (oauthCred, error) {
 		ExpiresIn    int64  `json:"expires_in"`
 	}
 	if err := json.NewDecoder(io.LimitReader(resp.Body, 1<<20)).Decode(&tok); err != nil || tok.AccessToken == "" {
-		return oauthCred{}, fmt.Errorf("토큰 갱신 응답을 읽지 못했습니다")
+		return oauthCred{}, fmt.Errorf("could not read the token refresh response")
 	}
 	expires := f.Now().UnixMilli() + tok.ExpiresIn*1000
 	oauth["accessToken"] = tok.AccessToken

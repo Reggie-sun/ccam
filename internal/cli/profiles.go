@@ -23,9 +23,9 @@ func addCmd(e *env) *cobra.Command {
 	var noLogin bool
 	var shares []string
 	cmd := &cobra.Command{
-		Use:   "add [이름]",
-		Short: "계정 추가: 프로필 생성 → 로그인 → 단축 명령",
-		Long:  "터미널에서 옵션 없이 실행하면 마법사가 이름과 공유 항목을 묻습니다.",
+		Use:   "add [name]",
+		Short: "Add an account: create profile → log in → shortcut",
+		Long:  "Run on a terminal without options, a wizard asks for the name and shared items.",
 		Args:  cobra.MaximumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if interactive(e) && !cmd.Flags().Changed("share") && !noLogin {
@@ -43,13 +43,13 @@ func addCmd(e *env) *cobra.Command {
 				return addInteractive(e, cfg, name)
 			}
 			if len(args) == 0 {
-				return fmt.Errorf("계정 이름이 필요합니다: ccam add <이름>")
+				return fmt.Errorf("an account name is required: ccam add <name>")
 			}
 			share := config.DefaultShare()
 			for _, s := range shares {
 				item, group, ok := cutEq(s)
 				if !ok {
-					return fmt.Errorf("--share 는 항목=그룹 형식입니다 (예: history=team): %q", s)
+					return fmt.Errorf("--share takes item=group (e.g. history=team): %q", s)
 				}
 				if err := share.Set(item, group); err != nil {
 					return err
@@ -58,8 +58,8 @@ func addCmd(e *env) *cobra.Command {
 			return addProfile(e, args[0], share, !noLogin)
 		},
 	}
-	cmd.Flags().BoolVar(&noLogin, "no-login", false, "로그인은 나중에 (`ccam login <이름>`)")
-	cmd.Flags().StringArrayVar(&shares, "share", nil, "공유 설정 항목=그룹|local (반복 가능)")
+	cmd.Flags().BoolVar(&noLogin, "no-login", false, "log in later (`ccam login <name>`)")
+	cmd.Flags().StringArrayVar(&shares, "share", nil, "share item=group|local (repeatable)")
 	return cmd
 }
 
@@ -80,18 +80,18 @@ func addProfile(e *env, name string, share config.Share, login bool) error {
 	}
 	if login {
 		if err := loginProfile(e, cfg, name); err != nil {
-			fmt.Fprintf(e.stderr, "로그인하지 못했습니다: %v\n나중에 `ccam login %s` 로 다시 시도하세요.\n", err, name)
+			fmt.Fprintf(e.stderr, "Login failed: %v\nTry again later with `ccam login %s`.\n", err, name)
 		}
 	}
 	if _, err := installShims(e, cfg); err != nil {
-		fmt.Fprintln(e.stderr, "단축 명령을 만들지 못했습니다:", err)
+		fmt.Fprintln(e.stderr, "Could not create shortcuts:", err)
 	}
 	prof, _ = cfg.Find(name)
 	email := prof.Email
 	if email == "" {
-		email = "로그인 전"
+		email = "not logged in"
 	}
-	e.printf("✓ %s (%s) 추가됨 — 단축 명령: claude%d\n", name, email, prof.Slot)
+	e.printf("✓ %s (%s) added — shortcut: claude%d\n", name, email, prof.Slot)
 	return nil
 }
 
@@ -106,7 +106,7 @@ func loginProfile(e *env, cfg *config.Config, sel string) error {
 	}
 	email, err := profile.ReadEmail(profile.Dir(e.paths, prof))
 	if err != nil {
-		return fmt.Errorf("로그인 후 이메일을 읽지 못했습니다: %w", err)
+		return fmt.Errorf("could not read the email after login: %w", err)
 	}
 	prof.Email = email
 	return e.save(cfg)
@@ -131,7 +131,7 @@ func installShims(e *env, cfg *config.Config) ([]string, error) {
 	}
 	created, err := shim.Install(e.paths.Bin, self, cfg)
 	if err == nil && !shim.InPath(e.paths.Bin) {
-		fmt.Fprintf(e.stderr, "참고: %s 가 PATH 에 없습니다. ~/.bashrc 나 ~/.zshrc 에 추가하세요:\n  export PATH=\"%s:$PATH\"\n", e.paths.Bin, e.paths.Bin)
+		fmt.Fprintf(e.stderr, "Note: %s is not in PATH. Add it to ~/.bashrc or ~/.zshrc:\n  export PATH=\"%s:$PATH\"\n", e.paths.Bin, e.paths.Bin)
 	}
 	return created, err
 }
@@ -160,13 +160,13 @@ func listCmd(e *env) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "list",
 		Aliases: []string{"ls"},
-		Short:   "계정 목록",
+		Short:   "List accounts",
 		Args:    cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return listProfiles(e, asJSON)
 		},
 	}
-	cmd.Flags().BoolVar(&asJSON, "json", false, "JSON 으로 출력")
+	cmd.Flags().BoolVar(&asJSON, "json", false, "print as JSON")
 	return cmd
 }
 
@@ -191,11 +191,11 @@ func listProfiles(e *env, asJSON bool) error {
 		return enc.Encode(rows)
 	}
 	if len(rows) == 0 {
-		e.printf("등록된 계정이 없습니다. `ccam add <이름>` 으로 추가하세요.\n")
+		e.printf("No accounts yet. Add one with `ccam add <name>`.\n")
 		return nil
 	}
 	tw := tabwriter.NewWriter(e.stdout, 0, 0, 2, ' ', 0)
-	fmt.Fprintln(tw, " \t번호\t이름\t이메일\t공유\t마지막 사용")
+	fmt.Fprintln(tw, " \tShortcut\tName\tEmail\tShared\tLast used")
 	for _, r := range rows {
 		mark := ""
 		if r.Default {
@@ -203,7 +203,7 @@ func listProfiles(e *env, asJSON bool) error {
 		}
 		email := r.Email
 		if email == "" {
-			email = "(로그인 전)"
+			email = "(not logged in)"
 		}
 		last := "-"
 		if r.LastUsed != nil {
@@ -237,24 +237,24 @@ func shareSummary(s config.Share) string {
 	return out
 }
 
-// Ago renders a short Korean relative time.
+// Ago renders a short relative time.
 func Ago(d time.Duration) string {
 	switch {
 	case d < time.Minute:
-		return "방금"
+		return "just now"
 	case d < time.Hour:
-		return fmt.Sprintf("%d분 전", int(d.Minutes()))
+		return fmt.Sprintf("%dm ago", int(d.Minutes()))
 	case d < 24*time.Hour:
-		return fmt.Sprintf("%d시간 전", int(d.Hours()))
+		return fmt.Sprintf("%dh ago", int(d.Hours()))
 	default:
-		return fmt.Sprintf("%d일 전", int(d.Hours()/24))
+		return fmt.Sprintf("%dd ago", int(d.Hours()/24))
 	}
 }
 
 func useCmd(e *env) *cobra.Command {
 	return &cobra.Command{
-		Use:   "use <이름|번호>",
-		Short: "기본 계정 지정",
+		Use:   "use <name|slot>",
+		Short: "Set the default account",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg, err := e.load()
@@ -269,7 +269,7 @@ func useCmd(e *env) *cobra.Command {
 			if err := e.save(cfg); err != nil {
 				return err
 			}
-			e.printf("✓ 기본 계정: %s\n", p.Name)
+			e.printf("✓ Default account: %s\n", p.Name)
 			return nil
 		},
 	}
@@ -278,9 +278,9 @@ func useCmd(e *env) *cobra.Command {
 func removeCmd(e *env) *cobra.Command {
 	var yes bool
 	cmd := &cobra.Command{
-		Use:     "remove <이름|번호>",
+		Use:     "remove <name|slot>",
 		Aliases: []string{"rm"},
-		Short:   "계정 삭제 (폴더는 휴지통으로 이동)",
+		Short:   "Remove an account (its folder goes to the trash)",
 		Args:    cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg, err := e.load()
@@ -292,8 +292,8 @@ func removeCmd(e *env) *cobra.Command {
 				return err
 			}
 			prof := *p
-			if !yes && !e.confirm(fmt.Sprintf("%s (%s) 계정을 삭제할까요?", prof.Name, profile.Dir(e.paths, &prof))) {
-				e.printf("취소했습니다.\n")
+			if !yes && !e.confirm(fmt.Sprintf("Remove account %s (%s)?", prof.Name, profile.Dir(e.paths, &prof))) {
+				e.printf("Cancelled.\n")
 				return nil
 			}
 			if g := prof.Share.Get("extensions"); g != config.Local {
@@ -317,21 +317,21 @@ func removeCmd(e *env) *cobra.Command {
 				shim.RemoveFor(e.paths.Bin, self, &prof)
 			}
 			if trashed != "" {
-				e.printf("✓ %s 삭제됨 (폴더는 %s 로 옮김)\n", prof.Name, trashed)
+				e.printf("✓ %s removed (folder moved to %s)\n", prof.Name, trashed)
 			} else {
-				e.printf("✓ %s 등록 해제됨 (폴더 %s 는 그대로 둠)\n", prof.Name, profile.Dir(e.paths, &prof))
+				e.printf("✓ %s unregistered (folder %s left in place)\n", prof.Name, profile.Dir(e.paths, &prof))
 			}
 			return nil
 		},
 	}
-	cmd.Flags().BoolVarP(&yes, "yes", "y", false, "확인 없이 삭제")
+	cmd.Flags().BoolVarP(&yes, "yes", "y", false, "remove without asking")
 	return cmd
 }
 
 func renameCmd(e *env) *cobra.Command {
 	return &cobra.Command{
-		Use:   "rename <이름> <새 이름>",
-		Short: "계정 이름 변경 (단축 명령 갱신)",
+		Use:   "rename <name> <new-name>",
+		Short: "Rename an account (updates shortcuts)",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg, err := e.load()
@@ -350,7 +350,7 @@ func renameCmd(e *env) *cobra.Command {
 				return err
 			}
 			if _, err := installShims(e, cfg); err != nil {
-				fmt.Fprintln(e.stderr, "단축 명령 갱신 실패:", err)
+				fmt.Fprintln(e.stderr, "Could not update shortcuts:", err)
 			}
 			e.printf("✓ %s → %s\n", oldName, args[1])
 			return nil
@@ -360,8 +360,8 @@ func renameCmd(e *env) *cobra.Command {
 
 func loginCmd(e *env) *cobra.Command {
 	return &cobra.Command{
-		Use:   "login <이름|번호>",
-		Short: "다시 로그인",
+		Use:   "login <name|slot>",
+		Short: "Log in again",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg, err := e.load()
@@ -372,7 +372,7 @@ func loginCmd(e *env) *cobra.Command {
 				return err
 			}
 			p, _ := cfg.Find(args[0])
-			e.printf("✓ %s 로그인: %s\n", p.Name, p.Email)
+			e.printf("✓ %s logged in: %s\n", p.Name, p.Email)
 			return nil
 		},
 	}
@@ -380,8 +380,8 @@ func loginCmd(e *env) *cobra.Command {
 
 func logoutCmd(e *env) *cobra.Command {
 	return &cobra.Command{
-		Use:   "logout <이름|번호>",
-		Short: "토큰 삭제",
+		Use:   "logout <name|slot>",
+		Short: "Remove the login token",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg, err := e.load()
@@ -402,11 +402,11 @@ func logoutCmd(e *env) *cobra.Command {
 }
 
 func shimsCmd(e *env) *cobra.Command {
-	cmd := &cobra.Command{Use: "shims", Short: "단축 명령(claude1…) 관리"}
+	cmd := &cobra.Command{Use: "shims", Short: "Manage shortcuts (claude1…)"}
 	var names bool
 	install := &cobra.Command{
 		Use:   "install",
-		Short: "claude1…claudeN 을 다시 만듭니다",
+		Short: "Recreate claude1…claudeN",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg, err := e.load()
@@ -423,11 +423,11 @@ func shimsCmd(e *env) *cobra.Command {
 			if err != nil {
 				return err
 			}
-			e.printf("✓ 단축 명령 %d개 새로 만듦 (%s)\n", len(created), e.paths.Bin)
+			e.printf("✓ %d new shortcuts created (%s)\n", len(created), e.paths.Bin)
 			return nil
 		},
 	}
-	install.Flags().BoolVar(&names, "names", false, "claude-<이름> 단축 명령도 만들기")
+	install.Flags().BoolVar(&names, "names", false, "also create claude-<name> shortcuts")
 	cmd.AddCommand(install)
 	return cmd
 }
@@ -435,8 +435,8 @@ func shimsCmd(e *env) *cobra.Command {
 func runCmd(e *env) *cobra.Command {
 	// Only reached for `ccam help run`; real runs never get to cobra.
 	return &cobra.Command{
-		Use:                "run <이름|번호> [-- claude 인자]",
-		Short:              "해당 계정으로 claude 실행 (`ccam <이름>` 과 같음)",
+		Use:                "run <name|slot> [-- claude args]",
+		Short:              "Run claude as that account (same as `ccam <name>`)",
 		DisableFlagParsing: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			sel := ""

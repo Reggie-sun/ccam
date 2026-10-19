@@ -26,7 +26,7 @@ func ValidateNewName(cfg *config.Config) func(string) error {
 			return err
 		}
 		if _, ok := cfg.Find(name); ok {
-			return fmt.Errorf("이미 있는 계정 이름입니다")
+			return fmt.Errorf("an account with this name already exists")
 		}
 		return nil
 	}
@@ -127,17 +127,17 @@ func (w Wizard) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (w Wizard) View() tea.View {
 	var b strings.Builder
-	b.WriteString(titleStyle.Render(" 계정 추가") + "\n\n")
+	b.WriteString(titleStyle.Render(" Add account") + "\n\n")
 	if w.askName {
-		fmt.Fprintf(&b, " 계정 이름: %s█\n", w.name)
-		b.WriteString(dimStyle.Render(" 영문 소문자·숫자·-·_ (예: work, personal)") + "\n")
+		fmt.Fprintf(&b, " Account name: %s█\n", w.name)
+		b.WriteString(dimStyle.Render(" a-z, 0-9, - and _ (e.g. work, personal)") + "\n")
 		if w.err != "" {
 			b.WriteString(" " + warnStyle.Render(w.err) + "\n")
 		}
-		b.WriteString("\n" + dimStyle.Render(" Enter 다음 · Esc 취소") + "\n")
+		b.WriteString("\n" + dimStyle.Render(" Enter next · Esc cancel") + "\n")
 		return tea.NewView(b.String())
 	}
-	fmt.Fprintf(&b, " 이름: %s\n\n ? 공유할 항목을 고르세요 (스페이스로 선택)\n", w.name)
+	fmt.Fprintf(&b, " Name: %s\n\n ? Choose what to share (Space to toggle)\n", w.name)
 	for i, item := range config.Items {
 		marker := "  "
 		if i == w.cursor {
@@ -149,7 +149,7 @@ func (w Wizard) View() tea.View {
 		}
 		fmt.Fprintf(&b, " %s%s %s\n", marker, box, itemLabels[item])
 	}
-	b.WriteString("\n" + dimStyle.Render(" Enter 로그인으로 · Esc 취소") + "\n")
+	b.WriteString("\n" + dimStyle.Render(" Enter go to login · Esc cancel") + "\n")
 	return tea.NewView(b.String())
 }
 
@@ -161,7 +161,7 @@ func RunAddWizard(cfg *config.Config, name string) (AddAnswers, error) {
 	}
 	w := final.(Wizard)
 	if !w.Done() {
-		return AddAnswers{}, fmt.Errorf("취소했습니다")
+		return AddAnswers{}, fmt.Errorf("cancelled")
 	}
 	return w.Answers(), nil
 }

@@ -36,7 +36,7 @@ func runShell(command string, input []byte) (string, error) {
 func statuslineInstallCmd(e *env) *cobra.Command {
 	return &cobra.Command{
 		Use:   "install",
-		Short: "모든 계정의 settings.json 에 ccam 상태줄을 설정 (기존 상태줄은 감싸서 유지)",
+		Short: "Set the ccam status line in every account's settings.json (an existing one is wrapped and kept)",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg, err := e.load()
@@ -61,7 +61,7 @@ func statuslineInstallCmd(e *env) *cobra.Command {
 				if changed {
 					e.printf("✓ %s\n", target)
 				} else {
-					e.printf("· %s (이미 설정됨)\n", target)
+					e.printf("· %s (already set)\n", target)
 				}
 			}
 			return nil

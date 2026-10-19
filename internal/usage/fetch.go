@@ -10,8 +10,10 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 	"time"
+	"unicode"
 
 	"github.com/jhyunwoo/ccam/internal/creds"
 	"github.com/jhyunwoo/ccam/internal/fsutil"
@@ -147,7 +149,7 @@ func (f *Fetcher) Fetch(ctx context.Context, a Account, opt Options) Report {
 			return f.fallback(a, r, StatusExpired, "")
 		}
 		if src == creds.Keychain {
-			return f.fallback(a, r, StatusExpired, "macOS 키체인 로그인은 갱신하지 않습니다")
+			return f.fallback(a, r, StatusExpired, "macOS keychain logins are not refreshed")
 		}
 		if cred, err = f.refresh(ctx, a); err != nil {
 			return f.fallback(a, r, StatusExpired, err.Error())
@@ -176,7 +178,7 @@ func (f *Fetcher) live(ctx context.Context, token string) (Limits, Status, error
 	resp, err := f.Client.Do(req)
 	if err != nil {
 		if ctx.Err() != nil {
-			return Limits{}, StatusError, fmt.Errorf("응답 없음 (%s 초과)", accountTimeout)
+			return Limits{}, StatusError, fmt.Errorf("no response (over %s)", accountTimeout)
 		}
 		return Limits{}, StatusError, err
 	}
@@ -187,7 +189,7 @@ func (f *Fetcher) live(ctx context.Context, token string) (Limits, Status, error
 	}
 	switch {
 	case resp.StatusCode == http.StatusUnauthorized || resp.StatusCode == http.StatusForbidden:
-		return Limits{}, StatusExpired, fmt.Errorf("인증 실패 (%d)", resp.StatusCode)
+		return Limits{}, StatusExpired, fmt.Errorf("authentication failed (%d)", resp.StatusCode)
 	case resp.StatusCode != http.StatusOK:
 		return Limits{}, StatusError, fmt.Errorf("HTTP %d", resp.StatusCode)
 	}
@@ -211,7 +213,7 @@ func (f *Fetcher) fallback(a Account, r Report, status Status, errMsg string) Re
 	}
 	if !found {
 		if status == StatusOK {
-			r.Status, r.Err = StatusError, "저장된 사용량이 없습니다"
+			r.Status, r.Err = StatusError, "no saved usage"
 		}
 		return r
 	}
@@ -245,6 +247,13 @@ func (f *Fetcher) readCache(name, src string) (cached, bool) {
 	if json.Unmarshal(data, &c) != nil || c.Limits == nil {
 		return cached{}, false
 	}
+	for i, s := range c.Limits.Scoped {
+		// Caches written before output became English-only may hold the
+		// old Korean fallback name.
+		if strings.ContainsFunc(s.Name, func(r rune) bool { return unicode.Is(unicode.Hangul, r) }) {
+			c.Limits.Scoped[i].Name = "per-model"
+		}
+	}
 	return c, true
 }
 
@@ -264,7 +273,7 @@ func SaveStatusLine(stateDir, name string, l Limits, at time.Time) error {
 
 var (
 	errNoOAuth = errors.New("no subscription login")
-	errFormat  = errors.New("사용량 응답 형식이 바뀌었습니다")
+	errFormat  = errors.New("the usage response format changed")
 )
 
 type oauthCred struct {

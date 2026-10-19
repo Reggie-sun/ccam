@@ -186,10 +186,10 @@ func TestArgumentPassThrough(t *testing.T) {
 		want    []string
 	}{
 		{[]string{"ccam", "work", "--resume"}, "work", []string{"--resume"}},
-		{[]string{"ccam", "work", "-p", "테스트 고쳐줘", "--output-format", "json"}, "work", []string{"-p", "테스트 고쳐줘", "--output-format", "json"}},
+		{[]string{"ccam", "work", "-p", "corrige les tests — ü", "--output-format", "json"}, "work", []string{"-p", "corrige les tests — ü", "--output-format", "json"}},
 		{[]string{"claude2", "--model", "opus", "--continue"}, "work", []string{"--model", "opus", "--continue"}},
 		{[]string{"ccam", "work", "--help"}, "work", []string{"--help"}},
-		{[]string{"ccam", "-p", "요약해줘"}, "personal", []string{"-p", "요약해줘"}},
+		{[]string{"ccam", "-p", "résume ça"}, "personal", []string{"-p", "résume ça"}},
 		{[]string{"ccam", "work", "--", "--version"}, "work", []string{"--version"}},
 		{[]string{"ccam", "work", "--version"}, "work", []string{"--version"}},
 		{[]string{"ccam", "2"}, "work", nil},
@@ -212,7 +212,7 @@ func TestStdinAndExitCodePassThrough(t *testing.T) {
 	h := newHarness(t)
 	h.addAccounts()
 	stdinFile := filepath.Join(h.home, "stdin.txt")
-	r := h.run("log line\n", []string{"FAKE_CLAUDE_STDIN=" + stdinFile, "FAKE_EXIT=7"}, "ccam", "work", "-p", "원인 찾아줘")
+	r := h.run("log line\n", []string{"FAKE_CLAUDE_STDIN=" + stdinFile, "FAKE_EXIT=7"}, "ccam", "work", "-p", "trouve la cause")
 	if r.code != 7 {
 		t.Fatalf("exit code %d", r.code)
 	}
@@ -251,7 +251,7 @@ func TestRemoveAndRename(t *testing.T) {
 		t.Fatalf("rename dir %s", dir)
 	}
 	r := h.run("n\n", nil, "ccam", "remove", "job")
-	if r.code != 0 || !strings.Contains(r.stdout, "취소") {
+	if r.code != 0 || !strings.Contains(r.stdout, "Cancelled") {
 		t.Fatalf("declined remove: %+v", r)
 	}
 	h.run("y\n", nil, "ccam", "remove", "job")

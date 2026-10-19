@@ -80,7 +80,7 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 - 사용자의 실제 ~/.claude, ~/.local/share/ccam은 절대 수정하지 않는다
 - 파일 쓰기는 fsutil.AtomicWrite, 데이터 이전은 share.Build → Apply 순서
 - 토큰 파일(.credentials.json)은 어떤 경우에도 공유 그룹에 링크하지 않는다 (share.Layout 허용 목록)
-- 사용자에게 보이는 메시지는 한국어, 코드·주석·커밋은 영어
+- 프로그램 출력(도움말, 메시지, 오류, 질문, TUI, install.sh)은 모두 영어다. 한글은 절대 출력하지 않는다. 코드·주석·커밋도 영어. internal/e2e/english_test.go의 TestSourceHasNoHangul(cmd/·internal/의 테스트 외 Go 소스와 install.sh·scripts/*.sh에 한글 금지, 이스케이프 포함)과 TestOutputHasNoHangul(빌드한 바이너리의 모든 도움말과 주요 명령 출력 검사)이 강제한다
 
 ## 명령
 - 빌드: go build ./cmd/ccam

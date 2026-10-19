@@ -159,7 +159,7 @@ func (m Model) updateList(k tea.KeyPressMsg) (tea.Model, tea.Cmd) {
 					return m, tea.Quit
 				}
 			}
-			m.message = key + "번 계정이 없습니다"
+			m.message = "no account in slot " + key
 		}
 	}
 	return m, nil
@@ -187,9 +187,9 @@ var (
 )
 
 func (m Model) viewList(b *strings.Builder) {
-	b.WriteString(titleStyle.Render(" ccam · Claude Code 계정") + "\n\n")
+	b.WriteString(titleStyle.Render(" ccam · Claude Code accounts") + "\n\n")
 	if len(m.rows) == 0 {
-		b.WriteString(" 등록된 계정이 없습니다. a 를 눌러 추가하세요.\n")
+		b.WriteString(" No accounts yet. Press a to add one.\n")
 	}
 	nameW, emailW := 4, 6
 	for _, r := range m.rows {
@@ -218,7 +218,7 @@ func (m Model) viewList(b *strings.Builder) {
 	if m.message != "" {
 		b.WriteString(" " + warnStyle.Render(m.message) + "\n")
 	}
-	b.WriteString(dimStyle.Render(ansi.Truncate(" Enter 실행 · 1-9 바로 실행 · a 추가 · s 공유 · d 기본 · r 새로고침 · q 종료", m.width-1, "…")) + "\n")
+	b.WriteString(dimStyle.Render(ansi.Truncate(" Enter launch · 1-9 jump · a add · s sharing · d default · r refresh · q quit", m.width-1, "…")) + "\n")
 }
 
 // usageCell is a fixed 8-column cell: "5h  72%", "5h …", "API", "-".
@@ -255,7 +255,7 @@ func padRight(s string, w int) string {
 
 func orDash(s string) string {
 	if s == "" {
-		return "(로그인 전)"
+		return "(not logged in)"
 	}
 	return s
 }
@@ -275,7 +275,7 @@ func shareSummary(s config.Share) string {
 		parts = append(parts, p)
 	}
 	if len(parts) == 0 {
-		return "분리"
+		return "local"
 	}
 	return strings.Join(parts, " ")
 }

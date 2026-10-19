@@ -20,7 +20,7 @@ type Flock struct {
 }
 
 // ErrBusy means another process holds the lock.
-var ErrBusy = errors.New("이미 사용 중입니다")
+var ErrBusy = errors.New("already in use")
 
 // TryFlock takes the lock without waiting.
 func TryFlock(path string) (*Flock, error) {
@@ -66,7 +66,7 @@ func DirLock(path string, timeout time.Duration) (unlock func(), err error) {
 			continue
 		}
 		if time.Now().After(deadline) {
-			return nil, fmt.Errorf("%s 잠금을 얻지 못했습니다 (Claude Code가 파일을 쓰는 중)", path)
+			return nil, fmt.Errorf("could not lock %s (Claude Code is writing the file)", path)
 		}
 		time.Sleep(50 * time.Millisecond)
 	}

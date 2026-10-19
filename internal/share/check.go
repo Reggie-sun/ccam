@@ -30,13 +30,13 @@ type Problem struct {
 func (pr Problem) String() string {
 	switch pr.Kind {
 	case MissingLink:
-		return fmt.Sprintf("%s: 공유 링크가 없습니다 (→ %s)", pr.Path, pr.Want)
+		return fmt.Sprintf("%s: share link is missing (→ %s)", pr.Path, pr.Want)
 	case WrongTarget:
-		return fmt.Sprintf("%s: 다른 곳을 가리킵니다 (%s, 기대: %s)", pr.Path, pr.Got, pr.Want)
+		return fmt.Sprintf("%s: points elsewhere (%s, expected %s)", pr.Path, pr.Got, pr.Want)
 	case NotLinked:
-		return fmt.Sprintf("%s: 공유 설정인데 링크가 아닌 실제 파일입니다", pr.Path)
+		return fmt.Sprintf("%s: set to shared but is a real file, not a link", pr.Path)
 	default:
-		return fmt.Sprintf("%s: 분리 설정인데 아직 그룹(%s)에 연결되어 있습니다", pr.Path, pr.Got)
+		return fmt.Sprintf("%s: set to local but still linked to group %s", pr.Path, pr.Got)
 	}
 }
 

@@ -49,7 +49,7 @@ func runHome(e *env) error {
 			if err := changeShare(e, cfg, prof, res.Share, share.Options{}, false, nil); err != nil {
 				return err
 			}
-			e.printf("Enter 를 누르면 목록으로 돌아갑니다.")
+			e.printf("Press Enter to return to the list.")
 			_, _ = e.in.ReadString('\n')
 		default:
 			return nil
@@ -89,6 +89,6 @@ func addInteractive(e *env, cfg *config.Config, name string) error {
 	if err != nil {
 		return err
 	}
-	e.printf("→ 브라우저에서 로그인하세요. 끝나면 자동으로 이어집니다.\n")
+	e.printf("→ Log in in your browser. ccam continues when you are done.\n")
 	return addProfile(e, ans.Name, ans.Share, true)
 }

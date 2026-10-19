@@ -53,7 +53,7 @@ func TestShareRoundTripCLI(t *testing.T) {
 	if b, _ := os.ReadFile(filepath.Join(work, "projects", "p", "s1.jsonl")); string(b) != "work session" {
 		t.Fatal("session lost in round trip")
 	}
-	if out := h.ok("ccam", "share", "work"); !strings.Contains(out, "공유 (default 그룹)") {
+	if out := h.ok("ccam", "share", "work"); !strings.Contains(out, "shared (group default)") {
 		t.Fatalf("share status: %s", out)
 	}
 	h.run("y\n", nil, "ccam", "remove", "work")

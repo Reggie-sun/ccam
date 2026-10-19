@@ -73,7 +73,7 @@ func TestUsageTableAndJSON(t *testing.T) {
 	if code != 0 {
 		t.Fatalf("%d %s", code, errOut)
 	}
-	for _, s := range []string{"72%", "8%", "100%", "여유가 가장 많은 계정: work"} {
+	for _, s := range []string{"72%", "8%", "100%", "Most headroom: work"} {
 		if !strings.Contains(out, s) {
 			t.Errorf("missing %q:\n%s", s, out)
 		}
@@ -91,7 +91,7 @@ func TestUsageTableAndJSON(t *testing.T) {
 func TestUsageReportsLoggedOut(t *testing.T) {
 	c := newTestCLI(t, map[string]int{"personal": 10})
 	out, _, _ := c.run("", "usage")
-	if !strings.Contains(out, "로그인 안 됨 → ccam login work") {
+	if !strings.Contains(out, "not logged in → ccam login work") {
 		t.Fatalf("%s", out)
 	}
 }
@@ -105,7 +105,7 @@ func TestStatuslineCollectsAndPrints(t *testing.T) {
 		t.Fatalf("%q", out)
 	}
 	out, _, _ = c.run("", "usage", "--source", "cache")
-	if !strings.Contains(out, "41%") || !strings.Contains(out, "(캐시)") {
+	if !strings.Contains(out, "41%") || !strings.Contains(out, "(cached)") {
 		t.Fatalf("cached usage:\n%s", out)
 	}
 	out, _, _ = c.run(string(input), "statusline", "--wrap", "echo mine")
@@ -140,7 +140,7 @@ func TestStatuslineInstallKeepsSymlinkAndWraps(t *testing.T) {
 		t.Fatalf("settings: %s", data)
 	}
 	out, _, _ = c.run("", "statusline", "install")
-	if !strings.Contains(out, "이미 설정됨") {
+	if !strings.Contains(out, "already set") {
 		t.Fatalf("second install: %s", out)
 	}
 }

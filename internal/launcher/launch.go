@@ -93,9 +93,9 @@ func historyCheck(p paths.Paths, pl *Plan) error {
 	}
 	dir := HistoryDir(p, group, cwd)
 	if session.Active(dir) {
-		fmt.Fprintf(os.Stderr, "ccam: 이 폴더에서 대화 내역을 공유하는 다른 Claude Code(%s 그룹)가 실행 중입니다.\n      같은 대화를 동시에 이어 쓰면 기록이 섞일 수 있습니다.\n", group)
-		if !askTTY("그래도 실행할까요?") {
-			return fmt.Errorf("취소했습니다")
+		fmt.Fprintf(os.Stderr, "ccam: another Claude Code sharing conversation history (group %s) is running in this folder.\n      Continuing the same conversation from both at once can mix up the history.\n", group)
+		if !askTTY("Run anyway?") {
+			return fmt.Errorf("cancelled")
 		}
 	}
 	return session.Register(dir)
@@ -125,10 +125,10 @@ func applyMCP(p paths.Paths, cfg *config.Config, pl *Plan, dry, running bool) er
 		switch {
 		case dry:
 		case running:
-			fmt.Fprintf(os.Stderr, "ccam: %s 계정이 이미 실행 중이라 MCP 동기화를 건너뜁니다\n", pl.Profile.Name)
+			fmt.Fprintf(os.Stderr, "ccam: account %s is already running, skipping MCP sync\n", pl.Profile.Name)
 		default:
 			if err := mcp.Sync(pl.Dir, gdir, state); err != nil {
-				fmt.Fprintf(os.Stderr, "ccam: MCP 동기화 실패 (그대로 실행합니다): %v\n", err)
+				fmt.Fprintf(os.Stderr, "ccam: MCP sync failed (launching anyway): %v\n", err)
 			}
 		}
 		return nil
@@ -139,7 +139,7 @@ func applyMCP(p paths.Paths, cfg *config.Config, pl *Plan, dry, running bool) er
 	}
 	fresh, err := mcp.NewLocal(pl.Dir, mcp.Path(gdir), filepath.Join(state, "seen"))
 	if err == nil && len(fresh) > 0 {
-		fmt.Fprintf(os.Stderr, "ccam: %s 계정에만 있는 MCP 서버: %s\n      다른 계정과 공유하려면: ccam mcp import %s %s\n",
+		fmt.Fprintf(os.Stderr, "ccam: MCP servers only account %s has: %s\n      To share them with other accounts: ccam mcp import %s %s\n",
 			pl.Profile.Name, strings.Join(fresh, ", "), pl.Profile.Name, strings.Join(fresh, " "))
 	}
 	return nil

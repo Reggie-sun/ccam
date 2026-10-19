@@ -134,7 +134,7 @@ func TestSyncSkipsWhenUnchangedAndRefusesBadJSON(t *testing.T) {
 	prof, group, state := t.TempDir(), t.TempDir(), t.TempDir()
 	(&Store{Servers: map[string]json.RawMessage{"g": json.RawMessage(`{"command":"x"}`)}}).Save(Path(group))
 	writeClaudeJSON(t, prof, `{not json`)
-	if err := Sync(prof, group, state); err == nil || !strings.Contains(err.Error(), "손대지 않음") {
+	if err := Sync(prof, group, state); err == nil || !strings.Contains(err.Error(), "left untouched") {
 		t.Fatalf("bad json: %v", err)
 	}
 	if b, _ := os.ReadFile(filepath.Join(prof, ".claude.json")); string(b) != "{not json" {

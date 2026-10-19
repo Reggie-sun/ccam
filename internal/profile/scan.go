@@ -14,7 +14,7 @@ import (
 func TopLevelValue(data []byte, key string) ([]byte, bool, error) {
 	i := skipWS(data, 0)
 	if i >= len(data) || data[i] != '{' {
-		return nil, false, fmt.Errorf("JSON 객체가 아닙니다")
+		return nil, false, fmt.Errorf("not a JSON object")
 	}
 	i++
 	for {
@@ -26,7 +26,7 @@ func TopLevelValue(data []byte, key string) ([]byte, bool, error) {
 			return nil, false, nil
 		}
 		if data[i] != '"' {
-			return nil, false, fmt.Errorf("잘못된 JSON (위치 %d)", i)
+			return nil, false, fmt.Errorf("invalid JSON (offset %d)", i)
 		}
 		end, err := skipString(data, i)
 		if err != nil {
@@ -35,7 +35,7 @@ func TopLevelValue(data []byte, key string) ([]byte, bool, error) {
 		k := data[i+1 : end-1]
 		i = skipWS(data, end)
 		if i >= len(data) || data[i] != ':' {
-			return nil, false, fmt.Errorf("잘못된 JSON (위치 %d)", i)
+			return nil, false, fmt.Errorf("invalid JSON (offset %d)", i)
 		}
 		i = skipWS(data, i+1)
 		vend, err := skipValue(data, i)

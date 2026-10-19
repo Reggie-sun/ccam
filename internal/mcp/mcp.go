@@ -41,7 +41,7 @@ func Load(path string) (*Store, error) {
 		return nil, err
 	}
 	if err := json.Unmarshal(data, s); err != nil {
-		return nil, fmt.Errorf("%s 읽기 실패: %w", path, err)
+		return nil, fmt.Errorf("could not read %s: %w", path, err)
 	}
 	if s.Servers == nil {
 		s.Servers = map[string]json.RawMessage{}
@@ -76,10 +76,10 @@ func Validate(def json.RawMessage) error {
 		URL     string `json:"url"`
 	}
 	if err := json.Unmarshal(def, &v); err != nil {
-		return fmt.Errorf("MCP 서버 정의는 JSON 객체여야 합니다: %w", err)
+		return fmt.Errorf("an MCP server definition must be a JSON object: %w", err)
 	}
 	if v.Command == "" && v.URL == "" {
-		return fmt.Errorf("MCP 서버 정의에 command 나 url 이 필요합니다")
+		return fmt.Errorf("an MCP server definition needs a command or url")
 	}
 	return nil
 }
@@ -187,7 +187,7 @@ func Sync(profileDir, groupDir, stateDir string) error {
 	perm := fs.FileMode(0o600)
 	if data, err := os.ReadFile(claudeJSON); err == nil {
 		if err := json.Unmarshal(data, &doc); err != nil {
-			return fmt.Errorf(".claude.json 읽기 실패 (손대지 않음): %w", err)
+			return fmt.Errorf("could not read .claude.json (left untouched): %w", err)
 		}
 		if err := backup(claudeJSON, data, filepath.Join(stateDir, "backups")); err != nil {
 			return err
@@ -201,7 +201,7 @@ func Sync(profileDir, groupDir, stateDir string) error {
 	servers := map[string]json.RawMessage{}
 	if raw, ok := doc["mcpServers"]; ok {
 		if err := json.Unmarshal(raw, &servers); err != nil {
-			return fmt.Errorf(".claude.json 의 mcpServers 를 읽지 못했습니다: %w", err)
+			return fmt.Errorf("could not read mcpServers in .claude.json: %w", err)
 		}
 	}
 	for _, n := range managed {

@@ -25,18 +25,18 @@ func usageCmd(e *env) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "usage",
 		Aliases: []string{"u"},
-		Short:   "모든 계정의 5시간·주간 사용률과 초기화 시각",
+		Short:   "5-hour and weekly usage of every account, with reset times",
 		Args:    cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if opt.Source != "" && opt.Source != "live" && opt.Source != "cache" {
-				return fmt.Errorf("--source 는 live 또는 cache 입니다")
+				return fmt.Errorf("--source must be live or cache")
 			}
 			cfg, err := e.load()
 			if err != nil {
 				return err
 			}
 			if len(cfg.Profiles) == 0 {
-				e.printf("등록된 계정이 없습니다. `ccam add <이름>` 으로 추가하세요.\n")
+				e.printf("No accounts yet. Add one with `ccam add <name>`.\n")
 				return nil
 			}
 			f := e.fetcher()
@@ -60,13 +60,13 @@ func usageCmd(e *env) *cobra.Command {
 			}
 		},
 	}
-	cmd.Flags().BoolVar(&asJSON, "json", false, "JSON 으로 출력")
-	cmd.Flags().IntVar(&watch, "watch", 60, "N초마다 새로 고침")
+	cmd.Flags().BoolVar(&asJSON, "json", false, "print as JSON")
+	cmd.Flags().IntVar(&watch, "watch", 60, "refresh every N seconds")
 	cmd.Flags().Lookup("watch").NoOptDefVal = "60"
-	cmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "모델별 한도와 출처 표시")
+	cmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "show per-model limits and the data source")
 	cmd.Flags().StringVar(&opt.Source, "source", "", "live|cache")
-	cmd.Flags().BoolVar(&opt.NoCache, "no-cache", false, "60초 캐시 무시")
-	cmd.Flags().BoolVar(&opt.Refresh, "refresh", false, "만료된 토큰 갱신 (실행 중이 아닌 계정만)")
+	cmd.Flags().BoolVar(&opt.NoCache, "no-cache", false, "ignore the 60-second cache")
+	cmd.Flags().BoolVar(&opt.Refresh, "refresh", false, "refresh expired tokens (only for accounts not running)")
 	return cmd
 }
 
@@ -140,7 +140,7 @@ func showUsage(e *env, f *usage.Fetcher, cfg *config.Config, opt usage.Options, 
 		draw()
 	}
 	if best := usage.Best(view); best != nil && len(view) > 1 {
-		e.printf("→ 여유가 가장 많은 계정: %s   (ccam next --auto 로 바로 열기)\n", best.Name)
+		e.printf("→ Most headroom: %s   (open it with ccam next --auto)\n", best.Name)
 	}
 	return nil
 }
@@ -158,14 +158,14 @@ func statuslineCmd(e *env) *cobra.Command {
 	var wrap string
 	cmd := &cobra.Command{
 		Use:   "statusline",
-		Short: "Claude Code 상태줄: 계정 이름 표시와 사용량 수집",
-		Long:  "Claude Code가 상태줄 명령으로 실행합니다. 설치는 `ccam statusline install`.",
+		Short: "Claude Code status line: shows the account name and collects usage",
+		Long:  "Claude Code runs this as its status line command. Install with `ccam statusline install`.",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return runStatusline(e, wrap)
 		},
 	}
-	cmd.Flags().StringVar(&wrap, "wrap", "", "기존 상태줄 명령 (출력 앞에 계정 이름을 붙임)")
+	cmd.Flags().StringVar(&wrap, "wrap", "", "existing status line command (its output gets the account name in front)")
 	cmd.AddCommand(statuslineInstallCmd(e))
 	return cmd
 }

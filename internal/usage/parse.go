@@ -60,7 +60,7 @@ type apiResponse struct {
 func ParseLive(body []byte) (Limits, error) {
 	var r apiResponse
 	if err := json.Unmarshal(body, &r); err != nil {
-		return Limits{}, fmt.Errorf("사용량 응답 형식을 읽지 못했습니다: %w", err)
+		return Limits{}, fmt.Errorf("could not read the usage response: %w", err)
 	}
 	var l Limits
 	for _, lim := range r.Limits {
@@ -71,7 +71,7 @@ func ParseLive(body []byte) (Limits, error) {
 		case "weekly_all":
 			l.Weekly = w
 		case "weekly_scoped":
-			name := "모델별"
+			name := "per-model"
 			if lim.Scope != nil && lim.Scope.Model != nil {
 				name = lim.Scope.Model.DisplayName
 			}
@@ -92,7 +92,7 @@ func ParseLive(body []byte) (Limits, error) {
 		}
 	}
 	if !l.FiveHour.Known && !l.Weekly.Known && len(l.Scoped) == 0 {
-		return l, fmt.Errorf("사용량 응답에 한도 정보가 없습니다 (형식이 바뀌었을 수 있음)")
+		return l, fmt.Errorf("the usage response has no limits (the format may have changed)")
 	}
 	return l, nil
 }

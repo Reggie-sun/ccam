@@ -5,7 +5,7 @@
 ## 설치와 추가
 
 - [ ] 새 사용자(빈 HOME)에서 `install.sh` 한 줄로 설치, `ccam version` 출력
-- [ ] `ccam add` 마법사: 이름 → 공유 항목 → 브라우저 로그인 → `✓ <이름> (<이메일>) 추가됨 — 단축 명령: claudeN`
+- [ ] `ccam add` 마법사: 이름 → 공유 항목 → 브라우저 로그인 → `✓ <name> (<email>) added — shortcut: claudeN`
 - [ ] 두 번째 계정도 같은 방식으로 추가, `ccam list`에 서로 다른 이메일
 - [ ] `ccam import`로 기존 `~/.claude` 등록 후 `ccam main`과 그냥 `claude`가 같은 계정
 
@@ -27,8 +27,8 @@
 ## 사용량
 
 - [ ] `ccam usage`가 claude.ai 설정 화면의 사용률과 일치
-- [ ] `ccam statusline install` 후 상태줄에 `[계정] · 모델 · 5h N%`
-- [ ] 네트워크를 끊고 `ccam usage` → 캐시 값과 "(캐시)" 표시
+- [ ] `ccam statusline install` 후 상태줄에 `[account] · model · 5h N%`
+- [ ] 네트워크를 끊고 `ccam usage` → 캐시 값과 "(cached)" 표시
 
 ## 점검
 

@@ -10,7 +10,7 @@ func doctorCmd(e *env) *cobra.Command {
 	var fix bool
 	cmd := &cobra.Command{
 		Use:   "doctor",
-		Short: "링크·권한·로그인·Claude Code 버전 점검 (--fix 로 자동 수리)",
+		Short: "Check links, permissions, login and Claude Code version (--fix repairs)",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg, err := e.load()
@@ -24,13 +24,13 @@ func doctorCmd(e *env) *cobra.Command {
 			}
 			if doctor.Failed(findings) {
 				if !fix {
-					e.printf("\n`ccam doctor --fix` 로 고칠 수 있는 것은 고칩니다.\n")
+					e.printf("\n`ccam doctor --fix` repairs what it can.\n")
 				}
 				return exitError(1)
 			}
 			return nil
 		},
 	}
-	cmd.Flags().BoolVar(&fix, "fix", false, "안전하게 고칠 수 있는 문제를 고침 (바뀌는 파일은 백업)")
+	cmd.Flags().BoolVar(&fix, "fix", false, "repair what is safe to repair (changed files are backed up)")
 	return cmd
 }

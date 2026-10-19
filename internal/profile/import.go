@@ -72,22 +72,22 @@ func Import(p paths.Paths, cfg *config.Config, path, name string) (*config.Profi
 		return nil, nil, err
 	}
 	if info, err := os.Stat(path); err != nil || !info.IsDir() {
-		return nil, nil, fmt.Errorf("폴더가 아닙니다: %s", path)
+		return nil, nil, fmt.Errorf("not a folder: %s", path)
 	}
 	if registered(p, cfg, path) {
-		return nil, nil, fmt.Errorf("이미 등록된 폴더입니다: %s", path)
+		return nil, nil, fmt.Errorf("folder is already registered: %s", path)
 	}
 	if name == "" {
 		name = SuggestName(path)
 	}
 	if name == "" {
-		return nil, nil, fmt.Errorf("이름을 정할 수 없습니다. --name 으로 지정하세요")
+		return nil, nil, fmt.Errorf("cannot derive a name. Give one with --name")
 	}
 	if err := config.ValidateName(name); err != nil {
 		return nil, nil, err
 	}
 	if _, ok := cfg.Find(name); ok {
-		return nil, nil, fmt.Errorf("이미 있는 계정 이름입니다: %q (--name 으로 다른 이름을 주세요)", name)
+		return nil, nil, fmt.Errorf("an account named %q already exists (give another name with --name)", name)
 	}
 
 	var notes []string
@@ -100,7 +100,7 @@ func Import(p paths.Paths, cfg *config.Config, path, name string) (*config.Profi
 		if err := os.Symlink(outer, inner); err != nil {
 			return nil, nil, err
 		}
-		notes = append(notes, fmt.Sprintf("%s → %s 링크를 만들었습니다", inner, outer))
+		notes = append(notes, fmt.Sprintf("created link %s → %s", inner, outer))
 	}
 
 	email, _ := ReadEmail(path)

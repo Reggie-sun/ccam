@@ -15,11 +15,11 @@ import (
 func nextCmd(e *env) *cobra.Command {
 	var cont, auto bool
 	cmd := &cobra.Command{
-		Use:   "next [--auto] [--continue] [-- claude 인자]",
-		Short: "다음 계정으로 실행 (--continue: 마지막 대화 이어가기)",
-		Long: "마지막으로 쓴 계정의 다음 번호 계정으로 Claude Code를 엽니다.\n" +
-			"--continue 는 대화 내역을 공유하는 계정 중에서 고르고 claude --continue 로 엽니다.\n" +
-			"--auto 는 5시간 사용률이 가장 낮은 계정을 고릅니다.",
+		Use:   "next [--auto] [--continue] [-- claude args]",
+		Short: "Run the next account (--continue: pick up the last conversation)",
+		Long: "Opens Claude Code as the account in the slot after the last one used.\n" +
+			"--continue picks among accounts that share conversation history and opens it with claude --continue.\n" +
+			"--auto picks the account with the lowest 5-hour usage.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg, err := e.load()
 			if err != nil {
@@ -45,8 +45,8 @@ func nextCmd(e *env) *cobra.Command {
 			return launcher.LaunchWith(e.paths, cfg, to.Name, args, e.dryRun, e.stdout)
 		},
 	}
-	cmd.Flags().BoolVarP(&cont, "continue", "c", false, "대화 내역을 공유하는 다음 계정에서 마지막 대화 이어가기")
-	cmd.Flags().BoolVar(&auto, "auto", false, "5시간 사용률이 가장 낮은 계정 고르기")
+	cmd.Flags().BoolVarP(&cont, "continue", "c", false, "continue the last conversation on the next account that shares history")
+	cmd.Flags().BoolVar(&auto, "auto", false, "pick the account with the lowest 5-hour usage")
 	return cmd
 }
 

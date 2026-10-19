@@ -264,7 +264,7 @@ func TestDescribe(t *testing.T) {
 	pl, _ := Build(dir, f.groups, config.Share{}, config.Share{Memory: "default"}, Options{})
 	var buf bytes.Buffer
 	pl.Describe(&buf)
-	if !bytes.Contains(buf.Bytes(), []byte("옮기기")) || !bytes.Contains(buf.Bytes(), []byte("링크")) {
+	if !bytes.Contains(buf.Bytes(), []byte("move")) || !bytes.Contains(buf.Bytes(), []byte("link")) {
 		t.Fatalf("describe:\n%s", buf.String())
 	}
 }

@@ -51,7 +51,7 @@ func TestHistoryLockWarnsOnConcurrentUse(t *testing.T) {
 		time.Sleep(20 * time.Millisecond)
 	}
 	r := h.run("", nil, "ccam", "work")
-	if r.code != 0 || !strings.Contains(r.stderr, "다른 Claude Code") {
+	if r.code != 0 || !strings.Contains(r.stderr, "another Claude Code") {
 		t.Fatalf("expected warning, got %+v", r)
 	}
 	// A different folder is not affected.
@@ -59,7 +59,7 @@ func TestHistoryLockWarnsOnConcurrentUse(t *testing.T) {
 	cmd.Dir = t.TempDir()
 	cmd.Env = h.env
 	out, _ := cmd.CombinedOutput()
-	if strings.Contains(string(out), "다른 Claude Code") {
+	if strings.Contains(string(out), "another Claude Code") {
 		t.Fatalf("other folder warned: %s", out)
 	}
 }
@@ -81,7 +81,7 @@ func TestLeftoverChildDoesNotHoldSession(t *testing.T) {
 		t.Fatalf("%+v", r)
 	}
 	r = h.run("", nil, "ccam", "work")
-	if strings.Contains(r.stderr, "다른 Claude Code") {
+	if strings.Contains(r.stderr, "another Claude Code") {
 		t.Fatalf("finished session still counted as running: %s", r.stderr)
 	}
 }
