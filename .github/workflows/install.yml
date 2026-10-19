@@ -1,0 +1,36 @@
+name: install
+
+# Installs the published release the way users do, on Linux and macOS.
+# Releases made with GITHUB_TOKEN do not trigger other workflows, so release.yml calls this one.
+on:
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  script:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, ubuntu-24.04-arm, macos-latest, macos-15-intel]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: curl -fsSL https://ccam.dev/install.sh | sh
+        run: |
+          export HOME="$RUNNER_TEMP/home" && mkdir -p "$HOME"
+          curl -fsSL https://ccam.dev/install.sh | sh
+          "$HOME/.local/bin/ccam" version
+          "$HOME/.local/bin/ccam" --help | perl -CS -ne 'if (/\p{Hangul}/) { print "Hangul: $_"; $bad = 1 } END { exit($bad ? 1 : 0) }'
+
+  deb:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Install the .deb from the latest release
+        run: |
+          url=$(curl -fsSL https://api.github.com/repos/jhyunwoo/ccam/releases/latest | grep -o 'https://[^"]*_linux_amd64\.deb' | head -1)
+          curl -fsSLo ccam.deb "$url"
+          sudo apt-get install -y ./ccam.deb
+          ccam version
+          test -f /usr/share/doc/ccam/copyright

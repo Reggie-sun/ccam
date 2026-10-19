@@ -14,7 +14,7 @@ builds:
 archives:
   - formats: [tar.gz]
     name_template: "ccam_{{ .Os }}_{{ .Arch }}"
-    files: [README.md, README.en.md]
+    files: [LICENSE, README.md, README.ko.md]
 
 checksum:
   name_template: checksums.txt
@@ -24,8 +24,12 @@ nfpms:
     homepage: https://github.com/jhyunwoo/ccam
     maintainer: jhyunwoo <jhyunwoo@users.noreply.github.com>
     description: Claude Code multi-account manager
+    license: MIT
     formats: [deb]
     bindir: /usr/bin
+    contents:
+      - src: LICENSE
+        dst: /usr/share/doc/ccam/copyright
 
 changelog:
   use: git

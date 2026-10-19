@@ -24,3 +24,7 @@ jobs:
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  install:
+    needs: release
+    uses: ./.github/workflows/install.yml
