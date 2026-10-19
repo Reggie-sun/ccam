@@ -1,5 +1,5 @@
 ---
-title: Quick start
+title: Mabilis na pagsisimula
 description: Magdagdag ng dalawang Claude Code account gamit ang ccam add, bigyan sila ng mga shortcut gaya ng ccwork, lumipat sa pagitan nila, at piliin kung ano ang ishe-share nila.
 updated: 2026-10-19
 order: 2

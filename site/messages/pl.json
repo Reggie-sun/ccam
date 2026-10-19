@@ -2,7 +2,8 @@
   "site": {
     "name": "ccam",
     "title": "ccam: kilka kont Claude Code na jednym komputerze",
-    "description": "ccam to darmowe narzędzie wiersza poleceń o otwartym kodzie, które pozwala używać kilku kont Claude Code na jednym komputerze i przełączać się między nimi jednym poleceniem."
+    "description": "ccam to darmowe narzędzie wiersza poleceń o otwartym kodzie, które pozwala używać kilku kont Claude Code na jednym komputerze i przełączać się między nimi jednym poleceniem.",
+    "titleSuffix": "ccam dla Claude Code"
   },
   "nav": {
     "docs": "Dokumentacja",
@@ -147,12 +148,12 @@
   },
   "changelog": {
     "title": "Lista zmian",
-    "description": "Każde wydanie ccam i to, co się w nim zmieniło.",
+    "description": "Każde wydanie ccam i to, co się w nim zmieniło. Nowe polecenia, poprawki i zmiany w korzystaniu z kilku kont Claude Code na jednym komputerze.",
     "empty": "Nie opublikowano jeszcze żadnych wydań. Kompilacje z gałęzi main są dostępne na GitHub."
   },
   "languages": {
     "title": "Języki",
-    "description": "Serwis ccam.dev jest dostępny w {count, plural, one {# języku} few {# językach} many {# językach} other {# języka}}.",
+    "description": "Serwis ccam.dev jest dostępny w {count, plural, one {# języku} few {# językach} many {# językach} other {# języka}}. Wybierz język dokumentacji i poradników ccam.",
     "coverage": "Według danych o populacji z Unicode CLDR osoby mówiące co najmniej jednym z tych języków stanowią od {low} do {high} ludności świata.",
     "method": "Niższa liczba uwzględnia w każdym kraju tylko najczęściej używany obsługiwany język; wyższa sumuje wszystkie obsługiwane języki i ogranicza każdy kraj do 100%."
   },

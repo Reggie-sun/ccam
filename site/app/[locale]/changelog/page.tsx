@@ -3,7 +3,7 @@ import { Shell } from "../../../components/Shell";
 import { locales } from "../../../i18n/locales";
 import { getMessages, hasMessages } from "../../../lib/i18n";
 import { REPO } from "../../../lib/paths";
-import { ogPath, seo } from "../../../lib/seo";
+import { ogPath, pageTitle, seo } from "../../../lib/seo";
 import releases from "../../../data/changelog.json";
 
 type Props = { params: Promise<{ locale: string }> };
@@ -14,7 +14,7 @@ const alternates = () => Object.fromEntries(locales.filter((l) => hasMessages(l.
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const m = getMessages(locale);
-  return seo({ locale, title: `${m.changelog.title} | ccam`, description: m.changelog.description, path: `/${locale}/changelog/`, alternates: alternates(), og: ogPath(locale, "changelog") });
+  return seo({ locale, title: pageTitle(locale, m.changelog.title), description: m.changelog.description, path: `/${locale}/changelog/`, alternates: alternates(), og: ogPath(locale, "changelog") });
 }
 
 export default async function Changelog({ params }: Props) {

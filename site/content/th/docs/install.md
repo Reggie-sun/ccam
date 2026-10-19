@@ -1,10 +1,10 @@
 ---
 title: ติดตั้ง ccam
-description: "ติดตั้ง ccam บน Linux หรือ macOS ด้วยคำสั่งเดียว จากแพ็กเกจ .deb หรือจากซอร์สโค้ด และอัปเดตให้เป็นรุ่นล่าสุดเสมอด้วย ccam update โดยต้องติดตั้ง Claude Code ก่อน"
+description: "ติดตั้ง ccam บน Linux หรือ macOS ด้วยคำสั่งเดียว จากแพ็กเกจ .deb หรือจากซอร์สโค้ด และอัปเดตให้เป็นรุ่นล่าสุดเสมอด้วย ccam update"
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: bde486b82b2e
+sourceHash: 4d7291e0f86e
 ---
 
 รันคำสั่งนี้ในเทอร์มินัลบน Linux หรือ macOS:

@@ -2,7 +2,8 @@
   "site": {
     "name": "ccam",
     "title": "ccam: 1台のコンピューターで複数のClaude Codeアカウントを使う",
-    "description": "ccamは、1台のコンピューターで複数のClaude Codeアカウントを使い、1つのコマンドで切り替えられる無料のオープンソースのコマンドラインツールです。"
+    "description": "ccamは、1台のコンピューターで複数のClaude Codeアカウントを使い、1つのコマンドで切り替えられる無料のオープンソースのコマンドラインツールです。",
+    "titleSuffix": "Claude Code 向け ccam"
   },
   "nav": {
     "docs": "ドキュメント",
@@ -147,12 +148,12 @@
   },
   "changelog": {
     "title": "変更履歴",
-    "description": "ccamの各リリースとその変更内容。",
+    "description": "ccamの各リリースとその変更内容。1台のコンピューターで複数の Claude Code アカウントを使うための新しいコマンド、修正、変更点。",
     "empty": "まだリリースは公開されていません。mainブランチのビルドはGitHubに掲載されています。"
   },
   "languages": {
     "title": "言語",
-    "description": "ccam.devは{count, plural, other {#言語}}で利用できます。",
+    "description": "ccam.devは{count, plural, other {#言語}}で利用できます。ccam のドキュメントとガイドを読む言語を選んでください。",
     "coverage": "Unicode CLDRの人口データによると、これらの言語のうち少なくとも1つを話す人は、世界人口の{low}から{high}を占めます。",
     "method": "低いほうの数値は、各国で最も話されている対応言語を1つだけ数えたものです。高いほうの数値は、対応するすべての言語を合計し、各国の上限を100%としたものです。"
   },

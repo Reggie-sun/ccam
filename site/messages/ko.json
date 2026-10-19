@@ -2,7 +2,8 @@
   "site": {
     "name": "ccam",
     "title": "ccam: 컴퓨터 한 대에서 여러 Claude Code 계정 사용하기",
-    "description": "ccam은 컴퓨터 한 대에서 여러 Claude Code 계정을 쓰고, 명령 하나로 계정을 전환할 수 있게 해 주는 무료 오픈소스 명령줄 도구입니다."
+    "description": "ccam은 컴퓨터 한 대에서 여러 Claude Code 계정을 쓰고, 명령 하나로 계정을 전환할 수 있게 해 주는 무료 오픈소스 명령줄 도구입니다.",
+    "titleSuffix": "Claude Code용 ccam"
   },
   "nav": {
     "docs": "문서",
@@ -147,12 +148,12 @@
   },
   "changelog": {
     "title": "변경 내역",
-    "description": "ccam의 모든 릴리스와 릴리스별 변경 사항.",
+    "description": "ccam의 모든 릴리스와 릴리스별 변경 사항. 한 컴퓨터에서 여러 Claude Code 계정을 쓰기 위한 새 명령, 수정 사항, 변경 사항.",
     "empty": "아직 공개된 릴리스가 없습니다. main 브랜치 빌드는 GitHub에서 볼 수 있습니다."
   },
   "languages": {
     "title": "언어",
-    "description": "ccam.dev는 {count, plural, other {#개 언어}}로 제공됩니다.",
+    "description": "ccam.dev는 {count, plural, other {#개 언어}}로 제공됩니다. ccam 문서와 가이드를 읽을 언어를 고르세요.",
     "coverage": "Unicode CLDR 인구 데이터에 따르면, 이 언어 중 하나 이상을 쓰는 사람은 세계 인구의 {low}~{high}입니다.",
     "method": "낮은 수치는 나라별로 지원 언어 중 가장 많이 쓰이는 언어 하나만 센 값이고, 높은 수치는 지원 언어를 모두 더하되 나라별로 100%를 넘지 않게 한 값입니다."
   },

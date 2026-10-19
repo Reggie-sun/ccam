@@ -108,6 +108,7 @@ async function main() {
     join(OUT, "_headers"),
     `/*
   Content-Security-Policy: ${csp}
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: interest-cohort=(), browsing-topics=()
@@ -133,7 +134,15 @@ async function main() {
 
   // Locale aliases and the duplicate English landing page.
   const codes = new Set(locales.map((l) => l.code));
-  const lines = ["/en/ / 301"];
+  const lines = ["/en/ / 301", "/en / 301", "/index.html / 301"];
+  // html_handling adds a missing trailing slash with a 307; search engines
+  // should see a permanent redirect instead. Static rules go before the
+  // splats: any rule after a splat counts against the 100 dynamic rules.
+  for (const f of htmlFiles) {
+    const dir = relative(OUT, f).replace(/\/?index\.html$/, "");
+    if (!f.endsWith("index.html") || !dir || dir === "en" || dir === "404") continue;
+    lines.push(`/${dir} /${dir}/ 301`);
+  }
   for (const [alias, code] of Object.entries(localeAliases)) {
     if (codes.has(code)) lines.push(`/${alias}/* /${code}/:splat 301`);
   }

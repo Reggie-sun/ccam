@@ -2,7 +2,8 @@
   "site": {
     "name": "ccam",
     "title": "ccam: yi amfani da asusun Claude Code da dama a kwamfuta ɗaya",
-    "description": "ccam kayan aikin command-line ne kyauta kuma open-source wanda ke ba ka damar amfani da asusun Claude Code da dama a kwamfuta ɗaya, ka kuma sauya tsakaninsu da umarni ɗaya."
+    "description": "ccam kayan aikin command-line ne kyauta kuma open-source wanda ke ba ka damar amfani da asusun Claude Code da dama a kwamfuta ɗaya, ka kuma sauya tsakaninsu da umarni ɗaya.",
+    "titleSuffix": "ccam don Claude Code"
   },
   "nav": {
     "docs": "Takardu",
@@ -147,12 +148,12 @@
   },
   "changelog": {
     "title": "Tarihin canje-canje",
-    "description": "Kowane sakin ccam da abin da ya canza a cikinsa.",
+    "description": "Kowane sakin ccam da abin da ya canza a cikinsa. Sababbin umarni, gyare-gyare da canje-canje don amfani da asusun Claude Code da yawa a kwamfuta guda.",
     "empty": "Ba a fitar da wani saki ba tukuna. Ana jera ginin da aka yi daga reshen main a GitHub."
   },
   "languages": {
     "title": "Harsuna",
-    "description": "Akwai ccam.dev a {count, plural, one {harshe #} other {harsuna #}}.",
+    "description": "Akwai ccam.dev a {count, plural, one {harshe #} other {harsuna #}}. Zaɓi harshe don takardun bayani da jagororin ccam.",
     "coverage": "Bisa ga bayanan yawan jama'a na Unicode CLDR, mutanen da ke magana aƙalla ɗaya daga cikin waɗannan harsunan sun kai daga {low} zuwa {high} na yawan mutanen duniya.",
     "method": "Ƙaramin adadin yana ƙidaya harshe ɗaya da aka fi magana a kowace ƙasa daga cikin waɗanda ake tallafawa; babban adadin yana haɗa dukan harsunan da ake tallafawa kuma yana iyakance kowace ƙasa a 100%."
   },

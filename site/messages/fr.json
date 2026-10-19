@@ -2,7 +2,8 @@
   "site": {
     "name": "ccam",
     "title": "ccam : utiliser plusieurs comptes Claude Code sur un seul ordinateur",
-    "description": "ccam est un outil en ligne de commande gratuit et open source qui permet d'utiliser plusieurs comptes Claude Code sur un seul ordinateur et de passer de l'un à l'autre avec une seule commande."
+    "description": "ccam est un outil en ligne de commande gratuit et open source qui permet d'utiliser plusieurs comptes Claude Code sur un seul ordinateur et de passer de l'un à l'autre avec une seule commande.",
+    "titleSuffix": "ccam pour Claude Code"
   },
   "nav": {
     "docs": "Documentation",
@@ -147,12 +148,12 @@
   },
   "changelog": {
     "title": "Journal des modifications",
-    "description": "Chaque version de ccam et ce qui a changé.",
+    "description": "Chaque version de ccam et ce qui a changé. Nouvelles commandes, corrections et changements pour utiliser plusieurs comptes Claude Code sur un même ordinateur.",
     "empty": "Aucune version n'a encore été publiée. Les builds de la branche main sont listés sur GitHub."
   },
   "languages": {
     "title": "Langues",
-    "description": "ccam.dev est disponible en {count, plural, one {# langue} other {# langues}}.",
+    "description": "ccam.dev est disponible en {count, plural, one {# langue} other {# langues}}. Choisissez une langue pour la documentation et les guides de ccam.",
     "coverage": "D'après les données de population d'Unicode CLDR, les personnes qui parlent au moins une de ces langues représentent de {low} à {high} de la population mondiale.",
     "method": "Le chiffre bas ne compte, pour chaque pays, que la langue prise en charge la plus parlée ; le chiffre haut additionne toutes les langues prises en charge et plafonne chaque pays à 100 %."
   },

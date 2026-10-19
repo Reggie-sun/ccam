@@ -2,7 +2,8 @@
   "site": {
     "name": "ccam",
     "title": "ccam: use several Claude Code accounts on one computer",
-    "description": "ccam is a free, open-source command-line tool that lets you use several Claude Code accounts on one computer and switch between them with one command."
+    "description": "ccam is a free, open-source command-line tool that lets you use several Claude Code accounts on one computer and switch between them with one command.",
+    "titleSuffix": "ccam for Claude Code"
   },
   "nav": {
     "docs": "Docs",
@@ -147,12 +148,12 @@
   },
   "changelog": {
     "title": "Changelog",
-    "description": "Every ccam release and what changed in it.",
+    "description": "Every ccam release and what changed in it. New commands, fixes and changes for using several Claude Code accounts on one computer.",
     "empty": "No releases have been published yet. Builds from the main branch are listed on GitHub."
   },
   "languages": {
     "title": "Languages",
-    "description": "ccam.dev is available in {count, plural, one {# language} other {# languages}}.",
+    "description": "ccam.dev is available in {count, plural, one {# language} other {# languages}}. Pick a language for the ccam documentation and guides.",
     "coverage": "By Unicode CLDR population data, people who speak at least one of these languages make up {low} to {high} of the world's population.",
     "method": "The lower number counts each country's single most-spoken supported language; the higher one adds up every supported language and caps each country at 100%."
   },

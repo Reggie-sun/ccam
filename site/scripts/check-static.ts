@@ -25,4 +25,16 @@ if (existsSync(`${OUT}/_headers`)) {
     if (line.length > 2000) errors.push(`_headers line ${i + 1} is ${line.length} characters (Cloudflare allows 2000)`);
   });
 }
+// Cloudflare silently skips _redirects rules past its limits: 2000 static and
+// 100 dynamic, where a static rule after a splat or placeholder counts as dynamic.
+if (existsSync(`${OUT}/_redirects`)) {
+  let statics = 0;
+  let dynamics = 0;
+  for (const line of readFileSync(`${OUT}/_redirects`, "utf8").split("\n").filter(Boolean)) {
+    if (/[*:]/.test(line.split(" ")[0]) || dynamics) dynamics++;
+    else statics++;
+  }
+  if (statics > 2000) errors.push(`_redirects has ${statics} static rules (Cloudflare allows 2000)`);
+  if (dynamics > 100) errors.push(`_redirects has ${dynamics} rules after the first splat (Cloudflare allows 100); put static rules first`);
+}
 fail(errors, "static");

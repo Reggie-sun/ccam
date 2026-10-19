@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getLocale, locales, type Locale } from "../i18n/locales";
+import { getMessages } from "./i18n";
 import { abs, SITE } from "./paths";
 
 type SeoInput = {
@@ -45,6 +46,13 @@ export function seo({ locale, title, description, path, alternates, og, type = "
 function markdownAlternate(path: string): Record<string, string> | undefined {
   const m = /^\/([^/]+)\/(docs|guides|features|compare|blog)\/([^/]+)\/$/.exec(path);
   return m ? { "text/markdown": abs(`/${m[1]}/${m[2]}/${m[3]}.md`) } : undefined;
+}
+
+/** "<page> | ccam for Claude Code", or "<page> | ccam" when the page title
+ *  already names Claude Code or the longer form would be cut off in results. */
+export function pageTitle(locale: string, title: string): string {
+  const long = `${title} | ${getMessages(locale).site.titleSuffix}`;
+  return title.includes("Claude Code") || long.length > 65 ? `${title} | ccam` : long;
 }
 
 export function ogPath(locale: Locale | string, key: string): string {

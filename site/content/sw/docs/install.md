@@ -1,10 +1,10 @@
 ---
 title: Sakinisha ccam
-description: Sakinisha ccam kwenye Linux au macOS kwa amri moja, kutoka kifurushi cha .deb, au kutoka msimbo chanzo, na uisasishe kwa ccam update. Claude Code lazima isakinishwe kwanza.
+description: Sakinisha ccam kwenye Linux au macOS kwa amri moja, kutoka kifurushi cha .deb, au kutoka msimbo chanzo, na uisasishe kwa ccam update.
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: bde486b82b2e
+sourceHash: 4d7291e0f86e
 ---
 
 Endesha hii kwenye terminal ya Linux au macOS:

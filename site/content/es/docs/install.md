@@ -1,10 +1,10 @@
 ---
 title: Instalar ccam
-description: Instala ccam en Linux o macOS con un comando, desde un paquete .deb o desde el código fuente, y mantenlo al día con ccam update. Primero debes instalar Claude Code.
+description: Instala ccam en Linux o macOS con un comando, desde un paquete .deb o desde el código fuente, y mantenlo al día con ccam update.
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: bde486b82b2e
+sourceHash: 4d7291e0f86e
 ---
 
 Ejecuta esto en una terminal de Linux o macOS:

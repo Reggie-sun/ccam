@@ -106,9 +106,27 @@ for (const l of builtLocales()) {
   }
 }
 
-const icon = new Resvg(readFileSync("public/favicon.svg", "utf8").replace(/<style>.*<\/style>/, "").replace(/class="g"/g, 'fill="#d97757"'), {
-  fitTo: { mode: "width", value: 512 },
-  background: "#f5f5f5",
-}).render().asPng();
-await writeFile(join(OUT, "icon-512.png"), icon);
+const mark = readFileSync("public/favicon.svg", "utf8").replace(/<style>.*<\/style>/, "").replace(/class="g"/g, 'fill="#d97757"');
+const png = (size: number, background?: string) => new Resvg(mark, { fitTo: { mode: "width", value: size }, background }).render().asPng();
+await writeFile(join(OUT, "icon-512.png"), png(512, "#f5f5f5"));
+// iOS ignores SVG icons and fills transparency with black.
+await writeFile(join(OUT, "apple-touch-icon.png"), png(180, "#f5f5f5"));
+// /favicon.ico for clients that request it without reading the page: an ICO
+// directory holding 32 and 48 px PNGs.
+const sizes = [32, 48].map((size) => ({ size, data: png(size) }));
+const ico = Buffer.alloc(6 + 16 * sizes.length);
+ico.writeUInt16LE(1, 2);
+ico.writeUInt16LE(sizes.length, 4);
+let offset = ico.length;
+sizes.forEach(({ size, data }, i) => {
+  const e = 6 + 16 * i;
+  ico.writeUInt8(size, e);
+  ico.writeUInt8(size, e + 1);
+  ico.writeUInt16LE(1, e + 4);
+  ico.writeUInt16LE(32, e + 6);
+  ico.writeUInt32LE(data.length, e + 8);
+  ico.writeUInt32LE(offset, e + 12);
+  offset += data.length;
+});
+await writeFile(join(OUT, "favicon.ico"), Buffer.concat([ico, ...sizes.map((s) => s.data)]));
 console.log(`og: ${count} images`);

@@ -1,10 +1,10 @@
 ---
 title: Girka ccam
-description: Girka ccam a Linux ko macOS da umarni ɗaya, daga kunshin .deb, ko daga lambar tushe, sannan ka riƙa sabunta shi da ccam update. Dole ne ka fara girka Claude Code.
+description: Girka ccam a Linux ko macOS da umarni ɗaya, daga kunshin .deb, ko daga lambar tushe, sannan ka riƙa sabunta shi da ccam update.
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: bde486b82b2e
+sourceHash: 4d7291e0f86e
 ---
 
 Gudanar da wannan a terminal a Linux ko macOS:

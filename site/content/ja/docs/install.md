@@ -1,10 +1,10 @@
 ---
 title: ccamのインストール
-description: LinuxまたはmacOSにccamを1つのコマンドで、.debパッケージから、またはソースからインストールし、ccam updateで最新の状態に保ちます。先にClaude Codeのインストールが必要です。
+description: LinuxまたはmacOSにccamを1つのコマンドで、.debパッケージから、またはソースからインストールし、ccam updateで最新の状態に保ちます。
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: bde486b82b2e
+sourceHash: 4d7291e0f86e
 ---
 
 LinuxまたはmacOSのターミナルで、次のコマンドを実行します。

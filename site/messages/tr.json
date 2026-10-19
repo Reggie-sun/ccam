@@ -2,7 +2,8 @@
   "site": {
     "name": "ccam",
     "title": "ccam: tek bilgisayarda birden fazla Claude Code hesabı kullanın",
-    "description": "ccam, tek bilgisayarda birden fazla Claude Code hesabı kullanmanızı ve hesaplar arasında tek komutla geçiş yapmanızı sağlayan ücretsiz, açık kaynaklı bir komut satırı aracıdır."
+    "description": "ccam, tek bilgisayarda birden fazla Claude Code hesabı kullanmanızı ve hesaplar arasında tek komutla geçiş yapmanızı sağlayan ücretsiz, açık kaynaklı bir komut satırı aracıdır.",
+    "titleSuffix": "Claude Code için ccam"
   },
   "nav": {
     "docs": "Belgeler",
@@ -147,12 +148,12 @@
   },
   "changelog": {
     "title": "Sürüm notları",
-    "description": "Tüm ccam sürümleri ve her birinde nelerin değiştiği.",
+    "description": "Tüm ccam sürümleri ve her birinde nelerin değiştiği. Tek bilgisayarda birden çok Claude Code hesabı kullanmak için yeni komutlar, düzeltmeler ve değişiklikler.",
     "empty": "Henüz yayımlanmış bir sürüm yok. main dalından yapılan derlemeler GitHub üzerinde listelenir."
   },
   "languages": {
     "title": "Diller",
-    "description": "ccam.dev {count, plural, one {# dilde} other {# dilde}} kullanılabilir.",
+    "description": "ccam.dev {count, plural, one {# dilde} other {# dilde}} kullanılabilir. ccam belgeleri ve kılavuzları için bir dil seçin.",
     "coverage": "Unicode CLDR nüfus verilerine göre, bu dillerden en az birini konuşan insanlar dünya nüfusunun {low} ile {high} arasındaki bir bölümünü oluşturur.",
     "method": "Düşük sayı, her ülkede desteklenen diller arasında en çok konuşulan tek dili sayar; yüksek sayı ise desteklenen tüm dilleri toplar ve her ülkeyi %100 ile sınırlar."
   },

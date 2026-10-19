@@ -2,7 +2,8 @@
   "site": {
     "name": "ccam",
     "title": "ccam: gumamit ng maraming Claude Code account sa iisang computer",
-    "description": "Ang ccam ay libre at open-source na command-line tool para gumamit ng maraming Claude Code account sa iisang computer at lumipat sa pagitan nila gamit ang isang command."
+    "description": "Ang ccam ay libre at open-source na command-line tool para gumamit ng maraming Claude Code account sa iisang computer at lumipat sa pagitan nila gamit ang isang command.",
+    "titleSuffix": "ccam para sa Claude Code"
   },
   "nav": {
     "docs": "Docs",
@@ -146,13 +147,13 @@
     "languages": "Lahat ng wika"
   },
   "changelog": {
-    "title": "Changelog",
-    "description": "Bawat release ng ccam at kung ano ang nagbago rito.",
+    "title": "Talaan ng mga pagbabago",
+    "description": "Bawat release ng ccam at kung ano ang nagbago rito. Mga bagong command, ayos at pagbabago para sa paggamit ng ilang Claude Code account sa iisang computer.",
     "empty": "Wala pang na-publish na release. Nakalista sa GitHub ang mga build mula sa main branch."
   },
   "languages": {
     "title": "Mga wika",
-    "description": "Available ang ccam.dev sa {count, plural, one {# wika} other {# wika}}.",
+    "description": "Available ang ccam.dev sa {count, plural, one {# wika} other {# wika}}. Pumili ng wika para sa dokumentasyon at mga gabay ng ccam.",
     "coverage": "Ayon sa population data ng Unicode CLDR, ang mga taong nagsasalita ng kahit isa sa mga wikang ito ay bumubuo ng {low} hanggang {high} ng populasyon ng mundo.",
     "method": "Binibilang ng mas mababang numero ang iisang pinakaginagamit na suportadong wika ng bawat bansa; pinagsasama naman ng mas mataas ang lahat ng suportadong wika at nililimitahan sa 100% ang bawat bansa."
   },

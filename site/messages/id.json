@@ -2,7 +2,8 @@
   "site": {
     "name": "ccam",
     "title": "ccam: gunakan beberapa akun Claude Code di satu komputer",
-    "description": "ccam adalah alat baris perintah gratis dan open source untuk menggunakan beberapa akun Claude Code di satu komputer dan berpindah di antaranya dengan satu perintah."
+    "description": "ccam adalah alat baris perintah gratis dan open source untuk menggunakan beberapa akun Claude Code di satu komputer dan berpindah di antaranya dengan satu perintah.",
+    "titleSuffix": "ccam untuk Claude Code"
   },
   "nav": {
     "docs": "Dokumentasi",
@@ -147,12 +148,12 @@
   },
   "changelog": {
     "title": "Catatan perubahan",
-    "description": "Setiap rilis ccam dan apa yang berubah di dalamnya.",
+    "description": "Setiap rilis ccam dan apa yang berubah di dalamnya. Perintah baru, perbaikan, dan perubahan untuk memakai beberapa akun Claude Code di satu komputer.",
     "empty": "Belum ada rilis yang diterbitkan. Build dari branch main tercantum di GitHub."
   },
   "languages": {
     "title": "Bahasa",
-    "description": "ccam.dev tersedia dalam {count, plural, other {# bahasa}}.",
+    "description": "ccam.dev tersedia dalam {count, plural, other {# bahasa}}. Pilih bahasa untuk dokumentasi dan panduan ccam.",
     "coverage": "Menurut data populasi Unicode CLDR, orang yang berbicara setidaknya satu dari bahasa-bahasa ini mencakup {low} hingga {high} dari populasi dunia.",
     "method": "Angka yang lebih rendah menghitung satu bahasa yang didukung dan paling banyak digunakan di setiap negara; angka yang lebih tinggi menjumlahkan semua bahasa yang didukung dan membatasi setiap negara pada 100%."
   },

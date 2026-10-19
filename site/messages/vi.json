@@ -2,7 +2,8 @@
   "site": {
     "name": "ccam",
     "title": "ccam: dùng nhiều tài khoản Claude Code trên một máy tính",
-    "description": "ccam là công cụ dòng lệnh miễn phí, mã nguồn mở, giúp bạn dùng nhiều tài khoản Claude Code trên một máy tính và chuyển đổi giữa chúng bằng một lệnh."
+    "description": "ccam là công cụ dòng lệnh miễn phí, mã nguồn mở, giúp bạn dùng nhiều tài khoản Claude Code trên một máy tính và chuyển đổi giữa chúng bằng một lệnh.",
+    "titleSuffix": "ccam cho Claude Code"
   },
   "nav": {
     "docs": "Tài liệu",
@@ -147,12 +148,12 @@
   },
   "changelog": {
     "title": "Nhật ký thay đổi",
-    "description": "Mọi bản phát hành của ccam và những thay đổi trong từng bản.",
+    "description": "Mọi bản phát hành của ccam và những thay đổi trong từng bản. Lệnh mới, bản sửa lỗi và thay đổi để dùng nhiều tài khoản Claude Code trên một máy tính.",
     "empty": "Chưa có bản phát hành nào. Các bản dựng từ nhánh main được liệt kê trên GitHub."
   },
   "languages": {
     "title": "Ngôn ngữ",
-    "description": "ccam.dev có sẵn bằng {count, plural, other {# ngôn ngữ}}.",
+    "description": "ccam.dev có sẵn bằng {count, plural, other {# ngôn ngữ}}. Chọn ngôn ngữ cho tài liệu và hướng dẫn của ccam.",
     "coverage": "Theo dữ liệu dân số của Unicode CLDR, những người nói ít nhất một trong các ngôn ngữ này chiếm từ {low} đến {high} dân số thế giới.",
     "method": "Con số thấp hơn chỉ tính ngôn ngữ được hỗ trợ có nhiều người nói nhất ở mỗi quốc gia; con số cao hơn cộng tất cả ngôn ngữ được hỗ trợ và giới hạn mỗi quốc gia ở mức 100%."
   },

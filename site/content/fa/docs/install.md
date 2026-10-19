@@ -1,10 +1,10 @@
 ---
 title: نصب ccam
-description: نصب ccam روی Linux یا macOS با یک فرمان، از بسته .deb یا از کد منبع، و به‌روز نگه داشتن آن با ccam update. ابتدا باید Claude Code نصب شده باشد.
+description: نصب ccam روی Linux یا macOS با یک فرمان، از بسته .deb یا از کد منبع، و به‌روز نگه داشتن آن با ccam update.
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: bde486b82b2e
+sourceHash: 4d7291e0f86e
 ---
 
 این فرمان را در یک ترمینال روی Linux یا macOS اجرا کنید:

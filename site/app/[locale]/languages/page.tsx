@@ -3,7 +3,7 @@ import { Shell } from "../../../components/Shell";
 import { locales, nativeName } from "../../../i18n/locales";
 import { format, getMessages, hasMessages } from "../../../lib/i18n";
 import { homePath } from "../../../lib/paths";
-import { ogPath, seo } from "../../../lib/seo";
+import { ogPath, pageTitle, seo } from "../../../lib/seo";
 import coverage from "../../../data/coverage.json";
 
 type Props = { params: Promise<{ locale: string }> };
@@ -14,7 +14,7 @@ const alternates = () => Object.fromEntries(built().map((l) => [l.code, `/${l.co
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const m = getMessages(locale);
-  return seo({ locale, title: `${m.languages.title} | ccam`, description: format(locale, m.languages.description, { count: built().length }), path: `/${locale}/languages/`, alternates: alternates(), og: ogPath(locale, "languages") });
+  return seo({ locale, title: pageTitle(locale, m.languages.title), description: format(locale, m.languages.description, { count: built().length }), path: `/${locale}/languages/`, alternates: alternates(), og: ogPath(locale, "languages") });
 }
 
 export default async function Languages({ params }: Props) {

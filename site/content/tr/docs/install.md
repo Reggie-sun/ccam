@@ -1,10 +1,10 @@
 ---
 title: ccam kurulumu
-description: ccam'ı Linux veya macOS üzerine tek komutla, bir .deb paketinden ya da kaynak koddan kurun ve ccam update ile güncel tutun. Önce Claude Code kurulu olmalıdır.
+description: ccam'ı Linux veya macOS üzerine tek komutla, bir .deb paketinden ya da kaynak koddan kurun ve ccam update ile güncel tutun.
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: bde486b82b2e
+sourceHash: 4d7291e0f86e
 ---
 
 Linux veya macOS üzerinde bir terminalde şunu çalıştırın:

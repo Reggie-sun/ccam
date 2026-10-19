@@ -4,7 +4,7 @@ import { DocPage, docAlternates } from "../../../../components/DocPage";
 import { allPages, getPage, type Section } from "../../../../lib/content";
 import { hasMessages } from "../../../../lib/i18n";
 import { pagePath } from "../../../../lib/paths";
-import { ogPath, seo } from "../../../../lib/seo";
+import { ogPath, pageTitle, seo } from "../../../../lib/seo";
 
 type Props = { params: Promise<{ locale: string; section: string; slug: string }> };
 
@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!page) return {};
   return seo({
     locale,
-    title: `${page.title} | ccam`,
+    title: pageTitle(locale, page.title),
     description: page.description,
     path: pagePath(locale, section, slug),
     alternates: docAlternates(section as Section, slug),

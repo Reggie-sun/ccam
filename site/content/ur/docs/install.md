@@ -1,10 +1,10 @@
 ---
 title: "ccam انسٹال کریں"
-description: "ccam کو Linux یا macOS پر ایک کمانڈ سے، .deb پیکیج سے یا سورس سے انسٹال کریں اور ccam update سے اسے تازہ ترین رکھیں۔ اس سے پہلے Claude Code انسٹال ہونا ضروری ہے۔"
+description: "ccam کو Linux یا macOS پر ایک کمانڈ سے، .deb پیکیج سے یا سورس سے انسٹال کریں اور ccam update سے اسے تازہ ترین رکھیں۔"
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: bde486b82b2e
+sourceHash: 4d7291e0f86e
 ---
 
 Linux یا macOS پر ٹرمینل میں یہ کمانڈ چلائیں:

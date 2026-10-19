@@ -1,10 +1,10 @@
 ---
 title: ccam इन्स्टॉल करा
-description: Linux किंवा macOS वर ccam एका कमांडने, .deb पॅकेजमधून किंवा सोर्सवरून इन्स्टॉल करा आणि ccam update ने ते अद्ययावत ठेवा. आधी Claude Code इन्स्टॉल असणे आवश्यक आहे.
+description: Linux किंवा macOS वर ccam एका कमांडने, .deb पॅकेजमधून किंवा सोर्सवरून इन्स्टॉल करा आणि ccam update ने ते अद्ययावत ठेवा.
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: bde486b82b2e
+sourceHash: 4d7291e0f86e
 ---
 
 Linux किंवा macOS वर टर्मिनलमध्ये हे चालवा:

@@ -2,7 +2,8 @@
   "site": {
     "name": "ccam",
     "title": "ccam：在一台電腦上使用多個 Claude Code 帳號",
-    "description": "ccam 是免費的開放原始碼命令列工具，讓你在一台電腦上使用多個 Claude Code 帳號，並用一個指令在帳號之間切換。"
+    "description": "ccam 是免費的開放原始碼命令列工具，讓你在一台電腦上使用多個 Claude Code 帳號，並用一個指令在帳號之間切換。",
+    "titleSuffix": "適用於 Claude Code 的 ccam"
   },
   "nav": {
     "docs": "文件",
@@ -147,12 +148,12 @@
   },
   "changelog": {
     "title": "變更紀錄",
-    "description": "ccam 的每個版本及其變更內容。",
+    "description": "ccam 的每個版本及其變更內容。在一台電腦上使用多個 Claude Code 帳號的新指令、修正與變更。",
     "empty": "目前尚未發布任何版本。main 分支的建置版本列在 GitHub 上。"
   },
   "languages": {
     "title": "語言",
-    "description": "ccam.dev 提供 {count, plural, other {# 種語言}}。",
+    "description": "ccam.dev 提供 {count, plural, other {# 種語言}}。選擇閱讀 ccam 文件與指南的語言。",
     "coverage": "根據 Unicode CLDR 人口資料，至少會說其中一種語言的人占世界人口的 {low} 到 {high}。",
     "method": "較低的數字只計算每個國家最常用的一種支援語言；較高的數字則加總所有支援語言，並將每個國家的上限定為 100%。"
   },

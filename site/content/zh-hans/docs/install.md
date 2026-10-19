@@ -1,10 +1,10 @@
 ---
 title: 安装 ccam
-description: 用一条命令在 Linux 或 macOS 上安装 ccam，也可以使用 .deb 软件包或从源码安装，并用 ccam update 保持最新。需要先安装 Claude Code。
+description: 用一条命令在 Linux 或 macOS 上安装 ccam，也可以使用 .deb 软件包或从源码安装，并用 ccam update 保持最新。
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: bde486b82b2e
+sourceHash: 4d7291e0f86e
 ---
 
 在 Linux 或 macOS 的终端中运行：
