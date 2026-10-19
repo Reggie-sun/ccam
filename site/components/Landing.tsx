@@ -99,7 +99,7 @@ export function Landing({ locale }: { locale: string }) {
             <ul className="cards">
               {guides.map((g) => (
                 <li key={g.slug}>
-                  <a className="card reveal" href={pagePath(locale, "guides", g.slug)} data-spot>
+                  <a className="card reveal" href={pagePath(locale, "guides", g.slug)}>
                     <strong>{g.title}</strong>
                     <span>{g.description}</span>
                     <span className="go">

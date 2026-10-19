@@ -1,6 +1,5 @@
-// Subsets the two Latin fonts to what the Latin-script locales need
-// (Basic Latin, Latin-1, common punctuation). Locales needing Latin Extended
-// (vi, tr, pl, ha) and every other script use the system font.
+// Subsets both Latin fonts to Basic Latin, Latin-1 and common punctuation.
+// Latin Extended locales (vi, tr, pl, ha) and every other script use the system font.
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import subsetFont from "subset-font";
 

@@ -27,9 +27,7 @@ function Bar({ value, label }: { value: number; label: string }) {
   );
 }
 
-/** The usage board, rendered in its final state; site.js replays it as a
- *  terminal session (type `ccam usage`, fill the bars, open the account with
- *  the most room) when it scrolls into view. */
+/** Rendered in its final state; site.js replays it as a terminal session when it scrolls into view. */
 export function UsageBoard({ locale, m }: { locale: Locale; m: Messages }) {
   const pct = (v: number) => new Intl.NumberFormat(locale.lang, { style: "percent" }).format(v / 100);
   const meter = (label: string, value: number) => (

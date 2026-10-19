@@ -123,15 +123,6 @@
     }, { passive: true });
   }
 
-  // Guide cards: a soft light follows the pointer.
-  for (const c of d.querySelectorAll("[data-spot]")) {
-    c.addEventListener("pointermove", (e) => {
-      const r = c.getBoundingClientRect();
-      c.style.setProperty("--mx", `${e.clientX - r.left}px`);
-      c.style.setProperty("--my", `${e.clientY - r.top}px`);
-    }, { passive: true });
-  }
-
   // The usage demo replays as a terminal session each time it scrolls into view.
   const demo = d.querySelector("[data-demo]");
   if (demo && IO) {
