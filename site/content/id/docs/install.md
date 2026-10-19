@@ -4,7 +4,7 @@ description: Instal ccam di Linux atau macOS dengan satu perintah, dari paket .d
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: fc63978e8f9e
+sourceHash: 79dc1b55e774
 ---
 
 Jalankan ini di terminal pada Linux atau macOS:
@@ -13,7 +13,7 @@ Jalankan ini di terminal pada Linux atau macOS:
 curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-Skrip ini mengunduh rilis untuk sistem Anda, memeriksa checksum SHA-256-nya, dan menaruh `ccam` di `~/.local/bin`, tempat `ccam add` nanti membuat pintasan `claude1`, `claude2`, dan seterusnya. Jika folder tersebut tidak ada di `PATH` Anda, skrip akan menampilkan baris yang perlu ditambahkan ke `~/.bashrc` atau `~/.zshrc`.
+Skrip ini mengunduh rilis untuk sistem Anda, memeriksa checksum SHA-256-nya, dan menaruh `ccam` di `~/.local/bin`, tempat ccam nanti juga membuat perintah pintasan yang Anda pilih, seperti `ccwork`. Jika folder tersebut tidak ada di `PATH` Anda, skrip akan menampilkan baris yang perlu ditambahkan ke `~/.bashrc` atau `~/.zshrc`.
 
 ccam menjalankan Claude Code untuk Anda, jadi instal [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) terlebih dahulu dan pastikan `claude --version` berfungsi.
 
@@ -65,10 +65,12 @@ ccam doctor
 
 ## Menghapus instalasi
 
-Hapus perintah tersebut dan pintasan akun, lalu folder data jika Anda tidak lagi memerlukan akun-akun tersebut:
+Hapus dulu pintasan akun selagi ccam masih terpasang. `ccam list` menampilkannya di kolom Shortcut; hapus masing-masing dengan `ccam shortcut <account> --remove`, atau hapus sendiri tautan itu dari `~/.local/bin`. Lalu hapus perintahnya, serta folder data jika Anda tidak lagi memerlukan akun-akun tersebut:
 
 ```sh
-rm ~/.local/bin/ccam ~/.local/bin/claude[0-9]*
+ccam list
+ccam shortcut work --remove   # once for each account that has a shortcut
+rm ~/.local/bin/ccam
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
 ```
 

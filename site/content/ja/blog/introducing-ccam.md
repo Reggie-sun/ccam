@@ -4,7 +4,7 @@ description: ccamが生まれた理由、複数のClaude Codeアカウントを�
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: 985e2d369c34
+sourceHash: bbc9d9014f98
 ---
 
 ccamは、同じコンピューターで複数のClaude Codeアカウントを使う人のための小さなコマンドラインツールです。たとえば個人用と仕事用のアカウントや、1つの長いプロジェクトで使う複数のアカウントが対象です。
@@ -15,8 +15,8 @@ Claude Codeは、`CLAUDE_CONFIG_DIR`によって複数のアカウントに対�
 
 ## ccamができること
 
-- `ccam add`は、フォルダーを作成してログインを実行し、`claude1`、`claude2`といったショートカットをアカウントに割り当てます。
-- `ccam work`や`claude2`は、そのアカウントでClaude Codeを起動し、すべての引数をそのまま渡します。
+- `ccam add`は、フォルダーを作成してログインを実行し、必要なら`ccwork`のように自分で名前を付けたショートカットをアカウントに割り当てます。
+- `ccam work`や`ccwork`は、そのアカウントでClaude Codeを起動し、すべての引数をそのまま渡します。
 - MCPサーバー、設定、`CLAUDE.md`、拡張機能は、項目ごと、アカウントごとにリンクで共有されます。ログインが共有されることはありません。
 - `ccam usage`はすべてのアカウントの5時間と週間の使用量を表示し、`ccam next --continue`は次のアカウントで会話を引き継ぎます。
 

@@ -20,7 +20,7 @@ No. Each account keeps its own limits. ccam shows them and lets you continue on 
 
 ## How do I use two Claude Code accounts on one computer?
 
-Give each account its own configuration folder with `CLAUDE_CONFIG_DIR`. ccam does this for you: run `ccam add` for each account, then start them with `claude1` and `claude2`. The [guide](/guides/multiple-claude-code-accounts) also shows how to do it by hand.
+Give each account its own configuration folder with `CLAUDE_CONFIG_DIR`. ccam does this for you: run `ccam add` for each account, then start them with `ccam personal` and `ccam work`, or with shortcuts you name yourself, such as `ccwork`. The [guide](/guides/multiple-claude-code-accounts) also shows how to do it by hand.
 
 ## How do I continue a conversation on another account?
 
@@ -36,7 +36,7 @@ In `~/.local/share/ccam/profiles/<name>/`, one folder per account. On macOS, Cla
 
 ## What happens to my existing ~/.claude?
 
-Nothing, unless you run `ccam import`. Import registers the folder where it is, so plain `claude` and `ccam <name>` keep using the same account and settings.
+Nothing, unless you run `ccam import` or `ccam migrate`. Import registers the folder where it is, so plain `claude` and `ccam <name>` keep using the same account and settings. `ccam migrate` copies its settings, `CLAUDE.md`, extensions and MCP servers into the shared settings and only reads the folder.
 
 ## Which systems does ccam support?
 
@@ -52,4 +52,4 @@ Starting Claude Code through ccam adds about 4 milliseconds, measured with `scri
 
 ## How do I uninstall ccam?
 
-Delete `ccam` and the `claude1`… links from `~/.local/bin`, then `~/.config/ccam`, `~/.local/share/ccam` and `~/.local/state/ccam` if you no longer need the accounts. See [install](/docs/install#uninstall).
+Remove each account's shortcut with `ccam shortcut <account> --remove`, delete `ccam` from `~/.local/bin`, then remove `~/.config/ccam`, `~/.local/share/ccam` and `~/.local/state/ccam` if you no longer need the accounts. See [install](/docs/install#uninstall).

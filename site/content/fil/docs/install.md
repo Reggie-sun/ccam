@@ -4,7 +4,7 @@ description: I-install ang ccam sa Linux o macOS gamit ang isang command, mula s
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: fc63978e8f9e
+sourceHash: 79dc1b55e774
 ---
 
 Patakbuhin ito sa terminal sa Linux o macOS:
@@ -13,7 +13,7 @@ Patakbuhin ito sa terminal sa Linux o macOS:
 curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-Dina-download ng script ang release para sa iyong system, sinusuri ang SHA-256 checksum nito at inilalagay ang `ccam` sa `~/.local/bin`, kung saan gagawa mamaya ang `ccam add` ng mga shortcut na `claude1`, `claude2` at iba pa. Kung wala sa iyong `PATH` ang folder na iyon, ipi-print ng script ang linyang idadagdag sa `~/.bashrc` o `~/.zshrc`.
+Dina-download ng script ang release para sa iyong system, sinusuri ang SHA-256 checksum nito at inilalagay ang `ccam` sa `~/.local/bin`, kung saan gagawa rin ang ccam ng mga shortcut command na pipiliin mo mamaya, gaya ng `ccwork`. Kung wala sa iyong `PATH` ang folder na iyon, ipi-print ng script ang linyang idadagdag sa `~/.bashrc` o `~/.zshrc`.
 
 Ang ccam ang nagsisimula ng Claude Code para sa iyo, kaya i-install muna ang [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) at tiyaking gumagana ang `claude --version`.
 
@@ -65,10 +65,12 @@ Sinusuri ng `ccam doctor` na nahahanap ang Claude Code at na maayos ang bawat ac
 
 ## Pag-uninstall
 
-Alisin ang command at ang mga shortcut ng account, saka ang mga data folder kung hindi mo na kailangan ang mga account:
+Alisin muna ang mga shortcut ng account habang naka-install pa ang ccam. Ipinapakita ng `ccam list` ang mga ito sa column na Shortcut; alisin ang bawat isa gamit ang `ccam shortcut <account> --remove`, o ikaw mismo ang magbura ng mga link na iyon mula sa `~/.local/bin`. Saka alisin ang command, at ang mga data folder kung hindi mo na kailangan ang mga account:
 
 ```sh
-rm ~/.local/bin/ccam ~/.local/bin/claude[0-9]*
+ccam list
+ccam shortcut work --remove   # once for each account that has a shortcut
+rm ~/.local/bin/ccam
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
 ```
 

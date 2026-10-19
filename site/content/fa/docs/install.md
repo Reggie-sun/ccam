@@ -4,7 +4,7 @@ description: نصب ccam روی Linux یا macOS با یک فرمان، از ب�
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: fc63978e8f9e
+sourceHash: 79dc1b55e774
 ---
 
 این فرمان را در یک ترمینال روی Linux یا macOS اجرا کنید:
@@ -13,7 +13,7 @@ sourceHash: fc63978e8f9e
 curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-اسکریپت نسخه منتشرشده مناسب سیستم شما را دانلود می‌کند، checksum از نوع SHA-256 آن را بررسی می‌کند و `ccam` را در `~/.local/bin` قرار می‌دهد؛ بعداً `ccam add` میان‌برهای `claude1`، `claude2` و مانند آن‌ها را در همین پوشه می‌سازد. اگر این پوشه در `PATH` شما نباشد، اسکریپت خطی را که باید به `~/.bashrc` یا `~/.zshrc` اضافه کنید چاپ می‌کند.
+اسکریپت نسخه مناسب سیستم شما را دانلود می‌کند، checksum SHA-256 آن را بررسی می‌کند و `ccam` را در `~/.local/bin` قرار می‌دهد؛ ccam فرمان‌های میان‌بری را هم که بعداً انتخاب می‌کنید، مانند `ccwork`، همان‌جا می‌سازد. اگر آن پوشه در `PATH` شما نباشد، اسکریپت خطی را که باید به `~/.bashrc` یا `~/.zshrc` اضافه کنید چاپ می‌کند.
 
 ccam خودش Claude Code را برای شما اجرا می‌کند، پس ابتدا [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) را نصب کنید و مطمئن شوید که `claude --version` کار می‌کند.
 
@@ -65,10 +65,12 @@ ccam doctor
 
 ## حذف نصب
 
-فرمان و میان‌برهای حساب‌ها را حذف کنید، سپس اگر دیگر به حساب‌ها نیاز ندارید، پوشه‌های داده را هم حذف کنید:
+ابتدا، تا وقتی ccam هنوز نصب است، میان‌برهای حساب‌ها را حذف کنید. `ccam list` آن‌ها را در ستون Shortcut نشان می‌دهد؛ هر کدام را با `ccam shortcut <account> --remove` حذف کنید، یا خودتان آن پیوندها را از `~/.local/bin` پاک کنید. سپس فرمان را حذف کنید و اگر دیگر به حساب‌ها نیاز ندارید، پوشه‌های داده را هم حذف کنید:
 
 ```sh
-rm ~/.local/bin/ccam ~/.local/bin/claude[0-9]*
+ccam list
+ccam shortcut work --remove   # once for each account that has a shortcut
+rm ~/.local/bin/ccam
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
 ```
 

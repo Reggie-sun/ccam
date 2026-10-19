@@ -12,7 +12,7 @@ Run this in a terminal on Linux or macOS:
 curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-The script downloads the release for your system, checks its SHA-256 checksum and puts `ccam` in `~/.local/bin`, where `ccam add` later creates the `claude1`, `claude2`… shortcuts. If that folder is not on your `PATH`, the script prints the line to add to `~/.bashrc` or `~/.zshrc`.
+The script downloads the release for your system, checks its SHA-256 checksum and puts `ccam` in `~/.local/bin`, where ccam also creates the shortcut commands you choose later, such as `ccwork`. If that folder is not on your `PATH`, the script prints the line to add to `~/.bashrc` or `~/.zshrc`.
 
 ccam starts Claude Code for you, so install [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) first and make sure `claude --version` works.
 
@@ -64,10 +64,12 @@ ccam doctor
 
 ## Uninstall
 
-Remove the command and the account shortcuts, then the data folders if you no longer need the accounts:
+Remove the account shortcuts first, while ccam is still installed. `ccam list` shows them in the Shortcut column; remove each one with `ccam shortcut <account> --remove`, or delete those links from `~/.local/bin` yourself. Then remove the command, and the data folders if you no longer need the accounts:
 
 ```sh
-rm ~/.local/bin/ccam ~/.local/bin/claude[0-9]*
+ccam list
+ccam shortcut work --remove   # once for each account that has a shortcut
+rm ~/.local/bin/ccam
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
 ```
 

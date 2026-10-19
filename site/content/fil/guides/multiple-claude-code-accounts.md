@@ -4,7 +4,7 @@ description: Magpatakbo ng maraming Claude Code account nang magkatabi gamit ang
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: e2fbee9f4f91
+sourceHash: 6a4b7d961e10
 ---
 
 Bigyan ang bawat account ng sariling configuration folder. Binabasa ng Claude Code ang folder mula sa environment variable na `CLAUDE_CONFIG_DIR`, at may sariling login, settings at kasaysayan ang bawat folder. Puwede mo itong i-set up nang mano-mano gamit ang shell alias, o hayaang gawin ito ng ccam.
@@ -34,12 +34,12 @@ Ina-automate ng ccam ang parehong ideya at idinadagdag ang mga kulang na bahagi:
 ```sh
 curl -fsSL https://ccam.dev/install.sh | sh
 ccam add personal
-ccam add work
+ccam add work --shortcut ccwork
 ```
 
-Ngayon, sinisimulan ng `claude1` at `claude2`, o ng `ccam personal` at `ccam work`, ang dalawang account. Dahil totoong mga program sila at hindi mga alias, gumagana rin sila sa mga script. Shared na mula sa simula ang settings, `CLAUDE.md`, mga MCP server at extension, at puwede mong i-on ang shared na kasaysayan ng usapan para maituloy ang isang usapan sa kabilang account gamit ang `ccam next --continue`.
+Ngayon, sinisimulan ng `ccam personal` at `ccam work` ang dalawang account, at ganoon din ang `ccwork`, ang shortcut na ibinigay mo sa work account. Dahil totoong mga program sila at hindi mga alias, gumagana rin sila sa mga script. Shared na mula sa simula ang settings, `CLAUDE.md`, mga MCP server at extension, at puwede mong i-on ang shared na kasaysayan ng usapan para maituloy ang isang usapan sa kabilang account gamit ang `ccam next --continue`.
 
-Kung gumagamit ka na ng `~/.claude`, patakbuhin ang `ccam import` sa halip na idagdag ulit ang account na iyon.
+Kung gumagamit ka na ng `~/.claude`, patakbuhin ang `ccam import` sa halip na idagdag ulit ang account na iyon, o ang `ccam migrate` para kopyahin ang settings, mga MCP server at extension nito sa shared na settings.
 
 ## Alin ang pipiliin
 

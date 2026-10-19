@@ -4,7 +4,7 @@ description: Dalilin samuwar ccam, abin da yake yi wa masu asusun Claude Code da
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: 985e2d369c34
+sourceHash: bbc9d9014f98
 ---
 
 ccam ƙaramin kayan aikin command-line ne ga mutanen da ke amfani da asusun Claude Code fiye da ɗaya a kwamfuta ɗaya: asusu na kai da na aiki, ko asusai da dama don dogon project ɗaya.
@@ -15,8 +15,8 @@ Claude Code yana tallafa wa asusai da dama ta `CLAUDE_CONFIG_DIR`: folda ɗaya g
 
 ## Abin da ccam ke yi
 
-- `ccam add` yana ƙirƙirar foldar, yana gudanar da shiga kuma yana ba asusun gajeren umarni: `claude1`, `claude2`, da sauransu.
-- `ccam work` da `claude2` suna fara Claude Code a matsayin wannan asusun kuma suna miƙa kowane argument ba tare da canji ba.
+- `ccam add` yana ƙirƙirar foldar, yana gudanar da shiga kuma, idan kana so, yana ba asusun gajeren umarni da kai da kanka ka sa masa suna, kamar `ccwork`.
+- `ccam work` da `ccwork` suna fara Claude Code a matsayin wannan asusun kuma suna miƙa kowane argument ba tare da canji ba.
 - Ana raba sabobin MCP, saituna, `CLAUDE.md` da extensions ta mahaɗai, abu bayan abu da asusu bayan asusu. Ba a taɓa raba bayanan shiga ba.
 - `ccam usage` yana nuna amfanin awa 5 da na mako na kowane asusu; `ccam next --continue` yana ɗauko tattaunawar a asusu na gaba.
 

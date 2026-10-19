@@ -22,7 +22,7 @@
   },
   "landing": {
     "headline": "Varias cuentas de Claude Code. Una terminal.",
-    "lede": "Agrega cada cuenta una vez. Cambia con claude2 o ccam work. Cuando una cuenta llega a su límite, sigue en la siguiente con la misma conversación.",
+    "lede": "Agrega cada cuenta una vez. Cambia con ccam work o con un atajo como ccwork. Cuando una cuenta llega a su límite, sigue en la siguiente con la misma conversación.",
     "installLabel": "Instalar en Linux o macOS",
     "thenAdd": "Luego agrega tu primera cuenta con {command}.",
     "readDocs": "Lee el inicio rápido",
@@ -59,11 +59,11 @@
     "flow": [
       {
         "command": "ccam add work",
-        "body": "Crea una carpeta de configuración separada para la cuenta, abre el inicio de sesión de Claude en tu navegador y le da a la cuenta un atajo: claude1, claude2, etc."
+        "body": "Crea una carpeta de configuración separada para la cuenta, abre el inicio de sesión de Claude en tu navegador y, si quieres, le da a la cuenta un atajo al que tú le pones nombre, como ccwork."
       },
       {
-        "command": "claude2",
-        "also": "ccam work --resume",
+        "command": "ccam work",
+        "also": "ccwork --resume",
         "body": "Inicia Claude Code con esa cuenta. Todo lo que va después del nombre pasa a Claude Code sin cambios, y ccam agrega unos 4 milisegundos antes de que inicie."
       },
       {
@@ -109,21 +109,23 @@
   "commands": {
     "ccam": "Abrir el selector de cuentas",
     "name": "Iniciar Claude Code con esa cuenta; los argumentos se pasan sin cambios",
-    "add": "Agregar una cuenta: carpeta de configuración, inicio de sesión y atajo",
+    "add": "Agregar una cuenta: carpeta de configuración, inicio de sesión y un atajo opcional",
     "list": "Listar las cuentas",
     "use": "Establecer la cuenta predeterminada",
     "next": "Abrir la siguiente cuenta; --continue mantiene la conversación, --auto elige la que tiene más margen",
     "usage": "Mostrar el uso de 5 horas y semanal de todas las cuentas",
     "share": "Cambiar lo que comparte una cuenta, después de mostrar el plan",
     "mcp": "Administrar los servidores MCP compartidos",
+    "migrate": "Copiar una configuración existente de Claude Code (~/.claude) a un grupo compartido",
     "login": "Volver a iniciar sesión en una cuenta",
     "logout": "Quitar el inicio de sesión de una cuenta",
-    "rename": "Cambiar el nombre de una cuenta y de su atajo",
+    "rename": "Cambiar el nombre de una cuenta; su atajo conserva el nombre",
     "remove": "Quitar una cuenta; su carpeta va a la carpeta de papelera",
     "import": "Registrar una carpeta ~/.claude existente donde está",
     "doctor": "Revisar enlaces, permisos, inicios de sesión y versiones, y reparar",
     "statusline": "Mostrar la cuenta y el uso en la línea de estado de Claude Code",
-    "shims": "Volver a crear claude1…claudeN",
+    "shims": "Volver a crear los enlaces de los atajos de todas las cuentas",
+    "shortcut": "Mostrar, crear, renombrar o quitar el atajo de una cuenta, como ccwork",
     "completion": "Imprimir el autocompletado de bash o zsh"
   },
   "copy": {

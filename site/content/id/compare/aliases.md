@@ -4,7 +4,7 @@ description: Perbandingan alias shell dengan CLAUDE_CONFIG_DIR dan ccam untuk me
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: 13da69070650
+sourceHash: f751716e46c9
 ---
 
 Satu alias shell per akun adalah cara paling sederhana untuk menjalankan beberapa akun Claude Code. ccam melakukan hal yang sama di baliknya, lalu menambahkan pembagian, perpindahan akun, dan pemantauan penggunaan.
@@ -13,7 +13,7 @@ Satu alias shell per akun adalah cara paling sederhana untuk menjalankan beberap
 | --- | --- | --- |
 | Login terpisah | Ya | Ya |
 | Penyiapan per akun | Edit `~/.bashrc`, login | `ccam add` |
-| Berfungsi di skrip dan program lain | Tidak, alias hanya ada di shell | Ya, `claude2` adalah perintah sungguhan |
+| Berfungsi di skrip dan program lain | Tidak, alias hanya ada di shell | Ya, `ccam work` dan pintasan seperti `ccwork` adalah perintah sungguhan |
 | Pengaturan, `CLAUDE.md`, ekstensi bersama | Salin atau tautkan secara manual | Per item, dengan cadangan |
 | Server MCP bersama | Manual, per akun | `ccam mcp add` sekali saja |
 | Melanjutkan percakapan di akun lain | Tidak | `ccam next --continue` |

@@ -4,7 +4,7 @@ description: "Linux বা macOS-এ একটি কমান্ডে, .deb �
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: fc63978e8f9e
+sourceHash: 79dc1b55e774
 ---
 
 Linux বা macOS-এ একটি টার্মিনালে এটি চালান:
@@ -13,7 +13,7 @@ Linux বা macOS-এ একটি টার্মিনালে এটি চ
 curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-স্ক্রিপ্টটি আপনার সিস্টেমের জন্য রিলিজ ডাউনলোড করে, এর SHA-256 চেকসাম যাচাই করে এবং `~/.local/bin`-এ `ccam` রাখে; পরে `ccam add` ওই ফোল্ডারেই `claude1`, `claude2`… শর্টকাটগুলো তৈরি করে। ওই ফোল্ডার আপনার `PATH`-এ না থাকলে, `~/.bashrc` বা `~/.zshrc`-এ কোন লাইন যোগ করতে হবে তা স্ক্রিপ্টটি প্রিন্ট করে।
+স্ক্রিপ্টটি আপনার সিস্টেমের জন্য রিলিজ ডাউনলোড করে, তার SHA-256 চেকসাম যাচাই করে এবং `ccam`-কে `~/.local/bin`-এ রাখে; ccam পরে আপনার বেছে নেওয়া শর্টকাট কমান্ড, যেমন `ccwork`, এই ফোল্ডারেই তৈরি করে। ফোল্ডারটি আপনার `PATH`-এ না থাকলে স্ক্রিপ্টটি `~/.bashrc` বা `~/.zshrc`-এ যোগ করার লাইনটি প্রিন্ট করে।
 
 ccam আপনার হয়ে Claude Code চালু করে, তাই আগে [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) ইনস্টল করুন এবং নিশ্চিত হন যে `claude --version` কাজ করে।
 
@@ -65,10 +65,12 @@ ccam doctor
 
 ## আনইনস্টল
 
-কমান্ডটি ও অ্যাকাউন্টের শর্টকাটগুলো সরিয়ে দিন, তারপর অ্যাকাউন্টগুলোর আর দরকার না থাকলে ডেটা ফোল্ডারগুলোও:
+ccam ইনস্টল থাকতে থাকতেই আগে অ্যাকাউন্টের শর্টকাটগুলো সরান। `ccam list` সেগুলো Shortcut কলামে দেখায়; প্রতিটি `ccam shortcut <account> --remove` দিয়ে সরান, অথবা ওই লিংকগুলো `~/.local/bin` থেকে নিজে মুছে দিন। তারপর কমান্ডটি সরান, আর অ্যাকাউন্টগুলোর আর দরকার না থাকলে ডেটা ফোল্ডারগুলোও:
 
 ```sh
-rm ~/.local/bin/ccam ~/.local/bin/claude[0-9]*
+ccam list
+ccam shortcut work --remove   # once for each account that has a shortcut
+rm ~/.local/bin/ccam
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
 ```
 

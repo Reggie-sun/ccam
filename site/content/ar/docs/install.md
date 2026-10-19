@@ -4,7 +4,7 @@ description: ثبّت ccam على Linux أو macOS بأمر واحد، أو من
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: fc63978e8f9e
+sourceHash: 79dc1b55e774
 ---
 
 شغّل هذا الأمر في طرفية على Linux أو macOS:
@@ -13,7 +13,7 @@ sourceHash: fc63978e8f9e
 curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-ينزّل السكربت الإصدار المناسب لنظامك، ويتحقق من مجموع SHA-256 الخاص به، ويضع `ccam` في `~/.local/bin`، حيث ينشئ `ccam add` لاحقًا الأوامر المختصرة `claude1` و`claude2` وغيرها. إذا لم يكن ذلك المجلد ضمن `PATH` لديك، يطبع السكربت السطر الذي يجب إضافته إلى `~/.bashrc` أو `~/.zshrc`.
+ينزّل السكربت الإصدار المناسب لنظامك، ويتحقق من مجموع SHA-256 الخاص به، ويضع `ccam` في `~/.local/bin`، حيث ينشئ ccam أيضًا الأوامر المختصرة التي تختارها لاحقًا، مثل `ccwork`. إذا لم يكن ذلك المجلد ضمن `PATH` لديك، يطبع السكربت السطر الذي يجب إضافته إلى `~/.bashrc` أو `~/.zshrc`.
 
 يشغّل ccam برنامج Claude Code نيابةً عنك، لذا ثبّت [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) أولًا وتأكد من أن `claude --version` يعمل.
 
@@ -65,10 +65,12 @@ ccam doctor
 
 ## إلغاء التثبيت
 
-أزل الأمر والأوامر المختصرة للحسابات، ثم مجلدات البيانات إذا لم تعد بحاجة إلى الحسابات:
+أزل الأوامر المختصرة للحسابات أولًا، ما دام ccam مثبتًا. يعرضها `ccam list` في عمود Shortcut؛ أزل كلًّا منها باستخدام `ccam shortcut <account> --remove`، أو احذف تلك الروابط من `~/.local/bin` بنفسك. ثم أزل الأمر، ومجلدات البيانات إذا لم تعد بحاجة إلى الحسابات:
 
 ```sh
-rm ~/.local/bin/ccam ~/.local/bin/claude[0-9]*
+ccam list
+ccam shortcut work --remove   # once for each account that has a shortcut
+rm ~/.local/bin/ccam
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
 ```
 

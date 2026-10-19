@@ -22,7 +22,7 @@
   },
   "landing": {
     "headline": "多个 Claude Code 账号，一个终端。",
-    "lede": "每个账号只需添加一次。用 claude2 或 ccam work 切换。一个账号达到用量限制时，在下一个账号中继续同一段对话。",
+    "lede": "每个账号只需添加一次。用 ccam work 或 ccwork 这样的快捷命令切换。一个账号达到用量限制时，在下一个账号中继续同一段对话。",
     "installLabel": "在 Linux 或 macOS 上安装",
     "thenAdd": "然后用 {command} 添加你的第一个账号。",
     "readDocs": "阅读快速入门",
@@ -59,11 +59,11 @@
     "flow": [
       {
         "command": "ccam add work",
-        "body": "为该账号创建单独的配置文件夹，在浏览器中打开 Claude 登录页面，并为账号分配一个快捷命令：claude1、claude2，依此类推。"
+        "body": "为该账号创建单独的配置文件夹，在浏览器中打开 Claude 登录页面；如果你需要，还会为账号设置一个你自己命名的快捷命令，例如 ccwork。"
       },
       {
-        "command": "claude2",
-        "also": "ccam work --resume",
+        "command": "ccam work",
+        "also": "ccwork --resume",
         "body": "以该账号启动 Claude Code。账号名之后的所有内容都原样传给 Claude Code，ccam 在启动前只增加约 4 毫秒。"
       },
       {
@@ -109,21 +109,23 @@
   "commands": {
     "ccam": "打开账号选择器",
     "name": "以该账号启动 Claude Code；参数原样传递",
-    "add": "添加账号：配置文件夹、登录和快捷命令",
+    "add": "添加账号：配置文件夹、登录和可选的快捷命令",
     "list": "列出账号",
     "use": "设置默认账号",
     "next": "打开下一个账号；--continue 保留对话，--auto 选择余量最多的账号",
     "usage": "显示所有账号的 5 小时用量和每周用量",
     "share": "更改账号的共享内容，先显示计划",
     "mcp": "管理共享的 MCP 服务器",
+    "migrate": "把现有的 Claude Code 配置（~/.claude）复制到共享组",
     "login": "重新登录账号",
     "logout": "删除账号的登录信息",
-    "rename": "重命名账号及其快捷命令",
+    "rename": "重命名账号；快捷命令保持原名",
     "remove": "删除账号；其文件夹会移到回收文件夹",
     "import": "在原位置注册已有的 ~/.claude 文件夹",
     "doctor": "检查链接、权限、登录和版本，并进行修复",
     "statusline": "在 Claude Code 的状态栏中显示账号和用量",
-    "shims": "重新创建 claude1…claudeN",
+    "shims": "重新创建所有账号的快捷命令链接",
+    "shortcut": "显示、创建、重命名或删除账号的快捷命令，例如 ccwork",
     "completion": "输出 bash 或 zsh 的补全脚本"
   },
   "copy": {

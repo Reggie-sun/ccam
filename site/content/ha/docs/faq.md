@@ -4,7 +4,7 @@ description: Amsoshi game da ccam, asusun Claude Code, iyakokin amfani, rabawa, 
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 2be18393cbe2
+sourceHash: e07d468d453b
 ---
 
 ## Shin ccam kayan aikin Anthropic ne na hukuma?
@@ -21,7 +21,7 @@ A'a. Kowane asusu yana riƙe iyakokinsa. ccam yana nuna su kuma yana ba ka damar
 
 ## Ta yaya zan yi amfani da asusun Claude Code biyu a kwamfuta ɗaya?
 
-Ba kowane asusu foldar saitunsa ta kansa da `CLAUDE_CONFIG_DIR`. ccam yana yi maka wannan: gudanar da `ccam add` ga kowane asusu, sannan ka fara su da `claude1` da `claude2`. [Jagorar](/guides/multiple-claude-code-accounts) tana kuma nuna yadda za a yi shi da hannu.
+Ba kowane asusu foldar saitunsa ta kansa da `CLAUDE_CONFIG_DIR`. ccam yana yi maka wannan: gudanar da `ccam add` ga kowane asusu, sannan ka fara su da `ccam personal` da `ccam work`, ko da gajerun umarni da kai da kanka ka sa musu suna, kamar `ccwork`. [Jagorar](/guides/multiple-claude-code-accounts) kuma tana nuna yadda ake yi da hannu.
 
 ## Ta yaya zan ci gaba da tattaunawa a wani asusu?
 
@@ -37,7 +37,7 @@ A `~/.local/share/ccam/profiles/<name>/`, folda ɗaya ga kowane asusu. A macOS, 
 
 ## Me zai faru da ~/.claude da nake da shi?
 
-Babu komai, sai dai idan ka gudanar da `ccam import`. Import yana yin rajistar foldar a inda take, don haka `claude` kai tsaye da `ccam <name>` suna ci gaba da amfani da asusu da saituna iri ɗaya.
+Babu komai, sai idan ka gudanar da `ccam import` ko `ccam migrate`. Import yana yin rajistar foldar a inda take, don haka `claude` na yau da kullum da `ccam <name>` suna ci gaba da amfani da asusu da saituna iri ɗaya. `ccam migrate` yana kwafar saitunanta, `CLAUDE.md`, extensions da sabobin MCP zuwa saitunan da aka raba, kuma yana karanta foldar ne kawai.
 
 ## Waɗanne tsaruka ne ccam yake tallafawa?
 
@@ -53,4 +53,4 @@ Fara Claude Code ta ccam yana ƙara kusan millisecond 4, wanda aka auna da `scri
 
 ## Ta yaya zan cire ccam?
 
-Share `ccam` da mahaɗan `claude1`… daga `~/.local/bin`, sannan `~/.config/ccam`, `~/.local/share/ccam` da `~/.local/state/ccam` idan ba ka buƙatar asusan kuma. Duba [girkawa](/docs/install#uninstall).
+Cire gajeren umarnin kowane asusu da `ccam shortcut <account> --remove`, goge `ccam` daga `~/.local/bin`, sannan ka cire `~/.config/ccam`, `~/.local/share/ccam` da `~/.local/state/ccam` idan ba ka buƙatar asusan kuma. Duba [shigarwa](/docs/install#uninstall).

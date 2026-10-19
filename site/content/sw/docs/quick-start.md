@@ -1,13 +1,13 @@
 ---
 title: Kuanza haraka
-description: Ongeza akaunti mbili za Claude Code kwa ccam add, badili kati yao kwa claude1, claude2 au ccam <name>, na uchague zinachoshiriki.
+description: Ongeza akaunti mbili za Claude Code kwa ccam add, zipe njia fupi kama ccwork, badili kati yao, na uchague zinachoshiriki.
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 6baf0bfa5029
+sourceHash: b73914ff371f
 ---
 
-Ongeza kila akaunti kwa `ccam add`, kisha anzisha Claude Code kwa `claude1`, `claude2` au `ccam <name>`. Hivyo ndivyo watu wengi wanavyohitaji.
+Ongeza kila akaunti kwa `ccam add`, kisha anzisha Claude Code kwa `ccam <name>` au kwa njia fupi unayoipa jina mwenyewe, kama `ccwork`. Hivyo ndivyo watu wengi wanavyohitaji.
 
 ## 1. Ongeza akaunti yako ya kwanza
 
@@ -15,43 +15,82 @@ Ongeza kila akaunti kwa `ccam add`, kisha anzisha Claude Code kwa `claude1`, `cl
 ccam add
 ```
 
-Mchawi wa usanidi (wizard) huuliza jina kama `personal` au `work`, na ni vipengele gani akaunti inapaswa kushiriki na akaunti zako nyingine. Kisha huendesha `claude auth login`, ambayo hufungua kivinjari ili uweze kuingia. Ikimaliza utaona:
+Mchawi wa usanidi (wizard) huuliza jina kama `personal` au `work`, ni vipengele gani akaunti inapaswa kushiriki na akaunti zako nyingine, na kama uunde amri ya njia fupi (tazama hatua ya 4). Kisha huendesha `claude auth login`, ambayo hufungua kivinjari ili uweze kuingia. Ikimaliza utaona:
 
 ```console
-✓ personal (me@example.com) added — shortcut: claude1
+✓ personal (me@example.com) added
+  no shortcut (add one with `ccam shortcut personal ccpersonal`)
 ```
 
 ccam huchapisha ujumbe wake kwa Kiingereza; amri na chaguo ni zile zile katika kila lugha.
 
-## 2. Ongeza akaunti ya pili
+## 2. Leta mipangilio yako iliyopo
+
+Ikiwa umewahi kutumia Claude Code, mipangilio yako, `CLAUDE.md`, viendelezi na seva za MCP viko katika `~/.claude`. Vinakili kwenye mipangilio inayoshirikiwa, ili kila akaunti ivipate:
+
+```sh
+ccam migrate
+```
+
+ccam huonyesha kitakachonakiliwa na huuliza kwanza. Husoma `~/.claude` tu, kamwe hainakili taarifa za kuingia, na haijumuishi historia ya mazungumzo isipokuwa uongeze `--history`. Tazama [kunakili usanidi uliopo](/docs/sharing#copy-an-existing-setup) kwa maelezo zaidi.
+
+## 3. Ongeza akaunti ya pili
 
 ```sh
 ccam add work
 ```
 
-Ingia kwa akaunti nyingine kwenye kivinjari. Itakuwa `claude2`.
+Ingia kwa akaunti nyingine kwenye kivinjari.
 
-## 3. Badili
+## 4. Badili akaunti
 
-Yoyote kati ya hizi huanzisha Claude Code kama akaunti ya kazi:
+`ccam work` huanzisha Claude Code kama akaunti ya kazi. Kwa kitu kifupi zaidi, ipe akaunti amri yake ya njia fupi, kama `ccwork`. Baada ya vipengele vya kushiriki, mchawi wa usanidi huuliza:
+
+```console
+ Create a shortcut command for work? [y/N]
+ A command such as ccwork that opens Claude Code as this account.
+```
+
+Bonyeza `y`, kisha andika jina, au bonyeza Enter kutumia jina lililopendekezwa:
+
+```console
+ Shortcut name [ccwork]: █
+ a-z, 0-9, '.', '-' and '_'; Enter alone uses ccwork
+```
+
+Baada ya kuingia, ccam huthibitisha:
+
+```console
+✓ work (work@example.com) added
+  shortcut: ccwork
+```
+
+Ikiwa uliruka swali hilo, ongeza njia fupi wakati wowote:
+
+```console
+$ ccam shortcut work ccwork
+✓ shortcut for work: ccwork
+```
+
+Sasa yoyote kati ya hizi huanzisha Claude Code kama akaunti ya kazi:
 
 ```sh
-claude2
+ccwork
 ccam work
 ccam 2
 ```
 
-Kila kitu baada ya jina la akaunti hupelekwa kwa Claude Code bila kubadilishwa, kwa hiyo unaendelea kutumia chaguo unazozijua:
-
-```sh
-ccam work --resume
-ccam work -p "fix the failing test" --output-format json
-cat error.log | claude2 -p "what caused this?"
-```
-
 Kuendesha `ccam` peke yake hufungua kichaguzi: tumia vitufe vya mishale na Enter, au bonyeza namba ya akaunti.
 
-## 4. Chagua cha kushiriki
+Kila kitu baada ya njia fupi au jina la akaunti hupelekwa kwa Claude Code bila kubadilishwa, kwa hiyo unaendelea kutumia chaguo unazozijua:
+
+```sh
+ccwork --resume
+ccam work -p "fix the failing test" --output-format json
+cat error.log | ccwork -p "what caused this?"
+```
+
+## 5. Chagua cha kushiriki
 
 Kwa chaguo-msingi, seva za MCP, `settings.json`, `CLAUDE.md` ya jumla, pamoja na agents, commands, skills na plugins hushirikiwa kati ya akaunti. Historia ya mazungumzo haishirikiwi. Iwashe kwa akaunti zote mbili ikiwa unataka kuendeleza mazungumzo kati yao:
 
@@ -62,7 +101,7 @@ ccam share work --history on
 
 ccam huonyesha kile itakachohamisha kabla ya kubadilisha chochote. Tazama [kushiriki](/docs/sharing) kwa maelezo zaidi.
 
-## 5. Akaunti inapofikia kikomo chake
+## 6. Akaunti ikifikia kikomo chake
 
 ```sh
 ccam usage

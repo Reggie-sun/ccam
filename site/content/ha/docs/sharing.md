@@ -4,7 +4,7 @@ description: Yadda ccam ke raba sabobin MCP, settings.json, CLAUDE.md, agents, s
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: e4b31e5098e3
+sourceHash: ccbb2c5e97bc
 ---
 
 Kowane asusu yana riƙe bayanan shigarsa. Duk sauran abubuwa za a iya raba su ɗaya bayan ɗaya: ccam yana mayar da fayil ko foldar asusun mahaɗi zuwa foldar rukuni da aka raba, don haka canjin da aka yi a asusu ɗaya yana bayyana a duk asusan wannan rukunin.
@@ -53,6 +53,57 @@ ccam share work --history off
 ```
 
 Ana cire mahaɗin, kuma asusun yana samun kwafinsa na abin da ke cikin rukunin a yanzu. Ƙara `--fresh` don farawa babu komai a maimakon haka. Rukunin yana riƙe abin da ke cikinsa don sauran asusai.
+
+## Kwafi saitin da ke akwai
+
+Idan ka yi amfani da Claude Code kafin ccam, saitunanka suna cikin `~/.claude`. `ccam migrate` yana kwafar su zuwa rukuni, don kowane asusu da ke raba waɗannan abubuwa ya same su:
+
+```sh
+ccam migrate
+```
+
+Abin da yake kwafa:
+
+- `settings.json` da `CLAUDE.md` na gaba ɗaya;
+- extensions `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/` da `rules/`;
+- sabobin MCP naka na mai amfani, wato shigarwar `mcpServers` ta `~/.claude.json`, zuwa `mcp.json` na rukunin;
+- tarihin tattaunawa (`projects/` da `history.jsonl`), amma sai idan ka ƙara `--history`.
+
+Ana karanta foldar tushe ne kawai: ba a matsar, haɗa ko canza komai a cikinta, kuma `claude` na yau da kullum yana ci gaba da aiki kamar da. Ba a taɓa kwafar fayilolin shiga `.credentials.json` da `.claude.json` ba.
+
+ccam yana buga shirin kuma yana tambaya kafin ya kwafi komai:
+
+```console
+$ ccam migrate
+Copy from /home/me/.claude into group default (/home/me/.local/share/ccam/groups/default):
+  mcp         ~/.claude.json  new: context7, fs
+  settings    settings.json   new: 80 B
+  memory      CLAUDE.md       new: 31 B
+  extensions  agents/         add 1 file the group lacks (17 B)
+              commands/       add 1 file the group lacks (15 B)
+              skills/         add 1 file the group lacks (32 B)
+              not found, skipped: plugins/, output-styles/, rules/
+  Conversation history (projects/, history.jsonl) is not included; add --history to copy it.
+Copy these into group default? [y/N] y
+✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, commands/, skills/
+Accounts that share these through group default:
+  mcp         personal
+  settings    personal
+  memory      personal
+  extensions  personal
+```
+
+A ƙarshe, ccam yana lissafa asusan da ke raba kowane abu ta rukunin. Idan wasu asusai ba sa yi, yana buga umarnin `ccam share` da ke kunna rabawa a gare su.
+
+Idan rukunin yana da wani kwafi na fayil da ya bambanta, ccam yana tambaya, kamar yadda yake yi lokacin da ka kunna rabawa: riƙe kwafin rukunin ko amfani da naka. Ana iya kuma haɗa `settings.json` da sauran fayilolin JSON, da `history.jsonl` layi bayan layi. Ana ajiye kwafin rukunin na baya a `.ccam-backup/<time>/` cikin foldar rukunin.
+
+| Zaɓi | Tasiri |
+| --- | --- |
+| `--settings`, `--memory`, `--extensions`, `--mcp`, `--history` | Kwafi abubuwan da ka ambata kawai; ba tare da su ba, komai sai tarihin tattaunawa |
+| `-g`, `--group <group>` | Kwafa zuwa wannan rukunin maimakon `default` |
+| `-y`, `--yes` | Kwafa ba tare da tambaya ba; idan fayil ya bambanta, riƙe kwafin rukunin |
+
+Sa `--dry-run` kafin umarnin, kamar a `ccam --dry-run migrate`, don ganin shirin ba tare da kwafar komai ba. Don kwafa daga wata foldar, ambaci ta: `ccam migrate ~/.claude-work --group work`.
 
 ## Sabobin MCP
 

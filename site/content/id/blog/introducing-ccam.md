@@ -4,7 +4,7 @@ description: Mengapa ccam dibuat, apa gunanya bagi pengguna beberapa akun Claude
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: 985e2d369c34
+sourceHash: bbc9d9014f98
 ---
 
 ccam adalah alat baris perintah kecil untuk orang yang menggunakan lebih dari satu akun Claude Code di komputer yang sama: akun pribadi dan akun kerja, atau beberapa akun untuk satu proyek panjang.
@@ -15,8 +15,8 @@ Claude Code mendukung beberapa akun melalui `CLAUDE_CONFIG_DIR`: satu folder per
 
 ## Apa yang dilakukan ccam
 
-- `ccam add` membuat folder, menjalankan login, dan memberi akun itu pintasan: `claude1`, `claude2`, dan seterusnya.
-- `ccam work` dan `claude2` menjalankan Claude Code sebagai akun tersebut dan meneruskan semua argumen tanpa diubah.
+- `ccam add` membuat folder, menjalankan login, dan jika Anda mau, memberi akun itu pintasan yang namanya Anda pilih sendiri, seperti `ccwork`.
+- `ccam work` dan `ccwork` menjalankan Claude Code sebagai akun tersebut dan meneruskan semua argumen tanpa diubah.
 - Server MCP, pengaturan, `CLAUDE.md`, dan ekstensi dibagikan melalui tautan, per item dan per akun. Login tidak pernah dibagikan.
 - `ccam usage` menampilkan penggunaan 5 jam dan mingguan semua akun; `ccam next --continue` melanjutkan percakapan di akun berikutnya.
 

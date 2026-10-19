@@ -16,13 +16,14 @@ Put `--dry-run` before any command to see what it would do without doing it, for
 
 `ccam` with arguments but no account name, such as `ccam -p "summarise"`, uses the default account. Set it with `ccam use <name>`.
 
-The shortcuts `claude1`, `claude2` and so on are links to ccam in `~/.local/bin`. `ccam shims install --names` also creates `claude-<name>` for every account.
+A shortcut such as `ccwork` starts its account the same way: `ccwork --resume` does what `ccam work --resume` does. See [shortcuts](/docs/commands#shortcuts).
 
 ## Adding and removing accounts
 
 ```sh
 ccam add                      # wizard
 ccam add work --share history=on
+ccam add side --shortcut ccside
 ccam add ci --no-login        # log in later with: ccam login ci
 ccam rename work job
 ccam remove side              # folder moves to ~/.local/share/ccam/trash
@@ -30,6 +31,22 @@ ccam import ~/.claude-old --name old
 ```
 
 `ccam import` without a folder looks for `~/.claude` and `~/.claude-*` and asks about each one. Imported folders are registered where they are; ccam never moves or copies a login.
+
+## Shortcuts
+
+```sh
+ccam shortcut work ccwork     # create it, or rename the existing one
+ccam shortcut work            # show it
+ccam shortcut work --remove
+```
+
+A shortcut is a command you name yourself that starts Claude Code as one account. Like `ccam work`, it passes every argument to Claude Code unchanged, so `ccwork --resume` and `ccwork -p "hi"` work as you would expect. It is a link to ccam in `~/.local/bin`.
+
+Shortcuts are optional. The `ccam add` wizard asks whether to create one, `ccam add <name> --shortcut <command>` creates one without asking, and `ccam list` shows each account's shortcut, or `-` when it has none.
+
+Names use the characters a-z, 0-9, `.`, `-` and `_`. A name cannot be a ccam command, another account's shortcut, or the name of another program on your `PATH`.
+
+`ccam rename` keeps the shortcut name, and `ccam remove` deletes the shortcut together with the account. `ccam shims install` recreates the links of all accounts, for example after you have moved ccam.
 
 ## Sharing
 
@@ -40,6 +57,17 @@ ccam share work --settings off --fresh
 ```
 
 Each item takes `on` (the `default` group), `off`, or a group name. See [sharing](/docs/sharing).
+
+## Copying an existing setup
+
+```sh
+ccam migrate                    # ~/.claude into the default group
+ccam --dry-run migrate          # show the plan, copy nothing
+ccam migrate ~/.claude-work --group work --settings --mcp
+ccam migrate --history --yes    # conversation history only
+```
+
+`ccam migrate` copies `settings.json`, `CLAUDE.md`, extensions and user MCP servers from a Claude Code folder into a group, so every account that shares those items gets them. The folder is only read. The options `--settings`, `--memory`, `--extensions`, `--mcp` and `--history` copy only the items you name; without them, everything except conversation history is copied. `-g` or `--group` picks the group, and `-y` or `--yes` copies without asking and keeps the group's copy when a file differs. See [copying an existing setup](/docs/sharing#copy-an-existing-setup).
 
 ## MCP servers
 
@@ -68,7 +96,7 @@ ccam next --auto
 ccam doctor          # check
 ccam doctor --fix    # repair what is safe to repair, with backups
 ccam statusline install
-ccam shims install
+ccam shims install   # recreate the shortcut links
 ```
 
 ## Files
@@ -79,6 +107,6 @@ ccam shims install
 | `~/.local/share/ccam/profiles/<name>/` | Each account's `CLAUDE_CONFIG_DIR` |
 | `~/.local/share/ccam/groups/<group>/` | Shared settings, MCP servers, extensions and history |
 | `~/.local/state/ccam/` | Usage cache and last-used times |
-| `~/.local/bin/claude1`, `claude2`… | Links to ccam |
+| `~/.local/bin/<shortcut>` | Shortcut commands such as `ccwork`, links to ccam |
 
 The `XDG_CONFIG_HOME`, `XDG_DATA_HOME` and `XDG_STATE_HOME` variables move these folders.

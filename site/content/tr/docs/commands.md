@@ -4,7 +4,7 @@ description: ccam add ve ccam <name> komutlarından ccam usage, ccam next ve cca
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 54bdfc489174
+sourceHash: 0c869c92fa63
 ---
 
 Bir komutun ne yapacağını, yapmadan görmek için komuttan önce `--dry-run` yazın, örneğin `ccam --dry-run work`.
@@ -17,13 +17,14 @@ Bir komutun ne yapacağını, yapmadan görmek için komuttan önce `--dry-run` 
 
 Hesap adı olmadan argümanlarla çalıştırılan `ccam`, örneğin `ccam -p "summarise"`, varsayılan hesabı kullanır. Varsayılan hesabı `ccam use <name>` ile ayarlayın.
 
-`claude1`, `claude2` ve devamındaki kısayollar, `~/.local/bin` içindeki ccam'a yönelen bağlantılardır. `ccam shims install --names` ayrıca her hesap için `claude-<name>` oluşturur.
+`ccwork` gibi bir kısayol, kendi hesabını aynı şekilde başlatır: `ccwork --resume`, `ccam work --resume` ile aynı işi yapar. [Kısayollar](/docs/commands#shortcuts) bölümüne bakın.
 
 ## Hesap ekleme ve kaldırma
 
 ```sh
 ccam add                      # wizard
 ccam add work --share history=on
+ccam add side --shortcut ccside
 ccam add ci --no-login        # log in later with: ccam login ci
 ccam rename work job
 ccam remove side              # folder moves to ~/.local/share/ccam/trash
@@ -31,6 +32,22 @@ ccam import ~/.claude-old --name old
 ```
 
 Klasör belirtilmeden çalıştırılan `ccam import`, `~/.claude` ve `~/.claude-*` klasörlerini arar ve her biri için sorar. İçe aktarılan klasörler bulundukları yerde kaydedilir; ccam hiçbir zaman bir girişi taşımaz veya kopyalamaz.
+
+## Kısayollar
+
+```sh
+ccam shortcut work ccwork     # create it, or rename the existing one
+ccam shortcut work            # show it
+ccam shortcut work --remove
+```
+
+Kısayol, adını kendiniz verdiğiniz ve Claude Code'u tek bir hesapla başlatan bir komuttur. `ccam work` gibi her argümanı Claude Code'a değiştirmeden iletir; bu yüzden `ccwork --resume` ve `ccwork -p "hi"` beklediğiniz gibi çalışır. `~/.local/bin` içinde ccam'e giden bir bağlantıdır.
+
+Kısayollar isteğe bağlıdır. `ccam add` sihirbazı bir kısayol oluşturulup oluşturulmayacağını sorar, `ccam add <name> --shortcut <command>` sormadan oluşturur ve `ccam list` her hesabın kısayolunu, yoksa `-` gösterir.
+
+Adlarda a-z, 0-9, `.`, `-` ve `_` karakterleri kullanılır. Bir ad bir ccam komutu, başka bir hesabın kısayolu veya `PATH` içindeki başka bir programın adı olamaz.
+
+`ccam rename` kısayolun adını korur, `ccam remove` ise kısayolu hesapla birlikte siler. `ccam shims install`, örneğin ccam'i taşıdıktan sonra, tüm hesapların bağlantılarını yeniden oluşturur.
 
 ## Paylaşım
 
@@ -41,6 +58,17 @@ ccam share work --settings off --fresh
 ```
 
 Her öğe `on` (`default` grubu), `off` veya bir grup adı alır. [Paylaşım](/docs/sharing) sayfasına bakın.
+
+## Mevcut bir kurulumu kopyalama
+
+```sh
+ccam migrate                    # ~/.claude into the default group
+ccam --dry-run migrate          # show the plan, copy nothing
+ccam migrate ~/.claude-work --group work --settings --mcp
+ccam migrate --history --yes    # conversation history only
+```
+
+`ccam migrate`, `settings.json`, `CLAUDE.md`, uzantıları ve kullanıcı MCP sunucularını bir Claude Code klasöründen bir gruba kopyalar; böylece bu öğeleri paylaşan her hesap onlara sahip olur. Klasör yalnızca okunur. `--settings`, `--memory`, `--extensions`, `--mcp` ve `--history` seçenekleri yalnızca belirttiğiniz öğeleri kopyalar; bunlar olmadan konuşma geçmişi dışındaki her şey kopyalanır. `-g` veya `--group` grubu seçer; `-y` veya `--yes` sormadan kopyalar ve bir dosya farklıysa grubun kopyasını korur. [Mevcut bir kurulumu kopyalama](/docs/sharing#copy-an-existing-setup) bölümüne bakın.
 
 ## MCP sunucuları
 
@@ -69,7 +97,7 @@ ccam next --auto
 ccam doctor          # check
 ccam doctor --fix    # repair what is safe to repair, with backups
 ccam statusline install
-ccam shims install
+ccam shims install   # recreate the shortcut links
 ```
 
 ## Dosyalar
@@ -80,6 +108,6 @@ ccam shims install
 | `~/.local/share/ccam/profiles/<name>/` | Her hesabın `CLAUDE_CONFIG_DIR` klasörü |
 | `~/.local/share/ccam/groups/<group>/` | Paylaşılan ayarlar, MCP sunucuları, uzantılar ve geçmiş |
 | `~/.local/state/ccam/` | Kullanım önbelleği ve son kullanım zamanları |
-| `~/.local/bin/claude1`, `claude2`… | ccam'a yönelen bağlantılar |
+| `~/.local/bin/<shortcut>` | `ccwork` gibi kısayol komutları, ccam'e giden bağlantılar |
 
 `XDG_CONFIG_HOME`, `XDG_DATA_HOME` ve `XDG_STATE_HOME` değişkenleri bu klasörlerin yerini değiştirir.

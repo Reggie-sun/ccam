@@ -4,7 +4,7 @@ description: Instale o ccam no Linux ou no macOS com um comando, por um pacote .
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: fc63978e8f9e
+sourceHash: 79dc1b55e774
 ---
 
 Execute isto em um terminal no Linux ou no macOS:
@@ -13,7 +13,7 @@ Execute isto em um terminal no Linux ou no macOS:
 curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-O script baixa a versão para o seu sistema, verifica o checksum SHA-256 e coloca o `ccam` em `~/.local/bin`, onde o `ccam add` cria depois os atalhos `claude1`, `claude2` e assim por diante. Se essa pasta não estiver no seu `PATH`, o script imprime a linha que você deve adicionar ao `~/.bashrc` ou ao `~/.zshrc`.
+O script baixa a versão para o seu sistema, verifica o checksum SHA-256 e coloca o `ccam` em `~/.local/bin`, onde o ccam também cria os atalhos que você escolher depois, como `ccwork`. Se essa pasta não estiver no seu `PATH`, o script imprime a linha que você deve adicionar ao `~/.bashrc` ou ao `~/.zshrc`.
 
 O ccam inicia o Claude Code para você, então instale o [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) primeiro e confirme que `claude --version` funciona.
 
@@ -65,10 +65,12 @@ ccam doctor
 
 ## Desinstalar
 
-Remova o comando e os atalhos das contas e depois as pastas de dados, se você não precisar mais das contas:
+Remova primeiro os atalhos das contas, enquanto o ccam ainda está instalado. `ccam list` os mostra na coluna Shortcut; remova cada um com `ccam shortcut <account> --remove` ou exclua você mesmo esses links de `~/.local/bin`. Depois remova o comando e, se você não precisar mais das contas, as pastas de dados:
 
 ```sh
-rm ~/.local/bin/ccam ~/.local/bin/claude[0-9]*
+ccam list
+ccam shortcut work --remove   # once for each account that has a shortcut
+rm ~/.local/bin/ccam
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
 ```
 

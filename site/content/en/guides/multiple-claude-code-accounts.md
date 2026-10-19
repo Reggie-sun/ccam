@@ -33,12 +33,12 @@ ccam automates the same idea and adds the missing parts:
 ```sh
 curl -fsSL https://ccam.dev/install.sh | sh
 ccam add personal
-ccam add work
+ccam add work --shortcut ccwork
 ```
 
-Now `claude1` and `claude2`, or `ccam personal` and `ccam work`, start the two accounts. Because they are real programs rather than aliases, they also work in scripts. Settings, `CLAUDE.md`, MCP servers and extensions are shared from the start, and you can turn on shared conversation history to continue a conversation on the other account with `ccam next --continue`.
+Now `ccam personal` and `ccam work` start the two accounts, and so does `ccwork`, the shortcut you gave the work account. Because they are real programs rather than aliases, they also work in scripts. Settings, `CLAUDE.md`, MCP servers and extensions are shared from the start, and you can turn on shared conversation history to continue a conversation on the other account with `ccam next --continue`.
 
-If you already use `~/.claude`, run `ccam import` instead of adding that account again.
+If you already use `~/.claude`, run `ccam import` instead of adding that account again, or `ccam migrate` to copy its settings, MCP servers and extensions into the shared settings.
 
 ## Which one to choose
 

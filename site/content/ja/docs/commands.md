@@ -4,7 +4,7 @@ description: ccam addやccam <name>から、ccam usage、ccam next、ccam doctor
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 54bdfc489174
+sourceHash: 0c869c92fa63
 ---
 
 どのコマンドでも前に`--dry-run`を付けると、実際には実行せずに何をするかを確認できます。たとえば`ccam --dry-run work`のように使います。
@@ -17,13 +17,14 @@ sourceHash: 54bdfc489174
 
 `ccam -p "summarise"`のように、引数はあってもアカウント名がない`ccam`は、デフォルトのアカウントを使います。デフォルトのアカウントは`ccam use <name>`で設定します。
 
-ショートカットの`claude1`、`claude2`などは、`~/.local/bin`にあるccamへのリンクです。`ccam shims install --names`を実行すると、アカウントごとに`claude-<name>`も作成されます。
+`ccwork`のようなショートカットも、同じようにそのアカウントを起動します。`ccwork --resume`は`ccam work --resume`と同じ動作です。詳しくは[ショートカット](/docs/commands#shortcuts)を参照してください。
 
 ## アカウントの追加と削除
 
 ```sh
 ccam add                      # wizard
 ccam add work --share history=on
+ccam add side --shortcut ccside
 ccam add ci --no-login        # log in later with: ccam login ci
 ccam rename work job
 ccam remove side              # folder moves to ~/.local/share/ccam/trash
@@ -31,6 +32,22 @@ ccam import ~/.claude-old --name old
 ```
 
 フォルダーを指定せずに`ccam import`を実行すると、`~/.claude`と`~/.claude-*`を探し、それぞれについて確認します。インポートしたフォルダーはその場所のまま登録されます。ccamがログインを移動またはコピーすることはありません。
+
+## ショートカット
+
+```sh
+ccam shortcut work ccwork     # create it, or rename the existing one
+ccam shortcut work            # show it
+ccam shortcut work --remove
+```
+
+ショートカットは、1つのアカウントでClaude Codeを起動する、自分で名前を付けたコマンドです。`ccam work`と同じように、すべての引数をそのままClaude Codeに渡すので、`ccwork --resume`や`ccwork -p "hi"`も期待どおりに動作します。実体は`~/.local/bin`にあるccamへのリンクです。
+
+ショートカットは任意です。`ccam add`のウィザードが作成するかどうかを尋ね、`ccam add <name> --shortcut <command>`なら確認なしで作成します。`ccam list`は各アカウントのショートカットを表示し、ない場合は`-`と表示します。
+
+名前に使える文字は、a-z、0-9、`.`、`-`、`_`です。ccamのコマンド、ほかのアカウントのショートカット、`PATH`上にあるほかのプログラムと同じ名前は使えません。
+
+`ccam rename`ではショートカットの名前は変わらず、`ccam remove`ではアカウントと一緒にショートカットも削除されます。`ccam shims install`は、たとえばccamを移動した後などに、すべてのアカウントのリンクを作り直します。
 
 ## 共有
 
@@ -41,6 +58,17 @@ ccam share work --settings off --fresh
 ```
 
 各項目には、`on`（`default`グループ）、`off`、またはグループ名を指定します。詳しくは[共有](/docs/sharing)を参照してください。
+
+## 既存の環境のコピー
+
+```sh
+ccam migrate                    # ~/.claude into the default group
+ccam --dry-run migrate          # show the plan, copy nothing
+ccam migrate ~/.claude-work --group work --settings --mcp
+ccam migrate --history --yes    # conversation history only
+```
+
+`ccam migrate`は、Claude Codeのフォルダーから`settings.json`、`CLAUDE.md`、拡張機能、ユーザーのMCPサーバーをグループにコピーし、それらの項目を共有するすべてのアカウントで使えるようにします。フォルダーは読み取るだけです。`--settings`、`--memory`、`--extensions`、`--mcp`、`--history`の各オプションを付けると、指定した項目だけをコピーします。何も付けない場合は、会話履歴以外のすべてをコピーします。`-g`または`--group`でグループを選び、`-y`または`--yes`を付けると確認なしでコピーし、内容が異なるファイルはグループのものを残します。詳しくは[既存の環境をコピーする](/docs/sharing#copy-an-existing-setup)を参照してください。
 
 ## MCPサーバー
 
@@ -69,7 +97,7 @@ ccam next --auto
 ccam doctor          # check
 ccam doctor --fix    # repair what is safe to repair, with backups
 ccam statusline install
-ccam shims install
+ccam shims install   # recreate the shortcut links
 ```
 
 ## ファイル
@@ -80,6 +108,6 @@ ccam shims install
 | `~/.local/share/ccam/profiles/<name>/` | 各アカウントの`CLAUDE_CONFIG_DIR` |
 | `~/.local/share/ccam/groups/<group>/` | 共有される設定、MCPサーバー、拡張機能、履歴 |
 | `~/.local/state/ccam/` | 使用量のキャッシュと最終使用日時 |
-| `~/.local/bin/claude1`, `claude2`… | ccamへのリンク |
+| `~/.local/bin/<shortcut>` | `ccwork`のようなショートカットコマンド（ccamへのリンク） |
 
 `XDG_CONFIG_HOME`、`XDG_DATA_HOME`、`XDG_STATE_HOME`の各変数を設定すると、これらのフォルダーの場所が変わります。

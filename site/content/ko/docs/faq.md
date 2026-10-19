@@ -4,7 +4,7 @@ description: ccam, Claude Code 계정, 사용량 한도, 공유, 개인정보, �
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 2be18393cbe2
+sourceHash: e07d468d453b
 ---
 
 ## ccam은 Anthropic 공식 도구인가요?
@@ -21,7 +21,7 @@ sourceHash: 2be18393cbe2
 
 ## 컴퓨터 한 대에서 Claude Code 계정 두 개를 쓰려면 어떻게 하나요?
 
-`CLAUDE_CONFIG_DIR`로 계정마다 설정 폴더를 따로 지정하면 됩니다. 이 작업은 ccam이 대신 해 줍니다. 계정마다 `ccam add`를 실행한 뒤 `claude1`, `claude2`로 시작하세요. [가이드](/guides/multiple-claude-code-accounts)에서는 직접 설정하는 방법도 설명합니다.
+`CLAUDE_CONFIG_DIR`로 계정마다 설정 폴더를 따로 지정하면 됩니다. 이 작업은 ccam이 대신 해 줍니다. 계정마다 `ccam add`를 실행한 뒤 `ccam personal`, `ccam work`로 시작하거나, `ccwork`처럼 직접 이름을 붙인 단축 명령으로 시작하세요. [가이드](/guides/multiple-claude-code-accounts)에서는 직접 설정하는 방법도 설명합니다.
 
 ## 다른 계정에서 대화를 이어 가려면 어떻게 하나요?
 
@@ -37,7 +37,7 @@ ccam은 로그인 정보를 절대 복사하거나 공유하지 않습니다. �
 
 ## 기존 ~/.claude는 어떻게 되나요?
 
-`ccam import`를 실행하지 않는 한 아무것도 바뀌지 않습니다. 가져오기는 폴더를 원래 위치에서 그대로 등록하므로, `claude`를 그냥 실행하든 `ccam <name>`으로 실행하든 같은 계정과 설정을 계속 사용합니다.
+`ccam import`나 `ccam migrate`를 실행하지 않는 한 아무것도 바뀌지 않습니다. 가져오기는 폴더를 원래 위치에서 그대로 등록하므로, `claude`를 그냥 실행하든 `ccam <name>`으로 실행하든 같은 계정과 설정을 계속 사용합니다. `ccam migrate`는 폴더를 읽기만 하면서 설정, `CLAUDE.md`, 확장 기능, MCP 서버를 공유 설정으로 복사합니다.
 
 ## ccam은 어떤 시스템을 지원하나요?
 
@@ -53,4 +53,4 @@ ccam을 거쳐 Claude Code를 시작하면 약 4밀리초가 더 걸립니다. �
 
 ## ccam은 어떻게 제거하나요?
 
-`~/.local/bin`에서 `ccam`과 `claude1`… 링크를 삭제하고, 계정이 더 이상 필요 없다면 `~/.config/ccam`, `~/.local/share/ccam`, `~/.local/state/ccam`도 삭제하세요. 자세한 내용은 [설치](/docs/install#uninstall)를 참고하세요.
+계정마다 `ccam shortcut <account> --remove`로 단축 명령을 지우고 `~/.local/bin`에서 `ccam`을 삭제한 뒤, 계정이 더 이상 필요 없다면 `~/.config/ccam`, `~/.local/share/ccam`, `~/.local/state/ccam`도 삭제하세요. 자세한 내용은 [설치](/docs/install#uninstall)를 참고하세요.

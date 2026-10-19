@@ -4,7 +4,7 @@ description: "Chạy song song Claude Code nhiều tài khoản với CLAUDE_CON
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: e2fbee9f4f91
+sourceHash: 6a4b7d961e10
 ---
 
 Hãy cho mỗi tài khoản một thư mục cấu hình riêng. Claude Code đọc thư mục này từ biến môi trường `CLAUDE_CONFIG_DIR`, và mỗi thư mục chứa thông tin đăng nhập, cài đặt và lịch sử riêng. Bạn có thể tự thiết lập bằng một alias của shell, hoặc để ccam làm việc đó.
@@ -34,12 +34,12 @@ ccam tự động hóa cùng ý tưởng đó và bổ sung những phần còn 
 ```sh
 curl -fsSL https://ccam.dev/install.sh | sh
 ccam add personal
-ccam add work
+ccam add work --shortcut ccwork
 ```
 
-Giờ đây `claude1` và `claude2`, hoặc `ccam personal` và `ccam work`, sẽ khởi động hai tài khoản. Vì chúng là chương trình thực sự chứ không phải alias, chúng cũng hoạt động trong script. Cài đặt, `CLAUDE.md`, máy chủ MCP và tiện ích mở rộng được dùng chung ngay từ đầu, và bạn có thể bật dùng chung lịch sử hội thoại để tiếp tục một cuộc hội thoại trên tài khoản kia bằng `ccam next --continue`.
+Giờ đây `ccam personal` và `ccam work` sẽ khởi động hai tài khoản, và `ccwork`, lệnh tắt bạn đặt cho tài khoản công việc, cũng vậy. Vì chúng là chương trình thực sự chứ không phải alias, chúng cũng hoạt động trong script. Cài đặt, `CLAUDE.md`, máy chủ MCP và tiện ích mở rộng được dùng chung ngay từ đầu, và bạn có thể bật dùng chung lịch sử hội thoại để tiếp tục một cuộc hội thoại trên tài khoản kia bằng `ccam next --continue`.
 
-Nếu bạn đã dùng `~/.claude`, hãy chạy `ccam import` thay vì thêm lại tài khoản đó.
+Nếu bạn đã dùng `~/.claude`, hãy chạy `ccam import` thay vì thêm lại tài khoản đó, hoặc chạy `ccam migrate` để sao chép cài đặt, máy chủ MCP và tiện ích mở rộng của nó vào phần cài đặt dùng chung.
 
 ## Nên chọn cách nào
 

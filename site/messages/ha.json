@@ -22,7 +22,7 @@
   },
   "landing": {
     "headline": "Asusun Claude Code da dama. Terminal ɗaya.",
-    "lede": "Ka ƙara kowane asusu sau ɗaya. Ka sauya da claude2 ko ccam work. Idan wani asusu ya kai iyakarsa, ka ci gaba a na gaba da wannan tattaunawar.",
+    "lede": "Ka ƙara kowane asusu sau ɗaya. Ka sauya da ccam work ko gajeren umarni kamar ccwork. Idan wani asusu ya kai iyakarsa, ka ci gaba a na gaba da wannan tattaunawar.",
     "installLabel": "Girka a Linux ko macOS",
     "thenAdd": "Sannan ka ƙara asusunka na farko da {command}.",
     "readDocs": "Karanta jagorar farawa da sauri",
@@ -59,11 +59,11 @@
     "flow": [
       {
         "command": "ccam add work",
-        "body": "Yana ƙirƙirar folda ta saituna daban don asusun, yana buɗe shigar Claude a burauzarka, kuma yana ba asusun gajeren umarni: claude1, claude2 da sauransu."
+        "body": "Yana ƙirƙirar folda ta saituna daban don asusun, yana buɗe shigar Claude a burauzarka kuma, idan kana so, yana ba asusun gajeren umarni da kai da kanka ka sa masa suna, kamar ccwork."
       },
       {
-        "command": "claude2",
-        "also": "ccam work --resume",
+        "command": "ccam work",
+        "also": "ccwork --resume",
         "body": "Yana fara Claude Code a matsayin wannan asusun. Duk abin da ke bayan sunan yana zuwa Claude Code ba tare da canji ba, kuma ccam yana ƙara kusan millisecond 4 kafin ya fara."
       },
       {
@@ -109,21 +109,23 @@
   "commands": {
     "ccam": "Buɗe mai zaɓar asusu",
     "name": "Fara Claude Code a matsayin wannan asusun; ana miƙa arguments ba tare da canji ba",
-    "add": "Ƙara asusu: folda ta saituna, shiga da gajeren umarni",
+    "add": "Ƙara asusu: folda ta saituna, shiga da gajeren umarni na zaɓi",
     "list": "Jera asusai",
     "use": "Saita asusun tsoho",
     "next": "Buɗe asusu na gaba; --continue yana riƙe tattaunawar, --auto yana zaɓar wanda ya fi sarari",
     "usage": "Nuna amfanin awa 5 da na mako na kowane asusu",
     "share": "Canza abin da asusu ke rabawa, bayan nuna shirin",
     "mcp": "Sarrafa sabobin MCP da aka raba",
+    "migrate": "Kwafi saitin Claude Code da ke akwai (~/.claude) zuwa rukunin da aka raba",
     "login": "Sake shiga da asusu",
     "logout": "Cire bayanan shigar asusu",
-    "rename": "Sauya sunan asusu da na gajeren umarninsa",
+    "rename": "Sauya sunan asusu; sunan gajeren umarninsa ba ya canzawa",
     "remove": "Cire asusu; foldarsa tana komawa foldar shara",
     "import": "Yi rajistar foldar ~/.claude da ke akwai a inda take",
     "doctor": "Duba mahaɗai, izini, bayanan shiga da sigogi, sannan ka gyara",
     "statusline": "Nuna asusun da amfaninsa a layin matsayi na Claude Code",
-    "shims": "Sake ƙirƙirar claude1…claudeN",
+    "shims": "Sake ƙirƙirar mahaɗan gajerun umarnin dukkan asusai",
+    "shortcut": "Nuna, ƙirƙira, sauya suna ko cire gajeren umarnin asusu, kamar ccwork",
     "completion": "Buga completion na bash ko zsh"
   },
   "copy": {

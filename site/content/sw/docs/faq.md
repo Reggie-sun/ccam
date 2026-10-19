@@ -4,7 +4,7 @@ description: Majibu kuhusu ccam, akaunti za Claude Code, vikomo vya matumizi, ku
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 2be18393cbe2
+sourceHash: e07d468d453b
 ---
 
 ## Je, ccam ni zana rasmi ya Anthropic?
@@ -21,7 +21,7 @@ Hapana. Kila akaunti huhifadhi vikomo vyake. ccam huvionyesha na hukuwezesha kue
 
 ## Nitatumiaje akaunti mbili za Claude Code kwenye kompyuta moja?
 
-Ipe kila akaunti folda yake ya usanidi kwa `CLAUDE_CONFIG_DIR`. ccam hukufanyia hili: endesha `ccam add` kwa kila akaunti, kisha uzianzishe kwa `claude1` na `claude2`. [Mwongozo](/guides/multiple-claude-code-accounts) pia unaonyesha jinsi ya kufanya hivyo kwa mkono.
+Ipe kila akaunti folda yake ya usanidi kwa `CLAUDE_CONFIG_DIR`. ccam hukufanyia hivyo: endesha `ccam add` kwa kila akaunti, kisha uzianzishe kwa `ccam personal` na `ccam work`, au kwa njia fupi unazozipa majina mwenyewe, kama `ccwork`. [Mwongozo](/guides/multiple-claude-code-accounts) pia unaonyesha jinsi ya kufanya hivyo kwa mkono.
 
 ## Nitaendeleaje na mazungumzo kwenye akaunti nyingine?
 
@@ -37,7 +37,7 @@ Katika `~/.local/share/ccam/profiles/<name>/`, folda moja kwa kila akaunti. Kwen
 
 ## Nini kinatokea kwa ~/.claude yangu iliyopo?
 
-Hakuna kitu, isipokuwa ukiendesha `ccam import`. Import husajili folda pale ilipo, kwa hiyo `claude` ya kawaida na `ccam <name>` huendelea kutumia akaunti na mipangilio ile ile.
+Hakuna kitu, isipokuwa uendeshe `ccam import` au `ccam migrate`. Import husajili folda pale ilipo, kwa hiyo `claude` ya kawaida na `ccam <name>` huendelea kutumia akaunti na mipangilio ile ile. `ccam migrate` hunakili mipangilio yake, `CLAUDE.md`, viendelezi na seva za MCP kwenye mipangilio inayoshirikiwa, na husoma folda tu.
 
 ## ccam inatumika kwenye mifumo gani?
 
@@ -53,4 +53,4 @@ Kuanzisha Claude Code kupitia ccam huongeza takriban milisekunde 4, zilizopimwa 
 
 ## Nitaondoaje ccam?
 
-Futa `ccam` na viungo vya `claude1`… kutoka `~/.local/bin`, kisha `~/.config/ccam`, `~/.local/share/ccam` na `~/.local/state/ccam` ikiwa huhitaji tena akaunti hizo. Tazama [usakinishaji](/docs/install#uninstall).
+Ondoa njia fupi ya kila akaunti kwa `ccam shortcut <account> --remove`, futa `ccam` kutoka `~/.local/bin`, kisha ondoa `~/.config/ccam`, `~/.local/share/ccam` na `~/.local/state/ccam` ikiwa huhitaji tena akaunti hizo. Tazama [usakinishaji](/docs/install#uninstall).

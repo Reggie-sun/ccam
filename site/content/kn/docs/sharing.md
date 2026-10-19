@@ -4,7 +4,7 @@ description: ಪ್ರತಿ ಲಾಗಿನ್ ಪ್ರತ್ಯೇಕವಾ�
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: e4b31e5098e3
+sourceHash: ccbb2c5e97bc
 ---
 
 ಪ್ರತಿ ಖಾತೆಯ ಲಾಗಿನ್ ಅದರದೇ ಆಗಿರುತ್ತದೆ. ಉಳಿದ ಎಲ್ಲವನ್ನೂ ಐಟಂವಾರು ಹಂಚಿಕೊಳ್ಳಬಹುದು: ccam ಖಾತೆಯ ಫೈಲ್ ಅಥವಾ ಫೋಲ್ಡರ್ ಅನ್ನು ಹಂಚಿಕೆಯ ಗುಂಪಿನ ಫೋಲ್ಡರ್‌ಗೆ ಲಿಂಕ್ ಮಾಡುತ್ತದೆ. ಹೀಗಾಗಿ ಒಂದು ಖಾತೆಯಲ್ಲಿ ಮಾಡಿದ ಬದಲಾವಣೆ ಆ ಗುಂಪಿನ ಎಲ್ಲಾ ಖಾತೆಗಳಲ್ಲೂ ಕಾಣಿಸುತ್ತದೆ.
@@ -53,6 +53,57 @@ ccam share work --history off
 ```
 
 ಲಿಂಕ್ ತೆಗೆದುಹಾಕಲಾಗುತ್ತದೆ ಮತ್ತು ಖಾತೆಗೆ ಗುಂಪಿನ ಈಗಿನ ವಿಷಯದ ತನ್ನದೇ ಆದ ಪ್ರತಿ ಸಿಗುತ್ತದೆ. ಬದಲಿಗೆ ಖಾಲಿಯಾಗಿ ಆರಂಭಿಸಲು `--fresh` ಸೇರಿಸಿ. ಗುಂಪು ತನ್ನ ವಿಷಯವನ್ನು ಇತರ ಖಾತೆಗಳಿಗಾಗಿ ಉಳಿಸಿಕೊಳ್ಳುತ್ತದೆ.
+
+## ಈಗಿರುವ ಸೆಟಪ್ ಅನ್ನು ನಕಲಿಸಿ
+
+ccam ಗಿಂತ ಮೊದಲು ನೀವು Claude Code ಬಳಸಿದ್ದರೆ, ನಿಮ್ಮ ಸೆಟ್ಟಿಂಗ್‌ಗಳು `~/.claude` ನಲ್ಲಿವೆ. `ccam migrate` ಅವುಗಳನ್ನು ಒಂದು ಗುಂಪಿಗೆ ನಕಲಿಸುತ್ತದೆ. ಹೀಗಾಗಿ ಆ ಐಟಂಗಳನ್ನು ಹಂಚಿಕೊಳ್ಳುವ ಪ್ರತಿ ಖಾತೆಗೂ ಅವು ಸಿಗುತ್ತವೆ:
+
+```sh
+ccam migrate
+```
+
+ಇದು ನಕಲಿಸುವುದು:
+
+- `settings.json` ಮತ್ತು ಜಾಗತಿಕ `CLAUDE.md`;
+- ವಿಸ್ತರಣೆಗಳು `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/` ಮತ್ತು `rules/`;
+- ನಿಮ್ಮ ಬಳಕೆದಾರ MCP ಸರ್ವರ್‌ಗಳು, ಅಂದರೆ `~/.claude.json` ನ `mcpServers` ನಮೂದು, ಗುಂಪಿನ `mcp.json` ಗೆ;
+- ಸಂಭಾಷಣೆಯ ಇತಿಹಾಸ (`projects/` ಮತ್ತು `history.jsonl`), ಆದರೆ ನೀವು `--history` ಸೇರಿಸಿದಾಗ ಮಾತ್ರ.
+
+ಮೂಲ ಫೋಲ್ಡರ್ ಅನ್ನು ಓದಲಾಗುತ್ತದೆ ಅಷ್ಟೇ: ಅದರಲ್ಲಿನ ಯಾವುದನ್ನೂ ಸ್ಥಳಾಂತರಿಸುವುದಿಲ್ಲ, ಲಿಂಕ್ ಮಾಡುವುದಿಲ್ಲ ಅಥವಾ ಬದಲಾಯಿಸುವುದಿಲ್ಲ, ಮತ್ತು ಸಾಮಾನ್ಯ `claude` ಹಿಂದಿನಂತೆಯೇ ಕೆಲಸ ಮಾಡುತ್ತದೆ. ಲಾಗಿನ್ ಫೈಲ್‌ಗಳಾದ `.credentials.json` ಮತ್ತು `.claude.json` ಎಂದಿಗೂ ನಕಲಾಗುವುದಿಲ್ಲ.
+
+ಏನನ್ನಾದರೂ ನಕಲಿಸುವ ಮೊದಲು ccam ಯೋಜನೆಯನ್ನು ಮುದ್ರಿಸಿ ಕೇಳುತ್ತದೆ:
+
+```console
+$ ccam migrate
+Copy from /home/me/.claude into group default (/home/me/.local/share/ccam/groups/default):
+  mcp         ~/.claude.json  new: context7, fs
+  settings    settings.json   new: 80 B
+  memory      CLAUDE.md       new: 31 B
+  extensions  agents/         add 1 file the group lacks (17 B)
+              commands/       add 1 file the group lacks (15 B)
+              skills/         add 1 file the group lacks (32 B)
+              not found, skipped: plugins/, output-styles/, rules/
+  Conversation history (projects/, history.jsonl) is not included; add --history to copy it.
+Copy these into group default? [y/N] y
+✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, commands/, skills/
+Accounts that share these through group default:
+  mcp         personal
+  settings    personal
+  memory      personal
+  extensions  personal
+```
+
+ಕೊನೆಯಲ್ಲಿ, ಗುಂಪಿನ ಮೂಲಕ ಪ್ರತಿ ಐಟಂ ಅನ್ನು ಹಂಚಿಕೊಳ್ಳುವ ಖಾತೆಗಳನ್ನು ccam ಪಟ್ಟಿ ಮಾಡುತ್ತದೆ. ಕೆಲವು ಖಾತೆಗಳು ಹಂಚಿಕೊಳ್ಳದಿದ್ದರೆ, ಅವುಗಳಿಗೆ ಹಂಚಿಕೆಯನ್ನು ಆನ್ ಮಾಡುವ `ccam share` ಕಮಾಂಡ್‌ಗಳನ್ನು ಅದು ಮುದ್ರಿಸುತ್ತದೆ.
+
+ಗುಂಪಿನಲ್ಲಿ ಈಗಾಗಲೇ ಒಂದು ಫೈಲ್‌ನ ಬೇರೆ ನಕಲು ಇದ್ದರೆ, ಹಂಚಿಕೆಯನ್ನು ಆನ್ ಮಾಡುವಾಗಿನಂತೆಯೇ ccam ಕೇಳುತ್ತದೆ: ಗುಂಪಿನ ನಕಲನ್ನು ಉಳಿಸಿಕೊಳ್ಳಬೇಕೇ ಅಥವಾ ನಿಮ್ಮದನ್ನು ಬಳಸಬೇಕೇ. `settings.json` ಮತ್ತು ಇತರ JSON ಫೈಲ್‌ಗಳನ್ನು ವಿಲೀನಗೊಳಿಸಲೂ ಬಹುದು, ಮತ್ತು `history.jsonl` ಅನ್ನು ಸಾಲುವಾರು ವಿಲೀನಗೊಳಿಸಬಹುದು. ಗುಂಪಿನ ಹಿಂದಿನ ನಕಲುಗಳನ್ನು ಗುಂಪಿನ ಫೋಲ್ಡರ್‌ನೊಳಗಿನ `.ccam-backup/<time>/` ನಲ್ಲಿ ಉಳಿಸಲಾಗುತ್ತದೆ.
+
+| ಆಯ್ಕೆ | ಪರಿಣಾಮ |
+| --- | --- |
+| `--settings`, `--memory`, `--extensions`, `--mcp`, `--history` | ನೀವು ಹೆಸರಿಸಿದ ಐಟಂಗಳನ್ನು ಮಾತ್ರ ನಕಲಿಸುತ್ತದೆ; ಅವು ಇಲ್ಲದಿದ್ದರೆ, ಸಂಭಾಷಣೆಯ ಇತಿಹಾಸವನ್ನು ಹೊರತುಪಡಿಸಿ ಎಲ್ಲವನ್ನೂ |
+| `-g`, `--group <group>` | `default` ಬದಲು ಈ ಗುಂಪಿಗೆ ನಕಲಿಸುತ್ತದೆ |
+| `-y`, `--yes` | ಕೇಳದೆ ನಕಲಿಸುತ್ತದೆ; ಫೈಲ್ ಬೇರೆಯಾಗಿದ್ದಾಗ, ಗುಂಪಿನ ನಕಲನ್ನು ಉಳಿಸಿಕೊಳ್ಳುತ್ತದೆ |
+
+ಏನನ್ನೂ ನಕಲಿಸದೆ ಯೋಜನೆಯನ್ನು ಮಾತ್ರ ನೋಡಲು, `ccam --dry-run migrate` ನಲ್ಲಿರುವಂತೆ ಕಮಾಂಡ್‌ನ ಮುಂದೆ `--dry-run` ಇರಿಸಿ. ಇನ್ನೊಂದು ಫೋಲ್ಡರ್‌ನಿಂದ ನಕಲಿಸಲು, ಅದರ ಹೆಸರನ್ನು ನೀಡಿ: `ccam migrate ~/.claude-work --group work`.
 
 ## MCP ಸರ್ವರ್‌ಗಳು
 

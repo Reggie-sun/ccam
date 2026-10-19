@@ -4,7 +4,7 @@ description: Jawaban seputar ccam, akun Claude Code, batas penggunaan, pembagian
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 2be18393cbe2
+sourceHash: e07d468d453b
 ---
 
 ## Apakah ccam alat resmi dari Anthropic?
@@ -21,7 +21,7 @@ Tidak. Setiap akun tetap memiliki batasnya sendiri. ccam menampilkan batas terse
 
 ## Bagaimana cara menggunakan dua akun Claude Code di satu komputer?
 
-Beri setiap akun folder konfigurasinya sendiri dengan `CLAUDE_CONFIG_DIR`. ccam melakukannya untuk Anda: jalankan `ccam add` untuk setiap akun, lalu jalankan akun-akun itu dengan `claude1` dan `claude2`. [Panduan ini](/guides/multiple-claude-code-accounts) juga menunjukkan cara melakukannya secara manual.
+Beri setiap akun folder konfigurasinya sendiri dengan `CLAUDE_CONFIG_DIR`. ccam melakukannya untuk Anda: jalankan `ccam add` untuk setiap akun, lalu jalankan akun-akun itu dengan `ccam personal` dan `ccam work`, atau dengan pintasan yang namanya Anda pilih sendiri, seperti `ccwork`. [Panduan ini](/guides/multiple-claude-code-accounts) juga menunjukkan cara melakukannya secara manual.
 
 ## Bagaimana cara melanjutkan percakapan di akun lain?
 
@@ -37,7 +37,7 @@ Di `~/.local/share/ccam/profiles/<name>/`, satu folder per akun. Di macOS, Claud
 
 ## Apa yang terjadi pada ~/.claude saya yang sudah ada?
 
-Tidak ada, kecuali Anda menjalankan `ccam import`. Impor mendaftarkan folder itu di tempatnya, sehingga `claude` biasa dan `ccam <name>` tetap menggunakan akun dan pengaturan yang sama.
+Tidak ada, kecuali Anda menjalankan `ccam import` atau `ccam migrate`. Impor mendaftarkan folder itu di tempatnya, sehingga `claude` biasa dan `ccam <name>` tetap menggunakan akun dan pengaturan yang sama. `ccam migrate` menyalin pengaturan, `CLAUDE.md`, ekstensi, dan server MCP dari folder itu ke pengaturan bersama dan hanya membaca folder tersebut.
 
 ## Sistem apa saja yang didukung ccam?
 
@@ -53,4 +53,4 @@ Menjalankan Claude Code melalui ccam menambah sekitar 4 milidetik, diukur dengan
 
 ## Bagaimana cara menghapus instalasi ccam?
 
-Hapus `ccam` dan tautan `claude1`… dari `~/.local/bin`, lalu hapus `~/.config/ccam`, `~/.local/share/ccam`, dan `~/.local/state/ccam` jika Anda tidak lagi memerlukan akun-akun tersebut. Lihat [instalasi](/docs/install#uninstall).
+Hapus pintasan setiap akun dengan `ccam shortcut <account> --remove`, hapus `ccam` dari `~/.local/bin`, lalu hapus `~/.config/ccam`, `~/.local/share/ccam`, dan `~/.local/state/ccam` jika Anda tidak lagi memerlukan akun-akun tersebut. Lihat [instalasi](/docs/install#uninstall).

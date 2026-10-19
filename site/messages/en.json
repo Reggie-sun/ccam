@@ -22,7 +22,7 @@
   },
   "landing": {
     "headline": "Several Claude Code accounts. One terminal.",
-    "lede": "Add each account once. Switch with claude2 or ccam work. When one account hits its limit, carry on in the next with the same conversation.",
+    "lede": "Add each account once. Switch with ccam work or a shortcut such as ccwork. When one account hits its limit, carry on in the next with the same conversation.",
     "installLabel": "Install on Linux or macOS",
     "thenAdd": "Then add your first account with {command}.",
     "readDocs": "Read the quick start",
@@ -59,11 +59,11 @@
     "flow": [
       {
         "command": "ccam add work",
-        "body": "Creates a separate config folder for the account, opens the Claude login in your browser and gives the account a shortcut: claude1, claude2 and so on."
+        "body": "Creates a separate config folder for the account, opens the Claude login in your browser and, if you want one, gives the account a shortcut you name yourself, such as ccwork."
       },
       {
-        "command": "claude2",
-        "also": "ccam work --resume",
+        "command": "ccam work",
+        "also": "ccwork --resume",
         "body": "Starts Claude Code as that account. Everything after the name goes to Claude Code unchanged, and ccam adds about 4 milliseconds before it starts."
       },
       {
@@ -109,21 +109,23 @@
   "commands": {
     "ccam": "Open the account picker",
     "name": "Start Claude Code as that account; arguments are passed through unchanged",
-    "add": "Add an account: config folder, login and shortcut",
+    "add": "Add an account: config folder, login and an optional shortcut",
     "list": "List accounts",
     "use": "Set the default account",
     "next": "Open the next account; --continue keeps the conversation, --auto picks the most room",
     "usage": "Show 5-hour and weekly usage of every account",
     "share": "Change what an account shares, after showing the plan",
     "mcp": "Manage shared MCP servers",
+    "migrate": "Copy an existing Claude Code setup (~/.claude) into a shared group",
     "login": "Log an account in again",
     "logout": "Remove an account's login",
-    "rename": "Rename an account and its shortcut",
+    "rename": "Rename an account; its shortcut keeps its name",
     "remove": "Remove an account; its folder goes to the trash folder",
     "import": "Register an existing ~/.claude folder in place",
     "doctor": "Check links, permissions, logins and versions, and repair",
     "statusline": "Show the account and usage in Claude Code's status line",
-    "shims": "Recreate the claude1…claudeN shortcuts",
+    "shims": "Recreate the shortcut links of all accounts",
+    "shortcut": "Show, create, rename or remove an account's shortcut command, such as ccwork",
     "completion": "Print bash or zsh completion"
   },
   "copy": {

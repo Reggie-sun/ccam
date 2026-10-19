@@ -4,7 +4,7 @@ description: Endesha akaunti kadhaa za Claude Code sambamba kwa CLAUDE_CONFIG_DI
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: e2fbee9f4f91
+sourceHash: 6a4b7d961e10
 ---
 
 Ipe kila akaunti folda yake ya usanidi. Claude Code husoma folda kutoka kigezo cha mazingira `CLAUDE_CONFIG_DIR`, na kila folda huhifadhi taarifa zake za kuingia, mipangilio na historia. Unaweza kusanidi hili kwa mkono kwa alias ya shell, au uiachie ccam ifanye.
@@ -34,12 +34,12 @@ ccam hufanya wazo hilo hilo kiotomatiki na huongeza sehemu zinazokosekana:
 ```sh
 curl -fsSL https://ccam.dev/install.sh | sh
 ccam add personal
-ccam add work
+ccam add work --shortcut ccwork
 ```
 
-Sasa `claude1` na `claude2`, au `ccam personal` na `ccam work`, huanzisha akaunti hizo mbili. Kwa kuwa ni programu halisi badala ya alias, zinafanya kazi pia ndani ya skripti. Mipangilio, `CLAUDE.md`, seva za MCP na viendelezi hushirikiwa tangu mwanzo, na unaweza kuwasha historia ya mazungumzo inayoshirikiwa ili kuendeleza mazungumzo kwenye akaunti nyingine kwa `ccam next --continue`.
+Sasa `ccam personal` na `ccam work` huanzisha akaunti hizo mbili, na vivyo hivyo `ccwork`, njia fupi uliyoipa akaunti ya kazi. Kwa kuwa ni programu halisi badala ya alias, hufanya kazi pia katika skripti. Mipangilio, `CLAUDE.md`, seva za MCP na viendelezi hushirikiwa tangu mwanzo, na unaweza kuwasha historia ya mazungumzo inayoshirikiwa ili kuendeleza mazungumzo kwenye akaunti nyingine kwa `ccam next --continue`.
 
-Ikiwa tayari unatumia `~/.claude`, endesha `ccam import` badala ya kuongeza akaunti hiyo tena.
+Ikiwa tayari unatumia `~/.claude`, endesha `ccam import` badala ya kuongeza akaunti hiyo tena, au `ccam migrate` ili kunakili mipangilio yake, seva za MCP na viendelezi kwenye mipangilio inayoshirikiwa.
 
 ## Ipi uchague
 

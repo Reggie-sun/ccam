@@ -4,7 +4,7 @@ description: ccam, Claude Code अकाउंट, उपयोग सीमा�
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 2be18393cbe2
+sourceHash: e07d468d453b
 ---
 
 ## क्या ccam, Anthropic का आधिकारिक टूल है?
@@ -21,7 +21,7 @@ sourceHash: 2be18393cbe2
 
 ## एक कंप्यूटर पर दो Claude Code अकाउंट कैसे इस्तेमाल करें?
 
-`CLAUDE_CONFIG_DIR` से हर अकाउंट को उसका अपना configuration फ़ोल्डर दें। ccam यह आपके लिए करता है: हर अकाउंट के लिए `ccam add` चलाएँ, फिर उन्हें `claude1` और `claude2` से शुरू करें। [गाइड](/guides/multiple-claude-code-accounts) यह भी दिखाती है कि इसे हाथ से कैसे करें।
+हर अकाउंट को `CLAUDE_CONFIG_DIR` के ज़रिए उसका अपना कॉन्फ़िगरेशन फ़ोल्डर दें। ccam यह आपके लिए करता है: हर अकाउंट के लिए `ccam add` चलाएँ, फिर उन्हें `ccam personal` और `ccam work` से, या अपने रखे नाम वाले शॉर्टकट, जैसे `ccwork`, से शुरू करें। [गाइड](/guides/multiple-claude-code-accounts) यह भी दिखाती है कि इसे हाथ से कैसे करें।
 
 ## किसी बातचीत को दूसरे अकाउंट में कैसे जारी रखें?
 
@@ -37,7 +37,7 @@ ccam कभी लॉगिन copy या साझा नहीं करत�
 
 ## मेरे मौजूदा ~/.claude का क्या होगा?
 
-कुछ नहीं, जब तक आप `ccam import` न चलाएँ। Import फ़ोल्डर को उसी जगह रजिस्टर करता है जहाँ वह है, इसलिए सादा `claude` और `ccam <name>` वही अकाउंट और सेटिंग्स इस्तेमाल करते रहते हैं।
+कुछ नहीं, जब तक आप `ccam import` या `ccam migrate` न चलाएँ। Import फ़ोल्डर को उसी जगह रजिस्टर करता है जहाँ वह है, इसलिए सादा `claude` और `ccam <name>` एक ही अकाउंट और सेटिंग्स इस्तेमाल करते रहते हैं। `ccam migrate` उसकी सेटिंग्स, `CLAUDE.md`, एक्सटेंशन और MCP सर्वर साझा सेटिंग्स में कॉपी करता है और फ़ोल्डर को केवल पढ़ता है।
 
 ## ccam किन सिस्टम पर चलता है?
 
@@ -53,4 +53,4 @@ ccam के ज़रिए Claude Code शुरू करने में ल�
 
 ## ccam को अनइंस्टॉल कैसे करें?
 
-`~/.local/bin` से `ccam` और `claude1`… लिंक हटाएँ, फिर अगर अब अकाउंट्स की ज़रूरत नहीं है तो `~/.config/ccam`, `~/.local/share/ccam` और `~/.local/state/ccam` भी हटाएँ। [इंस्टॉल](/docs/install#uninstall) देखें।
+हर अकाउंट का शॉर्टकट `ccam shortcut <account> --remove` से हटाएँ, `ccam` को `~/.local/bin` से मिटाएँ, फिर अगर अब अकाउंट्स की ज़रूरत नहीं है तो `~/.config/ccam`, `~/.local/share/ccam` और `~/.local/state/ccam` हटाएँ। [इंस्टॉल](/docs/install#uninstall) देखें।

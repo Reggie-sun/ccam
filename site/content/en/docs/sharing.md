@@ -53,6 +53,57 @@ ccam share work --history off
 
 The link is removed and the account gets its own copy of the group's current content. Add `--fresh` to start empty instead. The group keeps its content for the other accounts.
 
+## Copy an existing setup
+
+If you used Claude Code before ccam, your settings are in `~/.claude`. `ccam migrate` copies them into a group, so that every account sharing those items gets them:
+
+```sh
+ccam migrate
+```
+
+What it copies:
+
+- `settings.json` and the global `CLAUDE.md`;
+- the extensions `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/` and `rules/`;
+- your user MCP servers, the `mcpServers` entry of `~/.claude.json`, into the group's `mcp.json`;
+- conversation history (`projects/` and `history.jsonl`), but only when you add `--history`.
+
+The source folder is only read: nothing in it is moved, linked or changed, and plain `claude` keeps working as before. The login files `.credentials.json` and `.claude.json` are never copied.
+
+ccam prints the plan and asks before it copies anything:
+
+```console
+$ ccam migrate
+Copy from /home/me/.claude into group default (/home/me/.local/share/ccam/groups/default):
+  mcp         ~/.claude.json  new: context7, fs
+  settings    settings.json   new: 80 B
+  memory      CLAUDE.md       new: 31 B
+  extensions  agents/         add 1 file the group lacks (17 B)
+              commands/       add 1 file the group lacks (15 B)
+              skills/         add 1 file the group lacks (32 B)
+              not found, skipped: plugins/, output-styles/, rules/
+  Conversation history (projects/, history.jsonl) is not included; add --history to copy it.
+Copy these into group default? [y/N] y
+✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, commands/, skills/
+Accounts that share these through group default:
+  mcp         personal
+  settings    personal
+  memory      personal
+  extensions  personal
+```
+
+At the end, ccam lists the accounts that share each item through the group. If some accounts do not, it prints the `ccam share` commands that turn sharing on for them.
+
+When the group already has a different copy of a file, ccam asks, as it does when you turn sharing on: keep the group's copy or use yours. `settings.json` and other JSON files can also be merged, and `history.jsonl` line by line. The group's previous copies are saved in `.ccam-backup/<time>/` inside the group folder.
+
+| Option | Effect |
+| --- | --- |
+| `--settings`, `--memory`, `--extensions`, `--mcp`, `--history` | Copy only the items you name; without them, everything except conversation history |
+| `-g`, `--group <group>` | Copy into this group instead of `default` |
+| `-y`, `--yes` | Copy without asking; when a file differs, keep the group's copy |
+
+Put `--dry-run` before the command, as in `ccam --dry-run migrate`, to see the plan without copying anything. To copy from another folder, name it: `ccam migrate ~/.claude-work --group work`.
+
 ## MCP servers
 
 Claude Code stores MCP servers in `.claude.json`, together with the login, so that file cannot be shared. ccam keeps shared servers in the group's `mcp.json` and starts Claude Code with `--mcp-config=<group>/mcp.json`. Your own `--mcp-config` options still apply on top.

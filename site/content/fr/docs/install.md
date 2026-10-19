@@ -4,7 +4,7 @@ description: "Installez ccam sous Linux ou macOS avec une seule commande, depuis
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: fc63978e8f9e
+sourceHash: 79dc1b55e774
 ---
 
 Exécutez ceci dans un terminal sous Linux ou macOS :
@@ -13,7 +13,7 @@ Exécutez ceci dans un terminal sous Linux ou macOS :
 curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-Le script télécharge la version adaptée à votre système, vérifie sa somme de contrôle SHA-256 et place `ccam` dans `~/.local/bin`, où `ccam add` créera ensuite les raccourcis `claude1`, `claude2`, etc. Si ce dossier n'est pas dans votre `PATH`, le script affiche la ligne à ajouter à `~/.bashrc` ou `~/.zshrc`.
+Le script télécharge la version adaptée à votre système, vérifie sa somme de contrôle SHA-256 et place `ccam` dans `~/.local/bin`, où ccam crée aussi les raccourcis que vous choisirez plus tard, par exemple `ccwork`. Si ce dossier n'est pas dans votre `PATH`, le script affiche la ligne à ajouter à `~/.bashrc` ou `~/.zshrc`.
 
 ccam lance Claude Code pour vous : installez donc d'abord [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) et vérifiez que `claude --version` fonctionne.
 
@@ -65,10 +65,12 @@ ccam doctor
 
 ## Désinstaller
 
-Supprimez la commande et les raccourcis des comptes, puis les dossiers de données si vous n'avez plus besoin des comptes :
+Supprimez d'abord les raccourcis des comptes, tant que ccam est encore installé. `ccam list` les affiche dans la colonne Shortcut ; supprimez chacun avec `ccam shortcut <account> --remove`, ou supprimez vous-même ces liens de `~/.local/bin`. Supprimez ensuite la commande, puis les dossiers de données si vous n'avez plus besoin des comptes :
 
 ```sh
-rm ~/.local/bin/ccam ~/.local/bin/claude[0-9]*
+ccam list
+ccam shortcut work --remove   # once for each account that has a shortcut
+rm ~/.local/bin/ccam
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
 ```
 

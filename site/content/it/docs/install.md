@@ -4,7 +4,7 @@ description: Installa ccam su Linux o macOS con un solo comando, da un pacchetto
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: fc63978e8f9e
+sourceHash: 79dc1b55e774
 ---
 
 Esegui questo comando in un terminale su Linux o macOS:
@@ -13,7 +13,7 @@ Esegui questo comando in un terminale su Linux o macOS:
 curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-Lo script scarica la release per il tuo sistema, ne verifica il checksum SHA-256 e mette `ccam` in `~/.local/bin`, dove in seguito `ccam add` crea le scorciatoie `claude1`, `claude2` e così via. Se quella cartella non è nel tuo `PATH`, lo script stampa la riga da aggiungere a `~/.bashrc` o `~/.zshrc`.
+Lo script scarica la release per il tuo sistema, ne verifica il checksum SHA-256 e mette `ccam` in `~/.local/bin`, dove ccam crea anche le scorciatoie che scegli in seguito, come `ccwork`. Se quella cartella non è nel tuo `PATH`, lo script stampa la riga da aggiungere a `~/.bashrc` o `~/.zshrc`.
 
 ccam avvia Claude Code per te, quindi installa prima [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) e verifica che `claude --version` funzioni.
 
@@ -65,10 +65,12 @@ ccam doctor
 
 ## Disinstallazione
 
-Rimuovi il comando e le scorciatoie degli account, poi le cartelle dei dati se non ti servono più gli account:
+Rimuovi prima le scorciatoie degli account, finché ccam è ancora installato. `ccam list` le mostra nella colonna Shortcut; rimuovile una per una con `ccam shortcut <account> --remove`, oppure elimina tu quei link da `~/.local/bin`. Poi rimuovi il comando e, se non ti servono più gli account, le cartelle dei dati:
 
 ```sh
-rm ~/.local/bin/ccam ~/.local/bin/claude[0-9]*
+ccam list
+ccam shortcut work --remove   # once for each account that has a shortcut
+rm ~/.local/bin/ccam
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
 ```
 

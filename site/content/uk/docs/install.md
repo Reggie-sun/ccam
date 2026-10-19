@@ -4,7 +4,7 @@ description: Встановіть ccam на Linux або macOS однією ко
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: fc63978e8f9e
+sourceHash: 79dc1b55e774
 ---
 
 Виконайте це в терміналі на Linux або macOS:
@@ -13,7 +13,7 @@ sourceHash: fc63978e8f9e
 curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-Скрипт завантажує випуск для вашої системи, перевіряє його контрольну суму SHA-256 і розміщує `ccam` у `~/.local/bin`; згодом `ccam add` створює в цій самій теці короткі команди `claude1`, `claude2` тощо. Якщо цієї теки немає у вашому `PATH`, скрипт виводить рядок, який потрібно додати до `~/.bashrc` або `~/.zshrc`.
+Скрипт завантажує випуск для вашої системи, перевіряє його контрольну суму SHA-256 і розміщує `ccam` у `~/.local/bin`; там само ccam згодом створює вибрані вами короткі команди, наприклад `ccwork`. Якщо цієї теки немає у вашому `PATH`, скрипт виводить рядок, який потрібно додати до `~/.bashrc` або `~/.zshrc`.
 
 ccam запускає Claude Code за вас, тому спочатку встановіть [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) і переконайтеся, що `claude --version` працює.
 
@@ -65,10 +65,12 @@ ccam doctor
 
 ## Видалення
 
-Видаліть програму ccam та короткі команди облікових записів, а потім теки з даними, якщо облікові записи вам більше не потрібні:
+Спершу видаліть короткі команди облікових записів, поки ccam ще встановлено. `ccam list` показує їх у стовпці Shortcut; видаліть кожну командою `ccam shortcut <account> --remove` або самостійно видаліть ці посилання з `~/.local/bin`. Потім видаліть програму, а також теки з даними, якщо облікові записи вам більше не потрібні:
 
 ```sh
-rm ~/.local/bin/ccam ~/.local/bin/claude[0-9]*
+ccam list
+ccam shortcut work --remove   # once for each account that has a shortcut
+rm ~/.local/bin/ccam
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
 ```
 

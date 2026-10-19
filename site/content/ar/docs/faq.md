@@ -4,7 +4,7 @@ description: إجابات عن ccam وحسابات Claude Code وحدود الا
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 2be18393cbe2
+sourceHash: e07d468d453b
 ---
 
 ## هل ccam أداة رسمية من Anthropic؟
@@ -21,7 +21,7 @@ sourceHash: 2be18393cbe2
 
 ## كيف أستخدم حسابَي Claude Code على حاسوب واحد؟
 
-امنح كل حساب مجلد إعدادات خاصًا به باستخدام `CLAUDE_CONFIG_DIR`. يفعل ccam ذلك نيابةً عنك: شغّل `ccam add` لكل حساب، ثم شغّل الحسابين باستخدام `claude1` و`claude2`. ويوضح [الدليل](/guides/multiple-claude-code-accounts) أيضًا كيفية فعل ذلك يدويًا.
+امنح كل حساب مجلد إعدادات خاصًا به باستخدام `CLAUDE_CONFIG_DIR`. يفعل ccam ذلك نيابةً عنك: شغّل `ccam add` لكل حساب، ثم شغّل الحسابين باستخدام `ccam personal` و`ccam work`، أو بأوامر مختصرة تختار أسماءها بنفسك، مثل `ccwork`. ويوضح [الدليل](/guides/multiple-claude-code-accounts) أيضًا كيفية فعل ذلك يدويًا.
 
 ## كيف أتابع محادثة على حساب آخر؟
 
@@ -37,7 +37,7 @@ sourceHash: 2be18393cbe2
 
 ## ماذا يحدث لمجلد ~/.claude الموجود لدي؟
 
-لا شيء، إلا إذا شغّلت `ccam import`. يسجّل الاستيراد المجلد في مكانه، فيظل `claude` العادي و`ccam <name>` يستخدمان الحساب والإعدادات نفسها.
+لا شيء، إلا إذا شغّلت `ccam import` أو `ccam migrate`. يسجّل الاستيراد المجلد في مكانه، فيظل `claude` العادي و`ccam <name>` يستخدمان الحساب والإعدادات نفسها. أما `ccam migrate` فينسخ إعداداته و`CLAUDE.md` والإضافات وخوادم MCP إلى الإعدادات المشتركة، ويكتفي بقراءة المجلد.
 
 ## ما الأنظمة التي يدعمها ccam؟
 
@@ -53,4 +53,4 @@ Linux (Ubuntu وDebian وFedora وArch وAlpine وغيرها) وmacOS. على Wi
 
 ## كيف ألغي تثبيت ccam؟
 
-احذف `ccam` وروابط `claude1`… من `~/.local/bin`، ثم احذف `~/.config/ccam` و`~/.local/share/ccam` و`~/.local/state/ccam` إذا لم تعد بحاجة إلى الحسابات. راجع [التثبيت](/docs/install#uninstall).
+أزل الأمر المختصر لكل حساب باستخدام `ccam shortcut <account> --remove`، واحذف `ccam` من `~/.local/bin`، ثم احذف `~/.config/ccam` و`~/.local/share/ccam` و`~/.local/state/ccam` إذا لم تعد بحاجة إلى الحسابات. راجع [التثبيت](/docs/install#uninstall).

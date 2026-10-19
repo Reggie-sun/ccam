@@ -4,7 +4,7 @@ description: Birden fazla Claude Code hesabını CLAUDE_CONFIG_DIR ile yan yana 
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: e2fbee9f4f91
+sourceHash: 6a4b7d961e10
 ---
 
 Her hesaba kendi yapılandırma klasörünü verin. Claude Code klasörü `CLAUDE_CONFIG_DIR` ortam değişkeninden okur ve her klasör kendi giriş bilgilerini, ayarlarını ve geçmişini tutar. Tek bilgisayarda iki Claude Code hesabı için bunu bir kabuk takma adıyla elle kurabilir ya da işi ccam'a bırakabilirsiniz.
@@ -34,12 +34,12 @@ ccam aynı fikri otomatikleştirir ve eksik parçaları ekler:
 ```sh
 curl -fsSL https://ccam.dev/install.sh | sh
 ccam add personal
-ccam add work
+ccam add work --shortcut ccwork
 ```
 
-Artık `claude1` ve `claude2` ya da `ccam personal` ve `ccam work` iki hesabı başlatır. Bunlar takma ad değil gerçek programlar olduğu için betiklerde de çalışır. Ayarlar, `CLAUDE.md`, MCP sunucuları ve uzantılar baştan paylaşılır; ayrıca paylaşılan konuşma geçmişini açarak `ccam next --continue` ile bir konuşmaya diğer hesapta devam edebilirsiniz.
+Artık `ccam personal` ve `ccam work` iki hesabı başlatır; iş hesabına verdiğiniz `ccwork` kısayolu da öyle. Bunlar takma ad değil gerçek programlar olduğu için betiklerde de çalışır. Ayarlar, `CLAUDE.md`, MCP sunucuları ve uzantılar baştan paylaşılır; ayrıca paylaşılan konuşma geçmişini açarak `ccam next --continue` ile bir konuşmaya diğer hesapta devam edebilirsiniz.
 
-Zaten `~/.claude` kullanıyorsanız o hesabı yeniden eklemek yerine `ccam import` komutunu çalıştırın.
+Zaten `~/.claude` kullanıyorsanız o hesabı yeniden eklemek yerine `ccam import` komutunu çalıştırın ya da ayarlarını, MCP sunucularını ve uzantılarını paylaşılan ayarlara kopyalamak için `ccam migrate` komutunu kullanın.
 
 ## Hangisini seçmeli
 

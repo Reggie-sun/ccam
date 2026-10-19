@@ -4,7 +4,7 @@ description: Odpowiedzi o ccam, kontach Claude Code, limitach użycia, współdz
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 2be18393cbe2
+sourceHash: e07d468d453b
 ---
 
 ## Czy ccam to oficjalne narzędzie Anthropic?
@@ -21,7 +21,7 @@ Nie. Każde konto ma własne limity. ccam je pokazuje i pozwala kontynuować pra
 
 ## Jak używać dwóch kont Claude Code na jednym komputerze?
 
-Daj każdemu kontu własny folder konfiguracji przez `CLAUDE_CONFIG_DIR`. ccam robi to za ciebie: uruchom `ccam add` dla każdego konta, a potem uruchamiaj je przez `claude1` i `claude2`. [Poradnik](/guides/multiple-claude-code-accounts) pokazuje też, jak zrobić to ręcznie.
+Daj każdemu kontu własny folder konfiguracji przez `CLAUDE_CONFIG_DIR`. ccam robi to za ciebie: uruchom `ccam add` dla każdego konta, a potem uruchamiaj je przez `ccam personal` i `ccam work` albo przez skróty o nazwach wybranych przez ciebie, na przykład `ccwork`. [Poradnik](/guides/multiple-claude-code-accounts) pokazuje też, jak zrobić to ręcznie.
 
 ## Jak kontynuować rozmowę na innym koncie?
 
@@ -37,7 +37,7 @@ W `~/.local/share/ccam/profiles/<name>/`, jeden folder na konto. Na macOS Claude
 
 ## Co się stanie z moim istniejącym ~/.claude?
 
-Nic, chyba że uruchomisz `ccam import`. Import rejestruje folder tam, gdzie jest, więc zwykłe `claude` i `ccam <name>` nadal używają tego samego konta i ustawień.
+Nic, chyba że uruchomisz `ccam import` lub `ccam migrate`. Import rejestruje folder tam, gdzie jest, więc zwykłe `claude` i `ccam <name>` nadal używają tego samego konta i ustawień. `ccam migrate` kopiuje jego ustawienia, `CLAUDE.md`, rozszerzenia i serwery MCP do współdzielonych ustawień, a folder tylko odczytuje.
 
 ## Jakie systemy obsługuje ccam?
 
@@ -53,4 +53,4 @@ Uruchamianie Claude Code przez ccam dodaje około 4 milisekund, co zmierzono skr
 
 ## Jak odinstalować ccam?
 
-Usuń `ccam` i linki `claude1`… z `~/.local/bin`, a potem `~/.config/ccam`, `~/.local/share/ccam` i `~/.local/state/ccam`, jeśli konta nie są ci już potrzebne. Zobacz [instalacja](/docs/install#uninstall).
+Usuń skrót każdego konta poleceniem `ccam shortcut <account> --remove`, usuń `ccam` z `~/.local/bin`, a potem `~/.config/ccam`, `~/.local/share/ccam` i `~/.local/state/ccam`, jeśli konta nie są ci już potrzebne. Zobacz [instalacja](/docs/install#uninstall).

@@ -4,7 +4,7 @@ description: "Cách ccam dùng chung máy chủ MCP, settings.json, CLAUDE.md, a
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: e4b31e5098e3
+sourceHash: ccbb2c5e97bc
 ---
 
 Mỗi tài khoản giữ thông tin đăng nhập riêng. Mọi thứ khác đều có thể dùng chung theo từng mục: ccam liên kết tệp hoặc thư mục của tài khoản đến một thư mục nhóm dùng chung, nên thay đổi thực hiện ở một tài khoản sẽ xuất hiện ở mọi tài khoản trong nhóm đó.
@@ -53,6 +53,57 @@ ccam share work --history off
 ```
 
 Liên kết bị gỡ bỏ và tài khoản nhận một bản sao riêng của nội dung hiện tại trong nhóm. Thêm `--fresh` để bắt đầu từ trạng thái trống thay vào đó. Nhóm vẫn giữ nội dung của nó cho các tài khoản khác.
+
+## Sao chép thiết lập hiện có
+
+Nếu bạn đã dùng Claude Code trước khi có ccam, cài đặt của bạn nằm trong `~/.claude`. `ccam migrate` sao chép chúng vào một nhóm, để mọi tài khoản dùng chung các mục đó đều có chúng:
+
+```sh
+ccam migrate
+```
+
+Những gì được sao chép:
+
+- `settings.json` và `CLAUDE.md` toàn cục;
+- các tiện ích mở rộng `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/` và `rules/`;
+- máy chủ MCP người dùng của bạn, tức mục `mcpServers` trong `~/.claude.json`, vào `mcp.json` của nhóm;
+- lịch sử hội thoại (`projects/` và `history.jsonl`), nhưng chỉ khi bạn thêm `--history`.
+
+Thư mục nguồn chỉ được đọc: không có gì bên trong bị di chuyển, liên kết hay thay đổi, và lệnh `claude` thông thường vẫn hoạt động như trước. Các tệp đăng nhập `.credentials.json` và `.claude.json` không bao giờ được sao chép.
+
+ccam in ra kế hoạch và hỏi trước khi sao chép bất cứ thứ gì:
+
+```console
+$ ccam migrate
+Copy from /home/me/.claude into group default (/home/me/.local/share/ccam/groups/default):
+  mcp         ~/.claude.json  new: context7, fs
+  settings    settings.json   new: 80 B
+  memory      CLAUDE.md       new: 31 B
+  extensions  agents/         add 1 file the group lacks (17 B)
+              commands/       add 1 file the group lacks (15 B)
+              skills/         add 1 file the group lacks (32 B)
+              not found, skipped: plugins/, output-styles/, rules/
+  Conversation history (projects/, history.jsonl) is not included; add --history to copy it.
+Copy these into group default? [y/N] y
+✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, commands/, skills/
+Accounts that share these through group default:
+  mcp         personal
+  settings    personal
+  memory      personal
+  extensions  personal
+```
+
+Cuối cùng, ccam liệt kê các tài khoản dùng chung từng mục qua nhóm đó. Nếu có tài khoản chưa dùng chung, nó in ra các lệnh `ccam share` để bật dùng chung cho những tài khoản đó.
+
+Khi nhóm đã có một bản khác của một tệp, ccam hỏi bạn, giống như khi bật dùng chung: giữ bản của nhóm hay dùng bản của bạn. `settings.json` và các tệp JSON khác còn có thể được hợp nhất, và `history.jsonl` có thể được hợp nhất theo từng dòng. Các bản trước đó của nhóm được lưu trong `.ccam-backup/<time>/` bên trong thư mục nhóm.
+
+| Tùy chọn | Tác dụng |
+| --- | --- |
+| `--settings`, `--memory`, `--extensions`, `--mcp`, `--history` | Chỉ sao chép những mục bạn nêu; nếu không có, sao chép mọi thứ trừ lịch sử hội thoại |
+| `-g`, `--group <group>` | Sao chép vào nhóm này thay vì `default` |
+| `-y`, `--yes` | Sao chép mà không hỏi; khi một tệp khác nhau, giữ bản của nhóm |
+
+Đặt `--dry-run` trước lệnh, như `ccam --dry-run migrate`, để xem kế hoạch mà không sao chép gì. Để sao chép từ thư mục khác, hãy nêu tên thư mục đó: `ccam migrate ~/.claude-work --group work`.
 
 ## Máy chủ MCP
 

@@ -4,7 +4,7 @@ description: "Toutes les commandes et options de ccam, de ccam add et ccam <name
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 54bdfc489174
+sourceHash: 0c869c92fa63
 ---
 
 Placez `--dry-run` avant n'importe quelle commande pour voir ce qu'elle ferait sans l'exécuter, par exemple `ccam --dry-run work`.
@@ -17,13 +17,14 @@ Placez `--dry-run` avant n'importe quelle commande pour voir ce qu'elle ferait s
 
 `ccam` avec des arguments mais sans nom de compte, comme `ccam -p "summarise"`, utilise le compte par défaut. Définissez-le avec `ccam use <name>`.
 
-Les raccourcis `claude1`, `claude2`, etc. sont des liens vers ccam dans `~/.local/bin`. `ccam shims install --names` crée aussi `claude-<name>` pour chaque compte.
+Un raccourci comme `ccwork` lance son compte de la même façon : `ccwork --resume` fait la même chose que `ccam work --resume`. Voir [Raccourcis](/docs/commands#shortcuts).
 
 ## Ajouter et supprimer des comptes
 
 ```sh
 ccam add                      # wizard
 ccam add work --share history=on
+ccam add side --shortcut ccside
 ccam add ci --no-login        # log in later with: ccam login ci
 ccam rename work job
 ccam remove side              # folder moves to ~/.local/share/ccam/trash
@@ -31,6 +32,22 @@ ccam import ~/.claude-old --name old
 ```
 
 Sans dossier, `ccam import` cherche `~/.claude` et `~/.claude-*` et pose la question pour chacun. Les dossiers importés sont enregistrés là où ils se trouvent ; ccam ne déplace ni ne copie jamais une connexion.
+
+## Raccourcis
+
+```sh
+ccam shortcut work ccwork     # create it, or rename the existing one
+ccam shortcut work            # show it
+ccam shortcut work --remove
+```
+
+Un raccourci est une commande que vous nommez vous-même et qui lance Claude Code avec un compte donné. Comme `ccam work`, il transmet tous les arguments tels quels à Claude Code, si bien que `ccwork --resume` et `ccwork -p "hi"` fonctionnent comme prévu. C'est un lien vers ccam dans `~/.local/bin`.
+
+Les raccourcis sont facultatifs. L'assistant de `ccam add` demande s'il faut en créer un, `ccam add <name> --shortcut <command>` en crée un sans rien demander, et `ccam list` affiche le raccourci de chaque compte, ou `-` s'il n'en a pas.
+
+Les noms utilisent les caractères a-z, 0-9, `.`, `-` et `_`. Un nom ne peut pas être une commande ccam, le raccourci d'un autre compte, ni le nom d'un autre programme présent dans votre `PATH`.
+
+`ccam rename` conserve le nom du raccourci, et `ccam remove` supprime le raccourci avec le compte. `ccam shims install` recrée les liens de tous les comptes, par exemple après avoir déplacé ccam.
 
 ## Partage
 
@@ -41,6 +58,17 @@ ccam share work --settings off --fresh
 ```
 
 Chaque élément accepte `on` (le groupe `default`), `off` ou un nom de groupe. Voir [Partage](/docs/sharing).
+
+## Copier une configuration existante
+
+```sh
+ccam migrate                    # ~/.claude into the default group
+ccam --dry-run migrate          # show the plan, copy nothing
+ccam migrate ~/.claude-work --group work --settings --mcp
+ccam migrate --history --yes    # conversation history only
+```
+
+`ccam migrate` copie `settings.json`, `CLAUDE.md`, les extensions et les serveurs MCP utilisateur d'un dossier Claude Code dans un groupe, pour que chaque compte qui partage ces éléments en dispose. Le dossier est seulement lu. Les options `--settings`, `--memory`, `--extensions`, `--mcp` et `--history` ne copient que les éléments indiqués ; sans elles, tout est copié sauf l'historique des conversations. `-g` ou `--group` choisit le groupe, et `-y` ou `--yes` copie sans rien demander et garde la copie du groupe quand un fichier diffère. Voir [Copier une configuration existante](/docs/sharing#copy-an-existing-setup).
 
 ## Serveurs MCP
 
@@ -69,7 +97,7 @@ ccam next --auto
 ccam doctor          # check
 ccam doctor --fix    # repair what is safe to repair, with backups
 ccam statusline install
-ccam shims install
+ccam shims install   # recreate the shortcut links
 ```
 
 ## Fichiers
@@ -80,6 +108,6 @@ ccam shims install
 | `~/.local/share/ccam/profiles/<name>/` | Le `CLAUDE_CONFIG_DIR` de chaque compte |
 | `~/.local/share/ccam/groups/<group>/` | Paramètres, serveurs MCP, extensions et historique partagés |
 | `~/.local/state/ccam/` | Cache d'utilisation et heures de dernière utilisation |
-| `~/.local/bin/claude1`, `claude2`… | Liens vers ccam |
+| `~/.local/bin/<shortcut>` | Raccourcis comme `ccwork`, des liens vers ccam |
 
 Les variables `XDG_CONFIG_HOME`, `XDG_DATA_HOME` et `XDG_STATE_HOME` changent l'emplacement de ces dossiers.

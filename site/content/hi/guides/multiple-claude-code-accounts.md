@@ -4,7 +4,7 @@ description: CLAUDE_CONFIG_DIR से कई Claude Code अकाउंट स�
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: e2fbee9f4f91
+sourceHash: 6a4b7d961e10
 ---
 
 हर अकाउंट को उसका अपना configuration फ़ोल्डर दें। Claude Code यह फ़ोल्डर `CLAUDE_CONFIG_DIR` environment variable से पढ़ता है, और हर फ़ोल्डर में उसका अपना लॉगिन, सेटिंग्स और इतिहास रहता है। Claude Code multiple accounts का यह सेटअप आप shell alias से हाथ से कर सकते हैं, या ccam को करने दे सकते हैं।
@@ -34,12 +34,12 @@ ccam इसी विचार को स्वचालित करता ह�
 ```sh
 curl -fsSL https://ccam.dev/install.sh | sh
 ccam add personal
-ccam add work
+ccam add work --shortcut ccwork
 ```
 
-अब `claude1` और `claude2`, या `ccam personal` और `ccam work`, दोनों अकाउंट शुरू करते हैं। क्योंकि ये aliases नहीं, असली प्रोग्राम हैं, ये scripts में भी काम करते हैं। सेटिंग्स, `CLAUDE.md`, MCP सर्वर और एक्सटेंशन शुरू से साझा होते हैं, और आप साझा बातचीत का इतिहास चालू करके `ccam next --continue` से किसी बातचीत को दूसरे अकाउंट पर जारी रख सकते हैं।
+अब `ccam personal` और `ccam work` दोनों अकाउंट शुरू करते हैं, और `ccwork` भी, यानी वह शॉर्टकट जो आपने work अकाउंट को दिया। ये aliases नहीं, असली प्रोग्राम हैं, इसलिए scripts में भी काम करते हैं। सेटिंग्स, `CLAUDE.md`, MCP सर्वर और एक्सटेंशन शुरू से साझा होते हैं, और आप साझा बातचीत का इतिहास चालू करके `ccam next --continue` से दूसरे अकाउंट पर बातचीत जारी रख सकते हैं।
 
-अगर आप पहले से `~/.claude` इस्तेमाल करते हैं, तो वह अकाउंट फिर से जोड़ने की बजाय `ccam import` चलाएँ।
+अगर आप पहले से `~/.claude` इस्तेमाल करते हैं, तो उस अकाउंट को दोबारा जोड़ने की बजाय `ccam import` चलाएँ, या उसकी सेटिंग्स, MCP सर्वर और एक्सटेंशन साझा सेटिंग्स में कॉपी करने के लिए `ccam migrate` चलाएँ।
 
 ## कौन-सा चुनें
 

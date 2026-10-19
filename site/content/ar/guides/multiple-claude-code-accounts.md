@@ -4,7 +4,7 @@ description: شغّل عدة حسابات Claude Code جنبًا إلى جنب �
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: e2fbee9f4f91
+sourceHash: 6a4b7d961e10
 ---
 
 لاستخدام عدة حسابات Claude Code على جهاز واحد، امنح كل حساب مجلد إعدادات خاصًا به. يقرأ Claude Code المجلد من متغير البيئة `CLAUDE_CONFIG_DIR`، ويحتوي كل مجلد على تسجيل الدخول والإعدادات والسجل الخاصة به. يمكنك إعداد ذلك يدويًا باسم مستعار (alias) في الصدفة، أو ترك ccam يفعله.
@@ -34,12 +34,12 @@ alias claude-work='CLAUDE_CONFIG_DIR=~/.claude-work claude'
 ```sh
 curl -fsSL https://ccam.dev/install.sh | sh
 ccam add personal
-ccam add work
+ccam add work --shortcut ccwork
 ```
 
-الآن يشغّل `claude1` و`claude2`، أو `ccam personal` و`ccam work`، الحسابين. ولأنها برامج حقيقية وليست أسماء مستعارة، فهي تعمل في السكربتات أيضًا. تُشارَك الإعدادات و`CLAUDE.md` وخوادم MCP والإضافات منذ البداية، ويمكنك تفعيل مشاركة سجل المحادثات لمتابعة محادثة على الحساب الآخر باستخدام `ccam next --continue`.
+الآن يشغّل `ccam personal` و`ccam work` الحسابين، وكذلك `ccwork`، الأمر المختصر الذي منحته لحساب العمل. ولأنها برامج حقيقية وليست أسماء مستعارة، فهي تعمل في السكربتات أيضًا. تُشارَك الإعدادات و`CLAUDE.md` وخوادم MCP والإضافات منذ البداية، ويمكنك تفعيل مشاركة سجل المحادثات لمتابعة محادثة على الحساب الآخر باستخدام `ccam next --continue`.
 
-إذا كنت تستخدم `~/.claude` بالفعل، فشغّل `ccam import` بدلًا من إضافة ذلك الحساب مرة أخرى.
+إذا كنت تستخدم `~/.claude` بالفعل، فشغّل `ccam import` بدلًا من إضافة ذلك الحساب مرة أخرى، أو `ccam migrate` لنسخ إعداداته وخوادم MCP والإضافات إلى الإعدادات المشتركة.
 
 ## أيهما تختار
 

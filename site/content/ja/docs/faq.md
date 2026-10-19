@@ -4,7 +4,7 @@ description: ccam、Claude Codeのアカウント、使用量の上限、共有�
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 2be18393cbe2
+sourceHash: e07d468d453b
 ---
 
 ## ccamはAnthropicの公式ツールですか？
@@ -21,7 +21,7 @@ sourceHash: 2be18393cbe2
 
 ## 1台のコンピューターで2つのClaude Codeアカウントを使うにはどうすればよいですか？
 
-`CLAUDE_CONFIG_DIR`を使って、各アカウントに専用の設定フォルダーを割り当てます。ccamはこれを自動で行います。アカウントごとに`ccam add`を実行し、`claude1`と`claude2`で起動してください。手動で設定する方法は[ガイド](/guides/multiple-claude-code-accounts)でも説明しています。
+`CLAUDE_CONFIG_DIR`を使って、各アカウントに専用の設定フォルダーを割り当てます。ccamはこれを自動で行います。アカウントごとに`ccam add`を実行し、`ccam personal`と`ccam work`、または`ccwork`のように自分で名前を付けたショートカットで起動してください。手動で設定する方法は[ガイド](/guides/multiple-claude-code-accounts)でも説明しています。
 
 ## 別のアカウントで会話を続けるにはどうすればよいですか？
 
@@ -37,7 +37,7 @@ ccamがログインをコピーしたり共有したりすることはありま�
 
 ## 既存の~/.claudeはどうなりますか？
 
-`ccam import`を実行しない限り、何も変わりません。インポートはフォルダーをその場所のまま登録するので、通常の`claude`も`ccam <name>`も、引き続き同じアカウントと設定を使います。
+`ccam import`か`ccam migrate`を実行しない限り、何も変わりません。インポートはフォルダーをその場所のまま登録するので、通常の`claude`も`ccam <name>`も、引き続き同じアカウントと設定を使います。`ccam migrate`は、フォルダーを読み取るだけで、その設定、`CLAUDE.md`、拡張機能、MCPサーバーを共有設定にコピーします。
 
 ## ccamはどのシステムに対応していますか？
 
@@ -53,4 +53,4 @@ ccam経由でClaude Codeを起動すると、起動時間が約4ミリ秒増え�
 
 ## ccamをアンインストールするにはどうすればよいですか？
 
-`~/.local/bin`から`ccam`と、`claude1`…の各リンクを削除します。アカウントが不要になった場合は、続けて`~/.config/ccam`、`~/.local/share/ccam`、`~/.local/state/ccam`も削除します。詳しくは[インストール](/docs/install#uninstall)を参照してください。
+各アカウントのショートカットを`ccam shortcut <account> --remove`で削除し、`~/.local/bin`から`ccam`を削除します。アカウントが不要になった場合は、続けて`~/.config/ccam`、`~/.local/share/ccam`、`~/.local/state/ccam`も削除します。詳しくは[インストール](/docs/install#uninstall)を参照してください。

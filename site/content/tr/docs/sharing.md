@@ -4,7 +4,7 @@ description: Girişler ayrı kalırken MCP sunucuları, settings.json, CLAUDE.md
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: e4b31e5098e3
+sourceHash: ccbb2c5e97bc
 ---
 
 Her hesap kendi giriş bilgilerini korur. Geri kalan her şey öğe öğe paylaşılabilir: ccam, hesabın dosyasını veya klasörünü paylaşılan bir grup klasörüne bağlar; böylece bir hesapta yapılan değişiklik o gruptaki tüm hesaplarda görünür.
@@ -53,6 +53,57 @@ ccam share work --history off
 ```
 
 Bağlantı kaldırılır ve hesap, grubun mevcut içeriğinin kendine ait bir kopyasını alır. Bunun yerine boş başlamak için `--fresh` ekleyin. Grup, diğer hesaplar için içeriğini korur.
+
+## Mevcut bir kurulumu kopyalama
+
+Claude Code'u ccam'den önce kullandıysanız ayarlarınız `~/.claude` içindedir. `ccam migrate` bunları bir gruba kopyalar; böylece bu öğeleri paylaşan her hesap onlara sahip olur:
+
+```sh
+ccam migrate
+```
+
+Kopyaladıkları:
+
+- `settings.json` ve genel `CLAUDE.md`;
+- `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/` ve `rules/` uzantıları;
+- kullanıcı MCP sunucularınız, yani `~/.claude.json` içindeki `mcpServers` girdisi, grubun `mcp.json` dosyasına;
+- konuşma geçmişi (`projects/` ve `history.jsonl`), ancak yalnızca `--history` eklediğinizde.
+
+Kaynak klasör yalnızca okunur: içindeki hiçbir şey taşınmaz, bağlanmaz veya değiştirilmez ve düz `claude` eskisi gibi çalışmaya devam eder. Giriş dosyaları `.credentials.json` ve `.claude.json` asla kopyalanmaz.
+
+ccam herhangi bir şeyi kopyalamadan önce planı yazdırır ve onay ister:
+
+```console
+$ ccam migrate
+Copy from /home/me/.claude into group default (/home/me/.local/share/ccam/groups/default):
+  mcp         ~/.claude.json  new: context7, fs
+  settings    settings.json   new: 80 B
+  memory      CLAUDE.md       new: 31 B
+  extensions  agents/         add 1 file the group lacks (17 B)
+              commands/       add 1 file the group lacks (15 B)
+              skills/         add 1 file the group lacks (32 B)
+              not found, skipped: plugins/, output-styles/, rules/
+  Conversation history (projects/, history.jsonl) is not included; add --history to copy it.
+Copy these into group default? [y/N] y
+✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, commands/, skills/
+Accounts that share these through group default:
+  mcp         personal
+  settings    personal
+  memory      personal
+  extensions  personal
+```
+
+Sonunda ccam, her öğeyi grup üzerinden paylaşan hesapları listeler. Paylaşmayan hesaplar varsa onlar için paylaşımı açan `ccam share` komutlarını yazdırır.
+
+Grupta bir dosyanın farklı bir kopyası zaten varsa ccam, paylaşımı açarken olduğu gibi sorar: grubun kopyasını korumak mı, sizinkini kullanmak mı. `settings.json` ve diğer JSON dosyaları birleştirilebilir de, `history.jsonl` ise satır satır birleştirilebilir. Grubun önceki kopyaları grup klasörünün içindeki `.ccam-backup/<time>/` altında saklanır.
+
+| Seçenek | Etki |
+| --- | --- |
+| `--settings`, `--memory`, `--extensions`, `--mcp`, `--history` | Yalnızca belirttiğiniz öğeleri kopyalar; bunlar olmadan konuşma geçmişi dışındaki her şeyi |
+| `-g`, `--group <group>` | `default` yerine bu gruba kopyalar |
+| `-y`, `--yes` | Sormadan kopyalar; bir dosya farklıysa grubun kopyasını korur |
+
+Hiçbir şey kopyalamadan planı görmek için `--dry-run` seçeneğini komuttan önce yazın: `ccam --dry-run migrate`. Başka bir klasörden kopyalamak için onu belirtin: `ccam migrate ~/.claude-work --group work`.
 
 ## MCP sunucuları
 

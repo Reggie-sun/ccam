@@ -4,7 +4,7 @@ description: پاسخ به پرسش‌هایی درباره ccam، حساب‌ه
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 2be18393cbe2
+sourceHash: e07d468d453b
 ---
 
 ## آیا ccam ابزار رسمی Anthropic است؟
@@ -21,7 +21,7 @@ sourceHash: 2be18393cbe2
 
 ## چگونه از دو حساب Claude Code روی یک رایانه استفاده کنم؟
 
-با `CLAUDE_CONFIG_DIR` به هر حساب یک پوشه پیکربندی جداگانه بدهید. ccam این کار را برای شما انجام می‌دهد: برای هر حساب `ccam add` را اجرا کنید، سپس حساب‌ها را با `claude1` و `claude2` اجرا کنید. [راهنما](/guides/multiple-claude-code-accounts) انجام دستی این کار را هم نشان می‌دهد.
+به هر حساب یک پوشه پیکربندی جداگانه با `CLAUDE_CONFIG_DIR` بدهید. ccam این کار را برای شما انجام می‌دهد: برای هر حساب `ccam add` را اجرا کنید، سپس آن‌ها را با `ccam personal` و `ccam work` اجرا کنید، یا با میان‌برهایی که نامشان را خودتان انتخاب می‌کنید، مانند `ccwork`. [راهنما](/guides/multiple-claude-code-accounts) همچنین نشان می‌دهد چگونه این کار را دستی انجام دهید.
 
 ## چگونه یک گفتگو را در حساب دیگری ادامه دهم؟
 
@@ -37,7 +37,7 @@ ccam هرگز اطلاعات ورود را کپی یا به اشتراک نمی�
 
 ## چه بر سر پوشه ~/.claude فعلی من می‌آید؟
 
-هیچ، مگر اینکه `ccam import` را اجرا کنید. این فرمان پوشه را در همان جایی که هست ثبت می‌کند، بنابراین `claude` معمولی و `ccam <name>` همچنان از همان حساب و همان تنظیمات استفاده می‌کنند.
+هیچ، مگر اینکه `ccam import` یا `ccam migrate` را اجرا کنید. import پوشه را در همان جایی که هست ثبت می‌کند، بنابراین `claude` معمولی و `ccam <name>` همچنان از همان حساب و تنظیمات استفاده می‌کنند. `ccam migrate` تنظیمات، `CLAUDE.md`، افزونه‌ها و سرورهای MCP آن را در تنظیمات مشترک کپی می‌کند و پوشه را فقط می‌خواند.
 
 ## ccam از کدام سیستم‌ها پشتیبانی می‌کند؟
 
@@ -53,4 +53,4 @@ Linux (Ubuntu، Debian، Fedora، Arch، Alpine و توزیع‌های دیگر)
 
 ## چگونه ccam را حذف کنم؟
 
-`ccam` و پیوندهای `claude1`… را از `~/.local/bin` پاک کنید، سپس اگر دیگر به حساب‌ها نیاز ندارید، `~/.config/ccam`، `~/.local/share/ccam` و `~/.local/state/ccam` را هم پاک کنید. [نصب](/docs/install#uninstall) را ببینید.
+میان‌بر هر حساب را با `ccam shortcut <account> --remove` حذف کنید، `ccam` را از `~/.local/bin` پاک کنید، سپس اگر دیگر به حساب‌ها نیاز ندارید، `~/.config/ccam`، `~/.local/share/ccam` و `~/.local/state/ccam` را حذف کنید. [نصب](/docs/install#uninstall) را ببینید.

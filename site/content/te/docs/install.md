@@ -4,7 +4,7 @@ description: Linux లేదా macOS లో ccam ను ఒకే కమాం�
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: fc63978e8f9e
+sourceHash: 79dc1b55e774
 ---
 
 Linux లేదా macOS లో టెర్మినల్‌లో ఇది రన్ చేయండి:
@@ -13,7 +13,7 @@ Linux లేదా macOS లో టెర్మినల్‌లో ఇది �
 curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-ఈ స్క్రిప్ట్ మీ సిస్టమ్‌కు సరిపడే రిలీజ్‌ను డౌన్‌లోడ్ చేసి, దాని SHA-256 చెక్‌సమ్‌ను తనిఖీ చేసి, `ccam` ను `~/.local/bin` లో ఉంచుతుంది; తర్వాత `ccam add` అదే ఫోల్డర్‌లో `claude1`, `claude2`… షార్ట్‌కట్‌లను సృష్టిస్తుంది. ఆ ఫోల్డర్ మీ `PATH` లో లేకపోతే, `~/.bashrc` లేదా `~/.zshrc` కు జోడించాల్సిన లైన్‌ను స్క్రిప్ట్ ప్రింట్ చేస్తుంది.
+ఈ స్క్రిప్ట్ మీ సిస్టమ్‌కు సరిపడే రిలీజ్‌ను డౌన్‌లోడ్ చేసి, దాని SHA-256 చెక్‌సమ్‌ను తనిఖీ చేసి, `ccam` ను `~/.local/bin` లో ఉంచుతుంది; మీరు తర్వాత ఎంచుకునే `ccwork` వంటి షార్ట్‌కట్ కమాండ్‌లను కూడా ccam అదే ఫోల్డర్‌లో సృష్టిస్తుంది. ఆ ఫోల్డర్ మీ `PATH` లో లేకపోతే, `~/.bashrc` లేదా `~/.zshrc` కు జోడించాల్సిన లైన్‌ను స్క్రిప్ట్ ప్రింట్ చేస్తుంది.
 
 ccam మీ కోసం Claude Code ను ప్రారంభిస్తుంది, కాబట్టి ముందుగా [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) ను ఇన్‌స్టాల్ చేసి, `claude --version` పనిచేస్తోందని నిర్ధారించుకోండి.
 
@@ -65,10 +65,12 @@ ccam doctor
 
 ## అన్‌ఇన్‌స్టాల్ చేయడం
 
-కమాండ్‌ను, ఖాతా షార్ట్‌కట్‌లను తీసివేయండి. ఖాతాలు ఇక అవసరం లేకపోతే, తర్వాత డేటా ఫోల్డర్‌లను కూడా తీసివేయండి:
+ccam ఇంకా ఇన్‌స్టాల్ అయి ఉండగానే, ముందుగా ఖాతా షార్ట్‌కట్‌లను తీసివేయండి. `ccam list` వాటిని Shortcut కాలమ్‌లో చూపిస్తుంది; ప్రతిదాన్ని `ccam shortcut <account> --remove` తో తీసివేయండి, లేదా ఆ లింక్‌లను `~/.local/bin` నుంచి మీరే తొలగించండి. తర్వాత కమాండ్‌ను, ఖాతాలు ఇక అవసరం లేకపోతే డేటా ఫోల్డర్‌లను తొలగించండి:
 
 ```sh
-rm ~/.local/bin/ccam ~/.local/bin/claude[0-9]*
+ccam list
+ccam shortcut work --remove   # once for each account that has a shortcut
+rm ~/.local/bin/ccam
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
 ```
 

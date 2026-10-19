@@ -4,7 +4,7 @@ description: "ติดตั้ง ccam บน Linux หรือ macOS ด้�
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: fc63978e8f9e
+sourceHash: 79dc1b55e774
 ---
 
 รันคำสั่งนี้ในเทอร์มินัลบน Linux หรือ macOS:
@@ -13,7 +13,7 @@ sourceHash: fc63978e8f9e
 curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-สคริปต์จะดาวน์โหลดรุ่นสำหรับระบบของคุณ ตรวจสอบ checksum แบบ SHA-256 และวาง `ccam` ไว้ใน `~/.local/bin` ซึ่งภายหลัง `ccam add` จะสร้างคำสั่งลัด `claude1`, `claude2`… ไว้ในโฟลเดอร์เดียวกัน หากโฟลเดอร์นั้นไม่อยู่ใน `PATH` ของคุณ สคริปต์จะพิมพ์บรรทัดที่ต้องเพิ่มลงใน `~/.bashrc` หรือ `~/.zshrc` ออกมาให้
+สคริปต์จะดาวน์โหลดรุ่นสำหรับระบบของคุณ ตรวจสอบ checksum แบบ SHA-256 และวาง `ccam` ไว้ใน `~/.local/bin` ซึ่งเป็นโฟลเดอร์ที่ ccam ใช้สร้างคำสั่งลัดที่คุณเลือกในภายหลังด้วย เช่น `ccwork` หากโฟลเดอร์นั้นไม่อยู่ใน `PATH` ของคุณ สคริปต์จะพิมพ์บรรทัดที่ต้องเพิ่มลงใน `~/.bashrc` หรือ `~/.zshrc` ออกมาให้
 
 ccam เป็นตัวเริ่ม Claude Code ให้คุณ ดังนั้นให้ติดตั้ง [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) ก่อน และตรวจสอบให้แน่ใจว่า `claude --version` ทำงานได้
 
@@ -65,10 +65,12 @@ ccam doctor
 
 ## ถอนการติดตั้ง
 
-ลบคำสั่ง ccam และคำสั่งลัดของบัญชี จากนั้นลบโฟลเดอร์ข้อมูลหากคุณไม่ต้องการบัญชีเหล่านั้นอีกต่อไป:
+ลบคำสั่งลัดของบัญชีก่อน ขณะที่ ccam ยังติดตั้งอยู่ `ccam list` จะแสดงคำสั่งลัดในคอลัมน์ Shortcut ลบทีละรายการด้วย `ccam shortcut <account> --remove` หรือลบลิงก์เหล่านั้นออกจาก `~/.local/bin` ด้วยตัวเอง จากนั้นลบคำสั่ง ccam และลบโฟลเดอร์ข้อมูลหากคุณไม่ต้องการบัญชีเหล่านั้นอีกต่อไป:
 
 ```sh
-rm ~/.local/bin/ccam ~/.local/bin/claude[0-9]*
+ccam list
+ccam shortcut work --remove   # once for each account that has a shortcut
+rm ~/.local/bin/ccam
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
 ```
 

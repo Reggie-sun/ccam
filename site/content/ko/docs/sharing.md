@@ -4,7 +4,7 @@ description: ccam이 로그인 정보는 계정마다 분리해 둔 채 MCP 서�
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: e4b31e5098e3
+sourceHash: ccbb2c5e97bc
 ---
 
 로그인 정보는 계정마다 따로 유지됩니다. 그 밖의 항목은 하나씩 골라 공유할 수 있습니다. ccam은 계정의 파일이나 폴더를 공유 그룹 폴더에 링크하므로, 한 계정에서 바꾼 내용이 같은 그룹의 모든 계정에 반영됩니다.
@@ -53,6 +53,57 @@ ccam share work --history off
 ```
 
 링크가 제거되고, 계정은 그룹의 현재 내용을 복사한 자체 사본을 갖게 됩니다. 빈 상태로 새로 시작하려면 `--fresh`를 붙이세요. 그룹의 내용은 다른 계정을 위해 그대로 남습니다.
+
+## 기존 설정 복사하기
+
+ccam을 쓰기 전에 Claude Code를 써 왔다면 설정이 `~/.claude`에 있습니다. `ccam migrate`는 이 설정을 공유 그룹으로 복사하므로, 그 항목을 공유하는 모든 계정이 같은 설정을 쓰게 됩니다.
+
+```sh
+ccam migrate
+```
+
+복사하는 항목은 다음과 같습니다.
+
+- `settings.json`과 전역 `CLAUDE.md`
+- 확장 기능 `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/`, `rules/`
+- 사용자 MCP 서버(`~/.claude.json`의 `mcpServers` 항목). 그룹의 `mcp.json`으로 복사됩니다.
+- 대화 내역(`projects/`와 `history.jsonl`). `--history`를 붙였을 때만 복사됩니다.
+
+원본 폴더는 읽기만 합니다. 그 안의 어떤 것도 옮기거나 링크하거나 바꾸지 않으므로, `claude`를 그냥 실행해도 이전과 똑같이 동작합니다. 로그인 파일인 `.credentials.json`과 `.claude.json`은 절대 복사하지 않습니다.
+
+ccam은 무엇이든 복사하기 전에 계획을 출력하고 확인을 받습니다.
+
+```console
+$ ccam migrate
+Copy from /home/me/.claude into group default (/home/me/.local/share/ccam/groups/default):
+  mcp         ~/.claude.json  new: context7, fs
+  settings    settings.json   new: 80 B
+  memory      CLAUDE.md       new: 31 B
+  extensions  agents/         add 1 file the group lacks (17 B)
+              commands/       add 1 file the group lacks (15 B)
+              skills/         add 1 file the group lacks (32 B)
+              not found, skipped: plugins/, output-styles/, rules/
+  Conversation history (projects/, history.jsonl) is not included; add --history to copy it.
+Copy these into group default? [y/N] y
+✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, commands/, skills/
+Accounts that share these through group default:
+  mcp         personal
+  settings    personal
+  memory      personal
+  extensions  personal
+```
+
+마지막에는 항목마다 이 그룹을 통해 공유하는 계정을 보여 줍니다. 아직 공유하지 않는 계정이 있으면 공유를 켜는 `ccam share` 명령도 함께 출력합니다.
+
+그룹에 내용이 다른 같은 파일이 이미 있으면, 공유를 켤 때와 마찬가지로 그룹의 사본을 유지할지 내 사본을 쓸지 묻습니다. `settings.json` 같은 JSON 파일은 병합할 수도 있고, `history.jsonl`은 줄 단위로 병합할 수 있습니다. 그룹에 있던 이전 사본은 그룹 폴더 안의 `.ccam-backup/<time>/`에 보관됩니다.
+
+| 옵션 | 효과 |
+| --- | --- |
+| `--settings`, `--memory`, `--extensions`, `--mcp`, `--history` | 지정한 항목만 복사합니다. 옵션이 없으면 대화 내역을 제외한 모든 항목을 복사합니다 |
+| `-g`, `--group <group>` | `default` 대신 이 그룹으로 복사합니다 |
+| `-y`, `--yes` | 묻지 않고 복사합니다. 내용이 다른 파일은 그룹의 사본을 유지합니다 |
+
+`ccam --dry-run migrate`처럼 명령 앞에 `--dry-run`을 붙이면 아무것도 복사하지 않고 계획만 보여 줍니다. 다른 폴더에서 복사하려면 폴더를 지정하세요(예: `ccam migrate ~/.claude-work --group work`).
 
 ## MCP 서버
 

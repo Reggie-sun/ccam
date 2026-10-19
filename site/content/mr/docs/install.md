@@ -4,7 +4,7 @@ description: Linux किंवा macOS वर ccam एका कमांड�
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: fc63978e8f9e
+sourceHash: 79dc1b55e774
 ---
 
 Linux किंवा macOS वर टर्मिनलमध्ये हे चालवा:
@@ -13,7 +13,7 @@ Linux किंवा macOS वर टर्मिनलमध्ये हे �
 curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-ही स्क्रिप्ट तुमच्या सिस्टिमसाठीचे रिलीज डाउनलोड करते, त्याचा SHA-256 checksum तपासते आणि `ccam` ला `~/.local/bin` मध्ये ठेवते; नंतर `ccam add` त्याच फोल्डरमध्ये `claude1`, `claude2`… शॉर्टकट तयार करते. तो फोल्डर तुमच्या `PATH` वर नसेल, तर `~/.bashrc` किंवा `~/.zshrc` मध्ये जोडायची ओळ स्क्रिप्ट प्रिंट करते.
+स्क्रिप्ट तुमच्या सिस्टमसाठी रिलीज डाउनलोड करते, त्याचा SHA-256 checksum तपासते आणि `ccam` ला `~/.local/bin` मध्ये ठेवते; तुम्ही नंतर निवडलेल्या शॉर्टकट कमांड्स, जसे `ccwork`, ccam याच फोल्डरमध्ये तयार करते. हा फोल्डर तुमच्या `PATH` मध्ये नसेल, तर `~/.bashrc` किंवा `~/.zshrc` मध्ये जोडायची ओळ स्क्रिप्ट प्रिंट करते.
 
 ccam तुमच्यासाठी Claude Code सुरू करते, म्हणून आधी [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) इन्स्टॉल करा आणि `claude --version` चालते याची खात्री करा.
 
@@ -65,10 +65,12 @@ ccam doctor
 
 ## अनइन्स्टॉल
 
-कमांड आणि खात्यांचे शॉर्टकट काढून टाका, आणि खाती आता लागत नसतील तर डेटा फोल्डरही काढा:
+ccam इन्स्टॉल असतानाच आधी खात्यांचे शॉर्टकट काढा. `ccam list` ते Shortcut स्तंभात दाखवते; प्रत्येक `ccam shortcut <account> --remove` ने काढा, किंवा त्या लिंक्स `~/.local/bin` मधून स्वतः हटवा. नंतर कमांड काढा, आणि खाती आता लागत नसतील तर डेटा फोल्डरही:
 
 ```sh
-rm ~/.local/bin/ccam ~/.local/bin/claude[0-9]*
+ccam list
+ccam shortcut work --remove   # once for each account that has a shortcut
+rm ~/.local/bin/ccam
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
 ```
 

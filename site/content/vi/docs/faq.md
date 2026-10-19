@@ -4,7 +4,7 @@ description: "Giải đáp về ccam, tài khoản Claude Code, giới hạn s�
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 2be18393cbe2
+sourceHash: e07d468d453b
 ---
 
 ## ccam có phải là công cụ chính thức của Anthropic không?
@@ -21,7 +21,7 @@ Không. Mỗi tài khoản giữ giới hạn riêng của nó. ccam hiển th�
 
 ## Làm sao để dùng hai tài khoản Claude Code trên một máy tính?
 
-Hãy cho mỗi tài khoản một thư mục cấu hình riêng bằng `CLAUDE_CONFIG_DIR`. ccam làm việc này thay bạn: chạy `ccam add` cho từng tài khoản, rồi khởi động chúng bằng `claude1` và `claude2`. [Hướng dẫn](/guides/multiple-claude-code-accounts) cũng chỉ cách làm thủ công.
+Hãy cho mỗi tài khoản một thư mục cấu hình riêng bằng `CLAUDE_CONFIG_DIR`. ccam làm việc này thay bạn: chạy `ccam add` cho từng tài khoản, rồi khởi động chúng bằng `ccam personal` và `ccam work`, hoặc bằng các lệnh tắt do bạn tự đặt tên, chẳng hạn `ccwork`. [Hướng dẫn](/guides/multiple-claude-code-accounts) cũng chỉ cách làm thủ công.
 
 ## Làm sao để tiếp tục một cuộc hội thoại trên tài khoản khác?
 
@@ -37,7 +37,7 @@ Trong `~/.local/share/ccam/profiles/<name>/`, mỗi tài khoản một thư mụ
 
 ## Thư mục ~/.claude hiện có của tôi sẽ ra sao?
 
-Không có gì thay đổi, trừ khi bạn chạy `ccam import`. Lệnh import đăng ký thư mục ngay tại chỗ, nên lệnh `claude` thông thường và `ccam <name>` tiếp tục dùng cùng một tài khoản và cùng cài đặt.
+Không có gì thay đổi, trừ khi bạn chạy `ccam import` hoặc `ccam migrate`. Lệnh import đăng ký thư mục ngay tại chỗ, nên lệnh `claude` thông thường và `ccam <name>` tiếp tục dùng cùng một tài khoản và cùng cài đặt. `ccam migrate` sao chép cài đặt, `CLAUDE.md`, tiện ích mở rộng và máy chủ MCP của thư mục đó vào phần cài đặt dùng chung, và chỉ đọc thư mục.
 
 ## ccam hỗ trợ những hệ điều hành nào?
 
@@ -53,4 +53,4 @@ Khởi động Claude Code thông qua ccam tốn thêm khoảng 4 mili giây, đ
 
 ## Làm sao để gỡ cài đặt ccam?
 
-Xóa `ccam` và các liên kết `claude1`… khỏi `~/.local/bin`, sau đó xóa `~/.config/ccam`, `~/.local/share/ccam` và `~/.local/state/ccam` nếu bạn không còn cần các tài khoản. Xem [cài đặt](/docs/install#uninstall).
+Xóa lệnh tắt của từng tài khoản bằng `ccam shortcut <account> --remove`, xóa `ccam` khỏi `~/.local/bin`, sau đó xóa `~/.config/ccam`, `~/.local/share/ccam` và `~/.local/state/ccam` nếu bạn không còn cần các tài khoản. Xem [cài đặt](/docs/install#uninstall).

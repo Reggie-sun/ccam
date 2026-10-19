@@ -4,7 +4,7 @@ description: Cara ccam membagikan server MCP, settings.json, CLAUDE.md, agen, sk
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: e4b31e5098e3
+sourceHash: ccbb2c5e97bc
 ---
 
 Setiap akun menyimpan login-nya sendiri. Semua hal lain dapat dibagikan per item: ccam menautkan file atau folder milik akun ke folder grup bersama, sehingga perubahan yang dibuat di satu akun muncul di semua akun dalam grup tersebut.
@@ -53,6 +53,57 @@ ccam share work --history off
 ```
 
 Tautan dihapus dan akun mendapatkan salinannya sendiri dari isi grup saat ini. Tambahkan `--fresh` untuk memulai dari kosong. Grup tetap menyimpan isinya untuk akun-akun lain.
+
+## Menyalin penyiapan yang sudah ada
+
+Jika Anda sudah memakai Claude Code sebelum ccam, pengaturan Anda ada di `~/.claude`. `ccam migrate` menyalinnya ke sebuah grup, sehingga setiap akun yang membagikan item tersebut mendapatkannya:
+
+```sh
+ccam migrate
+```
+
+Yang disalin:
+
+- `settings.json` dan `CLAUDE.md` global;
+- ekstensi `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/`, dan `rules/`;
+- server MCP pengguna Anda, yaitu entri `mcpServers` di `~/.claude.json`, ke `mcp.json` milik grup;
+- riwayat percakapan (`projects/` dan `history.jsonl`), tetapi hanya jika Anda menambahkan `--history`.
+
+Folder sumber hanya dibaca: tidak ada isinya yang dipindahkan, ditautkan, atau diubah, dan `claude` biasa tetap berfungsi seperti sebelumnya. File login `.credentials.json` dan `.claude.json` tidak pernah disalin.
+
+Sebelum menyalin apa pun, ccam menampilkan rencananya dan meminta persetujuan:
+
+```console
+$ ccam migrate
+Copy from /home/me/.claude into group default (/home/me/.local/share/ccam/groups/default):
+  mcp         ~/.claude.json  new: context7, fs
+  settings    settings.json   new: 80 B
+  memory      CLAUDE.md       new: 31 B
+  extensions  agents/         add 1 file the group lacks (17 B)
+              commands/       add 1 file the group lacks (15 B)
+              skills/         add 1 file the group lacks (32 B)
+              not found, skipped: plugins/, output-styles/, rules/
+  Conversation history (projects/, history.jsonl) is not included; add --history to copy it.
+Copy these into group default? [y/N] y
+✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, commands/, skills/
+Accounts that share these through group default:
+  mcp         personal
+  settings    personal
+  memory      personal
+  extensions  personal
+```
+
+Di akhir, ccam mencantumkan akun yang membagikan setiap item melalui grup tersebut. Jika ada akun yang belum, ccam menampilkan perintah `ccam share` untuk mengaktifkan pembagian bagi akun itu.
+
+Jika grup sudah memiliki salinan file yang berbeda, ccam bertanya, sama seperti saat Anda mengaktifkan pembagian: mempertahankan salinan grup atau memakai milik Anda. `settings.json` dan file JSON lainnya juga bisa digabungkan, dan `history.jsonl` bisa digabungkan baris per baris. Salinan grup sebelumnya disimpan di `.ccam-backup/<time>/` di dalam folder grup.
+
+| Opsi | Efek |
+| --- | --- |
+| `--settings`, `--memory`, `--extensions`, `--mcp`, `--history` | Hanya menyalin item yang Anda sebutkan; tanpa opsi ini, semuanya kecuali riwayat percakapan |
+| `-g`, `--group <group>` | Menyalin ke grup ini, bukan ke `default` |
+| `-y`, `--yes` | Menyalin tanpa bertanya; jika ada file yang berbeda, mempertahankan salinan grup |
+
+Tulis `--dry-run` sebelum perintahnya, seperti `ccam --dry-run migrate`, untuk melihat rencana tanpa menyalin apa pun. Untuk menyalin dari folder lain, sebutkan foldernya: `ccam migrate ~/.claude-work --group work`.
 
 ## Server MCP
 

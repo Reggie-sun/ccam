@@ -4,7 +4,7 @@ description: ccamがログインを分けたまま、MCPサーバー、settings.
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: e4b31e5098e3
+sourceHash: ccbb2c5e97bc
 ---
 
 各アカウントはそれぞれ独自のログインを持ちます。それ以外のものは、項目ごとに共有できます。ccamはアカウントのファイルやフォルダーを共有グループのフォルダーにリンクするので、あるアカウントで行った変更が、そのグループのすべてのアカウントに反映されます。
@@ -53,6 +53,57 @@ ccam share work --history off
 ```
 
 リンクが削除され、アカウントにはグループの現在の内容のコピーが作られます。代わりに空の状態から始めたい場合は、`--fresh`を追加します。グループの内容は、ほかのアカウントのためにそのまま残ります。
+
+## 既存の環境をコピーする
+
+ccamを使う前からClaude Codeを使っていた場合、設定は`~/.claude`にあります。`ccam migrate`はそれをグループにコピーし、その項目を共有するすべてのアカウントで使えるようにします。
+
+```sh
+ccam migrate
+```
+
+コピーされるもの:
+
+- `settings.json`とグローバルの`CLAUDE.md`
+- 拡張機能の`agents/`、`commands/`、`skills/`、`plugins/`、`output-styles/`、`rules/`
+- ユーザーのMCPサーバー（`~/.claude.json`の`mcpServers`項目）。グループの`mcp.json`にコピーされます
+- 会話履歴（`projects/`と`history.jsonl`）。ただし`--history`を付けた場合だけです
+
+コピー元のフォルダーは読み取るだけです。中のものを移動、リンク、変更することはなく、通常の`claude`もこれまでどおり動作します。ログインファイルの`.credentials.json`と`.claude.json`がコピーされることはありません。
+
+ccamは、何かをコピーする前に計画を表示して確認を求めます。
+
+```console
+$ ccam migrate
+Copy from /home/me/.claude into group default (/home/me/.local/share/ccam/groups/default):
+  mcp         ~/.claude.json  new: context7, fs
+  settings    settings.json   new: 80 B
+  memory      CLAUDE.md       new: 31 B
+  extensions  agents/         add 1 file the group lacks (17 B)
+              commands/       add 1 file the group lacks (15 B)
+              skills/         add 1 file the group lacks (32 B)
+              not found, skipped: plugins/, output-styles/, rules/
+  Conversation history (projects/, history.jsonl) is not included; add --history to copy it.
+Copy these into group default? [y/N] y
+✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, commands/, skills/
+Accounts that share these through group default:
+  mcp         personal
+  settings    personal
+  memory      personal
+  extensions  personal
+```
+
+最後に、ccamは各項目をそのグループで共有しているアカウントを一覧表示します。共有していないアカウントがあれば、そのアカウントで共有を有効にする`ccam share`コマンドを表示します。
+
+グループにすでに内容の異なるファイルがある場合、ccamは共有を有効にするときと同じように、グループのものを残すか、自分のものを使うかを尋ねます。`settings.json`などのJSONファイルはマージすることもでき、`history.jsonl`は行単位でマージできます。グループの以前のファイルは、グループのフォルダー内の`.ccam-backup/<time>/`に保存されます。
+
+| オプション | 効果 |
+| --- | --- |
+| `--settings`、`--memory`、`--extensions`、`--mcp`、`--history` | 指定した項目だけをコピーします。指定しない場合は、会話履歴以外のすべてをコピーします |
+| `-g`、`--group <group>` | `default`の代わりに、このグループにコピーします |
+| `-y`、`--yes` | 確認なしでコピーします。内容が異なるファイルは、グループのものを残します |
+
+`ccam --dry-run migrate`のようにコマンドの前に`--dry-run`を付けると、何もコピーせずに計画だけを確認できます。別のフォルダーからコピーするには、`ccam migrate ~/.claude-work --group work`のようにフォルダーを指定します。
 
 ## MCPサーバー
 

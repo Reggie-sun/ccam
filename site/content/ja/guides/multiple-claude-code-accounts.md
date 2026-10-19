@@ -4,7 +4,7 @@ description: CLAUDE_CONFIG_DIRを使い、シェルエイリアスで手動で�
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: e2fbee9f4f91
+sourceHash: 6a4b7d961e10
 ---
 
 Claude Codeで複数アカウントを使うには、各アカウントに専用の設定フォルダーを割り当てます。Claude Codeは`CLAUDE_CONFIG_DIR`環境変数からフォルダーを読み取り、各フォルダーにはそれぞれのログイン、設定、履歴が保存されます。シェルエイリアスを使って手動で設定することも、ccamに任せることもできます。
@@ -34,12 +34,12 @@ ccamは同じ考え方を自動化し、足りない部分を補います。
 ```sh
 curl -fsSL https://ccam.dev/install.sh | sh
 ccam add personal
-ccam add work
+ccam add work --shortcut ccwork
 ```
 
-これで、`claude1`と`claude2`、または`ccam personal`と`ccam work`で2つのアカウントを起動できます。これらはエイリアスではなく実際のプログラムなので、スクリプトの中でも動作します。設定、`CLAUDE.md`、MCPサーバー、拡張機能は最初から共有されます。会話履歴の共有を有効にすれば、`ccam next --continue`でもう一方のアカウントに切り替えて会話を続けられます。
+これで、`ccam personal`と`ccam work`で2つのアカウントを起動できます。仕事用のアカウントに付けたショートカット`ccwork`でも起動できます。これらはエイリアスではなく実際のプログラムなので、スクリプトの中でも動作します。設定、`CLAUDE.md`、MCPサーバー、拡張機能は最初から共有されます。会話履歴の共有を有効にすれば、`ccam next --continue`でもう一方のアカウントに切り替えて会話を続けられます。
 
-すでに`~/.claude`を使っている場合は、そのアカウントを改めて追加する代わりに`ccam import`を実行してください。
+すでに`~/.claude`を使っている場合は、そのアカウントを改めて追加する代わりに`ccam import`を実行してください。または`ccam migrate`で、その設定、MCPサーバー、拡張機能を共有設定にコピーできます。
 
 ## どちらを選ぶか
 

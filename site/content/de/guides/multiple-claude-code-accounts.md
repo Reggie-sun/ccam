@@ -4,7 +4,7 @@ description: Mehrere Claude Code-Konten parallel mit CLAUDE_CONFIG_DIR betreiben
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: e2fbee9f4f91
+sourceHash: 6a4b7d961e10
 ---
 
 Gib jedem Konto einen eigenen Konfigurationsordner. Claude Code liest den Ordner aus der Umgebungsvariable `CLAUDE_CONFIG_DIR`, und jeder Ordner enthält seine eigene Anmeldung, Einstellungen und seinen eigenen Verlauf. Das kannst du von Hand mit einem Shell-Alias einrichten oder ccam erledigen lassen.
@@ -34,12 +34,12 @@ ccam automatisiert dieselbe Idee und ergänzt die fehlenden Teile:
 ```sh
 curl -fsSL https://ccam.dev/install.sh | sh
 ccam add personal
-ccam add work
+ccam add work --shortcut ccwork
 ```
 
-Jetzt starten `claude1` und `claude2` oder `ccam personal` und `ccam work` die beiden Konten. Weil das echte Programme und keine Aliase sind, funktionieren sie auch in Skripten. Einstellungen, `CLAUDE.md`, MCP-Server und Erweiterungen werden von Anfang an geteilt, und du kannst den geteilten Gesprächsverlauf einschalten, um ein Gespräch mit `ccam next --continue` im anderen Konto fortzusetzen.
+Jetzt starten `ccam personal` und `ccam work` die beiden Konten, ebenso `ccwork`, der Kurzbefehl, den du dem Arbeitskonto gegeben hast. Weil das echte Programme und keine Aliase sind, funktionieren sie auch in Skripten. Einstellungen, `CLAUDE.md`, MCP-Server und Erweiterungen werden von Anfang an geteilt, und du kannst den geteilten Gesprächsverlauf einschalten, um ein Gespräch mit `ccam next --continue` im anderen Konto fortzusetzen.
 
-Wenn du bereits `~/.claude` nutzt, führe `ccam import` aus, statt dieses Konto noch einmal hinzuzufügen.
+Wenn du bereits `~/.claude` nutzt, führe `ccam import` aus, statt dieses Konto noch einmal hinzuzufügen, oder `ccam migrate`, um seine Einstellungen, MCP-Server und Erweiterungen in die geteilten Einstellungen zu kopieren.
 
 ## Was du wählen solltest
 

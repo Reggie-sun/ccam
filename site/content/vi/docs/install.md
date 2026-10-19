@@ -4,7 +4,7 @@ description: "Cài đặt ccam trên Linux hoặc macOS bằng một lệnh, t�
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: fc63978e8f9e
+sourceHash: 79dc1b55e774
 ---
 
 Chạy lệnh này trong terminal trên Linux hoặc macOS:
@@ -13,7 +13,7 @@ Chạy lệnh này trong terminal trên Linux hoặc macOS:
 curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-Script tải về bản phát hành cho hệ thống của bạn, kiểm tra mã băm SHA-256 và đặt `ccam` vào `~/.local/bin`, nơi `ccam add` sau này tạo các lệnh tắt `claude1`, `claude2`, v.v. Nếu thư mục đó chưa nằm trong `PATH`, script sẽ in ra dòng cần thêm vào `~/.bashrc` hoặc `~/.zshrc`.
+Script tải về bản phát hành cho hệ thống của bạn, kiểm tra mã băm SHA-256 và đặt `ccam` vào `~/.local/bin`, nơi ccam cũng tạo các lệnh tắt mà bạn chọn sau này, chẳng hạn `ccwork`. Nếu thư mục đó chưa nằm trong `PATH`, script sẽ in ra dòng cần thêm vào `~/.bashrc` hoặc `~/.zshrc`.
 
 ccam khởi động Claude Code cho bạn, vì vậy hãy cài [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) trước và đảm bảo `claude --version` chạy được.
 
@@ -65,10 +65,12 @@ ccam doctor
 
 ## Gỡ cài đặt
 
-Xóa lệnh ccam và các lệnh tắt của tài khoản, sau đó xóa các thư mục dữ liệu nếu bạn không còn cần các tài khoản:
+Trước tiên, hãy xóa các lệnh tắt của tài khoản khi ccam vẫn còn được cài. `ccam list` hiển thị chúng trong cột Shortcut; xóa từng lệnh bằng `ccam shortcut <account> --remove`, hoặc tự xóa các liên kết đó khỏi `~/.local/bin`. Sau đó xóa lệnh ccam, và xóa các thư mục dữ liệu nếu bạn không còn cần các tài khoản:
 
 ```sh
-rm ~/.local/bin/ccam ~/.local/bin/claude[0-9]*
+ccam list
+ccam shortcut work --remove   # once for each account that has a shortcut
+rm ~/.local/bin/ccam
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
 ```
 

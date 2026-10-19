@@ -1,13 +1,13 @@
 ---
 title: ક્વિક સ્ટાર્ટ
-description: ccam add વડે બે Claude Code એકાઉન્ટ ઉમેરો, claude1, claude2 કે ccam <name> વડે તેમની વચ્ચે સ્વિચ કરો અને તેઓ શું શેર કરે તે પસંદ કરો.
+description: "ccam add વડે બે Claude Code એકાઉન્ટ ઉમેરો, તેમને ccwork જેવા શૉર્ટકટ આપો, તેમની વચ્ચે સ્વિચ કરો, અને તેઓ શું શેર કરે તે પસંદ કરો."
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 6baf0bfa5029
+sourceHash: b73914ff371f
 ---
 
-દરેક એકાઉન્ટ `ccam add` વડે ઉમેરો, પછી `claude1`, `claude2` કે `ccam <name>` વડે Claude Code શરૂ કરો. મોટા ભાગના લોકોને આટલું જ જોઈએ.
+દરેક એકાઉન્ટ `ccam add` વડે ઉમેરો, પછી `ccam <name>` વડે અથવા તમે જાતે નામ આપેલા શૉર્ટકટ, જેમ કે `ccwork`, વડે Claude Code શરૂ કરો. મોટા ભાગના લોકોને આટલું જ જોઈએ.
 
 ## 1. તમારું પહેલું એકાઉન્ટ ઉમેરો
 
@@ -15,43 +15,82 @@ sourceHash: 6baf0bfa5029
 ccam add
 ```
 
-વિઝાર્ડ `personal` કે `work` જેવું નામ પૂછે છે, અને એકાઉન્ટ તમારાં બીજાં એકાઉન્ટ સાથે કઈ વસ્તુઓ શેર કરે તે પૂછે છે. પછી તે `claude auth login` ચલાવે છે, જે બ્રાઉઝર ખોલે છે જેથી તમે સાઇન ઇન કરી શકો. તે પૂરું થાય ત્યારે તમને આ દેખાય છે:
+વિઝાર્ડ `personal` કે `work` જેવું નામ પૂછે છે, એકાઉન્ટ તમારાં બીજાં એકાઉન્ટ સાથે કઈ આઇટમ શેર કરે તે પૂછે છે, અને શૉર્ટકટ કમાન્ડ બનાવવો કે નહીં તે પણ પૂછે છે (પગલું 4 જુઓ). પછી તે `claude auth login` ચલાવે છે, જે સાઇન ઇન કરવા માટે બ્રાઉઝર ખોલે છે. પૂરું થાય ત્યારે તમને આ દેખાય છે:
 
 ```console
-✓ personal (me@example.com) added — shortcut: claude1
+✓ personal (me@example.com) added
+  no shortcut (add one with `ccam shortcut personal ccpersonal`)
 ```
 
 ccam પોતાના સંદેશા અંગ્રેજીમાં છાપે છે; કમાન્ડ અને ઓપ્શન દરેક ભાષામાં સરખા છે.
 
-## 2. બીજું એકાઉન્ટ ઉમેરો
+## 2. તમારાં હાલનાં સેટિંગ્સ લઈ આવો
+
+જો તમે પહેલાં Claude Code વાપર્યું હોય, તો તમારાં સેટિંગ્સ, `CLAUDE.md`, એક્સટેન્શન્સ અને MCP સર્વર `~/.claude` માં છે. દરેક એકાઉન્ટને તે મળે એ માટે તેમને શેર કરેલાં સેટિંગ્સમાં કૉપિ કરો:
+
+```sh
+ccam migrate
+```
+
+ccam પહેલાં બતાવે છે કે તે શું કૉપિ કરશે, અને પછી પૂછે છે. તે `~/.claude` ને ફક્ત વાંચે છે, ક્યારેય લૉગિન કૉપિ કરતું નથી, અને તમે `--history` ન ઉમેરો ત્યાં સુધી વાતચીતનો ઇતિહાસ છોડી દે છે. વિગતો માટે [હાલનું સેટઅપ કૉપિ કરવું](/docs/sharing#copy-an-existing-setup) જુઓ.
+
+## 3. બીજું એકાઉન્ટ ઉમેરો
 
 ```sh
 ccam add work
 ```
 
-બ્રાઉઝરમાં બીજા એકાઉન્ટથી સાઇન ઇન કરો. તે `claude2` બને છે.
+બ્રાઉઝરમાં બીજા એકાઉન્ટથી સાઇન ઇન કરો.
 
-## 3. સ્વિચ કરો
+## 4. એકાઉન્ટ સ્વિચ કરો
 
-આમાંથી કોઈ પણ કમાન્ડ work એકાઉન્ટ તરીકે Claude Code શરૂ કરે છે:
+`ccam work` Claude Code ને work એકાઉન્ટ તરીકે શરૂ કરે છે. એનાથી ટૂંકું કંઈક જોઈએ, તો એકાઉન્ટને તેનો પોતાનો શૉર્ટકટ કમાન્ડ આપો, જેમ કે `ccwork`. શેર કરવાની આઇટમ પછી વિઝાર્ડ પૂછે છે:
+
+```console
+ Create a shortcut command for work? [y/N]
+ A command such as ccwork that opens Claude Code as this account.
+```
+
+`y` દબાવો, પછી નામ ટાઇપ કરો, અથવા સૂચવેલું નામ વાપરવા Enter દબાવો:
+
+```console
+ Shortcut name [ccwork]: █
+ a-z, 0-9, '.', '-' and '_'; Enter alone uses ccwork
+```
+
+લૉગિન પછી ccam તેની પુષ્ટિ કરે છે:
+
+```console
+✓ work (work@example.com) added
+  shortcut: ccwork
+```
+
+જો તમે આ પ્રશ્ન છોડી દીધો હોય, તો ગમે ત્યારે શૉર્ટકટ ઉમેરી શકો છો:
+
+```console
+$ ccam shortcut work ccwork
+✓ shortcut for work: ccwork
+```
+
+હવે આમાંથી કોઈ પણ કમાન્ડ Claude Code ને work એકાઉન્ટ તરીકે શરૂ કરે છે:
 
 ```sh
-claude2
+ccwork
 ccam work
 ccam 2
 ```
 
-એકાઉન્ટના નામ પછીનું બધું કોઈ ફેરફાર વગર Claude Code ને જાય છે, તેથી તમે જાણીતા ઓપ્શન વાપરવાનું ચાલુ રાખી શકો છો:
-
-```sh
-ccam work --resume
-ccam work -p "fix the failing test" --output-format json
-cat error.log | claude2 -p "what caused this?"
-```
-
 ફક્ત `ccam` ચલાવવાથી એક પસંદગી મેનૂ ખૂલે છે: એરો કી અને Enter વાપરો, અથવા એકાઉન્ટનો નંબર દબાવો.
 
-## 4. શું શેર કરવું તે પસંદ કરો
+શૉર્ટકટ કે એકાઉન્ટના નામ પછીનું બધું કોઈ ફેરફાર વગર Claude Code ને જાય છે, તેથી તમે જાણીતા ઓપ્શન્સ જ વાપરતા રહો છો:
+
+```sh
+ccwork --resume
+ccam work -p "fix the failing test" --output-format json
+cat error.log | ccwork -p "what caused this?"
+```
+
+## 5. શું શેર કરવું તે પસંદ કરો
 
 ડિફૉલ્ટ રીતે MCP સર્વર, `settings.json`, ગ્લોબલ `CLAUDE.md`, અને agents, commands, skills અને plugins એકાઉન્ટ વચ્ચે શેર થાય છે. વાતચીતનો ઇતિહાસ શેર થતો નથી. જો તમે એકાઉન્ટ વચ્ચે વાતચીત ચાલુ રાખવા માગતા હો, તો બંને એકાઉન્ટ માટે તે ચાલુ કરો:
 
@@ -62,7 +101,7 @@ ccam share work --history on
 
 કંઈ પણ બદલતાં પહેલાં ccam બતાવે છે કે તે શું ખસેડશે. વિગતો માટે [શેરિંગ](/docs/sharing) જુઓ.
 
-## 5. જ્યારે એકાઉન્ટ તેની મર્યાદા સુધી પહોંચે
+## 6. જ્યારે એકાઉન્ટ તેની મર્યાદા સુધી પહોંચે
 
 ```sh
 ccam usage

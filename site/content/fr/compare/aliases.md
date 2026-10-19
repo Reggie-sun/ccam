@@ -4,7 +4,7 @@ description: "Alias shell avec CLAUDE_CONFIG_DIR ou ccam pour utiliser plusieurs
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: 13da69070650
+sourceHash: f751716e46c9
 ---
 
 Un alias shell par compte est le moyen le plus simple d'utiliser plusieurs comptes Claude Code. ccam fait la même chose en interne et ajoute le partage, le changement de compte et le suivi de l'utilisation.
@@ -13,7 +13,7 @@ Un alias shell par compte est le moyen le plus simple d'utiliser plusieurs compt
 | --- | --- | --- |
 | Connexions séparées | Oui | Oui |
 | Configuration par compte | Modifier `~/.bashrc`, se connecter | `ccam add` |
-| Fonctionne dans les scripts et d'autres programmes | Non, les alias n'existent que dans le shell | Oui, `claude2` est une vraie commande |
+| Fonctionne dans les scripts et d'autres programmes | Non, les alias n'existent que dans le shell | Oui, `ccam work` et les raccourcis comme `ccwork` sont de vraies commandes |
 | Paramètres, `CLAUDE.md` et extensions partagés | Copie ou lien à la main | Élément par élément, avec sauvegardes |
 | Serveurs MCP partagés | À la main, compte par compte | `ccam mcp add` une seule fois |
 | Poursuivre une conversation dans un autre compte | Non | `ccam next --continue` |

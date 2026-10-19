@@ -4,7 +4,7 @@ description: Usa varias cuentas de Claude Code en paralelo con CLAUDE_CONFIG_DIR
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: e2fbee9f4f91
+sourceHash: 6a4b7d961e10
 ---
 
 Dale a cada cuenta su propia carpeta de configuración. Claude Code lee la carpeta de la variable de entorno `CLAUDE_CONFIG_DIR`, y cada carpeta guarda su propio inicio de sesión, configuración e historial. Puedes configurar varias cuentas de Claude Code a mano con un alias del shell o dejar que ccam lo haga.
@@ -34,12 +34,12 @@ ccam automatiza la misma idea y agrega las partes que faltan:
 ```sh
 curl -fsSL https://ccam.dev/install.sh | sh
 ccam add personal
-ccam add work
+ccam add work --shortcut ccwork
 ```
 
-Ahora `claude1` y `claude2`, o `ccam personal` y `ccam work`, inician las dos cuentas. Como son programas reales y no alias, también funcionan en scripts. La configuración, `CLAUDE.md`, los servidores MCP y las extensiones se comparten desde el principio, y puedes activar el historial de conversaciones compartido para continuar una conversación en la otra cuenta con `ccam next --continue`.
+Ahora `ccam personal` y `ccam work` inician las dos cuentas, y también `ccwork`, el atajo que le diste a la cuenta work. Como son programas reales y no alias, también funcionan en scripts. La configuración, `CLAUDE.md`, los servidores MCP y las extensiones se comparten desde el principio, y puedes activar el historial de conversaciones compartido para continuar una conversación en la otra cuenta con `ccam next --continue`.
 
-Si ya usas `~/.claude`, ejecuta `ccam import` en lugar de volver a agregar esa cuenta.
+Si ya usas `~/.claude`, ejecuta `ccam import` en lugar de volver a agregar esa cuenta, o `ccam migrate` para copiar su configuración, sus servidores MCP y sus extensiones a la configuración compartida.
 
 ## Cuál elegir
 

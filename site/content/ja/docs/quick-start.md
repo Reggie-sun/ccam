@@ -1,13 +1,13 @@
 ---
 title: クイックスタート
-description: ccam addで2つのClaude Codeアカウントを追加し、claude1、claude2、ccam <name>で切り替え、共有する項目を選びます。
+description: ccam addで2つのClaude Codeアカウントを追加し、ccworkのようなショートカットを付けて切り替え、共有する項目を選びます。
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 6baf0bfa5029
+sourceHash: b73914ff371f
 ---
 
-`ccam add`で各アカウントを追加し、`claude1`、`claude2`、または`ccam <name>`でClaude Codeを起動します。ほとんどの人にとって、必要なのはこれだけです。
+`ccam add`で各アカウントを追加し、`ccam <name>`、または`ccwork`のように自分で名前を付けたショートカットでClaude Codeを起動します。ほとんどの人にとって、必要なのはこれだけです。
 
 ## 1. 最初のアカウントを追加する
 
@@ -15,43 +15,82 @@ sourceHash: 6baf0bfa5029
 ccam add
 ```
 
-ウィザードが、`personal`や`work`のような名前と、そのアカウントがほかのアカウントと共有する項目を尋ねます。次に`claude auth login`を実行し、サインインできるようにブラウザーを開きます。完了すると、次のように表示されます。
+ウィザードが、`personal`や`work`のような名前、そのアカウントがほかのアカウントと共有する項目、ショートカットコマンドを作成するかどうか（ステップ4を参照）を尋ねます。次に`claude auth login`を実行し、サインインできるようにブラウザーを開きます。完了すると、次のように表示されます。
 
 ```console
-✓ personal (me@example.com) added — shortcut: claude1
+✓ personal (me@example.com) added
+  no shortcut (add one with `ccam shortcut personal ccpersonal`)
 ```
 
 ccamは独自のメッセージを英語で表示します。コマンドとオプションはどの言語でも同じです。
 
-## 2. 2つ目のアカウントを追加する
+## 2. 既存の設定を引き継ぐ
+
+以前からClaude Codeを使っている場合、設定、`CLAUDE.md`、拡張機能、MCPサーバーは`~/.claude`にあります。これらを共有設定にコピーすると、すべてのアカウントで使えるようになります。
+
+```sh
+ccam migrate
+```
+
+ccamは、コピーする内容を表示してから確認を求めます。`~/.claude`は読み取るだけで、ログインは一切コピーせず、`--history`を付けない限り会話履歴も含めません。詳しくは[既存の環境をコピーする](/docs/sharing#copy-an-existing-setup)を参照してください。
+
+## 3. 2つ目のアカウントを追加する
 
 ```sh
 ccam add work
 ```
 
-ブラウザーで、もう一方のアカウントでサインインします。このアカウントが`claude2`になります。
+ブラウザーで、もう一方のアカウントでサインインします。
 
-## 3. 切り替える
+## 4. アカウントを切り替える
 
-次のどのコマンドでも、仕事用のアカウントでClaude Codeが起動します。
+`ccam work`で、仕事用のアカウントでClaude Codeが起動します。もっと短くしたい場合は、`ccwork`のような専用のショートカットコマンドをアカウントに付けます。共有する項目を選んだ後、ウィザードが次のように尋ねます。
+
+```console
+ Create a shortcut command for work? [y/N]
+ A command such as ccwork that opens Claude Code as this account.
+```
+
+`y`を押してから名前を入力するか、Enterキーを押して提案された名前を使います。
+
+```console
+ Shortcut name [ccwork]: █
+ a-z, 0-9, '.', '-' and '_'; Enter alone uses ccwork
+```
+
+ログインが終わると、ccamが結果を表示します。
+
+```console
+✓ work (work@example.com) added
+  shortcut: ccwork
+```
+
+この質問を飛ばした場合でも、いつでもショートカットを追加できます。
+
+```console
+$ ccam shortcut work ccwork
+✓ shortcut for work: ccwork
+```
+
+これで、次のどのコマンドでも、仕事用のアカウントでClaude Codeが起動します。
 
 ```sh
-claude2
+ccwork
 ccam work
 ccam 2
 ```
 
-アカウント名より後のものはすべてそのままClaude Codeに渡されるので、使い慣れたオプションをそのまま使えます。
-
-```sh
-ccam work --resume
-ccam work -p "fix the failing test" --output-format json
-cat error.log | claude2 -p "what caused this?"
-```
-
 `ccam`だけを実行すると、選択画面が開きます。矢印キーとEnterキーを使うか、アカウントの番号を押してください。
 
-## 4. 共有する項目を選ぶ
+ショートカットやアカウント名より後のものはすべてそのままClaude Codeに渡されるので、使い慣れたオプションをそのまま使えます。
+
+```sh
+ccwork --resume
+ccam work -p "fix the failing test" --output-format json
+cat error.log | ccwork -p "what caused this?"
+```
+
+## 5. 共有する項目を選ぶ
 
 デフォルトでは、MCPサーバー、`settings.json`、グローバルの`CLAUDE.md`、そしてエージェント、コマンド、スキル、プラグインがアカウント間で共有されます。会話履歴は共有されません。アカウントをまたいで会話を続けたい場合は、両方のアカウントで会話履歴の共有を有効にします。
 
@@ -62,7 +101,7 @@ ccam share work --history on
 
 ccamは、何かを変更する前に、何を移動するかを表示します。詳しくは[共有](/docs/sharing)を参照してください。
 
-## 5. アカウントが上限に達したとき
+## 6. アカウントが上限に達したとき
 
 ```sh
 ccam usage

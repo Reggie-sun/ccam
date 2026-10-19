@@ -4,7 +4,7 @@ description: 在 Linux 或 macOS 上用一個指令、.deb 套件或從原始碼
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: fc63978e8f9e
+sourceHash: 79dc1b55e774
 ---
 
 在 Linux 或 macOS 的終端機中執行：
@@ -13,7 +13,7 @@ sourceHash: fc63978e8f9e
 curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-這個腳本會下載適合你系統的發行版本，檢查其 SHA-256 總和檢查碼，並把 `ccam` 放入 `~/.local/bin`；之後 `ccam add` 會在同一個資料夾建立 `claude1`、`claude2`… 快捷指令。如果該資料夾不在你的 `PATH` 中，腳本會印出要加到 `~/.bashrc` 或 `~/.zshrc` 的那一行。
+這個腳本會下載適合你系統的發行版本，檢查其 SHA-256 總和檢查碼，並把 `ccam` 放入 `~/.local/bin`；之後你選擇的快捷指令（例如 `ccwork`）也會由 ccam 建立在這個資料夾中。如果該資料夾不在你的 `PATH` 中，腳本會印出要加到 `~/.bashrc` 或 `~/.zshrc` 的那一行。
 
 ccam 會替你啟動 Claude Code，所以請先安裝 [Claude Code](https://docs.claude.com/en/docs/claude-code/overview)，並確認 `claude --version` 可以正常執行。
 
@@ -65,10 +65,12 @@ ccam doctor
 
 ## 解除安裝
 
-移除 ccam 指令和帳號快捷指令；如果不再需要這些帳號，再移除資料資料夾：
+請趁 ccam 還在時，先移除帳號的快捷指令。`ccam list` 會在 Shortcut 欄顯示它們；用 `ccam shortcut <account> --remove` 逐一移除，或自行從 `~/.local/bin` 刪除這些連結。接著移除 ccam 指令；如果不再需要這些帳號，再移除資料資料夾：
 
 ```sh
-rm ~/.local/bin/ccam ~/.local/bin/claude[0-9]*
+ccam list
+ccam shortcut work --remove   # once for each account that has a shortcut
+rm ~/.local/bin/ccam
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
 ```
 

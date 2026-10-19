@@ -4,7 +4,7 @@ description: CLAUDE_CONFIG_DIR로 여러 Claude Code 계정을 함께 사용하�
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: e2fbee9f4f91
+sourceHash: 6a4b7d961e10
 ---
 
 계정마다 설정 폴더를 따로 두면 됩니다. Claude Code는 `CLAUDE_CONFIG_DIR` 환경 변수로 사용할 폴더를 정하며, 폴더마다 로그인 정보, 설정, 대화 내역이 따로 저장됩니다. 셸 별칭으로 직접 설정할 수도 있고, ccam에 맡길 수도 있습니다.
@@ -34,12 +34,12 @@ ccam은 같은 원리를 자동화하고, 부족한 부분을 채워 줍니다.
 ```sh
 curl -fsSL https://ccam.dev/install.sh | sh
 ccam add personal
-ccam add work
+ccam add work --shortcut ccwork
 ```
 
-이제 `claude1`과 `claude2`, 또는 `ccam personal`과 `ccam work`로 두 계정을 실행할 수 있습니다. 별칭이 아니라 실제 프로그램이므로 스크립트에서도 동작합니다. 설정, `CLAUDE.md`, MCP 서버, 확장 기능은 처음부터 공유되며, 대화 내역 공유를 켜면 `ccam next --continue`로 다른 계정에서 대화를 이어 갈 수 있습니다.
+이제 `ccam personal`과 `ccam work`로 두 계정을 실행할 수 있고, work 계정에 붙인 단축 명령 `ccwork`로도 실행할 수 있습니다. 별칭이 아니라 실제 프로그램이므로 스크립트에서도 동작합니다. 설정, `CLAUDE.md`, MCP 서버, 확장 기능은 처음부터 공유되며, 대화 내역 공유를 켜면 `ccam next --continue`로 다른 계정에서 대화를 이어 갈 수 있습니다.
 
-이미 `~/.claude`를 사용하고 있다면 그 계정을 다시 추가하지 말고 `ccam import`를 실행하세요.
+이미 `~/.claude`를 사용하고 있다면 그 계정을 다시 추가하지 말고 `ccam import`를 실행하세요. 또는 `ccam migrate`로 그 폴더의 설정, MCP 서버, 확장 기능을 공유 설정으로 복사할 수 있습니다.
 
 ## 어느 쪽을 선택할까요
 

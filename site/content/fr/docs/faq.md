@@ -4,7 +4,7 @@ description: "Réponses sur ccam, les comptes Claude Code, les limites d'utilisa
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 2be18393cbe2
+sourceHash: e07d468d453b
 ---
 
 ## ccam est-il un outil officiel d'Anthropic ?
@@ -21,7 +21,7 @@ Non. Chaque compte conserve ses propres limites. ccam les affiche et vous permet
 
 ## Comment utiliser deux comptes Claude Code sur un seul ordinateur ?
 
-Donnez à chaque compte son propre dossier de configuration avec `CLAUDE_CONFIG_DIR`. ccam le fait pour vous : exécutez `ccam add` pour chaque compte, puis lancez-les avec `claude1` et `claude2`. Le [guide](/guides/multiple-claude-code-accounts) montre aussi comment procéder à la main.
+Donnez à chaque compte son propre dossier de configuration avec `CLAUDE_CONFIG_DIR`. ccam le fait pour vous : exécutez `ccam add` pour chaque compte, puis lancez-les avec `ccam personal` et `ccam work`, ou avec des raccourcis que vous nommez vous-même, par exemple `ccwork`. Le [guide](/guides/multiple-claude-code-accounts) montre aussi comment procéder à la main.
 
 ## Comment poursuivre une conversation sur un autre compte ?
 
@@ -37,7 +37,7 @@ Dans `~/.local/share/ccam/profiles/<name>/`, un dossier par compte. Sous macOS, 
 
 ## Qu'advient-il de mon dossier ~/.claude existant ?
 
-Rien, sauf si vous exécutez `ccam import`. L'import enregistre le dossier là où il se trouve, si bien que `claude` seul et `ccam <name>` continuent d'utiliser le même compte et les mêmes paramètres.
+Rien, sauf si vous exécutez `ccam import` ou `ccam migrate`. L'import enregistre le dossier là où il se trouve, si bien que `claude` seul et `ccam <name>` continuent d'utiliser le même compte et les mêmes paramètres. `ccam migrate` copie ses paramètres, `CLAUDE.md`, ses extensions et ses serveurs MCP dans les paramètres partagés, et ne fait que lire le dossier.
 
 ## Quels systèmes ccam prend-il en charge ?
 
@@ -53,4 +53,4 @@ Lancer Claude Code via ccam ajoute environ 4 millisecondes, mesurées avec `scri
 
 ## Comment désinstaller ccam ?
 
-Supprimez `ccam` et les liens `claude1`… de `~/.local/bin`, puis `~/.config/ccam`, `~/.local/share/ccam` et `~/.local/state/ccam` si vous n'avez plus besoin des comptes. Voir [Installer ccam](/docs/install#uninstall).
+Supprimez le raccourci de chaque compte avec `ccam shortcut <account> --remove`, supprimez `ccam` de `~/.local/bin`, puis `~/.config/ccam`, `~/.local/share/ccam` et `~/.local/state/ccam` si vous n'avez plus besoin des comptes. Voir [Installer ccam](/docs/install#uninstall).

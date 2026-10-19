@@ -4,7 +4,7 @@ description: ccam'ı Linux veya macOS üzerine tek komutla, bir .deb paketinden 
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: fc63978e8f9e
+sourceHash: 79dc1b55e774
 ---
 
 Linux veya macOS üzerinde bir terminalde şunu çalıştırın:
@@ -13,7 +13,7 @@ Linux veya macOS üzerinde bir terminalde şunu çalıştırın:
 curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-Betik, sisteminize uygun sürümü indirir, SHA-256 sağlama toplamını doğrular ve `ccam` komutunu `~/.local/bin` klasörüne yerleştirir; `ccam add` daha sonra `claude1`, `claude2`… kısayollarını aynı klasörde oluşturur. Bu klasör `PATH` içinde değilse betik, `~/.bashrc` veya `~/.zshrc` dosyasına eklemeniz gereken satırı yazdırır.
+Betik, sisteminize uygun sürümü indirir, SHA-256 sağlama toplamını doğrular ve `ccam` komutunu `~/.local/bin` klasörüne yerleştirir; ccam daha sonra seçtiğiniz `ccwork` gibi kısayol komutlarını da aynı klasörde oluşturur. Bu klasör `PATH` içinde değilse betik, `~/.bashrc` veya `~/.zshrc` dosyasına eklemeniz gereken satırı yazdırır.
 
 ccam, Claude Code'u sizin için başlatır; bu nedenle önce [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) kurun ve `claude --version` komutunun çalıştığından emin olun.
 
@@ -65,10 +65,12 @@ ccam doctor
 
 ## Kaldırma
 
-Komutu ve hesap kısayollarını, ardından hesaplara artık ihtiyacınız yoksa veri klasörlerini silin:
+Önce, ccam hâlâ kuruluyken hesap kısayollarını kaldırın. `ccam list` bunları Shortcut sütununda gösterir; her birini `ccam shortcut <account> --remove` ile kaldırın ya da bu bağlantıları `~/.local/bin` içinden kendiniz silin. Ardından komutu ve hesaplara artık ihtiyacınız yoksa veri klasörlerini silin:
 
 ```sh
-rm ~/.local/bin/ccam ~/.local/bin/claude[0-9]*
+ccam list
+ccam shortcut work --remove   # once for each account that has a shortcut
+rm ~/.local/bin/ccam
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
 ```
 

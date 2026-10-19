@@ -40,6 +40,10 @@
     "usage": "ccam mcp [command]"
   },
   {
+    "key": "migrate",
+    "usage": "ccam migrate [folder]"
+  },
+  {
     "key": "next",
     "usage": "ccam next [--auto] [--continue] [-- claude args]"
   },
@@ -58,6 +62,10 @@
   {
     "key": "shims",
     "usage": "ccam shims [command]"
+  },
+  {
+    "key": "shortcut",
+    "usage": "ccam shortcut <name|number> [command]"
   },
   {
     "key": "statusline",

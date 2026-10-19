@@ -4,7 +4,7 @@ description: Mga sagot tungkol sa ccam, mga Claude Code account, usage limit, sh
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 2be18393cbe2
+sourceHash: e07d468d453b
 ---
 
 ## Opisyal bang tool ng Anthropic ang ccam?
@@ -21,7 +21,7 @@ Hindi. May sariling limit ang bawat account. Ipinapakita ng ccam ang mga ito at 
 
 ## Paano gumamit ng dalawang Claude Code account sa iisang computer?
 
-Bigyan ang bawat account ng sariling configuration folder gamit ang `CLAUDE_CONFIG_DIR`. Ginagawa ito ng ccam para sa iyo: patakbuhin ang `ccam add` para sa bawat account, saka simulan ang mga ito gamit ang `claude1` at `claude2`. Ipinapakita rin ng [gabay](/guides/multiple-claude-code-accounts) kung paano ito gawin nang mano-mano.
+Bigyan ang bawat account ng sariling configuration folder gamit ang `CLAUDE_CONFIG_DIR`. Ginagawa ito ng ccam para sa iyo: patakbuhin ang `ccam add` para sa bawat account, saka simulan ang mga ito gamit ang `ccam personal` at `ccam work`, o gamit ang mga shortcut na ikaw mismo ang nagpangalan, gaya ng `ccwork`. Ipinapakita rin ng [gabay](/guides/multiple-claude-code-accounts) kung paano ito gawin nang mano-mano.
 
 ## Paano ko itutuloy ang isang usapan sa ibang account?
 
@@ -37,7 +37,7 @@ Sa `~/.local/share/ccam/profiles/<name>/`, isang folder bawat account. Sa macOS,
 
 ## Ano ang mangyayari sa dati kong ~/.claude?
 
-Wala, maliban kung patakbuhin mo ang `ccam import`. Nirerehistro ng import ang folder kung nasaan ito, kaya ginagamit pa rin ng karaniwang `claude` at ng `ccam <name>` ang parehong account at settings.
+Wala, maliban kung patakbuhin mo ang `ccam import` o `ccam migrate`. Nirerehistro ng import ang folder kung nasaan ito, kaya ginagamit pa rin ng karaniwang `claude` at ng `ccam <name>` ang parehong account at settings. Kinokopya ng `ccam migrate` ang settings, `CLAUDE.md`, mga extension at MCP server nito sa shared na settings, at binabasa lang ang folder.
 
 ## Aling mga system ang suportado ng ccam?
 
@@ -53,4 +53,4 @@ Nagdadagdag ng mga 4 millisecond ang pagsisimula ng Claude Code sa pamamagitan n
 
 ## Paano i-uninstall ang ccam?
 
-Burahin ang `ccam` at ang mga link na `claude1`… mula sa `~/.local/bin`, saka ang `~/.config/ccam`, `~/.local/share/ccam` at `~/.local/state/ccam` kung hindi mo na kailangan ang mga account. Tingnan ang [install](/docs/install#uninstall).
+Alisin ang shortcut ng bawat account gamit ang `ccam shortcut <account> --remove`, burahin ang `ccam` mula sa `~/.local/bin`, saka alisin ang `~/.config/ccam`, `~/.local/share/ccam` at `~/.local/state/ccam` kung hindi mo na kailangan ang mga account. Tingnan ang [install](/docs/install#uninstall).

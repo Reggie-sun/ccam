@@ -4,7 +4,7 @@ description: உள்நுழைவுகளைத் தனியாக வ�
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: e4b31e5098e3
+sourceHash: ccbb2c5e97bc
 ---
 
 ஒவ்வொரு கணக்கும் தன் சொந்த உள்நுழைவை வைத்திருக்கும். மற்ற அனைத்தையும் உருப்படி வாரியாகப் பகிரலாம்: ccam கணக்கின் கோப்பையோ கோப்புறையையோ ஒரு பகிரப்பட்ட குழுக் கோப்புறையுடன் இணைக்கிறது, அதனால் ஒரு கணக்கில் செய்யும் மாற்றம் அந்தக் குழுவின் எல்லாக் கணக்குகளிலும் தெரியும்.
@@ -53,6 +53,57 @@ ccam share work --history off
 ```
 
 இணைப்பு நீக்கப்பட்டு, குழுவின் தற்போதைய உள்ளடக்கத்தின் சொந்த நகல் கணக்குக்குக் கிடைக்கும். அதற்குப் பதிலாகக் காலியாகத் தொடங்க `--fresh` சேருங்கள். மற்ற கணக்குகளுக்காகக் குழு அதன் உள்ளடக்கத்தை வைத்திருக்கும்.
+
+## ஏற்கெனவே உள்ள அமைப்பை நகலெடுங்கள்
+
+ccam-க்கு முன்பே நீங்கள் Claude Code பயன்படுத்தியிருந்தால், உங்கள் அமைப்புகள் `~/.claude`-இல் இருக்கும். `ccam migrate` அவற்றை ஒரு குழுவுக்குள் நகலெடுக்கிறது, அதனால் அந்த உருப்படிகளைப் பகிரும் ஒவ்வொரு கணக்குக்கும் அவை கிடைக்கும்:
+
+```sh
+ccam migrate
+```
+
+அது நகலெடுப்பவை:
+
+- `settings.json` மற்றும் உலகளாவிய `CLAUDE.md`;
+- நீட்டிப்புகள் `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/`, `rules/`;
+- உங்கள் பயனர் MCP சர்வர்கள், அதாவது `~/.claude.json`-இன் `mcpServers` பதிவு, குழுவின் `mcp.json`-க்குள்;
+- உரையாடல் வரலாறு (`projects/` மற்றும் `history.jsonl`), ஆனால் நீங்கள் `--history` சேர்த்தால் மட்டுமே.
+
+மூலக் கோப்புறை படிக்கப்பட மட்டுமே செய்யும்: அதிலுள்ள எதுவும் நகர்த்தப்படவோ, இணைக்கப்படவோ, மாற்றப்படவோ மாட்டாது, வெறும் `claude` முன்பு போலவே வேலை செய்யும். உள்நுழைவுக் கோப்புகளான `.credentials.json` மற்றும் `.claude.json` ஒருபோதும் நகலெடுக்கப்படாது.
+
+எதையும் நகலெடுக்கும் முன், ccam திட்டத்தை அச்சிட்டு உங்களிடம் கேட்கும்:
+
+```console
+$ ccam migrate
+Copy from /home/me/.claude into group default (/home/me/.local/share/ccam/groups/default):
+  mcp         ~/.claude.json  new: context7, fs
+  settings    settings.json   new: 80 B
+  memory      CLAUDE.md       new: 31 B
+  extensions  agents/         add 1 file the group lacks (17 B)
+              commands/       add 1 file the group lacks (15 B)
+              skills/         add 1 file the group lacks (32 B)
+              not found, skipped: plugins/, output-styles/, rules/
+  Conversation history (projects/, history.jsonl) is not included; add --history to copy it.
+Copy these into group default? [y/N] y
+✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, commands/, skills/
+Accounts that share these through group default:
+  mcp         personal
+  settings    personal
+  memory      personal
+  extensions  personal
+```
+
+இறுதியில், குழு வழியாக ஒவ்வொரு உருப்படியையும் பகிரும் கணக்குகளை ccam பட்டியலிடும். சில கணக்குகள் பகிரவில்லை என்றால், அவற்றுக்குப் பகிர்வை இயக்கும் `ccam share` கட்டளைகளை அது அச்சிடும்.
+
+குழுவிடம் ஏற்கெனவே ஒரு கோப்பின் வேறுபட்ட நகல் இருந்தால், பகிர்வை இயக்கும்போது கேட்பது போலவே ccam கேட்கும்: குழுவின் நகலை வைத்துக்கொள்வதா, உங்களுடையதைப் பயன்படுத்துவதா. `settings.json` மற்றும் பிற JSON கோப்புகளை ஒன்றிணைக்கவும் முடியும், `history.jsonl`-ஐ வரி வரியாக ஒன்றிணைக்கலாம். குழுவின் முந்தைய நகல்கள் குழுக் கோப்புறைக்குள் `.ccam-backup/<time>/`-இல் சேமிக்கப்படும்.
+
+| Option | விளைவு |
+| --- | --- |
+| `--settings`, `--memory`, `--extensions`, `--mcp`, `--history` | நீங்கள் குறிப்பிடும் உருப்படிகளை மட்டும் நகலெடுக்கும்; அவை இல்லாவிட்டால், உரையாடல் வரலாற்றைத் தவிர அனைத்தும் |
+| `-g`, `--group <group>` | `default`-க்குப் பதிலாக இந்தக் குழுவுக்குள் நகலெடுக்கும் |
+| `-y`, `--yes` | கேட்காமல் நகலெடுக்கும்; ஒரு கோப்பு வேறுபட்டால், குழுவின் நகலை வைத்திருக்கும் |
+
+எதையும் நகலெடுக்காமல் திட்டத்தை மட்டும் பார்க்க, `ccam --dry-run migrate` என்பதில் உள்ளது போல, கட்டளைக்கு முன் `--dry-run` வையுங்கள். வேறொரு கோப்புறையிலிருந்து நகலெடுக்க, அதன் பெயரைக் கொடுங்கள்: `ccam migrate ~/.claude-work --group work`.
 
 ## MCP சர்வர்கள்
 

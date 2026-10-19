@@ -4,7 +4,7 @@ description: Linux அல்லது macOS-இல் ccam-ஐ ஒரே கட�
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: fc63978e8f9e
+sourceHash: 79dc1b55e774
 ---
 
 Linux அல்லது macOS-இல் ஒரு டெர்மினலில் இதை இயக்குங்கள்:
@@ -13,7 +13,7 @@ Linux அல்லது macOS-இல் ஒரு டெர்மினலி�
 curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-இந்த script உங்கள் கணினி அமைப்புக்கான வெளியீட்டைப் பதிவிறக்கி, அதன் SHA-256 checksum-ஐச் சரிபார்த்து, `ccam`-ஐ `~/.local/bin`-இல் வைக்கிறது; பின்னர் `ccam add` அதே கோப்புறையில் `claude1`, `claude2`… குறுக்குவழிகளை உருவாக்கும். அந்தக் கோப்புறை உங்கள் `PATH`-இல் இல்லையென்றால், `~/.bashrc` அல்லது `~/.zshrc`-இல் சேர்க்க வேண்டிய வரியை script அச்சிடும்.
+இந்த script உங்கள் கணினி அமைப்புக்கான வெளியீட்டைப் பதிவிறக்கி, அதன் SHA-256 checksum-ஐச் சரிபார்த்து, `ccam`-ஐ `~/.local/bin`-இல் வைக்கிறது; பின்னர் நீங்கள் தேர்ந்தெடுக்கும் `ccwork` போன்ற குறுக்குவழிக் கட்டளைகளையும் ccam அதே கோப்புறையில் உருவாக்கும். அந்தக் கோப்புறை உங்கள் `PATH`-இல் இல்லையென்றால், `~/.bashrc` அல்லது `~/.zshrc`-இல் சேர்க்க வேண்டிய வரியை script அச்சிடும்.
 
 ccam உங்களுக்காக Claude Code-ஐத் தொடங்குகிறது, அதனால் முதலில் [Claude Code](https://docs.claude.com/en/docs/claude-code/overview)-ஐ நிறுவி, `claude --version` வேலை செய்கிறதா என்று உறுதிசெய்யுங்கள்.
 
@@ -65,10 +65,12 @@ Claude Code கண்டறியப்படுகிறதா, ஒவ்வொ
 
 ## நீக்குதல்
 
-கட்டளையையும் கணக்குக் குறுக்குவழிகளையும் நீக்குங்கள். கணக்குகள் இனி தேவையில்லை என்றால், பிறகு தரவுக் கோப்புறைகளையும் நீக்குங்கள்:
+ccam நிறுவப்பட்டிருக்கும்போதே முதலில் கணக்குக் குறுக்குவழிகளை நீக்குங்கள். `ccam list` அவற்றை Shortcut நெடுவரிசையில் காட்டும்; ஒவ்வொன்றையும் `ccam shortcut <account> --remove` மூலம் நீக்குங்கள், அல்லது அந்த இணைப்புகளை `~/.local/bin`-இலிருந்து நீங்களே நீக்குங்கள். பிறகு கட்டளையை நீக்குங்கள், கணக்குகள் இனி தேவையில்லை என்றால் தரவுக் கோப்புறைகளையும் நீக்குங்கள்:
 
 ```sh
-rm ~/.local/bin/ccam ~/.local/bin/claude[0-9]*
+ccam list
+ccam shortcut work --remove   # once for each account that has a shortcut
+rm ~/.local/bin/ccam
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
 ```
 

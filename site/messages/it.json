@@ -22,7 +22,7 @@
   },
   "landing": {
     "headline": "Più account Claude Code. Un solo terminale.",
-    "lede": "Aggiungi ogni account una sola volta. Passa da uno all'altro con claude2 o ccam work. Quando un account raggiunge il limite, prosegui nel successivo con la stessa conversazione.",
+    "lede": "Aggiungi ogni account una sola volta. Passa da uno all'altro con ccam work o con una scorciatoia come ccwork. Quando un account raggiunge il limite, prosegui nel successivo con la stessa conversazione.",
     "installLabel": "Installa su Linux o macOS",
     "thenAdd": "Poi aggiungi il tuo primo account con {command}.",
     "readDocs": "Leggi la guida rapida",
@@ -59,11 +59,11 @@
     "flow": [
       {
         "command": "ccam add work",
-        "body": "Crea una cartella di configurazione separata per l'account, apre il login di Claude nel browser e assegna all'account una scorciatoia: claude1, claude2 e così via."
+        "body": "Crea una cartella di configurazione separata per l'account, apre il login di Claude nel browser e, se vuoi, assegna all'account una scorciatoia a cui dai tu il nome, come ccwork."
       },
       {
-        "command": "claude2",
-        "also": "ccam work --resume",
+        "command": "ccam work",
+        "also": "ccwork --resume",
         "body": "Avvia Claude Code con quell'account. Tutto ciò che segue il nome arriva a Claude Code invariato, e ccam aggiunge circa 4 millisecondi prima dell'avvio."
       },
       {
@@ -109,21 +109,23 @@
   "commands": {
     "ccam": "Apre il selettore degli account",
     "name": "Avvia Claude Code con quell'account; gli argomenti vengono passati invariati",
-    "add": "Aggiunge un account: cartella di configurazione, login e scorciatoia",
+    "add": "Aggiunge un account: cartella di configurazione, login e una scorciatoia facoltativa",
     "list": "Elenca gli account",
     "use": "Imposta l'account predefinito",
     "next": "Apre l'account successivo; --continue mantiene la conversazione, --auto sceglie quello con più margine",
     "usage": "Mostra l'utilizzo su 5 ore e settimanale di tutti gli account",
     "share": "Cambia cosa condivide un account, dopo averne mostrato il piano",
     "mcp": "Gestisce i server MCP condivisi",
+    "migrate": "Copia una configurazione di Claude Code esistente (~/.claude) in un gruppo condiviso",
     "login": "Esegue di nuovo il login di un account",
     "logout": "Rimuove il login di un account",
-    "rename": "Rinomina un account e la sua scorciatoia",
+    "rename": "Rinomina un account; la sua scorciatoia mantiene il nome",
     "remove": "Rimuove un account; la sua cartella finisce nella cartella del cestino",
     "import": "Registra una cartella ~/.claude esistente dove si trova",
     "doctor": "Controlla link, permessi, login e versioni, e ripara",
     "statusline": "Mostra l'account e l'utilizzo nella riga di stato di Claude Code",
-    "shims": "Ricrea claude1…claudeN",
+    "shims": "Ricrea i link delle scorciatoie di tutti gli account",
+    "shortcut": "Mostra, crea, rinomina o rimuove la scorciatoia di un account, come ccwork",
     "completion": "Stampa il completamento per bash o zsh"
   },
   "copy": {

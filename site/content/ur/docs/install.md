@@ -4,7 +4,7 @@ description: "ccam کو Linux یا macOS پر ایک کمانڈ سے، .deb پی
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: fc63978e8f9e
+sourceHash: 79dc1b55e774
 ---
 
 Linux یا macOS پر ٹرمینل میں یہ کمانڈ چلائیں:
@@ -13,7 +13,7 @@ Linux یا macOS پر ٹرمینل میں یہ کمانڈ چلائیں:
 curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-اسکرپٹ آپ کے سسٹم کے لیے ریلیز ڈاؤن لوڈ کرتا ہے، اس کا SHA-256 چیک سم جانچتا ہے اور `ccam` کو `~/.local/bin` میں رکھتا ہے؛ بعد میں `ccam add` اسی فولڈر میں `claude1`، `claude2`… شارٹ کٹس بناتا ہے۔ اگر یہ فولڈر آپ کے `PATH` میں شامل نہیں ہے تو اسکرپٹ وہ لائن پرنٹ کرتا ہے جو `~/.bashrc` یا `~/.zshrc` میں شامل کرنی ہے۔
+اسکرپٹ آپ کے سسٹم کے لیے ریلیز ڈاؤن لوڈ کرتا ہے، اس کا SHA-256 چیک سم جانچتا ہے اور `ccam` کو `~/.local/bin` میں رکھتا ہے، جہاں ccam وہ شارٹ کٹ کمانڈز بھی بناتا ہے جو آپ بعد میں چنیں، جیسے `ccwork`۔ اگر وہ فولڈر آپ کے `PATH` میں نہیں ہے تو اسکرپٹ وہ لائن دکھاتا ہے جو `~/.bashrc` یا `~/.zshrc` میں شامل کرنی ہے۔
 
 ccam آپ کے لیے Claude Code شروع کرتا ہے، اس لیے پہلے [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) انسٹال کریں اور یقینی بنائیں کہ `claude --version` کام کرتا ہے۔
 
@@ -65,10 +65,12 @@ ccam doctor
 
 ## اَن انسٹال کرنا
 
-کمانڈ اور اکاؤنٹس کے شارٹ کٹس ہٹائیں، پھر اگر آپ کو اکاؤنٹس کی مزید ضرورت نہیں تو ڈیٹا فولڈرز بھی ہٹا دیں:
+پہلے، جب تک ccam انسٹال ہے، اکاؤنٹس کے شارٹ کٹس ہٹائیں۔ `ccam list` انہیں Shortcut کالم میں دکھاتا ہے؛ ہر ایک کو `ccam shortcut <account> --remove` سے ہٹائیں، یا وہ لنکس خود `~/.local/bin` سے حذف کریں۔ پھر کمانڈ ہٹائیں، اور اگر اکاؤنٹس کی ضرورت نہ رہی ہو تو ڈیٹا فولڈرز بھی:
 
 ```sh
-rm ~/.local/bin/ccam ~/.local/bin/claude[0-9]*
+ccam list
+ccam shortcut work --remove   # once for each account that has a shortcut
+rm ~/.local/bin/ccam
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
 ```
 

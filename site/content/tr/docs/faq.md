@@ -4,7 +4,7 @@ description: ccam, Claude Code hesapları, kullanım limitleri, paylaşım, gizl
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 2be18393cbe2
+sourceHash: e07d468d453b
 ---
 
 ## ccam resmi bir Anthropic aracı mı?
@@ -21,7 +21,7 @@ Hayır. Her hesabın kendi limitleri geçerli olmaya devam eder. ccam bu limitle
 
 ## Tek bilgisayarda iki Claude Code hesabını nasıl kullanırım?
 
-Her hesaba `CLAUDE_CONFIG_DIR` ile kendi yapılandırma klasörünü verin. ccam bunu sizin için yapar: her hesap için `ccam add` komutunu çalıştırın, ardından hesapları `claude1` ve `claude2` ile başlatın. [Kılavuz](/guides/multiple-claude-code-accounts), bunun elle nasıl yapılacağını da gösterir.
+Her hesaba `CLAUDE_CONFIG_DIR` ile kendi yapılandırma klasörünü verin. ccam bunu sizin için yapar: her hesap için `ccam add` komutunu çalıştırın, ardından hesapları `ccam personal` ve `ccam work` ile ya da adını kendiniz seçtiğiniz `ccwork` gibi kısayollarla başlatın. [Kılavuz](/guides/multiple-claude-code-accounts), bunun elle nasıl yapılacağını da gösterir.
 
 ## Bir konuşmaya başka bir hesapta nasıl devam ederim?
 
@@ -37,7 +37,7 @@ Her hesap için bir klasör olmak üzere `~/.local/share/ccam/profiles/<name>/` 
 
 ## Mevcut ~/.claude klasörüme ne olur?
 
-`ccam import` çalıştırmadığınız sürece hiçbir şey. İçe aktarma, klasörü bulunduğu yerde kaydeder; böylece düz `claude` ve `ccam <name>` aynı hesabı ve ayarları kullanmaya devam eder.
+`ccam import` veya `ccam migrate` çalıştırmadığınız sürece hiçbir şey. İçe aktarma, klasörü bulunduğu yerde kaydeder; böylece düz `claude` ve `ccam <name>` aynı hesabı ve ayarları kullanmaya devam eder. `ccam migrate` ise klasörün ayarlarını, `CLAUDE.md` dosyasını, uzantılarını ve MCP sunucularını paylaşılan ayarlara kopyalar ve klasörü yalnızca okur.
 
 ## ccam hangi sistemleri destekliyor?
 
@@ -53,4 +53,4 @@ Claude Code'u ccam üzerinden başlatmak yaklaşık 4 milisaniye ekler; bu süre
 
 ## ccam'ı nasıl kaldırırım?
 
-`ccam` komutunu ve `claude1`… bağlantılarını `~/.local/bin` içinden silin; hesaplara artık ihtiyacınız yoksa ardından `~/.config/ccam`, `~/.local/share/ccam` ve `~/.local/state/ccam` klasörlerini de silin. [Kurulum](/docs/install#uninstall) sayfasına bakın.
+Her hesabın kısayolunu `ccam shortcut <account> --remove` ile kaldırın, `ccam` komutunu `~/.local/bin` içinden silin; hesaplara artık ihtiyacınız yoksa ardından `~/.config/ccam`, `~/.local/share/ccam` ve `~/.local/state/ccam` klasörlerini de silin. [Kurulum](/docs/install#uninstall) sayfasına bakın.

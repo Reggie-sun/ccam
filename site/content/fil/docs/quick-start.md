@@ -1,13 +1,13 @@
 ---
 title: Quick start
-description: Magdagdag ng dalawang Claude Code account gamit ang ccam add, lumipat sa pagitan nila gamit ang claude1, claude2 o ccam <name>, at piliin kung ano ang ishe-share nila.
+description: Magdagdag ng dalawang Claude Code account gamit ang ccam add, bigyan sila ng mga shortcut gaya ng ccwork, lumipat sa pagitan nila, at piliin kung ano ang ishe-share nila.
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 6baf0bfa5029
+sourceHash: b73914ff371f
 ---
 
-Idagdag ang bawat account gamit ang `ccam add`, saka simulan ang Claude Code gamit ang `claude1`, `claude2` o `ccam <name>`. Iyan lang ang kailangan ng karamihan.
+Idagdag ang bawat account gamit ang `ccam add`, saka simulan ang Claude Code gamit ang `ccam <name>` o ang shortcut na ikaw mismo ang nagpangalan, gaya ng `ccwork`. Iyan lang ang kailangan ng karamihan.
 
 ## 1. Idagdag ang una mong account
 
@@ -15,43 +15,82 @@ Idagdag ang bawat account gamit ang `ccam add`, saka simulan ang Claude Code gam
 ccam add
 ```
 
-Hihingin ng wizard ang isang pangalan gaya ng `personal` o `work`, at kung aling mga item ang ishe-share ng account sa iba mo pang account. Pagkatapos ay patatakbuhin nito ang `claude auth login`, na magbubukas ng browser para makapag-sign in ka. Kapag tapos na, makikita mo:
+Hihingin ng wizard ang isang pangalan gaya ng `personal` o `work`, kung aling mga item ang ishe-share ng account sa iba mo pang account, at kung gagawa ng shortcut command (tingnan ang hakbang 4). Pagkatapos ay patatakbuhin nito ang `claude auth login`, na magbubukas ng browser para makapag-sign in ka. Kapag tapos na, makikita mo:
 
 ```console
-✓ personal (me@example.com) added — shortcut: claude1
+✓ personal (me@example.com) added
+  no shortcut (add one with `ccam shortcut personal ccpersonal`)
 ```
 
 Sa Ingles ipini-print ng ccam ang sarili nitong mga mensahe; pareho ang mga command at option sa bawat wika.
 
-## 2. Idagdag ang pangalawang account
+## 2. Dalhin ang dati mong settings
+
+Kung gumamit ka na ng Claude Code dati, nasa `~/.claude` ang iyong settings, `CLAUDE.md`, mga extension at MCP server. Kopyahin ang mga ito sa shared na settings para makuha ng bawat account:
+
+```sh
+ccam migrate
+```
+
+Ipapakita muna ng ccam kung ano ang kokopyahin nito at magtatanong bago magsimula. Binabasa lang nito ang `~/.claude`, hindi kailanman kinokopya ang login, at hindi isinasama ang kasaysayan ng usapan maliban kung idagdag mo ang `--history`. Tingnan ang [pagkopya ng dati nang setup](/docs/sharing#copy-an-existing-setup) para sa mga detalye.
+
+## 3. Idagdag ang pangalawang account
 
 ```sh
 ccam add work
 ```
 
-Mag-sign in gamit ang isa pang account sa browser. Ito ang magiging `claude2`.
+Mag-sign in gamit ang isa pang account sa browser.
 
-## 3. Lumipat
+## 4. Lumipat ng account
 
-Alinman sa mga ito ay magsisimula ng Claude Code bilang work account:
+Sinisimulan ng `ccam work` ang Claude Code bilang work account. Para sa mas maikli, bigyan ang account ng sarili nitong shortcut command, gaya ng `ccwork`. Pagkatapos ng mga shared na item, magtatanong ang wizard:
+
+```console
+ Create a shortcut command for work? [y/N]
+ A command such as ccwork that opens Claude Code as this account.
+```
+
+Pindutin ang `y`, saka mag-type ng pangalan, o pindutin ang Enter para gamitin ang iminungkahing pangalan:
+
+```console
+ Shortcut name [ccwork]: █
+ a-z, 0-9, '.', '-' and '_'; Enter alone uses ccwork
+```
+
+Pagkatapos ng login, kinukumpirma ito ng ccam:
+
+```console
+✓ work (work@example.com) added
+  shortcut: ccwork
+```
+
+Kung nilaktawan mo ang tanong, puwede kang magdagdag ng shortcut anumang oras:
+
+```console
+$ ccam shortcut work ccwork
+✓ shortcut for work: ccwork
+```
+
+Ngayon, alinman sa mga ito ay magsisimula ng Claude Code bilang work account:
 
 ```sh
-claude2
+ccwork
 ccam work
 ccam 2
 ```
 
-Ipinapasa nang walang pagbabago sa Claude Code ang lahat ng kasunod ng pangalan ng account, kaya patuloy mong magagamit ang mga option na alam mo na:
-
-```sh
-ccam work --resume
-ccam work -p "fix the failing test" --output-format json
-cat error.log | claude2 -p "what caused this?"
-```
-
 Kapag `ccam` lang ang pinatakbo mo, magbubukas ang isang picker: gamitin ang mga arrow key at Enter, o pindutin ang numero ng account.
 
-## 4. Piliin kung ano ang ishe-share
+Ipinapasa nang walang pagbabago sa Claude Code ang lahat ng kasunod ng shortcut o ng pangalan ng account, kaya patuloy mong magagamit ang mga option na alam mo na:
+
+```sh
+ccwork --resume
+ccam work -p "fix the failing test" --output-format json
+cat error.log | ccwork -p "what caused this?"
+```
+
+## 5. Piliin kung ano ang ishe-share
 
 Bilang default, shared sa pagitan ng mga account ang mga MCP server, `settings.json`, ang global na `CLAUDE.md`, at ang mga agent, command, skill at plugin. Hindi kasama ang kasaysayan ng usapan. I-on ito para sa parehong account kung gusto mong ituloy ang mga usapan sa pagitan nila:
 
@@ -62,7 +101,7 @@ ccam share work --history on
 
 Ipinapakita ng ccam kung ano ang ililipat nito bago ito magbago ng anuman. Tingnan ang [sharing](/docs/sharing) para sa mga detalye.
 
-## 5. Kapag naabot ng isang account ang limit nito
+## 6. Kapag naabot ng isang account ang limit nito
 
 ```sh
 ccam usage

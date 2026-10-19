@@ -22,7 +22,7 @@
   },
   "landing": {
     "headline": "Akaunti kadhaa za Claude Code. Terminal moja.",
-    "lede": "Ongeza kila akaunti mara moja. Badili kwa claude2 au ccam work. Akaunti moja ikifikia kikomo chake, endelea kwenye inayofuata na mazungumzo yale yale.",
+    "lede": "Ongeza kila akaunti mara moja. Badili kwa ccam work au njia fupi kama ccwork. Akaunti moja ikifikia kikomo chake, endelea kwenye inayofuata na mazungumzo yale yale.",
     "installLabel": "Sakinisha kwenye Linux au macOS",
     "thenAdd": "Kisha ongeza akaunti yako ya kwanza kwa {command}.",
     "readDocs": "Soma mwongozo wa kuanza haraka",
@@ -59,11 +59,11 @@
     "flow": [
       {
         "command": "ccam add work",
-        "body": "Huunda folda tofauti ya usanidi kwa ajili ya akaunti, hufungua ukurasa wa kuingia wa Claude kwenye kivinjari chako na huipa akaunti njia fupi: claude1, claude2 na kadhalika."
+        "body": "Huunda folda tofauti ya usanidi kwa ajili ya akaunti, hufungua ukurasa wa kuingia wa Claude kwenye kivinjari chako na, ukitaka, huipa akaunti njia fupi unayoipa jina mwenyewe, kama ccwork."
       },
       {
-        "command": "claude2",
-        "also": "ccam work --resume",
+        "command": "ccam work",
+        "also": "ccwork --resume",
         "body": "Huanzisha Claude Code kama akaunti hiyo. Kila kitu baada ya jina hupelekwa kwa Claude Code bila kubadilishwa, na ccam huongeza takriban milisekunde 4 kabla ya kuanza."
       },
       {
@@ -109,21 +109,23 @@
   "commands": {
     "ccam": "Fungua kichaguzi cha akaunti",
     "name": "Anzisha Claude Code kama akaunti hiyo; hoja hupitishwa bila kubadilishwa",
-    "add": "Ongeza akaunti: folda ya usanidi, kuingia na njia fupi",
+    "add": "Ongeza akaunti: folda ya usanidi, kuingia na njia fupi ya hiari",
     "list": "Orodhesha akaunti",
     "use": "Weka akaunti chaguo-msingi",
     "next": "Fungua akaunti inayofuata; --continue huhifadhi mazungumzo, --auto huchagua yenye nafasi kubwa zaidi",
     "usage": "Onyesha matumizi ya saa 5 na ya wiki ya kila akaunti",
     "share": "Badilisha kile ambacho akaunti inashiriki, baada ya kuonyesha mpango",
     "mcp": "Simamia seva za MCP zinazoshirikiwa",
+    "migrate": "Nakili usanidi uliopo wa Claude Code (~/.claude) kwenye kikundi kinachoshirikiwa",
     "login": "Ingiza akaunti tena",
     "logout": "Ondoa taarifa za kuingia za akaunti",
-    "rename": "Badilisha jina la akaunti na njia yake fupi",
+    "rename": "Badilisha jina la akaunti; njia yake fupi huhifadhi jina lake",
     "remove": "Ondoa akaunti; folda yake huhamishiwa kwenye folda ya taka",
     "import": "Sajili folda iliyopo ya ~/.claude pale ilipo",
     "doctor": "Kagua viungo, ruhusa, taarifa za kuingia na matoleo, na urekebishe",
     "statusline": "Onyesha akaunti na matumizi kwenye mstari wa hali (status line) wa Claude Code",
-    "shims": "Unda upya claude1…claudeN",
+    "shims": "Unda upya viungo vya njia fupi vya akaunti zote",
+    "shortcut": "Onyesha, unda, badilisha jina au ondoa amri ya njia fupi ya akaunti, kama ccwork",
     "completion": "Chapisha ukamilishaji wa bash au zsh"
   },
   "copy": {

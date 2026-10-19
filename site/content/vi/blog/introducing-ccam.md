@@ -4,7 +4,7 @@ description: "Vì sao có ccam, ccam làm gì cho người dùng nhiều tài kh
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: 985e2d369c34
+sourceHash: bbc9d9014f98
 ---
 
 ccam là một công cụ dòng lệnh nhỏ dành cho người dùng nhiều hơn một tài khoản Claude Code trên cùng một máy tính: một tài khoản cá nhân và một tài khoản công việc, hoặc nhiều tài khoản cho một dự án dài.
@@ -15,8 +15,8 @@ Claude Code hỗ trợ nhiều tài khoản thông qua `CLAUDE_CONFIG_DIR`: mỗ
 
 ## ccam làm gì
 
-- `ccam add` tạo thư mục, chạy bước đăng nhập và gán cho tài khoản một lệnh tắt: `claude1`, `claude2`, v.v.
-- `ccam work` và `claude2` khởi động Claude Code bằng tài khoản đó và chuyển nguyên vẹn mọi đối số.
+- `ccam add` tạo thư mục, chạy bước đăng nhập và, nếu bạn muốn, gán cho tài khoản một lệnh tắt do bạn tự đặt tên, chẳng hạn `ccwork`.
+- `ccam work` và `ccwork` khởi động Claude Code bằng tài khoản đó và chuyển nguyên vẹn mọi đối số.
 - Máy chủ MCP, cài đặt, `CLAUDE.md` và tiện ích mở rộng được dùng chung qua liên kết, theo từng mục và từng tài khoản. Thông tin đăng nhập không bao giờ được dùng chung.
 - `ccam usage` hiển thị mức sử dụng 5 giờ và hàng tuần của mọi tài khoản; `ccam next --continue` tiếp tục cuộc hội thoại ở tài khoản kế tiếp.
 

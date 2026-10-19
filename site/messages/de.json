@@ -22,7 +22,7 @@
   },
   "landing": {
     "headline": "Mehrere Claude Code-Konten. Ein Terminal.",
-    "lede": "Füge jedes Konto einmal hinzu. Wechsle mit claude2 oder ccam work. Wenn ein Konto sein Limit erreicht, machst du im nächsten mit demselben Gespräch weiter.",
+    "lede": "Füge jedes Konto einmal hinzu. Wechsle mit ccam work oder einem Kurzbefehl wie ccwork. Wenn ein Konto sein Limit erreicht, machst du im nächsten mit demselben Gespräch weiter.",
     "installLabel": "Unter Linux oder macOS installieren",
     "thenAdd": "Füge dann dein erstes Konto mit {command} hinzu.",
     "readDocs": "Zum Schnellstart",
@@ -59,11 +59,11 @@
     "flow": [
       {
         "command": "ccam add work",
-        "body": "Legt einen eigenen Konfigurationsordner für das Konto an, öffnet die Claude-Anmeldung im Browser und gibt dem Konto einen Kurzbefehl: claude1, claude2 und so weiter."
+        "body": "Legt einen eigenen Konfigurationsordner für das Konto an, öffnet die Claude-Anmeldung im Browser und gibt dem Konto auf Wunsch einen Kurzbefehl, den du selbst benennst, etwa ccwork."
       },
       {
-        "command": "claude2",
-        "also": "ccam work --resume",
+        "command": "ccam work",
+        "also": "ccwork --resume",
         "body": "Startet Claude Code mit diesem Konto. Alles nach dem Namen geht unverändert an Claude Code, und ccam braucht vor dem Start etwa 4 Millisekunden."
       },
       {
@@ -109,21 +109,23 @@
   "commands": {
     "ccam": "Kontoauswahl öffnen",
     "name": "Claude Code mit diesem Konto starten; Argumente werden unverändert weitergegeben",
-    "add": "Konto hinzufügen: Konfigurationsordner, Anmeldung und Kurzbefehl",
+    "add": "Konto hinzufügen: Konfigurationsordner, Anmeldung und optionaler Kurzbefehl",
     "list": "Konten auflisten",
     "use": "Standardkonto festlegen",
     "next": "Nächstes Konto öffnen; --continue behält das Gespräch bei, --auto wählt das mit dem meisten Spielraum",
     "usage": "5-Stunden- und Wochennutzung aller Konten anzeigen",
     "share": "Ändern, was ein Konto teilt, nachdem der Plan angezeigt wurde",
     "mcp": "Geteilte MCP-Server verwalten",
+    "migrate": "Eine vorhandene Claude Code-Einrichtung (~/.claude) in eine geteilte Gruppe kopieren",
     "login": "Ein Konto erneut anmelden",
     "logout": "Die Anmeldung eines Kontos entfernen",
-    "rename": "Ein Konto und seinen Kurzbefehl umbenennen",
+    "rename": "Ein Konto umbenennen; sein Kurzbefehl behält seinen Namen",
     "remove": "Ein Konto entfernen; sein Ordner kommt in den Papierkorbordner",
     "import": "Einen vorhandenen ~/.claude-Ordner an Ort und Stelle registrieren",
     "doctor": "Links, Berechtigungen, Anmeldungen und Versionen prüfen und reparieren",
     "statusline": "Konto und Nutzung in der Statuszeile von Claude Code anzeigen",
-    "shims": "claude1…claudeN neu erstellen",
+    "shims": "Die Kurzbefehl-Links aller Konten neu erstellen",
+    "shortcut": "Den Kurzbefehl eines Kontos, etwa ccwork, anzeigen, anlegen, umbenennen oder entfernen",
     "completion": "Vervollständigung für bash oder zsh ausgeben"
   },
   "copy": {

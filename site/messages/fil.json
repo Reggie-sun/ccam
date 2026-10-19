@@ -22,7 +22,7 @@
   },
   "landing": {
     "headline": "Maraming Claude Code account. Iisang terminal.",
-    "lede": "Idagdag nang isang beses ang bawat account. Lumipat gamit ang claude2 o ccam work. Kapag naabot ng isang account ang limit nito, ituloy sa susunod na account ang parehong usapan.",
+    "lede": "Idagdag nang isang beses ang bawat account. Lumipat gamit ang ccam work o ang isang shortcut gaya ng ccwork. Kapag naabot ng isang account ang limit nito, ituloy sa susunod na account ang parehong usapan.",
     "installLabel": "I-install sa Linux o macOS",
     "thenAdd": "Pagkatapos, idagdag ang una mong account gamit ang {command}.",
     "readDocs": "Basahin ang quick start",
@@ -59,11 +59,11 @@
     "flow": [
       {
         "command": "ccam add work",
-        "body": "Gumagawa ng hiwalay na config folder para sa account, binubuksan ang Claude login sa iyong browser at binibigyan ang account ng shortcut: claude1, claude2 at iba pa."
+        "body": "Gumagawa ng hiwalay na config folder para sa account, binubuksan ang Claude login sa iyong browser at, kung gusto mo, binibigyan ang account ng shortcut na ikaw mismo ang nagpangalan, gaya ng ccwork."
       },
       {
-        "command": "claude2",
-        "also": "ccam work --resume",
+        "command": "ccam work",
+        "also": "ccwork --resume",
         "body": "Sinisimulan ang Claude Code bilang account na iyon. Ipinapasa nang walang pagbabago sa Claude Code ang lahat ng kasunod ng pangalan, at nagdadagdag ang ccam ng mga 4 millisecond bago ito magsimula."
       },
       {
@@ -109,21 +109,23 @@
   "commands": {
     "ccam": "Buksan ang pagpili ng account",
     "name": "Simulan ang Claude Code bilang account na iyon; ipinapasa nang walang pagbabago ang mga argument",
-    "add": "Magdagdag ng account: config folder, login at shortcut",
+    "add": "Magdagdag ng account: config folder, login at opsyonal na shortcut",
     "list": "Ilista ang mga account",
     "use": "Itakda ang default na account",
     "next": "Buksan ang susunod na account; pinapanatili ng --continue ang usapan, pinipili ng --auto ang may pinakamaraming natitira",
     "usage": "Ipakita ang 5-oras at lingguhang usage ng bawat account",
     "share": "Baguhin kung ano ang ishe-share ng account, pagkatapos ipakita ang plano",
     "mcp": "Pamahalaan ang mga shared na MCP server",
+    "migrate": "Kopyahin ang dati nang Claude Code setup (~/.claude) sa isang shared na group",
     "login": "Mag-log in muli sa isang account",
     "logout": "Alisin ang login ng isang account",
-    "rename": "Palitan ang pangalan ng account at ng shortcut nito",
+    "rename": "Palitan ang pangalan ng account; hindi nagbabago ang pangalan ng shortcut nito",
     "remove": "Mag-alis ng account; mapupunta ang folder nito sa trash folder",
     "import": "Irehistro ang umiiral na ~/.claude folder kung nasaan ito",
     "doctor": "Suriin ang mga link, permission, login at bersyon, at mag-ayos",
     "statusline": "Ipakita ang account at usage sa status line ng Claude Code",
-    "shims": "Gawin muli ang claude1…claudeN",
+    "shims": "Gawin muli ang mga shortcut link ng lahat ng account",
+    "shortcut": "Ipakita, gawin, palitan ang pangalan o alisin ang shortcut command ng isang account, gaya ng ccwork",
     "completion": "I-print ang bash o zsh completion"
   },
   "copy": {

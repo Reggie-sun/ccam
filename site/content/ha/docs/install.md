@@ -4,7 +4,7 @@ description: Girka ccam a Linux ko macOS da umarni ɗaya, daga kunshin .deb, ko 
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: fc63978e8f9e
+sourceHash: 79dc1b55e774
 ---
 
 Gudanar da wannan a terminal a Linux ko macOS:
@@ -13,7 +13,7 @@ Gudanar da wannan a terminal a Linux ko macOS:
 curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-Rubutun (script) yana sauke sakin da ya dace da tsarinka, yana duba checksum ɗinsa na SHA-256, sannan yana saka `ccam` a `~/.local/bin`, inda daga baya `ccam add` ke ƙirƙirar gajerun umarnin `claude1`, `claude2` da sauransu. Idan wannan foldar ba ta cikin `PATH` ɗinka, rubutun yana buga layin da za ka ƙara a `~/.bashrc` ko `~/.zshrc`.
+Rubutun yana sauke sakin da ya dace da tsarinka, yana duba checksum na SHA-256 nasa, kuma yana sa `ccam` a `~/.local/bin`, inda ccam kuma yake ƙirƙirar gajerun umarnin da ka zaɓa daga baya, kamar `ccwork`. Idan wannan foldar ba ta cikin `PATH` naka, rubutun yana buga layin da za ka ƙara a `~/.bashrc` ko `~/.zshrc`.
 
 ccam ne ke fara maka Claude Code, don haka ka fara girka [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) kuma ka tabbata `claude --version` yana aiki.
 
@@ -65,10 +65,12 @@ ccam doctor
 
 ## Cire ccam
 
-Cire umarnin da gajerun umarnin asusai, sannan foldojin bayanai idan ba ka buƙatar asusan kuma:
+Da farko ka cire gajerun umarnin asusai, tun ccam yana nan a kwamfutarka. `ccam list` yana nuna su a ginshiƙin Shortcut; cire kowanne da `ccam shortcut <account> --remove`, ko ka goge waɗannan mahaɗai daga `~/.local/bin` da kanka. Sannan ka cire umarnin, da foldojin bayanai idan ba ka buƙatar asusan kuma:
 
 ```sh
-rm ~/.local/bin/ccam ~/.local/bin/claude[0-9]*
+ccam list
+ccam shortcut work --remove   # once for each account that has a shortcut
+rm ~/.local/bin/ccam
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
 ```
 

@@ -4,7 +4,7 @@ description: "Mọi lệnh và tùy chọn của ccam, từ ccam add và ccam <n
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 54bdfc489174
+sourceHash: 0c869c92fa63
 ---
 
 Đặt `--dry-run` trước bất kỳ lệnh nào để xem lệnh đó sẽ làm gì mà không thực sự thực hiện, ví dụ `ccam --dry-run work`.
@@ -17,13 +17,14 @@ sourceHash: 54bdfc489174
 
 `ccam` có đối số nhưng không có tên tài khoản, chẳng hạn `ccam -p "summarise"`, sẽ dùng tài khoản mặc định. Đặt tài khoản mặc định bằng `ccam use <name>`.
 
-Các lệnh tắt `claude1`, `claude2`, v.v. là liên kết đến ccam trong `~/.local/bin`. `ccam shims install --names` còn tạo thêm `claude-<name>` cho mọi tài khoản.
+Một lệnh tắt như `ccwork` khởi động tài khoản của nó theo cùng cách: `ccwork --resume` làm đúng những gì `ccam work --resume` làm. Xem [lệnh tắt](/docs/commands#shortcuts).
 
 ## Thêm và xóa tài khoản
 
 ```sh
 ccam add                      # wizard
 ccam add work --share history=on
+ccam add side --shortcut ccside
 ccam add ci --no-login        # log in later with: ccam login ci
 ccam rename work job
 ccam remove side              # folder moves to ~/.local/share/ccam/trash
@@ -31,6 +32,22 @@ ccam import ~/.claude-old --name old
 ```
 
 `ccam import` không kèm thư mục sẽ tìm `~/.claude` và `~/.claude-*` rồi hỏi bạn về từng thư mục. Các thư mục được nhập sẽ được đăng ký ngay tại chỗ; ccam không bao giờ di chuyển hay sao chép thông tin đăng nhập.
+
+## Lệnh tắt
+
+```sh
+ccam shortcut work ccwork     # create it, or rename the existing one
+ccam shortcut work            # show it
+ccam shortcut work --remove
+```
+
+Lệnh tắt là một lệnh do bạn tự đặt tên, dùng để khởi động Claude Code bằng một tài khoản. Giống như `ccam work`, nó chuyển nguyên vẹn mọi đối số cho Claude Code, nên `ccwork --resume` và `ccwork -p "hi"` hoạt động đúng như bạn mong đợi. Nó là một liên kết đến ccam trong `~/.local/bin`.
+
+Lệnh tắt là tùy chọn. Trình hướng dẫn `ccam add` hỏi bạn có muốn tạo không, `ccam add <name> --shortcut <command>` tạo luôn mà không hỏi, và `ccam list` hiển thị lệnh tắt của từng tài khoản, hoặc `-` khi không có.
+
+Tên dùng các ký tự a-z, 0-9, `.`, `-` và `_`. Tên không được trùng với một lệnh của ccam, lệnh tắt của tài khoản khác, hoặc tên của một chương trình khác trong `PATH`.
+
+`ccam rename` giữ nguyên tên lệnh tắt, còn `ccam remove` xóa lệnh tắt cùng với tài khoản. `ccam shims install` tạo lại liên kết của mọi tài khoản, chẳng hạn sau khi bạn di chuyển ccam.
 
 ## Dùng chung
 
@@ -41,6 +58,17 @@ ccam share work --settings off --fresh
 ```
 
 Mỗi mục nhận `on` (nhóm `default`), `off`, hoặc tên một nhóm. Xem [dùng chung](/docs/sharing).
+
+## Sao chép thiết lập hiện có
+
+```sh
+ccam migrate                    # ~/.claude into the default group
+ccam --dry-run migrate          # show the plan, copy nothing
+ccam migrate ~/.claude-work --group work --settings --mcp
+ccam migrate --history --yes    # conversation history only
+```
+
+`ccam migrate` sao chép `settings.json`, `CLAUDE.md`, tiện ích mở rộng và máy chủ MCP người dùng từ một thư mục Claude Code vào một nhóm, để mọi tài khoản dùng chung các mục đó đều có chúng. Thư mục chỉ được đọc. Các tùy chọn `--settings`, `--memory`, `--extensions`, `--mcp` và `--history` chỉ sao chép những mục bạn nêu; nếu không có chúng, mọi thứ trừ lịch sử hội thoại đều được sao chép. `-g` hoặc `--group` chọn nhóm, còn `-y` hoặc `--yes` sao chép mà không hỏi và giữ bản của nhóm khi một tệp khác nhau. Xem [sao chép thiết lập hiện có](/docs/sharing#copy-an-existing-setup).
 
 ## Máy chủ MCP
 
@@ -69,7 +97,7 @@ ccam next --auto
 ccam doctor          # check
 ccam doctor --fix    # repair what is safe to repair, with backups
 ccam statusline install
-ccam shims install
+ccam shims install   # recreate the shortcut links
 ```
 
 ## Tệp
@@ -80,6 +108,6 @@ ccam shims install
 | `~/.local/share/ccam/profiles/<name>/` | `CLAUDE_CONFIG_DIR` của từng tài khoản |
 | `~/.local/share/ccam/groups/<group>/` | Cài đặt, máy chủ MCP, tiện ích mở rộng và lịch sử dùng chung |
 | `~/.local/state/ccam/` | Bộ nhớ đệm mức sử dụng và thời điểm dùng gần nhất |
-| `~/.local/bin/claude1`, `claude2`… | Liên kết đến ccam |
+| `~/.local/bin/<shortcut>` | Các lệnh tắt như `ccwork`, là liên kết đến ccam |
 
 Các biến `XDG_CONFIG_HOME`, `XDG_DATA_HOME` và `XDG_STATE_HOME` dùng để đổi vị trí của các thư mục này.

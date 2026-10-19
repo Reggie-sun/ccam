@@ -4,7 +4,7 @@ description: 여러 Claude Code 계정을 쓸 때, CLAUDE_CONFIG_DIR 기반 셸 
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: 13da69070650
+sourceHash: f751716e46c9
 ---
 
 여러 Claude Code 계정을 쓰는 가장 간단한 방법은 계정마다 셸 별칭을 하나씩 만드는 것입니다. ccam도 내부적으로는 같은 방식을 쓰며, 여기에 공유, 계정 전환, 사용량 확인 기능을 더합니다.
@@ -13,7 +13,7 @@ sourceHash: 13da69070650
 | --- | --- | --- |
 | 로그인 분리 | 예 | 예 |
 | 계정별 설정 방법 | `~/.bashrc` 수정 후 로그인 | `ccam add` |
-| 스크립트와 다른 프로그램에서 사용 | 아니요(별칭은 셸에서만 동작) | 예(`claude2`는 실제 명령) |
+| 스크립트와 다른 프로그램에서 사용 | 아니요(별칭은 셸에서만 동작) | 예(`ccam work`와 `ccwork` 같은 단축 명령은 실제 명령) |
 | 설정, `CLAUDE.md`, 확장 기능 공유 | 직접 복사하거나 링크 | 항목별로 공유, 백업 포함 |
 | MCP 서버 공유 | 계정마다 직접 설정 | `ccam mcp add` 한 번 |
 | 다른 계정에서 대화 이어 가기 | 아니요 | `ccam next --continue` |

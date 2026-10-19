@@ -4,7 +4,7 @@ description: Usa più account Claude Code in parallelo con CLAUDE_CONFIG_DIR, a 
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: e2fbee9f4f91
+sourceHash: 6a4b7d961e10
 ---
 
 Per usare più account Claude Code sullo stesso computer, assegna a ogni account la propria cartella di configurazione. Claude Code legge la cartella dalla variabile d'ambiente `CLAUDE_CONFIG_DIR`, e ogni cartella contiene il proprio login, le proprie impostazioni e la propria cronologia. Puoi configurarlo a mano con un alias della shell oppure lasciarlo fare a ccam.
@@ -34,12 +34,12 @@ ccam automatizza la stessa idea e aggiunge le parti mancanti:
 ```sh
 curl -fsSL https://ccam.dev/install.sh | sh
 ccam add personal
-ccam add work
+ccam add work --shortcut ccwork
 ```
 
-Ora `claude1` e `claude2`, oppure `ccam personal` e `ccam work`, avviano i due account. Poiché sono veri programmi e non alias, funzionano anche negli script. Impostazioni, `CLAUDE.md`, server MCP ed estensioni sono condivisi fin dall'inizio, e puoi attivare la cronologia delle conversazioni condivisa per continuare una conversazione sull'altro account con `ccam next --continue`.
+Ora `ccam personal` e `ccam work` avviano i due account, e lo stesso fa `ccwork`, la scorciatoia che hai dato all'account work. Poiché sono veri programmi e non alias, funzionano anche negli script. Impostazioni, `CLAUDE.md`, server MCP ed estensioni sono condivisi fin dall'inizio, e puoi attivare la cronologia delle conversazioni condivisa per continuare una conversazione sull'altro account con `ccam next --continue`.
 
-Se usi già `~/.claude`, esegui `ccam import` invece di aggiungere di nuovo quell'account.
+Se usi già `~/.claude`, esegui `ccam import` invece di aggiungere di nuovo quell'account, oppure `ccam migrate` per copiarne le impostazioni, i server MCP e le estensioni nelle impostazioni condivise.
 
 ## Quale scegliere
 

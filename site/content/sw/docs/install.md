@@ -4,7 +4,7 @@ description: Sakinisha ccam kwenye Linux au macOS kwa amri moja, kutoka kifurush
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: fc63978e8f9e
+sourceHash: 79dc1b55e774
 ---
 
 Endesha hii kwenye terminal ya Linux au macOS:
@@ -13,7 +13,7 @@ Endesha hii kwenye terminal ya Linux au macOS:
 curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-Skripti hupakua toleo la mfumo wako, hukagua checksum yake ya SHA-256 na huweka `ccam` katika `~/.local/bin`, ambapo baadaye `ccam add` huunda njia fupi `claude1`, `claude2` na kadhalika. Ikiwa folda hiyo haipo kwenye `PATH` yako, skripti huchapisha mstari wa kuongeza kwenye `~/.bashrc` au `~/.zshrc`.
+Skripti hupakua toleo la mfumo wako, hukagua checksum yake ya SHA-256 na huweka `ccam` katika `~/.local/bin`, ambapo ccam pia huunda amri za njia fupi utakazochagua baadaye, kama `ccwork`. Ikiwa folda hiyo haiko kwenye `PATH` yako, skripti huchapisha mstari wa kuongeza kwenye `~/.bashrc` au `~/.zshrc`.
 
 ccam hukuanzishia Claude Code, kwa hiyo sakinisha [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) kwanza na uhakikishe kuwa `claude --version` inafanya kazi.
 
@@ -65,10 +65,12 @@ ccam doctor
 
 ## Ondoa ccam
 
-Ondoa amri hiyo na njia fupi za akaunti, kisha folda za data ikiwa huhitaji tena akaunti hizo:
+Kwanza ondoa njia fupi za akaunti, wakati ccam bado imesakinishwa. `ccam list` huzionyesha katika safu ya Shortcut; ondoa kila moja kwa `ccam shortcut <account> --remove`, au futa viungo hivyo kutoka `~/.local/bin` mwenyewe. Kisha ondoa amri, na folda za data ikiwa huhitaji tena akaunti hizo:
 
 ```sh
-rm ~/.local/bin/ccam ~/.local/bin/claude[0-9]*
+ccam list
+ccam shortcut work --remove   # once for each account that has a shortcut
+rm ~/.local/bin/ccam
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
 ```
 

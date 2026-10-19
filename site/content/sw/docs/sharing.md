@@ -4,7 +4,7 @@ description: Jinsi ccam inavyoshiriki seva za MCP, settings.json, CLAUDE.md, age
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: e4b31e5098e3
+sourceHash: ccbb2c5e97bc
 ---
 
 Kila akaunti huhifadhi taarifa zake za kuingia. Kila kitu kingine kinaweza kushirikiwa kipengele kwa kipengele: ccam huweka kiungo kutoka faili au folda ya akaunti kwenda folda ya kikundi kinachoshirikiwa, ili badiliko lililofanywa katika akaunti moja lionekane katika akaunti zote za kikundi hicho.
@@ -53,6 +53,57 @@ ccam share work --history off
 ```
 
 Kiungo huondolewa na akaunti hupata nakala yake yenyewe ya maudhui ya sasa ya kikundi. Ongeza `--fresh` ili kuanza ikiwa tupu badala yake. Kikundi huendelea kuhifadhi maudhui yake kwa ajili ya akaunti nyingine.
+
+## Nakili usanidi uliopo
+
+Ikiwa ulitumia Claude Code kabla ya ccam, mipangilio yako iko katika `~/.claude`. `ccam migrate` huinakili kwenye kikundi, ili kila akaunti inayoshiriki vipengele hivyo ivipate:
+
+```sh
+ccam migrate
+```
+
+Kinachonakiliwa:
+
+- `settings.json` na `CLAUDE.md` ya jumla;
+- viendelezi `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/` na `rules/`;
+- seva zako za MCP za mtumiaji, yaani kipengele `mcpServers` cha `~/.claude.json`, kwenda `mcp.json` ya kikundi;
+- historia ya mazungumzo (`projects/` na `history.jsonl`), lakini tu ukiongeza `--history`.
+
+Folda chanzo husomwa tu: hakuna kitu ndani yake kinachohamishwa, kuunganishwa au kubadilishwa, na `claude` ya kawaida inaendelea kufanya kazi kama awali. Faili za kuingia `.credentials.json` na `.claude.json` hazinakiliwi kamwe.
+
+ccam huchapisha mpango na huuliza kabla ya kunakili chochote:
+
+```console
+$ ccam migrate
+Copy from /home/me/.claude into group default (/home/me/.local/share/ccam/groups/default):
+  mcp         ~/.claude.json  new: context7, fs
+  settings    settings.json   new: 80 B
+  memory      CLAUDE.md       new: 31 B
+  extensions  agents/         add 1 file the group lacks (17 B)
+              commands/       add 1 file the group lacks (15 B)
+              skills/         add 1 file the group lacks (32 B)
+              not found, skipped: plugins/, output-styles/, rules/
+  Conversation history (projects/, history.jsonl) is not included; add --history to copy it.
+Copy these into group default? [y/N] y
+✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, commands/, skills/
+Accounts that share these through group default:
+  mcp         personal
+  settings    personal
+  memory      personal
+  extensions  personal
+```
+
+Mwishoni, ccam huorodhesha akaunti zinazoshiriki kila kipengele kupitia kikundi. Ikiwa baadhi ya akaunti hazishiriki, huchapisha amri za `ccam share` zinazowasha kushiriki kwa akaunti hizo.
+
+Kikundi kikiwa tayari na nakala tofauti ya faili, ccam huuliza, kama inavyofanya unapowasha kushiriki: kuhifadhi nakala ya kikundi au kutumia yako. `settings.json` na faili nyingine za JSON zinaweza pia kuunganishwa, na `history.jsonl` mstari kwa mstari. Nakala za awali za kikundi huhifadhiwa katika `.ccam-backup/<time>/` ndani ya folda ya kikundi.
+
+| Chaguo | Athari |
+| --- | --- |
+| `--settings`, `--memory`, `--extensions`, `--mcp`, `--history` | Nakili vipengele unavyovitaja tu; bila hivyo, kila kitu isipokuwa historia ya mazungumzo |
+| `-g`, `--group <group>` | Nakili kwenye kikundi hiki badala ya `default` |
+| `-y`, `--yes` | Nakili bila kuuliza; faili ikitofautiana, hifadhi nakala ya kikundi |
+
+Weka `--dry-run` kabla ya amri, kama katika `ccam --dry-run migrate`, ili kuona mpango bila kunakili chochote. Ili kunakili kutoka folda nyingine, itaje: `ccam migrate ~/.claude-work --group work`.
 
 ## Seva za MCP
 

@@ -22,7 +22,7 @@
   },
   "landing": {
     "headline": "Nhiều tài khoản Claude Code. Một terminal.",
-    "lede": "Thêm mỗi tài khoản một lần. Chuyển đổi bằng claude2 hoặc ccam work. Khi một tài khoản chạm giới hạn, hãy tiếp tục ở tài khoản kế tiếp với cùng cuộc hội thoại.",
+    "lede": "Thêm mỗi tài khoản một lần. Chuyển đổi bằng ccam work hoặc một lệnh tắt như ccwork. Khi một tài khoản chạm giới hạn, hãy tiếp tục ở tài khoản kế tiếp với cùng cuộc hội thoại.",
     "installLabel": "Cài đặt trên Linux hoặc macOS",
     "thenAdd": "Sau đó thêm tài khoản đầu tiên bằng {command}.",
     "readDocs": "Đọc phần bắt đầu nhanh",
@@ -59,11 +59,11 @@
     "flow": [
       {
         "command": "ccam add work",
-        "body": "Tạo một thư mục cấu hình riêng cho tài khoản, mở trang đăng nhập Claude trong trình duyệt và gán cho tài khoản một lệnh tắt: claude1, claude2, v.v."
+        "body": "Tạo một thư mục cấu hình riêng cho tài khoản, mở trang đăng nhập Claude trong trình duyệt và, nếu bạn muốn, gán cho tài khoản một lệnh tắt do bạn tự đặt tên, chẳng hạn ccwork."
       },
       {
-        "command": "claude2",
-        "also": "ccam work --resume",
+        "command": "ccam work",
+        "also": "ccwork --resume",
         "body": "Khởi động Claude Code bằng tài khoản đó. Mọi thứ sau tên tài khoản được chuyển nguyên vẹn cho Claude Code, và ccam thêm khoảng 4 mili giây trước khi Claude Code khởi động."
       },
       {
@@ -109,21 +109,23 @@
   "commands": {
     "ccam": "Mở trình chọn tài khoản",
     "name": "Khởi động Claude Code bằng tài khoản đó; các đối số được chuyển nguyên vẹn",
-    "add": "Thêm tài khoản: thư mục cấu hình, đăng nhập và lệnh tắt",
+    "add": "Thêm tài khoản: thư mục cấu hình, đăng nhập và lệnh tắt tùy chọn",
     "list": "Liệt kê các tài khoản",
     "use": "Đặt tài khoản mặc định",
     "next": "Mở tài khoản kế tiếp; --continue giữ cuộc hội thoại, --auto chọn tài khoản còn nhiều hạn mức nhất",
     "usage": "Hiển thị mức sử dụng 5 giờ và hàng tuần của mọi tài khoản",
     "share": "Thay đổi những gì một tài khoản dùng chung, sau khi hiển thị kế hoạch",
     "mcp": "Quản lý các máy chủ MCP dùng chung",
+    "migrate": "Sao chép thiết lập Claude Code hiện có (~/.claude) vào một nhóm dùng chung",
     "login": "Đăng nhập lại một tài khoản",
     "logout": "Xóa thông tin đăng nhập của một tài khoản",
-    "rename": "Đổi tên một tài khoản và lệnh tắt của nó",
+    "rename": "Đổi tên một tài khoản; lệnh tắt của nó giữ nguyên tên",
     "remove": "Xóa một tài khoản; thư mục của nó được chuyển vào thư mục thùng rác",
     "import": "Đăng ký tại chỗ một thư mục ~/.claude có sẵn",
     "doctor": "Kiểm tra liên kết, quyền truy cập, đăng nhập và phiên bản, rồi sửa chữa",
     "statusline": "Hiển thị tài khoản và mức sử dụng trên dòng trạng thái của Claude Code",
-    "shims": "Tạo lại claude1…claudeN",
+    "shims": "Tạo lại liên kết lệnh tắt của mọi tài khoản",
+    "shortcut": "Xem, tạo, đổi tên hoặc xóa lệnh tắt của một tài khoản, chẳng hạn ccwork",
     "completion": "In mã tự động hoàn thành cho bash hoặc zsh"
   },
   "copy": {

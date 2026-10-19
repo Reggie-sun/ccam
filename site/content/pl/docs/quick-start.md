@@ -1,13 +1,13 @@
 ---
 title: Szybki start
-description: Dodaj dwa konta Claude Code poleceniem ccam add, przełączaj się między nimi przez claude1, claude2 lub ccam <name> i wybierz, co mają współdzielić.
+description: Dodaj dwa konta Claude Code poleceniem ccam add, nadaj im skróty takie jak ccwork, przełączaj się między nimi i wybierz, co mają współdzielić.
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 6baf0bfa5029
+sourceHash: b73914ff371f
 ---
 
-Dodaj każde konto poleceniem `ccam add`, a potem uruchamiaj Claude Code przez `claude1`, `claude2` lub `ccam <name>`. Większości osób to wystarczy.
+Dodaj każde konto poleceniem `ccam add`, a potem uruchamiaj Claude Code przez `ccam <name>` lub przez skrót o nazwie wybranej przez ciebie, na przykład `ccwork`. Większości osób to wystarczy.
 
 ## 1. Dodaj pierwsze konto
 
@@ -15,43 +15,82 @@ Dodaj każde konto poleceniem `ccam add`, a potem uruchamiaj Claude Code przez `
 ccam add
 ```
 
-Kreator pyta o nazwę, na przykład `personal` lub `work`, oraz o to, które elementy konto ma współdzielić z pozostałymi kontami. Następnie uruchamia `claude auth login`, które otwiera przeglądarkę, żebyś mógł się zalogować. Po zakończeniu zobaczysz:
+Kreator pyta o nazwę, na przykład `personal` lub `work`, o to, które elementy konto ma współdzielić z pozostałymi kontami, oraz czy utworzyć skrót (zobacz krok 4). Następnie uruchamia `claude auth login`, które otwiera przeglądarkę, żebyś mógł się zalogować. Po zakończeniu zobaczysz:
 
 ```console
-✓ personal (me@example.com) added — shortcut: claude1
+✓ personal (me@example.com) added
+  no shortcut (add one with `ccam shortcut personal ccpersonal`)
 ```
 
 ccam wypisuje własne komunikaty po angielsku; polecenia i opcje są takie same w każdym języku.
 
-## 2. Dodaj drugie konto
+## 2. Przenieś istniejące ustawienia
+
+Jeśli używałeś już Claude Code, twoje ustawienia, `CLAUDE.md`, rozszerzenia i serwery MCP są w `~/.claude`. Skopiuj je do współdzielonych ustawień, żeby dostało je każde konto:
+
+```sh
+ccam migrate
+```
+
+ccam pokazuje, co skopiuje, i najpierw pyta o zgodę. Tylko odczytuje `~/.claude`, nigdy nie kopiuje danych logowania i pomija historię rozmów, chyba że dodasz `--history`. Szczegóły znajdziesz w części [kopiowanie istniejącej konfiguracji](/docs/sharing#copy-an-existing-setup).
+
+## 3. Dodaj drugie konto
 
 ```sh
 ccam add work
 ```
 
-Zaloguj się w przeglądarce na drugie konto. Stanie się ono kontem `claude2`.
+Zaloguj się w przeglądarce na drugie konto.
 
-## 3. Przełączanie
+## 4. Przełączanie kont
 
-Każde z tych poleceń uruchamia Claude Code jako konto służbowe:
+`ccam work` uruchamia Claude Code jako konto służbowe. Jeśli chcesz krócej, nadaj kontu własny skrót, na przykład `ccwork`. Po wyborze współdzielonych elementów kreator pyta:
+
+```console
+ Create a shortcut command for work? [y/N]
+ A command such as ccwork that opens Claude Code as this account.
+```
+
+Naciśnij `y`, a potem wpisz nazwę lub naciśnij Enter, aby użyć proponowanej:
+
+```console
+ Shortcut name [ccwork]: █
+ a-z, 0-9, '.', '-' and '_'; Enter alone uses ccwork
+```
+
+Po zalogowaniu ccam to potwierdza:
+
+```console
+✓ work (work@example.com) added
+  shortcut: ccwork
+```
+
+Jeśli pominąłeś to pytanie, skrót możesz dodać w dowolnej chwili:
+
+```console
+$ ccam shortcut work ccwork
+✓ shortcut for work: ccwork
+```
+
+Teraz każde z tych poleceń uruchamia Claude Code jako konto służbowe:
 
 ```sh
-claude2
+ccwork
 ccam work
 ccam 2
 ```
 
-Wszystko po nazwie konta trafia do Claude Code bez zmian, więc nadal używasz znanych ci opcji:
-
-```sh
-ccam work --resume
-ccam work -p "fix the failing test" --output-format json
-cat error.log | claude2 -p "what caused this?"
-```
-
 Samo `ccam` otwiera wybór konta: użyj strzałek i Enter albo naciśnij numer konta.
 
-## 4. Wybierz, co współdzielić
+Wszystko po skrócie lub nazwie konta trafia do Claude Code bez zmian, więc nadal używasz znanych opcji:
+
+```sh
+ccwork --resume
+ccam work -p "fix the failing test" --output-format json
+cat error.log | ccwork -p "what caused this?"
+```
+
+## 5. Wybierz, co współdzielić
 
 Domyślnie serwery MCP, `settings.json`, globalny `CLAUDE.md` oraz agenci, polecenia, umiejętności i wtyczki są współdzielone między kontami. Historia rozmów nie jest. Włącz ją dla obu kont, jeśli chcesz kontynuować rozmowy między nimi:
 
@@ -62,7 +101,7 @@ ccam share work --history on
 
 ccam pokazuje, co przeniesie, zanim cokolwiek zmieni. Szczegóły znajdziesz w części [współdzielenie](/docs/sharing).
 
-## 5. Gdy konto osiągnie limit
+## 6. Gdy konto osiągnie limit
 
 ```sh
 ccam usage

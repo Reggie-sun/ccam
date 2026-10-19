@@ -4,7 +4,7 @@ description: ccam 如何在 Claude Code 帳號間共用 MCP 伺服器、settings
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: e4b31e5098e3
+sourceHash: ccbb2c5e97bc
 ---
 
 每個帳號都保有自己的登入資訊。其他所有內容都可以逐項共用：ccam 會將帳號的檔案或資料夾連結到共用的群組資料夾，因此在一個帳號中所做的變更，會出現在該群組的所有帳號中。
@@ -53,6 +53,57 @@ ccam share work --history off
 ```
 
 連結會被移除，帳號會取得一份群組目前內容的副本。加上 `--fresh` 則改為從空白開始。群組會為其他帳號保留其內容。
+
+## 複製現有的設定
+
+如果你在使用 ccam 之前就用過 Claude Code，你的設定都在 `~/.claude` 中。`ccam migrate` 會把它們複製到一個群組，讓共用這些項目的每個帳號都能使用：
+
+```sh
+ccam migrate
+```
+
+它會複製：
+
+- `settings.json` 和全域 `CLAUDE.md`；
+- 擴充功能 `agents/`、`commands/`、`skills/`、`plugins/`、`output-styles/` 和 `rules/`；
+- 你的使用者 MCP 伺服器，也就是 `~/.claude.json` 中的 `mcpServers` 項目，會複製到群組的 `mcp.json`；
+- 對話記錄（`projects/` 和 `history.jsonl`），但只有在你加上 `--history` 時才會複製。
+
+來源資料夾只會被讀取：其中的內容都不會被移動、連結或變更，直接執行 `claude` 也會和以前一樣運作。登入檔案 `.credentials.json` 和 `.claude.json` 絕不會被複製。
+
+ccam 在複製任何內容之前，會先顯示計畫並詢問你：
+
+```console
+$ ccam migrate
+Copy from /home/me/.claude into group default (/home/me/.local/share/ccam/groups/default):
+  mcp         ~/.claude.json  new: context7, fs
+  settings    settings.json   new: 80 B
+  memory      CLAUDE.md       new: 31 B
+  extensions  agents/         add 1 file the group lacks (17 B)
+              commands/       add 1 file the group lacks (15 B)
+              skills/         add 1 file the group lacks (32 B)
+              not found, skipped: plugins/, output-styles/, rules/
+  Conversation history (projects/, history.jsonl) is not included; add --history to copy it.
+Copy these into group default? [y/N] y
+✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, commands/, skills/
+Accounts that share these through group default:
+  mcp         personal
+  settings    personal
+  memory      personal
+  extensions  personal
+```
+
+最後，ccam 會列出透過該群組共用每個項目的帳號。如果有帳號尚未共用，它會顯示為這些帳號開啟共用的 `ccam share` 指令。
+
+如果群組中已有內容不同的檔案，ccam 會像開啟共用時一樣詢問你：保留群組中的副本，或使用你的副本。`settings.json` 等 JSON 檔案也可以合併，`history.jsonl` 則可以逐行合併。群組原本的副本會保存在群組資料夾內的 `.ccam-backup/<time>/`。
+
+| 選項 | 作用 |
+| --- | --- |
+| `--settings`、`--memory`、`--extensions`、`--mcp`、`--history` | 只複製你指定的項目；不指定時，複製對話記錄以外的所有內容 |
+| `-g`、`--group <group>` | 複製到這個群組，而不是 `default` |
+| `-y`、`--yes` | 不詢問直接複製；檔案內容不同時保留群組中的副本 |
+
+在指令前加上 `--dry-run`，例如 `ccam --dry-run migrate`，就能只查看計畫而不複製任何內容。若要從其他資料夾複製，請指定該資料夾：`ccam migrate ~/.claude-work --group work`。
 
 ## MCP 伺服器
 

@@ -4,7 +4,7 @@ description: ccam, Claude Code खाती, वापर मर्यादा,
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 2be18393cbe2
+sourceHash: e07d468d453b
 ---
 
 ## ccam हे Anthropic चे अधिकृत टूल आहे का?
@@ -21,7 +21,7 @@ sourceHash: 2be18393cbe2
 
 ## एका कॉम्प्युटरवर दोन Claude Code खाती कशी वापरायची?
 
-`CLAUDE_CONFIG_DIR` वापरून प्रत्येक खात्याला स्वतःचा configuration फोल्डर द्या. ccam हे तुमच्यासाठी करते: प्रत्येक खात्यासाठी `ccam add` चालवा, नंतर `claude1` आणि `claude2` ने ती सुरू करा. हे हाताने कसे करायचे तेही [मार्गदर्शक](/guides/multiple-claude-code-accounts) मध्ये दाखवले आहे.
+प्रत्येक खात्याला `CLAUDE_CONFIG_DIR` द्वारे त्याचा स्वतःचा configuration फोल्डर द्या. ccam हे तुमच्यासाठी करते: प्रत्येक खात्यासाठी `ccam add` चालवा, नंतर ती `ccam personal` आणि `ccam work` ने, किंवा तुम्ही स्वतः नाव दिलेल्या शॉर्टकटने, जसे `ccwork`, सुरू करा. हे हाताने कसे करायचे तेही [मार्गदर्शकात](/guides/multiple-claude-code-accounts) दाखवले आहे.
 
 ## दुसऱ्या खात्यावर संभाषण पुढे कसे चालू ठेवायचे?
 
@@ -37,7 +37,7 @@ ccam कधीही लॉगिन कॉपी किंवा शेअर �
 
 ## माझ्या आधीच्या ~/.claude चे काय होते?
 
-तुम्ही `ccam import` चालवल्याशिवाय काहीच नाही. Import फोल्डर आहे त्याच जागी नोंदवते, त्यामुळे साधे `claude` आणि `ccam <name>` तेच खाते आणि सेटिंग्ज वापरत राहतात.
+तुम्ही `ccam import` किंवा `ccam migrate` चालवल्याशिवाय काहीच नाही. Import फोल्डर आहे तिथेच नोंदवते, त्यामुळे साधे `claude` आणि `ccam <name>` तेच खाते आणि सेटिंग्ज वापरत राहतात. `ccam migrate` त्याची सेटिंग्ज, `CLAUDE.md`, एक्स्टेंशन्स आणि MCP सर्व्हर शेअर केलेल्या सेटिंग्जमध्ये कॉपी करते आणि फोल्डर फक्त वाचते.
 
 ## ccam कोणत्या सिस्टिम्सना समर्थन देते?
 
@@ -53,4 +53,4 @@ ccam मार्फत Claude Code सुरू केल्याने सु
 
 ## ccam अनइन्स्टॉल कसे करायचे?
 
-`~/.local/bin` मधून `ccam` आणि `claude1`… लिंक्स हटवा, आणि खाती आता लागत नसतील तर `~/.config/ccam`, `~/.local/share/ccam` आणि `~/.local/state/ccam` हटवा. [इन्स्टॉल](/docs/install#uninstall) पाहा.
+प्रत्येक खात्याचा शॉर्टकट `ccam shortcut <account> --remove` ने काढा, `~/.local/bin` मधून `ccam` हटवा, नंतर खाती आता लागत नसतील तर `~/.config/ccam`, `~/.local/share/ccam` आणि `~/.local/state/ccam` काढा. [इन्स्टॉल](/docs/install#uninstall) पाहा.

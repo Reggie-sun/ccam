@@ -4,7 +4,7 @@ description: 並列比較用 CLAUDE_CONFIG_DIR 搭配 Shell 別名和使用 ccam
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: 13da69070650
+sourceHash: f751716e46c9
 ---
 
 為每個帳號設定一個 Shell 別名，是執行多個 Claude Code 帳號最簡單的方法。ccam 在底層做的是同一件事，並加上共用、切換和用量追蹤功能。
@@ -13,7 +13,7 @@ sourceHash: 13da69070650
 | --- | --- | --- |
 | 獨立的登入 | 是 | 是 |
 | 每個帳號的設定步驟 | 編輯 `~/.bashrc`，登入 | `ccam add` |
-| 可在腳本和其他程式中使用 | 否，別名只在 Shell 中有效 | 是，`claude2` 是真正的指令 |
+| 可在腳本和其他程式中使用 | 否，別名只在 Shell 中有效 | 是，`ccam work` 和 `ccwork` 這類快捷指令都是真正的指令 |
 | 共用設定、`CLAUDE.md`、擴充功能 | 手動複製或連結 | 逐項設定，並保留備份 |
 | 共用 MCP 伺服器 | 手動，每個帳號各設定一次 | 只需執行一次 `ccam mcp add` |
 | 在另一個帳號接續對話 | 否 | `ccam next --continue` |

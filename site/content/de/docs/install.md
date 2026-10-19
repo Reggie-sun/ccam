@@ -4,7 +4,7 @@ description: ccam unter Linux oder macOS mit einem Befehl, aus einem .deb-Paket 
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: fc63978e8f9e
+sourceHash: 79dc1b55e774
 ---
 
 Führe dies in einem Terminal unter Linux oder macOS aus:
@@ -13,7 +13,7 @@ Führe dies in einem Terminal unter Linux oder macOS aus:
 curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-Das Skript lädt das Release für dein System herunter, prüft seine SHA-256-Prüfsumme und legt `ccam` in `~/.local/bin` ab, wo `ccam add` später die Kurzbefehle `claude1`, `claude2` usw. anlegt. Wenn dieser Ordner nicht in deinem `PATH` liegt, gibt das Skript die Zeile aus, die du zu `~/.bashrc` oder `~/.zshrc` hinzufügen musst.
+Das Skript lädt das Release für dein System herunter, prüft seine SHA-256-Prüfsumme und legt `ccam` in `~/.local/bin` ab, wo ccam später auch die Kurzbefehle anlegt, die du wählst, etwa `ccwork`. Wenn dieser Ordner nicht in deinem `PATH` liegt, gibt das Skript die Zeile aus, die du zu `~/.bashrc` oder `~/.zshrc` hinzufügen musst.
 
 ccam startet Claude Code für dich, also installiere zuerst [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) und stelle sicher, dass `claude --version` funktioniert.
 
@@ -65,10 +65,12 @@ ccam doctor
 
 ## Deinstallieren
 
-Entferne den Befehl und die Konto-Kurzbefehle und danach die Datenordner, wenn du die Konten nicht mehr brauchst:
+Entferne zuerst die Kurzbefehle der Konten, solange ccam noch installiert ist. `ccam list` zeigt sie in der Spalte Shortcut; entferne jeden mit `ccam shortcut <account> --remove` oder lösche diese Links selbst aus `~/.local/bin`. Entferne dann den Befehl und die Datenordner, wenn du die Konten nicht mehr brauchst:
 
 ```sh
-rm ~/.local/bin/ccam ~/.local/bin/claude[0-9]*
+ccam list
+ccam shortcut work --remove   # once for each account that has a shortcut
+rm ~/.local/bin/ccam
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
 ```
 

@@ -59,11 +59,11 @@
     "flow": [
       {
         "command": "ccam add work",
-        "body": "계정 전용 설정 폴더를 만들고, 브라우저에서 Claude 로그인 화면을 연 뒤, 계정에 claude1, claude2 같은 단축 명령을 붙여 줍니다."
+        "body": "계정 전용 설정 폴더를 만들고, 브라우저에서 Claude 로그인 화면을 연 뒤, 원하면 ccwork처럼 직접 이름을 붙인 단축 명령도 만들어 줍니다."
       },
       {
-        "command": "claude2",
-        "also": "ccam work --resume",
+        "command": "ccam work",
+        "also": "ccwork --resume",
         "body": "해당 계정으로 Claude Code를 시작합니다. 이름 뒤에 쓴 내용은 모두 그대로 Claude Code에 전달되며, 시작 전에 ccam이 더하는 시간은 약 4밀리초입니다."
       },
       {
@@ -109,21 +109,23 @@
   "commands": {
     "ccam": "계정 선택 화면 열기",
     "name": "해당 계정으로 Claude Code 시작(인자는 그대로 전달)",
-    "add": "계정 추가(설정 폴더, 로그인, 단축 명령)",
+    "add": "계정 추가(설정 폴더, 로그인, 원하면 단축 명령)",
     "list": "계정 목록 보기",
     "use": "기본 계정 지정",
     "next": "다음 계정 열기(--continue: 대화 이어 가기, --auto: 여유가 가장 많은 계정 선택)",
     "usage": "모든 계정의 5시간·주간 사용량 보기",
     "share": "계정의 공유 항목 변경(변경 계획을 먼저 표시)",
     "mcp": "공유 MCP 서버 관리",
+    "migrate": "기존 Claude Code 설정(~/.claude)을 공유 그룹으로 복사",
     "login": "계정에 다시 로그인",
     "logout": "계정의 로그인 정보 삭제",
-    "rename": "계정 이름과 단축 명령 이름 변경",
+    "rename": "계정 이름 변경(단축 명령 이름은 그대로 유지)",
     "remove": "계정 삭제(폴더는 휴지통 폴더로 이동)",
     "import": "기존 ~/.claude 폴더를 옮기지 않고 그대로 등록",
     "doctor": "링크, 권한, 로그인, 버전 점검 및 복구",
     "statusline": "Claude Code 상태 표시줄에 계정과 사용량 표시",
-    "shims": "claude1…claudeN 단축 명령 다시 만들기",
+    "shims": "모든 계정의 단축 명령 링크 다시 만들기",
+    "shortcut": "계정의 단축 명령(예: ccwork) 보기, 만들기, 이름 바꾸기, 삭제",
     "completion": "bash 또는 zsh 자동완성 스크립트 출력"
   },
   "copy": {

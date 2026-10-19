@@ -22,7 +22,7 @@
   },
   "landing": {
     "headline": "Kilka kont Claude Code. Jeden terminal.",
-    "lede": "Dodaj każde konto raz. Przełączaj się poleceniem claude2 lub ccam work. Gdy jedno konto dojdzie do limitu, kontynuuj tę samą rozmowę na następnym.",
+    "lede": "Dodaj każde konto raz. Przełączaj się poleceniem ccam work lub skrótem takim jak ccwork. Gdy jedno konto dojdzie do limitu, kontynuuj tę samą rozmowę na następnym.",
     "installLabel": "Instalacja na Linux lub macOS",
     "thenAdd": "Następnie dodaj pierwsze konto poleceniem {command}.",
     "readDocs": "Przeczytaj szybki start",
@@ -59,11 +59,11 @@
     "flow": [
       {
         "command": "ccam add work",
-        "body": "Tworzy osobny folder konfiguracji dla konta, otwiera logowanie do Claude w przeglądarce i nadaje kontu skrót: claude1, claude2 i tak dalej."
+        "body": "Tworzy osobny folder konfiguracji dla konta, otwiera logowanie do Claude w przeglądarce i, jeśli chcesz, nadaje kontu skrót o nazwie wybranej przez ciebie, na przykład ccwork."
       },
       {
-        "command": "claude2",
-        "also": "ccam work --resume",
+        "command": "ccam work",
+        "also": "ccwork --resume",
         "body": "Uruchamia Claude Code jako to konto. Wszystko po nazwie trafia do Claude Code bez zmian, a ccam dodaje około 4 milisekund przed startem."
       },
       {
@@ -109,21 +109,23 @@
   "commands": {
     "ccam": "Otwórz wybór konta",
     "name": "Uruchom Claude Code jako to konto; argumenty są przekazywane bez zmian",
-    "add": "Dodaj konto: folder konfiguracji, logowanie i skrót",
+    "add": "Dodaj konto: folder konfiguracji, logowanie i opcjonalny skrót",
     "list": "Wyświetl konta",
     "use": "Ustaw domyślne konto",
     "next": "Otwórz następne konto; --continue zachowuje rozmowę, --auto wybiera konto z największym zapasem",
     "usage": "Pokaż 5-godzinne i tygodniowe użycie wszystkich kont",
     "share": "Zmień, co konto współdzieli, po pokazaniu planu",
     "mcp": "Zarządzaj współdzielonymi serwerami MCP",
+    "migrate": "Skopiuj istniejącą konfigurację Claude Code (~/.claude) do współdzielonej grupy",
     "login": "Zaloguj konto ponownie",
     "logout": "Usuń login konta",
-    "rename": "Zmień nazwę konta i jego skrótu",
+    "rename": "Zmień nazwę konta; jego skrót zachowuje swoją nazwę",
     "remove": "Usuń konto; jego folder trafia do folderu kosza",
     "import": "Zarejestruj istniejący folder ~/.claude w miejscu, w którym jest",
     "doctor": "Sprawdź linki, uprawnienia, loginy i wersje oraz napraw",
     "statusline": "Pokaż konto i użycie na pasku stanu Claude Code",
-    "shims": "Utwórz ponownie claude1…claudeN",
+    "shims": "Utwórz ponownie linki skrótów wszystkich kont",
+    "shortcut": "Pokaż, utwórz, zmień nazwę lub usuń skrót konta, na przykład ccwork",
     "completion": "Wypisz uzupełnianie dla bash lub zsh"
   },
   "copy": {

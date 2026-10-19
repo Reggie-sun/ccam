@@ -4,7 +4,7 @@ description: LinuxまたはmacOSにccamを1つのコマンドで、.debパッケ
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: fc63978e8f9e
+sourceHash: 79dc1b55e774
 ---
 
 LinuxまたはmacOSのターミナルで、次のコマンドを実行します。
@@ -13,7 +13,7 @@ LinuxまたはmacOSのターミナルで、次のコマンドを実行します�
 curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-このスクリプトは、お使いのシステム用のリリースをダウンロードしてSHA-256チェックサムを検証し、`~/.local/bin`に`ccam`を配置します。アカウントを追加すると、`ccam add`が同じフォルダーに`claude1`、`claude2`…のショートカットを作成します。そのフォルダーが`PATH`に含まれていない場合は、`~/.bashrc`または`~/.zshrc`に追加する行をスクリプトが表示します。
+このスクリプトは、お使いのシステム用のリリースをダウンロードしてSHA-256チェックサムを検証し、`~/.local/bin`に`ccam`を配置します。後から`ccwork`のようなショートカットコマンドを選ぶと、ccamは同じフォルダーにそれを作成します。そのフォルダーが`PATH`に含まれていない場合は、`~/.bashrc`または`~/.zshrc`に追加する行をスクリプトが表示します。
 
 ccamがClaude Codeを起動するので、先に[Claude Code](https://docs.claude.com/en/docs/claude-code/overview)をインストールし、`claude --version`が動作することを確認してください。
 
@@ -65,10 +65,12 @@ ccam doctor
 
 ## アンインストール
 
-コマンドとアカウントのショートカットを削除します。アカウントが不要になった場合は、データフォルダーも削除します。
+まず、ccamがインストールされているうちに、アカウントのショートカットを削除します。`ccam list`のShortcut列にショートカットが表示されます。それぞれ`ccam shortcut <account> --remove`で削除するか、`~/.local/bin`からそれらのリンクを自分で削除してください。続いてコマンドを削除し、アカウントが不要になった場合はデータフォルダーも削除します。
 
 ```sh
-rm ~/.local/bin/ccam ~/.local/bin/claude[0-9]*
+ccam list
+ccam shortcut work --remove   # once for each account that has a shortcut
+rm ~/.local/bin/ccam
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
 ```
 

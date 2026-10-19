@@ -4,7 +4,7 @@ description: 关于 ccam、Claude Code 账号、用量限制、共享、隐私�
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 2be18393cbe2
+sourceHash: e07d468d453b
 ---
 
 ## ccam 是 Anthropic 的官方工具吗？
@@ -21,7 +21,7 @@ sourceHash: 2be18393cbe2
 
 ## 如何在一台电脑上使用两个 Claude Code 账号？
 
-用 `CLAUDE_CONFIG_DIR` 为每个账号指定单独的配置文件夹。ccam 会替你完成这件事：为每个账号运行 `ccam add`，然后用 `claude1` 和 `claude2` 启动它们。[指南](/guides/multiple-claude-code-accounts)也介绍了如何手动设置。
+用 `CLAUDE_CONFIG_DIR` 为每个账号指定单独的配置文件夹。ccam 会替你完成这件事：为每个账号运行 `ccam add`，然后用 `ccam personal` 和 `ccam work`，或者你自己命名的快捷命令（例如 `ccwork`）启动它们。[指南](/guides/multiple-claude-code-accounts)也介绍了如何手动设置。
 
 ## 如何在另一个账号上继续对话？
 
@@ -37,7 +37,7 @@ ccam 从不复制或共享登录信息。它读取账号的访问令牌，只是
 
 ## 我现有的 ~/.claude 会怎样？
 
-不会有任何变化，除非你运行 `ccam import`。导入会在原位置注册该文件夹，因此直接运行 `claude` 和 `ccam <name>` 都会继续使用同一个账号和同一套设置。
+不会有任何变化，除非你运行 `ccam import` 或 `ccam migrate`。导入会在原位置注册该文件夹，因此直接运行 `claude` 和 `ccam <name>` 都会继续使用同一个账号和同一套设置。`ccam migrate` 会把其中的设置、`CLAUDE.md`、扩展和 MCP 服务器复制到共享设置中，并且只读取该文件夹。
 
 ## ccam 支持哪些系统？
 
@@ -53,4 +53,4 @@ Linux（Ubuntu、Debian、Fedora、Arch、Alpine 等）和 macOS。在 Windows �
 
 ## 如何卸载 ccam？
 
-从 `~/.local/bin` 中删除 `ccam` 和 `claude1`… 这些链接；如果不再需要这些账号，再删除 `~/.config/ccam`、`~/.local/share/ccam` 和 `~/.local/state/ccam`。参见[安装](/docs/install#uninstall)。
+用 `ccam shortcut <account> --remove` 删除每个账号的快捷命令，再从 `~/.local/bin` 中删除 `ccam`；如果不再需要这些账号，再删除 `~/.config/ccam`、`~/.local/share/ccam` 和 `~/.local/state/ccam`。参见[安装](/docs/install#uninstall)。

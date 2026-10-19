@@ -22,7 +22,7 @@
   },
   "landing": {
     "headline": "Beberapa akun Claude Code. Satu terminal.",
-    "lede": "Tambahkan setiap akun sekali saja. Berpindah dengan claude2 atau ccam work. Saat satu akun mencapai batasnya, lanjutkan di akun berikutnya dengan percakapan yang sama.",
+    "lede": "Tambahkan setiap akun sekali saja. Berpindah dengan ccam work atau pintasan seperti ccwork. Saat satu akun mencapai batasnya, lanjutkan di akun berikutnya dengan percakapan yang sama.",
     "installLabel": "Instal di Linux atau macOS",
     "thenAdd": "Lalu tambahkan akun pertama Anda dengan {command}.",
     "readDocs": "Baca panduan memulai cepat",
@@ -59,11 +59,11 @@
     "flow": [
       {
         "command": "ccam add work",
-        "body": "Membuat folder konfigurasi terpisah untuk akun tersebut, membuka login Claude di browser, dan memberi akun itu pintasan: claude1, claude2, dan seterusnya."
+        "body": "Membuat folder konfigurasi terpisah untuk akun tersebut, membuka login Claude di browser, dan jika Anda mau, memberi akun itu pintasan yang namanya Anda pilih sendiri, seperti ccwork."
       },
       {
-        "command": "claude2",
-        "also": "ccam work --resume",
+        "command": "ccam work",
+        "also": "ccwork --resume",
         "body": "Menjalankan Claude Code sebagai akun tersebut. Semua yang ada setelah nama akun diteruskan ke Claude Code tanpa diubah, dan ccam hanya menambah sekitar 4 milidetik sebelum Claude Code dimulai."
       },
       {
@@ -109,21 +109,23 @@
   "commands": {
     "ccam": "Membuka pemilih akun",
     "name": "Menjalankan Claude Code sebagai akun tersebut; argumen diteruskan tanpa diubah",
-    "add": "Menambahkan akun: folder konfigurasi, login, dan pintasan",
+    "add": "Menambahkan akun: folder konfigurasi, login, dan pintasan opsional",
     "list": "Menampilkan daftar akun",
     "use": "Menetapkan akun default",
     "next": "Membuka akun berikutnya; --continue mempertahankan percakapan, --auto memilih akun dengan sisa kuota terbanyak",
     "usage": "Menampilkan penggunaan 5 jam dan mingguan semua akun",
     "share": "Mengubah apa yang dibagikan sebuah akun, setelah menampilkan rencananya",
     "mcp": "Mengelola server MCP bersama",
+    "migrate": "Menyalin penyiapan Claude Code yang sudah ada (~/.claude) ke grup bersama",
     "login": "Login ulang ke sebuah akun",
     "logout": "Menghapus login sebuah akun",
-    "rename": "Mengganti nama akun dan pintasannya",
+    "rename": "Mengganti nama akun; pintasannya tetap memakai nama yang sama",
     "remove": "Menghapus akun; foldernya dipindahkan ke folder sampah",
     "import": "Mendaftarkan folder ~/.claude yang sudah ada di tempatnya",
     "doctor": "Memeriksa tautan, izin, login, dan versi, lalu memperbaiki",
     "statusline": "Menampilkan akun dan penggunaannya di status line Claude Code",
-    "shims": "Membuat ulang claude1…claudeN",
+    "shims": "Membuat ulang tautan pintasan semua akun",
+    "shortcut": "Menampilkan, membuat, mengganti nama, atau menghapus perintah pintasan akun, seperti ccwork",
     "completion": "Mencetak pelengkapan otomatis untuk bash atau zsh"
   },
   "copy": {

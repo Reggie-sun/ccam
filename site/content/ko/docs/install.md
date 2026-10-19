@@ -4,7 +4,7 @@ description: Linux나 macOS에서 명령 하나로, 또는 .deb 패키지나 소
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: fc63978e8f9e
+sourceHash: 79dc1b55e774
 ---
 
 Linux나 macOS 터미널에서 다음 명령을 실행하세요.
@@ -13,7 +13,7 @@ Linux나 macOS 터미널에서 다음 명령을 실행하세요.
 curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-스크립트는 시스템에 맞는 릴리스를 내려받아 SHA-256 체크섬을 확인한 뒤 `ccam`을 `~/.local/bin`에 설치합니다. 나중에 `ccam add`가 `claude1`, `claude2`… 단축 명령을 만드는 곳도 이 폴더입니다. 이 폴더가 `PATH`에 없으면 스크립트가 `~/.bashrc`나 `~/.zshrc`에 추가할 줄을 알려 줍니다.
+스크립트는 시스템에 맞는 릴리스를 내려받아 SHA-256 체크섬을 확인한 뒤 `ccam`을 `~/.local/bin`에 설치합니다. 나중에 `ccwork`처럼 직접 고른 단축 명령을 ccam이 만드는 곳도 이 폴더입니다. 이 폴더가 `PATH`에 없으면 스크립트가 `~/.bashrc`나 `~/.zshrc`에 추가할 줄을 알려 줍니다.
 
 ccam은 Claude Code를 대신 실행해 주는 도구이므로, 먼저 [Claude Code](https://docs.claude.com/en/docs/claude-code/overview)를 설치하고 `claude --version`이 제대로 실행되는지 확인하세요.
 
@@ -65,10 +65,12 @@ ccam doctor
 
 ## 제거
 
-ccam 명령과 계정 단축 명령을 지우고, 계정이 더 이상 필요 없다면 데이터 폴더도 지웁니다.
+ccam이 아직 설치되어 있을 때 계정 단축 명령부터 지웁니다. `ccam list`의 Shortcut 열에서 단축 명령을 확인하고, 하나씩 `ccam shortcut <account> --remove`로 지우거나 `~/.local/bin`에서 해당 링크를 직접 지우세요. 그다음 ccam 명령을 지우고, 계정이 더 이상 필요 없다면 데이터 폴더도 지웁니다.
 
 ```sh
-rm ~/.local/bin/ccam ~/.local/bin/claude[0-9]*
+ccam list
+ccam shortcut work --remove   # once for each account that has a shortcut
+rm ~/.local/bin/ccam
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
 ```
 

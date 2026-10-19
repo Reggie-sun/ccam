@@ -4,7 +4,7 @@ description: "ccam ใช้เซิร์ฟเวอร์ MCP, settings.json
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: e4b31e5098e3
+sourceHash: ccbb2c5e97bc
 ---
 
 แต่ละบัญชีเก็บการเข้าสู่ระบบของตัวเองไว้ ส่วนอย่างอื่นทั้งหมดใช้ร่วมกันได้ทีละรายการ: ccam ลิงก์ไฟล์หรือโฟลเดอร์ของบัญชีไปยังโฟลเดอร์ของกลุ่มที่ใช้ร่วมกัน ดังนั้นการเปลี่ยนแปลงที่ทำในบัญชีหนึ่งจะปรากฏในทุกบัญชีของกลุ่มนั้น
@@ -53,6 +53,57 @@ ccam share work --history off
 ```
 
 ลิงก์จะถูกลบออก และบัญชีจะได้รับสำเนาของเนื้อหาปัจจุบันของกลุ่มเป็นของตัวเอง เพิ่ม `--fresh` หากต้องการเริ่มต้นแบบว่างเปล่าแทน กลุ่มยังคงเก็บเนื้อหาไว้สำหรับบัญชีอื่น
+
+## คัดลอกการตั้งค่าที่มีอยู่
+
+หากคุณเคยใช้ Claude Code ก่อนใช้ ccam การตั้งค่าของคุณจะอยู่ใน `~/.claude` คำสั่ง `ccam migrate` จะคัดลอกการตั้งค่าเหล่านั้นไปยังกลุ่ม เพื่อให้ทุกบัญชีที่ใช้รายการเหล่านั้นร่วมกันได้รับด้วย:
+
+```sh
+ccam migrate
+```
+
+สิ่งที่คัดลอก:
+
+- `settings.json` และ `CLAUDE.md` ระดับ global
+- ส่วนขยาย `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/` และ `rules/`
+- เซิร์ฟเวอร์ MCP ของผู้ใช้ ซึ่งก็คือรายการ `mcpServers` ใน `~/.claude.json` โดยคัดลอกไปไว้ใน `mcp.json` ของกลุ่ม
+- ประวัติการสนทนา (`projects/` และ `history.jsonl`) แต่เฉพาะเมื่อคุณเพิ่ม `--history`
+
+โฟลเดอร์ต้นทางจะถูกอ่านอย่างเดียว: ไม่มีสิ่งใดในโฟลเดอร์ถูกย้าย ลิงก์ หรือเปลี่ยนแปลง และ `claude` แบบปกติยังทำงานได้เหมือนเดิม ไฟล์เข้าสู่ระบบ `.credentials.json` และ `.claude.json` จะไม่ถูกคัดลอกเลย
+
+ccam จะพิมพ์แผนและถามก่อนคัดลอกสิ่งใด:
+
+```console
+$ ccam migrate
+Copy from /home/me/.claude into group default (/home/me/.local/share/ccam/groups/default):
+  mcp         ~/.claude.json  new: context7, fs
+  settings    settings.json   new: 80 B
+  memory      CLAUDE.md       new: 31 B
+  extensions  agents/         add 1 file the group lacks (17 B)
+              commands/       add 1 file the group lacks (15 B)
+              skills/         add 1 file the group lacks (32 B)
+              not found, skipped: plugins/, output-styles/, rules/
+  Conversation history (projects/, history.jsonl) is not included; add --history to copy it.
+Copy these into group default? [y/N] y
+✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, commands/, skills/
+Accounts that share these through group default:
+  mcp         personal
+  settings    personal
+  memory      personal
+  extensions  personal
+```
+
+ในตอนท้าย ccam จะแสดงรายชื่อบัญชีที่ใช้แต่ละรายการร่วมกันผ่านกลุ่มนั้น หากมีบัญชีที่ยังไม่ได้ใช้ร่วมกัน ccam จะพิมพ์คำสั่ง `ccam share` สำหรับเปิดการใช้ร่วมกันให้บัญชีเหล่านั้น
+
+เมื่อกลุ่มมีสำเนาของไฟล์ที่เนื้อหาต่างกันอยู่แล้ว ccam จะถามคุณเหมือนตอนเปิดใช้งานการใช้ร่วมกัน: จะเก็บสำเนาของกลุ่มไว้ หรือใช้ของคุณ นอกจากนี้ `settings.json` และไฟล์ JSON อื่น ๆ ยังรวมเข้าด้วยกันได้ และ `history.jsonl` รวมกันทีละบรรทัดได้ สำเนาเดิมของกลุ่มจะถูกเก็บไว้ใน `.ccam-backup/<time>/` ภายในโฟลเดอร์ของกลุ่ม
+
+| ตัวเลือก | ผล |
+| --- | --- |
+| `--settings`, `--memory`, `--extensions`, `--mcp`, `--history` | คัดลอกเฉพาะรายการที่คุณระบุ หากไม่ระบุ จะคัดลอกทุกอย่างยกเว้นประวัติการสนทนา |
+| `-g`, `--group <group>` | คัดลอกไปยังกลุ่มนี้แทน `default` |
+| `-y`, `--yes` | คัดลอกโดยไม่ถาม เมื่อไฟล์ไม่ตรงกันจะเก็บสำเนาของกลุ่มไว้ |
+
+ใส่ `--dry-run` ไว้หน้าคำสั่ง เช่น `ccam --dry-run migrate` เพื่อดูแผนโดยไม่คัดลอกสิ่งใด หากต้องการคัดลอกจากโฟลเดอร์อื่น ให้ระบุโฟลเดอร์นั้น: `ccam migrate ~/.claude-work --group work`
 
 ## เซิร์ฟเวอร์ MCP
 

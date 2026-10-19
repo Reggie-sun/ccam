@@ -1,13 +1,13 @@
 ---
 title: Memulai cepat
-description: Tambahkan dua akun Claude Code dengan ccam add, berpindah di antaranya dengan claude1, claude2, atau ccam <name>, dan pilih apa yang dibagikan.
+description: Tambahkan dua akun Claude Code dengan ccam add, beri pintasan seperti ccwork, berpindah di antaranya, dan pilih apa yang dibagikan.
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 6baf0bfa5029
+sourceHash: b73914ff371f
 ---
 
-Tambahkan setiap akun dengan `ccam add`, lalu jalankan Claude Code dengan `claude1`, `claude2`, atau `ccam <name>`. Hanya itu yang dibutuhkan sebagian besar orang.
+Tambahkan setiap akun dengan `ccam add`, lalu jalankan Claude Code dengan `ccam <name>` atau dengan pintasan yang namanya Anda pilih sendiri, seperti `ccwork`. Bagi kebanyakan orang, itu sudah cukup.
 
 ## 1. Tambahkan akun pertama Anda
 
@@ -15,43 +15,82 @@ Tambahkan setiap akun dengan `ccam add`, lalu jalankan Claude Code dengan `claud
 ccam add
 ```
 
-Wizard akan menanyakan nama, seperti `personal` atau `work`, dan item apa saja yang perlu dibagikan akun ini dengan akun Anda yang lain. Lalu wizard menjalankan `claude auth login`, yang membuka browser agar Anda bisa masuk. Setelah selesai, Anda akan melihat:
+Wizard akan menanyakan nama, seperti `personal` atau `work`, item apa saja yang perlu dibagikan akun ini dengan akun Anda yang lain, dan apakah perlu membuat perintah pintasan (lihat langkah 4). Lalu wizard menjalankan `claude auth login`, yang membuka browser agar Anda bisa masuk. Setelah selesai, Anda akan melihat:
 
 ```console
-✓ personal (me@example.com) added — shortcut: claude1
+✓ personal (me@example.com) added
+  no shortcut (add one with `ccam shortcut personal ccpersonal`)
 ```
 
 ccam menampilkan pesannya sendiri dalam bahasa Inggris; perintah dan opsinya sama dalam semua bahasa.
 
-## 2. Tambahkan akun kedua
+## 2. Bawa pengaturan yang sudah ada
+
+Jika Anda sudah pernah memakai Claude Code, pengaturan, `CLAUDE.md`, ekstensi, dan server MCP Anda ada di `~/.claude`. Salin semuanya ke pengaturan bersama agar setiap akun mendapatkannya:
+
+```sh
+ccam migrate
+```
+
+ccam menampilkan apa yang akan disalin dan meminta persetujuan terlebih dahulu. ccam hanya membaca `~/.claude`, tidak pernah menyalin login, dan tidak menyertakan riwayat percakapan kecuali Anda menambahkan `--history`. Lihat [menyalin penyiapan yang sudah ada](/docs/sharing#copy-an-existing-setup) untuk detailnya.
+
+## 3. Tambahkan akun kedua
 
 ```sh
 ccam add work
 ```
 
-Masuk dengan akun lainnya di browser. Akun ini menjadi `claude2`.
+Masuk dengan akun yang lain di browser.
 
-## 3. Berpindah akun
+## 4. Berpindah akun
 
-Semua perintah berikut menjalankan Claude Code sebagai akun kerja:
+`ccam work` menjalankan Claude Code sebagai akun kerja. Agar lebih singkat, beri akun itu perintah pintasannya sendiri, seperti `ccwork`. Setelah item yang dibagikan, wizard akan bertanya:
+
+```console
+ Create a shortcut command for work? [y/N]
+ A command such as ccwork that opens Claude Code as this account.
+```
+
+Tekan `y`, lalu ketik nama, atau tekan Enter untuk memakai nama yang disarankan:
+
+```console
+ Shortcut name [ccwork]: █
+ a-z, 0-9, '.', '-' and '_'; Enter alone uses ccwork
+```
+
+Setelah login, ccam mengonfirmasinya:
+
+```console
+✓ work (work@example.com) added
+  shortcut: ccwork
+```
+
+Jika Anda melewati pertanyaan itu, tambahkan pintasan kapan saja:
+
+```console
+$ ccam shortcut work ccwork
+✓ shortcut for work: ccwork
+```
+
+Sekarang perintah mana pun di bawah ini menjalankan Claude Code sebagai akun kerja:
 
 ```sh
-claude2
+ccwork
 ccam work
 ccam 2
 ```
 
-Semua yang ada setelah nama akun diteruskan ke Claude Code tanpa diubah, jadi Anda tetap memakai opsi yang sudah Anda kenal:
+Menjalankan `ccam` saja akan membuka pemilih akun: gunakan tombol panah dan Enter, atau tekan nomor akunnya.
+
+Semua yang ada setelah pintasan atau nama akun diteruskan ke Claude Code tanpa diubah, jadi Anda tetap bisa memakai opsi yang sudah Anda kenal:
 
 ```sh
-ccam work --resume
+ccwork --resume
 ccam work -p "fix the failing test" --output-format json
-cat error.log | claude2 -p "what caused this?"
+cat error.log | ccwork -p "what caused this?"
 ```
 
-Menjalankan `ccam` saja akan membuka pemilih akun: gunakan tombol panah dan Enter, atau tekan nomor akun.
-
-## 4. Pilih apa yang dibagikan
+## 5. Pilih apa yang dibagikan
 
 Secara default, server MCP, `settings.json`, `CLAUDE.md` global, serta agen, perintah, skill, dan plugin dibagikan antarakun. Riwayat percakapan tidak dibagikan. Aktifkan untuk kedua akun jika Anda ingin melanjutkan percakapan di antara keduanya:
 
@@ -62,7 +101,7 @@ ccam share work --history on
 
 ccam menampilkan apa yang akan dipindahkannya sebelum mengubah apa pun. Lihat [pembagian](/docs/sharing) untuk detailnya.
 
-## 5. Saat sebuah akun mencapai batasnya
+## 6. Saat sebuah akun mencapai batasnya
 
 ```sh
 ccam usage
