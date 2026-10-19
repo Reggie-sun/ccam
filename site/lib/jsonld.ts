@@ -1,6 +1,6 @@
 import { abs, REPO, SITE } from "./paths";
 
-export const VERSION = "0.5.0"; // shown on the site; bump with releases
+export const VERSION = "0.6.0"; // shown on the site; bump with releases
 export const CLAUDE_CODE_VERSION = "2.1.302";
 
 export function websiteLd(lang: string) {

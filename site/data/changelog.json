@@ -1,5 +1,11 @@
 [
   {
+    "tag": "v0.6.0",
+    "date": "2026-10-19",
+    "url": "https://github.com/jhyunwoo/ccam/releases/tag/v0.6.0",
+    "notes": "<h2>Changelog</h2>\n<ul>\n<li>a34005ff107e4bd1d57ec628927110347eb2f1dd fix: Remote Control starts with shared MCP servers and asks to copy them</li>\n<li>791c4a8bbc3493b7c4b0a3f208cf3c340abad99b fix(site): long words break instead of overflowing a phone screen</li>\n<li>f9c9c9f73d626288eafaf81a094b9af9cfdee683 fix(site): style hashes move to a per-page meta CSP so the deploy fits _headers</li>\n<li>5720cc5bb3019974415048305f195a0698e0baa6 chore(site): site says ccam 0.5.0; changelog lists v0.5.0</li>\n</ul>\n"
+  },
+  {
     "tag": "v0.5.0",
     "date": "2026-10-19",
     "url": "https://github.com/jhyunwoo/ccam/releases/tag/v0.5.0",
