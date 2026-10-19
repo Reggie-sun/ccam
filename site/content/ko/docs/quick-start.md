@@ -4,7 +4,7 @@ description: ccam add로 Claude Code 계정 두 개를 추가하고, ccwork 같�
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: b73914ff371f
+sourceHash: eb078efa2ee2
 ---
 
 `ccam add`로 계정을 하나씩 추가한 뒤, `ccam <name>` 또는 `ccwork`처럼 직접 이름을 붙인 단축 명령으로 Claude Code를 시작합니다. 대부분은 이것만으로 충분합니다.
@@ -21,8 +21,6 @@ ccam add
 ✓ personal (me@example.com) added
   no shortcut (add one with `ccam shortcut personal ccpersonal`)
 ```
-
-ccam이 출력하는 메시지는 영어입니다. 명령과 옵션은 어느 언어에서나 같습니다.
 
 ## 2. 기존 설정 가져오기
 

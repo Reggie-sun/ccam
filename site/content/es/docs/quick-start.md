@@ -4,7 +4,7 @@ description: Agrega dos cuentas de Claude Code con ccam add, dales atajos como c
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: b73914ff371f
+sourceHash: eb078efa2ee2
 ---
 
 Agrega cada cuenta con `ccam add` y luego inicia Claude Code con `ccam <name>` o con un atajo al que tú le pones nombre, como `ccwork`. Es todo lo que la mayoría necesita.
@@ -21,8 +21,6 @@ El asistente te pide un nombre, como `personal` o `work`, qué elementos debe co
 ✓ personal (me@example.com) added
   no shortcut (add one with `ccam shortcut personal ccpersonal`)
 ```
-
-ccam muestra sus propios mensajes en inglés; los comandos y las opciones son los mismos en todos los idiomas.
 
 ## 2. Trae tu configuración actual
 

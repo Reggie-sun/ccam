@@ -4,7 +4,7 @@ description: ccam add ile iki Claude Code hesabı ekleyin, onlara ccwork gibi k�
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: b73914ff371f
+sourceHash: eb078efa2ee2
 ---
 
 Her hesabı `ccam add` ile ekleyin, ardından Claude Code'u `ccam <name>` ile veya adını kendiniz seçtiğiniz `ccwork` gibi bir kısayolla başlatın. Çoğu kişi için bu kadarı yeterlidir.
@@ -21,8 +21,6 @@ Sihirbaz, `personal` veya `work` gibi bir ad, hesabın diğer hesaplarınızla h
 ✓ personal (me@example.com) added
   no shortcut (add one with `ccam shortcut personal ccpersonal`)
 ```
-
-ccam kendi mesajlarını İngilizce yazdırır; komutlar ve seçenekler her dilde aynıdır.
 
 ## 2. Mevcut ayarlarınızı taşıyın
 

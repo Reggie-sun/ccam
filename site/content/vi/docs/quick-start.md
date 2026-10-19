@@ -4,7 +4,7 @@ description: Thêm hai tài khoản Claude Code bằng ccam add, đặt cho chú
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: b73914ff371f
+sourceHash: eb078efa2ee2
 ---
 
 Thêm từng tài khoản bằng `ccam add`, rồi khởi động Claude Code bằng `ccam <name>` hoặc bằng một lệnh tắt do bạn tự đặt tên, chẳng hạn `ccwork`. Hầu hết mọi người chỉ cần như vậy.
@@ -21,8 +21,6 @@ Trình hướng dẫn hỏi một cái tên, chẳng hạn `personal` hoặc `wo
 ✓ personal (me@example.com) added
   no shortcut (add one with `ccam shortcut personal ccpersonal`)
 ```
-
-ccam in thông báo của chính nó bằng tiếng Anh; các lệnh và tùy chọn thì giống nhau ở mọi ngôn ngữ.
 
 ## 2. Mang theo cài đặt hiện có
 

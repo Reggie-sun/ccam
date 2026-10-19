@@ -21,8 +21,6 @@ The wizard asks for a name such as `personal` or `work`, which items the account
   no shortcut (add one with `ccam shortcut personal ccpersonal`)
 ```
 
-ccam prints its own messages in English; the commands and options are the same in every language.
-
 ## 2. Bring over your existing settings
 
 If you used Claude Code before, your settings, `CLAUDE.md`, extensions and MCP servers are in `~/.claude`. Copy them into the shared settings, so that every account gets them:

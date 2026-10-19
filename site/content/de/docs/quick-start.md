@@ -4,7 +4,7 @@ description: Zwei Claude Code-Konten mit ccam add hinzufügen, ihnen Kurzbefehle
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: b73914ff371f
+sourceHash: eb078efa2ee2
 ---
 
 Füge jedes Konto mit `ccam add` hinzu und starte Claude Code dann mit `ccam <name>` oder mit einem Kurzbefehl, den du selbst benennst, etwa `ccwork`. Mehr brauchen die meisten nicht.
@@ -21,8 +21,6 @@ Der Assistent fragt nach einem Namen wie `personal` oder `work`, danach, welche 
 ✓ personal (me@example.com) added
   no shortcut (add one with `ccam shortcut personal ccpersonal`)
 ```
-
-ccam gibt seine eigenen Meldungen auf Englisch aus; die Befehle und Optionen sind in jeder Sprache gleich.
 
 ## 2. Vorhandene Einstellungen übernehmen
 

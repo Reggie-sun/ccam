@@ -4,7 +4,7 @@ description: "ccam add দিয়ে দুটি Claude Code অ্যাক�
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: b73914ff371f
+sourceHash: eb078efa2ee2
 ---
 
 `ccam add` দিয়ে প্রতিটি অ্যাকাউন্ট যোগ করুন, তারপর `ccam <name>` দিয়ে বা নিজের দেওয়া নামের একটি শর্টকাট, যেমন `ccwork`, দিয়ে Claude Code চালু করুন। বেশিরভাগ মানুষের এটুকুই দরকার।
@@ -21,8 +21,6 @@ ccam add
 ✓ personal (me@example.com) added
   no shortcut (add one with `ccam shortcut personal ccpersonal`)
 ```
-
-ccam নিজের বার্তাগুলো ইংরেজিতে প্রিন্ট করে; কমান্ড ও অপশন সব ভাষায় একই।
 
 ## ২. আপনার আগের সেটিংস নিয়ে আসুন
 

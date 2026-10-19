@@ -4,7 +4,7 @@ description: ccam add மூலம் இரண்டு Claude Code கணக�
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: b73914ff371f
+sourceHash: eb078efa2ee2
 ---
 
 ஒவ்வொரு கணக்கையும் `ccam add` மூலம் சேருங்கள், பிறகு `ccam <name>` மூலமோ, `ccwork` போல நீங்களே பெயரிடும் குறுக்குவழி மூலமோ Claude Code-ஐத் தொடங்குங்கள். பெரும்பாலானவர்களுக்கு இவ்வளவுதான் தேவை.
@@ -21,8 +21,6 @@ wizard, `personal` அல்லது `work` போன்ற ஒரு பெய
 ✓ personal (me@example.com) added
   no shortcut (add one with `ccam shortcut personal ccpersonal`)
 ```
-
-ccam தன் செய்திகளை ஆங்கிலத்தில் அச்சிடுகிறது; கட்டளைகளும் options-உம் எல்லா மொழிகளிலும் ஒன்றே.
 
 ## 2. ஏற்கெனவே உள்ள அமைப்புகளைக் கொண்டு வாருங்கள்
 

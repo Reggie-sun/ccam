@@ -4,7 +4,7 @@ description: ccam add తో రెండు Claude Code ఖాతాలను �
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: b73914ff371f
+sourceHash: eb078efa2ee2
 ---
 
 `ccam add` తో ప్రతి ఖాతాను జోడించండి, తర్వాత `ccam <name>` తో లేదా `ccwork` వంటి మీరే పేరు పెట్టిన షార్ట్‌కట్‌తో Claude Code ను ప్రారంభించండి. చాలా మందికి కావలసింది ఇంతే.
@@ -21,8 +21,6 @@ ccam add
 ✓ personal (me@example.com) added
   no shortcut (add one with `ccam shortcut personal ccpersonal`)
 ```
-
-ccam తన సందేశాలను ఇంగ్లీష్‌లో ప్రింట్ చేస్తుంది; కమాండ్‌లు, ఆప్షన్లు ప్రతి భాషలోనూ ఒకటే.
 
 ## 2. మీ ప్రస్తుత సెట్టింగ్‌లను తీసుకురండి
 

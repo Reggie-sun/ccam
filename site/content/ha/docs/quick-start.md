@@ -4,7 +4,7 @@ description: Ƙara asusun Claude Code biyu da ccam add, ba su gajerun umarni kam
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: b73914ff371f
+sourceHash: eb078efa2ee2
 ---
 
 Ƙara kowane asusu da `ccam add`, sannan ka fara Claude Code da `ccam <name>` ko da gajeren umarni da kai da kanka ka sa masa suna, kamar `ccwork`. Wannan ne kawai abin da yawancin mutane suke buƙata.
@@ -21,8 +21,6 @@ Mataimakin saitawa (wizard) yana tambayar suna kamar `personal` ko `work`, abubu
 ✓ personal (me@example.com) added
   no shortcut (add one with `ccam shortcut personal ccpersonal`)
 ```
-
-ccam yana buga saƙonninsa da harshen Turanci; umarni da zaɓuɓɓuka iri ɗaya ne a kowane harshe.
 
 ## 2. Kawo saitunanka da ke akwai
 

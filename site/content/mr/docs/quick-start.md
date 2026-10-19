@@ -4,7 +4,7 @@ description: "ccam add ने दोन Claude Code खाती जोडा, �
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: b73914ff371f
+sourceHash: eb078efa2ee2
 ---
 
 प्रत्येक खाते `ccam add` ने जोडा, नंतर `ccam <name>` ने किंवा तुम्ही स्वतः नाव दिलेल्या शॉर्टकटने, जसे `ccwork`, Claude Code सुरू करा. बहुतेक लोकांना एवढेच लागते.
@@ -21,8 +21,6 @@ ccam add
 ✓ personal (me@example.com) added
   no shortcut (add one with `ccam shortcut personal ccpersonal`)
 ```
-
-ccam स्वतःचे संदेश इंग्रजीमध्ये प्रिंट करते; कमांड आणि पर्याय प्रत्येक भाषेत सारखेच आहेत.
 
 ## 2. तुमची आधीची सेटिंग्ज आणा
 

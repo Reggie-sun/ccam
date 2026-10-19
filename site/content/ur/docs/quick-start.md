@@ -4,7 +4,7 @@ description: ccam add سے Claude Code کے دو اکاؤنٹس شامل کری�
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: b73914ff371f
+sourceHash: eb078efa2ee2
 ---
 
 ہر اکاؤنٹ `ccam add` سے شامل کریں، پھر Claude Code کو `ccam <name>` سے یا ایسے شارٹ کٹ سے شروع کریں جس کا نام آپ خود رکھیں، جیسے `ccwork`۔ زیادہ تر لوگوں کو بس اتنا ہی چاہیے۔
@@ -21,8 +21,6 @@ ccam add
 ✓ personal (me@example.com) added
   no shortcut (add one with `ccam shortcut personal ccpersonal`)
 ```
-
-ccam اپنے پیغامات انگریزی زبان میں دکھاتا ہے؛ کمانڈز اور آپشنز ہر زبان میں ایک جیسے ہیں۔
 
 ## 2. اپنی موجودہ سیٹنگز ساتھ لائیں
 

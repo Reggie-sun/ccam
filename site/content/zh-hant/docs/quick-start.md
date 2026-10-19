@@ -4,7 +4,7 @@ description: 用 ccam add 新增兩個 Claude Code 帳號，為它們設定 ccwo
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: b73914ff371f
+sourceHash: eb078efa2ee2
 ---
 
 用 `ccam add` 新增每個帳號，然後用 `ccam <name>` 或你自己命名的快捷指令（例如 `ccwork`）啟動 Claude Code。大多數人只需要這些。
@@ -21,8 +21,6 @@ ccam add
 ✓ personal (me@example.com) added
   no shortcut (add one with `ccam shortcut personal ccpersonal`)
 ```
-
-ccam 以英文顯示自己的訊息；指令和選項在每種語言中都相同。
 
 ## 2. 移轉現有的設定
 

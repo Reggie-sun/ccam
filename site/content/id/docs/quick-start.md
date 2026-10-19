@@ -4,7 +4,7 @@ description: Tambahkan dua akun Claude Code dengan ccam add, beri pintasan seper
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: b73914ff371f
+sourceHash: eb078efa2ee2
 ---
 
 Tambahkan setiap akun dengan `ccam add`, lalu jalankan Claude Code dengan `ccam <name>` atau dengan pintasan yang namanya Anda pilih sendiri, seperti `ccwork`. Bagi kebanyakan orang, itu sudah cukup.
@@ -21,8 +21,6 @@ Wizard akan menanyakan nama, seperti `personal` atau `work`, item apa saja yang 
 ✓ personal (me@example.com) added
   no shortcut (add one with `ccam shortcut personal ccpersonal`)
 ```
-
-ccam menampilkan pesannya sendiri dalam bahasa Inggris; perintah dan opsinya sama dalam semua bahasa.
 
 ## 2. Bawa pengaturan yang sudah ada
 

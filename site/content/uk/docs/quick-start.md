@@ -4,7 +4,7 @@ description: Додайте два облікові записи Claude Code к�
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: b73914ff371f
+sourceHash: eb078efa2ee2
 ---
 
 Додайте кожен обліковий запис командою `ccam add`, а потім запускайте Claude Code командою `ccam <name>` або короткою командою з назвою, яку ви вибираєте самі, наприклад `ccwork`. Більшості цього достатньо.
@@ -21,8 +21,6 @@ ccam add
 ✓ personal (me@example.com) added
   no shortcut (add one with `ccam shortcut personal ccpersonal`)
 ```
-
-ccam виводить власні повідомлення англійською мовою; команди й параметри однакові для всіх мов.
 
 ## 2. Перенесіть наявні налаштування
 

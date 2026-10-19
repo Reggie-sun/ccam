@@ -4,7 +4,7 @@ description: Ongeza akaunti mbili za Claude Code kwa ccam add, zipe njia fupi ka
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: b73914ff371f
+sourceHash: eb078efa2ee2
 ---
 
 Ongeza kila akaunti kwa `ccam add`, kisha anzisha Claude Code kwa `ccam <name>` au kwa njia fupi unayoipa jina mwenyewe, kama `ccwork`. Hivyo ndivyo watu wengi wanavyohitaji.
@@ -21,8 +21,6 @@ Mchawi wa usanidi (wizard) huuliza jina kama `personal` au `work`, ni vipengele 
 ✓ personal (me@example.com) added
   no shortcut (add one with `ccam shortcut personal ccpersonal`)
 ```
-
-ccam huchapisha ujumbe wake kwa Kiingereza; amri na chaguo ni zile zile katika kila lugha.
 
 ## 2. Leta mipangilio yako iliyopo
 

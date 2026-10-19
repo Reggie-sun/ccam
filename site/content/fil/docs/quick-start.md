@@ -4,7 +4,7 @@ description: Magdagdag ng dalawang Claude Code account gamit ang ccam add, bigya
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: b73914ff371f
+sourceHash: eb078efa2ee2
 ---
 
 Idagdag ang bawat account gamit ang `ccam add`, saka simulan ang Claude Code gamit ang `ccam <name>` o ang shortcut na ikaw mismo ang nagpangalan, gaya ng `ccwork`. Iyan lang ang kailangan ng karamihan.
@@ -21,8 +21,6 @@ Hihingin ng wizard ang isang pangalan gaya ng `personal` o `work`, kung aling mg
 ✓ personal (me@example.com) added
   no shortcut (add one with `ccam shortcut personal ccpersonal`)
 ```
-
-Sa Ingles ipini-print ng ccam ang sarili nitong mga mensahe; pareho ang mga command at option sa bawat wika.
 
 ## 2. Dalhin ang dati mong settings
 

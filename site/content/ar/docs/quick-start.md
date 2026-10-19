@@ -4,7 +4,7 @@ description: أضف حسابَي Claude Code باستخدام ccam add، وام�
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: b73914ff371f
+sourceHash: eb078efa2ee2
 ---
 
 أضف كل حساب باستخدام `ccam add`، ثم شغّل Claude Code باستخدام `ccam <name>` أو بأمر مختصر تختار اسمه بنفسك، مثل `ccwork`. هذا كل ما يحتاجه معظم الناس.
@@ -21,8 +21,6 @@ ccam add
 ✓ personal (me@example.com) added
   no shortcut (add one with `ccam shortcut personal ccpersonal`)
 ```
-
-يطبع ccam رسائله الخاصة باللغة الإنجليزية؛ أما الأوامر والخيارات فهي نفسها في كل اللغات.
 
 ## 2. انقل إعداداتك الحالية
 

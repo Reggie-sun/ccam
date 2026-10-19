@@ -4,7 +4,7 @@ description: เพิ่มบัญชี Claude Code สองบัญชี
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: b73914ff371f
+sourceHash: eb078efa2ee2
 ---
 
 เพิ่มแต่ละบัญชีด้วย `ccam add` จากนั้นเริ่ม Claude Code ด้วย `ccam <name>` หรือด้วยคำสั่งลัดที่คุณตั้งชื่อเอง เช่น `ccwork` เท่านี้ก็เพียงพอสำหรับผู้ใช้ส่วนใหญ่
@@ -21,8 +21,6 @@ ccam add
 ✓ personal (me@example.com) added
   no shortcut (add one with `ccam shortcut personal ccpersonal`)
 ```
-
-ccam แสดงข้อความของตัวเองเป็นภาษาอังกฤษ ส่วนคำสั่งและตัวเลือกเหมือนกันในทุกภาษา
 
 ## 2. นำการตั้งค่าเดิมมาใช้
 

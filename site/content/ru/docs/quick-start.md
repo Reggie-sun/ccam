@@ -4,7 +4,7 @@ description: Добавьте два аккаунта Claude Code командо
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: b73914ff371f
+sourceHash: eb078efa2ee2
 ---
 
 Добавьте каждый аккаунт командой `ccam add`, затем запускайте Claude Code командой `ccam <name>` или короткой командой, имя которой вы выбираете сами, например `ccwork`. Большинству этого достаточно.
@@ -21,8 +21,6 @@ ccam add
 ✓ personal (me@example.com) added
   no shortcut (add one with `ccam shortcut personal ccpersonal`)
 ```
-
-ccam выводит свои сообщения на английском; команды и параметры одинаковы на всех языках.
 
 ## 2. Перенесите существующие настройки
 
