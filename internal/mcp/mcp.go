@@ -7,12 +7,16 @@
 package mcp
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io/fs"
+	"maps"
 	"os"
 	"path/filepath"
+	"reflect"
+	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -60,13 +64,16 @@ func (s *Store) Save(path string) error {
 
 func (s *Store) Names() []string { return sortedKeys(s.Servers) }
 
-func sortedKeys(m map[string]json.RawMessage) []string {
-	out := make([]string, 0, len(m))
-	for k := range m {
-		out = append(out, k)
+func sortedKeys(m map[string]json.RawMessage) []string { return slices.Sorted(maps.Keys(m)) }
+
+// SameDef compares two server definitions by meaning: key order and
+// spacing do not matter.
+func SameDef(a, b json.RawMessage) bool {
+	var x, y any
+	if json.Unmarshal(a, &x) != nil || json.Unmarshal(b, &y) != nil {
+		return bytes.Equal(a, b)
 	}
-	sort.Strings(out)
-	return out
+	return reflect.DeepEqual(x, y)
 }
 
 // Validate checks that a server definition is a JSON object with a command or url.
@@ -212,7 +219,8 @@ func Sync(profileDir, groupDir, stateDir string) error {
 	for n, def := range group.Servers {
 		servers[n] = def
 	}
-	raw, err := json.Marshal(servers)
+	// Not json.Marshal: it would write && and > in commands as \u0026 and \u003e.
+	raw, err := fsutil.MarshalJSON(servers)
 	if err != nil {
 		return err
 	}
@@ -257,7 +265,10 @@ func RemoveLocal(profileDir, stateDir string, names []string) error {
 	for _, n := range names {
 		delete(servers, n)
 	}
-	raw, _ := json.Marshal(servers)
+	raw, err := fsutil.MarshalJSON(servers)
+	if err != nil {
+		return err
+	}
 	doc["mcpServers"] = raw
 	out, err := fsutil.MarshalJSON(doc)
 	if err != nil {

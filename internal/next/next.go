@@ -2,8 +2,9 @@
 package next
 
 import (
+	"cmp"
 	"fmt"
-	"sort"
+	"slices"
 	"time"
 
 	"github.com/jhyunwoo/ccam/internal/config"
@@ -25,7 +26,7 @@ func Rotate(cands []Candidate, sameHistory bool) (from, to *config.Profile, err 
 		return nil, nil, fmt.Errorf("no accounts yet")
 	}
 	sorted := append([]Candidate(nil), cands...)
-	sort.Slice(sorted, func(i, j int) bool { return sorted[i].Profile.Slot < sorted[j].Profile.Slot })
+	slices.SortFunc(sorted, func(a, b Candidate) int { return cmp.Compare(a.Profile.Slot, b.Profile.Slot) })
 	cur := 0
 	for i, c := range sorted {
 		if c.LastUsed.After(sorted[cur].LastUsed) {

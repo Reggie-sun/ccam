@@ -5,10 +5,10 @@ description: ccam add ve ccam <name> komutlarından ccam usage, ccam next ve cca
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 65fb2b8f6617
+sourceHash: 3342453e38d3
 ---
 
-Bir komutun ne yapacağını, yapmadan görmek için komuttan önce `--dry-run` yazın, örneğin `ccam --dry-run work`.
+Bir komutun ne yapacağını, yapmadan görmek için komuttan önce `--dry-run` yazın, örneğin `ccam --dry-run work`. Bu, Claude Code başlatılırken (`ccam <name>`, `ccam run`, `ccam next`) ve `share`, `migrate`, `shortcut`, `update` ile `doctor --fix` komutlarında çalışır. Bir şeyi değiştiren diğer komutlar çalışmak yerine bunu reddeder.
 
 <!-- commands -->
 
@@ -33,6 +33,10 @@ ccam import ~/.claude-old --name old
 ```
 
 Klasör belirtilmeden çalıştırılan `ccam import`, `~/.claude` ve `~/.claude-*` klasörlerini arar ve her biri için sorar. İçe aktarılan klasörler bulundukları yerde kaydedilir; ccam hiçbir zaman bir girişi taşımaz veya kopyalamaz.
+
+`ccam rename`, `ccam remove` ve `ccam share`, Claude Code bir hesapla çalışırken o hesabı değiştirmeyi reddeder. Önce oturumdan çıkın.
+
+`ccam list --json` her hesabı yuvası, kısayolu, e-postası ve klasörüyle birlikte yazdırır. Çıktıdaki `share` nesnesi her öğeyi (`mcp`, `settings`, `memory`, `extensions`, `history`) bir grup adıyla veya `local` ile eşler.
 
 ## Kısayollar
 
@@ -69,7 +73,7 @@ ccam migrate ~/.claude-work --group work --settings --mcp
 ccam migrate --history --yes    # conversation history only
 ```
 
-`ccam migrate`, `settings.json`, `CLAUDE.md`, uzantıları ve kullanıcı MCP sunucularını bir Claude Code klasöründen bir gruba kopyalar; böylece bu öğeleri paylaşan her hesap onlara sahip olur. Klasör yalnızca okunur. `--settings`, `--memory`, `--extensions`, `--mcp` ve `--history` seçenekleri yalnızca belirttiğiniz öğeleri kopyalar; bunlar olmadan konuşma geçmişi dışındaki her şey kopyalanır. `-g` veya `--group` grubu seçer; `-y` veya `--yes` sormadan kopyalar ve bir dosya farklıysa grubun kopyasını korur. [Mevcut bir kurulumu kopyalama](/docs/sharing#copy-an-existing-setup) bölümüne bakın.
+`ccam migrate`, `settings.json`, `CLAUDE.md`, uzantıları ve kullanıcı MCP sunucularını bir Claude Code klasöründen bir gruba kopyalar; böylece bu öğeleri paylaşan her hesap onlara sahip olur. Klasör yalnızca okunur. `--settings`, `--memory`, `--extensions`, `--mcp` ve `--history` seçenekleri yalnızca belirttiğiniz öğeleri kopyalar. Bunlar olmadan, terminalde bir kontrol listesinden seçim yaparsınız ve konuşma geçmişi dışındaki her şey işaretlidir; diğer durumlarda konuşma geçmişi dışındaki her şey kopyalanır. `-g` veya `--group` grubu seçer; `-y` veya `--yes` sormadan kopyalar ve bir dosya farklıysa grubun kopyasını korur. Ayrıca sunucuların kaydedilmiş girişlerini her hesabın kendi giriş dosyasına kopyalar. [Mevcut bir kurulumu kopyalama](/docs/sharing#copy-an-existing-setup) bölümüne bakın.
 
 ## MCP sunucuları
 
@@ -81,6 +85,8 @@ ccam mcp list
 ccam mcp import work gh
 ccam mcp remove fs
 ```
+
+`ccam mcp import <account>`, yalnızca o hesapta bulunan sunucuları hesabın grubuna taşır. Adı grupta zaten farklı bir tanım için kullanılan sunucular atlanır; grubun kopyasını değiştirmek için `--force` ekleyin, ccam önce o kopyayı yedekler.
 
 ## Kullanım ve geçiş
 
@@ -101,6 +107,7 @@ ccam statusline install
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam version         # also: ccam -v, ccam --version
 ```
 
 `ccam update`, ccam'ı değiştirmeden önce sürümün SHA-256 sağlama toplamını kontrol eder; `--version v0.2.0` ise belirli bir sürümü kurar. `.deb` paketinden kurulan ccam bunun yerine apt ile güncellenir. [Güncelleme](/docs/install#update) bölümüne bakın.

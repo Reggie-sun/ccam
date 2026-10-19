@@ -5,10 +5,10 @@ description: ccam की हर कमांड और विकल्प, ccam 
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 65fb2b8f6617
+sourceHash: 3342453e38d3
 ---
 
-कोई कमांड असल में चलाए बिना यह देखने के लिए कि वह क्या करेगी, उसके आगे `--dry-run` लगाएँ, उदाहरण के लिए `ccam --dry-run work`।
+किसी कमांड को असल में चलाए बिना यह देखने के लिए कि वह क्या करेगी, उसके आगे `--dry-run` लगाएँ, उदाहरण के लिए `ccam --dry-run work`। यह Claude Code शुरू करते समय (`ccam <name>`, `ccam run`, `ccam next`) और `share`, `migrate`, `shortcut`, `update` तथा `doctor --fix` के साथ काम करता है। कुछ बदलने वाली दूसरी कमांड इसे स्वीकार नहीं करतीं और चलने से मना कर देती हैं।
 
 <!-- commands -->
 
@@ -33,6 +33,10 @@ ccam import ~/.claude-old --name old
 ```
 
 फ़ोल्डर के बिना `ccam import`, `~/.claude` और `~/.claude-*` खोजता है और हर एक के बारे में पूछता है। Import किए गए फ़ोल्डर जहाँ हैं वहीं रजिस्टर होते हैं; ccam कभी लॉगिन को move या copy नहीं करता।
+
+जब Claude Code किसी अकाउंट के रूप में चल रहा हो, तब `ccam rename`, `ccam remove` और `ccam share` उस अकाउंट को बदलने से मना कर देते हैं। पहले session बंद करें।
+
+`ccam list --json` हर अकाउंट को उसके स्लॉट, शॉर्टकट, ईमेल और फ़ोल्डर के साथ दिखाता है। इसका `share` ऑब्जेक्ट हर आइटम (`mcp`, `settings`, `memory`, `extensions`, `history`) को किसी ग्रुप के नाम या `local` से जोड़ता है।
 
 ## शॉर्टकट
 
@@ -69,7 +73,7 @@ ccam migrate ~/.claude-work --group work --settings --mcp
 ccam migrate --history --yes    # conversation history only
 ```
 
-`ccam migrate` किसी Claude Code फ़ोल्डर से `settings.json`, `CLAUDE.md`, एक्सटेंशन और user MCP सर्वर एक ग्रुप में कॉपी करता है, ताकि उन आइटम को साझा करने वाले हर अकाउंट को वे मिल जाएँ। फ़ोल्डर को केवल पढ़ा जाता है। `--settings`, `--memory`, `--extensions`, `--mcp` और `--history` विकल्प केवल उन्हीं आइटम को कॉपी करते हैं जिनका आप नाम देते हैं; इनके बिना बातचीत के इतिहास को छोड़कर सब कुछ कॉपी होता है। `-g` या `--group` ग्रुप चुनता है, और `-y` या `--yes` बिना पूछे कॉपी करता है और कोई फ़ाइल अलग होने पर ग्रुप की कॉपी रखता है। [मौजूदा सेटअप कॉपी करना](/docs/sharing#copy-an-existing-setup) देखें।
+`ccam migrate` किसी Claude Code फ़ोल्डर से `settings.json`, `CLAUDE.md`, एक्सटेंशन और user MCP सर्वर एक ग्रुप में कॉपी करता है, ताकि उन आइटम को साझा करने वाले हर अकाउंट को वे मिल जाएँ। फ़ोल्डर को केवल पढ़ा जाता है। `--settings`, `--memory`, `--extensions`, `--mcp` और `--history` विकल्प केवल उन्हीं आइटम को कॉपी करते हैं जिनका आप नाम देते हैं। इनके बिना, टर्मिनल पर एक चेकलिस्ट आपको चुनने देती है, जिसमें बातचीत के इतिहास को छोड़कर सब कुछ चुना हुआ होता है; बाकी जगहों पर बातचीत के इतिहास को छोड़कर सब कुछ कॉपी होता है। `-g` या `--group` ग्रुप चुनता है, और `-y` या `--yes` बिना पूछे कॉपी करता है और कोई फ़ाइल अलग होने पर ग्रुप की कॉपी रखता है। यह सर्वरों के सहेजे गए साइन-इन भी हर अकाउंट की अपनी लॉगिन फ़ाइल में कॉपी करता है। [मौजूदा सेटअप कॉपी करना](/docs/sharing#copy-an-existing-setup) देखें।
 
 ## MCP सर्वर
 
@@ -81,6 +85,8 @@ ccam mcp list
 ccam mcp import work gh
 ccam mcp remove fs
 ```
+
+`ccam mcp import <account>` उन सर्वरों को उसके ग्रुप में move करता है जो केवल उसी अकाउंट के पास हैं। जिस सर्वर का नाम ग्रुप पहले से किसी अलग definition के लिए इस्तेमाल करता है, उसे छोड़ दिया जाता है; ग्रुप की कॉपी बदलने के लिए `--force` जोड़ें, जिसका ccam पहले बैकअप लेता है।
 
 ## उपयोग और स्विच करना
 
@@ -101,6 +107,7 @@ ccam statusline install
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam version         # also: ccam -v, ccam --version
 ```
 
 ccam को बदलने से पहले `ccam update` रिलीज़ का SHA-256 checksum जाँचता है, और `--version v0.2.0` कोई खास रिलीज़ इंस्टॉल करता है। `.deb` पैकेज से इंस्टॉल किया गया ccam इसके बजाय apt से अपडेट होता है। [अपडेट](/docs/install#update) देखें।

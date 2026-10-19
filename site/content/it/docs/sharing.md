@@ -4,7 +4,7 @@ description: Come ccam condivide server MCP, settings.json, CLAUDE.md, agenti, s
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: 1e2f0d6809fc
+sourceHash: f266f8bfd55c
 ---
 
 Ogni account mantiene il proprio login. Tutto il resto si può condividere elemento per elemento: ccam collega il file o la cartella dell'account a una cartella di gruppo condivisa, così una modifica fatta in un account compare in tutti gli account di quel gruppo.
@@ -46,6 +46,8 @@ Quando un account inizia a condividere un elemento, ccam:
 
 I file delle conversazioni prendono il nome dal loro ID di sessione, quindi le cronologie di più account si uniscono senza conflitti.
 
+ccam non modifica la condivisione mentre Claude Code è in esecuzione con l'account, perché la sessione continua a scrivere nei file che vengono spostati. Chiudila prima.
+
 ## Disattivare la condivisione
 
 ```sh
@@ -62,14 +64,19 @@ Se usavi Claude Code prima di ccam, le tue impostazioni si trovano in `~/.claude
 ccam migrate
 ```
 
+In un terminale, ccam mostra prima una checklist degli elementi. È tutto selezionato tranne la cronologia delle conversazioni; premi Spazio per cambiare un elemento e Invio per vedere il piano. Gli elementi per cui la cartella non contiene nulla sono indicati con `not found`.
+
 Cosa copia:
 
 - `settings.json` e il `CLAUDE.md` globale;
 - le estensioni `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/` e `rules/`;
 - i tuoi server MCP utente, cioè la voce `mcpServers` di `~/.claude.json`, nel `mcp.json` del gruppo;
+- gli accessi salvati (OAuth) dei server MCP che copia, nel file di login di ciascun account;
 - la cronologia delle conversazioni (`projects/` e `history.jsonl`), ma solo se aggiungi `--history`.
 
-La cartella di origine viene solo letta: niente al suo interno viene spostato, collegato o modificato, e `claude` da solo continua a funzionare come prima. I file di login `.credentials.json` e `.claude.json` non vengono mai copiati.
+La cartella di origine viene solo letta: niente al suo interno viene spostato, collegato o modificato, e `claude` da solo continua a funzionare come prima. I file di login `.credentials.json` e `.claude.json` non vengono mai copiati nel gruppo.
+
+I server MCP che accedono con OAuth conservano i loro token nel login, non nell'elenco dei server. Per evitarti di accedere di nuovo, ccam copia quegli accessi nel file di login di ogni account che riceve i server tramite il gruppo, a meno che l'account non abbia già i propri. Salta gli account in esecuzione, quelli in cui non hai ancora effettuato il login, quelli registrati sul posto con `ccam import` e quelli che conservano il login nel Portachiavi di macOS, e li elenca per nome; in quegli account accedi ai server con `/mcp`. Un account che inizia a condividere i server MCP in seguito riceve gli accessi quando esegui di nuovo `ccam migrate`.
 
 ccam stampa il piano e chiede conferma prima di copiare qualsiasi cosa:
 
@@ -99,7 +106,7 @@ Quando il gruppo ha già una copia diversa di un file, ccam chiede, come quando 
 
 | Opzione | Effetto |
 | --- | --- |
-| `--settings`, `--memory`, `--extensions`, `--mcp`, `--history` | Copia solo gli elementi indicati; senza di esse, tutto tranne la cronologia delle conversazioni |
+| `--settings`, `--memory`, `--extensions`, `--mcp`, `--history` | Copia solo gli elementi indicati, senza la checklist; senza di esse e fuori da un terminale, tutto tranne la cronologia delle conversazioni |
 | `-g`, `--group <group>` | Copia in questo gruppo invece che in `default` |
 | `-y`, `--yes` | Copia senza chiedere; quando un file è diverso, mantiene la copia del gruppo |
 
@@ -120,7 +127,9 @@ Un server che aggiungi all'interno di una sessione con `claude mcp add` viene sa
 ccam mcp import work gh
 ```
 
-I server MCP che accedono con OAuth salvano i loro token insieme al login dell'account, quindi autorizzali una volta in ciascun account.
+Se il gruppo ha già un server diverso con quel nome, ccam lo salta e te lo segnala. `--force` sostituisce il server del gruppo e conserva il vecchio `mcp.json` nella cartella `.ccam-backup/` del gruppo.
+
+I server MCP che accedono con OAuth salvano i loro token insieme al login dell'account, quindi autorizzali una volta in ciascun account, oppure copia gli accessi da `~/.claude` con `ccam migrate`.
 
 Se preferisci che i server compaiano in `claude mcp list` e `/mcp` come normali server utente, imposta `mcp_strategy = "sync"` in `~/.config/ccam/config.toml`. ccam li scrive allora nel `.claude.json` di ogni account prima dell'avvio, rispettando il lock sul file usato da Claude Code stesso e con un backup.
 

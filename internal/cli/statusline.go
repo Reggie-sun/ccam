@@ -29,6 +29,9 @@ func runShell(command string, input []byte) (string, error) {
 	defer cancel()
 	c := exec.CommandContext(ctx, "sh", "-c", command)
 	c.Stdin = bytes.NewReader(input)
+	// Killing sh does not close the pipe a background child still holds;
+	// without WaitDelay, Output waits for that child however long it runs.
+	c.WaitDelay = 200 * time.Millisecond
 	out, err := c.Output()
 	return string(out), err
 }

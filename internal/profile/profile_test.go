@@ -110,3 +110,43 @@ func TestRenameRewritesPluginPaths(t *testing.T) {
 		t.Fatalf("%s", data)
 	}
 }
+
+func TestRenameRollsBackWhenPluginRewriteFails(t *testing.T) {
+	p := testPaths(t)
+	cfg := &config.Config{}
+	Add(p, cfg, "work", config.Share{})
+	os.MkdirAll(filepath.Join(p.ProfileDir("work"), "plugins"), 0o700)
+	os.WriteFile(filepath.Join(p.ProfileDir("work"), "plugins", "installed_plugins.json"), []byte("{broken"), 0o600)
+	if err := Rename(p, cfg, "work", "job"); err == nil {
+		t.Fatal("want error")
+	}
+	if _, err := os.Stat(p.ProfileDir("work")); err != nil {
+		t.Fatal("folder must keep the name the config still has")
+	}
+	if _, ok := cfg.Find("work"); !ok {
+		t.Fatal("config renamed despite the error")
+	}
+}
+
+func TestTrashTwiceKeepsBothCopies(t *testing.T) {
+	p := testPaths(t)
+	var dsts []string
+	for _, body := range []string{"first", "second"} {
+		cfg := &config.Config{}
+		prof, _ := Add(p, cfg, "tt", config.Share{})
+		os.WriteFile(filepath.Join(p.ProfileDir("tt"), "note"), []byte(body), 0o600)
+		dst, err := Trash(p, prof)
+		if err != nil {
+			t.Fatal(err)
+		}
+		dsts = append(dsts, dst)
+	}
+	if dsts[0] == dsts[1] {
+		t.Fatalf("same trash folder %s", dsts[0])
+	}
+	for i, want := range []string{"first", "second"} {
+		if b, _ := os.ReadFile(filepath.Join(dsts[i], "note")); string(b) != want {
+			t.Fatalf("%s: %q", dsts[i], b)
+		}
+	}
+}

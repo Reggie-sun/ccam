@@ -1,6 +1,6 @@
 // Package launcher turns "profile + claude args" into an exec of claude.
 //
-// This is the hot path behind `ccam <name>` and `claude2`: no cobra, no TUI,
+// This is the hot path behind `ccam <name>` and shortcuts: no cobra, no TUI,
 // no HTTP, one config read, lstat-only checks.
 package launcher
 
@@ -127,6 +127,16 @@ func lastUsedPath(p paths.Paths, name string) string {
 	return filepath.Join(p.State, "last-used", name)
 }
 
+func mcpStateDir(p paths.Paths, name string) string {
+	return filepath.Join(p.State, "mcp", name)
+}
+
+// StatePaths lists what ccam keeps under an account's name in the state
+// folder, so rename can carry it along and remove can clear it.
+func StatePaths(p paths.Paths, name string) []string {
+	return []string{lastUsedPath(p, name), mcpStateDir(p, name)}
+}
+
 // MarkUsed records the launch time; losing it is harmless, so no fsync.
 func MarkUsed(p paths.Paths, name string) {
 	_ = fsutil.WriteFast(lastUsedPath(p, name), []byte(strconv.FormatInt(time.Now().Unix(), 10)))
@@ -145,20 +155,26 @@ func LastUsed(p paths.Paths, name string) time.Time {
 	return time.Unix(sec, 0)
 }
 
-// ResolveClaude finds the claude executable. Lookups through PATH are cached
-// in the state dir together with the file's mtime; a changed or missing file
-// triggers a fresh lookup.
+// ResolveClaude finds the claude executable, which must not be ccam itself
+// (that would add ccam's flags on every pass). Lookups through PATH are
+// cached in the state dir with the file's mtime and the claude_bin they
+// resolved; a changed or missing file, or another claude_bin, triggers a
+// fresh lookup.
 func ResolveClaude(p paths.Paths, bin string) (string, error) {
 	if bin == "" {
 		bin = "claude"
 	}
 	if strings.Contains(bin, "/") {
+		if isSelf(bin) {
+			return "", fmt.Errorf("%s points to ccam itself. Check claude_bin in config.toml", bin)
+		}
 		return bin, nil
 	}
 	cache := filepath.Join(p.State, "claude-path")
 	if data, err := os.ReadFile(cache); err == nil {
-		path, mtime, ok := strings.Cut(strings.TrimSpace(string(data)), "\t")
-		if ok {
+		path, rest, _ := strings.Cut(string(data), "\t")
+		mtime, cachedBin, _ := strings.Cut(rest, "\t")
+		if cachedBin == bin {
 			if fi, err := os.Stat(path); err == nil && strconv.FormatInt(fi.ModTime().UnixNano(), 10) == mtime {
 				return path, nil
 			}
@@ -173,19 +189,22 @@ func ResolveClaude(p paths.Paths, bin string) (string, error) {
 		return "", fmt.Errorf("%s points to ccam itself. Check claude_bin in config.toml", path)
 	}
 	if fi, err := os.Stat(path); err == nil {
-		_ = fsutil.WriteFast(cache, []byte(path+"\t"+strconv.FormatInt(fi.ModTime().UnixNano(), 10)))
+		_ = fsutil.WriteFast(cache, []byte(path+"\t"+strconv.FormatInt(fi.ModTime().UnixNano(), 10)+"\t"+bin))
 	}
 	return path, nil
 }
 
+// isSelf reports whether path is the running ccam binary, through any
+// symlink or hard link. Comparing inodes costs two stats, which matters on
+// the launch path; resolving both paths component by component does not.
 func isSelf(path string) bool {
 	self, err := os.Executable()
 	if err != nil {
 		return false
 	}
-	a, err1 := filepath.EvalSymlinks(self)
-	b, err2 := filepath.EvalSymlinks(path)
-	return err1 == nil && err2 == nil && a == b
+	a, err1 := os.Stat(self)
+	b, err2 := os.Stat(path)
+	return err1 == nil && err2 == nil && os.SameFile(a, b)
 }
 
 // ShellQuote quotes s for sh when needed.

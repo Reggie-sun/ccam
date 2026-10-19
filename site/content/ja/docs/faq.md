@@ -5,7 +5,7 @@ description: ccam、Claude Codeのアカウント、使用量の上限、共有�
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 8876e4f00bd2
+sourceHash: 88bd249ec51c
 ---
 
 ## ccamはAnthropicの公式ツールですか？
@@ -30,7 +30,11 @@ sourceHash: 8876e4f00bd2
 
 ## ccamはログイン情報を見たり送信したりしますか？
 
-ccamがログインをコピーしたり共有したりすることはありません。アカウントのアクセストークンを読み取るのは、`ccam usage`、`ccam next --auto`、`ccam doctor`を実行したときに、Anthropicの使用量エンドポイントにそのアカウントの使用量を問い合わせるためだけです。ccamにはテレメトリーがなく、それ以外の場所には何も送信しません。
+ccamがClaudeのログインをアカウント間で共有することはありません。アカウントのアクセストークンを読み取るのは、`ccam usage`、`ccam next --auto`、`ccam doctor`を実行したときに、Anthropicの使用量エンドポイントにそのアカウントの使用量を問い合わせるためだけです。`ccam migrate`は、MCPサーバーの保存済みのサインイン情報を`~/.claude`から、同じコンピューター上にある各アカウント自身のログインファイルにコピーします。ccamにはテレメトリーがなく、それ以外の場所には何も送信しません。
+
+## リモートサーバーでサインインするにはどうすればよいですか？
+
+SSHセッションで、いつもどおり`ccam add`または`ccam login <name>`を実行します。Claude Codeはサーバー上でサインインを待つため、手元のコンピューターのブラウザーは最後に`http://localhost:<port>/callback?code=…`のページに移動しますが、このページは読み込まれません。そのアドレスをブラウザーからコピーしてターミナルに貼り付けてください。ccamがそれをサーバー上のClaude Codeに渡し、Claude Codeがサインインを完了します。アドレスには一度だけ使えるコードが含まれているので、他人と共有しないでください。
 
 ## アカウントはどこに保存されますか？
 

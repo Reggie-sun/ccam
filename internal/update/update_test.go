@@ -13,6 +13,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 	"testing"
 )
 
@@ -22,12 +23,22 @@ type fakeRelease struct {
 	latest string
 	bins   map[string]string // tag → binary content
 	sums   map[string]string // tag → checksums.txt override
-	hits   []string
+
+	mu   sync.Mutex // the archive and checksums are fetched concurrently
+	hits []string
+}
+
+func (f *fakeRelease) requests() []string {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	return append([]string(nil), f.hits...)
 }
 
 func (f *fakeRelease) serve(t *testing.T) string {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		f.mu.Lock()
 		f.hits = append(f.hits, r.URL.Path)
+		f.mu.Unlock()
 		if r.URL.Path == "/latest" {
 			http.Redirect(w, r, "/tag/"+f.latest, http.StatusFound)
 			return
@@ -146,8 +157,8 @@ func TestCheckOnlyReports(t *testing.T) {
 	if bin, _ := binary(t, u); bin != "old" {
 		t.Fatal("binary changed")
 	}
-	if len(f.hits) != 1 {
-		t.Fatalf("--check downloaded something: %v", f.hits)
+	if len(f.requests()) != 1 {
+		t.Fatalf("--check downloaded something: %v", f.requests())
 	}
 	u.Current = "0.3.0"
 	if out, _ := run(t, u, Options{Check: true}); out != "ccam 0.3.0 is up to date.\n" {
@@ -244,8 +255,8 @@ func TestDevBuildRefused(t *testing.T) {
 				t.Fatalf("%q %+v: err = %v", current, o, err)
 			}
 		}
-		if len(f.hits) != 0 {
-			t.Fatalf("dev build went online: %v", f.hits)
+		if len(f.requests()) != 0 {
+			t.Fatalf("dev build went online: %v", f.requests())
 		}
 		// With --version a development build installs that release.
 		out, err := run(t, u, Options{Version: "0.3.0"})
@@ -265,7 +276,7 @@ func TestVersionFlag(t *testing.T) {
 	if bin, _ := binary(t, u); bin != "bin-0.2.0" {
 		t.Fatalf("binary %q", bin)
 	}
-	for _, h := range f.hits {
+	for _, h := range f.requests() {
 		if h == "/latest" {
 			t.Fatal("--version looked up the latest release")
 		}
@@ -294,8 +305,8 @@ func TestDryRunChangesNothing(t *testing.T) {
 	if bin, _ := binary(t, u); bin != "old" {
 		t.Fatal("binary changed")
 	}
-	if len(f.hits) != 1 || len(leftovers(t, u)) != 0 {
-		t.Fatalf("dry run downloaded or wrote: %v %v", f.hits, leftovers(t, u))
+	if len(f.requests()) != 1 || len(leftovers(t, u)) != 0 {
+		t.Fatalf("dry run downloaded or wrote: %v %v", f.requests(), leftovers(t, u))
 	}
 }
 
@@ -381,7 +392,7 @@ func TestCompareVersions(t *testing.T) {
 			t.Errorf("compare(%s, %s) = %d, want %d", c.a, c.b, got, c.want)
 		}
 	}
-	for _, v := range []string{"dev", "", "1.2", "1.2.x", "latest"} {
+	for _, v := range []string{"dev", "", "1.2", "1.2.x", "latest", "+1.2.3", "v1.2.3-%2F..%2Fx", "v1.2.3-a b", "v1.2.3-$(id)", "v1.2.3-../x"} {
 		if _, ok := parseVersion(v); ok {
 			t.Errorf("parseVersion(%q) ok", v)
 		}

@@ -5,7 +5,7 @@ description: Aggiungi due account Claude Code con ccam add, dai loro scorciatoie
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 745a9904e32a
+sourceHash: a10d91d2a64e
 ---
 
 Aggiungi ogni account con `ccam add`, poi avvia Claude Code con `ccam <name>` o con una scorciatoia a cui dai tu il nome, come `ccwork`. È tutto ciò che serve alla maggior parte delle persone.
@@ -16,7 +16,7 @@ Aggiungi ogni account con `ccam add`, poi avvia Claude Code con `ccam <name>` o 
 ccam add
 ```
 
-La procedura guidata chiede un nome come `personal` o `work`, quali elementi l'account deve condividere con gli altri tuoi account e se creare una scorciatoia (vedi il passo 4). Poi esegue `claude auth login`, che apre il browser per farti accedere. Al termine vedi:
+La procedura guidata chiede un nome come `personal` o `work`, quali elementi l'account deve condividere con gli altri tuoi account e se creare una scorciatoia (vedi il passo 4). Poi esegue `claude auth login`, che apre il browser per farti accedere. Su una macchina remota il browser può finire su una pagina `http://localhost:…/callback` che non si carica; incolla quell'indirizzo nel terminale e ccam completa l'accesso. Al termine vedi:
 
 ```console
 ✓ personal (me@example.com) added

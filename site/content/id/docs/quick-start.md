@@ -5,7 +5,7 @@ description: Tambahkan dua akun Claude Code dengan ccam add, beri pintasan seper
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 745a9904e32a
+sourceHash: a10d91d2a64e
 ---
 
 Tambahkan setiap akun dengan `ccam add`, lalu jalankan Claude Code dengan `ccam <name>` atau dengan pintasan yang namanya Anda pilih sendiri, seperti `ccwork`. Bagi kebanyakan orang, itu sudah cukup.
@@ -16,7 +16,7 @@ Tambahkan setiap akun dengan `ccam add`, lalu jalankan Claude Code dengan `ccam 
 ccam add
 ```
 
-Wizard akan menanyakan nama, seperti `personal` atau `work`, item apa saja yang perlu dibagikan akun ini dengan akun Anda yang lain, dan apakah perlu membuat perintah pintasan (lihat langkah 4). Lalu wizard menjalankan `claude auth login`, yang membuka browser agar Anda bisa masuk. Setelah selesai, Anda akan melihat:
+Wizard akan menanyakan nama, seperti `personal` atau `work`, item apa saja yang perlu dibagikan akun ini dengan akun Anda yang lain, dan apakah perlu membuat perintah pintasan (lihat langkah 4). Lalu wizard menjalankan `claude auth login`, yang membuka browser agar Anda bisa masuk. Di mesin jarak jauh, browser mungkin berakhir di halaman `http://localhost:…/callback` yang tidak bisa dimuat; tempelkan alamat itu ke terminal dan ccam akan menyelesaikan proses masuk. Setelah selesai, Anda akan melihat:
 
 ```console
 ✓ personal (me@example.com) added

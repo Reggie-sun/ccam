@@ -17,6 +17,7 @@ func doctorCmd(e *env) *cobra.Command {
 			if err != nil {
 				return err
 			}
+			fix := fix && !e.dryRun // a dry run reports what --fix would repair
 			self, _ := ccamPath()
 			findings := doctor.Run(e.paths, cfg, doctor.Options{Fix: fix, CcamPath: self, Usage: e.fetcher()})
 			for _, f := range findings {

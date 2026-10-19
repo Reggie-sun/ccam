@@ -26,7 +26,7 @@ func rows() []Row {
 }
 
 func fakeUsage(pct map[string]float64) UsageFunc {
-	return func(ctx context.Context, name string) usage.Report {
+	return func(ctx context.Context, name string, fresh bool) usage.Report {
 		p, ok := pct[name]
 		if !ok {
 			return usage.Report{Name: name, Status: usage.StatusLoggedOut}
@@ -127,7 +127,7 @@ func TestPickerShowsUsageWhenItArrives(t *testing.T) {
 }
 
 func TestFirstFrameIsFast(t *testing.T) {
-	slow := func(ctx context.Context, name string) usage.Report {
+	slow := func(ctx context.Context, name string, fresh bool) usage.Report {
 		time.Sleep(2 * time.Second) // usage must not block the first frame
 		return usage.Report{Name: name}
 	}
@@ -280,5 +280,12 @@ func TestWizardShortcutWithoutUsableSuggestion(t *testing.T) {
 	final := tm.FinalModel(t, teatest.WithFinalTimeout(2*time.Second)).(Wizard)
 	if a := final.Answers(); !final.Done() || a.Shortcut != "ccjob" {
 		t.Fatalf("%+v", a)
+	}
+}
+
+func TestWizardAcceptsPastedName(t *testing.T) {
+	m, _ := NewWizard(&config.Config{}, "").Update(tea.PasteMsg{Content: "side\n"})
+	if w := m.(Wizard); w.Answers().Name != "side" {
+		t.Fatalf("pasted name: %q", w.Answers().Name)
 	}
 }

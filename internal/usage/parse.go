@@ -17,6 +17,15 @@ type Window struct {
 	Known    bool      `json:"known"`
 }
 
+// as returns w as it stands at now. A window whose reset time has passed
+// has started over, so a percentage saved before the reset no longer holds.
+func (w Window) as(now time.Time) Window {
+	if w.Known && !w.ResetsAt.IsZero() && !w.ResetsAt.After(now) {
+		return Window{Known: true}
+	}
+	return w
+}
+
 // Scoped is a model-specific weekly window (shown with -v).
 type Scoped struct {
 	Name   string `json:"name"`
@@ -28,6 +37,15 @@ type Limits struct {
 	FiveHour Window   `json:"five_hour"`
 	Weekly   Window   `json:"weekly"`
 	Scoped   []Scoped `json:"scoped,omitempty"`
+}
+
+// as returns a copy of l with every lapsed window reset (see Window.as).
+func (l *Limits) as(now time.Time) *Limits {
+	out := &Limits{FiveHour: l.FiveHour.as(now), Weekly: l.Weekly.as(now)}
+	for _, s := range l.Scoped {
+		out.Scoped = append(out.Scoped, Scoped{Name: s.Name, Window: s.Window.as(now)})
+	}
+	return out
 }
 
 type apiWindow struct {
@@ -85,9 +103,12 @@ func ParseLive(body []byte) (Limits, error) {
 		l.Weekly = fromOld(r.SevenDay)
 	}
 	if len(r.Limits) == 0 {
-		for name, w := range map[string]*apiWindow{"Opus": r.SevenDayOpus, "Sonnet": r.SevenDaySon} {
-			if ow := fromOld(w); ow.Known {
-				l.Scoped = append(l.Scoped, Scoped{Name: name, Window: ow})
+		for _, m := range []struct {
+			name string
+			w    *apiWindow
+		}{{"Opus", r.SevenDayOpus}, {"Sonnet", r.SevenDaySon}} {
+			if ow := fromOld(m.w); ow.Known {
+				l.Scoped = append(l.Scoped, Scoped{Name: m.name, Window: ow})
 			}
 		}
 	}
@@ -132,7 +153,11 @@ func (w *statusWindow) window() Window {
 	if w == nil || w.UsedPercentage == nil {
 		return Window{}
 	}
-	return Window{Percent: *w.UsedPercentage, ResetsAt: time.Unix(w.ResetsAt, 0), Known: true}
+	win := Window{Percent: *w.UsedPercentage, Known: true}
+	if w.ResetsAt > 0 { // time.Unix(0, 0) is 1970, not the zero time
+		win.ResetsAt = time.Unix(w.ResetsAt, 0)
+	}
+	return win
 }
 
 // ParseStatusLine reads the JSON Claude Code pipes to the status line

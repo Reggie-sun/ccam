@@ -5,7 +5,7 @@ description: ccam add로 Claude Code 계정 두 개를 추가하고, ccwork 같�
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 745a9904e32a
+sourceHash: a10d91d2a64e
 ---
 
 `ccam add`로 계정을 하나씩 추가한 뒤, `ccam <name>` 또는 `ccwork`처럼 직접 이름을 붙인 단축 명령으로 Claude Code를 시작합니다. 대부분은 이것만으로 충분합니다.
@@ -16,7 +16,7 @@ sourceHash: 745a9904e32a
 ccam add
 ```
 
-설정 마법사가 `personal`이나 `work` 같은 계정 이름, 이 계정이 다른 계정과 공유할 항목, 그리고 단축 명령을 만들지 여부를 묻습니다(4단계 참고). 이어서 `claude auth login`이 실행되어 브라우저가 열리면 로그인하면 됩니다. 완료되면 다음과 같이 표시됩니다.
+설정 마법사가 `personal`이나 `work` 같은 계정 이름, 이 계정이 다른 계정과 공유할 항목, 그리고 단축 명령을 만들지 여부를 묻습니다(4단계 참고). 이어서 `claude auth login`이 실행되어 브라우저가 열리면 로그인하면 됩니다. 원격 컴퓨터에서는 브라우저가 로드되지 않는 `http://localhost:…/callback` 페이지에서 멈출 수 있습니다. 그 주소를 터미널에 붙여 넣으면 ccam이 로그인을 마칩니다. 완료되면 다음과 같이 표시됩니다.
 
 ```console
 ✓ personal (me@example.com) added

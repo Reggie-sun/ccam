@@ -5,7 +5,7 @@ description: Adicione duas contas do Claude Code com ccam add, dê a elas atalho
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 745a9904e32a
+sourceHash: a10d91d2a64e
 ---
 
 Adicione cada conta com `ccam add` e depois inicie o Claude Code com `ccam <name>` ou com um atalho que você mesmo nomeia, como `ccwork`. Isso é tudo de que a maioria das pessoas precisa.
@@ -16,7 +16,7 @@ Adicione cada conta com `ccam add` e depois inicie o Claude Code com `ccam <name
 ccam add
 ```
 
-O assistente pede um nome, como `personal` ou `work`, quais itens a conta deve compartilhar com suas outras contas e se deve criar um atalho (veja o passo 4). Depois ele executa `claude auth login`, que abre o navegador para você entrar. Quando ele termina, você vê:
+O assistente pede um nome, como `personal` ou `work`, quais itens a conta deve compartilhar com suas outras contas e se deve criar um atalho (veja o passo 4). Depois ele executa `claude auth login`, que abre o navegador para você entrar. Em uma máquina remota, o navegador pode parar em uma página `http://localhost:…/callback` que não carrega; cole esse endereço no terminal e o ccam conclui o login. Quando ele termina, você vê:
 
 ```console
 ✓ personal (me@example.com) added

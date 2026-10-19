@@ -5,7 +5,7 @@ description: Mga sagot tungkol sa ccam, mga Claude Code account, usage limit, sh
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 8876e4f00bd2
+sourceHash: 88bd249ec51c
 ---
 
 ## Opisyal bang tool ng Anthropic ang ccam?
@@ -30,7 +30,11 @@ I-share ang kasaysayan ng usapan sa pagitan ng dalawang account gamit ang `ccam 
 
 ## Nakikita o ipinapadala ba ng ccam ang login ko?
 
-Hindi kailanman kumokopya o nagshe-share ng login ang ccam. Binabasa lang nito ang access token ng isang account para itanong sa usage endpoint ng Anthropic ang usage ng account na iyon, kapag pinatakbo mo ang `ccam usage`, `ccam next --auto` o `ccam doctor`. Walang telemetry ang ccam at wala itong ipinapadala saanman bukod doon.
+Hindi kailanman ishe-share ng ccam ang iyong Claude login sa pagitan ng mga account. Binabasa lang nito ang access token ng isang account para itanong sa usage endpoint ng Anthropic ang usage ng account na iyon, kapag pinatakbo mo ang `ccam usage`, `ccam next --auto` o `ccam doctor`. Kinokopya ng `ccam migrate` ang mga naka-save na sign-in ng mga MCP server mula sa `~/.claude` papunta sa sariling login file ng iyong mga account sa parehong computer. Walang telemetry ang ccam at wala itong ipinapadala saanman bukod doon.
+
+## Paano mag-sign in sa isang remote server?
+
+Patakbuhin ang `ccam add` o `ccam login <name>` sa SSH session gaya ng dati. Naghihintay ang Claude Code ng sign-in sa server, kaya mapupunta ang browser sa computer mo sa isang `http://localhost:<port>/callback?code=…` na page na hindi naglo-load. Kopyahin ang address na iyon mula sa browser at i-paste sa terminal: ipapasa ito ng ccam sa Claude Code sa server, na siyang tatapos sa sign-in. May one-time code ang address, kaya huwag itong i-share.
 
 ## Saan naka-store ang mga account ko?
 

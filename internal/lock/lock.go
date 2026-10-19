@@ -61,8 +61,9 @@ func DirLock(path string, timeout time.Duration) (unlock func(), err error) {
 		if !errors.Is(err, fs.ErrExist) {
 			return nil, err
 		}
-		if info, err := os.Stat(path); err == nil && time.Since(info.ModTime()) > staleAfter {
-			os.Remove(path)
+		// Retry at once only when the stale lock is really gone; one that
+		// cannot be removed (not empty, no permission) waits like a live one.
+		if info, err := os.Stat(path); err == nil && time.Since(info.ModTime()) > staleAfter && os.Remove(path) == nil {
 			continue
 		}
 		if time.Now().After(deadline) {

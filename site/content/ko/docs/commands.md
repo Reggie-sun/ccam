@@ -5,10 +5,10 @@ description: ccam add, ccam <name>부터 ccam usage, ccam next, ccam doctor까�
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 65fb2b8f6617
+sourceHash: 3342453e38d3
 ---
 
-어떤 명령이든 앞에 `--dry-run`을 붙이면 실제로 실행하지 않고 무엇을 할지만 보여 줍니다(예: `ccam --dry-run work`).
+명령 앞에 `--dry-run`을 붙이면 실제로 실행하지 않고 무엇을 할지만 보여 줍니다(예: `ccam --dry-run work`). Claude Code를 시작할 때(`ccam <name>`, `ccam run`, `ccam next`)와 `share`, `migrate`, `shortcut`, `update`, `doctor --fix`에서 쓸 수 있습니다. 무언가를 바꾸는 다른 명령은 실행하지 않고 이 옵션을 거부합니다.
 
 <!-- commands -->
 
@@ -33,6 +33,10 @@ ccam import ~/.claude-old --name old
 ```
 
 폴더를 지정하지 않고 `ccam import`를 실행하면 `~/.claude`와 `~/.claude-*`를 찾아 폴더마다 하나씩 물어봅니다. 가져온 폴더는 원래 위치에서 그대로 등록되며, ccam은 로그인 정보를 절대 옮기거나 복사하지 않습니다.
+
+`ccam rename`, `ccam remove`, `ccam share`는 어떤 계정으로 Claude Code가 실행 중이면 그 계정을 바꾸지 않고 거부합니다. 먼저 세션을 종료하세요.
+
+`ccam list --json`은 모든 계정의 슬롯 번호, 단축 명령, 이메일, 폴더를 출력합니다. `share` 객체는 각 항목(`mcp`, `settings`, `memory`, `extensions`, `history`)을 그룹 이름이나 `local`에 대응시킵니다.
 
 ## 단축 명령
 
@@ -69,7 +73,7 @@ ccam migrate ~/.claude-work --group work --settings --mcp
 ccam migrate --history --yes    # conversation history only
 ```
 
-`ccam migrate`는 Claude Code 폴더에 있는 `settings.json`, `CLAUDE.md`, 확장 기능, 사용자 MCP 서버를 공유 그룹으로 복사합니다. 그러면 그 항목을 공유하는 모든 계정이 같은 내용을 쓰게 됩니다. 원본 폴더는 읽기만 합니다. `--settings`, `--memory`, `--extensions`, `--mcp`, `--history` 옵션을 주면 지정한 항목만 복사하고, 옵션이 없으면 대화 내역을 제외한 모든 항목을 복사합니다. `-g` 또는 `--group`으로 그룹을 고르고, `-y` 또는 `--yes`를 주면 묻지 않고 복사하며 내용이 다른 파일은 그룹의 사본을 유지합니다. 자세한 내용은 [기존 설정 복사하기](/docs/sharing#copy-an-existing-setup)를 참고하세요.
+`ccam migrate`는 Claude Code 폴더에 있는 `settings.json`, `CLAUDE.md`, 확장 기능, 사용자 MCP 서버를 공유 그룹으로 복사합니다. 그러면 그 항목을 공유하는 모든 계정이 같은 내용을 쓰게 됩니다. 원본 폴더는 읽기만 합니다. `--settings`, `--memory`, `--extensions`, `--mcp`, `--history` 옵션을 주면 지정한 항목만 복사합니다. 옵션이 없으면 터미널에서는 체크리스트가 나타나 직접 고를 수 있으며, 대화 내역을 제외한 모든 항목이 선택되어 있습니다. 터미널이 아니면 대화 내역을 제외한 모든 항목을 복사합니다. `-g` 또는 `--group`으로 그룹을 고르고, `-y` 또는 `--yes`를 주면 묻지 않고 복사하며 내용이 다른 파일은 그룹의 사본을 유지합니다. 또한 MCP 서버에 저장된 로그인 정보를 각 계정 자체의 로그인 파일로 복사합니다. 자세한 내용은 [기존 설정 복사하기](/docs/sharing#copy-an-existing-setup)를 참고하세요.
 
 ## MCP 서버
 
@@ -81,6 +85,8 @@ ccam mcp list
 ccam mcp import work gh
 ccam mcp remove fs
 ```
+
+`ccam mcp import <account>`는 그 계정에만 있는 서버를 계정의 그룹으로 옮깁니다. 그룹에 같은 이름으로 정의가 다른 서버가 이미 있으면 건너뜁니다. `--force`를 붙이면 그룹의 서버를 바꾸며, ccam이 먼저 기존 것을 백업합니다.
 
 ## 사용량 확인과 계정 전환
 
@@ -101,6 +107,7 @@ ccam statusline install
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam version         # also: ccam -v, ccam --version
 ```
 
 `ccam update`는 ccam을 교체하기 전에 릴리스의 SHA-256 체크섬을 확인하고, `--version v0.2.0`을 주면 특정 릴리스를 설치합니다. `.deb` 패키지로 설치한 ccam은 apt로 업데이트합니다. 자세한 내용은 [업데이트](/docs/install#update)를 참고하세요.

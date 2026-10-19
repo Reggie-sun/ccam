@@ -72,5 +72,9 @@ func TestParseStatusLine(t *testing.T) {
 	_, _, ok, err = ParseStatusLine([]byte(`{"model":{"display_name":"Opus"}}`))
 	if ok || err != nil {
 		t.Fatal("no rate_limits → not ok")
+	} // No resets_at: unknown reset time, not 1970.
+	l, _, ok, _ = ParseStatusLine([]byte(`{"rate_limits":{"five_hour":{"used_percentage":5}}}`))
+	if !ok || !l.FiveHour.ResetsAt.IsZero() {
+		t.Fatalf("missing resets_at: %+v", l.FiveHour)
 	}
 }

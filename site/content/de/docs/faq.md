@@ -5,7 +5,7 @@ description: Antworten zu ccam, Claude Code-Konten, Nutzungslimits, Teilen, Date
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 8876e4f00bd2
+sourceHash: 88bd249ec51c
 ---
 
 ## Ist ccam ein offizielles Tool von Anthropic?
@@ -30,7 +30,11 @@ Teile den Gesprächsverlauf zwischen den beiden Konten mit `ccam share <name> --
 
 ## Sieht oder sendet ccam meine Anmeldung?
 
-ccam kopiert oder teilt nie eine Anmeldung. Es liest das Zugriffstoken eines Kontos nur, um beim Nutzungs-Endpunkt von Anthropic die Nutzung dieses Kontos abzufragen, wenn du `ccam usage`, `ccam next --auto` oder `ccam doctor` ausführst. ccam hat keine Telemetrie und sendet an keine andere Stelle etwas.
+ccam teilt deine Claude-Anmeldung nie zwischen Konten. Es liest das Zugriffstoken eines Kontos nur, um beim Nutzungs-Endpunkt von Anthropic die Nutzung dieses Kontos abzufragen, wenn du `ccam usage`, `ccam next --auto` oder `ccam doctor` ausführst. `ccam migrate` kopiert die gespeicherten Anmeldungen von MCP-Servern aus `~/.claude` in die eigenen Anmeldedateien deiner Konten auf demselben Computer. ccam hat keine Telemetrie und sendet an keine andere Stelle etwas.
+
+## Wie melde ich mich auf einem entfernten Server an?
+
+Führe `ccam add` oder `ccam login <name>` wie gewohnt in der SSH-Sitzung aus. Claude Code wartet auf dem Server auf die Anmeldung, daher landet der Browser auf deinem Computer auf einer Seite `http://localhost:<port>/callback?code=…`, die nicht lädt. Kopiere diese Adresse aus dem Browser und füge sie im Terminal ein: ccam gibt sie an Claude Code auf dem Server weiter, das die Anmeldung abschließt. Die Adresse enthält einen Einmalcode, gib sie also nicht weiter.
 
 ## Wo werden meine Konten gespeichert?
 

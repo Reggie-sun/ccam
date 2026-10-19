@@ -5,10 +5,10 @@ description: Kila amri na chaguo la ccam, kuanzia ccam add na ccam <name> hadi c
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 65fb2b8f6617
+sourceHash: 3342453e38d3
 ---
 
-Weka `--dry-run` kabla ya amri yoyote ili kuona itakachofanya bila kukifanya, kwa mfano `ccam --dry-run work`.
+Weka `--dry-run` kabla ya amri ili kuona itakachofanya bila kukifanya, kwa mfano `ccam --dry-run work`. Inafanya kazi unapoanzisha Claude Code (`ccam <name>`, `ccam run`, `ccam next`) na pamoja na `share`, `migrate`, `shortcut`, `update` na `doctor --fix`. Amri nyingine zinazobadilisha kitu huikataa badala ya kufanya kazi.
 
 <!-- commands -->
 
@@ -33,6 +33,10 @@ ccam import ~/.claude-old --name old
 ```
 
 `ccam import` bila folda hutafuta `~/.claude` na `~/.claude-*` na huuliza kuhusu kila moja. Folda zilizoingizwa husajiliwa pale zilipo; ccam kamwe haihamishi wala kunakili taarifa za kuingia.
+
+`ccam rename`, `ccam remove` na `ccam share` hukataa kubadilisha akaunti wakati Claude Code inaendeshwa kama akaunti hiyo. Funga kipindi (session) kwanza.
+
+`ccam list --json` huchapisha kila akaunti pamoja na namba yake (slot), njia fupi, barua pepe na folda. Kitu chake `share` huhusisha kila kipengele (`mcp`, `settings`, `memory`, `extensions`, `history`) na jina la kikundi au `local`.
 
 ## Njia fupi
 
@@ -69,7 +73,7 @@ ccam migrate ~/.claude-work --group work --settings --mcp
 ccam migrate --history --yes    # conversation history only
 ```
 
-`ccam migrate` hunakili `settings.json`, `CLAUDE.md`, viendelezi na seva za MCP za mtumiaji kutoka folda ya Claude Code kwenda kwenye kikundi, ili kila akaunti inayoshiriki vipengele hivyo ivipate. Folda husomwa tu. Chaguo `--settings`, `--memory`, `--extensions`, `--mcp` na `--history` hunakili tu vipengele unavyovitaja; bila hivyo, kila kitu isipokuwa historia ya mazungumzo hunakiliwa. `-g` au `--group` huchagua kikundi, na `-y` au `--yes` hunakili bila kuuliza na huhifadhi nakala ya kikundi faili inapotofautiana. Tazama [kunakili usanidi uliopo](/docs/sharing#copy-an-existing-setup).
+`ccam migrate` hunakili `settings.json`, `CLAUDE.md`, viendelezi na seva za MCP za mtumiaji kutoka folda ya Claude Code kwenda kwenye kikundi, ili kila akaunti inayoshiriki vipengele hivyo ivipate. Folda husomwa tu. Chaguo `--settings`, `--memory`, `--extensions`, `--mcp` na `--history` hunakili tu vipengele unavyovitaja. Bila hivyo, kwenye terminal orodha ya kuteua hukuruhusu kuchagua, huku kila kitu isipokuwa historia ya mazungumzo kikiwa kimeteuliwa; mahali pengine, kila kitu isipokuwa historia ya mazungumzo hunakiliwa. `-g` au `--group` huchagua kikundi, na `-y` au `--yes` hunakili bila kuuliza na huhifadhi nakala ya kikundi faili inapotofautiana. Pia hunakili taarifa za kuingia zilizohifadhiwa za seva hizo kwenye faili ya kuingia ya kila akaunti yenyewe. Tazama [kunakili usanidi uliopo](/docs/sharing#copy-an-existing-setup).
 
 ## Seva za MCP
 
@@ -81,6 +85,8 @@ ccam mcp list
 ccam mcp import work gh
 ccam mcp remove fs
 ```
+
+`ccam mcp import <account>` huhamisha seva ambazo akaunti hiyo pekee inazo kwenda kwenye kikundi chake. Seva ambayo jina lake tayari linatumiwa na kikundi kwa ufafanuzi tofauti huachwa; ongeza `--force` ili kubadilisha nakala ya kikundi, ambayo ccam huitengenezea nakala rudufu kwanza.
 
 ## Matumizi na kubadili
 
@@ -101,6 +107,7 @@ ccam statusline install
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam version         # also: ccam -v, ccam --version
 ```
 
 `ccam update` hukagua checksum ya SHA-256 ya toleo kabla ya kubadilisha ccam, na `--version v0.2.0` husakinisha toleo mahususi. ccam iliyosakinishwa kutoka kifurushi cha `.deb` husasishwa kwa apt badala yake. Tazama [kusasisha ccam](/docs/install#update).

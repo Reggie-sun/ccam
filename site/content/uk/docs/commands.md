@@ -5,10 +5,10 @@ description: Усі команди та параметри ccam, від ccam add
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 65fb2b8f6617
+sourceHash: 3342453e38d3
 ---
 
-Додайте `--dry-run` перед будь-якою командою, щоб побачити, що вона зробила б, не виконуючи її, наприклад `ccam --dry-run work`.
+Додайте `--dry-run` перед командою, щоб побачити, що вона зробила б, не виконуючи її, наприклад `ccam --dry-run work`. Це працює під час запуску Claude Code (`ccam <name>`, `ccam run`, `ccam next`) і з `share`, `migrate`, `shortcut`, `update` та `doctor --fix`. Інші команди, які щось змінюють, відхиляють цей параметр і не виконуються.
 
 <!-- commands -->
 
@@ -33,6 +33,10 @@ ccam import ~/.claude-old --name old
 ```
 
 `ccam import` без теки шукає `~/.claude` і `~/.claude-*` та запитує про кожну з них. Імпортовані теки реєструються там, де вони є; ccam ніколи не переміщує й не копіює дані входу.
+
+`ccam rename`, `ccam remove` і `ccam share` відмовляються змінювати обліковий запис, поки Claude Code працює від його імені. Спершу завершіть сеанс.
+
+`ccam list --json` виводить кожен обліковий запис із його слотом, короткою командою, електронною поштою й текою. Його об'єкт `share` зіставляє кожен елемент (`mcp`, `settings`, `memory`, `extensions`, `history`) з назвою групи або з `local`.
 
 ## Короткі команди
 
@@ -69,7 +73,7 @@ ccam migrate ~/.claude-work --group work --settings --mcp
 ccam migrate --history --yes    # conversation history only
 ```
 
-`ccam migrate` копіює `settings.json`, `CLAUDE.md`, розширення та користувацькі сервери MCP з теки Claude Code до групи, щоб їх отримав кожен обліковий запис, який спільно використовує ці елементи. Тека лише читається. Параметри `--settings`, `--memory`, `--extensions`, `--mcp` і `--history` копіюють лише вказані елементи; без них копіюється все, крім історії розмов. `-g` або `--group` вибирає групу, а `-y` або `--yes` копіює без запитань і залишає копію групи, якщо файл відрізняється. Див. [копіювання наявного налаштування](/docs/sharing#copy-an-existing-setup).
+`ccam migrate` копіює `settings.json`, `CLAUDE.md`, розширення та користувацькі сервери MCP з теки Claude Code до групи, щоб їх отримав кожен обліковий запис, який спільно використовує ці елементи. Тека лише читається. Параметри `--settings`, `--memory`, `--extensions`, `--mcp` і `--history` копіюють лише вказані елементи. Без них у терміналі ви вибираєте елементи в контрольному списку, де позначено все, крім історії розмов; в інших випадках копіюється все, крім історії розмов. `-g` або `--group` вибирає групу, а `-y` або `--yes` копіює без запитань і залишає копію групи, якщо файл відрізняється. Він також копіює збережені входи серверів до власного файлу входу кожного облікового запису. Див. [копіювання наявного налаштування](/docs/sharing#copy-an-existing-setup).
 
 ## Сервери MCP
 
@@ -81,6 +85,8 @@ ccam mcp list
 ccam mcp import work gh
 ccam mcp remove fs
 ```
+
+`ccam mcp import <account>` переміщує до групи облікового запису сервери, які є лише в ньому. Сервер, назву якого група вже використовує для іншого визначення, пропускається; додайте `--force`, щоб замінити копію групи, а ccam спершу створить її резервну копію.
 
 ## Використання та перемикання
 
@@ -101,6 +107,7 @@ ccam statusline install
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam version         # also: ccam -v, ccam --version
 ```
 
 `ccam update` перевіряє контрольну суму SHA-256 випуску, перш ніж замінити ccam, а `--version v0.2.0` встановлює певний випуск. ccam, встановлений з пакета `.deb`, натомість оновлюється через apt. Див. [оновлення](/docs/install#update).

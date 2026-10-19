@@ -33,3 +33,17 @@ func TestPackageInitIsCheap(t *testing.T) {
 		t.Fatalf("package init takes %.1f ms in total", total)
 	}
 }
+
+// TestNoTextTemplate guards the binary size: text/template's reflective
+// method calls keep every exported method alive, which cost 2 MB (+20%)
+// when a custom cobra version template was set.
+func TestNoTextTemplate(t *testing.T) {
+	buildCcam(t)
+	out, err := exec.Command("go", "tool", "nm", ccamBin).Output()
+	if err != nil {
+		t.Skipf("go tool nm: %v", err)
+	}
+	if strings.Contains(string(out), " text/template.(*state).evalCall") {
+		t.Fatal("text/template is linked in; avoid cobra templates (SetVersionTemplate, SetUsageTemplate, …)")
+	}
+}

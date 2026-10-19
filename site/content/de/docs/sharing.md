@@ -4,7 +4,7 @@ description: Wie ccam MCP-Server, settings.json, CLAUDE.md, Agents, Skills und d
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: 1e2f0d6809fc
+sourceHash: f266f8bfd55c
 ---
 
 Jedes Konto behält seine eigene Anmeldung. Alles andere kann Element für Element geteilt werden: ccam verlinkt die Datei oder den Ordner des Kontos mit einem geteilten Gruppenordner, sodass eine Änderung in einem Konto in allen Konten dieser Gruppe erscheint.
@@ -46,6 +46,8 @@ Wenn ein Konto anfängt, ein Element zu teilen, macht ccam Folgendes:
 
 Gesprächsdateien sind nach ihrer Sitzungs-ID benannt, daher lassen sich Verläufe aus mehreren Konten ohne Konflikte zusammenführen.
 
+ccam ändert das Teilen nicht, solange Claude Code mit dem Konto läuft, weil die Sitzung weiter in die Dateien schreibt, die verschoben werden. Beende sie zuerst.
+
 ## Teilen ausschalten
 
 ```sh
@@ -62,14 +64,19 @@ Wenn du Claude Code schon vor ccam benutzt hast, liegen deine Einstellungen in `
 ccam migrate
 ```
 
+In einem Terminal zeigt ccam zuerst eine Checkliste der Elemente. Alles außer dem Gesprächsverlauf ist angehakt; drücke die Leertaste, um ein Element umzuschalten, und Enter, um den Plan zu sehen. Elemente, für die der Ordner nichts enthält, sind mit `not found` markiert.
+
 Was kopiert wird:
 
 - `settings.json` und die globale `CLAUDE.md`;
 - die Erweiterungen `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/` und `rules/`;
 - deine Benutzer-MCP-Server, also der Eintrag `mcpServers` in `~/.claude.json`, in die `mcp.json` der Gruppe;
+- die gespeicherten Anmeldungen (OAuth) der kopierten MCP-Server, in die eigene Anmeldedatei jedes Kontos;
 - der Gesprächsverlauf (`projects/` und `history.jsonl`), aber nur, wenn du `--history` angibst.
 
-Der Quellordner wird nur gelesen: Nichts darin wird verschoben, verlinkt oder geändert, und einfaches `claude` funktioniert weiter wie bisher. Die Anmeldedateien `.credentials.json` und `.claude.json` werden nie kopiert.
+Der Quellordner wird nur gelesen: Nichts darin wird verschoben, verlinkt oder geändert, und einfaches `claude` funktioniert weiter wie bisher. Die Anmeldedateien `.credentials.json` und `.claude.json` werden nie in die Gruppe kopiert.
+
+MCP-Server, die sich per OAuth anmelden, speichern ihre Tokens in der Anmeldung, nicht in der Serverliste. Damit du dich nicht erneut bei ihnen anmelden musst, kopiert ccam diese Anmeldungen in die Anmeldedatei jedes Kontos, das die Server über die Gruppe bekommt, sofern das Konto nicht schon eigene hat. Konten, die gerade laufen, noch nicht angemeldet sind, mit `ccam import` an Ort und Stelle registriert wurden oder ihre Anmeldung im macOS-Schlüsselbund speichern, überspringt es und nennt sie; melde dich dort mit `/mcp` bei den Servern an. Ein Konto, das MCP-Server erst später teilt, bekommt die Anmeldungen, wenn du `ccam migrate` erneut ausführst.
 
 ccam gibt den Plan aus und fragt nach, bevor es etwas kopiert:
 
@@ -99,7 +106,7 @@ Wenn die Gruppe bereits eine abweichende Kopie einer Datei hat, fragt ccam wie b
 
 | Option | Wirkung |
 | --- | --- |
-| `--settings`, `--memory`, `--extensions`, `--mcp`, `--history` | Nur die genannten Elemente kopieren; ohne sie alles außer dem Gesprächsverlauf |
+| `--settings`, `--memory`, `--extensions`, `--mcp`, `--history` | Nur die genannten Elemente kopieren, ohne Checkliste; ohne sie und außerhalb eines Terminals alles außer dem Gesprächsverlauf |
 | `-g`, `--group <group>` | In diese Gruppe statt in `default` kopieren |
 | `-y`, `--yes` | Ohne Nachfrage kopieren; wenn eine Datei abweicht, die Kopie der Gruppe behalten |
 
@@ -120,7 +127,9 @@ Ein Server, den du innerhalb einer Sitzung mit `claude mcp add` hinzufügst, wir
 ccam mcp import work gh
 ```
 
-MCP-Server, die sich per OAuth anmelden, speichern ihre Tokens zusammen mit der Anmeldung des Kontos, autorisiere sie also in jedem Konto einmal.
+Hat die Gruppe bereits einen anderen Server mit diesem Namen, überspringt ccam ihn und weist darauf hin. `--force` ersetzt den Server der Gruppe und behält die alte `mcp.json` im Ordner `.ccam-backup/` der Gruppe.
+
+MCP-Server, die sich per OAuth anmelden, speichern ihre Tokens zusammen mit der Anmeldung des Kontos, autorisiere sie also in jedem Konto einmal oder kopiere die Anmeldungen mit `ccam migrate` aus `~/.claude`.
 
 Wenn die Server in `claude mcp list` und `/mcp` als gewöhnliche Benutzer-Server erscheinen sollen, setze `mcp_strategy = "sync"` in `~/.config/ccam/config.toml`. ccam schreibt sie dann vor dem Start in die `.claude.json` jedes Kontos, unter der eigenen Dateisperre von Claude Code und mit einer Sicherung.
 

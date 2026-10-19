@@ -5,7 +5,7 @@ description: Jawaban seputar ccam, akun Claude Code, batas penggunaan, pembagian
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 8876e4f00bd2
+sourceHash: 88bd249ec51c
 ---
 
 ## Apakah ccam alat resmi dari Anthropic?
@@ -30,7 +30,11 @@ Bagikan riwayat percakapan antara kedua akun dengan `ccam share <name> --history
 
 ## Apakah ccam melihat atau mengirim login saya?
 
-ccam tidak pernah menyalin atau membagikan login. ccam membaca token akses sebuah akun hanya untuk menanyakan penggunaan akun itu ke endpoint penggunaan Anthropic, saat Anda menjalankan `ccam usage`, `ccam next --auto`, atau `ccam doctor`. ccam tidak memiliki telemetri dan tidak mengirim apa pun ke tempat lain.
+ccam tidak pernah membagikan login Claude Anda antarakun. ccam membaca token akses sebuah akun hanya untuk menanyakan penggunaan akun itu ke endpoint penggunaan Anthropic, saat Anda menjalankan `ccam usage`, `ccam next --auto`, atau `ccam doctor`. `ccam migrate` menyalin info masuk server MCP yang tersimpan dari `~/.claude` ke file login milik akun-akun Anda sendiri di komputer yang sama. ccam tidak memiliki telemetri dan tidak mengirim apa pun ke tempat lain.
+
+## Bagaimana cara masuk di server jarak jauh?
+
+Jalankan `ccam add` atau `ccam login <name>` di sesi SSH seperti biasa. Claude Code menunggu proses masuk di server, sehingga browser di komputer Anda berakhir di halaman `http://localhost:<port>/callback?code=…` yang tidak bisa dimuat. Salin alamat itu dari browser lalu tempelkan ke terminal: ccam meneruskannya ke Claude Code di server, yang kemudian menyelesaikan proses masuk. Alamat itu berisi kode sekali pakai, jadi jangan bagikan kepada siapa pun.
 
 ## Di mana akun saya disimpan?
 

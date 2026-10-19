@@ -32,13 +32,21 @@ func runHome(e *env) error {
 		if err != nil {
 			return err
 		}
+		// The picker may have been open for a while; act on the current config.
+		if cfg, err = e.load(); err != nil {
+			return err
+		}
 		switch res.Action {
 		case tui.Launch:
 			return launcher.LaunchWith(e.paths, cfg, res.Profile, nil, e.dryRun, e.stdout)
 		case tui.Add:
 			return addInteractive(e, cfg, "")
 		case tui.SetDefault:
-			cfg.Default = res.Profile
+			prof, err := cfg.MustFind(res.Profile)
+			if err != nil {
+				return err
+			}
+			cfg.Default = prof.Name
 			if err := e.save(cfg); err != nil {
 				return err
 			}
@@ -47,7 +55,7 @@ func runHome(e *env) error {
 			if err != nil {
 				return err
 			}
-			if err := changeShare(e, cfg, prof, res.Share, share.Options{}, false, nil); err != nil {
+			if err := changeShare(e, prof, res.Share, share.Options{}, false, nil); err != nil {
 				return err
 			}
 			e.printf("Press Enter to return to the list.")
@@ -74,8 +82,8 @@ func pick(e *env, cfg *config.Config) (tui.Result, error) {
 		rows = append(rows, tui.Row{Name: p.Name, Slot: p.Slot, Email: p.Email, Share: p.Share, LastUsed: last, Default: def == p})
 	}
 	f := e.fetcher()
-	fetch := func(ctx context.Context, name string) usage.Report {
-		return f.Fetch(ctx, accts[name], usage.Options{})
+	fetch := func(ctx context.Context, name string, fresh bool) usage.Report {
+		return f.Fetch(ctx, accts[name], usage.Options{NoCache: fresh})
 	}
 	final, err := tea.NewProgram(tui.NewPicker(rows, fetch), tea.WithInput(os.Stdin), tea.WithOutput(os.Stdout)).Run()
 	if err != nil {

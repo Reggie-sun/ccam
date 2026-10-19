@@ -5,7 +5,7 @@ description: ccam add ile iki Claude Code hesabı ekleyin, onlara ccwork gibi k�
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 745a9904e32a
+sourceHash: a10d91d2a64e
 ---
 
 Her hesabı `ccam add` ile ekleyin, ardından Claude Code'u `ccam <name>` ile veya adını kendiniz seçtiğiniz `ccwork` gibi bir kısayolla başlatın. Çoğu kişi için bu kadarı yeterlidir.
@@ -16,7 +16,7 @@ Her hesabı `ccam add` ile ekleyin, ardından Claude Code'u `ccam <name>` ile ve
 ccam add
 ```
 
-Sihirbaz, `personal` veya `work` gibi bir ad, hesabın diğer hesaplarınızla hangi öğeleri paylaşacağını ve bir kısayol komutu oluşturulup oluşturulmayacağını sorar (4. adıma bakın). Ardından `claude auth login` komutunu çalıştırır; bu komut giriş yapabilmeniz için tarayıcıyı açar. İşlem bittiğinde şunu görürsünüz:
+Sihirbaz, `personal` veya `work` gibi bir ad, hesabın diğer hesaplarınızla hangi öğeleri paylaşacağını ve bir kısayol komutu oluşturulup oluşturulmayacağını sorar (4. adıma bakın). Ardından `claude auth login` komutunu çalıştırır; bu komut giriş yapabilmeniz için tarayıcıyı açar. Uzak bir makinede tarayıcı, yüklenmeyen bir `http://localhost:…/callback` sayfasında kalabilir; bu adresi terminale yapıştırın, ccam girişi tamamlar. İşlem bittiğinde şunu görürsünüz:
 
 ```console
 ✓ personal (me@example.com) added

@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/charmbracelet/x/term"
 	"github.com/spf13/cobra"
 
 	"github.com/jhyunwoo/ccam/internal/config"
@@ -31,6 +32,9 @@ func usageCmd(e *env) *cobra.Command {
 			if opt.Source != "" && opt.Source != "live" && opt.Source != "cache" {
 				return fmt.Errorf("--source must be live or cache")
 			}
+			if e.dryRun && opt.Refresh {
+				return fmt.Errorf("--dry-run cannot be combined with --refresh, which rewrites login tokens")
+			}
 			cfg, err := e.load()
 			if err != nil {
 				return err
@@ -41,7 +45,7 @@ func usageCmd(e *env) *cobra.Command {
 			}
 			f := e.fetcher()
 			if !cmd.Flags().Changed("watch") {
-				return showUsage(e, f, cfg, opt, asJSON, verbose, false)
+				return showUsage(context.Background(), e, f, cfg, opt, asJSON, verbose, false)
 			}
 			if watch <= 0 {
 				watch = 60
@@ -49,7 +53,7 @@ func usageCmd(e *env) *cobra.Command {
 			ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 			defer stop()
 			for {
-				if err := showUsage(e, f, cfg, opt, asJSON, verbose, true); err != nil {
+				if err := showUsage(ctx, e, f, cfg, opt, asJSON, verbose, true); err != nil {
 					return err
 				}
 				select {
@@ -94,10 +98,10 @@ func usageAccounts(e *env, cfg *config.Config) []usage.Account {
 	return out
 }
 
-func showUsage(e *env, f *usage.Fetcher, cfg *config.Config, opt usage.Options, asJSON, verbose, clear bool) error {
+func showUsage(ctx context.Context, e *env, f *usage.Fetcher, cfg *config.Config, opt usage.Options, asJSON, verbose, clear bool) error {
 	accts := usageAccounts(e, cfg)
 	if asJSON {
-		reports := f.FetchAll(context.Background(), accts, opt, nil)
+		reports := f.FetchAll(ctx, accts, opt, nil)
 		enc := json.NewEncoder(e.stdout)
 		enc.SetIndent("", "  ")
 		return enc.Encode(reports)
@@ -130,7 +134,7 @@ func showUsage(e *env, f *usage.Fetcher, cfg *config.Config, opt usage.Options, 
 	if tty {
 		draw()
 	}
-	f.FetchAll(context.Background(), accts, opt, func(i int, r usage.Report) {
+	f.FetchAll(ctx, accts, opt, func(i int, r usage.Report) {
 		view[i] = &r
 		if tty {
 			draw()
@@ -145,13 +149,12 @@ func showUsage(e *env, f *usage.Fetcher, cfg *config.Config, opt usage.Options, 
 	return nil
 }
 
+// isTerminal reports whether w is a terminal. A character-device check is
+// not enough: /dev/null is one, and `ccam add work >/dev/null` must not
+// start the wizard.
 func isTerminal(w any) bool {
 	f, ok := w.(*os.File)
-	if !ok {
-		return false
-	}
-	fi, err := f.Stat()
-	return err == nil && fi.Mode()&os.ModeCharDevice != 0
+	return ok && term.IsTerminal(f.Fd())
 }
 
 func statuslineCmd(e *env) *cobra.Command {

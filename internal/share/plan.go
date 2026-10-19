@@ -2,7 +2,6 @@ package share
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"io"
 	"io/fs"
@@ -28,7 +27,7 @@ const (
 	OpCopyBack                 // copy the group content into the profile (sharing off)
 	OpCopyToGroup              // copy a foreign link's target into an empty group slot
 	OpMergeRegistry            // merge my plugin registry JSON into the group's (group backed up)
-	OpRewritePlugins           // point plugin registry paths at the group folder
+	OpRewritePlugins           // point plugin registry paths in To from prefix From to To
 )
 
 // Resolution decides a file conflict when turning sharing on.
@@ -82,7 +81,9 @@ type Options struct {
 // Build compares the current share settings with target and lists the
 // steps to get there. It does not touch the disk except to read it.
 func Build(dir, groupsRoot string, current, target config.Share, opt Options) (*Plan, error) {
-	pl := &Plan{Dir: dir, stamp: fsutil.Stamp(time.Now())}
+	// One backup folder per plan, even for two plans in the same second.
+	stamp := fsutil.UniqueDir(filepath.Join(dir, BackupDir, fsutil.Stamp(time.Now())))
+	pl := &Plan{Dir: dir, stamp: filepath.Base(stamp)}
 	for _, item := range config.Items {
 		from, to := current.Get(item), target.Get(item)
 		for _, e := range Layout[item] {
@@ -103,6 +104,10 @@ func Build(dir, groupsRoot string, current, target config.Share, opt Options) (*
 					pl.Steps = append(pl.Steps, Step{Op: OpUnlink, Item: item, Entry: e, From: mine})
 					if !opt.Fresh && fsutil.Exists(linkTarget) {
 						pl.Steps = append(pl.Steps, Step{Op: OpCopyBack, Item: item, Entry: e, From: linkTarget, To: mine})
+						if e.Name == "plugins" {
+							// The copy's registries still point into the group.
+							pl.Steps = append(pl.Steps, Step{Op: OpRewritePlugins, Item: item, Entry: e, From: linkTarget + string(filepath.Separator), To: mine})
+						}
 					}
 				}
 				continue
@@ -169,7 +174,7 @@ func planAdopt(pl *Plan, item string, e Entry, mine, grp string) error {
 		}
 		return nil
 	}
-	same, err := sameFile(mine, grp)
+	same, err := fsutil.SameContent(mine, grp)
 	if err != nil {
 		return err
 	}
@@ -203,18 +208,6 @@ func (pl *Plan) backupPath(e Entry) string {
 	return filepath.Join(pl.Dir, BackupDir, pl.stamp, e.Name)
 }
 
-func sameFile(a, b string) (bool, error) {
-	x, err := os.ReadFile(a)
-	if err != nil {
-		return false, err
-	}
-	y, err := os.ReadFile(b)
-	if errors.Is(err, fs.ErrNotExist) {
-		return false, nil
-	}
-	return bytes.Equal(x, y), err
-}
-
 // Describe writes the plan in plain words, one step per line.
 func (pl *Plan) Describe(w io.Writer) {
 	if pl.Empty() {
@@ -241,7 +234,7 @@ func (pl *Plan) Describe(w io.Writer) {
 		case OpMergeRegistry:
 			line = fmt.Sprintf("merge    %s → %s (plugin list)", s.From, s.To)
 		case OpRewritePlugins:
-			line = fmt.Sprintf("paths    plugin paths in %s → the group folder", s.To)
+			line = fmt.Sprintf("paths    plugin paths under %s → %s", strings.TrimSuffix(s.From, string(filepath.Separator)), s.To)
 		}
 		fmt.Fprintln(w, "  "+line)
 	}
@@ -278,22 +271,7 @@ func apply(s Step) error {
 	case OpCopyBack, OpCopyToGroup:
 		return fsutil.CopyTree(s.From, s.To)
 	case OpMergeRegistry:
-		if err := fsutil.CopyFile(s.To, s.Conflict.GroupSave); err != nil {
-			return err
-		}
-		mine, err := os.ReadFile(s.From)
-		if err != nil {
-			return err
-		}
-		grp, err := os.ReadFile(s.To)
-		if err != nil {
-			return err
-		}
-		merged, err := MergeJSONBytes(grp, mine)
-		if err != nil {
-			return err
-		}
-		return fsutil.AtomicWrite(s.To, merged, 0o600)
+		return MergeRegistry(s.From, s.To, s.Conflict.GroupSave, filepath.Dir(s.From))
 	case OpRewritePlugins:
 		_, err := profile.RewritePluginPaths(s.To, s.From, s.To+string(filepath.Separator))
 		return err
@@ -314,7 +292,7 @@ func mergeDir(src, dst string) error {
 			if fsutil.Exists(target) {
 				return nil
 			}
-			if err := fsutil.Move(path, target); err != nil {
+			if err := fsutil.MoveWithin(path, target, src); err != nil {
 				return err
 			}
 			return filepath.SkipDir
@@ -322,7 +300,7 @@ func mergeDir(src, dst string) error {
 		if fsutil.Exists(target) {
 			return nil
 		}
-		return fsutil.Move(path, target)
+		return fsutil.MoveWithin(path, target, src)
 	})
 }
 

@@ -5,7 +5,7 @@ description: Amsoshi game da ccam, asusun Claude Code, iyakokin amfani, rabawa, 
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 8876e4f00bd2
+sourceHash: 88bd249ec51c
 ---
 
 ## Shin ccam kayan aikin Anthropic ne na hukuma?
@@ -30,7 +30,11 @@ Raba tarihin tattaunawa tsakanin asusun biyu da `ccam share <name> --history on`
 
 ## Shin ccam yana ganin bayanan shigata ko yana aika su?
 
-ccam ba ya taɓa kwafa ko raba bayanan shiga. Yana karanta access token na asusu ne kawai don tambayar endpoint na amfani na Anthropic game da amfanin wannan asusun, lokacin da ka gudanar da `ccam usage`, `ccam next --auto` ko `ccam doctor`. ccam ba shi da telemetry kuma ba ya aika komai zuwa wani wuri dabam.
+ccam ba ya taɓa raba bayanan shigar Claude naka tsakanin asusu. Yana karanta access token na asusu ne kawai don tambayar endpoint na amfani na Anthropic game da amfanin wannan asusun, lokacin da ka gudanar da `ccam usage`, `ccam next --auto` ko `ccam doctor`. `ccam migrate` yana kwafar bayanan shigar sabobin MCP da aka ajiye daga `~/.claude` zuwa fayilolin shiga na asusunka a kwamfuta ɗaya. ccam ba shi da telemetry kuma ba ya aika komai zuwa wani wuri dabam.
+
+## Ta yaya zan shiga a sabar nesa?
+
+Gudanar da `ccam add` ko `ccam login <name>` a cikin zaman SSH kamar yadda aka saba. Claude Code yana jiran shigarwar a kan sabar, don haka burauza a kwamfutarka yana ƙarewa a shafin `http://localhost:<port>/callback?code=…` wanda ba ya buɗewa. Kwafi wannan adireshin daga burauza ka liƙa shi a terminal: ccam yana miƙa shi ga Claude Code a kan sabar, wanda ke kammala shigarwar. Adireshin yana ɗauke da lambar amfani sau ɗaya, don haka kada ka raba shi.
 
 ## A ina ake ajiye asusuna?
 

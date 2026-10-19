@@ -5,10 +5,10 @@ description: ccam addやccam <name>から、ccam usage、ccam next、ccam doctor
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 65fb2b8f6617
+sourceHash: 3342453e38d3
 ---
 
-どのコマンドでも前に`--dry-run`を付けると、実際には実行せずに何をするかを確認できます。たとえば`ccam --dry-run work`のように使います。
+コマンドの前に`--dry-run`を付けると、実際には実行せずに何をするかを確認できます。たとえば`ccam --dry-run work`のように使います。これが使えるのは、Claude Codeを起動するとき（`ccam <name>`、`ccam run`、`ccam next`）と、`share`、`migrate`、`shortcut`、`update`、`doctor --fix`です。何かを変更するそれ以外のコマンドは、実行せずにこのオプションを拒否します。
 
 <!-- commands -->
 
@@ -33,6 +33,10 @@ ccam import ~/.claude-old --name old
 ```
 
 フォルダーを指定せずに`ccam import`を実行すると、`~/.claude`と`~/.claude-*`を探し、それぞれについて確認します。インポートしたフォルダーはその場所のまま登録されます。ccamがログインを移動またはコピーすることはありません。
+
+`ccam rename`、`ccam remove`、`ccam share`は、そのアカウントでClaude Codeが実行中の間は、アカウントを変更しません。先にセッションを終了してください。
+
+`ccam list --json`は、すべてのアカウントをスロット、ショートカット、メールアドレス、フォルダーとともに出力します。その`share`オブジェクトは、各項目（`mcp`、`settings`、`memory`、`extensions`、`history`）をグループ名または`local`に対応付けます。
 
 ## ショートカット
 
@@ -69,7 +73,7 @@ ccam migrate ~/.claude-work --group work --settings --mcp
 ccam migrate --history --yes    # conversation history only
 ```
 
-`ccam migrate`は、Claude Codeのフォルダーから`settings.json`、`CLAUDE.md`、拡張機能、ユーザーのMCPサーバーをグループにコピーし、それらの項目を共有するすべてのアカウントで使えるようにします。フォルダーは読み取るだけです。`--settings`、`--memory`、`--extensions`、`--mcp`、`--history`の各オプションを付けると、指定した項目だけをコピーします。何も付けない場合は、会話履歴以外のすべてをコピーします。`-g`または`--group`でグループを選び、`-y`または`--yes`を付けると確認なしでコピーし、内容が異なるファイルはグループのものを残します。詳しくは[既存の環境をコピーする](/docs/sharing#copy-an-existing-setup)を参照してください。
+`ccam migrate`は、Claude Codeのフォルダーから`settings.json`、`CLAUDE.md`、拡張機能、ユーザーのMCPサーバーをグループにコピーし、それらの項目を共有するすべてのアカウントで使えるようにします。フォルダーは読み取るだけです。`--settings`、`--memory`、`--extensions`、`--mcp`、`--history`の各オプションを付けると、指定した項目だけをコピーします。何も付けない場合、ターミナルではチェックリストが表示され、会話履歴以外のすべてにチェックが入った状態から選べます。ターミナル以外では、会話履歴以外のすべてをコピーします。`-g`または`--group`でグループを選び、`-y`または`--yes`を付けると確認なしでコピーし、内容が異なるファイルはグループのものを残します。また、サーバーの保存済みのサインイン情報を各アカウント自身のログインファイルにコピーします。詳しくは[既存の環境をコピーする](/docs/sharing#copy-an-existing-setup)を参照してください。
 
 ## MCPサーバー
 
@@ -81,6 +85,8 @@ ccam mcp list
 ccam mcp import work gh
 ccam mcp remove fs
 ```
+
+`ccam mcp import <account>`は、そのアカウントだけが持つサーバーを、そのアカウントのグループに移動します。グループがすでに同じ名前を別の定義に使っているサーバーはスキップされます。`--force`を付けるとグループのものを置き換えます。その際、ccamは先にバックアップを取ります。
 
 ## 使用量と切り替え
 
@@ -101,6 +107,7 @@ ccam statusline install
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam version         # also: ccam -v, ccam --version
 ```
 
 `ccam update`は、ccamを置き換える前にリリースのSHA-256チェックサムを検証します。`--version v0.2.0`を指定すると、特定のリリースをインストールします。`.deb`パッケージからインストールしたccamは、代わりにaptで更新します。詳しくは[アップデート](/docs/install#update)を参照してください。

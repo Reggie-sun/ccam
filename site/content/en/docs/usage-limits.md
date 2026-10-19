@@ -24,7 +24,7 @@ The columns are: account, 5-hour usage, time until it resets, weekly usage, time
 
 ccam asks Anthropic's usage endpoint for every account at the same time, using each account's own login. It waits at most 3 seconds per account and shows each account as soon as it answers.
 
-This endpoint is not publicly documented and may change. When a request fails, ccam shows the last known numbers and marks them as cached. `ccam doctor` tells you if the response format has changed.
+This endpoint is not publicly documented and may change. When a request fails, ccam shows the last known numbers and marks them as cached. A window that has reset since those numbers were saved shows 0%. `ccam doctor` tells you if the response format has changed.
 
 Numbers fetched less than 60 seconds ago are reused. Options:
 

@@ -4,7 +4,7 @@ description: 用 ccam usage 查看每個 Claude Code 帳號的 5 小時和每週
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: cbc6b0c0618d
+sourceHash: d288177682d7
 ---
 
 `ccam usage` 會顯示每個帳號已使用了多少 5 小時限制和每週限制。`ccam next --auto` 會開啟剩餘額度最多的帳號，而 `--continue` 會把目前的對話帶過去。
@@ -24,7 +24,7 @@ $ ccam usage
 
 ccam 會使用每個帳號自己的登入資訊，同時向 Anthropic 的用量端點查詢所有帳號。每個帳號最多等待 3 秒，並在帳號一有回應時就顯示出來。
 
-這個端點沒有公開的文件，可能會變更。請求失敗時，ccam 會顯示最後已知的數字，並標示為快取資料。如果回應格式有所變更，`ccam doctor` 會告訴你。
+這個端點沒有公開的文件，可能會變更。請求失敗時，ccam 會顯示最後已知的數字，並標示為快取資料。在這些數字儲存之後已經重設的時間區間會顯示 0%。如果回應格式有所變更，`ccam doctor` 會告訴你。
 
 60 秒內取得的數字會重複使用。選項：
 

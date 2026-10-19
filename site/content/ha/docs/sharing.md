@@ -4,7 +4,7 @@ description: Yadda ccam ke raba sabobin MCP, settings.json, CLAUDE.md, agents, s
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: 1e2f0d6809fc
+sourceHash: f266f8bfd55c
 ---
 
 Kowane asusu yana riƙe bayanan shigarsa. Duk sauran abubuwa za a iya raba su ɗaya bayan ɗaya: ccam yana mayar da fayil ko foldar asusun mahaɗi zuwa foldar rukuni da aka raba, don haka canjin da aka yi a asusu ɗaya yana bayyana a duk asusan wannan rukunin.
@@ -46,6 +46,8 @@ Idan asusu ya fara raba wani abu, ccam:
 
 Ana sanya wa fayilolin tattaunawa suna bisa session ID ɗinsu, don haka tarihi daga asusai da dama yana haɗuwa ba tare da rikici ba.
 
+ccam ba ya canza rabawa yayin da Claude Code ke gudana a matsayin asusun, saboda zaman yana ci gaba da rubutu a cikin fayilolin da ake motsawa. Ka rufe shi tukuna.
+
 ## Kashe rabawa
 
 ```sh
@@ -62,14 +64,19 @@ Idan ka yi amfani da Claude Code kafin ccam, saitunanka suna cikin `~/.claude`. 
 ccam migrate
 ```
 
+A terminal, ccam yana fara nuna jerin zaɓin abubuwan (checklist). An yi wa komai alama sai tarihin tattaunawa; danna Space don canza abu, da Enter don ganin shirin. Abubuwan da foldar ba ta da komai a kansu ana yi musu alamar `not found`.
+
 Abin da yake kwafa:
 
 - `settings.json` da `CLAUDE.md` na gaba ɗaya;
 - extensions `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/` da `rules/`;
 - sabobin MCP naka na mai amfani, wato shigarwar `mcpServers` ta `~/.claude.json`, zuwa `mcp.json` na rukunin;
+- bayanan shiga (OAuth) da aka ajiye na sabobin MCP da yake kwafa, zuwa fayil ɗin shiga na kowane asusu;
 - tarihin tattaunawa (`projects/` da `history.jsonl`), amma sai idan ka ƙara `--history`.
 
-Ana karanta foldar tushe ne kawai: ba a matsar, haɗa ko canza komai a cikinta, kuma `claude` na yau da kullum yana ci gaba da aiki kamar da. Ba a taɓa kwafar fayilolin shiga `.credentials.json` da `.claude.json` ba.
+Ana karanta foldar tushe ne kawai: ba a matsar, haɗa ko canza komai a cikinta, kuma `claude` na yau da kullum yana ci gaba da aiki kamar da. Ba a taɓa kwafar fayilolin shiga `.credentials.json` da `.claude.json` zuwa rukunin ba.
+
+Sabobin MCP da ke shiga da OAuth suna ajiye token ɗinsu a cikin bayanan shiga, ba a cikin jerin sabobin ba. Don kada ka sake shiga cikinsu, ccam yana kwafar waɗannan bayanan shiga zuwa fayil ɗin shiga na kowane asusu da ke samun sabobin ta rukunin, sai dai idan asusun yana da nasa tuni. Yana tsallake asusun da ke aiki, waɗanda ba a shiga ba tukuna, waɗanda aka yi wa rajista a wurinsu da `ccam import`, ko waɗanda ke ajiye bayanan shigarsu a Keychain na macOS, kuma yana ambatar sunayensu; a cikinsu, shiga sabobin da `/mcp`. Asusun da ya fara raba sabobin MCP daga baya zai sami bayanan shigar idan ka sake gudanar da `ccam migrate`.
 
 ccam yana buga shirin kuma yana tambaya kafin ya kwafi komai:
 
@@ -99,7 +106,7 @@ Idan rukunin yana da wani kwafi na fayil da ya bambanta, ccam yana tambaya, kama
 
 | Zaɓi | Tasiri |
 | --- | --- |
-| `--settings`, `--memory`, `--extensions`, `--mcp`, `--history` | Kwafi abubuwan da ka ambata kawai; ba tare da su ba, komai sai tarihin tattaunawa |
+| `--settings`, `--memory`, `--extensions`, `--mcp`, `--history` | Kwafi abubuwan da ka ambata kawai, ba tare da jerin zaɓin ba; ba tare da su ba kuma a wajen terminal, komai sai tarihin tattaunawa |
 | `-g`, `--group <group>` | Kwafa zuwa wannan rukunin maimakon `default` |
 | `-y`, `--yes` | Kwafa ba tare da tambaya ba; idan fayil ya bambanta, riƙe kwafin rukunin |
 
@@ -120,7 +127,9 @@ Sabar da ka ƙara a cikin zama (session) da `claude mcp add` ana ajiye ta ga wan
 ccam mcp import work gh
 ```
 
-Sabobin MCP da ke shiga da OAuth suna ajiye token ɗinsu tare da bayanan shigar asusun, don haka ka ba su izini sau ɗaya a kowane asusu.
+Idan rukunin ya riga yana da wata sabar daban mai wannan sunan, ccam yana tsallake ta kuma yana faɗa. `--force` yana maye gurbin sabar rukunin kuma yana ajiye tsohon `mcp.json` a cikin foldar `.ccam-backup/` na rukunin.
+
+Sabobin MCP da ke shiga da OAuth suna ajiye token ɗinsu tare da bayanan shigar asusun, don haka ka ba su izini sau ɗaya a kowane asusu, ko ka kwafi bayanan shigar daga `~/.claude` da `ccam migrate`.
 
 Idan ka fi so sabobin su bayyana a `claude mcp list` da `/mcp` a matsayin sabobin mai amfani na yau da kullum, saita `mcp_strategy = "sync"` a `~/.config/ccam/config.toml`. Sannan ccam yana rubuta su a cikin `.claude.json` na kowane asusu kafin farawa, ƙarƙashin kullen fayil na Claude Code kansa kuma tare da kwafin ajiya.
 

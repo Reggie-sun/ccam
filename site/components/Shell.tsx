@@ -58,7 +58,7 @@ export function Shell({ locale, alternates, active, menu, children }: Props) {
             <nav className="site-nav" aria-label={m.nav.menu}>
               <a href={pagePath(locale, "docs", "quick-start")} aria-current={active === "docs" ? "page" : undefined}>{m.nav.docs}</a>
               <a href={pagePath(locale, "docs", "faq")} aria-current={active === "faq" ? "page" : undefined}>{m.nav.faq}</a>
-              <a href={REPO}>{m.nav.github}</a>
+              <a href={REPO} target="_blank" rel="noopener">{m.nav.github}</a>
             </nav>
             <div className="actions">
               <details className="picker">
@@ -100,7 +100,7 @@ export function Shell({ locale, alternates, active, menu, children }: Props) {
                 <div className="popover menu-panel">
                   <a href={pagePath(locale, "docs", "quick-start")} aria-current={active === "docs" ? "page" : undefined}>{m.nav.docs}</a>
                   <a href={pagePath(locale, "docs", "faq")} aria-current={active === "faq" ? "page" : undefined}>{m.nav.faq}</a>
-                  <a href={REPO}>{m.nav.github}</a>
+                  <a href={REPO} target="_blank" rel="noopener">{m.nav.github}</a>
                   {menu && <div className="menu-docs">{menu}</div>}
                 </div>
               </details>
@@ -115,7 +115,7 @@ export function Shell({ locale, alternates, active, menu, children }: Props) {
             <p>{m.footer.terms}</p>
             <p>{m.footer.analytics}</p>
             <ul className="footer-links">
-              <li><a href={REPO}>{m.footer.license}</a></li>
+              <li><a href={REPO} target="_blank" rel="noopener">{m.footer.license}</a></li>
               <li><a href={`/${locale}/languages/`}>{m.footer.languages}</a></li>
             </ul>
           </div>

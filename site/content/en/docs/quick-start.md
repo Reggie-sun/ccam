@@ -16,7 +16,7 @@ Add each account with `ccam add`, then start Claude Code with `ccam <name>` or w
 ccam add
 ```
 
-The wizard asks for a name such as `personal` or `work`, which items the account should share with your other accounts, and whether to create a shortcut command (see step 4). Then it runs `claude auth login`, which opens the browser so you can sign in. When it finishes you see:
+The wizard asks for a name such as `personal` or `work`, which items the account should share with your other accounts, and whether to create a shortcut command (see step 4). Then it runs `claude auth login`, which opens the browser so you can sign in. On a remote machine, the browser may end on a `http://localhost:…/callback` page that does not load; paste that address into the terminal and ccam finishes the sign-in. When it finishes you see:
 
 ```console
 ✓ personal (me@example.com) added

@@ -14,6 +14,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/jhyunwoo/ccam/internal/config"
+	"github.com/jhyunwoo/ccam/internal/launcher"
 	"github.com/jhyunwoo/ccam/internal/paths"
 )
 
@@ -33,6 +34,42 @@ type env struct {
 func (e *env) load() (*config.Config, error) { return config.Load(e.paths.ConfigFile()) }
 
 func (e *env) save(cfg *config.Config) error { return cfg.Save(e.paths.ConfigFile()) }
+
+// loadProfile loads the config and finds the account sel names.
+func (e *env) loadProfile(sel string) (*config.Config, *config.Profile, error) {
+	cfg, err := e.load()
+	if err != nil {
+		return nil, nil, err
+	}
+	prof, err := cfg.MustFind(sel)
+	if err != nil {
+		return nil, nil, err
+	}
+	return cfg, prof, nil
+}
+
+// update reloads the config, applies change and saves it. Commands that
+// wait (a browser login, a prompt, the picker) use it so they do not save
+// a copy loaded minutes ago over what another ccam wrote meanwhile.
+func (e *env) update(change func(*config.Config) error) (*config.Config, error) {
+	cfg, err := e.load()
+	if err != nil {
+		return nil, err
+	}
+	if err := change(cfg); err != nil {
+		return nil, err
+	}
+	return cfg, e.save(cfg)
+}
+
+// refuseRunning stops commands that move or remove an account's folder
+// while Claude Code still writes to it.
+func refuseRunning(e *env, name string) error {
+	if launcher.Running(e.paths, name) {
+		return fmt.Errorf("%s is running; quit its Claude Code session first", name)
+	}
+	return nil
+}
 
 func (e *env) printf(format string, a ...any) { fmt.Fprintf(e.stdout, format, a...) }
 
@@ -65,6 +102,12 @@ func newRoot(e *env) *cobra.Command {
 			return runHome(e)
 		},
 	}
+	root.PersistentPreRunE = func(cmd *cobra.Command, args []string) error {
+		if e.dryRun && !dryRunCommands[cmd.CommandPath()] {
+			return fmt.Errorf("--dry-run is not supported by `%s`; nothing was changed", cmd.CommandPath())
+		}
+		return nil
+	}
 	root.SetIn(e.stdin)
 	root.SetOut(e.stdout)
 	root.SetErr(e.stderr)
@@ -82,6 +125,15 @@ func newRoot(e *env) *cobra.Command {
 		}
 	}
 	return root
+}
+
+// dryRunCommands honour --dry-run or change nothing. Every other command
+// refuses the flag instead of quietly doing the real thing.
+var dryRunCommands = map[string]bool{
+	"ccam": true, "ccam run": true, "ccam next": true, "ccam share": true, "ccam migrate": true,
+	"ccam shortcut": true, "ccam update": true, "ccam doctor": true, "ccam usage": true,
+	"ccam list": true, "ccam mcp list": true, "ccam version": true, "ccam completion": true,
+	"ccam help": true, "ccam __complete": true, "ccam __completeNoDesc": true,
 }
 
 func versionCmd(e *env) *cobra.Command {

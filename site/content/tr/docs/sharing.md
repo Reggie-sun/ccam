@@ -4,7 +4,7 @@ description: Girişler ayrı kalırken MCP sunucuları, settings.json, CLAUDE.md
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: 1e2f0d6809fc
+sourceHash: f266f8bfd55c
 ---
 
 Her hesap kendi giriş bilgilerini korur. Geri kalan her şey öğe öğe paylaşılabilir: ccam, hesabın dosyasını veya klasörünü paylaşılan bir grup klasörüne bağlar; böylece bir hesapta yapılan değişiklik o gruptaki tüm hesaplarda görünür.
@@ -46,6 +46,8 @@ Bir hesap bir öğeyi paylaşmaya başladığında ccam:
 
 Konuşma dosyaları oturum kimliklerine göre adlandırılır; bu nedenle birden fazla hesabın geçmişi çakışma olmadan birleşir.
 
+Claude Code o hesapla çalışırken ccam paylaşımı değiştirmez, çünkü oturum taşınan dosyalara yazmaya devam eder. Önce oturumdan çıkın.
+
 ## Paylaşımı kapatma
 
 ```sh
@@ -62,14 +64,19 @@ Claude Code'u ccam'den önce kullandıysanız ayarlarınız `~/.claude` içinded
 ccam migrate
 ```
 
+Terminalde ccam önce öğelerin bir kontrol listesini gösterir. Konuşma geçmişi dışındaki her şey işaretlidir; bir öğeyi değiştirmek için Space'e, planı görmek için Enter'a basın. Klasörde karşılığı olmayan öğeler `not found` olarak işaretlenir.
+
 Kopyaladıkları:
 
 - `settings.json` ve genel `CLAUDE.md`;
 - `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/` ve `rules/` uzantıları;
 - kullanıcı MCP sunucularınız, yani `~/.claude.json` içindeki `mcpServers` girdisi, grubun `mcp.json` dosyasına;
+- kopyaladığı MCP sunucularının kaydedilmiş girişleri (OAuth), her hesabın kendi giriş dosyasına;
 - konuşma geçmişi (`projects/` ve `history.jsonl`), ancak yalnızca `--history` eklediğinizde.
 
-Kaynak klasör yalnızca okunur: içindeki hiçbir şey taşınmaz, bağlanmaz veya değiştirilmez ve düz `claude` eskisi gibi çalışmaya devam eder. Giriş dosyaları `.credentials.json` ve `.claude.json` asla kopyalanmaz.
+Kaynak klasör yalnızca okunur: içindeki hiçbir şey taşınmaz, bağlanmaz veya değiştirilmez ve düz `claude` eskisi gibi çalışmaya devam eder. Giriş dosyaları `.credentials.json` ve `.claude.json` asla gruba kopyalanmaz.
+
+OAuth ile giriş yapan MCP sunucuları tokenlarını sunucu listesinde değil, giriş bilgilerinde tutar. Bu sunuculara yeniden giriş yapmak zorunda kalmamanız için ccam bu girişleri, sunucuları grup üzerinden alan her hesabın giriş dosyasına kopyalar; hesabın zaten kendi girişi varsa kopyalamaz. Çalışan, henüz giriş yapmamış, `ccam import` ile yerinde kaydedilmiş veya girişini macOS Anahtar Zinciri'nde tutan hesapları atlar ve adlarını bildirir; bu hesaplarda sunuculara `/mcp` ile giriş yapın. MCP sunucularını daha sonra paylaşmaya başlayan bir hesap, `ccam migrate` komutunu yeniden çalıştırdığınızda girişleri alır.
 
 ccam herhangi bir şeyi kopyalamadan önce planı yazdırır ve onay ister:
 
@@ -99,7 +106,7 @@ Grupta bir dosyanın farklı bir kopyası zaten varsa ccam, paylaşımı açarke
 
 | Seçenek | Etki |
 | --- | --- |
-| `--settings`, `--memory`, `--extensions`, `--mcp`, `--history` | Yalnızca belirttiğiniz öğeleri kopyalar; bunlar olmadan konuşma geçmişi dışındaki her şeyi |
+| `--settings`, `--memory`, `--extensions`, `--mcp`, `--history` | Yalnızca belirttiğiniz öğeleri, kontrol listesi olmadan kopyalar; bunlar olmadan ve terminal dışında konuşma geçmişi dışındaki her şeyi |
 | `-g`, `--group <group>` | `default` yerine bu gruba kopyalar |
 | `-y`, `--yes` | Sormadan kopyalar; bir dosya farklıysa grubun kopyasını korur |
 
@@ -120,7 +127,9 @@ Bir oturum içinde `claude mcp add` ile eklediğiniz sunucu yalnızca o hesap i�
 ccam mcp import work gh
 ```
 
-OAuth ile giriş yapan MCP sunucuları, tokenlarını hesabın giriş bilgileriyle birlikte saklar; bu yüzden onları her hesapta bir kez yetkilendirin.
+Grupta aynı adla farklı bir sunucu zaten varsa ccam onu atlar ve bunu bildirir. `--force` grubun sunucusunu değiştirir ve eski `mcp.json` dosyasını grubun `.ccam-backup/` klasöründe saklar.
+
+OAuth ile giriş yapan MCP sunucuları, tokenlarını hesabın giriş bilgileriyle birlikte saklar; bu yüzden onları her hesapta bir kez yetkilendirin ya da girişleri `ccam migrate` ile `~/.claude` içinden kopyalayın.
 
 Sunucuların `claude mcp list` ve `/mcp` içinde sıradan kullanıcı sunucuları olarak görünmesini tercih ediyorsanız `~/.config/ccam/config.toml` dosyasında `mcp_strategy = "sync"` ayarını yapın. ccam bu durumda onları başlatmadan önce, Claude Code'un kendi dosya kilidi altında ve bir yedekle birlikte, her hesabın `.claude.json` dosyasına yazar.
 

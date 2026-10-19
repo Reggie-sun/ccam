@@ -4,7 +4,7 @@ description: Sprawdź 5-godzinne i tygodniowe użycie każdego konta Claude Code
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: cbc6b0c0618d
+sourceHash: d288177682d7
 ---
 
 `ccam usage` pokazuje, jaką część 5-godzinnego i tygodniowego limitu wykorzystało każde konto. `ccam next --auto` otwiera konto z największym zapasem, a `--continue` przenosi bieżącą rozmowę.
@@ -24,7 +24,7 @@ Kolumny to: konto, użycie 5-godzinne, czas do resetu, użycie tygodniowe, czas 
 
 ccam pyta endpoint użycia Anthropic o wszystkie konta jednocześnie, korzystając z własnego loginu każdego konta. Czeka najwyżej 3 sekundy na każde konto i pokazuje każde konto, gdy tylko odpowie.
 
-Ten endpoint nie jest publicznie udokumentowany i może się zmienić. Gdy zapytanie się nie powiedzie, ccam pokazuje ostatnie znane liczby i oznacza je jako pochodzące z pamięci podręcznej. `ccam doctor` informuje, jeśli format odpowiedzi się zmienił.
+Ten endpoint nie jest publicznie udokumentowany i może się zmienić. Gdy zapytanie się nie powiedzie, ccam pokazuje ostatnie znane liczby i oznacza je jako pochodzące z pamięci podręcznej. Okno, które zresetowało się od zapisania tych liczb, pokazuje 0%. `ccam doctor` informuje, jeśli format odpowiedzi się zmienił.
 
 Liczby pobrane mniej niż 60 sekund temu są używane ponownie. Opcje:
 

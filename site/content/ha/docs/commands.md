@@ -5,10 +5,10 @@ description: Kowane umarni da zaɓi na ccam, daga ccam add da ccam <name> zuwa c
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 65fb2b8f6617
+sourceHash: 3342453e38d3
 ---
 
-Saka `--dry-run` kafin kowane umarni don ganin abin da zai yi ba tare da ya yi shi ba, misali `ccam --dry-run work`.
+Saka `--dry-run` kafin umarni don ganin abin da zai yi ba tare da ya yi shi ba, misali `ccam --dry-run work`. Yana aiki lokacin fara Claude Code (`ccam <name>`, `ccam run`, `ccam next`) da kuma tare da `share`, `migrate`, `shortcut`, `update` da `doctor --fix`. Sauran umarnin da ke canza wani abu suna ƙin shi maimakon su gudana.
 
 <!-- commands -->
 
@@ -33,6 +33,10 @@ ccam import ~/.claude-old --name old
 ```
 
 `ccam import` ba tare da folda ba yana neman `~/.claude` da `~/.claude-*` kuma yana tambaya game da kowanne. Ana yin rajistar foldojin da aka shigo da su a inda suke; ccam ba ya taɓa motsawa ko kwafar bayanan shiga.
+
+`ccam rename`, `ccam remove` da `ccam share` suna ƙin canza asusu yayin da Claude Code ke gudana a matsayin wannan asusun. Ka rufe zaman (session) tukuna.
+
+`ccam list --json` yana buga kowane asusu tare da ramin (slot) sa, gajeren umarninsa, imel da foldarsa. Abin `share` ɗinsa yana danganta kowane abu (`mcp`, `settings`, `memory`, `extensions`, `history`) da sunan rukuni ko `local`.
 
 ## Gajerun umarni
 
@@ -69,7 +73,7 @@ ccam migrate ~/.claude-work --group work --settings --mcp
 ccam migrate --history --yes    # conversation history only
 ```
 
-`ccam migrate` yana kwafar `settings.json`, `CLAUDE.md`, extensions da sabobin MCP na mai amfani daga foldar Claude Code zuwa rukuni, don kowane asusu da ke raba waɗannan abubuwa ya same su. Ana karanta foldar ne kawai. Zaɓuɓɓukan `--settings`, `--memory`, `--extensions`, `--mcp` da `--history` suna kwafar abubuwan da ka ambata kawai; ba tare da su ba, ana kwafar komai sai tarihin tattaunawa. `-g` ko `--group` yana zaɓar rukunin, kuma `-y` ko `--yes` yana kwafa ba tare da tambaya ba kuma yana riƙe kwafin rukunin idan fayil ya bambanta. Duba [kwafar saitin da ke akwai](/docs/sharing#copy-an-existing-setup).
+`ccam migrate` yana kwafar `settings.json`, `CLAUDE.md`, extensions da sabobin MCP na mai amfani daga foldar Claude Code zuwa rukuni, don kowane asusu da ke raba waɗannan abubuwa ya same su. Ana karanta foldar ne kawai. Zaɓuɓɓukan `--settings`, `--memory`, `--extensions`, `--mcp` da `--history` suna kwafar abubuwan da ka ambata kawai. Ba tare da su ba, a terminal jerin zaɓi (checklist) yana ba ka damar zaɓa, inda aka yi wa komai alama sai tarihin tattaunawa; a wasu wurare kuma ana kwafar komai sai tarihin tattaunawa. `-g` ko `--group` yana zaɓar rukunin, kuma `-y` ko `--yes` yana kwafa ba tare da tambaya ba kuma yana riƙe kwafin rukunin idan fayil ya bambanta. Yana kuma kwafar bayanan shigar sabobin da aka ajiye zuwa fayil ɗin shiga na kowane asusu. Duba [kwafar saitin da ke akwai](/docs/sharing#copy-an-existing-setup).
 
 ## Sabobin MCP
 
@@ -81,6 +85,8 @@ ccam mcp list
 ccam mcp import work gh
 ccam mcp remove fs
 ```
+
+`ccam mcp import <account>` yana motsa sabobin da wannan asusun kaɗai ke da su zuwa rukuninsa. Ana tsallake sabar da rukunin ya riga ya yi amfani da sunanta don wata ma'ana daban; ƙara `--force` don maye gurbin kwafin rukunin, wanda ccam ke fara ajiye masa madadi.
 
 ## Amfani da sauyawa
 
@@ -101,6 +107,7 @@ ccam statusline install
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam version         # also: ccam -v, ccam --version
 ```
 
 `ccam update` yana duba checksum na SHA-256 na sakin kafin ya maye gurbin ccam, kuma `--version v0.2.0` yana girka takamaiman saki. ccam da aka girka daga kunshin `.deb` ana sabunta shi da apt a maimakon haka. Duba [sabuntawa](/docs/install#update).

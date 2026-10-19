@@ -10,7 +10,10 @@ tmp=$(mktemp -d)
 trap 'git worktree remove --force "$tmp/base" 2>/dev/null; rm -rf "$tmp"' EXIT
 git worktree add --detach "$tmp/base" "$base" >/dev/null
 
+# The base may lack a package or benchmark added since, so its failures are
+# tolerated, but a base with no benchmarks at all would compare nothing.
 (cd "$tmp/base" && go test -run '^$' -bench . -count 8 $pkgs 2>/dev/null) > "$tmp/old.txt" || true
+grep -q '^Benchmark' "$tmp/old.txt" || { echo "no benchmarks ran on $base" >&2; exit 1; }
 go test -run '^$' -bench . -count 8 $pkgs > "$tmp/new.txt"
 benchstat "$tmp/old.txt" "$tmp/new.txt" | tee "$tmp/diff.txt"
 

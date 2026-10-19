@@ -5,7 +5,7 @@ description: 關於 ccam、Claude Code 多帳號、用量限制、共用、隱�
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 8876e4f00bd2
+sourceHash: 88bd249ec51c
 ---
 
 ## ccam 是 Anthropic 的官方工具嗎？
@@ -30,7 +30,11 @@ sourceHash: 8876e4f00bd2
 
 ## ccam 會看到或傳送我的登入資訊嗎？
 
-ccam 絕不會複製或共用登入資訊。它讀取帳號的存取權杖只有一個用途：在你執行 `ccam usage`、`ccam next --auto` 或 `ccam doctor` 時，向 Anthropic 的用量端點查詢該帳號的用量。ccam 沒有遙測功能，也不會將任何資料傳送到其他地方。
+ccam 絕不會在帳號之間共用你的 Claude 登入資訊。它讀取帳號的存取權杖只有一個用途：在你執行 `ccam usage`、`ccam next --auto` 或 `ccam doctor` 時，向 Anthropic 的用量端點查詢該帳號的用量。`ccam migrate` 會把 MCP 伺服器已儲存的登入從 `~/.claude` 複製到同一台電腦上你各個帳號自己的登入檔案。ccam 沒有遙測功能，也不會將任何資料傳送到其他地方。
+
+## 如何在遠端伺服器上登入？
+
+像平常一樣在 SSH 工作階段中執行 `ccam add` 或 `ccam login <name>`。Claude Code 會在伺服器上等待登入，所以你電腦上的瀏覽器最後會停在無法載入的 `http://localhost:<port>/callback?code=…` 頁面。從瀏覽器複製這個網址並貼到終端機中：ccam 會把它交給伺服器上的 Claude Code，由它完成登入。這個網址包含一次性代碼，請不要分享給別人。
 
 ## 我的帳號存放在哪裡？
 

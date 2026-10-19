@@ -44,3 +44,26 @@ func TestDirLock(t *testing.T) {
 	}
 	unlock()
 }
+
+// A stale lock that cannot be removed (not empty) must not spin past the
+// timeout.
+func TestDirLockGivesUpOnUnremovableStaleLock(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "x.lock")
+	os.Mkdir(path, 0o700)
+	os.WriteFile(filepath.Join(path, "keep"), nil, 0o600)
+	old := time.Now().Add(-time.Minute)
+	os.Chtimes(path, old, old)
+	done := make(chan error, 1)
+	go func() {
+		_, err := DirLock(path, 100*time.Millisecond)
+		done <- err
+	}()
+	select {
+	case err := <-done:
+		if err == nil {
+			t.Fatal("locked although the lock folder is still there")
+		}
+	case <-time.After(2 * time.Second):
+		t.Fatal("DirLock ignored its timeout")
+	}
+}

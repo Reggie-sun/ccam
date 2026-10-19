@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"slices"
 
 	"github.com/jhyunwoo/ccam/internal/config"
 )
@@ -119,10 +120,7 @@ func isOurs(link, ccamPath string) bool {
 
 // InPath reports whether dir is on PATH, so we can tell the user to add it.
 func InPath(dir string) bool {
-	for _, d := range filepath.SplitList(os.Getenv("PATH")) {
-		if d == dir {
-			return true
-		}
-	}
-	return false
+	return slices.ContainsFunc(filepath.SplitList(os.Getenv("PATH")), func(d string) bool {
+		return filepath.Clean(d) == filepath.Clean(dir) // "~/.local/bin/" is the same folder
+	})
 }

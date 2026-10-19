@@ -4,7 +4,7 @@ description: Cara ccam membagikan server MCP, settings.json, CLAUDE.md, agen, sk
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: 1e2f0d6809fc
+sourceHash: f266f8bfd55c
 ---
 
 Setiap akun menyimpan login-nya sendiri. Semua hal lain dapat dibagikan per item: ccam menautkan file atau folder milik akun ke folder grup bersama, sehingga perubahan yang dibuat di satu akun muncul di semua akun dalam grup tersebut.
@@ -46,6 +46,8 @@ Saat sebuah akun mulai membagikan suatu item, ccam:
 
 File percakapan diberi nama sesuai ID sesinya, sehingga riwayat dari beberapa akun dapat digabungkan tanpa konflik.
 
+ccam tidak mengubah pembagian saat Claude Code sedang berjalan sebagai akun tersebut, karena sesi terus menulis ke file yang sedang dipindahkan. Keluar dari sesi itu terlebih dahulu.
+
 ## Menonaktifkan pembagian
 
 ```sh
@@ -62,14 +64,19 @@ Jika Anda sudah memakai Claude Code sebelum ccam, pengaturan Anda ada di `~/.cla
 ccam migrate
 ```
 
+Di terminal, ccam lebih dulu menampilkan daftar centang berisi item-item tersebut. Semua item kecuali riwayat percakapan sudah dicentang; tekan Space untuk mengubah sebuah item dan Enter untuk melihat rencananya. Item yang tidak ada isinya di folder itu ditandai `not found`.
+
 Yang disalin:
 
 - `settings.json` dan `CLAUDE.md` global;
 - ekstensi `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/`, dan `rules/`;
 - server MCP pengguna Anda, yaitu entri `mcpServers` di `~/.claude.json`, ke `mcp.json` milik grup;
+- info masuk (OAuth) yang tersimpan untuk server MCP yang disalin, ke file login milik setiap akun;
 - riwayat percakapan (`projects/` dan `history.jsonl`), tetapi hanya jika Anda menambahkan `--history`.
 
-Folder sumber hanya dibaca: tidak ada isinya yang dipindahkan, ditautkan, atau diubah, dan `claude` biasa tetap berfungsi seperti sebelumnya. File login `.credentials.json` dan `.claude.json` tidak pernah disalin.
+Folder sumber hanya dibaca: tidak ada isinya yang dipindahkan, ditautkan, atau diubah, dan `claude` biasa tetap berfungsi seperti sebelumnya. File login `.credentials.json` dan `.claude.json` tidak pernah disalin ke grup.
+
+Server MCP yang masuk dengan OAuth menyimpan tokennya di login, bukan di daftar server. Agar Anda tidak perlu masuk lagi ke server itu, ccam menyalin info masuk tersebut ke file login setiap akun yang mendapatkan server melalui grup, kecuali akun itu sudah memiliki info masuknya sendiri. ccam melewati akun yang sedang berjalan, belum login, didaftarkan di tempatnya dengan `ccam import`, atau menyimpan loginnya di Rantai Kunci (Keychain) macOS, lalu menyebutkan nama akun-akun itu; di akun tersebut, masuklah ke server dengan `/mcp`. Akun yang baru mulai membagikan server MCP belakangan akan mendapatkan info masuk itu saat Anda menjalankan `ccam migrate` lagi.
 
 Sebelum menyalin apa pun, ccam menampilkan rencananya dan meminta persetujuan:
 
@@ -99,7 +106,7 @@ Jika grup sudah memiliki salinan file yang berbeda, ccam bertanya, sama seperti 
 
 | Opsi | Efek |
 | --- | --- |
-| `--settings`, `--memory`, `--extensions`, `--mcp`, `--history` | Hanya menyalin item yang Anda sebutkan; tanpa opsi ini, semuanya kecuali riwayat percakapan |
+| `--settings`, `--memory`, `--extensions`, `--mcp`, `--history` | Hanya menyalin item yang Anda sebutkan, tanpa daftar centang; tanpa opsi ini dan di luar terminal, semuanya kecuali riwayat percakapan |
 | `-g`, `--group <group>` | Menyalin ke grup ini, bukan ke `default` |
 | `-y`, `--yes` | Menyalin tanpa bertanya; jika ada file yang berbeda, mempertahankan salinan grup |
 
@@ -120,7 +127,9 @@ Server yang Anda tambahkan di dalam sesi dengan `claude mcp add` hanya disimpan 
 ccam mcp import work gh
 ```
 
-Server MCP yang masuk dengan OAuth menyimpan tokennya bersama login akun, jadi otorisasi server tersebut sekali di setiap akun.
+Jika grup sudah memiliki server lain dengan nama yang sama, ccam melewatinya dan memberi tahu Anda. `--force` mengganti server milik grup dan menyimpan `mcp.json` yang lama di folder `.ccam-backup/` milik grup.
+
+Server MCP yang masuk dengan OAuth menyimpan tokennya bersama login akun, jadi otorisasi server tersebut sekali di setiap akun, atau salin info masuknya dari `~/.claude` dengan `ccam migrate`.
 
 Jika Anda lebih suka server muncul di `claude mcp list` dan `/mcp` sebagai server pengguna biasa, tetapkan `mcp_strategy = "sync"` di `~/.config/ccam/config.toml`. ccam kemudian menuliskannya ke `.claude.json` setiap akun sebelum memulai, di bawah file lock milik Claude Code sendiri dan dengan cadangan.
 

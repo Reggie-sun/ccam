@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -30,18 +31,19 @@ func (f *Fetcher) refresh(ctx context.Context, a Account) (oauthCred, error) {
 	if a.Imported {
 		return oauthCred{}, fmt.Errorf("not refreshing an account registered in place, since plain claude may also be using it")
 	}
-	if session.Active(a.SessionDir) {
-		return oauthCred{}, fmt.Errorf("not refreshed: a session is running")
-	}
-	// Serialize ccam's own refreshes of this account.
+	// Serialize ccam's own refreshes of this account; everything below is
+	// checked under the lock so two ccams never rotate the token twice.
 	l, err := lock.TryFlock(a.SessionDir + ".refresh.lock")
-	if err == lock.ErrBusy {
+	if errors.Is(err, lock.ErrBusy) {
 		return oauthCred{}, fmt.Errorf("another ccam is already refreshing")
 	}
 	if err != nil {
 		return oauthCred{}, err
 	}
 	defer l.Unlock()
+	if session.Active(a.SessionDir) {
+		return oauthCred{}, fmt.Errorf("not refreshed: a session is running")
+	}
 
 	path := filepath.Join(a.Dir, ".credentials.json")
 	data, err := os.ReadFile(path)
@@ -55,6 +57,10 @@ func (f *Fetcher) refresh(ctx context.Context, a Account) (oauthCred, error) {
 	oauth := map[string]any{}
 	if err := json.Unmarshal(doc["claudeAiOauth"], &oauth); err != nil {
 		return oauthCred{}, err
+	}
+	var current oauthCred
+	if json.Unmarshal(doc["claudeAiOauth"], &current) == nil && current.AccessToken != "" && !current.expired(f.Now()) {
+		return current, nil // refreshed by someone else meanwhile
 	}
 	rt, _ := oauth["refreshToken"].(string)
 	if rt == "" {

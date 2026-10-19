@@ -10,14 +10,12 @@
 package migrate
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
 	"io/fs"
 	"os"
 	"path/filepath"
-	"reflect"
 	"sort"
 	"strings"
 	"time"
@@ -34,11 +32,12 @@ import (
 var DefaultItems = []string{"settings", "memory", "extensions", "mcp"}
 
 type Options struct {
-	Source     string   // folder to copy from
-	Home       string   // user home: ~/.claude keeps its .claude.json there
-	GroupsRoot string   // paths.GroupsRoot()
-	Group      string   // target group name
-	Items      []string // items to copy (keys of share.Layout)
+	Source     string    // folder to copy from
+	Home       string    // user home: ~/.claude keeps its .claude.json there
+	GroupsRoot string    // paths.GroupsRoot()
+	Group      string    // target group name
+	Items      []string  // items to copy (keys of share.Layout)
+	Accounts   []Account // accounts that may receive the source's MCP sign-ins
 }
 
 // State says what happens to one path.
@@ -84,7 +83,8 @@ type Plan struct {
 	GroupDir  string
 	BackupDir string // where replaced group files are saved
 	Entries   []*Entry
-	MCP       *MCP // nil when mcp is not selected
+	MCP       *MCP    // nil when mcp is not selected
+	Logins    *Logins // nil when there are no MCP sign-ins to copy
 	Conflicts []*share.Conflict
 }
 
@@ -116,6 +116,24 @@ func HasContent(dir string) bool {
 	return false
 }
 
+// Found reports, for each item, whether the source has anything to copy:
+// lstat calls for files and folders, the MCP server list for mcp.
+func Found(source, home string) map[string]bool {
+	found := map[string]bool{}
+	for _, item := range config.Items {
+		for _, e := range share.Layout[item] {
+			if fsutil.Exists(filepath.Join(source, e.Name)) {
+				found[item] = true
+			}
+		}
+	}
+	if from := ClaudeJSON(source, home); from != "" {
+		servers, err := mcp.LocalServers(filepath.Dir(from))
+		found["mcp"] = err == nil && len(servers) > 0
+	}
+	return found
+}
+
 // Build looks at the source and the group and lists what Apply will do.
 // It only reads the disk.
 func Build(opt Options) (*Plan, error) {
@@ -130,11 +148,7 @@ func Build(opt Options) (*Plan, error) {
 	pl := &Plan{Source: src, Group: opt.Group, GroupDir: groupDir}
 	// One folder per run, even for two runs in the same second, so a backup
 	// never overwrites an earlier one.
-	stamp := filepath.Join(groupDir, share.BackupDir, fsutil.Stamp(time.Now()))
-	pl.BackupDir = stamp
-	for i := 2; fsutil.Exists(pl.BackupDir); i++ {
-		pl.BackupDir = fmt.Sprintf("%s-%d", stamp, i)
-	}
+	pl.BackupDir = fsutil.UniqueDir(filepath.Join(groupDir, share.BackupDir, fsutil.Stamp(time.Now())))
 	want := map[string]bool{}
 	for _, item := range opt.Items {
 		if _, ok := share.Layout[item]; !ok {
@@ -163,6 +177,11 @@ func Build(opt Options) (*Plan, error) {
 				return nil, err
 			}
 			pl.Entries = append(pl.Entries, en)
+		}
+	}
+	if want["mcp"] || want["extensions"] {
+		if pl.Logins, err = buildLogins(pl, opt); err != nil {
+			return nil, err
 		}
 	}
 	return pl, nil
@@ -222,7 +241,7 @@ func buildEntry(pl *Plan, item string, e share.Entry) (*Entry, error) {
 		}
 		return en, nil
 	}
-	same, err := sameContent(resolved, en.To)
+	same, err := fsutil.SameContent(resolved, en.To)
 	if err != nil {
 		return nil, err
 	}
@@ -260,7 +279,7 @@ func scan(en *Entry) error {
 		if !d.Type().IsRegular() {
 			return nil
 		}
-		same, err := sameContent(path, target)
+		same, err := fsutil.SameContent(path, target)
 		if err != nil || same {
 			return err
 		}
@@ -280,26 +299,6 @@ func isRegistry(name string) bool {
 		}
 	}
 	return false
-}
-
-func sameContent(a, b string) (bool, error) {
-	ia, err := os.Stat(a)
-	if err != nil {
-		return false, err
-	}
-	ib, err := os.Stat(b)
-	if err != nil || ia.Size() != ib.Size() || ib.IsDir() {
-		return false, nil
-	}
-	x, err := os.ReadFile(a)
-	if err != nil {
-		return false, err
-	}
-	y, err := os.ReadFile(b)
-	if err != nil {
-		return false, err
-	}
-	return bytes.Equal(x, y), nil
 }
 
 func buildMCP(pl *Plan, src, home string) (*MCP, error) {
@@ -326,7 +325,7 @@ func buildMCP(pl *Plan, src, home string) (*MCP, error) {
 		switch {
 		case !ok:
 			m.New = append(m.New, n)
-		case sameJSON(have, servers[n]):
+		case mcp.SameDef(have, servers[n]):
 			m.Same = append(m.Same, n)
 		default:
 			c := &share.Conflict{
@@ -342,15 +341,6 @@ func buildMCP(pl *Plan, src, home string) (*MCP, error) {
 		}
 	}
 	return m, nil
-}
-
-// sameJSON compares by meaning: key order and spacing do not matter.
-func sameJSON(a, b json.RawMessage) bool {
-	var x, y any
-	if json.Unmarshal(a, &x) != nil || json.Unmarshal(b, &y) != nil {
-		return bytes.Equal(a, b)
-	}
-	return reflect.DeepEqual(x, y)
 }
 
 func serverName(c *share.Conflict) string { return strings.TrimPrefix(c.Entry.Name, "MCP server ") }
@@ -388,7 +378,7 @@ func (pl *Plan) Changes() bool {
 			return true
 		}
 	}
-	return pl.MCP != nil && pl.MCP.changes()
+	return pl.MCP != nil && pl.MCP.changes() || pl.Logins != nil && pl.Logins.changes()
 }
 
 // Empty reports whether there is nothing to copy and nothing to decide.
@@ -439,6 +429,9 @@ func (pl *Plan) Describe(w io.Writer, asking bool) {
 		for _, c := range m.Conflicts {
 			fmt.Fprintf(w, "  %-11s %-15s %s\n", "", serverName(c), conflictText(c, asking))
 		}
+	}
+	if l := pl.Logins; l != nil {
+		fmt.Fprintf(w, "  %-11s %-15s %s\n", label("mcp"), "sign-ins", l.describe())
 	}
 	// Paths missing from the source go on one line per item, after the rest.
 	var missing []string
@@ -543,6 +536,9 @@ func (pl *Plan) Apply() error {
 			return fmt.Errorf("MCP servers: %w", err)
 		}
 	}
+	if pl.Logins != nil && pl.Logins.changes() {
+		return pl.Logins.apply(pl)
+	}
 	return nil
 }
 
@@ -564,7 +560,7 @@ func apply(pl *Plan, en *Entry) error {
 			return err
 		}
 		for _, name := range en.Registries {
-			if err := mergeRegistry(filepath.Join(en.From, name), filepath.Join(en.To, name), filepath.Join(pl.BackupDir, en.Entry.Name, name)); err != nil {
+			if err := share.MergeRegistry(filepath.Join(en.From, name), filepath.Join(en.To, name), filepath.Join(pl.BackupDir, en.Entry.Name, name), en.Source, en.From); err != nil {
 				return err
 			}
 		}
@@ -587,28 +583,13 @@ func apply(pl *Plan, en *Entry) error {
 	return nil
 }
 
-func mergeRegistry(mine, group, save string) error {
-	if err := fsutil.CopyFile(group, save); err != nil {
-		return err
-	}
-	a, err := os.ReadFile(group)
-	if err != nil {
-		return err
-	}
-	b, err := os.ReadFile(mine)
-	if err != nil {
-		return err
-	}
-	merged, err := share.MergeJSONBytes(a, b)
-	if err != nil {
-		return err
-	}
-	return fsutil.AtomicWrite(group, merged, 0o600)
-}
-
 // copyMissing copies every file, link and folder of src that dst lacks.
 // Nothing in dst is overwritten and nothing in src changes.
 func copyMissing(src, dst string) error {
+	// Parents the walk would create with the source's mode stay private.
+	if err := os.MkdirAll(filepath.Dir(dst), 0o700); err != nil {
+		return err
+	}
 	return filepath.WalkDir(src, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -632,7 +613,7 @@ func copyMissing(src, dst string) error {
 			if err != nil {
 				return err
 			}
-			return os.Symlink(link, target)
+			return os.Symlink(fsutil.PortableLink(path, link, src), target)
 		default:
 			return fsutil.CopyFile(path, target)
 		}
@@ -681,6 +662,9 @@ func (pl *Plan) Copied() []string {
 			}
 			out = append(out, name)
 		}
+	}
+	if l := pl.Logins; l != nil && len(l.written) > 0 {
+		out = append(out, "MCP sign-ins for "+strings.Join(l.written, ", "))
 	}
 	return out
 }

@@ -5,7 +5,7 @@ description: Ajoutez deux comptes Claude Code avec ccam add, donnez-leur des rac
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 745a9904e32a
+sourceHash: a10d91d2a64e
 ---
 
 Ajoutez chaque compte avec `ccam add`, puis lancez Claude Code avec `ccam <name>` ou avec un raccourci que vous nommez vous-même, par exemple `ccwork`. C'est tout ce dont la plupart des gens ont besoin.
@@ -16,7 +16,7 @@ Ajoutez chaque compte avec `ccam add`, puis lancez Claude Code avec `ccam <name>
 ccam add
 ```
 
-L'assistant vous demande un nom, par exemple `personal` ou `work`, les éléments que le compte doit partager avec vos autres comptes, et s'il faut créer un raccourci (voir l'étape 4). Il exécute ensuite `claude auth login`, qui ouvre le navigateur pour que vous puissiez vous connecter. À la fin, vous voyez :
+L'assistant vous demande un nom, par exemple `personal` ou `work`, les éléments que le compte doit partager avec vos autres comptes, et s'il faut créer un raccourci (voir l'étape 4). Il exécute ensuite `claude auth login`, qui ouvre le navigateur pour que vous puissiez vous connecter. Sur une machine distante, le navigateur peut aboutir sur une page `http://localhost:…/callback` qui ne se charge pas ; collez cette adresse dans le terminal et ccam termine la connexion. À la fin, vous voyez :
 
 ```console
 ✓ personal (me@example.com) added

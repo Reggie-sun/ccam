@@ -4,7 +4,7 @@ description: "Consultez l'utilisation sur 5 heures et hebdomadaire de chaque com
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: cbc6b0c0618d
+sourceHash: d288177682d7
 ---
 
 `ccam usage` indique quelle part des limites sur 5 heures et sur la semaine chaque compte a utilisée. `ccam next --auto` ouvre le compte qui a le plus de marge, et `--continue` reprend la conversation en cours.
@@ -24,7 +24,7 @@ Les colonnes sont : le compte, l'utilisation sur 5 heures, le temps restant ava
 
 ccam interroge le point de terminaison d'utilisation d'Anthropic pour tous les comptes en même temps, avec la propre connexion de chaque compte. Il attend au plus 3 secondes par compte et affiche chaque compte dès qu'il répond.
 
-Ce point de terminaison n'est pas documenté publiquement et peut changer. Quand une requête échoue, ccam affiche les derniers chiffres connus et les signale comme provenant du cache. `ccam doctor` vous prévient si le format de la réponse a changé.
+Ce point de terminaison n'est pas documenté publiquement et peut changer. Quand une requête échoue, ccam affiche les derniers chiffres connus et les signale comme provenant du cache. Une fenêtre réinitialisée depuis l'enregistrement de ces chiffres affiche 0 %. `ccam doctor` vous prévient si le format de la réponse a changé.
 
 Les chiffres récupérés il y a moins de 60 secondes sont réutilisés. Options :
 

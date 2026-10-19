@@ -241,6 +241,45 @@ func TestDryRunAndErrors(t *testing.T) {
 	}
 }
 
+// TestDryRunNeverChangesState: a command that cannot honour --dry-run must
+// refuse it rather than do the real thing.
+func TestDryRunNeverChangesState(t *testing.T) {
+	h := newHarness(t)
+	h.addAccounts()
+	cfgFile := filepath.Join(h.home, "config", "config.toml")
+	before, _ := os.ReadFile(cfgFile)
+	for _, argv := range [][]string{
+		{"remove", "work", "--yes"},
+		{"add", "ghost", "--no-login"},
+		{"rename", "work", "job"},
+		{"use", "work"},
+		{"logout", "work"},
+		{"login", "work"},
+		{"mcp", "add", "fs", "--", "npx", "server"},
+		{"import", "--yes"},
+		{"shims", "install"},
+		{"statusline", "install"},
+		{"usage", "--refresh"},
+	} {
+		r := h.run("", nil, append([]string{"ccam", "--dry-run"}, argv...)...)
+		if r.code == 0 || !strings.Contains(r.stderr, "dry-run") {
+			t.Errorf("--dry-run %v: %+v", argv, r)
+		}
+	}
+	if after, _ := os.ReadFile(cfgFile); !bytes.Equal(before, after) {
+		t.Fatalf("config changed:\n%s\n→\n%s", before, after)
+	}
+	if _, err := os.Stat(filepath.Join(h.home, "data", "groups", "default", "mcp.json")); err == nil {
+		t.Fatal("mcp.json written")
+	}
+	if _, err := os.Stat(h.profileDir("work")); err != nil {
+		t.Fatal("profile folder gone")
+	}
+	// Read-only commands still accept the flag; doctor --fix only reports.
+	h.ok("ccam", "--dry-run", "list")
+	h.ok("ccam", "--dry-run", "doctor", "--fix")
+}
+
 func TestRemoveAndRename(t *testing.T) {
 	h := newHarness(t)
 	h.addAccounts()

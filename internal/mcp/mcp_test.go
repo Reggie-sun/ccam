@@ -195,3 +195,21 @@ func TestRemoveLocalAndSyncKeepSymlinkedClaudeJSON(t *testing.T) {
 		t.Fatalf("real file: %s", data)
 	}
 }
+
+// Shell commands in server definitions stay readable in .claude.json.
+func TestSyncAndRemoveLocalDoNotEscapeShellCharacters(t *testing.T) {
+	prof, group, state := t.TempDir(), t.TempDir(), t.TempDir()
+	writeClaudeJSON(t, prof, `{"mcpServers":{"mine":{"command":"sh","args":["-c","a && b > c"]},"x":{}}}`)
+	s := &Store{Servers: map[string]json.RawMessage{"g": json.RawMessage(`{"command":"sh","args":["-c","d && e > f"]}`)}}
+	s.Save(Path(group))
+	if err := Sync(prof, group, state); err != nil {
+		t.Fatal(err)
+	}
+	if err := RemoveLocal(prof, state, []string{"x"}); err != nil {
+		t.Fatal(err)
+	}
+	data, _ := os.ReadFile(filepath.Join(prof, ".claude.json"))
+	if !strings.Contains(string(data), "a && b > c") || !strings.Contains(string(data), "d && e > f") {
+		t.Fatalf("escaped:\n%s", data)
+	}
+}

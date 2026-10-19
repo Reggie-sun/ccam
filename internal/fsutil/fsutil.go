@@ -9,6 +9,9 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"strconv"
+	"strings"
+	"syscall"
 	"time"
 )
 
@@ -90,21 +93,87 @@ func Exists(path string) bool {
 }
 
 // Move renames src to dst, falling back to copy+delete across filesystems.
-func Move(src, dst string) error {
+// Any other rename error (dst is a folder that is not empty, …) is returned
+// instead of copying over it; like rename(2), an existing dst file is replaced. Relative links that pointed outside src
+// are made absolute so they still resolve from the new place.
+func Move(src, dst string) error { return MoveWithin(src, dst, src) }
+
+// MoveWithin is Move for one piece of the folder root whose other pieces end
+// up next to dst as well: relative links that stay inside root are kept.
+func MoveWithin(src, dst, root string) error {
 	if err := os.MkdirAll(filepath.Dir(dst), 0o700); err != nil {
 		return err
 	}
-	if err := os.Rename(src, dst); err == nil {
-		return nil
+	err := os.Rename(src, dst)
+	if err == nil {
+		return fixMovedLinks(src, dst, root)
 	}
-	if err := CopyTree(src, dst); err != nil {
+	if !errors.Is(err, syscall.EXDEV) {
+		return err
+	}
+	if err := copyTree(src, dst, root); err != nil {
 		return err
 	}
 	return os.RemoveAll(src)
 }
 
-// CopyTree copies a file, symlink or directory tree. Existing files in dst are overwritten.
-func CopyTree(src, dst string) error {
+// UniqueDir returns base, or base-2, base-3 … : the first path that does not
+// exist. Backup and trash names have one-second stamps that can repeat.
+func UniqueDir(base string) string {
+	path := base
+	for i := 2; Exists(path); i++ {
+		path = base + "-" + strconv.Itoa(i)
+	}
+	return path
+}
+
+// PortableLink returns the target to give a copy of the symlink at path
+// (which reads link) when the tree root is copied or moved elsewhere: a
+// relative target inside root stays relative, one that leaves root becomes
+// absolute so it still points at the same place.
+func PortableLink(path, link, root string) string {
+	if filepath.IsAbs(link) {
+		return link
+	}
+	abs := filepath.Join(filepath.Dir(path), link)
+	if rel, err := filepath.Rel(root, abs); err == nil && rel != ".." && !strings.HasPrefix(rel, ".."+string(filepath.Separator)) {
+		return link
+	}
+	return abs
+}
+
+// fixMovedLinks rewrites, after src was renamed to dst, the relative links
+// in dst whose target lay outside root.
+func fixMovedLinks(src, dst, root string) error {
+	return filepath.WalkDir(dst, func(path string, d fs.DirEntry, err error) error {
+		if err != nil || d.Type()&fs.ModeSymlink == 0 {
+			return err
+		}
+		link, err := os.Readlink(path)
+		if err != nil || filepath.IsAbs(link) {
+			return err
+		}
+		rel, _ := filepath.Rel(dst, path)
+		fixed := PortableLink(filepath.Join(src, rel), link, root)
+		if fixed == link {
+			return nil
+		}
+		if err := os.Remove(path); err != nil {
+			return err
+		}
+		return os.Symlink(fixed, path)
+	})
+}
+
+// CopyTree copies a file, symlink or directory tree. Existing files in dst
+// are overwritten. Missing parents of dst are created 0700, not with the
+// source's (often 0755) mode.
+func CopyTree(src, dst string) error { return copyTree(src, dst, src) }
+
+func copyTree(src, dst, root string) error {
+	if err := os.MkdirAll(filepath.Dir(dst), 0o700); err != nil {
+		return err
+	}
 	return filepath.WalkDir(src, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -118,7 +187,7 @@ func CopyTree(src, dst string) error {
 				return err
 			}
 			os.Remove(target)
-			return os.Symlink(link, target)
+			return os.Symlink(PortableLink(path, link, root), target)
 		case d.IsDir():
 			info, err := d.Info()
 			if err != nil {
@@ -150,11 +219,38 @@ func CopyFile(src, dst string) error {
 	if err != nil {
 		return err
 	}
+	// OpenFile only applies perm to a new file; an overwritten one keeps its own.
+	if err := out.Chmod(info.Mode().Perm()); err != nil {
+		out.Close()
+		return err
+	}
 	if _, err := io.Copy(out, in); err != nil {
 		out.Close()
 		return err
 	}
 	return out.Close()
+}
+
+// SameContent reports whether b is a file with exactly a's content. A
+// missing or unreadable b is just different; only an error reading a counts.
+func SameContent(a, b string) (bool, error) {
+	ia, err := os.Stat(a)
+	if err != nil {
+		return false, err
+	}
+	ib, err := os.Stat(b)
+	if err != nil || ia.Size() != ib.Size() || ib.IsDir() {
+		return false, nil
+	}
+	x, err := os.ReadFile(a)
+	if err != nil {
+		return false, err
+	}
+	y, err := os.ReadFile(b)
+	if err != nil {
+		return false, nil
+	}
+	return bytes.Equal(x, y), nil
 }
 
 // Stamp returns a filesystem-safe timestamp for backup and trash folder names.

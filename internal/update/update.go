@@ -20,6 +20,7 @@ import (
 	"os/exec"
 	"path"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -192,9 +193,8 @@ func (u *Updater) Fetch(ctx context.Context, tag string) ([]byte, error) {
 	var sums, archive []byte
 	var sumsErr, archiveErr error
 	var wg sync.WaitGroup
-	wg.Add(2)
-	go func() { defer wg.Done(); sums, sumsErr = u.get(ctx, base+"checksums.txt") }()
-	go func() { defer wg.Done(); archive, archiveErr = u.get(ctx, base+asset) }()
+	wg.Go(func() { sums, sumsErr = u.get(ctx, base+"checksums.txt") })
+	wg.Go(func() { archive, archiveErr = u.get(ctx, base+asset) })
 	wg.Wait()
 	switch {
 	case errors.Is(sumsErr, errNotFound) && errors.Is(archiveErr, errNotFound):
@@ -299,9 +299,12 @@ func extract(archive []byte) ([]byte, error) {
 			return nil, fmt.Errorf("could not read the archive: %w", err)
 		}
 		if h.Typeflag == tar.TypeReg && path.Clean(h.Name) == "ccam" {
-			bin, err := io.ReadAll(io.LimitReader(tr, maxDownload))
+			bin, err := io.ReadAll(io.LimitReader(tr, maxDownload+1))
 			if err != nil {
 				return nil, fmt.Errorf("could not read the archive: %w", err)
+			}
+			if len(bin) > maxDownload {
+				return nil, fmt.Errorf("the ccam binary in the archive is larger than %d MB", maxDownload>>20)
 			}
 			return bin, nil
 		}
@@ -355,25 +358,26 @@ func writable(dir string) error {
 	return nil
 }
 
-// parseVersion reads MAJOR.MINOR.PATCH with an optional v, -prerelease and
-// +build. ok is false for anything else, such as "dev".
+// versionRe is MAJOR.MINOR.PATCH with an optional v, -prerelease and +build.
+// A tag ends up in download URLs and in a printed shell command, so nothing
+// else (no '/', '%', spaces or shell characters) gets through.
+var versionRe = regexp.MustCompile(`^v?(\d+)\.(\d+)\.(\d+)(?:-([0-9A-Za-z.-]+))?(?:\+[0-9A-Za-z.-]+)?$`)
+
+// parseVersion reads a version; ok is false for anything else, such as "dev".
 func parseVersion(v string) (version, bool) {
-	v = strings.TrimPrefix(v, "v")
-	v, _, _ = strings.Cut(v, "+")
-	core, pre, _ := strings.Cut(v, "-")
-	parts := strings.Split(core, ".")
-	if len(parts) != 3 {
+	m := versionRe.FindStringSubmatch(v)
+	if m == nil {
 		return version{}, false
 	}
 	var out version
-	for i, p := range parts {
-		n, err := strconv.Atoi(p)
-		if err != nil || n < 0 {
+	for i := range out.nums {
+		n, err := strconv.Atoi(m[i+1])
+		if err != nil {
 			return version{}, false
 		}
 		out.nums[i] = n
 	}
-	out.pre = pre
+	out.pre = m[4]
 	return out, true
 }
 

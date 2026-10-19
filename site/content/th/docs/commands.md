@@ -5,10 +5,10 @@ description: "ทุกคำสั่งและตัวเลือกขอ
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 65fb2b8f6617
+sourceHash: 3342453e38d3
 ---
 
-ใส่ `--dry-run` ไว้หน้าคำสั่งใดก็ได้เพื่อดูว่าคำสั่งนั้นจะทำอะไรโดยไม่ลงมือทำจริง เช่น `ccam --dry-run work`
+ใส่ `--dry-run` ไว้หน้าคำสั่งเพื่อดูว่าคำสั่งนั้นจะทำอะไรโดยไม่ลงมือทำจริง เช่น `ccam --dry-run work` ตัวเลือกนี้ใช้ได้เมื่อเริ่ม Claude Code (`ccam <name>`, `ccam run`, `ccam next`) และกับ `share`, `migrate`, `shortcut`, `update` และ `doctor --fix` ส่วนคำสั่งอื่นที่เปลี่ยนแปลงบางอย่างจะปฏิเสธตัวเลือกนี้แทนที่จะทำงาน
 
 <!-- commands -->
 
@@ -33,6 +33,10 @@ ccam import ~/.claude-old --name old
 ```
 
 `ccam import` ที่ไม่ระบุโฟลเดอร์จะค้นหา `~/.claude` และ `~/.claude-*` แล้วถามคุณทีละโฟลเดอร์ โฟลเดอร์ที่นำเข้าจะถูกลงทะเบียนไว้ในตำแหน่งเดิม ccam ไม่ย้ายหรือคัดลอกการเข้าสู่ระบบใด ๆ
+
+`ccam rename`, `ccam remove` และ `ccam share` จะไม่ยอมเปลี่ยนแปลงบัญชีในขณะที่ Claude Code กำลังทำงานด้วยบัญชีนั้น ให้ออกจากเซสชันนั้นก่อน
+
+`ccam list --json` จะแสดงทุกบัญชีพร้อมสล็อต คำสั่งลัด อีเมล และโฟลเดอร์ ออบเจ็กต์ `share` ในผลลัพธ์จะจับคู่แต่ละรายการ (`mcp`, `settings`, `memory`, `extensions`, `history`) กับชื่อกลุ่มหรือ `local`
 
 ## คำสั่งลัด
 
@@ -69,7 +73,7 @@ ccam migrate ~/.claude-work --group work --settings --mcp
 ccam migrate --history --yes    # conversation history only
 ```
 
-`ccam migrate` คัดลอก `settings.json`, `CLAUDE.md` ส่วนขยาย และเซิร์ฟเวอร์ MCP ของผู้ใช้จากโฟลเดอร์ Claude Code ไปยังกลุ่ม เพื่อให้ทุกบัญชีที่ใช้รายการเหล่านั้นร่วมกันได้รับด้วย โฟลเดอร์ต้นทางจะถูกอ่านอย่างเดียว ตัวเลือก `--settings`, `--memory`, `--extensions`, `--mcp` และ `--history` จะคัดลอกเฉพาะรายการที่คุณระบุ หากไม่ระบุ จะคัดลอกทุกอย่างยกเว้นประวัติการสนทนา `-g` หรือ `--group` ใช้เลือกกลุ่ม และ `-y` หรือ `--yes` จะคัดลอกโดยไม่ถาม และเก็บสำเนาของกลุ่มไว้เมื่อไฟล์ไม่ตรงกัน ดูที่ [การคัดลอกการตั้งค่าที่มีอยู่](/docs/sharing#copy-an-existing-setup)
+`ccam migrate` คัดลอก `settings.json`, `CLAUDE.md` ส่วนขยาย และเซิร์ฟเวอร์ MCP ของผู้ใช้จากโฟลเดอร์ Claude Code ไปยังกลุ่ม เพื่อให้ทุกบัญชีที่ใช้รายการเหล่านั้นร่วมกันได้รับด้วย โฟลเดอร์ต้นทางจะถูกอ่านอย่างเดียว ตัวเลือก `--settings`, `--memory`, `--extensions`, `--mcp` และ `--history` จะคัดลอกเฉพาะรายการที่คุณระบุ หากไม่ระบุ บนเทอร์มินัลจะมีรายการตรวจสอบ (checklist) ให้คุณเลือก โดยเลือกทุกอย่างไว้ยกเว้นประวัติการสนทนา ส่วนในกรณีอื่นจะคัดลอกทุกอย่างยกเว้นประวัติการสนทนา `-g` หรือ `--group` ใช้เลือกกลุ่ม และ `-y` หรือ `--yes` จะคัดลอกโดยไม่ถาม และเก็บสำเนาของกลุ่มไว้เมื่อไฟล์ไม่ตรงกัน นอกจากนี้ยังคัดลอกการลงชื่อเข้าใช้ที่บันทึกไว้ของเซิร์ฟเวอร์ไปยังไฟล์เข้าสู่ระบบของแต่ละบัญชีเองด้วย ดูที่ [การคัดลอกการตั้งค่าที่มีอยู่](/docs/sharing#copy-an-existing-setup)
 
 ## เซิร์ฟเวอร์ MCP
 
@@ -81,6 +85,8 @@ ccam mcp list
 ccam mcp import work gh
 ccam mcp remove fs
 ```
+
+`ccam mcp import <account>` จะย้ายเซิร์ฟเวอร์ที่มีเฉพาะในบัญชีนั้นไปยังกลุ่มของบัญชี เซิร์ฟเวอร์ที่ใช้ชื่อซึ่งกลุ่มใช้อยู่แล้วกับนิยามอื่นจะถูกข้ามไป เพิ่ม `--force` เพื่อแทนที่สำเนาของกลุ่ม โดย ccam จะสำรองสำเนานั้นไว้ก่อน
 
 ## การใช้งานและการสลับบัญชี
 
@@ -101,6 +107,7 @@ ccam statusline install
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam version         # also: ccam -v, ccam --version
 ```
 
 `ccam update` จะตรวจสอบ checksum แบบ SHA-256 ของรุ่นนั้นก่อนแทนที่ ccam และ `--version v0.2.0` จะติดตั้งรุ่นที่ระบุ ส่วน ccam ที่ติดตั้งจากแพ็กเกจ `.deb` ให้อัปเดตด้วย apt แทน ดูที่ [การอัปเดต](/docs/install#update)

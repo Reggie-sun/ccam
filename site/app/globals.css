@@ -147,11 +147,14 @@ html:not([data-font="brand"]) .brand { font-family: "Newsreader", Georgia, serif
 /* Hover or focus spells the name out; the long form overlays the header, so nothing shifts. */
 .brand-name { position: relative; display: inline-block; }
 .brand-name .short { display: inline-block; transition: opacity 250ms, transform 450ms var(--ease); }
-.brand-name .long {
-  position: absolute; inset-inline-start: 0; inset-block-start: 50%; white-space: nowrap; font-size: 1.35rem; letter-spacing: -0.02em;
-  opacity: 0; transform: translateY(calc(-50% + 0.4em)); pointer-events: none; transition: opacity 250ms, transform 450ms var(--ease);
-}
+/* Laid out only where the hover can happen: even transparent, the long form
+   is wider than a phone screen and would make the page scroll sideways. */
+.brand-name .long { display: none; }
 @media (hover: hover) and (min-width: 64rem) {
+  .brand-name .long {
+    display: block; position: absolute; inset-inline-start: 0; inset-block-start: 50%; white-space: nowrap; font-size: 1.35rem; letter-spacing: -0.02em;
+    opacity: 0; transform: translateY(calc(-50% + 0.4em)); pointer-events: none; transition: opacity 250ms, transform 450ms var(--ease);
+  }
   .site-header .brand:is(:hover, :focus-visible) .short { opacity: 0; transform: translateY(-0.4em); }
   .site-header .brand:is(:hover, :focus-visible) .long { opacity: 1; transform: translateY(-50%); }
 }

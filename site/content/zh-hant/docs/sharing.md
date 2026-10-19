@@ -4,7 +4,7 @@ description: ccam 如何在 Claude Code 帳號間共用 MCP 伺服器、settings
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: 1e2f0d6809fc
+sourceHash: f266f8bfd55c
 ---
 
 每個帳號都保有自己的登入資訊。其他所有內容都可以逐項共用：ccam 會將帳號的檔案或資料夾連結到共用的群組資料夾，因此在一個帳號中所做的變更，會出現在該群組的所有帳號中。
@@ -46,6 +46,8 @@ ccam share side --history team
 
 對話檔案以工作階段 ID 命名，因此多個帳號的對話記錄可以合併而不會衝突。
 
+當 Claude Code 正以該帳號執行時，ccam 不會變更共用，因為工作階段會持續寫入正在移動的檔案。請先結束工作階段。
+
 ## 關閉共用
 
 ```sh
@@ -62,14 +64,19 @@ ccam share work --history off
 ccam migrate
 ```
 
+在終端機中，ccam 會先顯示項目的核取清單。除了對話記錄以外的項目都已勾選；按 Space 切換項目，按 Enter 查看計畫。資料夾中沒有內容的項目會標示為 `not found`。
+
 它會複製：
 
 - `settings.json` 和全域 `CLAUDE.md`；
 - 擴充功能 `agents/`、`commands/`、`skills/`、`plugins/`、`output-styles/` 和 `rules/`；
 - 你的使用者 MCP 伺服器，也就是 `~/.claude.json` 中的 `mcpServers` 項目，會複製到群組的 `mcp.json`；
+- 所複製的 MCP 伺服器已儲存的登入（OAuth），會複製到每個帳號自己的登入檔案；
 - 對話記錄（`projects/` 和 `history.jsonl`），但只有在你加上 `--history` 時才會複製。
 
-來源資料夾只會被讀取：其中的內容都不會被移動、連結或變更，直接執行 `claude` 也會和以前一樣運作。登入檔案 `.credentials.json` 和 `.claude.json` 絕不會被複製。
+來源資料夾只會被讀取：其中的內容都不會被移動、連結或變更，直接執行 `claude` 也會和以前一樣運作。登入檔案 `.credentials.json` 和 `.claude.json` 絕不會被複製到群組。
+
+使用 OAuth 登入的 MCP 伺服器會把權杖存放在登入資訊中，而不是伺服器清單中。為了讓你不必重新登入這些伺服器，ccam 會把這些登入複製到每個透過群組取得這些伺服器的帳號的登入檔案，除非該帳號已有自己的登入。它會略過正在執行、尚未登入、以 `ccam import` 就地註冊，或把登入資訊存放在 macOS 鑰匙圈中的帳號，並列出它們的名稱；請在這些帳號中用 `/mcp` 登入伺服器。之後才開始共用 MCP 伺服器的帳號，會在你再次執行 `ccam migrate` 時取得這些登入。
 
 ccam 在複製任何內容之前，會先顯示計畫並詢問你：
 
@@ -99,7 +106,7 @@ Accounts that share these through group default:
 
 | 選項 | 作用 |
 | --- | --- |
-| `--settings`、`--memory`、`--extensions`、`--mcp`、`--history` | 只複製你指定的項目；不指定時，複製對話記錄以外的所有內容 |
+| `--settings`、`--memory`、`--extensions`、`--mcp`、`--history` | 只複製你指定的項目，不顯示核取清單；不指定且不在終端機中時，複製對話記錄以外的所有內容 |
 | `-g`、`--group <group>` | 複製到這個群組，而不是 `default` |
 | `-y`、`--yes` | 不詢問直接複製；檔案內容不同時保留群組中的副本 |
 
@@ -120,7 +127,9 @@ ccam mcp list
 ccam mcp import work gh
 ```
 
-使用 OAuth 登入的 MCP 伺服器會將權杖和帳號的登入資訊存放在一起，所以請在每個帳號中各授權一次。
+如果群組中已有同名的不同伺服器，ccam 會略過它並告訴你。`--force` 會取代群組的伺服器，並把舊的 `mcp.json` 保留在群組的 `.ccam-backup/` 資料夾中。
+
+使用 OAuth 登入的 MCP 伺服器會將權杖和帳號的登入資訊存放在一起，所以請在每個帳號中各授權一次，或用 `ccam migrate` 從 `~/.claude` 複製這些登入。
 
 如果你希望這些伺服器以一般使用者伺服器的形式出現在 `claude mcp list` 和 `/mcp` 中，請在 `~/.config/ccam/config.toml` 中設定 `mcp_strategy = "sync"`。ccam 會在啟動前將它們寫入每個帳號的 `.claude.json`，過程中使用 Claude Code 自己的檔案鎖，並保留備份。
 

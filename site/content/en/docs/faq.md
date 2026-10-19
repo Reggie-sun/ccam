@@ -30,7 +30,11 @@ Share conversation history between the two accounts with `ccam share <name> --hi
 
 ## Does ccam see or send my login?
 
-ccam never copies or shares a login. It reads an account's access token only to ask Anthropic's usage endpoint for that account's usage, when you run `ccam usage`, `ccam next --auto` or `ccam doctor`. ccam has no telemetry and sends nothing anywhere else.
+ccam never shares your Claude login between accounts. It reads an account's access token only to ask Anthropic's usage endpoint for that account's usage, when you run `ccam usage`, `ccam next --auto` or `ccam doctor`. `ccam migrate` copies the saved sign-ins of MCP servers from `~/.claude` into your accounts' own login files on the same computer. ccam has no telemetry and sends nothing anywhere else.
+
+## How do I sign in on a remote server?
+
+Run `ccam add` or `ccam login <name>` in the SSH session as usual. Claude Code waits for the sign-in on the server, so the browser on your computer ends on a `http://localhost:<port>/callback?code=…` page that does not load. Copy that address from the browser and paste it into the terminal: ccam passes it to Claude Code on the server, which finishes the sign-in. The address contains a one-time code, so do not share it.
 
 ## Where are my accounts stored?
 

@@ -4,7 +4,7 @@ description: Die 5-Stunden- und Wochennutzung aller Claude Code-Konten mit ccam 
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: cbc6b0c0618d
+sourceHash: d288177682d7
 ---
 
 `ccam usage` zeigt, wie viel jedes Konto von seinem 5-Stunden- und seinem Wochenlimit verbraucht hat. `ccam next --auto` öffnet das Konto mit dem meisten Spielraum, und `--continue` nimmt das aktuelle Gespräch mit.
@@ -24,7 +24,7 @@ Die Spalten sind: Konto, 5-Stunden-Nutzung, Zeit bis zum Zurücksetzen, Wochennu
 
 ccam fragt den Nutzungs-Endpunkt von Anthropic für alle Konten gleichzeitig ab, jeweils mit der eigenen Anmeldung des Kontos. Es wartet höchstens 3 Sekunden pro Konto und zeigt jedes Konto an, sobald es antwortet.
 
-Dieser Endpunkt ist nicht öffentlich dokumentiert und kann sich ändern. Wenn eine Anfrage fehlschlägt, zeigt ccam die zuletzt bekannten Zahlen und markiert sie als zwischengespeichert. `ccam doctor` sagt dir, ob sich das Antwortformat geändert hat.
+Dieser Endpunkt ist nicht öffentlich dokumentiert und kann sich ändern. Wenn eine Anfrage fehlschlägt, zeigt ccam die zuletzt bekannten Zahlen und markiert sie als zwischengespeichert. Ein Zeitfenster, das seit dem Speichern dieser Zahlen zurückgesetzt wurde, zeigt 0 %. `ccam doctor` sagt dir, ob sich das Antwortformat geändert hat.
 
 Zahlen, die vor weniger als 60 Sekunden abgerufen wurden, werden wiederverwendet. Optionen:
 

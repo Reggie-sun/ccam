@@ -5,7 +5,7 @@ description: Zwei Claude Code-Konten mit ccam add hinzufügen, ihnen Kurzbefehle
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 745a9904e32a
+sourceHash: a10d91d2a64e
 ---
 
 Füge jedes Konto mit `ccam add` hinzu und starte Claude Code dann mit `ccam <name>` oder mit einem Kurzbefehl, den du selbst benennst, etwa `ccwork`. Mehr brauchen die meisten nicht.
@@ -16,7 +16,7 @@ Füge jedes Konto mit `ccam add` hinzu und starte Claude Code dann mit `ccam <na
 ccam add
 ```
 
-Der Assistent fragt nach einem Namen wie `personal` oder `work`, danach, welche Elemente das Konto mit deinen anderen Konten teilen soll, und ob ein Kurzbefehl angelegt werden soll (siehe Schritt 4). Dann führt er `claude auth login` aus, das den Browser öffnet, damit du dich anmelden kannst. Wenn er fertig ist, siehst du:
+Der Assistent fragt nach einem Namen wie `personal` oder `work`, danach, welche Elemente das Konto mit deinen anderen Konten teilen soll, und ob ein Kurzbefehl angelegt werden soll (siehe Schritt 4). Dann führt er `claude auth login` aus, das den Browser öffnet, damit du dich anmelden kannst. Auf einem entfernten Rechner landet der Browser eventuell auf einer Seite `http://localhost:…/callback`, die nicht lädt; füge diese Adresse im Terminal ein, und ccam schließt die Anmeldung ab. Wenn er fertig ist, siehst du:
 
 ```console
 ✓ personal (me@example.com) added

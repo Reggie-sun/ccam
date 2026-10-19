@@ -340,3 +340,82 @@ func TestJoiningMergesPluginRegistry(t *testing.T) {
 		t.Fatal("group registry must be backed up before merging")
 	}
 }
+
+// A relative link into dotfiles (GNU stow) still resolves once its folder
+// is moved into the group, whether it adopts the group slot or merges in.
+func TestRelativeOutsideLinksSurviveSharing(t *testing.T) {
+	f := newFixture(t)
+	dot := filepath.Join(f.root, "dotfiles", "skill")
+	os.MkdirAll(dot, 0o700)
+	os.WriteFile(filepath.Join(dot, "SKILL.md"), []byte("stowed"), 0o600)
+	ext := config.Share{Extensions: "default"}
+	for _, name := range []string{"a", "b"} { // a adopts, b merges
+		// An imported ~/.claude sits deeper than the group folder.
+		dir := filepath.Join(f.root, "home", name, ".claude")
+		os.MkdirAll(filepath.Join(dir, "skills"), 0o700)
+		os.Symlink("../../../../dotfiles/skill", filepath.Join(dir, "skills", "stow-"+name))
+		share(t, f, dir, config.Share{}, ext, Options{})
+		if got := read(t, filepath.Join(f.groups, "default", "skills", "stow-"+name, "SKILL.md")); got != "stowed" {
+			t.Fatalf("%s: %q", name, got)
+		}
+	}
+}
+
+// Turning extensions off copies the plugins back; their registry must then
+// point at the account's own copy, not at the group.
+func TestLeavingRewritesPluginPathsBack(t *testing.T) {
+	f := newFixture(t)
+	ext := config.Share{Extensions: "default"}
+	a := f.profile(t, "a", nil)
+	os.MkdirAll(filepath.Join(a, "plugins", "cache", "mk", "one"), 0o700)
+	os.WriteFile(filepath.Join(a, "plugins", "installed_plugins.json"),
+		[]byte(`{"plugins":{"one@mk":[{"installPath":"`+a+`/plugins/cache/mk/one"}]}}`), 0o600)
+	share(t, f, a, config.Share{}, ext, Options{})
+	share(t, f, a, ext, config.Share{}, Options{})
+	data := read(t, filepath.Join(a, "plugins", "installed_plugins.json"))
+	if !strings.Contains(data, a+"/plugins/cache/mk/one") || strings.Contains(data, f.groups) {
+		t.Fatalf("registry after leaving:\n%s", data)
+	}
+}
+
+// The same plugin installed in two accounts stays one install record.
+func TestJoiningDoesNotDuplicateSharedPlugin(t *testing.T) {
+	f := newFixture(t)
+	ext := config.Share{Extensions: "default"}
+	for _, name := range []string{"a", "b"} {
+		dir := f.profile(t, name, nil)
+		os.MkdirAll(filepath.Join(dir, "plugins", "cache", "mk", "one"), 0o700)
+		os.WriteFile(filepath.Join(dir, "plugins", "installed_plugins.json"),
+			[]byte(`{"plugins":{"one@mk":[{"installPath":"`+dir+`/plugins/cache/mk/one","version":"1.0"}]}}`), 0o600)
+		share(t, f, dir, config.Share{}, ext, Options{})
+	}
+	var reg struct {
+		Plugins map[string][]any `json:"plugins"`
+	}
+	json.Unmarshal([]byte(read(t, filepath.Join(f.groups, "default", "plugins", "installed_plugins.json"))), &reg)
+	if n := len(reg.Plugins["one@mk"]); n != 1 {
+		t.Fatalf("%d install records: %v", n, reg.Plugins)
+	}
+}
+
+// Two plans in the same second must not share a backup folder: the second
+// would overwrite (or fail to move over) the first one's backup.
+func TestBackupsWithinOneSecondStayApart(t *testing.T) {
+	f := newFixture(t)
+	f.profile(t, "g", map[string]string{"settings.json": `{"group":1}`})
+	share(t, f, filepath.Join(f.root, "profiles", "g"), config.Share{}, config.Share{Settings: "default"}, Options{})
+	dir := f.profile(t, "a", map[string]string{"settings.json": `{"mine":1}`})
+	on, off := config.Share{Settings: "default"}, config.Share{}
+	share(t, f, dir, off, on, Options{})
+	share(t, f, dir, on, off, Options{})
+	os.WriteFile(filepath.Join(dir, "settings.json"), []byte(`{"mine":2}`), 0o600)
+	share(t, f, dir, off, on, Options{})
+	saved, _ := filepath.Glob(filepath.Join(dir, BackupDir, "*", "settings.json"))
+	var got []string
+	for _, s := range saved {
+		got = append(got, read(t, s))
+	}
+	if len(got) != 2 || !strings.Contains(strings.Join(got, ""), `{"mine":1}`) {
+		t.Fatalf("backups: %v", got)
+	}
+}

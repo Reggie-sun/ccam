@@ -1,11 +1,13 @@
 package cli
 
 import (
+	"cmp"
 	"encoding/json"
 	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"text/tabwriter"
 	"time"
 
@@ -17,6 +19,7 @@ import (
 	"github.com/jhyunwoo/ccam/internal/profile"
 	"github.com/jhyunwoo/ccam/internal/shim"
 	"github.com/jhyunwoo/ccam/internal/tui"
+	"github.com/jhyunwoo/ccam/internal/usage"
 )
 
 func addCmd(e *env) *cobra.Command {
@@ -51,7 +54,7 @@ func addCmd(e *env) *cobra.Command {
 			}
 			share := config.DefaultShare()
 			for _, s := range shares {
-				item, group, ok := cutEq(s)
+				item, group, ok := strings.Cut(s, "=")
 				if !ok {
 					return fmt.Errorf("--share takes item=group (e.g. history=team): %q", s)
 				}
@@ -90,25 +93,30 @@ func addProfile(e *env, name string, share config.Share, login bool, shortcut st
 	}
 	prof.Shortcut = shortcut
 	if err := applyShare(e, cfg, prof); err != nil {
+		// The folder is new and unregistered; left behind, it would block
+		// every retry with "folder already exists".
+		os.RemoveAll(e.paths.ProfileDir(name))
 		return err
 	}
 	if err := e.save(cfg); err != nil {
 		return err
 	}
 	if login {
-		if err := loginProfile(e, cfg, name); err != nil {
+		if _, err := loginProfile(e, name); err != nil {
 			fmt.Fprintf(e.stderr, "Login failed: %v\nTry again later with `ccam login %s`.\n", err, name)
+		}
+		if cfg, err = e.load(); err != nil { // the login saved the email
+			return err
 		}
 	}
 	if _, err := installShims(e, cfg); err != nil {
 		fmt.Fprintln(e.stderr, "Could not create the shortcut:", err)
 	}
-	prof, _ = cfg.Find(name)
-	email := prof.Email
-	if email == "" {
-		email = "not logged in"
+	prof, err = cfg.MustFind(name)
+	if err != nil {
+		return err
 	}
-	e.printf("✓ %s (%s) added\n", name, email)
+	e.printf("✓ %s (%s) added\n", name, orNone(prof.Email))
 	printShortcut(e, prof)
 	if claudeDir := filepath.Join(e.paths.Home, ".claude"); len(cfg.Profiles) == 1 && migrate.HasContent(claudeDir) {
 		e.printf("Tip: run `ccam migrate` to copy your existing Claude Code settings (%s) into the shared settings.\n", claudeDir)
@@ -116,21 +124,29 @@ func addProfile(e *env, name string, share config.Share, login bool, shortcut st
 	return nil
 }
 
-// loginProfile runs `claude auth login` inside the profile and caches the email.
-func loginProfile(e *env, cfg *config.Config, sel string) error {
-	prof, err := cfg.MustFind(sel)
+// loginProfile runs `claude auth login` inside the profile and caches the
+// email. The login can take minutes, so the config is reloaded to save it.
+func loginProfile(e *env, sel string) (*config.Profile, error) {
+	cfg, prof, err := e.loadProfile(sel)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	if err := runClaude(e, cfg, prof, "auth", "login"); err != nil {
-		return err
+	name := prof.Name
+	if err := runLogin(e, cfg, prof); err != nil {
+		return nil, err
 	}
 	email, err := profile.ReadEmail(profile.Dir(e.paths, prof))
 	if err != nil {
-		return fmt.Errorf("could not read the email after login: %w", err)
+		return nil, fmt.Errorf("could not read the email after login: %w", err)
 	}
-	prof.Email = email
-	return e.save(cfg)
+	var saved *config.Profile
+	_, err = e.update(func(cfg *config.Config) error {
+		if saved, err = cfg.MustFind(name); err == nil {
+			saved.Email = email
+		}
+		return err
+	})
+	return saved, err
 }
 
 // runClaude runs a claude subcommand (not exec) inside a profile.
@@ -154,6 +170,11 @@ func printShortcut(e *env, prof *config.Profile) {
 	}
 }
 
+// nameState lists what ccam keeps under an account's name outside its folder.
+func nameState(e *env, name string) []string {
+	return append(launcher.StatePaths(e.paths, name), usage.CachePaths(usageStateDir(e), name)...)
+}
+
 func installShims(e *env, cfg *config.Config) ([]string, error) {
 	self, err := ccamPath()
 	if err != nil {
@@ -166,24 +187,15 @@ func installShims(e *env, cfg *config.Config) ([]string, error) {
 	return created, err
 }
 
-func cutEq(s string) (string, string, bool) {
-	for i := 0; i < len(s); i++ {
-		if s[i] == '=' {
-			return s[:i], s[i+1:], true
-		}
-	}
-	return "", "", false
-}
-
 type listRow struct {
-	Slot     int          `json:"slot"`
-	Shortcut string       `json:"shortcut"`
-	Name     string       `json:"name"`
-	Email    string       `json:"email"`
-	Default  bool         `json:"default"`
-	Dir      string       `json:"dir"`
-	LastUsed *time.Time   `json:"last_used,omitempty"`
-	Share    config.Share `json:"share"`
+	Slot     int               `json:"slot"`
+	Shortcut string            `json:"shortcut"`
+	Name     string            `json:"name"`
+	Email    string            `json:"email"`
+	Default  bool              `json:"default"`
+	Dir      string            `json:"dir"`
+	LastUsed *time.Time        `json:"last_used,omitempty"`
+	Share    map[string]string `json:"share"` // item → group, or "local"
 }
 
 func listCmd(e *env) *cobra.Command {
@@ -210,7 +222,10 @@ func listProfiles(e *env, asJSON bool) error {
 	rows := make([]listRow, 0, len(cfg.Profiles))
 	for i := range cfg.Profiles {
 		p := &cfg.Profiles[i]
-		r := listRow{Slot: p.Slot, Shortcut: p.Shortcut, Name: p.Name, Email: p.Email, Default: def == p, Dir: profile.Dir(e.paths, p), Share: p.Share}
+		r := listRow{Slot: p.Slot, Shortcut: p.Shortcut, Name: p.Name, Email: p.Email, Default: def == p, Dir: profile.Dir(e.paths, p), Share: map[string]string{}}
+		for _, item := range config.Items {
+			r.Share[item] = p.Share.Get(item)
+		}
 		if t := launcher.LastUsed(e.paths, p.Name); !t.IsZero() {
 			r.LastUsed = &t
 		}
@@ -227,7 +242,7 @@ func listProfiles(e *env, asJSON bool) error {
 	}
 	tw := tabwriter.NewWriter(e.stdout, 0, 0, 2, ' ', 0)
 	fmt.Fprintln(tw, " \t#\tName\tShortcut\tEmail\tShared\tLast used")
-	for _, r := range rows {
+	for i, r := range rows {
 		mark := ""
 		if r.Default {
 			mark = "*"
@@ -244,32 +259,9 @@ func listProfiles(e *env, asJSON bool) error {
 		if shortcut == "" {
 			shortcut = "-"
 		}
-		fmt.Fprintf(tw, "%s\t%d\t%s\t%s\t%s\t%s\t%s\n", mark, r.Slot, r.Name, shortcut, email, shareSummary(r.Share), last)
+		fmt.Fprintf(tw, "%s\t%d\t%s\t%s\t%s\t%s\t%s\n", mark, r.Slot, r.Name, shortcut, email, cmp.Or(cfg.Profiles[i].Share.Summary(), "-"), last)
 	}
 	return tw.Flush()
-}
-
-// shareSummary renders e.g. "mcp settings memory ext" for shared items.
-func shareSummary(s config.Share) string {
-	short := map[string]string{"mcp": "mcp", "settings": "settings", "memory": "md", "extensions": "ext", "history": "history"}
-	out := ""
-	for _, item := range config.Items {
-		g := s.Get(item)
-		if g == config.Local {
-			continue
-		}
-		if out != "" {
-			out += " "
-		}
-		out += short[item]
-		if g != "default" {
-			out += "@" + g
-		}
-	}
-	if out == "" {
-		return "-"
-	}
-	return out
 }
 
 // Ago renders a short relative time.
@@ -292,11 +284,7 @@ func useCmd(e *env) *cobra.Command {
 		Short: "Set the default account",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cfg, err := e.load()
-			if err != nil {
-				return err
-			}
-			p, err := cfg.MustFind(args[0])
+			cfg, p, err := e.loadProfile(args[0])
 			if err != nil {
 				return err
 			}
@@ -318,19 +306,23 @@ func removeCmd(e *env) *cobra.Command {
 		Short:   "Remove an account (its folder goes to the trash)",
 		Args:    cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cfg, err := e.load()
+			_, p, err := e.loadProfile(args[0])
 			if err != nil {
 				return err
 			}
-			p, err := cfg.MustFind(args[0])
+			if err := refuseRunning(e, p.Name); err != nil {
+				return err
+			}
+			if !yes && !e.confirm(fmt.Sprintf("Remove account %s (%s)?", p.Name, profile.Dir(e.paths, p))) {
+				e.printf("Cancelled.\n")
+				return nil
+			}
+			// Reload: the prompt may have waited while another ccam saved.
+			cfg, p, err := e.loadProfile(p.Name)
 			if err != nil {
 				return err
 			}
 			prof := *p
-			if !yes && !e.confirm(fmt.Sprintf("Remove account %s (%s)?", prof.Name, profile.Dir(e.paths, &prof))) {
-				e.printf("Cancelled.\n")
-				return nil
-			}
 			if g := prof.Share.Get("extensions"); g != config.Local {
 				// Other accounts' plugin paths may run through this folder.
 				sep := string(filepath.Separator)
@@ -347,6 +339,9 @@ func removeCmd(e *env) *cobra.Command {
 			cfg.Remove(prof.Name)
 			if err := e.save(cfg); err != nil {
 				return err
+			}
+			for _, path := range nameState(e, prof.Name) {
+				os.RemoveAll(path) // a later account of this name must not inherit it
 			}
 			if self, err := ccamPath(); err == nil {
 				shim.Remove(e.paths.Bin, self, prof.Shortcut)
@@ -369,20 +364,23 @@ func renameCmd(e *env) *cobra.Command {
 		Short: "Rename an account (its shortcut command stays the same)",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cfg, err := e.load()
-			if err != nil {
-				return err
-			}
-			old, err := cfg.MustFind(args[0])
+			cfg, old, err := e.loadProfile(args[0])
 			if err != nil {
 				return err
 			}
 			oldName := old.Name
+			if err := refuseRunning(e, oldName); err != nil {
+				return err
+			}
 			if err := profile.Rename(e.paths, cfg, oldName, args[1]); err != nil {
 				return err
 			}
 			if err := e.save(cfg); err != nil {
 				return err
+			}
+			newState := nameState(e, args[1])
+			for i, path := range nameState(e, oldName) {
+				_ = os.Rename(path, newState[i]) // best effort: last use and cached usage
 			}
 			if _, err := installShims(e, cfg); err != nil {
 				fmt.Fprintln(e.stderr, "Could not update shortcuts:", err)
@@ -399,14 +397,10 @@ func loginCmd(e *env) *cobra.Command {
 		Short: "Log in again",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cfg, err := e.load()
+			p, err := loginProfile(e, args[0])
 			if err != nil {
 				return err
 			}
-			if err := loginProfile(e, cfg, args[0]); err != nil {
-				return err
-			}
-			p, _ := cfg.Find(args[0])
 			e.printf("✓ %s logged in: %s\n", p.Name, p.Email)
 			return nil
 		},
@@ -419,19 +413,22 @@ func logoutCmd(e *env) *cobra.Command {
 		Short: "Remove the login token",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cfg, err := e.load()
-			if err != nil {
-				return err
-			}
-			p, err := cfg.MustFind(args[0])
+			cfg, p, err := e.loadProfile(args[0])
 			if err != nil {
 				return err
 			}
 			if err := runClaude(e, cfg, p, "auth", "logout"); err != nil {
 				return err
 			}
-			p.Email = ""
-			return e.save(cfg)
+			name := p.Name
+			_, err = e.update(func(cfg *config.Config) error {
+				p, err := cfg.MustFind(name)
+				if err == nil {
+					p.Email = ""
+				}
+				return err
+			})
+			return err
 		},
 	}
 }

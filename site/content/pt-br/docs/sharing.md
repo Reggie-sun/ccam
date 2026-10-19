@@ -4,7 +4,7 @@ description: Como o ccam compartilha servidores MCP, settings.json, CLAUDE.md, a
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: 1e2f0d6809fc
+sourceHash: f266f8bfd55c
 ---
 
 Cada conta mantém o próprio login. Todo o resto pode ser compartilhado item por item: o ccam cria um link do arquivo ou da pasta da conta para uma pasta de grupo compartilhada, então uma alteração feita em uma conta aparece em todas as contas desse grupo.
@@ -46,6 +46,8 @@ Quando uma conta começa a compartilhar um item, o ccam:
 
 Os arquivos de conversa recebem o nome do ID da sessão, então os históricos de várias contas se combinam sem conflitos.
 
+O ccam não altera o compartilhamento enquanto o Claude Code estiver em execução com a conta, porque a sessão continua gravando nos arquivos que estão sendo movidos. Encerre-a primeiro.
+
 ## Desativar o compartilhamento
 
 ```sh
@@ -62,14 +64,19 @@ Se você usava o Claude Code antes do ccam, suas configurações estão em `~/.c
 ccam migrate
 ```
 
+Em um terminal, o ccam mostra primeiro uma lista de seleção dos itens. Tudo vem marcado, exceto o histórico de conversas; pressione Espaço para alterar um item e Enter para ver o plano. Itens para os quais a pasta não tem nada aparecem como `not found`.
+
 O que é copiado:
 
 - o `settings.json` e o `CLAUDE.md` global;
 - as extensões `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/` e `rules/`;
 - seus servidores MCP de usuário, ou seja, a entrada `mcpServers` do `~/.claude.json`, para o `mcp.json` do grupo;
+- os logins salvos (OAuth) dos servidores MCP que ele copia, para o próprio arquivo de login de cada conta;
 - o histórico de conversas (`projects/` e `history.jsonl`), mas só quando você adiciona `--history`.
 
-A pasta de origem é apenas lida: nada nela é movido, vinculado ou alterado, e o `claude` simples continua funcionando como antes. Os arquivos de login `.credentials.json` e `.claude.json` nunca são copiados.
+A pasta de origem é apenas lida: nada nela é movido, vinculado ou alterado, e o `claude` simples continua funcionando como antes. Os arquivos de login `.credentials.json` e `.claude.json` nunca são copiados para o grupo.
+
+Servidores MCP que fazem login com OAuth guardam os tokens no login, não na lista de servidores. Para que você não precise entrar neles de novo, o ccam copia esses logins para o arquivo de login de cada conta que recebe os servidores pelo grupo, a menos que a conta já tenha os seus. Ele ignora as contas que estão em execução, que ainda não fizeram login, que foram registradas no lugar com `ccam import` ou que guardam o login no Acesso às Chaves do macOS, e informa quais são; nelas, entre nos servidores com `/mcp`. Uma conta que passar a compartilhar servidores MCP depois recebe os logins quando você executar `ccam migrate` de novo.
 
 O ccam imprime o plano e pergunta antes de copiar qualquer coisa:
 
@@ -99,7 +106,7 @@ Quando o grupo já tem uma cópia diferente de um arquivo, o ccam pergunta, como
 
 | Opção | Efeito |
 | --- | --- |
-| `--settings`, `--memory`, `--extensions`, `--mcp`, `--history` | Copia só os itens que você indicar; sem elas, tudo exceto o histórico de conversas |
+| `--settings`, `--memory`, `--extensions`, `--mcp`, `--history` | Copia só os itens que você indicar, sem a lista de seleção; sem elas e fora de um terminal, tudo exceto o histórico de conversas |
 | `-g`, `--group <group>` | Copia para este grupo em vez de `default` |
 | `-y`, `--yes` | Copia sem perguntar; quando um arquivo é diferente, mantém a cópia do grupo |
 
@@ -120,7 +127,9 @@ Um servidor que você adiciona dentro de uma sessão com `claude mcp add` é sal
 ccam mcp import work gh
 ```
 
-Servidores MCP que fazem login com OAuth armazenam os tokens junto com o login da conta, então autorize-os uma vez em cada conta.
+Se o grupo já tiver um servidor diferente com esse nome, o ccam o ignora e avisa. `--force` substitui o servidor do grupo e guarda o `mcp.json` antigo na pasta `.ccam-backup/` do grupo.
+
+Servidores MCP que fazem login com OAuth armazenam os tokens junto com o login da conta, então autorize-os uma vez em cada conta ou copie os logins do `~/.claude` com `ccam migrate`.
 
 Se você prefere que os servidores apareçam em `claude mcp list` e em `/mcp` como servidores comuns de usuário, defina `mcp_strategy = "sync"` em `~/.config/ccam/config.toml`. Assim, o ccam grava os servidores no `.claude.json` de cada conta antes da inicialização, usando o bloqueio de arquivo do próprio Claude Code e com um backup.
 

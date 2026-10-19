@@ -4,7 +4,7 @@ description: "Cách ccam dùng chung máy chủ MCP, settings.json, CLAUDE.md, a
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: 1e2f0d6809fc
+sourceHash: f266f8bfd55c
 ---
 
 Mỗi tài khoản giữ thông tin đăng nhập riêng. Mọi thứ khác đều có thể dùng chung theo từng mục: ccam liên kết tệp hoặc thư mục của tài khoản đến một thư mục nhóm dùng chung, nên thay đổi thực hiện ở một tài khoản sẽ xuất hiện ở mọi tài khoản trong nhóm đó.
@@ -46,6 +46,8 @@ Khi một tài khoản bắt đầu dùng chung một mục, ccam sẽ:
 
 Các tệp hội thoại được đặt tên theo ID phiên, nên lịch sử từ nhiều tài khoản được gộp lại mà không xung đột.
 
+ccam không thay đổi việc dùng chung khi Claude Code đang chạy bằng tài khoản đó, vì phiên vẫn tiếp tục ghi vào các tệp đang được di chuyển. Hãy thoát phiên trước.
+
 ## Tắt dùng chung
 
 ```sh
@@ -62,14 +64,19 @@ Nếu bạn đã dùng Claude Code trước khi có ccam, cài đặt của bạ
 ccam migrate
 ```
 
+Trên terminal, ccam trước tiên hiển thị một danh sách kiểm (checklist) các mục. Mọi thứ trừ lịch sử hội thoại đều được đánh dấu; nhấn Space để thay đổi một mục và Enter để xem kế hoạch. Những mục mà thư mục không có gì được ghi là `not found`.
+
 Những gì được sao chép:
 
 - `settings.json` và `CLAUDE.md` toàn cục;
 - các tiện ích mở rộng `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/` và `rules/`;
 - máy chủ MCP người dùng của bạn, tức mục `mcpServers` trong `~/.claude.json`, vào `mcp.json` của nhóm;
+- thông tin đăng nhập đã lưu (OAuth) của các máy chủ MCP được sao chép, vào tệp đăng nhập riêng của từng tài khoản;
 - lịch sử hội thoại (`projects/` và `history.jsonl`), nhưng chỉ khi bạn thêm `--history`.
 
-Thư mục nguồn chỉ được đọc: không có gì bên trong bị di chuyển, liên kết hay thay đổi, và lệnh `claude` thông thường vẫn hoạt động như trước. Các tệp đăng nhập `.credentials.json` và `.claude.json` không bao giờ được sao chép.
+Thư mục nguồn chỉ được đọc: không có gì bên trong bị di chuyển, liên kết hay thay đổi, và lệnh `claude` thông thường vẫn hoạt động như trước. Các tệp đăng nhập `.credentials.json` và `.claude.json` không bao giờ được sao chép vào nhóm.
+
+Các máy chủ MCP đăng nhập bằng OAuth giữ token trong thông tin đăng nhập, không phải trong danh sách máy chủ. Để bạn không phải đăng nhập lại vào chúng, ccam sao chép các thông tin đăng nhập đó vào tệp đăng nhập của mọi tài khoản nhận máy chủ qua nhóm, trừ khi tài khoản đã có thông tin riêng. Nó bỏ qua các tài khoản đang chạy, chưa đăng nhập, được đăng ký tại chỗ bằng `ccam import`, hoặc lưu thông tin đăng nhập trong Chuỗi khóa (Keychain) của macOS, và nêu tên các tài khoản đó; hãy đăng nhập vào các máy chủ ở đó bằng `/mcp`. Tài khoản bắt đầu dùng chung máy chủ MCP về sau sẽ nhận được thông tin đăng nhập khi bạn chạy lại `ccam migrate`.
 
 ccam in ra kế hoạch và hỏi trước khi sao chép bất cứ thứ gì:
 
@@ -99,7 +106,7 @@ Khi nhóm đã có một bản khác của một tệp, ccam hỏi bạn, giốn
 
 | Tùy chọn | Tác dụng |
 | --- | --- |
-| `--settings`, `--memory`, `--extensions`, `--mcp`, `--history` | Chỉ sao chép những mục bạn nêu; nếu không có, sao chép mọi thứ trừ lịch sử hội thoại |
+| `--settings`, `--memory`, `--extensions`, `--mcp`, `--history` | Chỉ sao chép những mục bạn nêu, không có danh sách kiểm; nếu không có và ở ngoài terminal, sao chép mọi thứ trừ lịch sử hội thoại |
 | `-g`, `--group <group>` | Sao chép vào nhóm này thay vì `default` |
 | `-y`, `--yes` | Sao chép mà không hỏi; khi một tệp khác nhau, giữ bản của nhóm |
 
@@ -120,7 +127,9 @@ Máy chủ bạn thêm trong một phiên bằng `claude mcp add` chỉ được
 ccam mcp import work gh
 ```
 
-Các máy chủ MCP đăng nhập bằng OAuth lưu token cùng với thông tin đăng nhập của tài khoản, vì vậy hãy cấp quyền cho chúng một lần trong mỗi tài khoản.
+Nếu nhóm đã có một máy chủ khác cùng tên, ccam sẽ bỏ qua và thông báo cho bạn. `--force` thay máy chủ của nhóm và giữ `mcp.json` cũ trong thư mục `.ccam-backup/` của nhóm.
+
+Các máy chủ MCP đăng nhập bằng OAuth lưu token cùng với thông tin đăng nhập của tài khoản, vì vậy hãy cấp quyền cho chúng một lần trong mỗi tài khoản, hoặc sao chép thông tin đăng nhập từ `~/.claude` bằng `ccam migrate`.
 
 Nếu bạn muốn các máy chủ xuất hiện trong `claude mcp list` và `/mcp` như máy chủ người dùng thông thường, hãy đặt `mcp_strategy = "sync"` trong `~/.config/ccam/config.toml`. Khi đó ccam ghi chúng vào `.claude.json` của từng tài khoản trước khi khởi động, dưới khóa tệp của chính Claude Code và có bản sao lưu.
 

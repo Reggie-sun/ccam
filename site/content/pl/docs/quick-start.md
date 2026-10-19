@@ -5,7 +5,7 @@ description: Dodaj dwa konta Claude Code poleceniem ccam add, nadaj im skróty t
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 745a9904e32a
+sourceHash: a10d91d2a64e
 ---
 
 Dodaj każde konto poleceniem `ccam add`, a potem uruchamiaj Claude Code przez `ccam <name>` lub przez skrót o nazwie wybranej przez ciebie, na przykład `ccwork`. Większości osób to wystarczy.
@@ -16,7 +16,7 @@ Dodaj każde konto poleceniem `ccam add`, a potem uruchamiaj Claude Code przez `
 ccam add
 ```
 
-Kreator pyta o nazwę, na przykład `personal` lub `work`, o to, które elementy konto ma współdzielić z pozostałymi kontami, oraz czy utworzyć skrót (zobacz krok 4). Następnie uruchamia `claude auth login`, które otwiera przeglądarkę, żebyś mógł się zalogować. Po zakończeniu zobaczysz:
+Kreator pyta o nazwę, na przykład `personal` lub `work`, o to, które elementy konto ma współdzielić z pozostałymi kontami, oraz czy utworzyć skrót (zobacz krok 4). Następnie uruchamia `claude auth login`, które otwiera przeglądarkę, żebyś mógł się zalogować. Na zdalnej maszynie przeglądarka może zatrzymać się na stronie `http://localhost:…/callback`, która się nie wczytuje; wklej ten adres do terminala, a ccam dokończy logowanie. Po zakończeniu zobaczysz:
 
 ```console
 ✓ personal (me@example.com) added

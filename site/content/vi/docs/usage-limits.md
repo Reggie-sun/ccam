@@ -4,7 +4,7 @@ description: "Xem mức sử dụng 5 giờ và hàng tuần của mọi tài kh
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: cbc6b0c0618d
+sourceHash: d288177682d7
 ---
 
 `ccam usage` cho biết mỗi tài khoản đã dùng bao nhiêu trong giới hạn 5 giờ và giới hạn hàng tuần. `ccam next --auto` mở tài khoản còn nhiều hạn mức nhất, và `--continue` mang cuộc hội thoại hiện tại sang tài khoản đó.
@@ -24,7 +24,7 @@ Các cột lần lượt là: tài khoản, mức sử dụng 5 giờ, thời gi
 
 ccam hỏi endpoint mức sử dụng của Anthropic cho mọi tài khoản cùng lúc, dùng thông tin đăng nhập riêng của từng tài khoản. Nó chờ tối đa 3 giây cho mỗi tài khoản và hiển thị từng tài khoản ngay khi có phản hồi.
 
-Endpoint này không được công bố tài liệu chính thức và có thể thay đổi. Khi một yêu cầu thất bại, ccam hiển thị các con số đã biết gần nhất và đánh dấu chúng là dữ liệu từ bộ nhớ đệm. `ccam doctor` sẽ báo cho bạn nếu định dạng phản hồi đã thay đổi.
+Endpoint này không được công bố tài liệu chính thức và có thể thay đổi. Khi một yêu cầu thất bại, ccam hiển thị các con số đã biết gần nhất và đánh dấu chúng là dữ liệu từ bộ nhớ đệm. Một khoảng giới hạn đã được đặt lại kể từ khi các con số đó được lưu sẽ hiển thị 0%. `ccam doctor` sẽ báo cho bạn nếu định dạng phản hồi đã thay đổi.
 
 Các con số được lấy cách đây chưa đến 60 giây sẽ được dùng lại. Các tùy chọn:
 

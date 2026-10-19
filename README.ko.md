@@ -50,7 +50,9 @@ ccam next --continue # 한도에 걸리면 다음 계정에서 같은 대화 이
 
 이미 쓰던 `~/.claude`가 있으면 `ccam import`로 제자리에 등록합니다 (옮기거나 복사하지 않음).
 
-쓰던 설정을 공유 설정의 출발점으로 삼으려면 `ccam migrate`를 실행합니다. `~/.claude`의 settings.json, CLAUDE.md, 확장 기능, MCP 서버를 공유 그룹으로 복사합니다. 원래 폴더는 읽기만 하고, 대화 내역은 `--history`를 줄 때만 복사합니다. 복사할 내용을 먼저 보여주고 확인을 받습니다 (`ccam --dry-run migrate`는 보여주기만 함).
+쓰던 설정을 공유 설정의 출발점으로 삼으려면 `ccam migrate`를 실행합니다. `~/.claude`의 settings.json, CLAUDE.md, 확장 기능, MCP 서버를 공유 그룹으로 복사합니다. 원래 폴더는 읽기만 하고, 대화 내역은 `--history`를 줄 때만 복사합니다. 터미널에서는 먼저 복사할 항목을 체크 목록에서 고르고, 그다음 복사할 내용을 보여준 뒤 확인을 받습니다 (`ccam --dry-run migrate`는 보여주기만 함). 복사한 MCP 서버의 저장된 로그인(OAuth)은 그룹이 아니라 각 계정의 로그인 파일에 넣습니다.
+
+SSH로 접속한 원격 서버에서 로그인할 때는 내 컴퓨터의 브라우저가 열리지 않는 `http://localhost:<포트>/callback?code=…` 페이지에서 멈춥니다. 그 주소를 `ccam add`나 `ccam login`이 실행 중인 터미널에 붙여 넣으면 ccam이 서버의 Claude Code에 전달해 로그인을 마칩니다.
 
 ## 명령
 
@@ -76,7 +78,7 @@ ccam next --continue # 한도에 걸리면 다음 계정에서 같은 대화 이
 | `ccam update [--check] [--version vX.Y.Z]` | 최신(또는 지정한) 릴리스로 업데이트, 체크섬 확인 |
 | `ccam completion bash\|zsh` | 자동완성 |
 
-어느 명령이든 앞에 `--dry-run`을 붙이면 실행하지 않고 할 일만 보여줍니다 (`ccam --dry-run work`).
+앞에 `--dry-run`을 붙이면 실행하지 않고 할 일만 보여줍니다 (`ccam --dry-run work`). 실행(`ccam <이름>`, `run`, `next`), `share`, `migrate`, `shortcut`, `update`, `doctor --fix`에서 쓸 수 있고, 무언가를 바꾸는 다른 명령은 실제로 실행하는 대신 거절합니다.
 
 ## 공유
 
