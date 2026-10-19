@@ -1,11 +1,12 @@
 // Package app is the process entry point. It routes `ccam <name>`, `ccam run`
-// and claudeN shims straight to the launcher, and only hands real
+// and account shortcuts straight to the launcher, and only hands real
 // subcommands to the cobra CLI.
 package app
 
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"runtime/pprof"
 	"strings"
 
@@ -30,10 +31,9 @@ type route struct {
 	dry  bool
 }
 
+// parse routes `ccam …`. Shortcuts (any other argv[0]) are resolved in Main
+// against the config first.
 func parse(argv []string) route {
-	if sel, ok := shim.Selector(argv[0]); ok {
-		return route{kind: routeLaunch, sel: sel, args: argv[1:]}
-	}
 	rest := argv[1:]
 	dry := false
 	if len(rest) > 0 && rest[0] == "--dry-run" {
@@ -75,6 +75,24 @@ func Main(argv []string) int {
 		if stop := startProfile(path); stop != nil {
 			defer stop()
 			launcher.BeforeExec = stop
+		}
+	}
+	// Run as a shortcut: argv[0] names the account. The config is the one
+	// file the launch reads anyway, so it is loaded once and passed on.
+	if base := filepath.Base(argv[0]); base != "ccam" {
+		p := paths.FromEnv()
+		if cfg, err := config.Load(p.ConfigFile()); err == nil {
+			if sel, ok := shim.Lookup(cfg, base); ok {
+				if err := launcher.LaunchWith(p, cfg, sel, argv[1:], false, os.Stdout); err != nil {
+					fmt.Fprintln(os.Stderr, "ccam:", err)
+					return 1
+				}
+				return 0
+			}
+			if shim.Stale(base) {
+				fmt.Fprintf(os.Stderr, "ccam: %s is not the shortcut of any account (see `ccam list`, `ccam shortcut`)\n", base)
+				return 1
+			}
 		}
 	}
 	r := parse(argv)

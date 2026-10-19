@@ -14,7 +14,10 @@ import (
 	"github.com/jhyunwoo/ccam/internal/fsutil"
 )
 
-const CurrentVersion = 1
+// CurrentVersion 2: shortcuts are opt-in and stored per profile. Version 1
+// configs had a claude<slot> link for every profile; shim.Adopt records the
+// ones still on disk when a v1 config is first loaded by the CLI.
+const CurrentVersion = 2
 
 const (
 	MCPFlag = "flag"
@@ -29,7 +32,6 @@ type Config struct {
 	Default     string    `toml:"default,omitempty"`
 	ClaudeBin   string    `toml:"claude_bin,omitempty"`
 	MCPStrategy string    `toml:"mcp_strategy,omitempty"`
-	NameShims   bool      `toml:"name_shims,omitempty"` // also create claude-<name>
 	Profiles    []Profile `toml:"profile"`
 }
 
@@ -38,7 +40,10 @@ type Profile struct {
 	Slot  int    `toml:"slot"`
 	Email string `toml:"email,omitempty"`
 	Dir   string `toml:"dir,omitempty"` // set for imported folders registered in place
-	Share Share  `toml:"share"`
+	// Shortcut is the command in the bin folder that runs this account
+	// ("" = none). It links to the ccam binary, which looks argv[0] up here.
+	Shortcut string `toml:"shortcut,omitempty"`
+	Share    Share  `toml:"share"`
 }
 
 // Share maps each shareable item to Local or a group name.
@@ -121,7 +126,7 @@ var Reserved = map[string]bool{
 	"add": true, "list": true, "ls": true, "run": true, "use": true, "next": true,
 	"usage": true, "u": true, "share": true, "mcp": true, "login": true, "logout": true,
 	"rename": true, "remove": true, "rm": true, "import": true, "migrate": true, "doctor": true,
-	"shims": true, "completion": true, "help": true, "version": true, "statusline": true,
+	"shims": true, "shortcut": true, "completion": true, "help": true, "version": true, "statusline": true,
 }
 
 var nameRe = regexp.MustCompile(`^[a-z0-9][a-z0-9_-]{0,31}$`)
@@ -213,6 +218,19 @@ func (c *Config) DefaultProfile() (*Profile, error) {
 		}
 	}
 	return best, nil
+}
+
+// FindShortcut returns the profile whose shortcut command is name.
+func (c *Config) FindShortcut(name string) (*Profile, bool) {
+	if name == "" {
+		return nil, false
+	}
+	for i := range c.Profiles {
+		if c.Profiles[i].Shortcut == name {
+			return &c.Profiles[i], true
+		}
+	}
+	return nil, false
 }
 
 // NextSlot returns the lowest unused slot number, starting at 1.

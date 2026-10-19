@@ -3,6 +3,7 @@ package tui
 import (
 	"bytes"
 	"context"
+	"errors"
 	"io"
 	"strings"
 	"testing"
@@ -203,5 +204,81 @@ func TestWizardEscCancels(t *testing.T) {
 	tm.Send(key("esc"))
 	if w := tm.FinalModel(t, teatest.WithFinalTimeout(2*time.Second)).(Wizard); w.Done() {
 		t.Fatal("esc must cancel")
+	}
+}
+
+func shortcutWizard(t *testing.T) *teatest.TestModel {
+	check := func(name, shortcut string) error {
+		if shortcut == "list" {
+			return errors.New(`"list" is taken by ccam or Claude Code`)
+		}
+		return nil
+	}
+	w := NewWizard(&config.Config{}, "work").WithShortcut(func(name string) string { return "cc" + name }, check)
+	tm := teatest.NewTestModel(t, w, teatest.WithInitialTermSize(80, 24))
+	tm.Send(key("enter")) // keep the default items
+	teatest.WaitFor(t, tm.Output(), func(b []byte) bool {
+		return bytes.Contains(b, []byte("Create a shortcut command for work? [y/N]"))
+	}, teatest.WithDuration(2*time.Second))
+	return tm
+}
+
+func TestWizardShortcutDefaultsToNo(t *testing.T) {
+	tm := shortcutWizard(t)
+	tm.Send(key("enter"))
+	w := tm.FinalModel(t, teatest.WithFinalTimeout(2*time.Second)).(Wizard)
+	if a := w.Answers(); !w.Done() || a.Shortcut != "" || a.Name != "work" {
+		t.Fatalf("%+v", a)
+	}
+}
+
+func TestWizardShortcutNamed(t *testing.T) {
+	tm := shortcutWizard(t)
+	tm.Type("y")
+	teatest.WaitFor(t, tm.Output(), func(b []byte) bool { return bytes.Contains(b, []byte("Shortcut name [ccwork]:")) },
+		teatest.WithDuration(2*time.Second))
+	tm.Type("list")
+	tm.Send(key("enter"))
+	teatest.WaitFor(t, tm.Output(), func(b []byte) bool { return bytes.Contains(b, []byte("is taken by ccam")) },
+		teatest.WithDuration(2*time.Second))
+	tm.Type("ccjob")
+	tm.Send(key("enter"))
+	w := tm.FinalModel(t, teatest.WithFinalTimeout(2*time.Second)).(Wizard)
+	if a := w.Answers(); !w.Done() || a.Shortcut != "ccjob" {
+		t.Fatalf("%+v", a)
+	}
+}
+
+func TestWizardShortcutSuggestion(t *testing.T) {
+	tm := shortcutWizard(t)
+	tm.Type("y")
+	tm.Send(key("enter"))
+	w := tm.FinalModel(t, teatest.WithFinalTimeout(2*time.Second)).(Wizard)
+	if a := w.Answers(); !w.Done() || a.Shortcut != "ccwork" {
+		t.Fatalf("%+v", a)
+	}
+}
+
+func TestWizardShortcutWithoutUsableSuggestion(t *testing.T) {
+	check := func(name, shortcut string) error {
+		if shortcut == "ccwork" {
+			return errors.New(`"ccwork" would hide /usr/bin/ccwork`)
+		}
+		return nil
+	}
+	w := NewWizard(&config.Config{}, "work").WithShortcut(func(name string) string { return "cc" + name }, check)
+	tm := teatest.NewTestModel(t, w, teatest.WithInitialTermSize(80, 24))
+	tm.Send(key("enter"))
+	tm.Type("y")
+	teatest.WaitFor(t, tm.Output(), func(b []byte) bool { return bytes.Contains(b, []byte("Shortcut name: ")) },
+		teatest.WithDuration(2*time.Second))
+	tm.Send(key("enter")) // nothing typed, no default
+	teatest.WaitFor(t, tm.Output(), func(b []byte) bool { return bytes.Contains(b, []byte("type a name for the shortcut")) },
+		teatest.WithDuration(2*time.Second))
+	tm.Type("ccjob")
+	tm.Send(key("enter"))
+	final := tm.FinalModel(t, teatest.WithFinalTimeout(2*time.Second)).(Wizard)
+	if a := final.Answers(); !final.Done() || a.Shortcut != "ccjob" {
+		t.Fatalf("%+v", a)
 	}
 }

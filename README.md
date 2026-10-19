@@ -24,10 +24,10 @@ Linux (Ubuntu, Debian, Fedora, Arch, Alpine, …) and macOS are supported. This 
 ## Quick start
 
 ```bash
-ccam add             # name → shared items → browser login → shortcut claude1
-ccam add work        # second account → claude2
+ccam add             # name → shared items → shortcut? (y/N, you name it) → browser login
+ccam add work --shortcut ccwork    # second account with the shortcut command ccwork
 
-claude2              # Claude Code as account 2
+ccwork               # Claude Code as account work (via its shortcut)
 ccam work --resume   # by name; everything after the name goes to claude unchanged
 ccam                 # picker (Enter launch, 1-9 jump, s sharing, a add)
 ccam usage           # 5-hour and weekly usage of every account
@@ -44,8 +44,9 @@ To start the shared settings from the setup you already have, `ccam migrate` cop
 | --- | --- |
 | `ccam` | Picker (prints the list when not on a terminal) |
 | `ccam <name\|number> [claude args]` | Run `claude` as that account; args are passed through verbatim |
-| `claude1` … `claudeN` | Launch by number (`ccam shims install --names` adds `claude-<name>`) |
-| `ccam add [name]` | Add an account (wizard on a terminal; `--no-login`, `--share item=group`) |
+| `<shortcut> [claude args]` | Launch through the account's shortcut command, if it has one |
+| `ccam add [name]` | Add an account (wizard on a terminal; `--no-login`, `--share item=group`, `--shortcut <cmd>`) |
+| `ccam shortcut <name> [cmd] [--remove]` | Show, create, rename or remove an account's shortcut command |
 | `ccam list [--json]` | List accounts |
 | `ccam use <name>` | Default account for name-less runs such as `ccam -p "…"` |
 | `ccam next [--auto] [--continue]` | Next account; `--auto` picks the lowest 5-hour usage |

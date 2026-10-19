@@ -29,10 +29,10 @@ Claude Code(`claude`)가 먼저 설치되어 있어야 합니다.
 ## 빠른 시작
 
 ```bash
-ccam add             # 이름 → 공유 항목 → 브라우저 로그인 → 단축 명령 claude1
-ccam add work        # 두 번째 계정 → claude2
+ccam add             # 이름 → 공유 항목 → 단축 명령 만들기? (y/N, 이름은 직접) → 브라우저 로그인
+ccam add work --shortcut ccwork    # 두 번째 계정, 단축 명령 ccwork
 
-claude2              # 2번 계정으로 Claude Code
+ccwork               # 단축 명령으로 work 계정의 Claude Code
 ccam work --resume   # 이름으로 열기, 뒤의 인자는 그대로 claude에 전달
 ccam                 # 선택 화면 (Enter 실행, 1-9 바로 실행, s 공유, a 추가)
 ccam usage           # 모든 계정의 5시간·주간 사용률
@@ -49,8 +49,9 @@ ccam next --continue # 한도에 걸리면 다음 계정에서 같은 대화 이
 | --- | --- |
 | `ccam` | 선택 화면 (터미널이 아니면 목록 출력) |
 | `ccam <이름\|번호> [claude 인자]` | 그 계정으로 `claude` 실행. 인자는 해석하지 않고 그대로 전달 |
-| `claude1` … `claudeN` | 번호로 바로 실행 (`ccam shims install --names`면 `claude-<이름>`도) |
-| `ccam add [이름]` | 계정 추가. 터미널에서는 마법사, `--no-login`·`--share 항목=그룹`도 가능 |
+| `<단축 명령> [claude 인자]` | 계정에 단축 명령이 있으면 그 이름으로 바로 실행 |
+| `ccam add [이름]` | 계정 추가. 터미널에서는 마법사, `--no-login`·`--share 항목=그룹`·`--shortcut <명령>`도 가능 |
+| `ccam shortcut <이름> [명령] [--remove]` | 계정의 단축 명령 보기·만들기·이름 바꾸기·지우기 |
 | `ccam list [--json]` | 계정 목록 |
 | `ccam use <이름>` | 기본 계정 (`ccam -p "…"`처럼 이름 없이 실행할 때) |
 | `ccam next [--auto] [--continue]` | 다음 계정으로. `--auto`는 5시간 사용률이 가장 낮은 계정 |
@@ -105,7 +106,7 @@ $ ccam usage
 ~/.local/share/ccam/groups/<그룹>/    공유 저장소
 ~/.local/state/ccam/                 사용량 캐시, 마지막 사용 시각
 $XDG_RUNTIME_DIR/ccam/               잠금 파일
-~/.local/bin/claude1 …               ccam을 가리키는 링크
+~/.local/bin/<단축 명령>              ccam을 가리키는 링크 (만든 계정만)
 ```
 
 `CCAM_HOME`을 지정하면 모든 경로가 그 아래로 바뀝니다 (테스트용).

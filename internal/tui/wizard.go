@@ -15,8 +15,9 @@ import (
 
 // AddAnswers is what the add wizard collects.
 type AddAnswers struct {
-	Name  string
-	Share config.Share
+	Name     string
+	Share    config.Share
+	Shortcut string // "" = no shortcut
 }
 
 // ValidateNewName checks a profile name against the rules and existing names.
@@ -44,7 +45,8 @@ func ShareFromItems(items []string) config.Share {
 // DefaultItems are pre-selected: everything except conversation history.
 func DefaultItems() []string { return []string{"mcp", "settings", "memory", "extensions"} }
 
-// Wizard asks for a name (unless given) and the shared items.
+// Wizard asks for a name (unless given), the shared items and, when
+// WithShortcut set it up, whether to create a shortcut and its name.
 type Wizard struct {
 	validate  func(string) error
 	askName   bool
@@ -54,6 +56,13 @@ type Wizard struct {
 	cursor    int
 	done      bool
 	cancelled bool
+
+	checkShortcut func(name, shortcut string) error // nil: no shortcut questions
+	suggestFor    func(name string) string          // default shortcut for a name, e.g. ccwork
+	suggest       string                            // suggestFor(name) when it passes the check, else ""
+	askShortcut   bool                              // "Create a shortcut …? [y/N]"
+	typeShortcut  bool                              // "Shortcut name [ccwork]:"
+	shortcut      string
 }
 
 func NewWizard(cfg *config.Config, name string) Wizard {
@@ -61,6 +70,14 @@ func NewWizard(cfg *config.Config, name string) Wizard {
 	for _, item := range DefaultItems() {
 		w.selected[item] = true
 	}
+	return w
+}
+
+// WithShortcut adds the shortcut questions after the shared items. check
+// validates a shortcut for the account name; suggest gives the default for
+// a name, offered only when it passes check.
+func (w Wizard) WithShortcut(suggest func(name string) string, check func(name, shortcut string) error) Wizard {
+	w.suggestFor, w.checkShortcut = suggest, check
 	return w
 }
 
@@ -72,7 +89,7 @@ func (w Wizard) Answers() AddAnswers {
 			items = append(items, item)
 		}
 	}
-	return AddAnswers{Name: w.name, Share: ShareFromItems(items)}
+	return AddAnswers{Name: w.name, Share: ShareFromItems(items), Shortcut: w.shortcut}
 }
 
 func (w Wizard) Done() bool { return w.done }
@@ -106,6 +123,41 @@ func (w Wizard) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 		return w, nil
 	}
+	if w.askShortcut {
+		switch k.String() {
+		case "y", "Y":
+			w.askShortcut, w.typeShortcut = false, true
+		case "n", "N", "enter":
+			w.done = true
+			return w, tea.Quit
+		}
+		return w, nil
+	}
+	if w.typeShortcut {
+		switch k.String() {
+		case "enter":
+			if w.shortcut == "" {
+				w.shortcut = w.suggest
+			}
+			if w.shortcut == "" {
+				w.err = "type a name for the shortcut"
+				return w, nil
+			}
+			if err := w.checkShortcut(w.name, w.shortcut); err != nil {
+				w.err, w.shortcut = err.Error(), ""
+				return w, nil
+			}
+			w.done = true
+			return w, tea.Quit
+		case "backspace":
+			if r := []rune(w.shortcut); len(r) > 0 {
+				w.shortcut = string(r[:len(r)-1])
+			}
+		default:
+			w.shortcut += k.Text
+		}
+		return w, nil
+	}
 	switch k.String() {
 	case "up", "k":
 		if w.cursor > 0 {
@@ -119,6 +171,13 @@ func (w Wizard) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		item := config.Items[w.cursor]
 		w.selected[item] = !w.selected[item]
 	case "enter":
+		if w.checkShortcut != nil {
+			w.askShortcut, w.suggest = true, ""
+			if s := w.suggestFor(w.name); w.checkShortcut(w.name, s) == nil {
+				w.suggest = s
+			}
+			return w, nil
+		}
 		w.done = true
 		return w, tea.Quit
 	}
@@ -137,6 +196,32 @@ func (w Wizard) View() tea.View {
 		b.WriteString("\n" + dimStyle.Render(" Enter next · Esc cancel") + "\n")
 		return tea.NewView(b.String())
 	}
+	if w.askShortcut || w.typeShortcut {
+		fmt.Fprintf(&b, " Name: %s\n\n", w.name)
+		if w.askShortcut {
+			fmt.Fprintf(&b, " Create a shortcut command for %s? [y/N]\n", w.name)
+			hint := " A command that opens Claude Code as this account."
+			if w.suggest != "" {
+				hint = " A command such as " + w.suggest + " that opens Claude Code as this account."
+			}
+			b.WriteString(dimStyle.Render(hint) + "\n")
+			b.WriteString("\n" + dimStyle.Render(" y yes · n or Enter no · Esc cancel") + "\n")
+			return tea.NewView(b.String())
+		}
+		rule := " a-z, 0-9, '.', '-' and '_'"
+		if w.suggest != "" {
+			fmt.Fprintf(&b, " Shortcut name [%s]: %s█\n", w.suggest, w.shortcut)
+			rule += "; Enter alone uses " + w.suggest
+		} else {
+			fmt.Fprintf(&b, " Shortcut name: %s█\n", w.shortcut)
+		}
+		b.WriteString(dimStyle.Render(rule) + "\n")
+		if w.err != "" {
+			b.WriteString(" " + warnStyle.Render(w.err) + "\n")
+		}
+		b.WriteString("\n" + dimStyle.Render(" Enter go to login · Esc cancel") + "\n")
+		return tea.NewView(b.String())
+	}
 	fmt.Fprintf(&b, " Name: %s\n\n ? Choose what to share (Space to toggle)\n", w.name)
 	for i, item := range config.Items {
 		marker := "  "
@@ -149,13 +234,18 @@ func (w Wizard) View() tea.View {
 		}
 		fmt.Fprintf(&b, " %s%s %s\n", marker, box, itemLabels[item])
 	}
-	b.WriteString("\n" + dimStyle.Render(" Enter go to login · Esc cancel") + "\n")
+	next := " Enter go to login · Esc cancel"
+	if w.checkShortcut != nil {
+		next = " Enter next · Esc cancel"
+	}
+	b.WriteString("\n" + dimStyle.Render(next) + "\n")
 	return tea.NewView(b.String())
 }
 
-// RunAddWizard runs the wizard on the terminal.
-func RunAddWizard(cfg *config.Config, name string) (AddAnswers, error) {
-	final, err := tea.NewProgram(NewWizard(cfg, name), tea.WithInput(os.Stdin), tea.WithOutput(os.Stdout)).Run()
+// RunAddWizard runs the wizard on the terminal, with the shortcut questions.
+func RunAddWizard(cfg *config.Config, name string, suggest func(name string) string, check func(name, shortcut string) error) (AddAnswers, error) {
+	wiz := NewWizard(cfg, name).WithShortcut(suggest, check)
+	final, err := tea.NewProgram(wiz, tea.WithInput(os.Stdin), tea.WithOutput(os.Stdout)).Run()
 	if err != nil {
 		return AddAnswers{}, err
 	}

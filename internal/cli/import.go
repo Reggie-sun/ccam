@@ -54,7 +54,8 @@ func importCmd(e *env) *cobra.Command {
 				for _, n := range notes {
 					e.printf("· %s\n", n)
 				}
-				e.printf("✓ %s (%s) registered — shortcut: claude%d\n", prof.Name, orNone(prof.Email), prof.Slot)
+				e.printf("✓ %s (%s) registered\n", prof.Name, orNone(prof.Email))
+				printShortcut(e, prof)
 			}
 			if len(paths) == 0 {
 				return nil

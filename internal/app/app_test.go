@@ -12,8 +12,6 @@ func TestParse(t *testing.T) {
 	}{
 		{[]string{"ccam", "work", "--resume"}, route{kind: routeLaunch, sel: "work", args: []string{"--resume"}}},
 		{[]string{"ccam", "2"}, route{kind: routeLaunch, sel: "2", args: []string{}}},
-		{[]string{"/x/claude2", "--model", "opus", "--continue"}, route{kind: routeLaunch, sel: "2", args: []string{"--model", "opus", "--continue"}}},
-		{[]string{"claude-work", "add"}, route{kind: routeLaunch, sel: "work", args: []string{"add"}}},
 		{[]string{"ccam", "work", "--help"}, route{kind: routeLaunch, sel: "work", args: []string{"--help"}}},
 		{[]string{"ccam", "-p", "résume ça"}, route{kind: routeLaunch, args: []string{"-p", "résume ça"}}},
 		{[]string{"ccam", "work", "--", "--version"}, route{kind: routeLaunch, sel: "work", args: []string{"--", "--version"}}},

@@ -15,6 +15,7 @@ import (
 
 	"github.com/jhyunwoo/ccam/internal/config"
 	"github.com/jhyunwoo/ccam/internal/paths"
+	"github.com/jhyunwoo/ccam/internal/shim"
 )
 
 // Version is set at build time with -ldflags "-X .../cli.Version=...".
@@ -30,7 +31,16 @@ type env struct {
 	dryRun bool
 }
 
-func (e *env) load() (*config.Config, error) { return config.Load(e.paths.ConfigFile()) }
+// load reads the config. A config from before shortcuts were stored keeps
+// the claude<N> links still on disk as shortcuts (saved on the next save).
+func (e *env) load() (*config.Config, error) {
+	cfg, err := config.Load(e.paths.ConfigFile())
+	if err == nil && cfg.Version < 2 {
+		self, _ := ccamPath()
+		shim.Adopt(e.paths.Bin, self, cfg)
+	}
+	return cfg, err
+}
 
 func (e *env) save(cfg *config.Config) error { return cfg.Save(e.paths.ConfigFile()) }
 
@@ -57,7 +67,7 @@ func newRoot(e *env) *cobra.Command {
 	root := &cobra.Command{
 		Use:           "ccam",
 		Short:         "Claude Code multi-account manager",
-		Long:          "ccam adds and switches between several Claude Code accounts.\n\n  ccam <name|number> [claude args]  run Claude Code as that account\n  claude1, claude2 …                run by number",
+		Long:          "ccam adds and switches between several Claude Code accounts.\n\n  ccam <name|number> [claude args]  run Claude Code as that account\n  <shortcut> [claude args]          run by a shortcut command (ccam shortcut)",
 		Version:       Version,
 		SilenceUsage:  true,
 		SilenceErrors: true,
@@ -73,11 +83,11 @@ func newRoot(e *env) *cobra.Command {
 	root.ValidArgsFunction = profileNames(e) // `ccam <tab>` lists accounts
 	root.AddCommand(
 		addCmd(e), listCmd(e), runCmd(e), useCmd(e), removeCmd(e), renameCmd(e),
-		loginCmd(e), logoutCmd(e), shimsCmd(e), versionCmd(e), shareCmd(e), doctorCmd(e), mcpCmd(e), nextCmd(e), usageCmd(e), statuslineCmd(e), importCmd(e), migrateCmd(e), completionCmd(e),
+		loginCmd(e), logoutCmd(e), shimsCmd(e), versionCmd(e), shareCmd(e), doctorCmd(e), mcpCmd(e), nextCmd(e), usageCmd(e), statuslineCmd(e), importCmd(e), migrateCmd(e), shortcutCmd(e), completionCmd(e),
 	)
 	for _, c := range root.Commands() {
 		switch c.Name() {
-		case "run", "use", "remove", "rename", "login", "logout", "share":
+		case "run", "use", "remove", "rename", "login", "logout", "share", "shortcut":
 			c.ValidArgsFunction = profileNames(e)
 		}
 	}

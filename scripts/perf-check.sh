@@ -1,6 +1,6 @@
 #!/bin/sh
 # Measures the launch path with hyperfine and fails when the p95 is above
-# the PLAN.md targets: `ccam <name>` 10 ms, `ccam list` 30 ms, and peak memory
+# the PLAN.md targets: `ccam <name>` and a shortcut 10 ms, `ccam list` 30 ms, and peak memory
 # above 15 MB (memory needs hyperfine 2, which records it).
 set -eu
 
@@ -11,18 +11,19 @@ CGO_ENABLED=0 go build -trimpath -ldflags "-s -w" -o "$tmp/ccam" ./cmd/ccam
 export CCAM_HOME="$tmp/home"
 mkdir -p "$CCAM_HOME/config"
 printf 'version = 1\nclaude_bin = "/bin/true"\n' > "$CCAM_HOME/config/config.toml"
-"$tmp/ccam" add work --no-login >/dev/null 2>&1
+"$tmp/ccam" add work --no-login --shortcut ccwork >/dev/null 2>&1
 "$tmp/ccam" add personal --no-login >/dev/null 2>&1
 ccam="$tmp/ccam"
 
 hyperfine -N --warmup 20 --runs 300 --export-json "$tmp/result.json" \
   "$ccam --dry-run work" \
   "$ccam work" \
+  "$CCAM_HOME/bin/ccwork" \
   "$ccam list"
 
 python3 - "$tmp/result.json" <<'PY'
 import json, sys
-limits = {"--dry-run work": 10, " work": 10, " list": 30}
+limits = {"--dry-run work": 10, " work": 10, "/ccwork": 10, " list": 30}
 failed = False
 for r in json.load(open(sys.argv[1]))["results"]:
     if "times" in r:  # hyperfine 1.x

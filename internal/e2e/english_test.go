@@ -169,7 +169,15 @@ func TestOutputHasNoHangul(t *testing.T) {
 		{"ccam", "mcp", "list"},
 		{"ccam", "mcp", "remove", "web"},
 		{"ccam", "mcp", "import", "work"},
+		{"ccam", "shortcut", "work"},
+		{"ccam", "--dry-run", "shortcut", "work", "ccwork"},
+		{"ccam", "shortcut", "work", "ccwk"},
+		{"ccam", "shortcut", "work", "ccjob"},
+		{"ccam", "shortcut", "work"},
+		{"ccam", "doctor"},
 		{"ccam", "shims", "install"},
+		{"ccam", "shortcut", "work", "--remove"},
+		{"ccam", "shortcut", "work", "--remove"},
 		{"ccam", "statusline", "install"},
 		{"ccam", "import"},
 		{"ccam", "--dry-run", "migrate"},
@@ -193,6 +201,9 @@ func TestOutputHasNoHangul(t *testing.T) {
 		{"ccam", "completion", "fish"},
 		{"ccam", "import", "/nonexistent"},
 		{"ccam", "migrate", "/nonexistent"},
+		{"ccam", "shortcut", "work", "Bad"},
+		{"ccam", "shortcut", "work", "x", "--remove"},
+		{"ccam", "add", "x2", "--no-login", "--shortcut", "list"},
 		{"ccam", "migrate", "--group", "bad/group"},
 		{"ccam", "use"},
 		{"ccam", "bogus-command", "--bogus-flag"},
@@ -201,7 +212,9 @@ func TestOutputHasNoHangul(t *testing.T) {
 		run("", argv...)
 	}
 	os.WriteFile(filepath.Join(h.home, "home", ".claude", "settings.json"), []byte(`{"theme":"dark"}`), 0o600)
-	run("2\nn\n", "ccam", "migrate", "--settings") // conflict prompt, then no
+	run("2\nn\n", "ccam", "migrate", "--settings")               // conflict prompt, then no
+	os.Symlink(ccamBin, filepath.Join(h.home, "bin", "claude7")) // stale shortcut name
+	run("", "claude7")
 	run("n\n", "ccam", "remove", "spare")
 	run("y\n", "ccam", "remove", "spare")
 	run("", "ccam", "work", "-p", "hello")

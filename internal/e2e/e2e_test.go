@@ -86,7 +86,9 @@ func newHarness(t *testing.T) *harness {
 	h.env = append(os.Environ(),
 		"CCAM_HOME="+home,
 		"FAKE_CLAUDE_LOG="+h.log,
-		"PATH="+filepath.Join(home, "bin")+":"+os.Getenv("PATH"),
+		// Only system folders after bin: shortcut checks look for clashes on
+		// PATH, and the developer's own ~/.local/bin must not leak in.
+		"PATH="+filepath.Join(home, "bin")+":/usr/bin:/bin",
 	)
 	return h
 }
@@ -96,7 +98,7 @@ type result struct {
 	code           int
 }
 
-// run executes argv[0] (ccam, claude2 …) with extra env.
+// run executes argv[0] (ccam, ccwork …) with extra env.
 func (h *harness) run(stdin string, extraEnv []string, argv ...string) result {
 	h.t.Helper()
 	bin := ccamBin
@@ -154,16 +156,11 @@ func (h *harness) addAccounts() {
 	}
 }
 
-func TestAddCreatesShimsAndLogsIn(t *testing.T) {
+func TestAddLogsInWithoutShortcutByDefault(t *testing.T) {
 	h := newHarness(t)
 	h.addAccounts()
-	for _, s := range []string{"claude1", "claude2"} {
-		if _, err := os.Lstat(filepath.Join(h.home, "bin", s)); err != nil {
-			t.Fatalf("missing shim %s", s)
-		}
-	}
-	if _, err := os.Lstat(filepath.Join(h.home, "bin", "ccs")); err == nil {
-		t.Fatal("ccs alias should no longer be created")
+	if entries, _ := os.ReadDir(filepath.Join(h.home, "bin")); len(entries) != 0 {
+		t.Fatalf("shortcuts are opt-in, found %v", entries)
 	}
 	out := h.ok("ccam", "list")
 	if !strings.Contains(out, "me@example.com") || !strings.Contains(out, "dev@company.com") {
@@ -180,6 +177,8 @@ func TestArgumentPassThrough(t *testing.T) {
 	h := newHarness(t)
 	h.addAccounts()
 	h.ok("ccam", "use", "personal")
+	h.ok("ccam", "shortcut", "personal", "ccpersonal")
+	h.ok("ccam", "shortcut", "work", "ccwork")
 	cases := []struct {
 		argv    []string
 		profile string
@@ -187,14 +186,14 @@ func TestArgumentPassThrough(t *testing.T) {
 	}{
 		{[]string{"ccam", "work", "--resume"}, "work", []string{"--resume"}},
 		{[]string{"ccam", "work", "-p", "corrige les tests — ü", "--output-format", "json"}, "work", []string{"-p", "corrige les tests — ü", "--output-format", "json"}},
-		{[]string{"claude2", "--model", "opus", "--continue"}, "work", []string{"--model", "opus", "--continue"}},
+		{[]string{"ccwork", "--model", "opus", "--continue"}, "work", []string{"--model", "opus", "--continue"}},
 		{[]string{"ccam", "work", "--help"}, "work", []string{"--help"}},
 		{[]string{"ccam", "-p", "résume ça"}, "personal", []string{"-p", "résume ça"}},
 		{[]string{"ccam", "work", "--", "--version"}, "work", []string{"--version"}},
 		{[]string{"ccam", "work", "--version"}, "work", []string{"--version"}},
 		{[]string{"ccam", "2"}, "work", nil},
 		{[]string{"ccam", "run", "work", "--", "-c"}, "work", []string{"-c"}},
-		{[]string{"claude1", "it's \"quoted\"", ""}, "personal", []string{"it's \"quoted\"", ""}},
+		{[]string{"ccpersonal", "it's \"quoted\"", ""}, "personal", []string{"it's \"quoted\"", ""}},
 	}
 	for _, c := range cases {
 		h.ok(c.argv...)
@@ -245,7 +244,12 @@ func TestDryRunAndErrors(t *testing.T) {
 func TestRemoveAndRename(t *testing.T) {
 	h := newHarness(t)
 	h.addAccounts()
+	h.ok("ccam", "shortcut", "work", "ccwork")
 	h.ok("ccam", "rename", "work", "job")
+	h.ok("ccwork")
+	if dir, _ := h.called(); dir != h.profileDir("job") {
+		t.Fatalf("shortcut after rename: %s", dir)
+	}
 	h.ok("ccam", "job")
 	if dir, _ := h.called(); dir != h.profileDir("job") {
 		t.Fatalf("rename dir %s", dir)
@@ -258,8 +262,8 @@ func TestRemoveAndRename(t *testing.T) {
 	if _, err := os.Stat(h.profileDir("job")); err == nil {
 		t.Fatal("profile dir still there")
 	}
-	if _, err := os.Lstat(filepath.Join(h.home, "bin", "claude2")); err == nil {
-		t.Fatal("claude2 shim still there")
+	if _, err := os.Lstat(filepath.Join(h.home, "bin", "ccwork")); err == nil {
+		t.Fatal("ccwork shortcut still there")
 	}
 	trash, _ := os.ReadDir(filepath.Join(h.home, "data", "trash"))
 	if len(trash) != 1 {

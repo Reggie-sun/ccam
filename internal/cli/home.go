@@ -10,6 +10,7 @@ import (
 	"github.com/jhyunwoo/ccam/internal/config"
 	"github.com/jhyunwoo/ccam/internal/launcher"
 	"github.com/jhyunwoo/ccam/internal/share"
+	"github.com/jhyunwoo/ccam/internal/shim"
 	"github.com/jhyunwoo/ccam/internal/tui"
 	"github.com/jhyunwoo/ccam/internal/usage"
 )
@@ -85,10 +86,11 @@ func pick(e *env, cfg *config.Config) (tui.Result, error) {
 
 // addInteractive runs the wizard, then the same steps as `ccam add`.
 func addInteractive(e *env, cfg *config.Config, name string) error {
-	ans, err := tui.RunAddWizard(cfg, name)
+	check := func(name, shortcut string) error { return checkShortcut(e, cfg, name, shortcut) }
+	ans, err := tui.RunAddWizard(cfg, name, shim.Suggest, check)
 	if err != nil {
 		return err
 	}
 	e.printf("→ Log in in your browser. ccam continues when you are done.\n")
-	return addProfile(e, ans.Name, ans.Share, true)
+	return addProfile(e, ans.Name, ans.Share, true, ans.Shortcut)
 }

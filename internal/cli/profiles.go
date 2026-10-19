@@ -6,7 +6,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strconv"
 	"text/tabwriter"
 	"time"
 
@@ -23,13 +22,17 @@ import (
 func addCmd(e *env) *cobra.Command {
 	var noLogin bool
 	var shares []string
+	var shortcut string
 	cmd := &cobra.Command{
 		Use:   "add [name]",
-		Short: "Add an account: create profile → log in → shortcut",
-		Long:  "Run on a terminal without options, a wizard asks for the name and shared items.",
-		Args:  cobra.MaximumNArgs(1),
+		Short: "Add an account: create profile → log in → optional shortcut",
+		Long: "Run on a terminal without options, a wizard asks for the name, the shared items\n" +
+			"and whether to create a shortcut command (and its name).\n" +
+			"Otherwise no shortcut is created unless --shortcut names one.",
+		Example: "  ccam add\n  ccam add work --shortcut ccwork\n  ccam add side --no-login --share history=team",
+		Args:    cobra.MaximumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if interactive(e) && !cmd.Flags().Changed("share") && !noLogin {
+			if interactive(e) && !cmd.Flags().Changed("share") && !cmd.Flags().Changed("shortcut") && !noLogin {
 				cfg, err := e.load()
 				if err != nil {
 					return err
@@ -56,23 +59,36 @@ func addCmd(e *env) *cobra.Command {
 					return err
 				}
 			}
-			return addProfile(e, args[0], share, !noLogin)
+			return addProfile(e, args[0], share, !noLogin, shortcut)
 		},
 	}
 	cmd.Flags().BoolVar(&noLogin, "no-login", false, "log in later (`ccam login <name>`)")
 	cmd.Flags().StringArrayVar(&shares, "share", nil, "share item=group|local (repeatable)")
+	cmd.Flags().StringVar(&shortcut, "shortcut", "", "also create this shortcut command (e.g. ccwork); none without it")
 	return cmd
 }
 
-func addProfile(e *env, name string, share config.Share, login bool) error {
+// checkShortcut validates a shortcut name for account prof.
+func checkShortcut(e *env, cfg *config.Config, prof, name string) error {
+	self, _ := ccamPath()
+	return shim.Check(name, e.paths.Bin, self, cfg, prof)
+}
+
+func addProfile(e *env, name string, share config.Share, login bool, shortcut string) error {
 	cfg, err := e.load()
 	if err != nil {
 		return err
+	}
+	if shortcut != "" {
+		if err := checkShortcut(e, cfg, name, shortcut); err != nil {
+			return err
+		}
 	}
 	prof, err := profile.Add(e.paths, cfg, name, share)
 	if err != nil {
 		return err
 	}
+	prof.Shortcut = shortcut
 	if err := applyShare(e, cfg, prof); err != nil {
 		return err
 	}
@@ -85,14 +101,15 @@ func addProfile(e *env, name string, share config.Share, login bool) error {
 		}
 	}
 	if _, err := installShims(e, cfg); err != nil {
-		fmt.Fprintln(e.stderr, "Could not create shortcuts:", err)
+		fmt.Fprintln(e.stderr, "Could not create the shortcut:", err)
 	}
 	prof, _ = cfg.Find(name)
 	email := prof.Email
 	if email == "" {
 		email = "not logged in"
 	}
-	e.printf("✓ %s (%s) added — shortcut: claude%d\n", name, email, prof.Slot)
+	e.printf("✓ %s (%s) added\n", name, email)
+	printShortcut(e, prof)
 	if claudeDir := filepath.Join(e.paths.Home, ".claude"); len(cfg.Profiles) == 1 && migrate.HasContent(claudeDir) {
 		e.printf("Tip: run `ccam migrate` to copy your existing Claude Code settings (%s) into the shared settings.\n", claudeDir)
 	}
@@ -128,13 +145,22 @@ func runClaude(e *env, cfg *config.Config, prof *config.Profile, args ...string)
 	return c.Run()
 }
 
+// printShortcut prints the account's shortcut line under a ✓ line.
+func printShortcut(e *env, prof *config.Profile) {
+	if prof.Shortcut != "" {
+		e.printf("  shortcut: %s\n", prof.Shortcut)
+	} else {
+		e.printf("  no shortcut (add one with `ccam shortcut %s %s`)\n", prof.Name, shim.Suggest(prof.Name))
+	}
+}
+
 func installShims(e *env, cfg *config.Config) ([]string, error) {
 	self, err := ccamPath()
 	if err != nil {
 		return nil, err
 	}
 	created, err := shim.Install(e.paths.Bin, self, cfg)
-	if err == nil && !shim.InPath(e.paths.Bin) {
+	if err == nil && len(created) > 0 && !shim.InPath(e.paths.Bin) {
 		fmt.Fprintf(e.stderr, "Note: %s is not in PATH. Add it to ~/.bashrc or ~/.zshrc:\n  export PATH=\"%s:$PATH\"\n", e.paths.Bin, e.paths.Bin)
 	}
 	return created, err
@@ -151,6 +177,7 @@ func cutEq(s string) (string, string, bool) {
 
 type listRow struct {
 	Slot     int          `json:"slot"`
+	Shortcut string       `json:"shortcut"`
 	Name     string       `json:"name"`
 	Email    string       `json:"email"`
 	Default  bool         `json:"default"`
@@ -183,7 +210,7 @@ func listProfiles(e *env, asJSON bool) error {
 	rows := make([]listRow, 0, len(cfg.Profiles))
 	for i := range cfg.Profiles {
 		p := &cfg.Profiles[i]
-		r := listRow{Slot: p.Slot, Name: p.Name, Email: p.Email, Default: def == p, Dir: profile.Dir(e.paths, p), Share: p.Share}
+		r := listRow{Slot: p.Slot, Shortcut: p.Shortcut, Name: p.Name, Email: p.Email, Default: def == p, Dir: profile.Dir(e.paths, p), Share: p.Share}
 		if t := launcher.LastUsed(e.paths, p.Name); !t.IsZero() {
 			r.LastUsed = &t
 		}
@@ -199,7 +226,7 @@ func listProfiles(e *env, asJSON bool) error {
 		return nil
 	}
 	tw := tabwriter.NewWriter(e.stdout, 0, 0, 2, ' ', 0)
-	fmt.Fprintln(tw, " \tShortcut\tName\tEmail\tShared\tLast used")
+	fmt.Fprintln(tw, " \t#\tName\tShortcut\tEmail\tShared\tLast used")
 	for _, r := range rows {
 		mark := ""
 		if r.Default {
@@ -213,7 +240,11 @@ func listProfiles(e *env, asJSON bool) error {
 		if r.LastUsed != nil {
 			last = Ago(time.Since(*r.LastUsed))
 		}
-		fmt.Fprintf(tw, "%s\t%s\t%s\t%s\t%s\t%s\n", mark, "claude"+strconv.Itoa(r.Slot), r.Name, email, shareSummary(r.Share), last)
+		shortcut := r.Shortcut
+		if shortcut == "" {
+			shortcut = "-"
+		}
+		fmt.Fprintf(tw, "%s\t%d\t%s\t%s\t%s\t%s\t%s\n", mark, r.Slot, r.Name, shortcut, email, shareSummary(r.Share), last)
 	}
 	return tw.Flush()
 }
@@ -318,7 +349,7 @@ func removeCmd(e *env) *cobra.Command {
 				return err
 			}
 			if self, err := ccamPath(); err == nil {
-				shim.RemoveFor(e.paths.Bin, self, &prof)
+				shim.Remove(e.paths.Bin, self, prof.Shortcut)
 			}
 			if trashed != "" {
 				e.printf("✓ %s removed (folder moved to %s)\n", prof.Name, trashed)
@@ -406,22 +437,18 @@ func logoutCmd(e *env) *cobra.Command {
 }
 
 func shimsCmd(e *env) *cobra.Command {
-	cmd := &cobra.Command{Use: "shims", Short: "Manage shortcuts (claude1…)"}
-	var names bool
+	cmd := &cobra.Command{Use: "shims", Short: "Manage shortcut links (set them with `ccam shortcut`)"}
 	install := &cobra.Command{
 		Use:   "install",
-		Short: "Recreate claude1…claudeN",
+		Short: "Recreate the shortcut links of all accounts",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg, err := e.load()
 			if err != nil {
 				return err
 			}
-			if cmd.Flags().Changed("names") && cfg.NameShims != names {
-				cfg.NameShims = names
-				if err := e.save(cfg); err != nil {
-					return err
-				}
+			if err := e.save(cfg); err != nil { // keeps shortcuts adopted from an old config
+				return err
 			}
 			created, err := installShims(e, cfg)
 			if err != nil {
@@ -431,7 +458,6 @@ func shimsCmd(e *env) *cobra.Command {
 			return nil
 		},
 	}
-	install.Flags().BoolVar(&names, "names", false, "also create claude-<name> shortcuts")
 	cmd.AddCommand(install)
 	return cmd
 }

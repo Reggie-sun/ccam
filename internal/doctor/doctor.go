@@ -10,7 +10,6 @@ import (
 	"os/exec"
 	"path/filepath"
 	"sort"
-	"strconv"
 	"strings"
 	"time"
 
@@ -323,20 +322,26 @@ func checkMCP(r *report, p paths.Paths, cfg *config.Config) {
 }
 
 func checkShims(r *report, p paths.Paths, cfg *config.Config, opt Options) {
-	if opt.CcamPath == "" || len(cfg.Profiles) == 0 {
+	if opt.CcamPath == "" {
 		return
 	}
-	var missing []string
+	var names, missing []string
 	for _, prof := range cfg.Profiles {
-		name := "claude" + strconv.Itoa(prof.Slot)
-		if _, err := os.Lstat(filepath.Join(p.Bin, name)); err != nil {
-			missing = append(missing, name)
+		if prof.Shortcut == "" {
+			continue
+		}
+		names = append(names, prof.Shortcut)
+		if !shim.Linked(p.Bin, opt.CcamPath, prof.Shortcut) {
+			missing = append(missing, prof.Shortcut)
 		}
 	}
+	if len(names) == 0 {
+		return // shortcuts are opt-in
+	}
 	if len(missing) == 0 {
-		r.add(OK, "", "shortcuts OK (%s)", p.Bin)
+		r.add(OK, "", "shortcuts OK (%s)", strings.Join(names, ", "))
 	} else {
-		f := r.add(Warn, "", "missing shortcuts: %s", strings.Join(missing, ", "))
+		f := r.add(Warn, "", "missing shortcuts in %s: %s", p.Bin, strings.Join(missing, ", "))
 		if opt.Fix {
 			_, err := shim.Install(p.Bin, opt.CcamPath, cfg)
 			f.Fixed = err == nil
