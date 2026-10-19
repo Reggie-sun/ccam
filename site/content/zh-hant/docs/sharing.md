@@ -4,7 +4,7 @@ description: ccam 如何在 Claude Code 帳號間共用 MCP 伺服器、settings
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: ccbb2c5e97bc
+sourceHash: 0864ea87c3e9
 ---
 
 每個帳號都保有自己的登入資訊。其他所有內容都可以逐項共用：ccam 會將帳號的檔案或資料夾連結到共用的群組資料夾，因此在一個帳號中所做的變更，會出現在該群組的所有帳號中。
@@ -45,6 +45,8 @@ ccam share side --history team
 5. 以指向群組的連結取代原始檔案。
 
 對話檔案以工作階段 ID 命名，因此多個帳號的對話記錄可以合併而不會衝突。
+
+當 Claude Code 正以該帳號執行時，ccam 不會變更共用，因為工作階段會持續寫入正在移動的檔案。請先結束工作階段。
 
 ## 關閉共用
 
@@ -119,6 +121,8 @@ ccam mcp list
 ```sh
 ccam mcp import work gh
 ```
+
+如果群組中已有同名的不同伺服器，ccam 會略過它並告訴你。`--force` 會取代群組的伺服器，並把舊的 `mcp.json` 保留在群組的 `.ccam-backup/` 資料夾中。
 
 使用 OAuth 登入的 MCP 伺服器會將權杖和帳號的登入資訊存放在一起，所以請在每個帳號中各授權一次。
 

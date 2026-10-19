@@ -4,10 +4,10 @@ description: ccam add ve ccam <name> komutlarından ccam usage, ccam next ve cca
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a5a33b1a2f4
+sourceHash: 8ac012f7f7cf
 ---
 
-Bir komutun ne yapacağını, yapmadan görmek için komuttan önce `--dry-run` yazın, örneğin `ccam --dry-run work`.
+Bir komutun ne yapacağını, yapmadan görmek için komuttan önce `--dry-run` yazın, örneğin `ccam --dry-run work`. Bu, Claude Code başlatılırken (`ccam <name>`, `ccam run`, `ccam next`) ve `share`, `migrate`, `shortcut`, `update` ile `doctor --fix` komutlarında çalışır. Bir şeyi değiştiren diğer komutlar çalışmak yerine bunu reddeder.
 
 <!-- commands -->
 
@@ -32,6 +32,10 @@ ccam import ~/.claude-old --name old
 ```
 
 Klasör belirtilmeden çalıştırılan `ccam import`, `~/.claude` ve `~/.claude-*` klasörlerini arar ve her biri için sorar. İçe aktarılan klasörler bulundukları yerde kaydedilir; ccam hiçbir zaman bir girişi taşımaz veya kopyalamaz.
+
+`ccam rename`, `ccam remove` ve `ccam share`, Claude Code bir hesapla çalışırken o hesabı değiştirmeyi reddeder. Önce oturumdan çıkın.
+
+`ccam list --json` her hesabı yuvası, kısayolu, e-postası ve klasörüyle birlikte yazdırır. Çıktıdaki `share` nesnesi her öğeyi (`mcp`, `settings`, `memory`, `extensions`, `history`) bir grup adıyla veya `local` ile eşler.
 
 ## Kısayollar
 
@@ -81,6 +85,8 @@ ccam mcp import work gh
 ccam mcp remove fs
 ```
 
+`ccam mcp import <account>`, yalnızca o hesapta bulunan sunucuları hesabın grubuna taşır. Adı grupta zaten farklı bir tanım için kullanılan sunucular atlanır; grubun kopyasını değiştirmek için `--force` ekleyin, ccam önce o kopyayı yedekler.
+
 ## Kullanım ve geçiş
 
 ```sh
@@ -100,6 +106,7 @@ ccam statusline install
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam version         # also: ccam -v, ccam --version
 ```
 
 `ccam update`, ccam'ı değiştirmeden önce sürümün SHA-256 sağlama toplamını kontrol eder; `--version v0.2.0` ise belirli bir sürümü kurar. `.deb` paketinden kurulan ccam bunun yerine apt ile güncellenir. [Güncelleme](/docs/install#update) bölümüne bakın.

@@ -4,7 +4,7 @@ description: ccam 如何在 Claude Code 账号之间共享 MCP 服务器、setti
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: ccbb2c5e97bc
+sourceHash: 0864ea87c3e9
 ---
 
 每个账号都保留自己的登录。其他所有内容都可以逐项共享：ccam 把账号中的文件或文件夹链接到一个共享组文件夹，因此在一个账号中所做的更改会出现在该组的所有账号中。
@@ -45,6 +45,8 @@ ccam share side --history team
 5. 用指向该组的链接替换原始文件。
 
 对话文件以会话 ID 命名，因此多个账号的历史记录可以合并而不会冲突。
+
+当 Claude Code 正以该账号运行时，ccam 不会更改共享，因为会话会继续写入正在移动的文件。请先退出会话。
 
 ## 关闭共享
 
@@ -119,6 +121,8 @@ ccam mcp list
 ```sh
 ccam mcp import work gh
 ```
+
+如果组中已有同名的不同服务器，ccam 会跳过它并提示你。`--force` 会替换组中的服务器，并把旧的 `mcp.json` 保存在组的 `.ccam-backup/` 文件夹中。
 
 通过 OAuth 登录的 MCP 服务器会把令牌和账号的登录信息存放在一起，因此需要在每个账号中分别授权一次。
 

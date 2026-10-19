@@ -4,10 +4,10 @@ description: Kila amri na chaguo la ccam, kuanzia ccam add na ccam <name> hadi c
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a5a33b1a2f4
+sourceHash: 8ac012f7f7cf
 ---
 
-Weka `--dry-run` kabla ya amri yoyote ili kuona itakachofanya bila kukifanya, kwa mfano `ccam --dry-run work`.
+Weka `--dry-run` kabla ya amri ili kuona itakachofanya bila kukifanya, kwa mfano `ccam --dry-run work`. Inafanya kazi unapoanzisha Claude Code (`ccam <name>`, `ccam run`, `ccam next`) na pamoja na `share`, `migrate`, `shortcut`, `update` na `doctor --fix`. Amri nyingine zinazobadilisha kitu huikataa badala ya kufanya kazi.
 
 <!-- commands -->
 
@@ -32,6 +32,10 @@ ccam import ~/.claude-old --name old
 ```
 
 `ccam import` bila folda hutafuta `~/.claude` na `~/.claude-*` na huuliza kuhusu kila moja. Folda zilizoingizwa husajiliwa pale zilipo; ccam kamwe haihamishi wala kunakili taarifa za kuingia.
+
+`ccam rename`, `ccam remove` na `ccam share` hukataa kubadilisha akaunti wakati Claude Code inaendeshwa kama akaunti hiyo. Funga kipindi (session) kwanza.
+
+`ccam list --json` huchapisha kila akaunti pamoja na namba yake (slot), njia fupi, barua pepe na folda. Kitu chake `share` huhusisha kila kipengele (`mcp`, `settings`, `memory`, `extensions`, `history`) na jina la kikundi au `local`.
 
 ## Njia fupi
 
@@ -81,6 +85,8 @@ ccam mcp import work gh
 ccam mcp remove fs
 ```
 
+`ccam mcp import <account>` huhamisha seva ambazo akaunti hiyo pekee inazo kwenda kwenye kikundi chake. Seva ambayo jina lake tayari linatumiwa na kikundi kwa ufafanuzi tofauti huachwa; ongeza `--force` ili kubadilisha nakala ya kikundi, ambayo ccam huitengenezea nakala rudufu kwanza.
+
 ## Matumizi na kubadili
 
 ```sh
@@ -100,6 +106,7 @@ ccam statusline install
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam version         # also: ccam -v, ccam --version
 ```
 
 `ccam update` hukagua checksum ya SHA-256 ya toleo kabla ya kubadilisha ccam, na `--version v0.2.0` husakinisha toleo mahususi. ccam iliyosakinishwa kutoka kifurushi cha `.deb` husasishwa kwa apt badala yake. Tazama [kusasisha ccam](/docs/install#update).

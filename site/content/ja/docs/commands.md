@@ -4,10 +4,10 @@ description: ccam addやccam <name>から、ccam usage、ccam next、ccam doctor
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a5a33b1a2f4
+sourceHash: 8ac012f7f7cf
 ---
 
-どのコマンドでも前に`--dry-run`を付けると、実際には実行せずに何をするかを確認できます。たとえば`ccam --dry-run work`のように使います。
+コマンドの前に`--dry-run`を付けると、実際には実行せずに何をするかを確認できます。たとえば`ccam --dry-run work`のように使います。これが使えるのは、Claude Codeを起動するとき（`ccam <name>`、`ccam run`、`ccam next`）と、`share`、`migrate`、`shortcut`、`update`、`doctor --fix`です。何かを変更するそれ以外のコマンドは、実行せずにこのオプションを拒否します。
 
 <!-- commands -->
 
@@ -32,6 +32,10 @@ ccam import ~/.claude-old --name old
 ```
 
 フォルダーを指定せずに`ccam import`を実行すると、`~/.claude`と`~/.claude-*`を探し、それぞれについて確認します。インポートしたフォルダーはその場所のまま登録されます。ccamがログインを移動またはコピーすることはありません。
+
+`ccam rename`、`ccam remove`、`ccam share`は、そのアカウントでClaude Codeが実行中の間は、アカウントを変更しません。先にセッションを終了してください。
+
+`ccam list --json`は、すべてのアカウントをスロット、ショートカット、メールアドレス、フォルダーとともに出力します。その`share`オブジェクトは、各項目（`mcp`、`settings`、`memory`、`extensions`、`history`）をグループ名または`local`に対応付けます。
 
 ## ショートカット
 
@@ -81,6 +85,8 @@ ccam mcp import work gh
 ccam mcp remove fs
 ```
 
+`ccam mcp import <account>`は、そのアカウントだけが持つサーバーを、そのアカウントのグループに移動します。グループがすでに同じ名前を別の定義に使っているサーバーはスキップされます。`--force`を付けるとグループのものを置き換えます。その際、ccamは先にバックアップを取ります。
+
 ## 使用量と切り替え
 
 ```sh
@@ -100,6 +106,7 @@ ccam statusline install
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam version         # also: ccam -v, ccam --version
 ```
 
 `ccam update`は、ccamを置き換える前にリリースのSHA-256チェックサムを検証します。`--version v0.2.0`を指定すると、特定のリリースをインストールします。`.deb`パッケージからインストールしたccamは、代わりにaptで更新します。詳しくは[アップデート](/docs/install#update)を参照してください。

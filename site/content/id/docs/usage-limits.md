@@ -4,7 +4,7 @@ description: Lihat penggunaan 5 jam dan mingguan setiap akun Claude Code dengan 
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: 8ab41501c548
+sourceHash: 9aebb54d40e2
 ---
 
 `ccam usage` menampilkan seberapa banyak batas 5 jam dan mingguan yang sudah digunakan setiap akun. `ccam next --auto` membuka akun dengan sisa kuota terbanyak, dan `--continue` membawa percakapan saat ini ke akun tersebut.
@@ -24,7 +24,7 @@ Kolomnya adalah: akun, penggunaan 5 jam, waktu hingga direset, penggunaan minggu
 
 ccam menanyakan endpoint penggunaan Anthropic untuk semua akun secara bersamaan, menggunakan login masing-masing akun. ccam menunggu paling lama 3 detik per akun dan menampilkan setiap akun begitu akun itu menjawab.
 
-Endpoint ini tidak didokumentasikan secara publik dan dapat berubah. Jika permintaan gagal, ccam menampilkan angka terakhir yang diketahui dan menandainya sebagai cache. `ccam doctor` memberi tahu Anda jika format responsnya berubah.
+Endpoint ini tidak didokumentasikan secara publik dan dapat berubah. Jika permintaan gagal, ccam menampilkan angka terakhir yang diketahui dan menandainya sebagai cache. Jendela yang sudah direset sejak angka-angka itu disimpan menampilkan 0%. `ccam doctor` memberi tahu Anda jika format responsnya berubah.
 
 Angka yang diambil kurang dari 60 detik yang lalu akan dipakai ulang. Opsi:
 

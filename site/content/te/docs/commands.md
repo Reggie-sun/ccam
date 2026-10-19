@@ -4,10 +4,10 @@ description: ccam add, ccam <name> నుంచి ccam usage, ccam next, ccam d
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a5a33b1a2f4
+sourceHash: 8ac012f7f7cf
 ---
 
-ఏ కమాండ్ అయినా అసలు చేయకుండా అది ఏమి చేస్తుందో చూడటానికి, దాని ముందు `--dry-run` పెట్టండి, ఉదాహరణకు `ccam --dry-run work`.
+ఒక కమాండ్ అసలు చేయకుండా అది ఏమి చేస్తుందో చూడటానికి, దాని ముందు `--dry-run` పెట్టండి, ఉదాహరణకు `ccam --dry-run work`. ఇది Claude Code ను ప్రారంభించేటప్పుడు (`ccam <name>`, `ccam run`, `ccam next`), అలాగే `share`, `migrate`, `shortcut`, `update`, `doctor --fix` తో పనిచేస్తుంది. ఏదైనా మార్చే ఇతర కమాండ్‌లు రన్ అవ్వకుండా దాన్ని తిరస్కరిస్తాయి.
 
 <!-- commands -->
 
@@ -32,6 +32,10 @@ ccam import ~/.claude-old --name old
 ```
 
 ఫోల్డర్ ఇవ్వకుండా `ccam import` రన్ చేస్తే, అది `~/.claude`, `~/.claude-*` కోసం వెతికి ప్రతిదాని గురించి అడుగుతుంది. ఇంపోర్ట్ చేసిన ఫోల్డర్‌లు ఉన్న చోటే నమోదు అవుతాయి; ccam ఎప్పుడూ లాగిన్‌ను తరలించదు, కాపీ చేయదు.
+
+Claude Code ఒక ఖాతాగా రన్ అవుతున్నప్పుడు `ccam rename`, `ccam remove`, `ccam share` ఆ ఖాతాను మార్చడానికి నిరాకరిస్తాయి. ముందుగా ఆ సెషన్ నుంచి నిష్క్రమించండి.
+
+`ccam list --json` ప్రతి ఖాతాను దాని స్లాట్, షార్ట్‌కట్, ఇమెయిల్, ఫోల్డర్‌తో ప్రింట్ చేస్తుంది. దానిలోని `share` ఆబ్జెక్ట్ ప్రతి అంశాన్ని (`mcp`, `settings`, `memory`, `extensions`, `history`) ఒక గ్రూప్ పేరుకు లేదా `local` కు మ్యాప్ చేస్తుంది.
 
 ## షార్ట్‌కట్‌లు
 
@@ -81,6 +85,8 @@ ccam mcp import work gh
 ccam mcp remove fs
 ```
 
+`ccam mcp import <account>` ఆ ఖాతాకు మాత్రమే ఉన్న సర్వర్‌లను దాని గ్రూప్‌లోకి తరలిస్తుంది. గ్రూప్ ఇప్పటికే వేరే నిర్వచనం కోసం వాడుతున్న పేరు ఉన్న సర్వర్‌ను వదిలేస్తుంది; గ్రూప్ కాపీని భర్తీ చేయడానికి `--force` జోడించండి, ccam ముందుగా దాన్ని బ్యాకప్ చేస్తుంది.
+
 ## వినియోగం, ఖాతా మార్చడం
 
 ```sh
@@ -100,6 +106,7 @@ ccam statusline install
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam version         # also: ccam -v, ccam --version
 ```
 
 `ccam update` ccam ను మార్చే ముందు రిలీజ్ SHA-256 చెక్‌సమ్‌ను తనిఖీ చేస్తుంది, `--version v0.2.0` ఒక నిర్దిష్ట రిలీజ్‌ను ఇన్‌స్టాల్ చేస్తుంది. `.deb` ప్యాకేజీ నుంచి ఇన్‌స్టాల్ చేసిన ccam ను apt తో అప్‌డేట్ చేయండి. వివరాల కోసం [అప్‌డేట్ చేయడం](/docs/install#update) చూడండి.

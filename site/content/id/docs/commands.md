@@ -4,10 +4,10 @@ description: Semua perintah dan opsi ccam, dari ccam add dan ccam <name> hingga 
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a5a33b1a2f4
+sourceHash: 8ac012f7f7cf
 ---
 
-Letakkan `--dry-run` sebelum perintah apa pun untuk melihat apa yang akan dilakukannya tanpa benar-benar menjalankannya, misalnya `ccam --dry-run work`.
+Letakkan `--dry-run` sebelum perintah untuk melihat apa yang akan dilakukannya tanpa benar-benar menjalankannya, misalnya `ccam --dry-run work`. Opsi ini berfungsi saat menjalankan Claude Code (`ccam <name>`, `ccam run`, `ccam next`) dan dengan `share`, `migrate`, `shortcut`, `update`, serta `doctor --fix`. Perintah lain yang mengubah sesuatu akan menolaknya alih-alih berjalan.
 
 <!-- commands -->
 
@@ -32,6 +32,10 @@ ccam import ~/.claude-old --name old
 ```
 
 `ccam import` tanpa folder akan mencari `~/.claude` dan `~/.claude-*`, lalu menanyakan masing-masing. Folder yang diimpor didaftarkan di tempatnya; ccam tidak pernah memindahkan atau menyalin login.
+
+`ccam rename`, `ccam remove`, dan `ccam share` menolak mengubah akun saat Claude Code sedang berjalan sebagai akun tersebut. Keluar dari sesi terlebih dahulu.
+
+`ccam list --json` menampilkan setiap akun beserta slot, pintasan, email, dan foldernya. Objek `share` di dalamnya memetakan setiap item (`mcp`, `settings`, `memory`, `extensions`, `history`) ke nama grup atau `local`.
 
 ## Pintasan
 
@@ -81,6 +85,8 @@ ccam mcp import work gh
 ccam mcp remove fs
 ```
 
+`ccam mcp import <account>` memindahkan server yang hanya dimiliki akun itu ke grupnya. Server yang namanya sudah dipakai grup untuk definisi yang berbeda akan dilewati; tambahkan `--force` untuk mengganti salinan milik grup, yang dicadangkan ccam terlebih dahulu.
+
 ## Penggunaan dan perpindahan akun
 
 ```sh
@@ -100,6 +106,7 @@ ccam statusline install
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam version         # also: ccam -v, ccam --version
 ```
 
 `ccam update` memeriksa checksum SHA-256 rilis sebelum mengganti ccam, dan `--version v0.2.0` menginstal rilis tertentu. ccam yang diinstal dari paket `.deb` diperbarui dengan apt. Lihat [pembaruan](/docs/install#update).

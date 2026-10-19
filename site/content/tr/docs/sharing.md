@@ -4,7 +4,7 @@ description: Girişler ayrı kalırken MCP sunucuları, settings.json, CLAUDE.md
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: ccbb2c5e97bc
+sourceHash: 0864ea87c3e9
 ---
 
 Her hesap kendi giriş bilgilerini korur. Geri kalan her şey öğe öğe paylaşılabilir: ccam, hesabın dosyasını veya klasörünü paylaşılan bir grup klasörüne bağlar; böylece bir hesapta yapılan değişiklik o gruptaki tüm hesaplarda görünür.
@@ -45,6 +45,8 @@ Bir hesap bir öğeyi paylaşmaya başladığında ccam:
 5. orijinali gruba yönelen bir bağlantıyla değiştirir.
 
 Konuşma dosyaları oturum kimliklerine göre adlandırılır; bu nedenle birden fazla hesabın geçmişi çakışma olmadan birleşir.
+
+Claude Code o hesapla çalışırken ccam paylaşımı değiştirmez, çünkü oturum taşınan dosyalara yazmaya devam eder. Önce oturumdan çıkın.
 
 ## Paylaşımı kapatma
 
@@ -119,6 +121,8 @@ Bir oturum içinde `claude mcp add` ile eklediğiniz sunucu yalnızca o hesap i�
 ```sh
 ccam mcp import work gh
 ```
+
+Grupta aynı adla farklı bir sunucu zaten varsa ccam onu atlar ve bunu bildirir. `--force` grubun sunucusunu değiştirir ve eski `mcp.json` dosyasını grubun `.ccam-backup/` klasöründe saklar.
 
 OAuth ile giriş yapan MCP sunucuları, tokenlarını hesabın giriş bilgileriyle birlikte saklar; bu yüzden onları her hesapta bir kez yetkilendirin.
 

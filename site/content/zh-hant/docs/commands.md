@@ -4,10 +4,10 @@ description: 所有 ccam 指令和選項，從 ccam add、ccam <name> 到 ccam u
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a5a33b1a2f4
+sourceHash: 8ac012f7f7cf
 ---
 
-在任何指令前加上 `--dry-run`，就能查看它會做什麼而不實際執行，例如 `ccam --dry-run work`。
+在指令前加上 `--dry-run`，就能查看它會做什麼而不實際執行，例如 `ccam --dry-run work`。它適用於啟動 Claude Code（`ccam <name>`、`ccam run`、`ccam next`）以及 `share`、`migrate`、`shortcut`、`update` 和 `doctor --fix`。其他會做出變更的指令則會拒絕它，而不會執行。
 
 <!-- commands -->
 
@@ -32,6 +32,10 @@ ccam import ~/.claude-old --name old
 ```
 
 不指定資料夾的 `ccam import` 會尋找 `~/.claude` 和 `~/.claude-*`，並逐一詢問。匯入的資料夾會在原位置登錄；ccam 絕不會移動或複製登入資訊。
+
+當 Claude Code 正以某個帳號執行時，`ccam rename`、`ccam remove` 和 `ccam share` 會拒絕變更該帳號。請先結束該工作階段。
+
+`ccam list --json` 會輸出每個帳號及其槽位、快捷指令、電子郵件和資料夾。其中的 `share` 物件會把每個項目（`mcp`、`settings`、`memory`、`extensions`、`history`）對應到一個群組名稱或 `local`。
 
 ## 快捷指令
 
@@ -81,6 +85,8 @@ ccam mcp import work gh
 ccam mcp remove fs
 ```
 
+`ccam mcp import <account>` 會把只有該帳號擁有的伺服器移到它的群組。如果群組已有同名但定義不同的伺服器，該伺服器會被略過；加上 `--force` 可取代群組中的副本，ccam 會先備份它。
+
 ## 用量和切換
 
 ```sh
@@ -100,6 +106,7 @@ ccam statusline install
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam version         # also: ccam -v, ccam --version
 ```
 
 `ccam update` 會在取代 ccam 之前檢查發行版本的 SHA-256 總和檢查碼，`--version v0.2.0` 則可安裝特定的發行版本。從 `.deb` 套件安裝的 ccam 則改用 apt 更新。請參閱[更新](/docs/install#update)。

@@ -4,10 +4,10 @@ description: ccam add, ccam <name> முதல் ccam usage, ccam next, ccam d
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a5a33b1a2f4
+sourceHash: 8ac012f7f7cf
 ---
 
-எந்தக் கட்டளையும் உண்மையில் எதையும் செய்யாமல் என்ன செய்யும் என்று பார்க்க, அதற்கு முன் `--dry-run` வையுங்கள், எடுத்துக்காட்டாக `ccam --dry-run work`.
+ஒரு கட்டளை உண்மையில் எதையும் செய்யாமல் என்ன செய்யும் என்று பார்க்க, அதற்கு முன் `--dry-run` வையுங்கள், எடுத்துக்காட்டாக `ccam --dry-run work`. Claude Code-ஐத் தொடங்கும்போது (`ccam <name>`, `ccam run`, `ccam next`) மற்றும் `share`, `migrate`, `shortcut`, `update`, `doctor --fix` ஆகியவற்றுடன் இது வேலை செய்யும். எதையாவது மாற்றும் மற்ற கட்டளைகள் இயங்குவதற்குப் பதிலாக இதை மறுக்கும்.
 
 <!-- commands -->
 
@@ -32,6 +32,10 @@ ccam import ~/.claude-old --name old
 ```
 
 கோப்புறை இல்லாமல் இயக்கும் `ccam import`, `~/.claude` மற்றும் `~/.claude-*`-ஐத் தேடி, ஒவ்வொன்றைப் பற்றியும் கேட்கும். இறக்குமதி செய்யப்பட்ட கோப்புறைகள் அவை இருக்கும் இடத்திலேயே பதிவு செய்யப்படும்; ccam ஒருபோதும் உள்நுழைவை நகர்த்துவதோ நகலெடுப்பதோ இல்லை.
+
+ஒரு கணக்காக Claude Code இயங்கிக்கொண்டிருக்கும்போது, `ccam rename`, `ccam remove`, `ccam share` ஆகியவை அந்தக் கணக்கை மாற்ற மறுக்கும். முதலில் அமர்வை முடியுங்கள்.
+
+`ccam list --json` ஒவ்வொரு கணக்கையும் அதன் slot எண், குறுக்குவழி, மின்னஞ்சல், கோப்புறை ஆகியவற்றுடன் அச்சிடும். அதிலுள்ள `share` object ஒவ்வொரு உருப்படியையும் (`mcp`, `settings`, `memory`, `extensions`, `history`) ஒரு குழுப் பெயருடன் அல்லது `local` உடன் இணைக்கும்.
 
 ## குறுக்குவழிகள்
 
@@ -81,6 +85,8 @@ ccam mcp import work gh
 ccam mcp remove fs
 ```
 
+`ccam mcp import <account>` அந்தக் கணக்கிடம் மட்டும் உள்ள சர்வர்களை அதன் குழுவுக்கு நகர்த்தும். குழு ஏற்கெனவே வேறொரு வரையறைக்குப் பயன்படுத்தும் பெயருடைய சர்வர் தவிர்க்கப்படும்; குழுவின் நகலை மாற்ற `--force` சேருங்கள், ccam முதலில் அதை backup எடுக்கும்.
+
 ## பயன்பாடு மற்றும் கணக்கு மாற்றம்
 
 ```sh
@@ -100,6 +106,7 @@ ccam statusline install
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam version         # also: ccam -v, ccam --version
 ```
 
 `ccam update` ccam-ஐ மாற்றுவதற்கு முன் வெளியீட்டின் SHA-256 checksum-ஐச் சரிபார்க்கிறது, `--version v0.2.0` ஒரு குறிப்பிட்ட வெளியீட்டை நிறுவுகிறது. `.deb` தொகுப்பிலிருந்து நிறுவிய ccam-ஐ apt மூலம் புதுப்பியுங்கள். [புதுப்பித்தல்](/docs/install#update) பகுதியைப் பாருங்கள்.

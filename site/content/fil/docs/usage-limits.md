@@ -4,7 +4,7 @@ description: Tingnan ang 5-oras at lingguhang usage ng bawat Claude Code account
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: 8ab41501c548
+sourceHash: 9aebb54d40e2
 ---
 
 Ipinapakita ng `ccam usage` kung gaano kalaki na ang nagamit ng bawat account sa 5-oras at lingguhang limit. Binubuksan ng `ccam next --auto` ang account na may pinakamaraming natitira, at dinadala ng `--continue` ang kasalukuyang usapan.
@@ -24,7 +24,7 @@ Ang mga column ay: account, 5-oras na usage, oras bago ito mag-reset, lingguhang
 
 Sabay-sabay na nagtatanong ang ccam sa usage endpoint ng Anthropic para sa bawat account, gamit ang sariling login ng bawat account. Naghihintay ito nang hanggang 3 segundo bawat account at ipinapakita ang bawat account sa sandaling sumagot ito.
 
-Hindi pampublikong dokumentado ang endpoint na ito at puwede itong magbago. Kapag pumalya ang isang request, ipinapakita ng ccam ang huling alam na mga numero at minamarkahan ang mga ito bilang cached. Sasabihin sa iyo ng `ccam doctor` kung nagbago ang format ng response.
+Hindi pampublikong dokumentado ang endpoint na ito at puwede itong magbago. Kapag pumalya ang isang request, ipinapakita ng ccam ang huling alam na mga numero at minamarkahan ang mga ito bilang cached. Ang window na nag-reset na mula nang i-save ang mga numerong iyon ay nagpapakita ng 0%. Sasabihin sa iyo ng `ccam doctor` kung nagbago ang format ng response.
 
 Muling ginagamit ang mga numerong kinuha wala pang 60 segundo ang nakalipas. Mga option:
 

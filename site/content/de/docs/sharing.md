@@ -4,7 +4,7 @@ description: Wie ccam MCP-Server, settings.json, CLAUDE.md, Agents, Skills und d
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: ccbb2c5e97bc
+sourceHash: 0864ea87c3e9
 ---
 
 Jedes Konto behält seine eigene Anmeldung. Alles andere kann Element für Element geteilt werden: ccam verlinkt die Datei oder den Ordner des Kontos mit einem geteilten Gruppenordner, sodass eine Änderung in einem Konto in allen Konten dieser Gruppe erscheint.
@@ -45,6 +45,8 @@ Wenn ein Konto anfängt, ein Element zu teilen, macht ccam Folgendes:
 5. Es ersetzt das Original durch einen Link auf die Gruppe.
 
 Gesprächsdateien sind nach ihrer Sitzungs-ID benannt, daher lassen sich Verläufe aus mehreren Konten ohne Konflikte zusammenführen.
+
+ccam ändert das Teilen nicht, solange Claude Code mit dem Konto läuft, weil die Sitzung weiter in die Dateien schreibt, die verschoben werden. Beende sie zuerst.
 
 ## Teilen ausschalten
 
@@ -119,6 +121,8 @@ Ein Server, den du innerhalb einer Sitzung mit `claude mcp add` hinzufügst, wir
 ```sh
 ccam mcp import work gh
 ```
+
+Hat die Gruppe bereits einen anderen Server mit diesem Namen, überspringt ccam ihn und weist darauf hin. `--force` ersetzt den Server der Gruppe und behält die alte `mcp.json` im Ordner `.ccam-backup/` der Gruppe.
 
 MCP-Server, die sich per OAuth anmelden, speichern ihre Tokens zusammen mit der Anmeldung des Kontos, autorisiere sie also in jedem Konto einmal.
 

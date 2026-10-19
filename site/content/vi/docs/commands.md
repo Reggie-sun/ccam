@@ -4,10 +4,10 @@ description: "Mọi lệnh và tùy chọn của ccam, từ ccam add và ccam <n
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a5a33b1a2f4
+sourceHash: 8ac012f7f7cf
 ---
 
-Đặt `--dry-run` trước bất kỳ lệnh nào để xem lệnh đó sẽ làm gì mà không thực sự thực hiện, ví dụ `ccam --dry-run work`.
+Đặt `--dry-run` trước một lệnh để xem lệnh đó sẽ làm gì mà không thực sự thực hiện, ví dụ `ccam --dry-run work`. Tùy chọn này dùng được khi khởi động Claude Code (`ccam <name>`, `ccam run`, `ccam next`) và với `share`, `migrate`, `shortcut`, `update` và `doctor --fix`. Các lệnh khác có thay đổi một thứ gì đó sẽ từ chối tùy chọn này thay vì chạy.
 
 <!-- commands -->
 
@@ -32,6 +32,10 @@ ccam import ~/.claude-old --name old
 ```
 
 `ccam import` không kèm thư mục sẽ tìm `~/.claude` và `~/.claude-*` rồi hỏi bạn về từng thư mục. Các thư mục được nhập sẽ được đăng ký ngay tại chỗ; ccam không bao giờ di chuyển hay sao chép thông tin đăng nhập.
+
+`ccam rename`, `ccam remove` và `ccam share` từ chối thay đổi một tài khoản khi Claude Code đang chạy bằng tài khoản đó. Hãy thoát phiên đó trước.
+
+`ccam list --json` in ra mọi tài khoản cùng với slot, lệnh tắt, email và thư mục của nó. Đối tượng `share` trong đó ánh xạ từng mục (`mcp`, `settings`, `memory`, `extensions`, `history`) tới một tên nhóm hoặc `local`.
 
 ## Lệnh tắt
 
@@ -81,6 +85,8 @@ ccam mcp import work gh
 ccam mcp remove fs
 ```
 
+`ccam mcp import <account>` chuyển các máy chủ chỉ tài khoản đó có vào nhóm của nó. Máy chủ có tên mà nhóm đã dùng cho một định nghĩa khác sẽ bị bỏ qua; thêm `--force` để thay bản của nhóm, ccam sẽ sao lưu bản đó trước.
+
 ## Mức sử dụng và chuyển đổi tài khoản
 
 ```sh
@@ -100,6 +106,7 @@ ccam statusline install
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam version         # also: ccam -v, ccam --version
 ```
 
 `ccam update` kiểm tra mã băm SHA-256 của bản phát hành trước khi thay thế ccam, còn `--version v0.2.0` cài một bản phát hành cụ thể. ccam được cài từ gói `.deb` thì cập nhật bằng apt. Xem [cập nhật](/docs/install#update).

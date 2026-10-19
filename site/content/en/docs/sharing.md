@@ -45,6 +45,8 @@ When an account starts sharing an item, ccam:
 
 Conversation files are named after their session ID, so histories from several accounts combine without conflicts.
 
+ccam does not change sharing while Claude Code is running as the account, because the session keeps writing into the files being moved. Quit it first.
+
 ## Turning sharing off
 
 ```sh
@@ -118,6 +120,8 @@ A server you add inside a session with `claude mcp add` is saved for that accoun
 ```sh
 ccam mcp import work gh
 ```
+
+If the group already has a different server with that name, ccam skips it and says so. `--force` replaces the group's server and keeps the old `mcp.json` in the group's `.ccam-backup/` folder.
 
 MCP servers that sign in with OAuth store their tokens with the account's login, so authorise them once in each account.
 

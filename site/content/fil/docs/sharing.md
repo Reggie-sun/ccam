@@ -4,7 +4,7 @@ description: Paano shine-share ng ccam ang MCP server, settings.json, CLAUDE.md,
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: ccbb2c5e97bc
+sourceHash: 0864ea87c3e9
 ---
 
 May sariling login ang bawat account. Lahat ng iba pa ay puwedeng i-share nang isa-isang item: nili-link ng ccam ang file o folder ng account sa isang shared na group folder, kaya ang pagbabagong ginawa sa isang account ay lumalabas sa lahat ng account ng group na iyon.
@@ -45,6 +45,8 @@ Kapag nagsimulang mag-share ng item ang isang account, ang ccam ay:
 5. pinapalitan ang orihinal ng link sa group.
 
 Ipinapangalan ang mga file ng usapan ayon sa kanilang session ID, kaya nagsasama ang mga kasaysayan mula sa iba't ibang account nang walang conflict.
+
+Hindi binabago ng ccam ang sharing habang tumatakbo ang Claude Code bilang ang account, dahil patuloy na nagsusulat ang session sa mga file na inililipat. Isara muna ito.
 
 ## Pag-off ng sharing
 
@@ -119,6 +121,8 @@ Ang server na idinagdag mo sa loob ng session gamit ang `claude mcp add` ay naka
 ```sh
 ccam mcp import work gh
 ```
+
+Kung may ibang server na ang group na may ganoong pangalan, nilalaktawan ito ng ccam at sinasabi ito. Pinapalitan ng `--force` ang server ng group at itinatago ang lumang `mcp.json` sa `.ccam-backup/` folder ng group.
 
 Iniimbak ng mga MCP server na nagsa-sign in gamit ang OAuth ang kanilang mga token kasama ng login ng account, kaya i-authorize sila nang isang beses sa bawat account.
 

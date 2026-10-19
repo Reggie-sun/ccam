@@ -4,10 +4,10 @@ description: Todos os comandos e opções do ccam, de ccam add e ccam <name> a c
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a5a33b1a2f4
+sourceHash: 8ac012f7f7cf
 ---
 
-Coloque `--dry-run` antes de qualquer comando para ver o que ele faria sem fazê-lo, por exemplo `ccam --dry-run work`.
+Coloque `--dry-run` antes de um comando para ver o que ele faria sem fazê-lo, por exemplo `ccam --dry-run work`. Funciona ao iniciar o Claude Code (`ccam <name>`, `ccam run`, `ccam next`) e com `share`, `migrate`, `shortcut`, `update` e `doctor --fix`. Outros comandos que alteram algo recusam a opção em vez de executar.
 
 <!-- commands -->
 
@@ -32,6 +32,10 @@ ccam import ~/.claude-old --name old
 ```
 
 `ccam import` sem uma pasta procura `~/.claude` e `~/.claude-*` e pergunta sobre cada uma. As pastas importadas são registradas no lugar onde estão; o ccam nunca move nem copia um login.
+
+`ccam rename`, `ccam remove` e `ccam share` se recusam a alterar uma conta enquanto o Claude Code estiver em execução com essa conta. Encerre a sessão primeiro.
+
+`ccam list --json` mostra todas as contas com o número (slot), atalho, e-mail e pasta de cada uma. O objeto `share` associa cada item (`mcp`, `settings`, `memory`, `extensions`, `history`) a um nome de grupo ou a `local`.
 
 ## Atalhos
 
@@ -81,6 +85,8 @@ ccam mcp import work gh
 ccam mcp remove fs
 ```
 
+`ccam mcp import <account>` move para o grupo da conta os servidores que só essa conta tem. Um servidor cujo nome o grupo já usa para uma definição diferente é ignorado; adicione `--force` para substituir a cópia do grupo, da qual o ccam faz backup antes.
+
 ## Uso e troca de conta
 
 ```sh
@@ -100,6 +106,7 @@ ccam statusline install
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam version         # also: ccam -v, ccam --version
 ```
 
 `ccam update` verifica o checksum SHA-256 da versão antes de substituir o ccam, e `--version v0.2.0` instala uma versão específica. Um ccam instalado pelo pacote `.deb` é atualizado com o apt. Consulte [atualização](/docs/install#update).

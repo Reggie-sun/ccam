@@ -4,7 +4,7 @@ description: Cara ccam membagikan server MCP, settings.json, CLAUDE.md, agen, sk
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: ccbb2c5e97bc
+sourceHash: 0864ea87c3e9
 ---
 
 Setiap akun menyimpan login-nya sendiri. Semua hal lain dapat dibagikan per item: ccam menautkan file atau folder milik akun ke folder grup bersama, sehingga perubahan yang dibuat di satu akun muncul di semua akun dalam grup tersebut.
@@ -45,6 +45,8 @@ Saat sebuah akun mulai membagikan suatu item, ccam:
 5. mengganti file asli dengan tautan ke grup.
 
 File percakapan diberi nama sesuai ID sesinya, sehingga riwayat dari beberapa akun dapat digabungkan tanpa konflik.
+
+ccam tidak mengubah pembagian saat Claude Code sedang berjalan sebagai akun tersebut, karena sesi terus menulis ke file yang sedang dipindahkan. Keluar dari sesi itu terlebih dahulu.
 
 ## Menonaktifkan pembagian
 
@@ -119,6 +121,8 @@ Server yang Anda tambahkan di dalam sesi dengan `claude mcp add` hanya disimpan 
 ```sh
 ccam mcp import work gh
 ```
+
+Jika grup sudah memiliki server lain dengan nama yang sama, ccam melewatinya dan memberi tahu Anda. `--force` mengganti server milik grup dan menyimpan `mcp.json` yang lama di folder `.ccam-backup/` milik grup.
 
 Server MCP yang masuk dengan OAuth menyimpan tokennya bersama login akun, jadi otorisasi server tersebut sekali di setiap akun.
 

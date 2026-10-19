@@ -4,10 +4,10 @@ description: ccam add ಮತ್ತು ccam <name> ನಿಂದ ccam usage, ccam 
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a5a33b1a2f4
+sourceHash: 8ac012f7f7cf
 ---
 
-ಯಾವುದೇ ಕಮಾಂಡ್ ಏನು ಮಾಡುತ್ತದೆ ಎಂಬುದನ್ನು ನಿಜವಾಗಿ ಮಾಡದೆಯೇ ನೋಡಲು, ಅದರ ಮುಂದೆ `--dry-run` ಹಾಕಿ. ಉದಾಹರಣೆಗೆ `ccam --dry-run work`.
+ಕಮಾಂಡ್ ಏನು ಮಾಡುತ್ತದೆ ಎಂಬುದನ್ನು ನಿಜವಾಗಿ ಮಾಡದೆಯೇ ನೋಡಲು, ಅದರ ಮುಂದೆ `--dry-run` ಹಾಕಿ. ಉದಾಹರಣೆಗೆ `ccam --dry-run work`. ಇದು Claude Code ಆರಂಭಿಸುವಾಗ (`ccam <name>`, `ccam run`, `ccam next`) ಮತ್ತು `share`, `migrate`, `shortcut`, `update` ಹಾಗೂ `doctor --fix` ಜೊತೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ. ಏನನ್ನಾದರೂ ಬದಲಾಯಿಸುವ ಇತರ ಕಮಾಂಡ್‌ಗಳು ಚಾಲನೆಯಾಗುವ ಬದಲು ಇದನ್ನು ನಿರಾಕರಿಸುತ್ತವೆ.
 
 <!-- commands -->
 
@@ -32,6 +32,10 @@ ccam import ~/.claude-old --name old
 ```
 
 ಫೋಲ್ಡರ್ ನೀಡದೆ `ccam import` ರನ್ ಮಾಡಿದರೆ, ಅದು `~/.claude` ಮತ್ತು `~/.claude-*` ಗಾಗಿ ಹುಡುಕುತ್ತದೆ ಮತ್ತು ಪ್ರತಿಯೊಂದರ ಬಗ್ಗೆ ಕೇಳುತ್ತದೆ. ಇಂಪೋರ್ಟ್ ಮಾಡಿದ ಫೋಲ್ಡರ್‌ಗಳು ಇದ್ದಲ್ಲೇ ನೋಂದಣಿಯಾಗುತ್ತವೆ; ccam ಎಂದಿಗೂ ಲಾಗಿನ್ ಅನ್ನು ಸ್ಥಳಾಂತರಿಸುವುದಿಲ್ಲ ಅಥವಾ ನಕಲಿಸುವುದಿಲ್ಲ.
+
+ಒಂದು ಖಾತೆಯಾಗಿ Claude Code ಚಾಲನೆಯಲ್ಲಿರುವಾಗ, `ccam rename`, `ccam remove` ಮತ್ತು `ccam share` ಆ ಖಾತೆಯನ್ನು ಬದಲಾಯಿಸಲು ನಿರಾಕರಿಸುತ್ತವೆ. ಮೊದಲು ಸೆಷನ್‌ನಿಂದ ನಿರ್ಗಮಿಸಿ.
+
+`ccam list --json` ಪ್ರತಿ ಖಾತೆಯನ್ನು ಅದರ ಸ್ಲಾಟ್, ಶಾರ್ಟ್‌ಕಟ್, ಇಮೇಲ್ ಮತ್ತು ಫೋಲ್ಡರ್ ಜೊತೆ ಮುದ್ರಿಸುತ್ತದೆ. ಅದರ `share` ಆಬ್ಜೆಕ್ಟ್ ಪ್ರತಿ ಐಟಂ (`mcp`, `settings`, `memory`, `extensions`, `history`) ಅನ್ನು ಗುಂಪಿನ ಹೆಸರಿಗೆ ಅಥವಾ `local` ಗೆ ಹೊಂದಿಸುತ್ತದೆ.
 
 ## ಶಾರ್ಟ್‌ಕಟ್‌ಗಳು
 
@@ -81,6 +85,8 @@ ccam mcp import work gh
 ccam mcp remove fs
 ```
 
+`ccam mcp import <account>` ಆ ಖಾತೆಯಲ್ಲಿ ಮಾತ್ರ ಇರುವ ಸರ್ವರ್‌ಗಳನ್ನು ಅದರ ಗುಂಪಿಗೆ ಸ್ಥಳಾಂತರಿಸುತ್ತದೆ. ಗುಂಪು ಈಗಾಗಲೇ ಬೇರೆ ವ್ಯಾಖ್ಯಾನಕ್ಕಾಗಿ ಬಳಸುತ್ತಿರುವ ಹೆಸರಿನ ಸರ್ವರ್ ಅನ್ನು ಬಿಟ್ಟುಬಿಡಲಾಗುತ್ತದೆ; ಗುಂಪಿನ ನಕಲನ್ನು ಬದಲಾಯಿಸಲು `--force` ಸೇರಿಸಿ, ccam ಮೊದಲು ಅದರ ಬ್ಯಾಕಪ್ ತೆಗೆದುಕೊಳ್ಳುತ್ತದೆ.
+
 ## ಬಳಕೆ ಮತ್ತು ಬದಲಾವಣೆ
 
 ```sh
@@ -100,6 +106,7 @@ ccam statusline install
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam version         # also: ccam -v, ccam --version
 ```
 
 ccam ಅನ್ನು ಬದಲಾಯಿಸುವ ಮೊದಲು `ccam update` ಬಿಡುಗಡೆಯ SHA-256 ಚೆಕ್‌ಸಮ್ ಅನ್ನು ಪರಿಶೀಲಿಸುತ್ತದೆ, ಮತ್ತು `--version v0.2.0` ಒಂದು ನಿರ್ದಿಷ್ಟ ಬಿಡುಗಡೆಯನ್ನು ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡುತ್ತದೆ. `.deb` ಪ್ಯಾಕೇಜ್‌ನಿಂದ ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಿದ ccam ಅನ್ನು ಬದಲಿಗೆ apt ಮೂಲಕ ಅಪ್‌ಡೇಟ್ ಮಾಡಲಾಗುತ್ತದೆ. [ಅಪ್‌ಡೇಟ್](/docs/install#update) ನೋಡಿ.

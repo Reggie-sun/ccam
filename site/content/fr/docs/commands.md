@@ -4,10 +4,10 @@ description: "Toutes les commandes et options de ccam, de ccam add et ccam <name
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a5a33b1a2f4
+sourceHash: 8ac012f7f7cf
 ---
 
-Placez `--dry-run` avant n'importe quelle commande pour voir ce qu'elle ferait sans l'exécuter, par exemple `ccam --dry-run work`.
+Placez `--dry-run` avant une commande pour voir ce qu'elle ferait sans l'exécuter, par exemple `ccam --dry-run work`. Cela fonctionne au démarrage de Claude Code (`ccam <name>`, `ccam run`, `ccam next`) et avec `share`, `migrate`, `shortcut`, `update` et `doctor --fix`. Les autres commandes qui modifient quelque chose la refusent au lieu de s'exécuter.
 
 <!-- commands -->
 
@@ -32,6 +32,10 @@ ccam import ~/.claude-old --name old
 ```
 
 Sans dossier, `ccam import` cherche `~/.claude` et `~/.claude-*` et pose la question pour chacun. Les dossiers importés sont enregistrés là où ils se trouvent ; ccam ne déplace ni ne copie jamais une connexion.
+
+`ccam rename`, `ccam remove` et `ccam share` refusent de modifier un compte tant que Claude Code s'exécute avec ce compte. Quittez d'abord la session.
+
+`ccam list --json` affiche chaque compte avec son numéro d'emplacement, son raccourci, son adresse e-mail et son dossier. Son objet `share` associe chaque élément (`mcp`, `settings`, `memory`, `extensions`, `history`) à un nom de groupe ou à `local`.
 
 ## Raccourcis
 
@@ -81,6 +85,8 @@ ccam mcp import work gh
 ccam mcp remove fs
 ```
 
+`ccam mcp import <account>` déplace dans son groupe les serveurs que seul ce compte possède. Un serveur dont le groupe utilise déjà le nom pour une autre définition est ignoré ; ajoutez `--force` pour remplacer la copie du groupe, que ccam sauvegarde d'abord.
+
 ## Utilisation et changement de compte
 
 ```sh
@@ -100,6 +106,7 @@ ccam statusline install
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam version         # also: ccam -v, ccam --version
 ```
 
 `ccam update` vérifie la somme de contrôle SHA-256 de la version avant de remplacer ccam, et `--version v0.2.0` installe une version précise. Un ccam installé depuis le paquet `.deb` se met à jour avec apt. Voir [Mettre à jour](/docs/install#update).

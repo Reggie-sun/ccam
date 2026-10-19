@@ -4,7 +4,7 @@ description: Visualizza l'utilizzo su 5 ore e settimanale di ogni account Claude
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: 8ab41501c548
+sourceHash: 9aebb54d40e2
 ---
 
 `ccam usage` mostra quanta parte dei limiti su 5 ore e settimanali ha usato ogni account. `ccam next --auto` apre l'account con più margine, e `--continue` porta con sé la conversazione corrente.
@@ -24,7 +24,7 @@ Le colonne sono: account, utilizzo su 5 ore, tempo mancante all'azzeramento, uti
 
 ccam interroga l'endpoint di utilizzo di Anthropic per tutti gli account contemporaneamente, usando il login di ciascun account. Attende al massimo 3 secondi per account e mostra ogni account appena risponde.
 
-Questo endpoint non è documentato pubblicamente e potrebbe cambiare. Quando una richiesta non va a buon fine, ccam mostra gli ultimi numeri noti e li segna come presi dalla cache. `ccam doctor` ti avvisa se il formato della risposta è cambiato.
+Questo endpoint non è documentato pubblicamente e potrebbe cambiare. Quando una richiesta non va a buon fine, ccam mostra gli ultimi numeri noti e li segna come presi dalla cache. Una finestra che si è azzerata dopo il salvataggio di quei numeri mostra 0%. `ccam doctor` ti avvisa se il formato della risposta è cambiato.
 
 I numeri ottenuti meno di 60 secondi prima vengono riutilizzati. Opzioni:
 

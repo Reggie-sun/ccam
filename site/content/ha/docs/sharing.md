@@ -4,7 +4,7 @@ description: Yadda ccam ke raba sabobin MCP, settings.json, CLAUDE.md, agents, s
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: ccbb2c5e97bc
+sourceHash: 0864ea87c3e9
 ---
 
 Kowane asusu yana riƙe bayanan shigarsa. Duk sauran abubuwa za a iya raba su ɗaya bayan ɗaya: ccam yana mayar da fayil ko foldar asusun mahaɗi zuwa foldar rukuni da aka raba, don haka canjin da aka yi a asusu ɗaya yana bayyana a duk asusan wannan rukunin.
@@ -45,6 +45,8 @@ Idan asusu ya fara raba wani abu, ccam:
 5. yana maye gurbin ainihin da mahaɗi zuwa rukunin.
 
 Ana sanya wa fayilolin tattaunawa suna bisa session ID ɗinsu, don haka tarihi daga asusai da dama yana haɗuwa ba tare da rikici ba.
+
+ccam ba ya canza rabawa yayin da Claude Code ke gudana a matsayin asusun, saboda zaman yana ci gaba da rubutu a cikin fayilolin da ake motsawa. Ka rufe shi tukuna.
 
 ## Kashe rabawa
 
@@ -119,6 +121,8 @@ Sabar da ka ƙara a cikin zama (session) da `claude mcp add` ana ajiye ta ga wan
 ```sh
 ccam mcp import work gh
 ```
+
+Idan rukunin ya riga yana da wata sabar daban mai wannan sunan, ccam yana tsallake ta kuma yana faɗa. `--force` yana maye gurbin sabar rukunin kuma yana ajiye tsohon `mcp.json` a cikin foldar `.ccam-backup/` na rukunin.
 
 Sabobin MCP da ke shiga da OAuth suna ajiye token ɗinsu tare da bayanan shigar asusun, don haka ka ba su izini sau ɗaya a kowane asusu.
 

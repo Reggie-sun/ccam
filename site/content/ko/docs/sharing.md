@@ -4,7 +4,7 @@ description: ccam이 로그인 정보는 계정마다 분리해 둔 채 MCP 서�
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: ccbb2c5e97bc
+sourceHash: 0864ea87c3e9
 ---
 
 로그인 정보는 계정마다 따로 유지됩니다. 그 밖의 항목은 하나씩 골라 공유할 수 있습니다. ccam은 계정의 파일이나 폴더를 공유 그룹 폴더에 링크하므로, 한 계정에서 바꾼 내용이 같은 그룹의 모든 계정에 반영됩니다.
@@ -45,6 +45,8 @@ ccam share side --history team
 5. 원본이 있던 자리에 그룹을 가리키는 링크를 둡니다.
 
 대화 파일 이름은 세션 ID를 따르므로, 여러 계정의 대화 내역을 합쳐도 충돌하지 않습니다.
+
+Claude Code가 그 계정으로 실행 중일 때는 ccam이 공유 설정을 바꾸지 않습니다. 세션이 옮기려는 파일에 계속 쓰기 때문입니다. 먼저 세션을 종료하세요.
 
 ## 공유 끄기
 
@@ -119,6 +121,8 @@ ccam mcp list
 ```sh
 ccam mcp import work gh
 ```
+
+그룹에 같은 이름의 다른 서버가 이미 있으면 ccam은 그 서버를 건너뛰고 그 사실을 알려 줍니다. `--force`를 붙이면 그룹의 서버를 바꾸고, 이전 `mcp.json`은 그룹의 `.ccam-backup/` 폴더에 보관합니다.
 
 OAuth로 로그인하는 MCP 서버는 토큰을 계정의 로그인 정보와 함께 저장하므로, 계정마다 한 번씩 인증해야 합니다.
 

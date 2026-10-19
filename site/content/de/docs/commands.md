@@ -4,10 +4,10 @@ description: Alle ccam-Befehle und -Optionen, von ccam add und ccam <name> bis z
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a5a33b1a2f4
+sourceHash: 8ac012f7f7cf
 ---
 
-Setze `--dry-run` vor einen Befehl, um zu sehen, was er tun würde, ohne es zu tun, zum Beispiel `ccam --dry-run work`.
+Setze `--dry-run` vor einen Befehl, um zu sehen, was er tun würde, ohne es zu tun, zum Beispiel `ccam --dry-run work`. Das funktioniert beim Starten von Claude Code (`ccam <name>`, `ccam run`, `ccam next`) sowie mit `share`, `migrate`, `shortcut`, `update` und `doctor --fix`. Andere Befehle, die etwas ändern, lehnen die Option ab, statt zu laufen.
 
 <!-- commands -->
 
@@ -32,6 +32,10 @@ ccam import ~/.claude-old --name old
 ```
 
 `ccam import` ohne Ordner sucht nach `~/.claude` und `~/.claude-*` und fragt bei jedem nach. Importierte Ordner werden dort registriert, wo sie liegen; ccam verschiebt oder kopiert nie eine Anmeldung.
+
+`ccam rename`, `ccam remove` und `ccam share` ändern ein Konto nicht, solange Claude Code mit diesem Konto läuft. Beende zuerst die Sitzung.
+
+`ccam list --json` gibt jedes Konto mit Slot-Nummer, Kurzbefehl, E-Mail-Adresse und Ordner aus. Das Objekt `share` ordnet jedem Element (`mcp`, `settings`, `memory`, `extensions`, `history`) einen Gruppennamen oder `local` zu.
 
 ## Kurzbefehle
 
@@ -81,6 +85,8 @@ ccam mcp import work gh
 ccam mcp remove fs
 ```
 
+`ccam mcp import <account>` verschiebt die Server, die nur dieses Konto hat, in seine Gruppe. Ein Server, dessen Namen die Gruppe bereits für eine andere Definition verwendet, wird übersprungen; mit `--force` ersetzt du die Kopie der Gruppe, die ccam vorher sichert.
+
 ## Nutzung und Wechseln
 
 ```sh
@@ -100,6 +106,7 @@ ccam statusline install
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam version         # also: ccam -v, ccam --version
 ```
 
 `ccam update` prüft die SHA-256-Prüfsumme des Releases, bevor es ccam ersetzt, und `--version v0.2.0` installiert ein bestimmtes Release. Ein aus dem `.deb`-Paket installiertes ccam aktualisierst du stattdessen mit apt. Siehe [Aktualisieren](/docs/install#update).

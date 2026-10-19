@@ -4,7 +4,7 @@ description: Ga amfanin awa 5 da na mako na kowane asusun Claude Code da ccam us
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: 8ab41501c548
+sourceHash: 9aebb54d40e2
 ---
 
 `ccam usage` yana nuna nawa kowane asusu ya yi amfani da shi daga iyakar awa 5 da ta mako. `ccam next --auto` yana buɗe asusun da ya fi sauran sarari, kuma `--continue` yana ɗauko tattaunawar yanzu zuwa can.
@@ -24,7 +24,7 @@ Ginshiƙan su ne: asusu, amfanin awa 5, lokacin da ya rage kafin a sake saita sh
 
 ccam yana tambayar endpoint na amfani na Anthropic game da kowane asusu a lokaci ɗaya, ta amfani da bayanan shigar kowane asusu. Yana jira daƙiƙa 3 a mafi yawa ga kowane asusu, kuma yana nuna kowane asusu da zarar ya amsa.
 
-Ba a rubuta bayanin wannan endpoint a bainar jama'a ba, kuma yana iya canzawa. Idan buƙata ta gaza, ccam yana nuna lambobin ƙarshe da aka sani kuma yana yi musu alama a matsayin cache. `ccam doctor` yana gaya maka idan tsarin amsar ya canza.
+Ba a rubuta bayanin wannan endpoint a bainar jama'a ba, kuma yana iya canzawa. Idan buƙata ta gaza, ccam yana nuna lambobin ƙarshe da aka sani kuma yana yi musu alama a matsayin cache. Taga (window) da ya sake saita tun bayan da aka ajiye waɗannan lambobin yana nuna 0%. `ccam doctor` yana gaya maka idan tsarin amsar ya canza.
 
 Ana sake amfani da lambobin da aka samo ƙasa da daƙiƙa 60 da suka wuce. Zaɓuɓɓuka:
 

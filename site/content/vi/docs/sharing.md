@@ -4,7 +4,7 @@ description: "Cách ccam dùng chung máy chủ MCP, settings.json, CLAUDE.md, a
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: ccbb2c5e97bc
+sourceHash: 0864ea87c3e9
 ---
 
 Mỗi tài khoản giữ thông tin đăng nhập riêng. Mọi thứ khác đều có thể dùng chung theo từng mục: ccam liên kết tệp hoặc thư mục của tài khoản đến một thư mục nhóm dùng chung, nên thay đổi thực hiện ở một tài khoản sẽ xuất hiện ở mọi tài khoản trong nhóm đó.
@@ -45,6 +45,8 @@ Khi một tài khoản bắt đầu dùng chung một mục, ccam sẽ:
 5. thay bản gốc bằng một liên kết đến nhóm.
 
 Các tệp hội thoại được đặt tên theo ID phiên, nên lịch sử từ nhiều tài khoản được gộp lại mà không xung đột.
+
+ccam không thay đổi việc dùng chung khi Claude Code đang chạy bằng tài khoản đó, vì phiên vẫn tiếp tục ghi vào các tệp đang được di chuyển. Hãy thoát phiên trước.
 
 ## Tắt dùng chung
 
@@ -119,6 +121,8 @@ Máy chủ bạn thêm trong một phiên bằng `claude mcp add` chỉ được
 ```sh
 ccam mcp import work gh
 ```
+
+Nếu nhóm đã có một máy chủ khác cùng tên, ccam sẽ bỏ qua và thông báo cho bạn. `--force` thay máy chủ của nhóm và giữ `mcp.json` cũ trong thư mục `.ccam-backup/` của nhóm.
 
 Các máy chủ MCP đăng nhập bằng OAuth lưu token cùng với thông tin đăng nhập của tài khoản, vì vậy hãy cấp quyền cho chúng một lần trong mỗi tài khoản.
 

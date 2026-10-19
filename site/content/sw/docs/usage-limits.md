@@ -4,7 +4,7 @@ description: Ona matumizi ya saa 5 na ya wiki ya kila akaunti ya Claude Code kwa
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: 8ab41501c548
+sourceHash: 9aebb54d40e2
 ---
 
 `ccam usage` huonyesha kiasi cha vikomo vya saa 5 na vya wiki ambacho kila akaunti imetumia. `ccam next --auto` hufungua akaunti yenye nafasi kubwa zaidi, na `--continue` huhamisha mazungumzo ya sasa.
@@ -24,7 +24,7 @@ Safu ni: akaunti, matumizi ya saa 5, muda hadi yaanze upya, matumizi ya wiki, mu
 
 ccam huuliza endpoint ya matumizi ya Anthropic kwa ajili ya kila akaunti kwa wakati mmoja, ikitumia taarifa za kuingia za kila akaunti yenyewe. Husubiri sekunde 3 kwa akaunti kwa kiwango cha juu na huonyesha kila akaunti mara tu inapojibu.
 
-Endpoint hii haijaandikiwa nyaraka hadharani na inaweza kubadilika. Ombi linaposhindwa, ccam huonyesha namba za mwisho zinazojulikana na kuziwekea alama kuwa ni za cache. `ccam doctor` hukujulisha ikiwa muundo wa jibu umebadilika.
+Endpoint hii haijaandikiwa nyaraka hadharani na inaweza kubadilika. Ombi linaposhindwa, ccam huonyesha namba za mwisho zinazojulikana na kuziwekea alama kuwa ni za cache. Kipindi cha muda kilichoanza upya tangu namba hizo zihifadhiwe huonyesha 0%. `ccam doctor` hukujulisha ikiwa muundo wa jibu umebadilika.
 
 Namba zilizopatikana chini ya sekunde 60 zilizopita hutumiwa tena. Chaguo:
 

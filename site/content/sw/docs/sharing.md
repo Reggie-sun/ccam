@@ -4,7 +4,7 @@ description: Jinsi ccam inavyoshiriki seva za MCP, settings.json, CLAUDE.md, age
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: ccbb2c5e97bc
+sourceHash: 0864ea87c3e9
 ---
 
 Kila akaunti huhifadhi taarifa zake za kuingia. Kila kitu kingine kinaweza kushirikiwa kipengele kwa kipengele: ccam huweka kiungo kutoka faili au folda ya akaunti kwenda folda ya kikundi kinachoshirikiwa, ili badiliko lililofanywa katika akaunti moja lionekane katika akaunti zote za kikundi hicho.
@@ -45,6 +45,8 @@ Akaunti inapoanza kushiriki kipengele, ccam:
 5. hubadilisha faili asili kwa kiungo kinachoelekea kwenye kikundi.
 
 Faili za mazungumzo hupewa majina kwa kufuata session ID yake, kwa hiyo historia kutoka akaunti kadhaa huungana bila migongano.
+
+ccam haibadilishi kushiriki wakati Claude Code inaendeshwa kama akaunti hiyo, kwa sababu kipindi kinaendelea kuandika kwenye faili zinazohamishwa. Kifunge kwanza.
 
 ## Kuzima kushiriki
 
@@ -119,6 +121,8 @@ Seva unayoongeza ndani ya kipindi (session) kwa `claude mcp add` huhifadhiwa kwa
 ```sh
 ccam mcp import work gh
 ```
+
+Ikiwa kikundi tayari kina seva tofauti yenye jina hilo, ccam huiruka na kukujulisha. `--force` hubadilisha seva ya kikundi na huhifadhi `mcp.json` ya zamani kwenye folda ya `.ccam-backup/` ya kikundi.
 
 Seva za MCP zinazoingia kwa OAuth huhifadhi tokeni zao pamoja na taarifa za kuingia za akaunti, kwa hiyo ziidhinishe mara moja katika kila akaunti.
 

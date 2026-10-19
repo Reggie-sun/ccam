@@ -4,7 +4,7 @@ description: Consulta el uso de 5 horas y semanal de cada cuenta de Claude Code 
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: 8ab41501c548
+sourceHash: 9aebb54d40e2
 ---
 
 `ccam usage` muestra cuánto ha usado cada cuenta de sus límites de 5 horas y semanal. `ccam next --auto` abre la cuenta con más margen, y `--continue` lleva consigo la conversación actual.
@@ -24,7 +24,7 @@ Las columnas son: cuenta, uso de 5 horas, tiempo hasta que se restablece, uso se
 
 ccam consulta el endpoint de uso de Anthropic para todas las cuentas al mismo tiempo, con el inicio de sesión propio de cada cuenta. Espera como máximo 3 segundos por cuenta y muestra cada cuenta en cuanto responde.
 
-Este endpoint no está documentado públicamente y puede cambiar. Cuando una solicitud falla, ccam muestra las últimas cifras conocidas y las marca como almacenadas en caché. `ccam doctor` te avisa si el formato de la respuesta cambió.
+Este endpoint no está documentado públicamente y puede cambiar. Cuando una solicitud falla, ccam muestra las últimas cifras conocidas y las marca como almacenadas en caché. Una ventana que se haya reiniciado desde que se guardaron esas cifras muestra 0%. `ccam doctor` te avisa si el formato de la respuesta cambió.
 
 Las cifras obtenidas hace menos de 60 segundos se reutilizan. Opciones:
 

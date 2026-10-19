@@ -4,10 +4,10 @@ description: Все команды и параметры ccam, от ccam add и 
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a5a33b1a2f4
+sourceHash: 8ac012f7f7cf
 ---
 
-Поставьте `--dry-run` перед любой командой, чтобы увидеть, что она сделает, ничего не выполняя, например `ccam --dry-run work`.
+Поставьте `--dry-run` перед командой, чтобы увидеть, что она сделает, ничего не выполняя, например `ccam --dry-run work`. Это работает при запуске Claude Code (`ccam <name>`, `ccam run`, `ccam next`) и с `share`, `migrate`, `shortcut`, `update` и `doctor --fix`. Другие команды, которые что-то меняют, отклоняют этот флаг и не выполняются.
 
 <!-- commands -->
 
@@ -32,6 +32,10 @@ ccam import ~/.claude-old --name old
 ```
 
 `ccam import` без указания папки ищет `~/.claude` и `~/.claude-*` и спрашивает про каждую найденную. Импортированные папки регистрируются там, где они находятся; ccam никогда не перемещает и не копирует данные входа.
+
+`ccam rename`, `ccam remove` и `ccam share` не изменяют аккаунт, пока Claude Code работает от его имени. Сначала завершите сессию.
+
+`ccam list --json` выводит все аккаунты с номером (слотом), короткой командой, email и папкой каждого. Объект `share` в выводе сопоставляет каждому элементу (`mcp`, `settings`, `memory`, `extensions`, `history`) имя группы или `local`.
 
 ## Короткие команды
 
@@ -81,6 +85,8 @@ ccam mcp import work gh
 ccam mcp remove fs
 ```
 
+`ccam mcp import <account>` переносит в группу аккаунта серверы, которые есть только у этого аккаунта. Сервер, чьё имя в группе уже занято другим определением, пропускается; добавьте `--force`, чтобы заменить копию в группе, — ccam сначала сохранит её резервную копию.
+
 ## Использование и переключение
 
 ```sh
@@ -100,6 +106,7 @@ ccam statusline install
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam version         # also: ccam -v, ccam --version
 ```
 
 `ccam update` проверяет контрольную сумму SHA-256 выпуска, прежде чем заменить ccam, а `--version v0.2.0` устанавливает определённый выпуск. ccam, установленный из пакета `.deb`, обновляется через apt. Подробности в разделе [обновление](/docs/install#update).

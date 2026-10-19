@@ -4,7 +4,7 @@ description: Jak ccam współdzieli serwery MCP, settings.json, CLAUDE.md, agent
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: ccbb2c5e97bc
+sourceHash: 0864ea87c3e9
 ---
 
 Każde konto ma własny login. Wszystko inne można współdzielić element po elemencie: ccam linkuje plik lub folder konta do współdzielonego folderu grupy, więc zmiana wprowadzona na jednym koncie pojawia się na wszystkich kontach tej grupy.
@@ -45,6 +45,8 @@ Gdy konto zaczyna współdzielić element, ccam:
 5. zastępuje oryginał linkiem do grupy.
 
 Pliki rozmów mają nazwy według identyfikatora sesji, więc historie z kilku kont łączą się bez konfliktów.
+
+ccam nie zmienia współdzielenia, gdy Claude Code działa jako to konto, bo sesja dalej zapisuje do przenoszonych plików. Najpierw ją zakończ.
 
 ## Wyłączanie współdzielenia
 
@@ -119,6 +121,8 @@ Serwer dodany w trakcie sesji przez `claude mcp add` jest zapisywany tylko dla t
 ```sh
 ccam mcp import work gh
 ```
+
+Jeśli grupa ma już inny serwer o tej nazwie, ccam go pomija i o tym informuje. `--force` zastępuje serwer grupy i zachowuje stary `mcp.json` w folderze `.ccam-backup/` grupy.
 
 Serwery MCP logujące się przez OAuth przechowują swoje tokeny razem z loginem konta, więc autoryzuj je raz na każdym koncie.
 

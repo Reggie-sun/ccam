@@ -4,7 +4,7 @@ description: Tüm Claude Code hesaplarının 5 saatlik ve haftalık kullanımın
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: 8ab41501c548
+sourceHash: 9aebb54d40e2
 ---
 
 `ccam usage`, her hesabın 5 saatlik ve haftalık limitlerinin ne kadarını kullandığını gösterir. `ccam next --auto` en çok pay kalan hesabı açar, `--continue` ise mevcut konuşmayı o hesaba taşır.
@@ -24,7 +24,7 @@ Sütunlar şunlardır: hesap, 5 saatlik kullanım, sıfırlanmaya kalan süre, h
 
 ccam, her hesabın kendi giriş bilgilerini kullanarak tüm hesaplar için aynı anda Anthropic'in kullanım uç noktasına sorgu gönderir. Hesap başına en fazla 3 saniye bekler ve her hesabı yanıt verir vermez gösterir.
 
-Bu uç nokta herkese açık olarak belgelenmemiştir ve değişebilir. Bir istek başarısız olduğunda ccam bilinen son sayıları gösterir ve bunları önbellekten alınmış olarak işaretler. Yanıt biçimi değiştiyse `ccam doctor` bunu size bildirir.
+Bu uç nokta herkese açık olarak belgelenmemiştir ve değişebilir. Bir istek başarısız olduğunda ccam bilinen son sayıları gösterir ve bunları önbellekten alınmış olarak işaretler. Bu sayılar kaydedildikten sonra sıfırlanmış bir pencere %0 gösterir. Yanıt biçimi değiştiyse `ccam doctor` bunu size bildirir.
 
 60 saniyeden daha kısa süre önce alınan sayılar yeniden kullanılır. Seçenekler:
 

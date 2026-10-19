@@ -4,7 +4,7 @@ description: "Comment ccam partage serveurs MCP, settings.json, CLAUDE.md, agent
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: ccbb2c5e97bc
+sourceHash: 0864ea87c3e9
 ---
 
 Chaque compte conserve sa propre connexion. Tout le reste peut être partagé élément par élément : ccam relie le fichier ou le dossier du compte à un dossier de groupe partagé, si bien qu'une modification faite dans un compte apparaît dans tous les comptes de ce groupe.
@@ -45,6 +45,8 @@ Quand un compte commence à partager un élément, ccam :
 5. remplace l'original par un lien vers le groupe.
 
 Les fichiers de conversation portent le nom de leur ID de session : les historiques de plusieurs comptes se combinent donc sans conflit.
+
+ccam ne modifie pas le partage tant que Claude Code s'exécute avec le compte, car la session continue d'écrire dans les fichiers en cours de déplacement. Quittez-la d'abord.
 
 ## Désactiver le partage
 
@@ -119,6 +121,8 @@ Un serveur que vous ajoutez pendant une session avec `claude mcp add` est enregi
 ```sh
 ccam mcp import work gh
 ```
+
+Si le groupe possède déjà un autre serveur portant ce nom, ccam l'ignore et vous le signale. `--force` remplace le serveur du groupe et conserve l'ancien `mcp.json` dans le dossier `.ccam-backup/` du groupe.
 
 Les serveurs MCP qui se connectent avec OAuth stockent leurs jetons avec la connexion du compte : autorisez-les donc une fois dans chaque compte.
 

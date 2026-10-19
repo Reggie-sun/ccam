@@ -4,10 +4,10 @@ description: كل أوامر ccam وخياراتها، من ccam add وccam <nam
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a5a33b1a2f4
+sourceHash: 8ac012f7f7cf
 ---
 
-ضع `--dry-run` قبل أي أمر لترى ما سيفعله دون أن يفعله، مثلًا `ccam --dry-run work`.
+ضع `--dry-run` قبل أمر لترى ما سيفعله دون أن يفعله، مثلًا `ccam --dry-run work`. يعمل ذلك عند تشغيل Claude Code (`ccam <name>` و`ccam run` و`ccam next`) ومع `share` و`migrate` و`shortcut` و`update` و`doctor --fix`. أما الأوامر الأخرى التي تغيّر شيئًا فترفضه بدلًا من أن تعمل.
 
 <!-- commands -->
 
@@ -32,6 +32,10 @@ ccam import ~/.claude-old --name old
 ```
 
 عند تشغيل `ccam import` دون تحديد مجلد، يبحث عن `~/.claude` و`~/.claude-*` ويسألك عن كل واحد منها. تُسجَّل المجلدات المستوردة في أماكنها؛ ولا ينقل ccam أي تسجيل دخول أو ينسخه أبدًا.
+
+ترفض الأوامر `ccam rename` و`ccam remove` و`ccam share` تغيير حساب ما دام Claude Code يعمل بذلك الحساب. أنهِ الجلسة أولًا.
+
+يطبع `ccam list --json` كل حساب مع رقم خانته واختصاره وبريده الإلكتروني ومجلده. ويربط الكائن `share` كل عنصر (`mcp` و`settings` و`memory` و`extensions` و`history`) باسم مجموعة أو بالقيمة `local`.
 
 ## الأوامر المختصرة
 
@@ -81,6 +85,8 @@ ccam mcp import work gh
 ccam mcp remove fs
 ```
 
+ينقل `ccam mcp import <account>` الخوادم التي لا يملكها إلا ذلك الحساب إلى مجموعته. ويُتخطّى الخادم الذي تستخدم المجموعة اسمه بالفعل لتعريف مختلف؛ أضف `--force` لاستبدال نسخة المجموعة، ويحتفظ ccam بنسخة احتياطية منها أولًا.
+
 ## الاستخدام والتبديل
 
 ```sh
@@ -100,6 +106,7 @@ ccam statusline install
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam version         # also: ccam -v, ccam --version
 ```
 
 يتحقق `ccam update` من مجموع SHA-256 الخاص بالإصدار قبل أن يستبدل ccam، ويثبّت `--version v0.2.0` إصدارًا محددًا. أما ccam المثبّت من حزمة `.deb` فيُحدَّث باستخدام apt. راجع [التحديث](/docs/install#update).

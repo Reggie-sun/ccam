@@ -6,7 +6,7 @@ order: 3
 translation: source
 ---
 
-Put `--dry-run` before any command to see what it would do without doing it, for example `ccam --dry-run work`.
+Put `--dry-run` before a command to see what it would do without doing it, for example `ccam --dry-run work`. It works when starting Claude Code (`ccam <name>`, `ccam run`, `ccam next`) and with `share`, `migrate`, `shortcut`, `update` and `doctor --fix`. Other commands that change something refuse it instead of running.
 
 <!-- commands -->
 
@@ -31,6 +31,10 @@ ccam import ~/.claude-old --name old
 ```
 
 `ccam import` without a folder looks for `~/.claude` and `~/.claude-*` and asks about each one. Imported folders are registered where they are; ccam never moves or copies a login.
+
+`ccam rename`, `ccam remove` and `ccam share` refuse to change an account while Claude Code is running as that account. Quit the session first.
+
+`ccam list --json` prints every account with its slot, shortcut, email and folder. Its `share` object maps each item (`mcp`, `settings`, `memory`, `extensions`, `history`) to a group name or `local`.
 
 ## Shortcuts
 
@@ -80,6 +84,8 @@ ccam mcp import work gh
 ccam mcp remove fs
 ```
 
+`ccam mcp import <account>` moves the servers that only that account has into its group. A server whose name the group already uses for a different definition is skipped; add `--force` to replace the group's copy, which ccam backs up first.
+
 ## Usage and switching
 
 ```sh
@@ -99,6 +105,7 @@ ccam statusline install
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam version         # also: ccam -v, ccam --version
 ```
 
 `ccam update` checks the release's SHA-256 checksum before it replaces ccam, and `--version v0.2.0` installs a particular release. A ccam installed from the `.deb` package is updated with apt instead. See [update](/docs/install#update).
