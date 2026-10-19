@@ -59,7 +59,7 @@ The walk starts at the account used last and stops at the first logged-in accoun
 
 <!-- motion:next-auto -->
 
-`usage.Best()` takes the lowest 5-hour percentage and skips accounts at 100% or with unknown 5-hour usage. The lookup follows the rules of `ccam usage`: numbers younger than 60 seconds are reused, each account has 3 seconds, and an account that does not answer, or whose login has expired, is judged by its saved numbers. A saved window whose reset time has passed counts as 0%, so an account that has just reset is not passed over. `--auto` never renews tokens. Unlike plain rotation, `--auto` can choose the account you used last if it still has the most room.
+`usage.Best()` takes the lowest 5-hour percentage and skips accounts at 100% or with unknown 5-hour usage. The lookup follows the rules of `ccam usage`: numbers younger than 60 seconds are reused, each account has 3 seconds, and an account that does not answer, or whose login has expired, is judged by its saved numbers. A saved window whose reset time has passed counts as 0%, so an account whose window has reset since is not passed over. `--auto` never renews tokens. Unlike plain rotation, `--auto` can choose the account you used last if it still has the most room.
 
 ### --continue
 

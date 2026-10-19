@@ -31,7 +31,7 @@ $ ccam usage
 → Most headroom: personal   (open it with ccam next --auto)
 ```
 
-On a terminal the table appears at once with `fetching…` in each row, and each row is redrawn as its account answers. `As of` says how old the numbers are; `(cached)` means they were not fetched just now. The last line names the account with the lowest 5-hour usage below 100%, and only appears when you have more than one account. An account that is not logged in shows `not logged in → ccam login <name>`, and an API key account shows `no limits (API)`.
+On a terminal the table appears at once with `fetching…` in each row, and each row is redrawn as its account answers. `As of` says how old the numbers are; `(cached)` means they come from a saved file, not from the endpoint. The last line names the account with the lowest 5-hour usage below 100%, and only appears when you have more than one account. An account that is not logged in shows `not logged in → ccam login <name>`, and an API key account shows `no limits (API)`.
 
 After `ccam statusline install`, Claude Code shows a line such as `[work] · Opus · 5h 24% · 7d 41%`.
 
