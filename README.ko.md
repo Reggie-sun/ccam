@@ -41,6 +41,8 @@ ccam next --continue # 한도에 걸리면 다음 계정에서 같은 대화 이
 
 이미 쓰던 `~/.claude`가 있으면 `ccam import`로 제자리에 등록합니다 (옮기거나 복사하지 않음).
 
+쓰던 설정을 공유 설정의 출발점으로 삼으려면 `ccam migrate`를 실행합니다. `~/.claude`의 settings.json, CLAUDE.md, 확장 기능, MCP 서버를 공유 그룹으로 복사합니다. 원래 폴더는 읽기만 하고, 대화 내역은 `--history`를 줄 때만 복사합니다. 복사할 내용을 먼저 보여주고 확인을 받습니다 (`ccam --dry-run migrate`는 보여주기만 함).
+
 ## 명령
 
 | 명령 | 하는 일 |
@@ -58,6 +60,7 @@ ccam next --continue # 한도에 걸리면 다음 계정에서 같은 대화 이
 | `ccam login\|logout <이름>` | 다시 로그인 / 토큰 삭제 |
 | `ccam rename` / `ccam remove` | 이름 변경 / 삭제 (폴더는 휴지통으로) |
 | `ccam import [폴더]` | 기존 폴더 등록 |
+| `ccam migrate [폴더]` | 기존 설정(기본 `~/.claude`)을 공유 그룹으로 복사. 원본은 바꾸지 않음. `--group`, 항목 옵션, `--history`, `--yes` |
 | `ccam doctor [--fix]` | 링크·권한·로그인·버전·사용량 형식 점검과 수리 |
 | `ccam statusline install` | Claude Code 상태줄에 `[account] · model · 5h N%` 표시 |
 | `ccam completion bash\|zsh` | 자동완성 |

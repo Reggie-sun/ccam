@@ -14,6 +14,7 @@ import (
 
 	"github.com/jhyunwoo/ccam/internal/config"
 	"github.com/jhyunwoo/ccam/internal/launcher"
+	"github.com/jhyunwoo/ccam/internal/migrate"
 	"github.com/jhyunwoo/ccam/internal/profile"
 	"github.com/jhyunwoo/ccam/internal/shim"
 	"github.com/jhyunwoo/ccam/internal/tui"
@@ -92,6 +93,9 @@ func addProfile(e *env, name string, share config.Share, login bool) error {
 		email = "not logged in"
 	}
 	e.printf("✓ %s (%s) added — shortcut: claude%d\n", name, email, prof.Slot)
+	if claudeDir := filepath.Join(e.paths.Home, ".claude"); len(cfg.Profiles) == 1 && migrate.HasContent(claudeDir) {
+		e.printf("Tip: run `ccam migrate` to copy your existing Claude Code settings (%s) into the shared settings.\n", claudeDir)
+	}
 	return nil
 }
 

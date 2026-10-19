@@ -36,6 +36,8 @@ ccam next --continue # out of quota? continue the same conversation on the next 
 
 An existing `~/.claude` can be registered in place with `ccam import` (nothing is moved or copied).
 
+To start the shared settings from the setup you already have, `ccam migrate` copies `~/.claude`'s settings.json, CLAUDE.md, extensions and MCP servers into the shared group. The original folder is only read; conversation history is copied only with `--history`. It prints the plan and asks first (`ccam --dry-run migrate` only prints it).
+
 ## Commands
 
 | Command | What it does |
@@ -53,6 +55,7 @@ An existing `~/.claude` can be registered in place with `ccam import` (nothing i
 | `ccam login\|logout <name>` | Log in again / remove the token |
 | `ccam rename` / `ccam remove` | Rename / remove (folder goes to a trash folder) |
 | `ccam import [dir]` | Register an existing config folder |
+| `ccam migrate [dir]` | Copy an existing setup (default `~/.claude`) into the shared group; `--group`, item flags, `--history`, `--yes` |
 | `ccam doctor [--fix]` | Check links, permissions, login, version, usage format; repair |
 | `ccam statusline install` | Show `[account] · model · 5h N%` in Claude Code's status line |
 | `ccam completion bash\|zsh` | Shell completion |

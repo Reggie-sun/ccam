@@ -120,7 +120,7 @@ func DefaultShare() Share {
 var Reserved = map[string]bool{
 	"add": true, "list": true, "ls": true, "run": true, "use": true, "next": true,
 	"usage": true, "u": true, "share": true, "mcp": true, "login": true, "logout": true,
-	"rename": true, "remove": true, "rm": true, "import": true, "doctor": true,
+	"rename": true, "remove": true, "rm": true, "import": true, "migrate": true, "doctor": true,
 	"shims": true, "completion": true, "help": true, "version": true, "statusline": true,
 }
 

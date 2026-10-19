@@ -104,6 +104,7 @@ func subcommands(help string) []string {
 // fails if stdout or stderr contains Hangul.
 func TestOutputHasNoHangul(t *testing.T) {
 	h := newHarness(t)
+	h.seedClaude() // an existing ~/.claude: add's migrate hint, import, migrate
 	var outputs []string
 	run := func(stdin string, argv ...string) {
 		r := h.run(stdin, nil, argv...)
@@ -171,6 +172,9 @@ func TestOutputHasNoHangul(t *testing.T) {
 		{"ccam", "shims", "install"},
 		{"ccam", "statusline", "install"},
 		{"ccam", "import"},
+		{"ccam", "--dry-run", "migrate"},
+		{"ccam", "migrate", "--yes", "--history"},
+		{"ccam", "migrate", "--yes"},
 		{"ccam", "rename", "later", "spare"},
 		// Error paths.
 		{"ccam", "nobody"},
@@ -188,12 +192,16 @@ func TestOutputHasNoHangul(t *testing.T) {
 		{"ccam", "usage", "--source", "bogus"},
 		{"ccam", "completion", "fish"},
 		{"ccam", "import", "/nonexistent"},
+		{"ccam", "migrate", "/nonexistent"},
+		{"ccam", "migrate", "--group", "bad/group"},
 		{"ccam", "use"},
 		{"ccam", "bogus-command", "--bogus-flag"},
 		{"ccam", "list", "--bogus-flag"},
 	} {
 		run("", argv...)
 	}
+	os.WriteFile(filepath.Join(h.home, "home", ".claude", "settings.json"), []byte(`{"theme":"dark"}`), 0o600)
+	run("2\nn\n", "ccam", "migrate", "--settings") // conflict prompt, then no
 	run("n\n", "ccam", "remove", "spare")
 	run("y\n", "ccam", "remove", "spare")
 	run("", "ccam", "work", "-p", "hello")

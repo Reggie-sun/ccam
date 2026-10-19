@@ -174,22 +174,29 @@ func planAdopt(pl *Plan, item string, e Entry, mine, grp string) error {
 		return err
 	}
 	if !same {
-		c := &Conflict{Item: item, Entry: e, Mine: mine, Group: grp,
-			GroupSave: filepath.Join(pl.Dir, BackupDir, pl.stamp, "group", e.Name)}
-		switch {
-		case e.Name == "history.jsonl":
-			c.Candidates = []Resolution{MergeLines, KeepGroup, UseMine}
-		case strings.HasSuffix(e.Name, ".json"):
-			c.Candidates = []Resolution{KeepGroup, UseMine, MergeJSON}
-		default:
-			c.Candidates = []Resolution{KeepGroup, UseMine}
-		}
-		c.Choice = c.Candidates[0]
+		c := NewConflict(item, e, mine, grp, filepath.Join(pl.Dir, BackupDir, pl.stamp, "group", e.Name))
 		pl.Conflicts = append(pl.Conflicts, c)
 		pl.Steps = append(pl.Steps, Step{Op: OpWriteGroup, Item: item, Entry: e, From: mine, To: grp, Conflict: c})
 	}
 	pl.Steps = append(pl.Steps, Step{Op: OpBackup, Item: item, Entry: e, From: mine, To: pl.backupPath(e)})
 	return nil
+}
+
+// NewConflict lists the resolutions that fit the file and picks the first
+// as the default choice. groupSave is where the group copy is saved before
+// any choice other than KeepGroup overwrites it.
+func NewConflict(item string, e Entry, mine, group, groupSave string) *Conflict {
+	c := &Conflict{Item: item, Entry: e, Mine: mine, Group: group, GroupSave: groupSave}
+	switch {
+	case e.Name == "history.jsonl":
+		c.Candidates = []Resolution{MergeLines, KeepGroup, UseMine}
+	case strings.HasSuffix(e.Name, ".json"):
+		c.Candidates = []Resolution{KeepGroup, UseMine, MergeJSON}
+	default:
+		c.Candidates = []Resolution{KeepGroup, UseMine}
+	}
+	c.Choice = c.Candidates[0]
+	return c
 }
 
 func (pl *Plan) backupPath(e Entry) string {
@@ -318,6 +325,10 @@ func mergeDir(src, dst string) error {
 		return fsutil.Move(path, target)
 	})
 }
+
+// Resolve writes c.Choice into the group file, saving the group copy to
+// c.GroupSave first unless the group's version is kept.
+func (c *Conflict) Resolve() error { return resolve(c) }
 
 func resolve(c *Conflict) error {
 	if c.Choice == KeepGroup {

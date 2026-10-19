@@ -23,6 +23,7 @@
 - [ ] 세션 안 `claude mcp add` → 다음 실행 때 안내 → `ccam mcp import`
 - [ ] 대화 내역 공유 켜기 → 1번에서 대화 → 종료 → `ccam next --continue`가 2번에서 이어감
 - [ ] 같은 폴더에서 두 계정 동시 실행 시 경고
+- [ ] 기존 `~/.claude`(설정·CLAUDE.md·스킬·`~/.claude.json`의 MCP)가 있는 상태에서 첫 `ccam add` → `ccam migrate` 안내 한 줄. `ccam --dry-run migrate`로 계획 확인 → `ccam migrate` → 두 계정의 `/config`·`/mcp`·스킬 목록에 기존 설정이 보이고, `~/.claude`와 그냥 `claude`는 그대로
 
 ## 사용량
 
