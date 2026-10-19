@@ -1,0 +1,10 @@
+{
+  // www.ccam.dev redirects to ccam.dev (worker/www.ts).
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "ccam-www",
+  "main": "../worker/www.ts",
+  "compatibility_date": "2026-10-01",
+  "routes": [{ "pattern": "www.ccam.dev", "custom_domain": true }],
+  "workers_dev": false,
+  "preview_urls": false
+}

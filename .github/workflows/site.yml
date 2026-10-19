@@ -86,6 +86,9 @@ jobs:
       - name: Deploy to Cloudflare Workers
         if: env.CLOUDFLARE_API_TOKEN != ''
         run: pnpm exec wrangler deploy --config deploy/wrangler.jsonc
+      - name: Deploy the www.ccam.dev redirect
+        if: env.CLOUDFLARE_API_TOKEN != ''
+        run: pnpm exec wrangler deploy --config deploy/www.jsonc
       - name: Tell search engines about changed pages (IndexNow)
         if: env.CLOUDFLARE_API_TOKEN != ''
         run: node scripts/indexnow.ts

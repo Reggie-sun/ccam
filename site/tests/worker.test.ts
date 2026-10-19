@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import worker, { installScript, latest } from "../worker/index.ts";
+import www from "../worker/www.ts";
 
 test("install.sh comes from the latest release, else main", async () => {
   const seen: string[] = [];
@@ -29,4 +30,10 @@ test("latest redirects", () => {
 test("other paths go to static assets", async () => {
   const res = await worker.fetch(new Request("https://ccam.dev/en/"), { ASSETS: { fetch: async () => new Response("asset") } });
   assert.equal(await res.text(), "asset");
+});
+
+test("www redirects to the same path on ccam.dev", () => {
+  const res = www.fetch(new Request("http://www.ccam.dev/ko/docs/faq/?q=1"));
+  assert.equal(res.status, 301);
+  assert.equal(res.headers.get("Location"), "https://ccam.dev/ko/docs/faq/?q=1");
 });
