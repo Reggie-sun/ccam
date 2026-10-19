@@ -160,6 +160,30 @@ func NewLocal(profileDir, groupMCPPath, seenPath string) ([]string, error) {
 	return fresh, nil
 }
 
+func syncStampPath(stateDir string) string { return filepath.Join(stateDir, "sync-stamp") }
+
+// syncStamp identifies a version of the group's mcp.json.
+func syncStamp(mcpInfo os.FileInfo) string {
+	return strconv.FormatInt(mcpInfo.ModTime().UnixNano(), 10)
+}
+
+// Synced reports whether the profile's .claude.json holds the group's current
+// servers as the last Sync wrote them (true when the group has none).
+func Synced(groupDir, stateDir string) bool {
+	info, err := os.Stat(Path(groupDir))
+	if err != nil {
+		return true
+	}
+	data, err := os.ReadFile(syncStampPath(stateDir))
+	return err == nil && strings.SplitN(string(data), "\n", 2)[0] == syncStamp(info)
+}
+
+// HasCopy reports whether Sync has ever copied group servers into the profile.
+func HasCopy(stateDir string) bool {
+	_, err := os.Stat(syncStampPath(stateDir))
+	return err == nil
+}
+
 // Sync merges the group's servers into <profileDir>/.claude.json.
 // stateDir keeps the sync stamp, the names ccam manages, and backups.
 // The caller must make sure no Claude Code session runs in this profile.
@@ -168,8 +192,8 @@ func Sync(profileDir, groupDir, stateDir string) error {
 	if err != nil {
 		return nil // nothing shared yet
 	}
-	stampPath := filepath.Join(stateDir, "sync-stamp")
-	stamp := strconv.FormatInt(mcpInfo.ModTime().UnixNano(), 10)
+	stampPath := syncStampPath(stateDir)
+	stamp := syncStamp(mcpInfo)
 	var managed []string
 	if data, err := os.ReadFile(stampPath); err == nil {
 		lines := strings.Split(strings.TrimSpace(string(data)), "\n")

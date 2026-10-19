@@ -222,10 +222,37 @@ func addServer(e *env, groupFlag, name string, def json.RawMessage) error {
 		verb = "updated"
 	}
 	e.printf("✓ %s %s in group %s — applies from the next launch\n", name, verb, g)
+	refreshCopies(e, cfg, g, "")
 	if len(mcpGroups(cfg)) == 0 {
 		e.printf("Note: no account shares MCP yet. `ccam share <name> --mcp %s`\n", g)
 	}
 	return nil
+}
+
+// refreshCopies updates the accounts whose .claude.json holds a copy of the
+// group's servers, made when they started Remote Control. Under the flag
+// strategy an entry in .claude.json wins over --mcp-config, so a stale copy
+// would hide the change.
+func refreshCopies(e *env, cfg *config.Config, g, except string) {
+	if cfg.Strategy() == config.MCPSync {
+		return // every launch syncs
+	}
+	for i := range cfg.Profiles {
+		prof := &cfg.Profiles[i]
+		state := filepath.Join(e.paths.State, "mcp", prof.Name)
+		if prof.Name == except || prof.Share.Get("mcp") != g || !mcp.HasCopy(state) {
+			continue
+		}
+		if launcher.Running(e.paths, prof.Name) {
+			e.printf("Note: account %s is running, so the copy in its .claude.json stays as it was until its next Remote Control launch.\n", prof.Name)
+			continue
+		}
+		if err := mcp.Sync(profile.Dir(e.paths, prof), e.paths.GroupDir(g), state); err != nil {
+			e.printf("Note: could not update the copy in account %s's .claude.json: %v\n", prof.Name, err)
+			continue
+		}
+		e.printf("✓ Updated the copy in account %s's .claude.json (made for Remote Control)\n", prof.Name)
+	}
 }
 
 func mcpRemoveCmd(e *env, group *string) *cobra.Command {
@@ -255,6 +282,7 @@ func mcpRemoveCmd(e *env, group *string) *cobra.Command {
 				return err
 			}
 			e.printf("✓ %s removed from group %s\n", args[0], g)
+			refreshCopies(e, cfg, g, "")
 			return nil
 		},
 	}
@@ -336,6 +364,8 @@ func mcpImportCmd(e *env) *cobra.Command {
 			}
 			names = copied
 			e.printf("✓ Copied to group %s: %s\n", g, strings.Join(names, ", "))
+			// The account's own entries are dealt with below.
+			refreshCopies(e, cfg, g, prof.Name)
 			if keepLocal {
 				return nil
 			}

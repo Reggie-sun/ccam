@@ -158,3 +158,36 @@ func BenchmarkLaunchPath(b *testing.B) {
 		}
 	}
 }
+
+func TestRemoteControlCopiesMCPOnYes(t *testing.T) {
+	root := t.TempDir()
+	gdir, state, dir := filepath.Join(root, "group"), filepath.Join(root, "state"), filepath.Join(root, "profile")
+	os.MkdirAll(gdir, 0o700)
+	os.MkdirAll(dir, 0o700)
+	os.WriteFile(filepath.Join(gdir, "mcp.json"), []byte(`{"mcpServers":{"fs":{"command":"fs-mcp"}}}`), 0o600)
+	asked := 0
+	old := confirm
+	confirm = func(string) bool { asked++; return true }
+	t.Cleanup(func() { confirm = old })
+	pl := &Plan{Profile: &config.Profile{Name: "work"}, Dir: dir}
+
+	remoteControlMCP(pl, gdir, state, false, false)
+	if local, _ := os.ReadFile(filepath.Join(dir, ".claude.json")); asked != 1 || !strings.Contains(string(local), "fs-mcp") {
+		t.Fatalf("asked %d, .claude.json %s", asked, local)
+	}
+	remoteControlMCP(pl, gdir, state, false, false)
+	if asked != 1 {
+		t.Fatal("asked again although the copy is current")
+	}
+	later := time.Now().Add(time.Second)
+	os.WriteFile(filepath.Join(gdir, "mcp.json"), []byte(`{"mcpServers":{"fs":{"command":"fs-mcp-2"}}}`), 0o600)
+	os.Chtimes(filepath.Join(gdir, "mcp.json"), later, later)
+	remoteControlMCP(pl, gdir, state, false, true) // running: no question, no write
+	if asked != 1 {
+		t.Fatal("asked while the account runs")
+	}
+	remoteControlMCP(pl, gdir, state, false, false)
+	if local, _ := os.ReadFile(filepath.Join(dir, ".claude.json")); asked != 2 || !strings.Contains(string(local), "fs-mcp-2") {
+		t.Fatalf("after the group changed: asked %d, .claude.json %s", asked, local)
+	}
+}

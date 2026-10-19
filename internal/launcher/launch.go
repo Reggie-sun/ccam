@@ -101,6 +101,42 @@ func historyCheck(p paths.Paths, pl *Plan) error {
 	return session.Register(dir)
 }
 
+// remoteControlMCP offers to copy the group's servers into the account's
+// .claude.json, the only place Remote Control sessions read them from. It
+// asks only while that copy is missing or older than the group's mcp.json.
+func remoteControlMCP(pl *Plan, gdir, state string, dry, running bool) {
+	if mcp.Synced(gdir, state) {
+		return
+	}
+	name := pl.Profile.Name
+	names := "the shared MCP servers"
+	if store, err := mcp.Load(mcp.Path(gdir)); err == nil && len(store.Servers) > 0 {
+		names = "the shared MCP servers (" + strings.Join(store.Names(), ", ") + ")"
+	}
+	fmt.Fprintf(os.Stderr, "ccam: Remote Control sessions only get MCP servers stored in account %s's .claude.json, not %s.\n", name, names)
+	switch {
+	case dry:
+	case running:
+		fmt.Fprintf(os.Stderr, "      Account %s is running, so its .claude.json is left alone. Run this again after it exits to copy them.\n", name)
+	case confirm("Copy them into .claude.json (a backup is kept)?"):
+		if err := mcp.Sync(pl.Dir, gdir, state); err != nil {
+			fmt.Fprintf(os.Stderr, "ccam: copying the MCP servers failed (starting without them): %v\n", err)
+		}
+		return
+	}
+	fmt.Fprintln(os.Stderr, "      Starting without them. To copy them before every launch instead, set mcp_strategy = \"sync\" in ~/.config/ccam/config.toml")
+}
+
+// confirm asks a yes/no question on the terminal; without one the answer is no.
+// A variable so tests can answer it.
+var confirm = func(question string) bool {
+	fi, err := os.Stdin.Stat()
+	if err != nil || fi.Mode()&os.ModeCharDevice == 0 {
+		return false
+	}
+	return askTTY(question)
+}
+
 // askTTY asks on the terminal; without one it proceeds (the warning is shown).
 func askTTY(question string) bool {
 	fi, err := os.Stdin.Stat()
@@ -135,7 +171,14 @@ func applyMCP(p paths.Paths, cfg *config.Config, pl *Plan, dry, running bool) er
 		}
 		return nil
 	}
-	pl.InsertArgs(mcp.FlagArgs(gdir)...)
+	flag := mcp.FlagArgs(gdir)
+	if flag != nil && remoteControl(pl.Argv[1:]) {
+		// claude remote-control takes no --mcp-config: its sessions only see
+		// the servers stored in .claude.json.
+		flag = nil
+		remoteControlMCP(pl, gdir, state, dry, running)
+	}
+	pl.InsertArgs(flag...)
 	if dry {
 		return nil
 	}
@@ -145,4 +188,15 @@ func applyMCP(p paths.Paths, cfg *config.Config, pl *Plan, dry, running bool) er
 			pl.Profile.Name, strings.Join(fresh, ", "), pl.Profile.Name, strings.Join(fresh, " "))
 	}
 	return nil
+}
+
+// remoteControl reports whether args run `claude remote-control` (alias rc):
+// its first argument that is not an option is the verb.
+func remoteControl(args []string) bool {
+	for _, a := range args {
+		if !strings.HasPrefix(a, "-") {
+			return a == "remote-control" || a == "rc"
+		}
+	}
+	return false
 }

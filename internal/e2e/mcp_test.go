@@ -37,6 +37,24 @@ func TestMCPFlagStrategy(t *testing.T) {
 	if _, args := h.called(); !reflect.DeepEqual(args, []string{"--mcp-config=" + groupMCP, "fix the bug"}) {
 		t.Fatalf("prompt after flag: %q", args)
 	}
+	// claude remote-control refuses a --mcp-config before it and takes none
+	// after it, so ccam leaves the flag out and says the sessions lack the servers.
+	for _, verb := range []string{"remote-control", "rc"} {
+		r := h.run("", nil, "ccam", "work", "-d", verb, "--name", "x")
+		if r.code != 0 {
+			t.Fatalf("%s exited %d: %s", verb, r.code, r.stderr)
+		}
+		if _, args := h.called(); !reflect.DeepEqual(args, []string{"-d", verb, "--name", "x"}) {
+			t.Fatalf("%s args %q", verb, args)
+		}
+		if !strings.Contains(r.stderr, "Remote Control") || !strings.Contains(r.stderr, `mcp_strategy = "sync"`) {
+			t.Fatalf("%s stderr: %s", verb, r.stderr)
+		}
+	}
+	// Without a terminal nobody can answer the question, so .claude.json stays as it was.
+	if local, _ := os.ReadFile(filepath.Join(h.profileDir("work"), ".claude.json")); strings.Contains(string(local), "server-fs") {
+		t.Fatalf(".claude.json changed without an answer: %s", local)
+	}
 	var store struct {
 		Servers map[string]map[string]any `json:"mcpServers"`
 	}
@@ -101,6 +119,34 @@ func TestMCPSyncStrategy(t *testing.T) {
 	local, _ := os.ReadFile(filepath.Join(h.profileDir("work"), ".claude.json"))
 	if !strings.Contains(string(local), "fs-mcp") || !strings.Contains(string(local), "dev@company.com") {
 		t.Fatalf(".claude.json after sync: %s", local)
+	}
+}
+
+// A copy in .claude.json (made for Remote Control) would win over --mcp-config,
+// so changing the group updates it.
+func TestMCPCopyFollowsGroupChanges(t *testing.T) {
+	h := newHarness(t)
+	cfgPath := filepath.Join(h.home, "config", "config.toml")
+	data, _ := os.ReadFile(cfgPath)
+	os.WriteFile(cfgPath, append(data, []byte("mcp_strategy = \"sync\"\n")...), 0o600)
+	h.addAccounts()
+	h.ok("ccam", "mcp", "add-json", "fs", `{"type":"stdio","command":"fs-mcp"}`)
+	h.ok("ccam", "work", "-c") // leaves a copy in work's .claude.json
+	h.called()
+	data, _ = os.ReadFile(cfgPath)
+	os.WriteFile(cfgPath, []byte(strings.Replace(string(data), "mcp_strategy = 'sync'", "mcp_strategy = 'flag'", 1)), 0o600)
+
+	out := h.ok("ccam", "mcp", "add-json", "fs", `{"type":"stdio","command":"fs-mcp-2"}`)
+	if !strings.Contains(out, "Updated the copy in account work") {
+		t.Fatalf("add output:\n%s", out)
+	}
+	local, _ := os.ReadFile(filepath.Join(h.profileDir("work"), ".claude.json"))
+	if !strings.Contains(string(local), "fs-mcp-2") {
+		t.Fatalf(".claude.json after add: %s", local)
+	}
+	h.ok("ccam", "mcp", "remove", "fs")
+	if local, _ := os.ReadFile(filepath.Join(h.profileDir("work"), ".claude.json")); strings.Contains(string(local), "fs-mcp") {
+		t.Fatalf(".claude.json after remove: %s", local)
 	}
 }
 
