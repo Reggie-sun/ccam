@@ -17,7 +17,8 @@ function commandTable(code: string): string {
 function toMarkdown(p: SourcePage): string {
   const body = p.body
     .replace("<!-- commands -->", commandTable(p.locale))
-    .replace(/\]\(\/(docs|guides|compare|blog)\/([a-z0-9-]+)\/?(#[^)]*)?\)/g, (_, s, slug, hash = "") => `](${abs(`/${p.locale}/${s}/${slug}.md`)}${hash})`);
+    .replace(/<!-- motion:[a-z0-9-]+ -->\n*/g, "") // diagrams are pictures; the text explains them
+    .replace(/\]\(\/(docs|guides|features|compare|blog)\/([a-z0-9-]+)\/?(#[^)]*)?\)/g, (_, s, slug, hash = "") => `](${abs(`/${p.locale}/${s}/${slug}.md`)}${hash})`);
   return `# ${p.title}\n\n> ${p.description}\n\nSource: ${abs(p.path)} · Updated ${p.updated}\n\n${body.trim()}\n`;
 }
 
@@ -28,11 +29,11 @@ for (const p of pages) {
   await writeFile(file, toMarkdown(p));
 }
 
-const sectionNames: Record<string, string> = { docs: "Docs", guides: "Guides", compare: "Comparisons", blog: "Blog" };
+const sectionNames: Record<string, string> = { docs: "Docs", guides: "Guides", features: "Features", compare: "Comparisons", blog: "Blog" };
 for (const l of builtLocales()) {
   const m = messages(l.code);
   const list = pages.filter((p) => p.locale === l.code);
-  const groups = ["docs", "guides", "compare", "blog"].map((s) => {
+  const groups = ["docs", "guides", "features", "compare", "blog"].map((s) => {
     const items = list.filter((p) => p.section === s).map((p) => `- [${p.title}](${abs(`/${l.code}/${s}/${p.slug}.md`)}): ${p.description}`);
     return items.length ? `## ${m.docs.sections[s] ?? sectionNames[s]}\n\n${items.join("\n")}` : "";
   });

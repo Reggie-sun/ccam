@@ -43,7 +43,7 @@ export function seo({ locale, title, description, path, alternates, og, type = "
 
 /** Docs pages also exist as plain Markdown next to the HTML (for LLMs). */
 function markdownAlternate(path: string): Record<string, string> | undefined {
-  const m = /^\/([^/]+)\/(docs|guides|compare|blog)\/([^/]+)\/$/.exec(path);
+  const m = /^\/([^/]+)\/(docs|guides|features|compare|blog)\/([^/]+)\/$/.exec(path);
   return m ? { "text/markdown": abs(`/${m[1]}/${m[2]}/${m[3]}.md`) } : undefined;
 }
 

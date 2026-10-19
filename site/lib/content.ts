@@ -5,8 +5,8 @@ import { splitFrontMatter } from "./frontmatter";
 import { locales, type Locale } from "../i18n/locales";
 import { pagePath } from "./paths";
 
-export type Section = "docs" | "guides" | "compare" | "blog";
-export const sections: Section[] = ["docs", "guides", "compare", "blog"];
+export type Section = "docs" | "guides" | "features" | "compare" | "blog";
+export const sections: Section[] = ["docs", "guides", "features", "compare", "blog"];
 
 export type FrontMatter = {
   title: string;
@@ -95,7 +95,7 @@ export function renderMarkdown(page: Pick<Page, "locale" | "markdown" | "section
       link({ href, title, tokens }: Tokens.Link) {
         const text = this.parser.parseInline(tokens);
         let target = href;
-        const internal = /^\/(docs|guides|compare|blog)\/([a-z0-9-]+)\/?(#.*)?$/.exec(href);
+        const internal = /^\/(docs|guides|features|compare|blog)\/([a-z0-9-]+)\/?(#.*)?$/.exec(href);
         if (internal) {
           const [, section, slug, hash = ""] = internal;
           const locale = getPage(page.locale, section as Section, slug) ? page.locale : "en";

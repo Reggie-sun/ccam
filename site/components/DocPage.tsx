@@ -3,6 +3,7 @@ import { faqEntries, getPages, pageLocales, renderMarkdown, type Page, type Sect
 import { format, formatDate, getMessages, type Messages } from "../lib/i18n";
 import { abs, homePath, pagePath, REPO } from "../lib/paths";
 import { articleLd, CLAUDE_CODE_VERSION, faqLd, VERSION } from "../lib/jsonld";
+import { placeDiagrams } from "../lib/diagrams";
 import commands from "../data/commands.json";
 import { ChevronIcon } from "./Icons";
 import { JsonLd } from "./JsonLd";
@@ -17,6 +18,7 @@ function docGroups(locale: string, m: Messages): { title: string; pages: Page[] 
   const t = m.docs.sections as Record<Section, string>;
   return [
     { title: t.docs, pages: [...getPages(locale, "docs"), ...getPages(locale, "guides")] },
+    { title: t.features, pages: getPages(locale, "features") },
     { title: t.compare, pages: getPages(locale, "compare") },
     { title: t.blog, pages: getPages(locale, "blog") },
   ].filter((g) => g.pages.length);
@@ -49,7 +51,7 @@ export function DocPage({ page }: { page: Page }) {
   const l = getLocale(page.locale)!;
   const m = getMessages(page.locale);
   let { html, headings } = renderMarkdown(page, m.copy);
-  html = html.replace("<!-- commands -->", commandsTable(m));
+  html = placeDiagrams(html.replace("<!-- commands -->", commandsTable(m)), page.file);
   const groups = docGroups(page.locale, m);
   const group = groups.find((g) => g.pages.some((p) => p.section === page.section && p.slug === page.slug))!;
   const siblings = group.pages;
@@ -57,7 +59,7 @@ export function DocPage({ page }: { page: Page }) {
   const prev = siblings[i - 1];
   const next = siblings[i + 1];
   const path = pagePath(page.locale, page.section, page.slug);
-  const active = page.slug === "faq" ? "faq" : page.section === "docs" || page.section === "guides" ? "docs" : undefined;
+  const active = page.slug === "faq" ? "faq" : page.section === "docs" || page.section === "guides" || page.section === "features" ? "docs" : undefined;
   const sectionName = group.title;
   const toc = headings.filter((h) => h.depth === 2);
   const tocList = (

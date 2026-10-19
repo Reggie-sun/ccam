@@ -97,6 +97,8 @@ for (const l of locales.filter((l) => l.code !== "en" && (!only || l.code === on
       const levels = (md: string) => [...md.replace(/```[\s\S]*?```/g, "").matchAll(/^(#{1,6}) /gm)].map((m) => m[1].length).join(",");
       if (levels(src.body) !== levels(tr.body)) errors.push(`${file}: headings differ from the English source (anchors are matched by position)`);
       if (src.body.includes("<!-- commands -->") !== tr.body.includes("<!-- commands -->")) errors.push(`${file}: <!-- commands --> marker missing`);
+      const motion = (md: string) => [...md.matchAll(/<!-- motion:[a-z0-9-]+ -->/g)].map((m) => m[0]).join(" ");
+      if (motion(src.body) !== motion(tr.body)) errors.push(`${file}: motion diagrams differ: ${motion(src.body)} ≠ ${motion(tr.body)}`);
       const visible = (s: string) => s.replace(/```[\s\S]*?```/g, "").replace(/`[^`]+`/g, "");
       for (const term of glossary) {
         if (visible(src.body + src.data.title).includes(term) && !(tr.body + tr.data.title).includes(term)) errors.push(`${file}: glossary term "${term}" missing`);
