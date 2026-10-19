@@ -132,7 +132,7 @@ func loginProfile(e *env, sel string) (*config.Profile, error) {
 		return nil, err
 	}
 	name := prof.Name
-	if err := runClaude(e, cfg, prof, "auth", "login"); err != nil {
+	if err := runLogin(e, cfg, prof); err != nil {
 		return nil, err
 	}
 	email, err := profile.ReadEmail(profile.Dir(e.paths, prof))
