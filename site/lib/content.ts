@@ -88,7 +88,7 @@ export function renderMarkdown(page: Pick<Page, "locale" | "markdown" | "section
         return `<div class="code"><pre dir="ltr" tabindex="0"><code${lang ? ` data-lang="${lang}"` : ""}>${escaped}</code></pre>${copy ? `<button type="button" class="copy" data-copy data-copied="${labels.copied}" hidden>${labels.copy}</button>` : ""}</div>\n`;
       },
       codespan({ text }: Tokens.Codespan) {
-        // marked passes inline code unescaped: "ccs <name>" must not become a tag.
+        // marked passes inline code unescaped: "ccam <name>" must not become a tag.
         const escaped = text.replace(/&(?![a-z]+;|#\d+;)/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
         return `<code dir="ltr">${escaped}</code>`;
       },

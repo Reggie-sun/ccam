@@ -1,8 +1,9 @@
 import type { Messages } from "../lib/i18n";
 import { format } from "../lib/i18n";
 import type { Locale } from "../i18n/locales";
+import { Orbs } from "./Orbs";
 
-// Sample accounts, as `ccs usage` would print them.
+// Sample accounts, as `ccam usage` would print them.
 const rows = [
   { slot: 1, name: "personal", five: 72, week: 41, resets: 100 },
   { slot: 2, name: "work", five: 8, week: 19, resets: 252 },
@@ -26,29 +27,45 @@ function Bar({ value, label }: { value: number; label: string }) {
   );
 }
 
+/** The usage board, rendered in its final state; site.js replays it as a
+ *  terminal session (type `ccam usage`, fill the bars, open the account with
+ *  the most room) when it scrolls into view. */
 export function UsageBoard({ locale, m }: { locale: Locale; m: Messages }) {
   const pct = (v: number) => new Intl.NumberFormat(locale.lang, { style: "percent" }).format(v / 100);
+  const meter = (label: string, value: number) => (
+    <div className="meter">
+      <span>{label}</span>
+      <Bar value={value} label={`${label} ${pct(value)}`} />
+      <span className="pct" data-value={value}>{pct(value)}</span>
+    </div>
+  );
   return (
-    <figure className="board">
-      <figcaption>{m.landing.boardLabel}</figcaption>
-      {rows.map((r) => (
-        <div className="board-row" key={r.name}>
-          <span className="slot" dir="ltr">{r.slot}</span>
-          <span className="name" dir="ltr">{r.name}</span>
-          <div className="meter">
-            <span>{m.landing.board.fiveHour}</span>
-            <Bar value={r.five} label={`${m.landing.board.fiveHour} ${pct(r.five)}`} />
-            <span className="pct">{pct(r.five)}</span>
-          </div>
-          <div className="meter">
-            <span>{m.landing.board.weekly}</span>
-            <Bar value={r.week} label={`${m.landing.board.weekly} ${pct(r.week)}`} />
-            <span className="pct">{pct(r.week)}</span>
-          </div>
-          <span className="resets">{format(locale, m.landing.board.resets, { time: duration(locale, r.resets) })}</span>
+    <figure className="stage reveal" data-demo>
+      <Orbs kinds={["sky", "lavender", "peach"]} />
+      <div className="term">
+        <p className="line" dir="ltr">
+          <span className="ps">$</span>
+          <span data-type>ccam usage</span>
+        </p>
+        <div className="rows">
+          {rows.map((r) => (
+            <div className={`row later${r.name === "work" ? " on" : ""}`} key={r.name} data-pick={r.name === "work" ? "" : undefined}>
+              <span className="slot" dir="ltr">{r.slot}</span>
+              <span className="name" dir="ltr">{r.name}</span>
+              {meter(m.landing.board.fiveHour, r.five)}
+              {meter(m.landing.board.weekly, r.week)}
+              <span className="resets">{format(locale, m.landing.board.resets, { time: duration(locale, r.resets) })}</span>
+            </div>
+          ))}
         </div>
-      ))}
-      <footer>{format(locale, m.landing.board.mostRoom, { name: "work" })}</footer>
+        <p className="line note later">{format(locale, m.landing.board.mostRoom, { name: "work" })}</p>
+        <p className="line later" dir="ltr">
+          <span className="ps">$</span>
+          <span data-type>ccam next --auto</span>
+          <span className="caret" aria-hidden="true" />
+        </p>
+      </div>
+      <figcaption>{m.landing.boardLabel}</figcaption>
     </figure>
   );
 }

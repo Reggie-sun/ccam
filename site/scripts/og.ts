@@ -10,7 +10,7 @@ import { builtLocales, messages, OUT, routes, sourcePages } from "./lib.ts";
 const FONT_DIR = "node_modules/.cache/og-fonts";
 const RAW = "https://github.com/google/fonts/raw/main/ofl/";
 const fontFiles: Record<string, string> = {
-  brand: "atkinsonhyperlegiblenext/AtkinsonHyperlegibleNext%5Bwght%5D.ttf",
+  display: "newsreader/Newsreader%5Bopsz,wght%5D.ttf",
   latin: "notosans/NotoSans%5Bwdth,wght%5D.ttf",
   ko: "notosanskr/NotoSansKR%5Bwght%5D.ttf",
   ja: "notosansjp/NotoSansJP%5Bwght%5D.ttf",
@@ -40,7 +40,7 @@ async function font(key: string): Promise<string> {
 }
 
 function scriptFont(code: string, f: Font): string {
-  if (f === "brand") return "brand";
+  if (f === "brand") return "display";
   if (f === "latin-ext" || f === "cyrillic") return "latin";
   if (f === "indic") return indicScript[code];
   return f;
@@ -71,23 +71,23 @@ function svg(opts: { title: string; kicker: string; family: string; rtl: boolean
   const x = opts.rtl ? 1100 : 100;
   const anchor = opts.rtl ? "end" : "start";
   const tspans = lines.map((l, i) => `<tspan x="${x}" dy="${i ? size * 1.25 : 0}">${esc(l)}</tspan>`).join("");
-  const top = 250 - ((lines.length - 1) * size * 1.25) / 2;
+  const top = 300 - ((lines.length - 1) * size * 1.25) / 2;
+  const orb = (id: string, color: string) =>
+    `<radialGradient id="${id}"><stop offset="0" stop-color="${color}" stop-opacity="0.85"/><stop offset="1" stop-color="${color}" stop-opacity="0"/></radialGradient>`;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
-  <rect width="1200" height="630" fill="#fafbfd"/>
-  <g transform="translate(100 70)">
-    <rect width="48" height="9" fill="#d8dfe6"/><rect width="33" height="9" fill="#d9921e"/>
-    <rect y="16" width="48" height="9" fill="#d8dfe6"/><rect y="16" width="12" height="9" fill="#d9921e"/>
-    <rect y="32" width="48" height="9" fill="#18212b"/>
-    <text x="64" y="38" font-family="Atkinson Hyperlegible Next" font-size="44" font-weight="700" fill="#18212b">ccam</text>
-  </g>
-  <text x="${x}" y="${top}" text-anchor="${anchor}" direction="${opts.rtl ? "rtl" : "ltr"}" font-family="${opts.family}" font-size="${size}" fill="#18212b">${tspans}</text>
-  <text x="${x}" y="545" text-anchor="${anchor}" direction="${opts.rtl ? "rtl" : "ltr"}" font-family="${opts.family}" font-size="30" fill="#4a5866">${esc(opts.kicker)}</text>
-  <rect x="0" y="600" width="1200" height="30" fill="#18212b"/><rect x="0" y="600" width="780" height="30" fill="#d9921e"/>
+  <defs>${orb("mint", "#a7e5d3")}${orb("peach", "#f4c5a8")}${orb("lavender", "#c8b8e0")}</defs>
+  <rect width="1200" height="630" fill="#f5f5f5"/>
+  <circle cx="160" cy="90" r="420" fill="url(#mint)"/>
+  <circle cx="1100" cy="40" r="460" fill="url(#peach)"/>
+  <circle cx="780" cy="680" r="440" fill="url(#lavender)"/>
+  <text x="${x}" y="120" text-anchor="${anchor}" font-family="Newsreader" font-size="56" fill="#0c0a09">ccam</text>
+  <text x="${x}" y="${top}" text-anchor="${anchor}" direction="${opts.rtl ? "rtl" : "ltr"}" font-family="${opts.family}" font-size="${size}" fill="#0c0a09">${tspans}</text>
+  <text x="${x}" y="545" text-anchor="${anchor}" direction="${opts.rtl ? "rtl" : "ltr"}" font-family="${opts.family}" font-size="30" fill="#4e4e4e">${esc(opts.kicker)}</text>
 </svg>`;
 }
 
 const familyName: Record<string, string> = {
-  brand: "Atkinson Hyperlegible Next", latin: "Noto Sans", ko: "Noto Sans KR", ja: "Noto Sans JP", "zh-hans": "Noto Sans SC",
+  display: "Newsreader", latin: "Noto Sans", ko: "Noto Sans KR", ja: "Noto Sans JP", "zh-hans": "Noto Sans SC",
   "zh-hant": "Noto Sans TC", arabic: "Noto Sans Arabic", urdu: "Noto Nastaliq Urdu", devanagari: "Noto Sans Devanagari",
   bengali: "Noto Sans Bengali", tamil: "Noto Sans Tamil", telugu: "Noto Sans Telugu", gujarati: "Noto Sans Gujarati",
   kannada: "Noto Sans Kannada", thai: "Noto Sans Thai",
@@ -98,7 +98,7 @@ let count = 0;
 for (const l of builtLocales()) {
   const m = messages(l.code);
   const key = scriptFont(l.code, l.font);
-  const fonts = [await font("brand"), await font(key)];
+  const fonts = [await font("display"), await font(key)];
   const wide = ["ko", "ja", "zh-hans", "zh-hant"].includes(key);
   const titles: Record<string, string> = { home: m.landing.headline, changelog: m.changelog.title, languages: m.languages.title };
   for (const p of pages.filter((p) => p.locale === l.code)) titles[`${p.section}-${p.slug}`] = p.title;
@@ -114,7 +114,7 @@ for (const l of builtLocales()) {
 
 const icon = new Resvg(readFileSync("public/favicon.svg", "utf8").replace(/<style>.*<\/style>/, "").replace(/class="r"/g, 'fill="#d8dfe6"').replace(/class="a"/g, 'fill="#d9921e"').replace(/class="k"/g, 'fill="#18212b"'), {
   fitTo: { mode: "width", value: 512 },
-  background: "#fafbfd",
+  background: "#f5f5f5",
 }).render().asPng();
 await writeFile(join(OUT, "icon-512.png"), icon);
 console.log(`og: ${count} images`);

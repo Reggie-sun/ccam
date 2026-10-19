@@ -9,8 +9,7 @@ export default function NotFound() {
   const m = getMessages("en");
   return (
     <Shell locale="en" alternates={{}}>
-      <div className="wrap docs">
-        <div />
+      <div className="wrap page">
         <article className="article">
           <h1>{m.notFound.title}</h1>
           <p>

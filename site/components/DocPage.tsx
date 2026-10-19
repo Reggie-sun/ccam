@@ -4,6 +4,7 @@ import { format, formatDate, getMessages, type Messages } from "../lib/i18n";
 import { abs, homePath, pagePath, REPO } from "../lib/paths";
 import { articleLd, CLAUDE_CODE_VERSION, faqLd, VERSION } from "../lib/jsonld";
 import commands from "../data/commands.json";
+import { ChevronIcon } from "./Icons";
 import { JsonLd } from "./JsonLd";
 import { Shell } from "./Shell";
 
@@ -22,7 +23,7 @@ function commandsTable(m: Messages): string {
 export function DocPage({ page }: { page: Page }) {
   const l = getLocale(page.locale)!;
   const m = getMessages(page.locale);
-  let { html } = renderMarkdown(page, m.copy);
+  let { html, headings } = renderMarkdown(page, m.copy);
   html = html.replace("<!-- commands -->", commandsTable(m));
   const siblings = getPages(page.locale, page.section);
   const i = siblings.findIndex((p) => p.slug === page.slug);
@@ -31,12 +32,26 @@ export function DocPage({ page }: { page: Page }) {
   const path = pagePath(page.locale, page.section, page.slug);
   const active = page.slug === "faq" ? "faq" : page.section === "docs" ? "docs" : page.section === "guides" ? "guides" : undefined;
   const sectionName = (m.docs.sections as Record<Section, string>)[page.section];
+  const toc = headings.filter((h) => h.depth === 2);
+  const tocList = (
+    <ol>
+      {toc.map((h) => (
+        <li key={h.id}>
+          <a href={`#${h.id}`}>{h.text}</a>
+        </li>
+      ))}
+    </ol>
+  );
   return (
     <Shell locale={page.locale} alternates={docAlternates(page.section, page.slug)} active={active}>
-      <div className="wrap docs">
+      <div className="progress" aria-hidden="true" />
+      <div className={`wrap docs${toc.length > 1 ? " has-toc" : ""}`}>
         <aside className="sidebar">
-          <details open>
-            <summary>{m.nav.menu}</summary>
+          <details>
+            <summary>
+              {sectionName}
+              <ChevronIcon />
+            </summary>
             <nav aria-label={m.nav.docs}>
               {sections.map((s) => {
                 const list = getPages(page.locale, s);
@@ -58,6 +73,7 @@ export function DocPage({ page }: { page: Page }) {
           </details>
         </aside>
         <article className="article">
+          <p className="crumb">{sectionName}</p>
           <h1>{page.title}</h1>
           <p className="meta">
             {format(l, m.docs.updated, { date: formatDate(l, page.updated) })}
@@ -68,6 +84,15 @@ export function DocPage({ page }: { page: Page }) {
             <p className="notice">
               {m.docs.machine} <a href={`${REPO}/edit/main/${page.file}`}>{m.docs.edit}</a>
             </p>
+          )}
+          {toc.length > 1 && (
+            <details className="toc toc-inline">
+              <summary>
+                {m.docs.onThisPage}
+                <ChevronIcon />
+              </summary>
+              <div className="toc-body">{tocList}</div>
+            </details>
           )}
           <div className="prose" dangerouslySetInnerHTML={{ __html: html }} />
           <nav className="pager" aria-label={`${m.docs.prev}, ${m.docs.next}`}>
@@ -88,6 +113,12 @@ export function DocPage({ page }: { page: Page }) {
             <a href={`${REPO}/edit/main/${page.file}`}>{m.docs.edit}</a>
           </p>
         </article>
+        {toc.length > 1 && (
+          <div className="toc toc-rail">
+            <p className="toc-title">{m.docs.onThisPage}</p>
+            <nav aria-label={m.docs.onThisPage}>{tocList}</nav>
+          </div>
+        )}
       </div>
       <JsonLd
         data={articleLd({

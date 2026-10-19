@@ -5,7 +5,7 @@ Read ../docs/WEBSITE_PLAN.md first. Decisions: ../docs/site-decisions.md. Design
 ## Rules
 - Framework is vinext with Next.js public APIs only (no vinext-specific APIs)
 - Every page is generated at build time; nothing may need request-time rendering
-- No React client components: the static HTML ships without React's runtime (scripts/finalize.ts removes it). The three behaviours (copy button, language banner, theme toggle) live in scripts/client/site.js
+- No React client components: the static HTML ships without React's runtime (scripts/finalize.ts removes it). Every behaviour (copy buttons, language banner, theme toggle, header popovers, on-this-page highlight, the usage demo and the other motion) lives in scripts/client/site.js
 - UI strings are server-only (messages/<locale>.json); never ship them to the client
 - CSS uses logical properties only (RTL)
 - Images, OG images, sitemaps and llms.txt come from the scripts in scripts/

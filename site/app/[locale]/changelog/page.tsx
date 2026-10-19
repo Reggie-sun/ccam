@@ -23,8 +23,7 @@ export default async function Changelog({ params }: Props) {
   const list = releases as Release[];
   return (
     <Shell locale={locale} alternates={alternates()} active="changelog">
-      <div className="wrap docs">
-        <div />
+      <div className="wrap page">
         <article className="article">
           <h1>{m.changelog.title}</h1>
           <p className="meta">{m.changelog.description}</p>

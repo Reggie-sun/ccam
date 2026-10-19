@@ -23,8 +23,7 @@ export default async function Languages({ params }: Props) {
   const pct = (v: number) => new Intl.NumberFormat(locale, { style: "percent", maximumFractionDigits: 0 }).format(v);
   return (
     <Shell locale={locale} alternates={alternates()}>
-      <div className="wrap docs">
-        <div />
+      <div className="wrap page">
         <article className="article prose">
           <h1>{m.languages.title}</h1>
           <p>{format(locale, m.languages.description, { count: built().length })}</p>

@@ -1,10 +1,13 @@
+import { Fragment } from "react";
 import { getLocale, locales } from "../i18n/locales";
 import { getPages } from "../lib/content";
-import { format, getMessages, hasMessages } from "../lib/i18n";
+import { getMessages, hasMessages } from "../lib/i18n";
 import { homePath, pagePath } from "../lib/paths";
 import { softwareLd } from "../lib/jsonld";
+import { ArrowIcon } from "./Icons";
 import { InstallCommand } from "./InstallCommand";
 import { JsonLd } from "./JsonLd";
+import { Orbs } from "./Orbs";
 import { Shell } from "./Shell";
 import { UsageBoard } from "./UsageBoard";
 
@@ -18,63 +21,111 @@ export function Landing({ locale }: { locale: string }) {
   const guides = getPages(locale, "guides");
   const add = <code dir="ltr">ccam add</code>;
   const [before, after] = m.landing.thenAdd.split("{command}");
+  // Each word rises out of its own clip; languages without spaces rise as one line.
+  const words = m.landing.headline.split(" ");
   return (
     <Shell locale={locale} alternates={landingAlternates()}>
-      <div className="wrap">
-        <section className="hero">
-          <div>
-            <h1>{m.landing.headline}</h1>
-            <p className="lede">{m.landing.lede}</p>
+      <section className="hero">
+        <Orbs kinds={["mint", "peach", "lavender", "sky", "rose"]} parallax />
+        <div className="wrap">
+          <h1 className="display">
+            {words.map((w, i) => (
+              <Fragment key={i}>
+                {i > 0 && " "}
+                <span className="w">
+                  <span>{w}</span>
+                </span>
+              </Fragment>
+            ))}
+          </h1>
+          <p className="lede focus-in d1">{m.landing.lede}</p>
+          <div className="focus-in d2">
             <p className="install-label">{m.landing.installLabel}</p>
             <InstallCommand copy={m.copy.copy} copied={m.copy.copied} />
-            <p className="then">
+          </div>
+          <p className="then focus-in d3">
+            <span>
               {before}
               {add}
-              {after} <a href={pagePath(locale, "docs", "quick-start")}>{m.landing.readDocs}</a>
-            </p>
-          </div>
-          <UsageBoard locale={l} m={m} />
-        </section>
+              {after}
+            </span>
+            <a className="pill pill-outline" href={pagePath(locale, "docs", "quick-start")}>{m.landing.readDocs}</a>
+          </p>
+        </div>
+      </section>
 
-        <section className="section" aria-labelledby="flow">
-          <h2 id="flow">{m.landing.flowTitle}</h2>
-          <dl className="flow">
-            {m.landing.flow.map((f) => (
-              <div key={f.command}>
-                <dt dir="ltr">
+      <div className="wrap">
+        <UsageBoard locale={l} m={m} />
+      </div>
+
+      <section className="section" aria-labelledby="flow">
+        <div className="wrap">
+          <h2 id="flow" className="section-title display">{m.landing.flowTitle}</h2>
+          <div className="flow" data-flow>
+            <div className="flow-visual" aria-hidden="true">
+              <div className="flow-orb" />
+              {m.landing.flow.map((f, i) => (
+                <div className={`fv${i === 0 ? " on" : ""}`} key={f.command} dir="ltr">
                   <code>{f.command}</code>
                   {"also" in f && f.also ? <code>{f.also}</code> : null}
-                </dt>
-                <dd>{f.body}</dd>
+                </div>
+              ))}
+              <div className="rail">
+                {m.landing.flow.map((f) => (
+                  <span key={f.command} />
+                ))}
               </div>
-            ))}
-          </dl>
-        </section>
+            </div>
+            <ol className="steps">
+              {m.landing.flow.map((f, i) => (
+                <li className={`step${i === 0 ? " on" : ""}`} key={f.command}>
+                  <span className="step-n" dir="ltr" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
+                  <h3 className="step-cmd" dir="ltr">
+                    <code>{f.command}</code>
+                    {"also" in f && f.also ? <code>{f.also}</code> : null}
+                  </h3>
+                  <p>{f.body}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
+      </section>
 
-        {guides.length > 0 && (
-          <section className="section" aria-labelledby="guides">
-            <h2 id="guides">{m.landing.guidesTitle}</h2>
-            <ul className="guide-list">
+      {guides.length > 0 && (
+        <section className="section" aria-labelledby="guides">
+          <div className="wrap">
+            <h2 id="guides" className="section-title display">{m.landing.guidesTitle}</h2>
+            <ul className="cards">
               {guides.map((g) => (
                 <li key={g.slug}>
-                  <a href={pagePath(locale, "guides", g.slug)}>{g.title}</a>
-                  <p>{g.description}</p>
+                  <a className="card reveal" href={pagePath(locale, "guides", g.slug)} data-spot>
+                    <strong>{g.title}</strong>
+                    <span>{g.description}</span>
+                    <span className="go">
+                      <ArrowIcon />
+                    </span>
+                  </a>
                 </li>
               ))}
             </ul>
-          </section>
-        )}
-
-        <section className="section" aria-labelledby="facts">
-          <h2 id="facts">{m.landing.factsTitle}</h2>
-          <div className="facts">
-            <p>{m.facts.what}</p>
-            <p>{m.facts.how}</p>
-            <p>{m.facts.install}</p>
-            <p>{m.facts.official}</p>
           </div>
         </section>
-      </div>
+      )}
+
+      <section className="section" aria-labelledby="facts">
+        <div className="wrap">
+          <h2 id="facts" className="section-title display">{m.landing.factsTitle}</h2>
+          <div className="facts">
+            <p className="big">{m.facts.what}</p>
+            <div className="small">
+              <p>{m.facts.how}</p>
+              <p>{m.facts.install}</p>
+              <p>{m.facts.official}</p>
+            </div>
+          </div>
+        </div>
+      </section>
       <JsonLd data={softwareLd(m.site.description, l.lang)} />
     </Shell>
   );

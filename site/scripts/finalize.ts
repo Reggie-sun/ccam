@@ -100,7 +100,7 @@ async function main() {
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: interest-cohort=(), browsing-topics=()
   Cache-Control: public, max-age=0, s-maxage=86400, stale-while-revalidate=604800
-  Link: </fonts/atkinson-next.woff2>; rel=preload; as=font; type=font/woff2; crossorigin
+  Link: </fonts/newsreader.woff2>; rel=preload; as=font; type=font/woff2; crossorigin
 
 /assets/*
   Cache-Control: public, max-age=31536000, immutable

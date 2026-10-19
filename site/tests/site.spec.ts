@@ -108,3 +108,22 @@ test("404 page", async ({ page }) => {
   expect(res?.status()).toBe(404);
   await expect(page.locator("h1")).toHaveText("Page not found");
 });
+
+test("mobile menu opens, lists the sections and closes with Escape", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/en/docs/install/");
+  await page.locator(".menu > summary").click();
+  await expect(page.locator(".menu-panel a").first()).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(page.locator(".menu")).not.toHaveAttribute("open", "");
+});
+
+test("on this page links to every section heading", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/en/docs/commands/");
+  const links = page.locator(".toc-rail a");
+  await expect(links.first()).toBeVisible();
+  for (const href of await links.evaluateAll((as) => as.map((a) => a.getAttribute("href")!))) {
+    await expect(page.locator(href)).toHaveCount(1);
+  }
+});

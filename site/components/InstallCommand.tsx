@@ -4,7 +4,7 @@ export function InstallCommand({ copy, copied, command = INSTALL }: { copy: stri
   return (
     <div className="cmd" dir="ltr">
       <code tabIndex={0}>{command}</code>
-      <button type="button" className="copy" data-copy data-copied={copied} hidden>
+      <button type="button" className="copy pill pill-primary" data-copy data-copied={copied} hidden>
         {copy}
       </button>
     </div>
