@@ -1,5 +1,11 @@
 [
   {
+    "tag": "v0.2.0",
+    "date": "2026-10-19",
+    "url": "https://github.com/jhyunwoo/ccam/releases/tag/v0.2.0",
+    "notes": "<h2>Changelog</h2>\n<ul>\n<li>10bd4ec7f325a9c4790fdcd1aa56074e0eb74d39 test: compare shortcut links by resolved path; site says ccam 0.2.0</li>\n<li>5ff9230e6c2cbc4b1eedaf2b5d9bbbf1b5ad6aed docs(site): shortcuts are opt-in (ccwork style); ccam migrate and ccam shortcut documented in 30 languages</li>\n<li>5aae111515b78270610c871d1f505e124c236780 fix(site): header mark centred on the wordmark</li>\n<li>c73bd2ccf7d91d7f0c02205c508823da0e8fb6ce fix: --no-login help reads as text, not a flag argument</li>\n<li>b4e7e505f53828dc53f6c14875b5c97f8fd45c89 fix: rename help no longer says it updates shortcuts</li>\n<li>604aaa5ac91fe728a9d6004607e5b3d78698dd8e feat: shortcuts are opt-in and named by the user</li>\n<li>04567667f1ed642f32ac25db798fd7482bb65ea3 fix(site): demo shortcut is ccside, not claude3</li>\n<li>5b483c940b907b9cac073245abbe9bbc758866f6 feat(site): the header wordmark spells out Claude Code Account Manager on hover</li>\n<li>a5930d346b8cfa79cc4aca96cbfed93c10de4765 feat: ccam migrate copies an existing Claude Code setup into the shared group</li>\n<li>1817357cf7a2ebe4ec877a21a73255a162c36c1c feat(site): demo beside its four steps, sized to fit one screen</li>\n<li>d9728c1c411b0022b11186af8aefacec600344b1 fix(site): smaller Korean hero headline and intro</li>\n<li>d8c2d9139787f0fc650707d61c7af6bd5962d03c fix(site): demo caption describes the whole session in 30 languages</li>\n<li>637a7f3e4eb65904d83ace32e48ef519a97daa6a docs(site): natural Korean throughout; new Korean headline</li>\n<li>c80425e5d723cf28d7646cf60ab5b77121634db6 feat(site): demo shows Claude Code switching accounts; 320 px header fits</li>\n<li>c46329acd25a1191bc9788ea953d0520c3bd0a3c docs: v0.1.0 is released; launch blockers closed</li>\n</ul>\n"
+  },
+  {
     "tag": "v0.1.0",
     "date": "2026-10-19",
     "url": "https://github.com/jhyunwoo/ccam/releases/tag/v0.1.0",
