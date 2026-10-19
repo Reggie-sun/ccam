@@ -17,10 +17,10 @@ ccam add
 The wizard asks for a name such as `personal` or `work`, and which items the account should share with your other accounts. Then it runs `claude auth login`, which opens the browser so you can sign in. When it finishes you see:
 
 ```console
-✓ personal (me@example.com) 추가됨 — 단축 명령: claude1
+✓ personal (me@example.com) added — shortcut: claude1
 ```
 
-ccam prints its own messages in Korean for now; the commands and options are the same in every language.
+ccam prints its own messages in English; the commands and options are the same in every language.
 
 ## 2. Add the second account
 

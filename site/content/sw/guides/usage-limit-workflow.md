@@ -4,7 +4,7 @@ description: Kagua kila akaunti ya Claude Code ina nafasi kiasi gani na uendelez
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: db7ed9b7bcfc
+sourceHash: 767a731b912e
 ---
 
 Akaunti moja inapofikia kikomo chake cha matumizi (usage limit), endeleza mazungumzo yale yale katika akaunti nyingine unayoimiliki: shiriki historia ya mazungumzo mara moja, kisha endesha `ccam next --continue`. Ikiwa una akaunti moja tu, subiri muda wa kuanza upya ambao Claude Code inaonyesha.
@@ -32,8 +32,8 @@ ccam usage
 ```
 
 ```console
- 1 personal  ████████ 100% 22분        █████░░░  68% 1일 9시간   방금
- 2 work      █░░░░░░░   8% 4시간 12분  ██░░░░░░  19% 5일 2시간   방금
+ 1 personal  ████████ 100% 22m       █████░░░  68% 1d 9h     just now
+ 2 work      █░░░░░░░   8% 4h 12m    ██░░░░░░  19% 5d 2h     just now
 ```
 
 Fungua mazungumzo katika akaunti yenye nafasi kubwa zaidi:

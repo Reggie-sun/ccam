@@ -4,7 +4,7 @@ description: دو حساب Claude Code را با ccam add اضافه کنید، 
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: c6b1c1c3ebaf
+sourceHash: 6baf0bfa5029
 ---
 
 هر حساب را با `ccam add` اضافه کنید، سپس Claude Code را با `claude1`، `claude2` یا `ccam <name>` اجرا کنید. بیشتر کاربران به چیزی بیش از این نیاز ندارند.
@@ -18,10 +18,10 @@ ccam add
 دستیار راه‌اندازی یک نام مانند `personal` یا `work` از شما می‌پرسد و اینکه حساب کدام موارد را با حساب‌های دیگر شما به اشتراک بگذارد. سپس `claude auth login` را اجرا می‌کند که مرورگر را باز می‌کند تا وارد حساب شوید. در پایان این را می‌بینید:
 
 ```console
-✓ personal (me@example.com) 추가됨 — 단축 명령: claude1
+✓ personal (me@example.com) added — shortcut: claude1
 ```
 
-ccam فعلاً پیام‌های خود را به زبان کره‌ای چاپ می‌کند؛ فرمان‌ها و گزینه‌ها در همه زبان‌ها یکسان‌اند.
+ccam پیام‌های خود را به زبان انگلیسی چاپ می‌کند؛ فرمان‌ها و گزینه‌ها در همه زبان‌ها یکسان‌اند.
 
 ## ۲. حساب دوم را اضافه کنید
 

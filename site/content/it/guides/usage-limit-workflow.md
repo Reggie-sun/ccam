@@ -4,7 +4,7 @@ description: Controlla quanto margine resta a ogni account Claude Code e continu
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: db7ed9b7bcfc
+sourceHash: 767a731b912e
 ---
 
 Quando un account raggiunge il limite di utilizzo di Claude Code, continua la stessa conversazione in un altro account di tua proprietà: condividi una volta la cronologia delle conversazioni, poi esegui `ccam next --continue`. Se hai un solo account, attendi l'orario di azzeramento indicato da Claude Code.
@@ -32,8 +32,8 @@ ccam usage
 ```
 
 ```console
- 1 personal  ████████ 100% 22분        █████░░░  68% 1일 9시간   방금
- 2 work      █░░░░░░░   8% 4시간 12분  ██░░░░░░  19% 5일 2시간   방금
+ 1 personal  ████████ 100% 22m       █████░░░  68% 1d 9h     just now
+ 2 work      █░░░░░░░   8% 4h 12m    ██░░░░░░  19% 5d 2h     just now
 ```
 
 Apri la conversazione nell'account con più margine:

@@ -4,7 +4,7 @@ description: Claude Code 계정마다 남은 여유를 확인하고, 한 계정�
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: db7ed9b7bcfc
+sourceHash: 767a731b912e
 ---
 
 한 계정이 한도에 도달하면 본인이 가진 다른 계정에서 같은 대화를 이어 가세요. 대화 내역 공유를 한 번 켜 둔 뒤 `ccam next --continue`를 실행하면 됩니다. 계정이 하나뿐이라면 Claude Code가 보여 주는 초기화 시각까지 기다려야 합니다.
@@ -32,8 +32,8 @@ ccam usage
 ```
 
 ```console
- 1 personal  ████████ 100% 22분        █████░░░  68% 1일 9시간   방금
- 2 work      █░░░░░░░   8% 4시간 12분  ██░░░░░░  19% 5일 2시간   방금
+ 1 personal  ████████ 100% 22m       █████░░░  68% 1d 9h     just now
+ 2 work      █░░░░░░░   8% 4h 12m    ██░░░░░░  19% 5d 2h     just now
 ```
 
 여유가 가장 많은 계정에서 대화를 엽니다.

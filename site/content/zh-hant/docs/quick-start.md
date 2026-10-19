@@ -4,7 +4,7 @@ description: 用 ccam add 新增兩個 Claude Code 帳號，用 claude1、claude
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: c6b1c1c3ebaf
+sourceHash: 6baf0bfa5029
 ---
 
 用 `ccam add` 新增每個帳號，然後用 `claude1`、`claude2` 或 `ccam <name>` 啟動 Claude Code。大多數人只需要這些。
@@ -18,10 +18,10 @@ ccam add
 設定精靈會要求你輸入名稱，例如 `personal` 或 `work`，並詢問這個帳號要和其他帳號共用哪些項目。接著它會執行 `claude auth login`，開啟瀏覽器讓你登入。完成後你會看到：
 
 ```console
-✓ personal (me@example.com) 추가됨 — 단축 명령: claude1
+✓ personal (me@example.com) added — shortcut: claude1
 ```
 
-ccam 目前以韓文顯示自己的訊息；指令和選項在每種語言中都相同。
+ccam 以英文顯示自己的訊息；指令和選項在每種語言中都相同。
 
 ## 2. 新增第二個帳號
 

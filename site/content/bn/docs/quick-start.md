@@ -4,7 +4,7 @@ description: "ccam add দিয়ে দুটি Claude Code অ্যাক�
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: c6b1c1c3ebaf
+sourceHash: 6baf0bfa5029
 ---
 
 `ccam add` দিয়ে প্রতিটি অ্যাকাউন্ট যোগ করুন, তারপর `claude1`, `claude2` বা `ccam <name>` দিয়ে Claude Code চালু করুন। বেশিরভাগ মানুষের এটুকুই দরকার।
@@ -18,10 +18,10 @@ ccam add
 উইজার্ডটি `personal` বা `work`-এর মতো একটি নাম চায়, এবং জিজ্ঞেস করে অ্যাকাউন্টটি আপনার অন্য অ্যাকাউন্টগুলোর সঙ্গে কোন কোন আইটেম শেয়ার করবে। তারপর এটি `claude auth login` চালায়, যা সাইন ইন করার জন্য ব্রাউজার খোলে। শেষ হলে আপনি দেখবেন:
 
 ```console
-✓ personal (me@example.com) 추가됨 — 단축 명령: claude1
+✓ personal (me@example.com) added — shortcut: claude1
 ```
 
-ccam আপাতত নিজের বার্তাগুলো কোরিয়ান ভাষায় প্রিন্ট করে; কমান্ড ও অপশন সব ভাষায় একই।
+ccam নিজের বার্তাগুলো ইংরেজিতে প্রিন্ট করে; কমান্ড ও অপশন সব ভাষায় একই।
 
 ## ২. দ্বিতীয় অ্যাকাউন্ট যোগ করুন
 

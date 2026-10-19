@@ -4,7 +4,7 @@ description: Prüfen, wie viel Spielraum jedes Claude Code-Konto noch hat, und d
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: db7ed9b7bcfc
+sourceHash: 767a731b912e
 ---
 
 Wenn ein Konto sein Limit erreicht, setzt du dasselbe Gespräch in einem anderen Konto fort, das dir gehört: Teile den Gesprächsverlauf einmal und führe dann `ccam next --continue` aus. Wenn du nur ein Konto hast, warte auf den Zeitpunkt des Zurücksetzens, den Claude Code anzeigt.
@@ -32,8 +32,8 @@ ccam usage
 ```
 
 ```console
- 1 personal  ████████ 100% 22분        █████░░░  68% 1일 9시간   방금
- 2 work      █░░░░░░░   8% 4시간 12분  ██░░░░░░  19% 5일 2시간   방금
+ 1 personal  ████████ 100% 22m       █████░░░  68% 1d 9h     just now
+ 2 work      █░░░░░░░   8% 4h 12m    ██░░░░░░  19% 5d 2h     just now
 ```
 
 Öffne das Gespräch im Konto mit dem meisten Spielraum:

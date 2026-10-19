@@ -4,7 +4,7 @@ description: Ongeza akaunti mbili za Claude Code kwa ccam add, badili kati yao k
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: c6b1c1c3ebaf
+sourceHash: 6baf0bfa5029
 ---
 
 Ongeza kila akaunti kwa `ccam add`, kisha anzisha Claude Code kwa `claude1`, `claude2` au `ccam <name>`. Hivyo ndivyo watu wengi wanavyohitaji.
@@ -18,10 +18,10 @@ ccam add
 Mchawi wa usanidi (wizard) huuliza jina kama `personal` au `work`, na ni vipengele gani akaunti inapaswa kushiriki na akaunti zako nyingine. Kisha huendesha `claude auth login`, ambayo hufungua kivinjari ili uweze kuingia. Ikimaliza utaona:
 
 ```console
-✓ personal (me@example.com) 추가됨 — 단축 명령: claude1
+✓ personal (me@example.com) added — shortcut: claude1
 ```
 
-Kwa sasa ccam huchapisha ujumbe wake kwa Kikorea; amri na chaguo ni zile zile katika kila lugha.
+ccam huchapisha ujumbe wake kwa Kiingereza; amri na chaguo ni zile zile katika kila lugha.
 
 ## 2. Ongeza akaunti ya pili
 

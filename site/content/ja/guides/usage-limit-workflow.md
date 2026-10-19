@@ -4,7 +4,7 @@ description: 各Claude Codeアカウントの残りの余裕を確認し、あ�
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: db7ed9b7bcfc
+sourceHash: 767a731b912e
 ---
 
 あるアカウントが上限に達したら、自分が所有する別のアカウントで同じ会話を続けます。一度だけ会話履歴を共有しておき、`ccam next --continue`を実行してください。アカウントが1つしかない場合は、Claude Codeが表示するリセット時刻まで待ちます。
@@ -32,8 +32,8 @@ ccam usage
 ```
 
 ```console
- 1 personal  ████████ 100% 22분        █████░░░  68% 1일 9시간   방금
- 2 work      █░░░░░░░   8% 4시간 12분  ██░░░░░░  19% 5일 2시간   방금
+ 1 personal  ████████ 100% 22m       █████░░░  68% 1d 9h     just now
+ 2 work      █░░░░░░░   8% 4h 12m    ██░░░░░░  19% 5d 2h     just now
 ```
 
 最も余裕があるアカウントで会話を開きます。

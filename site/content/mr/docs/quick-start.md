@@ -4,7 +4,7 @@ description: ccam add ने दोन Claude Code खाती जोडा, cl
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: c6b1c1c3ebaf
+sourceHash: 6baf0bfa5029
 ---
 
 प्रत्येक खाते `ccam add` ने जोडा, नंतर `claude1`, `claude2` किंवा `ccam <name>` ने Claude Code सुरू करा. बहुतेक लोकांना एवढेच लागते.
@@ -18,10 +18,10 @@ ccam add
 विझार्ड `personal` किंवा `work` सारखे नाव विचारतो, आणि हे खाते तुमच्या इतर खात्यांशी कोणते आयटम शेअर करेल ते विचारतो. नंतर तो `claude auth login` चालवतो, जे साइन इन करण्यासाठी ब्राउझर उघडते. पूर्ण झाल्यावर तुम्हाला हे दिसते:
 
 ```console
-✓ personal (me@example.com) 추가됨 — 단축 명령: claude1
+✓ personal (me@example.com) added — shortcut: claude1
 ```
 
-सध्या ccam स्वतःचे संदेश कोरियनमध्ये प्रिंट करते; कमांड आणि पर्याय प्रत्येक भाषेत सारखेच आहेत.
+ccam स्वतःचे संदेश इंग्रजीमध्ये प्रिंट करते; कमांड आणि पर्याय प्रत्येक भाषेत सारखेच आहेत.
 
 ## 2. दुसरे खाते जोडा
 

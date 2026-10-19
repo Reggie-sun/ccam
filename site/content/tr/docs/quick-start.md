@@ -4,7 +4,7 @@ description: ccam add ile iki Claude Code hesabı ekleyin, claude1, claude2 veya
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: c6b1c1c3ebaf
+sourceHash: 6baf0bfa5029
 ---
 
 Her hesabı `ccam add` ile ekleyin, ardından Claude Code'u `claude1`, `claude2` veya `ccam <name>` ile başlatın. Çoğu kişinin ihtiyacı bu kadarıdır.
@@ -18,10 +18,10 @@ ccam add
 Sihirbaz, `personal` veya `work` gibi bir ad ve hesabın diğer hesaplarınızla hangi öğeleri paylaşacağını sorar. Ardından `claude auth login` komutunu çalıştırır; bu komut giriş yapabilmeniz için tarayıcıyı açar. İşlem bittiğinde şunu görürsünüz:
 
 ```console
-✓ personal (me@example.com) 추가됨 — 단축 명령: claude1
+✓ personal (me@example.com) added — shortcut: claude1
 ```
 
-ccam kendi mesajlarını şimdilik Korece yazdırır; komutlar ve seçenekler her dilde aynıdır.
+ccam kendi mesajlarını İngilizce yazdırır; komutlar ve seçenekler her dilde aynıdır.
 
 ## 2. İkinci hesabı ekleyin
 

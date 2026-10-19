@@ -4,7 +4,7 @@ description: ccam add மூலம் இரண்டு Claude Code கணக�
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: c6b1c1c3ebaf
+sourceHash: 6baf0bfa5029
 ---
 
 ஒவ்வொரு கணக்கையும் `ccam add` மூலம் சேருங்கள், பிறகு `claude1`, `claude2` அல்லது `ccam <name>` மூலம் Claude Code-ஐத் தொடங்குங்கள். பெரும்பாலானவர்களுக்கு இவ்வளவுதான் தேவை.
@@ -18,10 +18,10 @@ ccam add
 wizard, `personal` அல்லது `work` போன்ற ஒரு பெயரையும், கணக்கு உங்கள் மற்ற கணக்குகளுடன் எந்த உருப்படிகளைப் பகிர வேண்டும் என்பதையும் கேட்கும். பிறகு அது `claude auth login` இயக்கும், அது நீங்கள் உள்நுழைய உலாவியைத் திறக்கும். முடிந்ததும் இதைக் காண்பீர்கள்:
 
 ```console
-✓ personal (me@example.com) 추가됨 — 단축 명령: claude1
+✓ personal (me@example.com) added — shortcut: claude1
 ```
 
-ccam தற்போது தன் செய்திகளைக் கொரிய மொழியில் அச்சிடுகிறது; கட்டளைகளும் options-உம் எல்லா மொழிகளிலும் ஒன்றே.
+ccam தன் செய்திகளை ஆங்கிலத்தில் அச்சிடுகிறது; கட்டளைகளும் options-உம் எல்லா மொழிகளிலும் ஒன்றே.
 
 ## 2. இரண்டாவது கணக்கைச் சேருங்கள்
 

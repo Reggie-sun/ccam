@@ -4,7 +4,7 @@ description: 查看每個 Claude Code 帳號還剩多少額度，並在某個帳
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: db7ed9b7bcfc
+sourceHash: 767a731b912e
 ---
 
 當某個帳號達到用量限制時，可以在你擁有的另一個帳號繼續同一段對話：先設定一次對話記錄共用，然後執行 `ccam next --continue`。如果你只有一個帳號，請等到 Claude Code 顯示的重設時間。
@@ -32,8 +32,8 @@ ccam usage
 ```
 
 ```console
- 1 personal  ████████ 100% 22분        █████░░░  68% 1일 9시간   방금
- 2 work      █░░░░░░░   8% 4시간 12분  ██░░░░░░  19% 5일 2시간   방금
+ 1 personal  ████████ 100% 22m       █████░░░  68% 1d 9h     just now
+ 2 work      █░░░░░░░   8% 4h 12m    ██░░░░░░  19% 5d 2h     just now
 ```
 
 在剩餘額度最多的帳號開啟這段對話：

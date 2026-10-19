@@ -4,7 +4,7 @@ description: Sprawdź, ile zapasu zostało na każdym koncie Claude Code, i kont
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: db7ed9b7bcfc
+sourceHash: 767a731b912e
 ---
 
 Gdy jedno konto osiągnie limit, kontynuuj tę samą rozmowę na innym swoim koncie: raz włącz współdzielenie historii rozmów, a potem uruchom `ccam next --continue`. Jeśli masz tylko jedno konto, poczekaj do czasu resetu, który pokazuje Claude Code.
@@ -32,8 +32,8 @@ ccam usage
 ```
 
 ```console
- 1 personal  ████████ 100% 22분        █████░░░  68% 1일 9시간   방금
- 2 work      █░░░░░░░   8% 4시간 12분  ██░░░░░░  19% 5일 2시간   방금
+ 1 personal  ████████ 100% 22m       █████░░░  68% 1d 9h     just now
+ 2 work      █░░░░░░░   8% 4h 12m    ██░░░░░░  19% 5d 2h     just now
 ```
 
 Otwórz rozmowę na koncie z największym zapasem:

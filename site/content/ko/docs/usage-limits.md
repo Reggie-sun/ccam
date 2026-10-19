@@ -4,18 +4,18 @@ description: ccam usage로 모든 Claude Code 계정의 5시간·주간 사용�
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: a64c2c341db3
+sourceHash: 8ab41501c548
 ---
 
 `ccam usage`는 각 계정이 5시간 한도와 주간 한도를 얼마나 썼는지 보여 줍니다. `ccam next --auto`는 여유가 가장 많은 계정을 열고, `--continue`는 현재 대화를 그 계정으로 이어 갑니다.
 
 ```console
 $ ccam usage
- 계정        5시간         초기화      주간          초기화      기준
- 1 personal  ██████░░  72% 1시간 40분  ███░░░░░  41% 3일 6시간   방금
- 2 work      █░░░░░░░   8% 4시간 12분  ██░░░░░░  19% 5일 2시간   방금
- 3 side      ████████ 100% 22분        █████░░░  68% 1일 9시간   12분 전 (캐시)
-→ 여유가 가장 많은 계정: work   (ccam next --auto 로 바로 열기)
+ Account     5-hour        Resets    Weekly        Resets    As of
+ 1 personal  ██████░░  72% 1h 40m    ███░░░░░  41% 3d 6h     just now
+ 2 work      █░░░░░░░   8% 4h 12m    ██░░░░░░  19% 5d 2h     just now
+ 3 side      ████████ 100% 22m       █████░░░  68% 1d 9h     12m ago (cached)
+→ Most headroom: work   (open it with ccam next --auto)
 ```
 
 각 열은 차례로 계정, 5시간 사용량, 초기화까지 남은 시간, 주간 사용량, 초기화까지 남은 시간, 그리고 수치가 얼마나 오래되었는지(기준)를 나타냅니다.

@@ -4,7 +4,7 @@ description: Tambahkan dua akun Claude Code dengan ccam add, berpindah di antara
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: c6b1c1c3ebaf
+sourceHash: 6baf0bfa5029
 ---
 
 Tambahkan setiap akun dengan `ccam add`, lalu jalankan Claude Code dengan `claude1`, `claude2`, atau `ccam <name>`. Hanya itu yang dibutuhkan sebagian besar orang.
@@ -18,10 +18,10 @@ ccam add
 Wizard akan menanyakan nama, seperti `personal` atau `work`, dan item apa saja yang perlu dibagikan akun ini dengan akun Anda yang lain. Lalu wizard menjalankan `claude auth login`, yang membuka browser agar Anda bisa masuk. Setelah selesai, Anda akan melihat:
 
 ```console
-✓ personal (me@example.com) 추가됨 — 단축 명령: claude1
+✓ personal (me@example.com) added — shortcut: claude1
 ```
 
-Untuk saat ini ccam menampilkan pesannya sendiri dalam bahasa Korea; perintah dan opsinya sama dalam semua bahasa.
+ccam menampilkan pesannya sendiri dalam bahasa Inggris; perintah dan opsinya sama dalam semua bahasa.
 
 ## 2. Tambahkan akun kedua
 

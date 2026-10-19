@@ -4,18 +4,18 @@ description: Смотрите использование за 5 часов и з
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: a64c2c341db3
+sourceHash: 8ab41501c548
 ---
 
 `ccam usage` показывает, какую часть 5-часового и недельного лимитов уже использовал каждый аккаунт. `ccam next --auto` открывает аккаунт с наибольшим запасом, а `--continue` переносит текущий разговор.
 
 ```console
 $ ccam usage
- 계정        5시간         초기화      주간          초기화      기준
- 1 personal  ██████░░  72% 1시간 40분  ███░░░░░  41% 3일 6시간   방금
- 2 work      █░░░░░░░   8% 4시간 12분  ██░░░░░░  19% 5일 2시간   방금
- 3 side      ████████ 100% 22분        █████░░░  68% 1일 9시간   12분 전 (캐시)
-→ 여유가 가장 많은 계정: work   (ccam next --auto 로 바로 열기)
+ Account     5-hour        Resets    Weekly        Resets    As of
+ 1 personal  ██████░░  72% 1h 40m    ███░░░░░  41% 3d 6h     just now
+ 2 work      █░░░░░░░   8% 4h 12m    ██░░░░░░  19% 5d 2h     just now
+ 3 side      ████████ 100% 22m       █████░░░  68% 1d 9h     12m ago (cached)
+→ Most headroom: work   (open it with ccam next --auto)
 ```
 
 Столбцы: аккаунт, использование за 5 часов, время до сброса, использование за неделю, время до сброса и давность данных.

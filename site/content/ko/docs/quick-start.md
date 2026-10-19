@@ -4,7 +4,7 @@ description: ccam add로 Claude Code 계정 두 개를 추가하고, claude1, cl
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: c6b1c1c3ebaf
+sourceHash: 6baf0bfa5029
 ---
 
 계정마다 `ccam add`로 추가한 뒤 `claude1`, `claude2` 또는 `ccam <name>`으로 Claude Code를 시작합니다. 대부분은 이것만으로 충분합니다.
@@ -18,10 +18,10 @@ ccam add
 마법사가 `personal`이나 `work` 같은 이름과, 이 계정이 다른 계정과 공유할 항목을 묻습니다. 그다음 `claude auth login`을 실행해 브라우저를 열고 로그인하게 합니다. 끝나면 다음과 같이 표시됩니다.
 
 ```console
-✓ personal (me@example.com) 추가됨 — 단축 명령: claude1
+✓ personal (me@example.com) added — shortcut: claude1
 ```
 
-ccam은 현재 자체 메시지를 한국어로 출력하므로 위와 같은 메시지가 그대로 표시됩니다. 명령과 옵션은 어느 언어에서나 같습니다.
+ccam은 자체 메시지를 영어로 출력하므로 위와 같은 메시지가 그대로 표시됩니다. 명령과 옵션은 어느 언어에서나 같습니다.
 
 ## 2. 두 번째 계정 추가하기
 

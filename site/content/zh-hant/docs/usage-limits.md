@@ -4,18 +4,18 @@ description: 用 ccam usage 查看每個 Claude Code 帳號的 5 小時和每週
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: a64c2c341db3
+sourceHash: 8ab41501c548
 ---
 
 `ccam usage` 會顯示每個帳號已使用了多少 5 小時限制和每週限制。`ccam next --auto` 會開啟剩餘額度最多的帳號，而 `--continue` 會把目前的對話帶過去。
 
 ```console
 $ ccam usage
- 계정        5시간         초기화      주간          초기화      기준
- 1 personal  ██████░░  72% 1시간 40분  ███░░░░░  41% 3일 6시간   방금
- 2 work      █░░░░░░░   8% 4시간 12분  ██░░░░░░  19% 5일 2시간   방금
- 3 side      ████████ 100% 22분        █████░░░  68% 1일 9시간   12분 전 (캐시)
-→ 여유가 가장 많은 계정: work   (ccam next --auto 로 바로 열기)
+ Account     5-hour        Resets    Weekly        Resets    As of
+ 1 personal  ██████░░  72% 1h 40m    ███░░░░░  41% 3d 6h     just now
+ 2 work      █░░░░░░░   8% 4h 12m    ██░░░░░░  19% 5d 2h     just now
+ 3 side      ████████ 100% 22m       █████░░░  68% 1d 9h     12m ago (cached)
+→ Most headroom: work   (open it with ccam next --auto)
 ```
 
 各欄依序為：帳號、5 小時用量、距離重設的時間、每週用量、距離重設的時間，以及數字的新舊程度。

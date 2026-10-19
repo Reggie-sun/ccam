@@ -4,7 +4,7 @@ description: Veja quanto espaço resta em cada conta do Claude Code e continue a
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: db7ed9b7bcfc
+sourceHash: 767a731b912e
 ---
 
 Quando uma conta atingir o limite, continue a mesma conversa em outra conta sua: compartilhe o histórico de conversas uma vez e depois execute `ccam next --continue`. Se você tem apenas uma conta, espere o horário de reinício que o Claude Code mostra.
@@ -32,8 +32,8 @@ ccam usage
 ```
 
 ```console
- 1 personal  ████████ 100% 22분        █████░░░  68% 1일 9시간   방금
- 2 work      █░░░░░░░   8% 4시간 12분  ██░░░░░░  19% 5일 2시간   방금
+ 1 personal  ████████ 100% 22m       █████░░░  68% 1d 9h     just now
+ 2 work      █░░░░░░░   8% 4h 12m    ██░░░░░░  19% 5d 2h     just now
 ```
 
 Abra a conversa na conta com mais espaço:

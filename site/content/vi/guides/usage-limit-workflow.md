@@ -4,7 +4,7 @@ description: "Kiểm tra mỗi tài khoản Claude Code còn bao nhiêu hạn m�
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: db7ed9b7bcfc
+sourceHash: 767a731b912e
 ---
 
 Khi một tài khoản chạm giới hạn, hãy tiếp tục cùng cuộc hội thoại ở một tài khoản khác của bạn: bật dùng chung lịch sử hội thoại một lần, rồi chạy `ccam next --continue`. Nếu bạn chỉ có một tài khoản, hãy chờ đến thời điểm đặt lại mà Claude Code hiển thị.
@@ -32,8 +32,8 @@ ccam usage
 ```
 
 ```console
- 1 personal  ████████ 100% 22분        █████░░░  68% 1일 9시간   방금
- 2 work      █░░░░░░░   8% 4시간 12분  ██░░░░░░  19% 5일 2시간   방금
+ 1 personal  ████████ 100% 22m       █████░░░  68% 1d 9h     just now
+ 2 work      █░░░░░░░   8% 4h 12m    ██░░░░░░  19% 5d 2h     just now
 ```
 
 Mở cuộc hội thoại ở tài khoản còn nhiều hạn mức nhất:

@@ -4,7 +4,7 @@ description: "Vérifiez la marge restante de chaque compte Claude Code et poursu
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: db7ed9b7bcfc
+sourceHash: 767a731b912e
 ---
 
 Quand un compte atteint sa limite, poursuivez la même conversation dans un autre compte qui vous appartient : partagez l'historique des conversations une fois, puis exécutez `ccam next --continue`. Si vous n'avez qu'un seul compte, attendez l'heure de réinitialisation qu'affiche Claude Code.
@@ -32,8 +32,8 @@ ccam usage
 ```
 
 ```console
- 1 personal  ████████ 100% 22분        █████░░░  68% 1일 9시간   방금
- 2 work      █░░░░░░░   8% 4시간 12분  ██░░░░░░  19% 5일 2시간   방금
+ 1 personal  ████████ 100% 22m       █████░░░  68% 1d 9h     just now
+ 2 work      █░░░░░░░   8% 4h 12m    ██░░░░░░  19% 5d 2h     just now
 ```
 
 Ouvrez la conversation dans le compte qui a le plus de marge :

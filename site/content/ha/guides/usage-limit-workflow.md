@@ -4,7 +4,7 @@ description: Duba sauran sararin da kowane asusun Claude Code yake da shi, kuma 
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: db7ed9b7bcfc
+sourceHash: 767a731b912e
 ---
 
 Idan wani asusu ya kai iyakarsa, ci gaba da wannan tattaunawar a wani asusun da ka mallaka: raba tarihin tattaunawa sau ɗaya, sannan ka gudanar da `ccam next --continue`. Idan kana da asusu ɗaya kawai, jira lokacin sake saitawa da Claude Code yake nunawa.
@@ -32,8 +32,8 @@ ccam usage
 ```
 
 ```console
- 1 personal  ████████ 100% 22분        █████░░░  68% 1일 9시간   방금
- 2 work      █░░░░░░░   8% 4시간 12분  ██░░░░░░  19% 5일 2시간   방금
+ 1 personal  ████████ 100% 22m       █████░░░  68% 1d 9h     just now
+ 2 work      █░░░░░░░   8% 4h 12m    ██░░░░░░  19% 5d 2h     just now
 ```
 
 Buɗe tattaunawar a asusun da ya fi sarari:

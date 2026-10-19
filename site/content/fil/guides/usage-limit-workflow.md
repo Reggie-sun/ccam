@@ -4,7 +4,7 @@ description: Alamin kung gaano pa karami ang natitira sa bawat Claude Code accou
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: db7ed9b7bcfc
+sourceHash: 767a731b912e
 ---
 
 Kapag naabot ng isang account ang limit nito, ituloy ang parehong usapan sa ibang account na pag-aari mo: i-share nang isang beses ang kasaysayan ng usapan, saka patakbuhin ang `ccam next --continue`. Kung iisa lang ang account mo, hintayin ang oras ng reset na ipinapakita ng Claude Code.
@@ -32,8 +32,8 @@ ccam usage
 ```
 
 ```console
- 1 personal  ████████ 100% 22분        █████░░░  68% 1일 9시간   방금
- 2 work      █░░░░░░░   8% 4시간 12분  ██░░░░░░  19% 5일 2시간   방금
+ 1 personal  ████████ 100% 22m       █████░░░  68% 1d 9h     just now
+ 2 work      █░░░░░░░   8% 4h 12m    ██░░░░░░  19% 5d 2h     just now
 ```
 
 Buksan ang usapan sa account na may pinakamaraming natitira:

@@ -4,7 +4,7 @@ description: ccam add से दो Claude Code अकाउंट जोड़�
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: c6b1c1c3ebaf
+sourceHash: 6baf0bfa5029
 ---
 
 हर अकाउंट को `ccam add` से जोड़ें, फिर Claude Code को `claude1`, `claude2` या `ccam <name>` से शुरू करें। ज़्यादातर लोगों को बस इतना ही चाहिए।
@@ -18,10 +18,10 @@ ccam add
 विज़र्ड एक नाम पूछता है, जैसे `personal` या `work`, और यह भी कि अकाउंट आपके दूसरे अकाउंट्स के साथ कौन-से आइटम साझा करे। फिर यह `claude auth login` चलाता है, जो साइन इन करने के लिए ब्राउज़र खोलता है। पूरा होने पर आपको यह दिखता है:
 
 ```console
-✓ personal (me@example.com) 추가됨 — 단축 명령: claude1
+✓ personal (me@example.com) added — shortcut: claude1
 ```
 
-फ़िलहाल ccam अपने संदेश कोरियाई में प्रिंट करता है; कमांड और विकल्प हर भाषा में एक जैसे हैं।
+ccam अपने संदेश अंग्रेज़ी में प्रिंट करता है; कमांड और विकल्प हर भाषा में एक जैसे हैं।
 
 ## 2. दूसरा अकाउंट जोड़ें
 

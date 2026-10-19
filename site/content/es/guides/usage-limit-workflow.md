@@ -4,7 +4,7 @@ description: Revisa cuánto margen le queda a cada cuenta de Claude Code y conti
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: db7ed9b7bcfc
+sourceHash: 767a731b912e
 ---
 
 Cuando una cuenta llega a su límite de uso, continúa la misma conversación en otra cuenta tuya: comparte el historial de conversaciones una vez y luego ejecuta `ccam next --continue`. Si solo tienes una cuenta, espera a la hora de restablecimiento que muestra Claude Code.
@@ -32,8 +32,8 @@ ccam usage
 ```
 
 ```console
- 1 personal  ████████ 100% 22분        █████░░░  68% 1일 9시간   방금
- 2 work      █░░░░░░░   8% 4시간 12분  ██░░░░░░  19% 5일 2시간   방금
+ 1 personal  ████████ 100% 22m       █████░░░  68% 1d 9h     just now
+ 2 work      █░░░░░░░   8% 4h 12m    ██░░░░░░  19% 5d 2h     just now
 ```
 
 Abre la conversación en la cuenta con más margen:

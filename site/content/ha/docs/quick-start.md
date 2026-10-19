@@ -4,7 +4,7 @@ description: Ƙara asusun Claude Code biyu da ccam add, sauya tsakaninsu da clau
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: c6b1c1c3ebaf
+sourceHash: 6baf0bfa5029
 ---
 
 Ƙara kowane asusu da `ccam add`, sannan ka fara Claude Code da `claude1`, `claude2` ko `ccam <name>`. Wannan ne kawai abin da yawancin mutane suke buƙata.
@@ -18,10 +18,10 @@ ccam add
 Mataimakin saitawa (wizard) yana tambayar suna kamar `personal` ko `work`, da kuma abubuwan da asusun zai raba da sauran asusunka. Sannan yana gudanar da `claude auth login`, wanda ke buɗe burauza don ka shiga. Idan ya gama, za ka ga:
 
 ```console
-✓ personal (me@example.com) 추가됨 — 단축 명령: claude1
+✓ personal (me@example.com) added — shortcut: claude1
 ```
 
-A yanzu ccam yana buga saƙonninsa da harshen Koriya; umarni da zaɓuɓɓuka iri ɗaya ne a kowane harshe.
+ccam yana buga saƙonninsa da harshen Turanci; umarni da zaɓuɓɓuka iri ɗaya ne a kowane harshe.
 
 ## 2. Ƙara asusu na biyu
 

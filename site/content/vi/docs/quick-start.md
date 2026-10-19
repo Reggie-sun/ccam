@@ -4,7 +4,7 @@ description: "Thêm hai tài khoản Claude Code bằng ccam add, chuyển đổ
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: c6b1c1c3ebaf
+sourceHash: 6baf0bfa5029
 ---
 
 Thêm từng tài khoản bằng `ccam add`, rồi khởi động Claude Code bằng `claude1`, `claude2` hoặc `ccam <name>`. Hầu hết mọi người chỉ cần như vậy.
@@ -18,10 +18,10 @@ ccam add
 Trình hướng dẫn hỏi một cái tên, chẳng hạn `personal` hoặc `work`, và những mục nào tài khoản nên dùng chung với các tài khoản khác của bạn. Sau đó nó chạy `claude auth login`, lệnh này mở trình duyệt để bạn đăng nhập. Khi hoàn tất, bạn sẽ thấy:
 
 ```console
-✓ personal (me@example.com) 추가됨 — 단축 명령: claude1
+✓ personal (me@example.com) added — shortcut: claude1
 ```
 
-Hiện tại ccam in thông báo của chính nó bằng tiếng Hàn; các lệnh và tùy chọn thì giống nhau ở mọi ngôn ngữ.
+ccam in thông báo của chính nó bằng tiếng Anh; các lệnh và tùy chọn thì giống nhau ở mọi ngôn ngữ.
 
 ## 2. Thêm tài khoản thứ hai
 

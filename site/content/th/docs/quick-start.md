@@ -4,7 +4,7 @@ description: "เพิ่มบัญชี Claude Code สองบัญช�
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: c6b1c1c3ebaf
+sourceHash: 6baf0bfa5029
 ---
 
 เพิ่มแต่ละบัญชีด้วย `ccam add` จากนั้นเริ่ม Claude Code ด้วย `claude1`, `claude2` หรือ `ccam <name>` เท่านี้ก็เพียงพอสำหรับผู้ใช้ส่วนใหญ่
@@ -18,10 +18,10 @@ ccam add
 ตัวช่วยตั้งค่าจะถามชื่อบัญชี เช่น `personal` หรือ `work` และถามว่าบัญชีนี้ควรใช้รายการใดร่วมกับบัญชีอื่นของคุณ จากนั้นจะรัน `claude auth login` ซึ่งเปิดเบราว์เซอร์ให้คุณลงชื่อเข้าใช้ เมื่อเสร็จแล้วคุณจะเห็น:
 
 ```console
-✓ personal (me@example.com) 추가됨 — 단축 명령: claude1
+✓ personal (me@example.com) added — shortcut: claude1
 ```
 
-ขณะนี้ ccam แสดงข้อความของตัวเองเป็นภาษาเกาหลี ส่วนคำสั่งและตัวเลือกเหมือนกันในทุกภาษา
+ccam แสดงข้อความของตัวเองเป็นภาษาอังกฤษ ส่วนคำสั่งและตัวเลือกเหมือนกันในทุกภาษา
 
 ## 2. เพิ่มบัญชีที่สอง
 
