@@ -112,7 +112,7 @@ for (const l of builtLocales()) {
   }
 }
 
-const icon = new Resvg(readFileSync("public/favicon.svg", "utf8").replace(/<style>.*<\/style>/, "").replace(/class="r"/g, 'fill="#d8dfe6"').replace(/class="a"/g, 'fill="#d9921e"').replace(/class="k"/g, 'fill="#18212b"'), {
+const icon = new Resvg(readFileSync("public/favicon.svg", "utf8").replace(/<style>.*<\/style>/, "").replace(/class="g"/g, 'fill="#d97757"'), {
   fitTo: { mode: "width", value: 512 },
   background: "#f5f5f5",
 }).render().asPng();
