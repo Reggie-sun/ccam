@@ -39,6 +39,10 @@ func TestUpdate(t *testing.T) {
 	exe := filepath.Join(h.home, "bin", "ccam")
 	buildRelease(t, "0.2.0", exe)
 	os.Symlink(exe, filepath.Join(h.home, "bin", "ccwork")) // a shortcut
+	shown, err := filepath.EvalSymlinks(exe) // ccam prints the resolved path (/private/var on macOS)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	data, err := os.ReadFile(newBin)
 	if err != nil {
@@ -93,7 +97,7 @@ func TestUpdate(t *testing.T) {
 		t.Fatalf("dry run changed the binary: %+v", r)
 	}
 	r := run("update")
-	if r.code != 0 || !strings.HasSuffix(r.stdout, "✓ Updated ccam 0.2.0 → 0.3.0 ("+exe+")\n") {
+	if r.code != 0 || !strings.HasSuffix(r.stdout, "✓ Updated ccam 0.2.0 → 0.3.0 ("+shown+")\n") {
 		t.Fatalf("update: %+v", r)
 	}
 	if r := run("version"); r.stdout != "ccam 0.3.0\n" {
