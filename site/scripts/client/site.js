@@ -109,23 +109,6 @@
 
     if (still) return;
 
-    // Hero orbs lean toward the pointer.
-    const drift = d.querySelector("[data-parallax]");
-    if (drift && matchMedia("(pointer: fine)").matches) {
-      let x = 0, y = 0, queued = false;
-      addEventListener("pointermove", (e) => {
-        x = e.clientX / innerWidth - 0.5;
-        y = e.clientY / innerHeight - 0.5;
-        if (queued) return;
-        queued = true;
-        requestAnimationFrame(() => {
-          queued = false;
-          drift.style.setProperty("--px", x.toFixed(3));
-          drift.style.setProperty("--py", y.toFixed(3));
-        });
-      }, { passive: true });
-    }
-
     // The usage demo replays as a terminal session each time it scrolls into view.
     const demo = d.querySelector("[data-demo]");
     if (demo && IO) {

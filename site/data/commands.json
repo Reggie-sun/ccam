@@ -29,11 +29,11 @@
   },
   {
     "key": "login",
-    "usage": "ccam login <name|number>"
+    "usage": "ccam login <name|slot>"
   },
   {
     "key": "logout",
-    "usage": "ccam logout <name|number>"
+    "usage": "ccam logout <name|slot>"
   },
   {
     "key": "mcp",
@@ -45,15 +45,15 @@
   },
   {
     "key": "remove",
-    "usage": "ccam remove <name|number>"
+    "usage": "ccam remove <name|slot>"
   },
   {
     "key": "rename",
-    "usage": "ccam rename <name> <new name>"
+    "usage": "ccam rename <name> <new-name>"
   },
   {
     "key": "share",
-    "usage": "ccam share <name|number> [--mcp on|off|<group>] [--history …]"
+    "usage": "ccam share <name|slot> [--mcp on|off|<group>] [--history …]"
   },
   {
     "key": "shims",
@@ -69,6 +69,6 @@
   },
   {
     "key": "use",
-    "usage": "ccam use <name|number>"
+    "usage": "ccam use <name|slot>"
   }
 ]

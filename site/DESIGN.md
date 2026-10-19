@@ -252,6 +252,10 @@ components:
     typography: "{typography.body-sm}"
 ---
 
+## Owner overrides
+
+- 2026-10-19: no gradient orbs anywhere. The owner asked for a clean, readable site, so the atmospheric orbs below are not used; surfaces stay flat canvas, cards and hairlines.
+
 ## Overview
 
 ElevenLabs reads like a quietly editorial print magazine that happens to be a voice-AI product. The base canvas is off-white `{colors.canvas}` (#f5f5f5) holding warm near-black ink `{colors.ink}` (#0c0a09). The brand voltage is **photographic, not chromatic**: soft pastel atmospheric gradient orbs (mint, peach, lavender, sky, rose) drift through the page as the only "color" moments. There is no neon accent, no saturated CTA color, no dark-canvas dev-tools atmosphere.

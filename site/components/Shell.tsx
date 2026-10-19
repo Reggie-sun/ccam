@@ -16,11 +16,13 @@ type Props = {
   locale: string;
   /** This page in every locale it exists in (code → path). */
   alternates: Record<string, string>;
-  active?: "docs" | "guides" | "faq" | "changelog";
+  active?: "docs" | "faq" | "changelog";
+  /** Extra links for the phone menu: the doc list on doc pages. */
+  menu?: React.ReactNode;
   children: React.ReactNode;
 };
 
-export function Shell({ locale, alternates, active, children }: Props) {
+export function Shell({ locale, alternates, active, menu, children }: Props) {
   const l = getLocale(locale)!;
   const m = getMessages(locale);
   const built = locales.filter((x) => hasMessages(x.code));
@@ -48,7 +50,6 @@ export function Shell({ locale, alternates, active, children }: Props) {
             <a className="brand" href={homePath(locale)}>ccam</a>
             <nav className="site-nav" aria-label={m.nav.menu}>
               <a href={pagePath(locale, "docs", "quick-start")} aria-current={active === "docs" ? "page" : undefined}>{m.nav.docs}</a>
-              <a href={pagePath(locale, "guides", "multiple-claude-code-accounts")} aria-current={active === "guides" ? "page" : undefined}>{m.nav.guides}</a>
               <a href={pagePath(locale, "docs", "faq")} aria-current={active === "faq" ? "page" : undefined}>{m.nav.faq}</a>
               <a href={REPO}>{m.nav.github}</a>
             </nav>
@@ -91,9 +92,9 @@ export function Shell({ locale, alternates, active, children }: Props) {
                 </summary>
                 <div className="popover menu-panel">
                   <a href={pagePath(locale, "docs", "quick-start")} aria-current={active === "docs" ? "page" : undefined}>{m.nav.docs}</a>
-                  <a href={pagePath(locale, "guides", "multiple-claude-code-accounts")} aria-current={active === "guides" ? "page" : undefined}>{m.nav.guides}</a>
                   <a href={pagePath(locale, "docs", "faq")} aria-current={active === "faq" ? "page" : undefined}>{m.nav.faq}</a>
                   <a href={REPO}>{m.nav.github}</a>
+                  {menu && <div className="menu-docs">{menu}</div>}
                 </div>
               </details>
             </div>

@@ -72,14 +72,8 @@ function svg(opts: { title: string; kicker: string; family: string; rtl: boolean
   const anchor = opts.rtl ? "end" : "start";
   const tspans = lines.map((l, i) => `<tspan x="${x}" dy="${i ? size * 1.25 : 0}">${esc(l)}</tspan>`).join("");
   const top = 300 - ((lines.length - 1) * size * 1.25) / 2;
-  const orb = (id: string, color: string) =>
-    `<radialGradient id="${id}"><stop offset="0" stop-color="${color}" stop-opacity="0.85"/><stop offset="1" stop-color="${color}" stop-opacity="0"/></radialGradient>`;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
-  <defs>${orb("mint", "#a7e5d3")}${orb("peach", "#f4c5a8")}${orb("lavender", "#c8b8e0")}</defs>
   <rect width="1200" height="630" fill="#f5f5f5"/>
-  <circle cx="160" cy="90" r="420" fill="url(#mint)"/>
-  <circle cx="1100" cy="40" r="460" fill="url(#peach)"/>
-  <circle cx="780" cy="680" r="440" fill="url(#lavender)"/>
   <text x="${x}" y="120" text-anchor="${anchor}" font-family="Newsreader" font-size="56" fill="#0c0a09">ccam</text>
   <text x="${x}" y="${top}" text-anchor="${anchor}" direction="${opts.rtl ? "rtl" : "ltr"}" font-family="${opts.family}" font-size="${size}" fill="#0c0a09">${tspans}</text>
   <text x="${x}" y="545" text-anchor="${anchor}" direction="${opts.rtl ? "rtl" : "ltr"}" font-family="${opts.family}" font-size="30" fill="#4e4e4e">${esc(opts.kicker)}</text>

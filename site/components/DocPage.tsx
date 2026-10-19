@@ -1,5 +1,5 @@
 import { getLocale } from "../i18n/locales";
-import { faqEntries, getPages, pageLocales, renderMarkdown, sections, type Page, type Section } from "../lib/content";
+import { faqEntries, getPages, pageLocales, renderMarkdown, type Page, type Section } from "../lib/content";
 import { format, formatDate, getMessages, type Messages } from "../lib/i18n";
 import { abs, homePath, pagePath, REPO } from "../lib/paths";
 import { articleLd, CLAUDE_CODE_VERSION, faqLd, VERSION } from "../lib/jsonld";
@@ -10,6 +10,31 @@ import { Shell } from "./Shell";
 
 export function docAlternates(section: Section, slug: string): Record<string, string> {
   return Object.fromEntries(pageLocales(section, slug).map((l) => [l.code, pagePath(l.code, section, slug)]));
+}
+
+/** Docs and guides read as one list; comparisons and the blog keep their own groups. */
+function docGroups(locale: string, m: Messages): { title: string; pages: Page[] }[] {
+  const t = m.docs.sections as Record<Section, string>;
+  return [
+    { title: t.docs, pages: [...getPages(locale, "docs"), ...getPages(locale, "guides")] },
+    { title: t.compare, pages: getPages(locale, "compare") },
+    { title: t.blog, pages: getPages(locale, "blog") },
+  ].filter((g) => g.pages.length);
+}
+
+function DocList({ page, groups, Title }: { page: Page; groups: ReturnType<typeof docGroups>; Title: "h2" | "p" }) {
+  return groups.map((g) => (
+    <div key={g.title}>
+      <Title className="group-title">{g.title}</Title>
+      <ul>
+        {g.pages.map((p) => (
+          <li key={`${p.section}/${p.slug}`}>
+            <a href={pagePath(p.locale, p.section, p.slug)} aria-current={p.slug === page.slug && p.section === page.section ? "page" : undefined}>{p.title}</a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  ));
 }
 
 function commandsTable(m: Messages): string {
@@ -25,13 +50,15 @@ export function DocPage({ page }: { page: Page }) {
   const m = getMessages(page.locale);
   let { html, headings } = renderMarkdown(page, m.copy);
   html = html.replace("<!-- commands -->", commandsTable(m));
-  const siblings = getPages(page.locale, page.section);
-  const i = siblings.findIndex((p) => p.slug === page.slug);
+  const groups = docGroups(page.locale, m);
+  const group = groups.find((g) => g.pages.some((p) => p.section === page.section && p.slug === page.slug))!;
+  const siblings = group.pages;
+  const i = siblings.findIndex((p) => p.section === page.section && p.slug === page.slug);
   const prev = siblings[i - 1];
   const next = siblings[i + 1];
   const path = pagePath(page.locale, page.section, page.slug);
-  const active = page.slug === "faq" ? "faq" : page.section === "docs" ? "docs" : page.section === "guides" ? "guides" : undefined;
-  const sectionName = (m.docs.sections as Record<Section, string>)[page.section];
+  const active = page.slug === "faq" ? "faq" : page.section === "docs" || page.section === "guides" ? "docs" : undefined;
+  const sectionName = group.title;
   const toc = headings.filter((h) => h.depth === 2);
   const tocList = (
     <ol>
@@ -43,34 +70,18 @@ export function DocPage({ page }: { page: Page }) {
     </ol>
   );
   return (
-    <Shell locale={page.locale} alternates={docAlternates(page.section, page.slug)} active={active}>
+    <Shell
+      locale={page.locale}
+      alternates={docAlternates(page.section, page.slug)}
+      active={active}
+      menu={<DocList page={page} groups={groups} Title="p" />}
+    >
       <div className="progress" aria-hidden="true" />
       <div className={`wrap docs${toc.length > 1 ? " has-toc" : ""}`}>
         <aside className="sidebar">
-          <details>
-            <summary>
-              {sectionName}
-              <ChevronIcon />
-            </summary>
-            <nav aria-label={m.nav.docs}>
-              {sections.map((s) => {
-                const list = getPages(page.locale, s);
-                if (!list.length) return null;
-                return (
-                  <div key={s}>
-                    <h2>{(m.docs.sections as Record<Section, string>)[s]}</h2>
-                    <ul>
-                      {list.map((p) => (
-                        <li key={p.slug}>
-                          <a href={pagePath(p.locale, s, p.slug)} aria-current={p.slug === page.slug && s === page.section ? "page" : undefined}>{p.title}</a>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                );
-              })}
-            </nav>
-          </details>
+          <nav aria-label={m.nav.docs}>
+            <DocList page={page} groups={groups} Title="h2" />
+          </nav>
         </aside>
         <article className="article">
           <p className="crumb">{sectionName}</p>
@@ -97,13 +108,13 @@ export function DocPage({ page }: { page: Page }) {
           <div className="prose" dangerouslySetInnerHTML={{ __html: html }} />
           <nav className="pager" aria-label={`${m.docs.prev}, ${m.docs.next}`}>
             {prev && (
-              <a href={pagePath(page.locale, page.section, prev.slug)}>
+              <a href={pagePath(page.locale, prev.section, prev.slug)}>
                 <small>{m.docs.prev}</small>
                 {prev.title}
               </a>
             )}
             {next && (
-              <a className="next" href={pagePath(page.locale, page.section, next.slug)}>
+              <a className="next" href={pagePath(page.locale, next.section, next.slug)}>
                 <small>{m.docs.next}</small>
                 {next.title}
               </a>
@@ -129,7 +140,7 @@ export function DocPage({ page }: { page: Page }) {
           lang: l.lang,
           crumbs: [
             { name: "ccam", url: abs(homePath(page.locale)) },
-            { name: sectionName, url: abs(pagePath(page.locale, page.section, siblings[0].slug)) },
+            { name: sectionName, url: abs(pagePath(page.locale, siblings[0].section, siblings[0].slug)) },
             { name: page.title, url: abs(path) },
           ],
         })}

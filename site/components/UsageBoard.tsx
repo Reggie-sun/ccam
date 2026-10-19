@@ -1,7 +1,6 @@
 import type { Messages } from "../lib/i18n";
 import { format } from "../lib/i18n";
 import type { Locale } from "../i18n/locales";
-import { Orbs } from "./Orbs";
 
 // Sample accounts, as `ccam usage` would print them.
 const rows = [
@@ -39,7 +38,6 @@ export function UsageBoard({ locale, m }: { locale: Locale; m: Messages }) {
   );
   return (
     <figure className="stage reveal" data-demo>
-      <Orbs kinds={["sky", "lavender", "peach"]} />
       <div className="term">
         <p className="line" dir="ltr">
           <span className="ps">$</span>

@@ -82,7 +82,7 @@ test("keyboard: skip link, language picker, nav", async ({ page }) => {
   await page.keyboard.press("Enter");
   await expect(page.locator(".picker")).toHaveAttribute("open", "");
   await expect(page.locator("#lang-list a").first()).toBeVisible();
-  for (const name of ["Docs", "Guides", "FAQ"]) {
+  for (const name of ["Docs", "FAQ"]) {
     const href = await page.locator(".site-nav a", { hasText: name }).getAttribute("href");
     expect((await page.request.get(href!)).status(), name).toBe(200);
   }

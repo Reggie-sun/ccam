@@ -1,11 +1,17 @@
 const line = { fill: "none", stroke: "currentColor", strokeWidth: 1.6, strokeLinecap: "round", strokeLinejoin: "round" } as const;
 
+/** Sun and moon; CSS shows the one for the current theme. */
 export function ThemeIcon() {
   return (
-    <svg viewBox="0 0 20 20" aria-hidden="true" {...line}>
-      <circle cx="10" cy="10" r="4.2" />
-      <path d="M10 1.5v2.2M10 16.3v2.2M1.5 10h2.2M16.3 10h2.2M4 4l1.5 1.5M14.5 14.5L16 16M4 16l1.5-1.5M14.5 5.5L16 4" />
-    </svg>
+    <>
+      <svg className="sun" viewBox="0 0 20 20" aria-hidden="true" {...line}>
+        <circle cx="10" cy="10" r="4.2" />
+        <path d="M10 1.5v2.2M10 16.3v2.2M1.5 10h2.2M16.3 10h2.2M4 4l1.5 1.5M14.5 14.5L16 16M4 16l1.5-1.5M14.5 5.5L16 4" />
+      </svg>
+      <svg className="moon" viewBox="0 0 20 20" aria-hidden="true" {...line}>
+        <path d="M16.5 12.4A7 7 0 0 1 7.6 3.5a7 7 0 1 0 8.9 8.9z" />
+      </svg>
+    </>
   );
 }
 

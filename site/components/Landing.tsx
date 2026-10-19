@@ -7,7 +7,6 @@ import { softwareLd } from "../lib/jsonld";
 import { ArrowIcon } from "./Icons";
 import { InstallCommand } from "./InstallCommand";
 import { JsonLd } from "./JsonLd";
-import { Orbs } from "./Orbs";
 import { Shell } from "./Shell";
 import { UsageBoard } from "./UsageBoard";
 
@@ -26,7 +25,6 @@ export function Landing({ locale }: { locale: string }) {
   return (
     <Shell locale={locale} alternates={landingAlternates()}>
       <section className="hero">
-        <Orbs kinds={["mint", "peach", "lavender", "sky", "rose"]} parallax />
         <div className="wrap">
           <h1 className="display">
             {words.map((w, i) => (
@@ -63,7 +61,6 @@ export function Landing({ locale }: { locale: string }) {
           <h2 id="flow" className="section-title display">{m.landing.flowTitle}</h2>
           <div className="flow" data-flow>
             <div className="flow-visual" aria-hidden="true">
-              <div className="flow-orb" />
               {m.landing.flow.map((f, i) => (
                 <div className={`fv${i === 0 ? " on" : ""}`} key={f.command} dir="ltr">
                   <code>{f.command}</code>
