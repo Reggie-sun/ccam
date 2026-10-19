@@ -366,7 +366,7 @@ func removeCmd(e *env) *cobra.Command {
 func renameCmd(e *env) *cobra.Command {
 	return &cobra.Command{
 		Use:   "rename <name> <new-name>",
-		Short: "Rename an account (updates shortcuts)",
+		Short: "Rename an account (its shortcut command stays the same)",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg, err := e.load()
