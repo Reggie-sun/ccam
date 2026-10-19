@@ -11,6 +11,14 @@
 - [ ] 두 번째 계정도 같은 방식으로 추가, `ccam list`에 서로 다른 이메일
 - [ ] `ccam import`로 기존 `~/.claude` 등록 후 `ccam main`과 그냥 `claude`가 같은 계정
 
+## 업데이트
+
+- [ ] 이전 릴리스를 `install.sh`로 설치(`CCAM_VERSION=v<이전>`)한 뒤 `ccam update --check` → ``ccam <새 버전> is available (you have <이전>). Run `ccam update`.``
+- [ ] `ccam --dry-run update`가 받을 주소와 바꿀 경로만 보여주고 `ccam version`은 그대로
+- [ ] `ccam update` → `✓ Updated ccam <이전> → <새 버전> (~/.local/bin/ccam)`, `ccam version`과 단축 명령 모두 새 버전, 다시 실행하면 `is up to date.`
+- [ ] `.deb`로 설치한 `/usr/bin/ccam`에서 `ccam update` → 바꾸지 않고 `sudo apt install ./ccam_<버전>_linux_<아키텍처>.deb` 안내
+- [ ] 네트워크를 끊고 `ccam update` → `could not reach github.com …` 오류, 바이너리 그대로
+
 ## 전환
 
 - [ ] 단축 명령을 만든 두 계정이 각자의 단축 명령으로 서로 다른 이메일로 열림 (`/status`)

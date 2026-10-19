@@ -184,6 +184,8 @@ func TestOutputHasNoHangul(t *testing.T) {
 		{"ccam", "migrate", "--yes", "--history"},
 		{"ccam", "migrate", "--yes"},
 		{"ccam", "rename", "later", "spare"},
+		{"ccam", "update"}, // a development build refuses
+		{"ccam", "update", "--check"},
 		// Error paths.
 		{"ccam", "nobody"},
 		{"ccam", "9"},
@@ -208,6 +210,8 @@ func TestOutputHasNoHangul(t *testing.T) {
 		{"ccam", "use"},
 		{"ccam", "bogus-command", "--bogus-flag"},
 		{"ccam", "list", "--bogus-flag"},
+		{"ccam", "update", "--version", "latest"},
+		{"ccam", "update", "--check", "--version", "v1.0.0"},
 	} {
 		run("", argv...)
 	}
@@ -218,6 +222,8 @@ func TestOutputHasNoHangul(t *testing.T) {
 	run("n\n", "ccam", "remove", "spare")
 	run("y\n", "ccam", "remove", "spare")
 	run("", "ccam", "work", "-p", "hello")
+	r = h.run("", []string{"CCAM_RELEASES_URL=http://127.0.0.1:1"}, "ccam", "update", "--version", "v9.9.9") // offline
+	outputs = append(outputs, r.stdout+r.stderr)
 
 	var bad []string
 	for _, o := range outputs {

@@ -21,6 +21,15 @@ curl -fsSL https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.sh | sh
 
 Linux (Ubuntu, Debian, Fedora, Arch, Alpine, …) and macOS are supported. This installs `~/.local/bin/ccam` after verifying the release checksum. Alternatives: the `.deb` from [Releases](https://github.com/jhyunwoo/ccam/releases), or `go install github.com/jhyunwoo/ccam/cmd/ccam@latest` (Go 1.26+). Claude Code (`claude`) must be installed.
 
+## Update
+
+```bash
+ccam update            # install the latest release
+ccam update --check    # only say whether a newer release exists
+```
+
+`ccam update` downloads the release for your system, checks it against the release's `checksums.txt` (SHA-256) and replaces the `ccam` binary in one rename; shortcut commands link to it, so they update too. `--version v0.2.0` installs a specific release (also an older one), and `ccam --dry-run update` shows what would be downloaded and replaced. ccam never checks for updates on its own. A `.deb` install is left to apt: download the new `.deb` from [Releases](https://github.com/jhyunwoo/ccam/releases) and run `sudo apt install ./ccam_<version>_linux_<arch>.deb`. Rerunning the install script also updates a `~/.local/bin` install.
+
 ## Quick start
 
 ```bash
@@ -59,6 +68,7 @@ To start the shared settings from the setup you already have, `ccam migrate` cop
 | `ccam migrate [dir]` | Copy an existing setup (default `~/.claude`) into the shared group; `--group`, item flags, `--history`, `--yes` |
 | `ccam doctor [--fix]` | Check links, permissions, login, version, usage format; repair |
 | `ccam statusline install` | Show `[account] · model · 5h N%` in Claude Code's status line |
+| `ccam update [--check] [--version vX.Y.Z]` | Update ccam to the latest (or that) release, checksum verified |
 | `ccam completion bash\|zsh` | Shell completion |
 
 Put `--dry-run` first to print what would happen (`ccam --dry-run work`).

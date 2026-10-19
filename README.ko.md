@@ -26,6 +26,15 @@ curl -fsSL https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.sh | sh
 
 Claude Code(`claude`)가 먼저 설치되어 있어야 합니다.
 
+## 업데이트
+
+```bash
+ccam update            # 최신 릴리스 설치
+ccam update --check    # 새 릴리스가 있는지 알려 주기만 함
+```
+
+`ccam update`는 내 시스템용 릴리스를 받아 릴리스의 `checksums.txt`(SHA-256)로 확인한 뒤, `ccam` 바이너리를 파일 이름 바꾸기 한 번으로 교체합니다. 단축 명령은 이 파일을 가리키는 링크라 함께 새 버전이 됩니다. `--version v0.2.0`은 그 릴리스를 설치하고(이전 버전도 가능), `ccam --dry-run update`는 받을 파일과 바꿀 파일만 보여줍니다. ccam이 스스로 업데이트를 확인하는 일은 없습니다. `.deb`로 설치했다면 apt에 맡깁니다. [릴리스](https://github.com/jhyunwoo/ccam/releases)에서 새 `.deb`를 받아 `sudo apt install ./ccam_<버전>_linux_<아키텍처>.deb`를 실행하세요. 설치 스크립트를 다시 실행해도 `~/.local/bin`의 ccam이 업데이트됩니다.
+
 ## 빠른 시작
 
 ```bash
@@ -64,6 +73,7 @@ ccam next --continue # 한도에 걸리면 다음 계정에서 같은 대화 이
 | `ccam migrate [폴더]` | 기존 설정(기본 `~/.claude`)을 공유 그룹으로 복사. 원본은 바꾸지 않음. `--group`, 항목 옵션, `--history`, `--yes` |
 | `ccam doctor [--fix]` | 링크·권한·로그인·버전·사용량 형식 점검과 수리 |
 | `ccam statusline install` | Claude Code 상태줄에 `[account] · model · 5h N%` 표시 |
+| `ccam update [--check] [--version vX.Y.Z]` | 최신(또는 지정한) 릴리스로 업데이트, 체크섬 확인 |
 | `ccam completion bash\|zsh` | 자동완성 |
 
 어느 명령이든 앞에 `--dry-run`을 붙이면 실행하지 않고 할 일만 보여줍니다 (`ccam --dry-run work`).
