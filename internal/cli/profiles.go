@@ -62,7 +62,7 @@ func addCmd(e *env) *cobra.Command {
 			return addProfile(e, args[0], share, !noLogin, shortcut)
 		},
 	}
-	cmd.Flags().BoolVar(&noLogin, "no-login", false, "log in later (`ccam login <name>`)")
+	cmd.Flags().BoolVar(&noLogin, "no-login", false, "log in later with ccam login <name>")
 	cmd.Flags().StringArrayVar(&shares, "share", nil, "share item=group|local (repeatable)")
 	cmd.Flags().StringVar(&shortcut, "shortcut", "", "also create this shortcut command (e.g. ccwork); none without it")
 	return cmd
