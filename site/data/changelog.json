@@ -1,5 +1,11 @@
 [
   {
+    "tag": "v0.4.0",
+    "date": "2026-10-19",
+    "url": "https://github.com/jhyunwoo/ccam/releases/tag/v0.4.0",
+    "notes": "<h2>Changelog</h2>\n<ul>\n<li>88bb78d8fa0bc3ebd519cbee07c62f97f4fd1630 docs(site): --dry-run scope, running-account guard, mcp import --force and ccam -v, in 30 languages</li>\n<li>5fdaf5f50f0a8c4ac2b96baf2162357e7f873a5a fix(site): no sideways scroll at 320 px from the hover wordmark</li>\n<li>a2252c0b696991ad2934ae10e473bec3ac1ff021 fix: verify every command and fix review findings</li>\n<li>73b791c79dbe55df38d3bfe9f3a88a76c41a4a9d feat(site): GitHub links open in a new tab</li>\n<li>f8a6be857651993b292dc9b3ce834177114f6690 docs(site): changelog lists v0.3.0</li>\n</ul>\n"
+  },
+  {
     "tag": "v0.3.0",
     "date": "2026-10-19",
     "url": "https://github.com/jhyunwoo/ccam/releases/tag/v0.3.0",
