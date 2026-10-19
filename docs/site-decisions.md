@@ -24,7 +24,7 @@ Decisions taken while building the site, where they differ from or add to docs/W
 - **CSP**: hash-based; inline scripts, the inlined stylesheet and the few `style` attributes are hashed at build. The `'inline-speculation-rules'` keyword was not accepted by the tested Chromium, so speculation rules are hashed too.
 - **Language coverage**: the plan's 30 languages reach 70.0% (conservative) to 85.6% (optimistic) of the world population by Unicode CLDR data. The conservative estimate cannot reach 80%: adding the 12 best further languages only raises it to 72.3%, because CLDR's per-country language shares are literacy-adjusted and below 100% even for national languages. The site publishes both numbers on `/languages`.
 - **Cache purge after deploy**: not needed; Workers Static Assets serves each deployment atomically. HTML `s-maxage` only affects downstream caches.
-- **Changelog**: built from GitHub Releases; empty until the first release (the repository is private and has no release yet).
+- **Changelog**: built from GitHub Releases at build time; v0.1.0 (2026-10-19) is the first.
 - **Browser tests**: run in CI. The WSL environment used for development does not produce frames in headless Chromium (`requestAnimationFrame` never fires, even on a blank page), so screenshots and frame-dependent checks time out locally.
 
 ## Redesign, 2026-10-19
