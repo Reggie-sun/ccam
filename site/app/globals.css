@@ -137,11 +137,11 @@ code, pre, kbd { font-family: var(--font-mono); font-size: 0.9em; letter-spacing
   position: sticky; inset-block-start: 0; z-index: 50; view-transition-name: site-header;
   background: color-mix(in srgb, var(--canvas) 80%, transparent);
   backdrop-filter: saturate(1.4) blur(16px); -webkit-backdrop-filter: saturate(1.4) blur(16px);
-  border-block-end: 1px solid var(--line);
 }
+.site-header::after { content: ""; position: absolute; inset-inline: 0; inset-block-end: -1px; block-size: 1px; background: var(--line); }
 @supports (animation-timeline: scroll()) {
-  .site-header { border-block-end-color: transparent; animation: header-edge linear both; animation-timeline: scroll(); animation-range: 0 6rem; }
-  @keyframes header-edge { to { border-block-end-color: var(--line); } }
+  .site-header::after { animation: header-edge linear both; animation-timeline: scroll(); animation-range: 0 6rem; }
+  @keyframes header-edge { from { opacity: 0; } }
 }
 .site-header .wrap { display: flex; align-items: center; gap: 0.5rem; min-block-size: var(--header); }
 .brand { font-family: var(--font-display); font-weight: 300; font-size: 1.75rem; letter-spacing: -0.03em; line-height: 1; color: var(--ink); text-decoration: none; margin-inline-end: auto; padding-block-end: 0.15rem; }
@@ -197,7 +197,9 @@ summary { list-style: none; cursor: pointer; }
 
 /* Orbs: the only colour on the page, pure atmosphere behind content. */
 .orbs { position: absolute; inset: 0; z-index: -1; pointer-events: none; overflow: clip; }
-.hero .orbs { mask-image: linear-gradient(to bottom, #000 55%, transparent); }
+/* Sized by the viewport, not the hero, so a font swap never moves it (CLS). */
+.hero .orbs { inset-block-end: auto; block-size: min(100svh, 60rem); mask-image: linear-gradient(to bottom, #000 55%, transparent); }
+@media (max-width: 47.99rem) { .orb.sky, .orb.rose { display: none; } }
 .orbs-drift { position: absolute; inset: -20%; transform: translate3d(calc(var(--px, 0) * 28px), calc(var(--py, 0) * 28px), 0); transition: transform 900ms var(--ease); }
 .orb { position: absolute; border-radius: 50%; inline-size: clamp(18rem, 55vw, 44rem); aspect-ratio: 1; opacity: var(--orb); will-change: transform; }
 .orb.mint { background: radial-gradient(closest-side, var(--mint), transparent); inset-block-start: 8%; inset-inline-start: 4%; animation: drift-a 19s ease-in-out infinite alternate; }
@@ -233,7 +235,7 @@ html:not([data-font="brand"]) .hero h1 { font-size: clamp(2.3rem, 6vw, 4.25rem);
 .focus-in.d1 { animation-delay: 450ms; }
 .focus-in.d2 { animation-delay: 600ms; }
 .focus-in.d3 { animation-delay: 750ms; }
-@keyframes focus-in { from { transform: translateY(18px); filter: blur(10px); } }
+@keyframes focus-in { from { transform: translateY(22px); } }
 .install-label { font-size: 0.94rem; color: var(--lede); margin-block-end: 0.75rem; }
 .cmd {
   display: flex; align-items: center; gap: 0.5rem; max-inline-size: 36rem; min-block-size: 3.6rem; margin-inline: auto; padding: 0.4rem; padding-inline-start: 1.25rem;
@@ -353,10 +355,10 @@ html:not([data-font="brand"]) .facts .big { line-height: 1.55; letter-spacing: 0
 .facts .small p { margin: 0; padding-block-start: 1.25rem; border-block-start: 1px solid var(--line); }
 @media (min-width: 60rem) { .facts { grid-template-columns: 1.4fr 1fr; gap: 4rem; } }
 
-/* Reveal on scroll, CSS only. Clip and transform, so contrast checks see full colour. */
+/* Reveal on scroll, CSS only. Transform only: composited, and contrast checks see full colour. */
 @supports (animation-timeline: view()) {
   .reveal { animation: reveal linear both; animation-timeline: view(); animation-range: entry 0% entry 55%; }
-  @keyframes reveal { from { transform: translateY(48px) scale(0.97); clip-path: inset(0 0 25% 0 round 24px); filter: blur(4px); } }
+  @keyframes reveal { from { transform: translateY(56px) scale(0.96); } }
   .cards > li:nth-child(2) .reveal { animation-range: entry 5% entry 62%; }
   .cards > li:nth-child(3) .reveal { animation-range: entry 10% entry 70%; }
 }

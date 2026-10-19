@@ -143,7 +143,7 @@
     const pick = demo.querySelector("[data-pick]");
     const note = demo.querySelector(".note");
     const last = later[later.length - 1];
-    const fmt = new Intl.NumberFormat(d.documentElement.lang, { style: "percent" });
+    let fmt; // created on first play: Intl setup is a long task on slow phones
     let timers = [];
     const at = (ms, fn) => timers.push(setTimeout(fn, ms));
     const type = (el, text, start) => {
@@ -157,10 +157,11 @@
       later.forEach((e) => e.classList.remove("shown"));
       pick.classList.remove("on");
       typed.forEach((t) => (t.textContent = ""));
-      pcts.forEach((p) => (p.textContent = fmt.format(0)));
+      pcts.forEach((p) => (p.textContent = ""));
     };
     const play = () => {
       reset();
+      fmt ??= new Intl.NumberFormat(d.documentElement.lang, { style: "percent" });
       let t = type(typed[0], texts[0], 350) + 300;
       at(t, () => rows.forEach((r) => r.classList.add("shown")));
       for (const p of pcts) {
