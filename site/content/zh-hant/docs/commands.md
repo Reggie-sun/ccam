@@ -4,7 +4,7 @@ description: 所有 ccam 指令和選項，從 ccam add、ccam <name> 到 ccam u
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 0c869c92fa63
+sourceHash: 5a5a33b1a2f4
 ---
 
 在任何指令前加上 `--dry-run`，就能查看它會做什麼而不實際執行，例如 `ccam --dry-run work`。
@@ -98,7 +98,11 @@ ccam doctor          # check
 ccam doctor --fix    # repair what is safe to repair, with backups
 ccam statusline install
 ccam shims install   # recreate the shortcut links
+ccam update          # install the latest ccam release
+ccam update --check  # only check for a newer release
 ```
+
+`ccam update` 會在取代 ccam 之前檢查發行版本的 SHA-256 總和檢查碼，`--version v0.2.0` 則可安裝特定的發行版本。從 `.deb` 套件安裝的 ccam 則改用 apt 更新。請參閱[更新](/docs/install#update)。
 
 ## 檔案
 

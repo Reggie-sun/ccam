@@ -4,7 +4,7 @@ description: كل أوامر ccam وخياراتها، من ccam add وccam <nam
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 0c869c92fa63
+sourceHash: 5a5a33b1a2f4
 ---
 
 ضع `--dry-run` قبل أي أمر لترى ما سيفعله دون أن يفعله، مثلًا `ccam --dry-run work`.
@@ -98,7 +98,11 @@ ccam doctor          # check
 ccam doctor --fix    # repair what is safe to repair, with backups
 ccam statusline install
 ccam shims install   # recreate the shortcut links
+ccam update          # install the latest ccam release
+ccam update --check  # only check for a newer release
 ```
+
+يتحقق `ccam update` من مجموع SHA-256 الخاص بالإصدار قبل أن يستبدل ccam، ويثبّت `--version v0.2.0` إصدارًا محددًا. أما ccam المثبّت من حزمة `.deb` فيُحدَّث باستخدام apt. راجع [التحديث](/docs/install#update).
 
 ## الملفات
 

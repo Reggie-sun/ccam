@@ -126,6 +126,7 @@
     "statusline": "Hiển thị tài khoản và mức sử dụng trên dòng trạng thái của Claude Code",
     "shims": "Tạo lại liên kết lệnh tắt của mọi tài khoản",
     "shortcut": "Xem, tạo, đổi tên hoặc xóa lệnh tắt của một tài khoản, chẳng hạn ccwork",
+    "update": "Cập nhật ccam lên bản phát hành mới nhất sau khi kiểm tra mã băm",
     "completion": "In mã tự động hoàn thành cho bash hoặc zsh"
   },
   "copy": {

@@ -1,10 +1,10 @@
 ---
 title: ccam ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಿ
-description: Linux ಅಥವಾ macOS ನಲ್ಲಿ ಒಂದೇ ಕಮಾಂಡ್‌ನಿಂದ, .deb ಪ್ಯಾಕೇಜ್‌ನಿಂದ ಅಥವಾ ಸೋರ್ಸ್‌ನಿಂದ ccam ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಿ. ಮೊದಲು Claude Code ಇನ್‌ಸ್ಟಾಲ್ ಆಗಿರಬೇಕು.
+description: Linux ಅಥವಾ macOS ನಲ್ಲಿ ಒಂದೇ ಕಮಾಂಡ್‌ನಿಂದ, .deb ಪ್ಯಾಕೇಜ್‌ನಿಂದ ಅಥವಾ ಸೋರ್ಸ್‌ನಿಂದ ccam ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಿ ಮತ್ತು ccam update ಮೂಲಕ ಅದನ್ನು ಅಪ್‌ಡೇಟ್ ಆಗಿಡಿ. ಮೊದಲು Claude Code ಇನ್‌ಸ್ಟಾಲ್ ಆಗಿರಬೇಕು.
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: 79dc1b55e774
+sourceHash: bde486b82b2e
 ---
 
 Linux ಅಥವಾ macOS ನ ಟರ್ಮಿನಲ್‌ನಲ್ಲಿ ಇದನ್ನು ರನ್ ಮಾಡಿ:
@@ -62,6 +62,40 @@ ccam doctor
 ```
 
 `ccam doctor` Claude Code ಸಿಗುತ್ತದೆಯೇ ಮತ್ತು ಪ್ರತಿ ಖಾತೆಯ ಫೋಲ್ಡರ್, ಲಿಂಕ್ ಮತ್ತು ಲಾಗಿನ್ ಸರಿಯಾಗಿದೆಯೇ ಎಂದು ಪರಿಶೀಲಿಸುತ್ತದೆ. ನಂತರ [ತ್ವರಿತ ಆರಂಭ](/docs/quick-start) ಗೆ ಮುಂದುವರಿಯಿರಿ.
+
+## ಅಪ್‌ಡೇಟ್
+
+```sh
+ccam update --check
+ccam update
+```
+
+`ccam update --check` ಹೊಸ ಬಿಡುಗಡೆ ಇದೆಯೇ ಎಂಬುದನ್ನು ಮಾತ್ರ ತಿಳಿಸುತ್ತದೆ. `ccam update` ನಿಮ್ಮ ಸಿಸ್ಟಮ್‌ಗೆ ಹೊಂದುವ ಬಿಡುಗಡೆಯನ್ನು ಡೌನ್‌ಲೋಡ್ ಮಾಡುತ್ತದೆ, ಅದರ SHA-256 ಚೆಕ್‌ಸಮ್ ಅನ್ನು ಬಿಡುಗಡೆಯ `checksums.txt` ಜೊತೆ ಹೋಲಿಸಿ ಪರಿಶೀಲಿಸುತ್ತದೆ ಮತ್ತು ನಂತರ `ccam` ಫೈಲ್ ಅನ್ನು ಒಂದೇ ಹಂತದಲ್ಲಿ ಬದಲಾಯಿಸುತ್ತದೆ. ಚೆಕ್‌ಸಮ್ ಹೊಂದಿಕೆಯಾಗದಿದ್ದರೆ ಏನನ್ನೂ ಬದಲಾಯಿಸುವುದಿಲ್ಲ. `ccwork` ನಂತಹ ಶಾರ್ಟ್‌ಕಟ್‌ಗಳು ccam ಗೆ ಲಿಂಕ್‌ಗಳಾಗಿರುವುದರಿಂದ, ಅವು ತಕ್ಷಣವೇ ಹೊಸ ಆವೃತ್ತಿಯನ್ನು ರನ್ ಮಾಡುತ್ತವೆ.
+
+```console
+$ ccam update --check
+ccam 0.3.0 is available (you have 0.2.0). Run `ccam update`.
+$ ccam update
+→ downloading https://github.com/jhyunwoo/ccam/releases/download/v0.3.0/ccam_linux_amd64.tar.gz
+✓ Updated ccam 0.2.0 → 0.3.0 (/home/me/.local/bin/ccam)
+$ ccam update
+ccam 0.3.0 is up to date.
+```
+
+ccam ತಾನಾಗಿಯೇ ಎಂದಿಗೂ ಅಪ್‌ಡೇಟ್‌ಗಳಿಗಾಗಿ ಪರಿಶೀಲಿಸುವುದಿಲ್ಲ; ನೀವು ಈ ಕಮಾಂಡ್ ರನ್ ಮಾಡಿದಾಗ ಮಾತ್ರ ಅದು ಹೊಸ ಬಿಡುಗಡೆಯನ್ನು ಹುಡುಕುತ್ತದೆ. ಹಳೆಯ ಬಿಡುಗಡೆಯೂ ಸೇರಿದಂತೆ ಒಂದು ನಿರ್ದಿಷ್ಟ ಬಿಡುಗಡೆಯನ್ನು ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಲು `--version` ನೀಡಿ. `ccam --dry-run update` ಏನನ್ನೂ ಬದಲಾಯಿಸದೆ, ಏನು ಡೌನ್‌ಲೋಡ್ ಆಗುತ್ತದೆ ಮತ್ತು ಏನು ಬದಲಾಗುತ್ತದೆ ಎಂಬುದನ್ನು ತೋರಿಸುತ್ತದೆ.
+
+```sh
+ccam update --version v0.2.0
+ccam --dry-run update
+```
+
+ಇನ್‌ಸ್ಟಾಲ್ ಸ್ಕ್ರಿಪ್ಟ್ ಅನ್ನು ಮತ್ತೆ ರನ್ ಮಾಡಿದರೂ `~/.local/bin` ನಲ್ಲಿರುವ ಪ್ರತಿ ಅಪ್‌ಡೇಟ್ ಆಗುತ್ತದೆ. ನೀವು ccam ಅನ್ನು `go install` ಮೂಲಕ ಬಿಲ್ಡ್ ಮಾಡಿದ್ದರೆ, ಅದೇ ಕಮಾಂಡ್ ಅನ್ನು ಮತ್ತೆ ರನ್ ಮಾಡಿ.
+
+**Debian ಮತ್ತು Ubuntu ಪ್ಯಾಕೇಜ್.** apt ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಿದ `/usr/bin/ccam` ಅನ್ನು `ccam update` ಬದಲಾಯಿಸುವುದಿಲ್ಲ; ಬದಲಿಗೆ ಈ ಹಂತಗಳನ್ನು ಮುದ್ರಿಸುತ್ತದೆ. [ಬಿಡುಗಡೆಗಳ ಪುಟದಿಂದ](https://github.com/jhyunwoo/ccam/releases) ಹೊಸ `ccam_<version>_linux_amd64.deb` ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ, ಹಳೆಯ ಪ್ಯಾಕೇಜ್‌ನ ಮೇಲೆಯೇ ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಿ:
+
+```sh
+sudo apt install ./ccam_*_linux_amd64.deb
+```
 
 ## ಅನ್‌ಇನ್‌ಸ್ಟಾಲ್
 

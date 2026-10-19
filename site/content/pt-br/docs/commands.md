@@ -4,7 +4,7 @@ description: Todos os comandos e opções do ccam, de ccam add e ccam <name> a c
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 0c869c92fa63
+sourceHash: 5a5a33b1a2f4
 ---
 
 Coloque `--dry-run` antes de qualquer comando para ver o que ele faria sem fazê-lo, por exemplo `ccam --dry-run work`.
@@ -98,7 +98,11 @@ ccam doctor          # check
 ccam doctor --fix    # repair what is safe to repair, with backups
 ccam statusline install
 ccam shims install   # recreate the shortcut links
+ccam update          # install the latest ccam release
+ccam update --check  # only check for a newer release
 ```
+
+`ccam update` verifica o checksum SHA-256 da versão antes de substituir o ccam, e `--version v0.2.0` instala uma versão específica. Um ccam instalado pelo pacote `.deb` é atualizado com o apt. Consulte [atualização](/docs/install#update).
 
 ## Arquivos
 

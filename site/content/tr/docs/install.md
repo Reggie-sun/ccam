@@ -1,10 +1,10 @@
 ---
 title: ccam kurulumu
-description: ccam'ı Linux veya macOS üzerine tek komutla, bir .deb paketinden ya da kaynak koddan kurun. Önce Claude Code kurulu olmalıdır.
+description: ccam'ı Linux veya macOS üzerine tek komutla, bir .deb paketinden ya da kaynak koddan kurun ve ccam update ile güncel tutun. Önce Claude Code kurulu olmalıdır.
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: 79dc1b55e774
+sourceHash: bde486b82b2e
 ---
 
 Linux veya macOS üzerinde bir terminalde şunu çalıştırın:
@@ -62,6 +62,40 @@ ccam doctor
 ```
 
 `ccam doctor`, Claude Code'un bulunduğunu ve her hesap klasörünün, bağlantının ve girişin yerinde olduğunu kontrol eder. [Hızlı başlangıç](/docs/quick-start) ile devam edin.
+
+## Güncelleme
+
+```sh
+ccam update --check
+ccam update
+```
+
+`ccam update --check` yalnızca daha yeni bir sürüm olup olmadığını söyler. `ccam update` ise sisteminize uygun sürümü indirir, SHA-256 sağlama toplamını sürümün `checksums.txt` dosyasıyla karşılaştırır ve ardından `ccam` dosyasını tek adımda değiştirir. Sağlama toplamı eşleşmezse hiçbir şey değiştirilmez. `ccwork` gibi kısayollar ccam'a giden bağlantılar olduğundan yeni sürümü hemen çalıştırır.
+
+```console
+$ ccam update --check
+ccam 0.3.0 is available (you have 0.2.0). Run `ccam update`.
+$ ccam update
+→ downloading https://github.com/jhyunwoo/ccam/releases/download/v0.3.0/ccam_linux_amd64.tar.gz
+✓ Updated ccam 0.2.0 → 0.3.0 (/home/me/.local/bin/ccam)
+$ ccam update
+ccam 0.3.0 is up to date.
+```
+
+ccam güncellemeleri hiçbir zaman kendiliğinden kontrol etmez; yeni bir sürümü yalnızca bu komutu çalıştırdığınızda arar. Daha eski bir sürüm de dahil olmak üzere belirli bir sürümü kurmak için `--version` seçeneğini verin. `ccam --dry-run update`, hiçbir şeyi değiştirmeden neyin indirilip neyin değiştirileceğini gösterir.
+
+```sh
+ccam update --version v0.2.0
+ccam --dry-run update
+```
+
+Kurulum betiğini yeniden çalıştırmak da `~/.local/bin` içindeki kopyayı günceller. ccam'ı `go install` ile derlediyseniz aynı komutu yeniden çalıştırın.
+
+**Debian ve Ubuntu paketi.** `ccam update`, apt ile kurulmuş bir `/usr/bin/ccam` dosyasını değiştirmez; bunun yerine bu adımları yazdırır. Yeni `ccam_<version>_linux_amd64.deb` dosyasını [sürümler sayfasından](https://github.com/jhyunwoo/ccam/releases) indirin ve eskisinin üzerine kurun:
+
+```sh
+sudo apt install ./ccam_*_linux_amd64.deb
+```
 
 ## Kaldırma
 

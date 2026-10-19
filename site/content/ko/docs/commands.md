@@ -4,7 +4,7 @@ description: ccam add, ccam <name>부터 ccam usage, ccam next, ccam doctor까�
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 0c869c92fa63
+sourceHash: 5a5a33b1a2f4
 ---
 
 어떤 명령이든 앞에 `--dry-run`을 붙이면 실제로 실행하지 않고 무엇을 할지만 보여 줍니다(예: `ccam --dry-run work`).
@@ -98,7 +98,11 @@ ccam doctor          # check
 ccam doctor --fix    # repair what is safe to repair, with backups
 ccam statusline install
 ccam shims install   # recreate the shortcut links
+ccam update          # install the latest ccam release
+ccam update --check  # only check for a newer release
 ```
+
+`ccam update`는 ccam을 교체하기 전에 릴리스의 SHA-256 체크섬을 확인하고, `--version v0.2.0`을 주면 특정 릴리스를 설치합니다. `.deb` 패키지로 설치한 ccam은 apt로 업데이트합니다. 자세한 내용은 [업데이트](/docs/install#update)를 참고하세요.
 
 ## 파일
 

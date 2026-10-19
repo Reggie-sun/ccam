@@ -126,6 +126,7 @@
     "statusline": "Afficher le compte et l'utilisation dans la ligne d'état de Claude Code",
     "shims": "Recréer les liens des raccourcis de tous les comptes",
     "shortcut": "Afficher, créer, renommer ou supprimer le raccourci d'un compte, par exemple ccwork",
+    "update": "Mettre à jour ccam vers la dernière version après avoir vérifié sa somme de contrôle",
     "completion": "Afficher la complétion bash ou zsh"
   },
   "copy": {

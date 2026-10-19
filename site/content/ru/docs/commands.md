@@ -4,7 +4,7 @@ description: Все команды и параметры ccam, от ccam add и 
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 0c869c92fa63
+sourceHash: 5a5a33b1a2f4
 ---
 
 Поставьте `--dry-run` перед любой командой, чтобы увидеть, что она сделает, ничего не выполняя, например `ccam --dry-run work`.
@@ -98,7 +98,11 @@ ccam doctor          # check
 ccam doctor --fix    # repair what is safe to repair, with backups
 ccam statusline install
 ccam shims install   # recreate the shortcut links
+ccam update          # install the latest ccam release
+ccam update --check  # only check for a newer release
 ```
+
+`ccam update` проверяет контрольную сумму SHA-256 выпуска, прежде чем заменить ccam, а `--version v0.2.0` устанавливает определённый выпуск. ccam, установленный из пакета `.deb`, обновляется через apt. Подробности в разделе [обновление](/docs/install#update).
 
 ## Файлы
 

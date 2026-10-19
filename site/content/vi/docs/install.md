@@ -1,10 +1,10 @@
 ---
 title: Cài đặt ccam
-description: "Cài đặt ccam trên Linux hoặc macOS bằng một lệnh, từ gói .deb hoặc từ mã nguồn. Cần cài Claude Code trước."
+description: "Cài đặt ccam trên Linux hoặc macOS bằng một lệnh, từ gói .deb hoặc từ mã nguồn, và luôn giữ bản mới nhất với ccam update. Cần cài Claude Code trước."
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: 79dc1b55e774
+sourceHash: bde486b82b2e
 ---
 
 Chạy lệnh này trong terminal trên Linux hoặc macOS:
@@ -62,6 +62,40 @@ ccam doctor
 ```
 
 `ccam doctor` kiểm tra xem có tìm thấy Claude Code không và mọi thư mục tài khoản, liên kết và thông tin đăng nhập có ổn không. Tiếp tục với phần [bắt đầu nhanh](/docs/quick-start).
+
+## Cập nhật
+
+```sh
+ccam update --check
+ccam update
+```
+
+`ccam update --check` chỉ cho bạn biết có bản phát hành mới hơn hay không. `ccam update` tải về bản phát hành cho hệ thống của bạn, đối chiếu mã băm SHA-256 với tệp `checksums.txt` của bản phát hành đó, rồi thay thế tệp `ccam` trong một bước. Nếu mã băm không khớp, sẽ không có gì bị thay đổi. Các lệnh tắt như `ccwork` là liên kết tới ccam, nên chúng chạy phiên bản mới ngay lập tức.
+
+```console
+$ ccam update --check
+ccam 0.3.0 is available (you have 0.2.0). Run `ccam update`.
+$ ccam update
+→ downloading https://github.com/jhyunwoo/ccam/releases/download/v0.3.0/ccam_linux_amd64.tar.gz
+✓ Updated ccam 0.2.0 → 0.3.0 (/home/me/.local/bin/ccam)
+$ ccam update
+ccam 0.3.0 is up to date.
+```
+
+ccam không bao giờ tự kiểm tra cập nhật; nó chỉ tìm bản phát hành mới khi bạn chạy lệnh này. Để cài một bản phát hành cụ thể, kể cả bản cũ hơn, hãy truyền `--version`. `ccam --dry-run update` cho biết những gì sẽ được tải về và thay thế mà không thay đổi gì.
+
+```sh
+ccam update --version v0.2.0
+ccam --dry-run update
+```
+
+Chạy lại script cài đặt cũng sẽ cập nhật bản sao trong `~/.local/bin`. Nếu bạn đã build ccam bằng `go install`, hãy chạy lại chính lệnh đó.
+
+**Gói cho Debian và Ubuntu.** `ccam update` không thay thế `/usr/bin/ccam` do apt cài đặt mà in ra các bước sau. Tải `ccam_<version>_linux_amd64.deb` mới từ [trang phát hành](https://github.com/jhyunwoo/ccam/releases) rồi cài đè lên bản cũ:
+
+```sh
+sudo apt install ./ccam_*_linux_amd64.deb
+```
 
 ## Gỡ cài đặt
 

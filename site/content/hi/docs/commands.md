@@ -4,7 +4,7 @@ description: ccam की हर कमांड और विकल्प, ccam 
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 0c869c92fa63
+sourceHash: 5a5a33b1a2f4
 ---
 
 कोई कमांड असल में चलाए बिना यह देखने के लिए कि वह क्या करेगी, उसके आगे `--dry-run` लगाएँ, उदाहरण के लिए `ccam --dry-run work`।
@@ -98,7 +98,11 @@ ccam doctor          # check
 ccam doctor --fix    # repair what is safe to repair, with backups
 ccam statusline install
 ccam shims install   # recreate the shortcut links
+ccam update          # install the latest ccam release
+ccam update --check  # only check for a newer release
 ```
+
+ccam को बदलने से पहले `ccam update` रिलीज़ का SHA-256 checksum जाँचता है, और `--version v0.2.0` कोई खास रिलीज़ इंस्टॉल करता है। `.deb` पैकेज से इंस्टॉल किया गया ccam इसके बजाय apt से अपडेट होता है। [अपडेट](/docs/install#update) देखें।
 
 ## फ़ाइलें
 

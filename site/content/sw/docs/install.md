@@ -1,10 +1,10 @@
 ---
 title: Sakinisha ccam
-description: Sakinisha ccam kwenye Linux au macOS kwa amri moja, kutoka kifurushi cha .deb, au kutoka msimbo chanzo. Claude Code lazima isakinishwe kwanza.
+description: Sakinisha ccam kwenye Linux au macOS kwa amri moja, kutoka kifurushi cha .deb, au kutoka msimbo chanzo, na uisasishe kwa ccam update. Claude Code lazima isakinishwe kwanza.
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: 79dc1b55e774
+sourceHash: bde486b82b2e
 ---
 
 Endesha hii kwenye terminal ya Linux au macOS:
@@ -62,6 +62,40 @@ ccam doctor
 ```
 
 `ccam doctor` hukagua kuwa Claude Code inapatikana na kwamba kila folda ya akaunti, kiungo na taarifa za kuingia viko sawa. Endelea na [mwongozo wa kuanza haraka](/docs/quick-start).
+
+## Sasisha ccam
+
+```sh
+ccam update --check
+ccam update
+```
+
+`ccam update --check` hukuambia tu kama kuna toleo jipya zaidi. `ccam update` hupakua toleo la mfumo wako, hulinganisha checksum yake ya SHA-256 na `checksums.txt` ya toleo hilo, kisha hubadilisha faili ya `ccam` kwa hatua moja. Ikiwa checksum hailingani, hakuna kinachobadilishwa. Njia fupi kama `ccwork` ni viungo vya ccam, kwa hiyo huendesha toleo jipya mara moja.
+
+```console
+$ ccam update --check
+ccam 0.3.0 is available (you have 0.2.0). Run `ccam update`.
+$ ccam update
+→ downloading https://github.com/jhyunwoo/ccam/releases/download/v0.3.0/ccam_linux_amd64.tar.gz
+✓ Updated ccam 0.2.0 → 0.3.0 (/home/me/.local/bin/ccam)
+$ ccam update
+ccam 0.3.0 is up to date.
+```
+
+ccam kamwe haikagui masasisho yenyewe. Hutafuta toleo jipya tu unapoendesha amri hii. Ili kusakinisha toleo mahususi, hata la zamani, tumia `--version`. `ccam --dry-run update` huonyesha kile ambacho kingepakuliwa na kubadilishwa, bila kubadilisha chochote.
+
+```sh
+ccam update --version v0.2.0
+ccam --dry-run update
+```
+
+Kuendesha skripti ya usakinishaji tena pia husasisha nakala iliyo katika `~/.local/bin`. Ikiwa ulijenga ccam kwa `go install`, endesha amri ile ile tena.
+
+**Kifurushi cha Debian na Ubuntu.** `ccam update` haibadilishi `/usr/bin/ccam` iliyosakinishwa na apt, na badala yake huchapisha hatua hizi. Pakua kifurushi kipya `ccam_<version>_linux_amd64.deb` kutoka [ukurasa wa matoleo](https://github.com/jhyunwoo/ccam/releases) na ukisakinishe juu ya kile cha zamani:
+
+```sh
+sudo apt install ./ccam_*_linux_amd64.deb
+```
 
 ## Ondoa ccam
 

@@ -126,6 +126,7 @@
     "statusline": "Konto und Nutzung in der Statuszeile von Claude Code anzeigen",
     "shims": "Die Kurzbefehl-Links aller Konten neu erstellen",
     "shortcut": "Den Kurzbefehl eines Kontos, etwa ccwork, anzeigen, anlegen, umbenennen oder entfernen",
+    "update": "ccam nach Prüfung der Prüfsumme auf das neueste Release aktualisieren",
     "completion": "Vervollständigung für bash oder zsh ausgeben"
   },
   "copy": {

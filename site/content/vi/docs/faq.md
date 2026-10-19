@@ -4,7 +4,7 @@ description: "Giải đáp về ccam, tài khoản Claude Code, giới hạn s�
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: e07d468d453b
+sourceHash: 1355fa6ef3c6
 ---
 
 ## ccam có phải là công cụ chính thức của Anthropic không?
@@ -50,6 +50,10 @@ Máy chủ được thêm trong một phiên bằng `claude mcp add` chỉ đư�
 ## ccam có làm Claude Code chậm đi không?
 
 Khởi động Claude Code thông qua ccam tốn thêm khoảng 4 mili giây, đo bằng `scripts/perf-check.sh` trên một máy tính xách tay. ccam đọc một tệp nhỏ, kiểm tra các liên kết dùng chung rồi tự thay thế mình bằng `claude`, nên nó không chạy trong lúc bạn làm việc.
+
+## Làm sao để cập nhật ccam?
+
+Chạy `ccam update`. Lệnh này tải về bản phát hành mới nhất, kiểm tra mã băm rồi thay thế tệp `ccam`; `ccam update --check` chỉ cho biết có bản phát hành mới hơn hay không. ccam không bao giờ tự cập nhật. Nếu bạn đã cài gói `.deb`, hãy dùng apt để cài gói `.deb` mới. Xem [cập nhật](/docs/install#update).
 
 ## Làm sao để gỡ cài đặt ccam?
 

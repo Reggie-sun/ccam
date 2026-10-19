@@ -50,6 +50,10 @@ Servers added inside a session with `claude mcp add` are stored for that account
 
 Starting Claude Code through ccam adds about 4 milliseconds, measured with `scripts/perf-check.sh` on a laptop. ccam reads one small file, checks the shared links and then replaces itself with `claude`, so it is not running while you work.
 
+## How do I update ccam?
+
+Run `ccam update`. It downloads the latest release, checks its checksum and replaces the `ccam` file; `ccam update --check` only tells you whether a newer release exists. ccam never updates on its own. If you installed the `.deb` package, install the new `.deb` with apt instead. See [update](/docs/install#update).
+
 ## How do I uninstall ccam?
 
 Remove each account's shortcut with `ccam shortcut <account> --remove`, delete `ccam` from `~/.local/bin`, then remove `~/.config/ccam`, `~/.local/share/ccam` and `~/.local/state/ccam` if you no longer need the accounts. See [install](/docs/install#uninstall).

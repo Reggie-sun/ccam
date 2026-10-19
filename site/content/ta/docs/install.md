@@ -1,10 +1,10 @@
 ---
 title: ccam-ஐ நிறுவுதல்
-description: Linux அல்லது macOS-இல் ccam-ஐ ஒரே கட்டளையில், .deb தொகுப்பில் அல்லது மூலக் குறியீட்டிலிருந்து நிறுவுங்கள். முதலில் Claude Code நிறுவப்பட்டிருக்க வேண்டும்.
+description: Linux அல்லது macOS-இல் ccam-ஐ ஒரே கட்டளையில், .deb தொகுப்பில் அல்லது மூலக் குறியீட்டிலிருந்து நிறுவி, ccam update மூலம் புதுப்பித்த நிலையில் வைத்திருங்கள். முதலில் Claude Code நிறுவப்பட்டிருக்க வேண்டும்.
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: 79dc1b55e774
+sourceHash: bde486b82b2e
 ---
 
 Linux அல்லது macOS-இல் ஒரு டெர்மினலில் இதை இயக்குங்கள்:
@@ -62,6 +62,40 @@ ccam doctor
 ```
 
 Claude Code கண்டறியப்படுகிறதா, ஒவ்வொரு கணக்குக் கோப்புறையும் இணைப்பும் உள்நுழைவும் சரியாக உள்ளதா என்று `ccam doctor` சரிபார்க்கிறது. [விரைவுத் தொடக்கத்துடன்](/docs/quick-start) தொடருங்கள்.
+
+## புதுப்பித்தல்
+
+```sh
+ccam update --check
+ccam update
+```
+
+`ccam update --check` புதிய வெளியீடு உள்ளதா என்று மட்டுமே சொல்லும். `ccam update` உங்கள் கணினி அமைப்புக்கான வெளியீட்டைப் பதிவிறக்கி, அந்த வெளியீட்டின் `checksums.txt`-உடன் ஒப்பிட்டு அதன் SHA-256 checksum-ஐச் சரிபார்த்து, பிறகு `ccam` கோப்பை ஒரே படியில் மாற்றுகிறது. checksum பொருந்தவில்லை என்றால், எதுவும் மாற்றப்படாது. `ccwork` போன்ற குறுக்குவழிகள் ccam-க்கான இணைப்புகள் என்பதால், அவை உடனே புதிய பதிப்பை இயக்கும்.
+
+```console
+$ ccam update --check
+ccam 0.3.0 is available (you have 0.2.0). Run `ccam update`.
+$ ccam update
+→ downloading https://github.com/jhyunwoo/ccam/releases/download/v0.3.0/ccam_linux_amd64.tar.gz
+✓ Updated ccam 0.2.0 → 0.3.0 (/home/me/.local/bin/ccam)
+$ ccam update
+ccam 0.3.0 is up to date.
+```
+
+ccam தானாகப் புதுப்பிப்புகளைச் சரிபார்ப்பதில்லை; நீங்கள் இந்தக் கட்டளையை இயக்கும்போது மட்டுமே புதிய வெளியீட்டைத் தேடும். பழைய வெளியீடு உட்பட, ஒரு குறிப்பிட்ட வெளியீட்டை நிறுவ `--version`-ஐக் கொடுங்கள். `ccam --dry-run update` எதையும் மாற்றாமல், எது பதிவிறக்கப்படும், எது மாற்றப்படும் என்பதைக் காட்டும்.
+
+```sh
+ccam update --version v0.2.0
+ccam --dry-run update
+```
+
+நிறுவல் script-ஐ மீண்டும் இயக்கினாலும் `~/.local/bin`-இல் உள்ள நகல் புதுப்பிக்கப்படும். ccam-ஐ `go install` மூலம் build செய்திருந்தால், அதே கட்டளையை மீண்டும் இயக்குங்கள்.
+
+**Debian மற்றும் Ubuntu தொகுப்பு.** apt நிறுவிய `/usr/bin/ccam`-ஐ `ccam update` மாற்றாது, அதற்குப் பதிலாக இந்தப் படிகளை அச்சிடும். [வெளியீடுகள் பக்கத்திலிருந்து](https://github.com/jhyunwoo/ccam/releases) புதிய `ccam_<version>_linux_amd64.deb`-ஐப் பதிவிறக்கி, பழையதன் மேலேயே நிறுவுங்கள்:
+
+```sh
+sudo apt install ./ccam_*_linux_amd64.deb
+```
 
 ## நீக்குதல்
 

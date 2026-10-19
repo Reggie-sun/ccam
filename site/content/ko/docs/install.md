@@ -1,10 +1,10 @@
 ---
 title: ccam 설치
-description: Linux나 macOS에서 명령 하나로, 또는 .deb 패키지나 소스로 ccam을 설치합니다. Claude Code가 먼저 설치되어 있어야 합니다.
+description: Linux나 macOS에서 명령 하나로, 또는 .deb 패키지나 소스로 ccam을 설치하고 ccam update로 최신 상태를 유지합니다. Claude Code가 먼저 설치되어 있어야 합니다.
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: 79dc1b55e774
+sourceHash: bde486b82b2e
 ---
 
 Linux나 macOS 터미널에서 다음 명령을 실행하세요.
@@ -62,6 +62,40 @@ ccam doctor
 ```
 
 `ccam doctor`는 Claude Code를 찾을 수 있는지, 모든 계정 폴더와 링크, 로그인이 정상인지 확인합니다. 다음으로 [빠른 시작](/docs/quick-start)을 읽어 보세요.
+
+## 업데이트
+
+```sh
+ccam update --check
+ccam update
+```
+
+`ccam update --check`는 새 릴리스가 있는지 알려 주기만 합니다. `ccam update`는 시스템에 맞는 릴리스를 내려받아 릴리스의 `checksums.txt`로 SHA-256 체크섬을 확인한 뒤 `ccam` 파일을 한 번에 교체합니다. 체크섬이 맞지 않으면 아무것도 바꾸지 않습니다. `ccwork` 같은 단축 명령은 ccam을 가리키는 링크라서 곧바로 새 버전으로 실행됩니다.
+
+```console
+$ ccam update --check
+ccam 0.3.0 is available (you have 0.2.0). Run `ccam update`.
+$ ccam update
+→ downloading https://github.com/jhyunwoo/ccam/releases/download/v0.3.0/ccam_linux_amd64.tar.gz
+✓ Updated ccam 0.2.0 → 0.3.0 (/home/me/.local/bin/ccam)
+$ ccam update
+ccam 0.3.0 is up to date.
+```
+
+ccam은 스스로 업데이트를 확인하지 않습니다. 새 릴리스는 이 명령을 실행할 때만 찾습니다. 이전 버전을 포함해 특정 릴리스를 설치하려면 `--version`을 지정합니다. `ccam --dry-run update`는 아무것도 바꾸지 않고, 무엇을 내려받아 어떤 파일을 교체할지만 보여 줍니다.
+
+```sh
+ccam update --version v0.2.0
+ccam --dry-run update
+```
+
+설치 스크립트를 다시 실행해도 `~/.local/bin`의 ccam이 업데이트됩니다. `go install`로 설치했다면 같은 명령을 다시 실행하세요.
+
+**Debian, Ubuntu 패키지.** apt로 설치한 `/usr/bin/ccam`은 `ccam update`가 교체하지 않고, 대신 아래 방법을 알려 줍니다. [릴리스 페이지](https://github.com/jhyunwoo/ccam/releases)에서 새 `ccam_<version>_linux_amd64.deb`를 내려받아 기존 패키지 위에 설치하세요.
+
+```sh
+sudo apt install ./ccam_*_linux_amd64.deb
+```
 
 ## 제거
 

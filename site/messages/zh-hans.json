@@ -126,6 +126,7 @@
     "statusline": "在 Claude Code 的状态栏中显示账号和用量",
     "shims": "重新创建所有账号的快捷命令链接",
     "shortcut": "显示、创建、重命名或删除账号的快捷命令，例如 ccwork",
+    "update": "校验校验和后，将 ccam 更新到最新版本",
     "completion": "输出 bash 或 zsh 的补全脚本"
   },
   "copy": {

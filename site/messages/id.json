@@ -126,6 +126,7 @@
     "statusline": "Menampilkan akun dan penggunaannya di status line Claude Code",
     "shims": "Membuat ulang tautan pintasan semua akun",
     "shortcut": "Menampilkan, membuat, mengganti nama, atau menghapus perintah pintasan akun, seperti ccwork",
+    "update": "Memperbarui ccam ke rilis terbaru setelah memeriksa checksum-nya",
     "completion": "Mencetak pelengkapan otomatis untuk bash atau zsh"
   },
   "copy": {

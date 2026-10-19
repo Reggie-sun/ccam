@@ -4,7 +4,7 @@ description: Risposte su ccam, account Claude Code, limiti di utilizzo, condivis
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: e07d468d453b
+sourceHash: 1355fa6ef3c6
 ---
 
 ## ccam è uno strumento ufficiale di Anthropic?
@@ -50,6 +50,10 @@ I server aggiunti all'interno di una sessione con `claude mcp add` vengono salva
 ## ccam rallenta Claude Code?
 
 Avviare Claude Code tramite ccam aggiunge circa 4 millisecondi, misurati con `scripts/perf-check.sh` su un portatile. ccam legge un piccolo file, controlla i link condivisi e poi si sostituisce con `claude`, quindi non è in esecuzione mentre lavori.
+
+## Come si aggiorna ccam?
+
+Esegui `ccam update`. Scarica l'ultima release, ne verifica il checksum e sostituisce il file `ccam`; `ccam update --check` ti dice solo se esiste una release più recente. ccam non si aggiorna mai da solo. Se hai installato il pacchetto `.deb`, installa invece il nuovo `.deb` con apt. Vedi [aggiornamento](/docs/install#update).
 
 ## Come si disinstalla ccam?
 

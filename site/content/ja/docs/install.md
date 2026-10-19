@@ -1,10 +1,10 @@
 ---
 title: ccamのインストール
-description: LinuxまたはmacOSにccamを1つのコマンドで、.debパッケージから、またはソースからインストールします。先にClaude Codeのインストールが必要です。
+description: LinuxまたはmacOSにccamを1つのコマンドで、.debパッケージから、またはソースからインストールし、ccam updateで最新の状態に保ちます。先にClaude Codeのインストールが必要です。
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: 79dc1b55e774
+sourceHash: bde486b82b2e
 ---
 
 LinuxまたはmacOSのターミナルで、次のコマンドを実行します。
@@ -62,6 +62,40 @@ ccam doctor
 ```
 
 `ccam doctor`は、Claude Codeが見つかるか、すべてのアカウントのフォルダー、リンク、ログインに問題がないかを確認します。次は[クイックスタート](/docs/quick-start)に進んでください。
+
+## アップデート
+
+```sh
+ccam update --check
+ccam update
+```
+
+`ccam update --check`は、新しいリリースがあるかどうかを知らせるだけです。`ccam update`は、お使いのシステム用のリリースをダウンロードし、リリースの`checksums.txt`と照合してSHA-256チェックサムを検証してから、`ccam`ファイルを一度に置き換えます。チェックサムが一致しない場合は何も変更しません。`ccwork`のようなショートカットはccamへのリンクなので、すぐに新しいバージョンで動作します。
+
+```console
+$ ccam update --check
+ccam 0.3.0 is available (you have 0.2.0). Run `ccam update`.
+$ ccam update
+→ downloading https://github.com/jhyunwoo/ccam/releases/download/v0.3.0/ccam_linux_amd64.tar.gz
+✓ Updated ccam 0.2.0 → 0.3.0 (/home/me/.local/bin/ccam)
+$ ccam update
+ccam 0.3.0 is up to date.
+```
+
+ccamが自分から更新を確認することはありません。新しいリリースを探すのは、このコマンドを実行したときだけです。古いリリースも含めて特定のリリースをインストールするには、`--version`を指定します。`ccam --dry-run update`は、何も変更せずに、何をダウンロードして何を置き換えるかを表示します。
+
+```sh
+ccam update --version v0.2.0
+ccam --dry-run update
+```
+
+インストールスクリプトをもう一度実行しても、`~/.local/bin`にあるccamが更新されます。`go install`でccamをビルドした場合は、同じコマンドをもう一度実行してください。
+
+**DebianおよびUbuntuのパッケージ。** aptでインストールした`/usr/bin/ccam`は`ccam update`では置き換えず、代わりに次の手順を表示します。[リリースページ](https://github.com/jhyunwoo/ccam/releases)から新しい`ccam_<version>_linux_amd64.deb`をダウンロードし、古いパッケージの上からインストールします。
+
+```sh
+sudo apt install ./ccam_*_linux_amd64.deb
+```
 
 ## アンインストール
 

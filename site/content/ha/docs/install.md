@@ -1,10 +1,10 @@
 ---
 title: Girka ccam
-description: Girka ccam a Linux ko macOS da umarni ɗaya, daga kunshin .deb, ko daga lambar tushe. Dole ne ka fara girka Claude Code.
+description: Girka ccam a Linux ko macOS da umarni ɗaya, daga kunshin .deb, ko daga lambar tushe, sannan ka riƙa sabunta shi da ccam update. Dole ne ka fara girka Claude Code.
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: 79dc1b55e774
+sourceHash: bde486b82b2e
 ---
 
 Gudanar da wannan a terminal a Linux ko macOS:
@@ -62,6 +62,40 @@ ccam doctor
 ```
 
 `ccam doctor` yana duba cewa an sami Claude Code, kuma cewa kowace foldar asusu, kowane mahaɗi da kowane shiga suna cikin tsari. Ci gaba da [farawa da sauri](/docs/quick-start).
+
+## Sabuntawa
+
+```sh
+ccam update --check
+ccam update
+```
+
+`ccam update --check` yana gaya maka kawai ko akwai sabon saki. `ccam update` yana sauke sakin da ya dace da tsarinka, yana duba checksum na SHA-256 nasa da `checksums.txt` na sakin, sannan yana maye gurbin fayil ɗin `ccam` a mataki ɗaya. Idan checksum bai yi daidai ba, ba a canza komai ba. Gajerun umarni kamar `ccwork` mahaɗai ne zuwa ccam, don haka nan take suke gudanar da sabuwar siga.
+
+```console
+$ ccam update --check
+ccam 0.3.0 is available (you have 0.2.0). Run `ccam update`.
+$ ccam update
+→ downloading https://github.com/jhyunwoo/ccam/releases/download/v0.3.0/ccam_linux_amd64.tar.gz
+✓ Updated ccam 0.2.0 → 0.3.0 (/home/me/.local/bin/ccam)
+$ ccam update
+ccam 0.3.0 is up to date.
+```
+
+ccam ba ya taɓa duba sabuntawa da kansa; yana neman sabon saki ne kawai idan ka gudanar da wannan umarnin. Don girka takamaiman saki, har da tsoho, ka ba da `--version`. `ccam --dry-run update` yana nuna abin da za a sauke da abin da za a maye gurbinsa, ba tare da canza komai ba.
+
+```sh
+ccam update --version v0.2.0
+ccam --dry-run update
+```
+
+Sake gudanar da rubutun girkawa shi ma yana sabunta kwafin da ke `~/.local/bin`. Idan ka gina ccam da `go install`, sake gudanar da wannan umarnin.
+
+**Kunshin Debian da Ubuntu.** `ccam update` ba ya maye gurbin `/usr/bin/ccam` da apt ya girka, a maimakon haka yana buga waɗannan matakan. Sauke sabon `ccam_<version>_linux_amd64.deb` daga [shafin saki](https://github.com/jhyunwoo/ccam/releases) sannan ka girka shi a kan tsohon:
+
+```sh
+sudo apt install ./ccam_*_linux_amd64.deb
+```
 
 ## Cire ccam
 

@@ -126,6 +126,7 @@
     "statusline": "Mostrar a conta e o uso na linha de status do Claude Code",
     "shims": "Recriar os links dos atalhos de todas as contas",
     "shortcut": "Mostrar, criar, renomear ou remover o atalho de uma conta, como ccwork",
+    "update": "Atualizar o ccam para a versão mais recente depois de verificar o checksum",
     "completion": "Imprimir o preenchimento automático para bash ou zsh"
   },
   "copy": {

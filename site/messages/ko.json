@@ -126,6 +126,7 @@
     "statusline": "Claude Code 상태 표시줄에 계정과 사용량 표시",
     "shims": "모든 계정의 단축 명령 링크 다시 만들기",
     "shortcut": "계정의 단축 명령(예: ccwork) 보기, 만들기, 이름 바꾸기, 삭제",
+    "update": "체크섬을 확인한 뒤 ccam을 최신 릴리스로 업데이트",
     "completion": "bash 또는 zsh 자동완성 스크립트 출력"
   },
   "copy": {

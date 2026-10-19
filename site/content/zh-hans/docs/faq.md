@@ -4,7 +4,7 @@ description: 关于 ccam、Claude Code 账号、用量限制、共享、隐私�
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: e07d468d453b
+sourceHash: 1355fa6ef3c6
 ---
 
 ## ccam 是 Anthropic 的官方工具吗？
@@ -50,6 +50,10 @@ Linux（Ubuntu、Debian、Fedora、Arch、Alpine 等）和 macOS。在 Windows �
 ## ccam 会拖慢 Claude Code 吗？
 
 通过 ccam 启动 Claude Code 大约增加 4 毫秒，这是在一台笔记本电脑上用 `scripts/perf-check.sh` 测得的。ccam 读取一个小文件，检查共享链接，然后用 `claude` 替换自身，所以在你工作时它并不在运行。
+
+## 如何更新 ccam？
+
+运行 `ccam update`。它会下载最新版本，校验其校验和，然后替换 `ccam` 文件；`ccam update --check` 只告诉你是否有更新的版本。ccam 从不自行更新。如果你安装的是 `.deb` 软件包，请改用 apt 安装新的 `.deb`。参见[更新](/docs/install#update)。
 
 ## 如何卸载 ccam？
 

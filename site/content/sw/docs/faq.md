@@ -4,7 +4,7 @@ description: Majibu kuhusu ccam, akaunti za Claude Code, vikomo vya matumizi, ku
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: e07d468d453b
+sourceHash: 1355fa6ef3c6
 ---
 
 ## Je, ccam ni zana rasmi ya Anthropic?
@@ -50,6 +50,10 @@ Seva zilizoongezwa ndani ya kipindi kwa `claude mcp add` huhifadhiwa kwa akaunti
 ## Je, ccam hupunguza kasi ya Claude Code?
 
 Kuanzisha Claude Code kupitia ccam huongeza takriban milisekunde 4, zilizopimwa kwa `scripts/perf-check.sh` kwenye kompyuta mpakato. ccam husoma faili moja ndogo, hukagua viungo vinavyoshirikiwa kisha hujibadilisha yenyewe kuwa `claude`, kwa hiyo haiendeshwi wakati unafanya kazi.
+
+## Nitasasishaje ccam?
+
+Endesha `ccam update`. Hupakua toleo jipya zaidi, hukagua checksum yake na hubadilisha faili ya `ccam`, huku `ccam update --check` ikikuambia tu kama kuna toleo jipya zaidi. ccam kamwe haijisasishi yenyewe. Ikiwa ulisakinisha kifurushi cha `.deb`, badala yake sakinisha `.deb` mpya kwa apt. Tazama [kusasisha ccam](/docs/install#update).
 
 ## Nitaondoaje ccam?
 

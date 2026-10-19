@@ -1,10 +1,10 @@
 ---
 title: ccam ను ఇన్‌స్టాల్ చేయండి
-description: Linux లేదా macOS లో ccam ను ఒకే కమాండ్‌తో, .deb ప్యాకేజీ నుంచి లేదా సోర్స్ నుంచి ఇన్‌స్టాల్ చేయండి. ముందుగా Claude Code ఇన్‌స్టాల్ అయి ఉండాలి.
+description: Linux లేదా macOS లో ccam ను ఒకే కమాండ్‌తో, .deb ప్యాకేజీ నుంచి లేదా సోర్స్ నుంచి ఇన్‌స్టాల్ చేసి, ccam update తో తాజాగా ఉంచండి. ముందుగా Claude Code ఇన్‌స్టాల్ అయి ఉండాలి.
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: 79dc1b55e774
+sourceHash: bde486b82b2e
 ---
 
 Linux లేదా macOS లో టెర్మినల్‌లో ఇది రన్ చేయండి:
@@ -62,6 +62,40 @@ ccam doctor
 ```
 
 `ccam doctor` Claude Code కనబడుతోందా, ప్రతి ఖాతా ఫోల్డర్, లింక్, లాగిన్ సరిగ్గా ఉన్నాయా అని తనిఖీ చేస్తుంది. తర్వాత [క్విక్ స్టార్ట్](/docs/quick-start) తో కొనసాగండి.
+
+## అప్‌డేట్ చేయడం
+
+```sh
+ccam update --check
+ccam update
+```
+
+`ccam update --check` కొత్త రిలీజ్ ఉందో లేదో మాత్రమే చెబుతుంది. `ccam update` మీ సిస్టమ్‌కు సరిపడే రిలీజ్‌ను డౌన్‌లోడ్ చేసి, దాని SHA-256 చెక్‌సమ్‌ను రిలీజ్‌లోని `checksums.txt` తో సరిపోల్చి, తర్వాత `ccam` ఫైల్‌ను ఒకే దశలో మారుస్తుంది. చెక్‌సమ్ సరిపోలకపోతే, ఏదీ మార్చబడదు. `ccwork` వంటి షార్ట్‌కట్‌లు ccam కు లింక్‌లు కాబట్టి, అవి వెంటనే కొత్త వెర్షన్‌ను రన్ చేస్తాయి.
+
+```console
+$ ccam update --check
+ccam 0.3.0 is available (you have 0.2.0). Run `ccam update`.
+$ ccam update
+→ downloading https://github.com/jhyunwoo/ccam/releases/download/v0.3.0/ccam_linux_amd64.tar.gz
+✓ Updated ccam 0.2.0 → 0.3.0 (/home/me/.local/bin/ccam)
+$ ccam update
+ccam 0.3.0 is up to date.
+```
+
+ccam తనంతట తానుగా ఎప్పుడూ అప్‌డేట్‌ల కోసం తనిఖీ చేయదు; మీరు ఈ కమాండ్ రన్ చేసినప్పుడు మాత్రమే కొత్త రిలీజ్ కోసం చూస్తుంది. పాత రిలీజ్‌తో సహా, ఒక నిర్దిష్ట రిలీజ్‌ను ఇన్‌స్టాల్ చేయడానికి `--version` ఇవ్వండి. `ccam --dry-run update` ఏదీ మార్చకుండా, ఏమి డౌన్‌లోడ్ అవుతుందో, ఏమి మారుతుందో చూపిస్తుంది.
+
+```sh
+ccam update --version v0.2.0
+ccam --dry-run update
+```
+
+ఇన్‌స్టాల్ స్క్రిప్ట్‌ను మళ్లీ రన్ చేసినా `~/.local/bin` లోని కాపీ అప్‌డేట్ అవుతుంది. మీరు ccam ను `go install` తో బిల్డ్ చేసి ఉంటే, అదే కమాండ్‌ను మళ్లీ రన్ చేయండి.
+
+**Debian, Ubuntu ప్యాకేజీ.** apt ఇన్‌స్టాల్ చేసిన `/usr/bin/ccam` ను `ccam update` మార్చదు, దానికి బదులుగా ఈ దశలను ప్రింట్ చేస్తుంది. [రిలీజ్‌ల పేజీ](https://github.com/jhyunwoo/ccam/releases) నుంచి కొత్త `ccam_<version>_linux_amd64.deb` ను డౌన్‌లోడ్ చేసి, పాత దాని మీదే ఇన్‌స్టాల్ చేయండి:
+
+```sh
+sudo apt install ./ccam_*_linux_amd64.deb
+```
 
 ## అన్‌ఇన్‌స్టాల్ చేయడం
 

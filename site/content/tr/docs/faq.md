@@ -4,7 +4,7 @@ description: ccam, Claude Code hesapları, kullanım limitleri, paylaşım, gizl
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: e07d468d453b
+sourceHash: 1355fa6ef3c6
 ---
 
 ## ccam resmi bir Anthropic aracı mı?
@@ -50,6 +50,10 @@ Bir oturum içinde `claude mcp add` ile eklenen sunucular yalnızca o hesap içi
 ## ccam, Claude Code'u yavaşlatır mı?
 
 Claude Code'u ccam üzerinden başlatmak yaklaşık 4 milisaniye ekler; bu süre bir dizüstü bilgisayarda `scripts/perf-check.sh` ile ölçülmüştür. ccam küçük bir dosya okur, paylaşılan bağlantıları kontrol eder ve ardından kendini `claude` ile değiştirir; dolayısıyla siz çalışırken çalışır durumda değildir.
+
+## ccam'ı nasıl güncellerim?
+
+`ccam update` komutunu çalıştırın. Bu komut en son sürümü indirir, sağlama toplamını kontrol eder ve `ccam` dosyasını değiştirir; `ccam update --check` ise yalnızca daha yeni bir sürüm olup olmadığını söyler. ccam hiçbir zaman kendiliğinden güncellenmez. `.deb` paketini kurduysanız bunun yerine yeni `.deb` dosyasını apt ile kurun. [Güncelleme](/docs/install#update) bölümüne bakın.
 
 ## ccam'ı nasıl kaldırırım?
 

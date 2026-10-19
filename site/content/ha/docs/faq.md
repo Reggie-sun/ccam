@@ -4,7 +4,7 @@ description: Amsoshi game da ccam, asusun Claude Code, iyakokin amfani, rabawa, 
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: e07d468d453b
+sourceHash: 1355fa6ef3c6
 ---
 
 ## Shin ccam kayan aikin Anthropic ne na hukuma?
@@ -50,6 +50,10 @@ Sabobin da aka ƙara a cikin zama (session) da `claude mcp add` ana ajiye su ga 
 ## Shin ccam yana rage saurin Claude Code?
 
 Fara Claude Code ta ccam yana ƙara kusan millisecond 4, wanda aka auna da `scripts/perf-check.sh` a kwamfutar tafi-da-gidanka. ccam yana karanta ƙaramin fayil ɗaya, yana duba mahaɗan da aka raba, sannan yana maye gurbin kansa da `claude`, don haka ba ya aiki yayin da kake aiki.
+
+## Ta yaya zan sabunta ccam?
+
+Gudanar da `ccam update`. Yana sauke sakin baya-bayan nan, yana duba checksum nasa, sannan yana maye gurbin fayil ɗin `ccam`; `ccam update --check` yana gaya maka kawai ko akwai sabon saki. ccam ba ya taɓa sabunta kansa da kansa. Idan ka girka kunshin `.deb`, ka girka sabon `.deb` da apt a maimakon haka. Duba [sabuntawa](/docs/install#update).
 
 ## Ta yaya zan cire ccam?
 

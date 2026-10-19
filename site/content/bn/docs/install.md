@@ -1,10 +1,10 @@
 ---
 title: "ccam ইনস্টল করুন"
-description: "Linux বা macOS-এ একটি কমান্ডে, .deb প্যাকেজ থেকে, অথবা সোর্স থেকে ccam ইনস্টল করুন। আগে Claude Code ইনস্টল থাকতে হবে।"
+description: "Linux বা macOS-এ একটি কমান্ডে, .deb প্যাকেজ থেকে, অথবা সোর্স থেকে ccam ইনস্টল করুন এবং ccam update দিয়ে হালনাগাদ রাখুন। আগে Claude Code ইনস্টল থাকতে হবে।"
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: 79dc1b55e774
+sourceHash: bde486b82b2e
 ---
 
 Linux বা macOS-এ একটি টার্মিনালে এটি চালান:
@@ -62,6 +62,40 @@ ccam doctor
 ```
 
 `ccam doctor` পরীক্ষা করে যে Claude Code পাওয়া যাচ্ছে এবং প্রতিটি অ্যাকাউন্ট ফোল্ডার, লিংক ও লগইন ঠিক আছে। এরপর [কুইক স্টার্ট](/docs/quick-start) দেখুন।
+
+## আপডেট
+
+```sh
+ccam update --check
+ccam update
+```
+
+`ccam update --check` শুধু জানায় নতুন কোনো রিলিজ আছে কি না। `ccam update` আপনার সিস্টেমের জন্য রিলিজ ডাউনলোড করে, রিলিজের `checksums.txt` দিয়ে তার SHA-256 চেকসাম যাচাই করে, তারপর এক ধাপে `ccam` ফাইলটি বদলে দেয়। চেকসাম না মিললে কিছুই বদলায় না। `ccwork`-এর মতো শর্টকাটগুলো ccam-এর লিংক, তাই সেগুলো সঙ্গে সঙ্গে নতুন সংস্করণ চালায়।
+
+```console
+$ ccam update --check
+ccam 0.3.0 is available (you have 0.2.0). Run `ccam update`.
+$ ccam update
+→ downloading https://github.com/jhyunwoo/ccam/releases/download/v0.3.0/ccam_linux_amd64.tar.gz
+✓ Updated ccam 0.2.0 → 0.3.0 (/home/me/.local/bin/ccam)
+$ ccam update
+ccam 0.3.0 is up to date.
+```
+
+ccam কখনো নিজে থেকে আপডেট খোঁজে না; আপনি এই কমান্ড চালালেই কেবল নতুন রিলিজ খোঁজে। কোনো নির্দিষ্ট রিলিজ, এমনকি পুরোনো রিলিজও, ইনস্টল করতে `--version` দিন। `ccam --dry-run update` কিছু না বদলে দেখায় কী ডাউনলোড হবে আর কী বদলানো হবে।
+
+```sh
+ccam update --version v0.2.0
+ccam --dry-run update
+```
+
+ইনস্টল স্ক্রিপ্টটি আবার চালালেও `~/.local/bin`-এর কপিটি আপডেট হয়। ccam যদি `go install` দিয়ে বিল্ড করে থাকেন, তাহলে একই কমান্ড আবার চালান।
+
+**Debian ও Ubuntu প্যাকেজ।** apt দিয়ে ইনস্টল করা `/usr/bin/ccam` ফাইলটি `ccam update` বদলায় না, বরং এর বদলে এই ধাপগুলো প্রিন্ট করে। [রিলিজ পাতা](https://github.com/jhyunwoo/ccam/releases) থেকে নতুন `ccam_<version>_linux_amd64.deb` ডাউনলোড করে পুরোনোটির ওপর ইনস্টল করুন:
+
+```sh
+sudo apt install ./ccam_*_linux_amd64.deb
+```
 
 ## আনইনস্টল
 

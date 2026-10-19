@@ -1,10 +1,10 @@
 ---
 title: "ccam انسٹال کریں"
-description: "ccam کو Linux یا macOS پر ایک کمانڈ سے، .deb پیکیج سے یا سورس سے انسٹال کریں۔ اس سے پہلے Claude Code انسٹال ہونا ضروری ہے۔"
+description: "ccam کو Linux یا macOS پر ایک کمانڈ سے، .deb پیکیج سے یا سورس سے انسٹال کریں اور ccam update سے اسے تازہ ترین رکھیں۔ اس سے پہلے Claude Code انسٹال ہونا ضروری ہے۔"
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: 79dc1b55e774
+sourceHash: bde486b82b2e
 ---
 
 Linux یا macOS پر ٹرمینل میں یہ کمانڈ چلائیں:
@@ -62,6 +62,40 @@ ccam doctor
 ```
 
 `ccam doctor` چیک کرتا ہے کہ Claude Code مل رہا ہے اور ہر اکاؤنٹ فولڈر، لنک اور لاگ اِن درست حالت میں ہے۔ اس کے بعد [فوری آغاز](/docs/quick-start) پر جائیں۔
+
+## اپ ڈیٹ کرنا
+
+```sh
+ccam update --check
+ccam update
+```
+
+`ccam update --check` صرف یہ بتاتا ہے کہ کوئی نئی ریلیز موجود ہے یا نہیں۔ `ccam update` آپ کے سسٹم کے لیے ریلیز ڈاؤن لوڈ کرتا ہے، اس کا SHA-256 چیک سم ریلیز کی `checksums.txt` فائل سے ملاتا ہے اور پھر `ccam` فائل کو ایک ہی قدم میں بدل دیتا ہے۔ اگر چیک سم میل نہ کھائے تو کچھ بھی تبدیل نہیں ہوتا۔ `ccwork` جیسے شارٹ کٹس ccam کے لنکس ہیں، اس لیے وہ فوراً نیا ورژن چلاتے ہیں۔
+
+```console
+$ ccam update --check
+ccam 0.3.0 is available (you have 0.2.0). Run `ccam update`.
+$ ccam update
+→ downloading https://github.com/jhyunwoo/ccam/releases/download/v0.3.0/ccam_linux_amd64.tar.gz
+✓ Updated ccam 0.2.0 → 0.3.0 (/home/me/.local/bin/ccam)
+$ ccam update
+ccam 0.3.0 is up to date.
+```
+
+ccam کبھی خود سے اپ ڈیٹس چیک نہیں کرتا؛ یہ نئی ریلیز صرف تب ڈھونڈتا ہے جب آپ یہ کمانڈ چلائیں۔ کوئی مخصوص ریلیز، پرانی ریلیز سمیت، انسٹال کرنے کے لیے `--version` دیں۔ `ccam --dry-run update` کچھ بھی تبدیل کیے بغیر دکھاتا ہے کہ کیا ڈاؤن لوڈ ہوگا اور کیا بدلا جائے گا۔
+
+```sh
+ccam update --version v0.2.0
+ccam --dry-run update
+```
+
+انسٹال اسکرپٹ دوبارہ چلانے سے بھی `~/.local/bin` والی کاپی اپ ڈیٹ ہو جاتی ہے۔ اگر آپ نے ccam کو `go install` سے بنایا تھا تو وہی کمانڈ دوبارہ چلائیں۔
+
+**Debian اور Ubuntu پیکیج۔** apt کے ذریعے انسٹال کی گئی `/usr/bin/ccam` کو `ccam update` نہیں بدلتا بلکہ اس کے بجائے یہ مراحل دکھاتا ہے۔ [ریلیزز کے صفحے](https://github.com/jhyunwoo/ccam/releases) سے نئی `ccam_<version>_linux_amd64.deb` ڈاؤن لوڈ کریں اور اسے پرانی کے اوپر انسٹال کریں:
+
+```sh
+sudo apt install ./ccam_*_linux_amd64.deb
+```
 
 ## اَن انسٹال کرنا
 

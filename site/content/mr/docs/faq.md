@@ -4,7 +4,7 @@ description: ccam, Claude Code खाती, वापर मर्यादा,
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: e07d468d453b
+sourceHash: 1355fa6ef3c6
 ---
 
 ## ccam हे Anthropic चे अधिकृत टूल आहे का?
@@ -50,6 +50,10 @@ session मध्ये `claude mcp add` ने जोडलेले सर्�
 ## ccam मुळे Claude Code धीमे होते का?
 
 ccam मार्फत Claude Code सुरू केल्याने सुमारे 4 मिलिसेकंद वाढतात, हे एका लॅपटॉपवर `scripts/perf-check.sh` ने मोजले आहे. ccam एक छोटी फाइल वाचते, शेअर केलेल्या लिंक्स तपासते आणि नंतर स्वतःच्या जागी `claude` ठेवते, त्यामुळे तुम्ही काम करत असताना ते चालू नसते.
+
+## ccam अपडेट कसे करायचे?
+
+`ccam update` चालवा. ते नवीनतम रिलीज डाउनलोड करते, त्याचा checksum तपासते आणि `ccam` फाइल बदलते; `ccam update --check` फक्त नवीन रिलीज उपलब्ध आहे का ते सांगते. ccam स्वतःहून कधीही अपडेट होत नाही. तुम्ही `.deb` पॅकेज इन्स्टॉल केले असेल, तर त्याऐवजी नवीन `.deb` apt ने इन्स्टॉल करा. तपशीलासाठी [अपडेट](/docs/install#update) पाहा.
 
 ## ccam अनइन्स्टॉल कसे करायचे?
 

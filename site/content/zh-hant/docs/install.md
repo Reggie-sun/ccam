@@ -1,10 +1,10 @@
 ---
 title: 安裝 ccam
-description: 在 Linux 或 macOS 上用一個指令、.deb 套件或從原始碼安裝 ccam。需要先安裝 Claude Code。
+description: 在 Linux 或 macOS 上用一個指令、.deb 套件或從原始碼安裝 ccam，並用 ccam update 保持最新版本。需要先安裝 Claude Code。
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: 79dc1b55e774
+sourceHash: bde486b82b2e
 ---
 
 在 Linux 或 macOS 的終端機中執行：
@@ -62,6 +62,40 @@ ccam doctor
 ```
 
 `ccam doctor` 會檢查是否找得到 Claude Code，以及每個帳號資料夾、連結和登入是否都正常。接著請閱讀[快速入門](/docs/quick-start)。
+
+## 更新
+
+```sh
+ccam update --check
+ccam update
+```
+
+`ccam update --check` 只會告訴你是否有更新的發行版本。`ccam update` 會下載適合你系統的發行版本，以該版本的 `checksums.txt` 檢查其 SHA-256 總和檢查碼，再一次取代 `ccam` 檔案。如果總和檢查碼不符，就不會變更任何東西。`ccwork` 這類快捷指令是指向 ccam 的連結，因此會立即執行新版本。
+
+```console
+$ ccam update --check
+ccam 0.3.0 is available (you have 0.2.0). Run `ccam update`.
+$ ccam update
+→ downloading https://github.com/jhyunwoo/ccam/releases/download/v0.3.0/ccam_linux_amd64.tar.gz
+✓ Updated ccam 0.2.0 → 0.3.0 (/home/me/.local/bin/ccam)
+$ ccam update
+ccam 0.3.0 is up to date.
+```
+
+ccam 從不自動檢查更新，只有在你執行這個指令時才會尋找新的發行版本。若要安裝特定的發行版本（包括較舊的版本），請加上 `--version`。`ccam --dry-run update` 會顯示將下載和取代哪些內容，但不會做任何變更。
+
+```sh
+ccam update --version v0.2.0
+ccam --dry-run update
+```
+
+重新執行安裝腳本也會更新 `~/.local/bin` 中的 ccam。如果你是用 `go install` 建置 ccam，再執行一次同樣的指令即可。
+
+**Debian 和 Ubuntu 套件。** `ccam update` 不會取代由 apt 安裝的 `/usr/bin/ccam`，而是改為印出以下步驟。從[發行版本頁面](https://github.com/jhyunwoo/ccam/releases)下載新的 `ccam_<version>_linux_amd64.deb`，覆蓋安裝舊版：
+
+```sh
+sudo apt install ./ccam_*_linux_amd64.deb
+```
 
 ## 解除安裝
 

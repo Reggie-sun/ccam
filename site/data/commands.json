@@ -72,6 +72,10 @@
     "usage": "ccam statusline"
   },
   {
+    "key": "update",
+    "usage": "ccam update"
+  },
+  {
     "key": "usage",
     "usage": "ccam usage"
   },

@@ -1,10 +1,10 @@
 ---
 title: Installare ccam
-description: Installa ccam su Linux o macOS con un solo comando, da un pacchetto .deb o dai sorgenti. Claude Code deve essere già installato.
+description: Installa ccam su Linux o macOS con un solo comando, da un pacchetto .deb o dai sorgenti, e tienilo aggiornato con ccam update. Claude Code deve essere già installato.
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: 79dc1b55e774
+sourceHash: bde486b82b2e
 ---
 
 Esegui questo comando in un terminale su Linux o macOS:
@@ -62,6 +62,40 @@ ccam doctor
 ```
 
 `ccam doctor` controlla che Claude Code venga trovato e che ogni cartella di account, link e login sia in ordine. Prosegui con la [guida rapida](/docs/quick-start).
+
+## Aggiornamento
+
+```sh
+ccam update --check
+ccam update
+```
+
+`ccam update --check` ti dice solo se esiste una release più recente. `ccam update` scarica la release per il tuo sistema, ne verifica il checksum SHA-256 confrontandolo con il file `checksums.txt` della release e poi sostituisce il file `ccam` in un solo passaggio. Se il checksum non corrisponde, non viene modificato nulla. Le scorciatoie come `ccwork` sono link a ccam, quindi usano subito la nuova versione.
+
+```console
+$ ccam update --check
+ccam 0.3.0 is available (you have 0.2.0). Run `ccam update`.
+$ ccam update
+→ downloading https://github.com/jhyunwoo/ccam/releases/download/v0.3.0/ccam_linux_amd64.tar.gz
+✓ Updated ccam 0.2.0 → 0.3.0 (/home/me/.local/bin/ccam)
+$ ccam update
+ccam 0.3.0 is up to date.
+```
+
+ccam non controlla mai gli aggiornamenti da solo: cerca una nuova release solo quando esegui questo comando. Per installare una release specifica, anche una precedente, passa `--version`. `ccam --dry-run update` mostra cosa verrebbe scaricato e sostituito, senza modificare nulla.
+
+```sh
+ccam update --version v0.2.0
+ccam --dry-run update
+```
+
+Anche eseguire di nuovo lo script di installazione aggiorna la copia in `~/.local/bin`. Se hai compilato ccam con `go install`, esegui di nuovo lo stesso comando.
+
+**Pacchetto per Debian e Ubuntu.** `ccam update` non sostituisce un `/usr/bin/ccam` installato con apt e al suo posto stampa questi passaggi. Scarica il nuovo `ccam_<version>_linux_amd64.deb` dalla [pagina delle release](https://github.com/jhyunwoo/ccam/releases) e installalo sopra quello vecchio:
+
+```sh
+sudo apt install ./ccam_*_linux_amd64.deb
+```
 
 ## Disinstallazione
 

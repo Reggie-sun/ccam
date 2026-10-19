@@ -4,7 +4,7 @@ description: Jawaban seputar ccam, akun Claude Code, batas penggunaan, pembagian
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: e07d468d453b
+sourceHash: 1355fa6ef3c6
 ---
 
 ## Apakah ccam alat resmi dari Anthropic?
@@ -50,6 +50,10 @@ Server yang ditambahkan di dalam sesi dengan `claude mcp add` hanya disimpan unt
 ## Apakah ccam memperlambat Claude Code?
 
 Menjalankan Claude Code melalui ccam menambah sekitar 4 milidetik, diukur dengan `scripts/perf-check.sh` di sebuah laptop. ccam membaca satu file kecil, memeriksa tautan bersama, lalu menggantikan dirinya dengan `claude`, sehingga ccam tidak berjalan saat Anda bekerja.
+
+## Bagaimana cara memperbarui ccam?
+
+Jalankan `ccam update`. Perintah ini mengunduh rilis terbaru, memeriksa checksum-nya, lalu mengganti file `ccam`; `ccam update --check` hanya memberi tahu apakah ada rilis yang lebih baru. ccam tidak pernah memperbarui dirinya sendiri. Jika Anda menginstal paket `.deb`, instal `.deb` yang baru dengan apt. Lihat [pembaruan](/docs/install#update).
 
 ## Bagaimana cara menghapus instalasi ccam?
 

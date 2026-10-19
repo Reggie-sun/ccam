@@ -4,7 +4,7 @@ description: Mga sagot tungkol sa ccam, mga Claude Code account, usage limit, sh
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: e07d468d453b
+sourceHash: 1355fa6ef3c6
 ---
 
 ## Opisyal bang tool ng Anthropic ang ccam?
@@ -50,6 +50,10 @@ Ang mga server na idinagdag sa loob ng session gamit ang `claude mcp add` ay nak
 ## Pinababagal ba ng ccam ang Claude Code?
 
 Nagdadagdag ng mga 4 millisecond ang pagsisimula ng Claude Code sa pamamagitan ng ccam, na sinukat gamit ang `scripts/perf-check.sh` sa isang laptop. Nagbabasa ang ccam ng isang maliit na file, sinusuri ang mga shared na link at saka pinapalitan ang sarili nito ng `claude`, kaya hindi ito tumatakbo habang nagtatrabaho ka.
+
+## Paano i-update ang ccam?
+
+Patakbuhin ang `ccam update`. Dina-download nito ang pinakabagong release, sinusuri ang checksum nito at pinapalitan ang `ccam` file; sinasabi lang ng `ccam update --check` kung may mas bagong release. Hindi kailanman kusang nag-a-update ang ccam. Kung in-install mo ang `.deb` package, i-install na lang ang bagong `.deb` gamit ang apt. Tingnan ang [pag-update](/docs/install#update).
 
 ## Paano i-uninstall ang ccam?
 

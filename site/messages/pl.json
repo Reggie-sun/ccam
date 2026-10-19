@@ -126,6 +126,7 @@
     "statusline": "Pokaż konto i użycie na pasku stanu Claude Code",
     "shims": "Utwórz ponownie linki skrótów wszystkich kont",
     "shortcut": "Pokaż, utwórz, zmień nazwę lub usuń skrót konta, na przykład ccwork",
+    "update": "Zaktualizuj ccam do najnowszego wydania po sprawdzeniu sumy kontrolnej",
     "completion": "Wypisz uzupełnianie dla bash lub zsh"
   },
   "copy": {

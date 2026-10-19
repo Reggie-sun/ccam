@@ -126,6 +126,7 @@
     "statusline": "Mostra l'account e l'utilizzo nella riga di stato di Claude Code",
     "shims": "Ricrea i link delle scorciatoie di tutti gli account",
     "shortcut": "Mostra, crea, rinomina o rimuove la scorciatoia di un account, come ccwork",
+    "update": "Aggiorna ccam all'ultima release dopo averne verificato il checksum",
     "completion": "Stampa il completamento per bash o zsh"
   },
   "copy": {

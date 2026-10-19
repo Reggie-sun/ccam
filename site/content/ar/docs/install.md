@@ -1,10 +1,10 @@
 ---
 title: تثبيت ccam
-description: ثبّت ccam على Linux أو macOS بأمر واحد، أو من حزمة .deb، أو من الشيفرة المصدرية. يجب تثبيت Claude Code أولًا.
+description: ثبّت ccam على Linux أو macOS بأمر واحد، أو من حزمة .deb، أو من الشيفرة المصدرية، وأبقِه محدّثًا باستخدام ccam update. يجب تثبيت Claude Code أولًا.
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: 79dc1b55e774
+sourceHash: bde486b82b2e
 ---
 
 شغّل هذا الأمر في طرفية على Linux أو macOS:
@@ -62,6 +62,40 @@ ccam doctor
 ```
 
 يتحقق `ccam doctor` من العثور على Claude Code ومن سلامة كل مجلد حساب ورابط وتسجيل دخول. تابع مع [البدء السريع](/docs/quick-start).
+
+## التحديث
+
+```sh
+ccam update --check
+ccam update
+```
+
+يكتفي `ccam update --check` بإخبارك بوجود إصدار أحدث أو عدمه. أما `ccam update` فينزّل الإصدار المناسب لنظامك، ويتحقق من مجموع SHA-256 الخاص به بمطابقته مع ملف `checksums.txt` المرفق بالإصدار، ثم يستبدل الملف `ccam` في خطوة واحدة. إذا لم يتطابق المجموع، فلن يتغير أي شيء. الأوامر المختصرة مثل `ccwork` هي روابط إلى ccam، لذا تشغّل الإصدار الجديد فورًا.
+
+```console
+$ ccam update --check
+ccam 0.3.0 is available (you have 0.2.0). Run `ccam update`.
+$ ccam update
+→ downloading https://github.com/jhyunwoo/ccam/releases/download/v0.3.0/ccam_linux_amd64.tar.gz
+✓ Updated ccam 0.2.0 → 0.3.0 (/home/me/.local/bin/ccam)
+$ ccam update
+ccam 0.3.0 is up to date.
+```
+
+لا يبحث ccam عن التحديثات من تلقاء نفسه أبدًا، بل يبحث عن إصدار جديد فقط عندما تشغّل هذا الأمر. لتثبيت إصدار محدد، حتى لو كان أقدم، مرّر الخيار `--version`. ويعرض `ccam --dry-run update` ما سيُنزَّل وما سيُستبدَل دون تغيير أي شيء.
+
+```sh
+ccam update --version v0.2.0
+ccam --dry-run update
+```
+
+تشغيل سكربت التثبيت مرة أخرى يحدّث أيضًا النسخة الموجودة في `~/.local/bin`. وإذا بنيت ccam باستخدام `go install`، فشغّل الأمر نفسه مرة أخرى.
+
+**حزمة Debian وUbuntu.** لا يستبدل `ccam update` الملف `/usr/bin/ccam` الذي ثبّته apt، بل يطبع هذه الخطوات بدلًا من ذلك. نزّل الملف الجديد `ccam_<version>_linux_amd64.deb` من [صفحة الإصدارات](https://github.com/jhyunwoo/ccam/releases) وثبّته فوق القديم:
+
+```sh
+sudo apt install ./ccam_*_linux_amd64.deb
+```
 
 ## إلغاء التثبيت
 

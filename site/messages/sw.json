@@ -126,6 +126,7 @@
     "statusline": "Onyesha akaunti na matumizi kwenye mstari wa hali (status line) wa Claude Code",
     "shims": "Unda upya viungo vya njia fupi vya akaunti zote",
     "shortcut": "Onyesha, unda, badilisha jina au ondoa amri ya njia fupi ya akaunti, kama ccwork",
+    "update": "Sasisha ccam hadi toleo jipya zaidi baada ya kukagua checksum yake",
     "completion": "Chapisha ukamilishaji wa bash au zsh"
   },
   "copy": {

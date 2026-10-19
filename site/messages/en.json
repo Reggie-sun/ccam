@@ -126,6 +126,7 @@
     "statusline": "Show the account and usage in Claude Code's status line",
     "shims": "Recreate the shortcut links of all accounts",
     "shortcut": "Show, create, rename or remove an account's shortcut command, such as ccwork",
+    "update": "Update ccam to the latest release after checking its checksum",
     "completion": "Print bash or zsh completion"
   },
   "copy": {

@@ -1,10 +1,10 @@
 ---
 title: Instal ccam
-description: Instal ccam di Linux atau macOS dengan satu perintah, dari paket .deb, atau dari kode sumber. Claude Code harus diinstal terlebih dahulu.
+description: Instal ccam di Linux atau macOS dengan satu perintah, dari paket .deb, atau dari kode sumber, lalu jaga agar tetap terbaru dengan ccam update. Claude Code harus diinstal terlebih dahulu.
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: 79dc1b55e774
+sourceHash: bde486b82b2e
 ---
 
 Jalankan ini di terminal pada Linux atau macOS:
@@ -62,6 +62,40 @@ ccam doctor
 ```
 
 `ccam doctor` memeriksa bahwa Claude Code ditemukan dan bahwa setiap folder akun, tautan, dan login dalam kondisi baik. Lanjutkan ke [panduan memulai cepat](/docs/quick-start).
+
+## Pembaruan
+
+```sh
+ccam update --check
+ccam update
+```
+
+`ccam update --check` hanya memberi tahu apakah ada rilis yang lebih baru. `ccam update` mengunduh rilis untuk sistem Anda, mencocokkan checksum SHA-256-nya dengan `checksums.txt` dari rilis tersebut, lalu mengganti file `ccam` dalam satu langkah. Jika checksum tidak cocok, tidak ada yang diubah. Pintasan seperti `ccwork` adalah tautan ke ccam, jadi pintasan itu langsung menjalankan versi baru.
+
+```console
+$ ccam update --check
+ccam 0.3.0 is available (you have 0.2.0). Run `ccam update`.
+$ ccam update
+→ downloading https://github.com/jhyunwoo/ccam/releases/download/v0.3.0/ccam_linux_amd64.tar.gz
+✓ Updated ccam 0.2.0 → 0.3.0 (/home/me/.local/bin/ccam)
+$ ccam update
+ccam 0.3.0 is up to date.
+```
+
+ccam tidak pernah memeriksa pembaruan dengan sendirinya; ccam hanya mencari rilis baru saat Anda menjalankan perintah ini. Untuk menginstal rilis tertentu, termasuk rilis yang lebih lama, berikan `--version`. `ccam --dry-run update` menampilkan apa yang akan diunduh dan diganti tanpa mengubah apa pun.
+
+```sh
+ccam update --version v0.2.0
+ccam --dry-run update
+```
+
+Menjalankan skrip instalasi lagi juga memperbarui salinan di `~/.local/bin`. Jika Anda membangun ccam dengan `go install`, jalankan lagi perintah yang sama.
+
+**Paket Debian dan Ubuntu.** `ccam update` tidak mengganti `/usr/bin/ccam` yang diinstal oleh apt, dan sebagai gantinya menampilkan langkah-langkah berikut. Unduh `ccam_<version>_linux_amd64.deb` yang baru dari [halaman rilis](https://github.com/jhyunwoo/ccam/releases) lalu instal di atas versi yang lama:
+
+```sh
+sudo apt install ./ccam_*_linux_amd64.deb
+```
 
 ## Menghapus instalasi
 

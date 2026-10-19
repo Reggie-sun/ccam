@@ -126,6 +126,7 @@
     "statusline": "Hesabı ve kullanımı Claude Code'un durum satırında gösterir",
     "shims": "Tüm hesapların kısayol bağlantılarını yeniden oluşturur",
     "shortcut": "Bir hesabın ccwork gibi kısayol komutunu gösterir, oluşturur, yeniden adlandırır veya kaldırır",
+    "update": "Sağlama toplamını kontrol ettikten sonra ccam'ı en son sürüme günceller",
     "completion": "bash veya zsh tamamlama betiğini yazdırır"
   },
   "copy": {

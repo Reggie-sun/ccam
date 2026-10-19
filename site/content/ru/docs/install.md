@@ -1,10 +1,10 @@
 ---
 title: Установка ccam
-description: Установите ccam на Linux или macOS одной командой, из пакета .deb или из исходного кода. Сначала должен быть установлен Claude Code.
+description: Установите ccam на Linux или macOS одной командой, из пакета .deb или из исходного кода и поддерживайте его в актуальном состоянии с помощью ccam update. Сначала должен быть установлен Claude Code.
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: 79dc1b55e774
+sourceHash: bde486b82b2e
 ---
 
 Выполните это в терминале на Linux или macOS:
@@ -62,6 +62,40 @@ ccam doctor
 ```
 
 `ccam doctor` проверяет, что Claude Code найден и что все папки аккаунтов, ссылки и входы в порядке. Дальше переходите к [быстрому старту](/docs/quick-start).
+
+## Обновление
+
+```sh
+ccam update --check
+ccam update
+```
+
+`ccam update --check` только сообщает, есть ли более новый выпуск. `ccam update` скачивает выпуск для вашей системы, сверяет его контрольную сумму SHA-256 с файлом выпуска `checksums.txt` и затем за один шаг заменяет файл `ccam`. Если контрольная сумма не совпадает, ничего не меняется. Короткие команды, например `ccwork`, являются ссылками на ccam, поэтому сразу запускают новую версию.
+
+```console
+$ ccam update --check
+ccam 0.3.0 is available (you have 0.2.0). Run `ccam update`.
+$ ccam update
+→ downloading https://github.com/jhyunwoo/ccam/releases/download/v0.3.0/ccam_linux_amd64.tar.gz
+✓ Updated ccam 0.2.0 → 0.3.0 (/home/me/.local/bin/ccam)
+$ ccam update
+ccam 0.3.0 is up to date.
+```
+
+ccam никогда не проверяет обновления сам: новый выпуск он ищет, только когда вы выполняете эту команду. Чтобы установить определённый выпуск, в том числе более старый, укажите `--version`. `ccam --dry-run update` показывает, что будет скачано и заменено, ничего не меняя.
+
+```sh
+ccam update --version v0.2.0
+ccam --dry-run update
+```
+
+Повторный запуск скрипта установки тоже обновляет копию в `~/.local/bin`. Если вы собрали ccam с помощью `go install`, выполните ту же команду ещё раз.
+
+**Пакет для Debian и Ubuntu.** `ccam update` не заменяет `/usr/bin/ccam`, установленный через apt, а вместо этого выводит следующие шаги. Скачайте новый `ccam_<version>_linux_amd64.deb` со [страницы выпусков](https://github.com/jhyunwoo/ccam/releases) и установите его поверх старого:
+
+```sh
+sudo apt install ./ccam_*_linux_amd64.deb
+```
 
 ## Удаление
 

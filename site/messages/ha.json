@@ -126,6 +126,7 @@
     "statusline": "Nuna asusun da amfaninsa a layin matsayi na Claude Code",
     "shims": "Sake ƙirƙirar mahaɗan gajerun umarnin dukkan asusai",
     "shortcut": "Nuna, ƙirƙira, sauya suna ko cire gajeren umarnin asusu, kamar ccwork",
+    "update": "Sabunta ccam zuwa sakin baya-bayan nan bayan duba checksum nasa",
     "completion": "Buga completion na bash ko zsh"
   },
   "copy": {

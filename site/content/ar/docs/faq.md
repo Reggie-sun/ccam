@@ -4,7 +4,7 @@ description: إجابات عن ccam وحسابات Claude Code وحدود الا
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: e07d468d453b
+sourceHash: 1355fa6ef3c6
 ---
 
 ## هل ccam أداة رسمية من Anthropic؟
@@ -50,6 +50,10 @@ Linux (Ubuntu وDebian وFedora وArch وAlpine وغيرها) وmacOS. على Wi
 ## هل يبطئ ccam برنامج Claude Code؟
 
 تشغيل Claude Code عبر ccam يضيف نحو 4 أجزاء من الألف من الثانية، وقد قيس ذلك باستخدام `scripts/perf-check.sh` على حاسوب محمول. يقرأ ccam ملفًا صغيرًا واحدًا، ويفحص الروابط المشتركة، ثم يستبدل نفسه بـ `claude`، لذلك لا يكون قيد التشغيل أثناء عملك.
+
+## كيف أحدّث ccam؟
+
+شغّل `ccam update`. ينزّل هذا الأمر أحدث إصدار، ويتحقق من مجموع التحقق الخاص به، ويستبدل الملف `ccam`؛ أما `ccam update --check` فيكتفي بإخبارك بوجود إصدار أحدث أو عدمه. لا يحدّث ccam نفسه تلقائيًا أبدًا. إذا ثبّت حزمة `.deb`، فثبّت حزمة `.deb` الجديدة باستخدام apt بدلًا من ذلك. راجع [التحديث](/docs/install#update).
 
 ## كيف ألغي تثبيت ccam؟
 
