@@ -1,10 +1,10 @@
 ---
 title: Máy chủ MCP dùng chung
 description: "Giữ một danh sách máy chủ MCP cho mỗi nhóm bằng ccam mcp add, add-json, list, remove và import, được truyền qua --mcp-config hoặc đồng bộ vào từng tài khoản."
-updated: 2026-10-19
+updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: 69fd3233fd09
+sourceHash: f1de7db4b7be
 ---
 
 Claude Code lưu máy chủ MCP người dùng trong `.claude.json`, cũng là tệp chứa thông tin đăng nhập của tài khoản, nên tệp này không thể dùng chung giữa các tài khoản. ccam lưu các máy chủ dùng chung trong một tệp của nhóm, `mcp.json`, và trao nó cho mọi tài khoản trong nhóm khi khởi động. Hãy dùng `ccam mcp` để thêm một máy chủ một lần cho mọi tài khoản của bạn, và `ccam mcp import` để chuyển một máy chủ bạn đã thêm trong một phiên sang các tài khoản khác.
@@ -127,6 +127,7 @@ Với `--force`, máy chủ của nhóm bị thay thế, và `mcp.json` trước
 ## Liên quan
 
 - [Dùng chung giữa các tài khoản](/features/share)
+- [Dùng Remote Control với ccam](/guides/remote-control)
 - [Dùng chung máy chủ MCP, cài đặt và lịch sử](/docs/sharing)
 - [Sao chép thiết lập hiện có](/features/migrate)
 - [Tất cả các lệnh](/docs/commands)

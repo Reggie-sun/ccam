@@ -1,10 +1,10 @@
 ---
 title: Claude Code શરૂ કરવું
 description: ccam <name|number>, ccam run કે ccam picker વડે કોઈ પણ એકાઉન્ટ તરીકે Claude Code શરૂ કરો; આર્ગ્યુમેન્ટ્સ કોઈ ફેરફાર વગર claude ને જાય છે, અને --dry-run કમાન્ડ બતાવે છે.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 6c04bb48df22
+sourceHash: 401eed57e533
 ---
 
 `ccam work` Claude Code ને `work` એકાઉન્ટ તરીકે શરૂ કરે છે, અને નામ પછીનું બધું જેમ છે તેમ `claude` ને જાય છે. જ્યાં તમે `claude` લખતા હો ત્યાં તેને વાપરો: ટર્મિનલમાં, સ્ક્રિપ્ટમાં, કે pipe થી input આપીને.
@@ -152,6 +152,7 @@ ccam trace: prelaunch             0.083ms (total 3.661ms)
 ## સંબંધિત
 
 - [શૉર્ટકટ કમાન્ડ](/features/shortcuts)
+- [ccam સાથે Remote Control વાપરવું](/guides/remote-control)
 - [એકાઉન્ટનું સંચાલન](/features/accounts)
 - [કમાન્ડ સંદર્ભ](/docs/commands)
 - [MCP સર્વર, સેટિંગ્સ અને ઇતિહાસ શેર કરો](/docs/sharing)

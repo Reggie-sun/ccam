@@ -1,10 +1,10 @@
 ---
 title: Sabobin MCP da aka raba
 description: Riƙe jerin sabobin MCP ɗaya ga kowane rukuni da ccam mcp add, add-json, list, remove da import, ana miƙa su da --mcp-config ko ana daidaita su cikin kowane asusu.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: 69fd3233fd09
+sourceHash: f1de7db4b7be
 ---
 
 Claude Code yana ajiye sabobin MCP na mai amfani a `.claude.json`, fayil ɗaya da ke riƙe shigar asusun, don haka ba za a iya raba fayil ɗin tsakanin asusai ba. ccam yana ajiye sabobin da aka raba a fayil na rukuni, `mcp.json`, kuma yana miƙa shi ga kowane asusun rukunin lokacin farawa. Yi amfani da `ccam mcp` don ƙara sabar sau ɗaya ga dukkan asusanka, da `ccam mcp import` don matsar da sabar da ka ƙara a cikin zama ɗaya zuwa sauran.
@@ -127,6 +127,7 @@ Da `--force` ana maye gurbin sabar rukunin, kuma ana fara ajiye `mcp.json` na ba
 ## Masu alaƙa
 
 - [Rabawa tsakanin asusai](/features/share)
+- [Amfani da Remote Control tare da ccam](/guides/remote-control)
 - [Raba sabobin MCP, saituna da tarihi](/docs/sharing)
 - [Kwafar saitin da ke akwai](/features/migrate)
 - [Dukkan umarnai](/docs/commands)

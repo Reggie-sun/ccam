@@ -1,10 +1,10 @@
 ---
 title: Paylaşılan MCP sunucuları
 description: ccam mcp add, add-json, list, remove ve import ile grup başına tek bir MCP sunucu listesi tutun; liste --mcp-config ile iletilir veya her hesaba eşitlenir.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: 69fd3233fd09
+sourceHash: f1de7db4b7be
 ---
 
 Claude Code, kullanıcı MCP sunucularını hesabın girişini de tutan dosya olan `.claude.json` içinde saklar; bu yüzden bu dosya hesaplar arasında paylaşılamaz. ccam, paylaşılan sunucuları bir grup dosyasında, `mcp.json` içinde tutar ve başlatmada bunu grubun her hesabına verir. Bir sunucuyu tüm hesaplarınız için bir kez eklemek üzere `ccam mcp` komutunu, bir oturumda eklediğiniz bir sunucuyu diğer hesaplara taşımak için `ccam mcp import` komutunu kullanın.
@@ -127,6 +127,7 @@ Skipped gh: group default already has a different gh (`ccam mcp import work gh -
 ## İlgili
 
 - [Hesaplar arasında paylaşım](/features/share)
+- [ccam ile Remote Control kullanma](/guides/remote-control)
 - [MCP sunucularını, ayarları ve geçmişi paylaşma](/docs/sharing)
 - [Mevcut bir kurulumu kopyalama](/features/migrate)
 - [Tüm komutlar](/docs/commands)

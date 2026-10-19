@@ -1,10 +1,10 @@
 ---
 title: Kuanzisha Claude Code
 description: Anzisha Claude Code kama akaunti yoyote kwa ccam <name|number>, ccam run au kichaguzi cha ccam; hoja huenda kwa claude bila kubadilishwa, na --dry-run huonyesha amri.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 6c04bb48df22
+sourceHash: 401eed57e533
 ---
 
 `ccam work` huanzisha Claude Code kama akaunti `work`, na kila kitu kinachokuja baada ya jina huenda kwa `claude` kama kilivyo. Itumie popote ambapo ungecharaza `claude`: kwenye terminal, katika script, au ingizo likipitishwa kwa pipe.
@@ -152,6 +152,7 @@ ccam trace: prelaunch             0.083ms (total 3.661ms)
 ## Zinazohusiana
 
 - [Amri za njia fupi](/features/shortcuts)
+- [Kutumia Remote Control na ccam](/guides/remote-control)
 - [Kusimamia akaunti](/features/accounts)
 - [Marejeo ya amri](/docs/commands)
 - [Shiriki seva za MCP, mipangilio na historia](/docs/sharing)

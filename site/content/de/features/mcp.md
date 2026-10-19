@@ -1,10 +1,10 @@
 ---
 title: Geteilte MCP-Server
 description: Mit ccam mcp add, add-json, list, remove und import eine Liste von MCP-Servern pro Gruppe führen, die mit --mcp-config übergeben oder in jedes Konto synchronisiert wird.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: 69fd3233fd09
+sourceHash: f1de7db4b7be
 ---
 
 Claude Code speichert Benutzer-MCP-Server in `.claude.json`, derselben Datei, die die Anmeldung des Kontos enthält, daher kann diese Datei nicht zwischen Konten geteilt werden. ccam hält geteilte Server in einer Gruppendatei, `mcp.json`, und übergibt sie beim Start an jedes Konto der Gruppe. Mit `ccam mcp` fügst du einen Server einmal für alle deine Konten hinzu, und mit `ccam mcp import` verschiebst du einen Server, den du innerhalb einer Sitzung hinzugefügt hast, zu den anderen.
@@ -127,6 +127,7 @@ Mit `--force` wird der Server der Gruppe ersetzt, und die vorherige `mcp.json` w
 ## Verwandte Themen
 
 - [Teilen zwischen Konten](/features/share)
+- [Remote Control mit ccam nutzen](/guides/remote-control)
 - [MCP-Server, Einstellungen und Verlauf teilen](/docs/sharing)
 - [Eine vorhandene Einrichtung kopieren](/features/migrate)
 - [Alle Befehle](/docs/commands)

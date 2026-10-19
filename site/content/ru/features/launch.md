@@ -1,10 +1,10 @@
 ---
 title: Запуск Claude Code
 description: Запускайте Claude Code от имени любого аккаунта через ccam <name|number>, ccam run или меню выбора ccam; аргументы передаются в claude без изменений, а --dry-run показывает команду.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 6c04bb48df22
+sourceHash: 401eed57e533
 ---
 
 `ccam work` запускает Claude Code от имени аккаунта `work`, а всё, что идёт после имени, передаётся в `claude` как есть. Используйте его везде, где вы набрали бы `claude`: в терминале, в скрипте или с вводом через конвейер.
@@ -152,6 +152,7 @@ ccam trace: prelaunch             0.083ms (total 3.661ms)
 ## См. также
 
 - [Короткие команды](/features/shortcuts)
+- [Remote Control с ccam](/guides/remote-control)
 - [Управление аккаунтами](/features/accounts)
 - [Справочник команд](/docs/commands)
 - [Общие MCP-серверы, настройки и история](/docs/sharing)

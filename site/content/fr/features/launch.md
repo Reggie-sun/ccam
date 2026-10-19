@@ -1,10 +1,10 @@
 ---
 title: "Lancer Claude Code"
 description: "Lancez Claude Code avec n'importe quel compte via ccam <name|number>, ccam run ou le sélecteur ccam ; les arguments sont transmis tels quels à claude, et --dry-run affiche la commande."
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 6c04bb48df22
+sourceHash: 401eed57e533
 ---
 
 `ccam work` lance Claude Code avec le compte `work`, et tout ce qui suit le nom est transmis tel quel à `claude`. Utilisez-le partout où vous taperiez `claude` : dans un terminal, dans un script ou avec une entrée redirigée.
@@ -152,6 +152,7 @@ ccam trace: prelaunch             0.083ms (total 3.661ms)
 ## Voir aussi
 
 - [Commandes raccourcis](/features/shortcuts)
+- [Utiliser Remote Control avec ccam](/guides/remote-control)
 - [Gérer les comptes](/features/accounts)
 - [Référence des commandes](/docs/commands)
 - [Partager les serveurs MCP, les paramètres et l'historique](/docs/sharing)

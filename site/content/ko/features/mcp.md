@@ -1,10 +1,10 @@
 ---
 title: MCP 서버 공유
 description: ccam mcp add, add-json, list, remove, import로 그룹마다 MCP 서버 목록을 하나씩 관리하고, --mcp-config로 넘기거나 각 계정에 동기화합니다.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: 69fd3233fd09
+sourceHash: f1de7db4b7be
 ---
 
 Claude Code는 사용자 MCP 서버를 계정의 로그인 정보가 들어 있는 `.claude.json`에 함께 저장하므로, 이 파일은 계정 간에 공유할 수 없습니다. ccam은 공유 서버를 그룹 파일인 `mcp.json`에 두고, 실행할 때 그룹의 모든 계정에 이 파일을 넘깁니다. `ccam mcp`로 서버를 한 번만 추가해 모든 계정에서 쓰고, 한 세션 안에서 추가한 서버는 `ccam mcp import`로 다른 계정에 옮기세요.
@@ -127,6 +127,7 @@ Skipped gh: group default already has a different gh (`ccam mcp import work gh -
 ## 관련 문서
 
 - [계정 간 공유](/features/share)
+- [ccam으로 Remote Control 사용하기](/guides/remote-control)
 - [MCP 서버, 설정, 대화 내역 공유](/docs/sharing)
 - [기존 설정 복사하기](/features/migrate)
 - [전체 명령](/docs/commands)

@@ -1,10 +1,10 @@
 ---
 title: การเริ่ม Claude Code
 description: "เริ่ม Claude Code ในชื่อบัญชีใดก็ได้ด้วย ccam <name|number>, ccam run หรือตัวเลือกบัญชีของ ccam อาร์กิวเมนต์จะส่งต่อให้ claude โดยไม่เปลี่ยนแปลง และ --dry-run จะแสดงคำสั่ง"
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 6c04bb48df22
+sourceHash: 401eed57e533
 ---
 
 `ccam work` เริ่ม Claude Code ในชื่อบัญชี `work` และทุกอย่างหลังชื่อบัญชีจะส่งต่อให้ `claude` ตามเดิม ใช้ได้ทุกที่ที่คุณจะพิมพ์ `claude`: ในเทอร์มินัล ในสคริปต์ หรือเมื่อส่งอินพุตเข้ามาทางไปป์
@@ -152,6 +152,7 @@ ccam trace: prelaunch             0.083ms (total 3.661ms)
 ## หัวข้อที่เกี่ยวข้อง
 
 - [คำสั่งลัด](/features/shortcuts)
+- [การใช้ Remote Control กับ ccam](/guides/remote-control)
 - [การจัดการบัญชี](/features/accounts)
 - [ข้อมูลอ้างอิงคำสั่ง](/docs/commands)
 - [ใช้เซิร์ฟเวอร์ MCP การตั้งค่า และประวัติร่วมกัน](/docs/sharing)

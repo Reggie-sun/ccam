@@ -1,7 +1,7 @@
 ---
 title: Shared MCP servers
 description: Keep one list of MCP servers per group with ccam mcp add, add-json, list, remove and import, passed with --mcp-config or synced into each account.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 5
 translation: source
 ---
@@ -126,6 +126,7 @@ With `--force` the group's server is replaced, and the previous `mcp.json` is fi
 ## Related
 
 - [Sharing between accounts](/features/share)
+- [Using Remote Control with ccam](/guides/remote-control)
 - [Share MCP servers, settings and history](/docs/sharing)
 - [Copy an existing setup](/features/migrate)
 - [All commands](/docs/commands)

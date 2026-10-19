@@ -1,10 +1,10 @@
 ---
 title: Współdzielone serwery MCP
 description: Trzymaj jedną listę serwerów MCP na grupę dzięki ccam mcp add, add-json, list, remove i import, przekazywaną przez --mcp-config lub synchronizowaną do każdego konta.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: 69fd3233fd09
+sourceHash: f1de7db4b7be
 ---
 
 Claude Code przechowuje serwery MCP użytkownika w `.claude.json`, tym samym pliku, w którym jest login konta, więc tego pliku nie można współdzielić między kontami. ccam trzyma współdzielone serwery w pliku grupy, `mcp.json`, i przekazuje go każdemu kontu z grupy przy uruchomieniu. Użyj `ccam mcp`, żeby dodać serwer raz dla wszystkich kont, a `ccam mcp import`, żeby przenieść do pozostałych kont serwer dodany w trakcie sesji na jednym z nich.
@@ -127,6 +127,7 @@ Z `--force` serwer grupy jest zastępowany, a poprzedni `mcp.json` najpierw traf
 ## Powiązane
 
 - [Współdzielenie między kontami](/features/share)
+- [Remote Control z ccam](/guides/remote-control)
 - [Współdzielenie serwerów MCP, ustawień i historii](/docs/sharing)
 - [Kopiowanie istniejącej konfiguracji](/features/migrate)
 - [Wszystkie polecenia](/docs/commands)

@@ -1,10 +1,10 @@
 ---
 title: Спільні сервери MCP
 description: Зберігайте один список серверів MCP на групу за допомогою ccam mcp add, add-json, list, remove та import; він передається через --mcp-config або синхронізується в кожен обліковий запис.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: 69fd3233fd09
+sourceHash: f1de7db4b7be
 ---
 
 Claude Code зберігає користувацькі сервери MCP у `.claude.json`, тому самому файлі, що містить вхід облікового запису, тож цей файл не можна спільно використовувати між обліковими записами. ccam зберігає спільні сервери у файлі групи, `mcp.json`, і передає його кожному обліковому запису групи під час запуску. Використовуйте `ccam mcp`, щоб один раз додати сервер для всіх своїх облікових записів, і `ccam mcp import`, щоб перенести до інших сервер, який ви додали в межах одного сеансу.
@@ -127,6 +127,7 @@ Skipped gh: group default already has a different gh (`ccam mcp import work gh -
 ## Пов'язані сторінки
 
 - [Спільне використання між обліковими записами](/features/share)
+- [Remote Control з ccam](/guides/remote-control)
 - [Спільні сервери MCP, налаштування та історія](/docs/sharing)
 - [Копіювання наявного налаштування](/features/migrate)
 - [Усі команди](/docs/commands)

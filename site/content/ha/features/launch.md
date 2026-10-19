@@ -1,10 +1,10 @@
 ---
 title: Fara Claude Code
 description: Fara Claude Code a matsayin kowane asusu da ccam <name|number>, ccam run ko mai zaɓi na ccam; arguments suna zuwa claude ba tare da canji ba, kuma --dry-run yana nuna umarnin.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 6c04bb48df22
+sourceHash: 401eed57e533
 ---
 
 `ccam work` yana fara Claude Code a matsayin asusun `work`, kuma duk abin da ke bayan sunan yana zuwa `claude` kamar yadda yake. Yi amfani da shi duk inda za ka rubuta `claude`: a terminal, a rubutun (script), ko tare da shigarwa ta bututu (pipe).
@@ -152,6 +152,7 @@ ccam trace: prelaunch             0.083ms (total 3.661ms)
 ## Masu alaƙa
 
 - [Gajerun umarni](/features/shortcuts)
+- [Amfani da Remote Control tare da ccam](/guides/remote-control)
 - [Sarrafa asusai](/features/accounts)
 - [Bayanin umarnai](/docs/commands)
 - [Raba sabobin MCP, saituna da tarihi](/docs/sharing)

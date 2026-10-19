@@ -1,10 +1,10 @@
 ---
 title: تشغيل Claude Code
 description: شغّل Claude Code بأي حساب باستخدام ccam <name|number> أو ccam run أو أداة الاختيار في ccam؛ تُمرَّر الوسائط إلى claude دون تغيير، ويعرض --dry-run الأمر.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 6c04bb48df22
+sourceHash: 401eed57e533
 ---
 
 يشغّل `ccam work` برنامج Claude Code بالحساب `work`، وكل ما يأتي بعد الاسم يُمرَّر إلى `claude` كما هو. استخدمه في أي مكان كنت ستكتب فيه `claude`: في الطرفية، أو في سكربت، أو مع إدخال يصل عبر أنبوب.
@@ -152,6 +152,7 @@ ccam trace: prelaunch             0.083ms (total 3.661ms)
 ## صفحات ذات صلة
 
 - [الأوامر المختصرة](/features/shortcuts)
+- [استخدام Remote Control مع ccam](/guides/remote-control)
 - [إدارة الحسابات](/features/accounts)
 - [مرجع الأوامر](/docs/commands)
 - [مشاركة خوادم MCP والإعدادات والسجل](/docs/sharing)

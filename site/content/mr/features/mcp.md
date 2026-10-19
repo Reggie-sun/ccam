@@ -1,10 +1,10 @@
 ---
 title: शेअर केलेले MCP सर्व्हर
 description: ccam mcp add, add-json, list, remove आणि import ने प्रत्येक गटासाठी MCP सर्व्हरची एक यादी ठेवा, जी --mcp-config ने दिली जाते किंवा प्रत्येक खात्यात sync होते.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: 69fd3233fd09
+sourceHash: f1de7db4b7be
 ---
 
 Claude Code user MCP सर्व्हर `.claude.json` मध्ये ठेवते, ज्या फाइलमध्ये खात्याचे लॉगिनही असते, त्यामुळे ती फाइल खात्यांमध्ये शेअर करता येत नाही. ccam शेअर केलेले सर्व्हर `mcp.json` या गट फाइलमध्ये ठेवते आणि सुरू करताना ती गटातील प्रत्येक खात्याला देते. तुमच्या सर्व खात्यांसाठी एकदाच सर्व्हर जोडण्यासाठी `ccam mcp` वापरा, आणि एका session मध्ये जोडलेला सर्व्हर इतर खात्यांकडे हलवण्यासाठी `ccam mcp import` वापरा.
@@ -127,6 +127,7 @@ Skipped gh: group default already has a different gh (`ccam mcp import work gh -
 ## संबंधित
 
 - [खात्यांमध्ये शेअरिंग](/features/share)
+- [ccam सोबत Remote Control वापरणे](/guides/remote-control)
 - [MCP सर्व्हर, सेटिंग्ज आणि इतिहास शेअर करा](/docs/sharing)
 - [आधीचा सेटअप कॉपी करा](/features/migrate)
 - [सर्व कमांड्स](/docs/commands)

@@ -1,10 +1,10 @@
 ---
 title: เซิร์ฟเวอร์ MCP ที่ใช้ร่วมกัน
 description: "เก็บรายการเซิร์ฟเวอร์ MCP ชุดเดียวต่อกลุ่มด้วย ccam mcp add, add-json, list, remove และ import โดยส่งผ่าน --mcp-config หรือซิงก์ลงในแต่ละบัญชี"
-updated: 2026-10-19
+updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: 69fd3233fd09
+sourceHash: f1de7db4b7be
 ---
 
 Claude Code เก็บเซิร์ฟเวอร์ MCP ของผู้ใช้ไว้ใน `.claude.json` ซึ่งเป็นไฟล์เดียวกับที่เก็บการเข้าสู่ระบบของบัญชี จึงใช้ไฟล์นี้ร่วมกันระหว่างบัญชีไม่ได้ ccam เก็บเซิร์ฟเวอร์ที่ใช้ร่วมกันไว้ในไฟล์ของกลุ่ม `mcp.json` และส่งให้ทุกบัญชีในกลุ่มตอนเริ่มทำงาน ใช้ `ccam mcp` เพื่อเพิ่มเซิร์ฟเวอร์ครั้งเดียวสำหรับทุกบัญชีของคุณ และใช้ `ccam mcp import` เพื่อย้ายเซิร์ฟเวอร์ที่คุณเพิ่มไว้ภายในเซสชันหนึ่งไปยังบัญชีอื่น
@@ -127,6 +127,7 @@ Skipped gh: group default already has a different gh (`ccam mcp import work gh -
 ## หัวข้อที่เกี่ยวข้อง
 
 - [การใช้ร่วมกันระหว่างบัญชี](/features/share)
+- [การใช้ Remote Control กับ ccam](/guides/remote-control)
 - [ใช้เซิร์ฟเวอร์ MCP การตั้งค่า และประวัติร่วมกัน](/docs/sharing)
 - [คัดลอกการตั้งค่าที่มีอยู่](/features/migrate)
 - [คำสั่งทั้งหมด](/docs/commands)

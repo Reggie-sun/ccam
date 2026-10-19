@@ -1,10 +1,10 @@
 ---
 title: பகிரப்பட்ட MCP சர்வர்கள்
 description: ccam mcp add, add-json, list, remove, import மூலம் ஒவ்வொரு குழுவுக்கும் MCP சர்வர்களின் ஒரே பட்டியலை வைத்திருங்கள்; அது --mcp-config மூலம் அனுப்பப்படும் அல்லது ஒவ்வொரு கணக்குக்குள்ளும் sync செய்யப்படும்.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: 69fd3233fd09
+sourceHash: f1de7db4b7be
 ---
 
 Claude Code பயனர் MCP சர்வர்களை `.claude.json`-இல் வைக்கிறது, கணக்கின் உள்நுழைவையும் வைத்திருப்பது அதே கோப்புதான், அதனால் அந்தக் கோப்பைக் கணக்குகளுக்கு இடையே பகிர முடியாது. ccam பகிரப்பட்ட சர்வர்களை `mcp.json` என்ற குழுக் கோப்பில் வைத்து, தொடக்கத்தில் அதைக் குழுவின் ஒவ்வொரு கணக்குக்கும் கொடுக்கிறது. உங்கள் எல்லாக் கணக்குகளுக்கும் ஒரே முறை ஒரு சர்வரைச் சேர்க்க `ccam mcp`-ஐயும், ஓர் அமர்வுக்குள் நீங்கள் சேர்த்த சர்வரை மற்றவற்றுக்கு நகர்த்த `ccam mcp import`-ஐயும் பயன்படுத்துங்கள்.
@@ -127,6 +127,7 @@ Skipped gh: group default already has a different gh (`ccam mcp import work gh -
 ## தொடர்புடையவை
 
 - [கணக்குகளுக்கு இடையே பகிர்தல்](/features/share)
+- [ccam உடன் Remote Control-ஐப் பயன்படுத்துதல்](/guides/remote-control)
 - [MCP சர்வர்கள், அமைப்புகள், வரலாற்றைப் பகிர்தல்](/docs/sharing)
 - [ஏற்கெனவே உள்ள அமைப்பை நகலெடுத்தல்](/features/migrate)
 - [எல்லாக் கட்டளைகளும்](/docs/commands)

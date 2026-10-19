@@ -1,10 +1,10 @@
 ---
 title: اجرای Claude Code
 description: Claude Code را با هر حسابی از طریق ccam <name|number>، ccam run یا فهرست انتخاب ccam اجرا کنید؛ آرگومان‌ها بدون تغییر به claude می‌رسند و --dry-run فرمان را نشان می‌دهد.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 6c04bb48df22
+sourceHash: 401eed57e533
 ---
 
 `ccam work` اجرای Claude Code را با حساب `work` آغاز می‌کند و هر چه پس از نام بیاید همان‌طور که هست به `claude` می‌رسد. هر جا که `claude` را تایپ می‌کردید از آن استفاده کنید: در ترمینال، در یک اسکریپت یا با ورودی‌ای که از طریق pipe داده می‌شود.
@@ -152,6 +152,7 @@ ccam trace: prelaunch             0.083ms (total 3.661ms)
 ## مطالب مرتبط
 
 - [فرمان‌های میان‌بر](/features/shortcuts)
+- [استفاده از Remote Control با ccam](/guides/remote-control)
 - [مدیریت حساب‌ها](/features/accounts)
 - [مرجع فرمان‌ها](/docs/commands)
 - [اشتراک‌گذاری سرورهای MCP، تنظیمات و تاریخچه](/docs/sharing)

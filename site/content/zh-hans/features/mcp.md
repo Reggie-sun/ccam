@@ -1,10 +1,10 @@
 ---
 title: 共享的 MCP 服务器
 description: 用 ccam mcp add、add-json、list、remove 和 import 为每个组维护一份 MCP 服务器列表，通过 --mcp-config 传入，或同步到每个账号中。
-updated: 2026-10-19
+updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: 69fd3233fd09
+sourceHash: f1de7db4b7be
 ---
 
 Claude Code 把用户 MCP 服务器保存在 `.claude.json` 中，而这个文件同时保存着账号的登录，所以它不能在账号之间共享。ccam 把共享的服务器保存在组文件 `mcp.json` 中，并在启动时把它交给该组的每个账号。用 `ccam mcp` 可以一次性为所有账号添加服务器，用 `ccam mcp import` 可以把你在某个会话中添加的服务器转给其他账号。
@@ -127,6 +127,7 @@ Skipped gh: group default already has a different gh (`ccam mcp import work gh -
 ## 相关内容
 
 - [在账号之间共享](/features/share)
+- [用 ccam 使用 Remote Control](/guides/remote-control)
 - [共享 MCP 服务器、设置和历史记录](/docs/sharing)
 - [复制现有配置](/features/migrate)
 - [所有命令](/docs/commands)

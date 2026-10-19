@@ -1,10 +1,10 @@
 ---
 title: "Claude Code চালু করা"
 description: "ccam <name|number>, ccam run বা ccam পিকার দিয়ে যেকোনো অ্যাকাউন্ট হিসেবে Claude Code চালু করুন; আর্গুমেন্ট অপরিবর্তিত অবস্থায় claude-এ যায়, আর --dry-run কমান্ডটি দেখায়।"
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 6c04bb48df22
+sourceHash: 401eed57e533
 ---
 
 `ccam work` অ্যাকাউন্ট `work` হিসেবে Claude Code চালু করে, আর নামের পরের সবকিছু যেমন আছে তেমনই `claude`-এ যায়। যেখানে আপনি `claude` টাইপ করতেন সেখানেই এটি ব্যবহার করুন: টার্মিনালে, স্ক্রিপ্টে, বা পাইপ করা ইনপুটসহ।
@@ -152,6 +152,7 @@ ccam trace: prelaunch             0.083ms (total 3.661ms)
 ## সম্পর্কিত
 
 - [শর্টকাট কমান্ড](/features/shortcuts)
+- [ccam দিয়ে Remote Control ব্যবহার](/guides/remote-control)
 - [অ্যাকাউন্ট পরিচালনা](/features/accounts)
 - [কমান্ড রেফারেন্স](/docs/commands)
 - [MCP সার্ভার, সেটিংস ও ইতিহাস শেয়ার করুন](/docs/sharing)

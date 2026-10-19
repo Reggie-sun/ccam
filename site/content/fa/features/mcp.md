@@ -1,10 +1,10 @@
 ---
 title: سرورهای MCP مشترک
 description: برای هر گروه یک فهرست سرور MCP با ccam mcp add، add-json، list، remove و import نگه دارید که با --mcp-config داده یا در هر حساب همگام‌سازی می‌شود.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: 69fd3233fd09
+sourceHash: f1de7db4b7be
 ---
 
 Claude Code سرورهای MCP کاربر را در `.claude.json` نگه می‌دارد، همان فایلی که ورود حساب را در خود دارد، بنابراین این فایل را نمی‌توان بین حساب‌ها به اشتراک گذاشت. ccam سرورهای مشترک را در یک فایل گروه، `mcp.json`، نگه می‌دارد و هنگام اجرا آن را به همه حساب‌های گروه می‌دهد. با `ccam mcp` یک سرور را یک بار برای همه حساب‌هایتان اضافه کنید و با `ccam mcp import` سروری را که داخل یک نشست اضافه کرده‌اید به حساب‌های دیگر منتقل کنید.
@@ -127,6 +127,7 @@ Skipped gh: group default already has a different gh (`ccam mcp import work gh -
 ## مطالب مرتبط
 
 - [اشتراک‌گذاری بین حساب‌ها](/features/share)
+- [استفاده از Remote Control با ccam](/guides/remote-control)
 - [اشتراک‌گذاری سرورهای MCP، تنظیمات و تاریخچه](/docs/sharing)
 - [کپی کردن یک پیکربندی موجود](/features/migrate)
 - [همه فرمان‌ها](/docs/commands)

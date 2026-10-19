@@ -1,10 +1,10 @@
 ---
 title: Server MCP condivisi
 description: Mantieni un unico elenco di server MCP per gruppo con ccam mcp add, add-json, list, remove e import, passato con --mcp-config o sincronizzato in ogni account.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: 69fd3233fd09
+sourceHash: f1de7db4b7be
 ---
 
 Claude Code salva i server MCP utente in `.claude.json`, lo stesso file che contiene il login dell'account, quindi quel file non può essere condiviso tra account. ccam tiene i server condivisi in un file del gruppo, `mcp.json`, e lo passa all'avvio a ogni account del gruppo. Usa `ccam mcp` per aggiungere un server una sola volta per tutti i tuoi account, e `ccam mcp import` per portare agli altri un server che hai aggiunto all'interno di una sessione.
@@ -127,6 +127,7 @@ Con `--force` il server del gruppo viene sostituito, e il `mcp.json` precedente 
 ## Pagine correlate
 
 - [Condivisione tra account](/features/share)
+- [Usare Remote Control con ccam](/guides/remote-control)
 - [Condividere server MCP, impostazioni e cronologia](/docs/sharing)
 - [Copiare una configurazione esistente](/features/migrate)
 - [Tutti i comandi](/docs/commands)

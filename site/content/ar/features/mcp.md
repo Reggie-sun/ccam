@@ -1,10 +1,10 @@
 ---
 title: خوادم MCP المشتركة
 description: احتفظ بقائمة واحدة من خوادم MCP لكل مجموعة باستخدام ccam mcp add وadd-json وlist وremove وimport، وتُمرَّر عبر --mcp-config أو تُزامَن في كل حساب.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: 69fd3233fd09
+sourceHash: f1de7db4b7be
 ---
 
 يحتفظ Claude Code بخوادم MCP الخاصة بالمستخدم في `.claude.json`، وهو الملف نفسه الذي يحتوي على تسجيل دخول الحساب، لذلك لا يمكن مشاركة هذا الملف بين الحسابات. يحتفظ ccam بالخوادم المشتركة في ملف للمجموعة، `mcp.json`، ويسلّمه إلى كل حساب في المجموعة عند التشغيل. استخدم `ccam mcp` لإضافة خادم مرة واحدة لكل حساباتك، و`ccam mcp import` لنقل خادم أضفته داخل جلسة واحدة إلى الحسابات الأخرى.
@@ -127,6 +127,7 @@ Skipped gh: group default already has a different gh (`ccam mcp import work gh -
 ## صفحات ذات صلة
 
 - [المشاركة بين الحسابات](/features/share)
+- [استخدام Remote Control مع ccam](/guides/remote-control)
 - [مشاركة خوادم MCP والإعدادات والسجل](/docs/sharing)
 - [نسخ إعداد موجود](/features/migrate)
 - [كل الأوامر](/docs/commands)

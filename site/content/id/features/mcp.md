@@ -1,10 +1,10 @@
 ---
 title: Server MCP bersama
 description: Simpan satu daftar server MCP per grup dengan ccam mcp add, add-json, list, remove, dan import, yang diteruskan lewat --mcp-config atau disinkronkan ke setiap akun.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: 69fd3233fd09
+sourceHash: f1de7db4b7be
 ---
 
 Claude Code menyimpan server MCP pengguna di `.claude.json`, file yang sama yang menyimpan login akun, sehingga file itu tidak dapat dibagikan antarakun. ccam menyimpan server bersama di file grup, `mcp.json`, dan menyerahkannya ke setiap akun dalam grup saat peluncuran. Gunakan `ccam mcp` untuk menambahkan server sekali untuk semua akun Anda, dan `ccam mcp import` untuk memindahkan server yang Anda tambahkan di dalam satu sesi ke akun-akun lain.
@@ -127,6 +127,7 @@ Dengan `--force`, server grup diganti, dan `mcp.json` sebelumnya terlebih dahulu
 ## Terkait
 
 - [Berbagi antarakun](/features/share)
+- [Menggunakan Remote Control dengan ccam](/guides/remote-control)
 - [Berbagi server MCP, pengaturan, dan riwayat](/docs/sharing)
 - [Menyalin penyiapan yang sudah ada](/features/migrate)
 - [Semua perintah](/docs/commands)

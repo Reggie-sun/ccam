@@ -1,10 +1,10 @@
 ---
 title: Claude Code'u başlatma
 description: Claude Code'u herhangi bir hesapla ccam <name|number>, ccam run veya ccam seçicisiyle başlatın; argümanlar claude'a değiştirilmeden iletilir, --dry-run komutu gösterir.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 6c04bb48df22
+sourceHash: 401eed57e533
 ---
 
 `ccam work`, Claude Code'u `work` hesabıyla başlatır ve addan sonraki her şey `claude` komutuna olduğu gibi iletilir. `claude` yazacağınız her yerde kullanın: terminalde, bir betikte veya girdiyi boruyla aktararak.
@@ -152,6 +152,7 @@ ccam trace: prelaunch             0.083ms (total 3.661ms)
 ## İlgili
 
 - [Kısayol komutları](/features/shortcuts)
+- [ccam ile Remote Control kullanma](/guides/remote-control)
 - [Hesapları yönetme](/features/accounts)
 - [Komut başvurusu](/docs/commands)
 - [MCP sunucularını, ayarları ve geçmişi paylaşma](/docs/sharing)

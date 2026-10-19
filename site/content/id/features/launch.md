@@ -1,10 +1,10 @@
 ---
 title: Menjalankan Claude Code
 description: Jalankan Claude Code sebagai akun mana pun dengan ccam <name|number>, ccam run, atau pemilih ccam; argumen diteruskan ke claude tanpa diubah, dan --dry-run menampilkan perintahnya.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 6c04bb48df22
+sourceHash: 401eed57e533
 ---
 
 `ccam work` menjalankan Claude Code sebagai akun `work`, dan semua yang ada setelah nama diteruskan ke `claude` apa adanya. Gunakan di mana pun Anda biasa mengetik `claude`: di terminal, di skrip, atau dengan input dari pipe.
@@ -152,6 +152,7 @@ ccam trace: prelaunch             0.083ms (total 3.661ms)
 ## Terkait
 
 - [Perintah pintasan](/features/shortcuts)
+- [Menggunakan Remote Control dengan ccam](/guides/remote-control)
 - [Mengelola akun](/features/accounts)
 - [Referensi perintah](/docs/commands)
 - [Berbagi server MCP, pengaturan, dan riwayat](/docs/sharing)

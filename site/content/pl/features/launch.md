@@ -1,10 +1,10 @@
 ---
 title: Uruchamianie Claude Code
 description: Uruchom Claude Code jako dowolne konto przez ccam <name|number>, ccam run lub selektor ccam; argumenty trafiają do claude bez zmian, a --dry-run pokazuje polecenie.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 6c04bb48df22
+sourceHash: 401eed57e533
 ---
 
 `ccam work` uruchamia Claude Code jako konto `work`, a wszystko po nazwie trafia do `claude` bez zmian. Używaj go wszędzie tam, gdzie wpisałbyś `claude`: w terminalu, w skrypcie albo z wejściem przekazanym potokiem.
@@ -152,6 +152,7 @@ ccam trace: prelaunch             0.083ms (total 3.661ms)
 ## Powiązane
 
 - [Polecenia skrótów](/features/shortcuts)
+- [Remote Control z ccam](/guides/remote-control)
 - [Zarządzanie kontami](/features/accounts)
 - [Opis poleceń](/docs/commands)
 - [Współdzielenie serwerów MCP, ustawień i historii](/docs/sharing)

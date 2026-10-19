@@ -1,7 +1,7 @@
 ---
 title: Launching Claude Code
 description: Start Claude Code as any account with ccam <name|number>, ccam run or the ccam picker; arguments go to claude unchanged, and --dry-run shows the command.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: source
 ---
@@ -151,6 +151,7 @@ ccam trace: prelaunch             0.083ms (total 3.661ms)
 ## Related
 
 - [Shortcut commands](/features/shortcuts)
+- [Using Remote Control with ccam](/guides/remote-control)
 - [Managing accounts](/features/accounts)
 - [Command reference](/docs/commands)
 - [Share MCP servers, settings and history](/docs/sharing)

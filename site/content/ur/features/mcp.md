@@ -1,10 +1,10 @@
 ---
 title: "شیئر کیے گئے MCP سرورز"
 description: "ccam mcp add، add-json، list، remove اور import سے ہر گروپ کے لیے MCP سرورز کی ایک فہرست رکھیں، جو --mcp-config سے دی جاتی ہے یا ہر اکاؤنٹ میں sync کی جاتی ہے۔"
-updated: 2026-10-19
+updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: 69fd3233fd09
+sourceHash: f1de7db4b7be
 ---
 
 Claude Code یوزر MCP سرورز کو `.claude.json` میں رکھتا ہے، وہی فائل جس میں اکاؤنٹ کا لاگ اِن ہوتا ہے، اس لیے یہ فائل اکاؤنٹس کے درمیان شیئر نہیں ہو سکتی۔ ccam شیئر کیے گئے سرورز ایک گروپ فائل `mcp.json` میں رکھتا ہے، اور لانچ کے وقت اسے گروپ کے ہر اکاؤنٹ کو دیتا ہے۔ کسی سرور کو اپنے تمام اکاؤنٹس کے لیے ایک بار شامل کرنے کے لیے `ccam mcp` استعمال کریں، اور کسی ایک سیشن کے اندر شامل کیے گئے سرور کو دوسروں تک لے جانے کے لیے `ccam mcp import`۔
@@ -127,6 +127,7 @@ Skipped gh: group default already has a different gh (`ccam mcp import work gh -
 ## متعلقہ
 
 - [اکاؤنٹس کے درمیان شیئرنگ](/features/share)
+- [ccam کے ساتھ Remote Control استعمال کرنا](/guides/remote-control)
 - [MCP سرورز، سیٹنگز اور ہسٹری شیئر کریں](/docs/sharing)
 - [موجودہ سیٹ اپ کاپی کریں](/features/migrate)
 - [تمام کمانڈز](/docs/commands)

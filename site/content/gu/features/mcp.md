@@ -1,10 +1,10 @@
 ---
 title: શેર કરેલા MCP સર્વર
 description: ccam mcp add, add-json, list, remove અને import વડે દરેક ગ્રુપ માટે MCP સર્વરની એક યાદી રાખો, જે --mcp-config વડે આપવામાં આવે છે કે દરેક એકાઉન્ટમાં sync થાય છે.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: 69fd3233fd09
+sourceHash: f1de7db4b7be
 ---
 
 Claude Code user MCP સર્વર `.claude.json` માં રાખે છે, એ જ ફાઇલ જેમાં એકાઉન્ટનું લૉગિન હોય છે, તેથી આ ફાઇલ એકાઉન્ટ વચ્ચે શેર થઈ શકતી નથી. ccam શેર કરેલા સર્વર એક ગ્રુપ ફાઇલ, `mcp.json`, માં રાખે છે, અને શરૂઆત વખતે તે ગ્રુપના દરેક એકાઉન્ટને આપે છે. તમારાં બધાં એકાઉન્ટ માટે એક જ વાર સર્વર ઉમેરવા `ccam mcp` વાપરો, અને કોઈ એક સેશનમાં ઉમેરેલો સર્વર બીજાં એકાઉન્ટમાં ખસેડવા `ccam mcp import` વાપરો.
@@ -127,6 +127,7 @@ Skipped gh: group default already has a different gh (`ccam mcp import work gh -
 ## સંબંધિત
 
 - [એકાઉન્ટ વચ્ચે શેરિંગ](/features/share)
+- [ccam સાથે Remote Control વાપરવું](/guides/remote-control)
 - [MCP સર્વર, સેટિંગ્સ અને ઇતિહાસ શેર કરો](/docs/sharing)
 - [હાલનું સેટઅપ કૉપિ કરો](/features/migrate)
 - [બધા કમાન્ડ](/docs/commands)

@@ -1,10 +1,10 @@
 ---
 title: Общие MCP-серверы
 description: Храните один список MCP-серверов на группу с помощью ccam mcp add, add-json, list, remove и import; он передаётся через --mcp-config или синхронизируется в каждый аккаунт.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: 69fd3233fd09
+sourceHash: f1de7db4b7be
 ---
 
 Claude Code хранит пользовательские MCP-серверы в `.claude.json`, том же файле, где лежит вход аккаунта, поэтому этот файл нельзя сделать общим для аккаунтов. ccam хранит общие серверы в файле группы `mcp.json` и передаёт его каждому аккаунту группы при запуске. Используйте `ccam mcp`, чтобы добавить сервер один раз для всех аккаунтов, и `ccam mcp import`, чтобы перенести в остальные аккаунты сервер, добавленный внутри одной сессии.
@@ -127,6 +127,7 @@ Skipped gh: group default already has a different gh (`ccam mcp import work gh -
 ## См. также
 
 - [Общий доступ между аккаунтами](/features/share)
+- [Remote Control с ccam](/guides/remote-control)
 - [Общие MCP-серверы, настройки и история](/docs/sharing)
 - [Копирование существующей настройки](/features/migrate)
 - [Все команды](/docs/commands)

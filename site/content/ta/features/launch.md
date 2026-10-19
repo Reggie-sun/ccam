@@ -1,10 +1,10 @@
 ---
 title: Claude Code-ஐத் தொடங்குதல்
 description: ccam <name|number>, ccam run அல்லது ccam தேர்வியைப் பயன்படுத்தி எந்தக் கணக்காகவும் Claude Code-ஐத் தொடங்குங்கள்; arguments மாற்றமின்றி claude-க்குச் செல்லும், --dry-run கட்டளையைக் காட்டும்.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 6c04bb48df22
+sourceHash: 401eed57e533
 ---
 
 `ccam work` Claude Code-ஐ `work` கணக்காகத் தொடங்குகிறது, பெயருக்குப் பின் உள்ள அனைத்தும் அப்படியே `claude`-க்குச் செல்லும். நீங்கள் `claude` என்று தட்டச்சு செய்யும் எந்த இடத்திலும் இதைப் பயன்படுத்துங்கள்: டெர்மினலில், script-இல், அல்லது pipe மூலம் உள்ளீடு கொடுக்கும்போது.
@@ -152,6 +152,7 @@ ccam trace: prelaunch             0.083ms (total 3.661ms)
 ## தொடர்புடையவை
 
 - [குறுக்குவழிக் கட்டளைகள்](/features/shortcuts)
+- [ccam உடன் Remote Control-ஐப் பயன்படுத்துதல்](/guides/remote-control)
 - [கணக்குகளை நிர்வகித்தல்](/features/accounts)
 - [கட்டளைக் குறிப்பு](/docs/commands)
 - [MCP சர்வர்கள், அமைப்புகள், வரலாற்றைப் பகிர்தல்](/docs/sharing)

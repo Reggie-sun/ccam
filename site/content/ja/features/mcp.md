@@ -1,10 +1,10 @@
 ---
 title: 共有MCPサーバー
 description: ccam mcp add、add-json、list、remove、importで、グループごとに1つのMCPサーバーの一覧を管理します。一覧は--mcp-configで渡すか、各アカウントに同期します。
-updated: 2026-10-19
+updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: 69fd3233fd09
+sourceHash: f1de7db4b7be
 ---
 
 Claude CodeはユーザーのMCPサーバーを`.claude.json`に保存します。これはアカウントのログインを保持するのと同じファイルなので、アカウント間で共有できません。ccamは共有サーバーをグループのファイル`mcp.json`に保存し、起動時にグループのすべてのアカウントに渡します。`ccam mcp`を使うと、サーバーを一度追加するだけですべてのアカウントで使えます。あるセッション内で追加したサーバーをほかのアカウントに移すには、`ccam mcp import`を使います。
@@ -127,6 +127,7 @@ Skipped gh: group default already has a different gh (`ccam mcp import work gh -
 ## 関連項目
 
 - [アカウント間の共有](/features/share)
+- [ccamでRemote Controlを使う](/guides/remote-control)
 - [MCPサーバー、設定、履歴の共有](/docs/sharing)
 - [既存の環境のコピー](/features/migrate)
 - [すべてのコマンド](/docs/commands)

@@ -1,10 +1,10 @@
 ---
 title: Seva za MCP zinazoshirikiwa
 description: Hifadhi orodha moja ya seva za MCP kwa kila kikundi kwa ccam mcp add, add-json, list, remove na import, inayopitishwa kwa --mcp-config au kusawazishwa kwenye kila akaunti.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: 69fd3233fd09
+sourceHash: f1de7db4b7be
 ---
 
 Claude Code huhifadhi seva za MCP za mtumiaji katika `.claude.json`, faili ile ile inayohifadhi taarifa za kuingia za akaunti, kwa hiyo faili hiyo haiwezi kushirikiwa kati ya akaunti. ccam huhifadhi seva zinazoshirikiwa katika faili ya kikundi, `mcp.json`, na huikabidhi kila akaunti ya kikundi wakati wa kuanza. Tumia `ccam mcp` kuongeza seva mara moja kwa akaunti zako zote, na `ccam mcp import` kuhamisha seva uliyoiongeza ndani ya kipindi kimoja kwenda kwa nyingine.
@@ -127,6 +127,7 @@ Kwa `--force` seva ya kikundi hubadilishwa, na `mcp.json` ya awali kwanza huhifa
 ## Zinazohusiana
 
 - [Kushiriki kati ya akaunti](/features/share)
+- [Kutumia Remote Control na ccam](/guides/remote-control)
 - [Shiriki seva za MCP, mipangilio na historia](/docs/sharing)
 - [Nakili usanidi uliopo](/features/migrate)
 - [Amri zote](/docs/commands)

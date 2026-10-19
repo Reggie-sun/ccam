@@ -1,10 +1,10 @@
 ---
 title: షేర్ చేసిన MCP సర్వర్లు
 description: ccam mcp add, add-json, list, remove, import తో ప్రతి గ్రూప్‌కు ఒకే MCP సర్వర్ల జాబితాను ఉంచండి, అది --mcp-config తో పంపబడుతుంది లేదా ప్రతి ఖాతాలోకి సింక్ అవుతుంది.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: 69fd3233fd09
+sourceHash: f1de7db4b7be
 ---
 
 Claude Code యూజర్ MCP సర్వర్లను `.claude.json` లో ఉంచుతుంది, ఖాతా లాగిన్‌ను కలిగి ఉండే అదే ఫైల్, కాబట్టి ఆ ఫైల్‌ను ఖాతాల మధ్య షేర్ చేయలేము. ccam షేర్ చేసిన సర్వర్లను `mcp.json` అనే గ్రూప్ ఫైల్‌లో ఉంచి, ప్రారంభంలో గ్రూప్‌లోని ప్రతి ఖాతాకు దాన్ని అందిస్తుంది. మీ అన్ని ఖాతాల కోసం ఒక సర్వర్‌ను ఒక్కసారి జోడించడానికి `ccam mcp` ను, ఒక సెషన్ లోపల మీరు జోడించిన సర్వర్‌ను ఇతర ఖాతాలకు తరలించడానికి `ccam mcp import` ను ఉపయోగించండి.
@@ -127,6 +127,7 @@ Skipped gh: group default already has a different gh (`ccam mcp import work gh -
 ## సంబంధిత పేజీలు
 
 - [ఖాతాల మధ్య షేరింగ్](/features/share)
+- [ccam తో Remote Control ఉపయోగించడం](/guides/remote-control)
 - [MCP సర్వర్లు, సెట్టింగ్‌లు, చరిత్రను షేర్ చేయండి](/docs/sharing)
 - [ఇప్పటికే ఉన్న సెటప్‌ను కాపీ చేయండి](/features/migrate)
 - [అన్ని కమాండ్‌లు](/docs/commands)

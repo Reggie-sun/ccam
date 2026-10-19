@@ -1,10 +1,10 @@
 ---
 title: ಹಂಚಿಕೊಂಡ MCP ಸರ್ವರ್‌ಗಳು
 description: ccam mcp add, add-json, list, remove ಮತ್ತು import ಮೂಲಕ ಪ್ರತಿ ಗುಂಪಿಗೆ MCP ಸರ್ವರ್‌ಗಳ ಒಂದೇ ಪಟ್ಟಿಯನ್ನು ಇಡಿ; ಅದು --mcp-config ಮೂಲಕ ರವಾನೆಯಾಗುತ್ತದೆ ಅಥವಾ ಪ್ರತಿ ಖಾತೆಗೆ ಸಿಂಕ್ ಆಗುತ್ತದೆ.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: 69fd3233fd09
+sourceHash: f1de7db4b7be
 ---
 
 Claude Code ಬಳಕೆದಾರ MCP ಸರ್ವರ್‌ಗಳನ್ನು `.claude.json` ನಲ್ಲಿ ಇಡುತ್ತದೆ. ಖಾತೆಯ ಲಾಗಿನ್ ಕೂಡ ಇದೇ ಫೈಲ್‌ನಲ್ಲಿರುತ್ತದೆ, ಹೀಗಾಗಿ ಈ ಫೈಲ್ ಅನ್ನು ಖಾತೆಗಳ ನಡುವೆ ಹಂಚಿಕೊಳ್ಳಲು ಸಾಧ್ಯವಿಲ್ಲ. ccam ಹಂಚಿಕೊಂಡ ಸರ್ವರ್‌ಗಳನ್ನು `mcp.json` ಎಂಬ ಗುಂಪಿನ ಫೈಲ್‌ನಲ್ಲಿ ಇಡುತ್ತದೆ ಮತ್ತು ಆರಂಭದ ಸಮಯದಲ್ಲಿ ಅದನ್ನು ಗುಂಪಿನ ಪ್ರತಿ ಖಾತೆಗೆ ನೀಡುತ್ತದೆ. ನಿಮ್ಮ ಎಲ್ಲಾ ಖಾತೆಗಳಿಗೆ ಒಮ್ಮೆಯೇ ಸರ್ವರ್ ಸೇರಿಸಲು `ccam mcp` ಬಳಸಿ, ಮತ್ತು ಒಂದು ಸೆಷನ್‌ನೊಳಗೆ ನೀವು ಸೇರಿಸಿದ ಸರ್ವರ್ ಅನ್ನು ಇತರ ಖಾತೆಗಳಿಗೆ ಸ್ಥಳಾಂತರಿಸಲು `ccam mcp import` ಬಳಸಿ.
@@ -127,6 +127,7 @@ Skipped gh: group default already has a different gh (`ccam mcp import work gh -
 ## ಸಂಬಂಧಿತ
 
 - [ಖಾತೆಗಳ ನಡುವೆ ಹಂಚಿಕೆ](/features/share)
+- [ccam ಜೊತೆಗೆ Remote Control ಬಳಸುವುದು](/guides/remote-control)
 - [MCP ಸರ್ವರ್‌ಗಳು, ಸೆಟ್ಟಿಂಗ್‌ಗಳು ಮತ್ತು ಇತಿಹಾಸವನ್ನು ಹಂಚಿಕೊಳ್ಳಿ](/docs/sharing)
 - [ಈಗಿರುವ ಸೆಟಪ್ ಅನ್ನು ನಕಲಿಸುವುದು](/features/migrate)
 - [ಎಲ್ಲಾ ಕಮಾಂಡ್‌ಗಳು](/docs/commands)

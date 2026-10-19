@@ -1,10 +1,10 @@
 ---
 title: Khởi động Claude Code
 description: "Khởi động Claude Code bằng bất kỳ tài khoản nào với ccam <name|number>, ccam run hoặc bộ chọn của ccam; các đối số được chuyển nguyên vẹn cho claude, và --dry-run hiển thị lệnh."
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 6c04bb48df22
+sourceHash: 401eed57e533
 ---
 
 `ccam work` khởi động Claude Code bằng tài khoản `work`, và mọi thứ sau tên được chuyển nguyên vẹn cho `claude`. Hãy dùng nó ở bất cứ đâu bạn vẫn gõ `claude`: trong terminal, trong script, hoặc khi có đầu vào được pipe vào.
@@ -152,6 +152,7 @@ ccam trace: prelaunch             0.083ms (total 3.661ms)
 ## Liên quan
 
 - [Lệnh tắt](/features/shortcuts)
+- [Dùng Remote Control với ccam](/guides/remote-control)
 - [Quản lý tài khoản](/features/accounts)
 - [Tham chiếu lệnh](/docs/commands)
 - [Dùng chung máy chủ MCP, cài đặt và lịch sử](/docs/sharing)

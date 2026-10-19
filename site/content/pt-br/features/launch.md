@@ -1,10 +1,10 @@
 ---
 title: Iniciar o Claude Code
 description: Inicie o Claude Code com qualquer conta usando ccam <name|number>, ccam run ou o seletor do ccam; os argumentos vão para o claude sem alterações, e --dry-run mostra o comando.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 6c04bb48df22
+sourceHash: 401eed57e533
 ---
 
 `ccam work` inicia o Claude Code com a conta `work`, e tudo o que vem depois do nome vai para o `claude` como está. Use-o onde você digitaria `claude`: em um terminal, em um script ou com uma entrada enviada por pipe.
@@ -152,6 +152,7 @@ ccam trace: prelaunch             0.083ms (total 3.661ms)
 ## Relacionados
 
 - [Atalhos](/features/shortcuts)
+- [Usar o Remote Control com o ccam](/guides/remote-control)
 - [Gerenciar contas](/features/accounts)
 - [Referência de comandos](/docs/commands)
 - [Compartilhar servidores MCP, configurações e histórico](/docs/sharing)

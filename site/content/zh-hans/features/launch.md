@@ -1,10 +1,10 @@
 ---
 title: 启动 Claude Code
 description: 用 ccam <name|number>、ccam run 或 ccam 选择器以任意账号启动 Claude Code；参数原样传给 claude，--dry-run 会显示将执行的命令。
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 6c04bb48df22
+sourceHash: 401eed57e533
 ---
 
 `ccam work` 以账号 `work` 启动 Claude Code，账号名之后的所有内容都原样传给 `claude`。凡是你会输入 `claude` 的地方都可以用它：在终端中、在脚本中，或者通过管道输入。
@@ -152,6 +152,7 @@ ccam trace: prelaunch             0.083ms (total 3.661ms)
 ## 相关内容
 
 - [快捷命令](/features/shortcuts)
+- [用 ccam 使用 Remote Control](/guides/remote-control)
 - [管理账号](/features/accounts)
 - [命令参考](/docs/commands)
 - [共享 MCP 服务器、设置和历史记录](/docs/sharing)

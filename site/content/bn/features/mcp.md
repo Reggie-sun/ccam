@@ -1,10 +1,10 @@
 ---
 title: "শেয়ার করা MCP সার্ভার"
 description: "ccam mcp add, add-json, list, remove ও import দিয়ে প্রতি গ্রুপে MCP সার্ভারের একটি তালিকা রাখুন, যা --mcp-config দিয়ে দেওয়া হয় বা প্রতিটি অ্যাকাউন্টে সিঙ্ক করা হয়।"
-updated: 2026-10-19
+updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: 69fd3233fd09
+sourceHash: f1de7db4b7be
 ---
 
 Claude Code ইউজার MCP সার্ভারগুলো `.claude.json`-এ রাখে, যে ফাইলে অ্যাকাউন্টের লগইনও থাকে, তাই ফাইলটি অ্যাকাউন্টগুলোর মধ্যে শেয়ার করা যায় না। ccam শেয়ার করা সার্ভারগুলো একটি গ্রুপ ফাইল `mcp.json`-এ রাখে এবং চালু করার সময় গ্রুপের প্রতিটি অ্যাকাউন্টকে সেটি দেয়। আপনার সব অ্যাকাউন্টের জন্য একবারে একটি সার্ভার যোগ করতে `ccam mcp` ব্যবহার করুন, আর একটি সেশনের ভেতরে যোগ করা সার্ভার অন্যগুলোতে সরাতে `ccam mcp import`।
@@ -127,6 +127,7 @@ Skipped gh: group default already has a different gh (`ccam mcp import work gh -
 ## সম্পর্কিত
 
 - [অ্যাকাউন্টগুলোর মধ্যে শেয়ার করা](/features/share)
+- [ccam দিয়ে Remote Control ব্যবহার](/guides/remote-control)
 - [MCP সার্ভার, সেটিংস ও ইতিহাস শেয়ার করুন](/docs/sharing)
 - [আগের সেটআপ কপি করুন](/features/migrate)
 - [সব কমান্ড](/docs/commands)

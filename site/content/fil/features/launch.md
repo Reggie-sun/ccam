@@ -1,10 +1,10 @@
 ---
 title: Pagsisimula ng Claude Code
 description: Simulan ang Claude Code bilang anumang account gamit ang ccam <name|number>, ccam run o ang picker ng ccam; ipinapasa nang walang pagbabago sa claude ang mga argument, at ipinapakita ng --dry-run ang command.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 6c04bb48df22
+sourceHash: 401eed57e533
 ---
 
 Sinisimulan ng `ccam work` ang Claude Code bilang account na `work`, at ipinapasa sa `claude` nang walang pagbabago ang lahat ng kasunod ng pangalan. Gamitin ito saanman mo ita-type ang `claude`: sa terminal, sa script, o kapag may input na ipina-pipe.
@@ -152,6 +152,7 @@ ccam trace: prelaunch             0.083ms (total 3.661ms)
 ## Kaugnay
 
 - [Mga shortcut command](/features/shortcuts)
+- [Paggamit ng Remote Control sa ccam](/guides/remote-control)
 - [Pamamahala ng mga account](/features/accounts)
 - [Sanggunian ng mga command](/docs/commands)
 - [I-share ang mga MCP server, settings at kasaysayan](/docs/sharing)

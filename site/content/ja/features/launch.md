@@ -1,10 +1,10 @@
 ---
 title: Claude Codeの起動
 description: ccam <name|number>、ccam run、ccamのピッカーで、任意のアカウントとしてClaude Codeを起動します。引数はそのままclaudeに渡り、--dry-runで実行されるコマンドを確認できます。
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 6c04bb48df22
+sourceHash: 401eed57e533
 ---
 
 `ccam work`は、アカウント`work`としてClaude Codeを起動し、名前より後のものはすべてそのまま`claude`に渡します。ターミナル、スクリプト、パイプで入力を渡す場合など、`claude`と入力するあらゆる場所で使えます。
@@ -152,6 +152,7 @@ ccam trace: prelaunch             0.083ms (total 3.661ms)
 ## 関連項目
 
 - [ショートカットコマンド](/features/shortcuts)
+- [ccamでRemote Controlを使う](/guides/remote-control)
 - [アカウントの管理](/features/accounts)
 - [コマンドリファレンス](/docs/commands)
 - [MCPサーバー、設定、履歴の共有](/docs/sharing)
