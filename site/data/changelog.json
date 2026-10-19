@@ -1,5 +1,11 @@
 [
   {
+    "tag": "v0.5.0",
+    "date": "2026-10-19",
+    "url": "https://github.com/jhyunwoo/ccam/releases/tag/v0.5.0",
+    "notes": "<h2>Changelog</h2>\n<ul>\n<li>52d023a565f05ce986c2da2a655f5d499a68fb77 docs(site): ten feature pages in 30 languages</li>\n<li>3abb2b632ea3913cc606330c66d8de2775328d7f feat: show a * for each character typed during login</li>\n<li>f19357b0e49c4b06588715b3b4c3e841321f656f chore(site): Lighthouse covers a feature page; i18n-check reads nested code spans</li>\n<li>ecf5148124bb78f22f3fd794b05d1f48f7d700f7 feat(site): <a href=\"http://www.ccam.dev\">www.ccam.dev</a> redirects to ccam.dev</li>\n<li>f197e1b6af858a86c88064e21b9b6e17f64c4608 wip(site): all ten feature pages</li>\n<li>b9784b85babd31be4379bab476a9bbd7ac5d39a8 wip(site): feature pages from the writers</li>\n<li>ea1724d8cf16b9d410dda84fb69d6abcee0878b2 wip(site): feature pages and diagrams so far</li>\n<li>87acd9b25756c8926a789d85afaff76adea81e04 feat(site): Features section and a motion kit for its diagrams</li>\n<li>a62f8b573542786cf72c33da425451a52141b383 docs(site): migrate checklist, MCP sign-ins and remote sign-in, in 30 languages</li>\n<li>1472009f5c0bc0fb245f779a8c690ddd8b9a4db0 feat: ccam migrate picks items from a checklist and copies MCP sign-ins</li>\n<li>4ea6bcbd8b6d0299be279f89a7d2b149c44154fc feat: finish a sign-in on a remote machine from the pasted callback address</li>\n<li>449525d3ab472ddbe2f4c95a74056d8edef8f97e chore(site): site says ccam 0.4.0; changelog lists v0.4.0</li>\n</ul>\n"
+  },
+  {
     "tag": "v0.4.0",
     "date": "2026-10-19",
     "url": "https://github.com/jhyunwoo/ccam/releases/tag/v0.4.0",
