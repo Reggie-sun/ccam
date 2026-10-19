@@ -253,7 +253,7 @@ func Ago(d time.Duration) string {
 
 func useCmd(e *env) *cobra.Command {
 	return &cobra.Command{
-		Use:   "use <name|slot>",
+		Use:   "use <name|number>",
 		Short: "Set the default account",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -278,7 +278,7 @@ func useCmd(e *env) *cobra.Command {
 func removeCmd(e *env) *cobra.Command {
 	var yes bool
 	cmd := &cobra.Command{
-		Use:     "remove <name|slot>",
+		Use:     "remove <name|number>",
 		Aliases: []string{"rm"},
 		Short:   "Remove an account (its folder goes to the trash)",
 		Args:    cobra.ExactArgs(1),
@@ -360,7 +360,7 @@ func renameCmd(e *env) *cobra.Command {
 
 func loginCmd(e *env) *cobra.Command {
 	return &cobra.Command{
-		Use:   "login <name|slot>",
+		Use:   "login <name|number>",
 		Short: "Log in again",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -380,7 +380,7 @@ func loginCmd(e *env) *cobra.Command {
 
 func logoutCmd(e *env) *cobra.Command {
 	return &cobra.Command{
-		Use:   "logout <name|slot>",
+		Use:   "logout <name|number>",
 		Short: "Remove the login token",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -435,7 +435,7 @@ func shimsCmd(e *env) *cobra.Command {
 func runCmd(e *env) *cobra.Command {
 	// Only reached for `ccam help run`; real runs never get to cobra.
 	return &cobra.Command{
-		Use:                "run <name|slot> [-- claude args]",
+		Use:                "run <name|number> [-- claude args]",
 		Short:              "Run claude as that account (same as `ccam <name>`)",
 		DisableFlagParsing: true,
 		RunE: func(cmd *cobra.Command, args []string) error {

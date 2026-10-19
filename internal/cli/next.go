@@ -17,7 +17,7 @@ func nextCmd(e *env) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "next [--auto] [--continue] [-- claude args]",
 		Short: "Run the next account (--continue: pick up the last conversation)",
-		Long: "Opens Claude Code as the account in the slot after the last one used.\n" +
+		Long: "Opens Claude Code as the account numbered after the last one used.\n" +
 			"--continue picks among accounts that share conversation history and opens it with claude --continue.\n" +
 			"--auto picks the account with the lowest 5-hour usage.",
 		RunE: func(cmd *cobra.Command, args []string) error {

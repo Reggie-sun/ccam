@@ -35,7 +35,7 @@ func shareCmd(e *env) *cobra.Command {
 	var prefer string
 	values := map[string]*string{}
 	cmd := &cobra.Command{
-		Use:   "share <name|slot> [--mcp on|off|<group>] [--history …]",
+		Use:   "share <name|number> [--mcp on|off|<group>] [--history …]",
 		Short: "Change shared items (migrates data)",
 		Long: "Give each item on (= the default group), off (= local), or a group name.\n" +
 			"Items: --mcp --settings --memory --extensions --history\n" +

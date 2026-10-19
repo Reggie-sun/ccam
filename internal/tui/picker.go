@@ -159,7 +159,7 @@ func (m Model) updateList(k tea.KeyPressMsg) (tea.Model, tea.Cmd) {
 					return m, tea.Quit
 				}
 			}
-			m.message = "no account in slot " + key
+			m.message = "no account with number " + key
 		}
 	}
 	return m, nil

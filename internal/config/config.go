@@ -131,7 +131,7 @@ func ValidateName(name string) error {
 		return fmt.Errorf("profile names are 1-32 characters of a-z, 0-9, - and _: %q", name)
 	}
 	if _, err := strconv.Atoi(name); err == nil {
-		return fmt.Errorf("names cannot be all digits (they look like slot numbers): %q", name)
+		return fmt.Errorf("names cannot be all digits (they look like account numbers): %q", name)
 	}
 	if Reserved[name] {
 		return fmt.Errorf("%q is a ccam command, so it cannot be a profile name", name)

@@ -57,7 +57,7 @@ func newRoot(e *env) *cobra.Command {
 	root := &cobra.Command{
 		Use:           "ccam",
 		Short:         "Claude Code multi-account manager",
-		Long:          "ccam adds and switches between several Claude Code accounts.\n\n  ccam <name|slot> [claude args]  run Claude Code as that account\n  claude1, claude2 …              run by slot number",
+		Long:          "ccam adds and switches between several Claude Code accounts.\n\n  ccam <name|number> [claude args]  run Claude Code as that account\n  claude1, claude2 …                run by number",
 		Version:       Version,
 		SilenceUsage:  true,
 		SilenceErrors: true,

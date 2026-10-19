@@ -41,8 +41,8 @@ An existing `~/.claude` can be registered in place with `ccam import` (nothing i
 | Command | What it does |
 | --- | --- |
 | `ccam` | Picker (prints the list when not on a terminal) |
-| `ccam <name\|slot> [claude args]` | Run `claude` as that account; args are passed through verbatim |
-| `claude1` … `claudeN` | Launch by slot (`ccam shims install --names` adds `claude-<name>`) |
+| `ccam <name\|number> [claude args]` | Run `claude` as that account; args are passed through verbatim |
+| `claude1` … `claudeN` | Launch by number (`ccam shims install --names` adds `claude-<name>`) |
 | `ccam add [name]` | Add an account (wizard on a terminal; `--no-login`, `--share item=group`) |
 | `ccam list [--json]` | List accounts |
 | `ccam use <name>` | Default account for name-less runs such as `ccam -p "…"` |
