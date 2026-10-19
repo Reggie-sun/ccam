@@ -27,6 +27,27 @@
     "thenAdd": "Ajoutez ensuite votre premier compte avec {command}.",
     "readDocs": "Lire le démarrage rapide",
     "boardLabel": "Exemple de session : quand un compte atteint sa limite, ccam poursuit la conversation sur un autre",
+    "demo": {
+      "title": "Quand un compte atteint sa limite",
+      "steps": [
+        {
+          "command": "claude3",
+          "body": "Lancez Claude Code avec l'un de vos comptes grâce à son raccourci."
+        },
+        {
+          "command": "",
+          "body": "Ce compte atteint sa limite sur 5 heures et Claude Code s'arrête."
+        },
+        {
+          "command": "ccam usage",
+          "body": "Consultez l'utilisation sur 5 heures et sur la semaine de tous les comptes à la fois."
+        },
+        {
+          "command": "ccam next --auto --continue",
+          "body": "Ouvrez le compte qui a le plus de marge et reprenez la même conversation."
+        }
+      ]
+    },
     "board": {
       "account": "Compte",
       "fiveHour": "5 heures",

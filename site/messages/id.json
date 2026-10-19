@@ -27,6 +27,27 @@
     "thenAdd": "Lalu tambahkan akun pertama Anda dengan {command}.",
     "readDocs": "Baca panduan memulai cepat",
     "boardLabel": "Contoh sesi: saat satu akun mencapai batasnya, ccam melanjutkan percakapan di akun lain",
+    "demo": {
+      "title": "Saat akun mencapai batasnya",
+      "steps": [
+        {
+          "command": "claude3",
+          "body": "Jalankan Claude Code sebagai salah satu akun Anda dengan pintasannya."
+        },
+        {
+          "command": "",
+          "body": "Akun itu mencapai batas 5 jam, dan Claude Code berhenti."
+        },
+        {
+          "command": "ccam usage",
+          "body": "Lihat penggunaan 5 jam dan mingguan semua akun sekaligus."
+        },
+        {
+          "command": "ccam next --auto --continue",
+          "body": "Buka akun dengan sisa kuota terbanyak dan lanjutkan percakapan yang sama."
+        }
+      ]
+    },
     "board": {
       "account": "Akun",
       "fiveHour": "5 jam",

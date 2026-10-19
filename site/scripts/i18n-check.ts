@@ -51,9 +51,9 @@ function placeholders(s: string): string {
 function compare(en: unknown, tr: unknown, path: string, code: string): void {
   if (typeof en === "string") {
     if (typeof tr !== "string") return void errors.push(`${code}: ${path} should be a string`);
-    if (/^landing\.flow\[\d+\]\.(command|also)$/.test(path) && tr !== en) errors.push(`${code}: ${path} is a command and must stay "${en}"`);
+    if (/^landing\.(flow|demo\.steps)\[\d+\]\.(command|also)$/.test(path) && tr !== en) errors.push(`${code}: ${path} is a command and must stay "${en}"`);
     if (placeholders(en) !== placeholders(tr)) errors.push(`${code}: ${path} placeholders {${placeholders(en)}} ≠ {${placeholders(tr)}}`);
-    if (!tr.trim()) errors.push(`${code}: ${path} is empty`);
+    if (!tr.trim() && en.trim()) errors.push(`${code}: ${path} is empty`);
     return;
   }
   if (Array.isArray(en)) {

@@ -27,6 +27,27 @@
     "thenAdd": "Kisha ongeza akaunti yako ya kwanza kwa {command}.",
     "readDocs": "Soma mwongozo wa kuanza haraka",
     "boardLabel": "Mfano wa kipindi: akaunti moja inapofikia kikomo chake, ccam huendeleza mazungumzo kwenye akaunti nyingine",
+    "demo": {
+      "title": "Akaunti inapofikia kikomo chake",
+      "steps": [
+        {
+          "command": "claude3",
+          "body": "Anzisha Claude Code kama mojawapo ya akaunti zako kwa njia fupi yake."
+        },
+        {
+          "command": "",
+          "body": "Akaunti hiyo inafikia kikomo chake cha saa 5, na Claude Code inasimama."
+        },
+        {
+          "command": "ccam usage",
+          "body": "Tazama matumizi ya saa 5 na ya wiki ya kila akaunti kwa pamoja."
+        },
+        {
+          "command": "ccam next --auto --continue",
+          "body": "Fungua akaunti yenye nafasi kubwa zaidi na uendelee na mazungumzo yale yale."
+        }
+      ]
+    },
     "board": {
       "account": "Akaunti",
       "fiveHour": "Saa 5",

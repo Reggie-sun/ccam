@@ -117,6 +117,8 @@
       const texts = new Map(typed.map((t) => [t, t.textContent]));
       const pcts = [...demo.querySelectorAll(".pct")];
       const pick = demo.querySelector("[data-pick]");
+      const steps = [...d.querySelectorAll("[data-demo-steps] li")];
+      const step = (i) => steps.forEach((s, k) => s.classList.toggle("on", k === i));
       let fmt; // created on first play: Intl setup is a long task on slow phones
       let timers = [];
       const at = (ms, fn) => timers.push(setTimeout(fn, ms));
@@ -135,6 +137,8 @@
         demo.classList.add("playing");
         seq.forEach((e) => e.classList.remove("shown"));
         pick.classList.remove("on");
+        steps[0]?.parentElement.classList.add("live");
+        step(-1);
         typed.forEach((t) => (t.textContent = ""));
         pcts.forEach((p) => (p.textContent = ""));
       };
@@ -143,7 +147,10 @@
         fmt ??= new Intl.NumberFormat(d.documentElement.lang, { style: "percent" });
         let t = 300;
         for (const el of seq) {
-          at(t, () => el.classList.add("shown"));
+          at(t, () => {
+            el.classList.add("shown");
+            if (el.dataset.step) step(Number(el.dataset.step));
+          });
           for (const tp of el.querySelectorAll("[data-type]")) t = type(tp, t + 250);
           if (el.classList.contains("rows")) pcts.forEach((p) => count(p, t + 300));
           t += Number(el.dataset.seq);

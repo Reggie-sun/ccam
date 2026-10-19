@@ -27,6 +27,27 @@
     "thenAdd": "次に、{command}で最初のアカウントを追加します。",
     "readDocs": "クイックスタートを読む",
     "boardLabel": "例: あるアカウントが上限に達すると、ccam が別のアカウントで会話を続けます",
+    "demo": {
+      "title": "アカウントが上限に達したら",
+      "steps": [
+        {
+          "command": "claude3",
+          "body": "ショートカットを使って、いずれかのアカウントでClaude Codeを起動します。"
+        },
+        {
+          "command": "",
+          "body": "そのアカウントが5時間の上限に達し、Claude Codeが停止します。"
+        },
+        {
+          "command": "ccam usage",
+          "body": "すべてのアカウントの5時間と週間の使用量を一度に確認します。"
+        },
+        {
+          "command": "ccam next --auto --continue",
+          "body": "最も余裕があるアカウントを開き、同じ会話を続けます。"
+        }
+      ]
+    },
     "board": {
       "account": "アカウント",
       "fiveHour": "5時間",

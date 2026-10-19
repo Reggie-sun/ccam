@@ -52,9 +52,25 @@ export function Landing({ locale }: { locale: string }) {
         </div>
       </section>
 
-      <div className="wrap">
-        <UsageBoard locale={l} m={m} />
-      </div>
+      <section className="section demo-section" aria-labelledby="demo">
+        <div className="wrap demo-split">
+          <UsageBoard locale={l} m={m} />
+          <div className="demo-text">
+            <h2 id="demo" className="section-title display">{m.landing.demo.title}</h2>
+            <ol className="demo-steps" data-demo-steps>
+              {m.landing.demo.steps.map((s, i) => (
+                <li key={i}>
+                  <span className="step-n" dir="ltr" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
+                  <div>
+                    <p>{s.body}</p>
+                    {s.command && <code dir="ltr">{s.command}</code>}
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
+      </section>
 
       <section className="section" aria-labelledby="flow">
         <div className="wrap">

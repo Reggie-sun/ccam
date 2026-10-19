@@ -27,6 +27,27 @@
     "thenAdd": "Sannan ka ƙara asusunka na farko da {command}.",
     "readDocs": "Karanta jagorar farawa da sauri",
     "boardLabel": "Misalin zama: idan wani asusu ya kai iyakarsa, ccam yana ci gaba da tattaunawar a wani asusu",
+    "demo": {
+      "title": "Idan wani asusu ya kai iyakarsa",
+      "steps": [
+        {
+          "command": "claude3",
+          "body": "Ka fara Claude Code da ɗaya daga cikin asusanka ta gajeren umarninsa."
+        },
+        {
+          "command": "",
+          "body": "Wannan asusun ya kai iyakarsa ta awa 5, kuma Claude Code ya tsaya."
+        },
+        {
+          "command": "ccam usage",
+          "body": "Ka ga amfanin awa 5 da na mako na kowane asusu a lokaci ɗaya."
+        },
+        {
+          "command": "ccam next --auto --continue",
+          "body": "Ka buɗe asusun da ya fi sauran sarari, ka ci gaba da wannan tattaunawar."
+        }
+      ]
+    },
     "board": {
       "account": "Asusu",
       "fiveHour": "Awa 5",

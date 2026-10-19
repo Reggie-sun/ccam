@@ -27,6 +27,27 @@
     "thenAdd": "Pagkatapos, idagdag ang una mong account gamit ang {command}.",
     "readDocs": "Basahin ang quick start",
     "boardLabel": "Halimbawang session: kapag naabot ng isang account ang limit nito, itinutuloy ng ccam ang usapan sa ibang account",
+    "demo": {
+      "title": "Kapag naabot ng isang account ang limit nito",
+      "steps": [
+        {
+          "command": "claude3",
+          "body": "Simulan ang Claude Code bilang isa sa mga account mo gamit ang shortcut nito."
+        },
+        {
+          "command": "",
+          "body": "Naabot ng account na iyon ang 5-oras na limit nito, at huminto ang Claude Code."
+        },
+        {
+          "command": "ccam usage",
+          "body": "Tingnan nang sabay-sabay ang 5-oras at lingguhang usage ng bawat account."
+        },
+        {
+          "command": "ccam next --auto --continue",
+          "body": "Buksan ang account na may pinakamaraming natitira at ituloy ang parehong usapan."
+        }
+      ]
+    },
     "board": {
       "account": "Account",
       "fiveHour": "5 oras",

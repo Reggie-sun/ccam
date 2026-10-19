@@ -43,7 +43,7 @@ export function UsageBoard({ locale, m }: { locale: Locale; m: Messages }) {
   return (
     <figure className="stage reveal" data-demo>
       <div className="term">
-        <p className="line" dir="ltr" data-seq="250">
+        <p className="line" dir="ltr" data-seq="250" data-step="0">
           <span className="ps">$</span>
           <span data-type>claude3</span>
         </p>
@@ -54,9 +54,9 @@ export function UsageBoard({ locale, m }: { locale: Locale; m: Messages }) {
           <p className="cc-prompt" data-seq="700">
             <span className="ps">&gt;</span> <span data-type>{ASK}</span>
           </p>
-          <p className="cc-limit" data-seq="1000">5-hour limit reached · resets in 22m</p>
+          <p className="cc-limit" data-seq="1000" data-step="1">5-hour limit reached · resets in 22m</p>
         </div>
-        <p className="line" dir="ltr" data-seq="250">
+        <p className="line" dir="ltr" data-seq="250" data-step="2">
           <span className="ps">$</span>
           <span data-type>ccam usage</span>
         </p>
@@ -72,7 +72,7 @@ export function UsageBoard({ locale, m }: { locale: Locale; m: Messages }) {
           ))}
         </div>
         <p className="line note" data-seq="700">{format(locale, m.landing.board.mostRoom, { name: "work" })}</p>
-        <p className="line" dir="ltr" data-seq="400">
+        <p className="line" dir="ltr" data-seq="400" data-step="3">
           <span className="ps">$</span>
           <span data-type>ccam next --auto --continue</span>
         </p>

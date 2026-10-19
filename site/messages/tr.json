@@ -27,6 +27,27 @@
     "thenAdd": "Ardından ilk hesabınızı {command} ile ekleyin.",
     "readDocs": "Hızlı başlangıcı okuyun",
     "boardLabel": "Örnek oturum: bir hesap sınırına ulaştığında ccam konuşmaya başka bir hesapta devam eder",
+    "demo": {
+      "title": "Bir hesap limitine ulaştığında",
+      "steps": [
+        {
+          "command": "claude3",
+          "body": "Claude Code'u hesaplarınızdan biriyle, o hesabın kısayoluyla başlatın."
+        },
+        {
+          "command": "",
+          "body": "O hesap 5 saatlik limitine ulaşır ve Claude Code durur."
+        },
+        {
+          "command": "ccam usage",
+          "body": "Tüm hesapların 5 saatlik ve haftalık kullanımını bir arada görün."
+        },
+        {
+          "command": "ccam next --auto --continue",
+          "body": "En çok pay kalan hesabı açın ve aynı konuşmaya devam edin."
+        }
+      ]
+    },
     "board": {
       "account": "Hesap",
       "fiveHour": "5 saatlik",

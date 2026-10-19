@@ -27,6 +27,27 @@
     "thenAdd": "接著用 {command} 新增第一個帳號。",
     "readDocs": "閱讀快速入門",
     "boardLabel": "範例：一個帳號達到限額時，ccam 會在另一個帳號上繼續對話",
+    "demo": {
+      "title": "帳號達到用量限制時",
+      "steps": [
+        {
+          "command": "claude3",
+          "body": "用快捷指令以你的某個帳號啟動 Claude Code。"
+        },
+        {
+          "command": "",
+          "body": "該帳號達到 5 小時用量限制，Claude Code 隨即停止。"
+        },
+        {
+          "command": "ccam usage",
+          "body": "一次查看所有帳號的 5 小時用量和每週用量。"
+        },
+        {
+          "command": "ccam next --auto --continue",
+          "body": "開啟剩餘額度最多的帳號，繼續同一段對話。"
+        }
+      ]
+    },
     "board": {
       "account": "帳號",
       "fiveHour": "5 小時",

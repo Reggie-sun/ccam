@@ -27,6 +27,27 @@
     "thenAdd": "Sau đó thêm tài khoản đầu tiên bằng {command}.",
     "readDocs": "Đọc phần bắt đầu nhanh",
     "boardLabel": "Phiên ví dụ: khi một tài khoản chạm giới hạn, ccam tiếp tục cuộc trò chuyện trên tài khoản khác",
+    "demo": {
+      "title": "Khi một tài khoản chạm giới hạn",
+      "steps": [
+        {
+          "command": "claude3",
+          "body": "Khởi động Claude Code bằng một trong các tài khoản của bạn qua lệnh tắt của nó."
+        },
+        {
+          "command": "",
+          "body": "Tài khoản đó chạm giới hạn 5 giờ và Claude Code dừng lại."
+        },
+        {
+          "command": "ccam usage",
+          "body": "Xem mức sử dụng 5 giờ và hàng tuần của mọi tài khoản cùng lúc."
+        },
+        {
+          "command": "ccam next --auto --continue",
+          "body": "Mở tài khoản còn nhiều hạn mức nhất và tiếp tục cùng cuộc hội thoại."
+        }
+      ]
+    },
     "board": {
       "account": "Tài khoản",
       "fiveHour": "5 giờ",

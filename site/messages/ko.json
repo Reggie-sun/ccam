@@ -27,6 +27,27 @@
     "thenAdd": "그다음 {command} 명령으로 첫 계정을 추가하세요.",
     "readDocs": "빠른 시작 보기",
     "boardLabel": "예시 화면: 한 계정이 한도에 도달하면 ccam이 다른 계정에서 대화를 이어 갑니다",
+    "demo": {
+      "title": "계정이 한도에 도달했을 때",
+      "steps": [
+        {
+          "command": "claude3",
+          "body": "단축 명령으로 원하는 계정의 Claude Code를 실행합니다."
+        },
+        {
+          "command": "",
+          "body": "그 계정이 5시간 한도에 도달하면 Claude Code가 멈춥니다."
+        },
+        {
+          "command": "ccam usage",
+          "body": "모든 계정의 5시간·주간 사용량을 한 번에 확인합니다."
+        },
+        {
+          "command": "ccam next --auto --continue",
+          "body": "여유가 가장 많은 계정을 열고 같은 대화를 이어 갑니다."
+        }
+      ]
+    },
     "board": {
       "account": "계정",
       "fiveHour": "5시간",
