@@ -49,7 +49,10 @@ export function Shell({ locale, alternates, active, menu, children }: Props) {
           <div className="wrap">
             <a className="brand" href={homePath(locale)}>
               <BrandMark />
-              ccam
+              <span className="brand-name">
+                <span className="short">ccam</span>
+                <span className="long" aria-hidden="true">Claude Code Account Manager</span>
+              </span>
             </a>
             <nav className="site-nav" aria-label={m.nav.menu}>
               <a href={pagePath(locale, "docs", "quick-start")} aria-current={active === "docs" ? "page" : undefined}>{m.nav.docs}</a>
