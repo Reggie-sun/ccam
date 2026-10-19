@@ -1,0 +1,97 @@
+{
+  "summary": {
+    "health_score": 81,
+    "business_type": "Open-source developer tool (SaaS-like docs site)",
+    "top_findings": [
+      "ccam.dev not findable for its own name; indexing unconfirmed",
+      "No http to https redirect, no HSTS",
+      "Almost no outside footprint (0 stars, no mentions)",
+      "Changelog is a raw commit dump on 30 locale URLs",
+      "Switch-account queries reward switcher-tool pages the site does not match"
+    ],
+    "quick_wins": [
+      "Verify in Search Console and submit sitemap-index.xml",
+      "Enable Always Use HTTPS + HSTS in Cloudflare",
+      "Fix FAQ JSON-LD stripping in site/lib/content.ts:119",
+      "Fix duplicate breadcrumb URLs",
+      "Single Cache-Control header for /assets and /fonts"
+    ]
+  },
+  "categories": [
+    {
+      "name": "Technical SEO",
+      "score": 88,
+      "what_works": ["420/420 URLs 200, self-canonical", "Complete reciprocal hreflang", "Server-rendered HTML", "Strong security headers"],
+      "findings": [
+        {"title": "No http to https redirect, no HSTS", "severity": "High", "description": "http://ccam.dev/ko/ returns 200; no Strict-Transport-Security header", "recommendation": "Cloudflare Always Use HTTPS + HSTS"},
+        {"title": "lastmod is a uniform build stamp", "severity": "Medium", "description": "All 420 URLs lastmod 2026-10-19; sitemap index uses new Date()", "recommendation": "Use real change dates"},
+        {"title": "Split English URL scheme", "severity": "Low", "description": "Home at /, inner pages at /en/, /en/ 301s to /", "recommendation": "Keep consistent; document in site/lib/paths.ts"}
+      ]
+    },
+    {
+      "name": "Content Quality",
+      "score": 74,
+      "what_works": ["Readable, direct (Flesch 67-78)", "All 29 translations current", "Trust signals: disclaimer, checksums, no telemetry"],
+      "findings": [
+        {"title": "Changelog is a raw commit dump", "severity": "High", "description": "40-char SHAs and internal commits, identical English on 30 locale URLs", "recommendation": "Write per-version human release notes"},
+        {"title": "No named author or publish dates", "severity": "Medium", "description": "TechArticle lacks author/datePublished; blog has no byline", "recommendation": "Add author and real dates"},
+        {"title": "Thin guides", "severity": "Medium", "description": "254-440 words vs 1,100-1,600 for ranking how-tos", "recommendation": "Expand with /login route, WSL, troubleshooting"}
+      ]
+    },
+    {
+      "name": "On-Page SEO",
+      "score": 84,
+      "what_works": ["One h1 per page", "Self-canonical everywhere"],
+      "findings": [
+        {"title": "Brand name ambiguous, indexing unconfirmed", "severity": "Critical", "description": "site:ccam.dev and 'ccam claude code' return other CCAM entities and a competitor", "recommendation": "Verify in GSC; add 'Claude Code Account Manager' to title and schema alternateName"},
+        {"title": "Title and description lengths", "severity": "Medium", "description": "45 titles over 60 chars, 22 descriptions over 160, 78 under 70", "recommendation": "Trim; make doc titles specific"}
+      ]
+    },
+    {
+      "name": "Schema / Structured Data",
+      "score": 72,
+      "what_works": ["Valid JSON-LD, no deprecated types"],
+      "findings": [
+        {"title": "FAQ answer text corrupted", "severity": "Medium", "description": "CLAUDE_CONFIG_DIR rendered as CLAUDECONFIGDIR (site/lib/content.ts:119 strips every _ and >)", "recommendation": "Strip only Markdown syntax"},
+        {"title": "Duplicate breadcrumb URLs", "severity": "Medium", "description": "Blog and compare pages: positions 2 and 3 share a URL", "recommendation": "Point the section crumb to the section index"},
+        {"title": "Existing FAQPage", "severity": "Info", "description": "FAQ rich results retired for all sites May 7, 2026", "recommendation": "No action"}
+      ]
+    },
+    {
+      "name": "Performance (CWV)",
+      "score": 92,
+      "what_works": ["Lighthouse 94-99 (lab)", "LCP 2.1-2.2 s mobile", "TBT 0-30 ms"],
+      "findings": [
+        {"title": "/ar/ mobile CLS 0.111", "severity": "Medium", "description": "Single shift of main#main, likely font swap", "recommendation": "Size-adjusted fallback font or font-display: optional"},
+        {"title": "Conflicting Cache-Control on hashed assets", "severity": "Medium", "description": "max-age=0 and max-age=31536000 sent together on /fonts and /assets", "recommendation": "One immutable header for /assets and /fonts"}
+      ]
+    },
+    {
+      "name": "AI Search Readiness",
+      "score": 66,
+      "what_works": ["All AI crawlers allowed", "llms.txt and .md mirrors", "Answer-first pages"],
+      "findings": [
+        {"title": "Almost no outside footprint", "severity": "High", "description": "Repo 1 day old, 0 stars, no mentions found", "recommendation": "Package listings, awesome lists, Show HN"},
+        {"title": "No links to official Claude Code docs", "severity": "Medium", "description": "Text cites the docs without linking", "recommendation": "Link the sources"}
+      ]
+    },
+    {
+      "name": "Images",
+      "score": 88,
+      "what_works": ["No raster images to optimize", "OG 1200x630 on all pages"],
+      "findings": [
+        {"title": "apple-touch-icon.png 404", "severity": "Medium", "description": "Only favicon.svg, no PNG/ICO fallback", "recommendation": "Add a PNG icon"},
+        {"title": "Tap targets under 44 px", "severity": "Medium", "description": "Logo link 89x28; /ar/ banner link 28 px tall", "recommendation": "Enlarge targets"}
+      ]
+    }
+  ],
+  "action_plan": {
+    "phases": [
+      {"name": "Phase 1: Critical Fixes", "timeframe": "Week 1", "items": ["Search Console + Bing verification, submit sitemap", "Brand name in title and schema alternateName", "Always Use HTTPS + HSTS"]},
+      {"name": "Phase 2: High-Impact Improvements", "timeframe": "Weeks 2-3", "items": ["Fix FAQ JSON-LD stripping", "Fix breadcrumbs, add author and dates", "Match switch-account intent; competitor compare page", "Rewrite changelog"]},
+      {"name": "Phase 3: Content & Authority", "timeframe": "Month 2", "items": ["Deepen guides to 1,000+ words", "Package listings and first links", "Real lastmod dates", "Cache-Control, CLS, fonts, titles, icons"]},
+      {"name": "Phase 4: Monitoring & Iteration", "timeframe": "Ongoing", "items": ["Drift baseline, compare after deploys", "Re-audit in 3 months with GSC and Moz"]}
+    ]
+  },
+  "artifacts": {"findings_dir": "findings/", "screenshots_dir": "screenshots/"}
+}
