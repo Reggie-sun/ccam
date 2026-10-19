@@ -40,7 +40,7 @@ for (const path of sample) {
 
 test("no sideways scroll at 320 px", async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 700 });
-  for (const path of ["/", "/en/docs/commands/", "/en/docs/sharing/", "/en/features/launch/", "/ko/features/share/"]) {
+  for (const path of ["/", "/en/docs/commands/", "/en/docs/sharing/", "/en/features/launch/", "/ko/features/share/", "/en/features/usage/", "/en/changelog/", "/en/guides/claude-config-dir/", "/bn/features/share/"]) {
     await page.goto(path);
     expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth), path).toBeLessThanOrEqual(0);
   }
@@ -51,7 +51,7 @@ test("motion diagrams play, and stand still under reduced motion", async ({ page
   const fig = page.locator('[data-motion="launch"]');
   await expect(fig).toBeVisible();
   // The style attributes carry the timing; the CSP must have let them through.
-  expect(await fig.evaluate((el) => getComputedStyle(el).getPropertyValue("--t").trim())).toBe("9s");
+  expect(await fig.evaluate((el) => getComputedStyle(el).getPropertyValue("--t").trim())).toBe("11s");
   const dot = fig.locator(".mo-pkt").first();
   expect(await dot.evaluate((el) => getComputedStyle(el).animationName)).toBe("mo-move");
   await page.emulateMedia({ reducedMotion: "reduce" });

@@ -96,6 +96,8 @@ body {
   letter-spacing: var(--body-track);
   -webkit-font-smoothing: antialiased;
   overflow-x: clip;
+  /* A word longer than the line (a commit hash, CLAUDE_CONFIG_DIR in a heading, a path in code) breaks instead of running off a phone screen. */
+  overflow-wrap: break-word;
 }
 html[data-font="urdu"] body { line-height: 2.1; }
 html[data-font="arabic"] body, html[data-font="indic"] body, html[data-font="thai"] body { line-height: 1.85; }
