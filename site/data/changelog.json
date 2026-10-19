@@ -1,5 +1,11 @@
 [
   {
+    "tag": "v0.3.0",
+    "date": "2026-10-19",
+    "url": "https://github.com/jhyunwoo/ccam/releases/tag/v0.3.0",
+    "notes": "<h2>Changelog</h2>\n<ul>\n<li>4dc09a727eec8646b0f425cd57bee066003574d8 test: update e2e compares the resolved path (macOS /private/var)</li>\n<li>f0b095716c70ff5cd86d6662825851db7b3e8526 chore(site): site says ccam 0.3.0</li>\n<li>e82e449823717d9d427166f820ad08e3e8f15c30 docs(site): how to update ccam, in 30 languages</li>\n<li>5cda5b4db7f2bad536860ca1f546e4fc3af62a5a feat: ccam update replaces the binary with the latest release</li>\n<li>2676653c40b3e4c4b7f09f141ef3c7aa70ab96e3 refactor: drop compatibility with earlier versions</li>\n<li>ba0e79bd9e24d48103f9402c6ce02266d557c451 docs(site): drop the sentence about ccam&#39;s message language from the quick start</li>\n<li>ba524783b8d1c8824737152f399e92baa5663ed1 docs(site): changelog lists v0.2.0</li>\n</ul>\n"
+  },
+  {
     "tag": "v0.2.0",
     "date": "2026-10-19",
     "url": "https://github.com/jhyunwoo/ccam/releases/tag/v0.2.0",
