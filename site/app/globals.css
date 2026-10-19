@@ -139,10 +139,11 @@ code, pre, kbd { font-family: var(--font-mono); font-size: 0.9em; letter-spacing
   @keyframes header-edge { from { opacity: 0; } }
 }
 .site-header .wrap { display: flex; align-items: center; gap: 0.5rem; min-block-size: var(--header); }
-.brand { font-family: var(--font-display); font-weight: 300; font-size: 1.75rem; letter-spacing: -0.03em; line-height: 1; color: var(--ink); text-decoration: none; margin-inline-end: auto; padding-block-end: 0.15rem; }
+.brand { font-family: var(--font-display); font-weight: 300; font-size: 1.75rem; letter-spacing: -0.03em; line-height: 1; color: var(--ink); text-decoration: none; margin-inline-end: auto; }
 html:not([data-font="brand"]) .brand { font-family: "Newsreader", Georgia, serif; }
 .site-header .brand { display: inline-flex; align-items: center; gap: 0.45rem; }
-.brand .mark { inline-size: 1.6rem; block-size: 1.6rem; flex: none; margin-block-start: 0.15rem; }
+/* Sized and nudged so the mark's centre meets the centre of the lowercase wordmark (measured in Newsreader). */
+.brand .mark { inline-size: 1.3rem; block-size: 1.3rem; flex: none; translate: 0 -0.25px; }
 /* Hover or focus spells the name out; the long form overlays the header, so nothing shifts. */
 .brand-name { position: relative; display: inline-block; }
 .brand-name .short { display: inline-block; transition: opacity 250ms, transform 450ms var(--ease); }
