@@ -4,7 +4,7 @@ description: Magdagdag ng dalawang Claude Code account gamit ang ccam add, bigya
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: eb078efa2ee2
+sourceHash: d040e34d2a17
 ---
 
 Idagdag ang bawat account gamit ang `ccam add`, saka simulan ang Claude Code gamit ang `ccam <name>` o ang shortcut na ikaw mismo ang nagpangalan, gaya ng `ccwork`. Iyan lang ang kailangan ng karamihan.
@@ -15,7 +15,7 @@ Idagdag ang bawat account gamit ang `ccam add`, saka simulan ang Claude Code gam
 ccam add
 ```
 
-Hihingin ng wizard ang isang pangalan gaya ng `personal` o `work`, kung aling mga item ang ishe-share ng account sa iba mo pang account, at kung gagawa ng shortcut command (tingnan ang hakbang 4). Pagkatapos ay patatakbuhin nito ang `claude auth login`, na magbubukas ng browser para makapag-sign in ka. Kapag tapos na, makikita mo:
+Hihingin ng wizard ang isang pangalan gaya ng `personal` o `work`, kung aling mga item ang ishe-share ng account sa iba mo pang account, at kung gagawa ng shortcut command (tingnan ang hakbang 4). Pagkatapos ay patatakbuhin nito ang `claude auth login`, na magbubukas ng browser para makapag-sign in ka. Sa isang remote machine, maaaring mapunta ang browser sa isang `http://localhost:…/callback` na page na hindi naglo-load; i-paste ang address na iyon sa terminal at tatapusin ng ccam ang sign-in. Kapag tapos na, makikita mo:
 
 ```console
 ✓ personal (me@example.com) added

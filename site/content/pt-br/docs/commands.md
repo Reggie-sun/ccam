@@ -4,7 +4,7 @@ description: Todos os comandos e opções do ccam, de ccam add e ccam <name> a c
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 8ac012f7f7cf
+sourceHash: 5a82175c30d3
 ---
 
 Coloque `--dry-run` antes de um comando para ver o que ele faria sem fazê-lo, por exemplo `ccam --dry-run work`. Funciona ao iniciar o Claude Code (`ccam <name>`, `ccam run`, `ccam next`) e com `share`, `migrate`, `shortcut`, `update` e `doctor --fix`. Outros comandos que alteram algo recusam a opção em vez de executar.
@@ -72,7 +72,7 @@ ccam migrate ~/.claude-work --group work --settings --mcp
 ccam migrate --history --yes    # conversation history only
 ```
 
-`ccam migrate` copia `settings.json`, `CLAUDE.md`, extensões e servidores MCP de usuário de uma pasta do Claude Code para um grupo, para que todas as contas que compartilham esses itens os recebam. A pasta é apenas lida. As opções `--settings`, `--memory`, `--extensions`, `--mcp` e `--history` copiam só os itens que você indicar; sem elas, tudo é copiado, exceto o histórico de conversas. `-g` ou `--group` escolhe o grupo, e `-y` ou `--yes` copia sem perguntar e mantém a cópia do grupo quando um arquivo é diferente. Consulte [copiar uma configuração existente](/docs/sharing#copy-an-existing-setup).
+`ccam migrate` copia `settings.json`, `CLAUDE.md`, extensões e servidores MCP de usuário de uma pasta do Claude Code para um grupo, para que todas as contas que compartilham esses itens os recebam. A pasta é apenas lida. As opções `--settings`, `--memory`, `--extensions`, `--mcp` e `--history` copiam só os itens que você indicar. Sem elas, em um terminal, uma lista de seleção permite escolher, com tudo marcado exceto o histórico de conversas; fora de um terminal, tudo é copiado, exceto o histórico de conversas. `-g` ou `--group` escolhe o grupo, e `-y` ou `--yes` copia sem perguntar e mantém a cópia do grupo quando um arquivo é diferente. Ele também copia os logins salvos dos servidores para o próprio arquivo de login de cada conta. Consulte [copiar uma configuração existente](/docs/sharing#copy-an-existing-setup).
 
 ## Servidores MCP
 

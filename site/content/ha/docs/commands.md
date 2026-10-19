@@ -4,7 +4,7 @@ description: Kowane umarni da zaɓi na ccam, daga ccam add da ccam <name> zuwa c
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 8ac012f7f7cf
+sourceHash: 5a82175c30d3
 ---
 
 Saka `--dry-run` kafin umarni don ganin abin da zai yi ba tare da ya yi shi ba, misali `ccam --dry-run work`. Yana aiki lokacin fara Claude Code (`ccam <name>`, `ccam run`, `ccam next`) da kuma tare da `share`, `migrate`, `shortcut`, `update` da `doctor --fix`. Sauran umarnin da ke canza wani abu suna ƙin shi maimakon su gudana.
@@ -72,7 +72,7 @@ ccam migrate ~/.claude-work --group work --settings --mcp
 ccam migrate --history --yes    # conversation history only
 ```
 
-`ccam migrate` yana kwafar `settings.json`, `CLAUDE.md`, extensions da sabobin MCP na mai amfani daga foldar Claude Code zuwa rukuni, don kowane asusu da ke raba waɗannan abubuwa ya same su. Ana karanta foldar ne kawai. Zaɓuɓɓukan `--settings`, `--memory`, `--extensions`, `--mcp` da `--history` suna kwafar abubuwan da ka ambata kawai; ba tare da su ba, ana kwafar komai sai tarihin tattaunawa. `-g` ko `--group` yana zaɓar rukunin, kuma `-y` ko `--yes` yana kwafa ba tare da tambaya ba kuma yana riƙe kwafin rukunin idan fayil ya bambanta. Duba [kwafar saitin da ke akwai](/docs/sharing#copy-an-existing-setup).
+`ccam migrate` yana kwafar `settings.json`, `CLAUDE.md`, extensions da sabobin MCP na mai amfani daga foldar Claude Code zuwa rukuni, don kowane asusu da ke raba waɗannan abubuwa ya same su. Ana karanta foldar ne kawai. Zaɓuɓɓukan `--settings`, `--memory`, `--extensions`, `--mcp` da `--history` suna kwafar abubuwan da ka ambata kawai. Ba tare da su ba, a terminal jerin zaɓi (checklist) yana ba ka damar zaɓa, inda aka yi wa komai alama sai tarihin tattaunawa; a wasu wurare kuma ana kwafar komai sai tarihin tattaunawa. `-g` ko `--group` yana zaɓar rukunin, kuma `-y` ko `--yes` yana kwafa ba tare da tambaya ba kuma yana riƙe kwafin rukunin idan fayil ya bambanta. Yana kuma kwafar bayanan shigar sabobin da aka ajiye zuwa fayil ɗin shiga na kowane asusu. Duba [kwafar saitin da ke akwai](/docs/sharing#copy-an-existing-setup).
 
 ## Sabobin MCP
 

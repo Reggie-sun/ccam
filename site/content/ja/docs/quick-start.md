@@ -4,7 +4,7 @@ description: ccam addで2つのClaude Codeアカウントを追加し、ccwork�
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: eb078efa2ee2
+sourceHash: d040e34d2a17
 ---
 
 `ccam add`で各アカウントを追加し、`ccam <name>`、または`ccwork`のように自分で名前を付けたショートカットでClaude Codeを起動します。ほとんどの人にとって、必要なのはこれだけです。
@@ -15,7 +15,7 @@ sourceHash: eb078efa2ee2
 ccam add
 ```
 
-ウィザードが、`personal`や`work`のような名前、そのアカウントがほかのアカウントと共有する項目、ショートカットコマンドを作成するかどうか（ステップ4を参照）を尋ねます。次に`claude auth login`を実行し、サインインできるようにブラウザーを開きます。完了すると、次のように表示されます。
+ウィザードが、`personal`や`work`のような名前、そのアカウントがほかのアカウントと共有する項目、ショートカットコマンドを作成するかどうか（ステップ4を参照）を尋ねます。次に`claude auth login`を実行し、サインインできるようにブラウザーを開きます。リモートのマシンでは、ブラウザーが最後に読み込まれない`http://localhost:…/callback`のページで止まることがあります。そのアドレスをターミナルに貼り付けると、ccamがサインインを完了します。完了すると、次のように表示されます。
 
 ```console
 ✓ personal (me@example.com) added

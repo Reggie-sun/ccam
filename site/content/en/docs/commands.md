@@ -71,7 +71,7 @@ ccam migrate ~/.claude-work --group work --settings --mcp
 ccam migrate --history --yes    # conversation history only
 ```
 
-`ccam migrate` copies `settings.json`, `CLAUDE.md`, extensions and user MCP servers from a Claude Code folder into a group, so every account that shares those items gets them. The folder is only read. The options `--settings`, `--memory`, `--extensions`, `--mcp` and `--history` copy only the items you name; without them, everything except conversation history is copied. `-g` or `--group` picks the group, and `-y` or `--yes` copies without asking and keeps the group's copy when a file differs. See [copying an existing setup](/docs/sharing#copy-an-existing-setup).
+`ccam migrate` copies `settings.json`, `CLAUDE.md`, extensions and user MCP servers from a Claude Code folder into a group, so every account that shares those items gets them. The folder is only read. The options `--settings`, `--memory`, `--extensions`, `--mcp` and `--history` copy only the items you name. Without them, a checklist on a terminal lets you choose, with everything except conversation history checked; elsewhere everything except conversation history is copied. `-g` or `--group` picks the group, and `-y` or `--yes` copies without asking and keeps the group's copy when a file differs. It also copies the servers' saved sign-ins into each account's own login file. See [copying an existing setup](/docs/sharing#copy-an-existing-setup).
 
 ## MCP servers
 

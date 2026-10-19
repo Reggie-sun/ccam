@@ -4,7 +4,7 @@ description: Jinsi ccam inavyoshiriki seva za MCP, settings.json, CLAUDE.md, age
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: 0864ea87c3e9
+sourceHash: 0df8a7d51c87
 ---
 
 Kila akaunti huhifadhi taarifa zake za kuingia. Kila kitu kingine kinaweza kushirikiwa kipengele kwa kipengele: ccam huweka kiungo kutoka faili au folda ya akaunti kwenda folda ya kikundi kinachoshirikiwa, ili badiliko lililofanywa katika akaunti moja lionekane katika akaunti zote za kikundi hicho.
@@ -64,14 +64,19 @@ Ikiwa ulitumia Claude Code kabla ya ccam, mipangilio yako iko katika `~/.claude`
 ccam migrate
 ```
 
+Kwenye terminal, ccam huonyesha kwanza orodha ya kuteua ya vipengele. Kila kitu isipokuwa historia ya mazungumzo kimeteuliwa; bonyeza Space kubadilisha kipengele na Enter kuona mpango. Vipengele ambavyo folda haina chochote kwavyo huwekwa alama `not found`.
+
 Kinachonakiliwa:
 
 - `settings.json` na `CLAUDE.md` ya jumla;
 - viendelezi `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/` na `rules/`;
 - seva zako za MCP za mtumiaji, yaani kipengele `mcpServers` cha `~/.claude.json`, kwenda `mcp.json` ya kikundi;
+- taarifa za kuingia zilizohifadhiwa (OAuth) za seva za MCP inazonakili, kwenda kwenye faili ya kuingia ya kila akaunti yenyewe;
 - historia ya mazungumzo (`projects/` na `history.jsonl`), lakini tu ukiongeza `--history`.
 
-Folda chanzo husomwa tu: hakuna kitu ndani yake kinachohamishwa, kuunganishwa au kubadilishwa, na `claude` ya kawaida inaendelea kufanya kazi kama awali. Faili za kuingia `.credentials.json` na `.claude.json` hazinakiliwi kamwe.
+Folda chanzo husomwa tu: hakuna kitu ndani yake kinachohamishwa, kuunganishwa au kubadilishwa, na `claude` ya kawaida inaendelea kufanya kazi kama awali. Faili za kuingia `.credentials.json` na `.claude.json` hazinakiliwi kamwe kwenye kikundi.
+
+Seva za MCP zinazoingia kwa OAuth huhifadhi tokeni zao kwenye taarifa za kuingia, si kwenye orodha ya seva. Ili usilazimike kuingia kwenye seva hizo tena, ccam hunakili taarifa hizo za kuingia kwenye faili ya kuingia ya kila akaunti inayopata seva kupitia kikundi, isipokuwa akaunti tayari ina zake. Huruka akaunti zinazoendeshwa, ambazo bado hazijaingia, zilizosajiliwa mahali zilipo kwa `ccam import`, au zinazohifadhi taarifa zao za kuingia katika Keychain ya macOS, na huzitaja; ingia kwenye seva huko kwa `/mcp`. Akaunti inayoanza kushiriki seva za MCP baadaye hupata taarifa hizo za kuingia unapoendesha `ccam migrate` tena.
 
 ccam huchapisha mpango na huuliza kabla ya kunakili chochote:
 
@@ -101,7 +106,7 @@ Kikundi kikiwa tayari na nakala tofauti ya faili, ccam huuliza, kama inavyofanya
 
 | Chaguo | Athari |
 | --- | --- |
-| `--settings`, `--memory`, `--extensions`, `--mcp`, `--history` | Nakili vipengele unavyovitaja tu; bila hivyo, kila kitu isipokuwa historia ya mazungumzo |
+| `--settings`, `--memory`, `--extensions`, `--mcp`, `--history` | Nakili vipengele unavyovitaja tu, bila orodha ya kuteua; bila hivyo na nje ya terminal, kila kitu isipokuwa historia ya mazungumzo |
 | `-g`, `--group <group>` | Nakili kwenye kikundi hiki badala ya `default` |
 | `-y`, `--yes` | Nakili bila kuuliza; faili ikitofautiana, hifadhi nakala ya kikundi |
 
@@ -124,7 +129,7 @@ ccam mcp import work gh
 
 Ikiwa kikundi tayari kina seva tofauti yenye jina hilo, ccam huiruka na kukujulisha. `--force` hubadilisha seva ya kikundi na huhifadhi `mcp.json` ya zamani kwenye folda ya `.ccam-backup/` ya kikundi.
 
-Seva za MCP zinazoingia kwa OAuth huhifadhi tokeni zao pamoja na taarifa za kuingia za akaunti, kwa hiyo ziidhinishe mara moja katika kila akaunti.
+Seva za MCP zinazoingia kwa OAuth huhifadhi tokeni zao pamoja na taarifa za kuingia za akaunti, kwa hiyo ziidhinishe mara moja katika kila akaunti, au nakili taarifa za kuingia kutoka `~/.claude` kwa `ccam migrate`.
 
 Ikiwa unapendelea seva zionekane katika `claude mcp list` na `/mcp` kama seva za kawaida za mtumiaji, weka `mcp_strategy = "sync"` katika `~/.config/ccam/config.toml`. Kisha ccam huziandika katika `.claude.json` ya kila akaunti kabla ya kuanza, chini ya kufuli ya faili ya Claude Code yenyewe na kwa nakala rudufu.
 

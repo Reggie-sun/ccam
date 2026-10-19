@@ -4,7 +4,7 @@ description: Semua perintah dan opsi ccam, dari ccam add dan ccam <name> hingga 
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 8ac012f7f7cf
+sourceHash: 5a82175c30d3
 ---
 
 Letakkan `--dry-run` sebelum perintah untuk melihat apa yang akan dilakukannya tanpa benar-benar menjalankannya, misalnya `ccam --dry-run work`. Opsi ini berfungsi saat menjalankan Claude Code (`ccam <name>`, `ccam run`, `ccam next`) dan dengan `share`, `migrate`, `shortcut`, `update`, serta `doctor --fix`. Perintah lain yang mengubah sesuatu akan menolaknya alih-alih berjalan.
@@ -72,7 +72,7 @@ ccam migrate ~/.claude-work --group work --settings --mcp
 ccam migrate --history --yes    # conversation history only
 ```
 
-`ccam migrate` menyalin `settings.json`, `CLAUDE.md`, ekstensi, dan server MCP pengguna dari folder Claude Code ke sebuah grup, sehingga setiap akun yang membagikan item tersebut mendapatkannya. Folder itu hanya dibaca. Opsi `--settings`, `--memory`, `--extensions`, `--mcp`, dan `--history` hanya menyalin item yang Anda sebutkan; tanpa opsi itu, semuanya disalin kecuali riwayat percakapan. `-g` atau `--group` memilih grup, dan `-y` atau `--yes` menyalin tanpa bertanya serta mempertahankan salinan grup jika ada file yang berbeda. Lihat [menyalin penyiapan yang sudah ada](/docs/sharing#copy-an-existing-setup).
+`ccam migrate` menyalin `settings.json`, `CLAUDE.md`, ekstensi, dan server MCP pengguna dari folder Claude Code ke sebuah grup, sehingga setiap akun yang membagikan item tersebut mendapatkannya. Folder itu hanya dibaca. Opsi `--settings`, `--memory`, `--extensions`, `--mcp`, dan `--history` hanya menyalin item yang Anda sebutkan. Tanpa opsi itu, di terminal sebuah daftar centang memungkinkan Anda memilih, dengan semua item kecuali riwayat percakapan sudah dicentang; di luar terminal, semuanya disalin kecuali riwayat percakapan. `-g` atau `--group` memilih grup, dan `-y` atau `--yes` menyalin tanpa bertanya serta mempertahankan salinan grup jika ada file yang berbeda. ccam juga menyalin info masuk server yang tersimpan ke file login milik setiap akun. Lihat [menyalin penyiapan yang sudah ada](/docs/sharing#copy-an-existing-setup).
 
 ## Server MCP
 

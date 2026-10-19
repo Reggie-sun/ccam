@@ -4,7 +4,7 @@ description: "Comment ccam partage serveurs MCP, settings.json, CLAUDE.md, agent
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: 0864ea87c3e9
+sourceHash: 0df8a7d51c87
 ---
 
 Chaque compte conserve sa propre connexion. Tout le reste peut être partagé élément par élément : ccam relie le fichier ou le dossier du compte à un dossier de groupe partagé, si bien qu'une modification faite dans un compte apparaît dans tous les comptes de ce groupe.
@@ -64,14 +64,19 @@ Si vous utilisiez Claude Code avant ccam, vos paramètres se trouvent dans `~/.c
 ccam migrate
 ```
 
+Dans un terminal, ccam affiche d'abord une liste des éléments à cocher. Tout est coché sauf l'historique des conversations ; appuyez sur Espace pour changer un élément et sur Entrée pour voir le plan. Les éléments pour lesquels le dossier ne contient rien sont marqués `not found`.
+
 Ce qui est copié :
 
 - `settings.json` et le `CLAUDE.md` global ;
 - les extensions `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/` et `rules/` ;
 - vos serveurs MCP utilisateur, c'est-à-dire l'entrée `mcpServers` de `~/.claude.json`, dans le `mcp.json` du groupe ;
+- les connexions enregistrées (OAuth) des serveurs MCP qu'il copie, dans le fichier de connexion propre à chaque compte ;
 - l'historique des conversations (`projects/` et `history.jsonl`), mais seulement si vous ajoutez `--history`.
 
-Le dossier source est seulement lu : rien n'y est déplacé, lié ni modifié, et `claude` seul continue de fonctionner comme avant. Les fichiers de connexion `.credentials.json` et `.claude.json` ne sont jamais copiés.
+Le dossier source est seulement lu : rien n'y est déplacé, lié ni modifié, et `claude` seul continue de fonctionner comme avant. Les fichiers de connexion `.credentials.json` et `.claude.json` ne sont jamais copiés dans le groupe.
+
+Les serveurs MCP qui se connectent avec OAuth gardent leurs jetons dans la connexion, pas dans la liste des serveurs. Pour vous éviter de vous y reconnecter, ccam copie ces connexions dans le fichier de connexion de chaque compte qui reçoit les serveurs par le groupe, sauf si le compte a déjà les siennes. Il ignore les comptes en cours d'exécution, pas encore connectés, enregistrés sur place avec `ccam import` ou qui gardent leur connexion dans le trousseau macOS, et les nomme ; connectez-vous aux serveurs depuis ces comptes avec `/mcp`. Un compte qui commence à partager les serveurs MCP plus tard reçoit les connexions quand vous relancez `ccam migrate`.
 
 ccam affiche le plan et demande confirmation avant de copier quoi que ce soit :
 
@@ -101,7 +106,7 @@ Quand le groupe possède déjà une copie différente d'un fichier, ccam vous de
 
 | Option | Effet |
 | --- | --- |
-| `--settings`, `--memory`, `--extensions`, `--mcp`, `--history` | Copier seulement les éléments indiqués ; sans elles, tout sauf l'historique des conversations |
+| `--settings`, `--memory`, `--extensions`, `--mcp`, `--history` | Copier seulement les éléments indiqués, sans la liste à cocher ; sans elles et hors d'un terminal, tout sauf l'historique des conversations |
 | `-g`, `--group <group>` | Copier dans ce groupe au lieu de `default` |
 | `-y`, `--yes` | Copier sans rien demander ; quand un fichier diffère, garder la copie du groupe |
 
@@ -124,7 +129,7 @@ ccam mcp import work gh
 
 Si le groupe possède déjà un autre serveur portant ce nom, ccam l'ignore et vous le signale. `--force` remplace le serveur du groupe et conserve l'ancien `mcp.json` dans le dossier `.ccam-backup/` du groupe.
 
-Les serveurs MCP qui se connectent avec OAuth stockent leurs jetons avec la connexion du compte : autorisez-les donc une fois dans chaque compte.
+Les serveurs MCP qui se connectent avec OAuth stockent leurs jetons avec la connexion du compte : autorisez-les donc une fois dans chaque compte, ou copiez les connexions depuis `~/.claude` avec `ccam migrate`.
 
 Si vous préférez que les serveurs apparaissent dans `claude mcp list` et `/mcp` comme des serveurs utilisateur ordinaires, définissez `mcp_strategy = "sync"` dans `~/.config/ccam/config.toml`. ccam les écrit alors dans le `.claude.json` de chaque compte avant le démarrage, sous le verrou de fichier propre à Claude Code et avec une sauvegarde.
 

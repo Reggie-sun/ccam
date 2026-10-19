@@ -4,7 +4,7 @@ description: Respuestas sobre ccam, cuentas de Claude Code, límites de uso, uso
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 1355fa6ef3c6
+sourceHash: 5ff6e94786a2
 ---
 
 ## ¿ccam es una herramienta oficial de Anthropic?
@@ -29,7 +29,11 @@ Comparte el historial de conversaciones entre las dos cuentas con `ccam share <n
 
 ## ¿ccam ve o envía mi inicio de sesión?
 
-ccam nunca copia ni comparte un inicio de sesión. Lee el token de acceso de una cuenta solo para consultar al endpoint de uso de Anthropic el uso de esa cuenta, cuando ejecutas `ccam usage`, `ccam next --auto` o `ccam doctor`. ccam no tiene telemetría y no envía nada a ningún otro lugar.
+ccam nunca comparte tu inicio de sesión de Claude entre cuentas. Lee el token de acceso de una cuenta solo para consultar al endpoint de uso de Anthropic el uso de esa cuenta, cuando ejecutas `ccam usage`, `ccam next --auto` o `ccam doctor`. `ccam migrate` copia los inicios de sesión guardados de los servidores MCP de `~/.claude` a los archivos de inicio de sesión propios de tus cuentas en la misma computadora. ccam no tiene telemetría y no envía nada a ningún otro lugar.
+
+## ¿Cómo inicio sesión en un servidor remoto?
+
+Ejecuta `ccam add` o `ccam login <name>` en la sesión SSH como de costumbre. Claude Code espera el inicio de sesión en el servidor, así que el navegador de tu computadora termina en una página `http://localhost:<port>/callback?code=…` que no carga. Copia esa dirección del navegador y pégala en la terminal: ccam se la pasa a Claude Code en el servidor, que completa el inicio de sesión. La dirección contiene un código de un solo uso, así que no la compartas.
 
 ## ¿Dónde se guardan mis cuentas?
 

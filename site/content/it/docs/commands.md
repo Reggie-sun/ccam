@@ -4,7 +4,7 @@ description: Tutti i comandi e le opzioni di ccam, da ccam add e ccam <name> fin
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 8ac012f7f7cf
+sourceHash: 5a82175c30d3
 ---
 
 Metti `--dry-run` prima di un comando per vedere cosa farebbe senza eseguirlo, per esempio `ccam --dry-run work`. Funziona quando avvii Claude Code (`ccam <name>`, `ccam run`, `ccam next`) e con `share`, `migrate`, `shortcut`, `update` e `doctor --fix`. Gli altri comandi che modificano qualcosa lo rifiutano invece di essere eseguiti.
@@ -72,7 +72,7 @@ ccam migrate ~/.claude-work --group work --settings --mcp
 ccam migrate --history --yes    # conversation history only
 ```
 
-`ccam migrate` copia `settings.json`, `CLAUDE.md`, le estensioni e i server MCP utente da una cartella di Claude Code in un gruppo, così ogni account che condivide quegli elementi li riceve. La cartella viene solo letta. Le opzioni `--settings`, `--memory`, `--extensions`, `--mcp` e `--history` copiano solo gli elementi indicati; senza di esse viene copiato tutto tranne la cronologia delle conversazioni. `-g` o `--group` sceglie il gruppo, e `-y` o `--yes` copia senza chiedere e mantiene la copia del gruppo quando un file è diverso. Vedi [copiare una configurazione esistente](/docs/sharing#copy-an-existing-setup).
+`ccam migrate` copia `settings.json`, `CLAUDE.md`, le estensioni e i server MCP utente da una cartella di Claude Code in un gruppo, così ogni account che condivide quegli elementi li riceve. La cartella viene solo letta. Le opzioni `--settings`, `--memory`, `--extensions`, `--mcp` e `--history` copiano solo gli elementi indicati. Senza di esse, in un terminale una checklist ti permette di scegliere, con tutto selezionato tranne la cronologia delle conversazioni; altrove viene copiato tutto tranne la cronologia delle conversazioni. `-g` o `--group` sceglie il gruppo, e `-y` o `--yes` copia senza chiedere e mantiene la copia del gruppo quando un file è diverso. Copia anche gli accessi salvati dei server nel file di login di ciascun account. Vedi [copiare una configurazione esistente](/docs/sharing#copy-an-existing-setup).
 
 ## Server MCP
 

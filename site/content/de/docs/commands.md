@@ -4,7 +4,7 @@ description: Alle ccam-Befehle und -Optionen, von ccam add und ccam <name> bis z
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 8ac012f7f7cf
+sourceHash: 5a82175c30d3
 ---
 
 Setze `--dry-run` vor einen Befehl, um zu sehen, was er tun würde, ohne es zu tun, zum Beispiel `ccam --dry-run work`. Das funktioniert beim Starten von Claude Code (`ccam <name>`, `ccam run`, `ccam next`) sowie mit `share`, `migrate`, `shortcut`, `update` und `doctor --fix`. Andere Befehle, die etwas ändern, lehnen die Option ab, statt zu laufen.
@@ -72,7 +72,7 @@ ccam migrate ~/.claude-work --group work --settings --mcp
 ccam migrate --history --yes    # conversation history only
 ```
 
-`ccam migrate` kopiert `settings.json`, `CLAUDE.md`, Erweiterungen und Benutzer-MCP-Server aus einem Claude Code-Ordner in eine Gruppe, sodass jedes Konto, das diese Elemente teilt, sie bekommt. Der Ordner wird nur gelesen. Die Optionen `--settings`, `--memory`, `--extensions`, `--mcp` und `--history` kopieren nur die genannten Elemente; ohne sie wird alles außer dem Gesprächsverlauf kopiert. `-g` oder `--group` wählt die Gruppe, und `-y` oder `--yes` kopiert ohne Nachfrage und behält die Kopie der Gruppe, wenn eine Datei abweicht. Siehe [Eine vorhandene Einrichtung kopieren](/docs/sharing#copy-an-existing-setup).
+`ccam migrate` kopiert `settings.json`, `CLAUDE.md`, Erweiterungen und Benutzer-MCP-Server aus einem Claude Code-Ordner in eine Gruppe, sodass jedes Konto, das diese Elemente teilt, sie bekommt. Der Ordner wird nur gelesen. Die Optionen `--settings`, `--memory`, `--extensions`, `--mcp` und `--history` kopieren nur die genannten Elemente. Ohne sie kannst du in einem Terminal in einer Checkliste auswählen, in der alles außer dem Gesprächsverlauf angehakt ist; anderswo wird alles außer dem Gesprächsverlauf kopiert. `-g` oder `--group` wählt die Gruppe, und `-y` oder `--yes` kopiert ohne Nachfrage und behält die Kopie der Gruppe, wenn eine Datei abweicht. Außerdem kopiert es die gespeicherten Anmeldungen der Server in die eigene Anmeldedatei jedes Kontos. Siehe [Eine vorhandene Einrichtung kopieren](/docs/sharing#copy-an-existing-setup).
 
 ## MCP-Server
 

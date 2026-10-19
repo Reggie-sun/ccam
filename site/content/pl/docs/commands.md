@@ -4,7 +4,7 @@ description: Wszystkie polecenia i opcje ccam, od ccam add i ccam <name> po ccam
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 8ac012f7f7cf
+sourceHash: 5a82175c30d3
 ---
 
 Wpisz `--dry-run` przed poleceniem, żeby zobaczyć, co by zrobiło, bez wykonywania go, na przykład `ccam --dry-run work`. Działa to przy uruchamianiu Claude Code (`ccam <name>`, `ccam run`, `ccam next`) oraz z `share`, `migrate`, `shortcut`, `update` i `doctor --fix`. Inne polecenia, które coś zmieniają, odrzucają tę opcję zamiast się wykonać.
@@ -72,7 +72,7 @@ ccam migrate ~/.claude-work --group work --settings --mcp
 ccam migrate --history --yes    # conversation history only
 ```
 
-`ccam migrate` kopiuje `settings.json`, `CLAUDE.md`, rozszerzenia i serwery MCP użytkownika z folderu Claude Code do grupy, żeby dostało je każde konto współdzielące te elementy. Folder jest tylko odczytywany. Opcje `--settings`, `--memory`, `--extensions`, `--mcp` i `--history` kopiują tylko wskazane elementy; bez nich kopiowane jest wszystko oprócz historii rozmów. `-g` lub `--group` wybiera grupę, a `-y` lub `--yes` kopiuje bez pytania i zachowuje kopię grupy, gdy plik się różni. Zobacz [kopiowanie istniejącej konfiguracji](/docs/sharing#copy-an-existing-setup).
+`ccam migrate` kopiuje `settings.json`, `CLAUDE.md`, rozszerzenia i serwery MCP użytkownika z folderu Claude Code do grupy, żeby dostało je każde konto współdzielące te elementy. Folder jest tylko odczytywany. Opcje `--settings`, `--memory`, `--extensions`, `--mcp` i `--history` kopiują tylko wskazane elementy. Bez nich w terminalu pojawia się lista wyboru, na której zaznaczone jest wszystko oprócz historii rozmów; poza terminalem kopiowane jest wszystko oprócz historii rozmów. `-g` lub `--group` wybiera grupę, a `-y` lub `--yes` kopiuje bez pytania i zachowuje kopię grupy, gdy plik się różni. Kopiuje też zapisane logowania serwerów do własnego pliku logowania każdego konta. Zobacz [kopiowanie istniejącej konfiguracji](/docs/sharing#copy-an-existing-setup).
 
 ## Serwery MCP
 

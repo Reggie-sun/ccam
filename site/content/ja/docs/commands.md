@@ -4,7 +4,7 @@ description: ccam addやccam <name>から、ccam usage、ccam next、ccam doctor
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 8ac012f7f7cf
+sourceHash: 5a82175c30d3
 ---
 
 コマンドの前に`--dry-run`を付けると、実際には実行せずに何をするかを確認できます。たとえば`ccam --dry-run work`のように使います。これが使えるのは、Claude Codeを起動するとき（`ccam <name>`、`ccam run`、`ccam next`）と、`share`、`migrate`、`shortcut`、`update`、`doctor --fix`です。何かを変更するそれ以外のコマンドは、実行せずにこのオプションを拒否します。
@@ -72,7 +72,7 @@ ccam migrate ~/.claude-work --group work --settings --mcp
 ccam migrate --history --yes    # conversation history only
 ```
 
-`ccam migrate`は、Claude Codeのフォルダーから`settings.json`、`CLAUDE.md`、拡張機能、ユーザーのMCPサーバーをグループにコピーし、それらの項目を共有するすべてのアカウントで使えるようにします。フォルダーは読み取るだけです。`--settings`、`--memory`、`--extensions`、`--mcp`、`--history`の各オプションを付けると、指定した項目だけをコピーします。何も付けない場合は、会話履歴以外のすべてをコピーします。`-g`または`--group`でグループを選び、`-y`または`--yes`を付けると確認なしでコピーし、内容が異なるファイルはグループのものを残します。詳しくは[既存の環境をコピーする](/docs/sharing#copy-an-existing-setup)を参照してください。
+`ccam migrate`は、Claude Codeのフォルダーから`settings.json`、`CLAUDE.md`、拡張機能、ユーザーのMCPサーバーをグループにコピーし、それらの項目を共有するすべてのアカウントで使えるようにします。フォルダーは読み取るだけです。`--settings`、`--memory`、`--extensions`、`--mcp`、`--history`の各オプションを付けると、指定した項目だけをコピーします。何も付けない場合、ターミナルではチェックリストが表示され、会話履歴以外のすべてにチェックが入った状態から選べます。ターミナル以外では、会話履歴以外のすべてをコピーします。`-g`または`--group`でグループを選び、`-y`または`--yes`を付けると確認なしでコピーし、内容が異なるファイルはグループのものを残します。また、サーバーの保存済みのサインイン情報を各アカウント自身のログインファイルにコピーします。詳しくは[既存の環境をコピーする](/docs/sharing#copy-an-existing-setup)を参照してください。
 
 ## MCPサーバー
 

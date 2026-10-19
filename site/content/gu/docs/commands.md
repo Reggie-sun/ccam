@@ -4,7 +4,7 @@ description: ccam ના બધા કમાન્ડ અને ઓપ્શન,
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 8ac012f7f7cf
+sourceHash: 5a82175c30d3
 ---
 
 કોઈ કમાન્ડ ખરેખર ચલાવ્યા વગર તે શું કરશે તે જોવા માટે તેની આગળ `--dry-run` મૂકો, ઉદાહરણ તરીકે `ccam --dry-run work`. તે Claude Code શરૂ કરતી વખતે (`ccam <name>`, `ccam run`, `ccam next`) અને `share`, `migrate`, `shortcut`, `update` તથા `doctor --fix` સાથે કામ કરે છે. કંઈક બદલતા બીજા કમાન્ડ ચાલવાને બદલે તેનો ઇનકાર કરે છે.
@@ -72,7 +72,7 @@ ccam migrate ~/.claude-work --group work --settings --mcp
 ccam migrate --history --yes    # conversation history only
 ```
 
-`ccam migrate` કોઈ Claude Code ફોલ્ડરમાંથી `settings.json`, `CLAUDE.md`, એક્સટેન્શન્સ અને user MCP સર્વર એક ગ્રુપમાં કૉપિ કરે છે, જેથી તે આઇટમ શેર કરતા દરેક એકાઉન્ટને તે મળે. ફોલ્ડર ફક્ત વંચાય છે. `--settings`, `--memory`, `--extensions`, `--mcp` અને `--history` ઓપ્શન્સ ફક્ત તમે નામ આપેલી આઇટમ કૉપિ કરે છે; તેમના વગર વાતચીતના ઇતિહાસ સિવાય બધું કૉપિ થાય છે. `-g` કે `--group` ગ્રુપ પસંદ કરે છે, અને `-y` કે `--yes` પૂછ્યા વગર કૉપિ કરે છે અને કોઈ ફાઇલ જુદી હોય ત્યારે ગ્રુપની કૉપિ રાખે છે. [હાલનું સેટઅપ કૉપિ કરવું](/docs/sharing#copy-an-existing-setup) જુઓ.
+`ccam migrate` કોઈ Claude Code ફોલ્ડરમાંથી `settings.json`, `CLAUDE.md`, એક્સટેન્શન્સ અને user MCP સર્વર એક ગ્રુપમાં કૉપિ કરે છે, જેથી તે આઇટમ શેર કરતા દરેક એકાઉન્ટને તે મળે. ફોલ્ડર ફક્ત વંચાય છે. `--settings`, `--memory`, `--extensions`, `--mcp` અને `--history` ઓપ્શન્સ ફક્ત તમે નામ આપેલી આઇટમ કૉપિ કરે છે. તેમના વગર, ટર્મિનલ પર એક ચેકલિસ્ટ તમને પસંદ કરવા દે છે, જેમાં વાતચીતના ઇતિહાસ સિવાય બધું ચેક કરેલું હોય છે; બીજે બધે વાતચીતના ઇતિહાસ સિવાય બધું કૉપિ થાય છે. `-g` કે `--group` ગ્રુપ પસંદ કરે છે, અને `-y` કે `--yes` પૂછ્યા વગર કૉપિ કરે છે અને કોઈ ફાઇલ જુદી હોય ત્યારે ગ્રુપની કૉપિ રાખે છે. તે સર્વરનાં સેવ કરેલાં સાઇન-ઇન પણ દરેક એકાઉન્ટની પોતાની લૉગિન ફાઇલમાં કૉપિ કરે છે. [હાલનું સેટઅપ કૉપિ કરવું](/docs/sharing#copy-an-existing-setup) જુઓ.
 
 ## MCP સર્વર
 

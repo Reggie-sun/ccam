@@ -4,7 +4,7 @@ description: ccam, Claude Code 계정, 사용량 한도, 공유, 개인정보, �
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 1355fa6ef3c6
+sourceHash: 5ff6e94786a2
 ---
 
 ## ccam은 Anthropic 공식 도구인가요?
@@ -29,7 +29,11 @@ sourceHash: 1355fa6ef3c6
 
 ## ccam이 제 로그인 정보를 보거나 외부로 보내나요?
 
-ccam은 로그인 정보를 절대 복사하거나 공유하지 않습니다. 계정의 액세스 토큰은 `ccam usage`, `ccam next --auto`, `ccam doctor`를 실행할 때 Anthropic의 사용량 엔드포인트에 해당 계정의 사용량을 조회하는 용도로만 읽습니다. ccam에는 원격 측정(telemetry) 기능이 없으며, 그 밖의 어디에도 데이터를 보내지 않습니다.
+ccam은 계정 사이에 Claude 로그인 정보를 절대 공유하지 않습니다. 계정의 액세스 토큰은 `ccam usage`, `ccam next --auto`, `ccam doctor`를 실행할 때 Anthropic의 사용량 엔드포인트에 해당 계정의 사용량을 조회하는 용도로만 읽습니다. `ccam migrate`는 `~/.claude`에 저장된 MCP 서버의 로그인 정보를 같은 컴퓨터에 있는 각 계정 자체의 로그인 파일로 복사합니다. ccam에는 원격 측정(telemetry) 기능이 없으며, 그 밖의 어디에도 데이터를 보내지 않습니다.
+
+## 원격 서버에서는 어떻게 로그인하나요?
+
+SSH 세션에서 평소처럼 `ccam add`나 `ccam login <name>`을 실행하세요. Claude Code는 서버에서 로그인을 기다리므로, 내 컴퓨터의 브라우저는 결국 로드되지 않는 `http://localhost:<port>/callback?code=…` 페이지에서 멈춥니다. 브라우저에서 그 주소를 복사해 터미널에 붙여 넣으세요. ccam이 주소를 서버의 Claude Code에 넘기고, Claude Code가 로그인을 마칩니다. 주소에는 일회용 코드가 들어 있으니 다른 사람과 공유하지 마세요.
 
 ## 계정은 어디에 저장되나요?
 

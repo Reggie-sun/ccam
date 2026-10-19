@@ -4,7 +4,7 @@ description: 用 ccam add 添加两个 Claude Code 账号，为它们设置 ccwo
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: eb078efa2ee2
+sourceHash: d040e34d2a17
 ---
 
 用 `ccam add` 添加每个账号，然后用 `ccam <name>` 或你自己命名的快捷命令（例如 `ccwork`）启动 Claude Code。大多数人只需要这些。
@@ -15,7 +15,7 @@ sourceHash: eb078efa2ee2
 ccam add
 ```
 
-向导会询问账号名称（例如 `personal` 或 `work`）、该账号要与其他账号共享哪些项，以及是否创建快捷命令（见第 4 步）。然后它会运行 `claude auth login`，打开浏览器让你登录。完成后你会看到：
+向导会询问账号名称（例如 `personal` 或 `work`）、该账号要与其他账号共享哪些项，以及是否创建快捷命令（见第 4 步）。然后它会运行 `claude auth login`，打开浏览器让你登录。在远程机器上，浏览器可能停在一个无法加载的 `http://localhost:…/callback` 页面；把这个地址粘贴到终端中，ccam 就会完成登录。完成后你会看到：
 
 ```console
 ✓ personal (me@example.com) added

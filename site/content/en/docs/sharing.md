@@ -63,14 +63,19 @@ If you used Claude Code before ccam, your settings are in `~/.claude`. `ccam mig
 ccam migrate
 ```
 
+On a terminal, ccam first shows a checklist of the items. Everything except conversation history is checked; press Space to change an item and Enter to see the plan. Items the folder has nothing for are marked `not found`.
+
 What it copies:
 
 - `settings.json` and the global `CLAUDE.md`;
 - the extensions `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/` and `rules/`;
 - your user MCP servers, the `mcpServers` entry of `~/.claude.json`, into the group's `mcp.json`;
+- the saved sign-ins (OAuth) of the MCP servers it copies, into each account's own login file;
 - conversation history (`projects/` and `history.jsonl`), but only when you add `--history`.
 
-The source folder is only read: nothing in it is moved, linked or changed, and plain `claude` keeps working as before. The login files `.credentials.json` and `.claude.json` are never copied.
+The source folder is only read: nothing in it is moved, linked or changed, and plain `claude` keeps working as before. The login files `.credentials.json` and `.claude.json` are never copied into the group.
+
+MCP servers that sign in with OAuth keep their tokens in the login, not in the server list. So that you do not have to sign in to them again, ccam copies those sign-ins into the login file of every account that gets the servers through the group, unless the account already has its own. It skips accounts that are running, not logged in yet, registered in place with `ccam import`, or keep their login in the macOS Keychain, and names them; sign in to the servers there with `/mcp`. An account that starts sharing MCP servers later gets the sign-ins when you run `ccam migrate` again.
 
 ccam prints the plan and asks before it copies anything:
 
@@ -100,7 +105,7 @@ When the group already has a different copy of a file, ccam asks, as it does whe
 
 | Option | Effect |
 | --- | --- |
-| `--settings`, `--memory`, `--extensions`, `--mcp`, `--history` | Copy only the items you name; without them, everything except conversation history |
+| `--settings`, `--memory`, `--extensions`, `--mcp`, `--history` | Copy only the items you name, without the checklist; without them and outside a terminal, everything except conversation history |
 | `-g`, `--group <group>` | Copy into this group instead of `default` |
 | `-y`, `--yes` | Copy without asking; when a file differs, keep the group's copy |
 
@@ -123,7 +128,7 @@ ccam mcp import work gh
 
 If the group already has a different server with that name, ccam skips it and says so. `--force` replaces the group's server and keeps the old `mcp.json` in the group's `.ccam-backup/` folder.
 
-MCP servers that sign in with OAuth store their tokens with the account's login, so authorise them once in each account.
+MCP servers that sign in with OAuth store their tokens with the account's login, so authorise them once in each account, or copy the sign-ins from `~/.claude` with `ccam migrate`.
 
 If you prefer the servers to appear in `claude mcp list` and `/mcp` as ordinary user servers, set `mcp_strategy = "sync"` in `~/.config/ccam/config.toml`. ccam then writes them into each account's `.claude.json` before starting, under Claude Code's own file lock and with a backup.
 

@@ -4,7 +4,7 @@ description: Thêm hai tài khoản Claude Code bằng ccam add, đặt cho chú
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: eb078efa2ee2
+sourceHash: d040e34d2a17
 ---
 
 Thêm từng tài khoản bằng `ccam add`, rồi khởi động Claude Code bằng `ccam <name>` hoặc bằng một lệnh tắt do bạn tự đặt tên, chẳng hạn `ccwork`. Hầu hết mọi người chỉ cần như vậy.
@@ -15,7 +15,7 @@ Thêm từng tài khoản bằng `ccam add`, rồi khởi động Claude Code b�
 ccam add
 ```
 
-Trình hướng dẫn hỏi một cái tên, chẳng hạn `personal` hoặc `work`, những mục nào tài khoản nên dùng chung với các tài khoản khác của bạn, và có tạo lệnh tắt hay không (xem bước 4). Sau đó nó chạy `claude auth login`, lệnh này mở trình duyệt để bạn đăng nhập. Khi hoàn tất, bạn sẽ thấy:
+Trình hướng dẫn hỏi một cái tên, chẳng hạn `personal` hoặc `work`, những mục nào tài khoản nên dùng chung với các tài khoản khác của bạn, và có tạo lệnh tắt hay không (xem bước 4). Sau đó nó chạy `claude auth login`, lệnh này mở trình duyệt để bạn đăng nhập. Trên máy từ xa, trình duyệt có thể dừng ở một trang `http://localhost:…/callback` không tải được; hãy dán địa chỉ đó vào terminal và ccam sẽ hoàn tất việc đăng nhập. Khi hoàn tất, bạn sẽ thấy:
 
 ```console
 ✓ personal (me@example.com) added

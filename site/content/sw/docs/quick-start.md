@@ -4,7 +4,7 @@ description: Ongeza akaunti mbili za Claude Code kwa ccam add, zipe njia fupi ka
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: eb078efa2ee2
+sourceHash: d040e34d2a17
 ---
 
 Ongeza kila akaunti kwa `ccam add`, kisha anzisha Claude Code kwa `ccam <name>` au kwa njia fupi unayoipa jina mwenyewe, kama `ccwork`. Hivyo ndivyo watu wengi wanavyohitaji.
@@ -15,7 +15,7 @@ Ongeza kila akaunti kwa `ccam add`, kisha anzisha Claude Code kwa `ccam <name>` 
 ccam add
 ```
 
-Mchawi wa usanidi (wizard) huuliza jina kama `personal` au `work`, ni vipengele gani akaunti inapaswa kushiriki na akaunti zako nyingine, na kama uunde amri ya njia fupi (tazama hatua ya 4). Kisha huendesha `claude auth login`, ambayo hufungua kivinjari ili uweze kuingia. Ikimaliza utaona:
+Mchawi wa usanidi (wizard) huuliza jina kama `personal` au `work`, ni vipengele gani akaunti inapaswa kushiriki na akaunti zako nyingine, na kama uunde amri ya njia fupi (tazama hatua ya 4). Kisha huendesha `claude auth login`, ambayo hufungua kivinjari ili uweze kuingia. Kwenye mashine ya mbali, kivinjari kinaweza kuishia kwenye ukurasa wa `http://localhost:…/callback` ambao haufunguki; bandika anwani hiyo kwenye terminal na ccam hukamilisha kuingia. Ikimaliza utaona:
 
 ```console
 ✓ personal (me@example.com) added

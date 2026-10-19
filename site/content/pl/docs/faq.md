@@ -4,7 +4,7 @@ description: Odpowiedzi o ccam, kontach Claude Code, limitach użycia, współdz
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 1355fa6ef3c6
+sourceHash: 5ff6e94786a2
 ---
 
 ## Czy ccam to oficjalne narzędzie Anthropic?
@@ -29,7 +29,11 @@ Włącz współdzielenie historii rozmów między oboma kontami poleceniem `ccam
 
 ## Czy ccam widzi albo wysyła mój login?
 
-ccam nigdy nie kopiuje ani nie współdzieli loginu. Odczytuje token dostępu konta tylko po to, żeby zapytać endpoint użycia Anthropic o użycie tego konta, gdy uruchamiasz `ccam usage`, `ccam next --auto` lub `ccam doctor`. ccam nie ma telemetrii i nie wysyła niczego nigdzie indziej.
+ccam nigdy nie współdzieli twojego loginu Claude między kontami. Odczytuje token dostępu konta tylko po to, żeby zapytać endpoint użycia Anthropic o użycie tego konta, gdy uruchamiasz `ccam usage`, `ccam next --auto` lub `ccam doctor`. `ccam migrate` kopiuje zapisane logowania serwerów MCP z `~/.claude` do własnych plików logowania twoich kont na tym samym komputerze. ccam nie ma telemetrii i nie wysyła niczego nigdzie indziej.
+
+## Jak zalogować się na zdalnym serwerze?
+
+Uruchom `ccam add` lub `ccam login <name>` w sesji SSH jak zwykle. Claude Code czeka na logowanie na serwerze, więc przeglądarka na twoim komputerze kończy na stronie `http://localhost:<port>/callback?code=…`, która się nie wczytuje. Skopiuj ten adres z przeglądarki i wklej go do terminala: ccam przekaże go do Claude Code na serwerze, który dokończy logowanie. Adres zawiera jednorazowy kod, więc nikomu go nie udostępniaj.
 
 ## Gdzie są przechowywane moje konta?
 

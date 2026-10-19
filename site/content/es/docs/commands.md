@@ -4,7 +4,7 @@ description: Todos los comandos y opciones de ccam, desde ccam add y ccam <name>
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 8ac012f7f7cf
+sourceHash: 5a82175c30d3
 ---
 
 Pon `--dry-run` antes de un comando para ver lo que haría sin hacerlo, por ejemplo `ccam --dry-run work`. Funciona al iniciar Claude Code (`ccam <name>`, `ccam run`, `ccam next`) y con `share`, `migrate`, `shortcut`, `update` y `doctor --fix`. Los demás comandos que cambian algo lo rechazan en lugar de ejecutarse.
@@ -72,7 +72,7 @@ ccam migrate ~/.claude-work --group work --settings --mcp
 ccam migrate --history --yes    # conversation history only
 ```
 
-`ccam migrate` copia `settings.json`, `CLAUDE.md`, las extensiones y los servidores MCP de usuario de una carpeta de Claude Code a un grupo, para que todas las cuentas que comparten esos elementos los tengan. La carpeta solo se lee. Las opciones `--settings`, `--memory`, `--extensions`, `--mcp` y `--history` copian solo los elementos que indicas; sin ellas, se copia todo excepto el historial de conversaciones. `-g` o `--group` elige el grupo, y `-y` o `--yes` copia sin preguntar y conserva la copia del grupo cuando un archivo es distinto. Consulta [copiar una configuración existente](/docs/sharing#copy-an-existing-setup).
+`ccam migrate` copia `settings.json`, `CLAUDE.md`, las extensiones y los servidores MCP de usuario de una carpeta de Claude Code a un grupo, para que todas las cuentas que comparten esos elementos los tengan. La carpeta solo se lee. Las opciones `--settings`, `--memory`, `--extensions`, `--mcp` y `--history` copian solo los elementos que indicas. Sin ellas, en una terminal una lista de selección te permite elegir, con todo marcado excepto el historial de conversaciones; en otros casos se copia todo excepto el historial de conversaciones. `-g` o `--group` elige el grupo, y `-y` o `--yes` copia sin preguntar y conserva la copia del grupo cuando un archivo es distinto. También copia los inicios de sesión guardados de los servidores al archivo de inicio de sesión propio de cada cuenta. Consulta [copiar una configuración existente](/docs/sharing#copy-an-existing-setup).
 
 ## Servidores MCP
 

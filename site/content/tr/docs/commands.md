@@ -4,7 +4,7 @@ description: ccam add ve ccam <name> komutlarından ccam usage, ccam next ve cca
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 8ac012f7f7cf
+sourceHash: 5a82175c30d3
 ---
 
 Bir komutun ne yapacağını, yapmadan görmek için komuttan önce `--dry-run` yazın, örneğin `ccam --dry-run work`. Bu, Claude Code başlatılırken (`ccam <name>`, `ccam run`, `ccam next`) ve `share`, `migrate`, `shortcut`, `update` ile `doctor --fix` komutlarında çalışır. Bir şeyi değiştiren diğer komutlar çalışmak yerine bunu reddeder.
@@ -72,7 +72,7 @@ ccam migrate ~/.claude-work --group work --settings --mcp
 ccam migrate --history --yes    # conversation history only
 ```
 
-`ccam migrate`, `settings.json`, `CLAUDE.md`, uzantıları ve kullanıcı MCP sunucularını bir Claude Code klasöründen bir gruba kopyalar; böylece bu öğeleri paylaşan her hesap onlara sahip olur. Klasör yalnızca okunur. `--settings`, `--memory`, `--extensions`, `--mcp` ve `--history` seçenekleri yalnızca belirttiğiniz öğeleri kopyalar; bunlar olmadan konuşma geçmişi dışındaki her şey kopyalanır. `-g` veya `--group` grubu seçer; `-y` veya `--yes` sormadan kopyalar ve bir dosya farklıysa grubun kopyasını korur. [Mevcut bir kurulumu kopyalama](/docs/sharing#copy-an-existing-setup) bölümüne bakın.
+`ccam migrate`, `settings.json`, `CLAUDE.md`, uzantıları ve kullanıcı MCP sunucularını bir Claude Code klasöründen bir gruba kopyalar; böylece bu öğeleri paylaşan her hesap onlara sahip olur. Klasör yalnızca okunur. `--settings`, `--memory`, `--extensions`, `--mcp` ve `--history` seçenekleri yalnızca belirttiğiniz öğeleri kopyalar. Bunlar olmadan, terminalde bir kontrol listesinden seçim yaparsınız ve konuşma geçmişi dışındaki her şey işaretlidir; diğer durumlarda konuşma geçmişi dışındaki her şey kopyalanır. `-g` veya `--group` grubu seçer; `-y` veya `--yes` sormadan kopyalar ve bir dosya farklıysa grubun kopyasını korur. Ayrıca sunucuların kaydedilmiş girişlerini her hesabın kendi giriş dosyasına kopyalar. [Mevcut bir kurulumu kopyalama](/docs/sharing#copy-an-existing-setup) bölümüne bakın.
 
 ## MCP sunucuları
 

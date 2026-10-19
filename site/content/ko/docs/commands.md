@@ -4,7 +4,7 @@ description: ccam add, ccam <name>부터 ccam usage, ccam next, ccam doctor까�
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 8ac012f7f7cf
+sourceHash: 5a82175c30d3
 ---
 
 명령 앞에 `--dry-run`을 붙이면 실제로 실행하지 않고 무엇을 할지만 보여 줍니다(예: `ccam --dry-run work`). Claude Code를 시작할 때(`ccam <name>`, `ccam run`, `ccam next`)와 `share`, `migrate`, `shortcut`, `update`, `doctor --fix`에서 쓸 수 있습니다. 무언가를 바꾸는 다른 명령은 실행하지 않고 이 옵션을 거부합니다.
@@ -72,7 +72,7 @@ ccam migrate ~/.claude-work --group work --settings --mcp
 ccam migrate --history --yes    # conversation history only
 ```
 
-`ccam migrate`는 Claude Code 폴더에 있는 `settings.json`, `CLAUDE.md`, 확장 기능, 사용자 MCP 서버를 공유 그룹으로 복사합니다. 그러면 그 항목을 공유하는 모든 계정이 같은 내용을 쓰게 됩니다. 원본 폴더는 읽기만 합니다. `--settings`, `--memory`, `--extensions`, `--mcp`, `--history` 옵션을 주면 지정한 항목만 복사하고, 옵션이 없으면 대화 내역을 제외한 모든 항목을 복사합니다. `-g` 또는 `--group`으로 그룹을 고르고, `-y` 또는 `--yes`를 주면 묻지 않고 복사하며 내용이 다른 파일은 그룹의 사본을 유지합니다. 자세한 내용은 [기존 설정 복사하기](/docs/sharing#copy-an-existing-setup)를 참고하세요.
+`ccam migrate`는 Claude Code 폴더에 있는 `settings.json`, `CLAUDE.md`, 확장 기능, 사용자 MCP 서버를 공유 그룹으로 복사합니다. 그러면 그 항목을 공유하는 모든 계정이 같은 내용을 쓰게 됩니다. 원본 폴더는 읽기만 합니다. `--settings`, `--memory`, `--extensions`, `--mcp`, `--history` 옵션을 주면 지정한 항목만 복사합니다. 옵션이 없으면 터미널에서는 체크리스트가 나타나 직접 고를 수 있으며, 대화 내역을 제외한 모든 항목이 선택되어 있습니다. 터미널이 아니면 대화 내역을 제외한 모든 항목을 복사합니다. `-g` 또는 `--group`으로 그룹을 고르고, `-y` 또는 `--yes`를 주면 묻지 않고 복사하며 내용이 다른 파일은 그룹의 사본을 유지합니다. 또한 MCP 서버에 저장된 로그인 정보를 각 계정 자체의 로그인 파일로 복사합니다. 자세한 내용은 [기존 설정 복사하기](/docs/sharing#copy-an-existing-setup)를 참고하세요.
 
 ## MCP 서버
 

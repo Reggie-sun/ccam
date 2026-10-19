@@ -4,7 +4,7 @@ description: ccam 如何在 Claude Code 账号之间共享 MCP 服务器、setti
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: 0864ea87c3e9
+sourceHash: 0df8a7d51c87
 ---
 
 每个账号都保留自己的登录。其他所有内容都可以逐项共享：ccam 把账号中的文件或文件夹链接到一个共享组文件夹，因此在一个账号中所做的更改会出现在该组的所有账号中。
@@ -64,14 +64,19 @@ ccam share work --history off
 ccam migrate
 ```
 
+在终端中，ccam 会先显示一个项目清单。除对话历史外的所有项都已勾选；按 Space 切换某一项，按 Enter 查看计划。文件夹中没有内容的项会标记为 `not found`。
+
 它会复制：
 
 - `settings.json` 和全局 `CLAUDE.md`；
 - 扩展 `agents/`、`commands/`、`skills/`、`plugins/`、`output-styles/` 和 `rules/`；
 - 你的用户 MCP 服务器，即 `~/.claude.json` 中的 `mcpServers` 条目，复制到组的 `mcp.json` 中；
+- 所复制的 MCP 服务器已保存的登录（OAuth），复制到每个账号自己的登录文件中；
 - 对话历史（`projects/` 和 `history.jsonl`），但仅在你加上 `--history` 时复制。
 
-源文件夹只会被读取：其中的任何内容都不会被移动、链接或修改，直接运行 `claude` 也会像以前一样工作。登录文件 `.credentials.json` 和 `.claude.json` 从不复制。
+源文件夹只会被读取：其中的任何内容都不会被移动、链接或修改，直接运行 `claude` 也会像以前一样工作。登录文件 `.credentials.json` 和 `.claude.json` 从不复制到组中。
+
+通过 OAuth 登录的 MCP 服务器把令牌保存在登录信息中，而不是服务器列表中。为了让你不必重新登录这些服务器，ccam 会把这些登录复制到每个通过组获得这些服务器的账号的登录文件中，除非该账号已有自己的登录。它会跳过正在运行、尚未登录、用 `ccam import` 原地注册，或把登录信息保存在 macOS 钥匙串中的账号，并列出它们的名称；请在这些账号中用 `/mcp` 登录服务器。之后才开始共享 MCP 服务器的账号，会在你再次运行 `ccam migrate` 时获得这些登录。
 
 ccam 在复制任何内容之前，会先显示计划并征求确认：
 
@@ -101,7 +106,7 @@ Accounts that share these through group default:
 
 | 选项 | 作用 |
 | --- | --- |
-| `--settings`、`--memory`、`--extensions`、`--mcp`、`--history` | 只复制你指定的项；不指定时复制除对话历史以外的所有内容 |
+| `--settings`、`--memory`、`--extensions`、`--mcp`、`--history` | 只复制你指定的项，不显示清单；不指定且不在终端中时，复制除对话历史以外的所有内容 |
 | `-g`、`--group <group>` | 复制到这个组，而不是 `default` |
 | `-y`、`--yes` | 不询问直接复制；文件内容不同时保留组中的副本 |
 
@@ -124,7 +129,7 @@ ccam mcp import work gh
 
 如果组中已有同名的不同服务器，ccam 会跳过它并提示你。`--force` 会替换组中的服务器，并把旧的 `mcp.json` 保存在组的 `.ccam-backup/` 文件夹中。
 
-通过 OAuth 登录的 MCP 服务器会把令牌和账号的登录信息存放在一起，因此需要在每个账号中分别授权一次。
+通过 OAuth 登录的 MCP 服务器会把令牌和账号的登录信息存放在一起，因此需要在每个账号中分别授权一次，或者用 `ccam migrate` 从 `~/.claude` 复制这些登录。
 
 如果你希望这些服务器作为普通的用户级服务器出现在 `claude mcp list` 和 `/mcp` 中，请在 `~/.config/ccam/config.toml` 中设置 `mcp_strategy = "sync"`。这样 ccam 会在启动前把它们写入每个账号的 `.claude.json`，写入时使用 Claude Code 自己的文件锁，并保留备份。
 

@@ -4,7 +4,7 @@ description: Ƙara asusun Claude Code biyu da ccam add, ba su gajerun umarni kam
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: eb078efa2ee2
+sourceHash: d040e34d2a17
 ---
 
 Ƙara kowane asusu da `ccam add`, sannan ka fara Claude Code da `ccam <name>` ko da gajeren umarni da kai da kanka ka sa masa suna, kamar `ccwork`. Wannan ne kawai abin da yawancin mutane suke buƙata.
@@ -15,7 +15,7 @@ sourceHash: eb078efa2ee2
 ccam add
 ```
 
-Mataimakin saitawa (wizard) yana tambayar suna kamar `personal` ko `work`, abubuwan da asusun zai raba da sauran asusunka, da kuma ko a ƙirƙiri gajeren umarni (duba mataki na 4). Sannan yana gudanar da `claude auth login`, wanda ke buɗe burauza don ka shiga. Idan ya gama, za ka ga:
+Mataimakin saitawa (wizard) yana tambayar suna kamar `personal` ko `work`, abubuwan da asusun zai raba da sauran asusunka, da kuma ko a ƙirƙiri gajeren umarni (duba mataki na 4). Sannan yana gudanar da `claude auth login`, wanda ke buɗe burauza don ka shiga. A na'ura mai nisa, burauza na iya ƙarewa a shafin `http://localhost:…/callback` wanda ba ya buɗewa; liƙa wannan adireshin a terminal kuma ccam zai kammala shigarwar. Idan ya gama, za ka ga:
 
 ```console
 ✓ personal (me@example.com) added

@@ -4,7 +4,7 @@ description: ccam, Claude Code hesapları, kullanım limitleri, paylaşım, gizl
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 1355fa6ef3c6
+sourceHash: 5ff6e94786a2
 ---
 
 ## ccam resmi bir Anthropic aracı mı?
@@ -29,7 +29,11 @@ Her hesaba `CLAUDE_CONFIG_DIR` ile kendi yapılandırma klasörünü verin. ccam
 
 ## ccam giriş bilgilerimi görüyor veya gönderiyor mu?
 
-ccam hiçbir zaman bir girişi kopyalamaz veya paylaşmaz. Bir hesabın erişim tokenını yalnızca `ccam usage`, `ccam next --auto` veya `ccam doctor` çalıştırdığınızda, o hesabın kullanımını Anthropic'in kullanım uç noktasına sormak için okur. ccam'da telemetri yoktur ve başka hiçbir yere bir şey göndermez.
+ccam, Claude girişinizi hesaplar arasında asla paylaşmaz. Bir hesabın erişim tokenını yalnızca `ccam usage`, `ccam next --auto` veya `ccam doctor` çalıştırdığınızda, o hesabın kullanımını Anthropic'in kullanım uç noktasına sormak için okur. `ccam migrate`, MCP sunucularının kaydedilmiş girişlerini `~/.claude` içinden aynı bilgisayardaki hesaplarınızın kendi giriş dosyalarına kopyalar. ccam'da telemetri yoktur ve başka hiçbir yere bir şey göndermez.
+
+## Uzak bir sunucuda nasıl giriş yaparım?
+
+SSH oturumunda her zamanki gibi `ccam add` veya `ccam login <name>` çalıştırın. Claude Code girişi sunucuda beklediği için bilgisayarınızdaki tarayıcı, yüklenmeyen bir `http://localhost:<port>/callback?code=…` sayfasında kalır. Bu adresi tarayıcıdan kopyalayıp terminale yapıştırın: ccam onu sunucudaki Claude Code'a iletir ve Claude Code girişi tamamlar. Adres tek kullanımlık bir kod içerir, bu yüzden kimseyle paylaşmayın.
 
 ## Hesaplarım nerede saklanıyor?
 

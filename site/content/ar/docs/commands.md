@@ -4,7 +4,7 @@ description: كل أوامر ccam وخياراتها، من ccam add وccam <nam
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 8ac012f7f7cf
+sourceHash: 5a82175c30d3
 ---
 
 ضع `--dry-run` قبل أمر لترى ما سيفعله دون أن يفعله، مثلًا `ccam --dry-run work`. يعمل ذلك عند تشغيل Claude Code (`ccam <name>` و`ccam run` و`ccam next`) ومع `share` و`migrate` و`shortcut` و`update` و`doctor --fix`. أما الأوامر الأخرى التي تغيّر شيئًا فترفضه بدلًا من أن تعمل.
@@ -72,7 +72,7 @@ ccam migrate ~/.claude-work --group work --settings --mcp
 ccam migrate --history --yes    # conversation history only
 ```
 
-ينسخ `ccam migrate` الملفات `settings.json` و`CLAUDE.md` والإضافات وخوادم MCP الخاصة بالمستخدم من مجلد Claude Code إلى مجموعة، فتحصل عليها كل الحسابات التي تشارك هذه العناصر. يُقرأ المجلد فقط. تنسخ الخيارات `--settings` و`--memory` و`--extensions` و`--mcp` و`--history` العناصر التي تحددها فقط؛ ودونها يُنسخ كل شيء ما عدا سجل المحادثات. يختار `-g` أو `--group` المجموعة، وينسخ `-y` أو `--yes` دون سؤال ويحتفظ بنسخة المجموعة عندما يختلف ملف. راجع [نسخ إعداد موجود](/docs/sharing#copy-an-existing-setup).
+ينسخ `ccam migrate` الملفات `settings.json` و`CLAUDE.md` والإضافات وخوادم MCP الخاصة بالمستخدم من مجلد Claude Code إلى مجموعة، فتحصل عليها كل الحسابات التي تشارك هذه العناصر. يُقرأ المجلد فقط. تنسخ الخيارات `--settings` و`--memory` و`--extensions` و`--mcp` و`--history` العناصر التي تحددها فقط. ودونها تتيح لك قائمة اختيار في الطرفية أن تختار، مع تحديد كل شيء ما عدا سجل المحادثات؛ وفي غير ذلك يُنسخ كل شيء ما عدا سجل المحادثات. يختار `-g` أو `--group` المجموعة، وينسخ `-y` أو `--yes` دون سؤال ويحتفظ بنسخة المجموعة عندما يختلف ملف. كما ينسخ تسجيلات الدخول المحفوظة للخوادم إلى ملف تسجيل الدخول الخاص بكل حساب. راجع [نسخ إعداد موجود](/docs/sharing#copy-an-existing-setup).
 
 ## خوادم MCP
 

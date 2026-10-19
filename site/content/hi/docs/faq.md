@@ -4,7 +4,7 @@ description: ccam, Claude Code अकाउंट, उपयोग सीमा�
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 1355fa6ef3c6
+sourceHash: 5ff6e94786a2
 ---
 
 ## क्या ccam, Anthropic का आधिकारिक टूल है?
@@ -29,7 +29,11 @@ sourceHash: 1355fa6ef3c6
 
 ## क्या ccam मेरा लॉगिन देखता या भेजता है?
 
-ccam कभी लॉगिन copy या साझा नहीं करता। यह किसी अकाउंट का access token केवल तब पढ़ता है जब उस अकाउंट का उपयोग Anthropic के usage endpoint से पूछना हो, यानी जब आप `ccam usage`, `ccam next --auto` या `ccam doctor` चलाते हैं। ccam में कोई telemetry नहीं है और यह कहीं और कुछ नहीं भेजता।
+ccam आपका Claude लॉगिन कभी अकाउंट्स के बीच साझा नहीं करता। यह किसी अकाउंट का access token केवल तब पढ़ता है जब उस अकाउंट का उपयोग Anthropic के usage endpoint से पूछना हो, यानी जब आप `ccam usage`, `ccam next --auto` या `ccam doctor` चलाते हैं। `ccam migrate` MCP सर्वरों के सहेजे गए साइन-इन `~/.claude` से उसी कंप्यूटर पर आपके अकाउंट्स की अपनी लॉगिन फ़ाइलों में कॉपी करता है। ccam में कोई telemetry नहीं है और यह कहीं और कुछ नहीं भेजता।
+
+## रिमोट सर्वर पर साइन इन कैसे करें?
+
+SSH सेशन में हमेशा की तरह `ccam add` या `ccam login <name>` चलाएँ। Claude Code सर्वर पर साइन-इन का इंतज़ार करता है, इसलिए आपके कंप्यूटर का ब्राउज़र आख़िर में `http://localhost:<port>/callback?code=…` पेज पर पहुँचता है, जो लोड नहीं होता। वह पता ब्राउज़र से कॉपी करें और टर्मिनल में पेस्ट करें: ccam उसे सर्वर पर Claude Code को देता है, जो साइन-इन पूरा करता है। इस पते में एक बार इस्तेमाल होने वाला कोड होता है, इसलिए इसे किसी के साथ साझा न करें।
 
 ## मेरे अकाउंट कहाँ रखे जाते हैं?
 

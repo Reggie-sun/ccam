@@ -4,7 +4,7 @@ description: "Réponses sur ccam, les comptes Claude Code, les limites d'utilisa
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 1355fa6ef3c6
+sourceHash: 5ff6e94786a2
 ---
 
 ## ccam est-il un outil officiel d'Anthropic ?
@@ -29,7 +29,11 @@ Partagez l'historique des conversations entre les deux comptes avec `ccam share 
 
 ## ccam voit-il ou envoie-t-il mes identifiants de connexion ?
 
-ccam ne copie ni ne partage jamais les identifiants de connexion. Il lit le jeton d'accès d'un compte uniquement pour demander l'utilisation de ce compte au point de terminaison d'utilisation d'Anthropic, quand vous exécutez `ccam usage`, `ccam next --auto` ou `ccam doctor`. ccam n'a aucune télémétrie et n'envoie rien nulle part ailleurs.
+ccam ne partage jamais votre connexion Claude entre les comptes. Il lit le jeton d'accès d'un compte uniquement pour demander l'utilisation de ce compte au point de terminaison d'utilisation d'Anthropic, quand vous exécutez `ccam usage`, `ccam next --auto` ou `ccam doctor`. `ccam migrate` copie les connexions enregistrées des serveurs MCP depuis `~/.claude` dans les fichiers de connexion propres à vos comptes, sur le même ordinateur. ccam n'a aucune télémétrie et n'envoie rien nulle part ailleurs.
+
+## Comment se connecter sur un serveur distant ?
+
+Exécutez `ccam add` ou `ccam login <name>` dans la session SSH, comme d'habitude. Claude Code attend la connexion sur le serveur : le navigateur de votre ordinateur aboutit donc sur une page `http://localhost:<port>/callback?code=…` qui ne se charge pas. Copiez cette adresse depuis le navigateur et collez-la dans le terminal : ccam la transmet à Claude Code sur le serveur, qui termine la connexion. L'adresse contient un code à usage unique : ne la partagez pas.
 
 ## Où mes comptes sont-ils stockés ?
 

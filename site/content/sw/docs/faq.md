@@ -4,7 +4,7 @@ description: Majibu kuhusu ccam, akaunti za Claude Code, vikomo vya matumizi, ku
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 1355fa6ef3c6
+sourceHash: 5ff6e94786a2
 ---
 
 ## Je, ccam ni zana rasmi ya Anthropic?
@@ -29,7 +29,11 @@ Shiriki historia ya mazungumzo kati ya akaunti hizo mbili kwa `ccam share <name>
 
 ## Je, ccam huona au kutuma taarifa zangu za kuingia?
 
-ccam kamwe hainakili wala haishiriki taarifa za kuingia. Husoma tokeni ya ufikiaji ya akaunti ili tu kuuliza endpoint ya matumizi ya Anthropic kuhusu matumizi ya akaunti hiyo, unapoendesha `ccam usage`, `ccam next --auto` au `ccam doctor`. ccam haina telemetry na haitumi chochote mahali pengine popote.
+ccam kamwe haishiriki taarifa zako za kuingia za Claude kati ya akaunti. Husoma tokeni ya ufikiaji ya akaunti ili tu kuuliza endpoint ya matumizi ya Anthropic kuhusu matumizi ya akaunti hiyo, unapoendesha `ccam usage`, `ccam next --auto` au `ccam doctor`. `ccam migrate` hunakili taarifa za kuingia zilizohifadhiwa za seva za MCP kutoka `~/.claude` kwenda kwenye faili za kuingia za akaunti zako zenyewe kwenye kompyuta hiyo hiyo. ccam haina telemetry na haitumi chochote mahali pengine popote.
+
+## Nitaingiaje kwenye seva ya mbali?
+
+Endesha `ccam add` au `ccam login <name>` kwenye kipindi cha SSH kama kawaida. Claude Code husubiri kuingia kwenye seva, kwa hiyo kivinjari kwenye kompyuta yako huishia kwenye ukurasa wa `http://localhost:<port>/callback?code=…` ambao haufunguki. Nakili anwani hiyo kutoka kwenye kivinjari na uibandike kwenye terminal: ccam huipitisha kwa Claude Code kwenye seva, ambayo hukamilisha kuingia. Anwani hiyo ina msimbo wa matumizi ya mara moja, kwa hiyo usiishiriki.
 
 ## Akaunti zangu zimehifadhiwa wapi?
 

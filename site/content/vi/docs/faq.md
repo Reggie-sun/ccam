@@ -4,7 +4,7 @@ description: "Giải đáp về ccam, tài khoản Claude Code, giới hạn s�
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 1355fa6ef3c6
+sourceHash: 5ff6e94786a2
 ---
 
 ## ccam có phải là công cụ chính thức của Anthropic không?
@@ -29,7 +29,11 @@ Bật dùng chung lịch sử hội thoại giữa hai tài khoản bằng `ccam
 
 ## ccam có xem hoặc gửi thông tin đăng nhập của tôi đi không?
 
-ccam không bao giờ sao chép hay dùng chung thông tin đăng nhập. Nó chỉ đọc access token của một tài khoản để hỏi endpoint mức sử dụng của Anthropic về mức sử dụng của tài khoản đó, khi bạn chạy `ccam usage`, `ccam next --auto` hoặc `ccam doctor`. ccam không có telemetry và không gửi gì đến bất kỳ nơi nào khác.
+ccam không bao giờ dùng chung thông tin đăng nhập Claude của bạn giữa các tài khoản. Nó chỉ đọc access token của một tài khoản để hỏi endpoint mức sử dụng của Anthropic về mức sử dụng của tài khoản đó, khi bạn chạy `ccam usage`, `ccam next --auto` hoặc `ccam doctor`. `ccam migrate` sao chép thông tin đăng nhập đã lưu của các máy chủ MCP từ `~/.claude` vào tệp đăng nhập riêng của các tài khoản của bạn trên cùng một máy tính. ccam không có telemetry và không gửi gì đến bất kỳ nơi nào khác.
+
+## Làm sao để đăng nhập trên máy chủ từ xa?
+
+Chạy `ccam add` hoặc `ccam login <name>` trong phiên SSH như bình thường. Claude Code chờ việc đăng nhập trên máy chủ, nên trình duyệt trên máy tính của bạn dừng ở một trang `http://localhost:<port>/callback?code=…` không tải được. Hãy sao chép địa chỉ đó từ trình duyệt và dán vào terminal: ccam chuyển nó cho Claude Code trên máy chủ, và Claude Code hoàn tất việc đăng nhập. Địa chỉ này chứa một mã dùng một lần, vì vậy đừng chia sẻ nó.
 
 ## Các tài khoản của tôi được lưu ở đâu?
 

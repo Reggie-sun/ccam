@@ -4,7 +4,7 @@ description: Kila amri na chaguo la ccam, kuanzia ccam add na ccam <name> hadi c
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 8ac012f7f7cf
+sourceHash: 5a82175c30d3
 ---
 
 Weka `--dry-run` kabla ya amri ili kuona itakachofanya bila kukifanya, kwa mfano `ccam --dry-run work`. Inafanya kazi unapoanzisha Claude Code (`ccam <name>`, `ccam run`, `ccam next`) na pamoja na `share`, `migrate`, `shortcut`, `update` na `doctor --fix`. Amri nyingine zinazobadilisha kitu huikataa badala ya kufanya kazi.
@@ -72,7 +72,7 @@ ccam migrate ~/.claude-work --group work --settings --mcp
 ccam migrate --history --yes    # conversation history only
 ```
 
-`ccam migrate` hunakili `settings.json`, `CLAUDE.md`, viendelezi na seva za MCP za mtumiaji kutoka folda ya Claude Code kwenda kwenye kikundi, ili kila akaunti inayoshiriki vipengele hivyo ivipate. Folda husomwa tu. Chaguo `--settings`, `--memory`, `--extensions`, `--mcp` na `--history` hunakili tu vipengele unavyovitaja; bila hivyo, kila kitu isipokuwa historia ya mazungumzo hunakiliwa. `-g` au `--group` huchagua kikundi, na `-y` au `--yes` hunakili bila kuuliza na huhifadhi nakala ya kikundi faili inapotofautiana. Tazama [kunakili usanidi uliopo](/docs/sharing#copy-an-existing-setup).
+`ccam migrate` hunakili `settings.json`, `CLAUDE.md`, viendelezi na seva za MCP za mtumiaji kutoka folda ya Claude Code kwenda kwenye kikundi, ili kila akaunti inayoshiriki vipengele hivyo ivipate. Folda husomwa tu. Chaguo `--settings`, `--memory`, `--extensions`, `--mcp` na `--history` hunakili tu vipengele unavyovitaja. Bila hivyo, kwenye terminal orodha ya kuteua hukuruhusu kuchagua, huku kila kitu isipokuwa historia ya mazungumzo kikiwa kimeteuliwa; mahali pengine, kila kitu isipokuwa historia ya mazungumzo hunakiliwa. `-g` au `--group` huchagua kikundi, na `-y` au `--yes` hunakili bila kuuliza na huhifadhi nakala ya kikundi faili inapotofautiana. Pia hunakili taarifa za kuingia zilizohifadhiwa za seva hizo kwenye faili ya kuingia ya kila akaunti yenyewe. Tazama [kunakili usanidi uliopo](/docs/sharing#copy-an-existing-setup).
 
 ## Seva za MCP
 

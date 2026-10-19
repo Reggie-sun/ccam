@@ -4,7 +4,7 @@ description: 所有 ccam 指令和選項，從 ccam add、ccam <name> 到 ccam u
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 8ac012f7f7cf
+sourceHash: 5a82175c30d3
 ---
 
 在指令前加上 `--dry-run`，就能查看它會做什麼而不實際執行，例如 `ccam --dry-run work`。它適用於啟動 Claude Code（`ccam <name>`、`ccam run`、`ccam next`）以及 `share`、`migrate`、`shortcut`、`update` 和 `doctor --fix`。其他會做出變更的指令則會拒絕它，而不會執行。
@@ -72,7 +72,7 @@ ccam migrate ~/.claude-work --group work --settings --mcp
 ccam migrate --history --yes    # conversation history only
 ```
 
-`ccam migrate` 會把 Claude Code 資料夾中的 `settings.json`、`CLAUDE.md`、擴充功能和使用者 MCP 伺服器複製到一個群組，讓共用這些項目的每個帳號都能使用。該資料夾只會被讀取。選項 `--settings`、`--memory`、`--extensions`、`--mcp` 和 `--history` 只會複製你指定的項目；不加這些選項時，會複製對話記錄以外的所有內容。`-g` 或 `--group` 用來選擇群組；`-y` 或 `--yes` 不詢問直接複製，檔案內容不同時保留群組中的副本。請參閱[複製現有的設定](/docs/sharing#copy-an-existing-setup)。
+`ccam migrate` 會把 Claude Code 資料夾中的 `settings.json`、`CLAUDE.md`、擴充功能和使用者 MCP 伺服器複製到一個群組，讓共用這些項目的每個帳號都能使用。該資料夾只會被讀取。選項 `--settings`、`--memory`、`--extensions`、`--mcp` 和 `--history` 只會複製你指定的項目。不加這些選項時，在終端機中會顯示一份核取清單讓你選擇，除了對話記錄以外的項目都已勾選；在其他情況下，會複製對話記錄以外的所有內容。`-g` 或 `--group` 用來選擇群組；`-y` 或 `--yes` 不詢問直接複製，檔案內容不同時保留群組中的副本。它也會把這些伺服器已儲存的登入複製到每個帳號自己的登入檔案。請參閱[複製現有的設定](/docs/sharing#copy-an-existing-setup)。
 
 ## MCP 伺服器
 
