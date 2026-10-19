@@ -9,8 +9,11 @@ import (
 
 	"github.com/jhyunwoo/ccam/internal/config"
 	"github.com/jhyunwoo/ccam/internal/fsutil"
+	"github.com/jhyunwoo/ccam/internal/launcher"
 	"github.com/jhyunwoo/ccam/internal/migrate"
+	"github.com/jhyunwoo/ccam/internal/profile"
 	"github.com/jhyunwoo/ccam/internal/share"
+	"github.com/jhyunwoo/ccam/internal/tui"
 )
 
 func migrateCmd(e *env) *cobra.Command {
@@ -23,10 +26,16 @@ func migrateCmd(e *env) *cobra.Command {
 		Long: "Copies settings.json, CLAUDE.md, extensions (agents, commands, skills, plugins,\n" +
 			"output-styles, rules) and user MCP servers from a Claude Code folder into a share\n" +
 			"group, so every account that shares those items gets them. Name items to copy only\n" +
-			"those; without item flags, everything except conversation history is copied.\n\n" +
+			"those. Without item flags, a checklist on a terminal lets you choose (everything\n" +
+			"but conversation history is checked); elsewhere, or with --yes, everything except\n" +
+			"conversation history is copied.\n\n" +
 			"The folder (default ~/.claude, with MCP servers from ~/.claude.json) is only read:\n" +
 			"nothing in it is moved, linked or changed. Logins (.credentials.json, .claude.json)\n" +
-			"are never copied. Conversation history is copied only with --history.\n\n" +
+			"are never copied into the group. Conversation history is copied only with --history.\n\n" +
+			"MCP servers' saved sign-ins (OAuth) go along: each account that gets a copied server\n" +
+			"through the group gets its sign-in in its own login file, unless it already has one.\n" +
+			"Accounts that are running, not logged in, imported or using the macOS Keychain are\n" +
+			"skipped; sign in to the servers there with /mcp.\n\n" +
 			"Prints the plan and asks first. When the group already has a different copy of a\n" +
 			"file, you choose: keep group, use mine, or merge; with --yes the group's copy is kept.\n" +
 			"Replaced group files are saved in <group>/" + share.BackupDir + "/<time>/.",
@@ -61,10 +70,25 @@ func migrateCmd(e *env) *cobra.Command {
 				}
 			}
 			defaulted := len(items) == 0
+			if defaulted && !yes && interactive(e) && fsutil.Exists(src) {
+				picked, ok, err := tui.RunMigratePicker(src, g, migrate.Found(src, e.paths.Home), migrate.DefaultItems)
+				if err != nil {
+					return err
+				}
+				if !ok {
+					e.printf("Cancelled.\n")
+					return nil
+				}
+				if len(picked) == 0 {
+					e.printf("Nothing selected.\n")
+					return nil
+				}
+				items, defaulted = picked, false
+			}
 			if defaulted {
 				items = migrate.DefaultItems
 			}
-			pl, err := migrate.Build(migrate.Options{Source: src, Home: e.paths.Home, GroupsRoot: e.paths.GroupsRoot(), Group: g, Items: items})
+			pl, err := migrate.Build(migrate.Options{Source: src, Home: e.paths.Home, GroupsRoot: e.paths.GroupsRoot(), Group: g, Items: items, Accounts: migrateAccounts(e, cfg)})
 			if err != nil {
 				return err
 			}
@@ -122,6 +146,20 @@ func migrateCmd(e *env) *cobra.Command {
 	return cmd
 }
 
+// migrateAccounts are the accounts that may receive the source's MCP sign-ins.
+func migrateAccounts(e *env, cfg *config.Config) []migrate.Account {
+	out := make([]migrate.Account, 0, len(cfg.Profiles))
+	for i := range cfg.Profiles {
+		p := &cfg.Profiles[i]
+		out = append(out, migrate.Account{
+			Name: p.Name, Dir: profile.Dir(e.paths, p),
+			MCP: p.Share.Get("mcp"), Extensions: p.Share.Get("extensions"),
+			SessionDir: launcher.SessionDir(e.paths, p.Name), Imported: p.Dir != "",
+		})
+	}
+	return out
+}
+
 func hasHistory(src string) bool {
 	for _, en := range share.Layout["history"] {
 		if fsutil.Exists(filepath.Join(src, en.Name)) {
@@ -156,6 +194,9 @@ func migrateSummary(e *env, cfg *config.Config, pl *migrate.Plan, yes bool, reru
 	}
 	if fsutil.Exists(pl.BackupDir) {
 		e.printf("The group's previous copies are saved in %s\n", pl.BackupDir)
+	}
+	if l := pl.Logins; l != nil && len(l.Skipped) > 0 {
+		e.printf("MCP sign-ins were not copied to: %s. Sign in to those servers there with /mcp.\n", strings.Join(l.Skipped, ", "))
 	}
 	items := pl.Items()
 	if len(items) == 0 {
@@ -198,5 +239,8 @@ func migrateSummary(e *env, cfg *config.Config, pl *migrate.Plan, yes bool, reru
 		if flags := missing[p.Name]; len(flags) > 0 {
 			e.printf("  ccam share %s %s\n", p.Name, strings.Join(flags, " "))
 		}
+	}
+	if pl.Logins != nil {
+		e.printf("Then run `%s` again to give them the MCP sign-ins too.\n", rerun)
 	}
 }

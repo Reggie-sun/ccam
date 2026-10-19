@@ -605,3 +605,20 @@ func TestMergedRegistryHasNoDuplicates(t *testing.T) {
 		t.Fatalf("%d records: %v", n, reg.Plugins)
 	}
 }
+
+func TestFoundReportsItemsTheSourceHas(t *testing.T) {
+	f := newFixture(t, map[string]string{
+		".claude/settings.json":        "{}",
+		".claude/skills/demo/SKILL.md": "x",
+		".claude.json":                 `{"mcpServers":{"fs":{"command":"npx"}}}`,
+	})
+	got := Found(f.src, f.home)
+	want := map[string]bool{"settings": true, "extensions": true, "mcp": true}
+	if !reflect.DeepEqual(got, want) {
+		t.Fatalf("got %v want %v", got, want)
+	}
+	f = newFixture(t, map[string]string{".claude.json": `{"mcpServers":{}}`})
+	if got := Found(f.src, f.home); got["mcp"] {
+		t.Fatalf("empty mcpServers counted: %v", got)
+	}
+}

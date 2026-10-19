@@ -52,8 +52,7 @@ type Wizard struct {
 	askName   bool
 	name      string
 	err       string
-	selected  map[string]bool
-	cursor    int
+	list      checklist
 	done      bool
 	cancelled bool
 
@@ -66,11 +65,7 @@ type Wizard struct {
 }
 
 func NewWizard(cfg *config.Config, name string) Wizard {
-	w := Wizard{validate: ValidateNewName(cfg), askName: name == "", name: name, selected: map[string]bool{}}
-	for _, item := range DefaultItems() {
-		w.selected[item] = true
-	}
-	return w
+	return Wizard{validate: ValidateNewName(cfg), askName: name == "", name: name, list: newChecklist(DefaultItems())}
 }
 
 // WithShortcut adds the shortcut questions after the shared items. check
@@ -83,13 +78,7 @@ func (w Wizard) WithShortcut(suggest func(name string) string, check func(name, 
 
 // Answers is valid when Done reports true.
 func (w Wizard) Answers() AddAnswers {
-	var items []string
-	for _, item := range config.Items {
-		if w.selected[item] {
-			items = append(items, item)
-		}
-	}
-	return AddAnswers{Name: w.name, Share: ShareFromItems(items), Shortcut: w.shortcut}
+	return AddAnswers{Name: w.name, Share: ShareFromItems(w.list.items()), Shortcut: w.shortcut}
 }
 
 func (w Wizard) Done() bool { return w.done }
@@ -168,18 +157,10 @@ func (w Wizard) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 		return w, nil
 	}
+	if w.list.key(k.String()) {
+		return w, nil
+	}
 	switch k.String() {
-	case "up", "k":
-		if w.cursor > 0 {
-			w.cursor--
-		}
-	case "down", "j":
-		if w.cursor < len(config.Items)-1 {
-			w.cursor++
-		}
-	case "space", " ", "x":
-		item := config.Items[w.cursor]
-		w.selected[item] = !w.selected[item]
 	case "enter":
 		if w.checkShortcut != nil {
 			w.askShortcut, w.suggest = true, ""
@@ -233,17 +214,7 @@ func (w Wizard) View() tea.View {
 		return tea.NewView(b.String())
 	}
 	fmt.Fprintf(&b, " Name: %s\n\n ? Choose what to share (Space to toggle)\n", w.name)
-	for i, item := range config.Items {
-		marker := "  "
-		if i == w.cursor {
-			marker = cursorStyle.Render("› ")
-		}
-		box := "[ ]"
-		if w.selected[item] {
-			box = "[x]"
-		}
-		fmt.Fprintf(&b, " %s%s %s\n", marker, box, itemLabels[item])
-	}
+	w.list.view(&b, nil)
 	next := " Enter go to login · Esc cancel"
 	if w.checkShortcut != nil {
 		next = " Enter next · Esc cancel"

@@ -32,11 +32,12 @@ import (
 var DefaultItems = []string{"settings", "memory", "extensions", "mcp"}
 
 type Options struct {
-	Source     string   // folder to copy from
-	Home       string   // user home: ~/.claude keeps its .claude.json there
-	GroupsRoot string   // paths.GroupsRoot()
-	Group      string   // target group name
-	Items      []string // items to copy (keys of share.Layout)
+	Source     string    // folder to copy from
+	Home       string    // user home: ~/.claude keeps its .claude.json there
+	GroupsRoot string    // paths.GroupsRoot()
+	Group      string    // target group name
+	Items      []string  // items to copy (keys of share.Layout)
+	Accounts   []Account // accounts that may receive the source's MCP sign-ins
 }
 
 // State says what happens to one path.
@@ -82,7 +83,8 @@ type Plan struct {
 	GroupDir  string
 	BackupDir string // where replaced group files are saved
 	Entries   []*Entry
-	MCP       *MCP // nil when mcp is not selected
+	MCP       *MCP    // nil when mcp is not selected
+	Logins    *Logins // nil when there are no MCP sign-ins to copy
 	Conflicts []*share.Conflict
 }
 
@@ -112,6 +114,24 @@ func HasContent(dir string) bool {
 		}
 	}
 	return false
+}
+
+// Found reports, for each item, whether the source has anything to copy:
+// lstat calls for files and folders, the MCP server list for mcp.
+func Found(source, home string) map[string]bool {
+	found := map[string]bool{}
+	for _, item := range config.Items {
+		for _, e := range share.Layout[item] {
+			if fsutil.Exists(filepath.Join(source, e.Name)) {
+				found[item] = true
+			}
+		}
+	}
+	if from := ClaudeJSON(source, home); from != "" {
+		servers, err := mcp.LocalServers(filepath.Dir(from))
+		found["mcp"] = err == nil && len(servers) > 0
+	}
+	return found
 }
 
 // Build looks at the source and the group and lists what Apply will do.
@@ -157,6 +177,11 @@ func Build(opt Options) (*Plan, error) {
 				return nil, err
 			}
 			pl.Entries = append(pl.Entries, en)
+		}
+	}
+	if want["mcp"] || want["extensions"] {
+		if pl.Logins, err = buildLogins(pl, opt); err != nil {
+			return nil, err
 		}
 	}
 	return pl, nil
@@ -353,7 +378,7 @@ func (pl *Plan) Changes() bool {
 			return true
 		}
 	}
-	return pl.MCP != nil && pl.MCP.changes()
+	return pl.MCP != nil && pl.MCP.changes() || pl.Logins != nil && pl.Logins.changes()
 }
 
 // Empty reports whether there is nothing to copy and nothing to decide.
@@ -404,6 +429,9 @@ func (pl *Plan) Describe(w io.Writer, asking bool) {
 		for _, c := range m.Conflicts {
 			fmt.Fprintf(w, "  %-11s %-15s %s\n", "", serverName(c), conflictText(c, asking))
 		}
+	}
+	if l := pl.Logins; l != nil {
+		fmt.Fprintf(w, "  %-11s %-15s %s\n", label("mcp"), "sign-ins", l.describe())
 	}
 	// Paths missing from the source go on one line per item, after the rest.
 	var missing []string
@@ -507,6 +535,9 @@ func (pl *Plan) Apply() error {
 		if err := pl.MCP.apply(pl); err != nil {
 			return fmt.Errorf("MCP servers: %w", err)
 		}
+	}
+	if pl.Logins != nil && pl.Logins.changes() {
+		return pl.Logins.apply(pl)
 	}
 	return nil
 }
@@ -631,6 +662,9 @@ func (pl *Plan) Copied() []string {
 			}
 			out = append(out, name)
 		}
+	}
+	if l := pl.Logins; l != nil && len(l.written) > 0 {
+		out = append(out, "MCP sign-ins for "+strings.Join(l.written, ", "))
 	}
 	return out
 }

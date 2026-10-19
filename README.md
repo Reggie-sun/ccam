@@ -45,7 +45,9 @@ ccam next --continue # out of quota? continue the same conversation on the next 
 
 An existing `~/.claude` can be registered in place with `ccam import` (nothing is moved or copied).
 
-To start the shared settings from the setup you already have, `ccam migrate` copies `~/.claude`'s settings.json, CLAUDE.md, extensions and MCP servers into the shared group. The original folder is only read; conversation history is copied only with `--history`. It prints the plan and asks first (`ccam --dry-run migrate` only prints it).
+To start the shared settings from the setup you already have, `ccam migrate` copies `~/.claude`'s settings.json, CLAUDE.md, extensions and MCP servers into the shared group. The original folder is only read; conversation history is copied only with `--history`. On a terminal it first shows a checklist of the items to copy, then prints the plan and asks (`ccam --dry-run migrate` only prints it). The saved sign-ins (OAuth) of the copied MCP servers go into each account's own login file, never into the group.
+
+Signing in on a remote machine over SSH: the browser on your computer ends on a `http://localhost:<port>/callback?code=…` page that does not load. Paste that address into the terminal where `ccam add` or `ccam login` runs, and ccam passes it to Claude Code on the server.
 
 ## Commands
 
