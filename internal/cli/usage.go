@@ -140,7 +140,7 @@ func showUsage(e *env, f *usage.Fetcher, cfg *config.Config, opt usage.Options, 
 		draw()
 	}
 	if best := usage.Best(view); best != nil && len(view) > 1 {
-		e.printf("→ 여유가 가장 많은 계정: %s   (ccs next --auto 로 바로 열기)\n", best.Name)
+		e.printf("→ 여유가 가장 많은 계정: %s   (ccam next --auto 로 바로 열기)\n", best.Name)
 	}
 	return nil
 }

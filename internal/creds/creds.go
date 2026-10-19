@@ -31,7 +31,7 @@ func FilePath(dir string) string { return filepath.Join(dir, ".credentials.json"
 
 // DefaultStore reports whether Claude Code should use the unsuffixed
 // "default" secure-storage entry for dir: true for ~/.claude registered in
-// place, so `ccs <name>` and plain `claude` share one macOS Keychain login.
+// place, so `ccam <name>` and plain `claude` share one macOS Keychain login.
 // ccam sets CLAUDE_SECURESTORAGE_CONFIG_DIR="" for such profiles.
 func DefaultStore(dir, home string) bool {
 	return dir == filepath.Join(home, ".claude")

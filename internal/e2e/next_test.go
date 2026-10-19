@@ -13,7 +13,7 @@ import (
 func TestNextRotatesAndContinues(t *testing.T) {
 	h := newHarness(t)
 	h.addAccounts()
-	h.ok("ccs", "personal")
+	h.ok("ccam", "personal")
 	h.called()
 	time.Sleep(1100 * time.Millisecond) // last-used has 1 s resolution
 	h.ok("ccam", "next", "--", "-p", "hi")
@@ -40,7 +40,7 @@ func TestHistoryLockWarnsOnConcurrentUse(t *testing.T) {
 	h.addAccounts()
 	h.ok("ccam", "share", "personal", "--history", "on", "--yes")
 	h.ok("ccam", "share", "work", "--history", "on", "--yes")
-	first := exec.Command(filepath.Join(h.home, "bin", "ccs"), "personal")
+	first := exec.Command(ccamBin, "personal")
 	first.Env = append(append([]string{}, h.env...), "FAKE_SLEEP=2", "FAKE_CLAUDE_LOG="+filepath.Join(h.home, "first.log"))
 	if err := first.Start(); err != nil {
 		t.Fatal(err)
@@ -50,12 +50,12 @@ func TestHistoryLockWarnsOnConcurrentUse(t *testing.T) {
 	for !fileExists(filepath.Join(h.home, "first.log")) && time.Now().Before(deadline) {
 		time.Sleep(20 * time.Millisecond)
 	}
-	r := h.run("", nil, "ccs", "work")
+	r := h.run("", nil, "ccam", "work")
 	if r.code != 0 || !strings.Contains(r.stderr, "다른 Claude Code") {
 		t.Fatalf("expected warning, got %+v", r)
 	}
 	// A different folder is not affected.
-	cmd := exec.Command(filepath.Join(h.home, "bin", "ccs"), "work")
+	cmd := exec.Command(ccamBin, "work")
 	cmd.Dir = t.TempDir()
 	cmd.Env = h.env
 	out, _ := cmd.CombinedOutput()
@@ -76,11 +76,11 @@ func TestLeftoverChildDoesNotHoldSession(t *testing.T) {
 	h.addAccounts()
 	h.ok("ccam", "share", "personal", "--history", "on", "--yes")
 	h.ok("ccam", "share", "work", "--history", "on", "--yes")
-	r := h.run("", []string{"FAKE_BG=3"}, "ccs", "personal")
+	r := h.run("", []string{"FAKE_BG=3"}, "ccam", "personal")
 	if r.code != 0 {
 		t.Fatalf("%+v", r)
 	}
-	r = h.run("", nil, "ccs", "work")
+	r = h.run("", nil, "ccam", "work")
 	if strings.Contains(r.stderr, "다른 Claude Code") {
 		t.Fatalf("finished session still counted as running: %s", r.stderr)
 	}

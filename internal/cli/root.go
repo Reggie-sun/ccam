@@ -57,7 +57,7 @@ func newRoot(e *env) *cobra.Command {
 	root := &cobra.Command{
 		Use:           "ccam",
 		Short:         "Claude Code 다중 계정 관리 도구",
-		Long:          "ccam(짧게 ccs)은 Claude Code 계정 여러 개를 추가하고 전환합니다.\n\n  ccs <이름|번호> [claude 인자]   그 계정으로 Claude Code 실행\n  claude1, claude2 …            번호로 바로 실행",
+		Long:          "ccam은 Claude Code 계정 여러 개를 추가하고 전환합니다.\n\n  ccam <이름|번호> [claude 인자]  그 계정으로 Claude Code 실행\n  claude1, claude2 …            번호로 바로 실행",
 		Version:       Version,
 		SilenceUsage:  true,
 		SilenceErrors: true,
@@ -70,7 +70,7 @@ func newRoot(e *env) *cobra.Command {
 	root.SetErr(e.stderr)
 	root.PersistentFlags().BoolVar(&e.dryRun, "dry-run", false, "실행하지 않고 할 일만 출력")
 	root.CompletionOptions.DisableDefaultCmd = true
-	root.ValidArgsFunction = profileNames(e) // `ccs <tab>` lists accounts
+	root.ValidArgsFunction = profileNames(e) // `ccam <tab>` lists accounts
 	root.AddCommand(
 		addCmd(e), listCmd(e), runCmd(e), useCmd(e), removeCmd(e), renameCmd(e),
 		loginCmd(e), logoutCmd(e), shimsCmd(e), versionCmd(e), shareCmd(e), doctorCmd(e), mcpCmd(e), nextCmd(e), usageCmd(e), statuslineCmd(e), importCmd(e), completionCmd(e),

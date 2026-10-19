@@ -333,9 +333,6 @@ func checkShims(r *report, p paths.Paths, cfg *config.Config, opt Options) {
 			missing = append(missing, name)
 		}
 	}
-	if _, err := os.Lstat(filepath.Join(p.Bin, "ccs")); err != nil {
-		missing = append(missing, "ccs")
-	}
 	if len(missing) == 0 {
 		r.add(OK, "", "단축 명령 정상 (%s)", p.Bin)
 	} else {

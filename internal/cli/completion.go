@@ -9,7 +9,7 @@ import (
 func completionCmd(e *env) *cobra.Command {
 	return &cobra.Command{
 		Use:       "completion bash|zsh",
-		Short:     "자동완성 스크립트 출력 (ccam 과 ccs 둘 다)",
+		Short:     "자동완성 스크립트 출력",
 		Example:   "  ccam completion bash > ~/.local/share/bash-completion/completions/ccam\n  ccam completion zsh > \"${fpath[1]}/_ccam\"",
 		Args:      cobra.ExactArgs(1),
 		ValidArgs: []string{"bash", "zsh"},
@@ -17,19 +17,12 @@ func completionCmd(e *env) *cobra.Command {
 			root := cmd.Root()
 			switch args[0] {
 			case "bash":
-				if err := root.GenBashCompletionV2(e.stdout, true); err != nil {
-					return err
-				}
-				e.printf("complete -o default -F __start_ccam ccs\n")
+				return root.GenBashCompletionV2(e.stdout, true)
 			case "zsh":
-				if err := root.GenZshCompletion(e.stdout); err != nil {
-					return err
-				}
-				e.printf("compdef _ccam ccs\n")
+				return root.GenZshCompletion(e.stdout)
 			default:
 				return fmt.Errorf("bash 또는 zsh 만 지원합니다")
 			}
-			return nil
 		},
 	}
 }

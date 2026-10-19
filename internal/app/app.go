@@ -1,4 +1,4 @@
-// Package app is the process entry point. It routes `ccs <name>`, `ccs run`
+// Package app is the process entry point. It routes `ccam <name>`, `ccam run`
 // and claudeN shims straight to the launcher, and only hands real
 // subcommands to the cobra CLI.
 package app

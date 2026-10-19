@@ -96,7 +96,7 @@ type result struct {
 	code           int
 }
 
-// run executes argv[0] (ccam, ccs, claude2 …) with extra env.
+// run executes argv[0] (ccam, claude2 …) with extra env.
 func (h *harness) run(stdin string, extraEnv []string, argv ...string) result {
 	h.t.Helper()
 	bin := ccamBin
@@ -157,10 +157,13 @@ func (h *harness) addAccounts() {
 func TestAddCreatesShimsAndLogsIn(t *testing.T) {
 	h := newHarness(t)
 	h.addAccounts()
-	for _, s := range []string{"claude1", "claude2", "ccs"} {
+	for _, s := range []string{"claude1", "claude2"} {
 		if _, err := os.Lstat(filepath.Join(h.home, "bin", s)); err != nil {
 			t.Fatalf("missing shim %s", s)
 		}
+	}
+	if _, err := os.Lstat(filepath.Join(h.home, "bin", "ccs")); err == nil {
+		t.Fatal("ccs alias should no longer be created")
 	}
 	out := h.ok("ccam", "list")
 	if !strings.Contains(out, "me@example.com") || !strings.Contains(out, "dev@company.com") {
@@ -182,14 +185,14 @@ func TestArgumentPassThrough(t *testing.T) {
 		profile string
 		want    []string
 	}{
-		{[]string{"ccs", "work", "--resume"}, "work", []string{"--resume"}},
-		{[]string{"ccs", "work", "-p", "테스트 고쳐줘", "--output-format", "json"}, "work", []string{"-p", "테스트 고쳐줘", "--output-format", "json"}},
+		{[]string{"ccam", "work", "--resume"}, "work", []string{"--resume"}},
+		{[]string{"ccam", "work", "-p", "테스트 고쳐줘", "--output-format", "json"}, "work", []string{"-p", "테스트 고쳐줘", "--output-format", "json"}},
 		{[]string{"claude2", "--model", "opus", "--continue"}, "work", []string{"--model", "opus", "--continue"}},
-		{[]string{"ccs", "work", "--help"}, "work", []string{"--help"}},
-		{[]string{"ccs", "-p", "요약해줘"}, "personal", []string{"-p", "요약해줘"}},
-		{[]string{"ccs", "work", "--", "--version"}, "work", []string{"--version"}},
-		{[]string{"ccs", "work", "--version"}, "work", []string{"--version"}},
-		{[]string{"ccs", "2"}, "work", nil},
+		{[]string{"ccam", "work", "--help"}, "work", []string{"--help"}},
+		{[]string{"ccam", "-p", "요약해줘"}, "personal", []string{"-p", "요약해줘"}},
+		{[]string{"ccam", "work", "--", "--version"}, "work", []string{"--version"}},
+		{[]string{"ccam", "work", "--version"}, "work", []string{"--version"}},
+		{[]string{"ccam", "2"}, "work", nil},
 		{[]string{"ccam", "run", "work", "--", "-c"}, "work", []string{"-c"}},
 		{[]string{"claude1", "it's \"quoted\"", ""}, "personal", []string{"it's \"quoted\"", ""}},
 	}
@@ -209,7 +212,7 @@ func TestStdinAndExitCodePassThrough(t *testing.T) {
 	h := newHarness(t)
 	h.addAccounts()
 	stdinFile := filepath.Join(h.home, "stdin.txt")
-	r := h.run("log line\n", []string{"FAKE_CLAUDE_STDIN=" + stdinFile, "FAKE_EXIT=7"}, "ccs", "work", "-p", "원인 찾아줘")
+	r := h.run("log line\n", []string{"FAKE_CLAUDE_STDIN=" + stdinFile, "FAKE_EXIT=7"}, "ccam", "work", "-p", "원인 찾아줘")
 	if r.code != 7 {
 		t.Fatalf("exit code %d", r.code)
 	}
@@ -222,14 +225,14 @@ func TestDryRunAndErrors(t *testing.T) {
 	h := newHarness(t)
 	h.addAccounts()
 	os.Remove(h.log) // left behind by `auth login`
-	out := h.ok("ccs", "--dry-run", "work", "-c")
+	out := h.ok("ccam", "--dry-run", "work", "-c")
 	if !strings.Contains(out, "CLAUDE_CONFIG_DIR="+h.profileDir("work")) || !strings.HasSuffix(strings.TrimSpace(out), " -c") {
 		t.Fatalf("dry run: %s", out)
 	}
 	if _, err := os.Stat(h.log); err == nil {
 		t.Fatal("dry run must not exec")
 	}
-	r := h.run("", nil, "ccs", "nobody")
+	r := h.run("", nil, "ccam", "nobody")
 	if r.code == 0 || !strings.Contains(r.stderr, "nobody") {
 		t.Fatalf("unknown profile: %+v", r)
 	}
@@ -243,7 +246,7 @@ func TestRemoveAndRename(t *testing.T) {
 	h := newHarness(t)
 	h.addAccounts()
 	h.ok("ccam", "rename", "work", "job")
-	h.ok("ccs", "job")
+	h.ok("ccam", "job")
 	if dir, _ := h.called(); dir != h.profileDir("job") {
 		t.Fatalf("rename dir %s", dir)
 	}

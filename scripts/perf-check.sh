@@ -1,6 +1,6 @@
 #!/bin/sh
 # Measures the launch path with hyperfine and fails when the p95 is above
-# the PLAN.md targets: `ccs <name>` 10 ms, `ccs list` 30 ms, and peak memory
+# the PLAN.md targets: `ccam <name>` 10 ms, `ccam list` 30 ms, and peak memory
 # above 15 MB (memory needs hyperfine 2, which records it).
 set -eu
 
@@ -13,12 +13,12 @@ mkdir -p "$CCAM_HOME/config"
 printf 'version = 1\nclaude_bin = "/bin/true"\n' > "$CCAM_HOME/config/config.toml"
 "$tmp/ccam" add work --no-login >/dev/null 2>&1
 "$tmp/ccam" add personal --no-login >/dev/null 2>&1
-ccs="$CCAM_HOME/bin/ccs"
+ccam="$tmp/ccam"
 
 hyperfine -N --warmup 20 --runs 300 --export-json "$tmp/result.json" \
-  "$ccs --dry-run work" \
-  "$ccs work" \
-  "$ccs list"
+  "$ccam --dry-run work" \
+  "$ccam work" \
+  "$ccam list"
 
 python3 - "$tmp/result.json" <<'PY'
 import json, sys

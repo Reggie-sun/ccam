@@ -54,7 +54,7 @@ func row(r *Report, nameW int, o RenderOptions) []string {
 	case r.Status == StatusLoggedOut:
 		body = fmt.Sprintf("로그인 안 됨 → ccam login %s", r.Name)
 	case r.Limits == nil && r.Status == StatusExpired:
-		body = fmt.Sprintf("로그인 만료, `ccs %s` 를 한 번 실행하면 갱신", r.Name)
+		body = fmt.Sprintf("로그인 만료, `ccam %s` 를 한 번 실행하면 갱신", r.Name)
 	case r.Limits == nil:
 		body = "조회 실패: " + r.Err
 	default:

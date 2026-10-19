@@ -31,6 +31,7 @@ func TestInstallSyncsLinks(t *testing.T) {
 	os.MkdirAll(bin, 0o755)
 	os.WriteFile(filepath.Join(bin, "claude9"), []byte("user file"), 0o755) // not ours
 	os.Symlink(ccam, filepath.Join(bin, "claude7"))                         // stale, ours
+	os.Symlink(ccam, filepath.Join(bin, "ccs"))                             // removed alias, ours
 
 	cfg := &config.Config{NameShims: true, Profiles: []config.Profile{{Name: "a", Slot: 1}, {Name: "b", Slot: 2}}}
 	created, err := Install(bin, ccam, cfg)
@@ -38,12 +39,15 @@ func TestInstallSyncsLinks(t *testing.T) {
 		t.Fatal(err)
 	}
 	sort.Strings(created)
-	want := []string{"ccs", "claude-a", "claude-b", "claude1", "claude2"}
+	want := []string{"claude-a", "claude-b", "claude1", "claude2"}
 	if len(created) != len(want) {
 		t.Fatalf("created %v", created)
 	}
 	if _, err := os.Lstat(filepath.Join(bin, "claude7")); err == nil {
 		t.Fatal("stale link kept")
+	}
+	if _, err := os.Lstat(filepath.Join(bin, "ccs")); err == nil {
+		t.Fatal("stale ccs link kept")
 	}
 	if b, _ := os.ReadFile(filepath.Join(bin, "claude9")); string(b) != "user file" {
 		t.Fatal("user file touched")
@@ -66,5 +70,33 @@ func TestInstallRefusesForeignFile(t *testing.T) {
 	cfg := &config.Config{Profiles: []config.Profile{{Name: "a", Slot: 1}}}
 	if _, err := Install(dir, ccam, cfg); err == nil {
 		t.Fatal("want error for foreign claude1")
+	}
+}
+
+func TestInstallKeepsForeignCcs(t *testing.T) {
+	dir := t.TempDir()
+	bin := filepath.Join(dir, "bin")
+	ccam := filepath.Join(dir, "ccam")
+	other := filepath.Join(dir, "other")
+	os.WriteFile(ccam, []byte("x"), 0o755)
+	os.WriteFile(other, []byte("y"), 0o755)
+	os.MkdirAll(bin, 0o755)
+	cfg := &config.Config{Profiles: []config.Profile{{Name: "a", Slot: 1}}}
+
+	os.WriteFile(filepath.Join(bin, "ccs"), []byte("user file"), 0o755)
+	if _, err := Install(bin, ccam, cfg); err != nil {
+		t.Fatal(err)
+	}
+	if b, _ := os.ReadFile(filepath.Join(bin, "ccs")); string(b) != "user file" {
+		t.Fatal("regular ccs file touched")
+	}
+
+	os.Remove(filepath.Join(bin, "ccs"))
+	os.Symlink(other, filepath.Join(bin, "ccs"))
+	if _, err := Install(bin, ccam, cfg); err != nil {
+		t.Fatal(err)
+	}
+	if target, err := os.Readlink(filepath.Join(bin, "ccs")); err != nil || target != other {
+		t.Fatalf("foreign ccs link changed: %q %v", target, err)
 	}
 }

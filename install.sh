@@ -1,5 +1,5 @@
 #!/bin/sh
-# Installs ccam (and the ccs alias) into ~/.local/bin on Linux or macOS.
+# Installs ccam into ~/.local/bin on Linux or macOS.
 #
 #   curl -fsSL https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.sh | sh
 #
@@ -63,8 +63,11 @@ fi
 tar -xzf "$tmp/$asset" -C "$tmp" ccam || die "압축을 풀 수 없습니다"
 mkdir -p "$dir"
 install -m 0755 "$tmp/ccam" "$dir/ccam"
-ln -sf ccam "$dir/ccs"
-say "✓ $("$dir/ccam" version) → $dir/ccam (짧게: ccs)"
+# Older versions linked a ccs alias to ccam; drop it, but never a foreign ccs.
+if [ -L "$dir/ccs" ] && [ "$(readlink "$dir/ccs")" = ccam ]; then
+  rm -f "$dir/ccs"
+fi
+say "✓ $("$dir/ccam" version) → $dir/ccam"
 
 case ":$PATH:" in
   *":$dir:"*) ;;

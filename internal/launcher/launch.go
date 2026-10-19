@@ -15,7 +15,7 @@ import (
 	"github.com/jhyunwoo/ccam/internal/trace"
 )
 
-// Launch is the whole `ccs <name>` sequence: load config, prepare, check
+// Launch is the whole `ccam <name>` sequence: load config, prepare, check
 // links, apply MCP sharing, take locks, then exec (or print when dry).
 func Launch(p paths.Paths, sel string, args []string, dry bool, stdout io.Writer) error {
 	trace.Step("start")

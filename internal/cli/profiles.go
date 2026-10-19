@@ -402,11 +402,11 @@ func logoutCmd(e *env) *cobra.Command {
 }
 
 func shimsCmd(e *env) *cobra.Command {
-	cmd := &cobra.Command{Use: "shims", Short: "단축 명령(claude1…, ccs) 관리"}
+	cmd := &cobra.Command{Use: "shims", Short: "단축 명령(claude1…) 관리"}
 	var names bool
 	install := &cobra.Command{
 		Use:   "install",
-		Short: "claude1…claudeN 과 ccs 를 다시 만듭니다",
+		Short: "claude1…claudeN 을 다시 만듭니다",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg, err := e.load()
@@ -436,7 +436,7 @@ func runCmd(e *env) *cobra.Command {
 	// Only reached for `ccam help run`; real runs never get to cobra.
 	return &cobra.Command{
 		Use:                "run <이름|번호> [-- claude 인자]",
-		Short:              "해당 계정으로 claude 실행 (`ccs <이름>` 과 같음)",
+		Short:              "해당 계정으로 claude 실행 (`ccam <이름>` 과 같음)",
 		DisableFlagParsing: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			sel := ""

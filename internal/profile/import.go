@@ -92,7 +92,7 @@ func Import(p paths.Paths, cfg *config.Config, path, name string) (*config.Profi
 
 	var notes []string
 	// Without CLAUDE_CONFIG_DIR, Claude Code keeps .claude.json in $HOME,
-	// next to ~/.claude. Link it in so `ccs <name>` and plain `claude` see
+	// next to ~/.claude. Link it in so `ccam <name>` and plain `claude` see
 	// the same account and settings (Claude Code writes through the link).
 	inner := filepath.Join(path, ".claude.json")
 	outer := filepath.Join(p.Home, ".claude.json")

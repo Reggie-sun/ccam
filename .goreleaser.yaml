@@ -23,13 +23,9 @@ nfpms:
   - package_name: ccam
     homepage: https://github.com/jhyunwoo/ccam
     maintainer: jhyunwoo <jhyunwoo@users.noreply.github.com>
-    description: Claude Code multi-account manager (ccam / ccs)
+    description: Claude Code multi-account manager
     formats: [deb]
     bindir: /usr/bin
-    contents:
-      - src: /usr/bin/ccam
-        dst: /usr/bin/ccs
-        type: symlink
 
 changelog:
   use: git

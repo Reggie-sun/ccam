@@ -1,4 +1,4 @@
-// Package shim manages the claude1…claudeN and ccs symlinks in ~/.local/bin.
+// Package shim manages the claude1…claudeN symlinks in ~/.local/bin.
 // Each one points at the ccam binary, which picks the profile from argv[0].
 package shim
 
@@ -17,8 +17,11 @@ var (
 	nameRe = regexp.MustCompile(`^claude-([a-z0-9][a-z0-9_-]*)$`)
 )
 
+// legacyAlias is the short ccs alias older versions linked to ccam.
+const legacyAlias = "ccs"
+
 // Selector maps an executable name to a profile selector.
-// claude2 -> "2", claude-work -> "work". ok is false for ccam/ccs/anything else.
+// claude2 -> "2", claude-work -> "work". ok is false for ccam/anything else.
 func Selector(argv0 string) (string, bool) {
 	base := filepath.Base(argv0)
 	if m := slotRe.FindStringSubmatch(base); m != nil {
@@ -31,13 +34,13 @@ func Selector(argv0 string) (string, bool) {
 }
 
 // Install makes binDir match cfg: one claudeN per profile, claude-<name> when
-// enabled, and ccs. Stale links that point at ccam are removed; files that
-// are not our links are never touched.
+// enabled. Stale links that point at ccam are removed, including the old
+// ccs alias; files that are not our links are never touched.
 func Install(binDir, ccamPath string, cfg *config.Config) (created []string, err error) {
 	if err := os.MkdirAll(binDir, 0o755); err != nil {
 		return nil, err
 	}
-	want := map[string]bool{"ccs": true}
+	want := map[string]bool{}
 	for _, p := range cfg.Profiles {
 		want["claude"+strconv.Itoa(p.Slot)] = true
 		if cfg.NameShims {
@@ -53,7 +56,7 @@ func Install(binDir, ccamPath string, cfg *config.Config) (created []string, err
 		if want[name] || !isOurs(filepath.Join(binDir, name), ccamPath) {
 			continue
 		}
-		if _, ok := Selector(name); ok {
+		if _, ok := Selector(name); ok || name == legacyAlias {
 			os.Remove(filepath.Join(binDir, name))
 		}
 	}

@@ -71,7 +71,7 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 전체 계획과 결정 기록은 docs/PLAN.md, Claude Code 폴더 조사 결과는 docs/claude-layout.md를 먼저 읽는다.
 
 ## 규칙
-- 실행 파일은 ccam, 짧은 별칭 ccs(심볼릭 링크)로 실행해도 똑같이 동작한다
+- 실행 파일과 모든 명령은 ccam 하나다. 짧은 별칭 ccs는 없앴다 (예전 ~/.local/bin/ccs 링크는 shim 동기화 때 지운다)
 - ccam <이름|번호>는 run의 줄임이다. 프로필 이름은 하위 명령 이름(config.Reserved)과 겹칠 수 없다
 - 프로필 이름 뒤의 인자는 파싱하지 않고 배열 그대로 claude에 넘긴다 (internal/app이 cobra 이전에 os.Args 처리)
 - Go 1.26 (Charm v2 요구), 모듈 경로 github.com/jhyunwoo/ccam
@@ -90,7 +90,7 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 - 실행 경로 측정: scripts/perf-check.sh (hyperfine), 회귀 비교: scripts/bench-compare.sh <base>
 
 ## 성능 규칙 (docs/PLAN.md의 성능 설계)
-- ccs <이름> 실행 경로는 10 ms 이하. 이 경로에서는 cobra·bubbletea·lipgloss·net/http를 쓰지 않는다
+- ccam <이름> 실행 경로는 10 ms 이하. 이 경로에서는 cobra·bubbletea·lipgloss·net/http를 쓰지 않는다
 - 패키지 init()에서 파일·터미널·네트워크에 접근하지 않는다. 의존성 추가 후 TestPackageInitIsCheap 확인 (huh는 이 이유로 뺐다)
 - 실행 경로에서 읽는 파일은 config.toml 하나, 링크 확인은 lstat만
 - claude 실행은 항상 syscall.Exec, 후처리는 다음 실행 때

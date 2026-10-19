@@ -24,7 +24,7 @@ func TestTableMatchesPlanExample(t *testing.T) {
 		"3일 6시간",
 		"12분 전 (캐시)",
 		"한도 없음 (API)",
-		"로그인 만료, `ccs old`",
+		"로그인 만료, `ccam old`",
 	}
 	all := strings.Join(lines, "\n")
 	for _, s := range want {

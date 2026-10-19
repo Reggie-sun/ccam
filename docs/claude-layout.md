@@ -38,7 +38,7 @@ Read from the Claude Code 2.1.302 binary (the same JavaScript runs on every plat
 - Service name: `"Claude Code" + OAUTH_FILE_SUFFIX + "-credentials" + suffix`. `OAUTH_FILE_SUFFIX` is `""` in production.
   `suffix` is `"-" + sha256(configDir)[:8]` (hex, NFC-normalized path) when `CLAUDE_CONFIG_DIR` is set, else `""`.
 - `CLAUDE_SECURESTORAGE_CONFIG_DIR` overrides the path used for the suffix; set to `""` it selects the unsuffixed
-  default item. ccam sets it to `""` for an imported `~/.claude` on macOS so `ccs main` and plain `claude` share one login.
+  default item. ccam sets it to `""` for an imported `~/.claude` on macOS so `ccam main` and plain `claude` share one login.
 - Account: `$USER` if it matches `^[a-zA-Z0-9._-]+$`, else `claude-code-user`.
 - Read with `security find-generic-password -a <account> -w -s <service>`; when the Keychain rejects writes,
   Claude Code falls back to `<config dir>/.credentials.json`.

@@ -7,13 +7,13 @@
 - [ ] 새 사용자(빈 HOME)에서 `install.sh` 한 줄로 설치, `ccam version` 출력
 - [ ] `ccam add` 마법사: 이름 → 공유 항목 → 브라우저 로그인 → `✓ <이름> (<이메일>) 추가됨 — 단축 명령: claudeN`
 - [ ] 두 번째 계정도 같은 방식으로 추가, `ccam list`에 서로 다른 이메일
-- [ ] `ccam import`로 기존 `~/.claude` 등록 후 `ccs main`과 그냥 `claude`가 같은 계정
+- [ ] `ccam import`로 기존 `~/.claude` 등록 후 `ccam main`과 그냥 `claude`가 같은 계정
 
 ## 전환
 
 - [ ] `claude1`, `claude2`가 서로 다른 이메일로 열림 (`/status`)
-- [ ] `ccs work --resume`, `ccs 2 -p "hi"` 인자 전달
-- [ ] `ccs` 선택 화면: 화살표·Enter, 숫자 키, 80열 터미널에서 줄바꿈 없음
+- [ ] `ccam work --resume`, `ccam 2 -p "hi"` 인자 전달
+- [ ] `ccam` 선택 화면: 화살표·Enter, 숫자 키, 80열 터미널에서 줄바꿈 없음
 - [ ] 터미널 제목이 `claude · <이름>`
 
 ## 공유
@@ -21,14 +21,14 @@
 - [ ] settings 공유: 한 계정에서 `/config` 변경 → 다른 계정에 반영, 링크 유지
 - [ ] `ccam mcp add …` 후 두 계정 모두 `/mcp`에 보임
 - [ ] 세션 안 `claude mcp add` → 다음 실행 때 안내 → `ccam mcp import`
-- [ ] 대화 내역 공유 켜기 → 1번에서 대화 → 종료 → `ccs next --continue`가 2번에서 이어감
+- [ ] 대화 내역 공유 켜기 → 1번에서 대화 → 종료 → `ccam next --continue`가 2번에서 이어감
 - [ ] 같은 폴더에서 두 계정 동시 실행 시 경고
 
 ## 사용량
 
-- [ ] `ccs usage`가 claude.ai 설정 화면의 사용률과 일치
+- [ ] `ccam usage`가 claude.ai 설정 화면의 사용률과 일치
 - [ ] `ccam statusline install` 후 상태줄에 `[계정] · 모델 · 5h N%`
-- [ ] 네트워크를 끊고 `ccs usage` → 캐시 값과 "(캐시)" 표시
+- [ ] 네트워크를 끊고 `ccam usage` → 캐시 값과 "(캐시)" 표시
 
 ## 점검
 

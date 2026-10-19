@@ -15,7 +15,7 @@ func TestMCPFlagStrategy(t *testing.T) {
 	groupMCP := filepath.Join(h.home, "data", "groups", "default", "mcp.json")
 
 	// No group servers yet: no flag.
-	h.ok("ccs", "work", "-c")
+	h.ok("ccam", "work", "-c")
 	if _, args := h.called(); !reflect.DeepEqual(args, []string{"-c"}) {
 		t.Fatalf("args %q", args)
 	}
@@ -25,7 +25,7 @@ func TestMCPFlagStrategy(t *testing.T) {
 	if info, _ := os.Stat(groupMCP); info.Mode().Perm() != 0o600 {
 		t.Fatal("mcp.json must be 0600")
 	}
-	h.ok("ccs", "work", "--mcp-config", "mine.json", "-c")
+	h.ok("ccam", "work", "--mcp-config", "mine.json", "-c")
 	_, args := h.called()
 	want := []string{"--mcp-config=" + groupMCP, "--mcp-config", "mine.json", "-c"}
 	if !reflect.DeepEqual(args, want) {
@@ -33,7 +33,7 @@ func TestMCPFlagStrategy(t *testing.T) {
 	}
 	// --mcp-config is variadic in claude: the space form would swallow a
 	// following prompt or subcommand as another config file.
-	h.ok("ccs", "work", "fix the bug")
+	h.ok("ccam", "work", "fix the bug")
 	if _, args := h.called(); !reflect.DeepEqual(args, []string{"--mcp-config=" + groupMCP, "fix the bug"}) {
 		t.Fatalf("prompt after flag: %q", args)
 	}
@@ -56,7 +56,7 @@ func TestMCPFlagStrategy(t *testing.T) {
 
 	// Local MCP off: no flag even though the group has servers.
 	h.ok("ccam", "share", "work", "--mcp", "off", "--yes")
-	h.ok("ccs", "work")
+	h.ok("ccam", "work")
 	if _, args := h.called(); len(args) != 0 {
 		t.Fatalf("mcp off still passes %q", args)
 	}
@@ -68,11 +68,11 @@ func TestMCPNewLocalServerHintAndImport(t *testing.T) {
 	// Simulate `claude mcp add` inside a work session.
 	os.WriteFile(filepath.Join(h.profileDir("work"), ".claude.json"),
 		[]byte(`{"oauthAccount":{"emailAddress":"dev@company.com"},"mcpServers":{"gh":{"type":"stdio","command":"gh-mcp"}}}`), 0o600)
-	r := h.run("", nil, "ccs", "work")
+	r := h.run("", nil, "ccam", "work")
 	if !strings.Contains(r.stderr, "gh") || !strings.Contains(r.stderr, "ccam mcp import work gh") {
 		t.Fatalf("no hint: %q", r.stderr)
 	}
-	if r := h.run("", nil, "ccs", "work"); strings.Contains(r.stderr, "gh") {
+	if r := h.run("", nil, "ccam", "work"); strings.Contains(r.stderr, "gh") {
 		t.Fatal("hint repeated without changes")
 	}
 	h.ok("ccam", "mcp", "import", "work", "gh")
@@ -93,7 +93,7 @@ func TestMCPSyncStrategy(t *testing.T) {
 	os.WriteFile(cfgPath, append(data, []byte("mcp_strategy = \"sync\"\n")...), 0o600)
 	h.addAccounts()
 	h.ok("ccam", "mcp", "add-json", "fs", `{"type":"stdio","command":"fs-mcp"}`)
-	h.ok("ccs", "work", "-c")
+	h.ok("ccam", "work", "-c")
 	_, args := h.called()
 	if !reflect.DeepEqual(args, []string{"-c"}) {
 		t.Fatalf("sync must not add flags: %q", args)
@@ -108,12 +108,12 @@ func TestSessionMarkerNamesTheClaudeProcess(t *testing.T) {
 	h := newHarness(t)
 	h.addAccounts()
 	dir := filepath.Join(h.home, "run", "profile-work")
-	h.run("", []string{"FAKE_SESSION_PROBE=" + dir}, "ccs", "work")
+	h.run("", []string{"FAKE_SESSION_PROBE=" + dir}, "ccam", "work")
 	if b, _ := os.ReadFile(dir + ".result"); strings.TrimSpace(string(b)) != "held" {
 		t.Fatalf("marker while running: %q", b)
 	}
 	other := filepath.Join(h.home, "run", "profile-personal")
-	h.run("", []string{"FAKE_SESSION_PROBE=" + other}, "ccs", "work")
+	h.run("", []string{"FAKE_SESSION_PROBE=" + other}, "ccam", "work")
 	if b, _ := os.ReadFile(other + ".result"); strings.TrimSpace(string(b)) != "free" {
 		t.Fatalf("other profile: %q", b)
 	}

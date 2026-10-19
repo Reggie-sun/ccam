@@ -84,14 +84,14 @@ func TestLaunchRepairsMissingLinkButStopsOnRealFile(t *testing.T) {
 	h := newHarness(t)
 	h.addAccounts()
 	os.Remove(filepath.Join(h.profileDir("work"), "skills"))
-	h.ok("ccs", "work")
+	h.ok("ccam", "work")
 	if _, err := os.Readlink(filepath.Join(h.profileDir("work"), "skills")); err != nil {
 		t.Fatal("missing link not recreated at launch")
 	}
 	os.Remove(filepath.Join(h.profileDir("work"), "CLAUDE.md"))
 	os.WriteFile(filepath.Join(h.profileDir("work"), "CLAUDE.md"), []byte("real"), 0o600)
 	os.Remove(h.log)
-	r := h.run("", nil, "ccs", "work")
+	r := h.run("", nil, "ccam", "work")
 	if r.code == 0 || !strings.Contains(r.stderr, "doctor --fix") {
 		t.Fatalf("expected stop: %+v", r)
 	}
@@ -103,7 +103,7 @@ func TestLaunchRepairsMissingLinkButStopsOnRealFile(t *testing.T) {
 		t.Fatalf("doctor should fail: %s", r.stdout)
 	}
 	h.ok("ccam", "doctor", "--fix")
-	h.ok("ccs", "work")
+	h.ok("ccam", "work")
 	// The group had no CLAUDE.md yet, so the real file became the group's.
 	if b, _ := os.ReadFile(filepath.Join(h.profileDir("personal"), "CLAUDE.md")); string(b) != "real" {
 		t.Fatalf("doctor --fix must keep the real file's content, got %q", b)

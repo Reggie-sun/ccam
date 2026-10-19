@@ -1,6 +1,6 @@
 // Package launcher turns "profile + claude args" into an exec of claude.
 //
-// This is the hot path behind `ccs <name>` and `claude2`: no cobra, no TUI,
+// This is the hot path behind `ccam <name>` and `claude2`: no cobra, no TUI,
 // no HTTP, one config read, lstat-only checks.
 package launcher
 
