@@ -53,18 +53,19 @@
   color-scheme: dark;
 }
 
-/* Two Latin-only web fonts; every other script uses its system font. */
+/* Two Latin-only web fonts; every other script uses its system font.
+   optional: a font that misses the first paint waits for the next page, so it never shifts layout. */
 @font-face {
   font-family: "Newsreader";
   src: url("/fonts/newsreader.woff2") format("woff2");
   font-weight: 300;
-  font-display: swap;
+  font-display: optional;
 }
 @font-face {
   font-family: "Inter";
   src: url("/fonts/inter.woff2") format("woff2");
   font-weight: 400 600;
-  font-display: swap;
+  font-display: optional;
 }
 @font-face { font-family: "Inter Fallback"; src: local("Arial"); size-adjust: 107%; ascent-override: 90%; descent-override: 22%; line-gap-override: 0%; }
 @font-face { font-family: "Newsreader Fallback"; src: local("Georgia"); size-adjust: 94%; }

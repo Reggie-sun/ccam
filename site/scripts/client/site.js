@@ -69,108 +69,112 @@
   });
   for (const a of d.querySelectorAll(".toc-inline a, .sidebar a")) a.addEventListener("click", () => (a.closest("details").open = false));
 
-  // On this page: mark the section being read.
-  const tocLinks = [...d.querySelectorAll(".toc a")];
-  const heads = [...new Set(tocLinks.map((a) => decodeURIComponent(a.hash.slice(1))))].map((id) => d.getElementById(id)).filter(Boolean);
-  if (heads.length) {
-    let current, queued = false;
-    const mark = () => {
-      queued = false;
-      const line = innerHeight * 0.3;
-      const head = heads.filter((h) => h.getBoundingClientRect().top < line).pop();
-      if (head === current) return;
-      current = head;
-      for (const a of tocLinks) a.removeAttribute("aria-current");
-      if (head) for (const a of tocLinks) if (a.hash === `#${head.id}`) a.setAttribute("aria-current", "location");
-    };
-    addEventListener("scroll", () => { if (!queued) { queued = true; requestAnimationFrame(mark); } }, { passive: true });
-    mark();
-  }
-
-  // How it works: the step in the middle of the screen drives the sticky panel.
-  const flow = d.querySelector("[data-flow]");
-  if (flow && IO) {
-    const steps = [...flow.querySelectorAll(".step")];
-    const views = [...flow.querySelectorAll(".fv")];
-    const io = new IO((entries) => {
-      for (const e of entries) {
-        if (!e.isIntersecting) continue;
-        const i = steps.indexOf(e.target);
-        flow.dataset.active = i;
-        steps.forEach((s, k) => s.classList.toggle("on", k === i));
-        views.forEach((v, k) => v.classList.toggle("on", k === i));
-      }
-    }, { rootMargin: "-45% 0px -45% 0px" });
-    steps.forEach((s) => io.observe(s));
-  }
-
-  if (still) return;
-
-  // Hero orbs lean toward the pointer.
-  const drift = d.querySelector("[data-parallax]");
-  if (drift && matchMedia("(pointer: fine)").matches) {
-    let x = 0, y = 0, queued = false;
-    addEventListener("pointermove", (e) => {
-      x = e.clientX / innerWidth - 0.5;
-      y = e.clientY / innerHeight - 0.5;
-      if (queued) return;
-      queued = true;
-      requestAnimationFrame(() => {
+  // Everything below waits for an idle moment so it never lengthens the first task.
+  const idle = window.requestIdleCallback || ((fn) => setTimeout(fn, 200));
+  idle(() => {
+    // On this page: mark the section being read.
+    const tocLinks = [...d.querySelectorAll(".toc a")];
+    const heads = [...new Set(tocLinks.map((a) => decodeURIComponent(a.hash.slice(1))))].map((id) => d.getElementById(id)).filter(Boolean);
+    if (heads.length) {
+      let current, queued = false;
+      const mark = () => {
         queued = false;
-        drift.style.setProperty("--px", x.toFixed(3));
-        drift.style.setProperty("--py", y.toFixed(3));
-      });
-    }, { passive: true });
-  }
+        const line = innerHeight * 0.3;
+        const head = heads.filter((h) => h.getBoundingClientRect().top < line).pop();
+        if (head === current) return;
+        current = head;
+        for (const a of tocLinks) a.removeAttribute("aria-current");
+        if (head) for (const a of tocLinks) if (a.hash === `#${head.id}`) a.setAttribute("aria-current", "location");
+      };
+      addEventListener("scroll", () => { if (!queued) { queued = true; requestAnimationFrame(mark); } }, { passive: true });
+      mark();
+    }
 
-  // The usage demo replays as a terminal session each time it scrolls into view.
-  const demo = d.querySelector("[data-demo]");
-  if (demo && IO) {
-    const typed = [...demo.querySelectorAll("[data-type]")];
-    const texts = typed.map((t) => t.textContent);
-    const later = [...demo.querySelectorAll(".later")];
-    const rows = [...demo.querySelectorAll(".row")];
-    const pcts = [...demo.querySelectorAll(".pct")];
-    const pick = demo.querySelector("[data-pick]");
-    const note = demo.querySelector(".note");
-    const last = later[later.length - 1];
-    let fmt; // created on first play: Intl setup is a long task on slow phones
-    let timers = [];
-    const at = (ms, fn) => timers.push(setTimeout(fn, ms));
-    const type = (el, text, start) => {
-      for (let i = 0; i <= text.length; i++) at(start + i * 55, () => (el.textContent = text.slice(0, i)));
-      return start + text.length * 55;
-    };
-    const reset = () => {
-      timers.forEach(clearTimeout);
-      timers = [];
-      demo.classList.add("playing");
-      later.forEach((e) => e.classList.remove("shown"));
-      pick.classList.remove("on");
-      typed.forEach((t) => (t.textContent = ""));
-      pcts.forEach((p) => (p.textContent = ""));
-    };
-    const play = () => {
+    // How it works: the step in the middle of the screen drives the sticky panel.
+    const flow = d.querySelector("[data-flow]");
+    if (flow && IO) {
+      const steps = [...flow.querySelectorAll(".step")];
+      const views = [...flow.querySelectorAll(".fv")];
+      const io = new IO((entries) => {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          const i = steps.indexOf(e.target);
+          flow.dataset.active = i;
+          steps.forEach((s, k) => s.classList.toggle("on", k === i));
+          views.forEach((v, k) => v.classList.toggle("on", k === i));
+        }
+      }, { rootMargin: "-45% 0px -45% 0px" });
+      steps.forEach((s) => io.observe(s));
+    }
+
+    if (still) return;
+
+    // Hero orbs lean toward the pointer.
+    const drift = d.querySelector("[data-parallax]");
+    if (drift && matchMedia("(pointer: fine)").matches) {
+      let x = 0, y = 0, queued = false;
+      addEventListener("pointermove", (e) => {
+        x = e.clientX / innerWidth - 0.5;
+        y = e.clientY / innerHeight - 0.5;
+        if (queued) return;
+        queued = true;
+        requestAnimationFrame(() => {
+          queued = false;
+          drift.style.setProperty("--px", x.toFixed(3));
+          drift.style.setProperty("--py", y.toFixed(3));
+        });
+      }, { passive: true });
+    }
+
+    // The usage demo replays as a terminal session each time it scrolls into view.
+    const demo = d.querySelector("[data-demo]");
+    if (demo && IO) {
+      const typed = [...demo.querySelectorAll("[data-type]")];
+      const texts = typed.map((t) => t.textContent);
+      const later = [...demo.querySelectorAll(".later")];
+      const rows = [...demo.querySelectorAll(".row")];
+      const pcts = [...demo.querySelectorAll(".pct")];
+      const pick = demo.querySelector("[data-pick]");
+      const note = demo.querySelector(".note");
+      const last = later[later.length - 1];
+      let fmt; // created on first play: Intl setup is a long task on slow phones
+      let timers = [];
+      const at = (ms, fn) => timers.push(setTimeout(fn, ms));
+      const type = (el, text, start) => {
+        for (let i = 0; i <= text.length; i++) at(start + i * 55, () => (el.textContent = text.slice(0, i)));
+        return start + text.length * 55;
+      };
+      const reset = () => {
+        timers.forEach(clearTimeout);
+        timers = [];
+        demo.classList.add("playing");
+        later.forEach((e) => e.classList.remove("shown"));
+        pick.classList.remove("on");
+        typed.forEach((t) => (t.textContent = ""));
+        pcts.forEach((p) => (p.textContent = ""));
+      };
+      const play = () => {
+        reset();
+        fmt ??= new Intl.NumberFormat(d.documentElement.lang, { style: "percent" });
+        let t = type(typed[0], texts[0], 350) + 300;
+        at(t, () => rows.forEach((r) => r.classList.add("shown")));
+        for (const p of pcts) {
+          const v = Number(p.dataset.value);
+          for (let k = 1; k <= 24; k++) at(t + 300 + k * 50, () => (p.textContent = fmt.format((v * (1 - (1 - k / 24) ** 3)) / 100)));
+        }
+        t += 1900;
+        at(t, () => note.classList.add("shown"));
+        t += 800;
+        at(t, () => last.classList.add("shown"));
+        t = type(typed[1], texts[1], t + 400);
+        at(t + 450, () => pick.classList.add("on"));
+      };
       reset();
-      fmt ??= new Intl.NumberFormat(d.documentElement.lang, { style: "percent" });
-      let t = type(typed[0], texts[0], 350) + 300;
-      at(t, () => rows.forEach((r) => r.classList.add("shown")));
-      for (const p of pcts) {
-        const v = Number(p.dataset.value);
-        for (let k = 1; k <= 24; k++) at(t + 300 + k * 50, () => (p.textContent = fmt.format((v * (1 - (1 - k / 24) ** 3)) / 100)));
-      }
-      t += 1900;
-      at(t, () => note.classList.add("shown"));
-      t += 800;
-      at(t, () => last.classList.add("shown"));
-      t = type(typed[1], texts[1], t + 400);
-      at(t + 450, () => pick.classList.add("on"));
-    };
-    reset();
-    let seen = false;
-    new IO(([e]) => {
-      if (e.intersectionRatio >= 0.4 && !seen) { seen = true; play(); }
-      else if (!e.isIntersecting && seen) { seen = false; reset(); }
-    }, { threshold: [0, 0.4] }).observe(demo);
-  }
+      let seen = false;
+      new IO(([e]) => {
+        if (e.intersectionRatio >= 0.4 && !seen) { seen = true; play(); }
+        else if (!e.isIntersecting && seen) { seen = false; reset(); }
+      }, { threshold: [0, 0.4] }).observe(demo);
+    }
+  });
 })();
