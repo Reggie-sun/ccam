@@ -2,3 +2,6 @@
 allowBuilds:
   esbuild: true
   workerd: true
+# fflate < 0.7.5 can loop forever on malformed ZIP64 (Dependabot alert); satori pins 0.7.3.
+overrides:
+  fflate: ^0.8.2

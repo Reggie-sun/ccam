@@ -177,6 +177,8 @@ summary { list-style: none; cursor: pointer; }
 }
 .picker > summary:hover, .picker[open] > summary { background: var(--strong); }
 .picker > summary svg { inline-size: 1.05rem; block-size: 1.05rem; }
+/* Very narrow phones: the globe alone (the summary keeps its label), so the header fits 320 px. */
+@media (max-width: 23.99rem) { .picker .lang-name { display: none; } }
 .popover {
   position: absolute; inset-inline-end: 0; inset-block-start: calc(100% + 0.5rem); z-index: 60;
   background: var(--card); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow-lift);
@@ -233,6 +235,7 @@ html:not([data-font="brand"]) .hero h1 { font-size: clamp(2.3rem, 6vw, 4.25rem);
 .cmd code::before { content: "$ "; color: var(--muted); }
 .cmd .copy { flex: none; }
 .then { margin-block-start: 1.5rem; color: var(--body); display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 0.75rem 1rem; }
+.then .pill { white-space: normal; max-inline-size: 100%; text-align: center; line-height: 1.3; }
 .then code { color: var(--ink); background: var(--strong); padding: 0.15em 0.45em; border-radius: 6px; }
 
 /* Landing: the usage demo */
@@ -244,7 +247,17 @@ html:not([data-font="brand"]) .hero h1 { font-size: clamp(2.3rem, 6vw, 4.25rem);
 }
 .term .line { font-family: var(--font-mono); margin: 0; display: flex; gap: 0.6rem; align-items: baseline; min-block-size: 1.6em; }
 .term .ps { color: var(--term-muted); }
-.term .line + .rows, .rows + .line, .note + .line { margin-block-start: 1rem; }
+.term .line + .rows, .rows + .line, .note + .line, .cc + .line { margin-block-start: 1rem; }
+/* A Claude Code session inside the terminal. */
+.cc { margin-block-start: 0.6rem; padding: 0.8rem 1rem; border: 1px solid var(--term-line); border-radius: 12px; display: grid; gap: 0.4rem; font-family: var(--font-mono); font-size: 0.86rem; }
+.cc p { margin: 0; }
+.cc-head { display: flex; align-items: center; gap: 0.5rem; font-family: var(--font-sans); font-weight: 600; color: var(--term-ink); }
+.cc-mark { color: #d97757; }
+.cc-acct { font-family: var(--font-mono); font-weight: 400; font-size: 0.8rem; color: var(--term-ink); border: 1px solid var(--term-line); border-radius: 999px; padding: 0 0.55rem; }
+.cc-prompt { color: var(--term-ink); }
+.cc-limit { color: var(--term-full); }
+.cc-status { color: var(--term-muted); }
+.cc-status .caret { vertical-align: text-bottom; margin-inline-start: 0.3rem; }
 .term .note { color: var(--term-ink); font-family: var(--font-sans); }
 .caret { display: inline-block; inline-size: 0.55em; block-size: 1.1em; background: var(--term-ink); align-self: center; animation: blink 1.1s steps(1) infinite; }
 @keyframes blink { 50% { opacity: 0; } }
@@ -261,15 +274,12 @@ html:not([data-font="brand"]) .hero h1 { font-size: clamp(2.3rem, 6vw, 4.25rem);
 .meter .pct { text-align: end; color: var(--term-ink); font-variant-numeric: tabular-nums; font-family: var(--font-mono); }
 .meter .bar.full + .pct { color: var(--term-full); }
 .row .resets { grid-column: 2; font-size: 0.78rem; color: var(--term-muted); }
-/* Playback (site.js): every step is a transform or clip, never opacity, so text keeps its contrast mid-animation. */
-.term .line, .rows .row, .term .note { transition: clip-path 700ms var(--ease), transform 700ms var(--ease); }
-.stage.playing .later { clip-path: inset(0 100% 0 0); transform: translateY(8px); }
-[dir="rtl"] .stage.playing .later { clip-path: inset(0 0 0 100%); }
-.stage.playing .later.shown { clip-path: inset(0); transform: none; }
-.stage.playing .row:nth-child(2) { transition-delay: 120ms; }
-.stage.playing .row:nth-child(3) { transition-delay: 240ms; }
+/* Playback (site.js): every step is a clip or transform, never opacity, so text keeps its contrast mid-animation. */
+.term [data-seq] { transition: clip-path 700ms var(--ease), transform 700ms var(--ease); }
+.stage.playing [data-seq]:not(.shown) { clip-path: inset(0 100% 0 0); transform: translateY(8px); }
+[dir="rtl"] .stage.playing .rows[data-seq]:not(.shown), [dir="rtl"] .stage.playing .note[data-seq]:not(.shown) { clip-path: inset(0 0 0 100%); }
 .stage.playing .fill { transform: scaleX(0); }
-.stage.playing .row.shown .fill { transform: scaleX(1); transition: transform 1.3s var(--ease) 200ms; }
+.stage.playing .rows.shown .fill { transform: scaleX(1); transition: transform 1.3s var(--ease) 300ms; }
 
 /* Landing: sections */
 .section { padding-block: clamp(4rem, 10vw, 6rem); }

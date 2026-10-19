@@ -109,29 +109,31 @@
 
     if (still) return;
 
-    // The usage demo replays as a terminal session each time it scrolls into view.
+    // The demo replays as a terminal session each time it scrolls into view.
     const demo = d.querySelector("[data-demo]");
     if (demo && IO) {
+      const seq = [...demo.querySelectorAll("[data-seq]")];
       const typed = [...demo.querySelectorAll("[data-type]")];
-      const texts = typed.map((t) => t.textContent);
-      const later = [...demo.querySelectorAll(".later")];
-      const rows = [...demo.querySelectorAll(".row")];
+      const texts = new Map(typed.map((t) => [t, t.textContent]));
       const pcts = [...demo.querySelectorAll(".pct")];
       const pick = demo.querySelector("[data-pick]");
-      const note = demo.querySelector(".note");
-      const last = later[later.length - 1];
       let fmt; // created on first play: Intl setup is a long task on slow phones
       let timers = [];
       const at = (ms, fn) => timers.push(setTimeout(fn, ms));
-      const type = (el, text, start) => {
-        for (let i = 0; i <= text.length; i++) at(start + i * 55, () => (el.textContent = text.slice(0, i)));
-        return start + text.length * 55;
+      const type = (el, start) => {
+        const text = texts.get(el);
+        for (let i = 0; i <= text.length; i++) at(start + i * 45, () => (el.textContent = text.slice(0, i)));
+        return start + text.length * 45;
+      };
+      const count = (p, start) => {
+        const v = Number(p.dataset.value);
+        for (let k = 1; k <= 24; k++) at(start + k * 50, () => (p.textContent = fmt.format((v * (1 - (1 - k / 24) ** 3)) / 100)));
       };
       const reset = () => {
         timers.forEach(clearTimeout);
         timers = [];
         demo.classList.add("playing");
-        later.forEach((e) => e.classList.remove("shown"));
+        seq.forEach((e) => e.classList.remove("shown"));
         pick.classList.remove("on");
         typed.forEach((t) => (t.textContent = ""));
         pcts.forEach((p) => (p.textContent = ""));
@@ -139,25 +141,21 @@
       const play = () => {
         reset();
         fmt ??= new Intl.NumberFormat(d.documentElement.lang, { style: "percent" });
-        let t = type(typed[0], texts[0], 350) + 300;
-        at(t, () => rows.forEach((r) => r.classList.add("shown")));
-        for (const p of pcts) {
-          const v = Number(p.dataset.value);
-          for (let k = 1; k <= 24; k++) at(t + 300 + k * 50, () => (p.textContent = fmt.format((v * (1 - (1 - k / 24) ** 3)) / 100)));
+        let t = 300;
+        for (const el of seq) {
+          at(t, () => el.classList.add("shown"));
+          for (const tp of el.querySelectorAll("[data-type]")) t = type(tp, t + 250);
+          if (el.classList.contains("rows")) pcts.forEach((p) => count(p, t + 300));
+          t += Number(el.dataset.seq);
         }
-        t += 1900;
-        at(t, () => note.classList.add("shown"));
-        t += 800;
-        at(t, () => last.classList.add("shown"));
-        t = type(typed[1], texts[1], t + 400);
-        at(t + 450, () => pick.classList.add("on"));
+        at(t - 800, () => pick.classList.add("on"));
       };
       reset();
       let seen = false;
       new IO(([e]) => {
-        if (e.intersectionRatio >= 0.4 && !seen) { seen = true; play(); }
+        if (e.intersectionRatio >= 0.3 && !seen) { seen = true; play(); }
         else if (!e.isIntersecting && seen) { seen = false; reset(); }
-      }, { threshold: [0, 0.4] }).observe(demo);
+      }, { threshold: [0, 0.3] }).observe(demo);
     }
   });
 })();

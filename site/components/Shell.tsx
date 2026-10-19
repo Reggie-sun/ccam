@@ -60,7 +60,7 @@ export function Shell({ locale, alternates, active, menu, children }: Props) {
               <details className="picker">
                 <summary aria-label={m.nav.language}>
                   <GlobeIcon />
-                  {nativeName(l)}
+                  <span className="lang-name">{nativeName(l)}</span>
                 </summary>
                 <ul id="lang-list" className="popover">
                   {built.map((x) => {

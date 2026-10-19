@@ -26,7 +26,11 @@ function Bar({ value, label }: { value: number; label: string }) {
   );
 }
 
-/** Rendered in its final state; site.js replays it as a terminal session when it scrolls into view. */
+// The story: Claude Code on "side" hits its 5-hour limit, ccam usage shows the room left,
+// and ccam next continues the same conversation on "work". Numbers match the docs' sample output.
+const ASK = "refactor the parser and add tests";
+
+/** Rendered in its final state; site.js replays it line by line (data-seq: pause after, ms) when it scrolls into view. */
 export function UsageBoard({ locale, m }: { locale: Locale; m: Messages }) {
   const pct = (v: number) => new Intl.NumberFormat(locale.lang, { style: "percent" }).format(v / 100);
   const meter = (label: string, value: number) => (
@@ -39,13 +43,26 @@ export function UsageBoard({ locale, m }: { locale: Locale; m: Messages }) {
   return (
     <figure className="stage reveal" data-demo>
       <div className="term">
-        <p className="line" dir="ltr">
+        <p className="line" dir="ltr" data-seq="250">
+          <span className="ps">$</span>
+          <span data-type>claude3</span>
+        </p>
+        <div className="cc" dir="ltr" lang="en">
+          <p className="cc-head" data-seq="250">
+            <span className="cc-mark" aria-hidden="true">✻</span> Claude Code <span className="cc-acct">side</span>
+          </p>
+          <p className="cc-prompt" data-seq="700">
+            <span className="ps">&gt;</span> <span data-type>{ASK}</span>
+          </p>
+          <p className="cc-limit" data-seq="1000">5-hour limit reached · resets in 22m</p>
+        </div>
+        <p className="line" dir="ltr" data-seq="250">
           <span className="ps">$</span>
           <span data-type>ccam usage</span>
         </p>
-        <div className="rows">
+        <div className="rows" data-seq="1900">
           {rows.map((r) => (
-            <div className={`row later${r.name === "work" ? " on" : ""}`} key={r.name} data-pick={r.name === "work" ? "" : undefined}>
+            <div className={`row${r.name === "work" ? " on" : ""}`} key={r.name} data-pick={r.name === "work" ? "" : undefined}>
               <span className="slot" dir="ltr">{r.slot}</span>
               <span className="name" dir="ltr">{r.name}</span>
               {meter(m.landing.board.fiveHour, r.five)}
@@ -54,12 +71,22 @@ export function UsageBoard({ locale, m }: { locale: Locale; m: Messages }) {
             </div>
           ))}
         </div>
-        <p className="line note later">{format(locale, m.landing.board.mostRoom, { name: "work" })}</p>
-        <p className="line later" dir="ltr">
+        <p className="line note" data-seq="700">{format(locale, m.landing.board.mostRoom, { name: "work" })}</p>
+        <p className="line" dir="ltr" data-seq="400">
           <span className="ps">$</span>
-          <span data-type>ccam next --auto</span>
-          <span className="caret" aria-hidden="true" />
+          <span data-type>ccam next --auto --continue</span>
         </p>
+        <div className="cc" dir="ltr" lang="en">
+          <p className="cc-head" data-seq="350">
+            <span className="cc-mark" aria-hidden="true">✻</span> Claude Code <span className="cc-acct">work</span>
+          </p>
+          <p className="cc-prompt" data-seq="500">
+            <span className="ps">&gt;</span> {ASK}
+          </p>
+          <p className="cc-status" data-seq="0">
+            [work] · Opus · 5h 8% · 7d 19% <span className="caret" aria-hidden="true" />
+          </p>
+        </div>
       </div>
       <figcaption>{m.landing.boardLabel}</figcaption>
     </figure>
