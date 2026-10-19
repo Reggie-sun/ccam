@@ -3,6 +3,7 @@ package cli
 import (
 	"bufio"
 	"bytes"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -57,7 +58,7 @@ func TestRelayLoginDeliversCallbackAndForwardsTheRest(t *testing.T) {
 	in := bufio.NewReader(strings.NewReader("pasted-code\n" + srv.URL + "/callback?code=c1&state=s1\nlast"))
 	var toClaude pipe
 	var msg bytes.Buffer
-	relayLogin(in, &toClaude, &msg, deliverCallback)
+	relayLogin(in, nil, &toClaude, &msg, deliverCallback)
 
 	if got.Get("code") != "c1" || got.Get("state") != "s1" {
 		t.Fatalf("callback got %v", got)
@@ -78,8 +79,24 @@ func TestRelayLoginReportsAFailedDelivery(t *testing.T) {
 	in := bufio.NewReader(strings.NewReader(srv.URL + "/callback?code=c&state=s\n"))
 	var toClaude pipe
 	var msg bytes.Buffer
-	relayLogin(in, &toClaude, &msg, deliverCallback)
+	relayLogin(in, nil, &toClaude, &msg, deliverCallback)
 	if !strings.Contains(msg.String(), "HTTP 400") || toClaude.Len() != 0 {
 		t.Fatalf("message %q, claude got %q", msg.String(), toClaude.String())
+	}
+}
+
+func TestReadLineShowsStars(t *testing.T) {
+	in := bufio.NewReader(strings.NewReader("ab\x7fc\x1bd\r\x7fé\n\x04"))
+	var stars bytes.Buffer
+	for _, want := range []string{"acd\n", "é\n"} {
+		if line, err := readLine(in, &stars); line != want || err != nil {
+			t.Fatalf("got %q, %v; want %q", line, err, want)
+		}
+	}
+	if line, err := readLine(in, &stars); line != "" || err != io.EOF {
+		t.Fatalf("Ctrl-D: got %q, %v", line, err)
+	}
+	if got := stars.String(); got != "**\b \b**\n*\n" {
+		t.Fatalf("stars %q", got)
 	}
 }
