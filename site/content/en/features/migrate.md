@@ -114,7 +114,7 @@ MCP servers that sign in with OAuth keep their tokens in the login file, `.crede
 The entries go into each receiving account's own `.credentials.json`, written with `fsutil.AtomicWrite` at mode `0600`. They never go into the group. An account receives them only if it shares `mcp` (or, for plugin servers, `extensions`) through the target group, and only the keys it lacks are added: entries it already has, perhaps newer, are kept. The plan line `sign-ins` lists the servers, the receiving accounts and the skipped ones. ccam skips an account, and names it with the reason, when it is:
 
 - registered in place with `ccam import`, since plain `claude` may be using its login file;
-- running, since Claude Code rewrites its login file (checked again just before writing, reported as `started meanwhile`);
+- running, since Claude Code rewrites its login file (checked again right before writing, reported as `started meanwhile`);
 - not logged in yet;
 - keeping its login in the macOS Keychain, which ccam does not write.
 

@@ -6,7 +6,7 @@ order: 9
 translation: source
 ---
 
-`ccam doctor` checks your ccam installation: the Claude Code binary, every account's folder, login and share links, the shared MCP servers, the usage endpoint and your shortcut commands. `ccam doctor --fix` repairs what it can do without losing data and keeps a backup of anything it replaces. Run it when `ccam <name>` stops with a share link problem, after you restore files by hand, or after a Claude Code update.
+`ccam doctor` checks your ccam installation: the Claude Code binary, every account's folder, login and share links, the shared MCP servers, the usage endpoint and your shortcut commands. `ccam doctor --fix` repairs what it can do without losing data and moves any file it replaces into a backup folder first. Run it when `ccam <name>` stops with a share link problem, after you restore files by hand, or after a Claude Code update.
 
 ## Usage
 
@@ -57,7 +57,7 @@ $ ccam doctor --fix
 
 `ccam doctor` takes no arguments. It honours `--dry-run`: `ccam --dry-run doctor --fix` prints the same findings as `ccam doctor` and changes nothing.
 
-The exit code is `1` when at least one `✗` finding is left unfixed, and `0` otherwise. Warnings and information never fail the run. When the run fails without `--fix`, ccam adds the line ``\n`ccam doctor --fix` repairs what it can.``. A config that cannot be loaded also ends with `1` and a `ccam:` error.
+The exit code is `1` when at least one `✗` finding is left unfixed, and `0` otherwise. Warnings and information never fail the run. When the run fails without `--fix`, ccam ends with a blank line and `` `ccam doctor --fix` repairs what it can. ``. A config that cannot be loaded also ends with `1` and a `ccam:` error.
 
 ## How it works
 
@@ -70,7 +70,7 @@ The middle block runs once per account. The checks, and what `--fix` does for ea
 1. **Claude Code version** (`checkClaude`). Resolves the `claude` binary as the launcher does and runs `claude --version`. If the version does not start with `2.1.302`, the version ccam's folder layout was verified against (`doctor.LayoutVersion`), it adds `· ccam was verified against the folder layout of Claude Code 2.1.302. Any 'unknown entries' below may mean the layout changed`. A missing binary or a failing `--version` is an error. No fix.
 2. **Credentials in the environment** (`checkAuthEnv`). Warns when `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY` or `ANTHROPIC_AUTH_TOKEN` is set: every account launched from that shell inherits it, and Claude Code prefers it over the account's own login. No fix; unset it yourself.
 3. **Folder** (`checkProfile`). A missing account folder is an error and ends that account's checks. Permissions with any group or other bits set are a warning; `--fix` runs `chmod 0700`.
-4. **Login file** (`checkCredentials`). `.credentials.json` is checked with `lstat`. A symlink is an error, because each account must have its own token, and is not fixed: ccam will not pick which login to keep. A mode other than `0600` is a warning; `--fix` runs `chmod 0600`. Then the login is read (on macOS from the Keychain first). No login is a warning that points to `ccam login <name>`. An expired refresh token is the error `login expired`; an expired access token is only information, since Claude Code refreshes it on the next launch. None of these are fixed.
+4. **Login file** (`checkCredentials`). `.credentials.json` is checked with `lstat`. A symlink is an error, because each account must have its own token, and is not fixed. A mode other than `0600` is a warning; `--fix` runs `chmod 0600`. Then the login is read (on macOS from the Keychain first). No login is a warning that points to `ccam login <name>`. An expired refresh token is the error `login expired`; an expired access token is only information, since Claude Code refreshes it on the next launch. None of these are fixed.
 5. **Share links** (`share.Check`). Compares every path in `share.Layout` with the account's share settings, using only `lstat` and `readlink`. It reports four kinds: a missing link, a link that points elsewhere, a real file where a link belongs, and a link left over for an item that is now local. A missing link is a warning, the others are errors.
 6. **Unknown entries** (`checkUnknownEntries`). Lists top-level names in the account folder that ccam does not know (`share.Known`), as a hint that the Claude Code layout changed. Information only.
 7. **Plugin paths** (`checkPlugins`). Plugin registries (`installed_plugins.json`, `known_marketplaces.json`) store absolute paths. In each group's `plugins/`, paths that go through one account's folder break when that account is removed or renamed. `--fix` rewrites them to the group folder with `profile.RewritePluginPaths`, an atomic write of the registry file.
@@ -80,7 +80,16 @@ The middle block runs once per account. The checks, and what `--fix` does for ea
 
 ### Repairing share links
 
-The launch path creates a missing link on the spot, but stops for anything that could lose data and points here: ``stopped because of share link problems: … Repair them with `ccam doctor --fix`, then run again``. For any share link problem, `--fix` calls `share.Build` with the account's share settings as both the current and the target state, then `Plan.Apply`. `Build` re-derives every step from what is on disk, the same plan `ccam share` uses, so the repair follows the same rules as turning sharing on.
+The launch path creates a missing link on the spot, but stops for anything that could lose data and points here:
+
+```console
+$ ccam work
+ccam: stopped because of share link problems:
+  /home/me/.local/share/ccam/profiles/work/CLAUDE.md: set to shared but is a real file, not a link
+Repair them with `ccam doctor --fix`, then run again
+```
+
+For any share link problem, `--fix` calls `share.Build` with the account's share settings as both the current and the target state, then `Plan.Apply`. `Build` re-derives every step from what is on disk, the same plan `ccam share` uses, so the repair follows the same rules as turning sharing on.
 
 <!-- motion:doctor-repair -->
 
@@ -92,7 +101,7 @@ Here `settings.json` is a real file. Because the group already has a different `
 - A link to another group is replaced. A link to a folder outside ccam goes to the backup, and its content seeds the group if the group is empty.
 - A link left for an item that is now local is removed, and the account gets a copy of the group's content.
 
-Every step moves data into the group or the backup folder. Nothing is deleted.
+Apart from removing links, every step moves data into the group or the backup folder. Nothing is deleted.
 
 ## Safety and edge cases
 

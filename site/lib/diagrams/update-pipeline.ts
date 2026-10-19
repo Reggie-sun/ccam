@@ -30,7 +30,7 @@ export default function updatePipeline(): string {
     glow(x, y.cmd, w, h, 0),
     packet([cx, y.cmd + h], [cx, y.latest], 0.5),
     glow(x, y.latest, w, h, t),
-    packet([cx, y.latest + h], [cx, y.tag], t + 0.5, { label: "v0.5.0" }),
+    packet([cx, y.latest + h], [cx, y.tag], t + 0.5),
     glow(x, y.tag, w, h, 2 * t),
     packet([lcx, 190], [lcx, y.dl], 2 * t + 0.5),
     packet([rcx, 190], [rcx, y.dl], 2 * t + 0.5),
