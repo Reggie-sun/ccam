@@ -4,7 +4,7 @@ description: Fara Claude Code a matsayin kowane asusu da ccam <name|number>, cca
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: d033da86f44b
+sourceHash: 6c04bb48df22
 ---
 
 `ccam work` yana fara Claude Code a matsayin asusun `work`, kuma duk abin da ke bayan sunan yana zuwa `claude` kamar yadda yake. Yi amfani da shi duk inda za ka rubuta `claude`: a terminal, a rubutun (script), ko tare da shigarwa ta bututu (pipe).
@@ -108,6 +108,25 @@ Da tsohuwar dabarar `flag`, ccam yana miƙa sabobin MCP na rukunin ga Claude Cod
 
 Da `mcp_strategy = "sync"` a `config.toml`, ccam yana rubuta sabobin cikin `.claude.json` na asusun maimakon haka, kuma yana tsallake hakan idan asusun yana aiki tuni.
 
+### Remote Control
+
+`ccam work rc` (ko `ccam work remote-control`) yana fara Remote Control na Claude Code a matsayin `work`. `claude remote-control` yana ƙin `--mcp-config` kafin aikatau (verb) ɗinsa kuma ba ya karɓar ko ɗaya bayansa, kuma zamansa suna karanta sabobin MCP ne kawai daga `.claude.json` na asusun. Don haka dabarar flag tana aiki daban a nan:
+
+<!-- motion:launch-rc -->
+
+1. `remoteControl` yana ɗaukar argument na farko bayan asusun da bai fara da `-` ba a matsayin aikatau na Claude Code. Idan shi ne `remote-control` ko `rc`, `mcp.FlagArgs` ba ya ƙara komai.
+2. `mcp.Synced` yana kwatanta lokacin gyaran `mcp.json` na rukunin da `sync-stamp` na asusun. Idan `.claude.json` yana ɗauke da sabobin rukunin na yanzu tuni, ko rukunin ba shi da ko ɗaya, Remote Control yana farawa ba tare da tambaya ba.
+3. In ba haka ba, ccam yana faɗin sunayen sabobin da zaman za su rasa kuma yana tambaya:
+
+   ```console
+   ccam: Remote Control sessions only get MCP servers stored in account work's .claude.json, not the shared MCP servers (ctx, fs).
+   Copy them into .claude.json (a backup is kept)? [y/N]
+   ```
+
+4. Idan `y`, `mcp.Sync` yana kwafar su kamar yadda dabarar `sync` ke yi: ƙarƙashin kullen Claude Code, bayan ajiya, kuma yana riƙe sabobin asusun kansa. Idan `N`, ko babu terminal, Remote Control yana farawa ba tare da su ba, kuma ccam yana nuna `mcp_strategy = "sync"`, wanda ke kwafar su kafin kowace farawa.
+
+ccam yana tambaya a kowace farawar Remote Control har sai an kwafi sabobin, kuma bayan kwafi sai kawai idan `mcp.json` na rukunin ya sake canzawa. Kwafin da ke `.claude.json` yana nasara a kan `--mcp-config` a farawa ta yau da kullum na gaba, don haka `ccam mcp add`, `remove` da `import` suna sabunta kwafin da sauran asusan ke riƙe da su ([Sabobin MCP da aka raba](/features/mcp)).
+
 ### Kasafin 10 ms
 
 ccam yana ƙara 10 ms (p95) a mafi yawa kafin Claude Code ya fara. Hanyar farawa ba ta taɓa gina bishiyar umarnin cobra ba, ba ta fara Bubble Tea ba ko buɗe haɗin network, kuma `TestPackageInitIsCheap` yana gazawa idan ayyukan `init()` na packages sun ɗauki fiye da 5 ms gaba ɗaya. `scripts/perf-check.sh` yana auna `ccam --dry-run work`, `ccam work` da gajeren umarni da `hyperfine` kuma yana gazawa sama da 10 ms, kuma `BenchmarkLaunchPath` a `internal/launcher` yana gudanar da matakan a madauki. Don ganin lokacin kowane mataki, saita `CCAM_TRACE=1`:
@@ -127,6 +146,7 @@ ccam trace: prelaunch             0.083ms (total 3.661ms)
 - Idan hanyar da aka raba ta zama fayil na yau da kullum ko tana nuna wurin da bai dace ba, ccam yana tsayawa da `stopped because of share link problems:`, yana lissafa su, kuma yana roƙon ka ka gudanar da `ccam doctor --fix`. Ba ya matsar da bayanai a hanyar farawa.
 - Idan wani Claude Code da ke raba tarihin tattaunawa da wannan asusun (rukuni ɗaya) yana aiki a folda ɗaya, ccam yana gargaɗin cewa tarihin zai iya cakuɗewa kuma yana tambaya `Run anyway? [y/N]`. Ba tare da terminal ba yana nuna gargaɗin kuma yana ci gaba.
 - `--dry-run` yana tsallake daidaita MCP (sync), sanarwar sabuwar sabar, duba tarihi, alamar zama, take da lokacin amfani na ƙarshe, kuma ba ya yin exec. Har yanzu yana duba mahaɗan rabawa, kuma yana ƙirƙirar mahaɗin da ya ɓace kamar yadda farawa ta yau da kullum za ta yi.
+- `ccam work rc` yayin da `work` yana aiki tuni yana barin `.claude.json` yadda yake, yana faɗin haka, kuma yana fara Remote Control ba tare da sabobin rukunin ba; sake gudanar da shi bayan zaman ya ƙare don kwafar su. Da `--dry-run` yana buga saƙon amma ba ya tambaya kuma ba ya kwafi.
 - Da `mcp_strategy = "sync"`, sync da ya gaza yana buga `ccam: MCP sync failed (launching anyway): …` kuma Claude Code yana farawa da sabobin da yake da su tuni.
 
 ## Masu alaƙa

@@ -4,7 +4,7 @@ description: ccam add、ccam login、ccam list、ccam rename、ccam remove、cca
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 97cef50f48f4
+sourceHash: 99c931574262
 ---
 
 ccamの各アカウントは、独自のログインを持つ別々のClaude Codeの設定フォルダーです。ここで紹介するコマンドで、アカウントの作成、サインイン、一覧表示、名前変更、削除を行い、すでにあるフォルダーを登録します。
@@ -92,6 +92,8 @@ On a remote machine? If the browser ends on a http://localhost:…/callback page
 ```
 
 成功すると`→ Passed the sign-in to Claude Code on this machine.`と表示します。
+
+ログインがターミナルで入力を待っている間、ccamはターミナルのエコーと行モードをオフにし、入力した文字ごとに`*`を表示します。そのため、貼り付けたコードやコールバックアドレスは画面に表示されません。行の編集は`readLine`が自分で行います。`Enter`で行を送信し、`Backspace`で1文字消し、空の行で`Ctrl+D`を押すと入力が終わります。ターミナルの設定は、ログインが終わったときに元に戻ります。`Ctrl+C`、`SIGTERM`、`SIGHUP`を受けたときも元に戻り、これらは従来どおりccamを終了します。標準入力と標準エラー出力がターミナルでない場合は、行を届いたとおりにコピーします。
 
 ### 名前の変更、削除、インポート
 

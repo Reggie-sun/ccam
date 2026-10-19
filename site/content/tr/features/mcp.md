@@ -4,7 +4,7 @@ description: ccam mcp add, add-json, list, remove ve import ile grup başına te
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: 46a7aa716f99
+sourceHash: 69fd3233fd09
 ---
 
 Claude Code, kullanıcı MCP sunucularını hesabın girişini de tutan dosya olan `.claude.json` içinde saklar; bu yüzden bu dosya hesaplar arasında paylaşılamaz. ccam, paylaşılan sunucuları bir grup dosyasında, `mcp.json` içinde tutar ve başlatmada bunu grubun her hesabına verir. Bir sunucuyu tüm hesaplarınız için bir kez eklemek üzere `ccam mcp` komutunu, bir oturumda eklediğiniz bir sunucuyu diğer hesaplara taşımak için `ccam mcp import` komutunu kullanın.
@@ -72,7 +72,15 @@ Grupta zaten bulunan bir adı eklemek, onun tanımını değiştirir ve `added` 
 3. `mcp.NewLocal`, hesabın `.claude.json` dosyasının son başlatmadan bu yana değişip değişmediğini kontrol eder ve yalnızca değiştiyse sunucularını ayrıştırır.
 4. `syscall.Exec`, ccam'i Claude Code ile değiştirir.
 
-Yol iki değil, tek bir argüman olarak iletilir: `--mcp-config=<path>`. Claude Code'un `--mcp-config` seçeneği birden fazla değer alır; bu yüzden `claude --mcp-config a.json "prompt"` istemi ikinci bir yapılandırma dosyası olarak okur ve `MCP config file not found` ile başarısız olur. Tek argümanlı biçim orada durur ve ardından gelen bir istem veya `mcp list` gibi bir alt komut çalışır. Claude Code, `--mcp-config` sunucularını hesabın kendi sunucularına ek olarak yükler; ad çakışmasında `.claude.json` içindeki girdi kazanır. Bayrak stratejisi hiçbir zaman `.claude.json` dosyasına yazmaz.
+Yol iki değil, tek bir argüman olarak iletilir: `--mcp-config=<path>`. Claude Code'un `--mcp-config` seçeneği birden fazla değer alır; bu yüzden `claude --mcp-config a.json "prompt"` istemi ikinci bir yapılandırma dosyası olarak okur ve `MCP config file not found` ile başarısız olur. Tek argümanlı biçim orada durur ve ardından gelen bir istem veya `mcp list` gibi bir alt komut çalışır. Claude Code, `--mcp-config` sunucularını hesabın kendi sunucularına ek olarak yükler; ad çakışmasında `.claude.json` içindeki girdi kazanır. Bayrak stratejisi `.claude.json` dosyasına yalnızca Remote Control için yazar.
+
+`claude remote-control` (`rc`) `--mcp-config` almaz ve oturumları sunucuları yalnızca `.claude.json` dosyasından okur. `ccam work rc` için ccam bayrağı eklemez ve bir terminalde, grubun sunucularının `.claude.json` dosyasına kopyalanıp kopyalanmayacağını sorar; kopyalama, `sync` stratejisinde olduğu gibi bir yedekle yapılır. Bir kopya oluşana kadar sorar, sonra yalnızca grubun `mcp.json` dosyası değiştikten sonra yeniden sorar ([Remote Control](/features/launch#remote-control)). Böyle bir kopya ad çakışmasında `--mcp-config` seçeneğine üstün geldiği için `ccam mcp add`, `add-json`, `remove` ve `import`, grubun diğer hesaplarının tuttuğu kopyaları günceller:
+
+```console
+$ ccam mcp add ctx --url https://mcp.context7.com/mcp
+✓ ctx added in group default — applies from the next launch
+✓ Updated the copy in account side's .claude.json (made for Remote Control)
+```
 
 Bir oturumda `claude mcp add` ile eklenen sunucu yalnızca o hesabın `.claude.json` dosyasına yazılır. ccam o anda bunu göremez, çünkü Claude Code onun yerini almıştır; bu yüzden bir sonraki başlatmada kontrol eder. `seen` dosyası, `.claude.json` dosyasının değiştirilme zamanını ve daha önce bildirilmiş sunucu adlarını tutar. Zaman farklıysa ccam adları grupla karşılaştırır ve her yeni sunucu için girdi beklemeden bir kez ipucu yazdırır:
 
@@ -111,6 +119,7 @@ Skipped gh: group default already has a different gh (`ccam mcp import work gh -
 
 - **Oturum açmalar.** OAuth ile oturum açan sunucular tokenlarını sunucu listesinde değil, her hesabın `.credentials.json` dosyasında (`mcpOAuth`) tutar; bu yüzden bir sunucuyu paylaşmak oturum açmasını paylaşmaz. Her hesapta `/mcp` ile bir kez oturum açın veya oturum açmaları [`ccam migrate`](/features/migrate) ile `~/.claude` klasöründen kopyalayın. Grup hiçbir zaman bir giriş dosyası almaz.
 - **Çalışan hesaplar.** `import` gruba kopyalar ama çalışan bir hesabın kendi girdilerini yerinde bırakır ve bunu belirtir; oturum bittikten sonra yeniden çalıştırın. Eşitleme çalışan hesapları atlar.
+- **Remote Control için kopyalar.** Çalışan bir hesabın kopyasına dokunulmaz: `Note: account side is running, so the copy in its .claude.json stays as it was until its next Remote Control launch.` `mcp_strategy = "sync"` ile hiçbir şeyin güncellenmesi gerekmez, çünkü her başlatma eşitleme yapar.
 - **Bozuk dosyalar.** `.claude.json` geçerli bir JSON değilse eşitleme ona dokunmaz ve hatayı bildirir. Kilit 2 saniye içinde alınamazsa ccam `could not lock … (Claude Code is writing the file)` bildirir.
 - **MCP paylaşmayan hesaplar.** `import` reddeder ve önce `ccam share side --mcp on` çalıştırmanızı söyler.
 - **Grup adları.** `-g` yalnızca bir grup adı alır; bu ad `groups/` altında bir klasör olur, bu yüzden `../x` gibi adlar reddedilir.

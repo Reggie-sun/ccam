@@ -4,7 +4,7 @@ description: 用 ccam add、ccam login、ccam list、ccam rename、ccam remove �
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 97cef50f48f4
+sourceHash: 99c931574262
 ---
 
 每个 ccam 账号都是一个独立的 Claude Code 配置文件夹，拥有自己的登录。这些命令用于创建、登录、列出、重命名和删除账号，以及注册你已有的文件夹。
@@ -92,6 +92,8 @@ On a remote machine? If the browser ends on a http://localhost:…/callback page
 ```
 
 成功时打印 `→ Passed the sign-in to Claude Code on this machine.`
+
+登录在终端上等待输入时，ccam 会关闭终端的回显和行模式，你每输入一个字符就显示一个 `*`，因此粘贴的代码或回调地址不会出现在屏幕上。行编辑由 `readLine` 自己处理：`Enter` 发送这一行，`Backspace` 删除一个字符，在空行上按 `Ctrl+D` 结束输入。登录结束时会恢复终端设置；收到 `Ctrl+C`、`SIGTERM` 或 `SIGHUP` 时也会恢复，它们仍会结束 ccam。如果标准输入和标准错误不是终端，各行会按原样复制。
 
 ### 重命名、删除和导入
 

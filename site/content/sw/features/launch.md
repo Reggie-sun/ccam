@@ -4,7 +4,7 @@ description: Anzisha Claude Code kama akaunti yoyote kwa ccam <name|number>, cca
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: d033da86f44b
+sourceHash: 6c04bb48df22
 ---
 
 `ccam work` huanzisha Claude Code kama akaunti `work`, na kila kitu kinachokuja baada ya jina huenda kwa `claude` kama kilivyo. Itumie popote ambapo ungecharaza `claude`: kwenye terminal, katika script, au ingizo likipitishwa kwa pipe.
@@ -108,6 +108,25 @@ Kwa mkakati wa chaguo-msingi wa `flag`, ccam hupitisha seva za MCP za kikundi kw
 
 Kwa `mcp_strategy = "sync"` katika `config.toml`, ccam huandika seva katika `.claude.json` ya akaunti badala yake, na huruka hilo ikiwa akaunti tayari inaendeshwa.
 
+### Remote Control
+
+`ccam work rc` (au `ccam work remote-control`) huanzisha Remote Control ya Claude Code kama `work`. `claude remote-control` hukataa `--mcp-config` kabla ya kitenzi chake na haipokei yoyote baada yake, na vipindi vyake husoma seva za MCP kutoka `.claude.json` ya akaunti tu. Kwa hiyo mkakati wa flag hufanya kazi tofauti hapa:
+
+<!-- motion:launch-rc -->
+
+1. `remoteControl` huchukua hoja ya kwanza baada ya akaunti isiyoanza na `-` kama kitenzi cha Claude Code. Kinapokuwa `remote-control` au `rc`, `mcp.FlagArgs` haiongezi chochote.
+2. `mcp.Synced` hulinganisha muda wa kubadilishwa wa `mcp.json` ya kikundi na `sync-stamp` ya akaunti. Ikiwa `.claude.json` tayari ina seva za sasa za kikundi, au kikundi hakina seva yoyote, Remote Control huanza bila swali.
+3. Vinginevyo ccam hutaja seva ambazo vipindi vingezikosa na huuliza:
+
+   ```console
+   ccam: Remote Control sessions only get MCP servers stored in account work's .claude.json, not the shared MCP servers (ctx, fs).
+   Copy them into .claude.json (a backup is kept)? [y/N]
+   ```
+
+4. Kwa `y`, `mcp.Sync` huzinakili kama mkakati wa `sync` unavyofanya: chini ya kufuli ya Claude Code, baada ya nakala rudufu, ikihifadhi seva za akaunti yenyewe. Kwa `N`, au bila terminal, Remote Control huanza bila hizo, na ccam huelekeza kwa `mcp_strategy = "sync"`, ambayo huzinakili kabla ya kila uanzishaji.
+
+ccam huuliza kwa kila uanzishaji wa Remote Control hadi seva zinakiliwe, na baada ya kunakiliwa huuliza tena tu `mcp.json` ya kikundi inapobadilika tena. Nakala iliyo katika `.claude.json` hushinda `--mcp-config` katika uanzishaji wa kawaida unaofuata, kwa hiyo `ccam mcp add`, `remove` na `import` husasisha nakala zinazoshikiliwa na akaunti nyingine ([Seva za MCP zinazoshirikiwa](/features/mcp)).
+
 ### Bajeti ya ms 10
 
 ccam huongeza kwa kiwango cha juu ms 10 (p95) kabla Claude Code haijaanza. Njia ya uanzishaji kamwe haijengi mti wa amri wa cobra, haianzishi Bubble Tea wala haifungui muunganisho wa mtandao, na `TestPackageInitIsCheap` hushindwa ikiwa fanksheni za `init()` za vifurushi zinachukua zaidi ya ms 5 kwa jumla. `scripts/perf-check.sh` hupima `ccam --dry-run work`, `ccam work` na njia fupi kwa `hyperfine` na hushindwa juu ya ms 10, na `BenchmarkLaunchPath` katika `internal/launcher` huendesha hatua hizo kwa mzunguko. Ili kuona muda wa kila hatua, weka `CCAM_TRACE=1`:
@@ -127,6 +146,7 @@ ccam trace: prelaunch             0.083ms (total 3.661ms)
 - Ikiwa njia inayoshirikiwa imegeuka kuwa faili ya kawaida au inaelekea mahali pasipo sahihi, ccam husimama na `stopped because of share link problems:`, huziorodhesha, na hukuomba uendeshe `ccam doctor --fix`. Haihamishi data kwenye njia ya uanzishaji.
 - Ikiwa Claude Code nyingine inayoshiriki historia ya mazungumzo na akaunti hii (kikundi kile kile) inaendeshwa katika folda ile ile, ccam huonya kwamba historia inaweza kuchanganyika na huuliza `Run anyway? [y/N]`. Bila terminal huonyesha onyo na huendelea.
 - `--dry-run` huruka usawazishaji wa MCP, taarifa ya seva mpya, ukaguzi wa historia, alama ya kipindi, kichwa na muda wa matumizi ya mwisho, na haifanyi exec. Bado hukagua viungo vya kushiriki, na huunda kiungo kinachokosekana kama uanzishaji wa kawaida ungefanya.
+- `ccam work rc` wakati `work` tayari inaendeshwa huacha `.claude.json` bila kuigusa, husema hivyo, na huanzisha Remote Control bila seva za kikundi; iendeshe tena baada ya kipindi kuisha ili kuzinakili. Kwa `--dry-run` huchapisha ujumbe lakini haiulizi wala hainakili.
 - Kwa `mcp_strategy = "sync"`, usawazishaji ulioshindwa huchapisha `ccam: MCP sync failed (launching anyway): …` na Claude Code huanza na seva ilizokuwa nazo tayari.
 
 ## Zinazohusiana

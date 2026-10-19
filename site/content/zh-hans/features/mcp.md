@@ -4,7 +4,7 @@ description: 用 ccam mcp add、add-json、list、remove 和 import 为每个组
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: 46a7aa716f99
+sourceHash: 69fd3233fd09
 ---
 
 Claude Code 把用户 MCP 服务器保存在 `.claude.json` 中，而这个文件同时保存着账号的登录，所以它不能在账号之间共享。ccam 把共享的服务器保存在组文件 `mcp.json` 中，并在启动时把它交给该组的每个账号。用 `ccam mcp` 可以一次性为所有账号添加服务器，用 `ccam mcp import` 可以把你在某个会话中添加的服务器转给其他账号。
@@ -72,7 +72,15 @@ only in account work: pg
 3. `mcp.NewLocal` 检查账号的 `.claude.json` 自上次启动以来是否有变化，只有变化时才解析其中的服务器。
 4. `syscall.Exec` 用 Claude Code 替换 ccam。
 
-路径作为单个参数 `--mcp-config=<path>` 传入，而不是两个参数。Claude Code 的 `--mcp-config` 接受多个值，因此 `claude --mcp-config a.json "prompt"` 会把提示当作第二个配置文件读取，并以 `MCP config file not found` 失败。单参数形式到此为止，后面跟着的提示或 `mcp list` 这样的子命令都能正常工作。Claude Code 会在账号自己的服务器之外再加载 `--mcp-config` 中的服务器；名称冲突时，`.claude.json` 中的条目优先。flag 策略从不写入 `.claude.json`。
+路径作为单个参数 `--mcp-config=<path>` 传入，而不是两个参数。Claude Code 的 `--mcp-config` 接受多个值，因此 `claude --mcp-config a.json "prompt"` 会把提示当作第二个配置文件读取，并以 `MCP config file not found` 失败。单参数形式到此为止，后面跟着的提示或 `mcp list` 这样的子命令都能正常工作。Claude Code 会在账号自己的服务器之外再加载 `--mcp-config` 中的服务器；名称冲突时，`.claude.json` 中的条目优先。flag 策略只在 Remote Control 时写入 `.claude.json`。
+
+`claude remote-control`（`rc`）不接受 `--mcp-config`，它的会话只从 `.claude.json` 读取服务器。对于 `ccam work rc`，ccam 不加这个参数，并在终端上询问是否像 `sync` 策略那样，先做备份再把组的服务器复制到 `.claude.json`。在副本存在之前它会一直询问，之后只有在组的 `mcp.json` 变化后才会再次询问（[Remote Control](/features/launch#remote-control)）。由于名称冲突时这种副本优先于 `--mcp-config`，`ccam mcp add`、`add-json`、`remove` 和 `import` 会更新组中其他账号持有的副本：
+
+```console
+$ ccam mcp add ctx --url https://mcp.context7.com/mcp
+✓ ctx added in group default — applies from the next launch
+✓ Updated the copy in account side's .claude.json (made for Remote Control)
+```
 
 在会话中用 `claude mcp add` 添加的服务器只会进入该账号的 `.claude.json`。ccam 当时无法看到它，因为 Claude Code 已经替换了 ccam，所以它会在下次启动时检查。`seen` 文件保存 `.claude.json` 的修改时间和已经提示过的服务器名称。当时间不同时，ccam 把这些名称与组进行比较，并为每个新服务器打印一次提示，不等待输入：
 
@@ -111,6 +119,7 @@ Skipped gh: group default already has a different gh (`ccam mcp import work gh -
 
 - **登录。** 通过 OAuth 登录的服务器把令牌保存在每个账号的 `.credentials.json`（`mcpOAuth`）中，而不是服务器列表中，所以共享服务器并不会共享它的登录。请在每个账号中用 `/mcp` 登录一次，或者用 [`ccam migrate`](/features/migrate) 从 `~/.claude` 复制这些登录。组永远不会得到登录文件。
 - **正在运行的账号。** `import` 会复制到组中，但保留正在运行的账号自己的条目，并提示你；会话结束后请再运行一次。同步会跳过正在运行的账号。
+- **为 Remote Control 制作的副本。** 正在运行的账号的副本不会被改动，ccam 会提示 `Note: account side is running, so the copy in its .claude.json stays as it was until its next Remote Control launch.` 使用 `mcp_strategy = "sync"` 时无需更新，因为每次启动都会同步。
 - **损坏的文件。** 如果 `.claude.json` 不是有效的 JSON，同步不会改动它，并报告错误。如果 2 秒内无法获取锁，ccam 会报告 `could not lock … (Claude Code is writing the file)`。
 - **不共享 MCP 的账号。** `import` 会拒绝，并提示你先运行 `ccam share side --mcp on`。
 - **组名。** `-g` 只接受组名；它会成为 `groups/` 下的一个文件夹，因此 `../x` 这样的名称会被拒绝。

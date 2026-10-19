@@ -4,7 +4,7 @@ description: ccam mcp add, add-json, list, remove, import로 그룹마다 MCP �
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: 46a7aa716f99
+sourceHash: 69fd3233fd09
 ---
 
 Claude Code는 사용자 MCP 서버를 계정의 로그인 정보가 들어 있는 `.claude.json`에 함께 저장하므로, 이 파일은 계정 간에 공유할 수 없습니다. ccam은 공유 서버를 그룹 파일인 `mcp.json`에 두고, 실행할 때 그룹의 모든 계정에 이 파일을 넘깁니다. `ccam mcp`로 서버를 한 번만 추가해 모든 계정에서 쓰고, 한 세션 안에서 추가한 서버는 `ccam mcp import`로 다른 계정에 옮기세요.
@@ -72,7 +72,15 @@ only in account work: pg
 3. `mcp.NewLocal`은 계정의 `.claude.json`이 지난 실행 이후 바뀌었는지 확인하고, 바뀐 경우에만 서버 목록을 해석합니다.
 4. `syscall.Exec`로 ccam을 Claude Code로 바꿉니다.
 
-경로는 두 인자가 아니라 `--mcp-config=<path>` 한 인자로 넘깁니다. Claude Code의 `--mcp-config`는 값을 여러 개 받으므로, `claude --mcp-config a.json "prompt"`라고 하면 프롬프트를 두 번째 설정 파일로 읽어 `MCP config file not found`로 실패합니다. 한 인자 형식은 값이 거기서 끝나므로, 뒤따르는 프롬프트나 `mcp list` 같은 하위 명령이 정상 동작합니다. Claude Code는 `--mcp-config`의 서버를 계정 자체 서버에 더해 불러오며, 이름이 겹치면 `.claude.json`의 항목이 우선합니다. 옵션 방식은 `.claude.json`에 절대 쓰지 않습니다.
+경로는 두 인자가 아니라 `--mcp-config=<path>` 한 인자로 넘깁니다. Claude Code의 `--mcp-config`는 값을 여러 개 받으므로, `claude --mcp-config a.json "prompt"`라고 하면 프롬프트를 두 번째 설정 파일로 읽어 `MCP config file not found`로 실패합니다. 한 인자 형식은 값이 거기서 끝나므로, 뒤따르는 프롬프트나 `mcp list` 같은 하위 명령이 정상 동작합니다. Claude Code는 `--mcp-config`의 서버를 계정 자체 서버에 더해 불러오며, 이름이 겹치면 `.claude.json`의 항목이 우선합니다. 옵션 방식은 Remote Control에서만 `.claude.json`에 씁니다.
+
+`claude remote-control`(`rc`)은 `--mcp-config`를 받지 않으며, 그 세션은 `.claude.json`에서만 서버를 읽습니다. `ccam work rc`에서는 ccam이 이 옵션을 빼고, 터미널이면 `sync` 방식처럼 백업을 남기고 그룹의 서버를 `.claude.json`에 복사할지 묻습니다. 복사본이 생길 때까지 묻고, 그 뒤에는 그룹의 `mcp.json`이 바뀐 뒤에만 다시 묻습니다([Remote Control](/features/launch#remote-control)). 이 복사본은 이름이 겹칠 때 `--mcp-config`보다 우선하므로, `ccam mcp add`, `add-json`, `remove`, `import`는 그룹의 다른 계정이 가진 복사본도 갱신합니다.
+
+```console
+$ ccam mcp add ctx --url https://mcp.context7.com/mcp
+✓ ctx added in group default — applies from the next launch
+✓ Updated the copy in account side's .claude.json (made for Remote Control)
+```
 
 세션 안에서 `claude mcp add`로 추가한 서버는 해당 계정의 `.claude.json`에만 저장됩니다. 그 시점에는 Claude Code가 ccam을 대체한 상태라 ccam이 이를 볼 수 없으므로, 다음 실행 때 확인합니다. `seen` 파일에는 `.claude.json`의 수정 시각과 이미 알린 서버 이름이 들어 있습니다. 시각이 다르면 ccam은 서버 이름을 그룹과 비교하고, 새 서버마다 입력을 기다리지 않고 한 번씩 안내를 출력합니다.
 
@@ -111,6 +119,7 @@ Skipped gh: group default already has a different gh (`ccam mcp import work gh -
 
 - **로그인.** OAuth로 로그인하는 서버는 토큰을 서버 목록이 아니라 각 계정의 `.credentials.json`(`mcpOAuth`)에 보관하므로, 서버를 공유해도 로그인은 공유되지 않습니다. 계정마다 `/mcp`로 한 번씩 로그인하거나, [`ccam migrate`](/features/migrate)로 `~/.claude`의 로그인 정보를 복사하세요. 그룹에는 로그인 파일이 절대 들어가지 않습니다.
 - **실행 중인 계정.** `import`는 그룹에 복사하지만 실행 중인 계정 자체의 항목은 남겨 두고 그 사실을 알려 줍니다. 세션이 끝난 뒤 다시 실행하세요. 동기화는 실행 중인 계정을 건너뜁니다.
+- **Remote Control용 복사본.** 실행 중인 계정의 복사본은 건드리지 않고 다음과 같이 알립니다. `Note: account side is running, so the copy in its .claude.json stays as it was until its next Remote Control launch.` `mcp_strategy = "sync"`에서는 실행할 때마다 동기화하므로 갱신할 것이 없습니다.
 - **손상된 파일.** `.claude.json`이 올바른 JSON이 아니면 동기화는 파일을 건드리지 않고 오류를 보고합니다. 2초 안에 잠금을 잡지 못하면 `could not lock … (Claude Code is writing the file)`를 보고합니다.
 - **MCP를 공유하지 않는 계정.** `import`는 거부하고, 먼저 `ccam share side --mcp on`을 실행하라고 안내합니다.
 - **그룹 이름.** `-g`에는 그룹 이름만 줄 수 있습니다. 이름이 `groups/` 아래 폴더가 되므로 `../x` 같은 이름은 거부합니다.

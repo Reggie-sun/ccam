@@ -4,7 +4,7 @@ description: احتفظ بقائمة واحدة من خوادم MCP لكل مج�
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: 46a7aa716f99
+sourceHash: 69fd3233fd09
 ---
 
 يحتفظ Claude Code بخوادم MCP الخاصة بالمستخدم في `.claude.json`، وهو الملف نفسه الذي يحتوي على تسجيل دخول الحساب، لذلك لا يمكن مشاركة هذا الملف بين الحسابات. يحتفظ ccam بالخوادم المشتركة في ملف للمجموعة، `mcp.json`، ويسلّمه إلى كل حساب في المجموعة عند التشغيل. استخدم `ccam mcp` لإضافة خادم مرة واحدة لكل حساباتك، و`ccam mcp import` لنقل خادم أضفته داخل جلسة واحدة إلى الحسابات الأخرى.
@@ -72,7 +72,15 @@ only in account work: pg
 3. يتحقق `mcp.NewLocal` هل تغيّر ملف `.claude.json` الخاص بالحساب منذ التشغيل الأخير، ولا يحلّل خوادمه إلا عندئذ.
 4. يستبدل `syscall.Exec` برنامج ccam بـ Claude Code.
 
-يُمرَّر المسار وسيطًا واحدًا، `--mcp-config=<path>`، لا وسيطين. فالخيار `--mcp-config` في Claude Code يأخذ عدة قيم، لذلك سيقرأ `claude --mcp-config a.json "prompt"` الطلب على أنه ملف إعداد ثانٍ ويفشل مع `MCP config file not found`. أما صيغة الوسيط الواحد فتتوقف عند ذلك، ويعمل ما يليها من طلب أو أمر فرعي مثل `mcp list`. يحمّل Claude Code خوادم `--mcp-config` إضافة إلى خوادم الحساب نفسه؛ وعند تعارض الأسماء يتقدم المدخل الموجود في `.claude.json`. ولا تكتب استراتيجية الخيار في `.claude.json` أبدًا.
+يُمرَّر المسار وسيطًا واحدًا، `--mcp-config=<path>`، لا وسيطين. فالخيار `--mcp-config` في Claude Code يأخذ عدة قيم، لذلك سيقرأ `claude --mcp-config a.json "prompt"` الطلب على أنه ملف إعداد ثانٍ ويفشل مع `MCP config file not found`. أما صيغة الوسيط الواحد فتتوقف عند ذلك، ويعمل ما يليها من طلب أو أمر فرعي مثل `mcp list`. يحمّل Claude Code خوادم `--mcp-config` إضافة إلى خوادم الحساب نفسه؛ وعند تعارض الأسماء يتقدم المدخل الموجود في `.claude.json`. ولا تكتب استراتيجية الخيار في `.claude.json` إلا من أجل Remote Control.
+
+لا يأخذ `claude remote-control` (`rc`) الخيار `--mcp-config`، ولا تقرأ جلساته الخوادم إلا من `.claude.json`. ففي حالة `ccam work rc`، يحذف ccam هذا الخيار، وعلى الطرفية يسأل هل ينسخ خوادم المجموعة إلى `.claude.json`، مع نسخة احتياطية، كما تفعل استراتيجية `sync`. ويظل يسأل إلى أن توجد نسخة، ثم لا يسأل مرة أخرى إلا بعد تغيّر ملف `mcp.json` الخاص بالمجموعة ([Remote Control](/features/launch#remote-control)). ولأن هذه النسخة تتقدم على `--mcp-config` عند تعارض الأسماء، تحدّث الأوامر `ccam mcp add` و`add-json` و`remove` و`import` النسخ التي تحتفظ بها الحسابات الأخرى في المجموعة:
+
+```console
+$ ccam mcp add ctx --url https://mcp.context7.com/mcp
+✓ ctx added in group default — applies from the next launch
+✓ Updated the copy in account side's .claude.json (made for Remote Control)
+```
 
 الخادم الذي يُضاف داخل جلسة باستخدام `claude mcp add` لا يصل إلا إلى ملف `.claude.json` الخاص بذلك الحساب. ولا يستطيع ccam رؤيته في حينه، لأن Claude Code قد حلّ محله، لذلك يتحقق عند التشغيل التالي. يحتوي الملف `seen` على وقت تعديل `.claude.json` وأسماء الخوادم التي سبق الإبلاغ عنها. وعندما يختلف الوقت، يقارن ccam الأسماء بالمجموعة ويطبع تلميحًا لكل خادم جديد مرة واحدة، دون انتظار إدخال:
 
@@ -111,6 +119,7 @@ Skipped gh: group default already has a different gh (`ccam mcp import work gh -
 
 - **تسجيلات الدخول.** الخوادم التي تسجّل الدخول عبر OAuth تحتفظ برموزها في ملف `.credentials.json` الخاص بكل حساب (`mcpOAuth`)، لا في قائمة الخوادم، لذلك لا تؤدي مشاركة خادم إلى مشاركة تسجيل دخوله. سجّل الدخول مرة واحدة في كل حساب باستخدام `/mcp`، أو انسخ تسجيلات الدخول من `~/.claude` باستخدام [`ccam migrate`](/features/migrate). ولا تتلقى المجموعة أي ملف تسجيل دخول أبدًا.
 - **الحسابات التي تعمل.** ينسخ `import` إلى المجموعة لكنه يترك المدخلات الخاصة بالحساب الذي يعمل ويخبرك بذلك؛ شغّله مرة أخرى بعد انتهاء الجلسة. وتتخطى المزامنة الحسابات التي تعمل.
+- **النسخ الخاصة بـ Remote Control.** لا تُمَس نسخة الحساب الذي يعمل: `Note: account side is running, so the copy in its .claude.json stays as it was until its next Remote Control launch.` ومع `mcp_strategy = "sync"` لا يحتاج شيء إلى تحديث، لأن كل تشغيل يُجري المزامنة.
 - **الملفات التالفة.** إذا لم يكن `.claude.json` بصيغة JSON صالحة، تتركه المزامنة دون تغيير وتبلّغ عن الخطأ. وإذا تعذّر أخذ القفل خلال ثانيتين، يبلّغ ccam بـ `could not lock … (Claude Code is writing the file)`.
 - **الحسابات التي لا تشارك MCP.** يرفض `import` ويطلب منك تشغيل `ccam share side --mcp on` أولًا.
 - **أسماء المجموعات.** لا يأخذ `-g` إلا اسم مجموعة؛ فهو يصبح مجلدًا تحت `groups/`، لذلك تُرفض أسماء مثل `../x`.

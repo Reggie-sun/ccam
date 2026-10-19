@@ -4,7 +4,7 @@ description: "Khởi động Claude Code bằng bất kỳ tài khoản nào v�
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: d033da86f44b
+sourceHash: 6c04bb48df22
 ---
 
 `ccam work` khởi động Claude Code bằng tài khoản `work`, và mọi thứ sau tên được chuyển nguyên vẹn cho `claude`. Hãy dùng nó ở bất cứ đâu bạn vẫn gõ `claude`: trong terminal, trong script, hoặc khi có đầu vào được pipe vào.
@@ -108,6 +108,25 @@ Với chiến lược mặc định `flag`, ccam truyền các máy chủ MCP c�
 
 Với `mcp_strategy = "sync"` trong `config.toml`, ccam ghi các máy chủ vào `.claude.json` của tài khoản thay vào đó, và bỏ qua việc này nếu tài khoản đang chạy.
 
+### Remote Control
+
+`ccam work rc` (hoặc `ccam work remote-control`) khởi động Remote Control của Claude Code bằng tài khoản `work`. `claude remote-control` từ chối `--mcp-config` đặt trước động từ của nó và không nhận cờ này sau động từ, và các phiên của nó chỉ đọc máy chủ MCP từ `.claude.json` của tài khoản. Vì vậy chiến lược flag hoạt động khác ở đây:
+
+<!-- motion:launch-rc -->
+
+1. `remoteControl` coi đối số đầu tiên sau tên tài khoản không bắt đầu bằng `-` là động từ của Claude Code. Khi đó là `remote-control` hoặc `rc`, `mcp.FlagArgs` không thêm gì.
+2. `mcp.Synced` so sánh thời điểm sửa đổi của `mcp.json` của nhóm với `sync-stamp` của tài khoản. Nếu `.claude.json` đã chứa các máy chủ hiện tại của nhóm, hoặc nhóm không có máy chủ nào, Remote Control khởi động mà không hỏi.
+3. Nếu không, ccam nêu tên các máy chủ mà các phiên sẽ thiếu và hỏi:
+
+   ```console
+   ccam: Remote Control sessions only get MCP servers stored in account work's .claude.json, not the shared MCP servers (ctx, fs).
+   Copy them into .claude.json (a backup is kept)? [y/N]
+   ```
+
+4. Khi chọn `y`, `mcp.Sync` sao chép chúng theo cách của chiến lược `sync`: dưới khóa của Claude Code, sau khi sao lưu, và giữ lại các máy chủ riêng của tài khoản. Khi chọn `N`, hoặc khi không có terminal, Remote Control khởi động mà không có chúng, và ccam gợi ý `mcp_strategy = "sync"`, cách này sao chép chúng trước mỗi lần khởi động.
+
+ccam hỏi ở mỗi lần khởi động Remote Control cho đến khi các máy chủ được sao chép, và sau khi sao chép thì chỉ hỏi một lần khi `mcp.json` của nhóm lại thay đổi. Bản sao trong `.claude.json` được ưu tiên hơn `--mcp-config` ở các lần khởi động bình thường sau đó, nên `ccam mcp add`, `remove` và `import` cập nhật các bản sao mà tài khoản khác đang giữ ([Máy chủ MCP dùng chung](/features/mcp)).
+
 ### Ngân sách 10 ms
 
 ccam thêm tối đa 10 ms (p95) trước khi Claude Code khởi động. Đường khởi động không bao giờ dựng cây lệnh cobra, khởi động Bubble Tea hay mở kết nối mạng, và `TestPackageInitIsCheap` thất bại nếu các hàm `init()` của gói mất tổng cộng hơn 5 ms. `scripts/perf-check.sh` đo `ccam --dry-run work`, `ccam work` và một lệnh tắt bằng `hyperfine` và thất bại khi vượt 10 ms, còn `BenchmarkLaunchPath` trong `internal/launcher` chạy các bước trong một vòng lặp. Để xem thời gian của từng bước, hãy đặt `CCAM_TRACE=1`:
@@ -127,6 +146,7 @@ ccam trace: prelaunch             0.083ms (total 3.661ms)
 - Nếu một đường dẫn dùng chung đã trở thành tệp thông thường hoặc trỏ sai chỗ, ccam dừng với `stopped because of share link problems:`, liệt kê chúng, và yêu cầu bạn chạy `ccam doctor --fix`. Nó không di chuyển dữ liệu trên đường khởi động.
 - Nếu một Claude Code khác dùng chung lịch sử hội thoại với tài khoản này (cùng nhóm) đang chạy trong cùng thư mục, ccam cảnh báo rằng lịch sử có thể bị trộn lẫn và hỏi `Run anyway? [y/N]`. Khi không có terminal, nó hiển thị cảnh báo và tiếp tục.
 - `--dry-run` bỏ qua việc đồng bộ MCP, thông báo máy chủ mới, kiểm tra lịch sử, tệp đánh dấu phiên, tiêu đề và thời điểm dùng gần nhất, và không exec. Nó vẫn kiểm tra liên kết dùng chung, và tạo liên kết còn thiếu như một lần khởi động bình thường.
+- `ccam work rc` khi `work` đang chạy sẽ không động đến `.claude.json`, báo điều đó, và khởi động Remote Control mà không có các máy chủ của nhóm; hãy chạy lại sau khi phiên kết thúc để sao chép chúng. Với `--dry-run`, nó in thông báo nhưng không hỏi và không sao chép.
 - Với `mcp_strategy = "sync"`, việc đồng bộ thất bại sẽ in ra `ccam: MCP sync failed (launching anyway): …` và Claude Code khởi động với các máy chủ nó đã có.
 
 ## Liên quan

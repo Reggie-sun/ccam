@@ -4,7 +4,7 @@ description: Jalankan Claude Code sebagai akun mana pun dengan ccam <name|number
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: d033da86f44b
+sourceHash: 6c04bb48df22
 ---
 
 `ccam work` menjalankan Claude Code sebagai akun `work`, dan semua yang ada setelah nama diteruskan ke `claude` apa adanya. Gunakan di mana pun Anda biasa mengetik `claude`: di terminal, di skrip, atau dengan input dari pipe.
@@ -108,6 +108,25 @@ Dengan strategi default `flag`, ccam meneruskan server MCP milik grup ke Claude 
 
 Dengan `mcp_strategy = "sync"` di `config.toml`, ccam menulis server ke `.claude.json` milik akun sebagai gantinya, dan melewatinya jika akun sudah berjalan.
 
+### Remote Control
+
+`ccam work rc` (atau `ccam work remote-control`) menjalankan Remote Control milik Claude Code sebagai akun `work`. `claude remote-control` menolak `--mcp-config` sebelum subperintahnya dan tidak menerimanya setelahnya, dan sesinya hanya membaca server MCP dari `.claude.json` milik akun. Jadi strategi flag bekerja secara berbeda di sini:
+
+<!-- motion:launch-rc -->
+
+1. `remoteControl` menganggap argumen pertama setelah akun yang tidak diawali `-` sebagai subperintah Claude Code. Jika argumen itu `remote-control` atau `rc`, `mcp.FlagArgs` tidak menambahkan apa pun.
+2. `mcp.Synced` membandingkan waktu modifikasi `mcp.json` milik grup dengan `sync-stamp` milik akun. Jika `.claude.json` sudah berisi server grup saat ini, atau grup tidak punya server, Remote Control dimulai tanpa pertanyaan.
+3. Jika tidak, ccam menyebutkan server yang tidak akan didapat sesi dan bertanya:
+
+   ```console
+   ccam: Remote Control sessions only get MCP servers stored in account work's .claude.json, not the shared MCP servers (ctx, fs).
+   Copy them into .claude.json (a backup is kept)? [y/N]
+   ```
+
+4. Jika Anda menjawab `y`, `mcp.Sync` menyalinnya seperti yang dilakukan strategi `sync`: di bawah lock milik Claude Code, setelah membuat cadangan, dan dengan mempertahankan server milik akun sendiri. Jika menjawab `N`, atau tanpa terminal, Remote Control dimulai tanpa server tersebut, dan ccam menyarankan `mcp_strategy = "sync"`, yang menyalinnya sebelum setiap peluncuran.
+
+ccam bertanya pada setiap peluncuran Remote Control sampai server disalin, dan setelah disalin hanya bertanya lagi saat `mcp.json` milik grup berubah lagi. Salinan di `.claude.json` menang atas `--mcp-config` pada peluncuran normal berikutnya, sehingga `ccam mcp add`, `remove`, dan `import` memperbarui salinan yang dimiliki akun lain ([Server MCP bersama](/features/mcp)).
+
 ### Anggaran 10 ms
 
 ccam menambahkan paling banyak 10 ms (p95) sebelum Claude Code dimulai. Jalur peluncuran tidak pernah membangun pohon perintah cobra, menjalankan Bubble Tea, atau membuka koneksi jaringan, dan `TestPackageInitIsCheap` gagal jika fungsi `init()` paket memakan waktu lebih dari 5 ms secara total. `scripts/perf-check.sh` mengukur `ccam --dry-run work`, `ccam work`, dan sebuah pintasan dengan `hyperfine` dan gagal jika melebihi 10 ms, dan `BenchmarkLaunchPath` di `internal/launcher` menjalankan langkah-langkahnya dalam loop. Untuk melihat waktu per langkah, atur `CCAM_TRACE=1`:
@@ -127,6 +146,7 @@ ccam trace: prelaunch             0.083ms (total 3.661ms)
 - Jika path yang dibagikan berubah menjadi file biasa atau mengarah ke tempat yang salah, ccam berhenti dengan `stopped because of share link problems:`, mendaftar masalahnya, dan meminta Anda menjalankan `ccam doctor --fix`. ccam tidak memindahkan data di jalur peluncuran.
 - Jika Claude Code lain yang berbagi riwayat percakapan dengan akun ini (grup yang sama) berjalan di folder yang sama, ccam memperingatkan bahwa riwayat bisa tercampur dan bertanya `Run anyway? [y/N]`. Tanpa terminal, ccam menampilkan peringatan dan melanjutkan.
 - `--dry-run` melewati sinkronisasi MCP, pemberitahuan server baru, pemeriksaan riwayat, penanda sesi, judul, dan waktu terakhir digunakan, serta tidak melakukan exec. Opsi ini tetap memeriksa tautan pembagian, dan membuat tautan yang hilang seperti peluncuran biasa.
+- `ccam work rc` saat `work` sudah berjalan tidak menyentuh `.claude.json`, memberitahukannya, dan menjalankan Remote Control tanpa server grup; jalankan lagi setelah sesi berakhir untuk menyalinnya. Dengan `--dry-run`, ccam menampilkan pesannya tetapi tidak bertanya maupun menyalin.
 - Dengan `mcp_strategy = "sync"`, sinkronisasi yang gagal menampilkan `ccam: MCP sync failed (launching anyway): …` dan Claude Code dimulai dengan server yang sudah dimilikinya.
 
 ## Terkait

@@ -4,7 +4,7 @@ description: Uruchom Claude Code jako dowolne konto przez ccam <name|number>, cc
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: d033da86f44b
+sourceHash: 6c04bb48df22
 ---
 
 `ccam work` uruchamia Claude Code jako konto `work`, a wszystko po nazwie trafia do `claude` bez zmian. Używaj go wszędzie tam, gdzie wpisałbyś `claude`: w terminalu, w skrypcie albo z wejściem przekazanym potokiem.
@@ -108,6 +108,25 @@ Przy domyślnej strategii `flag` ccam przekazuje serwery MCP grupy do Claude Cod
 
 Z `mcp_strategy = "sync"` w `config.toml` ccam zamiast tego zapisuje serwery w `.claude.json` konta i pomija ten krok, jeśli konto już działa.
 
+### Remote Control
+
+`ccam work rc` (lub `ccam work remote-control`) uruchamia Remote Control z Claude Code jako konto `work`. `claude remote-control` odrzuca `--mcp-config` przed swoim poleceniem i nie przyjmuje go po nim, a jego sesje odczytują serwery MCP tylko z `.claude.json` konta. Dlatego strategia flagi działa tu inaczej:
+
+<!-- motion:launch-rc -->
+
+1. `remoteControl` traktuje pierwszy argument po koncie, który nie zaczyna się od `-`, jako polecenie Claude Code. Gdy jest to `remote-control` lub `rc`, `mcp.FlagArgs` niczego nie dodaje.
+2. `mcp.Synced` porównuje czas modyfikacji `mcp.json` grupy z `sync-stamp` konta. Jeśli `.claude.json` zawiera już bieżące serwery grupy albo grupa nie ma żadnych, Remote Control startuje bez pytania.
+3. W przeciwnym razie ccam wymienia serwery, których zabrakłoby w sesjach, i pyta:
+
+   ```console
+   ccam: Remote Control sessions only get MCP servers stored in account work's .claude.json, not the shared MCP servers (ctx, fs).
+   Copy them into .claude.json (a backup is kept)? [y/N]
+   ```
+
+4. Po odpowiedzi `y` funkcja `mcp.Sync` kopiuje je tak jak strategia `sync`: pod blokadą Claude Code, po wykonaniu kopii zapasowej i z zachowaniem własnych serwerów konta. Po odpowiedzi `N` albo bez terminala Remote Control startuje bez nich, a ccam wskazuje `mcp_strategy = "sync"`, które kopiuje je przed każdym uruchomieniem.
+
+ccam pyta przy każdym uruchomieniu Remote Control, dopóki serwery nie zostaną skopiowane, a po skopiowaniu dopiero wtedy, gdy `mcp.json` grupy znów się zmieni. Kopia w `.claude.json` wygrywa z `--mcp-config` przy późniejszych zwykłych uruchomieniach, dlatego `ccam mcp add`, `remove` i `import` aktualizują kopie przechowywane przez inne konta ([Współdzielone serwery MCP](/features/mcp)).
+
 ### Budżet 10 ms
 
 ccam dodaje najwyżej 10 ms (p95) przed startem Claude Code. Ścieżka uruchamiania nigdy nie buduje drzewa poleceń cobra, nie uruchamia Bubble Tea ani nie otwiera połączenia sieciowego, a `TestPackageInitIsCheap` kończy się niepowodzeniem, jeśli funkcje `init()` pakietów zajmują łącznie więcej niż 5 ms. `scripts/perf-check.sh` mierzy `ccam --dry-run work`, `ccam work` i skrót za pomocą `hyperfine` i zgłasza błąd powyżej 10 ms, a `BenchmarkLaunchPath` w `internal/launcher` wykonuje kroki w pętli. Aby zobaczyć czas każdego kroku, ustaw `CCAM_TRACE=1`:
@@ -127,6 +146,7 @@ ccam trace: prelaunch             0.083ms (total 3.661ms)
 - Jeśli współdzielona ścieżka stała się zwykłym plikiem lub wskazuje złe miejsce, ccam zatrzymuje się z komunikatem `stopped because of share link problems:`, wymienia problemy i prosi o uruchomienie `ccam doctor --fix`. Na ścieżce uruchamiania nie przenosi danych.
 - Jeśli w tym samym folderze działa inny Claude Code, który współdzieli historię rozmów z tym kontem (ta sama grupa), ccam ostrzega, że historia może się wymieszać, i pyta `Run anyway? [y/N]`. Bez terminala pokazuje ostrzeżenie i kontynuuje.
 - `--dry-run` pomija synchronizację MCP, informację o nowych serwerach, sprawdzenie historii, znacznik sesji, tytuł i czas ostatniego użycia, i nie wykonuje exec. Nadal sprawdza linki współdzielenia i tworzy brakujący link tak jak zwykłe uruchomienie.
+- `ccam work rc`, gdy `work` już działa, nie rusza `.claude.json`, informuje o tym i uruchamia Remote Control bez serwerów grupy; uruchom polecenie ponownie po zakończeniu sesji, aby je skopiować. Z `--dry-run` wypisuje komunikat, ale ani nie pyta, ani nie kopiuje.
 - Z `mcp_strategy = "sync"` nieudana synchronizacja wypisuje `ccam: MCP sync failed (launching anyway): …`, a Claude Code startuje z serwerami, które już miał.
 
 ## Powiązane

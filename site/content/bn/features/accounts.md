@@ -4,7 +4,7 @@ description: "ccam add, ccam login, ccam list, ccam rename, ccam remove ও ccam
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 97cef50f48f4
+sourceHash: 99c931574262
 ---
 
 প্রতিটি ccam অ্যাকাউন্ট নিজস্ব লগইনসহ আলাদা একটি Claude Code কনফিগ ফোল্ডার। এই কমান্ডগুলো অ্যাকাউন্ট তৈরি করে, সাইন ইন করায়, তালিকা দেখায়, নাম বদলায় ও সরায়, এবং আপনার আগে থেকে থাকা ফোল্ডার নিবন্ধন করে।
@@ -92,6 +92,8 @@ On a remote machine? If the browser ends on a http://localhost:…/callback page
 ```
 
 সফল হলে এটি প্রিন্ট করে `→ Passed the sign-in to Claude Code on this machine.`
+
+লগইন টার্মিনালে ইনপুটের জন্য অপেক্ষা করার সময় ccam টার্মিনালের echo ও line mode বন্ধ করে দেয় এবং আপনার টাইপ করা প্রতিটি অক্ষরের জন্য একটি `*` দেখায়, যাতে পেস্ট করা কোড বা callback ঠিকানা স্ক্রিনে দেখা না যায়। `readLine` নিজেই লাইন সম্পাদনা করে: `Enter` লাইনটি পাঠায়, `Backspace` একটি অক্ষর মোছে, এবং খালি লাইনে `Ctrl+D` ইনপুট শেষ করে। লগইন শেষ হলে টার্মিনাল আগের অবস্থায় ফেরে, এবং `Ctrl+C`, `SIGTERM` বা `SIGHUP`-এও ফেরে, যেগুলো তবুও ccam বন্ধ করে। স্ট্যান্ডার্ড ইনপুট ও স্ট্যান্ডার্ড এররে টার্মিনাল না থাকলে লাইনগুলো যেমন আসে তেমনই কপি হয়।
 
 ### নাম বদল, সরানো ও ইমপোর্ট
 

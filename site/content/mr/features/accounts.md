@@ -4,7 +4,7 @@ description: ccam add, ccam login, ccam list, ccam rename, ccam remove आणि
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 97cef50f48f4
+sourceHash: 99c931574262
 ---
 
 प्रत्येक ccam खाते हा स्वतःचे लॉगिन असलेला वेगळा Claude Code config फोल्डर आहे. या कमांड्स खाती तयार करतात, त्यांत साइन इन करतात, त्यांची यादी दाखवतात, नाव बदलतात आणि ती काढतात, तसेच तुमच्याकडे आधीच असलेले फोल्डर नोंदवतात.
@@ -92,6 +92,8 @@ On a remote machine? If the browser ends on a http://localhost:…/callback page
 ```
 
 यशस्वी झाल्यावर ते `→ Passed the sign-in to Claude Code on this machine.` छापते.
+
+लॉगिन टर्मिनलवर input ची वाट पाहत असताना, ccam टर्मिनलचा echo आणि line mode बंद करते आणि तुम्ही टाइप केलेल्या प्रत्येक अक्षरासाठी एक `*` दाखवते, जेणेकरून paste केलेला code किंवा callback पत्ता स्क्रीनवर दिसत नाही. `readLine` line editing स्वतः करते: `Enter` ओळ पाठवते, `Backspace` एक अक्षर पुसते, आणि रिकाम्या ओळीवर `Ctrl+D` input संपवते. लॉगिन संपल्यावर टर्मिनल पूर्वस्थितीत येतो, आणि `Ctrl+C`, `SIGTERM` किंवा `SIGHUP` वरही येतो, जे तरीही ccam बंद करतात. standard input आणि standard error वर टर्मिनल नसल्यास, ओळी जशा येतात तशा कॉपी होतात.
 
 ### नाव बदलणे, काढणे आणि इम्पोर्ट करणे
 

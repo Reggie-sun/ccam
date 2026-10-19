@@ -4,7 +4,7 @@ description: ccam mcp add、add-json、list、remove、importで、グループ�
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: 46a7aa716f99
+sourceHash: 69fd3233fd09
 ---
 
 Claude CodeはユーザーのMCPサーバーを`.claude.json`に保存します。これはアカウントのログインを保持するのと同じファイルなので、アカウント間で共有できません。ccamは共有サーバーをグループのファイル`mcp.json`に保存し、起動時にグループのすべてのアカウントに渡します。`ccam mcp`を使うと、サーバーを一度追加するだけですべてのアカウントで使えます。あるセッション内で追加したサーバーをほかのアカウントに移すには、`ccam mcp import`を使います。
@@ -72,7 +72,15 @@ only in account work: pg
 3. `mcp.NewLocal`が、前回の起動以降にアカウントの`.claude.json`が変更されたかを確認し、変更があった場合だけそのサーバーを解析します。
 4. `syscall.Exec`がccamをClaude Codeに置き換えます。
 
-パスは2つではなく、`--mcp-config=<path>`という1つの引数で渡されます。Claude Codeの`--mcp-config`は複数の値を取るため、`claude --mcp-config a.json "prompt"`ではプロンプトが2つ目の設定ファイルとして読まれ、`MCP config file not found`で失敗します。1つの引数の形式ならそこで区切られるので、続くプロンプトや`mcp list`のようなサブコマンドも動作します。Claude Codeは、アカウント自身のサーバーに加えて`--mcp-config`のサーバーを読み込みます。名前が重なった場合は`.claude.json`の項目が優先されます。フラグ戦略が`.claude.json`に書き込むことはありません。
+パスは2つではなく、`--mcp-config=<path>`という1つの引数で渡されます。Claude Codeの`--mcp-config`は複数の値を取るため、`claude --mcp-config a.json "prompt"`ではプロンプトが2つ目の設定ファイルとして読まれ、`MCP config file not found`で失敗します。1つの引数の形式ならそこで区切られるので、続くプロンプトや`mcp list`のようなサブコマンドも動作します。Claude Codeは、アカウント自身のサーバーに加えて`--mcp-config`のサーバーを読み込みます。名前が重なった場合は`.claude.json`の項目が優先されます。フラグ戦略が`.claude.json`に書き込むのは、Remote Controlの場合だけです。
+
+`claude remote-control`（`rc`）は`--mcp-config`を受け付けず、そのセッションは`.claude.json`からしかサーバーを読みません。`ccam work rc`では、ccamはこのフラグを付けず、ターミナル上であれば、`sync`戦略と同じようにバックアップを取ってグループのサーバーを`.claude.json`にコピーするかどうかを確認します。コピーができるまで確認し、その後はグループの`mcp.json`が変わったときにだけ再び確認します（[Remote Control](/features/launch#remote-control)）。このコピーは名前が重なった場合に`--mcp-config`より優先されるため、`ccam mcp add`、`add-json`、`remove`、`import`は、グループのほかのアカウントが持つコピーも更新します。
+
+```console
+$ ccam mcp add ctx --url https://mcp.context7.com/mcp
+✓ ctx added in group default — applies from the next launch
+✓ Updated the copy in account side's .claude.json (made for Remote Control)
+```
 
 セッション内で`claude mcp add`を使って追加したサーバーは、そのアカウントの`.claude.json`にだけ保存されます。その時点ではccamはClaude Codeに置き換えられていて検出できないため、次の起動時に確認します。`seen`ファイルには、`.claude.json`の更新日時と、すでに通知したサーバー名が保存されています。日時が異なる場合、ccamは名前をグループと比較し、新しいサーバーごとにヒントを一度だけ、入力を待たずに表示します。
 
@@ -111,6 +119,7 @@ Skipped gh: group default already has a different gh (`ccam mcp import work gh -
 
 - **サインイン。** OAuthでサインインするサーバーは、トークンをサーバーの一覧ではなく各アカウントの`.credentials.json`（`mcpOAuth`）に保存します。そのため、サーバーを共有してもサインインは共有されません。各アカウントで一度ずつ`/mcp`でサインインするか、[`ccam migrate`](/features/migrate)で`~/.claude`からサインイン情報をコピーしてください。グループがログインファイルを受け取ることはありません。
 - **実行中のアカウント。** `import`はグループにコピーしますが、実行中のアカウント自身の項目は残し、その旨を表示します。セッションが終了した後にもう一度実行してください。同期は実行中のアカウントをスキップします。
+- **Remote Control用のコピー。** 実行中のアカウントのコピーには触れず、次のように表示します。`Note: account side is running, so the copy in its .claude.json stays as it was until its next Remote Control launch.` `mcp_strategy = "sync"`の場合は、起動のたびに同期するため、更新は必要ありません。
 - **壊れたファイル。** `.claude.json`が有効なJSONでない場合、同期はファイルに触れずにエラーを報告します。2秒以内にロックを取得できない場合、ccamは`could not lock … (Claude Code is writing the file)`と報告します。
 - **MCPを共有していないアカウント。** `import`は拒否し、先に`ccam share side --mcp on`を実行するよう案内します。
 - **グループ名。** `-g`はグループ名だけを受け取ります。名前は`groups/`の下のフォルダーになるため、`../x`のような名前は拒否されます。

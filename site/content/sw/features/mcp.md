@@ -4,7 +4,7 @@ description: Hifadhi orodha moja ya seva za MCP kwa kila kikundi kwa ccam mcp ad
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: 46a7aa716f99
+sourceHash: 69fd3233fd09
 ---
 
 Claude Code huhifadhi seva za MCP za mtumiaji katika `.claude.json`, faili ile ile inayohifadhi taarifa za kuingia za akaunti, kwa hiyo faili hiyo haiwezi kushirikiwa kati ya akaunti. ccam huhifadhi seva zinazoshirikiwa katika faili ya kikundi, `mcp.json`, na huikabidhi kila akaunti ya kikundi wakati wa kuanza. Tumia `ccam mcp` kuongeza seva mara moja kwa akaunti zako zote, na `ccam mcp import` kuhamisha seva uliyoiongeza ndani ya kipindi kimoja kwenda kwa nyingine.
@@ -72,7 +72,15 @@ Kuna mikakati miwili, inayowekwa kwa `mcp_strategy` katika `~/.config/ccam/confi
 3. `mcp.NewLocal` hukagua kama `.claude.json` ya akaunti imebadilika tangu uanzishaji wa mwisho, na hapo tu ndipo hufasiri seva zake.
 4. `syscall.Exec` hubadilisha ccam kwa Claude Code.
 
-Njia hupitishwa kama hoja moja, `--mcp-config=<path>`, si mbili. `--mcp-config` ya Claude Code hupokea thamani kadhaa, kwa hiyo `claude --mcp-config a.json "prompt"` ingesoma prompt kama faili ya pili ya usanidi na kushindwa na `MCP config file not found`. Muundo wa hoja moja husimama hapo, na prompt au amri ndogo kama `mcp list` inayofuata hufanya kazi. Claude Code hupakia seva za `--mcp-config` pamoja na zile za akaunti yenyewe; majina yakigongana, kipengele katika `.claude.json` hushinda. Mkakati wa flag kamwe hauandiki `.claude.json`.
+Njia hupitishwa kama hoja moja, `--mcp-config=<path>`, si mbili. `--mcp-config` ya Claude Code hupokea thamani kadhaa, kwa hiyo `claude --mcp-config a.json "prompt"` ingesoma prompt kama faili ya pili ya usanidi na kushindwa na `MCP config file not found`. Muundo wa hoja moja husimama hapo, na prompt au amri ndogo kama `mcp list` inayofuata hufanya kazi. Claude Code hupakia seva za `--mcp-config` pamoja na zile za akaunti yenyewe; majina yakigongana, kipengele katika `.claude.json` hushinda. Mkakati wa flag huandika `.claude.json` kwa ajili ya Remote Control tu.
+
+`claude remote-control` (`rc`) haipokei `--mcp-config`, na vipindi vyake husoma seva kutoka `.claude.json` tu. Kwa `ccam work rc`, ccam huacha chaguo hilo na, kwenye terminal, huuliza kama inakili seva za kikundi kwenda `.claude.json`, pamoja na nakala rudufu, kama mkakati wa `sync` unavyofanya. Huuliza hadi nakala iwepo, kisha tena tu baada ya `mcp.json` ya kikundi kubadilika ([Remote Control](/features/launch#remote-control)). Kwa sababu nakala kama hiyo hushinda `--mcp-config` majina yanapogongana, `ccam mcp add`, `add-json`, `remove` na `import` husasisha nakala zinazoshikiliwa na akaunti nyingine za kikundi:
+
+```console
+$ ccam mcp add ctx --url https://mcp.context7.com/mcp
+✓ ctx added in group default — applies from the next launch
+✓ Updated the copy in account side's .claude.json (made for Remote Control)
+```
 
 Seva iliyoongezwa ndani ya kipindi kwa `claude mcp add` huingia kwenye `.claude.json` ya akaunti hiyo tu. ccam haiwezi kuiona wakati huo, kwa sababu Claude Code imeichukua nafasi yake, kwa hiyo hukagua wakati wa uanzishaji unaofuata. Faili ya `seen` huhifadhi muda wa kubadilishwa wa `.claude.json` na majina ya seva yaliyokwisha ripotiwa. Muda unapotofautiana, ccam hulinganisha majina na kikundi na huchapisha dokezo kwa kila seva mpya mara moja, bila kusubiri ingizo:
 
@@ -111,6 +119,7 @@ Kwa `--force` seva ya kikundi hubadilishwa, na `mcp.json` ya awali kwanza huhifa
 
 - **Taarifa za kuingia.** Seva zinazoingia kwa OAuth huhifadhi tokeni zao katika `.credentials.json` ya kila akaunti (`mcpOAuth`), si kwenye orodha ya seva, kwa hiyo kushiriki seva hakushiriki kuingia kwake. Ingia mara moja kwa kila akaunti kwa `/mcp`, au nakili taarifa za kuingia kutoka `~/.claude` kwa [`ccam migrate`](/features/migrate). Kikundi kamwe hakipokei faili ya kuingia.
 - **Akaunti zinazoendeshwa.** `import` hunakili kwenda kwenye kikundi lakini huacha vipengele vya akaunti inayoendeshwa na husema hivyo; iendeshe tena baada ya kipindi kuisha. Usawazishaji huruka akaunti zinazoendeshwa.
+- **Nakala kwa ajili ya Remote Control.** Nakala ya akaunti inayoendeshwa haiguswi: `Note: account side is running, so the copy in its .claude.json stays as it was until its next Remote Control launch.` Kwa `mcp_strategy = "sync"` hakuna kinachohitaji kusasishwa, kwa sababu kila uanzishaji husawazisha.
 - **Faili zilizoharibika.** Ikiwa `.claude.json` si JSON halali, usawazishaji huiacha bila kuigusa na huripoti kosa. Ikiwa kufuli haiwezi kuchukuliwa ndani ya sekunde 2, ccam huripoti `could not lock … (Claude Code is writing the file)`.
 - **Akaunti zisizoshiriki MCP.** `import` hukataa na hukuambia uendeshe `ccam share side --mcp on` kwanza.
 - **Majina ya vikundi.** `-g` hupokea jina la kikundi tu; huwa folda chini ya `groups/`, kwa hiyo majina kama `../x` hukataliwa.

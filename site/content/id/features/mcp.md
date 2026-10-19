@@ -4,7 +4,7 @@ description: Simpan satu daftar server MCP per grup dengan ccam mcp add, add-jso
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: 46a7aa716f99
+sourceHash: 69fd3233fd09
 ---
 
 Claude Code menyimpan server MCP pengguna di `.claude.json`, file yang sama yang menyimpan login akun, sehingga file itu tidak dapat dibagikan antarakun. ccam menyimpan server bersama di file grup, `mcp.json`, dan menyerahkannya ke setiap akun dalam grup saat peluncuran. Gunakan `ccam mcp` untuk menambahkan server sekali untuk semua akun Anda, dan `ccam mcp import` untuk memindahkan server yang Anda tambahkan di dalam satu sesi ke akun-akun lain.
@@ -72,7 +72,15 @@ Ada dua strategi, diatur oleh `mcp_strategy` di `~/.config/ccam/config.toml`. De
 3. `mcp.NewLocal` memeriksa apakah `.claude.json` milik akun berubah sejak peluncuran terakhir, dan hanya dalam hal itu mem-parse servernya.
 4. `syscall.Exec` mengganti ccam dengan Claude Code.
 
-Path diteruskan sebagai satu argumen, `--mcp-config=<path>`, bukan dua. `--mcp-config` milik Claude Code menerima beberapa nilai, sehingga `claude --mcp-config a.json "prompt"` akan membaca prompt sebagai file konfigurasi kedua dan gagal dengan `MCP config file not found`. Bentuk satu argumen berhenti di situ, sehingga prompt atau subperintah seperti `mcp list` yang mengikutinya tetap berfungsi. Claude Code memuat server `--mcp-config` sebagai tambahan dari server milik akun; jika ada nama yang bentrok, entri di `.claude.json` yang menang. Strategi flag tidak pernah menulis `.claude.json`.
+Path diteruskan sebagai satu argumen, `--mcp-config=<path>`, bukan dua. `--mcp-config` milik Claude Code menerima beberapa nilai, sehingga `claude --mcp-config a.json "prompt"` akan membaca prompt sebagai file konfigurasi kedua dan gagal dengan `MCP config file not found`. Bentuk satu argumen berhenti di situ, sehingga prompt atau subperintah seperti `mcp list` yang mengikutinya tetap berfungsi. Claude Code memuat server `--mcp-config` sebagai tambahan dari server milik akun; jika ada nama yang bentrok, entri di `.claude.json` yang menang. Strategi flag hanya menulis `.claude.json` untuk Remote Control.
+
+`claude remote-control` (`rc`) tidak menerima `--mcp-config`, dan sesinya hanya membaca server dari `.claude.json`. Untuk `ccam work rc`, ccam tidak menyertakan flag tersebut dan, di terminal, bertanya apakah server grup perlu disalin ke `.claude.json`, dengan cadangan, seperti yang dilakukan strategi `sync`. ccam terus bertanya sampai salinan ada, lalu bertanya lagi hanya setelah `mcp.json` milik grup berubah ([Remote Control](/features/launch#remote-control)). Karena salinan semacam itu menang atas `--mcp-config` jika ada nama yang bentrok, `ccam mcp add`, `add-json`, `remove`, dan `import` memperbarui salinan yang dimiliki akun lain dalam grup:
+
+```console
+$ ccam mcp add ctx --url https://mcp.context7.com/mcp
+✓ ctx added in group default — applies from the next launch
+✓ Updated the copy in account side's .claude.json (made for Remote Control)
+```
 
 Server yang ditambahkan di dalam sesi dengan `claude mcp add` hanya masuk ke `.claude.json` milik akun itu. ccam tidak dapat melihatnya saat itu, karena Claude Code sudah menggantikannya, sehingga ccam memeriksanya pada peluncuran berikutnya. File `seen` menyimpan waktu modifikasi `.claude.json` dan nama server yang sudah dilaporkan. Jika waktunya berbeda, ccam membandingkan nama-nama itu dengan grup dan menampilkan petunjuk untuk setiap server baru satu kali, tanpa menunggu input:
 
@@ -111,6 +119,7 @@ Dengan `--force`, server grup diganti, dan `mcp.json` sebelumnya terlebih dahulu
 
 - **Info masuk.** Server yang masuk dengan OAuth menyimpan tokennya di `.credentials.json` setiap akun (`mcpOAuth`), bukan di daftar server, sehingga membagikan server tidak ikut membagikan info masuknya. Masuk sekali per akun dengan `/mcp`, atau salin info masuk dari `~/.claude` dengan [`ccam migrate`](/features/migrate). Grup tidak pernah menerima file login.
 - **Akun yang sedang berjalan.** `import` menyalin ke grup tetapi membiarkan entri milik akun yang sedang berjalan dan memberitahukannya; jalankan lagi setelah sesi berakhir. Sinkronisasi melewati akun yang sedang berjalan.
+- **Salinan untuk Remote Control.** Salinan milik akun yang sedang berjalan tidak disentuh: `Note: account side is running, so the copy in its .claude.json stays as it was until its next Remote Control launch.` Dengan `mcp_strategy = "sync"`, tidak ada yang perlu diperbarui, karena setiap peluncuran melakukan sinkronisasi.
 - **File rusak.** Jika `.claude.json` bukan JSON yang valid, sinkronisasi tidak menyentuhnya dan melaporkan galatnya. Jika lock tidak dapat diambil dalam 2 detik, ccam melaporkan `could not lock … (Claude Code is writing the file)`.
 - **Akun yang tidak membagikan MCP.** `import` menolak dan meminta Anda menjalankan `ccam share side --mcp on` terlebih dahulu.
 - **Nama grup.** `-g` hanya menerima nama grup; nama itu menjadi folder di bawah `groups/`, sehingga nama seperti `../x` ditolak.

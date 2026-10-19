@@ -4,7 +4,7 @@ description: "Giữ một danh sách máy chủ MCP cho mỗi nhóm bằng ccam 
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: 46a7aa716f99
+sourceHash: 69fd3233fd09
 ---
 
 Claude Code lưu máy chủ MCP người dùng trong `.claude.json`, cũng là tệp chứa thông tin đăng nhập của tài khoản, nên tệp này không thể dùng chung giữa các tài khoản. ccam lưu các máy chủ dùng chung trong một tệp của nhóm, `mcp.json`, và trao nó cho mọi tài khoản trong nhóm khi khởi động. Hãy dùng `ccam mcp` để thêm một máy chủ một lần cho mọi tài khoản của bạn, và `ccam mcp import` để chuyển một máy chủ bạn đã thêm trong một phiên sang các tài khoản khác.
@@ -72,7 +72,15 @@ Có hai chiến lược, được đặt bằng `mcp_strategy` trong `~/.config/
 3. `mcp.NewLocal` kiểm tra `.claude.json` của tài khoản có thay đổi kể từ lần khởi động trước hay không, và chỉ khi đó mới phân tích các máy chủ của nó.
 4. `syscall.Exec` thay ccam bằng Claude Code.
 
-Đường dẫn được truyền dưới dạng một đối số, `--mcp-config=<path>`, chứ không phải hai. `--mcp-config` của Claude Code nhận nhiều giá trị, nên `claude --mcp-config a.json "prompt"` sẽ đọc lời nhắc như một tệp cấu hình thứ hai và thất bại với `MCP config file not found`. Dạng một đối số dừng lại ở đó, và lời nhắc hoặc lệnh con như `mcp list` theo sau vẫn hoạt động. Claude Code nạp các máy chủ từ `--mcp-config` bổ sung vào các máy chủ riêng của tài khoản; khi trùng tên, mục trong `.claude.json` được ưu tiên. Chiến lược flag không bao giờ ghi vào `.claude.json`.
+Đường dẫn được truyền dưới dạng một đối số, `--mcp-config=<path>`, chứ không phải hai. `--mcp-config` của Claude Code nhận nhiều giá trị, nên `claude --mcp-config a.json "prompt"` sẽ đọc lời nhắc như một tệp cấu hình thứ hai và thất bại với `MCP config file not found`. Dạng một đối số dừng lại ở đó, và lời nhắc hoặc lệnh con như `mcp list` theo sau vẫn hoạt động. Claude Code nạp các máy chủ từ `--mcp-config` bổ sung vào các máy chủ riêng của tài khoản; khi trùng tên, mục trong `.claude.json` được ưu tiên. Chiến lược flag chỉ ghi vào `.claude.json` cho Remote Control.
+
+`claude remote-control` (`rc`) không nhận `--mcp-config`, và các phiên của nó chỉ đọc máy chủ từ `.claude.json`. Với `ccam work rc`, ccam bỏ cờ này đi và, khi có terminal, hỏi có sao chép các máy chủ của nhóm vào `.claude.json` hay không, kèm một bản sao lưu, như chiến lược `sync` vẫn làm. Nó hỏi cho đến khi có bản sao, sau đó chỉ hỏi lại khi `mcp.json` của nhóm thay đổi ([Remote Control](/features/launch#remote-control)). Vì bản sao như vậy được ưu tiên hơn `--mcp-config` khi trùng tên, `ccam mcp add`, `add-json`, `remove` và `import` cập nhật các bản sao mà các tài khoản khác trong nhóm đang giữ:
+
+```console
+$ ccam mcp add ctx --url https://mcp.context7.com/mcp
+✓ ctx added in group default — applies from the next launch
+✓ Updated the copy in account side's .claude.json (made for Remote Control)
+```
 
 Một máy chủ được thêm trong phiên bằng `claude mcp add` chỉ nằm trong `.claude.json` của tài khoản đó. ccam không thể thấy nó vào lúc đó, vì Claude Code đã thay thế ccam, nên nó kiểm tra ở lần khởi động tiếp theo. Tệp `seen` lưu thời điểm sửa đổi của `.claude.json` và tên các máy chủ đã được báo. Khi thời điểm khác đi, ccam so sánh các tên với nhóm và in ra một gợi ý cho mỗi máy chủ mới một lần, mà không chờ đầu vào:
 
@@ -111,6 +119,7 @@ Với `--force`, máy chủ của nhóm bị thay thế, và `mcp.json` trước
 
 - **Đăng nhập.** Các máy chủ đăng nhập bằng OAuth giữ token trong `.credentials.json` của từng tài khoản (`mcpOAuth`), không phải trong danh sách máy chủ, nên dùng chung một máy chủ không có nghĩa là dùng chung thông tin đăng nhập của nó. Hãy đăng nhập một lần cho mỗi tài khoản bằng `/mcp`, hoặc sao chép thông tin đăng nhập từ `~/.claude` bằng [`ccam migrate`](/features/migrate). Nhóm không bao giờ nhận tệp đăng nhập.
 - **Tài khoản đang chạy.** `import` sao chép vào nhóm nhưng giữ nguyên các mục riêng của tài khoản đang chạy và báo điều đó; hãy chạy lại sau khi phiên kết thúc. Việc đồng bộ bỏ qua các tài khoản đang chạy.
+- **Bản sao cho Remote Control.** Bản sao của tài khoản đang chạy không bị động đến: `Note: account side is running, so the copy in its .claude.json stays as it was until its next Remote Control launch.` Với `mcp_strategy = "sync"` thì không cần cập nhật gì, vì mỗi lần khởi động đều đồng bộ.
 - **Tệp bị hỏng.** Nếu `.claude.json` không phải JSON hợp lệ, việc đồng bộ không động đến nó và báo lỗi. Nếu không lấy được khóa trong 2 giây, ccam báo `could not lock … (Claude Code is writing the file)`.
 - **Tài khoản không dùng chung MCP.** `import` từ chối và yêu cầu bạn chạy `ccam share side --mcp on` trước.
 - **Tên nhóm.** `-g` chỉ nhận tên nhóm; tên này trở thành một thư mục trong `groups/`, nên các tên như `../x` bị từ chối.

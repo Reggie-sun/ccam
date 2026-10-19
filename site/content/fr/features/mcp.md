@@ -4,7 +4,7 @@ description: "Gardez une seule liste de serveurs MCP par groupe avec ccam mcp ad
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: 46a7aa716f99
+sourceHash: 69fd3233fd09
 ---
 
 Claude Code conserve les serveurs MCP utilisateur dans `.claude.json`, le même fichier que celui qui contient la connexion du compte ; ce fichier ne peut donc pas être partagé entre comptes. ccam conserve les serveurs partagés dans un fichier de groupe, `mcp.json`, et le transmet à chaque compte du groupe au lancement. Utilisez `ccam mcp` pour ajouter un serveur une seule fois pour tous vos comptes, et `ccam mcp import` pour transférer aux autres un serveur que vous avez ajouté pendant une session.
@@ -72,7 +72,15 @@ Il existe deux stratégies, définies par `mcp_strategy` dans `~/.config/ccam/co
 3. `mcp.NewLocal` vérifie si le `.claude.json` du compte a changé depuis le dernier lancement, et n'analyse ses serveurs que dans ce cas.
 4. `syscall.Exec` remplace ccam par Claude Code.
 
-Le chemin est transmis en un seul argument, `--mcp-config=<path>`, et non en deux. Le `--mcp-config` de Claude Code accepte plusieurs valeurs, donc `claude --mcp-config a.json "prompt"` lirait l'invite comme un second fichier de configuration et échouerait avec `MCP config file not found`. La forme en un seul argument s'arrête là, et une invite ou une sous-commande comme `mcp list` qui suit fonctionne. Claude Code charge les serveurs de `--mcp-config` en plus de ceux du compte ; en cas de conflit de noms, l'entrée de `.claude.json` l'emporte. La stratégie de l'option n'écrit jamais dans `.claude.json`.
+Le chemin est transmis en un seul argument, `--mcp-config=<path>`, et non en deux. Le `--mcp-config` de Claude Code accepte plusieurs valeurs, donc `claude --mcp-config a.json "prompt"` lirait l'invite comme un second fichier de configuration et échouerait avec `MCP config file not found`. La forme en un seul argument s'arrête là, et une invite ou une sous-commande comme `mcp list` qui suit fonctionne. Claude Code charge les serveurs de `--mcp-config` en plus de ceux du compte ; en cas de conflit de noms, l'entrée de `.claude.json` l'emporte. La stratégie de l'option n'écrit dans `.claude.json` que pour Remote Control.
+
+`claude remote-control` (`rc`) n'accepte pas `--mcp-config`, et ses sessions ne lisent les serveurs que dans `.claude.json`. Pour `ccam work rc`, ccam omet l'option et, dans un terminal, demande s'il faut copier les serveurs du groupe dans `.claude.json`, avec une sauvegarde, comme le fait la stratégie `sync`. Il pose la question tant qu'aucune copie n'existe, puis seulement après un changement du `mcp.json` du groupe ([Remote Control](/features/launch#remote-control)). Comme une telle copie l'emporte sur `--mcp-config` en cas de conflit de noms, `ccam mcp add`, `add-json`, `remove` et `import` mettent à jour les copies que détiennent les autres comptes du groupe :
+
+```console
+$ ccam mcp add ctx --url https://mcp.context7.com/mcp
+✓ ctx added in group default — applies from the next launch
+✓ Updated the copy in account side's .claude.json (made for Remote Control)
+```
 
 Un serveur ajouté pendant une session avec `claude mcp add` n'arrive que dans le `.claude.json` de ce compte. ccam ne peut pas le voir sur le moment, puisque Claude Code l'a remplacé ; il vérifie donc au lancement suivant. Le fichier `seen` contient la date de modification de `.claude.json` et les noms de serveurs déjà signalés. Quand la date diffère, ccam compare les noms avec le groupe et affiche une seule fois une indication pour chaque nouveau serveur, sans attendre de saisie :
 
@@ -111,6 +119,7 @@ Avec `--force`, le serveur du groupe est remplacé, et le `mcp.json` précédent
 
 - **Connexions.** Les serveurs qui se connectent avec OAuth conservent leurs jetons dans le `.credentials.json` de chaque compte (`mcpOAuth`), pas dans la liste des serveurs ; partager un serveur ne partage donc pas sa connexion. Connectez-vous une fois par compte avec `/mcp`, ou copiez les connexions depuis `~/.claude` avec [`ccam migrate`](/features/migrate). Le groupe ne reçoit jamais de fichier de connexion.
 - **Comptes en cours d'exécution.** `import` copie vers le groupe mais laisse les entrées propres d'un compte en cours d'exécution, et le signale ; relancez-le une fois la session terminée. La synchronisation saute les comptes en cours d'exécution.
+- **Copies pour Remote Control.** La copie d'un compte en cours d'exécution n'est pas modifiée : `Note: account side is running, so the copy in its .claude.json stays as it was until its next Remote Control launch.` Avec `mcp_strategy = "sync"`, rien n'a besoin d'être mis à jour, car chaque lancement synchronise.
 - **Fichiers endommagés.** Si `.claude.json` n'est pas un JSON valide, la synchronisation n'y touche pas et signale l'erreur. Si le verrou ne peut pas être pris en 2 secondes, ccam signale `could not lock … (Claude Code is writing the file)`.
 - **Comptes qui ne partagent pas MCP.** `import` refuse et vous indique de lancer d'abord `ccam share side --mcp on`.
 - **Noms de groupe.** `-g` n'accepte qu'un nom de groupe ; il devient un dossier sous `groups/`, si bien que des noms comme `../x` sont refusés.

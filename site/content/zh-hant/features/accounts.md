@@ -4,7 +4,7 @@ description: 用 ccam add、ccam login、ccam list、ccam rename、ccam remove �
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 97cef50f48f4
+sourceHash: 99c931574262
 ---
 
 每個 ccam 帳號都是一個獨立的 Claude Code 設定資料夾，有自己的登入資訊。這些指令用來建立、登入、列出、重新命名和移除帳號，也能登錄你已經有的資料夾。
@@ -92,6 +92,8 @@ On a remote machine? If the browser ends on a http://localhost:…/callback page
 ```
 
 成功時會印出 `→ Passed the sign-in to Claude Code on this machine.`
+
+登入在終端機上等待輸入時，ccam 會關閉終端機的回顯和行模式，你每輸入一個字元就顯示一個 `*`，所以貼上的代碼或回呼位址不會出現在畫面上。行編輯由 `readLine` 自己處理：`Enter` 送出這一行，`Backspace` 刪除一個字元，在空行上按 `Ctrl+D` 結束輸入。登入結束時會還原終端機設定；收到 `Ctrl+C`、`SIGTERM` 或 `SIGHUP` 時也會還原，它們仍會結束 ccam。如果標準輸入和標準錯誤不是終端機，各行會照原樣複製。
 
 ### 重新命名、移除和匯入
 

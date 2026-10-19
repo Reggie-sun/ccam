@@ -4,7 +4,7 @@ description: ccam <name|number>、ccam run、ccamのピッカーで、任意の�
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: d033da86f44b
+sourceHash: 6c04bb48df22
 ---
 
 `ccam work`は、アカウント`work`としてClaude Codeを起動し、名前より後のものはすべてそのまま`claude`に渡します。ターミナル、スクリプト、パイプで入力を渡す場合など、`claude`と入力するあらゆる場所で使えます。
@@ -108,6 +108,25 @@ Claude Codeは、`CLAUDE_CONFIG_DIR`にアカウントのフォルダー、`CCAM
 
 `config.toml`で`mcp_strategy = "sync"`を設定すると、ccamは代わりにアカウントの`.claude.json`にサーバーを書き込みます。アカウントがすでに実行中の場合は、これをスキップします。
 
+### Remote Control
+
+`ccam work rc`（または`ccam work remote-control`）は、`work`としてClaude CodeのRemote Controlを起動します。`claude remote-control`は動詞の前の`--mcp-config`を拒否し、動詞の後でも受け付けません。また、そのセッションはアカウントの`.claude.json`からしかMCPサーバーを読みません。そのため、ここではフラグ戦略の動作が異なります。
+
+<!-- motion:launch-rc -->
+
+1. `remoteControl`は、アカウントより後の引数のうち`-`で始まらない最初のものをClaude Codeの動詞とみなします。それが`remote-control`か`rc`の場合、`mcp.FlagArgs`は何も追加しません。
+2. `mcp.Synced`は、グループの`mcp.json`の更新日時をアカウントの`sync-stamp`と比較します。`.claude.json`にグループの現在のサーバーがすでに入っている場合や、グループにサーバーがない場合は、確認せずにRemote Controlを起動します。
+3. それ以外の場合、ccamはセッションで使えなくなるサーバーの名前を示して確認します。
+
+   ```console
+   ccam: Remote Control sessions only get MCP servers stored in account work's .claude.json, not the shared MCP servers (ctx, fs).
+   Copy them into .claude.json (a backup is kept)? [y/N]
+   ```
+
+4. `y`と答えると、`mcp.Sync`が`sync`戦略と同じ方法でサーバーをコピーします。Claude Codeのロックを取得し、バックアップを取ったうえで、アカウント自身のサーバーは残します。`N`と答えた場合やターミナルがない場合は、それらのサーバーなしでRemote Controlを起動し、起動のたびにサーバーをコピーする`mcp_strategy = "sync"`を案内します。
+
+ccamは、サーバーがコピーされるまでRemote Controlの起動のたびに確認し、コピーした後はグループの`mcp.json`が再び変わったときに一度だけ確認します。その後の通常の起動では`.claude.json`のコピーが`--mcp-config`より優先されるため、`ccam mcp add`、`remove`、`import`はほかのアカウントが持つコピーも更新します（[共有MCPサーバー](/features/mcp)）。
+
 ### 10 msの予算
 
 ccamがClaude Codeの起動前に追加する時間は、最大10 ms（p95）です。起動経路では、cobraのコマンドツリーの構築、Bubble Teaの起動、ネットワーク接続を一切行いません。また、パッケージの`init()`関数の合計が5 msを超えると`TestPackageInitIsCheap`が失敗します。`scripts/perf-check.sh`は`hyperfine`で`ccam --dry-run work`、`ccam work`、ショートカットを計測し、10 msを超えると失敗します。`internal/launcher`の`BenchmarkLaunchPath`は、これらの手順をループで実行します。手順ごとの時間を確認するには、`CCAM_TRACE=1`を設定します。
@@ -127,6 +146,7 @@ ccam trace: prelaunch             0.083ms (total 3.661ms)
 - 共有パスが通常のファイルになったり、間違った場所を指していたりする場合、ccamは`stopped because of share link problems:`で停止し、問題を一覧表示して、`ccam doctor --fix`を実行するよう求めます。起動経路でデータを移動することはありません。
 - このアカウントと会話履歴を共有する（同じグループの）別のClaude Codeが同じフォルダーで実行中の場合、ccamは履歴が混ざる可能性があることを警告し、`Run anyway? [y/N]`と尋ねます。ターミナルがない場合は、警告を表示して続行します。
 - `--dry-run`は、MCPの同期、新しいサーバーの通知、履歴の確認、セッションのマーカー、タイトル、最終使用日時をスキップし、execも行いません。共有リンクの確認は行い、通常の起動と同じように足りないリンクを作成します。
+- `work`がすでに実行中のときに`ccam work rc`を実行すると、`.claude.json`には触れずにその旨を表示し、グループのサーバーなしでRemote Controlを起動します。サーバーをコピーするには、セッションが終了した後にもう一度実行してください。`--dry-run`ではメッセージを表示するだけで、確認もコピーも行いません。
 - `mcp_strategy = "sync"`の場合、同期に失敗すると`ccam: MCP sync failed (launching anyway): …`と表示され、Claude Codeはそれまでのサーバーで起動します。
 
 ## 関連項目

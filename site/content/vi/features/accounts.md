@@ -4,7 +4,7 @@ description: "Thêm, đăng nhập, liệt kê, đổi tên, xóa và nhập tà
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 97cef50f48f4
+sourceHash: 99c931574262
 ---
 
 Mỗi tài khoản ccam là một thư mục cấu hình Claude Code riêng với thông tin đăng nhập riêng. Các lệnh này tạo, đăng nhập, liệt kê, đổi tên và xóa tài khoản, cũng như đăng ký các thư mục bạn đã có.
@@ -92,6 +92,8 @@ On a remote machine? If the browser ends on a http://localhost:…/callback page
 ```
 
 Khi thành công, nó in ra `→ Passed the sign-in to Claude Code on this machine.`
+
+Trong lúc việc đăng nhập chờ nhập liệu trên terminal, ccam tắt chế độ echo và chế độ dòng của terminal, và hiển thị một `*` cho mỗi ký tự bạn gõ, nên mã hoặc địa chỉ callback được dán vào sẽ không hiện trên màn hình. `readLine` tự xử lý việc chỉnh sửa dòng: `Enter` gửi dòng, `Backspace` xóa một ký tự, và `Ctrl+D` trên một dòng trống kết thúc việc nhập. Terminal được khôi phục khi đăng nhập kết thúc, và cả khi nhận `Ctrl+C`, `SIGTERM` hoặc `SIGHUP`, những tín hiệu vẫn kết thúc ccam như trước. Khi đầu vào chuẩn và đầu ra lỗi chuẩn không phải là terminal, các dòng được sao chép nguyên như khi chúng đến.
 
 ### Đổi tên, xóa và nhập
 

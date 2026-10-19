@@ -4,7 +4,7 @@ description: Claude Code'u herhangi bir hesapla ccam <name|number>, ccam run vey
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: d033da86f44b
+sourceHash: 6c04bb48df22
 ---
 
 `ccam work`, Claude Code'u `work` hesabıyla başlatır ve addan sonraki her şey `claude` komutuna olduğu gibi iletilir. `claude` yazacağınız her yerde kullanın: terminalde, bir betikte veya girdiyi boruyla aktararak.
@@ -108,6 +108,25 @@ Varsayılan `flag` stratejisiyle ccam, grubun MCP sunucularını Claude Code'a s
 
 `config.toml` içinde `mcp_strategy = "sync"` ile ccam bunun yerine sunucuları hesabın `.claude.json` dosyasına yazar ve hesap zaten çalışıyorsa bunu atlar.
 
+### Remote Control
+
+`ccam work rc` (veya `ccam work remote-control`), Claude Code'un Remote Control özelliğini `work` hesabıyla başlatır. `claude remote-control`, `--mcp-config` seçeneğini alt komutundan önce reddeder, sonrasında da hiç almaz; oturumları ise MCP sunucularını yalnızca hesabın `.claude.json` dosyasından okur. Bu yüzden bayrak stratejisi burada farklı çalışır:
+
+<!-- motion:launch-rc -->
+
+1. `remoteControl`, hesaptan sonra gelen ve `-` ile başlamayan ilk argümanı Claude Code'un alt komutu olarak alır. Bu `remote-control` veya `rc` olduğunda `mcp.FlagArgs` hiçbir şey eklemez.
+2. `mcp.Synced`, grubun `mcp.json` dosyasının değiştirilme zamanını hesabın `sync-stamp` dosyasıyla karşılaştırır. `.claude.json` grubun güncel sunucularını zaten içeriyorsa veya grubun hiç sunucusu yoksa Remote Control soru sormadan başlar.
+3. Aksi halde ccam, oturumlarda eksik kalacak sunucuları adlarıyla belirtir ve sorar:
+
+   ```console
+   ccam: Remote Control sessions only get MCP servers stored in account work's .claude.json, not the shared MCP servers (ctx, fs).
+   Copy them into .claude.json (a backup is kept)? [y/N]
+   ```
+
+4. `y` yanıtında `mcp.Sync` bunları `sync` stratejisinin yaptığı gibi kopyalar: Claude Code'un kilidi altında, bir yedek aldıktan sonra ve hesabın kendi sunucularını koruyarak. `N` yanıtında veya terminal yoksa Remote Control onlar olmadan başlar ve ccam, bunları her başlatmadan önce kopyalayan `mcp_strategy = "sync"` ayarını önerir.
+
+ccam, sunucular kopyalanana kadar her Remote Control başlatmasında sorar; kopyalamadan sonra ise yalnızca grubun `mcp.json` dosyası yeniden değiştiğinde sorar. `.claude.json` içindeki bir kopya, sonraki normal başlatmalarda `--mcp-config` seçeneğine üstün gelir; bu yüzden `ccam mcp add`, `remove` ve `import` diğer hesapların tuttuğu kopyaları günceller ([Paylaşılan MCP sunucuları](/features/mcp)).
+
 ### 10 ms bütçesi
 
 ccam, Claude Code başlamadan önce en fazla 10 ms (p95) ekler. Başlatma yolu hiçbir zaman cobra komut ağacını oluşturmaz, Bubble Tea başlatmaz veya bir ağ bağlantısı açmaz; paket `init()` fonksiyonları toplamda 5 ms'den uzun sürerse `TestPackageInitIsCheap` başarısız olur. `scripts/perf-check.sh`, `ccam --dry-run work`, `ccam work` ve bir kısayolu `hyperfine` ile ölçer ve 10 ms'nin üzerinde başarısız olur; `internal/launcher` içindeki `BenchmarkLaunchPath` ise adımları bir döngüde çalıştırır. Adım başına süreyi görmek için `CCAM_TRACE=1` ayarlayın:
@@ -127,6 +146,7 @@ ccam trace: prelaunch             0.083ms (total 3.661ms)
 - Paylaşılan bir yol sıradan bir dosyaya dönüştüyse veya yanlış yere yöneliyorsa ccam `stopped because of share link problems:` ile durur, sorunları listeler ve `ccam doctor --fix` çalıştırmanızı ister. Başlatma yolunda veri taşımaz.
 - Bu hesapla konuşma geçmişini paylaşan (aynı gruptaki) başka bir Claude Code aynı klasörde çalışıyorsa ccam, geçmişin karışabileceği konusunda uyarır ve `Run anyway? [y/N]` diye sorar. Terminal yoksa uyarıyı gösterir ve devam eder.
 - `--dry-run`; MCP eşitlemesini, yeni sunucu bildirimini, geçmiş kontrolünü, oturum işaretini, başlığı ve son kullanım zamanını atlar ve exec yapmaz. Paylaşım bağlantılarını yine kontrol eder ve eksik bir bağlantıyı normal bir başlatmanın yapacağı gibi oluşturur.
+- `ccam work rc`, `work` zaten çalışırken `.claude.json` dosyasına dokunmaz, bunu belirtir ve Remote Control'ü grubun sunucuları olmadan başlatır; bunları kopyalamak için oturum bittikten sonra yeniden çalıştırın. `--dry-run` ile mesajı yazdırır ama ne sorar ne de kopyalar.
 - `mcp_strategy = "sync"` ile başarısız bir eşitleme `ccam: MCP sync failed (launching anyway): …` yazdırır ve Claude Code zaten sahip olduğu sunucularla başlar.
 
 ## İlgili

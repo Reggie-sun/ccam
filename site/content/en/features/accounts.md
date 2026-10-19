@@ -92,6 +92,8 @@ On a remote machine? If the browser ends on a http://localhost:…/callback page
 
 On success it prints `→ Passed the sign-in to Claude Code on this machine.`
 
+While the login waits for input on a terminal, ccam turns off the terminal's echo and line mode and shows a `*` for each character you type, so a pasted code or callback address does not appear on screen. `readLine` does the line editing itself: `Enter` sends the line, `Backspace` erases one character, and `Ctrl+D` on an empty line ends the input. The terminal is restored when the login ends, and also on `Ctrl+C`, `SIGTERM` or `SIGHUP`, which still end ccam. Without a terminal on standard input and standard error, lines are copied as they come.
+
 ### Rename, remove and import
 
 `ccam rename` and `ccam remove` act on the account's folder and on what ccam keeps under the account's name elsewhere. `nameState` lists those paths: `~/.local/state/ccam/last-used/<name>`, `~/.local/state/ccam/mcp/<name>` and the usage caches `~/.local/state/ccam/usage/<name>.json` and `<name>.statusline.json`. `ccam remove work` handles them in this order:

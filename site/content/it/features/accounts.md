@@ -4,7 +4,7 @@ description: Aggiungi, collega, elenca, rinomina, rimuovi e importa account Clau
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 97cef50f48f4
+sourceHash: 99c931574262
 ---
 
 Ogni account di ccam è una cartella di configurazione di Claude Code separata, con il proprio login. Questi comandi creano gli account, ne effettuano il login, li elencano, li rinominano e li rimuovono, e registrano le cartelle che hai già.
@@ -92,6 +92,8 @@ On a remote machine? If the browser ends on a http://localhost:…/callback page
 ```
 
 Se riesce, stampa `→ Passed the sign-in to Claude Code on this machine.`
+
+Mentre il login attende un input in un terminale, ccam disattiva l'eco e la modalità di riga del terminale e mostra un `*` per ogni carattere che digiti, così un codice o un indirizzo di callback incollato non compare sullo schermo. `readLine` gestisce da sé la modifica della riga: `Enter` invia la riga, `Backspace` cancella un carattere e `Ctrl+D` su una riga vuota termina l'input. Il terminale viene ripristinato quando il login finisce, e anche con `Ctrl+C`, `SIGTERM` o `SIGHUP`, che continuano a terminare ccam. Senza un terminale su standard input e standard error, le righe vengono copiate così come arrivano.
 
 ### Rinominare, rimuovere e importare
 

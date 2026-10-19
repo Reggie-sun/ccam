@@ -4,7 +4,7 @@ description: Tambahkan, login, tampilkan, ganti nama, hapus, dan impor akun Clau
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 97cef50f48f4
+sourceHash: 99c931574262
 ---
 
 Setiap akun ccam adalah folder konfigurasi Claude Code tersendiri dengan login-nya sendiri. Perintah-perintah ini membuat, memasukkan login, menampilkan, mengganti nama, dan menghapus akun, serta mendaftarkan folder yang sudah Anda miliki.
@@ -92,6 +92,8 @@ On a remote machine? If the browser ends on a http://localhost:…/callback page
 ```
 
 Jika berhasil, ccam menampilkan `→ Passed the sign-in to Claude Code on this machine.`
+
+Selama login menunggu input di terminal, ccam mematikan echo dan mode baris terminal serta menampilkan `*` untuk setiap karakter yang Anda ketik, sehingga kode atau alamat callback yang ditempel tidak muncul di layar. `readLine` menangani penyuntingan baris sendiri: `Enter` mengirim baris, `Backspace` menghapus satu karakter, dan `Ctrl+D` di baris kosong mengakhiri input. Terminal dipulihkan saat login berakhir, dan juga saat `Ctrl+C`, `SIGTERM`, atau `SIGHUP`, yang tetap mengakhiri ccam. Jika input standar dan error standar tidak terhubung ke terminal, baris disalin apa adanya saat masuk.
 
 ### Mengganti nama, menghapus, dan mengimpor
 

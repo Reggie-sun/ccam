@@ -4,7 +4,7 @@ description: Ƙara, shiga, lissafa, sake suna, cire da shigo da asusun Claude Co
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 97cef50f48f4
+sourceHash: 99c931574262
 ---
 
 Kowane asusun ccam foldar saitin Claude Code ce ta daban mai nata shiga. Waɗannan umarnai suna ƙirƙira, shiga, lissafa, sake suna da cire asusai, kuma suna yin rajistar foldojin da kake da su tuni.
@@ -92,6 +92,8 @@ On a remote machine? If the browser ends on a http://localhost:…/callback page
 ```
 
 Idan ya yi nasara yana buga `→ Passed the sign-in to Claude Code on this machine.`
+
+Yayin da shigar ke jiran shigarwa a terminal, ccam yana kashe echo da yanayin layi (line mode) na terminal kuma yana nuna `*` ga kowane harafi da ka rubuta, don haka lambar da aka liƙa ko adireshin callback ba ya bayyana a allo. `readLine` yana gyara layin da kansa: `Enter` yana aika layin, `Backspace` yana goge harafi ɗaya, kuma `Ctrl+D` a layi mara komai yana kawo ƙarshen shigarwa. Ana mayar da terminal yadda yake idan shigar ta ƙare, haka kuma a `Ctrl+C`, `SIGTERM` ko `SIGHUP`, waɗanda har yanzu suke ƙare ccam. Idan babu terminal a standard input da standard error, ana kwafar layuka yadda suke zuwa.
 
 ### Sake suna, cirewa da shigowa
 

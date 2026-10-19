@@ -4,7 +4,7 @@ description: ccam mcp add, add-json, list, remove आणि import ने प्
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: 46a7aa716f99
+sourceHash: 69fd3233fd09
 ---
 
 Claude Code user MCP सर्व्हर `.claude.json` मध्ये ठेवते, ज्या फाइलमध्ये खात्याचे लॉगिनही असते, त्यामुळे ती फाइल खात्यांमध्ये शेअर करता येत नाही. ccam शेअर केलेले सर्व्हर `mcp.json` या गट फाइलमध्ये ठेवते आणि सुरू करताना ती गटातील प्रत्येक खात्याला देते. तुमच्या सर्व खात्यांसाठी एकदाच सर्व्हर जोडण्यासाठी `ccam mcp` वापरा, आणि एका session मध्ये जोडलेला सर्व्हर इतर खात्यांकडे हलवण्यासाठी `ccam mcp import` वापरा.
@@ -72,7 +72,15 @@ only in account work: pg
 3. `mcp.NewLocal` मागच्या वेळी सुरू केल्यापासून खात्याची `.claude.json` बदलली का ते तपासते, आणि तेव्हाच तिचे सर्व्हर parse करते.
 4. `syscall.Exec` ccam च्या जागी Claude Code ठेवते.
 
-पाथ दोन नाही तर `--mcp-config=<path>` हा एक आर्ग्युमेंट म्हणून दिला जातो. Claude Code चा `--mcp-config` अनेक मूल्ये घेतो, त्यामुळे `claude --mcp-config a.json "prompt"` prompt ला दुसरी config फाइल म्हणून वाचेल आणि `MCP config file not found` देऊन अयशस्वी होईल. एका आर्ग्युमेंटचे रूप तिथेच थांबते, आणि त्यानंतर येणारा prompt किंवा `mcp list` सारखी subcommand चालते. Claude Code `--mcp-config` चे सर्व्हर खात्याच्या स्वतःच्या सर्व्हरसोबत लोड करते; नाव जुळल्यास `.claude.json` मधील नोंद जिंकते. flag strategy कधीच `.claude.json` लिहीत नाही.
+पाथ दोन नाही तर `--mcp-config=<path>` हा एक आर्ग्युमेंट म्हणून दिला जातो. Claude Code चा `--mcp-config` अनेक मूल्ये घेतो, त्यामुळे `claude --mcp-config a.json "prompt"` prompt ला दुसरी config फाइल म्हणून वाचेल आणि `MCP config file not found` देऊन अयशस्वी होईल. एका आर्ग्युमेंटचे रूप तिथेच थांबते, आणि त्यानंतर येणारा prompt किंवा `mcp list` सारखी subcommand चालते. Claude Code `--mcp-config` चे सर्व्हर खात्याच्या स्वतःच्या सर्व्हरसोबत लोड करते; नाव जुळल्यास `.claude.json` मधील नोंद जिंकते. flag strategy फक्त Remote Control साठी `.claude.json` लिहिते.
+
+`claude remote-control` (`rc`) कोणताही `--mcp-config` घेत नाही, आणि त्याचे sessions सर्व्हर फक्त `.claude.json` मधून वाचतात. `ccam work rc` साठी, ccam flag वगळते आणि टर्मिनलवर विचारते की गटाचे सर्व्हर बॅकअपसह `.claude.json` मध्ये कॉपी करायचे का, जसे `sync` strategy करते. कॉपी तयार होईपर्यंत ते विचारते, नंतर फक्त गटाची `mcp.json` बदलल्यानंतरच ([Remote Control](/features/launch#remote-control)). नाव जुळल्यास अशी कॉपी `--mcp-config` वर जिंकत असल्याने, `ccam mcp add`, `add-json`, `remove` आणि `import` गटातील इतर खात्यांकडील कॉपी अपडेट करतात:
+
+```console
+$ ccam mcp add ctx --url https://mcp.context7.com/mcp
+✓ ctx added in group default — applies from the next launch
+✓ Updated the copy in account side's .claude.json (made for Remote Control)
+```
 
 session मध्ये `claude mcp add` ने जोडलेला सर्व्हर फक्त त्या खात्याच्या `.claude.json` मध्ये जातो. त्या वेळी ccam तो पाहू शकत नाही, कारण Claude Code ने त्याची जागा घेतलेली असते, म्हणून ते पुढच्या वेळी सुरू करताना तपासते. `seen` फाइलमध्ये `.claude.json` ची modification time आणि आधी नोंदवलेली सर्व्हरची नावे असतात. वेळ वेगळी असल्यास, ccam नावांची गटाशी तुलना करते आणि प्रत्येक नवीन सर्व्हरसाठी एकदा सूचना छापते, input ची वाट न पाहता:
 
@@ -111,6 +119,7 @@ Skipped gh: group default already has a different gh (`ccam mcp import work gh -
 
 - **साइन-इन्स.** OAuth ने साइन इन करणारे सर्व्हर आपले tokens सर्व्हर यादीत नाही, तर प्रत्येक खात्याच्या `.credentials.json` (`mcpOAuth`) मध्ये ठेवतात, त्यामुळे सर्व्हर शेअर केल्याने त्याचे साइन-इन शेअर होत नाही. प्रत्येक खात्यात `/mcp` ने एकदा साइन इन करा, किंवा [`ccam migrate`](/features/migrate) ने `~/.claude` मधून साइन-इन्स कॉपी करा. गटाला कधीच लॉगिन फाइल मिळत नाही.
 - **चालू खाती.** `import` गटात कॉपी करते पण चालू खात्याच्या स्वतःच्या नोंदी तशाच ठेवते आणि तसे सांगते; session संपल्यानंतर ते पुन्हा चालवा. sync चालू खाती वगळतो.
+- **Remote Control साठीच्या कॉपी.** चालू खात्याच्या कॉपीला हात लावला जात नाही: `Note: account side is running, so the copy in its .claude.json stays as it was until its next Remote Control launch.` `mcp_strategy = "sync"` सह काहीही अपडेट करण्याची गरज नाही, कारण प्रत्येक वेळी सुरू करताना sync होते.
 - **बिघडलेल्या फाइल्स.** `.claude.json` वैध JSON नसेल, तर sync तिला हात लावत नाही आणि त्रुटी नोंदवतो. 2 सेकंदांत lock घेता आले नाही, तर ccam `could not lock … (Claude Code is writing the file)` नोंदवते.
 - **MCP शेअर न करणारी खाती.** `import` नकार देते आणि आधी `ccam share side --mcp on` चालवायला सांगते.
 - **गटांची नावे.** `-g` फक्त गटाचे नाव घेतो; ते `groups/` खाली फोल्डर बनते, त्यामुळे `../x` सारखी नावे नाकारली जातात.

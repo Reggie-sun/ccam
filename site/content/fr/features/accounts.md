@@ -4,7 +4,7 @@ description: "Ajoutez, connectez, listez, renommez, supprimez et importez des co
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 97cef50f48f4
+sourceHash: 99c931574262
 ---
 
 Chaque compte ccam est un dossier de configuration Claude Code distinct, avec sa propre connexion. Ces commandes créent, connectent, listent, renomment et suppriment des comptes, et enregistrent les dossiers que vous avez déjà.
@@ -92,6 +92,8 @@ On a remote machine? If the browser ends on a http://localhost:…/callback page
 ```
 
 En cas de réussite, il affiche `→ Passed the sign-in to Claude Code on this machine.`
+
+Pendant que la connexion attend une saisie dans un terminal, ccam désactive l'écho et le mode ligne du terminal et affiche un `*` pour chaque caractère que vous tapez, si bien qu'un code ou une adresse de rappel collés n'apparaissent pas à l'écran. `readLine` gère lui-même l'édition de la ligne : `Enter` envoie la ligne, `Backspace` efface un caractère, et `Ctrl+D` sur une ligne vide termine la saisie. Le terminal est restauré à la fin de la connexion, ainsi qu'à `Ctrl+C`, `SIGTERM` ou `SIGHUP`, qui terminent toujours ccam. Sans terminal sur l'entrée standard et la sortie d'erreur standard, les lignes sont copiées telles qu'elles arrivent.
 
 ### Renommer, supprimer et importer
 

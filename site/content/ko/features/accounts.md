@@ -4,7 +4,7 @@ description: ccam add, ccam login, ccam list, ccam rename, ccam remove, ccam imp
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 97cef50f48f4
+sourceHash: 99c931574262
 ---
 
 ccam 계정은 각각 자체 로그인 정보를 가진 별도의 Claude Code 설정 폴더입니다. 다음 명령으로 계정을 만들고, 로그인하고, 목록을 보고, 이름을 바꾸고, 삭제하며, 이미 있는 폴더를 등록할 수 있습니다.
@@ -92,6 +92,8 @@ On a remote machine? If the browser ends on a http://localhost:…/callback page
 ```
 
 성공하면 `→ Passed the sign-in to Claude Code on this machine.`를 출력합니다.
+
+로그인이 터미널에서 입력을 기다리는 동안 ccam은 터미널의 에코와 줄 단위 입력 모드를 끄고, 입력한 글자마다 `*`를 하나씩 보여 줍니다. 그래서 붙여 넣은 코드나 콜백 주소가 화면에 나타나지 않습니다. 줄 편집은 `readLine`이 직접 처리합니다. `Enter`는 줄을 보내고, `Backspace`는 한 글자를 지우며, 빈 줄에서 `Ctrl+D`를 누르면 입력이 끝납니다. 터미널 설정은 로그인이 끝날 때 복원되며, `Ctrl+C`, `SIGTERM`, `SIGHUP`을 받았을 때도 복원됩니다. 이 신호들은 여전히 ccam을 종료합니다. 표준 입력과 표준 오류가 터미널이 아니면 줄을 들어오는 그대로 복사합니다.
 
 ### 이름 변경, 삭제, 가져오기
 

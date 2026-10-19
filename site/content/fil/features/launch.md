@@ -4,7 +4,7 @@ description: Simulan ang Claude Code bilang anumang account gamit ang ccam <name
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: d033da86f44b
+sourceHash: 6c04bb48df22
 ---
 
 Sinisimulan ng `ccam work` ang Claude Code bilang account na `work`, at ipinapasa sa `claude` nang walang pagbabago ang lahat ng kasunod ng pangalan. Gamitin ito saanman mo ita-type ang `claude`: sa terminal, sa script, o kapag may input na ipina-pipe.
@@ -108,6 +108,25 @@ Nagbabalik lang ng argument ang `mcp.FlagArgs` kung mayroong `mcp.json` ang grou
 
 Kapag may `mcp_strategy = "sync"` sa `config.toml`, isinusulat na lang ng ccam ang mga server sa `.claude.json` ng account, at nilalaktawan iyon kung tumatakbo na ang account.
 
+### Remote Control
+
+Sinisimulan ng `ccam work rc` (o `ccam work remote-control`) ang Remote Control ng Claude Code bilang `work`. Tinatanggihan ng `claude remote-control` ang `--mcp-config` bago ang verb nito at wala itong tinatanggap pagkatapos nito, at binabasa lang ng mga session nito ang mga MCP server mula sa `.claude.json` ng account. Kaya iba ang takbo ng flag strategy dito:
+
+<!-- motion:launch-rc -->
+
+1. Itinuturing ng `remoteControl` na verb ng Claude Code ang unang argument pagkatapos ng account na hindi nagsisimula sa `-`. Kapag `remote-control` o `rc` ito, walang idinadagdag ang `mcp.FlagArgs`.
+2. Ikinukumpara ng `mcp.Synced` ang modification time ng `mcp.json` ng group sa `sync-stamp` ng account. Kung nasa `.claude.json` na ang kasalukuyang mga server ng group, o walang server ang group, nagsisimula ang Remote Control nang walang tanong.
+3. Kung hindi, pinapangalanan ng ccam ang mga server na mawawala sa mga session at nagtatanong:
+
+   ```console
+   ccam: Remote Control sessions only get MCP servers stored in account work's .claude.json, not the shared MCP servers (ctx, fs).
+   Copy them into .claude.json (a backup is kept)? [y/N]
+   ```
+
+4. Sa `y`, kinokopya ng `mcp.Sync` ang mga ito gaya ng ginagawa ng `sync` strategy: sa ilalim ng lock ng Claude Code, pagkatapos ng backup, at pinapanatili ang sariling server ng account. Sa `N`, o kapag walang terminal, nagsisimula ang Remote Control nang wala ang mga ito, at itinuturo ng ccam ang `mcp_strategy = "sync"`, na kumokopya sa mga ito bago ang bawat pagsisimula.
+
+Nagtatanong ang ccam sa bawat pagsisimula ng Remote Control hanggang makopya ang mga server, at pagkatapos ng kopya ay kapag nagbago lang ulit ang `mcp.json` ng group. Nananaig ang kopya sa `.claude.json` sa `--mcp-config` sa mga susunod na normal na pagsisimula, kaya ina-update ng `ccam mcp add`, `remove` at `import` ang mga kopyang hawak ng ibang account ([Mga shared na MCP server](/features/mcp)).
+
 ### Ang 10 ms na budget
 
 Hindi hihigit sa 10 ms (p95) ang idinadagdag ng ccam bago magsimula ang Claude Code. Hindi kailanman binubuo ng launch path ang command tree ng cobra, sinisimulan ang Bubble Tea o nagbubukas ng network connection, at pumapalya ang `TestPackageInitIsCheap` kapag lumampas sa kabuuang 5 ms ang mga function na `init()` ng package. Sinusukat ng `scripts/perf-check.sh` ang `ccam --dry-run work`, `ccam work` at isang shortcut gamit ang `hyperfine` at pumapalya kapag lampas sa 10 ms, at pinapatakbo nang paulit-ulit ng `BenchmarkLaunchPath` sa `internal/launcher` ang mga hakbang. Para makita ang oras ng bawat hakbang, itakda ang `CCAM_TRACE=1`:
@@ -127,6 +146,7 @@ ccam trace: prelaunch             0.083ms (total 3.661ms)
 - Kung naging karaniwang file ang isang shared na path o tumuturo ito sa maling lugar, humihinto ang ccam na may `stopped because of share link problems:`, inililista ang mga ito, at hinihiling na patakbuhin mo ang `ccam doctor --fix`. Hindi ito naglilipat ng data sa launch path.
 - Kung may ibang Claude Code na nagshe-share ng kasaysayan ng usapan sa account na ito (parehong group) at tumatakbo sa parehong folder, nagbababala ang ccam na puwedeng maghalo ang kasaysayan at nagtatanong ng `Run anyway? [y/N]`. Kapag walang terminal, ipinapakita nito ang babala at nagpapatuloy.
 - Nilalaktawan ng `--dry-run` ang MCP sync, ang abiso tungkol sa bagong server, ang pagsusuri ng kasaysayan, ang session marker, ang pamagat at ang oras ng huling paggamit, at hindi ito nag-e-exec. Sinusuri pa rin nito ang mga share link, at ginagawa ang nawawalang link gaya ng sa karaniwang pagsisimula.
+- Kapag pinatakbo ang `ccam work rc` habang tumatakbo na ang `work`, hindi nito ginagalaw ang `.claude.json`, sinasabi iyon, at sinisimulan ang Remote Control nang wala ang mga server ng group; patakbuhin ulit pagkatapos lumabas ng session para makopya ang mga ito. Sa `--dry-run`, ipi-print nito ang mensahe pero hindi ito magtatanong o kokopya.
 - Sa `mcp_strategy = "sync"`, nagpi-print ang pumalyang sync ng `ccam: MCP sync failed (launching anyway): …` at nagsisimula ang Claude Code kasama ang mga server na mayroon na ito.
 
 ## Kaugnay

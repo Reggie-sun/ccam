@@ -4,7 +4,7 @@ description: "ccam <name|number>, ccam run বা ccam পিকার দিয
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: d033da86f44b
+sourceHash: 6c04bb48df22
 ---
 
 `ccam work` অ্যাকাউন্ট `work` হিসেবে Claude Code চালু করে, আর নামের পরের সবকিছু যেমন আছে তেমনই `claude`-এ যায়। যেখানে আপনি `claude` টাইপ করতেন সেখানেই এটি ব্যবহার করুন: টার্মিনালে, স্ক্রিপ্টে, বা পাইপ করা ইনপুটসহ।
@@ -108,6 +108,25 @@ Claude Code চলে অ্যাকাউন্ট ফোল্ডারে �
 
 `config.toml`-এ `mcp_strategy = "sync"` থাকলে ccam এর বদলে সার্ভারগুলো অ্যাকাউন্টের `.claude.json`-এ লেখে, এবং অ্যাকাউন্টটি আগে থেকেই চললে সেটি বাদ দেয়।
 
+### Remote Control
+
+`ccam work rc` (বা `ccam work remote-control`) `work` হিসেবে Claude Code-এর Remote Control চালু করে। `claude remote-control` তার সাবকমান্ডের আগে `--mcp-config` প্রত্যাখ্যান করে এবং পরে কোনোটিই নেয় না, এবং এর সেশনগুলো MCP সার্ভার শুধু অ্যাকাউন্টের `.claude.json` থেকে পড়ে। তাই এখানে ফ্ল্যাগ কৌশল ভিন্নভাবে কাজ করে:
+
+<!-- motion:launch-rc -->
+
+1. `remoteControl` অ্যাকাউন্টের পরে প্রথম যে আর্গুমেন্ট `-` দিয়ে শুরু হয় না, সেটিকে Claude Code-এর সাবকমান্ড হিসেবে ধরে। সেটি `remote-control` বা `rc` হলে `mcp.FlagArgs` কিছুই যোগ করে না।
+2. `mcp.Synced` গ্রুপের `mcp.json`-এর পরিবর্তনের সময় অ্যাকাউন্টের `sync-stamp`-এর সঙ্গে তুলনা করে। `.claude.json`-এ যদি আগে থেকেই গ্রুপের বর্তমান সার্ভারগুলো থাকে, বা গ্রুপে কোনো সার্ভার না থাকে, তাহলে Remote Control কোনো প্রশ্ন ছাড়াই চালু হয়।
+3. না হলে ccam সেই সার্ভারগুলোর নাম জানায় যেগুলো সেশনগুলো পাবে না, এবং জিজ্ঞেস করে:
+
+   ```console
+   ccam: Remote Control sessions only get MCP servers stored in account work's .claude.json, not the shared MCP servers (ctx, fs).
+   Copy them into .claude.json (a backup is kept)? [y/N]
+   ```
+
+4. `y` দিলে `mcp.Sync` সেগুলো `sync` কৌশলের মতো করেই কপি করে: Claude Code-এর লকের অধীনে, ব্যাকআপ নেওয়ার পরে, অ্যাকাউন্টের নিজস্ব সার্ভারগুলো রেখে। `N` দিলে, বা টার্মিনাল ছাড়া, Remote Control সেগুলো ছাড়াই চালু হয়, এবং ccam `mcp_strategy = "sync"` দেখিয়ে দেয়, যা প্রতিবার চালু করার আগে সেগুলো কপি করে।
+
+সার্ভারগুলো কপি না হওয়া পর্যন্ত ccam প্রতিবার Remote Control চালু করার সময় জিজ্ঞেস করে, এবং কপির পরে শুধু তখনই, যখন গ্রুপের `mcp.json` আবার বদলায়। পরের স্বাভাবিক চালু করায় `.claude.json`-এর কপি `--mcp-config`-এর ওপর জেতে, তাই `ccam mcp add`, `remove` ও `import` অন্য অ্যাকাউন্টগুলোর কাছে থাকা কপিগুলো আপডেট করে ([শেয়ার করা MCP সার্ভার](/features/mcp))।
+
 ### ১০ ms বাজেট
 
 Claude Code চালু হওয়ার আগে ccam সর্বোচ্চ ১০ ms (p95) যোগ করে। চালু করার পথ কখনও cobra কমান্ড ট্রি তৈরি করে না, Bubble Tea চালু করে না বা নেটওয়ার্ক সংযোগ খোলে না, এবং প্যাকেজের `init()` ফাংশনগুলো মোট ৫ ms-এর বেশি নিলে `TestPackageInitIsCheap` ব্যর্থ হয়। `scripts/perf-check.sh` `hyperfine` দিয়ে `ccam --dry-run work`, `ccam work` ও একটি শর্টকাট মাপে এবং ১০ ms-এর বেশি হলে ব্যর্থ হয়, আর `internal/launcher`-এর `BenchmarkLaunchPath` ধাপগুলো একটি লুপে চালায়। প্রতি ধাপের সময় দেখতে `CCAM_TRACE=1` নির্ধারণ করুন:
@@ -127,6 +146,7 @@ ccam trace: prelaunch             0.083ms (total 3.661ms)
 - কোনো শেয়ার করা পাথ সাধারণ ফাইলে পরিণত হলে বা ভুল জায়গা নির্দেশ করলে ccam `stopped because of share link problems:` দিয়ে থেমে যায়, সেগুলোর তালিকা দেয়, এবং আপনাকে `ccam doctor --fix` চালাতে বলে। চালু করার পথে এটি ডেটা সরায় না।
 - এই অ্যাকাউন্টের সঙ্গে কথোপকথনের ইতিহাস শেয়ার করে (একই গ্রুপ) এমন অন্য একটি Claude Code একই ফোল্ডারে চললে ccam সতর্ক করে যে ইতিহাস মিশে যেতে পারে এবং জিজ্ঞেস করে `Run anyway? [y/N]`। টার্মিনাল না থাকলে এটি সতর্কতা দেখিয়ে চালিয়ে যায়।
 - `--dry-run` MCP সিঙ্ক, নতুন সার্ভারের বার্তা, ইতিহাসের যাচাই, সেশন মার্কার, শিরোনাম ও সর্বশেষ ব্যবহারের সময় বাদ দেয়, এবং exec করে না। এটি তবুও শেয়ার লিংক যাচাই করে, এবং স্বাভাবিক চালু করার মতোই অনুপস্থিত লিংক তৈরি করে।
+- `ccam work rc` চালালে, `work` যদি আগে থেকেই চলে, ccam `.claude.json`-এ হাত দেয় না, তা জানায়, এবং গ্রুপের সার্ভার ছাড়াই Remote Control চালু করে; সেগুলো কপি করতে সেশন শেষ হলে আবার চালান। `--dry-run` থাকলে এটি বার্তাটি প্রিন্ট করে, কিন্তু জিজ্ঞেসও করে না, কপিও করে না।
 - `mcp_strategy = "sync"` থাকলে ব্যর্থ সিঙ্ক `ccam: MCP sync failed (launching anyway): …` প্রিন্ট করে এবং Claude Code আগে থেকে থাকা সার্ভারগুলো নিয়েই চালু হয়।
 
 ## সম্পর্কিত

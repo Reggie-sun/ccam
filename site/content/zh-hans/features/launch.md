@@ -4,7 +4,7 @@ description: 用 ccam <name|number>、ccam run 或 ccam 选择器以任意账号
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: d033da86f44b
+sourceHash: 6c04bb48df22
 ---
 
 `ccam work` 以账号 `work` 启动 Claude Code，账号名之后的所有内容都原样传给 `claude`。凡是你会输入 `claude` 的地方都可以用它：在终端中、在脚本中，或者通过管道输入。
@@ -108,6 +108,25 @@ Claude Code 运行时，`CLAUDE_CONFIG_DIR` 设为账号文件夹，`CCAM_PROFIL
 
 在 `config.toml` 中设置 `mcp_strategy = "sync"` 时，ccam 改为把服务器写入账号的 `.claude.json`；如果账号已在运行，则跳过这一步。
 
+### Remote Control
+
+`ccam work rc`（或 `ccam work remote-control`）以账号 `work` 启动 Claude Code 的 Remote Control。`claude remote-control` 会拒绝出现在其动词之前的 `--mcp-config`，在动词之后也不接受，而且它的会话只从账号的 `.claude.json` 读取 MCP 服务器。因此 flag 策略在这里的工作方式不同：
+
+<!-- motion:launch-rc -->
+
+1. `remoteControl` 把账号之后第一个不以 `-` 开头的参数当作 Claude Code 的动词。当它是 `remote-control` 或 `rc` 时，`mcp.FlagArgs` 不添加任何内容。
+2. `mcp.Synced` 把组的 `mcp.json` 的修改时间与账号的 `sync-stamp` 比较。如果 `.claude.json` 已经包含组当前的服务器，或者组中没有服务器，Remote Control 会直接启动，不会询问。
+3. 否则，ccam 会列出会话将缺少的服务器并询问：
+
+   ```console
+   ccam: Remote Control sessions only get MCP servers stored in account work's .claude.json, not the shared MCP servers (ctx, fs).
+   Copy them into .claude.json (a backup is kept)? [y/N]
+   ```
+
+4. 回答 `y` 时，`mcp.Sync` 按 `sync` 策略的方式复制这些服务器：持有 Claude Code 的锁，先做备份，并保留账号自己的服务器。回答 `N` 或没有终端时，Remote Control 会在没有这些服务器的情况下启动，ccam 会提示 `mcp_strategy = "sync"`，它会在每次启动前复制这些服务器。
+
+在服务器被复制之前，ccam 每次启动 Remote Control 都会询问；复制之后，只有在组的 `mcp.json` 再次变化时才会询问一次。在之后的普通启动中，`.claude.json` 中的副本优先于 `--mcp-config`，因此 `ccam mcp add`、`remove` 和 `import` 会更新其他账号持有的副本（[共享的 MCP 服务器](/features/mcp)）。
+
 ### 10 ms 预算
 
 ccam 在 Claude Code 启动前最多增加 10 ms（p95）。启动路径从不构建 cobra 命令树、启动 Bubble Tea 或打开网络连接；如果各包 `init()` 函数总共耗时超过 5 ms，`TestPackageInitIsCheap` 就会失败。`scripts/perf-check.sh` 用 `hyperfine` 测量 `ccam --dry-run work`、`ccam work` 和一个快捷命令，超过 10 ms 即失败；`internal/launcher` 中的 `BenchmarkLaunchPath` 会循环运行这些步骤。要查看每一步的耗时，请设置 `CCAM_TRACE=1`：
@@ -127,6 +146,7 @@ ccam trace: prelaunch             0.083ms (total 3.661ms)
 - 如果某个共享路径变成了普通文件或指向错误的位置，ccam 会以 `stopped because of share link problems:` 停止，列出这些问题，并请你运行 `ccam doctor --fix`。它不会在启动路径上移动数据。
 - 如果另一个与此账号共享对话历史（同一组）的 Claude Code 正在同一文件夹中运行，ccam 会警告历史记录可能混在一起，并询问 `Run anyway? [y/N]`。没有终端时，它会显示警告并继续。
 - `--dry-run` 会跳过 MCP 同步、新服务器提示、历史检查、会话标记、标题和最近使用时间，也不会执行 exec。它仍会检查共享链接，并像正常启动一样创建缺少的链接。
+- 如果在 `work` 已在运行时执行 `ccam work rc`，ccam 不会改动 `.claude.json`，会说明这一点，并在没有组中服务器的情况下启动 Remote Control；会话退出后再运行一次即可复制它们。使用 `--dry-run` 时，它只打印这条消息，既不询问也不复制。
 - 使用 `mcp_strategy = "sync"` 时，同步失败会打印 `ccam: MCP sync failed (launching anyway): …`，Claude Code 会以它原有的服务器启动。
 
 ## 相关内容

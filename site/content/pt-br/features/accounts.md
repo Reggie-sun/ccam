@@ -4,7 +4,7 @@ description: Adicione, faça login, liste, renomeie, remova e importe contas do 
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 97cef50f48f4
+sourceHash: 99c931574262
 ---
 
 Cada conta do ccam é uma pasta de configuração separada do Claude Code, com o próprio login. Estes comandos criam, conectam, listam, renomeiam e removem contas, e registram pastas que você já tem.
@@ -92,6 +92,8 @@ On a remote machine? If the browser ends on a http://localhost:…/callback page
 ```
 
 Se der certo, ele imprime `→ Passed the sign-in to Claude Code on this machine.`
+
+Enquanto o login espera uma entrada em um terminal, o ccam desliga o eco e o modo de linha do terminal e mostra um `*` para cada caractere que você digita, então um código ou endereço de retorno colado não aparece na tela. `readLine` faz a edição da linha por conta própria: `Enter` envia a linha, `Backspace` apaga um caractere e `Ctrl+D` em uma linha vazia encerra a entrada. O terminal é restaurado quando o login termina, e também com `Ctrl+C`, `SIGTERM` ou `SIGHUP`, que continuam encerrando o ccam. Sem um terminal na entrada padrão e na saída de erro padrão, as linhas são copiadas conforme chegam.
 
 ### Renomear, remover e importar
 

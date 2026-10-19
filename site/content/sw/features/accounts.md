@@ -4,7 +4,7 @@ description: Ongeza, ingia, orodhesha, badilisha jina, ondoa na ingiza akaunti z
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 97cef50f48f4
+sourceHash: 99c931574262
 ---
 
 Kila akaunti ya ccam ni folda tofauti ya usanidi wa Claude Code yenye taarifa zake za kuingia. Amri hizi huunda, huingiza, huorodhesha, hubadilisha majina na huondoa akaunti, na husajili folda ambazo tayari unazo.
@@ -92,6 +92,8 @@ On a remote machine? If the browser ends on a http://localhost:…/callback page
 ```
 
 Ikifaulu huchapisha `→ Passed the sign-in to Claude Code on this machine.`
+
+Wakati kuingia kunasubiri ingizo kwenye terminal, ccam huzima mwangwi (echo) na hali ya mstari ya terminal na huonyesha `*` kwa kila herufi unayoandika, kwa hiyo msimbo au anwani ya callback iliyobandikwa haionekani kwenye skrini. `readLine` hufanya uhariri wa mstari yenyewe: `Enter` hutuma mstari, `Backspace` hufuta herufi moja, na `Ctrl+D` kwenye mstari mtupu humaliza ingizo. Terminal hurejeshwa kuingia kunapoisha, na pia kwa `Ctrl+C`, `SIGTERM` au `SIGHUP`, ambazo bado humaliza ccam. Bila terminal kwenye standard input na standard error, mistari hunakiliwa kama inavyokuja.
 
 ### Kubadilisha jina, kuondoa na kuingiza
 

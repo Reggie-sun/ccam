@@ -4,7 +4,7 @@ description: Agrega, inicia sesión, lista, cambia el nombre, quita e importa cu
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 97cef50f48f4
+sourceHash: 99c931574262
 ---
 
 Cada cuenta de ccam es una carpeta de configuración de Claude Code independiente con su propio inicio de sesión. Estos comandos crean cuentas, inician sesión en ellas, las listan, les cambian el nombre y las quitan, y registran carpetas que ya tienes.
@@ -92,6 +92,8 @@ On a remote machine? If the browser ends on a http://localhost:…/callback page
 ```
 
 Si todo sale bien, imprime `→ Passed the sign-in to Claude Code on this machine.`
+
+Mientras el inicio de sesión espera una entrada en una terminal, ccam desactiva el eco y el modo de línea de la terminal y muestra un `*` por cada carácter que escribes, para que un código o una dirección de retorno pegados no aparezcan en pantalla. `readLine` se encarga de editar la línea: `Enter` envía la línea, `Backspace` borra un carácter y `Ctrl+D` en una línea vacía termina la entrada. La terminal se restaura cuando termina el inicio de sesión, y también con `Ctrl+C`, `SIGTERM` o `SIGHUP`, que siguen cerrando ccam. Sin una terminal en la entrada estándar y la salida de error estándar, las líneas se copian tal como llegan.
 
 ### Cambiar el nombre, quitar e importar
 

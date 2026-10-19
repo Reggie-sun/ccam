@@ -4,7 +4,7 @@ description: Dodawaj, loguj, wyświetlaj, zmieniaj nazwy, usuwaj i importuj kont
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 97cef50f48f4
+sourceHash: 99c931574262
 ---
 
 Każde konto ccam to osobny folder konfiguracji Claude Code z własnym loginem. Te polecenia tworzą konta, logują do nich, wyświetlają je, zmieniają ich nazwy i je usuwają, a także rejestrują foldery, które już masz.
@@ -92,6 +92,8 @@ On a remote machine? If the browser ends on a http://localhost:…/callback page
 ```
 
 Po powodzeniu wypisuje `→ Passed the sign-in to Claude Code on this machine.`
+
+Gdy logowanie czeka na dane w terminalu, ccam wyłącza echo i tryb liniowy terminala i dla każdego wpisanego znaku pokazuje `*`, więc wklejony kod lub adres zwrotny nie pojawia się na ekranie. `readLine` sam obsługuje edycję wiersza: `Enter` wysyła wiersz, `Backspace` usuwa jeden znak, a `Ctrl+D` w pustym wierszu kończy wprowadzanie. Terminal jest przywracany po zakończeniu logowania, a także po `Ctrl+C`, `SIGTERM` lub `SIGHUP`, które nadal kończą ccam. Gdy standardowe wejście i standardowe wyjście błędów nie są terminalem, wiersze są kopiowane na bieżąco.
 
 ### Zmiana nazwy, usuwanie i import
 

@@ -4,7 +4,7 @@ description: Claude Code-Konten mit ccam add, ccam login, ccam list, ccam rename
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 97cef50f48f4
+sourceHash: 99c931574262
 ---
 
 Jedes ccam-Konto ist ein eigener Claude Code-Konfigurationsordner mit eigener Anmeldung. Diese Befehle legen Konten an, melden sie an, listen sie auf, benennen sie um, entfernen sie und registrieren Ordner, die du bereits hast.
@@ -92,6 +92,8 @@ On a remote machine? If the browser ends on a http://localhost:…/callback page
 ```
 
 Bei Erfolg gibt es `→ Passed the sign-in to Claude Code on this machine.` aus.
+
+Während die Anmeldung in einem Terminal auf eine Eingabe wartet, schaltet ccam das Echo und den Zeilenmodus des Terminals aus und zeigt für jedes getippte Zeichen ein `*`, sodass ein eingefügter Code oder eine Callback-Adresse nicht auf dem Bildschirm erscheint. `readLine` übernimmt die Zeilenbearbeitung selbst: `Enter` sendet die Zeile, `Backspace` löscht ein Zeichen, und `Ctrl+D` in einer leeren Zeile beendet die Eingabe. Das Terminal wird wiederhergestellt, wenn die Anmeldung endet, und auch bei `Ctrl+C`, `SIGTERM` oder `SIGHUP`, die ccam weiterhin beenden. Ohne Terminal an Standardeingabe und Standardfehlerausgabe werden Zeilen so kopiert, wie sie ankommen.
 
 ### Umbenennen, entfernen und importieren
 

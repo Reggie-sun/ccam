@@ -4,7 +4,7 @@ description: Riƙe jerin sabobin MCP ɗaya ga kowane rukuni da ccam mcp add, add
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: 46a7aa716f99
+sourceHash: 69fd3233fd09
 ---
 
 Claude Code yana ajiye sabobin MCP na mai amfani a `.claude.json`, fayil ɗaya da ke riƙe shigar asusun, don haka ba za a iya raba fayil ɗin tsakanin asusai ba. ccam yana ajiye sabobin da aka raba a fayil na rukuni, `mcp.json`, kuma yana miƙa shi ga kowane asusun rukunin lokacin farawa. Yi amfani da `ccam mcp` don ƙara sabar sau ɗaya ga dukkan asusanka, da `ccam mcp import` don matsar da sabar da ka ƙara a cikin zama ɗaya zuwa sauran.
@@ -72,7 +72,15 @@ Akwai dabaru biyu, ana saita su ta `mcp_strategy` a `~/.config/ccam/config.toml`
 3. `mcp.NewLocal` yana duba ko `.claude.json` na asusun ya canza tun farawa ta ƙarshe, kuma sai a lokacin ne yake karanta sabobinsa.
 4. `syscall.Exec` yana maye gurbin ccam da Claude Code.
 
-Ana miƙa hanyar a matsayin argument ɗaya, `--mcp-config=<path>`, ba biyu ba. `--mcp-config` na Claude Code yana karɓar ƙima da dama, don haka `claude --mcp-config a.json "prompt"` zai karanta prompt ɗin a matsayin fayil ɗin saiti na biyu kuma ya gaza da `MCP config file not found`. Nau'in argument ɗaya yana tsayawa a nan, kuma prompt ko ƙaramin umarni kamar `mcp list` da ke biye yana aiki. Claude Code yana loda sabobin `--mcp-config` ƙari ga na asusun kansa; idan sunaye sun yi karo, shigarwar da ke `.claude.json` ce ke nasara. Dabarar flag ba ta taɓa rubuta `.claude.json` ba.
+Ana miƙa hanyar a matsayin argument ɗaya, `--mcp-config=<path>`, ba biyu ba. `--mcp-config` na Claude Code yana karɓar ƙima da dama, don haka `claude --mcp-config a.json "prompt"` zai karanta prompt ɗin a matsayin fayil ɗin saiti na biyu kuma ya gaza da `MCP config file not found`. Nau'in argument ɗaya yana tsayawa a nan, kuma prompt ko ƙaramin umarni kamar `mcp list` da ke biye yana aiki. Claude Code yana loda sabobin `--mcp-config` ƙari ga na asusun kansa; idan sunaye sun yi karo, shigarwar da ke `.claude.json` ce ke nasara. Dabarar flag tana rubuta `.claude.json` ne kawai don Remote Control.
+
+`claude remote-control` (`rc`) ba ya karɓar `--mcp-config`, kuma zamansa suna karanta sabobi ne kawai daga `.claude.json`. Don `ccam work rc`, ccam yana barin flag ɗin kuma, a terminal, yana tambaya ko zai kwafi sabobin rukunin cikin `.claude.json`, tare da ajiya, kamar yadda dabarar `sync` ke yi. Yana tambaya har sai kwafi ya kasance, sannan sai kawai bayan `mcp.json` na rukunin ya canza ([Remote Control](/features/launch#remote-control)). Saboda irin wannan kwafi yana nasara a kan `--mcp-config` idan sunaye sun yi karo, `ccam mcp add`, `add-json`, `remove` da `import` suna sabunta kwafin da sauran asusan rukunin ke riƙe da su:
+
+```console
+$ ccam mcp add ctx --url https://mcp.context7.com/mcp
+✓ ctx added in group default — applies from the next launch
+✓ Updated the copy in account side's .claude.json (made for Remote Control)
+```
 
 Sabar da aka ƙara a cikin zama da `claude mcp add` tana sauka a `.claude.json` na wannan asusun kawai. ccam ba zai iya ganin ta a lokacin ba, domin Claude Code ya maye gurbinsa, don haka yana dubawa a farawa ta gaba. Fayil ɗin `seen` yana riƙe lokacin gyaran `.claude.json` da sunayen sabobin da aka riga aka sanar. Idan lokacin ya bambanta, ccam yana kwatanta sunayen da rukunin kuma yana buga shawara ga kowace sabuwar sabar sau ɗaya, ba tare da jiran shigarwa ba:
 
@@ -111,6 +119,7 @@ Da `--force` ana maye gurbin sabar rukunin, kuma ana fara ajiye `mcp.json` na ba
 
 - **Shiga.** Sabobin da ke shiga da OAuth suna ajiye token ɗinsu a `.credentials.json` na kowane asusu (`mcpOAuth`), ba a jerin sabobin ba, don haka raba sabar ba ya raba shigarta. Shiga sau ɗaya a kowane asusu da `/mcp`, ko kwafi bayanan shiga daga `~/.claude` da [`ccam migrate`](/features/migrate). Rukunin ba ya taɓa samun fayil ɗin shiga.
 - **Asusan da ke aiki.** `import` yana kwafa zuwa rukunin amma yana barin shigarwar asusun da ke aiki kuma yana faɗin haka; sake gudanar da shi bayan zaman ya ƙare. Sync yana tsallake asusan da ke aiki.
+- **Kwafi don Remote Control.** Ba a taɓa kwafin asusun da ke aiki ba: `Note: account side is running, so the copy in its .claude.json stays as it was until its next Remote Control launch.` Da `mcp_strategy = "sync"` babu abin da ke buƙatar sabuntawa, domin kowace farawa tana yin sync.
 - **Fayilolin da suka lalace.** Idan `.claude.json` ba ingantaccen JSON ba ne, sync yana barin sa yadda yake kuma yana bayar da rahoton kuskuren. Idan ba za a iya ɗaukar kullen cikin daƙiƙa 2 ba, ccam yana bayar da rahoton `could not lock … (Claude Code is writing the file)`.
 - **Asusan da ba sa raba MCP.** `import` yana ƙi kuma yana gaya maka ka fara gudanar da `ccam share side --mcp on`.
 - **Sunayen rukunoni.** `-g` yana karɓar sunan rukuni kawai; yana zama folda ƙarƙashin `groups/`, don haka ana ƙin sunaye kamar `../x`.

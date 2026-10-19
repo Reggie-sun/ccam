@@ -4,7 +4,7 @@ description: ccam <name|number>, ccam run किंवा ccam picker ने क
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: d033da86f44b
+sourceHash: 6c04bb48df22
 ---
 
 `ccam work` `work` खात्याने Claude Code सुरू करते, आणि नावानंतरचे सर्व काही जसेच्या तसे `claude` ला जाते. जिथे तुम्ही `claude` टाइप केले असते तिथे ते वापरा: टर्मिनलमध्ये, script मध्ये, किंवा pipe ने input देऊन.
@@ -108,6 +108,25 @@ Claude Code खात्याच्या फोल्डरवर सेट �
 
 `config.toml` मध्ये `mcp_strategy = "sync"` असल्यास, ccam त्याऐवजी सर्व्हर खात्याच्या `.claude.json` मध्ये लिहिते, आणि खाते आधीच चालू असेल तर ते वगळते.
 
+### Remote Control
+
+`ccam work rc` (किंवा `ccam work remote-control`) Claude Code चे Remote Control `work` म्हणून सुरू करते. `claude remote-control` त्याच्या verb च्या आधी `--mcp-config` नाकारतो आणि नंतर एकही घेत नाही, आणि त्याचे sessions MCP सर्व्हर फक्त खात्याच्या `.claude.json` मधून वाचतात. म्हणून इथे flag strategy वेगळ्या प्रकारे काम करते:
+
+<!-- motion:launch-rc -->
+
+1. `remoteControl` खात्यानंतरचा `-` ने सुरू न होणारा पहिला आर्ग्युमेंट Claude Code चा verb मानते. तो `remote-control` किंवा `rc` असल्यास, `mcp.FlagArgs` काहीही जोडत नाही.
+2. `mcp.Synced` गटाच्या `mcp.json` ची modification time खात्याच्या `sync-stamp` शी तुलना करते. `.claude.json` मध्ये आधीच गटाचे सध्याचे सर्व्हर असतील, किंवा गटात एकही सर्व्हर नसेल, तर Remote Control प्रश्न न विचारता सुरू होते.
+3. नाहीतर sessions ना जे सर्व्हर मिळणार नाहीत त्यांची नावे ccam सांगते आणि विचारते:
+
+   ```console
+   ccam: Remote Control sessions only get MCP servers stored in account work's .claude.json, not the shared MCP servers (ctx, fs).
+   Copy them into .claude.json (a backup is kept)? [y/N]
+   ```
+
+4. `y` वर, `mcp.Sync` ते `sync` strategy प्रमाणेच कॉपी करते: Claude Code च्या lock खाली, बॅकअप घेतल्यानंतर, खात्याचे स्वतःचे सर्व्हर तसेच ठेवून. `N` वर, किंवा टर्मिनल नसल्यास, Remote Control त्यांच्याशिवाय सुरू होते, आणि ccam `mcp_strategy = "sync"` सुचवते, जे प्रत्येक वेळी सुरू करण्यापूर्वी ते कॉपी करते.
+
+सर्व्हर कॉपी होईपर्यंत ccam प्रत्येक वेळी Remote Control सुरू करताना विचारते, आणि कॉपीनंतर फक्त गटाची `mcp.json` पुन्हा बदलल्यावरच. नंतर सामान्यपणे सुरू करताना `.claude.json` मधील कॉपी `--mcp-config` वर जिंकते, म्हणून `ccam mcp add`, `remove` आणि `import` इतर खात्यांकडील कॉपी अपडेट करतात ([शेअर केलेले MCP सर्व्हर](/features/mcp)).
+
 ### 10 ms ची मर्यादा
 
 Claude Code सुरू होण्यापूर्वी ccam जास्तीत जास्त 10 ms (p95) जोडते. सुरू करण्याचा मार्ग कधीच cobra कमांड tree तयार करत नाही, Bubble Tea सुरू करत नाही किंवा नेटवर्क कनेक्शन उघडत नाही, आणि package च्या `init()` functions ना एकूण 5 ms पेक्षा जास्त लागल्यास `TestPackageInitIsCheap` अयशस्वी होते. `scripts/perf-check.sh` `hyperfine` ने `ccam --dry-run work`, `ccam work` आणि एक शॉर्टकट मोजते आणि 10 ms पेक्षा जास्त झाल्यास अयशस्वी होते, आणि `internal/launcher` मधील `BenchmarkLaunchPath` हे टप्पे loop मध्ये चालवते. प्रत्येक टप्प्याचा वेळ पाहण्यासाठी `CCAM_TRACE=1` सेट करा:
@@ -127,6 +146,7 @@ ccam trace: prelaunch             0.083ms (total 3.661ms)
 - एखादा शेअर केलेला पाथ साधी फाइल बनला असेल किंवा चुकीच्या जागी निर्देश करत असेल, तर ccam `stopped because of share link problems:` ने थांबते, त्यांची यादी देते, आणि `ccam doctor --fix` चालवायला सांगते. सुरू करण्याच्या मार्गावर ते डेटा हलवत नाही.
 - या खात्याशी संभाषण इतिहास शेअर करणारे (त्याच गटातील) दुसरे Claude Code त्याच फोल्डरमध्ये चालू असेल, तर ccam इतिहास मिसळू शकतो असा इशारा देते आणि `Run anyway? [y/N]` विचारते. टर्मिनल नसताना ते इशारा दाखवते आणि पुढे जाते.
 - `--dry-run` MCP sync, नवीन सर्व्हरची सूचना, इतिहासाची तपासणी, session marker, title आणि शेवटच्या वापराची वेळ वगळते, आणि exec करत नाही. तरीही ते शेअर लिंक्स तपासते, आणि सामान्यपणे सुरू करताना होईल तशी नसलेली लिंक तयार करते.
+- `ccam work rc` हे `work` आधीच चालू असताना `.claude.json` ला हात लावत नाही, तसे सांगते, आणि गटाच्या सर्व्हरशिवाय Remote Control सुरू करते; ते कॉपी करण्यासाठी session संपल्यानंतर ते पुन्हा चालवा. `--dry-run` सह ते संदेश छापते पण विचारत नाही आणि कॉपीही करत नाही.
 - `mcp_strategy = "sync"` सह sync अयशस्वी झाल्यास `ccam: MCP sync failed (launching anyway): …` छापले जाते आणि Claude Code त्याच्याकडे आधीपासून असलेल्या सर्व्हरसह सुरू होते.
 
 ## संबंधित

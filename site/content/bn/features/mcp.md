@@ -4,7 +4,7 @@ description: "ccam mcp add, add-json, list, remove ও import দিয়ে �
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: 46a7aa716f99
+sourceHash: 69fd3233fd09
 ---
 
 Claude Code ইউজার MCP সার্ভারগুলো `.claude.json`-এ রাখে, যে ফাইলে অ্যাকাউন্টের লগইনও থাকে, তাই ফাইলটি অ্যাকাউন্টগুলোর মধ্যে শেয়ার করা যায় না। ccam শেয়ার করা সার্ভারগুলো একটি গ্রুপ ফাইল `mcp.json`-এ রাখে এবং চালু করার সময় গ্রুপের প্রতিটি অ্যাকাউন্টকে সেটি দেয়। আপনার সব অ্যাকাউন্টের জন্য একবারে একটি সার্ভার যোগ করতে `ccam mcp` ব্যবহার করুন, আর একটি সেশনের ভেতরে যোগ করা সার্ভার অন্যগুলোতে সরাতে `ccam mcp import`।
@@ -72,7 +72,15 @@ only in account work: pg
 3. `mcp.NewLocal` যাচাই করে শেষবার চালু করার পর থেকে অ্যাকাউন্টের `.claude.json` বদলেছে কি না, এবং শুধু তখনই এর সার্ভারগুলো পার্স করে।
 4. `syscall.Exec` ccam-কে Claude Code দিয়ে প্রতিস্থাপন করে।
 
-পাথটি দুটি নয়, একটি আর্গুমেন্ট হিসেবে দেওয়া হয়, `--mcp-config=<path>`। Claude Code-এর `--mcp-config` একাধিক মান নেয়, তাই `claude --mcp-config a.json "prompt"` প্রম্পটটিকে দ্বিতীয় কনফিগ ফাইল হিসেবে পড়ত এবং `MCP config file not found` দিয়ে ব্যর্থ হতো। এক-আর্গুমেন্টের রূপ সেখানেই থামে, এবং পরে আসা প্রম্পট বা `mcp list`-এর মতো সাবকমান্ড কাজ করে। Claude Code অ্যাকাউন্টের নিজস্ব সার্ভারের পাশাপাশি `--mcp-config` সার্ভারগুলোও লোড করে; নামের সংঘাত হলে `.claude.json`-এর এন্ট্রি জেতে। ফ্ল্যাগ কৌশল কখনও `.claude.json` লেখে না।
+পাথটি দুটি নয়, একটি আর্গুমেন্ট হিসেবে দেওয়া হয়, `--mcp-config=<path>`। Claude Code-এর `--mcp-config` একাধিক মান নেয়, তাই `claude --mcp-config a.json "prompt"` প্রম্পটটিকে দ্বিতীয় কনফিগ ফাইল হিসেবে পড়ত এবং `MCP config file not found` দিয়ে ব্যর্থ হতো। এক-আর্গুমেন্টের রূপ সেখানেই থামে, এবং পরে আসা প্রম্পট বা `mcp list`-এর মতো সাবকমান্ড কাজ করে। Claude Code অ্যাকাউন্টের নিজস্ব সার্ভারের পাশাপাশি `--mcp-config` সার্ভারগুলোও লোড করে; নামের সংঘাত হলে `.claude.json`-এর এন্ট্রি জেতে। ফ্ল্যাগ কৌশল শুধু Remote Control-এর জন্য `.claude.json` লেখে।
+
+`claude remote-control` (`rc`) কোনো `--mcp-config` নেয় না, এবং এর সেশনগুলো সার্ভার শুধু `.claude.json` থেকে পড়ে। `ccam work rc`-এর জন্য ccam ফ্ল্যাগটি বাদ দেয় এবং টার্মিনালে জিজ্ঞেস করে, গ্রুপের সার্ভারগুলো ব্যাকআপসহ `.claude.json`-এ কপি করবে কি না, যেমন `sync` কৌশল করে। কোনো কপি তৈরি না হওয়া পর্যন্ত এটি জিজ্ঞেস করে, তারপর শুধু গ্রুপের `mcp.json` বদলালে আবার ([Remote Control](/features/launch#remote-control))। নামের সংঘাত হলে এমন কপি `--mcp-config`-এর ওপর জেতে বলে `ccam mcp add`, `add-json`, `remove` ও `import` গ্রুপের অন্য অ্যাকাউন্টগুলোর কাছে থাকা কপিগুলো আপডেট করে:
+
+```console
+$ ccam mcp add ctx --url https://mcp.context7.com/mcp
+✓ ctx added in group default — applies from the next launch
+✓ Updated the copy in account side's .claude.json (made for Remote Control)
+```
 
 সেশনের ভেতরে `claude mcp add` দিয়ে যোগ করা সার্ভার শুধু ওই অ্যাকাউন্টের `.claude.json`-এ যায়। ccam সেই সময় এটি দেখতে পায় না, কারণ Claude Code তাকে প্রতিস্থাপন করেছে, তাই এটি পরের বার চালু করার সময় যাচাই করে। `seen` ফাইলে থাকে `.claude.json`-এর পরিবর্তনের সময় এবং আগে জানানো সার্ভারের নাম। সময় আলাদা হলে ccam নামগুলো গ্রুপের সঙ্গে তুলনা করে এবং প্রতিটি নতুন সার্ভারের জন্য একবার একটি ইঙ্গিত প্রিন্ট করে, ইনপুটের জন্য অপেক্ষা না করে:
 
@@ -111,6 +119,7 @@ Skipped gh: group default already has a different gh (`ccam mcp import work gh -
 
 - **সাইন-ইন।** যে সার্ভারগুলো OAuth দিয়ে সাইন ইন করে, সেগুলো তাদের টোকেন সার্ভার তালিকায় নয়, প্রতিটি অ্যাকাউন্টের `.credentials.json`-এ (`mcpOAuth`) রাখে, তাই সার্ভার শেয়ার করলে তার সাইন-ইন শেয়ার হয় না। প্রতিটি অ্যাকাউন্টে একবার `/mcp` দিয়ে সাইন ইন করুন, অথবা [`ccam migrate`](/features/migrate) দিয়ে `~/.claude` থেকে সাইন-ইনগুলো কপি করুন। গ্রুপ কখনও কোনো লগইন ফাইল পায় না।
 - **চলমান অ্যাকাউন্ট।** `import` গ্রুপে কপি করে, কিন্তু চলমান অ্যাকাউন্টের নিজস্ব এন্ট্রিগুলো রেখে দেয় এবং তা জানায়; সেশন শেষ হলে আবার চালান। সিঙ্ক চলমান অ্যাকাউন্টগুলো বাদ দেয়।
+- **Remote Control-এর জন্য কপি।** চলমান অ্যাকাউন্টের কপিতে হাত দেওয়া হয় না: `Note: account side is running, so the copy in its .claude.json stays as it was until its next Remote Control launch.` `mcp_strategy = "sync"` থাকলে কিছুই আপডেট করতে হয় না, কারণ প্রতিবার চালু করার সময় সিঙ্ক হয়।
 - **ভাঙা ফাইল।** `.claude.json` বৈধ JSON না হলে সিঙ্ক সেটি অস্পর্শিত রাখে এবং ত্রুটি জানায়। ২ সেকেন্ডে লক নেওয়া না গেলে ccam জানায় `could not lock … (Claude Code is writing the file)`।
 - **যে অ্যাকাউন্টগুলো MCP শেয়ার করে না।** `import` প্রত্যাখ্যান করে এবং আপনাকে আগে `ccam share side --mcp on` চালাতে বলে।
 - **গ্রুপের নাম।** `-g` শুধু একটি গ্রুপের নাম নেয়; এটি `groups/`-এর নিচে একটি ফোল্ডার হয়, তাই `../x`-এর মতো নাম প্রত্যাখ্যান করা হয়।

@@ -4,7 +4,7 @@ description: Magkaroon ng iisang listahan ng mga MCP server bawat group gamit an
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: 46a7aa716f99
+sourceHash: 69fd3233fd09
 ---
 
 Iniimbak ng Claude Code ang mga user MCP server sa `.claude.json`, ang parehong file na naglalaman ng login ng account, kaya hindi puwedeng i-share ang file na ito sa pagitan ng mga account. Iniimbak ng ccam ang mga shared na server sa isang group file, ang `mcp.json`, at ibinibigay ito sa bawat account ng group sa pagsisimula. Gamitin ang `ccam mcp` para magdagdag ng server nang isang beses para sa lahat ng iyong account, at ang `ccam mcp import` para ilipat sa iba ang server na idinagdag mo sa loob ng isang session.
@@ -72,7 +72,15 @@ May dalawang strategy, na itinatakda ng `mcp_strategy` sa `~/.config/ccam/config
 3. Sinusuri ng `mcp.NewLocal` kung nagbago ang `.claude.json` ng account mula noong huling pagsisimula, at saka lang nito pina-parse ang mga server nito.
 4. Pinapalitan ng `syscall.Exec` ang ccam ng Claude Code.
 
-Ipinapasa ang path bilang isang argument, `--mcp-config=<path>`, hindi bilang dalawa. Tumatanggap ng ilang value ang `--mcp-config` ng Claude Code, kaya babasahin ng `claude --mcp-config a.json "prompt"` ang prompt bilang pangalawang config file at papalya na may `MCP config file not found`. Doon na humihinto ang anyong may isang argument, at gumagana ang kasunod na prompt o subcommand gaya ng `mcp list`. Nilo-load ng Claude Code ang mga `--mcp-config` server bilang dagdag sa sariling server ng account; kapag nagkapareho ang pangalan, ang entry sa `.claude.json` ang nananaig. Hindi kailanman nagsusulat sa `.claude.json` ang flag strategy.
+Ipinapasa ang path bilang isang argument, `--mcp-config=<path>`, hindi bilang dalawa. Tumatanggap ng ilang value ang `--mcp-config` ng Claude Code, kaya babasahin ng `claude --mcp-config a.json "prompt"` ang prompt bilang pangalawang config file at papalya na may `MCP config file not found`. Doon na humihinto ang anyong may isang argument, at gumagana ang kasunod na prompt o subcommand gaya ng `mcp list`. Nilo-load ng Claude Code ang mga `--mcp-config` server bilang dagdag sa sariling server ng account; kapag nagkapareho ang pangalan, ang entry sa `.claude.json` ang nananaig. Sa Remote Control lang nagsusulat sa `.claude.json` ang flag strategy.
+
+Ang `claude remote-control` (`rc`) ay hindi tumatanggap ng `--mcp-config`, at binabasa lang ng mga session nito ang mga server mula sa `.claude.json`. Para sa `ccam work rc`, hindi isinasama ng ccam ang flag at, sa isang terminal, nagtatanong kung kokopyahin ang mga server ng group sa `.claude.json`, na may backup, gaya ng ginagawa ng `sync` strategy. Nagtatanong ito hanggang may kopya na, at pagkatapos ay muli lang kapag nagbago ang `mcp.json` ng group ([Remote Control](/features/launch#remote-control)). Dahil nananaig ang ganoong kopya sa `--mcp-config` kapag nagkapareho ang pangalan, ina-update ng `ccam mcp add`, `add-json`, `remove` at `import` ang mga kopyang hawak ng ibang account ng group:
+
+```console
+$ ccam mcp add ctx --url https://mcp.context7.com/mcp
+✓ ctx added in group default — applies from the next launch
+✓ Updated the copy in account side's .claude.json (made for Remote Control)
+```
 
 Ang server na idinagdag sa loob ng session gamit ang `claude mcp add` ay napupunta lang sa `.claude.json` ng account na iyon. Hindi ito makikita ng ccam sa oras na iyon, dahil napalitan na ito ng Claude Code, kaya sinusuri nito sa susunod na pagsisimula. Hawak ng file na `seen` ang modification time ng `.claude.json` at ang mga pangalan ng server na naiulat na. Kapag iba ang oras, ikinukumpara ng ccam ang mga pangalan sa group at nagpi-print ng pahiwatig nang isang beses para sa bawat bagong server, nang hindi naghihintay ng input:
 
@@ -111,6 +119,7 @@ Sa `--force`, pinapalitan ang server ng group, at sine-save muna ang dating `mcp
 
 - **Mga sign-in.** Iniimbak ng mga server na nagsa-sign in gamit ang OAuth ang kanilang mga token sa `.credentials.json` ng bawat account (`mcpOAuth`), hindi sa listahan ng server, kaya hindi nashe-share ang sign-in kapag nag-share ka ng server. Mag-sign in nang isang beses bawat account gamit ang `/mcp`, o kopyahin ang mga sign-in mula sa `~/.claude` gamit ang [`ccam migrate`](/features/migrate). Hindi kailanman nakakatanggap ng login file ang group.
 - **Mga tumatakbong account.** Kumokopya ang `import` sa group pero iniiwan ang sariling entry ng tumatakbong account at sinasabi iyon; patakbuhin ulit pagkatapos ng session. Nilalaktawan ng sync ang mga tumatakbong account.
+- **Mga kopya para sa Remote Control.** Hindi ginagalaw ang kopya ng tumatakbong account: `Note: account side is running, so the copy in its .claude.json stays as it was until its next Remote Control launch.` Sa `mcp_strategy = "sync"`, walang kailangang i-update, dahil nagsi-sync ang bawat pagsisimula.
 - **Mga sirang file.** Kung hindi valid na JSON ang `.claude.json`, hindi ito ginagalaw ng sync at iniuulat ang error. Kung hindi makuha ang lock sa loob ng 2 segundo, iniuulat ng ccam ang `could not lock … (Claude Code is writing the file)`.
 - **Mga account na hindi nagshe-share ng MCP.** Tumatanggi ang `import` at sinasabing patakbuhin muna ang `ccam share side --mcp on`.
 - **Mga pangalan ng group.** Pangalan ng group lang ang tinatanggap ng `-g`; nagiging folder ito sa ilalim ng `groups/`, kaya tinatanggihan ang mga pangalang gaya ng `../x`.

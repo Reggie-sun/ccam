@@ -4,7 +4,7 @@ description: ccam <name|number>, ccam run, ccam 선택 화면으로 원하는 �
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: d033da86f44b
+sourceHash: 6c04bb48df22
 ---
 
 `ccam work`는 `work` 계정으로 Claude Code를 시작하며, 이름 뒤의 모든 것은 그대로 `claude`에 전달됩니다. 터미널, 스크립트, 파이프로 입력을 넘길 때 등 `claude`를 입력하던 곳이면 어디서나 쓸 수 있습니다.
@@ -108,6 +108,25 @@ Claude Code는 `CLAUDE_CONFIG_DIR`가 계정 폴더로, `CCAM_PROFILE`이 계정
 
 `config.toml`에 `mcp_strategy = "sync"`를 설정하면 ccam은 대신 계정의 `.claude.json`에 서버를 기록하며, 그 계정이 이미 실행 중이면 이 단계를 건너뜁니다.
 
+### Remote Control
+
+`ccam work rc`(또는 `ccam work remote-control`)는 `work` 계정으로 Claude Code의 Remote Control을 시작합니다. `claude remote-control`은 동사 앞의 `--mcp-config`를 거부하고 동사 뒤에서도 받지 않으며, 그 세션은 계정의 `.claude.json`에서만 MCP 서버를 읽습니다. 그래서 여기서는 flag 방식이 다르게 동작합니다.
+
+<!-- motion:launch-rc -->
+
+1. `remoteControl`은 계정 이름 뒤에서 `-`로 시작하지 않는 첫 번째 인자를 Claude Code의 동사로 봅니다. 그 값이 `remote-control`이나 `rc`이면 `mcp.FlagArgs`는 아무것도 추가하지 않습니다.
+2. `mcp.Synced`는 그룹 `mcp.json`의 수정 시각을 계정의 `sync-stamp`와 비교합니다. `.claude.json`에 이미 그룹의 현재 서버가 들어 있거나 그룹에 서버가 없으면, 묻지 않고 Remote Control을 시작합니다.
+3. 그렇지 않으면 ccam은 세션에서 빠지게 될 서버 이름을 알려 주고 묻습니다.
+
+   ```console
+   ccam: Remote Control sessions only get MCP servers stored in account work's .claude.json, not the shared MCP servers (ctx, fs).
+   Copy them into .claude.json (a backup is kept)? [y/N]
+   ```
+
+4. `y`를 고르면 `mcp.Sync`가 `sync` 방식과 같은 방법으로 서버를 복사합니다. Claude Code의 잠금을 잡고, 백업을 만든 뒤, 계정 자체 서버는 그대로 둡니다. `N`을 고르거나 터미널이 아니면 이 서버 없이 Remote Control을 시작하고, 실행할 때마다 서버를 복사하는 `mcp_strategy = "sync"`를 안내합니다.
+
+ccam은 서버가 복사될 때까지 Remote Control을 실행할 때마다 묻고, 복사한 뒤에는 그룹의 `mcp.json`이 다시 바뀌었을 때만 한 번 묻습니다. 이후 일반 실행에서는 `.claude.json`의 복사본이 `--mcp-config`보다 우선하므로, `ccam mcp add`, `remove`, `import`가 다른 계정이 가진 복사본도 갱신합니다([MCP 서버 공유](/features/mcp)).
+
 ### 10 ms 예산
 
 ccam이 Claude Code 시작 전에 더하는 시간은 최대 10 ms(p95)입니다. 실행 경로에서는 cobra 명령 트리를 만들지 않고, Bubble Tea를 시작하지 않으며, 네트워크 연결도 열지 않습니다. 패키지의 `init()` 함수가 모두 합쳐 5 ms보다 오래 걸리면 `TestPackageInitIsCheap`가 실패합니다. `scripts/perf-check.sh`는 `hyperfine`으로 `ccam --dry-run work`, `ccam work`, 단축 명령을 측정해 10 ms를 넘으면 실패하고, `internal/launcher`의 `BenchmarkLaunchPath`는 이 단계들을 반복 실행합니다. 단계별 시간을 보려면 `CCAM_TRACE=1`을 설정하세요.
@@ -127,6 +146,7 @@ ccam trace: prelaunch             0.083ms (total 3.661ms)
 - 공유 경로가 일반 파일로 바뀌었거나 잘못된 곳을 가리키면 ccam은 `stopped because of share link problems:`와 함께 문제를 나열하고 멈추며, `ccam doctor --fix`를 실행하라고 안내합니다. 실행 경로에서는 데이터를 옮기지 않습니다.
 - 이 계정과 대화 내역을 공유하는(같은 그룹의) 다른 Claude Code가 같은 폴더에서 실행 중이면, ccam은 대화 내역이 섞일 수 있다고 경고하고 `Run anyway? [y/N]`를 묻습니다. 터미널이 아니면 경고만 보여 주고 계속합니다.
 - `--dry-run`은 MCP 동기화, 새 서버 알림, 대화 내역 확인, 세션 표시 파일, 터미널 제목, 마지막 사용 시각을 건너뛰고 exec도 하지 않습니다. 다만 공유 링크는 여전히 확인하며, 없는 링크는 일반 실행처럼 만듭니다.
+- `work`가 이미 실행 중일 때 `ccam work rc`를 실행하면 `.claude.json`을 건드리지 않고 그 사실을 알린 뒤, 그룹의 서버 없이 Remote Control을 시작합니다. 서버를 복사하려면 세션이 끝난 뒤 다시 실행하세요. `--dry-run`에서는 메시지만 출력하고 묻거나 복사하지 않습니다.
 - `mcp_strategy = "sync"`에서 동기화가 실패하면 `ccam: MCP sync failed (launching anyway): …`를 출력하고, Claude Code는 기존 서버로 시작합니다.
 
 ## 관련 문서

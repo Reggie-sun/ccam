@@ -4,7 +4,7 @@ description: Magdagdag, mag-log in, maglista, magpalit ng pangalan, mag-alis at 
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 97cef50f48f4
+sourceHash: 99c931574262
 ---
 
 Ang bawat ccam account ay hiwalay na Claude Code config folder na may sariling login. Gumagawa, nagsa-sign in, naglilista, nagpapalit ng pangalan at nag-aalis ng mga account ang mga command na ito, at nagrerehistro rin ng mga folder na mayroon ka na.
@@ -92,6 +92,8 @@ On a remote machine? If the browser ends on a http://localhost:…/callback page
 ```
 
 Kapag nagtagumpay, ipi-print nito ang `→ Passed the sign-in to Claude Code on this machine.`
+
+Habang naghihintay ng input ang login sa isang terminal, pinapatay ng ccam ang echo at line mode ng terminal at nagpapakita ng `*` para sa bawat character na tina-type mo, kaya hindi lumalabas sa screen ang idinikit na code o callback address. Ang `readLine` mismo ang gumagawa ng line editing: ipinapadala ng `Enter` ang linya, binubura ng `Backspace` ang isang character, at tinatapos ng `Ctrl+D` sa walang lamang linya ang input. Ibinabalik sa dati ang terminal kapag natapos ang login, at gayundin sa `Ctrl+C`, `SIGTERM` o `SIGHUP`, na tumatapos pa rin sa ccam. Kapag walang terminal sa standard input at standard error, kinokopya ang mga linya habang dumarating.
 
 ### Pagpapalit ng pangalan, pag-alis at pag-import
 

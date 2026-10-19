@@ -4,7 +4,7 @@ description: ccam add, ccam login, ccam list, ccam rename, ccam remove ve ccam i
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 97cef50f48f4
+sourceHash: 99c931574262
 ---
 
 Her ccam hesabı, kendi girişine sahip ayrı bir Claude Code yapılandırma klasörüdür. Bu komutlar hesap oluşturur, hesaplarda oturum açar, hesapları listeler, yeniden adlandırır ve kaldırır; ayrıca zaten sahip olduğunuz klasörleri kaydeder.
@@ -92,6 +92,8 @@ On a remote machine? If the browser ends on a http://localhost:…/callback page
 ```
 
 Başarılı olduğunda `→ Passed the sign-in to Claude Code on this machine.` yazdırır.
+
+Oturum açma bir terminalde girdi beklerken ccam terminalin yankısını ve satır modunu kapatır ve yazdığınız her karakter için bir `*` gösterir; böylece yapıştırılan bir kod veya geri çağırma adresi ekranda görünmez. `readLine` satır düzenlemeyi kendisi yapar: `Enter` satırı gönderir, `Backspace` bir karakter siler ve boş bir satırda `Ctrl+D` girdiyi bitirir. Terminal, oturum açma bittiğinde ve ayrıca ccam'i yine sonlandıran `Ctrl+C`, `SIGTERM` veya `SIGHUP` durumunda geri yüklenir. Standart girdi ve standart hata bir terminale bağlı değilse satırlar geldikleri gibi kopyalanır.
 
 ### Yeniden adlandırma, kaldırma ve içe aktarma
 

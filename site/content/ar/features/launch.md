@@ -4,7 +4,7 @@ description: شغّل Claude Code بأي حساب باستخدام ccam <name|nu
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: d033da86f44b
+sourceHash: 6c04bb48df22
 ---
 
 يشغّل `ccam work` برنامج Claude Code بالحساب `work`، وكل ما يأتي بعد الاسم يُمرَّر إلى `claude` كما هو. استخدمه في أي مكان كنت ستكتب فيه `claude`: في الطرفية، أو في سكربت، أو مع إدخال يصل عبر أنبوب.
@@ -108,6 +108,25 @@ CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/c
 
 مع `mcp_strategy = "sync"` في `config.toml`، يكتب ccam الخوادم في ملف `.claude.json` الخاص بالحساب بدلًا من ذلك، ويتخطى ذلك إذا كان الحساب يعمل بالفعل.
 
+### Remote Control
+
+يشغّل `ccam work rc` (أو `ccam work remote-control`) ميزة Remote Control في Claude Code بالحساب `work`. يرفض `claude remote-control` الخيار `--mcp-config` قبل فعله ولا يقبل أيًّا منه بعده، ولا تقرأ جلساته خوادم MCP إلا من ملف `.claude.json` الخاص بالحساب. لذلك تعمل استراتيجية الخيار هنا بطريقة مختلفة:
+
+<!-- motion:launch-rc -->
+
+1. يعدّ `remoteControl` أول وسيط بعد الحساب لا يبدأ بـ `-` فعلًا لـ Claude Code. وعندما يكون `remote-control` أو `rc`، لا يضيف `mcp.FlagArgs` شيئًا.
+2. يقارن `mcp.Synced` وقت تعديل ملف `mcp.json` الخاص بالمجموعة مع `sync-stamp` الخاص بالحساب. وإذا كان `.claude.json` يحتوي بالفعل على خوادم المجموعة الحالية، أو لم تكن لدى المجموعة أي خوادم، تبدأ Remote Control دون سؤال.
+3. وإلا يسمّي ccam الخوادم التي ستفتقدها الجلسات ويسأل:
+
+   ```console
+   ccam: Remote Control sessions only get MCP servers stored in account work's .claude.json, not the shared MCP servers (ctx, fs).
+   Copy them into .claude.json (a backup is kept)? [y/N]
+   ```
+
+4. عند `y`، ينسخها `mcp.Sync` كما تفعل استراتيجية `sync`: تحت قفل Claude Code، وبعد نسخة احتياطية، مع الإبقاء على خوادم الحساب نفسه. وعند `N`، أو بدون طرفية، تبدأ Remote Control بدونها، ويشير ccam إلى `mcp_strategy = "sync"`، التي تنسخها قبل كل تشغيل.
+
+يسأل ccam عند كل تشغيل لـ Remote Control إلى أن تُنسخ الخوادم، وبعد النسخ لا يسأل إلا عندما يتغير ملف `mcp.json` الخاص بالمجموعة مرة أخرى. وتتقدم النسخة الموجودة في `.claude.json` على `--mcp-config` في عمليات التشغيل العادية اللاحقة، لذلك تحدّث الأوامر `ccam mcp add` و`remove` و`import` النسخ التي تحتفظ بها الحسابات الأخرى ([خوادم MCP المشتركة](/features/mcp)).
+
 ### ميزانية 10 ms
 
 يضيف ccam ما لا يزيد على 10 ms (p95) قبل أن يبدأ Claude Code. لا يبني مسار التشغيل أبدًا شجرة أوامر cobra، ولا يشغّل Bubble Tea، ولا يفتح اتصال شبكة، ويفشل `TestPackageInitIsCheap` إذا استغرقت دوال `init()` في الحزم أكثر من 5 ms إجمالًا. يقيس `scripts/perf-check.sh` الأوامر `ccam --dry-run work` و`ccam work` وأمرًا مختصرًا باستخدام `hyperfine` ويفشل فوق 10 ms، ويشغّل `BenchmarkLaunchPath` في `internal/launcher` الخطوات في حلقة. ولرؤية الوقت لكل خطوة، عيّن `CCAM_TRACE=1`:
@@ -127,6 +146,7 @@ ccam trace: prelaunch             0.083ms (total 3.661ms)
 - إذا أصبح مسار مشترك ملفًا عاديًا أو صار يشير إلى المكان الخطأ، يتوقف ccam مع `stopped because of share link problems:`، ويسرد المشكلات، ويطلب منك تشغيل `ccam doctor --fix`. ولا ينقل بيانات في مسار التشغيل.
 - إذا كانت نسخة أخرى من Claude Code تشارك سجل المحادثات مع هذا الحساب (المجموعة نفسها) تعمل في المجلد نفسه، يحذّرك ccam من أن السجل قد يختلط ويسأل `Run anyway? [y/N]`. ودون طرفية يعرض التحذير ويتابع.
 - يتخطى `--dry-run` مزامنة MCP، وإشعار الخادم الجديد، وفحص السجل، وعلامة الجلسة، والعنوان، ووقت آخر استخدام، ولا يستدعي exec. لكنه يظل يفحص روابط المشاركة، وينشئ الرابط المفقود كما يفعل التشغيل العادي.
+- عند تشغيل `ccam work rc` بينما `work` يعمل بالفعل، يترك ccam ملف `.claude.json` دون تغيير، ويخبرك بذلك، ويبدأ Remote Control بدون خوادم المجموعة؛ شغّله مرة أخرى بعد انتهاء الجلسة لنسخها. ومع `--dry-run` يطبع الرسالة لكنه لا يسأل ولا ينسخ.
 - مع `mcp_strategy = "sync"`، تطبع المزامنة الفاشلة `ccam: MCP sync failed (launching anyway): …` ويبدأ Claude Code بالخوادم التي كانت لديه بالفعل.
 
 ## صفحات ذات صلة

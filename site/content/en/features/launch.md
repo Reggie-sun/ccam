@@ -107,6 +107,25 @@ With the default `flag` strategy, ccam passes the group's MCP servers to Claude 
 
 With `mcp_strategy = "sync"` in `config.toml`, ccam writes the servers into the account's `.claude.json` instead, and skips that if the account is already running.
 
+### Remote Control
+
+`ccam work rc` (or `ccam work remote-control`) starts Claude Code's Remote Control as `work`. `claude remote-control` refuses `--mcp-config` before its verb and takes none after it, and its sessions read MCP servers only from the account's `.claude.json`. So the flag strategy works differently here:
+
+<!-- motion:launch-rc -->
+
+1. `remoteControl` takes the first argument after the account that does not start with `-` as Claude Code's verb. When it is `remote-control` or `rc`, `mcp.FlagArgs` adds nothing.
+2. `mcp.Synced` compares the modification time of the group's `mcp.json` with the account's `sync-stamp`. If `.claude.json` already holds the group's current servers, or the group has none, Remote Control starts without a question.
+3. Otherwise ccam names the servers the sessions would miss and asks:
+
+   ```console
+   ccam: Remote Control sessions only get MCP servers stored in account work's .claude.json, not the shared MCP servers (ctx, fs).
+   Copy them into .claude.json (a backup is kept)? [y/N]
+   ```
+
+4. On `y`, `mcp.Sync` copies them the way the `sync` strategy does: under Claude Code's lock, after a backup, keeping the account's own servers. On `N`, or without a terminal, Remote Control starts without them, and ccam points to `mcp_strategy = "sync"`, which copies them before every launch.
+
+ccam asks on each Remote Control launch until the servers are copied, and after a copy only once the group's `mcp.json` changes again. A copy in `.claude.json` wins over `--mcp-config` on later normal launches, so `ccam mcp add`, `remove` and `import` update the copies other accounts hold ([Shared MCP servers](/features/mcp)).
+
 ### The 10 ms budget
 
 ccam adds at most 10 ms (p95) before Claude Code starts. The launch path never builds the cobra command tree, starts Bubble Tea or opens a network connection, and `TestPackageInitIsCheap` fails if package `init()` functions take more than 5 ms in total. `scripts/perf-check.sh` measures `ccam --dry-run work`, `ccam work` and a shortcut with `hyperfine` and fails above 10 ms, and `BenchmarkLaunchPath` in `internal/launcher` runs the steps in a loop. To see the time per step, set `CCAM_TRACE=1`:
@@ -126,6 +145,7 @@ ccam trace: prelaunch             0.083ms (total 3.661ms)
 - If a shared path became an ordinary file or points to the wrong place, ccam stops with `stopped because of share link problems:`, lists them, and asks you to run `ccam doctor --fix`. It does not move data on the launch path.
 - If another Claude Code that shares conversation history with this account (same group) runs in the same folder, ccam warns that the history can mix and asks `Run anyway? [y/N]`. Without a terminal it shows the warning and continues.
 - `--dry-run` skips the MCP sync, the new-server notice, the history check, the session marker, the title and the last-use time, and does not exec. It still checks share links, and creates a missing link as a normal launch would.
+- `ccam work rc` while `work` is already running leaves `.claude.json` alone, says so, and starts Remote Control without the group's servers; run it again after the session exits to copy them. With `--dry-run` it prints the message but neither asks nor copies.
 - With `mcp_strategy = "sync"`, a failed sync prints `ccam: MCP sync failed (launching anyway): …` and Claude Code starts with the servers it already had.
 
 ## Related

@@ -4,7 +4,7 @@ description: Claude Code mit ccam <name|number>, ccam run oder der ccam-Auswahl 
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: d033da86f44b
+sourceHash: 6c04bb48df22
 ---
 
 `ccam work` startet Claude Code als das Konto `work`, und alles nach dem Namen geht unverändert an `claude`. Verwende es überall dort, wo du `claude` tippen würdest: in einem Terminal, in einem Skript oder mit weitergeleiteter Eingabe.
@@ -108,6 +108,25 @@ Mit der Standardstrategie `flag` übergibt ccam die MCP-Server der Gruppe als Ar
 
 Mit `mcp_strategy = "sync"` in `config.toml` schreibt ccam die Server stattdessen in die `.claude.json` des Kontos und lässt das aus, wenn das Konto bereits läuft.
 
+### Remote Control
+
+`ccam work rc` (oder `ccam work remote-control`) startet die Remote Control von Claude Code als `work`. `claude remote-control` lehnt `--mcp-config` vor seinem Verb ab und nimmt danach keins an, und seine Sitzungen lesen MCP-Server nur aus der `.claude.json` des Kontos. Deshalb arbeitet die Flag-Strategie hier anders:
+
+<!-- motion:launch-rc -->
+
+1. `remoteControl` nimmt das erste Argument nach dem Konto, das nicht mit `-` beginnt, als Verb von Claude Code. Ist es `remote-control` oder `rc`, fügt `mcp.FlagArgs` nichts hinzu.
+2. `mcp.Synced` vergleicht die Änderungszeit der `mcp.json` der Gruppe mit dem `sync-stamp` des Kontos. Enthält `.claude.json` bereits die aktuellen Server der Gruppe oder hat die Gruppe keine, startet Remote Control ohne Rückfrage.
+3. Andernfalls nennt ccam die Server, die den Sitzungen fehlen würden, und fragt:
+
+   ```console
+   ccam: Remote Control sessions only get MCP servers stored in account work's .claude.json, not the shared MCP servers (ctx, fs).
+   Copy them into .claude.json (a backup is kept)? [y/N]
+   ```
+
+4. Bei `y` kopiert `mcp.Sync` sie wie die Strategie `sync`: unter der Sperre von Claude Code, nach einer Sicherung und ohne die eigenen Server des Kontos anzutasten. Bei `N` oder ohne Terminal startet Remote Control ohne sie, und ccam verweist auf `mcp_strategy = "sync"`, das sie vor jedem Start kopiert.
+
+ccam fragt bei jedem Start von Remote Control, bis die Server kopiert sind, und nach einer Kopie erst wieder, wenn sich die `mcp.json` der Gruppe erneut ändert. Eine Kopie in `.claude.json` gewinnt bei späteren normalen Starts gegen `--mcp-config`, deshalb aktualisieren `ccam mcp add`, `remove` und `import` die Kopien, die andere Konten haben ([Geteilte MCP-Server](/features/mcp)).
+
 ### Das Budget von 10 ms
 
 ccam fügt höchstens 10 ms (p95) hinzu, bevor Claude Code startet. Der Startpfad baut nie den cobra-Befehlsbaum auf, startet nie Bubble Tea und öffnet keine Netzwerkverbindung, und `TestPackageInitIsCheap` schlägt fehl, wenn die `init()`-Funktionen der Pakete zusammen mehr als 5 ms brauchen. `scripts/perf-check.sh` misst `ccam --dry-run work`, `ccam work` und einen Kurzbefehl mit `hyperfine` und schlägt oberhalb von 10 ms fehl, und `BenchmarkLaunchPath` in `internal/launcher` führt die Schritte in einer Schleife aus. Um die Zeit pro Schritt zu sehen, setze `CCAM_TRACE=1`:
@@ -127,6 +146,7 @@ ccam trace: prelaunch             0.083ms (total 3.661ms)
 - Ist ein geteilter Pfad zu einer gewöhnlichen Datei geworden oder zeigt er an die falsche Stelle, hält ccam mit `stopped because of share link problems:` an, listet die Probleme auf und bittet dich, `ccam doctor --fix` auszuführen. Auf dem Startpfad verschiebt es keine Daten.
 - Läuft im selben Ordner ein anderes Claude Code, das den Gesprächsverlauf mit diesem Konto teilt (dieselbe Gruppe), warnt ccam, dass sich der Verlauf vermischen kann, und fragt `Run anyway? [y/N]`. Ohne Terminal zeigt es die Warnung und macht weiter.
 - `--dry-run` überspringt die MCP-Synchronisierung, den Hinweis auf neue Server, die Verlaufsprüfung, die Sitzungsmarkierung, den Titel und die Zeit der letzten Verwendung und führt kein exec aus. Die Freigabelinks prüft es trotzdem und legt einen fehlenden Link an wie ein normaler Start.
+- `ccam work rc` bei bereits laufendem `work` lässt `.claude.json` unverändert, weist darauf hin und startet Remote Control ohne die Server der Gruppe; führe es nach dem Ende der Sitzung erneut aus, um sie zu kopieren. Mit `--dry-run` gibt es die Meldung aus, fragt aber nicht und kopiert nichts.
 - Mit `mcp_strategy = "sync"` gibt eine fehlgeschlagene Synchronisierung `ccam: MCP sync failed (launching anyway): …` aus, und Claude Code startet mit den Servern, die es bereits hatte.
 
 ## Verwandte Themen
