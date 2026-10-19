@@ -56,3 +56,17 @@ Mode: after (audit, then fix), chosen by the owner for this redesign. Direction:
 | 30 | LOW | Lighthouse (C-4) | landing | The first CI run scored 0.88 on mobile performance: CLS 0.187 (orb layer resized when the web font swapped in) and 220 ms TBT (blur, clip-path and border animations on the main thread, Intl set-up at start). | Fixed: orb layer sized by the viewport, two orbs fewer on phones, transform-only entrances and reveals, opacity header hairline, formatter created on first play. |
 
 Checked and passing: no em dashes in agent-written text; no buzzwords or generic CTAs ("Read the quick start", "Copy"); no badges, glows, grid backgrounds or illustrations; the ink pill is the only primary action per view; dark and light both verified (screenshots, axe in both themes); the 100% gauge shows its percentage, never colour alone; RTL (Arabic) checked: code stays left to right with the copy button beside it.
+
+## Audit 004, 2026-10-19 (SEO audit fixes)
+
+Scope: the English pages rewritten or added after the SEO audit (`guides/multiple-claude-code-accounts`, `guides/usage-limit-workflow`, `guides/claude-config-dir`, new `compare/account-switchers`, the last paragraph of `compare/aliases`, the FAQ link), new UI strings (`site.title`, `site.description`, `changelog.description`, `languages.description`, `docs.byline`, `footer.analytics`), `SECURITY.md`, and the code comments added in `lib/`, `scripts/`, `components/` and `app/globals.css`.
+
+| # | Priority | Rule | File | Finding | Action |
+|---|---|---|---|---|---|
+| 31 | HIGH | R-36, R-38 | `content/en/compare/account-switchers.md` | Claims about other tools must be checkable. | Every row comes from the tool's own README or docs, read on 2026-10-19 (sources kept with the audit); the table says so and marks undocumented features as "Not documented", not "No". A draft line saying no other tool continues a conversation across folders was cut: CAAM's shallow profiles share `projects/`, so the claim could not be shown. Star counts left out because they go stale. |
+| 32 | HIGH | R-36 | `content/en/guides/*.md` | Statements about Claude Code ("Claude Code's documentation describes", the limits, `/login`, `/status`, waiting for a reset, Windows support) had no source. | Each now links the official page it comes from (code.claude.com, support.claude.com). `/usage` was described as showing reset times; the documentation does not say that, so the sentence now says only what it does. |
+| 33 | MEDIUM | R-36 | `content/en/compare/account-switchers.md` | Bold lead-ins ("**Windows without WSL.**", "**Menu bar apps.**") restated each item. | Fixed: plain sentences that name the tools. |
+| 34 | MEDIUM | R-36 | `content/en/guides/usage-limit-workflow.md` | "starts Claude Code and gets out of the way" is a stock phrase. | Fixed: "replaces itself with it", which is what `syscall.Exec` does. |
+| 35 | LOW | R-17 | `SECURITY.md` | A draft promised a reply within a week, a commitment for the owner to make. | Removed. The checksum sentence was checked against `install.sh` and `internal/update`. |
+
+Checked and passing: no em or en dashes in the new English text or strings; no buzzwords; headings are the questions people search for; the comparison names where other tools do more (native Windows, automatic switching, menu bar apps, other agents) as plainly as where ccam does.

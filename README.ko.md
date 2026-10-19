@@ -1,4 +1,4 @@
-# ccam — Claude Code 다중 계정 관리
+# ccam — Claude Code Account Manager (Claude Code 다중 계정 관리)
 
 [English](README.md) · **한국어** · 웹사이트: https://ccam.dev
 

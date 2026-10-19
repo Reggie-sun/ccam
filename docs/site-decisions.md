@@ -25,6 +25,12 @@ Decisions taken while building the site, where they differ from or add to docs/W
 - **Language coverage**: the plan's 30 languages reach 70.0% (conservative) to 85.6% (optimistic) of the world population by Unicode CLDR data. The conservative estimate cannot reach 80%: adding the 12 best further languages only raises it to 72.3%, because CLDR's per-country language shares are literacy-adjusted and below 100% even for national languages. The site publishes both numbers on `/languages`.
 - **Cache purge after deploy**: not needed; Workers Static Assets serves each deployment atomically. HTML `s-maxage` only affects downstream caches.
 - **Changelog**: built from GitHub Releases at build time; v0.1.0 (2026-10-19) is the first.
+- **SEO audit fixes (2026-10-19)**: findings in `ccam.dev-audit/`.
+  - The language banner is fixed to the bottom of the screen: shown after first paint at the top, it pushed the page down (CLS 0.111 on `/ar/` for an English browser).
+  - `published` lives in English front matter only; translations read it from English. `metaTitle` (optional) is the search-result title when the short title used in headings and the sidebar says too little.
+  - The changelog shows only `feat`, `fix` and `perf` commits outside the site, without hashes; prose a maintainer writes above goreleaser's list is kept. `.goreleaser.yaml` filters the same way for future release notes.
+  - `check-html` fails titles wider than 60 and descriptions outside 70 to 160 (CJK counts double), breadcrumbs that repeat a URL, articles without author, publisher or dates, and FAQ answers that lose inline code.
+  - No `Content-Signal` line in robots.txt: it is a draft, and Lighthouse's robots.txt audit may flag unknown directives.
 - **Browser tests**: run in CI. The WSL environment used for development does not produce frames in headless Chromium (`requestAnimationFrame` never fires, even on a blank page), so screenshots and frame-dependent checks time out locally.
 
 ## Redesign, 2026-10-19
