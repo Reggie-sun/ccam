@@ -26,7 +26,7 @@
     "installLabel": "Linux veya macOS üzerine kurun",
     "thenAdd": "Ardından ilk hesabınızı {command} ile ekleyin.",
     "readDocs": "Hızlı başlangıcı okuyun",
-    "boardLabel": "ccam usage çıktısı örneği: tüm hesapların limitleri bir arada",
+    "boardLabel": "Örnek oturum: bir hesap sınırına ulaştığında ccam konuşmaya başka bir hesapta devam eder",
     "board": {
       "account": "Hesap",
       "fiveHour": "5 saatlik",

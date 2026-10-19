@@ -26,7 +26,7 @@
     "installLabel": "نصب روی Linux یا macOS",
     "thenAdd": "سپس نخستین حساب خود را با {command} اضافه کنید.",
     "readDocs": "خواندن شروع سریع",
-    "boardLabel": "نمونه خروجی ccam usage: سقف‌های همه حساب‌ها یک‌جا",
+    "boardLabel": "نمونه جلسه: وقتی یک حساب به سقف خود می‌رسد، ccam گفتگو را در حساب دیگری ادامه می‌دهد",
     "board": {
       "account": "حساب",
       "fiveHour": "۵ ساعته",

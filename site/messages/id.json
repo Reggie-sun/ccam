@@ -26,7 +26,7 @@
     "installLabel": "Instal di Linux atau macOS",
     "thenAdd": "Lalu tambahkan akun pertama Anda dengan {command}.",
     "readDocs": "Baca panduan memulai cepat",
-    "boardLabel": "Contoh keluaran ccam usage: batas semua akun sekaligus",
+    "boardLabel": "Contoh sesi: saat satu akun mencapai batasnya, ccam melanjutkan percakapan di akun lain",
     "board": {
       "account": "Akun",
       "fiveHour": "5 jam",

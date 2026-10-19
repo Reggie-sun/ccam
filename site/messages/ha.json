@@ -26,7 +26,7 @@
     "installLabel": "Girka a Linux ko macOS",
     "thenAdd": "Sannan ka ƙara asusunka na farko da {command}.",
     "readDocs": "Karanta jagorar farawa da sauri",
-    "boardLabel": "Misalin sakamakon ccam usage: iyakokin kowane asusu a lokaci ɗaya",
+    "boardLabel": "Misalin zama: idan wani asusu ya kai iyakarsa, ccam yana ci gaba da tattaunawar a wani asusu",
     "board": {
       "account": "Asusu",
       "fiveHour": "Awa 5",

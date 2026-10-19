@@ -26,7 +26,7 @@
     "installLabel": "LinuxまたはmacOSにインストール",
     "thenAdd": "次に、{command}で最初のアカウントを追加します。",
     "readDocs": "クイックスタートを読む",
-    "boardLabel": "ccam usageの出力例: すべてのアカウントの上限を一度に表示",
+    "boardLabel": "例: あるアカウントが上限に達すると、ccam が別のアカウントで会話を続けます",
     "board": {
       "account": "アカウント",
       "fiveHour": "5時間",

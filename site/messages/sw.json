@@ -26,7 +26,7 @@
     "installLabel": "Sakinisha kwenye Linux au macOS",
     "thenAdd": "Kisha ongeza akaunti yako ya kwanza kwa {command}.",
     "readDocs": "Soma mwongozo wa kuanza haraka",
-    "boardLabel": "Mfano wa matokeo ya ccam usage: vikomo vya kila akaunti kwa pamoja",
+    "boardLabel": "Mfano wa kipindi: akaunti moja inapofikia kikomo chake, ccam huendeleza mazungumzo kwenye akaunti nyingine",
     "board": {
       "account": "Akaunti",
       "fiveHour": "Saa 5",

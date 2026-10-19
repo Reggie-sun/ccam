@@ -26,7 +26,7 @@
     "installLabel": "在 Linux 或 macOS 上安裝",
     "thenAdd": "接著用 {command} 新增第一個帳號。",
     "readDocs": "閱讀快速入門",
-    "boardLabel": "ccam usage 的輸出範例：一次查看所有帳號的限制",
+    "boardLabel": "範例：一個帳號達到限額時，ccam 會在另一個帳號上繼續對話",
     "board": {
       "account": "帳號",
       "fiveHour": "5 小時",

@@ -26,7 +26,7 @@
     "installLabel": "Cài đặt trên Linux hoặc macOS",
     "thenAdd": "Sau đó thêm tài khoản đầu tiên bằng {command}.",
     "readDocs": "Đọc phần bắt đầu nhanh",
-    "boardLabel": "Ví dụ đầu ra của ccam usage: giới hạn của mọi tài khoản cùng lúc",
+    "boardLabel": "Phiên ví dụ: khi một tài khoản chạm giới hạn, ccam tiếp tục cuộc trò chuyện trên tài khoản khác",
     "board": {
       "account": "Tài khoản",
       "fiveHour": "5 giờ",

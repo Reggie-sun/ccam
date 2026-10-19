@@ -26,7 +26,7 @@
     "installLabel": "Instalacja na Linux lub macOS",
     "thenAdd": "Następnie dodaj pierwsze konto poleceniem {command}.",
     "readDocs": "Przeczytaj szybki start",
-    "boardLabel": "Przykładowy wynik ccam usage: limity wszystkich kont naraz",
+    "boardLabel": "Przykładowa sesja: gdy jedno konto osiągnie limit, ccam kontynuuje rozmowę na innym",
     "board": {
       "account": "Konto",
       "fiveHour": "5 godzin",

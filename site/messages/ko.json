@@ -26,7 +26,7 @@
     "installLabel": "Linux 또는 macOS에 설치",
     "thenAdd": "그다음 {command} 명령으로 첫 계정을 추가하세요.",
     "readDocs": "빠른 시작 보기",
-    "boardLabel": "ccam usage 출력 예시: 모든 계정의 한도를 한눈에",
+    "boardLabel": "예시 화면: 한 계정이 한도에 도달하면 ccam이 다른 계정에서 대화를 이어 갑니다",
     "board": {
       "account": "계정",
       "fiveHour": "5시간",

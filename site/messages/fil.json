@@ -26,7 +26,7 @@
     "installLabel": "I-install sa Linux o macOS",
     "thenAdd": "Pagkatapos, idagdag ang una mong account gamit ang {command}.",
     "readDocs": "Basahin ang quick start",
-    "boardLabel": "Halimbawang output ng ccam usage: ang mga limit ng lahat ng account nang sabay-sabay",
+    "boardLabel": "Halimbawang session: kapag naabot ng isang account ang limit nito, itinutuloy ng ccam ang usapan sa ibang account",
     "board": {
       "account": "Account",
       "fiveHour": "5 oras",
