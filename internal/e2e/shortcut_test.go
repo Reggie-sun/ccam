@@ -15,6 +15,12 @@ func (h *harness) link(name string) string {
 	if err != nil {
 		return ""
 	}
+	// macOS temp dirs live under /var, a link to /private/var: compare resolved paths.
+	a, err1 := filepath.EvalSymlinks(target)
+	b, err2 := filepath.EvalSymlinks(ccamBin)
+	if err1 == nil && err2 == nil && a == b {
+		return ccamBin
+	}
 	return target
 }
 
