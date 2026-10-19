@@ -1,8 +1,8 @@
 {
   "site": {
     "name": "ccam",
-    "title": "ccam: 컴퓨터 한 대에서 Claude Code 계정 여러 개 쓰기",
-    "description": "ccam은 컴퓨터 한 대에서 Claude Code 계정 여러 개를 쓰고 명령 하나로 바꿀 수 있게 해 주는 무료 오픈소스 명령줄 도구입니다."
+    "title": "ccam: 컴퓨터 한 대에서 여러 Claude Code 계정 사용하기",
+    "description": "ccam은 컴퓨터 한 대에서 여러 Claude Code 계정을 쓰고, 명령 하나로 계정을 전환할 수 있게 해 주는 무료 오픈소스 명령줄 도구입니다."
   },
   "nav": {
     "docs": "문서",
@@ -12,21 +12,21 @@
     "menu": "메뉴",
     "skip": "본문으로 건너뛰기",
     "language": "언어",
-    "theme": "밝은 테마 또는 어두운 테마로 전환"
+    "theme": "밝은 테마/어두운 테마 전환"
   },
   "facts": {
-    "what": "ccam은 컴퓨터 한 대에서 Claude Code 계정 여러 개를 쓰고 명령 하나로 바꿀 수 있게 해 주는 무료 오픈소스 명령줄 도구입니다.",
-    "how": "계정마다 별도의 CLAUDE_CONFIG_DIR에 자기 로그인을 따로 두고, MCP 서버, 설정, CLAUDE.md, 확장 기능, 대화 내역은 계정끼리 공유할 수 있습니다. 그래서 한 계정이 사용량 한도에 도달하면 다른 계정에서 대화를 이어 갈 수 있습니다.",
-    "install": "Linux나 macOS에서 명령 하나로 설치한 뒤, 계정마다 ccam add를 실행합니다.",
-    "official": "ccam은 비공식 프로젝트이며 Anthropic과 제휴하거나 Anthropic의 보증을 받은 것이 아닙니다."
+    "what": "ccam은 컴퓨터 한 대에서 여러 Claude Code 계정을 쓰고, 명령 하나로 계정을 전환할 수 있게 해 주는 무료 오픈소스 명령줄 도구입니다.",
+    "how": "각 계정의 로그인 정보는 별도의 CLAUDE_CONFIG_DIR에 따로 보관하고, MCP 서버, 설정, CLAUDE.md, 확장 기능, 대화 내역은 계정 간에 공유할 수 있습니다. 그래서 한 계정이 사용량 한도에 도달하면 다른 계정에서 대화를 이어 갈 수 있습니다.",
+    "install": "Linux나 macOS에서 명령 하나로 설치한 뒤, 계정마다 ccam add를 실행하세요.",
+    "official": "ccam은 비공식 프로젝트로, Anthropic과 제휴 관계가 없으며 Anthropic의 보증을 받지 않았습니다."
   },
   "landing": {
-    "headline": "Claude Code 계정 여러 개. 터미널 하나.",
-    "lede": "계정은 한 번씩만 추가합니다. claude2나 ccam work로 바꿉니다. 한 계정이 한도에 걸리면 다음 계정에서 같은 대화를 이어 갑니다.",
+    "headline": "여러 개의 Claude Code 계정을 하나의 터미널에서 쉽게 사용하세요.",
+    "lede": "Claude 계정을 한 번 추가해두면 명령어 하나만으로 계정을 변경하여 Claude Code를 사용할 수 있습니다. 한도에 도달하면 바로 다른 계정으로 변경해 보세요.",
     "installLabel": "Linux 또는 macOS에 설치",
-    "thenAdd": "그다음 {command} 명령으로 첫 계정을 추가합니다.",
-    "readDocs": "빠른 시작 읽기",
-    "boardLabel": "ccam usage 출력 예시: 모든 계정의 한도를 한 번에",
+    "thenAdd": "그다음 {command} 명령으로 첫 계정을 추가하세요.",
+    "readDocs": "빠른 시작 보기",
+    "boardLabel": "ccam usage 출력 예시: 모든 계정의 한도를 한눈에",
     "board": {
       "account": "계정",
       "fiveHour": "5시간",
@@ -38,20 +38,20 @@
     "flow": [
       {
         "command": "ccam add work",
-        "body": "계정용 설정 폴더를 따로 만들고, 브라우저에서 Claude 로그인을 연 뒤, 계정에 claude1, claude2 같은 단축 명령을 붙입니다."
+        "body": "계정 전용 설정 폴더를 만들고, 브라우저에서 Claude 로그인 화면을 연 뒤, 계정에 claude1, claude2 같은 단축 명령을 붙여 줍니다."
       },
       {
         "command": "claude2",
         "also": "ccam work --resume",
-        "body": "그 계정으로 Claude Code를 시작합니다. 이름 뒤의 내용은 모두 그대로 Claude Code에 전달되며, ccam이 시작 전에 더하는 시간은 약 4밀리초입니다."
+        "body": "해당 계정으로 Claude Code를 시작합니다. 이름 뒤에 쓴 내용은 모두 그대로 Claude Code에 전달되며, 시작 전에 ccam이 더하는 시간은 약 4밀리초입니다."
       },
       {
         "command": "ccam share work --history on",
-        "body": "계정이 다른 계정과 무엇을 공유할지 고릅니다. MCP 서버, 설정, CLAUDE.md, 확장 기능은 처음부터 공유되고, 로그인은 절대 공유되지 않습니다."
+        "body": "이 계정이 다른 계정과 무엇을 공유할지 정합니다. MCP 서버, 설정, CLAUDE.md, 확장 기능은 처음부터 공유되며, 로그인 정보는 절대 공유되지 않습니다."
       },
       {
         "command": "ccam usage",
-        "body": "모든 계정의 5시간 사용량과 주간 사용량을 한 번에 보여 주므로, 어느 계정에 여유가 남았는지 알 수 있습니다."
+        "body": "모든 계정의 5시간 사용량과 주간 사용량을 한눈에 보여 주므로, 어느 계정에 여유가 있는지 알 수 있습니다."
       },
       {
         "command": "ccam next --continue",
@@ -59,7 +59,7 @@
       },
       {
         "command": "ccam doctor --fix",
-        "body": "링크, 권한, 로그인을 점검하고 안전하게 고칠 수 있는 것은 고칩니다. 파일을 바꿀 때마다 백업을 남깁니다."
+        "body": "링크, 권한, 로그인을 점검하고, 안전하게 고칠 수 있는 문제는 고칩니다. 파일을 바꿀 때는 항상 백업을 남깁니다."
       }
     ],
     "guidesTitle": "가이드",
@@ -67,13 +67,13 @@
   },
   "docs": {
     "updated": "최종 수정 {date}",
-    "versions": "ccam {ccam}, Claude Code {claude}에서 확인함",
+    "versions": "ccam {ccam}, Claude Code {claude} 기준으로 확인함",
     "prev": "이전",
     "next": "다음",
-    "edit": "GitHub에서 이 페이지 수정하기",
-    "machine": "이 페이지는 영어에서 기계 번역되었습니다. 수정 제안을 환영합니다.",
+    "edit": "GitHub에서 이 페이지 수정",
+    "machine": "이 페이지는 영어 원문을 기계 번역했습니다. 수정 제안을 환영합니다.",
     "related": "관련 가이드",
-    "onThisPage": "이 페이지의 내용",
+    "onThisPage": "이 페이지 목차",
     "sections": {
       "docs": "문서",
       "guides": "가이드",
@@ -82,28 +82,28 @@
     },
     "commandsTable": {
       "command": "명령",
-      "does": "하는 일"
+      "does": "설명"
     }
   },
   "commands": {
     "ccam": "계정 선택 화면 열기",
-    "name": "그 계정으로 Claude Code 시작. 인자는 그대로 전달",
-    "add": "계정 추가: 설정 폴더, 로그인, 단축 명령",
-    "list": "계정 목록",
+    "name": "해당 계정으로 Claude Code 시작(인자는 그대로 전달)",
+    "add": "계정 추가(설정 폴더, 로그인, 단축 명령)",
+    "list": "계정 목록 보기",
     "use": "기본 계정 지정",
-    "next": "다음 계정 열기. --continue는 대화를 이어 가고, --auto는 여유가 가장 많은 계정을 고름",
-    "usage": "모든 계정의 5시간 사용량과 주간 사용량 보기",
-    "share": "계획을 보여 준 뒤 계정의 공유 항목 변경",
+    "next": "다음 계정 열기(--continue: 대화 이어 가기, --auto: 여유가 가장 많은 계정 선택)",
+    "usage": "모든 계정의 5시간·주간 사용량 보기",
+    "share": "계정의 공유 항목 변경(변경 계획을 먼저 표시)",
     "mcp": "공유 MCP 서버 관리",
     "login": "계정에 다시 로그인",
-    "logout": "계정의 로그인 삭제",
-    "rename": "계정과 단축 명령의 이름 변경",
-    "remove": "계정 삭제. 폴더는 휴지통 폴더로 이동",
-    "import": "기존 ~/.claude 폴더를 제자리에서 등록",
-    "doctor": "링크, 권한, 로그인, 버전 점검과 수리",
-    "statusline": "Claude Code 상태줄에 계정과 사용량 표시",
-    "shims": "claude1…claudeN 다시 만들기",
-    "completion": "bash 또는 zsh 자동완성 출력"
+    "logout": "계정의 로그인 정보 삭제",
+    "rename": "계정 이름과 단축 명령 이름 변경",
+    "remove": "계정 삭제(폴더는 휴지통 폴더로 이동)",
+    "import": "기존 ~/.claude 폴더를 옮기지 않고 그대로 등록",
+    "doctor": "링크, 권한, 로그인, 버전 점검 및 복구",
+    "statusline": "Claude Code 상태 표시줄에 계정과 사용량 표시",
+    "shims": "claude1…claudeN 단축 명령 다시 만들기",
+    "completion": "bash 또는 zsh 자동완성 스크립트 출력"
   },
   "copy": {
     "copy": "복사",
@@ -111,29 +111,29 @@
   },
   "banner": {
     "suggest": "이 페이지는 {language} 버전으로도 볼 수 있습니다.",
-    "open": "{language} 버전으로 열기",
+    "open": "{language} 버전으로 보기",
     "dismiss": "닫기"
   },
   "footer": {
-    "unofficial": "ccam은 비공식 오픈소스 도구입니다. Anthropic과 제휴하거나 Anthropic의 보증을 받은 것이 아닙니다. Claude와 Claude Code는 Anthropic의 상표입니다.",
-    "terms": "계정을 여러 개 써도 되는지는 각 계정의 약관에 따릅니다. 쓰기 전에 확인하세요.",
-    "license": "GitHub의 소스 코드",
+    "unofficial": "ccam은 비공식 오픈소스 도구로, Anthropic과 제휴 관계가 없으며 Anthropic의 보증을 받지 않았습니다. Claude와 Claude Code는 Anthropic의 상표입니다.",
+    "terms": "여러 계정을 사용해도 되는지는 각 계정의 약관에 따라 다릅니다. 사용하기 전에 약관을 확인하세요.",
+    "license": "GitHub에서 소스 코드 보기",
     "languages": "모든 언어"
   },
   "changelog": {
     "title": "변경 내역",
-    "description": "ccam의 모든 릴리스와 각 릴리스에서 바뀐 점.",
-    "empty": "아직 공개된 릴리스가 없습니다. main 브랜치의 빌드는 GitHub에 나와 있습니다."
+    "description": "ccam의 모든 릴리스와 릴리스별 변경 사항.",
+    "empty": "아직 공개된 릴리스가 없습니다. main 브랜치 빌드는 GitHub에서 볼 수 있습니다."
   },
   "languages": {
     "title": "언어",
     "description": "ccam.dev는 {count, plural, other {#개 언어}}로 제공됩니다.",
-    "coverage": "Unicode CLDR 인구 데이터에 따르면, 이 언어 중 하나 이상을 쓰는 사람은 세계 인구의 {low}에서 {high}에 이릅니다.",
-    "method": "낮은 수치는 나라마다 지원 언어 중 가장 많이 쓰이는 언어 하나만 셉니다. 높은 수치는 지원 언어를 모두 더하되 나라마다 100%를 넘지 않게 합니다."
+    "coverage": "Unicode CLDR 인구 데이터에 따르면, 이 언어 중 하나 이상을 쓰는 사람은 세계 인구의 {low}~{high}입니다.",
+    "method": "낮은 수치는 나라별로 지원 언어 중 가장 많이 쓰이는 언어 하나만 센 값이고, 높은 수치는 지원 언어를 모두 더하되 나라별로 100%를 넘지 않게 한 값입니다."
   },
   "notFound": {
     "title": "페이지를 찾을 수 없습니다",
-    "body": "ccam.dev에 없는 주소입니다. 문서는 여기에서 시작합니다:",
+    "body": "ccam.dev에 없는 주소입니다. 문서는 여기에서 시작해 보세요:",
     "home": "홈"
   }
 }
