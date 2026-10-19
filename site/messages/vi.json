@@ -31,7 +31,7 @@
       "title": "Khi một tài khoản chạm giới hạn",
       "steps": [
         {
-          "command": "claude3",
+          "command": "ccside",
           "body": "Khởi động Claude Code bằng một trong các tài khoản của bạn qua lệnh tắt của nó."
         },
         {

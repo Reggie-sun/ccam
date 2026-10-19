@@ -31,7 +31,7 @@
       "title": "Saat akun mencapai batasnya",
       "steps": [
         {
-          "command": "claude3",
+          "command": "ccside",
           "body": "Jalankan Claude Code sebagai salah satu akun Anda dengan pintasannya."
         },
         {

@@ -31,7 +31,7 @@
       "title": "Cuando una cuenta llega a su límite",
       "steps": [
         {
-          "command": "claude3",
+          "command": "ccside",
           "body": "Inicia Claude Code con una de tus cuentas usando su atajo."
         },
         {

@@ -31,7 +31,7 @@
       "title": "Akaunti inapofikia kikomo chake",
       "steps": [
         {
-          "command": "claude3",
+          "command": "ccside",
           "body": "Anzisha Claude Code kama mojawapo ya akaunti zako kwa njia fupi yake."
         },
         {

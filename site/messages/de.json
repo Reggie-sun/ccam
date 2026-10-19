@@ -31,7 +31,7 @@
       "title": "Wenn ein Konto sein Limit erreicht",
       "steps": [
         {
-          "command": "claude3",
+          "command": "ccside",
           "body": "Starte Claude Code mit einem deiner Konten über dessen Kurzbefehl."
         },
         {

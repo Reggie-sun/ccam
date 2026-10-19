@@ -31,7 +31,7 @@
       "title": "Kapag naabot ng isang account ang limit nito",
       "steps": [
         {
-          "command": "claude3",
+          "command": "ccside",
           "body": "Simulan ang Claude Code bilang isa sa mga account mo gamit ang shortcut nito."
         },
         {

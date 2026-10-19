@@ -31,7 +31,7 @@
       "title": "Gdy konto osiągnie limit",
       "steps": [
         {
-          "command": "claude3",
+          "command": "ccside",
           "body": "Uruchom Claude Code jako jedno ze swoich kont za pomocą jego skrótu."
         },
         {

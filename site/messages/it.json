@@ -31,7 +31,7 @@
       "title": "Quando un account raggiunge il limite",
       "steps": [
         {
-          "command": "claude3",
+          "command": "ccside",
           "body": "Avvia Claude Code con uno dei tuoi account tramite la sua scorciatoia."
         },
         {

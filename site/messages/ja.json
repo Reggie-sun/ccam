@@ -31,7 +31,7 @@
       "title": "アカウントが上限に達したら",
       "steps": [
         {
-          "command": "claude3",
+          "command": "ccside",
           "body": "ショートカットを使って、いずれかのアカウントでClaude Codeを起動します。"
         },
         {

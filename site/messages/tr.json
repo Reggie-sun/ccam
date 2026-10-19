@@ -31,7 +31,7 @@
       "title": "Bir hesap limitine ulaştığında",
       "steps": [
         {
-          "command": "claude3",
+          "command": "ccside",
           "body": "Claude Code'u hesaplarınızdan biriyle, o hesabın kısayoluyla başlatın."
         },
         {

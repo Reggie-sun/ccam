@@ -31,7 +31,7 @@
       "title": "계정이 한도에 도달했을 때",
       "steps": [
         {
-          "command": "claude3",
+          "command": "ccside",
           "body": "단축 명령으로 원하는 계정의 Claude Code를 실행합니다."
         },
         {

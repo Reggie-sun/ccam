@@ -31,7 +31,7 @@
       "title": "عندما يبلغ حساب حدّه",
       "steps": [
         {
-          "command": "claude3",
+          "command": "ccside",
           "body": "شغّل Claude Code بأحد حساباتك باستخدام أمره المختصر."
         },
         {

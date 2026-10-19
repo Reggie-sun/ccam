@@ -31,7 +31,7 @@
       "title": "账号达到用量限制时",
       "steps": [
         {
-          "command": "claude3",
+          "command": "ccside",
           "body": "用快捷命令以你的某个账号启动 Claude Code。"
         },
         {

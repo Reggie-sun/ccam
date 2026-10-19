@@ -45,7 +45,7 @@ export function UsageBoard({ locale, m }: { locale: Locale; m: Messages }) {
       <div className="term">
         <p className="line" dir="ltr" data-seq="250" data-step="0">
           <span className="ps">$</span>
-          <span data-type>claude3</span>
+          <span data-type>ccside</span>
         </p>
         <div className="cc" dir="ltr" lang="en">
           <p className="cc-head" data-seq="250">

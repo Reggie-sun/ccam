@@ -31,7 +31,7 @@
       "title": "Idan wani asusu ya kai iyakarsa",
       "steps": [
         {
-          "command": "claude3",
+          "command": "ccside",
           "body": "Ka fara Claude Code da ɗaya daga cikin asusanka ta gajeren umarninsa."
         },
         {
