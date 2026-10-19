@@ -1,0 +1,138 @@
+---
+title: نسخ إعداد موجود
+description: انسخ الإعدادات وCLAUDE.md والإضافات وخوادم MCP وتسجيلات الدخول إليها من ~/.claude موجود إلى مجموعة مشاركة في ccam باستخدام ccam migrate.
+updated: 2026-10-19
+order: 6
+translation: machine
+sourceHash: 95ce6ec9e220
+---
+
+إذا كنت قد استخدمت Claude Code قبل ccam، فإعدادك موجود في `~/.claude` و`~/.claude.json`. ينسخه `ccam migrate` إلى مجموعة مشاركة، فيبدأ كل حساب يشارك هذه العناصر عبر المجموعة بالإعداد الذي لديك بالفعل. يُقرأ المجلد المصدر فقط، ويستمر `claude` العادي في العمل كما كان. شغّله مرة واحدة بعد أول `ccam add`، ومرة أخرى كلما بدأ حساب ما بمشاركة خوادم MCP.
+
+## الاستخدام
+
+```sh
+ccam migrate                         # ~/.claude into group default, checklist on a terminal
+ccam --dry-run migrate               # show the plan, copy nothing
+ccam migrate --settings --mcp        # only these items, no checklist
+ccam migrate --history --yes         # conversation history only, no questions
+ccam migrate ~/.claude-work --group work
+```
+
+في الطرفية، ودون خيارات العناصر ودون `--yes`، يعرض ccam أولًا قائمة اختيار:
+
+```console
+ Copy into group default
+
+ From /home/me/.claude
+ ? Choose what to copy (Space to toggle)
+ › [x] MCP servers
+   [x] settings.json
+   [x] global CLAUDE.md
+   [x] agents, commands, skills
+   [ ] conversation history
+
+ Enter show the plan · Esc cancel
+```
+
+يبدّل مفتاح المسافة (أو `x`) العنصر الذي تحت المؤشر، وتنقل مفاتيح الأسهم أو `j`/`k` التحديد، ويعرض Enter الخطة، ويطبع Esc أو `q` أو Ctrl+C الرسالة `Cancelled.`. والعناصر التي لا يحتوي المصدر على شيء لها تُعلَّم بـ `not found`. وإذا ألغيت تحديد كل شيء، يطبع ccam الرسالة `Nothing selected.` ويتوقف.
+
+ثم يطبع ccam الخطة ويسألك قبل أن ينسخ:
+
+```console
+$ ccam migrate --yes
+Copy from /home/me/.claude into group default (/home/me/.local/share/ccam/groups/default):
+  mcp         ~/.claude.json  new: fs, linear
+              sign-ins        linear → personal; skipped: work (not logged in yet)
+  settings    settings.json   new: 61 B
+  memory      CLAUDE.md       new: 11 B
+  extensions  agents/         add 1 file the group lacks (6 B)
+              skills/         add 1 file the group lacks (13 B)
+              not found, skipped: commands/, plugins/, output-styles/, rules/
+  Conversation history (projects/, history.jsonl) is not included; add --history to copy it.
+✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, skills/, MCP sign-ins for personal
+MCP sign-ins were not copied to: work (not logged in yet). Sign in to those servers there with /mcp.
+Accounts that share these through group default:
+  mcp         personal, work
+  settings    personal, work
+  memory      personal, work
+  extensions  personal, work
+```
+
+لا تصل المجموعة إلا إلى الحسابات التي تشارك عنصرًا عبرها، لذلك يسرد الملخص هذه الحسابات لكل عنصر. وللحسابات التي لا تشاركه، يطبع ccam أوامر `ccam share <name> --<item> on` التي تفعّل المشاركة.
+
+## الخيارات
+
+| الخيار | ما يفعله | القيمة الافتراضية |
+| --- | --- | --- |
+| `[folder]` | مجلد Claude Code الذي يُنسخ منه | `~/.claude` |
+| `--settings` | ينسخ `settings.json` | معطّل |
+| `--memory` | ينسخ ملف `CLAUDE.md` العام | معطّل |
+| `--extensions` | ينسخ `agents/` و`commands/` و`skills/` و`plugins/` و`output-styles/` و`rules/` | معطّل |
+| `--mcp` | ينسخ خوادم MCP الخاصة بالمستخدم (`mcpServers` في `.claude.json`) | معطّل |
+| `--history` | ينسخ سجل المحادثات (`projects/` و`history.jsonl`) | معطّل |
+| `-g`، `--group string` | مجموعة المشاركة التي يُنسخ إليها | `default` |
+| `-y`، `--yes` | ينسخ دون سؤال؛ وعند التعارض يُحتفظ بنسخة المجموعة | معطّل |
+| `--dry-run` (عام) | يطبع الخطة ويتوقف قبل أي سؤال أو نسخ | معطّل |
+
+دون أي خيار للعناصر، تحدد قائمة الاختيار ما يُنسخ في الطرفية. وخارج الطرفية، أو مع `--yes`، ينسخ ccam كل شيء ما عدا سجل المحادثات. ويُستثنى السجل افتراضيًا لأن `projects/` قد يكون كبيرًا.
+
+القيمة `--group on` تعني `default`. وتُرفض `--group off` و`--group local` مع `--group takes a group name, not "off"`. يدعم `ccam migrate` الخيار `--dry-run`، وتظل قائمة الاختيار تظهر في التشغيل التجريبي لتتمكن من معاينة اختيار ما.
+
+## كيف يعمل
+
+يختار `internal/cli/migrate.go` العناصر، ثم يقرأ `migrate.Build` المصدر والمجموعة ويُرجع خطة. ولا يُكتب شيء حتى `Plan.Apply`، بعد أن تؤكد.
+
+1. **إيجاد المصدر.** يرفض `checkSource` المسار المفقود، أو الذي ليس مجلدًا، أو الذي لا يحتوي على أي مدخل معروف من Claude Code. ويجد `migrate.ClaudeJSON` ملف `.claude.json` الذي يخص المجلد: داخله، أو بالنسبة إلى `~/.claude` الذي ليس فيه واحد، `~/.claude.json` بجانبه. فهناك يحتفظ به Claude Code عندما لا يكون `CLAUDE_CONFIG_DIR` معيّنًا.
+2. **ربط العناصر بالمسارات.** يأتي كل مسار من `share.Layout`، وهي قائمة السماح نفسها التي يستخدمها `ccam share`. وتُقرأ خوادم MCP من `.claude.json` باستخدام `mcp.LocalServers`، الذي يستخدم الماسح `profile.TopLevelValue` بدلًا من تحليل الملف كله.
+3. **النسخ لا النقل.** تذهب الملفات إلى `~/.local/share/ccam/groups/<group>/` باستخدام `fsutil.AtomicWrite` أو `fsutil.CopyFile`؛ وتذهب خوادم MCP إلى ملف `mcp.json` الخاص بالمجموعة.
+
+يربط كل عنصر مسارًا واحدًا في المصدر بمسار واحد في المجموعة:
+
+<!-- motion:migrate-items -->
+
+صفّا السجل متقطعان لأنهما لا يُنسخان إلا مع `--history`. ويُدرج `.credentials.json` و`.claude.json` في `share.Never` ولا يصلان إلى المجموعة أبدًا: يُرجع `Build` خطأ داخليًا إذا ظهر أحدهما يومًا في البنية، ويتخطاهما المرور على المجلد بالاسم.
+
+يمنح `buildEntry` كل مسار حالة، وهي ما يصفه كل سطر في الخطة:
+
+<!-- motion:migrate-states -->
+
+- **Missing**: غير موجود في المصدر، أو ملف حيث يُتوقع مجلد. يُذكر مرة واحدة لكل عنصر بالشكل `not found, skipped`.
+- **Linked**: مسار المصدر يشير بالفعل إلى نسخة المجموعة، مثلًا عندما يكون المصدر مجلد حساب في ccam.
+- **Same**: لدى المجموعة بالفعل محتوى مطابق.
+- **New**: لا تملكه المجموعة، فيُنسخ كاملًا.
+- **Merge**: مجلد موجود في الجهتين. لا يضيف `copyMissing` إلا الملفات التي لا تملكها المجموعة؛ والملفات المختلفة تبقى كما هي في المجموعة، وتقول الخطة `group copies kept`. وبالنسبة إلى `plugins/`، يُدمج السجلان `installed_plugins.json` و`known_marketplaces.json`، وتُعاد كتابة مسارات الإضافات المطلقة لتشير إلى مجلد المجموعة.
+- **Conflict**: ملف موجود في الجهتين بمحتوى مختلف. تختار لكل ملف: `keep group` أو `use mine`، إضافة إلى `merge JSON` لملفات `.json` (دمج عميق تتقدم فيه المجموعة عند تعارض القيم) أو `merge by line` لـ `history.jsonl`. وخادم MCP الذي يختلف تعريفه تعارض أيضًا، مع `keep group` أو `use mine`. والخيار الأول المذكور هو الافتراضي عندما تضغط Enter؛ ويحتفظ `--yes` دائمًا بنسخة المجموعة.
+
+قائمة الاختيار نفسها هي `tui.MigratePicker` المبنية على المكوّن `checklist` الذي يستخدمه `ccam add`؛ ويعلّم `migrate.Found` العناصر المفقودة باستدعاءات lstat وقائمة خوادم MCP.
+
+### تسجيلات الدخول إلى MCP
+
+خوادم MCP التي تسجّل الدخول عبر OAuth تحتفظ برموزها في ملف تسجيل الدخول، `.credentials.json` تحت `mcpOAuth`، لا في قائمة الخوادم. يجعل Claude Code مفتاح كل مدخل `<name>|` متبوعًا بأول 16 حرفًا من تجزئة `sha256` للقيم `type` و`url` و`headers` الخاصة بالخادم. ولا يعتمد المفتاح على المجلد، لذلك يعمل المدخل المنسوخ في حساب آخر ما دام تعريف الخادم مطابقًا. لهذا لا ينسخ `buildLogins` في `internal/migrate/logins.go` إلا مدخلات الخوادم التي ينتهي بها الأمر في المجموعة بتعريف المصدر: الجديدة، أو المطابقة بالفعل، أو التعارض الذي اخترت فيه `use mine`. وتسجيلات الدخول لخوادم الإضافات (المفاتيح التي تبدأ بـ `plugin:`) تُنسخ معها عندما تنسخ الإضافات ويحتوي المصدر على `plugins/`.
+
+<!-- motion:migrate-signins -->
+
+تذهب المدخلات إلى ملف `.credentials.json` الخاص بكل حساب مستقبِل، وتُكتب باستخدام `fsutil.AtomicWrite` بالوضع `0600`. ولا تذهب إلى المجموعة أبدًا. ولا يتلقاها الحساب إلا إذا كان يشارك `mcp` (أو `extensions` بالنسبة إلى خوادم الإضافات) عبر المجموعة المستهدفة، ولا تُضاف إلا المفاتيح التي لا يملكها: فالمدخلات الموجودة لديه، وربما الأحدث، يُحتفظ بها. يسرد سطر الخطة `sign-ins` الخوادم والحسابات المستقبِلة والحسابات المتخطاة. ويتخطى ccam الحساب، ويذكر اسمه مع السبب، عندما يكون:
+
+- مسجلًا في مكانه باستخدام `ccam import`، لأن `claude` العادي قد يستخدم ملف تسجيل الدخول الخاص به؛
+- قيد التشغيل، لأن Claude Code يعيد كتابة ملف تسجيل الدخول الخاص به (يُفحص مرة أخرى قبل الكتابة مباشرة، ويُبلَّغ عنه بـ `started meanwhile`)؛
+- لم يسجّل الدخول بعد؛
+- يحتفظ بتسجيل دخوله في سلسلة المفاتيح على macOS، التي لا يكتب فيها ccam.
+
+سجّل الدخول إلى الخوادم في الحساب المتخطى باستخدام `/mcp`. والحساب الذي يبدأ مشاركة خوادم MCP لاحقًا يحصل على تسجيلات الدخول عندما تشغّل `ccam migrate` مرة أخرى؛ ويذكر الملخص ذلك مع ``Then run `ccam migrate` again to give them the MCP sign-ins too.``
+
+## الأمان والحالات الخاصة
+
+- يُقرأ المصدر فقط. لا يُنقل أي ملف فيه ولا يُربط ولا يُغيَّر، ولا يُكتب تسجيل الدخول في المصدر أبدًا، بما في ذلك على macOS حيث قد يُقرأ من سلسلة المفاتيح.
+- قبل استبدال ملف في المجموعة، سواء بـ `use mine` أو بدمج أو بخوادم MCP جديدة في ملف `mcp.json` موجود، تُحفظ نسخة المجموعة في `<group>/.ccam-backup/<time>/`. واسم المجلد فريد لكل تشغيل، فلا يكتب تشغيلان في الثانية نفسها فوق النسخ الاحتياطية لبعضهما. ويطبع الملخص المسار.
+- مع `--yes`، يحتفظ كل تعارض بنسخة المجموعة، ويخبرك ccam كيف تختار بدلًا من ذلك: شغّل الأمر نفسه دون `--yes`.
+- إذا لم يكن هناك ما سيتغيّر، يطبع ccam الرسالة `Nothing to copy.`؛ وإذا احتفظ كل تعارض بنسخة المجموعة، يطبع `Nothing to copy: the group keeps its own copies.`
+- إذا فشل النسخ في منتصف الطريق، يتوقف ccam مع `The source folder was not changed. Group files replaced so far are saved in` متبوعًا بمجلد النسخ الاحتياطية.
+- ينتهي المصدر المفقود بالرسالة `no Claude Code folder at <path>. Give the folder to copy from: ccam migrate <folder>`.
+
+## صفحات ذات صلة
+
+- [مشاركة خوادم MCP والإعدادات والسجل](/docs/sharing)
+- [الفحص والإصلاح](/features/doctor)
+- [عدة حسابات Claude Code](/guides/multiple-claude-code-accounts)
+- [CLAUDE_CONFIG_DIR](/guides/claude-config-dir)

@@ -1,0 +1,121 @@
+---
+title: 점검과 복구
+description: ccam doctor로 공유 링크, 파일 권한, 로그인, Claude Code 버전을 점검하고, ccam doctor --fix로 안전하게 고칠 수 있는 문제를 복구합니다.
+updated: 2026-10-19
+order: 9
+translation: machine
+sourceHash: a1b61efe2b1f
+---
+
+`ccam doctor`는 ccam 설치 상태를 점검합니다. Claude Code 실행 파일, 모든 계정의 폴더, 로그인, 공유 링크, 공유 MCP 서버, 사용량 엔드포인트, 단축 명령을 확인합니다. `ccam doctor --fix`는 데이터를 잃지 않고 고칠 수 있는 문제를 복구하며, 교체하는 파일은 먼저 백업 폴더로 옮깁니다. `ccam <name>`이 공유 링크 문제로 멈췄을 때, 파일을 직접 복원한 뒤, 또는 Claude Code를 업데이트한 뒤에 실행하세요.
+
+## 사용법
+
+```sh
+ccam doctor                  # check everything, change nothing
+ccam doctor --fix            # check, then repair what is safe to repair
+ccam --dry-run doctor --fix  # report only: what --fix would repair
+```
+
+점검 결과는 항목마다 한 줄로, 앞에 표시가 붙습니다. `✓`는 정상, `·`는 정보, `!`는 경고, `✗`는 오류입니다. 계정에 관한 결과는 계정 이름으로 시작합니다.
+
+```console
+$ ccam doctor
+✓ Claude Code 2.1.302 (Claude Code) (/home/me/.local/bin/claude)
+! personal: folder permissions are 755 (should be 0700)
+! personal: .credentials.json permissions are 644 (should be 0600)
+✓ personal: login valid (me@example.com)
+✗ personal: /home/me/.local/share/ccam/profiles/personal/settings.json: set to shared but is a real file, not a link
+· personal: unknown entries (Claude Code layout may have changed): newthing
+! work: not logged in → `ccam login work`
+✓ work: share links OK
+! missing shortcuts in /home/me/.local/bin: ccp
+
+`ccam doctor --fix` repairs what it can.
+```
+
+`--fix`를 붙이면 복구된 항목 끝에 `→ fixed`가 붙습니다.
+
+```console
+$ ccam doctor --fix
+✓ Claude Code 2.1.302 (Claude Code) (/home/me/.local/bin/claude)
+! personal: folder permissions are 755 (should be 0700) → fixed
+! personal: .credentials.json permissions are 644 (should be 0600) → fixed
+✓ personal: login valid (me@example.com)
+✗ personal: /home/me/.local/share/ccam/profiles/personal/settings.json: set to shared but is a real file, not a link → fixed
+· personal: unknown entries (Claude Code layout may have changed): newthing
+! work: not logged in → `ccam login work`
+✓ work: share links OK
+! missing shortcuts in /home/me/.local/bin: ccp → fixed
+```
+
+## 옵션
+
+| 옵션 | 동작 | 기본값 |
+| --- | --- | --- |
+| `--fix` | 안전하게 고칠 수 있는 문제를 복구합니다(바뀌는 파일은 백업) | 꺼짐 |
+| `--dry-run`(전역) | 모든 점검을 실행하지만, `--fix`를 붙여도 아무것도 복구하지 않습니다 | 꺼짐 |
+
+`ccam doctor`는 인자를 받지 않습니다. `--dry-run`을 지원하므로, `ccam --dry-run doctor --fix`는 `ccam doctor`와 같은 결과를 출력하고 아무것도 바꾸지 않습니다.
+
+복구되지 않은 `✗` 항목이 하나라도 남으면 종료 코드는 `1`이고, 그렇지 않으면 `0`입니다. 경고와 정보는 실패로 치지 않습니다. `--fix` 없이 실행해 실패하면 ccam은 빈 줄과 `` `ccam doctor --fix` repairs what it can. ``으로 끝납니다. 설정을 읽을 수 없을 때도 `ccam:` 오류와 함께 `1`로 끝납니다.
+
+## 동작 방식
+
+`internal/cli/doctor.go`가 `~/.config/ccam/config.toml`을 읽고 `internal/doctor/doctor.go`의 `doctor.Run`을 호출합니다. 이 함수는 정해진 순서로 점검을 실행하고 결과를 반환합니다. `--fix`는 `Options.Fix`로 전달되며, 시험 실행에서는 false가 됩니다.
+
+<!-- motion:doctor-checks -->
+
+가운데 블록은 계정마다 한 번씩 실행됩니다. 각 점검과 `--fix`가 하는 일은 다음과 같습니다.
+
+1. **Claude Code 버전**(`checkClaude`). 실행기와 같은 방식으로 `claude` 실행 파일을 찾아 `claude --version`을 실행합니다. 버전이 ccam이 폴더 구조를 검증한 버전(`doctor.LayoutVersion`)인 `2.1.302`로 시작하지 않으면 `· ccam was verified against the folder layout of Claude Code 2.1.302. Any 'unknown entries' below may mean the layout changed`를 추가합니다. 실행 파일이 없거나 `--version`이 실패하면 오류입니다. 복구하지 않습니다.
+2. **환경 변수의 로그인 정보**(`checkAuthEnv`). `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN` 중 하나가 설정되어 있으면 경고합니다. 그 셸에서 시작하는 모든 계정이 이 값을 물려받고, Claude Code는 계정 자체의 로그인보다 이 값을 우선하기 때문입니다. 복구하지 않으니 직접 해제하세요.
+3. **폴더**(`checkProfile`). 계정 폴더가 없으면 오류이며, 그 계정의 점검은 여기서 끝납니다. 그룹이나 기타 사용자 권한 비트가 하나라도 설정되어 있으면 경고이고, `--fix`가 `chmod 0700`을 실행합니다.
+4. **로그인 파일**(`checkCredentials`). `.credentials.json`을 `lstat`으로 확인합니다. 계정마다 자체 토큰이 있어야 하므로 심볼릭 링크이면 오류이며, 복구하지 않습니다. 권한이 `0600`이 아니면 경고이고, `--fix`가 `chmod 0600`을 실행합니다. 그다음 로그인 정보를 읽습니다(macOS에서는 키체인을 먼저 봅니다). 로그인 정보가 없으면 `ccam login <name>`을 안내하는 경고입니다. 리프레시 토큰이 만료되었으면 `login expired` 오류이고, 액세스 토큰만 만료되었으면 Claude Code가 다음 실행 때 갱신하므로 정보로만 표시합니다. 이 중 어느 것도 복구하지 않습니다.
+5. **공유 링크**(`share.Check`). `share.Layout`의 모든 경로를 계정의 공유 설정과 비교하며, `lstat`과 `readlink`만 사용합니다. 링크가 없는 경우, 링크가 다른 곳을 가리키는 경우, 링크가 있어야 할 자리에 일반 파일이 있는 경우, 이제 로컬인 항목에 링크가 남아 있는 경우의 네 가지를 보고합니다. 링크가 없는 경우는 경고이고, 나머지는 오류입니다.
+6. **알 수 없는 항목**(`checkUnknownEntries`). 계정 폴더 최상위에서 ccam이 모르는 이름(`share.Known`에 없는 이름)을 나열해, Claude Code 폴더 구조가 바뀌었을 수 있다는 단서를 줍니다. 정보로만 표시합니다.
+7. **플러그인 경로**(`checkPlugins`). 플러그인 레지스트리(`installed_plugins.json`, `known_marketplaces.json`)는 절대 경로를 저장합니다. 각 그룹의 `plugins/`에서 특정 계정 폴더를 거치는 경로는 그 계정을 삭제하거나 이름을 바꾸면 깨집니다. `--fix`는 `profile.RewritePluginPaths`로 이 경로를 그룹 폴더 기준으로 다시 씁니다. 레지스트리 파일은 원자적으로 기록됩니다.
+8. **MCP 서버**(`checkMCP`). 그룹마다 `mcp.json`을 한 번 읽습니다. 파일을 읽을 수 없으면 오류이고, `mcp.Validate`를 통과하지 못한 서버는 경고입니다. 복구하지 않습니다.
+9. **사용량 응답 형식**(`checkUsageFormat`). 캐시 없이, 평소처럼 3초 제한으로 계정을 하나씩 돌아가며 응답이 올 때까지 사용량 엔드포인트에 요청합니다. 응답을 더 이상 해석할 수 없으면 `ccam usage`가 상태 표시줄 캐시를 대신 쓴다고 경고합니다. 네트워크를 쓰는 점검은 이것뿐입니다.
+10. **단축 명령**(`checkShims`). 단축 명령이 있는 계정이 있을 때만 실행합니다. `~/.local/bin`에 링크가 없으면 경고이고, `--fix`가 `shim.Install`을 호출합니다. 이 함수는 없는 링크만 만들고 다른 파일은 절대 건드리지 않습니다. bin 폴더가 `PATH`에 없으면 경고이며, 복구하지 않습니다.
+
+### 공유 링크 복구
+
+실행 경로는 없는 링크를 그 자리에서 만들지만, 데이터를 잃을 수 있는 문제에서는 멈추고 이 명령을 안내합니다.
+
+```console
+$ ccam work
+ccam: stopped because of share link problems:
+  /home/me/.local/share/ccam/profiles/work/CLAUDE.md: set to shared but is a real file, not a link
+Repair them with `ccam doctor --fix`, then run again
+```
+
+공유 링크 문제가 있으면 `--fix`는 계정의 공유 설정을 현재 상태이자 목표 상태로 넘겨 `share.Build`를 호출한 다음 `Plan.Apply`를 실행합니다. `Build`는 `ccam share`가 쓰는 것과 같은 계획을 디스크의 실제 상태로부터 다시 만들어 내므로, 복구는 공유를 켤 때와 같은 규칙을 따릅니다.
+
+<!-- motion:doctor-repair -->
+
+이 예에서 `settings.json`은 일반 파일입니다. 그룹에 이미 내용이 다른 `settings.json`이 있으므로, 충돌은 기본 선택인 `KeepGroup`으로 처리되어 그룹의 사본이 유지됩니다. 계정의 파일은 계정 폴더 안의 `.ccam-backup/<time>/settings.json`으로 옮겨지고, `os.Symlink`가 그 경로를 그룹에 링크합니다. 다른 경우는 다음과 같습니다.
+
+- 그룹에 아직 사본이 없으면 계정의 파일이 그룹으로 옮겨져 그룹의 첫 내용이 됩니다.
+- 폴더라면 그룹에 없는 파일은 그룹으로 옮기고, 나머지는 백업으로 보냅니다.
+- `history.jsonl`은 기본값이 `merge by line`입니다. 그룹의 줄 다음에 새 줄을 붙입니다. 그룹의 이전 사본은 `.ccam-backup/<time>/group/`에 보관됩니다.
+- 다른 그룹을 가리키는 링크는 교체합니다. ccam 밖의 폴더를 가리키는 링크는 백업으로 보내고, 그룹이 비어 있으면 그 내용으로 그룹을 채웁니다.
+- 이제 로컬인 항목에 남은 링크는 제거하고, 계정은 그룹 내용의 사본을 받습니다.
+
+링크를 제거하는 것 말고는 모든 단계가 데이터를 그룹이나 백업 폴더로 옮깁니다. 삭제되는 것은 없습니다.
+
+## 안전장치와 예외 상황
+
+- 그냥 `ccam doctor`를 실행하면 아무것도 바꾸지 않습니다. 스크립트에서 확실히 하려면 `--fix`와 함께 `--dry-run`을 쓰세요.
+- `doctor --fix`는 계정이 실행 중인지 확인하지 않습니다. 세션이 그 파일들에 계속 쓰므로, 공유 링크를 복구하기 전에 그 계정의 Claude Code를 종료하세요.
+- 공유 복구가 실패하면 ccam은 그 계정에 대해 `could not repair share links: <error>`를 보고하고 알 수 없는 항목 점검을 건너뜁니다. 다른 계정은 계속 점검합니다.
+- `ccam share`가 중간에 실패하면 목표 설정을 먼저 저장하고, `ccam doctor --fix`로 마무리하라고 안내합니다.
+- 심볼릭 링크인 `.credentials.json`, 만료된 로그인, 환경 변수의 로그인 정보는 보고만 하고 절대 바꾸지 않습니다.
+- 플러그인 레지스트리를 다시 쓸 때는 원자적으로 기록하지만, `.ccam-backup/`에 복사해 두지는 않습니다.
+
+## 관련 문서
+
+- [MCP 서버, 설정, 대화 내역 공유](/docs/sharing)
+- [기존 설정 복사하기](/features/migrate)
+- [사용량 한도와 계정 전환](/docs/usage-limits)
+- [명령어](/docs/commands)

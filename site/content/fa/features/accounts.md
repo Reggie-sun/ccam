@@ -1,0 +1,124 @@
+---
+title: مدیریت حساب‌ها
+description: حساب‌های Claude Code را با ccam add، ccam login، ccam list، ccam rename، ccam remove و ccam import اضافه کنید، وارد شوید، فهرست کنید، تغییر نام دهید، حذف یا وارد کنید.
+updated: 2026-10-19
+order: 2
+translation: machine
+sourceHash: 97cef50f48f4
+---
+
+هر حساب ccam یک پوشه پیکربندی جداگانه Claude Code با ورود مخصوص خودش است. این فرمان‌ها حساب‌ها را می‌سازند، وارد می‌کنند، فهرست می‌کنند، تغییر نام می‌دهند و حذف می‌کنند، و پوشه‌هایی را که از قبل دارید ثبت می‌کنند.
+
+## نحوه استفاده
+
+```sh
+ccam add                                   # wizard on a terminal: name, shared items, shortcut, login
+ccam add work --shortcut ccwork            # no wizard: log in, then create the ccwork command
+ccam add side --no-login --share history=team
+ccam login side                            # run claude auth login inside the account
+ccam logout side                           # remove the login token
+ccam list                                  # table of accounts; ccam ls is the same
+ccam list --json                           # machine-readable
+ccam use 2                                 # make slot 2 the default account
+ccam rename side personal
+ccam remove personal                       # asks, then moves the folder to the trash
+ccam import                                # find ~/.claude and ~/.claude-* and ask about each
+ccam import ~/.claude-ops --name ops
+ccam completion zsh > "${fpath[1]}/_ccam"
+```
+
+هر جا فرمانی `<name|number>` بپذیرد، می‌توانید نام حساب یا شماره جایگاه آن، یعنی ستون `#` در `ccam list`، را بدهید.
+
+`ccam add` در ترمینال و بدون گزینه یک دستیار باز می‌کند. ابتدا نام را می‌پرسد، سپس فهرستی از موارد مشترک نشان می‌دهد (همه چیز به جز تاریخچه گفتگو علامت خورده است)، بعد می‌پرسد `Create a shortcut command for work? [y/N]` و در صورت پاسخ `y`، می‌پرسد `Shortcut name [ccwork]:`. هر یک از `--share`، `--shortcut` یا `--no-login`، یا یک pipe به‌جای ترمینال، دستیار را کنار می‌گذارد؛ در این حالت نام الزامی است و میان‌بری ساخته نمی‌شود مگر اینکه `--shortcut` نامی برای آن بدهد.
+
+`ccam list` جایگاه، نام، میان‌بر، ایمیل، موارد مشترک و آخرین استفاده را نشان می‌دهد و پیش از حساب پیش‌فرض `*` می‌گذارد:
+
+```console
+$ ccam list
+   #  Name      Shortcut  Email             Shared                        Last used
+*  1  work      ccwork    user@example.com  mcp settings md ext           -
+   2  personal  -         me@side.dev       settings md ext history@team  -
+```
+
+با `--json`، هر حساب یک شیء با `slot`، `shortcut`، `name`، `email`، `default`، `dir`، `last_used` (که اگر حساب هرگز اجرا نشده باشد حذف می‌شود) و `share` است. `share` هر مورد (`mcp`، `settings`، `memory`، `extensions`، `history`) را به نام گروه آن یا به `"local"` نگاشت می‌کند.
+
+## گزینه‌ها
+
+| گزینه | کاری که انجام می‌دهد | پیش‌فرض |
+| --- | --- | --- |
+| `ccam add --no-login` | حساب را بدون ورود می‌سازد؛ بعداً با `ccam login <name>` وارد شوید | خاموش |
+| `ccam add --share <item=group>` | یک مورد را با یک گروه به اشتراک می‌گذارد، یا با `item=local` آن را خصوصی نگه می‌دارد. قابل تکرار | `mcp`، `settings`، `memory`، `extensions` در `default`؛ `history` محلی |
+| `ccam add --shortcut <command>` | این فرمان میان‌بر را هم در `~/.local/bin` می‌سازد | هیچ |
+| `ccam list --json` | حساب‌ها را به‌صورت JSON چاپ می‌کند | خاموش |
+| `ccam remove -y`، `--yes` | بدون پرسش حذف می‌کند | خاموش |
+| `ccam import --name <name>` | نام حساب برای پوشه‌ای که می‌دهید | برگرفته از نام پوشه |
+| `ccam import -y`، `--yes` | همه پوشه‌های پیداشده را بدون پرسش وارد می‌کند | خاموش |
+| `--dry-run` | `ccam list` و `ccam completion` که چیزی را تغییر نمی‌دهند آن را می‌پذیرند. `add`، `login`، `logout`، `use`، `rename`، `remove` و `import` آن را با پیام `` --dry-run is not supported by `ccam add`; nothing was changed `` (با نام همان فرمان) رد می‌کنند | خاموش |
+
+`ccam login`، `ccam logout`، `ccam use` و `ccam rename` گزینه‌ای از خود ندارند. `ccam completion` مقدار `bash` یا `zsh` را می‌پذیرد؛ هر چیز دیگری با `only bash and zsh are supported` ناموفق می‌شود.
+
+نام حساب‌ها ۱ تا ۳۲ نویسه از `a-z`، `0-9`، `-` و `_` است و با یک حرف یا رقم شروع می‌شود. نام نمی‌تواند فقط از رقم تشکیل شود، چون `ccam 2` یعنی جایگاه ۲. نام همچنین نمی‌تواند یکی از فرمان‌های ccam باشد (`add`، `list`، `ls`، `run`، `use`، `next`، `usage`، `u`، `share`، `mcp`، `login`، `logout`، `rename`، `remove`، `rm`، `import`، `migrate`، `doctor`، `shims`، `shortcut`، `completion`، `help`، `version`، `statusline`، `update`)، تا `ccam <name>` هرگز مبهم نباشد. این فهرست `config.Reserved` در `internal/config` است.
+
+## نحوه کار
+
+`ccam add work --shortcut ccwork` این مراحل را در `addProfile` (`internal/cli/profiles.go`) اجرا می‌کند:
+
+<!-- motion:accounts-add -->
+
+1. `config.ValidateName` نام را و `shim.Check` میان‌بر را پیش از ساختن هر چیزی بررسی می‌کنند.
+2. `profile.Add` پوشه `~/.local/share/ccam/profiles/work/` را با مجوز `0700` می‌سازد و کوچک‌ترین شماره جایگاه آزاد (`Config.NextSlot`) را به حساب می‌دهد، بنابراین شماره یک حساب حذف‌شده دوباره استفاده می‌شود. نخستین حساب، حساب پیش‌فرض می‌شود.
+3. `applyShare` پوشه جدید و خالی را با `share.Build` و سپس `Apply` به گروه‌های اشتراکش پیوند می‌دهد، برای مثال `settings.json` را به `groups/default/settings.json`. اگر این کار ناموفق باشد، پوشه جدید حذف می‌شود، چون پوشه باقی‌مانده هر تلاش دوباره را با `folder already exists` متوقف می‌کرد.
+4. حساب از طریق `fsutil.AtomicWrite` در `~/.config/ccam/config.toml` ذخیره می‌شود: یک فایل موقت، `fsync` و سپس `rename`، بنابراین یک خرابی هرگز پیکربندی نیمه‌کاره بر جا نمی‌گذارد.
+5. `runLogin` فرمان `claude auth login` را با `CLAUDE_CONFIG_DIR` تنظیم‌شده روی پوشه حساب اجرا می‌کند. اگر ورود ناموفق باشد، حساب باقی می‌ماند و ccam خطا را چاپ می‌کند و می‌گوید بعداً `ccam login work` را اجرا کنید.
+6. `profile.ReadEmail` مقدار `oauthAccount.emailAddress` را از `profiles/work/.claude.json` می‌خواند. این فایل ممکن است چند مگابایت باشد، بنابراین `TopLevelValue` به‌جای تجزیه کل فایل، فقط به دنبال همان یک کلید می‌گردد.
+7. `shim.Install` پیوند `~/.local/bin/ccwork` را به فایل اجرایی ccam می‌سازد که هنگام شروع، `argv[0]` را در `config.toml` جست‌وجو می‌کند.
+
+ورود ممکن است چند دقیقه طول بکشد و در این مدت ccam دیگری ممکن است پیکربندی را ذخیره کند. به همین دلیل فرمان‌هایی که منتظر می‌مانند از طریق `env.update` ذخیره می‌کنند که `config.toml` را دوباره می‌خواند، همان یک تغییر (در اینجا ایمیل) را اعمال می‌کند و ذخیره می‌کند. `ccam remove` هم به همین دلیل پس از پرسش خود دوباره می‌خواند.
+
+`ccam login` مراحل ۵ و ۶ را برای یک حساب موجود اجرا می‌کند. `ccam logout` فرمان `claude auth logout` را در حساب اجرا می‌کند و ایمیل ذخیره‌شده را پاک می‌کند. `ccam use` فقط `default` را در `config.toml` بازنویسی می‌کند.
+
+### ورود روی یک ماشین راه دور
+
+از طریق SSH، بخش مرورگر `claude auth login` ممکن است کار نکند. Claude Code روی سرور منتظر ورود در یک سرور callback در `http://localhost:<port>/callback` می‌ماند، اما مرورگری که ورود را تمام می‌کند روی رایانه شما اجرا می‌شود، جایی که آن نشانی به هیچ جا نمی‌رسد و مرورگر خطایی مانند `ERR_CONNECTION_REFUSED` نشان می‌دهد. نشانی همچنان کد یک‌بارمصرف را در خود دارد، پس ccam می‌تواند آن را برساند:
+
+<!-- motion:accounts-relay -->
+
+`runLogin` ترمینال شما را به Claude Code نمی‌سپارد. ورودی استاندارد Claude Code را به یک pipe وصل می‌کند و `relayLogin` هر خطی را که تایپ می‌کنید در آن کپی می‌کند، بنابراین کدی که در اعلان `Paste code here` در Claude Code بچسبانید همچنان می‌رسد. وقتی یک خط نشانی callback باشد، `callbackURL` فقط در صورتی آن را می‌پذیرد که میزبان `localhost`، `127.0.0.1` یا `[::1]` باشد، درگاه داده شده باشد، مسیر `/callback` باشد و هر دو `code` و `state` وجود داشته باشند؛ `http://` را می‌توان ننوشت. سپس `deliverCallback` آن نشانی را روی سرور با محدودیت ۱۰ ثانیه و بدون دنبال کردن تغییر مسیرها درخواست می‌کند، همان‌طور که مرورگر می‌کرد. درخواست به سرور callback فرمان `claude auth login` منتظر می‌رسد (خط‌چین در نمودار). Claude Code کد را دریافت می‌کند و ورود را ذخیره می‌کند؛ روی Linux در `.credentials.json` داخل پوشه حساب. یک خط چسبانده‌شده هرگز نمی‌تواند ccam را به تماس با میزبان دیگری وادار کند.
+
+ccam پیش از شروع ورود این را چاپ می‌کند:
+
+```text
+On a remote machine? If the browser ends on a http://localhost:…/callback page that does not load, paste that address here.
+```
+
+در صورت موفقیت `→ Passed the sign-in to Claude Code on this machine.` را چاپ می‌کند.
+
+### تغییر نام، حذف و وارد کردن
+
+`ccam rename` و `ccam remove` روی پوشه حساب و روی آنچه ccam در جاهای دیگر به نام آن حساب نگه می‌دارد عمل می‌کنند. `nameState` این مسیرها را فهرست می‌کند: `~/.local/state/ccam/last-used/<name>`، `~/.local/state/ccam/mcp/<name>` و حافظه‌های نهان مصرف `~/.local/state/ccam/usage/<name>.json` و `<name>.statusline.json`. `ccam remove work` آن‌ها را به این ترتیب انجام می‌دهد:
+
+<!-- motion:accounts-remove -->
+
+`ccam remove` ابتدا اگر حساب در حال اجرا باشد آن را رد می‌کند و سپس می‌پرسد. اگر حساب افزونه‌ها را به اشتراک بگذارد، `RewritePluginPaths` فایل‌های `installed_plugins.json` و `known_marketplaces.json` گروه را بازنویسی می‌کند، چون Claude Code مسیرهای مطلق افزونه‌ها را ذخیره می‌کند که ممکن است از پوشه این حساب بگذرند. `profile.Trash` پوشه را به `~/.local/share/ccam/trash/<name>-<time>/` منتقل می‌کند، حساب از `config.toml` حذف می‌شود، مسیرهای `nameState` پاک می‌شوند تا حساب بعدی با همین نام آن‌ها را به ارث نبرد، و پیوند میان‌بر حذف می‌شود. برای بازیابی، پوشه را از سطل زباله برگردانید.
+
+`ccam rename` نام پوشه را تغییر می‌دهد، مسیرهای افزونه در `plugins/` آن را از پوشه قدیمی به پوشه جدید بازنویسی می‌کند، وضعیت پیش‌فرض را حفظ می‌کند و مسیرهای `nameState` را به نام جدید منتقل می‌کند. فرمان میان‌بر نام خود را نگه می‌دارد. اگر بازنویسی افزونه‌ها ناموفق باشد، نام پوشه به حالت قبل برمی‌گردد، چون پیکربندی ذخیره نمی‌شود.
+
+`ccam import` یک پوشه را در همان جایی که هست، به‌صورت `dir` در `config.toml` ثبت می‌کند. هرگز آن را جابه‌جا یا کپی نمی‌کند: یک توکن تمدید کپی‌شده باعث می‌شد نسخه‌ها یکدیگر را از حساب خارج کنند. بدون آرگومان پوشه، به دنبال پوشه‌های ثبت‌نشده `~/.claude` و `~/.claude-*` می‌گردد و درباره هر کدام می‌پرسد؛ نام‌ها از پوشه گرفته می‌شوند (`~/.claude` می‌شود `main`، `~/.claude-work` می‌شود `work`، `~/.claude-2` می‌شود `acct2`) و پوشه‌ای که نامی از آن به دست نیاید همراه با فرمان `--name` لازم فهرست می‌شود. بدون `CLAUDE_CONFIG_DIR`، Claude Code فایل `.claude.json` را در پوشه خانه شما کنار `~/.claude` نگه می‌دارد، بنابراین وقتی `~/.claude` را وارد می‌کنید و `.claude.json` خودش را ندارد، ccam پیوند `~/.claude/.claude.json` را به `~/.claude.json` می‌سازد. در این صورت `claude` معمولی و `ccam main` یک حساب را می‌بینند. حساب‌های واردشده تا وقتی `ccam share` را اجرا نکنید چیزی را به اشتراک نمی‌گذارند و میان‌بری هم برایشان ساخته نمی‌شود.
+
+`ccam completion bash|zsh` یک اسکریپت تکمیل خودکار چاپ می‌کند که نام حساب‌ها را هم تکمیل می‌کند.
+
+## ایمنی و موارد خاص
+
+- `ccam rename` و `ccam remove` تا وقتی حساب در حال اجراست (`refuseRunning`) با `work is running; quit its Claude Code session first` رد می‌کنند، چون نشست همچنان در پوشه می‌نویسد.
+- `ccam remove` روی یک حساب واردشده فقط ثبت آن را لغو می‌کند: `✓ main unregistered (folder ... left in place)`. `~/.claude` شما به سطل زباله منتقل نمی‌شود.
+- `ccam add` نامی را که پوشه‌اش از قبل در `profiles/` وجود دارد رد می‌کند و شما را به `ccam import` ارجاع می‌دهد.
+- `ccam import` پوشه‌ای را که از قبل ثبت شده، مسیری را که پوشه نیست و نامی را که گرفته شده رد می‌کند.
+- `ccam logout` و `ccam login` بررسی نمی‌کنند که حساب در حال اجرا هست یا نه.
+- اگر واسطه نتواند به Claude Code برسد، برای مثال پس از پایان ورود، `ccam: could not pass the sign-in to Claude Code:` را همراه با دلیل چاپ می‌کند. خطای HTTP معمولاً یعنی کد منقضی شده است؛ ورود را دوباره شروع کنید.
+
+## مطالب مرتبط
+
+- [اجرای Claude Code](/features/launch)
+- [فرمان‌های میان‌بر](/features/shortcuts)
+- [اشتراک‌گذاری سرورهای MCP، تنظیمات و تاریخچه](/docs/sharing)
+- [چند حساب Claude Code](/guides/multiple-claude-code-accounts)

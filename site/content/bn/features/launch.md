@@ -1,0 +1,138 @@
+---
+title: "Claude Code চালু করা"
+description: "ccam <name|number>, ccam run বা ccam পিকার দিয়ে যেকোনো অ্যাকাউন্ট হিসেবে Claude Code চালু করুন; আর্গুমেন্ট অপরিবর্তিত অবস্থায় claude-এ যায়, আর --dry-run কমান্ডটি দেখায়।"
+updated: 2026-10-19
+order: 1
+translation: machine
+sourceHash: d033da86f44b
+---
+
+`ccam work` অ্যাকাউন্ট `work` হিসেবে Claude Code চালু করে, আর নামের পরের সবকিছু যেমন আছে তেমনই `claude`-এ যায়। যেখানে আপনি `claude` টাইপ করতেন সেখানেই এটি ব্যবহার করুন: টার্মিনালে, স্ক্রিপ্টে, বা পাইপ করা ইনপুটসহ।
+
+## ব্যবহার
+
+```sh
+ccam work                        # Claude Code as the account work
+ccam 2                           # the account with number 2 (see ccam list)
+ccam work --resume               # claude --resume, as work
+ccam work -p "fix the tests" --output-format json
+cat log.txt | ccam work -p "find the cause"
+ccam -p "summarise"              # no name: the default account
+ccam use work                    # make work the default account
+ccam run work --continue         # same as ccam work --continue
+ccam                             # the picker on a terminal, the list otherwise
+ccam --dry-run work -p hi        # print the command instead of running it
+```
+
+অ্যাকাউন্টের নাম বা `ccam list` থেকে তার নম্বর দিন। নামের পরের আর্গুমেন্টগুলো ccam পড়ে না, তাই `ccam work --help` Claude Code-এর সাহায্য দেখায়। নামের পরে `--` দেওয়া ঐচ্ছিক। স্ট্যান্ডার্ড ইনপুট, এক্সিট কোড ও সিগন্যাল `claude`-এর মতোই আচরণ করে।
+
+প্রথম আর্গুমেন্ট `-` দিয়ে শুরু হলে এবং সেটি ccam-এর নিজস্ব কোনো ফ্ল্যাগ না হলে, ccam সব আর্গুমেন্টসহ ডিফল্ট অ্যাকাউন্ট চালু করে। ডিফল্ট হলো `ccam use` দিয়ে নির্ধারিত অ্যাকাউন্ট, অথবা আপনি কোনোটি নির্ধারণ না করলে সবচেয়ে ছোট নম্বরের অ্যাকাউন্ট।
+
+### পিকার
+
+স্ট্যান্ডার্ড ইনপুট ও আউটপুট টার্মিনাল হলে আর্গুমেন্ট ছাড়া `ccam` পিকার খোলে, অন্যথায় `ccam list` প্রিন্ট করে। এটি প্রতিটি অ্যাকাউন্টের নম্বর, ইমেইল, ৫ ঘণ্টার ব্যবহার, সর্বশেষ ব্যবহার ও শেয়ার করা আইটেম দেখায়; প্রতিটি অ্যাকাউন্ট উত্তর দেওয়ার সঙ্গে সঙ্গে ব্যবহার পূরণ হয়।
+
+| কী | কী করে |
+| --- | --- |
+| `Enter` | নির্বাচিত অ্যাকাউন্ট হিসেবে Claude Code চালু করে |
+| `1` থেকে `9` | ওই নম্বরের অ্যাকাউন্ট চালু করে |
+| `Up`/`Down`, `k`/`j` | নির্বাচন সরায় |
+| `a` | পিকার বন্ধ করে `ccam add` উইজার্ড চালায় |
+| `s` | নির্বাচিত অ্যাকাউন্টের শেয়ার করা আইটেম সম্পাদনা করে (`Space` বা `x` টগল করে, `Enter` প্রয়োগ করে, `Esc` ফিরে যায়) |
+| `d` | নির্বাচিত অ্যাকাউন্টকে ডিফল্ট করে |
+| `r` | স্বল্পমেয়াদি ক্যাশ ছাড়া আবার ব্যবহার আনে |
+| `q`, `Esc`, `Ctrl+C` | বন্ধ করে |
+
+পিকার কাজ করার আগে বন্ধ হয়, তাই Claude Code চালু হওয়ার আগে টার্মিনাল আগের অবস্থায় ফেরে। `d` বা শেয়ারের পরিবর্তনের পরে এটি আবার খোলে। শেয়ারের পরিবর্তন `ccam share`-এর মতোই আগে পরিকল্পনা দেখায় এবং জিজ্ঞেস করে।
+
+## অপশন
+
+| অপশন | কী করে | ডিফল্ট |
+| --- | --- | --- |
+| `--dry-run` | ccam যে এনভায়রনমেন্ট ও কমান্ড চালাত তা প্রিন্ট করে, তারপর বেরিয়ে যায় | বন্ধ |
+| `-v`, `--version` | `ccam <version>` প্রিন্ট করে (শুধু প্রথম আর্গুমেন্ট হিসেবে) | |
+| `-h`, `--help` | ccam-এর সাহায্য, `ccam --help` বা `ccam run --help` হিসেবে | |
+
+আর্গুমেন্টের নিয়ম:
+
+- ccam নিজের ফ্ল্যাগ শুধু অ্যাকাউন্টের নামের আগে পড়ে। নামের পরে প্রতিটি আর্গুমেন্ট Claude Code-এর, `--dry-run` ও `--help`-সহ।
+- `--dry-run` কাজ করে `ccam --dry-run work`, `ccam run --dry-run work` ও `ccam --dry-run` (ডিফল্ট অ্যাকাউন্ট) হিসেবে। এটি মানা হয়, প্রত্যাখ্যান করা হয় না।
+- `ccam run <name|number> [claude args]` হলো `ccam <name>`-এর দীর্ঘ রূপ। নাম ছাড়া `ccam run` ডিফল্ট অ্যাকাউন্ট ব্যবহার করে।
+- অ্যাকাউন্টের নাম `add`, `list`, `run` বা `usage`-এর মতো ccam কমান্ডের নাম হতে পারে না, তাই `ccam <word>` কখনও দ্ব্যর্থক হয় না।
+
+ড্রাই রান এমন একটি লাইন প্রিন্ট করে যা আপনি শেলে পেস্ট করতে পারেন:
+
+```console
+$ ccam --dry-run work -p "fix the tests"
+CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/claude --mcp-config=/home/me/.local/share/ccam/groups/default/mcp.json -p 'fix the tests'
+```
+
+## এটি কীভাবে কাজ করে
+
+প্রতিটি চালু করা কমান্ড লাইন থেকে `exec` পর্যন্ত একই ধাপগুলো নেয়:
+
+<!-- motion:launch -->
+
+প্রতিটি বাক্স তার ধাপ চলার সময় আলোকিত হয়, আর নিচের লাইনগুলো হলো সেই এনভায়রনমেন্ট ও আর্গুমেন্ট যা দিয়ে Claude Code চালু হয়।
+
+1. `cmd/ccam/main.go` `app.Main` ডাকে। ccam অন্য কোনো নামে চালু হলে সেটি একটি [শর্টকাট](/features/shortcuts) এবং সরাসরি লঞ্চারে যায়।
+2. cobra যুক্ত হওয়ার আগেই `app.parse` `os.Args` দেখে। শুধু একা `ccam` (পিকার), কোনো ccam কমান্ডের নাম (`config.Reserved`), `-h`/`--help` ও `-v`/`--version` `cli.Execute`-এ যায়। বাকি সবকিছু চালু করা।
+3. `launcher.Launch` `~/.config/ccam/config.toml` পড়ে, এটিই একমাত্র ফাইল যা এটি পার্স করে।
+4. `launcher.Prepare` নাম বা নম্বর দিয়ে অ্যাকাউন্ট খুঁজে বের করে, সামনের একটি `--` বাদ দেয়, এবং `ResolveClaude` দিয়ে `claude` এক্সিকিউটেবল খুঁজে বের করে। PATH খোঁজার ফলাফল ফাইলের পরিবর্তনের সময়সহ `~/.local/state/ccam/claude-path`-এ ক্যাশ করা থাকে, তাই ccam প্রতিবার চালু করার সময় `PATH` খোঁজে না। ফাইল বদলালে বা না থাকলে আবার খোঁজা হয়। `config.toml`-এ `claude_bin` পাথ থাকলে সেটি যেমন আছে তেমনই ব্যবহার হয়। যে `claude` আসলে ccam নিজেই, ccam সেটি প্রত্যাখ্যান করে, inode দিয়ে তুলনা করে, কারণ তাতে লুপ তৈরি হতো।
+5. `checkLinks` অ্যাকাউন্ট ফোল্ডার `~/.local/share/ccam/profiles/<name>/`-কে তার শেয়ার সেটিংসের সঙ্গে `share.Check` দিয়ে তুলনা করে, যা শুধু `lstat` ও `readlink` ডাকে, প্রতি আইটেমে একটি বা দুটি সিস্টেম কল। অনুপস্থিত লিংক সঙ্গে সঙ্গে তৈরি হয়। ডেটা হারাতে পারে এমন যেকোনো কিছু চালু করা থামিয়ে দেয়।
+6. `applyMCP` শেয়ার করা MCP সার্ভার যোগ করে (নিচে দেখুন)।
+7. `session.Register` সেশনটি নথিভুক্ত করে। ccam তার PID অনুযায়ী নামের একটি মার্কার, যাতে প্রসেস শুরুর সময় থাকে, `$XDG_RUNTIME_DIR/ccam/profile-<name>/<pid>`-এ লেখে (অথবা `XDG_RUNTIME_DIR` না থাকলে `~/.local/state/ccam/locks/`-এ)। যে অ্যাকাউন্ট কথোপকথনের ইতিহাস শেয়ার করে, তার জন্য `historyCheck` প্রথমে `history-<group>-<hash>`-এ চলমান সেশন খোঁজে, যেখানে হ্যাশটি বর্তমান ফোল্ডারের, এবং সেখানেও নিবন্ধন করে। `exec` PID একই রাখে, তাই মার্কারটি তখন Claude Code প্রসেসকেই নির্দেশ করে। ধরে রাখা লক নয়, মার্কার, কারণ Claude Code যে প্রসেসগুলো চালু করে সেগুলো লক উত্তরাধিকারে পেত এবং সেশন শেষ হওয়ার পরেও ধরে রাখত।
+8. `Plan.Exec` টার্মিনালের শিরোনাম `claude · <name>` করে (যখন স্ট্যান্ডার্ড এরর টার্মিনাল), `fsync` ছাড়া চালুর সময় `~/.local/state/ccam/last-used/<name>`-এ লেখে, এবং `syscall.Exec` ডাকে।
+
+Claude Code চলে অ্যাকাউন্ট ফোল্ডারে নির্ধারিত `CLAUDE_CONFIG_DIR` ও অ্যাকাউন্টের নামে নির্ধারিত `CCAM_PROFILE` দিয়ে। এগুলোর যে মান ccam উত্তরাধিকারে পেয়েছে, তা সরিয়ে দেয়। macOS-এ `ccam import` দিয়ে নিবন্ধিত `~/.claude` ফোল্ডারের জন্য এটি `CLAUDE_SECURESTORAGE_CONFIG_DIR`-ও একটি খালি মানে নির্ধারণ করে, যাতে অ্যাকাউন্টটি ও সাধারণ `claude` একই Keychain লগইন ব্যবহার করে।
+
+### কেন exec
+
+`syscall.Exec` ccam প্রসেসকে `claude` দিয়ে প্রতিস্থাপন করে, তাই ccam মেমরিতে থাকে না, কীস্ট্রোক, সিগন্যাল ও এক্সিট কোড Claude Code-এর নিজের, এবং আর্গুমেন্ট একটি অ্যারে থাকে, কখনও শেল স্ট্রিং নয়। সেশনের পরের কাজ, যেমন `claude mcp add` দিয়ে যোগ করা সার্ভার লক্ষ করা, পরের বার চালু করার সময় হয়: ccam `.claude.json`-এর পরিবর্তনের সময় `~/.local/state/ccam/mcp/<name>/seen`-এর সঙ্গে তুলনা করে এবং ফাইলটি বদলালেই শুধু পার্স করে।
+
+### কমান্ড লাইন কোন পথে যায়
+
+তিনটি কমান্ড লাইন, `internal/app`-এর মধ্য দিয়ে তিনটি পথ:
+
+<!-- motion:launch-route -->
+
+শর্টকাট মেলানো হয় `argv[0]` দিয়ে, `ccam <name>` প্রথম আর্গুমেন্ট দিয়ে, এবং দুটোই শেষ হয় `syscall.Exec`-এ। শুধু `ccam usage`-এর মতো ccam কমান্ড cobra-তে পৌঁছায়।
+
+### শেয়ার করা MCP সার্ভার
+
+ডিফল্ট `flag` কৌশলে ccam গ্রুপের MCP সার্ভারগুলো একটি আর্গুমেন্ট হিসেবে Claude Code-কে দেয়, আপনার আর্গুমেন্টের আগে বসিয়ে:
+
+<!-- motion:launch-mcp -->
+
+`mcp.FlagArgs` শুধু গ্রুপের `mcp.json` থাকলে একটি আর্গুমেন্ট ফেরত দেয়, এবং `Plan.InsertArgs` সেটি `claude`-এর ঠিক পরে বসায়। আপনার নিজের `--mcp-config` বা `--strict-mcp-config` তখনও এর ওপরে প্রযোজ্য থাকে। এটি একটি আর্গুমেন্ট, `--mcp-config=<path>`, কারণ Claude Code-এর `--mcp-config` একাধিক মান নেয়: দুটি আর্গুমেন্ট হিসেবে লিখলে এটি পরের প্রম্পটটিকেও একটি কনফিগ ফাইল হিসেবে পড়ত।
+
+`config.toml`-এ `mcp_strategy = "sync"` থাকলে ccam এর বদলে সার্ভারগুলো অ্যাকাউন্টের `.claude.json`-এ লেখে, এবং অ্যাকাউন্টটি আগে থেকেই চললে সেটি বাদ দেয়।
+
+### ১০ ms বাজেট
+
+Claude Code চালু হওয়ার আগে ccam সর্বোচ্চ ১০ ms (p95) যোগ করে। চালু করার পথ কখনও cobra কমান্ড ট্রি তৈরি করে না, Bubble Tea চালু করে না বা নেটওয়ার্ক সংযোগ খোলে না, এবং প্যাকেজের `init()` ফাংশনগুলো মোট ৫ ms-এর বেশি নিলে `TestPackageInitIsCheap` ব্যর্থ হয়। `scripts/perf-check.sh` `hyperfine` দিয়ে `ccam --dry-run work`, `ccam work` ও একটি শর্টকাট মাপে এবং ১০ ms-এর বেশি হলে ব্যর্থ হয়, আর `internal/launcher`-এর `BenchmarkLaunchPath` ধাপগুলো একটি লুপে চালায়। প্রতি ধাপের সময় দেখতে `CCAM_TRACE=1` নির্ধারণ করুন:
+
+```console
+$ CCAM_TRACE=1 ccam --dry-run work >/dev/null
+ccam trace: start                 2.830ms (total 2.830ms)
+ccam trace: load config           0.397ms (total 3.227ms)
+ccam trace: prepare               0.112ms (total 3.339ms)
+ccam trace: check links           0.238ms (total 3.578ms)
+ccam trace: prelaunch             0.083ms (total 3.661ms)
+```
+
+## নিরাপত্তা ও বিশেষ ক্ষেত্র
+
+- অজানা নাম বা নম্বর `no account "<name>"` দিয়ে থেমে যায় এবং `ccam list` দেখিয়ে দেয়। কোনো অ্যাকাউন্টই না থাকলে ccam আপনাকে `ccam add <name>` দিয়ে একটি যোগ করতে বলে।
+- কোনো শেয়ার করা পাথ সাধারণ ফাইলে পরিণত হলে বা ভুল জায়গা নির্দেশ করলে ccam `stopped because of share link problems:` দিয়ে থেমে যায়, সেগুলোর তালিকা দেয়, এবং আপনাকে `ccam doctor --fix` চালাতে বলে। চালু করার পথে এটি ডেটা সরায় না।
+- এই অ্যাকাউন্টের সঙ্গে কথোপকথনের ইতিহাস শেয়ার করে (একই গ্রুপ) এমন অন্য একটি Claude Code একই ফোল্ডারে চললে ccam সতর্ক করে যে ইতিহাস মিশে যেতে পারে এবং জিজ্ঞেস করে `Run anyway? [y/N]`। টার্মিনাল না থাকলে এটি সতর্কতা দেখিয়ে চালিয়ে যায়।
+- `--dry-run` MCP সিঙ্ক, নতুন সার্ভারের বার্তা, ইতিহাসের যাচাই, সেশন মার্কার, শিরোনাম ও সর্বশেষ ব্যবহারের সময় বাদ দেয়, এবং exec করে না। এটি তবুও শেয়ার লিংক যাচাই করে, এবং স্বাভাবিক চালু করার মতোই অনুপস্থিত লিংক তৈরি করে।
+- `mcp_strategy = "sync"` থাকলে ব্যর্থ সিঙ্ক `ccam: MCP sync failed (launching anyway): …` প্রিন্ট করে এবং Claude Code আগে থেকে থাকা সার্ভারগুলো নিয়েই চালু হয়।
+
+## সম্পর্কিত
+
+- [শর্টকাট কমান্ড](/features/shortcuts)
+- [অ্যাকাউন্ট পরিচালনা](/features/accounts)
+- [কমান্ড রেফারেন্স](/docs/commands)
+- [MCP সার্ভার, সেটিংস ও ইতিহাস শেয়ার করুন](/docs/sharing)
+- [CLAUDE_CONFIG_DIR কীভাবে কাজ করে](/guides/claude-config-dir)

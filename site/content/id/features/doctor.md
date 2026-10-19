@@ -1,0 +1,121 @@
+---
+title: Memeriksa dan memperbaiki
+description: Periksa tautan pembagian, izin file, login, dan versi Claude Code dengan ccam doctor, lalu perbaiki yang aman diperbaiki dengan ccam doctor --fix.
+updated: 2026-10-19
+order: 9
+translation: machine
+sourceHash: a1b61efe2b1f
+---
+
+`ccam doctor` memeriksa instalasi ccam Anda: biner Claude Code, folder setiap akun, login dan tautan pembagian, server MCP bersama, endpoint penggunaan, dan perintah pintasan Anda. `ccam doctor --fix` memperbaiki apa yang bisa diperbaiki tanpa kehilangan data dan terlebih dahulu memindahkan setiap file yang digantinya ke folder cadangan. Jalankan perintah ini saat `ccam <name>` berhenti karena masalah tautan pembagian, setelah Anda memulihkan file secara manual, atau setelah Claude Code diperbarui.
+
+## Penggunaan
+
+```sh
+ccam doctor                  # check everything, change nothing
+ccam doctor --fix            # check, then repair what is safe to repair
+ccam --dry-run doctor --fix  # report only: what --fix would repair
+```
+
+Setiap temuan berupa satu baris dengan tanda: `✓` OK, `·` informasi, `!` peringatan, `✗` galat. Temuan akun diawali dengan nama akun.
+
+```console
+$ ccam doctor
+✓ Claude Code 2.1.302 (Claude Code) (/home/me/.local/bin/claude)
+! personal: folder permissions are 755 (should be 0700)
+! personal: .credentials.json permissions are 644 (should be 0600)
+✓ personal: login valid (me@example.com)
+✗ personal: /home/me/.local/share/ccam/profiles/personal/settings.json: set to shared but is a real file, not a link
+· personal: unknown entries (Claude Code layout may have changed): newthing
+! work: not logged in → `ccam login work`
+✓ work: share links OK
+! missing shortcuts in /home/me/.local/bin: ccp
+
+`ccam doctor --fix` repairs what it can.
+```
+
+Dengan `--fix`, setiap temuan yang berhasil diperbaiki diakhiri dengan `→ fixed`:
+
+```console
+$ ccam doctor --fix
+✓ Claude Code 2.1.302 (Claude Code) (/home/me/.local/bin/claude)
+! personal: folder permissions are 755 (should be 0700) → fixed
+! personal: .credentials.json permissions are 644 (should be 0600) → fixed
+✓ personal: login valid (me@example.com)
+✗ personal: /home/me/.local/share/ccam/profiles/personal/settings.json: set to shared but is a real file, not a link → fixed
+· personal: unknown entries (Claude Code layout may have changed): newthing
+! work: not logged in → `ccam login work`
+✓ work: share links OK
+! missing shortcuts in /home/me/.local/bin: ccp → fixed
+```
+
+## Opsi
+
+| Opsi | Fungsinya | Default |
+| --- | --- | --- |
+| `--fix` | Memperbaiki yang aman diperbaiki (file yang diubah dicadangkan) | nonaktif |
+| `--dry-run` (global) | Menjalankan semua pemeriksaan tetapi tidak memperbaiki apa pun, bahkan dengan `--fix` | nonaktif |
+
+`ccam doctor` tidak menerima argumen. Perintah ini menghormati `--dry-run`: `ccam --dry-run doctor --fix` menampilkan temuan yang sama dengan `ccam doctor` dan tidak mengubah apa pun.
+
+Kode keluarnya `1` jika setidaknya satu temuan `✗` tidak diperbaiki, dan `0` jika tidak. Peringatan dan informasi tidak pernah menggagalkan proses. Jika proses gagal tanpa `--fix`, ccam diakhiri dengan baris kosong dan `` `ccam doctor --fix` repairs what it can. ``. Konfigurasi yang tidak dapat dimuat juga berakhir dengan `1` dan galat `ccam:`.
+
+## Cara kerjanya
+
+`internal/cli/doctor.go` memuat `~/.config/ccam/config.toml` dan memanggil `doctor.Run` di `internal/doctor/doctor.go`, yang menjalankan pemeriksaan dengan urutan tetap dan mengembalikan temuan. `--fix` diteruskan sebagai `Options.Fix`, yang diatur ke false saat dry run.
+
+<!-- motion:doctor-checks -->
+
+Blok tengah dijalankan sekali per akun. Pemeriksaannya, dan apa yang dilakukan `--fix` untuk masing-masing:
+
+1. **Versi Claude Code** (`checkClaude`). Mencari biner `claude` dengan cara yang sama seperti peluncur dan menjalankan `claude --version`. Jika versinya tidak diawali `2.1.302`, yaitu versi yang menjadi acuan verifikasi tata letak folder ccam (`doctor.LayoutVersion`), pemeriksaan ini menambahkan `· ccam was verified against the folder layout of Claude Code 2.1.302. Any 'unknown entries' below may mean the layout changed`. Biner yang tidak ada atau `--version` yang gagal adalah galat. Tidak ada perbaikan.
+2. **Info masuk di environment** (`checkAuthEnv`). Memberi peringatan jika `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY`, atau `ANTHROPIC_AUTH_TOKEN` diatur: setiap akun yang dijalankan dari shell itu mewarisinya, dan Claude Code lebih mengutamakannya daripada login milik akun. Tidak ada perbaikan; hapus sendiri variabel itu.
+3. **Folder** (`checkProfile`). Folder akun yang tidak ada adalah galat dan mengakhiri pemeriksaan akun tersebut. Izin dengan bit group atau other yang diatur adalah peringatan; `--fix` menjalankan `chmod 0700`.
+4. **File login** (`checkCredentials`). `.credentials.json` diperiksa dengan `lstat`. Symlink adalah galat, karena setiap akun harus memiliki tokennya sendiri, dan tidak diperbaiki. Mode selain `0600` adalah peringatan; `--fix` menjalankan `chmod 0600`. Lalu login dibaca (di macOS dari Rantai Kunci (Keychain) terlebih dahulu). Tidak adanya login adalah peringatan yang mengarah ke `ccam login <name>`. Refresh token yang kedaluwarsa adalah galat `login expired`; token akses yang kedaluwarsa hanya informasi, karena Claude Code memperbaruinya saat dijalankan berikutnya. Tidak satu pun dari ini diperbaiki.
+5. **Tautan pembagian** (`share.Check`). Membandingkan setiap path di `share.Layout` dengan pengaturan pembagian akun, hanya menggunakan `lstat` dan `readlink`. Pemeriksaan ini melaporkan empat jenis: tautan yang hilang, tautan yang mengarah ke tempat lain, file asli di tempat yang seharusnya berisi tautan, dan tautan yang tertinggal untuk item yang kini lokal. Tautan yang hilang adalah peringatan, sisanya galat.
+6. **Entri tak dikenal** (`checkUnknownEntries`). Mendaftar nama tingkat atas di folder akun yang tidak dikenal ccam (`share.Known`), sebagai petunjuk bahwa tata letak Claude Code berubah. Hanya informasi.
+7. **Path plugin** (`checkPlugins`). Registri plugin (`installed_plugins.json`, `known_marketplaces.json`) menyimpan path absolut. Di `plugins/` setiap grup, path yang melewati folder satu akun akan rusak saat akun itu dihapus atau diganti namanya. `--fix` menulis ulang path itu ke folder grup dengan `profile.RewritePluginPaths`, yaitu penulisan atomik file registri.
+8. **Server MCP** (`checkMCP`). Memuat `mcp.json` setiap grup sekali. File yang tidak dapat dibaca adalah galat; server yang gagal `mcp.Validate` adalah peringatan. Tidak ada perbaikan.
+9. **Format respons penggunaan** (`checkUsageFormat`). Menanyakan endpoint penggunaan, tanpa cache dan dengan batas 3 detik seperti biasa, untuk satu akun demi satu akun sampai ada yang menjawab. Jika respons tidak lagi dapat di-parse, pemeriksaan ini memperingatkan bahwa `ccam usage` beralih ke cache status line. Ini satu-satunya pemeriksaan yang memakai jaringan.
+10. **Pintasan** (`checkShims`). Hanya jika ada akun yang memiliki pintasan. Tautan yang hilang di `~/.local/bin` adalah peringatan; `--fix` memanggil `shim.Install`, yang hanya membuat tautan yang hilang dan tidak pernah menyentuh file lain. Folder bin yang tidak ada di `PATH` adalah peringatan dan tidak diperbaiki.
+
+### Memperbaiki tautan pembagian
+
+Jalur peluncuran langsung membuat tautan yang hilang, tetapi berhenti untuk apa pun yang bisa menyebabkan kehilangan data dan mengarahkan ke sini:
+
+```console
+$ ccam work
+ccam: stopped because of share link problems:
+  /home/me/.local/share/ccam/profiles/work/CLAUDE.md: set to shared but is a real file, not a link
+Repair them with `ccam doctor --fix`, then run again
+```
+
+Untuk setiap masalah tautan pembagian, `--fix` memanggil `share.Build` dengan pengaturan pembagian akun sebagai keadaan saat ini sekaligus keadaan tujuan, lalu `Plan.Apply`. `Build` menurunkan ulang setiap langkah dari apa yang ada di disk, rencana yang sama dengan yang dipakai `ccam share`, sehingga perbaikan mengikuti aturan yang sama seperti saat mengaktifkan pembagian.
+
+<!-- motion:doctor-repair -->
+
+Di sini `settings.json` adalah file asli. Karena grup sudah memiliki `settings.json` yang berbeda, konflik mengambil pilihan default-nya, `KeepGroup`, sehingga salinan milik grup tetap dipakai. File milik akun dipindahkan ke `.ccam-backup/<time>/settings.json` di dalam folder akun, dan `os.Symlink` menautkan path itu ke grup. Kasus lainnya:
+
+- Jika grup belum memiliki salinan, file akun dipindahkan ke grup dan menjadi isi pertamanya.
+- Untuk folder, file yang belum dimiliki grup dipindahkan ke grup; sisanya masuk ke cadangan.
+- Untuk `history.jsonl`, default-nya adalah `merge by line`: baris-baris milik grup, lalu baris baru Anda. Salinan grup sebelumnya disimpan di `.ccam-backup/<time>/group/`.
+- Tautan ke grup lain diganti. Tautan ke folder di luar ccam masuk ke cadangan, dan isinya menjadi isi awal grup jika grup masih kosong.
+- Tautan yang tertinggal untuk item yang kini lokal dihapus, dan akun mendapatkan salinan isi grup.
+
+Selain menghapus tautan, setiap langkah memindahkan data ke grup atau ke folder cadangan. Tidak ada yang dihapus.
+
+## Keamanan dan kasus khusus
+
+- `ccam doctor` biasa tidak pernah mengubah apa pun. Gunakan `--dry-run` bersama `--fix` agar pasti aman di skrip.
+- `doctor --fix` tidak memeriksa apakah sebuah akun sedang berjalan. Keluar dari Claude Code untuk akun tersebut sebelum memperbaiki tautan pembagiannya, karena sesi terus menulis ke file-file itu.
+- Jika perbaikan pembagian gagal, ccam melaporkan `could not repair share links: <error>` untuk akun tersebut dan melewati pemeriksaan entri tak dikenalnya. Akun lain tetap diperiksa.
+- Jika `ccam share` gagal di tengah jalan, perintah itu terlebih dahulu menyimpan pengaturan tujuan dan meminta Anda menyelesaikannya dengan `ccam doctor --fix`.
+- `.credentials.json` yang berupa symlink, login yang kedaluwarsa, dan info masuk di environment dilaporkan tetapi tidak pernah diubah.
+- Penulisan ulang registri plugin ditulis secara atomik tetapi tidak disalin ke `.ccam-backup/`.
+
+## Terkait
+
+- [Berbagi server MCP, pengaturan, dan riwayat](/docs/sharing)
+- [Menyalin penyiapan yang sudah ada](/features/migrate)
+- [Batas penggunaan dan perpindahan akun](/docs/usage-limits)
+- [Perintah](/docs/commands)
