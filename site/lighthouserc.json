@@ -6,9 +6,10 @@
         "http://localhost/index.html",
         "http://localhost/en/docs/quick-start/index.html",
         "http://localhost/en/docs/commands/index.html",
-        "http://localhost/en/guides/multiple-claude-code-accounts/index.html"
+        "http://localhost/en/guides/multiple-claude-code-accounts/index.html",
+        "http://localhost/en/features/launch/index.html"
       ],
-      "numberOfRuns": 1,
+      "numberOfRuns": 3,
       "settings": { "formFactor": "mobile", "screenEmulation": { "mobile": true } }
     },
     "assert": {

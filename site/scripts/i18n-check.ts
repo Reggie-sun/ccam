@@ -69,7 +69,10 @@ function compare(en: unknown, tr: unknown, path: string, code: string): void {
 }
 
 const codeBlocks = (md: string) => [...md.matchAll(/```[\s\S]*?```/g)].map((m) => m[0]);
-const inlineCode = (md: string) => [...md.replace(/```[\s\S]*?```/g, "").matchAll(/`([^`]+)`/g)].map((m) => m[1]).sort();
+// Inline code as Markdown reads it: a run of backticks closes only at a run
+// of the same length, so `` a `b` c `` is one span.
+const codeSpan = /(?<!`)(`+)(?!`)([\s\S]*?[^`])\1(?!`)/g;
+const inlineCode = (md: string) => [...md.replace(/```[\s\S]*?```/g, "").matchAll(codeSpan)].map((m) => m[2]).sort();
 const links = (md: string) => [...md.matchAll(/\]\(([^)]+)\)/g)].map((m) => m[1]).sort();
 
 const en = JSON.parse(readFileSync("messages/en.json", "utf8"));
@@ -99,7 +102,7 @@ for (const l of locales.filter((l) => l.code !== "en" && (!only || l.code === on
       if (src.body.includes("<!-- commands -->") !== tr.body.includes("<!-- commands -->")) errors.push(`${file}: <!-- commands --> marker missing`);
       const motion = (md: string) => [...md.matchAll(/<!-- motion:[a-z0-9-]+ -->/g)].map((m) => m[0]).join(" ");
       if (motion(src.body) !== motion(tr.body)) errors.push(`${file}: motion diagrams differ: ${motion(src.body)} ≠ ${motion(tr.body)}`);
-      const visible = (s: string) => s.replace(/```[\s\S]*?```/g, "").replace(/`[^`]+`/g, "");
+      const visible = (s: string) => s.replace(/```[\s\S]*?```/g, "").replace(codeSpan, "");
       for (const term of glossary) {
         if (visible(src.body + src.data.title).includes(term) && !(tr.body + tr.data.title).includes(term)) errors.push(`${file}: glossary term "${term}" missing`);
       }
