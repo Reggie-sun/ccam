@@ -1,10 +1,11 @@
 ---
 title: Quick start
-description: Magdagdag ng dalawang Claude Code account gamit ang ccam add, bigyan sila ng mga shortcut gaya ng ccwork, lumipat sa pagitan nila, at piliin kung ano ang ishe-share nila.
+metaTitle: "Quick start: magdagdag at mag-switch ng account"
+description: Magdagdag ng dalawang Claude Code account gamit ang ccam add, bigyan sila ng shortcut gaya ng ccwork, lumipat sa pagitan nila, at piliin ang ishe-share nila.
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: eb078efa2ee2
+sourceHash: 745a9904e32a
 ---
 
 Idagdag ang bawat account gamit ang `ccam add`, saka simulan ang Claude Code gamit ang `ccam <name>` o ang shortcut na ikaw mismo ang nagpangalan, gaya ng `ccwork`. Iyan lang ang kailangan ng karamihan.

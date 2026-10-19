@@ -4,7 +4,7 @@ description: "ccam কেন তৈরি হলো, একাধিক Claude C
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: bbc9d9014f98
+sourceHash: b116c91bb8d4
 ---
 
 ccam একটি ছোট কমান্ড-লাইন টুল, তাঁদের জন্য যাঁরা একই কম্পিউটারে একাধিক Claude Code অ্যাকাউন্ট ব্যবহার করেন: একটি ব্যক্তিগত ও একটি কাজের অ্যাকাউন্ট, অথবা একটি দীর্ঘ প্রকল্পের জন্য কয়েকটি অ্যাকাউন্ট।

@@ -1,8 +1,9 @@
 import { getLocale } from "../i18n/locales";
-import { faqEntries, getPages, pageLocales, renderMarkdown, type Page, type Section } from "../lib/content";
+import { faqEntries, getPage, getPages, pageLocales, renderMarkdown, type Page, type Section } from "../lib/content";
 import { format, formatDate, getMessages, type Messages } from "../lib/i18n";
 import { abs, homePath, pagePath, REPO } from "../lib/paths";
-import { articleLd, CLAUDE_CODE_VERSION, faqLd, VERSION } from "../lib/jsonld";
+import { articleLd, AUTHOR, CLAUDE_CODE_VERSION, faqLd, VERSION } from "../lib/jsonld";
+import { ogPath } from "../lib/seo";
 import commands from "../data/commands.json";
 import { ChevronIcon } from "./Icons";
 import { JsonLd } from "./JsonLd";
@@ -59,6 +60,9 @@ export function DocPage({ page }: { page: Page }) {
   const path = pagePath(page.locale, page.section, page.slug);
   const active = page.slug === "faq" ? "faq" : page.section === "docs" || page.section === "guides" ? "docs" : undefined;
   const sectionName = group.title;
+  // The author's name is a link, wherever the language puts it in the sentence.
+  const byline = format(l, m.docs.byline, { author: "\u0000" }).split("\u0000");
+  const published = getPage("en", page.section, page.slug)?.published ?? page.updated;
   const toc = headings.filter((h) => h.depth === 2);
   const tocList = (
     <ol>
@@ -87,6 +91,12 @@ export function DocPage({ page }: { page: Page }) {
           <p className="crumb">{sectionName}</p>
           <h1>{page.title}</h1>
           <p className="meta">
+            {byline[0]}
+            <a href={AUTHOR.url} dir="ltr">
+              {AUTHOR.name}
+            </a>
+            {byline[1]}
+            <br />
             {format(l, m.docs.updated, { date: formatDate(l, page.updated) })}
             <br />
             {format(l, m.docs.versions, { ccam: page.ccam ?? VERSION, claude: page.claude ?? CLAUDE_CODE_VERSION })}
@@ -133,14 +143,18 @@ export function DocPage({ page }: { page: Page }) {
       </div>
       <JsonLd
         data={articleLd({
+          type: page.section === "blog" ? "BlogPosting" : "TechArticle",
           title: page.title,
           description: page.description,
           url: abs(path),
+          published,
           updated: page.updated,
           lang: l.lang,
+          image: abs(ogPath(page.locale, `${page.section}-${page.slug}`)),
           crumbs: [
             { name: "ccam", url: abs(homePath(page.locale)) },
-            { name: sectionName, url: abs(pagePath(page.locale, siblings[0].section, siblings[0].slug)) },
+            // A section's first page stands for the section; it is not listed twice.
+            ...(i === 0 ? [] : [{ name: sectionName, url: abs(pagePath(page.locale, siblings[0].section, siblings[0].slug)) }]),
             { name: page.title, url: abs(path) },
           ],
         })}

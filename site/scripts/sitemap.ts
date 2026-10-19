@@ -8,7 +8,6 @@ import { builtLocales, OUT, routes } from "./lib.ts";
 const esc = (s: string) => s.replace(/&/g, "&amp;");
 const all = routes();
 await mkdir(join(OUT, "sitemaps"), { recursive: true });
-const today = new Date().toISOString().slice(0, 10);
 
 for (const l of builtLocales()) {
   const urls = all.filter((r) => r.locale === l.code).map((r) => {
@@ -23,7 +22,9 @@ for (const l of builtLocales()) {
   );
 }
 
-const index = builtLocales().map((l) => `  <sitemap>\n    <loc>${abs(`/sitemaps/${l.code}.xml`)}</loc>\n    <lastmod>${today}</lastmod>\n  </sitemap>`);
+// A locale's sitemap changes when one of its pages does, not on every build.
+const latest = (code: string) => all.filter((r) => r.locale === code).map((r) => r.updated).sort().at(-1);
+const index = builtLocales().map((l) => `  <sitemap>\n    <loc>${abs(`/sitemaps/${l.code}.xml`)}</loc>\n    <lastmod>${latest(l.code)}</lastmod>\n  </sitemap>`);
 await writeFile(join(OUT, "sitemap-index.xml"), `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${index.join("\n")}\n</sitemapindex>\n`);
 
 // Search and AI crawlers are all welcome (docs/WEBSITE_PLAN.md 9.4).

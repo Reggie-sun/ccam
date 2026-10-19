@@ -4,7 +4,7 @@ description: Die 5-Stunden- und Wochennutzung aller Claude Code-Konten mit ccam 
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: 8ab41501c548
+sourceHash: cbc6b0c0618d
 ---
 
 `ccam usage` zeigt, wie viel jedes Konto von seinem 5-Stunden- und seinem Wochenlimit verbraucht hat. `ccam next --auto` öffnet das Konto mit dem meisten Spielraum, und `--continue` nimmt das aktuelle Gespräch mit.

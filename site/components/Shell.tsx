@@ -32,6 +32,7 @@ export function Shell({ locale, alternates, active, menu, children }: Props) {
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT }} />
         {l.font === "brand" && <link rel="preload" href="/fonts/newsreader.woff2" as="font" type="font/woff2" crossOrigin="" />}
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <meta name="theme-color" content="#f5f5f5" media="(prefers-color-scheme: light)" />
         <meta name="theme-color" content="#0c0a09" media="(prefers-color-scheme: dark)" />
         <script type="speculationrules" dangerouslySetInnerHTML={{ __html: SPECULATION }} />
@@ -112,6 +113,7 @@ export function Shell({ locale, alternates, active, menu, children }: Props) {
             <a className="brand" href={homePath(locale)}>ccam</a>
             <p>{m.footer.unofficial}</p>
             <p>{m.footer.terms}</p>
+            <p>{m.footer.analytics}</p>
             <ul className="footer-links">
               <li><a href={REPO}>{m.footer.license}</a></li>
               <li><a href={`/${locale}/languages/`}>{m.footer.languages}</a></li>

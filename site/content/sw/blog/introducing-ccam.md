@@ -4,7 +4,7 @@ description: Kwa nini ccam ipo, inawafanyia nini watu wenye akaunti kadhaa za Cl
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: bbc9d9014f98
+sourceHash: b116c91bb8d4
 ---
 
 ccam ni zana ndogo ya mstari wa amri kwa watu wanaotumia zaidi ya akaunti moja ya Claude Code kwenye kompyuta moja: akaunti binafsi na ya kazi, au akaunti kadhaa kwa mradi mmoja mrefu.

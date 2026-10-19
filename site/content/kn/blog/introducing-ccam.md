@@ -4,7 +4,7 @@ description: ccam ಏಕೆ ಇದೆ, ಹಲವು Claude Code ಖಾತೆಗ�
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: bbc9d9014f98
+sourceHash: b116c91bb8d4
 ---
 
 ccam ಒಂದು ಚಿಕ್ಕ ಕಮಾಂಡ್-ಲೈನ್ ಟೂಲ್. ಒಂದೇ ಕಂಪ್ಯೂಟರ್‌ನಲ್ಲಿ ಒಂದಕ್ಕಿಂತ ಹೆಚ್ಚು Claude Code ಖಾತೆಗಳನ್ನು ಬಳಸುವವರಿಗಾಗಿ ಇದು: ಒಂದು ವೈಯಕ್ತಿಕ ಮತ್ತು ಒಂದು ಕೆಲಸದ ಖಾತೆ, ಅಥವಾ ಒಂದು ದೀರ್ಘ ಪ್ರಾಜೆಕ್ಟ್‌ಗಾಗಿ ಹಲವು ಖಾತೆಗಳು.

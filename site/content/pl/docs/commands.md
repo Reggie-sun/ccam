@@ -1,10 +1,11 @@
 ---
 title: Opis poleceń
+metaTitle: "Opis poleceń ccam"
 description: Wszystkie polecenia i opcje ccam, od ccam add i ccam <name> po ccam usage, ccam next i ccam doctor.
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a5a33b1a2f4
+sourceHash: 65fb2b8f6617
 ---
 
 Wpisz `--dry-run` przed dowolnym poleceniem, żeby zobaczyć, co by zrobiło, bez wykonywania go, na przykład `ccam --dry-run work`.

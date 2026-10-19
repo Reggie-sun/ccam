@@ -4,7 +4,7 @@ description: CLAUDE_CONFIG_DIR در Claude Code چه می‌کند، چه چیز
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 62f178595254
+sourceHash: ef9317030e42
 ---
 
 `CLAUDE_CONFIG_DIR` به Claude Code می‌گوید به‌جای `~/.claude` از کدام پوشه استفاده کند. هر چیزی که به حساب وابسته است در همان پوشه قرار دارد: ورود، تنظیمات، سرورهای MCP، پلاگین‌ها و تاریخچه گفتگو. اگر آن را به پوشه‌های مختلف اشاره دهید، حساب‌های جداگانه خواهید داشت.
@@ -13,13 +13,17 @@ sourceHash: 62f178595254
 CLAUDE_CONFIG_DIR=~/.claude-work claude
 ```
 
-## داخل پوشه چه چیزهایی هست
+## آیا CLAUDE_CONFIG_DIR به‌طور رسمی پشتیبانی می‌شود؟
+
+بله. Claude Code آن را در میان [متغیرهای محیطی](https://code.claude.com/docs/en/env-vars) خود به‌عنوان راه تغییر پوشه پیکربندی آورده است، «مفید برای اجرای هم‌زمان چند حساب»، و [راهنمای احراز هویت](https://code.claude.com/docs/en/authentication#log-in-with-multiple-accounts) آن برای ورود با چند حساب از آن استفاده می‌کند. می‌توانید آن را در شل یا در تنظیمات کاربر تنظیم کنید، اما نه در تنظیمات یک پروژه.
+
+## داخل پوشه چه چیزهایی هست؟
 
 بررسی‌شده با Claude Code 2.1.302:
 
 | مسیر | محتوا | قابل اشتراک |
 | --- | --- | --- |
-| `.credentials.json` | توکن‌های ورود (Linux)، توکن‌های OAuth سرورهای MCP | خیر |
+| `.credentials.json` | توکن‌های ورود (Linux، Windows)، توکن‌های OAuth سرورهای MCP | خیر |
 | `.claude.json` | جزئیات حساب، سرورهای MCP کاربر، وضعیت هر پروژه | خیر (سرورهای MCP جداگانه) |
 | `settings.json` | مجوزها، hookها، مدل، خط وضعیت، پلاگین‌ها | بله |
 | `CLAUDE.md` | دستورالعمل‌های سراسری | بله |
@@ -28,13 +32,19 @@ CLAUDE_CONFIG_DIR=~/.claude-work claude
 | `history.jsonl` | تاریخچه پرامپت‌ها | بله |
 | `sessions/`، `shell-snapshots/`، `cache/` و موارد دیگر | وضعیت زمان اجرا | خیر |
 
-## دو نکته که کاربران را غافلگیر می‌کند
+## چه چیزهایی کاربران را غافلگیر می‌کند؟
 
 **بدون `CLAUDE_CONFIG_DIR`، فایل `.claude.json` داخل `~/.claude` نیست.** در این حالت Claude Code آن را در `~/.claude.json`، کنار پوشه، نگه می‌دارد. اگر شروع به استفاده از `CLAUDE_CONFIG_DIR=~/.claude` کنید، Claude Code به‌جای آن به دنبال `~/.claude/.claude.json` می‌گردد و حساب شما را پیدا نمی‌کند. `ccam import` این مشکل را با پیوند دادن این دو حل می‌کند.
 
-**در macOS ورود در Keychain است، نه در پوشه.** Claude Code آن را با نام `Claude Code-credentials` ذخیره می‌کند و وقتی `CLAUDE_CONFIG_DIR` تنظیم شده باشد، یک هش کوتاه از مسیر پوشه را به دنبال آن می‌آورد. بنابراین پوشه‌های جداگانه مدخل‌های جداگانه‌ای در Keychain می‌گیرند. اگر Keychain نوشتن را نپذیرد، Claude Code به‌جای آن از `.credentials.json` داخل پوشه استفاده می‌کند.
+**در macOS ورود در Keychain است، نه در پوشه.** Claude Code آن را با نام `Claude Code-credentials` ذخیره می‌کند و وقتی `CLAUDE_CONFIG_DIR` تنظیم شده باشد، یک هش کوتاه از مسیر پوشه را به دنبال آن می‌آورد. بنابراین پوشه‌های جداگانه مدخل‌های جداگانه‌ای در Keychain می‌گیرند. اگر Keychain نوشتن را نپذیرد، Claude Code همان‌طور که [مستنداتش](https://code.claude.com/docs/en/authentication#credential-management) شرح می‌دهد، به‌جای آن از `.credentials.json` داخل پوشه استفاده می‌کند.
 
-## اشتراک‌گذاری بین پوشه‌ها
+**همه ورودها داخل پوشه نیستند.** ورود به Claude Console بدون کلید API بیرون از پوشه ذخیره می‌شود، بنابراین پوشه‌های جداگانه دو ورود از این نوع را از هم جدا نگه نمی‌دارند. ورودهای claude.ai و کلیدهای API برای هر پوشه جداگانه نگه داشته می‌شوند.
+
+## پوشه در Windows کجاست؟
+
+به‌طور پیش‌فرض `%USERPROFILE%\.claude`، و ورود در `.credentials.json` داخل آن است. برای هر حساب اضافی، `CLAUDE_CONFIG_DIR` را روی پوشه دیگری تنظیم کنید، به همان شکلی که در Linux و macOS انجام می‌دهید.
+
+## آیا پوشه‌ها می‌توانند فایل‌ها را به اشتراک بگذارند؟
 
 پیوندهای نمادین کار می‌کنند: Claude Code از طریق یک `settings.json` یا پوشه `projects/` پیوندی می‌خواند و می‌نویسد و پیوند را حفظ می‌کند. سرورهای MCP استثنا هستند، زیرا `.claude.json` را با ورود شریک‌اند؛ به‌جای آن، آن‌ها را با `--mcp-config` بدهید.
 

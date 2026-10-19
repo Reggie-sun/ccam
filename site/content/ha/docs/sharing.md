@@ -4,7 +4,7 @@ description: Yadda ccam ke raba sabobin MCP, settings.json, CLAUDE.md, agents, s
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: ccbb2c5e97bc
+sourceHash: 1e2f0d6809fc
 ---
 
 Kowane asusu yana riƙe bayanan shigarsa. Duk sauran abubuwa za a iya raba su ɗaya bayan ɗaya: ccam yana mayar da fayil ko foldar asusun mahaɗi zuwa foldar rukuni da aka raba, don haka canjin da aka yi a asusu ɗaya yana bayyana a duk asusan wannan rukunin.

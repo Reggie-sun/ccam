@@ -4,7 +4,7 @@ description: Cómo ccam comparte servidores MCP, settings.json, CLAUDE.md, agent
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: ccbb2c5e97bc
+sourceHash: 1e2f0d6809fc
 ---
 
 Cada cuenta mantiene su propio inicio de sesión. Todo lo demás se puede compartir elemento por elemento: ccam enlaza el archivo o la carpeta de la cuenta con una carpeta de grupo compartida, de modo que un cambio hecho en una cuenta aparece en todas las cuentas de ese grupo.

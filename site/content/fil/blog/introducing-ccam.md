@@ -4,7 +4,7 @@ description: Bakit ginawa ang ccam, ano ang naitutulong nito sa mga may maraming
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: bbc9d9014f98
+sourceHash: b116c91bb8d4
 ---
 
 Ang ccam ay maliit na command-line tool para sa mga gumagamit ng higit sa isang Claude Code account sa iisang computer: isang personal at isang work account, o ilang account para sa isang mahabang proyekto.

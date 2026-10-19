@@ -1,10 +1,11 @@
 ---
 title: Referensi perintah
+metaTitle: Referensi perintah ccam
 description: Semua perintah dan opsi ccam, dari ccam add dan ccam <name> hingga ccam usage, ccam next, dan ccam doctor.
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a5a33b1a2f4
+sourceHash: 65fb2b8f6617
 ---
 
 Letakkan `--dry-run` sebelum perintah apa pun untuk melihat apa yang akan dilakukannya tanpa benar-benar menjalankannya, misalnya `ccam --dry-run work`.

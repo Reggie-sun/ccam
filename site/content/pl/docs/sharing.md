@@ -4,7 +4,7 @@ description: Jak ccam współdzieli serwery MCP, settings.json, CLAUDE.md, agent
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: ccbb2c5e97bc
+sourceHash: 1e2f0d6809fc
 ---
 
 Każde konto ma własny login. Wszystko inne można współdzielić element po elemencie: ccam linkuje plik lub folder konta do współdzielonego folderu grupy, więc zmiana wprowadzona na jednym koncie pojawia się na wszystkich kontach tej grupy.

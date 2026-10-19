@@ -1,10 +1,11 @@
 ---
 title: コマンドリファレンス
+metaTitle: "ccamコマンドリファレンス"
 description: ccam addやccam <name>から、ccam usage、ccam next、ccam doctorまで、ccamのすべてのコマンドとオプションを説明します。
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a5a33b1a2f4
+sourceHash: 65fb2b8f6617
 ---
 
 どのコマンドでも前に`--dry-run`を付けると、実際には実行せずに何をするかを確認できます。たとえば`ccam --dry-run work`のように使います。

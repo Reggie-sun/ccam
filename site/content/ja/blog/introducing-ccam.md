@@ -4,7 +4,7 @@ description: ccamが生まれた理由、複数のClaude Codeアカウントを�
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: bbc9d9014f98
+sourceHash: b116c91bb8d4
 ---
 
 ccamは、同じコンピューターで複数のClaude Codeアカウントを使う人のための小さなコマンドラインツールです。たとえば個人用と仕事用のアカウントや、1つの長いプロジェクトで使う複数のアカウントが対象です。

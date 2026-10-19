@@ -4,7 +4,7 @@ description: Come ccam condivide server MCP, settings.json, CLAUDE.md, agenti, s
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: ccbb2c5e97bc
+sourceHash: 1e2f0d6809fc
 ---
 
 Ogni account mantiene il proprio login. Tutto il resto si può condividere elemento per elemento: ccam collega il file o la cartella dell'account a una cartella di gruppo condivisa, così una modifica fatta in un account compare in tutti gli account di quel gruppo.

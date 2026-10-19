@@ -1,10 +1,11 @@
 ---
 title: 명령어 레퍼런스
+metaTitle: "ccam 명령어 레퍼런스"
 description: ccam add, ccam <name>부터 ccam usage, ccam next, ccam doctor까지 ccam의 모든 명령과 옵션을 정리했습니다.
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a5a33b1a2f4
+sourceHash: 65fb2b8f6617
 ---
 
 어떤 명령이든 앞에 `--dry-run`을 붙이면 실제로 실행하지 않고 무엇을 할지만 보여 줍니다(예: `ccam --dry-run work`).

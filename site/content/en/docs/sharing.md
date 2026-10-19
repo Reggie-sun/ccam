@@ -2,6 +2,7 @@
 title: Share MCP servers, settings and history
 description: How ccam shares MCP servers, settings.json, CLAUDE.md, agents, skills and conversation history between Claude Code accounts while keeping every login separate.
 updated: 2026-10-19
+published: 2026-10-19
 order: 4
 translation: source
 ---

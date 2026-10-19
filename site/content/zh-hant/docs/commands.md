@@ -1,10 +1,11 @@
 ---
 title: 指令參考
+metaTitle: "ccam 指令參考"
 description: 所有 ccam 指令和選項，從 ccam add、ccam <name> 到 ccam usage、ccam next 和 ccam doctor。
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a5a33b1a2f4
+sourceHash: 65fb2b8f6617
 ---
 
 在任何指令前加上 `--dry-run`，就能查看它會做什麼而不實際執行，例如 `ccam --dry-run work`。

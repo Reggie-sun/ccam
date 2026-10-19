@@ -4,7 +4,7 @@ description: ccam을 만든 이유, 여러 Claude Code 계정을 쓰는 사람�
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: bbc9d9014f98
+sourceHash: b116c91bb8d4
 ---
 
 ccam은 한 컴퓨터에서 Claude Code 계정을 두 개 이상 쓰는 사람을 위한 작은 명령줄 도구입니다. 개인 계정과 회사 계정을 함께 쓰거나, 긴 프로젝트 하나에 여러 계정을 쓰는 경우가 그렇습니다.

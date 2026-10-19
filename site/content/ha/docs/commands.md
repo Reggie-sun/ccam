@@ -1,10 +1,11 @@
 ---
 title: Bayanin umarnai
+metaTitle: Bayanin umarnan ccam
 description: Kowane umarni da zaɓi na ccam, daga ccam add da ccam <name> zuwa ccam usage, ccam next da ccam doctor.
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a5a33b1a2f4
+sourceHash: 65fb2b8f6617
 ---
 
 Saka `--dry-run` kafin kowane umarni don ganin abin da zai yi ba tare da ya yi shi ba, misali `ccam --dry-run work`.

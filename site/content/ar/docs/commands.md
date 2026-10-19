@@ -1,10 +1,11 @@
 ---
 title: مرجع الأوامر
+metaTitle: مرجع أوامر ccam
 description: كل أوامر ccam وخياراتها، من ccam add وccam <name> إلى ccam usage وccam next وccam doctor.
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a5a33b1a2f4
+sourceHash: 65fb2b8f6617
 ---
 
 ضع `--dry-run` قبل أي أمر لترى ما سيفعله دون أن يفعله، مثلًا `ccam --dry-run work`.

@@ -4,7 +4,7 @@ description: ccam 如何在 Claude Code 账号之间共享 MCP 服务器、setti
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: ccbb2c5e97bc
+sourceHash: 1e2f0d6809fc
 ---
 
 每个账号都保留自己的登录。其他所有内容都可以逐项共享：ccam 把账号中的文件或文件夹链接到一个共享组文件夹，因此在一个账号中所做的更改会出现在该组的所有账号中。

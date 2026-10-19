@@ -2,6 +2,7 @@
 title: Introducing ccam
 description: Why ccam exists, what it does for people with several Claude Code accounts, and how it stays out of the way.
 updated: 2026-10-19
+published: 2026-10-19
 order: 1
 translation: source
 ---

@@ -1,8 +1,8 @@
 {
   "site": {
     "name": "ccam",
-    "title": "ccam: use várias contas do Claude Code no mesmo computador",
-    "description": "ccam é uma ferramenta de linha de comando gratuita e de código aberto que permite usar várias contas do Claude Code no mesmo computador e trocar entre elas com um comando."
+    "title": "ccam: Claude Code Account Manager para trocar de conta",
+    "description": "O ccam (Claude Code Account Manager) é gratuito e de código aberto. Use várias contas do Claude Code em um computador e troque entre elas com um comando."
   },
   "nav": {
     "docs": "Documentação",
@@ -87,6 +87,7 @@
     "factsTitle": "Em resumo"
   },
   "docs": {
+    "byline": "Por {author}",
     "updated": "Última atualização: {date}",
     "versions": "Verificado com ccam {ccam} e Claude Code {claude}",
     "prev": "Anterior",
@@ -141,17 +142,18 @@
   "footer": {
     "unofficial": "ccam é uma ferramenta de código aberto não oficial. Ela não é afiliada à Anthropic nem endossada por ela. Claude e Claude Code são marcas registradas da Anthropic.",
     "terms": "Se você pode usar várias contas depende dos termos de cada conta. Verifique-os antes de fazer isso.",
+    "analytics": "Este site conta as visitas com o Cloudflare Web Analytics, que não usa cookies nem coleta dados pessoais.",
     "license": "Código-fonte no GitHub",
     "languages": "Todos os idiomas"
   },
   "changelog": {
     "title": "Histórico de alterações",
-    "description": "Todas as versões do ccam e o que mudou em cada uma.",
+    "description": "Todas as versões do ccam e o que mudou em cada uma: novos comandos, correções e melhorias de velocidade, da mais recente para a mais antiga.",
     "empty": "Nenhuma versão foi publicada ainda. As builds do branch principal estão listadas no GitHub."
   },
   "languages": {
     "title": "Idiomas",
-    "description": "O ccam.dev está disponível em {count, plural, one {# idioma} many {# de idiomas} other {# idiomas}}.",
+    "description": "O ccam.dev está disponível em {count, plural, one {# idioma} many {# de idiomas} other {# idiomas}}, com a mesma documentação e os mesmos guias em cada um deles.",
     "coverage": "Segundo os dados de população do Unicode CLDR, as pessoas que falam pelo menos um destes idiomas representam de {low} a {high} da população mundial.",
     "method": "O número menor conta apenas o idioma suportado mais falado de cada país; o maior soma todos os idiomas suportados e limita cada país a 100%."
   },

@@ -1,8 +1,8 @@
 {
   "site": {
     "name": "ccam",
-    "title": "ccam: gunakan beberapa akun Claude Code di satu komputer",
-    "description": "ccam adalah alat baris perintah gratis dan open source untuk menggunakan beberapa akun Claude Code di satu komputer dan berpindah di antaranya dengan satu perintah."
+    "title": "ccam: Claude Code Account Manager dan pengalih akun",
+    "description": "ccam (Claude Code Account Manager) adalah alat open source gratis untuk memakai beberapa akun Claude Code di satu komputer dan ganti akun dengan satu perintah."
   },
   "nav": {
     "docs": "Dokumentasi",
@@ -87,6 +87,7 @@
     "factsTitle": "Singkatnya"
   },
   "docs": {
+    "byline": "Oleh {author}",
     "updated": "Terakhir diperbarui {date}",
     "versions": "Diperiksa dengan ccam {ccam} dan Claude Code {claude}",
     "prev": "Sebelumnya",
@@ -141,17 +142,18 @@
   "footer": {
     "unofficial": "ccam adalah alat open source tidak resmi. ccam tidak berafiliasi dengan atau didukung oleh Anthropic. Claude dan Claude Code adalah merek dagang Anthropic.",
     "terms": "Boleh tidaknya Anda menggunakan beberapa akun bergantung pada ketentuan setiap akun. Periksa ketentuan tersebut sebelum melakukannya.",
+    "analytics": "Situs ini menghitung kunjungan dengan Cloudflare Web Analytics, yang tidak memasang cookie dan tidak mengumpulkan data pribadi.",
     "license": "Kode sumber di GitHub",
     "languages": "Semua bahasa"
   },
   "changelog": {
     "title": "Catatan perubahan",
-    "description": "Setiap rilis ccam dan apa yang berubah di dalamnya.",
+    "description": "Setiap rilis ccam dan apa yang berubah di dalamnya: perintah baru, perbaikan, dan peningkatan kecepatan, dari yang terbaru.",
     "empty": "Belum ada rilis yang diterbitkan. Build dari branch main tercantum di GitHub."
   },
   "languages": {
     "title": "Bahasa",
-    "description": "ccam.dev tersedia dalam {count, plural, other {# bahasa}}.",
+    "description": "ccam.dev tersedia dalam {count, plural, other {# bahasa}}, dengan dokumentasi dan panduan yang sama di setiap bahasa.",
     "coverage": "Menurut data populasi Unicode CLDR, orang yang berbicara setidaknya satu dari bahasa-bahasa ini mencakup {low} hingga {high} dari populasi dunia.",
     "method": "Angka yang lebih rendah menghitung satu bahasa yang didukung dan paling banyak digunakan di setiap negara; angka yang lebih tinggi menjumlahkan semua bahasa yang didukung dan membatasi setiap negara pada 100%."
   },

@@ -4,7 +4,7 @@ description: 并排对比两种运行多个 Claude Code 账号的方式：使用
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: f751716e46c9
+sourceHash: 6fc4200a8a65
 ---
 
 为每个账号设置一个 shell 别名，是运行多个 Claude Code 账号最简单的方法。ccam 在底层做的是同一件事，并增加了共享、切换和用量跟踪。
@@ -25,4 +25,4 @@ sourceHash: f751716e46c9
 
 如果你只有两个账号，并且不想在它们之间共享任何内容，就选择别名。如果你希望多个账号用起来像同一套环境，就选择 ccam。你也可以先用别名，以后再迁移到 ccam：`ccam import` 会在原位置注册已有的 `~/.claude-*` 文件夹。
 
-[如何在一台电脑上使用两个账号](/guides/multiple-claude-code-accounts)逐步介绍了这两种方法。
+[如何在一台电脑上使用多个账号](/guides/multiple-claude-code-accounts)逐步介绍了这两种方法，[ccam 与其他账号切换工具](/compare/account-switchers)则把 ccam 与那些切换同一份登录信息的工具做了对比。

@@ -4,7 +4,7 @@ description: "So sánh song song alias của shell dùng CLAUDE_CONFIG_DIR với
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: f751716e46c9
+sourceHash: 6fc4200a8a65
 ---
 
 Mỗi tài khoản một alias của shell là cách đơn giản nhất để chạy Claude Code nhiều tài khoản. ccam bên dưới cũng làm điều tương tự, và bổ sung thêm việc dùng chung, chuyển đổi tài khoản và theo dõi mức sử dụng.
@@ -25,4 +25,4 @@ Mỗi tài khoản một alias của shell là cách đơn giản nhất để c
 
 Hãy chọn alias nếu bạn có hai tài khoản và không muốn dùng chung gì giữa chúng. Hãy chọn ccam nếu bạn muốn các tài khoản hoạt động như một bộ thiết lập duy nhất. Bạn có thể bắt đầu với alias và chuyển sang ccam sau: `ccam import` đăng ký các thư mục `~/.claude-*` có sẵn ngay tại chỗ.
 
-[Cách dùng hai tài khoản trên một máy tính](/guides/multiple-claude-code-accounts) giải thích từng bước cả hai cách.
+[Cách dùng nhiều tài khoản trên một máy tính](/guides/multiple-claude-code-accounts) giải thích từng bước cả hai cách, còn [ccam và các công cụ đổi tài khoản khác](/compare/account-switchers) so sánh ccam với những công cụ hoán đổi một lần đăng nhập.

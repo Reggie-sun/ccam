@@ -1,15 +1,16 @@
 ---
 title: Sık sorulan sorular
+metaTitle: "ccam SSS: birden fazla Claude Code hesabı"
 description: ccam, Claude Code hesapları, kullanım limitleri, paylaşım, gizlilik ve desteklenen sistemler hakkında yanıtlar.
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 1355fa6ef3c6
+sourceHash: 8876e4f00bd2
 ---
 
 ## ccam resmi bir Anthropic aracı mı?
 
-Hayır. ccam resmi olmayan, açık kaynaklı bir projedir; Anthropic ile bağlantılı değildir ve Anthropic tarafından onaylanmamıştır. Birden fazla hesabı yan yana çalıştırmak için Claude Code'un belgelediği `CLAUDE_CONFIG_DIR` ayarını kullanır.
+Hayır. ccam resmi olmayan, açık kaynaklı bir projedir; Anthropic ile bağlantılı değildir ve Anthropic tarafından onaylanmamıştır. Birden fazla hesabı yan yana çalıştırmak için [Claude Code'un belgelediği](https://code.claude.com/docs/en/env-vars) `CLAUDE_CONFIG_DIR` ayarını kullanır.
 
 ## Birden fazla Claude Code hesabı kullanmama izin var mı?
 

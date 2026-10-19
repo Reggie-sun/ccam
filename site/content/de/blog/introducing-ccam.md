@@ -4,7 +4,7 @@ description: Warum es ccam gibt, was es für Menschen mit mehreren Claude Code-K
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: bbc9d9014f98
+sourceHash: b116c91bb8d4
 ---
 
 ccam ist ein kleines Kommandozeilentool für alle, die mehr als ein Claude Code-Konto auf demselben Computer nutzen: ein privates und ein berufliches Konto oder mehrere Konten für ein langes Projekt.

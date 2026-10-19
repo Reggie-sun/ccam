@@ -1,8 +1,8 @@
 {
   "site": {
     "name": "ccam",
-    "title": "ccam: tek bilgisayarda birden fazla Claude Code hesabı kullanın",
-    "description": "ccam, tek bilgisayarda birden fazla Claude Code hesabı kullanmanızı ve hesaplar arasında tek komutla geçiş yapmanızı sağlayan ücretsiz, açık kaynaklı bir komut satırı aracıdır."
+    "title": "ccam: Claude Code Account Manager ve hesap değiştirici",
+    "description": "ccam (Claude Code Account Manager), birden fazla Claude Code hesabını tek bilgisayarda kullanmak ve tek komutla geçmek için ücretsiz, açık kaynaklı bir araçtır."
   },
   "nav": {
     "docs": "Belgeler",
@@ -87,6 +87,7 @@
     "factsTitle": "Kısaca"
   },
   "docs": {
+    "byline": "Yazar: {author}",
     "updated": "Son güncelleme: {date}",
     "versions": "ccam {ccam} ve Claude Code {claude} ile kontrol edildi",
     "prev": "Önceki",
@@ -141,17 +142,18 @@
   "footer": {
     "unofficial": "ccam resmi olmayan, açık kaynaklı bir araçtır. Anthropic ile bağlantılı değildir ve Anthropic tarafından onaylanmamıştır. Claude ve Claude Code, Anthropic'in ticari markalarıdır.",
     "terms": "Birden fazla hesap kullanıp kullanamayacağınız her hesabın koşullarına bağlıdır. Bunu yapmadan önce koşulları kontrol edin.",
+    "analytics": "Bu site ziyaretleri, çerez kullanmayan ve kişisel veri toplamayan Cloudflare Web Analytics ile sayar.",
     "license": "Kaynak kodu GitHub üzerinde",
     "languages": "Tüm diller"
   },
   "changelog": {
     "title": "Sürüm notları",
-    "description": "Tüm ccam sürümleri ve her birinde nelerin değiştiği.",
+    "description": "Tüm ccam sürümleri ve her birinde nelerin değiştiği: yeni komutlar, düzeltmeler ve hızlandırmalar, en yenisi en üstte.",
     "empty": "Henüz yayımlanmış bir sürüm yok. main dalından yapılan derlemeler GitHub üzerinde listelenir."
   },
   "languages": {
     "title": "Diller",
-    "description": "ccam.dev {count, plural, one {# dilde} other {# dilde}} kullanılabilir.",
+    "description": "ccam.dev {count, plural, one {# dilde} other {# dilde}} kullanılabilir ve her dilde aynı belgeleri ve kılavuzları sunar.",
     "coverage": "Unicode CLDR nüfus verilerine göre, bu dillerden en az birini konuşan insanlar dünya nüfusunun {low} ile {high} arasındaki bir bölümünü oluşturur.",
     "method": "Düşük sayı, her ülkede desteklenen diller arasında en çok konuşulan tek dili sayar; yüksek sayı ise desteklenen tüm dilleri toplar ve her ülkeyi %100 ile sınırlar."
   },

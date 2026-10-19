@@ -4,7 +4,7 @@ description: چرا ccam ساخته شد، چه کاری برای کسانی ک�
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: bbc9d9014f98
+sourceHash: b116c91bb8d4
 ---
 
 ccam یک ابزار خط فرمان کوچک برای کسانی است که روی یک رایانه از بیش از یک حساب Claude Code استفاده می‌کنند: یک حساب شخصی و یک حساب کاری، یا چند حساب برای یک پروژه طولانی.

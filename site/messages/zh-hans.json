@@ -1,8 +1,8 @@
 {
   "site": {
     "name": "ccam",
-    "title": "ccam：在一台电脑上使用多个 Claude Code 账号",
-    "description": "ccam 是一个免费的开源命令行工具，让你在一台电脑上使用多个 Claude Code 账号，并用一条命令在它们之间切换。"
+    "title": "ccam：Claude Code Account Manager 与账号切换工具",
+    "description": "ccam（Claude Code Account Manager）是一个免费的开源工具，让你在一台电脑上使用多个 Claude Code 账号，并用一条命令在它们之间切换。"
   },
   "nav": {
     "docs": "文档",
@@ -87,6 +87,7 @@
     "factsTitle": "简介"
   },
   "docs": {
+    "byline": "作者：{author}",
     "updated": "最后更新于 {date}",
     "versions": "已使用 ccam {ccam} 和 Claude Code {claude} 核实",
     "prev": "上一页",
@@ -141,17 +142,18 @@
   "footer": {
     "unofficial": "ccam 是一个非官方的开源工具，与 Anthropic 没有关联，也未获得 Anthropic 的认可。Claude 和 Claude Code 是 Anthropic 的商标。",
     "terms": "你能否使用多个账号，取决于每个账号适用的条款。使用前请先确认。",
+    "analytics": "本站使用 Cloudflare Web Analytics 统计访问量，它不设置 Cookie，也不收集个人数据。",
     "license": "GitHub 上的源代码",
     "languages": "所有语言"
   },
   "changelog": {
     "title": "更新日志",
-    "description": "ccam 的每个版本及其变更内容。",
+    "description": "ccam 每个版本的变更内容：新增的命令、问题修复和性能提升，按从新到旧的顺序排列。",
     "empty": "尚未发布任何版本。main 分支的构建列在 GitHub 上。"
   },
   "languages": {
     "title": "语言",
-    "description": "ccam.dev 提供 {count, plural, other {# 种语言}}版本。",
+    "description": "ccam.dev 提供 {count, plural, other {# 种语言}}版本，无论你选择哪种语言，都能读到相同的文档和指南。",
     "coverage": "根据 Unicode CLDR 人口数据，至少会说其中一种语言的人占世界人口的 {low} 到 {high}。",
     "method": "较低的数字只计算每个国家使用人数最多的一种受支持语言；较高的数字把所有受支持语言相加，并将每个国家的上限设为 100%。"
   },

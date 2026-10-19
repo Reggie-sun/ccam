@@ -4,7 +4,7 @@ description: Girişler ayrı kalırken MCP sunucuları, settings.json, CLAUDE.md
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: ccbb2c5e97bc
+sourceHash: 1e2f0d6809fc
 ---
 
 Her hesap kendi giriş bilgilerini korur. Geri kalan her şey öğe öğe paylaşılabilir: ccam, hesabın dosyasını veya klasörünü paylaşılan bir grup klasörüne bağlar; böylece bir hesapta yapılan değişiklik o gruptaki tüm hesaplarda görünür.

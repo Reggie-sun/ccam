@@ -1,15 +1,16 @@
 ---
 title: ಪದೇ ಪದೇ ಕೇಳುವ ಪ್ರಶ್ನೆಗಳು
+metaTitle: "ccam FAQ: ಹಲವು Claude Code ಖಾತೆಗಳು"
 description: ccam, Claude Code ಖಾತೆಗಳು, ಬಳಕೆಯ ಮಿತಿಗಳು, ಹಂಚಿಕೆ, ಗೌಪ್ಯತೆ ಮತ್ತು ಬೆಂಬಲಿತ ಸಿಸ್ಟಮ್‌ಗಳ ಬಗ್ಗೆ ಉತ್ತರಗಳು.
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 1355fa6ef3c6
+sourceHash: 8876e4f00bd2
 ---
 
 ## ccam, Anthropic ನ ಅಧಿಕೃತ ಟೂಲ್ ಆಗಿದೆಯೇ?
 
-ಇಲ್ಲ. ccam ಒಂದು ಅನಧಿಕೃತ ಓಪನ್-ಸೋರ್ಸ್ ಪ್ರಾಜೆಕ್ಟ್. ಇದು Anthropic ಜೊತೆ ಸಂಬಂಧ ಹೊಂದಿಲ್ಲ ಮತ್ತು Anthropic ಇದನ್ನು ಅನುಮೋದಿಸಿಲ್ಲ. ಹಲವು ಖಾತೆಗಳನ್ನು ಅಕ್ಕಪಕ್ಕದಲ್ಲಿ ರನ್ ಮಾಡಲು Claude Code ದಸ್ತಾವೇಜಿನಲ್ಲಿ ವಿವರಿಸಿರುವ `CLAUDE_CONFIG_DIR` ಸೆಟ್ಟಿಂಗ್ ಅನ್ನು ಇದು ಬಳಸುತ್ತದೆ.
+ಇಲ್ಲ. ccam ಒಂದು ಅನಧಿಕೃತ ಓಪನ್-ಸೋರ್ಸ್ ಪ್ರಾಜೆಕ್ಟ್. ಇದು Anthropic ಜೊತೆ ಸಂಬಂಧ ಹೊಂದಿಲ್ಲ ಮತ್ತು Anthropic ಇದನ್ನು ಅನುಮೋದಿಸಿಲ್ಲ. ಹಲವು ಖಾತೆಗಳನ್ನು ಅಕ್ಕಪಕ್ಕದಲ್ಲಿ ರನ್ ಮಾಡಲು [Claude Code ದಸ್ತಾವೇಜಿನಲ್ಲಿ ವಿವರಿಸಿರುವ](https://code.claude.com/docs/en/env-vars) `CLAUDE_CONFIG_DIR` ಸೆಟ್ಟಿಂಗ್ ಅನ್ನು ಇದು ಬಳಸುತ್ತದೆ.
 
 ## ನಾನು ಹಲವು Claude Code ಖಾತೆಗಳನ್ನು ಬಳಸಲು ಅನುಮತಿ ಇದೆಯೇ?
 

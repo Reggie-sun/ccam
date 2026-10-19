@@ -1,10 +1,11 @@
 ---
 title: Bắt đầu nhanh
+metaTitle: "Bắt đầu nhanh: thêm và đổi tài khoản Claude Code"
 description: Thêm hai tài khoản Claude Code bằng ccam add, đặt cho chúng lệnh tắt như ccwork, chuyển đổi giữa chúng và chọn những gì dùng chung.
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: eb078efa2ee2
+sourceHash: 745a9904e32a
 ---
 
 Thêm từng tài khoản bằng `ccam add`, rồi khởi động Claude Code bằng `ccam <name>` hoặc bằng một lệnh tắt do bạn tự đặt tên, chẳng hạn `ccwork`. Hầu hết mọi người chỉ cần như vậy.

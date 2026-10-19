@@ -4,7 +4,7 @@ description: Dlaczego powstał ccam, co daje osobom z kilkoma kontami Claude Cod
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: bbc9d9014f98
+sourceHash: b116c91bb8d4
 ---
 
 ccam to małe narzędzie wiersza poleceń dla osób, które używają więcej niż jednego konta Claude Code na tym samym komputerze: konta prywatnego i służbowego albo kilku kont do jednego długiego projektu.

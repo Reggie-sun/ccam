@@ -4,7 +4,7 @@ description: مصرف ۵ ساعته و هفتگی همه حساب‌های Claud
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: 8ab41501c548
+sourceHash: cbc6b0c0618d
 ---
 
 `ccam usage` نشان می‌دهد هر حساب چه مقدار از سقف ۵ ساعته و هفتگی خود را مصرف کرده است. `ccam next --auto` حسابی را که بیشترین ظرفیت را دارد باز می‌کند و `--continue` گفتگوی فعلی را به آن منتقل می‌کند.

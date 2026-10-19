@@ -1,8 +1,8 @@
 {
   "site": {
     "name": "ccam",
-    "title": "ccam: dùng nhiều tài khoản Claude Code trên một máy tính",
-    "description": "ccam là công cụ dòng lệnh miễn phí, mã nguồn mở, giúp bạn dùng nhiều tài khoản Claude Code trên một máy tính và chuyển đổi giữa chúng bằng một lệnh."
+    "title": "ccam: Claude Code Account Manager, công cụ đổi tài khoản",
+    "description": "ccam (Claude Code Account Manager) là công cụ miễn phí, mã nguồn mở để dùng nhiều tài khoản Claude Code trên một máy tính và đổi tài khoản bằng một lệnh."
   },
   "nav": {
     "docs": "Tài liệu",
@@ -87,6 +87,7 @@
     "factsTitle": "Tóm tắt"
   },
   "docs": {
+    "byline": "Tác giả: {author}",
     "updated": "Cập nhật lần cuối {date}",
     "versions": "Đã kiểm tra với ccam {ccam} và Claude Code {claude}",
     "prev": "Trước",
@@ -141,17 +142,18 @@
   "footer": {
     "unofficial": "ccam là công cụ mã nguồn mở không chính thức. Công cụ này không liên kết với Anthropic và không được Anthropic xác nhận. Claude và Claude Code là nhãn hiệu của Anthropic.",
     "terms": "Việc bạn có được dùng nhiều tài khoản hay không phụ thuộc vào điều khoản của từng tài khoản. Hãy kiểm tra trước khi làm vậy.",
+    "analytics": "Trang này đếm lượt truy cập bằng Cloudflare Web Analytics, công cụ không đặt cookie và không thu thập dữ liệu cá nhân.",
     "license": "Mã nguồn trên GitHub",
     "languages": "Tất cả ngôn ngữ"
   },
   "changelog": {
     "title": "Nhật ký thay đổi",
-    "description": "Mọi bản phát hành của ccam và những thay đổi trong từng bản.",
+    "description": "Mọi bản phát hành của ccam và những thay đổi trong từng bản: lệnh mới, bản sửa lỗi và cải thiện tốc độ, bản mới nhất ở trên cùng.",
     "empty": "Chưa có bản phát hành nào. Các bản dựng từ nhánh main được liệt kê trên GitHub."
   },
   "languages": {
     "title": "Ngôn ngữ",
-    "description": "ccam.dev có sẵn bằng {count, plural, other {# ngôn ngữ}}.",
+    "description": "ccam.dev có sẵn bằng {count, plural, other {# ngôn ngữ}}, với cùng tài liệu và hướng dẫn trong mỗi ngôn ngữ.",
     "coverage": "Theo dữ liệu dân số của Unicode CLDR, những người nói ít nhất một trong các ngôn ngữ này chiếm từ {low} đến {high} dân số thế giới.",
     "method": "Con số thấp hơn chỉ tính ngôn ngữ được hỗ trợ có nhiều người nói nhất ở mỗi quốc gia; con số cao hơn cộng tất cả ngôn ngữ được hỗ trợ và giới hạn mỗi quốc gia ở mức 100%."
   },

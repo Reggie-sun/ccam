@@ -4,7 +4,7 @@ description: Birden fazla Claude Code hesabı çalıştırmak için CLAUDE_CONFI
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: f751716e46c9
+sourceHash: 6fc4200a8a65
 ---
 
 Her hesap için bir kabuk takma adı (alias), birden fazla Claude Code hesabı çalıştırmanın en basit yoludur. ccam arka planda aynı şeyi yapar ve buna paylaşım, hesap değiştirme ve kullanım takibi ekler.
@@ -25,4 +25,4 @@ Her hesap için bir kabuk takma adı (alias), birden fazla Claude Code hesabı �
 
 İki hesabınız varsa ve aralarında hiçbir şeyin paylaşılmasını istemiyorsanız takma adları seçin. Hesapların tek bir kurulum gibi hissettirmesini istiyorsanız ccam'ı seçin. Takma adlarla başlayıp daha sonra ccam'a geçebilirsiniz: `ccam import`, mevcut `~/.claude-*` klasörlerini bulundukları yerde kaydeder.
 
-[Tek bilgisayarda iki hesap nasıl kullanılır](/guides/multiple-claude-code-accounts) kılavuzu, iki yaklaşımı da adım adım açıklar.
+[Tek bilgisayarda birden fazla hesap nasıl kullanılır](/guides/multiple-claude-code-accounts) kılavuzu iki yaklaşımı da adım adım açıklar; [ccam ve diğer hesap değiştirme araçları](/compare/account-switchers) ise ccam'ı tek bir girişi değiştiren araçlarla karşılaştırır.

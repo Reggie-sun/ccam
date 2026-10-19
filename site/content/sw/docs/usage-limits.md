@@ -4,7 +4,7 @@ description: Ona matumizi ya saa 5 na ya wiki ya kila akaunti ya Claude Code kwa
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: 8ab41501c548
+sourceHash: cbc6b0c0618d
 ---
 
 `ccam usage` huonyesha kiasi cha vikomo vya saa 5 na vya wiki ambacho kila akaunti imetumia. `ccam next --auto` hufungua akaunti yenye nafasi kubwa zaidi, na `--continue` huhamisha mazungumzo ya sasa.

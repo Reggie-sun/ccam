@@ -4,7 +4,7 @@ description: Paano shine-share ng ccam ang MCP server, settings.json, CLAUDE.md,
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: ccbb2c5e97bc
+sourceHash: 1e2f0d6809fc
 ---
 
 May sariling login ang bawat account. Lahat ng iba pa ay puwedeng i-share nang isa-isang item: nili-link ng ccam ang file o folder ng account sa isang shared na group folder, kaya ang pagbabagong ginawa sa isang account ay lumalabas sa lahat ng account ng group na iyon.

@@ -4,7 +4,7 @@ description: Wie ccam MCP-Server, settings.json, CLAUDE.md, Agents, Skills und d
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: ccbb2c5e97bc
+sourceHash: 1e2f0d6809fc
 ---
 
 Jedes Konto behält seine eigene Anmeldung. Alles andere kann Element für Element geteilt werden: ccam verlinkt die Datei oder den Ordner des Kontos mit einem geteilten Gruppenordner, sodass eine Änderung in einem Konto in allen Konten dieser Gruppe erscheint.

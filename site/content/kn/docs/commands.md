@@ -1,10 +1,11 @@
 ---
 title: ಕಮಾಂಡ್ ಉಲ್ಲೇಖ
+metaTitle: ccam ಕಮಾಂಡ್ ಉಲ್ಲೇಖ
 description: ccam add ಮತ್ತು ccam <name> ನಿಂದ ccam usage, ccam next ಮತ್ತು ccam doctor ವರೆಗೆ, ccam ನ ಎಲ್ಲಾ ಕಮಾಂಡ್‌ಗಳು ಮತ್ತು ಆಯ್ಕೆಗಳು.
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a5a33b1a2f4
+sourceHash: 65fb2b8f6617
 ---
 
 ಯಾವುದೇ ಕಮಾಂಡ್ ಏನು ಮಾಡುತ್ತದೆ ಎಂಬುದನ್ನು ನಿಜವಾಗಿ ಮಾಡದೆಯೇ ನೋಡಲು, ಅದರ ಮುಂದೆ `--dry-run` ಹಾಕಿ. ಉದಾಹರಣೆಗೆ `ccam --dry-run work`.

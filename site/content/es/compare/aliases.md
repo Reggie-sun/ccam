@@ -4,7 +4,7 @@ description: Alias del shell con CLAUDE_CONFIG_DIR frente a ccam para usar varia
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: f751716e46c9
+sourceHash: 6fc4200a8a65
 ---
 
 Un alias del shell por cuenta es la forma más sencilla de usar varias cuentas de Claude Code. ccam hace lo mismo por debajo y agrega uso compartido, cambio de cuenta y seguimiento del uso.
@@ -25,4 +25,4 @@ Un alias del shell por cuenta es la forma más sencilla de usar varias cuentas d
 
 Elige los alias si tienes dos cuentas y no quieres compartir nada entre ellas. Elige ccam si quieres que las cuentas funcionen como una sola configuración. Puedes empezar con alias y pasarte a ccam más adelante: `ccam import` registra las carpetas `~/.claude-*` existentes donde están.
 
-[Cómo usar dos cuentas en una computadora](/guides/multiple-claude-code-accounts) explica ambos métodos paso a paso.
+[Cómo usar varias cuentas en una computadora](/guides/multiple-claude-code-accounts) explica ambos métodos paso a paso, y [ccam y otros selectores de cuentas](/compare/account-switchers) compara ccam con las herramientas que intercambian un único inicio de sesión.

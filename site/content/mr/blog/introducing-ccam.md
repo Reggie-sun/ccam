@@ -4,7 +4,7 @@ description: ccam का आहे, अनेक Claude Code खाती अस
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: bbc9d9014f98
+sourceHash: b116c91bb8d4
 ---
 
 ccam हे एकाच कॉम्प्युटरवर एकापेक्षा जास्त Claude Code खाती वापरणाऱ्या लोकांसाठी छोटे कमांड-लाइन टूल आहे: एक वैयक्तिक आणि एक कामाचे खाते, किंवा एका मोठ्या प्रोजेक्टसाठी अनेक खाती.

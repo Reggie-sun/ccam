@@ -4,7 +4,7 @@ description: كيف يشارك ccam خوادم MCP وsettings.json وCLAUDE.md �
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: ccbb2c5e97bc
+sourceHash: 1e2f0d6809fc
 ---
 
 يحتفظ كل حساب بتسجيل دخوله الخاص. أما كل ما عدا ذلك فيمكن مشاركته عنصرًا عنصرًا: يربط ccam ملف الحساب أو مجلده بمجلد مجموعة مشترك، فيظهر التغيير الذي يُجرى في حساب واحد في كل حسابات تلك المجموعة.

@@ -1,10 +1,11 @@
 ---
 title: Befehlsreferenz
+metaTitle: "ccam-Befehlsreferenz"
 description: Alle ccam-Befehle und -Optionen, von ccam add und ccam <name> bis zu ccam usage, ccam next und ccam doctor.
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a5a33b1a2f4
+sourceHash: 65fb2b8f6617
 ---
 
 Setze `--dry-run` vor einen Befehl, um zu sehen, was er tun würde, ohne es zu tun, zum Beispiel `ccam --dry-run work`.

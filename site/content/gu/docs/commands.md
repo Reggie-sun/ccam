@@ -1,10 +1,11 @@
 ---
 title: કમાન્ડ સંદર્ભ
+metaTitle: ccam કમાન્ડ સંદર્ભ
 description: ccam ના બધા કમાન્ડ અને ઓપ્શન, ccam add અને ccam <name> થી લઈને ccam usage, ccam next અને ccam doctor સુધી.
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a5a33b1a2f4
+sourceHash: 65fb2b8f6617
 ---
 
 કોઈ પણ કમાન્ડ ખરેખર ચલાવ્યા વગર તે શું કરશે તે જોવા માટે તેની આગળ `--dry-run` મૂકો, ઉદાહરણ તરીકે `ccam --dry-run work`.

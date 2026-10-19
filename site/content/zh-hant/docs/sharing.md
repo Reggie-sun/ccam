@@ -4,7 +4,7 @@ description: ccam 如何在 Claude Code 帳號間共用 MCP 伺服器、settings
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: ccbb2c5e97bc
+sourceHash: 1e2f0d6809fc
 ---
 
 每個帳號都保有自己的登入資訊。其他所有內容都可以逐項共用：ccam 會將帳號的檔案或資料夾連結到共用的群組資料夾，因此在一個帳號中所做的變更，會出現在該群組的所有帳號中。

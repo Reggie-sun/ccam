@@ -4,7 +4,7 @@ description: 여러 Claude Code 계정을 쓸 때, CLAUDE_CONFIG_DIR 기반 셸 
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: f751716e46c9
+sourceHash: 6fc4200a8a65
 ---
 
 여러 Claude Code 계정을 쓰는 가장 간단한 방법은 계정마다 셸 별칭을 하나씩 만드는 것입니다. ccam도 내부적으로는 같은 방식을 쓰며, 여기에 공유, 계정 전환, 사용량 확인 기능을 더합니다.
@@ -25,4 +25,4 @@ sourceHash: f751716e46c9
 
 계정이 두 개이고 서로 아무것도 공유할 필요가 없다면 별칭을 선택하세요. 여러 계정을 하나의 환경처럼 쓰고 싶다면 ccam을 선택하세요. 별칭으로 시작했다가 나중에 ccam으로 옮겨도 됩니다. `ccam import`로 기존 `~/.claude-*` 폴더를 원래 위치에서 그대로 등록할 수 있습니다.
 
-[컴퓨터 한 대에서 계정 두 개를 쓰는 방법](/guides/multiple-claude-code-accounts)에서 두 방식을 단계별로 설명합니다.
+[컴퓨터 한 대에서 여러 계정을 쓰는 방법](/guides/multiple-claude-code-accounts)에서 두 방식을 단계별로 설명하고, [ccam과 다른 계정 전환 도구](/compare/account-switchers)에서는 로그인 하나를 바꿔 끼우는 도구와 ccam을 비교합니다.

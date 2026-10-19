@@ -1,10 +1,11 @@
 ---
 title: "کمانڈز کا حوالہ"
+metaTitle: "ccam کمانڈز کا حوالہ"
 description: "ccam کی ہر کمانڈ اور آپشن، ccam add اور ccam <name> سے لے کر ccam usage، ccam next اور ccam doctor تک۔"
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a5a33b1a2f4
+sourceHash: 65fb2b8f6617
 ---
 
 کوئی کمانڈ اصل میں چلائے بغیر یہ دیکھنے کے لیے کہ وہ کیا کرے گی، اس سے پہلے `--dry-run` لگائیں، مثلاً `ccam --dry-run work`۔

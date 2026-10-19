@@ -4,7 +4,7 @@ description: اعرض استخدام كل حساب Claude Code خلال 5 ساع
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: 8ab41501c548
+sourceHash: cbc6b0c0618d
 ---
 
 يعرض `ccam usage` مقدار ما استخدمه كل حساب من حدّي الخمس ساعات والأسبوع. ويفتح `ccam next --auto` الحساب الأكثر سعة متبقية، وينقل `--continue` المحادثة الحالية معه.

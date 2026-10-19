@@ -4,7 +4,7 @@ description: ccamがログインを分けたまま、MCPサーバー、settings.
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: ccbb2c5e97bc
+sourceHash: 1e2f0d6809fc
 ---
 
 各アカウントはそれぞれ独自のログインを持ちます。それ以外のものは、項目ごとに共有できます。ccamはアカウントのファイルやフォルダーを共有グループのフォルダーにリンクするので、あるアカウントで行った変更が、そのグループのすべてのアカウントに反映されます。

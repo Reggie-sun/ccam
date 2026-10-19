@@ -4,7 +4,7 @@ description: ccam ఎందుకు ఉంది, అనేక Claude Code ఖ�
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: bbc9d9014f98
+sourceHash: b116c91bb8d4
 ---
 
 ccam అనేది ఒకే కంప్యూటర్‌లో ఒకటి కంటే ఎక్కువ Claude Code ఖాతాలను ఉపయోగించేవారి కోసం ఒక చిన్న కమాండ్-లైన్ టూల్: ఒక వ్యక్తిగత ఖాతా, ఒక work ఖాతా, లేదా ఒక పెద్ద ప్రాజెక్ట్ కోసం అనేక ఖాతాలు.

@@ -4,7 +4,7 @@ description: ccam usage மூலம் ஒவ்வொரு Claude Code கண
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: 8ab41501c548
+sourceHash: cbc6b0c0618d
 ---
 
 ஒவ்வொரு கணக்கும் 5 மணி நேர மற்றும் வாராந்திர வரம்புகளில் எவ்வளவு பயன்படுத்தியுள்ளது என்று `ccam usage` காட்டுகிறது. `ccam next --auto` அதிக இடம் உள்ள கணக்கைத் திறக்கிறது, `--continue` தற்போதைய உரையாடலை அதற்குக் கொண்டு செல்கிறது.

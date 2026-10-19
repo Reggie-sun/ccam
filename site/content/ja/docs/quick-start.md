@@ -1,10 +1,11 @@
 ---
 title: クイックスタート
+metaTitle: "クイックスタート：Claude Codeアカウントの追加と切替"
 description: ccam addで2つのClaude Codeアカウントを追加し、ccworkのようなショートカットを付けて切り替え、共有する項目を選びます。
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: eb078efa2ee2
+sourceHash: 745a9904e32a
 ---
 
 `ccam add`で各アカウントを追加し、`ccam <name>`、または`ccwork`のように自分で名前を付けたショートカットでClaude Codeを起動します。ほとんどの人にとって、必要なのはこれだけです。

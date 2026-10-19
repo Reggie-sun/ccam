@@ -1,8 +1,8 @@
 {
   "site": {
     "name": "ccam",
-    "title": "ccam: yi amfani da asusun Claude Code da dama a kwamfuta ɗaya",
-    "description": "ccam kayan aikin command-line ne kyauta kuma open-source wanda ke ba ka damar amfani da asusun Claude Code da dama a kwamfuta ɗaya, ka kuma sauya tsakaninsu da umarni ɗaya."
+    "title": "ccam: Claude Code Account Manager da mai sauya asusu",
+    "description": "ccam (Claude Code Account Manager) kayan aiki ne kyauta kuma open-source don amfani da asusun Claude Code da dama a kwamfuta ɗaya da sauya su da umarni ɗaya."
   },
   "nav": {
     "docs": "Takardu",
@@ -87,6 +87,7 @@
     "factsTitle": "A taƙaice"
   },
   "docs": {
+    "byline": "Daga {author}",
     "updated": "An sabunta a ƙarshe {date}",
     "versions": "An duba da ccam {ccam} da Claude Code {claude}",
     "prev": "Na baya",
@@ -141,17 +142,18 @@
   "footer": {
     "unofficial": "ccam kayan aikin open-source ne da ba na hukuma ba. Ba shi da alaƙa da Anthropic, kuma Anthropic ba ta amince da shi ba. Claude da Claude Code alamomin kasuwanci ne na Anthropic.",
     "terms": "Ko an yarda ka yi amfani da asusai da dama ya dogara ne da sharuɗɗan kowane asusu. Ka duba su kafin ka yi haka.",
+    "analytics": "Wannan shafin yana ƙidaya ziyara da Cloudflare Web Analytics, wanda ba ya saka cookies kuma ba ya tattara bayanan sirri.",
     "license": "Lambar tushe a GitHub",
     "languages": "Dukan harsuna"
   },
   "changelog": {
     "title": "Tarihin canje-canje",
-    "description": "Kowane sakin ccam da abin da ya canza a cikinsa.",
+    "description": "Kowane sakin ccam da abin da ya canza a cikinsa: sababbin umarnai, gyare-gyare da ƙarin sauri, sabo a farko.",
     "empty": "Ba a fitar da wani saki ba tukuna. Ana jera ginin da aka yi daga reshen main a GitHub."
   },
   "languages": {
     "title": "Harsuna",
-    "description": "Akwai ccam.dev a {count, plural, one {harshe #} other {harsuna #}}.",
+    "description": "Akwai ccam.dev a {count, plural, one {harshe #} other {harsuna #}}, da takardu da jagorori iri ɗaya a kowanne.",
     "coverage": "Bisa ga bayanan yawan jama'a na Unicode CLDR, mutanen da ke magana aƙalla ɗaya daga cikin waɗannan harsunan sun kai daga {low} zuwa {high} na yawan mutanen duniya.",
     "method": "Ƙaramin adadin yana ƙidaya harshe ɗaya da aka fi magana a kowace ƙasa daga cikin waɗanda ake tallafawa; babban adadin yana haɗa dukan harsunan da ake tallafawa kuma yana iyakance kowace ƙasa a 100%."
   },

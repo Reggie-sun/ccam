@@ -4,7 +4,7 @@ description: "Cách ccam dùng chung máy chủ MCP, settings.json, CLAUDE.md, a
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: ccbb2c5e97bc
+sourceHash: 1e2f0d6809fc
 ---
 
 Mỗi tài khoản giữ thông tin đăng nhập riêng. Mọi thứ khác đều có thể dùng chung theo từng mục: ccam liên kết tệp hoặc thư mục của tài khoản đến một thư mục nhóm dùng chung, nên thay đổi thực hiện ở một tài khoản sẽ xuất hiện ở mọi tài khoản trong nhóm đó.

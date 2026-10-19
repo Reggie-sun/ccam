@@ -1,15 +1,16 @@
 ---
 title: پرسش‌های متداول
+metaTitle: "پرسش‌های متداول ccam: چند حساب Claude Code"
 description: پاسخ به پرسش‌هایی درباره ccam، حساب‌های Claude Code، سقف مصرف، اشتراک‌گذاری، حریم خصوصی و سیستم‌های پشتیبانی‌شده.
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 1355fa6ef3c6
+sourceHash: 8876e4f00bd2
 ---
 
 ## آیا ccam ابزار رسمی Anthropic است؟
 
-خیر. ccam یک پروژه متن‌باز غیررسمی است و هیچ وابستگی به Anthropic ندارد و مورد تأیید آن نیست. این ابزار از تنظیم `CLAUDE_CONFIG_DIR` استفاده می‌کند که Claude Code برای اجرای هم‌زمان چند حساب در مستندات خود معرفی کرده است.
+خیر. ccam یک پروژه متن‌باز غیررسمی است و هیچ وابستگی به Anthropic ندارد و مورد تأیید آن نیست. این ابزار از تنظیم `CLAUDE_CONFIG_DIR` استفاده می‌کند که Claude Code برای اجرای هم‌زمان چند حساب در [مستندات خود](https://code.claude.com/docs/en/env-vars) معرفی کرده است.
 
 ## آیا اجازه دارم از چند حساب Claude Code استفاده کنم؟
 

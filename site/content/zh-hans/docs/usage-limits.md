@@ -4,7 +4,7 @@ description: 用 ccam usage 查看每个 Claude Code 账号的 5 小时用量和
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: 8ab41501c548
+sourceHash: cbc6b0c0618d
 ---
 
 `ccam usage` 显示每个账号已用掉多少 5 小时限额和每周限额。`ccam next --auto` 打开余量最多的账号，`--continue` 会把当前对话带过去。

@@ -4,7 +4,7 @@ description: "Vì sao có ccam, ccam làm gì cho người dùng nhiều tài kh
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: bbc9d9014f98
+sourceHash: b116c91bb8d4
 ---
 
 ccam là một công cụ dòng lệnh nhỏ dành cho người dùng nhiều hơn một tài khoản Claude Code trên cùng một máy tính: một tài khoản cá nhân và một tài khoản công việc, hoặc nhiều tài khoản cho một dự án dài.

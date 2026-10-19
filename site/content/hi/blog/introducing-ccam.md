@@ -4,7 +4,7 @@ description: ccam क्यों बना, कई Claude Code अकाउं�
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: bbc9d9014f98
+sourceHash: b116c91bb8d4
 ---
 
 ccam एक छोटा command-line टूल है, उन लोगों के लिए जो एक ही कंप्यूटर पर एक से ज़्यादा Claude Code अकाउंट इस्तेमाल करते हैं: एक personal और एक work अकाउंट, या किसी लंबे प्रोजेक्ट के लिए कई अकाउंट।

@@ -1,10 +1,11 @@
 ---
 title: Cài đặt ccam
-description: "Cài đặt ccam trên Linux hoặc macOS bằng một lệnh, từ gói .deb hoặc từ mã nguồn, và luôn giữ bản mới nhất với ccam update. Cần cài Claude Code trước."
+metaTitle: "Cài đặt ccam trên Linux và macOS"
+description: "Cài đặt ccam trên Linux hoặc macOS bằng một lệnh, từ gói .deb hoặc từ mã nguồn, và cập nhật bằng ccam update. Cần cài Claude Code trước."
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: bde486b82b2e
+sourceHash: 7ecd1ed00e09
 ---
 
 Chạy lệnh này trong terminal trên Linux hoặc macOS:

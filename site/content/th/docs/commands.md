@@ -1,10 +1,11 @@
 ---
 title: ข้อมูลอ้างอิงคำสั่ง
+metaTitle: "ข้อมูลอ้างอิงคำสั่ง ccam"
 description: "ทุกคำสั่งและตัวเลือกของ ccam ตั้งแต่ ccam add และ ccam <name> ไปจนถึง ccam usage, ccam next และ ccam doctor"
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a5a33b1a2f4
+sourceHash: 65fb2b8f6617
 ---
 
 ใส่ `--dry-run` ไว้หน้าคำสั่งใดก็ได้เพื่อดูว่าคำสั่งนั้นจะทำอะไรโดยไม่ลงมือทำจริง เช่น `ccam --dry-run work`

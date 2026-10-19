@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import { JsonLd } from "../../../components/JsonLd";
 import { Shell } from "../../../components/Shell";
-import { locales } from "../../../i18n/locales";
+import { getLocale, locales } from "../../../i18n/locales";
 import { getMessages, hasMessages } from "../../../lib/i18n";
-import { REPO } from "../../../lib/paths";
+import { webPageLd } from "../../../lib/jsonld";
+import { abs, REPO } from "../../../lib/paths";
 import { ogPath, seo } from "../../../lib/seo";
 import releases from "../../../data/changelog.json";
 
@@ -44,6 +46,9 @@ export default async function Changelog({ params }: Props) {
           )}
         </article>
       </div>
+      {list.length > 0 && (
+        <JsonLd data={webPageLd({ title: m.changelog.title, description: m.changelog.description, url: abs(`/${locale}/changelog/`), updated: list[0].date, lang: getLocale(locale)!.lang })} />
+      )}
     </Shell>
   );
 }

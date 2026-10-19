@@ -1,10 +1,11 @@
 ---
 title: Довідник команд
+metaTitle: Довідник команд ccam
 description: Усі команди та параметри ccam, від ccam add і ccam <name> до ccam usage, ccam next і ccam doctor.
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a5a33b1a2f4
+sourceHash: 65fb2b8f6617
 ---
 
 Додайте `--dry-run` перед будь-якою командою, щоб побачити, що вона зробила б, не виконуючи її, наприклад `ccam --dry-run work`.

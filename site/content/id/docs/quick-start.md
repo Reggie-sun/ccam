@@ -1,10 +1,11 @@
 ---
 title: Memulai cepat
+metaTitle: "Memulai cepat: tambah dan ganti akun Claude Code"
 description: Tambahkan dua akun Claude Code dengan ccam add, beri pintasan seperti ccwork, berpindah di antaranya, dan pilih apa yang dibagikan.
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: eb078efa2ee2
+sourceHash: 745a9904e32a
 ---
 
 Tambahkan setiap akun dengan `ccam add`, lalu jalankan Claude Code dengan `ccam <name>` atau dengan pintasan yang namanya Anda pilih sendiri, seperti `ccwork`. Bagi kebanyakan orang, itu sudah cukup.

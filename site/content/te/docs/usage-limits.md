@@ -4,7 +4,7 @@ description: ccam usage తో ప్రతి Claude Code ఖాతా యొ�
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: 8ab41501c548
+sourceHash: cbc6b0c0618d
 ---
 
 ప్రతి ఖాతా 5 గంటల, వారపు పరిమితులలో ఎంత ఉపయోగించిందో `ccam usage` చూపిస్తుంది. `ccam next --auto` ఎక్కువ అవకాశం మిగిలి ఉన్న ఖాతాను తెరుస్తుంది, `--continue` ప్రస్తుత సంభాషణను దానికి తీసుకువెళ్తుంది.

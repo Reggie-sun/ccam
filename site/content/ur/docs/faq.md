@@ -1,15 +1,16 @@
 ---
 title: "اکثر پوچھے جانے والے سوالات"
+metaTitle: "ccam سوالات: Claude Code کے کئی اکاؤنٹس"
 description: "ccam، Claude Code اکاؤنٹس، استعمال کی حدوں، شیئرنگ، پرائیویسی اور معاون سسٹمز کے بارے میں سوالات کے جوابات۔"
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 1355fa6ef3c6
+sourceHash: 8876e4f00bd2
 ---
 
 ## کیا ccam، Anthropic کا سرکاری ٹول ہے؟
 
-نہیں۔ ccam ایک غیر سرکاری اوپن سورس پروجیکٹ ہے۔ اس کا Anthropic سے کوئی تعلق نہیں، اور نہ ہی Anthropic اس کی توثیق کرتا ہے۔ یہ `CLAUDE_CONFIG_DIR` سیٹنگ استعمال کرتا ہے، جسے Claude Code کی دستاویزات کئی اکاؤنٹس ساتھ ساتھ چلانے کے لیے بیان کرتی ہیں۔
+نہیں۔ ccam ایک غیر سرکاری اوپن سورس پروجیکٹ ہے۔ اس کا Anthropic سے کوئی تعلق نہیں، اور نہ ہی Anthropic اس کی توثیق کرتا ہے۔ یہ `CLAUDE_CONFIG_DIR` سیٹنگ استعمال کرتا ہے، جسے [Claude Code کی دستاویزات](https://code.claude.com/docs/en/env-vars) کئی اکاؤنٹس ساتھ ساتھ چلانے کے لیے بیان کرتی ہیں۔
 
 ## کیا مجھے Claude Code کے کئی اکاؤنٹس استعمال کرنے کی اجازت ہے؟
 

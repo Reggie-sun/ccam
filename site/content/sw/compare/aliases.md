@@ -4,7 +4,7 @@ description: Alias za shell zenye CLAUDE_CONFIG_DIR dhidi ya ccam kwa kuendesha 
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: f751716e46c9
+sourceHash: 6fc4200a8a65
 ---
 
 Alias ya shell kwa kila akaunti ndiyo njia rahisi zaidi ya kuendesha akaunti kadhaa za Claude Code. ccam hufanya jambo hilo hilo kwa ndani na huongeza kushiriki, kubadili na kufuatilia matumizi.
@@ -25,4 +25,4 @@ Alias ya shell kwa kila akaunti ndiyo njia rahisi zaidi ya kuendesha akaunti kad
 
 Chagua alias ikiwa una akaunti mbili na hutaki zishiriki chochote. Chagua ccam ikiwa unataka akaunti zihisike kama usanidi mmoja. Unaweza kuanza na alias na kuhamia ccam baadaye: `ccam import` husajili folda zilizopo za `~/.claude-*` pale zilipo.
 
-[Jinsi ya kutumia akaunti mbili kwenye kompyuta moja](/guides/multiple-claude-code-accounts) inaeleza njia zote mbili hatua kwa hatua.
+[Jinsi ya kutumia akaunti kadhaa kwenye kompyuta moja](/guides/multiple-claude-code-accounts) inaeleza njia zote mbili hatua kwa hatua, na [ccam na zana nyingine za kubadili akaunti](/compare/account-switchers) inailinganisha ccam na zana zinazobadilisha taarifa moja ya kuingia.

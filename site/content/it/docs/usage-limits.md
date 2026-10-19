@@ -4,7 +4,7 @@ description: Visualizza l'utilizzo su 5 ore e settimanale di ogni account Claude
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: 8ab41501c548
+sourceHash: cbc6b0c0618d
 ---
 
 `ccam usage` mostra quanta parte dei limiti su 5 ore e settimanali ha usato ogni account. `ccam next --auto` apre l'account con più margine, e `--continue` porta con sé la conversazione corrente.

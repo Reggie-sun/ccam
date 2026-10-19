@@ -4,7 +4,7 @@ description: Abin da CLAUDE_CONFIG_DIR ke yi a Claude Code, abin da ke cikin fol
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 62f178595254
+sourceHash: ef9317030e42
 ---
 
 `CLAUDE_CONFIG_DIR` yana gaya wa Claude Code wace folda zai yi amfani da ita maimakon `~/.claude`. Duk abin da ya shafi asusu yana nan a ciki: bayanan shiga, saituna, sabobin MCP, plugins da tarihin tattaunawa. Nuna shi zuwa foldoji daban-daban yana ba ka asusai daban-daban.
@@ -13,13 +13,17 @@ sourceHash: 62f178595254
 CLAUDE_CONFIG_DIR=~/.claude-work claude
 ```
 
-## Abin da ke cikin foldar
+## Shin CLAUDE_CONFIG_DIR yana da goyon bayan hukuma?
+
+Ee. Claude Code ya lissafa shi cikin [environment variables ɗinsa](https://code.claude.com/docs/en/env-vars) a matsayin hanyar sauya foldar saituna, "useful for running multiple accounts side by side", kuma [jagorar tantancewarsa](https://code.claude.com/docs/en/authentication#log-in-with-multiple-accounts) tana amfani da shi don shiga da asusai da dama. Za ka iya saita shi a shell ɗinka ko a saitunan mai amfani, amma ba a saitunan project ba.
+
+## Me ke cikin foldar?
 
 An duba da Claude Code 2.1.302:
 
 | Hanya | Abin da ke ciki | Ana iya rabawa |
 | --- | --- | --- |
-| `.credentials.json` | Token na shiga (Linux), token na MCP OAuth | A'a |
+| `.credentials.json` | Token na shiga (Linux, Windows), token na MCP OAuth | A'a |
 | `.claude.json` | Bayanan asusu, sabobin MCP na mai amfani, yanayin kowane project | A'a (sabobin MCP dabam) |
 | `settings.json` | Izini, hooks, model, layin matsayi, plugins | Ee |
 | `CLAUDE.md` | Umarni na gaba ɗaya (global) | Ee |
@@ -28,13 +32,19 @@ An duba da Claude Code 2.1.302:
 | `history.jsonl` | Tarihin prompts | Ee |
 | `sessions/`, `shell-snapshots/`, `cache/` da sauransu | Yanayin aiki (runtime state) | A'a |
 
-## Bayanai biyu da ke ruɗar mutane
+## Me ke ruɗar mutane?
 
 **Ba tare da `CLAUDE_CONFIG_DIR` ba, `.claude.json` ba ya cikin `~/.claude`.** A wannan yanayin Claude Code yana ajiye shi a `~/.claude.json`, kusa da foldar. Idan ka fara amfani da `CLAUDE_CONFIG_DIR=~/.claude`, Claude Code yana neman `~/.claude/.claude.json` maimakon haka kuma ba ya samun asusunka. `ccam import` yana magance wannan ta hanyar haɗa su biyun da mahaɗi.
 
-**A macOS bayanan shiga suna cikin Keychain, ba a cikin foldar ba.** Claude Code yana ajiye su ƙarƙashin sunan `Claude Code-credentials`, sannan gajeren hash na hanyar foldar idan an saita `CLAUDE_CONFIG_DIR`. Saboda haka foldoji daban-daban suna samun shigarwar Keychain daban-daban. Idan Keychain ya ƙi rubutun, Claude Code yana komawa ga `.credentials.json` a cikin foldar.
+**A macOS bayanan shiga suna cikin Keychain, ba a cikin foldar ba.** Claude Code yana ajiye su ƙarƙashin sunan `Claude Code-credentials`, sannan gajeren hash na hanyar foldar idan an saita `CLAUDE_CONFIG_DIR`. Saboda haka foldoji daban-daban suna samun shigarwar Keychain daban-daban. Idan Keychain ya ƙi rubutun, Claude Code yana komawa ga `.credentials.json` a cikin foldar, kamar yadda [takardunsa](https://code.claude.com/docs/en/authentication#credential-management) suka bayyana.
 
-## Rabawa tsakanin foldoji
+**Ba kowace shiga ce ke cikin foldar ba.** Shiga ta Claude Console ba tare da API key ba ana ajiye ta a wajen foldar, don haka foldoji daban-daban ba sa raba irin waɗannan shiga biyu. Shigar claude.ai da API keys ana ajiye su a kowace folda.
+
+## Ina foldar take a Windows?
+
+A tsoho (default) ita ce `%USERPROFILE%\.claude`, tare da bayanan shiga a `.credentials.json` a cikinta. Saita `CLAUDE_CONFIG_DIR` zuwa wata folda ga kowane ƙarin asusu, kamar yadda ake yi a Linux da macOS.
+
+## Shin foldoji za su iya raba fayiloli?
 
 Symbolic links suna aiki: Claude Code yana karantawa da rubutu ta `settings.json` ko foldar `projects/` da aka haɗa da mahaɗi, kuma yana barin mahaɗin yadda yake. Sabobin MCP ne kawai suka bambanta, domin suna raba `.claude.json` da bayanan shiga; miƙa su da `--mcp-config` maimakon haka.
 

@@ -4,7 +4,7 @@ description: "ccam کیوں بنایا گیا، Claude Code کے کئی اکاؤ
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: bbc9d9014f98
+sourceHash: b116c91bb8d4
 ---
 
 ccam ایک چھوٹا کمانڈ لائن ٹول ہے ان لوگوں کے لیے جو ایک ہی کمپیوٹر پر Claude Code کے ایک سے زیادہ اکاؤنٹس استعمال کرتے ہیں: ایک ذاتی اور ایک کام کا اکاؤنٹ، یا کسی ایک طویل پروجیکٹ کے لیے کئی اکاؤنٹس۔

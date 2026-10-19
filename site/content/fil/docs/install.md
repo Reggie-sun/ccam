@@ -1,10 +1,11 @@
 ---
 title: I-install ang ccam
-description: I-install ang ccam sa Linux o macOS gamit ang isang command, mula sa .deb package, o mula sa source, at panatilihin itong updated gamit ang ccam update. Kailangang naka-install muna ang Claude Code.
+metaTitle: I-install ang ccam sa Linux at macOS
+description: I-install ang ccam sa Linux o macOS gamit ang isang command, .deb package o source, at i-update gamit ang ccam update. Kailangan munang may Claude Code.
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: bde486b82b2e
+sourceHash: 7ecd1ed00e09
 ---
 
 Patakbuhin ito sa terminal sa Linux o macOS:

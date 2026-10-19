@@ -4,7 +4,7 @@ description: ccam이 로그인 정보는 계정마다 분리해 둔 채 MCP 서�
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: ccbb2c5e97bc
+sourceHash: 1e2f0d6809fc
 ---
 
 로그인 정보는 계정마다 따로 유지됩니다. 그 밖의 항목은 하나씩 골라 공유할 수 있습니다. ccam은 계정의 파일이나 폴더를 공유 그룹 폴더에 링크하므로, 한 계정에서 바꾼 내용이 같은 그룹의 모든 계정에 반영됩니다.

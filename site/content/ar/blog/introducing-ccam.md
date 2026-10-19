@@ -4,7 +4,7 @@ description: لماذا وُجد ccam، وما الذي يقدمه لمن لدي
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: bbc9d9014f98
+sourceHash: b116c91bb8d4
 ---
 
 ccam أداة سطر أوامر صغيرة لمن يستخدمون أكثر من حساب Claude Code على الحاسوب نفسه: حساب شخصي وحساب للعمل، أو عدة حسابات لمشروع واحد طويل.

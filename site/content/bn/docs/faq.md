@@ -1,15 +1,16 @@
 ---
 title: "প্রায়ই জিজ্ঞাসিত প্রশ্ন"
+metaTitle: "ccam FAQ: একাধিক Claude Code অ্যাকাউন্ট"
 description: "ccam, Claude Code অ্যাকাউন্ট, ব্যবহারের সীমা, শেয়ার করা, গোপনীয়তা ও সমর্থিত সিস্টেম নিয়ে প্রশ্নের উত্তর।"
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 1355fa6ef3c6
+sourceHash: 8876e4f00bd2
 ---
 
 ## ccam কি Anthropic-এর অফিসিয়াল টুল?
 
-না। ccam একটি অনানুষ্ঠানিক ওপেন-সোর্স প্রকল্প। এটি Anthropic-এর সঙ্গে যুক্ত নয় এবং Anthropic এটি অনুমোদন করেনি। একাধিক অ্যাকাউন্ট পাশাপাশি চালানোর জন্য Claude Code যে `CLAUDE_CONFIG_DIR` সেটিংয়ের কথা ডকুমেন্টেশনে বলে, ccam সেটিই ব্যবহার করে।
+না। ccam একটি অনানুষ্ঠানিক ওপেন-সোর্স প্রকল্প। এটি Anthropic-এর সঙ্গে যুক্ত নয় এবং Anthropic এটি অনুমোদন করেনি। একাধিক অ্যাকাউন্ট পাশাপাশি চালানোর জন্য Claude Code যে `CLAUDE_CONFIG_DIR` সেটিংয়ের কথা [ডকুমেন্টেশনে বলে](https://code.claude.com/docs/en/env-vars), ccam সেটিই ব্যবহার করে।
 
 ## আমি কি একাধিক Claude Code অ্যাকাউন্ট ব্যবহার করতে পারি?
 

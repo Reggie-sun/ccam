@@ -4,7 +4,7 @@ description: Ga amfanin awa 5 da na mako na kowane asusun Claude Code da ccam us
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: 8ab41501c548
+sourceHash: cbc6b0c0618d
 ---
 
 `ccam usage` yana nuna nawa kowane asusu ya yi amfani da shi daga iyakar awa 5 da ta mako. `ccam next --auto` yana buɗe asusun da ya fi sauran sarari, kuma `--continue` yana ɗauko tattaunawar yanzu zuwa can.

@@ -1,10 +1,11 @@
 ---
 title: Справочник команд
+metaTitle: Справочник команд ccam
 description: Все команды и параметры ccam, от ccam add и ccam <name> до ccam usage, ccam next и ccam doctor.
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a5a33b1a2f4
+sourceHash: 65fb2b8f6617
 ---
 
 Поставьте `--dry-run` перед любой командой, чтобы увидеть, что она сделает, ничего не выполняя, например `ccam --dry-run work`.

@@ -1,15 +1,16 @@
 ---
 title: 자주 묻는 질문
+metaTitle: "ccam FAQ: Claude Code 여러 계정 쓰기"
 description: ccam, Claude Code 계정, 사용량 한도, 공유, 개인정보, 지원 시스템에 관한 질문과 답변입니다.
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 1355fa6ef3c6
+sourceHash: 8876e4f00bd2
 ---
 
 ## ccam은 Anthropic 공식 도구인가요?
 
-아닙니다. ccam은 비공식 오픈소스 프로젝트로, Anthropic과 제휴 관계가 없으며 Anthropic의 보증을 받지 않았습니다. ccam은 Claude Code 문서에서 여러 계정을 함께 실행하는 방법으로 안내하는 `CLAUDE_CONFIG_DIR` 설정을 사용합니다.
+아닙니다. ccam은 비공식 오픈소스 프로젝트로, Anthropic과 제휴 관계가 없으며 Anthropic의 보증을 받지 않았습니다. ccam은 [Claude Code 문서](https://code.claude.com/docs/en/env-vars)에서 여러 계정을 함께 실행하는 방법으로 안내하는 `CLAUDE_CONFIG_DIR` 설정을 사용합니다.
 
 ## Claude Code 계정을 여러 개 써도 되나요?
 

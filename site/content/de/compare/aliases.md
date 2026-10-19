@@ -4,7 +4,7 @@ description: Shell-Aliase mit CLAUDE_CONFIG_DIR und ccam im direkten Vergleich, 
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: f751716e46c9
+sourceHash: 6fc4200a8a65
 ---
 
 Ein Shell-Alias pro Konto ist der einfachste Weg, mehrere Claude Code-Konten zu betreiben. ccam macht darunter dasselbe und ergänzt Teilen, Wechseln und das Verfolgen der Nutzung.
@@ -25,4 +25,4 @@ Ein Shell-Alias pro Konto ist der einfachste Weg, mehrere Claude Code-Konten zu 
 
 Nimm Aliase, wenn du zwei Konten hast und nichts zwischen ihnen teilen willst. Nimm ccam, wenn sich die Konten wie eine einzige Einrichtung anfühlen sollen. Du kannst mit Aliasen anfangen und später zu ccam wechseln: `ccam import` registriert vorhandene `~/.claude-*`-Ordner dort, wo sie liegen.
 
-[Zwei Konten auf einem Computer nutzen](/guides/multiple-claude-code-accounts) erklärt beide Ansätze Schritt für Schritt.
+[Mehrere Konten auf einem Computer nutzen](/guides/multiple-claude-code-accounts) erklärt beide Ansätze Schritt für Schritt, und [ccam und andere Tools zum Kontowechsel](/compare/account-switchers) vergleicht ccam mit Tools, die eine einzige Anmeldung austauschen.

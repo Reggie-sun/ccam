@@ -1,15 +1,16 @@
 ---
 title: คำถามที่พบบ่อย
+metaTitle: "ccam FAQ: ใช้ Claude Code หลายบัญชี"
 description: "คำตอบเกี่ยวกับ ccam บัญชี Claude Code ขีดจำกัดการใช้งาน การใช้ร่วมกัน ความเป็นส่วนตัว และระบบที่รองรับ"
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 1355fa6ef3c6
+sourceHash: 8876e4f00bd2
 ---
 
 ## ccam เป็นเครื่องมืออย่างเป็นทางการของ Anthropic หรือไม่?
 
-ไม่ใช่ ccam เป็นโปรเจกต์โอเพนซอร์สที่ไม่เป็นทางการ และไม่ได้มีส่วนเกี่ยวข้องหรือได้รับการรับรองจาก Anthropic ccam ใช้การตั้งค่า `CLAUDE_CONFIG_DIR` ที่ Claude Code ระบุไว้ในเอกสารสำหรับการใช้หลายบัญชีควบคู่กัน
+ไม่ใช่ ccam เป็นโปรเจกต์โอเพนซอร์สที่ไม่เป็นทางการ และไม่ได้มีส่วนเกี่ยวข้องหรือได้รับการรับรองจาก Anthropic ccam ใช้การตั้งค่า `CLAUDE_CONFIG_DIR` ที่ Claude Code [ระบุไว้ในเอกสาร](https://code.claude.com/docs/en/env-vars)สำหรับการใช้หลายบัญชีควบคู่กัน
 
 ## ฉันใช้บัญชี Claude Code หลายบัญชีได้หรือไม่?
 

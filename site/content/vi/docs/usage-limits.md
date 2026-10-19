@@ -4,7 +4,7 @@ description: "Xem mức sử dụng 5 giờ và hàng tuần của mọi tài kh
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: 8ab41501c548
+sourceHash: cbc6b0c0618d
 ---
 
 `ccam usage` cho biết mỗi tài khoản đã dùng bao nhiêu trong giới hạn 5 giờ và giới hạn hàng tuần. `ccam next --auto` mở tài khoản còn nhiều hạn mức nhất, và `--continue` mang cuộc hội thoại hiện tại sang tài khoản đó.

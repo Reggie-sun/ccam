@@ -1,8 +1,8 @@
 {
   "site": {
     "name": "ccam",
-    "title": "ccam: mehrere Claude Code-Konten auf einem Computer nutzen",
-    "description": "ccam ist ein kostenloses Open-Source-Kommandozeilentool, mit dem du mehrere Claude Code-Konten auf einem Computer nutzt und mit einem Befehl zwischen ihnen wechselst."
+    "title": "ccam: Claude Code Account Manager zum Kontowechsel",
+    "description": "ccam (Claude Code Account Manager) ist ein kostenloses Open-Source-Tool, mit dem du mehrere Claude Code-Konten auf einem Rechner nutzt und per Befehl wechselst."
   },
   "nav": {
     "docs": "Doku",
@@ -87,6 +87,7 @@
     "factsTitle": "Kurz gesagt"
   },
   "docs": {
+    "byline": "Von {author}",
     "updated": "Zuletzt aktualisiert am {date}",
     "versions": "Geprüft mit ccam {ccam} und Claude Code {claude}",
     "prev": "Zurück",
@@ -141,17 +142,18 @@
   "footer": {
     "unofficial": "ccam ist ein inoffizielles Open-Source-Tool. Es steht in keiner Verbindung zu Anthropic und wird nicht von Anthropic unterstützt. Claude und Claude Code sind Marken von Anthropic.",
     "terms": "Ob du mehrere Konten nutzen darfst, hängt von den Bedingungen jedes Kontos ab. Prüfe sie, bevor du es tust.",
+    "analytics": "Diese Website zählt Besuche mit Cloudflare Web Analytics, das keine Cookies setzt und keine personenbezogenen Daten erfasst.",
     "license": "Quellcode auf GitHub",
     "languages": "Alle Sprachen"
   },
   "changelog": {
     "title": "Changelog",
-    "description": "Jede ccam-Version und was sich darin geändert hat.",
+    "description": "Jede ccam-Version und was sich darin geändert hat: neue Befehle, Fehlerbehebungen und Beschleunigungen, die neueste zuerst.",
     "empty": "Es wurden noch keine Versionen veröffentlicht. Builds aus dem main-Branch sind auf GitHub aufgeführt."
   },
   "languages": {
     "title": "Sprachen",
-    "description": "ccam.dev gibt es in {count, plural, one {# Sprache} other {# Sprachen}}.",
+    "description": "ccam.dev gibt es in {count, plural, one {# Sprache} other {# Sprachen}}, jeweils mit derselben Dokumentation und denselben Anleitungen.",
     "coverage": "Nach den Bevölkerungsdaten von Unicode CLDR machen Menschen, die mindestens eine dieser Sprachen sprechen, {low} bis {high} der Weltbevölkerung aus.",
     "method": "Die niedrigere Zahl zählt in jedem Land nur die meistgesprochene unterstützte Sprache; die höhere addiert alle unterstützten Sprachen und begrenzt jedes Land auf 100 %."
   },

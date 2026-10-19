@@ -4,7 +4,7 @@ description: Claude Code માં CLAUDE_CONFIG_DIR શું કરે છે,
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 62f178595254
+sourceHash: ef9317030e42
 ---
 
 `CLAUDE_CONFIG_DIR` Claude Code ને જણાવે છે કે `~/.claude` ને બદલે કયું ફોલ્ડર વાપરવું. એકાઉન્ટને લગતું બધું ત્યાં રહે છે: લૉગિન, સેટિંગ્સ, MCP સર્વર, plugins અને વાતચીતનો ઇતિહાસ. તેને જુદાં ફોલ્ડર તરફ નિર્દેશિત કરવાથી તમને અલગ એકાઉન્ટ મળે છે.
@@ -13,13 +13,17 @@ sourceHash: 62f178595254
 CLAUDE_CONFIG_DIR=~/.claude-work claude
 ```
 
-## ફોલ્ડરની અંદર શું હોય છે
+## શું CLAUDE_CONFIG_DIR સત્તાવાર રીતે સમર્થિત છે?
+
+હા. Claude Code તેને પોતાના [environment variables](https://code.claude.com/docs/en/env-vars) માં કૉન્ફિગરેશન ફોલ્ડર બદલવાની રીત તરીકે ગણાવે છે, જે "ઘણાં એકાઉન્ટ સાથે-સાથે ચલાવવા માટે ઉપયોગી" છે, અને તેની [authentication માર્ગદર્શિકા](https://code.claude.com/docs/en/authentication#log-in-with-multiple-accounts) ઘણાં એકાઉન્ટથી લૉગિન કરવા માટે તેનો ઉપયોગ કરે છે. તમે તેને તમારા શેલમાં કે user settings માં સેટ કરી શકો છો, પણ પ્રોજેક્ટનાં settings માં નહીં.
+
+## ફોલ્ડરની અંદર શું હોય છે?
 
 Claude Code 2.1.302 સાથે તપાસેલું:
 
 | પાથ | સામગ્રી | શેર કરી શકાય |
 | --- | --- | --- |
-| `.credentials.json` | લૉગિન ટોકન (Linux), MCP OAuth ટોકન | ના |
+| `.credentials.json` | લૉગિન ટોકન (Linux, Windows), MCP OAuth ટોકન | ના |
 | `.claude.json` | એકાઉન્ટની વિગતો, user MCP સર્વર, દરેક પ્રોજેક્ટની સ્થિતિ | ના (MCP સર્વર અલગથી) |
 | `settings.json` | પરવાનગીઓ, hooks, મૉડલ, સ્ટેટસ લાઇન, plugins | હા |
 | `CLAUDE.md` | ગ્લોબલ સૂચનાઓ | હા |
@@ -28,13 +32,19 @@ Claude Code 2.1.302 સાથે તપાસેલું:
 | `history.jsonl` | પ્રૉમ્પ્ટનો ઇતિહાસ | હા |
 | `sessions/`, `shell-snapshots/`, `cache/` અને બીજાં | રનટાઇમ સ્થિતિ | ના |
 
-## બે વિગતો જેમાં લોકો ભૂલ કરે છે
+## લોકો ક્યાં ભૂલ કરે છે?
 
 **`CLAUDE_CONFIG_DIR` વગર, `.claude.json` એ `~/.claude` ની અંદર હોતી નથી.** ત્યારે Claude Code તેને ફોલ્ડરની બાજુમાં `~/.claude.json` પર રાખે છે. જો તમે `CLAUDE_CONFIG_DIR=~/.claude` વાપરવાનું શરૂ કરો, તો Claude Code તેના બદલે `~/.claude/.claude.json` શોધે છે અને તમારું એકાઉન્ટ શોધી શકતું નથી. `ccam import` આ બંનેને લિંક કરીને આ સંભાળી લે છે.
 
-**macOS પર લૉગિન ફોલ્ડરમાં નહીં, Keychain માં હોય છે.** Claude Code તેને `Claude Code-credentials` નામ હેઠળ રાખે છે, અને જ્યારે `CLAUDE_CONFIG_DIR` સેટ હોય ત્યારે તેની પાછળ ફોલ્ડર પાથનો ટૂંકો hash જોડાય છે. તેથી અલગ ફોલ્ડરને અલગ Keychain એન્ટ્રી મળે છે. જો Keychain લખવાની ના પાડે, તો Claude Code ફોલ્ડરમાંની `.credentials.json` વાપરે છે.
+**macOS પર લૉગિન ફોલ્ડરમાં નહીં, Keychain માં હોય છે.** Claude Code તેને `Claude Code-credentials` નામ હેઠળ રાખે છે, અને જ્યારે `CLAUDE_CONFIG_DIR` સેટ હોય ત્યારે તેની પાછળ ફોલ્ડર પાથનો ટૂંકો hash જોડાય છે. તેથી અલગ ફોલ્ડરને અલગ Keychain એન્ટ્રી મળે છે. જો Keychain લખવાની ના પાડે, તો Claude Code ફોલ્ડરમાંની `.credentials.json` વાપરે છે, જેમ [તેના દસ્તાવેજીકરણમાં](https://code.claude.com/docs/en/authentication#credential-management) વર્ણવેલું છે.
 
-## ફોલ્ડર વચ્ચે શેરિંગ
+**દરેક સાઇન-ઇન ફોલ્ડરમાં નથી રહેતું.** API key વગરનું Claude Console સાઇન-ઇન ફોલ્ડરની બહાર સંગ્રહાય છે, તેથી અલગ ફોલ્ડર આવાં બે સાઇન-ઇનને અલગ રાખી શકતાં નથી. claude.ai લૉગિન અને API key દરેક ફોલ્ડરમાં અલગ રહે છે.
+
+## Windows પર ફોલ્ડર ક્યાં હોય છે?
+
+ડિફૉલ્ટ રીતે `%USERPROFILE%\.claude`, અને લૉગિન તેની અંદર `.credentials.json` માં. દરેક વધારાના એકાઉન્ટ માટે `CLAUDE_CONFIG_DIR` ને બીજા ફોલ્ડર પર સેટ કરો, Linux અને macOS ની જેમ જ.
+
+## શું ફોલ્ડર ફાઇલો શેર કરી શકે?
 
 Symbolic links કામ કરે છે: Claude Code લિંક કરેલી `settings.json` કે `projects/` ફોલ્ડર દ્વારા વાંચે અને લખે છે, અને લિંક જાળવી રાખે છે. MCP સર્વર અપવાદ છે, કારણ કે તેઓ લૉગિન સાથે `.claude.json` શેર કરે છે; તેના બદલે તેમને `--mcp-config` વડે આપો.
 

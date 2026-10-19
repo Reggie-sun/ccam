@@ -4,7 +4,7 @@ description: Consulta el uso de 5 horas y semanal de cada cuenta de Claude Code 
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: 8ab41501c548
+sourceHash: cbc6b0c0618d
 ---
 
 `ccam usage` muestra cuánto ha usado cada cuenta de sus límites de 5 horas y semanal. `ccam next --auto` abre la cuenta con más margen, y `--continue` lleva consigo la conversación actual.

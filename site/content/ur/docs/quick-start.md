@@ -1,10 +1,11 @@
 ---
 title: "فوری آغاز"
+metaTitle: "فوری آغاز: Claude Code اکاؤنٹس شامل کریں اور بدلیں"
 description: ccam add سے Claude Code کے دو اکاؤنٹس شامل کریں، انہیں ccwork جیسے شارٹ کٹ دیں، ان کے درمیان تبدیل کریں اور طے کریں کہ وہ کیا شیئر کریں۔
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: eb078efa2ee2
+sourceHash: 745a9904e32a
 ---
 
 ہر اکاؤنٹ `ccam add` سے شامل کریں، پھر Claude Code کو `ccam <name>` سے یا ایسے شارٹ کٹ سے شروع کریں جس کا نام آپ خود رکھیں، جیسے `ccwork`۔ زیادہ تر لوگوں کو بس اتنا ہی چاہیے۔

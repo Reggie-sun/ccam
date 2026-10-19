@@ -4,7 +4,7 @@ description: Shell alias da CLAUDE_CONFIG_DIR idan aka kwatanta da ccam don guda
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: f751716e46c9
+sourceHash: 6fc4200a8a65
 ---
 
 Shell alias ga kowane asusu ita ce hanya mafi sauƙi ta gudanar da asusun Claude Code da dama. ccam yana yin abu ɗaya a ƙarƙashi kuma yana ƙara rabawa, sauyawa da bin diddigin amfani.
@@ -25,4 +25,4 @@ Shell alias ga kowane asusu ita ce hanya mafi sauƙi ta gudanar da asusun Claude
 
 Zaɓi alias idan kana da asusai biyu kuma ba ka son a raba komai a tsakaninsu. Zaɓi ccam idan kana son asusan su ji kamar saiti ɗaya. Za ka iya farawa da alias ka koma ccam daga baya: `ccam import` yana yin rajistar foldojin `~/.claude-*` da ke akwai a inda suke.
 
-[Yadda ake amfani da asusai biyu a kwamfuta ɗaya](/guides/multiple-claude-code-accounts) yana bayyana hanyoyin biyu mataki-mataki.
+[Yadda ake amfani da asusai da dama a kwamfuta ɗaya](/guides/multiple-claude-code-accounts) yana bayyana hanyoyin biyu mataki-mataki, kuma [ccam da sauran masu sauya asusu](/compare/account-switchers) yana kwatanta ccam da kayan aikin da ke musanya bayanan shiga ɗaya.

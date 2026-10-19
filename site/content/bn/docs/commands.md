@@ -1,10 +1,11 @@
 ---
 title: "কমান্ড রেফারেন্স"
+metaTitle: "ccam কমান্ড রেফারেন্স"
 description: "ccam add ও ccam <name> থেকে ccam usage, ccam next ও ccam doctor পর্যন্ত ccam-এর প্রতিটি কমান্ড ও অপশন।"
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a5a33b1a2f4
+sourceHash: 65fb2b8f6617
 ---
 
 কোনো কমান্ড আসলে না চালিয়ে সেটি কী করবে তা দেখতে কমান্ডের আগে `--dry-run` দিন, যেমন `ccam --dry-run work`।

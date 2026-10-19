@@ -1,19 +1,28 @@
 ---
 title: Co zrobić, gdy Claude Code osiągnie limit użycia
-description: Sprawdź, ile zapasu zostało na każdym koncie Claude Code, i kontynuuj tę samą rozmowę na innym koncie, gdy jedno osiągnie limit.
+description: Poczekaj na reset albo od razu kontynuuj tę samą rozmowę na innym koncie Claude Code. Jak działają limity 5-godzinne i tygodniowe, krok po kroku.
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 767a731b912e
+sourceHash: ff765a189332
 ---
 
-Gdy jedno konto osiągnie limit, kontynuuj tę samą rozmowę na innym swoim koncie: raz włącz współdzielenie historii rozmów, a potem uruchom `ccam next --continue`. Jeśli masz tylko jedno konto, poczekaj do czasu resetu, który pokazuje Claude Code.
+Gdy konto osiągnie limit użycia (często nazywany rate limitem), masz dwie możliwości: poczekać, aż limit się zresetuje, albo od razu kontynuować tę samą rozmowę na innym swoim koncie. Z ccam to drugie wymaga jednego polecenia, `ccam next --auto --continue`, gdy historia rozmów jest już współdzielona między kontami.
 
-## Zanim to nastąpi
+## Jakie limity ma Claude Code?
 
-Skonfiguruj konta tak, żeby przełączenie wymagało jednego polecenia:
+W planach Pro i Max Claude Code ma [5-godzinny limit sesji i limit tygodniowy](https://support.claude.com/en/articles/11145838-using-claude-code-with-your-pro-or-max-plan). Oba są wspólne z Claude w przeglądarce i w aplikacjach, a użycie liczy się do obu jednocześnie. Gdy jeden się wyczerpie, Claude Code [wyświetla komunikat](https://code.claude.com/docs/en/errors#youve-hit-your-session-limit) w rodzaju „You've hit your session limit · resets 3:45pm”. Zmiana modelu nie pomaga, bo limity obejmują wszystkie modele.
+
+## Opcja 1: poczekaj na reset
+
+Jeśli masz jedno konto, poczekaj. Nowsze wersje Claude Code [czekają w otwartej sesji](https://code.claude.com/docs/en/interactive-mode#wait-for-a-usage-limit-to-reset) i same wznawiają zadanie po zresetowaniu limitu. `/usage` w Claude Code pokazuje, jaką część limitów twojego planu już wykorzystałeś.
+
+## Opcja 2: kontynuuj od razu na innym koncie
+
+Jeśli masz drugie konto, możesz od razu kontynuować tę samą rozmowę. Skonfiguruj to raz:
 
 ```sh
+curl -fsSL https://ccam.dev/install.sh | sh
 ccam add personal
 ccam add work
 ccam share personal --history on
@@ -23,9 +32,7 @@ ccam statusline install
 
 Pasek stanu pokazuje teraz podczas pracy konto i jego 5-godzinne użycie, więc limit nie będzie zaskoczeniem.
 
-## Gdy limit zostanie osiągnięty
-
-Wyjdź z Claude Code (`/exit`), a następnie:
+Gdy limit zostanie osiągnięty, wyjdź z Claude Code (`/exit`), a następnie:
 
 ```sh
 ccam usage
@@ -44,11 +51,16 @@ ccam next --auto --continue
 
 Claude Code uruchomi się jako `work` z najnowszą rozmową z bieżącego folderu, łącznie ze wszystkim, co zostało w niej dotąd powiedziane.
 
+## Czy ccam przełącza konta automatycznie?
+
+Nie. ccam nie działa w trakcie twojej pracy: uruchamia Claude Code i zastępuje się nim. To ty decydujesz, kiedy przełączyć, a `ccam next --auto` wybiera konto z najniższym 5-godzinnym użyciem i pomija konta, które mają 100% albo nie są zalogowane. Niektóre inne narzędzia zamiast tego podmieniają login działającej sesji; [ccam i inne narzędzia do przełączania kont](/compare/account-switchers) wyjaśnia różnicę.
+
 ## O czym pamiętać
 
 - Uruchamiaj `ccam next --continue` w tym samym folderze, w którym pracowałeś; rozmowy są przechowywane osobno dla każdego folderu projektu.
 - Nie uruchamiaj dwóch kont na tej samej rozmowie jednocześnie. ccam ostrzeże cię, jeśli spróbujesz.
 - Drugie konto też musi współdzielić historię rozmów, w tej samej grupie.
+- Pierwsza wiadomość na nowym koncie może zużyć więcej jego limitu niż zwykle, bo to konto nie ma jeszcze rozmowy w pamięci podręcznej.
 - To, czy wolno ci w ten sposób przełączać się między kontami, zależy od warunków każdego konta.
 
 Wszystkie opcje `ccam usage` i `ccam next` znajdziesz w części [limity użycia](/docs/usage-limits).

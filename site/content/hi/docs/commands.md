@@ -1,10 +1,11 @@
 ---
 title: कमांड संदर्भ
+metaTitle: "ccam कमांड संदर्भ"
 description: ccam की हर कमांड और विकल्प, ccam add और ccam <name> से लेकर ccam usage, ccam next और ccam doctor तक।
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a5a33b1a2f4
+sourceHash: 65fb2b8f6617
 ---
 
 कोई कमांड असल में चलाए बिना यह देखने के लिए कि वह क्या करेगी, उसके आगे `--dry-run` लगाएँ, उदाहरण के लिए `ccam --dry-run work`।

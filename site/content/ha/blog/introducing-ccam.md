@@ -4,7 +4,7 @@ description: Dalilin samuwar ccam, abin da yake yi wa masu asusun Claude Code da
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: bbc9d9014f98
+sourceHash: b116c91bb8d4
 ---
 
 ccam ƙaramin kayan aikin command-line ne ga mutanen da ke amfani da asusun Claude Code fiye da ɗaya a kwamfuta ɗaya: asusu na kai da na aiki, ko asusai da dama don dogon project ɗaya.

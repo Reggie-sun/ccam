@@ -1,10 +1,11 @@
 ---
 title: ccam-ஐ நிறுவுதல்
-description: Linux அல்லது macOS-இல் ccam-ஐ ஒரே கட்டளையில், .deb தொகுப்பில் அல்லது மூலக் குறியீட்டிலிருந்து நிறுவி, ccam update மூலம் புதுப்பித்த நிலையில் வைத்திருங்கள். முதலில் Claude Code நிறுவப்பட்டிருக்க வேண்டும்.
+metaTitle: Linux, macOS-இல் ccam-ஐ நிறுவுதல்
+description: Linux அல்லது macOS-இல் ccam-ஐ ஒரே கட்டளை, .deb தொகுப்பு அல்லது மூலக் குறியீடு மூலம் நிறுவி, ccam update மூலம் புதுப்பியுங்கள். முதலில் Claude Code தேவை.
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: bde486b82b2e
+sourceHash: 7ecd1ed00e09
 ---
 
 Linux அல்லது macOS-இல் ஒரு டெர்மினலில் இதை இயக்குங்கள்:

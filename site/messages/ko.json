@@ -1,8 +1,8 @@
 {
   "site": {
     "name": "ccam",
-    "title": "ccam: 컴퓨터 한 대에서 여러 Claude Code 계정 사용하기",
-    "description": "ccam은 컴퓨터 한 대에서 여러 Claude Code 계정을 쓰고, 명령 하나로 계정을 전환할 수 있게 해 주는 무료 오픈소스 명령줄 도구입니다."
+    "title": "ccam: Claude Code Account Manager, 계정 전환 도구",
+    "description": "ccam(Claude Code Account Manager)은 컴퓨터 한 대에서 여러 Claude Code 계정을 쓰고 명령 하나로 전환하게 해 주는 무료 오픈소스 도구입니다."
   },
   "nav": {
     "docs": "문서",
@@ -87,6 +87,7 @@
     "factsTitle": "요약"
   },
   "docs": {
+    "byline": "작성자: {author}",
     "updated": "최종 수정 {date}",
     "versions": "ccam {ccam}, Claude Code {claude} 기준으로 확인함",
     "prev": "이전",
@@ -141,17 +142,18 @@
   "footer": {
     "unofficial": "ccam은 비공식 오픈소스 도구로, Anthropic과 제휴 관계가 없으며 Anthropic의 보증을 받지 않았습니다. Claude와 Claude Code는 Anthropic의 상표입니다.",
     "terms": "여러 계정을 사용해도 되는지는 각 계정의 약관에 따라 다릅니다. 사용하기 전에 약관을 확인하세요.",
+    "analytics": "이 사이트는 Cloudflare Web Analytics로 방문 수를 집계합니다. 쿠키를 설정하지 않으며 개인정보를 수집하지 않습니다.",
     "license": "GitHub에서 소스 코드 보기",
     "languages": "모든 언어"
   },
   "changelog": {
     "title": "변경 내역",
-    "description": "ccam의 모든 릴리스와 릴리스별 변경 사항.",
+    "description": "ccam의 모든 릴리스와 릴리스별 변경 사항(새 명령, 버그 수정, 속도 개선)을 최신순으로 정리했습니다.",
     "empty": "아직 공개된 릴리스가 없습니다. main 브랜치 빌드는 GitHub에서 볼 수 있습니다."
   },
   "languages": {
     "title": "언어",
-    "description": "ccam.dev는 {count, plural, other {#개 언어}}로 제공됩니다.",
+    "description": "ccam.dev는 {count, plural, other {#개 언어}}로 제공되며, 모든 언어에서 같은 문서와 가이드를 볼 수 있습니다.",
     "coverage": "Unicode CLDR 인구 데이터에 따르면, 이 언어 중 하나 이상을 쓰는 사람은 세계 인구의 {low}~{high}입니다.",
     "method": "낮은 수치는 나라별로 지원 언어 중 가장 많이 쓰이는 언어 하나만 센 값이고, 높은 수치는 지원 언어를 모두 더하되 나라별로 100%를 넘지 않게 한 값입니다."
   },

@@ -4,7 +4,7 @@ description: Cara ccam membagikan server MCP, settings.json, CLAUDE.md, agen, sk
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: ccbb2c5e97bc
+sourceHash: 1e2f0d6809fc
 ---
 
 Setiap akun menyimpan login-nya sendiri. Semua hal lain dapat dibagikan per item: ccam menautkan file atau folder milik akun ke folder grup bersama, sehingga perubahan yang dibuat di satu akun muncul di semua akun dalam grup tersebut.

@@ -1,10 +1,11 @@
 ---
 title: Tham chiếu lệnh
+metaTitle: "Tham chiếu lệnh ccam"
 description: "Mọi lệnh và tùy chọn của ccam, từ ccam add và ccam <name> đến ccam usage, ccam next và ccam doctor."
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a5a33b1a2f4
+sourceHash: 65fb2b8f6617
 ---
 
 Đặt `--dry-run` trước bất kỳ lệnh nào để xem lệnh đó sẽ làm gì mà không thực sự thực hiện, ví dụ `ccam --dry-run work`.

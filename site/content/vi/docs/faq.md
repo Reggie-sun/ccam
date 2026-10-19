@@ -1,15 +1,16 @@
 ---
 title: Câu hỏi thường gặp
+metaTitle: "ccam FAQ: dùng nhiều tài khoản Claude Code"
 description: "Giải đáp về ccam, tài khoản Claude Code, giới hạn sử dụng, việc dùng chung, quyền riêng tư và các hệ điều hành được hỗ trợ."
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 1355fa6ef3c6
+sourceHash: 8876e4f00bd2
 ---
 
 ## ccam có phải là công cụ chính thức của Anthropic không?
 
-Không. ccam là dự án mã nguồn mở không chính thức, không liên kết với Anthropic và không được Anthropic xác nhận. Nó dùng thiết lập `CLAUDE_CONFIG_DIR` mà Claude Code mô tả trong tài liệu để chạy song song nhiều tài khoản.
+Không. ccam là dự án mã nguồn mở không chính thức, không liên kết với Anthropic và không được Anthropic xác nhận. Nó dùng thiết lập `CLAUDE_CONFIG_DIR` mà Claude Code [mô tả trong tài liệu](https://code.claude.com/docs/en/env-vars) để chạy song song nhiều tài khoản.
 
 ## Tôi có được phép dùng nhiều tài khoản Claude Code không?
 

@@ -1,10 +1,11 @@
 ---
 title: కమాండ్ రిఫరెన్స్
+metaTitle: ccam కమాండ్ రిఫరెన్స్
 description: ccam add, ccam <name> నుంచి ccam usage, ccam next, ccam doctor వరకు ccam యొక్క ప్రతి కమాండ్, ఆప్షన్.
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a5a33b1a2f4
+sourceHash: 65fb2b8f6617
 ---
 
 ఏ కమాండ్ అయినా అసలు చేయకుండా అది ఏమి చేస్తుందో చూడటానికి, దాని ముందు `--dry-run` పెట్టండి, ఉదాహరణకు `ccam --dry-run work`.

@@ -3,13 +3,21 @@ import { abs, REPO, SITE } from "./paths";
 export const VERSION = "0.3.0"; // shown on the site; bump with releases
 export const CLAUDE_CODE_VERSION = "2.1.302";
 
+// "CCAM" also names other projects; the full name tells search engines which one this is.
+const FULL_NAME = "Claude Code Account Manager";
+const WEBSITE = { "@id": SITE + "/#website" };
+const ORGANIZATION = { "@id": SITE + "/#organization" };
+export const AUTHOR = { "@type": "Person", name: "jhyunwoo", url: "https://github.com/jhyunwoo" };
+
 export function websiteLd(lang: string) {
   return [
-    { "@context": "https://schema.org", "@type": "WebSite", name: "ccam", url: SITE + "/", inLanguage: lang },
+    { "@context": "https://schema.org", "@type": "WebSite", ...WEBSITE, name: "ccam", alternateName: FULL_NAME, url: SITE + "/", inLanguage: lang, publisher: ORGANIZATION },
     {
       "@context": "https://schema.org",
       "@type": "Organization",
+      ...ORGANIZATION,
       name: "ccam",
+      alternateName: FULL_NAME,
       url: SITE + "/",
       logo: abs("/icon-512.png"),
       sameAs: [REPO],
@@ -22,7 +30,10 @@ export function softwareLd(description: string, lang: string) {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     name: "ccam",
+    alternateName: FULL_NAME,
     description,
+    author: AUTHOR,
+    publisher: ORGANIZATION,
     inLanguage: lang,
     applicationCategory: "DeveloperApplication",
     operatingSystem: "Linux, macOS",
@@ -34,17 +45,22 @@ export function softwareLd(description: string, lang: string) {
   };
 }
 
-export function articleLd(opts: { title: string; description: string; url: string; updated: string; lang: string; crumbs: { name: string; url: string }[] }) {
+export function articleLd(opts: { type: "TechArticle" | "BlogPosting"; title: string; description: string; url: string; published: string; updated: string; lang: string; image: string; crumbs: { name: string; url: string }[] }) {
   return [
     {
       "@context": "https://schema.org",
-      "@type": "TechArticle",
+      "@type": opts.type,
       headline: opts.title,
       description: opts.description,
       inLanguage: opts.lang,
+      datePublished: opts.published,
       dateModified: opts.updated,
       url: opts.url,
-      isPartOf: { "@type": "WebSite", name: "ccam", url: SITE + "/" },
+      mainEntityOfPage: opts.url,
+      image: opts.image,
+      author: AUTHOR,
+      publisher: ORGANIZATION,
+      isPartOf: WEBSITE,
     },
     {
       "@context": "https://schema.org",
@@ -52,6 +68,19 @@ export function articleLd(opts: { title: string; description: string; url: strin
       itemListElement: opts.crumbs.map((c, i) => ({ "@type": "ListItem", position: i + 1, name: c.name, item: c.url })),
     },
   ];
+}
+
+export function webPageLd(opts: { title: string; description: string; url: string; updated: string; lang: string }) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: opts.title,
+    description: opts.description,
+    url: opts.url,
+    inLanguage: opts.lang,
+    dateModified: opts.updated,
+    isPartOf: WEBSITE,
+  };
 }
 
 export function faqLd(entries: { question: string; answer: string }[], lang: string) {

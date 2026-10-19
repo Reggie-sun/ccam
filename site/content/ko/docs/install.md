@@ -1,10 +1,11 @@
 ---
 title: ccam 설치
-description: Linux나 macOS에서 명령 하나로, 또는 .deb 패키지나 소스로 ccam을 설치하고 ccam update로 최신 상태를 유지합니다. Claude Code가 먼저 설치되어 있어야 합니다.
+metaTitle: "Linux와 macOS에 ccam 설치하기"
+description: "Linux나 macOS에서 명령 하나, .deb 패키지 또는 소스로 ccam을 설치하고 ccam update로 업데이트합니다. Claude Code를 먼저 설치해야 합니다."
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: bde486b82b2e
+sourceHash: 7ecd1ed00e09
 ---
 
 Linux나 macOS 터미널에서 다음 명령을 실행하세요.

@@ -1,8 +1,8 @@
 {
   "site": {
     "name": "ccam",
-    "title": "ccam: 1台のコンピューターで複数のClaude Codeアカウントを使う",
-    "description": "ccamは、1台のコンピューターで複数のClaude Codeアカウントを使い、1つのコマンドで切り替えられる無料のオープンソースのコマンドラインツールです。"
+    "title": "ccam: Claude Code Account Manager・アカウント切替ツール",
+    "description": "ccam（Claude Code Account Manager）は、1台のコンピューターで複数のClaude Codeアカウントを使い、1つのコマンドで切り替えられる無料のオープンソースツールです。"
   },
   "nav": {
     "docs": "ドキュメント",
@@ -87,6 +87,7 @@
     "factsTitle": "要点"
   },
   "docs": {
+    "byline": "執筆：{author}",
     "updated": "最終更新日: {date}",
     "versions": "ccam {ccam}とClaude Code {claude}で確認済み",
     "prev": "前へ",
@@ -141,17 +142,18 @@
   "footer": {
     "unofficial": "ccamは非公式のオープンソースツールです。Anthropicとは提携しておらず、Anthropicの承認も受けていません。ClaudeおよびClaude CodeはAnthropicの商標です。",
     "terms": "複数のアカウントを使ってよいかどうかは、各アカウントの規約によります。使う前に確認してください。",
+    "analytics": "このサイトはCloudflare Web Analyticsで訪問数を計測しています。Cookieは使用せず、個人データも収集しません。",
     "license": "GitHubのソースコード",
     "languages": "すべての言語"
   },
   "changelog": {
     "title": "変更履歴",
-    "description": "ccamの各リリースとその変更内容。",
+    "description": "ccamの各リリースと変更内容の一覧です。新しいコマンド、修正、高速化を新しい順に掲載しています。",
     "empty": "まだリリースは公開されていません。mainブランチのビルドはGitHubに掲載されています。"
   },
   "languages": {
     "title": "言語",
-    "description": "ccam.devは{count, plural, other {#言語}}で利用できます。",
+    "description": "ccam.devは{count, plural, other {#言語}}で利用でき、どの言語でも同じドキュメントとガイドを読めます。",
     "coverage": "Unicode CLDRの人口データによると、これらの言語のうち少なくとも1つを話す人は、世界人口の{low}から{high}を占めます。",
     "method": "低いほうの数値は、各国で最も話されている対応言語を1つだけ数えたものです。高いほうの数値は、対応するすべての言語を合計し、各国の上限を100%としたものです。"
   },

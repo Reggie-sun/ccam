@@ -4,7 +4,7 @@ description: Jinsi ccam inavyoshiriki seva za MCP, settings.json, CLAUDE.md, age
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: ccbb2c5e97bc
+sourceHash: 1e2f0d6809fc
 ---
 
 Kila akaunti huhifadhi taarifa zake za kuingia. Kila kitu kingine kinaweza kushirikiwa kipengele kwa kipengele: ccam huweka kiungo kutoka faili au folda ya akaunti kwenda folda ya kikundi kinachoshirikiwa, ili badiliko lililofanywa katika akaunti moja lionekane katika akaunti zote za kikundi hicho.

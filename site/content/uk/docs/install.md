@@ -1,10 +1,11 @@
 ---
 title: Встановлення ccam
-description: Встановіть ccam на Linux або macOS однією командою, з пакета .deb або з вихідного коду та оновлюйте його командою ccam update. Спочатку має бути встановлено Claude Code.
+metaTitle: Встановлення ccam на Linux і macOS
+description: Встановіть ccam на Linux або macOS однією командою, з пакета .deb або з коду та оновлюйте командою ccam update. Спершу потрібен Claude Code.
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: bde486b82b2e
+sourceHash: 7ecd1ed00e09
 ---
 
 Виконайте це в терміналі на Linux або macOS:

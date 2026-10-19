@@ -4,7 +4,7 @@ description: ccam શા માટે બન્યું, ઘણાં Claude Co
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: bbc9d9014f98
+sourceHash: b116c91bb8d4
 ---
 
 ccam એક નાનું કમાન્ડ-લાઇન ટૂલ છે, એવા લોકો માટે જેઓ એક જ કમ્પ્યુટર પર એક કરતાં વધુ Claude Code એકાઉન્ટ વાપરે છે: એક અંગત અને એક કામનું એકાઉન્ટ, અથવા એક લાંબા પ્રોજેક્ટ માટે ઘણાં એકાઉન્ટ.

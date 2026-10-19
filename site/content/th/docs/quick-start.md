@@ -1,10 +1,11 @@
 ---
 title: เริ่มต้นใช้งาน
+metaTitle: "เริ่มต้นใช้งาน: เพิ่มและสลับบัญชี Claude Code"
 description: เพิ่มบัญชี Claude Code สองบัญชีด้วย ccam add ตั้งคำสั่งลัดอย่าง ccwork สลับไปมาระหว่างบัญชี และเลือกสิ่งที่จะใช้ร่วมกัน
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: eb078efa2ee2
+sourceHash: 745a9904e32a
 ---
 
 เพิ่มแต่ละบัญชีด้วย `ccam add` จากนั้นเริ่ม Claude Code ด้วย `ccam <name>` หรือด้วยคำสั่งลัดที่คุณตั้งชื่อเอง เช่น `ccwork` เท่านี้ก็เพียงพอสำหรับผู้ใช้ส่วนใหญ่

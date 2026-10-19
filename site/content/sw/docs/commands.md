@@ -1,10 +1,11 @@
 ---
 title: Marejeo ya amri
+metaTitle: Marejeo ya amri za ccam
 description: Kila amri na chaguo la ccam, kuanzia ccam add na ccam <name> hadi ccam usage, ccam next na ccam doctor.
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a5a33b1a2f4
+sourceHash: 65fb2b8f6617
 ---
 
 Weka `--dry-run` kabla ya amri yoyote ili kuona itakachofanya bila kukifanya, kwa mfano `ccam --dry-run work`.

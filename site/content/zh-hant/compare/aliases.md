@@ -4,7 +4,7 @@ description: 並列比較用 CLAUDE_CONFIG_DIR 搭配 Shell 別名和使用 ccam
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: f751716e46c9
+sourceHash: 6fc4200a8a65
 ---
 
 為每個帳號設定一個 Shell 別名，是執行多個 Claude Code 帳號最簡單的方法。ccam 在底層做的是同一件事，並加上共用、切換和用量追蹤功能。
@@ -25,4 +25,4 @@ sourceHash: f751716e46c9
 
 如果你有兩個帳號，而且不想在它們之間共用任何內容，就選擇別名。如果你希望這些帳號用起來像同一套環境，就選擇 ccam。你也可以先用別名，之後再改用 ccam：`ccam import` 會在原位置登錄現有的 `~/.claude-*` 資料夾。
 
-[如何在一台電腦上使用兩個帳號](/guides/multiple-claude-code-accounts)逐步說明了這兩種做法。
+[如何在一台電腦上使用多個帳號](/guides/multiple-claude-code-accounts)逐步說明了這兩種做法，[ccam 與其他帳號切換工具](/compare/account-switchers)則比較了 ccam 和那些切換同一組登入資訊的工具。

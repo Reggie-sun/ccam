@@ -99,16 +99,21 @@ async function main() {
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: interest-cohort=(), browsing-topics=()
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
   Cache-Control: public, max-age=0, s-maxage=86400, stale-while-revalidate=604800
   Link: </fonts/newsreader.woff2>; rel=preload; as=font; type=font/woff2; crossorigin
 
 /assets/*
+  ! Cache-Control
   Cache-Control: public, max-age=31536000, immutable
 /_next/static/*
+  ! Cache-Control
   Cache-Control: public, max-age=31536000, immutable
 /fonts/*
+  ! Cache-Control
   Cache-Control: public, max-age=31536000, immutable
 /og/*
+  ! Cache-Control
   Cache-Control: public, max-age=86400
 /*.md
   Content-Type: text/markdown; charset=utf-8
@@ -121,7 +126,7 @@ async function main() {
 
   // Locale aliases and the duplicate English landing page.
   const codes = new Set(locales.map((l) => l.code));
-  const lines = ["/en/ / 301"];
+  const lines = ["/en/ / 301", "/sitemap.xml /sitemap-index.xml 301"];
   for (const [alias, code] of Object.entries(localeAliases)) {
     if (codes.has(code)) lines.push(`/${alias}/* /${code}/:splat 301`);
   }

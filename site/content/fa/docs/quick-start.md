@@ -1,10 +1,11 @@
 ---
 title: شروع سریع
+metaTitle: "شروع سریع: افزودن و تعویض حساب‌های Claude Code"
 description: دو حساب Claude Code را با ccam add اضافه کنید، به آن‌ها میان‌برهایی مانند ccwork بدهید، بین آن‌ها جابه‌جا شوید و تعیین کنید چه چیزهایی مشترک باشد.
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: eb078efa2ee2
+sourceHash: 745a9904e32a
 ---
 
 هر حساب را با `ccam add` اضافه کنید، سپس Claude Code را با `ccam <name>` یا با میان‌بری که نامش را خودتان انتخاب می‌کنید، مانند `ccwork`، اجرا کنید. بیشتر کاربران به چیزی بیش از این نیاز ندارند.

@@ -1,10 +1,11 @@
 ---
 title: Riferimento dei comandi
+metaTitle: Riferimento dei comandi di ccam
 description: Tutti i comandi e le opzioni di ccam, da ccam add e ccam <name> fino a ccam usage, ccam next e ccam doctor.
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a5a33b1a2f4
+sourceHash: 65fb2b8f6617
 ---
 
 Metti `--dry-run` prima di qualsiasi comando per vedere cosa farebbe senza eseguirlo, per esempio `ccam --dry-run work`.

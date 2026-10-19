@@ -4,7 +4,7 @@ description: Por qué existe ccam, qué hace por quienes tienen varias cuentas d
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: bbc9d9014f98
+sourceHash: b116c91bb8d4
 ---
 
 ccam es una pequeña herramienta de línea de comandos para quienes usan más de una cuenta de Claude Code en la misma computadora: una cuenta personal y una de trabajo, o varias cuentas para un proyecto largo.

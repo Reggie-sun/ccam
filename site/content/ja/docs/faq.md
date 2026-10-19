@@ -1,15 +1,16 @@
 ---
 title: よくある質問
+metaTitle: "ccamのよくある質問：Claude Codeの複数アカウント"
 description: ccam、Claude Codeのアカウント、使用量の上限、共有、プライバシー、対応システムについての回答です。
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 1355fa6ef3c6
+sourceHash: 8876e4f00bd2
 ---
 
 ## ccamはAnthropicの公式ツールですか？
 
-いいえ。ccamは非公式のオープンソースプロジェクトであり、Anthropicとは提携しておらず、Anthropicの承認も受けていません。ccamは、複数のアカウントを並行して使うためにClaude Codeがドキュメントで説明している`CLAUDE_CONFIG_DIR`設定を利用しています。
+いいえ。ccamは非公式のオープンソースプロジェクトであり、Anthropicとは提携しておらず、Anthropicの承認も受けていません。ccamは、複数のアカウントを並行して使うために[Claude Codeがドキュメントで説明している](https://code.claude.com/docs/en/env-vars)`CLAUDE_CONFIG_DIR`設定を利用しています。
 
 ## 複数のClaude Codeアカウントを使ってもよいのですか？
 

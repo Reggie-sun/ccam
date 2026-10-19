@@ -4,7 +4,7 @@ description: Tüm Claude Code hesaplarının 5 saatlik ve haftalık kullanımın
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: 8ab41501c548
+sourceHash: cbc6b0c0618d
 ---
 
 `ccam usage`, her hesabın 5 saatlik ve haftalık limitlerinin ne kadarını kullandığını gösterir. `ccam next --auto` en çok pay kalan hesabı açar, `--continue` ise mevcut konuşmayı o hesaba taşır.

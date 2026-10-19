@@ -4,7 +4,7 @@ description: چگونه ccam سرورهای MCP، settings.json، CLAUDE.md، ag
 updated: 2026-10-19
 order: 4
 translation: machine
-sourceHash: ccbb2c5e97bc
+sourceHash: 1e2f0d6809fc
 ---
 
 هر حساب ورود خود را جداگانه نگه می‌دارد. همه چیزهای دیگر را می‌توان مورد به مورد به اشتراک گذاشت: ccam فایل یا پوشه حساب را به پوشه یک گروه مشترک پیوند می‌دهد، بنابراین تغییری که در یک حساب ایجاد شود در همه حساب‌های آن گروه دیده می‌شود.

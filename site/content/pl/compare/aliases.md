@@ -4,7 +4,7 @@ description: Aliasy powłoki z CLAUDE_CONFIG_DIR i ccam do uruchamiania kilku ko
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: f751716e46c9
+sourceHash: 6fc4200a8a65
 ---
 
 Alias powłoki dla każdego konta to najprostszy sposób na uruchamianie kilku kont Claude Code. ccam robi pod spodem to samo i dodaje współdzielenie, przełączanie oraz śledzenie użycia.
@@ -25,4 +25,4 @@ Alias powłoki dla każdego konta to najprostszy sposób na uruchamianie kilku k
 
 Wybierz aliasy, jeśli masz dwa konta i nie chcesz niczego między nimi współdzielić. Wybierz ccam, jeśli chcesz, żeby konta działały jak jedna konfiguracja. Możesz zacząć od aliasów i przejść na ccam później: `ccam import` rejestruje istniejące foldery `~/.claude-*` tam, gdzie są.
 
-[Jak używać dwóch kont na jednym komputerze](/guides/multiple-claude-code-accounts) wyjaśnia oba podejścia krok po kroku.
+[Jak używać kilku kont na jednym komputerze](/guides/multiple-claude-code-accounts) wyjaśnia oba podejścia krok po kroku, a [ccam i inne narzędzia do przełączania kont](/compare/account-switchers) porównuje ccam z narzędziami, które podmieniają jeden login.

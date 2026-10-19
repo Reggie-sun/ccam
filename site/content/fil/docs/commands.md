@@ -1,10 +1,11 @@
 ---
 title: Sanggunian ng mga command
+metaTitle: Sanggunian ng mga command ng ccam
 description: Bawat command at option ng ccam, mula sa ccam add at ccam <name> hanggang ccam usage, ccam next at ccam doctor.
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a5a33b1a2f4
+sourceHash: 65fb2b8f6617
 ---
 
 Ilagay ang `--dry-run` bago ang anumang command para makita kung ano ang gagawin nito nang hindi ito talagang ginagawa, halimbawa `ccam --dry-run work`.

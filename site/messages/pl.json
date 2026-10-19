@@ -1,8 +1,8 @@
 {
   "site": {
     "name": "ccam",
-    "title": "ccam: kilka kont Claude Code na jednym komputerze",
-    "description": "ccam to darmowe narzędzie wiersza poleceń o otwartym kodzie, które pozwala używać kilku kont Claude Code na jednym komputerze i przełączać się między nimi jednym poleceniem."
+    "title": "ccam: Claude Code Account Manager do przełączania kont",
+    "description": "ccam (Claude Code Account Manager) to darmowe narzędzie open source: kilka kont Claude Code na jednym komputerze i przełączanie między nimi jednym poleceniem."
   },
   "nav": {
     "docs": "Dokumentacja",
@@ -87,6 +87,7 @@
     "factsTitle": "W skrócie"
   },
   "docs": {
+    "byline": "Autor: {author}",
     "updated": "Ostatnia aktualizacja: {date}",
     "versions": "Sprawdzono z ccam {ccam} i Claude Code {claude}",
     "prev": "Poprzednia",
@@ -141,17 +142,18 @@
   "footer": {
     "unofficial": "ccam jest nieoficjalnym narzędziem o otwartym kodzie. Nie jest powiązany z Anthropic ani przez Anthropic popierany. Claude i Claude Code są znakami towarowymi Anthropic.",
     "terms": "To, czy możesz używać kilku kont, zależy od warunków każdego konta. Sprawdź je, zanim to zrobisz.",
+    "analytics": "Ta strona liczy odwiedziny za pomocą Cloudflare Web Analytics, które nie zapisuje plików cookie i nie zbiera danych osobowych.",
     "license": "Kod źródłowy na GitHub",
     "languages": "Wszystkie języki"
   },
   "changelog": {
     "title": "Lista zmian",
-    "description": "Każde wydanie ccam i to, co się w nim zmieniło.",
+    "description": "Każde wydanie ccam i to, co się w nim zmieniło: nowe polecenia, poprawki i przyspieszenia, od najnowszego.",
     "empty": "Nie opublikowano jeszcze żadnych wydań. Kompilacje z gałęzi main są dostępne na GitHub."
   },
   "languages": {
     "title": "Języki",
-    "description": "Serwis ccam.dev jest dostępny w {count, plural, one {# języku} few {# językach} many {# językach} other {# języka}}.",
+    "description": "Serwis ccam.dev jest dostępny w {count, plural, one {# języku} few {# językach} many {# językach} other {# języka}}, w każdym z tą samą dokumentacją i poradnikami.",
     "coverage": "Według danych o populacji z Unicode CLDR osoby mówiące co najmniej jednym z tych języków stanowią od {low} do {high} ludności świata.",
     "method": "Niższa liczba uwzględnia w każdym kraju tylko najczęściej używany obsługiwany język; wyższa sumuje wszystkie obsługiwane języki i ogranicza każdy kraj do 100%."
   },

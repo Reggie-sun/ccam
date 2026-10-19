@@ -1,8 +1,8 @@
 {
   "site": {
     "name": "ccam",
-    "title": "ccam: tumia akaunti kadhaa za Claude Code kwenye kompyuta moja",
-    "description": "ccam ni zana ya bure ya mstari wa amri (open source) inayokuwezesha kutumia akaunti kadhaa za Claude Code kwenye kompyuta moja na kubadili kati yao kwa amri moja."
+    "title": "ccam: Claude Code Account Manager na kibadilisha akaunti",
+    "description": "ccam (Claude Code Account Manager) ni zana huria ya bure ya kutumia akaunti kadhaa za Claude Code kwenye kompyuta moja na kubadili kati yao kwa amri moja."
   },
   "nav": {
     "docs": "Nyaraka",
@@ -87,6 +87,7 @@
     "factsTitle": "Kwa ufupi"
   },
   "docs": {
+    "byline": "Imeandikwa na {author}",
     "updated": "Ilisasishwa mwisho {date}",
     "versions": "Imekaguliwa kwa ccam {ccam} na Claude Code {claude}",
     "prev": "Iliyotangulia",
@@ -141,17 +142,18 @@
   "footer": {
     "unofficial": "ccam ni zana isiyo rasmi ya open source. Haihusiani na Anthropic wala haijaidhinishwa nayo. Claude na Claude Code ni alama za biashara za Anthropic.",
     "terms": "Iwapo unaruhusiwa kutumia akaunti kadhaa inategemea masharti ya kila akaunti. Yakague kabla ya kufanya hivyo.",
+    "analytics": "Tovuti hii huhesabu ziara kwa Cloudflare Web Analytics, ambayo haiweki vidakuzi (cookies) wala kukusanya data binafsi.",
     "license": "Msimbo chanzo kwenye GitHub",
     "languages": "Lugha zote"
   },
   "changelog": {
     "title": "Mabadiliko",
-    "description": "Kila toleo la ccam na kilichobadilika ndani yake.",
+    "description": "Kila toleo la ccam na kilichobadilika ndani yake: amri mpya, marekebisho na maboresho ya kasi, toleo jipya zaidi kwanza.",
     "empty": "Bado hakuna toleo lililochapishwa. Matoleo yaliyojengwa kutoka tawi kuu yameorodheshwa kwenye GitHub."
   },
   "languages": {
     "title": "Lugha",
-    "description": "ccam.dev inapatikana kwa lugha {count, plural, one {#} other {#}}.",
+    "description": "ccam.dev inapatikana kwa {count, plural, one {lugha #} other {lugha #}}, zote zikiwa na nyaraka na miongozo ile ile.",
     "coverage": "Kwa mujibu wa data ya idadi ya watu ya Unicode CLDR, watu wanaozungumza angalau moja ya lugha hizi ni kati ya {low} na {high} ya idadi ya watu duniani.",
     "method": "Namba ya chini huhesabu lugha moja inayozungumzwa zaidi kati ya zinazotumika katika kila nchi; namba ya juu hujumlisha kila lugha inayotumika na huweka kikomo cha 100% kwa kila nchi."
   },

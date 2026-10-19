@@ -91,6 +91,7 @@ for (const l of locales.filter((l) => l.code !== "en" && (!only || l.code === on
       const tr = splitFrontMatter<any>(readFileSync(file, "utf8"));
       for (const k of ["title", "description", "updated", "order", "translation", "sourceHash"]) if (tr.data[k] === undefined) errors.push(`${file}: front matter lacks ${k}`);
       if (tr.data.order !== src.data.order) errors.push(`${file}: order ${tr.data.order} ≠ ${src.data.order}`);
+      if ((src.data.metaTitle === undefined) !== (tr.data.metaTitle === undefined)) errors.push(`${file}: metaTitle ${src.data.metaTitle === undefined ? "not in" : "missing from"} the translation, as in the English source`);
       if (codeBlocks(src.body).join("\n") !== codeBlocks(tr.body).join("\n")) errors.push(`${file}: code blocks differ from the English source`);
       if (inlineCode(src.body).join("\n") !== inlineCode(tr.body).join("\n")) errors.push(`${file}: inline code differs (${inlineCode(src.body).length} vs ${inlineCode(tr.body).length})`);
       if (links(src.body).join(" ") !== links(tr.body).join(" ")) errors.push(`${file}: links differ: ${links(src.body).join(" ")} ≠ ${links(tr.body).join(" ")}`);

@@ -106,9 +106,10 @@ for (const l of builtLocales()) {
   }
 }
 
-const icon = new Resvg(readFileSync("public/favicon.svg", "utf8").replace(/<style>.*<\/style>/, "").replace(/class="g"/g, 'fill="#d97757"'), {
-  fitTo: { mode: "width", value: 512 },
-  background: "#f5f5f5",
-}).render().asPng();
-await writeFile(join(OUT, "icon-512.png"), icon);
+// The favicon on a solid background: the logo in structured data, and the
+// home-screen icon iOS asks for at /apple-touch-icon.png.
+const iconSvg = readFileSync("public/favicon.svg", "utf8").replace(/<style>.*<\/style>/, "").replace(/class="g"/g, 'fill="#d97757"');
+for (const [file, size] of [["icon-512.png", 512], ["apple-touch-icon.png", 180]] as const) {
+  await writeFile(join(OUT, file), new Resvg(iconSvg, { fitTo: { mode: "width", value: size }, background: "#f5f5f5" }).render().asPng());
+}
 console.log(`og: ${count} images`);

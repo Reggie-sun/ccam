@@ -1,8 +1,8 @@
 {
   "site": {
     "name": "ccam",
-    "title": "ccam : utiliser plusieurs comptes Claude Code sur un seul ordinateur",
-    "description": "ccam est un outil en ligne de commande gratuit et open source qui permet d'utiliser plusieurs comptes Claude Code sur un seul ordinateur et de passer de l'un à l'autre avec une seule commande."
+    "title": "ccam : Claude Code Account Manager et sélecteur de compte",
+    "description": "ccam (Claude Code Account Manager) est un outil open source gratuit pour utiliser plusieurs comptes Claude Code sur un ordinateur et en changer d'une commande."
   },
   "nav": {
     "docs": "Documentation",
@@ -87,6 +87,7 @@
     "factsTitle": "En bref"
   },
   "docs": {
+    "byline": "Par {author}",
     "updated": "Dernière mise à jour : {date}",
     "versions": "Vérifié avec ccam {ccam} et Claude Code {claude}",
     "prev": "Précédent",
@@ -141,17 +142,18 @@
   "footer": {
     "unofficial": "ccam est un outil open source non officiel. Il n'est ni affilié à Anthropic ni approuvé par Anthropic. Claude et Claude Code sont des marques d'Anthropic.",
     "terms": "Le droit d'utiliser plusieurs comptes dépend des conditions de chaque compte. Vérifiez-les avant de le faire.",
+    "analytics": "Ce site compte les visites avec Cloudflare Web Analytics, qui ne dépose aucun cookie et ne collecte aucune donnée personnelle.",
     "license": "Code source sur GitHub",
     "languages": "Toutes les langues"
   },
   "changelog": {
     "title": "Journal des modifications",
-    "description": "Chaque version de ccam et ce qui a changé.",
+    "description": "Chaque version de ccam et ce qui a changé : nouvelles commandes, corrections et gains de vitesse, de la plus récente à la plus ancienne.",
     "empty": "Aucune version n'a encore été publiée. Les builds de la branche main sont listés sur GitHub."
   },
   "languages": {
     "title": "Langues",
-    "description": "ccam.dev est disponible en {count, plural, one {# langue} other {# langues}}.",
+    "description": "ccam.dev est disponible en {count, plural, one {# langue} other {# langues}}, avec la même documentation et les mêmes guides dans chacune.",
     "coverage": "D'après les données de population d'Unicode CLDR, les personnes qui parlent au moins une de ces langues représentent de {low} à {high} de la population mondiale.",
     "method": "Le chiffre bas ne compte, pour chaque pays, que la langue prise en charge la plus parlée ; le chiffre haut additionne toutes les langues prises en charge et plafonne chaque pays à 100 %."
   },

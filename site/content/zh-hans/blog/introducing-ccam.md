@@ -4,7 +4,7 @@ description: ccam 为什么存在，它能为拥有多个 Claude Code 账号的�
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: bbc9d9014f98
+sourceHash: b116c91bb8d4
 ---
 
 ccam 是一个小型命令行工具，适合在同一台电脑上使用多个 Claude Code 账号的人：比如一个个人账号加一个工作账号，或者为一个长期项目准备的多个账号。

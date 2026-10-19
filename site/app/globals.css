@@ -141,7 +141,7 @@ code, pre, kbd { font-family: var(--font-mono); font-size: 0.9em; letter-spacing
 .site-header .wrap { display: flex; align-items: center; gap: 0.5rem; min-block-size: var(--header); }
 .brand { font-family: var(--font-display); font-weight: 300; font-size: 1.75rem; letter-spacing: -0.03em; line-height: 1; color: var(--ink); text-decoration: none; margin-inline-end: auto; }
 html:not([data-font="brand"]) .brand { font-family: "Newsreader", Georgia, serif; }
-.site-header .brand { display: inline-flex; align-items: center; gap: 0.45rem; }
+.site-header .brand { display: inline-flex; align-items: center; gap: 0.45rem; min-block-size: 2.75rem; }
 /* Sized and nudged so the mark's centre meets the centre of the lowercase wordmark (measured in Newsreader). */
 .brand .mark { inline-size: 1.3rem; block-size: 1.3rem; flex: none; translate: 0 -0.25px; }
 /* Hover or focus spells the name out; the long form overlays the header, so nothing shifts. */
@@ -212,9 +212,12 @@ summary { list-style: none; cursor: pointer; }
   #lang-list { inline-size: auto; }
 }
 
-.lang-banner { background: var(--strong); font-size: 0.94rem; color: var(--ink); }
+/* The script shows the banner after first paint; fixed at the bottom it covers
+   the page instead of pushing it down, so it never shifts the layout. */
+.lang-banner { position: fixed; inset-inline: 0; inset-block-end: 0; z-index: 80; background: var(--strong); border-block-start: 1px solid var(--line-strong); font-size: 0.94rem; color: var(--ink); }
 .lang-banner .wrap { display: flex; gap: 0.5rem 1rem; align-items: center; padding-block: 0.6rem; flex-wrap: wrap; }
-.lang-banner a { font-weight: 500; }
+.lang-banner a { font-weight: 500; display: inline-flex; align-items: center; min-block-size: 2.75rem; }
+.lang-banner[hidden] { display: none; }
 .lang-banner button { margin-inline-start: auto; background: none; border: 0; color: var(--ink); cursor: pointer; text-decoration: underline; text-decoration-color: var(--line-strong); min-block-size: 2.75rem; }
 
 /* Landing: hero */

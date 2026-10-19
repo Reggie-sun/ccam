@@ -4,7 +4,7 @@ description: ما وظيفة CLAUDE_CONFIG_DIR في Claude Code، وما الم�
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 62f178595254
+sourceHash: ef9317030e42
 ---
 
 يخبر `CLAUDE_CONFIG_DIR` برنامج Claude Code بالمجلد الذي يستخدمه بدلًا من `~/.claude`. كل ما يخص الحساب موجود هناك: تسجيل الدخول والإعدادات وخوادم MCP والإضافات وسجل المحادثات. وتوجيهه إلى مجلدات مختلفة يمنحك حسابات منفصلة.
@@ -13,28 +13,38 @@ sourceHash: 62f178595254
 CLAUDE_CONFIG_DIR=~/.claude-work claude
 ```
 
-## ما الموجود داخل المجلد
+## هل CLAUDE_CONFIG_DIR مدعوم رسميًا؟
+
+نعم. يذكره Claude Code ضمن [متغيرات البيئة](https://code.claude.com/docs/en/env-vars) الخاصة به بوصفه طريقة لتغيير مجلد الإعدادات، "مفيدة لتشغيل عدة حسابات جنبًا إلى جنب"، ويستخدمه [دليل المصادقة](https://code.claude.com/docs/en/authentication#log-in-with-multiple-accounts) لتسجيل الدخول بعدة حسابات. يمكنك تعيينه في الصدفة أو في إعدادات المستخدم، لكن ليس في إعدادات مشروع.
+
+## ما الموجود داخل المجلد؟
 
 تم التحقق باستخدام Claude Code 2.1.302:
 
 | المسار | المحتوى | قابل للمشاركة |
 | --- | --- | --- |
-| `.credentials.json` | رموز تسجيل الدخول (Linux)، ورموز OAuth الخاصة بـ MCP | لا |
+| `.credentials.json` | رموز تسجيل الدخول (Linux وWindows)، ورموز OAuth الخاصة بـ MCP | لا |
 | `.claude.json` | تفاصيل الحساب، وخوادم MCP الخاصة بالمستخدم، وحالة كل مشروع | لا (خوادم MCP بشكل منفصل) |
-| `settings.json` | الأذونات والخطافات (hooks) والنموذج وسطر الحالة والإضافات | نعم |
+| `settings.json` | الأذونات والخطافات (hooks) والنموذج وشريط الحالة والإضافات | نعم |
 | `CLAUDE.md` | التعليمات العامة | نعم |
 | `agents/`، `commands/`، `skills/`، `plugins/` | الإضافات | نعم |
 | `projects/` | المحادثات كملفات `.jsonl`، وذاكرة كل مشروع | نعم |
 | `history.jsonl` | سجل الأوامر المكتوبة (prompts) | نعم |
 | `sessions/`، `shell-snapshots/`، `cache/` وغيرها | حالة التشغيل | لا |
 
-## تفصيلتان توقعان الناس في الخطأ
+## ما الذي يوقع الناس في الخطأ؟
 
 **دون `CLAUDE_CONFIG_DIR`، لا يكون `.claude.json` داخل `~/.claude`.** يحتفظ Claude Code به حينها في `~/.claude.json`، بجوار المجلد. إذا بدأت باستخدام `CLAUDE_CONFIG_DIR=~/.claude`، يبحث Claude Code عن `~/.claude/.claude.json` بدلًا من ذلك ولا يجد حسابك. يعالج `ccam import` ذلك بربط الملفين.
 
-**على macOS، يكون تسجيل الدخول في سلسلة المفاتيح وليس في المجلد.** يخزّنه Claude Code تحت الاسم `Claude Code-credentials`، متبوعًا بتجزئة (hash) قصيرة لمسار المجلد عندما يكون `CLAUDE_CONFIG_DIR` معيّنًا. لذلك تحصل المجلدات المنفصلة على إدخالات منفصلة في سلسلة المفاتيح. وإذا رفضت سلسلة المفاتيح الكتابة، يعود Claude Code إلى استخدام `.credentials.json` في المجلد.
+**على macOS، يكون تسجيل الدخول في سلسلة المفاتيح وليس في المجلد.** يخزّنه Claude Code تحت الاسم `Claude Code-credentials`، متبوعًا بتجزئة (hash) قصيرة لمسار المجلد عندما يكون `CLAUDE_CONFIG_DIR` معيّنًا. لذلك تحصل المجلدات المنفصلة على إدخالات منفصلة في سلسلة المفاتيح. وإذا رفضت سلسلة المفاتيح الكتابة، يعود Claude Code إلى استخدام `.credentials.json` في المجلد، كما [يصف توثيقه](https://code.claude.com/docs/en/authentication#credential-management).
 
-## المشاركة بين المجلدات
+**ليس كل تسجيل دخول محفوظًا في المجلد.** تسجيل الدخول إلى Claude Console دون مفتاح API يُخزَّن خارجه، لذلك لا تفصل المجلدات المنفصلة بين تسجيلَي دخول من هذا النوع. أما تسجيلات الدخول إلى claude.ai ومفاتيح API فتُحفظ لكل مجلد على حدة.
+
+## أين يوجد المجلد على Windows؟
+
+افتراضيًا في `%USERPROFILE%\.claude`، مع تسجيل الدخول في `.credentials.json` داخله. عيّن `CLAUDE_CONFIG_DIR` إلى مجلد آخر لكل حساب إضافي، بالطريقة نفسها كما على Linux وmacOS.
+
+## هل يمكن للمجلدات مشاركة الملفات؟
 
 الروابط الرمزية تعمل: يقرأ Claude Code ويكتب عبر ملف `settings.json` أو مجلد `projects/` مرتبط، ويحافظ على الرابط. خوادم MCP هي الاستثناء، لأنها تتشارك `.claude.json` مع تسجيل الدخول؛ مرّرها باستخدام `--mcp-config` بدلًا من ذلك.
 

@@ -4,7 +4,7 @@ description: Mengapa ccam dibuat, apa gunanya bagi pengguna beberapa akun Claude
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: bbc9d9014f98
+sourceHash: b116c91bb8d4
 ---
 
 ccam adalah alat baris perintah kecil untuk orang yang menggunakan lebih dari satu akun Claude Code di komputer yang sama: akun pribadi dan akun kerja, atau beberapa akun untuk satu proyek panjang.
