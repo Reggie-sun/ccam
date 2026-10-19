@@ -1,13 +1,13 @@
 ---
 title: Hızlı başlangıç
-description: ccam add ile iki Claude Code hesabı ekleyin, claude1, claude2 veya ccs ile aralarında geçiş yapın ve neyi paylaşacaklarını seçin.
+description: ccam add ile iki Claude Code hesabı ekleyin, claude1, claude2 veya ccam <name> ile aralarında geçiş yapın ve neyi paylaşacaklarını seçin.
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 9462b80d61bc
+sourceHash: c6b1c1c3ebaf
 ---
 
-Her hesabı `ccam add` ile ekleyin, ardından Claude Code'u `claude1`, `claude2` veya `ccs <name>` ile başlatın. Çoğu kişinin ihtiyacı bu kadarıdır.
+Her hesabı `ccam add` ile ekleyin, ardından Claude Code'u `claude1`, `claude2` veya `ccam <name>` ile başlatın. Çoğu kişinin ihtiyacı bu kadarıdır.
 
 ## 1. İlk hesabınızı ekleyin
 
@@ -37,19 +37,19 @@ Bunlardan herhangi biri Claude Code'u work hesabıyla başlatır:
 
 ```sh
 claude2
-ccs work
-ccs 2
+ccam work
+ccam 2
 ```
 
 Hesap adından sonra gelen her şey Claude Code'a değiştirilmeden iletilir; böylece bildiğiniz seçenekleri kullanmaya devam edersiniz:
 
 ```sh
-ccs work --resume
-ccs work -p "fix the failing test" --output-format json
+ccam work --resume
+ccam work -p "fix the failing test" --output-format json
 cat error.log | claude2 -p "what caused this?"
 ```
 
-`ccs` tek başına çalıştırıldığında bir seçici açar: ok tuşlarını ve Enter tuşunu kullanın ya da hesabın numarasına basın.
+`ccam` tek başına çalıştırıldığında bir seçici açar: ok tuşlarını ve Enter tuşunu kullanın ya da hesabın numarasına basın.
 
 ## 4. Neyin paylaşılacağını seçin
 
@@ -65,11 +65,11 @@ ccam, herhangi bir şeyi değiştirmeden önce neyi taşıyacağını gösterir.
 ## 5. Bir hesap limitine ulaştığında
 
 ```sh
-ccs usage
-ccs next --continue
+ccam usage
+ccam next --continue
 ```
 
-`ccs usage`, tüm hesapların 5 saatlik ve haftalık kullanımını gösterir. `ccs next --continue`, aynı konuşmayı bir sonraki hesapta açar. [Kullanım limitleri](/docs/usage-limits) sayfasına bakın.
+`ccam usage`, tüm hesapların 5 saatlik ve haftalık kullanımını gösterir. `ccam next --continue`, aynı konuşmayı bir sonraki hesapta açar. [Kullanım limitleri](/docs/usage-limits) sayfasına bakın.
 
 ## Zaten ~/.claude kullanıyor musunuz?
 

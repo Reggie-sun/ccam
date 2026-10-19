@@ -1,13 +1,13 @@
 ---
 title: Farawa da sauri
-description: Ƙara asusun Claude Code biyu da ccam add, sauya tsakaninsu da claude1, claude2 ko ccs, sannan ka zaɓi abin da za su raba.
+description: Ƙara asusun Claude Code biyu da ccam add, sauya tsakaninsu da claude1, claude2 ko ccam <name>, sannan ka zaɓi abin da za su raba.
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 9462b80d61bc
+sourceHash: c6b1c1c3ebaf
 ---
 
-Ƙara kowane asusu da `ccam add`, sannan ka fara Claude Code da `claude1`, `claude2` ko `ccs <name>`. Wannan ne kawai abin da yawancin mutane suke buƙata.
+Ƙara kowane asusu da `ccam add`, sannan ka fara Claude Code da `claude1`, `claude2` ko `ccam <name>`. Wannan ne kawai abin da yawancin mutane suke buƙata.
 
 ## 1. Ƙara asusunka na farko
 
@@ -37,19 +37,19 @@ Kowane ɗaya daga cikin waɗannan yana fara Claude Code a matsayin asusun work:
 
 ```sh
 claude2
-ccs work
-ccs 2
+ccam work
+ccam 2
 ```
 
 Duk abin da ke bayan sunan asusun yana zuwa Claude Code ba tare da canji ba, don haka za ka ci gaba da amfani da zaɓuɓɓukan da ka sani:
 
 ```sh
-ccs work --resume
-ccs work -p "fix the failing test" --output-format json
+ccam work --resume
+ccam work -p "fix the failing test" --output-format json
 cat error.log | claude2 -p "what caused this?"
 ```
 
-Gudanar da `ccs` shi kaɗai yana buɗe mai zaɓi: yi amfani da maɓallan kibiya da Enter, ko danna lambar asusun.
+Gudanar da `ccam` shi kaɗai yana buɗe mai zaɓi: yi amfani da maɓallan kibiya da Enter, ko danna lambar asusun.
 
 ## 4. Zaɓi abin da za a raba
 
@@ -65,11 +65,11 @@ ccam yana nuna abin da zai motsa kafin ya canza komai. Duba [rabawa](/docs/shari
 ## 5. Idan asusu ya kai iyakarsa
 
 ```sh
-ccs usage
-ccs next --continue
+ccam usage
+ccam next --continue
 ```
 
-`ccs usage` yana nuna amfanin awa 5 da na mako na kowane asusu. `ccs next --continue` yana buɗe wannan tattaunawar a asusu na gaba. Duba [iyakokin amfani](/docs/usage-limits).
+`ccam usage` yana nuna amfanin awa 5 da na mako na kowane asusu. `ccam next --continue` yana buɗe wannan tattaunawar a asusu na gaba. Duba [iyakokin amfani](/docs/usage-limits).
 
 ## Kana amfani da ~/.claude tuni?
 

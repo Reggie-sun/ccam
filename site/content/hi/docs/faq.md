@@ -4,7 +4,7 @@ description: ccam, Claude Code अकाउंट, उपयोग सीमा�
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 12ad0faef2ce
+sourceHash: 2be18393cbe2
 ---
 
 ## क्या ccam, Anthropic का आधिकारिक टूल है?
@@ -25,11 +25,11 @@ sourceHash: 12ad0faef2ce
 
 ## किसी बातचीत को दूसरे अकाउंट में कैसे जारी रखें?
 
-`ccam share <name> --history on` से दोनों अकाउंट्स के बीच बातचीत का इतिहास साझा करें, फिर `ccs next --continue` चलाएँ। Claude Code मौजूदा फ़ोल्डर की सबसे हाल की बातचीत अगले अकाउंट में खोलता है।
+`ccam share <name> --history on` से दोनों अकाउंट्स के बीच बातचीत का इतिहास साझा करें, फिर `ccam next --continue` चलाएँ। Claude Code मौजूदा फ़ोल्डर की सबसे हाल की बातचीत अगले अकाउंट में खोलता है।
 
 ## क्या ccam मेरा लॉगिन देखता या भेजता है?
 
-ccam कभी लॉगिन copy या साझा नहीं करता। यह किसी अकाउंट का access token केवल तब पढ़ता है जब उस अकाउंट का उपयोग Anthropic के usage endpoint से पूछना हो, यानी जब आप `ccs usage`, `ccs next --auto` या `ccam doctor` चलाते हैं। ccam में कोई telemetry नहीं है और यह कहीं और कुछ नहीं भेजता।
+ccam कभी लॉगिन copy या साझा नहीं करता। यह किसी अकाउंट का access token केवल तब पढ़ता है जब उस अकाउंट का उपयोग Anthropic के usage endpoint से पूछना हो, यानी जब आप `ccam usage`, `ccam next --auto` या `ccam doctor` चलाते हैं। ccam में कोई telemetry नहीं है और यह कहीं और कुछ नहीं भेजता।
 
 ## मेरे अकाउंट कहाँ रखे जाते हैं?
 
@@ -37,7 +37,7 @@ ccam कभी लॉगिन copy या साझा नहीं करत�
 
 ## मेरे मौजूदा ~/.claude का क्या होगा?
 
-कुछ नहीं, जब तक आप `ccam import` न चलाएँ। Import फ़ोल्डर को उसी जगह रजिस्टर करता है जहाँ वह है, इसलिए सादा `claude` और `ccs <name>` वही अकाउंट और सेटिंग्स इस्तेमाल करते रहते हैं।
+कुछ नहीं, जब तक आप `ccam import` न चलाएँ। Import फ़ोल्डर को उसी जगह रजिस्टर करता है जहाँ वह है, इसलिए सादा `claude` और `ccam <name>` वही अकाउंट और सेटिंग्स इस्तेमाल करते रहते हैं।
 
 ## ccam किन सिस्टम पर चलता है?
 
@@ -53,4 +53,4 @@ ccam के ज़रिए Claude Code शुरू करने में ल�
 
 ## ccam को अनइंस्टॉल कैसे करें?
 
-`~/.local/bin` से `ccam`, `ccs` और `claude1`… लिंक हटाएँ, फिर अगर अब अकाउंट्स की ज़रूरत नहीं है तो `~/.config/ccam`, `~/.local/share/ccam` और `~/.local/state/ccam` भी हटाएँ। [इंस्टॉल](/docs/install#uninstall) देखें।
+`~/.local/bin` से `ccam` और `claude1`… लिंक हटाएँ, फिर अगर अब अकाउंट्स की ज़रूरत नहीं है तो `~/.config/ccam`, `~/.local/share/ccam` और `~/.local/state/ccam` भी हटाएँ। [इंस्टॉल](/docs/install#uninstall) देखें।

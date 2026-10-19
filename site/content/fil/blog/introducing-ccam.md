@@ -4,7 +4,7 @@ description: Bakit ginawa ang ccam, ano ang naitutulong nito sa mga may maraming
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: 5e4121938d8c
+sourceHash: 985e2d369c34
 ---
 
 Ang ccam ay maliit na command-line tool para sa mga gumagamit ng higit sa isang Claude Code account sa iisang computer: isang personal at isang work account, o ilang account para sa isang mahabang proyekto.
@@ -16,9 +16,9 @@ Sinusuportahan ng Claude Code ang maraming account sa pamamagitan ng `CLAUDE_CON
 ## Ano ang ginagawa ng ccam
 
 - Ginagawa ng `ccam add` ang folder, pinapatakbo ang login at binibigyan ang account ng shortcut: `claude1`, `claude2`, at iba pa.
-- Sinisimulan ng `ccs work` at `claude2` ang Claude Code bilang account na iyon at ipinapasa nang walang pagbabago ang bawat argument.
+- Sinisimulan ng `ccam work` at `claude2` ang Claude Code bilang account na iyon at ipinapasa nang walang pagbabago ang bawat argument.
 - Shine-share ang mga MCP server, settings, `CLAUDE.md` at extension sa pamamagitan ng mga link, bawat item at bawat account. Hindi kailanman shine-share ang mga login.
-- Ipinapakita ng `ccs usage` ang 5-oras at lingguhang usage ng bawat account; itinutuloy ng `ccs next --continue` ang usapan sa susunod na account.
+- Ipinapakita ng `ccam usage` ang 5-oras at lingguhang usage ng bawat account; itinutuloy ng `ccam next --continue` ang usapan sa susunod na account.
 
 ## Hindi nakakasagabal
 

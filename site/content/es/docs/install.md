@@ -4,7 +4,7 @@ description: Instala ccam en Linux o macOS con un comando, desde un paquete .deb
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: c7f92dfa554a
+sourceHash: fc63978e8f9e
 ---
 
 Ejecuta esto en una terminal de Linux o macOS:
@@ -13,7 +13,7 @@ Ejecuta esto en una terminal de Linux o macOS:
 curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-El script descarga la versión para tu sistema, comprueba su suma de verificación SHA-256 y coloca dos comandos en `~/.local/bin`: `ccam` y su alias corto `ccs`. Si esa carpeta no está en tu `PATH`, el script imprime la línea que debes agregar a `~/.bashrc` o `~/.zshrc`.
+El script descarga la versión para tu sistema, comprueba su suma de verificación SHA-256 y coloca `ccam` en `~/.local/bin`, donde más adelante `ccam add` crea los atajos `claude1`, `claude2`, etc. Si esa carpeta no está en tu `PATH`, el script imprime la línea que debes agregar a `~/.bashrc` o `~/.zshrc`.
 
 ccam inicia Claude Code por ti, así que instala primero [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) y asegúrate de que `claude --version` funcione.
 
@@ -31,13 +31,12 @@ ccam inicia Claude Code por ti, así que instala primero [Claude Code](https://d
 sudo apt install ./ccam_*_linux_amd64.deb
 ```
 
-El paquete instala `/usr/bin/ccam` y el enlace `/usr/bin/ccs`.
+El paquete instala `/usr/bin/ccam`.
 
 **Desde el código fuente.** Con Go 1.26 o posterior:
 
 ```sh
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
-ln -s ccam "$(go env GOPATH)/bin/ccs"
 ```
 
 **Una versión específica.** Define `CCAM_VERSION`:
@@ -53,7 +52,7 @@ ccam completion bash > ~/.local/share/bash-completion/completions/ccam
 ccam completion zsh > "${fpath[1]}/_ccam"
 ```
 
-El autocompletado cubre tanto `ccam` como `ccs`, incluidos los nombres de las cuentas.
+El autocompletado cubre todos los comandos y opciones de `ccam`, incluidos los nombres de las cuentas.
 
 ## Comprobar la instalación
 
@@ -66,10 +65,10 @@ ccam doctor
 
 ## Desinstalar
 
-Elimina los dos comandos y los atajos de las cuentas y, luego, las carpetas de datos si ya no necesitas las cuentas:
+Elimina el comando y los atajos de las cuentas y, luego, las carpetas de datos si ya no necesitas las cuentas:
 
 ```sh
-rm ~/.local/bin/ccam ~/.local/bin/ccs ~/.local/bin/claude[0-9]*
+rm ~/.local/bin/ccam ~/.local/bin/claude[0-9]*
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
 ```
 

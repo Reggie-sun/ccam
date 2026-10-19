@@ -4,7 +4,7 @@ description: Linux ಅಥವಾ macOS ನಲ್ಲಿ ಒಂದೇ ಕಮಾಂ�
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: c7f92dfa554a
+sourceHash: fc63978e8f9e
 ---
 
 Linux ಅಥವಾ macOS ನ ಟರ್ಮಿನಲ್‌ನಲ್ಲಿ ಇದನ್ನು ರನ್ ಮಾಡಿ:
@@ -13,7 +13,7 @@ Linux ಅಥವಾ macOS ನ ಟರ್ಮಿನಲ್‌ನಲ್ಲಿ ಇದ�
 curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-ಈ ಸ್ಕ್ರಿಪ್ಟ್ ನಿಮ್ಮ ಸಿಸ್ಟಮ್‌ಗೆ ಹೊಂದುವ ಬಿಡುಗಡೆಯನ್ನು ಡೌನ್‌ಲೋಡ್ ಮಾಡುತ್ತದೆ, ಅದರ SHA-256 ಚೆಕ್‌ಸಮ್ ಪರಿಶೀಲಿಸುತ್ತದೆ ಮತ್ತು `~/.local/bin` ನಲ್ಲಿ ಎರಡು ಕಮಾಂಡ್‌ಗಳನ್ನು ಇರಿಸುತ್ತದೆ: `ccam` ಮತ್ತು ಅದರ ಚಿಕ್ಕ ಅಲಿಯಾಸ್ `ccs`. ಆ ಫೋಲ್ಡರ್ ನಿಮ್ಮ `PATH` ನಲ್ಲಿ ಇಲ್ಲದಿದ್ದರೆ, `~/.bashrc` ಅಥವಾ `~/.zshrc` ಗೆ ಸೇರಿಸಬೇಕಾದ ಸಾಲನ್ನು ಸ್ಕ್ರಿಪ್ಟ್ ಮುದ್ರಿಸುತ್ತದೆ.
+ಈ ಸ್ಕ್ರಿಪ್ಟ್ ನಿಮ್ಮ ಸಿಸ್ಟಮ್‌ಗೆ ಹೊಂದುವ ಬಿಡುಗಡೆಯನ್ನು ಡೌನ್‌ಲೋಡ್ ಮಾಡುತ್ತದೆ, ಅದರ SHA-256 ಚೆಕ್‌ಸಮ್ ಪರಿಶೀಲಿಸುತ್ತದೆ ಮತ್ತು `ccam` ಅನ್ನು `~/.local/bin` ನಲ್ಲಿ ಇರಿಸುತ್ತದೆ; ನಂತರ `ccam add` ಅದೇ ಫೋಲ್ಡರ್‌ನಲ್ಲಿ `claude1`, `claude2`… ಶಾರ್ಟ್‌ಕಟ್‌ಗಳನ್ನು ರಚಿಸುತ್ತದೆ. ಆ ಫೋಲ್ಡರ್ ನಿಮ್ಮ `PATH` ನಲ್ಲಿ ಇಲ್ಲದಿದ್ದರೆ, `~/.bashrc` ಅಥವಾ `~/.zshrc` ಗೆ ಸೇರಿಸಬೇಕಾದ ಸಾಲನ್ನು ಸ್ಕ್ರಿಪ್ಟ್ ಮುದ್ರಿಸುತ್ತದೆ.
 
 ccam ನಿಮಗಾಗಿ Claude Code ಅನ್ನು ಆರಂಭಿಸುತ್ತದೆ. ಆದ್ದರಿಂದ ಮೊದಲು [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಿ ಮತ್ತು `claude --version` ಕೆಲಸ ಮಾಡುತ್ತದೆಯೇ ಎಂದು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ.
 
@@ -31,13 +31,12 @@ ccam ನಿಮಗಾಗಿ Claude Code ಅನ್ನು ಆರಂಭಿಸುತ�
 sudo apt install ./ccam_*_linux_amd64.deb
 ```
 
-ಪ್ಯಾಕೇಜ್ `/usr/bin/ccam` ಮತ್ತು `/usr/bin/ccs` ಲಿಂಕ್ ಅನ್ನು ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡುತ್ತದೆ.
+ಪ್ಯಾಕೇಜ್ `/usr/bin/ccam` ಅನ್ನು ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡುತ್ತದೆ.
 
 **ಸೋರ್ಸ್‌ನಿಂದ.** Go 1.26 ಅಥವಾ ಹೊಸ ಆವೃತ್ತಿಯೊಂದಿಗೆ:
 
 ```sh
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
-ln -s ccam "$(go env GOPATH)/bin/ccs"
 ```
 
 **ನಿರ್ದಿಷ್ಟ ಆವೃತ್ತಿ.** `CCAM_VERSION` ಹೊಂದಿಸಿ:
@@ -53,7 +52,7 @@ ccam completion bash > ~/.local/share/bash-completion/completions/ccam
 ccam completion zsh > "${fpath[1]}/_ccam"
 ```
 
-Completion ಖಾತೆಗಳ ಹೆಸರುಗಳನ್ನೂ ಒಳಗೊಂಡಂತೆ `ccam` ಮತ್ತು `ccs` ಎರಡಕ್ಕೂ ಕೆಲಸ ಮಾಡುತ್ತದೆ.
+Completion ಖಾತೆಗಳ ಹೆಸರುಗಳನ್ನೂ ಒಳಗೊಂಡಂತೆ `ccam` ನ ಎಲ್ಲಾ ಕಮಾಂಡ್‌ಗಳು ಮತ್ತು ಆಯ್ಕೆಗಳಿಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ.
 
 ## ಇನ್‌ಸ್ಟಾಲೇಶನ್ ಪರಿಶೀಲಿಸಿ
 
@@ -66,10 +65,10 @@ ccam doctor
 
 ## ಅನ್‌ಇನ್‌ಸ್ಟಾಲ್
 
-ಎರಡು ಕಮಾಂಡ್‌ಗಳು ಮತ್ತು ಖಾತೆಗಳ ಶಾರ್ಟ್‌ಕಟ್‌ಗಳನ್ನು ತೆಗೆದುಹಾಕಿ. ನಿಮಗೆ ಖಾತೆಗಳು ಇನ್ನು ಬೇಡವಾದರೆ, ನಂತರ ಡೇಟಾ ಫೋಲ್ಡರ್‌ಗಳನ್ನೂ ತೆಗೆದುಹಾಕಿ:
+ಕಮಾಂಡ್ ಮತ್ತು ಖಾತೆಗಳ ಶಾರ್ಟ್‌ಕಟ್‌ಗಳನ್ನು ತೆಗೆದುಹಾಕಿ. ನಿಮಗೆ ಖಾತೆಗಳು ಇನ್ನು ಬೇಡವಾದರೆ, ನಂತರ ಡೇಟಾ ಫೋಲ್ಡರ್‌ಗಳನ್ನೂ ತೆಗೆದುಹಾಕಿ:
 
 ```sh
-rm ~/.local/bin/ccam ~/.local/bin/ccs ~/.local/bin/claude[0-9]*
+rm ~/.local/bin/ccam ~/.local/bin/claude[0-9]*
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
 ```
 

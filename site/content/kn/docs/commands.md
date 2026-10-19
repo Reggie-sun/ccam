@@ -1,21 +1,21 @@
 ---
 title: ಕಮಾಂಡ್ ಉಲ್ಲೇಖ
-description: ccam add ಮತ್ತು ccs <name> ನಿಂದ ccam usage, ccam next ಮತ್ತು ccam doctor ವರೆಗೆ, ccam ನ ಎಲ್ಲಾ ಕಮಾಂಡ್‌ಗಳು ಮತ್ತು ಆಯ್ಕೆಗಳು.
+description: ccam add ಮತ್ತು ccam <name> ನಿಂದ ccam usage, ccam next ಮತ್ತು ccam doctor ವರೆಗೆ, ccam ನ ಎಲ್ಲಾ ಕಮಾಂಡ್‌ಗಳು ಮತ್ತು ಆಯ್ಕೆಗಳು.
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 18ecad9a1104
+sourceHash: 54bdfc489174
 ---
 
-`ccam` ಮತ್ತು `ccs` ಒಂದೇ ಪ್ರೋಗ್ರಾಂ; ನಿಮಗೆ ಇಷ್ಟವಾದುದನ್ನು ಬಳಸಿ. ಯಾವುದೇ ಕಮಾಂಡ್ ಏನು ಮಾಡುತ್ತದೆ ಎಂಬುದನ್ನು ನಿಜವಾಗಿ ಮಾಡದೆಯೇ ನೋಡಲು, ಅದರ ಮುಂದೆ `--dry-run` ಹಾಕಿ. ಉದಾಹರಣೆಗೆ `ccs --dry-run work`.
+ಯಾವುದೇ ಕಮಾಂಡ್ ಏನು ಮಾಡುತ್ತದೆ ಎಂಬುದನ್ನು ನಿಜವಾಗಿ ಮಾಡದೆಯೇ ನೋಡಲು, ಅದರ ಮುಂದೆ `--dry-run` ಹಾಕಿ. ಉದಾಹರಣೆಗೆ `ccam --dry-run work`.
 
 <!-- commands -->
 
 ## Claude Code ಆರಂಭಿಸುವುದು
 
-`ccs <name|number> [arguments]` ಆ ಖಾತೆಯಾಗಿ Claude Code ಅನ್ನು ಆರಂಭಿಸುತ್ತದೆ. ಹೆಸರಿನ ನಂತರದ ಆರ್ಗ್ಯುಮೆಂಟ್‌ಗಳನ್ನು ccam ಓದುವುದಿಲ್ಲ; ಅದು ಅವುಗಳನ್ನು ಅದೇ ಕ್ರಮದಲ್ಲಿ `claude` ಗೆ ರವಾನಿಸುತ್ತದೆ. ಸ್ಟ್ಯಾಂಡರ್ಡ್ ಇನ್‌ಪುಟ್, ಎಕ್ಸಿಟ್ ಕೋಡ್ ಮತ್ತು ಸಿಗ್ನಲ್‌ಗಳು `claude` ನಲ್ಲಿ ಇರುವಂತೆಯೇ ವರ್ತಿಸುತ್ತವೆ. ಹೆಸರಿನ ನಂತರ `--` ಐಚ್ಛಿಕ.
+`ccam <name|number> [arguments]` ಆ ಖಾತೆಯಾಗಿ Claude Code ಅನ್ನು ಆರಂಭಿಸುತ್ತದೆ. ಹೆಸರಿನ ನಂತರದ ಆರ್ಗ್ಯುಮೆಂಟ್‌ಗಳನ್ನು ccam ಓದುವುದಿಲ್ಲ; ಅದು ಅವುಗಳನ್ನು ಅದೇ ಕ್ರಮದಲ್ಲಿ `claude` ಗೆ ರವಾನಿಸುತ್ತದೆ. ಸ್ಟ್ಯಾಂಡರ್ಡ್ ಇನ್‌ಪುಟ್, ಎಕ್ಸಿಟ್ ಕೋಡ್ ಮತ್ತು ಸಿಗ್ನಲ್‌ಗಳು `claude` ನಲ್ಲಿ ಇರುವಂತೆಯೇ ವರ್ತಿಸುತ್ತವೆ. ಹೆಸರಿನ ನಂತರ `--` ಐಚ್ಛಿಕ.
 
-ಆರ್ಗ್ಯುಮೆಂಟ್‌ಗಳಿದ್ದು ಖಾತೆಯ ಹೆಸರು ಇಲ್ಲದ `ccs`, ಉದಾಹರಣೆಗೆ `ccs -p "summarise"`, ಡೀಫಾಲ್ಟ್ ಖಾತೆಯನ್ನು ಬಳಸುತ್ತದೆ. ಅದನ್ನು `ccam use <name>` ಮೂಲಕ ಹೊಂದಿಸಿ.
+ಆರ್ಗ್ಯುಮೆಂಟ್‌ಗಳಿದ್ದು ಖಾತೆಯ ಹೆಸರು ಇಲ್ಲದ `ccam`, ಉದಾಹರಣೆಗೆ `ccam -p "summarise"`, ಡೀಫಾಲ್ಟ್ ಖಾತೆಯನ್ನು ಬಳಸುತ್ತದೆ. ಅದನ್ನು `ccam use <name>` ಮೂಲಕ ಹೊಂದಿಸಿ.
 
 `claude1`, `claude2` ಮುಂತಾದ ಶಾರ್ಟ್‌ಕಟ್‌ಗಳು `~/.local/bin` ನಲ್ಲಿರುವ ccam ಗೆ ಲಿಂಕ್‌ಗಳು. `ccam shims install --names` ಪ್ರತಿ ಖಾತೆಗೂ `claude-<name>` ಅನ್ನು ಸಹ ರಚಿಸುತ್ತದೆ.
 
@@ -56,11 +56,11 @@ ccam mcp remove fs
 ## ಬಳಕೆ ಮತ್ತು ಬದಲಾವಣೆ
 
 ```sh
-ccs usage            # also: ccs u
-ccs usage --watch    # refresh every 60 seconds
-ccs usage --json
-ccs next --continue
-ccs next --auto
+ccam usage           # also: ccam u
+ccam usage --watch   # refresh every 60 seconds
+ccam usage --json
+ccam next --continue
+ccam next --auto
 ```
 
 ## ನಿರ್ವಹಣೆ
@@ -80,6 +80,6 @@ ccam shims install
 | `~/.local/share/ccam/profiles/<name>/` | ಪ್ರತಿ ಖಾತೆಯ `CLAUDE_CONFIG_DIR` |
 | `~/.local/share/ccam/groups/<group>/` | ಹಂಚಿಕೊಂಡ ಸೆಟ್ಟಿಂಗ್‌ಗಳು, MCP ಸರ್ವರ್‌ಗಳು, ವಿಸ್ತರಣೆಗಳು ಮತ್ತು ಇತಿಹಾಸ |
 | `~/.local/state/ccam/` | ಬಳಕೆಯ ಕ್ಯಾಶ್ ಮತ್ತು ಕೊನೆಯ ಬಾರಿ ಬಳಸಿದ ಸಮಯಗಳು |
-| `~/.local/bin/claude1`, `ccs` | ccam ಗೆ ಲಿಂಕ್‌ಗಳು |
+| `~/.local/bin/claude1`, `claude2`… | ccam ಗೆ ಲಿಂಕ್‌ಗಳು |
 
 `XDG_CONFIG_HOME`, `XDG_DATA_HOME` ಮತ್ತು `XDG_STATE_HOME` ವೇರಿಯೇಬಲ್‌ಗಳು ಈ ಫೋಲ್ಡರ್‌ಗಳ ಸ್ಥಳವನ್ನು ಬದಲಾಯಿಸುತ್ತವೆ.

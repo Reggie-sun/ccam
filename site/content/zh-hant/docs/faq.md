@@ -4,7 +4,7 @@ description: 關於 ccam、Claude Code 帳號、用量限制、共用、隱私�
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 12ad0faef2ce
+sourceHash: 2be18393cbe2
 ---
 
 ## ccam 是 Anthropic 的官方工具嗎？
@@ -25,11 +25,11 @@ sourceHash: 12ad0faef2ce
 
 ## 如何在另一個帳號繼續對話？
 
-用 `ccam share <name> --history on` 讓兩個帳號共用對話記錄，然後執行 `ccs next --continue`。Claude Code 會在下一個帳號開啟目前資料夾中最近的一段對話。
+用 `ccam share <name> --history on` 讓兩個帳號共用對話記錄，然後執行 `ccam next --continue`。Claude Code 會在下一個帳號開啟目前資料夾中最近的一段對話。
 
 ## ccam 會看到或傳送我的登入資訊嗎？
 
-ccam 絕不會複製或共用登入資訊。它讀取帳號的存取權杖只有一個用途：在你執行 `ccs usage`、`ccs next --auto` 或 `ccam doctor` 時，向 Anthropic 的用量端點查詢該帳號的用量。ccam 沒有遙測功能，也不會將任何資料傳送到其他地方。
+ccam 絕不會複製或共用登入資訊。它讀取帳號的存取權杖只有一個用途：在你執行 `ccam usage`、`ccam next --auto` 或 `ccam doctor` 時，向 Anthropic 的用量端點查詢該帳號的用量。ccam 沒有遙測功能，也不會將任何資料傳送到其他地方。
 
 ## 我的帳號存放在哪裡？
 
@@ -37,7 +37,7 @@ ccam 絕不會複製或共用登入資訊。它讀取帳號的存取權杖只有
 
 ## 現有的 ~/.claude 會怎麼樣？
 
-不會有任何變化，除非你執行 `ccam import`。匯入會在原位置登錄該資料夾，因此直接執行 `claude` 和 `ccs <name>` 都會繼續使用相同的帳號和設定。
+不會有任何變化，除非你執行 `ccam import`。匯入會在原位置登錄該資料夾，因此直接執行 `claude` 和 `ccam <name>` 都會繼續使用相同的帳號和設定。
 
 ## ccam 支援哪些系統？
 
@@ -53,4 +53,4 @@ Linux（Ubuntu、Debian、Fedora、Arch、Alpine 等）和 macOS。在 Windows �
 
 ## 如何解除安裝 ccam？
 
-從 `~/.local/bin` 刪除 `ccam`、`ccs` 和 `claude1`… 等連結；如果不再需要這些帳號，再刪除 `~/.config/ccam`、`~/.local/share/ccam` 和 `~/.local/state/ccam`。請參閱[安裝](/docs/install#uninstall)。
+從 `~/.local/bin` 刪除 `ccam` 和 `claude1`… 等連結；如果不再需要這些帳號，再刪除 `~/.config/ccam`、`~/.local/share/ccam` 和 `~/.local/state/ccam`。請參閱[安裝](/docs/install#uninstall)。

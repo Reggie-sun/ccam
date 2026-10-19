@@ -23,11 +23,11 @@
   },
   "landing": {
     "headline": "Mehrere Claude Code-Konten. Ein Terminal.",
-    "lede": "Füge jedes Konto einmal hinzu. Wechsle mit claude2 oder ccs work. Wenn ein Konto sein Limit erreicht, machst du im nächsten mit demselben Gespräch weiter.",
+    "lede": "Füge jedes Konto einmal hinzu. Wechsle mit claude2 oder ccam work. Wenn ein Konto sein Limit erreicht, machst du im nächsten mit demselben Gespräch weiter.",
     "installLabel": "Unter Linux oder macOS installieren",
     "thenAdd": "Füge dann dein erstes Konto mit {command} hinzu.",
     "readDocs": "Zum Schnellstart",
-    "boardLabel": "Beispielausgabe von ccs usage: die Limits aller Konten auf einen Blick",
+    "boardLabel": "Beispielausgabe von ccam usage: die Limits aller Konten auf einen Blick",
     "board": {
       "account": "Konto",
       "fiveHour": "5 Stunden",
@@ -43,7 +43,7 @@
       },
       {
         "command": "claude2",
-        "also": "ccs work --resume",
+        "also": "ccam work --resume",
         "body": "Startet Claude Code mit diesem Konto. Alles nach dem Namen geht unverändert an Claude Code, und ccam braucht vor dem Start etwa 4 Millisekunden."
       },
       {
@@ -51,11 +51,11 @@
         "body": "Legt fest, was das Konto mit deinen anderen Konten teilt. MCP-Server, Einstellungen, CLAUDE.md und Erweiterungen werden von Anfang an geteilt, Anmeldungen nie."
       },
       {
-        "command": "ccs usage",
+        "command": "ccam usage",
         "body": "Zeigt die 5-Stunden- und die Wochennutzung aller Konten auf einmal, damit du weißt, welches noch Spielraum hat."
       },
       {
-        "command": "ccs next --continue",
+        "command": "ccam next --continue",
         "body": "Öffnet dasselbe Gespräch im nächsten Konto, wenn das aktuelle sein Limit erreicht."
       },
       {
@@ -86,7 +86,7 @@
     }
   },
   "commands": {
-    "ccs": "Kontoauswahl öffnen",
+    "ccam": "Kontoauswahl öffnen",
     "name": "Claude Code mit diesem Konto starten; Argumente werden unverändert weitergegeben",
     "add": "Konto hinzufügen: Konfigurationsordner, Anmeldung und Kurzbefehl",
     "list": "Konten auflisten",
@@ -102,7 +102,7 @@
     "import": "Einen vorhandenen ~/.claude-Ordner an Ort und Stelle registrieren",
     "doctor": "Links, Berechtigungen, Anmeldungen und Versionen prüfen und reparieren",
     "statusline": "Konto und Nutzung in der Statuszeile von Claude Code anzeigen",
-    "shims": "claude1…claudeN und ccs neu erstellen",
+    "shims": "claude1…claudeN neu erstellen",
     "completion": "Vervollständigung für bash oder zsh ausgeben"
   },
   "copy": {

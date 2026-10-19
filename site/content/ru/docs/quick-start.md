@@ -1,13 +1,13 @@
 ---
 title: Быстрый старт
-description: Добавьте два аккаунта Claude Code командой ccam add, переключайтесь между ними через claude1, claude2 или ccs и выберите, что у них общее.
+description: Добавьте два аккаунта Claude Code командой ccam add, переключайтесь между ними через claude1, claude2 или ccam <name> и выберите, что у них общее.
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 9462b80d61bc
+sourceHash: c6b1c1c3ebaf
 ---
 
-Добавьте каждый аккаунт командой `ccam add`, затем запускайте Claude Code командой `claude1`, `claude2` или `ccs <name>`. Большинству этого достаточно.
+Добавьте каждый аккаунт командой `ccam add`, затем запускайте Claude Code командой `claude1`, `claude2` или `ccam <name>`. Большинству этого достаточно.
 
 ## 1. Добавьте первый аккаунт
 
@@ -37,19 +37,19 @@ ccam add work
 
 ```sh
 claude2
-ccs work
-ccs 2
+ccam work
+ccam 2
 ```
 
 Всё, что указано после имени аккаунта, передаётся в Claude Code без изменений, поэтому вы продолжаете пользоваться привычными параметрами:
 
 ```sh
-ccs work --resume
-ccs work -p "fix the failing test" --output-format json
+ccam work --resume
+ccam work -p "fix the failing test" --output-format json
 cat error.log | claude2 -p "what caused this?"
 ```
 
-Если выполнить `ccs` без аргументов, откроется выбор аккаунта: используйте клавиши со стрелками и Enter или нажмите номер аккаунта.
+Если выполнить `ccam` без аргументов, откроется выбор аккаунта: используйте клавиши со стрелками и Enter или нажмите номер аккаунта.
 
 ## 4. Выберите, что будет общим
 
@@ -65,11 +65,11 @@ ccam share work --history on
 ## 5. Когда аккаунт достиг лимита
 
 ```sh
-ccs usage
-ccs next --continue
+ccam usage
+ccam next --continue
 ```
 
-`ccs usage` показывает использование за 5 часов и за неделю для каждого аккаунта. `ccs next --continue` открывает тот же разговор в следующем аккаунте. См. раздел [лимиты использования](/docs/usage-limits).
+`ccam usage` показывает использование за 5 часов и за неделю для каждого аккаунта. `ccam next --continue` открывает тот же разговор в следующем аккаунте. См. раздел [лимиты использования](/docs/usage-limits).
 
 ## Уже используете ~/.claude?
 

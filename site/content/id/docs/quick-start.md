@@ -1,13 +1,13 @@
 ---
 title: Memulai cepat
-description: Tambahkan dua akun Claude Code dengan ccam add, berpindah di antaranya dengan claude1, claude2, atau ccs, dan pilih apa yang dibagikan.
+description: Tambahkan dua akun Claude Code dengan ccam add, berpindah di antaranya dengan claude1, claude2, atau ccam <name>, dan pilih apa yang dibagikan.
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 9462b80d61bc
+sourceHash: c6b1c1c3ebaf
 ---
 
-Tambahkan setiap akun dengan `ccam add`, lalu jalankan Claude Code dengan `claude1`, `claude2`, atau `ccs <name>`. Hanya itu yang dibutuhkan sebagian besar orang.
+Tambahkan setiap akun dengan `ccam add`, lalu jalankan Claude Code dengan `claude1`, `claude2`, atau `ccam <name>`. Hanya itu yang dibutuhkan sebagian besar orang.
 
 ## 1. Tambahkan akun pertama Anda
 
@@ -37,19 +37,19 @@ Semua perintah berikut menjalankan Claude Code sebagai akun kerja:
 
 ```sh
 claude2
-ccs work
-ccs 2
+ccam work
+ccam 2
 ```
 
 Semua yang ada setelah nama akun diteruskan ke Claude Code tanpa diubah, jadi Anda tetap memakai opsi yang sudah Anda kenal:
 
 ```sh
-ccs work --resume
-ccs work -p "fix the failing test" --output-format json
+ccam work --resume
+ccam work -p "fix the failing test" --output-format json
 cat error.log | claude2 -p "what caused this?"
 ```
 
-Menjalankan `ccs` saja akan membuka pemilih akun: gunakan tombol panah dan Enter, atau tekan nomor akun.
+Menjalankan `ccam` saja akan membuka pemilih akun: gunakan tombol panah dan Enter, atau tekan nomor akun.
 
 ## 4. Pilih apa yang dibagikan
 
@@ -65,11 +65,11 @@ ccam menampilkan apa yang akan dipindahkannya sebelum mengubah apa pun. Lihat [p
 ## 5. Saat sebuah akun mencapai batasnya
 
 ```sh
-ccs usage
-ccs next --continue
+ccam usage
+ccam next --continue
 ```
 
-`ccs usage` menampilkan penggunaan 5 jam dan mingguan semua akun. `ccs next --continue` membuka percakapan yang sama di akun berikutnya. Lihat [batas penggunaan](/docs/usage-limits).
+`ccam usage` menampilkan penggunaan 5 jam dan mingguan semua akun. `ccam next --continue` membuka percakapan yang sama di akun berikutnya. Lihat [batas penggunaan](/docs/usage-limits).
 
 ## Sudah menggunakan ~/.claude?
 

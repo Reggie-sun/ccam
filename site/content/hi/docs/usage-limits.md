@@ -1,21 +1,21 @@
 ---
 title: उपयोग सीमाएँ और अकाउंट स्विच करना
-description: ccs usage से हर Claude Code अकाउंट का 5 घंटे और साप्ताहिक उपयोग देखें, और ccs next --auto से सबसे ज़्यादा गुंजाइश वाला अकाउंट खोलें।
+description: ccam usage से हर Claude Code अकाउंट का 5 घंटे और साप्ताहिक उपयोग देखें, और ccam next --auto से सबसे ज़्यादा गुंजाइश वाला अकाउंट खोलें।
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: a9ee77936668
+sourceHash: a64c2c341db3
 ---
 
-`ccs usage` दिखाता है कि हर अकाउंट ने 5 घंटे और साप्ताहिक सीमा का कितना हिस्सा इस्तेमाल किया है। `ccs next --auto` सबसे ज़्यादा गुंजाइश वाला अकाउंट खोलता है, और `--continue` मौजूदा बातचीत को साथ ले जाता है।
+`ccam usage` दिखाता है कि हर अकाउंट ने 5 घंटे और साप्ताहिक सीमा का कितना हिस्सा इस्तेमाल किया है। `ccam next --auto` सबसे ज़्यादा गुंजाइश वाला अकाउंट खोलता है, और `--continue` मौजूदा बातचीत को साथ ले जाता है।
 
 ```console
-$ ccs usage
+$ ccam usage
  계정        5시간         초기화      주간          초기화      기준
  1 personal  ██████░░  72% 1시간 40분  ███░░░░░  41% 3일 6시간   방금
  2 work      █░░░░░░░   8% 4시간 12분  ██░░░░░░  19% 5일 2시간   방금
  3 side      ████████ 100% 22분        █████░░░  68% 1일 9시간   12분 전 (캐시)
-→ 여유가 가장 많은 계정: work   (ccs next --auto 로 바로 열기)
+→ 여유가 가장 많은 계정: work   (ccam next --auto 로 바로 열기)
 ```
 
 कॉलम ये हैं: अकाउंट, 5 घंटे का उपयोग, रीसेट होने तक का समय, साप्ताहिक उपयोग, रीसेट होने तक का समय, और संख्याएँ कितनी पुरानी हैं।
@@ -38,9 +38,9 @@ ccam हर अकाउंट के अपने लॉगिन से, स�
 
 ## एक्सपायर हुए लॉगिन
 
-जब किसी अकाउंट का access token एक्सपायर हो जाता है, तो ccam उसे renew नहीं करता, क्योंकि अगर कोई Claude Code session वही लॉगिन इस्तेमाल कर रहा हो, तो renew करने से वह session साइन आउट हो सकता है। अकाउंट को एक बार `ccs <name>` से शुरू करें, Claude Code उसे renew कर देगा।
+जब किसी अकाउंट का access token एक्सपायर हो जाता है, तो ccam उसे renew नहीं करता, क्योंकि अगर कोई Claude Code session वही लॉगिन इस्तेमाल कर रहा हो, तो renew करने से वह session साइन आउट हो सकता है। अकाउंट को एक बार `ccam <name>` से शुरू करें, Claude Code उसे renew कर देगा।
 
-`ccs usage --refresh` एक्सपायर हुए tokens ख़ुद renew करता है, लेकिन केवल उन अकाउंट्स के लिए जो चल नहीं रहे हैं। यह macOS कीचेन में या import किए गए `~/.claude` में रखे लॉगिन कभी renew नहीं करता।
+`ccam usage --refresh` एक्सपायर हुए tokens ख़ुद renew करता है, लेकिन केवल उन अकाउंट्स के लिए जो चल नहीं रहे हैं। यह macOS कीचेन में या import किए गए `~/.claude` में रखे लॉगिन कभी renew नहीं करता।
 
 ## स्टेटस लाइन में उपयोग
 
@@ -48,16 +48,16 @@ ccam हर अकाउंट के अपने लॉगिन से, स�
 ccam statusline install
 ```
 
-इसके बाद Claude Code स्टेटस लाइन में अकाउंट का नाम और उसका उपयोग दिखाता है, उदाहरण के लिए `[work] · Opus · 5h 24% · 7d 41%`। अगर आपके पास पहले से कोई status line कमांड है, तो ccam उसे रखता है और उसके आगे अकाउंट का नाम जोड़ता है। स्टेटस लाइन अपनी संख्याएँ सेव भी करती है, जिन्हें `ccs usage` तब इस्तेमाल करता है जब endpoint जवाब नहीं देता।
+इसके बाद Claude Code स्टेटस लाइन में अकाउंट का नाम और उसका उपयोग दिखाता है, उदाहरण के लिए `[work] · Opus · 5h 24% · 7d 41%`। अगर आपके पास पहले से कोई status line कमांड है, तो ccam उसे रखता है और उसके आगे अकाउंट का नाम जोड़ता है। स्टेटस लाइन अपनी संख्याएँ सेव भी करती है, जिन्हें `ccam usage` तब इस्तेमाल करता है जब endpoint जवाब नहीं देता।
 
 ## स्विच करना
 
 ```sh
-ccs next              # the account after the one you used last
-ccs next --auto       # the account with the lowest 5-hour usage
-ccs next --continue   # the next account that shares your conversation history
+ccam next             # the account after the one you used last
+ccam next --auto      # the account with the lowest 5-hour usage
+ccam next --continue  # the next account that shares your conversation history
 ```
 
-`ccs next` उन अकाउंट्स को छोड़ देता है जिनमें लॉगिन नहीं है, और `--auto` उन अकाउंट्स को छोड़ देता है जो 100% पर हैं। बातचीत जारी रखने के लिए दोनों अकाउंट्स को बातचीत का इतिहास साझा करना होगा; [साझा करना](/docs/sharing) देखें।
+`ccam next` उन अकाउंट्स को छोड़ देता है जिनमें लॉगिन नहीं है, और `--auto` उन अकाउंट्स को छोड़ देता है जो 100% पर हैं। बातचीत जारी रखने के लिए दोनों अकाउंट्स को बातचीत का इतिहास साझा करना होगा; [साझा करना](/docs/sharing) देखें।
 
 [उपयोग सीमा वर्कफ़्लो गाइड](/guides/usage-limit-workflow) एक पूरा उदाहरण क़दम-दर-क़दम दिखाती है।

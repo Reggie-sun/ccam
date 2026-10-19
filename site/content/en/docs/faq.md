@@ -24,11 +24,11 @@ Give each account its own configuration folder with `CLAUDE_CONFIG_DIR`. ccam do
 
 ## How do I continue a conversation on another account?
 
-Share conversation history between the two accounts with `ccam share <name> --history on`, then run `ccs next --continue`. Claude Code opens the most recent conversation of the current folder in the next account.
+Share conversation history between the two accounts with `ccam share <name> --history on`, then run `ccam next --continue`. Claude Code opens the most recent conversation of the current folder in the next account.
 
 ## Does ccam see or send my login?
 
-ccam never copies or shares a login. It reads an account's access token only to ask Anthropic's usage endpoint for that account's usage, when you run `ccs usage`, `ccs next --auto` or `ccam doctor`. ccam has no telemetry and sends nothing anywhere else.
+ccam never copies or shares a login. It reads an account's access token only to ask Anthropic's usage endpoint for that account's usage, when you run `ccam usage`, `ccam next --auto` or `ccam doctor`. ccam has no telemetry and sends nothing anywhere else.
 
 ## Where are my accounts stored?
 
@@ -36,7 +36,7 @@ In `~/.local/share/ccam/profiles/<name>/`, one folder per account. On macOS, Cla
 
 ## What happens to my existing ~/.claude?
 
-Nothing, unless you run `ccam import`. Import registers the folder where it is, so plain `claude` and `ccs <name>` keep using the same account and settings.
+Nothing, unless you run `ccam import`. Import registers the folder where it is, so plain `claude` and `ccam <name>` keep using the same account and settings.
 
 ## Which systems does ccam support?
 
@@ -52,4 +52,4 @@ Starting Claude Code through ccam adds about 4 milliseconds, measured with `scri
 
 ## How do I uninstall ccam?
 
-Delete `ccam`, `ccs` and the `claude1`… links from `~/.local/bin`, then `~/.config/ccam`, `~/.local/share/ccam` and `~/.local/state/ccam` if you no longer need the accounts. See [install](/docs/install#uninstall).
+Delete `ccam` and the `claude1`… links from `~/.local/bin`, then `~/.config/ccam`, `~/.local/share/ccam` and `~/.local/state/ccam` if you no longer need the accounts. See [install](/docs/install#uninstall).

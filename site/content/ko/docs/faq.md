@@ -4,7 +4,7 @@ description: ccam, Claude Code 계정, 사용량 한도, 공유, 개인정보, �
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 12ad0faef2ce
+sourceHash: 2be18393cbe2
 ---
 
 ## ccam은 Anthropic의 공식 도구인가요?
@@ -25,11 +25,11 @@ sourceHash: 12ad0faef2ce
 
 ## 다른 계정에서 대화를 어떻게 이어 가나요?
 
-`ccam share <name> --history on`으로 두 계정이 대화 내역을 공유하게 한 뒤 `ccs next --continue`를 실행합니다. 그러면 Claude Code가 다음 계정에서 현재 폴더의 가장 최근 대화를 엽니다.
+`ccam share <name> --history on`으로 두 계정이 대화 내역을 공유하게 한 뒤 `ccam next --continue`를 실행합니다. 그러면 Claude Code가 다음 계정에서 현재 폴더의 가장 최근 대화를 엽니다.
 
 ## ccam이 제 로그인 정보를 보거나 전송하나요?
 
-ccam은 로그인을 절대 복사하거나 공유하지 않습니다. `ccs usage`, `ccs next --auto`, `ccam doctor`를 실행할 때, 계정의 사용량을 Anthropic의 사용량 엔드포인트에 요청하기 위해서만 그 계정의 액세스 토큰을 읽습니다. ccam에는 원격 측정(telemetry)이 없으며, 그 밖의 어디로도 아무것도 보내지 않습니다.
+ccam은 로그인을 절대 복사하거나 공유하지 않습니다. `ccam usage`, `ccam next --auto`, `ccam doctor`를 실행할 때, 계정의 사용량을 Anthropic의 사용량 엔드포인트에 요청하기 위해서만 그 계정의 액세스 토큰을 읽습니다. ccam에는 원격 측정(telemetry)이 없으며, 그 밖의 어디로도 아무것도 보내지 않습니다.
 
 ## 계정은 어디에 저장되나요?
 
@@ -37,7 +37,7 @@ ccam은 로그인을 절대 복사하거나 공유하지 않습니다. `ccs usag
 
 ## 기존 ~/.claude는 어떻게 되나요?
 
-`ccam import`를 실행하지 않으면 아무 일도 일어나지 않습니다. 가져오기는 폴더를 제자리에서 등록하므로, 그냥 `claude`를 실행해도, `ccs <name>`으로 실행해도 같은 계정과 설정을 계속 씁니다.
+`ccam import`를 실행하지 않으면 아무 일도 일어나지 않습니다. 가져오기는 폴더를 제자리에서 등록하므로, 그냥 `claude`를 실행해도, `ccam <name>`으로 실행해도 같은 계정과 설정을 계속 씁니다.
 
 ## ccam은 어떤 시스템을 지원하나요?
 
@@ -53,4 +53,4 @@ ccam을 거쳐 Claude Code를 시작하면 약 4밀리초가 더해집니다. �
 
 ## ccam은 어떻게 삭제하나요?
 
-`~/.local/bin`에서 `ccam`, `ccs`, `claude1`… 링크를 지우고, 계정이 더 이상 필요 없다면 `~/.config/ccam`, `~/.local/share/ccam`, `~/.local/state/ccam`도 지웁니다. [설치](/docs/install#uninstall)를 참고하세요.
+`~/.local/bin`에서 `ccam`과 `claude1`… 링크를 지우고, 계정이 더 이상 필요 없다면 `~/.config/ccam`, `~/.local/share/ccam`, `~/.local/state/ccam`도 지웁니다. [설치](/docs/install#uninstall)를 참고하세요.

@@ -4,7 +4,7 @@ description: "Cài đặt ccam trên Linux hoặc macOS bằng một lệnh, t�
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: c7f92dfa554a
+sourceHash: fc63978e8f9e
 ---
 
 Chạy lệnh này trong terminal trên Linux hoặc macOS:
@@ -13,7 +13,7 @@ Chạy lệnh này trong terminal trên Linux hoặc macOS:
 curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-Script tải về bản phát hành cho hệ thống của bạn, kiểm tra mã băm SHA-256 và đặt hai lệnh vào `~/.local/bin`: `ccam` và bí danh ngắn của nó là `ccs`. Nếu thư mục đó chưa nằm trong `PATH`, script sẽ in ra dòng cần thêm vào `~/.bashrc` hoặc `~/.zshrc`.
+Script tải về bản phát hành cho hệ thống của bạn, kiểm tra mã băm SHA-256 và đặt `ccam` vào `~/.local/bin`, nơi `ccam add` sau này tạo các lệnh tắt `claude1`, `claude2`, v.v. Nếu thư mục đó chưa nằm trong `PATH`, script sẽ in ra dòng cần thêm vào `~/.bashrc` hoặc `~/.zshrc`.
 
 ccam khởi động Claude Code cho bạn, vì vậy hãy cài [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) trước và đảm bảo `claude --version` chạy được.
 
@@ -31,13 +31,12 @@ ccam khởi động Claude Code cho bạn, vì vậy hãy cài [Claude Code](htt
 sudo apt install ./ccam_*_linux_amd64.deb
 ```
 
-Gói này cài `/usr/bin/ccam` và liên kết `/usr/bin/ccs`.
+Gói này cài `/usr/bin/ccam`.
 
 **Từ mã nguồn.** Với Go 1.26 trở lên:
 
 ```sh
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
-ln -s ccam "$(go env GOPATH)/bin/ccs"
 ```
 
 **Một phiên bản cụ thể.** Đặt `CCAM_VERSION`:
@@ -53,7 +52,7 @@ ccam completion bash > ~/.local/share/bash-completion/completions/ccam
 ccam completion zsh > "${fpath[1]}/_ccam"
 ```
 
-Tính năng tự động hoàn thành áp dụng cho cả `ccam` và `ccs`, bao gồm cả tên tài khoản.
+Tính năng tự động hoàn thành áp dụng cho mọi lệnh và tùy chọn của `ccam`, bao gồm cả tên tài khoản.
 
 ## Kiểm tra cài đặt
 
@@ -66,10 +65,10 @@ ccam doctor
 
 ## Gỡ cài đặt
 
-Xóa hai lệnh và các lệnh tắt của tài khoản, sau đó xóa các thư mục dữ liệu nếu bạn không còn cần các tài khoản:
+Xóa lệnh ccam và các lệnh tắt của tài khoản, sau đó xóa các thư mục dữ liệu nếu bạn không còn cần các tài khoản:
 
 ```sh
-rm ~/.local/bin/ccam ~/.local/bin/ccs ~/.local/bin/claude[0-9]*
+rm ~/.local/bin/ccam ~/.local/bin/claude[0-9]*
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
 ```
 

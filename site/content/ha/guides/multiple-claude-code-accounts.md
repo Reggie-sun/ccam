@@ -4,7 +4,7 @@ description: Gudanar da asusun Claude Code da dama gefe da gefe da CLAUDE_CONFIG
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: d82129ddcb4c
+sourceHash: e2fbee9f4f91
 ---
 
 Ba kowane asusu foldar saitunsa ta kansa. Claude Code yana karanta foldar daga environment variable ɗin `CLAUDE_CONFIG_DIR`, kuma kowace folda tana riƙe bayanan shigarta, saitunanta da tarihinta. Za ka iya saita wannan da hannu da shell alias, ko ka bar ccam ya yi maka.
@@ -37,7 +37,7 @@ ccam add personal
 ccam add work
 ```
 
-Yanzu `claude1` da `claude2`, ko `ccs personal` da `ccs work`, suna fara asusun biyu. Saboda shirye-shirye ne na gaske ba alias ba, suna aiki a scripts ma. Ana raba saituna, `CLAUDE.md`, sabobin MCP da extensions tun daga farko, kuma za ka iya kunna rabon tarihin tattaunawa don ci gaba da tattaunawa a ɗayan asusun da `ccs next --continue`.
+Yanzu `claude1` da `claude2`, ko `ccam personal` da `ccam work`, suna fara asusun biyu. Saboda shirye-shirye ne na gaske ba alias ba, suna aiki a scripts ma. Ana raba saituna, `CLAUDE.md`, sabobin MCP da extensions tun daga farko, kuma za ka iya kunna rabon tarihin tattaunawa don ci gaba da tattaunawa a ɗayan asusun da `ccam next --continue`.
 
 Idan kana amfani da `~/.claude` tuni, gudanar da `ccam import` maimakon sake ƙara wannan asusun.
 

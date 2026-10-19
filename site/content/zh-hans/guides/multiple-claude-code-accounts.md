@@ -4,7 +4,7 @@ description: 借助 CLAUDE_CONFIG_DIR 实现 Claude Code 多账号并行运行�
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: d82129ddcb4c
+sourceHash: e2fbee9f4f91
 ---
 
 为每个账号指定单独的配置文件夹。Claude Code 从 `CLAUDE_CONFIG_DIR` 环境变量中读取文件夹位置，每个文件夹都保存各自的登录信息、设置和历史记录。你可以用 shell 别名手动设置，也可以交给 ccam 完成。
@@ -37,7 +37,7 @@ ccam add personal
 ccam add work
 ```
 
-现在，`claude1` 和 `claude2`，或者 `ccs personal` 和 `ccs work`，都可以启动这两个账号。因为它们是真正的程序而不是别名，所以在脚本中也能使用。设置、`CLAUDE.md`、MCP 服务器和扩展从一开始就共享；你还可以开启对话历史共享，用 `ccs next --continue` 在另一个账号上继续对话。
+现在，`claude1` 和 `claude2`，或者 `ccam personal` 和 `ccam work`，都可以启动这两个账号。因为它们是真正的程序而不是别名，所以在脚本中也能使用。设置、`CLAUDE.md`、MCP 服务器和扩展从一开始就共享；你还可以开启对话历史共享，用 `ccam next --continue` 在另一个账号上继续对话。
 
 如果你已经在使用 `~/.claude`，请运行 `ccam import`，而不是再次添加该账号。
 

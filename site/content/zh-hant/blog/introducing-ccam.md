@@ -4,7 +4,7 @@ description: ccam 為什麼存在、它能為擁有多個 Claude Code 帳號的�
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: 5e4121938d8c
+sourceHash: 985e2d369c34
 ---
 
 ccam 是一個小型命令列工具，適合在同一台電腦上使用多個 Claude Code 帳號的人：例如一個個人帳號和一個工作帳號，或是為一個長期專案準備的多個帳號。
@@ -16,9 +16,9 @@ Claude Code 透過 `CLAUDE_CONFIG_DIR` 支援多個帳號：每個帳號一個�
 ## ccam 能做什麼
 
 - `ccam add` 會建立資料夾、執行登入，並給帳號一個快捷指令：`claude1`、`claude2`，依此類推。
-- `ccs work` 和 `claude2` 會以該帳號啟動 Claude Code，並將所有參數原封不動地傳遞過去。
+- `ccam work` 和 `claude2` 會以該帳號啟動 Claude Code，並將所有參數原封不動地傳遞過去。
 - MCP 伺服器、設定、`CLAUDE.md` 和擴充功能透過連結共用，可以逐項、逐帳號設定。登入資訊永遠不會共用。
-- `ccs usage` 會顯示每個帳號的 5 小時用量和每週用量；`ccs next --continue` 會在下一個帳號接續對話。
+- `ccam usage` 會顯示每個帳號的 5 小時用量和每週用量；`ccam next --continue` 會在下一個帳號接續對話。
 
 ## 不礙事
 

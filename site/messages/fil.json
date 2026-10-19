@@ -23,11 +23,11 @@
   },
   "landing": {
     "headline": "Maraming Claude Code account. Iisang terminal.",
-    "lede": "Idagdag nang isang beses ang bawat account. Lumipat gamit ang claude2 o ccs work. Kapag naabot ng isang account ang limit nito, ituloy sa susunod na account ang parehong usapan.",
+    "lede": "Idagdag nang isang beses ang bawat account. Lumipat gamit ang claude2 o ccam work. Kapag naabot ng isang account ang limit nito, ituloy sa susunod na account ang parehong usapan.",
     "installLabel": "I-install sa Linux o macOS",
     "thenAdd": "Pagkatapos, idagdag ang una mong account gamit ang {command}.",
     "readDocs": "Basahin ang quick start",
-    "boardLabel": "Halimbawang output ng ccs usage: ang mga limit ng lahat ng account nang sabay-sabay",
+    "boardLabel": "Halimbawang output ng ccam usage: ang mga limit ng lahat ng account nang sabay-sabay",
     "board": {
       "account": "Account",
       "fiveHour": "5 oras",
@@ -43,7 +43,7 @@
       },
       {
         "command": "claude2",
-        "also": "ccs work --resume",
+        "also": "ccam work --resume",
         "body": "Sinisimulan ang Claude Code bilang account na iyon. Ipinapasa nang walang pagbabago sa Claude Code ang lahat ng kasunod ng pangalan, at nagdadagdag ang ccam ng mga 4 millisecond bago ito magsimula."
       },
       {
@@ -51,11 +51,11 @@
         "body": "Pinipili kung ano ang ishe-share ng account sa iba mo pang account. Shared na mula sa simula ang mga MCP server, settings, CLAUDE.md at extension; hindi kailanman ang mga login."
       },
       {
-        "command": "ccs usage",
+        "command": "ccam usage",
         "body": "Ipinapakita nang sabay-sabay ang 5-oras at lingguhang usage ng bawat account, para malaman mo kung alin ang may natitira pa."
       },
       {
-        "command": "ccs next --continue",
+        "command": "ccam next --continue",
         "body": "Binubuksan ang parehong usapan sa susunod na account kapag naabot na ng kasalukuyang account ang limit nito."
       },
       {
@@ -86,7 +86,7 @@
     }
   },
   "commands": {
-    "ccs": "Buksan ang pagpili ng account",
+    "ccam": "Buksan ang pagpili ng account",
     "name": "Simulan ang Claude Code bilang account na iyon; ipinapasa nang walang pagbabago ang mga argument",
     "add": "Magdagdag ng account: config folder, login at shortcut",
     "list": "Ilista ang mga account",
@@ -102,7 +102,7 @@
     "import": "Irehistro ang umiiral na ~/.claude folder kung nasaan ito",
     "doctor": "Suriin ang mga link, permission, login at bersyon, at mag-ayos",
     "statusline": "Ipakita ang account at usage sa status line ng Claude Code",
-    "shims": "Gawin muli ang claude1…claudeN at ccs",
+    "shims": "Gawin muli ang claude1…claudeN",
     "completion": "I-print ang bash o zsh completion"
   },
   "copy": {

@@ -1,21 +1,21 @@
 ---
 title: コマンドリファレンス
-description: ccam addやccs <name>から、ccam usage、ccam next、ccam doctorまで、ccamのすべてのコマンドとオプションを説明します。
+description: ccam addやccam <name>から、ccam usage、ccam next、ccam doctorまで、ccamのすべてのコマンドとオプションを説明します。
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 18ecad9a1104
+sourceHash: 54bdfc489174
 ---
 
-`ccam`と`ccs`は同じプログラムなので、どちらを使ってもかまいません。どのコマンドでも前に`--dry-run`を付けると、実際には実行せずに何をするかを確認できます。たとえば`ccs --dry-run work`のように使います。
+どのコマンドでも前に`--dry-run`を付けると、実際には実行せずに何をするかを確認できます。たとえば`ccam --dry-run work`のように使います。
 
 <!-- commands -->
 
 ## Claude Codeの起動
 
-`ccs <name|number> [arguments]`は、そのアカウントでClaude Codeを起動します。ccamは名前より後の引数を読まず、同じ順序で`claude`に渡します。標準入力、終了コード、シグナルも`claude`そのものとまったく同じように動作します。名前の後の`--`は省略できます。
+`ccam <name|number> [arguments]`は、そのアカウントでClaude Codeを起動します。ccamは名前より後の引数を読まず、同じ順序で`claude`に渡します。標準入力、終了コード、シグナルも`claude`そのものとまったく同じように動作します。名前の後の`--`は省略できます。
 
-`ccs -p "summarise"`のように、引数はあってもアカウント名がない`ccs`は、デフォルトのアカウントを使います。デフォルトのアカウントは`ccam use <name>`で設定します。
+`ccam -p "summarise"`のように、引数はあってもアカウント名がない`ccam`は、デフォルトのアカウントを使います。デフォルトのアカウントは`ccam use <name>`で設定します。
 
 ショートカットの`claude1`、`claude2`などは、`~/.local/bin`にあるccamへのリンクです。`ccam shims install --names`を実行すると、アカウントごとに`claude-<name>`も作成されます。
 
@@ -56,11 +56,11 @@ ccam mcp remove fs
 ## 使用量と切り替え
 
 ```sh
-ccs usage            # also: ccs u
-ccs usage --watch    # refresh every 60 seconds
-ccs usage --json
-ccs next --continue
-ccs next --auto
+ccam usage           # also: ccam u
+ccam usage --watch   # refresh every 60 seconds
+ccam usage --json
+ccam next --continue
+ccam next --auto
 ```
 
 ## メンテナンス
@@ -80,6 +80,6 @@ ccam shims install
 | `~/.local/share/ccam/profiles/<name>/` | 各アカウントの`CLAUDE_CONFIG_DIR` |
 | `~/.local/share/ccam/groups/<group>/` | 共有される設定、MCPサーバー、拡張機能、履歴 |
 | `~/.local/state/ccam/` | 使用量のキャッシュと最終使用日時 |
-| `~/.local/bin/claude1`, `ccs` | ccamへのリンク |
+| `~/.local/bin/claude1`, `claude2`… | ccamへのリンク |
 
 `XDG_CONFIG_HOME`、`XDG_DATA_HOME`、`XDG_STATE_HOME`の各変数を設定すると、これらのフォルダーの場所が変わります。

@@ -1,13 +1,13 @@
 ---
 title: شروع سریع
-description: دو حساب Claude Code را با ccam add اضافه کنید، با claude1، claude2 یا ccs بین آن‌ها جابه‌جا شوید و تعیین کنید چه چیزهایی مشترک باشد.
+description: دو حساب Claude Code را با ccam add اضافه کنید، با claude1، claude2 یا ccam <name> بین آن‌ها جابه‌جا شوید و تعیین کنید چه چیزهایی مشترک باشد.
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 9462b80d61bc
+sourceHash: c6b1c1c3ebaf
 ---
 
-هر حساب را با `ccam add` اضافه کنید، سپس Claude Code را با `claude1`، `claude2` یا `ccs <name>` اجرا کنید. بیشتر کاربران به چیزی بیش از این نیاز ندارند.
+هر حساب را با `ccam add` اضافه کنید، سپس Claude Code را با `claude1`، `claude2` یا `ccam <name>` اجرا کنید. بیشتر کاربران به چیزی بیش از این نیاز ندارند.
 
 ## ۱. نخستین حساب را اضافه کنید
 
@@ -37,19 +37,19 @@ ccam add work
 
 ```sh
 claude2
-ccs work
-ccs 2
+ccam work
+ccam 2
 ```
 
 هر چه پس از نام حساب بیاید بدون تغییر به Claude Code می‌رسد، بنابراین می‌توانید همان گزینه‌هایی را که می‌شناسید به کار ببرید:
 
 ```sh
-ccs work --resume
-ccs work -p "fix the failing test" --output-format json
+ccam work --resume
+ccam work -p "fix the failing test" --output-format json
 cat error.log | claude2 -p "what caused this?"
 ```
 
-اجرای `ccs` به‌تنهایی یک انتخابگر باز می‌کند: از کلیدهای جهت‌نما و Enter استفاده کنید یا شماره حساب را بزنید.
+اجرای `ccam` به‌تنهایی یک انتخابگر باز می‌کند: از کلیدهای جهت‌نما و Enter استفاده کنید یا شماره حساب را بزنید.
 
 ## ۴. تعیین کنید چه چیزهایی مشترک باشد
 
@@ -65,11 +65,11 @@ ccam پیش از هر تغییری نشان می‌دهد چه چیزهایی ر
 ## ۵. وقتی یک حساب به سقف خود می‌رسد
 
 ```sh
-ccs usage
-ccs next --continue
+ccam usage
+ccam next --continue
 ```
 
-`ccs usage` مصرف ۵ ساعته و هفتگی همه حساب‌ها را نشان می‌دهد. `ccs next --continue` همان گفتگو را در حساب بعدی باز می‌کند. [سقف مصرف](/docs/usage-limits) را ببینید.
+`ccam usage` مصرف ۵ ساعته و هفتگی همه حساب‌ها را نشان می‌دهد. `ccam next --continue` همان گفتگو را در حساب بعدی باز می‌کند. [سقف مصرف](/docs/usage-limits) را ببینید.
 
 ## از ~/.claude استفاده می‌کنید؟
 

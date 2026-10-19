@@ -1,21 +1,21 @@
 ---
 title: 命令参考
-description: ccam 的所有命令和选项，从 ccam add、ccs <name> 到 ccam usage、ccam next 和 ccam doctor。
+description: ccam 的所有命令和选项，从 ccam add、ccam <name> 到 ccam usage、ccam next 和 ccam doctor。
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 18ecad9a1104
+sourceHash: 54bdfc489174
 ---
 
-`ccam` 和 `ccs` 是同一个程序，用哪个都可以。在任何命令前加上 `--dry-run`，可以查看它会做什么而不实际执行，例如 `ccs --dry-run work`。
+在任何命令前加上 `--dry-run`，可以查看它会做什么而不实际执行，例如 `ccam --dry-run work`。
 
 <!-- commands -->
 
 ## 启动 Claude Code
 
-`ccs <name|number> [arguments]` 以该账号启动 Claude Code。ccam 不会读取账号名之后的参数，而是按相同顺序把它们传给 `claude`；标准输入、退出码和信号的行为与直接运行 `claude` 完全相同。账号名之后的 `--` 是可选的。
+`ccam <name|number> [arguments]` 以该账号启动 Claude Code。ccam 不会读取账号名之后的参数，而是按相同顺序把它们传给 `claude`；标准输入、退出码和信号的行为与直接运行 `claude` 完全相同。账号名之后的 `--` 是可选的。
 
-`ccs` 带参数但不带账号名时（例如 `ccs -p "summarise"`），会使用默认账号。用 `ccam use <name>` 设置默认账号。
+`ccam` 带参数但不带账号名时（例如 `ccam -p "summarise"`），会使用默认账号。用 `ccam use <name>` 设置默认账号。
 
 快捷命令 `claude1`、`claude2` 等是 `~/.local/bin` 中指向 ccam 的链接。`ccam shims install --names` 还会为每个账号创建 `claude-<name>`。
 
@@ -56,11 +56,11 @@ ccam mcp remove fs
 ## 用量与切换
 
 ```sh
-ccs usage            # also: ccs u
-ccs usage --watch    # refresh every 60 seconds
-ccs usage --json
-ccs next --continue
-ccs next --auto
+ccam usage           # also: ccam u
+ccam usage --watch   # refresh every 60 seconds
+ccam usage --json
+ccam next --continue
+ccam next --auto
 ```
 
 ## 维护
@@ -80,6 +80,6 @@ ccam shims install
 | `~/.local/share/ccam/profiles/<name>/` | 每个账号的 `CLAUDE_CONFIG_DIR` |
 | `~/.local/share/ccam/groups/<group>/` | 共享的设置、MCP 服务器、扩展和历史记录 |
 | `~/.local/state/ccam/` | 用量缓存和最近使用时间 |
-| `~/.local/bin/claude1`、`ccs` | 指向 ccam 的链接 |
+| `~/.local/bin/claude1`、`claude2`… | 指向 ccam 的链接 |
 
 `XDG_CONFIG_HOME`、`XDG_DATA_HOME` 和 `XDG_STATE_HOME` 变量可以改变这些文件夹的位置。

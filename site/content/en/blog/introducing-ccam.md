@@ -15,9 +15,9 @@ Claude Code supports several accounts through `CLAUDE_CONFIG_DIR`: one folder pe
 ## What ccam does
 
 - `ccam add` creates the folder, runs the login and gives the account a shortcut: `claude1`, `claude2`, and so on.
-- `ccs work` and `claude2` start Claude Code as that account and pass every argument through unchanged.
+- `ccam work` and `claude2` start Claude Code as that account and pass every argument through unchanged.
 - MCP servers, settings, `CLAUDE.md` and extensions are shared through links, item by item and account by account. Logins are never shared.
-- `ccs usage` shows the 5-hour and weekly usage of every account; `ccs next --continue` picks up the conversation in the next account.
+- `ccam usage` shows the 5-hour and weekly usage of every account; `ccam next --continue` picks up the conversation in the next account.
 
 ## Staying out of the way
 

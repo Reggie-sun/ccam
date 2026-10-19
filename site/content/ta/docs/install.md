@@ -4,7 +4,7 @@ description: Linux அல்லது macOS-இல் ccam-ஐ ஒரே கட�
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: c7f92dfa554a
+sourceHash: fc63978e8f9e
 ---
 
 Linux அல்லது macOS-இல் ஒரு டெர்மினலில் இதை இயக்குங்கள்:
@@ -13,7 +13,7 @@ Linux அல்லது macOS-இல் ஒரு டெர்மினலி�
 curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-இந்த script உங்கள் கணினி அமைப்புக்கான வெளியீட்டைப் பதிவிறக்கி, அதன் SHA-256 checksum-ஐச் சரிபார்த்து, `~/.local/bin`-இல் இரண்டு கட்டளைகளை வைக்கிறது: `ccam` மற்றும் அதன் சுருக்கப் பெயர் `ccs`. அந்தக் கோப்புறை உங்கள் `PATH`-இல் இல்லையென்றால், `~/.bashrc` அல்லது `~/.zshrc`-இல் சேர்க்க வேண்டிய வரியை script அச்சிடும்.
+இந்த script உங்கள் கணினி அமைப்புக்கான வெளியீட்டைப் பதிவிறக்கி, அதன் SHA-256 checksum-ஐச் சரிபார்த்து, `ccam`-ஐ `~/.local/bin`-இல் வைக்கிறது; பின்னர் `ccam add` அதே கோப்புறையில் `claude1`, `claude2`… குறுக்குவழிகளை உருவாக்கும். அந்தக் கோப்புறை உங்கள் `PATH`-இல் இல்லையென்றால், `~/.bashrc` அல்லது `~/.zshrc`-இல் சேர்க்க வேண்டிய வரியை script அச்சிடும்.
 
 ccam உங்களுக்காக Claude Code-ஐத் தொடங்குகிறது, அதனால் முதலில் [Claude Code](https://docs.claude.com/en/docs/claude-code/overview)-ஐ நிறுவி, `claude --version` வேலை செய்கிறதா என்று உறுதிசெய்யுங்கள்.
 
@@ -31,13 +31,12 @@ ccam உங்களுக்காக Claude Code-ஐத் தொடங்க�
 sudo apt install ./ccam_*_linux_amd64.deb
 ```
 
-இந்தத் தொகுப்பு `/usr/bin/ccam`-ஐயும் `/usr/bin/ccs` இணைப்பையும் நிறுவுகிறது.
+இந்தத் தொகுப்பு `/usr/bin/ccam`-ஐ நிறுவுகிறது.
 
 **மூலக் குறியீட்டிலிருந்து.** Go 1.26 அல்லது புதிய பதிப்புடன்:
 
 ```sh
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
-ln -s ccam "$(go env GOPATH)/bin/ccs"
 ```
 
 **ஒரு குறிப்பிட்ட பதிப்பு.** `CCAM_VERSION`-ஐ அமையுங்கள்:
@@ -53,7 +52,7 @@ ccam completion bash > ~/.local/share/bash-completion/completions/ccam
 ccam completion zsh > "${fpath[1]}/_ccam"
 ```
 
-Completion, கணக்குப் பெயர்கள் உட்பட `ccam` மற்றும் `ccs` இரண்டுக்கும் வேலை செய்யும்.
+Completion, கணக்குப் பெயர்கள் உட்பட `ccam`-இன் எல்லாக் கட்டளைகளுக்கும் விருப்பங்களுக்கும் வேலை செய்யும்.
 
 ## நிறுவலைச் சரிபார்த்தல்
 
@@ -66,10 +65,10 @@ Claude Code கண்டறியப்படுகிறதா, ஒவ்வொ
 
 ## நீக்குதல்
 
-இரண்டு கட்டளைகளையும் கணக்குக் குறுக்குவழிகளையும் நீக்குங்கள். கணக்குகள் இனி தேவையில்லை என்றால், பிறகு தரவுக் கோப்புறைகளையும் நீக்குங்கள்:
+கட்டளையையும் கணக்குக் குறுக்குவழிகளையும் நீக்குங்கள். கணக்குகள் இனி தேவையில்லை என்றால், பிறகு தரவுக் கோப்புறைகளையும் நீக்குங்கள்:
 
 ```sh
-rm ~/.local/bin/ccam ~/.local/bin/ccs ~/.local/bin/claude[0-9]*
+rm ~/.local/bin/ccam ~/.local/bin/claude[0-9]*
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
 ```
 

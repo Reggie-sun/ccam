@@ -1,13 +1,13 @@
 ---
 title: Szybki start
-description: Dodaj dwa konta Claude Code poleceniem ccam add, przełączaj się między nimi przez claude1, claude2 lub ccs i wybierz, co mają współdzielić.
+description: Dodaj dwa konta Claude Code poleceniem ccam add, przełączaj się między nimi przez claude1, claude2 lub ccam <name> i wybierz, co mają współdzielić.
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 9462b80d61bc
+sourceHash: c6b1c1c3ebaf
 ---
 
-Dodaj każde konto poleceniem `ccam add`, a potem uruchamiaj Claude Code przez `claude1`, `claude2` lub `ccs <name>`. Większości osób to wystarczy.
+Dodaj każde konto poleceniem `ccam add`, a potem uruchamiaj Claude Code przez `claude1`, `claude2` lub `ccam <name>`. Większości osób to wystarczy.
 
 ## 1. Dodaj pierwsze konto
 
@@ -37,19 +37,19 @@ Każde z tych poleceń uruchamia Claude Code jako konto służbowe:
 
 ```sh
 claude2
-ccs work
-ccs 2
+ccam work
+ccam 2
 ```
 
 Wszystko po nazwie konta trafia do Claude Code bez zmian, więc nadal używasz znanych ci opcji:
 
 ```sh
-ccs work --resume
-ccs work -p "fix the failing test" --output-format json
+ccam work --resume
+ccam work -p "fix the failing test" --output-format json
 cat error.log | claude2 -p "what caused this?"
 ```
 
-Samo `ccs` otwiera wybór konta: użyj strzałek i Enter albo naciśnij numer konta.
+Samo `ccam` otwiera wybór konta: użyj strzałek i Enter albo naciśnij numer konta.
 
 ## 4. Wybierz, co współdzielić
 
@@ -65,11 +65,11 @@ ccam pokazuje, co przeniesie, zanim cokolwiek zmieni. Szczegóły znajdziesz w c
 ## 5. Gdy konto osiągnie limit
 
 ```sh
-ccs usage
-ccs next --continue
+ccam usage
+ccam next --continue
 ```
 
-`ccs usage` pokazuje 5-godzinne i tygodniowe użycie wszystkich kont. `ccs next --continue` otwiera tę samą rozmowę na następnym koncie. Zobacz [limity użycia](/docs/usage-limits).
+`ccam usage` pokazuje 5-godzinne i tygodniowe użycie wszystkich kont. `ccam next --continue` otwiera tę samą rozmowę na następnym koncie. Zobacz [limity użycia](/docs/usage-limits).
 
 ## Używasz już ~/.claude?
 

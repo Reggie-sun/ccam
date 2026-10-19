@@ -4,7 +4,7 @@ description: ccam'ın neden var olduğu, birden fazla Claude Code hesabı olan k
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: 5e4121938d8c
+sourceHash: 985e2d369c34
 ---
 
 ccam, aynı bilgisayarda birden fazla Claude Code hesabı kullanan kişiler için küçük bir komut satırı aracıdır: bir kişisel ve bir iş hesabı ya da uzun bir proje için birkaç hesap.
@@ -16,9 +16,9 @@ Claude Code, `CLAUDE_CONFIG_DIR` aracılığıyla birden fazla hesabı destekler
 ## ccam ne yapar
 
 - `ccam add` klasörü oluşturur, girişi çalıştırır ve hesaba bir kısayol verir: `claude1`, `claude2` ve devamı.
-- `ccs work` ve `claude2`, Claude Code'u o hesapla başlatır ve her argümanı değiştirmeden iletir.
+- `ccam work` ve `claude2`, Claude Code'u o hesapla başlatır ve her argümanı değiştirmeden iletir.
 - MCP sunucuları, ayarlar, `CLAUDE.md` ve uzantılar bağlantılar aracılığıyla, öğe öğe ve hesap hesap paylaşılır. Giriş bilgileri hiçbir zaman paylaşılmaz.
-- `ccs usage` tüm hesapların 5 saatlik ve haftalık kullanımını gösterir; `ccs next --continue` konuşmayı bir sonraki hesapta sürdürür.
+- `ccam usage` tüm hesapların 5 saatlik ve haftalık kullanımını gösterir; `ccam next --continue` konuşmayı bir sonraki hesapta sürdürür.
 
 ## İşinize karışmamak
 

@@ -4,7 +4,7 @@ description: ccam, Claude Code hesapları, kullanım limitleri, paylaşım, gizl
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 12ad0faef2ce
+sourceHash: 2be18393cbe2
 ---
 
 ## ccam resmi bir Anthropic aracı mı?
@@ -25,11 +25,11 @@ Her hesaba `CLAUDE_CONFIG_DIR` ile kendi yapılandırma klasörünü verin. ccam
 
 ## Bir konuşmaya başka bir hesapta nasıl devam ederim?
 
-İki hesap arasında konuşma geçmişini `ccam share <name> --history on` ile paylaşın, ardından `ccs next --continue` komutunu çalıştırın. Claude Code, geçerli klasörün en son konuşmasını bir sonraki hesapta açar.
+İki hesap arasında konuşma geçmişini `ccam share <name> --history on` ile paylaşın, ardından `ccam next --continue` komutunu çalıştırın. Claude Code, geçerli klasörün en son konuşmasını bir sonraki hesapta açar.
 
 ## ccam giriş bilgilerimi görüyor veya gönderiyor mu?
 
-ccam hiçbir zaman bir girişi kopyalamaz veya paylaşmaz. Bir hesabın erişim tokenını yalnızca `ccs usage`, `ccs next --auto` veya `ccam doctor` çalıştırdığınızda, o hesabın kullanımını Anthropic'in kullanım uç noktasına sormak için okur. ccam'da telemetri yoktur ve başka hiçbir yere bir şey göndermez.
+ccam hiçbir zaman bir girişi kopyalamaz veya paylaşmaz. Bir hesabın erişim tokenını yalnızca `ccam usage`, `ccam next --auto` veya `ccam doctor` çalıştırdığınızda, o hesabın kullanımını Anthropic'in kullanım uç noktasına sormak için okur. ccam'da telemetri yoktur ve başka hiçbir yere bir şey göndermez.
 
 ## Hesaplarım nerede saklanıyor?
 
@@ -37,7 +37,7 @@ Her hesap için bir klasör olmak üzere `~/.local/share/ccam/profiles/<name>/` 
 
 ## Mevcut ~/.claude klasörüme ne olur?
 
-`ccam import` çalıştırmadığınız sürece hiçbir şey. İçe aktarma, klasörü bulunduğu yerde kaydeder; böylece düz `claude` ve `ccs <name>` aynı hesabı ve ayarları kullanmaya devam eder.
+`ccam import` çalıştırmadığınız sürece hiçbir şey. İçe aktarma, klasörü bulunduğu yerde kaydeder; böylece düz `claude` ve `ccam <name>` aynı hesabı ve ayarları kullanmaya devam eder.
 
 ## ccam hangi sistemleri destekliyor?
 
@@ -53,4 +53,4 @@ Claude Code'u ccam üzerinden başlatmak yaklaşık 4 milisaniye ekler; bu süre
 
 ## ccam'ı nasıl kaldırırım?
 
-`ccam`, `ccs` ve `claude1`… bağlantılarını `~/.local/bin` içinden silin; hesaplara artık ihtiyacınız yoksa ardından `~/.config/ccam`, `~/.local/share/ccam` ve `~/.local/state/ccam` klasörlerini de silin. [Kurulum](/docs/install#uninstall) sayfasına bakın.
+`ccam` komutunu ve `claude1`… bağlantılarını `~/.local/bin` içinden silin; hesaplara artık ihtiyacınız yoksa ardından `~/.config/ccam`, `~/.local/share/ccam` ve `~/.local/state/ccam` klasörlerini de silin. [Kurulum](/docs/install#uninstall) sayfasına bakın.

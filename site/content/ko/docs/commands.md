@@ -1,21 +1,21 @@
 ---
 title: 명령어 레퍼런스
-description: ccam add와 ccs <name>부터 ccam usage, ccam next, ccam doctor까지 ccam의 모든 명령과 옵션입니다.
+description: ccam add와 ccam <name>부터 ccam usage, ccam next, ccam doctor까지 ccam의 모든 명령과 옵션입니다.
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 18ecad9a1104
+sourceHash: 54bdfc489174
 ---
 
-`ccam`과 `ccs`는 같은 프로그램이므로 편한 쪽을 쓰면 됩니다. 어느 명령이든 앞에 `--dry-run`을 붙이면 실제로 실행하지 않고 무엇을 할지만 보여 줍니다. 예: `ccs --dry-run work`.
+어느 명령이든 앞에 `--dry-run`을 붙이면 실제로 실행하지 않고 무엇을 할지만 보여 줍니다. 예: `ccam --dry-run work`.
 
 <!-- commands -->
 
 ## Claude Code 시작하기
 
-`ccs <name|number> [arguments]`는 그 계정으로 Claude Code를 시작합니다. ccam은 이름 뒤의 인자를 읽지 않고 같은 순서로 `claude`에 넘기며, 표준 입력, 종료 코드, 시그널도 `claude`를 직접 실행할 때와 똑같이 동작합니다. 이름 뒤의 `--`는 붙여도 되고 생략해도 됩니다.
+`ccam <name|number> [arguments]`는 그 계정으로 Claude Code를 시작합니다. ccam은 이름 뒤의 인자를 읽지 않고 같은 순서로 `claude`에 넘기며, 표준 입력, 종료 코드, 시그널도 `claude`를 직접 실행할 때와 똑같이 동작합니다. 이름 뒤의 `--`는 붙여도 되고 생략해도 됩니다.
 
-`ccs -p "summarise"`처럼 계정 이름 없이 인자만 주고 `ccs`를 실행하면 기본 계정을 씁니다. 기본 계정은 `ccam use <name>`으로 지정합니다.
+`ccam -p "summarise"`처럼 계정 이름 없이 인자만 주고 `ccam`을 실행하면 기본 계정을 씁니다. 기본 계정은 `ccam use <name>`으로 지정합니다.
 
 단축 명령 `claude1`, `claude2` 등은 `~/.local/bin`에 있는, ccam을 가리키는 링크입니다. `ccam shims install --names`를 실행하면 계정마다 `claude-<name>`도 만듭니다.
 
@@ -56,11 +56,11 @@ ccam mcp remove fs
 ## 사용량과 계정 전환
 
 ```sh
-ccs usage            # also: ccs u
-ccs usage --watch    # refresh every 60 seconds
-ccs usage --json
-ccs next --continue
-ccs next --auto
+ccam usage           # also: ccam u
+ccam usage --watch   # refresh every 60 seconds
+ccam usage --json
+ccam next --continue
+ccam next --auto
 ```
 
 ## 유지 관리
@@ -80,6 +80,6 @@ ccam shims install
 | `~/.local/share/ccam/profiles/<name>/` | 계정별 `CLAUDE_CONFIG_DIR` |
 | `~/.local/share/ccam/groups/<group>/` | 공유하는 설정, MCP 서버, 확장 기능, 대화 내역 |
 | `~/.local/state/ccam/` | 사용량 캐시와 마지막 사용 시각 |
-| `~/.local/bin/claude1`, `ccs` | ccam을 가리키는 링크 |
+| `~/.local/bin/claude1`, `claude2`… | ccam을 가리키는 링크 |
 
 `XDG_CONFIG_HOME`, `XDG_DATA_HOME`, `XDG_STATE_HOME` 변수를 설정하면 이 폴더들의 위치가 바뀝니다.

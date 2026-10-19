@@ -4,10 +4,10 @@ description: Prüfen, wie viel Spielraum jedes Claude Code-Konto noch hat, und d
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 64fe0b561bd1
+sourceHash: db7ed9b7bcfc
 ---
 
-Wenn ein Konto sein Limit erreicht, setzt du dasselbe Gespräch in einem anderen Konto fort, das dir gehört: Teile den Gesprächsverlauf einmal und führe dann `ccs next --continue` aus. Wenn du nur ein Konto hast, warte auf den Zeitpunkt des Zurücksetzens, den Claude Code anzeigt.
+Wenn ein Konto sein Limit erreicht, setzt du dasselbe Gespräch in einem anderen Konto fort, das dir gehört: Teile den Gesprächsverlauf einmal und führe dann `ccam next --continue` aus. Wenn du nur ein Konto hast, warte auf den Zeitpunkt des Zurücksetzens, den Claude Code anzeigt.
 
 ## Bevor es passiert
 
@@ -28,7 +28,7 @@ Die Statuszeile zeigt jetzt beim Arbeiten das Konto und seine 5-Stunden-Nutzung,
 Beende Claude Code (`/exit`), dann:
 
 ```sh
-ccs usage
+ccam usage
 ```
 
 ```console
@@ -39,16 +39,16 @@ ccs usage
 Öffne das Gespräch im Konto mit dem meisten Spielraum:
 
 ```sh
-ccs next --auto --continue
+ccam next --auto --continue
 ```
 
 Claude Code startet als `work` mit dem neuesten Gespräch des aktuellen Ordners, einschließlich allem, was bisher gesagt wurde.
 
 ## Worauf du achten solltest
 
-- Führe `ccs next --continue` im selben Ordner aus, in dem du gearbeitet hast; Gespräche werden pro Projektordner gespeichert.
+- Führe `ccam next --continue` im selben Ordner aus, in dem du gearbeitet hast; Gespräche werden pro Projektordner gespeichert.
 - Vermeide es, zwei Konten gleichzeitig mit demselben Gespräch laufen zu lassen. ccam warnt dich, wenn du es versuchst.
 - Das andere Konto muss den Gesprächsverlauf ebenfalls teilen, in derselben Gruppe.
 - Ob du so zwischen Konten wechseln darfst, hängt von den Bedingungen jedes Kontos ab.
 
-Alle Optionen von `ccs usage` und `ccs next` findest du unter [Nutzungslimits](/docs/usage-limits).
+Alle Optionen von `ccam usage` und `ccam next` findest du unter [Nutzungslimits](/docs/usage-limits).

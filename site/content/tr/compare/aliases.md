@@ -4,7 +4,7 @@ description: Birden fazla Claude Code hesabı çalıştırmak için CLAUDE_CONFI
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: e9902676e0ed
+sourceHash: 13da69070650
 ---
 
 Her hesap için bir kabuk takma adı (alias), birden fazla Claude Code hesabı çalıştırmanın en basit yoludur. ccam arka planda aynı şeyi yapar ve buna paylaşım, hesap değiştirme ve kullanım takibi ekler.
@@ -16,9 +16,9 @@ Her hesap için bir kabuk takma adı (alias), birden fazla Claude Code hesabı �
 | Betiklerde ve diğer programlarda çalışır | Hayır, takma adlar yalnızca kabukta çalışır | Evet, `claude2` gerçek bir komuttur |
 | Paylaşılan ayarlar, `CLAUDE.md`, uzantılar | Elle kopyalama veya bağlama | Öğe bazında, yedeklerle |
 | Paylaşılan MCP sunucuları | Elle, hesap başına | Bir kez `ccam mcp add` |
-| Bir konuşmaya başka hesapta devam etme | Hayır | `ccs next --continue` |
-| Tüm hesapların kullanımı | Hayır | `ccs usage` |
-| En çok pay kalan hesabı seçme | Hayır | `ccs next --auto` |
+| Bir konuşmaya başka hesapta devam etme | Hayır | `ccam next --continue` |
+| Tüm hesapların kullanımı | Hayır | `ccam usage` |
+| En çok pay kalan hesabı seçme | Hayır | `ccam next --auto` |
 | Durum satırında hesap adı | Hayır | `ccam statusline install` |
 | Bozuk bağlantıları onarma | Elle | `ccam doctor --fix` |
 | Ek yazılım | Yok | Tek bir statik ikili dosya |

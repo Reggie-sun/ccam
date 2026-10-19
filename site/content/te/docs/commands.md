@@ -1,21 +1,21 @@
 ---
 title: కమాండ్ రిఫరెన్స్
-description: ccam add, ccs <name> నుంచి ccam usage, ccam next, ccam doctor వరకు ccam యొక్క ప్రతి కమాండ్, ఆప్షన్.
+description: ccam add, ccam <name> నుంచి ccam usage, ccam next, ccam doctor వరకు ccam యొక్క ప్రతి కమాండ్, ఆప్షన్.
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 18ecad9a1104
+sourceHash: 54bdfc489174
 ---
 
-`ccam`, `ccs` ఒకే ప్రోగ్రామ్; మీకు నచ్చినదాన్ని ఉపయోగించండి. ఏ కమాండ్ అయినా అసలు చేయకుండా అది ఏమి చేస్తుందో చూడటానికి, దాని ముందు `--dry-run` పెట్టండి, ఉదాహరణకు `ccs --dry-run work`.
+ఏ కమాండ్ అయినా అసలు చేయకుండా అది ఏమి చేస్తుందో చూడటానికి, దాని ముందు `--dry-run` పెట్టండి, ఉదాహరణకు `ccam --dry-run work`.
 
 <!-- commands -->
 
 ## Claude Code ను ప్రారంభించడం
 
-`ccs <name|number> [arguments]` ఆ ఖాతాగా Claude Code ను ప్రారంభిస్తుంది. పేరు తర్వాత ఉన్న ఆర్గ్యుమెంట్‌లను ccam చదవదు; వాటిని అదే క్రమంలో `claude` కు పంపుతుంది. స్టాండర్డ్ ఇన్‌పుట్, ఎగ్జిట్ కోడ్, సిగ్నల్స్ అన్నీ `claude` తో నేరుగా ఉన్నట్లే పనిచేస్తాయి. పేరు తర్వాత `--` ఐచ్ఛికం.
+`ccam <name|number> [arguments]` ఆ ఖాతాగా Claude Code ను ప్రారంభిస్తుంది. పేరు తర్వాత ఉన్న ఆర్గ్యుమెంట్‌లను ccam చదవదు; వాటిని అదే క్రమంలో `claude` కు పంపుతుంది. స్టాండర్డ్ ఇన్‌పుట్, ఎగ్జిట్ కోడ్, సిగ్నల్స్ అన్నీ `claude` తో నేరుగా ఉన్నట్లే పనిచేస్తాయి. పేరు తర్వాత `--` ఐచ్ఛికం.
 
-ఖాతా పేరు లేకుండా ఆర్గ్యుమెంట్‌లతో `ccs`, ఉదాహరణకు `ccs -p "summarise"`, డిఫాల్ట్ ఖాతాను ఉపయోగిస్తుంది. దాన్ని `ccam use <name>` తో సెట్ చేయండి.
+ఖాతా పేరు లేకుండా ఆర్గ్యుమెంట్‌లతో `ccam`, ఉదాహరణకు `ccam -p "summarise"`, డిఫాల్ట్ ఖాతాను ఉపయోగిస్తుంది. దాన్ని `ccam use <name>` తో సెట్ చేయండి.
 
 `claude1`, `claude2` మొదలైన షార్ట్‌కట్‌లు `~/.local/bin` లో ccam కు ఉన్న లింక్‌లు. `ccam shims install --names` ప్రతి ఖాతాకు `claude-<name>` ను కూడా సృష్టిస్తుంది.
 
@@ -56,11 +56,11 @@ ccam mcp remove fs
 ## వినియోగం, ఖాతా మార్చడం
 
 ```sh
-ccs usage            # also: ccs u
-ccs usage --watch    # refresh every 60 seconds
-ccs usage --json
-ccs next --continue
-ccs next --auto
+ccam usage           # also: ccam u
+ccam usage --watch   # refresh every 60 seconds
+ccam usage --json
+ccam next --continue
+ccam next --auto
 ```
 
 ## నిర్వహణ
@@ -80,6 +80,6 @@ ccam shims install
 | `~/.local/share/ccam/profiles/<name>/` | ప్రతి ఖాతా యొక్క `CLAUDE_CONFIG_DIR` |
 | `~/.local/share/ccam/groups/<group>/` | షేర్ చేసిన సెట్టింగ్‌లు, MCP సర్వర్లు, ఎక్స్‌టెన్షన్లు, చరిత్ర |
 | `~/.local/state/ccam/` | వినియోగ కాష్, చివరిగా ఉపయోగించిన సమయాలు |
-| `~/.local/bin/claude1`, `ccs` | ccam కు లింక్‌లు |
+| `~/.local/bin/claude1`, `claude2`… | ccam కు లింక్‌లు |
 
 `XDG_CONFIG_HOME`, `XDG_DATA_HOME`, `XDG_STATE_HOME` వేరియబుల్స్ ఈ ఫోల్డర్‌ల స్థానాన్ని మారుస్తాయి.

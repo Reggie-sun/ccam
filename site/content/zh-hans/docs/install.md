@@ -4,7 +4,7 @@ description: 用一条命令在 Linux 或 macOS 上安装 ccam，也可以使用
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: c7f92dfa554a
+sourceHash: fc63978e8f9e
 ---
 
 在 Linux 或 macOS 的终端中运行：
@@ -13,7 +13,7 @@ sourceHash: c7f92dfa554a
 curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-脚本会下载适用于你系统的版本，校验其 SHA-256 校验和，然后在 `~/.local/bin` 中放入两个命令：`ccam` 和它的简短别名 `ccs`。如果该文件夹不在你的 `PATH` 中，脚本会打印需要添加到 `~/.bashrc` 或 `~/.zshrc` 的那一行。
+脚本会下载适用于你系统的版本，校验其 SHA-256 校验和，然后把 `ccam` 放入 `~/.local/bin`；之后 `ccam add` 会在同一文件夹中创建 `claude1`、`claude2`… 快捷命令。如果该文件夹不在你的 `PATH` 中，脚本会打印需要添加到 `~/.bashrc` 或 `~/.zshrc` 的那一行。
 
 ccam 会为你启动 Claude Code，所以请先安装 [Claude Code](https://docs.claude.com/en/docs/claude-code/overview)，并确认 `claude --version` 可以正常运行。
 
@@ -31,13 +31,12 @@ ccam 会为你启动 Claude Code，所以请先安装 [Claude Code](https://docs
 sudo apt install ./ccam_*_linux_amd64.deb
 ```
 
-该软件包会安装 `/usr/bin/ccam` 和 `/usr/bin/ccs` 链接。
+该软件包会安装 `/usr/bin/ccam`。
 
 **从源码安装。** 需要 Go 1.26 或更高版本：
 
 ```sh
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
-ln -s ccam "$(go env GOPATH)/bin/ccs"
 ```
 
 **安装特定版本。** 设置 `CCAM_VERSION`：
@@ -53,7 +52,7 @@ ccam completion bash > ~/.local/share/bash-completion/completions/ccam
 ccam completion zsh > "${fpath[1]}/_ccam"
 ```
 
-补全同时支持 `ccam` 和 `ccs`，包括账号名。
+补全覆盖 `ccam` 的所有命令和选项，包括账号名。
 
 ## 检查安装
 
@@ -66,10 +65,10 @@ ccam doctor
 
 ## 卸载
 
-删除这两个命令和账号快捷命令；如果不再需要这些账号，再删除数据文件夹：
+删除 ccam 命令和账号快捷命令；如果不再需要这些账号，再删除数据文件夹：
 
 ```sh
-rm ~/.local/bin/ccam ~/.local/bin/ccs ~/.local/bin/claude[0-9]*
+rm ~/.local/bin/ccam ~/.local/bin/claude[0-9]*
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
 ```
 

@@ -4,7 +4,7 @@ description: Shell-Aliase mit CLAUDE_CONFIG_DIR und ccam im direkten Vergleich, 
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: e9902676e0ed
+sourceHash: 13da69070650
 ---
 
 Ein Shell-Alias pro Konto ist der einfachste Weg, mehrere Claude Code-Konten zu betreiben. ccam macht darunter dasselbe und ergänzt Teilen, Wechseln und das Verfolgen der Nutzung.
@@ -16,9 +16,9 @@ Ein Shell-Alias pro Konto ist der einfachste Weg, mehrere Claude Code-Konten zu 
 | Funktioniert in Skripten und anderen Programmen | Nein, Aliase gibt es nur in der Shell | Ja, `claude2` ist ein echter Befehl |
 | Geteilte Einstellungen, `CLAUDE.md`, Erweiterungen | Von Hand kopieren oder verlinken | Pro Element, mit Sicherungen |
 | Geteilte MCP-Server | Von Hand, pro Konto | Einmal `ccam mcp add` |
-| Gespräch in einem anderen Konto fortsetzen | Nein | `ccs next --continue` |
-| Nutzung aller Konten | Nein | `ccs usage` |
-| Konto mit dem meisten Spielraum wählen | Nein | `ccs next --auto` |
+| Gespräch in einem anderen Konto fortsetzen | Nein | `ccam next --continue` |
+| Nutzung aller Konten | Nein | `ccam usage` |
+| Konto mit dem meisten Spielraum wählen | Nein | `ccam next --auto` |
 | Kontoname in der Statuszeile | Nein | `ccam statusline install` |
 | Defekte Links reparieren | Von Hand | `ccam doctor --fix` |
 | Zusätzliche Software | Keine | Eine statische Binärdatei |

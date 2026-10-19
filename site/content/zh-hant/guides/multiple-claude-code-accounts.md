@@ -4,7 +4,7 @@ description: 透過 CLAUDE_CONFIG_DIR 同時執行多個 Claude Code 帳號，�
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: d82129ddcb4c
+sourceHash: e2fbee9f4f91
 ---
 
 為每個帳號指定獨立的設定資料夾，就能在一台電腦上使用多個 Claude Code 帳號。Claude Code 會從 `CLAUDE_CONFIG_DIR` 環境變數讀取資料夾位置，每個資料夾各自保存登入資訊、設定和對話記錄。你可以用 Shell 別名手動設定，或交給 ccam 處理。
@@ -37,7 +37,7 @@ ccam add personal
 ccam add work
 ```
 
-現在 `claude1` 和 `claude2`，或 `ccs personal` 和 `ccs work`，就能啟動這兩個帳號。因為它們是真正的程式而不是別名，所以在腳本中也能使用。設定、`CLAUDE.md`、MCP 伺服器和擴充功能從一開始就會共用；你也可以開啟對話記錄共用，再用 `ccs next --continue` 在另一個帳號接續對話。
+現在 `claude1` 和 `claude2`，或 `ccam personal` 和 `ccam work`，就能啟動這兩個帳號。因為它們是真正的程式而不是別名，所以在腳本中也能使用。設定、`CLAUDE.md`、MCP 伺服器和擴充功能從一開始就會共用；你也可以開啟對話記錄共用，再用 `ccam next --continue` 在另一個帳號接續對話。
 
 如果你已經在使用 `~/.claude`，請執行 `ccam import`，不必再次新增該帳號。
 

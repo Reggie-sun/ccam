@@ -1,13 +1,13 @@
 ---
 title: 快速入門
-description: 用 ccam add 新增兩個 Claude Code 帳號，用 claude1、claude2 或 ccs 切換，並選擇要共用的項目。
+description: 用 ccam add 新增兩個 Claude Code 帳號，用 claude1、claude2 或 ccam <name> 切換，並選擇要共用的項目。
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 9462b80d61bc
+sourceHash: c6b1c1c3ebaf
 ---
 
-用 `ccam add` 新增每個帳號，然後用 `claude1`、`claude2` 或 `ccs <name>` 啟動 Claude Code。大多數人只需要這些。
+用 `ccam add` 新增每個帳號，然後用 `claude1`、`claude2` 或 `ccam <name>` 啟動 Claude Code。大多數人只需要這些。
 
 ## 1. 新增第一個帳號
 
@@ -37,19 +37,19 @@ ccam add work
 
 ```sh
 claude2
-ccs work
-ccs 2
+ccam work
+ccam 2
 ```
 
 帳號名稱後面的所有內容都會原封不動地傳給 Claude Code，所以你可以繼續使用熟悉的選項：
 
 ```sh
-ccs work --resume
-ccs work -p "fix the failing test" --output-format json
+ccam work --resume
+ccam work -p "fix the failing test" --output-format json
 cat error.log | claude2 -p "what caused this?"
 ```
 
-單獨執行 `ccs` 會開啟選擇器：用方向鍵和 Enter 選擇，或直接按下帳號的編號。
+單獨執行 `ccam` 會開啟選擇器：用方向鍵和 Enter 選擇，或直接按下帳號的編號。
 
 ## 4. 選擇要共用的項目
 
@@ -65,11 +65,11 @@ ccam 在變更任何內容之前，會先顯示它將移動哪些項目。詳情
 ## 5. 帳號達到限制時
 
 ```sh
-ccs usage
-ccs next --continue
+ccam usage
+ccam next --continue
 ```
 
-`ccs usage` 會顯示每個帳號的 5 小時用量和每週用量。`ccs next --continue` 會在下一個帳號開啟同一段對話。請參閱[用量限制](/docs/usage-limits)。
+`ccam usage` 會顯示每個帳號的 5 小時用量和每週用量。`ccam next --continue` 會在下一個帳號開啟同一段對話。請參閱[用量限制](/docs/usage-limits)。
 
 ## 已經在使用 ~/.claude？
 

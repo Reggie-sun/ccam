@@ -1,13 +1,13 @@
 ---
 title: クイックスタート
-description: ccam addで2つのClaude Codeアカウントを追加し、claude1、claude2、ccsで切り替え、共有する項目を選びます。
+description: ccam addで2つのClaude Codeアカウントを追加し、claude1、claude2、ccam <name>で切り替え、共有する項目を選びます。
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 9462b80d61bc
+sourceHash: c6b1c1c3ebaf
 ---
 
-`ccam add`で各アカウントを追加し、`claude1`、`claude2`、または`ccs <name>`でClaude Codeを起動します。ほとんどの人にとって、必要なのはこれだけです。
+`ccam add`で各アカウントを追加し、`claude1`、`claude2`、または`ccam <name>`でClaude Codeを起動します。ほとんどの人にとって、必要なのはこれだけです。
 
 ## 1. 最初のアカウントを追加する
 
@@ -37,19 +37,19 @@ ccam add work
 
 ```sh
 claude2
-ccs work
-ccs 2
+ccam work
+ccam 2
 ```
 
 アカウント名より後のものはすべてそのままClaude Codeに渡されるので、使い慣れたオプションをそのまま使えます。
 
 ```sh
-ccs work --resume
-ccs work -p "fix the failing test" --output-format json
+ccam work --resume
+ccam work -p "fix the failing test" --output-format json
 cat error.log | claude2 -p "what caused this?"
 ```
 
-`ccs`だけを実行すると、選択画面が開きます。矢印キーとEnterキーを使うか、アカウントの番号を押してください。
+`ccam`だけを実行すると、選択画面が開きます。矢印キーとEnterキーを使うか、アカウントの番号を押してください。
 
 ## 4. 共有する項目を選ぶ
 
@@ -65,11 +65,11 @@ ccamは、何かを変更する前に、何を移動するかを表示します�
 ## 5. アカウントが上限に達したとき
 
 ```sh
-ccs usage
-ccs next --continue
+ccam usage
+ccam next --continue
 ```
 
-`ccs usage`は、すべてのアカウントの5時間と週間の使用量を表示します。`ccs next --continue`は、次のアカウントで同じ会話を開きます。詳しくは[使用量の上限](/docs/usage-limits)を参照してください。
+`ccam usage`は、すべてのアカウントの5時間と週間の使用量を表示します。`ccam next --continue`は、次のアカウントで同じ会話を開きます。詳しくは[使用量の上限](/docs/usage-limits)を参照してください。
 
 ## すでに~/.claudeを使っている場合
 

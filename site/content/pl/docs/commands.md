@@ -1,21 +1,21 @@
 ---
 title: Opis poleceń
-description: Wszystkie polecenia i opcje ccam, od ccam add i ccs <name> po ccam usage, ccam next i ccam doctor.
+description: Wszystkie polecenia i opcje ccam, od ccam add i ccam <name> po ccam usage, ccam next i ccam doctor.
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 18ecad9a1104
+sourceHash: 54bdfc489174
 ---
 
-`ccam` i `ccs` to ten sam program; używaj tego, które wolisz. Wpisz `--dry-run` przed dowolnym poleceniem, żeby zobaczyć, co by zrobiło, bez wykonywania go, na przykład `ccs --dry-run work`.
+Wpisz `--dry-run` przed dowolnym poleceniem, żeby zobaczyć, co by zrobiło, bez wykonywania go, na przykład `ccam --dry-run work`.
 
 <!-- commands -->
 
 ## Uruchamianie Claude Code
 
-`ccs <name|number> [arguments]` uruchamia Claude Code jako to konto. ccam nie odczytuje argumentów po nazwie; przekazuje je do `claude` w tej samej kolejności, a standardowe wejście, kod wyjścia i sygnały działają dokładnie tak jak w samym `claude`. `--` po nazwie jest opcjonalne.
+`ccam <name|number> [arguments]` uruchamia Claude Code jako to konto. ccam nie odczytuje argumentów po nazwie; przekazuje je do `claude` w tej samej kolejności, a standardowe wejście, kod wyjścia i sygnały działają dokładnie tak jak w samym `claude`. `--` po nazwie jest opcjonalne.
 
-`ccs` z argumentami, ale bez nazwy konta, na przykład `ccs -p "summarise"`, używa domyślnego konta. Ustawisz je poleceniem `ccam use <name>`.
+`ccam` z argumentami, ale bez nazwy konta, na przykład `ccam -p "summarise"`, używa domyślnego konta. Ustawisz je poleceniem `ccam use <name>`.
 
 Skróty `claude1`, `claude2` i kolejne to linki do ccam w `~/.local/bin`. `ccam shims install --names` tworzy też `claude-<name>` dla każdego konta.
 
@@ -56,11 +56,11 @@ ccam mcp remove fs
 ## Użycie i przełączanie
 
 ```sh
-ccs usage            # also: ccs u
-ccs usage --watch    # refresh every 60 seconds
-ccs usage --json
-ccs next --continue
-ccs next --auto
+ccam usage           # also: ccam u
+ccam usage --watch   # refresh every 60 seconds
+ccam usage --json
+ccam next --continue
+ccam next --auto
 ```
 
 ## Konserwacja
@@ -80,6 +80,6 @@ ccam shims install
 | `~/.local/share/ccam/profiles/<name>/` | `CLAUDE_CONFIG_DIR` każdego konta |
 | `~/.local/share/ccam/groups/<group>/` | Współdzielone ustawienia, serwery MCP, rozszerzenia i historia |
 | `~/.local/state/ccam/` | Pamięć podręczna użycia i czasy ostatniego użycia |
-| `~/.local/bin/claude1`, `ccs` | Linki do ccam |
+| `~/.local/bin/claude1`, `claude2`… | Linki do ccam |
 
 Zmienne `XDG_CONFIG_HOME`, `XDG_DATA_HOME` i `XDG_STATE_HOME` zmieniają położenie tych folderów.

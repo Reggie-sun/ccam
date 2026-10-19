@@ -4,7 +4,7 @@ description: Aliases de shell com CLAUDE_CONFIG_DIR e o ccam lado a lado, para e
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: e9902676e0ed
+sourceHash: 13da69070650
 ---
 
 Um alias de shell por conta é a forma mais simples de executar várias contas do Claude Code. O ccam faz a mesma coisa por baixo e acrescenta compartilhamento, troca de conta e acompanhamento do uso.
@@ -16,9 +16,9 @@ Um alias de shell por conta é a forma mais simples de executar várias contas d
 | Funciona em scripts e outros programas | Não, aliases só existem no shell | Sim, `claude2` é um comando de verdade |
 | Configurações, `CLAUDE.md` e extensões compartilhados | Copiar ou criar links manualmente | Por item, com backups |
 | Servidores MCP compartilhados | Manualmente, por conta | `ccam mcp add` uma vez |
-| Continuar uma conversa em outra conta | Não | `ccs next --continue` |
-| Uso de todas as contas | Não | `ccs usage` |
-| Escolher a conta com mais espaço | Não | `ccs next --auto` |
+| Continuar uma conversa em outra conta | Não | `ccam next --continue` |
+| Uso de todas as contas | Não | `ccam usage` |
+| Escolher a conta com mais espaço | Não | `ccam next --auto` |
 | Nome da conta na linha de status | Não | `ccam statusline install` |
 | Corrigir links quebrados | Manualmente | `ccam doctor --fix` |
 | Software adicional | Nenhum | Um único binário estático |

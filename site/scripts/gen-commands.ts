@@ -22,8 +22,8 @@ const words: Record<string, string> = {
 const english = (usage: string) => Object.entries(words).reduce((u, [ko, en]) => u.replaceAll(ko, en), usage);
 
 const out = [
-  { key: "ccs", usage: "ccs" },
-  { key: "name", usage: "ccs <name|number> [claude arguments]" },
+  { key: "ccam", usage: "ccam" },
+  { key: "name", usage: "ccam <name|number> [claude arguments]" },
 ];
 for (const name of names) {
   const usage = /Usage:\n\s+(.+)/.exec(help(name))?.[1].replace(/^ccam/, "ccam").trim() ?? `ccam ${name}`;

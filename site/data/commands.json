@@ -1,11 +1,11 @@
 [
   {
-    "key": "ccs",
-    "usage": "ccs"
+    "key": "ccam",
+    "usage": "ccam"
   },
   {
     "key": "name",
-    "usage": "ccs <name|number> [claude arguments]"
+    "usage": "ccam <name|number> [claude arguments]"
   },
   {
     "key": "add",

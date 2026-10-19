@@ -23,11 +23,11 @@
   },
   "landing": {
     "headline": "多个 Claude Code 账号，一个终端。",
-    "lede": "每个账号只需添加一次。用 claude2 或 ccs work 切换。一个账号达到用量限制时，在下一个账号中继续同一段对话。",
+    "lede": "每个账号只需添加一次。用 claude2 或 ccam work 切换。一个账号达到用量限制时，在下一个账号中继续同一段对话。",
     "installLabel": "在 Linux 或 macOS 上安装",
     "thenAdd": "然后用 {command} 添加你的第一个账号。",
     "readDocs": "阅读快速入门",
-    "boardLabel": "ccs usage 的输出示例：一次查看所有账号的用量限制",
+    "boardLabel": "ccam usage 的输出示例：一次查看所有账号的用量限制",
     "board": {
       "account": "账号",
       "fiveHour": "5 小时",
@@ -43,7 +43,7 @@
       },
       {
         "command": "claude2",
-        "also": "ccs work --resume",
+        "also": "ccam work --resume",
         "body": "以该账号启动 Claude Code。账号名之后的所有内容都原样传给 Claude Code，ccam 在启动前只增加约 4 毫秒。"
       },
       {
@@ -51,11 +51,11 @@
         "body": "选择该账号与其他账号共享哪些内容。MCP 服务器、设置、CLAUDE.md 和扩展从一开始就共享；登录信息永远不共享。"
       },
       {
-        "command": "ccs usage",
+        "command": "ccam usage",
         "body": "一次显示所有账号的 5 小时用量和每周用量，让你知道哪个账号还有余量。"
       },
       {
-        "command": "ccs next --continue",
+        "command": "ccam next --continue",
         "body": "当前账号达到用量限制时，在下一个账号中打开同一段对话。"
       },
       {
@@ -86,7 +86,7 @@
     }
   },
   "commands": {
-    "ccs": "打开账号选择器",
+    "ccam": "打开账号选择器",
     "name": "以该账号启动 Claude Code；参数原样传递",
     "add": "添加账号：配置文件夹、登录和快捷命令",
     "list": "列出账号",
@@ -102,7 +102,7 @@
     "import": "在原位置注册已有的 ~/.claude 文件夹",
     "doctor": "检查链接、权限、登录和版本，并进行修复",
     "statusline": "在 Claude Code 的状态栏中显示账号和用量",
-    "shims": "重新创建 claude1…claudeN 和 ccs",
+    "shims": "重新创建 claude1…claudeN",
     "completion": "输出 bash 或 zsh 的补全脚本"
   },
   "copy": {

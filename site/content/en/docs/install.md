@@ -12,7 +12,7 @@ Run this in a terminal on Linux or macOS:
 curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-The script downloads the release for your system, checks its SHA-256 checksum and puts two commands in `~/.local/bin`: `ccam` and its short alias `ccs`. If that folder is not on your `PATH`, the script prints the line to add to `~/.bashrc` or `~/.zshrc`.
+The script downloads the release for your system, checks its SHA-256 checksum and puts `ccam` in `~/.local/bin`, where `ccam add` later creates the `claude1`, `claude2`… shortcuts. If that folder is not on your `PATH`, the script prints the line to add to `~/.bashrc` or `~/.zshrc`.
 
 ccam starts Claude Code for you, so install [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) first and make sure `claude --version` works.
 
@@ -30,13 +30,12 @@ ccam starts Claude Code for you, so install [Claude Code](https://docs.claude.co
 sudo apt install ./ccam_*_linux_amd64.deb
 ```
 
-The package installs `/usr/bin/ccam` and the `/usr/bin/ccs` link.
+The package installs `/usr/bin/ccam`.
 
 **From source.** With Go 1.26 or newer:
 
 ```sh
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
-ln -s ccam "$(go env GOPATH)/bin/ccs"
 ```
 
 **A specific version.** Set `CCAM_VERSION`:
@@ -52,7 +51,7 @@ ccam completion bash > ~/.local/share/bash-completion/completions/ccam
 ccam completion zsh > "${fpath[1]}/_ccam"
 ```
 
-Completion covers both `ccam` and `ccs`, including account names.
+Completion covers every `ccam` command and option, including account names.
 
 ## Check the installation
 
@@ -65,10 +64,10 @@ ccam doctor
 
 ## Uninstall
 
-Remove the two commands and the account shortcuts, then the data folders if you no longer need the accounts:
+Remove the command and the account shortcuts, then the data folders if you no longer need the accounts:
 
 ```sh
-rm ~/.local/bin/ccam ~/.local/bin/ccs ~/.local/bin/claude[0-9]*
+rm ~/.local/bin/ccam ~/.local/bin/claude[0-9]*
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
 ```
 

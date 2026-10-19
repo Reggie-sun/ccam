@@ -1,13 +1,13 @@
 ---
 title: "Démarrage rapide"
-description: "Ajoutez deux comptes Claude Code avec ccam add, changez de compte avec claude1, claude2 ou ccs, et choisissez ce qu'ils partagent."
+description: "Ajoutez deux comptes Claude Code avec ccam add, changez de compte avec claude1, claude2 ou ccam <name>, et choisissez ce qu'ils partagent."
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 9462b80d61bc
+sourceHash: c6b1c1c3ebaf
 ---
 
-Ajoutez chaque compte avec `ccam add`, puis lancez Claude Code avec `claude1`, `claude2` ou `ccs <name>`. C'est tout ce dont la plupart des gens ont besoin.
+Ajoutez chaque compte avec `ccam add`, puis lancez Claude Code avec `claude1`, `claude2` ou `ccam <name>`. C'est tout ce dont la plupart des gens ont besoin.
 
 ## 1. Ajouter votre premier compte
 
@@ -37,19 +37,19 @@ Chacune de ces commandes lance Claude Code avec le compte work :
 
 ```sh
 claude2
-ccs work
-ccs 2
+ccam work
+ccam 2
 ```
 
 Tout ce qui suit le nom du compte est transmis tel quel à Claude Code, si bien que vous continuez à utiliser les options que vous connaissez :
 
 ```sh
-ccs work --resume
-ccs work -p "fix the failing test" --output-format json
+ccam work --resume
+ccam work -p "fix the failing test" --output-format json
 cat error.log | claude2 -p "what caused this?"
 ```
 
-Exécuter `ccs` seul ouvre un sélecteur : utilisez les touches fléchées et Entrée, ou appuyez sur le numéro du compte.
+Exécuter `ccam` seul ouvre un sélecteur : utilisez les touches fléchées et Entrée, ou appuyez sur le numéro du compte.
 
 ## 4. Choisir ce qui est partagé
 
@@ -65,11 +65,11 @@ ccam montre ce qu'il va déplacer avant de modifier quoi que ce soit. Voir [Part
 ## 5. Quand un compte atteint sa limite
 
 ```sh
-ccs usage
-ccs next --continue
+ccam usage
+ccam next --continue
 ```
 
-`ccs usage` affiche l'utilisation sur 5 heures et sur la semaine de chaque compte. `ccs next --continue` ouvre la même conversation dans le compte suivant. Voir [Limites d'utilisation](/docs/usage-limits).
+`ccam usage` affiche l'utilisation sur 5 heures et sur la semaine de chaque compte. `ccam next --continue` ouvre la même conversation dans le compte suivant. Voir [Limites d'utilisation](/docs/usage-limits).
 
 ## Vous utilisez déjà ~/.claude ?
 

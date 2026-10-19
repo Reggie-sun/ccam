@@ -1,13 +1,13 @@
 ---
 title: البدء السريع
-description: أضف حسابَي Claude Code باستخدام ccam add، وبدّل بينهما باستخدام claude1 أو claude2 أو ccs، واختر ما يشاركانه.
+description: أضف حسابَي Claude Code باستخدام ccam add، وبدّل بينهما باستخدام claude1 أو claude2 أو ccam <name>، واختر ما يشاركانه.
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 9462b80d61bc
+sourceHash: c6b1c1c3ebaf
 ---
 
-أضف كل حساب باستخدام `ccam add`، ثم شغّل Claude Code باستخدام `claude1` أو `claude2` أو `ccs <name>`. هذا كل ما يحتاجه معظم الناس.
+أضف كل حساب باستخدام `ccam add`، ثم شغّل Claude Code باستخدام `claude1` أو `claude2` أو `ccam <name>`. هذا كل ما يحتاجه معظم الناس.
 
 ## 1. أضف حسابك الأول
 
@@ -37,19 +37,19 @@ ccam add work
 
 ```sh
 claude2
-ccs work
-ccs 2
+ccam work
+ccam 2
 ```
 
 كل ما يأتي بعد اسم الحساب يُمرَّر إلى Claude Code دون تغيير، فتواصل استخدام الخيارات التي تعرفها:
 
 ```sh
-ccs work --resume
-ccs work -p "fix the failing test" --output-format json
+ccam work --resume
+ccam work -p "fix the failing test" --output-format json
 cat error.log | claude2 -p "what caused this?"
 ```
 
-تشغيل `ccs` وحده يفتح أداة اختيار: استخدم مفاتيح الأسهم وEnter، أو اضغط رقم الحساب.
+تشغيل `ccam` وحده يفتح أداة اختيار: استخدم مفاتيح الأسهم وEnter، أو اضغط رقم الحساب.
 
 ## 4. اختر ما تريد مشاركته
 
@@ -65,11 +65,11 @@ ccam share work --history on
 ## 5. عندما يبلغ حساب حدّه
 
 ```sh
-ccs usage
-ccs next --continue
+ccam usage
+ccam next --continue
 ```
 
-يعرض `ccs usage` استخدام كل حساب خلال 5 ساعات وخلال الأسبوع. ويفتح `ccs next --continue` المحادثة نفسها في الحساب التالي. راجع [حدود الاستخدام](/docs/usage-limits).
+يعرض `ccam usage` استخدام كل حساب خلال 5 ساعات وخلال الأسبوع. ويفتح `ccam next --continue` المحادثة نفسها في الحساب التالي. راجع [حدود الاستخدام](/docs/usage-limits).
 
 ## هل تستخدم ~/.claude بالفعل؟
 

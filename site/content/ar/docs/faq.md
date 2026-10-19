@@ -4,7 +4,7 @@ description: إجابات عن ccam وحسابات Claude Code وحدود الا
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 12ad0faef2ce
+sourceHash: 2be18393cbe2
 ---
 
 ## هل ccam أداة رسمية من Anthropic؟
@@ -25,11 +25,11 @@ sourceHash: 12ad0faef2ce
 
 ## كيف أتابع محادثة على حساب آخر؟
 
-شارك سجل المحادثات بين الحسابين باستخدام `ccam share <name> --history on`، ثم شغّل `ccs next --continue`. يفتح Claude Code أحدث محادثة في المجلد الحالي في الحساب التالي.
+شارك سجل المحادثات بين الحسابين باستخدام `ccam share <name> --history on`، ثم شغّل `ccam next --continue`. يفتح Claude Code أحدث محادثة في المجلد الحالي في الحساب التالي.
 
 ## هل يرى ccam تسجيل دخولي أو يرسله؟
 
-لا ينسخ ccam أي تسجيل دخول ولا يشاركه أبدًا. يقرأ رمز الوصول الخاص بالحساب فقط ليطلب من نقطة نهاية الاستخدام لدى Anthropic بيانات استخدام ذلك الحساب، وذلك عندما تشغّل `ccs usage` أو `ccs next --auto` أو `ccam doctor`. لا يحتوي ccam على أي قياس عن بُعد (telemetry) ولا يرسل أي شيء إلى أي مكان آخر.
+لا ينسخ ccam أي تسجيل دخول ولا يشاركه أبدًا. يقرأ رمز الوصول الخاص بالحساب فقط ليطلب من نقطة نهاية الاستخدام لدى Anthropic بيانات استخدام ذلك الحساب، وذلك عندما تشغّل `ccam usage` أو `ccam next --auto` أو `ccam doctor`. لا يحتوي ccam على أي قياس عن بُعد (telemetry) ولا يرسل أي شيء إلى أي مكان آخر.
 
 ## أين تُخزَّن حساباتي؟
 
@@ -37,7 +37,7 @@ sourceHash: 12ad0faef2ce
 
 ## ماذا يحدث لمجلد ~/.claude الموجود لدي؟
 
-لا شيء، إلا إذا شغّلت `ccam import`. يسجّل الاستيراد المجلد في مكانه، فيظل `claude` العادي و`ccs <name>` يستخدمان الحساب والإعدادات نفسها.
+لا شيء، إلا إذا شغّلت `ccam import`. يسجّل الاستيراد المجلد في مكانه، فيظل `claude` العادي و`ccam <name>` يستخدمان الحساب والإعدادات نفسها.
 
 ## ما الأنظمة التي يدعمها ccam؟
 
@@ -53,4 +53,4 @@ Linux (Ubuntu وDebian وFedora وArch وAlpine وغيرها) وmacOS. على Wi
 
 ## كيف ألغي تثبيت ccam؟
 
-احذف `ccam` و`ccs` وروابط `claude1`… من `~/.local/bin`، ثم احذف `~/.config/ccam` و`~/.local/share/ccam` و`~/.local/state/ccam` إذا لم تعد بحاجة إلى الحسابات. راجع [التثبيت](/docs/install#uninstall).
+احذف `ccam` وروابط `claude1`… من `~/.local/bin`، ثم احذف `~/.config/ccam` و`~/.local/share/ccam` و`~/.local/state/ccam` إذا لم تعد بحاجة إلى الحسابات. راجع [التثبيت](/docs/install#uninstall).

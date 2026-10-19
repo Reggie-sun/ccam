@@ -4,7 +4,7 @@ description: Jalankan beberapa akun Claude Code secara berdampingan dengan CLAUD
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: d82129ddcb4c
+sourceHash: e2fbee9f4f91
 ---
 
 Untuk menggunakan dua akun Claude Code di satu komputer, beri setiap akun folder konfigurasinya sendiri. Claude Code membaca folder tersebut dari variabel lingkungan `CLAUDE_CONFIG_DIR`, dan setiap folder menyimpan login, pengaturan, dan riwayatnya sendiri. Anda bisa menyiapkannya secara manual dengan alias shell, atau membiarkan ccam melakukannya.
@@ -37,7 +37,7 @@ ccam add personal
 ccam add work
 ```
 
-Sekarang `claude1` dan `claude2`, atau `ccs personal` dan `ccs work`, menjalankan kedua akun tersebut. Karena keduanya adalah program sungguhan, bukan alias, keduanya juga berfungsi di skrip. Pengaturan, `CLAUDE.md`, server MCP, dan ekstensi dibagikan sejak awal, dan Anda dapat mengaktifkan riwayat percakapan bersama untuk melanjutkan percakapan di akun lain dengan `ccs next --continue`.
+Sekarang `claude1` dan `claude2`, atau `ccam personal` dan `ccam work`, menjalankan kedua akun tersebut. Karena keduanya adalah program sungguhan, bukan alias, keduanya juga berfungsi di skrip. Pengaturan, `CLAUDE.md`, server MCP, dan ekstensi dibagikan sejak awal, dan Anda dapat mengaktifkan riwayat percakapan bersama untuk melanjutkan percakapan di akun lain dengan `ccam next --continue`.
 
 Jika Anda sudah menggunakan `~/.claude`, jalankan `ccam import` alih-alih menambahkan akun itu lagi.
 

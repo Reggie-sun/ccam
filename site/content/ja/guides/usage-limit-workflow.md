@@ -4,10 +4,10 @@ description: 各Claude Codeアカウントの残りの余裕を確認し、あ�
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 64fe0b561bd1
+sourceHash: db7ed9b7bcfc
 ---
 
-あるアカウントが上限に達したら、自分が所有する別のアカウントで同じ会話を続けます。一度だけ会話履歴を共有しておき、`ccs next --continue`を実行してください。アカウントが1つしかない場合は、Claude Codeが表示するリセット時刻まで待ちます。
+あるアカウントが上限に達したら、自分が所有する別のアカウントで同じ会話を続けます。一度だけ会話履歴を共有しておき、`ccam next --continue`を実行してください。アカウントが1つしかない場合は、Claude Codeが表示するリセット時刻まで待ちます。
 
 ## 上限に達する前に
 
@@ -28,7 +28,7 @@ ccam statusline install
 Claude Codeを終了（`/exit`）してから、次のコマンドを実行します。
 
 ```sh
-ccs usage
+ccam usage
 ```
 
 ```console
@@ -39,16 +39,16 @@ ccs usage
 最も余裕があるアカウントで会話を開きます。
 
 ```sh
-ccs next --auto --continue
+ccam next --auto --continue
 ```
 
 Claude Codeが`work`として起動し、現在のフォルダーで最も新しい会話を、それまでのやり取りをすべて含めて開きます。
 
 ## 注意点
 
-- `ccs next --continue`は、作業していたのと同じフォルダーで実行してください。会話はプロジェクトのフォルダーごとに保存されます。
+- `ccam next --continue`は、作業していたのと同じフォルダーで実行してください。会話はプロジェクトのフォルダーごとに保存されます。
 - 2つのアカウントで同じ会話を同時に使うのは避けてください。そうしようとすると、ccamが警告します。
 - もう一方のアカウントも、同じグループで会話履歴を共有している必要があります。
 - このようにアカウントを切り替えてよいかどうかは、各アカウントの規約によります。
 
-`ccs usage`と`ccs next`のすべてのオプションについては、[使用量の上限](/docs/usage-limits)を参照してください。
+`ccam usage`と`ccam next`のすべてのオプションについては、[使用量の上限](/docs/usage-limits)を参照してください。

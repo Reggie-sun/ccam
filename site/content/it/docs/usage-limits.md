@@ -1,21 +1,21 @@
 ---
 title: Limiti di utilizzo e cambio di account
-description: Visualizza l'utilizzo su 5 ore e settimanale di ogni account Claude Code con ccs usage e apri quello con più margine con ccs next --auto.
+description: Visualizza l'utilizzo su 5 ore e settimanale di ogni account Claude Code con ccam usage e apri quello con più margine con ccam next --auto.
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: a9ee77936668
+sourceHash: a64c2c341db3
 ---
 
-`ccs usage` mostra quanta parte dei limiti su 5 ore e settimanali ha usato ogni account. `ccs next --auto` apre l'account con più margine, e `--continue` porta con sé la conversazione corrente.
+`ccam usage` mostra quanta parte dei limiti su 5 ore e settimanali ha usato ogni account. `ccam next --auto` apre l'account con più margine, e `--continue` porta con sé la conversazione corrente.
 
 ```console
-$ ccs usage
+$ ccam usage
  계정        5시간         초기화      주간          초기화      기준
  1 personal  ██████░░  72% 1시간 40분  ███░░░░░  41% 3일 6시간   방금
  2 work      █░░░░░░░   8% 4시간 12분  ██░░░░░░  19% 5일 2시간   방금
  3 side      ████████ 100% 22분        █████░░░  68% 1일 9시간   12분 전 (캐시)
-→ 여유가 가장 많은 계정: work   (ccs next --auto 로 바로 열기)
+→ 여유가 가장 많은 계정: work   (ccam next --auto 로 바로 열기)
 ```
 
 Le colonne sono: account, utilizzo su 5 ore, tempo mancante all'azzeramento, utilizzo settimanale, tempo mancante all'azzeramento e quanto sono recenti i dati.
@@ -38,9 +38,9 @@ I numeri ottenuti meno di 60 secondi prima vengono riutilizzati. Opzioni:
 
 ## Login scaduti
 
-Quando il token di accesso di un account è scaduto, ccam non lo rinnova, perché rinnovarlo mentre una sessione di Claude Code usa lo stesso login potrebbe disconnettere quella sessione. Avvia l'account una volta con `ccs <name>` e sarà Claude Code a rinnovarlo.
+Quando il token di accesso di un account è scaduto, ccam non lo rinnova, perché rinnovarlo mentre una sessione di Claude Code usa lo stesso login potrebbe disconnettere quella sessione. Avvia l'account una volta con `ccam <name>` e sarà Claude Code a rinnovarlo.
 
-`ccs usage --refresh` rinnova da solo i token scaduti, ma solo per gli account che non sono in esecuzione. Non rinnova mai i login salvati nel Portachiavi di macOS o in una cartella `~/.claude` importata.
+`ccam usage --refresh` rinnova da solo i token scaduti, ma solo per gli account che non sono in esecuzione. Non rinnova mai i login salvati nel Portachiavi di macOS o in una cartella `~/.claude` importata.
 
 ## Utilizzo nella riga di stato
 
@@ -48,16 +48,16 @@ Quando il token di accesso di un account è scaduto, ccam non lo rinnova, perch�
 ccam statusline install
 ```
 
-Claude Code mostra quindi il nome dell'account e il suo utilizzo nella riga di stato, per esempio `[work] · Opus · 5h 24% · 7d 41%`. Se hai già un comando per la riga di stato, ccam lo mantiene e mette davanti il nome dell'account. La riga di stato salva anche i propri numeri, che `ccs usage` usa quando l'endpoint non risponde.
+Claude Code mostra quindi il nome dell'account e il suo utilizzo nella riga di stato, per esempio `[work] · Opus · 5h 24% · 7d 41%`. Se hai già un comando per la riga di stato, ccam lo mantiene e mette davanti il nome dell'account. La riga di stato salva anche i propri numeri, che `ccam usage` usa quando l'endpoint non risponde.
 
 ## Cambiare account
 
 ```sh
-ccs next              # the account after the one you used last
-ccs next --auto       # the account with the lowest 5-hour usage
-ccs next --continue   # the next account that shares your conversation history
+ccam next             # the account after the one you used last
+ccam next --auto      # the account with the lowest 5-hour usage
+ccam next --continue  # the next account that shares your conversation history
 ```
 
-`ccs next` salta gli account che non hanno effettuato il login, e `--auto` salta gli account al 100%. Per continuare una conversazione, entrambi gli account devono condividere la cronologia delle conversazioni; vedi [condivisione](/docs/sharing).
+`ccam next` salta gli account che non hanno effettuato il login, e `--auto` salta gli account al 100%. Per continuare una conversazione, entrambi gli account devono condividere la cronologia delle conversazioni; vedi [condivisione](/docs/sharing).
 
 La [guida al flusso di lavoro per i limiti di utilizzo](/guides/usage-limit-workflow) illustra un esempio completo.

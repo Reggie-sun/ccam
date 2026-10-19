@@ -4,7 +4,7 @@ description: Linux나 macOS에서 명령 하나로, .deb 패키지로, 또는 �
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: c7f92dfa554a
+sourceHash: fc63978e8f9e
 ---
 
 Linux나 macOS의 터미널에서 다음을 실행합니다.
@@ -13,7 +13,7 @@ Linux나 macOS의 터미널에서 다음을 실행합니다.
 curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-스크립트는 시스템에 맞는 릴리스를 내려받아 SHA-256 체크섬을 확인하고, `~/.local/bin`에 명령 두 개를 넣습니다. `ccam`과 그 짧은 별칭인 `ccs`입니다. 그 폴더가 `PATH`에 없으면 `~/.bashrc`나 `~/.zshrc`에 추가할 줄을 출력합니다.
+스크립트는 시스템에 맞는 릴리스를 내려받아 SHA-256 체크섬을 확인하고, `ccam`을 `~/.local/bin`에 넣습니다. 계정을 추가하면 `ccam add`가 같은 폴더에 `claude1`, `claude2`… 단축 명령을 만듭니다. 그 폴더가 `PATH`에 없으면 `~/.bashrc`나 `~/.zshrc`에 추가할 줄을 출력합니다.
 
 ccam이 Claude Code를 대신 실행하므로, [Claude Code](https://docs.claude.com/en/docs/claude-code/overview)를 먼저 설치하고 `claude --version`이 동작하는지 확인하세요.
 
@@ -31,13 +31,12 @@ ccam이 Claude Code를 대신 실행하므로, [Claude Code](https://docs.claude
 sudo apt install ./ccam_*_linux_amd64.deb
 ```
 
-패키지는 `/usr/bin/ccam`과 `/usr/bin/ccs` 링크를 설치합니다.
+패키지는 `/usr/bin/ccam`을 설치합니다.
 
 **소스에서.** Go 1.26 이상이 필요합니다.
 
 ```sh
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
-ln -s ccam "$(go env GOPATH)/bin/ccs"
 ```
 
 **특정 버전.** `CCAM_VERSION`을 지정합니다.
@@ -53,7 +52,7 @@ ccam completion bash > ~/.local/share/bash-completion/completions/ccam
 ccam completion zsh > "${fpath[1]}/_ccam"
 ```
 
-자동완성은 `ccam`과 `ccs` 모두에 적용되며 계정 이름도 완성합니다.
+자동완성은 `ccam`의 모든 명령과 옵션에 적용되며 계정 이름도 완성합니다.
 
 ## 설치 확인
 
@@ -66,10 +65,10 @@ ccam doctor
 
 ## 삭제
 
-명령 두 개와 계정 단축 명령을 지우고, 계정이 더 이상 필요 없다면 데이터 폴더도 지웁니다.
+ccam 명령과 계정 단축 명령을 지우고, 계정이 더 이상 필요 없다면 데이터 폴더도 지웁니다.
 
 ```sh
-rm ~/.local/bin/ccam ~/.local/bin/ccs ~/.local/bin/claude[0-9]*
+rm ~/.local/bin/ccam ~/.local/bin/claude[0-9]*
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
 ```
 

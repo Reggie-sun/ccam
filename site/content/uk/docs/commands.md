@@ -1,21 +1,21 @@
 ---
 title: Довідник команд
-description: Усі команди та параметри ccam, від ccam add і ccs <name> до ccam usage, ccam next і ccam doctor.
+description: Усі команди та параметри ccam, від ccam add і ccam <name> до ccam usage, ccam next і ccam doctor.
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 18ecad9a1104
+sourceHash: 54bdfc489174
 ---
 
-`ccam` і `ccs` є однією й тією самою програмою; користуйтеся тією, яка вам зручніша. Додайте `--dry-run` перед будь-якою командою, щоб побачити, що вона зробила б, не виконуючи її, наприклад `ccs --dry-run work`.
+Додайте `--dry-run` перед будь-якою командою, щоб побачити, що вона зробила б, не виконуючи її, наприклад `ccam --dry-run work`.
 
 <!-- commands -->
 
 ## Запуск Claude Code
 
-`ccs <name|number> [arguments]` запускає Claude Code від імені цього облікового запису. ccam не читає аргументи після назви; він передає їх у `claude` у тому самому порядку, а стандартне введення, код виходу та сигнали поводяться так само, як із самим `claude`. `--` після назви необов'язковий.
+`ccam <name|number> [arguments]` запускає Claude Code від імені цього облікового запису. ccam не читає аргументи після назви; він передає їх у `claude` у тому самому порядку, а стандартне введення, код виходу та сигнали поводяться так само, як із самим `claude`. `--` після назви необов'язковий.
 
-`ccs` з аргументами, але без назви облікового запису, наприклад `ccs -p "summarise"`, використовує обліковий запис за замовчуванням. Задайте його командою `ccam use <name>`.
+`ccam` з аргументами, але без назви облікового запису, наприклад `ccam -p "summarise"`, використовує обліковий запис за замовчуванням. Задайте його командою `ccam use <name>`.
 
 Короткі команди `claude1`, `claude2` і так далі є посиланнями на ccam у `~/.local/bin`. `ccam shims install --names` також створює `claude-<name>` для кожного облікового запису.
 
@@ -56,11 +56,11 @@ ccam mcp remove fs
 ## Використання та перемикання
 
 ```sh
-ccs usage            # also: ccs u
-ccs usage --watch    # refresh every 60 seconds
-ccs usage --json
-ccs next --continue
-ccs next --auto
+ccam usage           # also: ccam u
+ccam usage --watch   # refresh every 60 seconds
+ccam usage --json
+ccam next --continue
+ccam next --auto
 ```
 
 ## Обслуговування
@@ -80,6 +80,6 @@ ccam shims install
 | `~/.local/share/ccam/profiles/<name>/` | `CLAUDE_CONFIG_DIR` кожного облікового запису |
 | `~/.local/share/ccam/groups/<group>/` | Спільні налаштування, сервери MCP, розширення та історія |
 | `~/.local/state/ccam/` | Кеш використання та час останнього використання |
-| `~/.local/bin/claude1`, `ccs` | Посилання на ccam |
+| `~/.local/bin/claude1`, `claude2`… | Посилання на ccam |
 
 Змінні `XDG_CONFIG_HOME`, `XDG_DATA_HOME` і `XDG_STATE_HOME` змінюють розташування цих тек.

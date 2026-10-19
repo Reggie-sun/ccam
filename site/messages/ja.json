@@ -23,11 +23,11 @@
   },
   "landing": {
     "headline": "複数のClaude Codeアカウントを、1つのターミナルで。",
-    "lede": "各アカウントを一度追加すれば、claude2やccs workで切り替えられます。あるアカウントが上限に達したら、次のアカウントで同じ会話を続けられます。",
+    "lede": "各アカウントを一度追加すれば、claude2やccam workで切り替えられます。あるアカウントが上限に達したら、次のアカウントで同じ会話を続けられます。",
     "installLabel": "LinuxまたはmacOSにインストール",
     "thenAdd": "次に、{command}で最初のアカウントを追加します。",
     "readDocs": "クイックスタートを読む",
-    "boardLabel": "ccs usageの出力例: すべてのアカウントの上限を一度に表示",
+    "boardLabel": "ccam usageの出力例: すべてのアカウントの上限を一度に表示",
     "board": {
       "account": "アカウント",
       "fiveHour": "5時間",
@@ -43,7 +43,7 @@
       },
       {
         "command": "claude2",
-        "also": "ccs work --resume",
+        "also": "ccam work --resume",
         "body": "そのアカウントでClaude Codeを起動します。名前の後に続くものはすべてそのままClaude Codeに渡され、ccamが起動までに加える時間は約4ミリ秒です。"
       },
       {
@@ -51,11 +51,11 @@
         "body": "そのアカウントがほかのアカウントと何を共有するかを選びます。MCPサーバー、設定、CLAUDE.md、拡張機能は最初から共有されます。ログインが共有されることはありません。"
       },
       {
-        "command": "ccs usage",
+        "command": "ccam usage",
         "body": "すべてのアカウントの5時間と週間の使用量を一度に表示するので、どのアカウントに余裕があるかがわかります。"
       },
       {
-        "command": "ccs next --continue",
+        "command": "ccam next --continue",
         "body": "現在のアカウントが上限に達したら、次のアカウントで同じ会話を開きます。"
       },
       {
@@ -86,7 +86,7 @@
     }
   },
   "commands": {
-    "ccs": "アカウント選択画面を開く",
+    "ccam": "アカウント選択画面を開く",
     "name": "そのアカウントでClaude Codeを起動する。引数はそのまま渡される",
     "add": "アカウントを追加する（設定フォルダー、ログイン、ショートカット）",
     "list": "アカウントを一覧表示する",
@@ -102,7 +102,7 @@
     "import": "既存の~/.claudeフォルダーをその場所のまま登録する",
     "doctor": "リンク、権限、ログイン、バージョンを確認して修復する",
     "statusline": "Claude Codeのステータスラインにアカウントと使用量を表示する",
-    "shims": "claude1…claudeNとccsを作り直す",
+    "shims": "claude1…claudeNを作り直す",
     "completion": "bashまたはzshの補完スクリプトを出力する"
   },
   "copy": {

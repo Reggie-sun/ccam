@@ -1,21 +1,21 @@
 ---
 title: 用量限制与切换账号
-description: 用 ccs usage 查看每个 Claude Code 账号的 5 小时用量和每周用量，并用 ccs next --auto 打开余量最多的账号。
+description: 用 ccam usage 查看每个 Claude Code 账号的 5 小时用量和每周用量，并用 ccam next --auto 打开余量最多的账号。
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: a9ee77936668
+sourceHash: a64c2c341db3
 ---
 
-`ccs usage` 显示每个账号已用掉多少 5 小时限额和每周限额。`ccs next --auto` 打开余量最多的账号，`--continue` 会把当前对话带过去。
+`ccam usage` 显示每个账号已用掉多少 5 小时限额和每周限额。`ccam next --auto` 打开余量最多的账号，`--continue` 会把当前对话带过去。
 
 ```console
-$ ccs usage
+$ ccam usage
  계정        5시간         초기화      주간          초기화      기준
  1 personal  ██████░░  72% 1시간 40분  ███░░░░░  41% 3일 6시간   방금
  2 work      █░░░░░░░   8% 4시간 12분  ██░░░░░░  19% 5일 2시간   방금
  3 side      ████████ 100% 22분        █████░░░  68% 1일 9시간   12분 전 (캐시)
-→ 여유가 가장 많은 계정: work   (ccs next --auto 로 바로 열기)
+→ 여유가 가장 많은 계정: work   (ccam next --auto 로 바로 열기)
 ```
 
 各列依次为：账号、5 小时用量、距离重置的时间、每周用量、距离重置的时间，以及这些数字是多久之前获取的。
@@ -38,9 +38,9 @@ ccam 使用每个账号自己的登录，同时向 Anthropic 的用量接口查�
 
 ## 过期的登录
 
-当某个账号的访问令牌已过期时，ccam 不会为它续期，因为如果某个 Claude Code 会话正在使用同一登录，续期可能会让该会话退出登录。用 `ccs <name>` 启动一次该账号，Claude Code 就会为它续期。
+当某个账号的访问令牌已过期时，ccam 不会为它续期，因为如果某个 Claude Code 会话正在使用同一登录，续期可能会让该会话退出登录。用 `ccam <name>` 启动一次该账号，Claude Code 就会为它续期。
 
-`ccs usage --refresh` 会自行为过期的令牌续期，但仅限于未在运行的账号。它从不为存储在 macOS 钥匙串中的登录或已导入的 `~/.claude` 中的登录续期。
+`ccam usage --refresh` 会自行为过期的令牌续期，但仅限于未在运行的账号。它从不为存储在 macOS 钥匙串中的登录或已导入的 `~/.claude` 中的登录续期。
 
 ## 在状态栏中显示用量
 
@@ -48,16 +48,16 @@ ccam 使用每个账号自己的登录，同时向 Anthropic 的用量接口查�
 ccam statusline install
 ```
 
-之后 Claude Code 会在状态栏中显示账号名及其用量，例如 `[work] · Opus · 5h 24% · 7d 41%`。如果你已经有状态栏命令，ccam 会保留它，并在前面加上账号名。状态栏也会保存它的数字，当接口没有响应时，`ccs usage` 会使用这些数字。
+之后 Claude Code 会在状态栏中显示账号名及其用量，例如 `[work] · Opus · 5h 24% · 7d 41%`。如果你已经有状态栏命令，ccam 会保留它，并在前面加上账号名。状态栏也会保存它的数字，当接口没有响应时，`ccam usage` 会使用这些数字。
 
 ## 切换
 
 ```sh
-ccs next              # the account after the one you used last
-ccs next --auto       # the account with the lowest 5-hour usage
-ccs next --continue   # the next account that shares your conversation history
+ccam next             # the account after the one you used last
+ccam next --auto      # the account with the lowest 5-hour usage
+ccam next --continue  # the next account that shares your conversation history
 ```
 
-`ccs next` 会跳过未登录的账号，`--auto` 会跳过用量已达 100% 的账号。要继续对话，两个账号都必须共享对话历史；参见[共享](/docs/sharing)。
+`ccam next` 会跳过未登录的账号，`--auto` 会跳过用量已达 100% 的账号。要继续对话，两个账号都必须共享对话历史；参见[共享](/docs/sharing)。
 
 [用量限制工作流程指南](/guides/usage-limit-workflow)通过一个完整示例进行了讲解。

@@ -4,7 +4,7 @@ description: Uruchamiaj kilka kont Claude Code obok siebie dzięki CLAUDE_CONFIG
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: d82129ddcb4c
+sourceHash: e2fbee9f4f91
 ---
 
 Aby mieć kilka kont Claude Code na jednym komputerze, daj każdemu kontu własny folder konfiguracji. Claude Code odczytuje folder ze zmiennej środowiskowej `CLAUDE_CONFIG_DIR`, a każdy folder przechowuje własny login, ustawienia i historię. Możesz to skonfigurować ręcznie za pomocą aliasu powłoki albo zostawić to ccam.
@@ -37,7 +37,7 @@ ccam add personal
 ccam add work
 ```
 
-Teraz `claude1` i `claude2` albo `ccs personal` i `ccs work` uruchamiają oba konta. Ponieważ są to prawdziwe programy, a nie aliasy, działają też w skryptach. Ustawienia, `CLAUDE.md`, serwery MCP i rozszerzenia są współdzielone od początku, a po włączeniu współdzielonej historii rozmów możesz kontynuować rozmowę na drugim koncie przez `ccs next --continue`.
+Teraz `claude1` i `claude2` albo `ccam personal` i `ccam work` uruchamiają oba konta. Ponieważ są to prawdziwe programy, a nie aliasy, działają też w skryptach. Ustawienia, `CLAUDE.md`, serwery MCP i rozszerzenia są współdzielone od początku, a po włączeniu współdzielonej historii rozmów możesz kontynuować rozmowę na drugim koncie przez `ccam next --continue`.
 
 Jeśli już używasz `~/.claude`, uruchom `ccam import` zamiast dodawać to konto ponownie.
 

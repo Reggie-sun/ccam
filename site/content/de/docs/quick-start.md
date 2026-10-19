@@ -1,13 +1,13 @@
 ---
 title: Schnellstart
-description: Zwei Claude Code-Konten mit ccam add hinzufügen, mit claude1, claude2 oder ccs zwischen ihnen wechseln und festlegen, was sie teilen.
+description: Zwei Claude Code-Konten mit ccam add hinzufügen, mit claude1, claude2 oder ccam <name> zwischen ihnen wechseln und festlegen, was sie teilen.
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 9462b80d61bc
+sourceHash: c6b1c1c3ebaf
 ---
 
-Füge jedes Konto mit `ccam add` hinzu und starte Claude Code dann mit `claude1`, `claude2` oder `ccs <name>`. Mehr brauchen die meisten nicht.
+Füge jedes Konto mit `ccam add` hinzu und starte Claude Code dann mit `claude1`, `claude2` oder `ccam <name>`. Mehr brauchen die meisten nicht.
 
 ## 1. Erstes Konto hinzufügen
 
@@ -37,19 +37,19 @@ Jeder dieser Befehle startet Claude Code mit dem Arbeitskonto:
 
 ```sh
 claude2
-ccs work
-ccs 2
+ccam work
+ccam 2
 ```
 
 Alles nach dem Kontonamen geht unverändert an Claude Code, du nutzt also weiter die Optionen, die du kennst:
 
 ```sh
-ccs work --resume
-ccs work -p "fix the failing test" --output-format json
+ccam work --resume
+ccam work -p "fix the failing test" --output-format json
 cat error.log | claude2 -p "what caused this?"
 ```
 
-Wenn du `ccs` allein ausführst, öffnet sich eine Auswahl: Nutze die Pfeiltasten und Enter oder drücke die Nummer des Kontos.
+Wenn du `ccam` allein ausführst, öffnet sich eine Auswahl: Nutze die Pfeiltasten und Enter oder drücke die Nummer des Kontos.
 
 ## 4. Festlegen, was geteilt wird
 
@@ -65,11 +65,11 @@ ccam zeigt, was es verschieben wird, bevor es etwas ändert. Details findest du 
 ## 5. Wenn ein Konto sein Limit erreicht
 
 ```sh
-ccs usage
-ccs next --continue
+ccam usage
+ccam next --continue
 ```
 
-`ccs usage` zeigt die 5-Stunden- und die Wochennutzung aller Konten. `ccs next --continue` öffnet dasselbe Gespräch im nächsten Konto. Siehe [Nutzungslimits](/docs/usage-limits).
+`ccam usage` zeigt die 5-Stunden- und die Wochennutzung aller Konten. `ccam next --continue` öffnet dasselbe Gespräch im nächsten Konto. Siehe [Nutzungslimits](/docs/usage-limits).
 
 ## Du nutzt bereits ~/.claude?
 

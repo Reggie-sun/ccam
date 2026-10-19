@@ -4,7 +4,7 @@ description: ccam को Linux या macOS पर एक कमांड से
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: c7f92dfa554a
+sourceHash: fc63978e8f9e
 ---
 
 Linux या macOS पर terminal में यह चलाएँ:
@@ -13,7 +13,7 @@ Linux या macOS पर terminal में यह चलाएँ:
 curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-यह स्क्रिप्ट आपके सिस्टम के लिए रिलीज़ डाउनलोड करती है, उसका SHA-256 checksum जाँचती है और `~/.local/bin` में दो कमांड रखती है: `ccam` और उसका छोटा alias `ccs`। अगर यह फ़ोल्डर आपके `PATH` में नहीं है, तो स्क्रिप्ट वह लाइन प्रिंट करती है जिसे `~/.bashrc` या `~/.zshrc` में जोड़ना है।
+यह स्क्रिप्ट आपके सिस्टम के लिए रिलीज़ डाउनलोड करती है, उसका SHA-256 checksum जाँचती है और `ccam` को `~/.local/bin` में रखती है; बाद में `ccam add` इसी फ़ोल्डर में `claude1`, `claude2`… शॉर्टकट बनाता है। अगर यह फ़ोल्डर आपके `PATH` में नहीं है, तो स्क्रिप्ट वह लाइन प्रिंट करती है जिसे `~/.bashrc` या `~/.zshrc` में जोड़ना है।
 
 ccam आपके लिए Claude Code शुरू करता है, इसलिए पहले [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) इंस्टॉल करें और पक्का करें कि `claude --version` काम करता है।
 
@@ -31,13 +31,12 @@ ccam आपके लिए Claude Code शुरू करता है, इस
 sudo apt install ./ccam_*_linux_amd64.deb
 ```
 
-यह पैकेज `/usr/bin/ccam` और `/usr/bin/ccs` लिंक इंस्टॉल करता है।
+यह पैकेज `/usr/bin/ccam` इंस्टॉल करता है।
 
 **सोर्स से।** Go 1.26 या नए वर्ज़न के साथ:
 
 ```sh
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
-ln -s ccam "$(go env GOPATH)/bin/ccs"
 ```
 
 **कोई ख़ास वर्ज़न।** `CCAM_VERSION` सेट करें:
@@ -53,7 +52,7 @@ ccam completion bash > ~/.local/share/bash-completion/completions/ccam
 ccam completion zsh > "${fpath[1]}/_ccam"
 ```
 
-Completion `ccam` और `ccs` दोनों के लिए काम करता है, अकाउंट के नामों सहित।
+Completion `ccam` की सभी कमांड और विकल्पों के लिए काम करता है, अकाउंट के नामों सहित।
 
 ## इंस्टॉलेशन जाँचें
 
@@ -66,10 +65,10 @@ ccam doctor
 
 ## अनइंस्टॉल करें
 
-दोनों कमांड और अकाउंट शॉर्टकट हटाएँ, फिर अगर अब अकाउंट्स की ज़रूरत नहीं है तो डेटा फ़ोल्डर भी हटाएँ:
+कमांड और अकाउंट शॉर्टकट हटाएँ, फिर अगर अब अकाउंट्स की ज़रूरत नहीं है तो डेटा फ़ोल्डर भी हटाएँ:
 
 ```sh
-rm ~/.local/bin/ccam ~/.local/bin/ccs ~/.local/bin/claude[0-9]*
+rm ~/.local/bin/ccam ~/.local/bin/claude[0-9]*
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
 ```
 

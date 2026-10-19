@@ -4,10 +4,10 @@ description: Duba sauran sararin da kowane asusun Claude Code yake da shi, kuma 
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 64fe0b561bd1
+sourceHash: db7ed9b7bcfc
 ---
 
-Idan wani asusu ya kai iyakarsa, ci gaba da wannan tattaunawar a wani asusun da ka mallaka: raba tarihin tattaunawa sau ɗaya, sannan ka gudanar da `ccs next --continue`. Idan kana da asusu ɗaya kawai, jira lokacin sake saitawa da Claude Code yake nunawa.
+Idan wani asusu ya kai iyakarsa, ci gaba da wannan tattaunawar a wani asusun da ka mallaka: raba tarihin tattaunawa sau ɗaya, sannan ka gudanar da `ccam next --continue`. Idan kana da asusu ɗaya kawai, jira lokacin sake saitawa da Claude Code yake nunawa.
 
 ## Kafin hakan ta faru
 
@@ -28,7 +28,7 @@ Yanzu layin matsayi (status line) yana nuna asusun da amfaninsa na awa 5 yayin d
 Fita daga Claude Code (`/exit`), sannan:
 
 ```sh
-ccs usage
+ccam usage
 ```
 
 ```console
@@ -39,16 +39,16 @@ ccs usage
 Buɗe tattaunawar a asusun da ya fi sarari:
 
 ```sh
-ccs next --auto --continue
+ccam next --auto --continue
 ```
 
 Claude Code yana farawa a matsayin `work` da tattaunawa ta baya-bayan nan ta foldar yanzu, har da duk abin da aka faɗa zuwa yanzu.
 
 ## Abubuwan da za ka tuna
 
-- Gudanar da `ccs next --continue` a foldar da ka yi aiki a ciki; ana ajiye tattaunawa bisa foldar kowane project.
+- Gudanar da `ccam next --continue` a foldar da ka yi aiki a ciki; ana ajiye tattaunawa bisa foldar kowane project.
 - Ka guji gudanar da asusai biyu a kan tattaunawa ɗaya a lokaci guda. ccam yana gargaɗe ka idan ka gwada.
 - Dole ne ɗayan asusun ma ya raba tarihin tattaunawa, a rukuni ɗaya.
 - Ko an yarda ka sauya tsakanin asusai ta wannan hanya ya dogara da sharuɗɗan kowane asusu.
 
-Duba [iyakokin amfani](/docs/usage-limits) don kowane zaɓi na `ccs usage` da `ccs next`.
+Duba [iyakokin amfani](/docs/usage-limits) don kowane zaɓi na `ccam usage` da `ccam next`.

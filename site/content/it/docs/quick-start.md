@@ -1,13 +1,13 @@
 ---
 title: Guida rapida
-description: Aggiungi due account Claude Code con ccam add, passa dall'uno all'altro con claude1, claude2 o ccs e scegli cosa condividono.
+description: Aggiungi due account Claude Code con ccam add, passa dall'uno all'altro con claude1, claude2 o ccam <name> e scegli cosa condividono.
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 9462b80d61bc
+sourceHash: c6b1c1c3ebaf
 ---
 
-Aggiungi ogni account con `ccam add`, poi avvia Claude Code con `claude1`, `claude2` o `ccs <name>`. Alla maggior parte delle persone non serve altro.
+Aggiungi ogni account con `ccam add`, poi avvia Claude Code con `claude1`, `claude2` o `ccam <name>`. Alla maggior parte delle persone non serve altro.
 
 ## 1. Aggiungi il primo account
 
@@ -37,19 +37,19 @@ Ognuno di questi comandi avvia Claude Code con l'account di lavoro:
 
 ```sh
 claude2
-ccs work
-ccs 2
+ccam work
+ccam 2
 ```
 
 Tutto ciò che segue il nome dell'account arriva a Claude Code invariato, quindi continui a usare le opzioni che conosci:
 
 ```sh
-ccs work --resume
-ccs work -p "fix the failing test" --output-format json
+ccam work --resume
+ccam work -p "fix the failing test" --output-format json
 cat error.log | claude2 -p "what caused this?"
 ```
 
-Eseguire `ccs` da solo apre un selettore: usa i tasti freccia e Invio, oppure premi il numero dell'account.
+Eseguire `ccam` da solo apre un selettore: usa i tasti freccia e Invio, oppure premi il numero dell'account.
 
 ## 4. Scegli cosa condividere
 
@@ -65,11 +65,11 @@ ccam mostra cosa sposterà prima di modificare qualsiasi cosa. Vedi [condivision
 ## 5. Quando un account raggiunge il limite
 
 ```sh
-ccs usage
-ccs next --continue
+ccam usage
+ccam next --continue
 ```
 
-`ccs usage` mostra l'utilizzo su 5 ore e settimanale di ogni account. `ccs next --continue` apre la stessa conversazione nell'account successivo. Vedi [limiti di utilizzo](/docs/usage-limits).
+`ccam usage` mostra l'utilizzo su 5 ore e settimanale di ogni account. `ccam next --continue` apre la stessa conversazione nell'account successivo. Vedi [limiti di utilizzo](/docs/usage-limits).
 
 ## Usi già ~/.claude?
 

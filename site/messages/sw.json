@@ -23,11 +23,11 @@
   },
   "landing": {
     "headline": "Akaunti kadhaa za Claude Code. Terminal moja.",
-    "lede": "Ongeza kila akaunti mara moja. Badili kwa claude2 au ccs work. Akaunti moja ikifikia kikomo chake, endelea kwenye inayofuata na mazungumzo yale yale.",
+    "lede": "Ongeza kila akaunti mara moja. Badili kwa claude2 au ccam work. Akaunti moja ikifikia kikomo chake, endelea kwenye inayofuata na mazungumzo yale yale.",
     "installLabel": "Sakinisha kwenye Linux au macOS",
     "thenAdd": "Kisha ongeza akaunti yako ya kwanza kwa {command}.",
     "readDocs": "Soma mwongozo wa kuanza haraka",
-    "boardLabel": "Mfano wa matokeo ya ccs usage: vikomo vya kila akaunti kwa pamoja",
+    "boardLabel": "Mfano wa matokeo ya ccam usage: vikomo vya kila akaunti kwa pamoja",
     "board": {
       "account": "Akaunti",
       "fiveHour": "Saa 5",
@@ -43,7 +43,7 @@
       },
       {
         "command": "claude2",
-        "also": "ccs work --resume",
+        "also": "ccam work --resume",
         "body": "Huanzisha Claude Code kama akaunti hiyo. Kila kitu baada ya jina hupelekwa kwa Claude Code bila kubadilishwa, na ccam huongeza takriban milisekunde 4 kabla ya kuanza."
       },
       {
@@ -51,11 +51,11 @@
         "body": "Huchagua kile ambacho akaunti inashiriki na akaunti zako nyingine. Seva za MCP, mipangilio, CLAUDE.md na viendelezi hushirikiwa tangu mwanzo; taarifa za kuingia hazishirikiwi kamwe."
       },
       {
-        "command": "ccs usage",
+        "command": "ccam usage",
         "body": "Huonyesha matumizi ya saa 5 na ya wiki ya kila akaunti kwa pamoja, ili ujue ipi bado ina nafasi."
       },
       {
-        "command": "ccs next --continue",
+        "command": "ccam next --continue",
         "body": "Hufungua mazungumzo yale yale kwenye akaunti inayofuata pale akaunti ya sasa inapofikia kikomo chake."
       },
       {
@@ -86,7 +86,7 @@
     }
   },
   "commands": {
-    "ccs": "Fungua kichaguzi cha akaunti",
+    "ccam": "Fungua kichaguzi cha akaunti",
     "name": "Anzisha Claude Code kama akaunti hiyo; hoja hupitishwa bila kubadilishwa",
     "add": "Ongeza akaunti: folda ya usanidi, kuingia na njia fupi",
     "list": "Orodhesha akaunti",
@@ -102,7 +102,7 @@
     "import": "Sajili folda iliyopo ya ~/.claude pale ilipo",
     "doctor": "Kagua viungo, ruhusa, taarifa za kuingia na matoleo, na urekebishe",
     "statusline": "Onyesha akaunti na matumizi kwenye mstari wa hali (status line) wa Claude Code",
-    "shims": "Unda upya claude1…claudeN na ccs",
+    "shims": "Unda upya claude1…claudeN",
     "completion": "Chapisha ukamilishaji wa bash au zsh"
   },
   "copy": {

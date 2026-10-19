@@ -4,7 +4,7 @@ description: Shell alias da CLAUDE_CONFIG_DIR idan aka kwatanta da ccam don guda
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: e9902676e0ed
+sourceHash: 13da69070650
 ---
 
 Shell alias ga kowane asusu ita ce hanya mafi sauƙi ta gudanar da asusun Claude Code da dama. ccam yana yin abu ɗaya a ƙarƙashi kuma yana ƙara rabawa, sauyawa da bin diddigin amfani.
@@ -16,9 +16,9 @@ Shell alias ga kowane asusu ita ce hanya mafi sauƙi ta gudanar da asusun Claude
 | Yana aiki a scripts da sauran shirye-shirye | A'a, alias na shell ne kawai | Ee, `claude2` umarni ne na gaske |
 | Saituna, `CLAUDE.md`, extensions da aka raba | Kwafa ko haɗa da hannu | Abu bayan abu, tare da kwafin ajiya |
 | Sabobin MCP da aka raba | Da hannu, ga kowane asusu | `ccam mcp add` sau ɗaya |
-| Ci gaba da tattaunawa a wani asusu | A'a | `ccs next --continue` |
-| Amfanin kowane asusu | A'a | `ccs usage` |
-| Zaɓar asusun da ya fi sarari | A'a | `ccs next --auto` |
+| Ci gaba da tattaunawa a wani asusu | A'a | `ccam next --continue` |
+| Amfanin kowane asusu | A'a | `ccam usage` |
+| Zaɓar asusun da ya fi sarari | A'a | `ccam next --auto` |
 | Sunan asusu a layin matsayi | A'a | `ccam statusline install` |
 | Gyara mahaɗan da suka lalace | Da hannu | `ccam doctor --fix` |
 | Ƙarin software | Babu | Static binary ɗaya |

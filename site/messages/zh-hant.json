@@ -23,11 +23,11 @@
   },
   "landing": {
     "headline": "多個 Claude Code 帳號，一個終端機。",
-    "lede": "每個帳號只需新增一次。用 claude2 或 ccs work 切換。某個帳號達到限制時，在下一個帳號繼續同一段對話。",
+    "lede": "每個帳號只需新增一次。用 claude2 或 ccam work 切換。某個帳號達到限制時，在下一個帳號繼續同一段對話。",
     "installLabel": "在 Linux 或 macOS 上安裝",
     "thenAdd": "接著用 {command} 新增第一個帳號。",
     "readDocs": "閱讀快速入門",
-    "boardLabel": "ccs usage 的輸出範例：一次查看所有帳號的限制",
+    "boardLabel": "ccam usage 的輸出範例：一次查看所有帳號的限制",
     "board": {
       "account": "帳號",
       "fiveHour": "5 小時",
@@ -43,7 +43,7 @@
       },
       {
         "command": "claude2",
-        "also": "ccs work --resume",
+        "also": "ccam work --resume",
         "body": "以該帳號啟動 Claude Code。名稱後面的所有內容都會原封不動地傳給 Claude Code，ccam 在啟動前大約只增加 4 毫秒。"
       },
       {
@@ -51,11 +51,11 @@
         "body": "選擇這個帳號要和其他帳號共用哪些項目。MCP 伺服器、設定、CLAUDE.md 和擴充功能從一開始就會共用；登入資訊則永遠不會共用。"
       },
       {
-        "command": "ccs usage",
+        "command": "ccam usage",
         "body": "一次顯示所有帳號的 5 小時用量和每週用量，讓你知道哪個帳號還有剩餘額度。"
       },
       {
-        "command": "ccs next --continue",
+        "command": "ccam next --continue",
         "body": "目前的帳號達到限制時，在下一個帳號開啟同一段對話。"
       },
       {
@@ -86,7 +86,7 @@
     }
   },
   "commands": {
-    "ccs": "開啟帳號選擇器",
+    "ccam": "開啟帳號選擇器",
     "name": "以該帳號啟動 Claude Code；參數會原封不動地傳遞",
     "add": "新增帳號：設定資料夾、登入和快捷指令",
     "list": "列出帳號",
@@ -102,7 +102,7 @@
     "import": "在原位置登錄現有的 ~/.claude 資料夾",
     "doctor": "檢查連結、權限、登入狀態和版本，並進行修復",
     "statusline": "在 Claude Code 的狀態列顯示帳號和用量",
-    "shims": "重新建立 claude1…claudeN 和 ccs",
+    "shims": "重新建立 claude1…claudeN",
     "completion": "輸出 bash 或 zsh 的自動補齊腳本"
   },
   "copy": {

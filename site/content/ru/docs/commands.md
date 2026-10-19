@@ -1,21 +1,21 @@
 ---
 title: Справочник команд
-description: Все команды и параметры ccam, от ccam add и ccs <name> до ccam usage, ccam next и ccam doctor.
+description: Все команды и параметры ccam, от ccam add и ccam <name> до ccam usage, ccam next и ccam doctor.
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 18ecad9a1104
+sourceHash: 54bdfc489174
 ---
 
-`ccam` и `ccs` являются одной и той же программой; используйте ту, что вам удобнее. Поставьте `--dry-run` перед любой командой, чтобы увидеть, что она сделает, ничего не выполняя, например `ccs --dry-run work`.
+Поставьте `--dry-run` перед любой командой, чтобы увидеть, что она сделает, ничего не выполняя, например `ccam --dry-run work`.
 
 <!-- commands -->
 
 ## Запуск Claude Code
 
-`ccs <name|number> [arguments]` запускает Claude Code от имени этого аккаунта. ccam не читает аргументы после имени; он передаёт их в `claude` в том же порядке, а стандартный ввод, код возврата и сигналы работают точно так же, как с самим `claude`. Указывать `--` после имени необязательно.
+`ccam <name|number> [arguments]` запускает Claude Code от имени этого аккаунта. ccam не читает аргументы после имени; он передаёт их в `claude` в том же порядке, а стандартный ввод, код возврата и сигналы работают точно так же, как с самим `claude`. Указывать `--` после имени необязательно.
 
-`ccs` с аргументами, но без имени аккаунта, например `ccs -p "summarise"`, использует аккаунт по умолчанию. Задать его можно командой `ccam use <name>`.
+`ccam` с аргументами, но без имени аккаунта, например `ccam -p "summarise"`, использует аккаунт по умолчанию. Задать его можно командой `ccam use <name>`.
 
 Короткие команды `claude1`, `claude2` и так далее являются ссылками на ccam в `~/.local/bin`. `ccam shims install --names` дополнительно создаёт `claude-<name>` для каждого аккаунта.
 
@@ -56,11 +56,11 @@ ccam mcp remove fs
 ## Использование и переключение
 
 ```sh
-ccs usage            # also: ccs u
-ccs usage --watch    # refresh every 60 seconds
-ccs usage --json
-ccs next --continue
-ccs next --auto
+ccam usage           # also: ccam u
+ccam usage --watch   # refresh every 60 seconds
+ccam usage --json
+ccam next --continue
+ccam next --auto
 ```
 
 ## Обслуживание
@@ -80,6 +80,6 @@ ccam shims install
 | `~/.local/share/ccam/profiles/<name>/` | `CLAUDE_CONFIG_DIR` каждого аккаунта |
 | `~/.local/share/ccam/groups/<group>/` | Общие настройки, MCP-серверы, расширения и история |
 | `~/.local/state/ccam/` | Кэш использования и время последнего использования |
-| `~/.local/bin/claude1`, `ccs` | Ссылки на ccam |
+| `~/.local/bin/claude1`, `claude2`… | Ссылки на ccam |
 
 Переменные `XDG_CONFIG_HOME`, `XDG_DATA_HOME` и `XDG_STATE_HOME` позволяют перенести эти папки.

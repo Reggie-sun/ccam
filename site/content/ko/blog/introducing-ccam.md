@@ -4,7 +4,7 @@ description: ccam을 만든 이유, Claude Code 계정을 여러 개 쓰는 사�
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: 5e4121938d8c
+sourceHash: 985e2d369c34
 ---
 
 ccam은 한 컴퓨터에서 Claude Code 계정을 두 개 이상 쓰는 사람을 위한 작은 명령줄 도구입니다. 개인 계정과 회사 계정을 함께 쓰거나, 긴 프로젝트 하나에 계정 여러 개를 쓰는 경우입니다.
@@ -16,9 +16,9 @@ Claude Code는 `CLAUDE_CONFIG_DIR`로 여러 계정을 지원합니다. 계정�
 ## ccam이 하는 일
 
 - `ccam add`는 폴더를 만들고, 로그인을 진행하고, 계정에 `claude1`, `claude2` 같은 단축 명령을 붙입니다.
-- `ccs work`와 `claude2`는 그 계정으로 Claude Code를 시작하고 모든 인자를 그대로 전달합니다.
+- `ccam work`와 `claude2`는 그 계정으로 Claude Code를 시작하고 모든 인자를 그대로 전달합니다.
 - MCP 서버, 설정, `CLAUDE.md`, 확장 기능은 링크로 공유되며, 항목별로, 계정별로 고를 수 있습니다. 로그인은 절대 공유되지 않습니다.
-- `ccs usage`는 모든 계정의 5시간 사용량과 주간 사용량을 보여 주고, `ccs next --continue`는 다음 계정에서 대화를 이어 갑니다.
+- `ccam usage`는 모든 계정의 5시간 사용량과 주간 사용량을 보여 주고, `ccam next --continue`는 다음 계정에서 대화를 이어 갑니다.
 
 ## 작업을 방해하지 않기
 

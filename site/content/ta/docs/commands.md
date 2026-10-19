@@ -1,21 +1,21 @@
 ---
 title: கட்டளைக் குறிப்பு
-description: ccam add, ccs <name> முதல் ccam usage, ccam next, ccam doctor வரை, ccam-இன் ஒவ்வொரு கட்டளையும் option-உம்.
+description: ccam add, ccam <name> முதல் ccam usage, ccam next, ccam doctor வரை, ccam-இன் ஒவ்வொரு கட்டளையும் option-உம்.
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 18ecad9a1104
+sourceHash: 54bdfc489174
 ---
 
-`ccam` மற்றும் `ccs` ஒரே நிரல்தான்; உங்களுக்குப் பிடித்ததைப் பயன்படுத்துங்கள். எந்தக் கட்டளையும் உண்மையில் எதையும் செய்யாமல் என்ன செய்யும் என்று பார்க்க, அதற்கு முன் `--dry-run` வையுங்கள், எடுத்துக்காட்டாக `ccs --dry-run work`.
+எந்தக் கட்டளையும் உண்மையில் எதையும் செய்யாமல் என்ன செய்யும் என்று பார்க்க, அதற்கு முன் `--dry-run` வையுங்கள், எடுத்துக்காட்டாக `ccam --dry-run work`.
 
 <!-- commands -->
 
 ## Claude Code-ஐத் தொடங்குதல்
 
-`ccs <name|number> [arguments]` அந்தக் கணக்காக Claude Code-ஐத் தொடங்குகிறது. பெயருக்குப் பின் உள்ள arguments-ஐ ccam படிப்பதில்லை; அவற்றை அதே வரிசையில் `claude`-க்கு அனுப்புகிறது. standard input, exit code, signals ஆகியவை `claude`-ஐ நேரடியாக இயக்குவது போலவே செயல்படும். பெயருக்குப் பின் `--` விருப்பத்தேர்வு மட்டுமே.
+`ccam <name|number> [arguments]` அந்தக் கணக்காக Claude Code-ஐத் தொடங்குகிறது. பெயருக்குப் பின் உள்ள arguments-ஐ ccam படிப்பதில்லை; அவற்றை அதே வரிசையில் `claude`-க்கு அனுப்புகிறது. standard input, exit code, signals ஆகியவை `claude`-ஐ நேரடியாக இயக்குவது போலவே செயல்படும். பெயருக்குப் பின் `--` விருப்பத்தேர்வு மட்டுமே.
 
-கணக்குப் பெயர் இல்லாமல் arguments உடன் இயக்கும் `ccs`, எடுத்துக்காட்டாக `ccs -p "summarise"`, இயல்புநிலைக் கணக்கைப் பயன்படுத்தும். அதை `ccam use <name>` மூலம் அமைக்கலாம்.
+கணக்குப் பெயர் இல்லாமல் arguments உடன் இயக்கும் `ccam`, எடுத்துக்காட்டாக `ccam -p "summarise"`, இயல்புநிலைக் கணக்கைப் பயன்படுத்தும். அதை `ccam use <name>` மூலம் அமைக்கலாம்.
 
 `claude1`, `claude2` போன்ற குறுக்குவழிகள், `~/.local/bin`-இல் உள்ள ccam-க்கான இணைப்புகள். `ccam shims install --names` ஒவ்வொரு கணக்குக்கும் `claude-<name>`-ஐயும் உருவாக்குகிறது.
 
@@ -56,11 +56,11 @@ ccam mcp remove fs
 ## பயன்பாடு மற்றும் கணக்கு மாற்றம்
 
 ```sh
-ccs usage            # also: ccs u
-ccs usage --watch    # refresh every 60 seconds
-ccs usage --json
-ccs next --continue
-ccs next --auto
+ccam usage           # also: ccam u
+ccam usage --watch   # refresh every 60 seconds
+ccam usage --json
+ccam next --continue
+ccam next --auto
 ```
 
 ## பராமரிப்பு
@@ -80,6 +80,6 @@ ccam shims install
 | `~/.local/share/ccam/profiles/<name>/` | ஒவ்வொரு கணக்கின் `CLAUDE_CONFIG_DIR` |
 | `~/.local/share/ccam/groups/<group>/` | பகிரப்பட்ட அமைப்புகள், MCP சர்வர்கள், நீட்டிப்புகள், வரலாறு |
 | `~/.local/state/ccam/` | பயன்பாட்டு cache மற்றும் கடைசியாகப் பயன்படுத்திய நேரங்கள் |
-| `~/.local/bin/claude1`, `ccs` | ccam-க்கான இணைப்புகள் |
+| `~/.local/bin/claude1`, `claude2`… | ccam-க்கான இணைப்புகள் |
 
 `XDG_CONFIG_HOME`, `XDG_DATA_HOME`, `XDG_STATE_HOME` மாறிகள் இந்தக் கோப்புறைகளின் இடத்தை மாற்றுகின்றன.

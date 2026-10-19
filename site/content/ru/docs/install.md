@@ -4,7 +4,7 @@ description: Установите ccam на Linux или macOS одной ком
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: c7f92dfa554a
+sourceHash: fc63978e8f9e
 ---
 
 Выполните это в терминале на Linux или macOS:
@@ -13,7 +13,7 @@ sourceHash: c7f92dfa554a
 curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-Скрипт скачивает выпуск для вашей системы, проверяет его контрольную сумму SHA-256 и помещает в `~/.local/bin` две команды: `ccam` и его короткий псевдоним `ccs`. Если этой папки нет в вашем `PATH`, скрипт выводит строку, которую нужно добавить в `~/.bashrc` или `~/.zshrc`.
+Скрипт скачивает выпуск для вашей системы, проверяет его контрольную сумму SHA-256 и помещает `ccam` в `~/.local/bin`; позже `ccam add` создаёт там же короткие команды `claude1`, `claude2` и так далее. Если этой папки нет в вашем `PATH`, скрипт выводит строку, которую нужно добавить в `~/.bashrc` или `~/.zshrc`.
 
 ccam запускает Claude Code за вас, поэтому сначала установите [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) и убедитесь, что `claude --version` работает.
 
@@ -31,13 +31,12 @@ ccam запускает Claude Code за вас, поэтому сначала �
 sudo apt install ./ccam_*_linux_amd64.deb
 ```
 
-Пакет устанавливает `/usr/bin/ccam` и ссылку `/usr/bin/ccs`.
+Пакет устанавливает `/usr/bin/ccam`.
 
 **Из исходного кода.** С Go 1.26 или новее:
 
 ```sh
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
-ln -s ccam "$(go env GOPATH)/bin/ccs"
 ```
 
 **Определённая версия.** Задайте `CCAM_VERSION`:
@@ -53,7 +52,7 @@ ccam completion bash > ~/.local/share/bash-completion/completions/ccam
 ccam completion zsh > "${fpath[1]}/_ccam"
 ```
 
-Автодополнение работает и для `ccam`, и для `ccs`, включая имена аккаунтов.
+Автодополнение работает для всех команд и параметров `ccam`, включая имена аккаунтов.
 
 ## Проверка установки
 
@@ -66,10 +65,10 @@ ccam doctor
 
 ## Удаление
 
-Удалите обе команды и короткие команды аккаунтов, а затем папки с данными, если аккаунты вам больше не нужны:
+Удалите программу ccam и короткие команды аккаунтов, а затем папки с данными, если аккаунты вам больше не нужны:
 
 ```sh
-rm ~/.local/bin/ccam ~/.local/bin/ccs ~/.local/bin/claude[0-9]*
+rm ~/.local/bin/ccam ~/.local/bin/claude[0-9]*
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
 ```
 

@@ -1,13 +1,13 @@
 ---
 title: เริ่มต้นใช้งาน
-description: "เพิ่มบัญชี Claude Code สองบัญชีด้วย ccam add สลับบัญชีด้วย claude1, claude2 หรือ ccs และเลือกสิ่งที่ใช้ร่วมกัน"
+description: "เพิ่มบัญชี Claude Code สองบัญชีด้วย ccam add สลับบัญชีด้วย claude1, claude2 หรือ ccam <name> และเลือกสิ่งที่ใช้ร่วมกัน"
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 9462b80d61bc
+sourceHash: c6b1c1c3ebaf
 ---
 
-เพิ่มแต่ละบัญชีด้วย `ccam add` จากนั้นเริ่ม Claude Code ด้วย `claude1`, `claude2` หรือ `ccs <name>` เท่านี้ก็เพียงพอสำหรับผู้ใช้ส่วนใหญ่
+เพิ่มแต่ละบัญชีด้วย `ccam add` จากนั้นเริ่ม Claude Code ด้วย `claude1`, `claude2` หรือ `ccam <name>` เท่านี้ก็เพียงพอสำหรับผู้ใช้ส่วนใหญ่
 
 ## 1. เพิ่มบัญชีแรก
 
@@ -37,19 +37,19 @@ ccam add work
 
 ```sh
 claude2
-ccs work
-ccs 2
+ccam work
+ccam 2
 ```
 
 ทุกอย่างที่อยู่หลังชื่อบัญชีจะส่งต่อให้ Claude Code โดยไม่เปลี่ยนแปลง คุณจึงใช้ตัวเลือกที่คุ้นเคยต่อไปได้:
 
 ```sh
-ccs work --resume
-ccs work -p "fix the failing test" --output-format json
+ccam work --resume
+ccam work -p "fix the failing test" --output-format json
 cat error.log | claude2 -p "what caused this?"
 ```
 
-การรัน `ccs` อย่างเดียวจะเปิดตัวเลือกบัญชี: ใช้ปุ่มลูกศรและ Enter หรือกดหมายเลขของบัญชี
+การรัน `ccam` อย่างเดียวจะเปิดตัวเลือกบัญชี: ใช้ปุ่มลูกศรและ Enter หรือกดหมายเลขของบัญชี
 
 ## 4. เลือกสิ่งที่จะใช้ร่วมกัน
 
@@ -65,11 +65,11 @@ ccam จะแสดงสิ่งที่จะย้ายก่อนเป
 ## 5. เมื่อบัญชีถึงขีดจำกัด
 
 ```sh
-ccs usage
-ccs next --continue
+ccam usage
+ccam next --continue
 ```
 
-`ccs usage` แสดงการใช้งานแบบ 5 ชั่วโมงและรายสัปดาห์ของทุกบัญชี `ccs next --continue` เปิดการสนทนาเดิมในบัญชีถัดไป ดูที่ [ขีดจำกัดการใช้งาน](/docs/usage-limits)
+`ccam usage` แสดงการใช้งานแบบ 5 ชั่วโมงและรายสัปดาห์ของทุกบัญชี `ccam next --continue` เปิดการสนทนาเดิมในบัญชีถัดไป ดูที่ [ขีดจำกัดการใช้งาน](/docs/usage-limits)
 
 ## ใช้ ~/.claude อยู่แล้วใช่ไหม?
 

@@ -1,13 +1,13 @@
 ---
 title: "কুইক স্টার্ট"
-description: "ccam add দিয়ে দুটি Claude Code অ্যাকাউন্ট যোগ করুন, claude1, claude2 বা ccs দিয়ে বদল করুন, এবং কী শেয়ার হবে তা বেছে নিন।"
+description: "ccam add দিয়ে দুটি Claude Code অ্যাকাউন্ট যোগ করুন, claude1, claude2 বা ccam <name> দিয়ে বদল করুন, এবং কী শেয়ার হবে তা বেছে নিন।"
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 9462b80d61bc
+sourceHash: c6b1c1c3ebaf
 ---
 
-`ccam add` দিয়ে প্রতিটি অ্যাকাউন্ট যোগ করুন, তারপর `claude1`, `claude2` বা `ccs <name>` দিয়ে Claude Code চালু করুন। বেশিরভাগ মানুষের এটুকুই দরকার।
+`ccam add` দিয়ে প্রতিটি অ্যাকাউন্ট যোগ করুন, তারপর `claude1`, `claude2` বা `ccam <name>` দিয়ে Claude Code চালু করুন। বেশিরভাগ মানুষের এটুকুই দরকার।
 
 ## ১. আপনার প্রথম অ্যাকাউন্ট যোগ করুন
 
@@ -37,19 +37,19 @@ ccam add work
 
 ```sh
 claude2
-ccs work
-ccs 2
+ccam work
+ccam 2
 ```
 
 অ্যাকাউন্টের নামের পরের সবকিছু অপরিবর্তিত অবস্থায় Claude Code-এ যায়, তাই আপনার চেনা অপশনগুলোই ব্যবহার করতে পারেন:
 
 ```sh
-ccs work --resume
-ccs work -p "fix the failing test" --output-format json
+ccam work --resume
+ccam work -p "fix the failing test" --output-format json
 cat error.log | claude2 -p "what caused this?"
 ```
 
-শুধু `ccs` চালালে একটি বাছাইয়ের তালিকা খোলে: অ্যারো কি ও Enter ব্যবহার করুন, অথবা অ্যাকাউন্টের নম্বর চাপুন।
+শুধু `ccam` চালালে একটি বাছাইয়ের তালিকা খোলে: অ্যারো কি ও Enter ব্যবহার করুন, অথবা অ্যাকাউন্টের নম্বর চাপুন।
 
 ## ৪. কী শেয়ার হবে তা বেছে নিন
 
@@ -65,11 +65,11 @@ ccam share work --history on
 ## ৫. যখন একটি অ্যাকাউন্ট সীমায় পৌঁছায়
 
 ```sh
-ccs usage
-ccs next --continue
+ccam usage
+ccam next --continue
 ```
 
-`ccs usage` সব অ্যাকাউন্টের ৫ ঘণ্টা ও সাপ্তাহিক ব্যবহার দেখায়। `ccs next --continue` একই কথোপকথন পরের অ্যাকাউন্টে খোলে। দেখুন [ব্যবহারের সীমা](/docs/usage-limits)।
+`ccam usage` সব অ্যাকাউন্টের ৫ ঘণ্টা ও সাপ্তাহিক ব্যবহার দেখায়। `ccam next --continue` একই কথোপকথন পরের অ্যাকাউন্টে খোলে। দেখুন [ব্যবহারের সীমা](/docs/usage-limits)।
 
 ## আগে থেকেই ~/.claude ব্যবহার করছেন?
 

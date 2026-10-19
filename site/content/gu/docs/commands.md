@@ -1,21 +1,21 @@
 ---
 title: કમાન્ડ સંદર્ભ
-description: ccam ના બધા કમાન્ડ અને ઓપ્શન, ccam add અને ccs <name> થી લઈને ccam usage, ccam next અને ccam doctor સુધી.
+description: ccam ના બધા કમાન્ડ અને ઓપ્શન, ccam add અને ccam <name> થી લઈને ccam usage, ccam next અને ccam doctor સુધી.
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 18ecad9a1104
+sourceHash: 54bdfc489174
 ---
 
-`ccam` અને `ccs` એક જ પ્રોગ્રામ છે; તમને જે ગમે તે વાપરો. કોઈ પણ કમાન્ડ ખરેખર ચલાવ્યા વગર તે શું કરશે તે જોવા માટે તેની આગળ `--dry-run` મૂકો, ઉદાહરણ તરીકે `ccs --dry-run work`.
+કોઈ પણ કમાન્ડ ખરેખર ચલાવ્યા વગર તે શું કરશે તે જોવા માટે તેની આગળ `--dry-run` મૂકો, ઉદાહરણ તરીકે `ccam --dry-run work`.
 
 <!-- commands -->
 
 ## Claude Code શરૂ કરવું
 
-`ccs <name|number> [arguments]` તે એકાઉન્ટ તરીકે Claude Code શરૂ કરે છે. ccam નામ પછીના આર્ગ્યુમેન્ટ્સ વાંચતું નથી; તે તેમને એ જ ક્રમમાં `claude` ને આપે છે, અને standard input, exit code અને સિગ્નલ બરાબર `claude` જેવું જ વર્તન કરે છે. નામ પછી `--` મૂકવું વૈકલ્પિક છે.
+`ccam <name|number> [arguments]` તે એકાઉન્ટ તરીકે Claude Code શરૂ કરે છે. ccam નામ પછીના આર્ગ્યુમેન્ટ્સ વાંચતું નથી; તે તેમને એ જ ક્રમમાં `claude` ને આપે છે, અને standard input, exit code અને સિગ્નલ બરાબર `claude` જેવું જ વર્તન કરે છે. નામ પછી `--` મૂકવું વૈકલ્પિક છે.
 
-આર્ગ્યુમેન્ટ્સ સાથે પણ એકાઉન્ટના નામ વગરનું `ccs`, જેમ કે `ccs -p "summarise"`, ડિફૉલ્ટ એકાઉન્ટ વાપરે છે. તેને `ccam use <name>` વડે સેટ કરો.
+આર્ગ્યુમેન્ટ્સ સાથે પણ એકાઉન્ટના નામ વગરનું `ccam`, જેમ કે `ccam -p "summarise"`, ડિફૉલ્ટ એકાઉન્ટ વાપરે છે. તેને `ccam use <name>` વડે સેટ કરો.
 
 `claude1`, `claude2` વગેરે શૉર્ટકટ `~/.local/bin` માં ccam ની લિંક છે. `ccam shims install --names` દરેક એકાઉન્ટ માટે `claude-<name>` પણ બનાવે છે.
 
@@ -56,11 +56,11 @@ ccam mcp remove fs
 ## વપરાશ અને સ્વિચિંગ
 
 ```sh
-ccs usage            # also: ccs u
-ccs usage --watch    # refresh every 60 seconds
-ccs usage --json
-ccs next --continue
-ccs next --auto
+ccam usage           # also: ccam u
+ccam usage --watch   # refresh every 60 seconds
+ccam usage --json
+ccam next --continue
+ccam next --auto
 ```
 
 ## જાળવણી
@@ -80,6 +80,6 @@ ccam shims install
 | `~/.local/share/ccam/profiles/<name>/` | દરેક એકાઉન્ટનું `CLAUDE_CONFIG_DIR` |
 | `~/.local/share/ccam/groups/<group>/` | શેર કરેલાં સેટિંગ્સ, MCP સર્વર, એક્સટેન્શન્સ અને ઇતિહાસ |
 | `~/.local/state/ccam/` | વપરાશ કૅશ અને છેલ્લે વાપર્યાના સમય |
-| `~/.local/bin/claude1`, `ccs` | ccam ની લિંક |
+| `~/.local/bin/claude1`, `claude2`… | ccam ની લિંક |
 
 `XDG_CONFIG_HOME`, `XDG_DATA_HOME` અને `XDG_STATE_HOME` વેરિએબલ આ ફોલ્ડરનું સ્થાન બદલે છે.

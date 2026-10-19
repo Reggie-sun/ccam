@@ -1,13 +1,13 @@
 ---
 title: Quick start
-description: Magdagdag ng dalawang Claude Code account gamit ang ccam add, lumipat sa pagitan nila gamit ang claude1, claude2 o ccs, at piliin kung ano ang ishe-share nila.
+description: Magdagdag ng dalawang Claude Code account gamit ang ccam add, lumipat sa pagitan nila gamit ang claude1, claude2 o ccam <name>, at piliin kung ano ang ishe-share nila.
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 9462b80d61bc
+sourceHash: c6b1c1c3ebaf
 ---
 
-Idagdag ang bawat account gamit ang `ccam add`, saka simulan ang Claude Code gamit ang `claude1`, `claude2` o `ccs <name>`. Iyan lang ang kailangan ng karamihan.
+Idagdag ang bawat account gamit ang `ccam add`, saka simulan ang Claude Code gamit ang `claude1`, `claude2` o `ccam <name>`. Iyan lang ang kailangan ng karamihan.
 
 ## 1. Idagdag ang una mong account
 
@@ -37,19 +37,19 @@ Alinman sa mga ito ay magsisimula ng Claude Code bilang work account:
 
 ```sh
 claude2
-ccs work
-ccs 2
+ccam work
+ccam 2
 ```
 
 Ipinapasa nang walang pagbabago sa Claude Code ang lahat ng kasunod ng pangalan ng account, kaya patuloy mong magagamit ang mga option na alam mo na:
 
 ```sh
-ccs work --resume
-ccs work -p "fix the failing test" --output-format json
+ccam work --resume
+ccam work -p "fix the failing test" --output-format json
 cat error.log | claude2 -p "what caused this?"
 ```
 
-Kapag `ccs` lang ang pinatakbo mo, magbubukas ang isang picker: gamitin ang mga arrow key at Enter, o pindutin ang numero ng account.
+Kapag `ccam` lang ang pinatakbo mo, magbubukas ang isang picker: gamitin ang mga arrow key at Enter, o pindutin ang numero ng account.
 
 ## 4. Piliin kung ano ang ishe-share
 
@@ -65,11 +65,11 @@ Ipinapakita ng ccam kung ano ang ililipat nito bago ito magbago ng anuman. Tingn
 ## 5. Kapag naabot ng isang account ang limit nito
 
 ```sh
-ccs usage
-ccs next --continue
+ccam usage
+ccam next --continue
 ```
 
-Ipinapakita ng `ccs usage` ang 5-oras at lingguhang usage ng bawat account. Binubuksan ng `ccs next --continue` ang parehong usapan sa susunod na account. Tingnan ang [mga usage limit](/docs/usage-limits).
+Ipinapakita ng `ccam usage` ang 5-oras at lingguhang usage ng bawat account. Binubuksan ng `ccam next --continue` ang parehong usapan sa susunod na account. Tingnan ang [mga usage limit](/docs/usage-limits).
 
 ## Gumagamit ka na ba ng ~/.claude?
 

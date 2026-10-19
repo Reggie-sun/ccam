@@ -4,7 +4,7 @@ description: "Linux বা macOS-এ একটি কমান্ডে, .deb �
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: c7f92dfa554a
+sourceHash: fc63978e8f9e
 ---
 
 Linux বা macOS-এ একটি টার্মিনালে এটি চালান:
@@ -13,7 +13,7 @@ Linux বা macOS-এ একটি টার্মিনালে এটি চ
 curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-স্ক্রিপ্টটি আপনার সিস্টেমের জন্য রিলিজ ডাউনলোড করে, এর SHA-256 চেকসাম যাচাই করে এবং `~/.local/bin`-এ দুটি কমান্ড রাখে: `ccam` ও এর ছোট বিকল্প নাম `ccs`। ওই ফোল্ডার আপনার `PATH`-এ না থাকলে, `~/.bashrc` বা `~/.zshrc`-এ কোন লাইন যোগ করতে হবে তা স্ক্রিপ্টটি প্রিন্ট করে।
+স্ক্রিপ্টটি আপনার সিস্টেমের জন্য রিলিজ ডাউনলোড করে, এর SHA-256 চেকসাম যাচাই করে এবং `~/.local/bin`-এ `ccam` রাখে; পরে `ccam add` ওই ফোল্ডারেই `claude1`, `claude2`… শর্টকাটগুলো তৈরি করে। ওই ফোল্ডার আপনার `PATH`-এ না থাকলে, `~/.bashrc` বা `~/.zshrc`-এ কোন লাইন যোগ করতে হবে তা স্ক্রিপ্টটি প্রিন্ট করে।
 
 ccam আপনার হয়ে Claude Code চালু করে, তাই আগে [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) ইনস্টল করুন এবং নিশ্চিত হন যে `claude --version` কাজ করে।
 
@@ -31,13 +31,12 @@ ccam আপনার হয়ে Claude Code চালু করে, তাই 
 sudo apt install ./ccam_*_linux_amd64.deb
 ```
 
-প্যাকেজটি `/usr/bin/ccam` এবং `/usr/bin/ccs` লিংক ইনস্টল করে।
+প্যাকেজটি `/usr/bin/ccam` ইনস্টল করে।
 
 **সোর্স থেকে।** Go 1.26 বা নতুন সংস্করণ দিয়ে:
 
 ```sh
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
-ln -s ccam "$(go env GOPATH)/bin/ccs"
 ```
 
 **একটি নির্দিষ্ট সংস্করণ।** `CCAM_VERSION` নির্ধারণ করুন:
@@ -53,7 +52,7 @@ ccam completion bash > ~/.local/share/bash-completion/completions/ccam
 ccam completion zsh > "${fpath[1]}/_ccam"
 ```
 
-কমপ্লিশন `ccam` ও `ccs` দুটিতেই কাজ করে, অ্যাকাউন্টের নামসহ।
+কমপ্লিশন `ccam`-এর সব কমান্ড ও অপশনে কাজ করে, অ্যাকাউন্টের নামসহ।
 
 ## ইনস্টলেশন পরীক্ষা করুন
 
@@ -66,10 +65,10 @@ ccam doctor
 
 ## আনইনস্টল
 
-দুটি কমান্ড ও অ্যাকাউন্টের শর্টকাটগুলো সরিয়ে দিন, তারপর অ্যাকাউন্টগুলোর আর দরকার না থাকলে ডেটা ফোল্ডারগুলোও:
+কমান্ডটি ও অ্যাকাউন্টের শর্টকাটগুলো সরিয়ে দিন, তারপর অ্যাকাউন্টগুলোর আর দরকার না থাকলে ডেটা ফোল্ডারগুলোও:
 
 ```sh
-rm ~/.local/bin/ccam ~/.local/bin/ccs ~/.local/bin/claude[0-9]*
+rm ~/.local/bin/ccam ~/.local/bin/claude[0-9]*
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
 ```
 

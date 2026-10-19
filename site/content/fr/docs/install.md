@@ -4,7 +4,7 @@ description: "Installez ccam sous Linux ou macOS avec une seule commande, depuis
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: c7f92dfa554a
+sourceHash: fc63978e8f9e
 ---
 
 Exécutez ceci dans un terminal sous Linux ou macOS :
@@ -13,7 +13,7 @@ Exécutez ceci dans un terminal sous Linux ou macOS :
 curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-Le script télécharge la version adaptée à votre système, vérifie sa somme de contrôle SHA-256 et place deux commandes dans `~/.local/bin` : `ccam` et son alias court `ccs`. Si ce dossier n'est pas dans votre `PATH`, le script affiche la ligne à ajouter à `~/.bashrc` ou `~/.zshrc`.
+Le script télécharge la version adaptée à votre système, vérifie sa somme de contrôle SHA-256 et place `ccam` dans `~/.local/bin`, où `ccam add` créera ensuite les raccourcis `claude1`, `claude2`, etc. Si ce dossier n'est pas dans votre `PATH`, le script affiche la ligne à ajouter à `~/.bashrc` ou `~/.zshrc`.
 
 ccam lance Claude Code pour vous : installez donc d'abord [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) et vérifiez que `claude --version` fonctionne.
 
@@ -31,13 +31,12 @@ ccam lance Claude Code pour vous : installez donc d'abord [Claude Code](https:/
 sudo apt install ./ccam_*_linux_amd64.deb
 ```
 
-Le paquet installe `/usr/bin/ccam` et le lien `/usr/bin/ccs`.
+Le paquet installe `/usr/bin/ccam`.
 
 **Depuis les sources.** Avec Go 1.26 ou une version plus récente :
 
 ```sh
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
-ln -s ccam "$(go env GOPATH)/bin/ccs"
 ```
 
 **Une version précise.** Définissez `CCAM_VERSION` :
@@ -53,7 +52,7 @@ ccam completion bash > ~/.local/share/bash-completion/completions/ccam
 ccam completion zsh > "${fpath[1]}/_ccam"
 ```
 
-La complétion couvre à la fois `ccam` et `ccs`, y compris les noms de comptes.
+La complétion couvre toutes les commandes et options de `ccam`, y compris les noms de comptes.
 
 ## Vérifier l'installation
 
@@ -66,10 +65,10 @@ ccam doctor
 
 ## Désinstaller
 
-Supprimez les deux commandes et les raccourcis des comptes, puis les dossiers de données si vous n'avez plus besoin des comptes :
+Supprimez la commande et les raccourcis des comptes, puis les dossiers de données si vous n'avez plus besoin des comptes :
 
 ```sh
-rm ~/.local/bin/ccam ~/.local/bin/ccs ~/.local/bin/claude[0-9]*
+rm ~/.local/bin/ccam ~/.local/bin/claude[0-9]*
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
 ```
 

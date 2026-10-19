@@ -23,11 +23,11 @@
   },
   "landing": {
     "headline": "Beberapa akun Claude Code. Satu terminal.",
-    "lede": "Tambahkan setiap akun sekali saja. Berpindah dengan claude2 atau ccs work. Saat satu akun mencapai batasnya, lanjutkan di akun berikutnya dengan percakapan yang sama.",
+    "lede": "Tambahkan setiap akun sekali saja. Berpindah dengan claude2 atau ccam work. Saat satu akun mencapai batasnya, lanjutkan di akun berikutnya dengan percakapan yang sama.",
     "installLabel": "Instal di Linux atau macOS",
     "thenAdd": "Lalu tambahkan akun pertama Anda dengan {command}.",
     "readDocs": "Baca panduan memulai cepat",
-    "boardLabel": "Contoh keluaran ccs usage: batas semua akun sekaligus",
+    "boardLabel": "Contoh keluaran ccam usage: batas semua akun sekaligus",
     "board": {
       "account": "Akun",
       "fiveHour": "5 jam",
@@ -43,7 +43,7 @@
       },
       {
         "command": "claude2",
-        "also": "ccs work --resume",
+        "also": "ccam work --resume",
         "body": "Menjalankan Claude Code sebagai akun tersebut. Semua yang ada setelah nama akun diteruskan ke Claude Code tanpa diubah, dan ccam hanya menambah sekitar 4 milidetik sebelum Claude Code dimulai."
       },
       {
@@ -51,11 +51,11 @@
         "body": "Memilih apa yang dibagikan akun ini dengan akun Anda yang lain. Server MCP, pengaturan, CLAUDE.md, dan ekstensi dibagikan sejak awal; login tidak pernah dibagikan."
       },
       {
-        "command": "ccs usage",
+        "command": "ccam usage",
         "body": "Menampilkan penggunaan 5 jam dan mingguan semua akun sekaligus, sehingga Anda tahu akun mana yang masih punya sisa kuota."
       },
       {
-        "command": "ccs next --continue",
+        "command": "ccam next --continue",
         "body": "Membuka percakapan yang sama di akun berikutnya saat akun saat ini mencapai batasnya."
       },
       {
@@ -86,7 +86,7 @@
     }
   },
   "commands": {
-    "ccs": "Membuka pemilih akun",
+    "ccam": "Membuka pemilih akun",
     "name": "Menjalankan Claude Code sebagai akun tersebut; argumen diteruskan tanpa diubah",
     "add": "Menambahkan akun: folder konfigurasi, login, dan pintasan",
     "list": "Menampilkan daftar akun",
@@ -102,7 +102,7 @@
     "import": "Mendaftarkan folder ~/.claude yang sudah ada di tempatnya",
     "doctor": "Memeriksa tautan, izin, login, dan versi, lalu memperbaiki",
     "statusline": "Menampilkan akun dan penggunaannya di status line Claude Code",
-    "shims": "Membuat ulang claude1…claudeN dan ccs",
+    "shims": "Membuat ulang claude1…claudeN",
     "completion": "Mencetak pelengkapan otomatis untuk bash atau zsh"
   },
   "copy": {

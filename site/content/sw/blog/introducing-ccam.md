@@ -4,7 +4,7 @@ description: Kwa nini ccam ipo, inawafanyia nini watu wenye akaunti kadhaa za Cl
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: 5e4121938d8c
+sourceHash: 985e2d369c34
 ---
 
 ccam ni zana ndogo ya mstari wa amri kwa watu wanaotumia zaidi ya akaunti moja ya Claude Code kwenye kompyuta moja: akaunti binafsi na ya kazi, au akaunti kadhaa kwa mradi mmoja mrefu.
@@ -16,9 +16,9 @@ Claude Code inaruhusu akaunti kadhaa kupitia `CLAUDE_CONFIG_DIR`: folda moja kwa
 ## ccam hufanya nini
 
 - `ccam add` huunda folda, huendesha mchakato wa kuingia na huipa akaunti njia fupi: `claude1`, `claude2`, na kadhalika.
-- `ccs work` na `claude2` huanzisha Claude Code kama akaunti hiyo na hupitisha kila hoja bila kuibadilisha.
+- `ccam work` na `claude2` huanzisha Claude Code kama akaunti hiyo na hupitisha kila hoja bila kuibadilisha.
 - Seva za MCP, mipangilio, `CLAUDE.md` na viendelezi hushirikiwa kupitia viungo, kipengele kwa kipengele na akaunti kwa akaunti. Taarifa za kuingia hazishirikiwi kamwe.
-- `ccs usage` huonyesha matumizi ya saa 5 na ya wiki ya kila akaunti; `ccs next --continue` huendeleza mazungumzo kwenye akaunti inayofuata.
+- `ccam usage` huonyesha matumizi ya saa 5 na ya wiki ya kila akaunti; `ccam next --continue` huendeleza mazungumzo kwenye akaunti inayofuata.
 
 ## Kukaa nje ya njia yako
 

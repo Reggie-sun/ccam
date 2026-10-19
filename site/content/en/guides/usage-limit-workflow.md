@@ -6,7 +6,7 @@ order: 3
 translation: source
 ---
 
-When one account reaches its limit, continue the same conversation in another account you own: share conversation history once, then run `ccs next --continue`. If you have only one account, wait for the reset time Claude Code shows.
+When one account reaches its limit, continue the same conversation in another account you own: share conversation history once, then run `ccam next --continue`. If you have only one account, wait for the reset time Claude Code shows.
 
 ## Before it happens
 
@@ -27,7 +27,7 @@ The status line now shows the account and its 5-hour usage while you work, so a 
 Leave Claude Code (`/exit`), then:
 
 ```sh
-ccs usage
+ccam usage
 ```
 
 ```console
@@ -38,16 +38,16 @@ ccs usage
 Open the conversation in the account with the most room:
 
 ```sh
-ccs next --auto --continue
+ccam next --auto --continue
 ```
 
 Claude Code starts as `work` with the most recent conversation of the current folder, including everything said so far.
 
 ## Things to keep in mind
 
-- Run `ccs next --continue` in the same folder you worked in; conversations are stored per project folder.
+- Run `ccam next --continue` in the same folder you worked in; conversations are stored per project folder.
 - Avoid running two accounts on the same conversation at the same time. ccam warns you if you try.
 - The other account must also share conversation history, in the same group.
 - Whether you may switch between accounts like this depends on each account's terms.
 
-See [usage limits](/docs/usage-limits) for every option of `ccs usage` and `ccs next`.
+See [usage limits](/docs/usage-limits) for every option of `ccam usage` and `ccam next`.

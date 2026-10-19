@@ -23,11 +23,11 @@
   },
   "landing": {
     "headline": "Várias contas do Claude Code. Um terminal.",
-    "lede": "Adicione cada conta uma vez. Troque com claude2 ou ccs work. Quando uma conta atingir o limite, continue na próxima com a mesma conversa.",
+    "lede": "Adicione cada conta uma vez. Troque com claude2 ou ccam work. Quando uma conta atingir o limite, continue na próxima com a mesma conversa.",
     "installLabel": "Instalar no Linux ou no macOS",
     "thenAdd": "Depois adicione sua primeira conta com {command}.",
     "readDocs": "Leia o início rápido",
-    "boardLabel": "Exemplo de saída do ccs usage: os limites de todas as contas de uma vez",
+    "boardLabel": "Exemplo de saída do ccam usage: os limites de todas as contas de uma vez",
     "board": {
       "account": "Conta",
       "fiveHour": "5 horas",
@@ -43,7 +43,7 @@
       },
       {
         "command": "claude2",
-        "also": "ccs work --resume",
+        "also": "ccam work --resume",
         "body": "Inicia o Claude Code como essa conta. Tudo o que vem depois do nome vai para o Claude Code sem alterações, e o ccam acrescenta cerca de 4 milissegundos antes da inicialização."
       },
       {
@@ -51,11 +51,11 @@
         "body": "Escolhe o que a conta compartilha com suas outras contas. Servidores MCP, configurações, CLAUDE.md e extensões são compartilhados desde o início; logins nunca são."
       },
       {
-        "command": "ccs usage",
+        "command": "ccam usage",
         "body": "Mostra o uso de 5 horas e o uso semanal de todas as contas de uma vez, para você saber qual delas ainda tem espaço."
       },
       {
-        "command": "ccs next --continue",
+        "command": "ccam next --continue",
         "body": "Abre a mesma conversa na próxima conta quando a atual atinge o limite."
       },
       {
@@ -86,7 +86,7 @@
     }
   },
   "commands": {
-    "ccs": "Abrir o seletor de contas",
+    "ccam": "Abrir o seletor de contas",
     "name": "Iniciar o Claude Code como essa conta; os argumentos são repassados sem alterações",
     "add": "Adicionar uma conta: pasta de configuração, login e atalho",
     "list": "Listar as contas",
@@ -102,7 +102,7 @@
     "import": "Registrar uma pasta ~/.claude existente no lugar onde ela está",
     "doctor": "Verificar links, permissões, logins e versões, e corrigir",
     "statusline": "Mostrar a conta e o uso na linha de status do Claude Code",
-    "shims": "Recriar claude1…claudeN e ccs",
+    "shims": "Recriar claude1…claudeN",
     "completion": "Imprimir o preenchimento automático para bash ou zsh"
   },
   "copy": {

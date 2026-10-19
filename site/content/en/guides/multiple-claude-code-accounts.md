@@ -36,7 +36,7 @@ ccam add personal
 ccam add work
 ```
 
-Now `claude1` and `claude2`, or `ccs personal` and `ccs work`, start the two accounts. Because they are real programs rather than aliases, they also work in scripts. Settings, `CLAUDE.md`, MCP servers and extensions are shared from the start, and you can turn on shared conversation history to continue a conversation on the other account with `ccs next --continue`.
+Now `claude1` and `claude2`, or `ccam personal` and `ccam work`, start the two accounts. Because they are real programs rather than aliases, they also work in scripts. Settings, `CLAUDE.md`, MCP servers and extensions are shared from the start, and you can turn on shared conversation history to continue a conversation on the other account with `ccam next --continue`.
 
 If you already use `~/.claude`, run `ccam import` instead of adding that account again.
 

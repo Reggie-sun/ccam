@@ -1,13 +1,13 @@
 ---
 title: క్విక్ స్టార్ట్
-description: ccam add తో రెండు Claude Code ఖాతాలను జోడించండి, claude1, claude2 లేదా ccs తో వాటి మధ్య మారండి, అవి ఏమి షేర్ చేయాలో ఎంచుకోండి.
+description: ccam add తో రెండు Claude Code ఖాతాలను జోడించండి, claude1, claude2 లేదా ccam <name> తో వాటి మధ్య మారండి, అవి ఏమి షేర్ చేయాలో ఎంచుకోండి.
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 9462b80d61bc
+sourceHash: c6b1c1c3ebaf
 ---
 
-`ccam add` తో ప్రతి ఖాతాను జోడించండి, తర్వాత `claude1`, `claude2` లేదా `ccs <name>` తో Claude Code ను ప్రారంభించండి. చాలా మందికి కావలసింది ఇంతే.
+`ccam add` తో ప్రతి ఖాతాను జోడించండి, తర్వాత `claude1`, `claude2` లేదా `ccam <name>` తో Claude Code ను ప్రారంభించండి. చాలా మందికి కావలసింది ఇంతే.
 
 ## 1. మీ మొదటి ఖాతాను జోడించండి
 
@@ -37,19 +37,19 @@ ccam add work
 
 ```sh
 claude2
-ccs work
-ccs 2
+ccam work
+ccam 2
 ```
 
 ఖాతా పేరు తర్వాత ఉన్నదంతా మార్పు లేకుండా Claude Code కు వెళ్తుంది, కాబట్టి మీకు తెలిసిన ఆప్షన్లనే ఉపయోగిస్తూ ఉండవచ్చు:
 
 ```sh
-ccs work --resume
-ccs work -p "fix the failing test" --output-format json
+ccam work --resume
+ccam work -p "fix the failing test" --output-format json
 cat error.log | claude2 -p "what caused this?"
 ```
 
-`ccs` ను ఒక్కటే రన్ చేస్తే ఎంపిక మెనూ తెరుచుకుంటుంది: యారో కీలు, Enter ఉపయోగించండి, లేదా ఖాతా సంఖ్యను నొక్కండి.
+`ccam` ను ఒక్కటే రన్ చేస్తే ఎంపిక మెనూ తెరుచుకుంటుంది: యారో కీలు, Enter ఉపయోగించండి, లేదా ఖాతా సంఖ్యను నొక్కండి.
 
 ## 4. ఏమి షేర్ చేయాలో ఎంచుకోండి
 
@@ -65,11 +65,11 @@ ccam share work --history on
 ## 5. ఒక ఖాతా పరిమితిని చేరినప్పుడు
 
 ```sh
-ccs usage
-ccs next --continue
+ccam usage
+ccam next --continue
 ```
 
-`ccs usage` అన్ని ఖాతాల 5 గంటల, వారపు వినియోగాన్ని చూపిస్తుంది. `ccs next --continue` అదే సంభాషణను తర్వాతి ఖాతాలో తెరుస్తుంది. [వినియోగ పరిమితులు](/docs/usage-limits) చూడండి.
+`ccam usage` అన్ని ఖాతాల 5 గంటల, వారపు వినియోగాన్ని చూపిస్తుంది. `ccam next --continue` అదే సంభాషణను తర్వాతి ఖాతాలో తెరుస్తుంది. [వినియోగ పరిమితులు](/docs/usage-limits) చూడండి.
 
 ## ఇప్పటికే ~/.claude ఉపయోగిస్తున్నారా?
 

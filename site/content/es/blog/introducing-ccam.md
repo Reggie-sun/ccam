@@ -4,7 +4,7 @@ description: Por qué existe ccam, qué hace por quienes tienen varias cuentas d
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: 5e4121938d8c
+sourceHash: 985e2d369c34
 ---
 
 ccam es una pequeña herramienta de línea de comandos para quienes usan más de una cuenta de Claude Code en la misma computadora: una cuenta personal y una de trabajo, o varias cuentas para un proyecto largo.
@@ -16,9 +16,9 @@ Claude Code admite varias cuentas mediante `CLAUDE_CONFIG_DIR`: una carpeta por 
 ## Qué hace ccam
 
 - `ccam add` crea la carpeta, ejecuta el inicio de sesión y le da a la cuenta un atajo: `claude1`, `claude2`, etc.
-- `ccs work` y `claude2` inician Claude Code con esa cuenta y pasan todos los argumentos sin cambios.
+- `ccam work` y `claude2` inician Claude Code con esa cuenta y pasan todos los argumentos sin cambios.
 - Los servidores MCP, la configuración, `CLAUDE.md` y las extensiones se comparten mediante enlaces, elemento por elemento y cuenta por cuenta. Los inicios de sesión nunca se comparten.
-- `ccs usage` muestra el uso de 5 horas y semanal de todas las cuentas; `ccs next --continue` retoma la conversación en la siguiente cuenta.
+- `ccam usage` muestra el uso de 5 horas y semanal de todas las cuentas; `ccam next --continue` retoma la conversación en la siguiente cuenta.
 
 ## Sin estorbar
 

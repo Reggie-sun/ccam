@@ -23,11 +23,11 @@
   },
   "landing": {
     "headline": "Birden fazla Claude Code hesabı. Tek terminal.",
-    "lede": "Her hesabı bir kez ekleyin. claude2 veya ccs work ile geçiş yapın. Bir hesap limitine ulaştığında aynı konuşmayla bir sonraki hesapta devam edin.",
+    "lede": "Her hesabı bir kez ekleyin. claude2 veya ccam work ile geçiş yapın. Bir hesap limitine ulaştığında aynı konuşmayla bir sonraki hesapta devam edin.",
     "installLabel": "Linux veya macOS üzerine kurun",
     "thenAdd": "Ardından ilk hesabınızı {command} ile ekleyin.",
     "readDocs": "Hızlı başlangıcı okuyun",
-    "boardLabel": "ccs usage çıktısı örneği: tüm hesapların limitleri bir arada",
+    "boardLabel": "ccam usage çıktısı örneği: tüm hesapların limitleri bir arada",
     "board": {
       "account": "Hesap",
       "fiveHour": "5 saatlik",
@@ -43,7 +43,7 @@
       },
       {
         "command": "claude2",
-        "also": "ccs work --resume",
+        "also": "ccam work --resume",
         "body": "Claude Code'u o hesapla başlatır. Addan sonra gelen her şey Claude Code'a değiştirilmeden iletilir ve ccam, başlatmadan önce yaklaşık 4 milisaniye ekler."
       },
       {
@@ -51,11 +51,11 @@
         "body": "Hesabın diğer hesaplarınızla neyi paylaşacağını seçer. MCP sunucuları, ayarlar, CLAUDE.md ve uzantılar baştan paylaşılır; giriş bilgileri hiçbir zaman paylaşılmaz."
       },
       {
-        "command": "ccs usage",
+        "command": "ccam usage",
         "body": "Tüm hesapların 5 saatlik ve haftalık kullanımını bir arada gösterir; böylece hangisinde pay kaldığını bilirsiniz."
       },
       {
-        "command": "ccs next --continue",
+        "command": "ccam next --continue",
         "body": "Geçerli hesap limitine ulaştığında aynı konuşmayı bir sonraki hesapta açar."
       },
       {
@@ -86,7 +86,7 @@
     }
   },
   "commands": {
-    "ccs": "Hesap seçiciyi açar",
+    "ccam": "Hesap seçiciyi açar",
     "name": "Claude Code'u o hesapla başlatır; argümanlar değiştirilmeden iletilir",
     "add": "Hesap ekler: yapılandırma klasörü, giriş ve kısayol",
     "list": "Hesapları listeler",
@@ -102,7 +102,7 @@
     "import": "Mevcut bir ~/.claude klasörünü yerinde kaydeder",
     "doctor": "Bağlantıları, izinleri, girişleri ve sürümleri kontrol eder ve onarır",
     "statusline": "Hesabı ve kullanımı Claude Code'un durum satırında gösterir",
-    "shims": "claude1…claudeN ve ccs komutlarını yeniden oluşturur",
+    "shims": "claude1…claudeN komutlarını yeniden oluşturur",
     "completion": "bash veya zsh tamamlama betiğini yazdırır"
   },
   "copy": {

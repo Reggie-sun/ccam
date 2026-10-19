@@ -4,7 +4,7 @@ description: Linux లేదా macOS లో ccam ను ఒకే కమాం�
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: c7f92dfa554a
+sourceHash: fc63978e8f9e
 ---
 
 Linux లేదా macOS లో టెర్మినల్‌లో ఇది రన్ చేయండి:
@@ -13,7 +13,7 @@ Linux లేదా macOS లో టెర్మినల్‌లో ఇది �
 curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-ఈ స్క్రిప్ట్ మీ సిస్టమ్‌కు సరిపడే రిలీజ్‌ను డౌన్‌లోడ్ చేసి, దాని SHA-256 చెక్‌సమ్‌ను తనిఖీ చేసి, `~/.local/bin` లో రెండు కమాండ్‌లను ఉంచుతుంది: `ccam`, దాని చిన్న అలియాస్ `ccs`. ఆ ఫోల్డర్ మీ `PATH` లో లేకపోతే, `~/.bashrc` లేదా `~/.zshrc` కు జోడించాల్సిన లైన్‌ను స్క్రిప్ట్ ప్రింట్ చేస్తుంది.
+ఈ స్క్రిప్ట్ మీ సిస్టమ్‌కు సరిపడే రిలీజ్‌ను డౌన్‌లోడ్ చేసి, దాని SHA-256 చెక్‌సమ్‌ను తనిఖీ చేసి, `ccam` ను `~/.local/bin` లో ఉంచుతుంది; తర్వాత `ccam add` అదే ఫోల్డర్‌లో `claude1`, `claude2`… షార్ట్‌కట్‌లను సృష్టిస్తుంది. ఆ ఫోల్డర్ మీ `PATH` లో లేకపోతే, `~/.bashrc` లేదా `~/.zshrc` కు జోడించాల్సిన లైన్‌ను స్క్రిప్ట్ ప్రింట్ చేస్తుంది.
 
 ccam మీ కోసం Claude Code ను ప్రారంభిస్తుంది, కాబట్టి ముందుగా [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) ను ఇన్‌స్టాల్ చేసి, `claude --version` పనిచేస్తోందని నిర్ధారించుకోండి.
 
@@ -31,13 +31,12 @@ ccam మీ కోసం Claude Code ను ప్రారంభిస్తు
 sudo apt install ./ccam_*_linux_amd64.deb
 ```
 
-ఈ ప్యాకేజీ `/usr/bin/ccam` ను, `/usr/bin/ccs` లింక్‌ను ఇన్‌స్టాల్ చేస్తుంది.
+ఈ ప్యాకేజీ `/usr/bin/ccam` ను ఇన్‌స్టాల్ చేస్తుంది.
 
 **సోర్స్ నుంచి.** Go 1.26 లేదా కొత్త వెర్షన్‌తో:
 
 ```sh
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
-ln -s ccam "$(go env GOPATH)/bin/ccs"
 ```
 
 **ఒక నిర్దిష్ట వెర్షన్.** `CCAM_VERSION` ను సెట్ చేయండి:
@@ -53,7 +52,7 @@ ccam completion bash > ~/.local/share/bash-completion/completions/ccam
 ccam completion zsh > "${fpath[1]}/_ccam"
 ```
 
-కంప్లీషన్ `ccam`, `ccs` రెండింటికీ పనిచేస్తుంది, ఖాతా పేర్లతో సహా.
+కంప్లీషన్ `ccam` యొక్క అన్ని కమాండ్‌లు, ఆప్షన్‌లకు పనిచేస్తుంది, ఖాతా పేర్లతో సహా.
 
 ## ఇన్‌స్టాలేషన్‌ను తనిఖీ చేయండి
 
@@ -66,10 +65,10 @@ ccam doctor
 
 ## అన్‌ఇన్‌స్టాల్ చేయడం
 
-రెండు కమాండ్‌లను, ఖాతా షార్ట్‌కట్‌లను తీసివేయండి. ఖాతాలు ఇక అవసరం లేకపోతే, తర్వాత డేటా ఫోల్డర్‌లను కూడా తీసివేయండి:
+కమాండ్‌ను, ఖాతా షార్ట్‌కట్‌లను తీసివేయండి. ఖాతాలు ఇక అవసరం లేకపోతే, తర్వాత డేటా ఫోల్డర్‌లను కూడా తీసివేయండి:
 
 ```sh
-rm ~/.local/bin/ccam ~/.local/bin/ccs ~/.local/bin/claude[0-9]*
+rm ~/.local/bin/ccam ~/.local/bin/claude[0-9]*
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
 ```
 

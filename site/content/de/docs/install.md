@@ -4,7 +4,7 @@ description: ccam unter Linux oder macOS mit einem Befehl, aus einem .deb-Paket 
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: c7f92dfa554a
+sourceHash: fc63978e8f9e
 ---
 
 Führe dies in einem Terminal unter Linux oder macOS aus:
@@ -13,7 +13,7 @@ Führe dies in einem Terminal unter Linux oder macOS aus:
 curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-Das Skript lädt das Release für dein System herunter, prüft seine SHA-256-Prüfsumme und legt zwei Befehle in `~/.local/bin` ab: `ccam` und seinen kurzen Alias `ccs`. Wenn dieser Ordner nicht in deinem `PATH` liegt, gibt das Skript die Zeile aus, die du zu `~/.bashrc` oder `~/.zshrc` hinzufügen musst.
+Das Skript lädt das Release für dein System herunter, prüft seine SHA-256-Prüfsumme und legt `ccam` in `~/.local/bin` ab, wo `ccam add` später die Kurzbefehle `claude1`, `claude2` usw. anlegt. Wenn dieser Ordner nicht in deinem `PATH` liegt, gibt das Skript die Zeile aus, die du zu `~/.bashrc` oder `~/.zshrc` hinzufügen musst.
 
 ccam startet Claude Code für dich, also installiere zuerst [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) und stelle sicher, dass `claude --version` funktioniert.
 
@@ -31,13 +31,12 @@ ccam startet Claude Code für dich, also installiere zuerst [Claude Code](https:
 sudo apt install ./ccam_*_linux_amd64.deb
 ```
 
-Das Paket installiert `/usr/bin/ccam` und den Link `/usr/bin/ccs`.
+Das Paket installiert `/usr/bin/ccam`.
 
 **Aus dem Quellcode.** Mit Go 1.26 oder neuer:
 
 ```sh
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
-ln -s ccam "$(go env GOPATH)/bin/ccs"
 ```
 
 **Eine bestimmte Version.** Setze `CCAM_VERSION`:
@@ -53,7 +52,7 @@ ccam completion bash > ~/.local/share/bash-completion/completions/ccam
 ccam completion zsh > "${fpath[1]}/_ccam"
 ```
 
-Die Vervollständigung deckt sowohl `ccam` als auch `ccs` ab, einschließlich der Kontonamen.
+Die Vervollständigung deckt alle Befehle und Optionen von `ccam` ab, einschließlich der Kontonamen.
 
 ## Installation prüfen
 
@@ -66,10 +65,10 @@ ccam doctor
 
 ## Deinstallieren
 
-Entferne die beiden Befehle und die Konto-Kurzbefehle und danach die Datenordner, wenn du die Konten nicht mehr brauchst:
+Entferne den Befehl und die Konto-Kurzbefehle und danach die Datenordner, wenn du die Konten nicht mehr brauchst:
 
 ```sh
-rm ~/.local/bin/ccam ~/.local/bin/ccs ~/.local/bin/claude[0-9]*
+rm ~/.local/bin/ccam ~/.local/bin/claude[0-9]*
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
 ```
 

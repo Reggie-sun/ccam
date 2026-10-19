@@ -4,7 +4,7 @@ description: "ติดตั้ง ccam บน Linux หรือ macOS ด้�
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: c7f92dfa554a
+sourceHash: fc63978e8f9e
 ---
 
 รันคำสั่งนี้ในเทอร์มินัลบน Linux หรือ macOS:
@@ -13,7 +13,7 @@ sourceHash: c7f92dfa554a
 curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-สคริปต์จะดาวน์โหลดรุ่นสำหรับระบบของคุณ ตรวจสอบ checksum แบบ SHA-256 และวางคำสั่งสองคำสั่งไว้ใน `~/.local/bin` ได้แก่ `ccam` และ alias แบบสั้นของมันคือ `ccs` หากโฟลเดอร์นั้นไม่อยู่ใน `PATH` ของคุณ สคริปต์จะพิมพ์บรรทัดที่ต้องเพิ่มลงใน `~/.bashrc` หรือ `~/.zshrc` ออกมาให้
+สคริปต์จะดาวน์โหลดรุ่นสำหรับระบบของคุณ ตรวจสอบ checksum แบบ SHA-256 และวาง `ccam` ไว้ใน `~/.local/bin` ซึ่งภายหลัง `ccam add` จะสร้างคำสั่งลัด `claude1`, `claude2`… ไว้ในโฟลเดอร์เดียวกัน หากโฟลเดอร์นั้นไม่อยู่ใน `PATH` ของคุณ สคริปต์จะพิมพ์บรรทัดที่ต้องเพิ่มลงใน `~/.bashrc` หรือ `~/.zshrc` ออกมาให้
 
 ccam เป็นตัวเริ่ม Claude Code ให้คุณ ดังนั้นให้ติดตั้ง [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) ก่อน และตรวจสอบให้แน่ใจว่า `claude --version` ทำงานได้
 
@@ -31,13 +31,12 @@ ccam เป็นตัวเริ่ม Claude Code ให้คุณ ดั�
 sudo apt install ./ccam_*_linux_amd64.deb
 ```
 
-แพ็กเกจจะติดตั้ง `/usr/bin/ccam` และลิงก์ `/usr/bin/ccs`
+แพ็กเกจจะติดตั้ง `/usr/bin/ccam`
 
 **จากซอร์สโค้ด** ใช้ Go 1.26 หรือใหม่กว่า:
 
 ```sh
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
-ln -s ccam "$(go env GOPATH)/bin/ccs"
 ```
 
 **รุ่นที่ระบุ** ตั้งค่า `CCAM_VERSION`:
@@ -53,7 +52,7 @@ ccam completion bash > ~/.local/share/bash-completion/completions/ccam
 ccam completion zsh > "${fpath[1]}/_ccam"
 ```
 
-การเติมคำอัตโนมัติครอบคลุมทั้ง `ccam` และ `ccs` รวมถึงชื่อบัญชีด้วย
+การเติมคำอัตโนมัติครอบคลุมทุกคำสั่งและตัวเลือกของ `ccam` รวมถึงชื่อบัญชีด้วย
 
 ## ตรวจสอบการติดตั้ง
 
@@ -66,10 +65,10 @@ ccam doctor
 
 ## ถอนการติดตั้ง
 
-ลบคำสั่งทั้งสองและคำสั่งลัดของบัญชี จากนั้นลบโฟลเดอร์ข้อมูลหากคุณไม่ต้องการบัญชีเหล่านั้นอีกต่อไป:
+ลบคำสั่ง ccam และคำสั่งลัดของบัญชี จากนั้นลบโฟลเดอร์ข้อมูลหากคุณไม่ต้องการบัญชีเหล่านั้นอีกต่อไป:
 
 ```sh
-rm ~/.local/bin/ccam ~/.local/bin/ccs ~/.local/bin/claude[0-9]*
+rm ~/.local/bin/ccam ~/.local/bin/claude[0-9]*
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
 ```
 

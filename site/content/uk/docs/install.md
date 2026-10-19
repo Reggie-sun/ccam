@@ -4,7 +4,7 @@ description: Встановіть ccam на Linux або macOS однією ко
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: c7f92dfa554a
+sourceHash: fc63978e8f9e
 ---
 
 Виконайте це в терміналі на Linux або macOS:
@@ -13,7 +13,7 @@ sourceHash: c7f92dfa554a
 curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-Скрипт завантажує випуск для вашої системи, перевіряє його контрольну суму SHA-256 і розміщує дві команди в `~/.local/bin`: `ccam` і його короткий псевдонім `ccs`. Якщо цієї теки немає у вашому `PATH`, скрипт виводить рядок, який потрібно додати до `~/.bashrc` або `~/.zshrc`.
+Скрипт завантажує випуск для вашої системи, перевіряє його контрольну суму SHA-256 і розміщує `ccam` у `~/.local/bin`; згодом `ccam add` створює в цій самій теці короткі команди `claude1`, `claude2` тощо. Якщо цієї теки немає у вашому `PATH`, скрипт виводить рядок, який потрібно додати до `~/.bashrc` або `~/.zshrc`.
 
 ccam запускає Claude Code за вас, тому спочатку встановіть [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) і переконайтеся, що `claude --version` працює.
 
@@ -31,13 +31,12 @@ ccam запускає Claude Code за вас, тому спочатку вст�
 sudo apt install ./ccam_*_linux_amd64.deb
 ```
 
-Пакет встановлює `/usr/bin/ccam` і посилання `/usr/bin/ccs`.
+Пакет встановлює `/usr/bin/ccam`.
 
 **З вихідного коду.** З Go 1.26 або новішою версією:
 
 ```sh
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
-ln -s ccam "$(go env GOPATH)/bin/ccs"
 ```
 
 **Певна версія.** Задайте `CCAM_VERSION`:
@@ -53,7 +52,7 @@ ccam completion bash > ~/.local/share/bash-completion/completions/ccam
 ccam completion zsh > "${fpath[1]}/_ccam"
 ```
 
-Автодоповнення працює і для `ccam`, і для `ccs`, включно з назвами облікових записів.
+Автодоповнення працює для всіх команд і параметрів `ccam`, включно з назвами облікових записів.
 
 ## Перевірка встановлення
 
@@ -66,10 +65,10 @@ ccam doctor
 
 ## Видалення
 
-Видаліть дві команди та короткі команди облікових записів, а потім теки з даними, якщо облікові записи вам більше не потрібні:
+Видаліть програму ccam та короткі команди облікових записів, а потім теки з даними, якщо облікові записи вам більше не потрібні:
 
 ```sh
-rm ~/.local/bin/ccam ~/.local/bin/ccs ~/.local/bin/claude[0-9]*
+rm ~/.local/bin/ccam ~/.local/bin/claude[0-9]*
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
 ```
 

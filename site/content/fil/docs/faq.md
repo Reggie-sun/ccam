@@ -4,7 +4,7 @@ description: Mga sagot tungkol sa ccam, mga Claude Code account, usage limit, sh
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 12ad0faef2ce
+sourceHash: 2be18393cbe2
 ---
 
 ## Opisyal bang tool ng Anthropic ang ccam?
@@ -25,11 +25,11 @@ Bigyan ang bawat account ng sariling configuration folder gamit ang `CLAUDE_CONF
 
 ## Paano ko itutuloy ang isang usapan sa ibang account?
 
-I-share ang kasaysayan ng usapan sa pagitan ng dalawang account gamit ang `ccam share <name> --history on`, saka patakbuhin ang `ccs next --continue`. Bubuksan ng Claude Code ang pinakahuling usapan ng kasalukuyang folder sa susunod na account.
+I-share ang kasaysayan ng usapan sa pagitan ng dalawang account gamit ang `ccam share <name> --history on`, saka patakbuhin ang `ccam next --continue`. Bubuksan ng Claude Code ang pinakahuling usapan ng kasalukuyang folder sa susunod na account.
 
 ## Nakikita o ipinapadala ba ng ccam ang login ko?
 
-Hindi kailanman kumokopya o nagshe-share ng login ang ccam. Binabasa lang nito ang access token ng isang account para itanong sa usage endpoint ng Anthropic ang usage ng account na iyon, kapag pinatakbo mo ang `ccs usage`, `ccs next --auto` o `ccam doctor`. Walang telemetry ang ccam at wala itong ipinapadala saanman bukod doon.
+Hindi kailanman kumokopya o nagshe-share ng login ang ccam. Binabasa lang nito ang access token ng isang account para itanong sa usage endpoint ng Anthropic ang usage ng account na iyon, kapag pinatakbo mo ang `ccam usage`, `ccam next --auto` o `ccam doctor`. Walang telemetry ang ccam at wala itong ipinapadala saanman bukod doon.
 
 ## Saan naka-store ang mga account ko?
 
@@ -37,7 +37,7 @@ Sa `~/.local/share/ccam/profiles/<name>/`, isang folder bawat account. Sa macOS,
 
 ## Ano ang mangyayari sa dati kong ~/.claude?
 
-Wala, maliban kung patakbuhin mo ang `ccam import`. Nirerehistro ng import ang folder kung nasaan ito, kaya ginagamit pa rin ng karaniwang `claude` at ng `ccs <name>` ang parehong account at settings.
+Wala, maliban kung patakbuhin mo ang `ccam import`. Nirerehistro ng import ang folder kung nasaan ito, kaya ginagamit pa rin ng karaniwang `claude` at ng `ccam <name>` ang parehong account at settings.
 
 ## Aling mga system ang suportado ng ccam?
 
@@ -53,4 +53,4 @@ Nagdadagdag ng mga 4 millisecond ang pagsisimula ng Claude Code sa pamamagitan n
 
 ## Paano i-uninstall ang ccam?
 
-Burahin ang `ccam`, `ccs` at ang mga link na `claude1`… mula sa `~/.local/bin`, saka ang `~/.config/ccam`, `~/.local/share/ccam` at `~/.local/state/ccam` kung hindi mo na kailangan ang mga account. Tingnan ang [install](/docs/install#uninstall).
+Burahin ang `ccam` at ang mga link na `claude1`… mula sa `~/.local/bin`, saka ang `~/.config/ccam`, `~/.local/share/ccam` at `~/.local/state/ccam` kung hindi mo na kailangan ang mga account. Tingnan ang [install](/docs/install#uninstall).

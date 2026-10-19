@@ -1,21 +1,21 @@
 ---
 title: Bayanin umarnai
-description: Kowane umarni da zaɓi na ccam, daga ccam add da ccs <name> zuwa ccam usage, ccam next da ccam doctor.
+description: Kowane umarni da zaɓi na ccam, daga ccam add da ccam <name> zuwa ccam usage, ccam next da ccam doctor.
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 18ecad9a1104
+sourceHash: 54bdfc489174
 ---
 
-`ccam` da `ccs` shiri ɗaya ne; yi amfani da wanda ka fi so. Saka `--dry-run` kafin kowane umarni don ganin abin da zai yi ba tare da ya yi shi ba, misali `ccs --dry-run work`.
+Saka `--dry-run` kafin kowane umarni don ganin abin da zai yi ba tare da ya yi shi ba, misali `ccam --dry-run work`.
 
 <!-- commands -->
 
 ## Fara Claude Code
 
-`ccs <name|number> [arguments]` yana fara Claude Code a matsayin wannan asusun. ccam ba ya karanta arguments da ke bayan sunan; yana miƙa su ga `claude` a tsari ɗaya, kuma standard input, exit code da signals suna aiki daidai kamar da `claude` kansa. `--` bayan sunan ba dole ba ne.
+`ccam <name|number> [arguments]` yana fara Claude Code a matsayin wannan asusun. ccam ba ya karanta arguments da ke bayan sunan; yana miƙa su ga `claude` a tsari ɗaya, kuma standard input, exit code da signals suna aiki daidai kamar da `claude` kansa. `--` bayan sunan ba dole ba ne.
 
-`ccs` tare da arguments amma ba tare da sunan asusu ba, kamar `ccs -p "summarise"`, yana amfani da asusun tsoho. Saita shi da `ccam use <name>`.
+`ccam` tare da arguments amma ba tare da sunan asusu ba, kamar `ccam -p "summarise"`, yana amfani da asusun tsoho. Saita shi da `ccam use <name>`.
 
 Gajerun umarnin `claude1`, `claude2` da sauransu mahaɗai ne zuwa ccam a `~/.local/bin`. `ccam shims install --names` yana kuma ƙirƙirar `claude-<name>` ga kowane asusu.
 
@@ -56,11 +56,11 @@ ccam mcp remove fs
 ## Amfani da sauyawa
 
 ```sh
-ccs usage            # also: ccs u
-ccs usage --watch    # refresh every 60 seconds
-ccs usage --json
-ccs next --continue
-ccs next --auto
+ccam usage           # also: ccam u
+ccam usage --watch   # refresh every 60 seconds
+ccam usage --json
+ccam next --continue
+ccam next --auto
 ```
 
 ## Kulawa
@@ -80,6 +80,6 @@ ccam shims install
 | `~/.local/share/ccam/profiles/<name>/` | `CLAUDE_CONFIG_DIR` na kowane asusu |
 | `~/.local/share/ccam/groups/<group>/` | Saituna, sabobin MCP, extensions da tarihi da aka raba |
 | `~/.local/state/ccam/` | Cache na amfani da lokutan amfani na ƙarshe |
-| `~/.local/bin/claude1`, `ccs` | Mahaɗai zuwa ccam |
+| `~/.local/bin/claude1`, `claude2`… | Mahaɗai zuwa ccam |
 
 Masu canji (variables) `XDG_CONFIG_HOME`, `XDG_DATA_HOME` da `XDG_STATE_HOME` suna canza wurin waɗannan foldojin.

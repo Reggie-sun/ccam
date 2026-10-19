@@ -2,7 +2,6 @@
 # i18n-check fails when an English page uses one of these and its translation does not.
 keep:
   - ccam
-  - ccs
   - Claude Code
   - Anthropic
   - MCP

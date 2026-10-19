@@ -4,7 +4,7 @@ description: Amsoshi game da ccam, asusun Claude Code, iyakokin amfani, rabawa, 
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 12ad0faef2ce
+sourceHash: 2be18393cbe2
 ---
 
 ## Shin ccam kayan aikin Anthropic ne na hukuma?
@@ -25,11 +25,11 @@ Ba kowane asusu foldar saitunsa ta kansa da `CLAUDE_CONFIG_DIR`. ccam yana yi ma
 
 ## Ta yaya zan ci gaba da tattaunawa a wani asusu?
 
-Raba tarihin tattaunawa tsakanin asusun biyu da `ccam share <name> --history on`, sannan ka gudanar da `ccs next --continue`. Claude Code yana buɗe tattaunawa ta baya-bayan nan ta foldar yanzu a asusu na gaba.
+Raba tarihin tattaunawa tsakanin asusun biyu da `ccam share <name> --history on`, sannan ka gudanar da `ccam next --continue`. Claude Code yana buɗe tattaunawa ta baya-bayan nan ta foldar yanzu a asusu na gaba.
 
 ## Shin ccam yana ganin bayanan shigata ko yana aika su?
 
-ccam ba ya taɓa kwafa ko raba bayanan shiga. Yana karanta access token na asusu ne kawai don tambayar endpoint na amfani na Anthropic game da amfanin wannan asusun, lokacin da ka gudanar da `ccs usage`, `ccs next --auto` ko `ccam doctor`. ccam ba shi da telemetry kuma ba ya aika komai zuwa wani wuri dabam.
+ccam ba ya taɓa kwafa ko raba bayanan shiga. Yana karanta access token na asusu ne kawai don tambayar endpoint na amfani na Anthropic game da amfanin wannan asusun, lokacin da ka gudanar da `ccam usage`, `ccam next --auto` ko `ccam doctor`. ccam ba shi da telemetry kuma ba ya aika komai zuwa wani wuri dabam.
 
 ## A ina ake ajiye asusuna?
 
@@ -37,7 +37,7 @@ A `~/.local/share/ccam/profiles/<name>/`, folda ɗaya ga kowane asusu. A macOS, 
 
 ## Me zai faru da ~/.claude da nake da shi?
 
-Babu komai, sai dai idan ka gudanar da `ccam import`. Import yana yin rajistar foldar a inda take, don haka `claude` kai tsaye da `ccs <name>` suna ci gaba da amfani da asusu da saituna iri ɗaya.
+Babu komai, sai dai idan ka gudanar da `ccam import`. Import yana yin rajistar foldar a inda take, don haka `claude` kai tsaye da `ccam <name>` suna ci gaba da amfani da asusu da saituna iri ɗaya.
 
 ## Waɗanne tsaruka ne ccam yake tallafawa?
 
@@ -53,4 +53,4 @@ Fara Claude Code ta ccam yana ƙara kusan millisecond 4, wanda aka auna da `scri
 
 ## Ta yaya zan cire ccam?
 
-Share `ccam`, `ccs` da mahaɗan `claude1`… daga `~/.local/bin`, sannan `~/.config/ccam`, `~/.local/share/ccam` da `~/.local/state/ccam` idan ba ka buƙatar asusan kuma. Duba [girkawa](/docs/install#uninstall).
+Share `ccam` da mahaɗan `claude1`… daga `~/.local/bin`, sannan `~/.config/ccam`, `~/.local/share/ccam` da `~/.local/state/ccam` idan ba ka buƙatar asusan kuma. Duba [girkawa](/docs/install#uninstall).

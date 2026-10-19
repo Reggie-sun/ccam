@@ -1,13 +1,13 @@
 ---
 title: Bắt đầu nhanh
-description: "Thêm hai tài khoản Claude Code bằng ccam add, chuyển đổi giữa chúng bằng claude1, claude2 hoặc ccs, và chọn những gì chúng dùng chung."
+description: "Thêm hai tài khoản Claude Code bằng ccam add, chuyển đổi giữa chúng bằng claude1, claude2 hoặc ccam <name>, và chọn những gì chúng dùng chung."
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 9462b80d61bc
+sourceHash: c6b1c1c3ebaf
 ---
 
-Thêm từng tài khoản bằng `ccam add`, rồi khởi động Claude Code bằng `claude1`, `claude2` hoặc `ccs <name>`. Hầu hết mọi người chỉ cần như vậy.
+Thêm từng tài khoản bằng `ccam add`, rồi khởi động Claude Code bằng `claude1`, `claude2` hoặc `ccam <name>`. Hầu hết mọi người chỉ cần như vậy.
 
 ## 1. Thêm tài khoản đầu tiên
 
@@ -37,19 +37,19 @@ Bất kỳ lệnh nào dưới đây cũng khởi động Claude Code bằng tà
 
 ```sh
 claude2
-ccs work
-ccs 2
+ccam work
+ccam 2
 ```
 
 Mọi thứ sau tên tài khoản được chuyển nguyên vẹn cho Claude Code, nên bạn vẫn dùng các tùy chọn quen thuộc:
 
 ```sh
-ccs work --resume
-ccs work -p "fix the failing test" --output-format json
+ccam work --resume
+ccam work -p "fix the failing test" --output-format json
 cat error.log | claude2 -p "what caused this?"
 ```
 
-Chạy `ccs` một mình sẽ mở trình chọn: dùng các phím mũi tên và Enter, hoặc nhấn số của tài khoản.
+Chạy `ccam` một mình sẽ mở trình chọn: dùng các phím mũi tên và Enter, hoặc nhấn số của tài khoản.
 
 ## 4. Chọn những gì dùng chung
 
@@ -65,11 +65,11 @@ ccam cho bạn xem những gì nó sẽ di chuyển trước khi thay đổi b�
 ## 5. Khi một tài khoản chạm giới hạn
 
 ```sh
-ccs usage
-ccs next --continue
+ccam usage
+ccam next --continue
 ```
 
-`ccs usage` hiển thị mức sử dụng 5 giờ và hàng tuần của mọi tài khoản. `ccs next --continue` mở cùng cuộc hội thoại ở tài khoản kế tiếp. Xem [giới hạn sử dụng](/docs/usage-limits).
+`ccam usage` hiển thị mức sử dụng 5 giờ và hàng tuần của mọi tài khoản. `ccam next --continue` mở cùng cuộc hội thoại ở tài khoản kế tiếp. Xem [giới hạn sử dụng](/docs/usage-limits).
 
 ## Bạn đã dùng ~/.claude?
 

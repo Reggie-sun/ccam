@@ -23,11 +23,11 @@
   },
   "landing": {
     "headline": "Asusun Claude Code da dama. Terminal ɗaya.",
-    "lede": "Ka ƙara kowane asusu sau ɗaya. Ka sauya da claude2 ko ccs work. Idan wani asusu ya kai iyakarsa, ka ci gaba a na gaba da wannan tattaunawar.",
+    "lede": "Ka ƙara kowane asusu sau ɗaya. Ka sauya da claude2 ko ccam work. Idan wani asusu ya kai iyakarsa, ka ci gaba a na gaba da wannan tattaunawar.",
     "installLabel": "Girka a Linux ko macOS",
     "thenAdd": "Sannan ka ƙara asusunka na farko da {command}.",
     "readDocs": "Karanta jagorar farawa da sauri",
-    "boardLabel": "Misalin sakamakon ccs usage: iyakokin kowane asusu a lokaci ɗaya",
+    "boardLabel": "Misalin sakamakon ccam usage: iyakokin kowane asusu a lokaci ɗaya",
     "board": {
       "account": "Asusu",
       "fiveHour": "Awa 5",
@@ -43,7 +43,7 @@
       },
       {
         "command": "claude2",
-        "also": "ccs work --resume",
+        "also": "ccam work --resume",
         "body": "Yana fara Claude Code a matsayin wannan asusun. Duk abin da ke bayan sunan yana zuwa Claude Code ba tare da canji ba, kuma ccam yana ƙara kusan millisecond 4 kafin ya fara."
       },
       {
@@ -51,11 +51,11 @@
         "body": "Yana zaɓar abin da asusun zai raba da sauran asusunka. Ana raba sabobin MCP, saituna, CLAUDE.md da extensions tun daga farko; ba a taɓa raba bayanan shiga ba."
       },
       {
-        "command": "ccs usage",
+        "command": "ccam usage",
         "body": "Yana nuna amfanin awa 5 da na mako na kowane asusu a lokaci ɗaya, don ka san wanne ne yake da sauran sarari."
       },
       {
-        "command": "ccs next --continue",
+        "command": "ccam next --continue",
         "body": "Yana buɗe wannan tattaunawar a asusu na gaba idan na yanzu ya kai iyakarsa."
       },
       {
@@ -86,7 +86,7 @@
     }
   },
   "commands": {
-    "ccs": "Buɗe mai zaɓar asusu",
+    "ccam": "Buɗe mai zaɓar asusu",
     "name": "Fara Claude Code a matsayin wannan asusun; ana miƙa arguments ba tare da canji ba",
     "add": "Ƙara asusu: folda ta saituna, shiga da gajeren umarni",
     "list": "Jera asusai",
@@ -102,7 +102,7 @@
     "import": "Yi rajistar foldar ~/.claude da ke akwai a inda take",
     "doctor": "Duba mahaɗai, izini, bayanan shiga da sigogi, sannan ka gyara",
     "statusline": "Nuna asusun da amfaninsa a layin matsayi na Claude Code",
-    "shims": "Sake ƙirƙirar claude1…claudeN da ccs",
+    "shims": "Sake ƙirƙirar claude1…claudeN",
     "completion": "Buga completion na bash ko zsh"
   },
   "copy": {

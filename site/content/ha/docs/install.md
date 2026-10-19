@@ -4,7 +4,7 @@ description: Girka ccam a Linux ko macOS da umarni ɗaya, daga kunshin .deb, ko 
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: c7f92dfa554a
+sourceHash: fc63978e8f9e
 ---
 
 Gudanar da wannan a terminal a Linux ko macOS:
@@ -13,7 +13,7 @@ Gudanar da wannan a terminal a Linux ko macOS:
 curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-Rubutun (script) yana sauke sakin da ya dace da tsarinka, yana duba checksum ɗinsa na SHA-256, sannan yana saka umarni biyu a `~/.local/bin`: `ccam` da gajeren sunansa `ccs`. Idan wannan foldar ba ta cikin `PATH` ɗinka, rubutun yana buga layin da za ka ƙara a `~/.bashrc` ko `~/.zshrc`.
+Rubutun (script) yana sauke sakin da ya dace da tsarinka, yana duba checksum ɗinsa na SHA-256, sannan yana saka `ccam` a `~/.local/bin`, inda daga baya `ccam add` ke ƙirƙirar gajerun umarnin `claude1`, `claude2` da sauransu. Idan wannan foldar ba ta cikin `PATH` ɗinka, rubutun yana buga layin da za ka ƙara a `~/.bashrc` ko `~/.zshrc`.
 
 ccam ne ke fara maka Claude Code, don haka ka fara girka [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) kuma ka tabbata `claude --version` yana aiki.
 
@@ -31,13 +31,12 @@ ccam ne ke fara maka Claude Code, don haka ka fara girka [Claude Code](https://d
 sudo apt install ./ccam_*_linux_amd64.deb
 ```
 
-Kunshin yana girka `/usr/bin/ccam` da mahaɗin `/usr/bin/ccs`.
+Kunshin yana girka `/usr/bin/ccam`.
 
 **Daga lambar tushe.** Da Go 1.26 ko sabo:
 
 ```sh
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
-ln -s ccam "$(go env GOPATH)/bin/ccs"
 ```
 
 **Wata siga ta musamman.** Saita `CCAM_VERSION`:
@@ -53,7 +52,7 @@ ccam completion bash > ~/.local/share/bash-completion/completions/ccam
 ccam completion zsh > "${fpath[1]}/_ccam"
 ```
 
-Completion yana aiki ga `ccam` da `ccs` duka, har da sunayen asusai.
+Completion yana aiki ga dukkan umarni da zaɓuɓɓukan `ccam`, har da sunayen asusai.
 
 ## Duba girkawar
 
@@ -66,10 +65,10 @@ ccam doctor
 
 ## Cire ccam
 
-Cire umarnin biyu da gajerun umarnin asusai, sannan foldojin bayanai idan ba ka buƙatar asusan kuma:
+Cire umarnin da gajerun umarnin asusai, sannan foldojin bayanai idan ba ka buƙatar asusan kuma:
 
 ```sh
-rm ~/.local/bin/ccam ~/.local/bin/ccs ~/.local/bin/claude[0-9]*
+rm ~/.local/bin/ccam ~/.local/bin/claude[0-9]*
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
 ```
 

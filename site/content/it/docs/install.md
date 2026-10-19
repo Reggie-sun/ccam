@@ -4,7 +4,7 @@ description: Installa ccam su Linux o macOS con un solo comando, da un pacchetto
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: c7f92dfa554a
+sourceHash: fc63978e8f9e
 ---
 
 Esegui questo comando in un terminale su Linux o macOS:
@@ -13,7 +13,7 @@ Esegui questo comando in un terminale su Linux o macOS:
 curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-Lo script scarica la release per il tuo sistema, ne verifica il checksum SHA-256 e mette due comandi in `~/.local/bin`: `ccam` e il suo alias breve `ccs`. Se quella cartella non è nel tuo `PATH`, lo script stampa la riga da aggiungere a `~/.bashrc` o `~/.zshrc`.
+Lo script scarica la release per il tuo sistema, ne verifica il checksum SHA-256 e mette `ccam` in `~/.local/bin`, dove in seguito `ccam add` crea le scorciatoie `claude1`, `claude2` e così via. Se quella cartella non è nel tuo `PATH`, lo script stampa la riga da aggiungere a `~/.bashrc` o `~/.zshrc`.
 
 ccam avvia Claude Code per te, quindi installa prima [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) e verifica che `claude --version` funzioni.
 
@@ -31,13 +31,12 @@ ccam avvia Claude Code per te, quindi installa prima [Claude Code](https://docs.
 sudo apt install ./ccam_*_linux_amd64.deb
 ```
 
-Il pacchetto installa `/usr/bin/ccam` e il link `/usr/bin/ccs`.
+Il pacchetto installa `/usr/bin/ccam`.
 
 **Dai sorgenti.** Con Go 1.26 o successivo:
 
 ```sh
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
-ln -s ccam "$(go env GOPATH)/bin/ccs"
 ```
 
 **Una versione specifica.** Imposta `CCAM_VERSION`:
@@ -53,7 +52,7 @@ ccam completion bash > ~/.local/share/bash-completion/completions/ccam
 ccam completion zsh > "${fpath[1]}/_ccam"
 ```
 
-Il completamento copre sia `ccam` sia `ccs`, compresi i nomi degli account.
+Il completamento copre tutti i comandi e le opzioni di `ccam`, compresi i nomi degli account.
 
 ## Verificare l'installazione
 
@@ -66,10 +65,10 @@ ccam doctor
 
 ## Disinstallazione
 
-Rimuovi i due comandi e le scorciatoie degli account, poi le cartelle dei dati se non ti servono più gli account:
+Rimuovi il comando e le scorciatoie degli account, poi le cartelle dei dati se non ti servono più gli account:
 
 ```sh
-rm ~/.local/bin/ccam ~/.local/bin/ccs ~/.local/bin/claude[0-9]*
+rm ~/.local/bin/ccam ~/.local/bin/claude[0-9]*
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
 ```
 

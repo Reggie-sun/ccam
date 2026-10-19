@@ -4,7 +4,7 @@ description: "ccam کو Linux یا macOS پر ایک کمانڈ سے، .deb پی
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: c7f92dfa554a
+sourceHash: fc63978e8f9e
 ---
 
 Linux یا macOS پر ٹرمینل میں یہ کمانڈ چلائیں:
@@ -13,7 +13,7 @@ Linux یا macOS پر ٹرمینل میں یہ کمانڈ چلائیں:
 curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-اسکرپٹ آپ کے سسٹم کے لیے ریلیز ڈاؤن لوڈ کرتا ہے، اس کا SHA-256 چیک سم جانچتا ہے اور `~/.local/bin` میں دو کمانڈز رکھتا ہے: `ccam` اور اس کا مختصر نام `ccs`۔ اگر یہ فولڈر آپ کے `PATH` میں شامل نہیں ہے تو اسکرپٹ وہ لائن پرنٹ کرتا ہے جو `~/.bashrc` یا `~/.zshrc` میں شامل کرنی ہے۔
+اسکرپٹ آپ کے سسٹم کے لیے ریلیز ڈاؤن لوڈ کرتا ہے، اس کا SHA-256 چیک سم جانچتا ہے اور `ccam` کو `~/.local/bin` میں رکھتا ہے؛ بعد میں `ccam add` اسی فولڈر میں `claude1`، `claude2`… شارٹ کٹس بناتا ہے۔ اگر یہ فولڈر آپ کے `PATH` میں شامل نہیں ہے تو اسکرپٹ وہ لائن پرنٹ کرتا ہے جو `~/.bashrc` یا `~/.zshrc` میں شامل کرنی ہے۔
 
 ccam آپ کے لیے Claude Code شروع کرتا ہے، اس لیے پہلے [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) انسٹال کریں اور یقینی بنائیں کہ `claude --version` کام کرتا ہے۔
 
@@ -31,13 +31,12 @@ ccam آپ کے لیے Claude Code شروع کرتا ہے، اس لیے پہلے 
 sudo apt install ./ccam_*_linux_amd64.deb
 ```
 
-پیکیج `/usr/bin/ccam` اور `/usr/bin/ccs` لنک انسٹال کرتا ہے۔
+پیکیج `/usr/bin/ccam` انسٹال کرتا ہے۔
 
 **سورس سے۔** Go 1.26 یا اس سے نئے ورژن کے ساتھ:
 
 ```sh
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
-ln -s ccam "$(go env GOPATH)/bin/ccs"
 ```
 
 **کوئی مخصوص ورژن۔** `CCAM_VERSION` سیٹ کریں:
@@ -53,7 +52,7 @@ ccam completion bash > ~/.local/share/bash-completion/completions/ccam
 ccam completion zsh > "${fpath[1]}/_ccam"
 ```
 
-کمپلیشن `ccam` اور `ccs` دونوں کے لیے کام کرتی ہے، اکاؤنٹس کے ناموں سمیت۔
+کمپلیشن `ccam` کی تمام کمانڈز اور آپشنز کے لیے کام کرتی ہے، اکاؤنٹس کے ناموں سمیت۔
 
 ## انسٹالیشن چیک کریں
 
@@ -66,10 +65,10 @@ ccam doctor
 
 ## اَن انسٹال کرنا
 
-دونوں کمانڈز اور اکاؤنٹس کے شارٹ کٹس ہٹائیں، پھر اگر آپ کو اکاؤنٹس کی مزید ضرورت نہیں تو ڈیٹا فولڈرز بھی ہٹا دیں:
+کمانڈ اور اکاؤنٹس کے شارٹ کٹس ہٹائیں، پھر اگر آپ کو اکاؤنٹس کی مزید ضرورت نہیں تو ڈیٹا فولڈرز بھی ہٹا دیں:
 
 ```sh
-rm ~/.local/bin/ccam ~/.local/bin/ccs ~/.local/bin/claude[0-9]*
+rm ~/.local/bin/ccam ~/.local/bin/claude[0-9]*
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
 ```
 

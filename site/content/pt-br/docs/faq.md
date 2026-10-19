@@ -4,7 +4,7 @@ description: Respostas sobre o ccam, contas do Claude Code, limites de uso, comp
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 12ad0faef2ce
+sourceHash: 2be18393cbe2
 ---
 
 ## O ccam é uma ferramenta oficial da Anthropic?
@@ -25,11 +25,11 @@ Dê a cada conta a própria pasta de configuração com `CLAUDE_CONFIG_DIR`. O c
 
 ## Como continuar uma conversa em outra conta?
 
-Compartilhe o histórico de conversas entre as duas contas com `ccam share <name> --history on` e depois execute `ccs next --continue`. O Claude Code abre a conversa mais recente da pasta atual na próxima conta.
+Compartilhe o histórico de conversas entre as duas contas com `ccam share <name> --history on` e depois execute `ccam next --continue`. O Claude Code abre a conversa mais recente da pasta atual na próxima conta.
 
 ## O ccam vê ou envia meu login?
 
-O ccam nunca copia nem compartilha um login. Ele lê o token de acesso de uma conta apenas para consultar o uso dessa conta no endpoint de uso da Anthropic, quando você executa `ccs usage`, `ccs next --auto` ou `ccam doctor`. O ccam não tem telemetria e não envia nada para nenhum outro lugar.
+O ccam nunca copia nem compartilha um login. Ele lê o token de acesso de uma conta apenas para consultar o uso dessa conta no endpoint de uso da Anthropic, quando você executa `ccam usage`, `ccam next --auto` ou `ccam doctor`. O ccam não tem telemetria e não envia nada para nenhum outro lugar.
 
 ## Onde minhas contas ficam armazenadas?
 
@@ -37,7 +37,7 @@ Em `~/.local/share/ccam/profiles/<name>/`, uma pasta por conta. No macOS, o Clau
 
 ## O que acontece com a minha pasta ~/.claude existente?
 
-Nada, a menos que você execute `ccam import`. A importação registra a pasta no lugar onde ela está, então o `claude` simples e o `ccs <name>` continuam usando a mesma conta e as mesmas configurações.
+Nada, a menos que você execute `ccam import`. A importação registra a pasta no lugar onde ela está, então o `claude` simples e o `ccam <name>` continuam usando a mesma conta e as mesmas configurações.
 
 ## Quais sistemas o ccam suporta?
 
@@ -53,4 +53,4 @@ Iniciar o Claude Code pelo ccam acrescenta cerca de 4 milissegundos, medidos com
 
 ## Como desinstalar o ccam?
 
-Exclua `ccam`, `ccs` e os links `claude1`… de `~/.local/bin` e depois `~/.config/ccam`, `~/.local/share/ccam` e `~/.local/state/ccam` se você não precisar mais das contas. Consulte [instalação](/docs/install#uninstall).
+Exclua o `ccam` e os links `claude1`… de `~/.local/bin` e depois `~/.config/ccam`, `~/.local/share/ccam` e `~/.local/state/ccam` se você não precisar mais das contas. Consulte [instalação](/docs/install#uninstall).

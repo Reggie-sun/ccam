@@ -4,10 +4,10 @@ description: Sprawdź, ile zapasu zostało na każdym koncie Claude Code, i kont
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 64fe0b561bd1
+sourceHash: db7ed9b7bcfc
 ---
 
-Gdy jedno konto osiągnie limit, kontynuuj tę samą rozmowę na innym swoim koncie: raz włącz współdzielenie historii rozmów, a potem uruchom `ccs next --continue`. Jeśli masz tylko jedno konto, poczekaj do czasu resetu, który pokazuje Claude Code.
+Gdy jedno konto osiągnie limit, kontynuuj tę samą rozmowę na innym swoim koncie: raz włącz współdzielenie historii rozmów, a potem uruchom `ccam next --continue`. Jeśli masz tylko jedno konto, poczekaj do czasu resetu, który pokazuje Claude Code.
 
 ## Zanim to nastąpi
 
@@ -28,7 +28,7 @@ Pasek stanu pokazuje teraz podczas pracy konto i jego 5-godzinne użycie, więc 
 Wyjdź z Claude Code (`/exit`), a następnie:
 
 ```sh
-ccs usage
+ccam usage
 ```
 
 ```console
@@ -39,16 +39,16 @@ ccs usage
 Otwórz rozmowę na koncie z największym zapasem:
 
 ```sh
-ccs next --auto --continue
+ccam next --auto --continue
 ```
 
 Claude Code uruchomi się jako `work` z najnowszą rozmową z bieżącego folderu, łącznie ze wszystkim, co zostało w niej dotąd powiedziane.
 
 ## O czym pamiętać
 
-- Uruchamiaj `ccs next --continue` w tym samym folderze, w którym pracowałeś; rozmowy są przechowywane osobno dla każdego folderu projektu.
+- Uruchamiaj `ccam next --continue` w tym samym folderze, w którym pracowałeś; rozmowy są przechowywane osobno dla każdego folderu projektu.
 - Nie uruchamiaj dwóch kont na tej samej rozmowie jednocześnie. ccam ostrzeże cię, jeśli spróbujesz.
 - Drugie konto też musi współdzielić historię rozmów, w tej samej grupie.
 - To, czy wolno ci w ten sposób przełączać się między kontami, zależy od warunków każdego konta.
 
-Wszystkie opcje `ccs usage` i `ccs next` znajdziesz w części [limity użycia](/docs/usage-limits).
+Wszystkie opcje `ccam usage` i `ccam next` znajdziesz w części [limity użycia](/docs/usage-limits).

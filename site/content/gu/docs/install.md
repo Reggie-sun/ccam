@@ -4,7 +4,7 @@ description: Linux કે macOS પર ccam એક કમાન્ડથી, .de
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: c7f92dfa554a
+sourceHash: fc63978e8f9e
 ---
 
 Linux કે macOS પર ટર્મિનલમાં આ ચલાવો:
@@ -13,7 +13,7 @@ Linux કે macOS પર ટર્મિનલમાં આ ચલાવો:
 curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-સ્ક્રિપ્ટ તમારી સિસ્ટમ માટેનું રિલીઝ ડાઉનલોડ કરે છે, તેનો SHA-256 ચેકસમ તપાસે છે અને `~/.local/bin` માં બે કમાન્ડ મૂકે છે: `ccam` અને તેનું ટૂંકું ઉપનામ `ccs`. જો એ ફોલ્ડર તમારા `PATH` માં ન હોય, તો સ્ક્રિપ્ટ `~/.bashrc` કે `~/.zshrc` માં ઉમેરવાની લાઇન છાપે છે.
+સ્ક્રિપ્ટ તમારી સિસ્ટમ માટેનું રિલીઝ ડાઉનલોડ કરે છે, તેનો SHA-256 ચેકસમ તપાસે છે અને `ccam` ને `~/.local/bin` માં મૂકે છે; પછીથી `ccam add` એ જ ફોલ્ડરમાં `claude1`, `claude2`… શૉર્ટકટ બનાવે છે. જો એ ફોલ્ડર તમારા `PATH` માં ન હોય, તો સ્ક્રિપ્ટ `~/.bashrc` કે `~/.zshrc` માં ઉમેરવાની લાઇન છાપે છે.
 
 ccam તમારા માટે Claude Code શરૂ કરે છે, તેથી પહેલાં [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) ઇન્સ્ટૉલ કરો અને ખાતરી કરો કે `claude --version` કામ કરે છે.
 
@@ -31,13 +31,12 @@ ccam તમારા માટે Claude Code શરૂ કરે છે, તે
 sudo apt install ./ccam_*_linux_amd64.deb
 ```
 
-પેકેજ `/usr/bin/ccam` અને `/usr/bin/ccs` લિંક ઇન્સ્ટૉલ કરે છે.
+પેકેજ `/usr/bin/ccam` ઇન્સ્ટૉલ કરે છે.
 
 **સોર્સમાંથી.** Go 1.26 કે તેથી નવા વર્ઝન સાથે:
 
 ```sh
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
-ln -s ccam "$(go env GOPATH)/bin/ccs"
 ```
 
 **કોઈ ચોક્કસ વર્ઝન.** `CCAM_VERSION` સેટ કરો:
@@ -53,7 +52,7 @@ ccam completion bash > ~/.local/share/bash-completion/completions/ccam
 ccam completion zsh > "${fpath[1]}/_ccam"
 ```
 
-Completion `ccam` અને `ccs` બંનેને આવરી લે છે, એકાઉન્ટનાં નામ સહિત.
+Completion `ccam` ના બધા કમાન્ડ અને વિકલ્પોને આવરી લે છે, એકાઉન્ટનાં નામ સહિત.
 
 ## ઇન્સ્ટૉલેશન તપાસો
 
@@ -66,10 +65,10 @@ ccam doctor
 
 ## અનઇન્સ્ટૉલ કરો
 
-બંને કમાન્ડ અને એકાઉન્ટ શૉર્ટકટ દૂર કરો, પછી જો તમને એકાઉન્ટની હવે જરૂર ન હોય તો ડેટા ફોલ્ડર પણ દૂર કરો:
+કમાન્ડ અને એકાઉન્ટ શૉર્ટકટ દૂર કરો, પછી જો તમને એકાઉન્ટની હવે જરૂર ન હોય તો ડેટા ફોલ્ડર પણ દૂર કરો:
 
 ```sh
-rm ~/.local/bin/ccam ~/.local/bin/ccs ~/.local/bin/claude[0-9]*
+rm ~/.local/bin/ccam ~/.local/bin/claude[0-9]*
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
 ```
 

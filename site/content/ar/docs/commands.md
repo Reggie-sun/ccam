@@ -1,21 +1,21 @@
 ---
 title: مرجع الأوامر
-description: كل أوامر ccam وخياراتها، من ccam add وccs <name> إلى ccam usage وccam next وccam doctor.
+description: كل أوامر ccam وخياراتها، من ccam add وccam <name> إلى ccam usage وccam next وccam doctor.
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 18ecad9a1104
+sourceHash: 54bdfc489174
 ---
 
-`ccam` و`ccs` هما البرنامج نفسه؛ استخدم أيهما تفضّل. ضع `--dry-run` قبل أي أمر لترى ما سيفعله دون أن يفعله، مثلًا `ccs --dry-run work`.
+ضع `--dry-run` قبل أي أمر لترى ما سيفعله دون أن يفعله، مثلًا `ccam --dry-run work`.
 
 <!-- commands -->
 
 ## تشغيل Claude Code
 
-يشغّل `ccs <name|number> [arguments]` برنامج Claude Code بذلك الحساب. لا يقرأ ccam الوسائط التي تأتي بعد الاسم؛ بل يمرّرها إلى `claude` بالترتيب نفسه، ويتصرف الإدخال القياسي ورمز الخروج والإشارات تمامًا كما مع `claude` نفسه. وضع `--` بعد الاسم اختياري.
+يشغّل `ccam <name|number> [arguments]` برنامج Claude Code بذلك الحساب. لا يقرأ ccam الوسائط التي تأتي بعد الاسم؛ بل يمرّرها إلى `claude` بالترتيب نفسه، ويتصرف الإدخال القياسي ورمز الخروج والإشارات تمامًا كما مع `claude` نفسه. وضع `--` بعد الاسم اختياري.
 
-أما `ccs` مع وسائط ولكن دون اسم حساب، مثل `ccs -p "summarise"`، فيستخدم الحساب الافتراضي. عيّنه باستخدام `ccam use <name>`.
+أما `ccam` مع وسائط ولكن دون اسم حساب، مثل `ccam -p "summarise"`، فيستخدم الحساب الافتراضي. عيّنه باستخدام `ccam use <name>`.
 
 الأوامر المختصرة `claude1` و`claude2` وهكذا هي روابط إلى ccam في `~/.local/bin`. وينشئ `ccam shims install --names` أيضًا `claude-<name>` لكل حساب.
 
@@ -56,11 +56,11 @@ ccam mcp remove fs
 ## الاستخدام والتبديل
 
 ```sh
-ccs usage            # also: ccs u
-ccs usage --watch    # refresh every 60 seconds
-ccs usage --json
-ccs next --continue
-ccs next --auto
+ccam usage           # also: ccam u
+ccam usage --watch   # refresh every 60 seconds
+ccam usage --json
+ccam next --continue
+ccam next --auto
 ```
 
 ## الصيانة
@@ -80,6 +80,6 @@ ccam shims install
 | `~/.local/share/ccam/profiles/<name>/` | مجلد `CLAUDE_CONFIG_DIR` لكل حساب |
 | `~/.local/share/ccam/groups/<group>/` | الإعدادات وخوادم MCP والإضافات والسجل المشتركة |
 | `~/.local/state/ccam/` | ذاكرة التخزين المؤقت للاستخدام وأوقات آخر استخدام |
-| `~/.local/bin/claude1`، `ccs` | روابط إلى ccam |
+| `~/.local/bin/claude1`، `claude2`… | روابط إلى ccam |
 
 تغيّر المتغيرات `XDG_CONFIG_HOME` و`XDG_DATA_HOME` و`XDG_STATE_HOME` مواقع هذه المجلدات.

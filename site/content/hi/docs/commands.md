@@ -1,21 +1,21 @@
 ---
 title: कमांड संदर्भ
-description: ccam की हर कमांड और विकल्प, ccam add और ccs <name> से लेकर ccam usage, ccam next और ccam doctor तक।
+description: ccam की हर कमांड और विकल्प, ccam add और ccam <name> से लेकर ccam usage, ccam next और ccam doctor तक।
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 18ecad9a1104
+sourceHash: 54bdfc489174
 ---
 
-`ccam` और `ccs` एक ही प्रोग्राम हैं; जो आपको पसंद हो, वह इस्तेमाल करें। कोई कमांड असल में चलाए बिना यह देखने के लिए कि वह क्या करेगी, उसके आगे `--dry-run` लगाएँ, उदाहरण के लिए `ccs --dry-run work`।
+कोई कमांड असल में चलाए बिना यह देखने के लिए कि वह क्या करेगी, उसके आगे `--dry-run` लगाएँ, उदाहरण के लिए `ccam --dry-run work`।
 
 <!-- commands -->
 
 ## Claude Code शुरू करना
 
-`ccs <name|number> [arguments]` Claude Code को उस अकाउंट से शुरू करता है। ccam नाम के बाद वाले आर्ग्युमेंट नहीं पढ़ता; वह उन्हें उसी क्रम में `claude` को दे देता है, और standard input, exit code और signals ठीक वैसे ही काम करते हैं जैसे ख़ुद `claude` के साथ। नाम के बाद `--` लगाना वैकल्पिक है।
+`ccam <name|number> [arguments]` Claude Code को उस अकाउंट से शुरू करता है। ccam नाम के बाद वाले आर्ग्युमेंट नहीं पढ़ता; वह उन्हें उसी क्रम में `claude` को दे देता है, और standard input, exit code और signals ठीक वैसे ही काम करते हैं जैसे ख़ुद `claude` के साथ। नाम के बाद `--` लगाना वैकल्पिक है।
 
-आर्ग्युमेंट के साथ लेकिन बिना अकाउंट नाम के `ccs`, जैसे `ccs -p "summarise"`, डिफ़ॉल्ट अकाउंट इस्तेमाल करता है। इसे `ccam use <name>` से सेट करें।
+आर्ग्युमेंट के साथ लेकिन बिना अकाउंट नाम के `ccam`, जैसे `ccam -p "summarise"`, डिफ़ॉल्ट अकाउंट इस्तेमाल करता है। इसे `ccam use <name>` से सेट करें।
 
 शॉर्टकट `claude1`, `claude2` आदि `~/.local/bin` में ccam के लिंक हैं। `ccam shims install --names` हर अकाउंट के लिए `claude-<name>` भी बनाता है।
 
@@ -56,11 +56,11 @@ ccam mcp remove fs
 ## उपयोग और स्विच करना
 
 ```sh
-ccs usage            # also: ccs u
-ccs usage --watch    # refresh every 60 seconds
-ccs usage --json
-ccs next --continue
-ccs next --auto
+ccam usage           # also: ccam u
+ccam usage --watch   # refresh every 60 seconds
+ccam usage --json
+ccam next --continue
+ccam next --auto
 ```
 
 ## रखरखाव
@@ -80,6 +80,6 @@ ccam shims install
 | `~/.local/share/ccam/profiles/<name>/` | हर अकाउंट का `CLAUDE_CONFIG_DIR` |
 | `~/.local/share/ccam/groups/<group>/` | साझा सेटिंग्स, MCP सर्वर, एक्सटेंशन और इतिहास |
 | `~/.local/state/ccam/` | उपयोग का cache और आख़िरी इस्तेमाल का समय |
-| `~/.local/bin/claude1`, `ccs` | ccam के लिंक |
+| `~/.local/bin/claude1`, `claude2`… | ccam के लिंक |
 
 `XDG_CONFIG_HOME`, `XDG_DATA_HOME` और `XDG_STATE_HOME` variables इन फ़ोल्डरों की जगह बदल देते हैं।

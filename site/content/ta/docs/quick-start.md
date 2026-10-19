@@ -1,13 +1,13 @@
 ---
 title: விரைவுத் தொடக்கம்
-description: ccam add மூலம் இரண்டு Claude Code கணக்குகளைச் சேர்த்து, claude1, claude2 அல்லது ccs மூலம் அவற்றுக்கு இடையே மாறி, அவை பகிர்வதைத் தேர்ந்தெடுங்கள்.
+description: ccam add மூலம் இரண்டு Claude Code கணக்குகளைச் சேர்த்து, claude1, claude2 அல்லது ccam <name> மூலம் அவற்றுக்கு இடையே மாறி, அவை பகிர்வதைத் தேர்ந்தெடுங்கள்.
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 9462b80d61bc
+sourceHash: c6b1c1c3ebaf
 ---
 
-ஒவ்வொரு கணக்கையும் `ccam add` மூலம் சேருங்கள், பிறகு `claude1`, `claude2` அல்லது `ccs <name>` மூலம் Claude Code-ஐத் தொடங்குங்கள். பெரும்பாலானவர்களுக்கு இவ்வளவுதான் தேவை.
+ஒவ்வொரு கணக்கையும் `ccam add` மூலம் சேருங்கள், பிறகு `claude1`, `claude2` அல்லது `ccam <name>` மூலம் Claude Code-ஐத் தொடங்குங்கள். பெரும்பாலானவர்களுக்கு இவ்வளவுதான் தேவை.
 
 ## 1. உங்கள் முதல் கணக்கைச் சேருங்கள்
 
@@ -37,19 +37,19 @@ ccam add work
 
 ```sh
 claude2
-ccs work
-ccs 2
+ccam work
+ccam 2
 ```
 
 கணக்குப் பெயருக்குப் பின் வரும் அனைத்தும் மாற்றமின்றி Claude Code-க்குச் செல்லும், அதனால் உங்களுக்குத் தெரிந்த options-ஐயே தொடர்ந்து பயன்படுத்தலாம்:
 
 ```sh
-ccs work --resume
-ccs work -p "fix the failing test" --output-format json
+ccam work --resume
+ccam work -p "fix the failing test" --output-format json
 cat error.log | claude2 -p "what caused this?"
 ```
 
-`ccs`-ஐ மட்டும் இயக்கினால் ஒரு தேர்வி திறக்கும்: அம்புக்குறி விசைகளையும் Enter-ஐயும் பயன்படுத்துங்கள், அல்லது கணக்கின் எண்ணை அழுத்துங்கள்.
+`ccam`-ஐ மட்டும் இயக்கினால் ஒரு தேர்வி திறக்கும்: அம்புக்குறி விசைகளையும் Enter-ஐயும் பயன்படுத்துங்கள், அல்லது கணக்கின் எண்ணை அழுத்துங்கள்.
 
 ## 4. எதைப் பகிர வேண்டும் என்று தேர்ந்தெடுங்கள்
 
@@ -65,11 +65,11 @@ ccam share work --history on
 ## 5. ஒரு கணக்கு அதன் வரம்பை அடையும்போது
 
 ```sh
-ccs usage
-ccs next --continue
+ccam usage
+ccam next --continue
 ```
 
-`ccs usage` எல்லாக் கணக்குகளின் 5 மணி நேர மற்றும் வாராந்திரப் பயன்பாட்டைக் காட்டுகிறது. `ccs next --continue` அதே உரையாடலை அடுத்த கணக்கில் திறக்கிறது. [பயன்பாட்டு வரம்புகள்](/docs/usage-limits) பக்கத்தைப் பாருங்கள்.
+`ccam usage` எல்லாக் கணக்குகளின் 5 மணி நேர மற்றும் வாராந்திரப் பயன்பாட்டைக் காட்டுகிறது. `ccam next --continue` அதே உரையாடலை அடுத்த கணக்கில் திறக்கிறது. [பயன்பாட்டு வரம்புகள்](/docs/usage-limits) பக்கத்தைப் பாருங்கள்.
 
 ## ஏற்கெனவே ~/.claude பயன்படுத்துகிறீர்களா?
 

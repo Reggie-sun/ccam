@@ -4,7 +4,7 @@ description: Dlaczego powstał ccam, co daje osobom z kilkoma kontami Claude Cod
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: 5e4121938d8c
+sourceHash: 985e2d369c34
 ---
 
 ccam to małe narzędzie wiersza poleceń dla osób, które używają więcej niż jednego konta Claude Code na tym samym komputerze: konta prywatnego i służbowego albo kilku kont do jednego długiego projektu.
@@ -16,9 +16,9 @@ Claude Code obsługuje kilka kont przez `CLAUDE_CONFIG_DIR`: jeden folder na kon
 ## Co robi ccam
 
 - `ccam add` tworzy folder, uruchamia logowanie i nadaje kontu skrót: `claude1`, `claude2` i tak dalej.
-- `ccs work` i `claude2` uruchamiają Claude Code jako to konto i przekazują każdy argument bez zmian.
+- `ccam work` i `claude2` uruchamiają Claude Code jako to konto i przekazują każdy argument bez zmian.
 - Serwery MCP, ustawienia, `CLAUDE.md` i rozszerzenia są współdzielone przez linki, element po elemencie i konto po koncie. Loginy nigdy nie są współdzielone.
-- `ccs usage` pokazuje 5-godzinne i tygodniowe użycie wszystkich kont; `ccs next --continue` podejmuje rozmowę na następnym koncie.
+- `ccam usage` pokazuje 5-godzinne i tygodniowe użycie wszystkich kont; `ccam next --continue` podejmuje rozmowę na następnym koncie.
 
 ## Bez wchodzenia w drogę
 

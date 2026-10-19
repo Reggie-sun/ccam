@@ -4,7 +4,7 @@ description: ccam'ı Linux veya macOS üzerine tek komutla, bir .deb paketinden 
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: c7f92dfa554a
+sourceHash: fc63978e8f9e
 ---
 
 Linux veya macOS üzerinde bir terminalde şunu çalıştırın:
@@ -13,7 +13,7 @@ Linux veya macOS üzerinde bir terminalde şunu çalıştırın:
 curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-Betik, sisteminize uygun sürümü indirir, SHA-256 sağlama toplamını doğrular ve `~/.local/bin` klasörüne iki komut yerleştirir: `ccam` ve onun kısa takma adı `ccs`. Bu klasör `PATH` içinde değilse betik, `~/.bashrc` veya `~/.zshrc` dosyasına eklemeniz gereken satırı yazdırır.
+Betik, sisteminize uygun sürümü indirir, SHA-256 sağlama toplamını doğrular ve `ccam` komutunu `~/.local/bin` klasörüne yerleştirir; `ccam add` daha sonra `claude1`, `claude2`… kısayollarını aynı klasörde oluşturur. Bu klasör `PATH` içinde değilse betik, `~/.bashrc` veya `~/.zshrc` dosyasına eklemeniz gereken satırı yazdırır.
 
 ccam, Claude Code'u sizin için başlatır; bu nedenle önce [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) kurun ve `claude --version` komutunun çalıştığından emin olun.
 
@@ -31,13 +31,12 @@ ccam, Claude Code'u sizin için başlatır; bu nedenle önce [Claude Code](https
 sudo apt install ./ccam_*_linux_amd64.deb
 ```
 
-Paket, `/usr/bin/ccam` dosyasını ve `/usr/bin/ccs` bağlantısını kurar.
+Paket, `/usr/bin/ccam` dosyasını kurar.
 
 **Kaynak koddan.** Go 1.26 veya daha yeni bir sürümle:
 
 ```sh
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
-ln -s ccam "$(go env GOPATH)/bin/ccs"
 ```
 
 **Belirli bir sürüm.** `CCAM_VERSION` değişkenini ayarlayın:
@@ -53,7 +52,7 @@ ccam completion bash > ~/.local/share/bash-completion/completions/ccam
 ccam completion zsh > "${fpath[1]}/_ccam"
 ```
 
-Tamamlama, hesap adları da dahil olmak üzere hem `ccam` hem de `ccs` için çalışır.
+Tamamlama, hesap adları da dahil olmak üzere `ccam` komutunun tüm alt komutları ve seçenekleri için çalışır.
 
 ## Kurulumu kontrol edin
 
@@ -66,10 +65,10 @@ ccam doctor
 
 ## Kaldırma
 
-İki komutu ve hesap kısayollarını, ardından hesaplara artık ihtiyacınız yoksa veri klasörlerini silin:
+Komutu ve hesap kısayollarını, ardından hesaplara artık ihtiyacınız yoksa veri klasörlerini silin:
 
 ```sh
-rm ~/.local/bin/ccam ~/.local/bin/ccs ~/.local/bin/claude[0-9]*
+rm ~/.local/bin/ccam ~/.local/bin/claude[0-9]*
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
 ```
 

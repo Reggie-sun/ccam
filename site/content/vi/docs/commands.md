@@ -1,21 +1,21 @@
 ---
 title: Tham chiếu lệnh
-description: "Mọi lệnh và tùy chọn của ccam, từ ccam add và ccs <name> đến ccam usage, ccam next và ccam doctor."
+description: "Mọi lệnh và tùy chọn của ccam, từ ccam add và ccam <name> đến ccam usage, ccam next và ccam doctor."
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 18ecad9a1104
+sourceHash: 54bdfc489174
 ---
 
-`ccam` và `ccs` là cùng một chương trình; bạn thích dùng tên nào cũng được. Đặt `--dry-run` trước bất kỳ lệnh nào để xem lệnh đó sẽ làm gì mà không thực sự thực hiện, ví dụ `ccs --dry-run work`.
+Đặt `--dry-run` trước bất kỳ lệnh nào để xem lệnh đó sẽ làm gì mà không thực sự thực hiện, ví dụ `ccam --dry-run work`.
 
 <!-- commands -->
 
 ## Khởi động Claude Code
 
-`ccs <name|number> [arguments]` khởi động Claude Code bằng tài khoản đó. ccam không đọc các đối số sau tên tài khoản; nó chuyển chúng cho `claude` theo đúng thứ tự, và đầu vào chuẩn, mã thoát cũng như tín hiệu hoạt động giống hệt như khi chạy chính `claude`. Dấu `--` sau tên tài khoản là không bắt buộc.
+`ccam <name|number> [arguments]` khởi động Claude Code bằng tài khoản đó. ccam không đọc các đối số sau tên tài khoản; nó chuyển chúng cho `claude` theo đúng thứ tự, và đầu vào chuẩn, mã thoát cũng như tín hiệu hoạt động giống hệt như khi chạy chính `claude`. Dấu `--` sau tên tài khoản là không bắt buộc.
 
-`ccs` có đối số nhưng không có tên tài khoản, chẳng hạn `ccs -p "summarise"`, sẽ dùng tài khoản mặc định. Đặt tài khoản mặc định bằng `ccam use <name>`.
+`ccam` có đối số nhưng không có tên tài khoản, chẳng hạn `ccam -p "summarise"`, sẽ dùng tài khoản mặc định. Đặt tài khoản mặc định bằng `ccam use <name>`.
 
 Các lệnh tắt `claude1`, `claude2`, v.v. là liên kết đến ccam trong `~/.local/bin`. `ccam shims install --names` còn tạo thêm `claude-<name>` cho mọi tài khoản.
 
@@ -56,11 +56,11 @@ ccam mcp remove fs
 ## Mức sử dụng và chuyển đổi tài khoản
 
 ```sh
-ccs usage            # also: ccs u
-ccs usage --watch    # refresh every 60 seconds
-ccs usage --json
-ccs next --continue
-ccs next --auto
+ccam usage           # also: ccam u
+ccam usage --watch   # refresh every 60 seconds
+ccam usage --json
+ccam next --continue
+ccam next --auto
 ```
 
 ## Bảo trì
@@ -80,6 +80,6 @@ ccam shims install
 | `~/.local/share/ccam/profiles/<name>/` | `CLAUDE_CONFIG_DIR` của từng tài khoản |
 | `~/.local/share/ccam/groups/<group>/` | Cài đặt, máy chủ MCP, tiện ích mở rộng và lịch sử dùng chung |
 | `~/.local/state/ccam/` | Bộ nhớ đệm mức sử dụng và thời điểm dùng gần nhất |
-| `~/.local/bin/claude1`, `ccs` | Liên kết đến ccam |
+| `~/.local/bin/claude1`, `claude2`… | Liên kết đến ccam |
 
 Các biến `XDG_CONFIG_HOME`, `XDG_DATA_HOME` và `XDG_STATE_HOME` dùng để đổi vị trí của các thư mục này.

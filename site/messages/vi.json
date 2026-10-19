@@ -23,11 +23,11 @@
   },
   "landing": {
     "headline": "Nhiều tài khoản Claude Code. Một terminal.",
-    "lede": "Thêm mỗi tài khoản một lần. Chuyển đổi bằng claude2 hoặc ccs work. Khi một tài khoản chạm giới hạn, hãy tiếp tục ở tài khoản kế tiếp với cùng cuộc hội thoại.",
+    "lede": "Thêm mỗi tài khoản một lần. Chuyển đổi bằng claude2 hoặc ccam work. Khi một tài khoản chạm giới hạn, hãy tiếp tục ở tài khoản kế tiếp với cùng cuộc hội thoại.",
     "installLabel": "Cài đặt trên Linux hoặc macOS",
     "thenAdd": "Sau đó thêm tài khoản đầu tiên bằng {command}.",
     "readDocs": "Đọc phần bắt đầu nhanh",
-    "boardLabel": "Ví dụ đầu ra của ccs usage: giới hạn của mọi tài khoản cùng lúc",
+    "boardLabel": "Ví dụ đầu ra của ccam usage: giới hạn của mọi tài khoản cùng lúc",
     "board": {
       "account": "Tài khoản",
       "fiveHour": "5 giờ",
@@ -43,7 +43,7 @@
       },
       {
         "command": "claude2",
-        "also": "ccs work --resume",
+        "also": "ccam work --resume",
         "body": "Khởi động Claude Code bằng tài khoản đó. Mọi thứ sau tên tài khoản được chuyển nguyên vẹn cho Claude Code, và ccam thêm khoảng 4 mili giây trước khi Claude Code khởi động."
       },
       {
@@ -51,11 +51,11 @@
         "body": "Chọn những gì tài khoản dùng chung với các tài khoản khác của bạn. Máy chủ MCP, cài đặt, CLAUDE.md và tiện ích mở rộng được dùng chung ngay từ đầu; thông tin đăng nhập thì không bao giờ."
       },
       {
-        "command": "ccs usage",
+        "command": "ccam usage",
         "body": "Hiển thị mức sử dụng 5 giờ và hàng tuần của mọi tài khoản cùng lúc, để bạn biết tài khoản nào còn hạn mức."
       },
       {
-        "command": "ccs next --continue",
+        "command": "ccam next --continue",
         "body": "Mở cùng cuộc hội thoại ở tài khoản kế tiếp khi tài khoản hiện tại chạm giới hạn."
       },
       {
@@ -86,7 +86,7 @@
     }
   },
   "commands": {
-    "ccs": "Mở trình chọn tài khoản",
+    "ccam": "Mở trình chọn tài khoản",
     "name": "Khởi động Claude Code bằng tài khoản đó; các đối số được chuyển nguyên vẹn",
     "add": "Thêm tài khoản: thư mục cấu hình, đăng nhập và lệnh tắt",
     "list": "Liệt kê các tài khoản",
@@ -102,7 +102,7 @@
     "import": "Đăng ký tại chỗ một thư mục ~/.claude có sẵn",
     "doctor": "Kiểm tra liên kết, quyền truy cập, đăng nhập và phiên bản, rồi sửa chữa",
     "statusline": "Hiển thị tài khoản và mức sử dụng trên dòng trạng thái của Claude Code",
-    "shims": "Tạo lại claude1…claudeN và ccs",
+    "shims": "Tạo lại claude1…claudeN",
     "completion": "In mã tự động hoàn thành cho bash hoặc zsh"
   },
   "copy": {

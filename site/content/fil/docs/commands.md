@@ -1,21 +1,21 @@
 ---
 title: Sanggunian ng mga command
-description: Bawat command at option ng ccam, mula sa ccam add at ccs <name> hanggang ccam usage, ccam next at ccam doctor.
+description: Bawat command at option ng ccam, mula sa ccam add at ccam <name> hanggang ccam usage, ccam next at ccam doctor.
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 18ecad9a1104
+sourceHash: 54bdfc489174
 ---
 
-Iisang program ang `ccam` at `ccs`; gamitin kung alin ang gusto mo. Ilagay ang `--dry-run` bago ang anumang command para makita kung ano ang gagawin nito nang hindi ito talagang ginagawa, halimbawa `ccs --dry-run work`.
+Ilagay ang `--dry-run` bago ang anumang command para makita kung ano ang gagawin nito nang hindi ito talagang ginagawa, halimbawa `ccam --dry-run work`.
 
 <!-- commands -->
 
 ## Pagsisimula ng Claude Code
 
-Sinisimulan ng `ccs <name|number> [arguments]` ang Claude Code bilang account na iyon. Hindi binabasa ng ccam ang mga argument na kasunod ng pangalan; ipinapasa nito ang mga iyon sa `claude` sa parehong pagkakasunod-sunod, at kumikilos ang standard input, exit code at mga signal nang eksaktong gaya ng sa `claude` mismo. Opsyonal ang `--` pagkatapos ng pangalan.
+Sinisimulan ng `ccam <name|number> [arguments]` ang Claude Code bilang account na iyon. Hindi binabasa ng ccam ang mga argument na kasunod ng pangalan; ipinapasa nito ang mga iyon sa `claude` sa parehong pagkakasunod-sunod, at kumikilos ang standard input, exit code at mga signal nang eksaktong gaya ng sa `claude` mismo. Opsyonal ang `--` pagkatapos ng pangalan.
 
-Ang `ccs` na may mga argument pero walang pangalan ng account, gaya ng `ccs -p "summarise"`, ay gumagamit ng default na account. Itakda ito gamit ang `ccam use <name>`.
+Ang `ccam` na may mga argument pero walang pangalan ng account, gaya ng `ccam -p "summarise"`, ay gumagamit ng default na account. Itakda ito gamit ang `ccam use <name>`.
 
 Ang mga shortcut na `claude1`, `claude2` at iba pa ay mga link sa ccam sa `~/.local/bin`. Gumagawa rin ang `ccam shims install --names` ng `claude-<name>` para sa bawat account.
 
@@ -56,11 +56,11 @@ ccam mcp remove fs
 ## Usage at paglipat
 
 ```sh
-ccs usage            # also: ccs u
-ccs usage --watch    # refresh every 60 seconds
-ccs usage --json
-ccs next --continue
-ccs next --auto
+ccam usage           # also: ccam u
+ccam usage --watch   # refresh every 60 seconds
+ccam usage --json
+ccam next --continue
+ccam next --auto
 ```
 
 ## Maintenance
@@ -80,6 +80,6 @@ ccam shims install
 | `~/.local/share/ccam/profiles/<name>/` | Ang `CLAUDE_CONFIG_DIR` ng bawat account |
 | `~/.local/share/ccam/groups/<group>/` | Mga shared na setting, MCP server, extension at kasaysayan |
 | `~/.local/state/ccam/` | Usage cache at mga oras ng huling paggamit |
-| `~/.local/bin/claude1`, `ccs` | Mga link sa ccam |
+| `~/.local/bin/claude1`, `claude2`… | Mga link sa ccam |
 
 Inililipat ng mga variable na `XDG_CONFIG_HOME`, `XDG_DATA_HOME` at `XDG_STATE_HOME` ang mga folder na ito.

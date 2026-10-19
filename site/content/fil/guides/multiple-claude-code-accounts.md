@@ -4,7 +4,7 @@ description: Magpatakbo ng maraming Claude Code account nang magkatabi gamit ang
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: d82129ddcb4c
+sourceHash: e2fbee9f4f91
 ---
 
 Bigyan ang bawat account ng sariling configuration folder. Binabasa ng Claude Code ang folder mula sa environment variable na `CLAUDE_CONFIG_DIR`, at may sariling login, settings at kasaysayan ang bawat folder. Puwede mo itong i-set up nang mano-mano gamit ang shell alias, o hayaang gawin ito ng ccam.
@@ -37,7 +37,7 @@ ccam add personal
 ccam add work
 ```
 
-Ngayon, sinisimulan ng `claude1` at `claude2`, o ng `ccs personal` at `ccs work`, ang dalawang account. Dahil totoong mga program sila at hindi mga alias, gumagana rin sila sa mga script. Shared na mula sa simula ang settings, `CLAUDE.md`, mga MCP server at extension, at puwede mong i-on ang shared na kasaysayan ng usapan para maituloy ang isang usapan sa kabilang account gamit ang `ccs next --continue`.
+Ngayon, sinisimulan ng `claude1` at `claude2`, o ng `ccam personal` at `ccam work`, ang dalawang account. Dahil totoong mga program sila at hindi mga alias, gumagana rin sila sa mga script. Shared na mula sa simula ang settings, `CLAUDE.md`, mga MCP server at extension, at puwede mong i-on ang shared na kasaysayan ng usapan para maituloy ang isang usapan sa kabilang account gamit ang `ccam next --continue`.
 
 Kung gumagamit ka na ng `~/.claude`, patakbuhin ang `ccam import` sa halip na idagdag ulit ang account na iyon.
 

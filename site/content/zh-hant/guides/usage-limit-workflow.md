@@ -4,10 +4,10 @@ description: 查看每個 Claude Code 帳號還剩多少額度，並在某個帳
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 64fe0b561bd1
+sourceHash: db7ed9b7bcfc
 ---
 
-當某個帳號達到用量限制時，可以在你擁有的另一個帳號繼續同一段對話：先設定一次對話記錄共用，然後執行 `ccs next --continue`。如果你只有一個帳號，請等到 Claude Code 顯示的重設時間。
+當某個帳號達到用量限制時，可以在你擁有的另一個帳號繼續同一段對話：先設定一次對話記錄共用，然後執行 `ccam next --continue`。如果你只有一個帳號，請等到 Claude Code 顯示的重設時間。
 
 ## 事前準備
 
@@ -28,7 +28,7 @@ ccam statusline install
 離開 Claude Code（`/exit`），然後執行：
 
 ```sh
-ccs usage
+ccam usage
 ```
 
 ```console
@@ -39,16 +39,16 @@ ccs usage
 在剩餘額度最多的帳號開啟這段對話：
 
 ```sh
-ccs next --auto --continue
+ccam next --auto --continue
 ```
 
 Claude Code 會以 `work` 啟動，並開啟目前資料夾中最近的一段對話，包含到目前為止的所有內容。
 
 ## 注意事項
 
-- 請在原本工作的同一個資料夾中執行 `ccs next --continue`；對話是依專案資料夾分別儲存的。
+- 請在原本工作的同一個資料夾中執行 `ccam next --continue`；對話是依專案資料夾分別儲存的。
 - 避免同時用兩個帳號處理同一段對話。如果你這麼做，ccam 會發出警告。
 - 另一個帳號也必須在同一個群組中共用對話記錄。
 - 能否像這樣在帳號之間切換，取決於各帳號的條款。
 
-關於 `ccs usage` 和 `ccs next` 的所有選項，請參閱[用量限制](/docs/usage-limits)。
+關於 `ccam usage` 和 `ccam next` 的所有選項，請參閱[用量限制](/docs/usage-limits)。

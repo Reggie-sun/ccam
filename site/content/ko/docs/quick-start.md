@@ -1,13 +1,13 @@
 ---
 title: 빠른 시작
-description: ccam add로 Claude Code 계정 두 개를 추가하고, claude1, claude2, ccs로 전환하고, 공유할 항목을 고릅니다.
+description: ccam add로 Claude Code 계정 두 개를 추가하고, claude1, claude2, ccam <name>으로 전환하고, 공유할 항목을 고릅니다.
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 9462b80d61bc
+sourceHash: c6b1c1c3ebaf
 ---
 
-계정마다 `ccam add`로 추가한 뒤 `claude1`, `claude2` 또는 `ccs <name>`으로 Claude Code를 시작합니다. 대부분은 이것만으로 충분합니다.
+계정마다 `ccam add`로 추가한 뒤 `claude1`, `claude2` 또는 `ccam <name>`으로 Claude Code를 시작합니다. 대부분은 이것만으로 충분합니다.
 
 ## 1. 첫 계정 추가하기
 
@@ -37,19 +37,19 @@ ccam add work
 
 ```sh
 claude2
-ccs work
-ccs 2
+ccam work
+ccam 2
 ```
 
 계정 이름 뒤의 내용은 모두 그대로 Claude Code에 전달되므로, 익숙한 옵션을 그대로 쓰면 됩니다.
 
 ```sh
-ccs work --resume
-ccs work -p "fix the failing test" --output-format json
+ccam work --resume
+ccam work -p "fix the failing test" --output-format json
 cat error.log | claude2 -p "what caused this?"
 ```
 
-`ccs`만 실행하면 선택 화면이 열립니다. 화살표 키와 Enter를 쓰거나 계정 번호를 누르세요.
+`ccam`만 실행하면 선택 화면이 열립니다. 화살표 키와 Enter를 쓰거나 계정 번호를 누르세요.
 
 ## 4. 공유할 항목 고르기
 
@@ -65,11 +65,11 @@ ccam은 무언가를 바꾸기 전에 무엇을 옮길지 먼저 보여 줍니�
 ## 5. 계정이 한도에 도달하면
 
 ```sh
-ccs usage
-ccs next --continue
+ccam usage
+ccam next --continue
 ```
 
-`ccs usage`는 모든 계정의 5시간 사용량과 주간 사용량을 보여 줍니다. `ccs next --continue`는 다음 계정에서 같은 대화를 엽니다. [사용량 한도](/docs/usage-limits)를 참고하세요.
+`ccam usage`는 모든 계정의 5시간 사용량과 주간 사용량을 보여 줍니다. `ccam next --continue`는 다음 계정에서 같은 대화를 엽니다. [사용량 한도](/docs/usage-limits)를 참고하세요.
 
 ## 이미 ~/.claude를 쓰고 있나요?
 

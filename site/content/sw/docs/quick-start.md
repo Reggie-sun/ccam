@@ -1,13 +1,13 @@
 ---
 title: Kuanza haraka
-description: Ongeza akaunti mbili za Claude Code kwa ccam add, badili kati yao kwa claude1, claude2 au ccs, na uchague zinachoshiriki.
+description: Ongeza akaunti mbili za Claude Code kwa ccam add, badili kati yao kwa claude1, claude2 au ccam <name>, na uchague zinachoshiriki.
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 9462b80d61bc
+sourceHash: c6b1c1c3ebaf
 ---
 
-Ongeza kila akaunti kwa `ccam add`, kisha anzisha Claude Code kwa `claude1`, `claude2` au `ccs <name>`. Hivyo ndivyo watu wengi wanavyohitaji.
+Ongeza kila akaunti kwa `ccam add`, kisha anzisha Claude Code kwa `claude1`, `claude2` au `ccam <name>`. Hivyo ndivyo watu wengi wanavyohitaji.
 
 ## 1. Ongeza akaunti yako ya kwanza
 
@@ -37,19 +37,19 @@ Yoyote kati ya hizi huanzisha Claude Code kama akaunti ya kazi:
 
 ```sh
 claude2
-ccs work
-ccs 2
+ccam work
+ccam 2
 ```
 
 Kila kitu baada ya jina la akaunti hupelekwa kwa Claude Code bila kubadilishwa, kwa hiyo unaendelea kutumia chaguo unazozijua:
 
 ```sh
-ccs work --resume
-ccs work -p "fix the failing test" --output-format json
+ccam work --resume
+ccam work -p "fix the failing test" --output-format json
 cat error.log | claude2 -p "what caused this?"
 ```
 
-Kuendesha `ccs` peke yake hufungua kichaguzi: tumia vitufe vya mishale na Enter, au bonyeza namba ya akaunti.
+Kuendesha `ccam` peke yake hufungua kichaguzi: tumia vitufe vya mishale na Enter, au bonyeza namba ya akaunti.
 
 ## 4. Chagua cha kushiriki
 
@@ -65,11 +65,11 @@ ccam huonyesha kile itakachohamisha kabla ya kubadilisha chochote. Tazama [kushi
 ## 5. Akaunti inapofikia kikomo chake
 
 ```sh
-ccs usage
-ccs next --continue
+ccam usage
+ccam next --continue
 ```
 
-`ccs usage` huonyesha matumizi ya saa 5 na ya wiki ya kila akaunti. `ccs next --continue` hufungua mazungumzo yale yale kwenye akaunti inayofuata. Tazama [vikomo vya matumizi](/docs/usage-limits).
+`ccam usage` huonyesha matumizi ya saa 5 na ya wiki ya kila akaunti. `ccam next --continue` hufungua mazungumzo yale yale kwenye akaunti inayofuata. Tazama [vikomo vya matumizi](/docs/usage-limits).
 
 ## Tayari unatumia ~/.claude?
 

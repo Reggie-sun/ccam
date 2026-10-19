@@ -4,7 +4,7 @@ description: نصب ccam روی Linux یا macOS با یک فرمان، از ب�
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: c7f92dfa554a
+sourceHash: fc63978e8f9e
 ---
 
 این فرمان را در یک ترمینال روی Linux یا macOS اجرا کنید:
@@ -13,7 +13,7 @@ sourceHash: c7f92dfa554a
 curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-اسکریپت نسخه منتشرشده مناسب سیستم شما را دانلود می‌کند، checksum از نوع SHA-256 آن را بررسی می‌کند و دو فرمان را در `~/.local/bin` قرار می‌دهد: `ccam` و نام مستعار کوتاه آن `ccs`. اگر این پوشه در `PATH` شما نباشد، اسکریپت خطی را که باید به `~/.bashrc` یا `~/.zshrc` اضافه کنید چاپ می‌کند.
+اسکریپت نسخه منتشرشده مناسب سیستم شما را دانلود می‌کند، checksum از نوع SHA-256 آن را بررسی می‌کند و `ccam` را در `~/.local/bin` قرار می‌دهد؛ بعداً `ccam add` میان‌برهای `claude1`، `claude2` و مانند آن‌ها را در همین پوشه می‌سازد. اگر این پوشه در `PATH` شما نباشد، اسکریپت خطی را که باید به `~/.bashrc` یا `~/.zshrc` اضافه کنید چاپ می‌کند.
 
 ccam خودش Claude Code را برای شما اجرا می‌کند، پس ابتدا [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) را نصب کنید و مطمئن شوید که `claude --version` کار می‌کند.
 
@@ -31,13 +31,12 @@ ccam خودش Claude Code را برای شما اجرا می‌کند، پس ا�
 sudo apt install ./ccam_*_linux_amd64.deb
 ```
 
-این بسته `/usr/bin/ccam` و پیوند `/usr/bin/ccs` را نصب می‌کند.
+این بسته `/usr/bin/ccam` را نصب می‌کند.
 
 **از کد منبع.** با Go 1.26 یا جدیدتر:
 
 ```sh
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
-ln -s ccam "$(go env GOPATH)/bin/ccs"
 ```
 
 **یک نسخه مشخص.** متغیر `CCAM_VERSION` را تنظیم کنید:
@@ -53,7 +52,7 @@ ccam completion bash > ~/.local/share/bash-completion/completions/ccam
 ccam completion zsh > "${fpath[1]}/_ccam"
 ```
 
-تکمیل خودکار هم `ccam` و هم `ccs` را پوشش می‌دهد، از جمله نام حساب‌ها.
+تکمیل خودکار همه فرمان‌ها و گزینه‌های `ccam` را پوشش می‌دهد، از جمله نام حساب‌ها.
 
 ## بررسی نصب
 
@@ -66,10 +65,10 @@ ccam doctor
 
 ## حذف نصب
 
-دو فرمان و میان‌برهای حساب‌ها را حذف کنید، سپس اگر دیگر به حساب‌ها نیاز ندارید، پوشه‌های داده را هم حذف کنید:
+فرمان و میان‌برهای حساب‌ها را حذف کنید، سپس اگر دیگر به حساب‌ها نیاز ندارید، پوشه‌های داده را هم حذف کنید:
 
 ```sh
-rm ~/.local/bin/ccam ~/.local/bin/ccs ~/.local/bin/claude[0-9]*
+rm ~/.local/bin/ccam ~/.local/bin/claude[0-9]*
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
 ```
 

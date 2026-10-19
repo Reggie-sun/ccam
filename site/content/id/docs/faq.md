@@ -4,7 +4,7 @@ description: Jawaban seputar ccam, akun Claude Code, batas penggunaan, pembagian
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 12ad0faef2ce
+sourceHash: 2be18393cbe2
 ---
 
 ## Apakah ccam alat resmi dari Anthropic?
@@ -25,11 +25,11 @@ Beri setiap akun folder konfigurasinya sendiri dengan `CLAUDE_CONFIG_DIR`. ccam 
 
 ## Bagaimana cara melanjutkan percakapan di akun lain?
 
-Bagikan riwayat percakapan antara kedua akun dengan `ccam share <name> --history on`, lalu jalankan `ccs next --continue`. Claude Code membuka percakapan terbaru dari folder saat ini di akun berikutnya.
+Bagikan riwayat percakapan antara kedua akun dengan `ccam share <name> --history on`, lalu jalankan `ccam next --continue`. Claude Code membuka percakapan terbaru dari folder saat ini di akun berikutnya.
 
 ## Apakah ccam melihat atau mengirim login saya?
 
-ccam tidak pernah menyalin atau membagikan login. ccam membaca token akses sebuah akun hanya untuk menanyakan penggunaan akun itu ke endpoint penggunaan Anthropic, saat Anda menjalankan `ccs usage`, `ccs next --auto`, atau `ccam doctor`. ccam tidak memiliki telemetri dan tidak mengirim apa pun ke tempat lain.
+ccam tidak pernah menyalin atau membagikan login. ccam membaca token akses sebuah akun hanya untuk menanyakan penggunaan akun itu ke endpoint penggunaan Anthropic, saat Anda menjalankan `ccam usage`, `ccam next --auto`, atau `ccam doctor`. ccam tidak memiliki telemetri dan tidak mengirim apa pun ke tempat lain.
 
 ## Di mana akun saya disimpan?
 
@@ -37,7 +37,7 @@ Di `~/.local/share/ccam/profiles/<name>/`, satu folder per akun. Di macOS, Claud
 
 ## Apa yang terjadi pada ~/.claude saya yang sudah ada?
 
-Tidak ada, kecuali Anda menjalankan `ccam import`. Impor mendaftarkan folder itu di tempatnya, sehingga `claude` biasa dan `ccs <name>` tetap menggunakan akun dan pengaturan yang sama.
+Tidak ada, kecuali Anda menjalankan `ccam import`. Impor mendaftarkan folder itu di tempatnya, sehingga `claude` biasa dan `ccam <name>` tetap menggunakan akun dan pengaturan yang sama.
 
 ## Sistem apa saja yang didukung ccam?
 
@@ -53,4 +53,4 @@ Menjalankan Claude Code melalui ccam menambah sekitar 4 milidetik, diukur dengan
 
 ## Bagaimana cara menghapus instalasi ccam?
 
-Hapus `ccam`, `ccs`, dan tautan `claude1`… dari `~/.local/bin`, lalu hapus `~/.config/ccam`, `~/.local/share/ccam`, dan `~/.local/state/ccam` jika Anda tidak lagi memerlukan akun-akun tersebut. Lihat [instalasi](/docs/install#uninstall).
+Hapus `ccam` dan tautan `claude1`… dari `~/.local/bin`, lalu hapus `~/.config/ccam`, `~/.local/share/ccam`, dan `~/.local/state/ccam` jika Anda tidak lagi memerlukan akun-akun tersebut. Lihat [instalasi](/docs/install#uninstall).

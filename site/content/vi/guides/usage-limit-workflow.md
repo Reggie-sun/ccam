@@ -4,10 +4,10 @@ description: "Kiểm tra mỗi tài khoản Claude Code còn bao nhiêu hạn m�
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 64fe0b561bd1
+sourceHash: db7ed9b7bcfc
 ---
 
-Khi một tài khoản chạm giới hạn, hãy tiếp tục cùng cuộc hội thoại ở một tài khoản khác của bạn: bật dùng chung lịch sử hội thoại một lần, rồi chạy `ccs next --continue`. Nếu bạn chỉ có một tài khoản, hãy chờ đến thời điểm đặt lại mà Claude Code hiển thị.
+Khi một tài khoản chạm giới hạn, hãy tiếp tục cùng cuộc hội thoại ở một tài khoản khác của bạn: bật dùng chung lịch sử hội thoại một lần, rồi chạy `ccam next --continue`. Nếu bạn chỉ có một tài khoản, hãy chờ đến thời điểm đặt lại mà Claude Code hiển thị.
 
 ## Trước khi điều đó xảy ra
 
@@ -28,7 +28,7 @@ Giờ đây dòng trạng thái hiển thị tài khoản và mức sử dụng 
 Thoát Claude Code (`/exit`), sau đó:
 
 ```sh
-ccs usage
+ccam usage
 ```
 
 ```console
@@ -39,16 +39,16 @@ ccs usage
 Mở cuộc hội thoại ở tài khoản còn nhiều hạn mức nhất:
 
 ```sh
-ccs next --auto --continue
+ccam next --auto --continue
 ```
 
 Claude Code khởi động dưới tài khoản `work` với cuộc hội thoại gần nhất của thư mục hiện tại, bao gồm mọi thứ đã trao đổi cho đến lúc đó.
 
 ## Những điều cần lưu ý
 
-- Chạy `ccs next --continue` trong cùng thư mục bạn đã làm việc; hội thoại được lưu theo từng thư mục dự án.
+- Chạy `ccam next --continue` trong cùng thư mục bạn đã làm việc; hội thoại được lưu theo từng thư mục dự án.
 - Tránh chạy hai tài khoản trên cùng một cuộc hội thoại cùng lúc. ccam sẽ cảnh báo nếu bạn thử làm vậy.
 - Tài khoản kia cũng phải dùng chung lịch sử hội thoại, trong cùng một nhóm.
 - Việc bạn có được chuyển đổi giữa các tài khoản theo cách này hay không phụ thuộc vào điều khoản của từng tài khoản.
 
-Xem [giới hạn sử dụng](/docs/usage-limits) để biết mọi tùy chọn của `ccs usage` và `ccs next`.
+Xem [giới hạn sử dụng](/docs/usage-limits) để biết mọi tùy chọn của `ccam usage` và `ccam next`.

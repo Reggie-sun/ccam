@@ -23,11 +23,11 @@
   },
   "landing": {
     "headline": "Several Claude Code accounts. One terminal.",
-    "lede": "Add each account once. Switch with claude2 or ccs work. When one account hits its limit, carry on in the next with the same conversation.",
+    "lede": "Add each account once. Switch with claude2 or ccam work. When one account hits its limit, carry on in the next with the same conversation.",
     "installLabel": "Install on Linux or macOS",
     "thenAdd": "Then add your first account with {command}.",
     "readDocs": "Read the quick start",
-    "boardLabel": "Example output of ccs usage: every account's limits at once",
+    "boardLabel": "Example output of ccam usage: every account's limits at once",
     "board": {
       "account": "Account",
       "fiveHour": "5-hour",
@@ -43,7 +43,7 @@
       },
       {
         "command": "claude2",
-        "also": "ccs work --resume",
+        "also": "ccam work --resume",
         "body": "Starts Claude Code as that account. Everything after the name goes to Claude Code unchanged, and ccam adds about 4 milliseconds before it starts."
       },
       {
@@ -51,11 +51,11 @@
         "body": "Chooses what the account shares with your other accounts. MCP servers, settings, CLAUDE.md and extensions are shared from the start; logins never are."
       },
       {
-        "command": "ccs usage",
+        "command": "ccam usage",
         "body": "Shows the 5-hour and weekly usage of every account at once, so you know which one has room left."
       },
       {
-        "command": "ccs next --continue",
+        "command": "ccam next --continue",
         "body": "Opens the same conversation in the next account when the current one reaches its limit."
       },
       {
@@ -86,7 +86,7 @@
     }
   },
   "commands": {
-    "ccs": "Open the account picker",
+    "ccam": "Open the account picker",
     "name": "Start Claude Code as that account; arguments are passed through unchanged",
     "add": "Add an account: config folder, login and shortcut",
     "list": "List accounts",
@@ -102,7 +102,7 @@
     "import": "Register an existing ~/.claude folder in place",
     "doctor": "Check links, permissions, logins and versions, and repair",
     "statusline": "Show the account and usage in Claude Code's status line",
-    "shims": "Recreate claude1…claudeN and ccs",
+    "shims": "Recreate the claude1…claudeN shortcuts",
     "completion": "Print bash or zsh completion"
   },
   "copy": {

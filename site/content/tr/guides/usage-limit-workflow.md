@@ -4,10 +4,10 @@ description: Her Claude Code hesabında ne kadar pay kaldığını kontrol edin 
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 64fe0b561bd1
+sourceHash: db7ed9b7bcfc
 ---
 
-Bir hesap Claude Code kullanım limitine ulaştığında, aynı konuşmaya sahip olduğunuz başka bir hesapta devam edin: konuşma geçmişini bir kez paylaşın, ardından `ccs next --continue` komutunu çalıştırın. Yalnızca bir hesabınız varsa Claude Code'un gösterdiği sıfırlanma zamanını bekleyin.
+Bir hesap Claude Code kullanım limitine ulaştığında, aynı konuşmaya sahip olduğunuz başka bir hesapta devam edin: konuşma geçmişini bir kez paylaşın, ardından `ccam next --continue` komutunu çalıştırın. Yalnızca bir hesabınız varsa Claude Code'un gösterdiği sıfırlanma zamanını bekleyin.
 
 ## Limit dolmadan önce
 
@@ -28,7 +28,7 @@ Artık siz çalışırken durum satırı hesabı ve 5 saatlik kullanımını gö
 Claude Code'dan çıkın (`/exit`), ardından:
 
 ```sh
-ccs usage
+ccam usage
 ```
 
 ```console
@@ -39,16 +39,16 @@ ccs usage
 Konuşmayı en çok pay kalan hesapta açın:
 
 ```sh
-ccs next --auto --continue
+ccam next --auto --continue
 ```
 
 Claude Code, geçerli klasörün en son konuşmasıyla, o ana kadar söylenen her şey dahil, `work` olarak başlar.
 
 ## Akılda tutulması gerekenler
 
-- `ccs next --continue` komutunu çalıştığınız klasörde çalıştırın; konuşmalar proje klasörü bazında saklanır.
+- `ccam next --continue` komutunu çalıştığınız klasörde çalıştırın; konuşmalar proje klasörü bazında saklanır.
 - Aynı konuşmada aynı anda iki hesap çalıştırmaktan kaçının. Bunu denerseniz ccam sizi uyarır.
 - Diğer hesap da konuşma geçmişini aynı grupta paylaşmalıdır.
 - Hesaplar arasında bu şekilde geçiş yapıp yapamayacağınız her hesabın koşullarına bağlıdır.
 
-`ccs usage` ve `ccs next` komutlarının tüm seçenekleri için [kullanım limitleri](/docs/usage-limits) sayfasına bakın.
+`ccam usage` ve `ccam next` komutlarının tüm seçenekleri için [kullanım limitleri](/docs/usage-limits) sayfasına bakın.

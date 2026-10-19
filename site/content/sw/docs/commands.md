@@ -1,21 +1,21 @@
 ---
 title: Marejeo ya amri
-description: Kila amri na chaguo la ccam, kuanzia ccam add na ccs <name> hadi ccam usage, ccam next na ccam doctor.
+description: Kila amri na chaguo la ccam, kuanzia ccam add na ccam <name> hadi ccam usage, ccam next na ccam doctor.
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 18ecad9a1104
+sourceHash: 54bdfc489174
 ---
 
-`ccam` na `ccs` ni programu moja; tumia unayopendelea. Weka `--dry-run` kabla ya amri yoyote ili kuona itakachofanya bila kukifanya, kwa mfano `ccs --dry-run work`.
+Weka `--dry-run` kabla ya amri yoyote ili kuona itakachofanya bila kukifanya, kwa mfano `ccam --dry-run work`.
 
 <!-- commands -->
 
 ## Kuanzisha Claude Code
 
-`ccs <name|number> [arguments]` huanzisha Claude Code kama akaunti hiyo. ccam haisomi hoja zinazokuja baada ya jina; huzipitisha kwa `claude` kwa mpangilio ule ule, na standard input, exit code na signals hufanya kazi sawasawa kama kwa `claude` yenyewe. `--` baada ya jina ni hiari.
+`ccam <name|number> [arguments]` huanzisha Claude Code kama akaunti hiyo. ccam haisomi hoja zinazokuja baada ya jina; huzipitisha kwa `claude` kwa mpangilio ule ule, na standard input, exit code na signals hufanya kazi sawasawa kama kwa `claude` yenyewe. `--` baada ya jina ni hiari.
 
-`ccs` ikiwa na hoja lakini bila jina la akaunti, kama `ccs -p "summarise"`, hutumia akaunti chaguo-msingi. Iweke kwa `ccam use <name>`.
+`ccam` ikiwa na hoja lakini bila jina la akaunti, kama `ccam -p "summarise"`, hutumia akaunti chaguo-msingi. Iweke kwa `ccam use <name>`.
 
 Njia fupi `claude1`, `claude2` na kadhalika ni viungo vya ccam katika `~/.local/bin`. `ccam shims install --names` pia huunda `claude-<name>` kwa kila akaunti.
 
@@ -56,11 +56,11 @@ ccam mcp remove fs
 ## Matumizi na kubadili
 
 ```sh
-ccs usage            # also: ccs u
-ccs usage --watch    # refresh every 60 seconds
-ccs usage --json
-ccs next --continue
-ccs next --auto
+ccam usage           # also: ccam u
+ccam usage --watch   # refresh every 60 seconds
+ccam usage --json
+ccam next --continue
+ccam next --auto
 ```
 
 ## Matengenezo
@@ -80,6 +80,6 @@ ccam shims install
 | `~/.local/share/ccam/profiles/<name>/` | `CLAUDE_CONFIG_DIR` ya kila akaunti |
 | `~/.local/share/ccam/groups/<group>/` | Mipangilio, seva za MCP, viendelezi na historia vinavyoshirikiwa |
 | `~/.local/state/ccam/` | Cache ya matumizi na nyakati za matumizi ya mwisho |
-| `~/.local/bin/claude1`, `ccs` | Viungo vya ccam |
+| `~/.local/bin/claude1`, `claude2`… | Viungo vya ccam |
 
 Vigezo `XDG_CONFIG_HOME`, `XDG_DATA_HOME` na `XDG_STATE_HOME` huhamisha folda hizi.

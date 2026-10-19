@@ -4,7 +4,7 @@ description: 複数のClaude Codeアカウントを使う方法として、CLAUD
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: e9902676e0ed
+sourceHash: 13da69070650
 ---
 
 アカウントごとにシェルエイリアスを作るのが、複数のClaude Codeアカウントを使う最も簡単な方法です。ccamも内部では同じことを行い、そのうえで共有、切り替え、使用量の確認の機能を加えています。
@@ -16,9 +16,9 @@ sourceHash: e9902676e0ed
 | スクリプトやほかのプログラムからの利用 | 不可。エイリアスはシェル内でのみ有効 | 可。`claude2`は実際のコマンド |
 | 設定、`CLAUDE.md`、拡張機能の共有 | 手動でコピーまたはリンク | 項目ごとに、バックアップ付きで |
 | MCPサーバーの共有 | アカウントごとに手動で | `ccam mcp add`を一度実行 |
-| 別のアカウントで会話を続ける | 不可 | `ccs next --continue` |
-| すべてのアカウントの使用量 | 不可 | `ccs usage` |
-| 最も余裕があるアカウントを選ぶ | 不可 | `ccs next --auto` |
+| 別のアカウントで会話を続ける | 不可 | `ccam next --continue` |
+| すべてのアカウントの使用量 | 不可 | `ccam usage` |
+| 最も余裕があるアカウントを選ぶ | 不可 | `ccam next --auto` |
 | ステータスラインへのアカウント名の表示 | 不可 | `ccam statusline install` |
 | 壊れたリンクの修復 | 手動 | `ccam doctor --fix` |
 | 追加のソフトウェア | なし | 静的バイナリ1つ |

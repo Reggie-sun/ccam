@@ -1,13 +1,13 @@
 ---
 title: ತ್ವರಿತ ಆರಂಭ
-description: ccam add ಮೂಲಕ ಎರಡು Claude Code ಖಾತೆಗಳನ್ನು ಸೇರಿಸಿ, claude1, claude2 ಅಥವಾ ccs ಮೂಲಕ ಅವುಗಳ ನಡುವೆ ಬದಲಾಯಿಸಿ ಮತ್ತು ಅವು ಏನನ್ನು ಹಂಚಿಕೊಳ್ಳಬೇಕು ಎಂದು ಆಯ್ಕೆಮಾಡಿ.
+description: ccam add ಮೂಲಕ ಎರಡು Claude Code ಖಾತೆಗಳನ್ನು ಸೇರಿಸಿ, claude1, claude2 ಅಥವಾ ccam <name> ಮೂಲಕ ಅವುಗಳ ನಡುವೆ ಬದಲಾಯಿಸಿ ಮತ್ತು ಅವು ಏನನ್ನು ಹಂಚಿಕೊಳ್ಳಬೇಕು ಎಂದು ಆಯ್ಕೆಮಾಡಿ.
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 9462b80d61bc
+sourceHash: c6b1c1c3ebaf
 ---
 
-ಪ್ರತಿ ಖಾತೆಯನ್ನು `ccam add` ಮೂಲಕ ಸೇರಿಸಿ, ನಂತರ `claude1`, `claude2` ಅಥವಾ `ccs <name>` ಮೂಲಕ Claude Code ಆರಂಭಿಸಿ. ಹೆಚ್ಚಿನವರಿಗೆ ಬೇಕಾಗಿರುವುದು ಇಷ್ಟೇ.
+ಪ್ರತಿ ಖಾತೆಯನ್ನು `ccam add` ಮೂಲಕ ಸೇರಿಸಿ, ನಂತರ `claude1`, `claude2` ಅಥವಾ `ccam <name>` ಮೂಲಕ Claude Code ಆರಂಭಿಸಿ. ಹೆಚ್ಚಿನವರಿಗೆ ಬೇಕಾಗಿರುವುದು ಇಷ್ಟೇ.
 
 ## 1. ನಿಮ್ಮ ಮೊದಲ ಖಾತೆಯನ್ನು ಸೇರಿಸಿ
 
@@ -37,19 +37,19 @@ ccam add work
 
 ```sh
 claude2
-ccs work
-ccs 2
+ccam work
+ccam 2
 ```
 
 ಖಾತೆಯ ಹೆಸರಿನ ನಂತರದ ಎಲ್ಲವೂ ಯಾವುದೇ ಬದಲಾವಣೆ ಇಲ್ಲದೆ Claude Code ಗೆ ಹೋಗುತ್ತದೆ. ಹೀಗಾಗಿ ನಿಮಗೆ ಗೊತ್ತಿರುವ ಆಯ್ಕೆಗಳನ್ನೇ ಬಳಸುತ್ತಿರಬಹುದು:
 
 ```sh
-ccs work --resume
-ccs work -p "fix the failing test" --output-format json
+ccam work --resume
+ccam work -p "fix the failing test" --output-format json
 cat error.log | claude2 -p "what caused this?"
 ```
 
-`ccs` ಅನ್ನು ಮಾತ್ರ ರನ್ ಮಾಡಿದರೆ ಒಂದು ಆಯ್ಕೆ ಪಟ್ಟಿ ತೆರೆಯುತ್ತದೆ: ಬಾಣದ ಕೀಲಿಗಳು ಮತ್ತು Enter ಬಳಸಿ, ಅಥವಾ ಖಾತೆಯ ಸಂಖ್ಯೆಯನ್ನು ಒತ್ತಿ.
+`ccam` ಅನ್ನು ಮಾತ್ರ ರನ್ ಮಾಡಿದರೆ ಒಂದು ಆಯ್ಕೆ ಪಟ್ಟಿ ತೆರೆಯುತ್ತದೆ: ಬಾಣದ ಕೀಲಿಗಳು ಮತ್ತು Enter ಬಳಸಿ, ಅಥವಾ ಖಾತೆಯ ಸಂಖ್ಯೆಯನ್ನು ಒತ್ತಿ.
 
 ## 4. ಏನನ್ನು ಹಂಚಿಕೊಳ್ಳಬೇಕು ಎಂದು ಆಯ್ಕೆಮಾಡಿ
 
@@ -65,11 +65,11 @@ ccam share work --history on
 ## 5. ಖಾತೆ ತನ್ನ ಮಿತಿ ತಲುಪಿದಾಗ
 
 ```sh
-ccs usage
-ccs next --continue
+ccam usage
+ccam next --continue
 ```
 
-`ccs usage` ಎಲ್ಲಾ ಖಾತೆಗಳ 5 ಗಂಟೆಯ ಮತ್ತು ವಾರದ ಬಳಕೆಯನ್ನು ತೋರಿಸುತ್ತದೆ. `ccs next --continue` ಅದೇ ಸಂಭಾಷಣೆಯನ್ನು ಮುಂದಿನ ಖಾತೆಯಲ್ಲಿ ತೆರೆಯುತ್ತದೆ. [ಬಳಕೆಯ ಮಿತಿಗಳು](/docs/usage-limits) ನೋಡಿ.
+`ccam usage` ಎಲ್ಲಾ ಖಾತೆಗಳ 5 ಗಂಟೆಯ ಮತ್ತು ವಾರದ ಬಳಕೆಯನ್ನು ತೋರಿಸುತ್ತದೆ. `ccam next --continue` ಅದೇ ಸಂಭಾಷಣೆಯನ್ನು ಮುಂದಿನ ಖಾತೆಯಲ್ಲಿ ತೆರೆಯುತ್ತದೆ. [ಬಳಕೆಯ ಮಿತಿಗಳು](/docs/usage-limits) ನೋಡಿ.
 
 ## ಈಗಾಗಲೇ ~/.claude ಬಳಸುತ್ತಿದ್ದೀರಾ?
 

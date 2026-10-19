@@ -15,9 +15,9 @@ A shell alias per account is the simplest way to run several Claude Code account
 | Works in scripts and other programs | No, aliases are shell-only | Yes, `claude2` is a real command |
 | Shared settings, `CLAUDE.md`, extensions | Copy or link by hand | Per item, with backups |
 | Shared MCP servers | By hand, per account | `ccam mcp add` once |
-| Continue a conversation in another account | No | `ccs next --continue` |
-| Usage of every account | No | `ccs usage` |
-| Pick the account with the most room | No | `ccs next --auto` |
+| Continue a conversation in another account | No | `ccam next --continue` |
+| Usage of every account | No | `ccam usage` |
+| Pick the account with the most room | No | `ccam next --auto` |
 | Account name in the status line | No | `ccam statusline install` |
 | Repair broken links | By hand | `ccam doctor --fix` |
 | Extra software | None | One static binary |

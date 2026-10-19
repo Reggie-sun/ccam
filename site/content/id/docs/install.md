@@ -4,7 +4,7 @@ description: Instal ccam di Linux atau macOS dengan satu perintah, dari paket .d
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: c7f92dfa554a
+sourceHash: fc63978e8f9e
 ---
 
 Jalankan ini di terminal pada Linux atau macOS:
@@ -13,7 +13,7 @@ Jalankan ini di terminal pada Linux atau macOS:
 curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-Skrip ini mengunduh rilis untuk sistem Anda, memeriksa checksum SHA-256-nya, dan menaruh dua perintah di `~/.local/bin`: `ccam` dan alias pendeknya `ccs`. Jika folder tersebut tidak ada di `PATH` Anda, skrip akan menampilkan baris yang perlu ditambahkan ke `~/.bashrc` atau `~/.zshrc`.
+Skrip ini mengunduh rilis untuk sistem Anda, memeriksa checksum SHA-256-nya, dan menaruh `ccam` di `~/.local/bin`, tempat `ccam add` nanti membuat pintasan `claude1`, `claude2`, dan seterusnya. Jika folder tersebut tidak ada di `PATH` Anda, skrip akan menampilkan baris yang perlu ditambahkan ke `~/.bashrc` atau `~/.zshrc`.
 
 ccam menjalankan Claude Code untuk Anda, jadi instal [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) terlebih dahulu dan pastikan `claude --version` berfungsi.
 
@@ -31,13 +31,12 @@ ccam menjalankan Claude Code untuk Anda, jadi instal [Claude Code](https://docs.
 sudo apt install ./ccam_*_linux_amd64.deb
 ```
 
-Paket ini menginstal `/usr/bin/ccam` dan tautan `/usr/bin/ccs`.
+Paket ini menginstal `/usr/bin/ccam`.
 
 **Dari kode sumber.** Dengan Go 1.26 atau yang lebih baru:
 
 ```sh
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
-ln -s ccam "$(go env GOPATH)/bin/ccs"
 ```
 
 **Versi tertentu.** Tetapkan `CCAM_VERSION`:
@@ -53,7 +52,7 @@ ccam completion bash > ~/.local/share/bash-completion/completions/ccam
 ccam completion zsh > "${fpath[1]}/_ccam"
 ```
 
-Pelengkapan otomatis mencakup `ccam` dan `ccs`, termasuk nama akun.
+Pelengkapan otomatis mencakup semua perintah dan opsi `ccam`, termasuk nama akun.
 
 ## Periksa instalasi
 
@@ -66,10 +65,10 @@ ccam doctor
 
 ## Menghapus instalasi
 
-Hapus kedua perintah dan pintasan akun, lalu folder data jika Anda tidak lagi memerlukan akun-akun tersebut:
+Hapus perintah tersebut dan pintasan akun, lalu folder data jika Anda tidak lagi memerlukan akun-akun tersebut:
 
 ```sh
-rm ~/.local/bin/ccam ~/.local/bin/ccs ~/.local/bin/claude[0-9]*
+rm ~/.local/bin/ccam ~/.local/bin/claude[0-9]*
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
 ```
 

@@ -4,10 +4,10 @@ description: Controlla quanto margine resta a ogni account Claude Code e continu
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 64fe0b561bd1
+sourceHash: db7ed9b7bcfc
 ---
 
-Quando un account raggiunge il limite di utilizzo di Claude Code, continua la stessa conversazione in un altro account di tua proprietà: condividi una volta la cronologia delle conversazioni, poi esegui `ccs next --continue`. Se hai un solo account, attendi l'orario di azzeramento indicato da Claude Code.
+Quando un account raggiunge il limite di utilizzo di Claude Code, continua la stessa conversazione in un altro account di tua proprietà: condividi una volta la cronologia delle conversazioni, poi esegui `ccam next --continue`. Se hai un solo account, attendi l'orario di azzeramento indicato da Claude Code.
 
 ## Prima che succeda
 
@@ -28,7 +28,7 @@ Ora la riga di stato mostra l'account e il suo utilizzo su 5 ore mentre lavori, 
 Esci da Claude Code (`/exit`), poi:
 
 ```sh
-ccs usage
+ccam usage
 ```
 
 ```console
@@ -39,16 +39,16 @@ ccs usage
 Apri la conversazione nell'account con più margine:
 
 ```sh
-ccs next --auto --continue
+ccam next --auto --continue
 ```
 
 Claude Code si avvia come `work` con la conversazione più recente della cartella corrente, compreso tutto ciò che è stato detto finora.
 
 ## Cose da tenere a mente
 
-- Esegui `ccs next --continue` nella stessa cartella in cui stavi lavorando; le conversazioni sono salvate per cartella di progetto.
+- Esegui `ccam next --continue` nella stessa cartella in cui stavi lavorando; le conversazioni sono salvate per cartella di progetto.
 - Evita di usare due account sulla stessa conversazione nello stesso momento. ccam ti avvisa se ci provi.
 - Anche l'altro account deve condividere la cronologia delle conversazioni, nello stesso gruppo.
 - La possibilità di passare da un account all'altro in questo modo dipende dai termini di ciascun account.
 
-Vedi [limiti di utilizzo](/docs/usage-limits) per tutte le opzioni di `ccs usage` e `ccs next`.
+Vedi [limiti di utilizzo](/docs/usage-limits) per tutte le opzioni di `ccam usage` e `ccam next`.

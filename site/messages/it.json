@@ -23,11 +23,11 @@
   },
   "landing": {
     "headline": "Più account Claude Code. Un solo terminale.",
-    "lede": "Aggiungi ogni account una sola volta. Passa da uno all'altro con claude2 o ccs work. Quando un account raggiunge il limite, prosegui nel successivo con la stessa conversazione.",
+    "lede": "Aggiungi ogni account una sola volta. Passa da uno all'altro con claude2 o ccam work. Quando un account raggiunge il limite, prosegui nel successivo con la stessa conversazione.",
     "installLabel": "Installa su Linux o macOS",
     "thenAdd": "Poi aggiungi il tuo primo account con {command}.",
     "readDocs": "Leggi la guida rapida",
-    "boardLabel": "Esempio di output di ccs usage: i limiti di tutti gli account in una volta",
+    "boardLabel": "Esempio di output di ccam usage: i limiti di tutti gli account in una volta",
     "board": {
       "account": "Account",
       "fiveHour": "5 ore",
@@ -43,7 +43,7 @@
       },
       {
         "command": "claude2",
-        "also": "ccs work --resume",
+        "also": "ccam work --resume",
         "body": "Avvia Claude Code con quell'account. Tutto ciò che segue il nome arriva a Claude Code invariato, e ccam aggiunge circa 4 millisecondi prima dell'avvio."
       },
       {
@@ -51,11 +51,11 @@
         "body": "Sceglie cosa l'account condivide con gli altri tuoi account. Server MCP, impostazioni, CLAUDE.md ed estensioni sono condivisi fin dall'inizio; i login mai."
       },
       {
-        "command": "ccs usage",
+        "command": "ccam usage",
         "body": "Mostra l'utilizzo su 5 ore e settimanale di tutti gli account in una volta, così sai quale ha ancora margine."
       },
       {
-        "command": "ccs next --continue",
+        "command": "ccam next --continue",
         "body": "Apre la stessa conversazione nell'account successivo quando quello attuale raggiunge il limite."
       },
       {
@@ -86,7 +86,7 @@
     }
   },
   "commands": {
-    "ccs": "Apre il selettore degli account",
+    "ccam": "Apre il selettore degli account",
     "name": "Avvia Claude Code con quell'account; gli argomenti vengono passati invariati",
     "add": "Aggiunge un account: cartella di configurazione, login e scorciatoia",
     "list": "Elenca gli account",
@@ -102,7 +102,7 @@
     "import": "Registra una cartella ~/.claude esistente dove si trova",
     "doctor": "Controlla link, permessi, login e versioni, e ripara",
     "statusline": "Mostra l'account e l'utilizzo nella riga di stato di Claude Code",
-    "shims": "Ricrea claude1…claudeN e ccs",
+    "shims": "Ricrea claude1…claudeN",
     "completion": "Stampa il completamento per bash o zsh"
   },
   "copy": {

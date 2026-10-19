@@ -4,7 +4,7 @@ description: LinuxまたはmacOSにccamを1つのコマンドで、.debパッケ
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: c7f92dfa554a
+sourceHash: fc63978e8f9e
 ---
 
 LinuxまたはmacOSのターミナルで、次のコマンドを実行します。
@@ -13,7 +13,7 @@ LinuxまたはmacOSのターミナルで、次のコマンドを実行します�
 curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-このスクリプトは、お使いのシステム用のリリースをダウンロードしてSHA-256チェックサムを検証し、`~/.local/bin`に`ccam`とその短い別名の`ccs`という2つのコマンドを配置します。そのフォルダーが`PATH`に含まれていない場合は、`~/.bashrc`または`~/.zshrc`に追加する行をスクリプトが表示します。
+このスクリプトは、お使いのシステム用のリリースをダウンロードしてSHA-256チェックサムを検証し、`~/.local/bin`に`ccam`を配置します。アカウントを追加すると、`ccam add`が同じフォルダーに`claude1`、`claude2`…のショートカットを作成します。そのフォルダーが`PATH`に含まれていない場合は、`~/.bashrc`または`~/.zshrc`に追加する行をスクリプトが表示します。
 
 ccamがClaude Codeを起動するので、先に[Claude Code](https://docs.claude.com/en/docs/claude-code/overview)をインストールし、`claude --version`が動作することを確認してください。
 
@@ -31,13 +31,12 @@ ccamがClaude Codeを起動するので、先に[Claude Code](https://docs.claud
 sudo apt install ./ccam_*_linux_amd64.deb
 ```
 
-このパッケージは`/usr/bin/ccam`と`/usr/bin/ccs`リンクをインストールします。
+このパッケージは`/usr/bin/ccam`をインストールします。
 
 **ソースから。** Go 1.26以降を使います。
 
 ```sh
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
-ln -s ccam "$(go env GOPATH)/bin/ccs"
 ```
 
 **特定のバージョン。** `CCAM_VERSION`を設定します。
@@ -53,7 +52,7 @@ ccam completion bash > ~/.local/share/bash-completion/completions/ccam
 ccam completion zsh > "${fpath[1]}/_ccam"
 ```
 
-補完は`ccam`と`ccs`の両方に対応し、アカウント名も補完します。
+補完は`ccam`のすべてのコマンドとオプションに対応し、アカウント名も補完します。
 
 ## インストールの確認
 
@@ -66,10 +65,10 @@ ccam doctor
 
 ## アンインストール
 
-2つのコマンドとアカウントのショートカットを削除します。アカウントが不要になった場合は、データフォルダーも削除します。
+コマンドとアカウントのショートカットを削除します。アカウントが不要になった場合は、データフォルダーも削除します。
 
 ```sh
-rm ~/.local/bin/ccam ~/.local/bin/ccs ~/.local/bin/claude[0-9]*
+rm ~/.local/bin/ccam ~/.local/bin/claude[0-9]*
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
 ```
 

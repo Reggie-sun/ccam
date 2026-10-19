@@ -1,20 +1,20 @@
 ---
 title: Usage limits and switching accounts
-description: See the 5-hour and weekly usage of every Claude Code account with ccs usage, and open the account with the most room with ccs next --auto.
+description: See the 5-hour and weekly usage of every Claude Code account with ccam usage, and open the account with the most room with ccam next --auto.
 updated: 2026-10-19
 order: 5
 translation: source
 ---
 
-`ccs usage` shows how much of the 5-hour and weekly limits each account has used. `ccs next --auto` opens the account with the most room, and `--continue` carries the current conversation over.
+`ccam usage` shows how much of the 5-hour and weekly limits each account has used. `ccam next --auto` opens the account with the most room, and `--continue` carries the current conversation over.
 
 ```console
-$ ccs usage
+$ ccam usage
  계정        5시간         초기화      주간          초기화      기준
  1 personal  ██████░░  72% 1시간 40분  ███░░░░░  41% 3일 6시간   방금
  2 work      █░░░░░░░   8% 4시간 12분  ██░░░░░░  19% 5일 2시간   방금
  3 side      ████████ 100% 22분        █████░░░  68% 1일 9시간   12분 전 (캐시)
-→ 여유가 가장 많은 계정: work   (ccs next --auto 로 바로 열기)
+→ 여유가 가장 많은 계정: work   (ccam next --auto 로 바로 열기)
 ```
 
 The columns are: account, 5-hour usage, time until it resets, weekly usage, time until it resets, and how old the numbers are.
@@ -37,9 +37,9 @@ Numbers fetched less than 60 seconds ago are reused. Options:
 
 ## Expired logins
 
-When an account's access token has expired, ccam does not renew it, because renewing it while a Claude Code session uses the same login could sign that session out. Start the account once with `ccs <name>` and Claude Code renews it.
+When an account's access token has expired, ccam does not renew it, because renewing it while a Claude Code session uses the same login could sign that session out. Start the account once with `ccam <name>` and Claude Code renews it.
 
-`ccs usage --refresh` renews expired tokens itself, but only for accounts that are not running. It never renews logins stored in the macOS Keychain or in an imported `~/.claude`.
+`ccam usage --refresh` renews expired tokens itself, but only for accounts that are not running. It never renews logins stored in the macOS Keychain or in an imported `~/.claude`.
 
 ## Usage in the status line
 
@@ -47,16 +47,16 @@ When an account's access token has expired, ccam does not renew it, because rene
 ccam statusline install
 ```
 
-Claude Code then shows the account name and its usage in the status line, for example `[work] · Opus · 5h 24% · 7d 41%`. If you already have a status line command, ccam keeps it and puts the account name in front. The status line also saves its numbers, which `ccs usage` uses when the endpoint does not answer.
+Claude Code then shows the account name and its usage in the status line, for example `[work] · Opus · 5h 24% · 7d 41%`. If you already have a status line command, ccam keeps it and puts the account name in front. The status line also saves its numbers, which `ccam usage` uses when the endpoint does not answer.
 
 ## Switching
 
 ```sh
-ccs next              # the account after the one you used last
-ccs next --auto       # the account with the lowest 5-hour usage
-ccs next --continue   # the next account that shares your conversation history
+ccam next             # the account after the one you used last
+ccam next --auto      # the account with the lowest 5-hour usage
+ccam next --continue  # the next account that shares your conversation history
 ```
 
-`ccs next` skips accounts that are not logged in, and `--auto` skips accounts at 100%. To continue a conversation, both accounts must share conversation history; see [sharing](/docs/sharing).
+`ccam next` skips accounts that are not logged in, and `--auto` skips accounts at 100%. To continue a conversation, both accounts must share conversation history; see [sharing](/docs/sharing).
 
 The [usage limit workflow guide](/guides/usage-limit-workflow) walks through a full example.

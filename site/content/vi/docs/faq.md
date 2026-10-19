@@ -4,7 +4,7 @@ description: "Giải đáp về ccam, tài khoản Claude Code, giới hạn s�
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 12ad0faef2ce
+sourceHash: 2be18393cbe2
 ---
 
 ## ccam có phải là công cụ chính thức của Anthropic không?
@@ -25,11 +25,11 @@ Hãy cho mỗi tài khoản một thư mục cấu hình riêng bằng `CLAUDE_C
 
 ## Làm sao để tiếp tục một cuộc hội thoại trên tài khoản khác?
 
-Bật dùng chung lịch sử hội thoại giữa hai tài khoản bằng `ccam share <name> --history on`, rồi chạy `ccs next --continue`. Claude Code sẽ mở cuộc hội thoại gần nhất của thư mục hiện tại trong tài khoản kế tiếp.
+Bật dùng chung lịch sử hội thoại giữa hai tài khoản bằng `ccam share <name> --history on`, rồi chạy `ccam next --continue`. Claude Code sẽ mở cuộc hội thoại gần nhất của thư mục hiện tại trong tài khoản kế tiếp.
 
 ## ccam có xem hoặc gửi thông tin đăng nhập của tôi đi không?
 
-ccam không bao giờ sao chép hay dùng chung thông tin đăng nhập. Nó chỉ đọc access token của một tài khoản để hỏi endpoint mức sử dụng của Anthropic về mức sử dụng của tài khoản đó, khi bạn chạy `ccs usage`, `ccs next --auto` hoặc `ccam doctor`. ccam không có telemetry và không gửi gì đến bất kỳ nơi nào khác.
+ccam không bao giờ sao chép hay dùng chung thông tin đăng nhập. Nó chỉ đọc access token của một tài khoản để hỏi endpoint mức sử dụng của Anthropic về mức sử dụng của tài khoản đó, khi bạn chạy `ccam usage`, `ccam next --auto` hoặc `ccam doctor`. ccam không có telemetry và không gửi gì đến bất kỳ nơi nào khác.
 
 ## Các tài khoản của tôi được lưu ở đâu?
 
@@ -37,7 +37,7 @@ Trong `~/.local/share/ccam/profiles/<name>/`, mỗi tài khoản một thư mụ
 
 ## Thư mục ~/.claude hiện có của tôi sẽ ra sao?
 
-Không có gì thay đổi, trừ khi bạn chạy `ccam import`. Lệnh import đăng ký thư mục ngay tại chỗ, nên lệnh `claude` thông thường và `ccs <name>` tiếp tục dùng cùng một tài khoản và cùng cài đặt.
+Không có gì thay đổi, trừ khi bạn chạy `ccam import`. Lệnh import đăng ký thư mục ngay tại chỗ, nên lệnh `claude` thông thường và `ccam <name>` tiếp tục dùng cùng một tài khoản và cùng cài đặt.
 
 ## ccam hỗ trợ những hệ điều hành nào?
 
@@ -53,4 +53,4 @@ Khởi động Claude Code thông qua ccam tốn thêm khoảng 4 mili giây, đ
 
 ## Làm sao để gỡ cài đặt ccam?
 
-Xóa `ccam`, `ccs` và các liên kết `claude1`… khỏi `~/.local/bin`, sau đó xóa `~/.config/ccam`, `~/.local/share/ccam` và `~/.local/state/ccam` nếu bạn không còn cần các tài khoản. Xem [cài đặt](/docs/install#uninstall).
+Xóa `ccam` và các liên kết `claude1`… khỏi `~/.local/bin`, sau đó xóa `~/.config/ccam`, `~/.local/share/ccam` và `~/.local/state/ccam` nếu bạn không còn cần các tài khoản. Xem [cài đặt](/docs/install#uninstall).

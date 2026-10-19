@@ -4,7 +4,7 @@ description: 关于 ccam、Claude Code 账号、用量限制、共享、隐私�
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 12ad0faef2ce
+sourceHash: 2be18393cbe2
 ---
 
 ## ccam 是 Anthropic 的官方工具吗？
@@ -25,11 +25,11 @@ sourceHash: 12ad0faef2ce
 
 ## 如何在另一个账号上继续对话？
 
-用 `ccam share <name> --history on` 在两个账号之间共享对话历史，然后运行 `ccs next --continue`。Claude Code 会在下一个账号中打开当前文件夹最近的一次对话。
+用 `ccam share <name> --history on` 在两个账号之间共享对话历史，然后运行 `ccam next --continue`。Claude Code 会在下一个账号中打开当前文件夹最近的一次对话。
 
 ## ccam 会查看或发送我的登录信息吗？
 
-ccam 从不复制或共享登录信息。它读取账号的访问令牌，只是为了在你运行 `ccs usage`、`ccs next --auto` 或 `ccam doctor` 时，向 Anthropic 的用量接口查询该账号的用量。ccam 没有遥测，也不会向其他任何地方发送数据。
+ccam 从不复制或共享登录信息。它读取账号的访问令牌，只是为了在你运行 `ccam usage`、`ccam next --auto` 或 `ccam doctor` 时，向 Anthropic 的用量接口查询该账号的用量。ccam 没有遥测，也不会向其他任何地方发送数据。
 
 ## 我的账号存储在哪里？
 
@@ -37,7 +37,7 @@ ccam 从不复制或共享登录信息。它读取账号的访问令牌，只是
 
 ## 我现有的 ~/.claude 会怎样？
 
-不会有任何变化，除非你运行 `ccam import`。导入会在原位置注册该文件夹，因此直接运行 `claude` 和 `ccs <name>` 都会继续使用同一个账号和同一套设置。
+不会有任何变化，除非你运行 `ccam import`。导入会在原位置注册该文件夹，因此直接运行 `claude` 和 `ccam <name>` 都会继续使用同一个账号和同一套设置。
 
 ## ccam 支持哪些系统？
 
@@ -53,4 +53,4 @@ Linux（Ubuntu、Debian、Fedora、Arch、Alpine 等）和 macOS。在 Windows �
 
 ## 如何卸载 ccam？
 
-从 `~/.local/bin` 中删除 `ccam`、`ccs` 和 `claude1`… 这些链接；如果不再需要这些账号，再删除 `~/.config/ccam`、`~/.local/share/ccam` 和 `~/.local/state/ccam`。参见[安装](/docs/install#uninstall)。
+从 `~/.local/bin` 中删除 `ccam` 和 `claude1`… 这些链接；如果不再需要这些账号，再删除 `~/.config/ccam`、`~/.local/share/ccam` 和 `~/.local/state/ccam`。参见[安装](/docs/install#uninstall)。

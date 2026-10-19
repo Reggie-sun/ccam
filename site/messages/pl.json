@@ -23,11 +23,11 @@
   },
   "landing": {
     "headline": "Kilka kont Claude Code. Jeden terminal.",
-    "lede": "Dodaj każde konto raz. Przełączaj się poleceniem claude2 lub ccs work. Gdy jedno konto dojdzie do limitu, kontynuuj tę samą rozmowę na następnym.",
+    "lede": "Dodaj każde konto raz. Przełączaj się poleceniem claude2 lub ccam work. Gdy jedno konto dojdzie do limitu, kontynuuj tę samą rozmowę na następnym.",
     "installLabel": "Instalacja na Linux lub macOS",
     "thenAdd": "Następnie dodaj pierwsze konto poleceniem {command}.",
     "readDocs": "Przeczytaj szybki start",
-    "boardLabel": "Przykładowy wynik ccs usage: limity wszystkich kont naraz",
+    "boardLabel": "Przykładowy wynik ccam usage: limity wszystkich kont naraz",
     "board": {
       "account": "Konto",
       "fiveHour": "5 godzin",
@@ -43,7 +43,7 @@
       },
       {
         "command": "claude2",
-        "also": "ccs work --resume",
+        "also": "ccam work --resume",
         "body": "Uruchamia Claude Code jako to konto. Wszystko po nazwie trafia do Claude Code bez zmian, a ccam dodaje około 4 milisekund przed startem."
       },
       {
@@ -51,11 +51,11 @@
         "body": "Określa, co konto współdzieli z pozostałymi kontami. Serwery MCP, ustawienia, CLAUDE.md i rozszerzenia są współdzielone od początku; loginy nigdy."
       },
       {
-        "command": "ccs usage",
+        "command": "ccam usage",
         "body": "Pokazuje 5-godzinne i tygodniowe użycie wszystkich kont naraz, więc wiesz, które ma jeszcze zapas."
       },
       {
-        "command": "ccs next --continue",
+        "command": "ccam next --continue",
         "body": "Otwiera tę samą rozmowę na następnym koncie, gdy bieżące osiągnie limit."
       },
       {
@@ -86,7 +86,7 @@
     }
   },
   "commands": {
-    "ccs": "Otwórz wybór konta",
+    "ccam": "Otwórz wybór konta",
     "name": "Uruchom Claude Code jako to konto; argumenty są przekazywane bez zmian",
     "add": "Dodaj konto: folder konfiguracji, logowanie i skrót",
     "list": "Wyświetl konta",
@@ -102,7 +102,7 @@
     "import": "Zarejestruj istniejący folder ~/.claude w miejscu, w którym jest",
     "doctor": "Sprawdź linki, uprawnienia, loginy i wersje oraz napraw",
     "statusline": "Pokaż konto i użycie na pasku stanu Claude Code",
-    "shims": "Utwórz ponownie claude1…claudeN i ccs",
+    "shims": "Utwórz ponownie claude1…claudeN",
     "completion": "Wypisz uzupełnianie dla bash lub zsh"
   },
   "copy": {

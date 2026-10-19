@@ -1,13 +1,13 @@
 ---
 title: क्विक स्टार्ट
-description: ccam add ने दोन Claude Code खाती जोडा, claude1, claude2 किंवा ccs ने त्यांच्यात बदल करा, आणि ती काय शेअर करतील ते निवडा.
+description: ccam add ने दोन Claude Code खाती जोडा, claude1, claude2 किंवा ccam <name> ने त्यांच्यात बदल करा, आणि ती काय शेअर करतील ते निवडा.
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 9462b80d61bc
+sourceHash: c6b1c1c3ebaf
 ---
 
-प्रत्येक खाते `ccam add` ने जोडा, नंतर `claude1`, `claude2` किंवा `ccs <name>` ने Claude Code सुरू करा. बहुतेक लोकांना एवढेच लागते.
+प्रत्येक खाते `ccam add` ने जोडा, नंतर `claude1`, `claude2` किंवा `ccam <name>` ने Claude Code सुरू करा. बहुतेक लोकांना एवढेच लागते.
 
 ## 1. तुमचे पहिले खाते जोडा
 
@@ -37,19 +37,19 @@ ccam add work
 
 ```sh
 claude2
-ccs work
-ccs 2
+ccam work
+ccam 2
 ```
 
 खात्याच्या नावानंतरचे सर्व काही जसेच्या तसे Claude Code कडे जाते, त्यामुळे तुम्ही ओळखीचे पर्याय वापरत राहू शकता:
 
 ```sh
-ccs work --resume
-ccs work -p "fix the failing test" --output-format json
+ccam work --resume
+ccam work -p "fix the failing test" --output-format json
 cat error.log | claude2 -p "what caused this?"
 ```
 
-फक्त `ccs` चालवल्यास निवडण्याची यादी उघडते: बाण की आणि Enter वापरा, किंवा खात्याचा क्रमांक दाबा.
+फक्त `ccam` चालवल्यास निवडण्याची यादी उघडते: बाण की आणि Enter वापरा, किंवा खात्याचा क्रमांक दाबा.
 
 ## 4. काय शेअर करायचे ते निवडा
 
@@ -65,11 +65,11 @@ ccam share work --history on
 ## 5. खाते मर्यादेला पोहोचल्यावर
 
 ```sh
-ccs usage
-ccs next --continue
+ccam usage
+ccam next --continue
 ```
 
-`ccs usage` सर्व खात्यांचा 5 तासांचा आणि साप्ताहिक वापर दाखवते. `ccs next --continue` तेच संभाषण पुढच्या खात्यात उघडते. [वापर मर्यादा](/docs/usage-limits) पाहा.
+`ccam usage` सर्व खात्यांचा 5 तासांचा आणि साप्ताहिक वापर दाखवते. `ccam next --continue` तेच संभाषण पुढच्या खात्यात उघडते. [वापर मर्यादा](/docs/usage-limits) पाहा.
 
 ## आधीच ~/.claude वापरत आहात?
 

@@ -4,10 +4,10 @@ description: Periksa sisa kuota setiap akun Claude Code dan lanjutkan percakapan
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 64fe0b561bd1
+sourceHash: db7ed9b7bcfc
 ---
 
-Saat satu akun mencapai batas penggunaan Claude Code, lanjutkan percakapan yang sama di akun lain milik Anda: bagikan riwayat percakapan sekali, lalu jalankan `ccs next --continue`. Jika Anda hanya punya satu akun, tunggu hingga waktu reset yang ditampilkan Claude Code.
+Saat satu akun mencapai batas penggunaan Claude Code, lanjutkan percakapan yang sama di akun lain milik Anda: bagikan riwayat percakapan sekali, lalu jalankan `ccam next --continue`. Jika Anda hanya punya satu akun, tunggu hingga waktu reset yang ditampilkan Claude Code.
 
 ## Sebelum terjadi
 
@@ -28,7 +28,7 @@ Sekarang status line menampilkan akun dan penggunaan 5 jamnya saat Anda bekerja,
 Keluar dari Claude Code (`/exit`), lalu:
 
 ```sh
-ccs usage
+ccam usage
 ```
 
 ```console
@@ -39,16 +39,16 @@ ccs usage
 Buka percakapan di akun dengan sisa kuota terbanyak:
 
 ```sh
-ccs next --auto --continue
+ccam next --auto --continue
 ```
 
 Claude Code dimulai sebagai `work` dengan percakapan terbaru dari folder saat ini, termasuk semua yang sudah dibicarakan sejauh ini.
 
 ## Hal yang perlu diingat
 
-- Jalankan `ccs next --continue` di folder yang sama tempat Anda bekerja; percakapan disimpan per folder proyek.
+- Jalankan `ccam next --continue` di folder yang sama tempat Anda bekerja; percakapan disimpan per folder proyek.
 - Hindari menjalankan dua akun pada percakapan yang sama secara bersamaan. ccam memperingatkan Anda jika Anda mencobanya.
 - Akun lainnya juga harus berbagi riwayat percakapan, dalam grup yang sama.
 - Boleh tidaknya Anda berpindah akun seperti ini bergantung pada ketentuan setiap akun.
 
-Lihat [batas penggunaan](/docs/usage-limits) untuk semua opsi `ccs usage` dan `ccs next`.
+Lihat [batas penggunaan](/docs/usage-limits) untuk semua opsi `ccam usage` dan `ccam next`.

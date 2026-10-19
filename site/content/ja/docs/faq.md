@@ -4,7 +4,7 @@ description: ccam、Claude Codeのアカウント、使用量の上限、共有�
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 12ad0faef2ce
+sourceHash: 2be18393cbe2
 ---
 
 ## ccamはAnthropicの公式ツールですか？
@@ -25,11 +25,11 @@ sourceHash: 12ad0faef2ce
 
 ## 別のアカウントで会話を続けるにはどうすればよいですか？
 
-`ccam share <name> --history on`で2つのアカウント間で会話履歴を共有してから、`ccs next --continue`を実行します。Claude Codeが、現在のフォルダーで最も新しい会話を次のアカウントで開きます。
+`ccam share <name> --history on`で2つのアカウント間で会話履歴を共有してから、`ccam next --continue`を実行します。Claude Codeが、現在のフォルダーで最も新しい会話を次のアカウントで開きます。
 
 ## ccamはログイン情報を見たり送信したりしますか？
 
-ccamがログインをコピーしたり共有したりすることはありません。アカウントのアクセストークンを読み取るのは、`ccs usage`、`ccs next --auto`、`ccam doctor`を実行したときに、Anthropicの使用量エンドポイントにそのアカウントの使用量を問い合わせるためだけです。ccamにはテレメトリーがなく、それ以外の場所には何も送信しません。
+ccamがログインをコピーしたり共有したりすることはありません。アカウントのアクセストークンを読み取るのは、`ccam usage`、`ccam next --auto`、`ccam doctor`を実行したときに、Anthropicの使用量エンドポイントにそのアカウントの使用量を問い合わせるためだけです。ccamにはテレメトリーがなく、それ以外の場所には何も送信しません。
 
 ## アカウントはどこに保存されますか？
 
@@ -37,7 +37,7 @@ ccamがログインをコピーしたり共有したりすることはありま�
 
 ## 既存の~/.claudeはどうなりますか？
 
-`ccam import`を実行しない限り、何も変わりません。インポートはフォルダーをその場所のまま登録するので、通常の`claude`も`ccs <name>`も、引き続き同じアカウントと設定を使います。
+`ccam import`を実行しない限り、何も変わりません。インポートはフォルダーをその場所のまま登録するので、通常の`claude`も`ccam <name>`も、引き続き同じアカウントと設定を使います。
 
 ## ccamはどのシステムに対応していますか？
 
@@ -53,4 +53,4 @@ ccam経由でClaude Codeを起動すると、起動時間が約4ミリ秒増え�
 
 ## ccamをアンインストールするにはどうすればよいですか？
 
-`~/.local/bin`から`ccam`、`ccs`、`claude1`…の各リンクを削除します。アカウントが不要になった場合は、続けて`~/.config/ccam`、`~/.local/share/ccam`、`~/.local/state/ccam`も削除します。詳しくは[インストール](/docs/install#uninstall)を参照してください。
+`~/.local/bin`から`ccam`と、`claude1`…の各リンクを削除します。アカウントが不要になった場合は、続けて`~/.config/ccam`、`~/.local/share/ccam`、`~/.local/state/ccam`も削除します。詳しくは[インストール](/docs/install#uninstall)を参照してください。

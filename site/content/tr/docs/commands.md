@@ -1,21 +1,21 @@
 ---
 title: Komut başvurusu
-description: ccam add ve ccs <name> komutlarından ccam usage, ccam next ve ccam doctor komutlarına kadar tüm ccam komutları ve seçenekleri.
+description: ccam add ve ccam <name> komutlarından ccam usage, ccam next ve ccam doctor komutlarına kadar tüm ccam komutları ve seçenekleri.
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 18ecad9a1104
+sourceHash: 54bdfc489174
 ---
 
-`ccam` ve `ccs` aynı programdır; hangisini tercih ederseniz onu kullanın. Bir komutun ne yapacağını, yapmadan görmek için komuttan önce `--dry-run` yazın, örneğin `ccs --dry-run work`.
+Bir komutun ne yapacağını, yapmadan görmek için komuttan önce `--dry-run` yazın, örneğin `ccam --dry-run work`.
 
 <!-- commands -->
 
 ## Claude Code'u başlatma
 
-`ccs <name|number> [arguments]`, Claude Code'u o hesapla başlatır. ccam, addan sonraki argümanları okumaz; bunları aynı sırayla `claude` komutuna iletir. Standart girdi, çıkış kodu ve sinyaller de tam olarak `claude` komutunun kendisinde olduğu gibi davranır. Addan sonra `--` yazmak isteğe bağlıdır.
+`ccam <name|number> [arguments]`, Claude Code'u o hesapla başlatır. ccam, addan sonraki argümanları okumaz; bunları aynı sırayla `claude` komutuna iletir. Standart girdi, çıkış kodu ve sinyaller de tam olarak `claude` komutunun kendisinde olduğu gibi davranır. Addan sonra `--` yazmak isteğe bağlıdır.
 
-Hesap adı olmadan argümanlarla çalıştırılan `ccs`, örneğin `ccs -p "summarise"`, varsayılan hesabı kullanır. Varsayılan hesabı `ccam use <name>` ile ayarlayın.
+Hesap adı olmadan argümanlarla çalıştırılan `ccam`, örneğin `ccam -p "summarise"`, varsayılan hesabı kullanır. Varsayılan hesabı `ccam use <name>` ile ayarlayın.
 
 `claude1`, `claude2` ve devamındaki kısayollar, `~/.local/bin` içindeki ccam'a yönelen bağlantılardır. `ccam shims install --names` ayrıca her hesap için `claude-<name>` oluşturur.
 
@@ -56,11 +56,11 @@ ccam mcp remove fs
 ## Kullanım ve geçiş
 
 ```sh
-ccs usage            # also: ccs u
-ccs usage --watch    # refresh every 60 seconds
-ccs usage --json
-ccs next --continue
-ccs next --auto
+ccam usage           # also: ccam u
+ccam usage --watch   # refresh every 60 seconds
+ccam usage --json
+ccam next --continue
+ccam next --auto
 ```
 
 ## Bakım
@@ -80,6 +80,6 @@ ccam shims install
 | `~/.local/share/ccam/profiles/<name>/` | Her hesabın `CLAUDE_CONFIG_DIR` klasörü |
 | `~/.local/share/ccam/groups/<group>/` | Paylaşılan ayarlar, MCP sunucuları, uzantılar ve geçmiş |
 | `~/.local/state/ccam/` | Kullanım önbelleği ve son kullanım zamanları |
-| `~/.local/bin/claude1`, `ccs` | ccam'a yönelen bağlantılar |
+| `~/.local/bin/claude1`, `claude2`… | ccam'a yönelen bağlantılar |
 
 `XDG_CONFIG_HOME`, `XDG_DATA_HOME` ve `XDG_STATE_HOME` değişkenleri bu klasörlerin yerini değiştirir.

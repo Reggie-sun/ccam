@@ -1,13 +1,13 @@
 ---
 title: "فوری آغاز"
-description: "ccam add سے Claude Code کے دو اکاؤنٹس شامل کریں، claude1، claude2 یا ccs سے ان کے درمیان تبدیل کریں، اور طے کریں کہ وہ کیا شیئر کریں۔"
+description: "ccam add سے Claude Code کے دو اکاؤنٹس شامل کریں، claude1، claude2 یا ccam <name> سے ان کے درمیان تبدیل کریں، اور طے کریں کہ وہ کیا شیئر کریں۔"
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 9462b80d61bc
+sourceHash: c6b1c1c3ebaf
 ---
 
-ہر اکاؤنٹ `ccam add` سے شامل کریں، پھر Claude Code کو `claude1`، `claude2` یا `ccs <name>` سے شروع کریں۔ زیادہ تر لوگوں کو بس اتنا ہی چاہیے۔
+ہر اکاؤنٹ `ccam add` سے شامل کریں، پھر Claude Code کو `claude1`، `claude2` یا `ccam <name>` سے شروع کریں۔ زیادہ تر لوگوں کو بس اتنا ہی چاہیے۔
 
 ## 1. اپنا پہلا اکاؤنٹ شامل کریں
 
@@ -37,19 +37,19 @@ ccam add work
 
 ```sh
 claude2
-ccs work
-ccs 2
+ccam work
+ccam 2
 ```
 
 اکاؤنٹ کے نام کے بعد کی ہر چیز بغیر تبدیلی کے Claude Code کو جاتی ہے، اس لیے آپ وہی آپشنز استعمال کرتے رہتے ہیں جو آپ جانتے ہیں:
 
 ```sh
-ccs work --resume
-ccs work -p "fix the failing test" --output-format json
+ccam work --resume
+ccam work -p "fix the failing test" --output-format json
 cat error.log | claude2 -p "what caused this?"
 ```
 
-صرف `ccs` چلانے سے اکاؤنٹ منتخب کرنے کا مینو کھلتا ہے: ایرو کیز اور Enter استعمال کریں، یا اکاؤنٹ کا نمبر دبائیں۔
+صرف `ccam` چلانے سے اکاؤنٹ منتخب کرنے کا مینو کھلتا ہے: ایرو کیز اور Enter استعمال کریں، یا اکاؤنٹ کا نمبر دبائیں۔
 
 ## 4. طے کریں کہ کیا شیئر کرنا ہے
 
@@ -65,11 +65,11 @@ ccam کچھ بھی تبدیل کرنے سے پہلے دکھاتا ہے کہ وہ
 ## 5. جب کوئی اکاؤنٹ اپنی حد تک پہنچ جائے
 
 ```sh
-ccs usage
-ccs next --continue
+ccam usage
+ccam next --continue
 ```
 
-`ccs usage` ہر اکاؤنٹ کا 5 گھنٹے اور ہفتہ وار استعمال دکھاتا ہے۔ `ccs next --continue` وہی گفتگو اگلے اکاؤنٹ میں کھولتا ہے۔ [استعمال کی حدیں](/docs/usage-limits) دیکھیں۔
+`ccam usage` ہر اکاؤنٹ کا 5 گھنٹے اور ہفتہ وار استعمال دکھاتا ہے۔ `ccam next --continue` وہی گفتگو اگلے اکاؤنٹ میں کھولتا ہے۔ [استعمال کی حدیں](/docs/usage-limits) دیکھیں۔
 
 ## کیا آپ پہلے سے ~/.claude استعمال کر رہے ہیں؟
 

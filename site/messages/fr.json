@@ -23,11 +23,11 @@
   },
   "landing": {
     "headline": "Plusieurs comptes Claude Code. Un seul terminal.",
-    "lede": "Ajoutez chaque compte une fois. Changez de compte avec claude2 ou ccs work. Quand un compte atteint sa limite, continuez sur le suivant avec la même conversation.",
+    "lede": "Ajoutez chaque compte une fois. Changez de compte avec claude2 ou ccam work. Quand un compte atteint sa limite, continuez sur le suivant avec la même conversation.",
     "installLabel": "Installer sous Linux ou macOS",
     "thenAdd": "Ajoutez ensuite votre premier compte avec {command}.",
     "readDocs": "Lire le démarrage rapide",
-    "boardLabel": "Exemple de sortie de ccs usage : les limites de tous les comptes à la fois",
+    "boardLabel": "Exemple de sortie de ccam usage : les limites de tous les comptes à la fois",
     "board": {
       "account": "Compte",
       "fiveHour": "5 heures",
@@ -43,7 +43,7 @@
       },
       {
         "command": "claude2",
-        "also": "ccs work --resume",
+        "also": "ccam work --resume",
         "body": "Lance Claude Code avec ce compte. Tout ce qui suit le nom est transmis tel quel à Claude Code, et ccam ajoute environ 4 millisecondes avant le démarrage."
       },
       {
@@ -51,11 +51,11 @@
         "body": "Choisit ce que le compte partage avec vos autres comptes. Les serveurs MCP, les paramètres, CLAUDE.md et les extensions sont partagés dès le départ ; les connexions ne le sont jamais."
       },
       {
-        "command": "ccs usage",
+        "command": "ccam usage",
         "body": "Affiche l'utilisation sur 5 heures et sur la semaine de tous les comptes à la fois, pour savoir lequel a encore de la marge."
       },
       {
-        "command": "ccs next --continue",
+        "command": "ccam next --continue",
         "body": "Ouvre la même conversation dans le compte suivant quand le compte actuel atteint sa limite."
       },
       {
@@ -86,7 +86,7 @@
     }
   },
   "commands": {
-    "ccs": "Ouvrir le sélecteur de compte",
+    "ccam": "Ouvrir le sélecteur de compte",
     "name": "Lancer Claude Code avec ce compte ; les arguments sont transmis tels quels",
     "add": "Ajouter un compte : dossier de configuration, connexion et raccourci",
     "list": "Lister les comptes",
@@ -102,7 +102,7 @@
     "import": "Enregistrer un dossier ~/.claude existant sans le déplacer",
     "doctor": "Vérifier les liens, les permissions, les connexions et les versions, puis réparer",
     "statusline": "Afficher le compte et l'utilisation dans la ligne d'état de Claude Code",
-    "shims": "Recréer claude1…claudeN et ccs",
+    "shims": "Recréer claude1…claudeN",
     "completion": "Afficher la complétion bash ou zsh"
   },
   "copy": {
