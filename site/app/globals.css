@@ -141,6 +141,8 @@ code, pre, kbd { font-family: var(--font-mono); font-size: 0.9em; letter-spacing
 .site-header .wrap { display: flex; align-items: center; gap: 0.5rem; min-block-size: var(--header); }
 .brand { font-family: var(--font-display); font-weight: 300; font-size: 1.75rem; letter-spacing: -0.03em; line-height: 1; color: var(--ink); text-decoration: none; margin-inline-end: auto; padding-block-end: 0.15rem; }
 html:not([data-font="brand"]) .brand { font-family: "Newsreader", Georgia, serif; }
+.site-header .brand { display: inline-flex; align-items: center; gap: 0.45rem; }
+.brand .mark { inline-size: 1.6rem; block-size: 1.6rem; flex: none; margin-block-start: 0.15rem; }
 .site-nav { display: none; gap: 0.25rem; }
 .site-nav a, .menu-panel a { font-weight: 500; font-size: 0.94rem; color: var(--ink); text-decoration: none; padding: 0.55rem 0.9rem; border-radius: 999px; transition: background-color 200ms; }
 .site-nav a:hover, .site-nav a[aria-current="page"], .menu-panel a[aria-current="page"] { background: var(--strong); }

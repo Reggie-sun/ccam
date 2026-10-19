@@ -1,5 +1,16 @@
 const line = { fill: "none", stroke: "currentColor", strokeWidth: 1.6, strokeLinecap: "round", strokeLinejoin: "round" } as const;
 
+/** The ccam mark, same drawing as public/favicon.svg: three left-aligned gauges. */
+export function BrandMark() {
+  return (
+    <svg className="mark" viewBox="0 0 32 32" aria-hidden="true" fill="#d97757">
+      <rect x="4" y="3" width="24" height="6" rx="3" />
+      <rect x="4" y="13" width="18" height="6" rx="3" />
+      <rect x="4" y="23" width="24" height="6" rx="3" />
+    </svg>
+  );
+}
+
 /** Sun and moon; CSS shows the one for the current theme. */
 export function ThemeIcon() {
   return (

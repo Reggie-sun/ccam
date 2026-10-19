@@ -4,7 +4,7 @@ import { getLocale, locales, nativeName } from "../i18n/locales";
 import { format, getMessages, hasMessages } from "../lib/i18n";
 import { homePath, pagePath, REPO } from "../lib/paths";
 import { websiteLd } from "../lib/jsonld";
-import { GlobeIcon, MenuIcon, ThemeIcon } from "./Icons";
+import { BrandMark, GlobeIcon, MenuIcon, ThemeIcon } from "./Icons";
 import { JsonLd } from "./JsonLd";
 
 // Applies the saved theme before first paint; hashed into the CSP at build.
@@ -47,7 +47,10 @@ export function Shell({ locale, alternates, active, menu, children }: Props) {
         </div>
         <header className="site-header">
           <div className="wrap">
-            <a className="brand" href={homePath(locale)}>ccam</a>
+            <a className="brand" href={homePath(locale)}>
+              <BrandMark />
+              ccam
+            </a>
             <nav className="site-nav" aria-label={m.nav.menu}>
               <a href={pagePath(locale, "docs", "quick-start")} aria-current={active === "docs" ? "page" : undefined}>{m.nav.docs}</a>
               <a href={pagePath(locale, "docs", "faq")} aria-current={active === "faq" ? "page" : undefined}>{m.nav.faq}</a>
