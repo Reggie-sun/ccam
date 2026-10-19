@@ -9,6 +9,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/jhyunwoo/ccam/internal/config"
+	"github.com/jhyunwoo/ccam/internal/launcher"
 	"github.com/jhyunwoo/ccam/internal/profile"
 	"github.com/jhyunwoo/ccam/internal/share"
 )
@@ -67,7 +68,7 @@ func shareCmd(e *env) *cobra.Command {
 			if err != nil {
 				return err
 			}
-			return changeShare(e, cfg, prof, target, share.Options{Fresh: fresh}, yes, res)
+			return changeShare(e, prof, target, share.Options{Fresh: fresh}, yes, res)
 		},
 	}
 	for _, item := range config.Items {
@@ -113,7 +114,12 @@ func showShare(e *env, prof *config.Profile) error {
 }
 
 // changeShare prints the plan, asks, resolves conflicts and applies.
-func changeShare(e *env, cfg *config.Config, prof *config.Profile, target config.Share, opt share.Options, yes bool, prefer *share.Resolution) error {
+func changeShare(e *env, prof *config.Profile, target config.Share, opt share.Options, yes bool, prefer *share.Resolution) error {
+	// A running session keeps writing into the folders being moved, and
+	// lines it appends meanwhile would be lost.
+	if !e.dryRun && launcher.Running(e.paths, prof.Name) {
+		return fmt.Errorf("account %s is running; quit it first, then change its sharing", prof.Name)
+	}
 	dir := profile.Dir(e.paths, prof)
 	pl, err := share.Build(dir, e.paths.GroupsRoot(), prof.Share, target, opt)
 	if err != nil {
@@ -145,11 +151,18 @@ func changeShare(e *env, cfg *config.Config, prof *config.Profile, target config
 		}
 	}
 	// Save the target first: if Apply stops halfway, doctor --fix and a
-	// rerun build their plan toward it and finish the change.
-	prof.Share = target
-	if err := e.save(cfg); err != nil {
+	// rerun build their plan toward it and finish the change. The prompts
+	// may have waited, so the current config is the one updated.
+	if _, err := e.update(func(cfg *config.Config) error {
+		p, err := cfg.MustFind(prof.Name)
+		if err == nil {
+			p.Share = target
+		}
+		return err
+	}); err != nil {
 		return err
 	}
+	prof.Share = target
 	if err := pl.Apply(); err != nil {
 		return fmt.Errorf("failed while applying: %w\nThe originals are in %s/%s. Fix the cause, then finish with `ccam doctor --fix`", err, dir, share.BackupDir)
 	}

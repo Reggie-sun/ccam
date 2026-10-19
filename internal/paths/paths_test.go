@@ -31,3 +31,23 @@ func TestXDG(t *testing.T) {
 		t.Fatalf("got %+v want %+v", p, want)
 	}
 }
+
+func TestRelativeXDGIsIgnored(t *testing.T) {
+	t.Setenv("CCAM_HOME", "")
+	t.Setenv("HOME", "/h")
+	t.Setenv("XDG_DATA_HOME", "rel/data")
+	t.Setenv("XDG_RUNTIME_DIR", "rel/run")
+	p := FromEnv()
+	if p.Data != "/h/.local/share/ccam" || p.Runtime != p.State+"/locks" {
+		t.Fatalf("got %+v", p)
+	}
+}
+
+func TestUnsetHomeStaysAbsolute(t *testing.T) {
+	t.Setenv("CCAM_HOME", "")
+	t.Setenv("HOME", "")
+	t.Setenv("XDG_CONFIG_HOME", "")
+	if p := FromEnv(); !filepath.IsAbs(p.Config) || !filepath.IsAbs(p.Bin) {
+		t.Fatalf("relative paths without HOME: %+v", p)
+	}
+}

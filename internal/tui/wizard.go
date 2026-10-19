@@ -97,6 +97,16 @@ func (w Wizard) Done() bool { return w.done }
 func (w Wizard) Init() tea.Cmd { return nil }
 
 func (w Wizard) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	// Terminals deliver pasted text as one message, not as key presses.
+	if p, ok := msg.(tea.PasteMsg); ok {
+		switch text := strings.TrimSpace(p.Content); {
+		case w.askName:
+			w.name += text
+		case w.typeShortcut:
+			w.shortcut += text
+		}
+		return w, nil
+	}
 	k, ok := msg.(tea.KeyPressMsg)
 	if !ok {
 		return w, nil

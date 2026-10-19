@@ -54,7 +54,7 @@ type Report struct {
 	Status Status    `json:"status"`
 	Limits *Limits   `json:"limits,omitempty"`
 	Source string    `json:"source,omitempty"` // live | cache | statusline
-	At     time.Time `json:"at,omitempty"`     // when the values were measured
+	At     time.Time `json:"at,omitzero"`      // when the values were measured
 	Err    string    `json:"error,omitempty"`
 	// FormatChanged means the endpoint answered but the parser did not
 	// understand it; doctor reports this.
@@ -79,14 +79,20 @@ type Fetcher struct {
 
 func NewFetcher(stateDir string) *Fetcher {
 	tr := &http.Transport{
-		Proxy:               http.ProxyFromEnvironment,
-		DialContext:         (&net.Dialer{Timeout: connectTimeout}).DialContext,
-		TLSHandshakeTimeout: connectTimeout,
-		ForceAttemptHTTP2:   true,
-		MaxIdleConnsPerHost: 8,
+		Proxy:                 http.ProxyFromEnvironment,
+		DialContext:           (&net.Dialer{Timeout: connectTimeout}).DialContext,
+		TLSHandshakeTimeout:   connectTimeout,
+		ResponseHeaderTimeout: accountTimeout,
+		ForceAttemptHTTP2:     true,
+		MaxIdleConnsPerHost:   8,
 	}
 	return &Fetcher{
-		Client:   &http.Client{Transport: tr},
+		Client: &http.Client{
+			Transport: tr,
+			// Neither endpoint redirects; following one would resend the
+			// token (or the refresh token in a POST body) elsewhere.
+			CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse },
+		},
 		URL:      Endpoint,
 		TokenURL: TokenURL,
 		StateDir: stateDir,
@@ -102,9 +108,7 @@ func (f *Fetcher) FetchAll(ctx context.Context, accts []Account, opt Options, on
 	var mu sync.Mutex
 	var wg sync.WaitGroup
 	for i, a := range accts {
-		wg.Add(1)
-		go func(i int, a Account) {
-			defer wg.Done()
+		wg.Go(func() {
 			r := f.Fetch(ctx, a, opt)
 			mu.Lock()
 			out[i] = r
@@ -112,7 +116,7 @@ func (f *Fetcher) FetchAll(ctx context.Context, accts []Account, opt Options, on
 				onResult(i, r)
 			}
 			mu.Unlock()
-		}(i, a)
+		})
 	}
 	wg.Wait()
 	return out
@@ -149,7 +153,10 @@ func (f *Fetcher) Fetch(ctx context.Context, a Account, opt Options) Report {
 		if src == creds.Keychain {
 			return f.fallback(a, r, StatusExpired, "macOS keychain logins are not refreshed")
 		}
-		if cred, err = f.refresh(ctx, a); err != nil {
+		rctx, cancel := context.WithTimeout(ctx, accountTimeout)
+		cred, err = f.refresh(rctx, a)
+		cancel()
+		if err != nil {
 			return f.fallback(a, r, StatusExpired, err.Error())
 		}
 	}
@@ -215,7 +222,7 @@ func (f *Fetcher) fallback(a Account, r Report, status Status, errMsg string) Re
 		}
 		return r
 	}
-	r.Limits, r.At = best.Limits, best.At
+	r.Limits, r.At = best.Limits.as(f.Now()), best.At
 	r.Source = "cache"
 	if best.source == "statusline" {
 		r.Source = "statusline"
@@ -234,6 +241,12 @@ func (f *Fetcher) cachePath(name, src string) string {
 		return filepath.Join(f.StateDir, name+".json")
 	}
 	return filepath.Join(f.StateDir, name+"."+src+".json")
+}
+
+// CachePaths lists the cache files of account name in stateDir.
+func CachePaths(stateDir, name string) []string {
+	f := Fetcher{StateDir: stateDir}
+	return []string{f.cachePath(name, "live"), f.cachePath(name, "statusline")}
 }
 
 func (f *Fetcher) readCache(name, src string) (cached, bool) {

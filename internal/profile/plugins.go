@@ -9,7 +9,7 @@ import (
 	"github.com/jhyunwoo/ccam/internal/fsutil"
 )
 
-// pluginFiles store absolute paths under the config dir that installed them
+// PluginFiles store absolute paths under the config dir that installed them
 // (docs/claude-layout.md), so they break when that folder moves.
 var PluginFiles = []string{"installed_plugins.json", "known_marketplaces.json"}
 

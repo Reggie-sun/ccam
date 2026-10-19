@@ -6,8 +6,9 @@ import (
 	"fmt"
 	"io/fs"
 	"os"
-	"regexp"
+	"slices"
 	"strconv"
+	"strings"
 
 	"github.com/pelletier/go-toml/v2"
 
@@ -52,24 +53,28 @@ type Share struct {
 // Items lists share item keys in display order.
 var Items = []string{"mcp", "settings", "memory", "extensions", "history"}
 
-func (s *Share) Get(item string) string {
-	var v string
+// field returns the setting of item, or nil for an unknown item.
+func (s *Share) field(item string) *string {
 	switch item {
 	case "mcp":
-		v = s.MCP
+		return &s.MCP
 	case "settings":
-		v = s.Settings
+		return &s.Settings
 	case "memory":
-		v = s.Memory
+		return &s.Memory
 	case "extensions":
-		v = s.Extensions
+		return &s.Extensions
 	case "history":
-		v = s.History
+		return &s.History
 	}
-	if v == "" {
-		return Local
+	return nil
+}
+
+func (s *Share) Get(item string) string {
+	if f := s.field(item); f != nil && *f != "" {
+		return *f
 	}
-	return v
+	return Local
 }
 
 func (s *Share) Set(item, group string) error {
@@ -79,23 +84,16 @@ func (s *Share) Set(item, group string) error {
 	if group == "on" {
 		group = "default"
 	}
-	if group != Local && !nameRe.MatchString(group) {
-		return fmt.Errorf("invalid group name: %q", group)
+	if group != Local {
+		if err := ValidateGroup(group); err != nil {
+			return err
+		}
 	}
-	switch item {
-	case "mcp":
-		s.MCP = group
-	case "settings":
-		s.Settings = group
-	case "memory":
-		s.Memory = group
-	case "extensions":
-		s.Extensions = group
-	case "history":
-		s.History = group
-	default:
+	f := s.field(item)
+	if f == nil {
 		return fmt.Errorf("unknown share item: %q (mcp, settings, memory, extensions, history)", item)
 	}
+	*f = group
 	return nil
 }
 
@@ -107,6 +105,25 @@ func (s Share) Equal(o Share) bool {
 		}
 	}
 	return true
+}
+
+// Summary renders the shared items, e.g. "mcp settings md ext history@team";
+// "" when nothing is shared.
+func (s Share) Summary() string {
+	short := map[string]string{"mcp": "mcp", "settings": "settings", "memory": "md", "extensions": "ext", "history": "history"}
+	var parts []string
+	for _, item := range Items {
+		g := s.Get(item)
+		if g == Local {
+			continue
+		}
+		if g != "default" {
+			parts = append(parts, short[item]+"@"+g)
+		} else {
+			parts = append(parts, short[item])
+		}
+	}
+	return strings.Join(parts, " ")
 }
 
 // DefaultShare is what `ccam add` uses unless told otherwise.
@@ -124,10 +141,32 @@ var Reserved = map[string]bool{
 	"update": true,
 }
 
-var nameRe = regexp.MustCompile(`^[a-z0-9][a-z0-9_-]{0,31}$`)
+// isName reports whether s matches ^[a-z0-9][a-z0-9_-]{0,31}$, the rule for
+// account and group names. Load checks every name on each launch, so this
+// is a loop rather than a regexp.
+func isName(s string) bool {
+	if len(s) == 0 || len(s) > 32 {
+		return false
+	}
+	for i := 0; i < len(s); i++ {
+		c := s[i]
+		if !(c >= 'a' && c <= 'z' || c >= '0' && c <= '9' || i > 0 && (c == '_' || c == '-')) {
+			return false
+		}
+	}
+	return true
+}
+
+// ValidateGroup checks a share group name; groups are folder names.
+func ValidateGroup(group string) error {
+	if !isName(group) {
+		return fmt.Errorf("invalid group name: %q", group)
+	}
+	return nil
+}
 
 func ValidateName(name string) error {
-	if !nameRe.MatchString(name) {
+	if !isName(name) {
 		return fmt.Errorf("profile names are 1-32 characters of a-z, 0-9, - and _: %q", name)
 	}
 	if _, err := strconv.Atoi(name); err == nil {
@@ -151,6 +190,19 @@ func Load(path string) (*Config, error) {
 	var c Config
 	if err := toml.Unmarshal(data, &c); err != nil {
 		return nil, fmt.Errorf("could not read %s: %w", path, err)
+	}
+	// Names and groups become folder names; a hand edit such as "../x"
+	// must not point ccam outside its own folders.
+	for i := range c.Profiles {
+		p := &c.Profiles[i]
+		if !isName(p.Name) {
+			return nil, fmt.Errorf("%s: invalid account name %q", path, p.Name)
+		}
+		for _, item := range Items {
+			if g := p.Share.Get(item); g != Local && !isName(g) {
+				return nil, fmt.Errorf("%s: account %s has an invalid %s group %q", path, p.Name, item, g)
+			}
+		}
 	}
 	return &c, nil
 }
@@ -237,13 +289,7 @@ func (c *Config) NextSlot() int {
 
 // Remove drops a profile and clears the default if it pointed at it.
 func (c *Config) Remove(name string) {
-	out := c.Profiles[:0]
-	for _, p := range c.Profiles {
-		if p.Name != name {
-			out = append(out, p)
-		}
-	}
-	c.Profiles = out
+	c.Profiles = slices.DeleteFunc(c.Profiles, func(p Profile) bool { return p.Name == name })
 	if c.Default == name {
 		c.Default = ""
 	}

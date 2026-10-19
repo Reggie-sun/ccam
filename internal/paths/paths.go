@@ -6,6 +6,7 @@ package paths
 
 import (
 	"os"
+	"os/user"
 	"path/filepath"
 )
 
@@ -30,6 +31,13 @@ func FromEnv() Paths {
 		}
 	}
 	home, _ := os.UserHomeDir()
+	if home == "" {
+		// HOME unset (cron, systemd units): without this every folder would
+		// be relative to the working directory.
+		if u, err := user.Current(); err == nil {
+			home = u.HomeDir
+		}
+	}
 	p := Paths{
 		Config: filepath.Join(xdg("XDG_CONFIG_HOME", home, ".config"), "ccam"),
 		Data:   filepath.Join(xdg("XDG_DATA_HOME", home, ".local/share"), "ccam"),
@@ -37,7 +45,7 @@ func FromEnv() Paths {
 		Bin:    filepath.Join(home, ".local", "bin"),
 		Home:   home,
 	}
-	if rt := os.Getenv("XDG_RUNTIME_DIR"); rt != "" {
+	if rt := os.Getenv("XDG_RUNTIME_DIR"); filepath.IsAbs(rt) {
 		p.Runtime = filepath.Join(rt, "ccam")
 	} else {
 		p.Runtime = filepath.Join(p.State, "locks")
@@ -45,8 +53,10 @@ func FromEnv() Paths {
 	return p
 }
 
+// xdg reads an XDG base directory; relative values are invalid by the spec
+// and ignored.
 func xdg(env, home, def string) string {
-	if v := os.Getenv(env); v != "" {
+	if v := os.Getenv(env); filepath.IsAbs(v) {
 		return v
 	}
 	return filepath.Join(home, def)

@@ -45,6 +45,7 @@ if [ -n "${CCAM_TARBALL:-}" ]; then
   cp "$CCAM_TARBALL" "$tmp/$asset"
 else
   if [ -n "${CCAM_VERSION:-}" ]; then
+    case "$CCAM_VERSION" in v*) ;; *) CCAM_VERSION="v$CCAM_VERSION" ;; esac # tags start with v
     base="${CCAM_BASE_URL:-https://github.com/$repo/releases/download}/$CCAM_VERSION"
   else
     base="${CCAM_BASE_URL:-https://github.com/$repo/releases/latest/download}"
@@ -54,7 +55,8 @@ else
   fetch "$base/checksums.txt" "$tmp/checksums.txt" || die "could not download checksums.txt"
   grep " $asset\$" "$tmp/checksums.txt" > "$tmp/sum.txt" || die "$asset is not in checksums.txt"
   if command -v sha256sum >/dev/null 2>&1; then
-    (cd "$tmp" && sha256sum -c --quiet sum.txt) || die "checksum mismatch"
+    # No --quiet: BusyBox (Alpine) sha256sum does not have it.
+    (cd "$tmp" && sha256sum -c sum.txt >/dev/null) || die "checksum mismatch"
   else # macOS
     (cd "$tmp" && shasum -a 256 -c -s sum.txt) || die "checksum mismatch"
   fi

@@ -56,7 +56,8 @@ func Trash(p paths.Paths, prof *config.Profile) (string, error) {
 	if !fsutil.Exists(src) {
 		return "", nil
 	}
-	dst := filepath.Join(p.TrashDir(), prof.Name+"-"+fsutil.Stamp(time.Now()))
+	// Two removals of one name within a second must not share a folder.
+	dst := fsutil.UniqueDir(filepath.Join(p.TrashDir(), prof.Name+"-"+fsutil.Stamp(time.Now())))
 	return dst, fsutil.Move(src, dst)
 }
 
@@ -73,12 +74,17 @@ func Rename(p paths.Paths, cfg *config.Config, oldName, newName string) error {
 		return fmt.Errorf("an account named %q already exists", newName)
 	}
 	if prof.Dir == "" {
-		if err := os.Rename(p.ProfileDir(oldName), p.ProfileDir(newName)); err != nil && !errors.Is(err, fs.ErrNotExist) {
+		oldDir, newDir := p.ProfileDir(oldName), p.ProfileDir(newName)
+		if err := os.Rename(oldDir, newDir); err != nil && !errors.Is(err, fs.ErrNotExist) {
 			return err
 		}
 		sep := string(filepath.Separator)
-		if _, err := RewritePluginPaths(filepath.Join(p.ProfileDir(newName), "plugins"),
-			p.ProfileDir(oldName)+sep, p.ProfileDir(newName)+sep); err != nil {
+		if _, err := RewritePluginPaths(filepath.Join(newDir, "plugins"), oldDir+sep, newDir+sep); err != nil {
+			// The caller does not save cfg on error, so the folder must keep
+			// the name cfg still has.
+			if rerr := os.Rename(newDir, oldDir); rerr != nil && !errors.Is(rerr, fs.ErrNotExist) {
+				return errors.Join(err, rerr)
+			}
 			return err
 		}
 	}

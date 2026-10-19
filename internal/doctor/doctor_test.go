@@ -50,3 +50,14 @@ func TestCredentialsChecks(t *testing.T) {
 		t.Fatal("perm not fixed")
 	}
 }
+
+func TestAuthEnvWarnsWithoutValue(t *testing.T) {
+	t.Setenv("CLAUDE_CODE_OAUTH_TOKEN", "secret-token")
+	t.Setenv("ANTHROPIC_API_KEY", "")
+	t.Setenv("ANTHROPIC_AUTH_TOKEN", "")
+	r := &report{}
+	checkAuthEnv(r)
+	if len(r.out) != 1 || r.out[0].Level != Warn || strings.Contains(r.out[0].String(), "secret") {
+		t.Fatalf("findings %v", r.out)
+	}
+}

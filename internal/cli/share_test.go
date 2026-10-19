@@ -7,6 +7,8 @@ import (
 	"testing"
 
 	"github.com/jhyunwoo/ccam/internal/config"
+	"github.com/jhyunwoo/ccam/internal/launcher"
+	"github.com/jhyunwoo/ccam/internal/session"
 )
 
 // If applying a share change fails halfway, the target is already saved so
@@ -39,5 +41,23 @@ func TestFailedShareChangeCanBeFinished(t *testing.T) {
 	}
 	if target, _ := os.Readlink(filepath.Join(work, "CLAUDE.md")); target != filepath.Join(group, "CLAUDE.md") {
 		t.Fatalf("not linked: %q", target)
+	}
+}
+
+// Moving data under a running session would lose what it writes meanwhile.
+func TestShareRefusesWhileRunning(t *testing.T) {
+	c := newTestCLI(t, nil)
+	if err := session.Register(launcher.SessionDir(c.p, "work")); err != nil {
+		t.Fatal(err)
+	}
+	if !launcher.Running(c.p, "work") {
+		t.Skip("session tracking is not supported on this platform")
+	}
+	_, errOut, code := c.run("", "share", "work", "--memory", "off", "--yes")
+	if code == 0 || !strings.Contains(errOut, "is running") {
+		t.Fatalf("want refusal, got %d %q", code, errOut)
+	}
+	if _, _, code := c.run("", "--dry-run", "share", "work", "--memory", "off"); code != 0 {
+		t.Fatal("a dry run only shows the plan and may run")
 	}
 }

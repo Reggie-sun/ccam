@@ -22,7 +22,14 @@ func Register(dir string) error {
 	if err := os.MkdirAll(dir, 0o700); err != nil {
 		return err
 	}
-	return os.WriteFile(filepath.Join(dir, strconv.Itoa(pid)), []byte(start), 0o600)
+	// Write under a name Active skips, then rename: a concurrent Active
+	// must never read a half-written marker and delete it as stale.
+	name := strconv.Itoa(pid)
+	tmp := filepath.Join(dir, ".tmp-"+name)
+	if err := os.WriteFile(tmp, []byte(start), 0o600); err != nil {
+		return err
+	}
+	return os.Rename(tmp, filepath.Join(dir, name))
 }
 
 // Active reports whether any session registered in dir is still running.

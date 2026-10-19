@@ -3,6 +3,7 @@ package config
 import (
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"testing"
 )
@@ -118,5 +119,28 @@ func TestShareSet(t *testing.T) {
 func TestShareEqual(t *testing.T) {
 	if !(Share{History: Local}).Equal(Share{}) || (Share{MCP: "default"}).Equal(Share{}) {
 		t.Fatal("Equal")
+	}
+}
+
+func TestLoadRejectsNamesThatLeaveTheFolders(t *testing.T) {
+	for _, body := range []string{
+		"[[profile]]\nname = \"../x\"\nslot = 1\n",
+		"[[profile]]\nname = \"work\"\nslot = 1\n[profile.share]\nhistory = \"../../y\"\n",
+	} {
+		path := filepath.Join(t.TempDir(), "config.toml")
+		os.WriteFile(path, []byte(body), 0o600)
+		if _, err := Load(path); err == nil {
+			t.Errorf("accepted:\n%s", body)
+		}
+	}
+}
+
+func TestIsNameMatchesRule(t *testing.T) {
+	rule := regexp.MustCompile(`^[a-z0-9][a-z0-9_-]{0,31}$`)
+	for _, s := range []string{"", "a", "0", "_a", "-a", "a_", "a-", "A", "aé", "a.b", "a/b", "..", "a b",
+		strings.Repeat("a", 32), strings.Repeat("a", 33), "work\n", "x\x00"} {
+		if got, want := isName(s), rule.MatchString(s); got != want {
+			t.Errorf("isName(%q) = %v, want %v", s, got, want)
+		}
 	}
 }

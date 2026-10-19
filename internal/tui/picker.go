@@ -2,6 +2,7 @@
 package tui
 
 import (
+	"cmp"
 	"context"
 	"fmt"
 	"strings"
@@ -42,8 +43,9 @@ type Row struct {
 	Default  bool
 }
 
-// UsageFunc fetches one account's usage; nil disables the column.
-type UsageFunc func(ctx context.Context, name string) usage.Report
+// UsageFunc fetches one account's usage; fresh skips the short cache (the
+// r key). nil disables the column.
+type UsageFunc func(ctx context.Context, name string, fresh bool) usage.Report
 
 type mode int
 
@@ -83,9 +85,9 @@ func NewPicker(rows []Row, fetch UsageFunc) Model {
 // Result is valid after the program finished.
 func (m Model) Result() Result { return m.result }
 
-func (m Model) Init() tea.Cmd { return m.fetchAll() }
+func (m Model) Init() tea.Cmd { return m.fetchAll(false) }
 
-func (m Model) fetchAll() tea.Cmd {
+func (m Model) fetchAll(fresh bool) tea.Cmd {
 	if m.fetch == nil {
 		return nil
 	}
@@ -93,7 +95,7 @@ func (m Model) fetchAll() tea.Cmd {
 	for _, r := range m.rows {
 		name := r.Name
 		cmds = append(cmds, func() tea.Msg {
-			return usageMsg{name: name, report: m.fetch(context.Background(), name)}
+			return usageMsg{name: name, report: m.fetch(context.Background(), name, fresh)}
 		})
 	}
 	return tea.Batch(cmds...)
@@ -149,7 +151,7 @@ func (m Model) updateList(k tea.KeyPressMsg) (tea.Model, tea.Cmd) {
 		}
 	case "r":
 		m.usage = map[string]*usage.Report{}
-		return m, m.fetchAll()
+		return m, m.fetchAll(true)
 	default:
 		// Number keys launch that slot directly.
 		if len(key) == 1 && key[0] >= '1' && key[0] <= '9' {
@@ -211,7 +213,7 @@ func (m Model) viewList(b *strings.Builder) {
 			padRight(ansi.Truncate(orDash(r.Email), emailW, "…"), emailW),
 			m.usageCell(r.Name),
 			dimStyle.Render(padRight(r.LastUsed, 8)),
-			dimStyle.Render(shareSummary(r.Share)))
+			dimStyle.Render(cmp.Or(r.Share.Summary(), "local")))
 		b.WriteString(ansi.Truncate(line, m.width-1, "…") + "\n")
 	}
 	b.WriteString("\n")
@@ -258,24 +260,4 @@ func orDash(s string) string {
 		return "(not logged in)"
 	}
 	return s
-}
-
-func shareSummary(s config.Share) string {
-	short := map[string]string{"mcp": "mcp", "settings": "settings", "memory": "md", "extensions": "ext", "history": "history"}
-	var parts []string
-	for _, item := range config.Items {
-		g := s.Get(item)
-		if g == config.Local {
-			continue
-		}
-		p := short[item]
-		if g != "default" {
-			p += "@" + g
-		}
-		parts = append(parts, p)
-	}
-	if len(parts) == 0 {
-		return "local"
-	}
-	return strings.Join(parts, " ")
 }

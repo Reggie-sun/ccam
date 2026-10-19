@@ -47,11 +47,24 @@ func parse(argv []string) route {
 		return route{kind: routeCLI}
 	case rest[0] == "run":
 		r := rest[1:]
+		// ccam's own flags may come right after run (it is a ccam command);
+		// anything after the account name goes to claude untouched.
+		if len(r) > 0 && r[0] == "--dry-run" {
+			dry, r = true, r[1:]
+		}
+		if len(r) > 0 && (r[0] == "-h" || r[0] == "--help") {
+			// cobra does not parse flags of run, so ask for its help directly.
+			return route{kind: routeCLI, args: []string{"help", "run"}}
+		}
 		if len(r) > 0 && !strings.HasPrefix(r[0], "-") {
 			return route{kind: routeLaunch, sel: r[0], args: r[1:], dry: dry}
 		}
 		return route{kind: routeLaunch, args: r, dry: dry}
-	case rest[0] == "-h" || rest[0] == "--help" || rest[0] == "--version":
+	case rest[0] == "--version" || rest[0] == "-v":
+		// The version command prints the same line; a custom cobra version
+		// template would pull text/template in and add 2 MB to the binary.
+		return route{kind: routeCLI, args: []string{"version"}}
+	case rest[0] == "-h" || rest[0] == "--help":
 		return route{kind: routeCLI, args: withDry(rest, dry)}
 	case strings.HasPrefix(rest[0], "-"):
 		return route{kind: routeLaunch, args: rest, dry: dry}

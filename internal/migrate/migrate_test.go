@@ -568,3 +568,40 @@ func TestSize(t *testing.T) {
 		}
 	}
 }
+
+// A stow-style relative link out of ~/.claude still resolves in the group,
+// and folders migrate creates are private even when the source's are not.
+func TestCopiedLinksResolveAndGroupIsPrivate(t *testing.T) {
+	f := newFixture(t, map[string]string{"dotfiles/skill/SKILL.md": "stowed"})
+	os.MkdirAll(filepath.Join(f.src, "skills"), 0o755)
+	os.Symlink("../../dotfiles/skill", filepath.Join(f.src, "skills", "stow"))
+	os.MkdirAll(filepath.Join(f.src, "agents"), 0o755)
+	os.WriteFile(filepath.Join(f.src, "agents", "a.md"), []byte("a"), 0o644)
+	f.migrate(t, "extensions")
+	if got := read(t, filepath.Join(f.group, "skills", "stow", "SKILL.md")); got != "stowed" {
+		t.Fatalf("link: %q", got)
+	}
+	for _, d := range []string{f.groups, f.group} {
+		if info, _ := os.Stat(d); info.Mode().Perm() != 0o700 {
+			t.Errorf("%s is %v", d, info.Mode().Perm())
+		}
+	}
+}
+
+// The group already lists the plugin the source has: one record, not two.
+func TestMergedRegistryHasNoDuplicates(t *testing.T) {
+	f := newFixture(t, nil)
+	rec := func(dir string) string {
+		return fmt.Sprintf(`{"plugins":{"p@mkt":[{"installPath":%q,"version":"1.0"}]}}`, filepath.Join(dir, "plugins", "cache", "mkt", "p"))
+	}
+	write(t, f.src, map[string]string{"plugins/installed_plugins.json": rec(f.src), "plugins/cache/mkt/p/x.md": "x"})
+	write(t, f.group, map[string]string{"plugins/installed_plugins.json": rec(f.group), "plugins/cache/mkt/p/x.md": "x"})
+	f.migrate(t, "extensions")
+	var reg struct {
+		Plugins map[string][]any `json:"plugins"`
+	}
+	json.Unmarshal([]byte(read(t, filepath.Join(f.group, "plugins", "installed_plugins.json"))), &reg)
+	if n := len(reg.Plugins["p@mkt"]); n != 1 {
+		t.Fatalf("%d records: %v", n, reg.Plugins)
+	}
+}

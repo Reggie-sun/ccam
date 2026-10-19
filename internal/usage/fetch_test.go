@@ -120,6 +120,9 @@ func TestFetchAllParallelWithOneHungAccount(t *testing.T) {
 
 func TestFetchUsesFreshCacheThenFallsBack(t *testing.T) {
 	e := newEnv(t)
+	// Before the fixture's 5-hour reset (2026-10-18T18:10Z).
+	base := time.Date(2026, 10, 18, 17, 0, 0, 0, time.UTC)
+	e.f.Now = func() time.Time { return base }
 	a := e.account("a", "ok-new-format.json", future)
 	ctx := context.Background()
 	e.f.Fetch(ctx, a, Options{})
@@ -132,11 +135,18 @@ func TestFetchUsesFreshCacheThenFallsBack(t *testing.T) {
 		t.Fatal("--no-cache must query")
 	}
 	// Server now fails: old values come back marked as cache.
-	e.f.Now = func() time.Time { return time.Now().Add(10 * time.Minute) }
+	e.f.Now = func() time.Time { return base.Add(10 * time.Minute) }
 	a = e.account("a", "boom", future)
 	r := e.f.Fetch(ctx, a, Options{})
 	if r.Status != StatusError || r.Source != "cache" || r.Limits == nil || r.Limits.FiveHour.Percent != 72 {
 		t.Fatalf("fallback: %+v", r)
+	}
+	// Once the 5-hour window has reset, the saved 72% no longer applies;
+	// the weekly window (resets 10-22) still does.
+	e.f.Now = func() time.Time { return base.Add(2 * time.Hour) }
+	r = e.f.Fetch(ctx, a, Options{})
+	if l := r.Limits; l == nil || !l.FiveHour.Known || l.FiveHour.Percent != 0 || !l.FiveHour.ResetsAt.IsZero() || l.Weekly.Percent != 41 {
+		t.Fatalf("lapsed window: %+v", l)
 	}
 }
 

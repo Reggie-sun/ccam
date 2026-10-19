@@ -84,3 +84,95 @@ func TestMarshalJSONKeepsShellCharacters(t *testing.T) {
 		t.Fatalf("%q %v", out, err)
 	}
 }
+
+func TestMoveRefusesToOverwriteExistingDir(t *testing.T) {
+	root := t.TempDir()
+	src, dst := filepath.Join(root, "src"), filepath.Join(root, "dst")
+	os.MkdirAll(src, 0o700)
+	os.WriteFile(filepath.Join(src, "f"), []byte("new"), 0o600)
+	os.MkdirAll(dst, 0o700)
+	os.WriteFile(filepath.Join(dst, "f"), []byte("old"), 0o600)
+	if err := Move(src, dst); err == nil {
+		t.Fatal("moved over a non-empty folder")
+	}
+	if b, _ := os.ReadFile(filepath.Join(dst, "f")); string(b) != "old" {
+		t.Fatalf("dst overwritten: %q", b)
+	}
+	if !Exists(filepath.Join(src, "f")) {
+		t.Fatal("src deleted")
+	}
+}
+
+func TestUniqueDir(t *testing.T) {
+	base := filepath.Join(t.TempDir(), "x")
+	if got := UniqueDir(base); got != base {
+		t.Fatalf("free name: %s", got)
+	}
+	os.Mkdir(base, 0o700)
+	os.Mkdir(base+"-2", 0o700)
+	if got := UniqueDir(base); got != base+"-3" {
+		t.Fatalf("taken names: %s", got)
+	}
+}
+
+// Relative links that leave the moved or copied tree (dotfiles managed by
+// stow) must still resolve from the new place; links inside stay relative.
+func TestMoveAndCopyKeepOutsideLinksWorking(t *testing.T) {
+	root := t.TempDir()
+	os.MkdirAll(filepath.Join(root, "dotfiles", "skill"), 0o700)
+	os.WriteFile(filepath.Join(root, "dotfiles", "skill", "SKILL.md"), []byte("s"), 0o600)
+	for _, move := range []bool{true, false} {
+		src := filepath.Join(root, "home", ".claude", "skills")
+		os.MkdirAll(src, 0o700)
+		os.Symlink("../../../dotfiles/skill", filepath.Join(src, "out"))
+		os.WriteFile(filepath.Join(src, "in.md"), []byte("i"), 0o600)
+		os.Symlink("in.md", filepath.Join(src, "inside"))
+		dst := filepath.Join(root, "data", "groups", "default", "skills")
+		var err error
+		if move {
+			err = Move(src, dst)
+		} else {
+			err = CopyTree(src, dst)
+		}
+		if err != nil {
+			t.Fatal(err)
+		}
+		if b, err := os.ReadFile(filepath.Join(dst, "out", "SKILL.md")); err != nil || string(b) != "s" {
+			t.Fatalf("move=%v: outside link broken: %v", move, err)
+		}
+		if l, _ := os.Readlink(filepath.Join(dst, "inside")); l != "in.md" {
+			t.Fatalf("move=%v: inside link changed to %q", move, l)
+		}
+		os.RemoveAll(filepath.Join(root, "data"))
+		os.RemoveAll(filepath.Join(root, "home"))
+	}
+}
+
+func TestCopyTreeParentsArePrivate(t *testing.T) {
+	root := t.TempDir()
+	src := filepath.Join(root, "src")
+	os.MkdirAll(src, 0o755)
+	os.WriteFile(filepath.Join(src, "f"), []byte("x"), 0o644)
+	dst := filepath.Join(root, "data", "groups", "default", "agents")
+	if err := CopyTree(src, dst); err != nil {
+		t.Fatal(err)
+	}
+	for _, d := range []string{"data", "data/groups", "data/groups/default"} {
+		if info, _ := os.Stat(filepath.Join(root, d)); info.Mode().Perm() != 0o700 {
+			t.Errorf("%s is %v", d, info.Mode().Perm())
+		}
+	}
+}
+
+func TestCopyFileSetsPermOnExistingFile(t *testing.T) {
+	dir := t.TempDir()
+	src, dst := filepath.Join(dir, "src"), filepath.Join(dir, "dst")
+	os.WriteFile(src, []byte("x"), 0o600)
+	os.WriteFile(dst, []byte("old"), 0o644)
+	if err := CopyFile(src, dst); err != nil {
+		t.Fatal(err)
+	}
+	if info, _ := os.Stat(dst); info.Mode().Perm() != 0o600 {
+		t.Fatalf("perm %v", info.Mode().Perm())
+	}
+}

@@ -117,6 +117,10 @@ func TestResolveClaudeCachesLookup(t *testing.T) {
 	if got, err := ResolveClaude(p, "claude-x"); err != nil || got != fake {
 		t.Fatalf("cache miss: %q %v", got, err)
 	}
+	// Another claude_bin is not answered from the cache.
+	if _, err := ResolveClaude(p, "claude-beta"); err == nil {
+		t.Fatal("cache answered for a different claude_bin")
+	}
 	// A changed file invalidates the cache.
 	os.Chtimes(fake, time.Now().Add(time.Hour), time.Now().Add(time.Hour))
 	if _, err := ResolveClaude(p, "claude-x"); err == nil {

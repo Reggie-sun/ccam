@@ -10,14 +10,12 @@
 package migrate
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
 	"io/fs"
 	"os"
 	"path/filepath"
-	"reflect"
 	"sort"
 	"strings"
 	"time"
@@ -130,11 +128,7 @@ func Build(opt Options) (*Plan, error) {
 	pl := &Plan{Source: src, Group: opt.Group, GroupDir: groupDir}
 	// One folder per run, even for two runs in the same second, so a backup
 	// never overwrites an earlier one.
-	stamp := filepath.Join(groupDir, share.BackupDir, fsutil.Stamp(time.Now()))
-	pl.BackupDir = stamp
-	for i := 2; fsutil.Exists(pl.BackupDir); i++ {
-		pl.BackupDir = fmt.Sprintf("%s-%d", stamp, i)
-	}
+	pl.BackupDir = fsutil.UniqueDir(filepath.Join(groupDir, share.BackupDir, fsutil.Stamp(time.Now())))
 	want := map[string]bool{}
 	for _, item := range opt.Items {
 		if _, ok := share.Layout[item]; !ok {
@@ -222,7 +216,7 @@ func buildEntry(pl *Plan, item string, e share.Entry) (*Entry, error) {
 		}
 		return en, nil
 	}
-	same, err := sameContent(resolved, en.To)
+	same, err := fsutil.SameContent(resolved, en.To)
 	if err != nil {
 		return nil, err
 	}
@@ -260,7 +254,7 @@ func scan(en *Entry) error {
 		if !d.Type().IsRegular() {
 			return nil
 		}
-		same, err := sameContent(path, target)
+		same, err := fsutil.SameContent(path, target)
 		if err != nil || same {
 			return err
 		}
@@ -280,26 +274,6 @@ func isRegistry(name string) bool {
 		}
 	}
 	return false
-}
-
-func sameContent(a, b string) (bool, error) {
-	ia, err := os.Stat(a)
-	if err != nil {
-		return false, err
-	}
-	ib, err := os.Stat(b)
-	if err != nil || ia.Size() != ib.Size() || ib.IsDir() {
-		return false, nil
-	}
-	x, err := os.ReadFile(a)
-	if err != nil {
-		return false, err
-	}
-	y, err := os.ReadFile(b)
-	if err != nil {
-		return false, err
-	}
-	return bytes.Equal(x, y), nil
 }
 
 func buildMCP(pl *Plan, src, home string) (*MCP, error) {
@@ -326,7 +300,7 @@ func buildMCP(pl *Plan, src, home string) (*MCP, error) {
 		switch {
 		case !ok:
 			m.New = append(m.New, n)
-		case sameJSON(have, servers[n]):
+		case mcp.SameDef(have, servers[n]):
 			m.Same = append(m.Same, n)
 		default:
 			c := &share.Conflict{
@@ -342,15 +316,6 @@ func buildMCP(pl *Plan, src, home string) (*MCP, error) {
 		}
 	}
 	return m, nil
-}
-
-// sameJSON compares by meaning: key order and spacing do not matter.
-func sameJSON(a, b json.RawMessage) bool {
-	var x, y any
-	if json.Unmarshal(a, &x) != nil || json.Unmarshal(b, &y) != nil {
-		return bytes.Equal(a, b)
-	}
-	return reflect.DeepEqual(x, y)
 }
 
 func serverName(c *share.Conflict) string { return strings.TrimPrefix(c.Entry.Name, "MCP server ") }
@@ -564,7 +529,7 @@ func apply(pl *Plan, en *Entry) error {
 			return err
 		}
 		for _, name := range en.Registries {
-			if err := mergeRegistry(filepath.Join(en.From, name), filepath.Join(en.To, name), filepath.Join(pl.BackupDir, en.Entry.Name, name)); err != nil {
+			if err := share.MergeRegistry(filepath.Join(en.From, name), filepath.Join(en.To, name), filepath.Join(pl.BackupDir, en.Entry.Name, name), en.Source, en.From); err != nil {
 				return err
 			}
 		}
@@ -587,28 +552,13 @@ func apply(pl *Plan, en *Entry) error {
 	return nil
 }
 
-func mergeRegistry(mine, group, save string) error {
-	if err := fsutil.CopyFile(group, save); err != nil {
-		return err
-	}
-	a, err := os.ReadFile(group)
-	if err != nil {
-		return err
-	}
-	b, err := os.ReadFile(mine)
-	if err != nil {
-		return err
-	}
-	merged, err := share.MergeJSONBytes(a, b)
-	if err != nil {
-		return err
-	}
-	return fsutil.AtomicWrite(group, merged, 0o600)
-}
-
 // copyMissing copies every file, link and folder of src that dst lacks.
 // Nothing in dst is overwritten and nothing in src changes.
 func copyMissing(src, dst string) error {
+	// Parents the walk would create with the source's mode stay private.
+	if err := os.MkdirAll(filepath.Dir(dst), 0o700); err != nil {
+		return err
+	}
 	return filepath.WalkDir(src, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -632,7 +582,7 @@ func copyMissing(src, dst string) error {
 			if err != nil {
 				return err
 			}
-			return os.Symlink(link, target)
+			return os.Symlink(fsutil.PortableLink(path, link, src), target)
 		default:
 			return fsutil.CopyFile(path, target)
 		}

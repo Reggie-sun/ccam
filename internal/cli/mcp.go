@@ -6,13 +6,16 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/spf13/cobra"
 
 	"github.com/jhyunwoo/ccam/internal/config"
+	"github.com/jhyunwoo/ccam/internal/fsutil"
 	"github.com/jhyunwoo/ccam/internal/launcher"
 	"github.com/jhyunwoo/ccam/internal/mcp"
 	"github.com/jhyunwoo/ccam/internal/profile"
+	"github.com/jhyunwoo/ccam/internal/share"
 )
 
 func mcpCmd(e *env) *cobra.Command {
@@ -40,14 +43,15 @@ func mcpGroups(cfg *config.Config) []string {
 	return out
 }
 
-func pickGroup(cfg *config.Config, flag string) string {
+func pickGroup(cfg *config.Config, flag string) (string, error) {
 	if flag != "" {
-		return flag
+		// The name becomes a folder under groups/; keep it there.
+		return flag, config.ValidateGroup(flag)
 	}
 	if gs := mcpGroups(cfg); len(gs) == 1 {
-		return gs[0]
+		return gs[0], nil
 	}
-	return "default"
+	return "default", nil
 }
 
 func mcpListCmd(e *env) *cobra.Command {
@@ -199,7 +203,10 @@ func addServer(e *env, groupFlag, name string, def json.RawMessage) error {
 	if err != nil {
 		return err
 	}
-	g := pickGroup(cfg, groupFlag)
+	g, err := pickGroup(cfg, groupFlag)
+	if err != nil {
+		return err
+	}
 	path := mcp.Path(e.paths.GroupDir(g))
 	store, err := mcp.Load(path)
 	if err != nil {
@@ -231,7 +238,10 @@ func mcpRemoveCmd(e *env, group *string) *cobra.Command {
 			if err != nil {
 				return err
 			}
-			g := pickGroup(cfg, *group)
+			g, err := pickGroup(cfg, *group)
+			if err != nil {
+				return err
+			}
 			path := mcp.Path(e.paths.GroupDir(g))
 			store, err := mcp.Load(path)
 			if err != nil {
@@ -251,7 +261,7 @@ func mcpRemoveCmd(e *env, group *string) *cobra.Command {
 }
 
 func mcpImportCmd(e *env) *cobra.Command {
-	var keepLocal bool
+	var keepLocal, force bool
 	cmd := &cobra.Command{
 		Use:   "import <account> [server…]",
 		Short: "Move MCP servers only one account has into that account's shared group",
@@ -290,16 +300,41 @@ func mcpImportCmd(e *env) *cobra.Command {
 			if err != nil {
 				return err
 			}
+			var copied, skipped []string
+			replaced := false
 			for _, n := range names {
 				def, ok := local[n]
 				if !ok {
 					return fmt.Errorf("account %s has no server %q", prof.Name, n)
 				}
+				// The group's definition is what every other account uses.
+				if have, ok := store.Servers[n]; ok && !mcp.SameDef(have, def) {
+					if !force {
+						skipped = append(skipped, n)
+						continue
+					}
+					replaced = true
+				}
 				store.Servers[n] = def
+				copied = append(copied, n)
+			}
+			for _, n := range skipped {
+				e.printf("Skipped %s: group %s already has a different %s (`ccam mcp import %s %s --force` replaces it)\n", n, g, n, prof.Name, n)
+			}
+			if len(copied) == 0 {
+				return nil
+			}
+			if replaced {
+				save := filepath.Join(fsutil.UniqueDir(filepath.Join(e.paths.GroupDir(g), share.BackupDir, fsutil.Stamp(time.Now()))), "mcp.json")
+				if err := fsutil.CopyFile(path, save); err != nil {
+					return err
+				}
+				e.printf("The group's previous mcp.json is saved in %s\n", save)
 			}
 			if err := store.Save(path); err != nil {
 				return err
 			}
+			names = copied
 			e.printf("✓ Copied to group %s: %s\n", g, strings.Join(names, ", "))
 			if keepLocal {
 				return nil
@@ -317,5 +352,6 @@ func mcpImportCmd(e *env) *cobra.Command {
 		},
 	}
 	cmd.Flags().BoolVar(&keepLocal, "keep-local", false, "keep the entries in the account's .claude.json")
+	cmd.Flags().BoolVar(&force, "force", false, "replace a group server of the same name that differs (the old mcp.json is backed up)")
 	return cmd
 }

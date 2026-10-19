@@ -75,6 +75,7 @@ func (r *report) add(level Level, prof, format string, a ...any) *Finding {
 func Run(p paths.Paths, cfg *config.Config, opt Options) []Finding {
 	r := &report{}
 	checkClaude(r, p, cfg)
+	checkAuthEnv(r)
 	for i := range cfg.Profiles {
 		checkProfile(r, p, &cfg.Profiles[i], opt.Fix)
 	}
@@ -110,6 +111,16 @@ func checkClaude(r *report, p paths.Paths, cfg *config.Config) {
 	r.add(OK, "", "Claude Code %s (%s)", version, bin)
 	if !strings.HasPrefix(version, LayoutVersion) {
 		r.add(Info, "", "ccam was verified against the folder layout of Claude Code %s. Any 'unknown entries' below may mean the layout changed", LayoutVersion)
+	}
+}
+
+// checkAuthEnv warns about credentials in the environment: every account
+// inherits them, and Claude Code prefers them over the account's own login.
+func checkAuthEnv(r *report) {
+	for _, v := range []string{"CLAUDE_CODE_OAUTH_TOKEN", "ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN"} {
+		if os.Getenv(v) != "" {
+			r.add(Warn, "", "%s is set in this shell; every account launched from it may use that credential instead of its own login", v)
+		}
 	}
 }
 

@@ -108,7 +108,9 @@ func askTTY(question string) bool {
 		return true
 	}
 	fmt.Fprintf(os.Stderr, "%s [y/N] ", question)
-	var buf [16]byte
+	// A terminal in line mode returns one line per read (at most 4096
+	// bytes), so a long answer does not spill into claude's input.
+	var buf [4096]byte
 	n, _ := os.Stdin.Read(buf[:])
 	ans := strings.ToLower(strings.TrimSpace(string(buf[:n])))
 	return ans == "y" || ans == "yes"
@@ -120,7 +122,7 @@ func applyMCP(p paths.Paths, cfg *config.Config, pl *Plan, dry, running bool) er
 		return nil
 	}
 	gdir := p.GroupDir(group)
-	state := filepath.Join(p.State, "mcp", pl.Profile.Name)
+	state := mcpStateDir(p, pl.Profile.Name)
 	if cfg.Strategy() == config.MCPSync {
 		switch {
 		case dry:

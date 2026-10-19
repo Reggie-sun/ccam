@@ -71,7 +71,7 @@ To start the shared settings from the setup you already have, `ccam migrate` cop
 | `ccam update [--check] [--version vX.Y.Z]` | Update ccam to the latest (or that) release, checksum verified |
 | `ccam completion bash\|zsh` | Shell completion |
 
-Put `--dry-run` first to print what would happen (`ccam --dry-run work`).
+Put `--dry-run` first to print what would happen (`ccam --dry-run work`). It works for launching (`ccam <name>`, `run`, `next`), `share`, `migrate`, `shortcut`, `update` and `doctor --fix`; other commands that change something refuse it rather than run for real.
 
 ## Sharing
 

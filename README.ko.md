@@ -76,7 +76,7 @@ ccam next --continue # 한도에 걸리면 다음 계정에서 같은 대화 이
 | `ccam update [--check] [--version vX.Y.Z]` | 최신(또는 지정한) 릴리스로 업데이트, 체크섬 확인 |
 | `ccam completion bash\|zsh` | 자동완성 |
 
-어느 명령이든 앞에 `--dry-run`을 붙이면 실행하지 않고 할 일만 보여줍니다 (`ccam --dry-run work`).
+앞에 `--dry-run`을 붙이면 실행하지 않고 할 일만 보여줍니다 (`ccam --dry-run work`). 실행(`ccam <이름>`, `run`, `next`), `share`, `migrate`, `shortcut`, `update`, `doctor --fix`에서 쓸 수 있고, 무언가를 바꾸는 다른 명령은 실제로 실행하는 대신 거절합니다.
 
 ## 공유
 
