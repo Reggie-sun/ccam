@@ -23,7 +23,7 @@ func setup(t testing.TB) (paths.Paths, *config.Config) {
 	os.WriteFile(fake, []byte("#!/bin/sh\n"), 0o755)
 	os.MkdirAll(p.ProfileDir("personal"), 0o700)
 	os.MkdirAll(p.ProfileDir("work"), 0o700)
-	cfg := &config.Config{Version: 1, Default: "work", ClaudeBin: fake, Profiles: []config.Profile{
+	cfg := &config.Config{Default: "work", ClaudeBin: fake, Profiles: []config.Profile{
 		{Name: "personal", Slot: 1},
 		{Name: "work", Slot: 2},
 	}}

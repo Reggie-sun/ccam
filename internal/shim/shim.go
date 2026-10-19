@@ -8,48 +8,17 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
-	"strconv"
 
 	"github.com/jhyunwoo/ccam/internal/config"
 )
 
-var (
-	slotRe     = regexp.MustCompile(`^claude([0-9]+)$`)
-	nameRe     = regexp.MustCompile(`^claude-([a-z0-9][a-z0-9_-]*)$`)
-	shortcutRe = regexp.MustCompile(`^[a-z0-9][a-z0-9._-]{0,63}$`)
-)
+var shortcutRe = regexp.MustCompile(`^[a-z0-9][a-z0-9._-]{0,63}$`)
 
-// legacyAlias is the short ccs alias older versions linked to ccam.
-const legacyAlias = "ccs"
-
-// Lookup maps the name ccam was run as to a profile selector: a configured
-// shortcut, or for a config from before shortcuts were stored (version 1)
-// the old claude<slot> / claude-<name> links. ok is false for ccam itself.
+// Lookup maps the name ccam was run as to the profile whose shortcut it is.
+// ok is false for ccam itself and for any name no account uses.
 func Lookup(cfg *config.Config, argv0 string) (string, bool) {
-	base := filepath.Base(argv0)
-	if p, ok := cfg.FindShortcut(base); ok {
+	if p, ok := cfg.FindShortcut(filepath.Base(argv0)); ok {
 		return p.Name, true
-	}
-	if cfg.Version < 2 {
-		return legacySelector(base)
-	}
-	return "", false
-}
-
-// Stale reports whether argv0 looks like a shortcut of an older ccam
-// (claude<N>, claude-<name>) that the config no longer has.
-func Stale(argv0 string) bool {
-	_, ok := legacySelector(filepath.Base(argv0))
-	return ok
-}
-
-// legacySelector: claude2 -> "2", claude-work -> "work".
-func legacySelector(base string) (string, bool) {
-	if m := slotRe.FindStringSubmatch(base); m != nil {
-		return m[1], true
-	}
-	if m := nameRe.FindStringSubmatch(base); m != nil {
-		return m[1], true
 	}
 	return "", false
 }
@@ -58,29 +27,6 @@ func legacySelector(base string) (string, bool) {
 // ccwork). Account names already use only allowed characters. Callers run
 // Check on it and offer nothing when it fails.
 func Suggest(name string) string { return "cc" + name }
-
-// Adopt upgrades a version 1 config, where every profile had a claude<slot>
-// link: each profile keeps the old link that is still on disk and points at
-// ccam (claude<slot>, else claude-<name>) as its shortcut. Profiles without
-// one get none. The caller saves the config.
-func Adopt(binDir, ccamPath string, cfg *config.Config) {
-	if cfg.Version >= 2 {
-		return
-	}
-	for i := range cfg.Profiles {
-		p := &cfg.Profiles[i]
-		if p.Shortcut != "" {
-			continue
-		}
-		for _, name := range []string{"claude" + strconv.Itoa(p.Slot), "claude-" + p.Name} {
-			if _, taken := cfg.FindShortcut(name); !taken && isOurs(filepath.Join(binDir, name), ccamPath) {
-				p.Shortcut = name
-				break
-			}
-		}
-	}
-	cfg.Version = 2
-}
 
 // Check validates a shortcut name for profile prof: a safe file name, not a
 // ccam command, not another account's shortcut, and not hiding another
@@ -111,28 +57,14 @@ func Check(name, binDir, ccamPath string, cfg *config.Config, prof string) error
 	return nil
 }
 
-// Install makes binDir match cfg: one link per configured shortcut. Old
-// claude<N>, claude-<name> and ccs links that point at ccam and are no
-// longer configured are removed; files that are not our links are never
-// touched.
+// Install creates the link of every configured shortcut that is missing.
+// It never removes anything: renaming or removing a shortcut deletes its
+// link with Remove, and files that are not our links are never touched.
 func Install(binDir, ccamPath string, cfg *config.Config) (created []string, err error) {
 	want := map[string]bool{}
 	for _, p := range cfg.Profiles {
 		if p.Shortcut != "" {
 			want[p.Shortcut] = true
-		}
-	}
-	entries, err := os.ReadDir(binDir)
-	if err != nil && len(want) == 0 {
-		return nil, nil // nothing to create, nothing to clean
-	}
-	for _, e := range entries {
-		name := e.Name()
-		if want[name] || !isOurs(filepath.Join(binDir, name), ccamPath) {
-			continue
-		}
-		if _, ok := legacySelector(name); ok || name == legacyAlias {
-			os.Remove(filepath.Join(binDir, name))
 		}
 	}
 	if len(want) == 0 {

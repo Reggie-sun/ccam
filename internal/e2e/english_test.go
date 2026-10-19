@@ -212,9 +212,9 @@ func TestOutputHasNoHangul(t *testing.T) {
 		run("", argv...)
 	}
 	os.WriteFile(filepath.Join(h.home, "home", ".claude", "settings.json"), []byte(`{"theme":"dark"}`), 0o600)
-	run("2\nn\n", "ccam", "migrate", "--settings")               // conflict prompt, then no
-	os.Symlink(ccamBin, filepath.Join(h.home, "bin", "claude7")) // stale shortcut name
-	run("", "claude7")
+	run("2\nn\n", "ccam", "migrate", "--settings")              // conflict prompt, then no
+	os.Symlink(ccamBin, filepath.Join(h.home, "bin", "ccgone")) // link no account claims
+	run("", "ccgone")
 	run("n\n", "ccam", "remove", "spare")
 	run("y\n", "ccam", "remove", "spare")
 	run("", "ccam", "work", "-p", "hello")

@@ -10,7 +10,7 @@ CGO_ENABLED=0 go build -trimpath -ldflags "-s -w" -o "$tmp/ccam" ./cmd/ccam
 
 export CCAM_HOME="$tmp/home"
 mkdir -p "$CCAM_HOME/config"
-printf 'version = 1\nclaude_bin = "/bin/true"\n' > "$CCAM_HOME/config/config.toml"
+printf 'claude_bin = "/bin/true"\n' > "$CCAM_HOME/config/config.toml"
 "$tmp/ccam" add work --no-login --shortcut ccwork >/dev/null 2>&1
 "$tmp/ccam" add personal --no-login >/dev/null 2>&1
 ccam="$tmp/ccam"

@@ -447,9 +447,6 @@ func shimsCmd(e *env) *cobra.Command {
 			if err != nil {
 				return err
 			}
-			if err := e.save(cfg); err != nil { // keeps shortcuts adopted from an old config
-				return err
-			}
 			created, err := installShims(e, cfg)
 			if err != nil {
 				return err

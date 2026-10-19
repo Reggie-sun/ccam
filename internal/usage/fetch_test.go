@@ -159,17 +159,6 @@ func TestFetchStatusLineCacheAndSourceCache(t *testing.T) {
 	}
 }
 
-func TestOldKoreanScopedNameInCacheIsEnglish(t *testing.T) {
-	e := newEnv(t)
-	// "\uBAA8\uB378\uBCC4" is the fallback name older versions cached.
-	old := Limits{Scoped: []Scoped{{Name: "\uBAA8\uB378\uBCC4", Window: Window{Percent: 5, Known: true}}, {Name: "Opus"}}}
-	SaveStatusLine(e.f.StateDir, "a", old, time.Now())
-	r := e.f.Fetch(context.Background(), e.account("a", "boom", future), Options{Source: "cache"})
-	if r.Limits == nil || r.Limits.Scoped[0].Name != "per-model" || r.Limits.Scoped[1].Name != "Opus" {
-		t.Fatalf("%+v", r.Limits)
-	}
-}
-
 func TestFetchExpiredLoggedOutAndAPI(t *testing.T) {
 	e := newEnv(t)
 	past := time.Now().Add(-time.Hour).UnixMilli()

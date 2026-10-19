@@ -89,7 +89,10 @@ func Main(argv []string) int {
 				}
 				return 0
 			}
-			if shim.Stale(base) {
+			// A link to ccam in the bin folder that no account claims (its
+			// shortcut was changed in config.toml by hand) must not fall
+			// through and open the default account.
+			if self, err := os.Executable(); err == nil && shim.Linked(p.Bin, self, base) {
 				fmt.Fprintf(os.Stderr, "ccam: %s is not the shortcut of any account (see `ccam list`, `ccam shortcut`)\n", base)
 				return 1
 			}

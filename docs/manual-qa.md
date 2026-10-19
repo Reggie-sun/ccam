@@ -8,7 +8,6 @@
 - [ ] `ccam add` 마법사: 이름 → 공유 항목 → `Create a shortcut command for <name>? [y/N]` → (y) `Shortcut name [cc<name>]:` (예: `ccwork`) → 브라우저 로그인 → `✓ <name> (<email>) added`와 `  shortcut: <cmd>` (N이면 `  no shortcut …`)
 - [ ] 마법사에서 PATH의 다른 프로그램 이름(예: `ls`)이나 `list`를 단축 명령으로 주면 이유와 함께 다시 물음
 - [ ] `ccam shortcut <name> <cmd>`로 만들기·이름 바꾸기, `--remove`로 지우기 → `~/.local/bin`의 링크가 따라 바뀌고 새 이름으로 실행됨
-- [ ] 예전 버전에서 만든 `claude1`·`claude2`가 업데이트 후에도 그대로 실행되고 `ccam list`의 Shortcut 칸에 보임
 - [ ] 두 번째 계정도 같은 방식으로 추가, `ccam list`에 서로 다른 이메일
 - [ ] `ccam import`로 기존 `~/.claude` 등록 후 `ccam main`과 그냥 `claude`가 같은 계정
 

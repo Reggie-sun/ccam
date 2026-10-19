@@ -42,7 +42,7 @@ func newTestCLI(t *testing.T, fiveHour map[string]int) *testCLI {
 	}
 	t.Cleanup(func() { newFetcher = orig })
 
-	cfg := &config.Config{Version: 1}
+	cfg := &config.Config{}
 	slot := 1
 	for _, name := range []string{"personal", "work", "side"} {
 		pct, ok := fiveHour[name]

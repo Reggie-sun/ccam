@@ -63,10 +63,6 @@ fi
 tar -xzf "$tmp/$asset" -C "$tmp" ccam || die "could not extract the archive"
 mkdir -p "$dir"
 install -m 0755 "$tmp/ccam" "$dir/ccam"
-# Older versions linked a ccs alias to ccam; drop it, but never a foreign ccs.
-if [ -L "$dir/ccs" ] && [ "$(readlink "$dir/ccs")" = ccam ]; then
-  rm -f "$dir/ccs"
-fi
 say "✓ $("$dir/ccam" version) → $dir/ccam"
 
 case ":$PATH:" in

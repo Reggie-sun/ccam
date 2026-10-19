@@ -82,7 +82,7 @@ func newHarness(t *testing.T) *harness {
 	h := &harness{t: t, home: home, log: filepath.Join(home, "claude.log")}
 	fake := filepath.Join(repoRoot(), "testdata", "fake-claude")
 	os.MkdirAll(filepath.Join(home, "config"), 0o700)
-	os.WriteFile(filepath.Join(home, "config", "config.toml"), []byte(fmt.Sprintf("version = 1\nclaude_bin = %q\n", fake)), 0o600)
+	os.WriteFile(filepath.Join(home, "config", "config.toml"), []byte(fmt.Sprintf("claude_bin = %q\n", fake)), 0o600)
 	h.env = append(os.Environ(),
 		"CCAM_HOME="+home,
 		"FAKE_CLAUDE_LOG="+h.log,

@@ -15,7 +15,6 @@ import (
 
 	"github.com/jhyunwoo/ccam/internal/config"
 	"github.com/jhyunwoo/ccam/internal/paths"
-	"github.com/jhyunwoo/ccam/internal/shim"
 )
 
 // Version is set at build time with -ldflags "-X .../cli.Version=...".
@@ -31,16 +30,7 @@ type env struct {
 	dryRun bool
 }
 
-// load reads the config. A config from before shortcuts were stored keeps
-// the claude<N> links still on disk as shortcuts (saved on the next save).
-func (e *env) load() (*config.Config, error) {
-	cfg, err := config.Load(e.paths.ConfigFile())
-	if err == nil && cfg.Version < 2 {
-		self, _ := ccamPath()
-		shim.Adopt(e.paths.Bin, self, cfg)
-	}
-	return cfg, err
-}
+func (e *env) load() (*config.Config, error) { return config.Load(e.paths.ConfigFile()) }
 
 func (e *env) save(cfg *config.Config) error { return cfg.Save(e.paths.ConfigFile()) }
 

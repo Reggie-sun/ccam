@@ -9,14 +9,14 @@ import (
 
 func TestLoadMissingIsEmpty(t *testing.T) {
 	c, err := Load(filepath.Join(t.TempDir(), "none.toml"))
-	if err != nil || c.Version != CurrentVersion || len(c.Profiles) != 0 {
+	if err != nil || len(c.Profiles) != 0 {
 		t.Fatalf("got %+v %v", c, err)
 	}
 }
 
 func TestRoundTrip(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "config.toml")
-	c := &Config{Version: 1, Default: "personal", MCPStrategy: MCPFlag}
+	c := &Config{Default: "personal", MCPStrategy: MCPFlag}
 	c.Profiles = append(c.Profiles,
 		Profile{Name: "personal", Slot: 1, Email: "me@example.com", Share: DefaultShare()},
 		Profile{Name: "work", Slot: 2, Dir: "/x/.claude"},
@@ -38,8 +38,7 @@ func TestRoundTrip(t *testing.T) {
 }
 
 func TestPlanExampleParses(t *testing.T) {
-	src := `version = 1
-default = "personal"
+	src := `default = "personal"
 claude_bin = "claude"
 mcp_strategy = "flag"
 
@@ -63,14 +62,6 @@ history = "local"
 	p, ok := c.Find("1")
 	if !ok || p.Name != "personal" || p.Share.Get("history") != Local || p.Share.Get("mcp") != "default" {
 		t.Fatalf("got %+v", c)
-	}
-}
-
-func TestNewerVersionRejected(t *testing.T) {
-	path := filepath.Join(t.TempDir(), "c.toml")
-	os.WriteFile(path, []byte("version = 99\n"), 0o600)
-	if _, err := Load(path); err == nil {
-		t.Fatal("want error for future version")
 	}
 }
 

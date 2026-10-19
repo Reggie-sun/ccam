@@ -55,9 +55,6 @@ func shortcutCmd(e *env) *cobra.Command {
 					if e.dryRun {
 						return nil
 					}
-					if err := e.save(cfg); err != nil { // may record an adopted shortcut
-						return err
-					}
 					_, err := installShims(e, cfg)
 					return err
 				}

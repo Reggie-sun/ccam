@@ -14,11 +14,6 @@ import (
 	"github.com/jhyunwoo/ccam/internal/fsutil"
 )
 
-// CurrentVersion 2: shortcuts are opt-in and stored per profile. Version 1
-// configs had a claude<slot> link for every profile; shim.Adopt records the
-// ones still on disk when a v1 config is first loaded by the CLI.
-const CurrentVersion = 2
-
 const (
 	MCPFlag = "flag"
 	MCPSync = "sync"
@@ -28,7 +23,6 @@ const (
 const Local = "local"
 
 type Config struct {
-	Version     int       `toml:"version"`
 	Default     string    `toml:"default,omitempty"`
 	ClaudeBin   string    `toml:"claude_bin,omitempty"`
 	MCPStrategy string    `toml:"mcp_strategy,omitempty"`
@@ -148,7 +142,7 @@ func ValidateName(name string) error {
 func Load(path string) (*Config, error) {
 	data, err := os.ReadFile(path)
 	if errors.Is(err, fs.ErrNotExist) {
-		return &Config{Version: CurrentVersion}, nil
+		return &Config{}, nil
 	}
 	if err != nil {
 		return nil, err
@@ -156,12 +150,6 @@ func Load(path string) (*Config, error) {
 	var c Config
 	if err := toml.Unmarshal(data, &c); err != nil {
 		return nil, fmt.Errorf("could not read %s: %w", path, err)
-	}
-	if c.Version > CurrentVersion {
-		return nil, fmt.Errorf("%s was written by a newer ccam (format version %d)", path, c.Version)
-	}
-	if c.Version == 0 {
-		c.Version = CurrentVersion
 	}
 	return &c, nil
 }

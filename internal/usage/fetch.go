@@ -10,10 +10,8 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"strings"
 	"sync"
 	"time"
-	"unicode"
 
 	"github.com/jhyunwoo/ccam/internal/creds"
 	"github.com/jhyunwoo/ccam/internal/fsutil"
@@ -246,13 +244,6 @@ func (f *Fetcher) readCache(name, src string) (cached, bool) {
 	var c cached
 	if json.Unmarshal(data, &c) != nil || c.Limits == nil {
 		return cached{}, false
-	}
-	for i, s := range c.Limits.Scoped {
-		// Caches written before output became English-only may hold the
-		// old Korean fallback name.
-		if strings.ContainsFunc(s.Name, func(r rune) bool { return unicode.Is(unicode.Hangul, r) }) {
-			c.Limits.Scoped[i].Name = "per-model"
-		}
 	}
 	return c, true
 }
