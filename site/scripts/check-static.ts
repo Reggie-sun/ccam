@@ -19,4 +19,10 @@ for (const f of await walk(OUT)) {
 for (const f of ["404.html", "_headers", "_redirects", "robots.txt", "sitemap-index.xml", "llms.txt", "llms-full.txt"]) {
   if (!existsSync(`${OUT}/${f}`)) errors.push(`missing ${f}`);
 }
+// Cloudflare rejects the whole deploy when a _headers line is longer than this.
+if (existsSync(`${OUT}/_headers`)) {
+  readFileSync(`${OUT}/_headers`, "utf8").split("\n").forEach((line, i) => {
+    if (line.length > 2000) errors.push(`_headers line ${i + 1} is ${line.length} characters (Cloudflare allows 2000)`);
+  });
+}
 fail(errors, "static");

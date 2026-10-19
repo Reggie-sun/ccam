@@ -35,7 +35,6 @@ async function main() {
   let css = "";
   const inlineScripts = new Set<string>();
   const styleHashes = new Set<string>();
-  const attrHashes = new Set<string>(); // style="..." attributes need 'unsafe-hashes'
 
   for (const file of htmlFiles) {
     let html = await readFile(file, "utf8");
@@ -51,17 +50,30 @@ async function main() {
       return ""; // vinext navigation runtime and RSC payload
     });
 
+    const pageStyles = new Set<string>();
+    let inline = false;
     const link = /<link rel="stylesheet"[^>]*href="(\/_next\/static\/css\/[^"]+\.css)"[^>]*\/?>/.exec(html);
     if (link) {
       if (!css) {
         cssHref = link[1];
         css = await readFile(join(OUT, cssHref), "utf8");
       }
-      const inline = gzipSync(css).length <= INLINE_CSS_LIMIT;
-      if (inline) styleHashes.add(sha256(css));
+      inline = gzipSync(css).length <= INLINE_CSS_LIMIT;
+      if (inline) {
+        styleHashes.add(sha256(css));
+        pageStyles.add(sha256(css));
+      }
       html = html.replace(link[0], inline ? `<style>${css}</style>` : `<link rel="stylesheet" href="${cssHref}"/>`);
     }
-    for (const [, value] of html.matchAll(/ style="([^"]*)"/g)) attrHashes.add(sha256(value.replace(/&quot;/g, '"')));
+    // style="..." attributes need 'unsafe-hashes'.
+    for (const [, value] of html.matchAll(/ style="([^"]*)"/g)) pageStyles.add(sha256(value.replace(/&quot;/g, '"')));
+    // Style hashes go in each page's own meta CSP: the motion diagrams have
+    // too many for _headers, where a line may not exceed 2000 characters.
+    // The browser enforces this policy and the header's, so the stricter one wins.
+    const styleSrc = [inline ? "" : "'self'", ...[...pageStyles].map((h) => `'sha256-${h}'`), "'unsafe-hashes'"].filter(Boolean).join(" ");
+    const charset = '<meta charSet="utf-8"/>';
+    if (!html.includes(charset)) throw new Error(`${file}: no ${charset} to put the CSP after`);
+    html = html.replace(charset, `${charset}<meta http-equiv="Content-Security-Policy" content="style-src ${styleSrc}"/>`);
     html = html.replace("</head>", `<script src="${siteJsPath}" defer></script></head>`);
     await writeFile(file, html);
   }
@@ -77,12 +89,12 @@ async function main() {
   if (styleHashes.size) await rm(join(OUT, cssHref), { force: true });
 
   const scriptHashes = [...inlineScripts].map((s) => `'sha256-${sha256(s)}'`).join(" ");
-  const styleSrc = [styleHashes.size ? "" : "'self'", ...[...styleHashes, ...attrHashes].map((h) => `'sha256-${h}'`)].filter(Boolean).join(" ");
   const csp = [
     "default-src 'self'",
     // Cloudflare Web Analytics, injected at the edge (plan section 9); it reports to same-origin /cdn-cgi/rum.
     `script-src 'self' https://static.cloudflareinsights.com ${scriptHashes}`,
-    `style-src ${styleSrc} 'unsafe-hashes'`,
+    // Styles are limited by each page's meta CSP; a hash here would make browsers ignore 'unsafe-inline'.
+    "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data:",
     "font-src 'self'",
     "connect-src 'self'",
