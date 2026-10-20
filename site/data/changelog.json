@@ -1,5 +1,11 @@
 [
   {
+    "tag": "v0.7.0",
+    "date": "2026-10-20",
+    "url": "https://github.com/jhyunwoo/ccam/releases/tag/v0.7.0",
+    "notes": "<h3>New</h3>\n<ul>\n<li>Windows support, ccam folder, and ccam --fallback for -p runs</li>\n</ul>\n<h3>Fixed</h3>\n<ul>\n<li>Refresh tokens at platform.claude.com, as Claude Code does</li>\n</ul>\n"
+  },
+  {
     "tag": "v0.6.0",
     "date": "2026-10-19",
     "url": "https://github.com/jhyunwoo/ccam/releases/tag/v0.6.0",

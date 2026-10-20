@@ -44,6 +44,7 @@ changelog:
     exclude:
       - '^(test|chore|ci|docs|build|refactor|style)[:(!]'
       - '^\w+\(site\)'
+      - '^Merge '
 
 release:
   # ccam.dev/install.sh and install.ps1 serve the copies attached to the latest release.

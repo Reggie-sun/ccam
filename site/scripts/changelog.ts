@@ -13,6 +13,7 @@ function userFacing(body: string): string {
   const groups: Record<string, string[]> = { feat: [], fix: [], perf: [] };
   const rest: string[] = [];
   for (const line of body.split(/\r?\n/)) {
+    if (/^[*-] (?:[0-9a-f]{7,40} )?Merge /.test(line)) continue; // merge commits say nothing new
     const c = /^[*-] (?:[0-9a-f]{7,40} )?(\w+)(?:\(([^)]*)\))?!?: (.+)$/.exec(line);
     if (!c) {
       if (!/^## Changelog\s*$/.test(line)) rest.push(line);
