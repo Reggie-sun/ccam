@@ -2,13 +2,20 @@
 // command reference cannot drift from the program. Descriptions come from
 // messages/<locale>.json ("commands.<key>"); this only supplies usage lines.
 import { execFileSync } from "node:child_process";
-import { mkdtempSync, writeFileSync } from "node:fs";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-const bin = join(mkdtempSync(join(tmpdir(), "ccam-")), "ccam");
+// Both folders are removed on exit: every site build runs this, and a
+// 15 MB binary left in /tmp each time fills a small tmpfs.
+const binDir = mkdtempSync(join(tmpdir(), "ccam-"));
+const home = mkdtempSync(join(tmpdir(), "ccam-home-"));
+process.on("exit", () => {
+  for (const d of [binDir, home]) rmSync(d, { recursive: true, force: true });
+});
+const bin = join(binDir, "ccam");
 execFileSync("go", ["build", "-buildvcs=false", "-o", bin, "./cmd/ccam"], { cwd: "..", stdio: "inherit" });
-const env = { ...process.env, CCAM_HOME: mkdtempSync(join(tmpdir(), "ccam-home-")) };
+const env = { ...process.env, CCAM_HOME: home };
 const help = (...args: string[]) => execFileSync(bin, [...args, "--help"], { env, encoding: "utf8" });
 
 const skip = new Set(["help", "version", "run"]);
