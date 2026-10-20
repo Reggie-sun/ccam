@@ -2,6 +2,7 @@ package doctor
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -82,6 +83,48 @@ func TestFolderChecks(t *testing.T) {
 	checkFolders(r, cfg)
 	if len(r.out) != 2 || r.out[0].Level != Warn || !strings.Contains(r.out[0].Msg, "gone") ||
 		r.out[1].Level != Error || !strings.Contains(r.out[1].Msg, "nobody") {
+		t.Fatalf("%v", r.out)
+	}
+}
+
+func TestGroupChecks(t *testing.T) {
+	cfg := &config.Config{Theme: "solarized", Profiles: []config.Profile{{Name: "a", Slot: 1}, {Name: "group", Slot: 2}}}
+	cfg.Groups = []config.Group{{Name: "default", Items: []string{"mcp"}, Members: []string{"a", "gone"}}}
+	r := &report{}
+	checkGroups(r, cfg)
+	all := fmt.Sprint(r.out)
+	for _, want := range []string{"group default lists gone", `theme "solarized"`, "`ccam group` is now a ccam command"} {
+		if !strings.Contains(all, want) {
+			t.Errorf("missing %q in %v", want, r.out)
+		}
+	}
+	r = &report{}
+	checkGroups(r, &config.Config{Theme: "dark-ansi"})
+	if len(r.out) != 0 {
+		t.Fatalf("%v", r.out)
+	}
+}
+
+func TestIdentityChecks(t *testing.T) {
+	t.Setenv("CCAM_HOME", t.TempDir())
+	p := paths.FromEnv()
+	cfg := &config.Config{Profiles: []config.Profile{
+		{Name: "a", Slot: 1, Login: &config.Identity{AccountUUID: "u1", Email: "a@x"}},
+		{Name: "b", Slot: 2},
+		{Name: "c", Slot: 3, Login: &config.Identity{AccountUUID: "u3", Email: "c@x"}},
+	}}
+	write := func(name, uuid, email string) {
+		dir := p.ProfileDir(name)
+		os.MkdirAll(dir, 0o700)
+		os.WriteFile(filepath.Join(dir, ".claude.json"), []byte(`{"oauthAccount":{"accountUuid":"`+uuid+`","emailAddress":"`+email+`","organizationUuid":"o"}}`), 0o600)
+	}
+	write("a", "u1", "a@x")
+	write("b", "u1", "a@x")
+	write("c", "u9", "other@x")
+	r := &report{}
+	checkIdentities(r, p, cfg)
+	all := fmt.Sprint(r.out)
+	if !strings.Contains(all, "b: logged in to the same Claude account as a") || !strings.Contains(all, "c: now logged in as other@x, but ccam recorded c@x") || len(r.out) != 2 {
 		t.Fatalf("%v", r.out)
 	}
 }

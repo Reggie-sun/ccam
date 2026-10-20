@@ -2,6 +2,7 @@ package cli
 
 import (
 	"bufio"
+	"cmp"
 	"fmt"
 	"io"
 	"net/http"
@@ -35,7 +36,12 @@ func runLogin(e *env, cfg *config.Config, prof *config.Profile) error {
 	if err != nil {
 		return err
 	}
-	c := exec.Command(bin, "auth", "login")
+	args := []string{"auth", "login"}
+	if email := cmp.Or(prof.Email, loginEmail(prof)); email != "" {
+		// Only fills in the login page; the identity is checked afterwards.
+		args = append(args, "--email", email)
+	}
+	c := exec.Command(bin, args...)
 	c.Env = launcher.ProfileEnv(e.paths, os.Environ(), profile.Dir(e.paths, prof), prof.Name)
 	c.Stdout, c.Stderr = e.stdout, e.stderr
 	toClaude, err := c.StdinPipe()
@@ -53,6 +59,14 @@ func runLogin(e *env, cfg *config.Config, prof *config.Profile) error {
 	// to anyone.
 	go relayLogin(e.in, stars, toClaude, e.stderr, deliverCallback)
 	return c.Wait()
+}
+
+// loginEmail is the email of the account's last recorded login.
+func loginEmail(prof *config.Profile) string {
+	if prof.Login != nil {
+		return prof.Login.Email
+	}
+	return ""
 }
 
 // maskTyping turns the terminal's echo off for the login so that the relay

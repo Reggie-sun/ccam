@@ -162,9 +162,10 @@ func NewLocal(profileDir, groupMCPPath, seenPath string) ([]string, error) {
 
 func syncStampPath(stateDir string) string { return filepath.Join(stateDir, "sync-stamp") }
 
-// syncStamp identifies a version of the group's mcp.json.
-func syncStamp(mcpInfo os.FileInfo) string {
-	return strconv.FormatInt(mcpInfo.ModTime().UnixNano(), 10)
+// syncStamp identifies a version of a group's mcp.json; the folder is in
+// it so that moving to another group syncs again.
+func syncStamp(groupDir string, mcpInfo os.FileInfo) string {
+	return strconv.FormatInt(mcpInfo.ModTime().UnixNano(), 10) + " " + groupDir
 }
 
 // Synced reports whether the profile's .claude.json holds the group's current
@@ -175,13 +176,38 @@ func Synced(groupDir, stateDir string) bool {
 		return true
 	}
 	data, err := os.ReadFile(syncStampPath(stateDir))
-	return err == nil && strings.SplitN(string(data), "\n", 2)[0] == syncStamp(info)
+	return err == nil && strings.SplitN(string(data), "\n", 2)[0] == syncStamp(groupDir, info)
 }
 
 // HasCopy reports whether Sync has ever copied group servers into the profile.
 func HasCopy(stateDir string) bool {
 	_, err := os.Stat(syncStampPath(stateDir))
 	return err == nil
+}
+
+// Copied lists the servers the last Sync copied into the profile.
+func Copied(stateDir string) []string {
+	data, err := os.ReadFile(syncStampPath(stateDir))
+	if err != nil {
+		return nil
+	}
+	return strings.Split(strings.TrimSpace(string(data)), "\n")[1:]
+}
+
+// Unsync removes the servers Sync copied, for an account that stops sharing
+// MCP: left in .claude.json they would still load, and under the flag
+// strategy win over the servers of a group it shares MCP with later.
+// The caller makes sure the profile is not running.
+func Unsync(profileDir, stateDir string) error {
+	if !HasCopy(stateDir) {
+		return nil
+	}
+	if names := Copied(stateDir); len(names) > 0 && fsutil.Exists(filepath.Join(profileDir, ".claude.json")) {
+		if err := RemoveLocal(profileDir, stateDir, names); err != nil {
+			return err
+		}
+	}
+	return os.Remove(syncStampPath(stateDir))
 }
 
 // Sync merges the group's servers into <profileDir>/.claude.json.
@@ -193,7 +219,7 @@ func Sync(profileDir, groupDir, stateDir string) error {
 		return nil // nothing shared yet
 	}
 	stampPath := syncStampPath(stateDir)
-	stamp := syncStamp(mcpInfo)
+	stamp := syncStamp(groupDir, mcpInfo)
 	var managed []string
 	if data, err := os.ReadFile(stampPath); err == nil {
 		lines := strings.Split(strings.TrimSpace(string(data)), "\n")

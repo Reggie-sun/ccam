@@ -17,36 +17,28 @@ type Candidate struct {
 	LoggedIn bool
 }
 
-// Rotate returns the profile after the most recently used one, in slot
-// order, wrapping around. Profiles that are not logged in are skipped.
-// With sameHistory, only profiles sharing the current one's history group
-// qualify, so `--continue` can find the conversation.
-func Rotate(cands []Candidate, sameHistory bool) (from, to *config.Profile, err error) {
+// Rotate returns the profile after from (the most recently used one when
+// from is ""), in slot order, wrapping around. Profiles that are not logged
+// in are skipped, and so are those fits refuses (nil: none).
+func Rotate(cands []Candidate, from string, fits func(*config.Profile) bool) (cur, to *config.Profile, err error) {
 	if len(cands) == 0 {
 		return nil, nil, fmt.Errorf("no accounts yet")
 	}
 	sorted := append([]Candidate(nil), cands...)
 	slices.SortFunc(sorted, func(a, b Candidate) int { return cmp.Compare(a.Profile.Slot, b.Profile.Slot) })
-	cur := 0
+	at := 0
 	for i, c := range sorted {
-		if c.LastUsed.After(sorted[cur].LastUsed) {
-			cur = i
+		if from == "" && c.LastUsed.After(sorted[at].LastUsed) || c.Profile.Name == from {
+			at = i
 		}
 	}
-	from = sorted[cur].Profile
-	hist := from.Share.Get("history")
+	cur = sorted[at].Profile
 	for k := 1; k < len(sorted); k++ {
-		c := sorted[(cur+k)%len(sorted)]
-		if !c.LoggedIn {
+		c := sorted[(at+k)%len(sorted)]
+		if !c.LoggedIn || fits != nil && !fits(c.Profile) {
 			continue
 		}
-		if sameHistory && (hist == config.Local || c.Profile.Share.Get("history") != hist) {
-			continue
-		}
-		return from, c.Profile, nil
+		return cur, c.Profile, nil
 	}
-	if sameHistory {
-		return from, nil, fmt.Errorf("no other account shares conversation history with %s. Turn it on with `ccam share <name> --history on`", from.Name)
-	}
-	return from, nil, fmt.Errorf("no logged-in account other than %s", from.Name)
+	return cur, nil, fmt.Errorf("no logged-in account other than %s", cur.Name)
 }

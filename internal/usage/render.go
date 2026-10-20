@@ -68,12 +68,23 @@ func row(r *Report, nameW int, o RenderOptions) []string {
 	}
 	out := []string{head + "  " + body}
 	if o.Verbose && r.Limits != nil {
+		labelW := barWidth + 5 + 1 + resetWidth // the 5-hour and its reset column
 		for _, s := range r.Limits.Scoped {
-			out = append(out, fmt.Sprintf(" %s  %s  %s", pad("", nameW+2), pad("· "+s.Name+" weekly", barWidth+5+1+resetWidth),
+			label := width.Truncate("· "+s.Name+" weekly", labelW, "…")
+			out = append(out, fmt.Sprintf(" %s  %s  %s", pad("", nameW+2), pad(label, labelW),
 				gauge(s.Window, o)+" "+until(s.Window, o.Now)))
 		}
-		if r.Source != "" {
-			out = append(out, fmt.Sprintf(" %s  source: %s", pad("", nameW+2), r.Source))
+		// "(cached)" already says the numbers are saved ones; the line adds
+		// where they came from, which "(cached)" does not tell.
+		switch r.Source {
+		case "live":
+			out = append(out, fmt.Sprintf(" %s  source: live, from the usage endpoint", pad("", nameW+2)))
+		case "claude":
+			out = append(out, fmt.Sprintf(" %s  source: live, from Claude Code (usage_source = \"claude\")", pad("", nameW+2)))
+		case "statusline":
+			out = append(out, fmt.Sprintf(" %s  source: saved by the status line", pad("", nameW+2)))
+		case "cache":
+			out = append(out, fmt.Sprintf(" %s  source: saved from the usage endpoint", pad("", nameW+2)))
 		}
 	}
 	return out
@@ -138,23 +149,4 @@ func basis(r *Report, now time.Time) string {
 
 func pad(s string, w int) string {
 	return width.FillRight(s, w)
-}
-
-// Best returns the account with the most 5-hour headroom, skipping full
-// and unknown ones. Live values beat cached ones only through their
-// percentage; both count.
-func Best(reports []*Report) *Report {
-	var best *Report
-	for _, r := range reports {
-		if r == nil || r.Limits == nil || !r.Limits.FiveHour.Known || r.Limits.FiveHour.Percent >= 100 {
-			continue
-		}
-		if r.Status == StatusLoggedOut {
-			continue
-		}
-		if best == nil || r.Limits.FiveHour.Percent < best.Limits.FiveHour.Percent {
-			best = r
-		}
-	}
-	return best
 }

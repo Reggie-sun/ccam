@@ -13,6 +13,7 @@ import (
 	"github.com/jhyunwoo/ccam/internal/config"
 	"github.com/jhyunwoo/ccam/internal/creds"
 	"github.com/jhyunwoo/ccam/internal/fsutil"
+	"github.com/jhyunwoo/ccam/internal/launcher"
 	"github.com/jhyunwoo/ccam/internal/lock"
 	"github.com/jhyunwoo/ccam/internal/profile"
 	"github.com/jhyunwoo/ccam/internal/usage"
@@ -29,6 +30,7 @@ type pickResult struct {
 	FiveHour *usage.Window `json:"five_hour,omitempty"`
 	Weekly   *usage.Window `json:"weekly,omitempty"`
 	Source   string        `json:"source,omitempty"`
+	Reason   string        `json:"reason,omitempty"` // why this account was chosen
 }
 
 func pickCmd(e *env) *cobra.Command {
@@ -61,15 +63,19 @@ func pickCmd(e *env) *cobra.Command {
 			if err != nil {
 				return err
 			}
+			// Workers stay in the organization of the account this folder
+			// would start.
+			base, _ := launcher.HereProfile(cfg)
+			org := newOrgs(e, cfg, choice.crossOrg)
 			var profs []*config.Profile
 			for i := range cfg.Profiles {
 				prof := &cfg.Profiles[i]
-				if creds.Has(profile.Dir(e.paths, prof), e.paths.Home) {
+				if creds.Has(profile.Dir(e.paths, prof), e.paths.Home) && org.fits(base, prof) {
 					profs = append(profs, prof)
 				}
 			}
 			if len(profs) == 0 {
-				return noRoom("no logged-in account to pick")
+				return noRoom(org.none(base, "no logged-in account to pick"))
 			}
 			var picked *usage.Report
 			prof, err := untilRoom(e, p, d, "no account with known usage and headroom (see `ccam usage`)", func() (*config.Profile, []*usage.Report, error) {
@@ -84,7 +90,7 @@ func pickCmd(e *env) *cobra.Command {
 				e.printf("%s\n", prof.Name)
 				return nil
 			}
-			out := pickResult{Name: prof.Name, Slot: prof.Slot, Email: prof.Email, Source: picked.Source}
+			out := pickResult{Name: prof.Name, Slot: prof.Slot, Email: prof.Email, Source: picked.Source, Reason: p.Why(picked, clock())}
 			if l := picked.Limits; l != nil {
 				out.FiveHour, out.Weekly = &l.FiveHour, &l.Weekly
 			}

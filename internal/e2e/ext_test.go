@@ -12,13 +12,15 @@ func TestExtShowsWhatEachAccountLoads(t *testing.T) {
 	h := newHarness(t)
 	h.addAccounts()
 	h.ok("ccam", "mcp", "add", "ctx", "--", "npx", "ctx-server")
+	// Extensions move to a group of work alone; personal keeps none.
+	h.ok("ccam", "group", "set", "default", "--remove", "extensions", "--fresh", "--yes")
+	h.ok("ccam", "group", "add", "ext", "--items", "extensions", "--members", "work", "--yes")
 	// A skill written through work's shared skills folder lands in the group.
 	skill := filepath.Join(h.profileDir("work"), "skills", "review", "SKILL.md")
 	os.MkdirAll(filepath.Dir(skill), 0o700)
 	os.WriteFile(skill, []byte("---\nname: review\n---\n"), 0o600)
-	// personal stops sharing extensions and has a skill of its own, and a
-	// server of its own that clashes with the group's.
-	h.ok("ccam", "share", "personal", "--extensions", "off", "--fresh", "--yes")
+	// personal has a skill of its own, and a server of its own that clashes
+	// with the group's.
 	own := filepath.Join(h.profileDir("personal"), "skills", "mine", "SKILL.md")
 	os.MkdirAll(filepath.Dir(own), 0o700)
 	os.WriteFile(own, []byte("x"), 0o600)
@@ -41,7 +43,7 @@ func TestExtShowsWhatEachAccountLoads(t *testing.T) {
 	lines := strings.Split(r.stdout, "\n")
 	for _, l := range lines {
 		f := strings.Fields(l)
-		if len(f) == 3 && f[0] == "review" && (f[1] != "-" || f[2] != "default") {
+		if len(f) == 3 && f[0] == "review" && (f[1] != "-" || f[2] != "ext") {
 			t.Errorf("review row: %q (personal stopped sharing, work shares it)", l)
 		}
 		if len(f) == 3 && f[0] == "mine" && (f[1] != "account" || f[2] != "-") {
@@ -58,7 +60,7 @@ func TestExtShowsWhatEachAccountLoads(t *testing.T) {
 		Problems []struct{ Account, Problem string } `json:"problems"`
 	}
 	if err := json.Unmarshal([]byte(out), &rep); err != nil || len(rep.Accounts) != 1 || rep.Accounts[0].Name != "work" ||
-		len(rep.Accounts[0].Skills) != 1 || rep.Accounts[0].Skills[0].Source != "default" || len(rep.Problems) != 0 {
+		len(rep.Accounts[0].Skills) != 1 || rep.Accounts[0].Skills[0].Source != "ext" || len(rep.Problems) != 0 {
 		t.Fatalf("json: %v\n%s", err, out)
 	}
 }

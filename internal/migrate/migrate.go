@@ -10,6 +10,7 @@
 package migrate
 
 import (
+	"cmp"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -35,7 +36,8 @@ type Options struct {
 	Source     string    // folder to copy from
 	Home       string    // user home: ~/.claude keeps its .claude.json there
 	GroupsRoot string    // paths.GroupsRoot()
-	Group      string    // target group name
+	Group      string    // target group folder (under GroupsRoot)
+	Name       string    // the group's name for messages; Group when ""
 	Items      []string  // items to copy (keys of share.Layout)
 	Accounts   []Account // accounts that may receive the source's MCP sign-ins
 }
@@ -79,7 +81,8 @@ type MCP struct {
 
 type Plan struct {
 	Source    string
-	Group     string
+	Group     string // folder
+	Name      string // the group's name
 	GroupDir  string
 	BackupDir string // where replaced group files are saved
 	Entries   []*Entry
@@ -145,7 +148,7 @@ func Build(opt Options) (*Plan, error) {
 		return nil, err
 	}
 	groupDir := filepath.Join(opt.GroupsRoot, opt.Group)
-	pl := &Plan{Source: src, Group: opt.Group, GroupDir: groupDir}
+	pl := &Plan{Source: src, Group: opt.Group, Name: cmp.Or(opt.Name, opt.Group), GroupDir: groupDir}
 	// One folder per run, even for two runs in the same second, so a backup
 	// never overwrites an earlier one.
 	pl.BackupDir = fsutil.UniqueDir(filepath.Join(groupDir, share.BackupDir, fsutil.Stamp(time.Now())))
@@ -387,7 +390,7 @@ func (pl *Plan) Empty() bool { return len(pl.Conflicts) == 0 && !pl.Changes() }
 // Describe writes one line per path. asking says conflicts are still to be
 // decided (otherwise their current choice is shown).
 func (pl *Plan) Describe(w io.Writer, asking bool) {
-	fmt.Fprintf(w, "Copy from %s into group %s (%s):\n", pl.Source, pl.Group, pl.GroupDir)
+	fmt.Fprintf(w, "Copy from %s into group %s (%s):\n", pl.Source, pl.Name, pl.GroupDir)
 	last := ""
 	label := func(item string) string {
 		if item == last {

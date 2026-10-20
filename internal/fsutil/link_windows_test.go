@@ -53,6 +53,20 @@ func TestLinkRefusesFilesWithoutDeveloperMode(t *testing.T) {
 	}
 }
 
+func TestCanLinkFiles(t *testing.T) {
+	if err := CanLinkFiles(t.TempDir()); err != nil && !strings.Contains(err.Error(), "Developer Mode") {
+		t.Fatal(err)
+	}
+	withoutSymlinks(t)
+	dir := t.TempDir()
+	if err := CanLinkFiles(dir); err == nil || !strings.Contains(err.Error(), "Developer Mode") {
+		t.Fatal(err)
+	}
+	if left, _ := os.ReadDir(dir); len(left) != 0 {
+		t.Fatalf("left %v behind", left)
+	}
+}
+
 func TestCopyTreeKeepsJunctions(t *testing.T) {
 	withoutSymlinks(t)
 	root := t.TempDir()

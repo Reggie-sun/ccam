@@ -5,6 +5,7 @@
 package main
 
 import (
+	"cmp"
 	"fmt"
 	"io"
 	"os"
@@ -51,12 +52,55 @@ func main() {
 		fmt.Fprintln(f, profile)
 		f.Close()
 	}
+	if from := os.Getenv("FAKE_SWITCH_FROM"); from != "" && from == profile {
+		// What `ccam hook switch` leaves for /ccam:switch.
+		cwd, _ := os.Getwd()
+		ticket := fmt.Sprintf(`{"account":%q,"session_id":"s1","transcript_path":%q,"cwd":%q,"at":%q,"reason":"switch","target":%q,"relay":%q}`,
+			from, os.Getenv("FAKE_SWITCH_TRANSCRIPT"), cwd, time.Now().Format(time.RFC3339Nano), os.Getenv("FAKE_SWITCH_TO"),
+			cmp.Or(os.Getenv("FAKE_SWITCH_RELAY"), os.Getenv("CCAM_RELAY")))
+		dir := filepath.Join(os.Getenv("FAKE_SWITCH_STATE"), "handoff")
+		must(os.MkdirAll(dir, 0o700))
+		must(os.WriteFile(filepath.Join(dir, from+".json"), []byte(ticket), 0o600))
+	}
+	if slices.Contains(args, "--input-format") && slices.Contains(args, "stream-json") {
+		// The get_usage control request: answer from FAKE_USAGE_DIR/<account>.json.
+		in, _ := io.ReadAll(os.Stdin)
+		if strings.Contains(string(in), "get_usage") {
+			data, err := os.ReadFile(filepath.Join(os.Getenv("FAKE_USAGE_DIR"), profile+".json"))
+			if err != nil {
+				data = []byte(`{"type":"control_response","response":{"subtype":"success","request_id":"ccam","response":{"rate_limits_available":false,"rate_limits":null}}}`)
+			}
+			fmt.Println(`{"type":"system","subtype":"init"}`)
+			os.Stdout.Write(append(data, '\n'))
+		}
+		return
+	}
+	if len(args) >= 2 && args[0] == "agents" && args[1] == "--json" {
+		// FAKE_AGENTS_DIR/<account>.json holds what the account lists.
+		data, err := os.ReadFile(filepath.Join(os.Getenv("FAKE_AGENTS_DIR"), profile+".json"))
+		if err != nil {
+			data = []byte("[]")
+		}
+		os.Stdout.Write(data)
+		return
+	}
 	if len(args) >= 2 && args[0] == "auth" && args[1] == "login" {
 		email := os.Getenv("FAKE_EMAIL")
 		if email == "" {
 			email = "user@example.com"
 		}
-		must(os.WriteFile(filepath.Join(dir, ".claude.json"), fmt.Appendf(nil, `{"numStartups":1,"oauthAccount":{"emailAddress":%q}}`, email), 0o600))
+		// The account is named after the email unless FAKE_ACCOUNT says
+		// otherwise; FAKE_LOGIN_ARGS records the arguments.
+		account := os.Getenv("FAKE_ACCOUNT")
+		if account == "" {
+			account = "uuid-" + email
+		}
+		if path := os.Getenv("FAKE_LOGIN_ARGS"); path != "" {
+			must(os.WriteFile(path, []byte(strings.Join(args, " ")), 0o600))
+		}
+		must(os.WriteFile(filepath.Join(dir, ".claude.json"), fmt.Appendf(nil,
+			`{"numStartups":1,"oauthAccount":{"emailAddress":%q,"accountUuid":%q,"organizationUuid":"org-1","organizationName":"Acme","organizationType":"claude_team"}}`,
+			email, account), 0o600))
 		must(os.WriteFile(filepath.Join(dir, ".credentials.json"), []byte(`{"claudeAiOauth":{"accessToken":"fake","expiresAt":4102444800000}}`), 0o600))
 	}
 	if len(args) >= 2 && args[0] == "auth" && args[1] == "logout" {

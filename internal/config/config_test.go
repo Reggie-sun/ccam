@@ -19,14 +19,17 @@ func TestRoundTrip(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "config.toml")
 	c := &Config{Default: "personal", MCPStrategy: MCPFlag}
 	c.Profiles = append(c.Profiles,
-		Profile{Name: "personal", Slot: 1, Email: "me@example.com", Share: DefaultShare()},
+		Profile{Name: "personal", Slot: 1, Email: "me@example.com"},
 		Profile{Name: "work", Slot: 2, Dir: "/x/.claude"},
 	)
+	if err := c.AddGroup("default", DefaultItems, []string{"personal"}); err != nil {
+		t.Fatal(err)
+	}
 	if err := c.Save(path); err != nil {
 		t.Fatal(err)
 	}
 	raw, _ := os.ReadFile(path)
-	if !strings.Contains(string(raw), "[[profile]]") || !strings.Contains(string(raw), "[profile.share]") {
+	if !strings.Contains(string(raw), "[[profile]]") || !strings.Contains(string(raw), "[[group]]") || strings.Contains(string(raw), "[profile.share]") {
 		t.Fatalf("unexpected toml layout:\n%s", raw)
 	}
 	got, err := Load(path)
@@ -222,3 +225,13 @@ func TestFoldersRoundTripAndValidate(t *testing.T) {
 }
 
 func tomlLiteral(s string) string { return `'` + s + `'` }
+
+func TestAPICheckNeedsAKeySource(t *testing.T) {
+	for _, from := range []string{"", "env:", "command:", "command:  ", "env:KEY", "command:pass show k", "file:/k", "KEY"} {
+		err := (&API{KeyFrom: from}).Check()
+		ok := from == "env:KEY" || from == "command:pass show k"
+		if (err == nil) != ok {
+			t.Errorf("%q: %v", from, err)
+		}
+	}
+}

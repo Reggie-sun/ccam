@@ -29,6 +29,12 @@ func Launch(p paths.Paths, sel string, args []string, dry bool, stdout io.Writer
 
 // LaunchWith is Launch with an already loaded config.
 func LaunchWith(p paths.Paths, cfg *config.Config, sel string, args []string, dry bool, stdout io.Writer) error {
+	return LaunchThen(p, cfg, sel, args, dry, stdout, nil)
+}
+
+// LaunchThen is LaunchWith that calls ready (unless nil or dry) once
+// everything is set for claude to start.
+func LaunchThen(p paths.Paths, cfg *config.Config, sel string, args []string, dry bool, stdout io.Writer, ready func()) error {
 	pl, err := Ready(p, cfg, sel, args, dry)
 	if err != nil {
 		return err
@@ -36,6 +42,12 @@ func LaunchWith(p paths.Paths, cfg *config.Config, sel string, args []string, dr
 	if dry {
 		pl.DryRun(stdout)
 		return nil
+	}
+	if ready != nil {
+		ready()
+	}
+	if cfg.Relay && relayable(pl.Argv[1:]) {
+		return pl.relay(p)
 	}
 	return pl.Exec(p)
 }
@@ -57,12 +69,31 @@ func Ready(p paths.Paths, cfg *config.Config, sel string, args []string, dry boo
 		if err := pl.useAPI(api); err != nil {
 			return nil, err
 		}
+	} else if api == nil {
+		warnAuthEnv(pl)
 	}
 	if err := prelaunch(p, cfg, pl, dry); err != nil {
 		return nil, err
 	}
 	trace.Step("prelaunch")
 	return pl, nil
+}
+
+// warnAuthEnv says when the environment holds a key or token that Claude
+// Code would use instead of the account's own login.
+func warnAuthEnv(pl *Plan) {
+	for _, kv := range pl.Env {
+		name, v, _ := strings.Cut(kv, "=")
+		if v == "" {
+			continue
+		}
+		switch name {
+		case "CLAUDE_CODE_OAUTH_TOKEN":
+			fmt.Fprintf(os.Stderr, "ccam: $%s is set, so Claude Code uses that token instead of %s's login. Unset it to use %s.\n", name, pl.Profile.Name, pl.Profile.Name)
+		case "ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN":
+			fmt.Fprintf(os.Stderr, "ccam: $%s is set, so Claude Code may use that key instead of %s's login. Unset it, or make the key an account of its own (ccam add <name> --api --key-from env:%s).\n", name, pl.Profile.Name, name)
+		}
+	}
 }
 
 // SessionDir holds markers of running sessions of a profile.
@@ -192,7 +223,7 @@ func applyMCP(p paths.Paths, cfg *config.Config, pl *Plan, dry, running bool) er
 		return nil
 	}
 	gdir := p.GroupDir(group)
-	state := mcpStateDir(p, pl.Profile.Name)
+	state := MCPStateDir(p, pl.Profile.Name)
 	if cfg.Strategy() == config.MCPSync {
 		switch {
 		case dry:

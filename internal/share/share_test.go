@@ -198,14 +198,62 @@ func TestMergeDirKeepsConflictingFileInBackup(t *testing.T) {
 
 func TestSwitchGroupRelinks(t *testing.T) {
 	f := newFixture(t)
-	dir := f.profile(t, "a", map[string]string{"CLAUDE.md": "x"})
-	share(t, f, dir, config.Share{}, config.Share{Memory: "default"}, Options{})
-	pl := share(t, f, dir, config.Share{Memory: "default"}, config.Share{Memory: "team"}, Options{})
+	dir := f.profile(t, "a", map[string]string{"CLAUDE.md": "x", "skills/s/SKILL.md": "s"})
+	on := config.Share{Memory: "default", Extensions: "default"}
+	share(t, f, dir, config.Share{}, on, Options{})
+	// A new group starts with a copy of what the account saw.
+	share(t, f, dir, on, config.Share{Memory: "team", Extensions: "team"}, Options{})
+	if target, _ := os.Readlink(filepath.Join(dir, "CLAUDE.md")); target != filepath.Join(f.groups, "team", "CLAUDE.md") {
+		t.Fatalf("link %s", target)
+	}
+	if read(t, filepath.Join(f.groups, "team", "CLAUDE.md")) != "x" || read(t, filepath.Join(dir, "skills", "s", "SKILL.md")) != "s" {
+		t.Fatal("team should start with default's content")
+	}
+	if read(t, filepath.Join(f.groups, "default", "CLAUDE.md")) != "x" {
+		t.Fatal("default must stay as it is")
+	}
+	// A group that has content is linked as it is.
+	os.MkdirAll(filepath.Join(f.groups, "pair"), 0o700)
+	os.WriteFile(filepath.Join(f.groups, "pair", "CLAUDE.md"), []byte("pair"), 0o600)
+	pl := share(t, f, dir, config.Share{Memory: "team"}, config.Share{Memory: "pair"}, Options{})
 	if len(pl.Notes) == 0 {
 		t.Fatal("switching groups should explain what happens to the old group")
 	}
-	if target, _ := os.Readlink(filepath.Join(dir, "CLAUDE.md")); target != filepath.Join(f.groups, "team", "CLAUDE.md") {
-		t.Fatalf("link %s", target)
+	if read(t, filepath.Join(dir, "CLAUDE.md")) != "pair" {
+		t.Fatal("link to pair")
+	}
+}
+
+// Plans built one after another see what the earlier ones put into the group.
+func TestPendingSeesEarlierPlans(t *testing.T) {
+	f := newFixture(t)
+	a := f.profile(t, "a", map[string]string{"CLAUDE.md": "a", "skills/x/SKILL.md": "x"})
+	b := f.profile(t, "b", map[string]string{"CLAUDE.md": "b", "skills/y/SKILL.md": "y"})
+	on := config.Share{Memory: "default", Extensions: "default"}
+	pa, err := Build(a, f.groups, config.Share{}, on, Options{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	pb, err := Build(b, f.groups, config.Share{}, on, Options{Pending: pa.Created()})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(pb.Conflicts) != 1 || pb.Conflicts[0].Seed != filepath.Join(a, "CLAUDE.md") {
+		t.Fatalf("b's CLAUDE.md should conflict with a's: %+v", pb.Conflicts)
+	}
+	for _, s := range pb.Steps {
+		if s.Op == OpAdopt {
+			t.Fatalf("b must not adopt %s: a does", s.Entry.Name)
+		}
+	}
+	if err := pa.Apply(); err != nil {
+		t.Fatal(err)
+	}
+	if err := pb.Apply(); err != nil {
+		t.Fatal(err)
+	}
+	if read(t, filepath.Join(b, "CLAUDE.md")) != "a" || read(t, filepath.Join(b, "skills", "x", "SKILL.md")) != "x" || read(t, filepath.Join(a, "skills", "y", "SKILL.md")) != "y" {
+		t.Fatal("both should see the merged group")
 	}
 }
 

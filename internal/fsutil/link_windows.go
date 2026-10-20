@@ -29,6 +29,24 @@ func Link(target, path string, dir bool) error {
 	return fmt.Errorf("cannot link %s: Windows links files only in Developer Mode (Settings > System > For developers). Turn it on, or keep this item local", path)
 }
 
+// CanLinkFiles reports why files cannot be linked in dir, or nil.
+func CanLinkFiles(dir string) error {
+	tmp, err := os.MkdirTemp(dir, ".ccam-linktest-")
+	if err != nil {
+		return err
+	}
+	defer os.RemoveAll(tmp)
+	target := filepath.Join(tmp, "t")
+	if err := os.WriteFile(target, nil, 0o600); err != nil {
+		return err
+	}
+	err = symlink(target, filepath.Join(tmp, "l"))
+	if errors.Is(err, windows.ERROR_PRIVILEGE_NOT_HELD) {
+		return fmt.Errorf("files can be linked on Windows only in Developer Mode (Settings > System > For developers)")
+	}
+	return err
+}
+
 // junction creates path as a directory junction (a mount point reparse
 // point) to the absolute folder target.
 func junction(target, path string) error {

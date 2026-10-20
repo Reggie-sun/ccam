@@ -50,29 +50,40 @@ type Set struct {
 	MCP      []Item   `json:"mcp_servers"`
 	Hooks    []Hook   `json:"hooks"`
 	Problems []string `json:"problems,omitempty"`
+	// GroupProblems are problems of items that come from a group, by
+	// group: every account in it would report them.
+	GroupProblems map[string][]string `json:"-"`
 }
 
 // ScanAccount reads the extensions in an account folder. groupsRoot is the
-// folder of the share groups, so links into it are named by their group.
-func ScanAccount(name, dir, groupsRoot string, share config.Share) Set {
+// folder of the share groups, so links into it are named by their group;
+// names maps a group folder to the group's name where they differ.
+func ScanAccount(name, dir, groupsRoot string, share config.Share, names map[string]string) Set {
 	s := Set{Name: name}
+	label := func(source string) string {
+		if n, ok := names[source]; ok {
+			return n
+		}
+		return source
+	}
+	src := func(entry string) string { return label(sourceOf(dir, entry, groupsRoot)) }
 	for _, folder := range []string{"skills", "commands", "agents", "plugins"} {
 		path := filepath.Join(dir, folder)
 		if target, ok := fsutil.LinkTarget(path); ok && !fsutil.Exists(target) {
 			s.Problems = append(s.Problems, folder+": broken link to "+target+" (ccam doctor --fix)")
 		}
 	}
-	s.Skills = skills(filepath.Join(dir, "skills"), sourceOf(dir, "skills", groupsRoot))
-	s.Commands = markdown(filepath.Join(dir, "commands"), sourceOf(dir, "commands", groupsRoot))
-	s.Agents = markdown(filepath.Join(dir, "agents"), sourceOf(dir, "agents", groupsRoot))
-	s.Plugins = plugins(filepath.Join(dir, "plugins"), sourceOf(dir, "plugins", groupsRoot))
-	s.Hooks = hooks(filepath.Join(dir, "settings.json"), sourceOf(dir, "settings.json", groupsRoot))
+	s.Skills = skills(filepath.Join(dir, "skills"), src("skills"))
+	s.Commands = markdown(filepath.Join(dir, "commands"), src("commands"))
+	s.Agents = markdown(filepath.Join(dir, "agents"), src("agents"))
+	s.Plugins = plugins(filepath.Join(dir, "plugins"), src("plugins"))
+	s.Hooks = hooks(filepath.Join(dir, "settings.json"), src("settings.json"))
 
 	defs := map[string][]def{}
 	if g := share.Get("mcp"); g != config.Local {
 		if store, err := mcp.Load(mcp.Path(filepath.Join(groupsRoot, g))); err == nil {
 			for n, raw := range store.Servers {
-				defs[n] = append(defs[n], def{g, "group " + g + "'s mcp.json", raw})
+				defs[n] = append(defs[n], def{label(g), "group " + label(g) + "'s mcp.json", raw})
 			}
 		}
 	}
@@ -86,8 +97,15 @@ func ScanAccount(name, dir, groupsRoot string, share config.Share) Set {
 	s.Problems = append(s.Problems, mcpProblems...)
 	for _, list := range [][]Item{s.Skills, s.Commands, s.Agents, s.Plugins} {
 		for _, it := range list {
-			if it.Problem != "" {
+			switch {
+			case it.Problem == "":
+			case it.Source == Account:
 				s.Problems = append(s.Problems, it.Name+": "+it.Problem)
+			default:
+				if s.GroupProblems == nil {
+					s.GroupProblems = map[string][]string{}
+				}
+				s.GroupProblems[it.Source] = append(s.GroupProblems[it.Source], it.Name+": "+it.Problem)
 			}
 		}
 	}

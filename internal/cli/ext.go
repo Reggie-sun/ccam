@@ -3,7 +3,9 @@ package cli
 import (
 	"encoding/json"
 	"fmt"
+	"maps"
 	"os"
+	"slices"
 	"strings"
 	"text/tabwriter"
 
@@ -22,8 +24,38 @@ type extReport struct {
 }
 
 type extIssue struct {
-	Account string `json:"account"`
+	Account string `json:"account,omitempty"`
+	Group   string `json:"group,omitempty"` // a problem every account in the group has
 	Problem string `json:"problem"`
+}
+
+// scanExt reads the extensions of profs and of the project in cwd.
+func scanExt(e *env, cfg *config.Config, profs []*config.Profile, cwd string) extReport {
+	rep := extReport{Project: ext.ScanProject(cwd), Folder: cwd, Problems: []extIssue{}}
+	names := map[string]string{}
+	for _, g := range cfg.Groups {
+		if g.Dir != "" {
+			names[g.Dir] = g.Name
+		}
+	}
+	seen := map[extIssue]bool{}
+	for _, p := range profs {
+		s := ext.ScanAccount(p.Name, profile.Dir(e.paths, p), e.paths.GroupsRoot(), p.Share, names)
+		s.Problems = append(s.Problems, ext.Overlaps(s, rep.Project)...)
+		rep.Accounts = append(rep.Accounts, s)
+		for _, pr := range s.Problems {
+			rep.Problems = append(rep.Problems, extIssue{Account: p.Name, Problem: pr})
+		}
+		for _, g := range slices.Sorted(maps.Keys(s.GroupProblems)) {
+			for _, pr := range s.GroupProblems[g] {
+				if is := (extIssue{Group: g, Problem: pr}); !seen[is] {
+					seen[is] = true
+					rep.Problems = append(rep.Problems, is)
+				}
+			}
+		}
+	}
+	return rep
 }
 
 func extCmd(e *env) *cobra.Command {
@@ -60,15 +92,7 @@ func extCmd(e *env) *cobra.Command {
 				return nil
 			}
 			cwd, _ := os.Getwd()
-			rep := extReport{Project: ext.ScanProject(cwd), Folder: cwd, Problems: []extIssue{}}
-			for _, p := range profs {
-				s := ext.ScanAccount(p.Name, profile.Dir(e.paths, p), e.paths.GroupsRoot(), p.Share)
-				s.Problems = append(s.Problems, ext.Overlaps(s, rep.Project)...)
-				rep.Accounts = append(rep.Accounts, s)
-				for _, pr := range s.Problems {
-					rep.Problems = append(rep.Problems, extIssue{p.Name, pr})
-				}
-			}
+			rep := scanExt(e, cfg, profs, cwd)
 			if asJSON {
 				data, _ := json.MarshalIndent(rep, "", "  ")
 				e.printf("%s\n", data)
@@ -157,6 +181,10 @@ func printExt(e *env, rep extReport) {
 		return
 	}
 	for _, pr := range rep.Problems {
+		if pr.Group != "" {
+			e.printf("! group %s: %s\n", pr.Group, pr.Problem)
+			continue
+		}
 		e.printf("! %s: %s\n", pr.Account, pr.Problem)
 	}
 }

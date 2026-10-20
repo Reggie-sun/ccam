@@ -37,7 +37,7 @@ func TestTableMatchesPlanExample(t *testing.T) {
 			t.Errorf("wider than 80 columns (%d): %s", width.StringWidth(l), l)
 		}
 	}
-	if b := Best(reports); b == nil || b.Name != "work" {
+	if b := (Policy{}).Choose(reports, time.Now()); b == nil || b.Name != "work" {
 		t.Fatalf("best %v", b)
 	}
 }

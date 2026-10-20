@@ -5,8 +5,24 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/jhyunwoo/ccam/internal/config"
 	"github.com/jhyunwoo/ccam/internal/shim"
 )
+
+// saveShortcut saves cfg, in which an account's shortcut changed from old,
+// and updates the commands in the bin folder.
+func saveShortcut(e *env, cfg *config.Config, old string) error {
+	if err := e.save(cfg); err != nil {
+		return err
+	}
+	if self, err := ccamPath(); err == nil && old != "" {
+		shim.Remove(e.paths.Bin, self, old)
+	}
+	if _, err := installShims(e, cfg); err != nil {
+		return fmt.Errorf("could not create the shortcut: %w", err)
+	}
+	return nil
+}
 
 func shortcutCmd(e *env) *cobra.Command {
 	var remove bool
@@ -71,14 +87,8 @@ func shortcutCmd(e *env) *cobra.Command {
 				}
 				return nil
 			}
-			if err := e.save(cfg); err != nil {
+			if err := saveShortcut(e, cfg, old); err != nil {
 				return err
-			}
-			if self, err := ccamPath(); err == nil {
-				shim.Remove(e.paths.Bin, self, old)
-			}
-			if _, err := installShims(e, cfg); err != nil {
-				return fmt.Errorf("could not create the shortcut: %w", err)
 			}
 			switch {
 			case prof.Shortcut == "":

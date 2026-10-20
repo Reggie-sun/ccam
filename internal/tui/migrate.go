@@ -9,15 +9,23 @@ import (
 
 // MigratePicker asks which items `ccam migrate` copies.
 type MigratePicker struct {
+	theme         Theme
 	source, group string
 	found         map[string]bool // items the source has something for
 	list          checklist
 	done          bool // false after Esc: cancelled
 }
 
-// NewMigratePicker starts with checked pre-selected.
+// NewMigratePicker starts with checked pre-selected, except items the
+// source has nothing for: copying those would do nothing.
 func NewMigratePicker(source, group string, found map[string]bool, checked []string) MigratePicker {
-	return MigratePicker{source: source, group: group, found: found, list: newChecklist(checked)}
+	var on []string
+	for _, item := range checked {
+		if found[item] {
+			on = append(on, item)
+		}
+	}
+	return MigratePicker{theme: ThemeFor("auto", true), source: source, group: group, found: found, list: itemChecklist(on)}
 }
 
 // Items is valid when Done reports true; it may be empty.
@@ -25,9 +33,13 @@ func (m MigratePicker) Items() []string { return m.list.items() }
 
 func (m MigratePicker) Done() bool { return m.done }
 
-func (m MigratePicker) Init() tea.Cmd { return nil }
+func (m MigratePicker) Init() tea.Cmd { return tea.RequestBackgroundColor }
 
 func (m MigratePicker) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	if bg, ok := msg.(tea.BackgroundColorMsg); ok {
+		m.theme = ThemeFor("auto", bg.IsDark())
+		return m, nil
+	}
 	k, ok := msg.(tea.KeyPressMsg)
 	if !ok || m.list.key(k.String()) {
 		return m, nil
@@ -44,15 +56,16 @@ func (m MigratePicker) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m MigratePicker) View() tea.View {
 	var b strings.Builder
-	b.WriteString(titleStyle.Render(" Copy into group "+m.group) + "\n\n")
-	b.WriteString(" From " + m.source + "\n ? Choose what to copy (Space to toggle)\n")
-	m.list.view(&b, func(item string) string {
+	t := m.theme
+	b.WriteString(" " + t.bold().Render("Copy into group "+m.group) + "\n\n")
+	b.WriteString(" From " + m.source + "\n Choose what to copy (Space to toggle)\n")
+	m.list.styled(&b, t, func(item string) string {
 		if !m.found[item] {
 			return "not found"
 		}
 		return ""
 	})
-	b.WriteString("\n" + dimStyle.Render(" Enter show the plan · Esc cancel") + "\n")
+	b.WriteString("\n " + t.dim().Render("space to toggle"+symDot+"enter to show the plan"+symDot+"esc to cancel") + "\n")
 	return tea.NewView(b.String())
 }
 

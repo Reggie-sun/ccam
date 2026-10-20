@@ -180,8 +180,12 @@ func TestLastUsed(t *testing.T) {
 
 func BenchmarkLaunchPath(b *testing.B) {
 	p, cfg := setup(b)
-	for i := range cfg.Profiles {
-		cfg.Profiles[i].Share = config.DefaultShare()
+	var names []string
+	for _, prof := range cfg.Profiles {
+		names = append(names, prof.Name)
+	}
+	if err := cfg.AddGroup("default", config.DefaultItems, names); err != nil {
+		b.Fatal(err)
 	}
 	if err := cfg.Save(p.ConfigFile()); err != nil {
 		b.Fatal(err)

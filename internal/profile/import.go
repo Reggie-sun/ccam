@@ -104,6 +104,7 @@ func Import(p paths.Paths, cfg *config.Config, path, name string) (*config.Profi
 	}
 
 	email, _ := ReadEmail(path)
+	cfg.DropMember(name)
 	cfg.Profiles = append(cfg.Profiles, config.Profile{Name: name, Slot: cfg.NextSlot(), Email: email, Dir: path})
 	if len(cfg.Profiles) == 1 {
 		cfg.Default = name

@@ -3,19 +3,24 @@ package cli
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
+	"os/exec"
 	"os/signal"
 	"path/filepath"
 	"strings"
 	"time"
 
+	"github.com/charmbracelet/x/ansi"
 	"github.com/charmbracelet/x/term"
 	"github.com/spf13/cobra"
 
 	"github.com/jhyunwoo/ccam/internal/config"
 	"github.com/jhyunwoo/ccam/internal/launcher"
+	"github.com/jhyunwoo/ccam/internal/next"
 	"github.com/jhyunwoo/ccam/internal/profile"
+	"github.com/jhyunwoo/ccam/internal/session"
 	"github.com/jhyunwoo/ccam/internal/usage"
 )
 
@@ -29,8 +34,8 @@ func usageCmd(e *env) *cobra.Command {
 		Short:   "5-hour and weekly usage of every account, with reset times",
 		Args:    cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if opt.Source != "" && opt.Source != "live" && opt.Source != "cache" {
-				return fmt.Errorf("--source must be live or cache")
+			if opt.Source != "" && opt.Source != "live" && opt.Source != "cache" && opt.Source != "claude" {
+				return fmt.Errorf("--source must be live, claude or cache")
 			}
 			if e.dryRun && opt.Refresh {
 				return fmt.Errorf("--dry-run cannot be combined with --refresh, which rewrites login tokens")
@@ -68,7 +73,7 @@ func usageCmd(e *env) *cobra.Command {
 	cmd.Flags().IntVar(&watch, "watch", 60, "refresh every N seconds")
 	cmd.Flags().Lookup("watch").NoOptDefVal = "60"
 	cmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "show per-model limits and the data source")
-	cmd.Flags().StringVar(&opt.Source, "source", "", "live|cache")
+	cmd.Flags().StringVar(&opt.Source, "source", "", "live (ccam asks the usage endpoint), claude (Claude Code does, slower) or cache (saved values) (config: usage_source)")
 	cmd.Flags().BoolVar(&opt.NoCache, "no-cache", false, "ignore the 60-second cache")
 	cmd.Flags().BoolVar(&opt.Refresh, "refresh", false, "refresh expired tokens (only for accounts not running)")
 	return cmd
@@ -80,7 +85,38 @@ var newFetcher = usage.NewFetcher
 func (e *env) fetcher() *usage.Fetcher {
 	f := newFetcher(usageStateDir(e))
 	f.Home = e.paths.Home
+	if cfg, err := e.load(); err == nil {
+		f.Source = cfg.UsageSource
+		f.Probe = claudeProbe(e, cfg)
+		if e.dryRun {
+			// Claude Code writes to the account's folder and may refresh its
+			// login, so a dry run goes by the saved usage.
+			f.Probe = func(context.Context, usage.Account) ([]byte, error) {
+				return nil, errors.New("a dry run does not start Claude Code; the usage shown is the saved one")
+			}
+		}
+	}
 	return f
+}
+
+// claudeProbe runs Claude Code in an account's folder and asks it for the
+// usage (usage.ProbeRequest): with --safe-mode, so the account's hooks, MCP
+// servers and plugins do not start, and without saving a session.
+func claudeProbe(e *env, cfg *config.Config) func(context.Context, usage.Account) ([]byte, error) {
+	return func(ctx context.Context, a usage.Account) ([]byte, error) {
+		bin, err := launcher.ResolveClaude(e.paths, cfg.ClaudeBin)
+		if err != nil {
+			return nil, err
+		}
+		c := exec.CommandContext(ctx, bin, "-p", "--input-format", "stream-json", "--output-format", "stream-json",
+			"--verbose", "--safe-mode", "--no-session-persistence")
+		// Its own login only, from a folder that is not a project.
+		c.Env = launcher.ProfileEnv(e.paths, launcher.WithoutAuth(os.Environ()), a.Dir, a.Name)
+		c.Dir = os.TempDir()
+		c.Stdin = strings.NewReader(usage.ProbeRequest)
+		c.WaitDelay = 2 * time.Second // a child that keeps the pipe open must not hold the lookup
+		return c.Output()
+	}
 }
 
 func usageStateDir(e *env) string { return filepath.Join(e.paths.State, "usage") }
@@ -117,6 +153,14 @@ func showUsage(ctx context.Context, e *env, f *usage.Fetcher, cfg *config.Config
 		fmt.Fprint(e.stdout, "\x1b[H\x1b[2J")
 	}
 	// On a terminal, draw placeholders and redraw as each account answers.
+	// Lines are cut to the terminal width: a wrapped line would take two
+	// rows, and moving up by the number of lines would then land too low.
+	cols := 0
+	if f, ok := e.stdout.(*os.File); ok && tty {
+		if w, _, err := term.GetSize(f.Fd()); err == nil && w > 1 {
+			cols = w - 1
+		}
+	}
 	drawn := 0
 	draw := func() {
 		ro.Now = time.Now()
@@ -127,6 +171,9 @@ func showUsage(ctx context.Context, e *env, f *usage.Fetcher, cfg *config.Config
 		for _, l := range lines {
 			if tty {
 				fmt.Fprint(e.stdout, "\x1b[2K")
+				if cols > 0 {
+					l = ansi.Truncate(l, cols, "…")
+				}
 			}
 			fmt.Fprintln(e.stdout, l)
 		}
@@ -144,7 +191,23 @@ func showUsage(ctx context.Context, e *env, f *usage.Fetcher, cfg *config.Config
 	if !tty {
 		draw()
 	}
-	if best := usage.Best(view); best != nil && len(view) > 1 {
+	// The same rule next --auto and pick use, so the advice matches them.
+	p, err := choiceFlags{}.policy(cfg, nil)
+	if err != nil {
+		p = usage.Policy{}
+	}
+	// next --auto stays in the organization of the last used account and
+	// counts running sessions.
+	from, _, _ := next.Rotate(candidates(e, cfg), "", nil)
+	org := newOrgs(e, cfg, false)
+	var pool []*usage.Report
+	for _, r := range view {
+		if prof, ok := cfg.Find(r.Name); ok && org.fits(from, prof) {
+			r.Sessions = session.Count(launcher.SessionDir(e.paths, r.Name))
+			pool = append(pool, r)
+		}
+	}
+	if best := p.Choose(pool, time.Now()); best != nil && len(view) > 1 {
 		e.printf("→ Most headroom: %s   (open it with ccam next --auto)\n", best.Name)
 	}
 	return nil

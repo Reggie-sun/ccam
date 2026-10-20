@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"slices"
 	"strconv"
 	"strings"
 	"text/tabwriter"
@@ -9,7 +10,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/jhyunwoo/ccam/internal/config"
-	"github.com/jhyunwoo/ccam/internal/launcher"
 	"github.com/jhyunwoo/ccam/internal/profile"
 	"github.com/jhyunwoo/ccam/internal/share"
 )
@@ -32,52 +32,35 @@ var itemLabels = map[string]string{
 }
 
 func shareCmd(e *env) *cobra.Command {
-	var fresh, yes bool
-	var prefer string
-	values := map[string]*string{}
 	cmd := &cobra.Command{
-		Use:   "share <name|number> [--mcp on|off|<group>] [--history …]",
-		Short: "Change shared items (migrates data)",
-		Long: "Give each item on (= the default group), off (= local), or a group name.\n" +
-			"Items: --mcp --settings --memory --extensions --history\n" +
-			"Without options, prints the current state.",
-		Args: cobra.ExactArgs(1),
+		Use:   "share <name|number>",
+		Short: "Show what an account shares, and through which group",
+		Long:  "Sharing is set by groups; change it with `ccam group` (join, leave, set).",
+		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cfg, err := e.load()
-			if err != nil {
-				return err
-			}
-			prof, err := cfg.MustFind(args[0])
-			if err != nil {
-				return err
-			}
-			target := prof.Share
-			changed := false
-			for _, item := range config.Items {
-				if cmd.Flags().Changed(item) {
-					if err := target.Set(item, *values[item]); err != nil {
-						return err
-					}
-					changed = true
+			for _, f := range append(slices.Clone(config.Items), "fresh", "yes", "prefer") {
+				if cmd.Flags().Changed(f) {
+					return fmt.Errorf("sharing is set by groups now: `ccam group join <group> %s`, `ccam group leave <group> %s`, or `ccam group set <group> --add <item>` (see `ccam group --help`)", args[0], args[0])
 				}
 			}
-			if !changed {
-				return showShare(e, prof)
-			}
-			res, err := parsePrefer(prefer)
+			cfg, prof, err := e.loadProfile(args[0])
 			if err != nil {
 				return err
 			}
-			return changeShare(e, prof, target, share.Options{Fresh: fresh}, yes, res)
+			return showShare(e, cfg, prof)
 		},
 	}
+	// The old flags stay, hidden, to point to ccam group.
 	for _, item := range config.Items {
-		values[item] = new(string)
-		cmd.Flags().StringVar(values[item], item, "", itemLabels[item]+": on|off|<group>")
+		cmd.Flags().String(item, "", "replaced by ccam group")
+		_ = cmd.Flags().MarkHidden(item)
 	}
-	cmd.Flags().BoolVar(&fresh, "fresh", false, "when turning sharing off, start empty instead of copying the group's content")
-	cmd.Flags().BoolVarP(&yes, "yes", "y", false, "run without asking (conflicts follow --prefer)")
-	cmd.Flags().StringVar(&prefer, "prefer", "", "conflict handling: group|mine|merge (default: ask; with --yes, each item's default)")
+	cmd.Flags().Bool("fresh", false, "replaced by ccam group")
+	cmd.Flags().BoolP("yes", "y", false, "replaced by ccam group")
+	cmd.Flags().String("prefer", "", "replaced by ccam group")
+	for _, f := range []string{"fresh", "yes", "prefer"} {
+		_ = cmd.Flags().MarkHidden(f)
+	}
 	return cmd
 }
 
@@ -98,80 +81,42 @@ func parsePrefer(s string) (*share.Resolution, error) {
 	return &r, nil
 }
 
-func showShare(e *env, prof *config.Profile) error {
+func showShare(e *env, cfg *config.Config, prof *config.Profile) error {
 	tw := tabwriter.NewWriter(e.stdout, 0, 0, 2, ' ', 0)
 	fmt.Fprintf(tw, "Sharing for %s\n", prof.Name)
 	for _, item := range config.Items {
-		g := prof.Share.Get(item)
-		if g == config.Local {
-			g = "local"
-		} else {
-			g = "shared (group " + g + ")"
+		state := "its own"
+		if g := cfg.GroupFor(prof.Name, item); g != nil {
+			state = "group " + g.Name
 		}
-		fmt.Fprintf(tw, "  %s\t%s\t--%s\n", itemLabels[item], g, item)
+		fmt.Fprintf(tw, "  %s\t%s\t%s\n", item, itemLabels[item], state)
 	}
-	return tw.Flush()
-}
-
-// changeShare prints the plan, asks, resolves conflicts and applies.
-func changeShare(e *env, prof *config.Profile, target config.Share, opt share.Options, yes bool, prefer *share.Resolution) error {
-	// A running session keeps writing into the folders being moved, and
-	// lines it appends meanwhile would be lost.
-	if !e.dryRun && launcher.Running(e.paths, prof.Name) {
-		return fmt.Errorf("account %s is running; quit it first, then change its sharing", prof.Name)
-	}
-	dir := profile.Dir(e.paths, prof)
-	pl, err := share.Build(dir, e.paths.GroupsRoot(), prof.Share, target, opt)
-	if err != nil {
+	if err := tw.Flush(); err != nil {
 		return err
 	}
-	for _, c := range pl.Conflicts {
-		if prefer != nil {
-			for _, cand := range c.Candidates {
-				if cand == *prefer || (*prefer == share.MergeJSON && cand == share.MergeLines) {
-					c.Choice = cand
-				}
-			}
-			continue
-		}
-		if yes {
-			continue
-		}
-		c.Choice = askConflict(e, c)
+	var names []string
+	for _, g := range cfg.GroupsOf(prof.Name) {
+		names = append(names, g.Name)
 	}
-	e.printf("Plan (%s):\n", prof.Name)
-	pl.Describe(e.stdout)
-	if e.dryRun {
+	if len(names) == 0 {
+		e.printf("%s is in no group. `ccam group join <group> %s` adds it to one.\n", prof.Name, prof.Name)
 		return nil
 	}
-	if !pl.Empty() && !yes {
-		if !e.confirm("Proceed?") {
-			e.printf("Cancelled.\n")
-			return nil
-		}
-	}
-	// Save the target first: if Apply stops halfway, doctor --fix and a
-	// rerun build their plan toward it and finish the change. The prompts
-	// may have waited, so the current config is the one updated.
-	if _, err := e.update(func(cfg *config.Config) error {
-		p, err := cfg.MustFind(prof.Name)
-		if err == nil {
-			p.Share = target
-		}
-		return err
-	}); err != nil {
-		return err
-	}
-	prof.Share = target
-	if err := pl.Apply(); err != nil {
-		return fmt.Errorf("failed while applying: %w\nThe originals are in %s/%s. Fix the cause, then finish with `ccam doctor --fix`", err, dir, share.BackupDir)
-	}
-	e.printf("✓ Sharing changed for %s\n", prof.Name)
+	e.printf("Groups: %s. Change them with `ccam group`.\n", strings.Join(names, ", "))
 	return nil
 }
 
-func askConflict(e *env, c *share.Conflict) share.Resolution {
-	e.printf("\n%s differs from the group's copy.\n  mine:  %s\n  group: %s\n", c.Entry.Name, c.Mine, c.Group)
+// askConflict asks how to settle c; who names the account when there are
+// several in the change.
+func askConflict(e *env, c *share.Conflict, who string) share.Resolution {
+	grp := c.Group
+	if c.Seed != "" {
+		grp = c.Seed + " (moves into the group first)"
+	}
+	if who != "" {
+		who += ": "
+	}
+	e.printf("\n%s%s differs from the group's copy.\n  mine:  %s\n  group: %s\n", who, c.Entry.Name, c.Mine, grp)
 	for i, r := range c.Candidates {
 		e.printf("  %d) %s\n", i+1, r)
 	}

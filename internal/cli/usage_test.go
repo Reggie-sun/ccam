@@ -60,8 +60,11 @@ func newTestCLI(t *testing.T, fiveHour map[string]int) *testCLI {
 			cred := fmt.Sprintf(`{"claudeAiOauth":{"accessToken":%q,"expiresAt":%d}}`, token, time.Now().Add(time.Hour).UnixMilli())
 			os.WriteFile(filepath.Join(dir, ".credentials.json"), []byte(cred), 0o600)
 		}
-		cfg.Profiles = append(cfg.Profiles, config.Profile{Name: name, Slot: slot, Share: config.Share{History: "team"}})
+		cfg.Profiles = append(cfg.Profiles, config.Profile{Name: name, Slot: slot})
 		slot++
+	}
+	if err := cfg.AddGroup("team", []string{"history"}, []string{"personal", "work", "side"}); err != nil {
+		t.Fatal(err)
 	}
 	if err := cfg.Save(c.p.ConfigFile()); err != nil {
 		t.Fatal(err)
@@ -93,6 +96,28 @@ func TestUsageTableAndJSON(t *testing.T) {
 	var reports []usage.Report
 	if err := json.Unmarshal([]byte(out), &reports); err != nil || len(reports) != 3 || reports[2].Limits.FiveHour.Percent != 100 {
 		t.Fatalf("json: %v %s", err, out)
+	}
+}
+
+// The advice line follows next --auto: an account whose weekly window is
+// full is not recommended however low its 5-hour usage is.
+func TestUsageAdviceSkipsWeeklyFull(t *testing.T) {
+	c := newTestCLI(t, map[string]int{"personal": 5, "work": 40})
+	cache := filepath.Join(c.p.State, "usage", "personal.json")
+	os.MkdirAll(filepath.Dir(cache), 0o700)
+	reset := time.Now().Add(48 * time.Hour).UTC().Format(time.RFC3339)
+	os.WriteFile(cache, []byte(`{"at":"`+time.Now().UTC().Format(time.RFC3339)+`","limits":{"five_hour":{"percent":5,"known":true,"resets_at":"`+reset+`"},"weekly":{"percent":100,"known":true,"resets_at":"`+reset+`"}}}`), 0o600)
+	out, _, _ := c.run("", "usage")
+	if !strings.Contains(out, "Most headroom: work") {
+		t.Fatalf("%s", out)
+	}
+}
+
+func TestUsageCacheModeSaysNotLoggedIn(t *testing.T) {
+	c := newTestCLI(t, map[string]int{"personal": 10})
+	out, _, _ := c.run("", "usage", "--source", "cache")
+	if !strings.Contains(out, "not logged in → ccam login work") || strings.Contains(out, "lookup failed: no saved usage") && strings.Contains(out, " work ") && strings.Count(out, "lookup failed") > 1 {
+		t.Fatalf("%s", out)
 	}
 }
 
@@ -181,7 +206,16 @@ func TestNextAutoPicksLowest(t *testing.T) {
 	cfg.ClaudeBin, _ = exec.LookPath("true") // /bin/true does not exist on macOS
 	cfg.Save(c.p.ConfigFile())
 	out, errOut, code := c.run("", "--dry-run", "next", "--auto")
-	if code != 0 || !strings.Contains(out, c.p.ProfileDir("side")) {
+	if code != 0 || !strings.Contains(out, c.p.ProfileDir("side")) || !strings.Contains(errOut, "(30% of its 5 hours used, the least)") {
 		t.Fatalf("%d out=%s err=%s", code, out, errOut)
+	}
+	// balance: every week is 10% used and resets at the same time, so the
+	// reason is about the week.
+	out, errOut, code = c.run("", "--dry-run", "next", "--auto", "--strategy", "balance")
+	if code != 0 || !strings.Contains(errOut, "90% of its week is left") {
+		t.Fatalf("%d out=%s err=%s", code, out, errOut)
+	}
+	if _, errOut, code := c.run("", "next", "--auto", "--strategy", "random"); code == 0 || !strings.Contains(errOut, `"balance"`) {
+		t.Fatalf("%d %s", code, errOut)
 	}
 }

@@ -1,7 +1,9 @@
 package launcher
 
 import (
+	"errors"
 	"os"
+	"os/exec"
 
 	"github.com/jhyunwoo/ccam/internal/paths"
 )
@@ -25,4 +27,17 @@ func (pl *Plan) Exec(p paths.Paths) error {
 		return ExitCode(code)
 	}
 	return nil
+}
+
+// execSelf runs ccam with args and ends with its exit code, as Windows has
+// no exec.
+func execSelf(self string, args []string) error {
+	c := exec.Command(self, args[1:]...)
+	c.Stdin, c.Stdout, c.Stderr = os.Stdin, os.Stdout, os.Stderr
+	err := c.Run()
+	var ee *exec.ExitError
+	if errors.As(err, &ee) {
+		return ExitCode(ee.ExitCode())
+	}
+	return err
 }

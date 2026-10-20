@@ -17,8 +17,24 @@ import (
 // a key or provider set in the shell cannot leak in or win over its own.
 var apiVars = []string{
 	"ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN", "CLAUDE_CODE_OAUTH_TOKEN",
-	"ANTHROPIC_BASE_URL", "ANTHROPIC_MODEL",
+	"CLAUDE_CODE_OAUTH_TOKEN_FILE_DESCRIPTOR", "CLAUDE_CODE_API_KEY_FILE_DESCRIPTOR",
+	"ANTHROPIC_BASE_URL", "ANTHROPIC_MODEL", "ANTHROPIC_UNIX_SOCKET",
 	"CLAUDE_CODE_USE_BEDROCK", "CLAUDE_CODE_USE_VERTEX", "CLAUDE_CODE_USE_FOUNDRY",
+	"CLAUDE_CODE_USE_ANTHROPIC_AWS", "CLAUDE_CODE_USE_ANTHROPIC_GOOGLE_CLOUD",
+	"CLAUDE_CODE_USE_MANTLE", "CLAUDE_CODE_USE_GATEWAY",
+}
+
+// WithoutAuth is environ without the variables that choose how Claude Code
+// signs in or which provider it uses.
+func WithoutAuth(environ []string) []string {
+	out := make([]string, 0, len(environ))
+	for _, kv := range environ {
+		name, _, _ := strings.Cut(kv, "=")
+		if !contains(apiVars, name) {
+			out = append(out, kv)
+		}
+	}
+	return out
 }
 
 // keyTimeout bounds a command: key source (a password manager may prompt).

@@ -10,6 +10,9 @@ import (
 const (
 	Headroom = "headroom" // the lowest 5-hour usage (default)
 	Expiring = "expiring" // the soonest 5-hour reset, so its quota is not left unused
+	// Balance takes the account whose weekly quota would go unused first:
+	// the most left per day until its reset, less for each running session.
+	Balance = "balance"
 )
 
 // Policy is how `ccam next --auto`, `--fallback` and `ccam pick` choose an
@@ -29,8 +32,8 @@ func (p Policy) Check() error {
 	if p.MaxUsage < 0 || p.MaxUsage > 100 {
 		return fmt.Errorf("auto_max_usage must be between 1 and 100, not %g", p.MaxUsage)
 	}
-	if p.Strategy != "" && p.Strategy != Headroom && p.Strategy != Expiring {
-		return fmt.Errorf("auto_strategy must be %q or %q, not %q", Headroom, Expiring, p.Strategy)
+	if p.Strategy != "" && p.Strategy != Headroom && p.Strategy != Expiring && p.Strategy != Balance {
+		return fmt.Errorf("auto_strategy must be %q, %q or %q, not %q", Headroom, Expiring, Balance, p.Strategy)
 	}
 	return nil
 }
@@ -121,13 +124,69 @@ func (p Policy) best(rs []*Report, now time.Time) *Report {
 
 // before reports whether a is a better choice than b.
 func (p Policy) before(a, b *Report, now time.Time) bool {
-	if p.Strategy == Expiring {
+	switch p.Strategy {
+	case Expiring:
 		ra, rb := resetIn(a, now), resetIn(b, now)
 		if ra != rb {
 			return ra < rb
 		}
+	case Balance:
+		ua, ub := urgency(a, now), urgency(b, now)
+		if ua != ub {
+			return ua > ub
+		}
 	}
 	return a.Limits.FiveHour.Percent < b.Limits.FiveHour.Percent
+}
+
+// sessionCost is how much of the weekly quota per day a running session
+// is taken to use, so balance spreads sessions over the accounts.
+const sessionCost = 10
+
+// urgency is the share of r's weekly quota left per day until the week
+// resets, less sessionCost for each running session. Without a known week,
+// a full week is assumed.
+func urgency(r *Report, now time.Time) float64 {
+	w := r.Limits.Weekly
+	left, days := 100.0, 7.0
+	if w.Known {
+		left = 100 - w.Percent
+		if !w.ResetsAt.IsZero() {
+			days = max(w.ResetsAt.Sub(now).Hours()/24, 1.0/24)
+		}
+	}
+	return left/days - sessionCost*float64(r.Sessions)
+}
+
+// Why says in a few words why Choose took r.
+func (p Policy) Why(r *Report, now time.Time) string {
+	if r == nil || !usable(r) {
+		return ""
+	}
+	five := fmt.Sprintf("%.0f%% of its 5 hours used", r.Limits.FiveHour.Percent)
+	if top := p.peak(r); top >= p.max() {
+		return fmt.Sprintf("every account is at %.0f%% or more; it has the lowest use, %s", p.max(), five)
+	}
+	switch p.Strategy {
+	case Expiring:
+		if at := r.Limits.FiveHour.ResetsAt; !at.IsZero() {
+			return fmt.Sprintf("its 5-hour window resets first, in %s (%s)", Duration(at.Sub(now)), five)
+		}
+	case Balance:
+		w := r.Limits.Weekly
+		why := "its weekly use is unknown"
+		if w.Known {
+			why = fmt.Sprintf("%.0f%% of its week is left", 100-w.Percent)
+			if !w.ResetsAt.IsZero() {
+				why += ", resetting in " + Duration(w.ResetsAt.Sub(now))
+			}
+		}
+		if r.Sessions > 0 {
+			why += fmt.Sprintf("; %d running", r.Sessions)
+		}
+		return why
+	}
+	return five + ", the least"
 }
 
 // resetIn is the time until r's 5-hour window resets; a window that is not

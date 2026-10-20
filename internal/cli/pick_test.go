@@ -52,7 +52,7 @@ func TestPickJSONDryRunAndNoRoom(t *testing.T) {
 	c := newTestCLI(t, map[string]int{"personal": 30, "work": 10})
 	out, _, code := c.run("", "--dry-run", "pick", "--json")
 	var r pickResult
-	if code != 0 || json.Unmarshal([]byte(out), &r) != nil || r.Name != "work" || r.FiveHour == nil || r.FiveHour.Percent != 10 {
+	if code != 0 || json.Unmarshal([]byte(out), &r) != nil || r.Name != "work" || r.FiveHour == nil || r.FiveHour.Percent != 10 || r.Reason != "10% of its 5 hours used, the least" {
 		t.Fatalf("%d %s", code, out)
 	}
 	// A dry run does not count as a pick.

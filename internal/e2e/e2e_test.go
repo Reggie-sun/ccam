@@ -13,6 +13,7 @@ import (
 	"strings"
 	"sync"
 	"testing"
+	"time"
 )
 
 var (
@@ -340,5 +341,123 @@ func TestRemoveAndRename(t *testing.T) {
 	trash, _ := os.ReadDir(filepath.Join(h.home, "data", "trash"))
 	if len(trash) != 1 {
 		t.Fatalf("trash %v", trash)
+	}
+}
+
+func TestLoginExpiredLogsInOnlyThoseThatNeedIt(t *testing.T) {
+	h := newHarness(t)
+	h.addAccounts()
+	h.ok("ccam", "add", "later", "--no-login")
+	// work's refresh token has expired; personal's login works.
+	os.WriteFile(filepath.Join(h.profileDir("work"), ".credentials.json"),
+		[]byte(`{"claudeAiOauth":{"accessToken":"x","expiresAt":1,"refreshTokenExpiresAt":1}}`), 0o600)
+	r := h.run("", []string{"FAKE_EMAIL=new@example.com"}, "ccam", "login", "--expired")
+	if r.code != 0 || !strings.Contains(r.stdout, "[1/2] work (login expired)") || !strings.Contains(r.stdout, "[2/2] later (not logged in)") ||
+		strings.Contains(r.stdout, "personal") {
+		t.Fatalf("%+v", r)
+	}
+	if out := h.ok("ccam", "login", "--expired"); !strings.Contains(out, "Every account's login works.") {
+		t.Fatal(out)
+	}
+	if r := h.run("", nil, "ccam", "login", "--expired", "work"); r.code == 0 {
+		t.Fatal("--expired takes no name")
+	}
+}
+
+// Claude Code takes the email only as a hint, so ccam checks whom the login
+// belongs to.
+func TestLoginIntoAnotherAccountIsCaught(t *testing.T) {
+	h := newHarness(t)
+	h.addAccounts()
+	args := filepath.Join(h.home, "login-args")
+	r := h.run("", []string{"FAKE_EMAIL=dev@company.com", "FAKE_LOGIN_ARGS=" + args}, "ccam", "login", "work")
+	if b, _ := os.ReadFile(args); r.code != 0 || !strings.Contains(string(b), "--email dev@company.com") {
+		t.Fatalf("%+v %s", r, b)
+	}
+	r = h.run("", []string{"FAKE_EMAIL=other@company.com"}, "ccam", "login", "work")
+	if !strings.Contains(r.stderr, "this login is other@company.com, but work was dev@company.com before") ||
+		!strings.Contains(r.stderr, "`ccam logout work`, then `ccam login work` and sign in as dev@company.com") {
+		t.Fatalf("%+v", r)
+	}
+	// Two folders logged in to one account share their limits.
+	r = h.run("", []string{"FAKE_EMAIL=me@example.com"}, "ccam", "login", "work")
+	if !strings.Contains(r.stderr, "personal is logged in to the same account") {
+		t.Fatalf("%+v", r)
+	}
+	cfg, _ := os.ReadFile(filepath.Join(h.home, "config", "config.toml"))
+	if !strings.Contains(string(cfg), "[profile.login]") || !strings.Contains(string(cfg), "org_type = 'claude_team'") {
+		t.Fatalf("%s", cfg)
+	}
+}
+
+func TestAgentsAcrossAccounts(t *testing.T) {
+	h := newHarness(t)
+	h.addAccounts()
+	agents := filepath.Join(h.home, "agents")
+	os.MkdirAll(agents, 0o700)
+	now := time.Now().UnixMilli()
+	os.WriteFile(filepath.Join(agents, "personal.json"), []byte(fmt.Sprintf(
+		`[{"pid":11,"id":"49ec0028","cwd":"/tmp/app","kind":"background","startedAt":%d,"sessionId":"49ec0028-x","name":"probe","status":"idle","state":"blocked"}]`, now-60000)), 0o600)
+	os.WriteFile(filepath.Join(agents, "work.json"), []byte(fmt.Sprintf(
+		`[{"pid":12,"cwd":"/tmp/web","kind":"interactive","startedAt":%d,"status":"busy"}]`, now)), 0o600)
+	env := []string{"FAKE_AGENTS_DIR=" + agents}
+	r := h.run("", env, "ccam", "agents")
+	lines := strings.Split(r.stdout, "\n")
+	if r.code != 0 || len(lines) < 3 || !strings.HasPrefix(lines[1], "work") || !strings.Contains(lines[1], "open (busy)") ||
+		!strings.HasPrefix(lines[2], "personal") || !strings.Contains(lines[2], "49ec0028") || !strings.Contains(lines[2], "blocked, idle") {
+		t.Fatalf("%+v", r)
+	}
+	if r := h.run("", env, "ccam", "agents", "--json"); !strings.Contains(r.stdout, `"account": "personal"`) {
+		t.Fatalf("%+v", r)
+	}
+	// An account that cannot be asked is not an empty list.
+	broken := t.TempDir()
+	for _, n := range []string{"personal", "work"} {
+		os.WriteFile(filepath.Join(broken, n+".json"), []byte("not json"), 0o600)
+	}
+	if r := h.run("", []string{"FAKE_AGENTS_DIR=" + broken}, "ccam", "agents"); r.code == 0 || strings.Contains(r.stdout, "No sessions") ||
+		!strings.Contains(r.stderr, "2 of 2 accounts could not be asked") {
+		t.Fatalf("%+v", r)
+	}
+	os.MkdirAll(filepath.Join(h.profileDir("personal"), "jobs", "49ec0028"), 0o700)
+	r = h.run("", nil, "ccam", "--dry-run", "attach", "49ec")
+	if r.code != 0 || !strings.Contains(r.stdout, filepath.Join("profiles", "personal")) || !strings.Contains(r.stdout, "attach 49ec0028") {
+		t.Fatalf("%+v", r)
+	}
+	if r := h.run("", nil, "ccam", "attach", "nope"); r.code == 0 || !strings.Contains(r.stderr, "no account has a background session") {
+		t.Fatalf("%+v", r)
+	}
+}
+
+// With usage_source = "claude", Claude Code looks the usage up itself.
+func TestUsageThroughClaudeCode(t *testing.T) {
+	h := newHarness(t)
+	h.addAccounts()
+	dir := filepath.Join(h.home, "usage")
+	os.MkdirAll(dir, 0o700)
+	os.WriteFile(filepath.Join(dir, "work.json"), []byte(`{"type":"control_response","response":{"subtype":"success","request_id":"ccam","response":{"rate_limits_available":true,`+
+		`"rate_limits":{"five_hour":{"utilization":37,"resets_at":"2099-01-01T00:00:00Z"},"seven_day":{"utilization":12,"resets_at":"2099-01-05T00:00:00Z"}}}}}`), 0o600)
+	env := []string{"FAKE_USAGE_DIR=" + dir}
+	r := h.run("", env, "ccam", "usage", "--source", "claude", "-v")
+	if r.code != 0 || !strings.Contains(r.stdout, "37%") || !strings.Contains(r.stdout, "from Claude Code") {
+		t.Fatalf("%+v", r)
+	}
+	// personal's login has no plan limits.
+	if !strings.Contains(r.stdout, "no plan limits") {
+		t.Fatalf("%+v", r)
+	}
+	if r := h.run("", nil, "ccam", "usage", "--source", "bogus"); r.code == 0 || !strings.Contains(r.stderr, "live, claude or cache") {
+		t.Fatalf("%+v", r)
+	}
+
+	// A dry run goes by the saved usage: Claude Code would write to the folder.
+	cfgFile := filepath.Join(h.home, "config", "config.toml")
+	cfg, _ := os.ReadFile(cfgFile)
+	os.WriteFile(cfgFile, append([]byte("usage_source = \"claude\"\n"), cfg...), 0o600)
+	os.RemoveAll(filepath.Join(h.home, "state", "usage"))
+	os.Remove(h.log)
+	r = h.run("", env, "ccam", "--dry-run", "usage", "-v")
+	if _, err := os.Stat(h.log); err == nil || strings.Contains(r.stdout, "37%") || !strings.Contains(r.stdout, "a dry run does not start Claude Code") {
+		t.Fatalf("Claude Code ran: %+v", r)
 	}
 }

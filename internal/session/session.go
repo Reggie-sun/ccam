@@ -34,12 +34,15 @@ func Register(dir string) error {
 
 // Active reports whether any session registered in dir is still running.
 // Markers of finished sessions are removed on the way.
-func Active(dir string) bool {
+func Active(dir string) bool { return Count(dir) > 0 }
+
+// Count is the number of sessions registered in dir that still run.
+func Count(dir string) int {
 	entries, err := os.ReadDir(dir)
 	if err != nil {
-		return false
+		return 0
 	}
-	active := false
+	n := 0
 	for _, e := range entries {
 		pid, err := strconv.Atoi(e.Name())
 		if err != nil {
@@ -48,12 +51,12 @@ func Active(dir string) bool {
 		path := filepath.Join(dir, e.Name())
 		want, _ := os.ReadFile(path)
 		if got, ok := startTime(pid); ok && got == string(want) {
-			active = true
+			n++
 			continue
 		}
 		os.Remove(path)
 	}
-	return active
+	return n
 }
 
 // Unregister removes the marker of the current process from dir, for a

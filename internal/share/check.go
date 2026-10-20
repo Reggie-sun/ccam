@@ -41,6 +41,14 @@ func (pr Problem) String() string {
 	}
 }
 
+// Waits reports whether pr is an account's own copy, or own link, of a
+// path added to an item in a later ccam (Entry.Late): it never stops a
+// launch, and doctor --fix moves it into the group.
+func (pr Problem) Waits(groupsRoot string) bool {
+	return pr.Entry.Late && (pr.Kind == NotLinked ||
+		pr.Kind == WrongTarget && !strings.HasPrefix(pr.Got, groupsRoot+string(filepath.Separator)))
+}
+
 // Check compares a profile folder with its share settings using only
 // lstat/readlink, so it is cheap enough for the launch path.
 func Check(dir string, s config.Share, groupsRoot string) []Problem {

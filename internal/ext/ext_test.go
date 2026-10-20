@@ -52,7 +52,7 @@ func TestScanAccount(t *testing.T) {
 	write(t, filepath.Join(group, "mcp.json"), `{"mcpServers":{"ctx":{"type":"http","url":"https://ctx"},"fs":{"command":"fs-server"}}}`)
 	write(t, filepath.Join(dir, ".claude.json"), `{"mcpServers":{"ctx":{"url":"https://ctx","type":"http"},"fs":{"command":"other-fs"},"own":{"command":"x"}}}`)
 
-	s := ScanAccount("work", dir, groups, config.Share{MCP: "default", Extensions: "default"})
+	s := ScanAccount("work", dir, groups, config.Share{MCP: "default", Extensions: "default"}, nil)
 	if got := names(s.Skills); !slices.Equal(got, []string{"empty@default", "review@default"}) {
 		t.Errorf("skills %v", got)
 	}
@@ -71,8 +71,12 @@ func TestScanAccount(t *testing.T) {
 	if len(s.Hooks) != 2 || s.Hooks[0].Event != "PreToolUse" || s.Hooks[0].Count != 2 || s.Hooks[1].Count != 1 {
 		t.Errorf("hooks %+v", s.Hooks)
 	}
+	// A problem of a group's skill is the group's, reported once for all.
+	if got := s.GroupProblems["default"]; len(got) != 1 || !strings.HasPrefix(got[0], "empty: no SKILL.md") {
+		t.Errorf("group problems %v", s.GroupProblems)
+	}
 	problems := strings.Join(s.Problems, "\n")
-	for _, want := range []string{"empty: no SKILL.md", "old: broken link to", "MCP server fs is defined differently in group default's mcp.json and .claude.json"} {
+	for _, want := range []string{"old: broken link to", "MCP server fs is defined differently in group default's mcp.json and .claude.json"} {
 		if !strings.Contains(problems, want) {
 			t.Errorf("missing problem %q in:\n%s", want, problems)
 		}
@@ -105,14 +109,14 @@ func TestBrokenFolderLink(t *testing.T) {
 	if err := os.Symlink(filepath.Join(dir, "gone"), filepath.Join(dir, "skills")); err != nil {
 		t.Skip(err)
 	}
-	s := ScanAccount("a", dir, t.TempDir(), config.Share{})
+	s := ScanAccount("a", dir, t.TempDir(), config.Share{}, nil)
 	if len(s.Problems) != 1 || !strings.Contains(s.Problems[0], "skills: broken link") {
 		t.Fatalf("%v", s.Problems)
 	}
 }
 
 func TestEmptyAccount(t *testing.T) {
-	s := ScanAccount("new", t.TempDir(), t.TempDir(), config.Share{})
+	s := ScanAccount("new", t.TempDir(), t.TempDir(), config.Share{}, nil)
 	if len(s.Skills)+len(s.Commands)+len(s.Agents)+len(s.Plugins)+len(s.MCP)+len(s.Hooks)+len(s.Problems) != 0 {
 		t.Fatalf("%+v", s)
 	}

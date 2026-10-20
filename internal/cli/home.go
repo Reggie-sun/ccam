@@ -2,14 +2,24 @@ package cli
 
 import (
 	"context"
+	"errors"
+	"fmt"
+	"io"
 	"os"
+	"path/filepath"
+	"slices"
+	"strings"
 	"time"
 
 	tea "charm.land/bubbletea/v2"
 
 	"github.com/jhyunwoo/ccam/internal/config"
+	"github.com/jhyunwoo/ccam/internal/doctor"
+	"github.com/jhyunwoo/ccam/internal/ext"
+	"github.com/jhyunwoo/ccam/internal/fsutil"
+	"github.com/jhyunwoo/ccam/internal/group"
 	"github.com/jhyunwoo/ccam/internal/launcher"
-	"github.com/jhyunwoo/ccam/internal/share"
+	"github.com/jhyunwoo/ccam/internal/session"
 	"github.com/jhyunwoo/ccam/internal/shim"
 	"github.com/jhyunwoo/ccam/internal/tui"
 	"github.com/jhyunwoo/ccam/internal/usage"
@@ -18,7 +28,9 @@ import (
 // interactive reports whether both ends are a terminal.
 func interactive(e *env) bool { return isTerminal(e.stdin) && isTerminal(e.stdout) }
 
-// runHome is bare `ccam`: the picker on a terminal, the list otherwise.
+// runHome is bare `ccam`: the dashboard on a terminal, the list otherwise.
+// Launching ends it; adding an account or logging in leaves the dashboard
+// for the terminal and comes back to it.
 func runHome(e *env) error {
 	if !interactive(e) {
 		return listProfiles(e, false)
@@ -28,76 +40,45 @@ func runHome(e *env) error {
 		if err != nil {
 			return err
 		}
-		res, err := pick(e, cfg)
+		cwd, _ := os.Getwd()
+		// Nothing may print over the dashboard: the backend's notes go nowhere.
+		quiet := *e
+		quiet.stdout, quiet.stderr = io.Discard, io.Discard
+		dash := tui.NewDashboard(backend{&quiet}, cfg, cwd, Version)
+		final, err := tea.NewProgram(dash, tea.WithInput(os.Stdin), tea.WithOutput(os.Stdout)).Run()
 		if err != nil {
 			return err
 		}
-		// The picker may have been open for a while; act on the current config.
+		res := final.(*tui.Dashboard).Result()
+		// The dashboard may have been open for a while; act on the current config.
 		if cfg, err = e.load(); err != nil {
 			return err
 		}
 		switch res.Action {
 		case tui.Launch:
-			return launcher.LaunchWith(e.paths, cfg, res.Profile, nil, e.dryRun, e.stdout)
+			return launcher.LaunchWith(e.paths, cfg, res.Profile, res.Args, e.dryRun || res.DryRun, e.stdout)
 		case tui.Add:
-			return addInteractive(e, cfg, "")
-		case tui.SetDefault:
-			prof, err := cfg.MustFind(res.Profile)
+			err := errDryRun
+			if !e.dryRun {
+				err = addFromAnswers(e, res.Add)
+			}
 			if err != nil {
-				return err
+				fmt.Fprintln(e.stderr, "ccam:", err)
 			}
-			cfg.Default = prof.Name
-			if err := e.save(cfg); err != nil {
-				return err
+		case tui.Login:
+			if e.dryRun {
+				fmt.Fprintln(e.stderr, "ccam:", errDryRun)
+			} else if p, err := loginProfile(e, res.Profile); err != nil {
+				fmt.Fprintln(e.stderr, "ccam:", err)
+			} else {
+				e.printf("✓ %s logged in: %s\n", p.Name, p.Email)
 			}
-		case tui.Share:
-			prof, err := cfg.MustFind(res.Profile)
-			if err != nil {
-				return err
-			}
-			if err := changeShare(e, prof, res.Share, share.Options{}, false, nil); err != nil {
-				return err
-			}
-			e.printf("Press Enter to return to the list.")
-			_, _ = e.in.ReadString('\n')
 		default:
 			return nil
 		}
+		e.printf("Press Enter to return to ccam.")
+		_, _ = e.in.ReadString('\n')
 	}
-}
-
-func pick(e *env, cfg *config.Config) (tui.Result, error) {
-	def, _ := cfg.DefaultProfile()
-	var here *config.Profile
-	if len(cfg.Folders) > 0 {
-		here, _ = launcher.HereProfile(cfg)
-	}
-	accts := map[string]usage.Account{}
-	for _, a := range usageAccounts(e, cfg) {
-		accts[a.Name] = a
-	}
-	rows := make([]tui.Row, 0, len(cfg.Profiles))
-	for i := range cfg.Profiles {
-		p := &cfg.Profiles[i]
-		last := "-"
-		if t := launcher.LastUsed(e.paths, p.Name); !t.IsZero() {
-			last = Ago(time.Since(t))
-		}
-		email := p.Email
-		if p.API != nil && email == "" {
-			email = p.API.Label()
-		}
-		rows = append(rows, tui.Row{Name: p.Name, Slot: p.Slot, Email: email, Share: p.Share, LastUsed: last, Default: def == p, Here: here == p})
-	}
-	f := e.fetcher()
-	fetch := func(ctx context.Context, name string, fresh bool) usage.Report {
-		return f.Fetch(ctx, accts[name], usage.Options{NoCache: fresh})
-	}
-	final, err := tea.NewProgram(tui.NewPicker(rows, fetch), tea.WithInput(os.Stdin), tea.WithOutput(os.Stdout)).Run()
-	if err != nil {
-		return tui.Result{}, err
-	}
-	return final.(tui.Model).Result(), nil
 }
 
 // addInteractive runs the wizard, then the same steps as `ccam add`.
@@ -107,6 +88,309 @@ func addInteractive(e *env, cfg *config.Config, name string) error {
 	if err != nil {
 		return err
 	}
-	e.printf("→ Log in in your browser. ccam continues when you are done.\n")
-	return addProfile(e, ans.Name, ans.Share, true, ans.Shortcut, nil)
+	return addFromAnswers(e, ans)
+}
+
+func addFromAnswers(e *env, a tui.AddAnswers) error {
+	if a.API != nil {
+		if _, err := ReadKeyForCheck(a.API); err != nil {
+			fmt.Fprintf(e.stderr, "Note: %v. Set it before starting the account.\n", err)
+		}
+	}
+	if a.Login {
+		e.printf("→ Log in in your browser. ccam continues when you are done.\n")
+	}
+	return addProfile(e, newAccount{name: a.Name, groups: a.Groups, items: a.Items, login: a.Login, shortcut: a.Shortcut, api: a.API})
+}
+
+// backend carries out what the dashboard asks for, with the same code as
+// the commands.
+type backend struct{ e *env }
+
+var errDryRun = errors.New("this is a dry run (ccam --dry-run): nothing was changed")
+
+func (b backend) changing() error {
+	if b.e.dryRun {
+		return errDryRun
+	}
+	return nil
+}
+
+func (b backend) Usage(ctx context.Context, name string, fresh bool) usage.Report {
+	cfg, err := b.e.load()
+	if err == nil {
+		for _, a := range usageAccounts(b.e, cfg) {
+			if a.Name == name {
+				return b.e.fetcher().Fetch(ctx, a, usage.Options{NoCache: fresh})
+			}
+		}
+		err = fmt.Errorf("no account %q", name)
+	}
+	return usage.Report{Name: name, Status: usage.StatusError, Err: err.Error()}
+}
+
+func (b backend) Running(name string) bool { return launcher.Running(b.e.paths, name) }
+func (b backend) Sessions(name string) int {
+	return session.Count(launcher.SessionDir(b.e.paths, name))
+}
+
+func (b backend) Takeover(from string) []string {
+	cfg, err := b.e.load()
+	if err != nil {
+		return nil
+	}
+	return takeover(b.e, cfg, from)
+}
+func (b backend) LastUsed(name string) time.Time { return launcher.LastUsed(b.e.paths, name) }
+
+func (b backend) SuggestShortcut(name string) string { return shim.Suggest(name) }
+
+func (b backend) CheckShortcut(name, shortcut string) error {
+	cfg, err := b.e.load()
+	if err != nil {
+		return err
+	}
+	return checkShortcut(b.e, cfg, name, shortcut)
+}
+
+func (b backend) update(change func(*config.Config) error) (*config.Config, error) {
+	if err := b.changing(); err != nil {
+		return nil, err
+	}
+	return b.e.update(change)
+}
+
+func (b backend) SetDefault(name string) (*config.Config, error) {
+	return b.update(func(c *config.Config) error {
+		p, err := c.MustFind(name)
+		if err == nil {
+			c.Default = p.Name
+		}
+		return err
+	})
+}
+
+func (b backend) SetFolder(dir, account string) (*config.Config, error) {
+	return b.update(func(c *config.Config) error {
+		p, err := c.MustFind(account)
+		if err != nil {
+			return err
+		}
+		abs, err := filepath.Abs(dir)
+		if err != nil {
+			return err
+		}
+		c.SetFolder(abs, p.Name)
+		return nil
+	})
+}
+
+func (b backend) UnsetFolder(dir string) (*config.Config, error) {
+	return b.update(func(c *config.Config) error {
+		if !c.UnsetFolder(dir) {
+			return fmt.Errorf("no rule for %s", dir)
+		}
+		return nil
+	})
+}
+
+func (b backend) Rename(oldName, newName string) (*config.Config, error) {
+	if err := b.changing(); err != nil {
+		return nil, err
+	}
+	if _, err := renameAccount(b.e, oldName, newName); err != nil {
+		return nil, err
+	}
+	return b.e.load()
+}
+
+func (b backend) SetShortcut(account, shortcut string) (*config.Config, error) {
+	if err := b.changing(); err != nil {
+		return nil, err
+	}
+	cfg, prof, err := b.e.loadProfile(account)
+	if err != nil {
+		return nil, err
+	}
+	if shortcut != "" {
+		if err := checkShortcut(b.e, cfg, prof.Name, shortcut); err != nil {
+			return nil, err
+		}
+	}
+	old := prof.Shortcut
+	prof.Shortcut = shortcut
+	if err := saveShortcut(b.e, cfg, old); err != nil {
+		return nil, err
+	}
+	return b.e.load()
+}
+
+func (b backend) Remove(name string) (*config.Config, string, error) {
+	if err := b.changing(); err != nil {
+		return nil, "", err
+	}
+	if err := refuseRunning(b.e, name); err != nil {
+		return nil, "", err
+	}
+	msg, err := removeAccount(b.e, name)
+	if err != nil {
+		return nil, "", err
+	}
+	cfg, err := b.e.load()
+	return cfg, msg, err
+}
+
+func (b backend) PlanGroups(edit func(*config.Config) error) (*group.Change, error) {
+	old, err := b.e.load()
+	if err != nil {
+		return nil, err
+	}
+	next := old.Clone()
+	if err := edit(next); err != nil {
+		return nil, err
+	}
+	ch, err := group.Build(b.e.paths, old, next, group.Options{})
+	if err != nil {
+		return nil, err
+	}
+	if b.e.dryRun {
+		return ch, nil
+	}
+	return ch, ch.Check(group.Running(b.e.paths))
+}
+
+func (b backend) ApplyGroups(edit func(*config.Config) error, ch *group.Change) (*config.Config, error) {
+	cfg, err := b.update(edit)
+	if err != nil {
+		return nil, err
+	}
+	if err := ch.Apply(); err != nil {
+		return cfg, fmt.Errorf("failed while applying: %w", err)
+	}
+	return cfg, nil
+}
+
+func (b backend) RemoveGroup(name string, ch *group.Change) (*config.Config, string, error) {
+	old, err := b.e.load()
+	if err != nil {
+		return nil, "", err
+	}
+	g, err := old.MustFindGroup(name)
+	if err != nil {
+		return nil, "", err
+	}
+	folder := g.Folder()
+	trash := len(old.FolderUsers(folder)) == 1 && fsutil.Exists(b.e.paths.GroupDir(folder))
+	cfg, err := b.ApplyGroups(func(c *config.Config) error { return c.RemoveGroup(name) }, ch)
+	if err != nil {
+		return cfg, "", err
+	}
+	if !trash {
+		return cfg, "group " + name + " removed", nil
+	}
+	dst := fsutil.UniqueDir(filepath.Join(b.e.paths.TrashDir(), "group-"+folder+"-"+fsutil.Stamp(time.Now())))
+	if err := fsutil.Move(b.e.paths.GroupDir(folder), dst); err != nil {
+		return cfg, "", fmt.Errorf("group %s is removed, but its folder could not go to the trash: %w", name, err)
+	}
+	return cfg, "group " + name + " removed; its folder is in " + dst, nil
+}
+
+func (b backend) Doctor(fix bool) ([]doctor.Finding, error) {
+	cfg, err := b.e.load()
+	if err != nil {
+		return nil, err
+	}
+	if fix {
+		if err := b.changing(); err != nil {
+			return nil, err
+		}
+	}
+	self, _ := ccamPath()
+	// No live usage check: the dashboard looks usage up itself.
+	return doctor.Run(b.e.paths, cfg, doctor.Options{Fix: fix, CcamPath: self}), nil
+}
+
+func (b backend) Extensions() (tui.ExtView, error) {
+	cfg, err := b.e.load()
+	if err != nil {
+		return tui.ExtView{}, err
+	}
+	profs := make([]*config.Profile, 0, len(cfg.Profiles))
+	for i := range cfg.Profiles {
+		profs = append(profs, &cfg.Profiles[i])
+	}
+	cwd, _ := os.Getwd()
+	return extView(scanExt(b.e, cfg, profs, cwd)), nil
+}
+
+// extView sorts a scan for the Extensions tab: each extension once, with
+// the groups it comes from and the accounts that have their own.
+func extView(rep extReport) tui.ExtView {
+	var v tui.ExtView
+	where := func(row *tui.ExtRow, account, source string) {
+		if source == ext.Account {
+			row.Own = append(row.Own, account)
+		} else if !slices.Contains(row.Groups, source) {
+			row.Groups = append(row.Groups, source)
+		}
+	}
+	kinds := []struct {
+		title string
+		pick  func(ext.Set) []ext.Item
+	}{
+		{"Skills", func(s ext.Set) []ext.Item { return s.Skills }},
+		{"Commands", func(s ext.Set) []ext.Item { return s.Commands }},
+		{"Agents", func(s ext.Set) []ext.Item { return s.Agents }},
+		{"Plugins", func(s ext.Set) []ext.Item { return s.Plugins }},
+		{"MCP servers", func(s ext.Set) []ext.Item { return s.MCP }},
+	}
+	for _, k := range kinds {
+		kind := tui.ExtKind{Title: k.title}
+		for _, n := range ext.Names(rep.Accounts, k.pick) {
+			row := tui.ExtRow{Name: n}
+			for _, s := range rep.Accounts {
+				for _, it := range k.pick(s) {
+					if it.Name == n {
+						row.Problem = row.Problem || it.Problem != ""
+						where(&row, s.Name, it.Source)
+					}
+				}
+			}
+			kind.Rows = append(kind.Rows, row)
+		}
+		v.Kinds = append(v.Kinds, kind)
+	}
+	hooks := tui.ExtKind{Title: "Hooks"}
+	for _, r := range hookTable(rep.Accounts) {
+		row := tui.ExtRow{Name: strings.TrimSpace(r[0])}
+		for _, s := range rep.Accounts {
+			for _, h := range s.Hooks {
+				if h.Event == row.Name {
+					where(&row, s.Name, h.Source)
+				}
+			}
+		}
+		hooks.Rows = append(hooks.Rows, row)
+	}
+	v.Kinds = append(v.Kinds, hooks)
+	p := rep.Project
+	for _, part := range []struct {
+		label string
+		items []ext.Item
+	}{{"skills", p.Skills}, {"commands", p.Commands}, {"agents", p.Agents}, {"MCP servers", p.MCP}} {
+		if len(part.items) > 0 {
+			v.Project = append(v.Project, part.label+": "+joinNames(part.items))
+		}
+	}
+	for _, h := range p.Hooks {
+		v.Project = append(v.Project, fmt.Sprintf("hook %s: %d", h.Event, h.Count))
+	}
+	for _, pr := range rep.Problems {
+		if pr.Group != "" {
+			v.Problems = append(v.Problems, "group "+pr.Group+": "+pr.Problem)
+		} else {
+			v.Problems = append(v.Problems, pr.Account+": "+pr.Problem)
+		}
+	}
+	return v
 }

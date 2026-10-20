@@ -83,3 +83,17 @@ func TestAPIKeyAccount(t *testing.T) {
 		t.Fatalf("--base-url without --api: %+v", r)
 	}
 }
+
+// A key or token in the shell would quietly replace a login account's own.
+func TestLaunchWarnsAboutAuthVariables(t *testing.T) {
+	h := newHarness(t)
+	h.addAccounts()
+	r := h.run("", []string{"ANTHROPIC_API_KEY=sk-x", "CLAUDE_CODE_OAUTH_TOKEN=", "ANTHROPIC_AUTH_TOKEN="}, "ccam", "work", "-p", "hi")
+	if r.code != 0 || !strings.Contains(r.stderr, "$ANTHROPIC_API_KEY is set") || !strings.Contains(r.stderr, "work's login") {
+		t.Fatalf("%+v", r)
+	}
+	r = h.run("", []string{"ANTHROPIC_API_KEY=", "CLAUDE_CODE_OAUTH_TOKEN=", "ANTHROPIC_AUTH_TOKEN="}, "ccam", "work", "-p", "hi")
+	if strings.Contains(r.stderr, "is set") {
+		t.Fatalf("no warning without a value: %+v", r)
+	}
+}

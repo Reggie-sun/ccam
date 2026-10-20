@@ -8,20 +8,30 @@ package share
 type Entry struct {
 	Name string
 	Dir  bool
+	// Late marks a path added to an item after accounts already shared it:
+	// such an account may still have its own copy, which a launch leaves
+	// alone and `ccam doctor --fix` (or the next group change) moves in.
+	Late bool
 }
 
 // Layout maps share items to the profile paths they cover.
 // The "mcp" item has no paths; it is handled by the mcp package.
 // See docs/claude-layout.md for where this comes from.
 var Layout = map[string][]Entry{
-	"settings": {{"settings.json", false}},
-	"memory":   {{"CLAUDE.md", false}},
+	"settings": {{Name: "settings.json"}, {Name: "keybindings.json", Late: true}},
+	"memory":   {{Name: "CLAUDE.md"}},
 	"extensions": {
-		{"agents", true}, {"commands", true}, {"skills", true},
-		{"plugins", true}, {"output-styles", true}, {"rules", true},
+		{Name: "agents", Dir: true}, {Name: "commands", Dir: true}, {Name: "skills", Dir: true},
+		{Name: "plugins", Dir: true}, {Name: "output-styles", Dir: true}, {Name: "rules", Dir: true},
 	},
-	"history": {{"projects", true}, {"history.jsonl", false}},
-	"mcp":     nil,
+	// file-history/ holds the backups /rewind restores code from, tasks/
+	// the task lists and paste-cache/ the large pastes history.jsonl points
+	// to: without them a conversation carried on elsewhere loses those.
+	"history": {
+		{Name: "projects", Dir: true}, {Name: "history.jsonl"},
+		{Name: "file-history", Dir: true, Late: true}, {Name: "tasks", Dir: true, Late: true}, {Name: "paste-cache", Dir: true, Late: true},
+	},
+	"mcp": nil,
 }
 
 // Never lists per-account files that must never be linked or moved.
@@ -44,6 +54,11 @@ var known = map[string]bool{
 	"agents": true, "commands": true, "CLAUDE.md": true, "todos": true, "statsig": true,
 	"ide": true, "plans": true, "file-history": true, "debug": true, "telemetry": true,
 	"settings.local.json": true,
+	// Claude Code 2.1.304: also per account, never shared.
+	"tasks": true, "paste-cache": true, "keybindings.json": true, "uploads": true, "image-cache": true,
+	"jobs": true, "daemon": true, "daemon.json": true, "daemon.lock": true, "daemon.log": true, "daemon.status.json": true,
+	"feedback": true, "policy-limits.json.signature.json": true, "remote-settings.json.signature.json": true,
+	".oauth_refresh.lock": true,
 }
 
 func Known(name string) bool { return known[name] }

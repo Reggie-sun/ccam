@@ -20,14 +20,14 @@ func testPaths(t *testing.T) paths.Paths {
 func TestAddCreatesPrivateDirAndSlots(t *testing.T) {
 	p := testPaths(t)
 	cfg := &config.Config{}
-	a, err := Add(p, cfg, "personal", config.DefaultShare())
+	a, err := Add(p, cfg, "personal")
 	if err != nil {
 		t.Fatal(err)
 	}
 	if a.Slot != 1 || cfg.Default != "personal" {
 		t.Fatalf("first profile: %+v default=%q", a, cfg.Default)
 	}
-	b, err := Add(p, cfg, "work", config.Share{})
+	b, err := Add(p, cfg, "work")
 	if err != nil || b.Slot != 2 {
 		t.Fatalf("second: %+v %v", b, err)
 	}
@@ -35,10 +35,10 @@ func TestAddCreatesPrivateDirAndSlots(t *testing.T) {
 	if err != nil || runtime.GOOS != "windows" && info.Mode().Perm() != 0o700 {
 		t.Fatalf("dir perm %v %v", info, err)
 	}
-	if _, err := Add(p, cfg, "work", config.Share{}); err == nil {
+	if _, err := Add(p, cfg, "work"); err == nil {
 		t.Fatal("duplicate accepted")
 	}
-	if _, err := Add(p, cfg, "run", config.Share{}); err == nil {
+	if _, err := Add(p, cfg, "run"); err == nil {
 		t.Fatal("reserved name accepted")
 	}
 }
@@ -46,7 +46,7 @@ func TestAddCreatesPrivateDirAndSlots(t *testing.T) {
 func TestTrashMovesManagedOnly(t *testing.T) {
 	p := testPaths(t)
 	cfg := &config.Config{}
-	prof, _ := Add(p, cfg, "work", config.Share{})
+	prof, _ := Add(p, cfg, "work")
 	os.WriteFile(filepath.Join(p.ProfileDir("work"), ".credentials.json"), []byte("{}"), 0o600)
 	dst, err := Trash(p, prof)
 	if err != nil || !strings.HasPrefix(dst, p.TrashDir()) {
@@ -69,12 +69,15 @@ func TestTrashMovesManagedOnly(t *testing.T) {
 func TestRename(t *testing.T) {
 	p := testPaths(t)
 	cfg := &config.Config{}
-	Add(p, cfg, "work", config.Share{})
+	Add(p, cfg, "work")
 	cfg.SetFolder(t.TempDir(), "work")
+	if err := cfg.AddGroup("default", config.DefaultItems, []string{"work"}); err != nil {
+		t.Fatal(err)
+	}
 	if err := Rename(p, cfg, "work", "job"); err != nil {
 		t.Fatal(err)
 	}
-	if _, ok := cfg.Find("job"); !ok || cfg.Default != "job" || cfg.Folders[0].Account != "job" {
+	if _, ok := cfg.Find("job"); !ok || cfg.Default != "job" || cfg.Folders[0].Account != "job" || cfg.Groups[0].Members[0] != "job" {
 		t.Fatal("config not renamed")
 	}
 	if _, err := os.Stat(p.ProfileDir("job")); err != nil {
@@ -100,7 +103,7 @@ func TestReadEmailStreams(t *testing.T) {
 func TestRenameRewritesPluginPaths(t *testing.T) {
 	p := testPaths(t)
 	cfg := &config.Config{}
-	Add(p, cfg, "work", config.Share{})
+	Add(p, cfg, "work")
 	old := p.ProfileDir("work")
 	os.MkdirAll(filepath.Join(old, "plugins"), 0o700)
 	install, _ := json.Marshal(filepath.Join(old, "plugins", "cache", "m", "x", "1"))
@@ -119,7 +122,7 @@ func TestRenameRewritesPluginPaths(t *testing.T) {
 func TestRenameRollsBackWhenPluginRewriteFails(t *testing.T) {
 	p := testPaths(t)
 	cfg := &config.Config{}
-	Add(p, cfg, "work", config.Share{})
+	Add(p, cfg, "work")
 	os.MkdirAll(filepath.Join(p.ProfileDir("work"), "plugins"), 0o700)
 	os.WriteFile(filepath.Join(p.ProfileDir("work"), "plugins", "installed_plugins.json"), []byte("{broken"), 0o600)
 	if err := Rename(p, cfg, "work", "job"); err == nil {
@@ -138,7 +141,7 @@ func TestTrashTwiceKeepsBothCopies(t *testing.T) {
 	var dsts []string
 	for _, body := range []string{"first", "second"} {
 		cfg := &config.Config{}
-		prof, _ := Add(p, cfg, "tt", config.Share{})
+		prof, _ := Add(p, cfg, "tt")
 		os.WriteFile(filepath.Join(p.ProfileDir("tt"), "note"), []byte(body), 0o600)
 		dst, err := Trash(p, prof)
 		if err != nil {
@@ -153,5 +156,23 @@ func TestTrashTwiceKeepsBothCopies(t *testing.T) {
 		if b, _ := os.ReadFile(filepath.Join(dsts[i], "note")); string(b) != want {
 			t.Fatalf("%s: %q", dsts[i], b)
 		}
+	}
+}
+
+// A group may still list a name from an account that is gone; renaming an
+// account to that name must not hand it that group.
+func TestRenameOverAStaleMember(t *testing.T) {
+	p := testPaths(t)
+	cfg := &config.Config{}
+	Add(p, cfg, "work")
+	cfg.Groups = []config.Group{{Name: "team", Items: []string{"history"}, Members: []string{"job"}}}
+	if err := Rename(p, cfg, "work", "job"); err != nil {
+		t.Fatal(err)
+	}
+	if err := cfg.Save(filepath.Join(t.TempDir(), "c.toml")); err != nil {
+		t.Fatal(err)
+	}
+	if len(cfg.Groups[0].Members) != 0 {
+		t.Fatalf("%v", cfg.Groups[0].Members)
 	}
 }

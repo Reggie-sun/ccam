@@ -67,7 +67,7 @@ func importCmd(e *env) *cobra.Command {
 			if _, err := installShims(e, cfg); err != nil {
 				fmt.Fprintln(e.stderr, "Could not create shortcuts:", err)
 			}
-			e.printf("Imported accounts start with nothing shared. To share: `ccam share <name> --settings on …`\n")
+			e.printf("Imported accounts start with nothing shared. To share: `ccam group join <group> <name>` (see `ccam group`)\n")
 			return nil
 		},
 	}

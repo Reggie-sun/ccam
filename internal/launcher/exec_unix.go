@@ -21,3 +21,6 @@ func (pl *Plan) Exec(p paths.Paths) error {
 	}
 	return syscall.Exec(pl.Bin, pl.Argv, pl.Env)
 }
+
+// execSelf replaces the current process with ccam run with args.
+func execSelf(self string, args []string) error { return syscall.Exec(self, args, os.Environ()) }

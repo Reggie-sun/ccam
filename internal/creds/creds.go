@@ -8,11 +8,13 @@ package creds
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"encoding/json"
 	"errors"
 	"io/fs"
 	"os"
 	"path/filepath"
 	"regexp"
+	"time"
 )
 
 // ErrNone means no login is stored.
@@ -25,6 +27,31 @@ const (
 	File     Source = "file"
 	Keychain Source = "keychain"
 )
+
+// Stale says why the login stored for dir no longer works: nothing is
+// stored, or its refresh token has expired. "" means it still works or
+// cannot be judged; an expired access token is renewed by Claude Code.
+func Stale(dir, home string, now time.Time) string {
+	data, _, err := Read(dir, home)
+	if errors.Is(err, ErrNone) {
+		return "not logged in"
+	}
+	if err != nil {
+		return ""
+	}
+	var c struct {
+		OAuth *struct {
+			RefreshTokenExpiresAt int64 `json:"refreshTokenExpiresAt"`
+		} `json:"claudeAiOauth"`
+	}
+	if json.Unmarshal(data, &c) != nil || c.OAuth == nil {
+		return ""
+	}
+	if t := c.OAuth.RefreshTokenExpiresAt; t > 0 && t < now.UnixMilli() {
+		return "login expired"
+	}
+	return ""
+}
 
 // FilePath is the plaintext credentials file of a config dir.
 func FilePath(dir string) string { return filepath.Join(dir, ".credentials.json") }

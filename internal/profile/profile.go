@@ -25,7 +25,7 @@ func Dir(p paths.Paths, prof *config.Profile) string {
 
 // Add registers a new profile in cfg and creates its folder (0700).
 // It does not save cfg.
-func Add(p paths.Paths, cfg *config.Config, name string, share config.Share) (*config.Profile, error) {
+func Add(p paths.Paths, cfg *config.Config, name string) (*config.Profile, error) {
 	if err := config.ValidateName(name); err != nil {
 		return nil, err
 	}
@@ -39,7 +39,8 @@ func Add(p paths.Paths, cfg *config.Config, name string, share config.Share) (*c
 	if err := os.MkdirAll(dir, 0o700); err != nil {
 		return nil, err
 	}
-	cfg.Profiles = append(cfg.Profiles, config.Profile{Name: name, Slot: cfg.NextSlot(), Share: share})
+	cfg.DropMember(name)
+	cfg.Profiles = append(cfg.Profiles, config.Profile{Name: name, Slot: cfg.NextSlot()})
 	if len(cfg.Profiles) == 1 {
 		cfg.Default = name
 	}
@@ -73,6 +74,7 @@ func Rename(p paths.Paths, cfg *config.Config, oldName, newName string) error {
 	if _, ok := cfg.Find(newName); ok {
 		return fmt.Errorf("an account named %q already exists", newName)
 	}
+	cfg.DropMember(newName)
 	if prof.Dir == "" {
 		oldDir, newDir := p.ProfileDir(oldName), p.ProfileDir(newName)
 		if err := os.Rename(oldDir, newDir); err != nil && !errors.Is(err, fs.ErrNotExist) {
@@ -97,6 +99,13 @@ func Rename(p paths.Paths, cfg *config.Config, oldName, newName string) error {
 			cfg.Folders[i].Account = newName
 		}
 	}
+	for i := range cfg.Groups {
+		for j, m := range cfg.Groups[i].Members {
+			if m == oldName {
+				cfg.Groups[i].Members[j] = newName
+			}
+		}
+	}
 	return nil
 }
 
@@ -110,6 +119,27 @@ func ReadEmail(dir string) (string, error) {
 		return "", err
 	}
 	return acct.EmailAddress, nil
+}
+
+// ReadIdentity reads who dir is logged in as from its .claude.json. A
+// folder without a login gives a nil identity and no error.
+func ReadIdentity(dir string) (*config.Identity, error) {
+	var acct struct {
+		AccountUUID      string `json:"accountUuid"`
+		EmailAddress     string `json:"emailAddress"`
+		OrganizationUUID string `json:"organizationUuid"`
+		OrganizationName string `json:"organizationName"`
+		OrganizationType string `json:"organizationType"`
+	}
+	ok, err := DecodeFileKey(filepath.Join(dir, ".claude.json"), "oauthAccount", &acct)
+	if errors.Is(err, fs.ErrNotExist) || err == nil && (!ok || acct.AccountUUID == "") {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	return &config.Identity{AccountUUID: acct.AccountUUID, Email: acct.EmailAddress, OrgUUID: acct.OrganizationUUID,
+		OrgName: acct.OrganizationName, OrgType: acct.OrganizationType}, nil
 }
 
 // DecodeFileKey decodes one top-level key of a JSON file into v.

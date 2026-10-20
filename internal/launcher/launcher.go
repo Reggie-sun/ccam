@@ -13,6 +13,7 @@ import (
 	"os/signal"
 	"path/filepath"
 	"runtime"
+	"slices"
 	"strconv"
 	"strings"
 	"syscall"
@@ -119,7 +120,7 @@ func buildEnv(environ []string, dir, name string, defaultStore bool) []string {
 	env := make([]string, 0, len(environ)+3)
 	for _, kv := range environ {
 		if strings.HasPrefix(kv, "CLAUDE_CONFIG_DIR=") || strings.HasPrefix(kv, "CCAM_PROFILE=") ||
-			strings.HasPrefix(kv, "CLAUDE_SECURESTORAGE_CONFIG_DIR=") {
+			strings.HasPrefix(kv, "CCAM_RELAY=") || strings.HasPrefix(kv, "CLAUDE_SECURESTORAGE_CONFIG_DIR=") {
 			continue
 		}
 		env = append(env, kv)
@@ -223,14 +224,15 @@ func lastUsedPath(p paths.Paths, name string) string {
 	return filepath.Join(p.State, "last-used", name)
 }
 
-func mcpStateDir(p paths.Paths, name string) string {
+// MCPStateDir keeps an account's MCP sync stamp and .claude.json backups.
+func MCPStateDir(p paths.Paths, name string) string {
 	return filepath.Join(p.State, "mcp", name)
 }
 
 // StatePaths lists what ccam keeps under an account's name in the state
 // folder, so rename can carry it along and remove can clear it.
 func StatePaths(p paths.Paths, name string) []string {
-	return []string{lastUsedPath(p, name), mcpStateDir(p, name), filepath.Join(p.State, "picks", name)}
+	return []string{lastUsedPath(p, name), MCPStateDir(p, name), filepath.Join(p.State, "picks", name)}
 }
 
 // MarkUsed records the launch time; losing it is harmless, so no fsync.
@@ -327,6 +329,9 @@ func checkLinks(p paths.Paths, pl *Plan) error {
 	if err != nil {
 		return err
 	}
+	// An account's own copy of a path added to an item later waits for
+	// doctor --fix; it never stops a launch.
+	rest = slices.DeleteFunc(rest, func(pr share.Problem) bool { return pr.Waits(p.GroupsRoot()) })
 	if len(rest) == 0 {
 		return nil
 	}

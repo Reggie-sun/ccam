@@ -311,3 +311,30 @@ func TestRefreshRefusedForImportedProfile(t *testing.T) {
 		t.Fatalf("%+v", r)
 	}
 }
+
+// usage_source in the config picks live or claude; "cache" there is not a
+// choice and asks the endpoint, as doctor says.
+func TestConfigSourceCacheIsLive(t *testing.T) {
+	e := newEnv(t)
+	e.f.Source = "cache"
+	r := e.f.Fetch(context.Background(), e.account("a", "ok-new-format.json", future), Options{NoCache: true})
+	if e.hits.Load() != 1 || r.Source != "live" {
+		t.Fatalf("%d hits: %+v", e.hits.Load(), r)
+	}
+}
+
+// Only an answer the parser does not know is a format change, not a probe
+// that failed for another reason.
+func TestProbeFailureIsNotAFormatChange(t *testing.T) {
+	e := newEnv(t)
+	e.f.Source = "claude"
+	answer := []byte(`{"type":"control_response","response":{"subtype":"error","request_id":"ccam","error":"Unknown subtype"}}`)
+	e.f.Probe = func(context.Context, Account) ([]byte, error) { return answer, nil }
+	if r := e.f.Fetch(context.Background(), e.account("a", "ok-new-format.json", future), Options{}); r.FormatChanged || r.Status != StatusError {
+		t.Fatalf("%+v", r)
+	}
+	answer = []byte("Error: something else\n")
+	if r := e.f.Fetch(context.Background(), e.account("b", "ok-new-format.json", future), Options{}); !r.FormatChanged {
+		t.Fatalf("no answer at all: %+v", r)
+	}
+}

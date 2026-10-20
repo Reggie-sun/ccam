@@ -31,11 +31,33 @@ type Config struct {
 	MCPStrategy string `toml:"mcp_strategy,omitempty"`
 	// AutoMaxUsage and AutoStrategy steer how next --auto, --fallback and
 	// pick choose an account (usage.Policy); 0 and "" are the defaults.
-	AutoMaxUsage float64   `toml:"auto_max_usage,omitempty"`
-	AutoStrategy string    `toml:"auto_strategy,omitempty"`
-	Profiles     []Profile `toml:"profile"`
-	Folders      []Folder  `toml:"folder,omitempty"`
+	AutoMaxUsage float64 `toml:"auto_max_usage,omitempty"`
+	AutoStrategy string  `toml:"auto_strategy,omitempty"`
+	// CrossOrg lets next --auto, --fallback and pick choose an account of
+	// another organization (or a personal plan for a team one).
+	CrossOrg bool `toml:"cross_org,omitempty"`
+	// UsageSource is where usage comes from: live (ccam asks the usage
+	// endpoint with the account's token, the default) or claude (Claude
+	// Code asks, and ccam never handles the token; slower).
+	UsageSource string `toml:"usage_source,omitempty"`
+	// Relay keeps ccam running beside an interactive Claude Code, so that
+	// /ccam:switch can carry the conversation on as another account.
+	Relay bool `toml:"relay,omitempty"`
+	// Theme picks the colors of ccam's screens: auto (from the terminal's
+	// background, the default), dark, light, dark-daltonized,
+	// light-daltonized, dark-ansi or light-ansi.
+	Theme    string    `toml:"theme,omitempty"`
+	Groups   []Group   `toml:"group,omitempty"`
+	Profiles []Profile `toml:"profile"`
+	Folders  []Folder  `toml:"folder,omitempty"`
+
+	// legacy is set when Load converted the old per-account format; the
+	// first Save keeps the old file as config.toml.bak.
+	legacy bool
 }
+
+// Themes lists the values of the theme setting besides "auto".
+var Themes = []string{"dark", "light", "dark-daltonized", "light-daltonized", "dark-ansi", "light-ansi"}
 
 // Folder makes Account the one a launch without a name uses inside Path
 // and every folder below it.
@@ -52,10 +74,17 @@ type Profile struct {
 	// Shortcut is the command in the bin folder that runs this account
 	// ("" = none). It links to the ccam binary, which looks argv[0] up here.
 	Shortcut string `toml:"shortcut,omitempty"`
-	Share    Share  `toml:"share"`
+	// Share is what the account's groups share, set by Load and Resolve.
+	// Change the groups, never this.
+	Share Share `toml:"-"`
+	// OldShare is the per-account format before groups ([profile.share]);
+	// Load converts it into groups.
+	OldShare *Share `toml:"share,omitempty"`
 	// API makes the account use an API endpoint and key instead of a Claude
 	// subscription login (ccam add --api).
 	API *API `toml:"api,omitempty"`
+	// Login is who the account logged in as, recorded by ccam login.
+	Login *Identity `toml:"login,omitempty"`
 }
 
 // API is an account that reaches an Anthropic-compatible endpoint with a key.
@@ -76,7 +105,7 @@ const (
 
 // Check reports an API setting that cannot work.
 func (a *API) Check() error {
-	if !strings.HasPrefix(a.KeyFrom, "env:") && !strings.HasPrefix(a.KeyFrom, "command:") || len(a.KeyFrom) <= len("env:") {
+	if kind, value, _ := strings.Cut(a.KeyFrom, ":"); kind != "env" && kind != "command" || strings.TrimSpace(value) == "" {
 		return fmt.Errorf("the key source is env:NAME or command:COMMAND, not %q", a.KeyFrom)
 	}
 	if a.Auth != "" && a.Auth != APIKey && a.Auth != Bearer {
@@ -196,7 +225,7 @@ var Reserved = map[string]bool{
 	"usage": true, "u": true, "share": true, "mcp": true, "login": true, "logout": true,
 	"rename": true, "remove": true, "rm": true, "import": true, "migrate": true, "doctor": true,
 	"shims": true, "shortcut": true, "completion": true, "help": true, "version": true, "statusline": true,
-	"update": true, "folder": true, "pick": true, "ext": true,
+	"update": true, "folder": true, "pick": true, "ext": true, "group": true, "groups": true, "hook": true, "agents": true, "attach": true,
 }
 
 // isName reports whether s matches ^[a-z0-9][a-z0-9_-]{0,31}$, the rule for
@@ -266,21 +295,56 @@ func Load(path string) (*Config, error) {
 				return nil, fmt.Errorf("%s: account %s: %w", path, p.Name, err)
 			}
 		}
+		if p.OldShare == nil {
+			continue
+		}
+		if len(c.Groups) > 0 {
+			return nil, fmt.Errorf("%s: account %s has a [profile.share] table, but sharing is set by [[group]] entries now; move it into a group and delete the table", path, p.Name)
+		}
 		for _, item := range Items {
-			if g := p.Share.Get(item); g != Local && !isName(g) {
+			if g := p.OldShare.Get(item); g != Local && !isName(g) {
 				return nil, fmt.Errorf("%s: account %s has an invalid %s group %q", path, p.Name, item, g)
 			}
 		}
+		p.Share, p.OldShare = *p.OldShare, nil
+		c.legacy = true
+	}
+	if c.legacy {
+		c.ConvertShares()
+	}
+	if err := c.Resolve(); err != nil {
+		return nil, fmt.Errorf("%s: %w", path, err)
 	}
 	return &c, nil
 }
 
 func (c *Config) Save(path string) error {
+	want, err := c.resolved()
+	if err != nil {
+		return err
+	}
+	for _, p := range c.Profiles {
+		if !want[p.Name].Equal(p.Share) {
+			return fmt.Errorf("internal error: the sharing of account %s does not match its groups", p.Name)
+		}
+	}
 	data, err := toml.Marshal(c)
 	if err != nil {
 		return err
 	}
-	return fsutil.AtomicWrite(path, data, 0o600)
+	if c.legacy {
+		// The first save in the group format keeps the old file.
+		if old, err := os.ReadFile(path); err == nil && !fsutil.Exists(path+".bak") {
+			if err := fsutil.AtomicWrite(path+".bak", old, 0o600); err != nil {
+				return err
+			}
+		}
+	}
+	if err := fsutil.AtomicWrite(path, data, 0o600); err != nil {
+		return err
+	}
+	c.legacy = false
+	return nil
 }
 
 // Find resolves a profile by name or slot number.
@@ -355,10 +419,14 @@ func (c *Config) NextSlot() int {
 	return n
 }
 
-// Remove drops a profile, its folders, and the default if it pointed at it.
+// Remove drops a profile, its folders, its group memberships, and the
+// default if it pointed at it.
 func (c *Config) Remove(name string) {
 	c.Profiles = slices.DeleteFunc(c.Profiles, func(p Profile) bool { return p.Name == name })
 	c.Folders = slices.DeleteFunc(c.Folders, func(f Folder) bool { return f.Account == name })
+	for i := range c.Groups {
+		c.Groups[i].Members = slices.DeleteFunc(c.Groups[i].Members, func(m string) bool { return m == name })
+	}
 	if c.Default == name {
 		c.Default = ""
 	}

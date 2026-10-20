@@ -24,34 +24,48 @@ func mcpCmd(e *env) *cobra.Command {
 		Short: "Manage shared MCP servers (the group's mcp.json)",
 	}
 	var group string
-	cmd.PersistentFlags().StringVarP(&group, "group", "g", "", "target group (default: the only group sharing MCP, otherwise default)")
+	cmd.PersistentFlags().StringVarP(&group, "group", "g", "", "target group (default: the only group that shares MCP, otherwise default)")
 	cmd.AddCommand(mcpListCmd(e), mcpAddCmd(e, &group), mcpAddJSONCmd(e, &group), mcpRemoveCmd(e, &group), mcpImportCmd(e))
 	return cmd
 }
 
-// mcpGroups lists groups that some profile shares MCP through.
-func mcpGroups(cfg *config.Config) []string {
-	seen := map[string]bool{}
-	var out []string
-	for _, p := range cfg.Profiles {
-		if g := p.Share.Get("mcp"); g != config.Local && !seen[g] {
-			seen[g] = true
-			out = append(out, g)
+// mcpGroups lists the groups that share MCP.
+func mcpGroups(cfg *config.Config) []*config.Group {
+	var out []*config.Group
+	for i := range cfg.Groups {
+		if cfg.Groups[i].Has("mcp") {
+			out = append(out, &cfg.Groups[i])
 		}
 	}
-	sort.Strings(out)
 	return out
 }
 
-func pickGroup(cfg *config.Config, flag string) (string, error) {
-	if flag != "" {
-		// The name becomes a folder under groups/; keep it there.
-		return flag, config.ValidateGroup(flag)
+// pickGroup returns the name and folder of the group whose mcp.json a
+// command changes. A name that is no group yet is a folder that a group
+// created later with that name starts from.
+func pickGroup(cfg *config.Config, flag string) (name, folder string, err error) {
+	if flag == "" {
+		if gs := mcpGroups(cfg); len(gs) == 1 {
+			return gs[0].Name, gs[0].Folder(), nil
+		}
+		flag = "default"
 	}
-	if gs := mcpGroups(cfg); len(gs) == 1 {
-		return gs[0], nil
+	if g, ok := cfg.FindGroup(flag); ok {
+		return g.Name, g.Folder(), nil
 	}
-	return "default", nil
+	if err := folderInUse(cfg, flag); err != nil {
+		return "", "", err
+	}
+	return flag, flag, config.ValidateGroupName(flag)
+}
+
+// folderInUse refuses a name that is no group but the folder of one (a
+// group renamed since): writing there would change that group.
+func folderInUse(cfg *config.Config, name string) error {
+	if users := cfg.FolderUsers(name); len(users) > 0 {
+		return fmt.Errorf("there is no group %s; group %s uses the folder groups/%s (use --group %s)", name, users[0].Name, name, users[0].Name)
+	}
+	return nil
 }
 
 func mcpListCmd(e *env) *cobra.Command {
@@ -66,22 +80,16 @@ func mcpListCmd(e *env) *cobra.Command {
 			}
 			groups := mcpGroups(cfg)
 			if len(groups) == 0 {
-				e.printf("No account shares MCP. Turn it on with `ccam share <name> --mcp on`.\n")
+				e.printf("No group shares MCP. Turn it on with `ccam group set <group> --add mcp`.\n")
 			}
-			shared := map[string]map[string]json.RawMessage{}
+			shared := map[string]map[string]json.RawMessage{} // folder → servers
 			for _, g := range groups {
-				store, err := mcp.Load(mcp.Path(e.paths.GroupDir(g)))
+				store, err := mcp.Load(mcp.Path(e.paths.GroupDir(g.Folder())))
 				if err != nil {
 					return err
 				}
-				shared[g] = store.Servers
-				var members []string
-				for _, p := range cfg.Profiles {
-					if p.Share.Get("mcp") == g {
-						members = append(members, p.Name)
-					}
-				}
-				e.printf("group %s (%s)\n", g, strings.Join(members, ", "))
+				shared[g.Folder()] = store.Servers
+				e.printf("group %s (%s)\n", g.Name, strings.Join(accounts(cfg, g), ", "))
 				if len(store.Servers) == 0 {
 					e.printf("  (none) add one with `ccam mcp add`\n")
 				}
@@ -203,11 +211,11 @@ func addServer(e *env, groupFlag, name string, def json.RawMessage) error {
 	if err != nil {
 		return err
 	}
-	g, err := pickGroup(cfg, groupFlag)
+	g, folder, err := pickGroup(cfg, groupFlag)
 	if err != nil {
 		return err
 	}
-	path := mcp.Path(e.paths.GroupDir(g))
+	path := mcp.Path(e.paths.GroupDir(folder))
 	store, err := mcp.Load(path)
 	if err != nil {
 		return err
@@ -222,17 +230,19 @@ func addServer(e *env, groupFlag, name string, def json.RawMessage) error {
 		verb = "updated"
 	}
 	e.printf("✓ %s %s in group %s — applies from the next launch\n", name, verb, g)
-	refreshCopies(e, cfg, g, "")
-	if len(mcpGroups(cfg)) == 0 {
-		e.printf("Note: no account shares MCP yet. `ccam share <name> --mcp %s`\n", g)
+	refreshCopies(e, cfg, folder, "")
+	if gr, ok := cfg.FindGroup(g); !ok {
+		e.printf("Note: there is no group %s yet. `ccam group add %s --items mcp --members <account,…>` shares it.\n", g, g)
+	} else if !gr.Has("mcp") {
+		e.printf("Note: group %s does not share MCP yet. `ccam group set %s --add mcp`\n", g, g)
 	}
 	return nil
 }
 
 // refreshCopies updates the accounts whose .claude.json holds a copy of the
-// group's servers, made when they started Remote Control. Under the flag
-// strategy an entry in .claude.json wins over --mcp-config, so a stale copy
-// would hide the change.
+// servers of the group in folder g, made when they started Remote Control.
+// Under the flag strategy an entry in .claude.json wins over --mcp-config,
+// so a stale copy would hide the change.
 func refreshCopies(e *env, cfg *config.Config, g, except string) {
 	if cfg.Strategy() == config.MCPSync {
 		return // every launch syncs
@@ -265,11 +275,11 @@ func mcpRemoveCmd(e *env, group *string) *cobra.Command {
 			if err != nil {
 				return err
 			}
-			g, err := pickGroup(cfg, *group)
+			g, folder, err := pickGroup(cfg, *group)
 			if err != nil {
 				return err
 			}
-			path := mcp.Path(e.paths.GroupDir(g))
+			path := mcp.Path(e.paths.GroupDir(folder))
 			store, err := mcp.Load(path)
 			if err != nil {
 				return err
@@ -282,7 +292,7 @@ func mcpRemoveCmd(e *env, group *string) *cobra.Command {
 				return err
 			}
 			e.printf("✓ %s removed from group %s\n", args[0], g)
-			refreshCopies(e, cfg, g, "")
+			refreshCopies(e, cfg, folder, "")
 			return nil
 		},
 	}
@@ -303,10 +313,11 @@ func mcpImportCmd(e *env) *cobra.Command {
 			if err != nil {
 				return err
 			}
-			g := prof.Share.Get("mcp")
-			if g == config.Local {
-				return fmt.Errorf("account %s does not share MCP. Run `ccam share %s --mcp on` first", prof.Name, prof.Name)
+			gr := cfg.GroupFor(prof.Name, "mcp")
+			if gr == nil {
+				return fmt.Errorf("account %s does not share MCP. Put it in a group that does first: `ccam group join <group> %s`", prof.Name, prof.Name)
 			}
+			g, folder := gr.Name, gr.Folder()
 			dir := profile.Dir(e.paths, prof)
 			local, err := mcp.LocalServers(dir)
 			if err != nil {
@@ -323,7 +334,7 @@ func mcpImportCmd(e *env) *cobra.Command {
 				e.printf("Account %s has no MCP servers of its own.\n", prof.Name)
 				return nil
 			}
-			path := mcp.Path(e.paths.GroupDir(g))
+			path := mcp.Path(e.paths.GroupDir(folder))
 			store, err := mcp.Load(path)
 			if err != nil {
 				return err
@@ -353,7 +364,7 @@ func mcpImportCmd(e *env) *cobra.Command {
 				return nil
 			}
 			if replaced {
-				save := filepath.Join(fsutil.UniqueDir(filepath.Join(e.paths.GroupDir(g), share.BackupDir, fsutil.Stamp(time.Now()))), "mcp.json")
+				save := filepath.Join(fsutil.UniqueDir(filepath.Join(e.paths.GroupDir(folder), share.BackupDir, fsutil.Stamp(time.Now()))), "mcp.json")
 				if err := fsutil.CopyFile(path, save); err != nil {
 					return err
 				}
@@ -365,7 +376,7 @@ func mcpImportCmd(e *env) *cobra.Command {
 			names = copied
 			e.printf("✓ Copied to group %s: %s\n", g, strings.Join(names, ", "))
 			// The account's own entries are dealt with below.
-			refreshCopies(e, cfg, g, prof.Name)
+			refreshCopies(e, cfg, folder, prof.Name)
 			if keepLocal {
 				return nil
 			}

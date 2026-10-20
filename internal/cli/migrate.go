@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"cmp"
 	"fmt"
 	"path/filepath"
 	"strings"
@@ -53,15 +54,15 @@ func migrateCmd(e *env) *cobra.Command {
 			if len(args) == 1 {
 				src = args[0]
 			}
-			g := "default"
-			if cmd.Flags().Changed("group") {
-				var s config.Share
-				if err := s.Set("settings", group); err != nil {
-					return err
-				}
-				if g = s.Get("settings"); g == config.Local {
-					return fmt.Errorf("--group takes a group name, not %q", group)
-				}
+			// A group that does not exist yet is a folder that one created
+			// later with that name starts from.
+			g, folder := group, group
+			if gr, ok := cfg.FindGroup(g); ok {
+				folder = gr.Folder()
+			} else if err := folderInUse(cfg, g); err != nil {
+				return err
+			} else if err := config.ValidateGroupName(g); err != nil {
+				return err
 			}
 			var items []string
 			for _, item := range config.Items {
@@ -88,7 +89,7 @@ func migrateCmd(e *env) *cobra.Command {
 			if defaulted {
 				items = migrate.DefaultItems
 			}
-			pl, err := migrate.Build(migrate.Options{Source: src, Home: e.paths.Home, GroupsRoot: e.paths.GroupsRoot(), Group: g, Items: items, Accounts: migrateAccounts(e, cfg)})
+			pl, err := migrate.Build(migrate.Options{Source: src, Home: e.paths.Home, GroupsRoot: e.paths.GroupsRoot(), Group: folder, Name: g, Items: items, Accounts: migrateAccounts(e, cfg)})
 			if err != nil {
 				return err
 			}
@@ -110,7 +111,7 @@ func migrateCmd(e *env) *cobra.Command {
 			}
 			if !yes {
 				for _, c := range pl.Conflicts {
-					c.Choice = askConflict(e, c)
+					c.Choice = askConflict(e, c, "")
 				}
 				if !pl.Changes() {
 					e.printf("Nothing to copy: the group keeps its own copies.\n")
@@ -184,7 +185,7 @@ func rerunArgs(args []string, groupSet bool, g string) string {
 // group only reaches accounts that share each item through it.
 func migrateSummary(e *env, cfg *config.Config, pl *migrate.Plan, yes bool, rerun string) {
 	if copied := pl.Copied(); len(copied) > 0 {
-		e.printf("✓ Copied into group %s: %s\n", pl.Group, strings.Join(copied, ", "))
+		e.printf("✓ Copied into group %s: %s\n", pl.Name, strings.Join(copied, ", "))
 	}
 	if kept := pl.Kept(); len(kept) > 0 {
 		e.printf("Kept the group's copy of: %s\n", strings.Join(kept, ", "))
@@ -202,43 +203,38 @@ func migrateSummary(e *env, cfg *config.Config, pl *migrate.Plan, yes bool, reru
 	if len(items) == 0 {
 		return
 	}
-	if len(cfg.Profiles) == 0 {
-		if pl.Group == "default" {
-			e.printf("No accounts yet. `ccam add <name>` shares settings, CLAUDE.md, extensions and MCP through group default.\n")
-		} else {
-			e.printf("No accounts yet. Add one with `ccam add <name> --share settings=%s` (one --share per item).\n", pl.Group)
+	g, ok := cfg.FindGroup(pl.Name)
+	if !ok {
+		if len(cfg.Profiles) == 0 && pl.Name == "default" {
+			e.printf("No accounts yet. `ccam add <name>` creates group default, which shares settings, CLAUDE.md, extensions and MCP.\n")
+			return
 		}
+		e.printf("There is no group %s yet. Create it to share these: `ccam group add %s --items %s --members <account,…>`\n", pl.Name, pl.Name, strings.Join(items, ","))
 		return
 	}
-	value := pl.Group
-	if value == "default" {
-		value = "on"
-	}
-	e.printf("Accounts that share these through group %s:\n", pl.Group)
-	missing := map[string][]string{} // profile → item flags to turn on
+	var missing []string
 	for _, item := range items {
-		var names []string
-		for _, p := range cfg.Profiles {
-			if p.Share.Get(item) == pl.Group {
-				names = append(names, p.Name)
-			} else {
-				missing[p.Name] = append(missing[p.Name], "--"+item+" "+value)
-			}
+		if !g.Has(item) {
+			missing = append(missing, item)
 		}
-		who := strings.Join(names, ", ")
-		if who == "" {
-			who = "none yet"
-		}
-		e.printf("  %-11s %s\n", item, who)
 	}
-	if len(missing) == 0 {
+	members := accounts(cfg, g)
+	e.printf("Group %s: %s\n", g.Name, cmp.Or(strings.Join(members, ", "), "no accounts yet"))
+	var others []string
+	for _, p := range cfg.Profiles {
+		if !g.HasMember(p.Name) {
+			others = append(others, p.Name)
+		}
+	}
+	if len(missing) == 0 && len(others) == 0 {
 		return
 	}
-	e.printf("To share them with the other accounts:\n")
-	for _, p := range cfg.Profiles {
-		if flags := missing[p.Name]; len(flags) > 0 {
-			e.printf("  ccam share %s %s\n", p.Name, strings.Join(flags, " "))
-		}
+	e.printf("To share them:\n")
+	if len(missing) > 0 {
+		e.printf("  ccam group set %s --add %s   # the group does not share these yet\n", g.Name, strings.Join(missing, ","))
+	}
+	if len(others) > 0 {
+		e.printf("  ccam group join %s %s\n", g.Name, strings.Join(others, " "))
 	}
 	if pl.Logins != nil {
 		e.printf("Then run `%s` again to give them the MCP sign-ins too.\n", rerun)

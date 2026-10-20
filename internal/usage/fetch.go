@@ -62,12 +62,18 @@ type Report struct {
 	// FormatChanged means the endpoint answered but the parser did not
 	// understand it; doctor reports this.
 	FormatChanged bool `json:"format_changed,omitempty"`
+	// Sessions is how many ccam sessions of the account run now; the
+	// caller fills it in for the balance strategy.
+	Sessions int `json:"sessions,omitempty"`
 }
 
 type Options struct {
 	NoCache bool
-	Source  string // "" or "live": live first; "cache": cached values only
-	Refresh bool   // refresh expired tokens (only when the profile is not running)
+	// Source is "live" (ccam asks the usage endpoint), "claude" (Claude Code
+	// does, see ProbeRequest), "cache" (saved values only), or "" for the
+	// Fetcher's Source.
+	Source  string
+	Refresh bool // refresh expired tokens (only when the profile is not running)
 }
 
 // Fetcher queries accounts in parallel over one shared HTTP client.
@@ -78,6 +84,11 @@ type Fetcher struct {
 	StateDir string // ~/.local/state/ccam/usage
 	Home     string // names the macOS Keychain item of an imported ~/.claude
 	Now      func() time.Time
+	// Source is what Options.Source "" means (config usage_source).
+	Source string
+	// Probe runs Claude Code in the account's folder with ProbeRequest on
+	// its standard input and returns its output.
+	Probe func(ctx context.Context, a Account) ([]byte, error)
 }
 
 func NewFetcher(stateDir string) *Fetcher {
@@ -132,8 +143,25 @@ func (f *Fetcher) Fetch(ctx context.Context, a Account, opt Options) Report {
 		r.Status = StatusAPI
 		return r
 	}
+	if opt.Source == "" && f.Source == "claude" {
+		opt.Source = f.Source // the config picks live or claude; cache is asked for per call
+	}
+	if opt.Source == "claude" {
+		return f.fetchClaude(ctx, a, opt)
+	}
 	if opt.Source == "cache" {
-		return f.fallback(a, r, StatusOK, "")
+		r = f.fallback(a, r, StatusOK, "")
+		if r.Limits == nil {
+			// Nothing saved: say why when the account has no login at all.
+			if _, _, err := readCredentials(a.Dir, f.Home); errors.Is(err, errNoOAuth) {
+				r.Err = ""
+				r.Status = StatusLoggedOut
+				if hasAPIKey(a.Dir) {
+					r.Status = StatusAPI
+				}
+			}
+		}
+		return r
 	}
 	if !opt.NoCache {
 		if c, ok := f.readCache(a.Name, "live"); ok && f.Now().Sub(c.At) < CacheTTL {
@@ -228,7 +256,7 @@ func (f *Fetcher) fallback(a Account, r Report, status Status, errMsg string) Re
 	r.Status, r.Err = status, errMsg
 	var best cached
 	found := false
-	for _, src := range []string{"live", "statusline"} {
+	for _, src := range []string{"live", "claude", "statusline"} {
 		if c, ok := f.readCache(a.Name, src); ok && (!found || c.At.After(best.At)) {
 			best, found = c, true
 			best.source = src
@@ -264,7 +292,7 @@ func (f *Fetcher) cachePath(name, src string) string {
 // CachePaths lists the cache files of account name in stateDir.
 func CachePaths(stateDir, name string) []string {
 	f := Fetcher{StateDir: stateDir}
-	return []string{f.cachePath(name, "live"), f.cachePath(name, "statusline"), f.pausePath(name)}
+	return []string{f.cachePath(name, "live"), f.cachePath(name, "claude"), f.cachePath(name, "statusline"), f.pausePath(name)}
 }
 
 // The endpoint answers HTTP 429 when asked too often. ccam then leaves the

@@ -73,7 +73,7 @@ func TestMCPFlagStrategy(t *testing.T) {
 	}
 
 	// Local MCP off: no flag even though the group has servers.
-	h.ok("ccam", "share", "work", "--mcp", "off", "--yes")
+	h.ok("ccam", "group", "leave", "default", "work", "--yes")
 	h.ok("ccam", "work")
 	if _, args := h.called(); len(args) != 0 {
 		t.Fatalf("mcp off still passes %q", args)

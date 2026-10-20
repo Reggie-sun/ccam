@@ -118,8 +118,9 @@ func TestOutputHasNoHangul(t *testing.T) {
 	run("", "ccam", "work")
 	r := h.run("", []string{"FAKE_EMAIL=me@example.com"}, "ccam", "add", "personal")
 	outputs = append(outputs, r.stdout+r.stderr)
-	r = h.run("", []string{"FAKE_EMAIL=dev@company.com"}, "ccam", "add", "work", "--share", "history=team")
+	r = h.run("", []string{"FAKE_EMAIL=dev@company.com"}, "ccam", "add", "work")
 	outputs = append(outputs, r.stdout+r.stderr)
+	run("", "ccam", "group", "add", "team", "--items", "history", "--members", "work", "--yes")
 	run("", "ccam", "add", "later", "--no-login")
 
 	// Help for every command, found by walking "Available Commands".
@@ -159,8 +160,11 @@ func TestOutputHasNoHangul(t *testing.T) {
 		{"ccam", "--dry-run", "next"},
 		{"ccam", "--dry-run", "next", "--continue"},
 		{"ccam", "--dry-run", "next", "--auto"},
-		{"ccam", "--dry-run", "share", "work", "--history", "off", "--yes"},
-		{"ccam", "--dry-run", "share", "personal", "--history", "team", "--prefer", "merge"},
+		{"ccam", "--dry-run", "group", "leave", "team", "work", "--yes"},
+		{"ccam", "--dry-run", "group", "join", "team", "personal", "--prefer", "merge"},
+		{"ccam", "--dry-run", "group", "set", "default", "--remove", "memory"},
+		{"ccam", "group"},
+		{"ccam", "group", "show", "default"},
 		{"ccam", "share", "work"},
 		{"ccam", "use", "work"},
 		{"ccam", "mcp", "list"},
@@ -193,8 +197,14 @@ func TestOutputHasNoHangul(t *testing.T) {
 		{"ccam", "add", "Bad"},
 		{"ccam", "add", "work"},
 		{"ccam", "add", "x", "--share", "history"},
+		{"ccam", "add", "x", "--group", "nope"},
 		{"ccam", "share", "work", "--mcp", "bad/group"},
-		{"ccam", "share", "work", "--history", "off", "--prefer", "nope"},
+		{"ccam", "group", "join", "team", "personal", "--prefer", "nope"},
+		{"ccam", "group", "add", "local", "--items", "mcp"},
+		{"ccam", "group", "add", "x", "--items", "tokens"},
+		{"ccam", "group", "set", "default", "--add", "history"},
+		{"ccam", "group", "remove", "default"},
+		{"ccam", "group", "show", "nope"},
 		{"ccam", "mcp", "add", "nothing"},
 		{"ccam", "mcp", "add", "h", "--url", "https://x", "--header", "nocolon"},
 		{"ccam", "mcp", "add-json", "bad", "[]"},

@@ -9,6 +9,9 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/jhyunwoo/ccam/internal/config"
+	"github.com/jhyunwoo/ccam/internal/launcher"
+	"github.com/jhyunwoo/ccam/internal/profile"
+	"github.com/jhyunwoo/ccam/internal/session"
 	"github.com/jhyunwoo/ccam/internal/usage"
 )
 
@@ -31,6 +34,7 @@ type choiceFlags struct {
 	maxUsage float64
 	strategy string
 	wait     string
+	crossOrg bool
 }
 
 // DefaultWait is how long a bare --wait waits at most: one 5-hour window.
@@ -38,9 +42,81 @@ const DefaultWait = "5h"
 
 func (c *choiceFlags) add(cmd *cobra.Command) {
 	cmd.Flags().Float64Var(&c.maxUsage, "max-usage", 0, "prefer accounts below this usage, 1-100 (config: auto_max_usage)")
-	cmd.Flags().StringVar(&c.strategy, "strategy", "", "headroom (lowest 5-hour usage) or expiring (soonest reset) (config: auto_strategy)")
+	cmd.Flags().StringVar(&c.strategy, "strategy", "", "headroom (lowest 5-hour usage), expiring (soonest reset) or balance (weekly quota that would go unused first) (config: auto_strategy)")
 	cmd.Flags().StringVar(&c.wait, "wait", "", "when no account has room, wait for one, at most this long (default "+DefaultWait+")")
 	cmd.Flags().Lookup("wait").NoOptDefVal = DefaultWait
+	cmd.Flags().BoolVar(&c.crossOrg, "cross-org", false, "also choose accounts of other organizations (config: cross_org)")
+}
+
+// orgs keeps automatic choices within one organization: accounts of one
+// team or enterprise organization, or all personal plans, stand in for
+// each other. A folder logged in to the same Claude account as another
+// shares its limits, so it never stands in for it.
+type orgs struct {
+	e     *env
+	cross bool
+	ids   map[string]*config.Identity
+}
+
+func newOrgs(e *env, cfg *config.Config, cross bool) *orgs {
+	return &orgs{e: e, cross: cross || cfg.CrossOrg, ids: map[string]*config.Identity{}}
+}
+
+// of is who p is logged in as: what its .claude.json says now (a /login
+// inside a session changes it), else the login ccam recorded.
+func (o *orgs) of(p *config.Profile) *config.Identity {
+	if id, ok := o.ids[p.Name]; ok {
+		return id
+	}
+	id := p.Login
+	if read, err := profile.ReadIdentity(profile.Dir(o.e.paths, p)); err == nil && read != nil {
+		// The plan is filled in a moment after a login; until then the
+		// recorded one of the same account stands.
+		if read.OrgType == "" && id != nil && id.AccountUUID == read.AccountUUID {
+			read.OrgType, read.OrgName = id.OrgType, id.OrgName
+		}
+		id = read
+	}
+	o.ids[p.Name] = id
+	return id
+}
+
+// takeover lists the accounts that may take over from the account named
+// from, by the rules of next --auto.
+func takeover(e *env, cfg *config.Config, from string) []string {
+	org := newOrgs(e, cfg, false)
+	f, ok := cfg.Find(from)
+	var out []string
+	for i := range cfg.Profiles {
+		if p := &cfg.Profiles[i]; !ok || org.fits(f, p) {
+			out = append(out, p.Name)
+		}
+	}
+	return out
+}
+
+// fits reports whether cand may take over from from (nil: anything goes).
+func (o *orgs) fits(from, cand *config.Profile) bool {
+	if from == nil || from.Name == cand.Name {
+		return true
+	}
+	a, b := o.of(from), o.of(cand)
+	if config.SameAccount(a, b) {
+		return false
+	}
+	return o.cross || config.SamePool(a, b)
+}
+
+// none is the message when the rule left no account: it names the
+// organization and how to look further.
+func (o *orgs) none(from *config.Profile, msg string) string {
+	if from == nil || o.cross {
+		return msg
+	}
+	if label := o.of(from).OrgLabel(); label != "" {
+		return fmt.Sprintf("%s among %s's (%s); --cross-org also looks at the others", msg, from.Name, label)
+	}
+	return msg
 }
 
 // policy is the config's choice rule with the flags and claude args on top.
@@ -142,6 +218,7 @@ func reportsOf(e *env, cfg *config.Config, profs []*config.Profile, opt usage.Op
 	reports := e.fetcher().FetchAll(context.Background(), accts, opt, nil)
 	out := make([]*usage.Report, len(reports))
 	for i := range reports {
+		reports[i].Sessions = session.Count(launcher.SessionDir(e.paths, reports[i].Name))
 		out[i] = &reports[i]
 	}
 	return out

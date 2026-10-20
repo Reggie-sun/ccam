@@ -192,10 +192,11 @@ func full(r *usage.Report) bool {
 // lookup refused) come after them in number order. It also returns the
 // reports, for waiting.
 func fallbackTarget(e *env, cfg *config.Config, from *config.Profile, tried map[string]bool, args []string, p usage.Policy) (*config.Profile, []*usage.Report) {
+	org := newOrgs(e, cfg, false)
 	var profs []*config.Profile
 	for i := range cfg.Profiles {
 		prof := &cfg.Profiles[i]
-		if tried[prof.Name] || !creds.Has(profile.Dir(e.paths, prof), e.paths.Home) {
+		if tried[prof.Name] || !creds.Has(profile.Dir(e.paths, prof), e.paths.Home) || !org.fits(from, prof) {
 			continue
 		}
 		if resumes(args) {

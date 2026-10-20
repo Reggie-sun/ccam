@@ -15,8 +15,8 @@ import (
 func TestMCPImportKeepsDifferentGroupServer(t *testing.T) {
 	c := newTestCLI(t, nil)
 	cfg, _ := config.Load(c.p.ConfigFile())
-	for i := range cfg.Profiles {
-		cfg.Profiles[i].Share.MCP = "default"
+	if err := cfg.AddGroup("default", []string{"mcp"}, []string{"personal", "work", "side"}); err != nil {
+		t.Fatal(err)
 	}
 	cfg.Save(c.p.ConfigFile())
 	store := mcp.Path(c.p.GroupDir("default"))

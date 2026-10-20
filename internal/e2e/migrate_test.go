@@ -98,7 +98,7 @@ func TestMigrateCopiesIntoTheSharedGroup(t *testing.T) {
 	if !strings.Contains(r.stdout, "Tip: run `ccam migrate`") {
 		t.Fatalf("first add: %+v", r)
 	}
-	r = h.run("", []string{"FAKE_EMAIL=dev@company.com"}, "ccam", "add", "work", "--share", "memory=local")
+	r = h.run("", []string{"FAKE_EMAIL=dev@company.com"}, "ccam", "add", "work", "--no-group")
 	if r.code != 0 || strings.Contains(r.stdout, "ccam migrate") {
 		t.Fatalf("second add: %+v", r)
 	}
@@ -109,32 +109,28 @@ func TestMigrateCopiesIntoTheSharedGroup(t *testing.T) {
 		t.Fatalf("summary:\n%s", out)
 	}
 	for _, want := range []string{
-		"Accounts that share these through group default:\n",
-		"  settings    personal, work\n",
-		"  memory      personal\n",
-		"  ccam share work --memory on\n",
+		"Group default: personal\n",
+		"  ccam group join default work\n",
 	} {
 		if !strings.Contains(out, want) {
 			t.Errorf("missing %q in:\n%s", want, out)
 		}
 	}
-	// Accounts that share settings see them through their links.
-	for _, name := range []string{"personal", "work"} {
-		if b, _ := os.ReadFile(filepath.Join(h.profileDir(name), "settings.json")); string(b) != `{"model":"opus"}` {
-			t.Errorf("%s settings.json: %q", name, b)
-		}
-		if b, _ := os.ReadFile(filepath.Join(h.profileDir(name), "skills", "review", "SKILL.md")); string(b) != "skill" {
-			t.Errorf("%s skills: %q", name, b)
-		}
+	// The group's accounts see them through their links.
+	if b, _ := os.ReadFile(filepath.Join(h.profileDir("personal"), "settings.json")); string(b) != `{"model":"opus"}` {
+		t.Errorf("settings.json: %q", b)
+	}
+	if b, _ := os.ReadFile(filepath.Join(h.profileDir("personal"), "skills", "review", "SKILL.md")); string(b) != "skill" {
+		t.Errorf("skills: %q", b)
 	}
 	if b, _ := os.ReadFile(filepath.Join(h.profileDir("personal"), "CLAUDE.md")); string(b) != "# my rules" {
 		t.Errorf("personal CLAUDE.md: %q", b)
 	}
 	if _, err := os.Lstat(filepath.Join(h.profileDir("work"), "CLAUDE.md")); err == nil {
-		t.Error("work keeps memory local")
+		t.Error("work is in no group")
 	}
 	// The group's MCP server reaches the launch.
-	h.ok("ccam", "work")
+	h.ok("ccam", "personal")
 	if _, args := h.called(); len(args) != 1 || args[0] != "--mcp-config="+filepath.Join(h.home, "data", "groups", "default", "mcp.json") {
 		t.Fatalf("launch args: %q", args)
 	}
@@ -154,7 +150,7 @@ func TestMigrateCopiesIntoTheSharedGroup(t *testing.T) {
 	if !strings.Contains(out, "Kept the group's copy of: settings.json\nTo choose instead, run `ccam migrate` without --yes.\n") {
 		t.Fatalf("--yes conflict:\n%s", out)
 	}
-	if b, _ := os.ReadFile(filepath.Join(h.profileDir("work"), "settings.json")); string(b) != `{"model":"opus"}` {
+	if b, _ := os.ReadFile(filepath.Join(h.profileDir("personal"), "settings.json")); string(b) != `{"model":"opus"}` {
 		t.Fatalf("--yes overwrote the group: %q", b)
 	}
 	// Choosing "merge JSON" interactively writes the merge; the old group copy is saved.
@@ -162,7 +158,7 @@ func TestMigrateCopiesIntoTheSharedGroup(t *testing.T) {
 	if r.code != 0 || !strings.Contains(r.stdout, "3) merge JSON") || !strings.Contains(r.stdout, "The group's previous copies are saved in "+filepath.Join(group, ".ccam-backup")) {
 		t.Fatalf("%+v", r)
 	}
-	b, _ := os.ReadFile(filepath.Join(h.profileDir("work"), "settings.json"))
+	b, _ := os.ReadFile(filepath.Join(h.profileDir("personal"), "settings.json"))
 	if !strings.Contains(string(b), "opus") || !strings.Contains(string(b), "dark") {
 		t.Fatalf("merged settings: %s", b)
 	}

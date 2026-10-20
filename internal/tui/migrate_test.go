@@ -15,18 +15,21 @@ func pressAll(m tea.Model, keys ...string) tea.Model {
 	return m
 }
 
+// newMigrate has every default item in the source except memory.
 func newMigrate() MigratePicker {
-	return NewMigratePicker("/h/.claude", "default", map[string]bool{"settings": true, "mcp": true}, DefaultItems())
+	found := map[string]bool{"settings": true, "mcp": true, "extensions": true}
+	return NewMigratePicker("/h/.claude", "default", found, DefaultItems())
 }
 
 func TestMigratePickerDefaultsAndToggle(t *testing.T) {
 	m := pressAll(newMigrate(), "enter").(MigratePicker)
-	if !m.Done() || !reflect.DeepEqual(m.Items(), []string{"mcp", "settings", "memory", "extensions"}) {
+	// memory is not in the source, so it starts unchecked.
+	if !m.Done() || !reflect.DeepEqual(m.Items(), []string{"mcp", "settings", "extensions"}) {
 		t.Fatalf("defaults: done=%v %v", m.Done(), m.Items())
 	}
 	// Turn mcp off, move to history (5th) and turn it on.
 	m = pressAll(newMigrate(), "space", "down", "down", "down", "down", "space", "enter").(MigratePicker)
-	if !reflect.DeepEqual(m.Items(), []string{"settings", "memory", "extensions", "history"}) {
+	if !reflect.DeepEqual(m.Items(), []string{"settings", "extensions", "history"}) {
 		t.Fatalf("toggled: %v", m.Items())
 	}
 }
@@ -37,7 +40,7 @@ func TestMigratePickerCancelAndNothingSelected(t *testing.T) {
 			t.Errorf("%s did not cancel", k)
 		}
 	}
-	m := pressAll(newMigrate(), "space", "down", "space", "down", "space", "down", "space", "enter").(MigratePicker)
+	m := pressAll(newMigrate(), "space", "down", "space", "down", "down", "space", "enter").(MigratePicker)
 	if !m.Done() || len(m.Items()) != 0 {
 		t.Fatalf("nothing selected: done=%v %v", m.Done(), m.Items())
 	}

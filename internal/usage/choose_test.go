@@ -20,6 +20,36 @@ func rep(name string, five float64, fiveIn time.Duration, week float64, scoped .
 	return &Report{Name: name, Status: StatusOK, Limits: l}
 }
 
+func weekIn(r *Report, d time.Duration) *Report {
+	r.Limits.Weekly.ResetsAt = fixedNow.Add(d)
+	return r
+}
+
+func sessions(r *Report, n int) *Report {
+	r.Sessions = n
+	return r
+}
+
+func TestPolicyWhy(t *testing.T) {
+	a, b := rep("a", 12, 42*time.Minute, 41), sessions(rep("b", 30, time.Hour, 20), 1)
+	cases := []struct {
+		policy Policy
+		in     *Report
+		want   string
+	}{
+		{Policy{}, a, "12% of its 5 hours used, the least"},
+		{Policy{Strategy: Expiring}, a, "its 5-hour window resets first, in 42m (12% of its 5 hours used)"},
+		{Policy{Strategy: Balance}, b, "80% of its week is left, resetting in 3d 0h; 1 running"},
+		{Policy{MaxUsage: 10}, a, "every account is at 10% or more; it has the lowest use, 12% of its 5 hours used"},
+		{Policy{}, rep("c", -1, 0, -1), ""},
+	}
+	for _, c := range cases {
+		if got := c.policy.Why(c.in, fixedNow); got != c.want {
+			t.Errorf("%+v for %s: got %q, want %q", c.policy, c.in.Name, got, c.want)
+		}
+	}
+}
+
 func repName(r *Report) string {
 	if r == nil {
 		return ""
@@ -53,6 +83,10 @@ func TestPolicyChoose(t *testing.T) {
 			rep("b", 50, time.Hour, 10),
 		}, "a"},
 		{"logged out is skipped", Policy{}, []*Report{{Name: "a", Status: StatusLoggedOut, Limits: rep("a", 1, time.Hour, 1).Limits}, rep("b", 50, time.Hour, 10)}, "b"},
+		// a: 90% left over 3 days (30/day); b: 50% left over 1 day (50/day).
+		{"balance takes the week that would go unused", Policy{Strategy: Balance}, []*Report{rep("a", 10, time.Hour, 10), weekIn(rep("b", 60, time.Hour, 50), 24*time.Hour)}, "b"},
+		{"balance counts running sessions", Policy{Strategy: Balance}, []*Report{rep("a", 10, time.Hour, 10), sessions(weekIn(rep("b", 60, time.Hour, 50), 24*time.Hour), 3)}, "a"},
+		{"balance still skips full", Policy{Strategy: Balance}, []*Report{rep("a", 10, time.Hour, 10), weekIn(rep("b", 100, time.Hour, 50), 24*time.Hour)}, "a"},
 	}
 	for _, c := range cases {
 		if got := repName(c.policy.Choose(c.in, fixedNow)); got != c.want {
@@ -85,7 +119,7 @@ func TestPolicyCheck(t *testing.T) {
 			t.Errorf("accepted %+v", bad)
 		}
 	}
-	if (Policy{MaxUsage: 80, Strategy: Expiring}).Check() != nil || (Policy{}).Check() != nil {
+	if (Policy{MaxUsage: 80, Strategy: Expiring}).Check() != nil || (Policy{Strategy: Balance}).Check() != nil || (Policy{}).Check() != nil {
 		t.Fatal("valid policy refused")
 	}
 }
