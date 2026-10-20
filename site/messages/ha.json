@@ -10,6 +10,7 @@
     "faq": "Tambayoyi",
     "changelog": "Tarihin canje-canje",
     "github": "GitHub",
+    "search": "Bincika",
     "menu": "Menu",
     "skip": "Tsallaka zuwa abin da ke ciki",
     "language": "Harshe",
@@ -103,6 +104,14 @@
       "compare": "Kwatance",
       "blog": "Blog"
     },
+    "groups": {
+      "start": "Farawa",
+      "core": "Manyan fasaloli",
+      "more": "Ƙarin fasaloli",
+      "guides": "Jagorori",
+      "reference": "Bayanan tunani",
+      "blog": "Blog"
+    },
     "hubs": {
       "docs": "Girka ccam, ƙara asusun Claude Code ɗinka, zaɓi abin da za su raba kuma ka nemo kowane umarni, tare da amsoshin tambayoyin da aka saba yi.",
       "guides": "Jagorori mataki-mataki don gudanar da asusun Claude Code da dama a kwamfuta ɗaya: CLAUDE_CONFIG_DIR, iyakokin amfani da Remote Control.",
@@ -115,6 +124,11 @@
       "does": "Abin da yake yi"
     },
     "byline": "Daga {author}"
+  },
+  "search": {
+    "placeholder": "Bincika takardun",
+    "empty": "Babu sakamako",
+    "close": "Rufe"
   },
   "commands": {
     "ccam": "Buɗe mai zaɓar asusu",

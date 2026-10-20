@@ -39,6 +39,7 @@ Decisions taken while building the site, where they differ from or add to docs/W
   - The commands table links each command to the feature page that documents it, and each "How it works" step on the landing page links to its feature page; the install label links to the install page.
   - Sidebar group titles are `<p>`, so the page's `<h1>` is its first heading; the sidebar `nav` has its own label.
   - The landing headline keeps "Claude Code" on one line: its words rise one by one and could break between the two.
+  - With the purpose-based sidebar (`lib/nav.ts`, `docs.groups`), `docs.sections` stays: section hubs, crumbs and their OG images are named after the URL's section, not the sidebar group.
   - Unchanged on purpose: Newsreader is preloaded on every page because the header wordmark uses it in every language; Inter is not preloaded (see "Display font" below); IndexNow needs `INDEXNOW_KEY` in CI (`scripts/indexnow.ts` exists).
 - **Browser tests**: run in CI. The WSL environment used for development does not produce frames in headless Chromium (`requestAnimationFrame` never fires, even on a blank page), so screenshots and frame-dependent checks time out locally.
 
@@ -51,14 +52,23 @@ The owner replaced the agent-written direction with `site/DESIGN.md` from `npx g
 - **Dark mode**: the file has no dark theme; dark tokens come from its own dark surfaces (`#0c0a09`, `#1c1917`) The theme toggle stays and shows a sun in light mode, a moon in dark mode.
 - **Logo**: the agent-drawn gauge mark is gone from the header and OG images; the wordmark is "ccam" in the display face, as in the file's top nav. The favicon is the owner's choice: three left-aligned gauges, top and bottom longest, middle shorter, in Claude orange `#d97757`, the only place that colour appears.
 - **Orbs**: removed at the owner's request on 2026-10-19 (DESIGN.md "Owner overrides"); the site is flat canvas, white cards and hairlines.
-- **Docs and guides**: one list in the sidebar and one "Docs" entry in the header; URLs stay `/docs/` and `/guides/` so links and search results keep working. The list is always open from 768 px up; on phones it is in the header menu.
+- **Docs and guides** (sidebar grouping superseded by "Docs structure and search, 2026-10-20" below): one list in the sidebar and one "Docs" entry in the header; URLs stay `/docs/` and `/guides/` so links and search results keep working. The list is always open from 768 px up; on phones it is in the header menu.
 - **Motion**: the owner asked for striking animation on the landing page. Every animation moves transform, clip-path or filter, never the opacity of text, so contrast checks see full colour mid-animation; scroll reveals use CSS scroll-driven animations where supported and are simply absent elsewhere; everything stops under `prefers-reduced-motion`.
 - **Docs**: three columns on wide screens (sections, article, on this page); below 80rem the table of contents folds into the article, below 60rem the section list becomes a sticky disclosure. Closed `details` are shown on desktop with `::details-content`, guarded by `@supports`.
 
 ## Feature pages, 2026-10-19
 
-- **Section**: one page per ccam feature under `/features/<slug>/`, listed as a third sidebar group ("Features", in every locale's `docs.sections`). The existing docs keep their task-oriented pages; feature pages hold every option and how the feature works inside, for developers.
+- **Section**: one page per ccam feature under `/features/<slug>/`, listed as a third sidebar group ("Features", in every locale's `docs.sections`; superseded by the groups below). The existing docs keep their task-oriented pages; feature pages hold every option and how the feature works inside, for developers.
 - **Motion diagrams**: inline SVG drawn at build time by `lib/diagrams/<name>.ts` with the kit in `lib/motion.ts`, placed with `<!-- motion:<name> -->`. No script: the pieces share one CSS cycle (`--t`) and start at `--d`, moving only by transform and clip-path, so they follow the motion rule above and stand complete under `prefers-reduced-motion`. Timing travels in `style` attributes, which the CSP already hashes; a `<style>` per diagram would not be. The kit's CSS is about 1 KB in the shared stylesheet.
 - **Diagram text is code only** (commands, paths, Go functions, syscalls): one diagram serves all 30 languages, and the page text around it explains it. `i18n-check` requires a translation to keep the English page's diagrams in order; the Markdown copies for LLMs drop the markers.
 - **At most 400 units wide, flowing down**, so a phone shows a diagram at about full size; `figure()` refuses wider ones.
 - **Review without frames**: `node scripts/motion-preview.ts [name] [--dark]` renders a diagram with resvg (dots at their destinations, highlights on), since headless Chromium under WSL draws no frames. The browser test that checks playback and reduced motion runs in CI.
+
+## Docs structure and search, 2026-10-20
+
+The owner found the sidebar hard to scan: one "Documentation" list mixed setup, reference and guides, and ten features sat in one flat group. The structure now follows developer docs such as Next.js and ccusage.
+
+- **Groups by purpose, not by folder**: `lib/nav.ts` lists the sidebar in reading order: Getting started (install, quick start), Core features (accounts, launch, share, usage, next), More features (shortcuts, MCP, migrate, doctor, update), Guides (task pages), Reference (commands, `CLAUDE_CONFIG_DIR`, comparison, FAQ), Blog. Group names are `docs.groups` in each locale. URLs keep their section folder, so links, hreflang and search results are unchanged. `check-links` fails when an English page is missing from the list or listed twice.
+- **One reading path**: previous and next follow the whole sidebar across groups; `llms.txt` uses the same groups and order.
+- **Search**: `scripts/search.ts` writes `/search/<locale>.json` at build: each page split at its headings, with the same anchors the page uses (`lib/headings.ts`). The site script loads it the first time the dialog opens (`Ctrl K`, `⌘K`, `/` or the header button), so pages that are never searched download nothing. Every word must appear in the page title, heading or text of a section; headings weigh most, and at most three sections per page are shown. No search library: the index is 39 to 53 KB gzip per locale and substring matching works for scripts without spaces. Without JavaScript the button stays hidden.
+- **Dialog**: native `<dialog>` with a combobox input and a listbox of options (no links inside options, which axe reports as nested interactive controls); Enter or a click opens the result. Strings (`nav.search`, `search.*`) are rendered into the HTML, not shipped as a bundle.

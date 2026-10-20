@@ -10,6 +10,7 @@
     "faq": "Hỏi đáp",
     "changelog": "Nhật ký thay đổi",
     "github": "GitHub",
+    "search": "Tìm kiếm",
     "menu": "Menu",
     "skip": "Chuyển đến nội dung",
     "language": "Ngôn ngữ",
@@ -103,6 +104,14 @@
       "compare": "So sánh",
       "blog": "Blog"
     },
+    "groups": {
+      "start": "Bắt đầu",
+      "core": "Tính năng chính",
+      "more": "Tính năng khác",
+      "guides": "Hướng dẫn",
+      "reference": "Tham khảo",
+      "blog": "Blog"
+    },
     "hubs": {
       "docs": "Cài đặt ccam, thêm các tài khoản Claude Code, chọn những gì chúng dùng chung và tra cứu mọi lệnh, kèm câu trả lời cho các câu hỏi thường gặp.",
       "guides": "Hướng dẫn từng bước để chạy nhiều tài khoản Claude Code trên một máy tính: CLAUDE_CONFIG_DIR, giới hạn sử dụng và Remote Control.",
@@ -115,6 +124,11 @@
       "does": "Chức năng"
     },
     "byline": "Tác giả: {author}"
+  },
+  "search": {
+    "placeholder": "Tìm trong tài liệu",
+    "empty": "Không có kết quả",
+    "close": "Đóng"
   },
   "commands": {
     "ccam": "Mở trình chọn tài khoản",

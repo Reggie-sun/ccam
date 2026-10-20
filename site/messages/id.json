@@ -10,6 +10,7 @@
     "faq": "FAQ",
     "changelog": "Catatan perubahan",
     "github": "GitHub",
+    "search": "Cari",
     "menu": "Menu",
     "skip": "Langsung ke konten",
     "language": "Bahasa",
@@ -103,6 +104,14 @@
       "compare": "Perbandingan",
       "blog": "Blog"
     },
+    "groups": {
+      "start": "Memulai",
+      "core": "Fitur utama",
+      "more": "Fitur lainnya",
+      "guides": "Panduan",
+      "reference": "Referensi",
+      "blog": "Blog"
+    },
     "hubs": {
       "docs": "Instal ccam, tambahkan akun Claude Code Anda, pilih apa yang dibagikan, dan cari setiap perintah, lengkap dengan jawaban atas pertanyaan umum.",
       "guides": "Panduan langkah demi langkah untuk menjalankan beberapa akun Claude Code di satu komputer: CLAUDE_CONFIG_DIR, batas penggunaan, dan Remote Control.",
@@ -115,6 +124,11 @@
       "does": "Fungsinya"
     },
     "byline": "Oleh {author}"
+  },
+  "search": {
+    "placeholder": "Cari di dokumentasi",
+    "empty": "Tidak ada hasil",
+    "close": "Tutup"
   },
   "commands": {
     "ccam": "Membuka pemilih akun",

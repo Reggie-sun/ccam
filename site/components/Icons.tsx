@@ -58,3 +58,12 @@ export function ArrowIcon() {
     </svg>
   );
 }
+
+export function SearchIcon() {
+  return (
+    <svg viewBox="0 0 20 20" aria-hidden="true" {...line}>
+      <circle cx="8.75" cy="8.75" r="5.75" />
+      <path d="M13 13l4.5 4.5" />
+    </svg>
+  );
+}

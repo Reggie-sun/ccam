@@ -1,5 +1,5 @@
 // The only JavaScript on ccam.dev. Pages work without it; with it they get the
-// copy buttons, the theme toggle, the language banner and the motion layer.
+// copy buttons, the theme toggle, the language banner, search and the motion layer.
 (() => {
   const d = document;
   const store = {
@@ -68,6 +68,136 @@
     }
   });
   for (const a of d.querySelectorAll(".toc-inline a, .sidebar a")) a.addEventListener("click", () => (a.closest("details").open = false));
+
+  // Search: Ctrl K, ⌘K or / opens the dialog; the locale's index loads on first
+  // use. Every word must appear in a section's page title, heading or text.
+  const dialog = d.querySelector("dialog.search");
+  const opener = d.querySelector("[data-search-open]");
+  if (dialog && opener && dialog.showModal && window.fetch) {
+    opener.hidden = false;
+    if (/Mac|iPhone|iPad/.test(navigator.platform)) opener.querySelector("[data-search-key]").textContent = "⌘K";
+    const input = dialog.querySelector("input");
+    const list = dialog.querySelector("[role=listbox]");
+    const status = dialog.querySelector("[role=status]");
+    const norm = (s) => s.normalize("NFKC").toLowerCase();
+    let entries, loading, hits = [], active = -1;
+    const load = () => (loading ??= fetch(dialog.dataset.searchIndex)
+      .then((r) => r.json())
+      .then(({ pages }) => {
+        entries = pages.flatMap((p, order) => p.sections.map((s) => ({
+          url: p.url + (s.id ? `#${s.id}` : ""), page: p.title, group: p.group, heading: s.heading, text: s.text, order,
+          t: norm(p.title), h: norm(s.heading), x: norm(s.text),
+        })));
+        run();
+      }, () => (loading = undefined))); // offline: try again on the next open
+
+    const score = (e, terms) => {
+      let s = 0;
+      for (const t of terms) {
+        const h = e.h.includes(t), title = e.t.includes(t), x = e.x.includes(t);
+        if (!h && !title && !x) return 0;
+        // A page title counts fully for the page's opening section only, so one page does not fill the list.
+        s += (h ? 10 : 0) + (title ? (e.heading ? 2 : 10) : 0) + (x ? 1 : 0);
+      }
+      return s;
+    };
+    // Text with each search word in <mark>; lowercasing can change a string's
+    // length in a few scripts, and then the text is shown plain.
+    const marked = (el, str, terms) => {
+      const low = str.toLowerCase();
+      const on = new Array(str.length).fill(false);
+      if (low.length === str.length) for (const t of terms) for (let i = low.indexOf(t); i >= 0; i = low.indexOf(t, i + 1)) on.fill(true, i, i + t.length);
+      for (let i = 0; i < str.length;) {
+        let j = i;
+        while (j < str.length && on[j] === on[i]) j++;
+        const part = str.slice(i, j);
+        el.append(on[i] ? Object.assign(d.createElement("mark"), { textContent: part }) : part);
+        i = j;
+      }
+      return el;
+    };
+    const span = (cls, text = "") => Object.assign(d.createElement("span"), { className: cls, textContent: text });
+    const snippet = (e, terms) => {
+      const at = e.x.length === e.text.length ? Math.min(...terms.map((t) => e.x.indexOf(t)).filter((i) => i >= 0)) : 0;
+      // Start a little before the first match, at a word break when one is near (CJK and Thai have none).
+      let start = Number.isFinite(at) && at > 50 ? at - 40 : 0;
+      const space = e.text.lastIndexOf(" ", start);
+      if (start && space > start - 20) start = space + 1;
+      return (start ? "…" : "") + e.text.slice(start, start + 160);
+    };
+    const select = (i) => {
+      active = i;
+      [...list.children].forEach((li, k) => li.setAttribute("aria-selected", String(k === i)));
+      if (i >= 0) {
+        input.setAttribute("aria-activedescendant", list.children[i].id);
+        list.children[i].scrollIntoView({ block: "nearest" });
+      } else input.removeAttribute("aria-activedescendant");
+    };
+    const run = () => {
+      const terms = norm(input.value).split(/\s+/).filter(Boolean);
+      hits = [];
+      if (entries && terms.length) {
+        const perPage = new Map();
+        const ranked = entries.map((e) => [score(e, terms), e]).filter(([s]) => s > 0).sort((a, b) => b[0] - a[0] || a[1].order - b[1].order);
+        for (const [, e] of ranked) {
+          const n = perPage.get(e.page) ?? 0;
+          if (n >= 3) continue;
+          perPage.set(e.page, n + 1);
+          hits.push(e);
+          if (hits.length === 12) break;
+        }
+      }
+      list.replaceChildren(...hits.map((e, i) => {
+        const li = Object.assign(d.createElement("li"), { id: `search-hit-${i}` });
+        li.setAttribute("role", "option");
+        li.append(
+          span("hit-path", e.heading ? `${e.group} › ${e.page}` : e.group),
+          marked(span("hit-title"), e.heading || e.page, terms),
+        );
+        if (e.text) li.append(marked(span("hit-text"), snippet(e, terms), terms));
+        li.addEventListener("click", () => go(e));
+        return li;
+      }));
+      input.setAttribute("aria-expanded", String(hits.length > 0));
+      select(hits.length ? 0 : -1);
+      status.textContent = entries && terms.length && !hits.length ? status.dataset.empty : "";
+    };
+    const go = (e) => {
+      dialog.close();
+      location.href = e.url;
+    };
+    const open = () => {
+      if (dialog.open) return;
+      dialog.showModal();
+      input.select();
+      load();
+    };
+
+    opener.addEventListener("click", open);
+    opener.addEventListener("pointerenter", load, { once: true });
+    dialog.querySelector("[data-search-close]").addEventListener("click", () => dialog.close());
+    dialog.addEventListener("click", (e) => e.target === dialog && dialog.close()); // the backdrop
+    input.addEventListener("input", run);
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        e.preventDefault();
+        if (hits.length) select((active + (e.key === "ArrowDown" ? 1 : hits.length - 1)) % hits.length);
+      } else if (e.key === "Enter" && hits[active]) {
+        e.preventDefault();
+        go(hits[active]);
+      } else if (e.key === "Escape") {
+        e.preventDefault(); // a search field would only clear its text
+        dialog.close();
+      }
+    });
+    d.addEventListener("keydown", (e) => {
+      const typing = e.target.closest?.("input, textarea, select, [contenteditable]");
+      if ((e.key === "k" && (e.metaKey || e.ctrlKey)) || (e.key === "/" && !typing)) {
+        e.preventDefault();
+        open();
+      }
+    });
+  }
 
   // Everything below waits for an idle moment so it never lengthens the first task.
   const idle = window.requestIdleCallback || ((fn) => setTimeout(fn, 200));

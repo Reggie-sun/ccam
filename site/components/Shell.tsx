@@ -4,7 +4,7 @@ import { getLocale, locales, nativeName } from "../i18n/locales";
 import { format, getMessages, hasMessages } from "../lib/i18n";
 import { homePath, pagePath, REPO } from "../lib/paths";
 import { websiteLd } from "../lib/jsonld";
-import { BrandMark, GlobeIcon, MenuIcon, ThemeIcon } from "./Icons";
+import { BrandMark, GlobeIcon, MenuIcon, SearchIcon, ThemeIcon } from "./Icons";
 import { JsonLd } from "./JsonLd";
 
 // Applies the saved theme before first paint; hashed into the CSP at build.
@@ -61,6 +61,12 @@ export function Shell({ locale, alternates, active, menu, children }: Props) {
               <a href={REPO} target="_blank" rel="noopener">{m.nav.github}</a>
             </nav>
             <div className="actions">
+              {/* Search needs site.js and the index it loads, so it stays hidden without them. */}
+              <button type="button" className="search-button" data-search-open aria-label={m.nav.search} hidden>
+                <SearchIcon />
+                <span className="search-label" aria-hidden="true">{m.nav.search}</span>
+                <kbd aria-hidden="true" data-search-key>Ctrl K</kbd>
+              </button>
               <details className="picker">
                 <summary aria-label={m.nav.language}>
                   <GlobeIcon />
@@ -107,6 +113,26 @@ export function Shell({ locale, alternates, active, menu, children }: Props) {
             </div>
           </div>
         </header>
+        <dialog className="search" aria-label={m.nav.search} data-search-index={`/search/${locale}.json`}>
+          <div className="search-box">
+            <SearchIcon />
+            <input
+              type="search"
+              role="combobox"
+              aria-label={m.search.placeholder}
+              aria-controls="search-results"
+              aria-expanded="false"
+              aria-autocomplete="list"
+              placeholder={m.search.placeholder}
+              autoComplete="off"
+              spellCheck={false}
+              enterKeyHint="go"
+            />
+            <button type="button" data-search-close>{m.search.close}</button>
+          </div>
+          <ul id="search-results" role="listbox" aria-label={m.nav.search} />
+          <p className="search-empty" role="status" data-empty={m.search.empty} />
+        </dialog>
         <main id="main">{children}</main>
         <footer className="site-footer">
           <div className="wrap">

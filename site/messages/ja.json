@@ -10,6 +10,7 @@
     "faq": "よくある質問",
     "changelog": "変更履歴",
     "github": "GitHub",
+    "search": "検索",
     "menu": "メニュー",
     "skip": "本文へスキップ",
     "language": "言語",
@@ -103,6 +104,14 @@
       "compare": "比較",
       "blog": "ブログ"
     },
+    "groups": {
+      "start": "はじめに",
+      "core": "主な機能",
+      "more": "その他の機能",
+      "guides": "ガイド",
+      "reference": "リファレンス",
+      "blog": "ブログ"
+    },
     "hubs": {
       "docs": "ccamをインストールし、Claude Codeアカウントを追加して、共有する内容を選び、すべてのコマンドを調べられます。よくある質問への回答もあります。",
       "guides": "1台のコンピューターで複数のClaude Codeアカウントを使うための手順ガイドです。CLAUDE_CONFIG_DIR、使用量の上限、Remote Controlを扱います。",
@@ -115,6 +124,11 @@
       "does": "説明"
     },
     "byline": "執筆：{author}"
+  },
+  "search": {
+    "placeholder": "ドキュメントを検索",
+    "empty": "結果が見つかりません",
+    "close": "閉じる"
   },
   "commands": {
     "ccam": "アカウント選択画面を開く",

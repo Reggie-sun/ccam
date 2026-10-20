@@ -10,6 +10,7 @@
     "faq": "FAQ",
     "changelog": "Changelog",
     "github": "GitHub",
+    "search": "Maghanap",
     "menu": "Menu",
     "skip": "Lumaktaw sa nilalaman",
     "language": "Wika",
@@ -103,6 +104,14 @@
       "compare": "Mga paghahambing",
       "blog": "Blog"
     },
+    "groups": {
+      "start": "Pagsisimula",
+      "core": "Mga pangunahing feature",
+      "more": "Iba pang feature",
+      "guides": "Mga gabay",
+      "reference": "Sanggunian",
+      "blog": "Blog"
+    },
     "hubs": {
       "docs": "I-install ang ccam, idagdag ang mga Claude Code account mo, piliin kung ano ang ishe-share nila at hanapin ang bawat command, may sagot sa karaniwang tanong.",
       "guides": "Mga gabay na sunud-sunod para magpatakbo ng maraming Claude Code account sa iisang computer: CLAUDE_CONFIG_DIR, mga usage limit at Remote Control.",
@@ -115,6 +124,11 @@
       "does": "Ano ang ginagawa nito"
     },
     "byline": "Ni {author}"
+  },
+  "search": {
+    "placeholder": "Maghanap sa docs",
+    "empty": "Walang resulta",
+    "close": "Isara"
   },
   "commands": {
     "ccam": "Buksan ang pagpili ng account",

@@ -10,6 +10,7 @@
     "faq": "SSS",
     "changelog": "Sürüm notları",
     "github": "GitHub",
+    "search": "Ara",
     "menu": "Menü",
     "skip": "İçeriğe geç",
     "language": "Dil",
@@ -103,6 +104,14 @@
       "compare": "Karşılaştırmalar",
       "blog": "Blog"
     },
+    "groups": {
+      "start": "Başlarken",
+      "core": "Temel özellikler",
+      "more": "Diğer özellikler",
+      "guides": "Kılavuzlar",
+      "reference": "Başvuru",
+      "blog": "Blog"
+    },
     "hubs": {
       "docs": "ccam'i kurun, Claude Code hesaplarınızı ekleyin, neyi paylaşacaklarını seçin ve her komuta göz atın; sık sorulan soruların yanıtları da burada.",
       "guides": "Tek bilgisayarda birden fazla Claude Code hesabı çalıştırmak için adım adım kılavuzlar: CLAUDE_CONFIG_DIR, kullanım limitleri ve Remote Control.",
@@ -115,6 +124,11 @@
       "does": "Ne yapar"
     },
     "byline": "Yazar: {author}"
+  },
+  "search": {
+    "placeholder": "Belgelerde ara",
+    "empty": "Sonuç yok",
+    "close": "Kapat"
   },
   "commands": {
     "ccam": "Hesap seçiciyi açar",

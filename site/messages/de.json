@@ -10,6 +10,7 @@
     "faq": "FAQ",
     "changelog": "Changelog",
     "github": "GitHub",
+    "search": "Suchen",
     "menu": "Menü",
     "skip": "Zum Inhalt springen",
     "language": "Sprache",
@@ -103,6 +104,14 @@
       "compare": "Vergleiche",
       "blog": "Blog"
     },
+    "groups": {
+      "start": "Erste Schritte",
+      "core": "Kernfunktionen",
+      "more": "Weitere Funktionen",
+      "guides": "Anleitungen",
+      "reference": "Referenz",
+      "blog": "Blog"
+    },
     "hubs": {
       "docs": "ccam installieren, Claude Code-Konten hinzufügen, festlegen, was sie teilen, und jeden Befehl nachschlagen, mit Antworten auf häufige Fragen.",
       "guides": "Schritt-für-Schritt-Anleitungen für mehrere Claude Code-Konten auf einem Rechner: CLAUDE_CONFIG_DIR, Nutzungslimits und Remote Control.",
@@ -115,6 +124,11 @@
       "does": "Was er tut"
     },
     "byline": "Von {author}"
+  },
+  "search": {
+    "placeholder": "Dokumentation durchsuchen",
+    "empty": "Keine Ergebnisse",
+    "close": "Schließen"
   },
   "commands": {
     "ccam": "Kontoauswahl öffnen",

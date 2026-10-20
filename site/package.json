@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "vite dev",
     "prebuild": "node scripts/gen-commands.ts && node scripts/changelog.ts && node scripts/coverage.ts",
-    "build": "vite build && node scripts/finalize.ts && node scripts/sitemap.ts && node scripts/llms.ts && node scripts/og.ts && node scripts/images.ts",
+    "build": "vite build && node scripts/finalize.ts && node scripts/sitemap.ts && node scripts/llms.ts && node scripts/search.ts && node scripts/og.ts && node scripts/images.ts",
     "check": "node scripts/check-static.ts && node scripts/budget.ts && node scripts/check-hreflang.ts && node scripts/check-links.ts && node scripts/check-html.ts && node scripts/i18n-check.ts"
   },
   "dependencies": {

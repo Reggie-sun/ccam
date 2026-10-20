@@ -10,6 +10,7 @@
     "faq": "常見問題",
     "changelog": "變更紀錄",
     "github": "GitHub",
+    "search": "搜尋",
     "menu": "選單",
     "skip": "跳至主要內容",
     "language": "語言",
@@ -103,6 +104,14 @@
       "compare": "比較",
       "blog": "部落格"
     },
+    "groups": {
+      "start": "入門",
+      "core": "核心功能",
+      "more": "更多功能",
+      "guides": "指南",
+      "reference": "參考",
+      "blog": "部落格"
+    },
     "hubs": {
       "docs": "安裝 ccam、新增你的 Claude Code 帳號、選擇它們要共用哪些內容、查詢每個指令，並找到常見問題的解答。",
       "guides": "在一台電腦上執行多個 Claude Code 帳號的逐步指南：CLAUDE_CONFIG_DIR、用量限制和 Remote Control。",
@@ -115,6 +124,11 @@
       "does": "用途"
     },
     "byline": "作者：{author}"
+  },
+  "search": {
+    "placeholder": "搜尋文件",
+    "empty": "沒有結果",
+    "close": "關閉"
   },
   "commands": {
     "ccam": "開啟帳號選擇器",

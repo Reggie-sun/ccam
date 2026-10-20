@@ -10,6 +10,7 @@
     "faq": "Maswali",
     "changelog": "Mabadiliko",
     "github": "GitHub",
+    "search": "Tafuta",
     "menu": "Menyu",
     "skip": "Ruka hadi maudhui",
     "language": "Lugha",
@@ -103,6 +104,14 @@
       "compare": "Ulinganisho",
       "blog": "Blogu"
     },
+    "groups": {
+      "start": "Kuanza",
+      "core": "Vipengele vikuu",
+      "more": "Vipengele zaidi",
+      "guides": "Miongozo",
+      "reference": "Marejeleo",
+      "blog": "Blogu"
+    },
     "hubs": {
       "docs": "Sakinisha ccam, ongeza akaunti zako za Claude Code, chagua kile zinachoshiriki na utafute kila amri, pamoja na majibu ya maswali ya kawaida.",
       "guides": "Miongozo ya hatua kwa hatua ya kuendesha akaunti kadhaa za Claude Code kwenye kompyuta moja: CLAUDE_CONFIG_DIR, vikomo vya matumizi na Remote Control.",
@@ -115,6 +124,11 @@
       "does": "Inachofanya"
     },
     "byline": "Imeandikwa na {author}"
+  },
+  "search": {
+    "placeholder": "Tafuta kwenye nyaraka",
+    "empty": "Hakuna matokeo",
+    "close": "Funga"
   },
   "commands": {
     "ccam": "Fungua kichaguzi cha akaunti",

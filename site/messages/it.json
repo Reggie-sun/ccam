@@ -10,6 +10,7 @@
     "faq": "FAQ",
     "changelog": "Novità",
     "github": "GitHub",
+    "search": "Cerca",
     "menu": "Menu",
     "skip": "Vai al contenuto",
     "language": "Lingua",
@@ -103,6 +104,14 @@
       "compare": "Confronti",
       "blog": "Blog"
     },
+    "groups": {
+      "start": "Per iniziare",
+      "core": "Funzionalità principali",
+      "more": "Altre funzionalità",
+      "guides": "Guide",
+      "reference": "Riferimento",
+      "blog": "Blog"
+    },
     "hubs": {
       "docs": "Installa ccam, aggiungi i tuoi account Claude Code, scegli cosa condividono e consulta ogni comando, con le risposte alle domande più comuni.",
       "guides": "Guide passo passo per usare più account Claude Code su un solo computer: CLAUDE_CONFIG_DIR, limiti di utilizzo e Remote Control.",
@@ -115,6 +124,11 @@
       "does": "Cosa fa"
     },
     "byline": "Di {author}"
+  },
+  "search": {
+    "placeholder": "Cerca nella documentazione",
+    "empty": "Nessun risultato",
+    "close": "Chiudi"
   },
   "commands": {
     "ccam": "Apre il selettore degli account",
