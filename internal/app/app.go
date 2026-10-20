@@ -29,18 +29,23 @@ type route struct {
 	sel      string   // profile selector for routeLaunch; "" = default profile
 	args     []string // claude args for routeLaunch, cobra args for routeCLI
 	dry      bool
-	fallback bool // --fallback: run again as another account at a usage limit
+	fallback bool   // --fallback: run again as another account at a usage limit
+	wait     string // --wait[=duration] with --fallback: wait for an account to reset
 }
 
-// launchFlags takes ccam's own launch flags (--dry-run, --fallback, in any
-// order) off the front of args.
+// launchFlags takes ccam's own launch flags (--dry-run, --fallback,
+// --wait[=duration], in any order) off the front of args.
 func launchFlags(args []string, r *route) []string {
 	for len(args) > 0 {
-		switch args[0] {
-		case "--dry-run":
+		switch a := args[0]; {
+		case a == "--dry-run":
 			r.dry = true
-		case "--fallback":
+		case a == "--fallback":
 			r.fallback = true
+		case a == "--wait":
+			r.wait = cli.DefaultWait
+		case strings.HasPrefix(a, "--wait="):
+			r.wait = strings.TrimPrefix(a, "--wait=")
 		default:
 			return args
 		}
@@ -54,27 +59,27 @@ func launchFlags(args []string, r *route) []string {
 func parse(argv []string) route {
 	var flags route
 	rest := launchFlags(argv[1:], &flags)
-	dry, fallback := flags.dry, flags.fallback
+	dry, fallback, wait := flags.dry, flags.fallback, flags.wait
 	switch {
 	case len(rest) == 0:
-		if dry || fallback {
-			return route{kind: routeLaunch, dry: dry, fallback: fallback}
+		if dry || fallback || wait != "" {
+			return route{kind: routeLaunch, dry: dry, fallback: fallback, wait: wait}
 		}
 		return route{kind: routeCLI}
 	case rest[0] == "run":
 		// ccam's own flags may come right after run (it is a ccam command);
 		// anything after the account name goes to claude untouched.
 		r := launchFlags(rest[1:], &flags)
-		dry, fallback = flags.dry, flags.fallback
+		dry, fallback, wait = flags.dry, flags.fallback, flags.wait
 		if len(r) > 0 && (r[0] == "-h" || r[0] == "--help") {
 			// cobra does not parse flags of run, so ask for its help directly.
 			return route{kind: routeCLI, args: []string{"help", "run"}}
 		}
 		if len(r) > 0 && !strings.HasPrefix(r[0], "-") {
-			return route{kind: routeLaunch, sel: r[0], args: r[1:], dry: dry, fallback: fallback}
+			return route{kind: routeLaunch, sel: r[0], args: r[1:], dry: dry, fallback: fallback, wait: wait}
 		}
-		return route{kind: routeLaunch, args: r, dry: dry, fallback: fallback}
-	case fallback && (rest[0] == "--version" || rest[0] == "-v" || rest[0] == "-h" || rest[0] == "--help" || config.Reserved[rest[0]]):
+		return route{kind: routeLaunch, args: r, dry: dry, fallback: fallback, wait: wait}
+	case (fallback || wait != "") && (rest[0] == "--version" || rest[0] == "-v" || rest[0] == "-h" || rest[0] == "--help" || config.Reserved[rest[0]]):
 		return route{kind: routeCLI, args: []string{"--fallback"}} // cobra explains the flag is unknown there
 	case rest[0] == "--version" || rest[0] == "-v":
 		// The version command prints the same line; a custom cobra version
@@ -83,11 +88,11 @@ func parse(argv []string) route {
 	case rest[0] == "-h" || rest[0] == "--help":
 		return route{kind: routeCLI, args: withDry(rest, dry)}
 	case strings.HasPrefix(rest[0], "-"):
-		return route{kind: routeLaunch, args: rest, dry: dry, fallback: fallback}
+		return route{kind: routeLaunch, args: rest, dry: dry, fallback: fallback, wait: wait}
 	case config.Reserved[rest[0]] || strings.HasPrefix(rest[0], "__"): // __complete is cobra's
 		return route{kind: routeCLI, args: withDry(rest, dry)}
 	default:
-		return route{kind: routeLaunch, sel: rest[0], args: rest[1:], dry: dry, fallback: fallback}
+		return route{kind: routeLaunch, sel: rest[0], args: rest[1:], dry: dry, fallback: fallback, wait: wait}
 	}
 }
 
@@ -127,8 +132,12 @@ func Main(argv []string) int {
 	if r.kind == routeCLI {
 		return cli.Execute(r.args)
 	}
+	if r.wait != "" && !r.fallback {
+		fmt.Fprintln(os.Stderr, "ccam: --wait works with --fallback (or ccam next --auto, ccam pick)")
+		return 1
+	}
 	if r.fallback {
-		return cli.Fallback(paths.FromEnv(), r.sel, r.args, r.dry)
+		return cli.Fallback(paths.FromEnv(), r.sel, r.args, r.dry, r.wait)
 	}
 	return exitCode(launcher.Launch(paths.FromEnv(), r.sel, r.args, r.dry, os.Stdout))
 }

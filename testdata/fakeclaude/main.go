@@ -35,6 +35,16 @@ func main() {
 		os.Exit(2)
 	}
 	must(os.WriteFile(path, []byte(log.String()), 0o600))
+	if path := os.Getenv("FAKE_ENV_FILE"); path != "" {
+		// NAME=value lines for the variables named in FAKE_ENV_NAMES.
+		var b strings.Builder
+		for _, name := range strings.Split(os.Getenv("FAKE_ENV_NAMES"), ",") {
+			if v, ok := os.LookupEnv(name); ok {
+				fmt.Fprintf(&b, "%s=%s\n", name, v)
+			}
+		}
+		must(os.WriteFile(path, []byte(b.String()), 0o600))
+	}
 	if runs := os.Getenv("FAKE_RUNS"); runs != "" {
 		f, err := os.OpenFile(runs, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0o600)
 		must(err)

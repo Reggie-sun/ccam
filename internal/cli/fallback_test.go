@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/jhyunwoo/ccam/internal/config"
+	"github.com/jhyunwoo/ccam/internal/usage"
 )
 
 func (c *testCLI) env() (*env, *config.Config) {
@@ -41,7 +42,7 @@ func TestFallbackTargetPrefersRoomThenUnknown(t *testing.T) {
 		}
 		from, _ := cfg.Find(tc.tried[0])
 		got := ""
-		if p := fallbackTarget(e, cfg, from, tried, []string{"-p", "hi"}); p != nil {
+		if p, _ := fallbackTarget(e, cfg, from, tried, []string{"-p", "hi"}, usage.Policy{}); p != nil {
 			got = p.Name
 		}
 		if got != tc.want {
@@ -56,10 +57,10 @@ func TestFallbackTargetKeepsHistoryWhenResuming(t *testing.T) {
 	cfg.Profiles[2].Share.History = config.Local // side does not share history
 	from := &cfg.Profiles[0]
 	tried := map[string]bool{"personal": true}
-	if p := fallbackTarget(e, cfg, from, tried, []string{"-p", "go on", "--continue"}); p == nil || p.Name != "work" {
+	if p, _ := fallbackTarget(e, cfg, from, tried, []string{"-p", "go on", "--continue"}, usage.Policy{}); p == nil || p.Name != "work" {
 		t.Fatalf("--continue must stay in the history group: %v", p)
 	}
-	if p := fallbackTarget(e, cfg, from, tried, []string{"-p", "new"}); p == nil || p.Name != "side" {
+	if p, _ := fallbackTarget(e, cfg, from, tried, []string{"-p", "new"}, usage.Policy{}); p == nil || p.Name != "side" {
 		t.Fatalf("a new run may use any account: %v", p)
 	}
 }

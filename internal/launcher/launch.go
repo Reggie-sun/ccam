@@ -52,6 +52,12 @@ func Ready(p paths.Paths, cfg *config.Config, sel string, args []string, dry boo
 		return nil, err
 	}
 	trace.Step("check links")
+	if api := pl.Profile.API; api != nil && !dry {
+		// A dry run prints the command, not the key, so it does not read one.
+		if err := pl.useAPI(api); err != nil {
+			return nil, err
+		}
+	}
 	if err := prelaunch(p, cfg, pl, dry); err != nil {
 		return nil, err
 	}

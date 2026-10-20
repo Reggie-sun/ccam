@@ -42,10 +42,18 @@ func TestFallbackRunsAgainOnAnotherAccountAtTheLimit(t *testing.T) {
 		t.Fatalf("plain failure: %+v", r)
 	}
 
-	// Every account at its limit: the last attempt's output and code.
+	// Every account at its limit: the last attempt's output, and exit code
+	// 75 (EX_TEMPFAIL) so a script can try again later.
 	r = h.run("", append(env, "FAKE_LIMITED=personal,work"), "ccam", "run", "--fallback", "work", "-p", "x")
-	if r.code != 1 || ranAs() != "work,personal" || !strings.Contains(r.stdout, "hit your limit") || !strings.Contains(r.stderr, "no other logged-in account has room") {
+	if r.code != 75 || ranAs() != "work,personal" || !strings.Contains(r.stdout, "hit your limit") || !strings.Contains(r.stderr, "no other logged-in account has room") {
 		t.Fatalf("all limited: %+v", r)
+	}
+	// --wait without --fallback is refused; a bad duration too.
+	if r := h.run("", env, "ccam", "--wait", "work", "-p", "x"); r.code == 0 || !strings.Contains(r.stderr, "--fallback") || ranAs() != "" {
+		t.Fatalf("--wait alone: %+v", r)
+	}
+	if r := h.run("", env, "ccam", "--fallback", "--wait=soon", "work", "-p", "x"); r.code == 0 || !strings.Contains(r.stderr, "duration") {
+		t.Fatalf("bad --wait: %+v", r)
 	}
 
 	// No name: the account for the folder or the default, as without --fallback.

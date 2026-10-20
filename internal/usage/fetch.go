@@ -10,6 +10,8 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -45,6 +47,7 @@ type Account struct {
 	Dir        string // CLAUDE_CONFIG_DIR
 	SessionDir string // markers of running sessions started by ccam
 	Imported   bool   // registered in place; plain `claude` may use it without ccam's lock
+	API        bool   // an API key account (ccam add --api): no subscription limits
 }
 
 // Report is one account's result.
@@ -125,6 +128,10 @@ func (f *Fetcher) FetchAll(ctx context.Context, accts []Account, opt Options, on
 // Fetch queries one account, falling back to cached values on failure.
 func (f *Fetcher) Fetch(ctx context.Context, a Account, opt Options) Report {
 	r := Report{Name: a.Name, Slot: a.Slot}
+	if a.API {
+		r.Status = StatusAPI
+		return r
+	}
 	if opt.Source == "cache" {
 		return f.fallback(a, r, StatusOK, "")
 	}
@@ -160,9 +167,18 @@ func (f *Fetcher) Fetch(ctx context.Context, a Account, opt Options) Report {
 			return f.fallback(a, r, StatusExpired, err.Error())
 		}
 	}
+	if until, ok := f.paused(a.Name); ok {
+		return f.fallback(a, r, StatusError, pausedMsg(until))
+	}
 	ctx, cancel := context.WithTimeout(ctx, accountTimeout)
 	defer cancel()
 	limits, status, err := f.live(ctx, cred.AccessToken)
+	var limited rateLimited
+	if errors.As(err, &limited) {
+		until := f.Now().Add(retryAfter(limited.retryAfter, f.Now()))
+		_ = fsutil.WriteFast(f.pausePath(a.Name), []byte(until.UTC().Format(time.RFC3339)))
+		return f.fallback(a, r, StatusError, pausedMsg(until))
+	}
 	if err != nil {
 		r.FormatChanged = errors.Is(err, errFormat)
 		return f.fallback(a, r, status, err.Error())
@@ -193,6 +209,8 @@ func (f *Fetcher) live(ctx context.Context, token string) (Limits, Status, error
 		return Limits{}, StatusError, err
 	}
 	switch {
+	case resp.StatusCode == http.StatusTooManyRequests:
+		return Limits{}, StatusError, rateLimited{retryAfter: resp.Header.Get("Retry-After")}
 	case resp.StatusCode == http.StatusUnauthorized || resp.StatusCode == http.StatusForbidden:
 		return Limits{}, StatusExpired, fmt.Errorf("authentication failed (%d)", resp.StatusCode)
 	case resp.StatusCode != http.StatusOK:
@@ -246,7 +264,48 @@ func (f *Fetcher) cachePath(name, src string) string {
 // CachePaths lists the cache files of account name in stateDir.
 func CachePaths(stateDir, name string) []string {
 	f := Fetcher{StateDir: stateDir}
-	return []string{f.cachePath(name, "live"), f.cachePath(name, "statusline")}
+	return []string{f.cachePath(name, "live"), f.cachePath(name, "statusline"), f.pausePath(name)}
+}
+
+// The endpoint answers HTTP 429 when asked too often. ccam then leaves the
+// account alone for Retry-After (or defaultPause), up to maxPause, and shows
+// saved numbers meanwhile, so retries do not keep the limit going.
+const (
+	defaultPause = 5 * time.Minute
+	maxPause     = time.Hour
+)
+
+type rateLimited struct{ retryAfter string }
+
+func (rateLimited) Error() string { return "rate limited" }
+
+// retryAfter reads a Retry-After value: seconds or an HTTP date.
+func retryAfter(v string, now time.Time) time.Duration {
+	d := defaultPause
+	if secs, err := strconv.Atoi(v); err == nil && secs > 0 {
+		d = time.Duration(secs) * time.Second
+	} else if at, err := http.ParseTime(v); err == nil && at.After(now) {
+		d = at.Sub(now)
+	}
+	return min(d, maxPause)
+}
+
+func (f *Fetcher) pausePath(name string) string {
+	return filepath.Join(f.StateDir, name+".pause")
+}
+
+// paused reports whether the endpoint asked to wait for this account.
+func (f *Fetcher) paused(name string) (time.Time, bool) {
+	data, err := os.ReadFile(f.pausePath(name))
+	if err != nil {
+		return time.Time{}, false
+	}
+	until, err := time.Parse(time.RFC3339, strings.TrimSpace(string(data)))
+	return until, err == nil && f.Now().Before(until)
+}
+
+func pausedMsg(until time.Time) string {
+	return "rate limited by the usage endpoint; asking again after " + until.Local().Format("15:04")
 }
 
 func (f *Fetcher) readCache(name, src string) (cached, bool) {

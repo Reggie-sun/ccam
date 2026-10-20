@@ -83,7 +83,11 @@ func pick(e *env, cfg *config.Config) (tui.Result, error) {
 		if t := launcher.LastUsed(e.paths, p.Name); !t.IsZero() {
 			last = Ago(time.Since(t))
 		}
-		rows = append(rows, tui.Row{Name: p.Name, Slot: p.Slot, Email: p.Email, Share: p.Share, LastUsed: last, Default: def == p, Here: here == p})
+		email := p.Email
+		if p.API != nil && email == "" {
+			email = p.API.Label()
+		}
+		rows = append(rows, tui.Row{Name: p.Name, Slot: p.Slot, Email: email, Share: p.Share, LastUsed: last, Default: def == p, Here: here == p})
 	}
 	f := e.fetcher()
 	fetch := func(ctx context.Context, name string, fresh bool) usage.Report {
@@ -104,5 +108,5 @@ func addInteractive(e *env, cfg *config.Config, name string) error {
 		return err
 	}
 	e.printf("→ Log in in your browser. ccam continues when you are done.\n")
-	return addProfile(e, ans.Name, ans.Share, true, ans.Shortcut)
+	return addProfile(e, ans.Name, ans.Share, true, ans.Shortcut, nil)
 }

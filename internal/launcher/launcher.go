@@ -230,7 +230,7 @@ func mcpStateDir(p paths.Paths, name string) string {
 // StatePaths lists what ccam keeps under an account's name in the state
 // folder, so rename can carry it along and remove can clear it.
 func StatePaths(p paths.Paths, name string) []string {
-	return []string{lastUsedPath(p, name), mcpStateDir(p, name)}
+	return []string{lastUsedPath(p, name), mcpStateDir(p, name), filepath.Join(p.State, "picks", name)}
 }
 
 // MarkUsed records the launch time; losing it is harmless, so no fsync.

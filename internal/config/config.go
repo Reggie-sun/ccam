@@ -26,11 +26,15 @@ const (
 const Local = "local"
 
 type Config struct {
-	Default     string    `toml:"default,omitempty"`
-	ClaudeBin   string    `toml:"claude_bin,omitempty"`
-	MCPStrategy string    `toml:"mcp_strategy,omitempty"`
-	Profiles    []Profile `toml:"profile"`
-	Folders     []Folder  `toml:"folder,omitempty"`
+	Default     string `toml:"default,omitempty"`
+	ClaudeBin   string `toml:"claude_bin,omitempty"`
+	MCPStrategy string `toml:"mcp_strategy,omitempty"`
+	// AutoMaxUsage and AutoStrategy steer how next --auto, --fallback and
+	// pick choose an account (usage.Policy); 0 and "" are the defaults.
+	AutoMaxUsage float64   `toml:"auto_max_usage,omitempty"`
+	AutoStrategy string    `toml:"auto_strategy,omitempty"`
+	Profiles     []Profile `toml:"profile"`
+	Folders      []Folder  `toml:"folder,omitempty"`
 }
 
 // Folder makes Account the one a launch without a name uses inside Path
@@ -49,6 +53,50 @@ type Profile struct {
 	// ("" = none). It links to the ccam binary, which looks argv[0] up here.
 	Shortcut string `toml:"shortcut,omitempty"`
 	Share    Share  `toml:"share"`
+	// API makes the account use an API endpoint and key instead of a Claude
+	// subscription login (ccam add --api).
+	API *API `toml:"api,omitempty"`
+}
+
+// API is an account that reaches an Anthropic-compatible endpoint with a key.
+// The key itself is never stored: KeyFrom says where to read it at launch.
+type API struct {
+	BaseURL string `toml:"base_url,omitempty"` // ANTHROPIC_BASE_URL; "" is Anthropic's API
+	KeyFrom string `toml:"key_from"`           // env:NAME or command:COMMAND
+	Auth    string `toml:"auth,omitempty"`     // APIKey (default) or Bearer
+	Model   string `toml:"model,omitempty"`    // ANTHROPIC_MODEL
+}
+
+// API auth styles: ANTHROPIC_API_KEY (x-api-key) or ANTHROPIC_AUTH_TOKEN
+// (Authorization: Bearer, for gateways such as LiteLLM or OpenRouter).
+const (
+	APIKey = "api-key"
+	Bearer = "bearer"
+)
+
+// Check reports an API setting that cannot work.
+func (a *API) Check() error {
+	if !strings.HasPrefix(a.KeyFrom, "env:") && !strings.HasPrefix(a.KeyFrom, "command:") || len(a.KeyFrom) <= len("env:") {
+		return fmt.Errorf("the key source is env:NAME or command:COMMAND, not %q", a.KeyFrom)
+	}
+	if a.Auth != "" && a.Auth != APIKey && a.Auth != Bearer {
+		return fmt.Errorf("auth is %q or %q, not %q", APIKey, Bearer, a.Auth)
+	}
+	if a.BaseURL != "" && !strings.HasPrefix(a.BaseURL, "https://") && !strings.HasPrefix(a.BaseURL, "http://") {
+		return fmt.Errorf("the base URL starts with https:// or http://: %q", a.BaseURL)
+	}
+	return nil
+}
+
+// Label names the endpoint for lists: "API" or "API: <host>".
+func (a *API) Label() string {
+	host := a.BaseURL
+	host = strings.TrimPrefix(strings.TrimPrefix(host, "https://"), "http://")
+	host, _, _ = strings.Cut(host, "/")
+	if host == "" {
+		return "API"
+	}
+	return "API: " + host
 }
 
 // Share maps each shareable item to Local or a group name.
@@ -148,7 +196,7 @@ var Reserved = map[string]bool{
 	"usage": true, "u": true, "share": true, "mcp": true, "login": true, "logout": true,
 	"rename": true, "remove": true, "rm": true, "import": true, "migrate": true, "doctor": true,
 	"shims": true, "shortcut": true, "completion": true, "help": true, "version": true, "statusline": true,
-	"update": true, "folder": true,
+	"update": true, "folder": true, "pick": true, "ext": true,
 }
 
 // isName reports whether s matches ^[a-z0-9][a-z0-9_-]{0,31}$, the rule for
@@ -212,6 +260,11 @@ func Load(path string) (*Config, error) {
 		p := &c.Profiles[i]
 		if !isName(p.Name) {
 			return nil, fmt.Errorf("%s: invalid account name %q", path, p.Name)
+		}
+		if p.API != nil {
+			if err := p.API.Check(); err != nil {
+				return nil, fmt.Errorf("%s: account %s: %w", path, p.Name, err)
+			}
 		}
 		for _, item := range Items {
 			if g := p.Share.Get(item); g != Local && !isName(g) {

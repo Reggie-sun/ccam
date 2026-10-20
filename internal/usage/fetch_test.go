@@ -59,6 +59,9 @@ func newEnv(t *testing.T) *env {
 			fmt.Fprint(w, `{"brand_new_shape":true}`)
 		case tok == "bad":
 			w.WriteHeader(401)
+		case tok == "limited":
+			w.Header().Set("Retry-After", "120")
+			w.WriteHeader(429)
 		default:
 			w.WriteHeader(500)
 		}
@@ -223,6 +226,43 @@ func TestRefreshOnlyWhenNotRunning(t *testing.T) {
 	}
 	if info, _ := os.Stat(filepath.Join(a.Dir, ".credentials.json")); runtime.GOOS != "windows" && info.Mode().Perm() != 0o600 {
 		t.Fatal("perm")
+	}
+}
+
+func TestRateLimitedLookupWaitsBeforeAskingAgain(t *testing.T) {
+	e := newEnv(t)
+	base := time.Now() // the token in e.account expires an hour from now
+	e.f.Now = func() time.Time { return base }
+	a := e.account("a", "limited", future)
+	r := e.f.Fetch(context.Background(), a, Options{NoCache: true})
+	if r.Status != StatusError || !strings.Contains(r.Err, "rate limited") || e.hits.Load() != 1 {
+		t.Fatalf("first: %+v hits=%d", r, e.hits.Load())
+	}
+	// Within Retry-After, even --no-cache does not ask again.
+	e.f.Now = func() time.Time { return base.Add(time.Minute) }
+	r = e.f.Fetch(context.Background(), a, Options{NoCache: true})
+	if e.hits.Load() != 1 || !strings.Contains(r.Err, "rate limited") {
+		t.Fatalf("during the pause: %+v hits=%d", r, e.hits.Load())
+	}
+	e.f.Now = func() time.Time { return base.Add(3 * time.Minute) }
+	e.f.Fetch(context.Background(), a, Options{NoCache: true})
+	if e.hits.Load() != 2 {
+		t.Fatalf("after the pause: hits=%d", e.hits.Load())
+	}
+}
+
+func TestRetryAfter(t *testing.T) {
+	at := time.Date(2026, 10, 20, 12, 0, 0, 0, time.UTC)
+	for in, want := range map[string]time.Duration{
+		"":                              defaultPause,
+		"30":                            30 * time.Second,
+		"Tue, 20 Oct 2026 12:10:00 GMT": 10 * time.Minute,
+		"soon":                          defaultPause,
+		"999999":                        maxPause,
+	} {
+		if got := retryAfter(in, at); got != want {
+			t.Errorf("%q: %v", in, got)
+		}
 	}
 }
 

@@ -5,6 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/jhyunwoo/ccam/internal/config"
 	"github.com/jhyunwoo/ccam/internal/profile"
 )
 
@@ -80,4 +81,13 @@ func orNone(s string) string {
 		return "not logged in"
 	}
 	return s
+}
+
+// accountLabel is what lists show for an account: its email, its API
+// endpoint, or "not logged in".
+func accountLabel(p *config.Profile) string {
+	if p.API != nil && p.Email == "" {
+		return p.API.Label()
+	}
+	return orNone(p.Email)
 }

@@ -37,10 +37,14 @@ func TestParse(t *testing.T) {
 		{[]string{"ccam", "run", "--fallback", "work", "-p"}, route{kind: routeLaunch, sel: "work", args: []string{"-p"}, fallback: true}},
 		{[]string{"ccam", "work", "--fallback"}, route{kind: routeLaunch, sel: "work", args: []string{"--fallback"}}}, // claude's argument
 		{[]string{"ccam", "--fallback", "usage"}, route{kind: routeCLI, args: []string{"--fallback"}}},
+		{[]string{"ccam", "--fallback", "--wait", "work", "-p"}, route{kind: routeLaunch, sel: "work", args: []string{"-p"}, fallback: true, wait: "5h"}},
+		{[]string{"ccam", "--wait=30m", "--fallback", "-p", "x"}, route{kind: routeLaunch, args: []string{"-p", "x"}, fallback: true, wait: "30m"}},
+		{[]string{"ccam", "run", "--fallback", "--wait=2h", "work", "-p"}, route{kind: routeLaunch, sel: "work", args: []string{"-p"}, fallback: true, wait: "2h"}},
+		{[]string{"ccam", "work", "--wait"}, route{kind: routeLaunch, sel: "work", args: []string{"--wait"}}}, // claude's argument
 	}
 	for _, c := range cases {
 		got := parse(c.argv)
-		if got.kind != c.want.kind || got.sel != c.want.sel || got.dry != c.want.dry || got.fallback != c.want.fallback || !sameArgs(got.args, c.want.args) {
+		if got.kind != c.want.kind || got.sel != c.want.sel || got.dry != c.want.dry || got.fallback != c.want.fallback || got.wait != c.want.wait || !sameArgs(got.args, c.want.args) {
 			t.Errorf("%q:\n got %+v\nwant %+v", c.argv, got, c.want)
 		}
 	}

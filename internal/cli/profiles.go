@@ -27,16 +27,41 @@ func addCmd(e *env) *cobra.Command {
 	var noLogin bool
 	var shares []string
 	var shortcut string
+	var api config.API
+	var useAPI bool
 	cmd := &cobra.Command{
 		Use:   "add [name]",
 		Short: "Add an account: create profile → log in → optional shortcut",
 		Long: "Run on a terminal without options, a wizard asks for the name, the shared items\n" +
 			"and whether to create a shortcut command (and its name).\n" +
-			"Otherwise no shortcut is created unless --shortcut names one.",
-		Example: "  ccam add\n  ccam add work --shortcut ccwork\n  ccam add side --no-login --share history=team",
-		Args:    cobra.MaximumNArgs(1),
+			"Otherwise no shortcut is created unless --shortcut names one.\n\n" +
+			"--api adds an account that uses an API key instead of a Claude login: Anthropic's\n" +
+			"API, or a compatible endpoint (--base-url) such as LiteLLM or OpenRouter. The key\n" +
+			"is not stored; --key-from says where ccam reads it at each launch:\n" +
+			"  env:NAME          an environment variable\n" +
+			"  command:COMMAND   the first line a command prints (a password manager, a keychain)",
+		Example: "  ccam add\n  ccam add work --shortcut ccwork\n  ccam add side --no-login --share history=team\n" +
+			"  ccam add api --api --key-from env:ANTHROPIC_KEY_WORK\n" +
+			"  ccam add gw --api --base-url https://llm.example.com --auth bearer --key-from 'command:pass show llm/key'",
+		Args: cobra.MaximumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if interactive(e) && !cmd.Flags().Changed("share") && !cmd.Flags().Changed("shortcut") && !noLogin {
+			for _, f := range []string{"base-url", "key-from", "auth", "model"} {
+				if cmd.Flags().Changed(f) && !useAPI {
+					return fmt.Errorf("--%s works with --api", f)
+				}
+			}
+			if useAPI {
+				if len(args) == 0 {
+					return fmt.Errorf("an account name is required: ccam add <name> --api --key-from …")
+				}
+				if api.KeyFrom == "" {
+					return fmt.Errorf("--api needs --key-from env:NAME or command:COMMAND")
+				}
+				if err := api.Check(); err != nil {
+					return err
+				}
+			}
+			if interactive(e) && !useAPI && !cmd.Flags().Changed("share") && !cmd.Flags().Changed("shortcut") && !noLogin {
 				cfg, err := e.load()
 				if err != nil {
 					return err
@@ -63,9 +88,17 @@ func addCmd(e *env) *cobra.Command {
 					return err
 				}
 			}
-			return addProfile(e, args[0], share, !noLogin, shortcut)
+			if useAPI {
+				return addAPIProfile(e, args[0], share, shortcut, &api)
+			}
+			return addProfile(e, args[0], share, !noLogin, shortcut, nil)
 		},
 	}
+	cmd.Flags().BoolVar(&useAPI, "api", false, "an API key account instead of a Claude login")
+	cmd.Flags().StringVar(&api.BaseURL, "base-url", "", "with --api: the endpoint (default: Anthropic's API)")
+	cmd.Flags().StringVar(&api.KeyFrom, "key-from", "", "with --api: env:NAME or command:COMMAND")
+	cmd.Flags().StringVar(&api.Auth, "auth", "", "with --api: api-key (x-api-key, default) or bearer")
+	cmd.Flags().StringVar(&api.Model, "model", "", "with --api: the model to use (ANTHROPIC_MODEL)")
 	cmd.Flags().BoolVar(&noLogin, "no-login", false, "log in later with ccam login <name>")
 	cmd.Flags().StringArrayVar(&shares, "share", nil, "share item=group|local (repeatable)")
 	cmd.Flags().StringVar(&shortcut, "shortcut", "", "also create this shortcut command (e.g. ccwork); none without it")
@@ -78,7 +111,24 @@ func checkShortcut(e *env, cfg *config.Config, prof, name string) error {
 	return shim.Check(name, e.paths.Bin, self, cfg, prof)
 }
 
-func addProfile(e *env, name string, share config.Share, login bool, shortcut string) error {
+// addAPIProfile adds an API key account: no login, the key read at launch.
+func addAPIProfile(e *env, name string, share config.Share, shortcut string, api *config.API) error {
+	if _, err := ReadKeyForCheck(api); err != nil {
+		fmt.Fprintf(e.stderr, "Note: %v. Set it before starting the account.\n", err)
+	}
+	return addProfile(e, name, share, false, shortcut, api)
+}
+
+// ReadKeyForCheck reads an env: key to tell early that it is missing;
+// command: sources are not run outside a launch.
+func ReadKeyForCheck(api *config.API) (string, error) {
+	if !strings.HasPrefix(api.KeyFrom, "env:") {
+		return "", nil
+	}
+	return launcher.ReadAPIKey(api.KeyFrom)
+}
+
+func addProfile(e *env, name string, share config.Share, login bool, shortcut string, api *config.API) error {
 	cfg, err := e.load()
 	if err != nil {
 		return err
@@ -93,6 +143,7 @@ func addProfile(e *env, name string, share config.Share, login bool, shortcut st
 		return err
 	}
 	prof.Shortcut = shortcut
+	prof.API = api
 	if err := applyShare(e, cfg, prof); err != nil {
 		// The folder is new and unregistered; left behind, it would block
 		// every retry with "folder already exists".
@@ -117,7 +168,7 @@ func addProfile(e *env, name string, share config.Share, login bool, shortcut st
 	if err != nil {
 		return err
 	}
-	e.printf("✓ %s (%s) added\n", name, orNone(prof.Email))
+	e.printf("✓ %s (%s) added\n", name, accountLabel(prof))
 	printShortcut(e, prof)
 	if claudeDir := filepath.Join(e.paths.Home, ".claude"); len(cfg.Profiles) == 1 && migrate.HasContent(claudeDir) {
 		e.printf("Tip: run `ccam migrate` to copy your existing Claude Code settings (%s) into the shared settings.\n", claudeDir)
@@ -131,6 +182,9 @@ func loginProfile(e *env, sel string) (*config.Profile, error) {
 	cfg, prof, err := e.loadProfile(sel)
 	if err != nil {
 		return nil, err
+	}
+	if prof.API != nil {
+		return nil, fmt.Errorf("%s is an API key account (%s): it has no login; its key comes from %s", prof.Name, prof.API.Label(), prof.API.KeyFrom)
 	}
 	name := prof.Name
 	if err := runLogin(e, cfg, prof); err != nil {
@@ -205,7 +259,8 @@ type listRow struct {
 	Default  bool              `json:"default"`
 	Dir      string            `json:"dir"`
 	LastUsed *time.Time        `json:"last_used,omitempty"`
-	Share    map[string]string `json:"share"` // item → group, or "local"
+	API      string            `json:"api,omitempty"` // "API" or "API: <host>" for API key accounts
+	Share    map[string]string `json:"share"`         // item → group, or "local"
 }
 
 func listCmd(e *env) *cobra.Command {
@@ -233,6 +288,9 @@ func listProfiles(e *env, asJSON bool) error {
 	for i := range cfg.Profiles {
 		p := &cfg.Profiles[i]
 		r := listRow{Slot: p.Slot, Shortcut: p.Shortcut, Name: p.Name, Email: p.Email, Default: def == p, Dir: profile.Dir(e.paths, p), Share: map[string]string{}}
+		if p.API != nil {
+			r.API = p.API.Label()
+		}
 		for _, item := range config.Items {
 			r.Share[item] = p.Share.Get(item)
 		}
@@ -258,7 +316,9 @@ func listProfiles(e *env, asJSON bool) error {
 			mark = "*"
 		}
 		email := r.Email
-		if email == "" {
+		if r.API != "" {
+			email = "(" + r.API + ")"
+		} else if email == "" {
 			email = "(not logged in)"
 		}
 		last := "-"
@@ -426,6 +486,9 @@ func logoutCmd(e *env) *cobra.Command {
 			cfg, p, err := e.loadProfile(args[0])
 			if err != nil {
 				return err
+			}
+			if p.API != nil {
+				return fmt.Errorf("%s is an API key account: it has no login to remove (its key comes from %s)", p.Name, p.API.KeyFrom)
 			}
 			if err := runClaude(e, cfg, p, "auth", "logout"); err != nil {
 				return err

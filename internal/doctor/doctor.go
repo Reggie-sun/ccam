@@ -89,6 +89,19 @@ func Run(p paths.Paths, cfg *config.Config, opt Options) []Finding {
 	return r.out
 }
 
+// checkAPIKey reports where an API key account gets its key. An env:
+// source is read to tell whether it is set; a command: source is not run,
+// since it may ask for a password.
+func checkAPIKey(r *report, name string, api *config.API) {
+	if env, ok := strings.CutPrefix(api.KeyFrom, "env:"); ok {
+		if _, err := launcher.ReadAPIKey(api.KeyFrom); err != nil {
+			r.add(Warn, name, "%s; $%s is empty, so the account cannot start", api.Label(), env)
+			return
+		}
+	}
+	r.add(OK, name, "%s, key from %s", api.Label(), api.KeyFrom)
+}
+
 // checkFolders reports `ccam folder` entries that no longer work. They are
 // left for the user: removing one would change which account starts there.
 func checkFolders(r *report, cfg *config.Config) {
@@ -221,6 +234,10 @@ func checkCredentials(r *report, prof *config.Profile, dir, home string, fix boo
 				f.Fixed = true
 			}
 		}
+	}
+	if api := prof.API; api != nil {
+		checkAPIKey(r, prof.Name, api)
+		return
 	}
 	data, _, err := creds.Read(dir, home)
 	if errors.Is(err, creds.ErrNone) {

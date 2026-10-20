@@ -119,7 +119,7 @@ func newRoot(e *env) *cobra.Command {
 	root.ValidArgsFunction = profileNames(e) // `ccam <tab>` lists accounts
 	root.AddCommand(
 		addCmd(e), listCmd(e), runCmd(e), useCmd(e), removeCmd(e), renameCmd(e),
-		loginCmd(e), logoutCmd(e), shimsCmd(e), versionCmd(e), shareCmd(e), doctorCmd(e), mcpCmd(e), nextCmd(e), usageCmd(e), statuslineCmd(e), importCmd(e), migrateCmd(e), shortcutCmd(e), folderCmd(e), updateCmd(e), completionCmd(e),
+		loginCmd(e), logoutCmd(e), shimsCmd(e), versionCmd(e), shareCmd(e), doctorCmd(e), mcpCmd(e), nextCmd(e), usageCmd(e), statuslineCmd(e), importCmd(e), migrateCmd(e), shortcutCmd(e), folderCmd(e), pickCmd(e), extCmd(e), updateCmd(e), completionCmd(e),
 	)
 	for _, c := range root.Commands() {
 		switch c.Name() {
@@ -134,7 +134,7 @@ func newRoot(e *env) *cobra.Command {
 // refuses the flag instead of quietly doing the real thing.
 var dryRunCommands = map[string]bool{
 	"ccam": true, "ccam run": true, "ccam next": true, "ccam share": true, "ccam migrate": true,
-	"ccam shortcut": true, "ccam folder": true, "ccam update": true, "ccam doctor": true, "ccam usage": true,
+	"ccam shortcut": true, "ccam folder": true, "ccam pick": true, "ccam ext": true, "ccam update": true, "ccam doctor": true, "ccam usage": true,
 	"ccam list": true, "ccam mcp list": true, "ccam version": true, "ccam completion": true,
 	"ccam help": true, "ccam __complete": true, "ccam __completeNoDesc": true,
 }
@@ -165,6 +165,11 @@ func ExecuteWith(args []string, p paths.Paths, stdin io.Reader, stdout, stderr i
 		var code launcher.ExitCode // claude's own exit code where ccam waits for it
 		if errors.As(err, &code) {
 			return int(code)
+		}
+		var coded codedError
+		if errors.As(err, &coded) {
+			fmt.Fprintln(stderr, "ccam:", coded.msg)
+			return coded.code
 		}
 		fmt.Fprintln(stderr, "ccam:", err)
 		return 1

@@ -93,6 +93,7 @@ func usageAccounts(e *env, cfg *config.Config) []usage.Account {
 			Name: p.Name, Slot: p.Slot, Dir: profile.Dir(e.paths, p),
 			SessionDir: launcher.SessionDir(e.paths, p.Name),
 			Imported:   p.Dir != "",
+			API:        p.API != nil,
 		})
 	}
 	return out
