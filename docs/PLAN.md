@@ -511,3 +511,33 @@ Windows에서 바뀌는 부분:
 - D. Windows: 이 컴퓨터(WSL2)의 Windows 11 호스트에서 교차 컴파일한 모든 패키지 테스트와 e2e가 통과합니다. 실제 `claude.exe` 2.1.302로 확인한 것: `ccam work --version`과 `ccwork.exe --version`이 실행되고, `ccam work auth status`의 `configDirectory`가 ccam 프로필 폴더이며, `--dry-run`이 출력한 줄을 PowerShell에 그대로 넣으면 실행됩니다. 공유 항목은 실제 심볼릭 링크로 만들어지고 `doctor`가 통과하며, `ccam folder`가 동작합니다. 사용자의 실제 `C:\Users\biost\.claude`와 `.claude.json`의 수정 시각은 전후로 같았습니다. 상태줄 명령(`C:/…/ccam.exe statusline`, `~/…`)은 Git Bash와 PowerShell 양쪽에서 실행됩니다. `install.ps1`은 로컬 릴리스 서버로 설치·덮어쓰기(실행 중 파일은 `.old`로)·체크섬 위조 거부를 확인했습니다. junction 대체 경로는 심볼릭 링크 실패를 흉내 낸 테스트로 확인했고, `RemoveAll`이 junction 너머를 지우지 않는 것도 테스트합니다.
 - Windows에서 확인하지 못한 것: 개발자 모드가 꺼진 실제 환경(이 컴퓨터는 심볼릭 링크가 허용됨, 테스트로 대체), 브라우저 로그인과 입력 가리기(대화형 콘솔 필요), 대화형 Claude Code 안의 상태줄 표시, `install.ps1`의 사용자 `PATH` 추가(실제 사용자 환경 변수를 바꾸므로 생략), ARM64.
 - 성능: `BenchmarkLaunchPath` main 76.78 µs → 78.18 µs (+1.82%). 처음 구현에서 `share.Check`가 항목마다 `lstat`을 두 번 불러 +24%였고, 첫 `lstat` 결과를 재사용해 고쳤습니다. hyperfine p95 4.5~4.9 ms, 최대 메모리 8.3 MB.
+
+## 2026-10-20 계획 2: clausona 비교에서 나온 보완
+
+clausona(larcane97/clausona v0.12.0-beta) 조사에서 나온 단점을 보완합니다. 원칙은 그대로입니다: 로그인 토큰을 스스로 갱신하지 않고, 실행 경로는 10 ms 안, 셸 함수·백그라운드 프로세스 없음.
+
+| 단계 | 내용 |
+| --- | --- |
+| 1. 고르는 규칙 | `config.toml`의 `auto_max_usage`(기본 100)와 `auto_strategy`(`headroom` 기본, `expiring`). 계정은 판단하는 모든 창(5시간, 주간, `--model`이 있으면 그 모델의 주간 창)이 임계값 아래면 "여유", 100% 미만이면 "넘침", 100%면 "가득". 여유 계정 중 전략으로 고르고, 없으면 넘침 계정 중 사용률이 가장 낮은 계정. `next --auto`·`--fallback`·`pick`이 같은 규칙(`usage.Policy`)을 씁니다. `next`와 `pick`은 `--max-usage`·`--strategy`로 덮어씁니다. |
+| 1. 종료 코드 75 | 고를 계정이 없으면 EX_TEMPFAIL(75)로 끝냅니다(`next --auto`, `pick`, 모든 계정이 한도인 `--fallback`). |
+| 1. `--wait[=시간]` | `--fallback`·`next --auto`·`pick`에서 계정이 없으면 가장 빨리 여유가 생기는 시각(막고 있는 창의 초기화 시각)까지 기다렸다가 다시 고릅니다. 기본 최대 5시간, 그 안에 생기지 않으면 75. |
+| 1. 429 | 사용량 조회가 429를 받으면 `Retry-After`(없으면 5분) 동안 그 계정을 다시 조회하지 않고 저장된 값을 씁니다. |
+| 2. `ccam pick` | 스크립트·병렬 작업자용. 규칙대로 고른 계정 이름을 출력(`--json`도). 잠금 아래에서 고르고, 최근 2분 안에 고른 계정은 뒤로 미뤄 동시에 시작한 작업자들이 서로 다른 계정을 받게 합니다. |
+| 3. API 키 계정 | `ccam add <이름> --api --base-url … --key-from env:NAME|command:"…"`. 키는 실행할 때 그 출처에서 읽어 환경 변수로만 넘기고 파일에 저장하지 않습니다. 물려받은 인증·공급자 변수는 지웁니다. |
+| 4. `ccam ext` | 읽기 전용 진단: 계정마다 로드되는 스킬·명령·에이전트·플러그인·MCP 서버·훅과 그 출처(그룹, 계정, 프로젝트), 깨진 링크, 여러 곳에 정의된 MCP 이름, 계정 사이 차이. |
+| 5. Claude Code 플러그인 | 저장소의 마켓플레이스와 `ccam` 플러그인: 사용량 확인, 다음 계정, 작업자에게 계정 나누기를 알려 주는 스킬과 명령. |
+| 6. 문서 | 기능 페이지(pick, API 키 계정, ext)와 바뀐 페이지, 30개 언어, 비교 페이지에 clausona. |
+
+보류: Codex 지원(범위), 비용 집계(ccusage 안내), 쉬는 계정 토큰 자동 갱신(원칙).
+
+진행 기록 (계획 2, 2026-10-20):
+
+- 고르는 규칙: `usage.Policy`(`internal/usage/choose.go`)가 `next --auto`·`--fallback`·`pick`의 공통 규칙입니다. 여유(모든 창이 임계값 아래) → 넘침(100% 미만) → 가득(고르지 않음) 순이고, 전략 `expiring`은 5시간 창이 가장 빨리 초기화되는 계정을 고릅니다. 모델 창은 `--model` 값에 `opus`·`sonnet`·`haiku`·`fable`이 들어 있으면 이름에 같은 낱말이 있는 모델별 주간 창을 봅니다. `FreeAt`은 가득 찬 계정만 봅니다(넘침 계정은 어차피 고를 수 있으므로).
+- `--wait`: 막고 있는 창의 초기화 시각 30초 뒤까지 자고 다시 고릅니다. 초기화 시각을 모르면 10분 뒤. `--fallback --wait`은 방금 한도에 걸린 계정이 60초 캐시에서 여유 있어 보일 수 있으므로 처음 한 번은 반드시 잡니다(바로 같은 계정을 다시 돌리는 반복 방지). 시계와 잠은 테스트에서 바꿉니다(`clock`, `sleep`).
+- 종료 코드 75: `next --auto`·`pick`에서 고를 계정이 없을 때, `--fallback`에서 모든 계정이 한도일 때. 이전에는 `--fallback`이 마지막 시도의 종료 코드를 돌려줬습니다(동작 변경).
+- 429: `<이름>.pause`에 다시 물을 시각(`Retry-After`, 없으면 5분, 최대 1시간)을 적고 그때까지는 `--no-cache`여도 묻지 않습니다. rename·remove가 함께 옮기고 지웁니다.
+- `ccam pick`: 잠금(`picks.lock`) 아래에서 고르고 `picks/<이름>`에 시각을 적습니다. 2분 안에 고른 계정은 먼저 뺍니다. 같은 프로세스 안 동시 호출 3개가 서로 다른 계정을 받는 것을 테스트합니다.
+- API 키 계정: `config.toml`의 `[profile.api]`(`base_url`, `key_from`, `auth`, `model`). 키는 실행 직전(`launcher.Ready`, dry run이 아닐 때)에 읽어 자식 환경 변수로만 넘기고, 물려받은 인증·공급자 변수 8개를 지웁니다. `command:` 출처는 dry run에서 실행하지 않습니다(e2e가 표시 파일로 확인). login·logout은 거절, usage는 `API`, 자동 선택 대상에서 빠짐.
+- `ccam ext`: `internal/ext`가 읽기만 합니다. 공유 폴더 자체가 링크이면 `WalkDir`가 따라가지 않아 명령·에이전트가 빠지던 것을 실제 출력에서 발견해 고쳤습니다(링크를 먼저 풂).
+- 플러그인: 저장소 루트 `.claude-plugin/marketplace.json`과 `plugins/ccam`(스킬 하나, `/ccam:usage`·`/ccam:ext`). `claude plugin validate --strict`로 둘 다 통과. 주의: `claude plugin init`은 현재 `CLAUDE_CONFIG_DIR`의 skills 폴더에 만들어서, 이 작업 중 공유 그룹에 생긴 `demo` 폴더를 지웠습니다. 플러그인은 손으로 쓰고 validate로만 확인합니다.
+- 확인: 리눅스 전체 테스트, lint(리눅스·Windows), Windows 호스트 전체 테스트 통과. `BenchmarkLaunchPath` main 82.36 µs → 80.90 µs (~, p=0.161), hyperfine p95 5.1~5.7 ms.

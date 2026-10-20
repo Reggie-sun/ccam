@@ -19,7 +19,7 @@
 - **Claude Code 옆에서 돌아가는 프로세스가 없습니다.** ccam은 `exec`로 `claude`가 됩니다. 래퍼·프록시·데몬이 없고, 실행할 때 더해지는 시간은 약 4 ms입니다. (`exec`이 없는 Windows에서는 Claude Code가 끝날 때까지 기다렸다가 종료 코드를 그대로 돌려줍니다.)
 - **항목별·그룹별로 공유합니다.** MCP 서버·설정·CLAUDE.md·확장 기능·대화 내역을 각각 `local`이나 그룹으로 정합니다. MCP 서버는 `--mcp-config`로 넘기므로 `.claude.json`을 고치지 않습니다.
 - **바꾸기 전에 계획을 보여 주고 백업합니다.** 파일을 옮기기 전의 계획 출력, 백업, `--dry-run`, 원자적 쓰기, `ccam doctor --fix`.
-- **스크립트도 한도에 대응합니다.** `ccam --fallback work -p "…"`는 `work`가 한도에 걸리면 여유가 가장 많은 계정으로 같은 명령을 다시 실행합니다. 대화형 세션은 상태줄이 `ccam next --auto --continue`를 알려 줍니다.
+- **스크립트도 한도에 대응합니다.** `ccam --fallback work -p "…"`는 `work`가 한도에 걸리면 여유가 가장 많은 계정으로 같은 명령을 다시 실행하고, `ccam pick`은 병렬 작업자마다 다른 계정을 줍니다. 여유 있는 계정이 없으면 둘 다 종료 코드 75로 끝내거나 `--wait`로 기다립니다. 대화형 세션은 상태줄이 `ccam next --auto --continue`를 알려 줍니다.
 - **프로젝트마다 맞는 계정.** `ccam folder work ~/code/company`로 그 폴더에서 이름 없이 실행하면 `work`가 열립니다.
 - **정적 바이너리 하나입니다.** Linux, macOS, Windows를 지원하고, 설치할 런타임이 없고, 설치와 업데이트는 체크섬을 확인하며, 텔레메트리가 없습니다.
 
@@ -38,6 +38,8 @@ curl -fsSL https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.sh | sh
 - 소스: `go install github.com/jhyunwoo/ccam/cmd/ccam@latest` (Go 1.26 이상)
 
 Claude Code(`claude`)가 먼저 설치되어 있어야 합니다.
+
+Claude Code 플러그인(Claude Code 2.1.275 이상): `/plugin install ccam --marketplace jhyunwoo/ccam`을 설치하면 Claude Code가 사용량을 확인하고, `ccam pick`으로 다른 계정에서 작업자를 띄우고, `ccam ext`로 빠진 스킬의 원인을 설명합니다.
 
 ## 업데이트
 
@@ -76,13 +78,15 @@ SSH로 접속한 원격 서버에서 로그인할 때는 내 컴퓨터의 브라
 | `ccam` | 선택 화면 (터미널이 아니면 목록 출력) |
 | `ccam <이름\|번호> [claude 인자]` | 그 계정으로 `claude` 실행. 인자는 해석하지 않고 그대로 전달 |
 | `<단축 명령> [claude 인자]` | 계정에 단축 명령이 있으면 그 이름으로 바로 실행 |
-| `ccam add [이름]` | 계정 추가. 터미널에서는 마법사, `--no-login`·`--share 항목=그룹`·`--shortcut <명령>`도 가능 |
+| `ccam add [이름]` | 계정 추가. 터미널에서는 마법사, `--no-login`·`--share 항목=그룹`·`--shortcut <명령>`도 가능. `--api --key-from env:NAME\|command:CMD`는 API 키 계정 |
 | `ccam shortcut <이름> [명령] [--remove]` | 계정의 단축 명령 보기·만들기·이름 바꾸기·지우기 |
 | `ccam list [--json]` | 계정 목록 |
 | `ccam use <이름>` | 기본 계정 (`ccam -p "…"`처럼 이름 없이 실행할 때) |
 | `ccam folder [이름] [폴더] [--remove]` | 그 폴더와 하위 폴더에서 이름 없이 실행할 때 쓸 계정. 인자가 없으면 목록 |
 | `ccam --fallback [이름] -p …` | 계정이 사용량 한도에 걸리면 여유가 가장 많은 계정으로 다시 실행 (`-p` 실행만) |
-| `ccam next [--auto] [--continue]` | 다음 계정으로. `--auto`는 5시간 사용률이 가장 낮은 계정 |
+| `ccam next [--auto] [--continue]` | 다음 계정으로. `--auto`는 사용량으로 고름 (`--max-usage`, `--strategy`, `--wait`) |
+| `ccam pick [--json] [--model m] [--wait]` | 스크립트용으로 여유가 가장 많은 계정 이름 출력. 함께 시작한 작업자는 서로 다른 계정, 없으면 종료 코드 75 |
+| `ccam ext [이름] [--json]` | 계정마다 로드되는 스킬·명령·플러그인·MCP 서버·훅과 그 출처, 문제 |
 | `ccam usage [--watch] [--json] [-v]` | 사용량 (줄임 `ccam u`) |
 | `ccam share <이름> --history on …` | 공유 변경. 이전 계획을 보여주고 확인 후 실행 |
 | `ccam mcp add\|add-json\|list\|remove\|import` | 공유 MCP 서버 |

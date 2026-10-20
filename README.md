@@ -19,7 +19,7 @@ All program output (messages, prompts, help) is in English.
 - **Nothing runs beside Claude Code.** ccam `exec`s into `claude`: no wrapper, proxy or daemon, and about 4 ms added at launch. (Windows has no `exec`; there ccam waits for Claude Code and passes its exit code on.)
 - **Sharing per item and per group.** MCP servers, settings, CLAUDE.md, extensions and history each are `local` or a group. MCP servers go through `--mcp-config`, so `.claude.json` is not edited.
 - **Changes are planned and backed up.** A plan before any files move, backups, `--dry-run`, atomic writes and `ccam doctor --fix`.
-- **Limits handled for scripts too.** `ccam --fallback work -p "…"` runs the same command again as the account with the most room when `work` reaches its limit; interactive sessions get a `ccam next --auto --continue` hint in the status line.
+- **Limits handled for scripts too.** `ccam --fallback work -p "…"` runs the same command again as the account with the most room when `work` reaches its limit, and `ccam pick` gives each parallel worker its own account; both exit with 75 (or `--wait`) when nobody has room. Interactive sessions get a `ccam next --auto --continue` hint in the status line.
 - **The right account per project.** `ccam folder work ~/code/company` makes name-less launches there use `work`.
 - **One static binary.** Linux, macOS and Windows, no runtime to install, checksum-verified install and update, no telemetry.
 
@@ -40,6 +40,8 @@ irm https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.ps1 | iex
 ```
 
 This installs `%USERPROFILE%\.local\bin\ccam.exe` after verifying the checksum and adds the folder to your user `PATH`. Shared folders work as they are; sharing single files (`settings.json`, `CLAUDE.md`, `history.jsonl`) needs Developer Mode, because Windows lets only that mode (or an administrator) link files. Alternatives: the `.deb` from [Releases](https://github.com/jhyunwoo/ccam/releases), or `go install github.com/jhyunwoo/ccam/cmd/ccam@latest` (Go 1.26+). Claude Code (`claude`) must be installed.
+
+Claude Code plugin (Claude Code 2.1.275+): `/plugin install ccam --marketplace jhyunwoo/ccam` teaches Claude Code to check usage, start workers on other accounts with `ccam pick`, and explain missing skills with `ccam ext`.
 
 ## Update
 
@@ -78,13 +80,15 @@ Signing in on a remote machine over SSH: the browser on your computer ends on a 
 | `ccam` | Picker (prints the list when not on a terminal) |
 | `ccam <name\|number> [claude args]` | Run `claude` as that account; args are passed through verbatim |
 | `<shortcut> [claude args]` | Launch through the account's shortcut command, if it has one |
-| `ccam add [name]` | Add an account (wizard on a terminal; `--no-login`, `--share item=group`, `--shortcut <cmd>`) |
+| `ccam add [name]` | Add an account (wizard on a terminal; `--no-login`, `--share item=group`, `--shortcut <cmd>`; `--api --key-from env:NAME\|command:CMD` for an API key account) |
 | `ccam shortcut <name> [cmd] [--remove]` | Show, create, rename or remove an account's shortcut command |
 | `ccam list [--json]` | List accounts |
 | `ccam use <name>` | Default account for name-less runs such as `ccam -p "…"` |
 | `ccam folder [name] [folder] [--remove]` | Account for name-less runs in a folder and below; without arguments, list them |
 | `ccam --fallback [name] -p …` | Run again as the account with the most room when the account reaches its usage limit (`-p` runs only) |
-| `ccam next [--auto] [--continue]` | Next account; `--auto` picks the lowest 5-hour usage |
+| `ccam next [--auto] [--continue]` | Next account; `--auto` picks by usage (`--max-usage`, `--strategy`, `--wait`) |
+| `ccam pick [--json] [--model m] [--wait]` | Print the account with the most room for a script; workers started together get different accounts; exit 75 when none |
+| `ccam ext [name] [--json]` | Skills, commands, plugins, MCP servers and hooks each account loads, with their source and problems |
 | `ccam usage [--watch] [--json] [-v]` | Usage (`ccam u`) |
 | `ccam share <name> --history on …` | Change sharing; prints a migration plan and asks first |
 | `ccam mcp add\|add-json\|list\|remove\|import` | Shared MCP servers |
