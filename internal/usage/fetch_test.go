@@ -8,6 +8,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"sync/atomic"
 	"testing"
@@ -220,7 +221,7 @@ func TestRefreshOnlyWhenNotRunning(t *testing.T) {
 	if doc.OAuth.AccessToken != "ok-new-format.json" || doc.OAuth.RefreshToken != "rt-new" || doc.OAuth.ExpiresAt < future-60000 || doc.MCP["x"] != "keep" {
 		t.Fatalf("credentials after refresh: %s", data)
 	}
-	if info, _ := os.Stat(filepath.Join(a.Dir, ".credentials.json")); info.Mode().Perm() != 0o600 {
+	if info, _ := os.Stat(filepath.Join(a.Dir, ".credentials.json")); runtime.GOOS != "windows" && info.Mode().Perm() != 0o600 {
 		t.Fatal("perm")
 	}
 }
@@ -233,6 +234,31 @@ func TestFormatChangeIsFlagged(t *testing.T) {
 	}
 	if r := e.f.Fetch(context.Background(), e.account("b", "boom", future), Options{}); r.FormatChanged {
 		t.Fatal("HTTP 500 is not a format change")
+	}
+}
+
+func TestRefreshRateLimitedSaysWait(t *testing.T) {
+	e := newEnv(t)
+	limited := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusTooManyRequests)
+	}))
+	t.Cleanup(limited.Close)
+	e.f.TokenURL = limited.URL
+	a := e.account("x", "stale", time.Now().Add(-time.Hour).UnixMilli())
+	r := e.f.Fetch(context.Background(), a, Options{Refresh: true})
+	if r.Status != StatusExpired || !strings.Contains(r.Err, "try again later") || strings.Contains(r.Err, "ccam login") {
+		t.Fatalf("%+v", r)
+	}
+	data, _ := os.ReadFile(filepath.Join(a.Dir, ".credentials.json"))
+	if !strings.Contains(string(data), `"rt-old"`) {
+		t.Fatalf("credentials must be untouched: %s", data)
+	}
+}
+
+func TestTokenURLIsClaudeCodes(t *testing.T) {
+	// Claude Code 2.1.304 refreshes at this address (TOKEN_URL in its bundle).
+	if TokenURL != "https://platform.claude.com/v1/oauth/token" {
+		t.Fatal(TokenURL)
 	}
 }
 

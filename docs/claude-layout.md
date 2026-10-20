@@ -112,7 +112,10 @@ first reply (`seven_day` was absent on that account, matching the live endpoint'
 
 ### Token refresh (unverified)
 
-`ccam usage --refresh` posts `grant_type=refresh_token` to `https://console.anthropic.com/v1/oauth/token`
-with Claude Code's public client id. This was **not** exercised against the live service: refresh tokens
+`ccam usage --refresh` posts `grant_type=refresh_token` to `https://platform.claude.com/v1/oauth/token`
+with Claude Code's public client id. Claude Code 2.1.304 uses this address (`TOKEN_URL` in its bundle; earlier
+versions used `https://console.anthropic.com/v1/oauth/token`, which still answers). A probe with an invalid refresh
+token on 2026-10-20 got a JSON `rate_limit_error` (HTTP 429) from both, so both endpoints are live; ccam reports HTTP 429 as
+"try again later" rather than asking for a new login. This was **not** exercised against the live service: refresh tokens
 rotate, so a test refresh would log out the running session that owns the token. Only unit-tested
 against a fake server; it refuses to run while a session of that profile holds the profile lock.

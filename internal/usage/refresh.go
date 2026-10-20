@@ -17,10 +17,11 @@ import (
 )
 
 // TokenURL and clientID are what Claude Code uses to refresh its OAuth
-// token. Not verified against the live service by ccam's tests (doing so
-// would rotate a real refresh token); see docs/claude-layout.md.
+// token (TOKEN_URL and CLIENT_ID in the 2.1.304 bundle). Not verified with a
+// real refresh by ccam's tests (doing so would rotate a real refresh token);
+// see docs/claude-layout.md.
 const (
-	TokenURL = "https://console.anthropic.com/v1/oauth/token"
+	TokenURL = "https://platform.claude.com/v1/oauth/token"
 	clientID = "9d1c250a-e61b-44d9-88ed-5944d1962f5e"
 )
 
@@ -77,6 +78,9 @@ func (f *Fetcher) refresh(ctx context.Context, a Account) (oauthCred, error) {
 		return oauthCred{}, err
 	}
 	defer resp.Body.Close()
+	if resp.StatusCode == http.StatusTooManyRequests {
+		return oauthCred{}, fmt.Errorf("token refresh rate limited (HTTP 429); try again later")
+	}
 	if resp.StatusCode != http.StatusOK {
 		return oauthCred{}, fmt.Errorf("token refresh failed (HTTP %d) → `ccam login %s`", resp.StatusCode, a.Name)
 	}
