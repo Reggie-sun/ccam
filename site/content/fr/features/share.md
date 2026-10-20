@@ -1,6 +1,6 @@
 ---
 title: "Partage entre comptes"
-description: "Comment ccam share relie les paramètres, CLAUDE.md, les extensions et l'historique à un dossier de groupe, avec un plan, des sauvegardes et des choix en cas de conflit, et comment off recopie le contenu."
+description: "Comment ccam share relie paramètres, CLAUDE.md, extensions et historique à un dossier de groupe, avec plan et sauvegardes, et comment off les recopie."
 updated: 2026-10-19
 order: 4
 translation: machine

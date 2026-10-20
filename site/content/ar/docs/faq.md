@@ -1,15 +1,16 @@
 ---
 title: الأسئلة الشائعة
+metaTitle: "أسئلة شائعة عن ccam: عدة حسابات Claude Code"
 description: إجابات عن ccam وحسابات Claude Code وحدود الاستخدام والمشاركة والخصوصية والأنظمة المدعومة.
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 5ff6e94786a2
+sourceHash: 88bd249ec51c
 ---
 
 ## هل ccam أداة رسمية من Anthropic؟
 
-لا. ccam مشروع مفتوح المصدر غير رسمي، وليس تابعًا لشركة Anthropic ولا معتمدًا منها. يستخدم إعداد `CLAUDE_CONFIG_DIR` الذي يوثّقه Claude Code لتشغيل عدة حسابات جنبًا إلى جنب.
+لا. ccam مشروع مفتوح المصدر غير رسمي، وليس تابعًا لشركة Anthropic ولا معتمدًا منها. يستخدم إعداد `CLAUDE_CONFIG_DIR` الذي [يوثّقه Claude Code](https://code.claude.com/docs/en/env-vars) لتشغيل عدة حسابات جنبًا إلى جنب.
 
 ## هل يُسمح لي باستخدام عدة حسابات Claude Code؟
 

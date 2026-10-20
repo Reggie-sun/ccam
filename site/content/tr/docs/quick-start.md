@@ -1,10 +1,11 @@
 ---
 title: Hızlı başlangıç
+metaTitle: "Hızlı başlangıç: Claude Code hesabı ekle ve değiştir"
 description: ccam add ile iki Claude Code hesabı ekleyin, onlara ccwork gibi kısayollar verin, aralarında geçiş yapın ve neyi paylaşacaklarını seçin.
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: d040e34d2a17
+sourceHash: a10d91d2a64e
 ---
 
 Her hesabı `ccam add` ile ekleyin, ardından Claude Code'u `ccam <name>` ile veya adını kendiniz seçtiğiniz `ccwork` gibi bir kısayolla başlatın. Çoğu kişi için bu kadarı yeterlidir.

@@ -1,10 +1,10 @@
 ---
 title: Remote Control mit ccam nutzen
-description: Die Remote Control von Claude Code mit ccam <name> rc als beliebiges Konto starten, welche Optionen gelten, warum ccam fragt, ob geteilte MCP-Server kopiert werden sollen, und wie du häufige Probleme behebst.
+description: "Die Remote Control von Claude Code mit ccam <name> rc als beliebiges Konto starten: geltende Optionen, warum ccam MCP-Server kopieren will, Fehlerbehebung."
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: b7b09f9bcb9e
+sourceHash: 59b802c44bb3
 ---
 
 `ccam work rc` startet die Remote Control von Claude Code als das Konto `work`, sodass du Sitzungen auf diesem Computer von claude.ai/code oder der mobilen Claude-App aus steuern kannst. Es funktioniert wie `claude rc`, mit einem Unterschied: Teilt das Konto MCP-Server, fragt ccam einmal, ob sie in die `.claude.json` des Kontos kopiert werden sollen, denn Sitzungen der Remote Control lesen Server von nirgendwo sonst.

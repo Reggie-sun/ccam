@@ -1,10 +1,11 @@
 ---
 title: Szybki start
+metaTitle: "Szybki start: dodaj i przełączaj konta Claude Code"
 description: Dodaj dwa konta Claude Code poleceniem ccam add, nadaj im skróty takie jak ccwork, przełączaj się między nimi i wybierz, co mają współdzielić.
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: d040e34d2a17
+sourceHash: a10d91d2a64e
 ---
 
 Dodaj każde konto poleceniem `ccam add`, a potem uruchamiaj Claude Code przez `ccam <name>` lub przez skrót o nazwie wybranej przez ciebie, na przykład `ccwork`. Większości osób to wystarczy.

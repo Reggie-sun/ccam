@@ -1,6 +1,6 @@
 ---
 title: "Mettre à jour ccam"
-description: "ccam update remplace ccam par la dernière version publiée sur GitHub après une vérification SHA-256 ; --check se contente d'informer et --version installe une étiquette de version donnée."
+description: "ccam update remplace ccam par la dernière version de GitHub après vérification SHA-256 ; --check informe seulement et --version installe une version précise."
 updated: 2026-10-19
 order: 10
 translation: machine

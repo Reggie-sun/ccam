@@ -1,8 +1,8 @@
 {
   "site": {
     "name": "ccam",
-    "title": "ccam：在一台電腦上使用多個 Claude Code 帳號",
-    "description": "ccam 是免費的開放原始碼命令列工具，讓你在一台電腦上使用多個 Claude Code 帳號，並用一個指令在帳號之間切換。",
+    "title": "ccam：Claude Code Account Manager 與帳號切換工具",
+    "description": "ccam（Claude Code Account Manager）是免費的開放原始碼工具，讓你在一台電腦上使用多個 Claude Code 帳號，並用一個指令在帳號之間切換。",
     "titleSuffix": "適用於 Claude Code 的 ccam"
   },
   "nav": {
@@ -103,10 +103,18 @@
       "compare": "比較",
       "blog": "部落格"
     },
+    "hubs": {
+      "docs": "安裝 ccam、新增你的 Claude Code 帳號、選擇它們要共用哪些內容、查詢每個指令，並找到常見問題的解答。",
+      "guides": "在一台電腦上執行多個 Claude Code 帳號的逐步指南：CLAUDE_CONFIG_DIR、用量限制和 Remote Control。",
+      "features": "詳細說明 ccam 的每項功能及所有選項：帳號、快捷指令、共用、MCP 伺服器、用量、切換、修復和更新。",
+      "compare": "逐項比較 ccam 與 Shell 別名以及其他 Claude Code 帳號切換工具，幫助你選出合適的工具。",
+      "blog": "ccam 專案的最新消息：它為什麼存在、如何運作，以及對使用多個 Claude Code 帳號的人有哪些改變。"
+    },
     "commandsTable": {
       "command": "指令",
       "does": "用途"
-    }
+    },
+    "byline": "作者：{author}"
   },
   "commands": {
     "ccam": "開啟帳號選擇器",
@@ -144,16 +152,17 @@
     "unofficial": "ccam 是非官方的開放原始碼工具，與 Anthropic 沒有關聯，也未獲得 Anthropic 認可。Claude 和 Claude Code 是 Anthropic 的商標。",
     "terms": "能否使用多個帳號取決於各帳號的條款。使用前請先確認。",
     "license": "GitHub 上的原始碼",
-    "languages": "所有語言"
+    "languages": "所有語言",
+    "analytics": "本網站使用 Cloudflare Web Analytics 統計造訪次數，它不會設定 Cookie，也不會收集個人資料。"
   },
   "changelog": {
     "title": "變更紀錄",
-    "description": "ccam 的每個版本及其變更內容。在一台電腦上使用多個 Claude Code 帳號的新指令、修正與變更。",
+    "description": "ccam 每個版本的變更內容：新增的指令、錯誤修正和效能改進，依時間由新到舊排列。",
     "empty": "目前尚未發布任何版本。main 分支的建置版本列在 GitHub 上。"
   },
   "languages": {
     "title": "語言",
-    "description": "ccam.dev 提供 {count, plural, other {# 種語言}}。選擇閱讀 ccam 文件與指南的語言。",
+    "description": "ccam.dev 提供 {count, plural, other {# 種語言}}版本，無論你選擇哪種語言，都能讀到相同的文件和指南。",
     "coverage": "根據 Unicode CLDR 人口資料，至少會說其中一種語言的人占世界人口的 {low} 到 {high}。",
     "method": "較低的數字只計算每個國家最常用的一種支援語言；較高的數字則加總所有支援語言，並將每個國家的上限定為 100%。"
   },

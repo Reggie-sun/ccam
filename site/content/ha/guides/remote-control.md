@@ -1,10 +1,10 @@
 ---
 title: Amfani da Remote Control tare da ccam
-description: "Fara Remote Control na Claude Code a matsayin kowane asusu da ccam <name> rc, ga waɗanne zaɓuɓɓuka suke aiki, dalilin da ya sa ccam ke tambaya ko zai kwafi sabobin MCP da aka raba, da yadda ake gyara matsalolin da aka saba gani."
+description: "Remote Control na Claude Code ga kowane asusu da ccam <name> rc: zaɓuɓɓukan da ke aiki, dalilin da ccam ke tayin kwafar sabobin MCP da aka raba, da gyara."
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: b7b09f9bcb9e
+sourceHash: 59b802c44bb3
 ---
 
 `ccam work rc` yana fara Remote Control na Claude Code a matsayin asusun `work`, don ka iya sarrafa zaman da ke kan wannan kwamfuta daga claude.ai/code ko manhajar Claude ta wayar hannu. Yana aiki kamar `claude rc` da bambanci guda ɗaya: idan asusun yana raba sabobin MCP, ccam yana tambaya sau ɗaya ko zai kwafe su cikin `.claude.json` na asusun, domin zaman Remote Control ba sa karanta sabobi daga ko'ina sai can.

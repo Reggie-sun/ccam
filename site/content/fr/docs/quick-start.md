@@ -1,10 +1,11 @@
 ---
 title: "Démarrage rapide"
+metaTitle: "Démarrage : ajouter et changer de compte Claude Code"
 description: Ajoutez deux comptes Claude Code avec ccam add, donnez-leur des raccourcis comme ccwork, passez de l'un à l'autre et choisissez ce qu'ils partagent.
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: d040e34d2a17
+sourceHash: a10d91d2a64e
 ---
 
 Ajoutez chaque compte avec `ccam add`, puis lancez Claude Code avec `ccam <name>` ou avec un raccourci que vous nommez vous-même, par exemple `ccwork`. C'est tout ce dont la plupart des gens ont besoin.

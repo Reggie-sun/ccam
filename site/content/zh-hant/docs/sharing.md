@@ -1,10 +1,10 @@
 ---
 title: 共用 MCP 伺服器、設定和對話記錄
 description: ccam 如何在 Claude Code 帳號間共用 MCP 伺服器、settings.json、CLAUDE.md、skills 和對話記錄，登入則各自獨立。
-updated: 2026-10-19
+updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 0df8a7d51c87
+sourceHash: 888d466b29e9
 ---
 
 每個帳號都保有自己的登入資訊。其他所有內容都可以逐項共用：ccam 會將帳號的檔案或資料夾連結到共用的群組資料夾，因此在一個帳號中所做的變更，會出現在該群組的所有帳號中。
@@ -22,6 +22,8 @@ sourceHash: 0df8a7d51c87
 新帳號會共用對話記錄以外的所有項目。
 
 登入檔案 `.credentials.json` 和 `.claude.json` 永遠不會共用。ccam 只連結固定清單中的路徑，而這兩個檔案不在清單上。
+
+本頁說明日常的操作。每個選項都在功能頁面中有詳細說明：[帳號之間的共用](/features/share)、[共用的 MCP 伺服器](/features/mcp)和[複製現有的設定](/features/migrate)。
 
 ## 群組
 

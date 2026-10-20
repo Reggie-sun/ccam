@@ -1,17 +1,17 @@
 ---
 title: Memperkenalkan ccam
 description: Mengapa ccam dibuat, apa gunanya bagi pengguna beberapa akun Claude Code, dan bagaimana ccam tidak mengganggu pekerjaan Anda.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: bbc9d9014f98
+sourceHash: a555dc969142
 ---
 
 ccam adalah alat baris perintah kecil untuk orang yang menggunakan lebih dari satu akun Claude Code di komputer yang sama: akun pribadi dan akun kerja, atau beberapa akun untuk satu proyek panjang.
 
 ## Masalahnya
 
-Claude Code mendukung beberapa akun melalui `CLAUDE_CONFIG_DIR`: satu folder per akun. Dalam praktiknya, setiap folder berdiri sendiri. Pengaturan, `CLAUDE.md`, server MCP, agen, dan skill harus disiapkan ulang di setiap folder dan diselaraskan secara manual. Percakapan tetap berada di tempat percakapan itu dimulai. Dan saat satu akun mencapai batas penggunaannya, Anda baru tahu setelah mencobanya.
+Claude Code mendukung beberapa akun melalui [`CLAUDE_CONFIG_DIR`](/guides/claude-config-dir): satu folder per akun. Dalam praktiknya, setiap folder berdiri sendiri. Pengaturan, `CLAUDE.md`, server MCP, agen, dan skill harus disiapkan ulang di setiap folder dan diselaraskan secara manual. Percakapan tetap berada di tempat percakapan itu dimulai. Dan saat satu akun mencapai batas penggunaannya, Anda baru tahu setelah mencobanya.
 
 ## Apa yang dilakukan ccam
 
@@ -32,5 +32,7 @@ ccam juga berhati-hati dengan file Anda. Setiap perubahan pada pembagian menampi
 curl -fsSL https://ccam.dev/install.sh | sh
 ccam add
 ```
+
+[Memulai cepat](/docs/quick-start) memandu Anda menambahkan dua akun, dan [cara menggunakan beberapa akun Claude Code](/guides/multiple-claude-code-accounts) menjelaskan pendekatannya dengan maupun tanpa ccam.
 
 ccam bersifat open source dan tidak resmi: ccam tidak berafiliasi dengan atau didukung oleh Anthropic. Boleh tidaknya Anda menggunakan beberapa akun bergantung pada ketentuan setiap akun. Masukan dan terjemahan sangat diterima di [GitHub](https://github.com/jhyunwoo/ccam).

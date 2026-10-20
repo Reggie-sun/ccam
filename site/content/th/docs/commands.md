@@ -1,10 +1,11 @@
 ---
 title: ข้อมูลอ้างอิงคำสั่ง
+metaTitle: "ข้อมูลอ้างอิงคำสั่ง ccam"
 description: "ทุกคำสั่งและตัวเลือกของ ccam ตั้งแต่ ccam add และ ccam <name> ไปจนถึง ccam usage, ccam next และ ccam doctor"
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a82175c30d3
+sourceHash: 3342453e38d3
 ---
 
 ใส่ `--dry-run` ไว้หน้าคำสั่งเพื่อดูว่าคำสั่งนั้นจะทำอะไรโดยไม่ลงมือทำจริง เช่น `ccam --dry-run work` ตัวเลือกนี้ใช้ได้เมื่อเริ่ม Claude Code (`ccam <name>`, `ccam run`, `ccam next`) และกับ `share`, `migrate`, `shortcut`, `update` และ `doctor --fix` ส่วนคำสั่งอื่นที่เปลี่ยนแปลงบางอย่างจะปฏิเสธตัวเลือกนี้แทนที่จะทำงาน

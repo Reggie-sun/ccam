@@ -1,6 +1,6 @@
 ---
 title: Vikomo vya matumizi
-description: ccam usage huonyesha vikomo vya saa 5 na vya wiki vya kila akaunti kwa wakati mmoja, na ccam statusline huweka jina la akaunti na matumizi yake ndani ya Claude Code.
+description: ccam usage huonyesha vikomo vya saa 5 na vya wiki vya kila akaunti kwa pamoja, na ccam statusline huweka jina la akaunti na matumizi yake ndani ya Claude Code.
 updated: 2026-10-19
 order: 7
 translation: machine

@@ -1,6 +1,6 @@
 ---
 title: Using Remote Control with ccam
-description: Start Claude Code Remote Control as any account with ccam <name> rc, see which options apply, why ccam asks to copy shared MCP servers, and how to fix common problems.
+description: Start Claude Code Remote Control as any account with ccam <name> rc, see which options apply, why ccam offers to copy shared MCP servers, and fix problems.
 updated: 2026-10-20
 order: 4
 translation: source

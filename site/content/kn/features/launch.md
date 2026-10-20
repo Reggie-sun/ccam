@@ -1,6 +1,6 @@
 ---
 title: Claude Code ಆರಂಭಿಸುವುದು
-description: ccam <name|number>, ccam run ಅಥವಾ ccam ಪಿಕರ್ ಮೂಲಕ ಯಾವುದೇ ಖಾತೆಯಾಗಿ Claude Code ಆರಂಭಿಸಿ; ಆರ್ಗ್ಯುಮೆಂಟ್‌ಗಳು ಬದಲಾವಣೆ ಇಲ್ಲದೆ claude ಗೆ ಹೋಗುತ್ತವೆ, ಮತ್ತು --dry-run ಕಮಾಂಡ್ ಅನ್ನು ತೋರಿಸುತ್ತದೆ.
+description: ccam <name|number>, ccam run ಅಥವಾ ಪಿಕರ್ ಮೂಲಕ ಯಾವುದೇ ಖಾತೆಯಾಗಿ Claude Code ಆರಂಭಿಸಿ; ಆರ್ಗ್ಯುಮೆಂಟ್‌ಗಳು ಬದಲಾಗದೆ claude ಗೆ ಹೋಗುತ್ತವೆ, --dry-run ಕಮಾಂಡ್ ತೋರಿಸುತ್ತದೆ.
 updated: 2026-10-20
 order: 1
 translation: machine

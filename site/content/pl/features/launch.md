@@ -1,6 +1,6 @@
 ---
 title: Uruchamianie Claude Code
-description: Uruchom Claude Code jako dowolne konto przez ccam <name|number>, ccam run lub selektor ccam; argumenty trafiają do claude bez zmian, a --dry-run pokazuje polecenie.
+description: Uruchom Claude Code na dowolnym koncie przez ccam <name|number>, ccam run lub selektor ccam; argumenty idą do claude bez zmian, --dry-run pokazuje polecenie.
 updated: 2026-10-20
 order: 1
 translation: machine

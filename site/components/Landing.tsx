@@ -10,6 +10,9 @@ import { JsonLd } from "./JsonLd";
 import { Shell } from "./Shell";
 import { UsageBoard } from "./UsageBoard";
 
+// The feature page behind each "How it works" step, in the order of landing.flow.
+const flowFeatures = ["accounts", "launch", "share", "usage", "next", "doctor"];
+
 export function landingAlternates(): Record<string, string> {
   return Object.fromEntries(locales.filter((l) => hasMessages(l.code)).map((l) => [l.code, homePath(l.code)]));
 }
@@ -21,7 +24,8 @@ export function Landing({ locale }: { locale: string }) {
   const add = <code dir="ltr">ccam add</code>;
   const [before, after] = m.landing.thenAdd.split("{command}");
   // Each word rises out of its own clip; languages without spaces rise as one line.
-  const words = m.landing.headline.split(" ");
+  // "Claude Code" rises as one word so it never breaks across lines.
+  const words = m.landing.headline.replace("Claude Code", "Claude\u00a0Code").split(" ");
   return (
     <Shell locale={locale} alternates={landingAlternates()}>
       <section className="hero">
@@ -38,7 +42,9 @@ export function Landing({ locale }: { locale: string }) {
           </h1>
           <p className="lede focus-in d1">{m.landing.lede}</p>
           <div className="focus-in d2">
-            <p className="install-label">{m.landing.installLabel}</p>
+            <p className="install-label">
+              <a href={pagePath(locale, "docs", "install")}>{m.landing.installLabel}</a>
+            </p>
             <InstallCommand copy={m.copy.copy} copied={m.copy.copied} />
           </div>
           <p className="then focus-in d3">
@@ -94,8 +100,10 @@ export function Landing({ locale }: { locale: string }) {
                 <li className={`step${i === 0 ? " on" : ""}`} key={f.command}>
                   <span className="step-n" dir="ltr" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
                   <h3 className="step-cmd" dir="ltr">
-                    <code>{f.command}</code>
-                    {"also" in f && f.also ? <code>{f.also}</code> : null}
+                    <a href={pagePath(locale, "features", flowFeatures[i])}>
+                      <code>{f.command}</code>
+                      {"also" in f && f.also ? <> <code>{f.also}</code></> : null}
+                    </a>
                   </h3>
                   <p>{f.body}</p>
                 </li>

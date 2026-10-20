@@ -1,6 +1,6 @@
 ---
 title: Запуск Claude Code
-description: Запускайте Claude Code від імені будь-якого облікового запису через ccam <name|number>, ccam run або вікно вибору ccam; аргументи передаються в claude без змін, а --dry-run показує команду.
+description: Запускайте Claude Code з будь-якого облікового запису через ccam <name|number>, ccam run або вибір ccam; аргументи йдуть у claude як є, --dry-run дає команду.
 updated: 2026-10-20
 order: 1
 translation: machine

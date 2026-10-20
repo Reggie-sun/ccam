@@ -1,10 +1,10 @@
 ---
 title: استخدام Remote Control مع ccam
-description: شغّل Remote Control في Claude Code بأي حساب باستخدام ccam <name> rc، وتعرّف على الخيارات التي تنطبق، ولماذا يسأل ccam عن نسخ خوادم MCP المشتركة، وكيف تحل المشكلات الشائعة.
+description: شغّل Remote Control في Claude Code بأي حساب باستخدام ccam <name> rc، وتعرّف على الخيارات المتاحة، ولماذا يعرض ccam نسخ خوادم MCP المشتركة، وحلّ المشكلات.
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: b7b09f9bcb9e
+sourceHash: 59b802c44bb3
 ---
 
 يشغّل `ccam work rc` ميزة Remote Control في Claude Code بالحساب `work`، فتتحكم في الجلسات على هذا الحاسوب من claude.ai/code أو من تطبيق Claude على الهاتف. وهو يعمل مثل `claude rc` مع فرق واحد: إذا كان الحساب يشارك خوادم MCP، يسألك ccam مرة واحدة هل ينسخها إلى ملف `.claude.json` الخاص بالحساب، لأن جلسات Remote Control لا تقرأ الخوادم من أي مكان آخر.

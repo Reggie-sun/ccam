@@ -1,13 +1,36 @@
 ---
 title: ccam ikilinganishwa na alias za shell
 description: Alias za shell zenye CLAUDE_CONFIG_DIR dhidi ya ccam kwa kuendesha akaunti kadhaa za Claude Code, zikilinganishwa sambamba.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: f751716e46c9
+sourceHash: ea24bb091caf
 ---
 
 Alias ya shell kwa kila akaunti ndiyo njia rahisi zaidi ya kuendesha akaunti kadhaa za Claude Code. ccam hufanya jambo hilo hilo kwa ndani na huongeza kushiriki, kubadili na kufuatilia matumizi.
+
+## Usanidi wa alias
+
+Ongeza mstari mmoja kwa kila akaunti ya ziada kwenye `~/.bashrc` au `~/.zshrc`, fungua terminal mpya na uendeshe alias mara moja ili kuingia:
+
+```sh
+alias claude-work='CLAUDE_CONFIG_DIR=~/.claude-work claude'
+```
+
+`claude` inabaki kuwa akaunti yako ya kwanza na `claude-work` huanzisha ya pili. Hii ndiyo njia ambayo [nyaraka za Claude Code zinaeleza](https://code.claude.com/docs/en/authentication#log-in-with-multiple-accounts).
+
+## Usanidi wa ccam
+
+Sakinisha ccam na uongeze akaunti, hapa ikiwa na amri yake ya njia fupi:
+
+```sh
+curl -fsSL https://ccam.dev/install.sh | sh
+ccam add work --shortcut ccwork
+```
+
+`ccam work` na `ccwork` huanzisha akaunti, na zote mbili hufanya kazi kwenye skripti pia.
+
+## Kando kwa kando
 
 | | Alias ya shell | ccam |
 | --- | --- | --- |
@@ -25,4 +48,4 @@ Alias ya shell kwa kila akaunti ndiyo njia rahisi zaidi ya kuendesha akaunti kad
 
 Chagua alias ikiwa una akaunti mbili na hutaki zishiriki chochote. Chagua ccam ikiwa unataka akaunti zihisike kama usanidi mmoja. Unaweza kuanza na alias na kuhamia ccam baadaye: `ccam import` husajili folda zilizopo za `~/.claude-*` pale zilipo.
 
-[Jinsi ya kutumia akaunti mbili kwenye kompyuta moja](/guides/multiple-claude-code-accounts) inaeleza njia zote mbili hatua kwa hatua.
+[Jinsi ya kutumia akaunti kadhaa kwenye kompyuta moja](/guides/multiple-claude-code-accounts) inaeleza njia zote mbili hatua kwa hatua, na [ccam na zana nyingine za kubadili akaunti](/compare/account-switchers) inailinganisha ccam na zana zinazobadilisha taarifa moja ya kuingia.

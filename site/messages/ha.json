@@ -1,8 +1,8 @@
 {
   "site": {
     "name": "ccam",
-    "title": "ccam: yi amfani da asusun Claude Code da dama a kwamfuta ɗaya",
-    "description": "ccam kayan aikin command-line ne kyauta kuma open-source wanda ke ba ka damar amfani da asusun Claude Code da dama a kwamfuta ɗaya, ka kuma sauya tsakaninsu da umarni ɗaya.",
+    "title": "ccam: Claude Code Account Manager da mai sauya asusu",
+    "description": "ccam (Claude Code Account Manager) kayan aiki ne kyauta kuma open-source don amfani da asusun Claude Code da dama a kwamfuta ɗaya da sauya su da umarni ɗaya.",
     "titleSuffix": "ccam don Claude Code"
   },
   "nav": {
@@ -103,10 +103,18 @@
       "compare": "Kwatance",
       "blog": "Blog"
     },
+    "hubs": {
+      "docs": "Girka ccam, ƙara asusun Claude Code ɗinka, zaɓi abin da za su raba kuma ka nemo kowane umarni, tare da amsoshin tambayoyin da aka saba yi.",
+      "guides": "Jagorori mataki-mataki don gudanar da asusun Claude Code da dama a kwamfuta ɗaya: CLAUDE_CONFIG_DIR, iyakokin amfani da Remote Control.",
+      "features": "Kowane fasalin ccam dalla-dalla, tare da dukan zaɓuɓɓukansa: asusai, gajerun umarni, rabawa, sabobin MCP, amfani, sauyawa, gyare-gyare da sabuntawa.",
+      "compare": "Yadda ccam ya kwatantu da alias na shell da sauran masu sauya asusun Claude Code, fasali bayan fasali, don ka zaɓi kayan aikin da ya dace.",
+      "blog": "Labarai daga aikin ccam: dalilin samuwarsa, yadda yake aiki da abin da ke canzawa ga masu amfani da asusun Claude Code da dama."
+    },
     "commandsTable": {
       "command": "Umarni",
       "does": "Abin da yake yi"
-    }
+    },
+    "byline": "Daga {author}"
   },
   "commands": {
     "ccam": "Buɗe mai zaɓar asusu",
@@ -144,16 +152,17 @@
     "unofficial": "ccam kayan aikin open-source ne da ba na hukuma ba. Ba shi da alaƙa da Anthropic, kuma Anthropic ba ta amince da shi ba. Claude da Claude Code alamomin kasuwanci ne na Anthropic.",
     "terms": "Ko an yarda ka yi amfani da asusai da dama ya dogara ne da sharuɗɗan kowane asusu. Ka duba su kafin ka yi haka.",
     "license": "Lambar tushe a GitHub",
-    "languages": "Dukan harsuna"
+    "languages": "Dukan harsuna",
+    "analytics": "Wannan shafin yana ƙidaya ziyara da Cloudflare Web Analytics, wanda ba ya saka cookies kuma ba ya tattara bayanan sirri."
   },
   "changelog": {
     "title": "Tarihin canje-canje",
-    "description": "Kowane sakin ccam da abin da ya canza a cikinsa. Sababbin umarni, gyare-gyare da canje-canje don amfani da asusun Claude Code da yawa a kwamfuta guda.",
+    "description": "Kowane sakin ccam da abin da ya canza a cikinsa: sababbin umarnai, gyare-gyare da ƙarin sauri, sabo a farko.",
     "empty": "Ba a fitar da wani saki ba tukuna. Ana jera ginin da aka yi daga reshen main a GitHub."
   },
   "languages": {
     "title": "Harsuna",
-    "description": "Akwai ccam.dev a {count, plural, one {harshe #} other {harsuna #}}. Zaɓi harshe don takardun bayani da jagororin ccam.",
+    "description": "Akwai ccam.dev a {count, plural, one {harshe #} other {harsuna #}}, da takardu da jagorori iri ɗaya a kowanne.",
     "coverage": "Bisa ga bayanan yawan jama'a na Unicode CLDR, mutanen da ke magana aƙalla ɗaya daga cikin waɗannan harsunan sun kai daga {low} zuwa {high} na yawan mutanen duniya.",
     "method": "Ƙaramin adadin yana ƙidaya harshe ɗaya da aka fi magana a kowace ƙasa daga cikin waɗanda ake tallafawa; babban adadin yana haɗa dukan harsunan da ake tallafawa kuma yana iyakance kowace ƙasa a 100%."
   },

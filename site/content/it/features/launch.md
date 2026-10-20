@@ -1,6 +1,6 @@
 ---
 title: Avviare Claude Code
-description: Avvia Claude Code con qualsiasi account usando ccam <name|number>, ccam run o il selettore di ccam; gli argomenti arrivano a claude invariati, e --dry-run mostra il comando.
+description: Avvia Claude Code con qualsiasi account usando ccam <name|number>, ccam run o il selettore; gli argomenti passano invariati e --dry-run mostra il comando.
 updated: 2026-10-20
 order: 1
 translation: machine

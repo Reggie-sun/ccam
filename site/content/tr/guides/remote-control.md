@@ -1,10 +1,10 @@
 ---
 title: ccam ile Remote Control kullanma
-description: Claude Code'un Remote Control özelliğini ccam <name> rc ile herhangi bir hesapla başlatın; hangi seçeneklerin geçerli olduğunu, ccam'in paylaşılan MCP sunucularını neden kopyalamayı sorduğunu ve sık karşılaşılan sorunların nasıl çözüleceğini görün.
+description: "Remote Control'ü ccam <name> rc ile her hesapla başlatın: geçerli seçenekler, ccam'in paylaşılan MCP sunucularını neden kopyalamayı önerdiği ve sorun giderme."
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: b7b09f9bcb9e
+sourceHash: 59b802c44bb3
 ---
 
 `ccam work rc`, Claude Code'un Remote Control özelliğini `work` hesabıyla başlatır; böylece bu bilgisayardaki oturumları claude.ai/code üzerinden veya Claude mobil uygulamasından yönetebilirsiniz. `claude rc` gibi çalışır, tek bir farkla: hesap MCP sunucularını paylaşıyorsa ccam, bunları hesabın `.claude.json` dosyasına kopyalayıp kopyalamayacağını bir kez sorar, çünkü Remote Control oturumları sunucuları başka hiçbir yerden okumaz.

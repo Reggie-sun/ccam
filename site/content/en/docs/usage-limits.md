@@ -2,6 +2,7 @@
 title: Usage limits and switching accounts
 description: See the 5-hour and weekly usage of every Claude Code account with ccam usage, and open the account with the most room with ccam next --auto.
 updated: 2026-10-19
+published: 2026-10-19
 order: 5
 translation: source
 ---

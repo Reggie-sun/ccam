@@ -1,19 +1,28 @@
 ---
-title: Cha kufanya Claude Code inapofikia kikomo chake cha matumizi
-description: Kagua kila akaunti ya Claude Code ina nafasi kiasi gani na uendeleze mazungumzo yale yale kwenye akaunti nyingine pale moja inapofikia kikomo chake.
+title: Cha kufanya Claude Code ikifikia kikomo cha matumizi
+description: Subiri kikomo kianze upya au endeleza mazungumzo yale yale kwenye akaunti nyingine ya Claude Code mara moja. Jinsi vikomo vya saa 5 na vya wiki hufanya kazi.
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 767a731b912e
+sourceHash: ff765a189332
 ---
 
-Akaunti moja inapofikia kikomo chake cha matumizi (usage limit), endeleza mazungumzo yale yale katika akaunti nyingine unayoimiliki: shiriki historia ya mazungumzo mara moja, kisha endesha `ccam next --continue`. Ikiwa una akaunti moja tu, subiri muda wa kuanza upya ambao Claude Code inaonyesha.
+Akaunti inapofikia kikomo chake cha matumizi (mara nyingi huitwa rate limit), una machaguo mawili: kusubiri hadi kikomo kianze upya, au kuendeleza mazungumzo yale yale sasa hivi kwenye akaunti nyingine unayoimiliki. Kwa ccam, chaguo la pili huchukua amri moja, `ccam next --auto --continue`, mara historia ya mazungumzo inaposhirikiwa kati ya akaunti.
 
-## Kabla halijatokea
+## Claude Code ina vikomo gani?
 
-Sanidi akaunti ili kubadili kuchukue amri moja:
+Kwenye mipango ya Pro na Max, Claude Code ina [kikomo cha kipindi cha saa tano na kikomo cha wiki](https://support.claude.com/en/articles/11145838-using-claude-code-with-your-pro-or-max-plan). Vyote viwili hushirikiwa na Claude kwenye wavuti na kwenye programu, na matumizi huhesabiwa kwenye vyote viwili kwa wakati mmoja. Kimoja kinapoisha, Claude Code [huonyesha ujumbe](https://code.claude.com/docs/en/errors#youve-hit-your-session-limit) kama "You've hit your session limit · resets 3:45pm". Kubadili model hakusaidii, kwa sababu vikomo vinahusu model zote.
+
+## Chaguo la 1: subiri kikomo kianze upya
+
+Ikiwa una akaunti moja, subiri. Matoleo ya hivi karibuni ya Claude Code [husubiri ndani ya kipindi kilicho wazi](https://code.claude.com/docs/en/interactive-mode#wait-for-a-usage-limit-to-reset) na huendelea na kazi yenyewe mara kikomo kinapoanza upya. `/usage` ndani ya Claude Code huonyesha kiasi ulichotumia cha vikomo vya mpango wako.
+
+## Chaguo la 2: endelea kwenye akaunti nyingine sasa
+
+Ikiwa una akaunti ya pili, unaweza kuendelea mara moja na mazungumzo yale yale. Sanidi hili mara moja tu:
 
 ```sh
+curl -fsSL https://ccam.dev/install.sh | sh
 ccam add personal
 ccam add work
 ccam share personal --history on
@@ -21,11 +30,9 @@ ccam share work --history on
 ccam statusline install
 ```
 
-Sasa mstari wa hali (status line) huonyesha akaunti na matumizi yake ya saa 5 wakati unafanya kazi, kwa hiyo kikomo hakikushtui.
+Sasa mstari wa hali (status line) huonyesha akaunti na matumizi yake ya saa 5 wakati unafanya kazi, kwa hiyo kikomo hakikushtukizi.
 
-## Kikomo kinapofikiwa
-
-Toka kwenye Claude Code (`/exit`), kisha:
+Kikomo kinapofikiwa, toka kwenye Claude Code (`/exit`), kisha:
 
 ```sh
 ccam usage
@@ -44,11 +51,16 @@ ccam next --auto --continue
 
 Claude Code huanza kama `work` ikiwa na mazungumzo ya hivi karibuni zaidi ya folda ya sasa, pamoja na kila kitu kilichosemwa hadi sasa.
 
+## Je, ccam hubadili akaunti kiotomatiki?
+
+Hapana. ccam haiendeshwi wakati unafanya kazi: huanzisha Claude Code na kujibadilisha nayo. Wewe ndiye unaamua wakati wa kubadili, na `ccam next --auto` huchagua akaunti yenye matumizi ya chini zaidi ya saa 5 na kuruka akaunti zilizofikia 100% au ambazo hazijaingiwa. Baadhi ya zana nyingine hubadilisha taarifa za kuingia za kipindi kinachoendelea badala yake; [ccam na zana nyingine za kubadili akaunti](/compare/account-switchers) inaeleza tofauti.
+
 ## Mambo ya kukumbuka
 
 - Endesha `ccam next --continue` katika folda ile ile uliyofanyia kazi; mazungumzo huhifadhiwa kwa kila folda ya mradi.
 - Epuka kuendesha akaunti mbili kwenye mazungumzo yale yale kwa wakati mmoja. ccam hukuonya ukijaribu.
 - Akaunti nyingine lazima pia ishiriki historia ya mazungumzo, katika kikundi kile kile.
+- Ujumbe wa kwanza kwenye akaunti mpya unaweza kutumia sehemu kubwa kuliko kawaida ya kikomo chake, kwa sababu akaunti hiyo bado haijahifadhi mazungumzo kwenye cache.
 - Iwapo unaruhusiwa kubadili kati ya akaunti kwa namna hii inategemea masharti ya kila akaunti.
 
 Tazama [vikomo vya matumizi](/docs/usage-limits) kwa kila chaguo la `ccam usage` na `ccam next`.

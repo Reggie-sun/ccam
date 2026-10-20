@@ -1,10 +1,10 @@
 ---
 title: Menggunakan Remote Control dengan ccam
-description: Jalankan Remote Control milik Claude Code sebagai akun mana pun dengan ccam <name> rc, lihat opsi mana yang berlaku, mengapa ccam menawarkan untuk menyalin server MCP bersama, dan cara mengatasi masalah umum.
+description: "Remote Control Claude Code untuk akun mana pun via ccam <name> rc: opsi yang berlaku, alasan ccam menawarkan salinan server MCP bersama, dan solusi masalah."
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: b7b09f9bcb9e
+sourceHash: 59b802c44bb3
 ---
 
 `ccam work rc` menjalankan Remote Control milik Claude Code sebagai akun `work`, sehingga Anda dapat mengendalikan sesi di komputer ini dari claude.ai/code atau aplikasi seluler Claude. Perintah ini bekerja seperti `claude rc` dengan satu perbedaan: jika akun berbagi server MCP, ccam bertanya sekali apakah server tersebut perlu disalin ke `.claude.json` milik akun, karena sesi Remote Control tidak membaca server dari tempat lain.

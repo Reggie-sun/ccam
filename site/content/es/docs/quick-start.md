@@ -1,10 +1,11 @@
 ---
 title: Inicio rápido
+metaTitle: "Inicio rápido: agrega y cambia cuentas de Claude Code"
 description: Agrega dos cuentas de Claude Code con ccam add, dales atajos como ccwork, cambia entre ellas y elige qué comparten.
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: d040e34d2a17
+sourceHash: a10d91d2a64e
 ---
 
 Agrega cada cuenta con `ccam add` y luego inicia Claude Code con `ccam <name>` o con un atajo al que tú le pones nombre, como `ccwork`. Es todo lo que la mayoría necesita.

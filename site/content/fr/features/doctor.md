@@ -1,6 +1,6 @@
 ---
 title: "Vérifier et réparer"
-description: "Vérifiez les liens de partage, les permissions des fichiers, les connexions et la version de Claude Code avec ccam doctor, et réparez ce qui peut l'être sans risque avec ccam doctor --fix."
+description: "Vérifiez les liens de partage, les permissions, les connexions et la version de Claude Code avec ccam doctor, et réparez ce qui est sûr avec ccam doctor --fix."
 updated: 2026-10-19
 order: 9
 translation: machine

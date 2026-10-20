@@ -1,15 +1,16 @@
 ---
 title: Pertanyaan yang sering diajukan
+metaTitle: "FAQ ccam: beberapa akun Claude Code"
 description: Jawaban seputar ccam, akun Claude Code, batas penggunaan, pembagian, privasi, dan sistem yang didukung.
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 5ff6e94786a2
+sourceHash: 88bd249ec51c
 ---
 
 ## Apakah ccam alat resmi dari Anthropic?
 
-Tidak. ccam adalah proyek open source tidak resmi dan tidak berafiliasi dengan atau didukung oleh Anthropic. ccam menggunakan pengaturan `CLAUDE_CONFIG_DIR` yang didokumentasikan Claude Code untuk menjalankan beberapa akun secara berdampingan.
+Tidak. ccam adalah proyek open source tidak resmi dan tidak berafiliasi dengan atau didukung oleh Anthropic. ccam menggunakan pengaturan `CLAUDE_CONFIG_DIR` yang [didokumentasikan Claude Code](https://code.claude.com/docs/en/env-vars) untuk menjalankan beberapa akun secara berdampingan.
 
 ## Apakah saya boleh menggunakan beberapa akun Claude Code?
 

@@ -1,10 +1,10 @@
 ---
 title: การใช้ Remote Control กับ ccam
-description: "เริ่ม Remote Control ของ Claude Code ในชื่อบัญชีใดก็ได้ด้วย ccam <name> rc ดูว่าตัวเลือกใดมีผล ทำไม ccam จึงถามว่าจะคัดลอกเซิร์ฟเวอร์ MCP ที่ใช้ร่วมกันหรือไม่ และวิธีแก้ปัญหาที่พบบ่อย"
+description: เริ่ม Remote Control ของ Claude Code ในชื่อบัญชีใดก็ได้ด้วย ccam <name> rc ดูตัวเลือกที่มีผล เหตุที่ ccam เสนอคัดลอกเซิร์ฟเวอร์ MCP ที่ใช้ร่วมกัน และการแก้ปัญหา
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: b7b09f9bcb9e
+sourceHash: 59b802c44bb3
 ---
 
 `ccam work rc` เริ่ม Remote Control ของ Claude Code ในชื่อบัญชี `work` คุณจึงควบคุมเซสชันบนคอมพิวเตอร์เครื่องนี้ได้จาก claude.ai/code หรือแอป Claude บนมือถือ คำสั่งนี้ทำงานเหมือน `claude rc` โดยต่างกันเพียงข้อเดียว: หากบัญชีใช้เซิร์ฟเวอร์ MCP ร่วมกัน ccam จะถามหนึ่งครั้งว่าจะคัดลอกเซิร์ฟเวอร์เหล่านั้นลงใน `.claude.json` ของบัญชีหรือไม่ เพราะเซสชันของ Remote Control อ่านเซิร์ฟเวอร์จากที่นั่นเท่านั้น

@@ -1,33 +1,45 @@
 ---
-title: Come usare due account Claude Code su un solo computer
-description: Usa più account Claude Code in parallelo con CLAUDE_CONFIG_DIR, a mano con gli alias della shell o in automatico con ccam.
+title: Usare più account Claude Code su un solo computer
+description: Esegui più account Claude Code in parallelo con CLAUDE_CONFIG_DIR, a mano con gli alias della shell o in automatico con ccam, e passa dall'uno all'altro.
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: 6a4b7d961e10
+sourceHash: e2f4deb40c81
 ---
 
-Per usare più account Claude Code sullo stesso computer, assegna a ogni account la propria cartella di configurazione. Claude Code legge la cartella dalla variabile d'ambiente `CLAUDE_CONFIG_DIR`, e ogni cartella contiene il proprio login, le proprie impostazioni e la propria cronologia. Puoi configurarlo a mano con un alias della shell oppure lasciarlo fare a ccam.
+Dai a ogni account la sua cartella di configurazione. Claude Code legge la cartella dalla variabile d'ambiente `CLAUDE_CONFIG_DIR`, e ogni cartella contiene il proprio login, le impostazioni e la cronologia, quindi ogni account resta connesso e puoi eseguirli contemporaneamente. Puoi configurarlo a mano con un alias della shell oppure lasciare che se ne occupi ccam.
 
-## A mano, con un alias
+## Come lo configuro a mano?
 
-È l'approccio descritto nella documentazione di Claude Code. Aggiungi a `~/.bashrc` o `~/.zshrc` una riga per ogni account in più:
+Questo è l'approccio che [descrive la documentazione di Claude Code](https://code.claude.com/docs/en/authentication#log-in-with-multiple-accounts). Aggiungi una riga per ogni account in più a `~/.bashrc` o `~/.zshrc`:
 
 ```sh
 alias claude-work='CLAUDE_CONFIG_DIR=~/.claude-work claude'
 ```
 
-Apri un nuovo terminale ed esegui `claude-work`. Claude Code ti chiede di effettuare il login, perché la cartella è nuova. Da quel momento `claude` è il tuo primo account e `claude-work` il secondo.
+Apri un nuovo terminale ed esegui `claude-work`. Claude Code ti chiede di effettuare il login, perché la cartella è nuova. Da quel momento `claude` è il tuo primo account e `claude-work` il secondo. Aggiungi un alias per ogni account, ciascuno con la sua cartella.
 
-Con due account funziona bene. Cose da sapere:
+Su Windows senza WSL, una funzione PowerShell nel tuo profilo (`notepad $PROFILE`) fa la stessa cosa:
 
-- Ogni cartella parte vuota: nessuna impostazione, nessun `CLAUDE.md`, nessun server MCP, nessun agente o skill. Copi o colleghi ciò che ti serve, e tieni allineate le copie da solo.
+```powershell
+function claude-work { $env:CLAUDE_CONFIG_DIR = "$HOME\.claude-work"; try { claude @args } finally { Remove-Item Env:CLAUDE_CONFIG_DIR } }
+```
+
+## Cosa manca con gli alias?
+
+Funziona bene per due account. Cose da sapere:
+
+- Ogni cartella parte vuota: niente impostazioni, niente `CLAUDE.md`, niente server MCP, niente agenti o skill. Copi o colleghi quello che ti serve e tieni allineate le copie da solo.
 - Gli alias esistono solo nelle shell interattive. Script, Makefile e altri programmi non li vedono.
-- I server MCP si trovano in `.claude.json`, accanto al login, quindi non si possono semplicemente collegare tra cartelle.
+- I server MCP stanno in `.claude.json`, accanto al login, quindi non si possono semplicemente collegare tra cartelle.
 - Le conversazioni restano nell'account in cui sono iniziate, quindi non puoi continuarne una in un altro account.
-- Non c'è nulla che mostri l'utilizzo di tutti gli account in una volta.
+- Non c'è nulla che mostri l'utilizzo di tutti gli account insieme.
 
-## Con ccam
+## Posso cambiare account con /login?
+
+Sì, se cambi solo ogni tanto. Digitare `/login` dentro Claude Code [cambia l'account](https://code.claude.com/docs/en/quickstart) della cartella in cui ti trovi. È connesso un solo account alla volta, quindi rifai il login a ogni cambio e non puoi eseguire due account in parallelo. Le cartelle separate evitano entrambi i problemi.
+
+## Come lo configuro con ccam?
 
 ccam automatizza la stessa idea e aggiunge le parti mancanti:
 
@@ -37,10 +49,32 @@ ccam add personal
 ccam add work --shortcut ccwork
 ```
 
-Ora `ccam personal` e `ccam work` avviano i due account, e lo stesso fa `ccwork`, la scorciatoia che hai dato all'account work. Poiché sono veri programmi e non alias, funzionano anche negli script. Impostazioni, `CLAUDE.md`, server MCP ed estensioni sono condivisi fin dall'inizio, e puoi attivare la cronologia delle conversazioni condivisa per continuare una conversazione sull'altro account con `ccam next --continue`.
+Ora `ccam personal` e `ccam work` avviano i due account, e lo stesso fa `ccwork`, la scorciatoia che hai dato all'account work. Poiché sono veri programmi e non alias, funzionano anche negli script. Esegui `ccam` da solo per scegliere un account da un elenco, e `ccam use work` per renderne uno quello predefinito.
 
-Se usi già `~/.claude`, esegui `ccam import` invece di aggiungere di nuovo quell'account, oppure `ccam migrate` per copiarne le impostazioni, i server MCP e le estensioni nelle impostazioni condivise.
+Impostazioni, `CLAUDE.md`, server MCP ed estensioni sono condivisi fin dall'inizio, e puoi attivare la cronologia delle conversazioni condivisa per continuare una conversazione sull'altro account con `ccam next --continue`. `ccam usage` mostra l'utilizzo su 5 ore e settimanale di tutti gli account insieme.
 
-## Quale scegliere
+Se usi già `~/.claude`, esegui `ccam import` invece di aggiungere di nuovo quell'account, oppure `ccam migrate` per copiarne impostazioni, server MCP ed estensioni nelle impostazioni condivise.
 
-Per due account senza nulla di condiviso basta un alias. Quando vuoi impostazioni e server MCP condivisi, più account, l'utilizzo a colpo d'occhio o la possibilità di continuare le conversazioni, ccam ti risparmia la gestione manuale. Il [confronto](/compare/aliases) mette le differenze una accanto all'altra.
+## Come faccio a sapere quale account è in esecuzione?
+
+Dentro Claude Code, `/status` mostra l'account con cui hai effettuato il login. Con ccam, esegui una volta `ccam statusline install` e la riga di stato mostra sempre il nome dell'account e il suo utilizzo, per esempio `[work] · Opus · 5h 24% · 7d 41%`.
+
+## Funziona su Windows e WSL?
+
+Claude Code gira [nativamente su Windows e dentro WSL](https://code.claude.com/docs/en/setup). `CLAUDE_CONFIG_DIR` funziona in entrambi, quindi su Windows nativo bastano l'alias o la funzione PowerShell vista sopra. ccam gira su Linux e macOS; su Windows installalo e usalo dentro WSL, dove funziona come su Linux.
+
+## Risoluzione dei problemi
+
+**Claude Code mi chiede il login ogni volta.** Il primo avvio in una cartella nuova lo chiede sempre. Se continua a chiederlo, il login è scaduto o è stato rimosso: esegui `ccam login work` (oppure avvia l'alias una volta ed effettua il login).
+
+**Un server MCP compare in un solo account.** I server aggiunti dentro una sessione con `claude mcp add` appartengono a quell'account. Spostane uno su tutti gli account con `ccam mcp import work <server>`.
+
+**Le impostazioni sono diverse tra gli account.** `ccam share work` mostra cosa condivide l'account; `ccam share work --settings on` ne condivide le impostazioni, dopo aver mostrato cosa cambierà. `ccam doctor --fix` ripara i link interrotti e conserva un backup di ogni file che modifica.
+
+**Due account aprono la stessa conversazione.** Evita di lavorare sulla stessa conversazione da due account contemporaneamente. ccam ti avvisa se ci provi.
+
+## Quale scegliere?
+
+Per due account senza nulla di condiviso basta un alias. Se vuoi impostazioni e server MCP condivisi, più account, l'utilizzo a colpo d'occhio o continuare le conversazioni, ccam ti risparmia il lavoro di manutenzione. Il [confronto con gli alias](/compare/aliases) elenca le differenze fianco a fianco, e [ccam e gli altri strumenti per cambiare account](/compare/account-switchers) tratta gli strumenti che scambiano un unico login.
+
+Se puoi usare più account dipende dai termini di ciascun account. Controllali prima di farlo.

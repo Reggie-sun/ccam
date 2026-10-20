@@ -1,6 +1,6 @@
 ---
 title: Fara Claude Code
-description: Fara Claude Code a matsayin kowane asusu da ccam <name|number>, ccam run ko mai zaɓi na ccam; arguments suna zuwa claude ba tare da canji ba, kuma --dry-run yana nuna umarnin.
+description: Fara Claude Code a matsayin kowane asusu da ccam <name|number>, ccam run ko mai zaɓi na ccam; arguments suna zuwa claude ba canji, --dry-run yana nuna umarnin.
 updated: 2026-10-20
 order: 1
 translation: machine

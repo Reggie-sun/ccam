@@ -1,6 +1,6 @@
 ---
 title: Beralih ke akun berikutnya
-description: ccam next membuka Claude Code sebagai akun setelah akun yang terakhir Anda pakai; --auto memilih penggunaan 5 jam terendah dan --continue melanjutkan percakapan.
+description: ccam next membuka Claude Code sebagai akun setelah akun terakhir Anda; --auto memilih penggunaan 5 jam terendah dan --continue melanjutkan percakapan.
 updated: 2026-10-19
 order: 8
 translation: machine

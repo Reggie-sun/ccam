@@ -1,6 +1,6 @@
 ---
 title: Berbagi antarakun
-description: Cara ccam share menautkan pengaturan, CLAUDE.md, ekstensi, dan riwayat ke folder grup, dengan rencana, cadangan, dan pilihan konflik, serta cara off menyalinnya kembali.
+description: Cara ccam share menautkan pengaturan, CLAUDE.md, ekstensi, dan riwayat ke folder grup, dengan rencana, cadangan, dan pilihan konflik; off menyalinnya kembali.
 updated: 2026-10-19
 order: 4
 translation: machine

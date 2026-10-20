@@ -1,10 +1,11 @@
 ---
 title: Справочник команд
+metaTitle: Справочник команд ccam
 description: Все команды и параметры ccam, от ccam add и ccam <name> до ccam usage, ccam next и ccam doctor.
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a82175c30d3
+sourceHash: 3342453e38d3
 ---
 
 Поставьте `--dry-run` перед командой, чтобы увидеть, что она сделает, ничего не выполняя, например `ccam --dry-run work`. Это работает при запуске Claude Code (`ccam <name>`, `ccam run`, `ccam next`) и с `share`, `migrate`, `shortcut`, `update` и `doctor --fix`. Другие команды, которые что-то меняют, отклоняют этот флаг и не выполняются.

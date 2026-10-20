@@ -4,7 +4,7 @@ description: "Consultez l'utilisation sur 5 heures et hebdomadaire de chaque com
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: 9aebb54d40e2
+sourceHash: d288177682d7
 ---
 
 `ccam usage` indique quelle part des limites sur 5 heures et sur la semaine chaque compte a utilisée. `ccam next --auto` ouvre le compte qui a le plus de marge, et `--continue` reprend la conversation en cours.

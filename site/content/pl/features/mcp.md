@@ -1,6 +1,6 @@
 ---
 title: Współdzielone serwery MCP
-description: Trzymaj jedną listę serwerów MCP na grupę dzięki ccam mcp add, add-json, list, remove i import, przekazywaną przez --mcp-config lub synchronizowaną do każdego konta.
+description: Jedna lista serwerów MCP na grupę dzięki ccam mcp add, add-json, list, remove i import, przekazywana przez --mcp-config lub synchronizowana do każdego konta.
 updated: 2026-10-20
 order: 5
 translation: machine

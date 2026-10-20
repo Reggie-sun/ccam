@@ -1,6 +1,6 @@
 ---
 title: Aggiornare ccam
-description: ccam update sostituisce ccam con l'ultima release su GitHub dopo un controllo SHA-256; --check si limita a segnalare e --version installa un tag di release specifico.
+description: ccam update sostituisce ccam con l'ultima release su GitHub dopo un controllo SHA-256; --check segnala soltanto e --version installa un tag specifico.
 updated: 2026-10-19
 order: 10
 translation: machine

@@ -1,6 +1,6 @@
 ---
 title: 次のアカウントへの切り替え
-description: ccam nextは、最後に使ったアカウントの次のアカウントとしてClaude Codeを開きます。--autoは5時間の使用量が最も少ないアカウントを選び、--continueは会話を再開します。
+description: ccam nextは最後に使ったアカウントの次のアカウントでClaude Codeを開きます。--autoは5時間の使用量が最も少ないアカウントを選び、--continueは会話を再開します。
 updated: 2026-10-19
 order: 8
 translation: machine

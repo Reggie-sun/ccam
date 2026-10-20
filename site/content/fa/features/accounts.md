@@ -1,6 +1,6 @@
 ---
 title: مدیریت حساب‌ها
-description: حساب‌های Claude Code را با ccam add، ccam login، ccam list، ccam rename، ccam remove و ccam import اضافه کنید، وارد شوید، فهرست کنید، تغییر نام دهید، حذف یا وارد کنید.
+description: افزودن، ورود، فهرست، تغییر نام، حذف و وارد کردن حساب‌های Claude Code با ccam add، ccam login، ccam list، ccam rename، ccam remove و ccam import.
 updated: 2026-10-19
 order: 2
 translation: machine

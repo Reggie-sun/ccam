@@ -33,6 +33,13 @@ nfpms:
 
 changelog:
   use: git
+  # Release notes list what changed in ccam, without commit hashes; ccam.dev
+  # shows the same list (site/scripts/changelog.ts).
+  format: "{{ .Message }}"
+  filters:
+    exclude:
+      - '^(test|chore|ci|docs|build|refactor|style)[:(!]'
+      - '^\w+\(site\)'
 
 release:
   # ccam.dev/install.sh serves the copy attached to the latest release.

@@ -1,6 +1,6 @@
 ---
 title: Teilen zwischen Konten
-description: Wie ccam share Einstellungen, CLAUDE.md, Erweiterungen und Verlauf mit Plan, Sicherungen und Konfliktauswahl in einen Gruppenordner verlinkt und wie off zurückkopiert.
+description: Wie ccam share Einstellungen, CLAUDE.md, Erweiterungen und Verlauf mit Plan und Sicherungen in einen Gruppenordner verlinkt und wie off zurückkopiert.
 updated: 2026-10-19
 order: 4
 translation: machine

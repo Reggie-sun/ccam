@@ -113,6 +113,7 @@ export function Shell({ locale, alternates, active, menu, children }: Props) {
             <a className="brand" href={homePath(locale)}>ccam</a>
             <p>{m.footer.unofficial}</p>
             <p>{m.footer.terms}</p>
+            <p>{m.footer.analytics}</p>
             <ul className="footer-links">
               <li><a href={REPO} target="_blank" rel="noopener">{m.footer.license}</a></li>
               <li><a href={`/${locale}/languages/`}>{m.footer.languages}</a></li>

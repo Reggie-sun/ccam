@@ -1,6 +1,6 @@
 ---
 title: "অ্যাকাউন্ট পরিচালনা"
-description: "ccam add, ccam login, ccam list, ccam rename, ccam remove ও ccam import দিয়ে Claude Code অ্যাকাউন্ট যোগ করুন, লগইন করুন, তালিকা দেখুন, নাম বদলান, সরান ও ইমপোর্ট করুন।"
+description: "ccam add, ccam login, ccam list, ccam rename, ccam remove ও ccam import দিয়ে Claude Code অ্যাকাউন্ট যোগ, লগইন, তালিকা, নাম বদল, অপসারণ ও ইমপোর্ট করুন।"
 updated: 2026-10-19
 order: 2
 translation: machine

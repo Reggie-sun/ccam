@@ -1,10 +1,10 @@
 ---
 title: Raba sabobin MCP, saituna da tarihi
 description: Yadda ccam ke raba sabobin MCP, settings.json, CLAUDE.md, agents, skills da tarihin tattaunawa tsakanin asusun Claude Code, yayin da kowane shiga yake daban.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 0df8a7d51c87
+sourceHash: 888d466b29e9
 ---
 
 Kowane asusu yana riƙe bayanan shigarsa. Duk sauran abubuwa za a iya raba su ɗaya bayan ɗaya: ccam yana mayar da fayil ko foldar asusun mahaɗi zuwa foldar rukuni da aka raba, don haka canjin da aka yi a asusu ɗaya yana bayyana a duk asusan wannan rukunin.
@@ -22,6 +22,8 @@ Kowane asusu yana riƙe bayanan shigarsa. Duk sauran abubuwa za a iya raba su ɗ
 Sababbin asusai suna raba komai banda tarihin tattaunawa.
 
 Ba a taɓa raba fayilolin shiga `.credentials.json` da `.claude.json` ba. ccam yana haɗa hanyoyi ne kawai daga ƙayyadadden jeri, kuma waɗannan biyun ba sa cikinsa.
+
+Wannan shafin yana bayani kan ayyukan yau da kullum. An bayyana kowane zaɓi a shafukan fasali: [rabawa tsakanin asusai](/features/share), [sabobin MCP da aka raba](/features/mcp) da [kwafar saitin da ke akwai](/features/migrate).
 
 ## Rukunoni
 

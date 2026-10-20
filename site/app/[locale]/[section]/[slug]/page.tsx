@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!page) return {};
   return seo({
     locale,
-    title: pageTitle(locale, page.title),
+    title: pageTitle(locale, page.metaTitle ?? page.title),
     description: page.description,
     path: pagePath(locale, section, slug),
     alternates: docAlternates(section as Section, slug),

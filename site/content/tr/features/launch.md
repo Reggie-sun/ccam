@@ -1,6 +1,6 @@
 ---
 title: Claude Code'u başlatma
-description: Claude Code'u herhangi bir hesapla ccam <name|number>, ccam run veya ccam seçicisiyle başlatın; argümanlar claude'a değiştirilmeden iletilir, --dry-run komutu gösterir.
+description: Claude Code'u herhangi bir hesapla ccam <name|number>, ccam run veya ccam seçicisiyle başlatın; argümanlar claude'a aynen gider, --dry-run komutu gösterir.
 updated: 2026-10-20
 order: 1
 translation: machine

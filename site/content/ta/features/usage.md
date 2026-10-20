@@ -1,6 +1,6 @@
 ---
 title: பயன்பாட்டு வரம்புகள்
-description: ccam usage எல்லாக் கணக்குகளின் 5 மணி நேர, வாராந்திர வரம்புகளையும் ஒரே நேரத்தில் காட்டுகிறது, ccam statusline கணக்கின் பெயரையும் பயன்பாட்டையும் Claude Code-இல் காட்டுகிறது.
+description: ccam usage எல்லாக் கணக்குகளின் 5 மணி நேர, வாராந்திர வரம்புகளைக் காட்டுகிறது; ccam statusline கணக்குப் பெயர், பயன்பாட்டை Claude Code-இல் காட்டுகிறது.
 updated: 2026-10-19
 order: 7
 translation: machine

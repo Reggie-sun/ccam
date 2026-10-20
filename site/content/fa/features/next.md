@@ -1,6 +1,6 @@
 ---
 title: جابه‌جایی به حساب بعدی
-description: ccam next، Claude Code را با حساب پس از حسابی که آخرین بار استفاده کردید باز می‌کند؛ --auto حسابی با کمترین مصرف ۵ ساعته را انتخاب می‌کند و --continue گفتگو را ادامه می‌دهد.
+description: ccam next، Claude Code را با حساب پس از حساب قبلی باز می‌کند؛ --auto حسابی با کمترین مصرف ۵ ساعته را برمی‌گزیند و --continue گفتگو را ادامه می‌دهد.
 updated: 2026-10-19
 order: 8
 translation: machine

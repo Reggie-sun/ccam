@@ -1,6 +1,6 @@
 ---
 title: "Limites d'utilisation"
-description: "ccam usage affiche en une fois les limites sur 5 heures et hebdomadaires de chaque compte, et ccam statusline place le nom du compte et l'utilisation dans Claude Code."
+description: "ccam usage affiche d'un coup les limites sur 5 heures et hebdomadaires de chaque compte, et ccam statusline met le compte et l'utilisation dans Claude Code."
 updated: 2026-10-19
 order: 7
 translation: machine

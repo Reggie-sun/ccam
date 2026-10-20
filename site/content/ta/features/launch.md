@@ -1,6 +1,6 @@
 ---
 title: Claude Code-ஐத் தொடங்குதல்
-description: ccam <name|number>, ccam run அல்லது ccam தேர்வியைப் பயன்படுத்தி எந்தக் கணக்காகவும் Claude Code-ஐத் தொடங்குங்கள்; arguments மாற்றமின்றி claude-க்குச் செல்லும், --dry-run கட்டளையைக் காட்டும்.
+description: ccam <name|number>, ccam run அல்லது ccam தேர்வி மூலம் எந்தக் கணக்காகவும் Claude Code-ஐத் தொடங்குங்கள்; arguments மாறாமல் claude-க்குச் செல்லும்.
 updated: 2026-10-20
 order: 1
 translation: machine

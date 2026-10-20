@@ -1,6 +1,6 @@
 ---
 title: షేర్ చేసిన MCP సర్వర్లు
-description: ccam mcp add, add-json, list, remove, import తో ప్రతి గ్రూప్‌కు ఒకే MCP సర్వర్ల జాబితాను ఉంచండి, అది --mcp-config తో పంపబడుతుంది లేదా ప్రతి ఖాతాలోకి సింక్ అవుతుంది.
+description: ccam mcp add, add-json, list, remove, import తో ప్రతి గ్రూప్‌కు ఒక MCP సర్వర్ల జాబితా, అది --mcp-config తో పంపబడుతుంది లేదా ప్రతి ఖాతాలో సింక్ అవుతుంది.
 updated: 2026-10-20
 order: 5
 translation: machine

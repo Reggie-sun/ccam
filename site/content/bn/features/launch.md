@@ -1,6 +1,6 @@
 ---
 title: "Claude Code চালু করা"
-description: "ccam <name|number>, ccam run বা ccam পিকার দিয়ে যেকোনো অ্যাকাউন্ট হিসেবে Claude Code চালু করুন; আর্গুমেন্ট অপরিবর্তিত অবস্থায় claude-এ যায়, আর --dry-run কমান্ডটি দেখায়।"
+description: "ccam <name|number>, ccam run বা ccam পিকার দিয়ে যেকোনো অ্যাকাউন্টে Claude Code চালু করুন; আর্গুমেন্ট অপরিবর্তিত claude-এ যায়, --dry-run কমান্ডটি দেখায়।"
 updated: 2026-10-20
 order: 1
 translation: machine

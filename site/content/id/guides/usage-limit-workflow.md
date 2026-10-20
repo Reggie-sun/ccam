@@ -1,19 +1,28 @@
 ---
-title: Yang perlu dilakukan saat Claude Code mencapai batas penggunaan
-description: Periksa sisa kuota setiap akun Claude Code dan lanjutkan percakapan yang sama di akun lain saat satu akun mencapai batasnya.
+title: Saat Claude Code mencapai batas penggunaan
+description: Tunggu reset atau langsung lanjutkan percakapan yang sama di akun Claude Code lain. Cara kerja batas 5 jam dan mingguan, langkah demi langkah.
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 767a731b912e
+sourceHash: ff765a189332
 ---
 
-Saat satu akun mencapai batas penggunaan Claude Code, lanjutkan percakapan yang sama di akun lain milik Anda: bagikan riwayat percakapan sekali, lalu jalankan `ccam next --continue`. Jika Anda hanya punya satu akun, tunggu hingga waktu reset yang ditampilkan Claude Code.
+Saat sebuah akun mencapai batas penggunaannya (sering disebut rate limit), Anda punya dua pilihan: menunggu sampai batasnya direset, atau melanjutkan percakapan yang sama sekarang juga di akun lain milik Anda. Dengan ccam, pilihan kedua cukup satu perintah, `ccam next --auto --continue`, setelah riwayat percakapan dibagikan antarakun.
 
-## Sebelum terjadi
+## Batas apa saja yang dimiliki Claude Code?
 
-Siapkan akun-akun Anda agar perpindahan cukup dengan satu perintah:
+Pada paket Pro dan Max, Claude Code memiliki [batas sesi lima jam dan batas mingguan](https://support.claude.com/en/articles/11145838-using-claude-code-with-your-pro-or-max-plan). Keduanya dipakai bersama dengan Claude di web dan di aplikasi, dan penggunaan dihitung terhadap keduanya sekaligus. Saat salah satunya habis, Claude Code [menampilkan pesan](https://code.claude.com/docs/en/errors#youve-hit-your-session-limit) seperti "You've hit your session limit · resets 3:45pm". Berganti model tidak membantu, karena batasnya berlaku untuk semua model.
+
+## Opsi 1: tunggu reset
+
+Jika Anda hanya punya satu akun, tunggu. Versi terbaru Claude Code [menunggu di sesi yang terbuka](https://code.claude.com/docs/en/interactive-mode#wait-for-a-usage-limit-to-reset) dan melanjutkan tugas dengan sendirinya setelah batasnya direset. `/usage` di dalam Claude Code menampilkan seberapa banyak batas paket Anda yang sudah terpakai.
+
+## Opsi 2: lanjutkan di akun lain sekarang
+
+Jika Anda punya akun kedua, Anda bisa langsung melanjutkan percakapan yang sama. Siapkan sekali:
 
 ```sh
+curl -fsSL https://ccam.dev/install.sh | sh
 ccam add personal
 ccam add work
 ccam share personal --history on
@@ -21,11 +30,9 @@ ccam share work --history on
 ccam statusline install
 ```
 
-Sekarang status line menampilkan akun dan penggunaan 5 jamnya saat Anda bekerja, sehingga batas penggunaan tidak datang sebagai kejutan.
+Status line kini menampilkan akun dan penggunaan 5 jamnya selama Anda bekerja, sehingga batas tidak datang tiba-tiba.
 
-## Saat batas tercapai
-
-Keluar dari Claude Code (`/exit`), lalu:
+Saat batas tercapai, keluar dari Claude Code (`/exit`), lalu:
 
 ```sh
 ccam usage
@@ -42,13 +49,18 @@ Buka percakapan di akun dengan sisa kuota terbanyak:
 ccam next --auto --continue
 ```
 
-Claude Code dimulai sebagai `work` dengan percakapan terbaru dari folder saat ini, termasuk semua yang sudah dibicarakan sejauh ini.
+Claude Code dimulai sebagai `work` dengan percakapan terbaru dari folder saat ini, termasuk semua yang sudah dibicarakan.
 
-## Hal yang perlu diingat
+## Apakah ccam berganti akun secara otomatis?
+
+Tidak. ccam tidak berjalan selama Anda bekerja: ccam menjalankan Claude Code lalu menggantikan dirinya dengan Claude Code. Anda yang menentukan kapan berganti, dan `ccam next --auto` memilih akun dengan penggunaan 5 jam terendah serta melewati akun yang sudah 100% atau belum login. Beberapa alat lain justru menukar login sesi yang sedang berjalan; [ccam dan pengalih akun lainnya](/compare/account-switchers) menjelaskan perbedaannya.
+
+## Hal yang perlu diperhatikan
 
 - Jalankan `ccam next --continue` di folder yang sama tempat Anda bekerja; percakapan disimpan per folder proyek.
 - Hindari menjalankan dua akun pada percakapan yang sama secara bersamaan. ccam memperingatkan Anda jika Anda mencobanya.
-- Akun lainnya juga harus berbagi riwayat percakapan, dalam grup yang sama.
-- Boleh tidaknya Anda berpindah akun seperti ini bergantung pada ketentuan setiap akun.
+- Akun lainnya juga harus membagikan riwayat percakapan, dalam grup yang sama.
+- Pesan pertama di akun baru bisa memakai lebih banyak batasnya daripada biasanya, karena akun itu belum menyimpan percakapan tersebut di cache.
+- Boleh tidaknya Anda berganti akun seperti ini bergantung pada ketentuan setiap akun.
 
-Lihat [batas penggunaan](/docs/usage-limits) untuk semua opsi `ccam usage` dan `ccam next`.
+Lihat [batas penggunaan](/docs/usage-limits) untuk setiap opsi `ccam usage` dan `ccam next`.

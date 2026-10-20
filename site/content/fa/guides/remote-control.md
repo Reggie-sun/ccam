@@ -1,10 +1,10 @@
 ---
 title: استفاده از Remote Control با ccam
-description: Remote Control در Claude Code را با هر حسابی از طریق ccam <name> rc اجرا کنید، ببینید کدام گزینه‌ها اعمال می‌شوند، چرا ccam برای کپی سرورهای MCP مشترک سؤال می‌کند و مشکلات رایج را چگونه حل کنید.
+description: با ccam <name> rc، Remote Control در Claude Code را با هر حسابی اجرا کنید؛ گزینه‌های مؤثر، دلیل پیشنهاد ccam برای کپی سرورهای MCP مشترک و رفع مشکلات.
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: b7b09f9bcb9e
+sourceHash: 59b802c44bb3
 ---
 
 `ccam work rc` قابلیت Remote Control در Claude Code را با حساب `work` اجرا می‌کند تا بتوانید نشست‌های این رایانه را از claude.ai/code یا اپلیکیشن موبایل Claude هدایت کنید. این فرمان مانند `claude rc` کار می‌کند، با یک تفاوت: اگر حساب سرورهای MCP را به اشتراک بگذارد، ccam یک بار می‌پرسد که آیا آن‌ها را در `.claude.json` حساب کپی کند یا نه، چون نشست‌های Remote Control سرورها را از هیچ جای دیگری نمی‌خوانند.

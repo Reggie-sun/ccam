@@ -1,6 +1,6 @@
 ---
 title: Керування обліковими записами
-description: Додавайте, входьте, переглядайте, перейменовуйте, видаляйте й імпортуйте облікові записи Claude Code командами ccam add, ccam login, ccam list, ccam rename, ccam remove і ccam import.
+description: "Додавайте, входьте, переглядайте, перейменовуйте, видаляйте й імпортуйте облікові записи Claude Code: ccam add, login, list, rename, remove і import."
 updated: 2026-10-19
 order: 2
 translation: machine

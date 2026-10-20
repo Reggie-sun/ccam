@@ -1,6 +1,6 @@
 ---
 title: Iniciar Claude Code
-description: Inicia Claude Code con cualquier cuenta mediante ccam <name|number>, ccam run o el selector de ccam; los argumentos llegan a claude sin cambios, y --dry-run muestra el comando.
+description: Inicia Claude Code como cualquier cuenta con ccam <name|number>, ccam run o el selector; los argumentos pasan intactos a claude y --dry-run muestra el comando.
 updated: 2026-10-20
 order: 1
 translation: machine

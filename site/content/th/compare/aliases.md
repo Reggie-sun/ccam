@@ -1,13 +1,36 @@
 ---
 title: เปรียบเทียบ ccam กับ shell alias
 description: "เปรียบเทียบ shell alias ร่วมกับ CLAUDE_CONFIG_DIR กับ ccam สำหรับการใช้ Claude Code หลายบัญชี แบบเทียบกันทีละข้อ"
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: f751716e46c9
+sourceHash: ea24bb091caf
 ---
 
 การสร้าง shell alias หนึ่งตัวต่อหนึ่งบัญชีเป็นวิธีที่ง่ายที่สุดในการใช้ Claude Code หลายบัญชี เบื้องหลังแล้ว ccam ทำสิ่งเดียวกัน แต่เพิ่มการใช้ร่วมกัน การสลับบัญชี และการติดตามการใช้งานเข้ามา
+
+## การตั้งค่าด้วย alias
+
+เพิ่มหนึ่งบรรทัดต่อบัญชีเพิ่มเติมแต่ละบัญชีใน `~/.bashrc` หรือ `~/.zshrc` เปิดเทอร์มินัลใหม่ แล้วรัน alias นั้นหนึ่งครั้งเพื่อเข้าสู่ระบบ:
+
+```sh
+alias claude-work='CLAUDE_CONFIG_DIR=~/.claude-work claude'
+```
+
+`claude` ยังคงเป็นบัญชีแรกของคุณ และ `claude-work` จะเริ่มบัญชีที่สอง นี่คือวิธีที่[เอกสารของ Claude Code อธิบายไว้](https://code.claude.com/docs/en/authentication#log-in-with-multiple-accounts)
+
+## การตั้งค่าด้วย ccam
+
+ติดตั้ง ccam แล้วเพิ่มบัญชี ในตัวอย่างนี้มีคำสั่งลัดของตัวเองด้วย:
+
+```sh
+curl -fsSL https://ccam.dev/install.sh | sh
+ccam add work --shortcut ccwork
+```
+
+`ccam work` และ `ccwork` จะเริ่มบัญชีนั้น และทั้งสองคำสั่งใช้ในสคริปต์ได้ด้วย
+
+## เปรียบเทียบแบบเคียงข้างกัน
 
 | | Shell alias | ccam |
 | --- | --- | --- |
@@ -25,4 +48,4 @@ sourceHash: f751716e46c9
 
 เลือกใช้ alias หากคุณมีสองบัญชีและไม่ต้องการใช้อะไรร่วมกันเลย เลือกใช้ ccam หากคุณต้องการให้ทุกบัญชีรู้สึกเหมือนเป็นการตั้งค่าเดียวกัน คุณเริ่มจาก alias ก่อนแล้วค่อยย้ายมาใช้ ccam ภายหลังได้: `ccam import` จะลงทะเบียนโฟลเดอร์ `~/.claude-*` ที่มีอยู่ไว้ในตำแหน่งเดิม
 
-[วิธีใช้สองบัญชีบนคอมพิวเตอร์เครื่องเดียว](/guides/multiple-claude-code-accounts) อธิบายทั้งสองแนวทางทีละขั้นตอน
+[วิธีใช้หลายบัญชีบนคอมพิวเตอร์เครื่องเดียว](/guides/multiple-claude-code-accounts) อธิบายทั้งสองแนวทางทีละขั้นตอน และ [ccam กับเครื่องมือสลับบัญชีอื่น ๆ](/compare/account-switchers) เปรียบเทียบ ccam กับเครื่องมือที่สลับการเข้าสู่ระบบเพียงชุดเดียว

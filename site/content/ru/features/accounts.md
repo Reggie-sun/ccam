@@ -1,6 +1,6 @@
 ---
 title: Управление аккаунтами
-description: Добавляйте, входите, просматривайте, переименовывайте, удаляйте и импортируйте аккаунты Claude Code командами ccam add, ccam login, ccam list, ccam rename, ccam remove и ccam import.
+description: "Добавляйте, входите, просматривайте, переименовывайте, удаляйте и импортируйте аккаунты Claude Code: ccam add, login, list, rename, remove и import."
 updated: 2026-10-19
 order: 2
 translation: machine

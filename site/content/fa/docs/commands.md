@@ -1,10 +1,11 @@
 ---
 title: مرجع فرمان‌ها
+metaTitle: مرجع فرمان‌های ccam
 description: همه فرمان‌ها و گزینه‌های ccam، از ccam add و ccam <name> تا ccam usage، ccam next و ccam doctor.
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a82175c30d3
+sourceHash: 3342453e38d3
 ---
 
 برای اینکه ببینید یک فرمان چه کاری انجام می‌دهد بدون آنکه واقعاً انجامش دهد، `--dry-run` را پیش از آن بگذارید، برای مثال `ccam --dry-run work`. این گزینه هنگام اجرای Claude Code (`ccam <name>`، `ccam run`، `ccam next`) و با `share`، `migrate`، `shortcut`، `update` و `doctor --fix` کار می‌کند. فرمان‌های دیگری که چیزی را تغییر می‌دهند، به‌جای اجرا شدن آن را رد می‌کنند.

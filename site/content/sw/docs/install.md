@@ -1,10 +1,11 @@
 ---
 title: Sakinisha ccam
-description: Sakinisha ccam kwenye Linux au macOS kwa amri moja, kutoka kifurushi cha .deb, au kutoka msimbo chanzo, na uisasishe kwa ccam update.
+metaTitle: Sakinisha ccam kwenye Linux na macOS
+description: Sakinisha ccam kwenye Linux au macOS kwa amri moja, kifurushi cha .deb au msimbo chanzo, na uisasishe kwa ccam update. Sakinisha Claude Code kwanza.
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: 4d7291e0f86e
+sourceHash: 7ecd1ed00e09
 ---
 
 Endesha hii kwenye terminal ya Linux au macOS:

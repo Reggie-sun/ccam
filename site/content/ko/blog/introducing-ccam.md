@@ -1,17 +1,17 @@
 ---
 title: ccam을 소개합니다
 description: ccam을 만든 이유, 여러 Claude Code 계정을 쓰는 사람에게 ccam이 해 주는 일, 그리고 작업을 방해하지 않도록 설계한 방식을 소개합니다.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: bbc9d9014f98
+sourceHash: a555dc969142
 ---
 
 ccam은 한 컴퓨터에서 Claude Code 계정을 두 개 이상 쓰는 사람을 위한 작은 명령줄 도구입니다. 개인 계정과 회사 계정을 함께 쓰거나, 긴 프로젝트 하나에 여러 계정을 쓰는 경우가 그렇습니다.
 
 ## 문제점
 
-Claude Code는 `CLAUDE_CONFIG_DIR`로 여러 계정을 지원합니다. 계정마다 폴더를 하나씩 쓰는 방식입니다. 하지만 실제로 써 보면 폴더 하나하나가 외딴섬입니다. 설정, `CLAUDE.md`, MCP 서버, 에이전트, 스킬을 폴더마다 다시 설정해야 하고, 서로 맞추는 일도 손수 해야 합니다. 대화는 시작한 폴더에만 남습니다. 게다가 한 계정이 사용량 한도에 도달했는지는 직접 써 봐야 알 수 있습니다.
+Claude Code는 [`CLAUDE_CONFIG_DIR`](/guides/claude-config-dir)로 여러 계정을 지원합니다. 계정마다 폴더를 하나씩 쓰는 방식입니다. 하지만 실제로 써 보면 폴더 하나하나가 외딴섬입니다. 설정, `CLAUDE.md`, MCP 서버, 에이전트, 스킬을 폴더마다 다시 설정해야 하고, 서로 맞추는 일도 손수 해야 합니다. 대화는 시작한 폴더에만 남습니다. 게다가 한 계정이 사용량 한도에 도달했는지는 직접 써 봐야 알 수 있습니다.
 
 ## ccam이 하는 일
 
@@ -32,5 +32,7 @@ Claude Code는 `CLAUDE_CONFIG_DIR`로 여러 계정을 지원합니다. 계정�
 curl -fsSL https://ccam.dev/install.sh | sh
 ccam add
 ```
+
+[빠른 시작](/docs/quick-start)에서 계정 두 개를 추가하는 과정을 따라가 볼 수 있고, [여러 Claude Code 계정을 쓰는 방법](/guides/multiple-claude-code-accounts)에서는 ccam을 쓸 때와 쓰지 않을 때의 방식을 설명합니다.
 
 ccam은 오픈소스 비공식 도구로, Anthropic과 제휴 관계가 없으며 Anthropic의 보증을 받지 않았습니다. 여러 계정을 사용해도 되는지는 각 계정의 약관에 따라 다릅니다. 의견이나 번역 기여는 [GitHub](https://github.com/jhyunwoo/ccam)에서 환영합니다.

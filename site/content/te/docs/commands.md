@@ -1,10 +1,11 @@
 ---
 title: కమాండ్ రిఫరెన్స్
+metaTitle: ccam కమాండ్ రిఫరెన్స్
 description: ccam add, ccam <name> నుంచి ccam usage, ccam next, ccam doctor వరకు ccam యొక్క ప్రతి కమాండ్, ఆప్షన్.
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a82175c30d3
+sourceHash: 3342453e38d3
 ---
 
 ఒక కమాండ్ అసలు చేయకుండా అది ఏమి చేస్తుందో చూడటానికి, దాని ముందు `--dry-run` పెట్టండి, ఉదాహరణకు `ccam --dry-run work`. ఇది Claude Code ను ప్రారంభించేటప్పుడు (`ccam <name>`, `ccam run`, `ccam next`), అలాగే `share`, `migrate`, `shortcut`, `update`, `doctor --fix` తో పనిచేస్తుంది. ఏదైనా మార్చే ఇతర కమాండ్‌లు రన్ అవ్వకుండా దాన్ని తిరస్కరిస్తాయి.

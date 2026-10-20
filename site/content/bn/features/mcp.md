@@ -1,6 +1,6 @@
 ---
 title: "শেয়ার করা MCP সার্ভার"
-description: "ccam mcp add, add-json, list, remove ও import দিয়ে প্রতি গ্রুপে MCP সার্ভারের একটি তালিকা রাখুন, যা --mcp-config দিয়ে দেওয়া হয় বা প্রতিটি অ্যাকাউন্টে সিঙ্ক করা হয়।"
+description: "ccam mcp add, add-json, list, remove ও import দিয়ে প্রতি গ্রুপে একটি MCP সার্ভার তালিকা রাখুন, যা --mcp-config দিয়ে দেওয়া বা প্রতিটি অ্যাকাউন্টে সিঙ্ক হয়।"
 updated: 2026-10-20
 order: 5
 translation: machine

@@ -1,10 +1,11 @@
 ---
 title: 빠른 시작
+metaTitle: "빠른 시작: Claude Code 계정 추가와 전환"
 description: ccam add로 Claude Code 계정 두 개를 추가하고, ccwork 같은 단축 명령을 붙여 계정을 전환한 뒤, 공유할 항목을 고릅니다.
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: d040e34d2a17
+sourceHash: a10d91d2a64e
 ---
 
 `ccam add`로 계정을 하나씩 추가한 뒤, `ccam <name>` 또는 `ccwork`처럼 직접 이름을 붙인 단축 명령으로 Claude Code를 시작합니다. 대부분은 이것만으로 충분합니다.

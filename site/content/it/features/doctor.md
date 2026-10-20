@@ -1,6 +1,6 @@
 ---
 title: Controllo e riparazione
-description: Controlla link di condivisione, permessi dei file, login e versione di Claude Code con ccam doctor, e ripara ciò che si può riparare in sicurezza con ccam doctor --fix.
+description: Controlla link di condivisione, permessi dei file, login e versione di Claude Code con ccam doctor, e ripara ciò che è sicuro riparare con ccam doctor --fix.
 updated: 2026-10-19
 order: 9
 translation: machine

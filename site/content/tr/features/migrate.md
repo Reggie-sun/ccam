@@ -1,6 +1,6 @@
 ---
 title: Mevcut bir kurulumu kopyalama
-description: Mevcut bir ~/.claude klasörünün ayarlarını, CLAUDE.md dosyasını, uzantılarını, MCP sunucularını ve MCP oturum açmalarını ccam migrate ile bir ccam paylaşım grubuna kopyalayın.
+description: Mevcut bir ~/.claude klasörünün ayarlarını, CLAUDE.md dosyasını, uzantılarını, MCP sunucularını ve MCP girişlerini ccam migrate ile paylaşım grubuna kopyalayın.
 updated: 2026-10-19
 order: 6
 translation: machine

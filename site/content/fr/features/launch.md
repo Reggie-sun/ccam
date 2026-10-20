@@ -1,6 +1,6 @@
 ---
 title: "Lancer Claude Code"
-description: "Lancez Claude Code avec n'importe quel compte via ccam <name|number>, ccam run ou le sélecteur ccam ; les arguments sont transmis tels quels à claude, et --dry-run affiche la commande."
+description: "Lancez Claude Code avec tout compte via ccam <name|number>, ccam run ou le sélecteur ; les arguments passent tels quels et --dry-run affiche la commande."
 updated: 2026-10-20
 order: 1
 translation: machine

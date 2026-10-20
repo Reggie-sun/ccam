@@ -1,6 +1,6 @@
 ---
 title: पुढच्या खात्यावर जाणे
-description: ccam next तुम्ही शेवटी वापरलेल्या खात्यानंतरच्या खात्याने Claude Code उघडते; --auto सर्वात कमी 5 तासांचा वापर असलेले खाते निवडते आणि --continue संभाषण पुढे चालू ठेवते.
+description: ccam next शेवटी वापरलेल्या खात्यानंतरच्या खात्याने Claude Code उघडते; --auto सर्वात कमी 5 तासांचा वापर असलेले खाते निवडते, --continue संभाषण चालू ठेवते.
 updated: 2026-10-19
 order: 8
 translation: machine

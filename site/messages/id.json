@@ -1,8 +1,8 @@
 {
   "site": {
     "name": "ccam",
-    "title": "ccam: gunakan beberapa akun Claude Code di satu komputer",
-    "description": "ccam adalah alat baris perintah gratis dan open source untuk menggunakan beberapa akun Claude Code di satu komputer dan berpindah di antaranya dengan satu perintah.",
+    "title": "ccam: Claude Code Account Manager dan pengalih akun",
+    "description": "ccam (Claude Code Account Manager) adalah alat open source gratis untuk memakai beberapa akun Claude Code di satu komputer dan ganti akun dengan satu perintah.",
     "titleSuffix": "ccam untuk Claude Code"
   },
   "nav": {
@@ -103,10 +103,18 @@
       "compare": "Perbandingan",
       "blog": "Blog"
     },
+    "hubs": {
+      "docs": "Instal ccam, tambahkan akun Claude Code Anda, pilih apa yang dibagikan, dan cari setiap perintah, lengkap dengan jawaban atas pertanyaan umum.",
+      "guides": "Panduan langkah demi langkah untuk menjalankan beberapa akun Claude Code di satu komputer: CLAUDE_CONFIG_DIR, batas penggunaan, dan Remote Control.",
+      "features": "Setiap fitur ccam secara rinci, dengan semua opsinya: akun, pintasan, berbagi, server MCP, penggunaan, perpindahan akun, perbaikan, dan pembaruan.",
+      "compare": "Perbandingan ccam dengan alias shell dan pengalih akun Claude Code lainnya, fitur demi fitur, agar Anda bisa memilih alat yang tepat.",
+      "blog": "Kabar dari proyek ccam: mengapa ccam dibuat, cara kerjanya, dan apa yang berubah bagi pengguna beberapa akun Claude Code."
+    },
     "commandsTable": {
       "command": "Perintah",
       "does": "Fungsinya"
-    }
+    },
+    "byline": "Oleh {author}"
   },
   "commands": {
     "ccam": "Membuka pemilih akun",
@@ -144,16 +152,17 @@
     "unofficial": "ccam adalah alat open source tidak resmi. ccam tidak berafiliasi dengan atau didukung oleh Anthropic. Claude dan Claude Code adalah merek dagang Anthropic.",
     "terms": "Boleh tidaknya Anda menggunakan beberapa akun bergantung pada ketentuan setiap akun. Periksa ketentuan tersebut sebelum melakukannya.",
     "license": "Kode sumber di GitHub",
-    "languages": "Semua bahasa"
+    "languages": "Semua bahasa",
+    "analytics": "Situs ini menghitung kunjungan dengan Cloudflare Web Analytics, yang tidak memasang cookie dan tidak mengumpulkan data pribadi."
   },
   "changelog": {
     "title": "Catatan perubahan",
-    "description": "Setiap rilis ccam dan apa yang berubah di dalamnya. Perintah baru, perbaikan, dan perubahan untuk memakai beberapa akun Claude Code di satu komputer.",
+    "description": "Setiap rilis ccam dan apa yang berubah di dalamnya: perintah baru, perbaikan, dan peningkatan kecepatan, dari yang terbaru.",
     "empty": "Belum ada rilis yang diterbitkan. Build dari branch main tercantum di GitHub."
   },
   "languages": {
     "title": "Bahasa",
-    "description": "ccam.dev tersedia dalam {count, plural, other {# bahasa}}. Pilih bahasa untuk dokumentasi dan panduan ccam.",
+    "description": "ccam.dev tersedia dalam {count, plural, other {# bahasa}}, dengan dokumentasi dan panduan yang sama di setiap bahasa.",
     "coverage": "Menurut data populasi Unicode CLDR, orang yang berbicara setidaknya satu dari bahasa-bahasa ini mencakup {low} hingga {high} dari populasi dunia.",
     "method": "Angka yang lebih rendah menghitung satu bahasa yang didukung dan paling banyak digunakan di setiap negara; angka yang lebih tinggi menjumlahkan semua bahasa yang didukung dan membatasi setiap negara pada 100%."
   },

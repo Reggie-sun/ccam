@@ -1,10 +1,11 @@
 ---
 title: ક્વિક સ્ટાર્ટ
+metaTitle: "ક્વિક સ્ટાર્ટ: Claude Code એકાઉન્ટ ઉમેરો, સ્વિચ કરો"
 description: "ccam add વડે બે Claude Code એકાઉન્ટ ઉમેરો, તેમને ccwork જેવા શૉર્ટકટ આપો, તેમની વચ્ચે સ્વિચ કરો, અને તેઓ શું શેર કરે તે પસંદ કરો."
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: d040e34d2a17
+sourceHash: a10d91d2a64e
 ---
 
 દરેક એકાઉન્ટ `ccam add` વડે ઉમેરો, પછી `ccam <name>` વડે અથવા તમે જાતે નામ આપેલા શૉર્ટકટ, જેમ કે `ccwork`, વડે Claude Code શરૂ કરો. મોટા ભાગના લોકોને આટલું જ જોઈએ.

@@ -1,7 +1,8 @@
 ---
 title: Share MCP servers, settings and history
 description: How ccam shares MCP servers, settings.json, CLAUDE.md, agents, skills and conversation history between Claude Code accounts while keeping every login separate.
-updated: 2026-10-19
+updated: 2026-10-20
+published: 2026-10-19
 order: 4
 translation: source
 ---
@@ -21,6 +22,8 @@ Each account keeps its own login. Everything else can be shared item by item: cc
 New accounts share everything except conversation history.
 
 The login files `.credentials.json` and `.claude.json` are never shared. ccam only links paths from a fixed list, and these two are not on it.
+
+This page covers the everyday tasks. Every option is described on the feature pages: [sharing between accounts](/features/share), [shared MCP servers](/features/mcp) and [copying an existing setup](/features/migrate).
 
 ## Groups
 

@@ -1,10 +1,11 @@
 ---
 title: Komut başvurusu
+metaTitle: ccam komut başvurusu
 description: ccam add ve ccam <name> komutlarından ccam usage, ccam next ve ccam doctor komutlarına kadar tüm ccam komutları ve seçenekleri.
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a82175c30d3
+sourceHash: 3342453e38d3
 ---
 
 Bir komutun ne yapacağını, yapmadan görmek için komuttan önce `--dry-run` yazın, örneğin `ccam --dry-run work`. Bu, Claude Code başlatılırken (`ccam <name>`, `ccam run`, `ccam next`) ve `share`, `migrate`, `shortcut`, `update` ile `doctor --fix` komutlarında çalışır. Bir şeyi değiştiren diğer komutlar çalışmak yerine bunu reddeder.

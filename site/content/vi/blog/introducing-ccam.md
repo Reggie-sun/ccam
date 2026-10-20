@@ -1,17 +1,17 @@
 ---
 title: Giới thiệu ccam
 description: "Vì sao có ccam, ccam làm gì cho người dùng nhiều tài khoản Claude Code, và cách nó không cản trở công việc của bạn."
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: bbc9d9014f98
+sourceHash: a555dc969142
 ---
 
 ccam là một công cụ dòng lệnh nhỏ dành cho người dùng nhiều hơn một tài khoản Claude Code trên cùng một máy tính: một tài khoản cá nhân và một tài khoản công việc, hoặc nhiều tài khoản cho một dự án dài.
 
 ## Vấn đề
 
-Claude Code hỗ trợ nhiều tài khoản thông qua `CLAUDE_CONFIG_DIR`: mỗi tài khoản một thư mục. Trên thực tế, mỗi thư mục là một hòn đảo riêng. Cài đặt, `CLAUDE.md`, máy chủ MCP, agent và skill phải được thiết lập lại trong từng thư mục và đồng bộ thủ công. Các cuộc hội thoại nằm lại ở nơi chúng bắt đầu. Và khi một tài khoản chạm giới hạn sử dụng, bạn chỉ biết được khi thử dùng.
+Claude Code hỗ trợ nhiều tài khoản thông qua [`CLAUDE_CONFIG_DIR`](/guides/claude-config-dir): mỗi tài khoản một thư mục. Trên thực tế, mỗi thư mục là một hòn đảo riêng. Cài đặt, `CLAUDE.md`, máy chủ MCP, agent và skill phải được thiết lập lại trong từng thư mục và đồng bộ thủ công. Các cuộc hội thoại nằm lại ở nơi chúng bắt đầu. Và khi một tài khoản chạm giới hạn sử dụng, bạn chỉ biết được khi thử dùng.
 
 ## ccam làm gì
 
@@ -32,5 +32,7 @@ ccam cũng cẩn thận với tệp của bạn. Mọi thay đổi về việc d
 curl -fsSL https://ccam.dev/install.sh | sh
 ccam add
 ```
+
+Phần [bắt đầu nhanh](/docs/quick-start) hướng dẫn từng bước thêm hai tài khoản, còn bài [cách dùng nhiều tài khoản Claude Code](/guides/multiple-claude-code-accounts) giải thích cách làm khi có và không có ccam.
 
 ccam là phần mềm mã nguồn mở và không chính thức: nó không liên kết với Anthropic và không được Anthropic xác nhận. Việc bạn có được dùng nhiều tài khoản hay không phụ thuộc vào điều khoản của từng tài khoản. Mọi góp ý và bản dịch đều được hoan nghênh trên [GitHub](https://github.com/jhyunwoo/ccam).

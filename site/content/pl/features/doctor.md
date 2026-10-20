@@ -1,6 +1,6 @@
 ---
 title: Sprawdzanie i naprawa
-description: Sprawdź linki współdzielenia, uprawnienia plików, loginy i wersję Claude Code poleceniem ccam doctor, a to, co da się bezpiecznie naprawić, napraw przez ccam doctor --fix.
+description: Sprawdź linki współdzielenia, uprawnienia plików, loginy i wersję Claude Code poleceniem ccam doctor, a bezpieczne poprawki wykonaj przez ccam doctor --fix.
 updated: 2026-10-19
 order: 9
 translation: machine

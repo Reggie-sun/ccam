@@ -4,7 +4,7 @@ description: "ดูการใช้งาน 5 ชั่วโมงและ
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: 9aebb54d40e2
+sourceHash: d288177682d7
 ---
 
 `ccam usage` แสดงว่าแต่ละบัญชีใช้ขีดจำกัดแบบ 5 ชั่วโมงและรายสัปดาห์ไปแล้วเท่าไร `ccam next --auto` เปิดบัญชีที่เหลือโควตามากที่สุด และ `--continue` จะนำการสนทนาปัจจุบันไปต่อด้วย

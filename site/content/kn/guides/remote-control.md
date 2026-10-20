@@ -1,10 +1,10 @@
 ---
 title: ccam ಜೊತೆಗೆ Remote Control ಬಳಸುವುದು
-description: ccam <name> rc ಮೂಲಕ ಯಾವುದೇ ಖಾತೆಯಾಗಿ Claude Code Remote Control ಆರಂಭಿಸಿ, ಯಾವ ಆಯ್ಕೆಗಳು ಅನ್ವಯಿಸುತ್ತವೆ ಎಂದು ನೋಡಿ, ಹಂಚಿಕೊಂಡ MCP ಸರ್ವರ್‌ಗಳನ್ನು ನಕಲಿಸಲು ccam ಏಕೆ ಕೇಳುತ್ತದೆ ಎಂದು ತಿಳಿಯಿರಿ, ಮತ್ತು ಸಾಮಾನ್ಯ ಸಮಸ್ಯೆಗಳನ್ನು ಪರಿಹರಿಸಿ.
+description: ccam <name> rc ಮೂಲಕ ಯಾವುದೇ ಖಾತೆಯಾಗಿ Claude Code Remote Control ಆರಂಭಿಸಿ; ಅನ್ವಯಿಸುವ ಆಯ್ಕೆಗಳು, ಹಂಚಿಕೊಂಡ MCP ಸರ್ವರ್‌ಗಳ ನಕಲನ್ನು ccam ಏಕೆ ಸೂಚಿಸುತ್ತದೆ, ಸಮಸ್ಯೆ ಪರಿಹಾರ.
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: b7b09f9bcb9e
+sourceHash: 59b802c44bb3
 ---
 
 `ccam work rc` Claude Code ನ Remote Control ಅನ್ನು `work` ಖಾತೆಯಾಗಿ ಆರಂಭಿಸುತ್ತದೆ, ಹೀಗಾಗಿ ಈ ಕಂಪ್ಯೂಟರ್‌ನಲ್ಲಿನ ಸೆಷನ್‌ಗಳನ್ನು claude.ai/code ಅಥವಾ Claude ಮೊಬೈಲ್ ಆ್ಯಪ್‌ನಿಂದ ನಡೆಸಬಹುದು. ಇದು `claude rc` ನಂತೆಯೇ ಕೆಲಸ ಮಾಡುತ್ತದೆ, ಒಂದೇ ವ್ಯತ್ಯಾಸದೊಂದಿಗೆ: ಖಾತೆ MCP ಸರ್ವರ್‌ಗಳನ್ನು ಹಂಚಿಕೊಂಡಿದ್ದರೆ, ಅವುಗಳನ್ನು ಖಾತೆಯ `.claude.json` ಗೆ ನಕಲಿಸಬೇಕೇ ಎಂದು ccam ಒಮ್ಮೆ ಕೇಳುತ್ತದೆ, ಏಕೆಂದರೆ Remote Control ಸೆಷನ್‌ಗಳು ಬೇರೆ ಯಾವ ಸ್ಥಳದಿಂದಲೂ ಸರ್ವರ್‌ಗಳನ್ನು ಓದುವುದಿಲ್ಲ.

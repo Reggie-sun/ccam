@@ -1,6 +1,6 @@
 ---
 title: Sao chép thiết lập hiện có
-description: "Sao chép cài đặt, CLAUDE.md, tiện ích mở rộng, máy chủ MCP và thông tin đăng nhập MCP của một ~/.claude hiện có vào một nhóm dùng chung của ccam bằng ccam migrate."
+description: "Sao chép cài đặt, CLAUDE.md, tiện ích mở rộng, máy chủ MCP và đăng nhập MCP của một ~/.claude hiện có vào một nhóm dùng chung của ccam bằng ccam migrate."
 updated: 2026-10-19
 order: 6
 translation: machine

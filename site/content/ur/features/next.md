@@ -1,6 +1,6 @@
 ---
 title: "اگلے اکاؤنٹ پر جانا"
-description: "ccam next، Claude Code کو اس اکاؤنٹ کے طور پر کھولتا ہے جو آخری بار استعمال کیے گئے اکاؤنٹ کے بعد آتا ہے؛ --auto سب سے کم 5 گھنٹے کا استعمال چنتا ہے اور --continue گفتگو جاری رکھتا ہے۔"
+description: "ccam next، Claude Code کو آخری استعمال شدہ اکاؤنٹ کے بعد والے اکاؤنٹ سے کھولتا ہے؛ --auto سب سے کم 5 گھنٹے کا استعمال چنتا ہے، --continue گفتگو جاری رکھتا ہے۔"
 updated: 2026-10-19
 order: 8
 translation: machine

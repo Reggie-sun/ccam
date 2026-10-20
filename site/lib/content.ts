@@ -10,8 +10,10 @@ export const sections: Section[] = ["docs", "guides", "features", "compare", "bl
 
 export type FrontMatter = {
   title: string;
+  metaTitle?: string; // search-result title when the short title (headings, sidebar) says too little
   description: string;
   updated: string; // YYYY-MM-DD
+  published?: string; // YYYY-MM-DD, English pages only; translations use it too
   order: number;
   ccam?: string;
   claude?: string;
@@ -110,14 +112,29 @@ export function renderMarkdown(page: Pick<Page, "locale" | "markdown" | "section
   return { html, headings };
 }
 
+/** Plain text of Markdown: rendered, then stripped of tags, so `CLAUDE_CONFIG_DIR`
+ *  and `<name>` keep their underscores and angle brackets. */
+function plainText(md: string): string {
+  const html = new Marked().parse(md.replace(/```[\s\S]*?```/g, ""), { async: false }) as string;
+  return html
+    .replace(/<\/(p|li|h\d|td|th|blockquote)>|<br\s*\/?>/g, " ")
+    .replace(/<[^>]+>/g, "")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&amp;/g, "&")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 /** Question/answer pairs from a FAQ page: each "## question" and the text below it. */
 export function faqEntries(page: Page): { question: string; answer: string }[] {
   const out: { question: string; answer: string }[] = [];
   const parts = page.markdown.split(/^## /m).slice(1);
   for (const part of parts) {
     const [question, ...rest] = part.split("\n");
-    const answer = rest.join("\n").replace(/```[\s\S]*?```/g, "").replace(/[`*_>#]/g, "").replace(/\[([^\]]+)\]\([^)]+\)/g, "$1").replace(/\s+/g, " ").trim();
-    out.push({ question: question.trim(), answer });
+    out.push({ question: plainText(question), answer: plainText(rest.join("\n")) });
   }
   return out;
 }

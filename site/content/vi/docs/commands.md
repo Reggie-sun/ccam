@@ -1,10 +1,11 @@
 ---
 title: Tham chiếu lệnh
+metaTitle: "Tham chiếu lệnh ccam"
 description: "Mọi lệnh và tùy chọn của ccam, từ ccam add và ccam <name> đến ccam usage, ccam next và ccam doctor."
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a82175c30d3
+sourceHash: 3342453e38d3
 ---
 
 Đặt `--dry-run` trước một lệnh để xem lệnh đó sẽ làm gì mà không thực sự thực hiện, ví dụ `ccam --dry-run work`. Tùy chọn này dùng được khi khởi động Claude Code (`ccam <name>`, `ccam run`, `ccam next`) và với `share`, `migrate`, `shortcut`, `update` và `doctor --fix`. Các lệnh khác có thay đổi một thứ gì đó sẽ từ chối tùy chọn này thay vì chạy.

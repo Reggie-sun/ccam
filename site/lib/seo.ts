@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getLocale, locales, type Locale } from "../i18n/locales";
 import { getMessages } from "./i18n";
 import { abs, SITE } from "./paths";
+import { TITLE_MAX, width } from "./width";
 
 type SeoInput = {
   locale: string;
@@ -52,7 +53,7 @@ function markdownAlternate(path: string): Record<string, string> | undefined {
  *  already names Claude Code or the longer form would be cut off in results. */
 export function pageTitle(locale: string, title: string): string {
   const long = `${title} | ${getMessages(locale).site.titleSuffix}`;
-  return title.includes("Claude Code") || long.length > 65 ? `${title} | ccam` : long;
+  return title.includes("Claude Code") || width(long) > TITLE_MAX ? `${title} | ccam` : long;
 }
 
 export function ogPath(locale: Locale | string, key: string): string {

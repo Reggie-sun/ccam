@@ -4,7 +4,7 @@ description: Lihat penggunaan 5 jam dan mingguan setiap akun Claude Code dengan 
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: 9aebb54d40e2
+sourceHash: d288177682d7
 ---
 
 `ccam usage` menampilkan seberapa banyak batas 5 jam dan mingguan yang sudah digunakan setiap akun. `ccam next --auto` membuka akun dengan sisa kuota terbanyak, dan `--continue` membawa percakapan saat ini ke akun tersebut.

@@ -1,17 +1,17 @@
 ---
 title: ccam 介紹
 description: ccam 為什麼存在、它能為擁有多個 Claude Code 帳號的人做些什麼，以及它如何做到不礙事。
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: bbc9d9014f98
+sourceHash: a555dc969142
 ---
 
 ccam 是一個小型命令列工具，適合在同一台電腦上使用多個 Claude Code 帳號的人：例如一個個人帳號和一個工作帳號，或是為一個長期專案準備的多個帳號。
 
 ## 問題所在
 
-Claude Code 透過 `CLAUDE_CONFIG_DIR` 支援多個帳號：每個帳號一個資料夾。實際使用時，每個資料夾都是一座孤島。設定、`CLAUDE.md`、MCP 伺服器、agents 和 skills 都得在每個資料夾中重新設定，並手動保持一致。對話會留在開始時的地方。而當某個帳號達到用量限制時，你要等到嘗試時才會發現。
+Claude Code 透過 [`CLAUDE_CONFIG_DIR`](/guides/claude-config-dir) 支援多個帳號：每個帳號一個資料夾。實際使用時，每個資料夾都是一座孤島。設定、`CLAUDE.md`、MCP 伺服器、agents 和 skills 都得在每個資料夾中重新設定，並手動保持一致。對話會留在開始時的地方。而當某個帳號達到用量限制時，你要等到嘗試時才會發現。
 
 ## ccam 能做什麼
 
@@ -32,5 +32,7 @@ Claude Code 透過 `CLAUDE_CONFIG_DIR` 支援多個帳號：每個帳號一個�
 curl -fsSL https://ccam.dev/install.sh | sh
 ccam add
 ```
+
+[快速入門](/docs/quick-start)會帶你新增兩個帳號；[如何使用多個 Claude Code 帳號](/guides/multiple-claude-code-accounts)則說明了使用與不使用 ccam 的做法。
 
 ccam 是開放原始碼的非官方工具：它與 Anthropic 沒有關聯，也未獲得 Anthropic 認可。能否使用多個帳號取決於各帳號的條款。歡迎在 [GitHub](https://github.com/jhyunwoo/ccam) 上提供意見回饋和翻譯。

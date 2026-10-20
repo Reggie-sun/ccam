@@ -1,13 +1,36 @@
 ---
 title: ccam 与 shell 别名对比
 description: 并排对比两种运行多个 Claude Code 账号的方式：使用 CLAUDE_CONFIG_DIR 的 shell 别名，以及 ccam。
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: f751716e46c9
+sourceHash: ea24bb091caf
 ---
 
 为每个账号设置一个 shell 别名，是运行多个 Claude Code 账号最简单的方法。ccam 在底层做的是同一件事，并增加了共享、切换和用量跟踪。
+
+## 别名方式
+
+在 `~/.bashrc` 或 `~/.zshrc` 中为每个额外账号添加一行，打开新的终端，然后运行一次该别名来登录：
+
+```sh
+alias claude-work='CLAUDE_CONFIG_DIR=~/.claude-work claude'
+```
+
+`claude` 仍然是你的第一个账号，`claude-work` 启动第二个账号。这正是 [Claude Code 文档所介绍的方法](https://code.claude.com/docs/en/authentication#log-in-with-multiple-accounts)。
+
+## ccam 方式
+
+安装 ccam 并添加账号，这里还为它设置了一个专属的快捷命令：
+
+```sh
+curl -fsSL https://ccam.dev/install.sh | sh
+ccam add work --shortcut ccwork
+```
+
+`ccam work` 和 `ccwork` 都会启动该账号，而且两者在脚本中同样可用。
+
+## 并排对比
 
 | | Shell 别名 | ccam |
 | --- | --- | --- |
@@ -25,4 +48,4 @@ sourceHash: f751716e46c9
 
 如果你只有两个账号，并且不想在它们之间共享任何内容，就选择别名。如果你希望多个账号用起来像同一套环境，就选择 ccam。你也可以先用别名，以后再迁移到 ccam：`ccam import` 会在原位置注册已有的 `~/.claude-*` 文件夹。
 
-[如何在一台电脑上使用两个账号](/guides/multiple-claude-code-accounts)逐步介绍了这两种方法。
+[如何在一台电脑上使用多个账号](/guides/multiple-claude-code-accounts)逐步介绍了这两种方法，[ccam 与其他账号切换工具](/compare/account-switchers)则把 ccam 与那些切换同一份登录信息的工具做了对比。

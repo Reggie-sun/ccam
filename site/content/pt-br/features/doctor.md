@@ -1,6 +1,6 @@
 ---
 title: Verificar e reparar
-description: Verifique links de compartilhamento, permissões de arquivos, logins e a versão do Claude Code com ccam doctor, e repare o que é seguro reparar com ccam doctor --fix.
+description: Verifique links de compartilhamento, permissões de arquivos, logins e a versão do Claude Code com ccam doctor, e corrija o que é seguro com ccam doctor --fix.
 updated: 2026-10-19
 order: 9
 translation: machine

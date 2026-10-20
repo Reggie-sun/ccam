@@ -4,7 +4,7 @@ description: ccam usage로 모든 Claude Code 계정의 5시간·주간 사용�
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: 9aebb54d40e2
+sourceHash: d288177682d7
 ---
 
 `ccam usage`는 각 계정이 5시간 한도와 주간 한도를 얼마나 썼는지 보여 줍니다. `ccam next --auto`는 여유가 가장 많은 계정을 열고, `--continue`는 지금 대화를 그 계정에서 이어 갑니다.

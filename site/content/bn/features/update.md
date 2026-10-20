@@ -1,6 +1,6 @@
 ---
 title: "ccam আপডেট করা"
-description: "ccam update একটি SHA-256 যাচাইয়ের পরে ccam-কে সর্বশেষ GitHub রিলিজ দিয়ে প্রতিস্থাপন করে; --check শুধু জানায় আর --version একটি নির্দিষ্ট রিলিজ ট্যাগ ইনস্টল করে।"
+description: "ccam update SHA-256 যাচাইয়ের পরে ccam-কে সর্বশেষ GitHub রিলিজ দিয়ে প্রতিস্থাপন করে; --check শুধু জানায়, --version নির্দিষ্ট রিলিজ ট্যাগ ইনস্টল করে।"
 updated: 2026-10-19
 order: 10
 translation: machine

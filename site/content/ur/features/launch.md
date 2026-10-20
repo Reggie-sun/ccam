@@ -1,6 +1,6 @@
 ---
 title: "Claude Code شروع کرنا"
-description: "ccam <name|number>، ccam run یا ccam کے انتخابی مینو سے Claude Code کو کسی بھی اکاؤنٹ کے طور پر شروع کریں؛ آرگیومنٹس بغیر تبدیلی کے claude کو جاتے ہیں، اور --dry-run کمانڈ دکھاتا ہے۔"
+description: "ccam <name|number>، ccam run یا انتخابی مینو سے Claude Code کسی بھی اکاؤنٹ سے شروع کریں؛ آرگیومنٹس جوں کے توں claude کو جاتے ہیں اور --dry-run کمانڈ دکھاتا ہے۔"
 updated: 2026-10-20
 order: 1
 translation: machine

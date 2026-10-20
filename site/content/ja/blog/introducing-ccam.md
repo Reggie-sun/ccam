@@ -1,17 +1,17 @@
 ---
 title: ccamの紹介
 description: ccamが生まれた理由、複数のClaude Codeアカウントを使う人のためにできること、作業の邪魔をしないための工夫を紹介します。
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: bbc9d9014f98
+sourceHash: a555dc969142
 ---
 
 ccamは、同じコンピューターで複数のClaude Codeアカウントを使う人のための小さなコマンドラインツールです。たとえば個人用と仕事用のアカウントや、1つの長いプロジェクトで使う複数のアカウントが対象です。
 
 ## 課題
 
-Claude Codeは、`CLAUDE_CONFIG_DIR`によって複数のアカウントに対応しています。アカウントごとに1つのフォルダーを使う方法です。しかし実際には、各フォルダーは孤立しています。設定、`CLAUDE.md`、MCPサーバー、エージェント、スキルは、フォルダーごとに設定し直し、手動で内容をそろえ続ける必要があります。会話は開始した場所に残ります。そして、あるアカウントが使用量の上限に達したかどうかは、使ってみるまでわかりません。
+Claude Codeは、[`CLAUDE_CONFIG_DIR`](/guides/claude-config-dir)によって複数のアカウントに対応しています。アカウントごとに1つのフォルダーを使う方法です。しかし実際には、各フォルダーは孤立しています。設定、`CLAUDE.md`、MCPサーバー、エージェント、スキルは、フォルダーごとに設定し直し、手動で内容をそろえ続ける必要があります。会話は開始した場所に残ります。そして、あるアカウントが使用量の上限に達したかどうかは、使ってみるまでわかりません。
 
 ## ccamができること
 
@@ -32,5 +32,7 @@ Claude Codeは、`CLAUDE_CONFIG_DIR`によって複数のアカウントに対�
 curl -fsSL https://ccam.dev/install.sh | sh
 ccam add
 ```
+
+[クイックスタート](/docs/quick-start)では2つのアカウントを追加する手順を説明しています。[複数のClaude Codeアカウントを使う方法](/guides/multiple-claude-code-accounts)では、ccamを使う場合と使わない場合のやり方を解説しています。
 
 ccamはオープンソースの非公式ツールであり、Anthropicとは提携しておらず、Anthropicの承認も受けていません。複数のアカウントを使ってよいかどうかは、各アカウントの規約によります。フィードバックや翻訳は[GitHub](https://github.com/jhyunwoo/ccam)で歓迎しています。

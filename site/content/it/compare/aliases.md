@@ -1,13 +1,36 @@
 ---
 title: ccam a confronto con gli alias della shell
 description: Alias della shell con CLAUDE_CONFIG_DIR e ccam a confronto, fianco a fianco, per usare più account Claude Code.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: f751716e46c9
+sourceHash: ea24bb091caf
 ---
 
 Un alias della shell per ogni account è il modo più semplice per usare più account Claude Code. ccam fa la stessa cosa dietro le quinte e aggiunge condivisione, cambio di account e monitoraggio dell'utilizzo.
+
+## La configurazione con gli alias
+
+Aggiungi una riga per ogni account in più a `~/.bashrc` o `~/.zshrc`, apri un nuovo terminale ed esegui l'alias una volta per fare il login:
+
+```sh
+alias claude-work='CLAUDE_CONFIG_DIR=~/.claude-work claude'
+```
+
+`claude` resta il tuo primo account e `claude-work` avvia il secondo. È il metodo [descritto nella documentazione di Claude Code](https://code.claude.com/docs/en/authentication#log-in-with-multiple-accounts).
+
+## La configurazione con ccam
+
+Installa ccam e aggiungi l'account, qui con un comando scorciatoia tutto suo:
+
+```sh
+curl -fsSL https://ccam.dev/install.sh | sh
+ccam add work --shortcut ccwork
+```
+
+`ccam work` e `ccwork` avviano l'account, ed entrambi funzionano anche negli script.
+
+## Fianco a fianco
 
 | | Alias della shell | ccam |
 | --- | --- | --- |
@@ -25,4 +48,4 @@ Un alias della shell per ogni account è il modo più semplice per usare più ac
 
 Scegli gli alias se hai due account e non vuoi condividere nulla tra loro. Scegli ccam se vuoi che gli account si comportino come un'unica configurazione. Puoi iniziare con gli alias e passare a ccam in seguito: `ccam import` registra le cartelle `~/.claude-*` esistenti dove si trovano.
 
-[Come usare due account su un solo computer](/guides/multiple-claude-code-accounts) spiega entrambi gli approcci passo dopo passo.
+[Come usare più account su un solo computer](/guides/multiple-claude-code-accounts) spiega entrambi gli approcci passo dopo passo, e [ccam e gli altri strumenti per cambiare account](/compare/account-switchers) confronta ccam con gli strumenti che scambiano un unico login.

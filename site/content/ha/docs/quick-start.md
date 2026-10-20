@@ -1,10 +1,11 @@
 ---
 title: Farawa da sauri
+metaTitle: "Farawa da sauri: ƙara da sauya asusun Claude Code"
 description: Ƙara asusun Claude Code biyu da ccam add, ba su gajerun umarni kamar ccwork, sauya tsakaninsu, kuma zaɓi abin da za su raba.
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: d040e34d2a17
+sourceHash: a10d91d2a64e
 ---
 
 Ƙara kowane asusu da `ccam add`, sannan ka fara Claude Code da `ccam <name>` ko da gajeren umarni da kai da kanka ka sa masa suna, kamar `ccwork`. Wannan ne kawai abin da yawancin mutane suke buƙata.

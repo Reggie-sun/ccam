@@ -1,10 +1,10 @@
 ---
 title: 共享 MCP 服务器、设置和历史记录
 description: ccam 如何在 Claude Code 账号之间共享 MCP 服务器、settings.json、CLAUDE.md、agents、skills 和对话历史，登录则各自独立。
-updated: 2026-10-19
+updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 0df8a7d51c87
+sourceHash: 888d466b29e9
 ---
 
 每个账号都保留自己的登录。其他所有内容都可以逐项共享：ccam 把账号中的文件或文件夹链接到一个共享组文件夹，因此在一个账号中所做的更改会出现在该组的所有账号中。
@@ -22,6 +22,8 @@ sourceHash: 0df8a7d51c87
 新账号默认共享除对话历史以外的所有内容。
 
 登录文件 `.credentials.json` 和 `.claude.json` 永远不会被共享。ccam 只链接一份固定列表中的路径，而这两个文件不在列表中。
+
+本页介绍日常任务。每个选项都在功能页面中有说明：[在账号之间共享](/features/share)、[共享的 MCP 服务器](/features/mcp)和[复制现有配置](/features/migrate)。
 
 ## 组
 

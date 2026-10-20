@@ -1,6 +1,6 @@
 ---
 title: Hesapları yönetme
-description: ccam add, ccam login, ccam list, ccam rename, ccam remove ve ccam import ile Claude Code hesaplarını ekleyin, giriş yapın, listeleyin, yeniden adlandırın, kaldırın ve içe aktarın.
+description: Claude Code hesaplarını ccam add, login, list, rename, remove ve import ile ekleyin, giriş yapın, listeleyin, yeniden adlandırın, kaldırın ve içe aktarın.
 updated: 2026-10-19
 order: 2
 translation: machine

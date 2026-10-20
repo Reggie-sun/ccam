@@ -1,10 +1,10 @@
 ---
 title: Współdzielenie serwerów MCP, ustawień i historii
 description: Jak ccam współdzieli serwery MCP, settings.json, CLAUDE.md, agentów, umiejętności i historię rozmów między kontami Claude Code, zachowując osobne loginy.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 0df8a7d51c87
+sourceHash: 888d466b29e9
 ---
 
 Każde konto ma własny login. Wszystko inne można współdzielić element po elemencie: ccam linkuje plik lub folder konta do współdzielonego folderu grupy, więc zmiana wprowadzona na jednym koncie pojawia się na wszystkich kontach tej grupy.
@@ -22,6 +22,8 @@ Każde konto ma własny login. Wszystko inne można współdzielić element po e
 Nowe konta współdzielą wszystko oprócz historii rozmów.
 
 Pliki logowania `.credentials.json` i `.claude.json` nigdy nie są współdzielone. ccam linkuje tylko ścieżki ze stałej listy, a tych dwóch na niej nie ma.
+
+Ta strona opisuje codzienne zadania. Wszystkie opcje są opisane na stronach funkcji: [współdzielenie między kontami](/features/share), [współdzielone serwery MCP](/features/mcp) i [kopiowanie istniejącej konfiguracji](/features/migrate).
 
 ## Grupy
 

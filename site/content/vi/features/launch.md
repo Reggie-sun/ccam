@@ -1,6 +1,6 @@
 ---
 title: Khởi động Claude Code
-description: "Khởi động Claude Code bằng bất kỳ tài khoản nào với ccam <name|number>, ccam run hoặc bộ chọn của ccam; các đối số được chuyển nguyên vẹn cho claude, và --dry-run hiển thị lệnh."
+description: "Chạy Claude Code bằng tài khoản bất kỳ với ccam <name|number>, ccam run hoặc bộ chọn của ccam; đối số được chuyển nguyên vẹn cho claude, --dry-run in ra lệnh."
 updated: 2026-10-20
 order: 1
 translation: machine

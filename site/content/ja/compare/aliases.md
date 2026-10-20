@@ -1,13 +1,36 @@
 ---
 title: ccamとシェルエイリアスの比較
 description: 複数のClaude Codeアカウントを使う方法として、CLAUDE_CONFIG_DIRを使うシェルエイリアスとccamを並べて比較します。
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: f751716e46c9
+sourceHash: ea24bb091caf
 ---
 
 アカウントごとにシェルエイリアスを作るのが、複数のClaude Codeアカウントを使う最も簡単な方法です。ccamも内部では同じことを行い、そのうえで共有、切り替え、使用量の確認の機能を加えています。
+
+## エイリアスでの設定
+
+追加するアカウントごとに`~/.bashrc`または`~/.zshrc`に1行を加え、新しいターミナルを開いて、エイリアスを一度実行してログインします。
+
+```sh
+alias claude-work='CLAUDE_CONFIG_DIR=~/.claude-work claude'
+```
+
+`claude`は1つ目のアカウントのまま使え、`claude-work`で2つ目のアカウントを起動します。これは[Claude Codeのドキュメントで説明されている方法](https://code.claude.com/docs/en/authentication#log-in-with-multiple-accounts)です。
+
+## ccamでの設定
+
+ccamをインストールしてアカウントを追加します。ここではアカウント専用のショートカットコマンドも作ります。
+
+```sh
+curl -fsSL https://ccam.dev/install.sh | sh
+ccam add work --shortcut ccwork
+```
+
+`ccam work`と`ccwork`のどちらでもアカウントを起動でき、どちらもスクリプトから使えます。
+
+## 並べて比較
 
 | | シェルエイリアス | ccam |
 | --- | --- | --- |
@@ -25,4 +48,4 @@ sourceHash: f751716e46c9
 
 アカウントが2つで、アカウント間で何も共有したくない場合は、エイリアスを選んでください。複数のアカウントを1つの環境のように扱いたい場合は、ccamを選んでください。最初はエイリアスで始めて、後からccamに移行することもできます。`ccam import`は、既存の`~/.claude-*`フォルダーをその場所のまま登録します。
 
-[1台のコンピューターで2つのアカウントを使う方法](/guides/multiple-claude-code-accounts)で、両方の方法を順を追って説明しています。
+[1台のコンピューターで複数のアカウントを使う方法](/guides/multiple-claude-code-accounts)で両方の方法を順を追って説明しています。[ccamとほかのアカウント切り替えツール](/compare/account-switchers)では、1つのログインを入れ替えるツールとccamを比較しています。

@@ -1,10 +1,10 @@
 ---
 title: Dùng Remote Control với ccam
-description: Khởi động Remote Control của Claude Code bằng bất kỳ tài khoản nào với ccam <name> rc, xem những tùy chọn nào áp dụng, vì sao ccam hỏi có sao chép các máy chủ MCP dùng chung hay không, và cách khắc phục các sự cố thường gặp.
+description: "Khởi động Remote Control bằng bất kỳ tài khoản nào với ccam <name> rc: tùy chọn áp dụng, vì sao ccam đề nghị sao chép máy chủ MCP dùng chung, và cách sửa sự cố."
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: b7b09f9bcb9e
+sourceHash: 59b802c44bb3
 ---
 
 `ccam work rc` khởi động Remote Control của Claude Code bằng tài khoản `work`, để bạn có thể điều khiển các phiên trên máy tính này từ claude.ai/code hoặc ứng dụng Claude trên điện thoại. Lệnh này hoạt động giống `claude rc` với một khác biệt: nếu tài khoản dùng chung máy chủ MCP, ccam hỏi một lần có sao chép chúng vào `.claude.json` của tài khoản hay không, vì các phiên Remote Control không đọc máy chủ từ nơi nào khác.

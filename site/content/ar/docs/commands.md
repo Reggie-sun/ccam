@@ -1,10 +1,11 @@
 ---
 title: مرجع الأوامر
+metaTitle: مرجع أوامر ccam
 description: كل أوامر ccam وخياراتها، من ccam add وccam <name> إلى ccam usage وccam next وccam doctor.
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a82175c30d3
+sourceHash: 3342453e38d3
 ---
 
 ضع `--dry-run` قبل أمر لترى ما سيفعله دون أن يفعله، مثلًا `ccam --dry-run work`. يعمل ذلك عند تشغيل Claude Code (`ccam <name>` و`ccam run` و`ccam next`) ومع `share` و`migrate` و`shortcut` و`update` و`doctor --fix`. أما الأوامر الأخرى التي تغيّر شيئًا فترفضه بدلًا من أن تعمل.

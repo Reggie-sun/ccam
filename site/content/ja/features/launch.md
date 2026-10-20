@@ -1,6 +1,6 @@
 ---
 title: Claude Codeの起動
-description: ccam <name|number>、ccam run、ccamのピッカーで、任意のアカウントとしてClaude Codeを起動します。引数はそのままclaudeに渡り、--dry-runで実行されるコマンドを確認できます。
+description: ccam <name|number>、ccam run、ピッカーで任意のアカウントのClaude Codeを起動します。引数はそのままclaudeに渡り、--dry-runで実行内容を確認できます。
 updated: 2026-10-20
 order: 1
 translation: machine

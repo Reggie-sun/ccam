@@ -1,10 +1,11 @@
 ---
 title: Sanggunian ng mga command
+metaTitle: Sanggunian ng mga command ng ccam
 description: Bawat command at option ng ccam, mula sa ccam add at ccam <name> hanggang ccam usage, ccam next at ccam doctor.
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a82175c30d3
+sourceHash: 3342453e38d3
 ---
 
 Ilagay ang `--dry-run` bago ang isang command para makita kung ano ang gagawin nito nang hindi ito talagang ginagawa, halimbawa `ccam --dry-run work`. Gumagana ito kapag sinisimulan ang Claude Code (`ccam <name>`, `ccam run`, `ccam next`) at sa `share`, `migrate`, `shortcut`, `update` at `doctor --fix`. Tinatanggihan ito ng ibang command na may binabago sa halip na tumakbo.

@@ -1,8 +1,8 @@
 {
   "site": {
     "name": "ccam",
-    "title": "ccam: 1台のコンピューターで複数のClaude Codeアカウントを使う",
-    "description": "ccamは、1台のコンピューターで複数のClaude Codeアカウントを使い、1つのコマンドで切り替えられる無料のオープンソースのコマンドラインツールです。",
+    "title": "ccam: Claude Code Account Manager・アカウント切替ツール",
+    "description": "ccam（Claude Code Account Manager）は、1台のコンピューターで複数のClaude Codeアカウントを使い、1つのコマンドで切り替えられる無料のオープンソースツールです。",
     "titleSuffix": "Claude Code 向け ccam"
   },
   "nav": {
@@ -103,10 +103,18 @@
       "compare": "比較",
       "blog": "ブログ"
     },
+    "hubs": {
+      "docs": "ccamをインストールし、Claude Codeアカウントを追加して、共有する内容を選び、すべてのコマンドを調べられます。よくある質問への回答もあります。",
+      "guides": "1台のコンピューターで複数のClaude Codeアカウントを使うための手順ガイドです。CLAUDE_CONFIG_DIR、使用量の上限、Remote Controlを扱います。",
+      "features": "ccamのすべての機能を全オプションとともに詳しく説明します。アカウント、ショートカット、共有、MCPサーバー、使用量、切り替え、修復、更新。",
+      "compare": "ccamをシェルエイリアスやほかのClaude Codeアカウント切り替えツールと機能ごとに比較し、適したツールを選べるようにします。",
+      "blog": "ccamプロジェクトのニュースです。ccamが生まれた理由、しくみ、複数のClaude Codeアカウントを使う人にとっての変更点を紹介します。"
+    },
     "commandsTable": {
       "command": "コマンド",
       "does": "説明"
-    }
+    },
+    "byline": "執筆：{author}"
   },
   "commands": {
     "ccam": "アカウント選択画面を開く",
@@ -144,16 +152,17 @@
     "unofficial": "ccamは非公式のオープンソースツールです。Anthropicとは提携しておらず、Anthropicの承認も受けていません。ClaudeおよびClaude CodeはAnthropicの商標です。",
     "terms": "複数のアカウントを使ってよいかどうかは、各アカウントの規約によります。使う前に確認してください。",
     "license": "GitHubのソースコード",
-    "languages": "すべての言語"
+    "languages": "すべての言語",
+    "analytics": "このサイトはCloudflare Web Analyticsで訪問数を計測しています。Cookieは使用せず、個人データも収集しません。"
   },
   "changelog": {
     "title": "変更履歴",
-    "description": "ccamの各リリースとその変更内容。1台のコンピューターで複数の Claude Code アカウントを使うための新しいコマンド、修正、変更点。",
+    "description": "ccamの各リリースと変更内容の一覧です。新しいコマンド、修正、高速化を新しい順に掲載しています。",
     "empty": "まだリリースは公開されていません。mainブランチのビルドはGitHubに掲載されています。"
   },
   "languages": {
     "title": "言語",
-    "description": "ccam.devは{count, plural, other {#言語}}で利用できます。ccam のドキュメントとガイドを読む言語を選んでください。",
+    "description": "ccam.devは{count, plural, other {#言語}}で利用でき、どの言語でも同じドキュメントとガイドを読めます。",
     "coverage": "Unicode CLDRの人口データによると、これらの言語のうち少なくとも1つを話す人は、世界人口の{low}から{high}を占めます。",
     "method": "低いほうの数値は、各国で最も話されている対応言語を1つだけ数えたものです。高いほうの数値は、対応するすべての言語を合計し、各国の上限を100%としたものです。"
   },

@@ -1,6 +1,6 @@
 ---
 title: Pag-update ng ccam
-description: Pinapalitan ng ccam update ang ccam ng pinakabagong GitHub release pagkatapos ng SHA-256 check; nag-uulat lang ang --check at nag-i-install ang --version ng partikular na release tag.
+description: Pinapalitan ng ccam update ang ccam ng pinakabagong GitHub release matapos ang SHA-256 check; nag-uulat lang ang --check; nag-i-install ng tag ang --version.
 updated: 2026-10-19
 order: 10
 translation: machine

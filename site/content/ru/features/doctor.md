@@ -1,6 +1,6 @@
 ---
 title: Проверка и исправление
-description: Проверяйте ссылки общего доступа, права на файлы, входы и версию Claude Code командой ccam doctor и исправляйте то, что безопасно исправить, командой ccam doctor --fix.
+description: Проверяйте ссылки общего доступа, права файлов, входы и версию Claude Code командой ccam doctor, а безопасные исправления делайте через ccam doctor --fix.
 updated: 2026-10-19
 order: 9
 translation: machine

@@ -1,6 +1,6 @@
 ---
 title: Menjalankan Claude Code
-description: Jalankan Claude Code sebagai akun mana pun dengan ccam <name|number>, ccam run, atau pemilih ccam; argumen diteruskan ke claude tanpa diubah, dan --dry-run menampilkan perintahnya.
+description: Jalankan Claude Code sebagai akun apa pun via ccam <name|number>, ccam run, atau pemilih; argumen diteruskan utuh ke claude, --dry-run menampilkan perintah.
 updated: 2026-10-20
 order: 1
 translation: machine

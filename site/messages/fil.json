@@ -1,8 +1,8 @@
 {
   "site": {
     "name": "ccam",
-    "title": "ccam: gumamit ng maraming Claude Code account sa iisang computer",
-    "description": "Ang ccam ay libre at open-source na command-line tool para gumamit ng maraming Claude Code account sa iisang computer at lumipat sa pagitan nila gamit ang isang command.",
+    "title": "ccam: Claude Code Account Manager at account switcher",
+    "description": "Libreng open-source tool ang ccam (Claude Code Account Manager) para gumamit ng maraming Claude Code account sa isang computer at mag-switch sa isang command.",
     "titleSuffix": "ccam para sa Claude Code"
   },
   "nav": {
@@ -103,10 +103,18 @@
       "compare": "Mga paghahambing",
       "blog": "Blog"
     },
+    "hubs": {
+      "docs": "I-install ang ccam, idagdag ang mga Claude Code account mo, piliin kung ano ang ishe-share nila at hanapin ang bawat command, may sagot sa karaniwang tanong.",
+      "guides": "Mga gabay na sunud-sunod para magpatakbo ng maraming Claude Code account sa iisang computer: CLAUDE_CONFIG_DIR, mga usage limit at Remote Control.",
+      "features": "Bawat feature ng ccam nang detalyado, kasama ang lahat ng option: account, shortcut, sharing, MCP server, usage, paglipat, pag-aayos at update.",
+      "compare": "Paano ikinukumpara ang ccam sa mga shell alias at sa ibang Claude Code account switcher, bawat feature, para mapili mo ang tamang tool.",
+      "blog": "Mga balita mula sa proyektong ccam: bakit ito ginawa, paano ito gumagana at ano ang nagbabago para sa mga gumagamit ng maraming Claude Code account."
+    },
     "commandsTable": {
       "command": "Utos",
       "does": "Ano ang ginagawa nito"
-    }
+    },
+    "byline": "Ni {author}"
   },
   "commands": {
     "ccam": "Buksan ang pagpili ng account",
@@ -144,16 +152,17 @@
     "unofficial": "Ang ccam ay hindi opisyal na open-source tool. Hindi ito kaanib o inendorso ng Anthropic. Ang Claude at Claude Code ay mga trademark ng Anthropic.",
     "terms": "Nakadepende sa terms ng bawat account kung puwede kang gumamit ng maraming account. Suriin muna ang mga ito bago mo gawin iyon.",
     "license": "Source sa GitHub",
-    "languages": "Lahat ng wika"
+    "languages": "Lahat ng wika",
+    "analytics": "Binibilang ng site na ito ang mga pagbisita gamit ang Cloudflare Web Analytics, na hindi naglalagay ng cookie at hindi nangongolekta ng personal na data."
   },
   "changelog": {
     "title": "Talaan ng mga pagbabago",
-    "description": "Bawat release ng ccam at kung ano ang nagbago rito. Mga bagong command, ayos at pagbabago para sa paggamit ng ilang Claude Code account sa iisang computer.",
+    "description": "Bawat release ng ccam at kung ano ang nagbago rito: mga bagong command, ayos sa bug at pagpapabilis, mula sa pinakabago.",
     "empty": "Wala pang na-publish na release. Nakalista sa GitHub ang mga build mula sa main branch."
   },
   "languages": {
     "title": "Mga wika",
-    "description": "Available ang ccam.dev sa {count, plural, one {# wika} other {# wika}}. Pumili ng wika para sa dokumentasyon at mga gabay ng ccam.",
+    "description": "Available ang ccam.dev sa {count, plural, one {# wika} other {# wika}}, na may parehong dokumentasyon at mga gabay sa bawat isa.",
     "coverage": "Ayon sa population data ng Unicode CLDR, ang mga taong nagsasalita ng kahit isa sa mga wikang ito ay bumubuo ng {low} hanggang {high} ng populasyon ng mundo.",
     "method": "Binibilang ng mas mababang numero ang iisang pinakaginagamit na suportadong wika ng bawat bansa; pinagsasama naman ng mas mataas ang lahat ng suportadong wika at nililimitahan sa 100% ang bawat bansa."
   },

@@ -1,6 +1,6 @@
 ---
 title: Compartir entre cuentas
-description: Cómo ccam share enlaza la configuración, CLAUDE.md, las extensiones y el historial con una carpeta de grupo, con un plan, copias de seguridad y opciones ante conflictos, y cómo off vuelve a copiarlos.
+description: Cómo ccam share enlaza configuración, CLAUDE.md, extensiones e historial a una carpeta de grupo con plan y copias de seguridad, y cómo off los vuelve a copiar.
 updated: 2026-10-19
 order: 4
 translation: machine

@@ -4,7 +4,7 @@ description: CLAUDE_CONFIG_DIR hufanya nini katika Claude Code, nini huhifadhiwa
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 62f178595254
+sourceHash: ef9317030e42
 ---
 
 `CLAUDE_CONFIG_DIR` huiambia Claude Code itumie folda ipi badala ya `~/.claude`. Kila kitu kinachohusu akaunti mahususi kiko humo: taarifa za kuingia, mipangilio, seva za MCP, plugins na historia ya mazungumzo. Kuielekeza kwenye folda tofauti hukupa akaunti tofauti.
@@ -13,13 +13,17 @@ sourceHash: 62f178595254
 CLAUDE_CONFIG_DIR=~/.claude-work claude
 ```
 
-## Kilicho ndani ya folda
+## Je, CLAUDE_CONFIG_DIR inaungwa mkono rasmi?
+
+Ndiyo. Claude Code huiorodhesha miongoni mwa [vigezo vyake vya mazingira](https://code.claude.com/docs/en/env-vars) kama njia ya kubadilisha folda ya usanidi, "useful for running multiple accounts side by side", na [mwongozo wake wa uthibitishaji](https://code.claude.com/docs/en/authentication#log-in-with-multiple-accounts) huitumia kuingia kwa akaunti kadhaa. Unaweza kuiweka kwenye shell yako au kwenye mipangilio ya mtumiaji, lakini si kwenye mipangilio ya mradi.
+
+## Kuna nini ndani ya folda?
 
 Imekaguliwa kwa Claude Code 2.1.302:
 
 | Njia | Yaliyomo | Inaweza kushirikiwa |
 | --- | --- | --- |
-| `.credentials.json` | Tokeni za kuingia (Linux), tokeni za MCP OAuth | Hapana |
+| `.credentials.json` | Tokeni za kuingia (Linux, Windows), tokeni za MCP OAuth | Hapana |
 | `.claude.json` | Maelezo ya akaunti, seva za MCP za mtumiaji, hali ya kila mradi | Hapana (seva za MCP kando) |
 | `settings.json` | Ruhusa, hooks, model, mstari wa hali (status line), plugins | Ndiyo |
 | `CLAUDE.md` | Maagizo ya jumla | Ndiyo |
@@ -28,13 +32,19 @@ Imekaguliwa kwa Claude Code 2.1.302:
 | `history.jsonl` | Historia ya maagizo (prompts) | Ndiyo |
 | `sessions/`, `shell-snapshots/`, `cache/` na mengineyo | Hali ya wakati wa kuendesha | Hapana |
 
-## Mambo mawili yanayowachanganya watu
+## Ni nini huwachanganya watu?
 
 **Bila `CLAUDE_CONFIG_DIR`, `.claude.json` haimo ndani ya `~/.claude`.** Hapo Claude Code huiweka katika `~/.claude.json`, kando ya folda. Ukianza kutumia `CLAUDE_CONFIG_DIR=~/.claude`, Claude Code hutafuta `~/.claude/.claude.json` badala yake na haipati akaunti yako. `ccam import` hushughulikia hili kwa kuziunganisha hizo mbili.
 
-**Kwenye macOS taarifa za kuingia ziko katika Keychain, si kwenye folda.** Claude Code huzihifadhi chini ya jina `Claude Code-credentials`, likifuatiwa na hash fupi ya njia ya folda wakati `CLAUDE_CONFIG_DIR` imewekwa. Kwa hiyo folda tofauti hupata maingizo tofauti ya Keychain. Ikiwa Keychain itakataa kuandika, Claude Code hurudi kwenye `.credentials.json` ndani ya folda.
+**Kwenye macOS taarifa za kuingia ziko katika Keychain, si kwenye folda.** Claude Code huzihifadhi chini ya jina `Claude Code-credentials`, likifuatiwa na hash fupi ya njia ya folda wakati `CLAUDE_CONFIG_DIR` imewekwa. Kwa hiyo folda tofauti hupata maingizo tofauti ya Keychain. Ikiwa Keychain itakataa kuandika, Claude Code hurudi kwenye `.credentials.json` ndani ya folda, kama [nyaraka zake](https://code.claude.com/docs/en/authentication#credential-management) zinavyoeleza.
 
-## Kushiriki kati ya folda
+**Si kila aina ya kuingia huhifadhiwa kwenye folda.** Kuingia kwa Claude Console bila API key huhifadhiwa nje yake, kwa hiyo folda tofauti haziwezi kutenganisha kuingia mbili za aina hiyo. Kuingia kwa claude.ai na API keys huhifadhiwa kwa kila folda.
+
+## Folda iko wapi kwenye Windows?
+
+Kwa chaguo-msingi ni `%USERPROFILE%\.claude`, na taarifa za kuingia ziko katika `.credentials.json` ndani yake. Weka `CLAUDE_CONFIG_DIR` kwenye folda nyingine kwa kila akaunti ya ziada, kama kwenye Linux na macOS.
+
+## Je, folda zinaweza kushiriki faili?
 
 Viungo vya ishara (symbolic links) hufanya kazi: Claude Code husoma na kuandika kupitia `settings.json` au folda ya `projects/` iliyounganishwa na huacha kiungo kama kilivyo. Seva za MCP ndizo zisizofuata kanuni hii, kwa sababu zinashiriki `.claude.json` na taarifa za kuingia; badala yake zipitishe kwa `--mcp-config`.
 

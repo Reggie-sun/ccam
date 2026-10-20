@@ -1,33 +1,45 @@
 ---
-title: 如何在一台電腦上使用兩個 Claude Code 帳號
-description: 透過 CLAUDE_CONFIG_DIR 同時執行多個 Claude Code 帳號，可以用 Shell 別名手動設定，或交給 ccam 自動處理。
+title: 在一台電腦上使用多個 Claude Code 帳號
+description: 透過 CLAUDE_CONFIG_DIR 同時執行多個 Claude Code 帳號並在帳號之間切換，可以用 Shell 別名手動設定，或交給 ccam 自動處理。
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: 6a4b7d961e10
+sourceHash: e2f4deb40c81
 ---
 
-為每個帳號指定獨立的設定資料夾，就能在一台電腦上使用多個 Claude Code 帳號。Claude Code 會從 `CLAUDE_CONFIG_DIR` 環境變數讀取資料夾位置，每個資料夾各自保存登入資訊、設定和對話記錄。你可以用 Shell 別名手動設定，或交給 ccam 處理。
+為每個帳號指定獨立的設定資料夾。Claude Code 會從 `CLAUDE_CONFIG_DIR` 環境變數讀取資料夾位置，每個資料夾各自保存登入資訊、設定和對話記錄，所以每個帳號都會保持登入，你也可以同時執行它們。你可以用 Shell 別名手動設定，或交給 ccam 處理。
 
-## 手動設定：使用別名
+## 如何手動設定？
 
-這是 Claude Code 文件中說明的方法。在 `~/.bashrc` 或 `~/.zshrc` 中，為每個額外的帳號加上一行：
+這是 [Claude Code 文件中說明的方法](https://code.claude.com/docs/en/authentication#log-in-with-multiple-accounts)。在 `~/.bashrc` 或 `~/.zshrc` 中，為每個額外的帳號加上一行：
 
 ```sh
 alias claude-work='CLAUDE_CONFIG_DIR=~/.claude-work claude'
 ```
 
-開啟新的終端機並執行 `claude-work`。因為資料夾是新的，Claude Code 會要求你登入。之後，`claude` 是你的第一個帳號，`claude-work` 則是第二個。
+開啟新的終端機並執行 `claude-work`。因為資料夾是新的，Claude Code 會要求你登入。之後，`claude` 是你的第一個帳號，`claude-work` 則是第二個。每個帳號各加一個別名，各用一個資料夾。
 
-這種方法在兩個帳號時很好用。需要注意的事項：
+在沒有 WSL 的 Windows 上，可以在 PowerShell 設定檔（`notepad $PROFILE`）中加入一個函式，效果相同：
+
+```powershell
+function claude-work { $env:CLAUDE_CONFIG_DIR = "$HOME\.claude-work"; try { claude @args } finally { Remove-Item Env:CLAUDE_CONFIG_DIR } }
+```
+
+## 別名做法有哪些不足？
+
+這種做法在兩個帳號時很好用。需要注意的事項：
 
 - 每個資料夾一開始都是空的：沒有設定、沒有 `CLAUDE.md`、沒有 MCP 伺服器，也沒有 agents 或 skills。你需要自己複製或連結需要的內容，並自行讓這些副本保持一致。
 - 別名只存在於互動式 Shell 中。腳本、Makefile 和其他程式都看不到它們。
 - MCP 伺服器存放在 `.claude.json` 中，和登入資訊放在一起，所以無法直接在資料夾之間連結。
 - 對話會留在開始時的帳號中，因此無法在另一個帳號接續。
-- 這種做法無法一次查看所有帳號的用量。
+- 沒有辦法一次查看所有帳號的用量。
 
-## 使用 ccam
+## 可以改用 /login 切換帳號嗎？
+
+可以，前提是你只是偶爾切換。在 Claude Code 中輸入 `/login` 會[切換目前資料夾的帳號](https://code.claude.com/docs/en/quickstart)。同一時間只有一個帳號處於登入狀態，所以每次切換都要重新登入，也無法讓兩個帳號同時執行。使用獨立的資料夾就能避免這兩個問題。
+
+## 如何用 ccam 設定？
 
 ccam 將同樣的做法自動化，並補上缺少的部分：
 
@@ -37,10 +49,32 @@ ccam add personal
 ccam add work --shortcut ccwork
 ```
 
-現在 `ccam personal` 和 `ccam work` 就能啟動這兩個帳號，你為 work 帳號設定的快捷指令 `ccwork` 也可以。因為它們是真正的程式而不是別名，所以在腳本中也能使用。設定、`CLAUDE.md`、MCP 伺服器和擴充功能從一開始就會共用；你也可以開啟對話記錄共用，再用 `ccam next --continue` 在另一個帳號接續對話。
+現在 `ccam personal` 和 `ccam work` 就能啟動這兩個帳號，你為 work 帳號設定的快捷指令 `ccwork` 也可以。因為它們是真正的程式而不是別名，所以在腳本中也能使用。單獨執行 `ccam` 可以從清單中選擇帳號，執行 `ccam use work` 則可將某個帳號設為預設。
+
+設定、`CLAUDE.md`、MCP 伺服器和擴充功能從一開始就會共用；你也可以開啟對話記錄共用，再用 `ccam next --continue` 在另一個帳號接續對話。`ccam usage` 會一次顯示所有帳號的 5 小時用量和每週用量。
 
 如果你已經在使用 `~/.claude`，請執行 `ccam import`，不必再次新增該帳號；或執行 `ccam migrate`，把其中的設定、MCP 伺服器和擴充功能複製到共用設定。
 
-## 該選擇哪一種
+## 如何知道目前執行的是哪個帳號？
 
-如果只有兩個帳號，而且不需要共用任何內容，用別名就夠了。如果你想共用設定和 MCP 伺服器、使用更多帳號、一眼看到用量或接續對話，ccam 能幫你省去這些管理工作。[比較](/compare/aliases)頁面並列了兩者的差異。
+在 Claude Code 中，`/status` 會顯示你目前登入的帳號。使用 ccam 時，執行一次 `ccam statusline install`，狀態列就會一直顯示帳號名稱和用量，例如 `[work] · Opus · 5h 24% · 7d 41%`。
+
+## 在 Windows 和 WSL 上可以使用嗎？
+
+Claude Code [可以在 Windows 上原生執行，也可以在 WSL 中執行](https://code.claude.com/docs/en/setup)。`CLAUDE_CONFIG_DIR` 在兩者中都有效，所以在原生 Windows 上，用上面的別名或 PowerShell 函式就夠了。ccam 支援 Linux 和 macOS；在 Windows 上，請在 WSL 中安裝和使用，用法與 Linux 相同。
+
+## 疑難排解
+
+**Claude Code 每次都要求我登入。** 在新資料夾中第一次啟動時一定會要求登入。如果一直要求登入，表示登入已過期或已被移除：執行 `ccam login work`（或透過別名啟動一次並登入）。
+
+**某個 MCP 伺服器只出現在一個帳號中。** 在工作階段中用 `claude mcp add` 新增的伺服器屬於該帳號。用 `ccam mcp import work <server>` 將它移到所有帳號。
+
+**各帳號的設定不一致。** `ccam share work` 會列出該帳號共用的內容；`ccam share work --settings on` 會先顯示將要變更的內容，再共用它的設定。`ccam doctor --fix` 會修復損壞的連結，並為它修改的每個檔案保留備份。
+
+**兩個帳號開啟了同一個對話。** 避免在兩個帳號中同時處理同一個對話。你這樣做時，ccam 會發出警告。
+
+## 該選擇哪一種？
+
+如果只有兩個帳號，而且不需要共用任何內容，用別名就夠了。如果你想共用設定和 MCP 伺服器、使用更多帳號、一眼看到用量或接續對話，ccam 能幫你省去這些管理工作。[與別名的比較](/compare/aliases)並列了兩者的差異，[ccam 與其他帳號切換工具](/compare/account-switchers)則介紹了那些切換同一組登入資訊的工具。
+
+是否可以使用多個帳號取決於各帳號的條款。使用前請先確認。

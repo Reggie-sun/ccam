@@ -1,6 +1,6 @@
 ---
 title: Condivisione tra account
-description: Come ccam share collega impostazioni, CLAUDE.md, estensioni e cronologia a una cartella di gruppo, con un piano, backup e scelte sui conflitti, e come off ricopia i dati.
+description: Come ccam share collega impostazioni, CLAUDE.md, estensioni e cronologia a una cartella di gruppo, con piano e backup, e come off ricopia i dati.
 updated: 2026-10-19
 order: 4
 translation: machine

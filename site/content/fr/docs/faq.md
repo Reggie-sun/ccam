@@ -1,15 +1,16 @@
 ---
 title: "Questions fréquentes"
+metaTitle: "FAQ ccam : plusieurs comptes Claude Code"
 description: "Réponses sur ccam, les comptes Claude Code, les limites d'utilisation, le partage, la confidentialité et les systèmes pris en charge."
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 5ff6e94786a2
+sourceHash: 88bd249ec51c
 ---
 
 ## ccam est-il un outil officiel d'Anthropic ?
 
-Non. ccam est un projet open source non officiel : il n'est ni affilié à Anthropic ni approuvé par Anthropic. Il utilise le paramètre `CLAUDE_CONFIG_DIR`, que Claude Code documente pour utiliser plusieurs comptes côte à côte.
+Non. ccam est un projet open source non officiel : il n'est ni affilié à Anthropic ni approuvé par Anthropic. Il utilise le paramètre `CLAUDE_CONFIG_DIR`, que [Claude Code documente](https://code.claude.com/docs/en/env-vars) pour utiliser plusieurs comptes côte à côte.
 
 ## Ai-je le droit d'utiliser plusieurs comptes Claude Code ?
 

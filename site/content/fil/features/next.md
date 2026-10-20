@@ -1,6 +1,6 @@
 ---
 title: Paglipat sa susunod na account
-description: Binubuksan ng ccam next ang Claude Code bilang account na kasunod ng huli mong ginamit; pinipili ng --auto ang pinakamababang 5-oras na usage at itinutuloy ng --continue ang usapan.
+description: Binubuksan ng ccam next ang Claude Code sa kasunod ng huling account; pinipili ng --auto ang pinakamababang 5-oras na usage, tinutuloy ng --continue ang usapan.
 updated: 2026-10-19
 order: 8
 translation: machine

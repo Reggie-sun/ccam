@@ -1,10 +1,11 @@
 ---
 title: Referensi perintah
+metaTitle: Referensi perintah ccam
 description: Semua perintah dan opsi ccam, dari ccam add dan ccam <name> hingga ccam usage, ccam next, dan ccam doctor.
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a82175c30d3
+sourceHash: 3342453e38d3
 ---
 
 Letakkan `--dry-run` sebelum perintah untuk melihat apa yang akan dilakukannya tanpa benar-benar menjalankannya, misalnya `ccam --dry-run work`. Opsi ini berfungsi saat menjalankan Claude Code (`ccam <name>`, `ccam run`, `ccam next`) dan dengan `share`, `migrate`, `shortcut`, `update`, serta `doctor --fix`. Perintah lain yang mengubah sesuatu akan menolaknya alih-alih berjalan.

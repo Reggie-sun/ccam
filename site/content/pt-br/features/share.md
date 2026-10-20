@@ -1,6 +1,6 @@
 ---
 title: Compartilhamento entre contas
-description: Como o ccam share vincula configurações, CLAUDE.md, extensões e histórico a uma pasta de grupo, com um plano, backups e escolhas de conflito, e como off copia de volta.
+description: Como o ccam share vincula configurações, CLAUDE.md, extensões e histórico a uma pasta de grupo, com plano e backups, e como off copia tudo de volta.
 updated: 2026-10-19
 order: 4
 translation: machine

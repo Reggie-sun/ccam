@@ -1,10 +1,11 @@
 ---
 title: コマンドリファレンス
+metaTitle: "ccamコマンドリファレンス"
 description: ccam addやccam <name>から、ccam usage、ccam next、ccam doctorまで、ccamのすべてのコマンドとオプションを説明します。
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a82175c30d3
+sourceHash: 3342453e38d3
 ---
 
 コマンドの前に`--dry-run`を付けると、実際には実行せずに何をするかを確認できます。たとえば`ccam --dry-run work`のように使います。これが使えるのは、Claude Codeを起動するとき（`ccam <name>`、`ccam run`、`ccam next`）と、`share`、`migrate`、`shortcut`、`update`、`doctor --fix`です。何かを変更するそれ以外のコマンドは、実行せずにこのオプションを拒否します。

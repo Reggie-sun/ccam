@@ -38,7 +38,7 @@ for (const l of builtLocales()) {
     return items.length ? `## ${m.docs.sections[s] ?? sectionNames[s]}\n\n${items.join("\n")}` : "";
   });
   const text = [
-    "# ccam",
+    "# ccam (Claude Code Account Manager)",
     `> ${m.facts.what}`,
     [m.facts.how, m.facts.install + " `curl -fsSL https://ccam.dev/install.sh | sh`", m.facts.official].map((f) => `- ${f}`).join("\n"),
     `Website: ${abs(homePath(l.code))}\nSource code: https://github.com/jhyunwoo/ccam`,

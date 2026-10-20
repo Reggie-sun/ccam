@@ -1,10 +1,11 @@
 ---
 title: Opis poleceń
+metaTitle: "Opis poleceń ccam"
 description: Wszystkie polecenia i opcje ccam, od ccam add i ccam <name> po ccam usage, ccam next i ccam doctor.
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a82175c30d3
+sourceHash: 3342453e38d3
 ---
 
 Wpisz `--dry-run` przed poleceniem, żeby zobaczyć, co by zrobiło, bez wykonywania go, na przykład `ccam --dry-run work`. Działa to przy uruchamianiu Claude Code (`ccam <name>`, `ccam run`, `ccam next`) oraz z `share`, `migrate`, `shortcut`, `update` i `doctor --fix`. Inne polecenia, które coś zmieniają, odrzucają tę opcję zamiast się wykonać.

@@ -1,6 +1,6 @@
 ---
 title: Claude Code starten
-description: Claude Code mit ccam <name|number>, ccam run oder der ccam-Auswahl als beliebiges Konto starten; Argumente gehen unverändert an claude, und --dry-run zeigt den Befehl.
+description: Claude Code mit ccam <name|number>, ccam run oder der Auswahl als beliebiges Konto starten; Argumente gehen unverändert an claude, --dry-run zeigt den Befehl.
 updated: 2026-10-20
 order: 1
 translation: machine

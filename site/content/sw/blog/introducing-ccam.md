@@ -1,17 +1,17 @@
 ---
 title: Tunakuletea ccam
 description: Kwa nini ccam ipo, inawafanyia nini watu wenye akaunti kadhaa za Claude Code, na jinsi inavyokaa nje ya njia yako.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: bbc9d9014f98
+sourceHash: a555dc969142
 ---
 
 ccam ni zana ndogo ya mstari wa amri kwa watu wanaotumia zaidi ya akaunti moja ya Claude Code kwenye kompyuta moja: akaunti binafsi na ya kazi, au akaunti kadhaa kwa mradi mmoja mrefu.
 
 ## Tatizo
 
-Claude Code inaruhusu akaunti kadhaa kupitia `CLAUDE_CONFIG_DIR`: folda moja kwa kila akaunti. Kwa vitendo, kila folda ni kisiwa. Mipangilio, `CLAUDE.md`, seva za MCP, agents na skills lazima visanidiwe upya katika kila folda na vilinganishwe kwa mkono. Mazungumzo hubaki pale yalipoanzia. Na akaunti moja inapofikia kikomo chake cha matumizi, unagundua hilo kwa kujaribu.
+Claude Code inaruhusu akaunti kadhaa kupitia [`CLAUDE_CONFIG_DIR`](/guides/claude-config-dir): folda moja kwa kila akaunti. Kwa vitendo, kila folda ni kisiwa. Mipangilio, `CLAUDE.md`, seva za MCP, agents na skills lazima visanidiwe upya katika kila folda na vilinganishwe kwa mkono. Mazungumzo hubaki pale yalipoanzia. Na akaunti moja inapofikia kikomo chake cha matumizi, unagundua hilo kwa kujaribu.
 
 ## ccam hufanya nini
 
@@ -32,5 +32,7 @@ Pia ni makini na faili zako. Kila badiliko la kushiriki huchapisha mpango kabla 
 curl -fsSL https://ccam.dev/install.sh | sh
 ccam add
 ```
+
+Mwongozo wa [kuanza haraka](/docs/quick-start) unaonyesha jinsi ya kuongeza akaunti mbili, na [jinsi ya kutumia akaunti kadhaa za Claude Code](/guides/multiple-claude-code-accounts) unaeleza mbinu hii ukiwa na ccam na bila ccam.
 
 ccam ni open source na si rasmi: haihusiani na Anthropic wala haijaidhinishwa nayo. Iwapo unaruhusiwa kutumia akaunti kadhaa inategemea masharti ya kila akaunti. Maoni na tafsiri yanakaribishwa kwenye [GitHub](https://github.com/jhyunwoo/ccam).

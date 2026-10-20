@@ -1,13 +1,36 @@
 ---
 title: ccam dibandingkan dengan alias shell
 description: Perbandingan alias shell dengan CLAUDE_CONFIG_DIR dan ccam untuk menjalankan beberapa akun Claude Code, berdampingan.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: f751716e46c9
+sourceHash: ea24bb091caf
 ---
 
 Satu alias shell per akun adalah cara paling sederhana untuk menjalankan beberapa akun Claude Code. ccam melakukan hal yang sama di baliknya, lalu menambahkan pembagian, perpindahan akun, dan pemantauan penggunaan.
+
+## Penyiapan alias
+
+Tambahkan satu baris per akun tambahan ke `~/.bashrc` atau `~/.zshrc`, buka terminal baru, lalu jalankan alias itu sekali untuk login:
+
+```sh
+alias claude-work='CLAUDE_CONFIG_DIR=~/.claude-work claude'
+```
+
+`claude` tetap menjadi akun pertama Anda dan `claude-work` menjalankan akun kedua. Inilah metode yang [dijelaskan dalam dokumentasi Claude Code](https://code.claude.com/docs/en/authentication#log-in-with-multiple-accounts).
+
+## Penyiapan ccam
+
+Instal ccam dan tambahkan akunnya, di sini dengan perintah pintasan tersendiri:
+
+```sh
+curl -fsSL https://ccam.dev/install.sh | sh
+ccam add work --shortcut ccwork
+```
+
+`ccam work` dan `ccwork` menjalankan akun tersebut, dan keduanya juga berfungsi di skrip.
+
+## Berdampingan
 
 | | Alias shell | ccam |
 | --- | --- | --- |
@@ -25,4 +48,4 @@ Satu alias shell per akun adalah cara paling sederhana untuk menjalankan beberap
 
 Pilih alias jika Anda punya dua akun dan tidak ingin ada yang dibagikan di antaranya. Pilih ccam jika Anda ingin akun-akun itu terasa seperti satu penyiapan. Anda bisa mulai dengan alias dan beralih ke ccam nanti: `ccam import` mendaftarkan folder `~/.claude-*` yang sudah ada di tempatnya.
 
-[Cara menggunakan dua akun di satu komputer](/guides/multiple-claude-code-accounts) menjelaskan kedua pendekatan langkah demi langkah.
+[Cara menggunakan beberapa akun di satu komputer](/guides/multiple-claude-code-accounts) menjelaskan kedua pendekatan langkah demi langkah, dan [ccam dan pengalih akun lainnya](/compare/account-switchers) membandingkan ccam dengan alat yang menukar satu login.

@@ -1,6 +1,6 @@
 ---
 title: Kushiriki kati ya akaunti
-description: Jinsi ccam share inavyounganisha mipangilio, CLAUDE.md, viendelezi na historia kwenye folda ya kikundi, kwa mpango, nakala rudufu na chaguo za migongano, na jinsi off inavyonakili kurudi.
+description: Jinsi ccam share huunganisha mipangilio, CLAUDE.md, viendelezi na historia kwa folda ya kikundi kwa mpango, nakala rudufu na chaguo za mgongano; off hurudisha.
 updated: 2026-10-19
 order: 4
 translation: machine

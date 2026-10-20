@@ -1,6 +1,6 @@
 ---
 title: Спільні сервери MCP
-description: Зберігайте один список серверів MCP на групу за допомогою ccam mcp add, add-json, list, remove та import; він передається через --mcp-config або синхронізується в кожен обліковий запис.
+description: "Один список серверів MCP на групу: ccam mcp add, add-json, list, remove та import; він передається через --mcp-config або синхронізується в кожен запис."
 updated: 2026-10-20
 order: 5
 translation: machine

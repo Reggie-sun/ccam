@@ -1,6 +1,6 @@
 ---
 title: Mga shared na MCP server
-description: Magkaroon ng iisang listahan ng mga MCP server bawat group gamit ang ccam mcp add, add-json, list, remove at import, na ipinapasa sa --mcp-config o sini-sync sa bawat account.
+description: Iisang listahan ng MCP server bawat group gamit ang ccam mcp add, add-json, list, remove at import, na ipinapasa sa --mcp-config o sini-sync sa bawat account.
 updated: 2026-10-20
 order: 5
 translation: machine

@@ -1,10 +1,11 @@
 ---
 title: ಕಮಾಂಡ್ ಉಲ್ಲೇಖ
+metaTitle: ccam ಕಮಾಂಡ್ ಉಲ್ಲೇಖ
 description: ccam add ಮತ್ತು ccam <name> ನಿಂದ ccam usage, ccam next ಮತ್ತು ccam doctor ವರೆಗೆ, ccam ನ ಎಲ್ಲಾ ಕಮಾಂಡ್‌ಗಳು ಮತ್ತು ಆಯ್ಕೆಗಳು.
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a82175c30d3
+sourceHash: 3342453e38d3
 ---
 
 ಕಮಾಂಡ್ ಏನು ಮಾಡುತ್ತದೆ ಎಂಬುದನ್ನು ನಿಜವಾಗಿ ಮಾಡದೆಯೇ ನೋಡಲು, ಅದರ ಮುಂದೆ `--dry-run` ಹಾಕಿ. ಉದಾಹರಣೆಗೆ `ccam --dry-run work`. ಇದು Claude Code ಆರಂಭಿಸುವಾಗ (`ccam <name>`, `ccam run`, `ccam next`) ಮತ್ತು `share`, `migrate`, `shortcut`, `update` ಹಾಗೂ `doctor --fix` ಜೊತೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ. ಏನನ್ನಾದರೂ ಬದಲಾಯಿಸುವ ಇತರ ಕಮಾಂಡ್‌ಗಳು ಚಾಲನೆಯಾಗುವ ಬದಲು ಇದನ್ನು ನಿರಾಕರಿಸುತ್ತವೆ.

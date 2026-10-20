@@ -116,12 +116,16 @@ async function main() {
   Link: </fonts/newsreader.woff2>; rel=preload; as=font; type=font/woff2; crossorigin
 
 /assets/*
+  ! Cache-Control
   Cache-Control: public, max-age=31536000, immutable
 /_next/static/*
+  ! Cache-Control
   Cache-Control: public, max-age=31536000, immutable
 /fonts/*
+  ! Cache-Control
   Cache-Control: public, max-age=31536000, immutable
 /og/*
+  ! Cache-Control
   Cache-Control: public, max-age=86400
 /*.md
   Content-Type: text/markdown; charset=utf-8
@@ -134,7 +138,7 @@ async function main() {
 
   // Locale aliases and the duplicate English landing page.
   const codes = new Set(locales.map((l) => l.code));
-  const lines = ["/en/ / 301", "/en / 301", "/index.html / 301"];
+  const lines = ["/en/ / 301", "/en / 301", "/index.html / 301", "/sitemap.xml /sitemap-index.xml 301"];
   // html_handling adds a missing trailing slash with a 307; search engines
   // should see a permanent redirect instead. Static rules go before the
   // splats: any rule after a splat counts against the 100 dynamic rules.

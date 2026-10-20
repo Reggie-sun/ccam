@@ -1,6 +1,6 @@
 ---
 title: Konten verwalten
-description: Claude Code-Konten mit ccam add, ccam login, ccam list, ccam rename, ccam remove und ccam import hinzufügen, anmelden, auflisten, umbenennen, entfernen und importieren.
+description: "Claude Code-Konten anlegen, anmelden, auflisten, umbenennen, entfernen und importieren: mit ccam add, login, list, rename, remove und import."
 updated: 2026-10-19
 order: 2
 translation: machine

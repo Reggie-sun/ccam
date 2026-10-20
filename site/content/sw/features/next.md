@@ -1,6 +1,6 @@
 ---
 title: Kubadili kwenda akaunti inayofuata
-description: ccam next hufungua Claude Code kama akaunti inayofuata ile uliyotumia mwisho; --auto huchagua matumizi ya chini zaidi ya saa 5 na --continue huendeleza mazungumzo.
+description: ccam next hufungua Claude Code kama akaunti inayofuata ile uliyotumia mwisho; --auto huchagua matumizi madogo zaidi ya saa 5, --continue huendeleza mazungumzo.
 updated: 2026-10-19
 order: 8
 translation: machine

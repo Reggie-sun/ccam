@@ -1,10 +1,10 @@
 ---
 title: I-share ang mga MCP server, settings at kasaysayan
 description: Paano shine-share ng ccam ang MCP server, settings.json, CLAUDE.md, agent, skill at kasaysayan ng usapan ng mga Claude Code account; hiwalay ang bawat login.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 0df8a7d51c87
+sourceHash: 888d466b29e9
 ---
 
 May sariling login ang bawat account. Lahat ng iba pa ay puwedeng i-share nang isa-isang item: nili-link ng ccam ang file o folder ng account sa isang shared na group folder, kaya ang pagbabagong ginawa sa isang account ay lumalabas sa lahat ng account ng group na iyon.
@@ -22,6 +22,8 @@ May sariling login ang bawat account. Lahat ng iba pa ay puwedeng i-share nang i
 Shine-share ng mga bagong account ang lahat maliban sa kasaysayan ng usapan.
 
 Hindi kailanman shine-share ang mga login file na `.credentials.json` at `.claude.json`. Nagli-link lang ang ccam ng mga path mula sa isang nakapirming listahan, at wala sa listahang iyon ang dalawang ito.
+
+Saklaw ng pahinang ito ang mga pang-araw-araw na gawain. Inilalarawan ang bawat option sa mga pahina ng feature: [sharing sa pagitan ng mga account](/features/share), [mga shared na MCP server](/features/mcp) at [pagkopya ng dati nang setup](/features/migrate).
 
 ## Mga group
 

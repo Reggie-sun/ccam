@@ -1,6 +1,6 @@
 ---
 title: ಪರಿಶೀಲನೆ ಮತ್ತು ದುರಸ್ತಿ
-description: ccam doctor ಮೂಲಕ ಹಂಚಿಕೆ ಲಿಂಕ್‌ಗಳು, ಫೈಲ್ ಅನುಮತಿಗಳು, ಲಾಗಿನ್‌ಗಳು ಮತ್ತು Claude Code ಆವೃತ್ತಿಯನ್ನು ಪರಿಶೀಲಿಸಿ, ಸುರಕ್ಷಿತವಾಗಿ ಸರಿಪಡಿಸಬಹುದಾದ್ದನ್ನು ccam doctor --fix ಮೂಲಕ ಸರಿಪಡಿಸಿ.
+description: ccam doctor ಹಂಚಿಕೆ ಲಿಂಕ್‌ಗಳು, ಫೈಲ್ ಅನುಮತಿಗಳು, ಲಾಗಿನ್‌ಗಳು ಮತ್ತು Claude Code ಆವೃತ್ತಿಯನ್ನು ಪರಿಶೀಲಿಸುತ್ತದೆ; ccam doctor --fix ಸುರಕ್ಷಿತವಾದುದನ್ನು ಸರಿಪಡಿಸುತ್ತದೆ.
 updated: 2026-10-19
 order: 9
 translation: machine

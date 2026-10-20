@@ -1,6 +1,6 @@
 ---
 title: Server MCP bersama
-description: Simpan satu daftar server MCP per grup dengan ccam mcp add, add-json, list, remove, dan import, yang diteruskan lewat --mcp-config atau disinkronkan ke setiap akun.
+description: Simpan satu daftar server MCP per grup dengan ccam mcp add, add-json, list, remove, dan import, diteruskan lewat --mcp-config atau disinkronkan ke setiap akun.
 updated: 2026-10-20
 order: 5
 translation: machine

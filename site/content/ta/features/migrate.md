@@ -1,6 +1,6 @@
 ---
 title: ஏற்கெனவே உள்ள அமைப்பை நகலெடுத்தல்
-description: ccam migrate மூலம் ஏற்கெனவே உள்ள ~/.claude-இன் அமைப்புகள், CLAUDE.md, நீட்டிப்புகள், MCP சர்வர்கள், MCP உள்நுழைவுகள் ஆகியவற்றை ஒரு ccam பகிர்வுக் குழுவுக்குள் நகலெடுங்கள்.
+description: ccam migrate மூலம் ~/.claude-இன் அமைப்புகள், CLAUDE.md, நீட்டிப்புகள், MCP சர்வர்கள், MCP உள்நுழைவுகளை ஒரு ccam குழுவுக்குள் நகலெடுங்கள்.
 updated: 2026-10-19
 order: 6
 translation: machine

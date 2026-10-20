@@ -1,7 +1,9 @@
 ---
 title: Quick start
+metaTitle: "Quick start: add and switch Claude Code accounts"
 description: Add two Claude Code accounts with ccam add, give them shortcuts such as ccwork, switch between them, and pick what they share.
 updated: 2026-10-19
+published: 2026-10-19
 order: 2
 translation: source
 ---

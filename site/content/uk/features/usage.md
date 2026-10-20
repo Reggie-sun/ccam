@@ -1,6 +1,6 @@
 ---
 title: Ліміти використання
-description: ccam usage показує 5-годинні й тижневі ліміти всіх облікових записів одночасно, а ccam statusline виводить назву облікового запису та використання в Claude Code.
+description: ccam usage показує 5-годинні й тижневі ліміти всіх облікових записів одразу, а ccam statusline виводить назву облікового запису та використання в Claude Code.
 updated: 2026-10-19
 order: 7
 translation: machine

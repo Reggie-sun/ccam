@@ -1,6 +1,6 @@
 ---
 title: Pagsisimula ng Claude Code
-description: Simulan ang Claude Code bilang anumang account gamit ang ccam <name|number>, ccam run o ang picker ng ccam; ipinapasa nang walang pagbabago sa claude ang mga argument, at ipinapakita ng --dry-run ang command.
+description: Patakbuhin ang Claude Code bilang anumang account sa ccam <name|number>, ccam run o picker; buo sa claude ang argument; ipinapakita ng --dry-run ang command.
 updated: 2026-10-20
 order: 1
 translation: machine

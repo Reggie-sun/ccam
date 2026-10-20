@@ -1,10 +1,11 @@
 ---
 title: 命令参考
+metaTitle: "ccam 命令参考"
 description: ccam 的所有命令和选项，从 ccam add、ccam <name> 到 ccam usage、ccam next 和 ccam doctor。
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a82175c30d3
+sourceHash: 3342453e38d3
 ---
 
 在命令前加上 `--dry-run`，可以查看它会做什么而不实际执行，例如 `ccam --dry-run work`。它适用于启动 Claude Code（`ccam <name>`、`ccam run`、`ccam next`）以及 `share`、`migrate`、`shortcut`、`update` 和 `doctor --fix`。其他会做出更改的命令会拒绝它，而不会执行。

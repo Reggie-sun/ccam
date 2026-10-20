@@ -1,10 +1,10 @@
 ---
 title: MCP-Server, Einstellungen und Verlauf teilen
 description: Wie ccam MCP-Server, settings.json, CLAUDE.md, Agents, Skills und den Gesprächsverlauf zwischen Claude Code-Konten teilt und jede Anmeldung getrennt hält.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 0df8a7d51c87
+sourceHash: 888d466b29e9
 ---
 
 Jedes Konto behält seine eigene Anmeldung. Alles andere kann Element für Element geteilt werden: ccam verlinkt die Datei oder den Ordner des Kontos mit einem geteilten Gruppenordner, sodass eine Änderung in einem Konto in allen Konten dieser Gruppe erscheint.
@@ -22,6 +22,8 @@ Jedes Konto behält seine eigene Anmeldung. Alles andere kann Element für Eleme
 Neue Konten teilen alles außer dem Gesprächsverlauf.
 
 Die Anmeldedateien `.credentials.json` und `.claude.json` werden nie geteilt. ccam verlinkt nur Pfade aus einer festen Liste, und diese beiden stehen nicht darauf.
+
+Diese Seite behandelt die alltäglichen Aufgaben. Jede Option ist auf den Funktionsseiten beschrieben: [Teilen zwischen Konten](/features/share), [geteilte MCP-Server](/features/mcp) und [eine vorhandene Einrichtung kopieren](/features/migrate).
 
 ## Gruppen
 

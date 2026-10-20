@@ -1,6 +1,6 @@
 ---
 title: ಹಂಚಿಕೊಂಡ MCP ಸರ್ವರ್‌ಗಳು
-description: ccam mcp add, add-json, list, remove ಮತ್ತು import ಮೂಲಕ ಪ್ರತಿ ಗುಂಪಿಗೆ MCP ಸರ್ವರ್‌ಗಳ ಒಂದೇ ಪಟ್ಟಿಯನ್ನು ಇಡಿ; ಅದು --mcp-config ಮೂಲಕ ರವಾನೆಯಾಗುತ್ತದೆ ಅಥವಾ ಪ್ರತಿ ಖಾತೆಗೆ ಸಿಂಕ್ ಆಗುತ್ತದೆ.
+description: ccam mcp add, add-json, list, remove, import ಮೂಲಕ ಪ್ರತಿ ಗುಂಪಿಗೆ MCP ಸರ್ವರ್‌ಗಳ ಒಂದೇ ಪಟ್ಟಿ ಇಡಿ; ಅದು --mcp-config ಮೂಲಕ ಹೋಗುತ್ತದೆ ಅಥವಾ ಖಾತೆಗೆ ಸಿಂಕ್ ಆಗುತ್ತದೆ.
 updated: 2026-10-20
 order: 5
 translation: machine

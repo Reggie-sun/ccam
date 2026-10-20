@@ -1,6 +1,6 @@
 ---
 title: Seva za MCP zinazoshirikiwa
-description: Hifadhi orodha moja ya seva za MCP kwa kila kikundi kwa ccam mcp add, add-json, list, remove na import, inayopitishwa kwa --mcp-config au kusawazishwa kwenye kila akaunti.
+description: Orodha moja ya seva za MCP kwa kila kikundi kwa ccam mcp add, add-json, list, remove na import, hupitishwa kwa --mcp-config au husawazishwa kwa kila akaunti.
 updated: 2026-10-20
 order: 5
 translation: machine

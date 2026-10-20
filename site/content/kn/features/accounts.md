@@ -1,6 +1,6 @@
 ---
 title: ಖಾತೆಗಳ ನಿರ್ವಹಣೆ
-description: ccam add, ccam login, ccam list, ccam rename, ccam remove ಮತ್ತು ccam import ಮೂಲಕ Claude Code ಖಾತೆಗಳನ್ನು ಸೇರಿಸಿ, ಲಾಗಿನ್ ಮಾಡಿ, ಪಟ್ಟಿ ಮಾಡಿ, ಮರುಹೆಸರಿಸಿ, ತೆಗೆದುಹಾಕಿ ಮತ್ತು ಇಂಪೋರ್ಟ್ ಮಾಡಿ.
+description: "ccam add, ccam login, ccam list, ccam rename, ccam remove, ccam import: Claude Code ಖಾತೆ ಸೇರಿಸಿ, ಲಾಗಿನ್ ಮಾಡಿ, ನೋಡಿ, ಮರುಹೆಸರಿಸಿ, ತೆಗೆಯಿರಿ, ಇಂಪೋರ್ಟ್ ಮಾಡಿ."
 updated: 2026-10-19
 order: 2
 translation: machine

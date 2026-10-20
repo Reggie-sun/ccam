@@ -1,10 +1,10 @@
 ---
 title: Dùng chung máy chủ MCP, cài đặt và lịch sử
 description: "Cách ccam dùng chung máy chủ MCP, settings.json, CLAUDE.md, agent, skill và lịch sử hội thoại giữa các tài khoản Claude Code, nhưng giữ riêng mọi đăng nhập."
-updated: 2026-10-19
+updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 0df8a7d51c87
+sourceHash: 888d466b29e9
 ---
 
 Mỗi tài khoản giữ thông tin đăng nhập riêng. Mọi thứ khác đều có thể dùng chung theo từng mục: ccam liên kết tệp hoặc thư mục của tài khoản đến một thư mục nhóm dùng chung, nên thay đổi thực hiện ở một tài khoản sẽ xuất hiện ở mọi tài khoản trong nhóm đó.
@@ -22,6 +22,8 @@ Mỗi tài khoản giữ thông tin đăng nhập riêng. Mọi thứ khác đ�
 Tài khoản mới dùng chung mọi thứ trừ lịch sử hội thoại.
 
 Các tệp đăng nhập `.credentials.json` và `.claude.json` không bao giờ được dùng chung. ccam chỉ liên kết các đường dẫn nằm trong một danh sách cố định, và hai tệp này không có trong danh sách đó.
+
+Trang này trình bày các tác vụ hằng ngày. Mọi tùy chọn được mô tả trên các trang tính năng: [dùng chung giữa các tài khoản](/features/share), [máy chủ MCP dùng chung](/features/mcp) và [sao chép thiết lập hiện có](/features/migrate).
 
 ## Nhóm
 

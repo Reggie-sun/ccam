@@ -1,10 +1,11 @@
 ---
 title: क्विक स्टार्ट
+metaTitle: "क्विक स्टार्ट: Claude Code अकाउंट जोड़ें, स्विच करें"
 description: "ccam add से दो Claude Code अकाउंट जोड़ें, उन्हें ccwork जैसे शॉर्टकट दें, उनके बीच स्विच करें, और चुनें कि वे क्या साझा करें।"
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: d040e34d2a17
+sourceHash: a10d91d2a64e
 ---
 
 हर अकाउंट को `ccam add` से जोड़ें, फिर Claude Code को `ccam <name>` से या अपने रखे नाम वाले शॉर्टकट, जैसे `ccwork`, से शुरू करें। ज़्यादातर लोगों को बस इतना ही चाहिए।

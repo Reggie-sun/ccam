@@ -1,6 +1,6 @@
 ---
 title: Geteilte MCP-Server
-description: Mit ccam mcp add, add-json, list, remove und import eine Liste von MCP-Servern pro Gruppe führen, die mit --mcp-config übergeben oder in jedes Konto synchronisiert wird.
+description: Mit ccam mcp add, add-json, list, remove und import eine MCP-Serverliste pro Gruppe führen, per --mcp-config übergeben oder in jedes Konto synchronisiert.
 updated: 2026-10-20
 order: 5
 translation: machine

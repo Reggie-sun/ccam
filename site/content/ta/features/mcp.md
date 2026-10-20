@@ -1,6 +1,6 @@
 ---
 title: பகிரப்பட்ட MCP சர்வர்கள்
-description: ccam mcp add, add-json, list, remove, import மூலம் ஒவ்வொரு குழுவுக்கும் MCP சர்வர்களின் ஒரே பட்டியலை வைத்திருங்கள்; அது --mcp-config மூலம் அனுப்பப்படும் அல்லது ஒவ்வொரு கணக்குக்குள்ளும் sync செய்யப்படும்.
+description: ccam mcp add, add-json, list, remove, import மூலம் குழுவுக்கு ஒரு MCP சர்வர் பட்டியல்; --mcp-config மூலம் அனுப்பப்படும் அல்லது கணக்கில் sync ஆகும்.
 updated: 2026-10-20
 order: 5
 translation: machine

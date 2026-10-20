@@ -1,13 +1,36 @@
 ---
 title: مقارنة ccam بالأسماء المستعارة في الصدفة
 description: مقارنة جنبًا إلى جنب بين الأسماء المستعارة في الصدفة مع CLAUDE_CONFIG_DIR وبين ccam لتشغيل عدة حسابات Claude Code.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: f751716e46c9
+sourceHash: ea24bb091caf
 ---
 
 الاسم المستعار (alias) في الصدفة لكل حساب هو أبسط طريقة لتشغيل عدة حسابات Claude Code. يفعل ccam الشيء نفسه في الخلفية، ويضيف المشاركة والتبديل وتتبّع الاستخدام.
+
+## إعداد الأسماء المستعارة
+
+أضف سطرًا واحدًا لكل حساب إضافي إلى `~/.bashrc` أو `~/.zshrc`، وافتح طرفية جديدة، وشغّل الاسم المستعار مرة واحدة لتسجيل الدخول:
+
+```sh
+alias claude-work='CLAUDE_CONFIG_DIR=~/.claude-work claude'
+```
+
+يبقى `claude` حسابك الأول، ويشغّل `claude-work` الحساب الثاني. هذه هي الطريقة التي [يصفها توثيق Claude Code](https://code.claude.com/docs/en/authentication#log-in-with-multiple-accounts).
+
+## إعداد ccam
+
+ثبّت ccam وأضف الحساب، وهنا مع أمر مختصر خاص به:
+
+```sh
+curl -fsSL https://ccam.dev/install.sh | sh
+ccam add work --shortcut ccwork
+```
+
+يشغّل `ccam work` و`ccwork` الحساب، وكلاهما يعمل في السكربتات أيضًا.
+
+## جنبًا إلى جنب
 
 | | اسم مستعار في الصدفة | ccam |
 | --- | --- | --- |
@@ -25,4 +48,4 @@ sourceHash: f751716e46c9
 
 اختر الأسماء المستعارة إذا كان لديك حسابان ولا تريد مشاركة أي شيء بينهما. واختر ccam إذا أردت أن تبدو الحسابات كإعداد واحد. يمكنك البدء بالأسماء المستعارة والانتقال إلى ccam لاحقًا: يسجّل `ccam import` مجلدات `~/.claude-*` الموجودة في أماكنها.
 
-يشرح دليل [كيفية استخدام حسابين على حاسوب واحد](/guides/multiple-claude-code-accounts) الطريقتين خطوة بخطوة.
+يشرح دليل [كيفية استخدام عدة حسابات على حاسوب واحد](/guides/multiple-claude-code-accounts) الطريقتين خطوة بخطوة، ويقارن [ccam وأدوات تبديل الحسابات الأخرى](/compare/account-switchers) بين ccam والأدوات التي تبدّل تسجيل دخول واحدًا.

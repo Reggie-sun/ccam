@@ -1,6 +1,6 @@
 ---
 title: கணக்குகளை நிர்வகித்தல்
-description: ccam add, ccam login, ccam list, ccam rename, ccam remove, ccam import மூலம் Claude Code கணக்குகளைச் சேர்க்கவும், உள்நுழையவும், பட்டியலிடவும், பெயர் மாற்றவும், நீக்கவும், இறக்குமதி செய்யவும்.
+description: ccam add, ccam login, ccam list, ccam rename, ccam remove, ccam import மூலம் Claude Code கணக்குகளைச் சேர்க்க, உள்நுழைய, பட்டியலிட, மறுபெயரிட, நீக்க.
 updated: 2026-10-19
 order: 2
 translation: machine

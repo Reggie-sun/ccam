@@ -1,6 +1,6 @@
 ---
 title: Claude Code ను ప్రారంభించడం
-description: ccam <name|number>, ccam run లేదా ccam పికర్‌తో ఏ ఖాతాగానైనా Claude Code ను ప్రారంభించండి; ఆర్గ్యుమెంట్‌లు మార్పు లేకుండా claude కు వెళ్తాయి, --dry-run కమాండ్‌ను చూపిస్తుంది.
+description: ccam <name|number>, ccam run లేదా పికర్‌తో ఏ ఖాతాగానైనా Claude Code ప్రారంభించండి; ఆర్గ్యుమెంట్‌లు మారకుండా claude కు వెళ్తాయి, --dry-run కమాండ్ చూపుతుంది.
 updated: 2026-10-20
 order: 1
 translation: machine

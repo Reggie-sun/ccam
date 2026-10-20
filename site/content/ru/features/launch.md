@@ -1,6 +1,6 @@
 ---
 title: Запуск Claude Code
-description: Запускайте Claude Code от имени любого аккаунта через ccam <name|number>, ccam run или меню выбора ccam; аргументы передаются в claude без изменений, а --dry-run показывает команду.
+description: Запускайте Claude Code от имени любого аккаунта через ccam <name|number>, ccam run или меню ccam; аргументы идут в claude как есть, --dry-run выводит команду.
 updated: 2026-10-20
 order: 1
 translation: machine

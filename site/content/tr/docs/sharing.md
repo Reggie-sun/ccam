@@ -1,10 +1,10 @@
 ---
 title: MCP sunucularını, ayarları ve geçmişi paylaşma
 description: Girişler ayrı kalırken MCP sunucuları, settings.json, CLAUDE.md, ajanlar, beceriler ve konuşma geçmişi Claude Code hesapları arasında ccam ile nasıl paylaşılır.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 0df8a7d51c87
+sourceHash: 888d466b29e9
 ---
 
 Her hesap kendi giriş bilgilerini korur. Geri kalan her şey öğe öğe paylaşılabilir: ccam, hesabın dosyasını veya klasörünü paylaşılan bir grup klasörüne bağlar; böylece bir hesapta yapılan değişiklik o gruptaki tüm hesaplarda görünür.
@@ -22,6 +22,8 @@ Her hesap kendi giriş bilgilerini korur. Geri kalan her şey öğe öğe payla�
 Yeni hesaplar konuşma geçmişi dışında her şeyi paylaşır.
 
 Giriş dosyaları `.credentials.json` ve `.claude.json` hiçbir zaman paylaşılmaz. ccam yalnızca sabit bir listedeki yolları bağlar ve bu iki dosya o listede yoktur.
+
+Bu sayfa günlük işleri anlatır. Tüm seçenekler özellik sayfalarında açıklanır: [hesaplar arasında paylaşım](/features/share), [paylaşılan MCP sunucuları](/features/mcp) ve [mevcut bir kurulumu kopyalama](/features/migrate).
 
 ## Gruplar
 

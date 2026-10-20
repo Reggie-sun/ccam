@@ -1,6 +1,6 @@
 ---
 title: Copiar uma configuração existente
-description: Copie as configurações, o CLAUDE.md, as extensões, os servidores MCP e os logins de MCP de um ~/.claude existente para um grupo de compartilhamento do ccam com ccam migrate.
+description: Copie configurações, CLAUDE.md, extensões, servidores MCP e logins de MCP de um ~/.claude existente para um grupo de compartilhamento do ccam com ccam migrate.
 updated: 2026-10-19
 order: 6
 translation: machine

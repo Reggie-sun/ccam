@@ -96,6 +96,7 @@ for (const l of builtLocales()) {
   const wide = ["ko", "ja", "zh-hans", "zh-hant"].includes(key);
   const titles: Record<string, string> = { home: m.landing.headline, changelog: m.changelog.title, languages: m.languages.title };
   for (const p of pages.filter((p) => p.locale === l.code)) titles[`${p.section}-${p.slug}`] = p.title;
+  for (const [section, title] of Object.entries(m.docs.sections as Record<string, string>)) titles[`hub-${section}`] = title;
   for (const r of routes().filter((r) => r.locale === l.code)) {
     const image = new Resvg(svg({ title: titles[r.key], kicker: "ccam.dev", family: familyName[key], rtl: getLocale(l.code)!.dir === "rtl", wide }), {
       font: { fontFiles: fonts, loadSystemFonts: false, defaultFontFamily: familyName[key] },

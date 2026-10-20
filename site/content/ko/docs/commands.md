@@ -1,10 +1,11 @@
 ---
 title: 명령어 레퍼런스
+metaTitle: "ccam 명령어 레퍼런스"
 description: ccam add, ccam <name>부터 ccam usage, ccam next, ccam doctor까지 ccam의 모든 명령과 옵션을 정리했습니다.
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a82175c30d3
+sourceHash: 3342453e38d3
 ---
 
 명령 앞에 `--dry-run`을 붙이면 실제로 실행하지 않고 무엇을 할지만 보여 줍니다(예: `ccam --dry-run work`). Claude Code를 시작할 때(`ccam <name>`, `ccam run`, `ccam next`)와 `share`, `migrate`, `shortcut`, `update`, `doctor --fix`에서 쓸 수 있습니다. 무언가를 바꾸는 다른 명령은 실행하지 않고 이 옵션을 거부합니다.

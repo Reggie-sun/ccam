@@ -1,10 +1,11 @@
 ---
 title: تثبيت ccam
-description: ثبّت ccam على Linux أو macOS بأمر واحد، أو من حزمة .deb، أو من الشيفرة المصدرية، وأبقِه محدّثًا باستخدام ccam update.
+metaTitle: تثبيت ccam على Linux وmacOS
+description: ثبّت ccam على Linux أو macOS بأمر واحد أو من حزمة .deb أو من الشيفرة المصدرية، وحدّثه باستخدام ccam update. يجب تثبيت Claude Code أولًا.
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: 4d7291e0f86e
+sourceHash: 7ecd1ed00e09
 ---
 
 شغّل هذا الأمر في طرفية على Linux أو macOS:

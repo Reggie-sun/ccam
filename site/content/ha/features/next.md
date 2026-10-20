@@ -1,6 +1,6 @@
 ---
 title: Sauyawa zuwa asusu na gaba
-description: ccam next yana buɗe Claude Code a matsayin asusun da ke bayan wanda ka yi amfani da shi na ƙarshe; --auto yana zaɓar mafi ƙarancin amfanin awa 5, kuma --continue yana ci gaba da tattaunawar.
+description: ccam next yana buɗe Claude Code da asusun da ke bin wanda ka yi amfani da shi na ƙarshe; --auto yana zaɓar mafi ƙarancin amfanin awa 5, --continue yana ci gaba.
 updated: 2026-10-19
 order: 8
 translation: machine

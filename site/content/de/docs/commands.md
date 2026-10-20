@@ -1,10 +1,11 @@
 ---
 title: Befehlsreferenz
+metaTitle: "ccam-Befehlsreferenz"
 description: Alle ccam-Befehle und -Optionen, von ccam add und ccam <name> bis zu ccam usage, ccam next und ccam doctor.
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a82175c30d3
+sourceHash: 3342453e38d3
 ---
 
 Setze `--dry-run` vor einen Befehl, um zu sehen, was er tun würde, ohne es zu tun, zum Beispiel `ccam --dry-run work`. Das funktioniert beim Starten von Claude Code (`ccam <name>`, `ccam run`, `ccam next`) sowie mit `share`, `migrate`, `shortcut`, `update` und `doctor --fix`. Andere Befehle, die etwas ändern, lehnen die Option ab, statt zu laufen.

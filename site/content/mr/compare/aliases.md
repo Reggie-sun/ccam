@@ -1,13 +1,36 @@
 ---
 title: शेल aliases विरुद्ध ccam
 description: अनेक Claude Code खाती चालवण्यासाठी CLAUDE_CONFIG_DIR सह शेल aliases आणि ccam यांची शेजारी शेजारी तुलना.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: f751716e46c9
+sourceHash: ea24bb091caf
 ---
 
 प्रत्येक खात्यासाठी एक शेल alias हा अनेक Claude Code खाती चालवण्याचा सर्वात सोपा मार्ग आहे. ccam आतून तेच करते आणि त्यावर शेअरिंग, खाते बदलणे आणि वापराचा मागोवा जोडते.
+
+## alias वापरून सेटअप
+
+प्रत्येक जादा खात्यासाठी `~/.bashrc` किंवा `~/.zshrc` मध्ये एक ओळ जोडा, नवीन टर्मिनल उघडा आणि लॉगिन करण्यासाठी alias एकदा चालवा:
+
+```sh
+alias claude-work='CLAUDE_CONFIG_DIR=~/.claude-work claude'
+```
+
+`claude` तुमचे पहिले खाते राहते आणि `claude-work` दुसरे खाते सुरू करते. हीच पद्धत [Claude Code च्या दस्तऐवजात सांगितली आहे](https://code.claude.com/docs/en/authentication#log-in-with-multiple-accounts).
+
+## ccam वापरून सेटअप
+
+ccam इन्स्टॉल करा आणि खाते जोडा, येथे त्याच्या स्वतःच्या शॉर्टकट कमांडसह:
+
+```sh
+curl -fsSL https://ccam.dev/install.sh | sh
+ccam add work --shortcut ccwork
+```
+
+`ccam work` आणि `ccwork` खाते सुरू करतात, आणि दोन्ही scripts मध्येही काम करतात.
+
+## शेजारी शेजारी
 
 | | शेल alias | ccam |
 | --- | --- | --- |
@@ -25,4 +48,4 @@ sourceHash: f751716e46c9
 
 तुमच्याकडे दोन खाती असतील आणि त्यांच्यात काहीही शेअर करायचे नसेल तर aliases निवडा. खाती एकाच सेटअपसारखी वाटावीत असे हवे असेल तर ccam निवडा. तुम्ही aliases ने सुरुवात करून नंतर ccam कडे जाऊ शकता: `ccam import` आधीपासून असलेले `~/.claude-*` फोल्डर आहेत त्याच जागी नोंदवते.
 
-[एका कॉम्प्युटरवर दोन खाती कशी वापरायची](/guides/multiple-claude-code-accounts) हे दोन्ही पद्धती टप्प्याटप्प्याने समजावून सांगते.
+[एका कॉम्प्युटरवर अनेक खाती कशी वापरायची](/guides/multiple-claude-code-accounts) हे दोन्ही पद्धती टप्प्याटप्प्याने समजावून सांगते, आणि [ccam आणि इतर account switchers](/compare/account-switchers) एकच लॉगिन बदलणाऱ्या टूल्सशी ccam ची तुलना करते.

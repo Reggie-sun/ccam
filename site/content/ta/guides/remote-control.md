@@ -1,10 +1,10 @@
 ---
 title: ccam உடன் Remote Control-ஐப் பயன்படுத்துதல்
-description: ccam <name> rc மூலம் எந்தக் கணக்காகவும் Claude Code Remote Control-ஐத் தொடங்குங்கள்; எந்த options பொருந்தும், பகிரப்பட்ட MCP சர்வர்களை நகலெடுக்க ccam ஏன் கேட்கிறது, பொதுவான பிரச்சினைகளை எப்படிச் சரிசெய்வது என்பதை அறியுங்கள்.
+description: ccam <name> rc மூலம் எந்தக் கணக்காகவும் Claude Code Remote Control-ஐத் தொடங்குங்கள்; பொருந்தும் options, MCP சர்வர்களை ஏன் நகலெடுக்கச் சொல்கிறது, தீர்வுகள்.
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: b7b09f9bcb9e
+sourceHash: 59b802c44bb3
 ---
 
 `ccam work rc` Claude Code-இன் Remote Control-ஐ `work` கணக்காகத் தொடங்குகிறது, அதனால் இந்தக் கணினியில் உள்ள அமர்வுகளை claude.ai/code அல்லது Claude மொபைல் செயலியிலிருந்து இயக்கலாம். இது `claude rc` போலவே வேலை செய்கிறது, ஒரே ஒரு வேறுபாட்டுடன்: கணக்கு MCP சர்வர்களைப் பகிர்ந்தால், அவற்றைக் கணக்கின் `.claude.json`-க்குள் நகலெடுக்கவா என்று ccam ஒருமுறை கேட்கும், ஏனெனில் Remote Control அமர்வுகள் சர்வர்களை வேறு எங்கிருந்தும் படிப்பதில்லை.

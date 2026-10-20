@@ -1,6 +1,6 @@
 ---
 title: अगले अकाउंट पर स्विच करना
-description: ccam next पिछली बार इस्तेमाल किए गए अकाउंट के बाद वाले अकाउंट से Claude Code खोलता है; --auto सबसे कम 5 घंटे का उपयोग चुनता है और --continue बातचीत जारी रखता है।
+description: ccam next पिछली बार इस्तेमाल किए गए अकाउंट के बाद वाले अकाउंट से Claude Code खोलता है; --auto सबसे कम 5 घंटे का उपयोग चुनता है, --continue बातचीत जारी रखता है।
 updated: 2026-10-19
 order: 8
 translation: machine

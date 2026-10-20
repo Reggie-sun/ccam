@@ -1,13 +1,36 @@
 ---
 title: ccam idan aka kwatanta da shell alias
 description: Shell alias da CLAUDE_CONFIG_DIR idan aka kwatanta da ccam don gudanar da asusun Claude Code da dama, gefe da gefe.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: f751716e46c9
+sourceHash: ea24bb091caf
 ---
 
 Shell alias ga kowane asusu ita ce hanya mafi sauƙi ta gudanar da asusun Claude Code da dama. ccam yana yin abu ɗaya a ƙarƙashi kuma yana ƙara rabawa, sauyawa da bin diddigin amfani.
+
+## Saitin alias
+
+Ƙara layi ɗaya ga kowane ƙarin asusu a `~/.bashrc` ko `~/.zshrc`, buɗe sabon terminal kuma ka gudanar da alias ɗin sau ɗaya don shiga:
+
+```sh
+alias claude-work='CLAUDE_CONFIG_DIR=~/.claude-work claude'
+```
+
+`claude` yana ci gaba da zama asusunka na farko, kuma `claude-work` yana fara na biyu. Wannan ita ce hanyar da [takardun Claude Code suka bayyana](https://code.claude.com/docs/en/authentication#log-in-with-multiple-accounts).
+
+## Saitin ccam
+
+Girka ccam kuma ka ƙara asusun, a nan tare da gajeren umarni nasa:
+
+```sh
+curl -fsSL https://ccam.dev/install.sh | sh
+ccam add work --shortcut ccwork
+```
+
+`ccam work` da `ccwork` suna fara asusun, kuma dukansu suna aiki a cikin scripts ma.
+
+## Gefe da gefe
 
 | | Shell alias | ccam |
 | --- | --- | --- |
@@ -25,4 +48,4 @@ Shell alias ga kowane asusu ita ce hanya mafi sauƙi ta gudanar da asusun Claude
 
 Zaɓi alias idan kana da asusai biyu kuma ba ka son a raba komai a tsakaninsu. Zaɓi ccam idan kana son asusan su ji kamar saiti ɗaya. Za ka iya farawa da alias ka koma ccam daga baya: `ccam import` yana yin rajistar foldojin `~/.claude-*` da ke akwai a inda suke.
 
-[Yadda ake amfani da asusai biyu a kwamfuta ɗaya](/guides/multiple-claude-code-accounts) yana bayyana hanyoyin biyu mataki-mataki.
+[Yadda ake amfani da asusai da dama a kwamfuta ɗaya](/guides/multiple-claude-code-accounts) yana bayyana hanyoyin biyu mataki-mataki, kuma [ccam da sauran masu sauya asusu](/compare/account-switchers) yana kwatanta ccam da kayan aikin da ke musanya bayanan shiga ɗaya.

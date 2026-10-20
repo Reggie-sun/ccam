@@ -1,10 +1,11 @@
 ---
 title: Guida rapida
+metaTitle: "Guida rapida: aggiungi e cambia account Claude Code"
 description: Aggiungi due account Claude Code con ccam add, dai loro scorciatoie come ccwork, passa dall'uno all'altro e scegli cosa condividono.
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: d040e34d2a17
+sourceHash: a10d91d2a64e
 ---
 
 Aggiungi ogni account con `ccam add`, poi avvia Claude Code con `ccam <name>` o con una scorciatoia a cui dai tu il nome, come `ccwork`. È tutto ciò che serve alla maggior parte delle persone.

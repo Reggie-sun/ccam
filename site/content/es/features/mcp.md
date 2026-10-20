@@ -1,6 +1,6 @@
 ---
 title: Servidores MCP compartidos
-description: Mantén una sola lista de servidores MCP por grupo con ccam mcp add, add-json, list, remove e import, que se pasa con --mcp-config o se sincroniza en cada cuenta.
+description: Mantén una lista de servidores MCP por grupo con ccam mcp add, add-json, list, remove e import, que se pasa con --mcp-config o se sincroniza en cada cuenta.
 updated: 2026-10-20
 order: 5
 translation: machine

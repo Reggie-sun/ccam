@@ -1,17 +1,17 @@
 ---
 title: ccam stellt sich vor
 description: Warum es ccam gibt, was es für Menschen mit mehreren Claude Code-Konten tut und wie es dir nicht in die Quere kommt.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: bbc9d9014f98
+sourceHash: a555dc969142
 ---
 
 ccam ist ein kleines Kommandozeilentool für alle, die mehr als ein Claude Code-Konto auf demselben Computer nutzen: ein privates und ein berufliches Konto oder mehrere Konten für ein langes Projekt.
 
 ## Das Problem
 
-Claude Code unterstützt mehrere Konten über `CLAUDE_CONFIG_DIR`: ein Ordner pro Konto. In der Praxis ist jeder Ordner eine Insel. Einstellungen, `CLAUDE.md`, MCP-Server, Agents und Skills müssen in jedem Ordner neu eingerichtet und von Hand synchron gehalten werden. Gespräche bleiben dort, wo sie begonnen haben. Und wenn ein Konto sein Nutzungslimit erreicht, merkst du das erst beim Ausprobieren.
+Claude Code unterstützt mehrere Konten über [`CLAUDE_CONFIG_DIR`](/guides/claude-config-dir): ein Ordner pro Konto. In der Praxis ist jeder Ordner eine Insel. Einstellungen, `CLAUDE.md`, MCP-Server, Agents und Skills müssen in jedem Ordner neu eingerichtet und von Hand synchron gehalten werden. Gespräche bleiben dort, wo sie begonnen haben. Und wenn ein Konto sein Nutzungslimit erreicht, merkst du das erst beim Ausprobieren.
 
 ## Was ccam tut
 
@@ -32,5 +32,7 @@ Außerdem geht es sorgsam mit deinen Dateien um. Jede Änderung am Teilen gibt v
 curl -fsSL https://ccam.dev/install.sh | sh
 ccam add
 ```
+
+Der [Schnellstart](/docs/quick-start) zeigt Schritt für Schritt, wie du zwei Konten hinzufügst, und [mehrere Claude Code-Konten nutzen](/guides/multiple-claude-code-accounts) erklärt den Ansatz mit und ohne ccam.
 
 ccam ist Open Source und inoffiziell: Es steht in keiner Verbindung zu Anthropic und wird nicht von Anthropic unterstützt. Ob du mehrere Konten nutzen darfst, hängt von den Bedingungen jedes Kontos ab. Feedback und Übersetzungen sind auf [GitHub](https://github.com/jhyunwoo/ccam) willkommen.

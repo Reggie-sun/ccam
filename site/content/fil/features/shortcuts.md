@@ -1,6 +1,6 @@
 ---
 title: Mga shortcut command
-description: Bigyan ang isang account ng sarili nitong command gaya ng ccwork gamit ang ccam shortcut, at gawin muli ang mga link sa ~/.local/bin gamit ang ccam shims install.
+description: Bigyan ang isang account ng sariling command gaya ng ccwork gamit ang ccam shortcut, at gawin muli ang mga link sa ~/.local/bin gamit ang ccam shims install.
 updated: 2026-10-19
 order: 3
 translation: machine

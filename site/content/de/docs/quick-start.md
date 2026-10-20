@@ -1,10 +1,11 @@
 ---
 title: Schnellstart
+metaTitle: "Schnellstart: Claude Code-Konten anlegen und wechseln"
 description: Zwei Claude Code-Konten mit ccam add hinzufügen, ihnen Kurzbefehle wie ccwork geben, zwischen ihnen wechseln und festlegen, was sie teilen.
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: d040e34d2a17
+sourceHash: a10d91d2a64e
 ---
 
 Füge jedes Konto mit `ccam add` hinzu und starte Claude Code dann mit `ccam <name>` oder mit einem Kurzbefehl, den du selbst benennst, etwa `ccwork`. Mehr brauchen die meisten nicht.

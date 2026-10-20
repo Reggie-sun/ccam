@@ -1,10 +1,11 @@
 ---
 title: البدء السريع
+metaTitle: "البدء السريع: أضف حسابات Claude Code وبدّل بينها"
 description: أضف حسابَي Claude Code باستخدام ccam add، وامنحهما أوامر مختصرة مثل ccwork، وبدّل بينهما، واختر ما يشاركانه.
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: d040e34d2a17
+sourceHash: a10d91d2a64e
 ---
 
 أضف كل حساب باستخدام `ccam add`، ثم شغّل Claude Code باستخدام `ccam <name>` أو بأمر مختصر تختار اسمه بنفسك، مثل `ccwork`. هذا كل ما يحتاجه معظم الناس.

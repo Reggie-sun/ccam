@@ -1,6 +1,6 @@
 ---
 title: Chuyển sang tài khoản tiếp theo
-description: "ccam next mở Claude Code bằng tài khoản đứng sau tài khoản bạn dùng gần nhất; --auto chọn tài khoản có mức sử dụng 5 giờ thấp nhất và --continue tiếp tục cuộc hội thoại."
+description: "ccam next mở Claude Code bằng tài khoản đứng sau tài khoản bạn dùng gần nhất; --auto chọn mức sử dụng 5 giờ thấp nhất, còn --continue tiếp tục hội thoại."
 updated: 2026-10-19
 order: 8
 translation: machine

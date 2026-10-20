@@ -1,15 +1,16 @@
 ---
 title: Preguntas frecuentes
+metaTitle: "Preguntas frecuentes: varias cuentas de Claude Code"
 description: Respuestas sobre ccam, cuentas de Claude Code, límites de uso, uso compartido, privacidad y sistemas compatibles.
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 5ff6e94786a2
+sourceHash: 88bd249ec51c
 ---
 
 ## ¿ccam es una herramienta oficial de Anthropic?
 
-No. ccam es un proyecto no oficial de código abierto y no está afiliado con Anthropic ni cuenta con su respaldo. Usa la opción `CLAUDE_CONFIG_DIR`, que Claude Code documenta para ejecutar varias cuentas en paralelo.
+No. ccam es un proyecto no oficial de código abierto y no está afiliado con Anthropic ni cuenta con su respaldo. Usa la opción `CLAUDE_CONFIG_DIR`, que [Claude Code documenta](https://code.claude.com/docs/en/env-vars) para ejecutar varias cuentas en paralelo.
 
 ## ¿Puedo usar varias cuentas de Claude Code?
 

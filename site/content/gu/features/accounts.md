@@ -1,6 +1,6 @@
 ---
 title: એકાઉન્ટનું સંચાલન
-description: ccam add, ccam login, ccam list, ccam rename, ccam remove અને ccam import વડે Claude Code એકાઉન્ટ ઉમેરો, લૉગિન કરો, યાદી જુઓ, નામ બદલો, દૂર કરો અને ઇમ્પોર્ટ કરો.
+description: ccam add, ccam login, ccam list, ccam rename, ccam remove અને ccam import વડે Claude Code એકાઉન્ટ ઉમેરો, લૉગિન કરો, જુઓ, નામ બદલો, દૂર કરો કે ઇમ્પોર્ટ કરો.
 updated: 2026-10-19
 order: 2
 translation: machine

@@ -1,6 +1,6 @@
 ---
 title: اجرای Claude Code
-description: Claude Code را با هر حسابی از طریق ccam <name|number>، ccam run یا فهرست انتخاب ccam اجرا کنید؛ آرگومان‌ها بدون تغییر به claude می‌رسند و --dry-run فرمان را نشان می‌دهد.
+description: Claude Code را با ccam <name|number>، ccam run یا فهرست انتخاب، با هر حسابی اجرا کنید؛ آرگومان‌ها بی‌تغییر به claude می‌رسند و --dry-run فرمان را نشان می‌دهد.
 updated: 2026-10-20
 order: 1
 translation: machine

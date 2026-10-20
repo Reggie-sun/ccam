@@ -1,6 +1,6 @@
 ---
 title: Comprobar y reparar
-description: Comprueba los enlaces compartidos, los permisos de archivos, los inicios de sesión y la versión de Claude Code con ccam doctor, y repara lo que es seguro reparar con ccam doctor --fix.
+description: Comprueba enlaces compartidos, permisos de archivos, inicios de sesión y la versión de Claude Code con ccam doctor, y repara lo seguro con ccam doctor --fix.
 updated: 2026-10-19
 order: 9
 translation: machine

@@ -4,7 +4,7 @@ description: Sprawdź 5-godzinne i tygodniowe użycie każdego konta Claude Code
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: 9aebb54d40e2
+sourceHash: d288177682d7
 ---
 
 `ccam usage` pokazuje, jaką część 5-godzinnego i tygodniowego limitu wykorzystało każde konto. `ccam next --auto` otwiera konto z największym zapasem, a `--continue` przenosi bieżącą rozmowę.

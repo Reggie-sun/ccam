@@ -1,17 +1,17 @@
 ---
 title: "Présentation de ccam"
 description: "Pourquoi ccam existe, ce qu'il apporte aux personnes qui ont plusieurs comptes Claude Code et comment il se fait oublier."
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: bbc9d9014f98
+sourceHash: a555dc969142
 ---
 
 ccam est un petit outil en ligne de commande pour les personnes qui utilisent plus d'un compte Claude Code sur le même ordinateur : un compte personnel et un compte professionnel, ou plusieurs comptes pour un même projet de longue durée.
 
 ## Le problème
 
-Claude Code prend en charge plusieurs comptes grâce à `CLAUDE_CONFIG_DIR` : un dossier par compte. En pratique, chaque dossier est une île. Les paramètres, `CLAUDE.md`, les serveurs MCP, les agents et les skills doivent être reconfigurés dans chaque dossier et synchronisés à la main. Les conversations restent là où elles ont commencé. Et quand un compte atteint sa limite d'utilisation, vous le découvrez en essayant.
+Claude Code prend en charge plusieurs comptes grâce à [`CLAUDE_CONFIG_DIR`](/guides/claude-config-dir) : un dossier par compte. En pratique, chaque dossier est une île. Les paramètres, `CLAUDE.md`, les serveurs MCP, les agents et les skills doivent être reconfigurés dans chaque dossier et synchronisés à la main. Les conversations restent là où elles ont commencé. Et quand un compte atteint sa limite d'utilisation, vous le découvrez en essayant.
 
 ## Ce que fait ccam
 
@@ -32,5 +32,7 @@ Il prend aussi soin de vos fichiers. Chaque modification du partage affiche un p
 curl -fsSL https://ccam.dev/install.sh | sh
 ccam add
 ```
+
+Le [démarrage rapide](/docs/quick-start) montre comment ajouter deux comptes, et [comment utiliser plusieurs comptes Claude Code](/guides/multiple-claude-code-accounts) explique l'approche avec et sans ccam.
 
 ccam est open source et non officiel : il n'est ni affilié à Anthropic ni approuvé par Anthropic. Le droit d'utiliser plusieurs comptes dépend des conditions de chaque compte. Les retours et les traductions sont les bienvenus sur [GitHub](https://github.com/jhyunwoo/ccam).

@@ -1,17 +1,17 @@
 ---
 title: Ipinapakilala ang ccam
 description: Bakit ginawa ang ccam, ano ang naitutulong nito sa mga may maraming Claude Code account, at paano ito hindi nakakasagabal.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: bbc9d9014f98
+sourceHash: a555dc969142
 ---
 
 Ang ccam ay maliit na command-line tool para sa mga gumagamit ng higit sa isang Claude Code account sa iisang computer: isang personal at isang work account, o ilang account para sa isang mahabang proyekto.
 
 ## Ang problema
 
-Sinusuportahan ng Claude Code ang maraming account sa pamamagitan ng `CLAUDE_CONFIG_DIR`: isang folder bawat account. Sa praktika, parang hiwalay na isla ang bawat folder. Kailangang i-set up ulit sa bawat folder ang settings, `CLAUDE.md`, mga MCP server, agent at skill, at panatilihing magkakatugma nang mano-mano. Nananatili ang mga usapan kung saan sila nagsimula. At kapag naabot ng isang account ang usage limit nito, malalaman mo lang kapag sinubukan mo.
+Sinusuportahan ng Claude Code ang maraming account sa pamamagitan ng [`CLAUDE_CONFIG_DIR`](/guides/claude-config-dir): isang folder bawat account. Sa praktika, parang hiwalay na isla ang bawat folder. Kailangang i-set up ulit sa bawat folder ang settings, `CLAUDE.md`, mga MCP server, agent at skill, at panatilihing magkakatugma nang mano-mano. Nananatili ang mga usapan kung saan sila nagsimula. At kapag naabot ng isang account ang usage limit nito, malalaman mo lang kapag sinubukan mo.
 
 ## Ano ang ginagawa ng ccam
 
@@ -32,5 +32,7 @@ Maingat din ito sa iyong mga file. Bawat pagbabago sa sharing ay nagpi-print ng 
 curl -fsSL https://ccam.dev/install.sh | sh
 ccam add
 ```
+
+Ipinapakita ng [mabilis na pagsisimula](/docs/quick-start) kung paano magdagdag ng dalawang account, at ipinapaliwanag ng [paano gumamit ng maraming Claude Code account](/guides/multiple-claude-code-accounts) ang paraan nang may ccam at wala nito.
 
 Open source at hindi opisyal ang ccam: hindi ito kaanib o inendorso ng Anthropic. Nakadepende sa terms ng bawat account kung puwede kang gumamit ng maraming account. Malugod naming tinatanggap ang feedback at mga pagsasalin sa [GitHub](https://github.com/jhyunwoo/ccam).

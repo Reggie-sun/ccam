@@ -1,6 +1,6 @@
 ---
 title: Claude Code शुरू करना
-description: ccam <name|number>, ccam run या ccam picker से Claude Code को किसी भी अकाउंट से शुरू करें; आर्ग्युमेंट बिना बदलाव के claude को जाते हैं, और --dry-run कमांड दिखाता है।
+description: ccam <name|number>, ccam run या ccam picker से किसी भी अकाउंट से Claude Code शुरू करें; आर्ग्युमेंट बिना बदलाव claude को जाते हैं, --dry-run कमांड दिखाता है।
 updated: 2026-10-20
 order: 1
 translation: machine

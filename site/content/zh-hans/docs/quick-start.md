@@ -1,10 +1,11 @@
 ---
 title: 快速入门
+metaTitle: "快速入门：添加和切换 Claude Code 账号"
 description: 用 ccam add 添加两个 Claude Code 账号，为它们设置 ccwork 这样的快捷命令，在它们之间切换，并选择要共享的内容。
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: d040e34d2a17
+sourceHash: a10d91d2a64e
 ---
 
 用 `ccam add` 添加每个账号，然后用 `ccam <name>` 或你自己命名的快捷命令（例如 `ccwork`）启动 Claude Code。大多数人只需要这些。

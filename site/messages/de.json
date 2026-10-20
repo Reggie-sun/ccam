@@ -1,8 +1,8 @@
 {
   "site": {
     "name": "ccam",
-    "title": "ccam: mehrere Claude Code-Konten auf einem Computer nutzen",
-    "description": "ccam ist ein kostenloses Open-Source-Kommandozeilentool, mit dem du mehrere Claude Code-Konten auf einem Computer nutzt und mit einem Befehl zwischen ihnen wechselst.",
+    "title": "ccam: Claude Code Account Manager zum Kontowechsel",
+    "description": "ccam (Claude Code Account Manager) ist ein kostenloses Open-Source-Tool, mit dem du mehrere Claude Code-Konten auf einem Rechner nutzt und per Befehl wechselst.",
     "titleSuffix": "ccam für Claude Code"
   },
   "nav": {
@@ -103,10 +103,18 @@
       "compare": "Vergleiche",
       "blog": "Blog"
     },
+    "hubs": {
+      "docs": "ccam installieren, Claude Code-Konten hinzufügen, festlegen, was sie teilen, und jeden Befehl nachschlagen, mit Antworten auf häufige Fragen.",
+      "guides": "Schritt-für-Schritt-Anleitungen für mehrere Claude Code-Konten auf einem Rechner: CLAUDE_CONFIG_DIR, Nutzungslimits und Remote Control.",
+      "features": "Jede Funktion von ccam im Detail mit allen Optionen: Konten, Kurzbefehle, Teilen, MCP-Server, Nutzung, Wechseln, Reparaturen und Updates.",
+      "compare": "Wie sich ccam mit Shell-Aliasen und anderen Tools zum Wechseln von Claude Code-Konten vergleicht, Funktion für Funktion, damit du das passende Tool wählst.",
+      "blog": "Neues aus dem ccam-Projekt: warum es ccam gibt, wie es funktioniert und was sich für Menschen mit mehreren Claude Code-Konten ändert."
+    },
     "commandsTable": {
       "command": "Befehl",
       "does": "Was er tut"
-    }
+    },
+    "byline": "Von {author}"
   },
   "commands": {
     "ccam": "Kontoauswahl öffnen",
@@ -144,16 +152,17 @@
     "unofficial": "ccam ist ein inoffizielles Open-Source-Tool. Es steht in keiner Verbindung zu Anthropic und wird nicht von Anthropic unterstützt. Claude und Claude Code sind Marken von Anthropic.",
     "terms": "Ob du mehrere Konten nutzen darfst, hängt von den Bedingungen jedes Kontos ab. Prüfe sie, bevor du es tust.",
     "license": "Quellcode auf GitHub",
-    "languages": "Alle Sprachen"
+    "languages": "Alle Sprachen",
+    "analytics": "Diese Website zählt Besuche mit Cloudflare Web Analytics, das keine Cookies setzt und keine personenbezogenen Daten erfasst."
   },
   "changelog": {
     "title": "Änderungsprotokoll",
-    "description": "Jede ccam-Version und was sich darin geändert hat. Neue Befehle, Fehlerbehebungen und Änderungen für mehrere Claude Code-Konten auf einem Computer.",
+    "description": "Jede ccam-Version und was sich darin geändert hat: neue Befehle, Fehlerbehebungen und Beschleunigungen, die neueste zuerst.",
     "empty": "Es wurden noch keine Versionen veröffentlicht. Builds aus dem main-Branch sind auf GitHub aufgeführt."
   },
   "languages": {
     "title": "Sprachen",
-    "description": "ccam.dev gibt es in {count, plural, one {# Sprache} other {# Sprachen}}. Wähle eine Sprache für die Dokumentation und Anleitungen von ccam.",
+    "description": "ccam.dev gibt es in {count, plural, one {# Sprache} other {# Sprachen}}, jeweils mit derselben Dokumentation und denselben Anleitungen.",
     "coverage": "Nach den Bevölkerungsdaten von Unicode CLDR machen Menschen, die mindestens eine dieser Sprachen sprechen, {low} bis {high} der Weltbevölkerung aus.",
     "method": "Die niedrigere Zahl zählt in jedem Land nur die meistgesprochene unterstützte Sprache; die höhere addiert alle unterstützten Sprachen und begrenzt jedes Land auf 100 %."
   },

@@ -1,10 +1,10 @@
 ---
 title: MCP 서버, 설정, 대화 내역 공유
 description: ccam이 로그인 정보는 계정마다 분리해 둔 채 MCP 서버, settings.json, CLAUDE.md, 에이전트, 스킬, 대화 내역을 Claude Code 계정 간에 공유하는 방법을 설명합니다.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 0df8a7d51c87
+sourceHash: 888d466b29e9
 ---
 
 로그인 정보는 계정마다 따로 유지됩니다. 그 밖의 항목은 하나씩 골라 공유할 수 있습니다. ccam은 계정의 파일이나 폴더를 공유 그룹 폴더에 링크하므로, 한 계정에서 바꾼 내용이 같은 그룹의 모든 계정에 반영됩니다.
@@ -22,6 +22,8 @@ sourceHash: 0df8a7d51c87
 새 계정은 대화 내역을 제외한 모든 항목을 공유합니다.
 
 로그인 파일인 `.credentials.json`과 `.claude.json`은 절대 공유되지 않습니다. ccam은 정해진 목록에 있는 경로만 링크하는데, 이 두 파일은 그 목록에 없습니다.
+
+이 페이지에서는 일상적인 작업을 다룹니다. 모든 옵션은 기능 페이지에서 설명합니다. [계정 간 공유](/features/share), [MCP 서버 공유](/features/mcp), [기존 설정 복사하기](/features/migrate)를 참고하세요.
 
 ## 그룹
 

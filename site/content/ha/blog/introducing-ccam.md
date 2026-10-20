@@ -1,17 +1,17 @@
 ---
 title: Gabatar da ccam
 description: Dalilin samuwar ccam, abin da yake yi wa masu asusun Claude Code da dama, da yadda yake guje wa kawo cikas.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: bbc9d9014f98
+sourceHash: a555dc969142
 ---
 
 ccam ƙaramin kayan aikin command-line ne ga mutanen da ke amfani da asusun Claude Code fiye da ɗaya a kwamfuta ɗaya: asusu na kai da na aiki, ko asusai da dama don dogon project ɗaya.
 
 ## Matsalar
 
-Claude Code yana tallafa wa asusai da dama ta `CLAUDE_CONFIG_DIR`: folda ɗaya ga kowane asusu. A aikace, kowace folda kamar tsibiri take. Dole ne a sake saita saituna, `CLAUDE.md`, sabobin MCP, agents da skills a kowace folda, kuma a riƙa daidaita su da hannu. Tattaunawa suna zama inda aka fara su. Kuma idan wani asusu ya kai iyakar amfaninsa, sai ka gwada sannan za ka gane.
+Claude Code yana tallafa wa asusai da dama ta [`CLAUDE_CONFIG_DIR`](/guides/claude-config-dir): folda ɗaya ga kowane asusu. A aikace, kowace folda kamar tsibiri take. Dole ne a sake saita saituna, `CLAUDE.md`, sabobin MCP, agents da skills a kowace folda, kuma a riƙa daidaita su da hannu. Tattaunawa suna zama inda aka fara su. Kuma idan wani asusu ya kai iyakar amfaninsa, sai ka gwada sannan za ka gane.
 
 ## Abin da ccam ke yi
 
@@ -32,5 +32,7 @@ Yana kuma kula da fayilolinka. Kowane canji ga rabawa yana buga shiri kafin ya f
 curl -fsSL https://ccam.dev/install.sh | sh
 ccam add
 ```
+
+[Farawa da sauri](/docs/quick-start) yana nuna yadda ake ƙara asusai biyu, kuma [yadda ake amfani da asusun Claude Code da dama](/guides/multiple-claude-code-accounts) yana bayyana hanyar tare da ccam da kuma ba tare da shi ba.
 
 ccam open source ne kuma ba na hukuma ba ne: ba shi da alaƙa da Anthropic, kuma Anthropic ba ta amince da shi ba. Ko an yarda ka yi amfani da asusai da dama ya dogara da sharuɗɗan kowane asusu. Ana maraba da ra'ayoyi da fassarori a [GitHub](https://github.com/jhyunwoo/ccam).

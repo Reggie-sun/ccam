@@ -1,10 +1,10 @@
 ---
 title: Condividere server MCP, impostazioni e cronologia
 description: Come ccam condivide server MCP, settings.json, CLAUDE.md, agenti, skill e cronologia tra account Claude Code, tenendo separato ogni login.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 0df8a7d51c87
+sourceHash: 888d466b29e9
 ---
 
 Ogni account mantiene il proprio login. Tutto il resto si può condividere elemento per elemento: ccam collega il file o la cartella dell'account a una cartella di gruppo condivisa, così una modifica fatta in un account compare in tutti gli account di quel gruppo.
@@ -22,6 +22,8 @@ Ogni account mantiene il proprio login. Tutto il resto si può condividere eleme
 I nuovi account condividono tutto tranne la cronologia delle conversazioni.
 
 I file di login `.credentials.json` e `.claude.json` non vengono mai condivisi. ccam collega solo percorsi presi da un elenco fisso, e questi due non ne fanno parte.
+
+Questa pagina tratta le attività di tutti i giorni. Ogni opzione è descritta nelle pagine delle funzionalità: [condivisione tra account](/features/share), [server MCP condivisi](/features/mcp) e [copia di una configurazione esistente](/features/migrate).
 
 ## Gruppi
 

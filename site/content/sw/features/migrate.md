@@ -1,6 +1,6 @@
 ---
 title: Kunakili usanidi uliopo
-description: Nakili mipangilio, CLAUDE.md, viendelezi, seva za MCP na taarifa za kuingia za MCP za ~/.claude iliyopo kwenda kwenye kikundi cha kushiriki cha ccam kwa ccam migrate.
+description: Nakili mipangilio, CLAUDE.md, viendelezi, seva za MCP na taarifa za kuingia za MCP za ~/.claude iliyopo hadi kikundi cha kushiriki cha ccam kwa ccam migrate.
 updated: 2026-10-19
 order: 6
 translation: machine

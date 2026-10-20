@@ -1,6 +1,6 @@
 ---
 title: Dùng chung giữa các tài khoản
-description: "Cách ccam share liên kết cài đặt, CLAUDE.md, tiện ích mở rộng và lịch sử vào một thư mục nhóm, với kế hoạch, bản sao lưu và lựa chọn khi xung đột, và cách off sao chép nội dung trở lại."
+description: "Cách ccam share liên kết cài đặt, CLAUDE.md, tiện ích và lịch sử vào thư mục nhóm với kế hoạch, bản sao lưu, lựa chọn khi xung đột, và cách off sao chép lại."
 updated: 2026-10-19
 order: 4
 translation: machine

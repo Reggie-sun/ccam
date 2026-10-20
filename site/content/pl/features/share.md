@@ -1,6 +1,6 @@
 ---
 title: Współdzielenie między kontami
-description: Jak ccam share linkuje ustawienia, CLAUDE.md, rozszerzenia i historię do folderu grupy, z planem, kopiami zapasowymi i wyborem przy konfliktach, oraz jak off kopiuje je z powrotem.
+description: Jak ccam share linkuje ustawienia, CLAUDE.md, rozszerzenia i historię do folderu grupy z planem, kopiami i wyborem przy konfliktach, a off kopiuje je wstecz.
 updated: 2026-10-19
 order: 4
 translation: machine

@@ -1,10 +1,10 @@
 ---
 title: Berbagi server MCP, pengaturan, dan riwayat
 description: Cara ccam membagikan server MCP, settings.json, CLAUDE.md, agen, skill, dan riwayat percakapan antarakun Claude Code dengan login tetap terpisah.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 0df8a7d51c87
+sourceHash: 888d466b29e9
 ---
 
 Setiap akun menyimpan login-nya sendiri. Semua hal lain dapat dibagikan per item: ccam menautkan file atau folder milik akun ke folder grup bersama, sehingga perubahan yang dibuat di satu akun muncul di semua akun dalam grup tersebut.
@@ -22,6 +22,8 @@ Setiap akun menyimpan login-nya sendiri. Semua hal lain dapat dibagikan per item
 Akun baru membagikan semuanya kecuali riwayat percakapan.
 
 File login `.credentials.json` dan `.claude.json` tidak pernah dibagikan. ccam hanya menautkan path dari daftar tetap, dan kedua file ini tidak ada di dalamnya.
+
+Halaman ini membahas tugas sehari-hari. Setiap opsi dijelaskan di halaman fitur: [berbagi antarakun](/features/share), [server MCP bersama](/features/mcp), dan [menyalin penyiapan yang sudah ada](/features/migrate).
 
 ## Grup
 

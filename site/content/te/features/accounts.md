@@ -1,6 +1,6 @@
 ---
 title: ఖాతాలను నిర్వహించడం
-description: ccam add, ccam login, ccam list, ccam rename, ccam remove, ccam import తో Claude Code ఖాతాలను జోడించండి, లాగిన్ చేయండి, జాబితా చూడండి, పేరు మార్చండి, తీసివేయండి, ఇంపోర్ట్ చేయండి.
+description: ccam add, ccam login, ccam list, ccam rename, ccam remove, ccam import తో Claude Code ఖాతాలను జోడించండి, లాగిన్, జాబితా, పేరు మార్పు, తొలగింపు, ఇంపోర్ట్.
 updated: 2026-10-19
 order: 2
 translation: machine

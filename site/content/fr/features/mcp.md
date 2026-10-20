@@ -1,6 +1,6 @@
 ---
 title: "Serveurs MCP partagés"
-description: "Gardez une seule liste de serveurs MCP par groupe avec ccam mcp add, add-json, list, remove et import, transmise via --mcp-config ou synchronisée dans chaque compte."
+description: "Gardez une liste de serveurs MCP par groupe avec ccam mcp add, add-json, list, remove et import, transmise via --mcp-config ou synchronisée dans chaque compte."
 updated: 2026-10-20
 order: 5
 translation: machine

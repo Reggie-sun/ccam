@@ -1,10 +1,10 @@
 ---
 title: ccam తో Remote Control ఉపయోగించడం
-description: ccam <name> rc తో ఏ ఖాతాగానైనా Claude Code Remote Control ను ప్రారంభించండి, ఏ ఆప్షన్లు వర్తిస్తాయో చూడండి, షేర్ చేసిన MCP సర్వర్లను కాపీ చేయాలా అని ccam ఎందుకు అడుగుతుందో తెలుసుకోండి, సాధారణ సమస్యలను పరిష్కరించండి.
+description: ccam <name> rc తో ఏ ఖాతాగానైనా Claude Code Remote Control ప్రారంభించండి; వర్తించే ఆప్షన్లు, షేర్ చేసిన MCP సర్వర్ల కాపీ సూచన, సమస్యల పరిష్కారాలు చూడండి.
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: b7b09f9bcb9e
+sourceHash: 59b802c44bb3
 ---
 
 `ccam work rc` Claude Code యొక్క Remote Control ను `work` ఖాతాగా ప్రారంభిస్తుంది, కాబట్టి ఈ కంప్యూటర్‌లోని సెషన్‌లను claude.ai/code లేదా Claude మొబైల్ యాప్ నుంచి నడపవచ్చు. ఇది `claude rc` లాగే పనిచేస్తుంది, ఒకే ఒక్క తేడాతో: ఖాతా MCP సర్వర్లను షేర్ చేస్తే, వాటిని ఖాతా `.claude.json` లోకి కాపీ చేయాలా అని ccam ఒక్కసారి అడుగుతుంది, ఎందుకంటే Remote Control సెషన్‌లు సర్వర్లను మరెక్కడి నుంచీ చదవవు.

@@ -54,12 +54,23 @@ export function routes(): Route[] {
   const built = builtLocales();
   const pages = sourcePages();
   const latest = pages.map((p) => p.updated).sort().at(-1) ?? "2026-01-01";
+  const released = (JSON.parse(readFileSync("data/changelog.json", "utf8")) as { date: string }[]).map((r) => r.date).sort().at(-1) ?? latest;
   const all = (fn: (code: string) => string) => Object.fromEntries(built.map((l) => [l.code, fn(l.code)]));
   const out: Route[] = [];
   for (const l of built) {
     out.push({ locale: l.code, path: homePath(l.code), key: "home", updated: latest, alternates: all(homePath) });
-    out.push({ locale: l.code, path: `/${l.code}/changelog/`, key: "changelog", updated: latest, alternates: all((c) => `/${c}/changelog/`) });
+    out.push({ locale: l.code, path: `/${l.code}/changelog/`, key: "changelog", updated: released, alternates: all((c) => `/${c}/changelog/`) });
     out.push({ locale: l.code, path: `/${l.code}/languages/`, key: "languages", updated: latest, alternates: all((c) => `/${c}/languages/`) });
+  }
+  // Section hubs (/en/guides/) exist where the section has pages.
+  for (const section of [...new Set(pages.map((p) => p.section))]) {
+    const inSection = pages.filter((p) => p.section === section);
+    const codes = [...new Set(inSection.map((p) => p.locale))];
+    const alternates = Object.fromEntries(codes.map((c) => [c, pagePath(c, section)]));
+    for (const code of codes) {
+      const updated = inSection.filter((p) => p.locale === code).map((p) => p.updated).sort().at(-1)!;
+      out.push({ locale: code, path: pagePath(code, section), key: `hub-${section}`, updated, alternates });
+    }
   }
   for (const p of pages) {
     const alternates = Object.fromEntries(

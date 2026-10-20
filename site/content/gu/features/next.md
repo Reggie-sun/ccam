@@ -1,6 +1,6 @@
 ---
 title: આગલા એકાઉન્ટ પર સ્વિચ કરવું
-description: ccam next છેલ્લે વાપરેલા એકાઉન્ટ પછીના એકાઉન્ટ તરીકે Claude Code ખોલે છે; --auto સૌથી ઓછા 5 કલાકના વપરાશવાળું એકાઉન્ટ પસંદ કરે છે અને --continue વાતચીત ફરી શરૂ કરે છે.
+description: ccam next છેલ્લે વાપરેલા પછીના એકાઉન્ટ તરીકે Claude Code ખોલે છે; --auto સૌથી ઓછા 5 કલાકના વપરાશવાળું એકાઉન્ટ લે છે, --continue વાતચીત ફરી શરૂ કરે છે.
 updated: 2026-10-19
 order: 8
 translation: machine

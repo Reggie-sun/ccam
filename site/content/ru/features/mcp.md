@@ -1,6 +1,6 @@
 ---
 title: Общие MCP-серверы
-description: Храните один список MCP-серверов на группу с помощью ccam mcp add, add-json, list, remove и import; он передаётся через --mcp-config или синхронизируется в каждый аккаунт.
+description: "Один список MCP-серверов на группу: ccam mcp add, add-json, list, remove и import; он передаётся через --mcp-config или синхронизируется в каждый аккаунт."
 updated: 2026-10-20
 order: 5
 translation: machine

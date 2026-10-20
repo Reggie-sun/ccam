@@ -1,10 +1,10 @@
 ---
 title: Kutumia Remote Control na ccam
-description: "Anzisha Remote Control ya Claude Code kama akaunti yoyote kwa ccam <name> rc, ona chaguo zipi zinatumika, kwa nini ccam huuliza kama inakili seva za MCP zinazoshirikiwa, na jinsi ya kutatua matatizo ya kawaida."
+description: "Remote Control ya Claude Code kama akaunti yoyote kwa ccam <name> rc: chaguo zinazotumika, kwa nini ccam hutoa kunakili seva za MCP zinazoshirikiwa, na utatuzi."
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: b7b09f9bcb9e
+sourceHash: 59b802c44bb3
 ---
 
 `ccam work rc` huanzisha Remote Control ya Claude Code kama akaunti `work`, ili uweze kuendesha vipindi kwenye kompyuta hii kutoka claude.ai/code au programu ya simu ya Claude. Hufanya kazi kama `claude rc` kwa tofauti moja tu: ikiwa akaunti inashiriki seva za MCP, ccam huuliza mara moja kama izinakili kwenda `.claude.json` ya akaunti, kwa sababu vipindi vya Remote Control havisomi seva kutoka mahali pengine popote.

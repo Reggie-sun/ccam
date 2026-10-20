@@ -1,6 +1,6 @@
 ---
 title: Administrar cuentas
-description: Agrega, inicia sesión, lista, cambia el nombre, quita e importa cuentas de Claude Code con ccam add, ccam login, ccam list, ccam rename, ccam remove y ccam import.
+description: Agrega, inicia sesión, lista, renombra, quita e importa cuentas de Claude Code con ccam add, ccam login, ccam list, ccam rename, ccam remove y ccam import.
 updated: 2026-10-19
 order: 2
 translation: machine

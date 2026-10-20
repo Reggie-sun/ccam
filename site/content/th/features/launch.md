@@ -1,6 +1,6 @@
 ---
 title: การเริ่ม Claude Code
-description: "เริ่ม Claude Code ในชื่อบัญชีใดก็ได้ด้วย ccam <name|number>, ccam run หรือตัวเลือกบัญชีของ ccam อาร์กิวเมนต์จะส่งต่อให้ claude โดยไม่เปลี่ยนแปลง และ --dry-run จะแสดงคำสั่ง"
+description: เริ่ม Claude Code ในชื่อบัญชีใดก็ได้ด้วย ccam <name|number>, ccam run หรือตัวเลือกบัญชีของ ccam อาร์กิวเมนต์ส่งต่อให้ claude ตามเดิม และ --dry-run แสดงคำสั่ง
 updated: 2026-10-20
 order: 1
 translation: machine

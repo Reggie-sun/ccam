@@ -1,6 +1,6 @@
 ---
 title: Prüfen und reparieren
-description: Mit ccam doctor Freigabelinks, Dateiberechtigungen, Anmeldungen und die Claude Code-Version prüfen und mit ccam doctor --fix reparieren, was sich gefahrlos reparieren lässt.
+description: Mit ccam doctor Freigabelinks, Dateiberechtigungen, Anmeldungen und die Claude Code-Version prüfen und mit ccam doctor --fix gefahrlos Reparierbares beheben.
 updated: 2026-10-19
 order: 9
 translation: machine

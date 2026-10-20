@@ -1,6 +1,6 @@
 ---
 title: Pamamahala ng mga account
-description: Magdagdag, mag-log in, maglista, magpalit ng pangalan, mag-alis at mag-import ng mga Claude Code account gamit ang ccam add, ccam login, ccam list, ccam rename, ccam remove at ccam import.
+description: Magdagdag, mag-log in, maglista, magpalit ng pangalan, mag-alis at mag-import ng Claude Code account gamit ang ccam add, login, list, rename, remove at import.
 updated: 2026-10-19
 order: 2
 translation: machine

@@ -1,6 +1,6 @@
 ---
 title: Kukagua na kurekebisha
-description: Kagua viungo vya kushiriki, ruhusa za faili, taarifa za kuingia na toleo la Claude Code kwa ccam doctor, na urekebishe kilicho salama kurekebisha kwa ccam doctor --fix.
+description: Kagua viungo vya kushiriki, ruhusa za faili, kuingia na toleo la Claude Code kwa ccam doctor, na urekebishe kilicho salama kurekebisha kwa ccam doctor --fix.
 updated: 2026-10-19
 order: 9
 translation: machine

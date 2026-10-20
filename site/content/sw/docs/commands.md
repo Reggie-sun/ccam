@@ -1,10 +1,11 @@
 ---
 title: Marejeo ya amri
+metaTitle: Marejeo ya amri za ccam
 description: Kila amri na chaguo la ccam, kuanzia ccam add na ccam <name> hadi ccam usage, ccam next na ccam doctor.
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a82175c30d3
+sourceHash: 3342453e38d3
 ---
 
 Weka `--dry-run` kabla ya amri ili kuona itakachofanya bila kukifanya, kwa mfano `ccam --dry-run work`. Inafanya kazi unapoanzisha Claude Code (`ccam <name>`, `ccam run`, `ccam next`) na pamoja na `share`, `migrate`, `shortcut`, `update` na `doctor --fix`. Amri nyingine zinazobadilisha kitu huikataa badala ya kufanya kazi.

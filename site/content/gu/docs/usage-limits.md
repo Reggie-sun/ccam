@@ -4,7 +4,7 @@ description: ccam usage વડે દરેક Claude Code એકાઉન્ટ
 updated: 2026-10-19
 order: 5
 translation: machine
-sourceHash: 9aebb54d40e2
+sourceHash: d288177682d7
 ---
 
 `ccam usage` બતાવે છે કે દરેક એકાઉન્ટે 5 કલાકની અને સાપ્તાહિક મર્યાદામાંથી કેટલું વાપર્યું છે. `ccam next --auto` સૌથી વધુ જગ્યાવાળું એકાઉન્ટ ખોલે છે, અને `--continue` હાલની વાતચીત ત્યાં લઈ જાય છે.

@@ -1,15 +1,16 @@
 ---
 title: 常见问题
-description: 关于 ccam、Claude Code 账号、用量限制、共享、隐私和支持系统的解答。
+metaTitle: "ccam 常见问题：Claude Code 多账号"
+description: 关于 ccam、Claude Code 多账号、用量限制、共享、隐私和支持的操作系统的常见问题解答。
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 5ff6e94786a2
+sourceHash: 88bd249ec51c
 ---
 
 ## ccam 是 Anthropic 的官方工具吗？
 
-不是。ccam 是一个非官方的开源项目，与 Anthropic 没有关联，也未获得 Anthropic 的认可。它使用的是 Claude Code 文档中说明的 `CLAUDE_CONFIG_DIR` 设置，用于并行运行多个账号。
+不是。ccam 是一个非官方的开源项目，与 Anthropic 没有关联，也未获得 Anthropic 的认可。它使用的是 [Claude Code 文档](https://code.claude.com/docs/en/env-vars)中说明的 `CLAUDE_CONFIG_DIR` 设置，用于并行运行多个账号。
 
 ## 使用多个 Claude Code 账号是否被允许？
 

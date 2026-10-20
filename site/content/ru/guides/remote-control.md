@@ -1,10 +1,10 @@
 ---
 title: Remote Control с ccam
-description: Запускайте Remote Control из Claude Code от имени любого аккаунта командой ccam <name> rc; какие параметры действуют, почему ccam предлагает скопировать общие MCP-серверы и как решить частые проблемы.
+description: "Запуск Remote Control от имени любого аккаунта через ccam <name> rc: действующие параметры, зачем ccam предлагает копировать общие MCP-серверы, решение проблем."
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: b7b09f9bcb9e
+sourceHash: 59b802c44bb3
 ---
 
 `ccam work rc` запускает Remote Control из Claude Code от имени аккаунта `work`, и вы можете управлять сессиями на этом компьютере из claude.ai/code или мобильного приложения Claude. Команда работает как `claude rc` с одним отличием: если аккаунт делит MCP-серверы, ccam один раз спрашивает, скопировать ли их в `.claude.json` аккаунта, потому что сессии Remote Control больше нигде серверы не ищут.

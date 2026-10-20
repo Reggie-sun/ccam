@@ -1,10 +1,11 @@
 ---
 title: క్విక్ స్టార్ట్
+metaTitle: "క్విక్ స్టార్ట్: Claude Code ఖాతాలను జోడించి మార్చండి"
 description: ccam add తో రెండు Claude Code ఖాతాలను జోడించి, వాటికి ccwork వంటి షార్ట్‌కట్‌లు ఇచ్చి, వాటి మధ్య మారి, అవి ఏమి షేర్ చేయాలో ఎంచుకోండి.
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: d040e34d2a17
+sourceHash: a10d91d2a64e
 ---
 
 `ccam add` తో ప్రతి ఖాతాను జోడించండి, తర్వాత `ccam <name>` తో లేదా `ccwork` వంటి మీరే పేరు పెట్టిన షార్ట్‌కట్‌తో Claude Code ను ప్రారంభించండి. చాలా మందికి కావలసింది ఇంతే.

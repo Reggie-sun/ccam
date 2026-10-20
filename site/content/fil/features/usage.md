@@ -1,6 +1,6 @@
 ---
 title: Mga usage limit
-description: Ipinapakita ng ccam usage nang sabay-sabay ang 5-oras at lingguhang limit ng bawat account, at inilalagay ng ccam statusline ang pangalan ng account at usage sa Claude Code.
+description: Ipinapakita ng ccam usage ang 5-oras at lingguhang limit ng bawat account nang sabay, at inilalagay ng ccam statusline ang account at usage nito sa Claude Code.
 updated: 2026-10-19
 order: 7
 translation: machine

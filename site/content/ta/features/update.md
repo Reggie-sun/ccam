@@ -1,6 +1,6 @@
 ---
 title: ccam-ஐப் புதுப்பித்தல்
-description: ccam update ஒரு SHA-256 சரிபார்ப்புக்குப் பிறகு ccam-ஐச் சமீபத்திய GitHub வெளியீட்டால் மாற்றுகிறது; --check தெரிவிக்க மட்டுமே செய்யும், --version குறிப்பிட்ட வெளியீட்டு tag-ஐ நிறுவும்.
+description: ccam update SHA-256 சரிபார்ப்புக்குப் பின் ccam-ஐச் சமீபத்திய GitHub வெளியீட்டால் மாற்றுகிறது; --check தெரிவிக்கும், --version tag-ஐ நிறுவும்.
 updated: 2026-10-19
 order: 10
 translation: machine

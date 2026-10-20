@@ -1,6 +1,6 @@
 ---
 title: Перевірка та виправлення
-description: Перевірте спільні посилання, права доступу до файлів, входи й версію Claude Code за допомогою ccam doctor і виправте те, що безпечно виправити, через ccam doctor --fix.
+description: Перевірте спільні посилання, права доступу до файлів, входи й версію Claude Code через ccam doctor і виправте безпечні проблеми через ccam doctor --fix.
 updated: 2026-10-19
 order: 9
 translation: machine

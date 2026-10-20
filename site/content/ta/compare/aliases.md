@@ -1,13 +1,36 @@
 ---
 title: ccam மற்றும் shell aliases ஒப்பீடு
 description: பல Claude Code கணக்குகளை இயக்க, CLAUDE_CONFIG_DIR உடன் shell aliases மற்றும் ccam, பக்கம் பக்கமாக ஒப்பீடு.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: f751716e46c9
+sourceHash: ea24bb091caf
 ---
 
 பல Claude Code கணக்குகளை இயக்க எளிய வழி, ஒவ்வொரு கணக்குக்கும் ஒரு shell alias. ccam அடிப்படையில் அதையே செய்கிறது, அதோடு பகிர்வு, கணக்கு மாற்றம், பயன்பாட்டுக் கண்காணிப்பு ஆகியவற்றைச் சேர்க்கிறது.
+
+## alias அமைப்பு
+
+ஒவ்வொரு கூடுதல் கணக்குக்கும் `~/.bashrc` அல்லது `~/.zshrc`-இல் ஒரு வரியைச் சேர்த்து, புதிய terminal-ஐத் திறந்து, உள்நுழைய alias-ஐ ஒருமுறை இயக்குங்கள்:
+
+```sh
+alias claude-work='CLAUDE_CONFIG_DIR=~/.claude-work claude'
+```
+
+`claude` உங்கள் முதல் கணக்காகவே இருக்கும், `claude-work` இரண்டாவது கணக்கைத் தொடங்கும். [Claude Code ஆவணங்கள் விவரிக்கும்](https://code.claude.com/docs/en/authentication#log-in-with-multiple-accounts) முறை இதுதான்.
+
+## ccam அமைப்பு
+
+ccam-ஐ நிறுவி, கணக்கைச் சேருங்கள், இங்கே அதற்கென ஒரு shortcut கட்டளையுடன்:
+
+```sh
+curl -fsSL https://ccam.dev/install.sh | sh
+ccam add work --shortcut ccwork
+```
+
+`ccam work`, `ccwork` இரண்டும் கணக்கைத் தொடங்கும், இரண்டும் scripts-இலும் வேலை செய்யும்.
+
+## பக்கம் பக்கமாக
 
 | | Shell alias | ccam |
 | --- | --- | --- |
@@ -25,4 +48,4 @@ sourceHash: f751716e46c9
 
 உங்களிடம் இரண்டு கணக்குகள் இருந்து, அவற்றுக்கு இடையே எதுவும் பகிரப்பட வேண்டாம் என்றால் aliases-ஐத் தேர்ந்தெடுங்கள். கணக்குகள் ஒரே அமைப்பு போல உணர வேண்டும் என்றால் ccam-ஐத் தேர்ந்தெடுங்கள். aliases-இல் தொடங்கி, பின்னர் ccam-க்கு மாறலாம்: `ccam import` ஏற்கெனவே உள்ள `~/.claude-*` கோப்புறைகளை அவை இருக்கும் இடத்திலேயே பதிவு செய்கிறது.
 
-[ஒரே கணினியில் இரண்டு கணக்குகளைப் பயன்படுத்துவது எப்படி](/guides/multiple-claude-code-accounts) இரண்டு அணுகுமுறைகளையும் படிப்படியாக விளக்குகிறது.
+[ஒரே கணினியில் பல கணக்குகளைப் பயன்படுத்துவது எப்படி](/guides/multiple-claude-code-accounts) இரண்டு அணுகுமுறைகளையும் படிப்படியாக விளக்குகிறது. ஒரே உள்நுழைவை மாற்றும் கருவிகளுடன் ccam-ஐ [ccam மற்றும் பிற கணக்கு மாற்றும் கருவிகள்](/compare/account-switchers) ஒப்பிடுகிறது.

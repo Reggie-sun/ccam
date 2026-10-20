@@ -1,8 +1,8 @@
 {
   "site": {
     "name": "ccam",
-    "title": "ccam : utiliser plusieurs comptes Claude Code sur un seul ordinateur",
-    "description": "ccam est un outil en ligne de commande gratuit et open source qui permet d'utiliser plusieurs comptes Claude Code sur un seul ordinateur et de passer de l'un à l'autre avec une seule commande.",
+    "title": "ccam : Claude Code Account Manager et sélecteur de compte",
+    "description": "ccam (Claude Code Account Manager) est un outil open source gratuit pour utiliser plusieurs comptes Claude Code sur un ordinateur et en changer d'une commande.",
     "titleSuffix": "ccam pour Claude Code"
   },
   "nav": {
@@ -103,10 +103,18 @@
       "compare": "Comparaisons",
       "blog": "Blog"
     },
+    "hubs": {
+      "docs": "Installez ccam, ajoutez vos comptes Claude Code, choisissez ce qu'ils partagent et consultez chaque commande, avec les réponses aux questions courantes.",
+      "guides": "Guides pas à pas pour utiliser plusieurs comptes Claude Code sur un même ordinateur : CLAUDE_CONFIG_DIR, limites d'utilisation et Remote Control.",
+      "features": "Chaque fonctionnalité de ccam en détail : comptes, raccourcis, partage, serveurs MCP, utilisation, changement de compte, réparations et mises à jour.",
+      "compare": "Comment ccam se compare aux alias shell et aux autres sélecteurs de compte Claude Code, fonctionnalité par fonctionnalité, pour choisir le bon outil.",
+      "blog": "Les nouvelles du projet ccam : pourquoi il existe, comment il fonctionne et ce qui change pour les personnes qui utilisent plusieurs comptes Claude Code."
+    },
     "commandsTable": {
       "command": "Commande",
       "does": "Rôle"
-    }
+    },
+    "byline": "Par {author}"
   },
   "commands": {
     "ccam": "Ouvrir le sélecteur de compte",
@@ -144,16 +152,17 @@
     "unofficial": "ccam est un outil open source non officiel. Il n'est ni affilié à Anthropic ni approuvé par Anthropic. Claude et Claude Code sont des marques d'Anthropic.",
     "terms": "Le droit d'utiliser plusieurs comptes dépend des conditions de chaque compte. Vérifiez-les avant de le faire.",
     "license": "Code source sur GitHub",
-    "languages": "Toutes les langues"
+    "languages": "Toutes les langues",
+    "analytics": "Ce site compte les visites avec Cloudflare Web Analytics, qui ne dépose aucun cookie et ne collecte aucune donnée personnelle."
   },
   "changelog": {
     "title": "Journal des modifications",
-    "description": "Chaque version de ccam et ce qui a changé. Nouvelles commandes, corrections et changements pour utiliser plusieurs comptes Claude Code sur un même ordinateur.",
+    "description": "Chaque version de ccam et ce qui a changé : nouvelles commandes, corrections et gains de vitesse, de la plus récente à la plus ancienne.",
     "empty": "Aucune version n'a encore été publiée. Les builds de la branche main sont listés sur GitHub."
   },
   "languages": {
     "title": "Langues",
-    "description": "ccam.dev est disponible en {count, plural, one {# langue} other {# langues}}. Choisissez une langue pour la documentation et les guides de ccam.",
+    "description": "ccam.dev est disponible en {count, plural, one {# langue} other {# langues}}, avec la même documentation et les mêmes guides dans chacune.",
     "coverage": "D'après les données de population d'Unicode CLDR, les personnes qui parlent au moins une de ces langues représentent de {low} à {high} de la population mondiale.",
     "method": "Le chiffre bas ne compte, pour chaque pays, que la langue prise en charge la plus parlée ; le chiffre haut additionne toutes les langues prises en charge et plafonne chaque pays à 100 %."
   },

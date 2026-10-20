@@ -1,10 +1,11 @@
 ---
 title: Riferimento dei comandi
+metaTitle: Riferimento dei comandi di ccam
 description: Tutti i comandi e le opzioni di ccam, da ccam add e ccam <name> fino a ccam usage, ccam next e ccam doctor.
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a82175c30d3
+sourceHash: 3342453e38d3
 ---
 
 Metti `--dry-run` prima di un comando per vedere cosa farebbe senza eseguirlo, per esempio `ccam --dry-run work`. Funziona quando avvii Claude Code (`ccam <name>`, `ccam run`, `ccam next`) e con `share`, `migrate`, `shortcut`, `update` e `doctor --fix`. Gli altri comandi che modificano qualcosa lo rifiutano invece di essere eseguiti.

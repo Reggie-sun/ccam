@@ -1,6 +1,6 @@
 ---
 title: 계정 간 공유
-description: ccam share가 계획, 백업, 충돌 선택을 거쳐 설정, CLAUDE.md, 확장 기능, 대화 내역을 그룹 폴더에 링크하는 방법과, off로 끌 때 내용을 다시 복사해 오는 방법을 설명합니다.
+description: ccam share가 계획, 백업, 충돌 선택을 거쳐 설정, CLAUDE.md, 확장 기능, 대화 내역을 그룹 폴더에 링크하는 방식과 off로 끌 때 내용을 다시 복사하는 방식입니다.
 updated: 2026-10-19
 order: 4
 translation: machine

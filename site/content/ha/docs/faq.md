@@ -1,15 +1,16 @@
 ---
 title: Tambayoyin da ake yawan yi
+metaTitle: "Tambayoyi game da ccam: asusun Claude Code da dama"
 description: Amsoshi game da ccam, asusun Claude Code, iyakokin amfani, rabawa, sirri da tsarukan da ake tallafawa.
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 5ff6e94786a2
+sourceHash: 88bd249ec51c
 ---
 
 ## Shin ccam kayan aikin Anthropic ne na hukuma?
 
-A'a. ccam aikin open-source ne da ba na hukuma ba, ba shi da alaƙa da Anthropic, kuma Anthropic ba ta amince da shi ba. Yana amfani da saitin `CLAUDE_CONFIG_DIR` wanda Claude Code ya rubuta bayaninsa don gudanar da asusai da dama gefe da gefe.
+A'a. ccam aikin open-source ne da ba na hukuma ba, ba shi da alaƙa da Anthropic, kuma Anthropic ba ta amince da shi ba. Yana amfani da saitin `CLAUDE_CONFIG_DIR` wanda [Claude Code ya rubuta bayaninsa](https://code.claude.com/docs/en/env-vars) don gudanar da asusai da dama gefe da gefe.
 
 ## Shin an yarda in yi amfani da asusun Claude Code da dama?
 

@@ -1,19 +1,28 @@
 ---
-title: Cosa fare quando Claude Code raggiunge il limite di utilizzo
-description: Controlla quanto margine resta a ogni account Claude Code e continua la stessa conversazione su un altro account quando uno raggiunge il limite.
+title: Cosa fare al limite di utilizzo di Claude Code
+description: Aspetta il reset o continua subito la stessa conversazione su un altro account Claude Code. Come funzionano i limiti di 5 ore e settimanale, passo dopo passo.
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 767a731b912e
+sourceHash: ff765a189332
 ---
 
-Quando un account raggiunge il limite di utilizzo di Claude Code, continua la stessa conversazione in un altro account di tua proprietà: condividi una volta la cronologia delle conversazioni, poi esegui `ccam next --continue`. Se hai un solo account, attendi l'orario di azzeramento indicato da Claude Code.
+Quando un account raggiunge il limite di utilizzo (spesso chiamato rate limit), hai due possibilità: aspettare che il limite si azzeri oppure continuare subito la stessa conversazione su un altro account che possiedi. Con ccam la seconda richiede un solo comando, `ccam next --auto --continue`, una volta che la cronologia delle conversazioni è condivisa tra gli account.
 
-## Prima che succeda
+## Quali limiti ha Claude Code?
 
-Configura gli account in modo che il cambio richieda un solo comando:
+Con i piani Pro e Max, Claude Code ha un [limite di sessione di cinque ore e un limite settimanale](https://support.claude.com/en/articles/11145838-using-claude-code-with-your-pro-or-max-plan). Entrambi sono condivisi con Claude sul web e nelle app, e l'utilizzo conta su entrambi contemporaneamente. Quando uno si esaurisce, Claude Code [mostra un messaggio](https://code.claude.com/docs/en/errors#youve-hit-your-session-limit) come "You've hit your session limit · resets 3:45pm". Cambiare modello non serve, perché i limiti valgono per tutti i modelli.
+
+## Opzione 1: aspettare il reset
+
+Se hai un solo account, aspetta. Le versioni recenti di Claude Code [aspettano nella sessione aperta](https://code.claude.com/docs/en/interactive-mode#wait-for-a-usage-limit-to-reset) e riprendono il lavoro da sole quando il limite si azzera. `/usage` dentro Claude Code mostra quanta parte dei limiti del tuo piano hai usato.
+
+## Opzione 2: continuare subito su un altro account
+
+Se hai un secondo account, puoi andare avanti subito con la stessa conversazione. Configuralo una volta:
 
 ```sh
+curl -fsSL https://ccam.dev/install.sh | sh
 ccam add personal
 ccam add work
 ccam share personal --history on
@@ -23,9 +32,7 @@ ccam statusline install
 
 Ora la riga di stato mostra l'account e il suo utilizzo su 5 ore mentre lavori, così il limite non ti coglie di sorpresa.
 
-## Quando raggiungi il limite
-
-Esci da Claude Code (`/exit`), poi:
+Quando raggiungi il limite, esci da Claude Code (`/exit`), poi:
 
 ```sh
 ccam usage
@@ -44,11 +51,16 @@ ccam next --auto --continue
 
 Claude Code si avvia come `work` con la conversazione più recente della cartella corrente, compreso tutto ciò che è stato detto finora.
 
+## ccam cambia account automaticamente?
+
+No. ccam non è in esecuzione mentre lavori: avvia Claude Code e si sostituisce con esso. Decidi tu quando cambiare, e `ccam next --auto` sceglie l'account con l'utilizzo su 5 ore più basso e salta gli account al 100% o senza login. Alcuni altri strumenti invece cambiano il login di una sessione in corso; [ccam e gli altri strumenti per cambiare account](/compare/account-switchers) spiega la differenza.
+
 ## Cose da tenere a mente
 
 - Esegui `ccam next --continue` nella stessa cartella in cui stavi lavorando; le conversazioni sono salvate per cartella di progetto.
-- Evita di usare due account sulla stessa conversazione nello stesso momento. ccam ti avvisa se ci provi.
+- Evita di eseguire due account sulla stessa conversazione contemporaneamente. ccam ti avvisa se ci provi.
 - Anche l'altro account deve condividere la cronologia delle conversazioni, nello stesso gruppo.
-- La possibilità di passare da un account all'altro in questo modo dipende dai termini di ciascun account.
+- Il primo messaggio sul nuovo account può consumare più limite del solito, perché quell'account non ha ancora la conversazione in cache.
+- Se puoi passare da un account all'altro in questo modo dipende dai termini di ciascun account.
 
 Vedi [limiti di utilizzo](/docs/usage-limits) per tutte le opzioni di `ccam usage` e `ccam next`.

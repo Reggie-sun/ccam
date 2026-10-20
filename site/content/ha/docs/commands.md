@@ -1,10 +1,11 @@
 ---
 title: Bayanin umarnai
+metaTitle: Bayanin umarnan ccam
 description: Kowane umarni da zaɓi na ccam, daga ccam add da ccam <name> zuwa ccam usage, ccam next da ccam doctor.
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a82175c30d3
+sourceHash: 3342453e38d3
 ---
 
 Saka `--dry-run` kafin umarni don ganin abin da zai yi ba tare da ya yi shi ba, misali `ccam --dry-run work`. Yana aiki lokacin fara Claude Code (`ccam <name>`, `ccam run`, `ccam next`) da kuma tare da `share`, `migrate`, `shortcut`, `update` da `doctor --fix`. Sauran umarnin da ke canza wani abu suna ƙin shi maimakon su gudana.

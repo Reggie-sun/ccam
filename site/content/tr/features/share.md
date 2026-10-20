@@ -1,6 +1,6 @@
 ---
 title: Hesaplar arasında paylaşım
-description: ccam share ayarları, CLAUDE.md dosyasını, uzantıları ve geçmişi bir plan, yedekler ve çakışma seçenekleriyle bir grup klasörüne nasıl bağlar ve off nasıl geri kopyalar.
+description: ccam share ayarları, CLAUDE.md dosyasını, uzantıları ve geçmişi plan, yedek ve çakışma seçenekleriyle grup klasörüne nasıl bağlar, off nasıl geri kopyalar.
 updated: 2026-10-19
 order: 4
 translation: machine

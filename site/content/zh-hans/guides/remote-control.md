@@ -1,10 +1,10 @@
 ---
 title: 用 ccam 使用 Remote Control
-description: 用 ccam <name> rc 以任意账号启动 Claude Code 的 Remote Control：哪些选项适用、ccam 为什么询问是否复制共享的 MCP 服务器，以及常见问题的解决方法。
+description: 用 ccam <name> rc 以任意账号启动 Claude Code 的 Remote Control：哪些选项适用、ccam 为什么提议复制共享的 MCP 服务器，以及如何解决问题。
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: b7b09f9bcb9e
+sourceHash: 59b802c44bb3
 ---
 
 `ccam work rc` 以账号 `work` 启动 Claude Code 的 Remote Control，这样你就可以在 claude.ai/code 或 Claude 移动应用中操作这台电脑上的会话。它的用法与 `claude rc` 相同，只有一处区别：如果该账号共享 MCP 服务器，ccam 会询问一次是否把它们复制到账号的 `.claude.json` 中，因为 Remote Control 的会话不会从其他任何地方读取服务器。

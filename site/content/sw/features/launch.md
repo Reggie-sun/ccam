@@ -1,6 +1,6 @@
 ---
 title: Kuanzisha Claude Code
-description: Anzisha Claude Code kama akaunti yoyote kwa ccam <name|number>, ccam run au kichaguzi cha ccam; hoja huenda kwa claude bila kubadilishwa, na --dry-run huonyesha amri.
+description: Anzisha Claude Code kama akaunti yoyote kwa ccam <name|number>, ccam run au kichaguzi; hoja hupita kwa claude bila kubadilishwa, na --dry-run huonyesha amri.
 updated: 2026-10-20
 order: 1
 translation: machine

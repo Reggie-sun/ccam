@@ -1,10 +1,11 @@
 ---
 title: "کمانڈز کا حوالہ"
+metaTitle: "ccam کمانڈز کا حوالہ"
 description: "ccam کی ہر کمانڈ اور آپشن، ccam add اور ccam <name> سے لے کر ccam usage، ccam next اور ccam doctor تک۔"
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a82175c30d3
+sourceHash: 3342453e38d3
 ---
 
 کسی کمانڈ کو اصل میں چلائے بغیر یہ دیکھنے کے لیے کہ وہ کیا کرے گی، اس سے پہلے `--dry-run` لگائیں، مثلاً `ccam --dry-run work`۔ یہ Claude Code شروع کرتے وقت (`ccam <name>`، `ccam run`، `ccam next`) اور `share`، `migrate`، `shortcut`، `update` اور `doctor --fix` کے ساتھ کام کرتا ہے۔ کچھ تبدیل کرنے والی دوسری کمانڈز چلنے کے بجائے اسے مسترد کر دیتی ہیں۔

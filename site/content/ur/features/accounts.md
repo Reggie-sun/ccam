@@ -1,6 +1,6 @@
 ---
 title: "اکاؤنٹس کا انتظام"
-description: "ccam add، ccam login، ccam list، ccam rename، ccam remove اور ccam import سے Claude Code اکاؤنٹس شامل کریں، لاگ اِن کریں، ان کی فہرست دیکھیں، نام بدلیں، ہٹائیں اور امپورٹ کریں۔"
+description: "ccam add، ccam login، ccam list، ccam rename، ccam remove اور ccam import: Claude Code اکاؤنٹس شامل کریں، لاگ اِن کریں، دیکھیں، نام بدلیں، ہٹائیں، امپورٹ کریں۔"
 updated: 2026-10-19
 order: 2
 translation: machine

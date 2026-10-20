@@ -1,10 +1,10 @@
 ---
 title: Compartir servidores MCP, configuración e historial
 description: Cómo ccam comparte servidores MCP, settings.json, CLAUDE.md, agentes, skills e historial entre cuentas de Claude Code y mantiene separado cada inicio de sesión.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 0df8a7d51c87
+sourceHash: 888d466b29e9
 ---
 
 Cada cuenta mantiene su propio inicio de sesión. Todo lo demás se puede compartir elemento por elemento: ccam enlaza el archivo o la carpeta de la cuenta con una carpeta de grupo compartida, de modo que un cambio hecho en una cuenta aparece en todas las cuentas de ese grupo.
@@ -22,6 +22,8 @@ Cada cuenta mantiene su propio inicio de sesión. Todo lo demás se puede compar
 Las cuentas nuevas comparten todo excepto el historial de conversaciones.
 
 Los archivos de inicio de sesión `.credentials.json` y `.claude.json` nunca se comparten. ccam solo enlaza rutas de una lista fija, y estos dos no están en ella.
+
+Esta página cubre las tareas cotidianas. Todas las opciones se describen en las páginas de funciones: [compartir entre cuentas](/features/share), [servidores MCP compartidos](/features/mcp) y [copiar una configuración existente](/features/migrate).
 
 ## Grupos
 

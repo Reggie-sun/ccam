@@ -1,6 +1,6 @@
 ---
 title: Sabunta ccam
-description: ccam update yana maye gurbin ccam da sabon sakin GitHub bayan duba SHA-256; --check yana bayar da rahoto kawai, kuma --version yana girka takamaiman tag na saki.
+description: ccam update yana maye gurbin ccam da sabon sakin GitHub bayan duba SHA-256; --check yana bayar da rahoto kawai, --version yana girka takamaiman tag na saki.
 updated: 2026-10-19
 order: 10
 translation: machine

@@ -1,10 +1,10 @@
 ---
 title: Shiriki seva za MCP, mipangilio na historia
 description: Jinsi ccam inavyoshiriki seva za MCP, settings.json, CLAUDE.md, agents, skills na historia ya mazungumzo kati ya akaunti za Claude Code; kuingia hubaki tofauti.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 0df8a7d51c87
+sourceHash: 888d466b29e9
 ---
 
 Kila akaunti huhifadhi taarifa zake za kuingia. Kila kitu kingine kinaweza kushirikiwa kipengele kwa kipengele: ccam huweka kiungo kutoka faili au folda ya akaunti kwenda folda ya kikundi kinachoshirikiwa, ili badiliko lililofanywa katika akaunti moja lionekane katika akaunti zote za kikundi hicho.
@@ -22,6 +22,8 @@ Kila akaunti huhifadhi taarifa zake za kuingia. Kila kitu kingine kinaweza kushi
 Akaunti mpya hushiriki kila kitu isipokuwa historia ya mazungumzo.
 
 Faili za kuingia `.credentials.json` na `.claude.json` hazishirikiwi kamwe. ccam huunganisha njia kutoka kwenye orodha maalum tu, na faili hizi mbili hazimo ndani yake.
+
+Ukurasa huu unashughulikia kazi za kila siku. Kila chaguo kimeelezwa kwenye kurasa za vipengele: [kushiriki kati ya akaunti](/features/share), [seva za MCP zinazoshirikiwa](/features/mcp) na [kunakili usanidi uliopo](/features/migrate).
 
 ## Vikundi
 

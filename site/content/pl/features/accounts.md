@@ -1,6 +1,6 @@
 ---
 title: Zarządzanie kontami
-description: Dodawaj, loguj, wyświetlaj, zmieniaj nazwy, usuwaj i importuj konta Claude Code poleceniami ccam add, ccam login, ccam list, ccam rename, ccam remove i ccam import.
+description: Dodawaj, loguj, wyświetlaj, zmieniaj nazwy, usuwaj i importuj konta Claude Code poleceniami ccam add, login, list, rename, remove i import.
 updated: 2026-10-19
 order: 2
 translation: machine

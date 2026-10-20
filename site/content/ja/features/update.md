@@ -1,6 +1,6 @@
 ---
 title: ccamのアップデート
-description: ccam updateは、SHA-256チェックサムを検証したうえで、ccamをGitHubの最新リリースに置き換えます。--checkは確認だけを行い、--versionは指定したリリースタグをインストールします。
+description: ccam updateは、SHA-256チェックサムを検証してccamをGitHubの最新リリースに置き換えます。--checkは確認のみ、--versionは指定したリリースタグをインストールします。
 updated: 2026-10-19
 order: 10
 translation: machine

@@ -1,6 +1,6 @@
 ---
 title: ccam ను అప్‌డేట్ చేయడం
-description: ccam update SHA-256 తనిఖీ తర్వాత ccam ను తాజా GitHub రిలీజ్‌తో భర్తీ చేస్తుంది; --check కేవలం నివేదిస్తుంది, --version ఇచ్చిన రిలీజ్ ట్యాగ్‌ను ఇన్‌స్టాల్ చేస్తుంది.
+description: ccam update SHA-256 తనిఖీ తర్వాత ccam ను తాజా GitHub రిలీజ్‌తో భర్తీ చేస్తుంది; --check నివేదిస్తుంది మాత్రమే, --version ఇచ్చిన రిలీజ్ ట్యాగ్‌ను వేస్తుంది.
 updated: 2026-10-19
 order: 10
 translation: machine

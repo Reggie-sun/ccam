@@ -1,6 +1,6 @@
 ---
 title: Sabobin MCP da aka raba
-description: Riƙe jerin sabobin MCP ɗaya ga kowane rukuni da ccam mcp add, add-json, list, remove da import, ana miƙa su da --mcp-config ko ana daidaita su cikin kowane asusu.
+description: Riƙe jerin sabobin MCP ɗaya ga kowane rukuni da ccam mcp add, add-json, list, remove da import, ana miƙa su da --mcp-config ko a daidaita su cikin kowane asusu.
 updated: 2026-10-20
 order: 5
 translation: machine

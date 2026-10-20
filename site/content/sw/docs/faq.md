@@ -1,15 +1,16 @@
 ---
 title: Maswali yanayoulizwa mara kwa mara
+metaTitle: "Maswali kuhusu ccam: akaunti kadhaa za Claude Code"
 description: Majibu kuhusu ccam, akaunti za Claude Code, vikomo vya matumizi, kushiriki, faragha na mifumo inayotumika.
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 5ff6e94786a2
+sourceHash: 88bd249ec51c
 ---
 
 ## Je, ccam ni zana rasmi ya Anthropic?
 
-Hapana. ccam ni mradi usio rasmi wa open source na hauhusiani na Anthropic wala haujaidhinishwa nayo. Inatumia mpangilio wa `CLAUDE_CONFIG_DIR` ambao Claude Code imeuandikia nyaraka kwa ajili ya kuendesha akaunti kadhaa sambamba.
+Hapana. ccam ni mradi usio rasmi wa open source na hauhusiani na Anthropic wala haujaidhinishwa nayo. Inatumia mpangilio wa `CLAUDE_CONFIG_DIR` ambao [Claude Code inauelezea katika nyaraka zake](https://code.claude.com/docs/en/env-vars) kwa ajili ya kuendesha akaunti kadhaa sambamba.
 
 ## Je, ninaruhusiwa kutumia akaunti kadhaa za Claude Code?
 

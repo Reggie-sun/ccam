@@ -1,6 +1,6 @@
 ---
 title: "Passer au compte suivant"
-description: "ccam next ouvre Claude Code avec le compte qui suit celui utilisé en dernier ; --auto choisit l'utilisation sur 5 heures la plus basse et --continue reprend la conversation."
+description: "ccam next ouvre Claude Code avec le compte suivant le dernier utilisé ; --auto choisit le plus bas usage sur 5 heures et --continue reprend la conversation."
 updated: 2026-10-19
 order: 8
 translation: machine

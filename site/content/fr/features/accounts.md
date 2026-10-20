@@ -1,6 +1,6 @@
 ---
 title: "Gérer les comptes"
-description: "Ajoutez, connectez, listez, renommez, supprimez et importez des comptes Claude Code avec ccam add, ccam login, ccam list, ccam rename, ccam remove et ccam import."
+description: "Ajoutez, connectez, listez, renommez, retirez et importez des comptes Claude Code : ccam add, ccam login, ccam list, ccam rename, ccam remove et ccam import."
 updated: 2026-10-19
 order: 2
 translation: machine

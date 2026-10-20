@@ -1,7 +1,9 @@
 ---
 title: Command reference
+metaTitle: ccam command reference
 description: Every ccam command and option, from ccam add and ccam <name> to ccam usage, ccam next and ccam doctor.
 updated: 2026-10-19
+published: 2026-10-19
 order: 3
 translation: source
 ---

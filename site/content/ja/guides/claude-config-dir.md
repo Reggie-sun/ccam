@@ -4,7 +4,7 @@ description: Claude CodeのCLAUDE_CONFIG_DIRの役割、フォルダーの中身
 updated: 2026-10-19
 order: 2
 translation: machine
-sourceHash: 62f178595254
+sourceHash: ef9317030e42
 ---
 
 `CLAUDE_CONFIG_DIR`は、`~/.claude`の代わりにどのフォルダーを使うかをClaude Codeに指定します。ログイン、設定、MCPサーバー、プラグイン、会話履歴など、アカウント固有のものはすべてそこに保存されます。別々のフォルダーを指定すれば、アカウントを分けられます。
@@ -13,13 +13,17 @@ sourceHash: 62f178595254
 CLAUDE_CONFIG_DIR=~/.claude-work claude
 ```
 
-## フォルダーの中身
+## CLAUDE_CONFIG_DIRは公式にサポートされていますか？
+
+はい。Claude Codeは[環境変数](https://code.claude.com/docs/en/env-vars)の一覧で、設定フォルダーを変更する方法としてこれを挙げており、「複数のアカウントを並行して実行するのに便利」と説明しています。[認証ガイド](https://code.claude.com/docs/en/authentication#log-in-with-multiple-accounts)でも、複数のアカウントでログインするためにこれを使っています。シェルやユーザー設定で設定できますが、プロジェクトの設定では設定できません。
+
+## フォルダーの中身は？
 
 Claude Code 2.1.302で確認した内容です。
 
 | パス | 内容 | 共有 |
 | --- | --- | --- |
-| `.credentials.json` | ログイントークン（Linux）、MCPのOAuthトークン | 不可 |
+| `.credentials.json` | ログイントークン（Linux、Windows）、MCPのOAuthトークン | 不可 |
 | `.claude.json` | アカウント情報、ユーザーのMCPサーバー、プロジェクトごとの状態 | 不可（MCPサーバーは別の方法で可） |
 | `settings.json` | 権限、フック、モデル、ステータスライン、プラグイン | 可 |
 | `CLAUDE.md` | グローバルな指示 | 可 |
@@ -28,13 +32,19 @@ Claude Code 2.1.302で確認した内容です。
 | `history.jsonl` | プロンプトの履歴 | 可 |
 | `sessions/`, `shell-snapshots/`, `cache/`など | 実行時の状態 | 不可 |
 
-## つまずきやすい2つの点
+## つまずきやすい点は？
 
 **`CLAUDE_CONFIG_DIR`を設定していない場合、`.claude.json`は`~/.claude`の中にありません。** このときClaude Codeは、フォルダーの隣の`~/.claude.json`にこのファイルを置きます。`CLAUDE_CONFIG_DIR=~/.claude`を使い始めると、Claude Codeは代わりに`~/.claude/.claude.json`を探すため、アカウントが見つかりません。`ccam import`は、この2つをリンクすることでこの問題に対処します。
 
-**macOSでは、ログインはフォルダーではなくキーチェーンにあります。** Claude Codeはログインを`Claude Code-credentials`という名前で保存し、`CLAUDE_CONFIG_DIR`が設定されている場合は、その後ろにフォルダーパスの短いハッシュを付けます。そのため、フォルダーが別であればキーチェーンの項目も別になります。キーチェーンへの書き込みが拒否された場合、Claude Codeは代わりにフォルダー内の`.credentials.json`を使います。
+**macOSでは、ログインはフォルダーではなくキーチェーンにあります。** Claude Codeはログインを`Claude Code-credentials`という名前で保存し、`CLAUDE_CONFIG_DIR`が設定されている場合は、その後ろにフォルダーパスの短いハッシュを付けます。そのため、フォルダーが別であればキーチェーンの項目も別になります。キーチェーンへの書き込みが拒否された場合、[ドキュメント](https://code.claude.com/docs/en/authentication#credential-management)に書かれているとおり、Claude Codeは代わりにフォルダー内の`.credentials.json`を使います。
 
-## フォルダー間での共有
+**すべてのサインインがフォルダーに保存されるわけではありません。** APIキーを使わないClaude Consoleのサインインはフォルダーの外に保存されるため、フォルダーを分けてもこの種のサインインを2つ使い分けることはできません。claude.aiのログインとAPIキーはフォルダーごとに保存されます。
+
+## Windowsではフォルダーはどこにありますか？
+
+デフォルトでは`%USERPROFILE%\.claude`で、ログインはその中の`.credentials.json`に保存されます。追加するアカウントごとに、LinuxやmacOSと同じように`CLAUDE_CONFIG_DIR`を別のフォルダーに設定します。
+
+## フォルダー間でファイルを共有できますか？
 
 シンボリックリンクは機能します。Claude Codeは、リンクされた`settings.json`や`projects/`フォルダーをリンク経由で読み書きし、リンクをそのまま維持します。例外はMCPサーバーです。MCPサーバーはログインと同じ`.claude.json`に保存されるため、代わりに`--mcp-config`で渡してください。
 

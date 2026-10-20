@@ -1,6 +1,6 @@
 ---
 title: Pagsusuri at pagkukumpuni
-description: Suriin ang mga share link, permission ng file, login at bersyon ng Claude Code gamit ang ccam doctor, at kumpunihin ang ligtas kumpunihin gamit ang ccam doctor --fix.
+description: Suriin ang mga share link, permission ng file, login at bersyon ng Claude Code gamit ang ccam doctor, at ayusin ang ligtas ayusin gamit ang ccam doctor --fix.
 updated: 2026-10-19
 order: 9
 translation: machine

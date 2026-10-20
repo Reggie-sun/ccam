@@ -1,10 +1,11 @@
 ---
 title: ccam ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಿ
-description: Linux ಅಥವಾ macOS ನಲ್ಲಿ ಒಂದೇ ಕಮಾಂಡ್‌ನಿಂದ, .deb ಪ್ಯಾಕೇಜ್‌ನಿಂದ ಅಥವಾ ಸೋರ್ಸ್‌ನಿಂದ ccam ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಿ ಮತ್ತು ccam update ಮೂಲಕ ಅದನ್ನು ಅಪ್‌ಡೇಟ್ ಆಗಿಡಿ.
+metaTitle: Linux ಮತ್ತು macOS ನಲ್ಲಿ ccam ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಿ
+description: Linux ಅಥವಾ macOS ನಲ್ಲಿ ಒಂದೇ ಕಮಾಂಡ್, .deb ಪ್ಯಾಕೇಜ್ ಅಥವಾ ಸೋರ್ಸ್‌ನಿಂದ ccam ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಿ, ccam update ಮೂಲಕ ಅಪ್‌ಡೇಟ್ ಮಾಡಿ. ಮೊದಲು Claude Code ಬೇಕು.
 updated: 2026-10-19
 order: 1
 translation: machine
-sourceHash: 4d7291e0f86e
+sourceHash: 7ecd1ed00e09
 ---
 
 Linux ಅಥವಾ macOS ನ ಟರ್ಮಿನಲ್‌ನಲ್ಲಿ ಇದನ್ನು ರನ್ ಮಾಡಿ:

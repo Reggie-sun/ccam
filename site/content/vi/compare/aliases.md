@@ -1,13 +1,36 @@
 ---
 title: So sánh ccam với alias của shell
 description: "So sánh song song alias của shell dùng CLAUDE_CONFIG_DIR với ccam để chạy nhiều tài khoản Claude Code."
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: f751716e46c9
+sourceHash: ea24bb091caf
 ---
 
 Mỗi tài khoản một alias của shell là cách đơn giản nhất để chạy Claude Code nhiều tài khoản. ccam bên dưới cũng làm điều tương tự, và bổ sung thêm việc dùng chung, chuyển đổi tài khoản và theo dõi mức sử dụng.
+
+## Thiết lập bằng alias
+
+Thêm một dòng cho mỗi tài khoản bổ sung vào `~/.bashrc` hoặc `~/.zshrc`, mở một terminal mới và chạy alias một lần để đăng nhập:
+
+```sh
+alias claude-work='CLAUDE_CONFIG_DIR=~/.claude-work claude'
+```
+
+`claude` vẫn là tài khoản đầu tiên của bạn, còn `claude-work` khởi động tài khoản thứ hai. Đây là cách mà [tài liệu của Claude Code mô tả](https://code.claude.com/docs/en/authentication#log-in-with-multiple-accounts).
+
+## Thiết lập bằng ccam
+
+Cài đặt ccam và thêm tài khoản, ở đây kèm luôn một lệnh tắt riêng:
+
+```sh
+curl -fsSL https://ccam.dev/install.sh | sh
+ccam add work --shortcut ccwork
+```
+
+`ccam work` và `ccwork` đều khởi động tài khoản này, và cả hai cũng dùng được trong script.
+
+## So sánh song song
 
 | | Alias của shell | ccam |
 | --- | --- | --- |
@@ -25,4 +48,4 @@ Mỗi tài khoản một alias của shell là cách đơn giản nhất để c
 
 Hãy chọn alias nếu bạn có hai tài khoản và không muốn dùng chung gì giữa chúng. Hãy chọn ccam nếu bạn muốn các tài khoản hoạt động như một bộ thiết lập duy nhất. Bạn có thể bắt đầu với alias và chuyển sang ccam sau: `ccam import` đăng ký các thư mục `~/.claude-*` có sẵn ngay tại chỗ.
 
-[Cách dùng hai tài khoản trên một máy tính](/guides/multiple-claude-code-accounts) giải thích từng bước cả hai cách.
+[Cách dùng nhiều tài khoản trên một máy tính](/guides/multiple-claude-code-accounts) giải thích từng bước cả hai cách, còn [ccam và các công cụ đổi tài khoản khác](/compare/account-switchers) so sánh ccam với những công cụ hoán đổi một lần đăng nhập.

@@ -1,6 +1,6 @@
 ---
 title: Kontrol etme ve onarma
-description: ccam doctor ile paylaşım bağlantılarını, dosya izinlerini, girişleri ve Claude Code sürümünü kontrol edin, onarılması güvenli olanı ccam doctor --fix ile onarın.
+description: ccam doctor ile paylaşım bağlantılarını, dosya izinlerini, girişleri ve Claude Code sürümünü kontrol edin, güvenli olanı ccam doctor --fix ile onarın.
 updated: 2026-10-19
 order: 9
 translation: machine

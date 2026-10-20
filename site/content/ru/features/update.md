@@ -1,6 +1,6 @@
 ---
 title: Обновление ccam
-description: ccam update заменяет ccam последним выпуском с GitHub после проверки SHA-256; --check только сообщает о выпуске, а --version устанавливает указанный тег выпуска.
+description: ccam update заменяет ccam последним выпуском с GitHub после проверки SHA-256; --check только сообщает о выпуске, а --version ставит указанный тег выпуска.
 updated: 2026-10-19
 order: 10
 translation: machine

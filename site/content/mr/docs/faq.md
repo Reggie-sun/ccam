@@ -1,15 +1,16 @@
 ---
 title: वारंवार विचारले जाणारे प्रश्न
+metaTitle: "ccam FAQ: अनेक Claude Code खाती"
 description: ccam, Claude Code खाती, वापर मर्यादा, शेअरिंग, गोपनीयता आणि समर्थित सिस्टिम्सबद्दल उत्तरे.
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 5ff6e94786a2
+sourceHash: 88bd249ec51c
 ---
 
 ## ccam हे Anthropic चे अधिकृत टूल आहे का?
 
-नाही. ccam हा अनधिकृत ओपन-सोर्स प्रकल्प आहे. त्याचा Anthropic शी संबंध नाही आणि Anthropic त्याला मान्यता देत नाही. अनेक खाती शेजारी शेजारी चालवण्यासाठी Claude Code ने दस्तऐवजात दिलेली `CLAUDE_CONFIG_DIR` सेटिंग ते वापरते.
+नाही. ccam हा अनधिकृत ओपन-सोर्स प्रकल्प आहे. त्याचा Anthropic शी संबंध नाही आणि Anthropic त्याला मान्यता देत नाही. अनेक खाती शेजारी शेजारी चालवण्यासाठी Claude Code ने [दस्तऐवजात दिलेली](https://code.claude.com/docs/en/env-vars) `CLAUDE_CONFIG_DIR` सेटिंग ते वापरते.
 
 ## मला अनेक Claude Code खाती वापरण्याची परवानगी आहे का?
 

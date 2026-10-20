@@ -1,6 +1,6 @@
 ---
 title: Sharing sa pagitan ng mga account
-description: Paano nili-link ng ccam share ang settings, CLAUDE.md, mga extension at kasaysayan sa isang group folder, na may plano, backup at mga pagpipilian sa conflict, at paano kumokopya pabalik ang off.
+description: Paano nili-link ng ccam share ang settings, CLAUDE.md, extension at kasaysayan sa group folder, may plano, backup at conflict choice; ibinabalik ito ng off.
 updated: 2026-10-19
 order: 4
 translation: machine

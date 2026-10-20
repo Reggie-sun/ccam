@@ -1,10 +1,11 @@
 ---
 title: கட்டளைக் குறிப்பு
+metaTitle: ccam கட்டளைக் குறிப்பு
 description: ccam add, ccam <name> முதல் ccam usage, ccam next, ccam doctor வரை, ccam-இன் ஒவ்வொரு கட்டளையும் option-உம்.
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: 5a82175c30d3
+sourceHash: 3342453e38d3
 ---
 
 ஒரு கட்டளை உண்மையில் எதையும் செய்யாமல் என்ன செய்யும் என்று பார்க்க, அதற்கு முன் `--dry-run` வையுங்கள், எடுத்துக்காட்டாக `ccam --dry-run work`. Claude Code-ஐத் தொடங்கும்போது (`ccam <name>`, `ccam run`, `ccam next`) மற்றும் `share`, `migrate`, `shortcut`, `update`, `doctor --fix` ஆகியவற்றுடன் இது வேலை செய்யும். எதையாவது மாற்றும் மற்ற கட்டளைகள் இயங்குவதற்குப் பதிலாக இதை மறுக்கும்.
