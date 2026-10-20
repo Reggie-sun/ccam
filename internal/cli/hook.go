@@ -39,7 +39,7 @@ func hookCmd(e *env) *cobra.Command {
 			"  stop-failure  a turn stopped at a usage limit: note the conversation and show a\n" +
 			"                terminal notification, so `ccam next --continue` carries it on\n" +
 			"  switch        /ccam:switch [account]: note the conversation and end the turn\n\n" +
-			"Both do nothing in a session that ccam did not start.",
+			"In a session that ccam did not start, stop-failure does nothing and switch says why it cannot move it.",
 		Args:      cobra.ExactArgs(1),
 		ValidArgs: []string{"stop-failure", "switch"},
 		RunE: func(cmd *cobra.Command, args []string) error {
