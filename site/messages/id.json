@@ -10,6 +10,7 @@
     "faq": "FAQ",
     "changelog": "Catatan perubahan",
     "github": "GitHub",
+    "search": "Cari",
     "menu": "Menu",
     "skip": "Langsung ke konten",
     "language": "Bahasa",
@@ -96,17 +97,23 @@
     "machine": "Halaman ini diterjemahkan dengan mesin dari bahasa Inggris. Koreksi sangat dihargai.",
     "related": "Panduan terkait",
     "onThisPage": "Di halaman ini",
-    "sections": {
-      "docs": "Dokumentasi",
+    "groups": {
+      "start": "Memulai",
+      "core": "Fitur utama",
+      "more": "Fitur lainnya",
       "guides": "Panduan",
-      "features": "Fitur",
-      "compare": "Perbandingan",
+      "reference": "Referensi",
       "blog": "Blog"
     },
     "commandsTable": {
       "command": "Perintah",
       "does": "Fungsinya"
     }
+  },
+  "search": {
+    "placeholder": "Cari di dokumentasi",
+    "empty": "Tidak ada hasil",
+    "close": "Tutup"
   },
   "commands": {
     "ccam": "Membuka pemilih akun",

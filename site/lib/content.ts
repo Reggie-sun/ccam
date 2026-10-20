@@ -2,6 +2,8 @@
 // not generated and never fall back to English (docs/WEBSITE_PLAN.md 5.3).
 import { Marked, type Tokens } from "marked";
 import { splitFrontMatter } from "./frontmatter";
+import { headingIds, slugify } from "./headings";
+import { nav, type GroupKey } from "./nav";
 import { locales, type Locale } from "../i18n/locales";
 import { pagePath } from "./paths";
 
@@ -54,11 +56,20 @@ export function allPages(): Page[] {
   return all;
 }
 
-export type Heading = { id: string; text: string; depth: number };
-
-function slugify(text: string): string {
-  return text.toLowerCase().normalize("NFKC").replace(/<[^>]+>/g, "").replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-|-$/g, "");
+/** The sidebar groups of a locale, keeping only pages that exist in it. */
+export function navGroups(locale: string): { key: GroupKey; pages: Page[] }[] {
+  return nav
+    .map((g) => ({
+      key: g.key,
+      pages: g.pages.map((id) => {
+        const [section, slug] = id.split("/");
+        return getPage(locale, section as Section, slug);
+      }).filter((p): p is Page => !!p),
+    }))
+    .filter((g) => g.pages.length);
 }
+
+export type Heading = { id: string; text: string; depth: number };
 
 /** Internal links go to the same locale when the page exists there, else to
  *  English. Code stays left-to-right inside right-to-left pages. */
@@ -66,8 +77,7 @@ function slugify(text: string): string {
  *  "/docs/install#uninstall" works in every language. */
 function englishIds(page: Pick<Page, "section" | "slug">): string[] {
   const en = getPage("en", page.section, page.slug);
-  if (!en) return [];
-  return new Marked().lexer(en.markdown).filter((t) => t.type === "heading").map((t) => slugify((t as Tokens.Heading).text.replace(/`/g, "")));
+  return en ? headingIds(en.markdown) : [];
 }
 
 export function renderMarkdown(page: Pick<Page, "locale" | "markdown" | "section" | "slug">, labels: { copy: string; copied: string }): { html: string; headings: Heading[] } {

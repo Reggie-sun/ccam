@@ -2,6 +2,7 @@
 import { readFileSync } from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
+import { nav } from "../lib/nav.ts";
 import { abs, homePath } from "../lib/paths.ts";
 import { builtLocales, messages, OUT, sourcePages, type SourcePage } from "./lib.ts";
 
@@ -29,13 +30,16 @@ for (const p of pages) {
   await writeFile(file, toMarkdown(p));
 }
 
-const sectionNames: Record<string, string> = { docs: "Docs", guides: "Guides", features: "Features", compare: "Comparisons", blog: "Blog" };
 for (const l of builtLocales()) {
   const m = messages(l.code);
   const list = pages.filter((p) => p.locale === l.code);
-  const groups = ["docs", "guides", "features", "compare", "blog"].map((s) => {
-    const items = list.filter((p) => p.section === s).map((p) => `- [${p.title}](${abs(`/${l.code}/${s}/${p.slug}.md`)}): ${p.description}`);
-    return items.length ? `## ${m.docs.sections[s] ?? sectionNames[s]}\n\n${items.join("\n")}` : "";
+  // Same groups and order as the docs sidebar.
+  const groups = nav.map((g) => {
+    const items = g.pages
+      .map((id) => list.find((p) => `${p.section}/${p.slug}` === id))
+      .filter((p) => !!p)
+      .map((p) => `- [${p.title}](${abs(`/${l.code}/${p.section}/${p.slug}.md`)}): ${p.description}`);
+    return items.length ? `## ${m.docs.groups[g.key]}\n\n${items.join("\n")}` : "";
   });
   const text = [
     "# ccam",

@@ -10,6 +10,7 @@
     "faq": "Hỏi đáp",
     "changelog": "Nhật ký thay đổi",
     "github": "GitHub",
+    "search": "Tìm kiếm",
     "menu": "Menu",
     "skip": "Chuyển đến nội dung",
     "language": "Ngôn ngữ",
@@ -96,17 +97,23 @@
     "machine": "Trang này được dịch máy từ tiếng Anh. Mọi góp ý chỉnh sửa đều được hoan nghênh.",
     "related": "Hướng dẫn liên quan",
     "onThisPage": "Trên trang này",
-    "sections": {
-      "docs": "Tài liệu",
+    "groups": {
+      "start": "Bắt đầu",
+      "core": "Tính năng chính",
+      "more": "Tính năng khác",
       "guides": "Hướng dẫn",
-      "features": "Tính năng",
-      "compare": "So sánh",
+      "reference": "Tham khảo",
       "blog": "Blog"
     },
     "commandsTable": {
       "command": "Lệnh",
       "does": "Chức năng"
     }
+  },
+  "search": {
+    "placeholder": "Tìm trong tài liệu",
+    "empty": "Không có kết quả",
+    "close": "Đóng"
   },
   "commands": {
     "ccam": "Mở trình chọn tài khoản",

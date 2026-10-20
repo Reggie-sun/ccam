@@ -10,6 +10,7 @@
     "faq": "Maswali",
     "changelog": "Mabadiliko",
     "github": "GitHub",
+    "search": "Tafuta",
     "menu": "Menyu",
     "skip": "Ruka hadi maudhui",
     "language": "Lugha",
@@ -96,17 +97,23 @@
     "machine": "Ukurasa huu umetafsiriwa kwa mashine kutoka Kiingereza. Marekebisho yanakaribishwa.",
     "related": "Miongozo inayohusiana",
     "onThisPage": "Katika ukurasa huu",
-    "sections": {
-      "docs": "Nyaraka",
+    "groups": {
+      "start": "Kuanza",
+      "core": "Vipengele vikuu",
+      "more": "Vipengele zaidi",
       "guides": "Miongozo",
-      "features": "Vipengele",
-      "compare": "Ulinganisho",
+      "reference": "Marejeleo",
       "blog": "Blogu"
     },
     "commandsTable": {
       "command": "Amri",
       "does": "Inachofanya"
     }
+  },
+  "search": {
+    "placeholder": "Tafuta kwenye nyaraka",
+    "empty": "Hakuna matokeo",
+    "close": "Funga"
   },
   "commands": {
     "ccam": "Fungua kichaguzi cha akaunti",

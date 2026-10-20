@@ -10,6 +10,7 @@
     "faq": "FAQ",
     "changelog": "Novità",
     "github": "GitHub",
+    "search": "Cerca",
     "menu": "Menu",
     "skip": "Vai al contenuto",
     "language": "Lingua",
@@ -96,17 +97,23 @@
     "machine": "Questa pagina è stata tradotta automaticamente dall'inglese. Le correzioni sono benvenute.",
     "related": "Guide correlate",
     "onThisPage": "In questa pagina",
-    "sections": {
-      "docs": "Documentazione",
+    "groups": {
+      "start": "Per iniziare",
+      "core": "Funzionalità principali",
+      "more": "Altre funzionalità",
       "guides": "Guide",
-      "features": "Funzionalità",
-      "compare": "Confronti",
+      "reference": "Riferimento",
       "blog": "Blog"
     },
     "commandsTable": {
       "command": "Comando",
       "does": "Cosa fa"
     }
+  },
+  "search": {
+    "placeholder": "Cerca nella documentazione",
+    "empty": "Nessun risultato",
+    "close": "Chiudi"
   },
   "commands": {
     "ccam": "Apre il selettore degli account",

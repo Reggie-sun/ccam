@@ -143,3 +143,39 @@ test("on this page links to every section heading", async ({ page }) => {
     await expect(page.locator(href)).toHaveCount(1);
   }
 });
+
+test("docs sidebar lists the groups in reading order, and next crosses groups", async ({ page }) => {
+  await page.goto("/en/docs/quick-start/");
+  await expect(page.locator(".sidebar .group-title")).toHaveText(["Getting started", "Core features", "More features", "Guides", "Reference", "Blog"]);
+  await expect(page.locator(".pager .next")).toHaveAttribute("href", "/en/features/accounts/");
+});
+
+test("search finds a section and opens it", async ({ page }) => {
+  await page.goto("/en/docs/install/");
+  const dialog = page.locator("dialog.search");
+  await expect(dialog).toBeHidden();
+  await page.keyboard.press("Control+k");
+  await expect(dialog).toBeVisible();
+  const input = dialog.getByRole("combobox");
+  await expect(input).toBeFocused();
+  await input.fill("statusline install");
+  const first = dialog.getByRole("option").first();
+  await expect(first).toBeVisible();
+  await expect(first).toHaveAttribute("aria-selected", "true");
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(/\/en\/(features|docs)\/[a-z-]+\/#[a-z-]+$/);
+  const id = decodeURIComponent(new URL(page.url()).hash.slice(1));
+  await expect(page.locator(`[id="${id}"]`)).toHaveCount(1);
+});
+
+test("search says when nothing matches, and closes with Escape", async ({ page }) => {
+  await page.goto("/ko/docs/install/");
+  await page.locator("[data-search-open]").click();
+  const dialog = page.locator("dialog.search");
+  await dialog.getByRole("combobox").fill("zzzzqqq");
+  await expect(dialog.getByRole("status")).toHaveText("검색 결과가 없습니다");
+  await dialog.getByRole("combobox").fill("공유");
+  await expect(dialog.getByRole("option").first()).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(dialog).toBeHidden();
+});

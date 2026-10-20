@@ -10,6 +10,7 @@
     "faq": "FAQ",
     "changelog": "Changelog",
     "github": "GitHub",
+    "search": "Maghanap",
     "menu": "Menu",
     "skip": "Lumaktaw sa nilalaman",
     "language": "Wika",
@@ -96,17 +97,23 @@
     "machine": "Machine translation mula sa Ingles ang pahinang ito. Malugod naming tinatanggap ang mga pagwawasto.",
     "related": "Kaugnay na mga gabay",
     "onThisPage": "Sa pahinang ito",
-    "sections": {
-      "docs": "Dokumentasyon",
+    "groups": {
+      "start": "Pagsisimula",
+      "core": "Mga pangunahing feature",
+      "more": "Iba pang feature",
       "guides": "Mga gabay",
-      "features": "Mga feature",
-      "compare": "Mga paghahambing",
+      "reference": "Sanggunian",
       "blog": "Blog"
     },
     "commandsTable": {
       "command": "Utos",
       "does": "Ano ang ginagawa nito"
     }
+  },
+  "search": {
+    "placeholder": "Maghanap sa docs",
+    "empty": "Walang resulta",
+    "close": "Isara"
   },
   "commands": {
     "ccam": "Buksan ang pagpili ng account",

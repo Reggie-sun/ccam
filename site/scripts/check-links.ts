@@ -1,10 +1,19 @@
-// Internal links, assets and #fragments resolve in the build. External links
-// are checked separately (lychee in CI) to keep this check offline.
+// Internal links, assets and #fragments resolve in the build, and every page
+// is listed once in the docs sidebar. External links are checked separately
+// (lychee in CI) to keep this check offline.
 import { existsSync, readFileSync } from "node:fs";
 import { join, relative } from "node:path";
-import { fail, OUT, walk } from "./lib.ts";
+import { nav } from "../lib/nav.ts";
+import { fail, OUT, sourcePages, walk } from "./lib.ts";
 
 const errors: string[] = [];
+const listed: string[] = nav.flatMap((g) => [...g.pages]);
+const english = sourcePages().filter((p) => p.locale === "en").map((p) => `${p.section}/${p.slug}`);
+for (const id of english) {
+  const n = listed.filter((x) => x === id).length;
+  if (n !== 1) errors.push(`lib/nav.ts lists ${id} ${n} times (expected once)`);
+}
+for (const id of listed) if (!english.includes(id)) errors.push(`lib/nav.ts lists ${id}, which has no English page`);
 const ok = (path: string) => {
   const p = decodeURIComponent(path.split("#")[0].split("?")[0]);
   if (!p) return true;

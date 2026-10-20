@@ -10,6 +10,7 @@
     "faq": "常見問題",
     "changelog": "變更紀錄",
     "github": "GitHub",
+    "search": "搜尋",
     "menu": "選單",
     "skip": "跳至主要內容",
     "language": "語言",
@@ -96,17 +97,23 @@
     "machine": "本頁由英文機器翻譯而成，歡迎提供修正。",
     "related": "相關指南",
     "onThisPage": "本頁內容",
-    "sections": {
-      "docs": "文件",
+    "groups": {
+      "start": "入門",
+      "core": "核心功能",
+      "more": "更多功能",
       "guides": "指南",
-      "features": "功能",
-      "compare": "比較",
+      "reference": "參考",
       "blog": "部落格"
     },
     "commandsTable": {
       "command": "指令",
       "does": "用途"
     }
+  },
+  "search": {
+    "placeholder": "搜尋文件",
+    "empty": "沒有結果",
+    "close": "關閉"
   },
   "commands": {
     "ccam": "開啟帳號選擇器",

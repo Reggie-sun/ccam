@@ -10,6 +10,7 @@
     "faq": "FAQ",
     "changelog": "Changelog",
     "github": "GitHub",
+    "search": "Search",
     "menu": "Menu",
     "skip": "Skip to content",
     "language": "Language",
@@ -96,17 +97,23 @@
     "machine": "This page was machine-translated from English. Corrections are welcome.",
     "related": "Related guides",
     "onThisPage": "On this page",
-    "sections": {
-      "docs": "Documentation",
+    "groups": {
+      "start": "Getting started",
+      "core": "Core features",
+      "more": "More features",
       "guides": "Guides",
-      "features": "Features",
-      "compare": "Comparisons",
+      "reference": "Reference",
       "blog": "Blog"
     },
     "commandsTable": {
       "command": "Command",
       "does": "What it does"
     }
+  },
+  "search": {
+    "placeholder": "Search the docs",
+    "empty": "No results",
+    "close": "Close"
   },
   "commands": {
     "ccam": "Open the account picker",

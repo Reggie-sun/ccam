@@ -1,5 +1,5 @@
 import { getLocale } from "../i18n/locales";
-import { faqEntries, getPages, pageLocales, renderMarkdown, type Page, type Section } from "../lib/content";
+import { faqEntries, navGroups, pageLocales, renderMarkdown, type Page, type Section } from "../lib/content";
 import { format, formatDate, getMessages, type Messages } from "../lib/i18n";
 import { abs, homePath, pagePath, REPO } from "../lib/paths";
 import { articleLd, CLAUDE_CODE_VERSION, faqLd, VERSION } from "../lib/jsonld";
@@ -13,15 +13,9 @@ export function docAlternates(section: Section, slug: string): Record<string, st
   return Object.fromEntries(pageLocales(section, slug).map((l) => [l.code, pagePath(l.code, section, slug)]));
 }
 
-/** Docs and guides read as one list; comparisons and the blog keep their own groups. */
+/** The sidebar groups (lib/nav.ts) with their names in this locale. */
 function docGroups(locale: string, m: Messages): { title: string; pages: Page[] }[] {
-  const t = m.docs.sections as Record<Section, string>;
-  return [
-    { title: t.docs, pages: [...getPages(locale, "docs"), ...getPages(locale, "guides")] },
-    { title: t.features, pages: getPages(locale, "features") },
-    { title: t.compare, pages: getPages(locale, "compare") },
-    { title: t.blog, pages: getPages(locale, "blog") },
-  ].filter((g) => g.pages.length);
+  return navGroups(locale).map((g) => ({ title: m.docs.groups[g.key], pages: g.pages }));
 }
 
 function DocList({ page, groups, Title }: { page: Page; groups: ReturnType<typeof docGroups>; Title: "h2" | "p" }) {
@@ -54,10 +48,11 @@ export function DocPage({ page }: { page: Page }) {
   html = placeDiagrams(html.replace("<!-- commands -->", commandsTable(m)), page.file);
   const groups = docGroups(page.locale, m);
   const group = groups.find((g) => g.pages.some((p) => p.section === page.section && p.slug === page.slug))!;
-  const siblings = group.pages;
-  const i = siblings.findIndex((p) => p.section === page.section && p.slug === page.slug);
-  const prev = siblings[i - 1];
-  const next = siblings[i + 1];
+  // Previous and next follow the sidebar across groups, as one reading path.
+  const ordered = groups.flatMap((g) => g.pages);
+  const i = ordered.findIndex((p) => p.section === page.section && p.slug === page.slug);
+  const prev = ordered[i - 1];
+  const next = ordered[i + 1];
   const path = pagePath(page.locale, page.section, page.slug);
   const active = page.slug === "faq" ? "faq" : page.section === "docs" || page.section === "guides" || page.section === "features" ? "docs" : undefined;
   const sectionName = group.title;
@@ -142,7 +137,7 @@ export function DocPage({ page }: { page: Page }) {
           lang: l.lang,
           crumbs: [
             { name: "ccam", url: abs(homePath(page.locale)) },
-            { name: sectionName, url: abs(pagePath(page.locale, siblings[0].section, siblings[0].slug)) },
+            { name: sectionName, url: abs(pagePath(page.locale, group.pages[0].section, group.pages[0].slug)) },
             { name: page.title, url: abs(path) },
           ],
         })}

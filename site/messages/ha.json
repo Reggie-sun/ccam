@@ -10,6 +10,7 @@
     "faq": "Tambayoyi",
     "changelog": "Tarihin canje-canje",
     "github": "GitHub",
+    "search": "Bincika",
     "menu": "Menu",
     "skip": "Tsallaka zuwa abin da ke ciki",
     "language": "Harshe",
@@ -96,17 +97,23 @@
     "machine": "Na'ura ce ta fassara wannan shafin daga Turanci. Ana maraba da gyare-gyare.",
     "related": "Jagorori masu alaƙa",
     "onThisPage": "A wannan shafin",
-    "sections": {
-      "docs": "Takardun bayani",
+    "groups": {
+      "start": "Farawa",
+      "core": "Manyan fasaloli",
+      "more": "Ƙarin fasaloli",
       "guides": "Jagorori",
-      "features": "Fasaloli",
-      "compare": "Kwatance",
+      "reference": "Bayanan tunani",
       "blog": "Blog"
     },
     "commandsTable": {
       "command": "Umarni",
       "does": "Abin da yake yi"
     }
+  },
+  "search": {
+    "placeholder": "Bincika takardun",
+    "empty": "Babu sakamako",
+    "close": "Rufe"
   },
   "commands": {
     "ccam": "Buɗe mai zaɓar asusu",

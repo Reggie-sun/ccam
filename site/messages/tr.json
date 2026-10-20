@@ -10,6 +10,7 @@
     "faq": "SSS",
     "changelog": "Sürüm notları",
     "github": "GitHub",
+    "search": "Ara",
     "menu": "Menü",
     "skip": "İçeriğe geç",
     "language": "Dil",
@@ -96,17 +97,23 @@
     "machine": "Bu sayfa İngilizceden makine çevirisiyle çevrilmiştir. Düzeltmelere açığız.",
     "related": "İlgili kılavuzlar",
     "onThisPage": "Bu sayfada",
-    "sections": {
-      "docs": "Belgeler",
+    "groups": {
+      "start": "Başlarken",
+      "core": "Temel özellikler",
+      "more": "Diğer özellikler",
       "guides": "Kılavuzlar",
-      "features": "Özellikler",
-      "compare": "Karşılaştırmalar",
+      "reference": "Başvuru",
       "blog": "Blog"
     },
     "commandsTable": {
       "command": "Komut",
       "does": "Ne yapar"
     }
+  },
+  "search": {
+    "placeholder": "Belgelerde ara",
+    "empty": "Sonuç yok",
+    "close": "Kapat"
   },
   "commands": {
     "ccam": "Hesap seçiciyi açar",
