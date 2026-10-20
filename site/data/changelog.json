@@ -1,5 +1,11 @@
 [
   {
+    "tag": "v0.9.0",
+    "date": "2026-10-20",
+    "url": "https://github.com/jhyunwoo/ccam/releases/tag/v0.9.0",
+    "notes": "<h3>New</h3>\n<ul>\n<li>The ccam plugin notifies at a usage limit and adds /ccam:switch</li>\n<li>Groups, a full-screen dashboard, and carrying a conversation on to another account at a usage limit</li>\n</ul>\n"
+  },
+  {
     "tag": "v0.8.0",
     "date": "2026-10-20",
     "url": "https://github.com/jhyunwoo/ccam/releases/tag/v0.8.0",
