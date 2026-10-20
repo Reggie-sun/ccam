@@ -1,0 +1,17 @@
+{
+  "description": "ccam: note a conversation that stops at a usage limit (with a terminal notification), and hand a conversation to another account with /ccam:switch",
+  "hooks": {
+    "StopFailure": [
+      {
+        "matcher": "rate_limit",
+        "hooks": [{ "type": "command", "command": "ccam hook stop-failure", "timeout": 10 }]
+      }
+    ],
+    "UserPromptExpansion": [
+      {
+        "matcher": "^ccam:switch$",
+        "hooks": [{ "type": "command", "command": "ccam hook switch", "timeout": 10 }]
+      }
+    ]
+  }
+}

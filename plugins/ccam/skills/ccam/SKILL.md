@@ -24,7 +24,7 @@ This session cannot move itself to another account. Tell the user to quit and ru
 ccam next --auto --continue
 ```
 
-It opens the account with the most room and continues this conversation there (both accounts must share conversation history; `ccam share <name> --history on`).
+It opens the account with the most room and continues this conversation there (both accounts must share conversation history through a group; `ccam group set default --add history`).
 
 ## Run work on other accounts
 
@@ -58,4 +58,4 @@ ccam doctor         # broken share links, logins, permissions
 ## Do not
 
 - Do not read or print `.credentials.json` or any token; ccam never needs them in a conversation.
-- Do not run `ccam add`, `ccam login`, `ccam share`, `ccam remove` or `ccam migrate` yourself: they log in through a browser or move files. Suggest the command to the user instead.
+- Do not run `ccam add`, `ccam login`, `ccam group` (other than `ccam group` and `ccam group show`, which only read), `ccam remove` or `ccam migrate` yourself: they log in through a browser or move files. Suggest the command to the user instead.
