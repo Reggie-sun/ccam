@@ -46,7 +46,10 @@ func TestNextRotatesAndContinues(t *testing.T) {
 		t.Fatalf("%+v", r)
 	}
 	dir, args = h.called()
-	if dir != h.profileDir("personal") || !reflect.DeepEqual(args, []string{"--resume", conv, "--fork-session", "-p", "go on"}) {
+	// ccam passes the file with links resolved (/private/var on macOS, long
+	// names for 8.3 ones on Windows).
+	resolved, _ := filepath.EvalSymlinks(conv)
+	if dir != h.profileDir("personal") || !reflect.DeepEqual(args, []string{"--resume", resolved, "--fork-session", "-p", "go on"}) {
 		t.Fatalf("next --continue: %s %q", dir, args)
 	}
 	// Sharing history: that very conversation by its id (--continue could
@@ -189,7 +192,8 @@ func TestRelayCarriesASwitchOn(t *testing.T) {
 		t.Fatalf("%v\n%s", err, out)
 	}
 	dir, args := h.called()
-	if dir != h.profileDir("work") || !reflect.DeepEqual(args, []string{"--resume", conv, "--fork-session"}) {
+	resolved, _ := filepath.EvalSymlinks(conv)
+	if dir != h.profileDir("work") || !reflect.DeepEqual(args, []string{"--resume", resolved, "--fork-session"}) {
 		t.Fatalf("the relay started %s %q\n%s", dir, args, out)
 	}
 	if b, _ := os.ReadFile(envFile); !regexp.MustCompile(`CCAM_RELAY=\d+`).Match(b) {
