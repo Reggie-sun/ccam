@@ -17,7 +17,7 @@ All program output (messages, prompts, help) is in English.
 
 - **Logins are never copied.** Each account signs in once in its own folder, and Claude Code renews its own token there. Switching never logs an account out, and several accounts can run at once.
 - **Nothing runs beside Claude Code.** ccam `exec`s into `claude`: no wrapper, proxy or daemon, and about 4 ms added at launch. (Windows has no `exec`; there ccam waits for Claude Code and passes its exit code on.)
-- **Sharing per item and per group.** MCP servers, settings, CLAUDE.md, extensions and history each are `local` or a group. MCP servers go through `--mcp-config`, so `.claude.json` is not edited.
+- **Groups decide what is shared.** A group names the items it shares (MCP servers, settings, CLAUDE.md, extensions, history) and its accounts; an account can be in several. MCP servers go through `--mcp-config`, so `.claude.json` is not edited.
 - **Changes are planned and backed up.** A plan before any files move, backups, `--dry-run`, atomic writes and `ccam doctor --fix`.
 - **Limits handled for scripts too.** `ccam --fallback work -p "…"` runs the same command again as the account with the most room when `work` reaches its limit, and `ccam pick` gives each parallel worker its own account; both exit with 75 (or `--wait`) when nobody has room. Interactive sessions get a `ccam next --auto --continue` hint in the status line.
 - **The right account per project.** `ccam folder work ~/code/company` makes name-less launches there use `work`.
@@ -55,12 +55,12 @@ ccam update --check    # only say whether a newer release exists
 ## Quick start
 
 ```bash
-ccam add             # name → shared items → shortcut? (y/N, you name it) → browser login
+ccam add             # name → sign-in → groups → shortcut? → summary → browser login
 ccam add work --shortcut ccwork    # second account with the shortcut command ccwork
 
 ccwork               # Claude Code as account work (via its shortcut)
 ccam work --resume   # by name; everything after the name goes to claude unchanged
-ccam                 # picker (Enter launch, 1-9 jump, s sharing, a add)
+ccam                 # dashboard: accounts, groups, folders, extensions, health
 ccam folder work ~/code/company   # name-less launches in that folder use work
 ccam usage           # 5-hour and weekly usage of every account
 ccam next --continue # out of quota? continue the same conversation on the next account
@@ -77,20 +77,21 @@ Signing in on a remote machine over SSH: the browser on your computer ends on a 
 
 | Command | What it does |
 | --- | --- |
-| `ccam` | Picker (prints the list when not on a terminal) |
+| `ccam` | Full-screen dashboard (prints the list when not on a terminal) |
 | `ccam <name\|number> [claude args]` | Run `claude` as that account; args are passed through verbatim |
 | `<shortcut> [claude args]` | Launch through the account's shortcut command, if it has one |
-| `ccam add [name]` | Add an account (wizard on a terminal; `--no-login`, `--share item=group`, `--shortcut <cmd>`; `--api --key-from env:NAME\|command:CMD` for an API key account) |
+| `ccam add [name]` | Add an account (wizard on a terminal; `--no-login`, `--group <group>`, `--no-group`, `--shortcut <cmd>`; `--api --key-from env:NAME\|command:CMD` for an API key account) |
 | `ccam shortcut <name> [cmd] [--remove]` | Show, create, rename or remove an account's shortcut command |
 | `ccam list [--json]` | List accounts |
 | `ccam use <name>` | Default account for name-less runs such as `ccam -p "…"` |
 | `ccam folder [name] [folder] [--remove]` | Account for name-less runs in a folder and below; without arguments, list them |
 | `ccam --fallback [name] -p …` | Run again as the account with the most room when the account reaches its usage limit (`-p` runs only) |
-| `ccam next [--auto] [--continue]` | Next account; `--auto` picks by usage (`--max-usage`, `--strategy`, `--wait`) |
+| `ccam next [--auto] [--continue]` | Next account; `--auto` picks by usage (`--max-usage`, `--strategy headroom\|expiring\|balance`, `--wait`) and says why |
 | `ccam pick [--json] [--model m] [--wait]` | Print the account with the most room for a script; workers started together get different accounts; exit 75 when none |
 | `ccam ext [name] [--json]` | Skills, commands, plugins, MCP servers and hooks each account loads, with their source and problems |
 | `ccam usage [--watch] [--json] [-v]` | Usage (`ccam u`) |
-| `ccam share <name> --history on …` | Change sharing; prints a migration plan and asks first |
+| `ccam group [add\|set\|join\|leave\|show\|rename\|remove]` | Groups: what a set of accounts share; changes print a plan and ask first |
+| `ccam share <name>` | What an account shares, and through which group |
 | `ccam mcp add\|add-json\|list\|remove\|import` | Shared MCP servers |
 | `ccam login\|logout <name>` | Log in again / remove the token |
 | `ccam rename` / `ccam remove` | Rename / remove (folder goes to a trash folder) |
@@ -101,11 +102,11 @@ Signing in on a remote machine over SSH: the browser on your computer ends on a 
 | `ccam update [--check] [--version vX.Y.Z]` | Update ccam to the latest (or that) release, checksum verified |
 | `ccam completion bash\|zsh\|powershell` | Shell completion |
 
-Put `--dry-run` first to print what would happen (`ccam --dry-run work`). It works for launching (`ccam <name>`, `run`, `next`), `share`, `migrate`, `shortcut`, `update` and `doctor --fix`; other commands that change something refuse it rather than run for real.
+Put `--dry-run` first to print what would happen (`ccam --dry-run work`). It works for launching (`ccam <name>`, `run`, `next`), `group`, `migrate`, `shortcut`, `update` and `doctor --fix`; other commands that change something refuse it rather than run for real.
 
 ## Sharing
 
-Every item is `local` or a group name (default `default`); only accounts in the same group share it. MCP servers are passed with `--mcp-config <group>/mcp.json` at launch (`.claude.json` untouched; `mcp_strategy = "sync"` merges into it instead). Settings, CLAUDE.md, extension folders and `projects/` + `history.jsonl` are symlinked to the group folder. `.credentials.json` and `.claude.json` are never shared. Turning sharing on or off backs originals up to `.ccam-backup/<time>/` and lets you resolve differing files (keep group / use mine / merge JSON).
+A group shares the items it names between the accounts in it: `ccam group add team --items history --members work,side`. An account can be in several groups, but each item comes from one group only; the first account creates `default` (MCP servers, settings, CLAUDE.md, extensions) and later ones join it. MCP servers are passed with `--mcp-config <group>/mcp.json` at launch (`.claude.json` untouched; `mcp_strategy = "sync"` merges into it instead). Settings, CLAUDE.md, extension folders and `projects/` + `history.jsonl` are symlinked to the group folder. `.credentials.json` and `.claude.json` are never shared. A group change moves every account it concerns in one plan, backs originals up to `.ccam-backup/<time>/` and lets you resolve differing files (keep group / use mine / merge JSON). A `config.toml` from before groups is read as groups and rewritten at the next save, with the old file kept as `config.toml.bak`.
 
 ## Usage lookup
 

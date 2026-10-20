@@ -17,7 +17,7 @@
 
 - **로그인을 복사하지 않습니다.** 계정마다 자기 폴더에서 한 번 로그인하고, 토큰 갱신은 Claude Code가 그 폴더에서 직접 합니다. 계정을 바꿔도 다른 계정이 로그아웃되지 않고, 여러 계정을 동시에 실행할 수 있습니다.
 - **Claude Code 옆에서 돌아가는 프로세스가 없습니다.** ccam은 `exec`로 `claude`가 됩니다. 래퍼·프록시·데몬이 없고, 실행할 때 더해지는 시간은 약 4 ms입니다. (`exec`이 없는 Windows에서는 Claude Code가 끝날 때까지 기다렸다가 종료 코드를 그대로 돌려줍니다.)
-- **항목별·그룹별로 공유합니다.** MCP 서버·설정·CLAUDE.md·확장 기능·대화 내역을 각각 `local`이나 그룹으로 정합니다. MCP 서버는 `--mcp-config`로 넘기므로 `.claude.json`을 고치지 않습니다.
+- **그룹이 공유할 것을 정합니다.** 그룹은 공유할 항목(MCP 서버·설정·CLAUDE.md·확장 기능·대화 내역)과 계정을 정하고, 계정은 여러 그룹에 들 수 있습니다. MCP 서버는 `--mcp-config`로 넘기므로 `.claude.json`을 고치지 않습니다.
 - **바꾸기 전에 계획을 보여 주고 백업합니다.** 파일을 옮기기 전의 계획 출력, 백업, `--dry-run`, 원자적 쓰기, `ccam doctor --fix`.
 - **스크립트도 한도에 대응합니다.** `ccam --fallback work -p "…"`는 `work`가 한도에 걸리면 여유가 가장 많은 계정으로 같은 명령을 다시 실행하고, `ccam pick`은 병렬 작업자마다 다른 계정을 줍니다. 여유 있는 계정이 없으면 둘 다 종료 코드 75로 끝내거나 `--wait`로 기다립니다. 대화형 세션은 상태줄이 `ccam next --auto --continue`를 알려 줍니다.
 - **프로젝트마다 맞는 계정.** `ccam folder work ~/code/company`로 그 폴더에서 이름 없이 실행하면 `work`가 열립니다.
@@ -53,12 +53,12 @@ ccam update --check    # 새 릴리스가 있는지 알려 주기만 함
 ## 빠른 시작
 
 ```bash
-ccam add             # 이름 → 공유 항목 → 단축 명령 만들기? (y/N, 이름은 직접) → 브라우저 로그인
+ccam add             # 이름 → 로그인 방식 → 그룹 → 단축 명령? → 요약 → 브라우저 로그인
 ccam add work --shortcut ccwork    # 두 번째 계정, 단축 명령 ccwork
 
 ccwork               # 단축 명령으로 work 계정의 Claude Code
 ccam work --resume   # 이름으로 열기, 뒤의 인자는 그대로 claude에 전달
-ccam                 # 선택 화면 (Enter 실행, 1-9 바로 실행, s 공유, a 추가)
+ccam                 # 대시보드: 계정·그룹·폴더·확장 기능·점검
 ccam folder work ~/code/company   # 그 폴더에서 이름 없이 실행하면 work
 ccam usage           # 모든 계정의 5시간·주간 사용률
 ccam next --continue # 한도에 걸리면 다음 계정에서 같은 대화 이어가기
@@ -75,20 +75,21 @@ SSH로 접속한 원격 서버에서 로그인할 때는 내 컴퓨터의 브라
 
 | 명령 | 하는 일 |
 | --- | --- |
-| `ccam` | 선택 화면 (터미널이 아니면 목록 출력) |
+| `ccam` | 전체 화면 대시보드 (터미널이 아니면 목록 출력) |
 | `ccam <이름\|번호> [claude 인자]` | 그 계정으로 `claude` 실행. 인자는 해석하지 않고 그대로 전달 |
 | `<단축 명령> [claude 인자]` | 계정에 단축 명령이 있으면 그 이름으로 바로 실행 |
-| `ccam add [이름]` | 계정 추가. 터미널에서는 마법사, `--no-login`·`--share 항목=그룹`·`--shortcut <명령>`도 가능. `--api --key-from env:NAME\|command:CMD`는 API 키 계정 |
+| `ccam add [이름]` | 계정 추가. 터미널에서는 마법사, `--no-login`·`--group <그룹>`·`--no-group`·`--shortcut <명령>`도 가능. `--api --key-from env:NAME\|command:CMD`는 API 키 계정 |
 | `ccam shortcut <이름> [명령] [--remove]` | 계정의 단축 명령 보기·만들기·이름 바꾸기·지우기 |
 | `ccam list [--json]` | 계정 목록 |
 | `ccam use <이름>` | 기본 계정 (`ccam -p "…"`처럼 이름 없이 실행할 때) |
 | `ccam folder [이름] [폴더] [--remove]` | 그 폴더와 하위 폴더에서 이름 없이 실행할 때 쓸 계정. 인자가 없으면 목록 |
 | `ccam --fallback [이름] -p …` | 계정이 사용량 한도에 걸리면 여유가 가장 많은 계정으로 다시 실행 (`-p` 실행만) |
-| `ccam next [--auto] [--continue]` | 다음 계정으로. `--auto`는 사용량으로 고름 (`--max-usage`, `--strategy`, `--wait`) |
+| `ccam next [--auto] [--continue]` | 다음 계정으로. `--auto`는 사용량으로 고르고 이유를 알려 줌 (`--max-usage`, `--strategy headroom\|expiring\|balance`, `--wait`) |
 | `ccam pick [--json] [--model m] [--wait]` | 스크립트용으로 여유가 가장 많은 계정 이름 출력. 함께 시작한 작업자는 서로 다른 계정, 없으면 종료 코드 75 |
 | `ccam ext [이름] [--json]` | 계정마다 로드되는 스킬·명령·플러그인·MCP 서버·훅과 그 출처, 문제 |
 | `ccam usage [--watch] [--json] [-v]` | 사용량 (줄임 `ccam u`) |
-| `ccam share <이름> --history on …` | 공유 변경. 이전 계획을 보여주고 확인 후 실행 |
+| `ccam group [add\|set\|join\|leave\|show\|rename\|remove]` | 그룹: 계정 여럿이 공유할 것. 바꿀 때는 계획을 보여 주고 확인 후 실행 |
+| `ccam share <이름>` | 계정이 무엇을 어느 그룹으로 공유하는지 보기 |
 | `ccam mcp add\|add-json\|list\|remove\|import` | 공유 MCP 서버 |
 | `ccam login\|logout <이름>` | 다시 로그인 / 토큰 삭제 |
 | `ccam rename` / `ccam remove` | 이름 변경 / 삭제 (폴더는 휴지통으로) |
@@ -99,11 +100,11 @@ SSH로 접속한 원격 서버에서 로그인할 때는 내 컴퓨터의 브라
 | `ccam update [--check] [--version vX.Y.Z]` | 최신(또는 지정한) 릴리스로 업데이트, 체크섬 확인 |
 | `ccam completion bash\|zsh\|powershell` | 자동완성 |
 
-앞에 `--dry-run`을 붙이면 실행하지 않고 할 일만 보여줍니다 (`ccam --dry-run work`). 실행(`ccam <이름>`, `run`, `next`), `share`, `migrate`, `shortcut`, `update`, `doctor --fix`에서 쓸 수 있고, 무언가를 바꾸는 다른 명령은 실제로 실행하는 대신 거절합니다.
+앞에 `--dry-run`을 붙이면 실행하지 않고 할 일만 보여줍니다 (`ccam --dry-run work`). 실행(`ccam <이름>`, `run`, `next`), `group`, `migrate`, `shortcut`, `update`, `doctor --fix`에서 쓸 수 있고, 무언가를 바꾸는 다른 명령은 실제로 실행하는 대신 거절합니다.
 
 ## 공유
 
-항목마다 `local`(분리) 또는 그룹 이름(기본 `default`)을 고릅니다. 같은 그룹의 계정끼리만 내용을 함께 씁니다.
+그룹은 정한 항목을 그 그룹의 계정끼리 공유합니다: `ccam group add team --items history --members work,side`. 계정은 여러 그룹에 들 수 있지만 한 항목은 한 그룹에서만 받습니다. 처음 추가한 계정이 `default`(MCP 서버·설정·CLAUDE.md·확장 기능)를 만들고 다음 계정들은 거기에 들어갑니다.
 
 | 항목 | 방식 |
 | --- | --- |
@@ -112,7 +113,7 @@ SSH로 접속한 원격 서버에서 로그인할 때는 내 컴퓨터의 브라
 | 에이전트·명령·스킬·플러그인 | `agents/ commands/ skills/ plugins/ output-styles/ rules/` 폴더 링크 |
 | 대화 내역 | `projects/`와 `history.jsonl` 링크 → 다른 계정에서 `--continue`/`--resume` |
 
-로그인 파일(`.credentials.json`, `.claude.json`)은 어떤 경우에도 공유되지 않습니다. 공유를 켜고 끌 때는 원본을 `.ccam-backup/<시각>/`에 남기고, 파일이 서로 다르면 "keep group / use mine / merge JSON" 중에서 고르게 합니다.
+로그인 파일(`.credentials.json`, `.claude.json`)은 어떤 경우에도 공유되지 않습니다. 그룹을 바꾸면 영향받는 모든 계정을 계획 하나로 옮기고, 원본을 `.ccam-backup/<시각>/`에 남기고, 파일이 서로 다르면 "keep group / use mine / merge JSON" 중에서 고르게 합니다. 그룹 이전의 `config.toml`은 그룹으로 읽고 다음 저장 때 새 형식으로 쓰며, 옛 파일은 `config.toml.bak`으로 남깁니다.
 
 세션 안에서 `claude mcp add`로 넣은 서버는 그 계정에만 저장됩니다. 다음 실행 때 ccam이 알려 주면 `ccam mcp import <계정> <서버>`로 그룹에 옮기세요. `.claude.json`을 직접 고치는 방식이 필요하면 `config.toml`에 `mcp_strategy = "sync"`를 둡니다.
 
