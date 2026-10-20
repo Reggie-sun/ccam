@@ -1,10 +1,10 @@
 ---
 title: ఖాతాలను నిర్వహించడం
 description: ccam add, ccam login, ccam list, ccam rename, ccam remove, ccam import తో Claude Code ఖాతాలను జోడించండి, లాగిన్, జాబితా, పేరు మార్పు, తొలగింపు, ఇంపోర్ట్.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 99c931574262
+sourceHash: 9eb992214132
 ---
 
 ప్రతి ccam ఖాతా తన సొంత లాగిన్‌తో ఉన్న వేరే Claude Code కాన్ఫిగ్ ఫోల్డర్. ఈ కమాండ్‌లు ఖాతాలను సృష్టిస్తాయి, సైన్ ఇన్ చేస్తాయి, జాబితాగా చూపిస్తాయి, పేరు మారుస్తాయి, తీసివేస్తాయి, మీకు ఇప్పటికే ఉన్న ఫోల్డర్‌లను నమోదు చేస్తాయి.
@@ -49,15 +49,16 @@ $ ccam list
 | `ccam add --no-login` | లాగిన్ చేయకుండా ఖాతాను సృష్టిస్తుంది; తర్వాత `ccam login <name>` తో లాగిన్ చేయండి | ఆఫ్ |
 | `ccam add --share <item=group>` | ఒక అంశాన్ని ఒక గ్రూప్‌తో షేర్ చేస్తుంది, లేదా దాన్ని ప్రైవేట్‌గా ఉంచడానికి `item=local`. మళ్లీ మళ్లీ ఇవ్వవచ్చు | `default` లో `mcp`, `settings`, `memory`, `extensions`; `history` లోకల్ |
 | `ccam add --shortcut <command>` | `~/.local/bin` లో ఈ షార్ట్‌కట్ కమాండ్‌ను కూడా సృష్టిస్తుంది | ఏమీ లేదు |
+| `ccam add --api --key-from <source>` | లాగిన్ బదులు API కీ ఉపయోగించే ఖాతా; [API కీ ఖాతాలు](/features/api) చూడండి | ఆఫ్ |
 | `ccam list --json` | ఖాతాలను JSON గా ప్రింట్ చేస్తుంది | ఆఫ్ |
 | `ccam remove -y`, `--yes` | అడగకుండా తీసివేస్తుంది | ఆఫ్ |
 | `ccam import --name <name>` | మీరు ఇచ్చే ఫోల్డర్ కోసం ఖాతా పేరు | ఫోల్డర్ పేరు నుంచి తీసుకోబడుతుంది |
 | `ccam import -y`, `--yes` | కనిపించిన ప్రతి ఫోల్డర్‌ను అడగకుండా ఇంపోర్ట్ చేస్తుంది | ఆఫ్ |
 | `--dry-run` | ఏమీ మార్చని `ccam list`, `ccam completion` దీన్ని పాటిస్తాయి. `add`, `login`, `logout`, `use`, `rename`, `remove`, `import` దీన్ని `` --dry-run is not supported by `ccam add`; nothing was changed `` (కమాండ్ పేరుతో) అని తిరస్కరిస్తాయి | ఆఫ్ |
 
-`ccam login`, `ccam logout`, `ccam use`, `ccam rename` లకు సొంత ఆప్షన్లు లేవు. `ccam completion` `bash` లేదా `zsh` తీసుకుంటుంది; మరేదైనా `only bash and zsh are supported` తో విఫలమవుతుంది.
+`ccam login`, `ccam logout`, `ccam use`, `ccam rename` లకు సొంత ఆప్షన్లు లేవు. `ccam completion` `bash`, `zsh` లేదా `powershell` తీసుకుంటుంది; మరేదైనా `only bash, zsh and powershell are supported` తో విఫలమవుతుంది.
 
-ఖాతా పేర్లు `a-z`, `0-9`, `-`, `_` అక్షరాలతో 1 నుంచి 32 అక్షరాల వరకు ఉంటాయి, ఒక అక్షరం లేదా అంకెతో మొదలవుతాయి. పేరు మొత్తం అంకెలు కాకూడదు, ఎందుకంటే `ccam 2` అంటే స్లాట్ 2. పేరు ccam కమాండ్ కూడా కాకూడదు (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`), కాబట్టి `ccam <name>` ఎప్పుడూ అస్పష్టంగా ఉండదు. ఈ జాబితా `internal/config` లోని `config.Reserved`.
+ఖాతా పేర్లు `a-z`, `0-9`, `-`, `_` అక్షరాలతో 1 నుంచి 32 అక్షరాల వరకు ఉంటాయి, ఒక అక్షరం లేదా అంకెతో మొదలవుతాయి. పేరు మొత్తం అంకెలు కాకూడదు, ఎందుకంటే `ccam 2` అంటే స్లాట్ 2. పేరు ccam కమాండ్ కూడా కాకూడదు (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`, `folder`, `pick`, `ext`), కాబట్టి `ccam <name>` ఎప్పుడూ అస్పష్టంగా ఉండదు. ఈ జాబితా `internal/config` లోని `config.Reserved`.
 
 ## ఇది ఎలా పనిచేస్తుంది
 

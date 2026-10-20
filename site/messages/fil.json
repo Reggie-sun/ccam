@@ -153,6 +153,8 @@
     "shims": "Gawin muli ang mga shortcut link ng lahat ng account",
     "shortcut": "Ipakita, gawin, palitan ang pangalan o alisin ang shortcut command ng isang account, gaya ng ccwork",
     "folder": "Gumamit ng isang account sa isang folder at sa ilalim nito kapag walang pinangalanang account",
+    "pick": "I-print ang account na may pinakamaraming natitirang puwang, para sa mga script at parallel worker",
+    "ext": "Ipakita ang mga skill, command, plugin, MCP server at hook na nilo-load ng bawat account",
     "update": "I-update ang ccam sa pinakabagong release matapos suriin ang checksum nito",
     "completion": "I-print ang bash, zsh o PowerShell completion"
   },

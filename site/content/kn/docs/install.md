@@ -5,7 +5,7 @@ description: Linux, macOS ಅಥವಾ Windows ನಲ್ಲಿ ಒಂದೇ ಕ�
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 07eadc0769c8
+sourceHash: aea4984c1576
 ---
 
 Linux ಅಥವಾ macOS ನ ಟರ್ಮಿನಲ್‌ನಲ್ಲಿ ಇದನ್ನು ರನ್ ಮಾಡಿ:
@@ -71,6 +71,16 @@ ccam completion powershell >> $PROFILE
 ```
 
 Completion ಖಾತೆಗಳ ಹೆಸರುಗಳನ್ನೂ ಒಳಗೊಂಡಂತೆ `ccam` ನ ಎಲ್ಲಾ ಕಮಾಂಡ್‌ಗಳು ಮತ್ತು ಆಯ್ಕೆಗಳಿಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ.
+
+## Claude Code ಪ್ಲಗಿನ್
+
+ccam ಪ್ಲಗಿನ್ Claude Code ಗೇ ccam ಬಳಸುವುದನ್ನು ಕಲಿಸುತ್ತದೆ: ಯಾವ ಖಾತೆಯಲ್ಲಿ ಅವಕಾಶ ಇದೆ ಎಂದು ಪರಿಶೀಲಿಸಲು, `ccam pick` ಮೂಲಕ ಬೇರೆ ಬೇರೆ ಖಾತೆಗಳಲ್ಲಿ ಸಮಾನಾಂತರ `claude -p` ವರ್ಕರ್‌ಗಳನ್ನು ಆರಂಭಿಸಲು, ಮತ್ತು ಕಾಣೆಯಾದ ಸ್ಕಿಲ್ ಅಥವಾ MCP ಸರ್ವರ್ ಅನ್ನು `ccam ext` ಮೂಲಕ ವಿವರಿಸಲು. ಇದನ್ನು Claude Code ಒಳಗೆ ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಿ:
+
+```text
+/plugin install ccam --marketplace jhyunwoo/ccam
+```
+
+ಇದು ಒಂದು ಸ್ಕಿಲ್ ಮತ್ತು ಎರಡು ಕಮಾಂಡ್‌ಗಳನ್ನು ಸೇರಿಸುತ್ತದೆ, `/ccam:usage` ಮತ್ತು `/ccam:ext`. ಸ್ಕಿಲ್ ಲಾಗಿನ್ ಮಾಡುವ ಅಥವಾ ಫೈಲ್‌ಗಳನ್ನು ಸ್ಥಳಾಂತರಿಸುವ ಕಮಾಂಡ್‌ಗಳನ್ನು ಎಂದಿಗೂ ರನ್ ಮಾಡುವುದಿಲ್ಲ; ಬದಲಿಗೆ ಅವುಗಳನ್ನು ಸೂಚಿಸುತ್ತದೆ.
 
 ## ಇನ್‌ಸ್ಟಾಲೇಶನ್ ಪರಿಶೀಲಿಸಿ
 

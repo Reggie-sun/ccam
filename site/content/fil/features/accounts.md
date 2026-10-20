@@ -1,10 +1,10 @@
 ---
 title: Pamamahala ng mga account
-description: Magdagdag, mag-log in, maglista, magpalit ng pangalan, mag-alis at mag-import ng Claude Code account gamit ang ccam add, login, list, rename, remove at import.
-updated: 2026-10-19
+description: Magdagdag, mag-log in, maglista, magpalit ng pangalan, mag-alis at mag-import ng Claude Code account sa ang ccam add, login, list, rename, remove at import.
+updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 99c931574262
+sourceHash: 9eb992214132
 ---
 
 Ang bawat ccam account ay hiwalay na Claude Code config folder na may sariling login. Gumagawa, nagsa-sign in, naglilista, nagpapalit ng pangalan at nag-aalis ng mga account ang mga command na ito, at nagrerehistro rin ng mga folder na mayroon ka na.
@@ -49,15 +49,16 @@ Sa `--json`, object ang bawat account na may `slot`, `shortcut`, `name`, `email`
 | `ccam add --no-login` | Gumawa ng account nang hindi nagla-log in; mag-log in mamaya gamit ang `ccam login <name>` | off |
 | `ccam add --share <item=group>` | I-share ang isang item sa isang group, o `item=local` para panatilihin itong pribado. Puwedeng ulitin | `mcp`, `settings`, `memory`, `extensions` sa `default`; local ang `history` |
 | `ccam add --shortcut <command>` | Gumawa rin ng shortcut command na ito sa `~/.local/bin` | wala |
+| `ccam add --api --key-from <source>` | Account na gumagamit ng API key sa halip na login; tingnan ang [Mga API key account](/features/api) | off |
 | `ccam list --json` | I-print ang mga account bilang JSON | off |
 | `ccam remove -y`, `--yes` | Mag-alis nang hindi nagtatanong | off |
 | `ccam import --name <name>` | Pangalan ng account para sa folder na ibinigay mo | kinukuha mula sa pangalan ng folder |
 | `ccam import -y`, `--yes` | I-import ang bawat nahanap na folder nang hindi nagtatanong | off |
 | `--dry-run` | Sinusunod ng `ccam list` at `ccam completion`, na walang binabago. Tinatanggihan ng `add`, `login`, `logout`, `use`, `rename`, `remove` at `import`, na may `` --dry-run is not supported by `ccam add`; nothing was changed `` (kasama ang pangalan ng command) | off |
 
-Walang sariling option ang `ccam login`, `ccam logout`, `ccam use` at `ccam rename`. Tumatanggap ang `ccam completion` ng `bash` o `zsh`; pumapalya ang iba na may `only bash and zsh are supported`.
+Walang sariling option ang `ccam login`, `ccam logout`, `ccam use` at `ccam rename`. Tumatanggap ang `ccam completion` ng `bash`, `zsh` o `powershell`; pumapalya ang iba na may `only bash, zsh and powershell are supported`.
 
-Ang mga pangalan ng account ay 1 hanggang 32 character ng `a-z`, `0-9`, `-` at `_`, na nagsisimula sa titik o numero. Hindi puwedeng puro numero ang pangalan, dahil ang ibig sabihin ng `ccam 2` ay slot 2. Hindi rin puwedeng ccam command ang pangalan (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`), kaya hindi kailanman malabo ang `ccam <name>`. Ang listahan ay `config.Reserved` sa `internal/config`.
+Ang mga pangalan ng account ay 1 hanggang 32 character ng `a-z`, `0-9`, `-` at `_`, na nagsisimula sa titik o numero. Hindi puwedeng puro numero ang pangalan, dahil ang ibig sabihin ng `ccam 2` ay slot 2. Hindi rin puwedeng ccam command ang pangalan (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`, `folder`, `pick`, `ext`), kaya hindi kailanman malabo ang `ccam <name>`. Ang listahan ay `config.Reserved` sa `internal/config`.
 
 ## Paano ito gumagana
 

@@ -5,7 +5,7 @@ description: "Cài đặt ccam trên Linux, macOS hoặc Windows bằng một l�
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 07eadc0769c8
+sourceHash: aea4984c1576
 ---
 
 Chạy lệnh này trong terminal trên Linux hoặc macOS:
@@ -71,6 +71,16 @@ ccam completion powershell >> $PROFILE
 ```
 
 Tính năng tự động hoàn thành áp dụng cho mọi lệnh và tùy chọn của `ccam`, bao gồm cả tên tài khoản.
+
+## Plugin Claude Code
+
+Plugin ccam dạy chính Claude Code cách dùng ccam: kiểm tra tài khoản nào còn hạn mức, khởi động các worker `claude -p` song song trên các tài khoản khác nhau bằng `ccam pick`, và giải thích vì sao thiếu một skill hay máy chủ MCP bằng `ccam ext`. Cài nó ngay trong Claude Code:
+
+```text
+/plugin install ccam --marketplace jhyunwoo/ccam
+```
+
+Plugin thêm một skill và hai lệnh, `/ccam:usage` và `/ccam:ext`. Skill này không bao giờ chạy các lệnh đăng nhập hay di chuyển tệp; thay vào đó nó gợi ý các lệnh đó cho bạn.
 
 ## Kiểm tra cài đặt
 

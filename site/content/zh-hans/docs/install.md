@@ -5,7 +5,7 @@ description: 用一条命令在 Linux、macOS 或 Windows 上安装 ccam，也�
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 07eadc0769c8
+sourceHash: aea4984c1576
 ---
 
 在 Linux 或 macOS 的终端中运行：
@@ -71,6 +71,16 @@ ccam completion powershell >> $PROFILE
 ```
 
 补全覆盖 `ccam` 的所有命令和选项，包括账号名。
+
+## Claude Code 插件
+
+ccam 插件让 Claude Code 自己学会使用 ccam：查看哪个账号还有余量，用 `ccam pick` 在不同账号上启动并行的 `claude -p` 任务，以及用 `ccam ext` 解释为什么缺少某个技能或 MCP 服务器。在 Claude Code 中安装它：
+
+```text
+/plugin install ccam --marketplace jhyunwoo/ccam
+```
+
+它会添加一个技能和两个命令：`/ccam:usage` 和 `/ccam:ext`。该技能从不运行登录或移动文件的命令，而是建议你去运行。
 
 ## 检查安装
 

@@ -1,10 +1,10 @@
 ---
 title: ccamとほかのClaude Codeアカウント切り替えツール
-description: ccamとclaude-swap、CCS、clauth、CAAM、cuxなど、Claude Codeのアカウントを切り替えるツールを比較し、用途に合う方式を説明します。
+description: ccamとclaude-swap、CCS、clausona、clauth、CAAM、cuxなど、Claude Codeのアカウントを切り替えるツールを比較し、用途に合う方式を説明します。
 updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: d058da937218
+sourceHash: 68048287f792
 ---
 
 Claude Codeのアカウントを切り替えるツールの方式は2つに分かれます。多くは1つの`~/.claude`フォルダーの中でログインを入れ替えるので、使えるアカウントは一度に1つです。ccamを含むほかのツールは、`CLAUDE_CONFIG_DIR`でアカウントごとに専用のフォルダーを割り当てるので、どのアカウントもログインしたままで、複数を同時に実行できます。ccamはさらに設定とMCPサーバーを共有し、別のアカウントのフォルダーで会話を続けられます。
@@ -19,13 +19,14 @@ Claude Codeのアカウントを切り替えるツールの方式は2つに分�
 
 ## ツールの比較
 
-2026-10-20時点の各プロジェクトのドキュメントとソースコードに基づきます。「記載なし」は、プロジェクトが言及していないという意味で、機能がないという意味ではありません。
+2026-10-20時点の各プロジェクトのドキュメントとソースコードに基づきます（clausona: v0.12.0-beta）。「記載なし」は、プロジェクトが言及していないという意味で、機能がないという意味ではありません。
 
 | ツール | 方式 | 複数アカウントの同時使用 | 5時間と週間の使用量 | 上限に達したとき | プラットフォーム |
 | --- | --- | --- | --- | --- | --- |
-| ccam | フォルダーを分ける | 可 | 可、`ccam usage` | `ccam next --auto --continue`を実行し、最も余裕があるアカウントで会話を続ける。`-p`のジョブは`ccam --fallback`がそのアカウントで自動的に再実行する | Linux、macOS、Windows |
+| ccam | フォルダーを分ける | 可 | 可、`ccam usage` | `ccam next --auto --continue`を実行し、最も余裕があるアカウントで会話を続ける。`-p`のジョブは`ccam --fallback`がそのアカウントで自動的に再実行し、`ccam pick`はワーカーを分散する | Linux、macOS、Windows |
 | [claude-swap](https://github.com/realiti4/claude-swap) | ログインを入れ替える。`cswap run`ではフォルダーを分ける | 可（`cswap run`） | 可 | `cswap auto`がしきい値でログインを切り替え、実行中のセッションはそのまま続く | Linux、macOS、Windows |
 | [CCS](https://github.com/kaitranntt/ccs) | フォルダーを分ける | 可 | 一部 | アカウントプールがローカルプロキシ経由でリクエストを次のアカウントに回す | Linux、macOS、Windows |
+| [clausona](https://github.com/larcane97/clausona) | フォルダーを分ける | 可 | 可 | 各実行の前にルートがクォータの残っているアカウントを選び、リセットを待つこともでき、ワーカーには別々のアカウントを割り当てる | Linux、macOS、Windows |
 | [clauth](https://github.com/uwuclxdy/clauth) | ログインを入れ替える。`clauth start`ではフォルダーを分ける | 可（`clauth start`） | 可 | フォールバックチェーンに沿って切り替える | Linux、macOS、Windows |
 | [CAAM](https://github.com/Dicklesworthstone/coding_agent_account_manager) | ログインを入れ替える、または分離したプロファイル | 可（分離したプロファイル） | 可 | `caam run`が非対話型のコマンドを別のアカウントで再試行する | Linux、macOS、Windows |
 | [cux](https://github.com/inulute/cux) | ログインを入れ替え、`claude`をラップする | 不可、使えるアカウントは1つ | 可 | ログインを入れ替えて同じ会話を再開する | Linux、macOS、Windows |
@@ -41,6 +42,7 @@ ccswapはclaude-swapのフォークで、Codexのログインも管理します�
 | ccam | Go、静的バイナリ1つ | 何もない。ccamは自身を`claude`に置き換える（置き換えられないWindowsでは終了を待つ） | しない | 項目ごとに個別に。アカウントごとにローカルか名前付きグループ |
 | claude-swap | Python 3.12以上、uvまたはpipxでインストール | `cswap run`では何もない。`cswap auto`とメニューバーアプリは動き続ける | する（ログインを入れ替えるとき） | `cswap run`の場合、設定、`CLAUDE.md`、拡張機能をまとめて、履歴は任意。MCPサーバーは起動のたびにコピー |
 | CCS | Node.js 18以上またはBun | CCSが親プロセスとして残る。プールはローカルプロキシを追加 | アカウントフォルダーではしない。プールは独自のログインを持つ | アカウントごとに共有かローカル、履歴はコンテキストグループで。MCPサーバーはコピー |
+| clausona | TypeScript、Node.js 20以上 | 素の`claude`はシェル関数を通して実行。`clausona run`ではNodeが親プロセスとして残る。終了のたびにバックグラウンドのNodeプロセス | しない。ただし使用量を読むため、使っていないアカウントのトークンを自分で更新する | アカウントごとのファイル以外すべてを1つのプライマリから。履歴は任意。`claude mcp add`で追加したサーバーは共有されない |
 | clauth | Rust | clauthが親プロセスとして残る | する（ログインを入れ替えるとき） | `~/.claude`全体か、何も共有しないか |
 | CAAM | Go | モードによる。デーモンは任意 | する（ボールトモード） | モードで決まる。MCPサーバーは起動のたびにコピー |
 | cux | Go | ラッパーが`claude`を包んだまま残る | する | すべて。フォルダーは1つ |
@@ -76,7 +78,7 @@ MCPサーバー、`settings.json`、`CLAUDE.md`、拡張機能（エージェン
 
 履歴を共有していれば、`ccam next --auto --continue`がすべてのアカウントの使用量を一度に問い合わせ、最も余裕があるアカウントを開いて会話を続けます。切り替えるタイミングはあなたが決めます。ccamがバックグラウンドで使用量を監視することはありません。アカウントが90%に達すると、ステータスラインがこのコマンドを提案します。
 
-スクリプトはあなたを待てないので、`ccam --fallback work -p "…"`がスクリプトのために切り替えます。アカウントが上限に達すると、同じコマンドを最も余裕があるアカウントで再実行し、最後まで完了した実行の出力だけを表示します。使用量の上限以外の失敗は、そのまま返します。
+スクリプトはあなたを待てないので、`ccam --fallback work -p "…"`がスクリプトのために切り替えます。アカウントが上限に達すると、同じコマンドを最も余裕があるアカウントで再実行し、最後まで完了した実行の出力だけを表示します。使用量の上限以外の失敗は、そのまま返します。並列のワーカーには、`ccam pick`が余裕のある別々のアカウントを1つずつ渡します。どのアカウントにも余裕がなければ、どちらも終了コード75で終了します。
 
 ### フォルダーごとに適切なアカウント
 
@@ -91,7 +93,8 @@ ccamは約10 MBの静的バイナリで、インストールが必要なラン�
 - claude-swap、clauth、cux、CAAM、CCSwitcherは、アカウントが使用量のしきい値を超えると、実行中の対話型セッションを自動で切り替えられます。ccamは`-p`の実行を`--fallback`で切り替え、対話型セッションはあなたに任せます。
 - 開発者モードがオフのWindowsでは、ccamはフォルダーを共有できますが、`settings.json`のような単一のファイルは共有できません。claude-swapとCCSはその場合ファイルをコピーします。
 - CCSwitcher、Claude Switcher、claude-swapは、macOSのメニューバーに使用量を表示します。
-- CCS、CAAM、clauth、ccswap、Claude Switcherは、Codexやほかのコーディングエージェントも管理します。
+- CCS、clausona、CAAM、clauth、ccswap、Claude Switcherは、Codexやほかのコーディングエージェントも管理します。
+- clausonaは、アカウントごとに拡張機能をオン・オフでき（ccamの`ccam ext`は表示するだけです）、ローカルのトークンコストを記録し、tmuxなどのターミナルで多数のワーカーを動かすClaude Codeプラグインも提供しています。
 - CAAM、CCSwitcher、Claude SwitcherはHomebrewでインストールでき、clauthとCAAMはリリースのチェックサムに署名しています。ccamはスクリプト、`.deb`、`go install`でインストールし、署名なしでチェックサムを確認します。
 
 ## どれが合うか

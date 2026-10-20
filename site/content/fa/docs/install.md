@@ -5,7 +5,7 @@ description: ccam را روی Linux، macOS یا Windows با یک فرمان، 
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 07eadc0769c8
+sourceHash: aea4984c1576
 ---
 
 این فرمان را در یک ترمینال روی Linux یا macOS اجرا کنید:
@@ -71,6 +71,16 @@ ccam completion powershell >> $PROFILE
 ```
 
 تکمیل خودکار همه فرمان‌ها و گزینه‌های `ccam` را پوشش می‌دهد، از جمله نام حساب‌ها.
+
+## پلاگین Claude Code
+
+پلاگین ccam به خود Claude Code یاد می‌دهد که از ccam استفاده کند: بررسی کند کدام حساب ظرفیت دارد، با `ccam pick` کارگرهای موازی `claude -p` را روی حساب‌های مختلف آغاز کند و با `ccam ext` توضیح دهد چرا یک مهارت یا سرور MCP در دسترس نیست. آن را درون Claude Code نصب کنید:
+
+```text
+/plugin install ccam --marketplace jhyunwoo/ccam
+```
+
+این پلاگین یک مهارت و دو فرمان اضافه می‌کند، `/ccam:usage` و `/ccam:ext`. این مهارت هرگز فرمان‌هایی را که وارد حساب می‌شوند یا فایل‌ها را جابه‌جا می‌کنند اجرا نمی‌کند؛ به جای آن، آن‌ها را پیشنهاد می‌دهد.
 
 ## بررسی نصب
 

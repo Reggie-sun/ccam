@@ -4,7 +4,7 @@ description: ccam usage yana nuna iyakokin awa 5 da na mako na kowane asusu a lo
 updated: 2026-10-20
 order: 7
 translation: machine
-sourceHash: f08a2fdc6f0b
+sourceHash: 525174ceed0d
 ---
 
 `ccam usage` yana nuna nawa kowane asusu ya yi amfani da shi daga iyakar awa 5 da ta mako, tare da lokacin da ya rage kafin kowace taga ta sake saitawa. Yi amfani da shi kafin ka fara dogon aiki, ko idan Claude Code ya gaya maka iyaka ta kusa, don ganin asusun da ke da sauran sarari. `ccam statusline` shi ne umarnin layin matsayi (status line) na Claude Code: yana nuna sunan asusun da amfaninsa a cikin Claude Code kuma yana ajiye lambobin don `ccam usage`.
@@ -74,7 +74,7 @@ Ga asusu ɗaya, `Fetcher.Fetch` yana yin waɗannan dubawa a tsari:
 2. Sai dai idan an saita `--no-cache`, sakamako kai tsaye a `~/.local/state/ccam/usage/<name>.json` da bai kai daƙiƙa 60 ba (`CacheTTL`) ana mayar da shi kamar yadda yake. Gudanar da `ccam usage` sau biyu a jere yana kashe buƙata ɗaya ga kowane asusu.
 3. `readCredentials()` yana karanta `.credentials.json` (ko Keychain na macOS) ba tare da canza shi ba, kuma maɓallin `claudeAiOauth` ne kawai ake karantawa. Rashin shigar biyan kuɗi (subscription) yana nufin `not logged in`, ko `no limits (API)` idan `.claude.json` yana riƙe API key.
 4. Ba a amfani da access token da ya ƙare. Ba tare da `--refresh` ba, asusun yana nuna lambobinsa da aka ajiye tare da alamar ya ƙare.
-5. In ba haka ba ccam yana kiran endpoint ɗin. 401 ko 403 ana ɗaukar su a matsayin shigar da ta ƙare, duk wani matsayi dabam ko jikin amsa da ba zai iya karantawa ba ana ɗaukar sa a matsayin kuskure, kuma duka biyun suna komawa ga lambobin da aka ajiye.
+5. In ba haka ba ccam yana kiran endpoint ɗin. 401 ko 403 ana ɗaukar su a matsayin shigar da ta ƙare, duk wani matsayi dabam ko jikin amsa da ba zai iya karantawa ba ana ɗaukar sa a matsayin kuskure, kuma duka biyun suna komawa ga lambobin da aka ajiye. 429 yana nufin ana tambayar endpoint ɗin da yawa: ccam yana rubuta `<name>.pause` da lokacin sake tambaya (`Retry-After`, ko minti 5, ba fiye da awa ɗaya ba), yana nuna lambobin da aka ajiye tare da `rate limited by the usage endpoint; asking again after 15:10`, kuma ba ya kiran endpoint ɗin ga wannan asusun har zuwa lokacin, ko da `--no-cache`. Sake gwadawa nan take zai ci gaba da riƙe iyakar ne kawai.
 6. Ana rubuta amsa mai kyau a `<name>.json` tare da lokacin da aka auna ta.
 
 `fallback()` yana karanta duka `<name>.json` da `<name>.statusline.json` kuma yana riƙe wanda ya fi sabo. Kafin ya nuna lambobin da aka ajiye, yana duba lokacin sake saitin kowace taga: tagar da ta sake saitawa tun lokacin da aka ajiye lambobin tana nuna 0%, domin tsohon kashi ba ya aiki kuma. Shi ya sa `personal` a sama yana nuna `0%` ba tare da lokacin sake saiti ba.

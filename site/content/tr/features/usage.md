@@ -4,7 +4,7 @@ description: ccam usage tüm hesapların 5 saatlik ve haftalık limitlerini ayn�
 updated: 2026-10-20
 order: 7
 translation: machine
-sourceHash: f08a2fdc6f0b
+sourceHash: 525174ceed0d
 ---
 
 `ccam usage`, her hesabın 5 saatlik ve haftalık limitlerinin ne kadarını kullandığını, her pencerenin sıfırlanmasına kalan süreyle birlikte gösterir. Uzun bir işe başlamadan önce veya Claude Code bir limitin yaklaştığını söylediğinde, hangi hesapta pay kaldığını görmek için kullanın. `ccam statusline`, Claude Code için durum satırı komutudur: hesap adını ve kullanımı Claude Code içinde gösterir ve sayıları `ccam usage` için kaydeder.
@@ -74,7 +74,7 @@ Tek bir hesap için `Fetcher.Fetch` şu kontrolleri sırayla yapar:
 2. `--no-cache` ayarlı değilse, `~/.local/state/ccam/usage/<name>.json` içinde 60 saniyeden (`CacheTTL`) yeni olan canlı bir sonuç olduğu gibi döndürülür. `ccam usage` komutunu art arda iki kez çalıştırmak hesap başına bir isteğe mal olur.
 3. `readCredentials()`, `.credentials.json` dosyasını (veya macOS Anahtar Zinciri'ni) değiştirmeden okur ve yalnızca `claudeAiOauth` anahtarının kodu çözülür. Abonelik girişi yoksa `not logged in`, `.claude.json` bir API anahtarı tutuyorsa `no limits (API)` gösterilir.
 4. Süresi dolmuş bir erişim tokenı kullanılmaz. `--refresh` olmadan hesap, süresi dolmuş olarak işaretlenmiş kayıtlı sayılarını gösterir.
-5. Aksi halde ccam uç noktayı çağırır. 401 veya 403 süresi dolmuş bir giriş sayılır, diğer her durum kodu veya okunamayan bir gövde hata sayılır ve her ikisi de kayıtlı sayılara geri döner.
+5. Aksi halde ccam uç noktayı çağırır. 401 veya 403 süresi dolmuş bir giriş sayılır, diğer her durum kodu veya okunamayan bir gövde hata sayılır ve her ikisi de kayıtlı sayılara geri döner. 429, uç noktaya çok sık sorulduğu anlamına gelir: ccam `<name>.pause` dosyasına yeniden sorma zamanını (`Retry-After` ya da 5 dakika, en fazla bir saat) yazar, kayıtlı sayıları `rate limited by the usage endpoint; asking again after 15:10` ile gösterir ve o zamana kadar, `--no-cache` ile bile, o hesap için uç noktayı çağırmaz. Hemen yeniden denemek yalnızca limitin sürmesine yol açar.
 6. İyi bir yanıt, ölçüldüğü zamanla birlikte `<name>.json` dosyasına yazılır.
 
 `fallback()` hem `<name>.json` hem de `<name>.statusline.json` dosyasını okur ve daha yeni olanı tutar. Kayıtlı sayıları göstermeden önce her pencerenin sıfırlanma zamanını kontrol eder: sayılar kaydedildikten sonra sıfırlanmış bir pencere %0 gösterir, çünkü eski yüzde artık geçerli değildir. Yukarıdaki `personal` hesabının sıfırlanma zamanı olmadan `0%` göstermesinin nedeni budur.

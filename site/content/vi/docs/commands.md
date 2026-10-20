@@ -5,7 +5,7 @@ description: "Mọi lệnh và tùy chọn của ccam, từ ccam add và ccam <n
 updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 5d3275878535
+sourceHash: da2594c672bc
 ---
 
 Đặt `--dry-run` trước một lệnh để xem lệnh đó sẽ làm gì mà không thực sự thực hiện, ví dụ `ccam --dry-run work`. Tùy chọn này dùng được khi khởi động Claude Code (`ccam <name>`, `ccam run`, `ccam next`) và với `share`, `migrate`, `shortcut`, `update` và `doctor --fix`. Các lệnh khác có thay đổi một thứ gì đó sẽ từ chối tùy chọn này thay vì chạy.
@@ -39,9 +39,12 @@ ccam add ci --no-login        # log in later with: ccam login ci
 ccam rename work job
 ccam remove side              # folder moves to ~/.local/share/ccam/trash
 ccam import ~/.claude-old --name old
+ccam add gw --api --base-url https://llm.example.com --auth bearer --key-from env:GW_KEY
 ```
 
 `ccam import` không kèm thư mục sẽ tìm `~/.claude` và `~/.claude-*` rồi hỏi bạn về từng thư mục. Các thư mục được nhập sẽ được đăng ký ngay tại chỗ; ccam không bao giờ di chuyển hay sao chép thông tin đăng nhập.
+
+`ccam add --api` thêm một tài khoản dùng API key thay cho đăng nhập Claude; ccam đọc khóa mỗi lần khởi động và không bao giờ lưu nó. Xem [Tài khoản API key](/features/api).
 
 `ccam rename`, `ccam remove` và `ccam share` từ chối thay đổi một tài khoản khi Claude Code đang chạy bằng tài khoản đó. Hãy thoát phiên đó trước.
 
@@ -105,7 +108,12 @@ ccam usage --watch   # refresh every 60 seconds
 ccam usage --json
 ccam next --continue
 ccam next --auto
+ccam next --auto --max-usage 80 --wait
+ccam pick                       # the account with the most room, for a script
+ccam "$(ccam pick)" -p "…"      # start a worker on it
 ```
+
+`next --auto`, `--fallback` và `ccam pick` chọn theo cùng một cách: ưu tiên các tài khoản dưới `auto_max_usage` (`config.toml`, mặc định 100), theo `auto_strategy` (`headroom` hoặc `expiring`), có tính khoảng hàng tuần của `--model`, và không bao giờ chọn tài khoản ở mức 100%. Khi không chọn được tài khoản nào, chúng thoát với mã 75, hoặc với `--wait` thì chờ tài khoản đầu tiên được đặt lại. Xem [Chuyển sang tài khoản tiếp theo](/features/next) và [Chọn tài khoản cho script](/features/pick).
 
 ## Bảo trì
 
@@ -113,6 +121,7 @@ ccam next --auto
 ccam doctor          # check
 ccam doctor --fix    # repair what is safe to repair, with backups
 ccam statusline install
+ccam ext             # skills, commands, MCP servers and hooks of every account, and problems
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release

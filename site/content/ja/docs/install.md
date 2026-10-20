@@ -5,7 +5,7 @@ description: Linux、macOS、Windowsにccamを1つのコマンド、.debパッ�
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 07eadc0769c8
+sourceHash: aea4984c1576
 ---
 
 LinuxまたはmacOSのターミナルで、次のコマンドを実行します。
@@ -71,6 +71,16 @@ ccam completion powershell >> $PROFILE
 ```
 
 補完は`ccam`のすべてのコマンドとオプションに対応し、アカウント名も補完します。
+
+## Claude Codeプラグイン
+
+ccamプラグインを使うと、Claude Code自身がccamを使えるようになります。どのアカウントに余裕があるかを確認し、`ccam pick`で別々のアカウントに並列の`claude -p`ワーカーを起動し、スキルやMCPサーバーが見つからない理由を`ccam ext`で説明します。Claude Codeの中でインストールします。
+
+```text
+/plugin install ccam --marketplace jhyunwoo/ccam
+```
+
+スキル1つと、2つのコマンド`/ccam:usage`と`/ccam:ext`が追加されます。スキルがログインやファイルの移動を行うコマンドを実行することはなく、代わりにそれを提案します。
 
 ## インストールの確認
 

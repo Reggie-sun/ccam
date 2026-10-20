@@ -1,10 +1,10 @@
 ---
 title: ccam 與其他 Claude Code 帳號切換工具比較
-description: ccam 與 claude-swap、CCS、clauth、CAAM、cux 等 Claude Code 帳號切換工具的比較，以及哪種做法適合哪種用途。
+description: ccam 與 claude-swap、CCS、clausona、clauth、CAAM、cux 等 Claude Code 帳號切換工具的比較，以及哪種做法適合哪種用途。
 updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: d058da937218
+sourceHash: 68048287f792
 ---
 
 切換 Claude Code 帳號的工具採用兩種做法之一。大多數工具在同一個 `~/.claude` 資料夾中替換登入資訊，所以同一時間只有一個帳號處於使用中。另一些工具（包括 ccam）則用 `CLAUDE_CONFIG_DIR` 為每個帳號提供獨立的資料夾，因此每個帳號都會保持登入，也能同時執行多個帳號。ccam 還提供共用的設定和 MCP 伺服器，並能在另一個帳號的資料夾中接續對話。
@@ -19,13 +19,14 @@ sourceHash: d058da937218
 
 ## 各工具比較
 
-資料取自各專案自己的文件與原始碼（2026-10-20）。「未說明」表示專案沒有提到，而不是缺少該功能。
+資料取自各專案自己的文件與原始碼（2026-10-20；clausona：v0.12.0-beta）。「未說明」表示專案沒有提到，而不是缺少該功能。
 
 | 工具 | 做法 | 同時使用多個帳號 | 5 小時和每週用量 | 達到限制時 | 平台 |
 | --- | --- | --- | --- | --- | --- |
-| ccam | 獨立的資料夾 | 是 | 是，`ccam usage` | 由你執行 `ccam next --auto --continue`，在剩餘額度最多的帳號中接續對話；`ccam --fallback` 會自動在那裡重新執行 `-p` 工作 | Linux、macOS、Windows |
+| ccam | 獨立的資料夾 | 是 | 是，`ccam usage` | 由你執行 `ccam next --auto --continue`，在剩餘額度最多的帳號中接續對話；`ccam --fallback` 會自動在那裡重新執行 `-p` 工作，`ccam pick` 則把工作程序分散到各帳號 | Linux、macOS、Windows |
 | [claude-swap](https://github.com/realiti4/claude-swap) | 替換登入資訊；`cswap run` 時使用獨立的資料夾 | 是，使用 `cswap run` | 是 | `cswap auto` 在達到門檻時切換登入資訊；執行中的工作階段會繼續 | Linux、macOS、Windows |
 | [CCS](https://github.com/kaitranntt/ccs) | 獨立的資料夾 | 是 | 部分支援 | 帳號池透過本機 Proxy 把請求轉給下一個帳號 | Linux、macOS、Windows |
+| [clausona](https://github.com/larcane97/clausona) | 獨立的資料夾 | 是 | 是 | 路由會在每次執行前選擇還有配額的帳號，可以等待重設，並為工作程序分配不同的帳號 | Linux、macOS、Windows |
 | [clauth](https://github.com/uwuclxdy/clauth) | 替換登入資訊；`clauth start` 時使用獨立的資料夾 | 是，使用 `clauth start` | 是 | 沿著備援鏈依序切換 | Linux、macOS、Windows |
 | [CAAM](https://github.com/Dicklesworthstone/coding_agent_account_manager) | 替換登入資訊，或使用隔離的設定檔 | 是，使用隔離的設定檔 | 是 | `caam run` 在另一個帳號上重試非互動式指令 | Linux、macOS、Windows |
 | [cux](https://github.com/inulute/cux) | 替換登入資訊並包裝 `claude` | 否，只有一個使用中的帳號 | 是 | 替換登入資訊並恢復同一個對話 | Linux、macOS、Windows |
@@ -41,6 +42,7 @@ ccswap 是 claude-swap 的分支，也能管理 Codex 的登入。[claude-accoun
 | ccam | Go，單一靜態執行檔 | 什麼都沒有：ccam 會以 `claude` 取代自己（在無法這樣做的 Windows 上，則等待它結束） | 否 | 每一項各自設定：每個帳號選擇本機或某個具名群組 |
 | claude-swap | Python 3.12+，以 uv 或 pipx 安裝 | 用 `cswap run` 時什麼都沒有；`cswap auto` 和選單列 App 會持續執行 | 是，在替換登入資訊時 | 用 `cswap run` 時：設定、`CLAUDE.md` 和擴充功能一起共用，對話記錄可選；MCP 伺服器在每次啟動時複製 |
 | CCS | Node.js 18+ 或 Bun | CCS 以父行程留著；帳號池會加上本機 Proxy | 帳號資料夾不複製；帳號池保存自己的登入資訊 | 每個帳號選擇共用或本機，對話記錄以情境群組共用；MCP 伺服器會被複製 |
+| clausona | TypeScript，Node.js 20+ | 一般的 `claude` 透過 Shell 函式執行；`clausona run` 讓 Node 以父行程留著；每次結束後會有一個背景 Node 行程 | 否，但它會自行更新閒置帳號的權杖，以讀取它們的用量 | 除了各帳號專屬的檔案以外的所有內容，來自一個主要帳號；對話記錄可選；以 `claude mcp add` 新增的伺服器不會共用 |
 | clauth | Rust | clauth 以父行程留著 | 是，在替換登入資訊時 | 整個 `~/.claude`，或什麼都不共用 |
 | CAAM | Go | 視模式而定；可選用的常駐程式 | 是，在其保管庫模式下 | 由模式決定；MCP 伺服器在每次啟動時複製 |
 | cux | Go | 包裝程式一直包在 `claude` 外面 | 是 | 全部：只有一個資料夾 |
@@ -76,7 +78,7 @@ MCP 伺服器、`settings.json`、`CLAUDE.md`、擴充功能（agents、commands
 
 共用對話記錄後，`ccam next --auto --continue` 會同時查詢所有帳號的用量，開啟剩餘額度最多的帳號並接續對話。何時切換由你決定；ccam 不會在背景監看你的用量。帳號達到 90% 時，狀態列會建議這個指令。
 
-指令碼無法等你，所以 `ccam --fallback work -p "…"` 會替它們切換：帳號達到上限時，同一個指令會以剩餘額度最多的帳號再次執行，而且只會輸出完成的那次執行的結果。不是用量上限造成的失敗則原樣傳回。
+指令碼無法等你，所以 `ccam --fallback work -p "…"` 會替它們切換：帳號達到上限時，同一個指令會以剩餘額度最多的帳號再次執行，而且只會輸出完成的那次執行的結果。不是用量上限造成的失敗則原樣傳回。對於平行的工作程序，`ccam pick` 會給每個工作程序一個不同且還有額度的帳號；沒有任何帳號還有額度時，兩者都會以代碼 75 結束。
 
 ### 每個資料夾使用正確的帳號
 
@@ -91,7 +93,8 @@ ccam 是一個約 10 MB 的靜態執行檔，不需要安裝任何執行環境�
 - claude-swap、clauth、cux、CAAM 和 CCSwitcher 可以在帳號超過用量門檻時，自行切換執行中的互動式工作階段。ccam 以 `--fallback` 切換 `-p` 執行，互動式工作階段則交給你。
 - 在未開啟開發人員模式的 Windows 上，ccam 可以共用資料夾，但無法共用 `settings.json` 這類單一檔案；claude-swap 和 CCS 則會改為複製這些檔案。
 - CCSwitcher、Claude Switcher 和 claude-swap 會在 macOS 選單列中顯示用量。
-- CCS、CAAM、clauth、ccswap 和 Claude Switcher 也能管理 Codex 和其他程式設計代理。
+- CCS、clausona、CAAM、clauth、ccswap 和 Claude Switcher 也能管理 Codex 和其他程式設計代理。
+- clausona 還能依帳號開啟或關閉擴充功能（ccam 的 `ccam ext` 只會顯示它們）、追蹤本機的權杖費用，並提供在 tmux 和其他終端機中執行大量工作程序的 Claude Code 外掛。
 - CAAM、CCSwitcher 和 Claude Switcher 可以用 Homebrew 安裝，clauth 和 CAAM 會為發行的校驗碼簽章。ccam 以安裝指令碼、`.deb` 或 `go install` 安裝，會檢查校驗碼但沒有簽章。
 
 ## 哪一種適合你？

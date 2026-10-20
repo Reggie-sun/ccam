@@ -5,7 +5,7 @@ description: Semua perintah dan opsi ccam, dari ccam add dan ccam <name> hingga 
 updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 5d3275878535
+sourceHash: da2594c672bc
 ---
 
 Letakkan `--dry-run` sebelum perintah untuk melihat apa yang akan dilakukannya tanpa benar-benar menjalankannya, misalnya `ccam --dry-run work`. Opsi ini berfungsi saat menjalankan Claude Code (`ccam <name>`, `ccam run`, `ccam next`) dan dengan `share`, `migrate`, `shortcut`, `update`, serta `doctor --fix`. Perintah lain yang mengubah sesuatu akan menolaknya alih-alih berjalan.
@@ -39,9 +39,12 @@ ccam add ci --no-login        # log in later with: ccam login ci
 ccam rename work job
 ccam remove side              # folder moves to ~/.local/share/ccam/trash
 ccam import ~/.claude-old --name old
+ccam add gw --api --base-url https://llm.example.com --auth bearer --key-from env:GW_KEY
 ```
 
 `ccam import` tanpa folder akan mencari `~/.claude` dan `~/.claude-*`, lalu menanyakan masing-masing. Folder yang diimpor didaftarkan di tempatnya; ccam tidak pernah memindahkan atau menyalin login.
+
+`ccam add --api` menambahkan akun yang memakai kunci API alih-alih login Claude; ccam membaca kunci itu setiap kali akun dijalankan dan tidak pernah menyimpannya. Lihat [akun kunci API](/features/api).
 
 `ccam rename`, `ccam remove`, dan `ccam share` menolak mengubah akun saat Claude Code sedang berjalan sebagai akun tersebut. Keluar dari sesi terlebih dahulu.
 
@@ -105,7 +108,12 @@ ccam usage --watch   # refresh every 60 seconds
 ccam usage --json
 ccam next --continue
 ccam next --auto
+ccam next --auto --max-usage 80 --wait
+ccam pick                       # the account with the most room, for a script
+ccam "$(ccam pick)" -p "…"      # start a worker on it
 ```
+
+`next --auto`, `--fallback`, dan `ccam pick` memilih dengan cara yang sama: akun di bawah `auto_max_usage` (`config.toml`, bawaan 100) lebih dulu, menurut `auto_strategy` (`headroom` atau `expiring`), dengan menghitung jendela mingguan `--model`, dan tidak pernah akun yang sudah 100%. Jika tidak ada yang bisa dipilih, semuanya keluar dengan kode 75, atau dengan `--wait` menunggu akun pertama di-reset. Lihat [Beralih ke akun berikutnya](/features/next) dan [Memilih akun untuk skrip](/features/pick).
 
 ## Pemeliharaan
 
@@ -113,6 +121,7 @@ ccam next --auto
 ccam doctor          # check
 ccam doctor --fix    # repair what is safe to repair, with backups
 ccam statusline install
+ccam ext             # skills, commands, MCP servers and hooks of every account, and problems
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release

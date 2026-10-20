@@ -1,10 +1,10 @@
 ---
 title: ccam અને બીજાં Claude Code એકાઉન્ટ સ્વિચર
-description: claude-swap, CCS, clauth, CAAM, cux અને Claude Code એકાઉન્ટ સ્વિચ કરવાનાં બીજાં ટૂલ સાથે ccam ની સરખામણી, અને કઈ રીત કયા ઉપયોગ માટે યોગ્ય છે.
+description: claude-swap, CCS, clausona, clauth, CAAM, cux અને Claude Code એકાઉન્ટ સ્વિચ કરવાનાં બીજાં ટૂલ સાથે ccam ની સરખામણી, અને કઈ રીત કયા ઉપયોગ માટે યોગ્ય છે.
 updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: d058da937218
+sourceHash: 68048287f792
 ---
 
 Claude Code એકાઉન્ટ સ્વિચ કરવાનાં ટૂલ બેમાંથી એક રીત અપનાવે છે. મોટા ભાગનાં ટૂલ એક જ `~/.claude` ફોલ્ડરની અંદર લૉગિન બદલે છે, તેથી એક સમયે એક જ એકાઉન્ટ સક્રિય રહે છે. બીજાં ટૂલ, જેમાં ccam પણ છે, `CLAUDE_CONFIG_DIR` વડે દરેક એકાઉન્ટને પોતાનું ફોલ્ડર આપે છે, તેથી દરેક એકાઉન્ટ લૉગિન રહે છે અને ઘણાં એકાઉન્ટ એકસાથે ચાલી શકે છે. ccam તેમાં શેર કરેલાં સેટિંગ્સ અને MCP સર્વર ઉમેરે છે, અને વાતચીતને બીજા એકાઉન્ટના ફોલ્ડરમાં ચાલુ રાખે છે.
@@ -19,13 +19,14 @@ Claude Code એકાઉન્ટ સ્વિચ કરવાનાં ટૂ�
 
 ## ટૂલની સરખામણી
 
-દરેક પ્રોજેક્ટના પોતાના દસ્તાવેજીકરણ અને સોર્સ કોડમાંથી 2026-10-20 ના રોજ લીધેલું. "દસ્તાવેજીકૃત નથી" નો અર્થ એ છે કે પ્રોજેક્ટ તેના વિશે કંઈ કહેતો નથી, એવો નહીં કે સુવિધા નથી.
+દરેક પ્રોજેક્ટના પોતાના દસ્તાવેજીકરણ અને સોર્સ કોડમાંથી 2026-10-20 ના રોજ લીધેલું (clausona: v0.12.0-beta). "દસ્તાવેજીકૃત નથી" નો અર્થ એ છે કે પ્રોજેક્ટ તેના વિશે કંઈ કહેતો નથી, એવો નહીં કે સુવિધા નથી.
 
 | ટૂલ | રીત | એકસાથે ઘણાં એકાઉન્ટ | 5 કલાકનો અને સાપ્તાહિક વપરાશ | મર્યાદા આવે ત્યારે | પ્લેટફૉર્મ |
 | --- | --- | --- | --- | --- | --- |
-| ccam | અલગ ફોલ્ડર | હા | હા, `ccam usage` | સૌથી વધુ જગ્યાવાળા એકાઉન્ટમાં વાતચીત ચાલુ રાખવા તમે `ccam next --auto --continue` ચલાવો છો; `ccam --fallback` `-p` jobs ત્યાં જાતે ફરી ચલાવે છે | Linux, macOS, Windows |
+| ccam | અલગ ફોલ્ડર | હા | હા, `ccam usage` | સૌથી વધુ જગ્યાવાળા એકાઉન્ટમાં વાતચીત ચાલુ રાખવા તમે `ccam next --auto --continue` ચલાવો છો; `ccam --fallback` `-p` jobs ત્યાં જાતે ફરી ચલાવે છે, અને `ccam pick` workers ને જુદાં એકાઉન્ટમાં વહેંચે છે | Linux, macOS, Windows |
 | [claude-swap](https://github.com/realiti4/claude-swap) | લૉગિન બદલે છે; `cswap run` વડે અલગ ફોલ્ડર | હા, `cswap run` વડે | હા | `cswap auto` નક્કી કરેલી હદે લૉગિન બદલે છે; ચાલુ સેશન ચાલુ રહે છે | Linux, macOS, Windows |
 | [CCS](https://github.com/kaitranntt/ccs) | અલગ ફોલ્ડર | હા | અંશતઃ | એકાઉન્ટ પૂલ સ્થાનિક proxy દ્વારા request આગલા એકાઉન્ટને મોકલે છે | Linux, macOS, Windows |
+| [clausona](https://github.com/larcane97/clausona) | અલગ ફોલ્ડર | હા | હા | દરેક run પહેલાં routes quota વાળું એકાઉન્ટ પસંદ કરે છે, reset ની રાહ જોઈ શકે છે, અને workers ને અલગ-અલગ એકાઉન્ટ આપે છે | Linux, macOS, Windows |
 | [clauth](https://github.com/uwuclxdy/clauth) | લૉગિન બદલે છે; `clauth start` વડે અલગ ફોલ્ડર | હા, `clauth start` વડે | હા | fallback chain માં આગળના એકાઉન્ટ પર જાય છે | Linux, macOS, Windows |
 | [CAAM](https://github.com/Dicklesworthstone/coding_agent_account_manager) | લૉગિન બદલે છે, અથવા અલગ પાડેલી પ્રોફાઇલ | હા, અલગ પાડેલી પ્રોફાઇલ વડે | હા | `caam run` non-interactive કમાન્ડ બીજા એકાઉન્ટ પર ફરી ચલાવે છે | Linux, macOS, Windows |
 | [cux](https://github.com/inulute/cux) | લૉગિન બદલે છે અને `claude` ને wrap કરે છે | ના, એક જ સક્રિય એકાઉન્ટ | હા | લૉગિન બદલીને એ જ વાતચીત ફરી ચાલુ કરે છે | Linux, macOS, Windows |
@@ -41,6 +42,7 @@ ccswap એ claude-swap નો fork છે, જે Codex લૉગિન પણ �
 | ccam | Go, એક static binary | કંઈ નહીં: ccam પોતાની જગ્યા `claude` ને આપી દે છે (Windows પર, જ્યાં આ શક્ય નથી, તે તેની રાહ જુએ છે) | ના | દરેક આઇટમ અલગથી: દરેક એકાઉન્ટ માટે local કે નામવાળું group |
 | claude-swap | Python 3.12+, uv કે pipx વડે ઇન્સ્ટોલ | `cswap run` સાથે કંઈ નહીં; `cswap auto` અને મેનુ બાર ઍપ ચાલુ રહે છે | હા, જ્યારે લૉગિન બદલે ત્યારે | `cswap run` સાથે: સેટિંગ્સ, `CLAUDE.md` અને extensions એકસાથે, ઇતિહાસ વૈકલ્પિક; દરેક લૉન્ચ વખતે MCP સર્વરની નકલ થાય છે |
 | CCS | Node.js 18+ કે Bun | CCS parent process તરીકે રહે છે; પૂલ સ્થાનિક proxy ઉમેરે છે | તેનાં એકાઉન્ટ ફોલ્ડર માટે ના; પૂલ પોતાનાં લૉગિન રાખે છે | દરેક એકાઉન્ટ માટે શેર કરેલું કે local, ઇતિહાસ context group માં; MCP સર્વરની નકલ થાય છે |
+| clausona | TypeScript, Node.js 20+ | સાદું `claude` એક shell function દ્વારા ચાલે છે; `clausona run` Node ને parent તરીકે રાખે છે; દરેક exit પછી એક background Node process | ના, પણ વપરાશ વાંચવા માટે તે નિષ્ક્રિય એકાઉન્ટના tokens જાતે રિન્યૂ કરે છે | એકાઉન્ટની પોતાની ફાઇલો સિવાય બધું, એક primary માંથી; ઇતિહાસ વૈકલ્પિક; `claude mcp add` વડે ઉમેરેલા સર્વર શેર થતા નથી |
 | clauth | Rust | clauth parent process તરીકે રહે છે | હા, જ્યારે લૉગિન બદલે ત્યારે | આખું `~/.claude`, અથવા કંઈ નહીં |
 | CAAM | Go | મોડ પર આધાર રાખે છે; એક વૈકલ્પિક daemon | હા, તેના vault મોડમાં | મોડ પ્રમાણે નક્કી; દરેક લૉન્ચ વખતે MCP સર્વરની નકલ થાય છે |
 | cux | Go | `claude` ની આસપાસ એક wrapper રહે છે | હા | બધું: એક જ ફોલ્ડર |
@@ -76,7 +78,7 @@ MCP સર્વર, `settings.json`, `CLAUDE.md`, extensions (agents, commands,
 
 શેર કરેલા ઇતિહાસ સાથે, `ccam next --auto --continue` બધાં એકાઉન્ટને એકસાથે તેમનો વપરાશ પૂછે છે, સૌથી વધુ જગ્યાવાળું એકાઉન્ટ ખોલે છે અને વાતચીત ચાલુ રાખે છે. ક્યારે સ્વિચ કરવું તે તમે નક્કી કરો છો; ccam બૅકગ્રાઉન્ડમાં તમારા વપરાશ પર નજર રાખતું નથી. કોઈ એકાઉન્ટ 90% પર પહોંચે એટલે સ્ટેટસ લાઇન આ command સૂચવે છે.
 
-Scripts તમારી રાહ જોઈ શકતી નથી, તેથી `ccam --fallback work -p "…"` તેમના માટે સ્વિચ કરે છે: એકાઉન્ટ તેની મર્યાદાએ પહોંચે ત્યારે એ જ command સૌથી વધુ જગ્યાવાળા એકાઉન્ટ તરીકે ફરી ચાલે છે, અને ફક્ત પૂરા થયેલા run નું output છપાય છે. વપરાશ મર્યાદા સિવાયની નિષ્ફળતા જેમ છે તેમ આગળ આપવામાં આવે છે.
+Scripts તમારી રાહ જોઈ શકતી નથી, તેથી `ccam --fallback work -p "…"` તેમના માટે સ્વિચ કરે છે: એકાઉન્ટ તેની મર્યાદાએ પહોંચે ત્યારે એ જ command સૌથી વધુ જગ્યાવાળા એકાઉન્ટ તરીકે ફરી ચાલે છે, અને ફક્ત પૂરા થયેલા run નું output છપાય છે. વપરાશ મર્યાદા સિવાયની નિષ્ફળતા જેમ છે તેમ આગળ આપવામાં આવે છે. સમાંતર workers માટે, `ccam pick` દરેકને જગ્યાવાળું જુદું એકાઉન્ટ આપે છે, અને કોઈ એકાઉન્ટમાં જગ્યા ન બચે ત્યારે બંને code 75 સાથે બહાર નીકળે છે.
 
 ### દરેક ફોલ્ડરમાં યોગ્ય એકાઉન્ટ
 
@@ -91,7 +93,8 @@ ccam Linux, macOS અને Windows માટે લગભગ 10 MB ની stati
 - કોઈ એકાઉન્ટ વપરાશની હદ વટાવે ત્યારે claude-swap, clauth, cux, CAAM અને CCSwitcher ચાલુ interactive સેશનને જાતે સ્વિચ કરી શકે છે. ccam `-p` runs ને `--fallback` વડે સ્વિચ કરે છે અને interactive સેશન તમારા પર છોડે છે.
 - Developer Mode વગરના Windows પર ccam ફોલ્ડર શેર કરે છે પણ `settings.json` જેવી એકલી ફાઇલો શેર કરી શકતું નથી; claude-swap અને CCS ત્યાં તેની નકલ કરે છે.
 - CCSwitcher, Claude Switcher અને claude-swap macOS મેનુ બારમાં વપરાશ બતાવે છે.
-- CCS, CAAM, clauth, ccswap અને Claude Switcher, Codex અને બીજા coding agents પણ સંભાળે છે.
+- CCS, clausona, CAAM, clauth, ccswap અને Claude Switcher, Codex અને બીજા coding agents પણ સંભાળે છે.
+- clausona એકાઉન્ટ પ્રમાણે extensions ચાલુ-બંધ પણ કરે છે (ccam નું `ccam ext` તેમને ફક્ત બતાવે છે), સ્થાનિક token ખર્ચ નોંધે છે, અને tmux તથા બીજાં ટર્મિનલમાં workers નો કાફલો ચલાવતાં Claude Code plugins આપે છે.
 - CAAM, CCSwitcher અને Claude Switcher Homebrew વડે ઇન્સ્ટોલ થાય છે, અને clauth અને CAAM તેમનાં release checksums પર સહી કરે છે. ccam તેની script, `.deb` કે `go install` વડે ઇન્સ્ટોલ થાય છે, અને સહી વગર checksums ચકાસે છે.
 
 ## કયું યોગ્ય છે?

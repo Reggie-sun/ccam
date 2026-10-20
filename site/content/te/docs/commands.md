@@ -5,7 +5,7 @@ description: ccam add, ccam <name> నుంచి ccam usage, ccam next, ccam d
 updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 5d3275878535
+sourceHash: da2594c672bc
 ---
 
 ఒక కమాండ్ అసలు చేయకుండా అది ఏమి చేస్తుందో చూడటానికి, దాని ముందు `--dry-run` పెట్టండి, ఉదాహరణకు `ccam --dry-run work`. ఇది Claude Code ను ప్రారంభించేటప్పుడు (`ccam <name>`, `ccam run`, `ccam next`), అలాగే `share`, `migrate`, `shortcut`, `update`, `doctor --fix` తో పనిచేస్తుంది. ఏదైనా మార్చే ఇతర కమాండ్‌లు రన్ అవ్వకుండా దాన్ని తిరస్కరిస్తాయి.
@@ -39,9 +39,12 @@ ccam add ci --no-login        # log in later with: ccam login ci
 ccam rename work job
 ccam remove side              # folder moves to ~/.local/share/ccam/trash
 ccam import ~/.claude-old --name old
+ccam add gw --api --base-url https://llm.example.com --auth bearer --key-from env:GW_KEY
 ```
 
 ఫోల్డర్ ఇవ్వకుండా `ccam import` రన్ చేస్తే, అది `~/.claude`, `~/.claude-*` కోసం వెతికి ప్రతిదాని గురించి అడుగుతుంది. ఇంపోర్ట్ చేసిన ఫోల్డర్‌లు ఉన్న చోటే నమోదు అవుతాయి; ccam ఎప్పుడూ లాగిన్‌ను తరలించదు, కాపీ చేయదు.
+
+`ccam add --api` Claude లాగిన్ బదులు API కీ ఉపయోగించే ఖాతాను జోడిస్తుంది; ccam ప్రతి ప్రారంభంలో కీని చదువుతుంది, దాన్ని ఎప్పుడూ సేవ్ చేయదు. [API కీ ఖాతాలు](/features/api) చూడండి.
 
 Claude Code ఒక ఖాతాగా రన్ అవుతున్నప్పుడు `ccam rename`, `ccam remove`, `ccam share` ఆ ఖాతాను మార్చడానికి నిరాకరిస్తాయి. ముందుగా ఆ సెషన్ నుంచి నిష్క్రమించండి.
 
@@ -105,7 +108,12 @@ ccam usage --watch   # refresh every 60 seconds
 ccam usage --json
 ccam next --continue
 ccam next --auto
+ccam next --auto --max-usage 80 --wait
+ccam pick                       # the account with the most room, for a script
+ccam "$(ccam pick)" -p "…"      # start a worker on it
 ```
+
+`next --auto`, `--fallback`, `ccam pick` ఒకే విధంగా ఎంచుకుంటాయి: ముందుగా `auto_max_usage` (`config.toml`, డిఫాల్ట్ 100) కంటే తక్కువ ఉన్నవి, `auto_strategy` (`headroom` లేదా `expiring`) ప్రకారం, `--model` వారపు విండోను కూడా లెక్కించి, 100% వద్ద ఉన్న ఖాతాను ఎప్పుడూ కాదు. ఏదీ ఎంచుకోలేనప్పుడు అవి కోడ్ 75 తో నిష్క్రమిస్తాయి, లేదా `--wait` తో మొదటి ఖాతా రీసెట్ అయ్యే వరకు వేచి ఉంటాయి. [తదుపరి ఖాతాకు మారడం](/features/next), [స్క్రిప్ట్‌ల కోసం ఖాతాను ఎంచుకోవడం](/features/pick) చూడండి.
 
 ## నిర్వహణ
 
@@ -113,6 +121,7 @@ ccam next --auto
 ccam doctor          # check
 ccam doctor --fix    # repair what is safe to repair, with backups
 ccam statusline install
+ccam ext             # skills, commands, MCP servers and hooks of every account, and problems
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release

@@ -1,0 +1,78 @@
+---
+title: "Inspecter les extensions"
+description: "ccam ext affiche les skills, commandes, plugins, serveurs MCP et hooks que charge chaque compte, l'origine de chacun et ce qui est cassé."
+updated: 2026-10-20
+order: 14
+translation: machine
+sourceHash: 78d83272963c
+---
+
+`ccam ext` répond à la question « pourquoi ce skill (ou ce serveur MCP) fonctionne-t-il dans un compte et pas dans l'autre ? ». Il liste, pour chaque compte, les extensions que Claude Code charge et l'origine de chacune : un groupe de partage, le dossier propre au compte ou le projet dans lequel vous êtes. Sous le tableau, il liste ce qui empêche une extension de se charger comme prévu. Il ne fait que lire.
+
+## Utilisation
+
+```sh
+ccam ext              # every account
+ccam ext work         # one account
+ccam ext --json       # for scripts
+```
+
+```console
+$ ccam ext
+Skills
+          personal   work
+  half    account !  -
+  review  -          default
+
+Commands
+          personal  work
+  deploy  -         default
+
+MCP servers
+       personal  work
+  ctx  account   default
+
+Hooks (commands per event)
+              personal     work
+  PreToolUse  1 (default)  1 (default)
+
+This project (/home/me/code/app), for every account:
+  commands: ship
+  MCP servers: fs
+
+Sources: a group name (shared), account (its own folder), - (not loaded).
+! personal: half: no SKILL.md, so Claude Code does not load it
+! personal: MCP server ctx is defined differently in group default's mcp.json and .claude.json
+```
+
+Une cellule indique la source de cet élément dans ce compte : le groupe de partage (`default`), `account` quand il se trouve dans le dossier propre au compte, ou `-` quand le compte ne l'a pas. `!` signale un élément qui pose problème, expliqué sous le tableau.
+
+## Ce qu'il lit
+
+| Type | Emplacement | Source affichée |
+| --- | --- | --- |
+| Skills | chaque dossier de `skills/` qui contient un `SKILL.md` | le groupe vers lequel pointe `skills/`, ou `account` |
+| Commandes, agents | les fichiers `.md` sous `commands/` et `agents/`, les sous-dossiers sous la forme `folder/name` | le groupe, ou `account` |
+| Plugins | `plugins/installed_plugins.json` | le groupe, ou `account` |
+| Serveurs MCP | le `mcp.json` du groupe (quand MCP est partagé) et le `.claude.json` du compte | le groupe, ou `account` |
+| Hooks | `hooks` dans `settings.json`, comptés par événement | le groupe, ou `account` |
+| Ce projet | `.claude/skills`, `.claude/commands`, `.claude/agents`, `.claude/settings.json`, `.claude/settings.local.json` et `.mcp.json` dans le dossier courant | listé une seule fois, pour chaque compte |
+
+## Problèmes signalés
+
+- **Liens cassés** : un lien dans `skills/`, `commands/` ou `agents/` dont la cible a disparu, ou un dossier partagé (`skills`, `commands`, `agents`, `plugins`) qui pointe vers un emplacement absent (réparez-le avec `ccam doctor --fix`).
+- **Un dossier de skill sans `SKILL.md`** : Claude Code l'ignore.
+- **Un serveur MCP défini différemment à deux endroits** : le `mcp.json` du groupe et le `.claude.json` du compte, ou l'un des deux et le `.mcp.json` du projet. Les mêmes paramètres aux deux endroits (ce qu'écrit `mcp_strategy = "sync"`) ne posent pas problème. Déplacez un serveur propre à un compte dans le groupe avec `ccam mcp import <account> <server>`.
+- **Un `installed_plugins.json` qui n'est pas du JSON valide.**
+
+## Sécurité et cas particuliers
+
+- `ccam ext` ne modifie rien et ne fait aucune requête réseau. Il lit les noms des serveurs et le nombre de hooks, jamais les valeurs de `env` ni des en-têtes dans les définitions MCP.
+- Il montre ce qui se trouve sur le disque. Un plugin installé mais désactivé dans les paramètres, ou un serveur bloqué par des paramètres gérés, apparaît quand même.
+- Lancez-le dans le dossier du projet pour inclure le dossier `.claude` et le `.mcp.json` de ce projet.
+
+## Voir aussi
+
+- [Partage entre comptes](/features/share)
+- [Serveurs MCP partagés](/features/mcp)
+- [Vérifier et réparer](/features/doctor)

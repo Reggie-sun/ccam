@@ -153,6 +153,8 @@
     "shims": "Die Kurzbefehl-Links aller Konten neu erstellen",
     "shortcut": "Den Kurzbefehl eines Kontos, etwa ccwork, anzeigen, anlegen, umbenennen oder entfernen",
     "folder": "Ein Konto in einem Ordner und darunter verwenden, wenn kein Konto genannt wird",
+    "pick": "Das Konto mit dem meisten Spielraum ausgeben, für Skripte und parallele Worker",
+    "ext": "Die Skills, Befehle, Plugins, MCP-Server und Hooks zeigen, die jedes Konto lädt",
     "update": "ccam nach Prüfung der Prüfsumme auf das neueste Release aktualisieren",
     "completion": "Vervollständigung für bash, zsh oder PowerShell ausgeben"
   },

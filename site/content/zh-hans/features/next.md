@@ -4,7 +4,7 @@ description: ccam next 以你上次使用的账号之后的账号打开 Claude C
 updated: 2026-10-20
 order: 8
 translation: machine
-sourceHash: 7bc55c2dd520
+sourceHash: 784ae4d1f6d9
 ---
 
 `ccam next` 无需你指定账号名，就能以另一个账号打开 Claude Code。当某个账号达到用量限制时使用它：单纯的 `ccam next` 选择你上次使用的账号之后的那个账号，`--auto` 选择 5 小时时间窗口内余量最多的账号，`--continue` 则在新账号中继续上一次对话。对于运行 `claude -p` 的脚本，`ccam --fallback` 会自动完成这种切换（参见[达到限制时重新运行](#run-again-at-the-limit)）。
@@ -16,6 +16,8 @@ ccam next                       # the account after the one you used last
 ccam next --auto                # the account with the lowest 5-hour usage
 ccam next --continue            # the next account that shares history, with claude --continue
 ccam next -c --auto             # both: lowest usage among accounts sharing history
+ccam next --auto --max-usage 80 # prefer accounts below 80%
+ccam next --auto --wait         # nobody has room: wait for the first reset (up to 5 hours)
 ccam next -- -p "summarize"     # pass arguments to claude after --
 ccam --dry-run next --auto      # print the choice and the command, start nothing
 ```
@@ -32,7 +34,10 @@ ccam 在标准错误上以 `→ <from> → <to>` 的形式打印这次切换，�
 
 | 选项 | 作用 | 默认值 |
 | --- | --- | --- |
-| `--auto` | 选择已登录账号中 5 小时用量最低的账号，跳过用量已达 100% 的账号 | 关闭 |
+| `--auto` | 按用量选择已登录的账号（见下文），跳过用量已达 100% 的账号 | 关闭 |
+| `--max-usage <1-100>` | 与 `--auto` 一起使用：优先选择用量低于此值的账号 | `auto_max_usage`，否则为 100 |
+| `--strategy headroom\|expiring` | 与 `--auto` 一起使用：5 小时用量最低的账号，或 5 小时时间窗口最早重置的账号 | `auto_strategy`，否则为 `headroom` |
+| `--wait[=<duration>]` | 与 `--auto` 一起使用：没有账号还有余量时，等待第一个账号重置，最多等待这么久 | 关闭；单独给出时为 `5h` |
 | `-c`、`--continue` | 只考虑与你上次使用的账号共享对话历史的账号，并启动 `claude --continue` | 关闭 |
 | `-- <claude args>` | 放在 ccam 自身参数之后传给 `claude` 的参数 | 无 |
 | `--dry-run` | 支持：打印 `→ <from> → <to>` 和将要执行的命令行，不启动 Claude Code，也不记录启动 | 关闭 |
@@ -56,11 +61,23 @@ ccam 在标准错误上以 `→ <from> → <to>` 的形式打印这次切换，�
 
 ### --auto
 
-`--auto` 按用量而不是槽位顺序做决定。`cli.pickAuto` 保留已登录的账号，用 `ccam usage` 所用的同一个 `Fetcher.FetchAll` 一次性查询它们的用量，然后交给 `usage.Best()` 选择：
+`--auto` 按用量而不是槽位顺序做决定。`cli.pickAuto` 保留已登录的账号，用 `ccam usage` 所用的同一个 `Fetcher.FetchAll` 一次性查询它们的用量，然后交给 `usage.Policy.Choose()` 选择：
 
 <!-- motion:next-auto -->
 
-`usage.Best()` 选择 5 小时百分比最低的账号，并跳过用量已达 100% 或 5 小时用量未知的账号。查询遵循 `ccam usage` 的规则：60 秒内获取的数字会被复用，每个账号最多等待 3 秒，没有响应或登录已过期的账号按其保存的数字判断。重置时间已过的已保存时间窗口按 0% 计算，因此之后已经重置的账号不会被漏掉。`--auto` 从不为令牌续期。与单纯的轮换不同，如果你上次使用的账号余量仍然最多，`--auto` 可能会选中它。
+账号按其 5 小时和每周时间窗口来判断；当传给 Claude Code 的参数中有 `--model` 时，还会计入该模型的每周时间窗口（名称中含有 `opus`、`sonnet`、`haiku` 或 `fable`）。`Policy.Choose()` 把账号分为三类：
+
+1. **有余量**：每个时间窗口都低于 `auto_max_usage`（`config.toml`，默认 100）。由策略在其中选择：`headroom`（默认）选 5 小时用量最低的账号，`expiring` 选 5 小时时间窗口最早重置的账号，让它剩余的配额在失效前被用掉。
+2. **超出**：低于 100%，但达到或超过 `auto_max_usage`。只在没有账号有余量时使用，先选 5 小时用量最低的。
+3. **已满**：某个时间窗口已达 100%，或 5 小时用量未知。从不选择。
+
+```toml
+# ~/.config/ccam/config.toml
+auto_max_usage = 80        # keep 20% of each account for interactive work
+auto_strategy = "expiring"
+```
+
+当没有可选的账号时，ccam 以退出码 75（`EX_TEMPFAIL`）退出，这样脚本就能把"稍后再试"和失败区分开。使用 `--wait` 时，它会改为等待，直到第一个已满账号中造成阻塞的时间窗口重置（重置时间之后 30 秒，此时接口会显示新的时间窗口），打印 `ccam: no account has room; waiting until 15:10`，然后重新选择；如果没有账号说明何时重置，它会在 10 分钟后再查看。如果在等待结束前没有账号空出来，它以 75 退出。查询遵循 `ccam usage` 的规则：60 秒内获取的数字会被复用，每个账号最多等待 3 秒，没有响应或登录已过期的账号按其保存的数字判断。重置时间已过的已保存时间窗口按 0% 计算，因此之后已经重置的账号不会被漏掉。`--auto` 从不为令牌续期。与单纯的轮换不同，如果你上次使用的账号余量仍然最多，`--auto` 可能会选中它。
 
 ### --continue
 
@@ -90,7 +107,7 @@ Summary: …
 6. 此时会丢弃这次尝试的输出，并以另一个已登录账号运行同一个命令：先选 5 小时用量最低的账号，然后是无法查询用量的账号，按编号顺序。用量已达 100% 的账号会被跳过，每个账号最多尝试一次。
 7. 如果参数中有 `-c`、`--continue`、`-r` 或 `--resume`，只会尝试同一历史组中的账号，以便找到那次对话。
 
-当没有剩余账号时，ccam 会打印最后一次尝试的输出，说明没有已登录账号还有余量，并以那次尝试的退出码退出。`ccam --dry-run --fallback work -p …` 会打印第一次尝试的命令。
+下一个账号按与 `--auto` 相同的规则选择（`auto_max_usage`、`auto_strategy`、`--model` 的时间窗口）。当没有剩余账号时，ccam 会打印最后一次尝试的输出，说明没有已登录账号还有余量，并以退出码 75 退出。在账号名之前加上 `--wait`（`ccam --fallback --wait=2h work -p …`）时，它会改为等待第一个账号重置，然后可能再次尝试每个账号；它总是先至少等待一次，所以刚刚达到限制的账号不会立刻再次运行。`ccam --dry-run --fallback work -p …` 会打印第一次尝试的命令。
 
 交互式会话不会自动切换。作为替代，使用 `ccam statusline install` 后，当 5 小时或每周用量达到 90% 时，状态栏会加上 `→ ccam next --auto --continue`（[用量限制](/features/usage)）。
 
@@ -98,7 +115,8 @@ Summary: …
 
 - 没有登录的账号永远不会被选中。如果没有其他已登录的账号，单纯的 `ccam next` 会以 `no logged-in account other than <name>` 停止。
 - 使用 `--continue` 但没有账号共享历史时：`` no other account shares conversation history with <name>. Turn it on with `ccam share <name> --history on` ``。
-- 使用 `--auto` 但没有已登录账号时：`no logged-in account to pick`。当每个账号都已用满或用量未知时：`` no account with known usage and headroom (see `ccam usage`) ``。
+- 使用 `--auto` 但没有已登录账号时：`no logged-in account to pick`。当每个账号都已用满或用量未知时：`` no account with known usage and headroom (see `ccam usage`) ``。两者都以退出码 75 结束。
+- `--max-usage`、`--strategy` 和 `--wait` 只能与 `--auto` 一起使用，超出 1-100 的值或其他策略会被拒绝。
 - 即使带有 `--dry-run`，`--auto` 也会发出网络请求。它只读取，从不写入令牌文件。
 - 所选账号通过与 `ccam <name>` 相同的路径启动，因此适用相同的检查，包括当另一个共享同一历史记录的 Claude Code 已在此文件夹中运行时发出的警告。
 - `last-used` 只在 Claude Code 实际启动时写入。`--dry-run` 不会改动它，因此试运行不会推进轮换。

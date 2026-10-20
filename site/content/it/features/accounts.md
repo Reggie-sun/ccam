@@ -1,10 +1,10 @@
 ---
 title: Gestire gli account
 description: Aggiungi, collega, elenca, rinomina, rimuovi e importa account Claude Code con ccam add, ccam login, ccam list, ccam rename, ccam remove e ccam import.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 99c931574262
+sourceHash: 9eb992214132
 ---
 
 Ogni account di ccam è una cartella di configurazione di Claude Code separata, con il proprio login. Questi comandi creano gli account, ne effettuano il login, li elencano, li rinominano e li rimuovono, e registrano le cartelle che hai già.
@@ -49,15 +49,16 @@ Con `--json`, ogni account è un oggetto con `slot`, `shortcut`, `name`, `email`
 | `ccam add --no-login` | Crea l'account senza effettuare il login; accedi in seguito con `ccam login <name>` | disattivata |
 | `ccam add --share <item=group>` | Condivide un elemento con un gruppo, oppure `item=local` per tenerlo privato. Ripetibile | `mcp`, `settings`, `memory`, `extensions` in `default`; `history` locale |
 | `ccam add --shortcut <command>` | Crea anche questo comando scorciatoia in `~/.local/bin` | nessuna |
+| `ccam add --api --key-from <source>` | Un account che usa una chiave API invece di un login; vedi [Account con chiave API](/features/api) | disattivata |
 | `ccam list --json` | Stampa gli account in JSON | disattivata |
 | `ccam remove -y`, `--yes` | Rimuove senza chiedere | disattivata |
 | `ccam import --name <name>` | Nome dell'account per la cartella indicata | ricavato dal nome della cartella |
 | `ccam import -y`, `--yes` | Importa ogni cartella trovata senza chiedere | disattivata |
 | `--dry-run` | Rispettata da `ccam list` e `ccam completion`, che non modificano nulla. Rifiutata da `add`, `login`, `logout`, `use`, `rename`, `remove` e `import`, con `` --dry-run is not supported by `ccam add`; nothing was changed `` (con il nome del comando) | disattivata |
 
-`ccam login`, `ccam logout`, `ccam use` e `ccam rename` non hanno opzioni proprie. `ccam completion` accetta `bash` o `zsh`; qualsiasi altro valore fallisce con `only bash and zsh are supported`.
+`ccam login`, `ccam logout`, `ccam use` e `ccam rename` non hanno opzioni proprie. `ccam completion` accetta `bash`, `zsh` o `powershell`; qualsiasi altro valore fallisce con `only bash, zsh and powershell are supported`.
 
-I nomi degli account sono lunghi da 1 a 32 caratteri tra `a-z`, `0-9`, `-` e `_`, e iniziano con una lettera o una cifra. Un nome non può essere composto solo da cifre, perché `ccam 2` indica lo slot 2. Un nome non può nemmeno essere un comando di ccam (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`), così `ccam <name>` non è mai ambiguo. L'elenco è `config.Reserved` in `internal/config`.
+I nomi degli account sono lunghi da 1 a 32 caratteri tra `a-z`, `0-9`, `-` e `_`, e iniziano con una lettera o una cifra. Un nome non può essere composto solo da cifre, perché `ccam 2` indica lo slot 2. Un nome non può nemmeno essere un comando di ccam (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`, `folder`, `pick`, `ext`), così `ccam <name>` non è mai ambiguo. L'elenco è `config.Reserved` in `internal/config`.
 
 ## Come funziona
 

@@ -5,7 +5,7 @@ description: Усі команди та параметри ccam, від ccam add
 updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 5d3275878535
+sourceHash: da2594c672bc
 ---
 
 Додайте `--dry-run` перед командою, щоб побачити, що вона зробила б, не виконуючи її, наприклад `ccam --dry-run work`. Це працює під час запуску Claude Code (`ccam <name>`, `ccam run`, `ccam next`) і з `share`, `migrate`, `shortcut`, `update` та `doctor --fix`. Інші команди, які щось змінюють, відхиляють цей параметр і не виконуються.
@@ -39,9 +39,12 @@ ccam add ci --no-login        # log in later with: ccam login ci
 ccam rename work job
 ccam remove side              # folder moves to ~/.local/share/ccam/trash
 ccam import ~/.claude-old --name old
+ccam add gw --api --base-url https://llm.example.com --auth bearer --key-from env:GW_KEY
 ```
 
 `ccam import` без теки шукає `~/.claude` і `~/.claude-*` та запитує про кожну з них. Імпортовані теки реєструються там, де вони є; ccam ніколи не переміщує й не копіює дані входу.
+
+`ccam add --api` додає обліковий запис, який використовує ключ API замість входу Claude; ccam читає ключ під час кожного запуску й ніколи його не зберігає. Див. [Облікові записи з ключем API](/features/api).
 
 `ccam rename`, `ccam remove` і `ccam share` відмовляються змінювати обліковий запис, поки Claude Code працює від його імені. Спершу завершіть сеанс.
 
@@ -105,7 +108,12 @@ ccam usage --watch   # refresh every 60 seconds
 ccam usage --json
 ccam next --continue
 ccam next --auto
+ccam next --auto --max-usage 80 --wait
+ccam pick                       # the account with the most room, for a script
+ccam "$(ccam pick)" -p "…"      # start a worker on it
 ```
+
+`next --auto`, `--fallback` і `ccam pick` вибирають однаково: спершу облікові записи нижче `auto_max_usage` (`config.toml`, за замовчуванням 100), за стратегією `auto_strategy` (`headroom` або `expiring`), з урахуванням тижневого вікна `--model` і ніколи не обліковий запис на 100%. Коли вибрати нікого, вони завершуються з кодом 75 або, з `--wait`, чекають на скидання першого облікового запису. Див. [Перемикання на наступний обліковий запис](/features/next) і [Вибір облікового запису для скриптів](/features/pick).
 
 ## Обслуговування
 
@@ -113,6 +121,7 @@ ccam next --auto
 ccam doctor          # check
 ccam doctor --fix    # repair what is safe to repair, with backups
 ccam statusline install
+ccam ext             # skills, commands, MCP servers and hooks of every account, and problems
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release

@@ -1,10 +1,10 @@
 ---
 title: "অ্যাকাউন্ট পরিচালনা"
 description: "ccam add, ccam login, ccam list, ccam rename, ccam remove ও ccam import দিয়ে Claude Code অ্যাকাউন্ট যোগ, লগইন, তালিকা, নাম বদল, অপসারণ ও ইমপোর্ট করুন।"
-updated: 2026-10-19
+updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 99c931574262
+sourceHash: 9eb992214132
 ---
 
 প্রতিটি ccam অ্যাকাউন্ট নিজস্ব লগইনসহ আলাদা একটি Claude Code কনফিগ ফোল্ডার। এই কমান্ডগুলো অ্যাকাউন্ট তৈরি করে, সাইন ইন করায়, তালিকা দেখায়, নাম বদলায় ও সরায়, এবং আপনার আগে থেকে থাকা ফোল্ডার নিবন্ধন করে।
@@ -49,15 +49,16 @@ $ ccam list
 | `ccam add --no-login` | লগইন না করে অ্যাকাউন্ট তৈরি করে; পরে `ccam login <name>` দিয়ে লগইন করুন | বন্ধ |
 | `ccam add --share <item=group>` | একটি আইটেম কোনো গ্রুপের সঙ্গে শেয়ার করে, অথবা `item=local` দিয়ে সেটি নিজস্ব রাখে। একাধিকবার দেওয়া যায় | `mcp`, `settings`, `memory`, `extensions` থাকে `default`-এ; `history` লোকাল |
 | `ccam add --shortcut <command>` | `~/.local/bin`-এ এই শর্টকাট কমান্ডটিও তৈরি করে | নেই |
+| `ccam add --api --key-from <source>` | লগইনের বদলে API key ব্যবহার করা একটি অ্যাকাউন্ট; দেখুন [API key অ্যাকাউন্ট](/features/api) | বন্ধ |
 | `ccam list --json` | অ্যাকাউন্টগুলো JSON হিসেবে প্রিন্ট করে | বন্ধ |
 | `ccam remove -y`, `--yes` | জিজ্ঞেস না করেই সরায় | বন্ধ |
 | `ccam import --name <name>` | আপনার দেওয়া ফোল্ডারের জন্য অ্যাকাউন্টের নাম | ফোল্ডারের নাম থেকে নেওয়া |
 | `ccam import -y`, `--yes` | পাওয়া প্রতিটি ফোল্ডার জিজ্ঞেস না করেই ইমপোর্ট করে | বন্ধ |
 | `--dry-run` | `ccam list` ও `ccam completion` এটি মানে, কারণ এগুলো কিছু বদলায় না। `add`, `login`, `logout`, `use`, `rename`, `remove` ও `import` এটি প্রত্যাখ্যান করে, `` --dry-run is not supported by `ccam add`; nothing was changed `` বার্তাসহ (কমান্ডের নাম উল্লেখ করে) | বন্ধ |
 
-`ccam login`, `ccam logout`, `ccam use` ও `ccam rename`-এর নিজস্ব কোনো অপশন নেই। `ccam completion` নেয় `bash` বা `zsh`; অন্য কিছু দিলে `only bash and zsh are supported` দিয়ে ব্যর্থ হয়।
+`ccam login`, `ccam logout`, `ccam use` ও `ccam rename`-এর নিজস্ব কোনো অপশন নেই। `ccam completion` নেয় `bash`, `zsh` বা `powershell`; অন্য কিছু দিলে `only bash, zsh and powershell are supported` দিয়ে ব্যর্থ হয়।
 
-অ্যাকাউন্টের নাম ১ থেকে ৩২ অক্ষরের, `a-z`, `0-9`, `-` ও `_` দিয়ে গঠিত, এবং কোনো অক্ষর বা অঙ্ক দিয়ে শুরু হয়। নাম শুধু অঙ্ক দিয়ে হতে পারে না, কারণ `ccam 2` মানে স্লট 2। নামটি কোনো ccam কমান্ডও হতে পারে না (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`), তাই `ccam <name>` কখনও দ্ব্যর্থক হয় না। তালিকাটি `internal/config`-এর `config.Reserved`।
+অ্যাকাউন্টের নাম ১ থেকে ৩২ অক্ষরের, `a-z`, `0-9`, `-` ও `_` দিয়ে গঠিত, এবং কোনো অক্ষর বা অঙ্ক দিয়ে শুরু হয়। নাম শুধু অঙ্ক দিয়ে হতে পারে না, কারণ `ccam 2` মানে স্লট 2। নামটি কোনো ccam কমান্ডও হতে পারে না (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`, `folder`, `pick`, `ext`), তাই `ccam <name>` কখনও দ্ব্যর্থক হয় না। তালিকাটি `internal/config`-এর `config.Reserved`।
 
 ## এটি কীভাবে কাজ করে
 

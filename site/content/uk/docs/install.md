@@ -5,7 +5,7 @@ description: Встановіть ccam на Linux, macOS або Windows одні
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 07eadc0769c8
+sourceHash: aea4984c1576
 ---
 
 Виконайте це в терміналі на Linux або macOS:
@@ -71,6 +71,16 @@ ccam completion powershell >> $PROFILE
 ```
 
 Автодоповнення працює для всіх команд і параметрів `ccam`, включно з назвами облікових записів.
+
+## Плагін Claude Code
+
+Плагін ccam навчає сам Claude Code користуватися ccam: перевіряти, у якого облікового запису є запас, запускати паралельні робочі процеси `claude -p` у різних облікових записах за допомогою `ccam pick` і пояснювати відсутність навички чи сервера MCP за допомогою `ccam ext`. Установіть його всередині Claude Code:
+
+```text
+/plugin install ccam --marketplace jhyunwoo/ccam
+```
+
+Він додає навичку та дві команди, `/ccam:usage` і `/ccam:ext`. Навичка ніколи не виконує команд, які виконують вхід або переміщують файли; натомість вона їх пропонує.
 
 ## Перевірка встановлення
 

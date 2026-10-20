@@ -5,7 +5,7 @@ description: Instal ccam di Linux, macOS, atau Windows dengan satu perintah, pak
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 07eadc0769c8
+sourceHash: aea4984c1576
 ---
 
 Jalankan ini di terminal pada Linux atau macOS:
@@ -71,6 +71,16 @@ ccam completion powershell >> $PROFILE
 ```
 
 Pelengkapan otomatis mencakup semua perintah dan opsi `ccam`, termasuk nama akun.
+
+## Plugin Claude Code
+
+Plugin ccam mengajari Claude Code sendiri cara memakai ccam: memeriksa akun mana yang masih punya kuota, menjalankan worker `claude -p` paralel di akun yang berbeda dengan `ccam pick`, dan menjelaskan skill atau server MCP yang hilang dengan `ccam ext`. Pasang plugin ini di dalam Claude Code:
+
+```text
+/plugin install ccam --marketplace jhyunwoo/ccam
+```
+
+Plugin ini menambahkan satu skill dan dua perintah, `/ccam:usage` dan `/ccam:ext`. Skill tersebut tidak pernah menjalankan perintah yang melakukan login atau memindahkan file; ia hanya menyarankannya.
 
 ## Periksa instalasi
 

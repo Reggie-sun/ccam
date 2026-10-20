@@ -5,7 +5,7 @@ description: 在 Linux、macOS 或 Windows 上用一個指令、.deb 套件或�
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 07eadc0769c8
+sourceHash: aea4984c1576
 ---
 
 在 Linux 或 macOS 的終端機中執行：
@@ -71,6 +71,16 @@ ccam completion powershell >> $PROFILE
 ```
 
 自動補齊涵蓋 `ccam` 的所有指令和選項，也包括帳號名稱。
+
+## Claude Code 外掛
+
+ccam 外掛會教 Claude Code 本身使用 ccam：檢查哪個帳號還有額度、用 `ccam pick` 在不同帳號上啟動平行的 `claude -p` 工作程序，以及用 `ccam ext` 說明為什麼缺少某個技能或 MCP 伺服器。請在 Claude Code 中安裝：
+
+```text
+/plugin install ccam --marketplace jhyunwoo/ccam
+```
+
+它會新增一個技能和兩個指令：`/ccam:usage` 和 `/ccam:ext`。這個技能絕不會執行登入或移動檔案的指令，而是建議你執行。
 
 ## 檢查安裝
 

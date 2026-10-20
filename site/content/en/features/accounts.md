@@ -1,7 +1,7 @@
 ---
 title: Managing accounts
 description: Add, log in, list, rename, remove and import Claude Code accounts with ccam add, ccam login, ccam list, ccam rename, ccam remove and ccam import.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 2
 translation: source
 ---
@@ -48,15 +48,16 @@ With `--json`, each account is an object with `slot`, `shortcut`, `name`, `email
 | `ccam add --no-login` | Create the account without logging in; log in later with `ccam login <name>` | off |
 | `ccam add --share <item=group>` | Share an item with a group, or `item=local` to keep it private. Repeatable | `mcp`, `settings`, `memory`, `extensions` in `default`; `history` local |
 | `ccam add --shortcut <command>` | Also create this shortcut command in `~/.local/bin` | none |
+| `ccam add --api --key-from <source>` | An account that uses an API key instead of a login; see [API key accounts](/features/api) | off |
 | `ccam list --json` | Print the accounts as JSON | off |
 | `ccam remove -y`, `--yes` | Remove without asking | off |
 | `ccam import --name <name>` | Account name for the folder you give | derived from the folder name |
 | `ccam import -y`, `--yes` | Import every folder found without asking | off |
 | `--dry-run` | Honoured by `ccam list` and `ccam completion`, which change nothing. Refused by `add`, `login`, `logout`, `use`, `rename`, `remove` and `import`, with `` --dry-run is not supported by `ccam add`; nothing was changed `` (naming the command) | off |
 
-`ccam login`, `ccam logout`, `ccam use` and `ccam rename` have no options of their own. `ccam completion` takes `bash` or `zsh`; anything else fails with `only bash and zsh are supported`.
+`ccam login`, `ccam logout`, `ccam use` and `ccam rename` have no options of their own. `ccam completion` takes `bash`, `zsh` or `powershell`; anything else fails with `only bash, zsh and powershell are supported`.
 
-Account names are 1 to 32 characters of `a-z`, `0-9`, `-` and `_`, starting with a letter or digit. A name cannot be all digits, because `ccam 2` means slot 2. A name cannot be a ccam command either (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`), so `ccam <name>` is never ambiguous. The list is `config.Reserved` in `internal/config`.
+Account names are 1 to 32 characters of `a-z`, `0-9`, `-` and `_`, starting with a letter or digit. A name cannot be all digits, because `ccam 2` means slot 2. A name cannot be a ccam command either (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`, `folder`, `pick`, `ext`), so `ccam <name>` is never ambiguous. The list is `config.Reserved` in `internal/config`.
 
 ## How it works
 

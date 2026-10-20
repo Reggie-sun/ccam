@@ -153,6 +153,8 @@
     "shims": "Utwórz ponownie linki skrótów wszystkich kont",
     "shortcut": "Pokaż, utwórz, zmień nazwę lub usuń skrót konta, na przykład ccwork",
     "folder": "Używa konta w folderze i jego podfolderach, gdy nie podano nazwy konta",
+    "pick": "Wypisuje konto z największym zapasem, dla skryptów i równoległych workerów",
+    "ext": "Pokazuje skille, polecenia, pluginy, serwery MCP i hooki ładowane przez każde konto",
     "update": "Zaktualizuj ccam do najnowszego wydania po sprawdzeniu sumy kontrolnej",
     "completion": "Wypisuje uzupełnianie dla bash, zsh lub PowerShell"
   },

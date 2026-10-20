@@ -1,10 +1,10 @@
 ---
 title: Sarrafa asusai
 description: Ƙara, shiga, lissafa, sake suna, cire da shigo da asusun Claude Code da ccam add, ccam login, ccam list, ccam rename, ccam remove da ccam import.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 99c931574262
+sourceHash: 9eb992214132
 ---
 
 Kowane asusun ccam foldar saitin Claude Code ce ta daban mai nata shiga. Waɗannan umarnai suna ƙirƙira, shiga, lissafa, sake suna da cire asusai, kuma suna yin rajistar foldojin da kake da su tuni.
@@ -49,15 +49,16 @@ Da `--json`, kowane asusu abu ne mai `slot`, `shortcut`, `name`, `email`, `defau
 | `ccam add --no-login` | Ƙirƙiri asusun ba tare da shiga ba; shiga daga baya da `ccam login <name>` | a kashe |
 | `ccam add --share <item=group>` | Raba abu da rukuni, ko `item=local` don a riƙe shi na sirri. Ana iya maimaitawa | `mcp`, `settings`, `memory`, `extensions` a `default`; `history` na gida |
 | `ccam add --shortcut <command>` | Kuma ƙirƙiri wannan gajeren umarni a `~/.local/bin` | babu |
+| `ccam add --api --key-from <source>` | Asusun da ke amfani da API key maimakon shiga; duba [Asusan API key](/features/api) | a kashe |
 | `ccam list --json` | Buga asusan a matsayin JSON | a kashe |
 | `ccam remove -y`, `--yes` | Cire ba tare da tambaya ba | a kashe |
 | `ccam import --name <name>` | Sunan asusu na foldar da ka bayar | daga sunan foldar |
 | `ccam import -y`, `--yes` | Shigo da kowace foldar da aka samo ba tare da tambaya ba | a kashe |
 | `--dry-run` | `ccam list` da `ccam completion` suna karɓar shi, domin ba sa canza komai. `add`, `login`, `logout`, `use`, `rename`, `remove` da `import` suna ƙin shi, da `` --dry-run is not supported by `ccam add`; nothing was changed `` (tare da sunan umarnin) | a kashe |
 
-`ccam login`, `ccam logout`, `ccam use` da `ccam rename` ba su da zaɓuɓɓukan kansu. `ccam completion` yana karɓar `bash` ko `zsh`; duk wani abu dabam yana gazawa da `only bash and zsh are supported`.
+`ccam login`, `ccam logout`, `ccam use` da `ccam rename` ba su da zaɓuɓɓukan kansu. `ccam completion` yana karɓar `bash`, `zsh` ko `powershell`; duk wani abu dabam yana gazawa da `only bash, zsh and powershell are supported`.
 
-Sunayen asusai haruffa 1 zuwa 32 ne na `a-z`, `0-9`, `-` da `_`, suna farawa da harafi ko lamba. Suna ba zai iya zama lambobi kawai ba, domin `ccam 2` yana nufin ramin 2. Haka kuma suna ba zai iya zama umarnin ccam ba (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`), don haka `ccam <name>` ba ya taɓa yin shubuha. Jerin shi ne `config.Reserved` a `internal/config`.
+Sunayen asusai haruffa 1 zuwa 32 ne na `a-z`, `0-9`, `-` da `_`, suna farawa da harafi ko lamba. Suna ba zai iya zama lambobi kawai ba, domin `ccam 2` yana nufin ramin 2. Haka kuma suna ba zai iya zama umarnin ccam ba (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`, `folder`, `pick`, `ext`), don haka `ccam <name>` ba ya taɓa yin shubuha. Jerin shi ne `config.Reserved` a `internal/config`.
 
 ## Yadda yake aiki
 

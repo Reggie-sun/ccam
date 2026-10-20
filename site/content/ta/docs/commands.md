@@ -5,7 +5,7 @@ description: ccam add, ccam <name> முதல் ccam usage, ccam next, ccam d
 updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 5d3275878535
+sourceHash: da2594c672bc
 ---
 
 ஒரு கட்டளை உண்மையில் எதையும் செய்யாமல் என்ன செய்யும் என்று பார்க்க, அதற்கு முன் `--dry-run` வையுங்கள், எடுத்துக்காட்டாக `ccam --dry-run work`. Claude Code-ஐத் தொடங்கும்போது (`ccam <name>`, `ccam run`, `ccam next`) மற்றும் `share`, `migrate`, `shortcut`, `update`, `doctor --fix` ஆகியவற்றுடன் இது வேலை செய்யும். எதையாவது மாற்றும் மற்ற கட்டளைகள் இயங்குவதற்குப் பதிலாக இதை மறுக்கும்.
@@ -39,9 +39,12 @@ ccam add ci --no-login        # log in later with: ccam login ci
 ccam rename work job
 ccam remove side              # folder moves to ~/.local/share/ccam/trash
 ccam import ~/.claude-old --name old
+ccam add gw --api --base-url https://llm.example.com --auth bearer --key-from env:GW_KEY
 ```
 
 கோப்புறை இல்லாமல் இயக்கும் `ccam import`, `~/.claude` மற்றும் `~/.claude-*`-ஐத் தேடி, ஒவ்வொன்றைப் பற்றியும் கேட்கும். இறக்குமதி செய்யப்பட்ட கோப்புறைகள் அவை இருக்கும் இடத்திலேயே பதிவு செய்யப்படும்; ccam ஒருபோதும் உள்நுழைவை நகர்த்துவதோ நகலெடுப்பதோ இல்லை.
+
+`ccam add --api` Claude உள்நுழைவுக்குப் பதிலாக API key பயன்படுத்தும் கணக்கைச் சேர்க்கும்; ccam ஒவ்வொரு தொடக்கத்திலும் key-ஐப் படிக்கும், அதை ஒருபோதும் சேமிக்காது. [API key கணக்குகள்](/features/api) பாருங்கள்.
 
 ஒரு கணக்காக Claude Code இயங்கிக்கொண்டிருக்கும்போது, `ccam rename`, `ccam remove`, `ccam share` ஆகியவை அந்தக் கணக்கை மாற்ற மறுக்கும். முதலில் அமர்வை முடியுங்கள்.
 
@@ -105,7 +108,12 @@ ccam usage --watch   # refresh every 60 seconds
 ccam usage --json
 ccam next --continue
 ccam next --auto
+ccam next --auto --max-usage 80 --wait
+ccam pick                       # the account with the most room, for a script
+ccam "$(ccam pick)" -p "…"      # start a worker on it
 ```
+
+`next --auto`, `--fallback`, `ccam pick` மூன்றும் ஒரே முறையில் தேர்ந்தெடுக்கும்: முதலில் `auto_max_usage`-க்குக் (`config.toml`, இயல்புநிலை 100) கீழ் உள்ளவை, `auto_strategy` (`headroom` அல்லது `expiring`) படி, `--model`-இன் வாராந்திரக் கால அளவையும் கணக்கிட்டு, 100%-இல் உள்ள கணக்கை ஒருபோதும் அல்ல. எதையும் தேர்ந்தெடுக்க முடியாதபோது அவை code 75 உடன் வெளியேறும், அல்லது `--wait` உடன் முதல் கணக்கு மீட்டமைக்கப்படும் வரை காத்திருக்கும். [அடுத்த கணக்குக்கு மாறுதல்](/features/next), [scripts-க்கு ஒரு கணக்கைத் தேர்ந்தெடுத்தல்](/features/pick) பாருங்கள்.
 
 ## பராமரிப்பு
 
@@ -113,6 +121,7 @@ ccam next --auto
 ccam doctor          # check
 ccam doctor --fix    # repair what is safe to repair, with backups
 ccam statusline install
+ccam ext             # skills, commands, MCP servers and hooks of every account, and problems
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release

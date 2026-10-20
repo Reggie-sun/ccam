@@ -5,7 +5,7 @@ description: ثبّت ccam على Linux أو macOS أو Windows بأمر واح�
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 07eadc0769c8
+sourceHash: aea4984c1576
 ---
 
 شغّل هذا الأمر في طرفية على Linux أو macOS:
@@ -71,6 +71,16 @@ ccam completion powershell >> $PROFILE
 ```
 
 يغطي الإكمال التلقائي كل أوامر `ccam` وخياراته، بما في ذلك أسماء الحسابات.
+
+## المكوّن الإضافي لـ Claude Code
+
+يعلّم المكوّن الإضافي لـ ccam برنامج Claude Code نفسه أن يستخدم ccam: أن يتحقق من الحساب الذي لديه هامش، وأن يشغّل عمّال `claude -p` متوازيين على حسابات مختلفة باستخدام `ccam pick`، وأن يشرح غياب مهارة أو خادم MCP باستخدام `ccam ext`. ثبّته من داخل Claude Code:
+
+```text
+/plugin install ccam --marketplace jhyunwoo/ccam
+```
+
+يضيف مهارة وأمرين، `/ccam:usage` و`/ccam:ext`. ولا تشغّل المهارة أبدًا أوامر تسجّل الدخول أو تنقل الملفات؛ بل تقترحها بدلًا من ذلك.
 
 ## التحقق من التثبيت
 

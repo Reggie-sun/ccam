@@ -1,10 +1,10 @@
 ---
 title: Vikomo vya matumizi
-description: ccam usage huonyesha vikomo vya saa 5 na vya wiki vya kila akaunti kwa pamoja, na ccam statusline huweka jina la akaunti na matumizi yake ndani ya Claude Code.
+description: ccam usage huonyesha vikomo vya saa 5 na vya wiki vya kila akaunti kwa pamoja, na ccam statusline huweka jina la akaunti na matumizi yake katika Claude Code.
 updated: 2026-10-20
 order: 7
 translation: machine
-sourceHash: f08a2fdc6f0b
+sourceHash: 525174ceed0d
 ---
 
 `ccam usage` huonyesha kiasi cha vikomo vya saa 5 na vya wiki ambacho kila akaunti imetumia, pamoja na muda uliobaki hadi kila kipindi kianze upya. Itumie kabla ya kuanza kazi ndefu, au Claude Code inapokuambia kikomo kiko karibu, ili kuona ni akaunti ipi bado ina nafasi. `ccam statusline` ni amri ya mstari wa hali (status line) kwa Claude Code: huonyesha jina la akaunti na matumizi ndani ya Claude Code na huhifadhi namba kwa ajili ya `ccam usage`.
@@ -74,7 +74,7 @@ Kwa akaunti moja, `Fetcher.Fetch` hufanya ukaguzi huu kwa mpangilio:
 2. Isipokuwa `--no-cache` imewekwa, matokeo ya moja kwa moja katika `~/.local/state/ccam/usage/<name>.json` yenye umri wa chini ya sekunde 60 (`CacheTTL`) hurudishwa kama yalivyo. Kuendesha `ccam usage` mara mbili mfululizo hugharimu ombi moja kwa kila akaunti.
 3. `readCredentials()` husoma `.credentials.json` (au Keychain ya macOS) bila kuibadilisha, na ufunguo wa `claudeAiOauth` pekee ndio hufasiriwa. Kukosekana kwa kuingia kwa usajili kunamaanisha `not logged in`, au `no limits (API)` wakati `.claude.json` ina API key.
 4. Tokeni ya ufikiaji iliyoisha muda haitumiwi. Bila `--refresh`, akaunti huonyesha namba zake zilizohifadhiwa zikiwa na alama ya kuisha muda.
-5. Vinginevyo ccam huita endpoint. 401 au 403 huhesabiwa kama kuingia kulikoisha muda, hali nyingine yoyote au mwili wa jibu usioweza kusomwa huhesabiwa kama kosa, na zote mbili hurudi kwenye namba zilizohifadhiwa.
+5. Vinginevyo ccam huita endpoint. 401 au 403 huhesabiwa kama kuingia kulikoisha muda, hali nyingine yoyote au mwili wa jibu usioweza kusomwa huhesabiwa kama kosa, na zote mbili hurudi kwenye namba zilizohifadhiwa. 429 inamaanisha endpoint inaulizwa mara nyingi mno: ccam huandika `<name>.pause` pamoja na muda wa kuuliza tena (`Retry-After`, au dakika 5, si zaidi ya saa moja), huonyesha namba zilizohifadhiwa pamoja na `rate limited by the usage endpoint; asking again after 15:10`, na haiiti endpoint kwa akaunti hiyo hadi wakati huo, hata kwa `--no-cache`. Kujaribu tena mara moja kungeendeleza kikomo tu.
 6. Jibu zuri huandikwa kwenye `<name>.json` pamoja na muda lilipopimwa.
 
 `fallback()` husoma `<name>.json` na `<name>.statusline.json` zote mbili na hubakiza ile mpya zaidi. Kabla ya kuonyesha namba zilizohifadhiwa, hukagua muda wa kuanza upya wa kila kipindi: kipindi kilichoanza upya tangu namba zihifadhiwe huonyesha 0%, kwa sababu asilimia ya zamani haitumiki tena. Ndiyo sababu `personal` hapo juu huonyesha `0%` bila muda wa kuanza upya.

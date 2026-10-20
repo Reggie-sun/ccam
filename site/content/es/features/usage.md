@@ -4,7 +4,7 @@ description: ccam usage muestra a la vez los límites de 5 horas y semanal de to
 updated: 2026-10-20
 order: 7
 translation: machine
-sourceHash: f08a2fdc6f0b
+sourceHash: 525174ceed0d
 ---
 
 `ccam usage` muestra cuánto ha usado cada cuenta de sus límites de 5 horas y semanal, junto con el tiempo que falta para que se restablezca cada ventana. Úsalo antes de empezar una tarea larga, o cuando Claude Code te avise de que un límite está cerca, para ver qué cuenta tiene margen. `ccam statusline` es el comando de línea de estado para Claude Code: muestra el nombre de la cuenta y su uso dentro de Claude Code y guarda las cifras para `ccam usage`.
@@ -74,7 +74,7 @@ Para una cuenta, `Fetcher.Fetch` hace estas comprobaciones en orden:
 2. Salvo que se indique `--no-cache`, un resultado en vivo en `~/.local/state/ccam/usage/<name>.json` con menos de 60 segundos (`CacheTTL`) se devuelve tal cual. Ejecutar `ccam usage` dos veces seguidas cuesta una solicitud por cuenta.
 3. `readCredentials()` lee `.credentials.json` (o el Llavero de macOS) sin cambiarlo, y solo se decodifica la clave `claudeAiOauth`. Si no hay un inicio de sesión de suscripción, se muestra `not logged in`, o `no limits (API)` cuando `.claude.json` contiene una clave de API.
 4. Un token de acceso vencido no se usa. Sin `--refresh`, la cuenta muestra sus cifras guardadas marcadas como vencidas.
-5. En caso contrario, ccam llama al endpoint. Un 401 o un 403 cuenta como inicio de sesión vencido, cualquier otro estado o un cuerpo que no puede leer cuenta como error, y en ambos casos se recurre a las cifras guardadas.
+5. En caso contrario, ccam llama al endpoint. Un 401 o un 403 cuenta como inicio de sesión vencido, cualquier otro estado o un cuerpo que no puede leer cuenta como error, y en ambos casos se recurre a las cifras guardadas. Un 429 significa que se está consultando el endpoint con demasiada frecuencia: ccam escribe `<name>.pause` con la hora para volver a preguntar (`Retry-After`, o 5 minutos, como máximo una hora), muestra las cifras guardadas con `rate limited by the usage endpoint; asking again after 15:10` y no llama al endpoint para esa cuenta hasta entonces, ni siquiera con `--no-cache`. Reintentar de inmediato solo mantendría el límite.
 6. Una respuesta correcta se escribe en `<name>.json` con la hora en que se midió.
 
 `fallback()` lee tanto `<name>.json` como `<name>.statusline.json` y se queda con el más reciente. Antes de mostrar cifras guardadas, comprueba la hora de restablecimiento de cada ventana: una ventana que se restableció después de guardar las cifras muestra 0 %, porque el porcentaje anterior ya no es válido. Por eso `personal`, más arriba, muestra `0%` sin hora de restablecimiento.

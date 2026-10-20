@@ -5,7 +5,7 @@ description: همه فرمان‌ها و گزینه‌های ccam، از ccam ad
 updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 5d3275878535
+sourceHash: da2594c672bc
 ---
 
 برای اینکه ببینید یک فرمان چه کاری انجام می‌دهد بدون آنکه واقعاً انجامش دهد، `--dry-run` را پیش از آن بگذارید، برای مثال `ccam --dry-run work`. این گزینه هنگام اجرای Claude Code (`ccam <name>`، `ccam run`، `ccam next`) و با `share`، `migrate`، `shortcut`، `update` و `doctor --fix` کار می‌کند. فرمان‌های دیگری که چیزی را تغییر می‌دهند، به‌جای اجرا شدن آن را رد می‌کنند.
@@ -39,9 +39,12 @@ ccam add ci --no-login        # log in later with: ccam login ci
 ccam rename work job
 ccam remove side              # folder moves to ~/.local/share/ccam/trash
 ccam import ~/.claude-old --name old
+ccam add gw --api --base-url https://llm.example.com --auth bearer --key-from env:GW_KEY
 ```
 
 `ccam import` بدون نام پوشه، به دنبال `~/.claude` و `~/.claude-*` می‌گردد و درباره هر کدام از شما می‌پرسد. پوشه‌های واردشده در همان جایی که هستند ثبت می‌شوند؛ ccam هرگز یک ورود را جابه‌جا یا کپی نمی‌کند.
+
+`ccam add --api` حسابی اضافه می‌کند که به جای ورود به Claude از کلید API استفاده می‌کند؛ ccam کلید را در هر اجرا می‌خواند و هرگز ذخیره‌اش نمی‌کند. [حساب‌های کلید API](/features/api) را ببینید.
 
 تا وقتی Claude Code با یک حساب در حال اجراست، `ccam rename`، `ccam remove` و `ccam share` آن حساب را تغییر نمی‌دهند. ابتدا نشست را ببندید.
 
@@ -105,7 +108,12 @@ ccam usage --watch   # refresh every 60 seconds
 ccam usage --json
 ccam next --continue
 ccam next --auto
+ccam next --auto --max-usage 80 --wait
+ccam pick                       # the account with the most room, for a script
+ccam "$(ccam pick)" -p "…"      # start a worker on it
 ```
+
+`next --auto`، `--fallback` و `ccam pick` به یک شکل انتخاب می‌کنند: ابتدا حساب‌های زیر `auto_max_usage` (`config.toml`، پیش‌فرض ۱۰۰)، بر اساس `auto_strategy` (`headroom` یا `expiring`)، با در نظر گرفتن پنجره هفتگی `--model`، و هرگز حسابی که به ۱۰۰٪ رسیده است. وقتی هیچ حسابی را نتوان انتخاب کرد، با کد ۷۵ خارج می‌شوند، یا با `--wait` منتظر می‌مانند تا نخستین حساب بازنشانی شود. [جابه‌جایی به حساب بعدی](/features/next) و [انتخاب حساب برای اسکریپت‌ها](/features/pick) را ببینید.
 
 ## نگهداری
 
@@ -113,6 +121,7 @@ ccam next --auto
 ccam doctor          # check
 ccam doctor --fix    # repair what is safe to repair, with backups
 ccam statusline install
+ccam ext             # skills, commands, MCP servers and hooks of every account, and problems
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release

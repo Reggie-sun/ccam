@@ -5,7 +5,7 @@ description: ccam add ಮತ್ತು ccam <name> ನಿಂದ ccam usage, ccam 
 updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 5d3275878535
+sourceHash: da2594c672bc
 ---
 
 ಕಮಾಂಡ್ ಏನು ಮಾಡುತ್ತದೆ ಎಂಬುದನ್ನು ನಿಜವಾಗಿ ಮಾಡದೆಯೇ ನೋಡಲು, ಅದರ ಮುಂದೆ `--dry-run` ಹಾಕಿ. ಉದಾಹರಣೆಗೆ `ccam --dry-run work`. ಇದು Claude Code ಆರಂಭಿಸುವಾಗ (`ccam <name>`, `ccam run`, `ccam next`) ಮತ್ತು `share`, `migrate`, `shortcut`, `update` ಹಾಗೂ `doctor --fix` ಜೊತೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ. ಏನನ್ನಾದರೂ ಬದಲಾಯಿಸುವ ಇತರ ಕಮಾಂಡ್‌ಗಳು ಚಾಲನೆಯಾಗುವ ಬದಲು ಇದನ್ನು ನಿರಾಕರಿಸುತ್ತವೆ.
@@ -39,9 +39,12 @@ ccam add ci --no-login        # log in later with: ccam login ci
 ccam rename work job
 ccam remove side              # folder moves to ~/.local/share/ccam/trash
 ccam import ~/.claude-old --name old
+ccam add gw --api --base-url https://llm.example.com --auth bearer --key-from env:GW_KEY
 ```
 
 ಫೋಲ್ಡರ್ ನೀಡದೆ `ccam import` ರನ್ ಮಾಡಿದರೆ, ಅದು `~/.claude` ಮತ್ತು `~/.claude-*` ಗಾಗಿ ಹುಡುಕುತ್ತದೆ ಮತ್ತು ಪ್ರತಿಯೊಂದರ ಬಗ್ಗೆ ಕೇಳುತ್ತದೆ. ಇಂಪೋರ್ಟ್ ಮಾಡಿದ ಫೋಲ್ಡರ್‌ಗಳು ಇದ್ದಲ್ಲೇ ನೋಂದಣಿಯಾಗುತ್ತವೆ; ccam ಎಂದಿಗೂ ಲಾಗಿನ್ ಅನ್ನು ಸ್ಥಳಾಂತರಿಸುವುದಿಲ್ಲ ಅಥವಾ ನಕಲಿಸುವುದಿಲ್ಲ.
+
+`ccam add --api` Claude ಲಾಗಿನ್ ಬದಲು API ಕೀ ಬಳಸುವ ಖಾತೆಯನ್ನು ಸೇರಿಸುತ್ತದೆ; ccam ಪ್ರತಿ ಆರಂಭದಲ್ಲೂ ಕೀಯನ್ನು ಓದುತ್ತದೆ ಮತ್ತು ಅದನ್ನು ಎಂದಿಗೂ ಸಂಗ್ರಹಿಸುವುದಿಲ್ಲ. [API ಕೀ ಖಾತೆಗಳು](/features/api) ನೋಡಿ.
 
 ಒಂದು ಖಾತೆಯಾಗಿ Claude Code ಚಾಲನೆಯಲ್ಲಿರುವಾಗ, `ccam rename`, `ccam remove` ಮತ್ತು `ccam share` ಆ ಖಾತೆಯನ್ನು ಬದಲಾಯಿಸಲು ನಿರಾಕರಿಸುತ್ತವೆ. ಮೊದಲು ಸೆಷನ್‌ನಿಂದ ನಿರ್ಗಮಿಸಿ.
 
@@ -105,7 +108,12 @@ ccam usage --watch   # refresh every 60 seconds
 ccam usage --json
 ccam next --continue
 ccam next --auto
+ccam next --auto --max-usage 80 --wait
+ccam pick                       # the account with the most room, for a script
+ccam "$(ccam pick)" -p "…"      # start a worker on it
 ```
+
+`next --auto`, `--fallback` ಮತ್ತು `ccam pick` ಒಂದೇ ರೀತಿಯಲ್ಲಿ ಆಯ್ಕೆಮಾಡುತ್ತವೆ: ಮೊದಲು `auto_max_usage` (`config.toml`, ಡೀಫಾಲ್ಟ್ 100) ಗಿಂತ ಕೆಳಗಿರುವ ಖಾತೆಗಳು, `auto_strategy` (`headroom` ಅಥವಾ `expiring`) ಪ್ರಕಾರ, `--model` ನ ವಾರದ ಅವಧಿಯನ್ನೂ ಎಣಿಸಿ; 100% ತಲುಪಿದ ಖಾತೆಯನ್ನು ಎಂದಿಗೂ ಆಯ್ಕೆಮಾಡುವುದಿಲ್ಲ. ಯಾವುದನ್ನೂ ಆಯ್ಕೆಮಾಡಲಾಗದಿದ್ದಾಗ ಅವು ಕೋಡ್ 75 ನೊಂದಿಗೆ ನಿರ್ಗಮಿಸುತ್ತವೆ, ಅಥವಾ `--wait` ಇದ್ದರೆ ಮೊದಲ ಖಾತೆ ರೀಸೆಟ್ ಆಗುವವರೆಗೆ ಕಾಯುತ್ತವೆ. [ಮುಂದಿನ ಖಾತೆಗೆ ಬದಲಾಯಿಸುವುದು](/features/next) ಮತ್ತು [ಸ್ಕ್ರಿಪ್ಟ್‌ಗಳಿಗಾಗಿ ಖಾತೆ ಆಯ್ಕೆ](/features/pick) ನೋಡಿ.
 
 ## ನಿರ್ವಹಣೆ
 
@@ -113,6 +121,7 @@ ccam next --auto
 ccam doctor          # check
 ccam doctor --fix    # repair what is safe to repair, with backups
 ccam statusline install
+ccam ext             # skills, commands, MCP servers and hooks of every account, and problems
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release

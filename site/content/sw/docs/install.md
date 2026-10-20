@@ -5,7 +5,7 @@ description: Sakinisha ccam kwenye Linux, macOS au Windows kwa amri moja, kifuru
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 07eadc0769c8
+sourceHash: aea4984c1576
 ---
 
 Endesha hii kwenye terminal ya Linux au macOS:
@@ -71,6 +71,16 @@ ccam completion powershell >> $PROFILE
 ```
 
 Ukamilishaji unashughulikia amri na chaguo zote za `ccam`, pamoja na majina ya akaunti.
+
+## Plugin ya Claude Code
+
+Plugin ya ccam humfundisha Claude Code yenyewe kutumia ccam: kuangalia akaunti ipi ina nafasi, kuanzisha workers wa `claude -p` sambamba kwenye akaunti tofauti kwa `ccam pick`, na kueleza kwa nini skill au seva ya MCP haipo kwa `ccam ext`. Isakinishe ndani ya Claude Code:
+
+```text
+/plugin install ccam --marketplace jhyunwoo/ccam
+```
+
+Huongeza skill moja na amri mbili, `/ccam:usage` na `/ccam:ext`. Skill hiyo kamwe haiendeshi amri zinazoingia kwenye akaunti au kuhamisha faili; badala yake huzipendekeza.
 
 ## Kagua usakinishaji
 

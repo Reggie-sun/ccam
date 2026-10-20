@@ -1,10 +1,10 @@
 ---
 title: การจัดการบัญชี
 description: "เพิ่ม เข้าสู่ระบบ แสดงรายการ เปลี่ยนชื่อ ลบ และนำเข้าบัญชี Claude Code ด้วย ccam add, ccam login, ccam list, ccam rename, ccam remove และ ccam import"
-updated: 2026-10-19
+updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 99c931574262
+sourceHash: 9eb992214132
 ---
 
 บัญชี ccam แต่ละบัญชีคือโฟลเดอร์การตั้งค่า Claude Code แยกกันที่มีการเข้าสู่ระบบของตัวเอง คำสั่งเหล่านี้ใช้สร้าง ลงชื่อเข้าใช้ แสดงรายการ เปลี่ยนชื่อ และลบบัญชี รวมถึงลงทะเบียนโฟลเดอร์ที่คุณมีอยู่แล้ว
@@ -49,15 +49,16 @@ $ ccam list
 | `ccam add --no-login` | สร้างบัญชีโดยไม่เข้าสู่ระบบ แล้วค่อยเข้าสู่ระบบภายหลังด้วย `ccam login <name>` | ปิด |
 | `ccam add --share <item=group>` | ใช้รายการร่วมกับกลุ่ม หรือใช้ `item=local` เพื่อเก็บไว้เฉพาะบัญชี ใส่ซ้ำได้หลายครั้ง | `mcp`, `settings`, `memory`, `extensions` อยู่ใน `default` ส่วน `history` เก็บไว้เฉพาะบัญชี |
 | `ccam add --shortcut <command>` | สร้างคำสั่งลัดนี้ใน `~/.local/bin` ด้วย | ไม่มี |
+| `ccam add --api --key-from <source>` | บัญชีที่ใช้ API key แทนการเข้าสู่ระบบ ดู[บัญชี API key](/features/api) | ปิด |
 | `ccam list --json` | พิมพ์รายการบัญชีเป็น JSON | ปิด |
 | `ccam remove -y`, `--yes` | ลบโดยไม่ถาม | ปิด |
 | `ccam import --name <name>` | ชื่อบัญชีสำหรับโฟลเดอร์ที่คุณระบุ | ได้มาจากชื่อโฟลเดอร์ |
 | `ccam import -y`, `--yes` | นำเข้าทุกโฟลเดอร์ที่พบโดยไม่ถาม | ปิด |
 | `--dry-run` | `ccam list` และ `ccam completion` ซึ่งไม่เปลี่ยนแปลงสิ่งใดจะรองรับตัวเลือกนี้ ส่วน `add`, `login`, `logout`, `use`, `rename`, `remove` และ `import` จะปฏิเสธด้วยข้อความ `` --dry-run is not supported by `ccam add`; nothing was changed `` (โดยระบุชื่อคำสั่งนั้น) | ปิด |
 
-`ccam login`, `ccam logout`, `ccam use` และ `ccam rename` ไม่มีตัวเลือกของตัวเอง `ccam completion` รับ `bash` หรือ `zsh` ค่าอื่นจะล้มเหลวด้วย `only bash and zsh are supported`
+`ccam login`, `ccam logout`, `ccam use` และ `ccam rename` ไม่มีตัวเลือกของตัวเอง `ccam completion` รับ `bash`, `zsh` หรือ `powershell` ค่าอื่นจะล้มเหลวด้วย `only bash, zsh and powershell are supported`
 
-ชื่อบัญชียาว 1 ถึง 32 อักขระ ประกอบด้วย `a-z`, `0-9`, `-` และ `_` และต้องขึ้นต้นด้วยตัวอักษรหรือตัวเลข ชื่อต้องไม่เป็นตัวเลขล้วน เพราะ `ccam 2` หมายถึงสล็อต 2 และชื่อต้องไม่ซ้ำกับคำสั่งของ ccam (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`) เพื่อให้ `ccam <name>` ไม่กำกวม รายการนี้คือ `config.Reserved` ใน `internal/config`
+ชื่อบัญชียาว 1 ถึง 32 อักขระ ประกอบด้วย `a-z`, `0-9`, `-` และ `_` และต้องขึ้นต้นด้วยตัวอักษรหรือตัวเลข ชื่อต้องไม่เป็นตัวเลขล้วน เพราะ `ccam 2` หมายถึงสล็อต 2 และชื่อต้องไม่ซ้ำกับคำสั่งของ ccam (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`, `folder`, `pick`, `ext`) เพื่อให้ `ccam <name>` ไม่กำกวม รายการนี้คือ `config.Reserved` ใน `internal/config`
 
 ## วิธีการทำงาน
 

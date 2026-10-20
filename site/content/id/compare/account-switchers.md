@@ -1,10 +1,10 @@
 ---
 title: ccam dan pengalih akun Claude Code lainnya
-description: Perbandingan ccam dengan claude-swap, CCS, clauth, CAAM, cux, dan alat lain untuk ganti akun Claude Code, serta pendekatan mana yang cocok untuk kebutuhan apa.
+description: Perbandingan ccam dengan claude-swap, CCS, clausona, clauth, CAAM, cux, dan alat lain untuk ganti akun Claude Code, serta pendekatan mana yang cocok.
 updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: d058da937218
+sourceHash: 68048287f792
 ---
 
 Alat untuk berganti akun Claude Code memakai salah satu dari dua pendekatan. Sebagian besar menukar login di dalam satu folder `~/.claude`, sehingga hanya satu akun yang aktif pada satu waktu. Yang lain, termasuk ccam, memberi setiap akun foldernya sendiri dengan `CLAUDE_CONFIG_DIR`, sehingga setiap akun tetap login dan beberapa akun bisa berjalan bersamaan. ccam menambahkan pengaturan dan server MCP bersama, serta bisa melanjutkan percakapan di folder akun lain.
@@ -19,13 +19,14 @@ Untuk menukar login, alat itu menyimpan salinan login setiap akun lain dan menul
 
 ## Perbandingan alat-alatnya
 
-Diambil dari dokumentasi dan kode sumber masing-masing proyek pada 2026-10-20. "Tidak didokumentasikan" berarti proyek tersebut tidak menyebutkannya, bukan berarti fiturnya tidak ada.
+Diambil dari dokumentasi dan kode sumber masing-masing proyek pada 2026-10-20 (clausona: v0.12.0-beta). "Tidak didokumentasikan" berarti proyek tersebut tidak menyebutkannya, bukan berarti fiturnya tidak ada.
 
 | Alat | Pendekatan | Beberapa akun sekaligus | Penggunaan 5 jam dan mingguan | Saat batas tercapai | Platform |
 | --- | --- | --- | --- | --- | --- |
-| ccam | Folder terpisah | Ya | Ya, `ccam usage` | Anda menjalankan `ccam next --auto --continue` untuk melanjutkan percakapan di akun dengan sisa kuota terbanyak; `ccam --fallback` menjalankan ulang tugas `-p` di sana dengan sendirinya | Linux, macOS, Windows |
+| ccam | Folder terpisah | Ya | Ya, `ccam usage` | Anda menjalankan `ccam next --auto --continue` untuk melanjutkan percakapan di akun dengan sisa kuota terbanyak; `ccam --fallback` menjalankan ulang tugas `-p` di sana dengan sendirinya, dan `ccam pick` menyebar worker ke berbagai akun | Linux, macOS, Windows |
 | [claude-swap](https://github.com/realiti4/claude-swap) | Menukar login; folder terpisah dengan `cswap run` | Ya, dengan `cswap run` | Ya | `cswap auto` menukar login pada ambang tertentu; sesi yang berjalan tetap berlanjut | Linux, macOS, Windows |
 | [CCS](https://github.com/kaitranntt/ccs) | Folder terpisah | Ya | Sebagian | Kumpulan akun meneruskan permintaan ke akun berikutnya melalui proxy lokal | Linux, macOS, Windows |
+| [clausona](https://github.com/larcane97/clausona) | Folder terpisah | Ya | Ya | Rute memilih akun yang masih punya kuota sebelum setiap proses, bisa menunggu reset, dan membagikan akun yang berbeda ke setiap worker | Linux, macOS, Windows |
 | [clauth](https://github.com/uwuclxdy/clauth) | Menukar login; folder terpisah dengan `clauth start` | Ya, dengan `clauth start` | Ya | Berpindah mengikuti rantai cadangan | Linux, macOS, Windows |
 | [CAAM](https://github.com/Dicklesworthstone/coding_agent_account_manager) | Menukar login, atau profil terisolasi | Ya, dengan profil terisolasi | Ya | `caam run` mengulang perintah non-interaktif di akun lain | Linux, macOS, Windows |
 | [cux](https://github.com/inulute/cux) | Menukar login dan membungkus `claude` | Tidak, satu akun aktif | Ya | Menukar login dan melanjutkan percakapan yang sama | Linux, macOS, Windows |
@@ -41,6 +42,7 @@ ccswap adalah fork dari claude-swap yang juga mengelola login Codex. [claude-acc
 | ccam | Go, satu biner statis | Tidak ada: ccam menggantikan dirinya dengan `claude` (di Windows, yang tidak bisa melakukannya, ccam menunggunya) | Tidak | Setiap item tersendiri: lokal atau grup bernama, per akun |
 | claude-swap | Python 3.12+, dipasang dengan uv atau pipx | Tidak ada dengan `cswap run`; `cswap auto` dan aplikasi bilah menu tetap berjalan | Ya, saat menukar login | Dengan `cswap run`: pengaturan, `CLAUDE.md`, dan ekstensi sekaligus, riwayat opsional; server MCP disalin setiap kali dijalankan |
 | CCS | Node.js 18+ atau Bun | CCS tetap sebagai proses induk; kumpulan akun menambahkan proxy lokal | Tidak untuk folder akunnya; kumpulan akun menyimpan login sendiri | Bersama atau lokal per akun, riwayat dalam grup konteks; server MCP disalin |
+| clausona | TypeScript, Node.js 20+ | `claude` biasa berjalan melalui fungsi shell; `clausona run` mempertahankan Node sebagai proses induk; proses Node di latar belakang setelah setiap keluar | Tidak, tetapi ia memperbarui sendiri token akun yang menganggur untuk membaca penggunaannya | Semuanya kecuali file per akun, dari satu akun utama; riwayat opsional; server yang ditambahkan dengan `claude mcp add` tidak dibagikan |
 | clauth | Rust | clauth tetap sebagai proses induk | Ya, saat menukar login | Seluruh `~/.claude`, atau tidak sama sekali |
 | CAAM | Go | Tergantung mode; daemon opsional | Ya, dalam mode vault-nya | Ditentukan oleh mode; server MCP disalin setiap kali dijalankan |
 | cux | Go | Sebuah wrapper tetap membungkus `claude` | Ya | Semuanya: satu folder |
@@ -76,7 +78,7 @@ Server MCP, `settings.json`, `CLAUDE.md`, ekstensi (agen, perintah, skill, plugi
 
 Dengan riwayat bersama, `ccam next --auto --continue` menanyakan penggunaan semua akun sekaligus, membuka akun dengan sisa kuota terbanyak, lalu melanjutkan percakapan. Anda yang menentukan kapan berganti; ccam tidak memantau penggunaan Anda di latar belakang. Baris status menyarankan perintah itu begitu sebuah akun mencapai 90%.
 
-Skrip tidak bisa menunggu Anda, jadi `ccam --fallback work -p "…"` berganti akun untuknya: saat akun mencapai batasnya, perintah yang sama dijalankan lagi sebagai akun dengan sisa kuota terbanyak, dan hanya output dari proses yang selesai yang dicetak. Kegagalan yang bukan karena batas penggunaan diteruskan apa adanya.
+Skrip tidak bisa menunggu Anda, jadi `ccam --fallback work -p "…"` berganti akun untuknya: saat akun mencapai batasnya, perintah yang sama dijalankan lagi sebagai akun dengan sisa kuota terbanyak, dan hanya output dari proses yang selesai yang dicetak. Kegagalan yang bukan karena batas penggunaan diteruskan apa adanya. Untuk worker paralel, `ccam pick` memberi setiap worker akun berbeda yang masih punya kuota, dan keduanya keluar dengan kode 75 jika tidak ada akun yang tersisa kuotanya.
 
 ### Akun yang tepat di setiap folder
 
@@ -91,7 +93,8 @@ ccam adalah biner statis sekitar 10 MB tanpa runtime yang perlu dipasang, untuk 
 - claude-swap, clauth, cux, CAAM, dan CCSwitcher bisa mengganti akun sesi interaktif yang sedang berjalan dengan sendirinya saat sebuah akun melewati ambang penggunaan. ccam mengganti akun untuk proses `-p` dengan `--fallback` dan menyerahkan sesi interaktif kepada Anda.
 - Di Windows tanpa Mode Pengembang (Developer Mode), ccam bisa membagikan folder tetapi tidak bisa membagikan file tunggal seperti `settings.json`; claude-swap dan CCS menyalinnya ke sana sebagai gantinya.
 - CCSwitcher, Claude Switcher, dan claude-swap menampilkan penggunaan di bilah menu macOS.
-- CCS, CAAM, clauth, ccswap, dan Claude Switcher juga mengelola Codex dan agen coding lainnya.
+- CCS, clausona, CAAM, clauth, ccswap, dan Claude Switcher juga mengelola Codex dan agen coding lainnya.
+- clausona juga menyalakan dan mematikan ekstensi per akun (`ccam ext` milik ccam hanya menampilkannya), mencatat biaya token secara lokal, dan menyertakan plugin Claude Code yang menjalankan sekumpulan worker di tmux dan terminal lain.
 - CAAM, CCSwitcher, dan Claude Switcher bisa dipasang dengan Homebrew, dan clauth serta CAAM menandatangani checksum rilisnya. ccam dipasang dengan skripnya, `.deb`, atau `go install`, dan memeriksa checksum tanpa tanda tangan.
 
 ## Mana yang cocok?

@@ -1,10 +1,10 @@
 ---
 title: खाती व्यवस्थापित करणे
 description: ccam add, ccam login, ccam list, ccam rename, ccam remove आणि ccam import ने Claude Code खाती जोडा, लॉग इन करा, यादी पाहा, नाव बदला, काढा आणि इम्पोर्ट करा.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 99c931574262
+sourceHash: 9eb992214132
 ---
 
 प्रत्येक ccam खाते हा स्वतःचे लॉगिन असलेला वेगळा Claude Code config फोल्डर आहे. या कमांड्स खाती तयार करतात, त्यांत साइन इन करतात, त्यांची यादी दाखवतात, नाव बदलतात आणि ती काढतात, तसेच तुमच्याकडे आधीच असलेले फोल्डर नोंदवतात.
@@ -49,15 +49,16 @@ $ ccam list
 | `ccam add --no-login` | लॉग इन न करता खाते तयार करा; नंतर `ccam login <name>` ने लॉग इन करा | बंद |
 | `ccam add --share <item=group>` | एखादा आयटम गटासोबत शेअर करा, किंवा तो खाजगी ठेवण्यासाठी `item=local`. अनेकदा देता येतो | `mcp`, `settings`, `memory`, `extensions` हे `default` मध्ये; `history` local |
 | `ccam add --shortcut <command>` | `~/.local/bin` मध्ये ही शॉर्टकट कमांडही तयार करा | काहीही नाही |
+| `ccam add --api --key-from <source>` | लॉगिनऐवजी API key वापरणारे खाते; [API key खाती](/features/api) पहा | बंद |
 | `ccam list --json` | खाती JSON म्हणून छापा | बंद |
 | `ccam remove -y`, `--yes` | न विचारता काढा | बंद |
 | `ccam import --name <name>` | तुम्ही दिलेल्या फोल्डरसाठी खात्याचे नाव | फोल्डरच्या नावावरून |
 | `ccam import -y`, `--yes` | सापडलेला प्रत्येक फोल्डर न विचारता इम्पोर्ट करा | बंद |
 | `--dry-run` | काहीही न बदलणाऱ्या `ccam list` आणि `ccam completion` कडून पाळला जातो. `add`, `login`, `logout`, `use`, `rename`, `remove` आणि `import` तो `` --dry-run is not supported by `ccam add`; nothing was changed `` (कमांडच्या नावासह) देऊन नाकारतात | बंद |
 
-`ccam login`, `ccam logout`, `ccam use` आणि `ccam rename` यांना स्वतःचे पर्याय नाहीत. `ccam completion` `bash` किंवा `zsh` घेते; इतर काहीही दिल्यास ते `only bash and zsh are supported` देऊन अयशस्वी होते.
+`ccam login`, `ccam logout`, `ccam use` आणि `ccam rename` यांना स्वतःचे पर्याय नाहीत. `ccam completion` `bash`, `zsh` किंवा `powershell` घेते; इतर काहीही दिल्यास ते `only bash, zsh and powershell are supported` देऊन अयशस्वी होते.
 
-खात्यांची नावे `a-z`, `0-9`, `-` आणि `_` यांपासून बनलेली 1 ते 32 अक्षरांची असतात, आणि अक्षराने किंवा अंकाने सुरू होतात. नाव फक्त अंकांचे असू शकत नाही, कारण `ccam 2` म्हणजे slot 2. नाव ccam ची कमांडही असू शकत नाही (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`), त्यामुळे `ccam <name>` कधीच संदिग्ध होत नाही. ही यादी `internal/config` मधील `config.Reserved` आहे.
+खात्यांची नावे `a-z`, `0-9`, `-` आणि `_` यांपासून बनलेली 1 ते 32 अक्षरांची असतात, आणि अक्षराने किंवा अंकाने सुरू होतात. नाव फक्त अंकांचे असू शकत नाही, कारण `ccam 2` म्हणजे slot 2. नाव ccam ची कमांडही असू शकत नाही (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`, `folder`, `pick`, `ext`), त्यामुळे `ccam <name>` कधीच संदिग्ध होत नाही. ही यादी `internal/config` मधील `config.Reserved` आहे.
 
 ## हे कसे काम करते
 

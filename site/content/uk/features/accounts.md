@@ -1,10 +1,10 @@
 ---
 title: Керування обліковими записами
 description: "Додавайте, входьте, переглядайте, перейменовуйте, видаляйте й імпортуйте облікові записи Claude Code: ccam add, login, list, rename, remove і import."
-updated: 2026-10-19
+updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 99c931574262
+sourceHash: 9eb992214132
 ---
 
 Кожен обліковий запис ccam є окремою текою конфігурації Claude Code із власним входом. Ці команди створюють облікові записи, виконують вхід, виводять їх список, перейменовують і видаляють їх, а також реєструють теки, які у вас уже є.
@@ -49,15 +49,16 @@ $ ccam list
 | `ccam add --no-login` | Створити обліковий запис без входу; увійти пізніше через `ccam login <name>` | вимкнено |
 | `ccam add --share <item=group>` | Спільно використовувати елемент із групою або `item=local`, щоб залишити його приватним. Можна повторювати | `mcp`, `settings`, `memory`, `extensions` у `default`; `history` локально |
 | `ccam add --shortcut <command>` | Також створити цю коротку команду в `~/.local/bin` | немає |
+| `ccam add --api --key-from <source>` | Обліковий запис, який використовує ключ API замість входу; див. [Облікові записи з ключем API](/features/api) | вимкнено |
 | `ccam list --json` | Вивести облікові записи у форматі JSON | вимкнено |
 | `ccam remove -y`, `--yes` | Видалити без запитання | вимкнено |
 | `ccam import --name <name>` | Назва облікового запису для вказаної теки | виводиться з назви теки |
 | `ccam import -y`, `--yes` | Імпортувати кожну знайдену теку без запитання | вимкнено |
 | `--dry-run` | Враховується командами `ccam list` і `ccam completion`, які нічого не змінюють. Відхиляється командами `add`, `login`, `logout`, `use`, `rename`, `remove` і `import` з повідомленням `` --dry-run is not supported by `ccam add`; nothing was changed `` (з назвою команди) | вимкнено |
 
-`ccam login`, `ccam logout`, `ccam use` і `ccam rename` не мають власних параметрів. `ccam completion` приймає `bash` або `zsh`; будь-що інше завершується помилкою `only bash and zsh are supported`.
+`ccam login`, `ccam logout`, `ccam use` і `ccam rename` не мають власних параметрів. `ccam completion` приймає `bash`, `zsh` або `powershell`; будь-що інше завершується помилкою `only bash, zsh and powershell are supported`.
 
-Назви облікових записів мають від 1 до 32 символів із `a-z`, `0-9`, `-` і `_` та починаються з літери або цифри. Назва не може складатися лише з цифр, бо `ccam 2` означає слот 2. Назва також не може збігатися з командою ccam (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`), тож `ccam <name>` ніколи не буває неоднозначним. Цей список міститься в `config.Reserved` у `internal/config`.
+Назви облікових записів мають від 1 до 32 символів із `a-z`, `0-9`, `-` і `_` та починаються з літери або цифри. Назва не може складатися лише з цифр, бо `ccam 2` означає слот 2. Назва також не може збігатися з командою ccam (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`, `folder`, `pick`, `ext`), тож `ccam <name>` ніколи не буває неоднозначним. Цей список міститься в `config.Reserved` у `internal/config`.
 
 ## Як це працює
 

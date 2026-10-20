@@ -5,7 +5,7 @@ description: ccam 的所有命令和选项，从 ccam add、ccam <name> 到 ccam
 updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 5d3275878535
+sourceHash: da2594c672bc
 ---
 
 在命令前加上 `--dry-run`，可以查看它会做什么而不实际执行，例如 `ccam --dry-run work`。它适用于启动 Claude Code（`ccam <name>`、`ccam run`、`ccam next`）以及 `share`、`migrate`、`shortcut`、`update` 和 `doctor --fix`。其他会做出更改的命令会拒绝它，而不会执行。
@@ -39,9 +39,12 @@ ccam add ci --no-login        # log in later with: ccam login ci
 ccam rename work job
 ccam remove side              # folder moves to ~/.local/share/ccam/trash
 ccam import ~/.claude-old --name old
+ccam add gw --api --base-url https://llm.example.com --auth bearer --key-from env:GW_KEY
 ```
 
 不指定文件夹的 `ccam import` 会查找 `~/.claude` 和 `~/.claude-*`，并逐个询问。导入的文件夹在原位置注册；ccam 从不移动或复制登录信息。
+
+`ccam add --api` 会添加一个使用 API 密钥而不是 Claude 登录的账号；ccam 在每次启动时读取密钥，从不保存它。参见 [API 密钥账号](/features/api)。
 
 当 Claude Code 正以某个账号运行时，`ccam rename`、`ccam remove` 和 `ccam share` 会拒绝更改该账号。请先退出该会话。
 
@@ -105,7 +108,12 @@ ccam usage --watch   # refresh every 60 seconds
 ccam usage --json
 ccam next --continue
 ccam next --auto
+ccam next --auto --max-usage 80 --wait
+ccam pick                       # the account with the most room, for a script
+ccam "$(ccam pick)" -p "…"      # start a worker on it
 ```
+
+`next --auto`、`--fallback` 和 `ccam pick` 的选择方式相同：优先选择低于 `auto_max_usage`（`config.toml`，默认 100）的账号，按 `auto_strategy`（`headroom` 或 `expiring`）选择，并计入 `--model` 的每周时间窗口，从不选择已达 100% 的账号。当没有可选的账号时，它们以退出码 75 退出，或者在使用 `--wait` 时等待第一个账号重置。参见[切换到下一个账号](/features/next)和[为脚本选择账号](/features/pick)。
 
 ## 维护
 
@@ -113,6 +121,7 @@ ccam next --auto
 ccam doctor          # check
 ccam doctor --fix    # repair what is safe to repair, with backups
 ccam statusline install
+ccam ext             # skills, commands, MCP servers and hooks of every account, and problems
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release

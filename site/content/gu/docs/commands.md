@@ -5,7 +5,7 @@ description: ccam ના બધા કમાન્ડ અને ઓપ્શન,
 updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 5d3275878535
+sourceHash: da2594c672bc
 ---
 
 કોઈ કમાન્ડ ખરેખર ચલાવ્યા વગર તે શું કરશે તે જોવા માટે તેની આગળ `--dry-run` મૂકો, ઉદાહરણ તરીકે `ccam --dry-run work`. તે Claude Code શરૂ કરતી વખતે (`ccam <name>`, `ccam run`, `ccam next`) અને `share`, `migrate`, `shortcut`, `update` તથા `doctor --fix` સાથે કામ કરે છે. કંઈક બદલતા બીજા કમાન્ડ ચાલવાને બદલે તેનો ઇનકાર કરે છે.
@@ -39,9 +39,12 @@ ccam add ci --no-login        # log in later with: ccam login ci
 ccam rename work job
 ccam remove side              # folder moves to ~/.local/share/ccam/trash
 ccam import ~/.claude-old --name old
+ccam add gw --api --base-url https://llm.example.com --auth bearer --key-from env:GW_KEY
 ```
 
 ફોલ્ડર વગરનું `ccam import` `~/.claude` અને `~/.claude-*` શોધે છે અને દરેક વિશે પૂછે છે. ઇમ્પોર્ટ કરેલાં ફોલ્ડર જ્યાં છે ત્યાં જ રજિસ્ટર થાય છે; ccam ક્યારેય લૉગિન ખસેડતું કે કૉપિ કરતું નથી.
+
+`ccam add --api` એવું એકાઉન્ટ ઉમેરે છે જે Claude લૉગિનને બદલે API key વાપરે છે; ccam દરેક લૉન્ચ વખતે key વાંચે છે અને તેને ક્યારેય સેવ કરતું નથી. [API key એકાઉન્ટ](/features/api) જુઓ.
 
 Claude Code કોઈ એકાઉન્ટ તરીકે ચાલી રહ્યું હોય ત્યારે `ccam rename`, `ccam remove` અને `ccam share` તે એકાઉન્ટમાં ફેરફાર કરવાનો ઇનકાર કરે છે. પહેલાં સેશન બંધ કરો.
 
@@ -105,7 +108,12 @@ ccam usage --watch   # refresh every 60 seconds
 ccam usage --json
 ccam next --continue
 ccam next --auto
+ccam next --auto --max-usage 80 --wait
+ccam pick                       # the account with the most room, for a script
+ccam "$(ccam pick)" -p "…"      # start a worker on it
 ```
+
+`next --auto`, `--fallback` અને `ccam pick` એક જ રીતે પસંદ કરે છે: પહેલાં `auto_max_usage` (`config.toml`, ડિફૉલ્ટ 100) થી નીચેનાં, `auto_strategy` (`headroom` કે `expiring`) પ્રમાણે, `--model` ની સાપ્તાહિક વિન્ડો ગણીને, અને 100% પરનું એકાઉન્ટ ક્યારેય નહીં. કોઈ પસંદ ન થઈ શકે ત્યારે તેઓ code 75 સાથે બહાર નીકળે છે, અથવા `--wait` સાથે પહેલું એકાઉન્ટ રીસેટ થાય તેની રાહ જુએ છે. જુઓ [આગલા એકાઉન્ટ પર સ્વિચ કરવું](/features/next) અને [scripts માટે એકાઉન્ટ પસંદ કરવું](/features/pick).
 
 ## જાળવણી
 
@@ -113,6 +121,7 @@ ccam next --auto
 ccam doctor          # check
 ccam doctor --fix    # repair what is safe to repair, with backups
 ccam statusline install
+ccam ext             # skills, commands, MCP servers and hooks of every account, and problems
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release

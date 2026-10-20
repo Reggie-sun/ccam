@@ -5,7 +5,7 @@ description: ccam add, ccam <name>부터 ccam usage, ccam next, ccam doctor까�
 updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 5d3275878535
+sourceHash: da2594c672bc
 ---
 
 명령 앞에 `--dry-run`을 붙이면 실제로 실행하지 않고 무엇을 할지만 보여 줍니다(예: `ccam --dry-run work`). Claude Code를 시작할 때(`ccam <name>`, `ccam run`, `ccam next`)와 `share`, `migrate`, `shortcut`, `update`, `doctor --fix`에서 쓸 수 있습니다. 무언가를 바꾸는 다른 명령은 실행하지 않고 이 옵션을 거부합니다.
@@ -39,9 +39,12 @@ ccam add ci --no-login        # log in later with: ccam login ci
 ccam rename work job
 ccam remove side              # folder moves to ~/.local/share/ccam/trash
 ccam import ~/.claude-old --name old
+ccam add gw --api --base-url https://llm.example.com --auth bearer --key-from env:GW_KEY
 ```
 
 폴더를 지정하지 않고 `ccam import`를 실행하면 `~/.claude`와 `~/.claude-*`를 찾아 폴더마다 하나씩 물어봅니다. 가져온 폴더는 원래 위치에서 그대로 등록되며, ccam은 로그인 정보를 절대 옮기거나 복사하지 않습니다.
+
+`ccam add --api`는 Claude 로그인 대신 API 키를 쓰는 계정을 추가합니다. ccam은 실행할 때마다 키를 읽으며 절대 저장하지 않습니다. [API 키 계정](/features/api)을 참고하세요.
 
 `ccam rename`, `ccam remove`, `ccam share`는 어떤 계정으로 Claude Code가 실행 중이면 그 계정을 바꾸지 않고 거부합니다. 먼저 세션을 종료하세요.
 
@@ -105,7 +108,12 @@ ccam usage --watch   # refresh every 60 seconds
 ccam usage --json
 ccam next --continue
 ccam next --auto
+ccam next --auto --max-usage 80 --wait
+ccam pick                       # the account with the most room, for a script
+ccam "$(ccam pick)" -p "…"      # start a worker on it
 ```
+
+`next --auto`, `--fallback`, `ccam pick`은 같은 방식으로 고릅니다. `auto_max_usage`(`config.toml`, 기본값 100) 미만인 계정을 먼저, `auto_strategy`(`headroom` 또는 `expiring`)에 따라 고르며, `--model`의 주간 구간도 따지고, 100%인 계정은 절대 고르지 않습니다. 고를 수 있는 계정이 없으면 종료 코드 75로 끝나며, `--wait`를 주면 첫 번째 계정이 초기화될 때까지 기다립니다. [다음 계정으로 전환](/features/next)과 [스크립트용 계정 고르기](/features/pick)를 참고하세요.
 
 ## 유지 관리
 
@@ -113,6 +121,7 @@ ccam next --auto
 ccam doctor          # check
 ccam doctor --fix    # repair what is safe to repair, with backups
 ccam statusline install
+ccam ext             # skills, commands, MCP servers and hooks of every account, and problems
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release

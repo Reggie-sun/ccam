@@ -5,7 +5,7 @@ description: Kila amri na chaguo la ccam, kuanzia ccam add na ccam <name> hadi c
 updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 5d3275878535
+sourceHash: da2594c672bc
 ---
 
 Weka `--dry-run` kabla ya amri ili kuona itakachofanya bila kukifanya, kwa mfano `ccam --dry-run work`. Inafanya kazi unapoanzisha Claude Code (`ccam <name>`, `ccam run`, `ccam next`) na pamoja na `share`, `migrate`, `shortcut`, `update` na `doctor --fix`. Amri nyingine zinazobadilisha kitu huikataa badala ya kufanya kazi.
@@ -39,9 +39,12 @@ ccam add ci --no-login        # log in later with: ccam login ci
 ccam rename work job
 ccam remove side              # folder moves to ~/.local/share/ccam/trash
 ccam import ~/.claude-old --name old
+ccam add gw --api --base-url https://llm.example.com --auth bearer --key-from env:GW_KEY
 ```
 
 `ccam import` bila folda hutafuta `~/.claude` na `~/.claude-*` na huuliza kuhusu kila moja. Folda zilizoingizwa husajiliwa pale zilipo; ccam kamwe haihamishi wala kunakili taarifa za kuingia.
+
+`ccam add --api` huongeza akaunti inayotumia API key badala ya kuingia kwa Claude; ccam husoma key kila inapoanzishwa na kamwe haiihifadhi. Tazama [Akaunti za API key](/features/api).
 
 `ccam rename`, `ccam remove` na `ccam share` hukataa kubadilisha akaunti wakati Claude Code inaendeshwa kama akaunti hiyo. Funga kipindi (session) kwanza.
 
@@ -105,7 +108,12 @@ ccam usage --watch   # refresh every 60 seconds
 ccam usage --json
 ccam next --continue
 ccam next --auto
+ccam next --auto --max-usage 80 --wait
+ccam pick                       # the account with the most room, for a script
+ccam "$(ccam pick)" -p "…"      # start a worker on it
 ```
+
+`next --auto`, `--fallback` na `ccam pick` huchagua kwa njia ile ile: kwanza zilizo chini ya `auto_max_usage` (`config.toml`, chaguo-msingi 100), kwa `auto_strategy` (`headroom` au `expiring`), zikihesabu kipindi cha wiki cha `--model`, na kamwe si akaunti iliyo kwenye 100%. Isipowezekana kuchagua yoyote, hutoka na msimbo 75, au kwa `--wait` husubiri kipindi cha akaunti ya kwanza kianze upya. Tazama [Kubadili kwenda akaunti inayofuata](/features/next) na [Kuchagua akaunti kwa ajili ya script](/features/pick).
 
 ## Matengenezo
 
@@ -113,6 +121,7 @@ ccam next --auto
 ccam doctor          # check
 ccam doctor --fix    # repair what is safe to repair, with backups
 ccam statusline install
+ccam ext             # skills, commands, MCP servers and hooks of every account, and problems
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release

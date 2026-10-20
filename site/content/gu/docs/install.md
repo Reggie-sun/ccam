@@ -5,7 +5,7 @@ description: Linux, macOS કે Windows પર ccam એક કમાન્ડ�
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 07eadc0769c8
+sourceHash: aea4984c1576
 ---
 
 Linux કે macOS પર ટર્મિનલમાં આ ચલાવો:
@@ -71,6 +71,16 @@ ccam completion powershell >> $PROFILE
 ```
 
 Completion `ccam` ના બધા કમાન્ડ અને વિકલ્પોને આવરી લે છે, એકાઉન્ટનાં નામ સહિત.
+
+## Claude Code plugin
+
+ccam plugin Claude Code ને પોતાને ccam વાપરતાં શીખવે છે: કયા એકાઉન્ટમાં જગ્યા છે તે તપાસવું, `ccam pick` વડે જુદાં એકાઉન્ટ પર સમાંતર `claude -p` workers શરૂ કરવા, અને `ccam ext` વડે ખૂટતી skill કે MCP સર્વર સમજાવવું. તેને Claude Code ની અંદર ઇન્સ્ટૉલ કરો:
+
+```text
+/plugin install ccam --marketplace jhyunwoo/ccam
+```
+
+તે એક skill અને બે commands ઉમેરે છે, `/ccam:usage` અને `/ccam:ext`. skill ક્યારેય લૉગિન કરતા કે ફાઇલો ખસેડતા commands ચલાવતી નથી; તેના બદલે તે તેમને સૂચવે છે.
 
 ## ઇન્સ્ટૉલેશન તપાસો
 

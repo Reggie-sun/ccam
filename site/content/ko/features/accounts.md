@@ -1,10 +1,10 @@
 ---
 title: 계정 관리
-description: ccam add, ccam login, ccam list, ccam rename, ccam remove, ccam import로 Claude Code 계정을 추가하고, 로그인하고, 확인하고, 이름을 바꾸고, 삭제하고, 가져옵니다.
-updated: 2026-10-19
+description: ccam add, ccam login, ccam list, ccam rename, ccam remove, ccam import로 Claude Code 계정을 추가, 로그인, 확인, 이름 변경, 삭제하고 가져옵니다.
+updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 99c931574262
+sourceHash: 9eb992214132
 ---
 
 ccam 계정은 각각 자체 로그인 정보를 가진 별도의 Claude Code 설정 폴더입니다. 다음 명령으로 계정을 만들고, 로그인하고, 목록을 보고, 이름을 바꾸고, 삭제하며, 이미 있는 폴더를 등록할 수 있습니다.
@@ -49,15 +49,16 @@ $ ccam list
 | `ccam add --no-login` | 로그인하지 않고 계정을 만듭니다. 나중에 `ccam login <name>`으로 로그인합니다 | 꺼짐 |
 | `ccam add --share <item=group>` | 항목을 그룹과 공유합니다. `item=local`이면 공유하지 않습니다. 여러 번 지정할 수 있습니다 | `mcp`, `settings`, `memory`, `extensions`는 `default`, `history`는 로컬 |
 | `ccam add --shortcut <command>` | `~/.local/bin`에 이 단축 명령도 만듭니다 | 없음 |
+| `ccam add --api --key-from <source>` | 로그인 대신 API 키를 쓰는 계정. [API 키 계정](/features/api) 참고 | 꺼짐 |
 | `ccam list --json` | 계정을 JSON으로 출력합니다 | 꺼짐 |
 | `ccam remove -y`, `--yes` | 묻지 않고 삭제합니다 | 꺼짐 |
 | `ccam import --name <name>` | 지정한 폴더의 계정 이름 | 폴더 이름에서 만듦 |
 | `ccam import -y`, `--yes` | 찾은 폴더를 모두 묻지 않고 가져옵니다 | 꺼짐 |
 | `--dry-run` | 아무것도 바꾸지 않는 `ccam list`와 `ccam completion`에서 지원합니다. `add`, `login`, `logout`, `use`, `rename`, `remove`, `import`는 `` --dry-run is not supported by `ccam add`; nothing was changed ``(해당 명령 이름이 들어감)를 출력하고 거부합니다 | 꺼짐 |
 
-`ccam login`, `ccam logout`, `ccam use`, `ccam rename`에는 자체 옵션이 없습니다. `ccam completion`은 `bash`나 `zsh`를 받으며, 그 밖의 값은 `only bash and zsh are supported`로 실패합니다.
+`ccam login`, `ccam logout`, `ccam use`, `ccam rename`에는 자체 옵션이 없습니다. `ccam completion`은 `bash`, `zsh`, `powershell`을 받으며, 그 밖의 값은 `only bash, zsh and powershell are supported`로 실패합니다.
 
-계정 이름은 `a-z`, `0-9`, `-`, `_`로 이루어진 1~32자이며, 문자나 숫자로 시작해야 합니다. `ccam 2`는 슬롯 2를 뜻하므로 숫자로만 된 이름은 쓸 수 없습니다. ccam 명령 이름(`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`)도 쓸 수 없으므로, `ccam <name>`이 모호해지는 일은 없습니다. 이 목록은 `internal/config`의 `config.Reserved`입니다.
+계정 이름은 `a-z`, `0-9`, `-`, `_`로 이루어진 1~32자이며, 문자나 숫자로 시작해야 합니다. `ccam 2`는 슬롯 2를 뜻하므로 숫자로만 된 이름은 쓸 수 없습니다. ccam 명령 이름(`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`, `folder`, `pick`, `ext`)도 쓸 수 없으므로, `ccam <name>`이 모호해지는 일은 없습니다. 이 목록은 `internal/config`의 `config.Reserved`입니다.
 
 ## 동작 방식
 

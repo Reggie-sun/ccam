@@ -153,6 +153,8 @@
     "shims": "Ricrea i link delle scorciatoie di tutti gli account",
     "shortcut": "Mostra, crea, rinomina o rimuove la scorciatoia di un account, come ccwork",
     "folder": "Usa un account in una cartella e nelle sue sottocartelle quando non viene indicato alcun account",
+    "pick": "Stampa l'account con più margine, per script e worker in parallelo",
+    "ext": "Mostra skill, comandi, plugin, server MCP e hook caricati da ogni account",
     "update": "Aggiorna ccam all'ultima release dopo averne verificato il checksum",
     "completion": "Stampa il completamento per bash, zsh o PowerShell"
   },

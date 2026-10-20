@@ -4,7 +4,7 @@ description: "ccam usage affiche d'un coup les limites sur 5 heures et hebdomada
 updated: 2026-10-20
 order: 7
 translation: machine
-sourceHash: f08a2fdc6f0b
+sourceHash: 525174ceed0d
 ---
 
 `ccam usage` indique quelle part des limites sur 5 heures et sur la semaine chaque compte a utilisée, avec le temps restant avant la réinitialisation de chaque fenêtre. Utilisez-le avant de commencer une longue tâche, ou quand Claude Code vous signale qu'une limite approche, pour voir quel compte a encore de la marge. `ccam statusline` est la commande de ligne d'état pour Claude Code : elle affiche le nom du compte et l'utilisation dans Claude Code et enregistre les chiffres pour `ccam usage`.
@@ -74,7 +74,7 @@ Pour un compte, `Fetcher.Fetch` effectue ces vérifications dans l'ordre :
 2. Sauf si `--no-cache` est défini, un résultat en direct dans `~/.local/state/ccam/usage/<name>.json` datant de moins de 60 secondes (`CacheTTL`) est renvoyé tel quel. Lancer `ccam usage` deux fois de suite coûte une seule requête par compte.
 3. `readCredentials()` lit `.credentials.json` (ou le trousseau macOS) sans le modifier, et seule la clé `claudeAiOauth` est décodée. L'absence de connexion par abonnement donne `not logged in`, ou `no limits (API)` quand `.claude.json` contient une clé d'API.
 4. Un jeton d'accès expiré n'est pas utilisé. Sans `--refresh`, le compte affiche ses chiffres enregistrés, marqués comme expirés.
-5. Sinon, ccam appelle le point de terminaison. Un 401 ou un 403 compte comme une connexion expirée, tout autre statut ou un corps illisible compte comme une erreur, et les deux se rabattent sur les chiffres enregistrés.
+5. Sinon, ccam appelle le point de terminaison. Un 401 ou un 403 compte comme une connexion expirée, tout autre statut ou un corps illisible compte comme une erreur, et les deux se rabattent sur les chiffres enregistrés. Un 429 signifie que le point de terminaison est sollicité trop souvent : ccam écrit `<name>.pause` avec l'heure à laquelle redemander (`Retry-After`, ou 5 minutes, une heure au plus), affiche les chiffres enregistrés avec `rate limited by the usage endpoint; asking again after 15:10` et n'appelle plus le point de terminaison pour ce compte d'ici là, même avec `--no-cache`. Réessayer tout de suite ne ferait que prolonger la limite.
 6. Une réponse valide est écrite dans `<name>.json` avec l'heure de la mesure.
 
 `fallback()` lit à la fois `<name>.json` et `<name>.statusline.json` et garde le plus récent. Avant d'afficher des chiffres enregistrés, il vérifie l'heure de réinitialisation de chaque fenêtre : une fenêtre réinitialisée depuis l'enregistrement des chiffres affiche 0 %, car l'ancien pourcentage n'est plus valable. C'est pourquoi `personal` ci-dessus affiche `0%` sans heure de réinitialisation.

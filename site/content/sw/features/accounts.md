@@ -1,10 +1,10 @@
 ---
 title: Kusimamia akaunti
 description: Ongeza, ingia, orodhesha, badilisha jina, ondoa na ingiza akaunti za Claude Code kwa ccam add, ccam login, ccam list, ccam rename, ccam remove na ccam import.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 99c931574262
+sourceHash: 9eb992214132
 ---
 
 Kila akaunti ya ccam ni folda tofauti ya usanidi wa Claude Code yenye taarifa zake za kuingia. Amri hizi huunda, huingiza, huorodhesha, hubadilisha majina na huondoa akaunti, na husajili folda ambazo tayari unazo.
@@ -49,15 +49,16 @@ Kwa `--json`, kila akaunti ni kitu chenye `slot`, `shortcut`, `name`, `email`, `
 | `ccam add --no-login` | Unda akaunti bila kuingia; ingia baadaye kwa `ccam login <name>` | imezimwa |
 | `ccam add --share <item=group>` | Shiriki kipengele na kikundi, au `item=local` ili kukiweka binafsi. Kinaweza kurudiwa | `mcp`, `settings`, `memory`, `extensions` katika `default`; `history` ya ndani |
 | `ccam add --shortcut <command>` | Pia unda amri hii ya njia fupi katika `~/.local/bin` | hakuna |
+| `ccam add --api --key-from <source>` | Akaunti inayotumia API key badala ya kuingia; tazama [Akaunti za API key](/features/api) | imezimwa |
 | `ccam list --json` | Chapisha akaunti kama JSON | imezimwa |
 | `ccam remove -y`, `--yes` | Ondoa bila kuuliza | imezimwa |
 | `ccam import --name <name>` | Jina la akaunti kwa folda unayotoa | hutokana na jina la folda |
 | `ccam import -y`, `--yes` | Ingiza kila folda iliyopatikana bila kuuliza | imezimwa |
 | `--dry-run` | Hukubaliwa na `ccam list` na `ccam completion`, ambazo hazibadilishi kitu. Hukataliwa na `add`, `login`, `logout`, `use`, `rename`, `remove` na `import`, kwa ujumbe `` --dry-run is not supported by `ccam add`; nothing was changed `` (ukitaja amri husika) | imezimwa |
 
-`ccam login`, `ccam logout`, `ccam use` na `ccam rename` hazina chaguo zao wenyewe. `ccam completion` hupokea `bash` au `zsh`; kitu kingine chochote hushindwa kwa `only bash and zsh are supported`.
+`ccam login`, `ccam logout`, `ccam use` na `ccam rename` hazina chaguo zao wenyewe. `ccam completion` hupokea `bash`, `zsh` au `powershell`; kitu kingine chochote hushindwa kwa `only bash, zsh and powershell are supported`.
 
-Majina ya akaunti yana herufi 1 hadi 32 za `a-z`, `0-9`, `-` na `_`, yakianza na herufi au tarakimu. Jina haliwezi kuwa tarakimu tu, kwa sababu `ccam 2` inamaanisha namba 2. Jina pia haliwezi kuwa amri ya ccam (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`), ili `ccam <name>` isiwe na utata kamwe. Orodha hiyo ni `config.Reserved` katika `internal/config`.
+Majina ya akaunti yana herufi 1 hadi 32 za `a-z`, `0-9`, `-` na `_`, yakianza na herufi au tarakimu. Jina haliwezi kuwa tarakimu tu, kwa sababu `ccam 2` inamaanisha namba 2. Jina pia haliwezi kuwa amri ya ccam (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`, `folder`, `pick`, `ext`), ili `ccam <name>` isiwe na utata kamwe. Orodha hiyo ni `config.Reserved` katika `internal/config`.
 
 ## Jinsi inavyofanya kazi
 

@@ -1,10 +1,10 @@
 ---
 title: 管理帳號
 description: 用 ccam add、ccam login、ccam list、ccam rename、ccam remove 和 ccam import 新增、登入、列出、重新命名、移除和匯入 Claude Code 帳號。
-updated: 2026-10-19
+updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 99c931574262
+sourceHash: 9eb992214132
 ---
 
 每個 ccam 帳號都是一個獨立的 Claude Code 設定資料夾，有自己的登入資訊。這些指令用來建立、登入、列出、重新命名和移除帳號，也能登錄你已經有的資料夾。
@@ -49,15 +49,16 @@ $ ccam list
 | `ccam add --no-login` | 建立帳號但不登入；之後再用 `ccam login <name>` 登入 | 關閉 |
 | `ccam add --share <item=group>` | 與某個群組共用一個項目，或用 `item=local` 讓它保持私有。可重複指定 | `mcp`、`settings`、`memory`、`extensions` 在 `default`；`history` 為 local |
 | `ccam add --shortcut <command>` | 同時在 `~/.local/bin` 中建立這個快捷指令 | 無 |
+| `ccam add --api --key-from <source>` | 使用 API 金鑰而不是登入的帳號；請參閱 [API 金鑰帳號](/features/api) | 關閉 |
 | `ccam list --json` | 以 JSON 輸出帳號 | 關閉 |
 | `ccam remove -y`、`--yes` | 不詢問直接移除 | 關閉 |
 | `ccam import --name <name>` | 你指定的資料夾要使用的帳號名稱 | 從資料夾名稱推導 |
 | `ccam import -y`、`--yes` | 不詢問直接匯入找到的每個資料夾 | 關閉 |
 | `--dry-run` | `ccam list` 和 `ccam completion` 不會變更任何東西，所以接受它。`add`、`login`、`logout`、`use`、`rename`、`remove` 和 `import` 會拒絕它，並顯示 `` --dry-run is not supported by `ccam add`; nothing was changed ``（其中為該指令的名稱） | 關閉 |
 
-`ccam login`、`ccam logout`、`ccam use` 和 `ccam rename` 沒有自己的選項。`ccam completion` 接受 `bash` 或 `zsh`；其他值會失敗並顯示 `only bash and zsh are supported`。
+`ccam login`、`ccam logout`、`ccam use` 和 `ccam rename` 沒有自己的選項。`ccam completion` 接受 `bash`、`zsh` 或 `powershell`；其他值會失敗並顯示 `only bash, zsh and powershell are supported`。
 
-帳號名稱為 1 到 32 個字元，可使用 `a-z`、`0-9`、`-` 和 `_`，並以字母或數字開頭。名稱不能全是數字，因為 `ccam 2` 代表槽位 2。名稱也不能是 ccam 的指令（`add`、`list`、`ls`、`run`、`use`、`next`、`usage`、`u`、`share`、`mcp`、`login`、`logout`、`rename`、`remove`、`rm`、`import`、`migrate`、`doctor`、`shims`、`shortcut`、`completion`、`help`、`version`、`statusline`、`update`），所以 `ccam <name>` 永遠不會有歧義。這份清單是 `internal/config` 中的 `config.Reserved`。
+帳號名稱為 1 到 32 個字元，可使用 `a-z`、`0-9`、`-` 和 `_`，並以字母或數字開頭。名稱不能全是數字，因為 `ccam 2` 代表槽位 2。名稱也不能是 ccam 的指令（`add`、`list`、`ls`、`run`、`use`、`next`、`usage`、`u`、`share`、`mcp`、`login`、`logout`、`rename`、`remove`、`rm`、`import`、`migrate`、`doctor`、`shims`、`shortcut`、`completion`、`help`、`version`、`statusline`、`update`、`folder`、`pick`、`ext`），所以 `ccam <name>` 永遠不會有歧義。這份清單是 `internal/config` 中的 `config.Reserved`。
 
 ## 運作方式
 

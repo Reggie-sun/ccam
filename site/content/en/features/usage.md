@@ -73,7 +73,7 @@ For one account, `Fetcher.Fetch` makes these checks in order:
 2. Unless `--no-cache` is set, a live result in `~/.local/state/ccam/usage/<name>.json` younger than 60 seconds (`CacheTTL`) is returned as it is. Running `ccam usage` twice in a row costs one request per account.
 3. `readCredentials()` reads `.credentials.json` (or the macOS Keychain) without changing it, and only the `claudeAiOauth` key is decoded. No subscription login means `not logged in`, or `no limits (API)` when `.claude.json` holds an API key.
 4. An expired access token is not used. Without `--refresh`, the account shows its saved numbers marked as expired.
-5. Otherwise ccam calls the endpoint. A 401 or 403 counts as an expired login, any other status or a body it cannot read counts as an error, and both fall back to saved numbers.
+5. Otherwise ccam calls the endpoint. A 401 or 403 counts as an expired login, any other status or a body it cannot read counts as an error, and both fall back to saved numbers. A 429 means the endpoint is being asked too often: ccam writes `<name>.pause` with the time to ask again (`Retry-After`, or 5 minutes, at most an hour), shows saved numbers with `rate limited by the usage endpoint; asking again after 15:10`, and does not call the endpoint for that account until then, even with `--no-cache`. Retrying at once would only keep the limit going.
 6. A good answer is written to `<name>.json` with the time it was measured.
 
 `fallback()` reads both `<name>.json` and `<name>.statusline.json` and keeps the newer one. Before it shows saved numbers, it checks each window's reset time: a window that has reset since the numbers were saved shows 0%, because the old percentage no longer holds. That is why `personal` above shows `0%` with no reset time.

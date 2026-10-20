@@ -1,10 +1,10 @@
 ---
 title: Mga usage limit
-description: Ipinapakita ng ccam usage ang 5-oras at lingguhang limit ng bawat account nang sabay, at inilalagay ng ccam statusline ang account at usage nito sa Claude Code.
+description: Ipinapakita ng ccam usage ang 5-oras at lingguhang limit ng bawat account nang sabay; inilalagay ng ccam statusline ang account at usage nito sa Claude Code.
 updated: 2026-10-20
 order: 7
 translation: machine
-sourceHash: f08a2fdc6f0b
+sourceHash: 525174ceed0d
 ---
 
 Ipinapakita ng `ccam usage` kung gaano kalaki na ang nagamit ng bawat account sa 5-oras at lingguhang limit, kasama ang oras bago mag-reset ang bawat window. Gamitin ito bago ka magsimula ng mahabang gawain, o kapag sinabi ng Claude Code na malapit na ang isang limit, para makita kung aling account ang may natitira pa. Ang `ccam statusline` ay ang status line command para sa Claude Code: ipinapakita nito ang pangalan ng account at usage sa loob ng Claude Code at sine-save ang mga numero para sa `ccam usage`.
@@ -74,7 +74,7 @@ Para sa isang account, ginagawa ng `Fetcher.Fetch` ang mga pagsusuring ito nang 
 2. Maliban kung nakatakda ang `--no-cache`, ibinabalik nang walang pagbabago ang live na resulta sa `~/.local/state/ccam/usage/<name>.json` na wala pang 60 segundo (`CacheTTL`). Isang request bawat account lang ang gastos kapag dalawang beses na sunod na pinatakbo ang `ccam usage`.
 3. Binabasa ng `readCredentials()` ang `.credentials.json` (o ang macOS Keychain) nang hindi ito binabago, at ang key na `claudeAiOauth` lang ang dine-decode. Kapag walang subscription login, `not logged in` ang resulta, o `no limits (API)` kapag may API key ang `.claude.json`.
 4. Hindi ginagamit ang expired na access token. Kapag walang `--refresh`, ipinapakita ng account ang mga naka-save na numero nito na may markang expired.
-5. Kung hindi, tinatawag ng ccam ang endpoint. Itinuturing na expired na login ang 401 o 403, itinuturing na error ang anumang ibang status o body na hindi nito mabasa, at parehong bumabalik ang mga ito sa mga naka-save na numero.
+5. Kung hindi, tinatawag ng ccam ang endpoint. Itinuturing na expired na login ang 401 o 403, itinuturing na error ang anumang ibang status o body na hindi nito mabasa, at parehong bumabalik ang mga ito sa mga naka-save na numero. Ang 429 ay nangangahulugang masyadong madalas tinatanong ang endpoint: isinusulat ng ccam ang `<name>.pause` kasama ang oras kung kailan magtatanong ulit (`Retry-After`, o 5 minuto, hindi hihigit sa isang oras), ipinapakita ang mga naka-save na numero na may `rate limited by the usage endpoint; asking again after 15:10`, at hindi tinatawag ang endpoint para sa account na iyon hanggang sa oras na iyon, kahit may `--no-cache`. Lalo lang mapapatagal ng agarang pagsubok ulit ang limit.
 6. Isinusulat ang maayos na sagot sa `<name>.json` kasama ang oras ng pagsukat.
 
 Binabasa ng `fallback()` ang parehong `<name>.json` at `<name>.statusline.json` at pinapanatili ang mas bago. Bago nito ipakita ang mga naka-save na numero, sinusuri nito ang oras ng reset ng bawat window: nagpapakita ng 0% ang window na nag-reset na mula nang i-save ang mga numero, dahil hindi na totoo ang lumang porsiyento. Kaya ang `personal` sa itaas ay nagpapakita ng `0%` na walang oras ng reset.

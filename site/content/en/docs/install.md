@@ -72,6 +72,16 @@ ccam completion powershell >> $PROFILE
 
 Completion covers every `ccam` command and option, including account names.
 
+## Claude Code plugin
+
+The ccam plugin teaches Claude Code itself to use ccam: to check which account has room, to start parallel `claude -p` workers on different accounts with `ccam pick`, and to explain a missing skill or MCP server with `ccam ext`. Install it inside Claude Code:
+
+```text
+/plugin install ccam --marketplace jhyunwoo/ccam
+```
+
+It adds a skill and two commands, `/ccam:usage` and `/ccam:ext`. The skill never runs commands that log in or move files; it suggests them instead.
+
 ## Check the installation
 
 ```sh

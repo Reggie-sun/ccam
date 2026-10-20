@@ -4,7 +4,7 @@ description: ccam usage는 모든 계정의 5시간 한도와 주간 한도를 �
 updated: 2026-10-20
 order: 7
 translation: machine
-sourceHash: f08a2fdc6f0b
+sourceHash: 525174ceed0d
 ---
 
 `ccam usage`는 각 계정이 5시간 한도와 주간 한도를 얼마나 썼는지, 각 구간이 초기화되기까지 얼마나 남았는지 보여 줍니다. 긴 작업을 시작하기 전이나 Claude Code가 한도가 가까워졌다고 알릴 때 실행해, 어느 계정에 여유가 남았는지 확인하세요. `ccam statusline`은 Claude Code의 상태 표시줄 명령입니다. Claude Code 안에 계정 이름과 사용량을 표시하고, `ccam usage`가 쓸 수 있도록 수치를 저장합니다.
@@ -74,7 +74,7 @@ $ ccam usage
 2. `--no-cache`가 없으면, `~/.local/state/ccam/usage/<name>.json`에 있는 실시간 결과가 60초(`CacheTTL`)보다 최근이면 그대로 반환합니다. `ccam usage`를 연달아 두 번 실행해도 요청은 계정당 한 번입니다.
 3. `readCredentials()`가 `.credentials.json`(또는 macOS 키체인)을 바꾸지 않고 읽으며, `claudeAiOauth` 키만 해석합니다. 구독 로그인이 없으면 `not logged in`이고, `.claude.json`에 API 키가 있으면 `no limits (API)`입니다.
 4. 만료된 액세스 토큰은 쓰지 않습니다. `--refresh`가 없으면 그 계정은 만료 표시와 함께 저장된 수치를 보여 줍니다.
-5. 그렇지 않으면 ccam이 엔드포인트를 호출합니다. 401이나 403은 로그인 만료로, 그 밖의 상태 코드나 읽을 수 없는 본문은 오류로 처리하며, 둘 다 저장된 수치로 대신합니다.
+5. 그렇지 않으면 ccam이 엔드포인트를 호출합니다. 401이나 403은 로그인 만료로, 그 밖의 상태 코드나 읽을 수 없는 본문은 오류로 처리하며, 둘 다 저장된 수치로 대신합니다. 429는 엔드포인트에 너무 자주 묻고 있다는 뜻입니다. ccam은 `<name>.pause`에 다시 물어볼 시각(`Retry-After`, 없으면 5분, 최대 1시간)을 기록하고, 저장된 수치를 `rate limited by the usage endpoint; asking again after 15:10`과 함께 보여 주며, 그때까지는 `--no-cache`를 붙여도 그 계정의 엔드포인트를 호출하지 않습니다. 곧바로 다시 시도하면 한도가 계속 이어질 뿐입니다.
 6. 정상 응답은 측정 시각과 함께 `<name>.json`에 기록합니다.
 
 `fallback()`은 `<name>.json`과 `<name>.statusline.json`을 모두 읽고 더 최근 것을 씁니다. 저장된 수치를 보여 주기 전에 각 구간의 초기화 시각을 확인해, 수치를 저장한 뒤 초기화된 구간은 0%로 표시합니다. 이전 사용률은 더 이상 맞지 않기 때문입니다. 위 예시에서 `personal`이 초기화 시각 없이 `0%`로 표시되는 이유가 이것입니다.

@@ -1,10 +1,10 @@
 ---
 title: Hesapları yönetme
 description: Claude Code hesaplarını ccam add, login, list, rename, remove ve import ile ekleyin, giriş yapın, listeleyin, yeniden adlandırın, kaldırın ve içe aktarın.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 99c931574262
+sourceHash: 9eb992214132
 ---
 
 Her ccam hesabı, kendi girişine sahip ayrı bir Claude Code yapılandırma klasörüdür. Bu komutlar hesap oluşturur, hesaplarda oturum açar, hesapları listeler, yeniden adlandırır ve kaldırır; ayrıca zaten sahip olduğunuz klasörleri kaydeder.
@@ -49,15 +49,16 @@ $ ccam list
 | `ccam add --no-login` | Hesabı giriş yapmadan oluşturur; daha sonra `ccam login <name>` ile giriş yapın | kapalı |
 | `ccam add --share <item=group>` | Bir öğeyi bir grupla paylaşır ya da `item=local` ile özel tutar. Tekrarlanabilir | `default` içinde `mcp`, `settings`, `memory`, `extensions`; `history` yerel |
 | `ccam add --shortcut <command>` | Bu kısayol komutunu `~/.local/bin` içinde de oluşturur | yok |
+| `ccam add --api --key-from <source>` | Giriş yerine API anahtarı kullanan bir hesap; bkz. [API anahtarlı hesaplar](/features/api) | kapalı |
 | `ccam list --json` | Hesapları JSON olarak yazdırır | kapalı |
 | `ccam remove -y`, `--yes` | Sormadan kaldırır | kapalı |
 | `ccam import --name <name>` | Verdiğiniz klasör için hesap adı | klasör adından türetilir |
 | `ccam import -y`, `--yes` | Bulunan her klasörü sormadan içe aktarır | kapalı |
 | `--dry-run` | Hiçbir şeyi değiştirmeyen `ccam list` ve `ccam completion` bunu dikkate alır. `add`, `login`, `logout`, `use`, `rename`, `remove` ve `import` ise `` --dry-run is not supported by `ccam add`; nothing was changed `` (komutun adıyla) mesajıyla reddeder | kapalı |
 
-`ccam login`, `ccam logout`, `ccam use` ve `ccam rename` komutlarının kendi seçenekleri yoktur. `ccam completion` `bash` veya `zsh` alır; başka bir değer `only bash and zsh are supported` hatasıyla başarısız olur.
+`ccam login`, `ccam logout`, `ccam use` ve `ccam rename` komutlarının kendi seçenekleri yoktur. `ccam completion` `bash`, `zsh` veya `powershell` alır; başka bir değer `only bash, zsh and powershell are supported` hatasıyla başarısız olur.
 
-Hesap adları `a-z`, `0-9`, `-` ve `_` karakterlerinden oluşan, harf veya rakamla başlayan 1 ile 32 karakter arası adlardır. Bir ad yalnızca rakamlardan oluşamaz, çünkü `ccam 2` 2 numaralı yuva anlamına gelir. Bir ad bir ccam komutu da olamaz (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`); böylece `ccam <name>` hiçbir zaman belirsiz olmaz. Liste, `internal/config` içindeki `config.Reserved` değişkenidir.
+Hesap adları `a-z`, `0-9`, `-` ve `_` karakterlerinden oluşan, harf veya rakamla başlayan 1 ile 32 karakter arası adlardır. Bir ad yalnızca rakamlardan oluşamaz, çünkü `ccam 2` 2 numaralı yuva anlamına gelir. Bir ad bir ccam komutu da olamaz (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`, `folder`, `pick`, `ext`); böylece `ccam <name>` hiçbir zaman belirsiz olmaz. Liste, `internal/config` içindeki `config.Reserved` değişkenidir.
 
 ## Nasıl çalışır
 

@@ -5,7 +5,7 @@ description: "Linux, macOS, Windows에서 명령 하나, .deb 패키지 또는 �
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 07eadc0769c8
+sourceHash: aea4984c1576
 ---
 
 Linux나 macOS 터미널에서 다음 명령을 실행하세요.
@@ -71,6 +71,16 @@ ccam completion powershell >> $PROFILE
 ```
 
 자동완성은 계정 이름을 포함해 `ccam`의 모든 명령과 옵션을 지원합니다.
+
+## Claude Code 플러그인
+
+ccam 플러그인은 Claude Code가 직접 ccam을 쓰도록 가르칩니다. 어느 계정에 여유가 있는지 확인하고, `ccam pick`으로 여러 계정에서 병렬 `claude -p` 워커를 시작하고, 스킬이나 MCP 서버가 보이지 않는 이유를 `ccam ext`로 설명합니다. Claude Code 안에서 설치하세요.
+
+```text
+/plugin install ccam --marketplace jhyunwoo/ccam
+```
+
+스킬 하나와 명령 두 개(`/ccam:usage`, `/ccam:ext`)가 추가됩니다. 스킬은 로그인하거나 파일을 옮기는 명령을 직접 실행하지 않고, 대신 제안만 합니다.
 
 ## 설치 확인
 

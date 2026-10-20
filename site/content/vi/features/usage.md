@@ -4,7 +4,7 @@ description: "ccam usage hiển thị giới hạn 5 giờ và hàng tuần củ
 updated: 2026-10-20
 order: 7
 translation: machine
-sourceHash: f08a2fdc6f0b
+sourceHash: 525174ceed0d
 ---
 
 `ccam usage` cho biết mỗi tài khoản đã dùng bao nhiêu trong giới hạn 5 giờ và giới hạn hàng tuần, cùng thời gian cho đến khi mỗi khoảng được đặt lại. Hãy dùng nó trước khi bắt đầu một tác vụ dài, hoặc khi Claude Code báo rằng sắp chạm giới hạn, để xem tài khoản nào còn hạn mức. `ccam statusline` là lệnh dòng trạng thái cho Claude Code: nó hiển thị tên tài khoản và mức sử dụng bên trong Claude Code và lưu các con số cho `ccam usage`.
@@ -74,7 +74,7 @@ Với một tài khoản, `Fetcher.Fetch` thực hiện các kiểm tra sau theo
 2. Trừ khi đặt `--no-cache`, một kết quả trực tiếp trong `~/.local/state/ccam/usage/<name>.json` mới hơn 60 giây (`CacheTTL`) được trả về nguyên như vậy. Chạy `ccam usage` hai lần liên tiếp chỉ tốn một yêu cầu cho mỗi tài khoản.
 3. `readCredentials()` đọc `.credentials.json` (hoặc Chuỗi khóa (Keychain) của macOS) mà không thay đổi nó, và chỉ khóa `claudeAiOauth` được giải mã. Không có thông tin đăng nhập gói đăng ký nghĩa là `not logged in`, hoặc `no limits (API)` khi `.claude.json` chứa một khóa API.
 4. Access token đã hết hạn không được dùng. Không có `--refresh`, tài khoản hiển thị các con số đã lưu và được đánh dấu là đã hết hạn.
-5. Nếu không, ccam gọi endpoint. Mã 401 hoặc 403 được tính là đăng nhập hết hạn, mọi trạng thái khác hoặc nội dung không đọc được được tính là lỗi, và cả hai đều quay về các con số đã lưu.
+5. Nếu không, ccam gọi endpoint. Mã 401 hoặc 403 được tính là đăng nhập hết hạn, mọi trạng thái khác hoặc nội dung không đọc được được tính là lỗi, và cả hai đều quay về các con số đã lưu. Mã 429 nghĩa là endpoint đang bị hỏi quá thường xuyên: ccam ghi `<name>.pause` với thời điểm được hỏi lại (`Retry-After`, hoặc 5 phút, tối đa một giờ), hiển thị các con số đã lưu kèm `rate limited by the usage endpoint; asking again after 15:10`, và không gọi endpoint cho tài khoản đó cho đến lúc ấy, kể cả với `--no-cache`. Thử lại ngay chỉ khiến giới hạn kéo dài thêm.
 6. Một phản hồi hợp lệ được ghi vào `<name>.json` cùng thời điểm đo.
 
 `fallback()` đọc cả `<name>.json` lẫn `<name>.statusline.json` và giữ tệp mới hơn. Trước khi hiển thị các con số đã lưu, nó kiểm tra thời điểm đặt lại của từng khoảng: một khoảng đã được đặt lại kể từ khi các con số được lưu sẽ hiển thị 0%, vì tỷ lệ phần trăm cũ không còn đúng. Đó là lý do `personal` ở trên hiển thị `0%` mà không có thời gian đặt lại.

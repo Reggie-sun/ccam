@@ -5,7 +5,7 @@ description: Instale o ccam no Linux, macOS ou Windows com um comando, um pacote
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 07eadc0769c8
+sourceHash: aea4984c1576
 ---
 
 Execute isto em um terminal no Linux ou no macOS:
@@ -71,6 +71,16 @@ ccam completion powershell >> $PROFILE
 ```
 
 O preenchimento automático funciona para todos os comandos e opções do `ccam`, incluindo os nomes das contas.
+
+## Plugin do Claude Code
+
+O plugin do ccam ensina o próprio Claude Code a usar o ccam: a verificar qual conta tem espaço, a iniciar workers `claude -p` em paralelo em contas diferentes com `ccam pick` e a explicar uma skill ou um servidor MCP ausente com `ccam ext`. Instale-o dentro do Claude Code:
+
+```text
+/plugin install ccam --marketplace jhyunwoo/ccam
+```
+
+Ele adiciona uma skill e dois comandos, `/ccam:usage` e `/ccam:ext`. A skill nunca executa comandos que fazem login ou movem arquivos; em vez disso, ela os sugere.
 
 ## Verificar a instalação
 

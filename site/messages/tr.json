@@ -153,6 +153,8 @@
     "shims": "Tüm hesapların kısayol bağlantılarını yeniden oluşturur",
     "shortcut": "Bir hesabın ccwork gibi kısayol komutunu gösterir, oluşturur, yeniden adlandırır veya kaldırır",
     "folder": "Hesap adı verilmediğinde bir klasörde ve altındaki klasörlerde bir hesap kullanır",
+    "pick": "Betikler ve paralel çalışan süreçler için en çok payı kalan hesabı yazdırır",
+    "ext": "Her hesabın yüklediği beceri, komut, eklenti, MCP sunucusu ve hook'ları gösterir",
     "update": "Sağlama toplamını kontrol ettikten sonra ccam'ı en son sürüme günceller",
     "completion": "bash, zsh veya PowerShell tamamlama betiğini yazdırır"
   },

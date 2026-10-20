@@ -153,6 +153,8 @@
     "shims": "Tạo lại liên kết lệnh tắt của mọi tài khoản",
     "shortcut": "Xem, tạo, đổi tên hoặc xóa lệnh tắt của một tài khoản, chẳng hạn ccwork",
     "folder": "Dùng một tài khoản trong một thư mục và các thư mục bên dưới khi không nêu tên tài khoản",
+    "pick": "In tài khoản còn nhiều hạn mức nhất, cho script và các worker chạy song song",
+    "ext": "Hiện các skill, lệnh, plugin, máy chủ MCP và hook mà mỗi tài khoản nạp",
     "update": "Cập nhật ccam lên bản phát hành mới nhất sau khi kiểm tra mã băm",
     "completion": "In mã tự động hoàn thành cho bash, zsh hoặc PowerShell"
   },

@@ -5,7 +5,7 @@ description: Linux, macOS లేదా Windows లో ccam ను ఒకే క�
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 07eadc0769c8
+sourceHash: aea4984c1576
 ---
 
 Linux లేదా macOS లో టెర్మినల్‌లో ఇది రన్ చేయండి:
@@ -71,6 +71,16 @@ ccam completion powershell >> $PROFILE
 ```
 
 కంప్లీషన్ `ccam` యొక్క అన్ని కమాండ్‌లు, ఆప్షన్‌లకు పనిచేస్తుంది, ఖాతా పేర్లతో సహా.
+
+## Claude Code plugin
+
+ccam plugin Claude Code కే ccam ను ఉపయోగించడం నేర్పుతుంది: ఏ ఖాతాలో అవకాశం ఉందో తనిఖీ చేయడం, `ccam pick` తో వేర్వేరు ఖాతాలపై సమాంతర `claude -p` workers ను ప్రారంభించడం, కనిపించని skill లేదా MCP సర్వర్‌ను `ccam ext` తో వివరించడం. దాన్ని Claude Code లోపల ఇన్‌స్టాల్ చేయండి:
+
+```text
+/plugin install ccam --marketplace jhyunwoo/ccam
+```
+
+ఇది ఒక skill ను, రెండు commands ను జోడిస్తుంది, `/ccam:usage`, `/ccam:ext`. ఆ skill లాగిన్ చేసే లేదా ఫైల్‌లను తరలించే కమాండ్‌లను ఎప్పుడూ రన్ చేయదు; బదులుగా వాటిని సూచిస్తుంది.
 
 ## ఇన్‌స్టాలేషన్‌ను తనిఖీ చేయండి
 

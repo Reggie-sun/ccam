@@ -153,6 +153,8 @@
     "shims": "Unda upya viungo vya njia fupi vya akaunti zote",
     "shortcut": "Onyesha, unda, badilisha jina au ondoa amri ya njia fupi ya akaunti, kama ccwork",
     "folder": "Tumia akaunti katika folda na zilizo chini yake wakati hakuna akaunti iliyotajwa",
+    "pick": "Chapisha akaunti yenye nafasi kubwa zaidi, kwa script na workers wanaoendeshwa sambamba",
+    "ext": "Onyesha skills, commands, plugins, seva za MCP na hooks ambazo kila akaunti hupakia",
     "update": "Sasisha ccam hadi toleo jipya zaidi baada ya kukagua checksum yake",
     "completion": "Chapisha ukamilishaji wa bash, zsh au PowerShell"
   },

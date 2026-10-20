@@ -153,6 +153,8 @@
     "shims": "Recreate the shortcut links of all accounts",
     "shortcut": "Show, create, rename or remove an account's shortcut command, such as ccwork",
     "folder": "Use an account in a folder and below when no account is named",
+    "pick": "Print the account with the most room, for scripts and parallel workers",
+    "ext": "Show the skills, commands, plugins, MCP servers and hooks each account loads",
     "update": "Update ccam to the latest release after checking its checksum",
     "completion": "Print bash, zsh or PowerShell completion"
   },

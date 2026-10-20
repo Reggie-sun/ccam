@@ -1,10 +1,10 @@
 ---
 title: مدیریت حساب‌ها
 description: افزودن، ورود، فهرست، تغییر نام، حذف و وارد کردن حساب‌های Claude Code با ccam add، ccam login، ccam list، ccam rename، ccam remove و ccam import.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 99c931574262
+sourceHash: 9eb992214132
 ---
 
 هر حساب ccam یک پوشه پیکربندی جداگانه Claude Code با ورود مخصوص خودش است. این فرمان‌ها حساب‌ها را می‌سازند، وارد می‌کنند، فهرست می‌کنند، تغییر نام می‌دهند و حذف می‌کنند، و پوشه‌هایی را که از قبل دارید ثبت می‌کنند.
@@ -49,15 +49,16 @@ $ ccam list
 | `ccam add --no-login` | حساب را بدون ورود می‌سازد؛ بعداً با `ccam login <name>` وارد شوید | خاموش |
 | `ccam add --share <item=group>` | یک مورد را با یک گروه به اشتراک می‌گذارد، یا با `item=local` آن را خصوصی نگه می‌دارد. قابل تکرار | `mcp`، `settings`، `memory`، `extensions` در `default`؛ `history` محلی |
 | `ccam add --shortcut <command>` | این فرمان میان‌بر را هم در `~/.local/bin` می‌سازد | هیچ |
+| `ccam add --api --key-from <source>` | حسابی که به جای ورود از کلید API استفاده می‌کند؛ [حساب‌های کلید API](/features/api) را ببینید | خاموش |
 | `ccam list --json` | حساب‌ها را به‌صورت JSON چاپ می‌کند | خاموش |
 | `ccam remove -y`، `--yes` | بدون پرسش حذف می‌کند | خاموش |
 | `ccam import --name <name>` | نام حساب برای پوشه‌ای که می‌دهید | برگرفته از نام پوشه |
 | `ccam import -y`، `--yes` | همه پوشه‌های پیداشده را بدون پرسش وارد می‌کند | خاموش |
 | `--dry-run` | `ccam list` و `ccam completion` که چیزی را تغییر نمی‌دهند آن را می‌پذیرند. `add`، `login`، `logout`، `use`، `rename`، `remove` و `import` آن را با پیام `` --dry-run is not supported by `ccam add`; nothing was changed `` (با نام همان فرمان) رد می‌کنند | خاموش |
 
-`ccam login`، `ccam logout`، `ccam use` و `ccam rename` گزینه‌ای از خود ندارند. `ccam completion` مقدار `bash` یا `zsh` را می‌پذیرد؛ هر چیز دیگری با `only bash and zsh are supported` ناموفق می‌شود.
+`ccam login`، `ccam logout`، `ccam use` و `ccam rename` گزینه‌ای از خود ندارند. `ccam completion` مقدار `bash`، `zsh` یا `powershell` را می‌پذیرد؛ هر چیز دیگری با `only bash, zsh and powershell are supported` ناموفق می‌شود.
 
-نام حساب‌ها ۱ تا ۳۲ نویسه از `a-z`، `0-9`، `-` و `_` است و با یک حرف یا رقم شروع می‌شود. نام نمی‌تواند فقط از رقم تشکیل شود، چون `ccam 2` یعنی جایگاه ۲. نام همچنین نمی‌تواند یکی از فرمان‌های ccam باشد (`add`، `list`، `ls`، `run`، `use`، `next`، `usage`، `u`، `share`، `mcp`، `login`، `logout`، `rename`، `remove`، `rm`، `import`، `migrate`، `doctor`، `shims`، `shortcut`، `completion`، `help`، `version`، `statusline`، `update`)، تا `ccam <name>` هرگز مبهم نباشد. این فهرست `config.Reserved` در `internal/config` است.
+نام حساب‌ها ۱ تا ۳۲ نویسه از `a-z`، `0-9`، `-` و `_` است و با یک حرف یا رقم شروع می‌شود. نام نمی‌تواند فقط از رقم تشکیل شود، چون `ccam 2` یعنی جایگاه ۲. نام همچنین نمی‌تواند یکی از فرمان‌های ccam باشد (`add`، `list`، `ls`، `run`، `use`، `next`، `usage`، `u`، `share`، `mcp`، `login`، `logout`، `rename`، `remove`، `rm`، `import`، `migrate`، `doctor`، `shims`، `shortcut`، `completion`، `help`، `version`، `statusline`، `update`، `folder`، `pick`، `ext`)، تا `ccam <name>` هرگز مبهم نباشد. این فهرست `config.Reserved` در `internal/config` است.
 
 ## نحوه کار
 

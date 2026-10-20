@@ -5,7 +5,7 @@ description: "ทุกคำสั่งและตัวเลือกขอ
 updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 5d3275878535
+sourceHash: da2594c672bc
 ---
 
 ใส่ `--dry-run` ไว้หน้าคำสั่งเพื่อดูว่าคำสั่งนั้นจะทำอะไรโดยไม่ลงมือทำจริง เช่น `ccam --dry-run work` ตัวเลือกนี้ใช้ได้เมื่อเริ่ม Claude Code (`ccam <name>`, `ccam run`, `ccam next`) และกับ `share`, `migrate`, `shortcut`, `update` และ `doctor --fix` ส่วนคำสั่งอื่นที่เปลี่ยนแปลงบางอย่างจะปฏิเสธตัวเลือกนี้แทนที่จะทำงาน
@@ -39,9 +39,12 @@ ccam add ci --no-login        # log in later with: ccam login ci
 ccam rename work job
 ccam remove side              # folder moves to ~/.local/share/ccam/trash
 ccam import ~/.claude-old --name old
+ccam add gw --api --base-url https://llm.example.com --auth bearer --key-from env:GW_KEY
 ```
 
 `ccam import` ที่ไม่ระบุโฟลเดอร์จะค้นหา `~/.claude` และ `~/.claude-*` แล้วถามคุณทีละโฟลเดอร์ โฟลเดอร์ที่นำเข้าจะถูกลงทะเบียนไว้ในตำแหน่งเดิม ccam ไม่ย้ายหรือคัดลอกการเข้าสู่ระบบใด ๆ
+
+`ccam add --api` เพิ่มบัญชีที่ใช้ API key แทนการเข้าสู่ระบบ Claude ccam อ่านคีย์ทุกครั้งที่เริ่มและไม่เคยเก็บไว้ ดู[บัญชี API key](/features/api)
 
 `ccam rename`, `ccam remove` และ `ccam share` จะไม่ยอมเปลี่ยนแปลงบัญชีในขณะที่ Claude Code กำลังทำงานด้วยบัญชีนั้น ให้ออกจากเซสชันนั้นก่อน
 
@@ -105,7 +108,12 @@ ccam usage --watch   # refresh every 60 seconds
 ccam usage --json
 ccam next --continue
 ccam next --auto
+ccam next --auto --max-usage 80 --wait
+ccam pick                       # the account with the most room, for a script
+ccam "$(ccam pick)" -p "…"      # start a worker on it
 ```
+
+`next --auto`, `--fallback` และ `ccam pick` เลือกด้วยวิธีเดียวกัน: บัญชีที่ต่ำกว่า `auto_max_usage` (`config.toml` ค่าเริ่มต้น 100) มาก่อน ตาม `auto_strategy` (`headroom` หรือ `expiring`) โดยนับช่วงรายสัปดาห์ของ `--model` ด้วย และไม่เลือกบัญชีที่อยู่ที่ 100% เด็ดขาด เมื่อเลือกบัญชีใดไม่ได้ จะออกด้วยรหัส 75 หรือเมื่อใช้ `--wait` จะรอให้บัญชีแรกรีเซ็ต ดู[การสลับไปยังบัญชีถัดไป](/features/next)และ[การเลือกบัญชีสำหรับสคริปต์](/features/pick)
 
 ## การบำรุงรักษา
 
@@ -113,6 +121,7 @@ ccam next --auto
 ccam doctor          # check
 ccam doctor --fix    # repair what is safe to repair, with backups
 ccam statusline install
+ccam ext             # skills, commands, MCP servers and hooks of every account, and problems
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release

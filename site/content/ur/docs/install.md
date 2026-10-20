@@ -5,7 +5,7 @@ description: "ccam کو Linux، macOS یا Windows پر ایک کمانڈ، .deb
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 07eadc0769c8
+sourceHash: aea4984c1576
 ---
 
 Linux یا macOS پر ٹرمینل میں یہ کمانڈ چلائیں:
@@ -71,6 +71,16 @@ ccam completion powershell >> $PROFILE
 ```
 
 کمپلیشن `ccam` کی تمام کمانڈز اور آپشنز کے لیے کام کرتی ہے، اکاؤنٹس کے ناموں سمیت۔
+
+## Claude Code پلگ اِن
+
+ccam پلگ اِن خود Claude Code کو ccam استعمال کرنا سکھاتا ہے: یہ دیکھنا کہ کس اکاؤنٹ میں گنجائش ہے، `ccam pick` سے مختلف اکاؤنٹس پر متوازی `claude -p` ورکرز شروع کرنا، اور `ccam ext` سے یہ بتانا کہ کوئی اسکل یا MCP سرور کیوں غائب ہے۔ اسے Claude Code کے اندر انسٹال کریں:
+
+```text
+/plugin install ccam --marketplace jhyunwoo/ccam
+```
+
+یہ ایک اسکل اور دو کمانڈز شامل کرتا ہے، `/ccam:usage` اور `/ccam:ext`۔ اسکل کبھی ایسی کمانڈز نہیں چلاتی جو لاگ اِن کریں یا فائلیں منتقل کریں؛ اس کے بجائے انہیں تجویز کرتی ہے۔
 
 ## انسٹالیشن چیک کریں
 

@@ -4,7 +4,7 @@ description: ccam next hufungua Claude Code kwa akaunti baada ya ile ya mwisho; 
 updated: 2026-10-20
 order: 8
 translation: machine
-sourceHash: 7bc55c2dd520
+sourceHash: 784ae4d1f6d9
 ---
 
 `ccam next` hufungua Claude Code kama akaunti nyingine bila wewe kuitaja. Itumie akaunti inapofikia kikomo chake cha matumizi: `ccam next` ya kawaida huchukua akaunti inayofuata ile uliyotumia mwisho, `--auto` huchukua ile yenye nafasi kubwa zaidi katika kipindi chake cha saa 5, na `--continue` huendeleza mazungumzo ya mwisho katika akaunti mpya. Kwa script zinazoendesha `claude -p`, `ccam --fallback` hufanya ubadilishaji huo yenyewe (tazama [Endesha tena kwenye kikomo](#run-again-at-the-limit)).
@@ -16,6 +16,8 @@ ccam next                       # the account after the one you used last
 ccam next --auto                # the account with the lowest 5-hour usage
 ccam next --continue            # the next account that shares history, with claude --continue
 ccam next -c --auto             # both: lowest usage among accounts sharing history
+ccam next --auto --max-usage 80 # prefer accounts below 80%
+ccam next --auto --wait         # nobody has room: wait for the first reset (up to 5 hours)
 ccam next -- -p "summarize"     # pass arguments to claude after --
 ccam --dry-run next --auto      # print the choice and the command, start nothing
 ```
@@ -32,7 +34,10 @@ ccam huchapisha ubadilishaji kama `→ <from> → <to>` kwenye standard error, k
 
 | Chaguo | Inachofanya | Chaguo-msingi |
 | --- | --- | --- |
-| `--auto` | Huchagua akaunti iliyoingia yenye matumizi ya chini zaidi ya saa 5, ikiruka akaunti zilizofikia 100% | imezimwa |
+| `--auto` | Huchagua akaunti iliyoingia kwa matumizi (tazama hapa chini), ikiruka akaunti zilizofikia 100% | imezimwa |
+| `--max-usage <1-100>` | Pamoja na `--auto`: hupendelea akaunti zilizo chini ya matumizi haya | `auto_max_usage`, vinginevyo 100 |
+| `--strategy headroom\|expiring` | Pamoja na `--auto`: matumizi ya chini zaidi ya saa 5, au kipindi cha saa 5 kinachoanza upya mapema zaidi | `auto_strategy`, vinginevyo `headroom` |
+| `--wait[=<duration>]` | Pamoja na `--auto`: hakuna akaunti yenye nafasi, husubiri ya kwanza ianze upya, si zaidi ya muda huu | imezimwa; `5h` ikitolewa peke yake |
 | `-c`, `--continue` | Huzingatia tu akaunti zinazoshiriki historia ya mazungumzo na akaunti uliyotumia mwisho, na huanzisha `claude --continue` | imezimwa |
 | `-- <claude args>` | Hoja zinazopitishwa kwa `claude` baada ya zile za ccam yenyewe | hakuna |
 | `--dry-run` | Inaheshimiwa: huchapisha `→ <from> → <to>` na mstari wa amri ambao ingeendesha, bila kuanzisha Claude Code wala kurekodi uanzishaji | imezimwa |
@@ -56,11 +61,23 @@ Mzunguko huanza kwenye akaunti iliyotumiwa mwisho na husimama kwenye akaunti ya 
 
 ### --auto
 
-`--auto` huamua kwa matumizi badala ya mpangilio wa slot. `cli.pickAuto` hubakiza akaunti zilizoingia, huomba matumizi yao yote kwa wakati mmoja kwa `Fetcher.FetchAll` ile ile ambayo `ccam usage` hutumia, na huiachia `usage.Best()` ichague:
+`--auto` huamua kwa matumizi badala ya mpangilio wa slot. `cli.pickAuto` hubakiza akaunti zilizoingia, huomba matumizi yao yote kwa wakati mmoja kwa `Fetcher.FetchAll` ile ile ambayo `ccam usage` hutumia, na huiachia `usage.Policy.Choose()` ichague:
 
 <!-- motion:next-auto -->
 
-`usage.Best()` huchukua asilimia ya chini zaidi ya saa 5 na huruka akaunti zilizofikia 100% au ambazo matumizi yao ya saa 5 hayajulikani. Utafutaji hufuata kanuni za `ccam usage`: namba zenye umri wa chini ya sekunde 60 hutumiwa tena, kila akaunti ina sekunde 3, na akaunti isiyojibu, au ambayo taarifa zake za kuingia zimeisha muda, hupimwa kwa namba zake zilizohifadhiwa. Kipindi kilichohifadhiwa ambacho muda wake wa kuanza upya umepita huhesabiwa kama 0%, ili akaunti ambayo kipindi chake kimeanza upya tangu hapo isirukwe. `--auto` kamwe haifanyi upya tokeni. Tofauti na mzunguko wa kawaida, `--auto` inaweza kuchagua akaunti uliyotumia mwisho ikiwa bado ina nafasi kubwa zaidi.
+Akaunti hupimwa kwa vipindi vyake vya saa 5 na vya wiki, na, `--model` ikiwa miongoni mwa hoja za Claude Code, pia kwa kipindi cha wiki cha modeli hiyo (`opus`, `sonnet`, `haiku` au `fable` katika jina). `Policy.Choose()` hupanga akaunti katika makundi matatu:
+
+1. **Nafasi**: kila kipindi kiko chini ya `auto_max_usage` (`config.toml`, chaguo-msingi 100). Mkakati huchagua kati yao: `headroom` (chaguo-msingi) huchukua matumizi ya chini zaidi ya saa 5, `expiring` huchukua kipindi cha saa 5 kitakachoanza upya mapema zaidi, ili kiasi chake kilichobaki kitumike kabla hakijapotea.
+2. **Juu**: chini ya 100% lakini kwenye au juu ya `auto_max_usage`. Hutumiwa tu wakati hakuna akaunti yenye nafasi, ile yenye matumizi ya chini zaidi ya saa 5 kwanza.
+3. **Imejaa**: kipindi kiko 100%, au matumizi ya saa 5 hayajulikani. Haichaguliwi kamwe.
+
+```toml
+# ~/.config/ccam/config.toml
+auto_max_usage = 80        # keep 20% of each account for interactive work
+auto_strategy = "expiring"
+```
+
+Isipowezekana kuchagua chochote, ccam hutoka na msimbo 75 (`EX_TEMPFAIL`), ili script iweze kutofautisha "jaribu baadaye" na kushindwa. Kwa `--wait`, badala yake hulala hadi kipindi kinachozuia akaunti ya kwanza iliyojaa kianze upya (sekunde 30 baada ya muda wa kuanza upya, endpoint inapoonyesha kipindi kipya), huchapisha `ccam: no account has room; waiting until 15:10`, na huchagua tena; ikiwa hakuna akaunti inayosema itaanza upya lini, huangalia tena baada ya dakika 10. Ikiwa hakuna kinachopata nafasi kabla ya kusubiri kuisha, hutoka na 75. Utafutaji hufuata kanuni za `ccam usage`: namba zenye umri wa chini ya sekunde 60 hutumiwa tena, kila akaunti ina sekunde 3, na akaunti isiyojibu, au ambayo taarifa zake za kuingia zimeisha muda, hupimwa kwa namba zake zilizohifadhiwa. Kipindi kilichohifadhiwa ambacho muda wake wa kuanza upya umepita huhesabiwa kama 0%, ili akaunti ambayo kipindi chake kimeanza upya tangu hapo isirukwe. `--auto` kamwe haifanyi upya tokeni. Tofauti na mzunguko wa kawaida, `--auto` inaweza kuchagua akaunti uliyotumia mwisho ikiwa bado ina nafasi kubwa zaidi.
 
 ### --continue
 
@@ -90,7 +107,7 @@ Summary: …
 6. Kisha output ya jaribio hilo hutupwa na amri ile ile huendeshwa kama akaunti nyingine iliyoingia: ile yenye matumizi ya chini zaidi ya saa 5, kisha akaunti ambazo matumizi yao hayawezi kupatikana, kwa mpangilio wa namba. Akaunti zilizofikia 100% hurukwa, na kila akaunti hujaribiwa si zaidi ya mara moja.
 7. Kukiwa na `-c`, `--continue`, `-r` au `--resume` miongoni mwa hoja, akaunti zilizo katika kikundi kile kile cha historia pekee ndizo hujaribiwa, ili mazungumzo yaweze kupatikana.
 
-Hakuna akaunti inapobaki, ccam huchapisha output ya jaribio la mwisho, husema kwamba hakuna akaunti iliyoingia yenye nafasi iliyobaki, na hutoka kwa code ya jaribio hilo. `ccam --dry-run --fallback work -p …` huchapisha amri ya jaribio la kwanza.
+Akaunti inayofuata huchaguliwa kwa kanuni zile zile kama `--auto` (`auto_max_usage`, `auto_strategy`, kipindi cha `--model`). Hakuna akaunti inapobaki, ccam huchapisha output ya jaribio la mwisho, husema kwamba hakuna akaunti iliyoingia yenye nafasi iliyobaki, na hutoka kwa code 75. Kwa `--wait` kabla ya jina la akaunti (`ccam --fallback --wait=2h work -p …`), badala yake husubiri akaunti ya kwanza ianze upya, kisha inaweza kujaribu kila akaunti tena; kila mara hulala angalau mara moja kwanza, ili akaunti iliyofikia kikomo chake sasa hivi isiendeshwe tena mara moja. `ccam --dry-run --fallback work -p …` huchapisha amri ya jaribio la kwanza.
 
 Vipindi shirikishi havibadilishwi vyenyewe. Badala yake, kwa `ccam statusline install`, mstari wa hali huongeza `→ ccam next --auto --continue` matumizi ya saa 5 au ya wiki yanapofikia 90% ([Vikomo vya matumizi](/features/usage)).
 
@@ -98,7 +115,8 @@ Vipindi shirikishi havibadilishwi vyenyewe. Badala yake, kwa `ccam statusline in
 
 - Akaunti ambazo hazijaingia hazichaguliwi kamwe. Ikiwa hakuna akaunti nyingine iliyoingia, `ccam next` ya kawaida husimama na `no logged-in account other than <name>`.
 - Kwa `--continue` na hakuna akaunti inayoshiriki historia: `` no other account shares conversation history with <name>. Turn it on with `ccam share <name> --history on` ``.
-- Kwa `--auto` na hakuna akaunti iliyoingia: `no logged-in account to pick`. Kila akaunti ikiwa imejaa au matumizi yake hayajulikani: `` no account with known usage and headroom (see `ccam usage`) ``.
+- Kwa `--auto` na hakuna akaunti iliyoingia: `no logged-in account to pick`. Kila akaunti ikiwa imejaa au matumizi yake hayajulikani: `` no account with known usage and headroom (see `ccam usage`) ``. Zote mbili huishia na exit code 75.
+- `--max-usage`, `--strategy` na `--wait` hufanya kazi tu pamoja na `--auto`, na thamani nje ya 1-100 au mkakati mwingine hukataliwa.
 - `--auto` hufanya maombi ya mtandao hata kwa `--dry-run`. Husoma tu, na kamwe haiandiki faili za tokeni.
 - Akaunti iliyochaguliwa huanza kupitia njia ile ile kama `ccam <name>`, kwa hiyo ukaguzi ule ule hutumika, pamoja na onyo wakati Claude Code nyingine inayoshiriki historia ile ile tayari inaendeshwa katika folda hii.
 - `last-used` huandikwa tu Claude Code inapoanza kweli. `--dry-run` huiacha bila kuigusa, kwa hiyo jaribio halisogezi mzunguko mbele.

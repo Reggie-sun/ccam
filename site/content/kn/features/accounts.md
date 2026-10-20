@@ -1,10 +1,10 @@
 ---
 title: ಖಾತೆಗಳ ನಿರ್ವಹಣೆ
 description: "ccam add, ccam login, ccam list, ccam rename, ccam remove, ccam import: Claude Code ಖಾತೆ ಸೇರಿಸಿ, ಲಾಗಿನ್ ಮಾಡಿ, ನೋಡಿ, ಮರುಹೆಸರಿಸಿ, ತೆಗೆಯಿರಿ, ಇಂಪೋರ್ಟ್ ಮಾಡಿ."
-updated: 2026-10-19
+updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 99c931574262
+sourceHash: 9eb992214132
 ---
 
 ಪ್ರತಿ ccam ಖಾತೆಯೂ ತನ್ನದೇ ಲಾಗಿನ್ ಇರುವ ಪ್ರತ್ಯೇಕ Claude Code ಕಾನ್ಫಿಗ್ ಫೋಲ್ಡರ್. ಈ ಕಮಾಂಡ್‌ಗಳು ಖಾತೆಗಳನ್ನು ರಚಿಸುತ್ತವೆ, ಸೈನ್ ಇನ್ ಮಾಡುತ್ತವೆ, ಪಟ್ಟಿ ಮಾಡುತ್ತವೆ, ಮರುಹೆಸರಿಸುತ್ತವೆ ಮತ್ತು ತೆಗೆದುಹಾಕುತ್ತವೆ, ಹಾಗೂ ನಿಮ್ಮ ಬಳಿ ಈಗಾಗಲೇ ಇರುವ ಫೋಲ್ಡರ್‌ಗಳನ್ನು ನೋಂದಾಯಿಸುತ್ತವೆ.
@@ -49,15 +49,16 @@ $ ccam list
 | `ccam add --no-login` | ಲಾಗಿನ್ ಮಾಡದೆ ಖಾತೆಯನ್ನು ರಚಿಸುತ್ತದೆ; ನಂತರ `ccam login <name>` ಮೂಲಕ ಲಾಗಿನ್ ಮಾಡಿ | ಆಫ್ |
 | `ccam add --share <item=group>` | ಒಂದು ಐಟಂ ಅನ್ನು ಗುಂಪಿನೊಂದಿಗೆ ಹಂಚಿಕೊಳ್ಳುತ್ತದೆ, ಅಥವಾ ಖಾಸಗಿಯಾಗಿಡಲು `item=local`. ಹಲವು ಬಾರಿ ನೀಡಬಹುದು | `default` ನಲ್ಲಿ `mcp`, `settings`, `memory`, `extensions`; `history` ಸ್ಥಳೀಯ |
 | `ccam add --shortcut <command>` | `~/.local/bin` ನಲ್ಲಿ ಈ ಶಾರ್ಟ್‌ಕಟ್ ಕಮಾಂಡ್ ಅನ್ನೂ ರಚಿಸುತ್ತದೆ | ಇಲ್ಲ |
+| `ccam add --api --key-from <source>` | ಲಾಗಿನ್ ಬದಲು API ಕೀ ಬಳಸುವ ಖಾತೆ; [API ಕೀ ಖಾತೆಗಳು](/features/api) ನೋಡಿ | ಆಫ್ |
 | `ccam list --json` | ಖಾತೆಗಳನ್ನು JSON ಆಗಿ ಮುದ್ರಿಸುತ್ತದೆ | ಆಫ್ |
 | `ccam remove -y`, `--yes` | ಕೇಳದೆ ತೆಗೆದುಹಾಕುತ್ತದೆ | ಆಫ್ |
 | `ccam import --name <name>` | ನೀವು ನೀಡುವ ಫೋಲ್ಡರ್‌ಗೆ ಖಾತೆಯ ಹೆಸರು | ಫೋಲ್ಡರ್ ಹೆಸರಿನಿಂದ ಪಡೆಯಲಾಗುತ್ತದೆ |
 | `ccam import -y`, `--yes` | ಸಿಕ್ಕ ಪ್ರತಿ ಫೋಲ್ಡರ್ ಅನ್ನು ಕೇಳದೆ ಇಂಪೋರ್ಟ್ ಮಾಡುತ್ತದೆ | ಆಫ್ |
 | `--dry-run` | ಏನನ್ನೂ ಬದಲಾಯಿಸದ `ccam list` ಮತ್ತು `ccam completion` ಇದನ್ನು ಪಾಲಿಸುತ್ತವೆ. `add`, `login`, `logout`, `use`, `rename`, `remove` ಮತ್ತು `import` ಇದನ್ನು `` --dry-run is not supported by `ccam add`; nothing was changed `` (ಕಮಾಂಡ್ ಹೆಸರಿನೊಂದಿಗೆ) ಎಂದು ನಿರಾಕರಿಸುತ್ತವೆ | ಆಫ್ |
 
-`ccam login`, `ccam logout`, `ccam use` ಮತ್ತು `ccam rename` ಗೆ ತಮ್ಮದೇ ಆಯ್ಕೆಗಳಿಲ್ಲ. `ccam completion` `bash` ಅಥವಾ `zsh` ತೆಗೆದುಕೊಳ್ಳುತ್ತದೆ; ಬೇರೆ ಯಾವುದೇ ಮೌಲ್ಯ `only bash and zsh are supported` ಎಂದು ವಿಫಲವಾಗುತ್ತದೆ.
+`ccam login`, `ccam logout`, `ccam use` ಮತ್ತು `ccam rename` ಗೆ ತಮ್ಮದೇ ಆಯ್ಕೆಗಳಿಲ್ಲ. `ccam completion` `bash`, `zsh` ಅಥವಾ `powershell` ತೆಗೆದುಕೊಳ್ಳುತ್ತದೆ; ಬೇರೆ ಯಾವುದೇ ಮೌಲ್ಯ `only bash, zsh and powershell are supported` ಎಂದು ವಿಫಲವಾಗುತ್ತದೆ.
 
-ಖಾತೆಯ ಹೆಸರುಗಳು `a-z`, `0-9`, `-` ಮತ್ತು `_` ಅಕ್ಷರಗಳಿಂದ ಕೂಡಿದ 1 ರಿಂದ 32 ಅಕ್ಷರಗಳಾಗಿರುತ್ತವೆ ಮತ್ತು ಅಕ್ಷರ ಅಥವಾ ಅಂಕಿಯಿಂದ ಆರಂಭವಾಗುತ್ತವೆ. ಹೆಸರು ಸಂಪೂರ್ಣವಾಗಿ ಅಂಕಿಗಳಾಗಿರಬಾರದು, ಏಕೆಂದರೆ `ccam 2` ಎಂದರೆ ಸ್ಲಾಟ್ 2. ಹೆಸರು ccam ಕಮಾಂಡ್ ಕೂಡ ಆಗಿರಬಾರದು (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`), ಹೀಗಾಗಿ `ccam <name>` ಎಂದಿಗೂ ಅಸ್ಪಷ್ಟವಾಗುವುದಿಲ್ಲ. ಈ ಪಟ್ಟಿ `internal/config` ನಲ್ಲಿರುವ `config.Reserved`.
+ಖಾತೆಯ ಹೆಸರುಗಳು `a-z`, `0-9`, `-` ಮತ್ತು `_` ಅಕ್ಷರಗಳಿಂದ ಕೂಡಿದ 1 ರಿಂದ 32 ಅಕ್ಷರಗಳಾಗಿರುತ್ತವೆ ಮತ್ತು ಅಕ್ಷರ ಅಥವಾ ಅಂಕಿಯಿಂದ ಆರಂಭವಾಗುತ್ತವೆ. ಹೆಸರು ಸಂಪೂರ್ಣವಾಗಿ ಅಂಕಿಗಳಾಗಿರಬಾರದು, ಏಕೆಂದರೆ `ccam 2` ಎಂದರೆ ಸ್ಲಾಟ್ 2. ಹೆಸರು ccam ಕಮಾಂಡ್ ಕೂಡ ಆಗಿರಬಾರದು (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`, `folder`, `pick`, `ext`), ಹೀಗಾಗಿ `ccam <name>` ಎಂದಿಗೂ ಅಸ್ಪಷ್ಟವಾಗುವುದಿಲ್ಲ. ಈ ಪಟ್ಟಿ `internal/config` ನಲ್ಲಿರುವ `config.Reserved`.
 
 ## ಇದು ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ
 

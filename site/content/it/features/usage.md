@@ -4,7 +4,7 @@ description: ccam usage mostra insieme i limiti su 5 ore e settimanali di tutti 
 updated: 2026-10-20
 order: 7
 translation: machine
-sourceHash: f08a2fdc6f0b
+sourceHash: 525174ceed0d
 ---
 
 `ccam usage` mostra quanta parte dei limiti su 5 ore e settimanali ha usato ogni account, con il tempo mancante all'azzeramento di ogni finestra. Usalo prima di iniziare un'attività lunga, o quando Claude Code ti avvisa che un limite è vicino, per vedere quale account ha ancora margine. `ccam statusline` è il comando per la riga di stato di Claude Code: mostra il nome dell'account e l'utilizzo dentro Claude Code e salva i numeri per `ccam usage`.
@@ -74,7 +74,7 @@ Per un singolo account, `Fetcher.Fetch` esegue questi controlli in ordine:
 2. A meno che non sia impostato `--no-cache`, un risultato aggiornato in `~/.local/state/ccam/usage/<name>.json` più recente di 60 secondi (`CacheTTL`) viene restituito così com'è. Eseguire `ccam usage` due volte di seguito costa una richiesta per account.
 3. `readCredentials()` legge `.credentials.json` (o il Portachiavi di macOS) senza modificarlo, e viene decodificata solo la chiave `claudeAiOauth`. Nessun login con abbonamento significa `not logged in`, oppure `no limits (API)` quando `.claude.json` contiene una chiave API.
 4. Un token di accesso scaduto non viene usato. Senza `--refresh`, l'account mostra i numeri salvati segnati come scaduti.
-5. Altrimenti ccam chiama l'endpoint. Un 401 o un 403 conta come login scaduto, qualsiasi altro stato o un corpo che non riesce a leggere conta come errore, e in entrambi i casi si ripiega sui numeri salvati.
+5. Altrimenti ccam chiama l'endpoint. Un 401 o un 403 conta come login scaduto, qualsiasi altro stato o un corpo che non riesce a leggere conta come errore, e in entrambi i casi si ripiega sui numeri salvati. Un 429 significa che l'endpoint riceve troppe richieste: ccam scrive `<name>.pause` con l'ora in cui chiedere di nuovo (`Retry-After`, oppure 5 minuti, al massimo un'ora), mostra i numeri salvati con `rate limited by the usage endpoint; asking again after 15:10` e non chiama l'endpoint per quell'account fino ad allora, nemmeno con `--no-cache`. Riprovare subito non farebbe che prolungare il limite.
 6. Una risposta valida viene scritta in `<name>.json` con l'ora in cui è stata misurata.
 
 `fallback()` legge sia `<name>.json` sia `<name>.statusline.json` e tiene il più recente. Prima di mostrare i numeri salvati, controlla l'orario di azzeramento di ogni finestra: una finestra che si è azzerata dopo il salvataggio dei numeri mostra 0%, perché la vecchia percentuale non vale più. Per questo `personal` qui sopra mostra `0%` senza orario di azzeramento.

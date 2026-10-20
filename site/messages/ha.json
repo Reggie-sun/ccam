@@ -153,6 +153,8 @@
     "shims": "Sake ƙirƙirar mahaɗan gajerun umarnin dukkan asusai",
     "shortcut": "Nuna, ƙirƙira, sauya suna ko cire gajeren umarnin asusu, kamar ccwork",
     "folder": "Yi amfani da asusu a folda da ƙarƙashinta idan ba a ambaci asusu ba",
+    "pick": "Buga asusun da ya fi sarari, don rubutun umarni da workers masu aiki a lokaci guda",
+    "ext": "Nuna skills, commands, plugins, sabobin MCP da hooks da kowane asusu ke lodawa",
     "update": "Sabunta ccam zuwa sakin baya-bayan nan bayan duba checksum nasa",
     "completion": "Buga completion na bash, zsh ko PowerShell"
   },

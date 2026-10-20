@@ -4,7 +4,7 @@ description: ccam usage pokazuje naraz 5-godzinne i tygodniowe limity każdego k
 updated: 2026-10-20
 order: 7
 translation: machine
-sourceHash: f08a2fdc6f0b
+sourceHash: 525174ceed0d
 ---
 
 `ccam usage` pokazuje, jaką część 5-godzinnego i tygodniowego limitu wykorzystało każde konto, wraz z czasem do resetu każdego okna. Używaj go przed rozpoczęciem długiego zadania albo gdy Claude Code informuje, że limit jest blisko, żeby zobaczyć, które konto ma jeszcze zapas. `ccam statusline` to polecenie paska stanu dla Claude Code: pokazuje nazwę konta i użycie w Claude Code i zapisuje liczby dla `ccam usage`.
@@ -74,7 +74,7 @@ Dla jednego konta `Fetcher.Fetch` wykonuje te sprawdzenia w kolejności:
 2. Jeśli nie ustawiono `--no-cache`, aktualny wynik w `~/.local/state/ccam/usage/<name>.json` młodszy niż 60 sekund (`CacheTTL`) jest zwracany bez zmian. Dwukrotne uruchomienie `ccam usage` pod rząd kosztuje jedno zapytanie na konto.
 3. `readCredentials()` odczytuje `.credentials.json` (lub pęk kluczy macOS) bez zmieniania go i dekoduje tylko klucz `claudeAiOauth`. Brak loginu subskrypcji oznacza `not logged in` albo `no limits (API)`, gdy `.claude.json` zawiera klucz API.
 4. Wygasły token dostępu nie jest używany. Bez `--refresh` konto pokazuje swoje zapisane liczby oznaczone jako wygasłe.
-5. W przeciwnym razie ccam wywołuje endpoint. Kod 401 lub 403 jest traktowany jako wygasły login, każdy inny status lub treść, której nie da się odczytać, jako błąd, i w obu przypadkach używane są zapisane liczby.
+5. W przeciwnym razie ccam wywołuje endpoint. Kod 401 lub 403 jest traktowany jako wygasły login, każdy inny status lub treść, której nie da się odczytać, jako błąd, i w obu przypadkach używane są zapisane liczby. Kod 429 oznacza, że endpoint dostaje zbyt wiele zapytań: ccam zapisuje `<name>.pause` z czasem kolejnego zapytania (`Retry-After` albo 5 minut, najwyżej godzina), pokazuje zapisane liczby z komunikatem `rate limited by the usage endpoint; asking again after 15:10` i do tego czasu nie wywołuje endpointu dla tego konta, nawet z `--no-cache`. Natychmiastowe ponawianie tylko podtrzymywałoby limit.
 6. Poprawna odpowiedź jest zapisywana w `<name>.json` razem z czasem pomiaru.
 
 `fallback()` odczytuje zarówno `<name>.json`, jak i `<name>.statusline.json` i zachowuje nowszy. Zanim pokaże zapisane liczby, sprawdza czas resetu każdego okna: okno, które zresetowało się od zapisania liczb, pokazuje 0%, bo stary procent już nie obowiązuje. Dlatego `personal` powyżej pokazuje `0%` bez czasu resetu.

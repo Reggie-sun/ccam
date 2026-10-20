@@ -1,10 +1,10 @@
 ---
 title: Mengelola akun
 description: Tambahkan, login, tampilkan, ganti nama, hapus, dan impor akun Claude Code dengan ccam add, ccam login, ccam list, ccam rename, ccam remove, dan ccam import.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 99c931574262
+sourceHash: 9eb992214132
 ---
 
 Setiap akun ccam adalah folder konfigurasi Claude Code tersendiri dengan login-nya sendiri. Perintah-perintah ini membuat, memasukkan login, menampilkan, mengganti nama, dan menghapus akun, serta mendaftarkan folder yang sudah Anda miliki.
@@ -49,15 +49,16 @@ Dengan `--json`, setiap akun adalah objek dengan `slot`, `shortcut`, `name`, `em
 | `ccam add --no-login` | Membuat akun tanpa login; login belakangan dengan `ccam login <name>` | nonaktif |
 | `ccam add --share <item=group>` | Membagikan item ke sebuah grup, atau `item=local` agar tetap privat. Bisa diulang | `mcp`, `settings`, `memory`, `extensions` di `default`; `history` lokal |
 | `ccam add --shortcut <command>` | Juga membuat perintah pintasan ini di `~/.local/bin` | tidak ada |
+| `ccam add --api --key-from <source>` | Akun yang memakai kunci API alih-alih login; lihat [akun kunci API](/features/api) | nonaktif |
 | `ccam list --json` | Menampilkan akun sebagai JSON | nonaktif |
 | `ccam remove -y`, `--yes` | Menghapus tanpa bertanya | nonaktif |
 | `ccam import --name <name>` | Nama akun untuk folder yang Anda berikan | diambil dari nama folder |
 | `ccam import -y`, `--yes` | Mengimpor setiap folder yang ditemukan tanpa bertanya | nonaktif |
 | `--dry-run` | Dihormati oleh `ccam list` dan `ccam completion`, yang tidak mengubah apa pun. Ditolak oleh `add`, `login`, `logout`, `use`, `rename`, `remove`, dan `import`, dengan `` --dry-run is not supported by `ccam add`; nothing was changed `` (menyebutkan perintahnya) | nonaktif |
 
-`ccam login`, `ccam logout`, `ccam use`, dan `ccam rename` tidak memiliki opsi sendiri. `ccam completion` menerima `bash` atau `zsh`; selain itu gagal dengan `only bash and zsh are supported`.
+`ccam login`, `ccam logout`, `ccam use`, dan `ccam rename` tidak memiliki opsi sendiri. `ccam completion` menerima `bash`, `zsh`, atau `powershell`; selain itu gagal dengan `only bash, zsh and powershell are supported`.
 
-Nama akun terdiri dari 1 sampai 32 karakter `a-z`, `0-9`, `-`, dan `_`, diawali huruf atau angka. Nama tidak boleh seluruhnya angka, karena `ccam 2` berarti slot 2. Nama juga tidak boleh berupa perintah ccam (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`), sehingga `ccam <name>` tidak pernah ambigu. Daftarnya adalah `config.Reserved` di `internal/config`.
+Nama akun terdiri dari 1 sampai 32 karakter `a-z`, `0-9`, `-`, dan `_`, diawali huruf atau angka. Nama tidak boleh seluruhnya angka, karena `ccam 2` berarti slot 2. Nama juga tidak boleh berupa perintah ccam (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`, `folder`, `pick`, `ext`), sehingga `ccam <name>` tidak pernah ambigu. Daftarnya adalah `config.Reserved` di `internal/config`.
 
 ## Cara kerjanya
 

@@ -5,7 +5,7 @@ description: ccam की हर कमांड और विकल्प, ccam 
 updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 5d3275878535
+sourceHash: da2594c672bc
 ---
 
 किसी कमांड को असल में चलाए बिना यह देखने के लिए कि वह क्या करेगी, उसके आगे `--dry-run` लगाएँ, उदाहरण के लिए `ccam --dry-run work`। यह Claude Code शुरू करते समय (`ccam <name>`, `ccam run`, `ccam next`) और `share`, `migrate`, `shortcut`, `update` तथा `doctor --fix` के साथ काम करता है। कुछ बदलने वाली दूसरी कमांड इसे स्वीकार नहीं करतीं और चलने से मना कर देती हैं।
@@ -39,9 +39,12 @@ ccam add ci --no-login        # log in later with: ccam login ci
 ccam rename work job
 ccam remove side              # folder moves to ~/.local/share/ccam/trash
 ccam import ~/.claude-old --name old
+ccam add gw --api --base-url https://llm.example.com --auth bearer --key-from env:GW_KEY
 ```
 
 फ़ोल्डर के बिना `ccam import`, `~/.claude` और `~/.claude-*` खोजता है और हर एक के बारे में पूछता है। Import किए गए फ़ोल्डर जहाँ हैं वहीं रजिस्टर होते हैं; ccam कभी लॉगिन को move या copy नहीं करता।
+
+`ccam add --api` ऐसा अकाउंट जोड़ता है जो Claude लॉगिन के बजाय API key इस्तेमाल करता है; ccam हर launch पर key पढ़ता है और उसे कभी सेव नहीं करता। [API key अकाउंट](/features/api) देखें।
 
 जब Claude Code किसी अकाउंट के रूप में चल रहा हो, तब `ccam rename`, `ccam remove` और `ccam share` उस अकाउंट को बदलने से मना कर देते हैं। पहले session बंद करें।
 
@@ -105,7 +108,12 @@ ccam usage --watch   # refresh every 60 seconds
 ccam usage --json
 ccam next --continue
 ccam next --auto
+ccam next --auto --max-usage 80 --wait
+ccam pick                       # the account with the most room, for a script
+ccam "$(ccam pick)" -p "…"      # start a worker on it
 ```
+
+`next --auto`, `--fallback` और `ccam pick` एक ही तरह से चुनते हैं: पहले `auto_max_usage` (`config.toml`, डिफ़ॉल्ट 100) से नीचे वाले अकाउंट, `auto_strategy` (`headroom` या `expiring`) के हिसाब से, `--model` की साप्ताहिक विंडो गिनते हुए, और 100% वाला अकाउंट कभी नहीं। जब कोई नहीं चुना जा सकता, तो वे code 75 के साथ बाहर निकलते हैं, या `--wait` के साथ पहले अकाउंट के reset होने का इंतज़ार करते हैं। [अगले अकाउंट पर स्विच करना](/features/next) और [scripts के लिए अकाउंट चुनना](/features/pick) देखें।
 
 ## रखरखाव
 
@@ -113,6 +121,7 @@ ccam next --auto
 ccam doctor          # check
 ccam doctor --fix    # repair what is safe to repair, with backups
 ccam statusline install
+ccam ext             # skills, commands, MCP servers and hooks of every account, and problems
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release

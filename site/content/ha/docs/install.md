@@ -5,7 +5,7 @@ description: Girka ccam a Linux, macOS ko Windows da umarni ɗaya, kunshin .deb 
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 07eadc0769c8
+sourceHash: aea4984c1576
 ---
 
 Gudanar da wannan a terminal a Linux ko macOS:
@@ -71,6 +71,16 @@ ccam completion powershell >> $PROFILE
 ```
 
 Completion yana aiki ga dukkan umarni da zaɓuɓɓukan `ccam`, har da sunayen asusai.
+
+## Plugin na Claude Code
+
+Plugin na ccam yana koya wa Claude Code kansa yin amfani da ccam: don duba wane asusu ke da sarari, don fara workers na `claude -p` a lokaci guda a asusai daban-daban da `ccam pick`, da kuma bayyana dalilin da wani skill ko saban MCP ya ɓace da `ccam ext`. Shigar da shi a cikin Claude Code:
+
+```text
+/plugin install ccam --marketplace jhyunwoo/ccam
+```
+
+Yana ƙara skill ɗaya da umarni biyu, `/ccam:usage` da `/ccam:ext`. Skill ɗin ba ya taɓa gudanar da umarnan da ke shiga ko motsa fayiloli; yana ba da shawarar su maimakon haka.
 
 ## Duba girkawar
 

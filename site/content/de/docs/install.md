@@ -5,7 +5,7 @@ description: "ccam unter Linux, macOS oder Windows per Befehl, .deb-Paket oder Q
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 07eadc0769c8
+sourceHash: aea4984c1576
 ---
 
 Führe dies in einem Terminal unter Linux oder macOS aus:
@@ -71,6 +71,16 @@ ccam completion powershell >> $PROFILE
 ```
 
 Die Vervollständigung deckt alle Befehle und Optionen von `ccam` ab, einschließlich der Kontonamen.
+
+## Claude Code-Plugin
+
+Das ccam-Plugin bringt Claude Code selbst bei, ccam zu verwenden: zu prüfen, welches Konto Spielraum hat, parallele `claude -p`-Worker mit `ccam pick` auf verschiedenen Konten zu starten und einen fehlenden Skill oder MCP-Server mit `ccam ext` zu erklären. Installiere es in Claude Code:
+
+```text
+/plugin install ccam --marketplace jhyunwoo/ccam
+```
+
+Es fügt einen Skill und zwei Befehle hinzu, `/ccam:usage` und `/ccam:ext`. Der Skill führt nie Befehle aus, die sich anmelden oder Dateien verschieben; er schlägt sie stattdessen vor.
 
 ## Installation prüfen
 

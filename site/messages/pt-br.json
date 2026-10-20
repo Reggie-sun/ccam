@@ -153,6 +153,8 @@
     "shims": "Recriar os links dos atalhos de todas as contas",
     "shortcut": "Mostrar, criar, renomear ou remover o atalho de uma conta, como ccwork",
     "folder": "Usa uma conta em uma pasta e nas subpastas quando nenhuma conta é informada",
+    "pick": "Imprime a conta com mais folga, para scripts e workers em paralelo",
+    "ext": "Mostra as skills, comandos, plugins, servidores MCP e hooks que cada conta carrega",
     "update": "Atualizar o ccam para a versão mais recente depois de verificar o checksum",
     "completion": "Imprime o preenchimento automático para bash, zsh ou PowerShell"
   },

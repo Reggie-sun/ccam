@@ -5,7 +5,7 @@ description: ccam'ı Linux, macOS veya Windows'a tek komutla, bir .deb paketiyle
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 07eadc0769c8
+sourceHash: aea4984c1576
 ---
 
 Linux veya macOS üzerinde bir terminalde şunu çalıştırın:
@@ -71,6 +71,16 @@ ccam completion powershell >> $PROFILE
 ```
 
 Tamamlama, hesap adları da dahil olmak üzere `ccam` komutunun tüm alt komutları ve seçenekleri için çalışır.
+
+## Claude Code eklentisi
+
+ccam eklentisi Claude Code'un kendisine ccam'i kullanmayı öğretir: hangi hesapta pay kaldığını kontrol etmeyi, farklı hesaplarda paralel `claude -p` çalışan süreçlerini `ccam pick` ile başlatmayı ve eksik bir beceriyi veya MCP sunucusunu `ccam ext` ile açıklamayı. Claude Code içinde kurun:
+
+```text
+/plugin install ccam --marketplace jhyunwoo/ccam
+```
+
+Bir beceri ve iki komut ekler: `/ccam:usage` ve `/ccam:ext`. Beceri, giriş yapan veya dosya taşıyan komutları hiçbir zaman çalıştırmaz; bunun yerine onları önerir.
 
 ## Kurulumu kontrol edin
 

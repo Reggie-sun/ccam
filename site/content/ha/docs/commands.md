@@ -5,7 +5,7 @@ description: Kowane umarni da zaɓi na ccam, daga ccam add da ccam <name> zuwa c
 updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 5d3275878535
+sourceHash: da2594c672bc
 ---
 
 Saka `--dry-run` kafin umarni don ganin abin da zai yi ba tare da ya yi shi ba, misali `ccam --dry-run work`. Yana aiki lokacin fara Claude Code (`ccam <name>`, `ccam run`, `ccam next`) da kuma tare da `share`, `migrate`, `shortcut`, `update` da `doctor --fix`. Sauran umarnin da ke canza wani abu suna ƙin shi maimakon su gudana.
@@ -39,9 +39,12 @@ ccam add ci --no-login        # log in later with: ccam login ci
 ccam rename work job
 ccam remove side              # folder moves to ~/.local/share/ccam/trash
 ccam import ~/.claude-old --name old
+ccam add gw --api --base-url https://llm.example.com --auth bearer --key-from env:GW_KEY
 ```
 
 `ccam import` ba tare da folda ba yana neman `~/.claude` da `~/.claude-*` kuma yana tambaya game da kowanne. Ana yin rajistar foldojin da aka shigo da su a inda suke; ccam ba ya taɓa motsawa ko kwafar bayanan shiga.
+
+`ccam add --api` yana ƙara asusun da ke amfani da API key maimakon shigar Claude; ccam yana karanta key ɗin a kowane ƙaddamarwa kuma ba ya taɓa ajiye shi. Duba [Asusan API key](/features/api).
 
 `ccam rename`, `ccam remove` da `ccam share` suna ƙin canza asusu yayin da Claude Code ke gudana a matsayin wannan asusun. Ka rufe zaman (session) tukuna.
 
@@ -105,7 +108,12 @@ ccam usage --watch   # refresh every 60 seconds
 ccam usage --json
 ccam next --continue
 ccam next --auto
+ccam next --auto --max-usage 80 --wait
+ccam pick                       # the account with the most room, for a script
+ccam "$(ccam pick)" -p "…"      # start a worker on it
 ```
+
+`next --auto`, `--fallback` da `ccam pick` suna zaɓa ta hanya ɗaya: na farko waɗanda ke ƙasa da `auto_max_usage` (`config.toml`, tsoho 100), bisa `auto_strategy` (`headroom` ko `expiring`), suna ƙirga tagar mako ta `--model`, kuma ba sa taɓa zaɓar asusun da ya kai 100%. Idan ba za a iya zaɓar kowanne ba, suna fita da code 75, ko da `--wait` suna jiran asusun farko ya sake saitawa. Duba [Sauyawa zuwa asusu na gaba](/features/next) da [Zaɓar asusu don rubutun umarni](/features/pick).
 
 ## Kulawa
 
@@ -113,6 +121,7 @@ ccam next --auto
 ccam doctor          # check
 ccam doctor --fix    # repair what is safe to repair, with backups
 ccam statusline install
+ccam ext             # skills, commands, MCP servers and hooks of every account, and problems
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release

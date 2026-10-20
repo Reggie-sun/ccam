@@ -4,7 +4,7 @@ description: ccam next membuka Claude Code sebagai akun setelah akun terakhir; -
 updated: 2026-10-20
 order: 8
 translation: machine
-sourceHash: 7bc55c2dd520
+sourceHash: 784ae4d1f6d9
 ---
 
 `ccam next` membuka Claude Code sebagai akun lain tanpa Anda perlu menyebutkan namanya. Gunakan saat sebuah akun mencapai batas penggunaannya: `ccam next` biasa mengambil akun setelah akun yang terakhir Anda pakai, `--auto` mengambil akun dengan ruang terbanyak di jendela 5 jamnya, dan `--continue` melanjutkan percakapan terakhir di akun baru. Untuk skrip yang menjalankan `claude -p`, `ccam --fallback` melakukan pergantian itu dengan sendirinya (lihat [Jalankan ulang saat batas tercapai](#run-again-at-the-limit)).
@@ -16,6 +16,8 @@ ccam next                       # the account after the one you used last
 ccam next --auto                # the account with the lowest 5-hour usage
 ccam next --continue            # the next account that shares history, with claude --continue
 ccam next -c --auto             # both: lowest usage among accounts sharing history
+ccam next --auto --max-usage 80 # prefer accounts below 80%
+ccam next --auto --wait         # nobody has room: wait for the first reset (up to 5 hours)
 ccam next -- -p "summarize"     # pass arguments to claude after --
 ccam --dry-run next --auto      # print the choice and the command, start nothing
 ```
@@ -32,7 +34,10 @@ ccam menampilkan perpindahan sebagai `→ <from> → <to>` di error standar, lal
 
 | Opsi | Fungsinya | Default |
 | --- | --- | --- |
-| `--auto` | Memilih akun yang sudah login dengan penggunaan 5 jam terendah, melewati akun yang sudah 100% | nonaktif |
+| `--auto` | Memilih akun yang sudah login berdasarkan penggunaan (lihat di bawah), melewati akun yang sudah 100% | nonaktif |
+| `--max-usage <1-100>` | Dengan `--auto`: utamakan akun di bawah penggunaan ini | `auto_max_usage`, jika tidak ada 100 |
+| `--strategy headroom\|expiring` | Dengan `--auto`: penggunaan 5 jam terendah, atau reset 5 jam yang paling cepat | `auto_strategy`, jika tidak ada `headroom` |
+| `--wait[=<duration>]` | Dengan `--auto`: jika tidak ada akun yang punya ruang, tunggu akun pertama di-reset, paling lama selama ini | nonaktif; `5h` jika diberikan tanpa nilai |
 | `-c`, `--continue` | Hanya mempertimbangkan akun yang berbagi riwayat percakapan dengan akun yang terakhir Anda pakai, dan menjalankan `claude --continue` | nonaktif |
 | `-- <claude args>` | Argumen yang diteruskan ke `claude` setelah argumen milik ccam | tidak ada |
 | `--dry-run` | Dihormati: menampilkan `→ <from> → <to>` dan baris perintah yang akan dijalankan, tanpa menjalankan Claude Code atau mencatat peluncuran | nonaktif |
@@ -56,11 +61,23 @@ Penelusuran dimulai dari akun yang terakhir dipakai dan berhenti di akun pertama
 
 ### --auto
 
-`--auto` memutuskan berdasarkan penggunaan alih-alih urutan slot. `cli.pickAuto` mempertahankan akun yang sudah login, menanyakan penggunaan semuanya sekaligus dengan `Fetcher.FetchAll` yang sama dengan yang dipakai `ccam usage`, dan membiarkan `usage.Best()` memilih:
+`--auto` memutuskan berdasarkan penggunaan alih-alih urutan slot. `cli.pickAuto` mempertahankan akun yang sudah login, menanyakan penggunaan semuanya sekaligus dengan `Fetcher.FetchAll` yang sama dengan yang dipakai `ccam usage`, dan membiarkan `usage.Policy.Choose()` memilih:
 
 <!-- motion:next-auto -->
 
-`usage.Best()` mengambil persentase 5 jam terendah dan melewati akun yang sudah 100% atau yang penggunaan 5 jamnya tidak diketahui. Pencarian mengikuti aturan `ccam usage`: angka yang berumur kurang dari 60 detik dipakai ulang, setiap akun diberi waktu 3 detik, dan akun yang tidak menjawab, atau yang login-nya sudah kedaluwarsa, dinilai berdasarkan angka yang tersimpan. Jendela tersimpan yang waktu reset-nya sudah lewat dihitung 0%, sehingga akun yang jendelanya sudah direset sejak itu tidak dilewatkan. `--auto` tidak pernah memperbarui token. Tidak seperti rotasi biasa, `--auto` dapat memilih akun yang terakhir Anda pakai jika akun itu masih memiliki ruang terbanyak.
+Akun dinilai berdasarkan jendela 5 jam dan mingguannya, dan, jika `--model` ada di antara argumen untuk Claude Code, juga berdasarkan jendela mingguan model itu (`opus`, `sonnet`, `haiku`, atau `fable` di namanya). `Policy.Choose()` membagi akun menjadi tiga kelompok:
+
+1. **Ada ruang**: setiap jendela di bawah `auto_max_usage` (`config.toml`, bawaan 100). Strategi memilih di antaranya: `headroom` (bawaan) mengambil penggunaan 5 jam terendah, `expiring` mengambil jendela 5 jam yang paling cepat di-reset, sehingga sisa kuotanya terpakai sebelum hangus.
+2. **Lewat batas**: di bawah 100% tetapi sama dengan atau di atas `auto_max_usage`. Hanya dipakai jika tidak ada akun yang punya ruang, dimulai dari penggunaan 5 jam terendah.
+3. **Penuh**: sebuah jendela di 100%, atau penggunaan 5 jam yang tidak diketahui. Tidak pernah dipilih.
+
+```toml
+# ~/.config/ccam/config.toml
+auto_max_usage = 80        # keep 20% of each account for interactive work
+auto_strategy = "expiring"
+```
+
+Jika tidak ada yang bisa dipilih, ccam keluar dengan kode 75 (`EX_TEMPFAIL`), sehingga skrip bisa membedakan "coba lagi nanti" dari kegagalan. Dengan `--wait`, ccam justru tidur sampai jendela penghalang milik akun penuh pertama di-reset (30 detik setelah waktu reset, saat endpoint menampilkan jendela baru), mencetak `ccam: no account has room; waiting until 15:10`, lalu memilih lagi; jika tidak ada akun yang menyebutkan kapan di-reset, ccam memeriksa lagi setelah 10 menit. Jika tidak ada yang kosong sebelum waktu tunggu berakhir, ccam keluar dengan 75. Pencarian mengikuti aturan `ccam usage`: angka yang berumur kurang dari 60 detik dipakai ulang, setiap akun diberi waktu 3 detik, dan akun yang tidak menjawab, atau yang login-nya sudah kedaluwarsa, dinilai berdasarkan angka yang tersimpan. Jendela tersimpan yang waktu reset-nya sudah lewat dihitung 0%, sehingga akun yang jendelanya sudah direset sejak itu tidak dilewatkan. `--auto` tidak pernah memperbarui token. Tidak seperti rotasi biasa, `--auto` dapat memilih akun yang terakhir Anda pakai jika akun itu masih memiliki ruang terbanyak.
 
 ### --continue
 
@@ -90,7 +107,7 @@ Summary: …
 6. Kemudian output percobaan itu dibuang dan perintah yang sama dijalankan sebagai akun lain yang sudah login: akun dengan penggunaan 5 jam terendah, lalu akun yang penggunaannya tidak bisa dicek, sesuai urutan nomor. Akun di 100% dilewati, dan setiap akun dicoba paling banyak sekali.
 7. Jika ada `-c`, `--continue`, `-r`, atau `--resume` di antara argumen, hanya akun dalam grup riwayat yang sama yang dicoba, sehingga percakapannya bisa ditemukan.
 
-Jika tidak ada akun yang tersisa, ccam mencetak output percobaan terakhir, menyatakan bahwa tidak ada akun yang sudah login yang masih punya ruang, dan keluar dengan kode percobaan itu. `ccam --dry-run --fallback work -p …` mencetak perintah percobaan pertama.
+Akun berikutnya dipilih dengan aturan yang sama seperti `--auto` (`auto_max_usage`, `auto_strategy`, jendela `--model`). Jika tidak ada akun yang tersisa, ccam mencetak output percobaan terakhir, menyatakan bahwa tidak ada akun yang sudah login yang masih punya ruang, dan keluar dengan kode 75. Dengan `--wait` sebelum nama akun (`ccam --fallback --wait=2h work -p …`), ccam justru menunggu akun pertama di-reset, lalu dapat mencoba setiap akun lagi; ccam selalu tidur setidaknya sekali terlebih dahulu, sehingga akun yang baru saja mencapai batasnya tidak langsung dijalankan lagi. `ccam --dry-run --fallback work -p …` mencetak perintah percobaan pertama.
 
 Sesi interaktif tidak berganti akun dengan sendirinya. Sebagai gantinya, dengan `ccam statusline install`, baris status menambahkan `→ ccam next --auto --continue` begitu penggunaan 5 jam atau mingguan mencapai 90% ([Batas penggunaan](/features/usage)).
 
@@ -98,7 +115,8 @@ Sesi interaktif tidak berganti akun dengan sendirinya. Sebagai gantinya, dengan 
 
 - Akun tanpa login tidak pernah dipilih. Jika tidak ada akun lain yang sudah login, `ccam next` biasa berhenti dengan `no logged-in account other than <name>`.
 - Dengan `--continue` dan tidak ada akun yang berbagi riwayat: `` no other account shares conversation history with <name>. Turn it on with `ccam share <name> --history on` ``.
-- Dengan `--auto` dan tidak ada akun yang sudah login: `no logged-in account to pick`. Jika setiap akun penuh atau penggunaannya tidak diketahui: `` no account with known usage and headroom (see `ccam usage`) ``.
+- Dengan `--auto` dan tidak ada akun yang sudah login: `no logged-in account to pick`. Jika setiap akun penuh atau penggunaannya tidak diketahui: `` no account with known usage and headroom (see `ccam usage`) ``. Keduanya berakhir dengan kode keluar 75.
+- `--max-usage`, `--strategy`, dan `--wait` hanya berfungsi dengan `--auto`, dan nilai di luar 1-100 atau strategi lain ditolak.
 - `--auto` membuat permintaan jaringan bahkan dengan `--dry-run`. Opsi ini hanya membaca, dan tidak pernah menulis file token.
 - Akun yang dipilih dijalankan melalui jalur yang sama dengan `ccam <name>`, sehingga pemeriksaan yang sama berlaku, termasuk peringatan jika Claude Code lain yang berbagi riwayat yang sama sudah berjalan di folder ini.
 - `last-used` hanya ditulis saat Claude Code benar-benar dimulai. `--dry-run` tidak menyentuhnya, sehingga dry run tidak memajukan rotasi.

@@ -1,10 +1,10 @@
 ---
 title: إدارة الحسابات
-description: أضف حسابات Claude Code وسجّل الدخول إليها واسردها وأعد تسميتها وأزلها واستوردها باستخدام ccam add وccam login وccam list وccam rename وccam remove وccam import.
-updated: 2026-10-19
+description: أضف حسابات Claude Code وسجّل الدخول إليها واسردها وأعد تسميتها وأزلها واستوردها عبر ccam add وccam login وccam list وccam rename وccam remove وccam import.
+updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 99c931574262
+sourceHash: 9eb992214132
 ---
 
 كل حساب في ccam هو مجلد إعداد منفصل لبرنامج Claude Code له تسجيل دخوله الخاص. تنشئ هذه الأوامر الحسابات، وتسجّل الدخول إليها، وتسردها، وتعيد تسميتها، وتزيلها، وتسجّل المجلدات التي لديك بالفعل.
@@ -49,15 +49,16 @@ $ ccam list
 | `ccam add --no-login` | ينشئ الحساب دون تسجيل الدخول؛ سجّل الدخول لاحقًا باستخدام `ccam login <name>` | معطّل |
 | `ccam add --share <item=group>` | يشارك عنصرًا مع مجموعة، أو `item=local` لإبقائه خاصًا. يمكن تكراره | `mcp` و`settings` و`memory` و`extensions` في `default`؛ و`history` محلي |
 | `ccam add --shortcut <command>` | ينشئ أيضًا هذا الأمر المختصر في `~/.local/bin` | لا شيء |
+| `ccam add --api --key-from <source>` | حساب يستخدم مفتاح API بدلًا من تسجيل الدخول؛ راجع [حسابات مفاتيح API](/features/api) | معطّل |
 | `ccam list --json` | يطبع الحسابات بصيغة JSON | معطّل |
 | `ccam remove -y`، `--yes` | يزيل دون سؤال | معطّل |
 | `ccam import --name <name>` | اسم الحساب للمجلد الذي تحدده | مشتق من اسم المجلد |
 | `ccam import -y`، `--yes` | يستورد كل مجلد يجده دون سؤال | معطّل |
 | `--dry-run` | يدعمه `ccam list` و`ccam completion`، وهما لا يغيّران شيئًا. وترفضه `add` و`login` و`logout` و`use` و`rename` و`remove` و`import` مع `` --dry-run is not supported by `ccam add`; nothing was changed `` (مع ذكر اسم الأمر) | معطّل |
 
-ليس لـ `ccam login` و`ccam logout` و`ccam use` و`ccam rename` خيارات خاصة بها. ويأخذ `ccam completion` القيمة `bash` أو `zsh`؛ وأي شيء آخر يفشل مع `only bash and zsh are supported`.
+ليس لـ `ccam login` و`ccam logout` و`ccam use` و`ccam rename` خيارات خاصة بها. ويأخذ `ccam completion` القيمة `bash` أو `zsh` أو `powershell`؛ وأي شيء آخر يفشل مع `only bash, zsh and powershell are supported`.
 
-أسماء الحسابات من 1 إلى 32 حرفًا من `a-z` و`0-9` و`-` و`_`، وتبدأ بحرف أو رقم. ولا يجوز أن يتكون الاسم من أرقام فقط، لأن `ccam 2` يعني الخانة 2. ولا يجوز أن يكون الاسم أمرًا من أوامر ccam أيضًا (`add` و`list` و`ls` و`run` و`use` و`next` و`usage` و`u` و`share` و`mcp` و`login` و`logout` و`rename` و`remove` و`rm` و`import` و`migrate` و`doctor` و`shims` و`shortcut` و`completion` و`help` و`version` و`statusline` و`update`)، فلا يكون `ccam <name>` ملتبسًا أبدًا. والقائمة هي `config.Reserved` في `internal/config`.
+أسماء الحسابات من 1 إلى 32 حرفًا من `a-z` و`0-9` و`-` و`_`، وتبدأ بحرف أو رقم. ولا يجوز أن يتكون الاسم من أرقام فقط، لأن `ccam 2` يعني الخانة 2. ولا يجوز أن يكون الاسم أمرًا من أوامر ccam أيضًا (`add` و`list` و`ls` و`run` و`use` و`next` و`usage` و`u` و`share` و`mcp` و`login` و`logout` و`rename` و`remove` و`rm` و`import` و`migrate` و`doctor` و`shims` و`shortcut` و`completion` و`help` و`version` و`statusline` و`update` و`folder` و`pick` و`ext`)، فلا يكون `ccam <name>` ملتبسًا أبدًا. والقائمة هي `config.Reserved` في `internal/config`.
 
 ## كيف يعمل
 

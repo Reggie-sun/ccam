@@ -1,10 +1,10 @@
 ---
 title: ccam và các công cụ đổi tài khoản Claude Code khác
-description: "So sánh ccam với claude-swap, CCS, clauth, CAAM, cux và các công cụ đổi tài khoản Claude Code khác, và cách tiếp cận nào hợp với nhu cầu nào."
+description: "So sánh ccam với claude-swap, CCS, clausona, clauth, CAAM, cux và các công cụ đổi tài khoản Claude Code khác, và cách tiếp cận nào hợp với nhu cầu nào."
 updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: d058da937218
+sourceHash: 68048287f792
 ---
 
 Các công cụ đổi tài khoản Claude Code đi theo một trong hai cách. Phần lớn hoán đổi thông tin đăng nhập bên trong một thư mục `~/.claude` duy nhất, nên mỗi lúc chỉ có một tài khoản hoạt động. Một số khác, trong đó có ccam, cho mỗi tài khoản một thư mục riêng bằng `CLAUDE_CONFIG_DIR`, nên mọi tài khoản đều giữ trạng thái đăng nhập và có thể chạy nhiều tài khoản cùng lúc. ccam còn bổ sung việc dùng chung cài đặt và máy chủ MCP, và tiếp tục một cuộc hội thoại trong thư mục của tài khoản khác.
@@ -19,13 +19,14 @@ Các công cụ đổi tài khoản Claude Code đi theo một trong hai cách. 
 
 ## So sánh các công cụ
 
-Tổng hợp từ tài liệu và mã nguồn của từng dự án vào ngày 2026-10-20. "Không có trong tài liệu" nghĩa là dự án không nói đến, không có nghĩa là thiếu tính năng.
+Tổng hợp từ tài liệu và mã nguồn của từng dự án vào ngày 2026-10-20 (clausona: v0.12.0-beta). "Không có trong tài liệu" nghĩa là dự án không nói đến, không có nghĩa là thiếu tính năng.
 
 | Công cụ | Cách tiếp cận | Nhiều tài khoản cùng lúc | Mức sử dụng 5 giờ và hàng tuần | Khi chạm giới hạn | Nền tảng |
 | --- | --- | --- | --- | --- | --- |
-| ccam | Thư mục riêng | Có | Có, `ccam usage` | Bạn chạy `ccam next --auto --continue` để tiếp tục cuộc hội thoại trên tài khoản còn nhiều hạn mức nhất; `ccam --fallback` tự chạy lại các tác vụ `-p` ở đó | Linux, macOS, Windows |
+| ccam | Thư mục riêng | Có | Có, `ccam usage` | Bạn chạy `ccam next --auto --continue` để tiếp tục cuộc hội thoại trên tài khoản còn nhiều hạn mức nhất; `ccam --fallback` tự chạy lại các tác vụ `-p` ở đó, và `ccam pick` phân bổ các worker | Linux, macOS, Windows |
 | [claude-swap](https://github.com/realiti4/claude-swap) | Hoán đổi đăng nhập; thư mục riêng với `cswap run` | Có, với `cswap run` | Có | `cswap auto` đổi đăng nhập khi chạm ngưỡng; phiên đang chạy vẫn tiếp tục | Linux, macOS, Windows |
 | [CCS](https://github.com/kaitranntt/ccs) | Thư mục riêng | Có | Một phần | Nhóm tài khoản chuyển yêu cầu sang tài khoản kế tiếp qua một proxy cục bộ | Linux, macOS, Windows |
+| [clausona](https://github.com/larcane97/clausona) | Thư mục riêng | Có | Có | Các route chọn một tài khoản còn hạn mức trước mỗi lần chạy, có thể chờ đặt lại, và giao các tài khoản khác nhau cho các worker | Linux, macOS, Windows |
 | [clauth](https://github.com/uwuclxdy/clauth) | Hoán đổi đăng nhập; thư mục riêng với `clauth start` | Có, với `clauth start` | Có | Chuyển lần lượt theo chuỗi tài khoản dự phòng | Linux, macOS, Windows |
 | [CAAM](https://github.com/Dicklesworthstone/coding_agent_account_manager) | Hoán đổi đăng nhập, hoặc hồ sơ tách biệt | Có, với hồ sơ tách biệt | Có | `caam run` thử lại các lệnh không tương tác trên tài khoản khác | Linux, macOS, Windows |
 | [cux](https://github.com/inulute/cux) | Hoán đổi đăng nhập và bọc lệnh `claude` | Không, chỉ một tài khoản hoạt động | Có | Hoán đổi đăng nhập và tiếp tục cùng cuộc hội thoại | Linux, macOS, Windows |
@@ -41,6 +42,7 @@ ccswap là một bản fork của claude-swap, quản lý thêm cả đăng nh�
 | ccam | Go, một tệp nhị phân tĩnh | Không có gì: ccam tự thay thế mình bằng `claude` (trên Windows, nơi không làm được điều này, nó chờ tiến trình đó kết thúc) | Không | Từng mục riêng: cục bộ hoặc một nhóm có tên, theo từng tài khoản |
 | claude-swap | Python 3.12+, cài bằng uv hoặc pipx | Không có gì với `cswap run`; `cswap auto` và ứng dụng thanh menu vẫn chạy | Có, khi hoán đổi đăng nhập | Với `cswap run`: cài đặt, `CLAUDE.md` và tiện ích mở rộng đi cùng nhau, lịch sử tùy chọn; máy chủ MCP được sao chép mỗi lần khởi chạy |
 | CCS | Node.js 18+ hoặc Bun | CCS vẫn là tiến trình cha; nhóm tài khoản thêm một proxy cục bộ | Không với các thư mục tài khoản của nó; nhóm tài khoản giữ thông tin đăng nhập riêng | Dùng chung hoặc cục bộ theo từng tài khoản, lịch sử trong các nhóm ngữ cảnh; máy chủ MCP được sao chép |
+| clausona | TypeScript, Node.js 20+ | `claude` thông thường chạy qua một hàm shell; `clausona run` giữ Node làm tiến trình cha; một tiến trình Node chạy nền sau mỗi lần thoát | Không, nhưng nó tự gia hạn token của các tài khoản đang rảnh để đọc mức sử dụng của chúng | Mọi thứ trừ các tệp riêng của từng tài khoản, từ một tài khoản chính; lịch sử tùy chọn; máy chủ thêm bằng `claude mcp add` không được dùng chung |
 | clauth | Rust | clauth vẫn là tiến trình cha | Có, khi hoán đổi đăng nhập | Toàn bộ `~/.claude`, hoặc không gì cả |
 | CAAM | Go | Tùy chế độ; có một daemon tùy chọn | Có, ở chế độ kho (vault) | Cố định theo chế độ; máy chủ MCP được sao chép mỗi lần khởi chạy |
 | cux | Go | Một lớp bọc nằm quanh `claude` | Có | Mọi thứ: một thư mục |
@@ -76,7 +78,7 @@ Máy chủ MCP, `settings.json`, `CLAUDE.md`, tiện ích mở rộng (agent, l�
 
 Khi dùng chung lịch sử, `ccam next --auto --continue` hỏi mức sử dụng của mọi tài khoản cùng lúc, mở tài khoản còn nhiều hạn mức nhất và tiếp tục cuộc hội thoại. Bạn quyết định khi nào đổi; ccam không theo dõi mức sử dụng của bạn ở chế độ nền. Dòng trạng thái gợi ý lệnh này khi một tài khoản chạm 90%.
 
-Script không thể chờ bạn, nên `ccam --fallback work -p "…"` tự đổi thay cho chúng: khi tài khoản chạm giới hạn, cùng lệnh đó chạy lại bằng tài khoản còn nhiều hạn mức nhất, và chỉ đầu ra của lần chạy đã hoàn tất được in ra. Lỗi không phải do giới hạn sử dụng được chuyển tiếp nguyên vẹn.
+Script không thể chờ bạn, nên `ccam --fallback work -p "…"` tự đổi thay cho chúng: khi tài khoản chạm giới hạn, cùng lệnh đó chạy lại bằng tài khoản còn nhiều hạn mức nhất, và chỉ đầu ra của lần chạy đã hoàn tất được in ra. Lỗi không phải do giới hạn sử dụng được chuyển tiếp nguyên vẹn. Với các worker chạy song song, `ccam pick` giao cho mỗi worker một tài khoản khác nhau còn hạn mức, và cả hai đều thoát với mã 75 khi không tài khoản nào còn hạn mức.
 
 ### Đúng tài khoản cho từng thư mục
 
@@ -91,7 +93,8 @@ ccam là một tệp nhị phân tĩnh khoảng 10 MB, không cần cài thêm m
 - claude-swap, clauth, cux, CAAM và CCSwitcher có thể tự đổi tài khoản cho một phiên tương tác đang chạy khi một tài khoản vượt ngưỡng sử dụng. ccam đổi các lần chạy `-p` bằng `--fallback` và để các phiên tương tác cho bạn.
 - Trên Windows không bật Developer Mode, ccam dùng chung được thư mục nhưng không dùng chung được tệp đơn lẻ như `settings.json`; claude-swap và CCS thì sao chép chúng thay vào đó.
 - CCSwitcher, Claude Switcher và claude-swap hiển thị mức sử dụng trên thanh menu macOS.
-- CCS, CAAM, clauth, ccswap và Claude Switcher cũng quản lý Codex và các coding agent khác.
+- CCS, clausona, CAAM, clauth, ccswap và Claude Switcher cũng quản lý Codex và các coding agent khác.
+- clausona còn bật và tắt tiện ích mở rộng theo từng tài khoản (`ccam ext` của ccam chỉ hiển thị chúng), theo dõi chi phí token cục bộ, và cung cấp các plugin Claude Code chạy hàng loạt worker trong tmux và các terminal khác.
 - CAAM, CCSwitcher và Claude Switcher cài được bằng Homebrew, còn clauth và CAAM ký checksum của bản phát hành. ccam cài bằng script riêng, gói `.deb` hoặc `go install`, và kiểm tra checksum mà không có chữ ký.
 
 ## Công cụ nào phù hợp?

@@ -5,7 +5,7 @@ description: ccam addやccam <name>から、ccam usage、ccam next、ccam doctor
 updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 5d3275878535
+sourceHash: da2594c672bc
 ---
 
 コマンドの前に`--dry-run`を付けると、実際には実行せずに何をするかを確認できます。たとえば`ccam --dry-run work`のように使います。これが使えるのは、Claude Codeを起動するとき（`ccam <name>`、`ccam run`、`ccam next`）と、`share`、`migrate`、`shortcut`、`update`、`doctor --fix`です。何かを変更するそれ以外のコマンドは、実行せずにこのオプションを拒否します。
@@ -39,9 +39,12 @@ ccam add ci --no-login        # log in later with: ccam login ci
 ccam rename work job
 ccam remove side              # folder moves to ~/.local/share/ccam/trash
 ccam import ~/.claude-old --name old
+ccam add gw --api --base-url https://llm.example.com --auth bearer --key-from env:GW_KEY
 ```
 
 フォルダーを指定せずに`ccam import`を実行すると、`~/.claude`と`~/.claude-*`を探し、それぞれについて確認します。インポートしたフォルダーはその場所のまま登録されます。ccamがログインを移動またはコピーすることはありません。
+
+`ccam add --api`は、Claudeのログインの代わりにAPIキーを使うアカウントを追加します。ccamは起動のたびにキーを読み、保存することはありません。[APIキーのアカウント](/features/api)を参照してください。
 
 `ccam rename`、`ccam remove`、`ccam share`は、そのアカウントでClaude Codeが実行中の間は、アカウントを変更しません。先にセッションを終了してください。
 
@@ -105,7 +108,12 @@ ccam usage --watch   # refresh every 60 seconds
 ccam usage --json
 ccam next --continue
 ccam next --auto
+ccam next --auto --max-usage 80 --wait
+ccam pick                       # the account with the most room, for a script
+ccam "$(ccam pick)" -p "…"      # start a worker on it
 ```
+
+`next --auto`、`--fallback`、`ccam pick`は同じ方法で選びます。まず`auto_max_usage`（`config.toml`、デフォルトは100）未満のアカウントを優先し、`auto_strategy`（`headroom`または`expiring`）に従って選びます。`--model`の週間の枠も数え、100%のアカウントは決して選びません。選べるアカウントがない場合は終了コード75で終了するか、`--wait`を付けていれば最初のアカウントがリセットされるまで待ちます。[次のアカウントへの切り替え](/features/next)と[スクリプト用のアカウント選び](/features/pick)を参照してください。
 
 ## メンテナンス
 
@@ -113,6 +121,7 @@ ccam next --auto
 ccam doctor          # check
 ccam doctor --fix    # repair what is safe to repair, with backups
 ccam statusline install
+ccam ext             # skills, commands, MCP servers and hooks of every account, and problems
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release

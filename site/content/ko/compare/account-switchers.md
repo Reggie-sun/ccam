@@ -1,10 +1,10 @@
 ---
 title: ccam과 다른 Claude Code 계정 전환 도구 비교
-description: claude-swap, CCS, clauth, CAAM, cux 등 Claude Code 계정 전환 도구와 ccam을 비교하고, 어떤 방식이 어떤 용도에 맞는지 설명합니다.
+description: claude-swap, CCS, clausona, clauth, CAAM, cux 등 Claude Code 계정 전환 도구와 ccam을 비교하고, 어떤 방식이 어떤 용도에 맞는지 설명합니다.
 updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: d058da937218
+sourceHash: 68048287f792
 ---
 
 Claude Code 계정을 전환하는 도구는 두 가지 방식 중 하나를 씁니다. 대부분은 하나뿐인 `~/.claude` 폴더 안에서 로그인을 바꿔 끼우므로, 한 번에 한 계정만 활성화됩니다. ccam을 비롯한 나머지는 `CLAUDE_CONFIG_DIR`로 계정마다 폴더를 따로 두므로, 모든 계정이 로그인 상태를 유지하고 여러 계정을 동시에 실행할 수 있습니다. ccam은 여기에 설정과 MCP 서버 공유를 더하고, 다른 계정의 폴더에서 대화를 이어 갈 수 있게 합니다.
@@ -19,13 +19,14 @@ Claude Code 계정을 전환하는 도구는 두 가지 방식 중 하나를 씁
 
 ## 도구 비교
 
-2026-10-20 기준으로 각 프로젝트의 문서와 소스 코드를 바탕으로 정리했습니다. "문서에 없음"은 프로젝트가 언급하지 않았다는 뜻이며, 기능이 없다는 뜻은 아닙니다.
+2026-10-20 기준으로 각 프로젝트의 문서와 소스 코드를 바탕으로 정리했습니다(clausona: v0.12.0-beta). "문서에 없음"은 프로젝트가 언급하지 않았다는 뜻이며, 기능이 없다는 뜻은 아닙니다.
 
 | 도구 | 방식 | 동시에 여러 계정 | 5시간·주간 사용량 | 한도에 도달했을 때 | 플랫폼 |
 | --- | --- | --- | --- | --- | --- |
-| ccam | 폴더 분리 | 예 | 예, `ccam usage` | 사용자가 `ccam next --auto --continue`를 실행해 여유가 가장 많은 계정에서 대화를 이어 감. `-p` 작업은 `ccam --fallback`이 그 계정에서 알아서 다시 실행 | Linux, macOS, Windows |
+| ccam | 폴더 분리 | 예 | 예, `ccam usage` | 사용자가 `ccam next --auto --continue`를 실행해 여유가 가장 많은 계정에서 대화를 이어 감. `-p` 작업은 `ccam --fallback`이 그 계정에서 알아서 다시 실행하고, `ccam pick`은 워커를 여러 계정에 나눔 | Linux, macOS, Windows |
 | [claude-swap](https://github.com/realiti4/claude-swap) | 로그인 교체, `cswap run`으로 폴더 분리 | 예, `cswap run` 사용 시 | 예 | `cswap auto`가 임계값에서 로그인을 바꾸며, 실행 중인 세션은 계속됨 | Linux, macOS, Windows |
 | [CCS](https://github.com/kaitranntt/ccs) | 폴더 분리 | 예 | 일부 | 계정 풀이 로컬 프록시를 거쳐 요청을 다음 계정으로 넘김 | Linux, macOS, Windows |
+| [clausona](https://github.com/larcane97/clausona) | 폴더 분리 | 예 | 예 | 실행할 때마다 라우트가 할당량이 남은 계정을 먼저 고르며, 초기화를 기다릴 수 있고, 워커마다 다른 계정을 나눠 줌 | Linux, macOS, Windows |
 | [clauth](https://github.com/uwuclxdy/clauth) | 로그인 교체, `clauth start`로 폴더 분리 | 예, `clauth start` 사용 시 | 예 | 대체 계정 순서를 따라 전환 | Linux, macOS, Windows |
 | [CAAM](https://github.com/Dicklesworthstone/coding_agent_account_manager) | 로그인 교체 또는 격리된 프로필 | 예, 격리된 프로필 사용 시 | 예 | `caam run`이 비대화형 명령을 다른 계정으로 다시 시도 | Linux, macOS, Windows |
 | [cux](https://github.com/inulute/cux) | 로그인 교체, `claude`를 감싸서 실행 | 아니요, 활성 계정은 하나 | 예 | 로그인을 바꾸고 같은 대화를 재개 | Linux, macOS, Windows |
@@ -41,6 +42,7 @@ ccswap은 Codex 로그인도 관리하는 claude-swap의 포크입니다. [claud
 | ccam | Go, 정적 바이너리 하나 | 없음: ccam이 자신을 `claude`로 대체(대체할 수 없는 Windows에서는 종료를 기다림) | 아니요 | 항목마다 따로: 계정별로 로컬 또는 이름 붙인 그룹 |
 | claude-swap | Python 3.12+, uv 또는 pipx로 설치 | `cswap run`에서는 없음, `cswap auto`와 메뉴 막대 앱은 계속 실행 | 예, 로그인을 바꿔 끼울 때 | `cswap run` 사용 시: 설정, `CLAUDE.md`, 확장을 한꺼번에, 대화 내역은 선택; MCP 서버는 실행할 때마다 복사 |
 | CCS | Node.js 18+ 또는 Bun | CCS가 부모 프로세스로 남음, 풀은 로컬 프록시를 추가 | 계정 폴더는 아니요, 풀은 자체 로그인을 보관 | 계정별로 공유 또는 로컬, 대화 내역은 컨텍스트 그룹으로; MCP 서버는 복사 |
+| clausona | TypeScript, Node.js 20+ | 그냥 실행한 `claude`는 셸 함수를 거침, `clausona run`은 Node가 부모 프로세스로 남음, 종료할 때마다 백그라운드 Node 프로세스 실행 | 아니요, 다만 사용량을 읽으려고 쉬고 있는 계정의 토큰을 직접 갱신 | 계정별 파일을 뺀 모든 것을 기본 계정 하나에서, 대화 내역은 선택; `claude mcp add`로 추가한 서버는 공유하지 않음 |
 | clauth | Rust | clauth가 부모 프로세스로 남음 | 예, 로그인을 바꿔 끼울 때 | `~/.claude` 전체 또는 아무것도 없음 |
 | CAAM | Go | 모드에 따라 다름, 선택적 데몬 | 예, 볼트 모드에서 | 모드에 따라 고정; MCP 서버는 실행할 때마다 복사 |
 | cux | Go | 래퍼가 `claude`를 감싼 채 남음 | 예 | 전부: 폴더 하나 |
@@ -76,7 +78,7 @@ MCP 서버, `settings.json`, `CLAUDE.md`, 확장(에이전트, 명령, 스킬, �
 
 대화 내역을 공유하면 `ccam next --auto --continue`가 모든 계정의 사용량을 한꺼번에 조회하고, 여유가 가장 많은 계정을 열어 대화를 이어 갑니다. 언제 전환할지는 사용자가 정합니다. ccam은 백그라운드에서 사용량을 지켜보지 않습니다. 계정이 90%에 도달하면 상태 표시줄이 이 명령을 제안합니다.
 
-스크립트는 사용자를 기다릴 수 없으므로, `ccam --fallback work -p "…"`가 대신 전환합니다. 계정이 한도에 도달하면 여유가 가장 많은 계정으로 같은 명령을 다시 실행하고, 끝까지 실행된 쪽의 출력만 표시합니다. 사용량 한도가 아닌 실패는 그대로 전달합니다.
+스크립트는 사용자를 기다릴 수 없으므로, `ccam --fallback work -p "…"`가 대신 전환합니다. 계정이 한도에 도달하면 여유가 가장 많은 계정으로 같은 명령을 다시 실행하고, 끝까지 실행된 쪽의 출력만 표시합니다. 사용량 한도가 아닌 실패는 그대로 전달합니다. 병렬 워커에는 `ccam pick`이 여유가 있는 서로 다른 계정을 하나씩 나눠 주며, 여유가 남은 계정이 없으면 둘 다 종료 코드 75로 끝납니다.
 
 ### 폴더마다 맞는 계정
 
@@ -91,7 +93,8 @@ ccam은 약 10 MB의 정적 바이너리이며, 따로 설치할 런타임이 �
 - claude-swap, clauth, cux, CAAM, CCSwitcher는 계정이 사용량 임계값을 넘으면 실행 중인 대화형 세션을 스스로 전환할 수 있습니다. ccam은 `-p` 실행만 `--fallback`으로 전환하고, 대화형 세션은 사용자에게 맡깁니다.
 - 개발자 모드가 꺼진 Windows에서 ccam은 폴더는 공유하지만 `settings.json` 같은 단일 파일은 공유하지 못합니다. claude-swap과 CCS는 이런 경우 파일을 복사합니다.
 - CCSwitcher, Claude Switcher, claude-swap은 macOS 메뉴 막대에 사용량을 표시합니다.
-- CCS, CAAM, clauth, ccswap, Claude Switcher는 Codex 등 다른 코딩 에이전트도 관리합니다.
+- CCS, clausona, CAAM, clauth, ccswap, Claude Switcher는 Codex 등 다른 코딩 에이전트도 관리합니다.
+- clausona는 계정마다 확장을 켜고 끌 수도 있고(ccam의 `ccam ext`는 보여 주기만 합니다), 로컬 토큰 비용을 기록하며, tmux 등의 터미널에서 여러 워커를 돌리는 Claude Code 플러그인도 제공합니다.
 - CAAM, CCSwitcher, Claude Switcher는 Homebrew로 설치할 수 있고, clauth와 CAAM은 릴리스 체크섬에 서명합니다. ccam은 설치 스크립트, `.deb`, `go install`로 설치하며, 서명 없이 체크섬만 확인합니다.
 
 ## 어떤 도구가 맞을까요?

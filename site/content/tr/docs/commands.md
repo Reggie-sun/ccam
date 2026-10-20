@@ -5,7 +5,7 @@ description: ccam add ve ccam <name> komutlarından ccam usage, ccam next ve cca
 updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 5d3275878535
+sourceHash: da2594c672bc
 ---
 
 Bir komutun ne yapacağını, yapmadan görmek için komuttan önce `--dry-run` yazın, örneğin `ccam --dry-run work`. Bu, Claude Code başlatılırken (`ccam <name>`, `ccam run`, `ccam next`) ve `share`, `migrate`, `shortcut`, `update` ile `doctor --fix` komutlarında çalışır. Bir şeyi değiştiren diğer komutlar çalışmak yerine bunu reddeder.
@@ -39,9 +39,12 @@ ccam add ci --no-login        # log in later with: ccam login ci
 ccam rename work job
 ccam remove side              # folder moves to ~/.local/share/ccam/trash
 ccam import ~/.claude-old --name old
+ccam add gw --api --base-url https://llm.example.com --auth bearer --key-from env:GW_KEY
 ```
 
 Klasör belirtilmeden çalıştırılan `ccam import`, `~/.claude` ve `~/.claude-*` klasörlerini arar ve her biri için sorar. İçe aktarılan klasörler bulundukları yerde kaydedilir; ccam hiçbir zaman bir girişi taşımaz veya kopyalamaz.
+
+`ccam add --api`, Claude girişi yerine API anahtarı kullanan bir hesap ekler; ccam anahtarı her başlatmada okur ve hiçbir zaman saklamaz. Bkz. [API anahtarlı hesaplar](/features/api).
 
 `ccam rename`, `ccam remove` ve `ccam share`, Claude Code bir hesapla çalışırken o hesabı değiştirmeyi reddeder. Önce oturumdan çıkın.
 
@@ -105,7 +108,12 @@ ccam usage --watch   # refresh every 60 seconds
 ccam usage --json
 ccam next --continue
 ccam next --auto
+ccam next --auto --max-usage 80 --wait
+ccam pick                       # the account with the most room, for a script
+ccam "$(ccam pick)" -p "…"      # start a worker on it
 ```
+
+`next --auto`, `--fallback` ve `ccam pick` aynı şekilde seçer: önce `auto_max_usage` (`config.toml`, varsayılan 100) altındaki hesaplar, `auto_strategy` (`headroom` veya `expiring`) stratejisine göre, `--model` haftalık penceresi de sayılarak ve %100'deki bir hesap asla seçilmeden. Hiçbiri seçilemediğinde 75 koduyla çıkarlar ya da `--wait` ile ilk hesabın sıfırlanmasını beklerler. Bkz. [Sonraki hesaba geçme](/features/next) ve [Betikler için hesap seçme](/features/pick).
 
 ## Bakım
 
@@ -113,6 +121,7 @@ ccam next --auto
 ccam doctor          # check
 ccam doctor --fix    # repair what is safe to repair, with backups
 ccam statusline install
+ccam ext             # skills, commands, MCP servers and hooks of every account, and problems
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release

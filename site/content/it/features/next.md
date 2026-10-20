@@ -4,7 +4,7 @@ description: ccam next apre Claude Code con l'account dopo l'ultimo usato; --aut
 updated: 2026-10-20
 order: 8
 translation: machine
-sourceHash: 7bc55c2dd520
+sourceHash: 784ae4d1f6d9
 ---
 
 `ccam next` apre Claude Code con un altro account senza che tu debba indicarne il nome. Usalo quando un account raggiunge il suo limite di utilizzo: `ccam next` da solo prende l'account che segue quello usato per ultimo, `--auto` prende quello con più margine nella finestra di 5 ore e `--continue` prosegue l'ultima conversazione nel nuovo account. Per gli script che eseguono `claude -p`, `ccam --fallback` fa questo cambio da solo (vedi [Rieseguire al limite](#run-again-at-the-limit)).
@@ -16,6 +16,8 @@ ccam next                       # the account after the one you used last
 ccam next --auto                # the account with the lowest 5-hour usage
 ccam next --continue            # the next account that shares history, with claude --continue
 ccam next -c --auto             # both: lowest usage among accounts sharing history
+ccam next --auto --max-usage 80 # prefer accounts below 80%
+ccam next --auto --wait         # nobody has room: wait for the first reset (up to 5 hours)
 ccam next -- -p "summarize"     # pass arguments to claude after --
 ccam --dry-run next --auto      # print the choice and the command, start nothing
 ```
@@ -32,7 +34,10 @@ ccam stampa il cambio come `→ <from> → <to>` sullo standard error, poi avvia
 
 | Opzione | Cosa fa | Predefinito |
 | --- | --- | --- |
-| `--auto` | Sceglie l'account con login attivo che ha l'utilizzo su 5 ore più basso, saltando gli account al 100% | disattivata |
+| `--auto` | Sceglie l'account con login attivo in base all'utilizzo (vedi sotto), saltando gli account al 100% | disattivata |
+| `--max-usage <1-100>` | Con `--auto`: preferisce gli account sotto questo utilizzo | `auto_max_usage`, altrimenti 100 |
+| `--strategy headroom\|expiring` | Con `--auto`: l'utilizzo su 5 ore più basso, oppure l'azzeramento su 5 ore più vicino | `auto_strategy`, altrimenti `headroom` |
+| `--wait[=<duration>]` | Con `--auto`: quando nessun account ha margine, attende l'azzeramento del primo, al massimo per questo tempo | disattivata; `5h` se indicata da sola |
 | `-c`, `--continue` | Considera solo gli account che condividono la cronologia delle conversazioni con l'account usato per ultimo e avvia `claude --continue` | disattivata |
 | `-- <claude args>` | Argomenti passati a `claude` dopo quelli di ccam | nessuno |
 | `--dry-run` | Rispettata: stampa `→ <from> → <to>` e la riga di comando che eseguirebbe, senza avviare Claude Code né registrare un avvio | disattivata |
@@ -56,11 +61,23 @@ Il percorso parte dall'account usato per ultimo e si ferma al primo account con 
 
 ### --auto
 
-`--auto` decide in base all'utilizzo invece che all'ordine degli slot. `cli.pickAuto` tiene gli account con login, chiede l'utilizzo di tutti contemporaneamente con lo stesso `Fetcher.FetchAll` usato da `ccam usage` e lascia scegliere a `usage.Best()`:
+`--auto` decide in base all'utilizzo invece che all'ordine degli slot. `cli.pickAuto` tiene gli account con login, chiede l'utilizzo di tutti contemporaneamente con lo stesso `Fetcher.FetchAll` usato da `ccam usage` e lascia scegliere a `usage.Policy.Choose()`:
 
 <!-- motion:next-auto -->
 
-`usage.Best()` prende la percentuale su 5 ore più bassa e salta gli account al 100% o con utilizzo su 5 ore sconosciuto. La richiesta segue le regole di `ccam usage`: i numeri ottenuti meno di 60 secondi prima vengono riutilizzati, ogni account ha 3 secondi e un account che non risponde, o il cui login è scaduto, viene valutato in base ai numeri salvati. Una finestra salvata il cui orario di azzeramento è passato conta come 0%, così un account la cui finestra si è nel frattempo azzerata non viene scartato. `--auto` non rinnova mai i token. A differenza della semplice rotazione, `--auto` può scegliere l'account usato per ultimo se è ancora quello con più margine.
+Un account viene valutato in base alle finestre di 5 ore e settimanale e, quando `--model` è tra gli argomenti per Claude Code, anche in base alla finestra settimanale di quel modello (`opus`, `sonnet`, `haiku` o `fable` nel nome). `Policy.Choose()` divide gli account in tre gruppi:
+
+1. **Con margine**: ogni finestra sotto `auto_max_usage` (`config.toml`, predefinito 100). La strategia sceglie tra questi: `headroom` (predefinita) prende l'utilizzo su 5 ore più basso, `expiring` prende la finestra di 5 ore che si azzera prima, così la sua quota residua viene usata prima di andare persa.
+2. **Oltre la soglia**: sotto il 100% ma pari o superiore a `auto_max_usage`. Usati solo quando nessun account ha margine, partendo dall'utilizzo su 5 ore più basso.
+3. **Pieni**: una finestra al 100%, oppure utilizzo su 5 ore sconosciuto. Mai scelti.
+
+```toml
+# ~/.config/ccam/config.toml
+auto_max_usage = 80        # keep 20% of each account for interactive work
+auto_strategy = "expiring"
+```
+
+Quando non si può scegliere nulla, ccam esce con codice 75 (`EX_TEMPFAIL`), così uno script può distinguere "riprova più tardi" da un errore. Con `--wait`, invece, attende finché la finestra bloccante del primo account pieno non si azzera (30 secondi dopo l'orario di azzeramento, quando l'endpoint mostra la nuova finestra), stampa `ccam: no account has room; waiting until 15:10` e sceglie di nuovo; quando nessun account dice quando si azzera, ricontrolla dopo 10 minuti. Se nulla si libera prima della fine dell'attesa, esce con 75. La richiesta segue le regole di `ccam usage`: i numeri ottenuti meno di 60 secondi prima vengono riutilizzati, ogni account ha 3 secondi e un account che non risponde, o il cui login è scaduto, viene valutato in base ai numeri salvati. Una finestra salvata il cui orario di azzeramento è passato conta come 0%, così un account la cui finestra si è nel frattempo azzerata non viene scartato. `--auto` non rinnova mai i token. A differenza della semplice rotazione, `--auto` può scegliere l'account usato per ultimo se è ancora quello con più margine.
 
 ### --continue
 
@@ -90,7 +107,7 @@ Summary: …
 6. A quel punto l'output di quel tentativo viene scartato e lo stesso comando viene eseguito con un altro account connesso: quello con l'utilizzo su 5 ore più basso, poi gli account il cui utilizzo non si può consultare, in ordine di numero. Gli account al 100% vengono saltati, e ogni account viene provato al massimo una volta.
 7. Con `-c`, `--continue`, `-r` o `--resume` tra gli argomenti vengono provati solo gli account dello stesso gruppo di cronologia, così la conversazione può essere trovata.
 
-Quando non resta alcun account, ccam stampa l'output dell'ultimo tentativo, dice che nessun account connesso ha ancora margine ed esce con il codice di quel tentativo. `ccam --dry-run --fallback work -p …` stampa il comando del primo tentativo.
+L'account successivo viene scelto con le stesse regole di `--auto` (`auto_max_usage`, `auto_strategy`, la finestra di `--model`). Quando non resta alcun account, ccam stampa l'output dell'ultimo tentativo, dice che nessun account connesso ha ancora margine ed esce con codice 75. Con `--wait` prima del nome dell'account (`ccam --fallback --wait=2h work -p …`), attende invece l'azzeramento del primo account, poi può provare di nuovo ogni account; attende sempre almeno una volta prima, così un account che ha appena raggiunto il limite non viene rieseguito subito. `ccam --dry-run --fallback work -p …` stampa il comando del primo tentativo.
 
 Le sessioni interattive non cambiano account da sole. Invece, con `ccam statusline install`, la riga di stato aggiunge `→ ccam next --auto --continue` quando l'utilizzo su 5 ore o settimanale arriva al 90% ([Limiti di utilizzo](/features/usage)).
 
@@ -98,7 +115,8 @@ Le sessioni interattive non cambiano account da sole. Invece, con `ccam statusli
 
 - Gli account senza login non vengono mai scelti. Se non c'è un altro account con login, `ccam next` da solo si ferma con `no logged-in account other than <name>`.
 - Con `--continue` e nessun account che condivide la cronologia: `` no other account shares conversation history with <name>. Turn it on with `ccam share <name> --history on` ``.
-- Con `--auto` e nessun account con login: `no logged-in account to pick`. Quando ogni account è pieno o ha un utilizzo sconosciuto: `` no account with known usage and headroom (see `ccam usage`) ``.
+- Con `--auto` e nessun account con login: `no logged-in account to pick`. Quando ogni account è pieno o ha un utilizzo sconosciuto: `` no account with known usage and headroom (see `ccam usage`) ``. In entrambi i casi il codice di uscita è 75.
+- `--max-usage`, `--strategy` e `--wait` funzionano solo con `--auto`, e un valore fuori da 1-100 o un'altra strategia vengono rifiutati.
 - `--auto` effettua richieste di rete anche con `--dry-run`. Si limita a leggere e non scrive mai i file dei token.
 - L'account scelto si avvia tramite lo stesso percorso di `ccam <name>`, quindi valgono gli stessi controlli, compreso l'avviso quando in questa cartella è già in esecuzione un altro Claude Code che condivide la stessa cronologia.
 - `last-used` viene scritto solo quando Claude Code si avvia davvero. `--dry-run` non lo tocca, quindi un dry run non fa avanzare la rotazione.

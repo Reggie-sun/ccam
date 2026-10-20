@@ -5,7 +5,7 @@ description: "ccam add ও ccam <name> থেকে ccam usage, ccam next ও cc
 updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 5d3275878535
+sourceHash: da2594c672bc
 ---
 
 কোনো কমান্ড আসলে না চালিয়ে সেটি কী করবে তা দেখতে কমান্ডের আগে `--dry-run` দিন, যেমন `ccam --dry-run work`। এটি Claude Code চালু করার সময় (`ccam <name>`, `ccam run`, `ccam next`) এবং `share`, `migrate`, `shortcut`, `update` ও `doctor --fix`-এর সঙ্গে কাজ করে। কিছু বদলায় এমন অন্য কমান্ডগুলো চলার বদলে এটি প্রত্যাখ্যান করে।
@@ -39,9 +39,12 @@ ccam add ci --no-login        # log in later with: ccam login ci
 ccam rename work job
 ccam remove side              # folder moves to ~/.local/share/ccam/trash
 ccam import ~/.claude-old --name old
+ccam add gw --api --base-url https://llm.example.com --auth bearer --key-from env:GW_KEY
 ```
 
 ফোল্ডার না দিয়ে `ccam import` চালালে এটি `~/.claude` ও `~/.claude-*` খোঁজে এবং প্রতিটির বিষয়ে আপনাকে জিজ্ঞেস করে। ইমপোর্ট করা ফোল্ডার যেখানে আছে সেখানেই নিবন্ধিত হয়; ccam কখনও কোনো লগইন সরায় বা কপি করে না।
+
+`ccam add --api` এমন একটি অ্যাকাউন্ট যোগ করে যা Claude লগইনের বদলে API key ব্যবহার করে; ccam প্রতিবার চালু করার সময় key পড়ে এবং কখনও সংরক্ষণ করে না। দেখুন [API key অ্যাকাউন্ট](/features/api)।
 
 কোনো অ্যাকাউন্ট হিসেবে Claude Code চলতে থাকলে `ccam rename`, `ccam remove` ও `ccam share` সেই অ্যাকাউন্ট বদলাতে রাজি হয় না। আগে সেশনটি বন্ধ করুন।
 
@@ -105,7 +108,12 @@ ccam usage --watch   # refresh every 60 seconds
 ccam usage --json
 ccam next --continue
 ccam next --auto
+ccam next --auto --max-usage 80 --wait
+ccam pick                       # the account with the most room, for a script
+ccam "$(ccam pick)" -p "…"      # start a worker on it
 ```
+
+`next --auto`, `--fallback` ও `ccam pick` একইভাবে বেছে নেয়: প্রথমে `auto_max_usage`-এর (`config.toml`, ডিফল্ট 100) নিচে থাকা অ্যাকাউন্ট, `auto_strategy` (`headroom` বা `expiring`) অনুযায়ী, `--model`-এর সাপ্তাহিক উইন্ডো ধরে, এবং ১০০%-এ থাকা অ্যাকাউন্ট কখনও নয়। কিছুই বেছে নেওয়া না গেলে এগুলো কোড 75 দিয়ে বেরিয়ে যায়, অথবা `--wait` দিলে প্রথম অ্যাকাউন্টটি রিসেট হওয়া পর্যন্ত অপেক্ষা করে। দেখুন [পরের অ্যাকাউন্টে যাওয়া](/features/next) ও [স্ক্রিপ্টের জন্য অ্যাকাউন্ট বেছে নেওয়া](/features/pick)।
 
 ## রক্ষণাবেক্ষণ
 
@@ -113,6 +121,7 @@ ccam next --auto
 ccam doctor          # check
 ccam doctor --fix    # repair what is safe to repair, with backups
 ccam statusline install
+ccam ext             # skills, commands, MCP servers and hooks of every account, and problems
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release

@@ -4,7 +4,7 @@ description: ccam usage menampilkan batas 5 jam dan mingguan semua akun sekaligu
 updated: 2026-10-20
 order: 7
 translation: machine
-sourceHash: f08a2fdc6f0b
+sourceHash: 525174ceed0d
 ---
 
 `ccam usage` menampilkan seberapa banyak batas 5 jam dan mingguan yang sudah digunakan setiap akun, beserta waktu hingga setiap jendela direset. Gunakan sebelum memulai tugas panjang, atau saat Claude Code memberi tahu bahwa batas sudah dekat, untuk melihat akun mana yang masih punya ruang. `ccam statusline` adalah perintah status line untuk Claude Code: perintah ini menampilkan nama akun dan penggunaan di dalam Claude Code serta menyimpan angkanya untuk `ccam usage`.
@@ -74,7 +74,7 @@ Untuk satu akun, `Fetcher.Fetch` melakukan pemeriksaan ini secara berurutan:
 2. Kecuali `--no-cache` diatur, hasil langsung di `~/.local/state/ccam/usage/<name>.json` yang berumur kurang dari 60 detik (`CacheTTL`) dikembalikan apa adanya. Menjalankan `ccam usage` dua kali berturut-turut hanya memakan satu permintaan per akun.
 3. `readCredentials()` membaca `.credentials.json` (atau Rantai Kunci (Keychain) macOS) tanpa mengubahnya, dan hanya kunci `claudeAiOauth` yang didekode. Tidak adanya login langganan berarti `not logged in`, atau `no limits (API)` jika `.claude.json` berisi kunci API.
 4. Token akses yang kedaluwarsa tidak dipakai. Tanpa `--refresh`, akun menampilkan angka tersimpannya dengan tanda kedaluwarsa.
-5. Jika tidak, ccam memanggil endpoint. 401 atau 403 dianggap sebagai login yang kedaluwarsa, status lain atau isi yang tidak dapat dibaca dianggap galat, dan keduanya beralih ke angka yang tersimpan.
+5. Jika tidak, ccam memanggil endpoint. 401 atau 403 dianggap sebagai login yang kedaluwarsa, status lain atau isi yang tidak dapat dibaca dianggap galat, dan keduanya beralih ke angka yang tersimpan. 429 berarti endpoint terlalu sering ditanya: ccam menulis `<name>.pause` berisi waktu untuk bertanya lagi (`Retry-After`, atau 5 menit, paling lama satu jam), menampilkan angka yang tersimpan dengan `rate limited by the usage endpoint; asking again after 15:10`, dan tidak memanggil endpoint untuk akun itu sampai saat tersebut, bahkan dengan `--no-cache`. Mencoba lagi seketika hanya akan membuat batas itu terus berlaku.
 6. Jawaban yang baik ditulis ke `<name>.json` bersama waktu pengukurannya.
 
 `fallback()` membaca `<name>.json` dan `<name>.statusline.json` sekaligus dan mempertahankan yang lebih baru. Sebelum menampilkan angka tersimpan, fungsi ini memeriksa waktu reset setiap jendela: jendela yang sudah direset sejak angka disimpan menampilkan 0%, karena persentase lama sudah tidak berlaku. Itulah sebabnya `personal` di atas menampilkan `0%` tanpa waktu reset.

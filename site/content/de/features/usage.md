@@ -4,7 +4,7 @@ description: ccam usage zeigt die 5-Stunden- und Wochenlimits aller Konten auf e
 updated: 2026-10-20
 order: 7
 translation: machine
-sourceHash: f08a2fdc6f0b
+sourceHash: 525174ceed0d
 ---
 
 `ccam usage` zeigt, wie viel jedes Konto von seinem 5-Stunden- und seinem Wochenlimit verbraucht hat, mit der Zeit bis zum Zurücksetzen jedes Zeitfensters. Verwende es, bevor du eine lange Aufgabe beginnst oder wenn Claude Code meldet, dass ein Limit nahe ist, um zu sehen, welches Konto noch Spielraum hat. `ccam statusline` ist der Statuszeilenbefehl für Claude Code: Er zeigt Kontoname und Nutzung in Claude Code an und speichert die Zahlen für `ccam usage`.
@@ -74,7 +74,7 @@ Für ein Konto führt `Fetcher.Fetch` diese Prüfungen der Reihe nach aus:
 2. Sofern `--no-cache` nicht gesetzt ist, wird ein Live-Ergebnis in `~/.local/state/ccam/usage/<name>.json`, das jünger als 60 Sekunden ist (`CacheTTL`), unverändert zurückgegeben. Zweimal hintereinander `ccam usage` kostet eine Anfrage pro Konto.
 3. `readCredentials()` liest `.credentials.json` (oder den macOS-Schlüsselbund), ohne etwas zu ändern, und dekodiert nur den Schlüssel `claudeAiOauth`. Ohne Abo-Anmeldung lautet das Ergebnis `not logged in`, oder `no limits (API)`, wenn `.claude.json` einen API-Schlüssel enthält.
 4. Ein abgelaufenes Zugriffstoken wird nicht verwendet. Ohne `--refresh` zeigt das Konto seine gespeicherten Zahlen, als abgelaufen markiert.
-5. Andernfalls ruft ccam den Endpunkt auf. Ein 401 oder 403 zählt als abgelaufene Anmeldung, jeder andere Status oder eine nicht lesbare Antwort zählt als Fehler, und beides fällt auf gespeicherte Zahlen zurück.
+5. Andernfalls ruft ccam den Endpunkt auf. Ein 401 oder 403 zählt als abgelaufene Anmeldung, jeder andere Status oder eine nicht lesbare Antwort zählt als Fehler, und beides fällt auf gespeicherte Zahlen zurück. Ein 429 bedeutet, dass der Endpunkt zu oft gefragt wird: ccam schreibt `<name>.pause` mit dem Zeitpunkt für die nächste Anfrage (`Retry-After`, sonst 5 Minuten, höchstens eine Stunde), zeigt gespeicherte Zahlen mit `rate limited by the usage endpoint; asking again after 15:10` und ruft den Endpunkt für dieses Konto bis dahin nicht auf, auch nicht mit `--no-cache`. Ein sofortiger neuer Versuch würde das Limit nur verlängern.
 6. Eine gültige Antwort wird mit dem Messzeitpunkt nach `<name>.json` geschrieben.
 
 `fallback()` liest sowohl `<name>.json` als auch `<name>.statusline.json` und behält die neuere. Bevor es gespeicherte Zahlen zeigt, prüft es den Zurücksetzungszeitpunkt jedes Zeitfensters: Ein Fenster, das seit dem Speichern der Zahlen zurückgesetzt wurde, zeigt 0 %, weil der alte Prozentsatz nicht mehr gilt. Deshalb zeigt `personal` oben `0%` ohne Zurücksetzungszeit.

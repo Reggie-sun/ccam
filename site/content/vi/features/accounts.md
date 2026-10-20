@@ -1,10 +1,10 @@
 ---
 title: Quản lý tài khoản
 description: "Thêm, đăng nhập, liệt kê, đổi tên, xóa và nhập tài khoản Claude Code bằng ccam add, ccam login, ccam list, ccam rename, ccam remove và ccam import."
-updated: 2026-10-19
+updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 99c931574262
+sourceHash: 9eb992214132
 ---
 
 Mỗi tài khoản ccam là một thư mục cấu hình Claude Code riêng với thông tin đăng nhập riêng. Các lệnh này tạo, đăng nhập, liệt kê, đổi tên và xóa tài khoản, cũng như đăng ký các thư mục bạn đã có.
@@ -49,15 +49,16 @@ Với `--json`, mỗi tài khoản là một đối tượng gồm `slot`, `shor
 | `ccam add --no-login` | Tạo tài khoản mà không đăng nhập; đăng nhập sau bằng `ccam login <name>` | tắt |
 | `ccam add --share <item=group>` | Dùng chung một mục với một nhóm, hoặc `item=local` để giữ riêng. Có thể lặp lại | `mcp`, `settings`, `memory`, `extensions` trong `default`; `history` riêng |
 | `ccam add --shortcut <command>` | Tạo thêm lệnh tắt này trong `~/.local/bin` | không có |
+| `ccam add --api --key-from <source>` | Tài khoản dùng API key thay cho đăng nhập; xem [Tài khoản API key](/features/api) | tắt |
 | `ccam list --json` | In các tài khoản dưới dạng JSON | tắt |
 | `ccam remove -y`, `--yes` | Xóa mà không hỏi | tắt |
 | `ccam import --name <name>` | Tên tài khoản cho thư mục bạn đưa vào | lấy từ tên thư mục |
 | `ccam import -y`, `--yes` | Nhập mọi thư mục tìm thấy mà không hỏi | tắt |
 | `--dry-run` | Được `ccam list` và `ccam completion` hỗ trợ, vì chúng không thay đổi gì. Bị `add`, `login`, `logout`, `use`, `rename`, `remove` và `import` từ chối, với thông báo `` --dry-run is not supported by `ccam add`; nothing was changed `` (nêu tên lệnh) | tắt |
 
-`ccam login`, `ccam logout`, `ccam use` và `ccam rename` không có tùy chọn riêng. `ccam completion` nhận `bash` hoặc `zsh`; giá trị khác sẽ thất bại với `only bash and zsh are supported`.
+`ccam login`, `ccam logout`, `ccam use` và `ccam rename` không có tùy chọn riêng. `ccam completion` nhận `bash`, `zsh` hoặc `powershell`; giá trị khác sẽ thất bại với `only bash, zsh and powershell are supported`.
 
-Tên tài khoản dài từ 1 đến 32 ký tự gồm `a-z`, `0-9`, `-` và `_`, bắt đầu bằng một chữ cái hoặc chữ số. Tên không được chỉ gồm chữ số, vì `ccam 2` nghĩa là slot 2. Tên cũng không được trùng với một lệnh của ccam (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`), nên `ccam <name>` không bao giờ mơ hồ. Danh sách này là `config.Reserved` trong `internal/config`.
+Tên tài khoản dài từ 1 đến 32 ký tự gồm `a-z`, `0-9`, `-` và `_`, bắt đầu bằng một chữ cái hoặc chữ số. Tên không được chỉ gồm chữ số, vì `ccam 2` nghĩa là slot 2. Tên cũng không được trùng với một lệnh của ccam (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`, `folder`, `pick`, `ext`), nên `ccam <name>` không bao giờ mơ hồ. Danh sách này là `config.Reserved` trong `internal/config`.
 
 ## Cách hoạt động
 

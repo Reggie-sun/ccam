@@ -153,6 +153,8 @@
     "shims": "Recréer les liens des raccourcis de tous les comptes",
     "shortcut": "Afficher, créer, renommer ou supprimer le raccourci d'un compte, par exemple ccwork",
     "folder": "Utiliser un compte dans un dossier et ses sous-dossiers quand aucun compte n'est nommé",
+    "pick": "Afficher le compte qui a le plus de marge, pour les scripts et les workers en parallèle",
+    "ext": "Afficher les skills, commandes, plugins, serveurs MCP et hooks que charge chaque compte",
     "update": "Mettre à jour ccam vers la dernière version après avoir vérifié sa somme de contrôle",
     "completion": "Afficher la complétion bash, zsh ou PowerShell"
   },

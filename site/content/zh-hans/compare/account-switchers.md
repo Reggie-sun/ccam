@@ -1,10 +1,10 @@
 ---
 title: ccam 与其他 Claude Code 账号切换工具对比
-description: ccam 与 claude-swap、CCS、clauth、CAAM、cux 等 Claude Code 账号切换工具的对比，以及哪种方式适合哪种用途。
+description: ccam 与 claude-swap、CCS、clausona、clauth、CAAM、cux 等 Claude Code 账号切换工具的对比，以及哪种方式适合哪种用途。
 updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: d058da937218
+sourceHash: 68048287f792
 ---
 
 切换 Claude Code 账号的工具采用两种方式之一。大多数工具在同一个 `~/.claude` 文件夹中替换登录信息，所以同一时间只有一个账号处于活动状态。另一些工具（包括 ccam）用 `CLAUDE_CONFIG_DIR` 为每个账号提供单独的文件夹，所以每个账号都保持登录状态，并且可以同时运行多个账号。ccam 还提供共享的设置和 MCP 服务器，并能在另一个账号的文件夹中继续对话。
@@ -19,13 +19,14 @@ sourceHash: d058da937218
 
 ## 各工具对比
 
-信息取自各项目自己的文档和源代码（2026-10-20）。"未说明"表示项目没有提及，而不是没有该功能。
+信息取自各项目自己的文档和源代码（2026-10-20；clausona：v0.12.0-beta）。"未说明"表示项目没有提及，而不是没有该功能。
 
 | 工具 | 方式 | 同时使用多个账号 | 5 小时和每周用量 | 达到限制时 | 平台 |
 | --- | --- | --- | --- | --- | --- |
-| ccam | 单独的文件夹 | 是 | 是，`ccam usage` | 你运行 `ccam next --auto --continue`，在余量最多的账号中继续对话；`ccam --fallback` 会自动在那里重新运行 `-p` 任务 | Linux、macOS、Windows |
+| ccam | 单独的文件夹 | 是 | 是，`ccam usage` | 你运行 `ccam next --auto --continue`，在余量最多的账号中继续对话；`ccam --fallback` 会自动在那里重新运行 `-p` 任务，`ccam pick` 把并行任务分散到各个账号 | Linux、macOS、Windows |
 | [claude-swap](https://github.com/realiti4/claude-swap) | 替换登录信息；用 `cswap run` 时使用单独的文件夹 | 是，使用 `cswap run` | 是 | `cswap auto` 在达到阈值时切换登录信息；正在运行的会话继续进行 | Linux、macOS、Windows |
 | [CCS](https://github.com/kaitranntt/ccs) | 单独的文件夹 | 是 | 部分支持 | 账号池通过本地代理把请求转给下一个账号 | Linux、macOS、Windows |
+| [clausona](https://github.com/larcane97/clausona) | 单独的文件夹 | 是 | 是 | 每次运行前由路由选出还有配额的账号，可以等待重置，并给各个并行任务分配不同的账号 | Linux、macOS、Windows |
 | [clauth](https://github.com/uwuclxdy/clauth) | 替换登录信息；用 `clauth start` 时使用单独的文件夹 | 是，使用 `clauth start` | 是 | 沿备用链依次切换 | Linux、macOS、Windows |
 | [CAAM](https://github.com/Dicklesworthstone/coding_agent_account_manager) | 替换登录信息，或使用隔离的配置 | 是，使用隔离的配置 | 是 | `caam run` 在另一个账号上重试非交互式命令 | Linux、macOS、Windows |
 | [cux](https://github.com/inulute/cux) | 替换登录信息并包装 `claude` | 否，只有一个活动账号 | 是 | 替换登录信息并恢复同一个对话 | Linux、macOS、Windows |
@@ -41,6 +42,7 @@ ccswap 是 claude-swap 的一个分支，还能管理 Codex 的登录。[claude-
 | ccam | Go，单个静态二进制文件 | 什么也没有：ccam 用 `claude` 替换自身（Windows 无法这样做，ccam 会等待它结束） | 否 | 每一项单独设置：每个账号选择本地或某个命名分组 |
 | claude-swap | Python 3.12+，用 uv 或 pipx 安装 | 用 `cswap run` 时什么也没有；`cswap auto` 和菜单栏应用会持续运行 | 是，在替换登录信息时 | 用 `cswap run` 时：设置、`CLAUDE.md` 和扩展一起共享，历史记录可选；MCP 服务器在每次启动时复制 |
 | CCS | Node.js 18+ 或 Bun | CCS 作为父进程留着；账号池会加一个本地代理 | 账号文件夹不复制；账号池保存自己的登录信息 | 每个账号选择共享或本地，历史记录按上下文分组；MCP 服务器会被复制 |
+| clausona | TypeScript，Node.js 20+ | 直接运行的 `claude` 经过一个 shell 函数；`clausona run` 让 Node 作为父进程留着；每次退出后有一个后台 Node 进程 | 否，但它会自行为闲置账号的令牌续期，以读取它们的用量 | 除每个账号自己的文件外，全部来自一个主账号；历史记录可选；用 `claude mcp add` 添加的服务器不共享 |
 | clauth | Rust | clauth 作为父进程留着 | 是，在替换登录信息时 | 整个 `~/.claude`，或者什么都不共享 |
 | CAAM | Go | 取决于模式；可选的守护进程 | 是，在其保管库模式下 | 由模式决定；MCP 服务器在每次启动时复制 |
 | cux | Go | 一个包装器始终包在 `claude` 外面 | 是 | 全部：只有一个文件夹 |
@@ -76,7 +78,7 @@ MCP 服务器、`settings.json`、`CLAUDE.md`、扩展（agents、commands、ski
 
 共享历史后，`ccam next --auto --continue` 会同时查询所有账号的用量，打开余量最多的账号并继续对话。何时切换由你决定；ccam 不会在后台监视你的用量。账号用量达到 90% 时，状态栏会提示这个命令。
 
-脚本无法等你操作，所以 `ccam --fallback work -p "…"` 会替它们切换：当账号达到限制时，同一个命令会以余量最多的账号重新运行，并且只打印最终完成的那次运行的输出。不是用量限制造成的失败会原样传递。
+脚本无法等你操作，所以 `ccam --fallback work -p "…"` 会替它们切换：当账号达到限制时，同一个命令会以余量最多的账号重新运行，并且只打印最终完成的那次运行的输出。不是用量限制造成的失败会原样传递。对于并行任务，`ccam pick` 会给每个任务分配一个还有余量的不同账号；当没有账号还有余量时，两者都以退出码 75 退出。
 
 ### 每个文件夹使用合适的账号
 
@@ -91,7 +93,8 @@ ccam 是一个约 10 MB 的静态二进制文件，无需安装任何运行时�
 - claude-swap、clauth、cux、CAAM 和 CCSwitcher 可以在账号超过用量阈值时自行切换正在运行的交互式会话。ccam 用 `--fallback` 切换 `-p` 运行，交互式会话则留给你。
 - 在未开启开发人员模式的 Windows 上，ccam 可以共享文件夹，但无法共享 `settings.json` 这样的单个文件；claude-swap 和 CCS 在这种情况下会改为复制它们。
 - CCSwitcher、Claude Switcher 和 claude-swap 会在 macOS 菜单栏中显示用量。
-- CCS、CAAM、clauth、ccswap 和 Claude Switcher 还能管理 Codex 和其他编程代理。
+- CCS、clausona、CAAM、clauth、ccswap 和 Claude Switcher 还能管理 Codex 和其他编程代理。
+- clausona 还能按账号开启或关闭扩展（ccam 的 `ccam ext` 只是显示它们），记录本地的令牌费用，并提供在 tmux 等终端中运行一批并行任务的 Claude Code 插件。
 - CAAM、CCSwitcher 和 Claude Switcher 可以用 Homebrew 安装，clauth 和 CAAM 会为发布的校验和签名。ccam 通过安装脚本、`.deb` 或 `go install` 安装，校验校验和但没有签名。
 
 ## 哪种适合你？

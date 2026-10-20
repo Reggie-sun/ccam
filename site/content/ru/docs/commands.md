@@ -5,7 +5,7 @@ description: Все команды и параметры ccam, от ccam add и 
 updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 5d3275878535
+sourceHash: da2594c672bc
 ---
 
 Поставьте `--dry-run` перед командой, чтобы увидеть, что она сделает, ничего не выполняя, например `ccam --dry-run work`. Это работает при запуске Claude Code (`ccam <name>`, `ccam run`, `ccam next`) и с `share`, `migrate`, `shortcut`, `update` и `doctor --fix`. Другие команды, которые что-то меняют, отклоняют этот флаг и не выполняются.
@@ -39,9 +39,12 @@ ccam add ci --no-login        # log in later with: ccam login ci
 ccam rename work job
 ccam remove side              # folder moves to ~/.local/share/ccam/trash
 ccam import ~/.claude-old --name old
+ccam add gw --api --base-url https://llm.example.com --auth bearer --key-from env:GW_KEY
 ```
 
 `ccam import` без указания папки ищет `~/.claude` и `~/.claude-*` и спрашивает про каждую найденную. Импортированные папки регистрируются там, где они находятся; ccam никогда не перемещает и не копирует данные входа.
+
+`ccam add --api` добавляет аккаунт, который использует ключ API вместо входа Claude; ccam читает ключ при каждом запуске и никогда его не сохраняет. См. [Аккаунты с ключом API](/features/api).
 
 `ccam rename`, `ccam remove` и `ccam share` не изменяют аккаунт, пока Claude Code работает от его имени. Сначала завершите сессию.
 
@@ -105,7 +108,12 @@ ccam usage --watch   # refresh every 60 seconds
 ccam usage --json
 ccam next --continue
 ccam next --auto
+ccam next --auto --max-usage 80 --wait
+ccam pick                       # the account with the most room, for a script
+ccam "$(ccam pick)" -p "…"      # start a worker on it
 ```
+
+`next --auto`, `--fallback` и `ccam pick` выбирают одинаково: сначала аккаунты ниже `auto_max_usage` (`config.toml`, по умолчанию 100), по стратегии `auto_strategy` (`headroom` или `expiring`), с учётом недельного окна `--model` и никогда не аккаунт на 100%. Когда выбрать некого, они завершаются с кодом 75 или, с `--wait`, ждут сброса первого аккаунта. См. [Переключение на следующий аккаунт](/features/next) и [Выбор аккаунта для скриптов](/features/pick).
 
 ## Обслуживание
 
@@ -113,6 +121,7 @@ ccam next --auto
 ccam doctor          # check
 ccam doctor --fix    # repair what is safe to repair, with backups
 ccam statusline install
+ccam ext             # skills, commands, MCP servers and hooks of every account, and problems
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release

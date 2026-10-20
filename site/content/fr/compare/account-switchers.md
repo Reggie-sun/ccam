@@ -1,10 +1,10 @@
 ---
 title: "ccam et les autres sélecteurs de compte Claude Code"
-description: "Comparaison de ccam avec claude-swap, CCS, clauth, CAAM, cux et d'autres outils pour changer de compte Claude Code, et quelle approche convient à quel usage."
+description: "ccam comparé à claude-swap, CCS, clausona, clauth, CAAM, cux et d'autres outils pour changer de compte Claude Code, et quelle approche pour quel usage."
 updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: d058da937218
+sourceHash: 68048287f792
 ---
 
 Les outils pour changer de compte Claude Code suivent l'une de deux approches. La plupart échangent la connexion à l'intérieur de l'unique dossier `~/.claude` : un seul compte est donc actif à la fois. D'autres, dont ccam, donnent à chaque compte son propre dossier avec `CLAUDE_CONFIG_DIR` : chaque compte reste connecté et plusieurs peuvent tourner en même temps. ccam y ajoute le partage des paramètres et des serveurs MCP, et poursuit une conversation dans le dossier d'un autre compte.
@@ -19,13 +19,14 @@ Pour faire l'échange, l'outil garde une copie de la connexion de chaque autre c
 
 ## Comparaison des outils
 
-D'après la documentation et le code source de chaque projet au 2026-10-20. « Non documenté » signifie que le projet n'en parle pas, pas que la fonctionnalité manque.
+D'après la documentation et le code source de chaque projet au 2026-10-20 (clausona : v0.12.0-beta). « Non documenté » signifie que le projet n'en parle pas, pas que la fonctionnalité manque.
 
 | Outil | Approche | Plusieurs comptes à la fois | Utilisation sur 5 heures et hebdomadaire | Quand une limite est atteinte | Plateformes |
 | --- | --- | --- | --- | --- | --- |
-| ccam | Dossiers séparés | Oui | Oui, `ccam usage` | Vous exécutez `ccam next --auto --continue` pour poursuivre la conversation dans le compte qui a le plus de marge ; `ccam --fallback` y relance les tâches `-p` de lui-même | Linux, macOS, Windows |
+| ccam | Dossiers séparés | Oui | Oui, `ccam usage` | Vous exécutez `ccam next --auto --continue` pour poursuivre la conversation dans le compte qui a le plus de marge ; `ccam --fallback` y relance les tâches `-p` de lui-même, et `ccam pick` répartit les workers | Linux, macOS, Windows |
 | [claude-swap](https://github.com/realiti4/claude-swap) | Échange la connexion ; dossiers séparés avec `cswap run` | Oui, avec `cswap run` | Oui | `cswap auto` change de connexion à un seuil ; la session en cours continue | Linux, macOS, Windows |
 | [CCS](https://github.com/kaitranntt/ccs) | Dossiers séparés | Oui | En partie | Des groupes de comptes transmettent les requêtes au compte suivant via un proxy local | Linux, macOS, Windows |
+| [clausona](https://github.com/larcane97/clausona) | Dossiers séparés | Oui | Oui | Des routes choisissent un compte qui a du quota avant chaque exécution, peuvent attendre une réinitialisation et attribuent des comptes distincts aux workers | Linux, macOS, Windows |
 | [clauth](https://github.com/uwuclxdy/clauth) | Échange la connexion ; dossiers séparés avec `clauth start` | Oui, avec `clauth start` | Oui | Passe au compte suivant d'une chaîne de secours | Linux, macOS, Windows |
 | [CAAM](https://github.com/Dicklesworthstone/coding_agent_account_manager) | Échange la connexion, ou profils isolés | Oui, avec des profils isolés | Oui | `caam run` relance les commandes non interactives sur un autre compte | Linux, macOS, Windows |
 | [cux](https://github.com/inulute/cux) | Échange la connexion et enveloppe `claude` | Non, un seul compte actif | Oui | Échange la connexion et reprend la même conversation | Linux, macOS, Windows |
@@ -41,6 +42,7 @@ ccswap est un fork de claude-swap qui gère aussi les connexions Codex. [claude-
 | ccam | Go, un seul binaire statique | Rien : ccam se remplace par `claude` (sous Windows, qui ne le permet pas, il l'attend) | Non | Chaque élément séparément : local ou un groupe nommé, compte par compte |
 | claude-swap | Python 3.12+, installé avec uv ou pipx | Rien avec `cswap run` ; `cswap auto` et l'app de barre des menus continuent de tourner | Oui, quand il échange la connexion | Avec `cswap run` : paramètres, `CLAUDE.md` et extensions ensemble, historique en option ; serveurs MCP copiés à chaque lancement |
 | CCS | Node.js 18+ ou Bun | CCS reste le processus parent ; les groupes de comptes ajoutent un proxy local | Non pour ses dossiers de compte ; les groupes de comptes gardent leurs propres connexions | Partagé ou local par compte, historique dans des groupes de contexte ; serveurs MCP copiés |
+| clausona | TypeScript, Node.js 20+ | `claude` seul passe par une fonction shell ; `clausona run` garde Node comme processus parent ; un processus Node en arrière-plan après chaque sortie | Non, mais il renouvelle lui-même les jetons des comptes inactifs pour lire leur utilisation | Tout sauf les fichiers propres à chaque compte, depuis un compte principal ; historique facultatif ; les serveurs ajoutés avec `claude mcp add` ne sont pas partagés |
 | clauth | Rust | clauth reste le processus parent | Oui, quand il échange la connexion | Tout `~/.claude`, ou rien |
 | CAAM | Go | Selon le mode ; un démon facultatif | Oui, en mode coffre | Fixé par le mode ; serveurs MCP copiés à chaque lancement |
 | cux | Go | Un wrapper reste autour de `claude` | Oui | Tout : un seul dossier |
@@ -76,7 +78,7 @@ Les serveurs MCP, `settings.json`, `CLAUDE.md`, les extensions (agents, commande
 
 Avec l'historique partagé, `ccam next --auto --continue` interroge tous les comptes en même temps sur leur utilisation, ouvre celui qui a le plus de marge et poursuit la conversation. C'est vous qui décidez quand changer ; ccam ne surveille pas votre utilisation en arrière-plan. La ligne d'état suggère la commande dès qu'un compte atteint 90 %.
 
-Les scripts ne peuvent pas vous attendre : `ccam --fallback work -p "…"` change donc de compte pour eux. Quand le compte atteint sa limite, la même commande est relancée avec le compte qui a le plus de marge, et seule la sortie de l'exécution qui a abouti est affichée. Un échec qui n'est pas dû à une limite d'utilisation est transmis tel quel.
+Les scripts ne peuvent pas vous attendre : `ccam --fallback work -p "…"` change donc de compte pour eux. Quand le compte atteint sa limite, la même commande est relancée avec le compte qui a le plus de marge, et seule la sortie de l'exécution qui a abouti est affichée. Un échec qui n'est pas dû à une limite d'utilisation est transmis tel quel. Pour des workers en parallèle, `ccam pick` donne à chacun un compte différent qui a de la marge, et les deux quittent avec le code 75 quand plus aucun compte n'en a.
 
 ### Le bon compte dans chaque dossier
 
@@ -91,7 +93,8 @@ ccam est un binaire statique d'environ 10 Mo, sans environnement d'exécution à
 - claude-swap, clauth, cux, CAAM et CCSwitcher peuvent changer de compte d'eux-mêmes dans une session interactive en cours quand un compte dépasse un seuil d'utilisation. ccam change de compte pour les exécutions `-p` avec `--fallback` et vous laisse décider pour les sessions interactives.
 - Sous Windows sans le Mode développeur, ccam partage les dossiers mais ne peut pas partager de fichiers isolés comme `settings.json` ; claude-swap et CCS les y copient à la place.
 - CCSwitcher, Claude Switcher et claude-swap affichent l'utilisation dans la barre des menus de macOS.
-- CCS, CAAM, clauth, ccswap et Claude Switcher gèrent aussi Codex et d'autres agents de code.
+- CCS, clausona, CAAM, clauth, ccswap et Claude Switcher gèrent aussi Codex et d'autres agents de code.
+- clausona active et désactive aussi les extensions compte par compte (`ccam ext` de ccam se contente de les afficher), suit le coût local en jetons et fournit des plugins Claude Code qui font tourner des flottes de workers dans tmux et d'autres terminaux.
 - CAAM, CCSwitcher et Claude Switcher s'installent avec Homebrew, et clauth et CAAM signent les sommes de contrôle de leurs versions. ccam s'installe avec son script, un `.deb` ou `go install`, et vérifie les sommes de contrôle sans signature.
 
 ## Lequel choisir ?

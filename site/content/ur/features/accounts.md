@@ -1,10 +1,10 @@
 ---
 title: "اکاؤنٹس کا انتظام"
-description: "ccam add، ccam login، ccam list، ccam rename، ccam remove اور ccam import: Claude Code اکاؤنٹس شامل کریں، لاگ اِن کریں، دیکھیں، نام بدلیں، ہٹائیں، امپورٹ کریں۔"
-updated: 2026-10-19
+description: "ccam add، ccam login، ccam list، ccam rename، ccam remove اور ccam import: Claude Code اکاؤنٹ شامل کریں، لاگ اِن کریں، دیکھیں، نام بدلیں، ہٹائیں، امپورٹ کریں۔"
+updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 99c931574262
+sourceHash: 9eb992214132
 ---
 
 ccam کا ہر اکاؤنٹ Claude Code کا ایک الگ کنفیگ فولڈر ہے جس کا اپنا لاگ اِن ہوتا ہے۔ یہ کمانڈز اکاؤنٹس بناتی ہیں، ان میں سائن اِن کرتی ہیں، ان کی فہرست دکھاتی ہیں، ان کے نام بدلتی ہیں اور انہیں ہٹاتی ہیں، اور ان فولڈرز کو رجسٹر کرتی ہیں جو آپ کے پاس پہلے سے ہیں۔
@@ -49,15 +49,16 @@ $ ccam list
 | `ccam add --no-login` | لاگ اِن کیے بغیر اکاؤنٹ بناتا ہے؛ بعد میں `ccam login <name>` سے لاگ اِن کریں | بند |
 | `ccam add --share <item=group>` | کسی آئٹم کو ایک گروپ کے ساتھ شیئر کرتا ہے، یا اسے نجی رکھنے کے لیے `item=local`۔ کئی بار دیا جا سکتا ہے | `mcp`، `settings`، `memory`، `extensions`، `default` میں؛ `history` لوکل |
 | `ccam add --shortcut <command>` | `~/.local/bin` میں یہ شارٹ کٹ کمانڈ بھی بناتا ہے | کوئی نہیں |
+| `ccam add --api --key-from <source>` | ایسا اکاؤنٹ جو لاگ اِن کے بجائے API key استعمال کرتا ہے؛ دیکھیں [API key اکاؤنٹس](/features/api) | بند |
 | `ccam list --json` | اکاؤنٹس کو JSON میں پرنٹ کرتا ہے | بند |
 | `ccam remove -y`، `--yes` | پوچھے بغیر ہٹاتا ہے | بند |
 | `ccam import --name <name>` | آپ کے دیے گئے فولڈر کے لیے اکاؤنٹ کا نام | فولڈر کے نام سے اخذ |
 | `ccam import -y`، `--yes` | ملنے والا ہر فولڈر پوچھے بغیر امپورٹ کرتا ہے | بند |
 | `--dry-run` | `ccam list` اور `ccam completion` اسے لاگو کرتے ہیں، کیونکہ وہ کچھ تبدیل نہیں کرتے۔ `add`، `login`، `logout`، `use`، `rename`، `remove` اور `import` اسے `` --dry-run is not supported by `ccam add`; nothing was changed `` کے ساتھ مسترد کرتے ہیں (کمانڈ کے نام کے ساتھ) | بند |
 
-`ccam login`، `ccam logout`، `ccam use` اور `ccam rename` کے اپنے کوئی آپشنز نہیں۔ `ccam completion`، `bash` یا `zsh` لیتا ہے؛ اس کے علاوہ کچھ بھی `only bash and zsh are supported` کے ساتھ ناکام ہوتا ہے۔
+`ccam login`، `ccam logout`، `ccam use` اور `ccam rename` کے اپنے کوئی آپشنز نہیں۔ `ccam completion`، `bash`، `zsh` یا `powershell` لیتا ہے؛ اس کے علاوہ کچھ بھی `only bash, zsh and powershell are supported` کے ساتھ ناکام ہوتا ہے۔
 
-اکاؤنٹ کے نام `a-z`، `0-9`، `-` اور `_` کے 1 سے 32 حروف ہوتے ہیں، جو کسی حرف یا ہندسے سے شروع ہوں۔ نام صرف ہندسوں پر مشتمل نہیں ہو سکتا، کیونکہ `ccam 2` کا مطلب سلاٹ 2 ہے۔ نام کوئی ccam کمانڈ بھی نہیں ہو سکتا (`add`، `list`، `ls`، `run`، `use`، `next`، `usage`، `u`، `share`، `mcp`، `login`، `logout`، `rename`، `remove`، `rm`، `import`، `migrate`، `doctor`، `shims`، `shortcut`، `completion`، `help`، `version`، `statusline`، `update`)، اس لیے `ccam <name>` کبھی مبہم نہیں ہوتا۔ یہ فہرست `internal/config` میں `config.Reserved` ہے۔
+اکاؤنٹ کے نام `a-z`، `0-9`، `-` اور `_` کے 1 سے 32 حروف ہوتے ہیں، جو کسی حرف یا ہندسے سے شروع ہوں۔ نام صرف ہندسوں پر مشتمل نہیں ہو سکتا، کیونکہ `ccam 2` کا مطلب سلاٹ 2 ہے۔ نام کوئی ccam کمانڈ بھی نہیں ہو سکتا (`add`، `list`، `ls`، `run`، `use`، `next`، `usage`، `u`، `share`، `mcp`، `login`، `logout`، `rename`، `remove`، `rm`، `import`، `migrate`، `doctor`، `shims`، `shortcut`، `completion`، `help`، `version`، `statusline`، `update`، `folder`، `pick`، `ext`)، اس لیے `ccam <name>` کبھی مبہم نہیں ہوتا۔ یہ فہرست `internal/config` میں `config.Reserved` ہے۔
 
 ## یہ کیسے کام کرتا ہے
 

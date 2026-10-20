@@ -5,7 +5,7 @@ description: Wszystkie polecenia i opcje ccam, od ccam add i ccam <name> po ccam
 updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 5d3275878535
+sourceHash: da2594c672bc
 ---
 
 Wpisz `--dry-run` przed poleceniem, żeby zobaczyć, co by zrobiło, bez wykonywania go, na przykład `ccam --dry-run work`. Działa to przy uruchamianiu Claude Code (`ccam <name>`, `ccam run`, `ccam next`) oraz z `share`, `migrate`, `shortcut`, `update` i `doctor --fix`. Inne polecenia, które coś zmieniają, odrzucają tę opcję zamiast się wykonać.
@@ -39,9 +39,12 @@ ccam add ci --no-login        # log in later with: ccam login ci
 ccam rename work job
 ccam remove side              # folder moves to ~/.local/share/ccam/trash
 ccam import ~/.claude-old --name old
+ccam add gw --api --base-url https://llm.example.com --auth bearer --key-from env:GW_KEY
 ```
 
 `ccam import` bez podanego folderu szuka `~/.claude` i `~/.claude-*` i pyta o każdy z nich. Zaimportowane foldery są rejestrowane tam, gdzie są; ccam nigdy nie przenosi ani nie kopiuje loginu.
+
+`ccam add --api` dodaje konto, które zamiast loginu Claude używa klucza API; ccam odczytuje klucz przy każdym uruchomieniu i nigdy go nie zapisuje. Zobacz [Konta z kluczem API](/features/api).
 
 `ccam rename`, `ccam remove` i `ccam share` odmawiają zmiany konta, gdy Claude Code działa jako to konto. Najpierw zakończ sesję.
 
@@ -105,7 +108,12 @@ ccam usage --watch   # refresh every 60 seconds
 ccam usage --json
 ccam next --continue
 ccam next --auto
+ccam next --auto --max-usage 80 --wait
+ccam pick                       # the account with the most room, for a script
+ccam "$(ccam pick)" -p "…"      # start a worker on it
 ```
+
+`next --auto`, `--fallback` i `ccam pick` wybierają w ten sam sposób: najpierw konta poniżej `auto_max_usage` (`config.toml`, domyślnie 100), według `auto_strategy` (`headroom` lub `expiring`), z uwzględnieniem tygodniowego okna `--model`, nigdy konto na poziomie 100%. Gdy nie da się wybrać żadnego, kończą działanie z kodem 75, a z `--wait` czekają na reset pierwszego konta. Zobacz [Przełączanie na następne konto](/features/next) i [Wybór konta dla skryptów](/features/pick).
 
 ## Konserwacja
 
@@ -113,6 +121,7 @@ ccam next --auto
 ccam doctor          # check
 ccam doctor --fix    # repair what is safe to repair, with backups
 ccam statusline install
+ccam ext             # skills, commands, MCP servers and hooks of every account, and problems
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release

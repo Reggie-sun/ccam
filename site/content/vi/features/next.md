@@ -4,7 +4,7 @@ description: "ccam next mở Claude Code bằng tài khoản kế tiếp; --auto
 updated: 2026-10-20
 order: 8
 translation: machine
-sourceHash: 7bc55c2dd520
+sourceHash: 784ae4d1f6d9
 ---
 
 `ccam next` mở Claude Code bằng một tài khoản khác mà bạn không cần nêu tên. Hãy dùng nó khi một tài khoản chạm giới hạn sử dụng: `ccam next` không kèm tùy chọn chọn tài khoản đứng sau tài khoản bạn dùng gần nhất, `--auto` chọn tài khoản còn nhiều hạn mức nhất trong khoảng 5 giờ, và `--continue` tiếp tục cuộc hội thoại gần nhất trong tài khoản mới. Với các script chạy `claude -p`, `ccam --fallback` tự thực hiện việc đổi đó (xem [Chạy lại khi chạm giới hạn](#run-again-at-the-limit)).
@@ -16,6 +16,8 @@ ccam next                       # the account after the one you used last
 ccam next --auto                # the account with the lowest 5-hour usage
 ccam next --continue            # the next account that shares history, with claude --continue
 ccam next -c --auto             # both: lowest usage among accounts sharing history
+ccam next --auto --max-usage 80 # prefer accounts below 80%
+ccam next --auto --wait         # nobody has room: wait for the first reset (up to 5 hours)
 ccam next -- -p "summarize"     # pass arguments to claude after --
 ccam --dry-run next --auto      # print the choice and the command, start nothing
 ```
@@ -32,7 +34,10 @@ ccam in việc chuyển đổi dưới dạng `→ <from> → <to>` ra đầu ra
 
 | Tùy chọn | Tác dụng | Mặc định |
 | --- | --- | --- |
-| `--auto` | Chọn tài khoản đã đăng nhập có mức sử dụng 5 giờ thấp nhất, bỏ qua các tài khoản ở mức 100% | tắt |
+| `--auto` | Chọn tài khoản đã đăng nhập theo mức sử dụng (xem bên dưới), bỏ qua các tài khoản ở mức 100% | tắt |
+| `--max-usage <1-100>` | Với `--auto`: ưu tiên các tài khoản có mức sử dụng dưới giá trị này | `auto_max_usage`, nếu không thì 100 |
+| `--strategy headroom\|expiring` | Với `--auto`: mức sử dụng 5 giờ thấp nhất, hoặc khoảng 5 giờ được đặt lại sớm nhất | `auto_strategy`, nếu không thì `headroom` |
+| `--wait[=<duration>]` | Với `--auto`: khi không tài khoản nào còn hạn mức, chờ tài khoản đầu tiên được đặt lại, tối đa chừng này thời gian | tắt; `5h` khi chỉ ghi cờ |
 | `-c`, `--continue` | Chỉ xét các tài khoản dùng chung lịch sử hội thoại với tài khoản bạn dùng gần nhất, và khởi động `claude --continue` | tắt |
 | `-- <claude args>` | Các đối số được chuyển cho `claude` sau các đối số của chính ccam | không có |
 | `--dry-run` | Được hỗ trợ: in ra `→ <from> → <to>` và dòng lệnh sẽ chạy, mà không khởi động Claude Code hay ghi lại lần khởi động | tắt |
@@ -56,11 +61,23 @@ Vòng duyệt bắt đầu ở tài khoản dùng gần nhất và dừng ở t�
 
 ### --auto
 
-`--auto` quyết định theo mức sử dụng thay vì thứ tự slot. `cli.pickAuto` giữ lại các tài khoản đã đăng nhập, hỏi mức sử dụng của tất cả cùng lúc bằng chính `Fetcher.FetchAll` mà `ccam usage` dùng, và để `usage.Best()` chọn:
+`--auto` quyết định theo mức sử dụng thay vì thứ tự slot. `cli.pickAuto` giữ lại các tài khoản đã đăng nhập, hỏi mức sử dụng của tất cả cùng lúc bằng chính `Fetcher.FetchAll` mà `ccam usage` dùng, và để `usage.Policy.Choose()` chọn:
 
 <!-- motion:next-auto -->
 
-`usage.Best()` lấy tỷ lệ phần trăm 5 giờ thấp nhất và bỏ qua các tài khoản ở mức 100% hoặc chưa rõ mức sử dụng 5 giờ. Việc tra cứu tuân theo các quy tắc của `ccam usage`: các con số mới hơn 60 giây được dùng lại, mỗi tài khoản có 3 giây, và tài khoản không phản hồi hoặc có đăng nhập đã hết hạn sẽ được đánh giá theo các con số đã lưu. Một khoảng đã lưu mà thời điểm đặt lại đã qua được tính là 0%, nên tài khoản có khoảng giới hạn đã được đặt lại kể từ đó sẽ không bị bỏ qua. `--auto` không bao giờ gia hạn token. Khác với vòng xoay thông thường, `--auto` có thể chọn tài khoản bạn dùng gần nhất nếu nó vẫn còn nhiều hạn mức nhất.
+Một tài khoản được đánh giá theo khoảng 5 giờ và khoảng hàng tuần của nó, và khi `--model` nằm trong các đối số cho Claude Code, theo cả khoảng hàng tuần của mô hình đó (`opus`, `sonnet`, `haiku` hoặc `fable` trong tên). `Policy.Choose()` chia các tài khoản thành ba nhóm:
+
+1. **Còn hạn mức**: mọi khoảng đều dưới `auto_max_usage` (`config.toml`, mặc định 100). Chiến lược chọn trong số này: `headroom` (mặc định) lấy mức sử dụng 5 giờ thấp nhất, `expiring` lấy khoảng 5 giờ được đặt lại sớm nhất, để hạn mức còn lại được dùng trước khi mất.
+2. **Vượt ngưỡng**: dưới 100% nhưng bằng hoặc vượt `auto_max_usage`. Chỉ được dùng khi không tài khoản nào còn hạn mức, ưu tiên mức sử dụng 5 giờ thấp nhất.
+3. **Đầy**: có một khoảng ở mức 100%, hoặc chưa rõ mức sử dụng 5 giờ. Không bao giờ được chọn.
+
+```toml
+# ~/.config/ccam/config.toml
+auto_max_usage = 80        # keep 20% of each account for interactive work
+auto_strategy = "expiring"
+```
+
+Khi không chọn được tài khoản nào, ccam thoát với mã 75 (`EX_TEMPFAIL`), để script phân biệt được "thử lại sau" với một lỗi. Với `--wait`, thay vào đó nó ngủ cho đến khi khoảng đang chặn của tài khoản đầy đầu tiên được đặt lại (30 giây sau thời điểm đặt lại, khi endpoint hiển thị khoảng mới), in ra `ccam: no account has room; waiting until 15:10`, rồi chọn lại; khi không tài khoản nào cho biết lúc nào được đặt lại, nó kiểm tra lại sau 10 phút. Nếu không có tài khoản nào trống ra trước khi hết thời gian chờ, nó thoát với mã 75. Việc tra cứu tuân theo các quy tắc của `ccam usage`: các con số mới hơn 60 giây được dùng lại, mỗi tài khoản có 3 giây, và tài khoản không phản hồi hoặc có đăng nhập đã hết hạn sẽ được đánh giá theo các con số đã lưu. Một khoảng đã lưu mà thời điểm đặt lại đã qua được tính là 0%, nên tài khoản có khoảng giới hạn đã được đặt lại kể từ đó sẽ không bị bỏ qua. `--auto` không bao giờ gia hạn token. Khác với vòng xoay thông thường, `--auto` có thể chọn tài khoản bạn dùng gần nhất nếu nó vẫn còn nhiều hạn mức nhất.
 
 ### --continue
 
@@ -90,7 +107,7 @@ Summary: …
 6. Khi đó đầu ra của lần thử đó bị bỏ đi và cùng lệnh chạy bằng một tài khoản đã đăng nhập khác: tài khoản có mức sử dụng 5 giờ thấp nhất, rồi đến các tài khoản không tra cứu được mức sử dụng, theo thứ tự số. Tài khoản ở mức 100% bị bỏ qua, và mỗi tài khoản được thử nhiều nhất một lần.
 7. Khi có `-c`, `--continue`, `-r` hoặc `--resume` trong các đối số, chỉ các tài khoản trong cùng nhóm lịch sử được thử, để có thể tìm thấy cuộc hội thoại.
 
-Khi không còn tài khoản nào, ccam in ra đầu ra của lần thử cuối, báo rằng không còn tài khoản đã đăng nhập nào còn hạn mức, và thoát với mã của lần thử đó. `ccam --dry-run --fallback work -p …` in ra lệnh của lần thử đầu tiên.
+Tài khoản tiếp theo được chọn theo cùng các quy tắc như `--auto` (`auto_max_usage`, `auto_strategy`, khoảng của `--model`). Khi không còn tài khoản nào, ccam in ra đầu ra của lần thử cuối, báo rằng không còn tài khoản đã đăng nhập nào còn hạn mức, và thoát với mã 75. Với `--wait` đặt trước tên tài khoản (`ccam --fallback --wait=2h work -p …`), thay vào đó nó chờ tài khoản đầu tiên được đặt lại, rồi có thể thử lại mọi tài khoản; nó luôn ngủ ít nhất một lần trước, nên tài khoản vừa chạm giới hạn sẽ không bị chạy lại ngay. `ccam --dry-run --fallback work -p …` in ra lệnh của lần thử đầu tiên.
 
 Các phiên tương tác không tự đổi tài khoản. Thay vào đó, với `ccam statusline install`, dòng trạng thái thêm `→ ccam next --auto --continue` khi mức sử dụng 5 giờ hoặc hàng tuần chạm 90% ([Giới hạn sử dụng](/features/usage)).
 
@@ -98,7 +115,8 @@ Các phiên tương tác không tự đổi tài khoản. Thay vào đó, với 
 
 - Tài khoản chưa đăng nhập không bao giờ được chọn. Khi không có tài khoản nào khác đã đăng nhập, `ccam next` thông thường dừng lại với `no logged-in account other than <name>`.
 - Với `--continue` và không có tài khoản nào dùng chung lịch sử: `` no other account shares conversation history with <name>. Turn it on with `ccam share <name> --history on` ``.
-- Với `--auto` và không có tài khoản nào đã đăng nhập: `no logged-in account to pick`. Khi mọi tài khoản đều đã đầy hoặc chưa rõ mức sử dụng: `` no account with known usage and headroom (see `ccam usage`) ``.
+- Với `--auto` và không có tài khoản nào đã đăng nhập: `no logged-in account to pick`. Khi mọi tài khoản đều đã đầy hoặc chưa rõ mức sử dụng: `` no account with known usage and headroom (see `ccam usage`) ``. Cả hai đều kết thúc với mã thoát 75.
+- `--max-usage`, `--strategy` và `--wait` chỉ dùng được với `--auto`, và giá trị ngoài khoảng 1-100 hoặc một chiến lược khác sẽ bị từ chối.
 - `--auto` gửi yêu cầu mạng ngay cả với `--dry-run`. Nó chỉ đọc, và không bao giờ ghi vào tệp token.
 - Tài khoản được chọn khởi động qua cùng đường đi với `ccam <name>`, nên các kiểm tra tương tự được áp dụng, bao gồm cảnh báo khi một Claude Code khác dùng chung lịch sử đang chạy trong thư mục này.
 - `last-used` chỉ được ghi khi Claude Code thực sự khởi động. `--dry-run` không động đến nó, nên chạy thử không đẩy vòng xoay tiến lên.

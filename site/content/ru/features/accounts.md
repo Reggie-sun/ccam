@@ -1,10 +1,10 @@
 ---
 title: Управление аккаунтами
 description: "Добавляйте, входите, просматривайте, переименовывайте, удаляйте и импортируйте аккаунты Claude Code: ccam add, login, list, rename, remove и import."
-updated: 2026-10-19
+updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 99c931574262
+sourceHash: 9eb992214132
 ---
 
 Каждый аккаунт ccam представляет собой отдельную папку конфигурации Claude Code с собственным входом. Эти команды создают аккаунты, выполняют вход, выводят список, переименовывают и удаляют аккаунты, а также регистрируют уже существующие папки.
@@ -49,15 +49,16 @@ $ ccam list
 | `ccam add --no-login` | Создать аккаунт без входа; войти позже можно командой `ccam login <name>` | выкл. |
 | `ccam add --share <item=group>` | Сделать элемент общим с группой или указать `item=local`, чтобы оставить его личным. Можно повторять | `mcp`, `settings`, `memory`, `extensions` в `default`; `history` локально |
 | `ccam add --shortcut <command>` | Дополнительно создать эту короткую команду в `~/.local/bin` | нет |
+| `ccam add --api --key-from <source>` | Аккаунт, который использует ключ API вместо входа; см. [Аккаунты с ключом API](/features/api) | выкл. |
 | `ccam list --json` | Вывести аккаунты в формате JSON | выкл. |
 | `ccam remove -y`, `--yes` | Удалить без вопросов | выкл. |
 | `ccam import --name <name>` | Имя аккаунта для указанной папки | выводится из имени папки |
 | `ccam import -y`, `--yes` | Импортировать все найденные папки без вопросов | выкл. |
 | `--dry-run` | Учитывается командами `ccam list` и `ccam completion`, которые ничего не меняют. Команды `add`, `login`, `logout`, `use`, `rename`, `remove` и `import` отклоняют его с сообщением `` --dry-run is not supported by `ccam add`; nothing was changed `` (с именем команды) | выкл. |
 
-У `ccam login`, `ccam logout`, `ccam use` и `ccam rename` нет собственных параметров. `ccam completion` принимает `bash` или `zsh`; любое другое значение завершается ошибкой `only bash and zsh are supported`.
+У `ccam login`, `ccam logout`, `ccam use` и `ccam rename` нет собственных параметров. `ccam completion` принимает `bash`, `zsh` или `powershell`; любое другое значение завершается ошибкой `only bash, zsh and powershell are supported`.
 
-Имя аккаунта содержит от 1 до 32 символов из `a-z`, `0-9`, `-` и `_` и начинается с буквы или цифры. Имя не может состоять только из цифр, потому что `ccam 2` означает слот 2. Имя также не может совпадать с командой ccam (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`), поэтому `ccam <name>` никогда не бывает неоднозначным. Этот список задан в `config.Reserved` в `internal/config`.
+Имя аккаунта содержит от 1 до 32 символов из `a-z`, `0-9`, `-` и `_` и начинается с буквы или цифры. Имя не может состоять только из цифр, потому что `ccam 2` означает слот 2. Имя также не может совпадать с командой ccam (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`, `folder`, `pick`, `ext`), поэтому `ccam <name>` никогда не бывает неоднозначным. Этот список задан в `config.Reserved` в `internal/config`.
 
 ## Как это работает
 

@@ -1,10 +1,10 @@
 ---
 title: Ang ccam at iba pang Claude Code account switcher
-description: Paano ikinukumpara ang ccam sa claude-swap, CCS, clauth, CAAM, cux at iba pang tool sa pag-switch ng Claude Code account, at aling paraan ang bagay saan.
+description: Ang ccam kumpara sa claude-swap, CCS, clausona, clauth, CAAM, cux at iba pang tool sa pag-switch ng Claude Code account, at aling paraan ang bagay saan.
 updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: d058da937218
+sourceHash: 68048287f792
 ---
 
 May dalawang paraan ang mga tool sa pag-switch ng Claude Code account. Karamihan ay nagpapalit ng login sa loob ng iisang `~/.claude` folder, kaya isang account lang ang aktibo sa bawat pagkakataon. Ang iba, kasama ang ccam, ay nagbibigay sa bawat account ng sariling folder gamit ang `CLAUDE_CONFIG_DIR`, kaya nananatiling naka-log in ang bawat account at puwedeng tumakbo nang sabay ang ilan. Nagdadagdag ang ccam ng shared na settings at MCP server, at itinutuloy nito ang isang usapan sa folder ng ibang account.
@@ -19,13 +19,14 @@ Para makapagpalit, nag-iingat ang tool ng kopya ng login ng bawat ibang account 
 
 ## Paghahambing ng mga tool
 
-Kinuha mula sa sariling dokumentasyon at source code ng bawat project noong 2026-10-20. Ang "Hindi nakadokumento" ay nangangahulugang hindi ito binabanggit ng project, hindi na wala ang feature.
+Kinuha mula sa sariling dokumentasyon at source code ng bawat project noong 2026-10-20 (clausona: v0.12.0-beta). Ang "Hindi nakadokumento" ay nangangahulugang hindi ito binabanggit ng project, hindi na wala ang feature.
 
 | Tool | Paraan | Sabay-sabay na account | 5-oras at lingguhang usage | Kapag naabot ang limit | Platform |
 | --- | --- | --- | --- | --- | --- |
-| ccam | Magkakahiwalay na folder | Oo | Oo, `ccam usage` | Ikaw ang nagpapatakbo ng `ccam next --auto --continue` para ituloy ang usapan sa account na may pinakamaraming natitira; kusang inuulit ng `ccam --fallback` doon ang mga `-p` job | Linux, macOS, Windows |
+| ccam | Magkakahiwalay na folder | Oo | Oo, `ccam usage` | Ikaw ang nagpapatakbo ng `ccam next --auto --continue` para ituloy ang usapan sa account na may pinakamaraming natitira; kusang inuulit ng `ccam --fallback` doon ang mga `-p` job, at ikinakalat ng `ccam pick` ang mga worker | Linux, macOS, Windows |
 | [claude-swap](https://github.com/realiti4/claude-swap) | Nagpapalit ng login; magkakahiwalay na folder gamit ang `cswap run` | Oo, gamit ang `cswap run` | Oo | Nagpapalit ng login ang `cswap auto` sa isang threshold; tuloy ang tumatakbong session | Linux, macOS, Windows |
 | [CCS](https://github.com/kaitranntt/ccs) | Magkakahiwalay na folder | Oo | Bahagya | Ipinapasa ng mga account pool ang mga request sa susunod na account sa pamamagitan ng lokal na proxy | Linux, macOS, Windows |
+| [clausona](https://github.com/larcane97/clausona) | Magkakahiwalay na folder | Oo | Oo | Pumipili ang mga route ng account na may quota bago ang bawat run, kayang maghintay ng reset, at namimigay ng magkakaibang account sa mga worker | Linux, macOS, Windows |
 | [clauth](https://github.com/uwuclxdy/clauth) | Nagpapalit ng login; magkakahiwalay na folder gamit ang `clauth start` | Oo, gamit ang `clauth start` | Oo | Lumilipat pababa sa isang fallback chain | Linux, macOS, Windows |
 | [CAAM](https://github.com/Dicklesworthstone/coding_agent_account_manager) | Nagpapalit ng login, o mga isolated na profile | Oo, gamit ang mga isolated na profile | Oo | Inuulit ng `caam run` ang mga non-interactive na command sa ibang account | Linux, macOS, Windows |
 | [cux](https://github.com/inulute/cux) | Nagpapalit ng login at binabalot ang `claude` | Hindi, isang aktibong account | Oo | Nagpapalit ng login at itinutuloy ang parehong usapan | Linux, macOS, Windows |
@@ -41,6 +42,7 @@ Ang ccswap ay fork ng claude-swap na namamahala rin ng mga Codex login. Nagbibig
 | ccam | Go, iisang static binary | Wala: pinapalitan ng ccam ang sarili nito ng `claude` (sa Windows, na hindi ito kaya, hinihintay nito ito) | Hindi | Bawat item nang hiwalay: lokal o isang may-pangalang grupo, bawat account |
 | claude-swap | Python 3.12+, ini-install gamit ang uv o pipx | Wala kapag `cswap run`; patuloy na tumatakbo ang `cswap auto` at ang menu bar app | Oo, kapag nagpapalit ito ng login | Sa `cswap run`: settings, `CLAUDE.md` at extension nang magkakasama, opsyonal ang kasaysayan; kinokopya ang mga MCP server sa bawat launch |
 | CCS | Node.js 18+ o Bun | Nananatili ang CCS bilang parent process; nagdadagdag ang mga pool ng lokal na proxy | Hindi para sa mga account folder nito; may sariling login ang mga pool | Shared o lokal bawat account, kasaysayan sa mga context group; kinokopya ang mga MCP server |
+| clausona | TypeScript, Node.js 20+ | Tumatakbo ang karaniwang `claude` sa pamamagitan ng isang shell function; pinananatili ng `clausona run` ang Node bilang parent; may background Node process pagkatapos ng bawat exit | Hindi, pero kusa nitong nire-renew ang mga token ng idle na account para mabasa ang usage nila | Lahat maliban sa mga file na pang-account, mula sa iisang primary; opsyonal ang kasaysayan; hindi ibinabahagi ang mga server na idinagdag gamit ang `claude mcp add` |
 | clauth | Rust | Nananatili ang clauth bilang parent process | Oo, kapag nagpapalit ito ng login | Ang buong `~/.claude`, o wala |
 | CAAM | Go | Depende sa mode; may opsyonal na daemon | Oo, sa vault mode nito | Itinakda ng mode; kinokopya ang mga MCP server sa bawat launch |
 | cux | Go | May wrapper na nananatili sa paligid ng `claude` | Oo | Lahat: iisang folder |
@@ -76,7 +78,7 @@ Nagpi-print ng plano ang `ccam share` at `ccam migrate` at nagtatanong muna bago
 
 Kapag shared ang kasaysayan, sabay-sabay na tinatanong ng `ccam next --auto --continue` ang bawat account tungkol sa usage nito, binubuksan ang may pinakamaraming natitira at itinutuloy ang usapan. Ikaw ang nagpapasya kung kailan lilipat; hindi binabantayan ng ccam ang usage mo sa background. Iminumungkahi ng status line ang command kapag umabot na sa 90% ang isang account.
 
-Hindi ka kayang hintayin ng mga script, kaya ang `ccam --fallback work -p "…"` ang lumilipat para sa kanila: kapag naabot ng account ang limit nito, pinapatakbo ulit ang parehong command bilang account na may pinakamaraming natitira, at ang output lang ng run na natapos ang ipi-print. Ang pagkabigong hindi dahil sa usage limit ay ipinapasa nang gaya ng dati.
+Hindi ka kayang hintayin ng mga script, kaya ang `ccam --fallback work -p "…"` ang lumilipat para sa kanila: kapag naabot ng account ang limit nito, pinapatakbo ulit ang parehong command bilang account na may pinakamaraming natitira, at ang output lang ng run na natapos ang ipi-print. Ang pagkabigong hindi dahil sa usage limit ay ipinapasa nang gaya ng dati. Para sa mga parallel worker, binibigyan ng `ccam pick` ang bawat isa ng ibang account na may natitira pa, at pareho silang lumalabas na may code 75 kapag wala nang account na may natitira.
 
 ### Ang tamang account sa bawat folder
 
@@ -91,7 +93,8 @@ Ang ccam ay static binary na mga 10 MB at walang runtime na kailangang i-install
 - Kayang kusang ilipat ng claude-swap, clauth, cux, CAAM at CCSwitcher ang isang tumatakbong interactive session kapag lumampas ang isang account sa usage threshold. Inililipat ng ccam ang mga `-p` run gamit ang `--fallback` at iniiwan sa iyo ang mga interactive session.
 - Sa Windows nang walang Developer Mode, nagshe-share ang ccam ng mga folder pero hindi ng mga iisang file gaya ng `settings.json`; kinokopya naman ang mga ito roon ng claude-swap at CCS.
 - Ipinapakita ng CCSwitcher, Claude Switcher at claude-swap ang usage sa macOS menu bar.
-- Namamahala rin ang CCS, CAAM, clauth, ccswap at Claude Switcher ng Codex at iba pang coding agent.
+- Namamahala rin ang CCS, clausona, CAAM, clauth, ccswap at Claude Switcher ng Codex at iba pang coding agent.
+- Kaya rin ng clausona na i-on at i-off ang mga extension bawat account (ipinapakita lang ang mga ito ng `ccam ext` ng ccam), sinusubaybayan nito ang lokal na gastos sa token, at may kasama itong mga Claude Code plugin na nagpapatakbo ng grupo ng mga worker sa tmux at iba pang terminal.
 - Nai-install ang CAAM, CCSwitcher at Claude Switcher gamit ang Homebrew, at pinipirmahan ng clauth at CAAM ang mga release checksum nila. Nai-install ang ccam gamit ang script nito, isang `.deb` o `go install`, at sinusuri nito ang mga checksum nang walang pirma.
 
 ## Alin ang bagay sa iyo?

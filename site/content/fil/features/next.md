@@ -4,7 +4,7 @@ description: Sa ccam next, bubukas ang Claude Code sa kasunod ng huling account;
 updated: 2026-10-20
 order: 8
 translation: machine
-sourceHash: 7bc55c2dd520
+sourceHash: 784ae4d1f6d9
 ---
 
 Binubuksan ng `ccam next` ang Claude Code bilang ibang account nang hindi mo ito pinapangalanan. Gamitin ito kapag naabot ng isang account ang usage limit nito: kinukuha ng simpleng `ccam next` ang account na kasunod ng huli mong ginamit, kinukuha ng `--auto` ang may pinakamaraming natitira sa 5-oras na window nito, at itinutuloy ng `--continue` ang huling usapan sa bagong account. Para sa mga script na nagpapatakbo ng `claude -p`, kusang ginagawa ng `ccam --fallback` ang paglipat na iyon (tingnan ang [Patakbuhin ulit sa limit](#run-again-at-the-limit)).
@@ -16,6 +16,8 @@ ccam next                       # the account after the one you used last
 ccam next --auto                # the account with the lowest 5-hour usage
 ccam next --continue            # the next account that shares history, with claude --continue
 ccam next -c --auto             # both: lowest usage among accounts sharing history
+ccam next --auto --max-usage 80 # prefer accounts below 80%
+ccam next --auto --wait         # nobody has room: wait for the first reset (up to 5 hours)
 ccam next -- -p "summarize"     # pass arguments to claude after --
 ccam --dry-run next --auto      # print the choice and the command, start nothing
 ```
@@ -32,7 +34,10 @@ Ipi-print ng ccam ang paglipat bilang `→ <from> → <to>` sa standard error, s
 
 | Option | Ano ang ginagawa | Default |
 | --- | --- | --- |
-| `--auto` | Piliin ang naka-log in na account na may pinakamababang 5-oras na usage, at laktawan ang mga account na nasa 100% | off |
+| `--auto` | Piliin ang naka-log in na account ayon sa usage (tingnan sa ibaba), at laktawan ang mga account na nasa 100% | off |
+| `--max-usage <1-100>` | Kasama ang `--auto`: unahin ang mga account na mas mababa sa usage na ito | `auto_max_usage`, kung wala ay 100 |
+| `--strategy headroom\|expiring` | Kasama ang `--auto`: pinakamababang 5-oras na usage, o ang pinakamalapit na 5-oras na reset | `auto_strategy`, kung wala ay `headroom` |
+| `--wait[=<duration>]` | Kasama ang `--auto`: kapag walang account na may natitira, hintayin ang unang mag-reset, nang hindi hihigit sa tagal na ito | off; `5h` kapag ibinigay nang mag-isa |
 | `-c`, `--continue` | Isaalang-alang lang ang mga account na nagshe-share ng kasaysayan ng usapan sa account na huli mong ginamit, at simulan ang `claude --continue` | off |
 | `-- <claude args>` | Mga argument na ipinapasa sa `claude` pagkatapos ng sariling argument ng ccam | wala |
 | `--dry-run` | Sinusunod: ipi-print ang `→ <from> → <to>` at ang command line na patatakbuhin nito, nang hindi sinisimulan ang Claude Code o itinatala ang pagsisimula | off |
@@ -56,11 +61,23 @@ Ang `work` ang pinakahuling sinimulan, kaya nagsisimula ang pagdaan pagkatapos n
 
 ### --auto
 
-Nagpapasya ang `--auto` ayon sa usage sa halip na sa pagkakasunod-sunod ng slot. Pinapanatili ng `cli.pickAuto` ang mga naka-log in na account, sabay-sabay na hinihingi ang usage nilang lahat gamit ang parehong `Fetcher.FetchAll` na ginagamit ng `ccam usage`, at hinahayaang pumili ang `usage.Best()`:
+Nagpapasya ang `--auto` ayon sa usage sa halip na sa pagkakasunod-sunod ng slot. Pinapanatili ng `cli.pickAuto` ang mga naka-log in na account, sabay-sabay na hinihingi ang usage nilang lahat gamit ang parehong `Fetcher.FetchAll` na ginagamit ng `ccam usage`, at hinahayaang pumili ang `usage.Policy.Choose()`:
 
 <!-- motion:next-auto -->
 
-Kinukuha ng `usage.Best()` ang pinakamababang 5-oras na porsiyento at nilalaktawan ang mga account na nasa 100% o hindi alam ang 5-oras na usage. Sinusunod ng paghahanap ang mga patakaran ng `ccam usage`: muling ginagamit ang mga numerong wala pang 60 segundo, may 3 segundo ang bawat account, at ang account na hindi sumasagot, o nag-expire ang login, ay hinuhusgahan ayon sa mga naka-save na numero nito. Itinuturing na 0% ang naka-save na window na lumipas na ang oras ng reset, kaya hindi nalalampasan ang account na nag-reset na ang window mula noon. Hindi kailanman nire-renew ng `--auto` ang mga token. Hindi tulad ng simpleng rotation, puwedeng piliin ng `--auto` ang account na huli mong ginamit kung ito pa rin ang may pinakamaraming natitira.
+Hinuhusgahan ang isang account ayon sa 5-oras at lingguhang window nito, at, kapag kasama ang `--model` sa mga argument para sa Claude Code, ayon din sa lingguhang window ng model na iyon (`opus`, `sonnet`, `haiku` o `fable` sa pangalan). Hinahati ng `Policy.Choose()` ang mga account sa tatlo:
+
+1. **May natitira**: bawat window ay mas mababa sa `auto_max_usage` (`config.toml`, default 100). Ang strategy ang pumipili sa kanila: kinukuha ng `headroom` (default) ang pinakamababang 5-oras na usage, kinukuha ng `expiring` ang 5-oras na window na pinakamalapit mag-reset, para magamit ang natitirang quota nito bago ito mawala.
+2. **Lampas**: mas mababa sa 100% pero nasa o lampas sa `auto_max_usage`. Ginagamit lang kapag walang account na may natitira, inuuna ang pinakamababang 5-oras na usage.
+3. **Puno**: may window na nasa 100%, o hindi alam ang 5-oras na usage. Hindi kailanman pinipili.
+
+```toml
+# ~/.config/ccam/config.toml
+auto_max_usage = 80        # keep 20% of each account for interactive work
+auto_strategy = "expiring"
+```
+
+Kapag walang mapipili, lumalabas ang ccam na may code 75 (`EX_TEMPFAIL`), para matukoy ng script ang "subukan mamaya" mula sa isang pagkabigo. Sa `--wait`, natutulog ito sa halip hanggang mag-reset ang humaharang na window ng unang punong account (30 segundo pagkatapos ng oras ng reset, kapag ipinapakita na ng endpoint ang bagong window), nagpi-print ng `ccam: no account has room; waiting until 15:10`, at pumipili ulit; kapag walang account na nagsasabi kung kailan ito magre-reset, titingin ulit ito pagkalipas ng 10 minuto. Kung walang lumuwag bago matapos ang paghihintay, lumalabas ito na may 75. Sinusunod ng paghahanap ang mga patakaran ng `ccam usage`: muling ginagamit ang mga numerong wala pang 60 segundo, may 3 segundo ang bawat account, at ang account na hindi sumasagot, o nag-expire ang login, ay hinuhusgahan ayon sa mga naka-save na numero nito. Itinuturing na 0% ang naka-save na window na lumipas na ang oras ng reset, kaya hindi nalalampasan ang account na nag-reset na ang window mula noon. Hindi kailanman nire-renew ng `--auto` ang mga token. Hindi tulad ng simpleng rotation, puwedeng piliin ng `--auto` ang account na huli mong ginamit kung ito pa rin ang may pinakamaraming natitira.
 
 ### --continue
 
@@ -90,7 +107,7 @@ Summary: …
 6. Saka itinatapon ang output ng pagtatangkang iyon at pinapatakbo ang parehong command bilang ibang naka-log in na account: ang may pinakamababang 5-oras na usage, saka ang mga account na hindi matingnan ang usage, ayon sa pagkakasunod-sunod ng numero. Nilalaktawan ang mga account na nasa 100%, at sinusubukan ang bawat account nang hindi hihigit sa isang beses.
 7. Kapag kasama sa mga argument ang `-c`, `--continue`, `-r` o `--resume`, ang mga account lang sa parehong history group ang sinusubukan, para mahanap ang usapan.
 
-Kapag wala nang natitirang account, ipi-print ng ccam ang output ng huling pagtatangka, sasabihing walang naka-log in na account na may natitira pa, at lalabas gamit ang code ng pagtatangkang iyon. Ipi-print ng `ccam --dry-run --fallback work -p …` ang command ng unang pagtatangka.
+Pinipili ang susunod na account ayon sa parehong mga patakaran ng `--auto` (`auto_max_usage`, `auto_strategy`, ang window ng `--model`). Kapag wala nang natitirang account, ipi-print ng ccam ang output ng huling pagtatangka, sasabihing walang naka-log in na account na may natitira pa, at lalabas na may code 75. Sa `--wait` bago ang pangalan ng account (`ccam --fallback --wait=2h work -p …`), hinihintay nito sa halip na mag-reset ang unang account, saka puwedeng subukan ulit ang bawat account; lagi itong natutulog nang kahit isang beses muna, kaya hindi agad pinapatakbo ulit ang account na kaaabot lang sa limit nito. Ipi-print ng `ccam --dry-run --fallback work -p …` ang command ng unang pagtatangka.
 
 Hindi kusang inililipat ang mga interactive session. Sa halip, kapag may `ccam statusline install`, idinadagdag ng status line ang `→ ccam next --auto --continue` kapag umabot sa 90% ang 5-oras o lingguhang usage ([Mga usage limit](/features/usage)).
 
@@ -98,7 +115,8 @@ Hindi kusang inililipat ang mga interactive session. Sa halip, kapag may `ccam s
 
 - Hindi kailanman pinipili ang mga account na walang login. Kapag walang ibang naka-log in na account, humihinto ang simpleng `ccam next` na may `no logged-in account other than <name>`.
 - Sa `--continue` at walang account na nagshe-share ng kasaysayan: `` no other account shares conversation history with <name>. Turn it on with `ccam share <name> --history on` ``.
-- Sa `--auto` at walang naka-log in na account: `no logged-in account to pick`. Kapag puno ang bawat account o hindi alam ang usage nito: `` no account with known usage and headroom (see `ccam usage`) ``.
+- Sa `--auto` at walang naka-log in na account: `no logged-in account to pick`. Kapag puno ang bawat account o hindi alam ang usage nito: `` no account with known usage and headroom (see `ccam usage`) ``. Parehong nagtatapos ang dalawa sa exit code 75.
+- Gumagana lang ang `--max-usage`, `--strategy` at `--wait` kasama ang `--auto`, at tinatanggihan ang value na labas sa 1-100 o ibang strategy.
 - Gumagawa ng mga network request ang `--auto` kahit may `--dry-run`. Nagbabasa lang ito, at hindi kailanman sumusulat sa mga token file.
 - Nagsisimula ang napiling account sa parehong daan ng `ccam <name>`, kaya nalalapat ang parehong mga pagsusuri, kasama ang babala kapag may tumatakbo nang ibang Claude Code na nagshe-share ng parehong kasaysayan sa folder na ito.
 - Isinusulat lang ang `last-used` kapag talagang nagsimula ang Claude Code. Hindi ito ginagalaw ng `--dry-run`, kaya hindi isinusulong ng dry run ang rotation.

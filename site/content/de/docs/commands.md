@@ -5,7 +5,7 @@ description: Alle ccam-Befehle und -Optionen, von ccam add und ccam <name> bis z
 updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 5d3275878535
+sourceHash: da2594c672bc
 ---
 
 Setze `--dry-run` vor einen Befehl, um zu sehen, was er tun würde, ohne es zu tun, zum Beispiel `ccam --dry-run work`. Das funktioniert beim Starten von Claude Code (`ccam <name>`, `ccam run`, `ccam next`) sowie mit `share`, `migrate`, `shortcut`, `update` und `doctor --fix`. Andere Befehle, die etwas ändern, lehnen die Option ab, statt zu laufen.
@@ -39,9 +39,12 @@ ccam add ci --no-login        # log in later with: ccam login ci
 ccam rename work job
 ccam remove side              # folder moves to ~/.local/share/ccam/trash
 ccam import ~/.claude-old --name old
+ccam add gw --api --base-url https://llm.example.com --auth bearer --key-from env:GW_KEY
 ```
 
 `ccam import` ohne Ordner sucht nach `~/.claude` und `~/.claude-*` und fragt bei jedem nach. Importierte Ordner werden dort registriert, wo sie liegen; ccam verschiebt oder kopiert nie eine Anmeldung.
+
+`ccam add --api` fügt ein Konto hinzu, das einen API-Schlüssel statt einer Claude-Anmeldung verwendet; ccam liest den Schlüssel bei jedem Start und speichert ihn nie. Siehe [API-Schlüssel-Konten](/features/api).
 
 `ccam rename`, `ccam remove` und `ccam share` ändern ein Konto nicht, solange Claude Code mit diesem Konto läuft. Beende zuerst die Sitzung.
 
@@ -105,7 +108,12 @@ ccam usage --watch   # refresh every 60 seconds
 ccam usage --json
 ccam next --continue
 ccam next --auto
+ccam next --auto --max-usage 80 --wait
+ccam pick                       # the account with the most room, for a script
+ccam "$(ccam pick)" -p "…"      # start a worker on it
 ```
+
+`next --auto`, `--fallback` und `ccam pick` wählen auf dieselbe Weise: zuerst unter `auto_max_usage` (`config.toml`, Standard 100), nach `auto_strategy` (`headroom` oder `expiring`), unter Berücksichtigung des Wochenfensters von `--model`, nie ein Konto bei 100 %. Wenn keines gewählt werden kann, beenden sie sich mit Code 75 oder warten mit `--wait`, bis das erste Konto zurückgesetzt wird. Siehe [Zum nächsten Konto wechseln](/features/next) und [Ein Konto für Skripte wählen](/features/pick).
 
 ## Wartung
 
@@ -113,6 +121,7 @@ ccam next --auto
 ccam doctor          # check
 ccam doctor --fix    # repair what is safe to repair, with backups
 ccam statusline install
+ccam ext             # skills, commands, MCP servers and hooks of every account, and problems
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release

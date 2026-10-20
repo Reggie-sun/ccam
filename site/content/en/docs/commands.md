@@ -39,9 +39,12 @@ ccam add ci --no-login        # log in later with: ccam login ci
 ccam rename work job
 ccam remove side              # folder moves to ~/.local/share/ccam/trash
 ccam import ~/.claude-old --name old
+ccam add gw --api --base-url https://llm.example.com --auth bearer --key-from env:GW_KEY
 ```
 
 `ccam import` without a folder looks for `~/.claude` and `~/.claude-*` and asks about each one. Imported folders are registered where they are; ccam never moves or copies a login.
+
+`ccam add --api` adds an account that uses an API key instead of a Claude login; ccam reads the key at each launch and never stores it. See [API key accounts](/features/api).
 
 `ccam rename`, `ccam remove` and `ccam share` refuse to change an account while Claude Code is running as that account. Quit the session first.
 
@@ -105,7 +108,12 @@ ccam usage --watch   # refresh every 60 seconds
 ccam usage --json
 ccam next --continue
 ccam next --auto
+ccam next --auto --max-usage 80 --wait
+ccam pick                       # the account with the most room, for a script
+ccam "$(ccam pick)" -p "…"      # start a worker on it
 ```
+
+`next --auto`, `--fallback` and `ccam pick` choose the same way: below `auto_max_usage` (`config.toml`, default 100) first, by `auto_strategy` (`headroom` or `expiring`), counting the `--model` weekly window, never an account at 100%. When none can be chosen they exit with code 75, or with `--wait` wait for the first account to reset. See [Switching to the next account](/features/next) and [Picking an account for scripts](/features/pick).
 
 ## Maintenance
 
@@ -113,6 +121,7 @@ ccam next --auto
 ccam doctor          # check
 ccam doctor --fix    # repair what is safe to repair, with backups
 ccam statusline install
+ccam ext             # skills, commands, MCP servers and hooks of every account, and problems
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release

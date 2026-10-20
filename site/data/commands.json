@@ -24,6 +24,10 @@
     "usage": "ccam doctor"
   },
   {
+    "key": "ext",
+    "usage": "ccam ext [name|number] [--json]"
+  },
+  {
     "key": "folder",
     "usage": "ccam folder [name|number] [folder]"
   },
@@ -54,6 +58,10 @@
   {
     "key": "next",
     "usage": "ccam next [--auto] [--continue] [-- claude args]"
+  },
+  {
+    "key": "pick",
+    "usage": "ccam pick [--json] [--model <model>] [--max-usage N] [--strategy S] [--wait[=D]]"
   },
   {
     "key": "remove",

@@ -1,10 +1,10 @@
 ---
 title: கணக்குகளை நிர்வகித்தல்
 description: ccam add, ccam login, ccam list, ccam rename, ccam remove, ccam import மூலம் Claude Code கணக்குகளைச் சேர்க்க, உள்நுழைய, பட்டியலிட, மறுபெயரிட, நீக்க.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 99c931574262
+sourceHash: 9eb992214132
 ---
 
 ஒவ்வொரு ccam கணக்கும் தனக்கென உள்நுழைவு கொண்ட ஒரு தனி Claude Code config கோப்புறை. இந்தக் கட்டளைகள் கணக்குகளை உருவாக்குகின்றன, உள்நுழைகின்றன, பட்டியலிடுகின்றன, பெயர் மாற்றுகின்றன, நீக்குகின்றன, உங்களிடம் ஏற்கெனவே உள்ள கோப்புறைகளைப் பதிவு செய்கின்றன.
@@ -49,15 +49,16 @@ $ ccam list
 | `ccam add --no-login` | உள்நுழையாமல் கணக்கை உருவாக்கும்; பின்னர் `ccam login <name>` மூலம் உள்நுழையுங்கள் | off |
 | `ccam add --share <item=group>` | ஓர் உருப்படியை ஒரு குழுவுடன் பகிரும், அல்லது தனிப்பட்டதாக வைக்க `item=local`. பலமுறை கொடுக்கலாம் | `mcp`, `settings`, `memory`, `extensions` `default`-இல்; `history` local |
 | `ccam add --shortcut <command>` | இந்தக் குறுக்குவழிக் கட்டளையையும் `~/.local/bin`-இல் உருவாக்கும் | none |
+| `ccam add --api --key-from <source>` | உள்நுழைவுக்குப் பதிலாக API key பயன்படுத்தும் கணக்கு; [API key கணக்குகள்](/features/api) பாருங்கள் | off |
 | `ccam list --json` | கணக்குகளை JSON ஆக அச்சிடும் | off |
 | `ccam remove -y`, `--yes` | கேட்காமல் நீக்கும் | off |
 | `ccam import --name <name>` | நீங்கள் கொடுக்கும் கோப்புறைக்கான கணக்குப் பெயர் | கோப்புறைப் பெயரிலிருந்து பெறப்படும் |
 | `ccam import -y`, `--yes` | கண்டுபிடித்த ஒவ்வொரு கோப்புறையையும் கேட்காமல் இறக்குமதி செய்யும் | off |
 | `--dry-run` | எதையும் மாற்றாத `ccam list` மற்றும் `ccam completion` இதை மதிக்கும். `add`, `login`, `logout`, `use`, `rename`, `remove`, `import` இதை `` --dry-run is not supported by `ccam add`; nothing was changed `` (கட்டளையைப் பெயரிட்டு) என்று மறுக்கும் | off |
 
-`ccam login`, `ccam logout`, `ccam use`, `ccam rename` ஆகியவற்றுக்குச் சொந்த options இல்லை. `ccam completion` `bash` அல்லது `zsh`-ஐ ஏற்கும்; வேறு எதுவும் `only bash and zsh are supported` என்று தோல்வியடையும்.
+`ccam login`, `ccam logout`, `ccam use`, `ccam rename` ஆகியவற்றுக்குச் சொந்த options இல்லை. `ccam completion` `bash`, `zsh` அல்லது `powershell`-ஐ ஏற்கும்; வேறு எதுவும் `only bash, zsh and powershell are supported` என்று தோல்வியடையும்.
 
-கணக்குப் பெயர்கள் `a-z`, `0-9`, `-`, `_` ஆகியவற்றால் ஆன 1 முதல் 32 எழுத்துகள், ஓர் எழுத்து அல்லது இலக்கத்தில் தொடங்க வேண்டும். `ccam 2` என்றால் slot 2 என்பதால், பெயர் முழுவதும் இலக்கங்களாக இருக்க முடியாது. பெயர் ஒரு ccam கட்டளையாகவும் இருக்க முடியாது (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`), அதனால் `ccam <name>` ஒருபோதும் குழப்பமாக இருக்காது. இந்தப் பட்டியல் `internal/config`-இல் உள்ள `config.Reserved`.
+கணக்குப் பெயர்கள் `a-z`, `0-9`, `-`, `_` ஆகியவற்றால் ஆன 1 முதல் 32 எழுத்துகள், ஓர் எழுத்து அல்லது இலக்கத்தில் தொடங்க வேண்டும். `ccam 2` என்றால் slot 2 என்பதால், பெயர் முழுவதும் இலக்கங்களாக இருக்க முடியாது. பெயர் ஒரு ccam கட்டளையாகவும் இருக்க முடியாது (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`, `folder`, `pick`, `ext`), அதனால் `ccam <name>` ஒருபோதும் குழப்பமாக இருக்காது. இந்தப் பட்டியல் `internal/config`-இல் உள்ள `config.Reserved`.
 
 ## இது எப்படி வேலை செய்கிறது
 

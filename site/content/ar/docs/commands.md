@@ -5,7 +5,7 @@ description: كل أوامر ccam وخياراتها، من ccam add وccam <nam
 updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 5d3275878535
+sourceHash: da2594c672bc
 ---
 
 ضع `--dry-run` قبل أمر لترى ما سيفعله دون أن يفعله، مثلًا `ccam --dry-run work`. يعمل ذلك عند تشغيل Claude Code (`ccam <name>` و`ccam run` و`ccam next`) ومع `share` و`migrate` و`shortcut` و`update` و`doctor --fix`. أما الأوامر الأخرى التي تغيّر شيئًا فترفضه بدلًا من أن تعمل.
@@ -39,9 +39,12 @@ ccam add ci --no-login        # log in later with: ccam login ci
 ccam rename work job
 ccam remove side              # folder moves to ~/.local/share/ccam/trash
 ccam import ~/.claude-old --name old
+ccam add gw --api --base-url https://llm.example.com --auth bearer --key-from env:GW_KEY
 ```
 
 عند تشغيل `ccam import` دون تحديد مجلد، يبحث عن `~/.claude` و`~/.claude-*` ويسألك عن كل واحد منها. تُسجَّل المجلدات المستوردة في أماكنها؛ ولا ينقل ccam أي تسجيل دخول أو ينسخه أبدًا.
+
+يضيف `ccam add --api` حسابًا يستخدم مفتاح API بدلًا من تسجيل الدخول إلى Claude؛ ويقرأ ccam المفتاح عند كل تشغيل ولا يخزّنه أبدًا. راجع [حسابات مفاتيح API](/features/api).
 
 ترفض الأوامر `ccam rename` و`ccam remove` و`ccam share` تغيير حساب ما دام Claude Code يعمل بذلك الحساب. أنهِ الجلسة أولًا.
 
@@ -105,7 +108,12 @@ ccam usage --watch   # refresh every 60 seconds
 ccam usage --json
 ccam next --continue
 ccam next --auto
+ccam next --auto --max-usage 80 --wait
+ccam pick                       # the account with the most room, for a script
+ccam "$(ccam pick)" -p "…"      # start a worker on it
 ```
+
+تختار `next --auto` و`--fallback` و`ccam pick` بالطريقة نفسها: الحسابات التي يقل استخدامها عن `auto_max_usage` (`config.toml`، والقيمة الافتراضية 100) أولًا، وفق `auto_strategy` (`headroom` أو `expiring`)، مع احتساب النافذة الأسبوعية لـ `--model`، ولا تختار أبدًا حسابًا بلغ 100%. وعندما يتعذر اختيار أي حساب تخرج بالرمز 75، أو تنتظر مع `--wait` حتى يُعاد ضبط أول حساب. راجع [التبديل إلى الحساب التالي](/features/next) و[اختيار حساب للسكربتات](/features/pick).
 
 ## الصيانة
 
@@ -113,6 +121,7 @@ ccam next --auto
 ccam doctor          # check
 ccam doctor --fix    # repair what is safe to repair, with backups
 ccam statusline install
+ccam ext             # skills, commands, MCP servers and hooks of every account, and problems
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release

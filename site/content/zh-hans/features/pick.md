@@ -1,0 +1,74 @@
+---
+title: 为脚本选择账号
+description: ccam pick 为脚本输出余量最多的账号，让同时启动的并行任务各用不同的账号，并在没有账号还有余量时以 75 退出。
+updated: 2026-10-20
+order: 12
+translation: machine
+sourceHash: 65a5a7e179a5
+---
+
+`ccam pick` 输出已登录账号中余量最多的那个账号的名称，供脚本用它启动 Claude Code。只要还有足够多有余量的账号，同时启动的并行任务就会各自拿到不同的账号，这样一批 `claude -p` 任务会分散到你的各个账号上，而不是耗尽其中一个。
+
+## 用法
+
+```sh
+ccam "$(ccam pick)" -p "fix the failing tests"
+for task in parse lint docs; do
+  ccam "$(ccam pick)" -p "do the $task task" > "$task.json" &
+done; wait
+ccam pick --json                      # the account and its usage
+ccam pick --model opus                # also count the Opus weekly limit
+ccam pick --max-usage 80 --strategy expiring
+ccam pick --wait=2h                   # nobody has room: wait for a reset
+ccam --fallback "$(ccam pick)" -p "…" # also switch if this account hits its limit mid-job
+```
+
+```console
+$ ccam pick --json
+{
+  "name": "work",
+  "slot": 2,
+  "email": "dev@company.com",
+  "five_hour": { "percent": 12, "resets_at": "2026-10-20T15:10:00Z", "known": true },
+  "weekly": { "percent": 41, "resets_at": "2026-10-24T09:00:00Z", "known": true },
+  "source": "live"
+}
+```
+
+退出码：在标准输出上给出名称时为 `0`；没有账号还有余量或没有已登录账号时为 `75`（`EX_TEMPFAIL`）；其他错误（例如错误的选项）为 `1`。
+
+## 选项
+
+| 选项 | 作用 | 默认值 |
+| --- | --- | --- |
+| `--json` | 输出账号、它的 5 小时和每周用量，以及这些数字的来源 | 关闭 |
+| `--model <model>` | 同时计入该模型的每周时间窗口，例如 `opus` | 无 |
+| `--max-usage <1-100>` | 优先选择用量低于此值的账号 | `auto_max_usage`，否则为 100 |
+| `--strategy headroom\|expiring` | 5 小时用量最低的账号，或 5 小时时间窗口最早重置的账号 | `auto_strategy`，否则为 `headroom` |
+| `--wait[=<duration>]` | 没有账号还有余量时，等待第一个账号重置，最多等待这么久 | 关闭；单独给出时为 `5h` |
+| `--dry-run` | 只做选择，不记录这次选择 | 关闭 |
+
+## 工作原理
+
+1. ccam 列出已登录的账号（API 密钥账号没有限制，因此不包括在内）。
+2. 它获取一个锁（`~/.local/state/ccam/picks.lock`），所以同时运行的选择会一个接一个地进行。
+3. 它以与 `ccam usage` 相同的方式、使用 60 秒缓存，一次性查询每个账号的用量。
+4. 先排除最近 2 分钟内被选中过的账号（`~/.local/state/ccam/picks/<name>`），再用 `ccam next --auto` 的[选择规则](/features/next#auto)在其余账号中选择：优先选择低于 `auto_max_usage` 的账号，按策略选择，从不选择已达 100% 的账号。
+5. 如果每个有余量的账号最近都被选中过，规则会重新在所有这些账号中选择，因此三个账号上的第四个并行任务会与其中一个共用账号。
+6. 记录这次选择并释放锁，然后输出名称。
+
+这 2 分钟的时间窗口很重要，因为新任务的用量需要一段时间才会体现在数字中：如果没有它，同时启动的五个并行任务都会把同一个账号看作余量最多的账号。
+
+## 安全性与边界情况
+
+- `ccam pick` 只读取用量并写入选择时间；除了 `ccam usage` 本身会做的之外，它从不为令牌续期或读取令牌。
+- 选择并不会预留账号。2 分钟后，两个脚本仍可能在同一个账号上启动；可以用 `--fallback` 在该账号达到限制时恢复。
+- 使用 `--wait` 等待时不持有锁，所以其他选择在此期间照常进行。
+- `ccam pick` 会忽略 [`ccam folder`](/features/folder)：它只按用量选择。
+
+## 相关内容
+
+- [切换到下一个账号](/features/next)
+- [达到限制时重新运行](/features/next#run-again-at-the-limit)
+- [用量限制](/features/usage)
+- [API 密钥账号](/features/api)

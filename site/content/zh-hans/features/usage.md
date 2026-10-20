@@ -4,7 +4,7 @@ description: ccam usage 一次显示每个账号的 5 小时限额和每周限�
 updated: 2026-10-20
 order: 7
 translation: machine
-sourceHash: f08a2fdc6f0b
+sourceHash: 525174ceed0d
 ---
 
 `ccam usage` 显示每个账号已用掉多少 5 小时限额和每周限额，以及每个时间窗口距离重置还有多久。在开始一项长任务之前，或者当 Claude Code 提示你快到限额时，用它查看哪个账号还有余量。`ccam statusline` 是供 Claude Code 使用的状态栏命令：它在 Claude Code 中显示账号名和用量，并为 `ccam usage` 保存这些数字。
@@ -74,7 +74,7 @@ $ ccam usage
 2. 除非设置了 `--no-cache`，否则 `~/.local/state/ccam/usage/<name>.json` 中不到 60 秒（`CacheTTL`）的实时结果会被原样返回。连续运行两次 `ccam usage`，每个账号只会发出一次请求。
 3. `readCredentials()` 读取 `.credentials.json`（或 macOS 钥匙串）而不修改它，只解码 `claudeAiOauth` 键。没有订阅登录时显示 `not logged in`；如果 `.claude.json` 中保存的是 API 密钥，则显示 `no limits (API)`。
 4. 过期的访问令牌不会被使用。不带 `--refresh` 时，该账号显示保存的数字，并标记为已过期。
-5. 否则 ccam 调用接口。401 或 403 视为登录已过期，其他任何状态码或无法读取的响应体视为错误，两者都会退回到保存的数字。
+5. 否则 ccam 调用接口。401 或 403 视为登录已过期，其他任何状态码或无法读取的响应体视为错误，两者都会退回到保存的数字。429 表示对接口的请求过于频繁：ccam 会写入 `<name>.pause`，记下再次请求的时间（`Retry-After`，否则为 5 分钟，最多一小时），显示保存的数字并附上 `rate limited by the usage endpoint; asking again after 15:10`，并且在那之前不会为该账号调用接口，即使使用 `--no-cache` 也是如此。立即重试只会让限制持续下去。
 6. 正常的响应会连同测量时间一起写入 `<name>.json`。
 
 `fallback()` 同时读取 `<name>.json` 和 `<name>.statusline.json`，并保留较新的那个。在显示保存的数字之前，它会检查每个时间窗口的重置时间：在这些数字保存之后已经重置的时间窗口显示 0%，因为旧的百分比已不再适用。这就是上面的 `personal` 显示 `0%` 且没有重置时间的原因。

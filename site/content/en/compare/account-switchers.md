@@ -1,6 +1,6 @@
 ---
 title: ccam and other Claude Code account switchers
-description: How ccam compares with claude-swap, CCS, clauth, CAAM, cux and other tools for switching Claude Code accounts, and which approach fits which use.
+description: How ccam compares with claude-swap, CCS, clausona, clauth, CAAM, cux and other tools for switching Claude Code accounts, and which approach fits which use.
 updated: 2026-10-20
 published: 2026-10-19
 order: 2
@@ -19,13 +19,14 @@ To swap, the tool keeps a copy of every other account's login and writes it into
 
 ## How the tools compare
 
-Taken from each project's own documentation and source code on 2026-10-20. "Not documented" means the project does not say, not that the feature is missing.
+Taken from each project's own documentation and source code on 2026-10-20 (clausona: v0.12.0-beta). "Not documented" means the project does not say, not that the feature is missing.
 
 | Tool | Approach | Accounts at once | 5-hour and weekly usage | When a limit is reached | Platforms |
 | --- | --- | --- | --- | --- | --- |
-| ccam | Separate folders | Yes | Yes, `ccam usage` | You run `ccam next --auto --continue` to continue the conversation in the account with the most room; `ccam --fallback` reruns `-p` jobs there by itself | Linux, macOS, Windows |
+| ccam | Separate folders | Yes | Yes, `ccam usage` | You run `ccam next --auto --continue` to continue the conversation in the account with the most room; `ccam --fallback` reruns `-p` jobs there by itself, and `ccam pick` spreads workers | Linux, macOS, Windows |
 | [claude-swap](https://github.com/realiti4/claude-swap) | Swaps the login; separate folders with `cswap run` | Yes, with `cswap run` | Yes | `cswap auto` switches the login at a threshold; the running session continues | Linux, macOS, Windows |
 | [CCS](https://github.com/kaitranntt/ccs) | Separate folders | Yes | Partly | Account pools pass requests to the next account through a local proxy | Linux, macOS, Windows |
+| [clausona](https://github.com/larcane97/clausona) | Separate folders | Yes | Yes | Routes choose an account with quota before each run, can wait for a reset, and hand out distinct accounts to workers | Linux, macOS, Windows |
 | [clauth](https://github.com/uwuclxdy/clauth) | Swaps the login; separate folders with `clauth start` | Yes, with `clauth start` | Yes | Switches down a fallback chain | Linux, macOS, Windows |
 | [CAAM](https://github.com/Dicklesworthstone/coding_agent_account_manager) | Swaps the login, or isolated profiles | Yes, with isolated profiles | Yes | `caam run` retries non-interactive commands on another account | Linux, macOS, Windows |
 | [cux](https://github.com/inulute/cux) | Swaps the login and wraps `claude` | No, one active account | Yes | Swaps the login and resumes the same conversation | Linux, macOS, Windows |
@@ -41,6 +42,7 @@ ccswap is a fork of claude-swap that also manages Codex logins. [claude-account]
 | ccam | Go, one static binary | Nothing: ccam replaces itself with `claude` (on Windows, which cannot, it waits for it) | No | Each item on its own: local or a named group, per account |
 | claude-swap | Python 3.12+, installed with uv or pipx | Nothing with `cswap run`; `cswap auto` and the menu bar app keep running | Yes, when it swaps the login | With `cswap run`: settings, `CLAUDE.md` and extensions together, history optional; MCP servers copied at each launch |
 | CCS | Node.js 18+ or Bun | CCS stays as the parent process; pools add a local proxy | No for its account folders; pools keep their own logins | Shared or local per account, history in context groups; MCP servers copied |
+| clausona | TypeScript, Node.js 20+ | Plain `claude` runs through a shell function; `clausona run` keeps Node as the parent; a background Node process after each exit | No, but it renews idle accounts' tokens itself to read their usage | Everything except per-account files, from one primary; history optional; servers added with `claude mcp add` are not shared |
 | clauth | Rust | clauth stays as the parent process | Yes, when it swaps the login | All of `~/.claude`, or nothing |
 | CAAM | Go | Depends on the mode; an optional daemon | Yes, in its vault mode | Fixed by the mode; MCP servers copied at each launch |
 | cux | Go | A wrapper stays around `claude` | Yes | Everything: one folder |
@@ -76,7 +78,7 @@ MCP servers, `settings.json`, `CLAUDE.md`, extensions (agents, commands, skills,
 
 With shared history, `ccam next --auto --continue` asks every account for its usage at once, opens the one with the most room and continues the conversation. You decide when to switch; ccam does not watch your usage in the background. The status line suggests the command once an account reaches 90%.
 
-Scripts cannot wait for you, so `ccam --fallback work -p "…"` switches for them: when the account reaches its limit, the same command runs again as the account with the most room, and only the output of the run that finished is printed. A failure that is not a usage limit is passed on as it is.
+Scripts cannot wait for you, so `ccam --fallback work -p "…"` switches for them: when the account reaches its limit, the same command runs again as the account with the most room, and only the output of the run that finished is printed. A failure that is not a usage limit is passed on as it is. For parallel workers, `ccam pick` hands each one a different account with room, and both exit with code 75 when no account has any left.
 
 ### The right account in each folder
 
@@ -91,7 +93,8 @@ ccam is a static binary of about 10 MB with no runtime to install, for Linux, ma
 - claude-swap, clauth, cux, CAAM and CCSwitcher can switch a running interactive session on their own when an account crosses a usage threshold. ccam switches `-p` runs with `--fallback` and leaves interactive sessions to you.
 - On Windows without Developer Mode, ccam shares folders but cannot share single files such as `settings.json`; claude-swap and CCS copy them there instead.
 - CCSwitcher, Claude Switcher and claude-swap show usage in the macOS menu bar.
-- CCS, CAAM, clauth, ccswap and Claude Switcher also manage Codex and other coding agents.
+- CCS, clausona, CAAM, clauth, ccswap and Claude Switcher also manage Codex and other coding agents.
+- clausona also turns extensions on and off per account (ccam's `ccam ext` only shows them), tracks local token cost, and ships Claude Code plugins that run fleets of workers in tmux and other terminals.
 - CAAM, CCSwitcher and Claude Switcher install with Homebrew, and clauth and CAAM sign their release checksums. ccam installs with its script, a `.deb` or `go install`, and checks checksums without a signature.
 
 ## Which one fits?

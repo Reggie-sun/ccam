@@ -1,11 +1,11 @@
 ---
 title: ccam इन्स्टॉल करा
 metaTitle: "Linux, macOS आणि Windows वर ccam इन्स्टॉल करा"
-description: "Linux, macOS किंवा Windows वर ccam एका कमांडने, .deb पॅकेज किंवा सोर्सवरून इन्स्टॉल करा, आणि ccam update ने अपडेट करा. आधी Claude Code इन्स्टॉल असणे आवश्यक आहे."
+description: "Linux, macOS किंवा Windows वर ccam एका कमांडने, .deb पॅकेज किंवा सोर्सवरून इन्स्टॉल करा, आणि ccam update ने अपडेट करा. आधी Claude Code इन्स्टॉल असावे."
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 07eadc0769c8
+sourceHash: aea4984c1576
 ---
 
 Linux किंवा macOS वर टर्मिनलमध्ये हे चालवा:
@@ -71,6 +71,16 @@ ccam completion powershell >> $PROFILE
 ```
 
 Completion `ccam` च्या सर्व कमांड आणि पर्यायांसाठी, खात्यांच्या नावांसह, काम करते.
+
+## Claude Code प्लगइन
+
+ccam प्लगइन Claude Code ला स्वतःच ccam वापरायला शिकवते: कोणत्या खात्यात जागा आहे ते तपासणे, `ccam pick` ने वेगवेगळ्या खात्यांवर समांतर `claude -p` workers सुरू करणे, आणि एखादे skill किंवा MCP सर्व्हर का सापडत नाही हे `ccam ext` ने समजावणे. ते Claude Code मध्येच इन्स्टॉल करा:
+
+```text
+/plugin install ccam --marketplace jhyunwoo/ccam
+```
+
+ते एक skill आणि दोन कमांड जोडते, `/ccam:usage` आणि `/ccam:ext`. हे skill लॉगिन करणाऱ्या किंवा फाइल्स हलवणाऱ्या कमांड कधीच चालवत नाही; त्याऐवजी ते त्या सुचवते.
 
 ## इन्स्टॉलेशन तपासा
 
