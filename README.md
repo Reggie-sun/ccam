@@ -4,14 +4,26 @@
 
 - ccam is a free, open-source command-line tool that lets you use several Claude Code accounts on one computer and switch between them with one command.
 - Each account keeps its own login in a separate CLAUDE_CONFIG_DIR, while MCP servers, settings, CLAUDE.md, extensions and conversation history can be shared between accounts, so you can continue a conversation on another account when one reaches its usage limit.
-- Install it on Linux or macOS with one command, then run ccam add for each account.
+- Install it on Linux, macOS or Windows with one command, then run ccam add for each account.
 - ccam is an unofficial project and is not affiliated with or endorsed by Anthropic.
 
-`ccam` is a single Go binary for adding and switching between several Claude Code accounts in an Ubuntu terminal. Each account gets its own `CLAUDE_CONFIG_DIR`, so logins stay separate, and you choose per item whether MCP servers, settings, the global CLAUDE.md, extensions and conversation history are shared.
+`ccam` is a single Go binary for adding and switching between several Claude Code accounts in a terminal on Linux, macOS or Windows. Each account gets its own `CLAUDE_CONFIG_DIR`, so logins stay separate, and you choose per item whether MCP servers, settings, the global CLAUDE.md, extensions and conversation history are shared.
 
 > **Check the terms first.** Whether using several accounts is allowed depends on each account's Anthropic terms and your organization's policy. ccam makes switching convenient; it does not work around usage limits.
 
 All program output (messages, prompts, help) is in English.
+
+## Why ccam
+
+- **Logins are never copied.** Each account signs in once in its own folder, and Claude Code renews its own token there. Switching never logs an account out, and several accounts can run at once.
+- **Nothing runs beside Claude Code.** ccam `exec`s into `claude`: no wrapper, proxy or daemon, and about 4 ms added at launch. (Windows has no `exec`; there ccam waits for Claude Code and passes its exit code on.)
+- **Sharing per item and per group.** MCP servers, settings, CLAUDE.md, extensions and history each are `local` or a group. MCP servers go through `--mcp-config`, so `.claude.json` is not edited.
+- **Changes are planned and backed up.** A plan before any files move, backups, `--dry-run`, atomic writes and `ccam doctor --fix`.
+- **Limits handled for scripts too.** `ccam --fallback work -p "…"` runs the same command again as the account with the most room when `work` reaches its limit; interactive sessions get a `ccam next --auto --continue` hint in the status line.
+- **The right account per project.** `ccam folder work ~/code/company` makes name-less launches there use `work`.
+- **One static binary.** Linux, macOS and Windows, no runtime to install, checksum-verified install and update, no telemetry.
+
+How this compares with claude-swap, CCS, clauth, CAAM, cux and others: [ccam.dev/en/compare/account-switchers](https://ccam.dev/en/compare/account-switchers/).
 
 ## Install
 
@@ -19,7 +31,15 @@ All program output (messages, prompts, help) is in English.
 curl -fsSL https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.sh | sh
 ```
 
-Linux (Ubuntu, Debian, Fedora, Arch, Alpine, …) and macOS are supported. This installs `~/.local/bin/ccam` after verifying the release checksum. Alternatives: the `.deb` from [Releases](https://github.com/jhyunwoo/ccam/releases), or `go install github.com/jhyunwoo/ccam/cmd/ccam@latest` (Go 1.26+). Claude Code (`claude`) must be installed.
+Linux (Ubuntu, Debian, Fedora, Arch, Alpine, …) and macOS are supported. This installs `~/.local/bin/ccam` after verifying the release checksum.
+
+On Windows 10 or 11, in PowerShell:
+
+```powershell
+irm https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.ps1 | iex
+```
+
+This installs `%USERPROFILE%\.local\bin\ccam.exe` after verifying the checksum and adds the folder to your user `PATH`. Shared folders work as they are; sharing single files (`settings.json`, `CLAUDE.md`, `history.jsonl`) needs Developer Mode, because Windows lets only that mode (or an administrator) link files. Alternatives: the `.deb` from [Releases](https://github.com/jhyunwoo/ccam/releases), or `go install github.com/jhyunwoo/ccam/cmd/ccam@latest` (Go 1.26+). Claude Code (`claude`) must be installed.
 
 ## Update
 
@@ -39,8 +59,10 @@ ccam add work --shortcut ccwork    # second account with the shortcut command cc
 ccwork               # Claude Code as account work (via its shortcut)
 ccam work --resume   # by name; everything after the name goes to claude unchanged
 ccam                 # picker (Enter launch, 1-9 jump, s sharing, a add)
+ccam folder work ~/code/company   # name-less launches in that folder use work
 ccam usage           # 5-hour and weekly usage of every account
 ccam next --continue # out of quota? continue the same conversation on the next account
+ccam --fallback work -p "fix the tests"   # in scripts: rerun on another account at the limit
 ```
 
 An existing `~/.claude` can be registered in place with `ccam import` (nothing is moved or copied).
@@ -60,6 +82,8 @@ Signing in on a remote machine over SSH: the browser on your computer ends on a 
 | `ccam shortcut <name> [cmd] [--remove]` | Show, create, rename or remove an account's shortcut command |
 | `ccam list [--json]` | List accounts |
 | `ccam use <name>` | Default account for name-less runs such as `ccam -p "…"` |
+| `ccam folder [name] [folder] [--remove]` | Account for name-less runs in a folder and below; without arguments, list them |
+| `ccam --fallback [name] -p …` | Run again as the account with the most room when the account reaches its usage limit (`-p` runs only) |
 | `ccam next [--auto] [--continue]` | Next account; `--auto` picks the lowest 5-hour usage |
 | `ccam usage [--watch] [--json] [-v]` | Usage (`ccam u`) |
 | `ccam share <name> --history on …` | Change sharing; prints a migration plan and asks first |
@@ -71,7 +95,7 @@ Signing in on a remote machine over SSH: the browser on your computer ends on a 
 | `ccam doctor [--fix]` | Check links, permissions, login, version, usage format; repair |
 | `ccam statusline install` | Show `[account] · model · 5h N%` in Claude Code's status line |
 | `ccam update [--check] [--version vX.Y.Z]` | Update ccam to the latest (or that) release, checksum verified |
-| `ccam completion bash\|zsh` | Shell completion |
+| `ccam completion bash\|zsh\|powershell` | Shell completion |
 
 Put `--dry-run` first to print what would happen (`ccam --dry-run work`). It works for launching (`ccam <name>`, `run`, `next`), `share`, `migrate`, `shortcut`, `update` and `doctor --fix`; other commands that change something refuse it rather than run for real.
 
@@ -85,7 +109,7 @@ Queries every account's usage in parallel with its own token (3 s per account, 6
 
 ## Performance
 
-`ccam <name>` reads one file, checks links with `lstat`, and `exec`s into `claude`: about 4 ms p95 added on a typical laptop, 8 MB peak memory. `CCAM_TRACE=1` prints per-step timings; `CCAM_PPROF=<file>` writes a CPU profile.
+`ccam <name>` reads one file, checks links with `lstat`, and `exec`s into `claude`: about 4 ms p95 added on a typical laptop, 8 MB peak memory. On Windows, which has no `exec`, ccam starts `claude.exe` with the same console and waits for it. `CCAM_TRACE=1` prints per-step timings; `CCAM_PPROF=<file>` writes a CPU profile.
 
 ## Development
 

@@ -4,14 +4,26 @@
 
 - ccam은 컴퓨터 한 대에서 Claude Code 계정 여러 개를 쓰고 명령 하나로 바꿀 수 있게 해 주는 무료 오픈소스 명령줄 도구입니다.
 - 계정마다 별도의 CLAUDE_CONFIG_DIR에 자기 로그인을 따로 두고, MCP 서버, 설정, CLAUDE.md, 확장 기능, 대화 내역은 계정끼리 공유할 수 있습니다. 그래서 한 계정이 사용량 한도에 도달하면 다른 계정에서 대화를 이어 갈 수 있습니다.
-- Linux나 macOS에서 명령 하나로 설치한 뒤, 계정마다 ccam add를 실행합니다.
+- Linux, macOS, Windows에서 명령 하나로 설치한 뒤, 계정마다 ccam add를 실행합니다.
 - ccam은 비공식 프로젝트이며 Anthropic과 제휴하거나 Anthropic의 보증을 받은 것이 아닙니다.
 
-`ccam`은 우분투 터미널에서 Claude Code 계정 여러 개를 추가하고 바꿔 쓰게 해 주는 단일 바이너리 도구입니다. 계정마다 `CLAUDE_CONFIG_DIR`을 따로 두어 로그인을 분리하고, MCP 서버·설정·전역 CLAUDE.md·확장 기능·대화 내역은 항목별로 공유할지 고릅니다.
+`ccam`은 Linux, macOS, Windows 터미널에서 Claude Code 계정 여러 개를 추가하고 바꿔 쓰게 해 주는 단일 바이너리 도구입니다. 계정마다 `CLAUDE_CONFIG_DIR`을 따로 두어 로그인을 분리하고, MCP 서버·설정·전역 CLAUDE.md·확장 기능·대화 내역은 항목별로 공유할지 고릅니다.
 
 > **이용약관을 먼저 확인하세요.** 계정을 여러 개 쓰는 것이 허용되는지는 각 계정의 Anthropic 이용약관과 소속 조직의 정책에 따릅니다. ccam은 계정 전환을 편하게 할 뿐, 사용량 한도를 우회하지 않습니다.
 
 프로그램 출력(메시지, 질문, 도움말)은 모두 영어입니다.
+
+## ccam을 쓰는 이유
+
+- **로그인을 복사하지 않습니다.** 계정마다 자기 폴더에서 한 번 로그인하고, 토큰 갱신은 Claude Code가 그 폴더에서 직접 합니다. 계정을 바꿔도 다른 계정이 로그아웃되지 않고, 여러 계정을 동시에 실행할 수 있습니다.
+- **Claude Code 옆에서 돌아가는 프로세스가 없습니다.** ccam은 `exec`로 `claude`가 됩니다. 래퍼·프록시·데몬이 없고, 실행할 때 더해지는 시간은 약 4 ms입니다. (`exec`이 없는 Windows에서는 Claude Code가 끝날 때까지 기다렸다가 종료 코드를 그대로 돌려줍니다.)
+- **항목별·그룹별로 공유합니다.** MCP 서버·설정·CLAUDE.md·확장 기능·대화 내역을 각각 `local`이나 그룹으로 정합니다. MCP 서버는 `--mcp-config`로 넘기므로 `.claude.json`을 고치지 않습니다.
+- **바꾸기 전에 계획을 보여 주고 백업합니다.** 파일을 옮기기 전의 계획 출력, 백업, `--dry-run`, 원자적 쓰기, `ccam doctor --fix`.
+- **스크립트도 한도에 대응합니다.** `ccam --fallback work -p "…"`는 `work`가 한도에 걸리면 여유가 가장 많은 계정으로 같은 명령을 다시 실행합니다. 대화형 세션은 상태줄이 `ccam next --auto --continue`를 알려 줍니다.
+- **프로젝트마다 맞는 계정.** `ccam folder work ~/code/company`로 그 폴더에서 이름 없이 실행하면 `work`가 열립니다.
+- **정적 바이너리 하나입니다.** Linux, macOS, Windows를 지원하고, 설치할 런타임이 없고, 설치와 업데이트는 체크섬을 확인하며, 텔레메트리가 없습니다.
+
+claude-swap, CCS, clauth, CAAM, cux 등과의 비교: [ccam.dev/ko/compare/account-switchers](https://ccam.dev/ko/compare/account-switchers/).
 
 ## 설치
 
@@ -21,6 +33,7 @@ curl -fsSL https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.sh | sh
 
 리눅스(우분투·데비안·페도라·아치·알파인 등)와 macOS를 지원합니다. `~/.local/bin/ccam`이 생깁니다. 체크섬을 확인한 뒤 설치하고, `~/.local/bin`이 `PATH`에 없으면 알려 줍니다. 그 밖의 방법:
 
+- Windows 10·11: PowerShell에서 `irm https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.ps1 | iex`. 체크섬을 확인한 뒤 `%USERPROFILE%\.local\bin\ccam.exe`를 설치하고 그 폴더를 사용자 `PATH`에 더합니다. 폴더 공유는 그대로 되고, 파일 하나를 공유하려면(`settings.json`, `CLAUDE.md`, `history.jsonl`) 개발자 모드가 필요합니다. Windows는 그 모드(또는 관리자)에서만 파일 링크를 만들게 해 주기 때문입니다.
 - `.deb`: [릴리스](https://github.com/jhyunwoo/ccam/releases)에서 받아 `sudo apt install ./ccam_*.deb`
 - 소스: `go install github.com/jhyunwoo/ccam/cmd/ccam@latest` (Go 1.26 이상)
 
@@ -44,8 +57,10 @@ ccam add work --shortcut ccwork    # 두 번째 계정, 단축 명령 ccwork
 ccwork               # 단축 명령으로 work 계정의 Claude Code
 ccam work --resume   # 이름으로 열기, 뒤의 인자는 그대로 claude에 전달
 ccam                 # 선택 화면 (Enter 실행, 1-9 바로 실행, s 공유, a 추가)
+ccam folder work ~/code/company   # 그 폴더에서 이름 없이 실행하면 work
 ccam usage           # 모든 계정의 5시간·주간 사용률
 ccam next --continue # 한도에 걸리면 다음 계정에서 같은 대화 이어가기
+ccam --fallback work -p "fix the tests"   # 스크립트: 한도에 걸리면 다른 계정으로 다시 실행
 ```
 
 이미 쓰던 `~/.claude`가 있으면 `ccam import`로 제자리에 등록합니다 (옮기거나 복사하지 않음).
@@ -65,6 +80,8 @@ SSH로 접속한 원격 서버에서 로그인할 때는 내 컴퓨터의 브라
 | `ccam shortcut <이름> [명령] [--remove]` | 계정의 단축 명령 보기·만들기·이름 바꾸기·지우기 |
 | `ccam list [--json]` | 계정 목록 |
 | `ccam use <이름>` | 기본 계정 (`ccam -p "…"`처럼 이름 없이 실행할 때) |
+| `ccam folder [이름] [폴더] [--remove]` | 그 폴더와 하위 폴더에서 이름 없이 실행할 때 쓸 계정. 인자가 없으면 목록 |
+| `ccam --fallback [이름] -p …` | 계정이 사용량 한도에 걸리면 여유가 가장 많은 계정으로 다시 실행 (`-p` 실행만) |
 | `ccam next [--auto] [--continue]` | 다음 계정으로. `--auto`는 5시간 사용률이 가장 낮은 계정 |
 | `ccam usage [--watch] [--json] [-v]` | 사용량 (줄임 `ccam u`) |
 | `ccam share <이름> --history on …` | 공유 변경. 이전 계획을 보여주고 확인 후 실행 |
@@ -76,7 +93,7 @@ SSH로 접속한 원격 서버에서 로그인할 때는 내 컴퓨터의 브라
 | `ccam doctor [--fix]` | 링크·권한·로그인·버전·사용량 형식 점검과 수리 |
 | `ccam statusline install` | Claude Code 상태줄에 `[account] · model · 5h N%` 표시 |
 | `ccam update [--check] [--version vX.Y.Z]` | 최신(또는 지정한) 릴리스로 업데이트, 체크섬 확인 |
-| `ccam completion bash\|zsh` | 자동완성 |
+| `ccam completion bash\|zsh\|powershell` | 자동완성 |
 
 앞에 `--dry-run`을 붙이면 실행하지 않고 할 일만 보여줍니다 (`ccam --dry-run work`). 실행(`ccam <이름>`, `run`, `next`), `share`, `migrate`, `shortcut`, `update`, `doctor --fix`에서 쓸 수 있고, 무언가를 바꾸는 다른 명령은 실제로 실행하는 대신 거절합니다.
 
@@ -125,7 +142,7 @@ $XDG_RUNTIME_DIR/ccam/               잠금 파일
 
 ## 성능
 
-`ccam <이름>`은 `config.toml` 하나만 읽고 `lstat`으로 링크를 확인한 뒤 `exec`로 `claude`가 됩니다. 일반 노트북에서 ccam이 더하는 시간은 p95 약 4 ms, 메모리는 8 MB입니다. `CCAM_TRACE=1`이면 단계별 시간을, `CCAM_PPROF=<파일>`이면 CPU 프로파일을 남깁니다.
+`ccam <이름>`은 `config.toml` 하나만 읽고 `lstat`으로 링크를 확인한 뒤 `exec`로 `claude`가 됩니다. 일반 노트북에서 ccam이 더하는 시간은 p95 약 4 ms, 메모리는 8 MB입니다. `exec`이 없는 Windows에서는 같은 콘솔로 `claude.exe`를 띄우고 끝날 때까지 기다립니다. `CCAM_TRACE=1`이면 단계별 시간을, `CCAM_PPROF=<파일>`이면 CPU 프로파일을 남깁니다.
 
 ## 문제 해결
 
