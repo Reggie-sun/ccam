@@ -19,13 +19,14 @@
   "facts": {
     "what": "ccam to darmowe narzędzie wiersza poleceń o otwartym kodzie, które pozwala używać kilku kont Claude Code na jednym komputerze i przełączać się między nimi jednym poleceniem.",
     "how": "Każde konto ma własne logowanie w osobnym CLAUDE_CONFIG_DIR, a serwery MCP, ustawienia, CLAUDE.md, rozszerzenia i historię rozmów można współdzielić między kontami, więc gdy jedno konto osiągnie limit użycia, możesz kontynuować rozmowę na innym.",
-    "install": "Zainstaluj je na Linux lub macOS jednym poleceniem, a potem uruchom ccam add dla każdego konta.",
+    "install": "Zainstaluj go w systemie Linux, macOS lub Windows jednym poleceniem, a potem uruchom ccam add dla każdego konta.",
     "official": "ccam jest nieoficjalnym projektem i nie jest powiązany z Anthropic ani przez Anthropic popierany."
   },
   "landing": {
     "headline": "Kilka kont Claude Code. Jeden terminal.",
     "lede": "Dodaj każde konto raz. Przełączaj się poleceniem ccam work lub skrótem takim jak ccwork. Gdy jedno konto dojdzie do limitu, kontynuuj tę samą rozmowę na następnym.",
     "installLabel": "Instalacja na Linux lub macOS",
+    "installWindowsLabel": "W Windows, w PowerShell",
     "thenAdd": "Następnie dodaj pierwsze konto poleceniem {command}.",
     "readDocs": "Przeczytaj szybki start",
     "boardLabel": "Przykładowa sesja: gdy jedno konto osiągnie limit, ccam kontynuuje rozmowę na innym",
@@ -133,6 +134,7 @@
   "commands": {
     "ccam": "Otwórz wybór konta",
     "name": "Uruchom Claude Code jako to konto; argumenty są przekazywane bez zmian",
+    "fallback": "Dla przebiegów -p: po osiągnięciu limitu użycia uruchamia to samo polecenie ponownie na koncie z największym zapasem",
     "add": "Dodaj konto: folder konfiguracji, logowanie i opcjonalny skrót",
     "list": "Wyświetl konta",
     "use": "Ustaw domyślne konto",
@@ -150,8 +152,9 @@
     "statusline": "Pokaż konto i użycie na pasku stanu Claude Code",
     "shims": "Utwórz ponownie linki skrótów wszystkich kont",
     "shortcut": "Pokaż, utwórz, zmień nazwę lub usuń skrót konta, na przykład ccwork",
+    "folder": "Używa konta w folderze i jego podfolderach, gdy nie podano nazwy konta",
     "update": "Zaktualizuj ccam do najnowszego wydania po sprawdzeniu sumy kontrolnej",
-    "completion": "Wypisz uzupełnianie dla bash lub zsh"
+    "completion": "Wypisuje uzupełnianie dla bash, zsh lub PowerShell"
   },
   "copy": {
     "copy": "Kopiuj",

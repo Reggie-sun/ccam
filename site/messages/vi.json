@@ -19,13 +19,14 @@
   "facts": {
     "what": "ccam là công cụ dòng lệnh miễn phí, mã nguồn mở, giúp bạn dùng nhiều tài khoản Claude Code trên một máy tính và chuyển đổi giữa chúng bằng một lệnh.",
     "how": "Mỗi tài khoản giữ thông tin đăng nhập riêng trong một CLAUDE_CONFIG_DIR riêng, còn máy chủ MCP, cài đặt, CLAUDE.md, tiện ích mở rộng và lịch sử hội thoại có thể dùng chung giữa các tài khoản, nên bạn có thể tiếp tục một cuộc hội thoại trên tài khoản khác khi một tài khoản chạm giới hạn sử dụng.",
-    "install": "Cài đặt trên Linux hoặc macOS bằng một lệnh, sau đó chạy ccam add cho từng tài khoản.",
+    "install": "Cài đặt trên Linux, macOS hoặc Windows bằng một lệnh, sau đó chạy ccam add cho từng tài khoản.",
     "official": "ccam là dự án không chính thức, không liên kết với Anthropic và không được Anthropic xác nhận."
   },
   "landing": {
     "headline": "Nhiều tài khoản Claude Code. Một terminal.",
     "lede": "Thêm mỗi tài khoản một lần. Chuyển đổi bằng ccam work hoặc một lệnh tắt như ccwork. Khi một tài khoản chạm giới hạn, hãy tiếp tục ở tài khoản kế tiếp với cùng cuộc hội thoại.",
     "installLabel": "Cài đặt trên Linux hoặc macOS",
+    "installWindowsLabel": "Trên Windows, trong PowerShell",
     "thenAdd": "Sau đó thêm tài khoản đầu tiên bằng {command}.",
     "readDocs": "Đọc phần bắt đầu nhanh",
     "boardLabel": "Phiên ví dụ: khi một tài khoản chạm giới hạn, ccam tiếp tục cuộc trò chuyện trên tài khoản khác",
@@ -133,6 +134,7 @@
   "commands": {
     "ccam": "Mở trình chọn tài khoản",
     "name": "Khởi động Claude Code bằng tài khoản đó; các đối số được chuyển nguyên vẹn",
+    "fallback": "Cho các lần chạy -p: khi chạm giới hạn sử dụng, chạy lại cùng lệnh đó bằng tài khoản còn nhiều hạn mức nhất",
     "add": "Thêm tài khoản: thư mục cấu hình, đăng nhập và lệnh tắt tùy chọn",
     "list": "Liệt kê các tài khoản",
     "use": "Đặt tài khoản mặc định",
@@ -150,8 +152,9 @@
     "statusline": "Hiển thị tài khoản và mức sử dụng trên dòng trạng thái của Claude Code",
     "shims": "Tạo lại liên kết lệnh tắt của mọi tài khoản",
     "shortcut": "Xem, tạo, đổi tên hoặc xóa lệnh tắt của một tài khoản, chẳng hạn ccwork",
+    "folder": "Dùng một tài khoản trong một thư mục và các thư mục bên dưới khi không nêu tên tài khoản",
     "update": "Cập nhật ccam lên bản phát hành mới nhất sau khi kiểm tra mã băm",
-    "completion": "In mã tự động hoàn thành cho bash hoặc zsh"
+    "completion": "In mã tự động hoàn thành cho bash, zsh hoặc PowerShell"
   },
   "copy": {
     "copy": "Sao chép",

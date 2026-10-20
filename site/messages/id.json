@@ -19,13 +19,14 @@
   "facts": {
     "what": "ccam adalah alat baris perintah gratis dan open source untuk menggunakan beberapa akun Claude Code di satu komputer dan berpindah di antaranya dengan satu perintah.",
     "how": "Setiap akun menyimpan login-nya sendiri di CLAUDE_CONFIG_DIR yang terpisah, sementara server MCP, pengaturan, CLAUDE.md, ekstensi, dan riwayat percakapan dapat dibagikan antarakun, sehingga Anda dapat melanjutkan percakapan di akun lain saat satu akun mencapai batas penggunaannya.",
-    "install": "Instal di Linux atau macOS dengan satu perintah, lalu jalankan ccam add untuk setiap akun.",
+    "install": "Instal di Linux, macOS, atau Windows dengan satu perintah, lalu jalankan ccam add untuk setiap akun.",
     "official": "ccam adalah proyek tidak resmi dan tidak berafiliasi dengan atau didukung oleh Anthropic."
   },
   "landing": {
     "headline": "Beberapa akun Claude Code. Satu terminal.",
     "lede": "Tambahkan setiap akun sekali saja. Berpindah dengan ccam work atau pintasan seperti ccwork. Saat satu akun mencapai batasnya, lanjutkan di akun berikutnya dengan percakapan yang sama.",
     "installLabel": "Instal di Linux atau macOS",
+    "installWindowsLabel": "Di Windows, di PowerShell",
     "thenAdd": "Lalu tambahkan akun pertama Anda dengan {command}.",
     "readDocs": "Baca panduan memulai cepat",
     "boardLabel": "Contoh sesi: saat satu akun mencapai batasnya, ccam melanjutkan percakapan di akun lain",
@@ -133,6 +134,7 @@
   "commands": {
     "ccam": "Membuka pemilih akun",
     "name": "Menjalankan Claude Code sebagai akun tersebut; argumen diteruskan tanpa diubah",
+    "fallback": "Untuk proses -p: saat batas penggunaan tercapai, menjalankan lagi perintah yang sama sebagai akun dengan sisa kuota terbanyak",
     "add": "Menambahkan akun: folder konfigurasi, login, dan pintasan opsional",
     "list": "Menampilkan daftar akun",
     "use": "Menetapkan akun default",
@@ -150,8 +152,9 @@
     "statusline": "Menampilkan akun dan penggunaannya di status line Claude Code",
     "shims": "Membuat ulang tautan pintasan semua akun",
     "shortcut": "Menampilkan, membuat, mengganti nama, atau menghapus perintah pintasan akun, seperti ccwork",
+    "folder": "Memakai sebuah akun di suatu folder dan di bawahnya saat tidak ada nama akun yang disebutkan",
     "update": "Memperbarui ccam ke rilis terbaru setelah memeriksa checksum-nya",
-    "completion": "Mencetak pelengkapan otomatis untuk bash atau zsh"
+    "completion": "Mencetak pelengkapan otomatis untuk bash, zsh, atau PowerShell"
   },
   "copy": {
     "copy": "Salin",

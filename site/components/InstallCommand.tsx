@@ -1,4 +1,5 @@
 export const INSTALL = "curl -fsSL https://ccam.dev/install.sh | sh";
+export const INSTALL_WINDOWS = "irm https://ccam.dev/install.ps1 | iex";
 
 export function InstallCommand({ copy, copied, command = INSTALL }: { copy: string; copied: string; command?: string }) {
   return (

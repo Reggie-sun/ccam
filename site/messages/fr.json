@@ -19,13 +19,14 @@
   "facts": {
     "what": "ccam est un outil en ligne de commande gratuit et open source qui permet d'utiliser plusieurs comptes Claude Code sur un seul ordinateur et de passer de l'un à l'autre avec une seule commande.",
     "how": "Chaque compte conserve sa propre connexion dans un CLAUDE_CONFIG_DIR distinct, tandis que les serveurs MCP, les paramètres, CLAUDE.md, les extensions et l'historique des conversations peuvent être partagés entre les comptes. Vous pouvez ainsi poursuivre une conversation sur un autre compte quand l'un d'eux atteint sa limite d'utilisation.",
-    "install": "Installez-le sous Linux ou macOS avec une seule commande, puis exécutez ccam add pour chaque compte.",
+    "install": "Installez-le sous Linux, macOS ou Windows avec une seule commande, puis exécutez ccam add pour chaque compte.",
     "official": "ccam est un projet non officiel : il n'est ni affilié à Anthropic ni approuvé par Anthropic."
   },
   "landing": {
     "headline": "Plusieurs comptes Claude Code. Un seul terminal.",
     "lede": "Ajoutez chaque compte une fois. Changez de compte avec ccam work ou un raccourci comme ccwork. Quand un compte atteint sa limite, continuez sur le suivant avec la même conversation.",
     "installLabel": "Installer sous Linux ou macOS",
+    "installWindowsLabel": "Sous Windows, dans PowerShell",
     "thenAdd": "Ajoutez ensuite votre premier compte avec {command}.",
     "readDocs": "Lire le démarrage rapide",
     "boardLabel": "Exemple de session : quand un compte atteint sa limite, ccam poursuit la conversation sur un autre",
@@ -133,6 +134,7 @@
   "commands": {
     "ccam": "Ouvrir le sélecteur de compte",
     "name": "Lancer Claude Code avec ce compte ; les arguments sont transmis tels quels",
+    "fallback": "Pour les exécutions -p : à une limite d'utilisation, relancer la même commande avec le compte qui a le plus de marge",
     "add": "Ajouter un compte : dossier de configuration, connexion et raccourci facultatif",
     "list": "Lister les comptes",
     "use": "Définir le compte par défaut",
@@ -150,8 +152,9 @@
     "statusline": "Afficher le compte et l'utilisation dans la ligne d'état de Claude Code",
     "shims": "Recréer les liens des raccourcis de tous les comptes",
     "shortcut": "Afficher, créer, renommer ou supprimer le raccourci d'un compte, par exemple ccwork",
+    "folder": "Utiliser un compte dans un dossier et ses sous-dossiers quand aucun compte n'est nommé",
     "update": "Mettre à jour ccam vers la dernière version après avoir vérifié sa somme de contrôle",
-    "completion": "Afficher la complétion bash ou zsh"
+    "completion": "Afficher la complétion bash, zsh ou PowerShell"
   },
   "copy": {
     "copy": "Copier",

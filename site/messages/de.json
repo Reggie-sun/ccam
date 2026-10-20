@@ -19,13 +19,14 @@
   "facts": {
     "what": "ccam ist ein kostenloses Open-Source-Kommandozeilentool, mit dem du mehrere Claude Code-Konten auf einem Computer nutzt und mit einem Befehl zwischen ihnen wechselst.",
     "how": "Jedes Konto behält seine eigene Anmeldung in einem eigenen CLAUDE_CONFIG_DIR, während MCP-Server, Einstellungen, CLAUDE.md, Erweiterungen und der Gesprächsverlauf zwischen Konten geteilt werden können. So kannst du ein Gespräch in einem anderen Konto fortsetzen, wenn eines sein Nutzungslimit erreicht.",
-    "install": "Installiere es unter Linux oder macOS mit einem Befehl und führe dann ccam add für jedes Konto aus.",
+    "install": "Installiere es unter Linux, macOS oder Windows mit einem Befehl und führe dann ccam add für jedes Konto aus.",
     "official": "ccam ist ein inoffizielles Projekt und steht in keiner Verbindung zu Anthropic und wird nicht von Anthropic unterstützt."
   },
   "landing": {
     "headline": "Mehrere Claude Code-Konten. Ein Terminal.",
     "lede": "Füge jedes Konto einmal hinzu. Wechsle mit ccam work oder einem Kurzbefehl wie ccwork. Wenn ein Konto sein Limit erreicht, machst du im nächsten mit demselben Gespräch weiter.",
     "installLabel": "Unter Linux oder macOS installieren",
+    "installWindowsLabel": "Unter Windows, in PowerShell",
     "thenAdd": "Füge dann dein erstes Konto mit {command} hinzu.",
     "readDocs": "Zum Schnellstart",
     "boardLabel": "Beispielsitzung: Erreicht ein Konto sein Limit, setzt ccam die Unterhaltung mit einem anderen fort",
@@ -133,6 +134,7 @@
   "commands": {
     "ccam": "Kontoauswahl öffnen",
     "name": "Claude Code mit diesem Konto starten; Argumente werden unverändert weitergegeben",
+    "fallback": "Für -p-Durchläufe: Am Nutzungslimit denselben Befehl erneut mit dem Konto mit dem meisten Spielraum ausführen",
     "add": "Konto hinzufügen: Konfigurationsordner, Anmeldung und optionaler Kurzbefehl",
     "list": "Konten auflisten",
     "use": "Standardkonto festlegen",
@@ -150,8 +152,9 @@
     "statusline": "Konto und Nutzung in der Statuszeile von Claude Code anzeigen",
     "shims": "Die Kurzbefehl-Links aller Konten neu erstellen",
     "shortcut": "Den Kurzbefehl eines Kontos, etwa ccwork, anzeigen, anlegen, umbenennen oder entfernen",
+    "folder": "Ein Konto in einem Ordner und darunter verwenden, wenn kein Konto genannt wird",
     "update": "ccam nach Prüfung der Prüfsumme auf das neueste Release aktualisieren",
-    "completion": "Vervollständigung für bash oder zsh ausgeben"
+    "completion": "Vervollständigung für bash, zsh oder PowerShell ausgeben"
   },
   "copy": {
     "copy": "Kopieren",

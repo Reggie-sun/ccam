@@ -17,6 +17,7 @@ const names = [...help().split("Available Commands:")[1].split(/\n\n/)[0].matchA
 const out = [
   { key: "ccam", usage: "ccam" },
   { key: "name", usage: "ccam <name|number> [claude arguments]" },
+  { key: "fallback", usage: "ccam --fallback [name|number] -p [claude arguments]" },
 ];
 for (const name of names) {
   const usage = /Usage:\n\s+(.+)/.exec(help(name))?.[1].replace(/^ccam/, "ccam").trim() ?? `ccam ${name}`;

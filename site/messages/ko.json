@@ -19,13 +19,14 @@
   "facts": {
     "what": "ccam은 컴퓨터 한 대에서 여러 Claude Code 계정을 쓰고, 명령 하나로 계정을 전환할 수 있게 해 주는 무료 오픈소스 명령줄 도구입니다.",
     "how": "각 계정의 로그인 정보는 별도의 CLAUDE_CONFIG_DIR에 따로 보관하고, MCP 서버, 설정, CLAUDE.md, 확장 기능, 대화 내역은 계정 간에 공유할 수 있습니다. 그래서 한 계정이 사용량 한도에 도달하면 다른 계정에서 대화를 이어 갈 수 있습니다.",
-    "install": "Linux나 macOS에서 명령 하나로 설치한 뒤, 계정마다 ccam add를 실행하세요.",
+    "install": "Linux, macOS, Windows에서 명령 하나로 설치한 뒤, 계정마다 ccam add를 실행하세요.",
     "official": "ccam은 비공식 프로젝트로, Anthropic과 제휴 관계가 없으며 Anthropic의 보증을 받지 않았습니다."
   },
   "landing": {
     "headline": "여러 개의 Claude Code 계정을 하나의 터미널에서 쉽게 사용하세요.",
     "lede": "Claude 계정을 한 번 추가해두면 명령어 하나만으로 계정을 변경하여 Claude Code를 사용할 수 있습니다. 한도에 도달하면 바로 다른 계정으로 변경해 보세요.",
     "installLabel": "Linux 또는 macOS에 설치",
+    "installWindowsLabel": "Windows에서는 PowerShell에서",
     "thenAdd": "그다음 {command} 명령으로 첫 계정을 추가하세요.",
     "readDocs": "빠른 시작 보기",
     "boardLabel": "예시 화면: 한 계정이 한도에 도달하면 ccam이 다른 계정에서 대화를 이어 갑니다",
@@ -133,6 +134,7 @@
   "commands": {
     "ccam": "계정 선택 화면 열기",
     "name": "해당 계정으로 Claude Code 시작(인자는 그대로 전달)",
+    "fallback": "-p 실행용: 사용량 한도에 도달하면 여유가 가장 많은 계정으로 같은 명령을 다시 실행",
     "add": "계정 추가(설정 폴더, 로그인, 원하면 단축 명령)",
     "list": "계정 목록 보기",
     "use": "기본 계정 지정",
@@ -150,8 +152,9 @@
     "statusline": "Claude Code 상태 표시줄에 계정과 사용량 표시",
     "shims": "모든 계정의 단축 명령 링크 다시 만들기",
     "shortcut": "계정의 단축 명령(예: ccwork) 보기, 만들기, 이름 바꾸기, 삭제",
+    "folder": "계정 이름을 주지 않았을 때 폴더와 그 아래에서 쓸 계정 지정",
     "update": "체크섬을 확인한 뒤 ccam을 최신 릴리스로 업데이트",
-    "completion": "bash 또는 zsh 자동완성 스크립트 출력"
+    "completion": "bash, zsh 또는 PowerShell 자동완성 스크립트 출력"
   },
   "copy": {
     "copy": "복사",

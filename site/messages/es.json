@@ -19,13 +19,14 @@
   "facts": {
     "what": "ccam es una herramienta de línea de comandos gratuita y de código abierto que te permite usar varias cuentas de Claude Code en una computadora y cambiar entre ellas con un comando.",
     "how": "Cada cuenta mantiene su propio inicio de sesión en un CLAUDE_CONFIG_DIR separado, mientras que los servidores MCP, la configuración, CLAUDE.md, las extensiones y el historial de conversaciones se pueden compartir entre cuentas, así que puedes continuar una conversación en otra cuenta cuando una llega a su límite de uso.",
-    "install": "Instálalo en Linux o macOS con un comando y luego ejecuta ccam add para cada cuenta.",
+    "install": "Instálalo en Linux, macOS o Windows con un comando y luego ejecuta ccam add para cada cuenta.",
     "official": "ccam es un proyecto no oficial y no está afiliado con Anthropic ni cuenta con su respaldo."
   },
   "landing": {
     "headline": "Varias cuentas de Claude Code. Una terminal.",
     "lede": "Agrega cada cuenta una vez. Cambia con ccam work o con un atajo como ccwork. Cuando una cuenta llega a su límite, sigue en la siguiente con la misma conversación.",
     "installLabel": "Instalar en Linux o macOS",
+    "installWindowsLabel": "En Windows, en PowerShell",
     "thenAdd": "Luego agrega tu primera cuenta con {command}.",
     "readDocs": "Lee el inicio rápido",
     "boardLabel": "Sesión de ejemplo: cuando una cuenta llega a su límite, ccam continúa la conversación en otra",
@@ -133,6 +134,7 @@
   "commands": {
     "ccam": "Abrir el selector de cuentas",
     "name": "Iniciar Claude Code con esa cuenta; los argumentos se pasan sin cambios",
+    "fallback": "Para ejecuciones -p: al llegar a un límite de uso, volver a ejecutar el mismo comando con la cuenta con más margen",
     "add": "Agregar una cuenta: carpeta de configuración, inicio de sesión y un atajo opcional",
     "list": "Listar las cuentas",
     "use": "Establecer la cuenta predeterminada",
@@ -150,8 +152,9 @@
     "statusline": "Mostrar la cuenta y el uso en la línea de estado de Claude Code",
     "shims": "Volver a crear los enlaces de los atajos de todas las cuentas",
     "shortcut": "Mostrar, crear, renombrar o quitar el atajo de una cuenta, como ccwork",
+    "folder": "Usar una cuenta en una carpeta y sus subcarpetas cuando no se nombra ninguna cuenta",
     "update": "Actualizar ccam a la versión más reciente tras comprobar su suma de verificación",
-    "completion": "Imprimir el autocompletado de bash o zsh"
+    "completion": "Imprimir el autocompletado de bash, zsh o PowerShell"
   },
   "copy": {
     "copy": "Copiar",

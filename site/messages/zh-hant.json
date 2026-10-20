@@ -19,13 +19,14 @@
   "facts": {
     "what": "ccam 是免費的開放原始碼命令列工具，讓你在一台電腦上使用多個 Claude Code 帳號，並用一個指令在帳號之間切換。",
     "how": "每個帳號的登入資訊各自保存在獨立的 CLAUDE_CONFIG_DIR 中，而 MCP 伺服器、設定、CLAUDE.md、擴充功能和對話記錄可以在帳號之間共用，因此當某個帳號達到用量限制時，你可以在另一個帳號繼續同一段對話。",
-    "install": "在 Linux 或 macOS 上用一個指令安裝，然後為每個帳號執行 ccam add。",
+    "install": "在 Linux、macOS 或 Windows 上用一個指令安裝，然後為每個帳號執行 ccam add。",
     "official": "ccam 是非官方專案，與 Anthropic 沒有關聯，也未獲得 Anthropic 認可。"
   },
   "landing": {
     "headline": "多個 Claude Code 帳號，一個終端機。",
     "lede": "每個帳號只需新增一次。用 ccam work 或 ccwork 這類快捷指令切換。某個帳號達到限制時，在下一個帳號繼續同一段對話。",
     "installLabel": "在 Linux 或 macOS 上安裝",
+    "installWindowsLabel": "在 Windows 上，於 PowerShell 中",
     "thenAdd": "接著用 {command} 新增第一個帳號。",
     "readDocs": "閱讀快速入門",
     "boardLabel": "範例：一個帳號達到限額時，ccam 會在另一個帳號上繼續對話",
@@ -133,6 +134,7 @@
   "commands": {
     "ccam": "開啟帳號選擇器",
     "name": "以該帳號啟動 Claude Code；參數會原封不動地傳遞",
+    "fallback": "用於 -p 執行：達到用量上限時，改以剩餘額度最多的帳號再次執行同一個指令",
     "add": "新增帳號：設定資料夾、登入和選用的快捷指令",
     "list": "列出帳號",
     "use": "設定預設帳號",
@@ -150,8 +152,9 @@
     "statusline": "在 Claude Code 的狀態列顯示帳號和用量",
     "shims": "重新建立所有帳號的快捷指令連結",
     "shortcut": "顯示、建立、重新命名或移除帳號的快捷指令，例如 ccwork",
+    "folder": "未指定帳號時，在某個資料夾及其子資料夾中使用指定的帳號",
     "update": "檢查總和檢查碼後，將 ccam 更新到最新的發行版本",
-    "completion": "輸出 bash 或 zsh 的自動補齊腳本"
+    "completion": "輸出 bash、zsh 或 PowerShell 的自動補齊腳本"
   },
   "copy": {
     "copy": "複製",

@@ -5,7 +5,7 @@ import { getMessages, hasMessages } from "../lib/i18n";
 import { homePath, pagePath } from "../lib/paths";
 import { softwareLd } from "../lib/jsonld";
 import { ArrowIcon } from "./Icons";
-import { InstallCommand } from "./InstallCommand";
+import { INSTALL_WINDOWS, InstallCommand } from "./InstallCommand";
 import { JsonLd } from "./JsonLd";
 import { Shell } from "./Shell";
 import { UsageBoard } from "./UsageBoard";
@@ -46,6 +46,8 @@ export function Landing({ locale }: { locale: string }) {
               <a href={pagePath(locale, "docs", "install")}>{m.landing.installLabel}</a>
             </p>
             <InstallCommand copy={m.copy.copy} copied={m.copy.copied} />
+            <p className="install-label">{m.landing.installWindowsLabel}</p>
+            <InstallCommand copy={m.copy.copy} copied={m.copy.copied} command={INSTALL_WINDOWS} />
           </div>
           <p className="then focus-in d3">
             <span>

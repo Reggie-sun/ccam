@@ -19,13 +19,14 @@
   "facts": {
     "what": "ccam kayan aikin command-line ne kyauta kuma open-source wanda ke ba ka damar amfani da asusun Claude Code da dama a kwamfuta ɗaya, ka kuma sauya tsakaninsu da umarni ɗaya.",
     "how": "Kowane asusu yana riƙe bayanan shigarsa a CLAUDE_CONFIG_DIR daban, yayin da za a iya raba sabobin MCP, saituna, CLAUDE.md, extensions da tarihin tattaunawa tsakanin asusai, don haka za ka iya ci gaba da tattaunawa a wani asusu idan ɗaya ya kai iyakar amfaninsa.",
-    "install": "Girka shi a Linux ko macOS da umarni ɗaya, sannan ka gudanar da ccam add ga kowane asusu.",
+    "install": "Girka shi a Linux, macOS ko Windows da umarni ɗaya, sannan ka gudanar da ccam add ga kowane asusu.",
     "official": "ccam aiki ne da ba na hukuma ba, ba shi da alaƙa da Anthropic, kuma Anthropic ba ta amince da shi ba."
   },
   "landing": {
     "headline": "Asusun Claude Code da dama. Terminal ɗaya.",
     "lede": "Ka ƙara kowane asusu sau ɗaya. Ka sauya da ccam work ko gajeren umarni kamar ccwork. Idan wani asusu ya kai iyakarsa, ka ci gaba a na gaba da wannan tattaunawar.",
     "installLabel": "Girka a Linux ko macOS",
+    "installWindowsLabel": "A Windows, a PowerShell",
     "thenAdd": "Sannan ka ƙara asusunka na farko da {command}.",
     "readDocs": "Karanta jagorar farawa da sauri",
     "boardLabel": "Misalin zama: idan wani asusu ya kai iyakarsa, ccam yana ci gaba da tattaunawar a wani asusu",
@@ -133,6 +134,7 @@
   "commands": {
     "ccam": "Buɗe mai zaɓar asusu",
     "name": "Fara Claude Code a matsayin wannan asusun; ana miƙa arguments ba tare da canji ba",
+    "fallback": "Don gudun -p: a iyakar amfani, sake gudanar da umarnin iri ɗaya a matsayin asusun da ya fi sarari",
     "add": "Ƙara asusu: folda ta saituna, shiga da gajeren umarni na zaɓi",
     "list": "Jera asusai",
     "use": "Saita asusun tsoho",
@@ -150,8 +152,9 @@
     "statusline": "Nuna asusun da amfaninsa a layin matsayi na Claude Code",
     "shims": "Sake ƙirƙirar mahaɗan gajerun umarnin dukkan asusai",
     "shortcut": "Nuna, ƙirƙira, sauya suna ko cire gajeren umarnin asusu, kamar ccwork",
+    "folder": "Yi amfani da asusu a folda da ƙarƙashinta idan ba a ambaci asusu ba",
     "update": "Sabunta ccam zuwa sakin baya-bayan nan bayan duba checksum nasa",
-    "completion": "Buga completion na bash ko zsh"
+    "completion": "Buga completion na bash, zsh ko PowerShell"
   },
   "copy": {
     "copy": "Kwafa",

@@ -19,13 +19,14 @@
   "facts": {
     "what": "ccam 是一个免费的开源命令行工具，让你在一台电脑上使用多个 Claude Code 账号，并用一条命令在它们之间切换。",
     "how": "每个账号的登录信息保存在各自独立的 CLAUDE_CONFIG_DIR 中，而 MCP 服务器、设置、CLAUDE.md、扩展和对话历史可以在账号之间共享，因此当一个账号达到用量限制时，你可以在另一个账号上继续对话。",
-    "install": "在 Linux 或 macOS 上用一条命令安装，然后为每个账号运行 ccam add。",
+    "install": "在 Linux、macOS 或 Windows 上用一条命令安装，然后为每个账号运行 ccam add。",
     "official": "ccam 是一个非官方项目，与 Anthropic 没有关联，也未获得 Anthropic 的认可。"
   },
   "landing": {
     "headline": "多个 Claude Code 账号，一个终端。",
     "lede": "每个账号只需添加一次。用 ccam work 或 ccwork 这样的快捷命令切换。一个账号达到用量限制时，在下一个账号中继续同一段对话。",
     "installLabel": "在 Linux 或 macOS 上安装",
+    "installWindowsLabel": "在 Windows 上，在 PowerShell 中运行",
     "thenAdd": "然后用 {command} 添加你的第一个账号。",
     "readDocs": "阅读快速入门",
     "boardLabel": "示例：一个账号达到限额时，ccam 会在另一个账号上继续对话",
@@ -133,6 +134,7 @@
   "commands": {
     "ccam": "打开账号选择器",
     "name": "以该账号启动 Claude Code；参数原样传递",
+    "fallback": "用于 -p 运行：达到用量限制时，以余量最多的账号重新运行同一个命令",
     "add": "添加账号：配置文件夹、登录和可选的快捷命令",
     "list": "列出账号",
     "use": "设置默认账号",
@@ -150,8 +152,9 @@
     "statusline": "在 Claude Code 的状态栏中显示账号和用量",
     "shims": "重新创建所有账号的快捷命令链接",
     "shortcut": "显示、创建、重命名或删除账号的快捷命令，例如 ccwork",
+    "folder": "未指定账号名时，在某个文件夹及其下文件夹中使用指定账号",
     "update": "校验校验和后，将 ccam 更新到最新版本",
-    "completion": "输出 bash 或 zsh 的补全脚本"
+    "completion": "输出 bash、zsh 或 PowerShell 的补全脚本"
   },
   "copy": {
     "copy": "复制",

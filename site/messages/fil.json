@@ -19,13 +19,14 @@
   "facts": {
     "what": "Ang ccam ay libre at open-source na command-line tool para gumamit ng maraming Claude Code account sa iisang computer at lumipat sa pagitan nila gamit ang isang command.",
     "how": "May sariling login ang bawat account sa hiwalay na CLAUDE_CONFIG_DIR, habang puwedeng i-share sa pagitan ng mga account ang mga MCP server, settings, CLAUDE.md, extension at kasaysayan ng usapan, kaya maipagpapatuloy mo ang isang usapan sa ibang account kapag naabot na ng isa ang usage limit nito.",
-    "install": "I-install ito sa Linux o macOS gamit ang isang command, saka patakbuhin ang ccam add para sa bawat account.",
+    "install": "I-install ito sa Linux, macOS o Windows gamit ang isang command, saka patakbuhin ang ccam add para sa bawat account.",
     "official": "Ang ccam ay hindi opisyal na proyekto at hindi kaanib o inendorso ng Anthropic."
   },
   "landing": {
     "headline": "Maraming Claude Code account. Iisang terminal.",
     "lede": "Idagdag nang isang beses ang bawat account. Lumipat gamit ang ccam work o ang isang shortcut gaya ng ccwork. Kapag naabot ng isang account ang limit nito, ituloy sa susunod na account ang parehong usapan.",
     "installLabel": "I-install sa Linux o macOS",
+    "installWindowsLabel": "Sa Windows, sa PowerShell",
     "thenAdd": "Pagkatapos, idagdag ang una mong account gamit ang {command}.",
     "readDocs": "Basahin ang quick start",
     "boardLabel": "Halimbawang session: kapag naabot ng isang account ang limit nito, itinutuloy ng ccam ang usapan sa ibang account",
@@ -133,6 +134,7 @@
   "commands": {
     "ccam": "Buksan ang pagpili ng account",
     "name": "Simulan ang Claude Code bilang account na iyon; ipinapasa nang walang pagbabago ang mga argument",
+    "fallback": "Para sa mga -p run: kapag naabot ang usage limit, patakbuhin ulit ang parehong command bilang account na may pinakamaraming natitira",
     "add": "Magdagdag ng account: config folder, login at opsyonal na shortcut",
     "list": "Ilista ang mga account",
     "use": "Itakda ang default na account",
@@ -150,8 +152,9 @@
     "statusline": "Ipakita ang account at usage sa status line ng Claude Code",
     "shims": "Gawin muli ang mga shortcut link ng lahat ng account",
     "shortcut": "Ipakita, gawin, palitan ang pangalan o alisin ang shortcut command ng isang account, gaya ng ccwork",
+    "folder": "Gumamit ng isang account sa isang folder at sa ilalim nito kapag walang pinangalanang account",
     "update": "I-update ang ccam sa pinakabagong release matapos suriin ang checksum nito",
-    "completion": "I-print ang bash o zsh completion"
+    "completion": "I-print ang bash, zsh o PowerShell completion"
   },
   "copy": {
     "copy": "Kopyahin",

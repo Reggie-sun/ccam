@@ -19,13 +19,14 @@
   "facts": {
     "what": "ccam é uma ferramenta de linha de comando gratuita e de código aberto que permite usar várias contas do Claude Code no mesmo computador e trocar entre elas com um comando.",
     "how": "Cada conta mantém o próprio login em um CLAUDE_CONFIG_DIR separado, enquanto servidores MCP, configurações, CLAUDE.md, extensões e histórico de conversas podem ser compartilhados entre as contas, para que você possa continuar uma conversa em outra conta quando uma delas atingir o limite de uso.",
-    "install": "Instale no Linux ou no macOS com um comando e depois execute ccam add para cada conta.",
+    "install": "Instale no Linux, no macOS ou no Windows com um comando e depois execute ccam add para cada conta.",
     "official": "ccam é um projeto não oficial e não é afiliado à Anthropic nem endossado por ela."
   },
   "landing": {
     "headline": "Várias contas do Claude Code. Um terminal.",
     "lede": "Adicione cada conta uma vez. Troque com ccam work ou com um atalho como ccwork. Quando uma conta atingir o limite, continue na próxima com a mesma conversa.",
     "installLabel": "Instalar no Linux ou no macOS",
+    "installWindowsLabel": "No Windows, no PowerShell",
     "thenAdd": "Depois adicione sua primeira conta com {command}.",
     "readDocs": "Leia o início rápido",
     "boardLabel": "Sessão de exemplo: quando uma conta atinge o limite, o ccam continua a conversa em outra",
@@ -133,6 +134,7 @@
   "commands": {
     "ccam": "Abrir o seletor de contas",
     "name": "Iniciar o Claude Code como essa conta; os argumentos são repassados sem alterações",
+    "fallback": "Para execuções -p: no limite de uso, executa o mesmo comando de novo com a conta que tem mais espaço",
     "add": "Adicionar uma conta: pasta de configuração, login e um atalho opcional",
     "list": "Listar as contas",
     "use": "Definir a conta padrão",
@@ -150,8 +152,9 @@
     "statusline": "Mostrar a conta e o uso na linha de status do Claude Code",
     "shims": "Recriar os links dos atalhos de todas as contas",
     "shortcut": "Mostrar, criar, renomear ou remover o atalho de uma conta, como ccwork",
+    "folder": "Usa uma conta em uma pasta e nas subpastas quando nenhuma conta é informada",
     "update": "Atualizar o ccam para a versão mais recente depois de verificar o checksum",
-    "completion": "Imprimir o preenchimento automático para bash ou zsh"
+    "completion": "Imprime o preenchimento automático para bash, zsh ou PowerShell"
   },
   "copy": {
     "copy": "Copiar",

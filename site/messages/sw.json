@@ -19,13 +19,14 @@
   "facts": {
     "what": "ccam ni zana ya bure ya mstari wa amri (open source) inayokuwezesha kutumia akaunti kadhaa za Claude Code kwenye kompyuta moja na kubadili kati yao kwa amri moja.",
     "how": "Kila akaunti huhifadhi taarifa zake za kuingia katika CLAUDE_CONFIG_DIR tofauti, huku seva za MCP, mipangilio, CLAUDE.md, viendelezi na historia ya mazungumzo vikiweza kushirikiwa kati ya akaunti, ili uweze kuendelea na mazungumzo kwenye akaunti nyingine pale moja inapofikia kikomo chake cha matumizi.",
-    "install": "Isakinishe kwenye Linux au macOS kwa amri moja, kisha endesha ccam add kwa kila akaunti.",
+    "install": "Isakinishe kwenye Linux, macOS au Windows kwa amri moja, kisha endesha ccam add kwa kila akaunti.",
     "official": "ccam ni mradi usio rasmi na hauhusiani na Anthropic wala haujaidhinishwa nayo."
   },
   "landing": {
     "headline": "Akaunti kadhaa za Claude Code. Terminal moja.",
     "lede": "Ongeza kila akaunti mara moja. Badili kwa ccam work au njia fupi kama ccwork. Akaunti moja ikifikia kikomo chake, endelea kwenye inayofuata na mazungumzo yale yale.",
     "installLabel": "Sakinisha kwenye Linux au macOS",
+    "installWindowsLabel": "Kwenye Windows, katika PowerShell",
     "thenAdd": "Kisha ongeza akaunti yako ya kwanza kwa {command}.",
     "readDocs": "Soma mwongozo wa kuanza haraka",
     "boardLabel": "Mfano wa kipindi: akaunti moja inapofikia kikomo chake, ccam huendeleza mazungumzo kwenye akaunti nyingine",
@@ -133,6 +134,7 @@
   "commands": {
     "ccam": "Fungua kichaguzi cha akaunti",
     "name": "Anzisha Claude Code kama akaunti hiyo; hoja hupitishwa bila kubadilishwa",
+    "fallback": "Kwa uendeshaji wa -p: kwenye kikomo cha matumizi, endesha amri ile ile tena kama akaunti yenye nafasi kubwa zaidi",
     "add": "Ongeza akaunti: folda ya usanidi, kuingia na njia fupi ya hiari",
     "list": "Orodhesha akaunti",
     "use": "Weka akaunti chaguo-msingi",
@@ -150,8 +152,9 @@
     "statusline": "Onyesha akaunti na matumizi kwenye mstari wa hali (status line) wa Claude Code",
     "shims": "Unda upya viungo vya njia fupi vya akaunti zote",
     "shortcut": "Onyesha, unda, badilisha jina au ondoa amri ya njia fupi ya akaunti, kama ccwork",
+    "folder": "Tumia akaunti katika folda na zilizo chini yake wakati hakuna akaunti iliyotajwa",
     "update": "Sasisha ccam hadi toleo jipya zaidi baada ya kukagua checksum yake",
-    "completion": "Chapisha ukamilishaji wa bash au zsh"
+    "completion": "Chapisha ukamilishaji wa bash, zsh au PowerShell"
   },
   "copy": {
     "copy": "Nakili",

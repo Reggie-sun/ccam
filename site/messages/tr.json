@@ -19,13 +19,14 @@
   "facts": {
     "what": "ccam, tek bilgisayarda birden fazla Claude Code hesabı kullanmanızı ve hesaplar arasında tek komutla geçiş yapmanızı sağlayan ücretsiz, açık kaynaklı bir komut satırı aracıdır.",
     "how": "Her hesabın giriş bilgileri ayrı bir CLAUDE_CONFIG_DIR klasöründe kalır; MCP sunucuları, ayarlar, CLAUDE.md, uzantılar ve konuşma geçmişi ise hesaplar arasında paylaşılabilir. Böylece bir hesap kullanım limitine ulaştığında konuşmaya başka bir hesapta devam edebilirsiniz.",
-    "install": "Linux veya macOS üzerinde tek komutla kurun, ardından her hesap için ccam add komutunu çalıştırın.",
+    "install": "Linux, macOS veya Windows üzerinde tek komutla kurun, ardından her hesap için ccam add komutunu çalıştırın.",
     "official": "ccam resmi olmayan bir projedir; Anthropic ile bağlantılı değildir ve Anthropic tarafından onaylanmamıştır."
   },
   "landing": {
     "headline": "Birden fazla Claude Code hesabı. Tek terminal.",
     "lede": "Her hesabı bir kez ekleyin. ccam work veya ccwork gibi bir kısayolla geçiş yapın. Bir hesap limitine ulaştığında aynı konuşmayla bir sonraki hesapta devam edin.",
     "installLabel": "Linux veya macOS üzerine kurun",
+    "installWindowsLabel": "Windows'ta, PowerShell'de",
     "thenAdd": "Ardından ilk hesabınızı {command} ile ekleyin.",
     "readDocs": "Hızlı başlangıcı okuyun",
     "boardLabel": "Örnek oturum: bir hesap sınırına ulaştığında ccam konuşmaya başka bir hesapta devam eder",
@@ -133,6 +134,7 @@
   "commands": {
     "ccam": "Hesap seçiciyi açar",
     "name": "Claude Code'u o hesapla başlatır; argümanlar değiştirilmeden iletilir",
+    "fallback": "-p çalıştırmaları için: kullanım limitinde aynı komutu en çok payı kalan hesapla yeniden çalıştırır",
     "add": "Hesap ekler: yapılandırma klasörü, giriş ve isteğe bağlı kısayol",
     "list": "Hesapları listeler",
     "use": "Varsayılan hesabı ayarlar",
@@ -150,8 +152,9 @@
     "statusline": "Hesabı ve kullanımı Claude Code'un durum satırında gösterir",
     "shims": "Tüm hesapların kısayol bağlantılarını yeniden oluşturur",
     "shortcut": "Bir hesabın ccwork gibi kısayol komutunu gösterir, oluşturur, yeniden adlandırır veya kaldırır",
+    "folder": "Hesap adı verilmediğinde bir klasörde ve altındaki klasörlerde bir hesap kullanır",
     "update": "Sağlama toplamını kontrol ettikten sonra ccam'ı en son sürüme günceller",
-    "completion": "bash veya zsh tamamlama betiğini yazdırır"
+    "completion": "bash, zsh veya PowerShell tamamlama betiğini yazdırır"
   },
   "copy": {
     "copy": "Kopyala",

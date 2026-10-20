@@ -19,13 +19,14 @@
   "facts": {
     "what": "ccam è uno strumento a riga di comando gratuito e open source che ti permette di usare più account Claude Code su un solo computer e di passare dall'uno all'altro con un solo comando.",
     "how": "Ogni account conserva il proprio login in una CLAUDE_CONFIG_DIR separata, mentre server MCP, impostazioni, CLAUDE.md, estensioni e cronologia delle conversazioni possono essere condivisi tra gli account, così puoi continuare una conversazione su un altro account quando uno raggiunge il limite di utilizzo.",
-    "install": "Installalo su Linux o macOS con un solo comando, poi esegui ccam add per ogni account.",
+    "install": "Installalo su Linux, macOS o Windows con un solo comando, poi esegui ccam add per ogni account.",
     "official": "ccam è un progetto non ufficiale e non è affiliato ad Anthropic né approvato da Anthropic."
   },
   "landing": {
     "headline": "Più account Claude Code. Un solo terminale.",
     "lede": "Aggiungi ogni account una sola volta. Passa da uno all'altro con ccam work o con una scorciatoia come ccwork. Quando un account raggiunge il limite, prosegui nel successivo con la stessa conversazione.",
     "installLabel": "Installa su Linux o macOS",
+    "installWindowsLabel": "Su Windows, in PowerShell",
     "thenAdd": "Poi aggiungi il tuo primo account con {command}.",
     "readDocs": "Leggi la guida rapida",
     "boardLabel": "Sessione di esempio: quando un account raggiunge il limite, ccam continua la conversazione su un altro",
@@ -133,6 +134,7 @@
   "commands": {
     "ccam": "Apre il selettore degli account",
     "name": "Avvia Claude Code con quell'account; gli argomenti vengono passati invariati",
+    "fallback": "Per le esecuzioni -p: al limite di utilizzo, riesegue lo stesso comando con l'account con più margine",
     "add": "Aggiunge un account: cartella di configurazione, login e una scorciatoia facoltativa",
     "list": "Elenca gli account",
     "use": "Imposta l'account predefinito",
@@ -150,8 +152,9 @@
     "statusline": "Mostra l'account e l'utilizzo nella riga di stato di Claude Code",
     "shims": "Ricrea i link delle scorciatoie di tutti gli account",
     "shortcut": "Mostra, crea, rinomina o rimuove la scorciatoia di un account, come ccwork",
+    "folder": "Usa un account in una cartella e nelle sue sottocartelle quando non viene indicato alcun account",
     "update": "Aggiorna ccam all'ultima release dopo averne verificato il checksum",
-    "completion": "Stampa il completamento per bash o zsh"
+    "completion": "Stampa il completamento per bash, zsh o PowerShell"
   },
   "copy": {
     "copy": "Copia",

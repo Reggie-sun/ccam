@@ -16,6 +16,18 @@ test("install.sh comes from the latest release, else main", async () => {
   assert.equal(seen.length, 2);
 });
 
+test("install.ps1 comes from the latest release as plain text", async () => {
+  const seen: string[] = [];
+  const fake = (async (url: string) => {
+    seen.push(url);
+    return new Response("# Installs ccam\n");
+  }) as typeof fetch;
+  const res = await installScript(fake, "install.ps1");
+  assert.equal(res.status, 200);
+  assert.equal(res.headers.get("Content-Type"), "text/plain; charset=utf-8");
+  assert.deepEqual(seen, ["https://github.com/jhyunwoo/ccam/releases/latest/download/install.ps1"]);
+});
+
 test("install.sh failure is a 502, not an HTML page piped into sh", async () => {
   const res = await installScript((async () => new Response("", { status: 500 })) as typeof fetch);
   assert.equal(res.status, 502);

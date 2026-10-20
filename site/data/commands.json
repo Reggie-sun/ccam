@@ -8,16 +8,24 @@
     "usage": "ccam <name|number> [claude arguments]"
   },
   {
+    "key": "fallback",
+    "usage": "ccam --fallback [name|number] -p [claude arguments]"
+  },
+  {
     "key": "add",
     "usage": "ccam add [name]"
   },
   {
     "key": "completion",
-    "usage": "ccam completion bash|zsh"
+    "usage": "ccam completion bash|zsh|powershell"
   },
   {
     "key": "doctor",
     "usage": "ccam doctor"
+  },
+  {
+    "key": "folder",
+    "usage": "ccam folder [name|number] [folder]"
   },
   {
     "key": "import",

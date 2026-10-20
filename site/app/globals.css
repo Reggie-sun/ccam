@@ -286,6 +286,7 @@ html[lang="ko"] .hero .lede { font-size: clamp(1rem, 1.5vw, 1.1rem); max-inline-
 .focus-in.d3 { animation-delay: 750ms; }
 @keyframes focus-in { from { transform: translateY(22px); } }
 .install-label { font-size: 0.94rem; color: var(--body); margin-block-end: 0.75rem; }
+.cmd + .install-label { margin-block-start: 1.25rem; }
 .cmd {
   display: flex; align-items: center; gap: 0.5rem; max-inline-size: 36rem; min-block-size: 3.6rem; margin-inline: auto; padding: 0.4rem; padding-inline-start: 1.25rem;
   background: var(--card); border: 1px solid var(--line); border-radius: 999px; box-shadow: var(--shadow-lift); text-align: start;

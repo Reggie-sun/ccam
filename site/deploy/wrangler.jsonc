@@ -11,7 +11,7 @@
     // trailingSlash: true in next.config.mjs writes directory-style pages.
     "html_handling": "force-trailing-slash",
     "not_found_handling": "404-page",
-    "run_worker_first": ["/install.sh", "/latest", "/latest/*"]
+    "run_worker_first": ["/install.sh", "/install.ps1", "/latest", "/latest/*"]
   },
   "routes": [{ "pattern": "ccam.dev", "custom_domain": true }],
   "observability": { "enabled": true },
