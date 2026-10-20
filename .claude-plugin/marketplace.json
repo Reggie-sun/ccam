@@ -12,7 +12,7 @@
     {
       "name": "ccam",
       "source": "./plugins/ccam",
-      "description": "Check the usage of every account, pick an account with room for parallel workers, and diagnose extensions, with ccam.",
+      "description": "See every account's usage, get a notification and carry on as another account at a usage limit (/ccam:switch), pick an account with room for parallel workers, and diagnose extensions, with ccam.",
       "category": "productivity"
     }
   ]

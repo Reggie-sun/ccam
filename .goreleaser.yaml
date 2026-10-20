@@ -29,6 +29,7 @@ nfpms:
     maintainer: jhyunwoo <jhyunwoo@users.noreply.github.com>
     description: Claude Code multi-account manager
     license: MIT
+    section: utils
     formats: [deb]
     bindir: /usr/bin
     contents:
