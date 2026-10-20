@@ -62,15 +62,19 @@ test("motion diagrams play, and stand still under reduced motion", async ({ page
   expect(await fig.locator(".mo-box").count()).toBeGreaterThan(3);
 });
 
-test("copy button copies the install command", async ({ page, context, browserName }) => {
+test("copy buttons copy the install commands", async ({ page, context, browserName }) => {
   test.skip(browserName !== "chromium");
   await context.grantPermissions(["clipboard-read", "clipboard-write"]);
   await page.goto("/");
-  const button = page.locator(".cmd .copy");
-  await expect(button).toBeVisible();
-  await button.click();
-  await expect(button).toHaveText("Copied");
-  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe("curl -fsSL https://ccam.dev/install.sh | sh");
+  const commands = ["curl -fsSL https://ccam.dev/install.sh | sh", "irm https://ccam.dev/install.ps1 | iex"];
+  await expect(page.locator(".cmd .copy")).toHaveCount(commands.length);
+  for (const [i, command] of commands.entries()) {
+    const button = page.locator(".cmd .copy").nth(i);
+    await expect(button).toBeVisible();
+    await button.click();
+    await expect(button).toHaveText("Copied");
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(command);
+  }
 });
 
 test("theme toggle switches and remembers the theme", async ({ page }) => {
