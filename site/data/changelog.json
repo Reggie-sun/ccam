@@ -1,5 +1,11 @@
 [
   {
+    "tag": "v0.8.0",
+    "date": "2026-10-20",
+    "url": "https://github.com/jhyunwoo/ccam/releases/tag/v0.8.0",
+    "notes": "<h3>New</h3>\n<ul>\n<li>Claude Code plugin for ccam (/plugin install ccam --marketplace jhyunwoo/ccam)</li>\n<li>ccam pick, API key accounts, ccam ext, and choice rules with --wait and exit code 75</li>\n</ul>\n"
+  },
+  {
     "tag": "v0.7.0",
     "date": "2026-10-20",
     "url": "https://github.com/jhyunwoo/ccam/releases/tag/v0.7.0",
