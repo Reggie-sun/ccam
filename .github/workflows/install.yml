@@ -25,18 +25,21 @@ jobs:
           "$HOME/.local/bin/ccam" --help | perl -CS -ne 'if (/\p{Hangul}/) { print "Hangul: $_"; $bad = 1 } END { exit($bad ? 1 : 0) }'
 
   powershell:
-    strategy:
-      fail-fast: false
-      matrix:
-        shell: [pwsh, powershell] # PowerShell 7 and Windows PowerShell 5.1
     runs-on: windows-latest
     steps:
-      - name: irm https://ccam.dev/install.ps1 | iex
-        shell: ${{ matrix.shell }}
+      - name: irm https://ccam.dev/install.ps1 | iex (PowerShell 7)
+        shell: pwsh
         run: |
-          $env:CCAM_INSTALL_DIR = "$env:RUNNER_TEMP\bin"
+          $env:CCAM_INSTALL_DIR = "$env:RUNNER_TEMP\pwsh"
           irm https://ccam.dev/install.ps1 | iex
-          & "$env:RUNNER_TEMP\bin\ccam.exe" version
+          & "$env:RUNNER_TEMP\pwsh\ccam.exe" version
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+      - name: irm https://ccam.dev/install.ps1 | iex (Windows PowerShell 5.1)
+        shell: powershell
+        run: |
+          $env:CCAM_INSTALL_DIR = "$env:RUNNER_TEMP\ps51"
+          irm https://ccam.dev/install.ps1 | iex
+          & "$env:RUNNER_TEMP\ps51\ccam.exe" version
           if ($LASTEXITCODE -ne 0) { exit 1 }
 
   deb:
