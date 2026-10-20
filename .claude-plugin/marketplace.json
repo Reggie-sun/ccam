@@ -1,0 +1,19 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "ccam",
+  "owner": {
+    "name": "jhyunwoo",
+    "url": "https://github.com/jhyunwoo"
+  },
+  "metadata": {
+    "description": "Claude Code plugins for ccam, the Claude Code Account Manager"
+  },
+  "plugins": [
+    {
+      "name": "ccam",
+      "source": "./plugins/ccam",
+      "description": "Check the usage of every account, pick an account with room for parallel workers, and diagnose extensions, with ccam.",
+      "category": "productivity"
+    }
+  ]
+}

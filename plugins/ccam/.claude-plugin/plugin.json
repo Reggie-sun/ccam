@@ -1,0 +1,14 @@
+{
+  "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
+  "name": "ccam",
+  "version": "0.1.0",
+  "description": "Use several Claude Code accounts from inside Claude Code with ccam: see each account's usage, give parallel workers an account with room, rerun -p jobs at a limit, and find out why a skill or MCP server is missing.",
+  "author": {
+    "name": "jhyunwoo",
+    "url": "https://github.com/jhyunwoo"
+  },
+  "homepage": "https://ccam.dev",
+  "repository": "https://github.com/jhyunwoo/ccam",
+  "license": "MIT",
+  "keywords": ["accounts", "usage", "rate-limit", "workers"]
+}
