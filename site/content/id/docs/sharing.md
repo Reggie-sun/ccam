@@ -1,46 +1,45 @@
 ---
 title: Berbagi server MCP, pengaturan, dan riwayat
-description: Cara ccam membagikan server MCP, settings.json, CLAUDE.md, agen, skill, dan riwayat percakapan antarakun Claude Code dengan login tetap terpisah.
+description: Cara grup ccam membagikan server MCP, settings.json, CLAUDE.md, skill, dan riwayat percakapan antarakun Claude Code, dengan setiap login tetap terpisah.
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 888d466b29e9
+sourceHash: "2606e4ec682e"
 ---
 
-Setiap akun menyimpan login-nya sendiri. Semua hal lain dapat dibagikan per item: ccam menautkan file atau folder milik akun ke folder grup bersama, sehingga perubahan yang dibuat di satu akun muncul di semua akun dalam grup tersebut.
+Setiap akun menyimpan login-nya sendiri. Semua hal lain dapat dibagikan melalui **grup**: sebuah grup menyebutkan item yang dibagikannya dan akun-akun di dalamnya, dan ccam menautkan file setiap akun itu ke folder milik grup, sehingga perubahan yang dibuat di satu akun muncul di semuanya.
 
 ## Apa saja yang bisa dibagikan
 
-| Item | Opsi | Yang dibagikan |
-| --- | --- | --- |
-| Server MCP | `--mcp` | `mcp.json` milik grup, diteruskan ke Claude Code saat dimulai |
-| Pengaturan | `--settings` | `settings.json`: izin, hook, model, status line |
-| Memori global | `--memory` | `CLAUDE.md` |
-| Ekstensi | `--extensions` | `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/`, `rules/` |
-| Riwayat percakapan | `--history` | `projects/` dan `history.jsonl` |
+| Item | Yang dibagikan |
+| --- | --- |
+| `mcp` | server MCP: `mcp.json` milik grup, diteruskan ke Claude Code saat dimulai |
+| `settings` | `settings.json`: izin, hook, model, status line |
+| `memory` | `CLAUDE.md` global |
+| `extensions` | `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/`, `rules/` |
+| `history` | riwayat percakapan: `projects/` dan `history.jsonl` |
 
-Akun baru membagikan semuanya kecuali riwayat percakapan.
+Akun pertama Anda membuat grup `default`, yang membagikan semuanya kecuali riwayat percakapan, dan akun-akun berikutnya bergabung ke grup itu.
 
 File login `.credentials.json` dan `.claude.json` tidak pernah dibagikan. ccam hanya menautkan path dari daftar tetap, dan kedua file ini tidak ada di dalamnya.
 
-Halaman ini membahas tugas sehari-hari. Setiap opsi dijelaskan di halaman fitur: [berbagi antarakun](/features/share), [server MCP bersama](/features/mcp), dan [menyalin penyiapan yang sudah ada](/features/migrate).
+Halaman ini membahas tugas sehari-hari. Setiap opsi dijelaskan di halaman fitur: [berbagi dengan grup](/features/share), [server MCP bersama](/features/mcp), dan [menyalin penyiapan yang sudah ada](/features/migrate).
 
 ## Grup
 
-`on` berarti grup `default`. Anda juga bisa memberi nama, sehingga hanya sebagian akun yang berbagi suatu item:
-
 ```sh
-ccam share work --history team
-ccam share side --history team
+ccam group                                   # the groups, what they share, their accounts
+ccam group set default --add history         # every account in default shares history
+ccam group add team --items history --members work,side
 ```
 
-Sekarang `work` dan `side` berbagi percakapan satu sama lain, tetapi tidak dengan akun Anda yang lain.
+Satu akun bisa masuk ke beberapa grup, tetapi setiap item hanya berasal dari satu grup. Jadi, untuk berbagi riwayat antara `work` dan `side` tetapi tidak dengan akun Anda yang lain, jangan masukkan riwayat ke `default` dan berikan kedua akun itu grup tersendiri, seperti di atas. `ccam share work` menampilkan apa yang dibagikan sebuah akun dan melalui grup mana. [Dasbor](/features/dashboard) melakukan hal yang sama di tab Groups.
 
-## Mengaktifkan pembagian
+## Saat sebuah akun mulai berbagi
 
-Saat sebuah akun mulai membagikan suatu item, ccam:
+Saat sebuah akun mulai membagikan suatu item (akun itu bergabung ke sebuah grup, atau grupnya menambahkan item tersebut), ccam:
 
-1. menampilkan rencana untuk setiap file yang akan dipindahkan, disalin, atau ditautkan, dan meminta persetujuan sebelum memulai;
+1. menampilkan rencana untuk setiap file yang akan dipindahkan, disalin, atau ditautkan bagi setiap akun, dan meminta persetujuan sebelum memulai;
 2. memindahkan file akun ke folder grup jika grup masih kosong, atau menambahkan file yang belum dimiliki grup;
 3. jika file yang sama berbeda isinya, menanyakan apakah akan mempertahankan versi grup, memakai versi Anda, atau menggabungkan JSON-nya;
 4. menyimpan file asli Anda di `.ccam-backup/<time>/` di dalam folder akun;
@@ -48,12 +47,13 @@ Saat sebuah akun mulai membagikan suatu item, ccam:
 
 File percakapan diberi nama sesuai ID sesinya, sehingga riwayat dari beberapa akun dapat digabungkan tanpa konflik.
 
-ccam tidak mengubah pembagian saat Claude Code sedang berjalan sebagai akun tersebut, karena sesi terus menulis ke file yang sedang dipindahkan. Keluar dari sesi itu terlebih dahulu.
+ccam tidak mengubah sebuah akun saat Claude Code sedang berjalan sebagai akun tersebut, karena sesi terus menulis ke file yang sedang dipindahkan. Keluar dari sesi itu terlebih dahulu.
 
-## Menonaktifkan pembagian
+## Saat sebuah akun berhenti berbagi
 
 ```sh
-ccam share work --history off
+ccam group leave team work                   # work leaves the group
+ccam group set default --remove history      # nobody in default shares history any more
 ```
 
 Tautan dihapus dan akun mendapatkan salinannya sendiri dari isi grup saat ini. Tambahkan `--fresh` untuk memulai dari kosong. Grup tetap menyimpan isinya untuk akun-akun lain.
@@ -95,14 +95,12 @@ Copy from /home/me/.claude into group default (/home/me/.local/share/ccam/groups
   Conversation history (projects/, history.jsonl) is not included; add --history to copy it.
 Copy these into group default? [y/N] y
 ✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, commands/, skills/
-Accounts that share these through group default:
-  mcp         personal
-  settings    personal
-  memory      personal
-  extensions  personal
+Group default: personal
+To share them:
+  ccam group join default work
 ```
 
-Di akhir, ccam mencantumkan akun yang membagikan setiap item melalui grup tersebut. Jika ada akun yang belum, ccam menampilkan perintah `ccam share` untuk mengaktifkan pembagian bagi akun itu.
+Di akhir, ccam mencantumkan akun-akun dalam grup. Jika grup belum membagikan salah satu item, atau ada akun yang belum masuk ke dalamnya, ccam menampilkan perintah `ccam group` untuk mengubahnya.
 
 Jika grup sudah memiliki salinan file yang berbeda, ccam bertanya, sama seperti saat Anda mengaktifkan pembagian: mempertahankan salinan grup atau memakai milik Anda. `settings.json` dan file JSON lainnya juga bisa digabungkan, dan `history.jsonl` bisa digabungkan baris per baris. Salinan grup sebelumnya disimpan di `.ccam-backup/<time>/` di dalam folder grup.
 

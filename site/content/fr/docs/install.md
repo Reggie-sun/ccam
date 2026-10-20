@@ -5,7 +5,7 @@ description: "Installez ccam sous Linux, macOS ou Windows en une commande, via .
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: aea4984c1576
+sourceHash: 07fab3165030
 ---
 
 Exécutez ceci dans un terminal sous Linux ou macOS :
@@ -80,7 +80,7 @@ Le plugin ccam apprend à Claude Code lui-même à utiliser ccam : vérifier que
 /plugin install ccam --marketplace jhyunwoo/ccam
 ```
 
-Il ajoute un skill et deux commandes, `/ccam:usage` et `/ccam:ext`. Le skill n'exécute jamais de commandes qui connectent un compte ou déplacent des fichiers ; il les propose à la place.
+Il ajoute un skill, les commandes `/ccam:usage`, `/ccam:ext` et `/ccam:switch`, et deux hooks : quand une session s'arrête à une limite d'utilisation, vous recevez une notification dans le terminal, et `/ccam:switch [account]` passe la conversation à un autre compte ([détails](/features/next#inside-claude-code)). Les hooks exécutent `ccam` : il doit donc se trouver dans le `PATH` que voit Claude Code. Le skill n'exécute jamais de commandes qui connectent un compte ou déplacent des fichiers ; il les propose à la place.
 
 ## Vérifier l'installation
 

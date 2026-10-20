@@ -4,7 +4,7 @@ description: Uruchamiaj kilka kont Claude Code obok siebie dzięki CLAUDE_CONFIG
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: f2982e4317a2
+sourceHash: "ee92078b81c3"
 ---
 
 Daj każdemu kontu własny folder konfiguracji. Claude Code odczytuje folder ze zmiennej środowiskowej `CLAUDE_CONFIG_DIR`, a każdy folder przechowuje własny login, ustawienia i historię, więc każde konto pozostaje zalogowane i możesz używać ich jednocześnie. Możesz to skonfigurować ręcznie za pomocą aliasu powłoki albo zostawić to ccam.
@@ -69,7 +69,7 @@ Claude Code działa [natywnie w Windows i w WSL](https://code.claude.com/docs/en
 
 **Serwer MCP pojawia się tylko na jednym koncie.** Serwery dodane w sesji przez `claude mcp add` należą do tego konta. Przenieś serwer na wszystkie konta przez `ccam mcp import work <server>`.
 
-**Ustawienia różnią się między kontami.** `ccam share work` pokazuje, co konto współdzieli; `ccam share work --settings on` włącza współdzielenie jego ustawień, po pokazaniu, co się zmieni. `ccam doctor --fix` naprawia zepsute linki i zachowuje kopię zapasową każdego zmienianego pliku.
+**Ustawienia różnią się między kontami.** `ccam share work` pokazuje, co konto współdzieli i przez którą grupę; `ccam group join default work` sprawia, że współdzieli to, co współdzieli `default`, po pokazaniu, co się zmieni. `ccam doctor --fix` naprawia zepsute linki i zachowuje kopię zapasową każdego zmienianego pliku.
 
 **Dwa konta otwierają tę samą rozmowę.** Nie pracuj nad jedną rozmową na dwóch kontach jednocześnie. ccam ostrzeże cię, jeśli spróbujesz.
 

@@ -5,10 +5,10 @@ description: ccam add ve ccam <name> komutlarından ccam usage, ccam next ve cca
 updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: da2594c672bc
+sourceHash: "116c5b34ac9a"
 ---
 
-Bir komutun ne yapacağını, yapmadan görmek için komuttan önce `--dry-run` yazın, örneğin `ccam --dry-run work`. Bu, Claude Code başlatılırken (`ccam <name>`, `ccam run`, `ccam next`) ve `share`, `migrate`, `shortcut`, `update` ile `doctor --fix` komutlarında çalışır. Bir şeyi değiştiren diğer komutlar çalışmak yerine bunu reddeder.
+Bir komutun ne yapacağını, yapmadan görmek için komuttan önce `--dry-run` yazın, örneğin `ccam --dry-run work`. Bu, Claude Code başlatılırken (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`) ve `group`, `migrate`, `shortcut`, `update` ile `doctor --fix` komutlarında çalışır. Bir şeyi değiştiren diğer komutlar çalışmak yerine bunu reddeder.
 
 <!-- commands -->
 
@@ -33,9 +33,10 @@ Hesap adından önce gelen `--fallback`, `-p`/`--print` çalıştırmaları içi
 
 ```sh
 ccam add                      # wizard
-ccam add work --share history=on
+ccam add work --group default --group team
 ccam add side --shortcut ccside
 ccam add ci --no-login        # log in later with: ccam login ci
+ccam login --expired          # log in every account whose login no longer works
 ccam rename work job
 ccam remove side              # folder moves to ~/.local/share/ccam/trash
 ccam import ~/.claude-old --name old
@@ -46,9 +47,9 @@ Klasör belirtilmeden çalıştırılan `ccam import`, `~/.claude` ve `~/.claude
 
 `ccam add --api`, Claude girişi yerine API anahtarı kullanan bir hesap ekler; ccam anahtarı her başlatmada okur ve hiçbir zaman saklamaz. Bkz. [API anahtarlı hesaplar](/features/api).
 
-`ccam rename`, `ccam remove` ve `ccam share`, Claude Code bir hesapla çalışırken o hesabı değiştirmeyi reddeder. Önce oturumdan çıkın.
+`ccam rename`, `ccam remove` ve `ccam group` komutları, Claude Code bir hesapla çalışırken o hesabı değiştirmeyi reddeder. Önce oturumdan çıkın.
 
-`ccam list --json` her hesabı yuvası, kısayolu, e-postası ve klasörüyle birlikte yazdırır. Çıktıdaki `share` nesnesi her öğeyi (`mcp`, `settings`, `memory`, `extensions`, `history`) bir grup adıyla veya `local` ile eşler.
+`ccam list --json` her hesabı yuvası, kısayolu, e-postası ve klasörüyle birlikte yazdırır. Çıktıdaki `groups` dizisi hesabın gruplarını listeler; `share` nesnesi ise her öğeyi (`mcp`, `settings`, `memory`, `extensions`, `history`) geldiği grupla veya `local` ile eşler.
 
 ## Kısayollar
 
@@ -69,12 +70,15 @@ Adlarda a-z, 0-9, `.`, `-` ve `_` karakterleri kullanılır. Bir ad bir ccam kom
 ## Paylaşım
 
 ```sh
-ccam share work                       # show the current state
-ccam share work --history on --mcp team
-ccam share work --settings off --fresh
+ccam group                                  # the groups, what they share, their accounts
+ccam group add team --items history --members work,side
+ccam group set default --add history        # every account in default changes together
+ccam group join team personal
+ccam group leave team side --fresh
+ccam share work                             # what work shares, and through which group
 ```
 
-Her öğe `on` (`default` grubu), `off` veya bir grup adı alır. [Paylaşım](/docs/sharing) sayfasına bakın.
+Bir grup, öğeleri kendi hesapları arasında paylaştırır; bir hesap birkaç grupta olabilir, ancak her öğe yalnızca tek bir gruptan gelir. [Gruplarla paylaşım](/features/share) sayfasına bakın.
 
 ## Mevcut bir kurulumu kopyalama
 
@@ -106,14 +110,17 @@ ccam mcp remove fs
 ccam usage           # also: ccam u
 ccam usage --watch   # refresh every 60 seconds
 ccam usage --json
-ccam next --continue
+ccam usage --source claude      # Claude Code looks it up; ccam never touches a token
+ccam next --continue            # this folder's last conversation, as the next account
 ccam next --auto
 ccam next --auto --max-usage 80 --wait
 ccam pick                       # the account with the most room, for a script
 ccam "$(ccam pick)" -p "…"      # start a worker on it
+ccam agents                     # background sessions of every account
+ccam attach 49ec0028            # open one, as the account that started it
 ```
 
-`next --auto`, `--fallback` ve `ccam pick` aynı şekilde seçer: önce `auto_max_usage` (`config.toml`, varsayılan 100) altındaki hesaplar, `auto_strategy` (`headroom` veya `expiring`) stratejisine göre, `--model` haftalık penceresi de sayılarak ve %100'deki bir hesap asla seçilmeden. Hiçbiri seçilemediğinde 75 koduyla çıkarlar ya da `--wait` ile ilk hesabın sıfırlanmasını beklerler. Bkz. [Sonraki hesaba geçme](/features/next) ve [Betikler için hesap seçme](/features/pick).
+`next --auto`, `--fallback` ve `ccam pick` aynı şekilde seçer: önce `auto_max_usage` (`config.toml`, varsayılan 100) altındaki hesaplar, `auto_strategy` (`headroom`, `expiring` veya `balance`) stratejisine göre, `--model` haftalık penceresi de sayılarak, %100'deki bir hesap asla seçilmeden ve başladıkları hesabın kuruluşu içinde kalarak (daha ötesine bakmak için `--cross-org` veya `cross_org = true`). Hiçbiri seçilemediğinde 75 koduyla çıkarlar ya da `--wait` ile ilk hesabın sıfırlanmasını beklerler. `ccam next --continue` bir konuşmayı geçmişi paylaşmayan hesaplar arasında bile taşır: Claude Code o zaman konuşmayı yeni hesaba kopyalar. Claude Code'un içinde eklentinin `/ccam:switch [account]` komutu bir konuşmayı devreder; `ccam hook` ise eklentinin hook'larının çalıştırdığı komuttur. Bkz. [Sonraki hesaba geçme](/features/next), [Betikler için hesap seçme](/features/pick) ve [Her hesabın arka plan oturumları](/features/agents).
 
 ## Bakım
 
@@ -135,10 +142,10 @@ ccam completion bash # or zsh, powershell
 
 | Yol | İçerik |
 | --- | --- |
-| `~/.config/ccam/config.toml` | Hesaplar ve neyi paylaştıkları |
+| `~/.config/ccam/config.toml` | Hesaplar, gruplar ve ayarlar (`theme`, `usage_source`, `relay`, `cross_org` …) |
 | `~/.local/share/ccam/profiles/<name>/` | Her hesabın `CLAUDE_CONFIG_DIR` klasörü |
 | `~/.local/share/ccam/groups/<group>/` | Paylaşılan ayarlar, MCP sunucuları, uzantılar ve geçmiş |
-| `~/.local/state/ccam/` | Kullanım önbelleği ve son kullanım zamanları |
+| `~/.local/state/ccam/` | Kullanım önbelleği, son kullanım zamanları ve `/ccam:switch` ile limit hook'unun bıraktığı notlar (`handoff/`) |
 | `~/.local/bin/<shortcut>` | `ccwork` gibi kısayol komutları, ccam'e giden bağlantılar |
 
 `XDG_CONFIG_HOME`, `XDG_DATA_HOME` ve `XDG_STATE_HOME` değişkenleri bu klasörlerin yerini değiştirir. Windows'ta `~`, `%USERPROFILE%` anlamına gelir ve kısayollar `<shortcut>.exe` olur.

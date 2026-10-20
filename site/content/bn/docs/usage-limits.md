@@ -4,7 +4,7 @@ description: "ccam usage দিয়ে প্রতিটি Claude Code অ�
 updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: a84df8e873d6
+sourceHash: 40aef0708c81
 ---
 
 `ccam usage` দেখায় প্রতিটি অ্যাকাউন্ট ৫ ঘণ্টা ও সাপ্তাহিক সীমার কতটা ব্যবহার করেছে। `ccam next --auto` সবচেয়ে বেশি জায়গা থাকা অ্যাকাউন্টটি খোলে, আর `--continue` বর্তমান কথোপকথনটি সঙ্গে নিয়ে যায়।
@@ -55,10 +55,10 @@ ccam statusline install
 ```sh
 ccam next             # the account after the one you used last
 ccam next --auto      # the account with the lowest 5-hour usage
-ccam next --continue  # the next account that shares your conversation history
+ccam next --continue  # carry this folder's conversation on as the next account
 ```
 
-`ccam next` লগইন না করা অ্যাকাউন্টগুলো বাদ দেয়, আর `--auto` ১০০%-এ থাকা অ্যাকাউন্টগুলো বাদ দেয়। একটি কথোপকথন চালিয়ে যেতে দুটি অ্যাকাউন্টকেই কথোপকথনের ইতিহাস শেয়ার করতে হবে; দেখুন [শেয়ার করা](/docs/sharing)।
+`ccam next` লগইন না করা অ্যাকাউন্টগুলো বাদ দেয়, আর `--auto` ১০০%-এ থাকা অ্যাকাউন্ট ও অন্য প্রতিষ্ঠানের অ্যাকাউন্টগুলো বাদ দেয়। দুটি অ্যাকাউন্ট কথোপকথনের ইতিহাস শেয়ার করলে `--continue` একই কথোপকথনটি খোলে; না করলে Claude Code সেটি নতুন অ্যাকাউন্টে কপি করে। দেখুন [শেয়ার করা](/docs/sharing) ও [পরের অ্যাকাউন্টে বদল](/features/next#continue)।
 
 `claude -p` চালানো স্ক্রিপ্ট ও নির্ধারিত কাজের জন্য অ্যাকাউন্টের নামের আগে `--fallback` দিন। ওই অ্যাকাউন্ট তার সীমায় পৌঁছালে ccam একই কমান্ড সবচেয়ে বেশি জায়গা থাকা অ্যাকাউন্ট হিসেবে আবার চালায়, এবং শুধু যে রানটি শেষ হয়েছে তার আউটপুট প্রিন্ট হয়:
 

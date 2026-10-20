@@ -4,7 +4,7 @@ description: ccam folder lässt einen Ordner und alles darunter ein Konto nutzen
 updated: 2026-10-20
 order: 11
 translation: machine
-sourceHash: 5071b04a194d
+sourceHash: 46d1410a3d81
 ---
 
 `ccam folder work ~/code/company` sorgt dafür, dass jeder Start ohne Kontonamen in `~/code/company` und in jedem Ordner darunter Claude Code als `work` startet. Außerhalb davon startet wie bisher das Standardkonto. Wenn du ein Konto nennst, mit `ccam personal` oder einem Kurzbefehl wie `ccpersonal`, startet immer dieses Konto.
@@ -34,7 +34,7 @@ Diese Starts verwenden das Konto des Ordners:
 - `ccam -p "…"` und jeder andere Start, dessen erstes Argument eine Option für Claude Code ist
 - `ccam run` ohne Namen und `ccam --dry-run`
 - `ccam --fallback -p "…"` für seinen ersten Versuch
-- die Auswahl, `ccam` allein, die mit dem Cursor auf dem Konto des Ordners beginnt
+- das Dashboard, `ccam` allein, das mit dem Cursor auf dem Konto des Ordners beginnt
 
 ## Optionen
 

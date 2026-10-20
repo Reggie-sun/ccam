@@ -4,7 +4,7 @@ description: ccam mcp add、add-json、list、remove、importで、グループ�
 updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: f1de7db4b7be
+sourceHash: "6d3b3c38c6cb"
 ---
 
 Claude CodeはユーザーのMCPサーバーを`.claude.json`に保存します。これはアカウントのログインを保持するのと同じファイルなので、アカウント間で共有できません。ccamは共有サーバーをグループのファイル`mcp.json`に保存し、起動時にグループのすべてのアカウントに渡します。`ccam mcp`を使うと、サーバーを一度追加するだけですべてのアカウントで使えます。あるセッション内で追加したサーバーをほかのアカウントに移すには、`ccam mcp import`を使います。
@@ -36,7 +36,7 @@ group default (work, side)
 only in account work: pg
 ```
 
-グループにすでにある名前を追加すると、その定義が置き換えられ、`added`ではなく`updated`と表示されます。サーバーがアカウントに届くのは、そのアカウントがそのグループとMCPを共有している場合（`ccam share <name> --mcp on`）だけです。MCPを共有しているアカウントがまだない場合は、`add`がその旨を表示します。
+グループにすでにある名前を追加すると、その定義が置き換えられ、`added`ではなく`updated`と表示されます。サーバーがアカウントに届くのは、そのアカウントがそのグループに入っていて、グループがMCPを共有している場合（`ccam group set <group> --add mcp`）だけです。グループがMCPを共有していない場合は、`add`がその旨を表示します。
 
 ## オプション
 
@@ -121,7 +121,7 @@ Skipped gh: group default already has a different gh (`ccam mcp import work gh -
 - **実行中のアカウント。** `import`はグループにコピーしますが、実行中のアカウント自身の項目は残し、その旨を表示します。セッションが終了した後にもう一度実行してください。同期は実行中のアカウントをスキップします。
 - **Remote Control用のコピー。** 実行中のアカウントのコピーには触れず、次のように表示します。`Note: account side is running, so the copy in its .claude.json stays as it was until its next Remote Control launch.` `mcp_strategy = "sync"`の場合は、起動のたびに同期するため、更新は必要ありません。
 - **壊れたファイル。** `.claude.json`が有効なJSONでない場合、同期はファイルに触れずにエラーを報告します。2秒以内にロックを取得できない場合、ccamは`could not lock … (Claude Code is writing the file)`と報告します。
-- **MCPを共有していないアカウント。** `import`は拒否し、先に`ccam share side --mcp on`を実行するよう案内します。
+- **MCPを共有していないアカウント。** `import`は拒否し、先にMCPを共有するグループにアカウントを入れる（`ccam group join <group> side`）よう案内します。
 - **グループ名。** `-g`はグループ名だけを受け取ります。名前は`groups/`の下のフォルダーになるため、`../x`のような名前は拒否されます。
 
 ## 関連項目

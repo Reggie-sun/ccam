@@ -4,7 +4,7 @@ description: Controlla link di condivisione, permessi dei file, login e versione
 updated: 2026-10-20
 order: 9
 translation: machine
-sourceHash: a45ca25bb722
+sourceHash: "6ae82bbf5585"
 ---
 
 `ccam doctor` controlla la tua installazione di ccam: il binario di Claude Code, la cartella, il login e i link di condivisione di ogni account, i server MCP condivisi, l'endpoint di utilizzo e i tuoi comandi scorciatoia. `ccam doctor --fix` ripara ciò che può riparare senza perdere dati e, prima di sostituire un file, lo sposta in una cartella di backup. Eseguilo quando `ccam <name>` si ferma per un problema con i link di condivisione, dopo aver ripristinato file a mano o dopo un aggiornamento di Claude Code.
@@ -71,14 +71,16 @@ Il blocco centrale viene eseguito una volta per account. I controlli, e cosa fa 
 1. **Versione di Claude Code** (`checkClaude`). Individua il binario `claude` come fa l'avvio ed esegue `claude --version`. Se la versione non inizia con `2.1.302`, la versione su cui è stata verificata la struttura delle cartelle di ccam (`doctor.LayoutVersion`), aggiunge `· ccam was verified against the folder layout of Claude Code 2.1.302. Any 'unknown entries' below may mean the layout changed`. Un binario mancante o un `--version` che fallisce è un errore. Nessuna riparazione.
 2. **Credenziali nell'ambiente** (`checkAuthEnv`). Avvisa quando è impostata `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY` o `ANTHROPIC_AUTH_TOKEN`: ogni account avviato da quella shell la eredita, e Claude Code la preferisce al login dell'account. Nessuna riparazione; rimuovila tu.
 3. **Cartella** (`checkProfile`). Una cartella dell'account mancante è un errore e termina i controlli di quell'account. Permessi con bit di gruppo o di altri utenti impostati sono un avviso; `--fix` esegue `chmod 0700`. Windows non ha bit di permesso, quindi lì questo controllo e quello su `0600` qui sotto vengono saltati; la cartella nel tuo profilo utente è protetta dalla sua lista di controllo di accesso.
-4. **File di login** (`checkCredentials`). `.credentials.json` viene controllato con `lstat`. Un link simbolico è un errore, perché ogni account deve avere il proprio token, e non viene riparato. Una modalità diversa da `0600` è un avviso; `--fix` esegue `chmod 0600`. Poi viene letto il login (su macOS prima dal Portachiavi). L'assenza di login è un avviso che rimanda a `ccam login <name>`. Un refresh token scaduto è l'errore `login expired`; un token di accesso scaduto è solo un'informazione, perché Claude Code lo rinnova al prossimo avvio. Nessuno di questi viene riparato.
-5. **Link di condivisione** (`share.Check`). Confronta ogni percorso di `share.Layout` con le impostazioni di condivisione dell'account, usando solo `lstat` e `readlink`. Segnala quattro casi: un link mancante, un link che punta altrove, un file normale dove dovrebbe esserci un link e un link rimasto per un elemento che ora è locale. Un link mancante è un avviso, gli altri sono errori.
+4. **File di login** (`checkCredentials`). `.credentials.json` viene controllato con `lstat`. Un link simbolico è un errore, perché ogni account deve avere il proprio token, e non viene riparato. Una modalità diversa da `0600` è un avviso; `--fix` esegue `chmod 0600`. Poi viene letto il login (su macOS prima dal Portachiavi). L'assenza di login è un avviso che rimanda a `ccam login <name>`. Un refresh token scaduto è l'errore `login expired`; un token di accesso scaduto è solo un'informazione, perché Claude Code lo rinnova al prossimo avvio. Un login valido mostra l'email e il piano (`login valid (dev@company.com, Claude Team · Acme)`). Nessuno di questi viene riparato; `ccam login --expired` effettua il login in ogni account che ne ha bisogno.
+5. **Link di condivisione** (`share.Check`). Confronta ogni percorso di `share.Layout` con i gruppi dell'account, usando solo `lstat` e `readlink`. Segnala quattro casi: un link mancante, un link che punta altrove, un file normale dove dovrebbe esserci un link e un link rimasto per un elemento che ora è locale. Un link mancante è un avviso, gli altri sono errori. I percorsi aggiunti a un elemento in una versione successiva di ccam (`file-history/`, `tasks/` e `paste-cache/` per la cronologia, `keybindings.json` per le impostazioni) sono solo un avviso finché l'account ne ha ancora una copia propria: `is not shared with the group yet (ccam doctor --fix moves it in)`. Un avvio non si ferma mai per questi.
 6. **Voci sconosciute** (`checkUnknownEntries`). Elenca i nomi di primo livello nella cartella dell'account che ccam non conosce (`share.Known`), come indizio che la struttura di Claude Code è cambiata. Solo informazione.
 7. **Percorsi dei plugin** (`checkPlugins`). I registri dei plugin (`installed_plugins.json`, `known_marketplaces.json`) salvano percorsi assoluti. Nel `plugins/` di ogni gruppo, i percorsi che passano per la cartella di un account smettono di funzionare quando quell'account viene rimosso o rinominato. `--fix` li riscrive verso la cartella del gruppo con `profile.RewritePluginPaths`, una scrittura atomica del file di registro.
 8. **Server MCP** (`checkMCP`). Carica una volta il `mcp.json` di ogni gruppo. Un file che non si riesce a leggere è un errore; un server che non supera `mcp.Validate` è un avviso. Nessuna riparazione.
 9. **Formato della risposta di utilizzo** (`checkUsageFormat`). Interroga l'endpoint di utilizzo, senza cache e con il consueto limite di 3 secondi, per un account dopo l'altro finché uno risponde. Se la risposta non si riesce più ad analizzare, avvisa che `ccam usage` ripiega sulla cache della riga di stato. È l'unico controllo che usa la rete.
 10. **Scorciatoie** (`checkShims`). Solo quando un account ha una scorciatoia. I link mancanti in `~/.local/bin` sono un avviso; `--fix` chiama `shim.Install`, che crea solo i link mancanti e non tocca mai altri file. Una cartella bin che non è nel `PATH` è un avviso e non viene riparata.
 11. **Cartelle** (`checkFolders`). Solo quando esistono voci di [`ccam folder`](/features/folder). Una voce il cui account non esiste è un errore, e una voce la cui cartella non c'è più è un avviso. Nessuna delle due viene riparata, perché rimuovere una voce cambierebbe l'account che parte lì.
+12. **Gruppi e impostazioni** (`checkGroups`). Un membro di un gruppo che non è un account, un account il cui nome nel frattempo è diventato un comando di ccam (avvialo con `ccam run <name>` o rinominalo), e un `theme` o un `usage_source` sconosciuto in `config.toml` sono avvisi. Nessuna riparazione.
+13. **Login** (`checkIdentities`). Legge da `.claude.json` con quale account ha effettuato il login ogni cartella. Una cartella ora collegata a un account diverso da quello registrato da `ccam login` (per esempio dopo `/login` dentro una sessione) è un avviso, e lo è anche una cartella collegata allo stesso account Claude di un'altra: le due condividono i limiti di utilizzo. Nessuna riparazione.
 
 ### Riparare i link di condivisione
 
@@ -91,7 +93,7 @@ ccam: stopped because of share link problems:
 Repair them with `ccam doctor --fix`, then run again
 ```
 
-Per qualsiasi problema con i link di condivisione, `--fix` chiama `share.Build` con le impostazioni di condivisione dell'account sia come stato attuale sia come stato di destinazione, poi `Plan.Apply`. `Build` ricava di nuovo ogni passaggio da ciò che si trova su disco, lo stesso piano usato da `ccam share`, quindi la riparazione segue le stesse regole dell'attivazione della condivisione.
+Per qualsiasi problema con i link di condivisione, `--fix` chiama `share.Build` con le impostazioni di condivisione dell'account sia come stato attuale sia come stato di destinazione, poi `Plan.Apply`. `Build` ricava di nuovo ogni passaggio da ciò che si trova su disco, lo stesso piano usato da una modifica con `ccam group`, quindi la riparazione segue le stesse regole dell'ingresso in un gruppo.
 
 <!-- motion:doctor-repair -->
 
@@ -110,7 +112,7 @@ A parte la rimozione dei link, ogni passaggio sposta i dati nel gruppo o nella c
 - Un semplice `ccam doctor` non modifica mai nulla. Negli script usa `--dry-run` insieme a `--fix` per esserne certo.
 - `doctor --fix` non controlla se un account è in esecuzione. Chiudi Claude Code per un account prima di ripararne i link di condivisione, perché la sessione continua a scrivere in quei file.
 - Se una riparazione della condivisione fallisce, ccam segnala `could not repair share links: <error>` per quell'account e salta il controllo delle voci sconosciute. Gli altri account vengono comunque controllati.
-- Se `ccam share` fallisce a metà, salva prima le impostazioni di destinazione e ti dice di completare con `ccam doctor --fix`.
+- Se una modifica con `ccam group` fallisce a metà, i nuovi gruppi sono già salvati, e ccam ti dice di completare con `ccam doctor --fix`.
 - Un `.credentials.json` collegato con un link simbolico, un login scaduto e le credenziali nell'ambiente vengono segnalati ma mai modificati.
 - Le riscritture dei registri dei plugin sono atomiche ma non vengono copiate in `.ccam-backup/`.
 

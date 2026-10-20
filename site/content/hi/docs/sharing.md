@@ -1,46 +1,45 @@
 ---
 title: MCP सर्वर, सेटिंग्स और इतिहास साझा करें
-description: ccam कैसे Claude Code अकाउंट्स के बीच MCP सर्वर, settings.json, CLAUDE.md, agents, skills और बातचीत का इतिहास साझा करता है, और हर लॉगिन अलग रखता है।
+description: ccam के ग्रुप Claude Code अकाउंट्स के बीच MCP सर्वर, settings.json, CLAUDE.md, skills और बातचीत का इतिहास कैसे साझा करते हैं, और हर लॉगिन अलग रखते हैं।
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 888d466b29e9
+sourceHash: 2606e4ec682e
 ---
 
-हर अकाउंट का अपना लॉगिन रहता है। बाक़ी सब कुछ आइटम के हिसाब से साझा किया जा सकता है: ccam अकाउंट की फ़ाइल या फ़ोल्डर को एक साझा ग्रुप फ़ोल्डर से लिंक करता है, इसलिए एक अकाउंट में किया गया बदलाव उस ग्रुप के सभी अकाउंट्स में दिखता है।
+हर अकाउंट का अपना लॉगिन रहता है। बाक़ी सब कुछ **ग्रुप** के ज़रिए साझा किया जा सकता है: एक ग्रुप उन आइटम के नाम बताता है जिन्हें वह साझा करता है और उसमें शामिल अकाउंट्स के भी, और ccam उन अकाउंट्स की फ़ाइलों को ग्रुप के फ़ोल्डर से लिंक करता है, इसलिए एक अकाउंट में किया गया बदलाव उन सभी में दिखता है।
 
 ## क्या साझा किया जा सकता है
 
-| आइटम | विकल्प | क्या साझा होता है |
-| --- | --- | --- |
-| MCP सर्वर | `--mcp` | ग्रुप की `mcp.json`, जो शुरू होते समय Claude Code को दी जाती है |
-| सेटिंग्स | `--settings` | `settings.json`: अनुमतियाँ, hooks, मॉडल, स्टेटस लाइन |
-| ग्लोबल मेमोरी | `--memory` | `CLAUDE.md` |
-| एक्सटेंशन | `--extensions` | `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/`, `rules/` |
-| बातचीत का इतिहास | `--history` | `projects/` और `history.jsonl` |
+| आइटम | क्या साझा होता है |
+| --- | --- |
+| `mcp` | MCP सर्वर: ग्रुप की `mcp.json`, जो शुरू होते समय Claude Code को दी जाती है |
+| `settings` | `settings.json`: अनुमतियाँ, hooks, मॉडल, स्टेटस लाइन |
+| `memory` | ग्लोबल `CLAUDE.md` |
+| `extensions` | `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/`, `rules/` |
+| `history` | बातचीत का इतिहास: `projects/` और `history.jsonl` |
 
-नए अकाउंट बातचीत के इतिहास को छोड़कर सब कुछ साझा करते हैं।
+आपका पहला अकाउंट ग्रुप `default` बनाता है, जो बातचीत के इतिहास को छोड़कर सब कुछ साझा करता है, और बाद के अकाउंट उसमें शामिल होते हैं।
 
 लॉगिन फ़ाइलें `.credentials.json` और `.claude.json` कभी साझा नहीं होतीं। ccam केवल एक तय सूची के पाथ लिंक करता है, और ये दोनों उस सूची में नहीं हैं।
 
-यह पेज रोज़मर्रा के काम बताता है। हर विकल्प का विवरण सुविधा पेजों पर है: [अकाउंट्स के बीच साझा करना](/features/share), [साझा MCP सर्वर](/features/mcp) और [मौजूदा सेटअप कॉपी करना](/features/migrate)।
+यह पेज रोज़मर्रा के काम बताता है। हर विकल्प का विवरण सुविधा पेजों पर है: [ग्रुप के साथ साझा करना](/features/share), [साझा MCP सर्वर](/features/mcp) और [मौजूदा सेटअप कॉपी करना](/features/migrate)।
 
 ## ग्रुप
 
-`on` का मतलब `default` ग्रुप है। आप कोई नाम भी दे सकते हैं, ताकि कोई आइटम केवल कुछ अकाउंट्स के बीच साझा हो:
-
 ```sh
-ccam share work --history team
-ccam share side --history team
+ccam group                                   # the groups, what they share, their accounts
+ccam group set default --add history         # every account in default shares history
+ccam group add team --items history --members work,side
 ```
 
-अब `work` और `side` आपस में बातचीत साझा करते हैं, लेकिन आपके दूसरे अकाउंट्स के साथ नहीं।
+एक अकाउंट कई ग्रुप में हो सकता है, लेकिन हर आइटम केवल एक ही ग्रुप से आता है। इसलिए `work` और `side` के बीच इतिहास साझा करने के लिए, लेकिन आपके दूसरे अकाउंट्स के साथ नहीं, इतिहास को `default` से बाहर रखें और दोनों को उनका अपना ग्रुप दें, जैसा ऊपर है। `ccam share work` दिखाता है कि कोई अकाउंट क्या साझा करता है और किस ग्रुप के ज़रिए। [डैशबोर्ड](/features/dashboard) अपने Groups टैब पर यही करता है।
 
-## साझा करना चालू करना
+## जब कोई अकाउंट साझा करना शुरू करता है
 
-जब कोई अकाउंट किसी आइटम को साझा करना शुरू करता है, तो ccam:
+जब कोई अकाउंट किसी आइटम को साझा करना शुरू करता है (वह किसी ग्रुप में शामिल होता है, या उसका ग्रुप वह आइटम जोड़ता है), तो ccam:
 
-1. हर उस फ़ाइल की योजना प्रिंट करता है जिसे वह move, copy या link करेगा, और शुरू करने से पहले पूछता है;
+1. हर अकाउंट के लिए उस हर फ़ाइल की योजना प्रिंट करता है जिसे वह move, copy या link करेगा, और शुरू करने से पहले पूछता है;
 2. अगर ग्रुप अभी ख़ाली है तो अकाउंट की फ़ाइलें ग्रुप फ़ोल्डर में move करता है, वरना वे फ़ाइलें जोड़ता है जो ग्रुप में अभी नहीं हैं;
 3. जब एक ही फ़ाइल अलग हो, तो पूछता है कि ग्रुप का वर्ज़न रखें, आपका इस्तेमाल करें, या JSON को merge करें;
 4. आपकी मूल फ़ाइल को अकाउंट फ़ोल्डर के अंदर `.ccam-backup/<time>/` में रखता है;
@@ -48,12 +47,13 @@ ccam share side --history team
 
 बातचीत की फ़ाइलों के नाम उनके session ID पर होते हैं, इसलिए कई अकाउंट्स के इतिहास बिना टकराव के एक साथ जुड़ जाते हैं।
 
-जब Claude Code उस अकाउंट के रूप में चल रहा हो, तब ccam साझा करने की सेटिंग नहीं बदलता, क्योंकि session उन फ़ाइलों में लिखता रहता है जिन्हें move किया जा रहा है। पहले उसे बंद करें।
+जब Claude Code किसी अकाउंट के रूप में चल रहा हो, तब ccam उस अकाउंट को नहीं बदलता, क्योंकि session उन फ़ाइलों में लिखता रहता है जिन्हें move किया जा रहा है। पहले उसे बंद करें।
 
-## साझा करना बंद करना
+## जब कोई अकाउंट साझा करना बंद करता है
 
 ```sh
-ccam share work --history off
+ccam group leave team work                   # work leaves the group
+ccam group set default --remove history      # nobody in default shares history any more
 ```
 
 लिंक हट जाता है और अकाउंट को ग्रुप की मौजूदा सामग्री की अपनी कॉपी मिल जाती है। इसकी बजाय ख़ाली शुरुआत करने के लिए `--fresh` जोड़ें। ग्रुप अपनी सामग्री दूसरे अकाउंट्स के लिए रखे रहता है।
@@ -95,14 +95,12 @@ Copy from /home/me/.claude into group default (/home/me/.local/share/ccam/groups
   Conversation history (projects/, history.jsonl) is not included; add --history to copy it.
 Copy these into group default? [y/N] y
 ✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, commands/, skills/
-Accounts that share these through group default:
-  mcp         personal
-  settings    personal
-  memory      personal
-  extensions  personal
+Group default: personal
+To share them:
+  ccam group join default work
 ```
 
-आख़िर में ccam उन अकाउंट्स की सूची दिखाता है जो ग्रुप के ज़रिए हर आइटम साझा करते हैं। अगर कुछ अकाउंट ऐसा नहीं करते, तो यह वे `ccam share` कमांड प्रिंट करता है जो उनके लिए साझा करना चालू करती हैं।
+आख़िर में ccam ग्रुप के अकाउंट्स की सूची दिखाता है। अगर ग्रुप अभी आइटम में से कोई साझा नहीं करता, या कुछ अकाउंट उसमें नहीं हैं, तो यह वे `ccam group` कमांड प्रिंट करता है जो इसे बदलती हैं।
 
 जब ग्रुप में किसी फ़ाइल की अलग कॉपी पहले से हो, तो ccam वैसे ही पूछता है जैसे साझा करना चालू करते समय: ग्रुप की कॉपी रखें या अपनी इस्तेमाल करें। `settings.json` और दूसरी JSON फ़ाइलें merge भी की जा सकती हैं, और `history.jsonl` लाइन-दर-लाइन। ग्रुप की पिछली कॉपियाँ ग्रुप फ़ोल्डर के अंदर `.ccam-backup/<time>/` में सहेजी जाती हैं।
 

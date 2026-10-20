@@ -4,7 +4,7 @@ description: ccam pick 为脚本输出余量最多的账号，让同时启动的
 updated: 2026-10-20
 order: 12
 translation: machine
-sourceHash: 65a5a7e179a5
+sourceHash: "2e8285b7c193"
 ---
 
 `ccam pick` 输出已登录账号中余量最多的那个账号的名称，供脚本用它启动 Claude Code。只要还有足够多有余量的账号，同时启动的并行任务就会各自拿到不同的账号，这样一批 `claude -p` 任务会分散到你的各个账号上，而不是耗尽其中一个。
@@ -19,6 +19,8 @@ done; wait
 ccam pick --json                      # the account and its usage
 ccam pick --model opus                # also count the Opus weekly limit
 ccam pick --max-usage 80 --strategy expiring
+ccam pick --strategy balance          # spread over the weekly quota, fewer running sessions first
+ccam pick --cross-org                 # also accounts of other organizations
 ccam pick --wait=2h                   # nobody has room: wait for a reset
 ccam --fallback "$(ccam pick)" -p "…" # also switch if this account hits its limit mid-job
 ```
@@ -31,7 +33,8 @@ $ ccam pick --json
   "email": "dev@company.com",
   "five_hour": { "percent": 12, "resets_at": "2026-10-20T15:10:00Z", "known": true },
   "weekly": { "percent": 41, "resets_at": "2026-10-24T09:00:00Z", "known": true },
-  "source": "live"
+  "source": "live",
+  "reason": "12% of its 5 hours used, the least"
 }
 ```
 
@@ -41,16 +44,17 @@ $ ccam pick --json
 
 | 选项 | 作用 | 默认值 |
 | --- | --- | --- |
-| `--json` | 输出账号、它的 5 小时和每周用量，以及这些数字的来源 | 关闭 |
+| `--json` | 输出账号、它的 5 小时和每周用量、这些数字的来源，以及选中它的理由 | 关闭 |
 | `--model <model>` | 同时计入该模型的每周时间窗口，例如 `opus` | 无 |
 | `--max-usage <1-100>` | 优先选择用量低于此值的账号 | `auto_max_usage`，否则为 100 |
-| `--strategy headroom\|expiring` | 5 小时用量最低的账号，或 5 小时时间窗口最早重置的账号 | `auto_strategy`，否则为 `headroom` |
+| `--strategy headroom\|expiring\|balance` | 5 小时用量最低的账号、5 小时时间窗口最早重置的账号，或每周配额最先会被浪费的账号 | `auto_strategy`，否则为 `headroom` |
+| `--cross-org` | 也选择其他组织的账号 | `cross_org`，否则为关闭 |
 | `--wait[=<duration>]` | 没有账号还有余量时，等待第一个账号重置，最多等待这么久 | 关闭；单独给出时为 `5h` |
 | `--dry-run` | 只做选择，不记录这次选择 | 关闭 |
 
 ## 工作原理
 
-1. ccam 列出已登录的账号（API 密钥账号没有限制，因此不包括在内）。
+1. ccam 列出此文件夹将要启动的账号所属组织中已登录的账号（API 密钥账号没有限制，因此不包括在内；参见[组织](/features/next#auto)）；与该账号登录到同一个 Claude 账号的文件夹也会被排除。
 2. 它获取一个锁（`~/.local/state/ccam/picks.lock`），所以同时运行的选择会一个接一个地进行。
 3. 它以与 `ccam usage` 相同的方式、使用 60 秒缓存，一次性查询每个账号的用量。
 4. 先排除最近 2 分钟内被选中过的账号（`~/.local/state/ccam/picks/<name>`），再用 `ccam next --auto` 的[选择规则](/features/next#auto)在其余账号中选择：优先选择低于 `auto_max_usage` 的账号，按策略选择，从不选择已达 100% 的账号。

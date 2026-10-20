@@ -4,7 +4,7 @@ description: ccam add --api, Anthropic API அல்லது gateway-க்க�
 updated: 2026-10-20
 order: 13
 translation: machine
-sourceHash: de2c5cde2c48
+sourceHash: "a903c92f2c50"
 ---
 
 ஒரு API key கணக்கு, Claude subscription உள்நுழைவுக்குப் பதிலாக API key மூலம் Claude Code-ஐத் தொடங்குகிறது: Anthropic-இன் API, அல்லது அதே Messages வடிவத்தைப் பேசும் endpoint, உதாரணமாக LiteLLM அல்லது OpenRouter gateway. ccam key-ஐச் சேமிப்பதில்லை. கணக்கு தொடங்கும் ஒவ்வொரு முறையும், ஒரு environment variable-இலிருந்தோ password manager போன்ற கட்டளையிலிருந்தோ அதைப் படித்து, அந்த Claude Code process-க்கு மட்டுமே கொடுக்கிறது.
@@ -22,12 +22,12 @@ ccam list
 
 ```console
 $ ccam list
-   #  Name      Shortcut  Email                    Shared               Last used
-*  1  personal  -         me@example.com           mcp settings md ext  2h ago
-   2  gw        -         (API: llm.example.com)   mcp settings md ext  -
+   #  Name      Shortcut  Email                   Groups   Last used
+*  1  personal  -         me@example.com          default  2h ago
+   2  gw        -         (API: llm.example.com)  default  -
 ```
 
-API key கணக்கு மற்ற எந்தக் கணக்கையும் போலவே அமைப்புகள், `CLAUDE.md`, extensions, MCP சர்வர்களைப் பகிர்கிறது, குறுக்குவழிகள், `ccam folder`, `ccam ext` ஆகியவற்றுடன் வேலை செய்கிறது.
+API key கணக்கு மற்ற எந்தக் கணக்கையும் போலவே குழுக்களில் சேர்கிறது (இயல்பாக `default`: அமைப்புகள், `CLAUDE.md`, extensions, MCP சர்வர்கள்), குறுக்குவழிகள், `ccam folder`, `ccam ext` ஆகியவற்றுடன் வேலை செய்கிறது.
 
 ## Options
 
@@ -59,7 +59,7 @@ model = 'claude-sonnet-5-5'
 கணக்கின் ஒவ்வொரு தொடக்கத்திலும், வழக்கமான சரிபார்ப்புகளுக்குப் பிறகு, Claude Code தொடங்கும் முன்:
 
 1. ccam key-ஐப் படிக்கிறது: `env:` environment-இலிருந்து, `command:` கட்டளையை 30 வினாடி வரம்புடன் இயக்கி. கட்டளை terminal-இல் password கேட்கலாம்; அதன் error output-உம் terminal-க்குச் செல்லும். காலியான key தொடக்கத்தை நிறுத்தும், key எங்கே எதிர்பார்க்கப்பட்டது என்று செய்தி சொல்லும்.
-2. Claude Code எப்படி உள்நுழைகிறது அல்லது எந்த provider-ஐப் பயன்படுத்துகிறது என்பதைத் தீர்மானிக்கும், மரபுரிமையாகப் பெற்ற ஒவ்வொரு variable-ஐயும் அது நீக்குகிறது: `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_BASE_URL`, `ANTHROPIC_MODEL`, `CLAUDE_CODE_USE_BEDROCK`, `CLAUDE_CODE_USE_VERTEX`, `CLAUDE_CODE_USE_FOUNDRY`. உங்கள் shell-இல் வேறொன்றுக்காக அமைத்த key இந்தக் கணக்கை அடைய முடியாது, subscription உள்நுழைவு அதன் key-ஐ மீற முடியாது.
+2. Claude Code எப்படி உள்நுழைகிறது அல்லது எந்த provider-ஐப் பயன்படுத்துகிறது என்பதைத் தீர்மானிக்கும், மரபுரிமையாகப் பெற்ற ஒவ்வொரு variable-ஐயும் அது நீக்குகிறது: keys மற்றும் tokens (`ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN_FILE_DESCRIPTOR`, `CLAUDE_CODE_API_KEY_FILE_DESCRIPTOR`), endpoint (`ANTHROPIC_BASE_URL`, `ANTHROPIC_UNIX_SOCKET`, `ANTHROPIC_MODEL`), provider switches (`CLAUDE_CODE_USE_BEDROCK`, `CLAUDE_CODE_USE_VERTEX`, `CLAUDE_CODE_USE_FOUNDRY`, `CLAUDE_CODE_USE_ANTHROPIC_AWS`, `CLAUDE_CODE_USE_ANTHROPIC_GOOGLE_CLOUD`, `CLAUDE_CODE_USE_MANTLE`, `CLAUDE_CODE_USE_GATEWAY`). உங்கள் shell-இல் வேறொன்றுக்காக அமைத்த key இந்தக் கணக்கை அடைய முடியாது, subscription உள்நுழைவு அதன் key-ஐ மீற முடியாது.
 3. கொடுக்கப்பட்டால் `ANTHROPIC_BASE_URL`, `ANTHROPIC_MODEL` ஆகியவற்றை அமைக்கிறது, key-ஐ `ANTHROPIC_API_KEY` அல்லது `ANTHROPIC_AUTH_TOKEN` ஆக அமைக்கிறது.
 
 subscription உள்நுழைவு உள்ள கணக்குகள் முன்பு போலவே மரபுரிமையாகப் பெற்ற environment-ஐ வைத்திருக்கின்றன. interactive அமர்வில், environment-இல் கண்டுபிடிக்கும் key-ஐப் பயன்படுத்தலாமா என்று Claude Code ஒருமுறை கேட்கலாம்.
@@ -70,7 +70,7 @@ subscription உள்நுழைவு உள்ள கணக்குகள�
 - `ccam add --api` ஒரு `env:` மூலத்தை உடனே சரிபார்த்து, variable காலியாக இருந்தால் எச்சரிக்கிறது; ஒரு `command:` மூலம் முதன்முதலில் தொடக்கத்தில் இயங்குகிறது.
 - API key கணக்குக்கு உள்நுழைவு இல்லாததால், `ccam login`, `ccam logout` அதை மறுக்கின்றன. `ccam doctor` அதன் endpoint-ஐயும் key மூலத்தையும் காட்டி, ஒரு `env:` variable காலியாக இருக்கும்போது எச்சரிக்கிறது.
 - `ccam usage` அதற்கு `API` எனக் காட்டுகிறது. API key-க்கு ஒப்பிட 5 மணி நேர அல்லது வாராந்திர வரம்பு இல்லாததால், `ccam next --auto`, `--fallback`, `ccam pick` ஆகியவை subscription கணக்குகளிலிருந்து மட்டுமே தேர்ந்தெடுக்கின்றன.
-- `env` block அல்லது `apiKeyHelper` உள்ள பகிரப்பட்ட `settings.json`, API key கணக்குகள் உட்படக் குழுவின் ஒவ்வொரு கணக்குக்கும் பொருந்தும். provider அமைப்புகளைப் பகிரப்பட்ட அமைப்புகளுக்கு வெளியே வையுங்கள்.
+- `env` block அல்லது `apiKeyHelper` உள்ள பகிரப்பட்ட `settings.json`, API key கணக்குகள் உட்படக் குழுவின் ஒவ்வொரு கணக்குக்கும் பொருந்தும். provider அமைப்புகளைப் பகிரப்பட்ட அமைப்புகளுக்கு வெளியே வையுங்கள், அல்லது API key கணக்கை `settings` இல்லாத ஒரு குழுவில் வையுங்கள்.
 
 ## தொடர்புடையவை
 

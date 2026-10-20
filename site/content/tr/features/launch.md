@@ -1,10 +1,10 @@
 ---
 title: Claude Code'u başlatma
-description: Claude Code'u herhangi bir hesapla ccam <name|number>, ccam run veya ccam seçicisiyle başlatın; argümanlar claude'a aynen gider, --dry-run komutu gösterir.
+description: Claude Code'u herhangi bir hesapla ccam <name|number>, ccam run veya kontrol paneliyle başlatın; argümanlar claude'a aynen gider, --dry-run komutu gösterir.
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: e6b5a8d4df86
+sourceHash: "4812b197f143"
 ---
 
 `ccam work`, Claude Code'u `work` hesabıyla başlatır ve addan sonraki her şey `claude` komutuna olduğu gibi iletilir. `claude` yazacağınız her yerde kullanın: terminalde, bir betikte veya girdiyi boruyla aktararak.
@@ -21,7 +21,7 @@ ccam -p "summarise"              # no name: the folder's account, else the defau
 ccam use work                    # make work the default account
 ccam folder work ~/code/company  # use work in that folder when no name is given
 ccam run work --continue         # same as ccam work --continue
-ccam                             # the picker on a terminal, the list otherwise
+ccam                             # the dashboard on a terminal, the list otherwise
 ccam --dry-run work -p hi        # print the command instead of running it
 ccam --fallback work -p "fix the tests"   # run again as another account at the limit
 ```
@@ -30,22 +30,13 @@ Bir hesabın adını veya `ccam list` çıktısındaki numarasını verin. ccam 
 
 İlk argüman `-` ile başlıyorsa ve ccam'in kendi seçeneklerinden biri değilse ccam, adsız bir hesabı tüm argümanlarla başlatır. Bu, geçerli klasör için [`ccam folder`](/features/folder) ile ayarlanan hesaptır; yoksa varsayılan hesaptır: `ccam use` ile ayarlanan hesap ya da ayarlamadıysanız en küçük numaralı hesap.
 
-### Seçici
+### Kontrol paneli
 
-Argümansız `ccam`, standart girdi ve çıktı bir terminal olduğunda seçiciyi açar, aksi halde `ccam list` çıktısını yazdırır. Seçici her hesabın numarasını, e-postasını, 5 saatlik kullanımını, son kullanımını ve paylaşılan öğelerini gösterir; kullanım, her hesap yanıt verdikçe dolar.
+Argümansız `ccam`, standart girdi ve çıktı bir terminal olduğunda [kontrol panelini](/features/dashboard) açar, aksi halde `ccam list` çıktısını yazdırır. Bir hesaba gidin (ok tuşlarıyla ya da numarasını yazarak) ve başlatmak için `Enter` tuşuna basın; `n` en çok payı kalan hesabı başlatır, `o` ise `--continue`, `--resume` veya başka argümanlar sunar. Kontrol paneli Claude Code başlamadan önce kapanır; böylece terminal önce eski haline gelir.
 
-| Tuş | Ne yapar |
-| --- | --- |
-| `Enter` | Claude Code'u seçili hesapla başlatır |
-| `1` ile `9` arası | O numaralı hesabı başlatır |
-| `Up`/`Down`, `k`/`j` | Seçimi taşır |
-| `a` | Seçiciyi kapatır ve `ccam add` sihirbazını çalıştırır |
-| `s` | Seçili hesabın paylaşılan öğelerini düzenler (`Space` veya `x` değiştirir, `Enter` uygular, `Esc` geri döner) |
-| `d` | Seçili hesabı varsayılan yapar |
-| `r` | Kısa önbelleği kullanmadan kullanımı yeniden alır |
-| `q`, `Esc`, `Ctrl+C` | Çıkar |
+Kabukta `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY` veya `ANTHROPIC_AUTH_TOKEN` ayarlıysa Claude Code, hesabın kendi girişi yerine o anahtarı ya da token'ı kullanabilir; bu yüzden ccam başlamadan önce bunu standart hataya yazar (`ccam: $ANTHROPIC_API_KEY is set, so Claude Code may use that key instead of work's login…`). Değişkenleri yalnızca okur; bir [API anahtarlı hesap](/features/api) ise onları temizler.
 
-Seçici bir işlem yapmadan önce kapanır; böylece terminal Claude Code başlamadan önce eski haline gelir. `d` veya bir paylaşım değişikliğinden sonra yeniden açılır. Paylaşım değişikliği, `ccam share` gibi önce planı gösterir ve onay ister.
+`config.toml` içinde `relay = true` olduğunda ccam etkileşimli oturumları bir alt süreç olarak başlatır ve yanlarında kalır; böylece `/ccam:switch` bir konuşmayı kendiliğinden sürdürebilir ([ayrıntılar](/features/next#inside-claude-code)). Aksi halde ccam kendini Claude Code ile değiştirir ve yanında hiçbir şey çalışmaz.
 
 ## Seçenekler
 
@@ -84,7 +75,7 @@ Her başlatma, komut satırından `exec` çağrısına kadar aynı adımları iz
 Her kutu, adımı çalışırken yanar; alttaki satırlar ise Claude Code'un başladığı ortam ve argümanlardır.
 
 1. `cmd/ccam/main.go`, `app.Main` fonksiyonunu çağırır. ccam başka bir adla başlatıldıysa bu bir [kısayoldur](/features/shortcuts) ve doğrudan başlatıcıya gider.
-2. `app.parse`, cobra devreye girmeden önce `os.Args` değerine bakar. Yalnızca tek başına `ccam` (seçici), bir ccam komut adı (`config.Reserved`), `-h`/`--help` ve `-v`/`--version`, `cli.Execute` fonksiyonuna gider. Geri kalan her şey bir başlatmadır.
+2. `app.parse`, cobra devreye girmeden önce `os.Args` değerine bakar. Yalnızca tek başına `ccam` (kontrol paneli), bir ccam komut adı (`config.Reserved`), `-h`/`--help` ve `-v`/`--version`, `cli.Execute` fonksiyonuna gider. Geri kalan her şey bir başlatmadır.
 3. `launcher.Launch`, ayrıştırdığı tek dosya olan `~/.config/ccam/config.toml` dosyasını okur.
 4. `launcher.Prepare` hesabı ada veya numaraya göre bulur (ad yoksa `HereProfile`, çalışma dizinini `config.toml` içindeki `[[folder]]` girdileriyle dize olarak karşılaştırıp klasörün hesabını alır), baştaki bir `--` değerini atar ve `claude` yürütülebilir dosyasını `ResolveClaude` ile bulur. PATH araması, dosyanın değiştirilme zamanıyla birlikte `~/.local/state/ccam/claude-path` içinde önbelleğe alınır; böylece ccam her başlatmada `PATH` içinde arama yapmaz. Değişmiş veya eksik bir dosya yeni bir aramayı tetikler. `config.toml` içindeki bir `claude_bin` yolu olduğu gibi kullanılır. ccam, inode ile karşılaştırarak ccam'in kendisi olan bir `claude` dosyasını reddeder, çünkü bu bir döngüye yol açar.
 5. `checkLinks`, hesap klasörü `~/.local/share/ccam/profiles/<name>/` ile paylaşım ayarlarını `share.Check` ile karşılaştırır; bu fonksiyon yalnızca `lstat` ve `readlink` çağırır, öğe başına bir veya iki sistem çağrısı. Eksik bir bağlantı anında oluşturulur. Veri kaybettirebilecek her şey başlatmayı durdurur.

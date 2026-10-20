@@ -5,7 +5,7 @@ description: "ccam کو Linux، macOS یا Windows پر ایک کمانڈ، .deb
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: aea4984c1576
+sourceHash: "07fab3165030"
 ---
 
 Linux یا macOS پر ٹرمینل میں یہ کمانڈ چلائیں:
@@ -80,7 +80,7 @@ ccam پلگ اِن خود Claude Code کو ccam استعمال کرنا سکھا
 /plugin install ccam --marketplace jhyunwoo/ccam
 ```
 
-یہ ایک اسکل اور دو کمانڈز شامل کرتا ہے، `/ccam:usage` اور `/ccam:ext`۔ اسکل کبھی ایسی کمانڈز نہیں چلاتی جو لاگ اِن کریں یا فائلیں منتقل کریں؛ اس کے بجائے انہیں تجویز کرتی ہے۔
+یہ ایک اسکل، کمانڈز `/ccam:usage`، `/ccam:ext` اور `/ccam:switch`، اور دو ہُکس شامل کرتا ہے: جب کوئی سیشن استعمال کی حد پر رک جائے تو آپ کو ٹرمینل میں اطلاع ملتی ہے، اور `/ccam:switch [account]` گفتگو کسی دوسرے اکاؤنٹ کو سونپ دیتا ہے ([تفصیلات](/features/next#inside-claude-code))۔ ہُکس `ccam` چلاتے ہیں، اس لیے اسے اس `PATH` پر ہونا چاہیے جو Claude Code دیکھتا ہے۔ اسکل کبھی ایسی کمانڈز نہیں چلاتی جو لاگ اِن کریں یا فائلیں منتقل کریں؛ اس کے بجائے انہیں تجویز کرتی ہے۔
 
 ## انسٹالیشن چیک کریں
 

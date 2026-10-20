@@ -1,10 +1,10 @@
 ---
 title: Pagkopya ng dati nang setup
-description: Kopyahin ang settings, CLAUDE.md, mga extension, MCP server at MCP sign-in ng dati nang ~/.claude papunta sa isang ccam share group gamit ang ccam migrate.
+description: Kopyahin ang settings, CLAUDE.md, mga extension, MCP server at MCP sign-in ng dati nang ~/.claude papunta sa isang ccam group gamit ang ccam migrate.
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 95ce6ec9e220
+sourceHash: 7cee52e75749
 ---
 
 Kung gumamit ka ng Claude Code bago ang ccam, nasa `~/.claude` at `~/.claude.json` ang iyong setup. Kinokopya ito ng `ccam migrate` sa isang share group, kaya nagsisimula ang bawat account na nagshe-share ng mga item na iyon sa pamamagitan ng group na dala ang setup na mayroon ka na. Binabasa lang ang source folder, at gumagana pa rin ang karaniwang `claude` gaya ng dati. Patakbuhin ito nang isang beses pagkatapos ng una mong `ccam add`, at ulit tuwing magsisimulang mag-share ng mga MCP server ang isang account.
@@ -59,7 +59,7 @@ Accounts that share these through group default:
   extensions  personal, work
 ```
 
-Umaabot lang ang isang group sa mga account na nagshe-share ng item sa pamamagitan nito, kaya inililista sila ng buod bawat item. Para sa mga account na hindi, ipi-print ng ccam ang mga command na `ccam share <name> --<item> on` na nag-o-on ng sharing.
+Umaabot lang ang isang group sa sarili nitong mga account, at para lang sa mga item na shine-share nito, kaya inililista ng buod ang mga account ng group. Kapag hindi shine-share ng group ang isa sa mga kinopyang item, o kapag wala rito ang ilang account, ipi-print ng ccam ang mga command na `ccam group set <group> --add <items>` at `ccam group join <group> <accounts>` na nagbabago niyon.
 
 ## Mga option
 
@@ -84,7 +84,7 @@ Ang ibig sabihin ng `--group on` ay `default`. Tinatanggihan ang `--group off` a
 Pinipili ng `internal/cli/migrate.go` ang mga item, saka binabasa ng `migrate.Build` ang source at ang group at nagbabalik ng plano. Walang isinusulat hanggang `Plan.Apply`, pagkatapos mong kumpirmahin.
 
 1. **Hanapin ang source.** Tinatanggihan ng `checkSource` ang path na wala, hindi folder, o walang kilalang entry ng Claude Code. Hinahanap ng `migrate.ClaudeJSON` ang `.claude.json` na kabilang sa folder: sa loob nito, o para sa `~/.claude` na walang ganito sa loob, ang `~/.claude.json` na katabi nito. Doon ito iniimbak ng Claude Code kapag hindi nakatakda ang `CLAUDE_CONFIG_DIR`.
-2. **Itugma ang mga item sa mga path.** Galing ang bawat path sa `share.Layout`, ang parehong listahan ng pinapayagan na ginagamit ng `ccam share`. Binabasa ang mga MCP server mula sa `.claude.json` gamit ang `mcp.LocalServers`, na gumagamit ng scanner na `profile.TopLevelValue` sa halip na i-parse ang buong file.
+2. **Itugma ang mga item sa mga path.** Galing ang bawat path sa `share.Layout`, ang parehong listahan ng pinapayagan na ginagamit ng mga group. Binabasa ang mga MCP server mula sa `.claude.json` gamit ang `mcp.LocalServers`, na gumagamit ng scanner na `profile.TopLevelValue` sa halip na i-parse ang buong file.
 3. **Kopyahin, huwag kailanman ilipat.** Napupunta ang mga file sa `~/.local/share/ccam/groups/<group>/` gamit ang `fsutil.AtomicWrite` o `fsutil.CopyFile`; napupunta ang mga MCP server sa `mcp.json` ng group.
 
 Itinutugma ng bawat item ang isang source path sa isang group path:

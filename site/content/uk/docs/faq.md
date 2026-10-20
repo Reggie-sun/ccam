@@ -5,7 +5,7 @@ description: Відповіді про ccam, облікові записи Claud
 updated: 2026-10-20
 order: 6
 translation: machine
-sourceHash: 80a5475ccfee
+sourceHash: "e7d4a2c877ac"
 ---
 
 ## Чи є ccam офіційним інструментом Anthropic?
@@ -26,7 +26,7 @@ sourceHash: 80a5475ccfee
 
 ## Як продовжити розмову в іншому обліковому записі?
 
-Увімкніть спільну історію розмов для двох облікових записів командою `ccam share <name> --history on`, а потім виконайте `ccam next --continue`. Claude Code відкриє найновішу розмову поточної теки в наступному обліковому записі.
+Зробіть історію розмов спільною для облікових записів командою `ccam group set default --add history` (або в їхній власній групі: `ccam group add pair --items history --members work,side`), а потім виконайте `ccam next --continue`. Claude Code відкриє найновішу розмову поточної теки в наступному обліковому записі.
 
 ## Чи бачить або надсилає ccam мої дані входу?
 

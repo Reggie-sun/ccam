@@ -1,10 +1,10 @@
 ---
 title: Claude Code ను ప్రారంభించడం
-description: ccam <name|number>, ccam run లేదా పికర్‌తో ఏ ఖాతాగానైనా Claude Code ప్రారంభించండి; ఆర్గ్యుమెంట్‌లు మారకుండా claude కు వెళ్తాయి, --dry-run కమాండ్ చూపుతుంది.
+description: ccam <name|number>, ccam run లేదా డాష్‌బోర్డ్‌తో ఏ ఖాతాగానైనా Claude Code ప్రారంభించండి; ఆర్గ్యుమెంట్‌లు అలాగే claude కు వెళ్తాయి, --dry-run కమాండ్ చూపుతుంది.
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: e6b5a8d4df86
+sourceHash: "4812b197f143"
 ---
 
 `ccam work` Claude Code ను `work` ఖాతాగా ప్రారంభిస్తుంది, పేరు తర్వాత ఉన్నదంతా ఉన్నది ఉన్నట్లుగా `claude` కు వెళ్తుంది. మీరు `claude` అని టైప్ చేసే ప్రతి చోటా దీన్ని ఉపయోగించండి: టెర్మినల్‌లో, స్క్రిప్ట్‌లో, లేదా పైప్ ద్వారా ఇన్‌పుట్ ఇచ్చి.
@@ -21,7 +21,7 @@ ccam -p "summarise"              # no name: the folder's account, else the defau
 ccam use work                    # make work the default account
 ccam folder work ~/code/company  # use work in that folder when no name is given
 ccam run work --continue         # same as ccam work --continue
-ccam                             # the picker on a terminal, the list otherwise
+ccam                             # the dashboard on a terminal, the list otherwise
 ccam --dry-run work -p hi        # print the command instead of running it
 ccam --fallback work -p "fix the tests"   # run again as another account at the limit
 ```
@@ -30,22 +30,13 @@ ccam --fallback work -p "fix the tests"   # run again as another account at the 
 
 మొదటి ఆర్గ్యుమెంట్ `-` తో మొదలై, ccam సొంత ఫ్లాగ్‌లలో ఒకటి కాకపోతే, ccam అన్ని ఆర్గ్యుమెంట్‌లతో పేరు లేకుండా ఒక ఖాతాను ప్రారంభిస్తుంది. అది [`ccam folder`](/features/folder) తో ప్రస్తుత ఫోల్డర్‌కు సెట్ చేసిన ఖాతా, లేకపోతే డిఫాల్ట్: `ccam use` తో సెట్ చేసిన ఖాతా, మీరు ఏదీ సెట్ చేయకపోతే అతి తక్కువ నంబర్ ఉన్న ఖాతా.
 
-### పికర్
+### డాష్‌బోర్డ్
 
-స్టాండర్డ్ ఇన్‌పుట్, అవుట్‌పుట్ టెర్మినల్ అయినప్పుడు ఆర్గ్యుమెంట్‌లు లేని `ccam` పికర్‌ను తెరుస్తుంది, లేకపోతే `ccam list` ను ప్రింట్ చేస్తుంది. ఇది ప్రతి ఖాతా నంబర్, ఇమెయిల్, 5 గంటల వినియోగం, చివరి వినియోగం, షేర్ చేసిన అంశాలను చూపిస్తుంది; ప్రతి ఖాతా సమాధానం ఇచ్చినప్పుడు వినియోగం నిండుతుంది.
+స్టాండర్డ్ ఇన్‌పుట్, అవుట్‌పుట్ టెర్మినల్ అయినప్పుడు ఆర్గ్యుమెంట్‌లు లేని `ccam` [డాష్‌బోర్డ్](/features/dashboard) ను తెరుస్తుంది, లేకపోతే `ccam list` ను ప్రింట్ చేస్తుంది. ఒక ఖాతాకు వెళ్లి (బాణం కీలతో, లేదా దాని నంబర్ టైప్ చేసి) దాన్ని ప్రారంభించడానికి `Enter` నొక్కండి; `n` ఎక్కువ అవకాశం ఉన్న ఖాతాను ప్రారంభిస్తుంది, `o` `--continue`, `--resume` లేదా ఇతర ఆర్గ్యుమెంట్‌లను అందిస్తుంది. Claude Code ప్రారంభమయ్యే ముందు డాష్‌బోర్డ్ మూసుకుంటుంది, కాబట్టి టెర్మినల్ ముందుగా పునరుద్ధరించబడుతుంది.
 
-| కీ | ఏమి చేస్తుంది |
-| --- | --- |
-| `Enter` | ఎంచుకున్న ఖాతాగా Claude Code ను ప్రారంభిస్తుంది |
-| `1` నుంచి `9` | ఆ నంబర్ ఉన్న ఖాతాను ప్రారంభిస్తుంది |
-| `Up`/`Down`, `k`/`j` | ఎంపికను కదిలిస్తుంది |
-| `a` | పికర్‌ను మూసి `ccam add` విజార్డ్‌ను రన్ చేస్తుంది |
-| `s` | ఎంచుకున్న ఖాతా షేర్ చేసే అంశాలను మార్చుతుంది (`Space` లేదా `x` మార్చుతుంది, `Enter` వర్తింపజేస్తుంది, `Esc` వెనక్కి వెళ్తుంది) |
-| `d` | ఎంచుకున్న ఖాతాను డిఫాల్ట్‌గా చేస్తుంది |
-| `r` | చిన్న కాష్ లేకుండా వినియోగాన్ని మళ్లీ తెస్తుంది |
-| `q`, `Esc`, `Ctrl+C` | నిష్క్రమిస్తుంది |
+షెల్‌లో `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY` లేదా `ANTHROPIC_AUTH_TOKEN` సెట్ అయి ఉంటే, Claude Code ఖాతా సొంత లాగిన్ బదులు ఆ కీని లేదా టోకెన్‌ను ఉపయోగిస్తుంది, కాబట్టి ప్రారంభించే ముందు ccam స్టాండర్డ్ ఎర్రర్‌పై ఆ విషయం చెబుతుంది (`ccam: $ANTHROPIC_API_KEY is set, so Claude Code may use that key instead of work's login…`). అది వేరియబుల్స్‌ను చదువుతుంది మాత్రమే; [API కీ ఖాతా](/features/api) బదులుగా వాటిని తొలగిస్తుంది.
 
-పికర్ పని చేసే ముందు మూసుకుంటుంది, కాబట్టి Claude Code ప్రారంభమయ్యే ముందు టెర్మినల్ పునరుద్ధరించబడుతుంది. `d` లేదా షేరింగ్ మార్పు తర్వాత అది మళ్లీ తెరుచుకుంటుంది. షేరింగ్ మార్పు `ccam share` లాగే ముందుగా ప్రణాళికను చూపించి అడుగుతుంది.
+`config.toml` లో `relay = true` తో, ccam ఇంటరాక్టివ్ సెషన్‌లను చైల్డ్‌గా ప్రారంభించి వాటి పక్కనే ఉంటుంది, తద్వారా `/ccam:switch` సంభాషణను తనంతట తానే కొనసాగించగలదు ([వివరాలు](/features/next#inside-claude-code)); లేకపోతే ccam తన స్థానాన్ని Claude Code కు ఇస్తుంది, దాని పక్కన ఏదీ రన్ అవ్వదు.
 
 ## ఆప్షన్లు
 
@@ -84,7 +75,7 @@ $env:CLAUDE_CONFIG_DIR='C:\Users\me\.local\share\ccam\profiles\work'; & C:\Users
 ప్రతి బాక్స్ దాని దశ రన్ అయినప్పుడు వెలుగుతుంది, కింద ఉన్న లైన్లు Claude Code ప్రారంభమయ్యే ఎన్విరాన్‌మెంట్, ఆర్గ్యుమెంట్‌లు.
 
 1. `cmd/ccam/main.go` `app.Main` ను పిలుస్తుంది. ccam మరో పేరుతో ప్రారంభించబడితే, అది ఒక [షార్ట్‌కట్](/features/shortcuts), నేరుగా లాంచర్‌కు వెళ్తుంది.
-2. cobra జోక్యం చేసుకునే ముందే `app.parse` `os.Args` ను చూస్తుంది. ఒంటరి `ccam` (పికర్), ఒక ccam కమాండ్ పేరు (`config.Reserved`), `-h`/`--help`, `-v`/`--version` మాత్రమే `cli.Execute` కు వెళ్తాయి. మిగతావన్నీ ప్రారంభాలు.
+2. cobra జోక్యం చేసుకునే ముందే `app.parse` `os.Args` ను చూస్తుంది. ఒంటరి `ccam` (డాష్‌బోర్డ్), ఒక ccam కమాండ్ పేరు (`config.Reserved`), `-h`/`--help`, `-v`/`--version` మాత్రమే `cli.Execute` కు వెళ్తాయి. మిగతావన్నీ ప్రారంభాలు.
 3. `launcher.Launch` `~/.config/ccam/config.toml` ను చదువుతుంది, అది పార్స్ చేసే ఏకైక ఫైల్ ఇదే.
 4. `launcher.Prepare` పేరు లేదా నంబర్ ద్వారా ఖాతాను కనుగొని (పేరు లేకపోతే `HereProfile` ఫోల్డర్ ఖాతాను తీసుకుంటుంది, working directory ని `config.toml` లోని `[[folder]]` ఎంట్రీలతో strings గా పోల్చి), ముందున్న ఒక `--` ను తొలగించి, `ResolveClaude` తో `claude` ఎగ్జిక్యూటబుల్‌ను కనుగొంటుంది. PATH లుకప్ ఫైల్ మార్పు సమయంతో పాటు `~/.local/state/ccam/claude-path` లో కాష్ అవుతుంది, కాబట్టి ccam ప్రతి ప్రారంభంలో `PATH` ను వెతకదు. ఫైల్ మారినా లేకపోయినా కొత్త లుకప్ జరుగుతుంది. `config.toml` లోని `claude_bin` పాత్ ఉన్నది ఉన్నట్లుగా ఉపయోగించబడుతుంది. ccam తానే అయిన `claude` ను, inode ద్వారా పోల్చి, ccam తిరస్కరిస్తుంది, ఎందుకంటే అది లూప్ అవుతుంది.
 5. `checkLinks` ఖాతా ఫోల్డర్ `~/.local/share/ccam/profiles/<name>/` ను దాని షేరింగ్ సెట్టింగ్‌లతో `share.Check` ద్వారా పోలుస్తుంది, అది `lstat`, `readlink` ను మాత్రమే పిలుస్తుంది, ఒక్కో అంశానికి ఒకటి లేదా రెండు సిస్టమ్ కాల్స్. లేని లింక్ అక్కడికక్కడే సృష్టించబడుతుంది. డేటా కోల్పోయే అవకాశం ఉన్న ఏదైనా ప్రారంభాన్ని ఆపుతుంది.

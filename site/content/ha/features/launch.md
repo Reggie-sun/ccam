@@ -1,10 +1,10 @@
 ---
 title: Fara Claude Code
-description: Fara Claude Code a matsayin kowane asusu da ccam <name|number>, ccam run ko mai zaɓi na ccam; arguments suna zuwa claude ba canji, --dry-run yana nuna umarnin.
+description: Fara Claude Code a matsayin kowane asusu da ccam <name|number>, ccam run ko dashboard; arguments suna zuwa claude ba canji, --dry-run yana nuna umarnin.
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: e6b5a8d4df86
+sourceHash: 4812b197f143
 ---
 
 `ccam work` yana fara Claude Code a matsayin asusun `work`, kuma duk abin da ke bayan sunan yana zuwa `claude` kamar yadda yake. Yi amfani da shi duk inda za ka rubuta `claude`: a terminal, a rubutun (script), ko tare da shigarwa ta bututu (pipe).
@@ -21,7 +21,7 @@ ccam -p "summarise"              # no name: the folder's account, else the defau
 ccam use work                    # make work the default account
 ccam folder work ~/code/company  # use work in that folder when no name is given
 ccam run work --continue         # same as ccam work --continue
-ccam                             # the picker on a terminal, the list otherwise
+ccam                             # the dashboard on a terminal, the list otherwise
 ccam --dry-run work -p hi        # print the command instead of running it
 ccam --fallback work -p "fix the tests"   # run again as another account at the limit
 ```
@@ -30,22 +30,13 @@ Ba da sunan asusu ko lambarsa daga `ccam list`. ccam ba ya karanta arguments da 
 
 Idan argument na farko ya fara da `-` kuma ba ɗaya daga cikin flags na ccam kansa ba ne, ccam yana fara asusu ba tare da suna ba, da dukkan arguments. Wannan shi ne asusun da aka saita don foldar yanzu da [`ccam folder`](/features/folder), in ba haka ba asusun tsoho: wanda aka saita da `ccam use`, ko asusun da ke da mafi ƙanƙantar lamba idan ba ka saita ɗaya ba.
 
-### Mai zaɓi
+### Dashboard
 
-`ccam` ba tare da arguments ba yana buɗe mai zaɓi (picker) idan standard input da output terminal ne, kuma yana buga `ccam list` in ba haka ba. Yana nuna lambar kowane asusu, imel, amfanin awa 5, amfani na ƙarshe da abubuwan da aka raba; amfani yana cika yayin da kowane asusu ya amsa.
+`ccam` ba tare da arguments ba yana buɗe [dashboard](/features/dashboard) idan standard input da output terminal ne, kuma yana buga `ccam list` in ba haka ba. Je kan asusu (da kibiyoyi, ko ta rubuta lambarsa) kuma danna `Enter` don fara shi; `n` yana fara asusun da ya fi sarari, kuma `o` yana ba da `--continue`, `--resume` ko wasu arguments. Dashboard yana rufewa kafin Claude Code ya fara, don haka ana fara maido da terminal.
 
-| Maɓalli | Abin da yake yi |
-| --- | --- |
-| `Enter` | Fara Claude Code a matsayin asusun da aka zaɓa |
-| `1` zuwa `9` | Fara asusun da ke da wannan lambar |
-| `Up`/`Down`, `k`/`j` | Matsar da zaɓin |
-| `a` | Rufe mai zaɓin kuma gudanar da mataimakin `ccam add` |
-| `s` | Gyara abubuwan da asusun da aka zaɓa ke rabawa (`Space` ko `x` yana sauyawa, `Enter` yana aiwatarwa, `Esc` yana komawa baya) |
-| `d` | Mai da asusun da aka zaɓa tsoho |
-| `r` | Sake ɗauko amfani, ba tare da gajeren cache ba |
-| `q`, `Esc`, `Ctrl+C` | Fita |
+Idan harsashin (shell) yana da `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY` ko `ANTHROPIC_AUTH_TOKEN` a saita, Claude Code zai yi amfani da wannan key ko token maimakon shigar asusun kansa, don haka ccam yana faɗin haka a standard error kafin ya fara (`ccam: $ANTHROPIC_API_KEY is set, so Claude Code may use that key instead of work's login…`). Yana karanta variables ɗin ne kawai; [asusun API key](/features/api) yana share su maimakon haka.
 
-Mai zaɓin yana rufewa kafin ya yi aiki, don haka ana maido da terminal kafin Claude Code ya fara. Bayan `d` ko canjin rabawa yana sake buɗewa. Canjin rabawa yana nuna shirin kuma yana fara tambaya, kamar yadda `ccam share` ke yi.
+Da `relay = true` a `config.toml`, ccam yana fara zaman mu'amala a matsayin process na ƙasa (child) kuma yana zama a gefensu, don `/ccam:switch` ya iya kai tattaunawa gaba da kansa ([cikakken bayani](/features/next#inside-claude-code)); in ba haka ba ccam yana maye gurbin kansa da Claude Code, kuma babu abin da ke gudana a gefensa.
 
 ## Zaɓuɓɓuka
 
@@ -84,7 +75,7 @@ Kowane farawa yana bin matakai iri ɗaya, daga layin umarni zuwa `exec`:
 Kowane akwati yana haskakawa yayin da matakinsa ke gudana, kuma layukan da ke ƙasa su ne muhalli da arguments da Claude Code ke farawa da su.
 
 1. `cmd/ccam/main.go` yana kiran `app.Main`. Idan an fara ccam da wani suna, [gajeren umarni](/features/shortcuts) ne kuma yana zuwa mai farawa (launcher) kai tsaye.
-2. `app.parse` yana duba `os.Args` kafin cobra ya shiga. `ccam` shi kaɗai (mai zaɓi), sunan umarnin ccam (`config.Reserved`), `-h`/`--help` da `-v`/`--version` ne kawai ke zuwa `cli.Execute`. Duk sauran farawa ne.
+2. `app.parse` yana duba `os.Args` kafin cobra ya shiga. `ccam` shi kaɗai (dashboard), sunan umarnin ccam (`config.Reserved`), `-h`/`--help` da `-v`/`--version` ne kawai ke zuwa `cli.Execute`. Duk sauran farawa ne.
 3. `launcher.Launch` yana karanta `~/.config/ccam/config.toml`, fayil ɗaya tilo da yake karantawa.
 4. `launcher.Prepare` yana nemo asusun ta suna ko lamba (idan babu, `HereProfile` yana ɗaukar asusun foldar, yana kwatanta foldar aiki da shigarwar `[[folder]]` na `config.toml` a matsayin strings), yana cire `--` ɗaya na farko, kuma yana nemo shirin `claude` da `ResolveClaude`. Ana ajiye sakamakon neman PATH a cache a `~/.local/state/ccam/claude-path` tare da lokacin gyaran fayil ɗin, don haka ccam ba ya bincika `PATH` a kowane farawa. Fayil da ya canza ko ya ɓace yana sa a sake nema. Ana amfani da hanyar `claude_bin` a `config.toml` kamar yadda take. ccam yana ƙin `claude` wanda ccam kansa ne, ana kwatanta su ta inode, domin hakan zai yi ta zagayawa.
 5. `checkLinks` yana kwatanta foldar asusun `~/.local/share/ccam/profiles/<name>/` da saitunan rabawarta ta amfani da `share.Check`, wanda ke kiran `lstat` da `readlink` kawai, kiran tsarin (system call) ɗaya ko biyu ga kowane abu. Ana ƙirƙirar mahaɗin da ya ɓace nan take. Duk abin da zai iya rasa bayanai yana dakatar da farawar.

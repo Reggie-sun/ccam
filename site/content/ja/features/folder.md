@@ -4,7 +4,7 @@ description: ccam folderを使うと、アカウント名なしでClaude Codeを
 updated: 2026-10-20
 order: 11
 translation: machine
-sourceHash: 5071b04a194d
+sourceHash: "46d1410a3d81"
 ---
 
 `ccam folder work ~/code/company`を実行すると、`~/code/company`とその下のどのフォルダーでも、アカウント名を指定しない起動はすべて`work`としてClaude Codeを起動します。その外では、これまでどおりデフォルトのアカウントが起動します。`ccam personal`や`ccpersonal`のようなショートカットでアカウントを指定した場合は、常にそのアカウントが起動します。
@@ -34,7 +34,7 @@ Here (/home/me/code/company/api): work, set for /home/me/code/company
 - `ccam -p "…"`、および最初の引数がClaude Codeのオプションであるそのほかの起動
 - 名前なしの`ccam run`と、`ccam --dry-run`
 - `ccam --fallback -p "…"`の最初の試行
-- ピッカー（`ccam`単体）。フォルダーのアカウントにカーソルを置いた状態で開きます
+- ダッシュボード（`ccam`単体）。フォルダーのアカウントにカーソルを置いた状態で開きます
 
 ## オプション
 

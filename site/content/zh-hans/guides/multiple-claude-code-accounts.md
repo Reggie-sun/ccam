@@ -4,7 +4,7 @@ description: 借助 CLAUDE_CONFIG_DIR 让多个 Claude Code 账号并行运行�
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: f2982e4317a2
+sourceHash: "ee92078b81c3"
 ---
 
 为每个账号指定单独的配置文件夹。Claude Code 从 `CLAUDE_CONFIG_DIR` 环境变量中读取文件夹位置，每个文件夹都保存各自的登录信息、设置和历史记录，所以每个账号都保持登录状态，你也可以同时运行它们。你可以用 shell 别名手动设置，也可以交给 ccam 完成。
@@ -69,7 +69,7 @@ Claude Code [可以在 Windows 上原生运行，也可以在 WSL 中运行](htt
 
 **某个 MCP 服务器只出现在一个账号中。** 在会话中用 `claude mcp add` 添加的服务器属于该账号。用 `ccam mcp import work <server>` 把它移到所有账号。
 
-**各账号的设置不一致。** `ccam share work` 会列出该账号共享的内容；`ccam share work --settings on` 会先显示将要发生的变更，再共享它的设置。`ccam doctor --fix` 会修复损坏的链接，并为它修改的每个文件保留备份。
+**各账号的设置不一致。** `ccam share work` 会列出该账号共享的内容以及通过哪个组共享；`ccam group join default work` 会先显示将要发生的变更，再让它共享 `default` 所共享的内容。`ccam doctor --fix` 会修复损坏的链接，并为它修改的每个文件保留备份。
 
 **两个账号打开了同一个对话。** 避免在两个账号中同时处理同一个对话。你这样做时，ccam 会发出警告。
 

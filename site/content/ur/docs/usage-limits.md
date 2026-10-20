@@ -4,7 +4,7 @@ description: "ccam usage سے Claude Code کے ہر اکاؤنٹ کا 5 گھنٹ
 updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: a84df8e873d6
+sourceHash: "40aef0708c81"
 ---
 
 `ccam usage` دکھاتا ہے کہ ہر اکاؤنٹ نے 5 گھنٹے اور ہفتہ وار حدوں کا کتنا حصہ استعمال کر لیا ہے۔ `ccam next --auto` سب سے زیادہ گنجائش والا اکاؤنٹ کھولتا ہے، اور `--continue` موجودہ گفتگو کو ساتھ لے جاتا ہے۔
@@ -55,10 +55,10 @@ ccam statusline install
 ```sh
 ccam next             # the account after the one you used last
 ccam next --auto      # the account with the lowest 5-hour usage
-ccam next --continue  # the next account that shares your conversation history
+ccam next --continue  # carry this folder's conversation on as the next account
 ```
 
-`ccam next` ان اکاؤنٹس کو چھوڑ دیتا ہے جن میں لاگ اِن نہیں کیا گیا، اور `--auto` ان اکاؤنٹس کو چھوڑ دیتا ہے جو 100% پر ہیں۔ گفتگو جاری رکھنے کے لیے ضروری ہے کہ دونوں اکاؤنٹس گفتگو کی ہسٹری شیئر کرتے ہوں؛ [شیئرنگ](/docs/sharing) دیکھیں۔
+`ccam next` ان اکاؤنٹس کو چھوڑ دیتا ہے جن میں لاگ اِن نہیں کیا گیا، اور `--auto` ان اکاؤنٹس کو چھوڑ دیتا ہے جو 100% پر ہیں اور جو کسی دوسری تنظیم کے ہیں۔ جب دونوں اکاؤنٹس گفتگو کی ہسٹری شیئر کرتے ہوں تو `--continue` وہی گفتگو کھولتا ہے؛ ورنہ Claude Code اسے نئے اکاؤنٹ میں کاپی کر دیتا ہے۔ [شیئرنگ](/docs/sharing) اور [اگلے اکاؤنٹ پر جانا](/features/next#continue) دیکھیں۔
 
 `claude -p` چلانے والے اسکرپٹس اور شیڈول شدہ جابز کے لیے اکاؤنٹ کے نام سے پہلے `--fallback` لگائیں۔ جب وہ اکاؤنٹ اپنی حد کو پہنچ جائے تو ccam وہی کمانڈ سب سے زیادہ گنجائش والے اکاؤنٹ سے دوبارہ چلاتا ہے، اور صرف اس رن کا آؤٹ پٹ پرنٹ ہوتا ہے جو مکمل ہوا:
 

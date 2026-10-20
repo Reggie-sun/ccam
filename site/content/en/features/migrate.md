@@ -1,6 +1,6 @@
 ---
 title: Copying an existing setup
-description: Copy the settings, CLAUDE.md, extensions, MCP servers and MCP sign-ins of an existing ~/.claude into a ccam share group with ccam migrate.
+description: Copy the settings, CLAUDE.md, extensions, MCP servers and MCP sign-ins of an existing ~/.claude into a ccam group with ccam migrate.
 updated: 2026-10-19
 order: 6
 translation: source
@@ -58,7 +58,7 @@ Accounts that share these through group default:
   extensions  personal, work
 ```
 
-A group only reaches the accounts that share an item through it, so the summary lists them per item. For accounts that do not, ccam prints the `ccam share <name> --<item> on` commands that turn sharing on.
+A group only reaches its own accounts, and only for the items it shares, so the summary lists the group's accounts. When the group does not share one of the copied items, or some accounts are not in it, ccam prints the `ccam group set <group> --add <items>` and `ccam group join <group> <accounts>` commands that change that.
 
 ## Options
 
@@ -83,7 +83,7 @@ With no item flag, the checklist decides on a terminal. Outside a terminal, or w
 `internal/cli/migrate.go` picks the items, then `migrate.Build` reads the source and the group and returns a plan. Nothing is written until `Plan.Apply`, after you confirm.
 
 1. **Find the source.** `checkSource` refuses a path that is missing, not a folder, or holds no known Claude Code entry. `migrate.ClaudeJSON` finds the `.claude.json` that belongs to the folder: inside it, or for `~/.claude` without one inside, `~/.claude.json` next to it. That is where Claude Code keeps it when `CLAUDE_CONFIG_DIR` is not set.
-2. **Map items to paths.** Every path comes from `share.Layout`, the same allow list `ccam share` uses. The MCP servers are read out of `.claude.json` with `mcp.LocalServers`, which uses the `profile.TopLevelValue` scanner rather than parsing the whole file.
+2. **Map items to paths.** Every path comes from `share.Layout`, the same allow list groups use. The MCP servers are read out of `.claude.json` with `mcp.LocalServers`, which uses the `profile.TopLevelValue` scanner rather than parsing the whole file.
 3. **Copy, never move.** Files go to `~/.local/share/ccam/groups/<group>/` with `fsutil.AtomicWrite` or `fsutil.CopyFile`; MCP servers go into the group's `mcp.json`.
 
 Each item maps one source path to one group path:

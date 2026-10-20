@@ -4,7 +4,7 @@ description: ccam pick พิมพ์บัญชีที่เหลือโ
 updated: 2026-10-20
 order: 12
 translation: machine
-sourceHash: 65a5a7e179a5
+sourceHash: "2e8285b7c193"
 ---
 
 `ccam pick` พิมพ์ชื่อของบัญชีที่เข้าสู่ระบบแล้วซึ่งเหลือโควตามากที่สุด เพื่อให้สคริปต์ใช้เริ่ม Claude Code worker ที่เริ่มพร้อมกันจะได้บัญชีคนละบัญชีตราบใดที่มีบัญชีที่เหลือโควตามากพอ งาน `claude -p` ชุดหนึ่งจึงกระจายไปทั่วบัญชีของคุณแทนที่จะใช้บัญชีเดียวจนหมด
@@ -19,6 +19,8 @@ done; wait
 ccam pick --json                      # the account and its usage
 ccam pick --model opus                # also count the Opus weekly limit
 ccam pick --max-usage 80 --strategy expiring
+ccam pick --strategy balance          # spread over the weekly quota, fewer running sessions first
+ccam pick --cross-org                 # also accounts of other organizations
 ccam pick --wait=2h                   # nobody has room: wait for a reset
 ccam --fallback "$(ccam pick)" -p "…" # also switch if this account hits its limit mid-job
 ```
@@ -31,7 +33,8 @@ $ ccam pick --json
   "email": "dev@company.com",
   "five_hour": { "percent": 12, "resets_at": "2026-10-20T15:10:00Z", "known": true },
   "weekly": { "percent": 41, "resets_at": "2026-10-24T09:00:00Z", "known": true },
-  "source": "live"
+  "source": "live",
+  "reason": "12% of its 5 hours used, the least"
 }
 ```
 
@@ -41,16 +44,17 @@ $ ccam pick --json
 
 | ตัวเลือก | สิ่งที่ทำ | ค่าเริ่มต้น |
 | --- | --- | --- |
-| `--json` | พิมพ์บัญชี การใช้งาน 5 ชั่วโมงและรายสัปดาห์ และแหล่งที่มาของตัวเลข | ปิด |
+| `--json` | พิมพ์บัญชี การใช้งาน 5 ชั่วโมงและรายสัปดาห์ แหล่งที่มาของตัวเลข และเหตุผลที่เลือกบัญชีนั้น | ปิด |
 | `--model <model>` | นับช่วงรายสัปดาห์ของโมเดลนั้นด้วย เช่น `opus` | ไม่มี |
 | `--max-usage <1-100>` | เลือกบัญชีที่ใช้งานต่ำกว่าค่านี้ก่อน | `auto_max_usage` หากไม่มีคือ 100 |
-| `--strategy headroom\|expiring` | การใช้งาน 5 ชั่วโมงต่ำที่สุด หรือช่วง 5 ชั่วโมงที่จะรีเซ็ตเร็วที่สุด | `auto_strategy` หากไม่มีคือ `headroom` |
+| `--strategy headroom\|expiring\|balance` | การใช้งาน 5 ชั่วโมงต่ำที่สุด ช่วง 5 ชั่วโมงที่จะรีเซ็ตเร็วที่สุด หรือโควตารายสัปดาห์ที่จะถูกปล่อยทิ้งโดยไม่ได้ใช้ก่อน | `auto_strategy` หากไม่มีคือ `headroom` |
+| `--cross-org` | เลือกบัญชีขององค์กรอื่นด้วย | `cross_org` หากไม่มีคือปิด |
 | `--wait[=<duration>]` | เมื่อไม่มีบัญชีใดเหลือโควตา ให้รอบัญชีแรกที่รีเซ็ต นานไม่เกินค่านี้ | ปิด; `5h` เมื่อระบุโดยไม่มีค่า |
 | `--dry-run` | เลือกโดยไม่บันทึกการเลือก | ปิด |
 
 ## วิธีการทำงาน
 
-1. ccam แสดงรายการบัญชีที่เข้าสู่ระบบแล้ว (บัญชี API key ไม่มีขีดจำกัดจึงไม่ถูกนับรวม)
+1. ccam แสดงรายการบัญชีที่เข้าสู่ระบบแล้ว (บัญชี API key ไม่มีขีดจำกัดจึงไม่ถูกนับรวม) ซึ่งอยู่ในองค์กรเดียวกับบัญชีที่โฟลเดอร์นี้จะเริ่มใช้ (ดู[องค์กร](/features/next#auto)) โฟลเดอร์ที่เข้าสู่ระบบด้วยบัญชี Claude เดียวกันกับบัญชีนั้นก็จะไม่ถูกนับรวมด้วย
 2. ccam ล็อก (`~/.local/state/ccam/picks.lock`) เพื่อให้การเลือกที่รันพร้อมกันเกิดขึ้นทีละรายการ
 3. ccam สอบถามการใช้งานของทุกบัญชีพร้อมกันแบบเดียวกับ `ccam usage` โดยใช้แคช 60 วินาที
 4. บัญชีที่ถูกเลือกภายใน 2 นาทีที่ผ่านมา (`~/.local/state/ccam/picks/<name>`) จะถูกตัดออกก่อน แล้ว[กฎการเลือก](/features/next#auto)ของ `ccam next --auto` จะเลือกจากบัญชีที่เหลือ: บัญชีที่ต่ำกว่า `auto_max_usage` มาก่อน ตามกลยุทธ์ และไม่เลือกบัญชีที่อยู่ที่ 100% เด็ดขาด

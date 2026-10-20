@@ -4,7 +4,7 @@ description: ccam usage показує 5-годинні й тижневі лім
 updated: 2026-10-20
 order: 7
 translation: machine
-sourceHash: 525174ceed0d
+sourceHash: "ec1d1ee27d9f"
 ---
 
 `ccam usage` показує, яку частку 5-годинного та тижневого лімітів використав кожен обліковий запис, і час до скидання кожного вікна. Використовуйте цю команду перед початком довгого завдання або коли Claude Code попереджає, що ліміт близько, щоб побачити, в якого облікового запису ще є запас. `ccam statusline` — це команда рядка стану для Claude Code: вона показує назву облікового запису й використання всередині Claude Code і зберігає числа для `ccam usage`.
@@ -20,6 +20,7 @@ ccam usage -v               # add per-model weekly limits and the data source
 ccam usage --json           # machine-readable, one object per account
 ccam usage --source cache   # saved numbers only, no network
 ccam usage --refresh        # also renew expired logins of accounts not running
+ccam usage --source claude  # let Claude Code look it up: ccam never touches a token
 ccam statusline install     # set the status line in every account's settings.json
 ```
 
@@ -32,7 +33,7 @@ $ ccam usage
 → Most headroom: personal   (open it with ccam next --auto)
 ```
 
-У терміналі таблиця з'являється одразу з `fetching…` у кожному рядку, і кожен рядок перемальовується, щойно відповідає його обліковий запис. `As of` показує давність чисел; `(cached)` означає, що вони взяті зі збереженого файлу, а не з кінцевої точки. Останній рядок називає обліковий запис із найменшим 5-годинним використанням нижче 100% і з'являється лише тоді, коли у вас більше одного облікового запису. Обліковий запис без входу показує `not logged in → ccam login <name>`, а обліковий запис із ключем API — `no limits (API)`.
+У терміналі таблиця з'являється одразу з `fetching…` у кожному рядку, і кожен рядок перемальовується, щойно відповідає його обліковий запис. `As of` показує давність чисел; `(cached)` означає, що вони взяті зі збереженого файлу, а не з кінцевої точки. Останній рядок називає обліковий запис, який [`ccam next --auto`](/features/next) вибрав би за тими самими правилами (`auto_max_usage`, `auto_strategy`, запущені сеанси, лише облікові записи організації останнього використаного облікового запису, якщо не задано `cross_org`, пропуск кожного вікна на 100%, тож обліковий запис із вичерпаним тижнем ніколи не називається), і з'являється лише тоді, коли у вас більше одного облікового запису. Обліковий запис без входу показує `not logged in → ccam login <name>`, а обліковий запис із ключем API — `no limits (API)`.
 
 Після `ccam statusline install` Claude Code показує рядок на кшталт `[work] · Opus · 5h 24% · 7d 41%`.
 
@@ -44,11 +45,15 @@ $ ccam usage
 | `--watch[=N]` | Перемальовувати кожні `N` секунд, доки ви не натиснете Ctrl+C. Сам `--watch` або значення 0 чи менше означає 60 | вимкнено |
 | `-v`, `--verbose` | Показувати тижневі ліміти для окремих моделей і рядок `source:` (`live`, `cache` або `statusline`) | вимкнено |
 | `--no-cache` | Ігнорувати 60-секундний кеш і знову запитати кінцеву точку | вимкнено |
-| `--source live\|cache` | `cache` ніколи не запитує кінцеву точку й показує лише збережені числа; `live` — поведінка за замовчуванням | live |
+| `--source live\|claude\|cache` | `live` запитує кінцеву точку з токеном облікового запису; `claude` доручає пошук Claude Code (нижче); `cache` показує лише збережені числа | `usage_source`, інакше `live` |
 | `--refresh` | Оновлювати прострочені токени доступу лише для облікових записів, які не запущено | вимкнено |
 | `--dry-run` | Приймається: `ccam usage` не змінює нічого, крім власного кешу. Відхиляється разом із `--refresh`: `--dry-run cannot be combined with --refresh, which rewrites login tokens` | вимкнено |
 
-Будь-яке інше значення `--source` завершується помилкою `--source must be live or cache`. `ccam usage` не приймає аргументів.
+Будь-яке інше значення `--source` завершується помилкою `--source must be live, claude or cache`.
+
+### Використання через сам Claude Code
+
+З `usage_source = "claude"` у `config.toml` (або з `--source claude`) ccam узагалі не читає токен входу. Для кожного облікового запису він запускає `claude -p --input-format stream-json --output-format stream-json --verbose --safe-mode --no-session-persistence` у теці облікового запису й надсилає у стандартний ввід запит Claude Code `get_usage` (Claude Code 2.1.270 або новіший); Claude Code шукає використання за власним входом і відповідає 5-годинним, тижневим і модельними вікнами. `--safe-mode` не дає запуститися хукам, серверам MCP і плагінам облікового запису, а сеанс не зберігається. Кожен обліковий запис потребує запуску Claude Code, приблизно секунду, тому це джерело повільніше за `live`; облікові записи опитуються одночасно, кожен у межах 20 секунд, і кеш на 60 секунд діє як завжди. Claude Code позначає цей запит як експериментальний, тож якщо він перестане відповідати, ccam покаже збережені числа, а `ccam doctor` про це повідомить. `--dry-run` не запускає Claude Code (той пише в теку облікового запису) і показує збережені числа. `usage_source` приймає `live` або `claude`; `cache` — лише варіант для `--source`. `ccam usage` не приймає аргументів.
 
 `ccam statusline` читає JSON рядка стану Claude Code зі стандартного введення. Його єдиний параметр — `--wrap <command>`: наявна команда рядка стану, до першого рядка виводу якої додається назва облікового запису. `ccam statusline install` не має параметрів. Обидві команди відхиляють `--dry-run` з повідомленням `` --dry-run is not supported by `ccam statusline`; nothing was changed ``.
 

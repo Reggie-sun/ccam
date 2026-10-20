@@ -4,7 +4,7 @@ description: Copia la configuración, CLAUDE.md, las extensiones, los servidores
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 95ce6ec9e220
+sourceHash: 7cee52e75749
 ---
 
 Si usabas Claude Code antes de ccam, tu configuración está en `~/.claude` y `~/.claude.json`. `ccam migrate` la copia a un grupo de uso compartido, para que todas las cuentas que comparten esos elementos a través del grupo empiecen con la configuración que ya tienes. La carpeta de origen solo se lee, y `claude` a secas sigue funcionando como antes. Ejecútalo una vez después de tu primer `ccam add`, y de nuevo cada vez que una cuenta empiece a compartir servidores MCP.
@@ -59,7 +59,7 @@ Accounts that share these through group default:
   extensions  personal, work
 ```
 
-Un grupo solo llega a las cuentas que comparten un elemento a través de él, así que el resumen las lista por elemento. Para las cuentas que no lo hacen, ccam imprime los comandos `ccam share <name> --<item> on` que activan el uso compartido.
+Un grupo solo llega a sus propias cuentas, y solo con los elementos que comparte, así que el resumen lista las cuentas del grupo. Cuando el grupo no comparte alguno de los elementos copiados, o algunas cuentas no están en él, ccam imprime los comandos `ccam group set <group> --add <items>` y `ccam group join <group> <accounts>` que lo cambian.
 
 ## Opciones
 
@@ -84,7 +84,7 @@ Sin ninguna opción de elemento, en una terminal decide la lista de selección. 
 `internal/cli/migrate.go` elige los elementos, y luego `migrate.Build` lee el origen y el grupo y devuelve un plan. No se escribe nada hasta `Plan.Apply`, después de que confirmas.
 
 1. **Encontrar el origen.** `checkSource` rechaza una ruta que no existe, que no es una carpeta o que no contiene ninguna entrada conocida de Claude Code. `migrate.ClaudeJSON` busca el `.claude.json` que corresponde a la carpeta: dentro de ella o, para `~/.claude` sin uno dentro, `~/.claude.json` junto a ella. Ahí es donde lo guarda Claude Code cuando `CLAUDE_CONFIG_DIR` no está definida.
-2. **Asignar elementos a rutas.** Cada ruta sale de `share.Layout`, la misma lista de rutas permitidas que usa `ccam share`. Los servidores MCP se leen de `.claude.json` con `mcp.LocalServers`, que usa el escáner `profile.TopLevelValue` en lugar de analizar el archivo completo.
+2. **Asignar elementos a rutas.** Cada ruta sale de `share.Layout`, la misma lista de rutas permitidas que usan los grupos. Los servidores MCP se leen de `.claude.json` con `mcp.LocalServers`, que usa el escáner `profile.TopLevelValue` en lugar de analizar el archivo completo.
 3. **Copiar, nunca mover.** Los archivos van a `~/.local/share/ccam/groups/<group>/` con `fsutil.AtomicWrite` o `fsutil.CopyFile`; los servidores MCP van al `mcp.json` del grupo.
 
 Cada elemento asigna una ruta de origen a una ruta del grupo:

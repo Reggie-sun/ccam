@@ -5,7 +5,7 @@ description: ثبّت ccam على Linux أو macOS أو Windows بأمر واح�
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: aea4984c1576
+sourceHash: 07fab3165030
 ---
 
 شغّل هذا الأمر في طرفية على Linux أو macOS:
@@ -80,7 +80,7 @@ ccam completion powershell >> $PROFILE
 /plugin install ccam --marketplace jhyunwoo/ccam
 ```
 
-يضيف مهارة وأمرين، `/ccam:usage` و`/ccam:ext`. ولا تشغّل المهارة أبدًا أوامر تسجّل الدخول أو تنقل الملفات؛ بل تقترحها بدلًا من ذلك.
+يضيف مهارة، والأوامر `/ccam:usage` و`/ccam:ext` و`/ccam:switch`، وخطافين: عندما تتوقف جلسة عند حد الاستخدام يصلك إشعار في الطرفية، ويسلّم `/ccam:switch [account]` المحادثة إلى حساب آخر ([التفاصيل](/features/next#inside-claude-code)). تشغّل الخطافات `ccam`، لذا يجب أن يكون ضمن `PATH` الذي يراه Claude Code. ولا تشغّل المهارة أبدًا أوامر تسجّل الدخول أو تنقل الملفات؛ بل تقترحها بدلًا من ذلك.
 
 ## التحقق من التثبيت
 

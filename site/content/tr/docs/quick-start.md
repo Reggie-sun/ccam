@@ -5,7 +5,7 @@ description: ccam add ile iki Claude Code hesabı ekleyin, onlara ccwork gibi k�
 updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 55f81dae9fc0
+sourceHash: "d5b0e295f3f0"
 ---
 
 Her hesabı `ccam add` ile ekleyin, ardından Claude Code'u `ccam <name>` ile veya adını kendiniz seçtiğiniz `ccwork` gibi bir kısayolla başlatın. Çoğu kişi için bu kadarı yeterlidir.
@@ -79,7 +79,7 @@ ccam work
 ccam 2
 ```
 
-Yalnızca `ccam` çalıştırıldığında bir seçici açılır: ok tuşlarını ve Enter'ı kullanın ya da hesabın numarasına basın.
+Yalnızca `ccam` çalıştırıldığında [kontrol paneli](/features/dashboard) açılır: ok tuşlarıyla veya numarasıyla bir hesaba gidin, ardından Enter'a basın.
 
 Kısayoldan veya hesap adından sonra gelen her şey Claude Code'a değiştirilmeden iletilir, böylece bildiğiniz seçenekleri kullanmaya devam edersiniz:
 
@@ -91,14 +91,13 @@ cat error.log | ccwork -p "what caused this?"
 
 ## 5. Neyin paylaşılacağını seçin
 
-Varsayılan olarak MCP sunucuları, `settings.json`, genel `CLAUDE.md` ile ajanlar, komutlar, beceriler ve eklentiler hesaplar arasında paylaşılır. Konuşma geçmişi paylaşılmaz. Konuşmalara hesaplar arasında devam etmek istiyorsanız bunu iki hesap için de açın:
+Varsayılan olarak MCP sunucuları, `settings.json`, genel `CLAUDE.md` ile ajanlar, komutlar, beceriler ve eklentiler `default` grubu üzerinden hesaplar arasında paylaşılır. Konuşma geçmişi paylaşılmaz. Konuşmalara hesaplar arasında devam etmek istiyorsanız onu gruba ekleyin:
 
 ```sh
-ccam share personal --history on
-ccam share work --history on
+ccam group set default --add history
 ```
 
-ccam, herhangi bir şeyi değiştirmeden önce neyi taşıyacağını gösterir. Ayrıntılar için [paylaşım](/docs/sharing) sayfasına bakın.
+ccam, herhangi bir şeyi değiştirmeden önce her hesap için neyi taşıyacağını gösterir. Ayrıntılar için [gruplarla paylaşım](/features/share) sayfasına bakın.
 
 ## 6. Bir hesap limitine ulaştığında
 

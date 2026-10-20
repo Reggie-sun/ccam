@@ -5,7 +5,7 @@ description: ccam, Claude Code கணக்குகள், பயன்பா�
 updated: 2026-10-20
 order: 6
 translation: machine
-sourceHash: 80a5475ccfee
+sourceHash: "e7d4a2c877ac"
 ---
 
 ## ccam, Anthropic-இன் அதிகாரப்பூர்வ கருவியா?
@@ -26,7 +26,7 @@ sourceHash: 80a5475ccfee
 
 ## ஓர் உரையாடலை வேறொரு கணக்கில் எப்படித் தொடர்வது?
 
-`ccam share <name> --history on` மூலம் இரண்டு கணக்குகளுக்கு இடையே உரையாடல் வரலாற்றைப் பகிருங்கள், பிறகு `ccam next --continue` இயக்குங்கள். Claude Code, தற்போதைய கோப்புறையின் மிகச் சமீபத்திய உரையாடலை அடுத்த கணக்கில் திறக்கும்.
+`ccam group set default --add history` மூலம் (அல்லது அவற்றுக்கென ஒரு தனிக் குழு மூலம்: `ccam group add pair --items history --members work,side`) கணக்குகளுக்கு இடையே உரையாடல் வரலாற்றைப் பகிருங்கள், பிறகு `ccam next --continue` இயக்குங்கள். Claude Code, தற்போதைய கோப்புறையின் மிகச் சமீபத்திய உரையாடலை அடுத்த கணக்கில் திறக்கும்.
 
 ## ccam என் உள்நுழைவைப் பார்க்கிறதா அல்லது அனுப்புகிறதா?
 

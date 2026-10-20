@@ -1,133 +1,182 @@
 ---
-title: "Partage entre comptes"
-description: "Comment ccam share relie paramètres, CLAUDE.md, extensions et historique à un dossier de groupe, avec plan et sauvegardes, et comment off les recopie."
+title: "Partager avec des groupes"
+description: "Un groupe ccam partage des éléments choisis entre ses comptes via un dossier ; ccam group déplace les données avec plan, sauvegardes et arbitrage des conflits."
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 16de29bbdd57
+sourceHash: 0c0338362ba2
 ---
 
-Chaque compte a son propre dossier, mais la plupart de ce qu'il contient n'a pas besoin d'être séparé. `ccam share` active ou désactive le partage pour un compte et un élément à la fois : le fichier ou le dossier du compte est déplacé dans un dossier de groupe et remplacé par un lien symbolique, si bien que chaque compte du groupe lit et écrit la même copie. Utilisez-le après `ccam add` pour changer ce que partage un compte, ou pour placer quelques comptes dans un groupe à part.
+Chaque compte a son propre dossier, mais la plupart de ce qu'il contient n'a pas besoin d'être séparé. Un **groupe** indique ce qui est partagé et par qui : chaque compte du groupe relie ces éléments à un même dossier, `~/.local/share/ccam/groups/<group>/`, si bien qu'ils lisent et écrivent tous la même copie. Les jetons de connexion ne sont jamais partagés.
+
+Un compte peut appartenir à plusieurs groupes, mais chaque élément ne provient que d'un seul groupe. Une configuration typique comprend un groupe pour les paramètres et les extensions, et un second pour l'historique des conversations entre deux comptes :
+
+```toml
+[[group]]
+name = 'default'
+items = ['mcp', 'settings', 'memory', 'extensions']
+members = ['personal', 'work', 'side']
+
+[[group]]
+name = 'team'
+items = ['history']
+members = ['work', 'side']
+```
+
+Le premier compte que vous ajoutez crée `default`, et les comptes suivants le rejoignent sauf indication contraire.
 
 ## Utilisation
 
 ```sh
-ccam share work                       # show what work shares, and with which group
-ccam share work --history on          # share conversation history with the default group
-ccam share side --history team        # share it with the group team instead
-ccam share work --settings off        # give work its own copy of settings.json again
-ccam share work --memory off --fresh  # stop sharing CLAUDE.md and start with no file
-ccam share work --settings on --yes --prefer merge   # no questions; merge JSON on conflicts
-ccam --dry-run share work --history on               # print the plan, change nothing
+ccam group                                        # the groups, what they share, their accounts
+ccam group show default                           # items, accounts, folder and MCP servers
+ccam group add team --items history --members work,side
+ccam group set default --add history              # every account in default moves together
+ccam group set default --remove history --fresh   # stop sharing; accounts start without it
+ccam group set team --items history,memory --from work   # work's CLAUDE.md goes in first
+ccam group join team personal                     # personal starts sharing team's items
+ccam group join team personal --replace           # leave the group that shares them now
+ccam group leave team side                        # side keeps a copy of team's items
+ccam group rename team pair                       # the folder keeps its name
+ccam group remove pair --leave                    # its accounts keep a copy; folder to the trash
+ccam share work                                   # what work shares, and through which group
+ccam --dry-run group set default --add history    # print the plan, change nothing
 ```
-
-Sans option d'élément, `ccam share` affiche l'état actuel :
 
 ```console
+$ ccam group
+Group    Shares                          Accounts
+default  mcp settings memory extensions  personal, work, side
+team     history                         work, side
+
 $ ccam share work
 Sharing for work
-  MCP servers                        shared (group default)  --mcp
-  settings.json                      shared (group default)  --settings
-  global CLAUDE.md                   shared (group default)  --memory
-  agents, commands, skills, plugins  shared (group default)  --extensions
-  conversation history               local                   --history
+  mcp         MCP servers                        group default
+  settings    settings.json                      group default
+  memory      global CLAUDE.md                   group default
+  extensions  agents, commands, skills, plugins  group default
+  history     conversation history               group team
+Groups: default, team. Change them with `ccam group`.
 ```
 
-Avec des options, ccam affiche un plan, pose une question pour chaque fichier qui diffère de la copie du groupe, et demande `Proceed? [y/N]` avant de modifier quoi que ce soit. Un nouveau compte partage tout sauf l'historique des conversations ; [Partager les serveurs MCP, les paramètres et l'historique](/docs/sharing) décrit chaque élément du point de vue de l'utilisateur.
+Chaque commande qui déplace des données affiche un plan, pose une question pour chaque fichier qui diffère de la copie du groupe, et demande `Proceed? [y/N]` avant de modifier quoi que ce soit :
 
-## Options
+```console
+$ ccam group set default --add history
+Plan (paths in /home/me/.local/share/ccam):
+personal: +history (group default)
+  move     projects, history.jsonl: profiles/personal → groups/default (first content of the group)
+  link     projects, history.jsonl: profiles/personal → groups/default
+work: +history (group default)
+  merge    new files in projects: profiles/work → groups/default
+  conflict profiles/work/history.jsonl ↔ groups/default/history.jsonl: merge by line
+  back up  projects, history.jsonl: profiles/work → profiles/work/.ccam-backup/20261020-153012
+  link     projects, history.jsonl: profiles/work → groups/default
+Proceed? [y/N]
+```
+
+Les mêmes modifications se trouvent dans l'onglet **Groups** du [tableau de bord](/features/dashboard), et `s` sur un compte choisit ses groupes.
+
+## Éléments
+
+| Élément | Ce qu'il couvre |
+| --- | --- |
+| `mcp` | les serveurs MCP, via le `mcp.json` du groupe ([Serveurs MCP partagés](/features/mcp)) |
+| `settings` | `settings.json` |
+| `memory` | le `CLAUDE.md` global |
+| `extensions` | `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/`, `rules/` |
+| `history` | `projects/` et `history.jsonl`, pour qu'un autre compte puisse faire `--continue` |
+
+Un élément qu'aucun groupe du compte ne partage reste dans le dossier propre au compte.
+
+## Commandes et options
+
+| Commande | Effet |
+| --- | --- |
+| `ccam group` ou `ccam group list` | lister les groupes |
+| `ccam group show <group>` | ce que partage le groupe, ses comptes, son dossier et ses serveurs MCP |
+| `ccam group add <group> --items <items> [--members <accounts>]` | créer un groupe ; les éléments de ses comptes y sont déplacés |
+| `ccam group set <group> --add <items> \| --remove <items> \| --items <items>` | changer ce que partage le groupe, pour chacun de ses comptes |
+| `ccam group join <group> <account>...` | placer des comptes dans le groupe |
+| `ccam group leave <group> <account>...` | retirer des comptes ; chacun garde une copie |
+| `ccam group rename <group> <new-name>` | renommer, dans la configuration seulement |
+| `ccam group remove <group> [--leave]` | supprimer un groupe |
 
 | Option | Effet | Par défaut |
 | --- | --- | --- |
-| `--mcp <on\|off\|group>` | Serveurs MCP | inchangé |
-| `--settings <on\|off\|group>` | `settings.json` | inchangé |
-| `--memory <on\|off\|group>` | le `CLAUDE.md` global | inchangé |
-| `--extensions <on\|off\|group>` | `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/`, `rules/` | inchangé |
-| `--history <on\|off\|group>` | `projects/` et `history.jsonl` | inchangé |
-| `--fresh` | en désactivant le partage, partir de rien au lieu de copier le contenu du groupe | désactivé |
-| `--prefer <group\|mine\|merge>` | comment trancher les conflits | demander ; avec `--yes`, le choix par défaut de chaque élément |
+| `--from <account>` | `add`, `set` : le compte dont la copie entre la première dans le groupe | le compte par défaut, puis par numéro |
+| `--replace` | `join` : quitter d'abord les groupes qui partagent les mêmes éléments | désactivé |
+| `--fresh` | les comptes qui cessent de partager un élément repartent sans lui au lieu d'en garder une copie | désactivé |
+| `--leave` | `remove` : retirer d'abord les comptes du groupe | nécessaire quand il a des comptes |
+| `--prefer <group\|mine\|merge>` | comment trancher les conflits | demander ; avec `--yes`, le choix par défaut de chaque fichier |
 | `-y`, `--yes` | exécuter sans demander ; les conflits suivent `--prefer` | désactivé |
-| `-h`, `--help` | aide de `share` | |
-| `--dry-run` (globale) | respecté : pose les questions sur les conflits, affiche le plan, ne modifie rien | désactivé |
+| `--dry-run` (globale) | afficher le plan, ne rien modifier | désactivé |
 
-La valeur `on` désigne le groupe `default`, `off` signifie local (non partagé), et toute autre valeur est un nom de groupe. Les noms de groupe deviennent des noms de dossiers sous `~/.local/share/ccam/groups/`, donc `ccam share side --history ../x` échoue avec `invalid group name: "../x"`. Le compte est indiqué par son nom ou son numéro, et seuls les éléments que vous nommez changent.
+Les comptes sont indiqués par leur nom ou leur numéro, les éléments par une liste séparée par des virgules. `ccam add` accepte `--group <group>` (répétable) ou `--no-group`.
 
 ## Fonctionnement
 
 Les fichiers concernés :
 
-- `~/.config/ccam/config.toml` : la table `[profile.share]` de chaque compte, une valeur par élément.
+- `~/.config/ccam/config.toml` : les entrées `[[group]]` : `name`, `items`, `members` et, quand le nom du dossier diffère, `dir`.
 - `~/.local/share/ccam/profiles/<name>/` : le `CLAUDE_CONFIG_DIR` du compte.
-- `~/.local/share/ccam/groups/<group>/` : les copies partagées.
+- `~/.local/share/ccam/groups/<folder>/` : les copies partagées.
 
-1. `internal/cli/share.go` lit la configuration, applique chaque valeur `--<item>` à une copie des paramètres du compte avec `config.Share.Set`, et refuse si le compte est en cours d'exécution.
-2. `share.Build` compare les paramètres actuels avec la cible et liste les étapes. Il ne fait que lire le disque : `os.Lstat` et `os.Readlink` pour chaque chemin de `share.Layout`. Le plan est une liste d'opérations : déplacer dans un emplacement de groupe vide (adoption), déplacer les fichiers absents du groupe (fusion de dossier), écrire un conflit résolu dans le groupe, sauvegarder, supprimer un lien, créer un lien, recopier, réécrire les chemins de plugins et fusionner le registre des plugins.
-3. Les conflits sont tranchés, par la question posée ou par `--prefer`.
-4. `Plan.Describe` affiche le plan, et ccam demande confirmation.
-5. Les paramètres cibles sont écrits dans `config.toml` avant tout déplacement. Si `Plan.Apply` s'arrête à mi-parcours, `ccam doctor --fix` et une nouvelle exécution construisent leur plan vers la cible enregistrée et terminent la modification.
-6. `Plan.Apply` exécute les étapes dans l'ordre. Chaque étape déplace des données vers le groupe ou vers le dossier de sauvegarde ; rien n'est supprimé.
+À la lecture de `config.toml`, les groupes de chaque compte sont résolus en un dossier par élément. Cela prend environ 25 µs pour cinq comptes, si bien qu'un lancement ne lit toujours que `config.toml`. Une configuration où un compte recevrait un élément de deux groupes est une erreur, et rien ne démarre tant qu'elle n'est pas corrigée.
 
-`share.Layout` est une liste d'autorisation des chemins couverts par chaque élément. Rien de ce qui n'y figure ne peut atteindre un groupe. `share.Never` nomme `.credentials.json` et `.claude.json`, et `Build` s'arrête avec une erreur interne si l'un d'eux apparaît un jour dans la structure. L'élément `mcp` n'a pas de chemins : la liste des serveurs se trouve dans `.claude.json`, donc le [partage MCP](/features/mcp) passe plutôt par le `mcp.json` du groupe, et `--mcp` ne modifie que le paramètre.
+Une modification travaille sur une copie de la configuration :
 
-Voici ce qui arrive à un dossier, `projects/`, quand `side` active l'historique et que le groupe a déjà du contenu :
+1. La commande modifie la copie (`AddGroup`, `SetGroupItems`, `JoinGroup` …), qui vérifie les règles.
+2. `internal/group` compare l'ancienne et la nouvelle et, pour chaque compte dont les éléments changent, construit un plan avec `share.Build`. Les plans sont construits l'un après l'autre, et chacun voit ce que les précédents vont placer dans les dossiers de groupe : seul le premier compte y déplace donc sa copie. La première copie vient du dossier du groupe s'il en a déjà une, puis de `--from`, puis du compte par défaut, puis des autres par numéro.
+3. ccam refuse si l'un de ces comptes est en cours d'exécution, et, sous Windows sans le Mode développeur, si un fichier devait être relié par un lien.
+4. Les conflits sont tranchés, par la question posée ou par `--prefer`, le plan est affiché, et ccam demande confirmation.
+5. La nouvelle configuration est enregistrée avant tout déplacement. Si une étape s'arrête à mi-parcours, `ccam doctor --fix` et une nouvelle exécution construisent leur plan vers les groupes enregistrés et terminent la modification.
+6. Les plans s'exécutent dans l'ordre. Chaque étape déplace des données vers le groupe ou vers le dossier de sauvegarde ; rien n'est supprimé.
+
+`share.Layout` est une liste d'autorisation des chemins couverts par chaque élément. Rien de ce qui n'y figure ne peut atteindre un groupe. `share.Never` nomme `.credentials.json` et `.claude.json`, et `Build` s'arrête avec une erreur interne si l'un d'eux apparaît un jour dans la structure. L'élément `mcp` n'a pas de chemins : la liste des serveurs se trouve dans `.claude.json`, donc le [partage MCP](/features/mcp) passe par le `mcp.json` du groupe.
+
+Voici ce qui arrive à un dossier, `projects/`, quand `side` commence à partager l'historique et que le groupe a déjà du contenu :
 
 <!-- motion:share-on -->
 
-Si le groupe n'a encore rien à ce chemin, le compte est le premier à le partager et son dossier y est déplacé tel quel, sans sauvegarde. Sinon, `mergeDir` déplace dans le groupe chaque fichier qui lui manque, et les fichiers présents des deux côtés restent dans le dossier du compte, si bien que la version du groupe est conservée. Le dossier du compte va ensuite dans `.ccam-backup/<time>/` à l'intérieur du dossier du compte, et `os.Symlink` met un lien à sa place. Les fichiers de conversation portent le nom de leur ID de session : les historiques de plusieurs comptes se combinent donc sans conflit.
+Si le groupe n'a encore rien à ce chemin, le compte est le premier à le partager et son dossier y est déplacé tel quel. Sinon, chaque fichier qui manque au groupe y est déplacé, et les fichiers présents des deux côtés restent dans le dossier du compte, si bien que la version du groupe est conservée. Le dossier du compte va ensuite dans `.ccam-backup/<time>/` à l'intérieur du dossier du compte, et un lien prend sa place. Les fichiers de conversation portent le nom de leur ID de session : les historiques de plusieurs comptes se combinent donc sans conflit. Les registres de `plugins/` enregistrent des chemins absolus qui passent par le dossier du compte ; ccam les fait pointer vers le dossier du groupe et fusionne les entrées du compte dans un registre que le groupe possède déjà.
 
-Le déplacement utilise `rename(2)` et se rabat sur une copie suivie d'une suppression entre systèmes de fichiers différents. Un lien relatif dans l'arborescence déplacée qui pointait à l'extérieur est réécrit en lien absolu (`fsutil.PortableLink`), afin qu'il soit toujours résolu depuis le nouvel emplacement. Les registres de `plugins/` (`installed_plugins.json`, `known_marketplaces.json`) enregistrent des chemins absolus qui passent par le dossier du compte ; ccam les fait pointer vers le dossier du groupe et, quand le groupe a déjà un registre, y fusionne les entrées du compte.
-
-Désactiver un élément inverse le lien :
+Quitter le partage inverse le lien :
 
 <!-- motion:share-off -->
 
-ccam ne supprime le lien que s'il pointe dans le dossier des groupes, puis copie le contenu actuel du groupe dans le compte avec `CopyTree`. Avec `--fresh`, la copie est sautée et le compte part de rien à ce chemin. Le groupe conserve son contenu pour les autres comptes. Faire passer un élément d'un groupe à un autre supprime le lien et le relie au nouveau groupe, en laissant l'ancien groupe tel quel ; le plan l'indique dans une ligne `Note:`.
+ccam ne supprime le lien que s'il pointe dans le dossier des groupes, puis copie le contenu actuel du groupe dans le compte. Avec `--fresh`, la copie est sautée. Le groupe conserve son contenu pour les autres comptes. Un compte qui fait passer un élément à un groupe dont le dossier est encore vide apporte une copie de ce qu'il voyait, et garde donc ses fichiers ; les serveurs MCP suivent de la même façon. Un compte qui cesse de partager MCP perd les serveurs que ccam avait copiés dans son `.claude.json` (une sauvegarde est conservée), puisqu'ils venaient du groupe.
 
 Un fichier présent des deux côtés avec un contenu différent est un conflit :
 
 <!-- motion:share-conflict -->
 
-`share.NewConflict` liste les choix adaptés au fichier. `history.jsonl` propose `merge by line`, `keep group` et `use mine`, avec la fusion en premier. Les autres fichiers `.json` proposent `keep group`, `use mine` et `merge JSON`. Tout le reste propose `keep group` et `use mine`. Le premier choix est celui par défaut :
+`history.jsonl` propose `merge by line`, `keep group` et `use mine`, avec la fusion en premier. Les autres fichiers `.json` proposent `keep group`, `use mine` et `merge JSON`. Tout le reste propose `keep group` et `use mine`. `merge JSON` fusionne les objets récursivement, joint les tableaux sans doublons et garde la valeur du groupe quand les deux côtés définissent la même clé différemment, si bien que les autres comptes ne voient aucun changement. Chaque choix sauf `keep group` enregistre d'abord la copie du groupe dans `.ccam-backup/<time>/group/` du compte. Votre propre fichier va toujours dans la sauvegarde.
 
-```console
-history.jsonl differs from the group's copy.
-  mine:  ~/.local/share/ccam/profiles/side/history.jsonl
-  group: ~/.local/share/ccam/groups/default/history.jsonl
-  1) merge by line
-  2) keep group
-  3) use mine
-Choice [1]:
-```
+À chaque lancement, `share.Check` compare chaque chemin de la structure avec les groupes du compte en n'utilisant que `lstat` et `readlink`. Un lien manquant est créé sur-le-champ. Un vrai fichier là où devrait se trouver un lien, un lien vers le mauvais endroit ou un lien périmé arrête le lancement et renvoie vers `ccam doctor --fix`.
 
-`merge JSON` (`MergeJSONBytes`) fusionne les objets récursivement, joint les tableaux sans doublons et garde la valeur du groupe quand les deux côtés définissent la même clé différemment, si bien que les autres comptes ne voient aucun changement de comportement. `merge by line` garde les lignes du groupe, puis ajoute celles des vôtres qui lui manquent. Chaque choix sauf `keep group` enregistre d'abord la copie du groupe dans `.ccam-backup/<time>/group/` du dossier du compte, puis écrit le résultat avec `fsutil.AtomicWrite`. Votre propre fichier va toujours dans la sauvegarde.
+### Renommer, supprimer et l'ancien format
 
-`--prefer group`, `mine` ou `merge` tranche chaque conflit sans demander ; `merge` signifie `merge JSON` ou `merge by line`, selon ce que propose le fichier, et un fichier qui ne propose ni l'un ni l'autre garde le choix par défaut. `--yes` seul prend le choix par défaut de chaque fichier.
-
-À chaque lancement, `share.Check` compare chaque chemin de la structure avec le paramètre en n'utilisant que `lstat` et `readlink`, ce qui le rend assez léger pour le chemin de lancement. Un lien manquant est créé sur-le-champ, car il n'y a rien à perdre. Un vrai fichier là où devrait se trouver un lien, un lien vers le mauvais endroit ou un lien périmé arrête le lancement :
-
-```console
-ccam: stopped because of share link problems:
-  ~/.local/share/ccam/profiles/work/CLAUDE.md: set to shared but is a real file, not a link
-Repair them with `ccam doctor --fix`, then run again
-```
-
-`ccam doctor --fix` exécute `share.Build` avec les paramètres enregistrés des deux côtés, ce qui déduit chaque étape de ce qui se trouve sur le disque, garde le contenu du groupe en cas de conflit et sauvegarde tout ce qu'il remplace.
+- `ccam group rename` ne modifie que la configuration. Le dossier garde son nom et le groupe l'enregistre comme `dir` : rien ne bouge et rien ne peut être perdu.
+- `ccam group remove` refuse un groupe qui a des comptes, sauf si vous ajoutez `--leave`. Chaque compte garde alors une copie, et le dossier part dans `~/.local/share/ccam/trash/`, sauf si un autre groupe l'utilise.
+- Avant les groupes, `config.toml` enregistrait une table `[profile.share]` par compte. ccam lit ce format comme des groupes sans rien déplacer. Au premier enregistrement, il écrit le nouveau format et garde l'ancien fichier sous le nom `config.toml.bak`. Les éléments partagés par les mêmes comptes deviennent un seul groupe portant le nom du dossier ; les autres reçoivent des noms comme `default-history` et continuent d'utiliser le même dossier.
 
 ### Sous Windows
 
-Windows ne crée de liens symboliques qu'en Mode développeur (Paramètres > Système > Pour les développeurs) ou pour un administrateur. `fsutil.Link` essaie d'abord un lien symbolique. Sans ce droit, un dossier partagé (`agents`, `skills`, `projects` et les autres) devient une jonction de répertoire, que tout utilisateur peut créer, et fonctionne de la même façon pour Claude Code. Un fichier partagé (`settings.json`, `CLAUDE.md`, `history.jsonl`) ne peut être qu'un lien symbolique : ccam s'arrête donc avec `Windows links files only in Developer Mode` et propose d'activer ce mode ou de garder cet élément local. `share.Check` lit les jonctions comme des liens (`fsutil.LinkTarget`), et supprimer un dossier de compte supprime la jonction elle-même, jamais le contenu du groupe vers lequel elle pointe.
+Windows ne crée de liens symboliques qu'en Mode développeur (Paramètres > Système > Pour les développeurs) ou pour un administrateur. Sans ce droit, un dossier partagé devient une jonction de répertoire, qui fonctionne de la même façon pour Claude Code. Un fichier partagé (`settings.json`, `CLAUDE.md`, `history.jsonl`) ne peut être qu'un lien symbolique : une modification de groupe qui en exige un est donc refusée avant tout déplacement.
 
 ## Sécurité et cas particuliers
 
-- **Comptes en cours d'exécution.** ccam refuse de modifier le partage pendant que Claude Code s'exécute avec le compte (`account work is running; quit it first, then change its sharing`), car la session continue d'écrire dans les fichiers en cours de déplacement et les lignes qu'elle ajoute entre-temps seraient perdues. `--dry-run` affiche tout de même le plan.
-- **Sauvegardes.** Chaque plan reçoit son propre dossier `.ccam-backup/<time>/` dans le dossier du compte, avec un suffixe numéroté quand deux plans démarrent dans la même seconde. ccam ne les supprime jamais.
-- **Échecs partiels.** Si une étape échoue, ccam affiche l'erreur et l'emplacement des originaux, et vous indique de terminer avec `ccam doctor --fix`. La cible est déjà enregistrée, donc la réparation continue vers elle.
+- **Comptes en cours d'exécution.** Une modification est refusée pendant que Claude Code s'exécute avec l'un des comptes qu'elle déplace, car la session continue d'écrire dans ces fichiers. Quitter un groupe ou en rejoindre un ne concerne que le compte nommé. `--dry-run` affiche tout de même le plan.
+- **Sauvegardes.** Chaque plan reçoit son propre dossier `.ccam-backup/<time>/` dans le dossier du compte. ccam ne les supprime jamais.
 - **Vos propres liens.** Si un chemin est déjà un lien que vous avez créé, par exemple vers un dépôt de dotfiles, et que le groupe est vide, ccam copie la cible du lien dans le groupe et déplace le lien lui-même dans la sauvegarde. La cible n'est pas modifiée.
-- **Fichiers de connexion.** `.credentials.json` et `.claude.json` ne sont jamais reliés, déplacés ni copiés dans un groupe.
-- **Deux comptes dans un même dossier.** Les comptes qui partagent l'historique écrivent dans les mêmes fichiers. Quand un second compte du même groupe d'historique démarre dans un dossier où un autre s'exécute déjà, ccam avertit et demande confirmation avant de continuer.
+- **Dossiers importés.** Un compte enregistré sur place avec `ccam import` (comme `~/.claude`) est modifié sur place, si bien que `claude` seul voit aussi le changement ; le plan l'indique.
+- **Deux comptes dans un même dossier.** Les comptes qui partagent l'historique écrivent dans les mêmes fichiers. Quand un second compte démarre dans un dossier où un autre s'exécute déjà, ccam avertit et demande confirmation.
+- **Modifications à la main.** Un membre qui n'est pas un compte est ignoré et signalé par `ccam doctor`. Les noms `local`, `on`, `off` et `none` ne peuvent pas être des noms de groupe.
 
 ## Voir aussi
 
+- [Le tableau de bord](/features/dashboard)
 - [Partager les serveurs MCP, les paramètres et l'historique](/docs/sharing)
 - [Serveurs MCP partagés](/features/mcp)
 - [Copier une configuration existante](/features/migrate)

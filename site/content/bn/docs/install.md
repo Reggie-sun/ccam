@@ -5,7 +5,7 @@ description: "Linux, macOS বা Windows-এ একটি কমান্ডে
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: aea4984c1576
+sourceHash: 07fab3165030
 ---
 
 Linux বা macOS-এ একটি টার্মিনালে এটি চালান:
@@ -80,7 +80,7 @@ ccam প্লাগইন Claude Code-কে নিজেই ccam ব্যব�
 /plugin install ccam --marketplace jhyunwoo/ccam
 ```
 
-এটি একটি skill ও দুটি কমান্ড যোগ করে, `/ccam:usage` ও `/ccam:ext`। skill-টি কখনও লগইন করা বা ফাইল সরানোর কমান্ড চালায় না; বরং সেগুলো প্রস্তাব করে।
+এটি একটি skill, `/ccam:usage`, `/ccam:ext` ও `/ccam:switch` কমান্ড, এবং দুটি হুক যোগ করে: কোনো সেশন ব্যবহারের সীমায় থেমে গেলে আপনি টার্মিনালে একটি নোটিফিকেশন পান, আর `/ccam:switch [account]` কথোপকথনটি অন্য একটি অ্যাকাউন্টের হাতে তুলে দেয় ([বিস্তারিত](/features/next#inside-claude-code))। হুকগুলো `ccam` চালায়, তাই Claude Code যে `PATH` দেখে, তাতে এটি থাকতে হবে। skill-টি কখনও লগইন করা বা ফাইল সরানোর কমান্ড চালায় না; বরং সেগুলো প্রস্তাব করে।
 
 ## ইনস্টলেশন পরীক্ষা করুন
 

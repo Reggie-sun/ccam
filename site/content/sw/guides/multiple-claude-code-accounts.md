@@ -4,7 +4,7 @@ description: Endesha akaunti kadhaa za Claude Code sambamba kwa CLAUDE_CONFIG_DI
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: f2982e4317a2
+sourceHash: "ee92078b81c3"
 ---
 
 Ipe kila akaunti folda yake ya usanidi. Claude Code husoma folda kutoka kigezo cha mazingira `CLAUDE_CONFIG_DIR`, na kila folda huhifadhi taarifa zake za kuingia, mipangilio na historia, kwa hiyo kila akaunti hubaki imeingia na unaweza kuziendesha kwa wakati mmoja. Unaweza kusanidi hili kwa mkono kwa alias ya shell, au uiachie ccam ifanye.
@@ -69,7 +69,7 @@ Claude Code huendeshwa [moja kwa moja kwenye Windows na ndani ya WSL](https://co
 
 **Seva ya MCP inaonekana katika akaunti moja tu.** Seva zinazoongezwa ndani ya kipindi kwa `claude mcp add` ni za akaunti hiyo tu. Ihamishe kwa akaunti zote kwa `ccam mcp import work <server>`.
 
-**Mipangilio inatofautiana kati ya akaunti.** `ccam share work` huonyesha kile ambacho akaunti inashiriki; `ccam share work --settings on` hushiriki mipangilio yake, baada ya kuonyesha kitakachobadilika. `ccam doctor --fix` hurekebisha viungo vilivyoharibika na huhifadhi nakala rudufu ya kila faili inayoibadilisha.
+**Mipangilio inatofautiana kati ya akaunti.** `ccam share work` huonyesha kile ambacho akaunti inashiriki na kupitia kikundi kipi; `ccam group join default work` huifanya ishiriki kile ambacho `default` hushiriki, baada ya kuonyesha kitakachobadilika. `ccam doctor --fix` hurekebisha viungo vilivyoharibika na huhifadhi nakala rudufu ya kila faili inayoibadilisha.
 
 **Akaunti mbili zinafungua mazungumzo yale yale.** Epuka kufanya kazi kwenye mazungumzo moja katika akaunti mbili kwa wakati mmoja. ccam hukuonya ukijaribu.
 

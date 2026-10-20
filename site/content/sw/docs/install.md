@@ -5,7 +5,7 @@ description: Sakinisha ccam kwenye Linux, macOS au Windows kwa amri moja, kifuru
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: aea4984c1576
+sourceHash: "07fab3165030"
 ---
 
 Endesha hii kwenye terminal ya Linux au macOS:
@@ -80,7 +80,7 @@ Plugin ya ccam humfundisha Claude Code yenyewe kutumia ccam: kuangalia akaunti i
 /plugin install ccam --marketplace jhyunwoo/ccam
 ```
 
-Huongeza skill moja na amri mbili, `/ccam:usage` na `/ccam:ext`. Skill hiyo kamwe haiendeshi amri zinazoingia kwenye akaunti au kuhamisha faili; badala yake huzipendekeza.
+Huongeza skill moja, amri `/ccam:usage`, `/ccam:ext` na `/ccam:switch`, na hooks mbili: kipindi kinaposimama kwenye kikomo cha matumizi unapata arifa kwenye terminal, na `/ccam:switch [account]` hukabidhi mazungumzo kwa akaunti nyingine ([maelezo](/features/next#inside-claude-code)). Hooks huendesha `ccam`, kwa hiyo lazima iwe kwenye `PATH` ambayo Claude Code huiona. Skill hiyo kamwe haiendeshi amri zinazoingia kwenye akaunti au kuhamisha faili; badala yake huzipendekeza.
 
 ## Kagua usakinishaji
 

@@ -4,7 +4,7 @@ description: "ccam folder کسی فولڈر اور اس کے نیچے ہر چی�
 updated: 2026-10-20
 order: 11
 translation: machine
-sourceHash: 5071b04a194d
+sourceHash: "46d1410a3d81"
 ---
 
 `ccam folder work ~/code/company` سے `~/code/company` کے اندر، اور اس کے نیچے کسی بھی فولڈر میں، اکاؤنٹ کے نام کے بغیر ہر لانچ Claude Code کو `work` کے طور پر شروع کرتا ہے۔ اس سے باہر، ڈیفالٹ اکاؤنٹ پہلے کی طرح شروع ہوتا ہے۔ کسی اکاؤنٹ کا نام لینا، `ccam personal` سے یا `ccpersonal` جیسے شارٹ کٹ سے، ہمیشہ وہی اکاؤنٹ شروع کرتا ہے۔
@@ -34,7 +34,7 @@ Here (/home/me/code/company/api): work, set for /home/me/code/company
 - `ccam -p "…"` اور کوئی بھی دوسرا لانچ جس کا پہلا آرگیومنٹ Claude Code کا آپشن ہو
 - نام کے بغیر `ccam run`، اور `ccam --dry-run`
 - `ccam --fallback -p "…"` اپنی پہلی کوشش کے لیے
-- پکر، یعنی اکیلا `ccam`، جو کرسر کو فولڈر کے اکاؤنٹ پر رکھ کر شروع ہوتا ہے
+- ڈیش بورڈ، یعنی اکیلا `ccam`، جو کرسر کو فولڈر کے اکاؤنٹ پر رکھ کر شروع ہوتا ہے
 
 ## آپشنز
 

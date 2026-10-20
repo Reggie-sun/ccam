@@ -5,7 +5,7 @@ description: Dodaj dwa konta Claude Code poleceniem ccam add, nadaj im skróty t
 updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 55f81dae9fc0
+sourceHash: "d5b0e295f3f0"
 ---
 
 Dodaj każde konto poleceniem `ccam add`, a potem uruchamiaj Claude Code przez `ccam <name>` lub przez skrót o nazwie wybranej przez ciebie, na przykład `ccwork`. Większości osób to wystarczy.
@@ -79,7 +79,7 @@ ccam work
 ccam 2
 ```
 
-Samo `ccam` otwiera wybór konta: użyj strzałek i Enter albo naciśnij numer konta.
+Samo `ccam` otwiera [panel](/features/dashboard): przejdź do konta strzałkami lub jego numerem, a potem naciśnij Enter.
 
 Wszystko po skrócie lub nazwie konta trafia do Claude Code bez zmian, więc nadal używasz znanych opcji:
 
@@ -91,14 +91,13 @@ cat error.log | ccwork -p "what caused this?"
 
 ## 5. Wybierz, co współdzielić
 
-Domyślnie serwery MCP, `settings.json`, globalny `CLAUDE.md` oraz agenci, polecenia, umiejętności i wtyczki są współdzielone między kontami. Historia rozmów nie jest. Włącz ją dla obu kont, jeśli chcesz kontynuować rozmowy między nimi:
+Domyślnie serwery MCP, `settings.json`, globalny `CLAUDE.md` oraz agenci, polecenia, umiejętności i wtyczki są współdzielone między kontami przez grupę `default`. Historia rozmów nie jest. Dodaj ją do grupy, jeśli chcesz kontynuować rozmowy między kontami:
 
 ```sh
-ccam share personal --history on
-ccam share work --history on
+ccam group set default --add history
 ```
 
-ccam pokazuje, co przeniesie, zanim cokolwiek zmieni. Szczegóły znajdziesz w części [współdzielenie](/docs/sharing).
+ccam pokazuje, co przeniesie dla każdego konta, zanim cokolwiek zmieni. Szczegóły znajdziesz w części [współdzielenie przez grupy](/features/share).
 
 ## 6. Gdy konto osiągnie limit
 

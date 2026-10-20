@@ -4,7 +4,7 @@ description: ccam <name> rc से किसी भी अकाउंट से
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 59b802c44bb3
+sourceHash: 5f0b90ea53d6
 ---
 
 `ccam work rc` Claude Code का Remote Control अकाउंट `work` के रूप में शुरू करता है, ताकि आप इस कंप्यूटर पर चल रहे sessions को claude.ai/code या Claude मोबाइल ऐप से चला सकें। यह `claude rc` की तरह ही काम करता है, बस एक अंतर के साथ: अगर अकाउंट MCP सर्वर साझा करता है, तो ccam एक बार पूछता है कि क्या उन्हें अकाउंट की `.claude.json` में कॉपी किया जाए, क्योंकि Remote Control के sessions सर्वर कहीं और से नहीं पढ़ते।
@@ -33,7 +33,7 @@ ccam --dry-run work rc                # print the command instead of running it
 | `--dry-run` (अकाउंट से पहले) | environment और कमांड प्रिंट करता है, और MCP सूचना भी, अगर कोई हो। न पूछता है, न कॉपी करता है | बंद |
 | `Copy them into .claude.json (a backup is kept)? [y/N]` | तब पूछा जाता है जब अकाउंट MCP सर्वर साझा करता है और उसकी `.claude.json` में ग्रुप की मौजूदा सूची नहीं होती। `y` उन्हें कॉपी करता है, `N` या Enter उनके बिना शुरू करता है | `N` |
 | `~/.config/ccam/config.toml` में `mcp_strategy = "sync"` | हर बार शुरू करने से पहले, चाहे Remote Control हो या नहीं, ग्रुप के सर्वर `.claude.json` में कॉपी करता है, इसलिए कभी कुछ नहीं पूछा जाता | `"flag"` |
-| `ccam share work --mcp off` | अकाउंट के साथ MCP सर्वर साझा करना बंद करता है; तब Remote Control केवल अकाउंट के अपने सर्वरों के साथ शुरू होता है और कुछ नहीं पूछा जाता | चालू |
+| `ccam group leave <group> work` | अकाउंट को उस ग्रुप से निकालता है जो उसके साथ MCP साझा करता है; तब Remote Control केवल अकाउंट के अपने सर्वरों के साथ शुरू होता है और कुछ नहीं पूछा जाता | `default` में |
 
 ### Remote Control के विकल्प
 
@@ -124,7 +124,7 @@ $ ccam mcp add ctx --url https://mcp.context7.com/mcp
 
 ### ccam हर बार पूछता है
 
-आपने अभी तक सर्वर कॉपी नहीं किए हैं। एक बार `y` जवाब दें, या `mcp_strategy = "sync"` सेट करें। अगर आपको Remote Control में सर्वर कभी नहीं चाहिए, तो अकाउंट के साथ MCP साझा करना बंद करें: `ccam share work --mcp off`।
+आपने अभी तक सर्वर कॉपी नहीं किए हैं। एक बार `y` जवाब दें, या `mcp_strategy = "sync"` सेट करें। अगर आपको Remote Control में सर्वर कभी नहीं चाहिए, तो अकाउंट के साथ MCP साझा करना बंद करें: उसे उस ग्रुप से निकालें (`ccam group leave default work`), या MCP को उसके अपने ग्रुप में रखें जिसमें यह अकाउंट न हो।
 
 ### `ccam work rc` तुरंत `--mcp-config` से जुड़ी त्रुटि के साथ विफल होता है
 

@@ -1,10 +1,10 @@
 ---
 title: आधीचा सेटअप कॉपी करणे
-description: ccam migrate ने आधीपासून असलेल्या ~/.claude मधील सेटिंग्ज, CLAUDE.md, एक्स्टेंशन्स, MCP सर्व्हर आणि MCP साइन-इन्स ccam शेअर गटात कॉपी करा.
+description: ccam migrate ने आधीपासून असलेल्या ~/.claude मधील सेटिंग्ज, CLAUDE.md, एक्स्टेंशन्स, MCP सर्व्हर आणि MCP साइन-इन्स ccam गटात कॉपी करा.
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 95ce6ec9e220
+sourceHash: "7cee52e75749"
 ---
 
 तुम्ही ccam आधी Claude Code वापरले असेल, तर तुमचा सेटअप `~/.claude` आणि `~/.claude.json` मध्ये आहे. `ccam migrate` तो एका शेअर गटात कॉपी करते, त्यामुळे गटामार्फत ते आयटम शेअर करणारे प्रत्येक खाते तुमच्याकडे आधीपासून असलेल्या सेटअपने सुरू होते. स्रोत फोल्डर फक्त वाचला जातो, आणि साधे `claude` आधीसारखेच चालत राहते. तुमच्या पहिल्या `ccam add` नंतर ते एकदा चालवा, आणि एखादे खाते MCP सर्व्हर शेअर करू लागेल तेव्हा पुन्हा चालवा.
@@ -59,7 +59,7 @@ Accounts that share these through group default:
   extensions  personal, work
 ```
 
-गट फक्त त्याच्यामार्फत एखादा आयटम शेअर करणाऱ्या खात्यांपर्यंत पोहोचतो, म्हणून सारांश प्रत्येक आयटमसाठी त्यांची यादी देतो. जी खाती तसे करत नाहीत, त्यांच्यासाठी ccam शेअरिंग चालू करणाऱ्या `ccam share <name> --<item> on` कमांड्स छापते.
+गट फक्त त्याच्या स्वतःच्या खात्यांपर्यंत पोहोचतो, आणि तेही फक्त तो शेअर करत असलेल्या आयटम्ससाठी, म्हणून सारांश गटाच्या खात्यांची यादी देतो. कॉपी केलेल्यांपैकी एखादा आयटम गट शेअर करत नसेल, किंवा काही खाती त्यात नसतील, तर ccam ते बदलणाऱ्या `ccam group set <group> --add <items>` आणि `ccam group join <group> <accounts>` कमांड्स छापते.
 
 ## पर्याय
 
@@ -84,7 +84,7 @@ Accounts that share these through group default:
 `internal/cli/migrate.go` आयटम निवडते, मग `migrate.Build` स्रोत आणि गट वाचते आणि योजना परत देते. तुम्ही खात्री दिल्यानंतर `Plan.Apply` होईपर्यंत काहीही लिहिले जात नाही.
 
 1. **स्रोत शोधणे.** नसलेला, फोल्डर नसलेला किंवा Claude Code ची एकही ओळखीची नोंद नसलेला पाथ `checkSource` नाकारते. `migrate.ClaudeJSON` फोल्डरची `.claude.json` शोधते: त्याच्या आत, किंवा आत नसलेल्या `~/.claude` साठी त्याच्या शेजारी असलेली `~/.claude.json`. `CLAUDE_CONFIG_DIR` सेट नसताना Claude Code ती तिथेच ठेवते.
-2. **आयटम्स पाथशी जोडणे.** प्रत्येक पाथ `share.Layout` मधून येतो, `ccam share` वापरते तीच अनुमत यादी. MCP सर्व्हर `.claude.json` मधून `mcp.LocalServers` ने वाचले जातात, जे संपूर्ण फाइल parse करण्याऐवजी `profile.TopLevelValue` scanner वापरते.
+2. **आयटम्स पाथशी जोडणे.** प्रत्येक पाथ `share.Layout` मधून येतो, गट वापरतात तीच अनुमत यादी. MCP सर्व्हर `.claude.json` मधून `mcp.LocalServers` ने वाचले जातात, जे संपूर्ण फाइल parse करण्याऐवजी `profile.TopLevelValue` scanner वापरते.
 3. **कॉपी, कधीच हलवणे नाही.** फाइल्स `fsutil.AtomicWrite` किंवा `fsutil.CopyFile` ने `~/.local/share/ccam/groups/<group>/` मध्ये जातात; MCP सर्व्हर गटाच्या `mcp.json` मध्ये जातात.
 
 प्रत्येक आयटम एक स्रोत पाथ एका गट पाथशी जोडतो:

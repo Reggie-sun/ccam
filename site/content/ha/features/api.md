@@ -4,7 +4,7 @@ description: ccam add --api yana ƙara asusun API key don API na Anthropic ko ga
 updated: 2026-10-20
 order: 13
 translation: machine
-sourceHash: de2c5cde2c48
+sourceHash: "a903c92f2c50"
 ---
 
 Asusun API key yana fara Claude Code da API key maimakon shigar biyan kuɗin Claude: API na Anthropic, ko endpoint da ke magana da tsarin Messages iri ɗaya, kamar gateway na LiteLLM ko OpenRouter. ccam ba ya ajiye key ɗin. Yana karanta shi a duk lokacin da asusun ya fara, daga environment variable ko daga umarni kamar password manager, kuma yana miƙa shi ga wannan process na Claude Code kawai.
@@ -22,12 +22,12 @@ ccam list
 
 ```console
 $ ccam list
-   #  Name      Shortcut  Email                    Shared               Last used
-*  1  personal  -         me@example.com           mcp settings md ext  2h ago
-   2  gw        -         (API: llm.example.com)   mcp settings md ext  -
+   #  Name      Shortcut  Email                   Groups   Last used
+*  1  personal  -         me@example.com          default  2h ago
+   2  gw        -         (API: llm.example.com)  default  -
 ```
 
-Asusun API key yana raba saituna, `CLAUDE.md`, extensions da sabobin MCP kamar kowane asusu, kuma yana aiki da gajerun umarni, `ccam folder` da `ccam ext`.
+Asusun API key yana shiga rukunoni kamar kowane asusu (ta tsohuwa `default`: saituna, `CLAUDE.md`, extensions da sabobin MCP), kuma yana aiki da gajerun umarni, `ccam folder` da `ccam ext`.
 
 ## Zaɓuɓɓuka
 
@@ -59,7 +59,7 @@ model = 'claude-sonnet-5-5'
 A kowane ƙaddamar da asusun, bayan dubawa na yau da kullum kuma kafin Claude Code ya fara:
 
 1. ccam yana karanta key ɗin: `env:` daga environment, `command:` ta gudanar da umarnin tare da iyakar daƙiƙa 30. Umarni zai iya neman kalmar sirri a terminal; output na kuskurensa ma yana zuwa terminal. Key mara komai yana tsayar da ƙaddamarwar da saƙon da ke faɗin inda ake sa ran key ɗin.
-2. Yana cire kowane variable da aka gada wanda ke zaɓar yadda Claude Code ke shiga ko wane mai bayarwa yake amfani da shi: `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_BASE_URL`, `ANTHROPIC_MODEL`, `CLAUDE_CODE_USE_BEDROCK`, `CLAUDE_CODE_USE_VERTEX` da `CLAUDE_CODE_USE_FOUNDRY`. Key da aka saita a shell ɗinka don wani abu dabam ba zai iya kaiwa wannan asusun ba, kuma shigar biyan kuɗi ba za ta iya rinjayar key ɗinsa ba.
+2. Yana cire kowane variable da aka gada wanda ke zaɓar yadda Claude Code ke shiga ko wane mai bayarwa yake amfani da shi: key da token (`ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN_FILE_DESCRIPTOR`, `CLAUDE_CODE_API_KEY_FILE_DESCRIPTOR`), endpoint (`ANTHROPIC_BASE_URL`, `ANTHROPIC_UNIX_SOCKET`, `ANTHROPIC_MODEL`) da maɓallan zaɓin mai bayarwa (`CLAUDE_CODE_USE_BEDROCK`, `CLAUDE_CODE_USE_VERTEX`, `CLAUDE_CODE_USE_FOUNDRY`, `CLAUDE_CODE_USE_ANTHROPIC_AWS`, `CLAUDE_CODE_USE_ANTHROPIC_GOOGLE_CLOUD`, `CLAUDE_CODE_USE_MANTLE`, `CLAUDE_CODE_USE_GATEWAY`). Key da aka saita a shell ɗinka don wani abu dabam ba zai iya kaiwa wannan asusun ba, kuma shigar biyan kuɗi ba za ta iya rinjayar key ɗinsa ba.
 3. Yana saita `ANTHROPIC_BASE_URL` da `ANTHROPIC_MODEL` idan an ba su, da key ɗin a matsayin `ANTHROPIC_API_KEY` ko `ANTHROPIC_AUTH_TOKEN`.
 
 Asusan da ke da shigar biyan kuɗi suna riƙe environment ɗin da suka gada, kamar da. A zaman mu'amala Claude Code zai iya tambaya sau ɗaya ko zai yi amfani da key ɗin da ya samu a environment.
@@ -70,7 +70,7 @@ Asusan da ke da shigar biyan kuɗi suna riƙe environment ɗin da suka gada, kam
 - `ccam add --api` yana duba tushen `env:` nan take kuma yana gargaɗi idan variable ɗin babu komai a ciki; ana fara gudanar da tushen `command:` ne a lokacin ƙaddamarwa.
 - `ccam login` da `ccam logout` suna ƙin asusun API key, domin ba shi da shiga. `ccam doctor` yana nuna endpoint ɗinsa da tushen key ɗinsa, kuma yana gargaɗi idan variable na `env:` babu komai a ciki.
 - `ccam usage` yana nuna `API` gare shi. `ccam next --auto`, `--fallback` da `ccam pick` suna zaɓa a cikin asusan biyan kuɗi kawai, domin API key ba shi da iyakar awa 5 ko ta mako da za a kwatanta.
-- `settings.json` da aka raba mai sashen `env` ko `apiKeyHelper` yana aiki ga kowane asusu a rukunin, har da asusan API key. Ka cire saitunan mai bayarwa daga saitunan da aka raba.
+- `settings.json` da aka raba mai sashen `env` ko `apiKeyHelper` yana aiki ga kowane asusu a rukunin, har da asusan API key. Ka cire saitunan mai bayarwa daga saitunan da aka raba, ko ka saka asusun API key a rukunin da ba ya raba `settings`.
 
 ## Masu alaƙa
 

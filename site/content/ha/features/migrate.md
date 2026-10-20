@@ -1,10 +1,10 @@
 ---
 title: Kwafar saitin da ke akwai
-description: Kwafi saituna, CLAUDE.md, extensions, sabobin MCP da shigar sabobin MCP na ~/.claude da ke akwai zuwa rukunin rabawa na ccam da ccam migrate.
+description: Kwafi saituna, CLAUDE.md, extensions, sabobin MCP da shigar sabobin MCP na ~/.claude da ke akwai zuwa rukuni na ccam da ccam migrate.
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 95ce6ec9e220
+sourceHash: 7cee52e75749
 ---
 
 Idan ka yi amfani da Claude Code kafin ccam, saitinka yana cikin `~/.claude` da `~/.claude.json`. `ccam migrate` yana kwafar sa zuwa rukunin rabawa, don kowane asusu da ke raba waɗannan abubuwa ta rukunin ya fara da saitin da kake da shi tuni. Ana karanta foldar tushe ne kawai, kuma `claude` na yau da kullum yana ci gaba da aiki kamar da. Gudanar da shi sau ɗaya bayan `ccam add` ɗinka na farko, kuma ka sake gudanar da shi duk lokacin da wani asusu ya fara raba sabobin MCP.
@@ -59,7 +59,7 @@ Accounts that share these through group default:
   extensions  personal, work
 ```
 
-Rukuni yana kai wa asusan da ke raba abu ta cikinsa ne kawai, don haka taƙaitawar tana lissafa su ga kowane abu. Ga asusan da ba sa yi, ccam yana buga umarnin `ccam share <name> --<item> on` da ke kunna rabawa.
+Rukuni yana kai wa asusansa ne kawai, kuma ga abubuwan da yake rabawa kawai, don haka taƙaitawar tana lissafa asusan rukunin. Idan rukunin ba ya raba ɗaya daga cikin abubuwan da aka kwafa, ko wasu asusai ba sa cikinsa, ccam yana buga umarnan `ccam group set <group> --add <items>` da `ccam group join <group> <accounts>` da ke canza hakan.
 
 ## Zaɓuɓɓuka
 
@@ -84,7 +84,7 @@ Ba tare da flag na abu ba, jerin zaɓin ne ke yanke shawara a terminal. A wajen 
 `internal/cli/migrate.go` yana zaɓar abubuwan, sannan `migrate.Build` yana karanta tushen da rukunin kuma yana mayar da shiri. Ba a rubuta komai har sai `Plan.Apply`, bayan ka tabbatar.
 
 1. **Nemo tushen.** `checkSource` yana ƙin hanyar da ta ɓace, ba folda ba ce, ko ba ta da shigarwar Claude Code da aka sani. `migrate.ClaudeJSON` yana nemo `.claude.json` na foldar: a cikinta, ko ga `~/.claude` da ba shi da ɗaya a ciki, `~/.claude.json` kusa da shi. A nan ne Claude Code ke ajiye shi idan ba a saita `CLAUDE_CONFIG_DIR` ba.
-2. **Danganta abubuwa da hanyoyi.** Kowace hanya tana fitowa daga `share.Layout`, jerin izini ɗaya da `ccam share` ke amfani da shi. Ana karanta sabobin MCP daga `.claude.json` da `mcp.LocalServers`, wanda ke amfani da scanner na `profile.TopLevelValue` maimakon karanta dukkan fayil ɗin.
+2. **Danganta abubuwa da hanyoyi.** Kowace hanya tana fitowa daga `share.Layout`, jerin izini ɗaya da rukunoni ke amfani da shi. Ana karanta sabobin MCP daga `.claude.json` da `mcp.LocalServers`, wanda ke amfani da scanner na `profile.TopLevelValue` maimakon karanta dukkan fayil ɗin.
 3. **Kwafi, ba matsawa ba.** Fayiloli suna zuwa `~/.local/share/ccam/groups/<group>/` da `fsutil.AtomicWrite` ko `fsutil.CopyFile`; sabobin MCP suna shiga `mcp.json` na rukunin.
 
 Kowane abu yana danganta hanyar tushe ɗaya da hanyar rukuni ɗaya:

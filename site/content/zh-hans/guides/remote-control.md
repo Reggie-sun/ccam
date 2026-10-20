@@ -4,7 +4,7 @@ description: 用 ccam <name> rc 以任意账号启动 Claude Code 的 Remote Con
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 59b802c44bb3
+sourceHash: "5f0b90ea53d6"
 ---
 
 `ccam work rc` 以账号 `work` 启动 Claude Code 的 Remote Control，这样你就可以在 claude.ai/code 或 Claude 移动应用中操作这台电脑上的会话。它的用法与 `claude rc` 相同，只有一处区别：如果该账号共享 MCP 服务器，ccam 会询问一次是否把它们复制到账号的 `.claude.json` 中，因为 Remote Control 的会话不会从其他任何地方读取服务器。
@@ -33,7 +33,7 @@ ccam --dry-run work rc                # print the command instead of running it
 | `--dry-run`（写在账号之前） | 打印环境变量和命令，有 MCP 提示时也一并打印。既不询问也不复制 | 关 |
 | `Copy them into .claude.json (a backup is kept)? [y/N]` | 当账号共享 MCP 服务器、而其 `.claude.json` 中没有组的当前列表时询问。`y` 复制，`N` 或回车则不复制直接启动 | `N` |
 | `~/.config/ccam/config.toml` 中的 `mcp_strategy = "sync"` | 每次启动前都把组的服务器复制到 `.claude.json`，无论是否为 Remote Control，因此从不询问 | `"flag"` |
-| `ccam share work --mcp off` | 停止与该账号共享 MCP 服务器；之后 Remote Control 只带账号自己的服务器启动，也不会询问 | 开 |
+| `ccam group leave <group> work` | 把账号移出与它共享 MCP 的组；之后 Remote Control 只带账号自己的服务器启动，也不会询问 | 在 `default` 中 |
 
 ### Remote Control 选项
 
@@ -124,7 +124,7 @@ $ ccam mcp add ctx --url https://mcp.context7.com/mcp
 
 ### ccam 每次都询问
 
-你还没有复制这些服务器。回答一次 `y`，或者设置 `mcp_strategy = "sync"`。如果你根本不想在 Remote Control 中使用这些服务器，就停止与该账号共享 MCP：`ccam share work --mcp off`。
+你还没有复制这些服务器。回答一次 `y`，或者设置 `mcp_strategy = "sync"`。如果你根本不想在 Remote Control 中使用这些服务器，就停止与该账号共享 MCP：把它移出那个组（`ccam group leave default work`），或者把 MCP 放进一个该账号不在其中的单独的组。
 
 ### `ccam work rc` 立即失败，并报出与 `--mcp-config` 有关的错误
 

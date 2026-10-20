@@ -4,7 +4,7 @@ description: ccam pick yana buga asusun da ya fi sarari don rubutun umarni, yana
 updated: 2026-10-20
 order: 12
 translation: machine
-sourceHash: 65a5a7e179a5
+sourceHash: 2e8285b7c193
 ---
 
 `ccam pick` yana buga sunan asusun da aka shiga da shi wanda ya fi sarari, don rubutun umarni (script) ya fara Claude Code da shi. Workers da aka fara a lokaci ɗaya kowannensu yana samun asusu daban muddin akwai isassun asusai masu sarari, don haka rukunin ayyukan `claude -p` yana rarrabuwa a kan asusanka maimakon ya shanye ɗaya.
@@ -19,6 +19,8 @@ done; wait
 ccam pick --json                      # the account and its usage
 ccam pick --model opus                # also count the Opus weekly limit
 ccam pick --max-usage 80 --strategy expiring
+ccam pick --strategy balance          # spread over the weekly quota, fewer running sessions first
+ccam pick --cross-org                 # also accounts of other organizations
 ccam pick --wait=2h                   # nobody has room: wait for a reset
 ccam --fallback "$(ccam pick)" -p "…" # also switch if this account hits its limit mid-job
 ```
@@ -31,7 +33,8 @@ $ ccam pick --json
   "email": "dev@company.com",
   "five_hour": { "percent": 12, "resets_at": "2026-10-20T15:10:00Z", "known": true },
   "weekly": { "percent": 41, "resets_at": "2026-10-24T09:00:00Z", "known": true },
-  "source": "live"
+  "source": "live",
+  "reason": "12% of its 5 hours used, the least"
 }
 ```
 
@@ -41,16 +44,17 @@ Exit codes: `0` tare da suna a standard output, `75` (`EX_TEMPFAIL`) idan babu a
 
 | Zaɓi | Abin da yake yi | Tsoho |
 | --- | --- | --- |
-| `--json` | Buga asusun, amfaninsa na awa 5 da na mako, da inda lambobin suka fito | a kashe |
+| `--json` | Buga asusun, amfaninsa na awa 5 da na mako, inda lambobin suka fito da dalilin da ya sa aka zaɓe shi | a kashe |
 | `--model <model>` | Ƙirga tagar mako ta wannan model ɗin ma, kamar `opus` | babu |
 | `--max-usage <1-100>` | Fifita asusan da ke ƙasa da wannan amfani | `auto_max_usage`, in ba haka ba 100 |
-| `--strategy headroom\|expiring` | Mafi ƙarancin amfanin awa 5, ko sake saitin awa 5 mafi kusa | `auto_strategy`, in ba haka ba `headroom` |
+| `--strategy headroom\|expiring\|balance` | Mafi ƙarancin amfanin awa 5, sake saitin awa 5 mafi kusa, ko kason mako da zai fara ɓata ba tare da an yi amfani da shi ba | `auto_strategy`, in ba haka ba `headroom` |
+| `--cross-org` | Zaɓi asusan wasu ƙungiyoyi (organizations) ma | `cross_org`, in ba haka ba a kashe |
 | `--wait[=<duration>]` | Idan babu asusun da ke da sarari, jira na farko ya sake saitawa, har zuwa iyakar wannan tsawon | a kashe; `5h` idan an ba shi shi kaɗai |
 | `--dry-run` | Zaɓa ba tare da rubuta zaɓin ba | a kashe |
 
 ## Yadda yake aiki
 
-1. ccam yana lissafa asusan da aka shiga da su (asusan API key ba su da iyaka kuma ana barin su a waje).
+1. ccam yana lissafa asusan da aka shiga da su (asusan API key ba su da iyaka kuma ana barin su a waje) a cikin ƙungiyar asusun da wannan foldar za ta fara (duba [ƙungiyoyi](/features/next#auto)); ana barin foldar da ta shiga asusun Claude iri ɗaya da wannan a waje ita ma.
 2. Yana ɗaukar kulle (`~/.local/state/ccam/picks.lock`), don zaɓuɓɓukan da ke gudana a lokaci ɗaya su faru ɗaya bayan ɗaya.
 3. Yana neman amfanin kowane asusu a lokaci ɗaya, kamar yadda `ccam usage` ke yi, tare da cache na daƙiƙa 60.
 4. Ana fara barin asusan da aka zaɓa a cikin minti 2 da suka gabata (`~/.local/state/ccam/picks/<name>`) a waje, kuma [ƙa'idodin zaɓi](/features/next#auto) na `ccam next --auto` suna zaɓa a cikin sauran: waɗanda ke ƙasa da `auto_max_usage` da farko, bisa dabarar, kuma ba a taɓa zaɓar asusun da ya kai 100% ba.

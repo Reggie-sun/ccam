@@ -4,7 +4,7 @@ description: ccam pick виводить для скрипту обліковий
 updated: 2026-10-20
 order: 12
 translation: machine
-sourceHash: 65a5a7e179a5
+sourceHash: "2e8285b7c193"
 ---
 
 `ccam pick` виводить назву облікового запису з входом і найбільшим запасом, щоб скрипт запустив із ним Claude Code. Робочі процеси, запущені одночасно, отримують різні облікові записи, поки облікових записів із запасом вистачає, тож пакет завдань `claude -p` розподіляється між вашими обліковими записами, а не вичерпує один.
@@ -19,6 +19,8 @@ done; wait
 ccam pick --json                      # the account and its usage
 ccam pick --model opus                # also count the Opus weekly limit
 ccam pick --max-usage 80 --strategy expiring
+ccam pick --strategy balance          # spread over the weekly quota, fewer running sessions first
+ccam pick --cross-org                 # also accounts of other organizations
 ccam pick --wait=2h                   # nobody has room: wait for a reset
 ccam --fallback "$(ccam pick)" -p "…" # also switch if this account hits its limit mid-job
 ```
@@ -31,7 +33,8 @@ $ ccam pick --json
   "email": "dev@company.com",
   "five_hour": { "percent": 12, "resets_at": "2026-10-20T15:10:00Z", "known": true },
   "weekly": { "percent": 41, "resets_at": "2026-10-24T09:00:00Z", "known": true },
-  "source": "live"
+  "source": "live",
+  "reason": "12% of its 5 hours used, the least"
 }
 ```
 
@@ -41,16 +44,17 @@ $ ccam pick --json
 
 | Параметр | Дія | За замовчуванням |
 | --- | --- | --- |
-| `--json` | Вивести обліковий запис, його 5-годинне й тижневе використання та джерело чисел | вимкнено |
+| `--json` | Вивести обліковий запис, його 5-годинне й тижневе використання, джерело чисел і причину вибору | вимкнено |
 | `--model <model>` | Враховувати також тижневе вікно цієї моделі, наприклад `opus` | немає |
 | `--max-usage <1-100>` | Віддавати перевагу обліковим записам нижче цього використання | `auto_max_usage`, інакше 100 |
-| `--strategy headroom\|expiring` | Найменше 5-годинне використання або найближче скидання 5-годинного вікна | `auto_strategy`, інакше `headroom` |
+| `--strategy headroom\|expiring\|balance` | Найменше 5-годинне використання, найближче скидання 5-годинного вікна або тижнева квота, яка першою лишилася б невикористаною | `auto_strategy`, інакше `headroom` |
+| `--cross-org` | Вибирати також облікові записи інших організацій | `cross_org`, інакше вимкнено |
 | `--wait[=<duration>]` | Коли в жодного облікового запису немає запасу, чекати на скидання першого з них, але не довше за цей час | вимкнено; `5h`, якщо вказано без значення |
 | `--dry-run` | Вибрати, не записуючи вибір | вимкнено |
 
 ## Як це працює
 
-1. ccam перелічує облікові записи з входом (облікові записи з ключем API не мають лімітів і не враховуються).
+1. ccam перелічує облікові записи з входом (облікові записи з ключем API не мають лімітів і не враховуються) в організації облікового запису, який запустився б у цій теці (див. [організації](/features/next#auto)); теж не враховується тека, у якій виконано вхід у той самий обліковий запис Claude, що й у ньому.
 2. Він бере блокування (`~/.local/state/ccam/picks.lock`), тож одночасні вибори виконуються по черзі.
 3. Він одночасно запитує використання всіх облікових записів так само, як `ccam usage`, з кешем на 60 секунд.
 4. Облікові записи, вибрані за останні 2 хвилини (`~/.local/state/ccam/picks/<name>`), спершу виключаються, а серед решти вибирають [правила вибору](/features/next#auto) `ccam next --auto`: спершу облікові записи нижче `auto_max_usage`, за стратегією, і ніколи не обліковий запис на 100%.

@@ -1,10 +1,10 @@
 ---
 title: Iniciar Claude Code
-description: Inicia Claude Code como cualquier cuenta con ccam <name|number>, ccam run o el selector; los argumentos pasan intactos a claude y --dry-run muestra el comando.
+description: Inicia Claude Code como cualquier cuenta con ccam <name|number>, ccam run o el panel; los argumentos pasan intactos a claude y --dry-run muestra el comando.
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: e6b5a8d4df86
+sourceHash: 4812b197f143
 ---
 
 `ccam work` inicia Claude Code con la cuenta `work`, y todo lo que va después del nombre llega a `claude` tal cual. Úsalo donde escribirías `claude`: en una terminal, en un script o con la entrada por una tubería.
@@ -21,7 +21,7 @@ ccam -p "summarise"              # no name: the folder's account, else the defau
 ccam use work                    # make work the default account
 ccam folder work ~/code/company  # use work in that folder when no name is given
 ccam run work --continue         # same as ccam work --continue
-ccam                             # the picker on a terminal, the list otherwise
+ccam                             # the dashboard on a terminal, the list otherwise
 ccam --dry-run work -p hi        # print the command instead of running it
 ccam --fallback work -p "fix the tests"   # run again as another account at the limit
 ```
@@ -30,22 +30,13 @@ Indica el nombre de una cuenta o su número de `ccam list`. ccam no lee los argu
 
 Cuando el primer argumento empieza con `-` y no es una de las opciones propias de ccam, ccam inicia una cuenta sin nombre con todos los argumentos. Esa es la cuenta asignada a la carpeta actual con [`ccam folder`](/features/folder) o, si no hay ninguna, la predeterminada: la cuenta establecida con `ccam use`, o la cuenta con el número más bajo si no has establecido ninguna.
 
-### El selector
+### El panel
 
-`ccam` sin argumentos abre el selector cuando la entrada y la salida estándar son una terminal, y en otro caso imprime `ccam list`. Muestra el número, el correo electrónico, el uso de 5 horas, el último uso y los elementos compartidos de cada cuenta; el uso se completa a medida que responde cada cuenta.
+`ccam` sin argumentos abre el [panel](/features/dashboard) cuando la entrada y la salida estándar son una terminal, y en otro caso imprime `ccam list`. Ve a una cuenta (con las flechas o escribiendo su número) y presiona `Enter` para iniciarla; `n` inicia la cuenta con más margen y `o` ofrece `--continue`, `--resume` u otros argumentos. El panel se cierra antes de que se inicie Claude Code, así que primero se restaura la terminal.
 
-| Tecla | Qué hace |
-| --- | --- |
-| `Enter` | Inicia Claude Code con la cuenta seleccionada |
-| `1` a `9` | Inicia la cuenta con ese número |
-| `Up`/`Down`, `k`/`j` | Mueve la selección |
-| `a` | Cierra el selector y ejecuta el asistente de `ccam add` |
-| `s` | Edita los elementos compartidos de la cuenta seleccionada (`Space` o `x` cambia un elemento, `Enter` aplica, `Esc` vuelve atrás) |
-| `d` | Convierte la cuenta seleccionada en la predeterminada |
-| `r` | Vuelve a obtener el uso, sin la caché breve |
-| `q`, `Esc`, `Ctrl+C` | Sale |
+Cuando la shell tiene definida `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY` o `ANTHROPIC_AUTH_TOKEN`, Claude Code usaría esa clave o ese token en lugar del inicio de sesión propio de la cuenta, así que ccam lo indica en la salida de error estándar antes de iniciar (`ccam: $ANTHROPIC_API_KEY is set, so Claude Code may use that key instead of work's login…`). Solo lee las variables; una [cuenta con clave de API](/features/api) las borra en su lugar.
 
-El selector se cierra antes de actuar, así que la terminal se restaura antes de que se inicie Claude Code. Después de `d` o de un cambio en el uso compartido, se vuelve a abrir. Un cambio en el uso compartido muestra el plan y pregunta primero, igual que `ccam share`.
+Con `relay = true` en `config.toml`, ccam inicia las sesiones interactivas como proceso hijo y se queda a su lado, para que `/ccam:switch` pueda llevar una conversación a otra cuenta por sí solo ([detalles](/features/next#inside-claude-code)); si no, ccam se reemplaza a sí mismo por Claude Code, y nada se ejecuta a su lado.
 
 ## Opciones
 
@@ -84,7 +75,7 @@ Cada inicio sigue los mismos pasos, desde la línea de comandos hasta `exec`:
 Cada recuadro se ilumina mientras se ejecuta su paso, y las líneas de abajo son el entorno y los argumentos con los que se inicia Claude Code.
 
 1. `cmd/ccam/main.go` llama a `app.Main`. Si ccam se inició con otro nombre, es un [atajo](/features/shortcuts) y va directamente al iniciador.
-2. `app.parse` examina `os.Args` antes de que intervenga cobra. Solo `ccam` a secas (el selector), un nombre de comando de ccam (`config.Reserved`), `-h`/`--help` y `-v`/`--version` van a `cli.Execute`. Todo lo demás es un inicio.
+2. `app.parse` examina `os.Args` antes de que intervenga cobra. Solo `ccam` a secas (el panel), un nombre de comando de ccam (`config.Reserved`), `-h`/`--help` y `-v`/`--version` van a `cli.Execute`. Todo lo demás es un inicio.
 3. `launcher.Launch` lee `~/.config/ccam/config.toml`, el único archivo que analiza.
 4. `launcher.Prepare` busca la cuenta por nombre o número (sin nombre, `HereProfile` toma la cuenta de la carpeta comparando el directorio de trabajo con las entradas `[[folder]]` de `config.toml` como cadenas), descarta un `--` inicial y resuelve el ejecutable `claude` con `ResolveClaude`. La búsqueda en PATH se guarda en caché en `~/.local/state/ccam/claude-path` junto con la fecha de modificación del archivo, así que ccam no busca en `PATH` en cada inicio. Un archivo modificado o que falta provoca una búsqueda nueva. Una ruta `claude_bin` en `config.toml` se usa tal cual. ccam rechaza un `claude` que sea el propio ccam, comparando el inodo, porque eso crearía un bucle.
 5. `checkLinks` compara la carpeta de la cuenta `~/.local/share/ccam/profiles/<name>/` con su configuración de uso compartido mediante `share.Check`, que solo llama a `lstat` y `readlink`, una o dos llamadas al sistema por elemento. Un enlace que falta se crea en el momento. Cualquier cosa que podría perder datos detiene el inicio.

@@ -1,10 +1,10 @@
 ---
 title: اجرای Claude Code
-description: Claude Code را با ccam <name|number>، ccam run یا فهرست انتخاب، با هر حسابی اجرا کنید؛ آرگومان‌ها بی‌تغییر به claude می‌رسند و --dry-run فرمان را نشان می‌دهد.
+description: Claude Code را با ccam <name|number>، ccam run یا داشبورد، با هر حسابی اجرا کنید؛ آرگومان‌ها بی‌تغییر به claude می‌رسند و --dry-run فرمان را نشان می‌دهد.
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: e6b5a8d4df86
+sourceHash: 4812b197f143
 ---
 
 `ccam work` اجرای Claude Code را با حساب `work` آغاز می‌کند و هر چه پس از نام بیاید همان‌طور که هست به `claude` می‌رسد. هر جا که `claude` را تایپ می‌کردید از آن استفاده کنید: در ترمینال، در یک اسکریپت یا با ورودی‌ای که از طریق pipe داده می‌شود.
@@ -21,7 +21,7 @@ ccam -p "summarise"              # no name: the folder's account, else the defau
 ccam use work                    # make work the default account
 ccam folder work ~/code/company  # use work in that folder when no name is given
 ccam run work --continue         # same as ccam work --continue
-ccam                             # the picker on a terminal, the list otherwise
+ccam                             # the dashboard on a terminal, the list otherwise
 ccam --dry-run work -p hi        # print the command instead of running it
 ccam --fallback work -p "fix the tests"   # run again as another account at the limit
 ```
@@ -30,22 +30,13 @@ ccam --fallback work -p "fix the tests"   # run again as another account at the 
 
 وقتی آرگومان اول با `-` شروع شود و یکی از گزینه‌های خود ccam نباشد، ccam حسابی را بدون نام، با همه آرگومان‌ها اجرا می‌کند. این حسابی است که با [`ccam folder`](/features/folder) برای پوشه فعلی تعیین شده، وگرنه حساب پیش‌فرض: حسابی که با `ccam use` تعیین شده، یا اگر حسابی تعیین نکرده باشید، حسابی که کمترین شماره را دارد.
 
-### فهرست انتخاب
+### داشبورد
 
-`ccam` بدون آرگومان، وقتی ورودی و خروجی استاندارد ترمینال باشند فهرست انتخاب را باز می‌کند و در غیر این صورت `ccam list` را چاپ می‌کند. این فهرست شماره، ایمیل، مصرف ۵ ساعته، آخرین استفاده و موارد مشترک هر حساب را نشان می‌دهد؛ مصرف هر حساب به محض پاسخ دادن آن پر می‌شود.
+`ccam` بدون آرگومان، وقتی ورودی و خروجی استاندارد ترمینال باشند [داشبورد](/features/dashboard) را باز می‌کند و در غیر این صورت `ccam list` را چاپ می‌کند. به یک حساب بروید (با کلیدهای جهت‌نما یا با تایپ شماره آن) و برای اجرای آن `Enter` را بزنید؛ `n` حسابی را که بیشترین ظرفیت را دارد اجرا می‌کند و `o`، `--continue`، `--resume` یا آرگومان‌های دیگر را پیشنهاد می‌دهد. داشبورد پیش از شروع Claude Code بسته می‌شود، بنابراین ترمینال ابتدا به حالت عادی برمی‌گردد.
 
-| کلید | کار آن |
-| --- | --- |
-| `Enter` | اجرای Claude Code با حساب انتخاب‌شده |
-| `1` تا `9` | اجرای حسابی که آن شماره را دارد |
-| `Up`/`Down`، `k`/`j` | جابه‌جا کردن انتخاب |
-| `a` | بستن فهرست انتخاب و اجرای دستیار `ccam add` |
-| `s` | ویرایش موارد مشترک حساب انتخاب‌شده (`Space` یا `x` روشن و خاموش می‌کند، `Enter` اعمال می‌کند، `Esc` برمی‌گردد) |
-| `d` | پیش‌فرض کردن حساب انتخاب‌شده |
-| `r` | دریافت دوباره مصرف، بدون حافظه نهان کوتاه‌مدت |
-| `q`، `Esc`، `Ctrl+C` | خروج |
+وقتی در shell یکی از `CLAUDE_CODE_OAUTH_TOKEN`، `ANTHROPIC_API_KEY` یا `ANTHROPIC_AUTH_TOKEN` تنظیم شده باشد، Claude Code به‌جای ورود خود حساب از آن کلید یا توکن استفاده می‌کرد، پس ccam پیش از شروع این را در خطای استاندارد می‌گوید (`ccam: $ANTHROPIC_API_KEY is set, so Claude Code may use that key instead of work's login…`). فقط متغیرها را می‌خواند؛ یک [حساب کلید API](/features/api) به‌جای آن، آن‌ها را پاک می‌کند.
 
-فهرست انتخاب پیش از انجام کار بسته می‌شود، بنابراین ترمینال پیش از شروع Claude Code به حالت عادی برمی‌گردد. پس از `d` یا تغییر اشتراک‌گذاری، فهرست دوباره باز می‌شود. تغییر اشتراک‌گذاری، مانند `ccam share`، ابتدا برنامه را نشان می‌دهد و از شما می‌پرسد.
+با `relay = true` در `config.toml`، ccam نشست‌های تعاملی را به‌عنوان فرایند فرزند اجرا می‌کند و در کنارشان می‌ماند تا `/ccam:switch` بتواند یک گفتگو را خودش ادامه دهد ([جزئیات](/features/next#inside-claude-code))؛ در غیر این صورت ccam خودش را با Claude Code جایگزین می‌کند و هیچ چیز در کنار آن اجرا نمی‌شود.
 
 ## گزینه‌ها
 
@@ -84,7 +75,7 @@ $env:CLAUDE_CONFIG_DIR='C:\Users\me\.local\share\ccam\profiles\work'; & C:\Users
 هر جعبه هنگام اجرای گام خود روشن می‌شود و خط‌های زیر آن، محیط و آرگومان‌هایی هستند که Claude Code با آن‌ها شروع می‌شود.
 
 1. `cmd/ccam/main.go` تابع `app.Main` را فراخوانی می‌کند. اگر ccam با نام دیگری اجرا شده باشد، یک [میان‌بر](/features/shortcuts) است و مستقیم به اجراکننده می‌رود.
-2. `app.parse` پیش از دخالت cobra به `os.Args` نگاه می‌کند. فقط `ccam` به‌تنهایی (فهرست انتخاب)، نام یک فرمان ccam (`config.Reserved`)، `-h`/`--help` و `-v`/`--version` به `cli.Execute` می‌روند. هر چیز دیگری یک اجراست.
+2. `app.parse` پیش از دخالت cobra به `os.Args` نگاه می‌کند. فقط `ccam` به‌تنهایی (داشبورد)، نام یک فرمان ccam (`config.Reserved`)، `-h`/`--help` و `-v`/`--version` به `cli.Execute` می‌روند. هر چیز دیگری یک اجراست.
 3. `launcher.Launch` فایل `~/.config/ccam/config.toml` را می‌خواند، تنها فایلی که تجزیه می‌کند.
 4. `launcher.Prepare` حساب را با نام یا شماره پیدا می‌کند (بدون نام، `HereProfile` حساب پوشه را برمی‌دارد و پوشه کاری را به‌صورت رشته با ورودی‌های `[[folder]]` در `config.toml` مقایسه می‌کند)، یک `--` آغازین را حذف می‌کند و فایل اجرایی `claude` را با `ResolveClaude` پیدا می‌کند. نتیجه جست‌وجو در PATH همراه با زمان تغییر فایل در `~/.local/state/ccam/claude-path` ذخیره می‌شود، بنابراین ccam در هر اجرا `PATH` را جست‌وجو نمی‌کند. اگر فایل تغییر کرده یا وجود نداشته باشد، جست‌وجوی تازه‌ای انجام می‌شود. مسیر `claude_bin` در `config.toml` همان‌طور که هست استفاده می‌شود. ccam فایل `claude` را که خود ccam باشد (با مقایسه inode) رد می‌کند، چون به یک حلقه بی‌پایان می‌انجامد.
 5. `checkLinks` پوشه حساب `~/.local/share/ccam/profiles/<name>/` را با تنظیمات اشتراک‌گذاری آن با استفاده از `share.Check` مقایسه می‌کند، که فقط `lstat` و `readlink` را فراخوانی می‌کند، یعنی یک یا دو فراخوانی سیستمی برای هر مورد. پیوندی که وجود نداشته باشد در همان لحظه ساخته می‌شود. هر چیزی که ممکن است به از دست رفتن داده بینجامد اجرا را متوقف می‌کند.

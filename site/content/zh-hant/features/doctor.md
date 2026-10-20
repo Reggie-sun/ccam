@@ -4,7 +4,7 @@ description: 用 ccam doctor 檢查共用連結、檔案權限、登入和 Claud
 updated: 2026-10-20
 order: 9
 translation: machine
-sourceHash: a45ca25bb722
+sourceHash: "6ae82bbf5585"
 ---
 
 `ccam doctor` 會檢查你的 ccam 安裝：Claude Code 執行檔、每個帳號的資料夾、登入和共用連結、共用的 MCP 伺服器、用量端點，以及你的快捷指令。`ccam doctor --fix` 會修復不會遺失資料的問題，並先把要取代的檔案移到備份資料夾。當 `ccam <name>` 因共用連結問題而停止、你手動還原檔案之後，或 Claude Code 更新之後，請執行它。
@@ -71,14 +71,16 @@ $ ccam doctor --fix
 1. **Claude Code 版本**（`checkClaude`）。以和啟動器相同的方式找出 `claude` 執行檔，並執行 `claude --version`。如果版本不是以 `2.1.302` 開頭（這是 ccam 驗證資料夾結構時所用的版本，`doctor.LayoutVersion`），會加上 `· ccam was verified against the folder layout of Claude Code 2.1.302. Any 'unknown entries' below may mean the layout changed`。找不到執行檔或 `--version` 失敗則為錯誤。不修復。
 2. **環境變數中的登入資訊**（`checkAuthEnv`）。設定了 `CLAUDE_CODE_OAUTH_TOKEN`、`ANTHROPIC_API_KEY` 或 `ANTHROPIC_AUTH_TOKEN` 時發出警告：從該 shell 啟動的每個帳號都會繼承它，而且 Claude Code 會優先使用它，而不是帳號自己的登入。不修復；請自行取消設定。
 3. **資料夾**（`checkProfile`）。帳號資料夾不存在時為錯誤，並結束該帳號的檢查。權限中設定了任何群組或其他使用者的位元時為警告；`--fix` 會執行 `chmod 0700`。Windows 沒有權限位元，所以在那裡會略過這項檢查和下方的 `0600` 檢查；位於使用者設定檔中的資料夾由其存取清單保護。
-4. **登入檔案**（`checkCredentials`）。以 `lstat` 檢查 `.credentials.json`。符號連結是錯誤，因為每個帳號都必須有自己的權杖，而且不會修復。權限不是 `0600` 時為警告；`--fix` 會執行 `chmod 0600`。接著讀取登入資訊（在 macOS 上會先從鑰匙圈讀取）。沒有登入是警告，並提示使用 `ccam login <name>`。更新權杖過期是錯誤 `login expired`；存取權杖過期只是資訊，因為 Claude Code 會在下次啟動時更新它。這些都不會修復。
-5. **共用連結**（`share.Check`）。只用 `lstat` 和 `readlink`，把 `share.Layout` 中的每個路徑和帳號的共用設定比對。它會回報四種情況：缺少連結、連結指向別處、應該是連結的地方是實際檔案，以及已改為 local 的項目仍殘留連結。缺少連結是警告，其他都是錯誤。
+4. **登入檔案**（`checkCredentials`）。以 `lstat` 檢查 `.credentials.json`。符號連結是錯誤，因為每個帳號都必須有自己的權杖，而且不會修復。權限不是 `0600` 時為警告；`--fix` 會執行 `chmod 0600`。接著讀取登入資訊（在 macOS 上會先從鑰匙圈讀取）。沒有登入是警告，並提示使用 `ccam login <name>`。更新權杖過期是錯誤 `login expired`；存取權杖過期只是資訊，因為 Claude Code 會在下次啟動時更新它。有效的登入會顯示電子郵件和方案（`login valid (dev@company.com, Claude Team · Acme)`）。這些都不會修復；`ccam login --expired` 會登入所有需要重新登入的帳號。
+5. **共用連結**（`share.Check`）。只用 `lstat` 和 `readlink`，把 `share.Layout` 中的每個路徑和帳號的群組比對。它會回報四種情況：缺少連結、連結指向別處、應該是連結的地方是實際檔案，以及已改為 local 的項目仍殘留連結。缺少連結是警告，其他都是錯誤。在較新版本的 ccam 中新增到某個項目的路徑（對話記錄的 `file-history/`、`tasks/` 和 `paste-cache/`，設定的 `keybindings.json`），只要帳號仍有自己的副本，就只會是警告：`is not shared with the group yet (ccam doctor --fix moves it in)`。啟動絕不會因為它們而停止。
 6. **未知項目**（`checkUnknownEntries`）。列出帳號資料夾中 ccam 不認得的頂層名稱（`share.Known`），作為 Claude Code 資料夾結構可能已變更的提示。僅供參考。
 7. **外掛路徑**（`checkPlugins`）。外掛登錄檔（`installed_plugins.json`、`known_marketplaces.json`）儲存的是絕對路徑。在每個群組的 `plugins/` 中，經過某個帳號資料夾的路徑會在該帳號被移除或重新命名時失效。`--fix` 會用 `profile.RewritePluginPaths` 把它們改寫為群組資料夾，以原子寫入的方式更新登錄檔。
 8. **MCP 伺服器**（`checkMCP`）。每個群組的 `mcp.json` 只載入一次。無法讀取的檔案是錯誤；未通過 `mcp.Validate` 的伺服器是警告。不修復。
 9. **用量回應格式**（`checkUsageFormat`）。不使用快取，以一般的 3 秒限制逐一向用量端點查詢帳號，直到有一個回應為止。如果回應已經無法解析，它會警告 `ccam usage` 將改用狀態列的快取。這是唯一使用網路的檢查。
 10. **快捷指令**（`checkShims`）。只在有帳號設定了快捷指令時執行。`~/.local/bin` 中缺少連結是警告；`--fix` 會呼叫 `shim.Install`，它只建立缺少的連結，絕不碰其他檔案。bin 資料夾不在 `PATH` 上時為警告，不會修復。
 11. **資料夾設定**（`checkFolders`）。只在有 [`ccam folder`](/features/folder) 項目時執行。項目的帳號不存在時為錯誤，項目的資料夾已不存在時為警告。兩者都不會修復，因為移除項目會改變在那裡啟動的帳號。
+12. **群組和設定**（`checkGroups`）。不是帳號的群組成員、名稱後來變成 ccam 指令的帳號（用 `ccam run <name>` 啟動它，或重新命名），以及 `config.toml` 中未知的 `theme` 或 `usage_source`，都是警告。不會修復。
+13. **登入身分**（`checkIdentities`）。從每個資料夾的 `.claude.json` 讀取它登入的身分。資料夾現在登入的帳號和 `ccam login` 記錄的不同時（例如在工作階段中執行 `/login` 之後）是警告；資料夾和另一個資料夾登入同一個 Claude 帳號時也是警告，因為兩者會共用用量上限。不會修復。
 
 ### 修復共用連結
 
@@ -91,7 +93,7 @@ ccam: stopped because of share link problems:
 Repair them with `ccam doctor --fix`, then run again
 ```
 
-遇到任何共用連結問題時，`--fix` 會以帳號的共用設定同時作為目前狀態和目標狀態呼叫 `share.Build`，再執行 `Plan.Apply`。`Build` 會根據磁碟上的實際內容重新推導每個步驟，產生的計畫和 `ccam share` 使用的相同，所以修復遵循的規則和開啟共用時一樣。
+遇到任何共用連結問題時，`--fix` 會以帳號的共用設定同時作為目前狀態和目標狀態呼叫 `share.Build`，再執行 `Plan.Apply`。`Build` 會根據磁碟上的實際內容重新推導每個步驟，產生的計畫和 `ccam group` 變更使用的相同，所以修復遵循的規則和加入群組時一樣。
 
 <!-- motion:doctor-repair -->
 
@@ -110,7 +112,7 @@ Repair them with `ccam doctor --fix`, then run again
 - 單純執行 `ccam doctor` 絕不會變更任何東西。在腳本中若要確保不變更，請把 `--dry-run` 和 `--fix` 一起使用。
 - `doctor --fix` 不會檢查帳號是否正在執行。修復帳號的共用連結之前，請先結束該帳號的 Claude Code，因為工作階段會持續寫入這些檔案。
 - 如果共用修復失敗，ccam 會對該帳號回報 `could not repair share links: <error>`，並略過它的未知項目檢查。其他帳號仍會繼續檢查。
-- 如果 `ccam share` 中途失敗，它會先儲存目標設定，並告訴你用 `ccam doctor --fix` 完成。
+- 如果 `ccam group` 變更中途失敗，新的群組已經儲存，ccam 會告訴你用 `ccam doctor --fix` 完成。
 - 符號連結的 `.credentials.json`、過期的登入和環境變數中的登入資訊只會回報，絕不會變更。
 - 外掛登錄檔的改寫以原子方式寫入，但不會複製到 `.ccam-backup/`。
 

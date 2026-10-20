@@ -1,10 +1,10 @@
 ---
 title: Menjalankan Claude Code
-description: Jalankan Claude Code sebagai akun apa pun via ccam <name|number>, ccam run, atau pemilih; argumen diteruskan utuh ke claude, --dry-run menampilkan perintah.
+description: Jalankan Claude Code sebagai akun apa pun via ccam <name|number>, ccam run, atau dasbor; argumen diteruskan utuh ke claude, --dry-run menampilkan perintah.
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: e6b5a8d4df86
+sourceHash: "4812b197f143"
 ---
 
 `ccam work` menjalankan Claude Code sebagai akun `work`, dan semua yang ada setelah nama diteruskan ke `claude` apa adanya. Gunakan di mana pun Anda biasa mengetik `claude`: di terminal, di skrip, atau dengan input dari pipe.
@@ -21,7 +21,7 @@ ccam -p "summarise"              # no name: the folder's account, else the defau
 ccam use work                    # make work the default account
 ccam folder work ~/code/company  # use work in that folder when no name is given
 ccam run work --continue         # same as ccam work --continue
-ccam                             # the picker on a terminal, the list otherwise
+ccam                             # the dashboard on a terminal, the list otherwise
 ccam --dry-run work -p hi        # print the command instead of running it
 ccam --fallback work -p "fix the tests"   # run again as another account at the limit
 ```
@@ -30,22 +30,13 @@ Berikan nama akun atau nomornya dari `ccam list`. ccam tidak membaca argumen set
 
 Jika argumen pertama diawali `-` dan bukan salah satu flag milik ccam, ccam menjalankan akun tanpa nama, dengan semua argumen. Akun itu adalah akun yang ditetapkan untuk folder saat ini dengan [`ccam folder`](/features/folder), atau jika tidak ada, akun default: akun yang ditetapkan dengan `ccam use`, atau akun dengan nomor terkecil jika Anda belum menetapkannya.
 
-### Pemilih
+### Dasbor
 
-`ccam` tanpa argumen membuka pemilih jika input dan output standar adalah terminal, dan menampilkan `ccam list` jika tidak. Pemilih menampilkan nomor, email, penggunaan 5 jam, waktu terakhir digunakan, dan item yang dibagikan untuk setiap akun; angka penggunaan terisi begitu setiap akun menjawab.
+`ccam` tanpa argumen membuka [dasbor](/features/dashboard) jika input dan output standar adalah terminal, dan menampilkan `ccam list` jika tidak. Pindah ke sebuah akun (dengan tombol panah, atau dengan mengetik nomornya) lalu tekan `Enter` untuk menjalankannya; `n` menjalankan akun dengan ruang terbanyak dan `o` menawarkan `--continue`, `--resume`, atau argumen lain. Dasbor ditutup sebelum Claude Code dimulai, sehingga terminal dipulihkan terlebih dahulu.
 
-| Tombol | Fungsinya |
-| --- | --- |
-| `Enter` | Menjalankan Claude Code sebagai akun yang dipilih |
-| `1` sampai `9` | Menjalankan akun dengan nomor tersebut |
-| `Up`/`Down`, `k`/`j` | Memindahkan pilihan |
-| `a` | Menutup pemilih dan menjalankan wizard `ccam add` |
-| `s` | Mengubah item yang dibagikan akun yang dipilih (`Space` atau `x` mengubah centang, `Enter` menerapkan, `Esc` kembali) |
-| `d` | Menjadikan akun yang dipilih sebagai default |
-| `r` | Mengambil ulang penggunaan, tanpa cache singkat |
-| `q`, `Esc`, `Ctrl+C` | Keluar |
+Jika shell memiliki `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY`, atau `ANTHROPIC_AUTH_TOKEN` yang ditetapkan, Claude Code akan memakai kunci atau token itu alih-alih login milik akun, sehingga ccam memberitahukannya di error standar sebelum menjalankannya (`ccam: $ANTHROPIC_API_KEY is set, so Claude Code may use that key instead of work's login…`). ccam hanya membaca variabel-variabel itu; [akun kunci API](/features/api) justru mengosongkannya.
 
-Pemilih ditutup sebelum bertindak, sehingga terminal dipulihkan sebelum Claude Code dimulai. Setelah `d` atau perubahan pembagian, pemilih terbuka lagi. Perubahan pembagian menampilkan rencana dan bertanya terlebih dahulu, seperti `ccam share`.
+Dengan `relay = true` di `config.toml`, ccam menjalankan sesi interaktif sebagai proses anak dan tetap berjalan di sampingnya, agar `/ccam:switch` bisa melanjutkan percakapan dengan sendirinya ([detail](/features/next#inside-claude-code)); jika tidak, ccam menggantikan dirinya dengan Claude Code, dan tidak ada yang berjalan di sampingnya.
 
 ## Opsi
 
@@ -84,7 +75,7 @@ Setiap peluncuran melewati langkah yang sama, dari baris perintah sampai `exec`:
 Setiap kotak menyala saat langkahnya berjalan, dan baris di bawahnya adalah environment dan argumen yang dipakai Claude Code saat dimulai.
 
 1. `cmd/ccam/main.go` memanggil `app.Main`. Jika ccam dijalankan dengan nama lain, itu adalah [pintasan](/features/shortcuts) dan langsung menuju peluncur.
-2. `app.parse` memeriksa `os.Args` sebelum cobra terlibat. Hanya `ccam` saja (pemilih), nama perintah ccam (`config.Reserved`), `-h`/`--help`, dan `-v`/`--version` yang diteruskan ke `cli.Execute`. Selain itu adalah peluncuran.
+2. `app.parse` memeriksa `os.Args` sebelum cobra terlibat. Hanya `ccam` saja (dasbor), nama perintah ccam (`config.Reserved`), `-h`/`--help`, dan `-v`/`--version` yang diteruskan ke `cli.Execute`. Selain itu adalah peluncuran.
 3. `launcher.Launch` membaca `~/.config/ccam/config.toml`, satu-satunya file yang di-parse-nya.
 4. `launcher.Prepare` mencari akun berdasarkan nama atau nomor (tanpa nama, `HereProfile` mengambil akun folder itu, dengan membandingkan direktori kerja dengan entri `[[folder]]` di `config.toml` sebagai string), membuang satu `--` di depan, dan menemukan executable `claude` dengan `ResolveClaude`. Hasil pencarian PATH disimpan dalam cache di `~/.local/state/ccam/claude-path` bersama waktu modifikasi file, sehingga ccam tidak mencari di `PATH` setiap kali peluncuran. File yang berubah atau hilang memicu pencarian baru. Path `claude_bin` di `config.toml` dipakai apa adanya. ccam menolak `claude` yang ternyata ccam sendiri, dibandingkan berdasarkan inode, karena itu akan berulang tanpa akhir.
 5. `checkLinks` membandingkan folder akun `~/.local/share/ccam/profiles/<name>/` dengan pengaturan pembagiannya menggunakan `share.Check`, yang hanya memanggil `lstat` dan `readlink`, satu atau dua system call per item. Tautan yang hilang langsung dibuat. Apa pun yang bisa menyebabkan kehilangan data akan menghentikan peluncuran.

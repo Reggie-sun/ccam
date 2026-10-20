@@ -4,7 +4,7 @@ description: "ccam folder cho một thư mục và mọi thư mục con dùng m�
 updated: 2026-10-20
 order: 11
 translation: machine
-sourceHash: 5071b04a194d
+sourceHash: "46d1410a3d81"
 ---
 
 `ccam folder work ~/code/company` khiến mọi lần khởi chạy không nêu tên tài khoản bên trong `~/code/company`, và trong mọi thư mục bên dưới nó, khởi động Claude Code bằng `work`. Bên ngoài thư mục đó, tài khoản mặc định vẫn khởi động như trước. Khi nêu tên một tài khoản, bằng `ccam personal` hoặc một lệnh tắt như `ccpersonal`, tài khoản đó luôn được khởi động.
@@ -34,7 +34,7 @@ Các lần khởi chạy sau dùng tài khoản của thư mục:
 - `ccam -p "…"` và mọi lần khởi chạy khác có đối số đầu tiên là một tùy chọn cho Claude Code
 - `ccam run` không kèm tên, và `ccam --dry-run`
 - `ccam --fallback -p "…"` cho lần thử đầu tiên
-- bộ chọn, `ccam` đứng một mình, mở ra với con trỏ đặt sẵn ở tài khoản của thư mục
+- bảng điều khiển, `ccam` đứng một mình, mở ra với con trỏ đặt sẵn ở tài khoản của thư mục
 
 ## Tùy chọn
 

@@ -1,10 +1,10 @@
 ---
 title: Kuanzisha Claude Code
-description: Anzisha Claude Code kama akaunti yoyote kwa ccam <name|number>, ccam run au kichaguzi; hoja hupita kwa claude bila kubadilishwa, na --dry-run huonyesha amri.
+description: Anzisha Claude Code kama akaunti yoyote kwa ccam <name|number>, ccam run au dashibodi; hoja hupita kwa claude bila kubadilishwa, na --dry-run huonyesha amri.
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: e6b5a8d4df86
+sourceHash: "4812b197f143"
 ---
 
 `ccam work` huanzisha Claude Code kama akaunti `work`, na kila kitu kinachokuja baada ya jina huenda kwa `claude` kama kilivyo. Itumie popote ambapo ungecharaza `claude`: kwenye terminal, katika script, au ingizo likipitishwa kwa pipe.
@@ -21,7 +21,7 @@ ccam -p "summarise"              # no name: the folder's account, else the defau
 ccam use work                    # make work the default account
 ccam folder work ~/code/company  # use work in that folder when no name is given
 ccam run work --continue         # same as ccam work --continue
-ccam                             # the picker on a terminal, the list otherwise
+ccam                             # the dashboard on a terminal, the list otherwise
 ccam --dry-run work -p hi        # print the command instead of running it
 ccam --fallback work -p "fix the tests"   # run again as another account at the limit
 ```
@@ -30,22 +30,13 @@ Toa jina la akaunti au namba yake kutoka `ccam list`. ccam haisomi hoja zinazoku
 
 Hoja ya kwanza inapoanza na `-` na si mojawapo ya chaguo za ccam yenyewe, ccam huanzisha akaunti bila jina, pamoja na hoja zote. Hiyo ni akaunti iliyowekwa kwa folda ya sasa kwa [`ccam folder`](/features/folder), la sivyo ile chaguo-msingi: akaunti iliyowekwa kwa `ccam use`, au akaunti yenye namba ya chini zaidi ikiwa hujaweka moja.
 
-### Kichaguzi
+### Dashibodi
 
-`ccam` bila hoja hufungua kichaguzi wakati standard input na output ni terminal, na vinginevyo huchapisha `ccam list`. Huonyesha namba ya kila akaunti, barua pepe, matumizi ya saa 5, matumizi ya mwisho na vipengele vinavyoshirikiwa; matumizi hujazwa kila akaunti inapojibu.
+`ccam` bila hoja hufungua [dashibodi](/features/dashboard) wakati standard input na output ni terminal, na vinginevyo huchapisha `ccam list`. Nenda kwenye akaunti (kwa mishale, au kwa kuandika namba yake) na ubonyeze `Enter` ili kuianzisha; `n` huanzisha akaunti yenye nafasi kubwa zaidi na `o` hutoa `--continue`, `--resume` au hoja nyingine. Dashibodi hujifunga kabla Claude Code haijaanza, kwa hiyo terminal hurejeshwa kwanza.
 
-| Kitufe | Inachofanya |
-| --- | --- |
-| `Enter` | Huanzisha Claude Code kama akaunti iliyochaguliwa |
-| `1` hadi `9` | Huanzisha akaunti yenye namba hiyo |
-| `Up`/`Down`, `k`/`j` | Husogeza uteuzi |
-| `a` | Hufunga kichaguzi na huendesha mchawi wa `ccam add` |
-| `s` | Huhariri vipengele vinavyoshirikiwa vya akaunti iliyochaguliwa (`Space` au `x` hubadilisha, `Enter` hutekeleza, `Esc` hurudi nyuma) |
-| `d` | Hufanya akaunti iliyochaguliwa kuwa chaguo-msingi |
-| `r` | Huleta matumizi tena, bila cache fupi |
-| `q`, `Esc`, `Ctrl+C` | Hutoka |
+Shell ikiwa na `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY` au `ANTHROPIC_AUTH_TOKEN` iliyowekwa, Claude Code ingetumia key au tokeni hiyo badala ya taarifa za kuingia za akaunti yenyewe, kwa hiyo ccam husema hivyo kwenye standard error kabla ya kuanza (`ccam: $ANTHROPIC_API_KEY is set, so Claude Code may use that key instead of work's login…`). Husoma vigezo hivyo tu; [akaunti ya API key](/features/api) huvifuta badala yake.
 
-Kichaguzi hujifunga kabla ya kutenda, kwa hiyo terminal hurejeshwa kabla Claude Code haijaanza. Baada ya `d` au badiliko la kushiriki hufunguka tena. Badiliko la kushiriki huonyesha mpango na huuliza kwanza, kama `ccam share` inavyofanya.
+Kwa `relay = true` katika `config.toml`, ccam huanzisha vipindi shirikishi kama mchakato mtoto na hubaki kando yake, ili `/ccam:switch` iweze kuhamisha mazungumzo yenyewe ([maelezo](/features/next#inside-claude-code)); vinginevyo ccam hujibadilisha na Claude Code, na hakuna kinachoendeshwa kando yake.
 
 ## Chaguo
 
@@ -84,7 +75,7 @@ Kila uanzishaji hupitia hatua zile zile, kuanzia mstari wa amri hadi `exec`:
 Kila kisanduku huwaka hatua yake inapoendeshwa, na mistari iliyo chini ni mazingira na hoja ambazo Claude Code huanza nazo.
 
 1. `cmd/ccam/main.go` huita `app.Main`. Ikiwa ccam ilianzishwa kwa jina lingine, ni [njia fupi](/features/shortcuts) na huenda moja kwa moja kwa launcher.
-2. `app.parse` huangalia `os.Args` kabla cobra haijahusika. `ccam` peke yake (kichaguzi), jina la amri ya ccam (`config.Reserved`), `-h`/`--help` na `-v`/`--version` pekee ndizo huenda kwa `cli.Execute`. Kila kitu kingine ni uanzishaji.
+2. `app.parse` huangalia `os.Args` kabla cobra haijahusika. `ccam` peke yake (dashibodi), jina la amri ya ccam (`config.Reserved`), `-h`/`--help` na `-v`/`--version` pekee ndizo huenda kwa `cli.Execute`. Kila kitu kingine ni uanzishaji.
 3. `launcher.Launch` husoma `~/.config/ccam/config.toml`, faili pekee ambayo huichanganua.
 4. `launcher.Prepare` hupata akaunti kwa jina au namba (bila jina, `HereProfile` huchukua akaunti ya folda, ikilinganisha folda ya kazi na maingizo ya `[[folder]]` ya `config.toml` kama mifuatano ya maandishi), huondoa `--` moja ya mwanzo, na hutafuta programu ya `claude` kwa `ResolveClaude`. Utafutaji katika PATH huhifadhiwa kwenye cache katika `~/.local/state/ccam/claude-path` pamoja na muda wa mwisho wa kubadilishwa kwa faili, kwa hiyo ccam haitafuti `PATH` kila inapoanzisha. Faili iliyobadilika au inayokosekana husababisha utafutaji mpya. Njia ya `claude_bin` katika `config.toml` hutumiwa kama ilivyo. ccam hukataa `claude` ambayo ni ccam yenyewe, ikilinganisha kwa inode, kwa sababu hilo lingesababisha mzunguko usioisha.
 5. `checkLinks` hulinganisha folda ya akaunti `~/.local/share/ccam/profiles/<name>/` na mipangilio yake ya kushiriki kwa `share.Check`, ambayo huita `lstat` na `readlink` tu, system call moja au mbili kwa kila kipengele. Kiungo kinachokosekana huundwa papo hapo. Chochote kinachoweza kupoteza data husimamisha uanzishaji.

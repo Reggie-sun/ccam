@@ -4,7 +4,7 @@ description: Claude Code hesaplarını ccam add, login, list, rename, remove ve 
 updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 9eb992214132
+sourceHash: "8564517d0d71"
 ---
 
 Her ccam hesabı, kendi girişine sahip ayrı bir Claude Code yapılandırma klasörüdür. Bu komutlar hesap oluşturur, hesaplarda oturum açar, hesapları listeler, yeniden adlandırır ve kaldırır; ayrıca zaten sahip olduğunuz klasörleri kaydeder.
@@ -12,10 +12,11 @@ Her ccam hesabı, kendi girişine sahip ayrı bir Claude Code yapılandırma kla
 ## Kullanım
 
 ```sh
-ccam add                                   # wizard on a terminal: name, shared items, shortcut, login
+ccam add                                   # wizard on a terminal: name, sign-in, groups, shortcut
 ccam add work --shortcut ccwork            # no wizard: log in, then create the ccwork command
-ccam add side --no-login --share history=team
+ccam add side --no-login --group default --group team
 ccam login side                            # run claude auth login inside the account
+ccam login --expired                       # every account never logged in, or whose login expired
 ccam logout side                           # remove the login token
 ccam list                                  # table of accounts; ccam ls is the same
 ccam list --json                           # machine-readable
@@ -29,25 +30,28 @@ ccam completion zsh > "${fpath[1]}/_ccam"
 
 Bir komut `<name|number>` aldığı her yerde hesap adını veya yuva numarasını, yani `ccam list` çıktısındaki `#` sütununu verebilirsiniz.
 
-Terminalde seçeneksiz çalıştırılan `ccam add` bir sihirbaz açar. Sihirbaz önce adı sorar, ardından paylaşılan öğelerin bir kontrol listesini gösterir (konuşma geçmişi dışındaki her şey işaretlidir), sonra `Create a shortcut command for work? [y/N]` sorusunu, `y` yanıtında da `Shortcut name [ccwork]:` sorusunu sorar. `--share`, `--shortcut` veya `--no-login` seçeneklerinden herhangi biri ya da terminal yerine bir boru (pipe) sihirbazı atlar; bu durumda bir ad zorunludur ve `--shortcut` bir ad vermedikçe kısayol oluşturulmaz.
+Terminalde seçeneksiz çalıştırılan `ccam add` bir sihirbaz açar. Sihirbaz adı ve hesabın nasıl giriş yapacağını (şimdi bir Claude girişi, bir API anahtarı ya da daha sonra bir Claude girişi) sorar, ardından katılınacak grupları `default` işaretli olarak gösterir (henüz grup yoksa `default` grubunun paylaşacağı öğeleri), sonra `Create a shortcut command for work? [y/N]` sorusunu sorar ve onaylamanız için bir özetle biter. `Esc` bir adım geri gider. `--group`, `--no-group`, `--shortcut` veya `--no-login` seçeneklerinden herhangi biri ya da terminal yerine bir boru (pipe) sihirbazı atlar; bu durumda bir ad zorunludur ve `--shortcut` bir ad vermedikçe kısayol oluşturulmaz.
 
-`ccam list` yuvayı, adı, kısayolu, e-postayı, paylaşılan öğeleri ve son kullanımı gösterir; varsayılan hesabın önünde `*` bulunur:
+`--group` verilmezse yeni bir hesap `default` grubuna katılır. İlk hesap bu grubu MCP sunucularını, ayarları, `CLAUDE.md` dosyasını ve uzantıları paylaşacak şekilde oluşturur; bkz. [gruplarla paylaşım](/features/share).
+
+`ccam list` yuvayı, adı, kısayolu, e-postayı, grupları ve son kullanımı gösterir; varsayılan hesabın önünde `*` bulunur:
 
 ```console
 $ ccam list
-   #  Name      Shortcut  Email             Shared                        Last used
-*  1  work      ccwork    user@example.com  mcp settings md ext           -
-   2  personal  -         me@side.dev       settings md ext history@team  -
+   #  Name      Shortcut  Email             Groups        Last used
+*  1  work      ccwork    user@example.com  default team  -
+   2  personal  -         me@side.dev       default       -
 ```
 
-`--json` ile her hesap `slot`, `shortcut`, `name`, `email`, `default`, `dir`, `last_used` (hesap hiç başlatılmadıysa yer almaz) ve `share` alanlarına sahip bir nesnedir. `share` her öğeyi (`mcp`, `settings`, `memory`, `extensions`, `history`) grup adıyla veya `"local"` ile eşler.
+`--json` ile her hesap `slot`, `shortcut`, `name`, `email`, `default`, `dir`, `last_used` (hesap hiç başlatılmadıysa yer almaz), `groups` ve `share` alanlarına sahip bir nesnedir. `share` her öğeyi (`mcp`, `settings`, `memory`, `extensions`, `history`) geldiği grupla veya `"local"` ile eşler.
 
 ## Seçenekler
 
 | Seçenek | Ne yapar | Varsayılan |
 | --- | --- | --- |
 | `ccam add --no-login` | Hesabı giriş yapmadan oluşturur; daha sonra `ccam login <name>` ile giriş yapın | kapalı |
-| `ccam add --share <item=group>` | Bir öğeyi bir grupla paylaşır ya da `item=local` ile özel tutar. Tekrarlanabilir | `default` içinde `mcp`, `settings`, `memory`, `extensions`; `history` yerel |
+| `ccam add --group <group>` | `default` yerine bu gruba katılır. Tekrarlanabilir; `default` yoksa oluşturulur | `default` |
+| `ccam add --no-group` | Hiçbir gruba katılmaz: hesap hiçbir şey paylaşmaz | kapalı |
 | `ccam add --shortcut <command>` | Bu kısayol komutunu `~/.local/bin` içinde de oluşturur | yok |
 | `ccam add --api --key-from <source>` | Giriş yerine API anahtarı kullanan bir hesap; bkz. [API anahtarlı hesaplar](/features/api) | kapalı |
 | `ccam list --json` | Hesapları JSON olarak yazdırır | kapalı |
@@ -58,7 +62,7 @@ $ ccam list
 
 `ccam login`, `ccam logout`, `ccam use` ve `ccam rename` komutlarının kendi seçenekleri yoktur. `ccam completion` `bash`, `zsh` veya `powershell` alır; başka bir değer `only bash, zsh and powershell are supported` hatasıyla başarısız olur.
 
-Hesap adları `a-z`, `0-9`, `-` ve `_` karakterlerinden oluşan, harf veya rakamla başlayan 1 ile 32 karakter arası adlardır. Bir ad yalnızca rakamlardan oluşamaz, çünkü `ccam 2` 2 numaralı yuva anlamına gelir. Bir ad bir ccam komutu da olamaz (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`, `folder`, `pick`, `ext`); böylece `ccam <name>` hiçbir zaman belirsiz olmaz. Liste, `internal/config` içindeki `config.Reserved` değişkenidir.
+Hesap adları `a-z`, `0-9`, `-` ve `_` karakterlerinden oluşan, harf veya rakamla başlayan 1 ile 32 karakter arası adlardır. Bir ad yalnızca rakamlardan oluşamaz, çünkü `ccam 2` 2 numaralı yuva anlamına gelir. Bir ad bir ccam komutu da olamaz (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`, `folder`, `pick`, `ext`, `group`, `groups`); böylece `ccam <name>` hiçbir zaman belirsiz olmaz. Liste, `internal/config` içindeki `config.Reserved` değişkenidir.
 
 ## Nasıl çalışır
 
@@ -68,15 +72,19 @@ Hesap adları `a-z`, `0-9`, `-` ve `_` karakterlerinden oluşan, harf veya rakam
 
 1. Herhangi bir şey oluşturulmadan önce `config.ValidateName` adı, `shim.Check` ise kısayolu kontrol eder.
 2. `profile.Add`, `~/.local/share/ccam/profiles/work/` klasörünü `0700` moduyla oluşturur ve hesaba en küçük boş yuva numarasını (`Config.NextSlot`) verir; böylece kaldırılmış bir hesabın numarası yeniden kullanılır. İlk hesap varsayılan olur.
-3. `applyShare`, yeni ve boş klasörü `share.Build` ve ardından `Apply` ile paylaşım gruplarına bağlar; örneğin `settings.json` dosyasını `groups/default/settings.json` dosyasına. Bu başarısız olursa yeni klasör kaldırılır, çünkü geride kalan bir klasör her yeniden denemeyi `folder already exists` ile engeller.
+3. Hesap gruplarına katılır (`--group` veya `--no-group` aksini söylemedikçe `default`; ilk hesap `default` grubunu oluşturur) ve `applyShare` yeni, boş klasörü `share.Build` ve ardından `Apply` ile bu gruplara bağlar; örneğin `settings.json` dosyasını `groups/default/settings.json` dosyasına. Bu başarısız olursa yeni klasör kaldırılır, çünkü geride kalan bir klasör her yeniden denemeyi `folder already exists` ile engeller.
 4. Hesap, `fsutil.AtomicWrite` aracılığıyla `~/.config/ccam/config.toml` dosyasına kaydedilir: önce geçici bir dosya, `fsync`, ardından `rename`; böylece bir çökme hiçbir zaman yarım bir yapılandırma bırakmaz.
-5. `runLogin`, `CLAUDE_CONFIG_DIR` hesap klasörüne ayarlanmış olarak `claude auth login` komutunu başlatır. Giriş başarısız olursa hesap yerinde kalır; ccam hatayı yazdırır ve daha sonra `ccam login work` çalıştırmanızı söyler.
-6. `profile.ReadEmail`, `oauthAccount.emailAddress` değerini `profiles/work/.claude.json` dosyasından alır. Bu dosya birkaç megabayt olabilir; bu yüzden `TopLevelValue` tüm dosyayı ayrıştırmak yerine yalnızca o anahtarı tarar.
+5. `runLogin`, `CLAUDE_CONFIG_DIR` hesap klasörüne ayarlanmış olarak `claude auth login` komutunu, giriş sayfası dolu gelsin diye hesabın son e-postasıyla birlikte `--email` ile başlatır. Giriş başarısız olursa hesap yerinde kalır; ccam hatayı yazdırır ve daha sonra `ccam login work` çalıştırmanızı söyler.
+6. `profile.ReadIdentity`, `oauthAccount` değerini `profiles/work/.claude.json` dosyasından alır: e-posta, hesap ve kuruluş kimlikleri, kuruluşun adı ve plan (`claude_max`, `claude_team` …). Bu dosya birkaç megabayt olabilir; bu yüzden `TopLevelValue` tüm dosyayı ayrıştırmak yerine yalnızca o anahtarı tarar. ccam bunları `config.toml` içinde `[profile.login]` altında tutar.
 7. `shim.Install`, `~/.local/bin/ccwork` bağlantısını ccam ikili dosyasına yönlendirir; ccam başladığında `argv[0]` değerini `config.toml` içinde arar.
 
 Bir giriş dakikalar sürebilir ve bu arada başka bir ccam yapılandırmayı kaydedebilir. Bu yüzden bekleyen komutlar, `config.toml` dosyasını yeniden yükleyen, tek değişikliği (burada e-postayı) uygulayan ve kaydeden `env.update` üzerinden kaydeder. `ccam remove` da aynı nedenle sorusundan sonra yeniden yükler.
 
-`ccam login`, mevcut bir hesap için 5. ve 6. adımları çalıştırır. `ccam logout`, hesapta `claude auth logout` komutunu çalıştırır ve kayıtlı e-postayı temizler. `ccam use` yalnızca `config.toml` içindeki `default` değerini yeniden yazar.
+`ccam login`, mevcut bir hesap için 5. ve 6. adımları çalıştırır. Claude Code e-postayı yalnızca giriş sayfası için bir ipucu olarak alır; bu yüzden bir giriş, ccam hesabının önceki Claude hesabından farklı bir Claude hesabına düşebilir. ccam yeni girişi `[profile.login]` ile karşılaştırır ve bunu söyler (`ccam: this login is other@company.com, but work was dev@company.com before.`). Yeni girişi korur ve bunu nasıl geri alacağınızı söyler: `ccam logout work`, ardından `ccam login work` ve doğru e-postayla giriş. Başka bir ccam hesabı aynı Claude hesabına giriş yapmışsa ccam, ikisinin kullanım limitlerini paylaştığı konusunda uyarır. `ccam login --expired`, hiç giriş yapmamış ya da girişinin (yenileme token'ının) süresi dolmuş her hesapta sırayla giriş yapar.
+
+`ccam logout`, hesapta `claude auth logout` komutunu çalıştırır ve kayıtlı e-postayı temizler; giriş kaydı kalır, böylece bir sonraki giriş onunla karşılaştırılır. `ccam use` yalnızca `config.toml` içindeki `default` değerini yeniden yazar.
+
+Hesaplar birden fazla kuruluşa aitse `ccam list` bir `Organization` sütunu ekler (kişisel planlar `personal` gösterir) ve `ccam list --json` her hesap için `plan` ve `org` alanlarını içerir.
 
 ### Uzak bir makinede oturum açma
 
@@ -106,7 +114,7 @@ Oturum açma bir terminalde girdi beklerken ccam terminalin yankısını ve sat�
 
 `ccam rename` klasörü yeniden adlandırır, `plugins/` içindeki eklenti yollarını eski klasörden yenisine göre yeniden yazar, varsayılan ayarını taşır ve `nameState` yollarını yeni ada taşır. Kısayol komutu adını korur. Eklenti yollarının yeniden yazılması başarısız olursa yapılandırma kaydedilmediği için klasör eski adına geri döndürülür.
 
-`ccam import` bir klasörü bulunduğu yerde, `config.toml` içinde `dir` olarak kaydeder. Onu hiçbir zaman taşımaz veya kopyalamaz: kopyalanmış bir yenileme tokenı, kopyaların birbirinin oturumunu kapatmasına neden olur. Klasör argümanı olmadan kaydedilmemiş `~/.claude` ve `~/.claude-*` klasörlerini arar ve her biri için sorar. Adlar klasörden gelir (`~/.claude` için `main`, `~/.claude-work` için `work`, `~/.claude-2` için `acct2`); adı türetilemeyen bir klasör, kullanılacak `--name` komutuyla birlikte listelenir. `CLAUDE_CONFIG_DIR` olmadan Claude Code, `.claude.json` dosyasını ev klasörünüzde `~/.claude` klasörünün yanında tutar; bu yüzden `~/.claude` klasörünü içe aktardığınızda ve kendine ait bir `.claude.json` dosyası yoksa ccam, `~/.claude/.claude.json` bağlantısını `~/.claude.json` dosyasına yönlendirerek oluşturur. Böylece düz `claude` ve `ccam main` aynı hesabı görür. İçe aktarılan hesaplar siz `ccam share` çalıştırana kadar hiçbir şey paylaşmaz ve kısayol oluşturulmaz.
+`ccam import` bir klasörü bulunduğu yerde, `config.toml` içinde `dir` olarak kaydeder. Onu hiçbir zaman taşımaz veya kopyalamaz: kopyalanmış bir yenileme tokenı, kopyaların birbirinin oturumunu kapatmasına neden olur. Klasör argümanı olmadan kaydedilmemiş `~/.claude` ve `~/.claude-*` klasörlerini arar ve her biri için sorar. Adlar klasörden gelir (`~/.claude` için `main`, `~/.claude-work` için `work`, `~/.claude-2` için `acct2`); adı türetilemeyen bir klasör, kullanılacak `--name` komutuyla birlikte listelenir. `CLAUDE_CONFIG_DIR` olmadan Claude Code, `.claude.json` dosyasını ev klasörünüzde `~/.claude` klasörünün yanında tutar; bu yüzden `~/.claude` klasörünü içe aktardığınızda ve kendine ait bir `.claude.json` dosyası yoksa ccam, `~/.claude/.claude.json` bağlantısını `~/.claude.json` dosyasına yönlendirerek oluşturur. Böylece düz `claude` ve `ccam main` aynı hesabı görür. İçe aktarılan hesaplar siz onları bir gruba ekleyene kadar (`ccam group join <group> <name>`) hiçbir grupta değildir ve kısayol oluşturulmaz.
 
 `ccam completion bash|zsh`, hesap adlarını da tamamlayan bir tamamlama betiği yazdırır.
 

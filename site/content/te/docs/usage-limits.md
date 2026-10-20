@@ -4,7 +4,7 @@ description: ccam usage తో ప్రతి Claude Code ఖాతా యొ�
 updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: a84df8e873d6
+sourceHash: "40aef0708c81"
 ---
 
 ప్రతి ఖాతా 5 గంటల, వారపు పరిమితులలో ఎంత ఉపయోగించిందో `ccam usage` చూపిస్తుంది. `ccam next --auto` ఎక్కువ అవకాశం మిగిలి ఉన్న ఖాతాను తెరుస్తుంది, `--continue` ప్రస్తుత సంభాషణను దానికి తీసుకువెళ్తుంది.
@@ -55,10 +55,10 @@ ccam statusline install
 ```sh
 ccam next             # the account after the one you used last
 ccam next --auto      # the account with the lowest 5-hour usage
-ccam next --continue  # the next account that shares your conversation history
+ccam next --continue  # carry this folder's conversation on as the next account
 ```
 
-`ccam next` లాగిన్ కాని ఖాతాలను వదిలేస్తుంది, `--auto` 100% వద్ద ఉన్న ఖాతాలను వదిలేస్తుంది. ఒక సంభాషణను కొనసాగించాలంటే, రెండు ఖాతాలూ సంభాషణ చరిత్రను షేర్ చేయాలి; [షేరింగ్](/docs/sharing) చూడండి.
+`ccam next` లాగిన్ కాని ఖాతాలను వదిలేస్తుంది, `--auto` 100% వద్ద ఉన్న ఖాతాలను, మరో సంస్థకు చెందిన ఖాతాలను వదిలేస్తుంది. రెండు ఖాతాలూ సంభాషణ చరిత్రను షేర్ చేస్తే, `--continue` అదే సంభాషణను తెరుస్తుంది; లేకపోతే Claude Code దాన్ని కొత్త ఖాతాలోకి కాపీ చేస్తుంది. [షేరింగ్](/docs/sharing), [తర్వాతి ఖాతాకు మారడం](/features/next#continue) చూడండి.
 
 `claude -p` రన్ చేసే స్క్రిప్ట్‌లు, షెడ్యూల్ చేసిన jobs కోసం, ఖాతా పేరుకు ముందు `--fallback` పెట్టండి. ఆ ఖాతా తన పరిమితిని చేరినప్పుడు, ccam అదే కమాండ్‌ను ఎక్కువ అవకాశం ఉన్న ఖాతాగా మళ్లీ రన్ చేస్తుంది, పూర్తయిన రన్ output మాత్రమే ప్రింట్ అవుతుంది:
 

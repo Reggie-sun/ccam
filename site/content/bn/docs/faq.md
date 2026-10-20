@@ -5,7 +5,7 @@ description: "ccam, Claude Code অ্যাকাউন্ট, ব্যবহ�
 updated: 2026-10-20
 order: 6
 translation: machine
-sourceHash: 80a5475ccfee
+sourceHash: e7d4a2c877ac
 ---
 
 ## ccam কি Anthropic-এর অফিসিয়াল টুল?
@@ -26,7 +26,7 @@ sourceHash: 80a5475ccfee
 
 ## অন্য অ্যাকাউন্টে একটি কথোপকথন কীভাবে চালিয়ে যাব?
 
-`ccam share <name> --history on` দিয়ে দুটি অ্যাকাউন্টের মধ্যে কথোপকথনের ইতিহাস শেয়ার করুন, তারপর `ccam next --continue` চালান। Claude Code পরের অ্যাকাউন্টে বর্তমান ফোল্ডারের সবচেয়ে সাম্প্রতিক কথোপকথনটি খোলে।
+`ccam group set default --add history` দিয়ে (অথবা তাদের নিজস্ব একটি গ্রুপ দিয়ে: `ccam group add pair --items history --members work,side`) অ্যাকাউন্টগুলোর মধ্যে কথোপকথনের ইতিহাস শেয়ার করুন, তারপর `ccam next --continue` চালান। Claude Code পরের অ্যাকাউন্টে বর্তমান ফোল্ডারের সবচেয়ে সাম্প্রতিক কথোপকথনটি খোলে।
 
 ## ccam কি আমার লগইন দেখে বা কোথাও পাঠায়?
 

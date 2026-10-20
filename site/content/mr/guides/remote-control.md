@@ -4,7 +4,7 @@ description: ccam <name> rc ने कोणत्याही खात्य�
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 59b802c44bb3
+sourceHash: "5f0b90ea53d6"
 ---
 
 `ccam work rc` Claude Code चे Remote Control `work` खात्याने सुरू करते, त्यामुळे या कॉम्प्युटरवरचे sessions तुम्ही claude.ai/code किंवा Claude मोबाइल ॲपवरून चालवू शकता. ते `claude rc` सारखेच काम करते, फक्त एका फरकाने: खाते MCP सर्व्हर शेअर करत असेल, तर ccam एकदा विचारते की ते खात्याच्या `.claude.json` मध्ये कॉपी करायचे का, कारण Remote Control sessions सर्व्हर दुसऱ्या कुठूनही वाचत नाहीत.
@@ -33,7 +33,7 @@ ccam --dry-run work rc                # print the command instead of running it
 | `--dry-run` (खात्याच्या आधी) | environment आणि कमांड छापतो, आणि MCP सूचना असल्यास तीही. ना विचारतो, ना कॉपी करतो | बंद |
 | `Copy them into .claude.json (a backup is kept)? [y/N]` | खाते MCP सर्व्हर शेअर करत असेल आणि त्याच्या `.claude.json` मध्ये गटाची सध्याची यादी नसेल तेव्हा विचारले जाते. `y` ते कॉपी करतो, `N` किंवा Enter त्यांच्याशिवाय सुरू करतो | `N` |
 | `~/.config/ccam/config.toml` मध्ये `mcp_strategy = "sync"` | प्रत्येक वेळी सुरू करण्यापूर्वी, Remote Control असो वा नसो, गटाचे सर्व्हर `.claude.json` मध्ये कॉपी करतो, त्यामुळे कधीच काहीही विचारले जात नाही | `"flag"` |
-| `ccam share work --mcp off` | खात्यासोबत MCP सर्व्हर शेअर करणे थांबवतो; मग Remote Control फक्त खात्याच्या स्वतःच्या सर्व्हरसह सुरू होते आणि काहीही विचारले जात नाही | चालू |
+| `ccam group leave <group> work` | खात्यासोबत MCP शेअर करणाऱ्या गटातून ते खाते बाहेर काढतो; मग Remote Control फक्त खात्याच्या स्वतःच्या सर्व्हरसह सुरू होते आणि काहीही विचारले जात नाही | `default` मध्ये |
 
 ### Remote Control चे पर्याय
 
@@ -124,7 +124,7 @@ $ ccam mcp add ctx --url https://mcp.context7.com/mcp
 
 ### ccam प्रत्येक वेळी विचारते
 
-तुम्ही अजून सर्व्हर कॉपी केलेले नाहीत. एकदा `y` उत्तर द्या, किंवा `mcp_strategy = "sync"` सेट करा. Remote Control मध्ये सर्व्हर कधीच नको असतील, तर खात्यासोबत MCP शेअर करणे थांबवा: `ccam share work --mcp off`.
+तुम्ही अजून सर्व्हर कॉपी केलेले नाहीत. एकदा `y` उत्तर द्या, किंवा `mcp_strategy = "sync"` सेट करा. Remote Control मध्ये सर्व्हर कधीच नको असतील, तर खात्यासोबत MCP शेअर करणे थांबवा: त्या गटातून ते खाते बाहेर काढा (`ccam group leave default work`), किंवा MCP अशा स्वतंत्र गटात ठेवा ज्यात ते खाते नाही.
 
 ### `ccam work rc` लगेचच `--mcp-config` बद्दलच्या त्रुटीसह अयशस्वी होते
 

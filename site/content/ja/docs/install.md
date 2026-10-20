@@ -5,7 +5,7 @@ description: Linux、macOS、Windowsにccamを1つのコマンド、.debパッ�
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: aea4984c1576
+sourceHash: "07fab3165030"
 ---
 
 LinuxまたはmacOSのターミナルで、次のコマンドを実行します。
@@ -80,7 +80,7 @@ ccamプラグインを使うと、Claude Code自身がccamを使えるように�
 /plugin install ccam --marketplace jhyunwoo/ccam
 ```
 
-スキル1つと、2つのコマンド`/ccam:usage`と`/ccam:ext`が追加されます。スキルがログインやファイルの移動を行うコマンドを実行することはなく、代わりにそれを提案します。
+スキル1つ、コマンド`/ccam:usage`、`/ccam:ext`、`/ccam:switch`、そして2つのフックが追加されます。セッションが使用量の上限で止まるとターミナルに通知が表示され、`/ccam:switch [account]`は会話を別のアカウントに引き渡します（[詳細](/features/next#inside-claude-code)）。フックは`ccam`を実行するので、ccamはClaude Codeから見える`PATH`上にある必要があります。スキルがログインやファイルの移動を行うコマンドを実行することはなく、代わりにそれを提案します。
 
 ## インストールの確認
 

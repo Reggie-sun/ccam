@@ -4,7 +4,7 @@ description: ccam <name> rcで任意のアカウントのClaude Code Remote Cont
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 59b802c44bb3
+sourceHash: "5f0b90ea53d6"
 ---
 
 `ccam work rc`は、アカウント`work`としてClaude CodeのRemote Controlを起動します。これで、このコンピューター上のセッションをclaude.ai/codeやClaudeモバイルアプリから操作できます。動作は`claude rc`と同じですが、違いが1つあります。アカウントがMCPサーバーを共有している場合、ccamはそれらをアカウントの`.claude.json`にコピーするかどうかを一度だけ確認します。Remote Controlのセッションは、それ以外の場所からサーバーを読まないためです。
@@ -33,7 +33,7 @@ ccam --dry-run work rc                # print the command instead of running it
 | `--dry-run`（アカウントの前） | 環境変数とコマンド、MCPの通知があればそれも表示します。確認もコピーもしません | オフ |
 | `Copy them into .claude.json (a backup is kept)? [y/N]` | アカウントがMCPサーバーを共有していて、その`.claude.json`にグループの現在のリストがないときに表示されます。`y`でコピーし、`N`またはEnterでコピーせずに起動します | `N` |
 | `~/.config/ccam/config.toml`の`mcp_strategy = "sync"` | Remote Controlかどうかにかかわらず、起動のたびにグループのサーバーを`.claude.json`にコピーするので、確認は一切ありません | `"flag"` |
-| `ccam share work --mcp off` | このアカウントとのMCPサーバーの共有をやめます。Remote Controlはアカウント自身のサーバーだけで起動し、確認もありません | オン |
+| `ccam group leave <group> work` | このアカウントとMCPを共有しているグループから、アカウントを外します。Remote Controlはアカウント自身のサーバーだけで起動し、確認もありません | `default`に所属 |
 
 ### Remote Controlのオプション
 
@@ -124,7 +124,7 @@ $ ccam mcp add ctx --url https://mcp.context7.com/mcp
 
 ### ccamが毎回確認してくる
 
-まだサーバーをコピーしていないためです。一度`y`と答えるか、`mcp_strategy = "sync"`を設定してください。Remote Controlでこれらのサーバーを使うつもりがないなら、このアカウントとのMCP共有をやめます: `ccam share work --mcp off`。
+まだサーバーをコピーしていないためです。一度`y`と答えるか、`mcp_strategy = "sync"`を設定してください。Remote Controlでこれらのサーバーを使うつもりがないなら、このアカウントとのMCP共有をやめます。アカウントをそのグループから外す（`ccam group leave default work`）か、MCPを、そのアカウントが入っていない専用のグループで共有します。
 
 ### `ccam work rc`が`--mcp-config`についてのエラーですぐに失敗する
 

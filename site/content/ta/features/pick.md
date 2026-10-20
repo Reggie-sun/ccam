@@ -4,7 +4,7 @@ description: ccam pick ஒரு script-க்கு அதிக இடம் �
 updated: 2026-10-20
 order: 12
 translation: machine
-sourceHash: 65a5a7e179a5
+sourceHash: "2e8285b7c193"
 ---
 
 `ccam pick` அதிக இடம் உள்ள உள்நுழைந்த கணக்கின் பெயரை அச்சிடுகிறது, ஒரு script அதைக் கொண்டு Claude Code-ஐத் தொடங்கலாம். இடம் உள்ள கணக்குகள் போதுமான அளவு இருக்கும் வரை, ஒரே நேரத்தில் தொடங்கும் ஒவ்வொரு worker-உம் வெவ்வேறு கணக்கைப் பெறுகிறது, அதனால் `claude -p` jobs தொகுப்பு ஒரே கணக்கைத் தீர்த்துவிடுவதற்குப் பதிலாக உங்கள் கணக்குகளிடையே பரவுகிறது.
@@ -19,6 +19,8 @@ done; wait
 ccam pick --json                      # the account and its usage
 ccam pick --model opus                # also count the Opus weekly limit
 ccam pick --max-usage 80 --strategy expiring
+ccam pick --strategy balance          # spread over the weekly quota, fewer running sessions first
+ccam pick --cross-org                 # also accounts of other organizations
 ccam pick --wait=2h                   # nobody has room: wait for a reset
 ccam --fallback "$(ccam pick)" -p "…" # also switch if this account hits its limit mid-job
 ```
@@ -31,7 +33,8 @@ $ ccam pick --json
   "email": "dev@company.com",
   "five_hour": { "percent": 12, "resets_at": "2026-10-20T15:10:00Z", "known": true },
   "weekly": { "percent": 41, "resets_at": "2026-10-24T09:00:00Z", "known": true },
-  "source": "live"
+  "source": "live",
+  "reason": "12% of its 5 hours used, the least"
 }
 ```
 
@@ -41,16 +44,17 @@ $ ccam pick --json
 
 | Option | என்ன செய்யும் | இயல்புநிலை |
 | --- | --- | --- |
-| `--json` | கணக்கு, அதன் 5 மணி நேர மற்றும் வாராந்திரப் பயன்பாடு, எண்கள் எங்கிருந்து வருகின்றன என்பதை அச்சிடும் | off |
+| `--json` | கணக்கு, அதன் 5 மணி நேர மற்றும் வாராந்திரப் பயன்பாடு, எண்கள் எங்கிருந்து வருகின்றன, அது ஏன் தேர்ந்தெடுக்கப்பட்டது என்பதை அச்சிடும் | off |
 | `--model <model>` | அந்த model-இன் வாராந்திரக் கால அளவையும் கணக்கிடும், உதாரணமாக `opus` | none |
 | `--max-usage <1-100>` | இந்தப் பயன்பாட்டுக்குக் கீழ் உள்ள கணக்குகளுக்கு முன்னுரிமை தரும் | `auto_max_usage`, இல்லையெனில் 100 |
-| `--strategy headroom\|expiring` | மிகக் குறைந்த 5 மணி நேரப் பயன்பாடு, அல்லது மிக விரைவான 5 மணி நேர மீட்டமைப்பு | `auto_strategy`, இல்லையெனில் `headroom` |
+| `--strategy headroom\|expiring\|balance` | மிகக் குறைந்த 5 மணி நேரப் பயன்பாடு, மிக விரைவான 5 மணி நேர மீட்டமைப்பு, அல்லது முதலில் பயன்படுத்தப்படாமல் போகக்கூடிய வாராந்திர quota | `auto_strategy`, இல்லையெனில் `headroom` |
+| `--cross-org` | பிற நிறுவனங்களின் கணக்குகளையும் தேர்ந்தெடுக்கும் | `cross_org`, இல்லையெனில் off |
 | `--wait[=<duration>]` | எந்தக் கணக்கிலும் இடம் இல்லாதபோது, முதல் கணக்கு மீட்டமைக்கப்படும் வரை, அதிகபட்சம் இவ்வளவு நேரம் காத்திருக்கும் | off; தனியாகக் கொடுத்தால் `5h` |
 | `--dry-run` | தேர்வைப் பதிவு செய்யாமல் தேர்ந்தெடுக்கும் | off |
 
 ## இது எப்படி வேலை செய்கிறது
 
-1. ccam உள்நுழைந்த கணக்குகளைப் பட்டியலிடுகிறது (API key கணக்குகளுக்கு வரம்புகள் இல்லை, அவை விலக்கப்படுகின்றன).
+1. இந்தக் கோப்புறை தொடங்கும் கணக்கின் நிறுவனத்தில் உள்ள உள்நுழைந்த கணக்குகளை ccam பட்டியலிடுகிறது (API key கணக்குகளுக்கு வரம்புகள் இல்லை, அவை விலக்கப்படுகின்றன; [நிறுவனங்கள்](/features/next#auto) பாருங்கள்); அந்தக் கணக்கின் அதே Claude கணக்கில் உள்நுழைந்த கோப்புறையும் விலக்கப்படுகிறது.
 2. அது ஒரு lock-ஐ (`~/.local/state/ccam/picks.lock`) எடுக்கிறது, அதனால் ஒரே நேரத்தில் இயங்கும் தேர்வுகள் ஒன்றன்பின் ஒன்றாக நடக்கின்றன.
 3. `ccam usage` செய்வது போலவே, 60 வினாடி cache உடன், எல்லாக் கணக்குகளின் பயன்பாட்டையும் ஒரே நேரத்தில் பார்க்கிறது.
 4. கடைசி 2 நிமிடங்களில் தேர்ந்தெடுக்கப்பட்ட கணக்குகள் (`~/.local/state/ccam/picks/<name>`) முதலில் விலக்கப்படுகின்றன, மீதமுள்ளவற்றில் `ccam next --auto`-இன் [தேர்வு விதிகள்](/features/next#auto) தேர்ந்தெடுக்கின்றன: முதலில் `auto_max_usage`-க்குக் கீழ் உள்ளவை, strategy-யின்படி, 100%-இல் உள்ள கணக்கை ஒருபோதும் அல்ல.

@@ -1,46 +1,45 @@
 ---
 title: Raba sabobin MCP, saituna da tarihi
-description: Yadda ccam ke raba sabobin MCP, settings.json, CLAUDE.md, agents, skills da tarihin tattaunawa tsakanin asusun Claude Code, yayin da kowane shiga yake daban.
+description: Yadda rukunonin ccam ke raba sabobin MCP, settings.json, CLAUDE.md, skills da tarihin tattaunawa tsakanin asusun Claude Code, kowane shiga yana zama daban.
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 888d466b29e9
+sourceHash: 2606e4ec682e
 ---
 
-Kowane asusu yana riƙe bayanan shigarsa. Duk sauran abubuwa za a iya raba su ɗaya bayan ɗaya: ccam yana mayar da fayil ko foldar asusun mahaɗi zuwa foldar rukuni da aka raba, don haka canjin da aka yi a asusu ɗaya yana bayyana a duk asusan wannan rukunin.
+Kowane asusu yana riƙe bayanan shigarsa. Duk sauran abubuwa za a iya raba su ta **rukunoni**: rukuni yana ambaton abubuwan da yake rabawa da asusan da ke cikinsa, kuma ccam yana haɗa fayilolin kowane ɗaya daga cikin waɗannan asusai da foldar rukunin ta mahaɗi, don haka canjin da aka yi a asusu ɗaya yana bayyana a dukansu.
 
 ## Abin da za a iya rabawa
 
-| Abu | Zaɓi | Abin da ake rabawa |
-| --- | --- | --- |
-| Sabobin MCP | `--mcp` | `mcp.json` na rukunin, wanda ake miƙa wa Claude Code lokacin farawa |
-| Saituna | `--settings` | `settings.json`: izini, hooks, model, layin matsayi |
-| Ƙwaƙwalwa ta gaba ɗaya | `--memory` | `CLAUDE.md` |
-| Extensions | `--extensions` | `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/`, `rules/` |
-| Tarihin tattaunawa | `--history` | `projects/` da `history.jsonl` |
+| Abu | Abin da ake rabawa |
+| --- | --- |
+| `mcp` | Sabobin MCP: `mcp.json` na rukunin, wanda ake miƙa wa Claude Code lokacin farawa |
+| `settings` | `settings.json`: izini, hooks, model, layin matsayi |
+| `memory` | `CLAUDE.md` na gaba ɗaya |
+| `extensions` | `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/`, `rules/` |
+| `history` | tarihin tattaunawa: `projects/` da `history.jsonl` |
 
-Sababbin asusai suna raba komai banda tarihin tattaunawa.
+Asusunka na farko yana ƙirƙirar rukunin `default`, wanda ke raba komai banda tarihin tattaunawa, kuma asusan da ke biye suna shiga cikinsa.
 
 Ba a taɓa raba fayilolin shiga `.credentials.json` da `.claude.json` ba. ccam yana haɗa hanyoyi ne kawai daga ƙayyadadden jeri, kuma waɗannan biyun ba sa cikinsa.
 
-Wannan shafin yana bayani kan ayyukan yau da kullum. An bayyana kowane zaɓi a shafukan fasali: [rabawa tsakanin asusai](/features/share), [sabobin MCP da aka raba](/features/mcp) da [kwafar saitin da ke akwai](/features/migrate).
+Wannan shafin yana bayani kan ayyukan yau da kullum. An bayyana kowane zaɓi a shafukan fasali: [rabawa da rukunoni](/features/share), [sabobin MCP da aka raba](/features/mcp) da [kwafar saitin da ke akwai](/features/migrate).
 
 ## Rukunoni
 
-`on` yana nufin rukunin `default`. Za ka iya kuma ba da suna, don wasu asusai kawai su raba wani abu:
-
 ```sh
-ccam share work --history team
-ccam share side --history team
+ccam group                                   # the groups, what they share, their accounts
+ccam group set default --add history         # every account in default shares history
+ccam group add team --items history --members work,side
 ```
 
-Yanzu `work` da `side` suna raba tattaunawa da juna, amma ba da sauran asusunka ba.
+Asusu zai iya kasancewa a rukunoni da dama, amma kowane abu yana fitowa daga rukuni ɗaya kawai. Don haka don raba tarihi tsakanin `work` da `side` amma ba da sauran asusanka ba, ka bar tarihi a wajen `default` kuma ka ba su biyun rukuni nasu na kansu, kamar a sama. `ccam share work` yana nuna abin da asusu ke rabawa da kuma ta wane rukuni. [Dashboard](/features/dashboard) yana yin haka a shafinsa na Groups.
 
-## Kunna rabawa
+## Idan asusu ya fara rabawa
 
-Idan asusu ya fara raba wani abu, ccam:
+Idan asusu ya fara raba wani abu (ya shiga rukuni, ko rukuninsa ya ƙara abin), ccam:
 
-1. yana buga shirin kowane fayil da zai motsa, kwafa ko haɗa da mahaɗi, kuma yana tambaya kafin ya fara;
+1. yana buga shirin kowane fayil da zai motsa, kwafa ko haɗa da mahaɗi ga kowane asusu, kuma yana tambaya kafin ya fara;
 2. yana motsa fayilolin asusun zuwa foldar rukunin idan rukunin har yanzu babu komai a ciki, ko yana ƙara fayilolin da rukunin bai da su tukuna;
 3. idan fayil ɗaya ya bambanta, yana tambaya ko a riƙe sigar rukunin, a yi amfani da taka, ko a haɗa JSON ɗin;
 4. yana ajiye ainihin naka a `.ccam-backup/<time>/` a cikin foldar asusun;
@@ -48,12 +47,13 @@ Idan asusu ya fara raba wani abu, ccam:
 
 Ana sanya wa fayilolin tattaunawa suna bisa session ID ɗinsu, don haka tarihi daga asusai da dama yana haɗuwa ba tare da rikici ba.
 
-ccam ba ya canza rabawa yayin da Claude Code ke gudana a matsayin asusun, saboda zaman yana ci gaba da rubutu a cikin fayilolin da ake motsawa. Ka rufe shi tukuna.
+ccam ba ya canza asusu yayin da Claude Code ke gudana a matsayinsa, saboda zaman yana ci gaba da rubutu a cikin fayilolin da ake motsawa. Ka rufe shi tukuna.
 
-## Kashe rabawa
+## Idan asusu ya daina rabawa
 
 ```sh
-ccam share work --history off
+ccam group leave team work                   # work leaves the group
+ccam group set default --remove history      # nobody in default shares history any more
 ```
 
 Ana cire mahaɗin, kuma asusun yana samun kwafinsa na abin da ke cikin rukunin a yanzu. Ƙara `--fresh` don farawa babu komai a maimakon haka. Rukunin yana riƙe abin da ke cikinsa don sauran asusai.
@@ -95,14 +95,12 @@ Copy from /home/me/.claude into group default (/home/me/.local/share/ccam/groups
   Conversation history (projects/, history.jsonl) is not included; add --history to copy it.
 Copy these into group default? [y/N] y
 ✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, commands/, skills/
-Accounts that share these through group default:
-  mcp         personal
-  settings    personal
-  memory      personal
-  extensions  personal
+Group default: personal
+To share them:
+  ccam group join default work
 ```
 
-A ƙarshe, ccam yana lissafa asusan da ke raba kowane abu ta rukunin. Idan wasu asusai ba sa yi, yana buga umarnin `ccam share` da ke kunna rabawa a gare su.
+A ƙarshe, ccam yana lissafa asusan rukunin. Idan rukunin bai raba ɗaya daga cikin abubuwan ba tukuna, ko wasu asusai ba sa cikinsa, yana buga umarnan `ccam group` da ke canza hakan.
 
 Idan rukunin yana da wani kwafi na fayil da ya bambanta, ccam yana tambaya, kamar yadda yake yi lokacin da ka kunna rabawa: riƙe kwafin rukunin ko amfani da naka. Ana iya kuma haɗa `settings.json` da sauran fayilolin JSON, da `history.jsonl` layi bayan layi. Ana ajiye kwafin rukunin na baya a `.ccam-backup/<time>/` cikin foldar rukunin.
 

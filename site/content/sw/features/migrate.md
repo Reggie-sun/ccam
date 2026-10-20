@@ -1,10 +1,10 @@
 ---
 title: Kunakili usanidi uliopo
-description: Nakili mipangilio, CLAUDE.md, viendelezi, seva za MCP na taarifa za kuingia za MCP za ~/.claude iliyopo hadi kikundi cha kushiriki cha ccam kwa ccam migrate.
+description: Nakili mipangilio, CLAUDE.md, viendelezi, seva za MCP na taarifa za kuingia za MCP za ~/.claude iliyopo hadi kikundi cha ccam kwa ccam migrate.
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 95ce6ec9e220
+sourceHash: "7cee52e75749"
 ---
 
 Ikiwa ulitumia Claude Code kabla ya ccam, usanidi wako uko katika `~/.claude` na `~/.claude.json`. `ccam migrate` huunakili kwenye kikundi cha kushiriki, ili kila akaunti inayoshiriki vipengele hivyo kupitia kikundi ianze na usanidi ulio nao tayari. Folda chanzo husomwa tu, na `claude` ya kawaida inaendelea kufanya kazi kama awali. Iendeshe mara moja baada ya `ccam add` yako ya kwanza, na tena kila akaunti inapoanza kushiriki seva za MCP.
@@ -59,7 +59,7 @@ Accounts that share these through group default:
   extensions  personal, work
 ```
 
-Kikundi hufikia tu akaunti zinazoshiriki kipengele kupitia kikundi hicho, kwa hiyo muhtasari huziorodhesha kwa kila kipengele. Kwa akaunti zisizoshiriki, ccam huchapisha amri za `ccam share <name> --<item> on` zinazowasha kushiriki.
+Kikundi hufikia akaunti zake tu, na kwa vipengele kinavyoshiriki tu, kwa hiyo muhtasari huorodhesha akaunti za kikundi. Kikundi kisiposhiriki mojawapo ya vipengele vilivyonakiliwa, au baadhi ya akaunti hazimo ndani yake, ccam huchapisha amri za `ccam group set <group> --add <items>` na `ccam group join <group> <accounts>` zinazobadilisha hilo.
 
 ## Chaguo
 
@@ -84,7 +84,7 @@ Bila chaguo la kipengele, orodha ya kuteua huamua kwenye terminal. Nje ya termin
 `internal/cli/migrate.go` huchagua vipengele, kisha `migrate.Build` husoma chanzo na kikundi na hurudisha mpango. Hakuna kinachoandikwa hadi `Plan.Apply`, baada ya wewe kuthibitisha.
 
 1. **Kupata chanzo.** `checkSource` hukataa njia inayokosekana, isiyo folda, au isiyo na kipengee chochote kinachojulikana cha Claude Code. `migrate.ClaudeJSON` hupata `.claude.json` inayohusiana na folda: ndani yake, au kwa `~/.claude` isiyo na moja ndani, `~/.claude.json` kando yake. Hapo ndipo Claude Code huihifadhi wakati `CLAUDE_CONFIG_DIR` haijawekwa.
-2. **Kuhusisha vipengele na njia.** Kila njia hutoka `share.Layout`, orodha ile ile ya ruhusa ambayo `ccam share` hutumia. Seva za MCP husomwa kutoka `.claude.json` kwa `mcp.LocalServers`, ambayo hutumia kisomaji cha `profile.TopLevelValue` badala ya kufasiri faili nzima.
+2. **Kuhusisha vipengele na njia.** Kila njia hutoka `share.Layout`, orodha ile ile ya ruhusa ambayo vikundi hutumia. Seva za MCP husomwa kutoka `.claude.json` kwa `mcp.LocalServers`, ambayo hutumia kisomaji cha `profile.TopLevelValue` badala ya kufasiri faili nzima.
 3. **Kunakili, kamwe si kuhamisha.** Faili huenda `~/.local/share/ccam/groups/<group>/` kwa `fsutil.AtomicWrite` au `fsutil.CopyFile`; seva za MCP huenda kwenye `mcp.json` ya kikundi.
 
 Kila kipengele huhusisha njia moja ya chanzo na njia moja ya kikundi:

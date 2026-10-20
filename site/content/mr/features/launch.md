@@ -1,10 +1,10 @@
 ---
 title: Claude Code सुरू करणे
-description: ccam <name|number>, ccam run किंवा ccam picker ने कोणत्याही खात्याने Claude Code सुरू करा; आर्ग्युमेंट्स न बदलता claude ला जातात, आणि --dry-run कमांड दाखवते.
+description: ccam <name|number>, ccam run किंवा डॅशबोर्डने कोणत्याही खात्याने Claude Code सुरू करा; आर्ग्युमेंट्स न बदलता claude ला जातात, आणि --dry-run कमांड दाखवते.
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: e6b5a8d4df86
+sourceHash: "4812b197f143"
 ---
 
 `ccam work` `work` खात्याने Claude Code सुरू करते, आणि नावानंतरचे सर्व काही जसेच्या तसे `claude` ला जाते. जिथे तुम्ही `claude` टाइप केले असते तिथे ते वापरा: टर्मिनलमध्ये, script मध्ये, किंवा pipe ने input देऊन.
@@ -21,7 +21,7 @@ ccam -p "summarise"              # no name: the folder's account, else the defau
 ccam use work                    # make work the default account
 ccam folder work ~/code/company  # use work in that folder when no name is given
 ccam run work --continue         # same as ccam work --continue
-ccam                             # the picker on a terminal, the list otherwise
+ccam                             # the dashboard on a terminal, the list otherwise
 ccam --dry-run work -p hi        # print the command instead of running it
 ccam --fallback work -p "fix the tests"   # run again as another account at the limit
 ```
@@ -30,22 +30,13 @@ ccam --fallback work -p "fix the tests"   # run again as another account at the 
 
 पहिला आर्ग्युमेंट `-` ने सुरू होत असेल आणि तो ccam च्या स्वतःच्या flags पैकी नसेल, तर ccam सर्व आर्ग्युमेंट्ससह नावाशिवाय एक खाते सुरू करते. ते म्हणजे [`ccam folder`](/features/folder) ने सध्याच्या फोल्डरसाठी सेट केलेले खाते, नाहीतर डीफॉल्ट: `ccam use` ने सेट केलेले खाते, किंवा तुम्ही ते सेट केले नसेल तर सर्वात लहान क्रमांकाचे खाते.
 
-### Picker
+### डॅशबोर्ड
 
-standard input आणि output टर्मिनल असताना आर्ग्युमेंट्सशिवाय `ccam` picker उघडते, आणि इतर वेळी `ccam list` छापते. ते प्रत्येक खात्याचा क्रमांक, ईमेल, 5 तासांचा वापर, शेवटचा वापर आणि शेअर केलेले आयटम दाखवते; प्रत्येक खाते उत्तर देईल तसा वापर भरला जातो.
+standard input आणि output टर्मिनल असताना आर्ग्युमेंट्सशिवाय `ccam` [डॅशबोर्ड](/features/dashboard) उघडते, आणि इतर वेळी `ccam list` छापते. एखाद्या खात्यावर जा (बाण की ने, किंवा त्याचा क्रमांक टाइप करून) आणि ते सुरू करण्यासाठी `Enter` दाबा; `n` सर्वात जास्त जागा असलेले खाते सुरू करते आणि `o` `--continue`, `--resume` किंवा इतर आर्ग्युमेंट्स देऊ करते. Claude Code सुरू होण्यापूर्वी डॅशबोर्ड बंद होतो, त्यामुळे टर्मिनल आधी पूर्ववत होतो.
 
-| की | काय करते |
-| --- | --- |
-| `Enter` | निवडलेल्या खात्याने Claude Code सुरू करा |
-| `1` to `9` | त्या क्रमांकाचे खाते सुरू करा |
-| `Up`/`Down`, `k`/`j` | निवड हलवा |
-| `a` | picker बंद करून `ccam add` विझार्ड चालवा |
-| `s` | निवडलेल्या खात्याचे शेअर केलेले आयटम बदला (`Space` किंवा `x` टॉगल करते, `Enter` लागू करते, `Esc` मागे जाते) |
-| `d` | निवडलेले खाते डीफॉल्ट करा |
-| `r` | छोट्या cache शिवाय वापर पुन्हा आणा |
-| `q`, `Esc`, `Ctrl+C` | बाहेर पडा |
+shell मध्ये `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY` किंवा `ANTHROPIC_AUTH_TOKEN` सेट असेल, तर Claude Code खात्याच्या स्वतःच्या लॉगिनऐवजी ती key किंवा token वापरेल, म्हणून ccam सुरू होण्यापूर्वी standard error वर तसे सांगते (`ccam: $ANTHROPIC_API_KEY is set, so Claude Code may use that key instead of work's login…`). ते फक्त variables वाचते; [API key खाते](/features/api) त्याऐवजी ते काढून टाकते.
 
-picker काही करण्यापूर्वी बंद होतो, त्यामुळे Claude Code सुरू होण्यापूर्वी टर्मिनल पूर्ववत होतो. `d` किंवा शेअरिंगमधील बदलानंतर तो पुन्हा उघडतो. शेअरिंगमधील बदल `ccam share` प्रमाणेच आधी योजना दाखवतो आणि विचारतो.
+`config.toml` मध्ये `relay = true` असेल, तर ccam interactive सत्रे child process म्हणून सुरू करते आणि त्यांच्या शेजारी राहते, जेणेकरून `/ccam:switch` संभाषण आपोआप पुढे नेऊ शकेल ([तपशील](/features/next#inside-claude-code)); नाहीतर ccam स्वतःची जागा Claude Code ला देते, आणि त्याच्या शेजारी काहीही चालत नाही.
 
 ## पर्याय
 
@@ -84,7 +75,7 @@ $env:CLAUDE_CONFIG_DIR='C:\Users\me\.local\share\ccam\profiles\work'; & C:\Users
 प्रत्येक टप्पा चालताना त्याचा box उजळतो, आणि खालच्या ओळी म्हणजे Claude Code ज्या environment आणि आर्ग्युमेंट्ससह सुरू होते ते.
 
 1. `cmd/ccam/main.go` `app.Main` बोलावते. ccam दुसऱ्या नावाने सुरू झाले असेल, तर तो [शॉर्टकट](/features/shortcuts) आहे आणि थेट launcher कडे जातो.
-2. cobra सहभागी होण्यापूर्वी `app.parse` `os.Args` पाहते. फक्त एकटे `ccam` (picker), ccam कमांडचे नाव (`config.Reserved`), `-h`/`--help` आणि `-v`/`--version` `cli.Execute` कडे जातात. बाकी सर्व काही म्हणजे Claude Code सुरू करणे.
+2. cobra सहभागी होण्यापूर्वी `app.parse` `os.Args` पाहते. फक्त एकटे `ccam` (डॅशबोर्ड), ccam कमांडचे नाव (`config.Reserved`), `-h`/`--help` आणि `-v`/`--version` `cli.Execute` कडे जातात. बाकी सर्व काही म्हणजे Claude Code सुरू करणे.
 3. `launcher.Launch` `~/.config/ccam/config.toml` वाचते, ही एकमेव फाइल जी ते parse करते.
 4. `launcher.Prepare` नाव किंवा क्रमांकावरून खाते शोधते (नाव नसल्यास `HereProfile` फोल्डरचे खाते घेते, working directory ची `config.toml` मधील `[[folder]]` नोंदींशी strings म्हणून तुलना करून), सुरुवातीचा एक `--` काढते, आणि `ResolveClaude` ने `claude` executable शोधते. PATH मधील शोध फाइलच्या modification time सह `~/.local/state/ccam/claude-path` मध्ये cache होतो, त्यामुळे ccam प्रत्येक वेळी `PATH` शोधत नाही. फाइल बदलली किंवा नसली तर नवीन शोध होतो. `config.toml` मधील `claude_bin` पाथ जसाच्या तसा वापरला जातो. जो `claude` स्वतः ccam आहे, तो ccam inode ने तुलना करून नाकारते, कारण त्याने loop होईल.
 5. `checkLinks` खात्याचा फोल्डर `~/.local/share/ccam/profiles/<name>/` त्याच्या शेअरिंग सेटिंग्जशी `share.Check` ने तुलना करते, जे फक्त `lstat` आणि `readlink` बोलावते, प्रत्येक आयटमसाठी एक किंवा दोन system calls. नसलेली लिंक तिथल्या तिथे तयार होते. डेटा गमावू शकेल अशी कोणतीही गोष्ट सुरू करणे थांबवते.

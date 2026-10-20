@@ -4,7 +4,7 @@ description: Agrega, inicia sesión, lista, renombra, quita e importa cuentas de
 updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 9eb992214132
+sourceHash: "8564517d0d71"
 ---
 
 Cada cuenta de ccam es una carpeta de configuración de Claude Code independiente con su propio inicio de sesión. Estos comandos crean cuentas, inician sesión en ellas, las listan, les cambian el nombre y las quitan, y registran carpetas que ya tienes.
@@ -12,10 +12,11 @@ Cada cuenta de ccam es una carpeta de configuración de Claude Code independient
 ## Uso
 
 ```sh
-ccam add                                   # wizard on a terminal: name, shared items, shortcut, login
+ccam add                                   # wizard on a terminal: name, sign-in, groups, shortcut
 ccam add work --shortcut ccwork            # no wizard: log in, then create the ccwork command
-ccam add side --no-login --share history=team
+ccam add side --no-login --group default --group team
 ccam login side                            # run claude auth login inside the account
+ccam login --expired                       # every account never logged in, or whose login expired
 ccam logout side                           # remove the login token
 ccam list                                  # table of accounts; ccam ls is the same
 ccam list --json                           # machine-readable
@@ -29,25 +30,28 @@ ccam completion zsh > "${fpath[1]}/_ccam"
 
 Siempre que un comando acepta `<name|number>`, puedes indicar el nombre de la cuenta o su número de posición, la columna `#` de `ccam list`.
 
-`ccam add` sin opciones en una terminal abre un asistente. Pide el nombre, luego muestra una lista de selección de los elementos compartidos (todo está marcado excepto el historial de conversaciones), después pregunta `Create a shortcut command for work? [y/N]` y, si respondes `y`, `Shortcut name [ccwork]:`. Cualquiera de `--share`, `--shortcut` o `--no-login`, o una tubería en lugar de una terminal, omite el asistente; en ese caso el nombre es obligatorio y no se crea ningún atajo salvo que `--shortcut` indique uno.
+`ccam add` sin opciones en una terminal abre un asistente. Pide el nombre y cómo inicia sesión la cuenta (un inicio de sesión de Claude ahora, una clave de API o un inicio de sesión de Claude más tarde), luego muestra los grupos a los que unirse con `default` marcado (si todavía no hay grupos, los elementos que compartirá el grupo `default`), después pregunta `Create a shortcut command for work? [y/N]` y termina con un resumen para confirmar. `Esc` vuelve un paso atrás. Cualquiera de `--group`, `--no-group`, `--shortcut` o `--no-login`, o una tubería en lugar de una terminal, omite el asistente; en ese caso el nombre es obligatorio y no se crea ningún atajo salvo que `--shortcut` indique uno.
 
-`ccam list` muestra la posición, el nombre, el atajo, el correo electrónico, los elementos compartidos y el último uso, con `*` delante de la cuenta predeterminada:
+Sin `--group`, una cuenta nueva se une al grupo `default`. La primera cuenta lo crea, y comparte los servidores MCP, la configuración, `CLAUDE.md` y las extensiones; consulta [compartir con grupos](/features/share).
+
+`ccam list` muestra la posición, el nombre, el atajo, el correo electrónico, los grupos y el último uso, con `*` delante de la cuenta predeterminada:
 
 ```console
 $ ccam list
-   #  Name      Shortcut  Email             Shared                        Last used
-*  1  work      ccwork    user@example.com  mcp settings md ext           -
-   2  personal  -         me@side.dev       settings md ext history@team  -
+   #  Name      Shortcut  Email             Groups        Last used
+*  1  work      ccwork    user@example.com  default team  -
+   2  personal  -         me@side.dev       default       -
 ```
 
-Con `--json`, cada cuenta es un objeto con `slot`, `shortcut`, `name`, `email`, `default`, `dir`, `last_used` (se omite si la cuenta nunca se inició) y `share`. `share` asigna a cada elemento (`mcp`, `settings`, `memory`, `extensions`, `history`) su nombre de grupo o `"local"`.
+Con `--json`, cada cuenta es un objeto con `slot`, `shortcut`, `name`, `email`, `default`, `dir`, `last_used` (se omite si la cuenta nunca se inició), `groups` y `share`. `share` asigna a cada elemento (`mcp`, `settings`, `memory`, `extensions`, `history`) el grupo del que proviene, o `"local"`.
 
 ## Opciones
 
 | Opción | Qué hace | Valor predeterminado |
 | --- | --- | --- |
 | `ccam add --no-login` | Crea la cuenta sin iniciar sesión; inicia sesión más tarde con `ccam login <name>` | desactivada |
-| `ccam add --share <item=group>` | Comparte un elemento con un grupo, o `item=local` para mantenerlo privado. Se puede repetir | `mcp`, `settings`, `memory`, `extensions` en `default`; `history` local |
+| `ccam add --group <group>` | Se une a este grupo en lugar de `default`. Se puede repetir; `default` se crea si no existe | `default` |
+| `ccam add --no-group` | No se une a ningún grupo: la cuenta no comparte nada | desactivada |
 | `ccam add --shortcut <command>` | Crea también este atajo en `~/.local/bin` | ninguno |
 | `ccam add --api --key-from <source>` | Una cuenta que usa una clave de API en lugar de un inicio de sesión; consulta [Cuentas con clave de API](/features/api) | desactivada |
 | `ccam list --json` | Imprime las cuentas en JSON | desactivada |
@@ -58,7 +62,7 @@ Con `--json`, cada cuenta es un objeto con `slot`, `shortcut`, `name`, `email`, 
 
 `ccam login`, `ccam logout`, `ccam use` y `ccam rename` no tienen opciones propias. `ccam completion` acepta `bash`, `zsh` o `powershell`; cualquier otro valor falla con `only bash, zsh and powershell are supported`.
 
-Los nombres de cuenta tienen de 1 a 32 caracteres entre `a-z`, `0-9`, `-` y `_`, y empiezan con una letra o un dígito. Un nombre no puede tener solo dígitos, porque `ccam 2` significa la posición 2. Tampoco puede ser un comando de ccam (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`, `folder`, `pick`, `ext`), así que `ccam <name>` nunca es ambiguo. La lista es `config.Reserved` en `internal/config`.
+Los nombres de cuenta tienen de 1 a 32 caracteres entre `a-z`, `0-9`, `-` y `_`, y empiezan con una letra o un dígito. Un nombre no puede tener solo dígitos, porque `ccam 2` significa la posición 2. Tampoco puede ser un comando de ccam (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`, `folder`, `pick`, `ext`, `group`, `groups`), así que `ccam <name>` nunca es ambiguo. La lista es `config.Reserved` en `internal/config`.
 
 ## Cómo funciona
 
@@ -68,15 +72,19 @@ Los nombres de cuenta tienen de 1 a 32 caracteres entre `a-z`, `0-9`, `-` y `_`,
 
 1. `config.ValidateName` comprueba el nombre y `shim.Check` comprueba el atajo antes de crear nada.
 2. `profile.Add` crea `~/.local/share/ccam/profiles/work/` con el modo `0700` y le asigna a la cuenta el número de posición libre más bajo (`Config.NextSlot`), de modo que el número de una cuenta quitada se reutiliza. La primera cuenta pasa a ser la predeterminada.
-3. `applyShare` enlaza la carpeta nueva y vacía con sus grupos de uso compartido mediante `share.Build` y después `Apply`, por ejemplo `settings.json` con `groups/default/settings.json`. Si esto falla, se elimina la carpeta nueva, porque una carpeta sobrante bloquearía cada reintento con `folder already exists`.
+3. La cuenta se une a sus grupos (`default` salvo que `--group` o `--no-group` indiquen otra cosa; la primera cuenta crea `default`), y `applyShare` enlaza la carpeta nueva y vacía con ellos mediante `share.Build` y después `Apply`, por ejemplo `settings.json` con `groups/default/settings.json`. Si esto falla, se elimina la carpeta nueva, porque una carpeta sobrante bloquearía cada reintento con `folder already exists`.
 4. La cuenta se guarda en `~/.config/ccam/config.toml` mediante `fsutil.AtomicWrite`: un archivo temporal, `fsync` y luego `rename`, así que un fallo nunca deja la configuración a medias.
-5. `runLogin` inicia `claude auth login` con `CLAUDE_CONFIG_DIR` apuntando a la carpeta de la cuenta. Si el inicio de sesión falla, la cuenta se conserva, y ccam imprime el error y te indica que ejecutes `ccam login work` más tarde.
-6. `profile.ReadEmail` extrae `oauthAccount.emailAddress` de `profiles/work/.claude.json`. Ese archivo puede ocupar varios megabytes, así que `TopLevelValue` busca esa única clave en lugar de analizar el archivo completo.
+5. `runLogin` inicia `claude auth login` con `CLAUDE_CONFIG_DIR` apuntando a la carpeta de la cuenta, y `--email` con el último correo electrónico de la cuenta para que la página de inicio de sesión aparezca rellenada. Si el inicio de sesión falla, la cuenta se conserva, y ccam imprime el error y te indica que ejecutes `ccam login work` más tarde.
+6. `profile.ReadIdentity` extrae `oauthAccount` de `profiles/work/.claude.json`: el correo electrónico, los ids de la cuenta y de la organización, el nombre de la organización y el plan (`claude_max`, `claude_team` …). Ese archivo puede ocupar varios megabytes, así que `TopLevelValue` busca esa única clave en lugar de analizar el archivo completo. ccam los guarda en `[profile.login]` en `config.toml`.
 7. `shim.Install` enlaza `~/.local/bin/ccwork` con el binario de ccam, que busca `argv[0]` en `config.toml` al iniciar.
 
 Un inicio de sesión puede tardar minutos, y mientras tanto otro ccam puede guardar la configuración. Por eso los comandos que esperan guardan mediante `env.update`, que vuelve a cargar `config.toml`, aplica el único cambio (aquí, el correo electrónico) y guarda. `ccam remove` vuelve a cargar después de su pregunta por el mismo motivo.
 
-`ccam login` ejecuta los pasos 5 y 6 para una cuenta existente. `ccam logout` ejecuta `claude auth logout` en la cuenta y borra el correo electrónico guardado. `ccam use` solo reescribe `default` en `config.toml`.
+`ccam login` ejecuta los pasos 5 y 6 para una cuenta existente. Claude Code toma el correo electrónico solo como sugerencia para la página de inicio de sesión, así que un inicio de sesión puede acabar en otra cuenta de Claude distinta de la que tenía la cuenta de ccam; ccam compara el nuevo inicio de sesión con `[profile.login]` y lo indica (`ccam: this login is other@company.com, but work was dev@company.com before.`). Conserva el nuevo inicio de sesión y te indica cómo deshacerlo: `ccam logout work`, luego `ccam login work`, e inicia sesión con el correo electrónico correcto. Cuando otra cuenta de ccam tiene la sesión iniciada en la misma cuenta de Claude, ccam avisa de que las dos comparten sus límites de uso. `ccam login --expired` inicia sesión, una tras otra, en todas las cuentas que nunca iniciaron sesión o cuyo inicio de sesión (su token de actualización) caducó.
+
+`ccam logout` ejecuta `claude auth logout` en la cuenta y borra el correo electrónico guardado; el registro del inicio de sesión se conserva, así que el siguiente inicio de sesión se compara con él. `ccam use` solo reescribe `default` en `config.toml`.
+
+`ccam list` agrega una columna `Organization` cuando las cuentas pertenecen a más de una organización (los planes personales muestran `personal`), y `ccam list --json` incluye `plan` y `org` para cada cuenta.
 
 ### Iniciar sesión en una máquina remota
 
@@ -106,7 +114,7 @@ Mientras el inicio de sesión espera una entrada en una terminal, ccam desactiva
 
 `ccam rename` cambia el nombre de la carpeta, reescribe las rutas de plugins de su `plugins/` de la carpeta anterior a la nueva, conserva la cuenta predeterminada y mueve las rutas de `nameState` al nombre nuevo. El atajo conserva su nombre. Si falla la reescritura de los plugins, la carpeta recupera su nombre anterior, ya que la configuración no se guarda.
 
-`ccam import` registra una carpeta donde está, como `dir` en `config.toml`. Nunca la mueve ni la copia: un token de actualización copiado haría que las copias se cerraran la sesión entre sí. Sin una carpeta como argumento, busca carpetas `~/.claude` y `~/.claude-*` no registradas y pregunta por cada una; los nombres salen de la carpeta (`~/.claude` es `main`, `~/.claude-work` es `work`, `~/.claude-2` es `acct2`), y una carpeta de la que no se puede derivar un nombre aparece con el comando `--name` que debes usar. Sin `CLAUDE_CONFIG_DIR`, Claude Code guarda `.claude.json` en tu carpeta personal junto a `~/.claude`, así que cuando importas `~/.claude` y no tiene su propio `.claude.json`, ccam crea el enlace `~/.claude/.claude.json` a `~/.claude.json`. Así, `claude` a secas y `ccam main` ven la misma cuenta. Las cuentas importadas no comparten nada hasta que ejecutas `ccam share`, y no se crea ningún atajo.
+`ccam import` registra una carpeta donde está, como `dir` en `config.toml`. Nunca la mueve ni la copia: un token de actualización copiado haría que las copias se cerraran la sesión entre sí. Sin una carpeta como argumento, busca carpetas `~/.claude` y `~/.claude-*` no registradas y pregunta por cada una; los nombres salen de la carpeta (`~/.claude` es `main`, `~/.claude-work` es `work`, `~/.claude-2` es `acct2`), y una carpeta de la que no se puede derivar un nombre aparece con el comando `--name` que debes usar. Sin `CLAUDE_CONFIG_DIR`, Claude Code guarda `.claude.json` en tu carpeta personal junto a `~/.claude`, así que cuando importas `~/.claude` y no tiene su propio `.claude.json`, ccam crea el enlace `~/.claude/.claude.json` a `~/.claude.json`. Así, `claude` a secas y `ccam main` ven la misma cuenta. Las cuentas importadas no están en ningún grupo hasta que las agregas a uno (`ccam group join <group> <name>`), y no se crea ningún atajo.
 
 `ccam completion bash|zsh` imprime un script de autocompletado que también completa los nombres de cuenta.
 

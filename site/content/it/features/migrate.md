@@ -1,10 +1,10 @@
 ---
 title: Copiare una configurazione esistente
-description: Copia impostazioni, CLAUDE.md, estensioni, server MCP e accessi MCP di una ~/.claude esistente in un gruppo di condivisione di ccam con ccam migrate.
+description: Copia impostazioni, CLAUDE.md, estensioni, server MCP e accessi MCP di una ~/.claude esistente in un gruppo di ccam con ccam migrate.
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 95ce6ec9e220
+sourceHash: "7cee52e75749"
 ---
 
 Se usavi Claude Code prima di ccam, la tua configurazione si trova in `~/.claude` e `~/.claude.json`. `ccam migrate` la copia in un gruppo di condivisione, così ogni account che condivide quegli elementi tramite il gruppo parte con la configurazione che hai già. La cartella di origine viene solo letta, e `claude` da solo continua a funzionare come prima. Eseguilo una volta dopo il tuo primo `ccam add`, e di nuovo ogni volta che un account inizia a condividere i server MCP.
@@ -59,7 +59,7 @@ Accounts that share these through group default:
   extensions  personal, work
 ```
 
-Un gruppo raggiunge solo gli account che condividono un elemento tramite esso, quindi il riepilogo li elenca per elemento. Per gli account che non lo fanno, ccam stampa i comandi `ccam share <name> --<item> on` che attivano la condivisione.
+Un gruppo raggiunge solo i propri account, e solo per gli elementi che condivide, quindi il riepilogo elenca gli account del gruppo. Quando il gruppo non condivide uno degli elementi copiati, o alcuni account non ne fanno parte, ccam stampa i comandi `ccam group set <group> --add <items>` e `ccam group join <group> <accounts>` che lo cambiano.
 
 ## Opzioni
 
@@ -84,7 +84,7 @@ Senza opzioni per gli elementi, in un terminale decide la checklist. Fuori da un
 `internal/cli/migrate.go` sceglie gli elementi, poi `migrate.Build` legge l'origine e il gruppo e restituisce un piano. Non viene scritto nulla fino a `Plan.Apply`, dopo la tua conferma.
 
 1. **Trovare l'origine.** `checkSource` rifiuta un percorso mancante, che non è una cartella o che non contiene nessuna voce nota di Claude Code. `migrate.ClaudeJSON` trova il `.claude.json` che appartiene alla cartella: al suo interno oppure, per una `~/.claude` che non ne contiene uno, `~/.claude.json` accanto a essa. È lì che Claude Code lo tiene quando `CLAUDE_CONFIG_DIR` non è impostata.
-2. **Associare gli elementi ai percorsi.** Ogni percorso viene da `share.Layout`, lo stesso elenco di percorsi consentiti usato da `ccam share`. I server MCP vengono letti da `.claude.json` con `mcp.LocalServers`, che usa lo scanner `profile.TopLevelValue` invece di analizzare l'intero file.
+2. **Associare gli elementi ai percorsi.** Ogni percorso viene da `share.Layout`, lo stesso elenco di percorsi consentiti usato dai gruppi. I server MCP vengono letti da `.claude.json` con `mcp.LocalServers`, che usa lo scanner `profile.TopLevelValue` invece di analizzare l'intero file.
 3. **Copiare, mai spostare.** I file vanno in `~/.local/share/ccam/groups/<group>/` con `fsutil.AtomicWrite` o `fsutil.CopyFile`; i server MCP vanno nel `mcp.json` del gruppo.
 
 Ogni elemento associa un percorso di origine a un percorso del gruppo:

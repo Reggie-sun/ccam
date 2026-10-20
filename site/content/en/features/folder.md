@@ -33,7 +33,7 @@ These launches use the folder's account:
 - `ccam -p "…"` and any other launch whose first argument is an option for Claude Code
 - `ccam run` without a name, and `ccam --dry-run`
 - `ccam --fallback -p "…"` for its first attempt
-- the picker, `ccam` alone, which starts with its cursor on the folder's account
+- the dashboard, `ccam` alone, which starts with its cursor on the folder's account
 
 ## Options
 

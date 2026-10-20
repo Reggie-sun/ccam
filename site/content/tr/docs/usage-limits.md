@@ -4,7 +4,7 @@ description: Tüm Claude Code hesaplarının 5 saatlik ve haftalık kullanımın
 updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: a84df8e873d6
+sourceHash: "40aef0708c81"
 ---
 
 `ccam usage`, her hesabın 5 saatlik ve haftalık limitlerinin ne kadarını kullandığını gösterir. `ccam next --auto` en çok pay kalan hesabı açar, `--continue` ise mevcut konuşmayı o hesaba taşır.
@@ -55,10 +55,10 @@ Bundan sonra Claude Code, durum satırında hesap adını ve kullanımını gös
 ```sh
 ccam next             # the account after the one you used last
 ccam next --auto      # the account with the lowest 5-hour usage
-ccam next --continue  # the next account that shares your conversation history
+ccam next --continue  # carry this folder's conversation on as the next account
 ```
 
-`ccam next` giriş yapılmamış hesapları atlar, `--auto` ise %100'deki hesapları atlar. Bir konuşmaya devam etmek için iki hesabın da konuşma geçmişini paylaşması gerekir; bkz. [paylaşım](/docs/sharing).
+`ccam next` giriş yapılmamış hesapları atlar, `--auto` ise %100'deki hesapları ve başka bir kuruluşun hesaplarını atlar. İki hesap konuşma geçmişini paylaşıyorsa `--continue` aynı konuşmayı açar; paylaşmıyorsa Claude Code konuşmayı yeni hesaba kopyalar. Bkz. [paylaşım](/docs/sharing) ve [sonraki hesaba geçme](/features/next#continue).
 
 `claude -p` çalıştıran betikler ve zamanlanmış işler için hesap adından önce `--fallback` koyun. O hesap limitine ulaştığında ccam aynı komutu en çok payı kalan hesapla yeniden çalıştırır ve yalnızca tamamlanan çalıştırmanın çıktısı yazdırılır:
 

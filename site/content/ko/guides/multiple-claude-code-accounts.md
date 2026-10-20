@@ -4,7 +4,7 @@ description: CLAUDE_CONFIG_DIR로 여러 Claude Code 계정을 나란히 실행�
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: f2982e4317a2
+sourceHash: "ee92078b81c3"
 ---
 
 계정마다 설정 폴더를 따로 두면 됩니다. Claude Code는 `CLAUDE_CONFIG_DIR` 환경 변수로 사용할 폴더를 정하고, 폴더마다 로그인 정보, 설정, 대화 내역이 따로 저장됩니다. 그래서 모든 계정이 로그인 상태를 유지하고, 여러 계정을 동시에 실행할 수 있습니다. 셸 별칭으로 직접 설정할 수도 있고, ccam에 맡길 수도 있습니다.
@@ -69,7 +69,7 @@ Claude Code는 [Windows에서 네이티브로, 그리고 WSL 안에서](https://
 
 **MCP 서버가 한 계정에만 보입니다.** 세션 안에서 `claude mcp add`로 추가한 서버는 그 계정에만 속합니다. `ccam mcp import work <server>`로 모든 계정에 옮길 수 있습니다.
 
-**계정마다 설정이 다릅니다.** `ccam share work`는 그 계정이 무엇을 공유하는지 보여 줍니다. `ccam share work --settings on`은 바뀔 내용을 먼저 보여 준 뒤 설정을 공유합니다. `ccam doctor --fix`는 깨진 링크를 복구하고, 바꾸는 파일은 모두 백업해 둡니다.
+**계정마다 설정이 다릅니다.** `ccam share work`는 그 계정이 무엇을 어느 그룹으로 공유하는지 보여 줍니다. `ccam group join default work`는 바뀔 내용을 먼저 보여 준 뒤 이 계정이 `default`가 공유하는 항목을 함께 공유하게 합니다. `ccam doctor --fix`는 깨진 링크를 복구하고, 바꾸는 파일은 모두 백업해 둡니다.
 
 **두 계정이 같은 대화를 엽니다.** 한 대화를 두 계정에서 동시에 작업하지 마세요. 그렇게 하려고 하면 ccam이 경고합니다.
 

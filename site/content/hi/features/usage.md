@@ -4,7 +4,7 @@ description: ccam usage हर अकाउंट की 5 घंटे और �
 updated: 2026-10-20
 order: 7
 translation: machine
-sourceHash: 525174ceed0d
+sourceHash: "ec1d1ee27d9f"
 ---
 
 `ccam usage` दिखाता है कि हर अकाउंट ने 5 घंटे और साप्ताहिक सीमा का कितना हिस्सा इस्तेमाल किया है, और हर विंडो के रीसेट होने तक का समय भी। कोई लंबा काम शुरू करने से पहले, या जब Claude Code बताए कि कोई सीमा पास है, तब इसे इस्तेमाल करें, ताकि पता चले कि किस अकाउंट में गुंजाइश बची है। `ccam statusline`, Claude Code के लिए स्टेटस लाइन कमांड है: यह Claude Code के अंदर अकाउंट का नाम और उपयोग दिखाता है और `ccam usage` के लिए संख्याएँ सेव करता है।
@@ -20,6 +20,7 @@ ccam usage -v               # add per-model weekly limits and the data source
 ccam usage --json           # machine-readable, one object per account
 ccam usage --source cache   # saved numbers only, no network
 ccam usage --refresh        # also renew expired logins of accounts not running
+ccam usage --source claude  # let Claude Code look it up: ccam never touches a token
 ccam statusline install     # set the status line in every account's settings.json
 ```
 
@@ -32,7 +33,7 @@ $ ccam usage
 → Most headroom: personal   (open it with ccam next --auto)
 ```
 
-टर्मिनल पर table तुरंत हर पंक्ति में `fetching…` के साथ दिखती है, और हर पंक्ति उसके अकाउंट के जवाब देते ही फिर से बनती है। `As of` बताता है कि संख्याएँ कितनी पुरानी हैं; `(cached)` का मतलब है कि वे endpoint से नहीं, सेव की गई फ़ाइल से आई हैं। आख़िरी पंक्ति 100% से कम में सबसे कम 5 घंटे के उपयोग वाले अकाउंट का नाम बताती है, और केवल तभी दिखती है जब आपके पास एक से ज़्यादा अकाउंट हों। जिस अकाउंट में लॉगिन नहीं है, वह `not logged in → ccam login <name>` दिखाता है, और API key वाला अकाउंट `no limits (API)` दिखाता है।
+टर्मिनल पर table तुरंत हर पंक्ति में `fetching…` के साथ दिखती है, और हर पंक्ति उसके अकाउंट के जवाब देते ही फिर से बनती है। `As of` बताता है कि संख्याएँ कितनी पुरानी हैं; `(cached)` का मतलब है कि वे endpoint से नहीं, सेव की गई फ़ाइल से आई हैं। आख़िरी पंक्ति उस अकाउंट का नाम बताती है जिसे [`ccam next --auto`](/features/next) उन्हीं नियमों से चुनता (`auto_max_usage`, `auto_strategy`, चल रहे session, `cross_org` सेट न हो तो केवल पिछली बार इस्तेमाल हुए अकाउंट के संगठन के अकाउंट, 100% पर पहुँची हर विंडो छोड़ी जाती है, इसलिए जिस अकाउंट का हफ़्ता भर चुका है उसका नाम कभी नहीं आता), और केवल तभी दिखती है जब आपके पास एक से ज़्यादा अकाउंट हों। जिस अकाउंट में लॉगिन नहीं है, वह `not logged in → ccam login <name>` दिखाता है, और API key वाला अकाउंट `no limits (API)` दिखाता है।
 
 `ccam statusline install` के बाद, Claude Code `[work] · Opus · 5h 24% · 7d 41%` जैसी पंक्ति दिखाता है।
 
@@ -44,11 +45,15 @@ $ ccam usage
 | `--watch[=N]` | Ctrl+C दबाने तक हर `N` सेकंड में फिर से बनाएँ। अकेले `--watch`, या 0 या उससे कम मान का मतलब 60 है | बंद |
 | `-v`, `--verbose` | मॉडल के हिसाब से साप्ताहिक सीमाएँ और एक `source:` पंक्ति (`live`, `cache` या `statusline`) दिखाएँ | बंद |
 | `--no-cache` | 60 सेकंड की cache अनदेखी करें और endpoint से फिर पूछें | बंद |
-| `--source live\|cache` | `cache` कभी endpoint से नहीं पूछता और केवल सेव की गई संख्याएँ दिखाता है; `live` डिफ़ॉल्ट व्यवहार है | live |
+| `--source live\|claude\|cache` | `live` अकाउंट के token से endpoint से पूछता है; `claude` Claude Code से पता करवाता है (नीचे देखें); `cache` केवल सेव की गई संख्याएँ दिखाता है | `usage_source`, वरना `live` |
 | `--refresh` | एक्सपायर हुए access tokens renew करें, केवल उन अकाउंट्स के लिए जो चल नहीं रहे | बंद |
 | `--dry-run` | स्वीकार किया जाता है: `ccam usage` अपनी cache के अलावा कुछ नहीं बदलता। `--refresh` के साथ अस्वीकार किया जाता है: `--dry-run cannot be combined with --refresh, which rewrites login tokens` | बंद |
 
-`--source` का कोई और मान `--source must be live or cache` के साथ विफल होता है। `ccam usage` कोई आर्ग्युमेंट नहीं लेता।
+`--source` का कोई और मान `--source must be live, claude or cache` के साथ विफल होता है।
+
+### ख़ुद Claude Code से उपयोग
+
+`config.toml` में `usage_source = "claude"` (या `--source claude`) होने पर ccam लॉगिन token बिल्कुल नहीं पढ़ता। हर अकाउंट के लिए यह अकाउंट के फ़ोल्डर में `claude -p --input-format stream-json --output-format stream-json --verbose --safe-mode --no-session-persistence` शुरू करता है और standard input पर Claude Code का `get_usage` request भेजता है (Claude Code 2.1.270 या उसके बाद); Claude Code अपने ही लॉगिन से उपयोग पता करता है और 5 घंटे, साप्ताहिक और मॉडल विंडो के साथ जवाब देता है। `--safe-mode` अकाउंट के hooks, MCP सर्वर और plugins को शुरू होने से रोकता है, और कोई session सेव नहीं होता। हर अकाउंट के लिए Claude Code एक बार शुरू होता है, लगभग एक सेकंड, इसलिए यह source `live` से धीमा है; अकाउंट्स से एक साथ पूछा जाता है, हर एक 20 सेकंड के भीतर, और 60 सेकंड की cache हमेशा की तरह लागू होती है। Claude Code इस request को experimental बताता है, इसलिए अगर यह जवाब देना बंद कर दे, तो ccam सेव की गई संख्याएँ दिखाता है और `ccam doctor` इसकी सूचना देता है। `--dry-run` Claude Code शुरू नहीं करता (वह अकाउंट के फ़ोल्डर में लिखता है) और सेव की गई संख्याएँ दिखाता है। `usage_source` में `live` या `claude` दिया जा सकता है; `cache` केवल `--source` का एक विकल्प है। `ccam usage` कोई आर्ग्युमेंट नहीं लेता।
 
 `ccam statusline`, standard input से Claude Code का स्टेटस लाइन JSON पढ़ता है। इसका एकमात्र विकल्प `--wrap <command>` है: एक मौजूदा स्टेटस लाइन कमांड, जिसके आउटपुट की पहली पंक्ति के आगे अकाउंट का नाम लगता है। `ccam statusline install` कोई विकल्प नहीं लेता। दोनों `--dry-run` को `` --dry-run is not supported by `ccam statusline`; nothing was changed `` के साथ अस्वीकार करते हैं।
 

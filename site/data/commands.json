@@ -16,6 +16,14 @@
     "usage": "ccam add [name]"
   },
   {
+    "key": "agents",
+    "usage": "ccam agents [--all] [--json]"
+  },
+  {
+    "key": "attach",
+    "usage": "ccam attach <id> [claude args]"
+  },
+  {
     "key": "completion",
     "usage": "ccam completion bash|zsh|powershell"
   },
@@ -32,6 +40,14 @@
     "usage": "ccam folder [name|number] [folder]"
   },
   {
+    "key": "group",
+    "usage": "ccam group"
+  },
+  {
+    "key": "hook",
+    "usage": "ccam hook stop-failure|switch"
+  },
+  {
     "key": "import",
     "usage": "ccam import [folder]"
   },
@@ -41,7 +57,7 @@
   },
   {
     "key": "login",
-    "usage": "ccam login <name|number>"
+    "usage": "ccam login <name|number> | login --expired"
   },
   {
     "key": "logout",
@@ -73,7 +89,7 @@
   },
   {
     "key": "share",
-    "usage": "ccam share <name|number> [--mcp on|off|<group>] [--history …]"
+    "usage": "ccam share <name|number>"
   },
   {
     "key": "shims",

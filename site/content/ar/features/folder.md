@@ -4,7 +4,7 @@ description: يجعل ccam folder مجلدًا وكل ما تحته يستخدم
 updated: 2026-10-20
 order: 11
 translation: machine
-sourceHash: 5071b04a194d
+sourceHash: 46d1410a3d81
 ---
 
 يجعل `ccam folder work ~/code/company` كل تشغيل دون اسم حساب داخل `~/code/company`، وفي أي مجلد تحته، يبدأ Claude Code بالحساب `work`. وخارجه يبدأ الحساب الافتراضي كما من قبل. أما تسمية حساب، باستخدام `ccam personal` أو أمر مختصر مثل `ccpersonal`، فتشغّل ذلك الحساب دائمًا.
@@ -34,7 +34,7 @@ Here (/home/me/code/company/api): work, set for /home/me/code/company
 - `ccam -p "…"` وأي تشغيل آخر يكون وسيطه الأول خيارًا لـ Claude Code
 - `ccam run` دون اسم، و`ccam --dry-run`
 - `ccam --fallback -p "…"` في محاولته الأولى
-- أداة الاختيار، أي `ccam` وحده، التي تبدأ ومؤشرها على حساب المجلد
+- لوحة التحكم، أي `ccam` وحده، التي تبدأ ومؤشرها على حساب المجلد
 
 ## الخيارات
 

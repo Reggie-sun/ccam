@@ -1,10 +1,10 @@
 ---
 title: Menyalin penyiapan yang sudah ada
-description: Salin pengaturan, CLAUDE.md, ekstensi, server MCP, dan info masuk MCP dari ~/.claude yang sudah ada ke grup pembagian ccam dengan ccam migrate.
+description: Salin pengaturan, CLAUDE.md, ekstensi, server MCP, dan info masuk MCP dari ~/.claude yang sudah ada ke grup ccam dengan ccam migrate.
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 95ce6ec9e220
+sourceHash: "7cee52e75749"
 ---
 
 Jika Anda sudah memakai Claude Code sebelum ccam, penyiapan Anda ada di `~/.claude` dan `~/.claude.json`. `ccam migrate` menyalinnya ke sebuah grup pembagian, sehingga setiap akun yang membagikan item tersebut melalui grup itu dimulai dengan penyiapan yang sudah Anda miliki. Folder sumber hanya dibaca, dan `claude` biasa tetap berfungsi seperti sebelumnya. Jalankan sekali setelah `ccam add` pertama Anda, dan lagi setiap kali sebuah akun mulai membagikan server MCP.
@@ -59,7 +59,7 @@ Accounts that share these through group default:
   extensions  personal, work
 ```
 
-Grup hanya menjangkau akun yang membagikan suatu item melaluinya, sehingga ringkasan mendaftar akun-akun itu per item. Untuk akun yang tidak membagikannya, ccam menampilkan perintah `ccam share <name> --<item> on` untuk mengaktifkan pembagian.
+Grup hanya menjangkau akun-akunnya sendiri, dan hanya untuk item yang dibagikannya, sehingga ringkasan mendaftar akun-akun dalam grup itu. Jika grup tidak membagikan salah satu item yang disalin, atau ada akun yang tidak berada di dalamnya, ccam menampilkan perintah `ccam group set <group> --add <items>` dan `ccam group join <group> <accounts>` untuk mengubahnya.
 
 ## Opsi
 
@@ -84,7 +84,7 @@ Tanpa opsi item, daftar centang yang menentukan di terminal. Di luar terminal, a
 `internal/cli/migrate.go` memilih item, lalu `migrate.Build` membaca sumber dan grup serta mengembalikan rencana. Tidak ada yang ditulis sampai `Plan.Apply`, setelah Anda mengonfirmasi.
 
 1. **Menemukan sumber.** `checkSource` menolak path yang tidak ada, bukan folder, atau tidak berisi entri Claude Code yang dikenal. `migrate.ClaudeJSON` menemukan `.claude.json` milik folder tersebut: di dalamnya, atau untuk `~/.claude` yang tidak memilikinya di dalam, `~/.claude.json` di sampingnya. Di situlah Claude Code menyimpannya jika `CLAUDE_CONFIG_DIR` tidak diatur.
-2. **Memetakan item ke path.** Setiap path berasal dari `share.Layout`, daftar izin yang sama dengan yang dipakai `ccam share`. Server MCP dibaca dari `.claude.json` dengan `mcp.LocalServers`, yang memakai pemindai `profile.TopLevelValue` alih-alih mem-parse seluruh file.
+2. **Memetakan item ke path.** Setiap path berasal dari `share.Layout`, daftar izin yang sama dengan yang dipakai grup. Server MCP dibaca dari `.claude.json` dengan `mcp.LocalServers`, yang memakai pemindai `profile.TopLevelValue` alih-alih mem-parse seluruh file.
 3. **Menyalin, tidak pernah memindahkan.** File masuk ke `~/.local/share/ccam/groups/<group>/` dengan `fsutil.AtomicWrite` atau `fsutil.CopyFile`; server MCP masuk ke `mcp.json` milik grup.
 
 Setiap item memetakan satu path sumber ke satu path grup:

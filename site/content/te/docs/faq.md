@@ -5,7 +5,7 @@ description: ccam, Claude Code ఖాతాలు, వినియోగ పర�
 updated: 2026-10-20
 order: 6
 translation: machine
-sourceHash: 80a5475ccfee
+sourceHash: "e7d4a2c877ac"
 ---
 
 ## ccam అనేది Anthropic యొక్క అధికారిక టూలా?
@@ -26,7 +26,7 @@ sourceHash: 80a5475ccfee
 
 ## మరో ఖాతాలో సంభాషణను ఎలా కొనసాగించాలి?
 
-`ccam share <name> --history on` తో రెండు ఖాతాల మధ్య సంభాషణ చరిత్రను షేర్ చేయండి, తర్వాత `ccam next --continue` రన్ చేయండి. Claude Code ప్రస్తుత ఫోల్డర్ యొక్క అత్యంత ఇటీవలి సంభాషణను తర్వాతి ఖాతాలో తెరుస్తుంది.
+`ccam group set default --add history` తో ఖాతాల మధ్య సంభాషణ చరిత్రను షేర్ చేయండి (లేదా వాటికే ప్రత్యేకమైన గ్రూప్‌తో: `ccam group add pair --items history --members work,side`), తర్వాత `ccam next --continue` రన్ చేయండి. Claude Code ప్రస్తుత ఫోల్డర్ యొక్క అత్యంత ఇటీవలి సంభాషణను తర్వాతి ఖాతాలో తెరుస్తుంది.
 
 ## ccam నా లాగిన్‌ను చూస్తుందా లేదా పంపుతుందా?
 

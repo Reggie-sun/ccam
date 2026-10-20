@@ -4,7 +4,7 @@ description: يعرض ccam usage حدّي الخمس ساعات والأسبوع
 updated: 2026-10-20
 order: 7
 translation: machine
-sourceHash: 525174ceed0d
+sourceHash: "ec1d1ee27d9f"
 ---
 
 يعرض `ccam usage` مقدار ما استخدمه كل حساب من حدّي الخمس ساعات والأسبوع، مع الوقت المتبقي حتى إعادة ضبط كل نافذة. استخدمه قبل أن تبدأ مهمة طويلة، أو عندما يخبرك Claude Code أن حدًا ما يقترب، لترى أي حساب لا تزال لديه سعة. و`ccam statusline` هو أمر سطر الحالة في Claude Code: يعرض اسم الحساب واستخدامه داخل Claude Code ويحفظ الأرقام لـ `ccam usage`.
@@ -20,6 +20,7 @@ ccam usage -v               # add per-model weekly limits and the data source
 ccam usage --json           # machine-readable, one object per account
 ccam usage --source cache   # saved numbers only, no network
 ccam usage --refresh        # also renew expired logins of accounts not running
+ccam usage --source claude  # let Claude Code look it up: ccam never touches a token
 ccam statusline install     # set the status line in every account's settings.json
 ```
 
@@ -32,7 +33,7 @@ $ ccam usage
 → Most headroom: personal   (open it with ccam next --auto)
 ```
 
-في الطرفية يظهر الجدول فورًا مع `fetching…` في كل صف، ويُعاد رسم كل صف عندما يصل رد حسابه. يبيّن `As of` عمر الأرقام؛ وتعني `(cached)` أنها تأتي من ملف محفوظ، لا من نقطة النهاية. يذكر السطر الأخير الحساب الأقل استخدامًا في نافذة الخمس ساعات دون 100%، ولا يظهر إلا إذا كان لديك أكثر من حساب. ويعرض الحساب غير المسجَّل دخوله `not logged in → ccam login <name>`، ويعرض حساب مفتاح API الرسالة `no limits (API)`.
+في الطرفية يظهر الجدول فورًا مع `fetching…` في كل صف، ويُعاد رسم كل صف عندما يصل رد حسابه. يبيّن `As of` عمر الأرقام؛ وتعني `(cached)` أنها تأتي من ملف محفوظ، لا من نقطة النهاية. يذكر السطر الأخير الحساب الذي سيختاره [`ccam next --auto`](/features/next) وفق القواعد نفسها (`auto_max_usage` و`auto_strategy` والجلسات العاملة، وحسابات مؤسسة آخر حساب مستخدَم فقط ما لم يُعيَّن `cross_org`، مع تخطي كل نافذة بلغت 100%، فلا يُذكر أبدًا حساب امتلأ أسبوعه)، ولا يظهر إلا إذا كان لديك أكثر من حساب. ويعرض الحساب غير المسجَّل دخوله `not logged in → ccam login <name>`، ويعرض حساب مفتاح API الرسالة `no limits (API)`.
 
 بعد `ccam statusline install`، يعرض Claude Code سطرًا مثل `[work] · Opus · 5h 24% · 7d 41%`.
 
@@ -44,11 +45,15 @@ $ ccam usage
 | `--watch[=N]` | يعيد الرسم كل `N` ثانية حتى تضغط Ctrl+C. و`--watch` وحده، أو قيمة 0 أو أقل، يعني 60 | معطّل |
 | `-v`، `--verbose` | يعرض الحدود الأسبوعية لكل نموذج وسطر `source:` (`live` أو `cache` أو `statusline`) | معطّل |
 | `--no-cache` | يتجاهل ذاكرة التخزين المؤقت ذات الستين ثانية ويطلب من نقطة النهاية مرة أخرى | معطّل |
-| `--source live\|cache` | لا يطلب `cache` من نقطة النهاية أبدًا ويعرض الأرقام المحفوظة فقط؛ و`live` هو السلوك الافتراضي | live |
+| `--source live\|claude\|cache` | يطلب `live` من نقطة النهاية باستخدام رمز الحساب؛ ويجعل `claude` برنامج Claude Code يستعلم عنه (انظر أدناه)؛ ويعرض `cache` الأرقام المحفوظة فقط | `usage_source`، وإلا `live` |
 | `--refresh` | يجدّد رموز الوصول المنتهية، للحسابات التي لا تعمل فقط | معطّل |
 | `--dry-run` | مقبول: لا يغيّر `ccam usage` شيئًا سوى ذاكرة التخزين المؤقت الخاصة به. ويُرفض مع `--refresh`: `--dry-run cannot be combined with --refresh, which rewrites login tokens` | معطّل |
 
-أي قيمة أخرى لـ `--source` تفشل مع `--source must be live or cache`. ولا يأخذ `ccam usage` أي وسائط.
+أي قيمة أخرى لـ `--source` تفشل مع `--source must be live, claude or cache`.
+
+### الاستخدام من Claude Code نفسه
+
+مع `usage_source = "claude"` في `config.toml` (أو `--source claude`)، لا يقرأ ccam رمز تسجيل الدخول إطلاقًا. فلكل حساب يشغّل `claude -p --input-format stream-json --output-format stream-json --verbose --safe-mode --no-session-persistence` في مجلد الحساب، ويرسل طلب `get_usage` الخاص بـ Claude Code عبر الإدخال القياسي (Claude Code 2.1.270 أو أحدث)؛ فيستعلم Claude Code عن الاستخدام بتسجيل دخوله هو، ويجيب بنوافذ الخمس ساعات والأسبوع والنماذج. ويمنع `--safe-mode` خطافات الحساب وخوادم MCP والمكوّنات الإضافية من البدء، ولا تُحفظ أي جلسة. ويتطلب كل حساب تشغيلًا لـ Claude Code يستغرق نحو ثانية، لذلك هذا المصدر أبطأ من `live`؛ وتُسأل الحسابات كلها في آن واحد، كلٌّ منها خلال 20 ثانية، وتنطبق الذاكرة المؤقتة لمدة 60 ثانية كالمعتاد. ويصنّف Claude Code هذا الطلب على أنه تجريبي، لذلك إذا توقف عن الاستجابة، يعرض ccam الأرقام المحفوظة ويبلّغ عنه `ccam doctor`. ولا يشغّل `--dry-run` برنامج Claude Code (لأنه يكتب في مجلد الحساب)، بل يعرض الأرقام المحفوظة. ويقبل `usage_source` القيمة `live` أو `claude`؛ أما `cache` فهو خيار لـ `--source` فقط. ولا يأخذ `ccam usage` أي وسائط.
 
 يقرأ `ccam statusline` بيانات JSON الخاصة بسطر الحالة في Claude Code من الإدخال القياسي. وخياره الوحيد هو `--wrap <command>`: أمر سطر حالة موجود يُضاف اسم الحساب أمام أول سطر من مخرجاته. ولا يأخذ `ccam statusline install` أي خيارات. ويرفض كلاهما `--dry-run` مع `` --dry-run is not supported by `ccam statusline`; nothing was changed ``.
 

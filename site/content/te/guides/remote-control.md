@@ -4,7 +4,7 @@ description: ccam <name> rc తో ఏ ఖాతాగానైనా Claude Cod
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 59b802c44bb3
+sourceHash: "5f0b90ea53d6"
 ---
 
 `ccam work rc` Claude Code యొక్క Remote Control ను `work` ఖాతాగా ప్రారంభిస్తుంది, కాబట్టి ఈ కంప్యూటర్‌లోని సెషన్‌లను claude.ai/code లేదా Claude మొబైల్ యాప్ నుంచి నడపవచ్చు. ఇది `claude rc` లాగే పనిచేస్తుంది, ఒకే ఒక్క తేడాతో: ఖాతా MCP సర్వర్లను షేర్ చేస్తే, వాటిని ఖాతా `.claude.json` లోకి కాపీ చేయాలా అని ccam ఒక్కసారి అడుగుతుంది, ఎందుకంటే Remote Control సెషన్‌లు సర్వర్లను మరెక్కడి నుంచీ చదవవు.
@@ -33,7 +33,7 @@ ccam --dry-run work rc                # print the command instead of running it
 | `--dry-run` (ఖాతాకు ముందు) | ఎన్విరాన్‌మెంట్, కమాండ్, MCP నోటీసు ఉంటే అదీ ప్రింట్ చేస్తుంది. అడగదు, కాపీ చేయదు | ఆఫ్ |
 | `Copy them into .claude.json (a backup is kept)? [y/N]` | ఖాతా MCP సర్వర్లను షేర్ చేస్తూ, దాని `.claude.json` లో గ్రూప్ ప్రస్తుత జాబితా లేనప్పుడు అడుగుతుంది. `y` వాటిని కాపీ చేస్తుంది, `N` లేదా Enter అవి లేకుండా ప్రారంభిస్తుంది | `N` |
 | `~/.config/ccam/config.toml` లో `mcp_strategy = "sync"` | Remote Control అయినా కాకపోయినా, ప్రతి ప్రారంభానికి ముందు గ్రూప్ సర్వర్లను `.claude.json` లోకి కాపీ చేస్తుంది, కాబట్టి ఎప్పుడూ ఏమీ అడగదు | `"flag"` |
-| `ccam share work --mcp off` | ఖాతాతో MCP సర్వర్లను షేర్ చేయడం ఆపుతుంది; అప్పుడు Remote Control ఖాతా సొంత సర్వర్లతో మాత్రమే ప్రారంభమవుతుంది, ఏమీ అడగదు | ఆన్ |
+| `ccam group leave <group> work` | ఖాతాతో MCP ను షేర్ చేసే గ్రూప్ నుంచి ఖాతాను తీసివేస్తుంది; అప్పుడు Remote Control ఖాతా సొంత సర్వర్లతో మాత్రమే ప్రారంభమవుతుంది, ఏమీ అడగదు | `default` లో |
 
 ### Remote Control ఆప్షన్లు
 
@@ -124,7 +124,7 @@ $ ccam mcp add ctx --url https://mcp.context7.com/mcp
 
 ### ccam ప్రతిసారీ అడుగుతుంది
 
-మీరు ఇంకా సర్వర్లను కాపీ చేయలేదు. ఒక్కసారి `y` అని సమాధానం ఇవ్వండి, లేదా `mcp_strategy = "sync"` సెట్ చేయండి. Remote Control లో సర్వర్లు ఎప్పటికీ వద్దనుకుంటే, ఖాతాతో MCP షేరింగ్‌ను ఆపండి: `ccam share work --mcp off`.
+మీరు ఇంకా సర్వర్లను కాపీ చేయలేదు. ఒక్కసారి `y` అని సమాధానం ఇవ్వండి, లేదా `mcp_strategy = "sync"` సెట్ చేయండి. Remote Control లో సర్వర్లు ఎప్పటికీ వద్దనుకుంటే, ఖాతాతో MCP షేరింగ్‌ను ఆపండి: దాన్ని ఆ గ్రూప్ నుంచి తీసివేయండి (`ccam group leave default work`), లేదా ఆ ఖాతా లేని ప్రత్యేక గ్రూప్‌లో MCP ను ఉంచండి.
 
 ### `ccam work rc` వెంటనే `--mcp-config` గురించిన ఎర్రర్‌తో విఫలమవుతుంది
 

@@ -4,7 +4,7 @@ description: ccam folder fa usare un account a una cartella e a tutto ciò che c
 updated: 2026-10-20
 order: 11
 translation: machine
-sourceHash: 5071b04a194d
+sourceHash: "46d1410a3d81"
 ---
 
 `ccam folder work ~/code/company` fa sì che ogni avvio senza nome di account dentro `~/code/company`, e in qualsiasi cartella al suo interno, avvii Claude Code con `work`. Fuori da lì, l'account predefinito si avvia come prima. Indicare un account, con `ccam personal` o con una scorciatoia come `ccpersonal`, avvia sempre quell'account.
@@ -34,7 +34,7 @@ Questi avvii usano l'account della cartella:
 - `ccam -p "…"` e qualsiasi altro avvio il cui primo argomento è un'opzione per Claude Code
 - `ccam run` senza nome, e `ccam --dry-run`
 - `ccam --fallback -p "…"` per il suo primo tentativo
-- il selettore, `ccam` da solo, che parte con il cursore sull'account della cartella
+- la dashboard, `ccam` da solo, che parte con il cursore sull'account della cartella
 
 ## Opzioni
 

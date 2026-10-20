@@ -4,7 +4,7 @@ description: ccam usage ಎಲ್ಲಾ ಖಾತೆಗಳ 5 ಗಂಟೆಯ ಮ
 updated: 2026-10-20
 order: 7
 translation: machine
-sourceHash: 525174ceed0d
+sourceHash: "ec1d1ee27d9f"
 ---
 
 `ccam usage` ಪ್ರತಿ ಖಾತೆಯು 5 ಗಂಟೆಯ ಮತ್ತು ವಾರದ ಮಿತಿಗಳಲ್ಲಿ ಎಷ್ಟನ್ನು ಬಳಸಿದೆ ಎಂಬುದನ್ನು, ಪ್ರತಿ ಅವಧಿ ರೀಸೆಟ್ ಆಗಲು ಉಳಿದ ಸಮಯದೊಂದಿಗೆ ತೋರಿಸುತ್ತದೆ. ದೀರ್ಘ ಕೆಲಸವನ್ನು ಆರಂಭಿಸುವ ಮೊದಲು, ಅಥವಾ ಮಿತಿ ಹತ್ತಿರವಾಗಿದೆ ಎಂದು Claude Code ಹೇಳಿದಾಗ, ಯಾವ ಖಾತೆಯಲ್ಲಿ ಇನ್ನೂ ಅವಕಾಶ ಇದೆ ಎಂದು ನೋಡಲು ಇದನ್ನು ಬಳಸಿ. `ccam statusline` ಎಂಬುದು Claude Code ಗಾಗಿ ಸ್ಟೇಟಸ್ ಲೈನ್ ಕಮಾಂಡ್: ಇದು Claude Code ಒಳಗೆ ಖಾತೆಯ ಹೆಸರು ಮತ್ತು ಬಳಕೆಯನ್ನು ತೋರಿಸುತ್ತದೆ ಮತ್ತು ಸಂಖ್ಯೆಗಳನ್ನು `ccam usage` ಗಾಗಿ ಉಳಿಸುತ್ತದೆ.
@@ -20,6 +20,7 @@ ccam usage -v               # add per-model weekly limits and the data source
 ccam usage --json           # machine-readable, one object per account
 ccam usage --source cache   # saved numbers only, no network
 ccam usage --refresh        # also renew expired logins of accounts not running
+ccam usage --source claude  # let Claude Code look it up: ccam never touches a token
 ccam statusline install     # set the status line in every account's settings.json
 ```
 
@@ -32,7 +33,7 @@ $ ccam usage
 → Most headroom: personal   (open it with ccam next --auto)
 ```
 
-ಟರ್ಮಿನಲ್‌ನಲ್ಲಿ ಪಟ್ಟಿ ತಕ್ಷಣ ಕಾಣಿಸುತ್ತದೆ, ಪ್ರತಿ ಸಾಲಿನಲ್ಲಿ `fetching…` ಇರುತ್ತದೆ, ಮತ್ತು ಪ್ರತಿ ಖಾತೆ ಉತ್ತರಿಸಿದಂತೆ ಅದರ ಸಾಲನ್ನು ಮತ್ತೆ ಬರೆಯಲಾಗುತ್ತದೆ. `As of` ಸಂಖ್ಯೆಗಳು ಎಷ್ಟು ಹಳೆಯವು ಎಂದು ಹೇಳುತ್ತದೆ; `(cached)` ಎಂದರೆ ಅವು ಎಂಡ್‌ಪಾಯಿಂಟ್‌ನಿಂದಲ್ಲ, ಉಳಿಸಿದ ಫೈಲ್‌ನಿಂದ ಬಂದಿವೆ. ಕೊನೆಯ ಸಾಲು 100% ಕ್ಕಿಂತ ಕಡಿಮೆ ಇರುವ, ಅತಿ ಕಡಿಮೆ 5 ಗಂಟೆಯ ಬಳಕೆಯ ಖಾತೆಯನ್ನು ಹೆಸರಿಸುತ್ತದೆ, ಮತ್ತು ನಿಮಗೆ ಒಂದಕ್ಕಿಂತ ಹೆಚ್ಚು ಖಾತೆಗಳಿದ್ದಾಗ ಮಾತ್ರ ಕಾಣಿಸುತ್ತದೆ. ಲಾಗಿನ್ ಆಗದ ಖಾತೆ `not logged in → ccam login <name>` ಎಂದು ತೋರಿಸುತ್ತದೆ, ಮತ್ತು API ಕೀ ಖಾತೆ `no limits (API)` ಎಂದು ತೋರಿಸುತ್ತದೆ.
+ಟರ್ಮಿನಲ್‌ನಲ್ಲಿ ಪಟ್ಟಿ ತಕ್ಷಣ ಕಾಣಿಸುತ್ತದೆ, ಪ್ರತಿ ಸಾಲಿನಲ್ಲಿ `fetching…` ಇರುತ್ತದೆ, ಮತ್ತು ಪ್ರತಿ ಖಾತೆ ಉತ್ತರಿಸಿದಂತೆ ಅದರ ಸಾಲನ್ನು ಮತ್ತೆ ಬರೆಯಲಾಗುತ್ತದೆ. `As of` ಸಂಖ್ಯೆಗಳು ಎಷ್ಟು ಹಳೆಯವು ಎಂದು ಹೇಳುತ್ತದೆ; `(cached)` ಎಂದರೆ ಅವು ಎಂಡ್‌ಪಾಯಿಂಟ್‌ನಿಂದಲ್ಲ, ಉಳಿಸಿದ ಫೈಲ್‌ನಿಂದ ಬಂದಿವೆ. ಕೊನೆಯ ಸಾಲು [`ccam next --auto`](/features/next) ಅದೇ ನಿಯಮಗಳ ಪ್ರಕಾರ ಆಯ್ಕೆಮಾಡುವ ಖಾತೆಯನ್ನು ಹೆಸರಿಸುತ್ತದೆ (`auto_max_usage`, `auto_strategy`, ರನ್ ಆಗುತ್ತಿರುವ ಸೆಷನ್‌ಗಳು, `cross_org` ಹೊಂದಿಸದಿದ್ದರೆ ಕೊನೆಯದಾಗಿ ಬಳಸಿದ ಖಾತೆಯ ಸಂಸ್ಥೆಯ ಖಾತೆಗಳು ಮಾತ್ರ, 100% ತಲುಪಿದ ಯಾವುದೇ ವಿಂಡೋ ಇರುವ ಖಾತೆ ಬಿಟ್ಟುಬಿಡಲಾಗುತ್ತದೆ, ಹೀಗಾಗಿ ವಾರ ತುಂಬಿರುವ ಖಾತೆಯನ್ನು ಎಂದಿಗೂ ಹೆಸರಿಸುವುದಿಲ್ಲ), ಮತ್ತು ನಿಮಗೆ ಒಂದಕ್ಕಿಂತ ಹೆಚ್ಚು ಖಾತೆಗಳಿದ್ದಾಗ ಮಾತ್ರ ಕಾಣಿಸುತ್ತದೆ. ಲಾಗಿನ್ ಆಗದ ಖಾತೆ `not logged in → ccam login <name>` ಎಂದು ತೋರಿಸುತ್ತದೆ, ಮತ್ತು API ಕೀ ಖಾತೆ `no limits (API)` ಎಂದು ತೋರಿಸುತ್ತದೆ.
 
 `ccam statusline install` ನಂತರ, Claude Code `[work] · Opus · 5h 24% · 7d 41%` ನಂತಹ ಸಾಲನ್ನು ತೋರಿಸುತ್ತದೆ.
 
@@ -44,11 +45,15 @@ $ ccam usage
 | `--watch[=N]` | ನೀವು Ctrl+C ಒತ್ತುವವರೆಗೆ ಪ್ರತಿ `N` ಸೆಕೆಂಡ್‌ಗೆ ಮತ್ತೆ ಬರೆಯುತ್ತದೆ. `--watch` ಒಂದೇ, ಅಥವಾ 0 ಅಥವಾ ಅದಕ್ಕಿಂತ ಕಡಿಮೆ ಮೌಲ್ಯ, 60 ಎಂದರ್ಥ | off |
 | `-v`, `--verbose` | ಮಾಡೆಲ್‌ವಾರು ವಾರದ ಮಿತಿಗಳನ್ನು ಮತ್ತು `source:` ಸಾಲನ್ನು (`live`, `cache` ಅಥವಾ `statusline`) ತೋರಿಸುತ್ತದೆ | off |
 | `--no-cache` | 60 ಸೆಕೆಂಡ್‌ಗಳ ಕ್ಯಾಶ್ ಅನ್ನು ನಿರ್ಲಕ್ಷಿಸಿ ಎಂಡ್‌ಪಾಯಿಂಟ್ ಅನ್ನು ಮತ್ತೆ ಕೇಳುತ್ತದೆ | off |
-| `--source live\|cache` | `cache` ಎಂಡ್‌ಪಾಯಿಂಟ್ ಅನ್ನು ಎಂದಿಗೂ ಕೇಳುವುದಿಲ್ಲ ಮತ್ತು ಉಳಿಸಿದ ಸಂಖ್ಯೆಗಳನ್ನು ಮಾತ್ರ ತೋರಿಸುತ್ತದೆ; `live` ಡೀಫಾಲ್ಟ್ ವರ್ತನೆ | live |
+| `--source live\|claude\|cache` | `live` ಖಾತೆಯ ಟೋಕನ್‌ನೊಂದಿಗೆ ಎಂಡ್‌ಪಾಯಿಂಟ್ ಅನ್ನು ಕೇಳುತ್ತದೆ; `claude` Claude Code ನಿಂದಲೇ ಹುಡುಕಿಸುತ್ತದೆ (ಕೆಳಗೆ ನೋಡಿ); `cache` ಉಳಿಸಿದ ಸಂಖ್ಯೆಗಳನ್ನು ಮಾತ್ರ ತೋರಿಸುತ್ತದೆ | `usage_source`, ಇಲ್ಲದಿದ್ದರೆ `live` |
 | `--refresh` | ಅವಧಿ ಮುಗಿದ ಆಕ್ಸೆಸ್ ಟೋಕನ್‌ಗಳನ್ನು ನವೀಕರಿಸುತ್ತದೆ, ರನ್ ಆಗುತ್ತಿಲ್ಲದ ಖಾತೆಗಳಿಗೆ ಮಾತ್ರ | off |
 | `--dry-run` | ಸ್ವೀಕರಿಸಲಾಗುತ್ತದೆ: `ccam usage` ತನ್ನ ಕ್ಯಾಶ್ ಹೊರತುಪಡಿಸಿ ಏನನ್ನೂ ಬದಲಾಯಿಸುವುದಿಲ್ಲ. `--refresh` ಜೊತೆ ನಿರಾಕರಿಸಲಾಗುತ್ತದೆ: `--dry-run cannot be combined with --refresh, which rewrites login tokens` | off |
 
-ಬೇರೆ ಯಾವುದೇ `--source` ಮೌಲ್ಯ `--source must be live or cache` ಎಂದು ವಿಫಲವಾಗುತ್ತದೆ. `ccam usage` ಯಾವುದೇ ಆರ್ಗ್ಯುಮೆಂಟ್ ತೆಗೆದುಕೊಳ್ಳುವುದಿಲ್ಲ.
+ಬೇರೆ ಯಾವುದೇ `--source` ಮೌಲ್ಯ `--source must be live, claude or cache` ಎಂದು ವಿಫಲವಾಗುತ್ತದೆ.
+
+### Claude Code ನಿಂದಲೇ ಬಳಕೆ
+
+`config.toml` ನಲ್ಲಿ `usage_source = "claude"` ಇದ್ದರೆ (ಅಥವಾ `--source claude`), ccam ಲಾಗಿನ್ ಟೋಕನ್ ಅನ್ನು ಓದುವುದೇ ಇಲ್ಲ. ಪ್ರತಿ ಖಾತೆಗೂ ಅದು ಖಾತೆಯ ಫೋಲ್ಡರ್‌ನಲ್ಲಿ `claude -p --input-format stream-json --output-format stream-json --verbose --safe-mode --no-session-persistence` ಅನ್ನು ಆರಂಭಿಸಿ, Claude Code ನ `get_usage` ವಿನಂತಿಯನ್ನು ಸ್ಟ್ಯಾಂಡರ್ಡ್ ಇನ್‌ಪುಟ್‌ನಲ್ಲಿ ಕಳುಹಿಸುತ್ತದೆ (Claude Code 2.1.270 ಅಥವಾ ನಂತರದ್ದು); Claude Code ತನ್ನದೇ ಲಾಗಿನ್‌ನೊಂದಿಗೆ ಬಳಕೆಯನ್ನು ಹುಡುಕಿ 5 ಗಂಟೆಯ, ವಾರದ ಮತ್ತು ಮಾಡೆಲ್ ವಿಂಡೋಗಳೊಂದಿಗೆ ಉತ್ತರಿಸುತ್ತದೆ. `--safe-mode` ಖಾತೆಯ ಹುಕ್‌ಗಳು, MCP ಸರ್ವರ್‌ಗಳು ಮತ್ತು ಪ್ಲಗಿನ್‌ಗಳು ಆರಂಭವಾಗದಂತೆ ತಡೆಯುತ್ತದೆ, ಮತ್ತು ಯಾವುದೇ ಸೆಷನ್ ಉಳಿಯುವುದಿಲ್ಲ. ಪ್ರತಿ ಖಾತೆಗೂ ಒಂದು Claude Code ಆರಂಭ, ಸುಮಾರು ಒಂದು ಸೆಕೆಂಡ್, ಬೇಕಾಗುತ್ತದೆ, ಹೀಗಾಗಿ ಈ ಮೂಲ `live` ಗಿಂತ ನಿಧಾನ; ಖಾತೆಗಳನ್ನು ಒಮ್ಮೆಗೇ ಕೇಳಲಾಗುತ್ತದೆ, ಪ್ರತಿಯೊಂದನ್ನೂ 20 ಸೆಕೆಂಡ್‌ಗಳೊಳಗೆ, ಮತ್ತು 60 ಸೆಕೆಂಡ್‌ಗಳ ಕ್ಯಾಶ್ ಎಂದಿನಂತೆ ಅನ್ವಯಿಸುತ್ತದೆ. Claude Code ಈ ವಿನಂತಿಯನ್ನು ಪ್ರಾಯೋಗಿಕ ಎಂದು ಗುರುತಿಸುತ್ತದೆ, ಹೀಗಾಗಿ ಅದು ಉತ್ತರಿಸುವುದನ್ನು ನಿಲ್ಲಿಸಿದರೆ ccam ಉಳಿಸಿದ ಸಂಖ್ಯೆಗಳನ್ನು ತೋರಿಸುತ್ತದೆ ಮತ್ತು `ccam doctor` ಅದನ್ನು ವರದಿ ಮಾಡುತ್ತದೆ. `--dry-run` Claude Code ಅನ್ನು ಆರಂಭಿಸುವುದಿಲ್ಲ (ಅದು ಖಾತೆಯ ಫೋಲ್ಡರ್‌ಗೆ ಬರೆಯುತ್ತದೆ) ಮತ್ತು ಉಳಿಸಿದ ಸಂಖ್ಯೆಗಳನ್ನು ತೋರಿಸುತ್ತದೆ. `usage_source` `live` ಅಥವಾ `claude` ತೆಗೆದುಕೊಳ್ಳುತ್ತದೆ; `cache` ಕೇವಲ `--source` ಆಯ್ಕೆ. `ccam usage` ಯಾವುದೇ ಆರ್ಗ್ಯುಮೆಂಟ್ ತೆಗೆದುಕೊಳ್ಳುವುದಿಲ್ಲ.
 
 `ccam statusline` Claude Code ನ ಸ್ಟೇಟಸ್ ಲೈನ್ JSON ಅನ್ನು ಸ್ಟ್ಯಾಂಡರ್ಡ್ ಇನ್‌ಪುಟ್‌ನಿಂದ ಓದುತ್ತದೆ. ಅದರ ಏಕೈಕ ಆಯ್ಕೆ `--wrap <command>`: ಈಗಿರುವ ಸ್ಟೇಟಸ್ ಲೈನ್ ಕಮಾಂಡ್, ಅದರ ಔಟ್‌ಪುಟ್‌ನ ಮೊದಲ ಸಾಲಿನ ಮುಂದೆ ಖಾತೆಯ ಹೆಸರು ಸೇರುತ್ತದೆ. `ccam statusline install` ಯಾವುದೇ ಆಯ್ಕೆ ತೆಗೆದುಕೊಳ್ಳುವುದಿಲ್ಲ. ಎರಡೂ `--dry-run` ಅನ್ನು `` --dry-run is not supported by `ccam statusline`; nothing was changed `` ಎಂದು ನಿರಾಕರಿಸುತ್ತವೆ.
 

@@ -4,7 +4,7 @@ description: ccam folder yana sa folda da duk abin da ke ƙarƙashinta su yi amf
 updated: 2026-10-20
 order: 11
 translation: machine
-sourceHash: 5071b04a194d
+sourceHash: 46d1410a3d81
 ---
 
 `ccam folder work ~/code/company` yana sa kowane farawa ba tare da sunan asusu ba a cikin `~/code/company`, da kowace folda da ke ƙarƙashinta, ya fara Claude Code a matsayin `work`. A wajenta, asusun tsoho yana farawa kamar da. Ambaton asusu, da `ccam personal` ko gajeren umarni kamar `ccpersonal`, koyaushe yana fara wannan asusun.
@@ -34,7 +34,7 @@ Waɗannan farawa suna amfani da asusun foldar:
 - `ccam -p "…"` da duk wani farawa wanda argument ɗinsa na farko zaɓi ne na Claude Code
 - `ccam run` ba tare da suna ba, da `ccam --dry-run`
 - `ccam --fallback -p "…"` don yunƙurinsa na farko
-- mai zaɓi, `ccam` shi kaɗai, wanda ke farawa da alamar zaɓinsa a kan asusun foldar
+- dashboard, `ccam` shi kaɗai, wanda ke farawa da alamar zaɓinsa a kan asusun foldar
 
 ## Zaɓuɓɓuka
 

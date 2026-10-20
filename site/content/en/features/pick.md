@@ -18,6 +18,8 @@ done; wait
 ccam pick --json                      # the account and its usage
 ccam pick --model opus                # also count the Opus weekly limit
 ccam pick --max-usage 80 --strategy expiring
+ccam pick --strategy balance          # spread over the weekly quota, fewer running sessions first
+ccam pick --cross-org                 # also accounts of other organizations
 ccam pick --wait=2h                   # nobody has room: wait for a reset
 ccam --fallback "$(ccam pick)" -p "…" # also switch if this account hits its limit mid-job
 ```
@@ -30,7 +32,8 @@ $ ccam pick --json
   "email": "dev@company.com",
   "five_hour": { "percent": 12, "resets_at": "2026-10-20T15:10:00Z", "known": true },
   "weekly": { "percent": 41, "resets_at": "2026-10-24T09:00:00Z", "known": true },
-  "source": "live"
+  "source": "live",
+  "reason": "12% of its 5 hours used, the least"
 }
 ```
 
@@ -40,16 +43,17 @@ Exit codes: `0` with a name on standard output, `75` (`EX_TEMPFAIL`) when no acc
 
 | Option | What it does | Default |
 | --- | --- | --- |
-| `--json` | Print the account, its 5-hour and weekly usage and where the numbers come from | off |
+| `--json` | Print the account, its 5-hour and weekly usage, where the numbers come from and why it was chosen | off |
 | `--model <model>` | Count that model's weekly window too, such as `opus` | none |
 | `--max-usage <1-100>` | Prefer accounts below this usage | `auto_max_usage`, else 100 |
-| `--strategy headroom\|expiring` | Lowest 5-hour usage, or the soonest 5-hour reset | `auto_strategy`, else `headroom` |
+| `--strategy headroom\|expiring\|balance` | Lowest 5-hour usage, the soonest 5-hour reset, or the weekly quota that would go unused first | `auto_strategy`, else `headroom` |
+| `--cross-org` | Also choose accounts of other organizations | `cross_org`, else off |
 | `--wait[=<duration>]` | When no account has room, wait for the first one to reset, at most this long | off; `5h` when given alone |
 | `--dry-run` | Choose without recording the pick | off |
 
 ## How it works
 
-1. ccam lists the logged-in accounts (API key accounts have no limits and are left out).
+1. ccam lists the logged-in accounts (API key accounts have no limits and are left out) in the organization of the account this folder would start (see [organizations](/features/next#auto)); a folder logged in to the same Claude account as that one is left out too.
 2. It takes a lock (`~/.local/state/ccam/picks.lock`), so picks running at the same time happen one after another.
 3. It looks up every account's usage at once, the same way `ccam usage` does, with the 60-second cache.
 4. Accounts picked within the last 2 minutes (`~/.local/state/ccam/picks/<name>`) are left out first, and the [choice rules](/features/next#auto) of `ccam next --auto` pick among the rest: below `auto_max_usage` first, by the strategy, never an account at 100%.

@@ -4,7 +4,7 @@ description: ccam pick حسابی را که بیشترین ظرفیت را دا�
 updated: 2026-10-20
 order: 12
 translation: machine
-sourceHash: 65a5a7e179a5
+sourceHash: 2e8285b7c193
 ---
 
 `ccam pick` نام حساب واردشده‌ای را که بیشترین ظرفیت را دارد چاپ می‌کند تا اسکریپت Claude Code را با آن آغاز کند. کارگرهایی که هم‌زمان آغاز می‌شوند، تا وقتی حساب‌های کافی با ظرفیت باشد، هر کدام حساب متفاوتی می‌گیرند؛ پس دسته‌ای از کارهای `claude -p` به جای خالی کردن یک حساب، میان حساب‌های شما پخش می‌شود.
@@ -19,6 +19,8 @@ done; wait
 ccam pick --json                      # the account and its usage
 ccam pick --model opus                # also count the Opus weekly limit
 ccam pick --max-usage 80 --strategy expiring
+ccam pick --strategy balance          # spread over the weekly quota, fewer running sessions first
+ccam pick --cross-org                 # also accounts of other organizations
 ccam pick --wait=2h                   # nobody has room: wait for a reset
 ccam --fallback "$(ccam pick)" -p "…" # also switch if this account hits its limit mid-job
 ```
@@ -31,7 +33,8 @@ $ ccam pick --json
   "email": "dev@company.com",
   "five_hour": { "percent": 12, "resets_at": "2026-10-20T15:10:00Z", "known": true },
   "weekly": { "percent": 41, "resets_at": "2026-10-24T09:00:00Z", "known": true },
-  "source": "live"
+  "source": "live",
+  "reason": "12% of its 5 hours used, the least"
 }
 ```
 
@@ -41,16 +44,17 @@ $ ccam pick --json
 
 | گزینه | کاری که انجام می‌دهد | پیش‌فرض |
 | --- | --- | --- |
-| `--json` | حساب، مصرف ۵ ساعته و هفتگی آن و منبع عددها را چاپ می‌کند | خاموش |
+| `--json` | حساب، مصرف ۵ ساعته و هفتگی آن، منبع عددها و دلیل انتخاب آن را چاپ می‌کند | خاموش |
 | `--model <model>` | پنجره هفتگی آن مدل را هم در نظر می‌گیرد، مانند `opus` | هیچ |
 | `--max-usage <1-100>` | حساب‌هایی را که مصرفشان زیر این مقدار است ترجیح می‌دهد | `auto_max_usage`، وگرنه ۱۰۰ |
-| `--strategy headroom\|expiring` | کمترین مصرف ۵ ساعته، یا زودترین بازنشانی ۵ ساعته | `auto_strategy`، وگرنه `headroom` |
+| `--strategy headroom\|expiring\|balance` | کمترین مصرف ۵ ساعته، زودترین بازنشانی ۵ ساعته، یا سهمیه هفتگی‌ای که زودتر از همه بی‌استفاده می‌ماند | `auto_strategy`، وگرنه `headroom` |
+| `--cross-org` | حساب‌های سازمان‌های دیگر را هم انتخاب می‌کند | `cross_org`، وگرنه خاموش |
 | `--wait[=<duration>]` | وقتی هیچ حسابی ظرفیت ندارد، منتظر می‌ماند تا نخستین حساب بازنشانی شود، حداکثر به این مدت | خاموش؛ اگر تنها داده شود `5h` |
 | `--dry-run` | انتخاب می‌کند بدون آنکه انتخاب را ثبت کند | خاموش |
 
 ## سازوکار
 
-1. ccam حساب‌های واردشده را فهرست می‌کند (حساب‌های کلید API سقفی ندارند و کنار گذاشته می‌شوند).
+1. ccam حساب‌های واردشده را در سازمان حسابی که این پوشه اجرا می‌کرد فهرست می‌کند (حساب‌های کلید API سقفی ندارند و کنار گذاشته می‌شوند؛ [سازمان‌ها](/features/next#auto) را ببینید)؛ پوشه‌ای که به همان حساب Claude آن حساب وارد شده باشد هم کنار گذاشته می‌شود.
 2. یک قفل می‌گیرد (`~/.local/state/ccam/picks.lock`)، تا انتخاب‌هایی که هم‌زمان اجرا می‌شوند یکی پس از دیگری انجام شوند.
 3. مصرف همه حساب‌ها را هم‌زمان می‌پرسد، به همان شکلی که `ccam usage` می‌پرسد، با حافظه نهان ۶۰ ثانیه‌ای.
 4. ابتدا حساب‌هایی که در ۲ دقیقه گذشته انتخاب شده‌اند (`~/.local/state/ccam/picks/<name>`) کنار گذاشته می‌شوند و [قواعد انتخاب](/features/next#auto) `ccam next --auto` از میان بقیه انتخاب می‌کنند: ابتدا حساب‌های زیر `auto_max_usage`، بر اساس راهبرد، و هرگز حسابی که به ۱۰۰٪ رسیده است.

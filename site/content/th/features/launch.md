@@ -1,10 +1,10 @@
 ---
 title: การเริ่ม Claude Code
-description: เริ่ม Claude Code ในชื่อบัญชีใดก็ได้ด้วย ccam <name|number>, ccam run หรือตัวเลือกบัญชีของ ccam อาร์กิวเมนต์ส่งต่อให้ claude ตามเดิม และ --dry-run แสดงคำสั่ง
+description: เริ่ม Claude Code ในชื่อบัญชีใดก็ได้ด้วย ccam <name|number>, ccam run หรือแดชบอร์ด อาร์กิวเมนต์ส่งต่อให้ claude ตามเดิม และ --dry-run แสดงคำสั่ง
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: e6b5a8d4df86
+sourceHash: "4812b197f143"
 ---
 
 `ccam work` เริ่ม Claude Code ในชื่อบัญชี `work` และทุกอย่างหลังชื่อบัญชีจะส่งต่อให้ `claude` ตามเดิม ใช้ได้ทุกที่ที่คุณจะพิมพ์ `claude`: ในเทอร์มินัล ในสคริปต์ หรือเมื่อส่งอินพุตเข้ามาทางไปป์
@@ -21,7 +21,7 @@ ccam -p "summarise"              # no name: the folder's account, else the defau
 ccam use work                    # make work the default account
 ccam folder work ~/code/company  # use work in that folder when no name is given
 ccam run work --continue         # same as ccam work --continue
-ccam                             # the picker on a terminal, the list otherwise
+ccam                             # the dashboard on a terminal, the list otherwise
 ccam --dry-run work -p hi        # print the command instead of running it
 ccam --fallback work -p "fix the tests"   # run again as another account at the limit
 ```
@@ -30,22 +30,13 @@ ccam --fallback work -p "fix the tests"   # run again as another account at the 
 
 เมื่ออาร์กิวเมนต์แรกขึ้นต้นด้วย `-` และไม่ใช่แฟล็กของ ccam เอง ccam จะเริ่มบัญชีโดยไม่ระบุชื่อพร้อมอาร์กิวเมนต์ทั้งหมด ซึ่งก็คือบัญชีที่ตั้งไว้สำหรับโฟลเดอร์ปัจจุบันด้วย [`ccam folder`](/features/folder) หากไม่มีจะใช้บัญชีเริ่มต้น: บัญชีที่ตั้งไว้ด้วย `ccam use` หรือบัญชีที่มีหมายเลขต่ำสุดหากคุณยังไม่ได้ตั้ง
 
-### ตัวเลือกบัญชี
+### แดชบอร์ด
 
-`ccam` ที่ไม่มีอาร์กิวเมนต์จะเปิดตัวเลือกบัญชี (picker) เมื่ออินพุตและเอาต์พุตมาตรฐานเป็นเทอร์มินัล และจะพิมพ์ `ccam list` ในกรณีอื่น ตัวเลือกบัญชีแสดงหมายเลข อีเมล การใช้งาน 5 ชั่วโมง เวลาที่ใช้ล่าสุด และรายการที่ใช้ร่วมกันของแต่ละบัญชี ตัวเลขการใช้งานจะปรากฏขึ้นเมื่อแต่ละบัญชีได้รับคำตอบ
+`ccam` ที่ไม่มีอาร์กิวเมนต์จะเปิด[แดชบอร์ด](/features/dashboard) เมื่ออินพุตและเอาต์พุตมาตรฐานเป็นเทอร์มินัล และจะพิมพ์ `ccam list` ในกรณีอื่น เลื่อนไปที่บัญชี (ด้วยปุ่มลูกศร หรือพิมพ์หมายเลขของบัญชี) แล้วกด `Enter` เพื่อเริ่มบัญชีนั้น `n` จะเริ่มบัญชีที่เหลือโควตามากที่สุด และ `o` จะเสนอ `--continue`, `--resume` หรืออาร์กิวเมนต์อื่น แดชบอร์ดจะปิดก่อนที่ Claude Code จะเริ่ม เทอร์มินัลจึงกลับสู่สภาพเดิมก่อน
 
-| ปุ่ม | สิ่งที่ทำ |
-| --- | --- |
-| `Enter` | เริ่ม Claude Code ในชื่อบัญชีที่เลือก |
-| `1` ถึง `9` | เริ่มบัญชีที่มีหมายเลขนั้น |
-| `Up`/`Down`, `k`/`j` | เลื่อนตัวเลือก |
-| `a` | ปิดตัวเลือกบัญชีแล้วเปิดตัวช่วยตั้งค่าของ `ccam add` |
-| `s` | แก้ไขรายการที่ใช้ร่วมกันของบัญชีที่เลือก (`Space` หรือ `x` สลับ, `Enter` นำไปใช้, `Esc` ย้อนกลับ) |
-| `d` | ตั้งบัญชีที่เลือกเป็นบัญชีเริ่มต้น |
-| `r` | ดึงการใช้งานอีกครั้งโดยไม่ใช้แคชระยะสั้น |
-| `q`, `Esc`, `Ctrl+C` | ออก |
+เมื่อ shell ตั้งค่า `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY` หรือ `ANTHROPIC_AUTH_TOKEN` ไว้ Claude Code จะใช้คีย์หรือโทเค็นนั้นแทนการเข้าสู่ระบบของบัญชีเอง ccam จึงแจ้งเรื่องนี้ทางข้อผิดพลาดมาตรฐานก่อนเริ่ม (`ccam: $ANTHROPIC_API_KEY is set, so Claude Code may use that key instead of work's login…`) ccam เพียงอ่านตัวแปรเหล่านี้ ส่วน[บัญชี API key](/features/api)จะล้างตัวแปรเหล่านี้แทน
 
-ตัวเลือกบัญชีจะปิดตัวเองก่อนทำงาน เทอร์มินัลจึงกลับสู่สภาพเดิมก่อนที่ Claude Code จะเริ่ม หลังจากกด `d` หรือเปลี่ยนการใช้ร่วมกัน ตัวเลือกบัญชีจะเปิดขึ้นอีกครั้ง การเปลี่ยนการใช้ร่วมกันจะแสดงแผนและถามก่อน เหมือนกับที่ `ccam share` ทำ
+เมื่อตั้ง `relay = true` ใน `config.toml` ccam จะเริ่มเซสชันแบบโต้ตอบเป็นโปรเซสลูกและอยู่ข้าง ๆ เพื่อให้ `/ccam:switch` พาการสนทนาไปต่อได้เอง ([รายละเอียด](/features/next#inside-claude-code)) หากไม่ได้ตั้ง ccam จะแทนที่ตัวเองด้วย Claude Code และไม่มีอะไรทำงานอยู่ข้าง ๆ
 
 ## ตัวเลือก
 
@@ -84,7 +75,7 @@ $env:CLAUDE_CONFIG_DIR='C:\Users\me\.local\share\ccam\profiles\work'; & C:\Users
 แต่ละกล่องจะสว่างขึ้นเมื่อขั้นตอนนั้นทำงาน และบรรทัดด้านล่างคือตัวแปรสภาพแวดล้อมและอาร์กิวเมนต์ที่ Claude Code ใช้เริ่มทำงาน
 
 1. `cmd/ccam/main.go` เรียก `app.Main` หาก ccam ถูกเริ่มด้วยชื่ออื่น แสดงว่าเป็น[คำสั่งลัด](/features/shortcuts) และจะไปที่ตัวเริ่มโปรแกรมโดยตรง
-2. `app.parse` ตรวจ `os.Args` ก่อนที่ cobra จะเข้ามาเกี่ยวข้อง มีเพียง `ccam` เดี่ยว ๆ (ตัวเลือกบัญชี) ชื่อคำสั่งของ ccam (`config.Reserved`) `-h`/`--help` และ `-v`/`--version` ที่ไปยัง `cli.Execute` นอกนั้นถือเป็นการเริ่ม Claude Code
+2. `app.parse` ตรวจ `os.Args` ก่อนที่ cobra จะเข้ามาเกี่ยวข้อง มีเพียง `ccam` เดี่ยว ๆ (แดชบอร์ด) ชื่อคำสั่งของ ccam (`config.Reserved`) `-h`/`--help` และ `-v`/`--version` ที่ไปยัง `cli.Execute` นอกนั้นถือเป็นการเริ่ม Claude Code
 3. `launcher.Launch` อ่าน `~/.config/ccam/config.toml` ซึ่งเป็นไฟล์เดียวที่พาร์ส
 4. `launcher.Prepare` หาบัญชีจากชื่อหรือหมายเลข (หากไม่มีชื่อ `HereProfile` จะเลือกบัญชีของโฟลเดอร์ โดยเปรียบเทียบไดเรกทอรีทำงานกับรายการ `[[folder]]` ใน `config.toml` แบบสตริง) ตัด `--` ตัวแรกที่นำหน้าออกหนึ่งตัว และหาไฟล์ปฏิบัติการ `claude` ด้วย `ResolveClaude` ผลการค้นหาใน PATH จะถูกแคชไว้ใน `~/.local/state/ccam/claude-path` พร้อมเวลาแก้ไขของไฟล์ ccam จึงไม่ต้องค้นหาใน `PATH` ทุกครั้งที่เริ่ม หากไฟล์เปลี่ยนหรือหายไปจะค้นหาใหม่ พาธ `claude_bin` ใน `config.toml` จะถูกใช้ตามที่ระบุ ccam จะปฏิเสธ `claude` ที่เป็นตัว ccam เอง (เปรียบเทียบด้วย inode) เพราะจะทำให้วนซ้ำไม่สิ้นสุด
 5. `checkLinks` เปรียบเทียบโฟลเดอร์บัญชี `~/.local/share/ccam/profiles/<name>/` กับการตั้งค่าการใช้ร่วมกันด้วย `share.Check` ซึ่งเรียกเพียง `lstat` และ `readlink` หนึ่งหรือสอง system call ต่อรายการ ลิงก์ที่หายไปจะถูกสร้างทันที สิ่งใดที่อาจทำให้ข้อมูลสูญหายจะหยุดการเริ่ม

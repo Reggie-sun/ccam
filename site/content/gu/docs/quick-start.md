@@ -5,7 +5,7 @@ description: "ccam add વડે બે Claude Code એકાઉન્ટ ઉમ
 updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 55f81dae9fc0
+sourceHash: d5b0e295f3f0
 ---
 
 દરેક એકાઉન્ટ `ccam add` વડે ઉમેરો, પછી `ccam <name>` વડે અથવા તમે જાતે નામ આપેલા શૉર્ટકટ, જેમ કે `ccwork`, વડે Claude Code શરૂ કરો. મોટા ભાગના લોકોને આટલું જ જોઈએ.
@@ -79,7 +79,7 @@ ccam work
 ccam 2
 ```
 
-ફક્ત `ccam` ચલાવવાથી એક પસંદગી મેનૂ ખૂલે છે: એરો કી અને Enter વાપરો, અથવા એકાઉન્ટનો નંબર દબાવો.
+ફક્ત `ccam` ચલાવવાથી [ડેશબોર્ડ](/features/dashboard) ખૂલે છે: એરો કી કે એકાઉન્ટના નંબર વડે એકાઉન્ટ પર જાઓ, પછી Enter દબાવો.
 
 શૉર્ટકટ કે એકાઉન્ટના નામ પછીનું બધું કોઈ ફેરફાર વગર Claude Code ને જાય છે, તેથી તમે જાણીતા ઓપ્શન્સ જ વાપરતા રહો છો:
 
@@ -91,14 +91,13 @@ cat error.log | ccwork -p "what caused this?"
 
 ## 5. શું શેર કરવું તે પસંદ કરો
 
-ડિફૉલ્ટ રીતે MCP સર્વર, `settings.json`, ગ્લોબલ `CLAUDE.md`, અને agents, commands, skills અને plugins એકાઉન્ટ વચ્ચે શેર થાય છે. વાતચીતનો ઇતિહાસ શેર થતો નથી. જો તમે એકાઉન્ટ વચ્ચે વાતચીત ચાલુ રાખવા માગતા હો, તો બંને એકાઉન્ટ માટે તે ચાલુ કરો:
+ડિફૉલ્ટ રીતે MCP સર્વર, `settings.json`, ગ્લોબલ `CLAUDE.md`, અને agents, commands, skills અને plugins `default` ગ્રુપ દ્વારા એકાઉન્ટ વચ્ચે શેર થાય છે. વાતચીતનો ઇતિહાસ શેર થતો નથી. જો તમે એકાઉન્ટ વચ્ચે વાતચીત ચાલુ રાખવા માગતા હો, તો તેને ગ્રુપમાં ઉમેરો:
 
 ```sh
-ccam share personal --history on
-ccam share work --history on
+ccam group set default --add history
 ```
 
-કંઈ પણ બદલતાં પહેલાં ccam બતાવે છે કે તે શું ખસેડશે. વિગતો માટે [શેરિંગ](/docs/sharing) જુઓ.
+કંઈ પણ બદલતાં પહેલાં ccam બતાવે છે કે તે દરેક એકાઉન્ટ માટે શું ખસેડશે. વિગતો માટે [ગ્રુપ વડે શેરિંગ](/features/share) જુઓ.
 
 ## 6. જ્યારે એકાઉન્ટ તેની મર્યાદા સુધી પહોંચે
 

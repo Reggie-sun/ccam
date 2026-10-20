@@ -4,7 +4,7 @@ description: مصرف ۵ ساعته و هفتگی همه حساب‌های Claud
 updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: a84df8e873d6
+sourceHash: 40aef0708c81
 ---
 
 `ccam usage` نشان می‌دهد هر حساب چه مقدار از سقف ۵ ساعته و هفتگی خود را مصرف کرده است. `ccam next --auto` حسابی را که بیشترین ظرفیت را دارد باز می‌کند و `--continue` گفتگوی فعلی را به آن منتقل می‌کند.
@@ -55,10 +55,10 @@ ccam statusline install
 ```sh
 ccam next             # the account after the one you used last
 ccam next --auto      # the account with the lowest 5-hour usage
-ccam next --continue  # the next account that shares your conversation history
+ccam next --continue  # carry this folder's conversation on as the next account
 ```
 
-`ccam next` از حساب‌هایی که وارد نشده‌اند می‌گذرد و `--auto` از حساب‌هایی که به ۱۰۰٪ رسیده‌اند می‌گذرد. برای ادامه یک گفتگو، هر دو حساب باید تاریخچه گفتگو را به اشتراک بگذارند؛ [اشتراک‌گذاری](/docs/sharing) را ببینید.
+`ccam next` از حساب‌هایی که وارد نشده‌اند می‌گذرد و `--auto` از حساب‌هایی که به ۱۰۰٪ رسیده‌اند و حساب‌های سازمانی دیگر می‌گذرد. وقتی دو حساب تاریخچه گفتگو را به اشتراک می‌گذارند، `--continue` همان گفتگو را باز می‌کند؛ در غیر این صورت Claude Code آن را در حساب جدید کپی می‌کند. [اشتراک‌گذاری](/docs/sharing) و [جابه‌جایی به حساب بعدی](/features/next#continue) را ببینید.
 
 برای اسکریپت‌ها و کارهای زمان‌بندی‌شده‌ای که `claude -p` را اجرا می‌کنند، `--fallback` را پیش از نام حساب بگذارید. وقتی آن حساب به سقفش برسد، ccam همان فرمان را دوباره با حسابی که بیشترین ظرفیت را دارد اجرا می‌کند و فقط خروجی اجرایی که به پایان رسیده چاپ می‌شود:
 

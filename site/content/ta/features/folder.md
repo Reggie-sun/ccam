@@ -4,7 +4,7 @@ description: கணக்குப் பெயரின்றி Claude Code-�
 updated: 2026-10-20
 order: 11
 translation: machine
-sourceHash: 5071b04a194d
+sourceHash: "46d1410a3d81"
 ---
 
 `ccam folder work ~/code/company` கணக்குப் பெயர் இல்லாத ஒவ்வொரு தொடக்கத்தையும், `~/code/company`-க்குள்ளும் அதன் கீழ் உள்ள எந்தக் கோப்புறையிலும், Claude Code-ஐ `work` ஆகத் தொடங்க வைக்கிறது. அதற்கு வெளியே, இயல்புநிலைக் கணக்கு முன்பு போலவே தொடங்கும். `ccam personal` மூலமோ `ccpersonal` போன்ற குறுக்குவழி மூலமோ ஒரு கணக்கைப் பெயரிட்டால், எப்போதும் அந்தக் கணக்கே தொடங்கும்.
@@ -34,7 +34,7 @@ Here (/home/me/code/company/api): work, set for /home/me/code/company
 - `ccam -p "…"` மற்றும் முதல் argument Claude Code-க்கான option ஆக உள்ள வேறு எந்தத் தொடக்கமும்
 - பெயர் இல்லாத `ccam run`, மற்றும் `ccam --dry-run`
 - `ccam --fallback -p "…"` அதன் முதல் முயற்சிக்கு
-- தேர்வி, தனியாக `ccam`, இது கோப்புறையின் கணக்கின் மீது cursor உடன் தொடங்குகிறது
+- டாஷ்போர்டு, தனியாக `ccam`, இது கோப்புறையின் கணக்கின் மீது cursor உடன் தொடங்குகிறது
 
 ## Options
 

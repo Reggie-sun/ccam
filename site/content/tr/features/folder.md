@@ -4,7 +4,7 @@ description: ccam folder, Claude Code'u hesap adı vermeden başlattığınızda
 updated: 2026-10-20
 order: 11
 translation: machine
-sourceHash: 5071b04a194d
+sourceHash: "46d1410a3d81"
 ---
 
 `ccam folder work ~/code/company`, `~/code/company` içinde ve altındaki her klasörde hesap adı verilmeden yapılan her başlatmanın Claude Code'u `work` olarak başlatmasını sağlar. Bu klasörün dışında varsayılan hesap eskisi gibi başlar. Bir hesabın adını vermek, `ccam personal` ile ya da `ccpersonal` gibi bir kısayolla, her zaman o hesabı başlatır.
@@ -34,7 +34,7 @@ Here (/home/me/code/company/api): work, set for /home/me/code/company
 - `ccam -p "…"` ve ilk argümanı Claude Code için bir seçenek olan diğer tüm başlatmalar
 - adsız `ccam run` ve `ccam --dry-run`
 - ilk denemesi için `ccam --fallback -p "…"`
-- imleci klasörün hesabında açılan seçici, yani tek başına `ccam`
+- imleci klasörün hesabında açılan kontrol paneli, yani tek başına `ccam`
 
 ## Seçenekler
 

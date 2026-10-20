@@ -5,7 +5,7 @@ description: Ajoutez deux comptes Claude Code avec ccam add, donnez-leur des rac
 updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 55f81dae9fc0
+sourceHash: d5b0e295f3f0
 ---
 
 Ajoutez chaque compte avec `ccam add`, puis lancez Claude Code avec `ccam <name>` ou avec un raccourci que vous nommez vous-même, par exemple `ccwork`. C'est tout ce dont la plupart des gens ont besoin.
@@ -79,7 +79,7 @@ ccam work
 ccam 2
 ```
 
-Exécuter `ccam` seul ouvre un sélecteur : utilisez les touches fléchées et Entrée, ou appuyez sur le numéro du compte.
+Exécuter `ccam` seul ouvre le [tableau de bord](/features/dashboard) : placez-vous sur un compte avec les touches fléchées ou son numéro, puis appuyez sur Entrée.
 
 Tout ce qui suit le raccourci ou le nom du compte est transmis tel quel à Claude Code, si bien que vous continuez à utiliser les options que vous connaissez :
 
@@ -91,14 +91,13 @@ cat error.log | ccwork -p "what caused this?"
 
 ## 5. Choisir ce qui est partagé
 
-Par défaut, les serveurs MCP, `settings.json`, le `CLAUDE.md` global ainsi que les agents, commandes, skills et plugins sont partagés entre les comptes. L'historique des conversations ne l'est pas. Activez-le pour les deux comptes si vous voulez poursuivre des conversations de l'un à l'autre :
+Par défaut, les serveurs MCP, `settings.json`, le `CLAUDE.md` global ainsi que les agents, commandes, skills et plugins sont partagés entre les comptes par le groupe `default`. L'historique des conversations ne l'est pas. Ajoutez-le au groupe si vous voulez poursuivre des conversations d'un compte à l'autre :
 
 ```sh
-ccam share personal --history on
-ccam share work --history on
+ccam group set default --add history
 ```
 
-ccam montre ce qu'il va déplacer avant de modifier quoi que ce soit. Voir [Partage](/docs/sharing) pour les détails.
+ccam montre ce qu'il va déplacer pour chaque compte avant de modifier quoi que ce soit. Voir [Partager avec des groupes](/features/share) pour les détails.
 
 ## 6. Quand un compte atteint sa limite
 

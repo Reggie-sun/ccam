@@ -4,7 +4,7 @@ description: "ดูการใช้งาน 5 ชั่วโมงและ
 updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: a84df8e873d6
+sourceHash: "40aef0708c81"
 ---
 
 `ccam usage` แสดงว่าแต่ละบัญชีใช้ขีดจำกัดแบบ 5 ชั่วโมงและรายสัปดาห์ไปแล้วเท่าไร `ccam next --auto` เปิดบัญชีที่เหลือโควตามากที่สุด และ `--continue` จะนำการสนทนาปัจจุบันไปต่อด้วย
@@ -55,10 +55,10 @@ ccam statusline install
 ```sh
 ccam next             # the account after the one you used last
 ccam next --auto      # the account with the lowest 5-hour usage
-ccam next --continue  # the next account that shares your conversation history
+ccam next --continue  # carry this folder's conversation on as the next account
 ```
 
-`ccam next` จะข้ามบัญชีที่ยังไม่ได้เข้าสู่ระบบ และ `--auto` จะข้ามบัญชีที่ใช้ไปถึง 100% แล้ว การสนทนาต่อได้นั้น ทั้งสองบัญชีต้องใช้ประวัติการสนทนาร่วมกัน ดูที่ [การใช้ร่วมกัน](/docs/sharing)
+`ccam next` จะข้ามบัญชีที่ยังไม่ได้เข้าสู่ระบบ และ `--auto` จะข้ามบัญชีที่ใช้ไปถึง 100% แล้วและบัญชีขององค์กรอื่น เมื่อสองบัญชีใช้ประวัติการสนทนาร่วมกัน `--continue` จะเปิดการสนทนาเดียวกัน หากไม่ได้ใช้ร่วมกัน Claude Code จะคัดลอกการสนทนานั้นไปยังบัญชีใหม่ ดูที่ [การใช้ร่วมกัน](/docs/sharing) และ [การสลับไปยังบัญชีถัดไป](/features/next#continue)
 
 สำหรับสคริปต์และงานตามกำหนดเวลาที่รัน `claude -p` ให้ใส่ `--fallback` ไว้หน้าชื่อบัญชี เมื่อบัญชีนั้นถึงขีดจำกัด ccam จะรันคำสั่งเดิมอีกครั้งด้วยบัญชีที่เหลือโควตามากที่สุด และพิมพ์เฉพาะผลลัพธ์ของการรันที่ทำงานจนจบ:
 

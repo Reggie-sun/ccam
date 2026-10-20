@@ -4,7 +4,7 @@ description: "เพิ่ม เข้าสู่ระบบ แสดงร�
 updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 9eb992214132
+sourceHash: "8564517d0d71"
 ---
 
 บัญชี ccam แต่ละบัญชีคือโฟลเดอร์การตั้งค่า Claude Code แยกกันที่มีการเข้าสู่ระบบของตัวเอง คำสั่งเหล่านี้ใช้สร้าง ลงชื่อเข้าใช้ แสดงรายการ เปลี่ยนชื่อ และลบบัญชี รวมถึงลงทะเบียนโฟลเดอร์ที่คุณมีอยู่แล้ว
@@ -12,10 +12,11 @@ sourceHash: 9eb992214132
 ## การใช้งาน
 
 ```sh
-ccam add                                   # wizard on a terminal: name, shared items, shortcut, login
+ccam add                                   # wizard on a terminal: name, sign-in, groups, shortcut
 ccam add work --shortcut ccwork            # no wizard: log in, then create the ccwork command
-ccam add side --no-login --share history=team
+ccam add side --no-login --group default --group team
 ccam login side                            # run claude auth login inside the account
+ccam login --expired                       # every account never logged in, or whose login expired
 ccam logout side                           # remove the login token
 ccam list                                  # table of accounts; ccam ls is the same
 ccam list --json                           # machine-readable
@@ -29,25 +30,28 @@ ccam completion zsh > "${fpath[1]}/_ccam"
 
 เมื่อคำสั่งรับ `<name|number>` คุณระบุชื่อบัญชีหรือหมายเลขสล็อตก็ได้ ซึ่งก็คือคอลัมน์ `#` ของ `ccam list`
 
-`ccam add` บนเทอร์มินัลโดยไม่ใส่ตัวเลือกจะเปิดตัวช่วยตั้งค่า โดยจะถามชื่อ จากนั้นแสดงรายการตรวจสอบ (checklist) ของรายการที่ใช้ร่วมกัน (เลือกไว้ทุกอย่างยกเว้นประวัติการสนทนา) แล้วถาม `Create a shortcut command for work? [y/N]` และหากตอบ `y` จะถาม `Shortcut name [ccwork]:` ต่อ การใส่ `--share`, `--shortcut` หรือ `--no-login` ตัวใดตัวหนึ่ง หรือการส่งข้อมูลผ่านไปป์แทนเทอร์มินัล จะข้ามตัวช่วยตั้งค่า ในกรณีนั้นต้องระบุชื่อ และจะไม่มีการสร้างคำสั่งลัดเว้นแต่ `--shortcut` จะระบุชื่อไว้
+`ccam add` บนเทอร์มินัลโดยไม่ใส่ตัวเลือกจะเปิดตัวช่วยตั้งค่า โดยจะถามชื่อและวิธีที่บัญชีลงชื่อเข้าใช้ (เข้าสู่ระบบ Claude ตอนนี้ ใช้ API key หรือเข้าสู่ระบบ Claude ภายหลัง) จากนั้นแสดงกลุ่มที่จะเข้าร่วมโดยเลือก `default` ไว้ (หากยังไม่มีกลุ่มใดเลย จะแสดงรายการที่กลุ่ม `default` จะใช้ร่วมกันแทน) แล้วถาม `Create a shortcut command for work? [y/N]` และปิดท้ายด้วยสรุปให้ยืนยัน `Esc` ใช้ย้อนกลับไปหนึ่งขั้น การใส่ `--group`, `--no-group`, `--shortcut` หรือ `--no-login` ตัวใดตัวหนึ่ง หรือการส่งข้อมูลผ่านไปป์แทนเทอร์มินัล จะข้ามตัวช่วยตั้งค่า ในกรณีนั้นต้องระบุชื่อ และจะไม่มีการสร้างคำสั่งลัดเว้นแต่ `--shortcut` จะระบุชื่อไว้
 
-`ccam list` แสดงสล็อต ชื่อ คำสั่งลัด อีเมล รายการที่ใช้ร่วมกัน และเวลาที่ใช้ล่าสุด โดยมี `*` อยู่หน้าบัญชีเริ่มต้น:
+หากไม่ใส่ `--group` บัญชีใหม่จะเข้าร่วมกลุ่ม `default` บัญชีแรกจะสร้างกลุ่มนี้ขึ้น โดยใช้เซิร์ฟเวอร์ MCP การตั้งค่า `CLAUDE.md` และส่วนขยายร่วมกัน ดู[การใช้ร่วมกันด้วยกลุ่ม](/features/share)
+
+`ccam list` แสดงสล็อต ชื่อ คำสั่งลัด อีเมล กลุ่ม และเวลาที่ใช้ล่าสุด โดยมี `*` อยู่หน้าบัญชีเริ่มต้น:
 
 ```console
 $ ccam list
-   #  Name      Shortcut  Email             Shared                        Last used
-*  1  work      ccwork    user@example.com  mcp settings md ext           -
-   2  personal  -         me@side.dev       settings md ext history@team  -
+   #  Name      Shortcut  Email             Groups        Last used
+*  1  work      ccwork    user@example.com  default team  -
+   2  personal  -         me@side.dev       default       -
 ```
 
-เมื่อใช้ `--json` แต่ละบัญชีจะเป็นออบเจ็กต์ที่มี `slot`, `shortcut`, `name`, `email`, `default`, `dir`, `last_used` (ไม่มีหากบัญชีไม่เคยถูกเริ่ม) และ `share` โดย `share` จะจับคู่แต่ละรายการ (`mcp`, `settings`, `memory`, `extensions`, `history`) กับชื่อกลุ่มหรือ `"local"`
+เมื่อใช้ `--json` แต่ละบัญชีจะเป็นออบเจ็กต์ที่มี `slot`, `shortcut`, `name`, `email`, `default`, `dir`, `last_used` (ไม่มีหากบัญชีไม่เคยถูกเริ่ม), `groups` และ `share` โดย `share` จะจับคู่แต่ละรายการ (`mcp`, `settings`, `memory`, `extensions`, `history`) กับกลุ่มที่รายการนั้นมาจาก หรือ `"local"`
 
 ## ตัวเลือก
 
 | ตัวเลือก | สิ่งที่ทำ | ค่าเริ่มต้น |
 | --- | --- | --- |
 | `ccam add --no-login` | สร้างบัญชีโดยไม่เข้าสู่ระบบ แล้วค่อยเข้าสู่ระบบภายหลังด้วย `ccam login <name>` | ปิด |
-| `ccam add --share <item=group>` | ใช้รายการร่วมกับกลุ่ม หรือใช้ `item=local` เพื่อเก็บไว้เฉพาะบัญชี ใส่ซ้ำได้หลายครั้ง | `mcp`, `settings`, `memory`, `extensions` อยู่ใน `default` ส่วน `history` เก็บไว้เฉพาะบัญชี |
+| `ccam add --group <group>` | เข้าร่วมกลุ่มนี้แทน `default` ใส่ซ้ำได้หลายครั้ง และ `default` จะถูกสร้างขึ้นเมื่อยังไม่มี | `default` |
+| `ccam add --no-group` | ไม่เข้าร่วมกลุ่มใด: บัญชีจะไม่ใช้สิ่งใดร่วมกัน | ปิด |
 | `ccam add --shortcut <command>` | สร้างคำสั่งลัดนี้ใน `~/.local/bin` ด้วย | ไม่มี |
 | `ccam add --api --key-from <source>` | บัญชีที่ใช้ API key แทนการเข้าสู่ระบบ ดู[บัญชี API key](/features/api) | ปิด |
 | `ccam list --json` | พิมพ์รายการบัญชีเป็น JSON | ปิด |
@@ -58,7 +62,7 @@ $ ccam list
 
 `ccam login`, `ccam logout`, `ccam use` และ `ccam rename` ไม่มีตัวเลือกของตัวเอง `ccam completion` รับ `bash`, `zsh` หรือ `powershell` ค่าอื่นจะล้มเหลวด้วย `only bash, zsh and powershell are supported`
 
-ชื่อบัญชียาว 1 ถึง 32 อักขระ ประกอบด้วย `a-z`, `0-9`, `-` และ `_` และต้องขึ้นต้นด้วยตัวอักษรหรือตัวเลข ชื่อต้องไม่เป็นตัวเลขล้วน เพราะ `ccam 2` หมายถึงสล็อต 2 และชื่อต้องไม่ซ้ำกับคำสั่งของ ccam (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`, `folder`, `pick`, `ext`) เพื่อให้ `ccam <name>` ไม่กำกวม รายการนี้คือ `config.Reserved` ใน `internal/config`
+ชื่อบัญชียาว 1 ถึง 32 อักขระ ประกอบด้วย `a-z`, `0-9`, `-` และ `_` และต้องขึ้นต้นด้วยตัวอักษรหรือตัวเลข ชื่อต้องไม่เป็นตัวเลขล้วน เพราะ `ccam 2` หมายถึงสล็อต 2 และชื่อต้องไม่ซ้ำกับคำสั่งของ ccam (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`, `folder`, `pick`, `ext`, `group`, `groups`) เพื่อให้ `ccam <name>` ไม่กำกวม รายการนี้คือ `config.Reserved` ใน `internal/config`
 
 ## วิธีการทำงาน
 
@@ -68,15 +72,19 @@ $ ccam list
 
 1. `config.ValidateName` ตรวจสอบชื่อ และ `shim.Check` ตรวจสอบคำสั่งลัด ก่อนที่จะสร้างสิ่งใด
 2. `profile.Add` สร้าง `~/.local/share/ccam/profiles/work/` ด้วยโหมด `0700` และให้หมายเลขสล็อตที่ว่างต่ำสุดแก่บัญชี (`Config.NextSlot`) ดังนั้นหมายเลขของบัญชีที่ลบไปแล้วจะถูกนำกลับมาใช้ บัญชีแรกจะเป็นบัญชีเริ่มต้น
-3. `applyShare` ลิงก์โฟลเดอร์ใหม่ที่ยังว่างเข้ากับกลุ่มที่ใช้ร่วมกันด้วย `share.Build` แล้วตามด้วย `Apply` เช่น ลิงก์ `settings.json` ไปยัง `groups/default/settings.json` หากขั้นตอนนี้ล้มเหลว โฟลเดอร์ใหม่จะถูกลบ เพราะโฟลเดอร์ที่ค้างอยู่จะทำให้การลองใหม่ทุกครั้งล้มเหลวด้วย `folder already exists`
+3. บัญชีเข้าร่วมกลุ่มของตัวเอง (`default` เว้นแต่ `--group` หรือ `--no-group` จะระบุเป็นอย่างอื่น บัญชีแรกจะสร้าง `default`) และ `applyShare` ลิงก์โฟลเดอร์ใหม่ที่ยังว่างเข้ากับกลุ่มเหล่านั้นด้วย `share.Build` แล้วตามด้วย `Apply` เช่น ลิงก์ `settings.json` ไปยัง `groups/default/settings.json` หากขั้นตอนนี้ล้มเหลว โฟลเดอร์ใหม่จะถูกลบ เพราะโฟลเดอร์ที่ค้างอยู่จะทำให้การลองใหม่ทุกครั้งล้มเหลวด้วย `folder already exists`
 4. บัญชีจะถูกบันทึกลงใน `~/.config/ccam/config.toml` ผ่าน `fsutil.AtomicWrite`: เขียนไฟล์ชั่วคราว เรียก `fsync` แล้วจึง `rename` ดังนั้นการแครชจะไม่ทิ้งการตั้งค่าไว้ครึ่ง ๆ กลาง ๆ
-5. `runLogin` เริ่ม `claude auth login` โดยตั้ง `CLAUDE_CONFIG_DIR` เป็นโฟลเดอร์ของบัญชี หากเข้าสู่ระบบไม่สำเร็จ บัญชีจะยังคงอยู่ และ ccam จะพิมพ์ข้อผิดพลาดพร้อมบอกให้คุณรัน `ccam login work` ภายหลัง
-6. `profile.ReadEmail` ดึง `oauthAccount.emailAddress` ออกจาก `profiles/work/.claude.json` ไฟล์นั้นอาจมีขนาดหลายเมกะไบต์ `TopLevelValue` จึงสแกนหาเพียงคีย์เดียวแทนการพาร์สทั้งไฟล์
+5. `runLogin` เริ่ม `claude auth login` โดยตั้ง `CLAUDE_CONFIG_DIR` เป็นโฟลเดอร์ของบัญชี และใส่ `--email` เป็นอีเมลล่าสุดของบัญชี เพื่อให้หน้าเข้าสู่ระบบกรอกไว้ให้ หากเข้าสู่ระบบไม่สำเร็จ บัญชีจะยังคงอยู่ และ ccam จะพิมพ์ข้อผิดพลาดพร้อมบอกให้คุณรัน `ccam login work` ภายหลัง
+6. `profile.ReadIdentity` ดึง `oauthAccount` ออกจาก `profiles/work/.claude.json` ได้แก่ อีเมล id ของบัญชีและองค์กร ชื่อองค์กร และแพ็กเกจ (`claude_max`, `claude_team` …) ไฟล์นั้นอาจมีขนาดหลายเมกะไบต์ `TopLevelValue` จึงสแกนหาเพียงคีย์เดียวแทนการพาร์สทั้งไฟล์ ccam เก็บค่าเหล่านี้ไว้ใน `[profile.login]` ใน `config.toml`
 7. `shim.Install` ลิงก์ `~/.local/bin/ccwork` ไปยังไบนารีของ ccam ซึ่งจะค้นหา `argv[0]` ใน `config.toml` เมื่อเริ่มทำงาน
 
 การเข้าสู่ระบบอาจใช้เวลาหลายนาที และ ccam อีกตัวอาจบันทึกการตั้งค่าในระหว่างนั้น คำสั่งที่ต้องรอจึงบันทึกผ่าน `env.update` ซึ่งโหลด `config.toml` ใหม่ ใช้การเปลี่ยนแปลงเพียงรายการเดียว (ในที่นี้คืออีเมล) แล้วบันทึก `ccam remove` ก็โหลดใหม่หลังจากถามด้วยเหตุผลเดียวกัน
 
-`ccam login` ทำขั้นตอนที่ 5 และ 6 สำหรับบัญชีที่มีอยู่แล้ว `ccam logout` รัน `claude auth logout` ในบัญชีนั้นและล้างอีเมลที่บันทึกไว้ ส่วน `ccam use` เพียงเขียนค่า `default` ใน `config.toml` ใหม่
+`ccam login` ทำขั้นตอนที่ 5 และ 6 สำหรับบัญชีที่มีอยู่แล้ว Claude Code ใช้อีเมลเป็นเพียงคำใบ้สำหรับหน้าเข้าสู่ระบบ การเข้าสู่ระบบจึงอาจไปจบที่บัญชี Claude อื่นที่ไม่ใช่บัญชีเดิมของบัญชี ccam นั้นได้ ccam จะเปรียบเทียบการเข้าสู่ระบบใหม่กับ `[profile.login]` และแจ้งให้ทราบ (`ccam: this login is other@company.com, but work was dev@company.com before.`) ccam จะเก็บการเข้าสู่ระบบใหม่ไว้และบอกวิธีย้อนกลับ: `ccam logout work` จากนั้น `ccam login work` แล้วลงชื่อเข้าใช้ด้วยอีเมลที่ถูกต้อง เมื่อบัญชี ccam อื่นเข้าสู่ระบบด้วยบัญชี Claude เดียวกัน ccam จะเตือนว่าทั้งสองใช้ขีดจำกัดการใช้งานร่วมกัน `ccam login --expired` จะเข้าสู่ระบบทีละบัญชีให้กับทุกบัญชีที่ไม่เคยเข้าสู่ระบบ หรือที่การเข้าสู่ระบบ (refresh token) หมดอายุแล้ว
+
+`ccam logout` รัน `claude auth logout` ในบัญชีนั้นและล้างอีเมลที่บันทึกไว้ แต่บันทึกการเข้าสู่ระบบยังคงอยู่ การเข้าสู่ระบบครั้งถัดไปจึงถูกตรวจเทียบกับบันทึกนั้น ส่วน `ccam use` เพียงเขียนค่า `default` ใน `config.toml` ใหม่
+
+`ccam list` จะเพิ่มคอลัมน์ `Organization` เมื่อบัญชีอยู่ในองค์กรมากกว่าหนึ่งแห่ง (แพ็กเกจส่วนตัวแสดงเป็น `personal`) และ `ccam list --json` มี `plan` และ `org` สำหรับทุกบัญชี
 
 ### การลงชื่อเข้าใช้บนเครื่องระยะไกล
 
@@ -106,7 +114,7 @@ On a remote machine? If the browser ends on a http://localhost:…/callback page
 
 `ccam rename` เปลี่ยนชื่อโฟลเดอร์ เขียนพาธปลั๊กอินใน `plugins/` ของบัญชีใหม่จากโฟลเดอร์เดิมเป็นโฟลเดอร์ใหม่ คงสถานะบัญชีเริ่มต้นไว้ และย้ายพาธใน `nameState` ไปใช้ชื่อใหม่ คำสั่งลัดยังคงชื่อเดิม หากการเขียนพาธปลั๊กอินใหม่ล้มเหลว โฟลเดอร์จะถูกเปลี่ยนชื่อกลับ เนื่องจากยังไม่ได้บันทึกการตั้งค่า
 
-`ccam import` ลงทะเบียนโฟลเดอร์ไว้ในตำแหน่งเดิม โดยเก็บเป็น `dir` ใน `config.toml` ccam ไม่ย้ายหรือคัดลอกโฟลเดอร์เลย เพราะ refresh token ที่ถูกคัดลอกจะทำให้สำเนาแต่ละชุดทำให้กันและกันออกจากระบบ หากไม่ระบุโฟลเดอร์ ccam จะค้นหาโฟลเดอร์ `~/.claude` และ `~/.claude-*` ที่ยังไม่ได้ลงทะเบียนแล้วถามทีละโฟลเดอร์ ชื่อบัญชีได้มาจากชื่อโฟลเดอร์ (`~/.claude` เป็น `main`, `~/.claude-work` เป็น `work`, `~/.claude-2` เป็น `acct2`) และโฟลเดอร์ที่หาชื่อไม่ได้จะแสดงพร้อมคำสั่ง `--name` ที่ต้องใช้ หากไม่มี `CLAUDE_CONFIG_DIR` Claude Code จะเก็บ `.claude.json` ไว้ในโฟลเดอร์ home ข้าง ๆ `~/.claude` ดังนั้นเมื่อคุณนำเข้า `~/.claude` และโฟลเดอร์นั้นไม่มี `.claude.json` ของตัวเอง ccam จะสร้างลิงก์ `~/.claude/.claude.json` ไปยัง `~/.claude.json` จากนั้น `claude` แบบปกติและ `ccam main` จะเห็นบัญชีเดียวกัน บัญชีที่นำเข้าจะไม่ใช้สิ่งใดร่วมกันจนกว่าคุณจะรัน `ccam share` และจะไม่มีการสร้างคำสั่งลัด
+`ccam import` ลงทะเบียนโฟลเดอร์ไว้ในตำแหน่งเดิม โดยเก็บเป็น `dir` ใน `config.toml` ccam ไม่ย้ายหรือคัดลอกโฟลเดอร์เลย เพราะ refresh token ที่ถูกคัดลอกจะทำให้สำเนาแต่ละชุดทำให้กันและกันออกจากระบบ หากไม่ระบุโฟลเดอร์ ccam จะค้นหาโฟลเดอร์ `~/.claude` และ `~/.claude-*` ที่ยังไม่ได้ลงทะเบียนแล้วถามทีละโฟลเดอร์ ชื่อบัญชีได้มาจากชื่อโฟลเดอร์ (`~/.claude` เป็น `main`, `~/.claude-work` เป็น `work`, `~/.claude-2` เป็น `acct2`) และโฟลเดอร์ที่หาชื่อไม่ได้จะแสดงพร้อมคำสั่ง `--name` ที่ต้องใช้ หากไม่มี `CLAUDE_CONFIG_DIR` Claude Code จะเก็บ `.claude.json` ไว้ในโฟลเดอร์ home ข้าง ๆ `~/.claude` ดังนั้นเมื่อคุณนำเข้า `~/.claude` และโฟลเดอร์นั้นไม่มี `.claude.json` ของตัวเอง ccam จะสร้างลิงก์ `~/.claude/.claude.json` ไปยัง `~/.claude.json` จากนั้น `claude` แบบปกติและ `ccam main` จะเห็นบัญชีเดียวกัน บัญชีที่นำเข้าจะไม่อยู่ในกลุ่มใดจนกว่าคุณจะเพิ่มเข้าไปในกลุ่มหนึ่ง (`ccam group join <group> <name>`) และจะไม่มีการสร้างคำสั่งลัด
 
 `ccam completion bash|zsh` พิมพ์สคริปต์ completion ที่เติมชื่อบัญชีให้ด้วย
 

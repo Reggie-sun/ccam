@@ -1,46 +1,45 @@
 ---
 title: MCP सर्व्हर, सेटिंग्ज आणि इतिहास शेअर करा
-description: प्रत्येक लॉगिन वेगळे ठेवून ccam MCP सर्व्हर, settings.json, CLAUDE.md, agents, skills आणि संभाषण इतिहास Claude Code खात्यांमध्ये कसे शेअर करते.
+description: प्रत्येक लॉगिन वेगळे ठेवून ccam गट MCP सर्व्हर, settings.json, CLAUDE.md, skills आणि संभाषण इतिहास Claude Code खात्यांमध्ये कसे शेअर करतात.
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 888d466b29e9
+sourceHash: "2606e4ec682e"
 ---
 
-प्रत्येक खात्याचे लॉगिन स्वतःचे राहते. बाकी सर्व काही आयटमनुसार शेअर करता येते: ccam खात्याची फाइल किंवा फोल्डर एका शेअर केलेल्या गट फोल्डरशी लिंक करते, त्यामुळे एका खात्यात केलेला बदल त्या गटातील सर्व खात्यांत दिसतो.
+प्रत्येक खात्याचे लॉगिन स्वतःचे राहते. बाकी सर्व काही **गटांमार्फत** शेअर करता येते: गट तो शेअर करत असलेले आयटम आणि त्यातील खाती ठरवतो, आणि ccam त्या प्रत्येक खात्याच्या फाइल्स गटाच्या फोल्डरशी लिंक करते, त्यामुळे एका खात्यात केलेला बदल त्या सर्वांमध्ये दिसतो.
 
 ## काय शेअर करता येते
 
-| आयटम | पर्याय | काय शेअर होते |
-| --- | --- | --- |
-| MCP सर्व्हर | `--mcp` | गटाची `mcp.json`, जी सुरू करताना Claude Code ला दिली जाते |
-| सेटिंग्ज | `--settings` | `settings.json`: परवानग्या, hooks, मॉडेल, स्टेटस लाइन |
-| global memory | `--memory` | `CLAUDE.md` |
-| एक्स्टेंशन्स | `--extensions` | `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/`, `rules/` |
-| संभाषण इतिहास | `--history` | `projects/` आणि `history.jsonl` |
+| आयटम | काय शेअर होते |
+| --- | --- |
+| `mcp` | MCP सर्व्हर: गटाची `mcp.json`, जी सुरू करताना Claude Code ला दिली जाते |
+| `settings` | `settings.json`: परवानग्या, hooks, मॉडेल, स्टेटस लाइन |
+| `memory` | global `CLAUDE.md` |
+| `extensions` | `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/`, `rules/` |
+| `history` | संभाषण इतिहास: `projects/` आणि `history.jsonl` |
 
-नवीन खाती संभाषण इतिहास सोडून सर्व काही शेअर करतात.
+तुमचे पहिले खाते `default` गट तयार करते, जो संभाषण इतिहास सोडून सर्व काही शेअर करतो, आणि नंतरची खाती त्यात सामील होतात.
 
 `.credentials.json` आणि `.claude.json` या लॉगिन फाइल्स कधीच शेअर होत नाहीत. ccam फक्त एका निश्चित यादीतील पाथ लिंक करते, आणि या दोन फाइल्स त्या यादीत नाहीत.
 
-हे पान रोजची कामे सांगते. प्रत्येक पर्यायाचे वर्णन फीचर पानांवर आहे: [खात्यांमध्ये शेअरिंग](/features/share), [शेअर केलेले MCP सर्व्हर](/features/mcp) आणि [आधीचा सेटअप कॉपी करणे](/features/migrate).
+हे पान रोजची कामे सांगते. प्रत्येक पर्यायाचे वर्णन फीचर पानांवर आहे: [गटांसह शेअरिंग](/features/share), [शेअर केलेले MCP सर्व्हर](/features/mcp) आणि [आधीचा सेटअप कॉपी करणे](/features/migrate).
 
 ## गट
 
-`on` म्हणजे `default` गट. तुम्ही नावही देऊ शकता, म्हणजे फक्त काही खाती एखादा आयटम शेअर करतील:
-
 ```sh
-ccam share work --history team
-ccam share side --history team
+ccam group                                   # the groups, what they share, their accounts
+ccam group set default --add history         # every account in default shares history
+ccam group add team --items history --members work,side
 ```
 
-आता `work` आणि `side` एकमेकांशी संभाषणे शेअर करतात, पण तुमच्या इतर खात्यांशी नाही.
+एक खाते अनेक गटांमध्ये असू शकते, पण प्रत्येक आयटम फक्त एकाच गटातून येतो. म्हणून `work` आणि `side` मध्ये इतिहास शेअर करायचा असेल पण तुमच्या इतर खात्यांशी नाही, तर इतिहास `default` बाहेर ठेवा आणि त्या दोघांना वरीलप्रमाणे त्यांचा स्वतःचा गट द्या. `ccam share work` खाते काय शेअर करते आणि कोणत्या गटामार्फत ते दाखवते. [डॅशबोर्ड](/features/dashboard) त्याच्या Groups tab वर हेच करतो.
 
-## शेअरिंग चालू करणे
+## खाते शेअर करू लागते तेव्हा
 
-एखादे खाते एखादा आयटम शेअर करू लागते तेव्हा ccam:
+एखादे खाते एखादा आयटम शेअर करू लागते (ते गटात सामील होते, किंवा त्याचा गट तो आयटम जोडतो) तेव्हा ccam:
 
-1. ते हलवणार, कॉपी करणार किंवा लिंक करणार असलेल्या प्रत्येक फाइलची योजना प्रिंट करते, आणि सुरू करण्यापूर्वी विचारते;
+1. प्रत्येक खात्यासाठी ते हलवणार, कॉपी करणार किंवा लिंक करणार असलेल्या प्रत्येक फाइलची योजना प्रिंट करते, आणि सुरू करण्यापूर्वी विचारते;
 2. गट अजून रिकामा असेल तर खात्याच्या फाइल्स गट फोल्डरमध्ये हलवते, नाहीतर गटाकडे अजून नसलेल्या फाइल्स जोडते;
 3. तीच फाइल वेगळी असेल तर गटाची आवृत्ती ठेवायची, तुमची वापरायची, की JSON merge करायचे हे विचारते;
 4. तुमची मूळ फाइल खात्याच्या फोल्डरमधील `.ccam-backup/<time>/` मध्ये ठेवते;
@@ -48,12 +47,13 @@ ccam share side --history team
 
 संभाषण फाइल्सना त्यांच्या session ID वरून नावे दिली जातात, त्यामुळे अनेक खात्यांचे इतिहास कोणत्याही conflict शिवाय एकत्र होतात.
 
-Claude Code त्या खात्याने चालू असताना ccam शेअरिंग बदलत नाही, कारण session हलवल्या जाणाऱ्या फाइल्समध्ये लिहीत राहते. आधी ते बंद करा.
+Claude Code एखाद्या खात्याने चालू असताना ccam ते खाते बदलत नाही, कारण session हलवल्या जाणाऱ्या फाइल्समध्ये लिहीत राहते. आधी ते बंद करा.
 
-## शेअरिंग बंद करणे
+## खाते शेअर करणे थांबवते तेव्हा
 
 ```sh
-ccam share work --history off
+ccam group leave team work                   # work leaves the group
+ccam group set default --remove history      # nobody in default shares history any more
 ```
 
 लिंक काढली जाते आणि खात्याला गटाच्या सध्याच्या मजकुराची स्वतःची प्रत मिळते. त्याऐवजी रिकाम्याने सुरुवात करायची असेल तर `--fresh` जोडा. गट इतर खात्यांसाठी आपला मजकूर ठेवतो.
@@ -95,14 +95,12 @@ Copy from /home/me/.claude into group default (/home/me/.local/share/ccam/groups
   Conversation history (projects/, history.jsonl) is not included; add --history to copy it.
 Copy these into group default? [y/N] y
 ✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, commands/, skills/
-Accounts that share these through group default:
-  mcp         personal
-  settings    personal
-  memory      personal
-  extensions  personal
+Group default: personal
+To share them:
+  ccam group join default work
 ```
 
-शेवटी ccam गटामार्फत प्रत्येक आयटम शेअर करणाऱ्या खात्यांची यादी दाखवते. काही खाती तसे करत नसतील, तर त्यांच्यासाठी शेअरिंग चालू करणाऱ्या `ccam share` कमांड्स प्रिंट करते.
+शेवटी ccam गटाच्या खात्यांची यादी दाखवते. कॉपी केलेल्यांपैकी एखादा आयटम गट अजून शेअर करत नसेल, किंवा काही खाती त्यात नसतील, तर ते बदलणाऱ्या `ccam group` कमांड्स प्रिंट करते.
 
 गटाकडे एखाद्या फाइलची वेगळी प्रत आधीच असेल, तर ccam शेअरिंग चालू करतानाप्रमाणेच विचारते: गटाची प्रत ठेवायची की तुमची वापरायची. `settings.json` आणि इतर JSON फाइल्स merge देखील करता येतात, आणि `history.jsonl` ओळीनुसार. गटाच्या आधीच्या प्रती गट फोल्डरमधील `.ccam-backup/<time>/` मध्ये जतन होतात.
 

@@ -5,10 +5,10 @@ description: "ccam کی ہر کمانڈ اور آپشن، ccam add اور ccam <
 updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: da2594c672bc
+sourceHash: "116c5b34ac9a"
 ---
 
-کسی کمانڈ کو اصل میں چلائے بغیر یہ دیکھنے کے لیے کہ وہ کیا کرے گی، اس سے پہلے `--dry-run` لگائیں، مثلاً `ccam --dry-run work`۔ یہ Claude Code شروع کرتے وقت (`ccam <name>`، `ccam run`، `ccam next`) اور `share`، `migrate`، `shortcut`، `update` اور `doctor --fix` کے ساتھ کام کرتا ہے۔ کچھ تبدیل کرنے والی دوسری کمانڈز چلنے کے بجائے اسے مسترد کر دیتی ہیں۔
+کسی کمانڈ کو اصل میں چلائے بغیر یہ دیکھنے کے لیے کہ وہ کیا کرے گی، اس سے پہلے `--dry-run` لگائیں، مثلاً `ccam --dry-run work`۔ یہ Claude Code شروع کرتے وقت (`ccam <name>`، `ccam run`، `ccam next`، `ccam attach`) اور `group`، `migrate`، `shortcut`، `update` اور `doctor --fix` کے ساتھ کام کرتا ہے۔ کچھ تبدیل کرنے والی دوسری کمانڈز چلنے کے بجائے اسے مسترد کر دیتی ہیں۔
 
 <!-- commands -->
 
@@ -33,9 +33,10 @@ ccam --fallback work -p "fix the tests"   # run again as another account at the 
 
 ```sh
 ccam add                      # wizard
-ccam add work --share history=on
+ccam add work --group default --group team
 ccam add side --shortcut ccside
 ccam add ci --no-login        # log in later with: ccam login ci
+ccam login --expired          # log in every account whose login no longer works
 ccam rename work job
 ccam remove side              # folder moves to ~/.local/share/ccam/trash
 ccam import ~/.claude-old --name old
@@ -46,9 +47,9 @@ ccam add gw --api --base-url https://llm.example.com --auth bearer --key-from en
 
 `ccam add --api` ایسا اکاؤنٹ شامل کرتا ہے جو Claude لاگ اِن کے بجائے API key استعمال کرتا ہے؛ ccam ہر لانچ پر key پڑھتا ہے اور اسے کبھی محفوظ نہیں کرتا۔ دیکھیں [API key اکاؤنٹس](/features/api)۔
 
-جب Claude Code کسی اکاؤنٹ کے طور پر چل رہا ہو تو `ccam rename`، `ccam remove` اور `ccam share` اس اکاؤنٹ میں تبدیلی سے انکار کر دیتے ہیں۔ پہلے وہ سیشن بند کریں۔
+جب Claude Code کسی اکاؤنٹ کے طور پر چل رہا ہو تو `ccam rename`، `ccam remove` اور `ccam group` کمانڈز اس اکاؤنٹ میں تبدیلی سے انکار کر دیتی ہیں۔ پہلے وہ سیشن بند کریں۔
 
-`ccam list --json` ہر اکاؤنٹ کو اس کے سلاٹ، شارٹ کٹ، ای میل اور فولڈر کے ساتھ پرنٹ کرتا ہے۔ اس کا `share` آبجیکٹ ہر آئٹم (`mcp`، `settings`، `memory`، `extensions`، `history`) کو کسی گروپ کے نام یا `local` سے جوڑتا ہے۔
+`ccam list --json` ہر اکاؤنٹ کو اس کے سلاٹ، شارٹ کٹ، ای میل اور فولڈر کے ساتھ پرنٹ کرتا ہے۔ اس کی `groups` array اکاؤنٹ کے گروپس کی فہرست دیتی ہے، اور اس کا `share` آبجیکٹ ہر آئٹم (`mcp`، `settings`، `memory`، `extensions`، `history`) کو اس گروپ سے جوڑتا ہے جس سے وہ آتا ہے، یا `local` سے۔
 
 ## شارٹ کٹس
 
@@ -69,12 +70,15 @@ ccam shortcut work --remove
 ## شیئرنگ
 
 ```sh
-ccam share work                       # show the current state
-ccam share work --history on --mcp team
-ccam share work --settings off --fresh
+ccam group                                  # the groups, what they share, their accounts
+ccam group add team --items history --members work,side
+ccam group set default --add history        # every account in default changes together
+ccam group join team personal
+ccam group leave team side --fresh
+ccam share work                             # what work shares, and through which group
 ```
 
-ہر آئٹم کے لیے `on` (یعنی `default` گروپ)، `off`، یا کسی گروپ کا نام دیا جا سکتا ہے۔ [شیئرنگ](/docs/sharing) دیکھیں۔
+ایک گروپ اپنے اکاؤنٹس کے درمیان آئٹمز شیئر کرتا ہے؛ ایک اکاؤنٹ کئی گروپس میں ہو سکتا ہے، لیکن ہر آئٹم صرف ایک گروپ سے آتا ہے۔ [گروپس کے ساتھ شیئرنگ](/features/share) دیکھیں۔
 
 ## موجودہ سیٹ اپ کاپی کرنا
 
@@ -106,14 +110,17 @@ ccam mcp remove fs
 ccam usage           # also: ccam u
 ccam usage --watch   # refresh every 60 seconds
 ccam usage --json
-ccam next --continue
+ccam usage --source claude      # Claude Code looks it up; ccam never touches a token
+ccam next --continue            # this folder's last conversation, as the next account
 ccam next --auto
 ccam next --auto --max-usage 80 --wait
 ccam pick                       # the account with the most room, for a script
 ccam "$(ccam pick)" -p "…"      # start a worker on it
+ccam agents                     # background sessions of every account
+ccam attach 49ec0028            # open one, as the account that started it
 ```
 
-`next --auto`، `--fallback` اور `ccam pick` ایک ہی طرح چنتے ہیں: پہلے `auto_max_usage` (`config.toml`، ڈیفالٹ 100) سے کم والے اکاؤنٹس، `auto_strategy` (`headroom` یا `expiring`) کے مطابق، `--model` کی ہفتہ وار ونڈو کو شمار کرتے ہوئے، اور کبھی 100% والا اکاؤنٹ نہیں۔ جب کوئی اکاؤنٹ نہ چنا جا سکے تو یہ کوڈ 75 کے ساتھ باہر نکلتے ہیں، یا `--wait` کے ساتھ پہلے اکاؤنٹ کے ری سیٹ ہونے کا انتظار کرتے ہیں۔ دیکھیں [اگلے اکاؤنٹ پر جانا](/features/next) اور [اسکرپٹس کے لیے اکاؤنٹ چننا](/features/pick)۔
+`next --auto`، `--fallback` اور `ccam pick` ایک ہی طرح چنتے ہیں: پہلے `auto_max_usage` (`config.toml`، ڈیفالٹ 100) سے کم والے اکاؤنٹس، `auto_strategy` (`headroom`، `expiring` یا `balance`) کے مطابق، `--model` کی ہفتہ وار ونڈو کو شمار کرتے ہوئے، کبھی 100% والا اکاؤنٹ نہیں، اور اسی تنظیم کے اندر جس کے اکاؤنٹ سے وہ شروع کرتے ہیں (آگے دیکھنے کے لیے `--cross-org` یا `cross_org = true`)۔ جب کوئی اکاؤنٹ نہ چنا جا سکے تو یہ کوڈ 75 کے ساتھ باہر نکلتے ہیں، یا `--wait` کے ساتھ پہلے اکاؤنٹ کے ری سیٹ ہونے کا انتظار کرتے ہیں۔ `ccam next --continue` گفتگو کو ان اکاؤنٹس کے درمیان بھی لے جاتا ہے جو ہسٹری شیئر نہیں کرتے: تب Claude Code اسے نئے اکاؤنٹ میں کاپی کر دیتا ہے۔ Claude Code کے اندر، پلگ اِن کا `/ccam:switch [account]` گفتگو آگے سونپتا ہے، اور `ccam hook` وہ ہے جو اس کے ہُکس چلاتے ہیں۔ دیکھیں [اگلے اکاؤنٹ پر جانا](/features/next)، [اسکرپٹس کے لیے اکاؤنٹ چننا](/features/pick) اور [ہر اکاؤنٹ کے پس منظر کے سیشنز](/features/agents)۔
 
 ## دیکھ بھال
 
@@ -135,10 +142,10 @@ ccam completion bash # or zsh, powershell
 
 | راستہ | مواد |
 | --- | --- |
-| `~/.config/ccam/config.toml` | اکاؤنٹس اور یہ کہ وہ کیا شیئر کرتے ہیں |
+| `~/.config/ccam/config.toml` | اکاؤنٹس، گروپس اور سیٹنگز (`theme`، `usage_source`، `relay`، `cross_org` …) |
 | `~/.local/share/ccam/profiles/<name>/` | ہر اکاؤنٹ کا `CLAUDE_CONFIG_DIR` |
 | `~/.local/share/ccam/groups/<group>/` | شیئر کی گئی سیٹنگز، MCP سرورز، ایکسٹینشنز اور ہسٹری |
-| `~/.local/state/ccam/` | استعمال کا کیش اور آخری استعمال کے اوقات |
+| `~/.local/state/ccam/` | استعمال کا کیش، آخری استعمال کے اوقات اور وہ نوٹس جو `/ccam:switch` اور حد والا ہُک چھوڑتے ہیں (`handoff/`) |
 | `~/.local/bin/<shortcut>` | `ccwork` جیسی شارٹ کٹ کمانڈز، جو ccam کے لنکس ہیں |
 
 `XDG_CONFIG_HOME`، `XDG_DATA_HOME` اور `XDG_STATE_HOME` ویری ایبلز ان فولڈرز کی جگہ بدل دیتے ہیں۔ Windows پر `~` سے مراد `%USERPROFILE%` ہے اور شارٹ کٹس `<shortcut>.exe` ہوتے ہیں۔

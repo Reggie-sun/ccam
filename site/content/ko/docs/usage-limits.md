@@ -4,7 +4,7 @@ description: ccam usage로 모든 Claude Code 계정의 5시간·주간 사용�
 updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: a84df8e873d6
+sourceHash: "40aef0708c81"
 ---
 
 `ccam usage`는 각 계정이 5시간 한도와 주간 한도를 얼마나 썼는지 보여 줍니다. `ccam next --auto`는 여유가 가장 많은 계정을 열고, `--continue`는 지금 대화를 그 계정에서 이어 갑니다.
@@ -55,10 +55,10 @@ ccam statusline install
 ```sh
 ccam next             # the account after the one you used last
 ccam next --auto      # the account with the lowest 5-hour usage
-ccam next --continue  # the next account that shares your conversation history
+ccam next --continue  # carry this folder's conversation on as the next account
 ```
 
-`ccam next`는 로그인되지 않은 계정을 건너뛰고, `--auto`는 사용량이 100%인 계정을 건너뜁니다. 대화를 이어 가려면 두 계정 모두 대화 내역을 공유해야 합니다. 자세한 내용은 [공유](/docs/sharing)를 참고하세요.
+`ccam next`는 로그인되지 않은 계정을 건너뛰고, `--auto`는 사용량이 100%인 계정과 다른 조직의 계정을 건너뜁니다. 두 계정이 대화 내역을 공유하면 `--continue`는 같은 대화를 열고, 그렇지 않으면 Claude Code가 대화를 새 계정으로 복사합니다. [공유](/docs/sharing)와 [다음 계정으로 전환](/features/next#continue)을 참고하세요.
 
 `claude -p`를 실행하는 스크립트나 예약 작업에서는 계정 이름 앞에 `--fallback`을 붙이세요. 그 계정이 한도에 도달하면 ccam이 여유가 가장 많은 계정으로 같은 명령을 다시 실행하고, 끝까지 실행된 쪽의 출력만 표시합니다.
 

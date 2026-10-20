@@ -1,133 +1,182 @@
 ---
-title: अकाउंट्स के बीच साझा करना
-description: ccam share सेटिंग्स, CLAUDE.md, एक्सटेंशन और इतिहास को योजना, बैकअप और टकराव विकल्पों के साथ ग्रुप फ़ोल्डर से कैसे लिंक करता है, off कैसे वापस कॉपी करता है।
+title: ग्रुप के साथ साझा करना
+description: ccam का ग्रुप चुने हुए आइटम अपने अकाउंट्स के बीच एक फ़ोल्डर से साझा करता है; ccam group योजना, बैकअप और टकराव विकल्पों के साथ डेटा move करता है।
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 16de29bbdd57
+sourceHash: 0c0338362ba2
 ---
 
-हर अकाउंट का अपना फ़ोल्डर होता है, लेकिन उसकी ज़्यादातर सामग्री को अलग रखने की ज़रूरत नहीं होती। `ccam share` एक बार में एक अकाउंट और एक आइटम के लिए साझा करना चालू या बंद करता है: अकाउंट की फ़ाइल या फ़ोल्डर एक ग्रुप फ़ोल्डर में move होता है और उसकी जगह एक symbolic link लग जाता है, इसलिए ग्रुप का हर अकाउंट एक ही कॉपी पढ़ता और लिखता है। `ccam add` के बाद यह बदलने के लिए कि कोई अकाउंट क्या साझा करता है, या कुछ अकाउंट्स को उनके अपने ग्रुप में रखने के लिए इसे इस्तेमाल करें।
+हर अकाउंट का अपना फ़ोल्डर होता है, लेकिन उसकी ज़्यादातर सामग्री को अलग रखने की ज़रूरत नहीं होती। एक **ग्रुप** बताता है कि क्या साझा होगा और किनके बीच: ग्रुप का हर अकाउंट उन आइटम को एक ही फ़ोल्डर, `~/.local/share/ccam/groups/<group>/`, से लिंक करता है, इसलिए वे सब एक ही कॉपी पढ़ते और लिखते हैं। लॉगिन tokens कभी साझा नहीं होते।
+
+एक अकाउंट कई ग्रुप में हो सकता है, लेकिन हर आइटम केवल एक ही ग्रुप से आता है। एक आम सेटअप में सेटिंग्स और एक्सटेंशन के लिए एक ग्रुप होता है, और दो अकाउंट्स के बीच बातचीत के इतिहास के लिए दूसरा:
+
+```toml
+[[group]]
+name = 'default'
+items = ['mcp', 'settings', 'memory', 'extensions']
+members = ['personal', 'work', 'side']
+
+[[group]]
+name = 'team'
+items = ['history']
+members = ['work', 'side']
+```
+
+आपका जोड़ा पहला अकाउंट `default` बनाता है, और बाद के अकाउंट उसमें शामिल होते हैं, जब तक आप कुछ और न कहें।
 
 ## उपयोग
 
 ```sh
-ccam share work                       # show what work shares, and with which group
-ccam share work --history on          # share conversation history with the default group
-ccam share side --history team        # share it with the group team instead
-ccam share work --settings off        # give work its own copy of settings.json again
-ccam share work --memory off --fresh  # stop sharing CLAUDE.md and start with no file
-ccam share work --settings on --yes --prefer merge   # no questions; merge JSON on conflicts
-ccam --dry-run share work --history on               # print the plan, change nothing
+ccam group                                        # the groups, what they share, their accounts
+ccam group show default                           # items, accounts, folder and MCP servers
+ccam group add team --items history --members work,side
+ccam group set default --add history              # every account in default moves together
+ccam group set default --remove history --fresh   # stop sharing; accounts start without it
+ccam group set team --items history,memory --from work   # work's CLAUDE.md goes in first
+ccam group join team personal                     # personal starts sharing team's items
+ccam group join team personal --replace           # leave the group that shares them now
+ccam group leave team side                        # side keeps a copy of team's items
+ccam group rename team pair                       # the folder keeps its name
+ccam group remove pair --leave                    # its accounts keep a copy; folder to the trash
+ccam share work                                   # what work shares, and through which group
+ccam --dry-run group set default --add history    # print the plan, change nothing
 ```
-
-आइटम विकल्पों के बिना, `ccam share` मौजूदा स्थिति प्रिंट करता है:
 
 ```console
+$ ccam group
+Group    Shares                          Accounts
+default  mcp settings memory extensions  personal, work, side
+team     history                         work, side
+
 $ ccam share work
 Sharing for work
-  MCP servers                        shared (group default)  --mcp
-  settings.json                      shared (group default)  --settings
-  global CLAUDE.md                   shared (group default)  --memory
-  agents, commands, skills, plugins  shared (group default)  --extensions
-  conversation history               local                   --history
+  mcp         MCP servers                        group default
+  settings    settings.json                      group default
+  memory      global CLAUDE.md                   group default
+  extensions  agents, commands, skills, plugins  group default
+  history     conversation history               group team
+Groups: default, team. Change them with `ccam group`.
 ```
 
-विकल्पों के साथ, ccam एक योजना प्रिंट करता है, ग्रुप की कॉपी से अलग हर फ़ाइल के बारे में पूछता है, और कुछ भी बदलने से पहले `Proceed? [y/N]` पूछता है। नया अकाउंट बातचीत के इतिहास को छोड़कर सब कुछ साझा करता है; [MCP सर्वर, सेटिंग्स और इतिहास साझा करें](/docs/sharing) हर आइटम को उपयोगकर्ता की नज़र से बताता है।
+डेटा move करने वाली हर कमांड एक योजना प्रिंट करती है, ग्रुप की कॉपी से अलग हर फ़ाइल के बारे में पूछती है, और कुछ भी बदलने से पहले `Proceed? [y/N]` पूछती है:
 
-## विकल्प
+```console
+$ ccam group set default --add history
+Plan (paths in /home/me/.local/share/ccam):
+personal: +history (group default)
+  move     projects, history.jsonl: profiles/personal → groups/default (first content of the group)
+  link     projects, history.jsonl: profiles/personal → groups/default
+work: +history (group default)
+  merge    new files in projects: profiles/work → groups/default
+  conflict profiles/work/history.jsonl ↔ groups/default/history.jsonl: merge by line
+  back up  projects, history.jsonl: profiles/work → profiles/work/.ccam-backup/20261020-153012
+  link     projects, history.jsonl: profiles/work → groups/default
+Proceed? [y/N]
+```
+
+यही बदलाव [डैशबोर्ड](/features/dashboard) के **Groups** टैब पर भी हैं, और किसी अकाउंट पर `s` उसके ग्रुप चुनता है।
+
+## आइटम
+
+| आइटम | क्या कवर करता है |
+| --- | --- |
+| `mcp` | MCP सर्वर, ग्रुप की `mcp.json` के ज़रिए ([साझा MCP सर्वर](/features/mcp)) |
+| `settings` | `settings.json` |
+| `memory` | ग्लोबल `CLAUDE.md` |
+| `extensions` | `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/`, `rules/` |
+| `history` | `projects/` और `history.jsonl`, ताकि कोई दूसरा अकाउंट `--continue` कर सके |
+
+जिस आइटम को अकाउंट का कोई ग्रुप साझा नहीं करता, वह अकाउंट के अपने फ़ोल्डर में रहता है।
+
+## कमांड और विकल्प
+
+| कमांड | क्या करती है |
+| --- | --- |
+| `ccam group` या `ccam group list` | ग्रुप्स की सूची दिखाएँ |
+| `ccam group show <group>` | ग्रुप क्या साझा करता है, उसके अकाउंट, उसका फ़ोल्डर और MCP सर्वर |
+| `ccam group add <group> --items <items> [--members <accounts>]` | ग्रुप बनाएँ; उसके अकाउंट्स के आइटम उसमें move होते हैं |
+| `ccam group set <group> --add <items> \| --remove <items> \| --items <items>` | ग्रुप क्या साझा करता है, यह उसके हर अकाउंट के लिए बदलें |
+| `ccam group join <group> <account>...` | अकाउंट्स को ग्रुप में रखें |
+| `ccam group leave <group> <account>...` | अकाउंट्स को बाहर निकालें; हर एक के पास एक कॉपी रहती है |
+| `ccam group rename <group> <new-name>` | केवल config में नाम बदलें |
+| `ccam group remove <group> [--leave]` | ग्रुप हटाएँ |
 
 | विकल्प | क्या करता है | डिफ़ॉल्ट |
 | --- | --- | --- |
-| `--mcp <on\|off\|group>` | MCP सर्वर | बिना बदलाव |
-| `--settings <on\|off\|group>` | `settings.json` | बिना बदलाव |
-| `--memory <on\|off\|group>` | ग्लोबल `CLAUDE.md` | बिना बदलाव |
-| `--extensions <on\|off\|group>` | `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/`, `rules/` | बिना बदलाव |
-| `--history <on\|off\|group>` | `projects/` और `history.jsonl` | बिना बदलाव |
-| `--fresh` | साझा करना बंद करते समय, ग्रुप की सामग्री कॉपी करने के बजाय ख़ाली शुरुआत करें | बंद |
-| `--prefer <group\|mine\|merge>` | टकराव कैसे तय हों | पूछें; `--yes` के साथ, हर आइटम का डिफ़ॉल्ट |
+| `--from <account>` | `add`, `set`: वह अकाउंट जिसकी कॉपी सबसे पहले ग्रुप में जाती है | डिफ़ॉल्ट अकाउंट, फिर नंबर के क्रम में |
+| `--replace` | `join`: पहले उन ग्रुप्स को छोड़ें जो वही आइटम साझा करते हैं | बंद |
+| `--fresh` | जो अकाउंट किसी आइटम को साझा करना बंद करते हैं, वे कॉपी के बजाय उसके बिना शुरू होते हैं | बंद |
+| `--leave` | `remove`: पहले ग्रुप के अकाउंट्स को बाहर निकालें | जब ग्रुप में अकाउंट हों तो ज़रूरी |
+| `--prefer <group\|mine\|merge>` | टकराव कैसे तय हों | पूछें; `--yes` के साथ, हर फ़ाइल का डिफ़ॉल्ट |
 | `-y`, `--yes` | बिना पूछे चलाएँ; टकराव `--prefer` के अनुसार तय होते हैं | बंद |
-| `-h`, `--help` | `share` की help | |
-| `--dry-run` (ग्लोबल) | माना जाता है: टकराव के बारे में पूछता है, योजना प्रिंट करता है, कुछ नहीं बदलता | बंद |
+| `--dry-run` (ग्लोबल) | योजना प्रिंट करें, कुछ न बदलें | बंद |
 
-मान `on` का मतलब `default` ग्रुप है, `off` का मतलब local (साझा नहीं), और कोई भी दूसरा मान ग्रुप का नाम है। ग्रुप के नाम `~/.local/share/ccam/groups/` के नीचे फ़ोल्डर के नाम बनते हैं, इसलिए `ccam share side --history ../x`, `invalid group name: "../x"` के साथ विफल होता है। अकाउंट नाम या नंबर से दिया जाता है, और केवल वही आइटम बदलते हैं जिनका आप नाम देते हैं।
+अकाउंट नाम या नंबर से दिए जाते हैं; आइटम कॉमा से अलग की गई सूची के रूप में। `ccam add`, `--group <group>` (कई बार दिया जा सकता है) या `--no-group` लेता है।
 
 ## यह कैसे काम करता है
 
 शामिल फ़ाइलें:
 
-- `~/.config/ccam/config.toml`: हर अकाउंट की `[profile.share]` table, हर आइटम के लिए एक मान।
+- `~/.config/ccam/config.toml`: `[[group]]` entries: `name`, `items`, `members` और, जब फ़ोल्डर का नाम अलग हो, `dir`।
 - `~/.local/share/ccam/profiles/<name>/`: अकाउंट का `CLAUDE_CONFIG_DIR`।
-- `~/.local/share/ccam/groups/<group>/`: साझा कॉपियाँ।
+- `~/.local/share/ccam/groups/<folder>/`: साझा कॉपियाँ।
 
-1. `internal/cli/share.go` config पढ़ता है, `config.Share.Set` से हर `--<item>` मान को अकाउंट की सेटिंग्स की एक कॉपी पर लागू करता है, और अकाउंट चल रहा हो तो मना कर देता है।
-2. `share.Build` मौजूदा सेटिंग्स की तुलना लक्ष्य से करता है और चरणों की सूची बनाता है। यह डिस्क को केवल पढ़ता है: `share.Layout` के हर पाथ के लिए `os.Lstat` और `os.Readlink`। योजना operations की एक सूची है: ग्रुप की ख़ाली जगह में move करना (adopt), वे फ़ाइलें move करना जो ग्रुप में नहीं हैं (merge dir), हल किए गए टकराव को ग्रुप में लिखना, बैकअप लेना, unlink करना, link करना, वापस कॉपी करना, plugin पाथ फिर से लिखना और plugin registry merge करना।
-3. टकराव prompt से या `--prefer` से तय होते हैं।
-4. `Plan.Describe` योजना प्रिंट करता है, और ccam पूछता है।
-5. कुछ भी move होने से पहले लक्ष्य सेटिंग्स `config.toml` में लिखी जाती हैं। अगर `Plan.Apply` बीच में रुक जाए, तो `ccam doctor --fix` और दोबारा चलाना अपनी योजना सेव किए गए लक्ष्य की ओर बनाते हैं और बदलाव पूरा करते हैं।
-6. `Plan.Apply` चरणों को क्रम से चलाता है। हर चरण डेटा को ग्रुप में या बैकअप फ़ोल्डर में move करता है; कुछ भी मिटाया नहीं जाता।
+जब `config.toml` पढ़ा जाता है, तो हर अकाउंट के ग्रुप्स को हर आइटम के लिए एक फ़ोल्डर में बदल दिया जाता है। पाँच अकाउंट्स के लिए इसमें लगभग 25 µs लगते हैं, इसलिए launch अब भी केवल `config.toml` पढ़ता है। ऐसा config जिसमें किसी अकाउंट को एक आइटम दो ग्रुप्स से मिलता, त्रुटि है, और उसके ठीक होने तक कुछ भी शुरू नहीं होता।
 
-`share.Layout` उन पाथ की अनुमत सूची है जिन्हें हर आइटम कवर करता है। जो इस सूची में नहीं है, वह कभी किसी ग्रुप तक नहीं पहुँच सकता। `share.Never` में `.credentials.json` और `.claude.json` के नाम हैं, और अगर इनमें से कोई कभी लेआउट में दिखे तो `Build` एक आंतरिक त्रुटि के साथ रुक जाता है। `mcp` आइटम का कोई पाथ नहीं है: सर्वर सूची `.claude.json` के अंदर रहती है, इसलिए [MCP साझा करना](/features/mcp) इसके बजाय ग्रुप की `mcp.json` से काम करता है, और `--mcp` केवल सेटिंग बदलता है।
+बदलाव config की एक कॉपी पर काम करता है:
 
-जब `side` इतिहास चालू करता है और ग्रुप में पहले से सामग्री है, तो एक फ़ोल्डर `projects/` के साथ यह होता है:
+1. कमांड कॉपी को बदलती है (`AddGroup`, `SetGroupItems`, `JoinGroup` …), जो नियम जाँचता है।
+2. `internal/group` पुराने और नए की तुलना करता है और हर उस अकाउंट के लिए जिसके आइटम बदलते हैं, `share.Build` से एक योजना बनाता है। योजनाएँ एक के बाद एक बनती हैं, और हर योजना देखती है कि पहले वाली योजनाएँ ग्रुप फ़ोल्डरों में क्या रखेंगी, इसलिए केवल पहला अकाउंट अपनी कॉपी अंदर move करता है। पहली कॉपी ग्रुप फ़ोल्डर से आती है, अगर उसमें पहले से कोई हो, फिर `--from` से, फिर डिफ़ॉल्ट अकाउंट से, फिर बाक़ी से नंबर के क्रम में।
+3. अगर इनमें से कोई अकाउंट चल रहा हो, तो ccam मना कर देता है, और Developer Mode के बिना Windows पर भी, अगर किसी फ़ाइल को लिंक की ज़रूरत हो।
+4. टकराव prompt से या `--prefer` से तय होते हैं, योजना प्रिंट होती है, और ccam पूछता है।
+5. कुछ भी move होने से पहले नया config सेव होता है। अगर कोई चरण बीच में रुक जाए, तो `ccam doctor --fix` और दोबारा चलाना अपनी योजना सेव किए गए ग्रुप्स की ओर बनाते हैं और बदलाव पूरा करते हैं।
+6. योजनाएँ क्रम से चलती हैं। हर चरण डेटा को ग्रुप में या बैकअप फ़ोल्डर में move करता है; कुछ भी मिटाया नहीं जाता।
+
+`share.Layout` उन पाथ की अनुमत सूची है जिन्हें हर आइटम कवर करता है। जो इस सूची में नहीं है, वह कभी किसी ग्रुप तक नहीं पहुँच सकता। `share.Never` में `.credentials.json` और `.claude.json` के नाम हैं, और अगर इनमें से कोई कभी लेआउट में दिखे तो `Build` एक आंतरिक त्रुटि के साथ रुक जाता है। `mcp` आइटम का कोई पाथ नहीं है: सर्वर सूची `.claude.json` के अंदर रहती है, इसलिए [MCP साझा करना](/features/mcp) ग्रुप की `mcp.json` से काम करता है।
+
+जब `side` इतिहास साझा करना शुरू करता है और ग्रुप में पहले से सामग्री है, तो एक फ़ोल्डर `projects/` के साथ यह होता है:
 
 <!-- motion:share-on -->
 
-अगर ग्रुप के पास उस पाथ पर अभी कुछ नहीं है, तो यह अकाउंट उसे साझा करने वाला पहला है और उसका फ़ोल्डर बिना बैकअप के, जैसा है वैसा वहाँ move हो जाता है। वरना `mergeDir` हर वह फ़ाइल ग्रुप में move करता है जो ग्रुप में नहीं है, और दोनों तरफ़ मौजूद फ़ाइलें अकाउंट के फ़ोल्डर में रहती हैं, इसलिए ग्रुप का वर्ज़न रखा जाता है। फिर अकाउंट का फ़ोल्डर अकाउंट फ़ोल्डर के अंदर `.ccam-backup/<time>/` में जाता है, और `os.Symlink` उसकी जगह एक लिंक लगाता है। बातचीत की फ़ाइलों के नाम उनके session ID पर होते हैं, इसलिए कई अकाउंट्स के इतिहास बिना टकराव के एक साथ जुड़ जाते हैं।
+अगर ग्रुप के पास उस पाथ पर अभी कुछ नहीं है, तो यह अकाउंट उसे साझा करने वाला पहला है और उसका फ़ोल्डर जैसा है वैसा वहाँ move हो जाता है। वरना हर वह फ़ाइल जो ग्रुप में नहीं है, ग्रुप में move होती है, और दोनों तरफ़ मौजूद फ़ाइलें अकाउंट के फ़ोल्डर में रहती हैं, इसलिए ग्रुप का वर्ज़न रखा जाता है। फिर अकाउंट का फ़ोल्डर अकाउंट फ़ोल्डर के अंदर `.ccam-backup/<time>/` में जाता है, और उसकी जगह एक लिंक लग जाता है। बातचीत की फ़ाइलों के नाम उनके session ID पर होते हैं, इसलिए कई अकाउंट्स के इतिहास बिना टकराव के एक साथ जुड़ जाते हैं। `plugins/` की registries अकाउंट फ़ोल्डर से होकर जाने वाले absolute पाथ सेव करती हैं; ccam उन्हें ग्रुप के फ़ोल्डर की ओर मोड़ता है और अकाउंट की entries को उस registry में merge करता है जो ग्रुप के पास पहले से है।
 
-Move करने के लिए `rename(2)` इस्तेमाल होता है, और अलग file systems के बीच यह कॉपी करके मिटाने पर लौट आता है। Move किए गए ट्री के अंदर का ऐसा relative link जो उसके बाहर इशारा करता था, absolute link के रूप में फिर से लिखा जाता है (`fsutil.PortableLink`), ताकि वह नई जगह से भी सही जगह पहुँचे। `plugins/` की registries (`installed_plugins.json`, `known_marketplaces.json`) अकाउंट फ़ोल्डर से होकर जाने वाले absolute पाथ सेव करती हैं; ccam उन्हें ग्रुप के फ़ोल्डर की ओर मोड़ता है, और जब ग्रुप के पास पहले से registry हो, तो अकाउंट की entries उसमें merge करता है।
-
-किसी आइटम को बंद करना लिंक को उलट देता है:
+ग्रुप छोड़ना लिंक को उलट देता है:
 
 <!-- motion:share-off -->
 
-ccam लिंक तभी हटाता है जब वह groups फ़ोल्डर के अंदर इशारा करता हो, फिर `CopyTree` से ग्रुप की मौजूदा सामग्री अकाउंट में कॉपी करता है। `--fresh` के साथ कॉपी छोड़ दी जाती है और अकाउंट उस पाथ पर कुछ नहीं के साथ शुरू होता है। ग्रुप अपनी सामग्री दूसरे अकाउंट्स के लिए रखे रहता है। किसी आइटम को एक ग्रुप से दूसरे में ले जाना उसे unlink करके नए ग्रुप से link करता है, और पुराने ग्रुप को जैसा है वैसा छोड़ देता है; योजना यह एक `Note:` पंक्ति में बताती है।
+ccam लिंक तभी हटाता है जब वह groups फ़ोल्डर के अंदर इशारा करता हो, फिर ग्रुप की मौजूदा सामग्री अकाउंट में कॉपी करता है। `--fresh` के साथ कॉपी छोड़ दी जाती है। ग्रुप अपनी सामग्री दूसरे अकाउंट्स के लिए रखे रहता है। जो अकाउंट किसी आइटम को ऐसे ग्रुप में ले जाता है जिसका फ़ोल्डर अभी ख़ाली है, वह जो देख रहा था उसकी एक कॉपी साथ लाता है, इसलिए उसकी फ़ाइलें बनी रहती हैं; MCP सर्वर भी इसी तरह साथ आते हैं। जो अकाउंट MCP साझा करना बंद करता है, वह उन सर्वरों को खो देता है जिन्हें ccam ने उसकी `.claude.json` में कॉपी किया था (एक बैकअप रखा जाता है), क्योंकि वे ग्रुप से आए थे।
 
 दोनों तरफ़ अलग सामग्री के साथ मौजूद एक अकेली फ़ाइल टकराव है:
 
 <!-- motion:share-conflict -->
 
-`share.NewConflict` फ़ाइल के लिए उपयुक्त विकल्पों की सूची देता है। `history.jsonl` पर `merge by line`, `keep group` और `use mine` मिलते हैं, merge पहले। दूसरी `.json` फ़ाइलों पर `keep group`, `use mine` और `merge JSON` मिलते हैं। बाकी सब पर `keep group` और `use mine`। पहला विकल्प डिफ़ॉल्ट है:
+`history.jsonl` पर `merge by line`, `keep group` और `use mine` मिलते हैं, merge पहले। दूसरी `.json` फ़ाइलों पर `keep group`, `use mine` और `merge JSON` मिलते हैं। बाकी सब पर `keep group` और `use mine`। `merge JSON` ऑब्जेक्ट को recursively merge करता है, arrays को बिना दोहराव के जोड़ता है, और जब दोनों तरफ़ एक ही key अलग मान पर सेट हो तो ग्रुप का मान रखता है, ताकि दूसरे अकाउंट्स को कोई बदलाव न दिखे। `keep group` को छोड़कर हर विकल्प पहले ग्रुप की कॉपी अकाउंट के `.ccam-backup/<time>/group/` में सेव करता है। आपकी अपनी फ़ाइल हमेशा बैकअप में जाती है।
 
-```console
-history.jsonl differs from the group's copy.
-  mine:  ~/.local/share/ccam/profiles/side/history.jsonl
-  group: ~/.local/share/ccam/groups/default/history.jsonl
-  1) merge by line
-  2) keep group
-  3) use mine
-Choice [1]:
-```
+हर बार शुरू होने पर, `share.Check` लेआउट के हर पाथ की तुलना अकाउंट के ग्रुप्स से केवल `lstat` और `readlink` से करता है। गायब लिंक तुरंत बना दिया जाता है। लिंक की जगह असली फ़ाइल, ग़लत जगह का लिंक, या पुराना लिंक शुरू करना रोक देता है और `ccam doctor --fix` की ओर इशारा करता है।
 
-`merge JSON` (`MergeJSONBytes`) ऑब्जेक्ट को recursively merge करता है, arrays को बिना दोहराव के जोड़ता है, और जब दोनों तरफ़ एक ही key अलग मान पर सेट हो तो ग्रुप का मान रखता है, ताकि दूसरे अकाउंट्स को व्यवहार में कोई बदलाव न दिखे। `merge by line` ग्रुप की पंक्तियाँ रखता है, फिर आपकी वे पंक्तियाँ जोड़ता है जो उसमें नहीं हैं। `keep group` को छोड़कर हर विकल्प पहले ग्रुप की कॉपी अकाउंट फ़ोल्डर के `.ccam-backup/<time>/group/` में सेव करता है, फिर नतीजा `fsutil.AtomicWrite` से लिखता है। आपकी अपनी फ़ाइल हमेशा बैकअप में जाती है।
+### नाम बदलना, हटाना और पुराना फ़ॉर्मैट
 
-`--prefer group`, `mine` या `merge` हर टकराव बिना पूछे तय करता है; `merge` का मतलब `merge JSON` या `merge by line` है, जो भी फ़ाइल पर उपलब्ध हो, और जिस फ़ाइल पर दोनों में से कोई नहीं है वह डिफ़ॉल्ट रखती है। अकेला `--yes` हर फ़ाइल का डिफ़ॉल्ट लेता है।
-
-हर बार शुरू होने पर, `share.Check` लेआउट के हर पाथ की तुलना सेटिंग से केवल `lstat` और `readlink` से करता है, जिससे यह शुरू करने के रास्ते के लिए काफ़ी हल्का रहता है। गायब लिंक तुरंत बना दिया जाता है, क्योंकि उसमें खोने को कुछ नहीं है। लिंक की जगह असली फ़ाइल, ग़लत जगह का लिंक, या पुराना लिंक शुरू करना रोक देता है:
-
-```console
-ccam: stopped because of share link problems:
-  ~/.local/share/ccam/profiles/work/CLAUDE.md: set to shared but is a real file, not a link
-Repair them with `ccam doctor --fix`, then run again
-```
-
-`ccam doctor --fix` दोनों तरफ़ सेव की गई सेटिंग्स के साथ `share.Build` चलाता है, जो हर चरण डिस्क पर मौजूद चीज़ों से तय करता है, टकराव में ग्रुप की सामग्री रखता है और जो कुछ बदलता है उसका बैकअप लेता है।
+- `ccam group rename` केवल config बदलता है। फ़ोल्डर का नाम वही रहता है और ग्रुप उसे `dir` के रूप में दर्ज करता है, इसलिए कुछ भी move नहीं होता और कुछ भी खो नहीं सकता।
+- `ccam group remove` अकाउंट वाले ग्रुप को तब तक हटाने से मना करता है जब तक आप `--leave` न जोड़ें। तब हर अकाउंट के पास एक कॉपी रहती है, और फ़ोल्डर `~/.local/share/ccam/trash/` में जाता है, जब तक कोई दूसरा ग्रुप उसे इस्तेमाल न करता हो।
+- ग्रुप्स से पहले, `config.toml` हर अकाउंट के लिए एक `[profile.share]` table सेव करता था। ccam उस फ़ॉर्मैट को कुछ भी move किए बिना ग्रुप्स के रूप में पढ़ता है। पहली बार सेव करने पर यह नया फ़ॉर्मैट लिखता है और पुरानी फ़ाइल को `config.toml.bak` के रूप में रखता है। एक ही अकाउंट्स द्वारा साझा किए गए आइटम एक ग्रुप बन जाते हैं जिसका नाम फ़ोल्डर पर होता है; बाक़ी को `default-history` जैसे नाम मिलते हैं और वे वही फ़ोल्डर इस्तेमाल करते रहते हैं।
 
 ### Windows पर
 
-Windows symbolic links केवल Developer Mode (Settings > System > For developers) में या किसी administrator के लिए बनाता है। `fsutil.Link` पहले symbolic link आज़माता है। यह अधिकार न होने पर, साझा फ़ोल्डर (`agents`, `skills`, `projects` और बाक़ी) एक directory junction बन जाता है, जिसे कोई भी user बना सकता है, और यह Claude Code के लिए वैसे ही काम करता है। साझा फ़ाइल (`settings.json`, `CLAUDE.md`, `history.jsonl`) केवल symbolic link ही हो सकती है, इसलिए ccam `Windows links files only in Developer Mode` के साथ रुक जाता है और उसे चालू करने या उस आइटम को local रखने का सुझाव देता है। `share.Check` junctions को लिंक के रूप में पढ़ता है (`fsutil.LinkTarget`), और किसी अकाउंट फ़ोल्डर को हटाने से junction ख़ुद हटता है, वह ग्रुप सामग्री कभी नहीं जिसकी ओर वह इशारा करता है।
+Windows symbolic links केवल Developer Mode (Settings > System > For developers) में या किसी administrator के लिए बनाता है। यह अधिकार न होने पर, साझा फ़ोल्डर एक directory junction बन जाता है, जो Claude Code के लिए वैसे ही काम करता है। साझा फ़ाइल (`settings.json`, `CLAUDE.md`, `history.jsonl`) केवल symbolic link ही हो सकती है, इसलिए जिस ग्रुप बदलाव को इसकी ज़रूरत हो, उसे कुछ भी move होने से पहले मना कर दिया जाता है।
 
 ## सुरक्षा और विशेष स्थितियाँ
 
-- **चल रहे अकाउंट।** जब Claude Code उस अकाउंट के रूप में चल रहा हो, तो ccam साझा करना बदलने से मना करता है (`account work is running; quit it first, then change its sharing`), क्योंकि session move हो रही फ़ाइलों में लिखता रहता है और इस बीच जोड़ी गई पंक्तियाँ खो जातीं। `--dry-run` फिर भी योजना प्रिंट करता है।
-- **बैकअप।** हर योजना को अकाउंट फ़ोल्डर में अपना `.ccam-backup/<time>/` फ़ोल्डर मिलता है, और जब दो योजनाएँ एक ही सेकंड में शुरू हों तो नंबर वाला suffix जुड़ता है। ccam इन्हें कभी नहीं मिटाता।
-- **आंशिक विफलता।** अगर कोई चरण विफल हो, तो ccam त्रुटि और मूल फ़ाइलों की जगह प्रिंट करता है, और `ccam doctor --fix` से काम पूरा करने को कहता है। लक्ष्य पहले से सेव है, इसलिए मरम्मत उसी की ओर आगे बढ़ती है।
+- **चल रहे अकाउंट।** जब Claude Code उन अकाउंट्स में से किसी के रूप में चल रहा हो जिन्हें बदलाव move करता है, तो बदलाव मना कर दिया जाता है, क्योंकि session उन फ़ाइलों में लिखता रहता है। छोड़ना और शामिल होना केवल नाम दिए गए अकाउंट से जुड़े हैं। `--dry-run` फिर भी योजना प्रिंट करता है।
+- **बैकअप।** हर योजना को अकाउंट फ़ोल्डर में अपना `.ccam-backup/<time>/` फ़ोल्डर मिलता है। ccam इन्हें कभी नहीं मिटाता।
 - **आपके अपने लिंक।** अगर कोई पाथ पहले से आपका बनाया लिंक है, उदाहरण के लिए किसी dotfiles repository का, और ग्रुप ख़ाली है, तो ccam लिंक के target को ग्रुप में कॉपी करता है और लिंक को ख़ुद बैकअप में move करता है। Target को छुआ नहीं जाता।
-- **लॉगिन फ़ाइलें।** `.credentials.json` और `.claude.json` कभी किसी ग्रुप में link, move या copy नहीं होतीं।
-- **एक फ़ोल्डर में दो अकाउंट।** इतिहास साझा करने वाले अकाउंट एक ही फ़ाइलों में लिखते हैं। जब उसी इतिहास ग्रुप का दूसरा अकाउंट ऐसे फ़ोल्डर में शुरू होता है जहाँ एक पहले से चल रहा है, तो ccam चेतावनी देता है और आगे बढ़ने से पहले पूछता है।
+- **Import किए गए फ़ोल्डर।** `ccam import` से अपनी जगह पर रजिस्टर किया गया अकाउंट (जैसे `~/.claude`) अपनी जगह पर ही बदलता है, इसलिए सादा `claude` भी बदलाव देखता है; योजना यह बताती है।
+- **एक फ़ोल्डर में दो अकाउंट।** इतिहास साझा करने वाले अकाउंट एक ही फ़ाइलों में लिखते हैं। जब दूसरा अकाउंट ऐसे फ़ोल्डर में शुरू होता है जहाँ एक पहले से चल रहा है, तो ccam चेतावनी देता है और पूछता है।
+- **हाथ से किए बदलाव।** ऐसा सदस्य जो अकाउंट नहीं है, अनदेखा किया जाता है और `ccam doctor` उसकी सूचना देता है। `local`, `on`, `off` और `none` ग्रुप के नाम नहीं हो सकते।
 
 ## संबंधित
 
+- [डैशबोर्ड](/features/dashboard)
 - [MCP सर्वर, सेटिंग्स और इतिहास साझा करें](/docs/sharing)
 - [साझा MCP सर्वर](/features/mcp)
 - [मौजूदा सेटअप कॉपी करना](/features/migrate)

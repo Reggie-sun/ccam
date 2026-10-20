@@ -4,7 +4,7 @@ description: Dodawaj, loguj, wyświetlaj, zmieniaj nazwy, usuwaj i importuj kont
 updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 9eb992214132
+sourceHash: "8564517d0d71"
 ---
 
 Każde konto ccam to osobny folder konfiguracji Claude Code z własnym loginem. Te polecenia tworzą konta, logują do nich, wyświetlają je, zmieniają ich nazwy i je usuwają, a także rejestrują foldery, które już masz.
@@ -12,10 +12,11 @@ Każde konto ccam to osobny folder konfiguracji Claude Code z własnym loginem. 
 ## Użycie
 
 ```sh
-ccam add                                   # wizard on a terminal: name, shared items, shortcut, login
+ccam add                                   # wizard on a terminal: name, sign-in, groups, shortcut
 ccam add work --shortcut ccwork            # no wizard: log in, then create the ccwork command
-ccam add side --no-login --share history=team
+ccam add side --no-login --group default --group team
 ccam login side                            # run claude auth login inside the account
+ccam login --expired                       # every account never logged in, or whose login expired
 ccam logout side                           # remove the login token
 ccam list                                  # table of accounts; ccam ls is the same
 ccam list --json                           # machine-readable
@@ -29,25 +30,28 @@ ccam completion zsh > "${fpath[1]}/_ccam"
 
 Gdy polecenie przyjmuje `<name|number>`, możesz podać nazwę konta albo jego numer slotu, czyli kolumnę `#` w wyniku `ccam list`.
 
-`ccam add` uruchomione w terminalu bez opcji otwiera kreator. Pyta o nazwę, potem pokazuje listę współdzielonych elementów do zaznaczenia (zaznaczone jest wszystko oprócz historii rozmów), następnie pyta `Create a shortcut command for work? [y/N]`, a po odpowiedzi `y` także `Shortcut name [ccwork]:`. Każda z opcji `--share`, `--shortcut` lub `--no-login`, albo potok zamiast terminala, pomija kreator; wtedy nazwa jest wymagana, a skrót powstaje tylko wtedy, gdy podasz go w `--shortcut`.
+`ccam add` uruchomione w terminalu bez opcji otwiera kreator. Pyta o nazwę i sposób logowania konta (login Claude teraz, klucz API albo login Claude później), potem pokazuje grupy do dołączenia z zaznaczonym `default` (zanim powstaną jakiekolwiek grupy: elementy, które będzie współdzielić grupa `default`), następnie pyta `Create a shortcut command for work? [y/N]` i kończy podsumowaniem do potwierdzenia. `Esc` cofa o krok. Każda z opcji `--group`, `--no-group`, `--shortcut` lub `--no-login`, albo potok zamiast terminala, pomija kreator; wtedy nazwa jest wymagana, a skrót powstaje tylko wtedy, gdy podasz go w `--shortcut`.
 
-`ccam list` pokazuje slot, nazwę, skrót, adres e-mail, współdzielone elementy i ostatnie użycie, z `*` przed domyślnym kontem:
+Bez `--group` nowe konto dołącza do grupy `default`. Pierwsze konto ją tworzy, a grupa współdzieli serwery MCP, ustawienia, `CLAUDE.md` i rozszerzenia; zobacz [współdzielenie przez grupy](/features/share).
+
+`ccam list` pokazuje slot, nazwę, skrót, adres e-mail, grupy i ostatnie użycie, z `*` przed domyślnym kontem:
 
 ```console
 $ ccam list
-   #  Name      Shortcut  Email             Shared                        Last used
-*  1  work      ccwork    user@example.com  mcp settings md ext           -
-   2  personal  -         me@side.dev       settings md ext history@team  -
+   #  Name      Shortcut  Email             Groups        Last used
+*  1  work      ccwork    user@example.com  default team  -
+   2  personal  -         me@side.dev       default       -
 ```
 
-Z `--json` każde konto jest obiektem z polami `slot`, `shortcut`, `name`, `email`, `default`, `dir`, `last_used` (pomijanym, gdy konto nigdy nie było uruchomione) i `share`. `share` przypisuje każdy element (`mcp`, `settings`, `memory`, `extensions`, `history`) do nazwy jego grupy albo do `"local"`.
+Z `--json` każde konto jest obiektem z polami `slot`, `shortcut`, `name`, `email`, `default`, `dir`, `last_used` (pomijanym, gdy konto nigdy nie było uruchomione), `groups` i `share`. `share` przypisuje każdy element (`mcp`, `settings`, `memory`, `extensions`, `history`) do grupy, z której pochodzi, albo do `"local"`.
 
 ## Opcje
 
 | Opcja | Działanie | Domyślnie |
 | --- | --- | --- |
 | `ccam add --no-login` | Tworzy konto bez logowania; zalogujesz się później przez `ccam login <name>` | wyłączone |
-| `ccam add --share <item=group>` | Współdzieli element z grupą albo, z `item=local`, zostawia go prywatnym. Można powtarzać | `mcp`, `settings`, `memory`, `extensions` w `default`; `history` lokalnie |
+| `ccam add --group <group>` | Dołącza do tej grupy zamiast do `default`. Można powtarzać; `default` powstaje, gdy jeszcze nie istnieje | `default` |
+| `ccam add --no-group` | Nie dołącza do żadnej grupy: konto niczego nie współdzieli | wyłączone |
 | `ccam add --shortcut <command>` | Tworzy też to polecenie skrótu w `~/.local/bin` | brak |
 | `ccam add --api --key-from <source>` | Konto, które zamiast loginu używa klucza API; zobacz [Konta z kluczem API](/features/api) | wyłączone |
 | `ccam list --json` | Wypisuje konta jako JSON | wyłączone |
@@ -58,7 +62,7 @@ Z `--json` każde konto jest obiektem z polami `slot`, `shortcut`, `name`, `emai
 
 `ccam login`, `ccam logout`, `ccam use` i `ccam rename` nie mają własnych opcji. `ccam completion` przyjmuje `bash`, `zsh` lub `powershell`; wszystko inne kończy się błędem `only bash, zsh and powershell are supported`.
 
-Nazwy kont mają od 1 do 32 znaków spośród `a-z`, `0-9`, `-` i `_` i zaczynają się literą lub cyfrą. Nazwa nie może składać się z samych cyfr, bo `ccam 2` oznacza slot 2. Nie może też być poleceniem ccam (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`, `folder`, `pick`, `ext`), więc `ccam <name>` nigdy nie jest niejednoznaczne. Ta lista to `config.Reserved` w `internal/config`.
+Nazwy kont mają od 1 do 32 znaków spośród `a-z`, `0-9`, `-` i `_` i zaczynają się literą lub cyfrą. Nazwa nie może składać się z samych cyfr, bo `ccam 2` oznacza slot 2. Nie może też być poleceniem ccam (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`, `folder`, `pick`, `ext`, `group`, `groups`), więc `ccam <name>` nigdy nie jest niejednoznaczne. Ta lista to `config.Reserved` w `internal/config`.
 
 ## Jak to działa
 
@@ -68,15 +72,19 @@ Nazwy kont mają od 1 do 32 znaków spośród `a-z`, `0-9`, `-` i `_` i zaczynaj
 
 1. `config.ValidateName` sprawdza nazwę, a `shim.Check` sprawdza skrót, zanim cokolwiek zostanie utworzone.
 2. `profile.Add` tworzy `~/.local/share/ccam/profiles/work/` z uprawnieniami `0700` i nadaje kontu najniższy wolny numer slotu (`Config.NextSlot`), więc numer usuniętego konta jest używany ponownie. Pierwsze konto staje się domyślnym.
-3. `applyShare` linkuje nowy, pusty folder do jego grup współdzielenia przez `share.Build`, a potem `Apply`, na przykład `settings.json` do `groups/default/settings.json`. Jeśli to się nie uda, nowy folder jest usuwany, bo pozostawiony folder blokowałby każdą kolejną próbę błędem `folder already exists`.
+3. Konto dołącza do swoich grup (`default`, chyba że `--group` lub `--no-group` mówi inaczej; pierwsze konto tworzy `default`), a `applyShare` linkuje do nich nowy, pusty folder przez `share.Build`, a potem `Apply`, na przykład `settings.json` do `groups/default/settings.json`. Jeśli to się nie uda, nowy folder jest usuwany, bo pozostawiony folder blokowałby każdą kolejną próbę błędem `folder already exists`.
 4. Konto jest zapisywane w `~/.config/ccam/config.toml` przez `fsutil.AtomicWrite`: plik tymczasowy, `fsync`, potem `rename`, więc awaria nigdy nie zostawia połowy konfiguracji.
-5. `runLogin` uruchamia `claude auth login` z `CLAUDE_CONFIG_DIR` ustawionym na folder konta. Jeśli logowanie się nie powiedzie, konto zostaje, a ccam wypisuje błąd i każe później uruchomić `ccam login work`.
-6. `profile.ReadEmail` odczytuje `oauthAccount.emailAddress` z `profiles/work/.claude.json`. Ten plik może mieć kilka megabajtów, więc `TopLevelValue` wyszukuje jeden klucz zamiast parsować cały plik.
+5. `runLogin` uruchamia `claude auth login` z `CLAUDE_CONFIG_DIR` ustawionym na folder konta oraz z `--email` z ostatnim adresem e-mail konta, żeby strona logowania była już wypełniona. Jeśli logowanie się nie powiedzie, konto zostaje, a ccam wypisuje błąd i każe później uruchomić `ccam login work`.
+6. `profile.ReadIdentity` odczytuje `oauthAccount` z `profiles/work/.claude.json`: adres e-mail, identyfikatory konta i organizacji, nazwę organizacji i plan (`claude_max`, `claude_team` …). Ten plik może mieć kilka megabajtów, więc `TopLevelValue` wyszukuje jeden klucz zamiast parsować cały plik. ccam przechowuje te dane w `[profile.login]` w `config.toml`.
 7. `shim.Install` linkuje `~/.local/bin/ccwork` do pliku binarnego ccam, który przy starcie szuka `argv[0]` w `config.toml`.
 
 Logowanie może trwać minuty, a w tym czasie inny ccam może zapisać konfigurację. Dlatego polecenia, które czekają, zapisują przez `env.update`, które ponownie wczytuje `config.toml`, stosuje jedną zmianę (tutaj adres e-mail) i zapisuje. Z tego samego powodu `ccam remove` wczytuje konfigurację ponownie po pytaniu.
 
-`ccam login` wykonuje kroki 5 i 6 dla istniejącego konta. `ccam logout` uruchamia `claude auth logout` na koncie i czyści zapisany adres e-mail. `ccam use` zmienia tylko `default` w `config.toml`.
+`ccam login` wykonuje kroki 5 i 6 dla istniejącego konta. Claude Code traktuje adres e-mail tylko jako podpowiedź dla strony logowania, więc login może trafić na inne konto Claude niż to, którym było konto ccam; ccam porównuje nowy login z `[profile.login]` i o tym mówi (`ccam: this login is other@company.com, but work was dev@company.com before.`). Zachowuje nowy login i podpowiada, jak to cofnąć: `ccam logout work`, potem `ccam login work` i zalogowanie się właściwym adresem e-mail. Gdy inne konto ccam jest zalogowane na to samo konto Claude, ccam ostrzega, że oba dzielą limity użycia. `ccam login --expired` loguje, jedno po drugim, każde konto, które nigdy nie było zalogowane albo którego login (jego token odświeżania) wygasł.
+
+`ccam logout` uruchamia `claude auth logout` na koncie i czyści zapisany adres e-mail; zapis logowania zostaje, więc następny login jest z nim porównywany. `ccam use` zmienia tylko `default` w `config.toml`.
+
+`ccam list` dodaje kolumnę `Organization`, gdy konta należą do więcej niż jednej organizacji (plany prywatne pokazują `personal`), a `ccam list --json` ma `plan` i `org` dla każdego konta.
 
 ### Logowanie na zdalnej maszynie
 
@@ -106,7 +114,7 @@ Gdy logowanie czeka na dane w terminalu, ccam wyłącza echo i tryb liniowy term
 
 `ccam rename` zmienia nazwę folderu, przepisuje ścieżki wtyczek w jego `plugins/` ze starego folderu na nowy, przenosi status domyślnego konta i przenosi ścieżki `nameState` pod nową nazwę. Polecenie skrótu zachowuje swoją nazwę. Jeśli przepisanie ścieżek wtyczek się nie powiedzie, folder wraca do starej nazwy, bo konfiguracja nie zostaje zapisana.
 
-`ccam import` rejestruje folder tam, gdzie jest, jako `dir` w `config.toml`. Nigdy go nie przenosi ani nie kopiuje: skopiowany token odświeżania sprawiłby, że kopie nawzajem by się wylogowywały. Bez argumentu z folderem szuka niezarejestrowanych folderów `~/.claude` i `~/.claude-*` i pyta o każdy; nazwy pochodzą od folderu (`~/.claude` to `main`, `~/.claude-work` to `work`, `~/.claude-2` to `acct2`), a folder, z którego nie da się wyprowadzić nazwy, jest wypisywany razem z poleceniem `--name` do użycia. Bez `CLAUDE_CONFIG_DIR` Claude Code trzyma `.claude.json` w folderze domowym obok `~/.claude`, więc gdy importujesz `~/.claude`, a nie ma on własnego `.claude.json`, ccam tworzy link `~/.claude/.claude.json` do `~/.claude.json`. Zwykłe `claude` i `ccam main` widzą wtedy to samo konto. Zaimportowane konta niczego nie współdzielą, dopóki nie uruchomisz `ccam share`, i nie powstaje dla nich skrót.
+`ccam import` rejestruje folder tam, gdzie jest, jako `dir` w `config.toml`. Nigdy go nie przenosi ani nie kopiuje: skopiowany token odświeżania sprawiłby, że kopie nawzajem by się wylogowywały. Bez argumentu z folderem szuka niezarejestrowanych folderów `~/.claude` i `~/.claude-*` i pyta o każdy; nazwy pochodzą od folderu (`~/.claude` to `main`, `~/.claude-work` to `work`, `~/.claude-2` to `acct2`), a folder, z którego nie da się wyprowadzić nazwy, jest wypisywany razem z poleceniem `--name` do użycia. Bez `CLAUDE_CONFIG_DIR` Claude Code trzyma `.claude.json` w folderze domowym obok `~/.claude`, więc gdy importujesz `~/.claude`, a nie ma on własnego `.claude.json`, ccam tworzy link `~/.claude/.claude.json` do `~/.claude.json`. Zwykłe `claude` i `ccam main` widzą wtedy to samo konto. Zaimportowane konta nie należą do żadnej grupy, dopóki ich do niej nie dodasz (`ccam group join <group> <name>`), i nie powstaje dla nich skrót.
 
 `ccam completion bash|zsh` wypisuje skrypt uzupełniania, który uzupełnia też nazwy kont.
 

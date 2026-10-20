@@ -4,7 +4,7 @@ description: ccam usage yana nuna iyakokin awa 5 da na mako na kowane asusu a lo
 updated: 2026-10-20
 order: 7
 translation: machine
-sourceHash: 525174ceed0d
+sourceHash: "ec1d1ee27d9f"
 ---
 
 `ccam usage` yana nuna nawa kowane asusu ya yi amfani da shi daga iyakar awa 5 da ta mako, tare da lokacin da ya rage kafin kowace taga ta sake saitawa. Yi amfani da shi kafin ka fara dogon aiki, ko idan Claude Code ya gaya maka iyaka ta kusa, don ganin asusun da ke da sauran sarari. `ccam statusline` shi ne umarnin layin matsayi (status line) na Claude Code: yana nuna sunan asusun da amfaninsa a cikin Claude Code kuma yana ajiye lambobin don `ccam usage`.
@@ -20,6 +20,7 @@ ccam usage -v               # add per-model weekly limits and the data source
 ccam usage --json           # machine-readable, one object per account
 ccam usage --source cache   # saved numbers only, no network
 ccam usage --refresh        # also renew expired logins of accounts not running
+ccam usage --source claude  # let Claude Code look it up: ccam never touches a token
 ccam statusline install     # set the status line in every account's settings.json
 ```
 
@@ -32,7 +33,7 @@ $ ccam usage
 → Most headroom: personal   (open it with ccam next --auto)
 ```
 
-A terminal teburin yana bayyana nan take da `fetching…` a kowane layi, kuma ana sake zana kowane layi yayin da asusunsa ya amsa. `As of` yana faɗin tsawon lokacin da lambobin suka yi; `(cached)` yana nufin sun fito daga fayil da aka ajiye, ba daga endpoint ba. Layin ƙarshe yana ambaton asusun da ke da mafi ƙarancin amfanin awa 5 ƙasa da 100%, kuma yana bayyana ne kawai idan kana da asusu fiye da ɗaya. Asusun da ba a shiga da shi ba yana nuna `not logged in → ccam login <name>`, kuma asusun API key yana nuna `no limits (API)`.
+A terminal teburin yana bayyana nan take da `fetching…` a kowane layi, kuma ana sake zana kowane layi yayin da asusunsa ya amsa. `As of` yana faɗin tsawon lokacin da lambobin suka yi; `(cached)` yana nufin sun fito daga fayil da aka ajiye, ba daga endpoint ba. Layin ƙarshe yana ambaton asusun da [`ccam next --auto`](/features/next) zai zaɓa bisa ƙa'idodi iri ɗaya (`auto_max_usage`, `auto_strategy`, zaman da ke gudana, asusan ƙungiyar asusun da aka yi amfani da shi na ƙarshe kawai sai dai idan an saita `cross_org`, ana tsallake duk tagar da ta kai 100%, don haka asusun da makonsa ya cika ba a taɓa ambaton sa ba), kuma yana bayyana ne kawai idan kana da asusu fiye da ɗaya. Asusun da ba a shiga da shi ba yana nuna `not logged in → ccam login <name>`, kuma asusun API key yana nuna `no limits (API)`.
 
 Bayan `ccam statusline install`, Claude Code yana nuna layi kamar `[work] · Opus · 5h 24% · 7d 41%`.
 
@@ -44,11 +45,15 @@ Bayan `ccam statusline install`, Claude Code yana nuna layi kamar `[work] · Opu
 | `--watch[=N]` | Sake zanawa kowane daƙiƙa `N` har sai ka danna Ctrl+C. `--watch` shi kaɗai, ko ƙima ta 0 ko ƙasa da haka, yana nufin 60 | a kashe |
 | `-v`, `--verbose` | Nuna iyakokin mako na kowane model da layin `source:` (`live`, `cache` ko `statusline`) | a kashe |
 | `--no-cache` | Yi watsi da cache na daƙiƙa 60 kuma sake tambayar endpoint | a kashe |
-| `--source live\|cache` | `cache` ba ya taɓa tambayar endpoint kuma yana nuna lambobin da aka ajiye kawai; `live` shi ne ɗabi'ar tsoho | live |
+| `--source live\|claude\|cache` | `live` yana tambayar endpoint da token na asusun; `claude` yana sa Claude Code ya nemo shi (a ƙasa); `cache` yana nuna lambobin da aka ajiye kawai | `usage_source`, in ba haka ba `live` |
 | `--refresh` | Sabunta access tokens da suka ƙare, ga asusan da ba sa aiki kawai | a kashe |
 | `--dry-run` | Ana karɓar sa: `ccam usage` ba ya canza komai sai cache nasa. Ana ƙin sa tare da `--refresh`: `--dry-run cannot be combined with --refresh, which rewrites login tokens` | a kashe |
 
-Duk wata ƙimar `--source` dabam tana gazawa da `--source must be live or cache`. `ccam usage` ba ya karɓar arguments.
+Duk wata ƙimar `--source` dabam tana gazawa da `--source must be live, claude or cache`.
+
+### Amfani daga Claude Code kansa
+
+Da `usage_source = "claude"` a `config.toml` (ko `--source claude`), ccam ba ya karanta token na shiga ko kaɗan. Ga kowane asusu yana fara `claude -p --input-format stream-json --output-format stream-json --verbose --safe-mode --no-session-persistence` a foldar asusun kuma yana aika buƙatar `get_usage` ta Claude Code a standard input (Claude Code 2.1.270 ko sabo); Claude Code yana nemo amfanin da nasa shigar kuma yana amsawa da tagogin awa 5, na mako da na model. `--safe-mode` yana hana hooks, sabobin MCP da plugins na asusun farawa, kuma ba a ajiye zama. Kowane asusu yana ɗaukar farawar Claude Code ɗaya, kusan daƙiƙa ɗaya, don haka wannan tushe ya fi `live` jinkiri; ana tambayar asusan a lokaci ɗaya, kowanne a cikin daƙiƙa 20, kuma cache na daƙiƙa 60 yana aiki kamar yadda aka saba. Claude Code yana yi wa buƙatar alama a matsayin ta gwaji, don haka idan ta daina amsawa, ccam yana nuna lambobin da aka ajiye kuma `ccam doctor` yana bayar da rahoto. `--dry-run` ba ya fara Claude Code (yana rubutu a foldar asusun) kuma yana nuna lambobin da aka ajiye. `usage_source` yana karɓar `live` ko `claude`; `cache` zaɓi ne na `--source` kawai. `ccam usage` ba ya karɓar arguments.
 
 `ccam statusline` yana karanta JSON na layin matsayi na Claude Code daga standard input. Zaɓinsa ɗaya shi ne `--wrap <command>`: umarnin layin matsayi da ke akwai wanda layin fitarwa na farko ke samun sunan asusun a gabansa. `ccam statusline install` ba ya karɓar zaɓuɓɓuka. Duka biyun suna ƙin `--dry-run` da `` --dry-run is not supported by `ccam statusline`; nothing was changed ``.
 

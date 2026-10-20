@@ -1,10 +1,10 @@
 ---
 title: Khởi động Claude Code
-description: "Chạy Claude Code bằng tài khoản bất kỳ với ccam <name|number>, ccam run hoặc bộ chọn của ccam; đối số được chuyển nguyên vẹn cho claude, --dry-run in ra lệnh."
+description: "Chạy Claude Code bằng tài khoản bất kỳ với ccam <name|number>, ccam run hoặc bảng điều khiển; đối số được chuyển nguyên vẹn cho claude, --dry-run in ra lệnh."
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: e6b5a8d4df86
+sourceHash: "4812b197f143"
 ---
 
 `ccam work` khởi động Claude Code bằng tài khoản `work`, và mọi thứ sau tên được chuyển nguyên vẹn cho `claude`. Hãy dùng nó ở bất cứ đâu bạn vẫn gõ `claude`: trong terminal, trong script, hoặc khi có đầu vào được pipe vào.
@@ -21,7 +21,7 @@ ccam -p "summarise"              # no name: the folder's account, else the defau
 ccam use work                    # make work the default account
 ccam folder work ~/code/company  # use work in that folder when no name is given
 ccam run work --continue         # same as ccam work --continue
-ccam                             # the picker on a terminal, the list otherwise
+ccam                             # the dashboard on a terminal, the list otherwise
 ccam --dry-run work -p hi        # print the command instead of running it
 ccam --fallback work -p "fix the tests"   # run again as another account at the limit
 ```
@@ -30,22 +30,13 @@ Hãy đưa tên của một tài khoản hoặc số của nó trong `ccam list`
 
 Khi đối số đầu tiên bắt đầu bằng `-` và không phải một cờ của chính ccam, ccam khởi động một tài khoản không cần tên, với tất cả các đối số. Đó là tài khoản được đặt cho thư mục hiện tại bằng [`ccam folder`](/features/folder), nếu không thì là tài khoản mặc định: tài khoản được đặt bằng `ccam use`, hoặc tài khoản có số thấp nhất nếu bạn chưa đặt.
 
-### Bộ chọn
+### Bảng điều khiển
 
-`ccam` không kèm đối số sẽ mở bộ chọn khi đầu vào và đầu ra chuẩn là terminal, và in ra `ccam list` trong các trường hợp khác. Bộ chọn hiển thị số, email, mức sử dụng 5 giờ, lần dùng gần nhất và các mục dùng chung của từng tài khoản; mức sử dụng được điền vào khi từng tài khoản phản hồi.
+`ccam` không kèm đối số sẽ mở [bảng điều khiển](/features/dashboard) khi đầu vào và đầu ra chuẩn là terminal, và in ra `ccam list` trong các trường hợp khác. Di chuyển tới một tài khoản (bằng các phím mũi tên, hoặc gõ số của nó) và nhấn `Enter` để khởi động nó; `n` khởi động tài khoản còn nhiều hạn mức nhất và `o` đề xuất `--continue`, `--resume` hoặc các đối số khác. Bảng điều khiển đóng lại trước khi Claude Code khởi động, nên terminal được khôi phục trước.
 
-| Phím | Tác dụng |
-| --- | --- |
-| `Enter` | Khởi động Claude Code bằng tài khoản đang chọn |
-| `1` đến `9` | Khởi động tài khoản có số đó |
-| `Up`/`Down`, `k`/`j` | Di chuyển lựa chọn |
-| `a` | Đóng bộ chọn và chạy trình hướng dẫn `ccam add` |
-| `s` | Sửa các mục dùng chung của tài khoản đang chọn (`Space` hoặc `x` để bật/tắt, `Enter` để áp dụng, `Esc` để quay lại) |
-| `d` | Đặt tài khoản đang chọn làm mặc định |
-| `r` | Lấy lại mức sử dụng, không dùng bộ nhớ đệm ngắn hạn |
-| `q`, `Esc`, `Ctrl+C` | Thoát |
+Khi shell có đặt `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY` hoặc `ANTHROPIC_AUTH_TOKEN`, Claude Code sẽ dùng khóa hoặc token đó thay cho thông tin đăng nhập riêng của tài khoản, nên ccam báo điều này trên đầu ra lỗi chuẩn trước khi khởi động (`ccam: $ANTHROPIC_API_KEY is set, so Claude Code may use that key instead of work's login…`). Nó chỉ đọc các biến này; một [tài khoản API key](/features/api) thì xóa chúng đi.
 
-Bộ chọn đóng lại trước khi thực hiện thao tác, nên terminal được khôi phục trước khi Claude Code khởi động. Sau `d` hoặc một thay đổi về dùng chung, bộ chọn mở lại. Thay đổi về dùng chung sẽ hiển thị kế hoạch và hỏi trước, như `ccam share`.
+Với `relay = true` trong `config.toml`, ccam khởi động các phiên tương tác như một tiến trình con và ở lại bên cạnh chúng, để `/ccam:switch` có thể tự chuyển một cuộc hội thoại đi tiếp ([chi tiết](/features/next#inside-claude-code)); nếu không, ccam tự thay thế mình bằng Claude Code, và không có gì chạy bên cạnh.
 
 ## Tùy chọn
 
@@ -84,7 +75,7 @@ Mỗi lần khởi động đi qua cùng các bước, từ dòng lệnh đến 
 Mỗi ô sáng lên khi bước của nó chạy, và các dòng bên dưới là biến môi trường và đối số mà Claude Code khởi động cùng.
 
 1. `cmd/ccam/main.go` gọi `app.Main`. Nếu ccam được khởi động dưới một tên khác, đó là một [lệnh tắt](/features/shortcuts) và đi thẳng tới trình khởi chạy.
-2. `app.parse` xem `os.Args` trước khi cobra tham gia. Chỉ `ccam` đứng một mình (bộ chọn), một tên lệnh của ccam (`config.Reserved`), `-h`/`--help` và `-v`/`--version` mới đi tới `cli.Execute`. Mọi thứ khác là một lần khởi động.
+2. `app.parse` xem `os.Args` trước khi cobra tham gia. Chỉ `ccam` đứng một mình (bảng điều khiển), một tên lệnh của ccam (`config.Reserved`), `-h`/`--help` và `-v`/`--version` mới đi tới `cli.Execute`. Mọi thứ khác là một lần khởi động.
 3. `launcher.Launch` đọc `~/.config/ccam/config.toml`, tệp duy nhất nó phân tích.
 4. `launcher.Prepare` tìm tài khoản theo tên hoặc số (khi không có, `HereProfile` lấy tài khoản của thư mục, so sánh thư mục làm việc với các mục `[[folder]]` của `config.toml` dưới dạng chuỗi), bỏ một dấu `--` đứng đầu, và tìm tệp thực thi `claude` bằng `ResolveClaude`. Kết quả tra cứu PATH được lưu đệm trong `~/.local/state/ccam/claude-path` cùng với thời điểm sửa đổi của tệp, nên ccam không phải tìm trong `PATH` ở mỗi lần khởi động. Tệp bị thay đổi hoặc không còn sẽ kích hoạt một lần tra cứu mới. Đường dẫn `claude_bin` trong `config.toml` được dùng nguyên như vậy. ccam từ chối một `claude` chính là ccam, so sánh theo inode, vì điều đó sẽ tạo vòng lặp.
 5. `checkLinks` so sánh thư mục tài khoản `~/.local/share/ccam/profiles/<name>/` với thiết lập dùng chung của nó bằng `share.Check`, hàm này chỉ gọi `lstat` và `readlink`, một hoặc hai lời gọi hệ thống cho mỗi mục. Liên kết còn thiếu được tạo ngay lập tức. Bất cứ thứ gì có thể làm mất dữ liệu đều dừng việc khởi động.

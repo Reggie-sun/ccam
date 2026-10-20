@@ -1,10 +1,10 @@
 ---
 title: "Claude Code شروع کرنا"
-description: "ccam <name|number>، ccam run یا انتخابی مینو سے Claude Code کسی بھی اکاؤنٹ سے شروع کریں؛ آرگیومنٹس جوں کے توں claude کو جاتے ہیں اور --dry-run کمانڈ دکھاتا ہے۔"
+description: "ccam <name|number>، ccam run یا ڈیش بورڈ سے Claude Code کسی بھی اکاؤنٹ سے شروع کریں؛ آرگیومنٹس جوں کے توں claude کو جاتے ہیں اور --dry-run کمانڈ دکھاتا ہے۔"
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: e6b5a8d4df86
+sourceHash: "4812b197f143"
 ---
 
 `ccam work`، Claude Code کو اکاؤنٹ `work` کے طور پر شروع کرتا ہے، اور نام کے بعد سب کچھ جوں کا توں `claude` کو جاتا ہے۔ اسے ہر اس جگہ استعمال کریں جہاں آپ `claude` ٹائپ کرتے: ٹرمینل میں، اسکرپٹ میں، یا pipe سے آنے والے اِن پٹ کے ساتھ۔
@@ -21,7 +21,7 @@ ccam -p "summarise"              # no name: the folder's account, else the defau
 ccam use work                    # make work the default account
 ccam folder work ~/code/company  # use work in that folder when no name is given
 ccam run work --continue         # same as ccam work --continue
-ccam                             # the picker on a terminal, the list otherwise
+ccam                             # the dashboard on a terminal, the list otherwise
 ccam --dry-run work -p hi        # print the command instead of running it
 ccam --fallback work -p "fix the tests"   # run again as another account at the limit
 ```
@@ -30,22 +30,13 @@ ccam --fallback work -p "fix the tests"   # run again as another account at the 
 
 جب پہلا آرگیومنٹ `-` سے شروع ہو اور ccam کا اپنا کوئی فلیگ نہ ہو، تو ccam تمام آرگیومنٹس کے ساتھ بغیر نام کے ایک اکاؤنٹ شروع کرتا ہے۔ یہ وہ اکاؤنٹ ہے جو [`ccam folder`](/features/folder) سے موجودہ فولڈر کے لیے مقرر ہو، ورنہ ڈیفالٹ: وہ اکاؤنٹ جو `ccam use` سے مقرر کیا گیا ہو، یا اگر آپ نے کوئی مقرر نہ کیا ہو تو سب سے کم نمبر والا اکاؤنٹ۔
 
-### انتخابی مینو
+### ڈیش بورڈ
 
-بغیر آرگیومنٹس کے `ccam` انتخابی مینو کھولتا ہے جب اسٹینڈرڈ اِن پٹ اور آؤٹ پٹ ٹرمینل ہوں، ورنہ `ccam list` پرنٹ کرتا ہے۔ یہ ہر اکاؤنٹ کا نمبر، ای میل، 5 گھنٹے کا استعمال، آخری استعمال اور شیئر کیے گئے آئٹمز دکھاتا ہے؛ استعمال ہر اکاؤنٹ کے جواب دینے پر بھرتا جاتا ہے۔
+بغیر آرگیومنٹس کے `ccam` [ڈیش بورڈ](/features/dashboard) کھولتا ہے جب اسٹینڈرڈ اِن پٹ اور آؤٹ پٹ ٹرمینل ہوں، ورنہ `ccam list` پرنٹ کرتا ہے۔ کسی اکاؤنٹ پر جائیں (ایرو کیز سے، یا اس کا نمبر ٹائپ کر کے) اور اسے شروع کرنے کے لیے `Enter` دبائیں؛ `n` سب سے زیادہ گنجائش والا اکاؤنٹ شروع کرتا ہے اور `o`، `--continue`، `--resume` یا دوسرے آرگیومنٹس پیش کرتا ہے۔ ڈیش بورڈ Claude Code شروع ہونے سے پہلے بند ہو جاتا ہے، اس لیے ٹرمینل پہلے بحال ہو جاتا ہے۔
 
-| کی | کیا کرتی ہے |
-| --- | --- |
-| `Enter` | منتخب اکاؤنٹ کے طور پر Claude Code شروع کرتی ہے |
-| `1` سے `9` | اس نمبر والا اکاؤنٹ شروع کرتی ہے |
-| `Up`/`Down`، `k`/`j` | انتخاب کو اوپر نیچے کرتی ہے |
-| `a` | مینو بند کر کے `ccam add` کا وزرڈ چلاتی ہے |
-| `s` | منتخب اکاؤنٹ کے شیئر کیے گئے آئٹمز میں ترمیم (`Space` یا `x` بدلتی ہے، `Enter` لاگو کرتی ہے، `Esc` واپس جاتی ہے) |
-| `d` | منتخب اکاؤنٹ کو ڈیفالٹ بناتی ہے |
-| `r` | مختصر کیش کے بغیر استعمال دوبارہ حاصل کرتی ہے |
-| `q`، `Esc`، `Ctrl+C` | باہر نکلتی ہے |
+جب شیل میں `CLAUDE_CODE_OAUTH_TOKEN`، `ANTHROPIC_API_KEY` یا `ANTHROPIC_AUTH_TOKEN` سیٹ ہو تو Claude Code اکاؤنٹ کے اپنے لاگ اِن کے بجائے وہ key یا ٹوکن استعمال کرے گا، اس لیے ccam شروع کرنے سے پہلے اسٹینڈرڈ ایرر پر یہ بتا دیتا ہے (`ccam: $ANTHROPIC_API_KEY is set, so Claude Code may use that key instead of work's login…`)۔ یہ صرف ویری ایبلز پڑھتا ہے؛ [API key اکاؤنٹ](/features/api) اس کے بجائے انہیں صاف کر دیتا ہے۔
 
-مینو کوئی عمل کرنے سے پہلے بند ہو جاتا ہے، اس لیے Claude Code شروع ہونے سے پہلے ٹرمینل بحال ہو جاتا ہے۔ `d` یا شیئرنگ کی تبدیلی کے بعد یہ دوبارہ کھلتا ہے۔ شیئرنگ کی تبدیلی پہلے منصوبہ دکھاتی ہے اور پوچھتی ہے، جیسے `ccam share` کرتا ہے۔
+`config.toml` میں `relay = true` کے ساتھ ccam انٹرایکٹو سیشنز کو چائلڈ پروسیس کے طور پر شروع کرتا ہے اور ان کے ساتھ رہتا ہے، تاکہ `/ccam:switch` گفتگو کو خود آگے لے جا سکے ([تفصیلات](/features/next#inside-claude-code))؛ ورنہ ccam خود کو Claude Code سے بدل دیتا ہے، اور اس کے ساتھ کچھ نہیں چلتا۔
 
 ## آپشنز
 
@@ -84,7 +75,7 @@ $env:CLAUDE_CONFIG_DIR='C:\Users\me\.local\share\ccam\profiles\work'; & C:\Users
 ہر خانہ اپنا مرحلہ چلنے پر روشن ہوتا ہے، اور نیچے کی لائنیں وہ انوائرنمنٹ اور آرگیومنٹس ہیں جن کے ساتھ Claude Code شروع ہوتا ہے۔
 
 1. `cmd/ccam/main.go`، `app.Main` کو کال کرتا ہے۔ اگر ccam کسی اور نام سے شروع ہوا ہو تو یہ ایک [شارٹ کٹ](/features/shortcuts) ہے اور سیدھا لانچر پر جاتا ہے۔
-2. `app.parse`، cobra کے شامل ہونے سے پہلے `os.Args` دیکھتا ہے۔ صرف اکیلا `ccam` (انتخابی مینو)، ccam کمانڈ کا نام (`config.Reserved`)، `-h`/`--help` اور `-v`/`--version`، `cli.Execute` پر جاتے ہیں۔ باقی سب کچھ لانچ ہے۔
+2. `app.parse`، cobra کے شامل ہونے سے پہلے `os.Args` دیکھتا ہے۔ صرف اکیلا `ccam` (ڈیش بورڈ)، ccam کمانڈ کا نام (`config.Reserved`)، `-h`/`--help` اور `-v`/`--version`، `cli.Execute` پر جاتے ہیں۔ باقی سب کچھ لانچ ہے۔
 3. `launcher.Launch`، `~/.config/ccam/config.toml` پڑھتا ہے، جو واحد فائل ہے جسے یہ پارس کرتا ہے۔
 4. `launcher.Prepare` اکاؤنٹ کو نام یا نمبر سے تلاش کرتا ہے (نام نہ ہو تو `HereProfile` فولڈر کا اکاؤنٹ لیتا ہے، ورکنگ ڈائریکٹری کو `config.toml` کے `[[folder]]` اندراجات سے اسٹرنگ کے طور پر ملا کر)، شروع کا ایک `--` ہٹاتا ہے، اور `ResolveClaude` سے `claude` قابلِ عمل فائل تلاش کرتا ہے۔ PATH کی تلاش فائل کے ترمیم کے وقت کے ساتھ `~/.local/state/ccam/claude-path` میں کیش ہوتی ہے، اس لیے ccam ہر لانچ پر `PATH` تلاش نہیں کرتا۔ بدلی ہوئی یا غائب فائل نئی تلاش شروع کرتی ہے۔ `config.toml` میں `claude_bin` کا راستہ جوں کا توں استعمال ہوتا ہے۔ ccam ایسا `claude` مسترد کرتا ہے جو خود ccam ہو، inode سے موازنہ کر کے، کیونکہ اس سے لوپ بن جائے گا۔
 5. `checkLinks` اکاؤنٹ فولڈر `~/.local/share/ccam/profiles/<name>/` کو اس کی شیئرنگ سیٹنگز سے `share.Check` کے ذریعے موازنہ کرتا ہے، جو صرف `lstat` اور `readlink` کال کرتا ہے، ہر آئٹم کے لیے ایک یا دو سسٹم کالز۔ غائب لنک فوراً بنا دیا جاتا ہے۔ جس چیز سے ڈیٹا کھو سکتا ہو وہ لانچ روک دیتی ہے۔

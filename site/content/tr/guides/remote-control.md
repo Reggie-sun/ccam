@@ -4,7 +4,7 @@ description: "Remote Control'ü ccam <name> rc ile her hesapla başlatın: geçe
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 59b802c44bb3
+sourceHash: "5f0b90ea53d6"
 ---
 
 `ccam work rc`, Claude Code'un Remote Control özelliğini `work` hesabıyla başlatır; böylece bu bilgisayardaki oturumları claude.ai/code üzerinden veya Claude mobil uygulamasından yönetebilirsiniz. `claude rc` gibi çalışır, tek bir farkla: hesap MCP sunucularını paylaşıyorsa ccam, bunları hesabın `.claude.json` dosyasına kopyalayıp kopyalamayacağını bir kez sorar, çünkü Remote Control oturumları sunucuları başka hiçbir yerden okumaz.
@@ -33,7 +33,7 @@ Burada iki tür seçenek bir araya gelir: hesap adından önce yazılan veya cca
 | `--dry-run` (hesaptan önce) | Ortamı ve komutu, varsa MCP bildirimini de yazdırır. Ne soru sorar ne de kopyalar | kapalı |
 | `Copy them into .claude.json (a backup is kept)? [y/N]` | Hesap MCP sunucularını paylaştığında ve `.claude.json` dosyasında grubun güncel listesi olmadığında sorulur. `y` bunları kopyalar, `N` veya Enter onlar olmadan başlatır | `N` |
 | `~/.config/ccam/config.toml` içinde `mcp_strategy = "sync"` | Remote Control olsun olmasın, her başlatmadan önce grubun sunucularını `.claude.json` dosyasına kopyalar; böylece hiçbir zaman soru sorulmaz | `"flag"` |
-| `ccam share work --mcp off` | Hesapla MCP sunucularını paylaşmayı bırakır; Remote Control bu durumda yalnızca hesabın kendi sunucularıyla başlar ve soru sorulmaz | açık |
+| `ccam group leave <group> work` | Hesabı, onunla MCP paylaşan gruptan çıkarır; Remote Control bu durumda yalnızca hesabın kendi sunucularıyla başlar ve soru sorulmaz | `default` içinde |
 
 ### Remote Control seçenekleri
 
@@ -124,7 +124,7 @@ Soruya `N` yanıtı verildi, terminal yoktu veya hesap çalışıyordu. Remote C
 
 ### ccam her seferinde soruyor
 
-Sunucuları henüz kopyalamadınız. Bir kez `y` yanıtını verin veya `mcp_strategy = "sync"` ayarlayın. Remote Control'de sunucuları hiç istemiyorsanız hesapla MCP paylaşımını kapatın: `ccam share work --mcp off`.
+Sunucuları henüz kopyalamadınız. Bir kez `y` yanıtını verin veya `mcp_strategy = "sync"` ayarlayın. Remote Control'de sunucuları hiç istemiyorsanız hesapla MCP paylaşımını bırakın: hesabı o gruptan çıkarın (`ccam group leave default work`) ya da MCP'yi hesabın içinde olmadığı ayrı bir grupta tutun.
 
 ### `ccam work rc` hemen `--mcp-config` ile ilgili bir hatayla başarısız oluyor
 

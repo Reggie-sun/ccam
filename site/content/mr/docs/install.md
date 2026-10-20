@@ -5,7 +5,7 @@ description: "Linux, macOS किंवा Windows वर ccam एका कम�
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: aea4984c1576
+sourceHash: "07fab3165030"
 ---
 
 Linux किंवा macOS वर टर्मिनलमध्ये हे चालवा:
@@ -80,7 +80,7 @@ ccam प्लगइन Claude Code ला स्वतःच ccam वापर�
 /plugin install ccam --marketplace jhyunwoo/ccam
 ```
 
-ते एक skill आणि दोन कमांड जोडते, `/ccam:usage` आणि `/ccam:ext`. हे skill लॉगिन करणाऱ्या किंवा फाइल्स हलवणाऱ्या कमांड कधीच चालवत नाही; त्याऐवजी ते त्या सुचवते.
+ते एक skill, `/ccam:usage`, `/ccam:ext` आणि `/ccam:switch` या कमांड, आणि दोन hooks जोडते: सत्र वापर मर्यादेवर थांबले की तुम्हाला terminal मध्ये सूचना मिळते, आणि `/ccam:switch [account]` संभाषण दुसऱ्या खात्याकडे सोपवते ([तपशील](/features/next#inside-claude-code)). hooks `ccam` चालवतात, त्यामुळे ते Claude Code ला दिसणाऱ्या `PATH` वर असले पाहिजे. हे skill लॉगिन करणाऱ्या किंवा फाइल्स हलवणाऱ्या कमांड कधीच चालवत नाही; त्याऐवजी ते त्या सुचवते.
 
 ## इन्स्टॉलेशन तपासा
 

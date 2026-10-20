@@ -4,7 +4,7 @@ description: ccam pick స్క్రిప్ట్ కోసం ఎక్క�
 updated: 2026-10-20
 order: 12
 translation: machine
-sourceHash: 65a5a7e179a5
+sourceHash: "2e8285b7c193"
 ---
 
 `ccam pick` ఎక్కువ అవకాశం ఉన్న లాగిన్ అయిన ఖాతా పేరును ప్రింట్ చేస్తుంది, దానితో ఒక స్క్రిప్ట్ Claude Code ను ప్రారంభించవచ్చు. అవకాశం ఉన్న ఖాతాలు సరిపడా ఉన్నంత వరకు, ఒకే సమయంలో ప్రారంభమయ్యే ప్రతి worker కు వేరే ఖాతా వస్తుంది, కాబట్టి `claude -p` jobs సమూహం ఒకే ఖాతాను ఖాళీ చేయకుండా మీ ఖాతాలన్నింటిపై పంచబడుతుంది.
@@ -19,6 +19,8 @@ done; wait
 ccam pick --json                      # the account and its usage
 ccam pick --model opus                # also count the Opus weekly limit
 ccam pick --max-usage 80 --strategy expiring
+ccam pick --strategy balance          # spread over the weekly quota, fewer running sessions first
+ccam pick --cross-org                 # also accounts of other organizations
 ccam pick --wait=2h                   # nobody has room: wait for a reset
 ccam --fallback "$(ccam pick)" -p "…" # also switch if this account hits its limit mid-job
 ```
@@ -31,7 +33,8 @@ $ ccam pick --json
   "email": "dev@company.com",
   "five_hour": { "percent": 12, "resets_at": "2026-10-20T15:10:00Z", "known": true },
   "weekly": { "percent": 41, "resets_at": "2026-10-24T09:00:00Z", "known": true },
-  "source": "live"
+  "source": "live",
+  "reason": "12% of its 5 hours used, the least"
 }
 ```
 
@@ -41,16 +44,17 @@ $ ccam pick --json
 
 | ఆప్షన్ | ఏమి చేస్తుంది | డిఫాల్ట్ |
 | --- | --- | --- |
-| `--json` | ఖాతాను, దాని 5 గంటల, వారపు వినియోగాన్ని, సంఖ్యలు ఎక్కడి నుంచి వచ్చాయో ప్రింట్ చేస్తుంది | ఆఫ్ |
+| `--json` | ఖాతాను, దాని 5 గంటల, వారపు వినియోగాన్ని, సంఖ్యలు ఎక్కడి నుంచి వచ్చాయో, అది ఎందుకు ఎంచుకోబడిందో ప్రింట్ చేస్తుంది | ఆఫ్ |
 | `--model <model>` | ఆ మోడల్ వారపు విండోను కూడా లెక్కిస్తుంది, ఉదాహరణకు `opus` | ఏమీ లేదు |
 | `--max-usage <1-100>` | ఈ వినియోగం కంటే తక్కువ ఉన్న ఖాతాలకు ప్రాధాన్యం ఇస్తుంది | `auto_max_usage`, లేకపోతే 100 |
-| `--strategy headroom\|expiring` | అతి తక్కువ 5 గంటల వినియోగం, లేదా అన్నిటికంటే ముందు వచ్చే 5 గంటల రీసెట్ | `auto_strategy`, లేకపోతే `headroom` |
+| `--strategy headroom\|expiring\|balance` | అతి తక్కువ 5 గంటల వినియోగం, అన్నిటికంటే ముందు వచ్చే 5 గంటల రీసెట్, లేదా అన్నిటికంటే ముందు వృథా అయ్యే వారపు కోటా | `auto_strategy`, లేకపోతే `headroom` |
+| `--cross-org` | ఇతర సంస్థల ఖాతాలను కూడా ఎంచుకుంటుంది | `cross_org`, లేకపోతే ఆఫ్ |
 | `--wait[=<duration>]` | ఏ ఖాతాలోనూ అవకాశం లేనప్పుడు, మొదటి ఖాతా రీసెట్ అయ్యే వరకు, గరిష్ఠంగా ఇంత సేపు వేచి ఉంటుంది | ఆఫ్; ఒంటరిగా ఇస్తే `5h` |
 | `--dry-run` | ఎంపికను నమోదు చేయకుండా ఎంచుకుంటుంది | ఆఫ్ |
 
 ## ఇది ఎలా పనిచేస్తుంది
 
-1. ccam లాగిన్ అయిన ఖాతాల జాబితా తీస్తుంది (API కీ ఖాతాలకు పరిమితులు లేవు, అవి వదిలేయబడతాయి).
+1. ఈ ఫోల్డర్ ప్రారంభించే ఖాతా యొక్క సంస్థలో లాగిన్ అయిన ఖాతాల జాబితాను ccam తీస్తుంది (API కీ ఖాతాలకు పరిమితులు లేవు, అవి వదిలేయబడతాయి; [సంస్థలు](/features/next#auto) చూడండి); ఆ ఖాతా లాగే అదే Claude ఖాతాలోకి లాగిన్ అయిన ఫోల్డర్ కూడా వదిలేయబడుతుంది.
 2. అది ఒక lock (`~/.local/state/ccam/picks.lock`) తీసుకుంటుంది, కాబట్టి ఒకేసారి నడిచే ఎంపికలు ఒకదాని తర్వాత ఒకటి జరుగుతాయి.
 3. `ccam usage` లాగే, 60 సెకన్ల క్యాష్‌తో, అన్ని ఖాతాల వినియోగాన్ని ఒకేసారి చూస్తుంది.
 4. గత 2 నిమిషాల్లో ఎంచుకున్న ఖాతాలు (`~/.local/state/ccam/picks/<name>`) ముందుగా వదిలేయబడతాయి, మిగిలిన వాటిలో `ccam next --auto` యొక్క [ఎంపిక నియమాలు](/features/next#auto) ఎంచుకుంటాయి: ముందుగా `auto_max_usage` కంటే తక్కువ ఉన్నవి, strategy ప్రకారం, 100% వద్ద ఉన్న ఖాతాను ఎప్పుడూ కాదు.

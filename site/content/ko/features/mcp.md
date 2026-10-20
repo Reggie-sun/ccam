@@ -4,7 +4,7 @@ description: ccam mcp add, add-json, list, remove, import로 그룹마다 MCP �
 updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: f1de7db4b7be
+sourceHash: "6d3b3c38c6cb"
 ---
 
 Claude Code는 사용자 MCP 서버를 계정의 로그인 정보가 들어 있는 `.claude.json`에 함께 저장하므로, 이 파일은 계정 간에 공유할 수 없습니다. ccam은 공유 서버를 그룹 파일인 `mcp.json`에 두고, 실행할 때 그룹의 모든 계정에 이 파일을 넘깁니다. `ccam mcp`로 서버를 한 번만 추가해 모든 계정에서 쓰고, 한 세션 안에서 추가한 서버는 `ccam mcp import`로 다른 계정에 옮기세요.
@@ -36,7 +36,7 @@ group default (work, side)
 only in account work: pg
 ```
 
-그룹에 이미 있는 이름을 추가하면 기존 정의를 바꾸고, `added` 대신 `updated`를 출력합니다. 서버는 그 그룹과 MCP를 공유하는 계정(`ccam share <name> --mcp on`)에만 전달됩니다. 아직 MCP를 공유하는 계정이 없으면 `add`가 그 사실을 알려 줍니다.
+그룹에 이미 있는 이름을 추가하면 기존 정의를 바꾸고, `added` 대신 `updated`를 출력합니다. 서버는 그 그룹에 속해 있고 그룹이 MCP를 공유할 때(`ccam group set <group> --add mcp`)만 계정에 전달됩니다. 그룹이 MCP를 공유하지 않으면 `add`가 그 사실을 알려 줍니다.
 
 ## 옵션
 
@@ -121,7 +121,7 @@ Skipped gh: group default already has a different gh (`ccam mcp import work gh -
 - **실행 중인 계정.** `import`는 그룹에 복사하지만 실행 중인 계정 자체의 항목은 남겨 두고 그 사실을 알려 줍니다. 세션이 끝난 뒤 다시 실행하세요. 동기화는 실행 중인 계정을 건너뜁니다.
 - **Remote Control용 복사본.** 실행 중인 계정의 복사본은 건드리지 않고 다음과 같이 알립니다. `Note: account side is running, so the copy in its .claude.json stays as it was until its next Remote Control launch.` `mcp_strategy = "sync"`에서는 실행할 때마다 동기화하므로 갱신할 것이 없습니다.
 - **손상된 파일.** `.claude.json`이 올바른 JSON이 아니면 동기화는 파일을 건드리지 않고 오류를 보고합니다. 2초 안에 잠금을 잡지 못하면 `could not lock … (Claude Code is writing the file)`를 보고합니다.
-- **MCP를 공유하지 않는 계정.** `import`는 거부하고, 먼저 `ccam share side --mcp on`을 실행하라고 안내합니다.
+- **MCP를 공유하지 않는 계정.** `import`는 거부하고, 먼저 계정을 MCP를 공유하는 그룹에 넣으라고 안내합니다(`ccam group join <group> side`).
 - **그룹 이름.** `-g`에는 그룹 이름만 줄 수 있습니다. 이름이 `groups/` 아래 폴더가 되므로 `../x` 같은 이름은 거부합니다.
 
 ## 관련 문서

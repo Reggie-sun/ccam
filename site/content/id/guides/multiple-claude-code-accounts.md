@@ -4,7 +4,7 @@ description: Jalankan beberapa akun Claude Code berdampingan dengan CLAUDE_CONFI
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: f2982e4317a2
+sourceHash: "ee92078b81c3"
 ---
 
 Beri setiap akun folder konfigurasinya sendiri. Claude Code membaca folder itu dari variabel lingkungan `CLAUDE_CONFIG_DIR`, dan setiap folder menyimpan login, pengaturan, dan riwayatnya sendiri, sehingga setiap akun tetap login dan Anda bisa menjalankannya bersamaan. Anda bisa menyiapkannya secara manual dengan alias shell, atau membiarkan ccam melakukannya.
@@ -69,7 +69,7 @@ Claude Code berjalan [secara native di Windows dan di dalam WSL](https://code.cl
 
 **Server MCP hanya muncul di satu akun.** Server yang ditambahkan di dalam sesi dengan `claude mcp add` menjadi milik akun tersebut. Pindahkan server ke semua akun dengan `ccam mcp import work <server>`.
 
-**Pengaturan berbeda antarakun.** `ccam share work` menampilkan apa saja yang dibagikan akun itu; `ccam share work --settings on` membagikan pengaturannya setelah menunjukkan apa yang akan berubah. `ccam doctor --fix` memperbaiki tautan yang rusak dan menyimpan cadangan setiap file yang diubahnya.
+**Pengaturan berbeda antarakun.** `ccam share work` menampilkan apa saja yang dibagikan akun itu dan melalui grup mana; `ccam group join default work` membuatnya membagikan apa yang dibagikan `default`, setelah menunjukkan apa yang akan berubah. `ccam doctor --fix` memperbaiki tautan yang rusak dan menyimpan cadangan setiap file yang diubahnya.
 
 **Dua akun membuka percakapan yang sama.** Hindari mengerjakan satu percakapan di dua akun secara bersamaan. ccam memperingatkan Anda jika Anda mencobanya.
 

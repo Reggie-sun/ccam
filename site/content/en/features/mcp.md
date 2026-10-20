@@ -35,7 +35,7 @@ group default (work, side)
 only in account work: pg
 ```
 
-Adding a name the group already has replaces its definition and prints `updated` instead of `added`. Servers reach an account only if it shares MCP with that group (`ccam share <name> --mcp on`); when no account shares MCP yet, `add` says so.
+Adding a name the group already has replaces its definition and prints `updated` instead of `added`. Servers reach an account only if it is in that group and the group shares MCP (`ccam group set <group> --add mcp`); when the group does not, `add` says so.
 
 ## Options
 
@@ -120,7 +120,7 @@ With `--force` the group's server is replaced, and the previous `mcp.json` is fi
 - **Running accounts.** `import` copies to the group but leaves a running account's own entries and says so; run it again after the session ends. Sync skips running accounts.
 - **Copies for Remote Control.** A running account's copy is not touched: `Note: account side is running, so the copy in its .claude.json stays as it was until its next Remote Control launch.` With `mcp_strategy = "sync"` nothing needs updating, because every launch syncs.
 - **Broken files.** If `.claude.json` is not valid JSON, sync leaves it untouched and reports the error. If the lock cannot be taken in 2 seconds, ccam reports `could not lock … (Claude Code is writing the file)`.
-- **Accounts that do not share MCP.** `import` refuses and tells you to run `ccam share side --mcp on` first.
+- **Accounts that do not share MCP.** `import` refuses and tells you to put the account in a group that shares MCP first (`ccam group join <group> side`).
 - **Group names.** `-g` takes a group name only; it becomes a folder under `groups/`, so names such as `../x` are refused.
 
 ## Related

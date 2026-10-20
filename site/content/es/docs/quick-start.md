@@ -5,7 +5,7 @@ description: Agrega dos cuentas de Claude Code con ccam add, dales atajos como c
 updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 55f81dae9fc0
+sourceHash: d5b0e295f3f0
 ---
 
 Agrega cada cuenta con `ccam add` y luego inicia Claude Code con `ccam <name>` o con un atajo al que tú le pones nombre, como `ccwork`. Es todo lo que la mayoría necesita.
@@ -79,7 +79,7 @@ ccam work
 ccam 2
 ```
 
-Si ejecutas `ccam` solo, se abre un selector: usa las flechas y Enter, o presiona el número de la cuenta.
+Si ejecutas `ccam` solo, se abre el [panel](/features/dashboard): ve a una cuenta con las flechas o con su número y presiona Enter.
 
 Todo lo que va después del atajo o del nombre de la cuenta pasa a Claude Code sin cambios, así que sigues usando las opciones que ya conoces:
 
@@ -91,14 +91,13 @@ cat error.log | ccwork -p "what caused this?"
 
 ## 5. Elige qué compartir
 
-De forma predeterminada, los servidores MCP, `settings.json`, el `CLAUDE.md` global, y los agentes, comandos, skills y plugins se comparten entre cuentas. El historial de conversaciones no. Actívalo en ambas cuentas si quieres continuar conversaciones entre ellas:
+De forma predeterminada, los servidores MCP, `settings.json`, el `CLAUDE.md` global, y los agentes, comandos, skills y plugins se comparten entre cuentas a través del grupo `default`. El historial de conversaciones no. Agrégalo al grupo si quieres continuar conversaciones entre cuentas:
 
 ```sh
-ccam share personal --history on
-ccam share work --history on
+ccam group set default --add history
 ```
 
-ccam muestra lo que va a mover antes de cambiar nada. Consulta [compartir](/docs/sharing) para ver los detalles.
+ccam muestra lo que va a mover en cada cuenta antes de cambiar nada. Consulta [compartir con grupos](/features/share) para ver los detalles.
 
 ## 6. Cuando una cuenta llega a su límite
 

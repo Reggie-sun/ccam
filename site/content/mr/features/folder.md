@@ -4,7 +4,7 @@ description: ccam folder मुळे खात्याचे नाव न द
 updated: 2026-10-20
 order: 11
 translation: machine
-sourceHash: 5071b04a194d
+sourceHash: "46d1410a3d81"
 ---
 
 `ccam folder work ~/code/company` मुळे `~/code/company` मध्ये, आणि त्याखालील कोणत्याही फोल्डरमध्ये, खात्याच्या नावाशिवाय होणारा प्रत्येक launch Claude Code `work` म्हणून सुरू करतो. त्या फोल्डरबाहेर, डीफॉल्ट खाते पूर्वीसारखेच सुरू होते. `ccam personal` ने किंवा `ccpersonal` सारख्या शॉर्टकटने खात्याचे नाव दिल्यास नेहमी तेच खाते सुरू होते.
@@ -34,7 +34,7 @@ Here (/home/me/code/company/api): work, set for /home/me/code/company
 - `ccam -p "…"` आणि ज्याचा पहिला आर्ग्युमेंट Claude Code साठीचा पर्याय आहे असा इतर कोणताही launch
 - नावाशिवाय `ccam run`, आणि `ccam --dry-run`
 - `ccam --fallback -p "…"` त्याच्या पहिल्या प्रयत्नासाठी
-- picker, म्हणजे एकटे `ccam`, जो फोल्डरच्या खात्यावर cursor ठेवून सुरू होतो
+- डॅशबोर्ड, म्हणजे एकटे `ccam`, जो फोल्डरच्या खात्यावर cursor ठेवून सुरू होतो
 
 ## पर्याय
 

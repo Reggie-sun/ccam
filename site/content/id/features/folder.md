@@ -4,7 +4,7 @@ description: ccam folder membuat folder dan semua isinya memakai satu akun saat 
 updated: 2026-10-20
 order: 11
 translation: machine
-sourceHash: 5071b04a194d
+sourceHash: "46d1410a3d81"
 ---
 
 `ccam folder work ~/code/company` membuat setiap peluncuran tanpa nama akun di dalam `~/code/company`, dan di folder mana pun di bawahnya, menjalankan Claude Code sebagai `work`. Di luar folder itu, akun default tetap dijalankan seperti sebelumnya. Menyebutkan nama akun, dengan `ccam personal` atau pintasan seperti `ccpersonal`, selalu menjalankan akun tersebut.
@@ -34,7 +34,7 @@ Peluncuran berikut memakai akun folder tersebut:
 - `ccam -p "…"` dan peluncuran lain yang argumen pertamanya adalah opsi untuk Claude Code
 - `ccam run` tanpa nama, dan `ccam --dry-run`
 - `ccam --fallback -p "…"` untuk percobaan pertamanya
-- pemilih, `ccam` saja, yang dimulai dengan kursor pada akun folder tersebut
+- dasbor, `ccam` saja, yang dimulai dengan kursor pada akun folder tersebut
 
 ## Opsi
 

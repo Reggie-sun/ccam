@@ -4,7 +4,7 @@ description: "Xem mức sử dụng 5 giờ và hàng tuần của mọi tài kh
 updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: a84df8e873d6
+sourceHash: "40aef0708c81"
 ---
 
 `ccam usage` cho biết mỗi tài khoản đã dùng bao nhiêu trong giới hạn 5 giờ và giới hạn hàng tuần. `ccam next --auto` mở tài khoản còn nhiều hạn mức nhất, và `--continue` mang cuộc hội thoại hiện tại sang tài khoản đó.
@@ -55,10 +55,10 @@ Sau đó Claude Code hiển thị tên tài khoản và mức sử dụng của 
 ```sh
 ccam next             # the account after the one you used last
 ccam next --auto      # the account with the lowest 5-hour usage
-ccam next --continue  # the next account that shares your conversation history
+ccam next --continue  # carry this folder's conversation on as the next account
 ```
 
-`ccam next` bỏ qua các tài khoản chưa đăng nhập, và `--auto` bỏ qua các tài khoản đã ở mức 100%. Để tiếp tục một cuộc hội thoại, cả hai tài khoản phải dùng chung lịch sử hội thoại; xem [dùng chung](/docs/sharing).
+`ccam next` bỏ qua các tài khoản chưa đăng nhập, và `--auto` bỏ qua các tài khoản đã ở mức 100% và các tài khoản thuộc tổ chức khác. Khi hai tài khoản dùng chung lịch sử hội thoại, `--continue` mở cùng cuộc hội thoại đó; nếu không, Claude Code sao chép nó vào tài khoản mới. Xem [dùng chung](/docs/sharing) và [chuyển sang tài khoản tiếp theo](/features/next#continue).
 
 Với các script và tác vụ định kỳ chạy `claude -p`, hãy đặt `--fallback` trước tên tài khoản. Khi tài khoản đó chạm giới hạn, ccam chạy lại cùng lệnh đó bằng tài khoản còn nhiều hạn mức nhất, và chỉ đầu ra của lần chạy đã hoàn tất được in ra:
 

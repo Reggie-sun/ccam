@@ -4,7 +4,7 @@ description: ccam'ın claude-swap, CCS, clausona, clauth, CAAM, cux ve diğer Cl
 updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 68048287f792
+sourceHash: "a90ede56b767"
 ---
 
 Claude Code hesap değiştirme araçları iki yaklaşımdan birini izler. Çoğu, tek `~/.claude` klasörünün içindeki girişi değiştirir; bu yüzden aynı anda yalnızca bir hesap etkindir. ccam'ın da aralarında olduğu diğerleri, `CLAUDE_CONFIG_DIR` ile her hesaba kendi klasörünü verir; böylece her hesap oturum açık kalır ve birkaçı aynı anda çalışabilir. ccam buna paylaşılan ayarları ve MCP sunucularını ekler ve bir konuşmaya başka bir hesabın klasöründe devam eder.
@@ -23,7 +23,7 @@ Her projenin kendi belgelerinden ve kaynak kodundan 20 Ekim 2026'da alınmışt�
 
 | Araç | Yaklaşım | Aynı anda birden fazla hesap | 5 saatlik ve haftalık kullanım | Limite ulaşıldığında | Platformlar |
 | --- | --- | --- | --- | --- | --- |
-| ccam | Ayrı klasörler | Evet | Evet, `ccam usage` | Konuşmaya en çok payı kalan hesapta devam etmek için `ccam next --auto --continue` komutunu siz çalıştırırsınız; `ccam --fallback` ise `-p` işlerini orada kendiliğinden yeniden çalıştırır, `ccam pick` de çalışan süreçleri hesaplara dağıtır | Linux, macOS, Windows |
+| ccam | Ayrı klasörler | Evet | Evet, `ccam usage` | Oturumda bir bildirim; `ccam next --auto --continue` veya `/ccam:switch` konuşmayı, paylaşılan geçmiş olsun ya da olmasın, en çok payı kalan hesaba taşır; `ccam --fallback` ise `-p` işlerini orada kendiliğinden yeniden çalıştırır, `ccam pick` de çalışan süreçleri hesaplara dağıtır | Linux, macOS, Windows |
 | [claude-swap](https://github.com/realiti4/claude-swap) | Girişi değiştirir; `cswap run` ile ayrı klasörler | Evet, `cswap run` ile | Evet | `cswap auto` bir eşikte girişi değiştirir; çalışan oturum devam eder | Linux, macOS, Windows |
 | [CCS](https://github.com/kaitranntt/ccs) | Ayrı klasörler | Evet | Kısmen | Hesap havuzları istekleri yerel bir proxy üzerinden sıradaki hesaba iletir | Linux, macOS, Windows |
 | [clausona](https://github.com/larcane97/clausona) | Ayrı klasörler | Evet | Evet | Rotalar her çalıştırmadan önce kotası kalan bir hesap seçer, bir sıfırlanmayı bekleyebilir ve çalışan süreçlere farklı hesaplar dağıtır | Linux, macOS, Windows |
@@ -39,7 +39,7 @@ ccswap, Codex girişlerini de yöneten bir claude-swap çatalıdır. [claude-acc
 
 | Araç | Yazıldığı dil | Claude Code çalışırken | Girişleri yerler arasında kopyalar | Hesaplar neleri paylaşabilir |
 | --- | --- | --- | --- | --- |
-| ccam | Go, tek statik ikili dosya | Hiçbir şey: ccam kendini `claude` ile değiştirir (bunu yapamayan Windows'ta onu bekler) | Hayır | Her öğe ayrı ayrı: hesap başına yerel veya adlandırılmış bir grupta |
+| ccam | Go, tek statik ikili dosya | Hiçbir şey: ccam kendini `claude` ile değiştirir (bunu yapamayan Windows'ta onu bekler; isteğe bağlı bir aktarıcı yanında kalır) | Hayır | Gruplar: her grup paylaştığı öğeleri ve hesaplarını belirtir; bir hesap birkaç grupta olabilir |
 | claude-swap | Python 3.12+, uv veya pipx ile kurulur | `cswap run` ile hiçbir şey; `cswap auto` ve menü çubuğu uygulaması çalışmaya devam eder | Evet, girişi değiştirdiğinde | `cswap run` ile: ayarlar, `CLAUDE.md` ve uzantılar birlikte, geçmiş isteğe bağlı; MCP sunucuları her başlatmada kopyalanır |
 | CCS | Node.js 18+ veya Bun | CCS üst süreç olarak kalır; havuzlar yerel bir proxy ekler | Kendi hesap klasörleri için hayır; havuzlar kendi girişlerini tutar | Hesap başına paylaşılan veya yerel, geçmiş bağlam gruplarında; MCP sunucuları kopyalanır |
 | clausona | TypeScript, Node.js 20+ | Düz `claude` bir kabuk fonksiyonu üzerinden çalışır; `clausona run` Node'u üst süreç olarak tutar; her çıkıştan sonra arka planda bir Node süreci çalışır | Hayır, ama boştaki hesapların kullanımını okumak için onların token'larını kendisi yeniler | Hesaba özgü dosyalar dışında her şey, tek bir ana hesaptan; geçmiş isteğe bağlı; `claude mcp add` ile eklenen sunucular paylaşılmaz |
@@ -62,9 +62,9 @@ ccam bir dosya okur, bağlantılarını denetler ve kendini `claude` ile değiş
 
 Bir hesabı bu şekilde başlatmak yaklaşık 4 ms ekler; bu süre 95. yüzdelikte 6 ms'nin altındadır ve en yüksek bellek kullanımı 8 MB'tır ([`scripts/perf-check.sh`](https://github.com/jhyunwoo/ccam/blob/main/scripts/perf-check.sh) ve hyperfine ile, 300 çalıştırma). Aynı dizüstü bilgisayarda, bir program henüz hiçbir şey yapmadan, yalnızca Python yorumlayıcısını başlatmak 13 ms, Node.js'i başlatmak 31 ms sürer.
 
-### Öğe öğe, hesap hesap paylaşım
+### Neyin paylaşılacağına gruplar karar verir
 
-MCP sunucuları, `settings.json`, `CLAUDE.md`, uzantılar (ajanlar, komutlar, beceriler, eklentiler) ve konuşma geçmişi beş ayrı öğedir. Her hesap her öğeyi `local` ya da bir gruba ayarlar; böylece iki iş hesabı geçmişi bir `work` grubunda paylaşırken kişisel bir hesap kendi geçmişini tutar ve üçü de aynı MCP sunucularını paylaşır.
+MCP sunucuları, `settings.json`, `CLAUDE.md`, uzantılar (ajanlar, komutlar, beceriler, eklentiler) ve konuşma geçmişi beş ayrı öğedir. Bir grup paylaştığı öğeleri ve içindeki hesapları belirtir; böylece iki iş hesabı geçmişi bir `work` grubunda paylaşırken kişisel bir hesap kendi geçmişini tutar ve üçü de `default` üzerinden aynı MCP sunucularını paylaşır. `ccam group set work --add memory` grubun tüm hesaplarını tek bir planla taşır; [kontrol paneli](/features/dashboard) aynı şeyi onay kutularıyla yapar ve bir hesabın zaten başka bir gruptan aldığı öğeyi gri gösterir.
 
 - MCP sunucuları başlatmada `--mcp-config` ile verilir; bu yüzden ccam varsayılan olarak, Claude Code'un çalışırken yeniden yazdığı `.claude.json` dosyasını asla düzenlemez. `ccam mcp add` bir sunucuyu tüm grup için bir kez ekler.
 - Diğer öğeler grup klasörüne giden bağlantılardır; bu yüzden bir hesapta yapılan değişiklik diğerlerinde hemen görünür. Başlatmada hiçbir şey kopyalanmaz.
@@ -72,11 +72,11 @@ MCP sunucuları, `settings.json`, `CLAUDE.md`, uzantılar (ajanlar, komutlar, be
 
 ### Her değişiklik önce gösterilir ve yedeklenir
 
-`ccam share` ve `ccam migrate` bir şeyi taşımadan önce bir plan yazdırır ve onay ister. Bir dosya hesapla grubu arasında farklıysa seçim sizindir: grubunkini koruyun, sizinkini kullanın ya da JSON'u birleştirin. Orijinaller `.ccam-backup/<time>/` klasörüne, kaldırılan bir hesabın klasörü bir çöp klasörüne gider; dosyalar tek bir yeniden adlandırmayla değiştirilir, böylece yarıda kalan bir yazma eski dosyayı yerinde bırakır. `--dry-run`, başlatma, paylaşma, taşıma, kısayollar, güncellemeler ve onarımların ne yapacağını gösterir. `ccam doctor --fix` bozuk bağlantıları ve izinleri onarır.
+`ccam group` ve `ccam migrate` bir şeyi taşımadan önce bir plan yazdırır ve onay ister. Bir dosya hesapla grubu arasında farklıysa seçim sizindir: grubunkini koruyun, sizinkini kullanın ya da JSON'u birleştirin. Orijinaller `.ccam-backup/<time>/` klasörüne, kaldırılan bir hesabın klasörü bir çöp klasörüne gider; dosyalar tek bir yeniden adlandırmayla değiştirilir, böylece yarıda kalan bir yazma eski dosyayı yerinde bırakır. `--dry-run`, başlatma, paylaşma, taşıma, kısayollar, güncellemeler ve onarımların ne yapacağını gösterir. `ccam doctor --fix` bozuk bağlantıları ve izinleri onarır.
 
 ### Sıradaki hesapta aynı konuşma
 
-Paylaşılan geçmişle `ccam next --auto --continue` tüm hesaplara kullanımlarını aynı anda sorar, en çok payı kalanı açar ve konuşmaya devam eder. Ne zaman geçileceğine siz karar verirsiniz; ccam kullanımınızı arka planda izlemez. Bir hesap %90'a ulaştığında durum satırı bu komutu önerir.
+`ccam next --auto --continue` tüm hesaplara kullanımlarını aynı anda sorar, en çok payı kalanı açar ve konuşmaya devam eder. Paylaşılan geçmişle bu aynı konuşmadır; paylaşılan geçmiş yoksa Claude Code konuşmayı yeni hesaba kopyalar (`--resume <file> --fork-session`) ve ccam ilk yanıtın kaç token'ı yeniden okuyacağını söyler. Bir limit oturumu durdurduğunda ccam eklentisinin hook'u bir bildirim gösterir ve `/ccam:switch` konuşmayı devreder. Ne zaman geçileceğine siz karar verirsiniz; kullanımınızı arka planda izleyen hiçbir şey yoktur ve otomatik seçimler tek bir kuruluşun içinde kalır, böylece bir şirket konuşması yanlışlıkla kişisel bir hesaba düşmez. Bir hesap %90'a ulaştığında durum satırı bu komutu önerir.
 
 Betikler sizi bekleyemez; bu yüzden `ccam --fallback work -p "…"` onların yerine geçiş yapar: hesap limitine ulaştığında aynı komut en çok payı kalan hesapla yeniden çalışır ve yalnızca tamamlanan çalıştırmanın çıktısı yazdırılır. Kullanım limiti olmayan bir hata olduğu gibi iletilir. Paralel çalışan süreçler için `ccam pick` her birine payı kalan farklı bir hesap verir ve hiçbir hesapta pay kalmadığında ikisi de 75 koduyla çıkar.
 
@@ -86,11 +86,11 @@ Betikler sizi bekleyemez; bu yüzden `ccam --fallback work -p "…"` onların ye
 
 ### Tek ikili dosya, denetlenen indirmeler
 
-ccam, Linux, macOS ve Windows için, ayrıca bir çalışma zamanı kurmayı gerektirmeyen, yaklaşık 10 MB'lık statik bir ikili dosyadır. Kurulum betikleri (`install.sh`, `install.ps1`) ve `ccam update` her indirmeyi sürümün SHA-256 sağlama toplamlarıyla denetler ve ccam güncellemeleri asla kendiliğinden denetlemez. Telemetrisi yoktur: yaptığı tek istekler, hesaplarınız için Anthropic'e yapılan kullanım sorguları (paralel, 3 saniyelik sınır ve 60 saniyelik önbellekle) ve sizin istediğiniz indirmelerdir.
+ccam, Linux, macOS ve Windows için, ayrıca bir çalışma zamanı kurmayı gerektirmeyen, yaklaşık 10 MB'lık statik bir ikili dosyadır. Kurulum betikleri (`install.sh`, `install.ps1`) ve `ccam update` her indirmeyi sürümün SHA-256 sağlama toplamlarıyla denetler ve ccam güncellemeleri asla kendiliğinden denetlemez. Telemetrisi yoktur: yaptığı tek istekler, hesaplarınız için Anthropic'e yapılan kullanım sorguları (paralel, 3 saniyelik sınır ve 60 saniyelik önbellekle) ve sizin istediğiniz indirmelerdir. `usage_source = "claude"` ile bunlar bile Claude Code üzerinden geçer ve ccam hiçbir token'a dokunmaz.
 
 ## Diğer araçlar nerede daha fazlasını yapar?
 
-- claude-swap, clauth, cux, CAAM ve CCSwitcher bir hesap kullanım eşiğini aştığında çalışan etkileşimli bir oturumu kendiliğinden başka hesaba geçirebilir. ccam `-p` çalıştırmalarını `--fallback` ile geçirir ve etkileşimli oturumları size bırakır.
+- claude-swap, clauth, cux, CAAM ve CCSwitcher bir hesap kullanım eşiğini aştığında çalışan etkileşimli bir oturumu kendiliğinden başka hesaba geçirebilir. ccam `-p` çalıştırmalarını `--fallback` ile geçirir ve etkileşimli oturumları, limitte bir bildirim ve `/ccam:switch` ile size bırakır.
 - Geliştirici Modu olmayan Windows'ta ccam klasörleri paylaşır ama `settings.json` gibi tek dosyaları paylaşamaz; claude-swap ve CCS orada bunları kopyalar.
 - CCSwitcher, Claude Switcher ve claude-swap kullanımı macOS menü çubuğunda gösterir.
 - CCS, clausona, CAAM, clauth, ccswap ve Claude Switcher Codex'i ve diğer kodlama ajanlarını da yönetir.

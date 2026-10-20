@@ -4,7 +4,7 @@ description: Duba mahaɗan rabawa, izinin fayiloli, shiga da sigar Claude Code d
 updated: 2026-10-20
 order: 9
 translation: machine
-sourceHash: a45ca25bb722
+sourceHash: 6ae82bbf5585
 ---
 
 `ccam doctor` yana duba girkin ccam ɗinka: binary na Claude Code, foldar kowane asusu, shiga da mahaɗan rabawa, sabobin MCP da aka raba, endpoint na amfani da gajerun umarninka. `ccam doctor --fix` yana gyara abin da zai iya yi ba tare da rasa bayanai ba, kuma yana fara matsar da duk fayil da zai maye gurbinsa zuwa foldar ajiya. Gudanar da shi idan `ccam <name>` ya tsaya saboda matsalar mahaɗin rabawa, bayan ka maido da fayiloli da hannu, ko bayan sabunta Claude Code.
@@ -71,14 +71,16 @@ Toshen tsakiya yana gudana sau ɗaya ga kowane asusu. Dubawar, da abin da `--fix
 1. **Sigar Claude Code** (`checkClaude`). Yana nemo binary na `claude` kamar yadda mai farawa (launcher) ke yi kuma yana gudanar da `claude --version`. Idan sigar ba ta fara da `2.1.302` ba, sigar da aka tabbatar da tsarin foldar ccam a kanta (`doctor.LayoutVersion`), yana ƙara `· ccam was verified against the folder layout of Claude Code 2.1.302. Any 'unknown entries' below may mean the layout changed`. Rashin binary ko gazawar `--version` kuskure ne. Babu gyara.
 2. **Bayanan shiga a muhalli (environment)** (`checkAuthEnv`). Yana gargaɗi idan an saita `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY` ko `ANTHROPIC_AUTH_TOKEN`: kowane asusu da aka fara daga wannan shell yana gadon sa, kuma Claude Code yana fifita shi a kan shigar asusun kansa. Babu gyara; cire shi da kanka.
 3. **Folda** (`checkProfile`). Rashin foldar asusu kuskure ne kuma yana kawo ƙarshen dubawar wannan asusun. Izini da ke da kowane bit na group ko other gargaɗi ne; `--fix` yana gudanar da `chmod 0700`. Windows ba shi da permission bits, don haka ana tsallake wannan dubawar da dubawar `0600` da ke ƙasa a can; foldar da ke cikin profile ɗin mai amfaninka tana da kariyar jerin izininta (access list).
-4. **Fayil ɗin shiga** (`checkCredentials`). Ana duba `.credentials.json` da `lstat`. Symlink kuskure ne, domin dole kowane asusu ya sami nasa token, kuma ba a gyara shi. Mode da ba `0600` ba gargaɗi ne; `--fix` yana gudanar da `chmod 0600`. Sannan ana karanta shigar (a macOS daga Keychain da farko). Rashin shiga gargaɗi ne da ke nuna `ccam login <name>`. Refresh token da ya ƙare kuskuren `login expired` ne; access token da ya ƙare bayani ne kawai, tunda Claude Code yana sabunta shi a farawa ta gaba. Ba a gyara ko ɗaya daga cikin waɗannan ba.
-5. **Mahaɗan rabawa** (`share.Check`). Yana kwatanta kowace hanya a `share.Layout` da saitunan rabawar asusun, ta amfani da `lstat` da `readlink` kawai. Yana bayar da rahoton nau'i huɗu: mahaɗin da ya ɓace, mahaɗin da ke nuna wani wuri, fayil na gaske inda ya kamata mahaɗi ya kasance, da mahaɗin da ya rage ga abin da yanzu na gida ne. Mahaɗin da ya ɓace gargaɗi ne, sauran kurakurai ne.
+4. **Fayil ɗin shiga** (`checkCredentials`). Ana duba `.credentials.json` da `lstat`. Symlink kuskure ne, domin dole kowane asusu ya sami nasa token, kuma ba a gyara shi. Mode da ba `0600` ba gargaɗi ne; `--fix` yana gudanar da `chmod 0600`. Sannan ana karanta shigar (a macOS daga Keychain da farko). Rashin shiga gargaɗi ne da ke nuna `ccam login <name>`. Refresh token da ya ƙare kuskuren `login expired` ne; access token da ya ƙare bayani ne kawai, tunda Claude Code yana sabunta shi a farawa ta gaba. Shiga mai inganci yana nuna imel da tsarin biyan kuɗi (`login valid (dev@company.com, Claude Team · Acme)`). Ba a gyara ko ɗaya daga cikin waɗannan ba; `ccam login --expired` yana shiga kowane asusu da ke buƙatar hakan.
+5. **Mahaɗan rabawa** (`share.Check`). Yana kwatanta kowace hanya a `share.Layout` da rukunonin asusun, ta amfani da `lstat` da `readlink` kawai. Yana bayar da rahoton nau'i huɗu: mahaɗin da ya ɓace, mahaɗin da ke nuna wani wuri, fayil na gaske inda ya kamata mahaɗi ya kasance, da mahaɗin da ya rage ga abin da yanzu na gida ne. Mahaɗin da ya ɓace gargaɗi ne, sauran kurakurai ne. Hanyoyin da aka ƙara wa wani abu a sigar ccam ta baya (`file-history/`, `tasks/` da `paste-cache/` ga tarihi, `keybindings.json` ga saituna) gargaɗi ne kawai yayin da asusun ke da nasa kwafin har yanzu: `is not shared with the group yet (ccam doctor --fix moves it in)`. Farawa ba ta taɓa tsayawa saboda su.
 6. **Shigarwar da ba a sani ba** (`checkUnknownEntries`). Yana lissafa sunayen babban mataki a foldar asusun da ccam bai sani ba (`share.Known`), a matsayin alamar cewa tsarin Claude Code ya canza. Bayani ne kawai.
 7. **Hanyoyin plugin** (`checkPlugins`). Rajistocin plugin (`installed_plugins.json`, `known_marketplaces.json`) suna ajiye cikakkun hanyoyi. A cikin `plugins/` na kowane rukuni, hanyoyin da ke ratsa foldar asusu ɗaya suna lalacewa idan aka cire ko aka sake sunan wannan asusun. `--fix` yana sake rubuta su zuwa foldar rukunin da `profile.RewritePluginPaths`, rubutu na atomic na fayil ɗin rajistar.
 8. **Sabobin MCP** (`checkMCP`). Yana loda `mcp.json` na kowane rukuni sau ɗaya. Fayil da ba za a iya karantawa ba kuskure ne; sabar da ta gaza `mcp.Validate` gargaɗi ce. Babu gyara.
 9. **Tsarin amsar amfani** (`checkUsageFormat`). Yana tambayar endpoint na amfani, ba tare da cache ba kuma da iyakar daƙiƙa 3 da aka saba, ga asusu ɗaya bayan ɗaya har sai ɗaya ya amsa. Idan ba a iya karanta amsar kuma ba, yana gargaɗin cewa `ccam usage` zai koma ga cache na layin matsayi. Wannan ita ce dubawa kaɗai da ke amfani da network.
 10. **Gajerun umarni** (`checkShims`). Sai idan asusu yana da gajeren umarni. Mahaɗan da suka ɓace a `~/.local/bin` gargaɗi ne; `--fix` yana kiran `shim.Install`, wanda ke ƙirƙirar mahaɗan da suka ɓace kawai kuma ba ya taɓa wasu fayiloli. Foldar bin da ba ta cikin `PATH` gargaɗi ce kuma ba a gyara ta.
 11. **Foldoji** (`checkFolders`). Sai idan akwai shigarwar [`ccam folder`](/features/folder). Shigarwar da asusunta babu shi kuskure ne, kuma shigarwar da foldarta ta ɓace gargaɗi ce. Ba a gyara ko ɗaya, domin cire shigarwa zai canza asusun da ke farawa a can.
+12. **Rukunoni da saituna** (`checkGroups`). Memba na rukuni da ba asusu ba ne, asusun da sunansa ya zama umarnin ccam tun daga lokacin (fara shi da `ccam run <name>` ko sake masa suna), da `theme` ko `usage_source` da ba a sani ba a `config.toml` gargaɗi ne. Babu gyara.
+13. **Bayanan shiga** (`checkIdentities`). Yana karanta wanda kowace folda ta shiga da shi daga `.claude.json` ɗinta. Foldar da yanzu ta shiga wani asusu dabam da wanda `ccam login` ya rubuta (misali bayan `/login` a cikin zama) gargaɗi ce, haka ma foldar da ta shiga asusun Claude iri ɗaya da wata: su biyun suna raba iyakokin amfaninsu. Babu gyara.
 
 ### Gyara mahaɗan rabawa
 
@@ -91,7 +93,7 @@ ccam: stopped because of share link problems:
 Repair them with `ccam doctor --fix`, then run again
 ```
 
-Ga kowace matsalar mahaɗin rabawa, `--fix` yana kiran `share.Build` da saitunan rabawar asusun a matsayin duka yanayin yanzu da yanayin da ake so, sannan `Plan.Apply`. `Build` yana sake samar da kowane mataki daga abin da ke kan faifai, shiri ɗaya da `ccam share` ke amfani da shi, don haka gyaran yana bin ƙa'idodi iri ɗaya da kunna rabawa.
+Ga kowace matsalar mahaɗin rabawa, `--fix` yana kiran `share.Build` da saitunan rabawar asusun a matsayin duka yanayin yanzu da yanayin da ake so, sannan `Plan.Apply`. `Build` yana sake samar da kowane mataki daga abin da ke kan faifai, shiri ɗaya da canjin `ccam group` ke amfani da shi, don haka gyaran yana bin ƙa'idodi iri ɗaya da shiga rukuni.
 
 <!-- motion:doctor-repair -->
 
@@ -110,7 +112,7 @@ Banda cire mahaɗai, kowane mataki yana matsar da bayanai cikin rukunin ko folda
 - `ccam doctor` kawai ba ya taɓa canza komai. Yi amfani da `--dry-run` tare da `--fix` don tabbatarwa a cikin rubutun (scripts).
 - `doctor --fix` ba ya duba ko asusu yana aiki. Rufe Claude Code na asusu kafin ka gyara mahaɗan rabawarsa, domin zaman yana ci gaba da rubutu a waɗannan fayiloli.
 - Idan gyaran rabawa ya gaza, ccam yana bayar da rahoton `could not repair share links: <error>` ga wannan asusun kuma yana tsallake dubawar shigarwar da ba a sani ba. Ana ci gaba da duba sauran asusai.
-- Idan `ccam share` ya gaza a tsakiya, yana fara ajiye saitunan da ake so kuma yana gaya maka ka kammala da `ccam doctor --fix`.
+- Idan canjin `ccam group` ya gaza a tsakiya, an riga an ajiye sababbin rukunonin, kuma ccam yana gaya maka ka kammala da `ccam doctor --fix`.
 - Ana bayar da rahoton `.credentials.json` da aka yi wa symlink, shigar da ta ƙare da bayanan shiga a muhalli, amma ba a taɓa canza su.
 - Ana rubuta sake rubutun rajistar plugin a atomic, amma ba a kwafar su zuwa `.ccam-backup/`.
 

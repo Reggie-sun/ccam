@@ -1,34 +1,37 @@
 ---
 title: Cambiar a la siguiente cuenta
-description: ccam next abre Claude Code con la cuenta siguiente a la última usada; --auto elige la de más margen, --continue retoma y --fallback reejecuta trabajos -p.
+description: ccam next abre Claude Code con otra cuenta; --auto elige la de más margen, --continue lleva consigo la conversación y --fallback reejecuta trabajos -p.
 updated: 2026-10-20
 order: 8
 translation: machine
-sourceHash: 784ae4d1f6d9
+sourceHash: "6a5dcb1d5c01"
 ---
 
-`ccam next` abre Claude Code con otra cuenta sin que tengas que nombrarla. Úsalo cuando una cuenta llegue a su límite de uso: `ccam next` a secas toma la cuenta que sigue a la que usaste por última vez, `--auto` toma la que tiene más margen en su ventana de 5 horas y `--continue` sigue la última conversación en la cuenta nueva. Para scripts que ejecutan `claude -p`, `ccam --fallback` hace ese cambio por sí solo (consulta [Volver a ejecutar al llegar al límite](#run-again-at-the-limit)).
+`ccam next` abre Claude Code con otra cuenta sin que tengas que nombrarla. Úsalo cuando una cuenta llegue a su límite de uso: `ccam next` a secas toma la cuenta que sigue a la que usaste por última vez, `--auto` toma la que tiene más margen y `--continue` lleva la última conversación de esta carpeta a la cuenta nueva, compartan o no el historial las dos. Dentro de Claude Code, el [plugin de ccam](#inside-claude-code) te avisa cuando un límite detiene una sesión y `/ccam:switch` pasa la conversación a otra cuenta. Para scripts que ejecutan `claude -p`, `ccam --fallback` hace el cambio por sí solo (consulta [Volver a ejecutar al llegar al límite](#run-again-at-the-limit)).
 
 ## Uso
 
 ```sh
 ccam next                       # the account after the one you used last
-ccam next --auto                # the account with the lowest 5-hour usage
-ccam next --continue            # the next account that shares history, with claude --continue
-ccam next -c --auto             # both: lowest usage among accounts sharing history
+ccam next --auto                # the account with the most room
+ccam next --continue            # carry this folder's last conversation on as the next account
+ccam next -c --auto             # both: the conversation, on the account with the most room
 ccam next --auto --max-usage 80 # prefer accounts below 80%
+ccam next --auto --strategy balance   # the weekly quota that would go unused first
+ccam next --auto --cross-org    # also accounts of other organizations
 ccam next --auto --wait         # nobody has room: wait for the first reset (up to 5 hours)
 ccam next -- -p "summarize"     # pass arguments to claude after --
 ccam --dry-run next --auto      # print the choice and the command, start nothing
 ```
 
 ```console
-$ ccam --dry-run next
-→ personal → work
-CLAUDE_CONFIG_DIR=/home/you/.local/share/ccam/profiles/work /usr/local/bin/claude
+$ ccam --dry-run next --auto --continue
+→ personal → work (12% of its 5 hours used, the least)
+  continuing "Fix the flaky tests" (about 182k tokens); work does not share personal's history, so Claude Code copies it into work
+CLAUDE_CONFIG_DIR=/home/you/.local/share/ccam/profiles/work /usr/local/bin/claude --resume /home/you/.local/share/ccam/profiles/personal/projects/-home-you-code-app/4f1c….jsonl --fork-session
 ```
 
-ccam imprime el cambio como `→ <from> → <to>` en la salida de error estándar y luego inicia Claude Code con la cuenta nueva igual que `ccam <name>`. `<from>` es la cuenta que usaste por última vez. Los argumentos que van después de `--` llegan a `claude` sin cambios.
+ccam imprime el cambio como `→ <from> → <to>` en la salida de error estándar, con el motivo de una elección de `--auto`, y luego inicia Claude Code con la cuenta nueva igual que `ccam <name>`. `<from>` es la cuenta que usaste por última vez o, con `--continue`, la cuenta a la que pertenece la conversación. Los argumentos que van después de `--` llegan a `claude` sin cambios.
 
 ## Opciones
 
@@ -36,13 +39,14 @@ ccam imprime el cambio como `→ <from> → <to>` en la salida de error estánda
 | --- | --- | --- |
 | `--auto` | Elige la cuenta con sesión iniciada según el uso (ver más abajo), y omite las cuentas al 100 % | desactivada |
 | `--max-usage <1-100>` | Con `--auto`: prefiere las cuentas por debajo de este uso | `auto_max_usage`, si no 100 |
-| `--strategy headroom\|expiring` | Con `--auto`: el menor uso de 5 horas, o el restablecimiento de 5 horas más próximo | `auto_strategy`, si no `headroom` |
+| `--strategy headroom\|expiring\|balance` | Con `--auto`: el menor uso de 5 horas, el restablecimiento de 5 horas más próximo o la cuota semanal que antes quedaría sin usar | `auto_strategy`, si no `headroom` |
+| `--cross-org` | Con `--auto`: elige también cuentas de otra organización (ver más abajo) | `cross_org`, si no desactivada |
 | `--wait[=<duration>]` | Con `--auto`: cuando ninguna cuenta tiene margen, espera a que se restablezca la primera, como máximo este tiempo | desactivada; `5h` si se da sola |
-| `-c`, `--continue` | Solo tiene en cuenta las cuentas que comparten el historial de conversaciones con la cuenta que usaste por última vez, e inicia `claude --continue` | desactivada |
+| `-c`, `--continue` | Lleva la última conversación de esta carpeta a la cuenta nueva (ver más abajo) | desactivada |
 | `-- <claude args>` | Argumentos que se pasan a `claude` después de los de ccam | ninguno |
 | `--dry-run` | Se respeta: imprime `→ <from> → <to>` y la línea de comandos que ejecutaría, sin iniciar Claude Code ni registrar un inicio | desactivada |
 
-`--auto` y `--continue` se pueden combinar. Con `--continue`, `--continue` se coloca antes de tus propios argumentos.
+`--auto` y `--continue` se pueden combinar. Con `--continue`, los argumentos de `--resume` se colocan antes de los tuyos.
 
 ## Cómo funciona
 
@@ -67,7 +71,7 @@ El recorrido empieza en la última cuenta usada y se detiene en la primera cuent
 
 Una cuenta se juzga por sus ventanas de 5 horas y semanal y, cuando `--model` está entre los argumentos para Claude Code, también por la ventana semanal de ese modelo (`opus`, `sonnet`, `haiku` o `fable` en el nombre). `Policy.Choose()` reparte las cuentas en tres grupos:
 
-1. **Con margen**: todas las ventanas por debajo de `auto_max_usage` (`config.toml`, 100 por defecto). La estrategia elige entre ellas: `headroom` (predeterminada) toma el menor uso de 5 horas, `expiring` toma la ventana de 5 horas que se restablece antes, para que su cuota restante se use antes de perderse.
+1. **Con margen**: todas las ventanas por debajo de `auto_max_usage` (`config.toml`, 100 por defecto). La estrategia elige entre ellas: `headroom` (predeterminada) toma el menor uso de 5 horas; `expiring` toma la ventana de 5 horas que se restablece antes, para que su cuota restante se use antes de perderse; `balance` toma la cuenta con más cuota semanal restante por día hasta que se restablezca su semana, y cuenta en su contra cada sesión de ccam en ejecución, para que la cuota semanal no quede sin usar y las sesiones en paralelo se repartan.
 2. **Por encima**: por debajo del 100 %, pero en `auto_max_usage` o por encima. Solo se usan cuando ninguna cuenta tiene margen, primero la de menor uso de 5 horas.
 3. **Llenas**: una ventana al 100 %, o un uso de 5 horas desconocido. Nunca se eligen.
 
@@ -77,11 +81,27 @@ auto_max_usage = 80        # keep 20% of each account for interactive work
 auto_strategy = "expiring"
 ```
 
+**Organizaciones.** Las elecciones automáticas se quedan con cuentas como la que dejas: la misma organización de equipo o de empresa, o los planes personales (Pro, Max) entre sí, para que el trabajo de una cuenta de la empresa no continúe en una privada ni al revés. ccam conoce la organización de cada cuenta por su inicio de sesión (`ccam login` la registra; en los inicios de sesión más antiguos se lee de `.claude.json`); una cuenta cuya organización no puede determinar encaja en cualquier sitio. Dos carpetas con la sesión iniciada en la misma cuenta de Claude comparten sus límites, así que una nunca releva a la otra. `--cross-org`, o `cross_org = true` en `config.toml`, quita la regla de la organización.
+
 Cuando no se puede elegir nada, ccam sale con el código 75 (`EX_TEMPFAIL`), para que un script distinga "inténtalo más tarde" de un fallo. Con `--wait`, en cambio, espera hasta que se restablezca la ventana que bloquea a la primera cuenta llena (30 segundos después de la hora de restablecimiento, cuando el endpoint muestra la nueva ventana), imprime `ccam: no account has room; waiting until 15:10` y vuelve a elegir; cuando ninguna cuenta dice cuándo se restablece, vuelve a mirar a los 10 minutos. Si nada se libera antes de que acabe la espera, sale con 75. La consulta sigue las reglas de `ccam usage`: las cifras con menos de 60 segundos se reutilizan, cada cuenta tiene 3 segundos, y una cuenta que no responde, o cuyo inicio de sesión venció, se juzga por sus cifras guardadas. Una ventana guardada cuya hora de restablecimiento ya pasó cuenta como 0 %, así que no se descarta una cuenta cuya ventana se restableció desde entonces. `--auto` nunca renueva tokens. A diferencia de la rotación simple, `--auto` puede elegir la cuenta que usaste por última vez si sigue teniendo el mayor margen.
 
 ### --continue
 
-`--continue` de Claude Code abre la conversación más reciente de la carpeta actual, lo que solo funciona si la cuenta nueva puede ver esa conversación. Por eso, con `--continue`, ccam solo tiene en cuenta las cuentas del mismo grupo de `history` que la cuenta que usaste por última vez, y luego coloca `--continue` delante de tus argumentos. Las cuentas cuyo historial es `local` no comparten con nadie, así que `--continue` desde una de ellas siempre falla. Activa primero el uso compartido con `ccam share <name> --history on` (consulta [compartir](/docs/sharing)).
+1. ccam busca la última conversación de esta carpeta en todas las cuentas: el `<session>.jsonl` más reciente de `projects/<folder>/` (el nombre de la carpeta es la carpeta de trabajo con cada carácter que no sea una letra o un dígito convertido en `-`, como la nombra Claude Code). Si la sesión dejó una nota (un límite de uso o `/ccam:switch`, ver más abajo) y desde entonces no se escribió nada más reciente, se usa exactamente esa sesión.
+2. La cuenta a la que pertenece es la cuenta de la que te cambias, y la cuenta nueva se elige como se describe arriba, dentro de la misma organización.
+3. Si la cuenta nueva comparte ese historial (la misma carpeta de grupo), ccam inicia `claude --resume <session id>`, justo esa conversación (`--continue` abriría la más reciente de la carpeta, sea cual sea).
+4. Si no, inicia `claude --resume <the conversation's file> --fork-session`: Claude Code copia la conversación completa, con un nuevo id de sesión, en el historial propio de la cuenta nueva, y el original queda como estaba. A partir de entonces, `--continue` de la cuenta nueva la encuentra.
+
+ccam indica el tamaño de la conversación: la cuenta nueva la vuelve a leer entera con su primera respuesta. Las cachés de prompts nunca se comparten entre organizaciones, así que con `--cross-org` esa primera respuesta cuesta el tamaño completo. Compartir `history` en un grupo evita la copia, mantiene una sola conversación y comparte también los puntos de control desde los que `/rewind` restaura el código (`file-history/`).
+
+## Dentro de Claude Code
+
+El [plugin de ccam](/docs/install#claude-code-plugin) agrega dos hooks (Claude Code 2.1.78 o posterior):
+
+- Cuando un turno se detiene en un límite de uso (`You've hit your session limit`, el límite semanal o el de un modelo), anota la conversación y muestra una notificación de escritorio en las terminales que la admiten (iTerm2, WezTerm, Windows Terminal, kitty, Ghostty): `ccam: work hit its 5-hour limit (resets 3:45pm). ccam next --continue carries on as another account.` Una limitación breve del servidor o el límite de solicitudes de una clave de API no es un límite de uso y no se toca. Claude Code 2.1.234 y posteriores también esperan en la sesión y continúan por sí solos tras un restablecimiento de 5 horas; la notificación te da la opción de cambiar de cuenta en su lugar.
+- `/ccam:switch [account]` anota la conversación y termina el turno antes de que se haga ninguna solicitud: escribe `/exit`, y luego `ccam next --continue` la continúa, con la cuenta que nombraste o con la siguiente.
+
+La nota vive en `~/.local/state/ccam/handoff/<account>.json` durante 12 horas y se usa una sola vez, cuando la siguiente sesión está a punto de iniciarse; un inicio que falla la deja para el siguiente intento. Pertenece a la carpeta en la que se inició la sesión, incluso después de un `cd` en el shell de Claude Code. Si la cuenta que nombra se ha renombrado o eliminado desde entonces, ccam lo indica y elige como de costumbre. Con `relay = true` en `config.toml`, ccam se queda al lado de las sesiones interactivas en lugar de reemplazarse a sí mismo por Claude Code, y después de `/ccam:switch` continúa por sí solo la conversación de esa sesión (no actúa sobre una nota que haya dejado otra sesión). Eso cuesta un proceso de ccam en espera por sesión, y por eso está desactivado por defecto. La sesión que toma el relevo se inicia con `ccam next --continue`, sin los argumentos con los que se inició la primera, como `--model`.
 
 ## Volver a ejecutar al llegar al límite
 
@@ -106,6 +126,7 @@ Summary: …
 5. Un fallo cuenta como límite de uso cuando el mensaje de Claude Code lo indica (`You've hit your limit`, `usage limit reached`), o cuando la consulta de uso de la cuenta muestra su ventana de 5 horas o semanal al 100 %.
 6. Entonces se descarta la salida de ese intento y el mismo comando se ejecuta con otra cuenta con sesión iniciada: la de menor uso de 5 horas, y después las cuentas cuyo uso no se puede consultar, por orden de número. Las cuentas al 100 % se omiten, y cada cuenta se prueba como máximo una vez.
 7. Con `-c`, `--continue`, `-r` o `--resume` entre los argumentos, solo se prueban las cuentas del mismo grupo de historial, para que se pueda encontrar la conversación.
+8. Solo se prueban cuentas de la misma organización, igual que con `--auto` (`cross_org = true` quita esta restricción).
 
 La siguiente cuenta se elige con las mismas reglas que `--auto` (`auto_max_usage`, `auto_strategy`, la ventana de `--model`). Cuando no queda ninguna cuenta, ccam imprime la salida del último intento, indica que ninguna cuenta con sesión iniciada tiene margen y sale con el código 75. Con `--wait` antes del nombre de la cuenta (`ccam --fallback --wait=2h work -p …`), en cambio, espera a que se restablezca la primera cuenta y después puede volver a probar todas las cuentas; siempre espera al menos una vez antes, para que una cuenta que acaba de llegar a su límite no se vuelva a ejecutar de inmediato. `ccam --dry-run --fallback work -p …` imprime el comando del primer intento.
 
@@ -114,9 +135,11 @@ Las sesiones interactivas no cambian por sí solas. En su lugar, con `ccam statu
 ## Seguridad y casos límite
 
 - Las cuentas sin inicio de sesión nunca se eligen. Si no hay otra cuenta con sesión iniciada, `ccam next` a secas se detiene con `no logged-in account other than <name>`.
-- Con `--continue` y ninguna cuenta que comparta el historial: `` no other account shares conversation history with <name>. Turn it on with `ccam share <name> --history on` ``.
+- Con `--continue` y ninguna conversación en la carpeta: `no account has a conversation in <folder> to continue`.
+- Cuando la regla de la organización no deja ninguna cuenta: `` no logged-in account to pick among <name>'s (<organization>); --cross-org also looks at the others ``.
 - Con `--auto` y ninguna cuenta con sesión iniciada: `no logged-in account to pick`. Cuando todas las cuentas están llenas o su uso es desconocido: `` no account with known usage and headroom (see `ccam usage`) ``. Ambos casos terminan con el código de salida 75.
-- `--max-usage`, `--strategy` y `--wait` solo funcionan con `--auto`, y se rechaza un valor fuera de 1-100 u otra estrategia.
+- `--max-usage`, `--strategy`, `--wait` y `--cross-org` solo funcionan con `--auto`, y se rechaza un valor fuera de 1-100 u otra estrategia.
+- Una bifurcación copia la conversación, no el resto del estado de la cuenta: los puntos de control de `file-history/` de la cuenta original no la acompañan, salvo que el historial se comparta.
 - `--auto` hace solicitudes de red incluso con `--dry-run`. Solo lee, y nunca escribe archivos de tokens.
 - La cuenta elegida se inicia por la misma ruta que `ccam <name>`, así que se aplican las mismas comprobaciones, incluida la advertencia cuando otro Claude Code que comparte el mismo historial ya se está ejecutando en esta carpeta.
 - `last-used` solo se escribe cuando Claude Code se inicia de verdad. `--dry-run` no lo toca, así que una ejecución de prueba no hace avanzar la rotación.

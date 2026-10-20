@@ -4,7 +4,7 @@ description: Subiri kikomo kianze upya au endeleza mazungumzo yale yale kwenye a
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: ff765a189332
+sourceHash: "38b80d780bba"
 ---
 
 Akaunti inapofikia kikomo chake cha matumizi (mara nyingi huitwa rate limit), una machaguo mawili: kusubiri hadi kikomo kianze upya, au kuendeleza mazungumzo yale yale sasa hivi kwenye akaunti nyingine unayoimiliki. Kwa ccam, chaguo la pili huchukua amri moja, `ccam next --auto --continue`, mara historia ya mazungumzo inaposhirikiwa kati ya akaunti.
@@ -25,8 +25,7 @@ Ikiwa una akaunti ya pili, unaweza kuendelea mara moja na mazungumzo yale yale. 
 curl -fsSL https://ccam.dev/install.sh | sh
 ccam add personal
 ccam add work
-ccam share personal --history on
-ccam share work --history on
+ccam group set default --add history
 ccam statusline install
 ```
 
@@ -49,17 +48,19 @@ Fungua mazungumzo katika akaunti yenye nafasi kubwa zaidi:
 ccam next --auto --continue
 ```
 
-Claude Code huanza kama `work` ikiwa na mazungumzo ya hivi karibuni zaidi ya folda ya sasa, pamoja na kila kitu kilichosemwa hadi sasa.
+Claude Code huanza kama `work` ikiwa na mazungumzo ya hivi karibuni zaidi ya folda ya sasa, pamoja na kila kitu kilichosemwa hadi sasa. Kushiriki historia (`ccam group set default --add history` hapo juu) huyafanya kuwa mazungumzo mamoja; bila hilo, Claude Code huyanakili mazungumzo kwenye `work`, na ccam hukuambia ni tokeni ngapi jibu hilo la kwanza husoma tena.
+
+Ukiwa na [plugin ya ccam](/docs/install#claude-code-plugin) ndani ya Claude Code, kipindi kinachosimama kwenye kikomo chake huonyesha arifa, na `/ccam:switch` (au `/ccam:switch work`) hurekodi mazungumzo kwa ajili ya `ccam next --continue` bila kuacha chochote cha kubahatisha.
 
 ## Je, ccam hubadili akaunti kiotomatiki?
 
-Hapana. ccam haiendeshwi wakati unafanya kazi: huanzisha Claude Code na kujibadilisha nayo. Wewe ndiye unaamua wakati wa kubadili, na `ccam next --auto` huchagua akaunti yenye matumizi ya chini zaidi ya saa 5 na kuruka akaunti zilizofikia 100% au ambazo hazijaingiwa. Baadhi ya zana nyingine hubadilisha taarifa za kuingia za kipindi kinachoendelea badala yake; [ccam na zana nyingine za kubadili akaunti](/compare/account-switchers) inaeleza tofauti.
+Hapana. ccam haiendeshwi wakati unafanya kazi: huanzisha Claude Code na kujibadilisha nayo. Wewe ndiye unaamua wakati wa kubadili, na `ccam next --auto` huchagua akaunti yenye matumizi ya chini zaidi ya saa 5 na kuruka akaunti zilizofikia 100%, ambazo hazijaingiwa, au za shirika jingine. Kwa `relay = true` katika `config.toml`, ccam husubiri kando ya kipindi badala yake, kwa hiyo `/ccam:switch` huendelea yenyewe. Baadhi ya zana nyingine hubadilisha taarifa za kuingia za kipindi kinachoendelea badala yake; [ccam na zana nyingine za kubadili akaunti](/compare/account-switchers) inaeleza tofauti.
 
 ## Mambo ya kukumbuka
 
 - Endesha `ccam next --continue` katika folda ile ile uliyofanyia kazi; mazungumzo huhifadhiwa kwa kila folda ya mradi.
 - Epuka kuendesha akaunti mbili kwenye mazungumzo yale yale kwa wakati mmoja. ccam hukuonya ukijaribu.
-- Akaunti nyingine lazima pia ishiriki historia ya mazungumzo, katika kikundi kile kile.
+- Bila historia inayoshirikiwa, mazungumzo hunakiliwa kwenye akaunti nyingine na nakala hizo mbili huendelea kila moja kwa njia yake; checkpoints ambazo `/rewind` hurejesha msimbo kutoka kwazo hubaki kwenye akaunti ya kwanza.
 - Ujumbe wa kwanza kwenye akaunti mpya unaweza kutumia sehemu kubwa kuliko kawaida ya kikomo chake, kwa sababu akaunti hiyo bado haijahifadhi mazungumzo kwenye cache.
 - Iwapo unaruhusiwa kubadili kati ya akaunti kwa namna hii inategemea masharti ya kila akaunti.
 

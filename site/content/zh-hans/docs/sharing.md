@@ -1,46 +1,45 @@
 ---
 title: 共享 MCP 服务器、设置和历史记录
-description: ccam 如何在 Claude Code 账号之间共享 MCP 服务器、settings.json、CLAUDE.md、agents、skills 和对话历史，登录则各自独立。
+description: ccam 的组如何在 Claude Code 账号之间共享 MCP 服务器、settings.json、CLAUDE.md、技能和对话历史，同时让每个登录保持独立。
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 888d466b29e9
+sourceHash: "2606e4ec682e"
 ---
 
-每个账号都保留自己的登录。其他所有内容都可以逐项共享：ccam 把账号中的文件或文件夹链接到一个共享组文件夹，因此在一个账号中所做的更改会出现在该组的所有账号中。
+每个账号都保留自己的登录。其他所有内容都可以通过**组**共享：组指定它共享的项以及其中的账号，ccam 把这些账号的文件链接到组的文件夹，因此在一个账号中所做的更改会出现在所有这些账号中。
 
 ## 可以共享哪些内容
 
-| 共享项 | 选项 | 共享的内容 |
-| --- | --- | --- |
-| MCP 服务器 | `--mcp` | 组中的 `mcp.json`，在启动时传给 Claude Code |
-| 设置 | `--settings` | `settings.json`：权限、hooks、模型、状态栏 |
-| 全局记忆 | `--memory` | `CLAUDE.md` |
-| 扩展 | `--extensions` | `agents/`、`commands/`、`skills/`、`plugins/`、`output-styles/`、`rules/` |
-| 对话历史 | `--history` | `projects/` 和 `history.jsonl` |
+| 项 | 共享的内容 |
+| --- | --- |
+| `mcp` | MCP 服务器：组的 `mcp.json`，在启动时传给 Claude Code |
+| `settings` | `settings.json`：权限、钩子、模型、状态栏 |
+| `memory` | 全局 `CLAUDE.md` |
+| `extensions` | `agents/`、`commands/`、`skills/`、`plugins/`、`output-styles/`、`rules/` |
+| `history` | 对话历史：`projects/` 和 `history.jsonl` |
 
-新账号默认共享除对话历史以外的所有内容。
+你的第一个账号会创建组 `default`，它共享除对话历史以外的所有内容，之后添加的账号都会加入这个组。
 
 登录文件 `.credentials.json` 和 `.claude.json` 永远不会被共享。ccam 只链接一份固定列表中的路径，而这两个文件不在列表中。
 
-本页介绍日常任务。每个选项都在功能页面中有说明：[在账号之间共享](/features/share)、[共享的 MCP 服务器](/features/mcp)和[复制现有配置](/features/migrate)。
+本页介绍日常任务。每个选项都在功能页面中有说明：[通过组共享](/features/share)、[共享的 MCP 服务器](/features/mcp)和[复制现有配置](/features/migrate)。
 
 ## 组
 
-`on` 表示 `default` 组。你也可以指定一个组名，让只有部分账号共享某一项：
-
 ```sh
-ccam share work --history team
-ccam share side --history team
+ccam group                                   # the groups, what they share, their accounts
+ccam group set default --add history         # every account in default shares history
+ccam group add team --items history --members work,side
 ```
 
-现在 `work` 和 `side` 彼此共享对话，但不与你的其他账号共享。
+一个账号可以属于多个组，但每一项只能来自一个组。因此，如果想让 `work` 和 `side` 共享对话历史而不与你的其他账号共享，就不要让 `default` 共享历史，而是像上面那样给这两个账号单独建一个组。`ccam share work` 显示一个账号共享哪些内容，以及通过哪个组共享。[仪表盘](/features/dashboard)的 Groups 选项卡也能完成同样的操作。
 
-## 开启共享
+## 账号开始共享时
 
-当某个账号开始共享某一项时，ccam 会：
+当某个账号开始共享某一项时（它加入了一个组，或者它所在的组添加了这一项），ccam 会：
 
-1. 打印一份计划，列出它将移动、复制或链接的每个文件，并在开始前征求你的确认；
+1. 为每个账号打印一份计划，列出它将移动、复制或链接的每个文件，并在开始前征求你的确认；
 2. 如果组文件夹仍为空，就把账号的文件移入组文件夹；否则只添加组中还没有的文件；
 3. 当同一个文件的内容不同时，询问你是保留组中的版本、使用你的版本，还是合并 JSON；
 4. 把你的原始文件保存在账号文件夹内的 `.ccam-backup/<time>/` 中；
@@ -48,12 +47,13 @@ ccam share side --history team
 
 对话文件以会话 ID 命名，因此多个账号的历史记录可以合并而不会冲突。
 
-当 Claude Code 正以该账号运行时，ccam 不会更改共享，因为会话会继续写入正在移动的文件。请先退出会话。
+当 Claude Code 正以某个账号运行时，ccam 不会更改这个账号，因为会话会继续写入正在移动的文件。请先退出会话。
 
-## 关闭共享
+## 账号停止共享时
 
 ```sh
-ccam share work --history off
+ccam group leave team work                   # work leaves the group
+ccam group set default --remove history      # nobody in default shares history any more
 ```
 
 链接会被移除，该账号会得到组中当前内容的一份副本。如果想从空白开始，请加上 `--fresh`。组会为其他账号保留其内容。
@@ -95,14 +95,12 @@ Copy from /home/me/.claude into group default (/home/me/.local/share/ccam/groups
   Conversation history (projects/, history.jsonl) is not included; add --history to copy it.
 Copy these into group default? [y/N] y
 ✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, commands/, skills/
-Accounts that share these through group default:
-  mcp         personal
-  settings    personal
-  memory      personal
-  extensions  personal
+Group default: personal
+To share them:
+  ccam group join default work
 ```
 
-最后，ccam 会列出通过该组共享每一项的账号。如果有账号尚未共享，它会显示为这些账号开启共享的 `ccam share` 命令。
+最后，ccam 会列出该组的账号。如果该组尚未共享其中某一项，或者有些账号还不在组中，它会打印用于更改这些情况的 `ccam group` 命令。
 
 如果组中已有内容不同的同名文件，ccam 会像开启共享时一样询问你：保留组中的副本，还是使用你的副本。`settings.json` 等 JSON 文件还可以合并，`history.jsonl` 可以按行合并。组中原有的副本会保存在组文件夹内的 `.ccam-backup/<time>/` 中。
 

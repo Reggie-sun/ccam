@@ -5,7 +5,7 @@ description: ccam addで2つのClaude Codeアカウントを追加し、ccwork�
 updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 55f81dae9fc0
+sourceHash: "d5b0e295f3f0"
 ---
 
 `ccam add`で各アカウントを追加し、`ccam <name>`、または`ccwork`のように自分で名前を付けたショートカットでClaude Codeを起動します。ほとんどの人にとって、必要なのはこれだけです。
@@ -79,7 +79,7 @@ ccam work
 ccam 2
 ```
 
-`ccam`だけを実行すると、選択画面が開きます。矢印キーとEnterキーを使うか、アカウントの番号を押してください。
+`ccam`だけを実行すると、[ダッシュボード](/features/dashboard)が開きます。矢印キーか番号でアカウントに移動し、Enterキーを押してください。
 
 ショートカットやアカウント名より後のものはすべてそのままClaude Codeに渡されるので、使い慣れたオプションをそのまま使えます。
 
@@ -91,14 +91,13 @@ cat error.log | ccwork -p "what caused this?"
 
 ## 5. 共有する項目を選ぶ
 
-デフォルトでは、MCPサーバー、`settings.json`、グローバルの`CLAUDE.md`、そしてエージェント、コマンド、スキル、プラグインがアカウント間で共有されます。会話履歴は共有されません。アカウントをまたいで会話を続けたい場合は、両方のアカウントで会話履歴の共有を有効にします。
+デフォルトでは、MCPサーバー、`settings.json`、グローバルの`CLAUDE.md`、そしてエージェント、コマンド、スキル、プラグインが、`default`グループを通じてアカウント間で共有されます。会話履歴は共有されません。アカウントをまたいで会話を続けたい場合は、会話履歴をグループに追加します。
 
 ```sh
-ccam share personal --history on
-ccam share work --history on
+ccam group set default --add history
 ```
 
-ccamは、何かを変更する前に、何を移動するかを表示します。詳しくは[共有](/docs/sharing)を参照してください。
+ccamは、何かを変更する前に、アカウントごとに何を移動するかを表示します。詳しくは[グループによる共有](/features/share)を参照してください。
 
 ## 6. アカウントが上限に達したとき
 

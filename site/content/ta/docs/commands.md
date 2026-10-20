@@ -5,10 +5,10 @@ description: ccam add, ccam <name> முதல் ccam usage, ccam next, ccam d
 updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: da2594c672bc
+sourceHash: "116c5b34ac9a"
 ---
 
-ஒரு கட்டளை உண்மையில் எதையும் செய்யாமல் என்ன செய்யும் என்று பார்க்க, அதற்கு முன் `--dry-run` வையுங்கள், எடுத்துக்காட்டாக `ccam --dry-run work`. Claude Code-ஐத் தொடங்கும்போது (`ccam <name>`, `ccam run`, `ccam next`) மற்றும் `share`, `migrate`, `shortcut`, `update`, `doctor --fix` ஆகியவற்றுடன் இது வேலை செய்யும். எதையாவது மாற்றும் மற்ற கட்டளைகள் இயங்குவதற்குப் பதிலாக இதை மறுக்கும்.
+ஒரு கட்டளை உண்மையில் எதையும் செய்யாமல் என்ன செய்யும் என்று பார்க்க, அதற்கு முன் `--dry-run` வையுங்கள், எடுத்துக்காட்டாக `ccam --dry-run work`. Claude Code-ஐத் தொடங்கும்போது (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`) மற்றும் `group`, `migrate`, `shortcut`, `update`, `doctor --fix` ஆகியவற்றுடன் இது வேலை செய்யும். எதையாவது மாற்றும் மற்ற கட்டளைகள் இயங்குவதற்குப் பதிலாக இதை மறுக்கும்.
 
 <!-- commands -->
 
@@ -33,9 +33,10 @@ ccam --fallback work -p "fix the tests"   # run again as another account at the 
 
 ```sh
 ccam add                      # wizard
-ccam add work --share history=on
+ccam add work --group default --group team
 ccam add side --shortcut ccside
 ccam add ci --no-login        # log in later with: ccam login ci
+ccam login --expired          # log in every account whose login no longer works
 ccam rename work job
 ccam remove side              # folder moves to ~/.local/share/ccam/trash
 ccam import ~/.claude-old --name old
@@ -46,9 +47,9 @@ ccam add gw --api --base-url https://llm.example.com --auth bearer --key-from en
 
 `ccam add --api` Claude உள்நுழைவுக்குப் பதிலாக API key பயன்படுத்தும் கணக்கைச் சேர்க்கும்; ccam ஒவ்வொரு தொடக்கத்திலும் key-ஐப் படிக்கும், அதை ஒருபோதும் சேமிக்காது. [API key கணக்குகள்](/features/api) பாருங்கள்.
 
-ஒரு கணக்காக Claude Code இயங்கிக்கொண்டிருக்கும்போது, `ccam rename`, `ccam remove`, `ccam share` ஆகியவை அந்தக் கணக்கை மாற்ற மறுக்கும். முதலில் அமர்வை முடியுங்கள்.
+ஒரு கணக்காக Claude Code இயங்கிக்கொண்டிருக்கும்போது, `ccam rename`, `ccam remove`, `ccam group` கட்டளைகள் ஆகியவை அந்தக் கணக்கை மாற்ற மறுக்கும். முதலில் அமர்வை முடியுங்கள்.
 
-`ccam list --json` ஒவ்வொரு கணக்கையும் அதன் slot எண், குறுக்குவழி, மின்னஞ்சல், கோப்புறை ஆகியவற்றுடன் அச்சிடும். அதிலுள்ள `share` object ஒவ்வொரு உருப்படியையும் (`mcp`, `settings`, `memory`, `extensions`, `history`) ஒரு குழுப் பெயருடன் அல்லது `local` உடன் இணைக்கும்.
+`ccam list --json` ஒவ்வொரு கணக்கையும் அதன் slot எண், குறுக்குவழி, மின்னஞ்சல், கோப்புறை ஆகியவற்றுடன் அச்சிடும். அதிலுள்ள `groups` array கணக்கின் குழுக்களைப் பட்டியலிடும், `share` object ஒவ்வொரு உருப்படியையும் (`mcp`, `settings`, `memory`, `extensions`, `history`) அது வரும் குழுவுடன், அல்லது `local` உடன் இணைக்கும்.
 
 ## குறுக்குவழிகள்
 
@@ -69,12 +70,15 @@ ccam shortcut work --remove
 ## பகிர்வு
 
 ```sh
-ccam share work                       # show the current state
-ccam share work --history on --mcp team
-ccam share work --settings off --fresh
+ccam group                                  # the groups, what they share, their accounts
+ccam group add team --items history --members work,side
+ccam group set default --add history        # every account in default changes together
+ccam group join team personal
+ccam group leave team side --fresh
+ccam share work                             # what work shares, and through which group
 ```
 
-ஒவ்வொரு உருப்படியும் `on` (`default` குழு), `off`, அல்லது ஒரு குழுவின் பெயரை ஏற்கும். [பகிர்வு](/docs/sharing) பக்கத்தைப் பாருங்கள்.
+ஒரு குழு தன் கணக்குகளுக்கு இடையே உருப்படிகளைப் பகிர்கிறது; ஒரு கணக்கு பல குழுக்களில் இருக்கலாம், ஆனால் ஒவ்வோர் உருப்படியும் ஒரே ஒரு குழுவிலிருந்து மட்டுமே வரும். [குழுக்களுடன் பகிர்தல்](/features/share) பாருங்கள்.
 
 ## ஏற்கெனவே உள்ள அமைப்பை நகலெடுத்தல்
 
@@ -106,14 +110,17 @@ ccam mcp remove fs
 ccam usage           # also: ccam u
 ccam usage --watch   # refresh every 60 seconds
 ccam usage --json
-ccam next --continue
+ccam usage --source claude      # Claude Code looks it up; ccam never touches a token
+ccam next --continue            # this folder's last conversation, as the next account
 ccam next --auto
 ccam next --auto --max-usage 80 --wait
 ccam pick                       # the account with the most room, for a script
 ccam "$(ccam pick)" -p "…"      # start a worker on it
+ccam agents                     # background sessions of every account
+ccam attach 49ec0028            # open one, as the account that started it
 ```
 
-`next --auto`, `--fallback`, `ccam pick` மூன்றும் ஒரே முறையில் தேர்ந்தெடுக்கும்: முதலில் `auto_max_usage`-க்குக் (`config.toml`, இயல்புநிலை 100) கீழ் உள்ளவை, `auto_strategy` (`headroom` அல்லது `expiring`) படி, `--model`-இன் வாராந்திரக் கால அளவையும் கணக்கிட்டு, 100%-இல் உள்ள கணக்கை ஒருபோதும் அல்ல. எதையும் தேர்ந்தெடுக்க முடியாதபோது அவை code 75 உடன் வெளியேறும், அல்லது `--wait` உடன் முதல் கணக்கு மீட்டமைக்கப்படும் வரை காத்திருக்கும். [அடுத்த கணக்குக்கு மாறுதல்](/features/next), [scripts-க்கு ஒரு கணக்கைத் தேர்ந்தெடுத்தல்](/features/pick) பாருங்கள்.
+`next --auto`, `--fallback`, `ccam pick` மூன்றும் ஒரே முறையில் தேர்ந்தெடுக்கும்: முதலில் `auto_max_usage`-க்குக் (`config.toml`, இயல்புநிலை 100) கீழ் உள்ளவை, `auto_strategy` (`headroom`, `expiring` அல்லது `balance`) படி, `--model`-இன் வாராந்திரக் கால அளவையும் கணக்கிட்டு, 100%-இல் உள்ள கணக்கை ஒருபோதும் அல்ல, அவை தொடங்கும் கணக்கின் நிறுவனத்துக்குள்ளேயே (அதற்கு அப்பாலும் தேட `--cross-org` அல்லது `cross_org = true`). எதையும் தேர்ந்தெடுக்க முடியாதபோது அவை code 75 உடன் வெளியேறும், அல்லது `--wait` உடன் முதல் கணக்கு மீட்டமைக்கப்படும் வரை காத்திருக்கும். வரலாற்றைப் பகிராத கணக்குகளுக்கு இடையிலும் `ccam next --continue` உரையாடலைக் கொண்டுசெல்கிறது: அப்போது Claude Code அதைப் புதிய கணக்குக்குள் நகலெடுக்கிறது. Claude Code-க்குள், plugin-இன் `/ccam:switch [account]` உரையாடலை ஒப்படைக்கிறது, அதன் hooks இயக்குவது `ccam hook`. [அடுத்த கணக்குக்கு மாறுதல்](/features/next), [scripts-க்கு ஒரு கணக்கைத் தேர்ந்தெடுத்தல்](/features/pick), [எல்லாக் கணக்குகளின் பின்னணி அமர்வுகள்](/features/agents) பாருங்கள்.
 
 ## பராமரிப்பு
 
@@ -135,10 +142,10 @@ ccam completion bash # or zsh, powershell
 
 | பாதை | உள்ளடக்கம் |
 | --- | --- |
-| `~/.config/ccam/config.toml` | கணக்குகளும் அவை பகிர்வதும் |
+| `~/.config/ccam/config.toml` | கணக்குகள், குழுக்கள், அமைப்புகள் (`theme`, `usage_source`, `relay`, `cross_org` …) |
 | `~/.local/share/ccam/profiles/<name>/` | ஒவ்வொரு கணக்கின் `CLAUDE_CONFIG_DIR` |
 | `~/.local/share/ccam/groups/<group>/` | பகிரப்பட்ட அமைப்புகள், MCP சர்வர்கள், நீட்டிப்புகள், வரலாறு |
-| `~/.local/state/ccam/` | பயன்பாட்டு cache மற்றும் கடைசியாகப் பயன்படுத்திய நேரங்கள் |
+| `~/.local/state/ccam/` | பயன்பாட்டு cache, கடைசியாகப் பயன்படுத்திய நேரங்கள், `/ccam:switch`-உம் வரம்பு hook-உம் விட்டுச்செல்லும் குறிப்புகள் (`handoff/`) |
 | `~/.local/bin/<shortcut>` | `ccwork` போன்ற குறுக்குவழிக் கட்டளைகள், ccam-க்கான இணைப்புகள் |
 
 `XDG_CONFIG_HOME`, `XDG_DATA_HOME`, `XDG_STATE_HOME` மாறிகள் இந்தக் கோப்புறைகளின் இடத்தை மாற்றுகின்றன. Windows-இல் `~` என்பது `%USERPROFILE%`, குறுக்குவழிகள் `<shortcut>.exe` ஆக இருக்கும்.

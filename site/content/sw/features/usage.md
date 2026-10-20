@@ -4,7 +4,7 @@ description: ccam usage huonyesha vikomo vya saa 5 na vya wiki vya kila akaunti 
 updated: 2026-10-20
 order: 7
 translation: machine
-sourceHash: 525174ceed0d
+sourceHash: "ec1d1ee27d9f"
 ---
 
 `ccam usage` huonyesha kiasi cha vikomo vya saa 5 na vya wiki ambacho kila akaunti imetumia, pamoja na muda uliobaki hadi kila kipindi kianze upya. Itumie kabla ya kuanza kazi ndefu, au Claude Code inapokuambia kikomo kiko karibu, ili kuona ni akaunti ipi bado ina nafasi. `ccam statusline` ni amri ya mstari wa hali (status line) kwa Claude Code: huonyesha jina la akaunti na matumizi ndani ya Claude Code na huhifadhi namba kwa ajili ya `ccam usage`.
@@ -20,6 +20,7 @@ ccam usage -v               # add per-model weekly limits and the data source
 ccam usage --json           # machine-readable, one object per account
 ccam usage --source cache   # saved numbers only, no network
 ccam usage --refresh        # also renew expired logins of accounts not running
+ccam usage --source claude  # let Claude Code look it up: ccam never touches a token
 ccam statusline install     # set the status line in every account's settings.json
 ```
 
@@ -32,7 +33,7 @@ $ ccam usage
 → Most headroom: personal   (open it with ccam next --auto)
 ```
 
-Kwenye terminal jedwali huonekana mara moja likiwa na `fetching…` katika kila safu, na kila safu huchorwa upya akaunti yake inapojibu. `As of` husema namba zina umri gani; `(cached)` inamaanisha zinatoka kwenye faili iliyohifadhiwa, si kwenye endpoint. Mstari wa mwisho hutaja akaunti yenye matumizi ya chini zaidi ya saa 5 yaliyo chini ya 100%, na huonekana tu ukiwa na zaidi ya akaunti moja. Akaunti ambayo haijaingia huonyesha `not logged in → ccam login <name>`, na akaunti ya API key huonyesha `no limits (API)`.
+Kwenye terminal jedwali huonekana mara moja likiwa na `fetching…` katika kila safu, na kila safu huchorwa upya akaunti yake inapojibu. `As of` husema namba zina umri gani; `(cached)` inamaanisha zinatoka kwenye faili iliyohifadhiwa, si kwenye endpoint. Mstari wa mwisho hutaja akaunti ambayo [`ccam next --auto`](/features/next) ingechagua kwa kanuni zile zile (`auto_max_usage`, `auto_strategy`, vipindi vinavyoendeshwa, akaunti za shirika la akaunti iliyotumika mwisho pekee isipokuwa `cross_org` imewekwa, kila kipindi kilicho 100% kikirukwa, kwa hiyo akaunti ambayo wiki yake imejaa haitajwi kamwe), na huonekana tu ukiwa na zaidi ya akaunti moja. Akaunti ambayo haijaingia huonyesha `not logged in → ccam login <name>`, na akaunti ya API key huonyesha `no limits (API)`.
 
 Baada ya `ccam statusline install`, Claude Code huonyesha mstari kama `[work] · Opus · 5h 24% · 7d 41%`.
 
@@ -44,11 +45,15 @@ Baada ya `ccam statusline install`, Claude Code huonyesha mstari kama `[work] ·
 | `--watch[=N]` | Huchora upya kila sekunde `N` hadi ubonyeze Ctrl+C. `--watch` peke yake, au thamani ya 0 au chini, inamaanisha 60 | imezimwa |
 | `-v`, `--verbose` | Huonyesha vikomo vya wiki vya kila model na mstari wa `source:` (`live`, `cache` au `statusline`) | imezimwa |
 | `--no-cache` | Hupuuza cache ya sekunde 60 na huuliza endpoint tena | imezimwa |
-| `--source live\|cache` | `cache` kamwe haiulizi endpoint na huonyesha namba zilizohifadhiwa tu; `live` ndiyo tabia ya chaguo-msingi | live |
+| `--source live\|claude\|cache` | `live` huuliza endpoint kwa tokeni ya akaunti; `claude` huiachia Claude Code itafute (hapa chini); `cache` huonyesha namba zilizohifadhiwa tu | `usage_source`, vinginevyo `live` |
 | `--refresh` | Hufanya upya tokeni za ufikiaji zilizoisha muda, kwa akaunti ambazo haziendeshwi tu | imezimwa |
 | `--dry-run` | Inakubaliwa: `ccam usage` haibadilishi chochote isipokuwa cache yake yenyewe. Hukataliwa pamoja na `--refresh`: `--dry-run cannot be combined with --refresh, which rewrites login tokens` | imezimwa |
 
-Thamani nyingine yoyote ya `--source` hushindwa na `--source must be live or cache`. `ccam usage` haipokei hoja.
+Thamani nyingine yoyote ya `--source` hushindwa na `--source must be live, claude or cache`.
+
+### Matumizi kutoka Claude Code yenyewe
+
+Kwa `usage_source = "claude"` katika `config.toml` (au `--source claude`), ccam haisomi tokeni ya kuingia hata kidogo. Kwa kila akaunti huanzisha `claude -p --input-format stream-json --output-format stream-json --verbose --safe-mode --no-session-persistence` katika folda ya akaunti na hutuma ombi la `get_usage` la Claude Code kupitia standard input (Claude Code 2.1.270 au baadaye); Claude Code hutafuta matumizi kwa taarifa zake yenyewe za kuingia na hujibu kwa vipindi vya saa 5, vya wiki na vya model. `--safe-mode` huzuia hooks, seva za MCP na plugins za akaunti zisianze, na hakuna kipindi kinachohifadhiwa. Kila akaunti huhitaji Claude Code kuanzishwa, takriban sekunde moja, kwa hiyo chanzo hiki ni cha polepole kuliko `live`; akaunti huulizwa kwa wakati mmoja, kila moja ndani ya sekunde 20, na cache ya sekunde 60 hutumika kama kawaida. Claude Code huliweka ombi hili alama ya majaribio, kwa hiyo likiacha kujibu, ccam huonyesha namba zilizohifadhiwa na `ccam doctor` huliripoti. `--dry-run` haianzishi Claude Code (huandika kwenye folda ya akaunti) na huonyesha namba zilizohifadhiwa. `usage_source` hupokea `live` au `claude`; `cache` ni chaguo la `--source` pekee. `ccam usage` haipokei hoja.
 
 `ccam statusline` husoma JSON ya mstari wa hali ya Claude Code kutoka standard input. Chaguo lake moja ni `--wrap <command>`: amri ya mstari wa hali iliyopo ambayo mstari wake wa kwanza wa matokeo huwekewa jina la akaunti mbele. `ccam statusline install` haipokei chaguo. Zote mbili hukataa `--dry-run` kwa `` --dry-run is not supported by `ccam statusline`; nothing was changed ``.
 

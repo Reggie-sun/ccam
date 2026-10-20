@@ -1,46 +1,45 @@
 ---
 title: Share MCP servers, settings and history
-description: How ccam shares MCP servers, settings.json, CLAUDE.md, agents, skills and conversation history between Claude Code accounts while keeping every login separate.
+description: How ccam groups share MCP servers, settings.json, CLAUDE.md, skills and conversation history between Claude Code accounts, with every login kept separate.
 updated: 2026-10-20
 published: 2026-10-19
 order: 4
 translation: source
 ---
 
-Each account keeps its own login. Everything else can be shared item by item: ccam links the account's file or folder to a shared group folder, so a change made in one account appears in all accounts of that group.
+Each account keeps its own login. Everything else can be shared through **groups**: a group names the items it shares and the accounts in it, and ccam links each of those accounts' files to the group's folder, so a change made in one account appears in all of them.
 
 ## What can be shared
 
-| Item | Option | What is shared |
-| --- | --- | --- |
-| MCP servers | `--mcp` | The group's `mcp.json`, passed to Claude Code at start |
-| Settings | `--settings` | `settings.json`: permissions, hooks, model, status line |
-| Global memory | `--memory` | `CLAUDE.md` |
-| Extensions | `--extensions` | `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/`, `rules/` |
-| Conversation history | `--history` | `projects/` and `history.jsonl` |
+| Item | What is shared |
+| --- | --- |
+| `mcp` | MCP servers: the group's `mcp.json`, passed to Claude Code at start |
+| `settings` | `settings.json`: permissions, hooks, model, status line |
+| `memory` | the global `CLAUDE.md` |
+| `extensions` | `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/`, `rules/` |
+| `history` | conversation history: `projects/` and `history.jsonl` |
 
-New accounts share everything except conversation history.
+Your first account creates the group `default`, which shares everything except conversation history, and later accounts join it.
 
 The login files `.credentials.json` and `.claude.json` are never shared. ccam only links paths from a fixed list, and these two are not on it.
 
-This page covers the everyday tasks. Every option is described on the feature pages: [sharing between accounts](/features/share), [shared MCP servers](/features/mcp) and [copying an existing setup](/features/migrate).
+This page covers the everyday tasks. Every option is described on the feature pages: [sharing with groups](/features/share), [shared MCP servers](/features/mcp) and [copying an existing setup](/features/migrate).
 
 ## Groups
 
-`on` means the `default` group. You can also give a name, so that only some accounts share an item:
-
 ```sh
-ccam share work --history team
-ccam share side --history team
+ccam group                                   # the groups, what they share, their accounts
+ccam group set default --add history         # every account in default shares history
+ccam group add team --items history --members work,side
 ```
 
-`work` and `side` now share conversations with each other, but not with your other accounts.
+An account can be in several groups, but each item comes from one group only. So to share history between `work` and `side` but not your other accounts, keep history out of `default` and give the two a group of their own, as above. `ccam share work` shows what an account shares and through which group. The [dashboard](/features/dashboard) does the same on its Groups tab.
 
-## Turning sharing on
+## When an account starts sharing
 
-When an account starts sharing an item, ccam:
+When an account starts sharing an item (it joins a group, or its group adds the item), ccam:
 
-1. prints a plan of every file it will move, copy or link, and asks before it starts;
+1. prints a plan of every file it will move, copy or link for each account, and asks before it starts;
 2. moves the account's files into the group folder if the group is still empty, or adds the files the group does not have yet;
 3. when the same file differs, asks whether to keep the group's version, use yours, or merge the JSON;
 4. keeps your original in `.ccam-backup/<time>/` inside the account folder;
@@ -48,12 +47,13 @@ When an account starts sharing an item, ccam:
 
 Conversation files are named after their session ID, so histories from several accounts combine without conflicts.
 
-ccam does not change sharing while Claude Code is running as the account, because the session keeps writing into the files being moved. Quit it first.
+ccam does not change an account while Claude Code is running as it, because the session keeps writing into the files being moved. Quit it first.
 
-## Turning sharing off
+## When an account stops sharing
 
 ```sh
-ccam share work --history off
+ccam group leave team work                   # work leaves the group
+ccam group set default --remove history      # nobody in default shares history any more
 ```
 
 The link is removed and the account gets its own copy of the group's current content. Add `--fresh` to start empty instead. The group keeps its content for the other accounts.
@@ -95,14 +95,12 @@ Copy from /home/me/.claude into group default (/home/me/.local/share/ccam/groups
   Conversation history (projects/, history.jsonl) is not included; add --history to copy it.
 Copy these into group default? [y/N] y
 ✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, commands/, skills/
-Accounts that share these through group default:
-  mcp         personal
-  settings    personal
-  memory      personal
-  extensions  personal
+Group default: personal
+To share them:
+  ccam group join default work
 ```
 
-At the end, ccam lists the accounts that share each item through the group. If some accounts do not, it prints the `ccam share` commands that turn sharing on for them.
+At the end, ccam lists the group's accounts. If the group does not share one of the items yet, or some accounts are not in it, it prints the `ccam group` commands that change that.
 
 When the group already has a different copy of a file, ccam asks, as it does when you turn sharing on: keep the group's copy or use yours. `settings.json` and other JSON files can also be merged, and `history.jsonl` line by line. The group's previous copies are saved in `.ccam-backup/<time>/` inside the group folder.
 

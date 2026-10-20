@@ -4,7 +4,7 @@ description: ccam pick выводит для скрипта аккаунт с н
 updated: 2026-10-20
 order: 12
 translation: machine
-sourceHash: 65a5a7e179a5
+sourceHash: "2e8285b7c193"
 ---
 
 `ccam pick` выводит имя аккаунта с входом и наибольшим запасом, чтобы скрипт запустил с ним Claude Code. Рабочие процессы, запущенные одновременно, получают разные аккаунты, пока аккаунтов с запасом хватает, поэтому пакет заданий `claude -p` распределяется по вашим аккаунтам, а не исчерпывает один.
@@ -19,6 +19,8 @@ done; wait
 ccam pick --json                      # the account and its usage
 ccam pick --model opus                # also count the Opus weekly limit
 ccam pick --max-usage 80 --strategy expiring
+ccam pick --strategy balance          # spread over the weekly quota, fewer running sessions first
+ccam pick --cross-org                 # also accounts of other organizations
 ccam pick --wait=2h                   # nobody has room: wait for a reset
 ccam --fallback "$(ccam pick)" -p "…" # also switch if this account hits its limit mid-job
 ```
@@ -31,7 +33,8 @@ $ ccam pick --json
   "email": "dev@company.com",
   "five_hour": { "percent": 12, "resets_at": "2026-10-20T15:10:00Z", "known": true },
   "weekly": { "percent": 41, "resets_at": "2026-10-24T09:00:00Z", "known": true },
-  "source": "live"
+  "source": "live",
+  "reason": "12% of its 5 hours used, the least"
 }
 ```
 
@@ -41,16 +44,17 @@ $ ccam pick --json
 
 | Параметр | Действие | По умолчанию |
 | --- | --- | --- |
-| `--json` | Вывести аккаунт, его использование за 5 часов и за неделю и источник данных | выкл. |
+| `--json` | Вывести аккаунт, его использование за 5 часов и за неделю, источник данных и причину выбора | выкл. |
 | `--model <model>` | Учитывать также недельное окно этой модели, например `opus` | нет |
 | `--max-usage <1-100>` | Предпочитать аккаунты ниже этого использования | `auto_max_usage`, иначе 100 |
-| `--strategy headroom\|expiring` | Наименьшее использование за 5 часов или ближайший сброс 5-часового окна | `auto_strategy`, иначе `headroom` |
+| `--strategy headroom\|expiring\|balance` | Наименьшее использование за 5 часов, ближайший сброс 5-часового окна или недельная квота, которая первой осталась бы неиспользованной | `auto_strategy`, иначе `headroom` |
+| `--cross-org` | Выбирать также аккаунты других организаций | `cross_org`, иначе выкл. |
 | `--wait[=<duration>]` | Если ни у одного аккаунта нет запаса, ждать сброса первого из них, но не дольше этого времени | выкл.; `5h`, если указан без значения |
 | `--dry-run` | Выбрать, не записывая выбор | выкл. |
 
 ## Как это работает
 
-1. ccam перечисляет аккаунты с входом (у аккаунтов с ключом API нет лимитов, и они не учитываются).
+1. ccam перечисляет аккаунты с входом (у аккаунтов с ключом API нет лимитов, и они не учитываются) в организации аккаунта, который запустила бы эта папка (см. [организации](/features/next#auto)); папка, вошедшая в тот же аккаунт Claude, что и он, тоже не учитывается.
 2. Он берёт блокировку (`~/.local/state/ccam/picks.lock`), поэтому одновременные выборы выполняются по очереди.
 3. Он одновременно запрашивает использование всех аккаунтов так же, как `ccam usage`, с кэшем на 60 секунд.
 4. Аккаунты, выбранные за последние 2 минуты (`~/.local/state/ccam/picks/<name>`), сначала исключаются, а среди остальных выбирают [правила выбора](/features/next#auto) `ccam next --auto`: сначала аккаунты ниже `auto_max_usage`, по стратегии, и никогда не аккаунт на 100%.

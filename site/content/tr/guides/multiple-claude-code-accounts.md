@@ -4,7 +4,7 @@ description: CLAUDE_CONFIG_DIR ile birden fazla Claude Code hesabını yan yana 
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: f2982e4317a2
+sourceHash: "ee92078b81c3"
 ---
 
 Her hesaba kendi yapılandırma klasörünü verin. Claude Code klasörü `CLAUDE_CONFIG_DIR` ortam değişkeninden okur ve her klasör kendi giriş bilgilerini, ayarlarını ve geçmişini tutar; böylece her hesap oturum açık kalır ve hesapları aynı anda çalıştırabilirsiniz. Bunu bir kabuk takma adıyla elle kurabilir ya da ccam'a bırakabilirsiniz.
@@ -69,7 +69,7 @@ Claude Code [Windows'ta yerel olarak ve WSL içinde](https://code.claude.com/doc
 
 **Bir MCP sunucusu yalnızca bir hesapta görünüyor.** Bir oturum içinde `claude mcp add` ile eklenen sunucular o hesaba aittir. Bir sunucuyu tüm hesaplara taşımak için `ccam mcp import work <server>` komutunu kullanın.
 
-**Ayarlar hesaplar arasında farklı.** `ccam share work`, hesabın neyi paylaştığını yazdırır; `ccam share work --settings on`, neyin değişeceğini gösterdikten sonra ayarlarını paylaşır. `ccam doctor --fix` bozuk bağlantıları onarır ve değiştirdiği her dosyanın yedeğini tutar.
+**Ayarlar hesaplar arasında farklı.** `ccam share work`, hesabın neyi, hangi grup üzerinden paylaştığını yazdırır; `ccam group join default work`, neyin değişeceğini gösterdikten sonra hesabın `default` grubunun paylaştıklarını paylaşmasını sağlar. `ccam doctor --fix` bozuk bağlantıları onarır ve değiştirdiği her dosyanın yedeğini tutar.
 
 **İki hesap aynı konuşmayı açıyor.** Aynı konuşma üzerinde iki hesapla aynı anda çalışmaktan kaçının. Bunu denediğinizde ccam sizi uyarır.
 

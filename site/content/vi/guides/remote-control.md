@@ -4,7 +4,7 @@ description: "Khởi động Remote Control bằng bất kỳ tài khoản nào 
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 59b802c44bb3
+sourceHash: "5f0b90ea53d6"
 ---
 
 `ccam work rc` khởi động Remote Control của Claude Code bằng tài khoản `work`, để bạn có thể điều khiển các phiên trên máy tính này từ claude.ai/code hoặc ứng dụng Claude trên điện thoại. Lệnh này hoạt động giống `claude rc` với một khác biệt: nếu tài khoản dùng chung máy chủ MCP, ccam hỏi một lần có sao chép chúng vào `.claude.json` của tài khoản hay không, vì các phiên Remote Control không đọc máy chủ từ nơi nào khác.
@@ -33,7 +33,7 @@ ccam --dry-run work rc                # print the command instead of running it
 | `--dry-run` (trước tên tài khoản) | In ra biến môi trường và lệnh, cùng thông báo MCP nếu có. Không hỏi và không sao chép | tắt |
 | `Copy them into .claude.json (a backup is kept)? [y/N]` | Được hỏi khi tài khoản dùng chung máy chủ MCP và `.claude.json` của nó chưa có danh sách hiện tại của nhóm. `y` sao chép chúng, `N` hoặc Enter khởi động mà không có chúng | `N` |
 | `mcp_strategy = "sync"` trong `~/.config/ccam/config.toml` | Sao chép các máy chủ của nhóm vào `.claude.json` trước mỗi lần khởi động, dù có phải Remote Control hay không, nên không bao giờ phải hỏi | `"flag"` |
-| `ccam share work --mcp off` | Ngừng dùng chung máy chủ MCP với tài khoản; khi đó Remote Control khởi động chỉ với các máy chủ riêng của tài khoản và không hỏi gì | bật |
+| `ccam group leave <group> work` | Đưa tài khoản ra khỏi nhóm đang dùng chung MCP với nó; khi đó Remote Control khởi động chỉ với các máy chủ riêng của tài khoản và không hỏi gì | trong `default` |
 
 ### Tùy chọn của Remote Control
 
@@ -124,7 +124,7 @@ Một phiên của `work` vẫn đang mở: một `ccam work` bình thường, m
 
 ### ccam lần nào cũng hỏi
 
-Bạn chưa sao chép các máy chủ. Hãy chọn `y` một lần, hoặc đặt `mcp_strategy = "sync"`. Nếu bạn không bao giờ muốn có các máy chủ đó trong Remote Control, hãy ngừng dùng chung MCP với tài khoản: `ccam share work --mcp off`.
+Bạn chưa sao chép các máy chủ. Hãy chọn `y` một lần, hoặc đặt `mcp_strategy = "sync"`. Nếu bạn không bao giờ muốn có các máy chủ đó trong Remote Control, hãy ngừng dùng chung MCP với tài khoản: đưa nó ra khỏi nhóm đó (`ccam group leave default work`), hoặc để MCP trong một nhóm riêng mà tài khoản không thuộc về.
 
 ### `ccam work rc` thất bại ngay với lỗi về `--mcp-config`
 

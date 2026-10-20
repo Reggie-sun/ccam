@@ -1,10 +1,10 @@
 ---
 title: Claude Code 시작하기
-description: ccam <name|number>, ccam run, ccam 선택 화면으로 원하는 계정의 Claude Code를 시작합니다. 인자는 그대로 claude에 전달되며, --dry-run은 실행할 명령을 보여 줍니다.
+description: ccam <name|number>, ccam run, 대시보드로 원하는 계정의 Claude Code를 시작합니다. 인자는 그대로 claude에 전달되며, --dry-run은 실행할 명령을 보여 줍니다.
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: e6b5a8d4df86
+sourceHash: "4812b197f143"
 ---
 
 `ccam work`는 `work` 계정으로 Claude Code를 시작하며, 이름 뒤의 모든 것은 그대로 `claude`에 전달됩니다. 터미널, 스크립트, 파이프로 입력을 넘길 때 등 `claude`를 입력하던 곳이면 어디서나 쓸 수 있습니다.
@@ -21,7 +21,7 @@ ccam -p "summarise"              # no name: the folder's account, else the defau
 ccam use work                    # make work the default account
 ccam folder work ~/code/company  # use work in that folder when no name is given
 ccam run work --continue         # same as ccam work --continue
-ccam                             # the picker on a terminal, the list otherwise
+ccam                             # the dashboard on a terminal, the list otherwise
 ccam --dry-run work -p hi        # print the command instead of running it
 ccam --fallback work -p "fix the tests"   # run again as another account at the limit
 ```
@@ -30,22 +30,13 @@ ccam --fallback work -p "fix the tests"   # run again as another account at the 
 
 첫 번째 인자가 `-`로 시작하고 ccam 자체 옵션이 아니면, ccam은 모든 인자를 넘겨 이름 없이 계정을 시작합니다. 이때는 [`ccam folder`](/features/folder)로 현재 폴더에 지정한 계정을, 없으면 기본 계정을 씁니다. 기본 계정은 `ccam use`로 지정한 계정이며, 지정하지 않았다면 번호가 가장 낮은 계정입니다.
 
-### 선택 화면
+### 대시보드
 
-표준 입력과 출력이 터미널이면 인자 없이 `ccam`을 실행할 때 선택 화면이 열리고, 터미널이 아니면 `ccam list`를 출력합니다. 선택 화면은 계정마다 번호, 이메일, 5시간 사용량, 마지막 사용 시각, 공유 항목을 보여 주며, 사용량은 계정이 응답하는 대로 채워집니다.
+표준 입력과 출력이 터미널이면 인자 없이 `ccam`을 실행할 때 [대시보드](/features/dashboard)가 열리고, 터미널이 아니면 `ccam list`를 출력합니다. 계정으로 이동한 뒤(화살표 키로, 또는 번호를 입력해서) `Enter`를 누르면 그 계정이 시작됩니다. `n`은 여유가 가장 많은 계정을 시작하고, `o`는 `--continue`, `--resume`, 그 밖의 인자를 고를 수 있게 합니다. 대시보드는 Claude Code가 시작되기 전에 닫히므로, 터미널이 먼저 원래대로 돌아옵니다.
 
-| 키 | 동작 |
-| --- | --- |
-| `Enter` | 선택한 계정으로 Claude Code를 시작합니다 |
-| `1`~`9` | 해당 번호의 계정을 시작합니다 |
-| `Up`/`Down`, `k`/`j` | 선택을 옮깁니다 |
-| `a` | 선택 화면을 닫고 `ccam add` 설정 마법사를 실행합니다 |
-| `s` | 선택한 계정의 공유 항목을 편집합니다(`Space`나 `x`로 전환, `Enter`로 적용, `Esc`로 돌아가기) |
-| `d` | 선택한 계정을 기본 계정으로 지정합니다 |
-| `r` | 짧은 캐시를 무시하고 사용량을 다시 가져옵니다 |
-| `q`, `Esc`, `Ctrl+C` | 종료합니다 |
+셸에 `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN` 중 하나가 설정되어 있으면 Claude Code는 계정 자체의 로그인 대신 그 키나 토큰을 쓰게 되므로, ccam은 시작하기 전에 표준 오류로 그 사실을 알립니다(`ccam: $ANTHROPIC_API_KEY is set, so Claude Code may use that key instead of work's login…`). ccam은 변수를 읽기만 하며, [API 키 계정](/features/api)은 대신 이 변수들을 지웁니다.
 
-선택 화면은 동작하기 전에 닫히므로, Claude Code가 시작되기 전에 터미널이 원래대로 돌아옵니다. `d`를 누르거나 공유 설정을 바꾼 뒤에는 다시 열립니다. 공유 설정을 바꿀 때는 `ccam share`와 마찬가지로 계획을 보여 주고 먼저 확인을 받습니다.
+`config.toml`에 `relay = true`를 설정하면 ccam은 대화형 세션을 자식 프로세스로 시작하고 그 옆에 남아 있으므로, `/ccam:switch`가 스스로 대화를 넘길 수 있습니다([자세히](/features/next#inside-claude-code)). 설정하지 않으면 ccam은 자신을 Claude Code로 대체하며, 옆에서 실행되는 것은 아무것도 없습니다.
 
 ## 옵션
 
@@ -84,7 +75,7 @@ $env:CLAUDE_CONFIG_DIR='C:\Users\me\.local\share\ccam\profiles\work'; & C:\Users
 각 상자는 해당 단계가 실행될 때 강조되며, 아래 줄은 Claude Code가 시작될 때 받는 환경 변수와 인자입니다.
 
 1. `cmd/ccam/main.go`가 `app.Main`을 호출합니다. ccam이 다른 이름으로 시작되었다면 [단축 명령](/features/shortcuts)이므로 바로 실행기로 넘어갑니다.
-2. `app.parse`는 cobra가 관여하기 전에 `os.Args`를 살펴봅니다. `ccam`만 입력한 경우(선택 화면), ccam 명령 이름(`config.Reserved`), `-h`/`--help`, `-v`/`--version`만 `cli.Execute`로 갑니다. 나머지는 모두 실행입니다.
+2. `app.parse`는 cobra가 관여하기 전에 `os.Args`를 살펴봅니다. `ccam`만 입력한 경우(대시보드), ccam 명령 이름(`config.Reserved`), `-h`/`--help`, `-v`/`--version`만 `cli.Execute`로 갑니다. 나머지는 모두 실행입니다.
 3. `launcher.Launch`가 `~/.config/ccam/config.toml`을 읽습니다. 해석하는 파일은 이것 하나뿐입니다.
 4. `launcher.Prepare`가 이름이나 번호로 계정을 찾고(이름이 없으면 `HereProfile`이 작업 폴더를 `config.toml`의 `[[folder]]` 항목과 문자열로 비교해 폴더의 계정을 고릅니다), 맨 앞의 `--` 하나를 제거한 뒤, `ResolveClaude`로 `claude` 실행 파일을 찾습니다. PATH 검색 결과는 파일의 수정 시각과 함께 `~/.local/state/ccam/claude-path`에 캐시되므로, ccam은 실행할 때마다 `PATH`를 검색하지 않습니다. 파일이 바뀌었거나 없어졌으면 다시 검색합니다. `config.toml`에 `claude_bin` 경로가 있으면 그대로 씁니다. `claude`가 ccam 자신이면 무한 반복이 되므로, inode로 비교해 거부합니다.
 5. `checkLinks`가 계정 폴더 `~/.local/share/ccam/profiles/<name>/`를 공유 설정과 비교합니다. 이때 쓰는 `share.Check`는 `lstat`과 `readlink`만 호출하므로 항목당 시스템 호출은 한두 번입니다. 없는 링크는 그 자리에서 만듭니다. 데이터를 잃을 수 있는 문제가 있으면 실행을 멈춥니다.

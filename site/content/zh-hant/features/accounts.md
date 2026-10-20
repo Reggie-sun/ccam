@@ -4,7 +4,7 @@ description: 用 ccam add、ccam login、ccam list、ccam rename、ccam remove �
 updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 9eb992214132
+sourceHash: "8564517d0d71"
 ---
 
 每個 ccam 帳號都是一個獨立的 Claude Code 設定資料夾，有自己的登入資訊。這些指令用來建立、登入、列出、重新命名和移除帳號，也能登錄你已經有的資料夾。
@@ -12,10 +12,11 @@ sourceHash: 9eb992214132
 ## 用法
 
 ```sh
-ccam add                                   # wizard on a terminal: name, shared items, shortcut, login
+ccam add                                   # wizard on a terminal: name, sign-in, groups, shortcut
 ccam add work --shortcut ccwork            # no wizard: log in, then create the ccwork command
-ccam add side --no-login --share history=team
+ccam add side --no-login --group default --group team
 ccam login side                            # run claude auth login inside the account
+ccam login --expired                       # every account never logged in, or whose login expired
 ccam logout side                           # remove the login token
 ccam list                                  # table of accounts; ccam ls is the same
 ccam list --json                           # machine-readable
@@ -29,25 +30,28 @@ ccam completion zsh > "${fpath[1]}/_ccam"
 
 凡是接受 `<name|number>` 的指令，都可以指定帳號名稱或它的槽位編號，也就是 `ccam list` 的 `#` 欄。
 
-在終端機中不加任何選項執行 `ccam add`，會開啟設定精靈。它會先詢問名稱，接著顯示共用項目的核取清單（除了對話記錄以外都已勾選），然後詢問 `Create a shortcut command for work? [y/N]`，回答 `y` 後再詢問 `Shortcut name [ccwork]:`。只要加上 `--share`、`--shortcut` 或 `--no-login` 任一個選項，或是輸入來自管線而不是終端機，就會略過設定精靈；這時必須指定名稱，而且除非 `--shortcut` 指定了名稱，否則不會建立快捷指令。
+在終端機中不加任何選項執行 `ccam add`，會開啟設定精靈。它會先詢問名稱和帳號的登入方式（現在以 Claude 登入、API 金鑰，或稍後再以 Claude 登入），接著顯示可加入的群組，其中 `default` 已勾選（還沒有任何群組時，則顯示群組 `default` 將會共用的項目），然後詢問 `Create a shortcut command for work? [y/N]`，最後顯示摘要讓你確認。`Esc` 會回到上一步。只要加上 `--group`、`--no-group`、`--shortcut` 或 `--no-login` 任一個選項，或是輸入來自管線而不是終端機，就會略過設定精靈；這時必須指定名稱，而且除非 `--shortcut` 指定了名稱，否則不會建立快捷指令。
 
-`ccam list` 會顯示槽位、名稱、快捷指令、電子郵件、共用的項目和上次使用時間，預設帳號前面會標示 `*`：
+不加 `--group` 時，新帳號會加入群組 `default`。第一個帳號會建立這個群組，共用 MCP 伺服器、設定、`CLAUDE.md` 和擴充功能；請參閱[用群組共用](/features/share)。
+
+`ccam list` 會顯示槽位、名稱、快捷指令、電子郵件、群組和上次使用時間，預設帳號前面會標示 `*`：
 
 ```console
 $ ccam list
-   #  Name      Shortcut  Email             Shared                        Last used
-*  1  work      ccwork    user@example.com  mcp settings md ext           -
-   2  personal  -         me@side.dev       settings md ext history@team  -
+   #  Name      Shortcut  Email             Groups        Last used
+*  1  work      ccwork    user@example.com  default team  -
+   2  personal  -         me@side.dev       default       -
 ```
 
-加上 `--json` 時，每個帳號都是一個物件，包含 `slot`、`shortcut`、`name`、`email`、`default`、`dir`、`last_used`（帳號從未啟動過時省略）和 `share`。`share` 會把每個項目（`mcp`、`settings`、`memory`、`extensions`、`history`）對應到它的群組名稱或 `"local"`。
+加上 `--json` 時，每個帳號都是一個物件，包含 `slot`、`shortcut`、`name`、`email`、`default`、`dir`、`last_used`（帳號從未啟動過時省略）、`groups` 和 `share`。`share` 會把每個項目（`mcp`、`settings`、`memory`、`extensions`、`history`）對應到它所來自的群組，或 `"local"`。
 
 ## 選項
 
 | 選項 | 作用 | 預設值 |
 | --- | --- | --- |
 | `ccam add --no-login` | 建立帳號但不登入；之後再用 `ccam login <name>` 登入 | 關閉 |
-| `ccam add --share <item=group>` | 與某個群組共用一個項目，或用 `item=local` 讓它保持私有。可重複指定 | `mcp`、`settings`、`memory`、`extensions` 在 `default`；`history` 為 local |
+| `ccam add --group <group>` | 加入這個群組，而不是 `default`。可重複指定；`default` 不存在時會建立它 | `default` |
+| `ccam add --no-group` | 不加入任何群組：這個帳號不共用任何項目 | 關閉 |
 | `ccam add --shortcut <command>` | 同時在 `~/.local/bin` 中建立這個快捷指令 | 無 |
 | `ccam add --api --key-from <source>` | 使用 API 金鑰而不是登入的帳號；請參閱 [API 金鑰帳號](/features/api) | 關閉 |
 | `ccam list --json` | 以 JSON 輸出帳號 | 關閉 |
@@ -58,7 +62,7 @@ $ ccam list
 
 `ccam login`、`ccam logout`、`ccam use` 和 `ccam rename` 沒有自己的選項。`ccam completion` 接受 `bash`、`zsh` 或 `powershell`；其他值會失敗並顯示 `only bash, zsh and powershell are supported`。
 
-帳號名稱為 1 到 32 個字元，可使用 `a-z`、`0-9`、`-` 和 `_`，並以字母或數字開頭。名稱不能全是數字，因為 `ccam 2` 代表槽位 2。名稱也不能是 ccam 的指令（`add`、`list`、`ls`、`run`、`use`、`next`、`usage`、`u`、`share`、`mcp`、`login`、`logout`、`rename`、`remove`、`rm`、`import`、`migrate`、`doctor`、`shims`、`shortcut`、`completion`、`help`、`version`、`statusline`、`update`、`folder`、`pick`、`ext`），所以 `ccam <name>` 永遠不會有歧義。這份清單是 `internal/config` 中的 `config.Reserved`。
+帳號名稱為 1 到 32 個字元，可使用 `a-z`、`0-9`、`-` 和 `_`，並以字母或數字開頭。名稱不能全是數字，因為 `ccam 2` 代表槽位 2。名稱也不能是 ccam 的指令（`add`、`list`、`ls`、`run`、`use`、`next`、`usage`、`u`、`share`、`mcp`、`login`、`logout`、`rename`、`remove`、`rm`、`import`、`migrate`、`doctor`、`shims`、`shortcut`、`completion`、`help`、`version`、`statusline`、`update`、`folder`、`pick`、`ext`、`group`、`groups`），所以 `ccam <name>` 永遠不會有歧義。這份清單是 `internal/config` 中的 `config.Reserved`。
 
 ## 運作方式
 
@@ -68,15 +72,19 @@ $ ccam list
 
 1. 在建立任何東西之前，`config.ValidateName` 會檢查名稱，`shim.Check` 會檢查快捷指令。
 2. `profile.Add` 以權限 `0700` 建立 `~/.local/share/ccam/profiles/work/`，並給帳號最小的可用槽位編號（`Config.NextSlot`），因此已移除帳號的編號會被重複使用。第一個帳號會成為預設帳號。
-3. `applyShare` 先用 `share.Build` 再用 `Apply`，把新建的空資料夾連結到它的共用群組，例如把 `settings.json` 連結到 `groups/default/settings.json`。如果這一步失敗，新資料夾會被移除，因為殘留的資料夾會讓之後每次重試都因 `folder already exists` 而失敗。
+3. 帳號加入它的群組（除非 `--group` 或 `--no-group` 另有指定，否則為 `default`；第一個帳號會建立 `default`），接著 `applyShare` 先用 `share.Build` 再用 `Apply`，把新建的空資料夾連結到這些群組，例如把 `settings.json` 連結到 `groups/default/settings.json`。如果這一步失敗，新資料夾會被移除，因為殘留的資料夾會讓之後每次重試都因 `folder already exists` 而失敗。
 4. 帳號會透過 `fsutil.AtomicWrite` 儲存到 `~/.config/ccam/config.toml`：先寫入暫存檔、`fsync`，再 `rename`，所以當機時絕不會留下只寫了一半的設定。
-5. `runLogin` 會在 `CLAUDE_CONFIG_DIR` 設為帳號資料夾的狀態下啟動 `claude auth login`。如果登入失敗，帳號仍會保留，ccam 會印出錯誤，並告訴你之後執行 `ccam login work`。
-6. `profile.ReadEmail` 從 `profiles/work/.claude.json` 取出 `oauthAccount.emailAddress`。這個檔案可能有好幾 MB，所以 `TopLevelValue` 只掃描那一個鍵，而不解析整個檔案。
+5. `runLogin` 會在 `CLAUDE_CONFIG_DIR` 設為帳號資料夾的狀態下啟動 `claude auth login`，並以 `--email` 帶入帳號上次使用的電子郵件，讓登入頁面自動填好。如果登入失敗，帳號仍會保留，ccam 會印出錯誤，並告訴你之後執行 `ccam login work`。
+6. `profile.ReadIdentity` 從 `profiles/work/.claude.json` 取出 `oauthAccount`：電子郵件、帳號和組織的 ID、組織名稱以及方案（`claude_max`、`claude_team` …）。這個檔案可能有好幾 MB，所以 `TopLevelValue` 只掃描那一個鍵，而不解析整個檔案。ccam 會把這些資訊保存在 `config.toml` 的 `[profile.login]` 中。
 7. `shim.Install` 把 `~/.local/bin/ccwork` 連結到 ccam 執行檔；ccam 啟動時會在 `config.toml` 中查詢 `argv[0]`。
 
 登入可能要花上幾分鐘，這段期間另一個 ccam 可能會儲存設定。因此需要等待的指令會透過 `env.update` 儲存：它會重新載入 `config.toml`，套用那一項變更（這裡是電子郵件），再儲存。基於同樣的理由，`ccam remove` 會在詢問之後重新載入。
 
-`ccam login` 會對現有的帳號執行第 5 和第 6 步。`ccam logout` 會在帳號中執行 `claude auth logout`，並清除儲存的電子郵件。`ccam use` 只會改寫 `config.toml` 中的 `default`。
+`ccam login` 會對現有的帳號執行第 5 和第 6 步。Claude Code 只把電子郵件當作登入頁面的提示，所以登入結果可能是另一個 Claude 帳號，而不是這個 ccam 帳號原本的帳號；ccam 會把新的登入和 `[profile.login]` 比對，並告訴你（`ccam: this login is other@company.com, but work was dev@company.com before.`）。它會保留新的登入，並告訴你如何復原：先執行 `ccam logout work`，再執行 `ccam login work`，並以正確的電子郵件登入。當另一個 ccam 帳號登入同一個 Claude 帳號時，ccam 會警告這兩者共用用量上限。`ccam login --expired` 會逐一登入每個從未登入過、或登入（更新權杖）已過期的帳號。
+
+`ccam logout` 會在帳號中執行 `claude auth logout`，並清除儲存的電子郵件；登入記錄仍會保留，所以下次登入時會拿它來比對。`ccam use` 只會改寫 `config.toml` 中的 `default`。
+
+當帳號屬於不只一個組織時，`ccam list` 會加上 `Organization` 欄（個人方案顯示 `personal`），`ccam list --json` 也會為每個帳號提供 `plan` 和 `org`。
 
 ### 在遠端機器上登入
 
@@ -106,7 +114,7 @@ On a remote machine? If the browser ends on a http://localhost:…/callback page
 
 `ccam rename` 會重新命名資料夾，把其 `plugins/` 中的外掛路徑從舊資料夾改寫為新資料夾，保留預設帳號的設定，並把 `nameState` 的路徑移到新名稱下。快捷指令的名稱不變。如果改寫外掛路徑失敗，因為設定尚未儲存，資料夾會被改回原名。
 
-`ccam import` 會在原位置登錄資料夾，記錄為 `config.toml` 中的 `dir`。它絕不移動或複製資料夾：複製後的更新權杖會讓各個副本互相登出。不指定資料夾時，它會尋找尚未登錄的 `~/.claude` 和 `~/.claude-*` 資料夾，並逐一詢問；名稱取自資料夾（`~/.claude` 為 `main`，`~/.claude-work` 為 `work`，`~/.claude-2` 為 `acct2`），無法推導出名稱的資料夾會列出應使用的 `--name` 指令。沒有 `CLAUDE_CONFIG_DIR` 時，Claude Code 會把 `.claude.json` 放在家目錄中 `~/.claude` 的旁邊，所以當你匯入 `~/.claude` 而它沒有自己的 `.claude.json` 時，ccam 會建立指向 `~/.claude.json` 的連結 `~/.claude/.claude.json`。這樣直接執行 `claude` 和 `ccam main` 會看到同一個帳號。匯入的帳號在你執行 `ccam share` 之前不共用任何項目，也不會建立快捷指令。
+`ccam import` 會在原位置登錄資料夾，記錄為 `config.toml` 中的 `dir`。它絕不移動或複製資料夾：複製後的更新權杖會讓各個副本互相登出。不指定資料夾時，它會尋找尚未登錄的 `~/.claude` 和 `~/.claude-*` 資料夾，並逐一詢問；名稱取自資料夾（`~/.claude` 為 `main`，`~/.claude-work` 為 `work`，`~/.claude-2` 為 `acct2`），無法推導出名稱的資料夾會列出應使用的 `--name` 指令。沒有 `CLAUDE_CONFIG_DIR` 時，Claude Code 會把 `.claude.json` 放在家目錄中 `~/.claude` 的旁邊，所以當你匯入 `~/.claude` 而它沒有自己的 `.claude.json` 時，ccam 會建立指向 `~/.claude.json` 的連結 `~/.claude/.claude.json`。這樣直接執行 `claude` 和 `ccam main` 會看到同一個帳號。匯入的帳號在你把它加入某個群組（`ccam group join <group> <name>`）之前不屬於任何群組，也不會建立快捷指令。
 
 `ccam completion bash|zsh` 會印出一份自動完成腳本，也能自動完成帳號名稱。
 

@@ -4,7 +4,7 @@ description: "ccam add --api legt ein Konto mit API-Schlüssel für die API von 
 updated: 2026-10-20
 order: 13
 translation: machine
-sourceHash: de2c5cde2c48
+sourceHash: "a903c92f2c50"
 ---
 
 Ein API-Schlüssel-Konto startet Claude Code mit einem API-Schlüssel statt mit der Anmeldung eines Claude-Abos: die API von Anthropic oder ein Endpunkt, der dasselbe Messages-Format spricht, etwa ein LiteLLM- oder OpenRouter-Gateway. ccam speichert den Schlüssel nicht. Es liest ihn bei jedem Start des Kontos aus einer Umgebungsvariable oder über einen Befehl, etwa einen Passwortmanager, und gibt ihn nur an diesen Claude Code-Prozess weiter.
@@ -22,12 +22,12 @@ ccam list
 
 ```console
 $ ccam list
-   #  Name      Shortcut  Email                    Shared               Last used
-*  1  personal  -         me@example.com           mcp settings md ext  2h ago
-   2  gw        -         (API: llm.example.com)   mcp settings md ext  -
+   #  Name      Shortcut  Email                   Groups   Last used
+*  1  personal  -         me@example.com          default  2h ago
+   2  gw        -         (API: llm.example.com)  default  -
 ```
 
-Ein API-Schlüssel-Konto teilt Einstellungen, `CLAUDE.md`, Erweiterungen und MCP-Server wie jedes andere Konto und funktioniert mit Kurzbefehlen, `ccam folder` und `ccam ext`.
+Ein API-Schlüssel-Konto tritt Gruppen bei wie jedes andere Konto (standardmäßig `default`: Einstellungen, `CLAUDE.md`, Erweiterungen und MCP-Server) und funktioniert mit Kurzbefehlen, `ccam folder` und `ccam ext`.
 
 ## Optionen
 
@@ -59,7 +59,7 @@ model = 'claude-sonnet-5-5'
 Bei jedem Start des Kontos, nach den üblichen Prüfungen und bevor Claude Code startet:
 
 1. ccam liest den Schlüssel: `env:` aus der Umgebung, `command:` durch Ausführen des Befehls mit einem Limit von 30 Sekunden. Ein Befehl kann im Terminal nach einem Passwort fragen; auch seine Fehlerausgabe geht an das Terminal. Ein leerer Schlüssel stoppt den Start mit einer Meldung, wo der Schlüssel erwartet wurde.
-2. Es entfernt jede geerbte Variable, die bestimmt, wie sich Claude Code anmeldet oder welchen Anbieter es verwendet: `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_BASE_URL`, `ANTHROPIC_MODEL`, `CLAUDE_CODE_USE_BEDROCK`, `CLAUDE_CODE_USE_VERTEX` und `CLAUDE_CODE_USE_FOUNDRY`. Ein Schlüssel, der in deiner Shell für etwas anderes gesetzt ist, kann dieses Konto nicht erreichen, und eine Abo-Anmeldung kann sich nicht gegen seinen Schlüssel durchsetzen.
+2. Es entfernt jede geerbte Variable, die bestimmt, wie sich Claude Code anmeldet oder welchen Anbieter es verwendet: die Schlüssel und Tokens (`ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN_FILE_DESCRIPTOR`, `CLAUDE_CODE_API_KEY_FILE_DESCRIPTOR`), den Endpunkt (`ANTHROPIC_BASE_URL`, `ANTHROPIC_UNIX_SOCKET`, `ANTHROPIC_MODEL`) und die Anbieterschalter (`CLAUDE_CODE_USE_BEDROCK`, `CLAUDE_CODE_USE_VERTEX`, `CLAUDE_CODE_USE_FOUNDRY`, `CLAUDE_CODE_USE_ANTHROPIC_AWS`, `CLAUDE_CODE_USE_ANTHROPIC_GOOGLE_CLOUD`, `CLAUDE_CODE_USE_MANTLE`, `CLAUDE_CODE_USE_GATEWAY`). Ein Schlüssel, der in deiner Shell für etwas anderes gesetzt ist, kann dieses Konto nicht erreichen, und eine Abo-Anmeldung kann sich nicht gegen seinen Schlüssel durchsetzen.
 3. Es setzt `ANTHROPIC_BASE_URL` und `ANTHROPIC_MODEL`, wenn angegeben, und den Schlüssel als `ANTHROPIC_API_KEY` oder `ANTHROPIC_AUTH_TOKEN`.
 
 Konten mit Abo-Anmeldung behalten wie bisher die Umgebung, die sie erben. In einer interaktiven Sitzung fragt Claude Code möglicherweise einmal, ob es den in der Umgebung gefundenen Schlüssel verwenden soll.
@@ -70,7 +70,7 @@ Konten mit Abo-Anmeldung behalten wie bisher die Umgebung, die sie erben. In ein
 - `ccam add --api` prüft eine `env:`-Quelle sofort und warnt, wenn die Variable leer ist; eine `command:`-Quelle wird erst beim Start ausgeführt.
 - `ccam login` und `ccam logout` lehnen ein API-Schlüssel-Konto ab, da es keine Anmeldung hat. `ccam doctor` zeigt seinen Endpunkt und seine Schlüsselquelle und warnt, wenn eine `env:`-Variable leer ist.
 - `ccam usage` zeigt dafür `API`. `ccam next --auto`, `--fallback` und `ccam pick` wählen nur unter Abo-Konten, weil ein API-Schlüssel kein 5-Stunden- oder Wochenlimit zum Vergleichen hat.
-- Ein geteiltes `settings.json` mit einem `env`-Block oder `apiKeyHelper` gilt für jedes Konto der Gruppe, API-Schlüssel-Konten eingeschlossen. Halte Anbietereinstellungen aus geteilten Einstellungen heraus.
+- Ein geteiltes `settings.json` mit einem `env`-Block oder `apiKeyHelper` gilt für jedes Konto der Gruppe, API-Schlüssel-Konten eingeschlossen. Halte Anbietereinstellungen aus geteilten Einstellungen heraus, oder nimm das API-Schlüssel-Konto in eine Gruppe ohne `settings` auf.
 
 ## Verwandte Themen
 

@@ -4,7 +4,7 @@ description: Ga amfanin awa 5 da na mako na kowane asusun Claude Code da ccam us
 updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: a84df8e873d6
+sourceHash: 40aef0708c81
 ---
 
 `ccam usage` yana nuna nawa kowane asusu ya yi amfani da shi daga iyakar awa 5 da ta mako. `ccam next --auto` yana buɗe asusun da ya fi sauran sarari, kuma `--continue` yana ɗauko tattaunawar yanzu zuwa can.
@@ -55,10 +55,10 @@ Sannan Claude Code yana nuna sunan asusun da amfaninsa a layin matsayi (status l
 ```sh
 ccam next             # the account after the one you used last
 ccam next --auto      # the account with the lowest 5-hour usage
-ccam next --continue  # the next account that shares your conversation history
+ccam next --continue  # carry this folder's conversation on as the next account
 ```
 
-`ccam next` yana tsallake asusan da ba a shiga da su ba, kuma `--auto` yana tsallake asusan da suka kai 100%. Don ci gaba da tattaunawa, dole ne asusun biyu su raba tarihin tattaunawa; duba [rabawa](/docs/sharing).
+`ccam next` yana tsallake asusan da ba a shiga da su ba, kuma `--auto` yana tsallake asusan da suka kai 100% da asusan wata ƙungiya (organization) dabam. Idan asusun biyu suna raba tarihin tattaunawa, `--continue` yana buɗe tattaunawa ɗaya; in ba haka ba Claude Code yana kwafar ta cikin sabon asusun. Duba [rabawa](/docs/sharing) da [sauyawa zuwa asusu na gaba](/features/next#continue).
 
 Don rubutun umarni (scripts) da ayyukan da aka tsara lokacinsu masu gudanar da `claude -p`, saka `--fallback` kafin sunan asusun. Idan wannan asusun ya kai iyakarsa, ccam yana sake gudanar da umarnin iri ɗaya a matsayin asusun da ya fi sarari, kuma sakamakon gudun da ya kammala kaɗai ake bugawa:
 

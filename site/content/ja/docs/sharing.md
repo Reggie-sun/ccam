@@ -1,46 +1,45 @@
 ---
 title: MCPサーバー、設定、履歴の共有
-description: ccamがログインを分けたまま、MCPサーバー、settings.json、CLAUDE.md、エージェント、スキル、会話履歴をアカウント間で共有するしくみです。
+description: ccamのグループが、ログインを分けたまま、MCPサーバー、settings.json、CLAUDE.md、スキル、会話履歴をClaude Codeのアカウント間で共有するしくみです。
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 888d466b29e9
+sourceHash: "2606e4ec682e"
 ---
 
-各アカウントはそれぞれ独自のログインを持ちます。それ以外のものは、項目ごとに共有できます。ccamはアカウントのファイルやフォルダーを共有グループのフォルダーにリンクするので、あるアカウントで行った変更が、そのグループのすべてのアカウントに反映されます。
+各アカウントはそれぞれ独自のログインを持ちます。それ以外のものは、**グループ**を通じて共有できます。グループは共有する項目と所属するアカウントを決め、ccamはそれらのアカウントのファイルをグループのフォルダーにリンクするので、あるアカウントで行った変更がすべてのアカウントに反映されます。
 
 ## 共有できる項目
 
-| 項目 | オプション | 共有されるもの |
-| --- | --- | --- |
-| MCPサーバー | `--mcp` | グループの`mcp.json`。起動時にClaude Codeに渡されます |
-| 設定 | `--settings` | `settings.json`: 権限、フック、モデル、ステータスライン |
-| グローバルメモリー | `--memory` | `CLAUDE.md` |
-| 拡張機能 | `--extensions` | `agents/`、`commands/`、`skills/`、`plugins/`、`output-styles/`、`rules/` |
-| 会話履歴 | `--history` | `projects/`と`history.jsonl` |
+| 項目 | 共有されるもの |
+| --- | --- |
+| `mcp` | MCPサーバー: グループの`mcp.json`。起動時にClaude Codeに渡されます |
+| `settings` | `settings.json`: 権限、フック、モデル、ステータスライン |
+| `memory` | グローバルの`CLAUDE.md` |
+| `extensions` | `agents/`、`commands/`、`skills/`、`plugins/`、`output-styles/`、`rules/` |
+| `history` | 会話履歴: `projects/`と`history.jsonl` |
 
-新しいアカウントは、会話履歴以外のすべてを共有します。
+最初のアカウントが、会話履歴以外のすべてを共有する`default`グループを作成し、その後のアカウントはそこに加わります。
 
 ログインファイルである`.credentials.json`と`.claude.json`が共有されることはありません。ccamは決められたリストにあるパスだけをリンクし、この2つはそのリストに含まれていません。
 
-このページでは日常的な作業を説明します。すべてのオプションは機能ページで説明しています。[アカウント間の共有](/features/share)、[共有MCPサーバー](/features/mcp)、[既存の環境のコピー](/features/migrate)を参照してください。
+このページでは日常的な作業を説明します。すべてのオプションは機能ページで説明しています。[グループによる共有](/features/share)、[共有MCPサーバー](/features/mcp)、[既存の環境のコピー](/features/migrate)を参照してください。
 
 ## グループ
 
-`on`は`default`グループを意味します。名前を指定して、一部のアカウントだけで項目を共有することもできます。
-
 ```sh
-ccam share work --history team
-ccam share side --history team
+ccam group                                   # the groups, what they share, their accounts
+ccam group set default --add history         # every account in default shares history
+ccam group add team --items history --members work,side
 ```
 
-これで`work`と`side`は互いに会話を共有しますが、ほかのアカウントとは共有しません。
+1つのアカウントは複数のグループに入れますが、各項目を受け取るのは1つのグループからだけです。そのため、`work`と`side`の間だけで履歴を共有し、ほかのアカウントとは共有しないようにするには、上の例のように、履歴を`default`に含めず、2つのアカウント専用のグループを作ります。`ccam share work`は、アカウントが何を、どのグループを通じて共有しているかを表示します。[ダッシュボード](/features/dashboard)のGroupsタブでも同じことができます。
 
-## 共有を有効にする
+## アカウントが共有を始めるとき
 
-アカウントで項目の共有を開始すると、ccamは次の処理を行います。
+アカウントが項目の共有を始めると（グループに加わったときや、グループに項目が追加されたとき）、ccamは次の処理を行います。
 
-1. 移動、コピー、リンクするすべてのファイルの計画を表示し、開始する前に確認を求めます。
+1. アカウントごとに、移動、コピー、リンクするすべてのファイルの計画を表示し、開始する前に確認を求めます。
 2. グループがまだ空であれば、アカウントのファイルをグループのフォルダーに移動します。空でなければ、グループにまだないファイルを追加します。
 3. 同じファイルの内容が異なる場合は、グループのバージョンを残すか、自分のバージョンを使うか、JSONをマージするかを尋ねます。
 4. 元のファイルを、アカウントのフォルダー内の`.ccam-backup/<time>/`に保存します。
@@ -48,12 +47,13 @@ ccam share side --history team
 
 会話ファイルの名前はセッションIDに基づいているため、複数のアカウントの履歴を競合なく結合できます。
 
-そのアカウントでClaude Codeが実行中の間は、ccamは共有を変更しません。移動するファイルに、セッションが書き込み続けるためです。先にセッションを終了してください。
+そのアカウントとしてClaude Codeが実行中の間は、ccamはそのアカウントを変更しません。移動するファイルに、セッションが書き込み続けるためです。先にセッションを終了してください。
 
-## 共有を無効にする
+## アカウントが共有をやめるとき
 
 ```sh
-ccam share work --history off
+ccam group leave team work                   # work leaves the group
+ccam group set default --remove history      # nobody in default shares history any more
 ```
 
 リンクが削除され、アカウントにはグループの現在の内容のコピーが作られます。代わりに空の状態から始めたい場合は、`--fresh`を追加します。グループの内容は、ほかのアカウントのためにそのまま残ります。
@@ -95,14 +95,12 @@ Copy from /home/me/.claude into group default (/home/me/.local/share/ccam/groups
   Conversation history (projects/, history.jsonl) is not included; add --history to copy it.
 Copy these into group default? [y/N] y
 ✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, commands/, skills/
-Accounts that share these through group default:
-  mcp         personal
-  settings    personal
-  memory      personal
-  extensions  personal
+Group default: personal
+To share them:
+  ccam group join default work
 ```
 
-最後に、ccamは各項目をそのグループで共有しているアカウントを一覧表示します。共有していないアカウントがあれば、そのアカウントで共有を有効にする`ccam share`コマンドを表示します。
+最後に、ccamはグループのアカウントを一覧表示します。グループがまだ共有していない項目がある場合や、グループに入っていないアカウントがある場合は、それを変更する`ccam group`コマンドを表示します。
 
 グループにすでに内容の異なるファイルがある場合、ccamは共有を有効にするときと同じように、グループのものを残すか、自分のものを使うかを尋ねます。`settings.json`などのJSONファイルはマージすることもでき、`history.jsonl`は行単位でマージできます。グループの以前のファイルは、グループのフォルダー内の`.ccam-backup/<time>/`に保存されます。
 

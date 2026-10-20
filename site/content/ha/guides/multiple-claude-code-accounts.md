@@ -4,7 +4,7 @@ description: Gudanar da asusun Claude Code da dama gefe da gefe da CLAUDE_CONFIG
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: f2982e4317a2
+sourceHash: ee92078b81c3
 ---
 
 Ba kowane asusu foldar saitunsa ta kansa. Claude Code yana karanta foldar daga environment variable ɗin `CLAUDE_CONFIG_DIR`, kuma kowace folda tana riƙe bayanan shigarta, saitunanta da tarihinta, don haka kowane asusu yana nan a shiga kuma za ka iya gudanar da su a lokaci guda. Za ka iya saita wannan da hannu da shell alias, ko ka bar ccam ya yi maka.
@@ -69,7 +69,7 @@ Claude Code yana aiki [kai tsaye a Windows da kuma cikin WSL](https://code.claud
 
 **Sabar MCP tana bayyana a asusu ɗaya kawai.** Sabobin da aka ƙara a cikin zama da `claude mcp add` na wannan asusun ne. Matsar da ɗaya zuwa duk asusai da `ccam mcp import work <server>`.
 
-**Saituna sun bambanta tsakanin asusai.** `ccam share work` yana nuna abin da asusun ke rabawa; `ccam share work --settings on` yana raba saitunansa, bayan ya nuna abin da zai canza. `ccam doctor --fix` yana gyara mahaɗan da suka lalace kuma yana ajiye kwafin kowane fayil da ya canza.
+**Saituna sun bambanta tsakanin asusai.** `ccam share work` yana nuna abin da asusun ke rabawa da kuma ta wane rukuni; `ccam group join default work` yana sa shi ya raba abin da `default` ke rabawa, bayan ya nuna abin da zai canza. `ccam doctor --fix` yana gyara mahaɗan da suka lalace kuma yana ajiye kwafin kowane fayil da ya canza.
 
 **Asusai biyu suna buɗe tattaunawa ɗaya.** Ka guji yin aiki a kan tattaunawa ɗaya a asusai biyu a lokaci guda. ccam yana gargaɗe ka idan ka gwada.
 

@@ -1,46 +1,45 @@
 ---
 title: MCP 서버, 설정, 대화 내역 공유
-description: ccam이 로그인 정보는 계정마다 분리해 둔 채 MCP 서버, settings.json, CLAUDE.md, 에이전트, 스킬, 대화 내역을 Claude Code 계정 간에 공유하는 방법을 설명합니다.
+description: ccam 그룹이 로그인 정보는 계정마다 분리해 둔 채 MCP 서버, settings.json, CLAUDE.md, 스킬, 대화 내역을 Claude Code 계정 간에 공유하는 방법을 설명합니다.
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 888d466b29e9
+sourceHash: "2606e4ec682e"
 ---
 
-로그인 정보는 계정마다 따로 유지됩니다. 그 밖의 항목은 하나씩 골라 공유할 수 있습니다. ccam은 계정의 파일이나 폴더를 공유 그룹 폴더에 링크하므로, 한 계정에서 바꾼 내용이 같은 그룹의 모든 계정에 반영됩니다.
+로그인 정보는 계정마다 따로 유지됩니다. 그 밖의 항목은 **그룹**으로 공유할 수 있습니다. 그룹에는 공유할 항목과 속한 계정이 정해져 있고, ccam은 그 계정들의 파일을 그룹 폴더에 링크합니다. 그래서 한 계정에서 바꾼 내용이 그룹의 모든 계정에 반영됩니다.
 
 ## 공유할 수 있는 항목
 
-| 항목 | 옵션 | 공유되는 내용 |
-| --- | --- | --- |
-| MCP 서버 | `--mcp` | 그룹의 `mcp.json`(시작할 때 Claude Code에 전달) |
-| 설정 | `--settings` | `settings.json`: 권한, 훅, 모델, 상태 표시줄 |
-| 전역 메모리 | `--memory` | `CLAUDE.md` |
-| 확장 기능 | `--extensions` | `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/`, `rules/` |
-| 대화 내역 | `--history` | `projects/`와 `history.jsonl` |
+| 항목 | 공유되는 내용 |
+| --- | --- |
+| `mcp` | MCP 서버: 그룹의 `mcp.json`(시작할 때 Claude Code에 전달) |
+| `settings` | `settings.json`: 권한, 훅, 모델, 상태 표시줄 |
+| `memory` | 전역 `CLAUDE.md` |
+| `extensions` | `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/`, `rules/` |
+| `history` | 대화 내역: `projects/`와 `history.jsonl` |
 
-새 계정은 대화 내역을 제외한 모든 항목을 공유합니다.
+처음 추가한 계정이 `default` 그룹을 만듭니다. 이 그룹은 대화 내역을 제외한 모든 항목을 공유하며, 이후에 추가하는 계정도 이 그룹에 들어갑니다.
 
 로그인 파일인 `.credentials.json`과 `.claude.json`은 절대 공유되지 않습니다. ccam은 정해진 목록에 있는 경로만 링크하는데, 이 두 파일은 그 목록에 없습니다.
 
-이 페이지에서는 일상적인 작업을 다룹니다. 모든 옵션은 기능 페이지에서 설명합니다. [계정 간 공유](/features/share), [MCP 서버 공유](/features/mcp), [기존 설정 복사하기](/features/migrate)를 참고하세요.
+이 페이지에서는 일상적인 작업을 다룹니다. 모든 옵션은 기능 페이지에서 설명합니다. [그룹으로 공유하기](/features/share), [MCP 서버 공유](/features/mcp), [기존 설정 복사하기](/features/migrate)를 참고하세요.
 
 ## 그룹
 
-`on`은 `default` 그룹을 뜻합니다. 그룹 이름을 직접 지정하면 일부 계정끼리만 항목을 공유할 수 있습니다.
-
 ```sh
-ccam share work --history team
-ccam share side --history team
+ccam group                                   # the groups, what they share, their accounts
+ccam group set default --add history         # every account in default shares history
+ccam group add team --items history --members work,side
 ```
 
-이제 `work`와 `side`는 서로 대화를 공유하지만, 다른 계정과는 공유하지 않습니다.
+한 계정이 여러 그룹에 속할 수 있지만, 각 항목은 한 그룹에서만 받습니다. 그래서 `work`와 `side`끼리만 대화 내역을 공유하고 다른 계정과는 공유하지 않으려면, 위처럼 `default`에서는 대화 내역을 빼고 두 계정만의 그룹을 따로 만드세요. `ccam share work`는 계정이 무엇을 어느 그룹으로 공유하는지 보여 줍니다. [대시보드](/features/dashboard)의 Groups 탭에서도 같은 일을 할 수 있습니다.
 
-## 공유 켜기
+## 계정이 공유를 시작할 때
 
-계정에서 어떤 항목의 공유를 시작하면 ccam은 다음 순서로 진행합니다.
+계정이 어떤 항목을 공유하기 시작하면(그룹에 들어가거나, 계정의 그룹에 항목이 추가되면) ccam은 다음 순서로 진행합니다.
 
-1. 옮기거나 복사하거나 링크할 파일을 모두 보여 주는 계획을 출력하고, 시작하기 전에 확인을 받습니다.
+1. 계정마다 옮기거나 복사하거나 링크할 파일을 모두 보여 주는 계획을 출력하고, 시작하기 전에 확인을 받습니다.
 2. 그룹이 아직 비어 있으면 계정의 파일을 그룹 폴더로 옮기고, 그렇지 않으면 그룹에 없는 파일만 추가합니다.
 3. 같은 파일인데 내용이 다르면 그룹의 버전을 유지할지, 내 버전을 쓸지, JSON을 병합할지 묻습니다.
 4. 원본은 계정 폴더 안의 `.ccam-backup/<time>/`에 보관합니다.
@@ -48,19 +47,20 @@ ccam share side --history team
 
 대화 파일 이름은 세션 ID를 따르므로, 여러 계정의 대화 내역을 합쳐도 충돌하지 않습니다.
 
-Claude Code가 그 계정으로 실행 중일 때는 ccam이 공유 설정을 바꾸지 않습니다. 세션이 옮기려는 파일에 계속 쓰기 때문입니다. 먼저 세션을 종료하세요.
+Claude Code가 그 계정으로 실행 중일 때는 ccam이 계정을 바꾸지 않습니다. 세션이 옮기려는 파일에 계속 쓰기 때문입니다. 먼저 세션을 종료하세요.
 
-## 공유 끄기
+## 계정이 공유를 멈출 때
 
 ```sh
-ccam share work --history off
+ccam group leave team work                   # work leaves the group
+ccam group set default --remove history      # nobody in default shares history any more
 ```
 
 링크가 제거되고, 계정은 그룹의 현재 내용을 복사한 자체 사본을 갖게 됩니다. 빈 상태로 새로 시작하려면 `--fresh`를 붙이세요. 그룹의 내용은 다른 계정을 위해 그대로 남습니다.
 
 ## 기존 설정 복사하기
 
-ccam을 쓰기 전에 Claude Code를 써 왔다면 설정이 `~/.claude`에 있습니다. `ccam migrate`는 이 설정을 공유 그룹으로 복사하므로, 그 항목을 공유하는 모든 계정이 같은 설정을 쓰게 됩니다.
+ccam을 쓰기 전에 Claude Code를 써 왔다면 설정이 `~/.claude`에 있습니다. `ccam migrate`는 이 설정을 그룹으로 복사하므로, 그 항목을 공유하는 모든 계정이 같은 설정을 쓰게 됩니다.
 
 ```sh
 ccam migrate
@@ -95,14 +95,12 @@ Copy from /home/me/.claude into group default (/home/me/.local/share/ccam/groups
   Conversation history (projects/, history.jsonl) is not included; add --history to copy it.
 Copy these into group default? [y/N] y
 ✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, commands/, skills/
-Accounts that share these through group default:
-  mcp         personal
-  settings    personal
-  memory      personal
-  extensions  personal
+Group default: personal
+To share them:
+  ccam group join default work
 ```
 
-마지막에는 항목마다 이 그룹을 통해 공유하는 계정을 보여 줍니다. 아직 공유하지 않는 계정이 있으면 공유를 켜는 `ccam share` 명령도 함께 출력합니다.
+마지막에는 그룹의 계정을 보여 줍니다. 복사한 항목 중 그룹이 아직 공유하지 않는 항목이 있거나 그룹에 들어 있지 않은 계정이 있으면, 이를 바꾸는 `ccam group` 명령도 함께 출력합니다.
 
 그룹에 내용이 다른 같은 파일이 이미 있으면, 공유를 켤 때와 마찬가지로 그룹의 사본을 유지할지 내 사본을 쓸지 묻습니다. `settings.json` 같은 JSON 파일은 병합할 수도 있고, `history.jsonl`은 줄 단위로 병합할 수 있습니다. 그룹에 있던 이전 사본은 그룹 폴더 안의 `.ccam-backup/<time>/`에 보관됩니다.
 

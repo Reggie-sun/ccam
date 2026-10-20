@@ -4,7 +4,7 @@ description: "ccam folder ทำให้โฟลเดอร์หนึ่ง
 updated: 2026-10-20
 order: 11
 translation: machine
-sourceHash: 5071b04a194d
+sourceHash: "46d1410a3d81"
 ---
 
 `ccam folder work ~/code/company` ทำให้ทุกการเปิดที่ไม่ระบุชื่อบัญชีภายใน `~/code/company` และในทุกโฟลเดอร์ย่อย เริ่ม Claude Code ในชื่อบัญชี `work` นอกโฟลเดอร์นั้น บัญชีเริ่มต้นจะเริ่มเหมือนเดิม การระบุชื่อบัญชีด้วย `ccam personal` หรือคำสั่งลัดอย่าง `ccpersonal` จะเริ่มบัญชีนั้นเสมอ
@@ -34,7 +34,7 @@ Here (/home/me/code/company/api): work, set for /home/me/code/company
 - `ccam -p "…"` และการเปิดอื่นใดที่อาร์กิวเมนต์แรกเป็นตัวเลือกของ Claude Code
 - `ccam run` ที่ไม่มีชื่อบัญชี และ `ccam --dry-run`
 - `ccam --fallback -p "…"` สำหรับการลองครั้งแรก
-- ตัวเลือกบัญชี (`ccam` อย่างเดียว) ซึ่งจะเริ่มโดยวางเคอร์เซอร์ไว้ที่บัญชีของโฟลเดอร์
+- แดชบอร์ด (`ccam` อย่างเดียว) ซึ่งจะเริ่มโดยวางเคอร์เซอร์ไว้ที่บัญชีของโฟลเดอร์
 
 ## ตัวเลือก
 

@@ -4,7 +4,7 @@ description: ccam folder 讓你在未指定帳號名稱就啟動 Claude Code 時
 updated: 2026-10-20
 order: 11
 translation: machine
-sourceHash: 5071b04a194d
+sourceHash: "46d1410a3d81"
 ---
 
 `ccam folder work ~/code/company` 會讓在 `~/code/company` 及其下任何資料夾中未指定帳號名稱的每次啟動，都以 `work` 啟動 Claude Code。在該資料夾之外，則和以前一樣啟動預設帳號。指定帳號名稱時，例如 `ccam personal` 或 `ccpersonal` 這類快捷指令，一律會啟動該帳號。
@@ -34,7 +34,7 @@ Here (/home/me/code/company/api): work, set for /home/me/code/company
 - `ccam -p "…"`，以及其他第一個參數是 Claude Code 選項的啟動
 - 不帶名稱的 `ccam run`，以及 `ccam --dry-run`
 - `ccam --fallback -p "…"` 的第一次嘗試
-- 選擇器，也就是單獨的 `ccam`，開啟時游標會停在該資料夾的帳號上
+- 儀表板，也就是單獨的 `ccam`，開啟時游標會停在該資料夾的帳號上
 
 ## 選項
 

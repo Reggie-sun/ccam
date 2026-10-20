@@ -4,7 +4,7 @@ description: "ccam usage একসঙ্গে প্রতিটি অ্য�
 updated: 2026-10-20
 order: 7
 translation: machine
-sourceHash: 525174ceed0d
+sourceHash: "ec1d1ee27d9f"
 ---
 
 `ccam usage` দেখায় প্রতিটি অ্যাকাউন্ট ৫ ঘণ্টা ও সাপ্তাহিক সীমার কতটা ব্যবহার করেছে, প্রতিটি উইন্ডো রিসেট হওয়া পর্যন্ত সময়সহ। কোন অ্যাকাউন্টে জায়গা বাকি আছে তা দেখতে দীর্ঘ কোনো কাজ শুরুর আগে, বা Claude Code যখন জানায় সীমা কাছে, তখন এটি ব্যবহার করুন। `ccam statusline` হলো Claude Code-এর স্ট্যাটাস লাইন কমান্ড: এটি Claude Code-এর ভেতরে অ্যাকাউন্টের নাম ও ব্যবহার দেখায় এবং `ccam usage`-এর জন্য সংখ্যাগুলো সংরক্ষণ করে।
@@ -20,6 +20,7 @@ ccam usage -v               # add per-model weekly limits and the data source
 ccam usage --json           # machine-readable, one object per account
 ccam usage --source cache   # saved numbers only, no network
 ccam usage --refresh        # also renew expired logins of accounts not running
+ccam usage --source claude  # let Claude Code look it up: ccam never touches a token
 ccam statusline install     # set the status line in every account's settings.json
 ```
 
@@ -32,7 +33,7 @@ $ ccam usage
 → Most headroom: personal   (open it with ccam next --auto)
 ```
 
-টার্মিনালে টেবিলটি সঙ্গে সঙ্গে প্রতিটি সারিতে `fetching…`-সহ দেখা যায়, এবং প্রতিটি অ্যাকাউন্ট উত্তর দেওয়ার সঙ্গে সঙ্গে তার সারি আবার আঁকা হয়। `As of` জানায় সংখ্যাগুলো কতক্ষণ আগের; `(cached)` মানে সেগুলো এন্ডপয়েন্ট থেকে নয়, সংরক্ষিত ফাইল থেকে এসেছে। শেষ লাইনটি ১০০%-এর নিচে সবচেয়ে কম ৫ ঘণ্টার ব্যবহারের অ্যাকাউন্টের নাম দেয়, এবং শুধু একাধিক অ্যাকাউন্ট থাকলে দেখা যায়। লগইন না করা অ্যাকাউন্ট দেখায় `not logged in → ccam login <name>`, আর API কী-এর অ্যাকাউন্ট দেখায় `no limits (API)`।
+টার্মিনালে টেবিলটি সঙ্গে সঙ্গে প্রতিটি সারিতে `fetching…`-সহ দেখা যায়, এবং প্রতিটি অ্যাকাউন্ট উত্তর দেওয়ার সঙ্গে সঙ্গে তার সারি আবার আঁকা হয়। `As of` জানায় সংখ্যাগুলো কতক্ষণ আগের; `(cached)` মানে সেগুলো এন্ডপয়েন্ট থেকে নয়, সংরক্ষিত ফাইল থেকে এসেছে। শেষ লাইনটি সেই অ্যাকাউন্টের নাম দেয় যা [`ccam next --auto`](/features/next) একই নিয়মে বেছে নিত (`auto_max_usage`, `auto_strategy`, চলমান সেশনগুলো, `cross_org` সেট না থাকলে শুধু সর্বশেষ ব্যবহৃত অ্যাকাউন্টের প্রতিষ্ঠানের অ্যাকাউন্ট, ১০০%-এ থাকা প্রতিটি উইন্ডো বাদ, তাই যে অ্যাকাউন্টের সপ্তাহ পূর্ণ তার নাম কখনও আসে না), এবং শুধু একাধিক অ্যাকাউন্ট থাকলে দেখা যায়। লগইন না করা অ্যাকাউন্ট দেখায় `not logged in → ccam login <name>`, আর API কী-এর অ্যাকাউন্ট দেখায় `no limits (API)`।
 
 `ccam statusline install`-এর পরে Claude Code `[work] · Opus · 5h 24% · 7d 41%`-এর মতো একটি লাইন দেখায়।
 
@@ -44,11 +45,15 @@ $ ccam usage
 | `--watch[=N]` | Ctrl+C না চাপা পর্যন্ত প্রতি `N` সেকেন্ডে আবার আঁকে। শুধু `--watch`, বা 0 বা তার কম মান, মানে 60 | বন্ধ |
 | `-v`, `--verbose` | মডেলভিত্তিক সাপ্তাহিক সীমা এবং একটি `source:` লাইন (`live`, `cache` বা `statusline`) দেখায় | বন্ধ |
 | `--no-cache` | ৬০ সেকেন্ডের ক্যাশ উপেক্ষা করে আবার এন্ডপয়েন্টে জিজ্ঞেস করে | বন্ধ |
-| `--source live\|cache` | `cache` কখনও এন্ডপয়েন্টে জিজ্ঞেস করে না এবং শুধু সংরক্ষিত সংখ্যা দেখায়; `live` হলো ডিফল্ট আচরণ | live |
+| `--source live\|claude\|cache` | `live` অ্যাকাউন্টের টোকেন দিয়ে এন্ডপয়েন্টে জিজ্ঞেস করে; `claude` Claude Code-কে দিয়ে খোঁজ করায় (নিচে দেখুন); `cache` শুধু সংরক্ষিত সংখ্যা দেখায় | `usage_source`, নইলে `live` |
 | `--refresh` | মেয়াদোত্তীর্ণ অ্যাক্সেস টোকেন নবায়ন করে, শুধু যে অ্যাকাউন্টগুলো চলছে না সেগুলোর জন্য | বন্ধ |
 | `--dry-run` | গ্রহণ করা হয়: `ccam usage` নিজের ক্যাশ ছাড়া কিছু বদলায় না। `--refresh`-এর সঙ্গে প্রত্যাখ্যান করা হয়: `--dry-run cannot be combined with --refresh, which rewrites login tokens` | বন্ধ |
 
-অন্য যেকোনো `--source` মান `--source must be live or cache` দিয়ে ব্যর্থ হয়। `ccam usage` কোনো আর্গুমেন্ট নেয় না।
+অন্য যেকোনো `--source` মান `--source must be live, claude or cache` দিয়ে ব্যর্থ হয়।
+
+### Claude Code-এর নিজের কাছ থেকে ব্যবহার
+
+`config.toml`-এ `usage_source = "claude"` থাকলে (বা `--source claude` দিলে) ccam লগইন টোকেন একেবারেই পড়ে না। প্রতিটি অ্যাকাউন্টের জন্য এটি অ্যাকাউন্টের ফোল্ডারে `claude -p --input-format stream-json --output-format stream-json --verbose --safe-mode --no-session-persistence` চালু করে এবং স্ট্যান্ডার্ড ইনপুটে Claude Code-এর `get_usage` অনুরোধ পাঠায় (Claude Code 2.1.270 বা তার পরের সংস্করণ); Claude Code নিজের লগইন দিয়ে ব্যবহার খুঁজে ৫ ঘণ্টা, সাপ্তাহিক ও মডেলের উইন্ডোগুলো দিয়ে উত্তর দেয়। `--safe-mode` অ্যাকাউন্টের হুক, MCP সার্ভার ও প্লাগইন চালু হতে দেয় না, এবং কোনো সেশন সংরক্ষিত হয় না। প্রতিটি অ্যাকাউন্টে একবার Claude Code চালু হতে হয়, প্রায় এক সেকেন্ড, তাই এই উৎস `live`-এর চেয়ে ধীর; অ্যাকাউন্টগুলোকে একসঙ্গে জিজ্ঞেস করা হয়, প্রত্যেককে ২০ সেকেন্ডের মধ্যে, এবং ৬০ সেকেন্ডের ক্যাশ যথারীতি প্রযোজ্য। Claude Code অনুরোধটিকে পরীক্ষামূলক হিসেবে চিহ্নিত করে, তাই এটি উত্তর দেওয়া বন্ধ করলে ccam সংরক্ষিত সংখ্যাগুলো দেখায় এবং `ccam doctor` তা জানায়। `--dry-run` Claude Code চালু করে না (চালু হলে এটি অ্যাকাউন্টের ফোল্ডারে লেখে) এবং সংরক্ষিত সংখ্যাগুলো দেখায়। `usage_source`-এর মান হতে পারে `live` বা `claude`; `cache` শুধু `--source`-এর একটি বিকল্প। `ccam usage` কোনো আর্গুমেন্ট নেয় না।
 
 `ccam statusline` স্ট্যান্ডার্ড ইনপুট থেকে Claude Code-এর স্ট্যাটাস লাইন JSON পড়ে। এর একমাত্র অপশন `--wrap <command>`: একটি বিদ্যমান স্ট্যাটাস লাইন কমান্ড, যার আউটপুটের প্রথম লাইনের সামনে অ্যাকাউন্টের নাম বসে। `ccam statusline install` কোনো অপশন নেয় না। দুটোই `--dry-run` প্রত্যাখ্যান করে `` --dry-run is not supported by `ccam statusline`; nothing was changed `` দিয়ে।
 

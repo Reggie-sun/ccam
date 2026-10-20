@@ -5,7 +5,7 @@ description: "ติดตั้ง ccam บน Linux, macOS หรือ Window
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: aea4984c1576
+sourceHash: "07fab3165030"
 ---
 
 รันคำสั่งนี้ในเทอร์มินัลบน Linux หรือ macOS:
@@ -80,7 +80,7 @@ ccam completion powershell >> $PROFILE
 /plugin install ccam --marketplace jhyunwoo/ccam
 ```
 
-ปลั๊กอินนี้เพิ่ม skill หนึ่งตัวและคำสั่งสองคำสั่ง คือ `/ccam:usage` และ `/ccam:ext` skill นี้ไม่เคยรันคำสั่งที่เข้าสู่ระบบหรือย้ายไฟล์ แต่จะแนะนำคำสั่งเหล่านั้นให้คุณแทน
+ปลั๊กอินนี้เพิ่ม skill หนึ่งตัว คำสั่ง `/ccam:usage`, `/ccam:ext` และ `/ccam:switch` และ hook สองตัว: เมื่อเซสชันหยุดเพราะถึงขีดจำกัดการใช้งาน คุณจะได้รับการแจ้งเตือนในเทอร์มินัล และ `/ccam:switch [account]` จะส่งต่อการสนทนาไปยังอีกบัญชีหนึ่ง ([รายละเอียด](/features/next#inside-claude-code)) hook เหล่านี้รัน `ccam` ดังนั้น ccam ต้องอยู่ใน `PATH` ที่ Claude Code มองเห็น skill นี้ไม่เคยรันคำสั่งที่เข้าสู่ระบบหรือย้ายไฟล์ แต่จะแนะนำคำสั่งเหล่านั้นให้คุณแทน
 
 ## ตรวจสอบการติดตั้ง
 

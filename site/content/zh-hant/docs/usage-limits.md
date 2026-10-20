@@ -4,7 +4,7 @@ description: 用 ccam usage 查看每個 Claude Code 帳號的 5 小時和每週
 updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: a84df8e873d6
+sourceHash: "40aef0708c81"
 ---
 
 `ccam usage` 會顯示每個帳號已使用了多少 5 小時限制和每週限制。`ccam next --auto` 會開啟剩餘額度最多的帳號，而 `--continue` 會把目前的對話帶過去。
@@ -55,10 +55,10 @@ ccam statusline install
 ```sh
 ccam next             # the account after the one you used last
 ccam next --auto      # the account with the lowest 5-hour usage
-ccam next --continue  # the next account that shares your conversation history
+ccam next --continue  # carry this folder's conversation on as the next account
 ```
 
-`ccam next` 會略過未登入的帳號，`--auto` 則會略過已達 100% 的帳號。要接續對話，兩個帳號都必須共用對話記錄；請參閱[共用](/docs/sharing)。
+`ccam next` 會略過未登入的帳號，`--auto` 則會略過已達 100% 的帳號和屬於其他組織的帳號。兩個帳號共用對話記錄時，`--continue` 會開啟同一段對話；否則 Claude Code 會把對話複製到新的帳號。請參閱[共用](/docs/sharing)和[切換到下一個帳號](/features/next#continue)。
 
 對於執行 `claude -p` 的指令碼和排程工作，請在帳號名稱前加上 `--fallback`。該帳號達到上限時，ccam 會以剩餘額度最多的帳號再次執行同一個指令，並且只輸出完成的那次執行的結果：
 

@@ -1,10 +1,10 @@
 ---
 title: Claude Code starten
-description: Claude Code mit ccam <name|number>, ccam run oder der Auswahl als beliebiges Konto starten; Argumente gehen unverändert an claude, --dry-run zeigt den Befehl.
+description: Claude Code mit ccam <name|number>, ccam run oder dem Dashboard als beliebiges Konto starten; Argumente gehen unverändert an claude, --dry-run zeigt den Befehl.
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: e6b5a8d4df86
+sourceHash: 4812b197f143
 ---
 
 `ccam work` startet Claude Code als das Konto `work`, und alles nach dem Namen geht unverändert an `claude`. Verwende es überall dort, wo du `claude` tippen würdest: in einem Terminal, in einem Skript oder mit weitergeleiteter Eingabe.
@@ -21,7 +21,7 @@ ccam -p "summarise"              # no name: the folder's account, else the defau
 ccam use work                    # make work the default account
 ccam folder work ~/code/company  # use work in that folder when no name is given
 ccam run work --continue         # same as ccam work --continue
-ccam                             # the picker on a terminal, the list otherwise
+ccam                             # the dashboard on a terminal, the list otherwise
 ccam --dry-run work -p hi        # print the command instead of running it
 ccam --fallback work -p "fix the tests"   # run again as another account at the limit
 ```
@@ -30,22 +30,13 @@ Gib den Namen eines Kontos oder seine Nummer aus `ccam list` an. ccam liest die 
 
 Beginnt das erste Argument mit `-` und ist keine von ccams eigenen Optionen, startet ccam ein Konto ohne Namen mit allen Argumenten. Das ist das Konto, das mit [`ccam folder`](/features/folder) für den aktuellen Ordner festgelegt ist, sonst das Standardkonto: das mit `ccam use` festgelegte Konto, oder das Konto mit der niedrigsten Nummer, wenn du keines festgelegt hast.
 
-### Die Auswahl
+### Das Dashboard
 
-`ccam` ohne Argumente öffnet die Auswahl, wenn Standardeingabe und -ausgabe ein Terminal sind, und gibt sonst `ccam list` aus. Sie zeigt für jedes Konto Nummer, E-Mail-Adresse, 5-Stunden-Nutzung, letzte Verwendung und geteilte Elemente; die Nutzung erscheint, sobald das jeweilige Konto antwortet.
+`ccam` ohne Argumente öffnet das [Dashboard](/features/dashboard), wenn Standardeingabe und -ausgabe ein Terminal sind, und gibt sonst `ccam list` aus. Gehe zu einem Konto (mit den Pfeiltasten oder indem du seine Nummer tippst) und drücke `Enter`, um es zu starten; `n` startet das Konto mit dem meisten Spielraum, und `o` bietet `--continue`, `--resume` oder andere Argumente an. Das Dashboard schließt sich, bevor Claude Code startet, sodass das Terminal zuerst wiederhergestellt wird.
 
-| Taste | Wirkung |
-| --- | --- |
-| `Enter` | Claude Code als das ausgewählte Konto starten |
-| `1` bis `9` | Das Konto mit dieser Nummer starten |
-| `Up`/`Down`, `k`/`j` | Die Auswahl bewegen |
-| `a` | Die Auswahl schließen und den Assistenten von `ccam add` ausführen |
-| `s` | Die geteilten Elemente des ausgewählten Kontos bearbeiten (`Space` oder `x` schaltet um, `Enter` übernimmt, `Esc` geht zurück) |
-| `d` | Das ausgewählte Konto zum Standardkonto machen |
-| `r` | Die Nutzung erneut abrufen, ohne den kurzen Cache |
-| `q`, `Esc`, `Ctrl+C` | Beenden |
+Wenn in der Shell `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY` oder `ANTHROPIC_AUTH_TOKEN` gesetzt ist, würde Claude Code diesen Schlüssel oder dieses Token statt der eigenen Anmeldung des Kontos verwenden, daher weist ccam vor dem Start auf der Standardfehlerausgabe darauf hin (`ccam: $ANTHROPIC_API_KEY is set, so Claude Code may use that key instead of work's login…`). Es liest die Variablen nur; ein [API-Schlüssel-Konto](/features/api) entfernt sie stattdessen.
 
-Die Auswahl schließt sich, bevor sie handelt, sodass das Terminal wiederhergestellt ist, bevor Claude Code startet. Nach `d` oder einer Änderung am Teilen öffnet sie sich erneut. Eine Änderung am Teilen zeigt zuerst den Plan und fragt nach, wie `ccam share`.
+Mit `relay = true` in `config.toml` startet ccam interaktive Sitzungen als Kindprozess und bleibt neben ihnen, damit `/ccam:switch` ein Gespräch von selbst weiterführen kann ([Details](/features/next#inside-claude-code)); andernfalls ersetzt sich ccam selbst durch Claude Code, und nichts läuft daneben.
 
 ## Optionen
 
@@ -84,7 +75,7 @@ Jeder Start durchläuft dieselben Schritte, von der Befehlszeile bis `exec`:
 Jedes Feld leuchtet auf, während sein Schritt läuft, und die Zeilen darunter sind die Umgebung und die Argumente, mit denen Claude Code startet.
 
 1. `cmd/ccam/main.go` ruft `app.Main` auf. Wurde ccam unter einem anderen Namen gestartet, ist es ein [Kurzbefehl](/features/shortcuts) und geht direkt an den Starter.
-2. `app.parse` wertet `os.Args` aus, bevor cobra beteiligt ist. Nur `ccam` allein (die Auswahl), ein ccam-Befehlsname (`config.Reserved`), `-h`/`--help` und `-v`/`--version` gehen an `cli.Execute`. Alles andere ist ein Start.
+2. `app.parse` wertet `os.Args` aus, bevor cobra beteiligt ist. Nur `ccam` allein (das Dashboard), ein ccam-Befehlsname (`config.Reserved`), `-h`/`--help` und `-v`/`--version` gehen an `cli.Execute`. Alles andere ist ein Start.
 3. `launcher.Launch` liest `~/.config/ccam/config.toml`, die einzige Datei, die es parst.
 4. `launcher.Prepare` findet das Konto über Namen oder Nummer (ohne Namen nimmt `HereProfile` das Konto des Ordners und vergleicht dazu das Arbeitsverzeichnis als Zeichenkette mit den `[[folder]]`-Einträgen von `config.toml`), entfernt ein führendes `--` und ermittelt die ausführbare Datei `claude` mit `ResolveClaude`. Die Suche im PATH wird zusammen mit der Änderungszeit der Datei in `~/.local/state/ccam/claude-path` zwischengespeichert, sodass ccam nicht bei jedem Start `PATH` durchsucht. Eine geänderte oder fehlende Datei löst eine neue Suche aus. Ein `claude_bin`-Pfad in `config.toml` wird unverändert verwendet. ccam lehnt ein `claude` ab, das ccam selbst ist (Vergleich über den Inode), weil das eine Endlosschleife wäre.
 5. `checkLinks` vergleicht den Kontoordner `~/.local/share/ccam/profiles/<name>/` mit seinen Freigabeeinstellungen über `share.Check`, das nur `lstat` und `readlink` aufruft, ein oder zwei Systemaufrufe pro Element. Ein fehlender Link wird sofort angelegt. Alles, was Daten kosten könnte, hält den Start an.

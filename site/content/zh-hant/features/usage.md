@@ -4,7 +4,7 @@ description: ccam usage 一次顯示每個帳號的 5 小時和每週限制，cc
 updated: 2026-10-20
 order: 7
 translation: machine
-sourceHash: 525174ceed0d
+sourceHash: "ec1d1ee27d9f"
 ---
 
 `ccam usage` 會顯示每個帳號已使用了多少 5 小時限制和每週限制，以及每個時間區間距離重設的時間。在開始一項長時間的工作之前，或 Claude Code 告訴你快要達到限制時，可以用它查看哪個帳號還有剩餘額度。`ccam statusline` 是 Claude Code 的狀態列指令：它會在 Claude Code 中顯示帳號名稱和用量，並為 `ccam usage` 儲存這些數字。
@@ -20,6 +20,7 @@ ccam usage -v               # add per-model weekly limits and the data source
 ccam usage --json           # machine-readable, one object per account
 ccam usage --source cache   # saved numbers only, no network
 ccam usage --refresh        # also renew expired logins of accounts not running
+ccam usage --source claude  # let Claude Code look it up: ccam never touches a token
 ccam statusline install     # set the status line in every account's settings.json
 ```
 
@@ -32,7 +33,7 @@ $ ccam usage
 → Most headroom: personal   (open it with ccam next --auto)
 ```
 
-在終端機中，表格會立即出現，每一列顯示 `fetching…`，並在各帳號回應時重新繪製該列。`As of` 表示數字的新舊程度；`(cached)` 代表數字來自已儲存的檔案，而不是端點。最後一行會列出 5 小時用量最低且低於 100% 的帳號，只在你有多個帳號時才會出現。未登入的帳號會顯示 `not logged in → ccam login <name>`，API 金鑰帳號則顯示 `no limits (API)`。
+在終端機中，表格會立即出現，每一列顯示 `fetching…`，並在各帳號回應時重新繪製該列。`As of` 表示數字的新舊程度；`(cached)` 代表數字來自已儲存的檔案，而不是端點。最後一行會列出 [`ccam next --auto`](/features/next) 依相同規則會選擇的帳號（`auto_max_usage`、`auto_strategy`、執行中的工作階段；除非設定了 `cross_org`，否則只考慮上次使用的帳號所屬組織的帳號；任何區間達到 100% 的帳號都會略過，所以每週額度已用完的帳號絕不會被列出），只在你有多個帳號時才會出現。未登入的帳號會顯示 `not logged in → ccam login <name>`，API 金鑰帳號則顯示 `no limits (API)`。
 
 執行 `ccam statusline install` 之後，Claude Code 會顯示 `[work] · Opus · 5h 24% · 7d 41%` 這樣的一行。
 
@@ -44,11 +45,15 @@ $ ccam usage
 | `--watch[=N]` | 每 `N` 秒重新繪製，直到你按下 Ctrl+C。只寫 `--watch`，或值為 0 以下時，代表 60 | 關閉 |
 | `-v`、`--verbose` | 顯示各模型的每週限制，以及 `source:` 一行（`live`、`cache` 或 `statusline`） | 關閉 |
 | `--no-cache` | 忽略 60 秒快取，重新查詢端點 | 關閉 |
-| `--source live\|cache` | `cache` 絕不查詢端點，只顯示已儲存的數字；`live` 是預設行為 | live |
+| `--source live\|claude\|cache` | `live` 以帳號的權杖查詢端點；`claude` 讓 Claude Code 查詢（見下文）；`cache` 只顯示已儲存的數字 | `usage_source`，否則為 `live` |
 | `--refresh` | 更新過期的存取權杖，只針對沒有在執行的帳號 | 關閉 |
 | `--dry-run` | 接受：`ccam usage` 除了自己的快取以外不變更任何東西。和 `--refresh` 一起使用時會被拒絕：`--dry-run cannot be combined with --refresh, which rewrites login tokens` | 關閉 |
 
-其他任何 `--source` 值都會失敗並顯示 `--source must be live or cache`。`ccam usage` 不接受參數。
+其他任何 `--source` 值都會失敗並顯示 `--source must be live, claude or cache`。
+
+### 由 Claude Code 本身查詢用量
+
+在 `config.toml` 中設定 `usage_source = "claude"`（或使用 `--source claude`）時，ccam 完全不會讀取登入權杖。它會在每個帳號的資料夾中啟動 `claude -p --input-format stream-json --output-format stream-json --verbose --safe-mode --no-session-persistence`，並透過標準輸入送出 Claude Code 的 `get_usage` 請求（需要 Claude Code 2.1.270 或更新版本）；Claude Code 會用自己的登入查詢用量，並回傳 5 小時、每週和各模型的區間。`--safe-mode` 會讓帳號的 hook、MCP 伺服器和外掛不啟動，也不會儲存任何工作階段。每個帳號都需要啟動一次 Claude Code，大約一秒，所以這個來源比 `live` 慢；所有帳號會同時查詢，每個都限制在 20 秒內，60 秒快取也照常適用。Claude Code 把這個請求標示為實驗性功能，所以如果它不再回應，ccam 會顯示已儲存的數字，`ccam doctor` 也會回報。`--dry-run` 不會啟動 Claude Code（因為它會寫入帳號的資料夾），而是顯示已儲存的數字。`usage_source` 接受 `live` 或 `claude`；`cache` 只能作為 `--source` 的選項。`ccam usage` 不接受參數。
 
 `ccam statusline` 從標準輸入讀取 Claude Code 的狀態列 JSON。它唯一的選項是 `--wrap <command>`：一個現有的狀態列指令，ccam 會在它輸出的第一行前面加上帳號名稱。`ccam statusline install` 沒有選項。兩者都會以 `` --dry-run is not supported by `ccam statusline`; nothing was changed `` 拒絕 `--dry-run`。
 

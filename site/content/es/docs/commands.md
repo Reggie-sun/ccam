@@ -5,10 +5,10 @@ description: Todos los comandos y opciones de ccam, desde ccam add y ccam <name>
 updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: da2594c672bc
+sourceHash: 116c5b34ac9a
 ---
 
-Pon `--dry-run` antes de un comando para ver lo que haría sin hacerlo, por ejemplo `ccam --dry-run work`. Funciona al iniciar Claude Code (`ccam <name>`, `ccam run`, `ccam next`) y con `share`, `migrate`, `shortcut`, `update` y `doctor --fix`. Los demás comandos que cambian algo lo rechazan en lugar de ejecutarse.
+Pon `--dry-run` antes de un comando para ver lo que haría sin hacerlo, por ejemplo `ccam --dry-run work`. Funciona al iniciar Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`) y con `group`, `migrate`, `shortcut`, `update` y `doctor --fix`. Los demás comandos que cambian algo lo rechazan en lugar de ejecutarse.
 
 <!-- commands -->
 
@@ -33,9 +33,10 @@ Un atajo como `ccwork` inicia su cuenta de la misma forma: `ccwork --resume` hac
 
 ```sh
 ccam add                      # wizard
-ccam add work --share history=on
+ccam add work --group default --group team
 ccam add side --shortcut ccside
 ccam add ci --no-login        # log in later with: ccam login ci
+ccam login --expired          # log in every account whose login no longer works
 ccam rename work job
 ccam remove side              # folder moves to ~/.local/share/ccam/trash
 ccam import ~/.claude-old --name old
@@ -46,9 +47,9 @@ ccam add gw --api --base-url https://llm.example.com --auth bearer --key-from en
 
 `ccam add --api` agrega una cuenta que usa una clave de API en lugar de un inicio de sesión de Claude; ccam lee la clave en cada inicio y nunca la guarda. Consulta [Cuentas con clave de API](/features/api).
 
-`ccam rename`, `ccam remove` y `ccam share` se niegan a cambiar una cuenta mientras Claude Code se está ejecutando con esa cuenta. Cierra primero la sesión.
+`ccam rename`, `ccam remove` y los comandos `ccam group` se niegan a cambiar una cuenta mientras Claude Code se está ejecutando con esa cuenta. Cierra primero la sesión.
 
-`ccam list --json` muestra cada cuenta con su número de posición, atajo, correo electrónico y carpeta. Su objeto `share` asigna a cada elemento (`mcp`, `settings`, `memory`, `extensions`, `history`) un nombre de grupo o `local`.
+`ccam list --json` muestra cada cuenta con su número de posición, atajo, correo electrónico y carpeta. Su arreglo `groups` lista los grupos de la cuenta, y su objeto `share` asigna a cada elemento (`mcp`, `settings`, `memory`, `extensions`, `history`) el grupo del que proviene, o `local`.
 
 ## Atajos
 
@@ -69,12 +70,15 @@ Los nombres usan los caracteres a-z, 0-9, `.`, `-` y `_`. Un nombre no puede ser
 ## Compartir
 
 ```sh
-ccam share work                       # show the current state
-ccam share work --history on --mcp team
-ccam share work --settings off --fresh
+ccam group                                  # the groups, what they share, their accounts
+ccam group add team --items history --members work,side
+ccam group set default --add history        # every account in default changes together
+ccam group join team personal
+ccam group leave team side --fresh
+ccam share work                             # what work shares, and through which group
 ```
 
-Cada elemento acepta `on` (el grupo `default`), `off` o el nombre de un grupo. Consulta [compartir](/docs/sharing).
+Un grupo comparte elementos entre sus cuentas; una cuenta puede estar en varios grupos, pero cada elemento proviene de un solo grupo. Consulta [compartir con grupos](/features/share).
 
 ## Copiar una configuración existente
 
@@ -106,14 +110,17 @@ ccam mcp remove fs
 ccam usage           # also: ccam u
 ccam usage --watch   # refresh every 60 seconds
 ccam usage --json
-ccam next --continue
+ccam usage --source claude      # Claude Code looks it up; ccam never touches a token
+ccam next --continue            # this folder's last conversation, as the next account
 ccam next --auto
 ccam next --auto --max-usage 80 --wait
 ccam pick                       # the account with the most room, for a script
 ccam "$(ccam pick)" -p "…"      # start a worker on it
+ccam agents                     # background sessions of every account
+ccam attach 49ec0028            # open one, as the account that started it
 ```
 
-`next --auto`, `--fallback` y `ccam pick` eligen de la misma forma: primero por debajo de `auto_max_usage` (`config.toml`, 100 por defecto), según `auto_strategy` (`headroom` o `expiring`), contando la ventana semanal de `--model`, nunca una cuenta al 100 %. Cuando no se puede elegir ninguna, salen con el código 75 o, con `--wait`, esperan a que se restablezca la primera cuenta. Consulta [Cambiar a la siguiente cuenta](/features/next) y [Elegir una cuenta para scripts](/features/pick).
+`next --auto`, `--fallback` y `ccam pick` eligen de la misma forma: primero por debajo de `auto_max_usage` (`config.toml`, 100 por defecto), según `auto_strategy` (`headroom`, `expiring` o `balance`), contando la ventana semanal de `--model`, nunca una cuenta al 100 %, y dentro de la organización de la cuenta desde la que parten (`--cross-org` o `cross_org = true` para buscar más allá). Cuando no se puede elegir ninguna, salen con el código 75 o, con `--wait`, esperan a que se restablezca la primera cuenta. `ccam next --continue` lleva una conversación a otra cuenta incluso entre cuentas que no comparten el historial: Claude Code la copia entonces en la nueva cuenta. Dentro de Claude Code, `/ccam:switch [account]` del plugin pasa una conversación a otra cuenta, y `ccam hook` es lo que ejecutan sus hooks. Consulta [Cambiar a la siguiente cuenta](/features/next), [Elegir una cuenta para scripts](/features/pick) y [Sesiones en segundo plano de todas las cuentas](/features/agents).
 
 ## Mantenimiento
 
@@ -135,10 +142,10 @@ ccam completion bash # or zsh, powershell
 
 | Ruta | Contenido |
 | --- | --- |
-| `~/.config/ccam/config.toml` | Las cuentas y lo que comparten |
+| `~/.config/ccam/config.toml` | Cuentas, grupos y ajustes (`theme`, `usage_source`, `relay`, `cross_org` …) |
 | `~/.local/share/ccam/profiles/<name>/` | El `CLAUDE_CONFIG_DIR` de cada cuenta |
 | `~/.local/share/ccam/groups/<group>/` | Configuración, servidores MCP, extensiones e historial compartidos |
-| `~/.local/state/ccam/` | Caché de uso y horas del último uso |
+| `~/.local/state/ccam/` | Caché de uso, horas del último uso y las notas que dejan `/ccam:switch` y el hook de límite (`handoff/`) |
 | `~/.local/bin/<shortcut>` | Atajos como `ccwork`, enlaces a ccam |
 
 Las variables `XDG_CONFIG_HOME`, `XDG_DATA_HOME` y `XDG_STATE_HOME` cambian la ubicación de estas carpetas. En Windows, `~` es `%USERPROFILE%` y los atajos son `<shortcut>.exe`.

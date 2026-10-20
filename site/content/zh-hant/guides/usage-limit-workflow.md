@@ -4,7 +4,7 @@ description: 等待額度重置，或立即在另一個 Claude Code 帳號接續
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: ff765a189332
+sourceHash: "38b80d780bba"
 ---
 
 當一個帳號達到用量限制（常被稱為 rate limit）時，你有兩個選擇：等到限制重置，或現在就在你擁有的另一個帳號接續同一個對話。使用 ccam 時，只要帳號之間共用了對話記錄，第二種做法只需要一個指令：`ccam next --auto --continue`。
@@ -25,8 +25,7 @@ sourceHash: ff765a189332
 curl -fsSL https://ccam.dev/install.sh | sh
 ccam add personal
 ccam add work
-ccam share personal --history on
-ccam share work --history on
+ccam group set default --add history
 ccam statusline install
 ```
 
@@ -49,17 +48,19 @@ ccam usage
 ccam next --auto --continue
 ```
 
-Claude Code 會以 `work` 帳號啟動，並開啟目前資料夾中最近的對話，包含之前的所有內容。
+Claude Code 會以 `work` 帳號啟動，並開啟目前資料夾中最近的對話，包含之前的所有內容。共用對話記錄（上面的 `ccam group set default --add history`）能讓它維持同一個對話；沒有共用時，Claude Code 會把對話複製到 `work`，ccam 也會告訴你第一次回覆會重新讀取多少 token。
+
+在 Claude Code 中安裝 [ccam 外掛](/docs/install#claude-code-plugin)後，因上限而停止的工作階段會顯示通知，`/ccam:switch`（或 `/ccam:switch work`）則會為 `ccam next --continue` 記下這個對話，什麼都不必猜。
 
 ## ccam 會自動切換帳號嗎？
 
-不會。你工作時 ccam 並沒有在執行：它啟動 Claude Code 後就用 Claude Code 取代自己。何時切換由你決定，`ccam next --auto` 會選出 5 小時用量最低的帳號，並略過用量已達 100% 或未登入的帳號。另一些工具則是替換執行中工作階段的登入資訊；[ccam 與其他帳號切換工具](/compare/account-switchers)說明了兩者的差異。
+不會。你工作時 ccam 並沒有在執行：它啟動 Claude Code 後就用 Claude Code 取代自己。何時切換由你決定，`ccam next --auto` 會選出 5 小時用量最低的帳號，並略過用量已達 100%、未登入或屬於其他組織的帳號。在 `config.toml` 中設定 `relay = true` 時，ccam 會改為在工作階段旁等待，讓 `/ccam:switch` 能自行接續下去。另一些工具則是替換執行中工作階段的登入資訊；[ccam 與其他帳號切換工具](/compare/account-switchers)說明了兩者的差異。
 
 ## 注意事項
 
 - 在你工作時所在的同一個資料夾中執行 `ccam next --continue`；對話是依專案資料夾儲存的。
 - 避免讓兩個帳號同時處理同一個對話。你這樣做時，ccam 會發出警告。
-- 另一個帳號也必須在同一個群組中共用對話記錄。
+- 沒有共用對話記錄時，對話會被複製到另一個帳號，之後兩份副本各自發展；`/rewind` 用來還原程式碼的檢查點會留在第一個帳號。
 - 新帳號上的第一則訊息可能會比平常消耗更多額度，因為該帳號還沒有快取這個對話。
 - 是否可以這樣在帳號之間切換，取決於各帳號的條款。
 

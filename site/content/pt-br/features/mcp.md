@@ -4,7 +4,7 @@ description: Mantenha uma lista de servidores MCP por grupo com ccam mcp add, ad
 updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: f1de7db4b7be
+sourceHash: "6d3b3c38c6cb"
 ---
 
 O Claude Code mantém os servidores MCP de usuário no `.claude.json`, o mesmo arquivo que guarda o login da conta, então esse arquivo não pode ser compartilhado entre contas. O ccam mantém os servidores compartilhados em um arquivo de grupo, `mcp.json`, e o entrega a todas as contas do grupo na inicialização. Use `ccam mcp` para adicionar um servidor uma única vez para todas as suas contas, e `ccam mcp import` para levar às outras um servidor que você adicionou dentro de uma sessão.
@@ -36,7 +36,7 @@ group default (work, side)
 only in account work: pg
 ```
 
-Adicionar um nome que o grupo já tem substitui a definição dele e imprime `updated` em vez de `added`. Os servidores só chegam a uma conta se ela compartilha MCP com esse grupo (`ccam share <name> --mcp on`); quando nenhuma conta compartilha MCP ainda, o `add` avisa.
+Adicionar um nome que o grupo já tem substitui a definição dele e imprime `updated` em vez de `added`. Os servidores só chegam a uma conta se ela está nesse grupo e o grupo compartilha MCP (`ccam group set <group> --add mcp`); quando o grupo não compartilha, o `add` avisa.
 
 ## Opções
 
@@ -121,7 +121,7 @@ Com `--force`, o servidor do grupo é substituído, e o `mcp.json` anterior é s
 - **Contas em execução.** `import` copia para o grupo, mas mantém as entradas próprias de uma conta em execução e avisa; execute-o de novo depois que a sessão terminar. A sincronização pula as contas em execução.
 - **Cópias para o Remote Control.** A cópia de uma conta em execução não é alterada: `Note: account side is running, so the copy in its .claude.json stays as it was until its next Remote Control launch.` Com `mcp_strategy = "sync"`, nada precisa ser atualizado, porque cada inicialização sincroniza.
 - **Arquivos corrompidos.** Se o `.claude.json` não for um JSON válido, a sincronização não mexe nele e informa o erro. Se o bloqueio não puder ser obtido em 2 segundos, o ccam informa `could not lock … (Claude Code is writing the file)`.
-- **Contas que não compartilham MCP.** `import` se recusa e pede que você execute `ccam share side --mcp on` antes.
+- **Contas que não compartilham MCP.** `import` se recusa e pede que você coloque antes a conta em um grupo que compartilha MCP (`ccam group join <group> side`).
 - **Nomes de grupos.** `-g` aceita apenas um nome de grupo; ele vira uma pasta em `groups/`, então nomes como `../x` são recusados.
 
 ## Relacionados

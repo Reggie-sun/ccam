@@ -4,7 +4,7 @@ description: ccam folder એકાઉન્ટના નામ વગર Claude 
 updated: 2026-10-20
 order: 11
 translation: machine
-sourceHash: 5071b04a194d
+sourceHash: 46d1410a3d81
 ---
 
 `ccam folder work ~/code/company` એકાઉન્ટના નામ વગરના દરેક લૉન્ચને `~/code/company` ની અંદર, અને તેની નીચેના કોઈ પણ ફોલ્ડરમાં, Claude Code ને `work` તરીકે શરૂ કરતું કરે છે. તેની બહાર, ડિફૉલ્ટ એકાઉન્ટ પહેલાંની જેમ શરૂ થાય છે. એકાઉન્ટનું નામ આપવાથી, `ccam personal` વડે કે `ccpersonal` જેવા શૉર્ટકટ વડે, હંમેશાં એ જ એકાઉન્ટ શરૂ થાય છે.
@@ -34,7 +34,7 @@ Here (/home/me/code/company/api): work, set for /home/me/code/company
 - `ccam -p "…"` અને બીજું કોઈ પણ લૉન્ચ જેનો પહેલો આર્ગ્યુમેન્ટ Claude Code નો ઓપ્શન હોય
 - નામ વગરનું `ccam run`, અને `ccam --dry-run`
 - `ccam --fallback -p "…"` તેના પહેલા પ્રયાસ માટે
-- picker, એકલું `ccam`, જે ફોલ્ડરના એકાઉન્ટ પર cursor સાથે શરૂ થાય છે
+- ડેશબોર્ડ, એકલું `ccam`, જે ફોલ્ડરના એકાઉન્ટ પર cursor સાથે શરૂ થાય છે
 
 ## ઓપ્શન
 

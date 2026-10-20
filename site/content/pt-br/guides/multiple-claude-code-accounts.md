@@ -4,7 +4,7 @@ description: Execute várias contas do Claude Code lado a lado com CLAUDE_CONFIG
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: f2982e4317a2
+sourceHash: "ee92078b81c3"
 ---
 
 Dê a cada conta a própria pasta de configuração. O Claude Code lê a pasta da variável de ambiente `CLAUDE_CONFIG_DIR`, e cada pasta guarda o próprio login, as configurações e o histórico, então todas as contas continuam logadas e você pode executá-las ao mesmo tempo. Você pode configurar isso manualmente com um alias de shell ou deixar o ccam fazer isso.
@@ -69,7 +69,7 @@ O Claude Code roda [nativamente no Windows e dentro do WSL](https://code.claude.
 
 **Um servidor MCP aparece em só uma conta.** Servidores adicionados dentro de uma sessão com `claude mcp add` pertencem àquela conta. Leve um deles para todas as contas com `ccam mcp import work <server>`.
 
-**As configurações são diferentes entre as contas.** `ccam share work` mostra o que a conta compartilha; `ccam share work --settings on` compartilha as configurações dela, depois de mostrar o que vai mudar. `ccam doctor --fix` corrige links quebrados e guarda um backup de cada arquivo que altera.
+**As configurações são diferentes entre as contas.** `ccam share work` mostra o que a conta compartilha e por meio de qual grupo; `ccam group join default work` faz com que ela compartilhe o que o `default` compartilha, depois de mostrar o que vai mudar. `ccam doctor --fix` corrige links quebrados e guarda um backup de cada arquivo que altera.
 
 **Duas contas abrem a mesma conversa.** Evite trabalhar em uma conversa em duas contas ao mesmo tempo. O ccam avisa se você tentar.
 

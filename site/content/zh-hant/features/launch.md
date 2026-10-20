@@ -1,10 +1,10 @@
 ---
 title: 啟動 Claude Code
-description: 用 ccam <name|number>、ccam run 或 ccam 選擇器以任一帳號啟動 Claude Code；參數原封不動地傳給 claude，--dry-run 會顯示要執行的指令。
+description: 用 ccam <name|number>、ccam run 或儀表板以任一帳號啟動 Claude Code；參數原封不動地傳給 claude，--dry-run 會顯示要執行的指令。
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: e6b5a8d4df86
+sourceHash: "4812b197f143"
 ---
 
 `ccam work` 會以帳號 `work` 啟動 Claude Code，名稱後面的所有內容都原樣傳給 `claude`。凡是你會輸入 `claude` 的地方都可以使用它：在終端機中、在腳本中，或搭配管線輸入。
@@ -21,7 +21,7 @@ ccam -p "summarise"              # no name: the folder's account, else the defau
 ccam use work                    # make work the default account
 ccam folder work ~/code/company  # use work in that folder when no name is given
 ccam run work --continue         # same as ccam work --continue
-ccam                             # the picker on a terminal, the list otherwise
+ccam                             # the dashboard on a terminal, the list otherwise
 ccam --dry-run work -p hi        # print the command instead of running it
 ccam --fallback work -p "fix the tests"   # run again as another account at the limit
 ```
@@ -30,22 +30,13 @@ ccam --fallback work -p "fix the tests"   # run again as another account at the 
 
 當第一個參數以 `-` 開頭，而且不是 ccam 自己的旗標時，ccam 會帶著所有參數啟動未指定名稱時的帳號。那是用 [`ccam folder`](/features/folder) 為目前資料夾設定的帳號，否則就是預設帳號：用 `ccam use` 設定的帳號；如果你沒有設定，則是編號最小的帳號。
 
-### 選擇器
+### 儀表板
 
-不帶參數的 `ccam` 在標準輸入和輸出都是終端機時會開啟選擇器，否則會印出 `ccam list`。它會顯示每個帳號的編號、電子郵件、5 小時用量、上次使用時間和共用的項目；用量會在每個帳號回應時陸續填入。
+不帶參數的 `ccam` 在標準輸入和輸出都是終端機時會開啟[儀表板](/features/dashboard)，否則會印出 `ccam list`。移到某個帳號（用方向鍵，或輸入它的編號）再按 `Enter` 即可啟動它；`n` 會啟動剩餘額度最多的帳號，`o` 則讓你選擇 `--continue`、`--resume` 或其他參數。儀表板會在 Claude Code 啟動前關閉，所以終端機會先還原。
 
-| 按鍵 | 作用 |
-| --- | --- |
-| `Enter` | 以選取的帳號啟動 Claude Code |
-| `1` 到 `9` | 啟動該編號的帳號 |
-| `Up`/`Down`、`k`/`j` | 移動選取項目 |
-| `a` | 關閉選擇器並執行 `ccam add` 設定精靈 |
-| `s` | 編輯選取帳號的共用項目（`Space` 或 `x` 切換，`Enter` 套用，`Esc` 返回） |
-| `d` | 把選取的帳號設為預設帳號 |
-| `r` | 略過短期快取，重新取得用量 |
-| `q`、`Esc`、`Ctrl+C` | 結束 |
+當 Shell 設定了 `CLAUDE_CODE_OAUTH_TOKEN`、`ANTHROPIC_API_KEY` 或 `ANTHROPIC_AUTH_TOKEN` 時，Claude Code 會使用那個金鑰或權杖，而不是帳號自己的登入，所以 ccam 會在啟動前於標準錯誤輸出中提醒你（`ccam: $ANTHROPIC_API_KEY is set, so Claude Code may use that key instead of work's login…`）。它只會讀取這些變數；[API 金鑰帳號](/features/api)則會清除它們。
 
-選擇器會在執行動作之前關閉，所以在 Claude Code 啟動前終端機就已經還原。按 `d` 或變更共用之後，它會再次開啟。變更共用時會像 `ccam share` 一樣先顯示計畫並詢問你。
+在 `config.toml` 中設定 `relay = true` 時，ccam 會以子行程啟動互動式工作階段並留在它旁邊，讓 `/ccam:switch` 能自行把對話接續下去（[詳細說明](/features/next#inside-claude-code)）；否則 ccam 會以 Claude Code 取代自己，旁邊不會有任何東西在執行。
 
 ## 選項
 
@@ -84,7 +75,7 @@ $env:CLAUDE_CONFIG_DIR='C:\Users\me\.local\share\ccam\profiles\work'; & C:\Users
 每個方塊會在其步驟執行時亮起，下方的各行是 Claude Code 啟動時使用的環境變數和參數。
 
 1. `cmd/ccam/main.go` 呼叫 `app.Main`。如果 ccam 是以其他名稱啟動的，那就是[快捷指令](/features/shortcuts)，會直接交給啟動器。
-2. `app.parse` 在 cobra 介入之前檢查 `os.Args`。只有單獨的 `ccam`（選擇器）、ccam 指令名稱（`config.Reserved`）、`-h`/`--help` 和 `-v`/`--version` 會交給 `cli.Execute`。其他一切都是啟動。
+2. `app.parse` 在 cobra 介入之前檢查 `os.Args`。只有單獨的 `ccam`（儀表板）、ccam 指令名稱（`config.Reserved`）、`-h`/`--help` 和 `-v`/`--version` 會交給 `cli.Execute`。其他一切都是啟動。
 3. `launcher.Launch` 讀取 `~/.config/ccam/config.toml`，這是它唯一解析的檔案。
 4. `launcher.Prepare` 依名稱或編號找到帳號（沒有名稱時，`HereProfile` 會取用該資料夾的帳號，以字串比對工作目錄和 `config.toml` 中的 `[[folder]]` 項目），去掉開頭的一個 `--`，並用 `ResolveClaude` 找出 `claude` 執行檔。PATH 查詢的結果會連同檔案的修改時間快取在 `~/.local/state/ccam/claude-path`，所以 ccam 不會在每次啟動時搜尋 `PATH`。檔案變更或不存在時會重新查詢。`config.toml` 中的 `claude_bin` 路徑會直接使用。如果 `claude` 就是 ccam 本身（以 inode 比對），ccam 會拒絕，因為那樣會無限循環。
 5. `checkLinks` 用 `share.Check` 把帳號資料夾 `~/.local/share/ccam/profiles/<name>/` 和它的共用設定比對，過程中只呼叫 `lstat` 和 `readlink`，每個項目一到兩次系統呼叫。缺少的連結會當場建立。任何可能遺失資料的情況都會中止啟動。

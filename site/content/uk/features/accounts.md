@@ -4,7 +4,7 @@ description: "Додавайте, входьте, переглядайте, пе
 updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 9eb992214132
+sourceHash: "8564517d0d71"
 ---
 
 Кожен обліковий запис ccam є окремою текою конфігурації Claude Code із власним входом. Ці команди створюють облікові записи, виконують вхід, виводять їх список, перейменовують і видаляють їх, а також реєструють теки, які у вас уже є.
@@ -12,10 +12,11 @@ sourceHash: 9eb992214132
 ## Використання
 
 ```sh
-ccam add                                   # wizard on a terminal: name, shared items, shortcut, login
+ccam add                                   # wizard on a terminal: name, sign-in, groups, shortcut
 ccam add work --shortcut ccwork            # no wizard: log in, then create the ccwork command
-ccam add side --no-login --share history=team
+ccam add side --no-login --group default --group team
 ccam login side                            # run claude auth login inside the account
+ccam login --expired                       # every account never logged in, or whose login expired
 ccam logout side                           # remove the login token
 ccam list                                  # table of accounts; ccam ls is the same
 ccam list --json                           # machine-readable
@@ -29,25 +30,28 @@ ccam completion zsh > "${fpath[1]}/_ccam"
 
 Там, де команда приймає `<name|number>`, можна вказати назву облікового запису або номер його слота, тобто стовпець `#` у `ccam list`.
 
-`ccam add` у терміналі без параметрів відкриває майстер. Він запитує назву, потім показує контрольний список спільних елементів (позначено все, крім історії розмов), далі запитує `Create a shortcut command for work? [y/N]` і, якщо відповісти `y`, `Shortcut name [ccwork]:`. Будь-який із параметрів `--share`, `--shortcut` чи `--no-login` або конвеєр замість термінала пропускає майстер; тоді назва обов'язкова, а коротка команда не створюється, якщо `--shortcut` її не вказує.
+`ccam add` у терміналі без параметрів відкриває майстер. Він запитує назву та спосіб входу облікового запису (вхід Claude зараз, ключ API або вхід Claude пізніше), потім показує групи, до яких можна приєднатися, з позначеною `default` (поки груп немає — елементи, які спільно використовуватиме група `default`), далі запитує `Create a shortcut command for work? [y/N]` і завершується підсумком для підтвердження. `Esc` повертає на крок назад. Будь-який із параметрів `--group`, `--no-group`, `--shortcut` чи `--no-login` або конвеєр замість термінала пропускає майстер; тоді назва обов'язкова, а коротка команда не створюється, якщо `--shortcut` її не вказує.
 
-`ccam list` показує слот, назву, коротку команду, електронну пошту, спільні елементи й останнє використання, а перед обліковим записом за замовчуванням стоїть `*`:
+Без `--group` новий обліковий запис приєднується до групи `default`. Перший обліковий запис створює її, і вона спільно використовує сервери MCP, налаштування, `CLAUDE.md` і розширення; див. [спільне використання через групи](/features/share).
+
+`ccam list` показує слот, назву, коротку команду, електронну пошту, групи й останнє використання, а перед обліковим записом за замовчуванням стоїть `*`:
 
 ```console
 $ ccam list
-   #  Name      Shortcut  Email             Shared                        Last used
-*  1  work      ccwork    user@example.com  mcp settings md ext           -
-   2  personal  -         me@side.dev       settings md ext history@team  -
+   #  Name      Shortcut  Email             Groups        Last used
+*  1  work      ccwork    user@example.com  default team  -
+   2  personal  -         me@side.dev       default       -
 ```
 
-З `--json` кожен обліковий запис є об'єктом із полями `slot`, `shortcut`, `name`, `email`, `default`, `dir`, `last_used` (відсутнє, якщо обліковий запис ще ніколи не запускали) і `share`. `share` зіставляє кожен елемент (`mcp`, `settings`, `memory`, `extensions`, `history`) з назвою його групи або з `"local"`.
+З `--json` кожен обліковий запис є об'єктом із полями `slot`, `shortcut`, `name`, `email`, `default`, `dir`, `last_used` (відсутнє, якщо обліковий запис ще ніколи не запускали), `groups` і `share`. `share` зіставляє кожен елемент (`mcp`, `settings`, `memory`, `extensions`, `history`) з групою, з якої він береться, або з `"local"`.
 
 ## Параметри
 
 | Параметр | Дія | За замовчуванням |
 | --- | --- | --- |
 | `ccam add --no-login` | Створити обліковий запис без входу; увійти пізніше через `ccam login <name>` | вимкнено |
-| `ccam add --share <item=group>` | Спільно використовувати елемент із групою або `item=local`, щоб залишити його приватним. Можна повторювати | `mcp`, `settings`, `memory`, `extensions` у `default`; `history` локально |
+| `ccam add --group <group>` | Приєднатися до цієї групи замість `default`. Можна повторювати; `default` створюється, якщо її немає | `default` |
+| `ccam add --no-group` | Не приєднуватися до жодної групи: обліковий запис нічого не використовує спільно | вимкнено |
 | `ccam add --shortcut <command>` | Також створити цю коротку команду в `~/.local/bin` | немає |
 | `ccam add --api --key-from <source>` | Обліковий запис, який використовує ключ API замість входу; див. [Облікові записи з ключем API](/features/api) | вимкнено |
 | `ccam list --json` | Вивести облікові записи у форматі JSON | вимкнено |
@@ -58,7 +62,7 @@ $ ccam list
 
 `ccam login`, `ccam logout`, `ccam use` і `ccam rename` не мають власних параметрів. `ccam completion` приймає `bash`, `zsh` або `powershell`; будь-що інше завершується помилкою `only bash, zsh and powershell are supported`.
 
-Назви облікових записів мають від 1 до 32 символів із `a-z`, `0-9`, `-` і `_` та починаються з літери або цифри. Назва не може складатися лише з цифр, бо `ccam 2` означає слот 2. Назва також не може збігатися з командою ccam (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`, `folder`, `pick`, `ext`), тож `ccam <name>` ніколи не буває неоднозначним. Цей список міститься в `config.Reserved` у `internal/config`.
+Назви облікових записів мають від 1 до 32 символів із `a-z`, `0-9`, `-` і `_` та починаються з літери або цифри. Назва не може складатися лише з цифр, бо `ccam 2` означає слот 2. Назва також не може збігатися з командою ccam (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`, `folder`, `pick`, `ext`, `group`, `groups`), тож `ccam <name>` ніколи не буває неоднозначним. Цей список міститься в `config.Reserved` у `internal/config`.
 
 ## Як це працює
 
@@ -68,15 +72,19 @@ $ ccam list
 
 1. `config.ValidateName` перевіряє назву, а `shim.Check` перевіряє коротку команду, перш ніж щось буде створено.
 2. `profile.Add` створює `~/.local/share/ccam/profiles/work/` з режимом `0700` і призначає обліковому запису найменший вільний номер слота (`Config.NextSlot`), тож номер видаленого облікового запису використовується повторно. Перший обліковий запис стає обліковим записом за замовчуванням.
-3. `applyShare` пов'язує нову порожню теку з її спільними групами через `share.Build`, а потім `Apply`, наприклад `settings.json` з `groups/default/settings.json`. Якщо це не вдається, нова тека видаляється, бо залишена тека блокувала б кожну повторну спробу помилкою `folder already exists`.
+3. Обліковий запис приєднується до своїх груп (`default`, якщо `--group` чи `--no-group` не вказує інше; перший обліковий запис створює `default`), а `applyShare` пов'язує з ними нову порожню теку через `share.Build`, а потім `Apply`, наприклад `settings.json` з `groups/default/settings.json`. Якщо це не вдається, нова тека видаляється, бо залишена тека блокувала б кожну повторну спробу помилкою `folder already exists`.
 4. Обліковий запис зберігається в `~/.config/ccam/config.toml` через `fsutil.AtomicWrite`: тимчасовий файл, `fsync`, потім `rename`, тож збій ніколи не залишає половину конфігурації.
-5. `runLogin` запускає `claude auth login` зі змінною `CLAUDE_CONFIG_DIR`, що вказує на теку облікового запису. Якщо вхід не вдається, обліковий запис залишається, а ccam виводить помилку й радить пізніше виконати `ccam login work`.
-6. `profile.ReadEmail` бере `oauthAccount.emailAddress` з `profiles/work/.claude.json`. Цей файл може мати кілька мегабайтів, тому `TopLevelValue` шукає один ключ замість розбору всього файлу.
+5. `runLogin` запускає `claude auth login` зі змінною `CLAUDE_CONFIG_DIR`, що вказує на теку облікового запису, і з `--email` з останньою електронною поштою облікового запису, щоб сторінку входу було заповнено. Якщо вхід не вдається, обліковий запис залишається, а ccam виводить помилку й радить пізніше виконати `ccam login work`.
+6. `profile.ReadIdentity` бере `oauthAccount` з `profiles/work/.claude.json`: електронну пошту, ідентифікатори облікового запису й організації, назву організації та план (`claude_max`, `claude_team` …). Цей файл може мати кілька мегабайтів, тому `TopLevelValue` шукає один ключ замість розбору всього файлу. ccam зберігає їх у `[profile.login]` у `config.toml`.
 7. `shim.Install` пов'язує `~/.local/bin/ccwork` з виконуваним файлом ccam, який під час запуску шукає `argv[0]` у `config.toml`.
 
 Вхід може тривати кілька хвилин, і за цей час інший ccam може зберегти конфігурацію. Тому команди, які чекають, зберігають через `env.update`: вона повторно завантажує `config.toml`, застосовує одну зміну (тут електронну пошту) і зберігає. З тієї самої причини `ccam remove` повторно завантажує конфігурацію після свого запитання.
 
-`ccam login` виконує кроки 5 і 6 для наявного облікового запису. `ccam logout` запускає `claude auth logout` в обліковому записі й очищає збережену електронну пошту. `ccam use` лише переписує `default` у `config.toml`.
+`ccam login` виконує кроки 5 і 6 для наявного облікового запису. Claude Code сприймає електронну пошту лише як підказку для сторінки входу, тож вхід може опинитися в іншому обліковому записі Claude, ніж той, яким був обліковий запис ccam; ccam порівнює новий вхід із `[profile.login]` і повідомляє про це (`ccam: this login is other@company.com, but work was dev@company.com before.`). Він зберігає новий вхід і пояснює, як це скасувати: `ccam logout work`, потім `ccam login work` і вхід із правильною електронною поштою. Коли інший обліковий запис ccam увійшов у той самий обліковий запис Claude, ccam попереджає, що вони мають спільні ліміти використання. `ccam login --expired` по черзі виконує вхід у кожен обліковий запис, у який ще ніколи не входили або вхід якого (його токен оновлення) прострочено.
+
+`ccam logout` запускає `claude auth logout` в обліковому записі й очищає збережену електронну пошту; запис про вхід лишається, тож наступний вхід звіряється з ним. `ccam use` лише переписує `default` у `config.toml`.
+
+`ccam list` додає стовпець `Organization`, коли облікові записи належать до кількох організацій (особисті плани показують `personal`), а `ccam list --json` містить `plan` і `org` для кожного облікового запису.
 
 ### Вхід на віддаленому комп'ютері
 
@@ -106,7 +114,7 @@ On a remote machine? If the browser ends on a http://localhost:…/callback page
 
 `ccam rename` перейменовує теку, переписує шляхи до плагінів у її `plugins/` зі старої теки на нову, переносить позначку облікового запису за замовчуванням і переміщує шляхи `nameState` під нову назву. Коротка команда зберігає свою назву. Якщо переписати шляхи до плагінів не вдається, теку перейменовують назад, оскільки конфігурацію не збережено.
 
-`ccam import` реєструє теку там, де вона є, як `dir` у `config.toml`. Він ніколи не переміщує й не копіює її: скопійований токен оновлення змушував би копії виводити одна одну із системи. Без аргументу-теки він шукає незареєстровані теки `~/.claude` і `~/.claude-*` та запитує про кожну; назви походять від теки (`~/.claude` — це `main`, `~/.claude-work` — `work`, `~/.claude-2` — `acct2`), а теку, назву якої вивести не вдається, показано разом із командою з `--name`, яку слід використати. Без `CLAUDE_CONFIG_DIR` Claude Code зберігає `.claude.json` у вашій домашній теці поруч із `~/.claude`, тож коли ви імпортуєте `~/.claude`, а власного `.claude.json` у ній немає, ccam створює посилання `~/.claude/.claude.json` на `~/.claude.json`. Тоді звичайний `claude` і `ccam main` бачать той самий обліковий запис. Імпортовані облікові записи нічого не використовують спільно, доки ви не виконаєте `ccam share`, і коротка команда не створюється.
+`ccam import` реєструє теку там, де вона є, як `dir` у `config.toml`. Він ніколи не переміщує й не копіює її: скопійований токен оновлення змушував би копії виводити одна одну із системи. Без аргументу-теки він шукає незареєстровані теки `~/.claude` і `~/.claude-*` та запитує про кожну; назви походять від теки (`~/.claude` — це `main`, `~/.claude-work` — `work`, `~/.claude-2` — `acct2`), а теку, назву якої вивести не вдається, показано разом із командою з `--name`, яку слід використати. Без `CLAUDE_CONFIG_DIR` Claude Code зберігає `.claude.json` у вашій домашній теці поруч із `~/.claude`, тож коли ви імпортуєте `~/.claude`, а власного `.claude.json` у ній немає, ccam створює посилання `~/.claude/.claude.json` на `~/.claude.json`. Тоді звичайний `claude` і `ccam main` бачать той самий обліковий запис. Імпортовані облікові записи не входять до жодної групи, доки ви не додасте їх до неї (`ccam group join <group> <name>`), і коротка команда не створюється.
 
 `ccam completion bash|zsh` виводить скрипт автодоповнення, який також доповнює назви облікових записів.
 

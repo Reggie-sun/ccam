@@ -4,7 +4,7 @@ description: ccam <name> rc로 원하는 계정의 Claude Code Remote Control을
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 59b802c44bb3
+sourceHash: "5f0b90ea53d6"
 ---
 
 `ccam work rc`는 `work` 계정으로 Claude Code의 Remote Control을 시작하므로, 이 컴퓨터의 세션을 claude.ai/code나 Claude 모바일 앱에서 조작할 수 있습니다. 동작은 `claude rc`와 같고 차이는 하나뿐입니다. 계정이 MCP 서버를 공유하고 있으면 ccam은 그 서버를 계정의 `.claude.json`에 복사할지 한 번 묻습니다. Remote Control 세션은 그 밖의 어디에서도 서버를 읽지 않기 때문입니다.
@@ -33,7 +33,7 @@ ccam --dry-run work rc                # print the command instead of running it
 | `--dry-run` (계정 앞) | 환경 변수와 명령, 그리고 MCP 안내가 있으면 그것도 출력합니다. 묻지도 복사하지도 않습니다 | 꺼짐 |
 | `Copy them into .claude.json (a backup is kept)? [y/N]` | 계정이 MCP 서버를 공유하고, 그 `.claude.json`에 그룹의 현재 목록이 없을 때 묻습니다. `y`는 복사하고, `N`이나 Enter는 복사 없이 시작합니다 | `N` |
 | `~/.config/ccam/config.toml`의 `mcp_strategy = "sync"` | Remote Control 여부와 관계없이 실행할 때마다 그룹의 서버를 `.claude.json`에 복사하므로, 아무것도 묻지 않습니다 | `"flag"` |
-| `ccam share work --mcp off` | 이 계정과 MCP 서버 공유를 중단합니다. 그러면 Remote Control은 계정 자체의 서버만으로 시작하고 아무것도 묻지 않습니다 | 켜짐 |
+| `ccam group leave <group> work` | MCP를 공유하는 그룹에서 이 계정을 뺍니다. 그러면 Remote Control은 계정 자체의 서버만으로 시작하고 아무것도 묻지 않습니다 | `default`에 속함 |
 
 ### Remote Control 옵션
 
@@ -124,7 +124,7 @@ $ ccam mcp add ctx --url https://mcp.context7.com/mcp
 
 ### ccam이 매번 묻습니다
 
-아직 서버를 복사하지 않았기 때문입니다. `y`로 한 번 답하거나 `mcp_strategy = "sync"`를 설정하세요. Remote Control에서 이 서버를 쓸 생각이 없다면 이 계정과 MCP 공유를 중단하세요: `ccam share work --mcp off`.
+아직 서버를 복사하지 않았기 때문입니다. `y`로 한 번 답하거나 `mcp_strategy = "sync"`를 설정하세요. Remote Control에서 이 서버를 쓸 생각이 없다면 이 계정과 MCP 공유를 중단하세요. 그 그룹에서 계정을 빼거나(`ccam group leave default work`), MCP를 이 계정이 속하지 않은 별도 그룹에 두면 됩니다.
 
 ### `ccam work rc`가 `--mcp-config` 관련 오류와 함께 바로 실패합니다
 

@@ -1,10 +1,10 @@
 ---
 title: Pagsisimula ng Claude Code
-description: Patakbuhin ang Claude Code bilang anumang account sa ccam <name|number>, ccam run o picker; buo sa claude ang argument; ipinapakita ng --dry-run ang command.
+description: Patakbuhin ang Claude Code bilang anumang account sa ccam <name|number>, ccam run o dashboard; buo sa claude ang argument; ipinapakita ng --dry-run ang command.
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: e6b5a8d4df86
+sourceHash: 4812b197f143
 ---
 
 Sinisimulan ng `ccam work` ang Claude Code bilang account na `work`, at ipinapasa sa `claude` nang walang pagbabago ang lahat ng kasunod ng pangalan. Gamitin ito saanman mo ita-type ang `claude`: sa terminal, sa script, o kapag may input na ipina-pipe.
@@ -21,7 +21,7 @@ ccam -p "summarise"              # no name: the folder's account, else the defau
 ccam use work                    # make work the default account
 ccam folder work ~/code/company  # use work in that folder when no name is given
 ccam run work --continue         # same as ccam work --continue
-ccam                             # the picker on a terminal, the list otherwise
+ccam                             # the dashboard on a terminal, the list otherwise
 ccam --dry-run work -p hi        # print the command instead of running it
 ccam --fallback work -p "fix the tests"   # run again as another account at the limit
 ```
@@ -30,22 +30,13 @@ Ibigay ang pangalan ng account o ang numero nito mula sa `ccam list`. Hindi bina
 
 Kapag nagsisimula sa `-` ang unang argument at hindi ito isa sa sariling flag ng ccam, sinisimulan ng ccam ang isang account nang walang pangalan, kasama ang lahat ng argument. Iyon ang account na itinakda para sa kasalukuyang folder gamit ang [`ccam folder`](/features/folder), o kung wala, ang default: ang account na itinakda gamit ang `ccam use`, o ang account na may pinakamababang numero kung wala kang itinakda.
 
-### Ang picker
+### Ang dashboard
 
-Binubuksan ng `ccam` na walang argument ang picker kapag terminal ang standard input at output, at ipi-print ang `ccam list` kung hindi. Ipinapakita nito ang numero, email, 5-oras na usage, huling paggamit at mga shared na item ng bawat account; napupunan ang usage habang sumasagot ang bawat account.
+Binubuksan ng `ccam` na walang argument ang [dashboard](/features/dashboard) kapag terminal ang standard input at output, at ipi-print ang `ccam list` kung hindi. Pumunta sa isang account (gamit ang mga arrow, o sa pag-type ng numero nito) at pindutin ang `Enter` para simulan ito; sinisimulan ng `n` ang account na may pinakamaraming natitira at nag-aalok ang `o` ng `--continue`, `--resume` o iba pang argument. Nagsasara ang dashboard bago magsimula ang Claude Code, kaya naibabalik muna ang terminal.
 
-| Key | Ano ang ginagawa |
-| --- | --- |
-| `Enter` | Simulan ang Claude Code bilang ang napiling account |
-| `1` hanggang `9` | Simulan ang account na may numerong iyon |
-| `Up`/`Down`, `k`/`j` | Ilipat ang pagpili |
-| `a` | Isara ang picker at patakbuhin ang wizard ng `ccam add` |
-| `s` | Baguhin ang mga shared na item ng napiling account (nagto-toggle ang `Space` o `x`, naglalapat ang `Enter`, bumabalik ang `Esc`) |
-| `d` | Gawing default ang napiling account |
-| `r` | Kunin ulit ang usage, nang hindi ginagamit ang maikling cache |
-| `q`, `Esc`, `Ctrl+C` | Lumabas |
+Kapag nakatakda sa shell ang `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY` o `ANTHROPIC_AUTH_TOKEN`, gagamitin ng Claude Code ang key o token na iyon sa halip na ang sariling login ng account, kaya sinasabi iyon ng ccam sa standard error bago ito magsimula (`ccam: $ANTHROPIC_API_KEY is set, so Claude Code may use that key instead of work's login…`). Binabasa lang nito ang mga variable; binubura naman ang mga ito ng isang [API key account](/features/api).
 
-Nagsasara ang picker bago ito kumilos, kaya naibabalik ang terminal bago magsimula ang Claude Code. Pagkatapos ng `d` o ng pagbabago sa sharing, bumubukas itong muli. Ipinapakita muna ng pagbabago sa sharing ang plano at nagtatanong, gaya ng `ccam share`.
+Kapag may `relay = true` sa `config.toml`, sinisimulan ng ccam ang mga interactive session bilang child at nananatili ito sa tabi nila, para kusang madala ng `/ccam:switch` ang isang usapan ([mga detalye](/features/next#inside-claude-code)); kung hindi, pinapalitan ng ccam ang sarili nito ng Claude Code, at walang tumatakbo sa tabi nito.
 
 ## Mga option
 
@@ -84,7 +75,7 @@ Pareho ang mga hakbang ng bawat pagsisimula, mula sa command line hanggang `exec
 Umiilaw ang bawat kahon habang tumatakbo ang hakbang nito, at ang mga linya sa ilalim ay ang environment at mga argument na kasama ng pagsisimula ng Claude Code.
 
 1. Tinatawag ng `cmd/ccam/main.go` ang `app.Main`. Kung sinimulan ang ccam sa ibang pangalan, isa itong [shortcut](/features/shortcuts) at direktang napupunta sa launcher.
-2. Tinitingnan ng `app.parse` ang `os.Args` bago pa makisangkot ang cobra. Ang `ccam` lang na mag-isa (ang picker), ang pangalan ng ccam command (`config.Reserved`), `-h`/`--help` at `-v`/`--version` ang napupunta sa `cli.Execute`. Pagsisimula ang lahat ng iba pa.
+2. Tinitingnan ng `app.parse` ang `os.Args` bago pa makisangkot ang cobra. Ang `ccam` lang na mag-isa (ang dashboard), ang pangalan ng ccam command (`config.Reserved`), `-h`/`--help` at `-v`/`--version` ang napupunta sa `cli.Execute`. Pagsisimula ang lahat ng iba pa.
 3. Binabasa ng `launcher.Launch` ang `~/.config/ccam/config.toml`, ang tanging file na pina-parse nito.
 4. Hinahanap ng `launcher.Prepare` ang account ayon sa pangalan o numero (kapag wala, kinukuha ng `HereProfile` ang account ng folder, na ikinukumpara ang working directory sa mga `[[folder]]` entry ng `config.toml` bilang mga string), inaalis ang isang `--` sa unahan, at hinahanap ang `claude` executable gamit ang `ResolveClaude`. Naka-cache ang paghahanap sa PATH sa `~/.local/state/ccam/claude-path` kasama ang modification time ng file, kaya hindi hinahanap ng ccam ang `PATH` sa bawat pagsisimula. Naghahanap ulit kapag nagbago o nawala ang file. Ginagamit nang walang pagbabago ang path na `claude_bin` sa `config.toml`. Tinatanggihan ng ccam ang `claude` na ccam mismo, na ikinukumpara ayon sa inode, dahil magdudulot iyon ng loop.
 5. Ikinukumpara ng `checkLinks` ang folder ng account na `~/.local/share/ccam/profiles/<name>/` sa sharing settings nito gamit ang `share.Check`, na tumatawag lang ng `lstat` at `readlink`, isa o dalawang system call bawat item. Ginagawa agad ang nawawalang link. Pinapahinto ang pagsisimula ng anumang puwedeng magpawala ng data.

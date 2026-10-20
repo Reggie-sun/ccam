@@ -5,10 +5,10 @@ description: ccam addやccam <name>から、ccam usage、ccam next、ccam doctor
 updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: da2594c672bc
+sourceHash: "116c5b34ac9a"
 ---
 
-コマンドの前に`--dry-run`を付けると、実際には実行せずに何をするかを確認できます。たとえば`ccam --dry-run work`のように使います。これが使えるのは、Claude Codeを起動するとき（`ccam <name>`、`ccam run`、`ccam next`）と、`share`、`migrate`、`shortcut`、`update`、`doctor --fix`です。何かを変更するそれ以外のコマンドは、実行せずにこのオプションを拒否します。
+コマンドの前に`--dry-run`を付けると、実際には実行せずに何をするかを確認できます。たとえば`ccam --dry-run work`のように使います。これが使えるのは、Claude Codeを起動するとき（`ccam <name>`、`ccam run`、`ccam next`、`ccam attach`）と、`group`、`migrate`、`shortcut`、`update`、`doctor --fix`です。何かを変更するそれ以外のコマンドは、実行せずにこのオプションを拒否します。
 
 <!-- commands -->
 
@@ -33,9 +33,10 @@ ccam --fallback work -p "fix the tests"   # run again as another account at the 
 
 ```sh
 ccam add                      # wizard
-ccam add work --share history=on
+ccam add work --group default --group team
 ccam add side --shortcut ccside
 ccam add ci --no-login        # log in later with: ccam login ci
+ccam login --expired          # log in every account whose login no longer works
 ccam rename work job
 ccam remove side              # folder moves to ~/.local/share/ccam/trash
 ccam import ~/.claude-old --name old
@@ -46,9 +47,9 @@ ccam add gw --api --base-url https://llm.example.com --auth bearer --key-from en
 
 `ccam add --api`は、Claudeのログインの代わりにAPIキーを使うアカウントを追加します。ccamは起動のたびにキーを読み、保存することはありません。[APIキーのアカウント](/features/api)を参照してください。
 
-`ccam rename`、`ccam remove`、`ccam share`は、そのアカウントでClaude Codeが実行中の間は、アカウントを変更しません。先にセッションを終了してください。
+`ccam rename`、`ccam remove`、`ccam group`の各コマンドは、そのアカウントでClaude Codeが実行中の間は、アカウントを変更しません。先にセッションを終了してください。
 
-`ccam list --json`は、すべてのアカウントをスロット、ショートカット、メールアドレス、フォルダーとともに出力します。その`share`オブジェクトは、各項目（`mcp`、`settings`、`memory`、`extensions`、`history`）をグループ名または`local`に対応付けます。
+`ccam list --json`は、すべてのアカウントをスロット、ショートカット、メールアドレス、フォルダーとともに出力します。その`groups`配列はアカウントのグループを一覧し、`share`オブジェクトは、各項目（`mcp`、`settings`、`memory`、`extensions`、`history`）を、その項目の出どころのグループか`local`に対応付けます。
 
 ## ショートカット
 
@@ -69,12 +70,15 @@ ccam shortcut work --remove
 ## 共有
 
 ```sh
-ccam share work                       # show the current state
-ccam share work --history on --mcp team
-ccam share work --settings off --fresh
+ccam group                                  # the groups, what they share, their accounts
+ccam group add team --items history --members work,side
+ccam group set default --add history        # every account in default changes together
+ccam group join team personal
+ccam group leave team side --fresh
+ccam share work                             # what work shares, and through which group
 ```
 
-各項目には、`on`（`default`グループ）、`off`、またはグループ名を指定します。詳しくは[共有](/docs/sharing)を参照してください。
+グループは、そのアカウントの間で項目を共有します。1つのアカウントは複数のグループに入れますが、各項目を受け取るのは1つのグループからだけです。詳しくは[グループによる共有](/features/share)を参照してください。
 
 ## 既存の環境のコピー
 
@@ -106,14 +110,17 @@ ccam mcp remove fs
 ccam usage           # also: ccam u
 ccam usage --watch   # refresh every 60 seconds
 ccam usage --json
-ccam next --continue
+ccam usage --source claude      # Claude Code looks it up; ccam never touches a token
+ccam next --continue            # this folder's last conversation, as the next account
 ccam next --auto
 ccam next --auto --max-usage 80 --wait
 ccam pick                       # the account with the most room, for a script
 ccam "$(ccam pick)" -p "…"      # start a worker on it
+ccam agents                     # background sessions of every account
+ccam attach 49ec0028            # open one, as the account that started it
 ```
 
-`next --auto`、`--fallback`、`ccam pick`は同じ方法で選びます。まず`auto_max_usage`（`config.toml`、デフォルトは100）未満のアカウントを優先し、`auto_strategy`（`headroom`または`expiring`）に従って選びます。`--model`の週間の枠も数え、100%のアカウントは決して選びません。選べるアカウントがない場合は終了コード75で終了するか、`--wait`を付けていれば最初のアカウントがリセットされるまで待ちます。[次のアカウントへの切り替え](/features/next)と[スクリプト用のアカウント選び](/features/pick)を参照してください。
+`next --auto`、`--fallback`、`ccam pick`は同じ方法で選びます。まず`auto_max_usage`（`config.toml`、デフォルトは100）未満のアカウントを優先し、`auto_strategy`（`headroom`、`expiring`、`balance`）に従って選びます。`--model`の週間の枠も数え、100%のアカウントは決して選ばず、起点となるアカウントと同じ組織の中から選びます（範囲を広げるには`--cross-org`か`cross_org = true`）。選べるアカウントがない場合は終了コード75で終了するか、`--wait`を付けていれば最初のアカウントがリセットされるまで待ちます。`ccam next --continue`は、履歴を共有していないアカウントの間でも会話を持ち越します。その場合はClaude Codeが会話を新しいアカウントにコピーします。Claude Codeの中では、プラグインの`/ccam:switch [account]`が会話を引き渡し、そのフックが実行するのが`ccam hook`です。[次のアカウントへの切り替え](/features/next)、[スクリプト用のアカウント選び](/features/pick)、[すべてのアカウントのバックグラウンドセッション](/features/agents)を参照してください。
 
 ## メンテナンス
 
@@ -135,10 +142,10 @@ ccam completion bash # or zsh, powershell
 
 | パス | 内容 |
 | --- | --- |
-| `~/.config/ccam/config.toml` | アカウントと、それぞれが共有する項目 |
+| `~/.config/ccam/config.toml` | アカウント、グループ、設定（`theme`、`usage_source`、`relay`、`cross_org` …） |
 | `~/.local/share/ccam/profiles/<name>/` | 各アカウントの`CLAUDE_CONFIG_DIR` |
 | `~/.local/share/ccam/groups/<group>/` | 共有される設定、MCPサーバー、拡張機能、履歴 |
-| `~/.local/state/ccam/` | 使用量のキャッシュと最終使用日時 |
+| `~/.local/state/ccam/` | 使用量のキャッシュ、最終使用日時、`/ccam:switch`と上限のフックが残すメモ（`handoff/`） |
 | `~/.local/bin/<shortcut>` | `ccwork`のようなショートカットコマンド（ccamへのリンク） |
 
 `XDG_CONFIG_HOME`、`XDG_DATA_HOME`、`XDG_STATE_HOME`の各変数を設定すると、これらのフォルダーの場所が変わります。Windowsでは`~`は`%USERPROFILE%`で、ショートカットは`<shortcut>.exe`です。

@@ -4,7 +4,7 @@ description: شغّل Remote Control في Claude Code بأي حساب باستخ
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 59b802c44bb3
+sourceHash: 5f0b90ea53d6
 ---
 
 يشغّل `ccam work rc` ميزة Remote Control في Claude Code بالحساب `work`، فتتحكم في الجلسات على هذا الحاسوب من claude.ai/code أو من تطبيق Claude على الهاتف. وهو يعمل مثل `claude rc` مع فرق واحد: إذا كان الحساب يشارك خوادم MCP، يسألك ccam مرة واحدة هل ينسخها إلى ملف `.claude.json` الخاص بالحساب، لأن جلسات Remote Control لا تقرأ الخوادم من أي مكان آخر.
@@ -33,7 +33,7 @@ ccam --dry-run work rc                # print the command instead of running it
 | `--dry-run` (قبل الحساب) | يطبع البيئة والأمر، وإشعار MCP إن وُجد. لا يسأل ولا ينسخ | معطّل |
 | `Copy them into .claude.json (a backup is kept)? [y/N]` | يُطرح عندما يشارك الحساب خوادم MCP ولا يحتوي ملف `.claude.json` الخاص به على القائمة الحالية للمجموعة. `y` ينسخها، و`N` أو Enter يبدأ بدونها | `N` |
 | `mcp_strategy = "sync"` في `~/.config/ccam/config.toml` | ينسخ خوادم المجموعة إلى `.claude.json` قبل كل تشغيل، سواء أكان Remote Control أم لا، فلا يُطرح أي سؤال أبدًا | `"flag"` |
-| `ccam share work --mcp off` | يوقف مشاركة خوادم MCP مع الحساب؛ فتبدأ Remote Control بخوادم الحساب نفسه فقط ولا يُطرح أي سؤال | مفعّل |
+| `ccam group leave <group> work` | يُخرج الحساب من المجموعة التي تشاركه MCP؛ فتبدأ Remote Control بخوادم الحساب نفسه فقط ولا يُطرح أي سؤال | في `default` |
 
 ### خيارات Remote Control
 
@@ -124,7 +124,7 @@ $ ccam mcp add ctx --url https://mcp.context7.com/mcp
 
 ### يسأل ccam في كل مرة
 
-لم تنسخ الخوادم بعد. أجب `y` مرة واحدة، أو عيّن `mcp_strategy = "sync"`. وإذا كنت لا تريد الخوادم في Remote Control أبدًا، فأوقف مشاركة MCP مع الحساب: `ccam share work --mcp off`.
+لم تنسخ الخوادم بعد. أجب `y` مرة واحدة، أو عيّن `mcp_strategy = "sync"`. وإذا كنت لا تريد الخوادم في Remote Control أبدًا، فأوقف مشاركة MCP مع الحساب: أخرجه من تلك المجموعة (`ccam group leave default work`)، أو ضع MCP في مجموعة خاصة به لا ينتمي إليها الحساب.
 
 ### يفشل `ccam work rc` فورًا مع خطأ يتعلق بـ `--mcp-config`
 

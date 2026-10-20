@@ -1,10 +1,10 @@
 ---
 title: 既存の環境のコピー
-description: ccam migrateで、既存の~/.claudeの設定、CLAUDE.md、拡張機能、MCPサーバー、MCPのサインイン情報をccamの共有グループにコピーします。
+description: ccam migrateで、既存の~/.claudeの設定、CLAUDE.md、拡張機能、MCPサーバー、MCPのサインイン情報をccamのグループにコピーします。
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 95ce6ec9e220
+sourceHash: "7cee52e75749"
 ---
 
 ccamを使う前からClaude Codeを使っていた場合、環境は`~/.claude`と`~/.claude.json`にあります。`ccam migrate`はそれを共有グループにコピーするので、グループを通じてそれらの項目を共有するすべてのアカウントが、これまでと同じ環境で使い始められます。コピー元のフォルダーは読み取るだけで、通常の`claude`もこれまでどおり動作します。最初の`ccam add`の後に一度実行し、アカウントがMCPサーバーの共有を始めるたびにもう一度実行してください。
@@ -59,7 +59,7 @@ Accounts that share these through group default:
   extensions  personal, work
 ```
 
-グループの内容が届くのは、そのグループを通じて項目を共有しているアカウントだけなので、概要では項目ごとにそのアカウントを一覧表示します。共有していないアカウントについては、共有を有効にする`ccam share <name> --<item> on`コマンドを表示します。
+グループの内容が届くのはそのグループのアカウントだけで、しかもグループが共有する項目だけなので、概要ではグループのアカウントを一覧表示します。コピーした項目のうちグループが共有していないものがある場合や、グループに入っていないアカウントがある場合は、それを変更する`ccam group set <group> --add <items>`と`ccam group join <group> <accounts>`のコマンドを表示します。
 
 ## オプション
 
@@ -84,7 +84,7 @@ Accounts that share these through group default:
 `internal/cli/migrate.go`が項目を選び、`migrate.Build`がコピー元とグループを読み取って計画を返します。確認した後の`Plan.Apply`まで、何も書き込まれません。
 
 1. **コピー元を見つける。** `checkSource`は、存在しないパス、フォルダーではないパス、Claude Codeの既知の項目が1つもないパスを拒否します。`migrate.ClaudeJSON`は、そのフォルダーに対応する`.claude.json`を見つけます。フォルダー内にあればそれを使い、`~/.claude`の中にない場合は、その隣の`~/.claude.json`を使います。`CLAUDE_CONFIG_DIR`が設定されていない場合、Claude Codeはそこにこのファイルを置きます。
-2. **項目をパスに対応付ける。** すべてのパスは、`ccam share`が使うのと同じ許可リストである`share.Layout`から取得します。MCPサーバーは`mcp.LocalServers`で`.claude.json`から読み取ります。これはファイル全体を解析せず、`profile.TopLevelValue`スキャナーを使います。
+2. **項目をパスに対応付ける。** すべてのパスは、グループが使うのと同じ許可リストである`share.Layout`から取得します。MCPサーバーは`mcp.LocalServers`で`.claude.json`から読み取ります。これはファイル全体を解析せず、`profile.TopLevelValue`スキャナーを使います。
 3. **移動せず、コピーする。** ファイルは`fsutil.AtomicWrite`か`fsutil.CopyFile`で`~/.local/share/ccam/groups/<group>/`にコピーし、MCPサーバーはグループの`mcp.json`に入れます。
 
 各項目は、1つのコピー元のパスを1つのグループのパスに対応付けます。

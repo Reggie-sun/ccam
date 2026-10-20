@@ -5,10 +5,10 @@ description: ccam add ಮತ್ತು ccam <name> ನಿಂದ ccam usage, ccam 
 updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: da2594c672bc
+sourceHash: "116c5b34ac9a"
 ---
 
-ಕಮಾಂಡ್ ಏನು ಮಾಡುತ್ತದೆ ಎಂಬುದನ್ನು ನಿಜವಾಗಿ ಮಾಡದೆಯೇ ನೋಡಲು, ಅದರ ಮುಂದೆ `--dry-run` ಹಾಕಿ. ಉದಾಹರಣೆಗೆ `ccam --dry-run work`. ಇದು Claude Code ಆರಂಭಿಸುವಾಗ (`ccam <name>`, `ccam run`, `ccam next`) ಮತ್ತು `share`, `migrate`, `shortcut`, `update` ಹಾಗೂ `doctor --fix` ಜೊತೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ. ಏನನ್ನಾದರೂ ಬದಲಾಯಿಸುವ ಇತರ ಕಮಾಂಡ್‌ಗಳು ಚಾಲನೆಯಾಗುವ ಬದಲು ಇದನ್ನು ನಿರಾಕರಿಸುತ್ತವೆ.
+ಕಮಾಂಡ್ ಏನು ಮಾಡುತ್ತದೆ ಎಂಬುದನ್ನು ನಿಜವಾಗಿ ಮಾಡದೆಯೇ ನೋಡಲು, ಅದರ ಮುಂದೆ `--dry-run` ಹಾಕಿ. ಉದಾಹರಣೆಗೆ `ccam --dry-run work`. ಇದು Claude Code ಆರಂಭಿಸುವಾಗ (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`) ಮತ್ತು `group`, `migrate`, `shortcut`, `update` ಹಾಗೂ `doctor --fix` ಜೊತೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ. ಏನನ್ನಾದರೂ ಬದಲಾಯಿಸುವ ಇತರ ಕಮಾಂಡ್‌ಗಳು ಚಾಲನೆಯಾಗುವ ಬದಲು ಇದನ್ನು ನಿರಾಕರಿಸುತ್ತವೆ.
 
 <!-- commands -->
 
@@ -33,9 +33,10 @@ ccam --fallback work -p "fix the tests"   # run again as another account at the 
 
 ```sh
 ccam add                      # wizard
-ccam add work --share history=on
+ccam add work --group default --group team
 ccam add side --shortcut ccside
 ccam add ci --no-login        # log in later with: ccam login ci
+ccam login --expired          # log in every account whose login no longer works
 ccam rename work job
 ccam remove side              # folder moves to ~/.local/share/ccam/trash
 ccam import ~/.claude-old --name old
@@ -46,9 +47,9 @@ ccam add gw --api --base-url https://llm.example.com --auth bearer --key-from en
 
 `ccam add --api` Claude ಲಾಗಿನ್ ಬದಲು API ಕೀ ಬಳಸುವ ಖಾತೆಯನ್ನು ಸೇರಿಸುತ್ತದೆ; ccam ಪ್ರತಿ ಆರಂಭದಲ್ಲೂ ಕೀಯನ್ನು ಓದುತ್ತದೆ ಮತ್ತು ಅದನ್ನು ಎಂದಿಗೂ ಸಂಗ್ರಹಿಸುವುದಿಲ್ಲ. [API ಕೀ ಖಾತೆಗಳು](/features/api) ನೋಡಿ.
 
-ಒಂದು ಖಾತೆಯಾಗಿ Claude Code ಚಾಲನೆಯಲ್ಲಿರುವಾಗ, `ccam rename`, `ccam remove` ಮತ್ತು `ccam share` ಆ ಖಾತೆಯನ್ನು ಬದಲಾಯಿಸಲು ನಿರಾಕರಿಸುತ್ತವೆ. ಮೊದಲು ಸೆಷನ್‌ನಿಂದ ನಿರ್ಗಮಿಸಿ.
+ಒಂದು ಖಾತೆಯಾಗಿ Claude Code ಚಾಲನೆಯಲ್ಲಿರುವಾಗ, `ccam rename`, `ccam remove` ಮತ್ತು `ccam group` ಕಮಾಂಡ್‌ಗಳು ಆ ಖಾತೆಯನ್ನು ಬದಲಾಯಿಸಲು ನಿರಾಕರಿಸುತ್ತವೆ. ಮೊದಲು ಸೆಷನ್‌ನಿಂದ ನಿರ್ಗಮಿಸಿ.
 
-`ccam list --json` ಪ್ರತಿ ಖಾತೆಯನ್ನು ಅದರ ಸ್ಲಾಟ್, ಶಾರ್ಟ್‌ಕಟ್, ಇಮೇಲ್ ಮತ್ತು ಫೋಲ್ಡರ್ ಜೊತೆ ಮುದ್ರಿಸುತ್ತದೆ. ಅದರ `share` ಆಬ್ಜೆಕ್ಟ್ ಪ್ರತಿ ಐಟಂ (`mcp`, `settings`, `memory`, `extensions`, `history`) ಅನ್ನು ಗುಂಪಿನ ಹೆಸರಿಗೆ ಅಥವಾ `local` ಗೆ ಹೊಂದಿಸುತ್ತದೆ.
+`ccam list --json` ಪ್ರತಿ ಖಾತೆಯನ್ನು ಅದರ ಸ್ಲಾಟ್, ಶಾರ್ಟ್‌ಕಟ್, ಇಮೇಲ್ ಮತ್ತು ಫೋಲ್ಡರ್ ಜೊತೆ ಮುದ್ರಿಸುತ್ತದೆ. ಅದರ `groups` ಅರೇ ಖಾತೆಯ ಗುಂಪುಗಳನ್ನು ಪಟ್ಟಿ ಮಾಡುತ್ತದೆ, ಮತ್ತು ಅದರ `share` ಆಬ್ಜೆಕ್ಟ್ ಪ್ರತಿ ಐಟಂ (`mcp`, `settings`, `memory`, `extensions`, `history`) ಅನ್ನು ಅದು ಬರುವ ಗುಂಪಿಗೆ, ಅಥವಾ `local` ಗೆ ಹೊಂದಿಸುತ್ತದೆ.
 
 ## ಶಾರ್ಟ್‌ಕಟ್‌ಗಳು
 
@@ -69,12 +70,15 @@ ccam shortcut work --remove
 ## ಹಂಚಿಕೆ
 
 ```sh
-ccam share work                       # show the current state
-ccam share work --history on --mcp team
-ccam share work --settings off --fresh
+ccam group                                  # the groups, what they share, their accounts
+ccam group add team --items history --members work,side
+ccam group set default --add history        # every account in default changes together
+ccam group join team personal
+ccam group leave team side --fresh
+ccam share work                             # what work shares, and through which group
 ```
 
-ಪ್ರತಿ ಐಟಂ `on` (`default` ಗುಂಪು), `off`, ಅಥವಾ ಒಂದು ಗುಂಪಿನ ಹೆಸರನ್ನು ತೆಗೆದುಕೊಳ್ಳುತ್ತದೆ. [ಹಂಚಿಕೆ](/docs/sharing) ನೋಡಿ.
+ಒಂದು ಗುಂಪು ತನ್ನ ಖಾತೆಗಳ ನಡುವೆ ಐಟಂಗಳನ್ನು ಹಂಚಿಕೊಳ್ಳುತ್ತದೆ; ಒಂದು ಖಾತೆ ಹಲವು ಗುಂಪುಗಳಲ್ಲಿರಬಹುದು, ಆದರೆ ಪ್ರತಿ ಐಟಂ ಒಂದೇ ಗುಂಪಿನಿಂದ ಬರುತ್ತದೆ. [ಗುಂಪುಗಳೊಂದಿಗೆ ಹಂಚಿಕೆ](/features/share) ನೋಡಿ.
 
 ## ಈಗಿರುವ ಸೆಟಪ್ ಅನ್ನು ನಕಲಿಸುವುದು
 
@@ -106,14 +110,17 @@ ccam mcp remove fs
 ccam usage           # also: ccam u
 ccam usage --watch   # refresh every 60 seconds
 ccam usage --json
-ccam next --continue
+ccam usage --source claude      # Claude Code looks it up; ccam never touches a token
+ccam next --continue            # this folder's last conversation, as the next account
 ccam next --auto
 ccam next --auto --max-usage 80 --wait
 ccam pick                       # the account with the most room, for a script
 ccam "$(ccam pick)" -p "…"      # start a worker on it
+ccam agents                     # background sessions of every account
+ccam attach 49ec0028            # open one, as the account that started it
 ```
 
-`next --auto`, `--fallback` ಮತ್ತು `ccam pick` ಒಂದೇ ರೀತಿಯಲ್ಲಿ ಆಯ್ಕೆಮಾಡುತ್ತವೆ: ಮೊದಲು `auto_max_usage` (`config.toml`, ಡೀಫಾಲ್ಟ್ 100) ಗಿಂತ ಕೆಳಗಿರುವ ಖಾತೆಗಳು, `auto_strategy` (`headroom` ಅಥವಾ `expiring`) ಪ್ರಕಾರ, `--model` ನ ವಾರದ ಅವಧಿಯನ್ನೂ ಎಣಿಸಿ; 100% ತಲುಪಿದ ಖಾತೆಯನ್ನು ಎಂದಿಗೂ ಆಯ್ಕೆಮಾಡುವುದಿಲ್ಲ. ಯಾವುದನ್ನೂ ಆಯ್ಕೆಮಾಡಲಾಗದಿದ್ದಾಗ ಅವು ಕೋಡ್ 75 ನೊಂದಿಗೆ ನಿರ್ಗಮಿಸುತ್ತವೆ, ಅಥವಾ `--wait` ಇದ್ದರೆ ಮೊದಲ ಖಾತೆ ರೀಸೆಟ್ ಆಗುವವರೆಗೆ ಕಾಯುತ್ತವೆ. [ಮುಂದಿನ ಖಾತೆಗೆ ಬದಲಾಯಿಸುವುದು](/features/next) ಮತ್ತು [ಸ್ಕ್ರಿಪ್ಟ್‌ಗಳಿಗಾಗಿ ಖಾತೆ ಆಯ್ಕೆ](/features/pick) ನೋಡಿ.
+`next --auto`, `--fallback` ಮತ್ತು `ccam pick` ಒಂದೇ ರೀತಿಯಲ್ಲಿ ಆಯ್ಕೆಮಾಡುತ್ತವೆ: ಮೊದಲು `auto_max_usage` (`config.toml`, ಡೀಫಾಲ್ಟ್ 100) ಗಿಂತ ಕೆಳಗಿರುವ ಖಾತೆಗಳು, `auto_strategy` (`headroom`, `expiring` ಅಥವಾ `balance`) ಪ್ರಕಾರ, `--model` ನ ವಾರದ ಅವಧಿಯನ್ನೂ ಎಣಿಸಿ; 100% ತಲುಪಿದ ಖಾತೆಯನ್ನು ಎಂದಿಗೂ ಆಯ್ಕೆಮಾಡುವುದಿಲ್ಲ, ಮತ್ತು ಅವು ಆರಂಭವಾಗುವ ಖಾತೆಯ ಸಂಸ್ಥೆಯೊಳಗೇ ಆಯ್ಕೆಮಾಡುತ್ತವೆ (ಅದರಾಚೆ ನೋಡಲು `--cross-org` ಅಥವಾ `cross_org = true`). ಯಾವುದನ್ನೂ ಆಯ್ಕೆಮಾಡಲಾಗದಿದ್ದಾಗ ಅವು ಕೋಡ್ 75 ನೊಂದಿಗೆ ನಿರ್ಗಮಿಸುತ್ತವೆ, ಅಥವಾ `--wait` ಇದ್ದರೆ ಮೊದಲ ಖಾತೆ ರೀಸೆಟ್ ಆಗುವವರೆಗೆ ಕಾಯುತ್ತವೆ. ಇತಿಹಾಸ ಹಂಚಿಕೊಳ್ಳದ ಖಾತೆಗಳ ನಡುವೆಯೂ `ccam next --continue` ಸಂಭಾಷಣೆಯನ್ನು ಕೊಂಡೊಯ್ಯುತ್ತದೆ: ಆಗ Claude Code ಅದನ್ನು ಹೊಸ ಖಾತೆಗೆ ನಕಲಿಸುತ್ತದೆ. Claude Code ಒಳಗೆ, ಪ್ಲಗಿನ್‌ನ `/ccam:switch [account]` ಸಂಭಾಷಣೆಯನ್ನು ಮುಂದಕ್ಕೆ ಒಪ್ಪಿಸುತ್ತದೆ, ಮತ್ತು ಅದರ ಹುಕ್‌ಗಳು ರನ್ ಮಾಡುವುದು `ccam hook`. [ಮುಂದಿನ ಖಾತೆಗೆ ಬದಲಾಯಿಸುವುದು](/features/next), [ಸ್ಕ್ರಿಪ್ಟ್‌ಗಳಿಗಾಗಿ ಖಾತೆ ಆಯ್ಕೆ](/features/pick) ಮತ್ತು [ಪ್ರತಿ ಖಾತೆಯ ಹಿನ್ನೆಲೆ ಸೆಷನ್‌ಗಳು](/features/agents) ನೋಡಿ.
 
 ## ನಿರ್ವಹಣೆ
 
@@ -135,10 +142,10 @@ ccam ಅನ್ನು ಬದಲಾಯಿಸುವ ಮೊದಲು `ccam update` �
 
 | ಪಾತ್ | ಒಳಗೊಂಡಿರುವುದು |
 | --- | --- |
-| `~/.config/ccam/config.toml` | ಖಾತೆಗಳು ಮತ್ತು ಅವು ಏನನ್ನು ಹಂಚಿಕೊಳ್ಳುತ್ತವೆ |
+| `~/.config/ccam/config.toml` | ಖಾತೆಗಳು, ಗುಂಪುಗಳು ಮತ್ತು ಸೆಟ್ಟಿಂಗ್‌ಗಳು (`theme`, `usage_source`, `relay`, `cross_org` …) |
 | `~/.local/share/ccam/profiles/<name>/` | ಪ್ರತಿ ಖಾತೆಯ `CLAUDE_CONFIG_DIR` |
 | `~/.local/share/ccam/groups/<group>/` | ಹಂಚಿಕೊಂಡ ಸೆಟ್ಟಿಂಗ್‌ಗಳು, MCP ಸರ್ವರ್‌ಗಳು, ವಿಸ್ತರಣೆಗಳು ಮತ್ತು ಇತಿಹಾಸ |
-| `~/.local/state/ccam/` | ಬಳಕೆಯ ಕ್ಯಾಶ್ ಮತ್ತು ಕೊನೆಯ ಬಾರಿ ಬಳಸಿದ ಸಮಯಗಳು |
+| `~/.local/state/ccam/` | ಬಳಕೆಯ ಕ್ಯಾಶ್, ಕೊನೆಯ ಬಾರಿ ಬಳಸಿದ ಸಮಯಗಳು, ಮತ್ತು `/ccam:switch` ಹಾಗೂ ಮಿತಿಯ ಹುಕ್ ಬಿಡುವ ಟಿಪ್ಪಣಿಗಳು (`handoff/`) |
 | `~/.local/bin/<shortcut>` | `ccwork` ನಂತಹ ಶಾರ್ಟ್‌ಕಟ್ ಕಮಾಂಡ್‌ಗಳು, ccam ಗೆ ಲಿಂಕ್‌ಗಳು |
 
 `XDG_CONFIG_HOME`, `XDG_DATA_HOME` ಮತ್ತು `XDG_STATE_HOME` ವೇರಿಯೇಬಲ್‌ಗಳು ಈ ಫೋಲ್ಡರ್‌ಗಳ ಸ್ಥಳವನ್ನು ಬದಲಾಯಿಸುತ್ತವೆ. Windows ನಲ್ಲಿ, `~` ಎಂದರೆ `%USERPROFILE%`, ಮತ್ತು ಶಾರ್ಟ್‌ಕಟ್‌ಗಳು `<shortcut>.exe`.

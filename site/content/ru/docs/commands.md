@@ -5,10 +5,10 @@ description: Все команды и параметры ccam, от ccam add и 
 updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: da2594c672bc
+sourceHash: "116c5b34ac9a"
 ---
 
-Поставьте `--dry-run` перед командой, чтобы увидеть, что она сделает, ничего не выполняя, например `ccam --dry-run work`. Это работает при запуске Claude Code (`ccam <name>`, `ccam run`, `ccam next`) и с `share`, `migrate`, `shortcut`, `update` и `doctor --fix`. Другие команды, которые что-то меняют, отклоняют этот флаг и не выполняются.
+Поставьте `--dry-run` перед командой, чтобы увидеть, что она сделает, ничего не выполняя, например `ccam --dry-run work`. Это работает при запуске Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`) и с `group`, `migrate`, `shortcut`, `update` и `doctor --fix`. Другие команды, которые что-то меняют, отклоняют этот флаг и не выполняются.
 
 <!-- commands -->
 
@@ -33,9 +33,10 @@ ccam --fallback work -p "fix the tests"   # run again as another account at the 
 
 ```sh
 ccam add                      # wizard
-ccam add work --share history=on
+ccam add work --group default --group team
 ccam add side --shortcut ccside
 ccam add ci --no-login        # log in later with: ccam login ci
+ccam login --expired          # log in every account whose login no longer works
 ccam rename work job
 ccam remove side              # folder moves to ~/.local/share/ccam/trash
 ccam import ~/.claude-old --name old
@@ -46,9 +47,9 @@ ccam add gw --api --base-url https://llm.example.com --auth bearer --key-from en
 
 `ccam add --api` добавляет аккаунт, который использует ключ API вместо входа Claude; ccam читает ключ при каждом запуске и никогда его не сохраняет. См. [Аккаунты с ключом API](/features/api).
 
-`ccam rename`, `ccam remove` и `ccam share` не изменяют аккаунт, пока Claude Code работает от его имени. Сначала завершите сессию.
+`ccam rename`, `ccam remove` и команды `ccam group` не изменяют аккаунт, пока Claude Code работает от его имени. Сначала завершите сессию.
 
-`ccam list --json` выводит все аккаунты с номером (слотом), короткой командой, email и папкой каждого. Объект `share` в выводе сопоставляет каждому элементу (`mcp`, `settings`, `memory`, `extensions`, `history`) имя группы или `local`.
+`ccam list --json` выводит все аккаунты с номером (слотом), короткой командой, email и папкой каждого. Массив `groups` перечисляет группы аккаунта, а объект `share` сопоставляет каждому элементу (`mcp`, `settings`, `memory`, `extensions`, `history`) группу, из которой он берётся, или `local`.
 
 ## Короткие команды
 
@@ -69,12 +70,15 @@ ccam shortcut work --remove
 ## Общий доступ
 
 ```sh
-ccam share work                       # show the current state
-ccam share work --history on --mcp team
-ccam share work --settings off --fresh
+ccam group                                  # the groups, what they share, their accounts
+ccam group add team --items history --members work,side
+ccam group set default --add history        # every account in default changes together
+ccam group join team personal
+ccam group leave team side --fresh
+ccam share work                             # what work shares, and through which group
 ```
 
-Каждый элемент принимает `on` (группа `default`), `off` или имя группы. Подробнее в разделе [общий доступ](/docs/sharing).
+Группа делит элементы между своими аккаунтами; аккаунт может состоять в нескольких группах, но каждый элемент берётся только из одной группы. Подробнее в разделе [общий доступ через группы](/features/share).
 
 ## Копирование существующей настройки
 
@@ -106,14 +110,17 @@ ccam mcp remove fs
 ccam usage           # also: ccam u
 ccam usage --watch   # refresh every 60 seconds
 ccam usage --json
-ccam next --continue
+ccam usage --source claude      # Claude Code looks it up; ccam never touches a token
+ccam next --continue            # this folder's last conversation, as the next account
 ccam next --auto
 ccam next --auto --max-usage 80 --wait
 ccam pick                       # the account with the most room, for a script
 ccam "$(ccam pick)" -p "…"      # start a worker on it
+ccam agents                     # background sessions of every account
+ccam attach 49ec0028            # open one, as the account that started it
 ```
 
-`next --auto`, `--fallback` и `ccam pick` выбирают одинаково: сначала аккаунты ниже `auto_max_usage` (`config.toml`, по умолчанию 100), по стратегии `auto_strategy` (`headroom` или `expiring`), с учётом недельного окна `--model` и никогда не аккаунт на 100%. Когда выбрать некого, они завершаются с кодом 75 или, с `--wait`, ждут сброса первого аккаунта. См. [Переключение на следующий аккаунт](/features/next) и [Выбор аккаунта для скриптов](/features/pick).
+`next --auto`, `--fallback` и `ccam pick` выбирают одинаково: сначала аккаунты ниже `auto_max_usage` (`config.toml`, по умолчанию 100), по стратегии `auto_strategy` (`headroom`, `expiring` или `balance`), с учётом недельного окна `--model`, никогда не аккаунт на 100% и в пределах организации аккаунта, с которого они начинают (`--cross-org` или `cross_org = true`, чтобы искать дальше). Когда выбрать некого, они завершаются с кодом 75 или, с `--wait`, ждут сброса первого аккаунта. `ccam next --continue` переносит разговор даже между аккаунтами без общей истории: тогда Claude Code копирует его в новый аккаунт. Внутри Claude Code команда плагина `/ccam:switch [account]` передаёт разговор дальше, а `ccam hook` — то, что запускают его хуки. См. [Переключение на следующий аккаунт](/features/next), [Выбор аккаунта для скриптов](/features/pick) и [Фоновые сессии всех аккаунтов](/features/agents).
 
 ## Обслуживание
 
@@ -135,10 +142,10 @@ ccam completion bash # or zsh, powershell
 
 | Путь | Содержимое |
 | --- | --- |
-| `~/.config/ccam/config.toml` | Аккаунты и то, что они делят |
+| `~/.config/ccam/config.toml` | Аккаунты, группы и настройки (`theme`, `usage_source`, `relay`, `cross_org` …) |
 | `~/.local/share/ccam/profiles/<name>/` | `CLAUDE_CONFIG_DIR` каждого аккаунта |
 | `~/.local/share/ccam/groups/<group>/` | Общие настройки, MCP-серверы, расширения и история |
-| `~/.local/state/ccam/` | Кэш использования и время последнего использования |
+| `~/.local/state/ccam/` | Кэш использования, время последнего использования и заметки, которые оставляют `/ccam:switch` и хук лимита (`handoff/`) |
 | `~/.local/bin/<shortcut>` | Короткие команды, например `ccwork`; ссылки на ccam |
 
 Переменные `XDG_CONFIG_HOME`, `XDG_DATA_HOME` и `XDG_STATE_HOME` позволяют перенести эти папки. В Windows `~` — это `%USERPROFILE%`, а короткие команды — это `<shortcut>.exe`.

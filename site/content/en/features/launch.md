@@ -1,6 +1,6 @@
 ---
 title: Launching Claude Code
-description: Start Claude Code as any account with ccam <name|number>, ccam run or the ccam picker; arguments go to claude unchanged, and --dry-run shows the command.
+description: Start Claude Code as any account with ccam <name|number>, ccam run or the dashboard; arguments go to claude unchanged, and --dry-run shows the command.
 updated: 2026-10-20
 order: 1
 translation: source
@@ -20,7 +20,7 @@ ccam -p "summarise"              # no name: the folder's account, else the defau
 ccam use work                    # make work the default account
 ccam folder work ~/code/company  # use work in that folder when no name is given
 ccam run work --continue         # same as ccam work --continue
-ccam                             # the picker on a terminal, the list otherwise
+ccam                             # the dashboard on a terminal, the list otherwise
 ccam --dry-run work -p hi        # print the command instead of running it
 ccam --fallback work -p "fix the tests"   # run again as another account at the limit
 ```
@@ -29,22 +29,13 @@ Give an account's name or its number from `ccam list`. ccam does not read the ar
 
 When the first argument starts with `-` and is not one of ccam's own flags, ccam starts an account without a name, with all arguments. That is the account set for the current folder with [`ccam folder`](/features/folder), else the default: the account set with `ccam use`, or the account with the lowest number if you have not set one.
 
-### The picker
+### The dashboard
 
-`ccam` without arguments opens the picker when standard input and output are a terminal, and prints `ccam list` otherwise. It shows each account's number, email, 5-hour usage, last use and shared items; usage fills in as each account answers.
+`ccam` without arguments opens the [dashboard](/features/dashboard) when standard input and output are a terminal, and prints `ccam list` otherwise. Move to an account (with the arrows, or by typing its number) and press `Enter` to start it; `n` starts the account with the most room and `o` offers `--continue`, `--resume` or other arguments. The dashboard closes before Claude Code starts, so the terminal is restored first.
 
-| Key | What it does |
-| --- | --- |
-| `Enter` | Start Claude Code as the selected account |
-| `1` to `9` | Start the account with that number |
-| `Up`/`Down`, `k`/`j` | Move the selection |
-| `a` | Close the picker and run the `ccam add` wizard |
-| `s` | Edit the shared items of the selected account (`Space` or `x` toggles, `Enter` applies, `Esc` goes back) |
-| `d` | Make the selected account the default |
-| `r` | Fetch usage again, without the short cache |
-| `q`, `Esc`, `Ctrl+C` | Quit |
+When the shell has `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY` or `ANTHROPIC_AUTH_TOKEN` set, Claude Code would use that key or token instead of the account's own login, so ccam says so on standard error before it starts (`ccam: $ANTHROPIC_API_KEY is set, so Claude Code may use that key instead of work's login…`). It only reads the variables; an [API key account](/features/api) clears them instead.
 
-The picker closes before it acts, so the terminal is restored before Claude Code starts. After `d` or a sharing change it opens again. A sharing change shows the plan and asks first, as `ccam share` does.
+With `relay = true` in `config.toml`, ccam starts interactive sessions as a child and stays beside them, so that `/ccam:switch` can carry a conversation on by itself ([details](/features/next#inside-claude-code)); otherwise ccam replaces itself with Claude Code, and nothing runs beside it.
 
 ## Options
 
@@ -83,7 +74,7 @@ Each launch takes the same steps, from the command line to `exec`:
 Each box lights up as its step runs, and the lines underneath are the environment and arguments Claude Code starts with.
 
 1. `cmd/ccam/main.go` calls `app.Main`. If ccam was started under another name, it is a [shortcut](/features/shortcuts) and goes to the launcher directly.
-2. `app.parse` looks at `os.Args` before cobra is involved. Only `ccam` alone (the picker), a ccam command name (`config.Reserved`), `-h`/`--help` and `-v`/`--version` go to `cli.Execute`. Everything else is a launch.
+2. `app.parse` looks at `os.Args` before cobra is involved. Only `ccam` alone (the dashboard), a ccam command name (`config.Reserved`), `-h`/`--help` and `-v`/`--version` go to `cli.Execute`. Everything else is a launch.
 3. `launcher.Launch` reads `~/.config/ccam/config.toml`, the only file it parses.
 4. `launcher.Prepare` finds the account by name or number (without one, `HereProfile` takes the folder's account, comparing the working directory with the `[[folder]]` entries of `config.toml` as strings), drops one leading `--`, and resolves the `claude` executable with `ResolveClaude`. The PATH lookup is cached in `~/.local/state/ccam/claude-path` together with the file's modification time, so ccam does not search `PATH` on every launch. A changed or missing file triggers a new lookup. A `claude_bin` path in `config.toml` is used as it is. ccam refuses a `claude` that is ccam itself, compared by inode, because that would loop.
 5. `checkLinks` compares the account folder `~/.local/share/ccam/profiles/<name>/` with its sharing settings using `share.Check`, which only calls `lstat` and `readlink`, one system call or two per item. A missing link is created on the spot. Anything that could lose data stops the launch.

@@ -5,7 +5,7 @@ description: ccam را روی Linux، macOS یا Windows با یک فرمان، 
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: aea4984c1576
+sourceHash: 07fab3165030
 ---
 
 این فرمان را در یک ترمینال روی Linux یا macOS اجرا کنید:
@@ -80,7 +80,7 @@ ccam completion powershell >> $PROFILE
 /plugin install ccam --marketplace jhyunwoo/ccam
 ```
 
-این پلاگین یک مهارت و دو فرمان اضافه می‌کند، `/ccam:usage` و `/ccam:ext`. این مهارت هرگز فرمان‌هایی را که وارد حساب می‌شوند یا فایل‌ها را جابه‌جا می‌کنند اجرا نمی‌کند؛ به جای آن، آن‌ها را پیشنهاد می‌دهد.
+این پلاگین یک مهارت، فرمان‌های `/ccam:usage`، `/ccam:ext` و `/ccam:switch` و دو هوک اضافه می‌کند: وقتی یک نشست در سقف مصرف متوقف شود یک اعلان در ترمینال دریافت می‌کنید و `/ccam:switch [account]` گفتگو را به حساب دیگری می‌سپارد ([جزئیات](/features/next#inside-claude-code)). هوک‌ها `ccam` را اجرا می‌کنند، پس باید در `PATH`ی باشد که Claude Code می‌بیند. این مهارت هرگز فرمان‌هایی را که وارد حساب می‌شوند یا فایل‌ها را جابه‌جا می‌کنند اجرا نمی‌کند؛ به جای آن، آن‌ها را پیشنهاد می‌دهد.
 
 ## بررسی نصب
 

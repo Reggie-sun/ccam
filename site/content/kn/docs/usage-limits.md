@@ -4,7 +4,7 @@ description: ccam usage ಮೂಲಕ ಎಲ್ಲಾ Claude Code ಖಾತೆಗ
 updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: a84df8e873d6
+sourceHash: "40aef0708c81"
 ---
 
 `ccam usage` ಪ್ರತಿ ಖಾತೆಯು 5 ಗಂಟೆಯ ಮತ್ತು ವಾರದ ಬಳಕೆಯ ಮಿತಿಗಳಲ್ಲಿ ಎಷ್ಟನ್ನು ಬಳಸಿದೆ ಎಂದು ತೋರಿಸುತ್ತದೆ. `ccam next --auto` ಹೆಚ್ಚು ಅವಕಾಶ ಇರುವ ಖಾತೆಯನ್ನು ತೆರೆಯುತ್ತದೆ, ಮತ್ತು `--continue` ಈಗಿನ ಸಂಭಾಷಣೆಯನ್ನು ಅಲ್ಲಿಗೆ ಕೊಂಡೊಯ್ಯುತ್ತದೆ.
@@ -55,10 +55,10 @@ ccam statusline install
 ```sh
 ccam next             # the account after the one you used last
 ccam next --auto      # the account with the lowest 5-hour usage
-ccam next --continue  # the next account that shares your conversation history
+ccam next --continue  # carry this folder's conversation on as the next account
 ```
 
-`ccam next` ಲಾಗಿನ್ ಆಗಿರದ ಖಾತೆಗಳನ್ನು ಬಿಟ್ಟುಬಿಡುತ್ತದೆ, ಮತ್ತು `--auto` 100% ತಲುಪಿರುವ ಖಾತೆಗಳನ್ನು ಬಿಟ್ಟುಬಿಡುತ್ತದೆ. ಸಂಭಾಷಣೆಯನ್ನು ಮುಂದುವರಿಸಲು, ಎರಡೂ ಖಾತೆಗಳು ಸಂಭಾಷಣೆಯ ಇತಿಹಾಸವನ್ನು ಹಂಚಿಕೊಳ್ಳಬೇಕು; [ಹಂಚಿಕೆ](/docs/sharing) ನೋಡಿ.
+`ccam next` ಲಾಗಿನ್ ಆಗಿರದ ಖಾತೆಗಳನ್ನು ಬಿಟ್ಟುಬಿಡುತ್ತದೆ, ಮತ್ತು `--auto` 100% ತಲುಪಿರುವ ಖಾತೆಗಳನ್ನು ಹಾಗೂ ಬೇರೆ ಸಂಸ್ಥೆಯ ಖಾತೆಗಳನ್ನು ಬಿಟ್ಟುಬಿಡುತ್ತದೆ. ಎರಡು ಖಾತೆಗಳು ಸಂಭಾಷಣೆಯ ಇತಿಹಾಸವನ್ನು ಹಂಚಿಕೊಂಡಿದ್ದರೆ, `--continue` ಅದೇ ಸಂಭಾಷಣೆಯನ್ನು ತೆರೆಯುತ್ತದೆ; ಇಲ್ಲದಿದ್ದರೆ Claude Code ಅದನ್ನು ಹೊಸ ಖಾತೆಗೆ ನಕಲಿಸುತ್ತದೆ. [ಹಂಚಿಕೆ](/docs/sharing) ಮತ್ತು [ಮುಂದಿನ ಖಾತೆಗೆ ಬದಲಾಯಿಸುವುದು](/features/next#continue) ನೋಡಿ.
 
 `claude -p` ರನ್ ಮಾಡುವ ಸ್ಕ್ರಿಪ್ಟ್‌ಗಳು ಮತ್ತು ನಿಗದಿತ ಕೆಲಸಗಳಿಗಾಗಿ, ಖಾತೆಯ ಹೆಸರಿನ ಮುಂದೆ `--fallback` ಹಾಕಿ. ಆ ಖಾತೆ ತನ್ನ ಮಿತಿ ತಲುಪಿದಾಗ, ccam ಅದೇ ಕಮಾಂಡ್ ಅನ್ನು ಹೆಚ್ಚು ಅವಕಾಶ ಇರುವ ಖಾತೆಯಾಗಿ ಮತ್ತೆ ರನ್ ಮಾಡುತ್ತದೆ, ಮತ್ತು ಪೂರ್ಣಗೊಂಡ ರನ್‌ನ ಔಟ್‌ಪುಟ್ ಮಾತ್ರ ಮುದ್ರಿತವಾಗುತ್ತದೆ:
 

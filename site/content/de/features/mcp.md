@@ -4,7 +4,7 @@ description: Mit ccam mcp add, add-json, list, remove und import eine MCP-Server
 updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: f1de7db4b7be
+sourceHash: 6d3b3c38c6cb
 ---
 
 Claude Code speichert Benutzer-MCP-Server in `.claude.json`, derselben Datei, die die Anmeldung des Kontos enthält, daher kann diese Datei nicht zwischen Konten geteilt werden. ccam hält geteilte Server in einer Gruppendatei, `mcp.json`, und übergibt sie beim Start an jedes Konto der Gruppe. Mit `ccam mcp` fügst du einen Server einmal für alle deine Konten hinzu, und mit `ccam mcp import` verschiebst du einen Server, den du innerhalb einer Sitzung hinzugefügt hast, zu den anderen.
@@ -36,7 +36,7 @@ group default (work, side)
 only in account work: pg
 ```
 
-Fügst du einen Namen hinzu, den die Gruppe bereits hat, wird dessen Definition ersetzt, und es erscheint `updated` statt `added`. Server erreichen ein Konto nur, wenn es MCP mit dieser Gruppe teilt (`ccam share <name> --mcp on`); teilt noch kein Konto MCP, weist `add` darauf hin.
+Fügst du einen Namen hinzu, den die Gruppe bereits hat, wird dessen Definition ersetzt, und es erscheint `updated` statt `added`. Server erreichen ein Konto nur, wenn es in dieser Gruppe ist und die Gruppe MCP teilt (`ccam group set <group> --add mcp`); tut die Gruppe das nicht, weist `add` darauf hin.
 
 ## Optionen
 
@@ -121,7 +121,7 @@ Mit `--force` wird der Server der Gruppe ersetzt, und die vorherige `mcp.json` w
 - **Laufende Konten.** `import` kopiert in die Gruppe, lässt aber die eigenen Einträge eines laufenden Kontos stehen und weist darauf hin; führe es nach dem Ende der Sitzung erneut aus. Die Synchronisierung überspringt laufende Konten.
 - **Kopien für Remote Control.** Die Kopie eines laufenden Kontos bleibt unberührt: `Note: account side is running, so the copy in its .claude.json stays as it was until its next Remote Control launch.` Mit `mcp_strategy = "sync"` muss nichts aktualisiert werden, weil jeder Start synchronisiert.
 - **Beschädigte Dateien.** Ist `.claude.json` kein gültiges JSON, lässt die Synchronisierung die Datei unberührt und meldet den Fehler. Lässt sich die Sperre nicht innerhalb von 2 Sekunden nehmen, meldet ccam `could not lock … (Claude Code is writing the file)`.
-- **Konten, die MCP nicht teilen.** `import` lehnt ab und rät dir, zuerst `ccam share side --mcp on` auszuführen.
+- **Konten, die MCP nicht teilen.** `import` lehnt ab und rät dir, das Konto zuerst in eine Gruppe aufzunehmen, die MCP teilt (`ccam group join <group> side`).
 - **Gruppennamen.** `-g` nimmt nur einen Gruppennamen; er wird zu einem Ordner unter `groups/`, daher werden Namen wie `../x` abgelehnt.
 
 ## Verwandte Themen

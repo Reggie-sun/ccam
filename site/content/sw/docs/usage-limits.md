@@ -4,7 +4,7 @@ description: Ona matumizi ya saa 5 na ya wiki ya kila akaunti ya Claude Code kwa
 updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: a84df8e873d6
+sourceHash: "40aef0708c81"
 ---
 
 `ccam usage` huonyesha kiasi cha vikomo vya saa 5 na vya wiki ambacho kila akaunti imetumia. `ccam next --auto` hufungua akaunti yenye nafasi kubwa zaidi, na `--continue` huhamisha mazungumzo ya sasa.
@@ -55,10 +55,10 @@ Kisha Claude Code huonyesha jina la akaunti na matumizi yake kwenye mstari wa ha
 ```sh
 ccam next             # the account after the one you used last
 ccam next --auto      # the account with the lowest 5-hour usage
-ccam next --continue  # the next account that shares your conversation history
+ccam next --continue  # carry this folder's conversation on as the next account
 ```
 
-`ccam next` huruka akaunti ambazo hazijaingia, na `--auto` huruka akaunti zilizofikia 100%. Ili kuendeleza mazungumzo, akaunti zote mbili lazima zishiriki historia ya mazungumzo; tazama [kushiriki](/docs/sharing).
+`ccam next` huruka akaunti ambazo hazijaingia, na `--auto` huruka akaunti zilizofikia 100% na akaunti za shirika jingine. Akaunti hizo mbili zikishiriki historia ya mazungumzo, `--continue` hufungua mazungumzo yale yale; vinginevyo Claude Code huyanakili kwenye akaunti mpya. Tazama [kushiriki](/docs/sharing) na [kubadili kwenda akaunti inayofuata](/features/next#continue).
 
 Kwa script na kazi zilizopangwa zinazoendesha `claude -p`, weka `--fallback` kabla ya jina la akaunti. Akaunti hiyo inapofikia kikomo chake, ccam huendesha amri ile ile tena kama akaunti yenye nafasi kubwa zaidi, na matokeo ya uendeshaji uliokamilika pekee ndiyo huchapishwa:
 

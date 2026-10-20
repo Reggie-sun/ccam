@@ -19,6 +19,7 @@ ccam usage -v               # add per-model weekly limits and the data source
 ccam usage --json           # machine-readable, one object per account
 ccam usage --source cache   # saved numbers only, no network
 ccam usage --refresh        # also renew expired logins of accounts not running
+ccam usage --source claude  # let Claude Code look it up: ccam never touches a token
 ccam statusline install     # set the status line in every account's settings.json
 ```
 
@@ -31,7 +32,7 @@ $ ccam usage
 → Most headroom: personal   (open it with ccam next --auto)
 ```
 
-On a terminal the table appears at once with `fetching…` in each row, and each row is redrawn as its account answers. `As of` says how old the numbers are; `(cached)` means they come from a saved file, not from the endpoint. The last line names the account with the lowest 5-hour usage below 100%, and only appears when you have more than one account. An account that is not logged in shows `not logged in → ccam login <name>`, and an API key account shows `no limits (API)`.
+On a terminal the table appears at once with `fetching…` in each row, and each row is redrawn as its account answers. `As of` says how old the numbers are; `(cached)` means they come from a saved file, not from the endpoint. The last line names the account [`ccam next --auto`](/features/next) would choose by the same rules (`auto_max_usage`, `auto_strategy`, the running sessions, accounts of the last used account's organization only unless `cross_org` is set, every window at 100% skipped, so an account whose week is full is never named), and only appears when you have more than one account. An account that is not logged in shows `not logged in → ccam login <name>`, and an API key account shows `no limits (API)`.
 
 After `ccam statusline install`, Claude Code shows a line such as `[work] · Opus · 5h 24% · 7d 41%`.
 
@@ -43,11 +44,15 @@ After `ccam statusline install`, Claude Code shows a line such as `[work] · Opu
 | `--watch[=N]` | Redraw every `N` seconds until you press Ctrl+C. `--watch` alone, or a value of 0 or less, means 60 | off |
 | `-v`, `--verbose` | Show per-model weekly limits and a `source:` line (`live`, `cache` or `statusline`) | off |
 | `--no-cache` | Ignore the 60-second cache and ask the endpoint again | off |
-| `--source live\|cache` | `cache` never asks the endpoint and shows saved numbers only; `live` is the default behaviour | live |
+| `--source live\|claude\|cache` | `live` asks the endpoint with the account's token; `claude` has Claude Code look it up (below); `cache` shows saved numbers only | `usage_source`, else `live` |
 | `--refresh` | Renew expired access tokens, only for accounts that are not running | off |
 | `--dry-run` | Accepted: `ccam usage` changes nothing but its own cache. Refused together with `--refresh`: `--dry-run cannot be combined with --refresh, which rewrites login tokens` | off |
 
-Any other `--source` value fails with `--source must be live or cache`. `ccam usage` takes no arguments.
+Any other `--source` value fails with `--source must be live, claude or cache`.
+
+### Usage from Claude Code itself
+
+With `usage_source = "claude"` in `config.toml` (or `--source claude`), ccam does not read the login token at all. For each account it starts `claude -p --input-format stream-json --output-format stream-json --verbose --safe-mode --no-session-persistence` in the account's folder and sends Claude Code's `get_usage` request on standard input (Claude Code 2.1.270 or later); Claude Code looks the usage up with its own login and answers with the 5-hour, weekly and model windows. `--safe-mode` keeps the account's hooks, MCP servers and plugins from starting, and no session is saved. Each account takes a Claude Code start, about a second, so this source is slower than `live`; the accounts are asked at once, each within 20 seconds, and the 60-second cache applies as usual. Claude Code marks the request as experimental, so if it stops answering, ccam shows the saved numbers and `ccam doctor` reports it. A `--dry-run` does not start Claude Code (it writes to the account's folder) and shows the saved numbers. `usage_source` takes `live` or `claude`; `cache` is a `--source` choice only. `ccam usage` takes no arguments.
 
 `ccam statusline` reads Claude Code's status line JSON from standard input. Its one option is `--wrap <command>`: an existing status line command whose first output line gets the account name in front. `ccam statusline install` takes no options. Both refuse `--dry-run` with `` --dry-run is not supported by `ccam statusline`; nothing was changed ``.
 

@@ -5,7 +5,7 @@ description: Majibu kuhusu ccam, akaunti za Claude Code, vikomo vya matumizi, ku
 updated: 2026-10-20
 order: 6
 translation: machine
-sourceHash: 80a5475ccfee
+sourceHash: "e7d4a2c877ac"
 ---
 
 ## Je, ccam ni zana rasmi ya Anthropic?
@@ -26,7 +26,7 @@ Ipe kila akaunti folda yake ya usanidi kwa `CLAUDE_CONFIG_DIR`. ccam hukufanyia 
 
 ## Nitaendeleaje na mazungumzo kwenye akaunti nyingine?
 
-Shiriki historia ya mazungumzo kati ya akaunti hizo mbili kwa `ccam share <name> --history on`, kisha endesha `ccam next --continue`. Claude Code hufungua mazungumzo ya hivi karibuni zaidi ya folda ya sasa kwenye akaunti inayofuata.
+Shiriki historia ya mazungumzo kati ya akaunti kwa `ccam group set default --add history` (au kikundi chao wenyewe: `ccam group add pair --items history --members work,side`), kisha endesha `ccam next --continue`. Claude Code hufungua mazungumzo ya hivi karibuni zaidi ya folda ya sasa kwenye akaunti inayofuata.
 
 ## Je, ccam huona au kutuma taarifa zangu za kuingia?
 

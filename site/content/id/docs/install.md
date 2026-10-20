@@ -5,7 +5,7 @@ description: Instal ccam di Linux, macOS, atau Windows dengan satu perintah, pak
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: aea4984c1576
+sourceHash: 07fab3165030
 ---
 
 Jalankan ini di terminal pada Linux atau macOS:
@@ -80,7 +80,7 @@ Plugin ccam mengajari Claude Code sendiri cara memakai ccam: memeriksa akun mana
 /plugin install ccam --marketplace jhyunwoo/ccam
 ```
 
-Plugin ini menambahkan satu skill dan dua perintah, `/ccam:usage` dan `/ccam:ext`. Skill tersebut tidak pernah menjalankan perintah yang melakukan login atau memindahkan file; ia hanya menyarankannya.
+Plugin ini menambahkan satu skill, perintah `/ccam:usage`, `/ccam:ext`, dan `/ccam:switch`, serta dua hook: saat sebuah sesi berhenti karena batas penggunaan, Anda mendapat notifikasi di terminal, dan `/ccam:switch [account]` meneruskan percakapan ke akun lain ([detail](/features/next#inside-claude-code)). Hook tersebut menjalankan `ccam`, jadi ccam harus ada di `PATH` yang dilihat Claude Code. Skill tersebut tidak pernah menjalankan perintah yang melakukan login atau memindahkan file; ia hanya menyarankannya.
 
 ## Periksa instalasi
 

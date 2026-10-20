@@ -4,7 +4,7 @@ description: Die 5-Stunden- und Wochennutzung aller Claude Code-Konten mit ccam 
 updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: a84df8e873d6
+sourceHash: 40aef0708c81
 ---
 
 `ccam usage` zeigt, wie viel jedes Konto von seinem 5-Stunden- und seinem Wochenlimit verbraucht hat. `ccam next --auto` öffnet das Konto mit dem meisten Spielraum, und `--continue` nimmt das aktuelle Gespräch mit.
@@ -55,10 +55,10 @@ Claude Code zeigt dann den Kontonamen und seine Nutzung in der Statuszeile an, z
 ```sh
 ccam next             # the account after the one you used last
 ccam next --auto      # the account with the lowest 5-hour usage
-ccam next --continue  # the next account that shares your conversation history
+ccam next --continue  # carry this folder's conversation on as the next account
 ```
 
-`ccam next` überspringt Konten, die nicht angemeldet sind, und `--auto` überspringt Konten bei 100 %. Um ein Gespräch fortzusetzen, müssen beide Konten den Gesprächsverlauf teilen; siehe [Teilen](/docs/sharing).
+`ccam next` überspringt Konten, die nicht angemeldet sind, und `--auto` überspringt Konten bei 100 % sowie Konten einer anderen Organisation. Wenn die beiden Konten den Gesprächsverlauf teilen, öffnet `--continue` dasselbe Gespräch; andernfalls kopiert Claude Code es in das neue Konto. Siehe [Teilen](/docs/sharing) und [zum nächsten Konto wechseln](/features/next#continue).
 
 Für Skripte und geplante Jobs, die `claude -p` ausführen, setze `--fallback` vor den Kontonamen. Wenn dieses Konto sein Limit erreicht, führt ccam denselben Befehl erneut mit dem Konto mit dem meisten Spielraum aus, und nur die Ausgabe des Durchlaufs, der fertig wurde, wird ausgegeben:
 

@@ -26,7 +26,7 @@ Give each account its own configuration folder with `CLAUDE_CONFIG_DIR`. ccam do
 
 ## How do I continue a conversation on another account?
 
-Share conversation history between the two accounts with `ccam share <name> --history on`, then run `ccam next --continue`. Claude Code opens the most recent conversation of the current folder in the next account.
+Share conversation history between the accounts with `ccam group set default --add history` (or a group of their own: `ccam group add pair --items history --members work,side`), then run `ccam next --continue`. Claude Code opens the most recent conversation of the current folder in the next account.
 
 ## Does ccam see or send my login?
 

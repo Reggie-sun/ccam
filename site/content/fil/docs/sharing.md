@@ -1,46 +1,45 @@
 ---
 title: I-share ang mga MCP server, settings at kasaysayan
-description: Paano shine-share ng ccam ang MCP server, settings.json, CLAUDE.md, agent, skill at kasaysayan ng usapan ng mga Claude Code account; hiwalay ang bawat login.
+description: Paano shine-share ng mga ccam group ang MCP server, settings.json, CLAUDE.md, skill at kasaysayan ng usapan ng mga Claude Code account; hiwalay ang bawat login.
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 888d466b29e9
+sourceHash: 2606e4ec682e
 ---
 
-May sariling login ang bawat account. Lahat ng iba pa ay puwedeng i-share nang isa-isang item: nili-link ng ccam ang file o folder ng account sa isang shared na group folder, kaya ang pagbabagong ginawa sa isang account ay lumalabas sa lahat ng account ng group na iyon.
+May sariling login ang bawat account. Lahat ng iba pa ay puwedeng i-share sa pamamagitan ng mga **group**: pinapangalanan ng isang group ang mga item na shine-share nito at ang mga account na kasapi nito, at nili-link ng ccam ang mga file ng bawat isa sa mga account na iyon sa folder ng group, kaya ang pagbabagong ginawa sa isang account ay lumalabas sa lahat ng iyon.
 
 ## Ano ang puwedeng i-share
 
-| Item | Option | Ano ang shine-share |
-| --- | --- | --- |
-| Mga MCP server | `--mcp` | Ang `mcp.json` ng group, na ipinapasa sa Claude Code sa pagsisimula |
-| Settings | `--settings` | `settings.json`: mga permission, hook, model, status line |
-| Global na memory | `--memory` | `CLAUDE.md` |
-| Mga extension | `--extensions` | `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/`, `rules/` |
-| Kasaysayan ng usapan | `--history` | `projects/` at `history.jsonl` |
+| Item | Ano ang shine-share |
+| --- | --- |
+| `mcp` | Mga MCP server: ang `mcp.json` ng group, na ipinapasa sa Claude Code sa pagsisimula |
+| `settings` | `settings.json`: mga permission, hook, model, status line |
+| `memory` | ang global na `CLAUDE.md` |
+| `extensions` | `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/`, `rules/` |
+| `history` | kasaysayan ng usapan: `projects/` at `history.jsonl` |
 
-Shine-share ng mga bagong account ang lahat maliban sa kasaysayan ng usapan.
+Ang una mong account ang gumagawa ng group na `default`, na nagshe-share ng lahat maliban sa kasaysayan ng usapan, at sumasali rito ang mga susunod na account.
 
 Hindi kailanman shine-share ang mga login file na `.credentials.json` at `.claude.json`. Nagli-link lang ang ccam ng mga path mula sa isang nakapirming listahan, at wala sa listahang iyon ang dalawang ito.
 
-Saklaw ng pahinang ito ang mga pang-araw-araw na gawain. Inilalarawan ang bawat option sa mga pahina ng feature: [sharing sa pagitan ng mga account](/features/share), [mga shared na MCP server](/features/mcp) at [pagkopya ng dati nang setup](/features/migrate).
+Saklaw ng pahinang ito ang mga pang-araw-araw na gawain. Inilalarawan ang bawat option sa mga pahina ng feature: [pag-share gamit ang mga group](/features/share), [mga shared na MCP server](/features/mcp) at [pagkopya ng dati nang setup](/features/migrate).
 
 ## Mga group
 
-Ang ibig sabihin ng `on` ay ang `default` group. Puwede ka ring magbigay ng pangalan, para iilang account lang ang mag-share ng isang item:
-
 ```sh
-ccam share work --history team
-ccam share side --history team
+ccam group                                   # the groups, what they share, their accounts
+ccam group set default --add history         # every account in default shares history
+ccam group add team --items history --members work,side
 ```
 
-Nagshe-share na ngayon ng mga usapan ang `work` at `side` sa isa't isa, pero hindi sa iba mo pang account.
+Puwedeng kasapi ang isang account sa ilang group, pero iisang group lang ang pinanggagalingan ng bawat item. Kaya para mag-share ng kasaysayan ang `work` at `side` pero hindi ang iba mo pang account, huwag isama ang kasaysayan sa `default` at bigyan ang dalawa ng sarili nilang group, gaya ng nasa itaas. Ipinapakita ng `ccam share work` kung ano ang shine-share ng isang account at sa pamamagitan ng aling group. Ganoon din ang ginagawa ng [dashboard](/features/dashboard) sa tab nitong Groups.
 
-## Pag-on ng sharing
+## Kapag nagsimulang mag-share ang isang account
 
-Kapag nagsimulang mag-share ng item ang isang account, ang ccam ay:
+Kapag nagsimulang mag-share ng item ang isang account (sumali ito sa isang group, o idinagdag ng group nito ang item), ang ccam ay:
 
-1. nagpi-print ng plano ng bawat file na ililipat, kokopyahin o ili-link nito, at nagtatanong bago magsimula;
+1. nagpi-print ng plano ng bawat file na ililipat, kokopyahin o ili-link nito para sa bawat account, at nagtatanong bago magsimula;
 2. inililipat ang mga file ng account sa group folder kung wala pang laman ang group, o idinadagdag ang mga file na wala pa sa group;
 3. kapag magkaiba ang parehong file, nagtatanong kung pananatilihin ang bersyon ng group, gagamitin ang sa iyo, o pagsasamahin ang JSON;
 4. iniimbak ang orihinal mo sa `.ccam-backup/<time>/` sa loob ng account folder;
@@ -48,12 +47,13 @@ Kapag nagsimulang mag-share ng item ang isang account, ang ccam ay:
 
 Ipinapangalan ang mga file ng usapan ayon sa kanilang session ID, kaya nagsasama ang mga kasaysayan mula sa iba't ibang account nang walang conflict.
 
-Hindi binabago ng ccam ang sharing habang tumatakbo ang Claude Code bilang ang account, dahil patuloy na nagsusulat ang session sa mga file na inililipat. Isara muna ito.
+Hindi binabago ng ccam ang isang account habang tumatakbo ang Claude Code bilang ito, dahil patuloy na nagsusulat ang session sa mga file na inililipat. Isara muna ito.
 
-## Pag-off ng sharing
+## Kapag tumigil mag-share ang isang account
 
 ```sh
-ccam share work --history off
+ccam group leave team work                   # work leaves the group
+ccam group set default --remove history      # nobody in default shares history any more
 ```
 
 Inaalis ang link at nakakakuha ang account ng sarili nitong kopya ng kasalukuyang nilalaman ng group. Idagdag ang `--fresh` para magsimulang walang laman sa halip. Pinapanatili ng group ang nilalaman nito para sa ibang account.
@@ -95,14 +95,12 @@ Copy from /home/me/.claude into group default (/home/me/.local/share/ccam/groups
   Conversation history (projects/, history.jsonl) is not included; add --history to copy it.
 Copy these into group default? [y/N] y
 ✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, commands/, skills/
-Accounts that share these through group default:
-  mcp         personal
-  settings    personal
-  memory      personal
-  extensions  personal
+Group default: personal
+To share them:
+  ccam group join default work
 ```
 
-Sa dulo, inililista ng ccam ang mga account na nagshe-share ng bawat item sa pamamagitan ng group. Kung may mga account na hindi pa, ipi-print nito ang mga command na `ccam share` na mag-o-on ng sharing para sa kanila.
+Sa dulo, inililista ng ccam ang mga account ng group. Kung hindi pa shine-share ng group ang isa sa mga item, o kung wala rito ang ilang account, ipi-print nito ang mga command na `ccam group` na nagbabago niyon.
 
 Kapag may iba nang kopya ng isang file sa group, magtatanong ang ccam, gaya ng pag-on ng sharing: pananatilihin ang kopya ng group o gagamitin ang sa iyo. Puwede ring pagsamahin ang `settings.json` at iba pang JSON file, at ang `history.jsonl` nang linya por linya. Sine-save ang mga dating kopya ng group sa `.ccam-backup/<time>/` sa loob ng group folder.
 

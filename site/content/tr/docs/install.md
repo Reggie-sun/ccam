@@ -5,7 +5,7 @@ description: ccam'ı Linux, macOS veya Windows'a tek komutla, bir .deb paketiyle
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: aea4984c1576
+sourceHash: "07fab3165030"
 ---
 
 Linux veya macOS üzerinde bir terminalde şunu çalıştırın:
@@ -80,7 +80,7 @@ ccam eklentisi Claude Code'un kendisine ccam'i kullanmayı öğretir: hangi hesa
 /plugin install ccam --marketplace jhyunwoo/ccam
 ```
 
-Bir beceri ve iki komut ekler: `/ccam:usage` ve `/ccam:ext`. Beceri, giriş yapan veya dosya taşıyan komutları hiçbir zaman çalıştırmaz; bunun yerine onları önerir.
+Bir beceri, `/ccam:usage`, `/ccam:ext` ve `/ccam:switch` komutlarını ve iki hook ekler: bir oturum kullanım limitinde durduğunda bir terminal bildirimi alırsınız ve `/ccam:switch [account]` konuşmayı başka bir hesaba devreder ([ayrıntılar](/features/next#inside-claude-code)). Hook'lar `ccam` komutunu çalıştırır; bu yüzden ccam, Claude Code'un gördüğü `PATH` üzerinde olmalıdır. Beceri, giriş yapan veya dosya taşıyan komutları hiçbir zaman çalıştırmaz; bunun yerine onları önerir.
 
 ## Kurulumu kontrol edin
 

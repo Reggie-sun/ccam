@@ -5,7 +5,7 @@ description: Jawaban seputar ccam, akun Claude Code, batas penggunaan, pembagian
 updated: 2026-10-20
 order: 6
 translation: machine
-sourceHash: 80a5475ccfee
+sourceHash: e7d4a2c877ac
 ---
 
 ## Apakah ccam alat resmi dari Anthropic?
@@ -26,7 +26,7 @@ Beri setiap akun folder konfigurasinya sendiri dengan `CLAUDE_CONFIG_DIR`. ccam 
 
 ## Bagaimana cara melanjutkan percakapan di akun lain?
 
-Bagikan riwayat percakapan antara kedua akun dengan `ccam share <name> --history on`, lalu jalankan `ccam next --continue`. Claude Code membuka percakapan terbaru dari folder saat ini di akun berikutnya.
+Bagikan riwayat percakapan antarakun dengan `ccam group set default --add history` (atau dengan grup tersendiri: `ccam group add pair --items history --members work,side`), lalu jalankan `ccam next --continue`. Claude Code membuka percakapan terbaru dari folder saat ini di akun berikutnya.
 
 ## Apakah ccam melihat atau mengirim login saya?
 

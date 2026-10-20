@@ -4,7 +4,7 @@ description: Ongeza, ingia, orodhesha, badilisha jina, ondoa na ingiza akaunti z
 updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 9eb992214132
+sourceHash: "8564517d0d71"
 ---
 
 Kila akaunti ya ccam ni folda tofauti ya usanidi wa Claude Code yenye taarifa zake za kuingia. Amri hizi huunda, huingiza, huorodhesha, hubadilisha majina na huondoa akaunti, na husajili folda ambazo tayari unazo.
@@ -12,10 +12,11 @@ Kila akaunti ya ccam ni folda tofauti ya usanidi wa Claude Code yenye taarifa za
 ## Matumizi
 
 ```sh
-ccam add                                   # wizard on a terminal: name, shared items, shortcut, login
+ccam add                                   # wizard on a terminal: name, sign-in, groups, shortcut
 ccam add work --shortcut ccwork            # no wizard: log in, then create the ccwork command
-ccam add side --no-login --share history=team
+ccam add side --no-login --group default --group team
 ccam login side                            # run claude auth login inside the account
+ccam login --expired                       # every account never logged in, or whose login expired
 ccam logout side                           # remove the login token
 ccam list                                  # table of accounts; ccam ls is the same
 ccam list --json                           # machine-readable
@@ -29,25 +30,28 @@ ccam completion zsh > "${fpath[1]}/_ccam"
 
 Popote amri inapopokea `<name|number>`, unaweza kutoa jina la akaunti au namba yake (slot), yaani safu ya `#` ya `ccam list`.
 
-`ccam add` kwenye terminal bila chaguo hufungua mchawi. Huuliza jina, kisha huonyesha orodha ya kuteua ya vipengele vinavyoshirikiwa (kila kitu isipokuwa historia ya mazungumzo kimeteuliwa), kisha huuliza `Create a shortcut command for work? [y/N]` na, ukijibu `y`, `Shortcut name [ccwork]:`. Chaguo lolote kati ya `--share`, `--shortcut` au `--no-login`, au pipe badala ya terminal, huruka mchawi; hapo jina linahitajika na hakuna njia fupi inayoundwa isipokuwa `--shortcut` itaje moja.
+`ccam add` kwenye terminal bila chaguo hufungua mchawi. Huuliza jina na jinsi akaunti inavyoingia (kuingia kwa Claude sasa, API key, au kuingia kwa Claude baadaye), kisha huonyesha vikundi vya kujiunga huku `default` ikiwa imeteuliwa (kabla ya kuwepo kwa vikundi, vipengele ambavyo kikundi `default` kitashiriki), kisha huuliza `Create a shortcut command for work? [y/N]`, na humalizia kwa muhtasari wa kuthibitisha. `Esc` hurudi hatua moja nyuma. Chaguo lolote kati ya `--group`, `--no-group`, `--shortcut` au `--no-login`, au pipe badala ya terminal, huruka mchawi; hapo jina linahitajika na hakuna njia fupi inayoundwa isipokuwa `--shortcut` itaje moja.
 
-`ccam list` huonyesha namba, jina, njia fupi, barua pepe, vipengele vinavyoshirikiwa na matumizi ya mwisho, na `*` mbele ya akaunti chaguo-msingi:
+Bila `--group`, akaunti mpya hujiunga na kikundi `default`. Akaunti ya kwanza hukiunda, kikishiriki seva za MCP, mipangilio, `CLAUDE.md` na viendelezi; tazama [kushiriki kwa vikundi](/features/share).
+
+`ccam list` huonyesha namba, jina, njia fupi, barua pepe, vikundi na matumizi ya mwisho, na `*` mbele ya akaunti chaguo-msingi:
 
 ```console
 $ ccam list
-   #  Name      Shortcut  Email             Shared                        Last used
-*  1  work      ccwork    user@example.com  mcp settings md ext           -
-   2  personal  -         me@side.dev       settings md ext history@team  -
+   #  Name      Shortcut  Email             Groups        Last used
+*  1  work      ccwork    user@example.com  default team  -
+   2  personal  -         me@side.dev       default       -
 ```
 
-Kwa `--json`, kila akaunti ni kitu chenye `slot`, `shortcut`, `name`, `email`, `default`, `dir`, `last_used` (huachwa ikiwa akaunti haijawahi kuanzishwa) na `share`. `share` huhusisha kila kipengele (`mcp`, `settings`, `memory`, `extensions`, `history`) na jina la kikundi chake au `"local"`.
+Kwa `--json`, kila akaunti ni kitu chenye `slot`, `shortcut`, `name`, `email`, `default`, `dir`, `last_used` (huachwa ikiwa akaunti haijawahi kuanzishwa), `groups` na `share`. `share` huhusisha kila kipengele (`mcp`, `settings`, `memory`, `extensions`, `history`) na kikundi kinachotoka, au `"local"`.
 
 ## Chaguo
 
 | Chaguo | Kinachofanya | Chaguo-msingi |
 | --- | --- | --- |
 | `ccam add --no-login` | Unda akaunti bila kuingia; ingia baadaye kwa `ccam login <name>` | imezimwa |
-| `ccam add --share <item=group>` | Shiriki kipengele na kikundi, au `item=local` ili kukiweka binafsi. Kinaweza kurudiwa | `mcp`, `settings`, `memory`, `extensions` katika `default`; `history` ya ndani |
+| `ccam add --group <group>` | Jiunge na kikundi hiki badala ya `default`. Kinaweza kurudiwa; `default` huundwa ikiwa hakipo | `default` |
+| `ccam add --no-group` | Usijiunge na kikundi chochote: akaunti haishiriki chochote | imezimwa |
 | `ccam add --shortcut <command>` | Pia unda amri hii ya njia fupi katika `~/.local/bin` | hakuna |
 | `ccam add --api --key-from <source>` | Akaunti inayotumia API key badala ya kuingia; tazama [Akaunti za API key](/features/api) | imezimwa |
 | `ccam list --json` | Chapisha akaunti kama JSON | imezimwa |
@@ -58,7 +62,7 @@ Kwa `--json`, kila akaunti ni kitu chenye `slot`, `shortcut`, `name`, `email`, `
 
 `ccam login`, `ccam logout`, `ccam use` na `ccam rename` hazina chaguo zao wenyewe. `ccam completion` hupokea `bash`, `zsh` au `powershell`; kitu kingine chochote hushindwa kwa `only bash, zsh and powershell are supported`.
 
-Majina ya akaunti yana herufi 1 hadi 32 za `a-z`, `0-9`, `-` na `_`, yakianza na herufi au tarakimu. Jina haliwezi kuwa tarakimu tu, kwa sababu `ccam 2` inamaanisha namba 2. Jina pia haliwezi kuwa amri ya ccam (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`, `folder`, `pick`, `ext`), ili `ccam <name>` isiwe na utata kamwe. Orodha hiyo ni `config.Reserved` katika `internal/config`.
+Majina ya akaunti yana herufi 1 hadi 32 za `a-z`, `0-9`, `-` na `_`, yakianza na herufi au tarakimu. Jina haliwezi kuwa tarakimu tu, kwa sababu `ccam 2` inamaanisha namba 2. Jina pia haliwezi kuwa amri ya ccam (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`, `folder`, `pick`, `ext`, `group`, `groups`), ili `ccam <name>` isiwe na utata kamwe. Orodha hiyo ni `config.Reserved` katika `internal/config`.
 
 ## Jinsi inavyofanya kazi
 
@@ -68,15 +72,19 @@ Majina ya akaunti yana herufi 1 hadi 32 za `a-z`, `0-9`, `-` na `_`, yakianza na
 
 1. `config.ValidateName` hukagua jina, na `shim.Check` hukagua njia fupi kabla ya kitu chochote kuundwa.
 2. `profile.Add` huunda `~/.local/share/ccam/profiles/work/` kwa mode `0700` na huipa akaunti namba ndogo kabisa iliyo wazi (`Config.NextSlot`), kwa hiyo namba ya akaunti iliyoondolewa hutumiwa tena. Akaunti ya kwanza huwa chaguo-msingi.
-3. `applyShare` huunganisha folda mpya iliyo tupu na vikundi vyake vya kushiriki kwa `share.Build` na kisha `Apply`, kwa mfano `settings.json` kwenda `groups/default/settings.json`. Hili likishindwa, folda mpya huondolewa, kwa sababu folda iliyobaki ingezuia kila jaribio jipya kwa `folder already exists`.
+3. Akaunti hujiunga na vikundi vyake (`default` isipokuwa `--group` au `--no-group` iseme vinginevyo; akaunti ya kwanza huunda `default`), na `applyShare` huunganisha folda mpya iliyo tupu na vikundi hivyo kwa `share.Build` na kisha `Apply`, kwa mfano `settings.json` kwenda `groups/default/settings.json`. Hili likishindwa, folda mpya huondolewa, kwa sababu folda iliyobaki ingezuia kila jaribio jipya kwa `folder already exists`.
 4. Akaunti huhifadhiwa katika `~/.config/ccam/config.toml` kupitia `fsutil.AtomicWrite`: faili ya muda, `fsync`, kisha `rename`, ili hitilafu ya ghafla isiache usanidi nusu.
-5. `runLogin` huanzisha `claude auth login` huku `CLAUDE_CONFIG_DIR` ikiwa imewekwa kwenye folda ya akaunti. Kuingia kukishindwa, akaunti hubaki, na ccam huchapisha hitilafu na kukuambia uendeshe `ccam login work` baadaye.
-6. `profile.ReadEmail` huchukua `oauthAccount.emailAddress` kutoka `profiles/work/.claude.json`. Faili hiyo inaweza kuwa megabaiti kadhaa, kwa hiyo `TopLevelValue` hutafuta ufunguo huo mmoja badala ya kuchanganua faili nzima.
+5. `runLogin` huanzisha `claude auth login` huku `CLAUDE_CONFIG_DIR` ikiwa imewekwa kwenye folda ya akaunti, pamoja na `--email` yenye barua pepe ya mwisho ya akaunti ili ukurasa wa kuingia ujazwe tayari. Kuingia kukishindwa, akaunti hubaki, na ccam huchapisha hitilafu na kukuambia uendeshe `ccam login work` baadaye.
+6. `profile.ReadIdentity` huchukua `oauthAccount` kutoka `profiles/work/.claude.json`: barua pepe, id za akaunti na shirika, jina la shirika na mpango (`claude_max`, `claude_team` …). Faili hiyo inaweza kuwa megabaiti kadhaa, kwa hiyo `TopLevelValue` hutafuta ufunguo huo mmoja badala ya kuchanganua faili nzima. ccam huvihifadhi katika `[profile.login]` ndani ya `config.toml`.
 7. `shim.Install` huunganisha `~/.local/bin/ccwork` na binary ya ccam, ambayo hutafuta `argv[0]` katika `config.toml` inapoanza.
 
 Kuingia kunaweza kuchukua dakika kadhaa, na ccam nyingine inaweza kuhifadhi usanidi wakati huo. Kwa hiyo amri zinazosubiri huhifadhi kupitia `env.update`, ambayo hupakia upya `config.toml`, hutumia badiliko hilo moja (hapa, barua pepe) na kuhifadhi. `ccam remove` hupakia upya baada ya swali lake kwa sababu hiyo hiyo.
 
-`ccam login` hutekeleza hatua ya 5 na 6 kwa akaunti iliyopo. `ccam logout` huendesha `claude auth logout` ndani ya akaunti na hufuta barua pepe iliyohifadhiwa. `ccam use` huandika upya `default` tu katika `config.toml`.
+`ccam login` hutekeleza hatua ya 5 na 6 kwa akaunti iliyopo. Claude Code huichukua barua pepe kama kidokezo tu kwa ukurasa wa kuingia, kwa hiyo kuingia kunaweza kuishia kwenye akaunti nyingine ya Claude kuliko ile ambayo akaunti ya ccam ilikuwa; ccam hulinganisha kuingia kupya na `[profile.login]` na husema hivyo (`ccam: this login is other@company.com, but work was dev@company.com before.`). Huhifadhi kuingia kupya na hukuambia jinsi ya kulirudisha: `ccam logout work`, kisha `ccam login work` na uingie kwa barua pepe sahihi. Akaunti nyingine ya ccam ikiwa imeingia kwenye akaunti ile ile ya Claude, ccam huonya kwamba hizo mbili hushiriki vikomo vyao vya matumizi. `ccam login --expired` huingiza, moja baada ya nyingine, kila akaunti ambayo haijawahi kuingia au ambayo kuingia kwake (refresh token yake) kumeisha muda.
+
+`ccam logout` huendesha `claude auth logout` ndani ya akaunti na hufuta barua pepe iliyohifadhiwa; rekodi ya kuingia hubaki, kwa hiyo kuingia kunakofuata hukaguliwa dhidi yake. `ccam use` huandika upya `default` tu katika `config.toml`.
+
+`ccam list` huongeza safu ya `Organization` akaunti zinapokuwa za mashirika zaidi ya moja (mipango ya binafsi huonyesha `personal`), na `ccam list --json` ina `plan` na `org` kwa kila akaunti.
 
 ### Kuingia kwenye mashine ya mbali
 
@@ -106,7 +114,7 @@ Wakati kuingia kunasubiri ingizo kwenye terminal, ccam huzima mwangwi (echo) na 
 
 `ccam rename` hubadilisha jina la folda, huandika upya njia za plugins katika `plugins/` yake kutoka folda ya zamani kwenda mpya, huhamisha hali ya chaguo-msingi pamoja nayo, na huhamisha njia za `nameState` kwenda jina jipya. Amri ya njia fupi huhifadhi jina lake. Uandikaji upya wa plugins ukishindwa, folda hurudishiwa jina lake la zamani, kwa kuwa usanidi haujahifadhiwa.
 
-`ccam import` husajili folda pale ilipo, kama `dir` katika `config.toml`. Kamwe haiihamishi wala kuinakili: refresh token iliyonakiliwa ingesababisha nakala hizo zitoane nje ya akaunti. Bila hoja ya folda, hutafuta folda za `~/.claude` na `~/.claude-*` ambazo hazijasajiliwa na huuliza kuhusu kila moja; majina hutokana na folda (`~/.claude` ni `main`, `~/.claude-work` ni `work`, `~/.claude-2` ni `acct2`), na folda ambayo jina lake haliwezi kupatikana huorodheshwa pamoja na amri ya `--name` ya kutumia. Bila `CLAUDE_CONFIG_DIR`, Claude Code huhifadhi `.claude.json` katika folda yako ya nyumbani kando ya `~/.claude`, kwa hiyo unapoingiza `~/.claude` na haina `.claude.json` yake yenyewe, ccam huunda kiungo `~/.claude/.claude.json` kwenda `~/.claude.json`. Kisha `claude` ya kawaida na `ccam main` huona akaunti ile ile. Akaunti zilizoingizwa hazishiriki chochote hadi uendeshe `ccam share`, na hakuna njia fupi inayoundwa.
+`ccam import` husajili folda pale ilipo, kama `dir` katika `config.toml`. Kamwe haiihamishi wala kuinakili: refresh token iliyonakiliwa ingesababisha nakala hizo zitoane nje ya akaunti. Bila hoja ya folda, hutafuta folda za `~/.claude` na `~/.claude-*` ambazo hazijasajiliwa na huuliza kuhusu kila moja; majina hutokana na folda (`~/.claude` ni `main`, `~/.claude-work` ni `work`, `~/.claude-2` ni `acct2`), na folda ambayo jina lake haliwezi kupatikana huorodheshwa pamoja na amri ya `--name` ya kutumia. Bila `CLAUDE_CONFIG_DIR`, Claude Code huhifadhi `.claude.json` katika folda yako ya nyumbani kando ya `~/.claude`, kwa hiyo unapoingiza `~/.claude` na haina `.claude.json` yake yenyewe, ccam huunda kiungo `~/.claude/.claude.json` kwenda `~/.claude.json`. Kisha `claude` ya kawaida na `ccam main` huona akaunti ile ile. Akaunti zilizoingizwa haziko katika kikundi chochote hadi uziongeze kwenye kimoja (`ccam group join <group> <name>`), na hakuna njia fupi inayoundwa.
 
 `ccam completion bash|zsh` huchapisha script ya kukamilisha amri ambayo pia hukamilisha majina ya akaunti.
 

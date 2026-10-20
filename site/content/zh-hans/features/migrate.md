@@ -1,10 +1,10 @@
 ---
 title: 复制现有配置
-description: 用 ccam migrate 把现有 ~/.claude 中的设置、CLAUDE.md、扩展、MCP 服务器和 MCP 登录复制到 ccam 共享组中。
+description: 用 ccam migrate 把现有 ~/.claude 中的设置、CLAUDE.md、扩展、MCP 服务器和 MCP 登录复制到 ccam 的组中。
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 95ce6ec9e220
+sourceHash: "7cee52e75749"
 ---
 
 如果你在使用 ccam 之前就用过 Claude Code，你的配置都在 `~/.claude` 和 `~/.claude.json` 中。`ccam migrate` 会把它们复制到一个共享组中，让通过该组共享这些项的每个账号一开始就拥有你现有的配置。源文件夹只会被读取，直接运行 `claude` 也会像以前一样工作。在第一次 `ccam add` 之后运行一次，之后每当有账号开始共享 MCP 服务器时再运行一次。
@@ -59,7 +59,7 @@ Accounts that share these through group default:
   extensions  personal, work
 ```
 
-组只会到达通过它共享某一项的账号，因此摘要会按项列出这些账号。对于尚未共享的账号，ccam 会打印开启共享的 `ccam share <name> --<item> on` 命令。
+组只会到达它自己的账号，而且只涉及它共享的项，因此摘要会列出组中的账号。如果组不共享某个被复制的项，或者有些账号不在组中，ccam 会打印用来更改这些的 `ccam group set <group> --add <items>` 和 `ccam group join <group> <accounts>` 命令。
 
 ## 选项
 
@@ -84,7 +84,7 @@ Accounts that share these through group default:
 `internal/cli/migrate.go` 选定项目，然后 `migrate.Build` 读取源和组并返回一个计划。在你确认之后、执行 `Plan.Apply` 之前，不会写入任何内容。
 
 1. **找到源。** `checkSource` 会拒绝不存在的路径、不是文件夹的路径，以及不包含任何已知 Claude Code 条目的文件夹。`migrate.ClaudeJSON` 找到属于该文件夹的 `.claude.json`：在文件夹内；或者对于内部没有该文件的 `~/.claude`，则是它旁边的 `~/.claude.json`。未设置 `CLAUDE_CONFIG_DIR` 时，Claude Code 就把它放在那里。
-2. **把项目映射到路径。** 每个路径都来自 `share.Layout`，也就是 `ccam share` 使用的同一份允许列表。MCP 服务器通过 `mcp.LocalServers` 从 `.claude.json` 中读出，它使用 `profile.TopLevelValue` 扫描器，而不是解析整个文件。
+2. **把项目映射到路径。** 每个路径都来自 `share.Layout`，也就是组所使用的同一份允许列表。MCP 服务器通过 `mcp.LocalServers` 从 `.claude.json` 中读出，它使用 `profile.TopLevelValue` 扫描器，而不是解析整个文件。
 3. **只复制，不移动。** 文件通过 `fsutil.AtomicWrite` 或 `fsutil.CopyFile` 写入 `~/.local/share/ccam/groups/<group>/`；MCP 服务器写入组的 `mcp.json`。
 
 每一项都把一个源路径映射到一个组路径：

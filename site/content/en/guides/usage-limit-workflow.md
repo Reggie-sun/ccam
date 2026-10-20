@@ -25,8 +25,7 @@ If you have a second account, you can carry on straight away with the same conve
 curl -fsSL https://ccam.dev/install.sh | sh
 ccam add personal
 ccam add work
-ccam share personal --history on
-ccam share work --history on
+ccam group set default --add history
 ccam statusline install
 ```
 
@@ -49,17 +48,19 @@ Open the conversation in the account with the most room:
 ccam next --auto --continue
 ```
 
-Claude Code starts as `work` with the most recent conversation of the current folder, including everything said so far.
+Claude Code starts as `work` with the most recent conversation of the current folder, including everything said so far. Sharing history (`ccam group set default --add history` above) keeps it one conversation; without it, Claude Code copies the conversation into `work`, and ccam tells you how many tokens that first reply reads again.
+
+With the [ccam plugin](/docs/install#claude-code-plugin) in Claude Code, a session that stops at its limit shows a notification, and `/ccam:switch` (or `/ccam:switch work`) notes the conversation for `ccam next --continue` without leaving anything to guess.
 
 ## Does ccam switch accounts automatically?
 
-No. ccam is not running while you work: it starts Claude Code and replaces itself with it. You decide when to switch, and `ccam next --auto` picks the account with the lowest 5-hour usage and skips accounts that are at 100% or not logged in. Some other tools swap the login of a running session instead; [ccam and other account switchers](/compare/account-switchers) explains the difference.
+No. ccam is not running while you work: it starts Claude Code and replaces itself with it. You decide when to switch, and `ccam next --auto` picks the account with the lowest 5-hour usage and skips accounts that are at 100%, not logged in, or of another organization. With `relay = true` in `config.toml`, ccam waits beside the session instead, so `/ccam:switch` carries on by itself. Some other tools swap the login of a running session instead; [ccam and other account switchers](/compare/account-switchers) explains the difference.
 
 ## Things to keep in mind
 
 - Run `ccam next --continue` in the same folder you worked in; conversations are stored per project folder.
 - Avoid running two accounts on the same conversation at the same time. ccam warns you if you try.
-- The other account must also share conversation history, in the same group.
+- Without shared history, the conversation is copied to the other account and the two copies go their own ways; the checkpoints `/rewind` restores code from stay with the first account.
 - The first message on the new account may use more of its limit than usual, because that account has not cached the conversation yet.
 - Whether you may switch between accounts like this depends on each account's terms.
 

@@ -1,133 +1,182 @@
 ---
-title: Sharing sa pagitan ng mga account
-description: Paano nili-link ng ccam share ang settings, CLAUDE.md, extension at kasaysayan sa group folder, may plano, backup at conflict choice; ibinabalik ito ng off.
+title: Pag-share gamit ang mga group
+description: Nagshe-share ang ccam group ng piniling item ng mga account nito sa iisang folder; inililipat ng ccam group ang data nang may plano, backup at conflict choice.
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 16de29bbdd57
+sourceHash: 0c0338362ba2
 ---
 
-May sariling folder ang bawat account, pero hindi kailangang hiwalay ang karamihan ng laman nito. Ino-on o ino-off ng `ccam share` ang sharing para sa isang account at isang item sa bawat pagkakataon: inililipat ang file o folder ng account sa isang group folder at pinapalitan ng symbolic link, kaya binabasa at sinusulatan ng bawat account sa group ang iisang kopya. Gamitin ito pagkatapos ng `ccam add` para baguhin kung ano ang shine-share ng isang account, o para ilagay ang ilang account sa sarili nilang group.
+May sariling folder ang bawat account, pero hindi kailangang hiwalay ang karamihan ng laman nito. Sinasabi ng isang **group** kung ano ang shine-share at kung sino ang nagshe-share: nili-link ng bawat account sa group ang mga item na iyon sa iisang folder, `~/.local/share/ccam/groups/<group>/`, kaya binabasa at sinusulatan nilang lahat ang iisang kopya. Hindi kailanman shine-share ang mga login token.
+
+Puwedeng kasapi ang isang account sa ilang group, pero iisang group lang ang pinanggagalingan ng bawat item. Karaniwang setup ang isang group para sa settings at mga extension, at pangalawang group para sa kasaysayan ng usapan sa pagitan ng dalawang account:
+
+```toml
+[[group]]
+name = 'default'
+items = ['mcp', 'settings', 'memory', 'extensions']
+members = ['personal', 'work', 'side']
+
+[[group]]
+name = 'team'
+items = ['history']
+members = ['work', 'side']
+```
+
+Ang unang account na idinagdag mo ang gumagawa ng `default`, at sumasali rito ang mga susunod na account maliban kung iba ang sabihin mo.
 
 ## Paggamit
 
 ```sh
-ccam share work                       # show what work shares, and with which group
-ccam share work --history on          # share conversation history with the default group
-ccam share side --history team        # share it with the group team instead
-ccam share work --settings off        # give work its own copy of settings.json again
-ccam share work --memory off --fresh  # stop sharing CLAUDE.md and start with no file
-ccam share work --settings on --yes --prefer merge   # no questions; merge JSON on conflicts
-ccam --dry-run share work --history on               # print the plan, change nothing
+ccam group                                        # the groups, what they share, their accounts
+ccam group show default                           # items, accounts, folder and MCP servers
+ccam group add team --items history --members work,side
+ccam group set default --add history              # every account in default moves together
+ccam group set default --remove history --fresh   # stop sharing; accounts start without it
+ccam group set team --items history,memory --from work   # work's CLAUDE.md goes in first
+ccam group join team personal                     # personal starts sharing team's items
+ccam group join team personal --replace           # leave the group that shares them now
+ccam group leave team side                        # side keeps a copy of team's items
+ccam group rename team pair                       # the folder keeps its name
+ccam group remove pair --leave                    # its accounts keep a copy; folder to the trash
+ccam share work                                   # what work shares, and through which group
+ccam --dry-run group set default --add history    # print the plan, change nothing
 ```
-
-Kapag walang item option, ipi-print ng `ccam share` ang kasalukuyang estado:
 
 ```console
+$ ccam group
+Group    Shares                          Accounts
+default  mcp settings memory extensions  personal, work, side
+team     history                         work, side
+
 $ ccam share work
 Sharing for work
-  MCP servers                        shared (group default)  --mcp
-  settings.json                      shared (group default)  --settings
-  global CLAUDE.md                   shared (group default)  --memory
-  agents, commands, skills, plugins  shared (group default)  --extensions
-  conversation history               local                   --history
+  mcp         MCP servers                        group default
+  settings    settings.json                      group default
+  memory      global CLAUDE.md                   group default
+  extensions  agents, commands, skills, plugins  group default
+  history     conversation history               group team
+Groups: default, team. Change them with `ccam group`.
 ```
 
-Kapag may mga option, nagpi-print ang ccam ng plano, nagtatanong tungkol sa bawat file na naiiba sa kopya ng group, at nagtatanong ng `Proceed? [y/N]` bago ito magbago ng anuman. Shine-share ng bagong account ang lahat maliban sa kasaysayan ng usapan; inilalarawan ng [I-share ang mga MCP server, settings at kasaysayan](/docs/sharing) ang bawat item mula sa panig ng user.
+Nagpi-print ng plano ang bawat command na naglilipat ng data, nagtatanong tungkol sa bawat file na naiiba sa kopya ng group, at nagtatanong ng `Proceed? [y/N]` bago ito magbago ng anuman:
 
-## Mga option
+```console
+$ ccam group set default --add history
+Plan (paths in /home/me/.local/share/ccam):
+personal: +history (group default)
+  move     projects, history.jsonl: profiles/personal → groups/default (first content of the group)
+  link     projects, history.jsonl: profiles/personal → groups/default
+work: +history (group default)
+  merge    new files in projects: profiles/work → groups/default
+  conflict profiles/work/history.jsonl ↔ groups/default/history.jsonl: merge by line
+  back up  projects, history.jsonl: profiles/work → profiles/work/.ccam-backup/20261020-153012
+  link     projects, history.jsonl: profiles/work → groups/default
+Proceed? [y/N]
+```
+
+Nasa tab na **Groups** ng [dashboard](/features/dashboard) din ang parehong mga pagbabago, at pinipili ng `s` sa isang account ang mga group nito.
+
+## Mga item
+
+| Item | Ano ang sakop |
+| --- | --- |
+| `mcp` | Mga MCP server, sa pamamagitan ng `mcp.json` ng group ([Mga shared na MCP server](/features/mcp)) |
+| `settings` | `settings.json` |
+| `memory` | ang global na `CLAUDE.md` |
+| `extensions` | `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/`, `rules/` |
+| `history` | `projects/` at `history.jsonl`, para magamit ng ibang account ang `--continue` |
+
+Nananatili sa sariling folder ng account ang item na hindi shine-share ng alinmang group ng account.
+
+## Mga command at option
+
+| Command | Ano ang ginagawa |
+| --- | --- |
+| `ccam group` o `ccam group list` | ilista ang mga group |
+| `ccam group show <group>` | kung ano ang shine-share ng group, ang mga account nito, ang folder nito at ang mga MCP server |
+| `ccam group add <group> --items <items> [--members <accounts>]` | gumawa ng group; inililipat dito ang mga item ng mga account nito |
+| `ccam group set <group> --add <items> \| --remove <items> \| --items <items>` | baguhin kung ano ang shine-share ng group, para sa bawat account nito |
+| `ccam group join <group> <account>...` | ilagay ang mga account sa group |
+| `ccam group leave <group> <account>...` | alisin ang mga account; may naiiwang kopya sa bawat isa |
+| `ccam group rename <group> <new-name>` | palitan ang pangalan sa config lang |
+| `ccam group remove <group> [--leave]` | mag-alis ng group |
 
 | Option | Ano ang ginagawa | Default |
 | --- | --- | --- |
-| `--mcp <on\|off\|group>` | Mga MCP server | hindi binabago |
-| `--settings <on\|off\|group>` | `settings.json` | hindi binabago |
-| `--memory <on\|off\|group>` | ang global na `CLAUDE.md` | hindi binabago |
-| `--extensions <on\|off\|group>` | `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/`, `rules/` | hindi binabago |
-| `--history <on\|off\|group>` | `projects/` at `history.jsonl` | hindi binabago |
-| `--fresh` | kapag ino-off ang sharing, magsimulang walang laman sa halip na kopyahin ang nilalaman ng group | off |
-| `--prefer <group\|mine\|merge>` | paano pagpapasyahan ang mga conflict | magtanong; sa `--yes`, ang default ng bawat item |
+| `--from <account>` | `add`, `set`: ang account na unang ipapasok ang kopya sa group | ang default na account, saka ayon sa numero |
+| `--replace` | `join`: umalis muna sa mga group na nagshe-share ng parehong mga item | off |
+| `--fresh` | nagsisimulang wala ang item ang mga account na tumitigil mag-share nito, sa halip na may kopya | off |
+| `--leave` | `remove`: alisin muna ang mga account ng group | kailangan kapag may mga account ito |
+| `--prefer <group\|mine\|merge>` | paano pagpapasyahan ang mga conflict | magtanong; sa `--yes`, ang default ng bawat file |
 | `-y`, `--yes` | tumakbo nang hindi nagtatanong; sinusunod ng mga conflict ang `--prefer` | off |
-| `-h`, `--help` | help para sa `share` | |
-| `--dry-run` (global) | sinusunod: nagtatanong tungkol sa mga conflict, nagpi-print ng plano, walang binabago | off |
+| `--dry-run` (global) | i-print ang plano, walang binabago | off |
 
-Ang ibig sabihin ng value na `on` ay ang group na `default`, ang `off` ay local (hindi shine-share), at pangalan ng group ang anumang ibang value. Nagiging pangalan ng folder sa ilalim ng `~/.local/share/ccam/groups/` ang mga pangalan ng group, kaya pumapalya ang `ccam share side --history ../x` na may `invalid group name: "../x"`. Ibinibigay ang account ayon sa pangalan o numero, at ang mga item lang na pinangalanan mo ang nagbabago.
+Ibinibigay ang mga account ayon sa pangalan o numero, at ang mga item bilang listahang pinaghihiwalay ng kuwit. Tumatanggap ang `ccam add` ng `--group <group>` (puwedeng ulitin) o `--no-group`.
 
 ## Paano ito gumagana
 
 Ang mga file na kasangkot:
 
-- `~/.config/ccam/config.toml`: ang table na `[profile.share]` ng bawat account, isang value bawat item.
+- `~/.config/ccam/config.toml`: ang mga entry na `[[group]]`: `name`, `items`, `members` at, kapag iba ang pangalan ng folder, `dir`.
 - `~/.local/share/ccam/profiles/<name>/`: ang `CLAUDE_CONFIG_DIR` ng account.
-- `~/.local/share/ccam/groups/<group>/`: ang mga shared na kopya.
+- `~/.local/share/ccam/groups/<folder>/`: ang mga shared na kopya.
 
-1. Binabasa ng `internal/cli/share.go` ang config, inilalapat ang bawat value ng `--<item>` sa kopya ng settings ng account gamit ang `config.Share.Set`, at tumatanggi kung tumatakbo ang account.
-2. Ikinukumpara ng `share.Build` ang kasalukuyang settings sa target at inililista ang mga hakbang. Binabasa lang nito ang disk: `os.Lstat` at `os.Readlink` para sa bawat path sa `share.Layout`. Listahan ng mga operasyon ang plano: ilipat sa bakanteng puwesto sa group (adopt), ilipat ang mga file na wala sa group (merge dir), isulat sa group ang naresolbang conflict, mag-back up, mag-unlink, mag-link, kumopya pabalik, isulat ulit ang mga plugin path at pagsamahin ang plugin registry.
-3. Pinagpapasyahan ang mga conflict, sa pamamagitan ng tanong o ng `--prefer`.
-4. Ipi-print ng `Plan.Describe` ang plano, at magtatanong ang ccam.
-5. Isinusulat ang target na settings sa `config.toml` bago may ilipat. Kapag huminto ang `Plan.Apply` sa kalagitnaan, binubuo ng `ccam doctor --fix` at ng muling pagpapatakbo ang kanilang plano patungo sa naka-save na target at tinatapos ang pagbabago.
-6. Pinapatakbo ng `Plan.Apply` ang mga hakbang nang sunod-sunod. Inililipat ng bawat hakbang ang data sa group o sa backup folder; walang binubura.
+Kapag binasa ang `config.toml`, nireresolba ang mga group ng bawat account sa iisang folder bawat item. Mga 25 µs ito para sa limang account, kaya `config.toml` pa rin lang ang binabasa ng isang launch. Error ang config kung saan makakakuha ang isang account ng item mula sa dalawang group, at walang nagsisimula hangga't hindi ito naaayos.
 
-Ang `share.Layout` ay listahan ng mga pinapayagang path na sakop ng bawat item. Hindi kailanman makakaabot sa group ang anumang wala rito. Pinapangalanan ng `share.Never` ang `.credentials.json` at `.claude.json`, at humihinto ang `Build` na may internal error kung lumabas man ang alinman sa layout. Walang path ang item na `mcp`: nasa loob ng `.claude.json` ang listahan ng server, kaya gumagana ang [MCP sharing](/features/mcp) sa pamamagitan ng `mcp.json` ng group sa halip, at binabago lang ng `--mcp` ang setting.
+Gumagana ang isang pagbabago sa isang kopya ng config:
 
-Ito ang nangyayari sa isang folder, ang `projects/`, kapag ino-on ng `side` ang kasaysayan at may laman na ang group:
+1. Binabago ng command ang kopya (`AddGroup`, `SetGroupItems`, `JoinGroup` …), na sinusuri ang mga patakaran.
+2. Ikinukumpara ng `internal/group` ang luma at ang bago at, para sa bawat account na nagbabago ang mga item, bumubuo ito ng plano gamit ang `share.Build`. Isa-isang binubuo ang mga plano, at nakikita ng bawat isa kung ano ang ilalagay ng mga nauna sa mga group folder, kaya ang unang account lang ang naglilipat ng kopya nito sa group. Galing ang unang kopya sa group folder kung mayroon na ito, saka sa `--from`, saka sa default na account, saka sa iba ayon sa numero.
+3. Tumatanggi ang ccam kung tumatakbo ang isa sa mga account na iyon, at sa Windows nang walang Developer Mode kung mangangailangan ng link ang isang file.
+4. Pinagpapasyahan ang mga conflict, sa pamamagitan ng tanong o ng `--prefer`, ipi-print ang plano, at magtatanong ang ccam.
+5. Sine-save ang bagong config bago may ilipat. Kapag huminto ang isang hakbang sa kalagitnaan, binubuo ng `ccam doctor --fix` at ng muling pagpapatakbo ang kanilang plano patungo sa mga naka-save na group at tinatapos ang pagbabago.
+6. Pinapatakbo ang mga plano nang sunod-sunod. Inililipat ng bawat hakbang ang data sa group o sa backup folder; walang binubura.
+
+Ang `share.Layout` ay listahan ng mga pinapayagang path na sakop ng bawat item. Hindi kailanman makakaabot sa group ang anumang wala rito. Pinapangalanan ng `share.Never` ang `.credentials.json` at `.claude.json`, at humihinto ang `Build` na may internal error kung lumabas man ang alinman sa layout. Walang path ang item na `mcp`: nasa loob ng `.claude.json` ang listahan ng server, kaya gumagana ang [MCP sharing](/features/mcp) sa pamamagitan ng `mcp.json` ng group.
+
+Ito ang nangyayari sa isang folder, ang `projects/`, kapag nagsimulang mag-share ng kasaysayan ang `side` at may laman na ang group:
 
 <!-- motion:share-on -->
 
-Kung wala pang laman ang group sa path na iyon, ang account ang unang nagshe-share nito at inililipat doon ang folder nito nang walang pagbabago, nang walang backup. Kung hindi, inililipat ng `mergeDir` sa group ang bawat file na wala sa group, at nananatili sa folder ng account ang mga file na mayroon sa magkabilang panig, kaya pinapanatili ang bersyon ng group. Pagkatapos ay napupunta ang folder ng account sa `.ccam-backup/<time>/` sa loob ng folder ng account, at naglalagay ang `os.Symlink` ng link sa puwesto nito. Ipinapangalan ang mga file ng usapan ayon sa kanilang session ID, kaya nagsasama ang mga kasaysayan mula sa ilang account nang walang banggaan.
+Kung wala pang laman ang group sa path na iyon, ang account ang unang nagshe-share nito at inililipat doon ang folder nito nang walang pagbabago. Kung hindi, inililipat sa group ang bawat file na wala pa sa group, at nananatili sa folder ng account ang mga file na mayroon sa magkabilang panig, kaya pinapanatili ang bersyon ng group. Pagkatapos ay napupunta ang folder ng account sa `.ccam-backup/<time>/` sa loob ng folder ng account, at may link na pumapalit sa puwesto nito. Ipinapangalan ang mga file ng usapan ayon sa kanilang session ID, kaya nagsasama ang mga kasaysayan mula sa ilang account nang walang banggaan. Nag-iimbak ang mga registry ng `plugins/` ng mga absolute na path na dumadaan sa folder ng account; itinuturo ng ccam ang mga ito sa folder ng group at pinagsasama ang mga entry ng account sa registry na mayroon na ang group.
 
-Gumagamit ang paglilipat ng `rename(2)` at bumabalik sa copy at delete kapag magkaibang file system. Ang relative na link sa loob ng inilipat na tree na tumuturo sa labas nito ay isinusulat ulit bilang absolute na link (`fsutil.PortableLink`), para gumana pa rin ito mula sa bagong lugar. Nag-iimbak ang mga registry ng `plugins/` (`installed_plugins.json`, `known_marketplaces.json`) ng mga absolute na path na dumadaan sa folder ng account; itinuturo ng ccam ang mga ito sa folder ng group at, kapag may registry na ang group, pinagsasama roon ang mga entry ng account.
-
-Binabaligtad ng pag-off ng isang item ang link:
+Binabaligtad ng pag-alis sa group ang link:
 
 <!-- motion:share-off -->
 
-Inaalis lang ng ccam ang link kung tumuturo ito sa groups folder, saka kinokopya ang kasalukuyang nilalaman ng group sa account gamit ang `CopyTree`. Sa `--fresh`, nilalaktawan ang pagkopya at nagsisimula ang account na walang laman sa path na iyon. Pinapanatili ng group ang nilalaman nito para sa ibang account. Kapag inilipat ang isang item mula sa isang group papunta sa iba, ina-unlink ito at nili-link sa bagong group, at hindi ginagalaw ang lumang group; sinasabi iyon ng plano sa linyang `Note:`.
+Inaalis lang ng ccam ang link kung tumuturo ito sa groups folder, saka kinokopya ang kasalukuyang nilalaman ng group sa account. Sa `--fresh`, nilalaktawan ang pagkopya. Pinapanatili ng group ang nilalaman nito para sa ibang account. Ang account na naglilipat ng item sa isang group na wala pang laman ang folder ay nagdadala ng kopya ng nakita nito, kaya napapanatili nito ang mga file nito; ganoon din ang mga MCP server. Nawawala sa account na tumitigil mag-share ng MCP ang mga server na kinopya ng ccam sa `.claude.json` nito (may naiiwang backup), dahil galing ang mga iyon sa group.
 
 Conflict ang iisang file na mayroon sa magkabilang panig na magkaiba ang nilalaman:
 
 <!-- motion:share-conflict -->
 
-Inililista ng `share.NewConflict` ang mga pagpipiliang angkop sa file. Nag-aalok ang `history.jsonl` ng `merge by line`, `keep group` at `use mine`, na nauuna ang pagsasama. Nag-aalok ang ibang `.json` file ng `keep group`, `use mine` at `merge JSON`. Nag-aalok ang anumang iba ng `keep group` at `use mine`. Ang unang pagpipilian ang default:
+Nag-aalok ang `history.jsonl` ng `merge by line`, `keep group` at `use mine`, na nauuna ang pagsasama. Nag-aalok ang ibang `.json` file ng `keep group`, `use mine` at `merge JSON`. Nag-aalok ang anumang iba ng `keep group` at `use mine`. Pinagsasama ng `merge JSON` ang mga object nang recursive, pinagdudugtong ang mga array nang walang duplicate, at pinapanatili ang value ng group kapag magkaiba ang itinakda ng magkabilang panig sa parehong key, kaya walang nakikitang pagbabago ang ibang account. Bawat pagpipilian maliban sa `keep group` ay sine-save muna ang kopya ng group sa `.ccam-backup/<time>/group/` ng account. Laging napupunta sa backup ang sarili mong file.
 
-```console
-history.jsonl differs from the group's copy.
-  mine:  ~/.local/share/ccam/profiles/side/history.jsonl
-  group: ~/.local/share/ccam/groups/default/history.jsonl
-  1) merge by line
-  2) keep group
-  3) use mine
-Choice [1]:
-```
+Sa bawat pagsisimula, ikinukumpara ng `share.Check` ang bawat path sa layout sa mga group ng account gamit lang ang `lstat` at `readlink`. Ginagawa agad ang nawawalang link. Pinapahinto ang pagsisimula ng totoong file kung saan dapat may link, ng link sa maling lugar, o ng lumang link, at itinuturo ang `ccam doctor --fix`.
 
-Pinagsasama ng `merge JSON` (`MergeJSONBytes`) ang mga object nang recursive, pinagdudugtong ang mga array nang walang duplicate, at pinapanatili ang value ng group kapag magkaiba ang itinakda ng magkabilang panig sa parehong key, kaya walang nakikitang pagbabago sa kilos ang ibang account. Pinapanatili ng `merge by line` ang mga linya ng group, saka idinadagdag ang mga linya mo na wala roon. Bawat pagpipilian maliban sa `keep group` ay sine-save muna ang kopya ng group sa `.ccam-backup/<time>/group/` sa folder ng account, saka isinusulat ang resulta gamit ang `fsutil.AtomicWrite`. Laging napupunta sa backup ang sarili mong file.
+### Pagpapalit ng pangalan, pag-alis at ang lumang format
 
-Pinagpapasyahan ng `--prefer group`, `mine` o `merge` ang bawat conflict nang hindi nagtatanong; ang ibig sabihin ng `merge` ay `merge JSON` o `merge by line`, alinman ang inaalok ng file, at pinapanatili ang default ng file na hindi nag-aalok ng alinman. Kinukuha ng `--yes` lang ang default ng bawat file.
-
-Sa bawat pagsisimula, ikinukumpara ng `share.Check` ang bawat path sa layout sa setting gamit lang ang `lstat` at `readlink`, kaya sapat itong magaan para sa launch path. Ginagawa agad ang nawawalang link, dahil walang mawawala. Pinapahinto ang pagsisimula ng totoong file kung saan dapat may link, ng link sa maling lugar, o ng lumang link:
-
-```console
-ccam: stopped because of share link problems:
-  ~/.local/share/ccam/profiles/work/CLAUDE.md: set to shared but is a real file, not a link
-Repair them with `ccam doctor --fix`, then run again
-```
-
-Pinapatakbo ng `ccam doctor --fix` ang `share.Build` na ang naka-save na settings ang nasa magkabilang panig, na hinahango ang bawat hakbang mula sa nasa disk, pinapanatili ang nilalaman ng group sa mga conflict at bina-back up ang anumang pinapalitan nito.
+- Config lang ang binabago ng `ccam group rename`. Pinapanatili ng folder ang pangalan nito at itinatala ito ng group bilang `dir`, kaya walang inililipat at walang puwedeng mawala.
+- Tumatanggi ang `ccam group remove` sa group na may mga account maliban kung idagdag mo ang `--leave`. May naiiwang kopya sa bawat account, at napupunta ang folder sa `~/.local/share/ccam/trash/` maliban kung ginagamit ito ng ibang group.
+- Bago nagkaroon ng mga group, nag-iimbak ang `config.toml` ng table na `[profile.share]` bawat account. Binabasa ng ccam ang format na iyon bilang mga group nang walang inililipat. Sa unang pag-save, isinusulat nito ang bagong format at itinatabi ang lumang file bilang `config.toml.bak`. Nagiging iisang group na ipinangalan sa folder ang mga item na shine-share ng parehong mga account; nakakakuha ang iba ng mga pangalang gaya ng `default-history` at patuloy na ginagamit ang parehong folder.
 
 ### Sa Windows
 
-Gumagawa lang ang Windows ng mga symbolic link sa Developer Mode (Settings > System > For developers) o para sa isang administrator. Sinusubukan muna ng `fsutil.Link` ang symbolic link. Kapag wala ang karapatang iyon, nagiging directory junction ang shared na folder (`agents`, `skills`, `projects` at ang iba pa), na puwedeng gawin ng kahit sinong user, at pareho ang paggana nito para sa Claude Code. Symbolic link lang ang puwedeng maging shared na file (`settings.json`, `CLAUDE.md`, `history.jsonl`), kaya humihinto ang ccam na may `Windows links files only in Developer Mode` at iminumungkahing i-on ito o panatilihing lokal ang item na iyon. Binabasa ng `share.Check` ang mga junction bilang mga link (`fsutil.LinkTarget`), at ang pag-alis ng folder ng account ay nag-aalis ng junction mismo, hindi kailanman ng nilalaman ng group na itinuturo nito.
+Gumagawa lang ang Windows ng mga symbolic link sa Developer Mode (Settings > System > For developers) o para sa isang administrator. Kapag wala ang karapatang iyon, nagiging directory junction ang shared na folder, na pareho ang paggana para sa Claude Code. Symbolic link lang ang puwedeng maging shared na file (`settings.json`, `CLAUDE.md`, `history.jsonl`), kaya tinatanggihan ang pagbabago sa group na nangangailangan nito bago may ilipat.
 
 ## Kaligtasan at mga espesyal na kaso
 
-- **Mga tumatakbong account.** Tumatanggi ang ccam na baguhin ang sharing habang tumatakbo ang Claude Code bilang ang account (`account work is running; quit it first, then change its sharing`), dahil patuloy na nagsusulat ang session sa mga file na inililipat at mawawala ang mga linyang idinadagdag nito habang nangyayari iyon. Ipi-print pa rin ng `--dry-run` ang plano.
-- **Mga backup.** May sariling `.ccam-backup/<time>/` folder ang bawat plano sa folder ng account, na may numerong suffix kapag nagsimula ang dalawang plano sa parehong segundo. Hindi kailanman binubura ng ccam ang mga ito.
-- **Bahagyang pagpalya.** Kapag pumalya ang isang hakbang, ipi-print ng ccam ang error at kung nasaan ang mga orihinal, at sasabihing tapusin mo gamit ang `ccam doctor --fix`. Naka-save na ang target, kaya nagpapatuloy ang pagkukumpuni patungo roon.
+- **Mga tumatakbong account.** Tinatanggihan ang isang pagbabago habang tumatakbo ang Claude Code bilang isa sa mga account na inililipat nito, dahil patuloy na nagsusulat ang session sa mga file na iyon. Ang account lang na pinangalanan ang saklaw ng pag-alis at pagsali. Ipi-print pa rin ng `--dry-run` ang plano.
+- **Mga backup.** May sariling `.ccam-backup/<time>/` folder ang bawat plano sa folder ng account. Hindi kailanman binubura ng ccam ang mga ito.
 - **Sarili mong mga link.** Kung link na ginawa mo na ang isang path, halimbawa sa isang dotfiles repository, at walang laman ang group, kinokopya ng ccam ang target ng link sa group at inililipat ang link mismo sa backup. Hindi ginagalaw ang target.
-- **Mga login file.** Hindi kailanman nili-link, inililipat o kinokopya sa group ang `.credentials.json` at `.claude.json`.
-- **Dalawang account sa isang folder.** Sinusulatan ng mga account na nagshe-share ng kasaysayan ang parehong mga file. Kapag nagsimula ang pangalawang account ng parehong history group sa folder kung saan may tumatakbo na, nagbababala ang ccam at nagtatanong bago magpatuloy.
+- **Mga in-import na folder.** Binabago kung nasaan ito ang account na nirehistro kung nasaan ito gamit ang `ccam import` (gaya ng `~/.claude`), kaya nakikita rin ng karaniwang `claude` ang pagbabago; sinasabi iyon ng plano.
+- **Dalawang account sa isang folder.** Sinusulatan ng mga account na nagshe-share ng kasaysayan ang parehong mga file. Kapag nagsimula ang pangalawa sa folder kung saan may tumatakbo na, nagbababala ang ccam at nagtatanong.
+- **Mga manwal na pagbabago.** Hindi pinapansin ang miyembrong hindi account, at iniuulat ito ng `ccam doctor`. Hindi puwedeng maging pangalan ng group ang `local`, `on`, `off` at `none`.
 
 ## Kaugnay
 
+- [Ang dashboard](/features/dashboard)
 - [I-share ang mga MCP server, settings at kasaysayan](/docs/sharing)
 - [Mga shared na MCP server](/features/mcp)
 - [Kopyahin ang dati nang setup](/features/migrate)

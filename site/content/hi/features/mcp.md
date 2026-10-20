@@ -4,7 +4,7 @@ description: ccam mcp add, add-json, list, remove और import से हर �
 updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: f1de7db4b7be
+sourceHash: 6d3b3c38c6cb
 ---
 
 Claude Code user MCP सर्वर `.claude.json` में रखता है, वही फ़ाइल जिसमें अकाउंट का लॉगिन होता है, इसलिए यह फ़ाइल अकाउंट्स के बीच साझा नहीं हो सकती। ccam साझा सर्वरों को एक ग्रुप फ़ाइल `mcp.json` में रखता है, और शुरू होते समय उसे ग्रुप के हर अकाउंट को देता है। किसी सर्वर को एक बार में अपने सभी अकाउंट्स के लिए जोड़ने के लिए `ccam mcp` इस्तेमाल करें, और किसी एक session में जोड़े गए सर्वर को दूसरों तक ले जाने के लिए `ccam mcp import`।
@@ -36,7 +36,7 @@ group default (work, side)
 only in account work: pg
 ```
 
-ऐसा नाम जोड़ना जो ग्रुप के पास पहले से है, उसकी definition बदल देता है और `added` की जगह `updated` प्रिंट करता है। सर्वर किसी अकाउंट तक केवल तभी पहुँचते हैं जब वह उस ग्रुप के साथ MCP साझा करता हो (`ccam share <name> --mcp on`); जब अभी कोई अकाउंट MCP साझा नहीं करता, तो `add` यह बताता है।
+ऐसा नाम जोड़ना जो ग्रुप के पास पहले से है, उसकी definition बदल देता है और `added` की जगह `updated` प्रिंट करता है। सर्वर किसी अकाउंट तक केवल तभी पहुँचते हैं जब वह उस ग्रुप में हो और ग्रुप MCP साझा करता हो (`ccam group set <group> --add mcp`); जब ग्रुप ऐसा नहीं करता, तो `add` यह बताता है।
 
 ## विकल्प
 
@@ -121,7 +121,7 @@ Skipped gh: group default already has a different gh (`ccam mcp import work gh -
 - **चल रहे अकाउंट।** `import` ग्रुप में कॉपी करता है लेकिन चल रहे अकाउंट की अपनी entries रहने देता है और यह बताता है; session ख़त्म होने के बाद इसे फिर से चलाएँ। Sync चल रहे अकाउंट्स को छोड़ देता है।
 - **Remote Control के लिए कॉपियाँ।** चल रहे अकाउंट की कॉपी को छुआ नहीं जाता: `Note: account side is running, so the copy in its .claude.json stays as it was until its next Remote Control launch.` `mcp_strategy = "sync"` के साथ कुछ भी अपडेट करने की ज़रूरत नहीं होती, क्योंकि हर बार शुरू करने पर sync होता है।
 - **टूटी फ़ाइलें।** अगर `.claude.json` वैध JSON नहीं है, तो sync उसे बिना छुए छोड़ देता है और त्रुटि बताता है। अगर 2 सेकंड में lock न लिया जा सके, तो ccam `could not lock … (Claude Code is writing the file)` बताता है।
-- **MCP साझा न करने वाले अकाउंट।** `import` मना कर देता है और पहले `ccam share side --mcp on` चलाने को कहता है।
+- **MCP साझा न करने वाले अकाउंट।** `import` मना कर देता है और कहता है कि पहले अकाउंट को ऐसे ग्रुप में रखें जो MCP साझा करता हो (`ccam group join <group> side`)।
 - **ग्रुप के नाम।** `-g` केवल ग्रुप का नाम लेता है; वह `groups/` के नीचे एक फ़ोल्डर बनता है, इसलिए `../x` जैसे नाम अस्वीकार किए जाते हैं।
 
 ## संबंधित

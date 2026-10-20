@@ -1,46 +1,45 @@
 ---
 title: Shiriki seva za MCP, mipangilio na historia
-description: Jinsi ccam inavyoshiriki seva za MCP, settings.json, CLAUDE.md, agents, skills na historia ya mazungumzo kati ya akaunti za Claude Code; kuingia hubaki tofauti.
+description: Jinsi vikundi vya ccam vinavyoshiriki seva za MCP, settings.json, CLAUDE.md, skills na historia kati ya akaunti za Claude Code; kuingia hubaki tofauti.
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 888d466b29e9
+sourceHash: "2606e4ec682e"
 ---
 
-Kila akaunti huhifadhi taarifa zake za kuingia. Kila kitu kingine kinaweza kushirikiwa kipengele kwa kipengele: ccam huweka kiungo kutoka faili au folda ya akaunti kwenda folda ya kikundi kinachoshirikiwa, ili badiliko lililofanywa katika akaunti moja lionekane katika akaunti zote za kikundi hicho.
+Kila akaunti huhifadhi taarifa zake za kuingia. Kila kitu kingine kinaweza kushirikiwa kupitia **vikundi**: kikundi hutaja vipengele kinachoshiriki na akaunti zilizomo, na ccam huunganisha faili za kila moja ya akaunti hizo na folda ya kikundi, ili badiliko lililofanywa katika akaunti moja lionekane katika zote.
 
 ## Kinachoweza kushirikiwa
 
-| Kipengele | Chaguo | Kinachoshirikiwa |
-| --- | --- | --- |
-| Seva za MCP | `--mcp` | `mcp.json` ya kikundi, hupitishwa kwa Claude Code wakati wa kuanza |
-| Mipangilio | `--settings` | `settings.json`: ruhusa, hooks, model, mstari wa hali (status line) |
-| Kumbukumbu ya jumla | `--memory` | `CLAUDE.md` |
-| Viendelezi | `--extensions` | `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/`, `rules/` |
-| Historia ya mazungumzo | `--history` | `projects/` na `history.jsonl` |
+| Kipengele | Kinachoshirikiwa |
+| --- | --- |
+| `mcp` | seva za MCP: `mcp.json` ya kikundi, hupitishwa kwa Claude Code wakati wa kuanza |
+| `settings` | `settings.json`: ruhusa, hooks, model, mstari wa hali (status line) |
+| `memory` | `CLAUDE.md` ya jumla |
+| `extensions` | `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/`, `rules/` |
+| `history` | historia ya mazungumzo: `projects/` na `history.jsonl` |
 
-Akaunti mpya hushiriki kila kitu isipokuwa historia ya mazungumzo.
+Akaunti yako ya kwanza huunda kikundi `default`, ambacho hushiriki kila kitu isipokuwa historia ya mazungumzo, na akaunti zinazofuata hujiunga nacho.
 
 Faili za kuingia `.credentials.json` na `.claude.json` hazishirikiwi kamwe. ccam huunganisha njia kutoka kwenye orodha maalum tu, na faili hizi mbili hazimo ndani yake.
 
-Ukurasa huu unashughulikia kazi za kila siku. Kila chaguo kimeelezwa kwenye kurasa za vipengele: [kushiriki kati ya akaunti](/features/share), [seva za MCP zinazoshirikiwa](/features/mcp) na [kunakili usanidi uliopo](/features/migrate).
+Ukurasa huu unashughulikia kazi za kila siku. Kila chaguo kimeelezwa kwenye kurasa za vipengele: [kushiriki kwa vikundi](/features/share), [seva za MCP zinazoshirikiwa](/features/mcp) na [kunakili usanidi uliopo](/features/migrate).
 
 ## Vikundi
 
-`on` inamaanisha kikundi cha `default`. Unaweza pia kutoa jina, ili akaunti fulani tu zishiriki kipengele:
-
 ```sh
-ccam share work --history team
-ccam share side --history team
+ccam group                                   # the groups, what they share, their accounts
+ccam group set default --add history         # every account in default shares history
+ccam group add team --items history --members work,side
 ```
 
-Sasa `work` na `side` zinashiriki mazungumzo kati yao, lakini si na akaunti zako nyingine.
+Akaunti inaweza kuwa katika vikundi kadhaa, lakini kila kipengele hutoka kwenye kikundi kimoja tu. Kwa hiyo ili kushiriki historia kati ya `work` na `side` lakini si na akaunti zako nyingine, iache historia nje ya `default` na uzipe akaunti hizo mbili kikundi chao wenyewe, kama ilivyo hapo juu. `ccam share work` huonyesha kile ambacho akaunti inashiriki na kupitia kikundi kipi. [Dashibodi](/features/dashboard) hufanya vivyo hivyo kwenye kichupo chake cha Groups.
 
-## Kuwasha kushiriki
+## Akaunti inapoanza kushiriki
 
-Akaunti inapoanza kushiriki kipengele, ccam:
+Akaunti inapoanza kushiriki kipengele (inajiunga na kikundi, au kikundi chake kinaongeza kipengele hicho), ccam:
 
-1. huchapisha mpango wa kila faili itakayohamisha, kunakili au kuunganisha, na huuliza kabla ya kuanza;
+1. huchapisha mpango wa kila faili itakayohamisha, kunakili au kuunganisha kwa kila akaunti, na huuliza kabla ya kuanza;
 2. huhamisha faili za akaunti kwenda folda ya kikundi ikiwa kikundi bado kiko tupu, au huongeza faili ambazo kikundi bado hakina;
 3. faili ile ile inapotofautiana, huuliza kama ubaki na toleo la kikundi, utumie lako, au uunganishe JSON;
 4. huhifadhi faili yako asili katika `.ccam-backup/<time>/` ndani ya folda ya akaunti;
@@ -48,12 +47,13 @@ Akaunti inapoanza kushiriki kipengele, ccam:
 
 Faili za mazungumzo hupewa majina kwa kufuata session ID yake, kwa hiyo historia kutoka akaunti kadhaa huungana bila migongano.
 
-ccam haibadilishi kushiriki wakati Claude Code inaendeshwa kama akaunti hiyo, kwa sababu kipindi kinaendelea kuandika kwenye faili zinazohamishwa. Kifunge kwanza.
+ccam haibadilishi akaunti wakati Claude Code inaendeshwa kama akaunti hiyo, kwa sababu kipindi kinaendelea kuandika kwenye faili zinazohamishwa. Kifunge kwanza.
 
-## Kuzima kushiriki
+## Akaunti inapoacha kushiriki
 
 ```sh
-ccam share work --history off
+ccam group leave team work                   # work leaves the group
+ccam group set default --remove history      # nobody in default shares history any more
 ```
 
 Kiungo huondolewa na akaunti hupata nakala yake yenyewe ya maudhui ya sasa ya kikundi. Ongeza `--fresh` ili kuanza ikiwa tupu badala yake. Kikundi huendelea kuhifadhi maudhui yake kwa ajili ya akaunti nyingine.
@@ -95,14 +95,12 @@ Copy from /home/me/.claude into group default (/home/me/.local/share/ccam/groups
   Conversation history (projects/, history.jsonl) is not included; add --history to copy it.
 Copy these into group default? [y/N] y
 ✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, commands/, skills/
-Accounts that share these through group default:
-  mcp         personal
-  settings    personal
-  memory      personal
-  extensions  personal
+Group default: personal
+To share them:
+  ccam group join default work
 ```
 
-Mwishoni, ccam huorodhesha akaunti zinazoshiriki kila kipengele kupitia kikundi. Ikiwa baadhi ya akaunti hazishiriki, huchapisha amri za `ccam share` zinazowasha kushiriki kwa akaunti hizo.
+Mwishoni, ccam huorodhesha akaunti za kikundi. Ikiwa kikundi bado hakishiriki mojawapo ya vipengele, au baadhi ya akaunti hazimo ndani yake, huchapisha amri za `ccam group` zinazobadilisha hilo.
 
 Kikundi kikiwa tayari na nakala tofauti ya faili, ccam huuliza, kama inavyofanya unapowasha kushiriki: kuhifadhi nakala ya kikundi au kutumia yako. `settings.json` na faili nyingine za JSON zinaweza pia kuunganishwa, na `history.jsonl` mstari kwa mstari. Nakala za awali za kikundi huhifadhiwa katika `.ccam-backup/<time>/` ndani ya folda ya kikundi.
 

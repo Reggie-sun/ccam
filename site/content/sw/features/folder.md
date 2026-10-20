@@ -4,7 +4,7 @@ description: ccam folder hufanya folda na kila kitu chini yake kitumie akaunti m
 updated: 2026-10-20
 order: 11
 translation: machine
-sourceHash: 5071b04a194d
+sourceHash: "46d1410a3d81"
 ---
 
 `ccam folder work ~/code/company` hufanya kila uanzishaji usio na jina la akaunti ndani ya `~/code/company`, na katika folda yoyote iliyo chini yake, uanzishe Claude Code kama `work`. Nje yake, akaunti chaguo-msingi huanza kama hapo awali. Kutaja akaunti, kwa `ccam personal` au njia fupi kama `ccpersonal`, huanzisha akaunti hiyo kila mara.
@@ -34,7 +34,7 @@ Uanzishaji huu hutumia akaunti ya folda:
 - `ccam -p "…"` na uanzishaji mwingine wowote ambao hoja yake ya kwanza ni chaguo la Claude Code
 - `ccam run` bila jina, na `ccam --dry-run`
 - `ccam --fallback -p "…"` kwa jaribio lake la kwanza
-- kichaguzi, `ccam` peke yake, ambacho huanza kiashiria chake kikiwa kwenye akaunti ya folda
+- dashibodi, `ccam` peke yake, ambacho huanza kiashiria chake kikiwa kwenye akaunti ya folda
 
 ## Chaguo
 

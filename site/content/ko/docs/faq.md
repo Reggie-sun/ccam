@@ -5,7 +5,7 @@ description: ccam, Claude Code 계정, 사용량 한도, 공유, 개인정보, �
 updated: 2026-10-20
 order: 6
 translation: machine
-sourceHash: 80a5475ccfee
+sourceHash: "e7d4a2c877ac"
 ---
 
 ## ccam은 Anthropic 공식 도구인가요?
@@ -26,7 +26,7 @@ sourceHash: 80a5475ccfee
 
 ## 다른 계정에서 대화를 이어 가려면 어떻게 하나요?
 
-`ccam share <name> --history on`으로 두 계정이 대화 내역을 공유하도록 설정한 뒤 `ccam next --continue`를 실행하세요. 그러면 Claude Code가 다음 계정에서 현재 폴더의 가장 최근 대화를 엽니다.
+`ccam group set default --add history`로 계정들이 대화 내역을 공유하도록 설정한 뒤(두 계정만의 그룹을 따로 만들어도 됩니다: `ccam group add pair --items history --members work,side`) `ccam next --continue`를 실행하세요. 그러면 Claude Code가 다음 계정에서 현재 폴더의 가장 최근 대화를 엽니다.
 
 ## ccam이 제 로그인 정보를 보거나 외부로 보내나요?
 

@@ -5,7 +5,7 @@ description: Girka ccam a Linux, macOS ko Windows da umarni ɗaya, kunshin .deb 
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: aea4984c1576
+sourceHash: 07fab3165030
 ---
 
 Gudanar da wannan a terminal a Linux ko macOS:
@@ -80,7 +80,7 @@ Plugin na ccam yana koya wa Claude Code kansa yin amfani da ccam: don duba wane 
 /plugin install ccam --marketplace jhyunwoo/ccam
 ```
 
-Yana ƙara skill ɗaya da umarni biyu, `/ccam:usage` da `/ccam:ext`. Skill ɗin ba ya taɓa gudanar da umarnan da ke shiga ko motsa fayiloli; yana ba da shawarar su maimakon haka.
+Yana ƙara skill, umarnan `/ccam:usage`, `/ccam:ext` da `/ccam:switch`, da hooks biyu: idan zama ya tsaya a iyakar amfani kana samun sanarwa a terminal, kuma `/ccam:switch [account]` yana miƙa tattaunawar ga wani asusu ([cikakken bayani](/features/next#inside-claude-code)). Hooks ɗin suna gudanar da `ccam`, don haka dole ne ya kasance a `PATH` da Claude Code ke gani. Skill ɗin ba ya taɓa gudanar da umarnan da ke shiga ko motsa fayiloli; yana ba da shawarar su maimakon haka.
 
 ## Duba girkawar
 

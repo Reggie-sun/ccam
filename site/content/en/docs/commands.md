@@ -8,7 +8,7 @@ order: 3
 translation: source
 ---
 
-Put `--dry-run` before a command to see what it would do without doing it, for example `ccam --dry-run work`. It works when starting Claude Code (`ccam <name>`, `ccam run`, `ccam next`) and with `share`, `migrate`, `shortcut`, `update` and `doctor --fix`. Other commands that change something refuse it instead of running.
+Put `--dry-run` before a command to see what it would do without doing it, for example `ccam --dry-run work`. It works when starting Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`) and with `group`, `migrate`, `shortcut`, `update` and `doctor --fix`. Other commands that change something refuse it instead of running.
 
 <!-- commands -->
 
@@ -33,9 +33,10 @@ A shortcut such as `ccwork` starts its account the same way: `ccwork --resume` d
 
 ```sh
 ccam add                      # wizard
-ccam add work --share history=on
+ccam add work --group default --group team
 ccam add side --shortcut ccside
 ccam add ci --no-login        # log in later with: ccam login ci
+ccam login --expired          # log in every account whose login no longer works
 ccam rename work job
 ccam remove side              # folder moves to ~/.local/share/ccam/trash
 ccam import ~/.claude-old --name old
@@ -46,9 +47,9 @@ ccam add gw --api --base-url https://llm.example.com --auth bearer --key-from en
 
 `ccam add --api` adds an account that uses an API key instead of a Claude login; ccam reads the key at each launch and never stores it. See [API key accounts](/features/api).
 
-`ccam rename`, `ccam remove` and `ccam share` refuse to change an account while Claude Code is running as that account. Quit the session first.
+`ccam rename`, `ccam remove` and the `ccam group` commands refuse to change an account while Claude Code is running as that account. Quit the session first.
 
-`ccam list --json` prints every account with its slot, shortcut, email and folder. Its `share` object maps each item (`mcp`, `settings`, `memory`, `extensions`, `history`) to a group name or `local`.
+`ccam list --json` prints every account with its slot, shortcut, email and folder. Its `groups` array lists the account's groups, and its `share` object maps each item (`mcp`, `settings`, `memory`, `extensions`, `history`) to the group it comes from, or `local`.
 
 ## Shortcuts
 
@@ -69,12 +70,15 @@ Names use the characters a-z, 0-9, `.`, `-` and `_`. A name cannot be a ccam com
 ## Sharing
 
 ```sh
-ccam share work                       # show the current state
-ccam share work --history on --mcp team
-ccam share work --settings off --fresh
+ccam group                                  # the groups, what they share, their accounts
+ccam group add team --items history --members work,side
+ccam group set default --add history        # every account in default changes together
+ccam group join team personal
+ccam group leave team side --fresh
+ccam share work                             # what work shares, and through which group
 ```
 
-Each item takes `on` (the `default` group), `off`, or a group name. See [sharing](/docs/sharing).
+A group shares items between its accounts; an account can be in several groups, but each item comes from one group only. See [sharing with groups](/features/share).
 
 ## Copying an existing setup
 
@@ -106,14 +110,17 @@ ccam mcp remove fs
 ccam usage           # also: ccam u
 ccam usage --watch   # refresh every 60 seconds
 ccam usage --json
-ccam next --continue
+ccam usage --source claude      # Claude Code looks it up; ccam never touches a token
+ccam next --continue            # this folder's last conversation, as the next account
 ccam next --auto
 ccam next --auto --max-usage 80 --wait
 ccam pick                       # the account with the most room, for a script
 ccam "$(ccam pick)" -p "…"      # start a worker on it
+ccam agents                     # background sessions of every account
+ccam attach 49ec0028            # open one, as the account that started it
 ```
 
-`next --auto`, `--fallback` and `ccam pick` choose the same way: below `auto_max_usage` (`config.toml`, default 100) first, by `auto_strategy` (`headroom` or `expiring`), counting the `--model` weekly window, never an account at 100%. When none can be chosen they exit with code 75, or with `--wait` wait for the first account to reset. See [Switching to the next account](/features/next) and [Picking an account for scripts](/features/pick).
+`next --auto`, `--fallback` and `ccam pick` choose the same way: below `auto_max_usage` (`config.toml`, default 100) first, by `auto_strategy` (`headroom`, `expiring` or `balance`), counting the `--model` weekly window, never an account at 100%, and within the organization of the account they start from (`--cross-org` or `cross_org = true` to look further). When none can be chosen they exit with code 75, or with `--wait` wait for the first account to reset. `ccam next --continue` carries a conversation over even between accounts that do not share history: Claude Code then copies it into the new account. Inside Claude Code, the plugin's `/ccam:switch [account]` hands a conversation on, and `ccam hook` is what its hooks run. See [Switching to the next account](/features/next), [Picking an account for scripts](/features/pick) and [Background sessions of every account](/features/agents).
 
 ## Maintenance
 
@@ -135,10 +142,10 @@ ccam completion bash # or zsh, powershell
 
 | Path | Contents |
 | --- | --- |
-| `~/.config/ccam/config.toml` | Accounts and what they share |
+| `~/.config/ccam/config.toml` | Accounts, groups and settings (`theme`, `usage_source`, `relay`, `cross_org` …) |
 | `~/.local/share/ccam/profiles/<name>/` | Each account's `CLAUDE_CONFIG_DIR` |
 | `~/.local/share/ccam/groups/<group>/` | Shared settings, MCP servers, extensions and history |
-| `~/.local/state/ccam/` | Usage cache and last-used times |
+| `~/.local/state/ccam/` | Usage cache, last-used times and the notes `/ccam:switch` and the limit hook leave (`handoff/`) |
 | `~/.local/bin/<shortcut>` | Shortcut commands such as `ccwork`, links to ccam |
 
 The `XDG_CONFIG_HOME`, `XDG_DATA_HOME` and `XDG_STATE_HOME` variables move these folders. On Windows, `~` is `%USERPROFILE%` and shortcuts are `<shortcut>.exe`.

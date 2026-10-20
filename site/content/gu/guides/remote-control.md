@@ -4,7 +4,7 @@ description: ccam <name> rc વડે કોઈ પણ એકાઉન્ટથ�
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 59b802c44bb3
+sourceHash: 5f0b90ea53d6
 ---
 
 `ccam work rc` Claude Code નું Remote Control `work` એકાઉન્ટ તરીકે શરૂ કરે છે, જેથી તમે claude.ai/code કે Claude મોબાઇલ ઍપ પરથી આ કમ્પ્યૂટર પરનાં સેશન ચલાવી શકો. તે `claude rc` જેવું જ કામ કરે છે, ફક્ત એક ફરક સાથે: જો એકાઉન્ટ MCP સર્વર શેર કરતું હોય, તો ccam એક વાર પૂછે છે કે તેમને એકાઉન્ટની `.claude.json` માં કૉપિ કરવા કે નહીં, કારણ કે Remote Control સેશન સર્વર બીજે ક્યાંયથી વાંચતાં નથી.
@@ -33,7 +33,7 @@ ccam --dry-run work rc                # print the command instead of running it
 | `--dry-run` (એકાઉન્ટ પહેલાં) | environment અને કમાન્ડ છાપે છે, અને MCP સૂચના હોય તો તે પણ. ન તો પૂછે છે, ન કૉપિ કરે છે | off |
 | `Copy them into .claude.json (a backup is kept)? [y/N]` | જ્યારે એકાઉન્ટ MCP સર્વર શેર કરતું હોય અને તેની `.claude.json` માં ગ્રુપની હાલની યાદી ન હોય ત્યારે પુછાય છે. `y` તેમને કૉપિ કરે છે, `N` કે Enter તેમના વગર શરૂ કરે છે | `N` |
 | `~/.config/ccam/config.toml` માં `mcp_strategy = "sync"` | દરેક શરૂઆત પહેલાં, Remote Control હોય કે ન હોય, ગ્રુપના સર્વર `.claude.json` માં કૉપિ કરે છે, તેથી ક્યારેય કશું પુછાતું નથી | `"flag"` |
-| `ccam share work --mcp off` | એકાઉન્ટ સાથે MCP સર્વર શેર કરવાનું બંધ કરે છે; પછી Remote Control ફક્ત એકાઉન્ટના પોતાના સર્વર સાથે શરૂ થાય છે અને કશું પુછાતું નથી | on |
+| `ccam group leave <group> work` | એકાઉન્ટ સાથે MCP શેર કરતા ગ્રુપમાંથી તેને બહાર કાઢે છે; પછી Remote Control ફક્ત એકાઉન્ટના પોતાના સર્વર સાથે શરૂ થાય છે અને કશું પુછાતું નથી | `default` માં |
 
 ### Remote Control ના ઓપ્શન
 
@@ -124,7 +124,7 @@ $ ccam mcp add ctx --url https://mcp.context7.com/mcp
 
 ### ccam દર વખતે પૂછે છે
 
-તમે હજી સર્વર કૉપિ કર્યા નથી. એક વાર `y` જવાબ આપો, અથવા `mcp_strategy = "sync"` સેટ કરો. જો Remote Control માં તમારે સર્વર ક્યારેય ન જોઈતા હોય, તો એકાઉન્ટ સાથે MCP શેર કરવાનું બંધ કરો: `ccam share work --mcp off`.
+તમે હજી સર્વર કૉપિ કર્યા નથી. એક વાર `y` જવાબ આપો, અથવા `mcp_strategy = "sync"` સેટ કરો. જો Remote Control માં તમારે સર્વર ક્યારેય ન જોઈતા હોય, તો એકાઉન્ટ સાથે MCP શેર કરવાનું બંધ કરો: તેને એ ગ્રુપમાંથી બહાર કાઢો (`ccam group leave default work`), અથવા MCP ને એવા અલગ ગ્રુપમાં રાખો જેમાં એ એકાઉન્ટ ન હોય.
 
 ### `ccam work rc` તરત જ `--mcp-config` વિશેની ભૂલ સાથે નિષ્ફળ જાય છે
 

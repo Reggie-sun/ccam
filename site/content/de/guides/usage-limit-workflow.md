@@ -4,7 +4,7 @@ description: Auf den Reset warten oder dasselbe Gespräch sofort in einem andere
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: ff765a189332
+sourceHash: 38b80d780bba
 ---
 
 Wenn ein Konto sein Nutzungslimit erreicht (oft Rate Limit genannt), hast du zwei Möglichkeiten: warten, bis das Limit zurückgesetzt wird, oder dasselbe Gespräch sofort in einem anderen Konto fortsetzen, das dir gehört. Mit ccam braucht das Zweite nur einen Befehl, `ccam next --auto --continue`, sobald der Gesprächsverlauf zwischen den Konten geteilt wird.
@@ -25,8 +25,7 @@ Wenn du ein zweites Konto hast, kannst du direkt mit demselben Gespräch weiterm
 curl -fsSL https://ccam.dev/install.sh | sh
 ccam add personal
 ccam add work
-ccam share personal --history on
-ccam share work --history on
+ccam group set default --add history
 ccam statusline install
 ```
 
@@ -49,17 +48,19 @@ ccam usage
 ccam next --auto --continue
 ```
 
-Claude Code startet als `work` mit dem neuesten Gespräch des aktuellen Ordners, einschließlich allem, was bisher gesagt wurde.
+Claude Code startet als `work` mit dem neuesten Gespräch des aktuellen Ordners, einschließlich allem, was bisher gesagt wurde. Geteilter Verlauf (`ccam group set default --add history` oben) hält es bei einem Gespräch; ohne ihn kopiert Claude Code das Gespräch nach `work`, und ccam sagt dir, wie viele Tokens diese erste Antwort erneut liest.
+
+Mit dem [ccam-Plugin](/docs/install#claude-code-plugin) in Claude Code zeigt eine Sitzung, die an ihrem Limit anhält, eine Benachrichtigung, und `/ccam:switch` (oder `/ccam:switch work`) merkt das Gespräch für `ccam next --continue` vor, sodass nichts zu raten bleibt.
 
 ## Wechselt ccam das Konto automatisch?
 
-Nein. ccam läuft nicht, während du arbeitest: Es startet Claude Code und ersetzt sich selbst durch diesen Prozess. Du entscheidest, wann gewechselt wird, und `ccam next --auto` wählt das Konto mit der geringsten 5-Stunden-Nutzung und überspringt Konten, die bei 100 % oder nicht angemeldet sind. Manche anderen Tools tauschen stattdessen die Anmeldung einer laufenden Sitzung aus; [ccam und andere Tools zum Kontowechsel](/compare/account-switchers) erklärt den Unterschied.
+Nein. ccam läuft nicht, während du arbeitest: Es startet Claude Code und ersetzt sich selbst durch diesen Prozess. Du entscheidest, wann gewechselt wird, und `ccam next --auto` wählt das Konto mit der geringsten 5-Stunden-Nutzung und überspringt Konten, die bei 100 % stehen, nicht angemeldet sind oder zu einer anderen Organisation gehören. Mit `relay = true` in `config.toml` wartet ccam stattdessen neben der Sitzung, sodass `/ccam:switch` von selbst weitermacht. Manche anderen Tools tauschen stattdessen die Anmeldung einer laufenden Sitzung aus; [ccam und andere Tools zum Kontowechsel](/compare/account-switchers) erklärt den Unterschied.
 
 ## Was du beachten solltest
 
 - Führe `ccam next --continue` im selben Ordner aus, in dem du gearbeitet hast; Gespräche werden pro Projektordner gespeichert.
 - Arbeite nicht gleichzeitig mit zwei Konten am selben Gespräch. ccam warnt dich, wenn du es versuchst.
-- Das andere Konto muss den Gesprächsverlauf ebenfalls teilen, in derselben Gruppe.
+- Ohne geteilten Verlauf wird das Gespräch in das andere Konto kopiert, und die beiden Kopien gehen getrennte Wege; die Checkpoints, aus denen `/rewind` Code wiederherstellt, bleiben beim ersten Konto.
 - Die erste Nachricht im neuen Konto kann mehr von dessen Limit verbrauchen als üblich, weil dieses Konto das Gespräch noch nicht im Cache hat.
 - Ob du so zwischen Konten wechseln darfst, hängt von den Bedingungen des jeweiligen Kontos ab.
 

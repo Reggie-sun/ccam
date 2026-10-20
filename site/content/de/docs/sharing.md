@@ -1,46 +1,45 @@
 ---
 title: MCP-Server, Einstellungen und Verlauf teilen
-description: Wie ccam MCP-Server, settings.json, CLAUDE.md, Agents, Skills und den Gesprächsverlauf zwischen Claude Code-Konten teilt und jede Anmeldung getrennt hält.
+description: Wie ccam-Gruppen MCP-Server, settings.json, CLAUDE.md, Skills und den Gesprächsverlauf zwischen Claude Code-Konten teilen; jede Anmeldung bleibt getrennt.
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 888d466b29e9
+sourceHash: 2606e4ec682e
 ---
 
-Jedes Konto behält seine eigene Anmeldung. Alles andere kann Element für Element geteilt werden: ccam verlinkt die Datei oder den Ordner des Kontos mit einem geteilten Gruppenordner, sodass eine Änderung in einem Konto in allen Konten dieser Gruppe erscheint.
+Jedes Konto behält seine eigene Anmeldung. Alles andere kann über **Gruppen** geteilt werden: Eine Gruppe nennt die Elemente, die sie teilt, und die Konten in ihr, und ccam verlinkt die Dateien jedes dieser Konten mit dem Ordner der Gruppe, sodass eine Änderung in einem Konto in allen erscheint.
 
 ## Was geteilt werden kann
 
-| Element | Option | Was geteilt wird |
-| --- | --- | --- |
-| MCP-Server | `--mcp` | Die `mcp.json` der Gruppe, die beim Start an Claude Code übergeben wird |
-| Einstellungen | `--settings` | `settings.json`: Berechtigungen, Hooks, Modell, Statuszeile |
-| Globales Gedächtnis | `--memory` | `CLAUDE.md` |
-| Erweiterungen | `--extensions` | `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/`, `rules/` |
-| Gesprächsverlauf | `--history` | `projects/` und `history.jsonl` |
+| Element | Was geteilt wird |
+| --- | --- |
+| `mcp` | MCP-Server: die `mcp.json` der Gruppe, die beim Start an Claude Code übergeben wird |
+| `settings` | `settings.json`: Berechtigungen, Hooks, Modell, Statuszeile |
+| `memory` | die globale `CLAUDE.md` |
+| `extensions` | `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/`, `rules/` |
+| `history` | Gesprächsverlauf: `projects/` und `history.jsonl` |
 
-Neue Konten teilen alles außer dem Gesprächsverlauf.
+Dein erstes Konto legt die Gruppe `default` an, die alles außer dem Gesprächsverlauf teilt, und spätere Konten treten ihr bei.
 
 Die Anmeldedateien `.credentials.json` und `.claude.json` werden nie geteilt. ccam verlinkt nur Pfade aus einer festen Liste, und diese beiden stehen nicht darauf.
 
-Diese Seite behandelt die alltäglichen Aufgaben. Jede Option ist auf den Funktionsseiten beschrieben: [Teilen zwischen Konten](/features/share), [geteilte MCP-Server](/features/mcp) und [eine vorhandene Einrichtung kopieren](/features/migrate).
+Diese Seite behandelt die alltäglichen Aufgaben. Jede Option ist auf den Funktionsseiten beschrieben: [Teilen mit Gruppen](/features/share), [geteilte MCP-Server](/features/mcp) und [eine vorhandene Einrichtung kopieren](/features/migrate).
 
 ## Gruppen
 
-`on` steht für die Gruppe `default`. Du kannst auch einen Namen angeben, sodass nur einige Konten ein Element teilen:
-
 ```sh
-ccam share work --history team
-ccam share side --history team
+ccam group                                   # the groups, what they share, their accounts
+ccam group set default --add history         # every account in default shares history
+ccam group add team --items history --members work,side
 ```
 
-`work` und `side` teilen jetzt Gespräche miteinander, aber nicht mit deinen anderen Konten.
+Ein Konto kann in mehreren Gruppen sein, aber jedes Element kommt nur aus einer Gruppe. Um also den Verlauf zwischen `work` und `side` zu teilen, aber nicht mit deinen anderen Konten, halte den Verlauf aus `default` heraus und gib den beiden eine eigene Gruppe, wie oben. `ccam share work` zeigt, was ein Konto teilt und über welche Gruppe. Das [Dashboard](/features/dashboard) zeigt dasselbe auf seinem Tab Groups.
 
-## Teilen einschalten
+## Wenn ein Konto anfängt zu teilen
 
-Wenn ein Konto anfängt, ein Element zu teilen, macht ccam Folgendes:
+Wenn ein Konto anfängt, ein Element zu teilen (es tritt einer Gruppe bei, oder seine Gruppe nimmt das Element auf), macht ccam Folgendes:
 
-1. Es gibt einen Plan mit jeder Datei aus, die es verschieben, kopieren oder verlinken wird, und fragt, bevor es beginnt.
+1. Es gibt einen Plan mit jeder Datei aus, die es für jedes Konto verschieben, kopieren oder verlinken wird, und fragt, bevor es beginnt.
 2. Es verschiebt die Dateien des Kontos in den Gruppenordner, wenn die Gruppe noch leer ist, oder fügt die Dateien hinzu, die die Gruppe noch nicht hat.
 3. Wenn sich dieselbe Datei unterscheidet, fragt es, ob die Version der Gruppe behalten, deine verwendet oder das JSON zusammengeführt werden soll.
 4. Es bewahrt dein Original in `.ccam-backup/<time>/` im Kontoordner auf.
@@ -48,12 +47,13 @@ Wenn ein Konto anfängt, ein Element zu teilen, macht ccam Folgendes:
 
 Gesprächsdateien sind nach ihrer Sitzungs-ID benannt, daher lassen sich Verläufe aus mehreren Konten ohne Konflikte zusammenführen.
 
-ccam ändert das Teilen nicht, solange Claude Code mit dem Konto läuft, weil die Sitzung weiter in die Dateien schreibt, die verschoben werden. Beende sie zuerst.
+ccam ändert ein Konto nicht, solange Claude Code mit ihm läuft, weil die Sitzung weiter in die Dateien schreibt, die verschoben werden. Beende sie zuerst.
 
-## Teilen ausschalten
+## Wenn ein Konto aufhört zu teilen
 
 ```sh
-ccam share work --history off
+ccam group leave team work                   # work leaves the group
+ccam group set default --remove history      # nobody in default shares history any more
 ```
 
 Der Link wird entfernt, und das Konto erhält eine eigene Kopie des aktuellen Inhalts der Gruppe. Füge `--fresh` hinzu, um stattdessen leer zu beginnen. Die Gruppe behält ihren Inhalt für die anderen Konten.
@@ -95,14 +95,12 @@ Copy from /home/me/.claude into group default (/home/me/.local/share/ccam/groups
   Conversation history (projects/, history.jsonl) is not included; add --history to copy it.
 Copy these into group default? [y/N] y
 ✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, commands/, skills/
-Accounts that share these through group default:
-  mcp         personal
-  settings    personal
-  memory      personal
-  extensions  personal
+Group default: personal
+To share them:
+  ccam group join default work
 ```
 
-Am Ende listet ccam die Konten auf, die jedes Element über die Gruppe teilen. Wenn einige Konten das nicht tun, gibt es die `ccam share`-Befehle aus, die das Teilen für sie einschalten.
+Am Ende listet ccam die Konten der Gruppe auf. Wenn die Gruppe eines der Elemente noch nicht teilt oder manche Konten nicht in ihr sind, gibt es die `ccam group`-Befehle aus, die das ändern.
 
 Wenn die Gruppe bereits eine abweichende Kopie einer Datei hat, fragt ccam wie beim Einschalten des Teilens: die Kopie der Gruppe behalten oder deine verwenden. `settings.json` und andere JSON-Dateien lassen sich auch zusammenführen, `history.jsonl` Zeile für Zeile. Die vorherigen Kopien der Gruppe werden in `.ccam-backup/<time>/` im Gruppenordner gesichert.
 

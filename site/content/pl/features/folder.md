@@ -4,7 +4,7 @@ description: ccam folder sprawia, że folder i wszystko w nim używa jednego kon
 updated: 2026-10-20
 order: 11
 translation: machine
-sourceHash: 5071b04a194d
+sourceHash: "46d1410a3d81"
 ---
 
 `ccam folder work ~/code/company` sprawia, że każde uruchomienie bez nazwy konta w `~/code/company` i w każdym folderze poniżej uruchamia Claude Code jako `work`. Poza nim konto domyślne uruchamia się jak wcześniej. Podanie nazwy konta, przez `ccam personal` albo skrót taki jak `ccpersonal`, zawsze uruchamia to konto.
@@ -34,7 +34,7 @@ Te uruchomienia używają konta folderu:
 - `ccam -p "…"` i każde inne uruchomienie, którego pierwszy argument jest opcją dla Claude Code
 - `ccam run` bez nazwy oraz `ccam --dry-run`
 - `ccam --fallback -p "…"` przy pierwszej próbie
-- selektor, czyli samo `ccam`, który startuje z kursorem na koncie folderu
+- panel, czyli samo `ccam`, który startuje z kursorem na koncie folderu
 
 ## Opcje
 

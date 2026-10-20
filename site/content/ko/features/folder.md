@@ -4,7 +4,7 @@ description: ccam folder를 쓰면 계정 이름 없이 Claude Code를 시작할
 updated: 2026-10-20
 order: 11
 translation: machine
-sourceHash: 5071b04a194d
+sourceHash: "46d1410a3d81"
 ---
 
 `ccam folder work ~/code/company`를 실행하면 `~/code/company`와 그 아래 모든 폴더에서 계정 이름 없이 실행할 때 Claude Code가 `work`로 시작합니다. 그 밖의 폴더에서는 전처럼 기본 계정이 시작됩니다. `ccam personal`이나 `ccpersonal` 같은 단축 명령으로 계정 이름을 지정하면 언제나 그 계정이 시작됩니다.
@@ -34,7 +34,7 @@ Here (/home/me/code/company/api): work, set for /home/me/code/company
 - `ccam -p "…"`처럼 첫 번째 인자가 Claude Code 옵션인 모든 실행
 - 이름 없는 `ccam run`과 `ccam --dry-run`
 - `ccam --fallback -p "…"`의 첫 번째 시도
-- 선택 화면(`ccam`만 실행). 커서가 폴더에 지정된 계정에 놓인 상태로 열립니다
+- 대시보드(`ccam`만 실행). 커서가 폴더에 지정된 계정에 놓인 상태로 열립니다
 
 ## 옵션
 

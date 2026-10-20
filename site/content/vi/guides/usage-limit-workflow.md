@@ -4,7 +4,7 @@ description: "Chờ giới hạn được đặt lại hoặc tiếp tục ngay 
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: ff765a189332
+sourceHash: "38b80d780bba"
 ---
 
 Khi một tài khoản chạm giới hạn sử dụng (thường gọi là rate limit), bạn có hai lựa chọn: chờ đến khi giới hạn được đặt lại, hoặc tiếp tục ngay cùng cuộc hội thoại trên một tài khoản khác của bạn. Với ccam, cách thứ hai chỉ cần một lệnh, `ccam next --auto --continue`, sau khi lịch sử hội thoại đã được dùng chung giữa các tài khoản.
@@ -25,8 +25,7 @@ Nếu có tài khoản thứ hai, bạn có thể tiếp tục ngay với cùng 
 curl -fsSL https://ccam.dev/install.sh | sh
 ccam add personal
 ccam add work
-ccam share personal --history on
-ccam share work --history on
+ccam group set default --add history
 ccam statusline install
 ```
 
@@ -49,17 +48,19 @@ Mở cuộc hội thoại trên tài khoản còn nhiều hạn mức nhất:
 ccam next --auto --continue
 ```
 
-Claude Code khởi động với tài khoản `work` và cuộc hội thoại gần nhất của thư mục hiện tại, bao gồm mọi nội dung đã trao đổi.
+Claude Code khởi động với tài khoản `work` và cuộc hội thoại gần nhất của thư mục hiện tại, bao gồm mọi nội dung đã trao đổi. Dùng chung lịch sử (`ccam group set default --add history` ở trên) giữ nó là một cuộc hội thoại duy nhất; nếu không, Claude Code sao chép cuộc hội thoại vào `work`, và ccam cho bạn biết câu trả lời đầu tiên đó phải đọc lại bao nhiêu token.
+
+Với [plugin ccam](/docs/install#claude-code-plugin) trong Claude Code, một phiên dừng lại vì chạm giới hạn sẽ hiện một thông báo, và `/ccam:switch` (hoặc `/ccam:switch work`) ghi chú cuộc hội thoại cho `ccam next --continue` mà không để lại điều gì phải đoán.
 
 ## ccam có tự động đổi tài khoản không?
 
-Không. ccam không chạy trong lúc bạn làm việc: nó khởi động Claude Code rồi tự thay thế mình bằng Claude Code. Bạn quyết định khi nào đổi, và `ccam next --auto` chọn tài khoản có mức sử dụng 5 giờ thấp nhất, bỏ qua các tài khoản đã đạt 100% hoặc chưa đăng nhập. Một số công cụ khác thì hoán đổi đăng nhập của phiên đang chạy; [ccam và các công cụ đổi tài khoản khác](/compare/account-switchers) giải thích sự khác biệt.
+Không. ccam không chạy trong lúc bạn làm việc: nó khởi động Claude Code rồi tự thay thế mình bằng Claude Code. Bạn quyết định khi nào đổi, và `ccam next --auto` chọn tài khoản có mức sử dụng 5 giờ thấp nhất, bỏ qua các tài khoản đã đạt 100%, chưa đăng nhập, hoặc thuộc tổ chức khác. Với `relay = true` trong `config.toml`, thay vào đó ccam chờ bên cạnh phiên, nên `/ccam:switch` tự chuyển cuộc hội thoại đi tiếp. Một số công cụ khác thì hoán đổi đăng nhập của phiên đang chạy; [ccam và các công cụ đổi tài khoản khác](/compare/account-switchers) giải thích sự khác biệt.
 
 ## Những điều cần lưu ý
 
 - Chạy `ccam next --continue` trong đúng thư mục bạn đã làm việc; hội thoại được lưu theo từng thư mục dự án.
 - Tránh chạy hai tài khoản trên cùng một cuộc hội thoại cùng lúc. ccam sẽ cảnh báo nếu bạn thử.
-- Tài khoản kia cũng phải dùng chung lịch sử hội thoại, trong cùng một nhóm.
+- Không dùng chung lịch sử, cuộc hội thoại được sao chép sang tài khoản kia và hai bản sao đi theo hướng riêng; các checkpoint mà `/rewind` dùng để khôi phục mã vẫn ở lại với tài khoản đầu tiên.
 - Tin nhắn đầu tiên trên tài khoản mới có thể tốn nhiều hạn mức hơn bình thường, vì tài khoản đó chưa lưu cache cuộc hội thoại.
 - Việc bạn có được đổi tài khoản như vậy hay không phụ thuộc vào điều khoản của từng tài khoản.
 

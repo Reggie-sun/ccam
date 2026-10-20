@@ -5,10 +5,10 @@ description: Усі команди та параметри ccam, від ccam add
 updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: da2594c672bc
+sourceHash: "116c5b34ac9a"
 ---
 
-Додайте `--dry-run` перед командою, щоб побачити, що вона зробила б, не виконуючи її, наприклад `ccam --dry-run work`. Це працює під час запуску Claude Code (`ccam <name>`, `ccam run`, `ccam next`) і з `share`, `migrate`, `shortcut`, `update` та `doctor --fix`. Інші команди, які щось змінюють, відхиляють цей параметр і не виконуються.
+Додайте `--dry-run` перед командою, щоб побачити, що вона зробила б, не виконуючи її, наприклад `ccam --dry-run work`. Це працює під час запуску Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`) і з `group`, `migrate`, `shortcut`, `update` та `doctor --fix`. Інші команди, які щось змінюють, відхиляють цей параметр і не виконуються.
 
 <!-- commands -->
 
@@ -33,9 +33,10 @@ ccam --fallback work -p "fix the tests"   # run again as another account at the 
 
 ```sh
 ccam add                      # wizard
-ccam add work --share history=on
+ccam add work --group default --group team
 ccam add side --shortcut ccside
 ccam add ci --no-login        # log in later with: ccam login ci
+ccam login --expired          # log in every account whose login no longer works
 ccam rename work job
 ccam remove side              # folder moves to ~/.local/share/ccam/trash
 ccam import ~/.claude-old --name old
@@ -46,9 +47,9 @@ ccam add gw --api --base-url https://llm.example.com --auth bearer --key-from en
 
 `ccam add --api` додає обліковий запис, який використовує ключ API замість входу Claude; ccam читає ключ під час кожного запуску й ніколи його не зберігає. Див. [Облікові записи з ключем API](/features/api).
 
-`ccam rename`, `ccam remove` і `ccam share` відмовляються змінювати обліковий запис, поки Claude Code працює від його імені. Спершу завершіть сеанс.
+`ccam rename`, `ccam remove` і команди `ccam group` відмовляються змінювати обліковий запис, поки Claude Code працює від його імені. Спершу завершіть сеанс.
 
-`ccam list --json` виводить кожен обліковий запис із його слотом, короткою командою, електронною поштою й текою. Його об'єкт `share` зіставляє кожен елемент (`mcp`, `settings`, `memory`, `extensions`, `history`) з назвою групи або з `local`.
+`ccam list --json` виводить кожен обліковий запис із його слотом, короткою командою, електронною поштою й текою. Його масив `groups` перелічує групи облікового запису, а об'єкт `share` зіставляє кожен елемент (`mcp`, `settings`, `memory`, `extensions`, `history`) з групою, з якої він береться, або з `local`.
 
 ## Короткі команди
 
@@ -69,12 +70,15 @@ ccam shortcut work --remove
 ## Спільне використання
 
 ```sh
-ccam share work                       # show the current state
-ccam share work --history on --mcp team
-ccam share work --settings off --fresh
+ccam group                                  # the groups, what they share, their accounts
+ccam group add team --items history --members work,side
+ccam group set default --add history        # every account in default changes together
+ccam group join team personal
+ccam group leave team side --fresh
+ccam share work                             # what work shares, and through which group
 ```
 
-Кожен елемент приймає `on` (група `default`), `off` або назву групи. Див. [спільне використання](/docs/sharing).
+Група спільно використовує елементи між своїми обліковими записами; обліковий запис може бути в кількох групах, але кожен елемент береться лише з однієї групи. Див. [спільне використання через групи](/features/share).
 
 ## Копіювання наявного налаштування
 
@@ -106,14 +110,17 @@ ccam mcp remove fs
 ccam usage           # also: ccam u
 ccam usage --watch   # refresh every 60 seconds
 ccam usage --json
-ccam next --continue
+ccam usage --source claude      # Claude Code looks it up; ccam never touches a token
+ccam next --continue            # this folder's last conversation, as the next account
 ccam next --auto
 ccam next --auto --max-usage 80 --wait
 ccam pick                       # the account with the most room, for a script
 ccam "$(ccam pick)" -p "…"      # start a worker on it
+ccam agents                     # background sessions of every account
+ccam attach 49ec0028            # open one, as the account that started it
 ```
 
-`next --auto`, `--fallback` і `ccam pick` вибирають однаково: спершу облікові записи нижче `auto_max_usage` (`config.toml`, за замовчуванням 100), за стратегією `auto_strategy` (`headroom` або `expiring`), з урахуванням тижневого вікна `--model` і ніколи не обліковий запис на 100%. Коли вибрати нікого, вони завершуються з кодом 75 або, з `--wait`, чекають на скидання першого облікового запису. Див. [Перемикання на наступний обліковий запис](/features/next) і [Вибір облікового запису для скриптів](/features/pick).
+`next --auto`, `--fallback` і `ccam pick` вибирають однаково: спершу облікові записи нижче `auto_max_usage` (`config.toml`, за замовчуванням 100), за стратегією `auto_strategy` (`headroom`, `expiring` або `balance`), з урахуванням тижневого вікна `--model`, ніколи не обліковий запис на 100% і в межах організації облікового запису, з якого вони починають (`--cross-org` або `cross_org = true`, щоб шукати ширше). Коли вибрати нікого, вони завершуються з кодом 75 або, з `--wait`, чекають на скидання першого облікового запису. `ccam next --continue` переносить розмову навіть між обліковими записами, які не мають спільної історії: тоді Claude Code копіює її в новий обліковий запис. Усередині Claude Code `/ccam:switch [account]` із плагіна передає розмову далі, а `ccam hook` — це те, що запускають його хуки. Див. [Перемикання на наступний обліковий запис](/features/next), [Вибір облікового запису для скриптів](/features/pick) і [Фонові сеанси всіх облікових записів](/features/agents).
 
 ## Обслуговування
 
@@ -135,10 +142,10 @@ ccam completion bash # or zsh, powershell
 
 | Шлях | Вміст |
 | --- | --- |
-| `~/.config/ccam/config.toml` | Облікові записи та те, що вони спільно використовують |
+| `~/.config/ccam/config.toml` | Облікові записи, групи та налаштування (`theme`, `usage_source`, `relay`, `cross_org` …) |
 | `~/.local/share/ccam/profiles/<name>/` | `CLAUDE_CONFIG_DIR` кожного облікового запису |
 | `~/.local/share/ccam/groups/<group>/` | Спільні налаштування, сервери MCP, розширення та історія |
-| `~/.local/state/ccam/` | Кеш використання та час останнього використання |
+| `~/.local/state/ccam/` | Кеш використання, час останнього використання та нотатки, які залишають `/ccam:switch` і хук ліміту (`handoff/`) |
 | `~/.local/bin/<shortcut>` | Короткі команди, наприклад `ccwork`; посилання на ccam |
 
 Змінні `XDG_CONFIG_HOME`, `XDG_DATA_HOME` і `XDG_STATE_HOME` змінюють розташування цих тек. У Windows `~` — це `%USERPROFILE%`, а короткі команди — це `<shortcut>.exe`.

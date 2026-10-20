@@ -4,7 +4,7 @@ description: ccam folder 让一个文件夹及其下所有文件夹在不指定�
 updated: 2026-10-20
 order: 11
 translation: machine
-sourceHash: 5071b04a194d
+sourceHash: "46d1410a3d81"
 ---
 
 `ccam folder work ~/code/company` 让 `~/code/company` 及其下任何文件夹中所有不指定账号名的启动都以 `work` 启动 Claude Code。在这个文件夹之外，照旧启动默认账号。指定账号名时，无论是用 `ccam personal` 还是 `ccpersonal` 这样的快捷命令，总是启动该账号。
@@ -34,7 +34,7 @@ Here (/home/me/code/company/api): work, set for /home/me/code/company
 - `ccam -p "…"`，以及其他第一个参数是 Claude Code 选项的启动
 - 不带账号名的 `ccam run`，以及 `ccam --dry-run`
 - `ccam --fallback -p "…"` 的第一次尝试
-- 选择器，即单独的 `ccam`，打开时光标位于文件夹的账号上
+- 仪表盘，即单独的 `ccam`，打开时光标位于文件夹的账号上
 
 ## 选项
 

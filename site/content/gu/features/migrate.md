@@ -1,10 +1,10 @@
 ---
 title: હાલનું સેટઅપ કૉપિ કરવું
-description: ccam migrate વડે હાલના ~/.claude નાં સેટિંગ્સ, CLAUDE.md, એક્સટેન્શન્સ, MCP સર્વર અને MCP સાઇન-ઇન ccam ના શેર ગ્રુપમાં કૉપિ કરો.
+description: ccam migrate વડે હાલના ~/.claude નાં સેટિંગ્સ, CLAUDE.md, એક્સટેન્શન્સ, MCP સર્વર અને MCP સાઇન-ઇન ccam ના ગ્રુપમાં કૉપિ કરો.
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 95ce6ec9e220
+sourceHash: 7cee52e75749
 ---
 
 જો તમે ccam પહેલાં Claude Code વાપર્યું હોય, તો તમારું સેટઅપ `~/.claude` અને `~/.claude.json` માં છે. `ccam migrate` તેને એક શેર ગ્રુપમાં કૉપિ કરે છે, જેથી ગ્રુપ દ્વારા તે આઇટમ શેર કરતું દરેક એકાઉન્ટ તમારી પાસે પહેલેથી હોય તે સેટઅપ સાથે શરૂ થાય. સ્રોત ફોલ્ડર ફક્ત વંચાય છે, અને સાદું `claude` પહેલાંની જેમ કામ કરતું રહે છે. તમારા પહેલા `ccam add` પછી તેને એક વાર ચલાવો, અને જ્યારે પણ કોઈ એકાઉન્ટ MCP સર્વર શેર કરવાનું શરૂ કરે ત્યારે ફરીથી ચલાવો.
@@ -59,7 +59,7 @@ Accounts that share these through group default:
   extensions  personal, work
 ```
 
-ગ્રુપ ફક્ત એવાં એકાઉન્ટ સુધી પહોંચે છે જે તેના દ્વારા કોઈ આઇટમ શેર કરે છે, તેથી સારાંશ તેમને આઇટમ પ્રમાણે બતાવે છે. જે એકાઉન્ટ શેર નથી કરતાં તેમના માટે, ccam શેરિંગ ચાલુ કરતા `ccam share <name> --<item> on` કમાન્ડ છાપે છે.
+ગ્રુપ ફક્ત પોતાનાં એકાઉન્ટ સુધી અને ફક્ત પોતે શેર કરે છે તે આઇટમ માટે જ પહોંચે છે, તેથી સારાંશ ગ્રુપનાં એકાઉન્ટની યાદી આપે છે. જ્યારે ગ્રુપ કૉપિ કરેલી આઇટમમાંથી કોઈ શેર ન કરતું હોય, અથવા કેટલાંક એકાઉન્ટ તેમાં ન હોય, ત્યારે ccam તે બદલતા `ccam group set <group> --add <items>` અને `ccam group join <group> <accounts>` કમાન્ડ છાપે છે.
 
 ## ઓપ્શન
 
@@ -84,7 +84,7 @@ Accounts that share these through group default:
 `internal/cli/migrate.go` આઇટમ પસંદ કરે છે, પછી `migrate.Build` સ્રોત અને ગ્રુપ વાંચે છે અને એક યોજના પાછી આપે છે. તમે ખાતરી કરો પછી `Plan.Apply` સુધી કંઈ લખાતું નથી.
 
 1. **સ્રોત શોધો.** `checkSource` એવા પાથનો ઇનકાર કરે છે જે ન હોય, ફોલ્ડર ન હોય, કે જેમાં Claude Code ની કોઈ જાણીતી એન્ટ્રી ન હોય. `migrate.ClaudeJSON` ફોલ્ડરની `.claude.json` શોધે છે: તેની અંદર, અથવા અંદર ન હોય તેવા `~/.claude` માટે, તેની બાજુની `~/.claude.json`. `CLAUDE_CONFIG_DIR` સેટ ન હોય ત્યારે Claude Code તેને ત્યાં જ રાખે છે.
-2. **આઇટમને પાથ સાથે જોડો.** દરેક પાથ `share.Layout` માંથી આવે છે, એ જ મંજૂર યાદી જે `ccam share` વાપરે છે. MCP સર્વર `mcp.LocalServers` વડે `.claude.json` માંથી વંચાય છે, જે આખી ફાઇલ parse કરવાને બદલે `profile.TopLevelValue` scanner વાપરે છે.
+2. **આઇટમને પાથ સાથે જોડો.** દરેક પાથ `share.Layout` માંથી આવે છે, એ જ મંજૂર યાદી જે ગ્રુપ વાપરે છે. MCP સર્વર `mcp.LocalServers` વડે `.claude.json` માંથી વંચાય છે, જે આખી ફાઇલ parse કરવાને બદલે `profile.TopLevelValue` scanner વાપરે છે.
 3. **કૉપિ કરો, ક્યારેય ખસેડો નહીં.** ફાઇલો `fsutil.AtomicWrite` કે `fsutil.CopyFile` વડે `~/.local/share/ccam/groups/<group>/` માં જાય છે; MCP સર્વર ગ્રુપની `mcp.json` માં જાય છે.
 
 દરેક આઇટમ સ્રોતના એક પાથને ગ્રુપના એક પાથ સાથે જોડે છે:

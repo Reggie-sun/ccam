@@ -5,10 +5,10 @@ description: ccam add, ccam <name>부터 ccam usage, ccam next, ccam doctor까�
 updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: da2594c672bc
+sourceHash: "116c5b34ac9a"
 ---
 
-명령 앞에 `--dry-run`을 붙이면 실제로 실행하지 않고 무엇을 할지만 보여 줍니다(예: `ccam --dry-run work`). Claude Code를 시작할 때(`ccam <name>`, `ccam run`, `ccam next`)와 `share`, `migrate`, `shortcut`, `update`, `doctor --fix`에서 쓸 수 있습니다. 무언가를 바꾸는 다른 명령은 실행하지 않고 이 옵션을 거부합니다.
+명령 앞에 `--dry-run`을 붙이면 실제로 실행하지 않고 무엇을 할지만 보여 줍니다(예: `ccam --dry-run work`). Claude Code를 시작할 때(`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`)와 `group`, `migrate`, `shortcut`, `update`, `doctor --fix`에서 쓸 수 있습니다. 무언가를 바꾸는 다른 명령은 실행하지 않고 이 옵션을 거부합니다.
 
 <!-- commands -->
 
@@ -33,9 +33,10 @@ ccam --fallback work -p "fix the tests"   # run again as another account at the 
 
 ```sh
 ccam add                      # wizard
-ccam add work --share history=on
+ccam add work --group default --group team
 ccam add side --shortcut ccside
 ccam add ci --no-login        # log in later with: ccam login ci
+ccam login --expired          # log in every account whose login no longer works
 ccam rename work job
 ccam remove side              # folder moves to ~/.local/share/ccam/trash
 ccam import ~/.claude-old --name old
@@ -46,9 +47,9 @@ ccam add gw --api --base-url https://llm.example.com --auth bearer --key-from en
 
 `ccam add --api`는 Claude 로그인 대신 API 키를 쓰는 계정을 추가합니다. ccam은 실행할 때마다 키를 읽으며 절대 저장하지 않습니다. [API 키 계정](/features/api)을 참고하세요.
 
-`ccam rename`, `ccam remove`, `ccam share`는 어떤 계정으로 Claude Code가 실행 중이면 그 계정을 바꾸지 않고 거부합니다. 먼저 세션을 종료하세요.
+`ccam rename`, `ccam remove`, 그리고 `ccam group` 명령들은 어떤 계정으로 Claude Code가 실행 중이면 그 계정을 바꾸지 않고 거부합니다. 먼저 세션을 종료하세요.
 
-`ccam list --json`은 모든 계정의 슬롯 번호, 단축 명령, 이메일, 폴더를 출력합니다. `share` 객체는 각 항목(`mcp`, `settings`, `memory`, `extensions`, `history`)을 그룹 이름이나 `local`에 대응시킵니다.
+`ccam list --json`은 모든 계정의 슬롯 번호, 단축 명령, 이메일, 폴더를 출력합니다. `groups` 배열은 계정이 속한 그룹을 나열하고, `share` 객체는 각 항목(`mcp`, `settings`, `memory`, `extensions`, `history`)을 그 항목을 받는 그룹이나 `local`에 대응시킵니다.
 
 ## 단축 명령
 
@@ -69,12 +70,15 @@ ccam shortcut work --remove
 ## 공유
 
 ```sh
-ccam share work                       # show the current state
-ccam share work --history on --mcp team
-ccam share work --settings off --fresh
+ccam group                                  # the groups, what they share, their accounts
+ccam group add team --items history --members work,side
+ccam group set default --add history        # every account in default changes together
+ccam group join team personal
+ccam group leave team side --fresh
+ccam share work                             # what work shares, and through which group
 ```
 
-항목마다 `on`(`default` 그룹), `off`, 또는 그룹 이름을 지정할 수 있습니다. 자세한 내용은 [공유](/docs/sharing)를 참고하세요.
+그룹은 속한 계정끼리 항목을 공유합니다. 한 계정이 여러 그룹에 속할 수 있지만, 각 항목은 한 그룹에서만 받습니다. 자세한 내용은 [그룹으로 공유하기](/features/share)를 참고하세요.
 
 ## 기존 설정 복사하기
 
@@ -106,14 +110,17 @@ ccam mcp remove fs
 ccam usage           # also: ccam u
 ccam usage --watch   # refresh every 60 seconds
 ccam usage --json
-ccam next --continue
+ccam usage --source claude      # Claude Code looks it up; ccam never touches a token
+ccam next --continue            # this folder's last conversation, as the next account
 ccam next --auto
 ccam next --auto --max-usage 80 --wait
 ccam pick                       # the account with the most room, for a script
 ccam "$(ccam pick)" -p "…"      # start a worker on it
+ccam agents                     # background sessions of every account
+ccam attach 49ec0028            # open one, as the account that started it
 ```
 
-`next --auto`, `--fallback`, `ccam pick`은 같은 방식으로 고릅니다. `auto_max_usage`(`config.toml`, 기본값 100) 미만인 계정을 먼저, `auto_strategy`(`headroom` 또는 `expiring`)에 따라 고르며, `--model`의 주간 구간도 따지고, 100%인 계정은 절대 고르지 않습니다. 고를 수 있는 계정이 없으면 종료 코드 75로 끝나며, `--wait`를 주면 첫 번째 계정이 초기화될 때까지 기다립니다. [다음 계정으로 전환](/features/next)과 [스크립트용 계정 고르기](/features/pick)를 참고하세요.
+`next --auto`, `--fallback`, `ccam pick`은 같은 방식으로 고릅니다. `auto_max_usage`(`config.toml`, 기본값 100) 미만인 계정을 먼저, `auto_strategy`(`headroom`, `expiring` 또는 `balance`)에 따라 고르며, `--model`의 주간 구간도 따지고, 100%인 계정은 절대 고르지 않고, 시작한 계정과 같은 조직 안에서만 고릅니다(더 넓게 찾으려면 `--cross-org` 또는 `cross_org = true`). 고를 수 있는 계정이 없으면 종료 코드 75로 끝나며, `--wait`를 주면 첫 번째 계정이 초기화될 때까지 기다립니다. `ccam next --continue`는 대화 내역을 공유하지 않는 계정 사이에서도 대화를 넘깁니다. 이때는 Claude Code가 대화를 새 계정으로 복사합니다. Claude Code 안에서는 플러그인의 `/ccam:switch [account]`가 대화를 넘기며, `ccam hook`은 플러그인의 훅이 실행하는 명령입니다. [다음 계정으로 전환](/features/next), [스크립트용 계정 고르기](/features/pick), [모든 계정의 백그라운드 세션](/features/agents)을 참고하세요.
 
 ## 유지 관리
 
@@ -135,10 +142,10 @@ ccam completion bash # or zsh, powershell
 
 | 경로 | 내용 |
 | --- | --- |
-| `~/.config/ccam/config.toml` | 계정 목록과 각 계정의 공유 항목 |
+| `~/.config/ccam/config.toml` | 계정, 그룹, 설정(`theme`, `usage_source`, `relay`, `cross_org` …) |
 | `~/.local/share/ccam/profiles/<name>/` | 계정별 `CLAUDE_CONFIG_DIR` |
 | `~/.local/share/ccam/groups/<group>/` | 공유된 설정, MCP 서버, 확장 기능, 대화 내역 |
-| `~/.local/state/ccam/` | 사용량 캐시와 마지막 사용 시각 |
+| `~/.local/state/ccam/` | 사용량 캐시, 마지막 사용 시각, `/ccam:switch`와 한도 훅이 남기는 메모(`handoff/`) |
 | `~/.local/bin/<shortcut>` | `ccwork` 같은 단축 명령(ccam 링크) |
 
 `XDG_CONFIG_HOME`, `XDG_DATA_HOME`, `XDG_STATE_HOME` 변수로 이 폴더들의 위치를 바꿀 수 있습니다. Windows에서는 `~`가 `%USERPROFILE%`이고, 단축 명령은 `<shortcut>.exe`입니다.

@@ -1,10 +1,10 @@
 ---
 title: 複製現有的設定
-description: 用 ccam migrate 把現有 ~/.claude 中的設定、CLAUDE.md、擴充功能、MCP 伺服器和 MCP 登入複製到 ccam 的共用群組。
+description: 用 ccam migrate 把現有 ~/.claude 中的設定、CLAUDE.md、擴充功能、MCP 伺服器和 MCP 登入複製到 ccam 群組。
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 95ce6ec9e220
+sourceHash: "7cee52e75749"
 ---
 
 如果你在使用 ccam 之前就用過 Claude Code，你的設定都在 `~/.claude` 和 `~/.claude.json` 中。`ccam migrate` 會把它們複製到一個共用群組，讓透過該群組共用這些項目的每個帳號，一開始就擁有你現有的設定。來源資料夾只會被讀取，直接執行 `claude` 也會和以前一樣運作。請在第一次 `ccam add` 之後執行一次，並在每次有帳號開始共用 MCP 伺服器時再執行一次。
@@ -59,7 +59,7 @@ Accounts that share these through group default:
   extensions  personal, work
 ```
 
-群組只會送達透過它共用某個項目的帳號，所以摘要會逐項列出這些帳號。對於尚未共用的帳號，ccam 會印出開啟共用的 `ccam share <name> --<item> on` 指令。
+群組只會送達它自己的帳號，而且只限於它共用的項目，所以摘要會列出群組的帳號。如果群組沒有共用某個已複製的項目，或有些帳號不在群組中，ccam 會印出用來變更的 `ccam group set <group> --add <items>` 和 `ccam group join <group> <accounts>` 指令。
 
 ## 選項
 
@@ -84,7 +84,7 @@ Accounts that share these through group default:
 `internal/cli/migrate.go` 會選出項目，接著 `migrate.Build` 讀取來源和群組並傳回一份計畫。在你確認、執行 `Plan.Apply` 之前，不會寫入任何東西。
 
 1. **找出來源。** `checkSource` 會拒絕不存在、不是資料夾，或沒有任何已知 Claude Code 項目的路徑。`migrate.ClaudeJSON` 會找出屬於該資料夾的 `.claude.json`：在資料夾內，或者對於內部沒有這個檔案的 `~/.claude`，則是它旁邊的 `~/.claude.json`。沒有設定 `CLAUDE_CONFIG_DIR` 時，Claude Code 就把它放在那裡。
-2. **把項目對應到路徑。** 每個路徑都來自 `share.Layout`，也就是 `ccam share` 使用的同一份允許清單。MCP 伺服器是用 `mcp.LocalServers` 從 `.claude.json` 讀出的，它使用 `profile.TopLevelValue` 掃描器，而不解析整個檔案。
+2. **把項目對應到路徑。** 每個路徑都來自 `share.Layout`，也就是群組使用的同一份允許清單。MCP 伺服器是用 `mcp.LocalServers` 從 `.claude.json` 讀出的，它使用 `profile.TopLevelValue` 掃描器，而不解析整個檔案。
 3. **只複製，絕不移動。** 檔案以 `fsutil.AtomicWrite` 或 `fsutil.CopyFile` 寫到 `~/.local/share/ccam/groups/<group>/`；MCP 伺服器則寫入群組的 `mcp.json`。
 
 每個項目都把一個來源路徑對應到一個群組路徑：

@@ -4,7 +4,7 @@ description: リセットを待つか、別のClaude Codeアカウントです�
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: ff765a189332
+sourceHash: "38b80d780bba"
 ---
 
 アカウントが使用量の上限（レート制限とも呼ばれます）に達したときの選択肢は2つです。上限がリセットされるまで待つか、自分が所有する別のアカウントで同じ会話をすぐに続けるかです。ccamを使う場合、アカウント間で会話履歴を共有しておけば、後者は`ccam next --auto --continue`という1つのコマンドで済みます。
@@ -25,8 +25,7 @@ ProプランとMaxプランでは、Claude Codeに[5時間のセッション上�
 curl -fsSL https://ccam.dev/install.sh | sh
 ccam add personal
 ccam add work
-ccam share personal --history on
-ccam share work --history on
+ccam group set default --add history
 ccam statusline install
 ```
 
@@ -49,17 +48,19 @@ ccam usage
 ccam next --auto --continue
 ```
 
-Claude Codeが`work`として起動し、現在のフォルダーで最も新しい会話を、それまでのやり取りをすべて含めて開きます。
+Claude Codeが`work`として起動し、現在のフォルダーで最も新しい会話を、それまでのやり取りをすべて含めて開きます。履歴を共有していれば（上の`ccam group set default --add history`）、会話は1つのままです。共有していなければ、Claude Codeが会話を`work`にコピーし、ccamはその最初の応答で読み直すトークン数を表示します。
+
+Claude Codeに[ccamプラグイン](/docs/install#claude-code-plugin)を入れておくと、上限で止まったセッションが通知を表示します。`/ccam:switch`（または`/ccam:switch work`）は、`ccam next --continue`のために会話をメモに残すので、どの会話を続けるかを推測する必要がありません。
 
 ## ccamは自動でアカウントを切り替えますか？
 
-いいえ。作業中にccamは動いていません。ccamはClaude Codeを起動し、自身をClaude Codeに置き換えます。切り替えるタイミングはあなたが決めます。`ccam next --auto`は、5時間の使用量が最も少ないアカウントを選び、100%に達したアカウントやログインしていないアカウントは飛ばします。実行中のセッションのログインを入れ替えるツールもあります。違いは[ccamとほかのアカウント切り替えツール](/compare/account-switchers)で説明しています。
+いいえ。作業中にccamは動いていません。ccamはClaude Codeを起動し、自身をClaude Codeに置き換えます。切り替えるタイミングはあなたが決めます。`ccam next --auto`は、5時間の使用量が最も少ないアカウントを選び、100%に達したアカウント、ログインしていないアカウント、別の組織のアカウントは飛ばします。`config.toml`で`relay = true`を設定すると、ccamは代わりにセッションのそばで待機するので、`/ccam:switch`だけで会話が自動で引き継がれます。実行中のセッションのログインを入れ替えるツールもあります。違いは[ccamとほかのアカウント切り替えツール](/compare/account-switchers)で説明しています。
 
 ## 注意点
 
 - `ccam next --continue`は、作業していたのと同じフォルダーで実行してください。会話はプロジェクトのフォルダーごとに保存されます。
 - 2つのアカウントで同じ会話を同時に使うのは避けてください。そうしようとすると、ccamが警告します。
-- もう一方のアカウントも、同じグループで会話履歴を共有している必要があります。
+- 履歴を共有していない場合、会話はもう一方のアカウントにコピーされ、2つのコピーはそれぞれ別々に進みます。`/rewind`がコードを復元するためのチェックポイントは、最初のアカウントに残ります。
 - 新しいアカウントではまだ会話がキャッシュされていないため、最初のメッセージで通常より多く上限を消費することがあります。
 - このようにアカウントを切り替えてよいかどうかは、各アカウントの規約によります。
 

@@ -4,7 +4,7 @@ description: ఖాతా పేరు లేకుండా Claude Code ను 
 updated: 2026-10-20
 order: 11
 translation: machine
-sourceHash: 5071b04a194d
+sourceHash: "46d1410a3d81"
 ---
 
 `ccam folder work ~/code/company` ఖాతా పేరు లేని ప్రతి లాంచ్‌ను, `~/code/company` లోపల, దాని కింద ఉన్న ఏ ఫోల్డర్‌లోనైనా, Claude Code ను `work` గా ప్రారంభించేలా చేస్తుంది. దాని బయట, డిఫాల్ట్ ఖాతా మునుపటిలాగే ప్రారంభమవుతుంది. `ccam personal` తో లేదా `ccpersonal` వంటి షార్ట్‌కట్‌తో ఖాతా పేరు చెబితే, ఎప్పుడూ ఆ ఖాతానే ప్రారంభమవుతుంది.
@@ -34,7 +34,7 @@ Here (/home/me/code/company/api): work, set for /home/me/code/company
 - `ccam -p "…"`, మొదటి ఆర్గ్యుమెంట్ Claude Code కోసం ఆప్షన్ అయిన ఇతర ఏ లాంచ్ అయినా
 - పేరు లేని `ccam run`, `ccam --dry-run`
 - `ccam --fallback -p "…"` దాని మొదటి ప్రయత్నం కోసం
-- పికర్, ఒంటరి `ccam`, ఇది ఫోల్డర్ ఖాతాపై కర్సర్‌తో ప్రారంభమవుతుంది
+- డాష్‌బోర్డ్, ఒంటరి `ccam`, ఇది ఫోల్డర్ ఖాతాపై కర్సర్‌తో ప్రారంభమవుతుంది
 
 ## ఆప్షన్లు
 

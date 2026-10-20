@@ -55,10 +55,10 @@ Claude Code then shows the account name and its usage in the status line, for ex
 ```sh
 ccam next             # the account after the one you used last
 ccam next --auto      # the account with the lowest 5-hour usage
-ccam next --continue  # the next account that shares your conversation history
+ccam next --continue  # carry this folder's conversation on as the next account
 ```
 
-`ccam next` skips accounts that are not logged in, and `--auto` skips accounts at 100%. To continue a conversation, both accounts must share conversation history; see [sharing](/docs/sharing).
+`ccam next` skips accounts that are not logged in, and `--auto` skips accounts at 100% and accounts of another organization. When the two accounts share conversation history, `--continue` opens the same conversation; otherwise Claude Code copies it into the new account. See [sharing](/docs/sharing) and [switching to the next account](/features/next#continue).
 
 For scripts and scheduled jobs that run `claude -p`, put `--fallback` before the account name. When that account reaches its limit, ccam runs the same command again as the account with the most room, and only the output of the run that finished is printed:
 

@@ -4,7 +4,7 @@ description: "ccam <name> rc দিয়ে যেকোনো অ্যাক�
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 59b802c44bb3
+sourceHash: 5f0b90ea53d6
 ---
 
 `ccam work rc` অ্যাকাউন্ট `work` হিসেবে Claude Code-এর Remote Control চালু করে, যাতে আপনি claude.ai/code বা Claude মোবাইল অ্যাপ থেকে এই কম্পিউটারের সেশনগুলো চালাতে পারেন। এটি `claude rc`-এর মতোই কাজ করে, শুধু একটি পার্থক্য আছে: অ্যাকাউন্টটি MCP সার্ভার শেয়ার করলে ccam একবার জিজ্ঞেস করে সেগুলো অ্যাকাউন্টের `.claude.json`-এ কপি করবে কি না, কারণ Remote Control সেশনগুলো অন্য কোথাও থেকে সার্ভার পড়ে না।
@@ -33,7 +33,7 @@ ccam --dry-run work rc                # print the command instead of running it
 | `--dry-run` (অ্যাকাউন্টের আগে) | এনভায়রনমেন্ট ও কমান্ড প্রিন্ট করে, আর MCP বার্তা থাকলে সেটিও। জিজ্ঞেসও করে না, কপিও করে না | বন্ধ |
 | `Copy them into .claude.json (a backup is kept)? [y/N]` | জিজ্ঞেস করা হয় যখন অ্যাকাউন্টটি MCP সার্ভার শেয়ার করে এবং তার `.claude.json`-এ গ্রুপের বর্তমান তালিকা নেই। `y` সেগুলো কপি করে, `N` বা Enter সেগুলো ছাড়াই চালু করে | `N` |
 | `~/.config/ccam/config.toml`-এ `mcp_strategy = "sync"` | প্রতিবার চালু করার আগে, Remote Control হোক বা না হোক, গ্রুপের সার্ভারগুলো `.claude.json`-এ কপি করে, তাই কখনও কিছু জিজ্ঞেস করা হয় না | `"flag"` |
-| `ccam share work --mcp off` | অ্যাকাউন্টের সঙ্গে MCP সার্ভার শেয়ার করা বন্ধ করে; তখন Remote Control শুধু অ্যাকাউন্টের নিজস্ব সার্ভার নিয়ে চালু হয় এবং কিছু জিজ্ঞেস করা হয় না | চালু |
+| `ccam group leave <group> work` | যে গ্রুপ অ্যাকাউন্টটির সঙ্গে MCP শেয়ার করে, সেখান থেকে অ্যাকাউন্টটিকে বের করে নেয়; তখন Remote Control শুধু অ্যাকাউন্টের নিজস্ব সার্ভার নিয়ে চালু হয় এবং কিছু জিজ্ঞেস করা হয় না | `default`-এ আছে |
 
 ### Remote Control-এর অপশন
 
@@ -124,7 +124,7 @@ $ ccam mcp add ctx --url https://mcp.context7.com/mcp
 
 ### ccam প্রতিবার জিজ্ঞেস করে
 
-আপনি এখনও সার্ভারগুলো কপি করেননি। একবার `y` উত্তর দিন, বা `mcp_strategy = "sync"` নির্ধারণ করুন। Remote Control-এ কখনও সার্ভার না চাইলে অ্যাকাউন্টের সঙ্গে MCP শেয়ার করা বন্ধ করুন: `ccam share work --mcp off`।
+আপনি এখনও সার্ভারগুলো কপি করেননি। একবার `y` উত্তর দিন, বা `mcp_strategy = "sync"` নির্ধারণ করুন। Remote Control-এ কখনও সার্ভার না চাইলে অ্যাকাউন্টের সঙ্গে MCP শেয়ার করা বন্ধ করুন: অ্যাকাউন্টটিকে ওই গ্রুপ থেকে বের করে নিন (`ccam group leave default work`), অথবা MCP-কে এমন একটি আলাদা গ্রুপে রাখুন যাতে অ্যাকাউন্টটি নেই।
 
 ### `ccam work rc` সঙ্গে সঙ্গে `--mcp-config` সংক্রান্ত ত্রুটি দিয়ে ব্যর্থ হয়
 

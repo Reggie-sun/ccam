@@ -4,7 +4,7 @@ description: Sa ccam folder, iisang account ang gagamitin ng folder at laman nit
 updated: 2026-10-20
 order: 11
 translation: machine
-sourceHash: 5071b04a194d
+sourceHash: 46d1410a3d81
 ---
 
 Ginagawa ng `ccam folder work ~/code/company` na sisimulan ang Claude Code bilang `work` ng bawat launch na walang pangalan ng account sa loob ng `~/code/company`, at sa anumang folder sa ilalim nito. Sa labas nito, sinisimulan ang default na account gaya ng dati. Kapag pinangalanan mo ang isang account, gamit ang `ccam personal` o isang shortcut gaya ng `ccpersonal`, laging sinisimulan ang account na iyon.
@@ -34,7 +34,7 @@ Ginagamit ng mga launch na ito ang account ng folder:
 - `ccam -p "…"` at anumang ibang launch na ang unang argument ay isang option para sa Claude Code
 - `ccam run` na walang pangalan, at `ccam --dry-run`
 - `ccam --fallback -p "…"` para sa unang pagtatangka nito
-- ang picker, ang `ccam` na mag-isa, na nagsisimulang nakatapat ang cursor sa account ng folder
+- ang dashboard, ang `ccam` na mag-isa, na nagsisimulang nakatapat ang cursor sa account ng folder
 
 ## Mga option
 

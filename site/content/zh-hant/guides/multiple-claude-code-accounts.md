@@ -4,7 +4,7 @@ description: 透過 CLAUDE_CONFIG_DIR 同時執行多個 Claude Code 帳號並�
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: f2982e4317a2
+sourceHash: "ee92078b81c3"
 ---
 
 為每個帳號指定獨立的設定資料夾。Claude Code 會從 `CLAUDE_CONFIG_DIR` 環境變數讀取資料夾位置，每個資料夾各自保存登入資訊、設定和對話記錄，所以每個帳號都會保持登入，你也可以同時執行它們。你可以用 Shell 別名手動設定，或交給 ccam 處理。
@@ -69,7 +69,7 @@ Claude Code [可以在 Windows 上原生執行，也可以在 WSL 中執行](htt
 
 **某個 MCP 伺服器只出現在一個帳號中。** 在工作階段中用 `claude mcp add` 新增的伺服器屬於該帳號。用 `ccam mcp import work <server>` 將它移到所有帳號。
 
-**各帳號的設定不一致。** `ccam share work` 會列出該帳號共用的內容；`ccam share work --settings on` 會先顯示將要變更的內容，再共用它的設定。`ccam doctor --fix` 會修復損壞的連結，並為它修改的每個檔案保留備份。
+**各帳號的設定不一致。** `ccam share work` 會列出該帳號共用的內容，以及透過哪個群組共用；`ccam group join default work` 會先顯示將要變更的內容，再讓它共用 `default` 共用的項目。`ccam doctor --fix` 會修復損壞的連結，並為它修改的每個檔案保留備份。
 
 **兩個帳號開啟了同一個對話。** 避免在兩個帳號中同時處理同一個對話。你這樣做時，ccam 會發出警告。
 

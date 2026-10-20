@@ -4,7 +4,7 @@ description: "Giữ một danh sách máy chủ MCP cho mỗi nhóm bằng ccam 
 updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: f1de7db4b7be
+sourceHash: "6d3b3c38c6cb"
 ---
 
 Claude Code lưu máy chủ MCP người dùng trong `.claude.json`, cũng là tệp chứa thông tin đăng nhập của tài khoản, nên tệp này không thể dùng chung giữa các tài khoản. ccam lưu các máy chủ dùng chung trong một tệp của nhóm, `mcp.json`, và trao nó cho mọi tài khoản trong nhóm khi khởi động. Hãy dùng `ccam mcp` để thêm một máy chủ một lần cho mọi tài khoản của bạn, và `ccam mcp import` để chuyển một máy chủ bạn đã thêm trong một phiên sang các tài khoản khác.
@@ -36,7 +36,7 @@ group default (work, side)
 only in account work: pg
 ```
 
-Thêm một tên mà nhóm đã có sẽ thay định nghĩa của nó và in ra `updated` thay vì `added`. Máy chủ chỉ đến được một tài khoản nếu tài khoản đó dùng chung MCP với nhóm (`ccam share <name> --mcp on`); khi chưa có tài khoản nào dùng chung MCP, `add` sẽ báo điều đó.
+Thêm một tên mà nhóm đã có sẽ thay định nghĩa của nó và in ra `updated` thay vì `added`. Máy chủ chỉ đến được một tài khoản nếu tài khoản đó thuộc nhóm và nhóm dùng chung MCP (`ccam group set <group> --add mcp`); khi nhóm chưa dùng chung MCP, `add` sẽ báo điều đó.
 
 ## Tùy chọn
 
@@ -121,7 +121,7 @@ Với `--force`, máy chủ của nhóm bị thay thế, và `mcp.json` trước
 - **Tài khoản đang chạy.** `import` sao chép vào nhóm nhưng giữ nguyên các mục riêng của tài khoản đang chạy và báo điều đó; hãy chạy lại sau khi phiên kết thúc. Việc đồng bộ bỏ qua các tài khoản đang chạy.
 - **Bản sao cho Remote Control.** Bản sao của tài khoản đang chạy không bị động đến: `Note: account side is running, so the copy in its .claude.json stays as it was until its next Remote Control launch.` Với `mcp_strategy = "sync"` thì không cần cập nhật gì, vì mỗi lần khởi động đều đồng bộ.
 - **Tệp bị hỏng.** Nếu `.claude.json` không phải JSON hợp lệ, việc đồng bộ không động đến nó và báo lỗi. Nếu không lấy được khóa trong 2 giây, ccam báo `could not lock … (Claude Code is writing the file)`.
-- **Tài khoản không dùng chung MCP.** `import` từ chối và yêu cầu bạn chạy `ccam share side --mcp on` trước.
+- **Tài khoản không dùng chung MCP.** `import` từ chối và yêu cầu bạn đưa tài khoản vào một nhóm dùng chung MCP trước (`ccam group join <group> side`).
 - **Tên nhóm.** `-g` chỉ nhận tên nhóm; tên này trở thành một thư mục trong `groups/`, nên các tên như `../x` bị từ chối.
 
 ## Liên quan

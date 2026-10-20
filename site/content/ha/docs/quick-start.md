@@ -5,7 +5,7 @@ description: Ƙara asusun Claude Code biyu da ccam add, ba su gajerun umarni kam
 updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 55f81dae9fc0
+sourceHash: d5b0e295f3f0
 ---
 
 Ƙara kowane asusu da `ccam add`, sannan ka fara Claude Code da `ccam <name>` ko da gajeren umarni da kai da kanka ka sa masa suna, kamar `ccwork`. Wannan ne kawai abin da yawancin mutane suke buƙata.
@@ -79,7 +79,7 @@ ccam work
 ccam 2
 ```
 
-Gudanar da `ccam` shi kaɗai yana buɗe mai zaɓi: yi amfani da maɓallan kibiya da Enter, ko danna lambar asusun.
+Gudanar da `ccam` shi kaɗai yana buɗe [dashboard](/features/dashboard): je kan asusu da maɓallan kibiya ko lambarsa, sannan danna Enter.
 
 Duk abin da ke bayan gajeren umarnin ko sunan asusun yana zuwa Claude Code ba tare da canji ba, don haka za ka ci gaba da amfani da zaɓuɓɓukan da ka sani:
 
@@ -91,14 +91,13 @@ cat error.log | ccwork -p "what caused this?"
 
 ## 5. Zaɓi abin da za a raba
 
-Ta tsohuwa, ana raba sabobin MCP, `settings.json`, `CLAUDE.md` na gaba ɗaya (global), da agents, commands, skills da plugins tsakanin asusai. Ba a raba tarihin tattaunawa ba. Kunna shi ga asusun biyu idan kana son ci gaba da tattaunawa a tsakaninsu:
+Ta tsohuwa, ana raba sabobin MCP, `settings.json`, `CLAUDE.md` na gaba ɗaya (global), da agents, commands, skills da plugins tsakanin asusai ta rukunin `default`. Ba a raba tarihin tattaunawa ba. Ƙara shi ga rukunin idan kana son ci gaba da tattaunawa tsakanin asusai:
 
 ```sh
-ccam share personal --history on
-ccam share work --history on
+ccam group set default --add history
 ```
 
-ccam yana nuna abin da zai motsa kafin ya canza komai. Duba [rabawa](/docs/sharing) don cikakken bayani.
+ccam yana nuna abin da zai motsa ga kowane asusu kafin ya canza komai. Duba [rabawa da rukunoni](/features/share) don cikakken bayani.
 
 ## 6. Idan asusu ya kai iyakarsa
 

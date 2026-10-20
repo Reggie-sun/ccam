@@ -1,10 +1,10 @@
 ---
 title: Claude Codeの起動
-description: ccam <name|number>、ccam run、ピッカーで任意のアカウントのClaude Codeを起動します。引数はそのままclaudeに渡り、--dry-runで実行内容を確認できます。
+description: ccam <name|number>、ccam run、ダッシュボードで任意のアカウントのClaude Codeを起動します。引数はそのままclaudeに渡り、--dry-runで実行内容を確認できます。
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: e6b5a8d4df86
+sourceHash: "4812b197f143"
 ---
 
 `ccam work`は、アカウント`work`としてClaude Codeを起動し、名前より後のものはすべてそのまま`claude`に渡します。ターミナル、スクリプト、パイプで入力を渡す場合など、`claude`と入力するあらゆる場所で使えます。
@@ -21,7 +21,7 @@ ccam -p "summarise"              # no name: the folder's account, else the defau
 ccam use work                    # make work the default account
 ccam folder work ~/code/company  # use work in that folder when no name is given
 ccam run work --continue         # same as ccam work --continue
-ccam                             # the picker on a terminal, the list otherwise
+ccam                             # the dashboard on a terminal, the list otherwise
 ccam --dry-run work -p hi        # print the command instead of running it
 ccam --fallback work -p "fix the tests"   # run again as another account at the limit
 ```
@@ -30,22 +30,13 @@ ccam --fallback work -p "fix the tests"   # run again as another account at the 
 
 最初の引数が`-`で始まり、ccam自身のフラグでない場合、ccamはすべての引数を付けて、名前を指定しないときのアカウントを起動します。それは[`ccam folder`](/features/folder)で現在のフォルダーに設定したアカウントで、なければデフォルトのアカウントです。デフォルトは`ccam use`で設定したアカウントで、設定していない場合は番号が最も小さいアカウントです。
 
-### ピッカー
+### ダッシュボード
 
-引数なしの`ccam`は、標準入力と標準出力がターミナルであればピッカーを開き、そうでなければ`ccam list`を出力します。ピッカーには、各アカウントの番号、メールアドレス、5時間の使用量、最終使用日時、共有項目が表示されます。使用量は、各アカウントの応答があり次第表示されます。
+引数なしの`ccam`は、標準入力と標準出力がターミナルであれば[ダッシュボード](/features/dashboard)を開き、そうでなければ`ccam list`を出力します。アカウントに移動し（矢印キーか、番号の入力で）、`Enter`を押すと起動します。`n`は最も余裕があるアカウントを起動し、`o`では`--continue`、`--resume`、そのほかの引数を選べます。ダッシュボードはClaude Codeが起動する前に閉じるので、先にターミナルが元の状態に戻ります。
 
-| キー | 動作 |
-| --- | --- |
-| `Enter` | 選択したアカウントとしてClaude Codeを起動します |
-| `1`～`9` | その番号のアカウントを起動します |
-| `Up`/`Down`、`k`/`j` | 選択を移動します |
-| `a` | ピッカーを閉じて`ccam add`のウィザードを実行します |
-| `s` | 選択したアカウントの共有項目を編集します（`Space`か`x`で切り替え、`Enter`で適用、`Esc`で戻ります） |
-| `d` | 選択したアカウントをデフォルトにします |
-| `r` | 短期キャッシュを使わずに使用量を取得し直します |
-| `q`、`Esc`、`Ctrl+C` | 終了します |
+シェルに`CLAUDE_CODE_OAUTH_TOKEN`、`ANTHROPIC_API_KEY`、`ANTHROPIC_AUTH_TOKEN`が設定されていると、Claude Codeはアカウント自身のログインではなくそのキーやトークンを使うことがあるため、ccamは起動前にその旨を標準エラー出力に表示します（`ccam: $ANTHROPIC_API_KEY is set, so Claude Code may use that key instead of work's login…`）。ccamは変数を読むだけです。[APIキーのアカウント](/features/api)では、代わりにこれらの変数を消去します。
 
-ピッカーは操作を実行する前に閉じるので、Claude Codeが起動する前にターミナルは元の状態に戻ります。`d`や共有の変更の後は、ピッカーがもう一度開きます。共有を変更するときは、`ccam share`と同じように、先に計画を表示して確認を求めます。
+`config.toml`で`relay = true`を設定すると、ccamは対話型のセッションを子プロセスとして起動してそのそばに留まり、`/ccam:switch`の後に会話を自動で引き継げるようにします（[詳細](/features/next#inside-claude-code)）。設定しない場合、ccamは自身をClaude Codeに置き換え、そばでは何も動作しません。
 
 ## オプション
 
@@ -84,7 +75,7 @@ $env:CLAUDE_CONFIG_DIR='C:\Users\me\.local\share\ccam\profiles\work'; & C:\Users
 各ボックスはその手順の実行中に強調表示され、その下の行は、Claude Codeが起動するときの環境変数と引数です。
 
 1. `cmd/ccam/main.go`が`app.Main`を呼び出します。ccamが別の名前で起動された場合、それは[ショートカット](/features/shortcuts)なので、直接起動処理に進みます。
-2. `app.parse`は、cobraが関わる前に`os.Args`を調べます。`cli.Execute`に進むのは、`ccam`単体（ピッカー）、ccamのコマンド名（`config.Reserved`）、`-h`/`--help`、`-v`/`--version`だけです。それ以外はすべて起動です。
+2. `app.parse`は、cobraが関わる前に`os.Args`を調べます。`cli.Execute`に進むのは、`ccam`単体（ダッシュボード）、ccamのコマンド名（`config.Reserved`）、`-h`/`--help`、`-v`/`--version`だけです。それ以外はすべて起動です。
 3. `launcher.Launch`が`~/.config/ccam/config.toml`を読み込みます。解析するファイルはこれだけです。
 4. `launcher.Prepare`が名前か番号でアカウントを見つけ（指定がない場合は、`HereProfile`が作業ディレクトリと`config.toml`の`[[folder]]`エントリーを文字列として比較し、フォルダーのアカウントを選びます）、先頭の`--`を1つ取り除き、`ResolveClaude`で`claude`の実行ファイルを特定します。PATHの検索結果は、ファイルの更新日時とともに`~/.local/state/ccam/claude-path`にキャッシュされるので、ccamが起動のたびに`PATH`を検索することはありません。ファイルが変更されたか、なくなった場合は、検索し直します。`config.toml`の`claude_bin`のパスは、そのまま使われます。ループになるため、ccam自身である`claude`は、inodeで比較して拒否します。
 5. `checkLinks`が、アカウントのフォルダー`~/.local/share/ccam/profiles/<name>/`を共有設定と比較します。使う`share.Check`は`lstat`と`readlink`だけを呼び出すので、システムコールは項目ごとに1回か2回です。足りないリンクはその場で作成します。データを失う可能性があるものがあれば、起動を停止します。

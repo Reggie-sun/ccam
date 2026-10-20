@@ -4,7 +4,7 @@ description: ccam mcp add, add-json, list, remove ve import ile grup başına te
 updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: f1de7db4b7be
+sourceHash: "6d3b3c38c6cb"
 ---
 
 Claude Code, kullanıcı MCP sunucularını hesabın girişini de tutan dosya olan `.claude.json` içinde saklar; bu yüzden bu dosya hesaplar arasında paylaşılamaz. ccam, paylaşılan sunucuları bir grup dosyasında, `mcp.json` içinde tutar ve başlatmada bunu grubun her hesabına verir. Bir sunucuyu tüm hesaplarınız için bir kez eklemek üzere `ccam mcp` komutunu, bir oturumda eklediğiniz bir sunucuyu diğer hesaplara taşımak için `ccam mcp import` komutunu kullanın.
@@ -36,7 +36,7 @@ group default (work, side)
 only in account work: pg
 ```
 
-Grupta zaten bulunan bir adı eklemek, onun tanımını değiştirir ve `added` yerine `updated` yazdırır. Sunucular bir hesaba yalnızca hesap MCP'yi o grupla paylaşıyorsa ulaşır (`ccam share <name> --mcp on`); henüz hiçbir hesap MCP paylaşmıyorsa `add` bunu belirtir.
+Grupta zaten bulunan bir adı eklemek, onun tanımını değiştirir ve `added` yerine `updated` yazdırır. Sunucular bir hesaba yalnızca hesap o gruptaysa ve grup MCP'yi paylaşıyorsa ulaşır (`ccam group set <group> --add mcp`); grup paylaşmıyorsa `add` bunu belirtir.
 
 ## Seçenekler
 
@@ -121,7 +121,7 @@ Skipped gh: group default already has a different gh (`ccam mcp import work gh -
 - **Çalışan hesaplar.** `import` gruba kopyalar ama çalışan bir hesabın kendi girdilerini yerinde bırakır ve bunu belirtir; oturum bittikten sonra yeniden çalıştırın. Eşitleme çalışan hesapları atlar.
 - **Remote Control için kopyalar.** Çalışan bir hesabın kopyasına dokunulmaz: `Note: account side is running, so the copy in its .claude.json stays as it was until its next Remote Control launch.` `mcp_strategy = "sync"` ile hiçbir şeyin güncellenmesi gerekmez, çünkü her başlatma eşitleme yapar.
 - **Bozuk dosyalar.** `.claude.json` geçerli bir JSON değilse eşitleme ona dokunmaz ve hatayı bildirir. Kilit 2 saniye içinde alınamazsa ccam `could not lock … (Claude Code is writing the file)` bildirir.
-- **MCP paylaşmayan hesaplar.** `import` reddeder ve önce `ccam share side --mcp on` çalıştırmanızı söyler.
+- **MCP paylaşmayan hesaplar.** `import` reddeder ve önce hesabı MCP paylaşan bir gruba koymanızı söyler (`ccam group join <group> side`).
 - **Grup adları.** `-g` yalnızca bir grup adı alır; bu ad `groups/` altında bir klasör olur, bu yüzden `../x` gibi adlar reddedilir.
 
 ## İlgili

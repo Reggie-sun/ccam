@@ -4,7 +4,7 @@ description: ccam pick in tài khoản còn nhiều hạn mức nhất cho scrip
 updated: 2026-10-20
 order: 12
 translation: machine
-sourceHash: 65a5a7e179a5
+sourceHash: "2e8285b7c193"
 ---
 
 `ccam pick` in tên của tài khoản đã đăng nhập còn nhiều hạn mức nhất, để một script dùng nó khởi động Claude Code. Các worker khởi động cùng lúc sẽ mỗi worker nhận một tài khoản khác nhau, miễn là có đủ tài khoản còn hạn mức, nên một loạt tác vụ `claude -p` được trải ra trên các tài khoản của bạn thay vì dùng cạn một tài khoản.
@@ -19,6 +19,8 @@ done; wait
 ccam pick --json                      # the account and its usage
 ccam pick --model opus                # also count the Opus weekly limit
 ccam pick --max-usage 80 --strategy expiring
+ccam pick --strategy balance          # spread over the weekly quota, fewer running sessions first
+ccam pick --cross-org                 # also accounts of other organizations
 ccam pick --wait=2h                   # nobody has room: wait for a reset
 ccam --fallback "$(ccam pick)" -p "…" # also switch if this account hits its limit mid-job
 ```
@@ -31,7 +33,8 @@ $ ccam pick --json
   "email": "dev@company.com",
   "five_hour": { "percent": 12, "resets_at": "2026-10-20T15:10:00Z", "known": true },
   "weekly": { "percent": 41, "resets_at": "2026-10-24T09:00:00Z", "known": true },
-  "source": "live"
+  "source": "live",
+  "reason": "12% of its 5 hours used, the least"
 }
 ```
 
@@ -41,16 +44,17 @@ Mã thoát: `0` kèm một tên trên đầu ra chuẩn, `75` (`EX_TEMPFAIL`) kh
 
 | Tùy chọn | Tác dụng | Mặc định |
 | --- | --- | --- |
-| `--json` | In tài khoản, mức sử dụng 5 giờ và hàng tuần của nó, và nguồn của các con số | tắt |
+| `--json` | In tài khoản, mức sử dụng 5 giờ và hàng tuần của nó, nguồn của các con số và lý do nó được chọn | tắt |
 | `--model <model>` | Tính cả khoảng hàng tuần của mô hình đó, chẳng hạn `opus` | không có |
 | `--max-usage <1-100>` | Ưu tiên các tài khoản có mức sử dụng dưới giá trị này | `auto_max_usage`, nếu không thì 100 |
-| `--strategy headroom\|expiring` | Mức sử dụng 5 giờ thấp nhất, hoặc khoảng 5 giờ được đặt lại sớm nhất | `auto_strategy`, nếu không thì `headroom` |
+| `--strategy headroom\|expiring\|balance` | Mức sử dụng 5 giờ thấp nhất, khoảng 5 giờ được đặt lại sớm nhất, hoặc hạn mức hàng tuần sẽ bị bỏ phí sớm nhất | `auto_strategy`, nếu không thì `headroom` |
+| `--cross-org` | Chọn cả các tài khoản thuộc tổ chức khác | `cross_org`, nếu không thì tắt |
 | `--wait[=<duration>]` | Khi không tài khoản nào còn hạn mức, chờ tài khoản đầu tiên được đặt lại, tối đa chừng này thời gian | tắt; `5h` khi chỉ ghi cờ |
 | `--dry-run` | Chọn mà không ghi lại lần chọn | tắt |
 
 ## Cách hoạt động
 
-1. ccam liệt kê các tài khoản đã đăng nhập (tài khoản API key không có giới hạn nên bị loại ra).
+1. ccam liệt kê các tài khoản đã đăng nhập (tài khoản API key không có giới hạn nên bị loại ra) trong tổ chức của tài khoản mà thư mục này sẽ khởi động (xem [tổ chức](/features/next#auto)); một thư mục đăng nhập vào cùng tài khoản Claude với tài khoản đó cũng bị loại ra.
 2. Nó lấy một khóa (`~/.local/state/ccam/picks.lock`), nên các lần chọn chạy cùng lúc sẽ diễn ra lần lượt.
 3. Nó tra cứu mức sử dụng của mọi tài khoản cùng lúc, theo cùng cách với `ccam usage`, với bộ nhớ đệm 60 giây.
 4. Các tài khoản được chọn trong 2 phút gần nhất (`~/.local/state/ccam/picks/<name>`) bị loại ra trước, và [quy tắc chọn](/features/next#auto) của `ccam next --auto` chọn trong số còn lại: ưu tiên dưới `auto_max_usage`, theo chiến lược, không bao giờ chọn tài khoản ở mức 100%.

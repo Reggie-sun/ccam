@@ -80,7 +80,7 @@ The ccam plugin teaches Claude Code itself to use ccam: to check which account h
 /plugin install ccam --marketplace jhyunwoo/ccam
 ```
 
-It adds a skill and two commands, `/ccam:usage` and `/ccam:ext`. The skill never runs commands that log in or move files; it suggests them instead.
+It adds a skill, the commands `/ccam:usage`, `/ccam:ext` and `/ccam:switch`, and two hooks: when a session stops at a usage limit you get a terminal notification, and `/ccam:switch [account]` hands the conversation to another account ([details](/features/next#inside-claude-code)). The hooks run `ccam`, so it must be on the `PATH` Claude Code sees. The skill never runs commands that log in or move files; it suggests them instead.
 
 ## Check the installation
 

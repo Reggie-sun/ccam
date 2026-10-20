@@ -5,7 +5,7 @@ description: 關於 ccam、Claude Code 多帳號、用量限制、共用、隱�
 updated: 2026-10-20
 order: 6
 translation: machine
-sourceHash: 80a5475ccfee
+sourceHash: "e7d4a2c877ac"
 ---
 
 ## ccam 是 Anthropic 的官方工具嗎？
@@ -26,7 +26,7 @@ sourceHash: 80a5475ccfee
 
 ## 如何在另一個帳號繼續對話？
 
-用 `ccam share <name> --history on` 讓兩個帳號共用對話記錄，然後執行 `ccam next --continue`。Claude Code 會在下一個帳號開啟目前資料夾中最近的一段對話。
+用 `ccam group set default --add history`（或為這些帳號另建一個群組：`ccam group add pair --items history --members work,side`）讓這些帳號共用對話記錄，然後執行 `ccam next --continue`。Claude Code 會在下一個帳號開啟目前資料夾中最近的一段對話。
 
 ## ccam 會看到或傳送我的登入資訊嗎？
 

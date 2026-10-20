@@ -4,7 +4,7 @@ description: ccam mcp add, add-json, list, remove आणि import ने प्
 updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: f1de7db4b7be
+sourceHash: "6d3b3c38c6cb"
 ---
 
 Claude Code user MCP सर्व्हर `.claude.json` मध्ये ठेवते, ज्या फाइलमध्ये खात्याचे लॉगिनही असते, त्यामुळे ती फाइल खात्यांमध्ये शेअर करता येत नाही. ccam शेअर केलेले सर्व्हर `mcp.json` या गट फाइलमध्ये ठेवते आणि सुरू करताना ती गटातील प्रत्येक खात्याला देते. तुमच्या सर्व खात्यांसाठी एकदाच सर्व्हर जोडण्यासाठी `ccam mcp` वापरा, आणि एका session मध्ये जोडलेला सर्व्हर इतर खात्यांकडे हलवण्यासाठी `ccam mcp import` वापरा.
@@ -36,7 +36,7 @@ group default (work, side)
 only in account work: pg
 ```
 
-गटाकडे आधीच असलेले नाव जोडल्यास त्याची व्याख्या बदलली जाते आणि `added` ऐवजी `updated` छापले जाते. सर्व्हर एखाद्या खात्यापर्यंत तेव्हाच पोहोचतात जेव्हा ते खाते त्या गटासोबत MCP शेअर करते (`ccam share <name> --mcp on`); अजून कोणतेही खाते MCP शेअर करत नसेल, तर `add` तसे सांगते.
+गटाकडे आधीच असलेले नाव जोडल्यास त्याची व्याख्या बदलली जाते आणि `added` ऐवजी `updated` छापले जाते. सर्व्हर एखाद्या खात्यापर्यंत तेव्हाच पोहोचतात जेव्हा ते खाते त्या गटात असते आणि तो गट MCP शेअर करतो (`ccam group set <group> --add mcp`); गट तसे करत नसेल, तर `add` तसे सांगते.
 
 ## पर्याय
 
@@ -121,7 +121,7 @@ Skipped gh: group default already has a different gh (`ccam mcp import work gh -
 - **चालू खाती.** `import` गटात कॉपी करते पण चालू खात्याच्या स्वतःच्या नोंदी तशाच ठेवते आणि तसे सांगते; session संपल्यानंतर ते पुन्हा चालवा. sync चालू खाती वगळतो.
 - **Remote Control साठीच्या कॉपी.** चालू खात्याच्या कॉपीला हात लावला जात नाही: `Note: account side is running, so the copy in its .claude.json stays as it was until its next Remote Control launch.` `mcp_strategy = "sync"` सह काहीही अपडेट करण्याची गरज नाही, कारण प्रत्येक वेळी सुरू करताना sync होते.
 - **बिघडलेल्या फाइल्स.** `.claude.json` वैध JSON नसेल, तर sync तिला हात लावत नाही आणि त्रुटी नोंदवतो. 2 सेकंदांत lock घेता आले नाही, तर ccam `could not lock … (Claude Code is writing the file)` नोंदवते.
-- **MCP शेअर न करणारी खाती.** `import` नकार देते आणि आधी `ccam share side --mcp on` चालवायला सांगते.
+- **MCP शेअर न करणारी खाती.** `import` नकार देते आणि आधी ते खाते MCP शेअर करणाऱ्या गटात टाकायला सांगते (`ccam group join <group> side`).
 - **गटांची नावे.** `-g` फक्त गटाचे नाव घेतो; ते `groups/` खाली फोल्डर बनते, त्यामुळे `../x` सारखी नावे नाकारली जातात.
 
 ## संबंधित

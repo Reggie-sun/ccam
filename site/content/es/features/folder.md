@@ -4,7 +4,7 @@ description: ccam folder hace que una carpeta y todo su contenido usen una cuent
 updated: 2026-10-20
 order: 11
 translation: machine
-sourceHash: 5071b04a194d
+sourceHash: 46d1410a3d81
 ---
 
 `ccam folder work ~/code/company` hace que todo inicio sin nombre de cuenta dentro de `~/code/company`, y en cualquier carpeta debajo de ella, inicie Claude Code como `work`. Fuera de ella, se inicia la cuenta predeterminada como antes. Si nombras una cuenta, con `ccam personal` o un atajo como `ccpersonal`, siempre se inicia esa cuenta.
@@ -34,7 +34,7 @@ Estos inicios usan la cuenta de la carpeta:
 - `ccam -p "…"` y cualquier otro inicio cuyo primer argumento sea una opción para Claude Code
 - `ccam run` sin nombre, y `ccam --dry-run`
 - `ccam --fallback -p "…"` en su primer intento
-- el selector, `ccam` a secas, que empieza con el cursor en la cuenta de la carpeta
+- el panel, `ccam` a secas, que empieza con el cursor en la cuenta de la carpeta
 
 ## Opciones
 

@@ -5,7 +5,7 @@ description: Ongeza akaunti mbili za Claude Code kwa ccam add, zipe njia fupi ka
 updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 55f81dae9fc0
+sourceHash: "d5b0e295f3f0"
 ---
 
 Ongeza kila akaunti kwa `ccam add`, kisha anzisha Claude Code kwa `ccam <name>` au kwa njia fupi unayoipa jina mwenyewe, kama `ccwork`. Hivyo ndivyo watu wengi wanavyohitaji.
@@ -79,7 +79,7 @@ ccam work
 ccam 2
 ```
 
-Kuendesha `ccam` peke yake hufungua kichaguzi: tumia vitufe vya mishale na Enter, au bonyeza namba ya akaunti.
+Kuendesha `ccam` peke yake hufungua [dashibodi](/features/dashboard): nenda kwenye akaunti kwa vitufe vya mishale au namba yake, kisha bonyeza Enter.
 
 Kila kitu baada ya njia fupi au jina la akaunti hupelekwa kwa Claude Code bila kubadilishwa, kwa hiyo unaendelea kutumia chaguo unazozijua:
 
@@ -91,14 +91,13 @@ cat error.log | ccwork -p "what caused this?"
 
 ## 5. Chagua cha kushiriki
 
-Kwa chaguo-msingi, seva za MCP, `settings.json`, `CLAUDE.md` ya jumla, pamoja na agents, commands, skills na plugins hushirikiwa kati ya akaunti. Historia ya mazungumzo haishirikiwi. Iwashe kwa akaunti zote mbili ikiwa unataka kuendeleza mazungumzo kati yao:
+Kwa chaguo-msingi, seva za MCP, `settings.json`, `CLAUDE.md` ya jumla, pamoja na agents, commands, skills na plugins hushirikiwa kati ya akaunti kupitia kikundi `default`. Historia ya mazungumzo haishirikiwi. Iongeze kwenye kikundi ikiwa unataka kuendeleza mazungumzo kati ya akaunti:
 
 ```sh
-ccam share personal --history on
-ccam share work --history on
+ccam group set default --add history
 ```
 
-ccam huonyesha kile itakachohamisha kabla ya kubadilisha chochote. Tazama [kushiriki](/docs/sharing) kwa maelezo zaidi.
+ccam huonyesha kile itakachohamisha kwa kila akaunti kabla ya kubadilisha chochote. Tazama [kushiriki kwa vikundi](/features/share) kwa maelezo zaidi.
 
 ## 6. Akaunti ikifikia kikomo chake
 

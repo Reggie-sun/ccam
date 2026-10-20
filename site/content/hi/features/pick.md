@@ -4,7 +4,7 @@ description: ccam pick script के लिए सबसे ज़्याद�
 updated: 2026-10-20
 order: 12
 translation: machine
-sourceHash: 65a5a7e179a5
+sourceHash: 2e8285b7c193
 ---
 
 `ccam pick` सबसे ज़्यादा गुंजाइश वाले लॉगिन किए हुए अकाउंट का नाम प्रिंट करता है, ताकि कोई script उससे Claude Code शुरू कर सके। जब तक गुंजाइश वाले अकाउंट काफ़ी हों, एक ही समय पर शुरू हुए हर worker को अलग अकाउंट मिलता है, इसलिए `claude -p` jobs का एक batch किसी एक अकाउंट को ख़ाली करने के बजाय आपके अकाउंट्स में बँट जाता है।
@@ -19,6 +19,8 @@ done; wait
 ccam pick --json                      # the account and its usage
 ccam pick --model opus                # also count the Opus weekly limit
 ccam pick --max-usage 80 --strategy expiring
+ccam pick --strategy balance          # spread over the weekly quota, fewer running sessions first
+ccam pick --cross-org                 # also accounts of other organizations
 ccam pick --wait=2h                   # nobody has room: wait for a reset
 ccam --fallback "$(ccam pick)" -p "…" # also switch if this account hits its limit mid-job
 ```
@@ -31,7 +33,8 @@ $ ccam pick --json
   "email": "dev@company.com",
   "five_hour": { "percent": 12, "resets_at": "2026-10-20T15:10:00Z", "known": true },
   "weekly": { "percent": 41, "resets_at": "2026-10-24T09:00:00Z", "known": true },
-  "source": "live"
+  "source": "live",
+  "reason": "12% of its 5 hours used, the least"
 }
 ```
 
@@ -41,16 +44,17 @@ Exit codes: standard output पर नाम के साथ `0`, जब कि
 
 | विकल्प | क्या करता है | डिफ़ॉल्ट |
 | --- | --- | --- |
-| `--json` | अकाउंट, उसका 5 घंटे और साप्ताहिक उपयोग, और संख्याएँ कहाँ से आईं, यह प्रिंट करें | बंद |
+| `--json` | अकाउंट, उसका 5 घंटे और साप्ताहिक उपयोग, संख्याएँ कहाँ से आईं और उसे क्यों चुना गया, यह प्रिंट करें | बंद |
 | `--model <model>` | उस मॉडल की साप्ताहिक विंडो भी गिनें, जैसे `opus` | कोई नहीं |
 | `--max-usage <1-100>` | इस उपयोग से नीचे वाले अकाउंट्स को प्राथमिकता दें | `auto_max_usage`, वरना 100 |
-| `--strategy headroom\|expiring` | सबसे कम 5 घंटे का उपयोग, या सबसे जल्दी होने वाला 5 घंटे का reset | `auto_strategy`, वरना `headroom` |
+| `--strategy headroom\|expiring\|balance` | सबसे कम 5 घंटे का उपयोग, सबसे जल्दी होने वाला 5 घंटे का reset, या वह साप्ताहिक कोटा जो सबसे पहले बिना इस्तेमाल के रह जाएगा | `auto_strategy`, वरना `headroom` |
+| `--cross-org` | दूसरे संगठनों के अकाउंट भी चुनें | `cross_org`, वरना बंद |
 | `--wait[=<duration>]` | जब किसी अकाउंट में गुंजाइश न हो, तो पहले अकाउंट के reset होने का इंतज़ार करें, ज़्यादा से ज़्यादा इतनी देर | बंद; अकेले देने पर `5h` |
 | `--dry-run` | चुनाव दर्ज किए बिना चुनें | बंद |
 
 ## यह कैसे काम करता है
 
-1. ccam लॉगिन किए हुए अकाउंट्स की सूची बनाता है (API key अकाउंट्स की कोई सीमा नहीं होती, इसलिए वे छोड़ दिए जाते हैं)।
+1. ccam उस अकाउंट के संगठन के लॉगिन किए हुए अकाउंट्स की सूची बनाता है जिसे यह फ़ोल्डर शुरू करता (देखें [संगठन](/features/next#auto)); API key अकाउंट्स की कोई सीमा नहीं होती, इसलिए वे छोड़ दिए जाते हैं, और जो फ़ोल्डर उसी Claude अकाउंट में लॉगिन है जिसमें वह अकाउंट, वह भी छोड़ दिया जाता है।
 2. यह एक lock (`~/.local/state/ccam/picks.lock`) लेता है, ताकि एक साथ चल रहे picks एक के बाद एक हों।
 3. यह हर अकाउंट का उपयोग एक साथ पूछता है, उसी तरह जैसे `ccam usage` करता है, 60 सेकंड के cache के साथ।
 4. पिछले 2 मिनट में चुने गए अकाउंट (`~/.local/state/ccam/picks/<name>`) पहले छोड़ दिए जाते हैं, और बाक़ी में से `ccam next --auto` के [चुनाव के नियम](/features/next#auto) चुनते हैं: पहले `auto_max_usage` से नीचे वाले, strategy के हिसाब से, और 100% वाला अकाउंट कभी नहीं।

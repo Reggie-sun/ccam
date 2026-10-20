@@ -4,7 +4,7 @@ description: ccam usage tüm hesapların 5 saatlik ve haftalık limitlerini ayn�
 updated: 2026-10-20
 order: 7
 translation: machine
-sourceHash: 525174ceed0d
+sourceHash: "ec1d1ee27d9f"
 ---
 
 `ccam usage`, her hesabın 5 saatlik ve haftalık limitlerinin ne kadarını kullandığını, her pencerenin sıfırlanmasına kalan süreyle birlikte gösterir. Uzun bir işe başlamadan önce veya Claude Code bir limitin yaklaştığını söylediğinde, hangi hesapta pay kaldığını görmek için kullanın. `ccam statusline`, Claude Code için durum satırı komutudur: hesap adını ve kullanımı Claude Code içinde gösterir ve sayıları `ccam usage` için kaydeder.
@@ -20,6 +20,7 @@ ccam usage -v               # add per-model weekly limits and the data source
 ccam usage --json           # machine-readable, one object per account
 ccam usage --source cache   # saved numbers only, no network
 ccam usage --refresh        # also renew expired logins of accounts not running
+ccam usage --source claude  # let Claude Code look it up: ccam never touches a token
 ccam statusline install     # set the status line in every account's settings.json
 ```
 
@@ -32,7 +33,7 @@ $ ccam usage
 → Most headroom: personal   (open it with ccam next --auto)
 ```
 
-Terminalde tablo, her satırda `fetching…` ile hemen görünür ve her satır, hesabı yanıt verdikçe yeniden çizilir. `As of` sayıların ne kadar eski olduğunu söyler; `(cached)` sayıların uç noktadan değil, kayıtlı bir dosyadan geldiği anlamına gelir. Son satır, 5 saatlik kullanımı %100'ün altında olan hesaplar arasında en düşük olanı adlandırır ve yalnızca birden fazla hesabınız olduğunda görünür. Giriş yapılmamış bir hesap `not logged in → ccam login <name>`, API anahtarlı bir hesap ise `no limits (API)` gösterir.
+Terminalde tablo, her satırda `fetching…` ile hemen görünür ve her satır, hesabı yanıt verdikçe yeniden çizilir. `As of` sayıların ne kadar eski olduğunu söyler; `(cached)` sayıların uç noktadan değil, kayıtlı bir dosyadan geldiği anlamına gelir. Son satır, [`ccam next --auto`](/features/next) komutunun aynı kurallarla seçeceği hesabı adlandırır (`auto_max_usage`, `auto_strategy`, çalışan oturumlar, `cross_org` ayarlanmadıkça yalnızca son kullanılan hesabın kuruluşundaki hesaplar ve %100'deki her pencere atlanarak; böylece haftası dolmuş bir hesap hiçbir zaman adlandırılmaz) ve yalnızca birden fazla hesabınız olduğunda görünür. Giriş yapılmamış bir hesap `not logged in → ccam login <name>`, API anahtarlı bir hesap ise `no limits (API)` gösterir.
 
 `ccam statusline install` sonrasında Claude Code, `[work] · Opus · 5h 24% · 7d 41%` gibi bir satır gösterir.
 
@@ -44,11 +45,15 @@ Terminalde tablo, her satırda `fetching…` ile hemen görünür ve her satır,
 | `--watch[=N]` | Ctrl+C'ye basana kadar her `N` saniyede bir yeniden çizer. Tek başına `--watch` veya 0 ya da daha küçük bir değer 60 anlamına gelir | kapalı |
 | `-v`, `--verbose` | Modele özgü haftalık limitleri ve bir `source:` satırını (`live`, `cache` veya `statusline`) gösterir | kapalı |
 | `--no-cache` | 60 saniyelik önbelleği yok sayar ve uç noktaya yeniden sorar | kapalı |
-| `--source live\|cache` | `cache` uç noktaya hiç sormaz ve yalnızca kayıtlı sayıları gösterir; `live` varsayılan davranıştır | live |
+| `--source live\|claude\|cache` | `live` uç noktaya hesabın token'ıyla sorar; `claude` kullanımı Claude Code'a sorgulatır (aşağıda); `cache` yalnızca kayıtlı sayıları gösterir | `usage_source`, yoksa `live` |
 | `--refresh` | Süresi dolmuş erişim tokenlarını yalnızca çalışmayan hesaplar için yeniler | kapalı |
 | `--dry-run` | Kabul edilir: `ccam usage` kendi önbelleği dışında hiçbir şeyi değiştirmez. `--refresh` ile birlikte reddedilir: `--dry-run cannot be combined with --refresh, which rewrites login tokens` | kapalı |
 
-Başka herhangi bir `--source` değeri `--source must be live or cache` ile başarısız olur. `ccam usage` argüman almaz.
+Başka herhangi bir `--source` değeri `--source must be live, claude or cache` ile başarısız olur.
+
+### Claude Code'un kendisinden kullanım
+
+`config.toml` içinde `usage_source = "claude"` ile (ya da `--source claude` ile) ccam giriş token'ını hiç okumaz. Her hesap için hesabın klasöründe `claude -p --input-format stream-json --output-format stream-json --verbose --safe-mode --no-session-persistence` başlatır ve Claude Code'un `get_usage` isteğini standart girdiden gönderir (Claude Code 2.1.270 veya sonrası); Claude Code kullanımı kendi girişiyle sorgular ve 5 saatlik, haftalık ve model pencereleriyle yanıt verir. `--safe-mode`, hesabın hook'larının, MCP sunucularının ve eklentilerinin başlamasını engeller ve hiçbir oturum kaydedilmez. Her hesap bir Claude Code başlatması, yaklaşık bir saniye alır; bu yüzden bu kaynak `live` kaynağından yavaştır. Hesaplara aynı anda, her birine 20 saniye içinde sorulur ve 60 saniyelik önbellek her zamanki gibi geçerlidir. Claude Code bu isteği deneysel olarak işaretler; bu yüzden yanıt vermeyi bırakırsa ccam kayıtlı sayıları gösterir ve `ccam doctor` bunu bildirir. Bir `--dry-run` Claude Code'u başlatmaz (Claude Code hesabın klasörüne yazar) ve kayıtlı sayıları gösterir. `usage_source`, `live` veya `claude` alır; `cache` yalnızca bir `--source` seçeneğidir. `ccam usage` argüman almaz.
 
 `ccam statusline`, Claude Code'un durum satırı JSON'unu standart girdiden okur. Tek seçeneği `--wrap <command>` seçeneğidir: ilk çıktı satırının başına hesap adı eklenen mevcut bir durum satırı komutu. `ccam statusline install` seçenek almaz. İkisi de `--dry-run` seçeneğini `` --dry-run is not supported by `ccam statusline`; nothing was changed `` ile reddeder.
 

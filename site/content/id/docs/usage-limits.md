@@ -4,7 +4,7 @@ description: Lihat penggunaan 5 jam dan mingguan setiap akun Claude Code dengan 
 updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: a84df8e873d6
+sourceHash: 40aef0708c81
 ---
 
 `ccam usage` menampilkan seberapa banyak batas 5 jam dan mingguan yang sudah digunakan setiap akun. `ccam next --auto` membuka akun dengan sisa kuota terbanyak, dan `--continue` membawa percakapan saat ini ke akun tersebut.
@@ -55,10 +55,10 @@ Claude Code kemudian menampilkan nama akun dan penggunaannya di status line, mis
 ```sh
 ccam next             # the account after the one you used last
 ccam next --auto      # the account with the lowest 5-hour usage
-ccam next --continue  # the next account that shares your conversation history
+ccam next --continue  # carry this folder's conversation on as the next account
 ```
 
-`ccam next` melewati akun yang belum login, dan `--auto` melewati akun yang sudah mencapai 100%. Untuk melanjutkan percakapan, kedua akun harus berbagi riwayat percakapan; lihat [pembagian](/docs/sharing).
+`ccam next` melewati akun yang belum login, dan `--auto` melewati akun yang sudah mencapai 100% serta akun dari organisasi lain. Jika kedua akun berbagi riwayat percakapan, `--continue` membuka percakapan yang sama; jika tidak, Claude Code menyalinnya ke akun baru. Lihat [pembagian](/docs/sharing) dan [beralih ke akun berikutnya](/features/next#continue).
 
 Untuk skrip dan tugas terjadwal yang menjalankan `claude -p`, letakkan `--fallback` sebelum nama akun. Saat akun itu mencapai batasnya, ccam menjalankan lagi perintah yang sama sebagai akun dengan sisa kuota terbanyak, dan hanya output dari proses yang selesai yang dicetak:
 

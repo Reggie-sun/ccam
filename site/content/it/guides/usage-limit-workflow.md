@@ -4,7 +4,7 @@ description: Aspetta il reset o continua subito la stessa conversazione su un al
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: ff765a189332
+sourceHash: "38b80d780bba"
 ---
 
 Quando un account raggiunge il limite di utilizzo (spesso chiamato rate limit), hai due possibilità: aspettare che il limite si azzeri oppure continuare subito la stessa conversazione su un altro account che possiedi. Con ccam la seconda richiede un solo comando, `ccam next --auto --continue`, una volta che la cronologia delle conversazioni è condivisa tra gli account.
@@ -25,8 +25,7 @@ Se hai un secondo account, puoi andare avanti subito con la stessa conversazione
 curl -fsSL https://ccam.dev/install.sh | sh
 ccam add personal
 ccam add work
-ccam share personal --history on
-ccam share work --history on
+ccam group set default --add history
 ccam statusline install
 ```
 
@@ -49,17 +48,19 @@ Apri la conversazione nell'account con più margine:
 ccam next --auto --continue
 ```
 
-Claude Code si avvia come `work` con la conversazione più recente della cartella corrente, compreso tutto ciò che è stato detto finora.
+Claude Code si avvia come `work` con la conversazione più recente della cartella corrente, compreso tutto ciò che è stato detto finora. Condividere la cronologia (`ccam group set default --add history` qui sopra) la mantiene un'unica conversazione; senza, Claude Code copia la conversazione in `work`, e ccam ti dice quanti token rilegge quella prima risposta.
+
+Con il [plugin di ccam](/docs/install#claude-code-plugin) in Claude Code, una sessione che si ferma al limite mostra una notifica, e `/ccam:switch` (oppure `/ccam:switch work`) annota la conversazione per `ccam next --continue` senza lasciare nulla da indovinare.
 
 ## ccam cambia account automaticamente?
 
-No. ccam non è in esecuzione mentre lavori: avvia Claude Code e si sostituisce con esso. Decidi tu quando cambiare, e `ccam next --auto` sceglie l'account con l'utilizzo su 5 ore più basso e salta gli account al 100% o senza login. Alcuni altri strumenti invece cambiano il login di una sessione in corso; [ccam e gli altri strumenti per cambiare account](/compare/account-switchers) spiega la differenza.
+No. ccam non è in esecuzione mentre lavori: avvia Claude Code e si sostituisce con esso. Decidi tu quando cambiare, e `ccam next --auto` sceglie l'account con l'utilizzo su 5 ore più basso e salta gli account al 100%, senza login o di un'altra organizzazione. Con `relay = true` in `config.toml`, ccam invece resta in attesa accanto alla sessione, così `/ccam:switch` prosegue da solo. Alcuni altri strumenti invece cambiano il login di una sessione in corso; [ccam e gli altri strumenti per cambiare account](/compare/account-switchers) spiega la differenza.
 
 ## Cose da tenere a mente
 
 - Esegui `ccam next --continue` nella stessa cartella in cui stavi lavorando; le conversazioni sono salvate per cartella di progetto.
 - Evita di eseguire due account sulla stessa conversazione contemporaneamente. ccam ti avvisa se ci provi.
-- Anche l'altro account deve condividere la cronologia delle conversazioni, nello stesso gruppo.
+- Senza cronologia condivisa, la conversazione viene copiata nell'altro account e le due copie proseguono ciascuna per conto proprio; i checkpoint da cui `/rewind` ripristina il codice restano nel primo account.
 - Il primo messaggio sul nuovo account può consumare più limite del solito, perché quell'account non ha ancora la conversazione in cache.
 - Se puoi passare da un account all'altro in questo modo dipende dai termini di ciascun account.
 

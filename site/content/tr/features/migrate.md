@@ -1,10 +1,10 @@
 ---
 title: Mevcut bir kurulumu kopyalama
-description: Mevcut bir ~/.claude klasörünün ayarlarını, CLAUDE.md dosyasını, uzantılarını, MCP sunucularını ve MCP girişlerini ccam migrate ile paylaşım grubuna kopyalayın.
+description: Mevcut bir ~/.claude klasörünün ayarlarını, CLAUDE.md dosyasını, uzantılarını, MCP sunucularını ve MCP girişlerini ccam migrate ile bir ccam grubuna kopyalayın.
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 95ce6ec9e220
+sourceHash: "7cee52e75749"
 ---
 
 Claude Code'u ccam'den önce kullandıysanız kurulumunuz `~/.claude` ve `~/.claude.json` içindedir. `ccam migrate` bunu bir paylaşım grubuna kopyalar; böylece bu öğeleri grup üzerinden paylaşan her hesap, zaten sahip olduğunuz kurulumla başlar. Kaynak klasör yalnızca okunur ve düz `claude` eskisi gibi çalışmaya devam eder. İlk `ccam add` komutunuzdan sonra bir kez, bir hesap MCP sunucularını paylaşmaya başladığında da yeniden çalıştırın.
@@ -59,7 +59,7 @@ Accounts that share these through group default:
   extensions  personal, work
 ```
 
-Bir grup yalnızca bir öğeyi o grup üzerinden paylaşan hesaplara ulaşır; bu yüzden özet, hesapları öğe öğe listeler. Paylaşmayan hesaplar için ccam, paylaşımı açan `ccam share <name> --<item> on` komutlarını yazdırır.
+Bir grup yalnızca kendi hesaplarına ve yalnızca paylaştığı öğeler için ulaşır; bu yüzden özet, grubun hesaplarını listeler. Grup kopyalanan öğelerden birini paylaşmıyorsa ya da bazı hesaplar grupta değilse ccam, bunu değiştiren `ccam group set <group> --add <items>` ve `ccam group join <group> <accounts>` komutlarını yazdırır.
 
 ## Seçenekler
 
@@ -84,7 +84,7 @@ Bir grup yalnızca bir öğeyi o grup üzerinden paylaşan hesaplara ulaşır; b
 `internal/cli/migrate.go` öğeleri seçer, ardından `migrate.Build` kaynağı ve grubu okur ve bir plan döndürür. Siz onaylayıp `Plan.Apply` çalışana kadar hiçbir şey yazılmaz.
 
 1. **Kaynağı bulma.** `checkSource`; eksik olan, klasör olmayan veya bilinen hiçbir Claude Code girdisi içermeyen bir yolu reddeder. `migrate.ClaudeJSON`, klasöre ait `.claude.json` dosyasını bulur: klasörün içinde ya da içinde olmayan `~/.claude` için yanındaki `~/.claude.json`. `CLAUDE_CONFIG_DIR` ayarlı olmadığında Claude Code onu orada tutar.
-2. **Öğeleri yollara eşleme.** Her yol, `ccam share` komutunun kullandığı izin listesinin aynısı olan `share.Layout` içinden gelir. MCP sunucuları, dosyanın tamamını ayrıştırmak yerine `profile.TopLevelValue` tarayıcısını kullanan `mcp.LocalServers` ile `.claude.json` dosyasından okunur.
+2. **Öğeleri yollara eşleme.** Her yol, grupların kullandığı izin listesinin aynısı olan `share.Layout` içinden gelir. MCP sunucuları, dosyanın tamamını ayrıştırmak yerine `profile.TopLevelValue` tarayıcısını kullanan `mcp.LocalServers` ile `.claude.json` dosyasından okunur.
 3. **Taşımadan kopyalama.** Dosyalar `fsutil.AtomicWrite` veya `fsutil.CopyFile` ile `~/.local/share/ccam/groups/<group>/` içine gider; MCP sunucuları grubun `mcp.json` dosyasına gider.
 
 Her öğe bir kaynak yolu bir grup yoluna eşler:

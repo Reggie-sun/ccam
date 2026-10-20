@@ -1,10 +1,10 @@
 ---
 title: Claude Code-ஐத் தொடங்குதல்
-description: ccam <name|number>, ccam run அல்லது ccam தேர்வி மூலம் எந்தக் கணக்காகவும் Claude Code-ஐத் தொடங்குங்கள்; arguments மாறாமல் claude-க்குச் செல்லும்.
+description: ccam <name|number>, ccam run அல்லது டாஷ்போர்டு மூலம் எந்தக் கணக்காகவும் Claude Code-ஐத் தொடங்குங்கள்; arguments மாறாமல் claude-க்குச் செல்லும்.
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: e6b5a8d4df86
+sourceHash: "4812b197f143"
 ---
 
 `ccam work` Claude Code-ஐ `work` கணக்காகத் தொடங்குகிறது, பெயருக்குப் பின் உள்ள அனைத்தும் அப்படியே `claude`-க்குச் செல்லும். நீங்கள் `claude` என்று தட்டச்சு செய்யும் எந்த இடத்திலும் இதைப் பயன்படுத்துங்கள்: டெர்மினலில், script-இல், அல்லது pipe மூலம் உள்ளீடு கொடுக்கும்போது.
@@ -21,7 +21,7 @@ ccam -p "summarise"              # no name: the folder's account, else the defau
 ccam use work                    # make work the default account
 ccam folder work ~/code/company  # use work in that folder when no name is given
 ccam run work --continue         # same as ccam work --continue
-ccam                             # the picker on a terminal, the list otherwise
+ccam                             # the dashboard on a terminal, the list otherwise
 ccam --dry-run work -p hi        # print the command instead of running it
 ccam --fallback work -p "fix the tests"   # run again as another account at the limit
 ```
@@ -30,22 +30,13 @@ ccam --fallback work -p "fix the tests"   # run again as another account at the 
 
 முதல் argument `-` என்று தொடங்கி, ccam-இன் சொந்த flags-இல் ஒன்றாக இல்லாதபோது, ccam எல்லா arguments-உடனும் பெயர் இல்லாமல் ஒரு கணக்கைத் தொடங்கும். அது [`ccam folder`](/features/folder) மூலம் தற்போதைய கோப்புறைக்கு அமைக்கப்பட்ட கணக்கு, இல்லையெனில் இயல்புநிலை: `ccam use` மூலம் அமைத்த கணக்கு, அல்லது நீங்கள் ஒன்றை அமைக்கவில்லை என்றால் மிகக் குறைந்த எண் உள்ள கணக்கு.
 
-### தேர்வி
+### டாஷ்போர்டு
 
-standard input-உம் output-உம் டெர்மினலாக இருக்கும்போது, arguments இல்லாத `ccam` தேர்வியைத் திறக்கும், இல்லையென்றால் `ccam list`-ஐ அச்சிடும். அது ஒவ்வொரு கணக்கின் எண், மின்னஞ்சல், 5 மணி நேரப் பயன்பாடு, கடைசிப் பயன்பாடு, பகிரப்பட்ட உருப்படிகள் ஆகியவற்றைக் காட்டும்; ஒவ்வொரு கணக்கும் பதில் அளிக்கும்போது பயன்பாடு நிரப்பப்படும்.
+standard input-உம் output-உம் டெர்மினலாக இருக்கும்போது, arguments இல்லாத `ccam` [டாஷ்போர்டைத்](/features/dashboard) திறக்கும், இல்லையென்றால் `ccam list`-ஐ அச்சிடும். ஒரு கணக்குக்குச் சென்று (அம்புக்குறிகளால், அல்லது அதன் எண்ணைத் தட்டச்சு செய்து) அதைத் தொடங்க `Enter` அழுத்துங்கள்; `n` அதிக இடம் உள்ள கணக்கைத் தொடங்கும், `o` `--continue`, `--resume` அல்லது பிற arguments-ஐ வழங்கும். Claude Code தொடங்கும் முன் டாஷ்போர்டு மூடிக்கொள்கிறது, அதனால் டெர்மினல் முதலில் மீட்டமைக்கப்படும்.
 
-| விசை | என்ன செய்யும் |
-| --- | --- |
-| `Enter` | தேர்ந்தெடுத்த கணக்காக Claude Code-ஐத் தொடங்கும் |
-| `1` முதல் `9` வரை | அந்த எண் உள்ள கணக்கைத் தொடங்கும் |
-| `Up`/`Down`, `k`/`j` | தேர்வை நகர்த்தும் |
-| `a` | தேர்வியை மூடி `ccam add` wizard-ஐ இயக்கும் |
-| `s` | தேர்ந்தெடுத்த கணக்கின் பகிரப்பட்ட உருப்படிகளைத் திருத்தும் (`Space` அல்லது `x` மாற்றும், `Enter` பொருத்தும், `Esc` பின்செல்லும்) |
-| `d` | தேர்ந்தெடுத்த கணக்கை இயல்புநிலை ஆக்கும் |
-| `r` | குறுகிய cache இல்லாமல், பயன்பாட்டை மீண்டும் பெறும் |
-| `q`, `Esc`, `Ctrl+C` | வெளியேறும் |
+shell-இல் `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY` அல்லது `ANTHROPIC_AUTH_TOKEN` அமைக்கப்பட்டிருந்தால், Claude Code கணக்கின் சொந்த உள்நுழைவுக்குப் பதிலாக அந்த key அல்லது token-ஐப் பயன்படுத்தும், அதனால் தொடங்கும் முன் ccam அதை standard error-இல் சொல்கிறது (`ccam: $ANTHROPIC_API_KEY is set, so Claude Code may use that key instead of work's login…`). அது variables-ஐப் படிக்க மட்டுமே செய்கிறது; ஒரு [API key கணக்கு](/features/api) அதற்குப் பதிலாக அவற்றை நீக்குகிறது.
 
-தேர்வி செயல்படும் முன் மூடிக்கொள்கிறது, அதனால் Claude Code தொடங்கும் முன் டெர்மினல் மீட்டமைக்கப்படும். `d` அல்லது பகிர்வு மாற்றத்துக்குப் பிறகு அது மீண்டும் திறக்கும். பகிர்வு மாற்றம், `ccam share` செய்வது போலவே, முதலில் திட்டத்தைக் காட்டிக் கேட்கும்.
+`config.toml`-இல் `relay = true` இருந்தால், `/ccam:switch` ஓர் உரையாடலைத் தானாகவே தொடர முடியும்படி, ccam interactive அமர்வுகளை ஒரு child ஆகத் தொடங்கி அவற்றின் அருகிலேயே இருக்கும் ([விவரங்கள்](/features/next#inside-claude-code)); இல்லையென்றால் ccam தன் இடத்தில் Claude Code-ஐ இயக்குகிறது, அதன் அருகில் எதுவும் இயங்காது.
 
 ## Options
 
@@ -84,7 +75,7 @@ $env:CLAUDE_CONFIG_DIR='C:\Users\me\.local\share\ccam\profiles\work'; & C:\Users
 ஒவ்வொரு படியும் இயங்கும்போது அதன் பெட்டி ஒளிரும், கீழே உள்ள வரிகள் Claude Code தொடங்கும் சூழலும் arguments-உம் ஆகும்.
 
 1. `cmd/ccam/main.go` `app.Main`-ஐ அழைக்கிறது. ccam வேறொரு பெயரில் தொடங்கப்பட்டிருந்தால், அது ஒரு [குறுக்குவழி](/features/shortcuts), நேரடியாக launcher-க்குச் செல்லும்.
-2. cobra ஈடுபடும் முன் `app.parse` `os.Args`-ஐப் பார்க்கிறது. தனியாக `ccam` (தேர்வி), ஒரு ccam கட்டளைப் பெயர் (`config.Reserved`), `-h`/`--help`, `-v`/`--version` ஆகியவை மட்டுமே `cli.Execute`-க்குச் செல்லும். மற்ற அனைத்தும் தொடக்கமே.
+2. cobra ஈடுபடும் முன் `app.parse` `os.Args`-ஐப் பார்க்கிறது. தனியாக `ccam` (டாஷ்போர்டு), ஒரு ccam கட்டளைப் பெயர் (`config.Reserved`), `-h`/`--help`, `-v`/`--version` ஆகியவை மட்டுமே `cli.Execute`-க்குச் செல்லும். மற்ற அனைத்தும் தொடக்கமே.
 3. `launcher.Launch` `~/.config/ccam/config.toml`-ஐப் படிக்கிறது; அது parse செய்யும் ஒரே கோப்பு இதுதான்.
 4. `launcher.Prepare` கணக்கைப் பெயராலோ எண்ணாலோ கண்டுபிடித்து (பெயர் இல்லையென்றால் `HereProfile` கோப்புறையின் கணக்கை எடுக்கிறது, working directory-ஐ `config.toml`-இன் `[[folder]]` பதிவுகளுடன் strings ஆக ஒப்பிட்டு), முன்னால் உள்ள ஒரு `--`-ஐ நீக்கி, `claude` executable-ஐ `ResolveClaude` மூலம் கண்டறிகிறது. PATH தேடல் கோப்பின் மாற்ற நேரத்துடன் சேர்த்து `~/.local/state/ccam/claude-path`-இல் cache செய்யப்படுகிறது, அதனால் ஒவ்வொரு தொடக்கத்திலும் ccam `PATH`-ஐத் தேடுவதில்லை. மாறிய அல்லது இல்லாத கோப்பு புதிய தேடலைத் தூண்டும். `config.toml`-இல் உள்ள `claude_bin` பாதை அப்படியே பயன்படுத்தப்படும். ccam-ஆகவே இருக்கும் `claude`-ஐ, inode மூலம் ஒப்பிட்டு, ccam மறுக்கிறது, ஏனெனில் அது முடிவில்லாச் சுழற்சியை ஏற்படுத்தும்.
 5. `checkLinks` கணக்குக் கோப்புறை `~/.local/share/ccam/profiles/<name>/`-ஐ அதன் பகிர்வு அமைப்புகளுடன் `share.Check` மூலம் ஒப்பிடுகிறது; அது `lstat` மற்றும் `readlink`-ஐ மட்டுமே அழைக்கிறது, ஒவ்வோர் உருப்படிக்கும் ஒன்று அல்லது இரண்டு system calls. இல்லாத இணைப்பு அந்த இடத்திலேயே உருவாக்கப்படும். தரவை இழக்கக்கூடிய எதுவும் தொடக்கத்தை நிறுத்தும்.

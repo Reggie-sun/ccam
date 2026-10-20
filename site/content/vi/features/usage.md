@@ -4,7 +4,7 @@ description: "ccam usage hiển thị giới hạn 5 giờ và hàng tuần củ
 updated: 2026-10-20
 order: 7
 translation: machine
-sourceHash: 525174ceed0d
+sourceHash: "ec1d1ee27d9f"
 ---
 
 `ccam usage` cho biết mỗi tài khoản đã dùng bao nhiêu trong giới hạn 5 giờ và giới hạn hàng tuần, cùng thời gian cho đến khi mỗi khoảng được đặt lại. Hãy dùng nó trước khi bắt đầu một tác vụ dài, hoặc khi Claude Code báo rằng sắp chạm giới hạn, để xem tài khoản nào còn hạn mức. `ccam statusline` là lệnh dòng trạng thái cho Claude Code: nó hiển thị tên tài khoản và mức sử dụng bên trong Claude Code và lưu các con số cho `ccam usage`.
@@ -20,6 +20,7 @@ ccam usage -v               # add per-model weekly limits and the data source
 ccam usage --json           # machine-readable, one object per account
 ccam usage --source cache   # saved numbers only, no network
 ccam usage --refresh        # also renew expired logins of accounts not running
+ccam usage --source claude  # let Claude Code look it up: ccam never touches a token
 ccam statusline install     # set the status line in every account's settings.json
 ```
 
@@ -32,7 +33,7 @@ $ ccam usage
 → Most headroom: personal   (open it with ccam next --auto)
 ```
 
-Trên terminal, bảng xuất hiện ngay với `fetching…` ở mỗi hàng, và mỗi hàng được vẽ lại khi tài khoản của nó phản hồi. `As of` cho biết độ cũ của các con số; `(cached)` nghĩa là chúng lấy từ một tệp đã lưu, không phải từ endpoint. Dòng cuối nêu tên tài khoản có mức sử dụng 5 giờ thấp nhất dưới 100%, và chỉ xuất hiện khi bạn có nhiều hơn một tài khoản. Tài khoản chưa đăng nhập hiển thị `not logged in → ccam login <name>`, còn tài khoản dùng khóa API hiển thị `no limits (API)`.
+Trên terminal, bảng xuất hiện ngay với `fetching…` ở mỗi hàng, và mỗi hàng được vẽ lại khi tài khoản của nó phản hồi. `As of` cho biết độ cũ của các con số; `(cached)` nghĩa là chúng lấy từ một tệp đã lưu, không phải từ endpoint. Dòng cuối nêu tên tài khoản mà [`ccam next --auto`](/features/next) sẽ chọn theo cùng các quy tắc (`auto_max_usage`, `auto_strategy`, các phiên đang chạy, chỉ các tài khoản thuộc tổ chức của tài khoản dùng gần nhất trừ khi đặt `cross_org`, bỏ qua mọi khoảng ở mức 100%, nên một tài khoản đã đầy hạn mức tuần không bao giờ được nêu tên), và chỉ xuất hiện khi bạn có nhiều hơn một tài khoản. Tài khoản chưa đăng nhập hiển thị `not logged in → ccam login <name>`, còn tài khoản dùng khóa API hiển thị `no limits (API)`.
 
 Sau `ccam statusline install`, Claude Code hiển thị một dòng như `[work] · Opus · 5h 24% · 7d 41%`.
 
@@ -44,11 +45,15 @@ Sau `ccam statusline install`, Claude Code hiển thị một dòng như `[work]
 | `--watch[=N]` | Vẽ lại mỗi `N` giây cho đến khi bạn nhấn Ctrl+C. `--watch` không kèm giá trị, hoặc giá trị từ 0 trở xuống, nghĩa là 60 | tắt |
 | `-v`, `--verbose` | Hiển thị giới hạn hàng tuần theo từng mô hình và một dòng `source:` (`live`, `cache` hoặc `statusline`) | tắt |
 | `--no-cache` | Bỏ qua bộ nhớ đệm 60 giây và hỏi lại endpoint | tắt |
-| `--source live\|cache` | `cache` không bao giờ hỏi endpoint và chỉ hiển thị các con số đã lưu; `live` là hành vi mặc định | live |
+| `--source live\|claude\|cache` | `live` hỏi endpoint bằng token của tài khoản; `claude` để Claude Code tra cứu (bên dưới); `cache` chỉ hiển thị các con số đã lưu | `usage_source`, nếu không thì `live` |
 | `--refresh` | Gia hạn các access token đã hết hạn, chỉ cho những tài khoản không đang chạy | tắt |
 | `--dry-run` | Được chấp nhận: `ccam usage` không thay đổi gì ngoài bộ nhớ đệm của chính nó. Bị từ chối khi đi cùng `--refresh`: `--dry-run cannot be combined with --refresh, which rewrites login tokens` | tắt |
 
-Mọi giá trị `--source` khác đều thất bại với `--source must be live or cache`. `ccam usage` không nhận đối số.
+Mọi giá trị `--source` khác đều thất bại với `--source must be live, claude or cache`.
+
+### Mức sử dụng từ chính Claude Code
+
+Với `usage_source = "claude"` trong `config.toml` (hoặc `--source claude`), ccam hoàn toàn không đọc token đăng nhập. Với mỗi tài khoản, nó khởi động `claude -p --input-format stream-json --output-format stream-json --verbose --safe-mode --no-session-persistence` trong thư mục của tài khoản và gửi yêu cầu `get_usage` của Claude Code qua đầu vào chuẩn (Claude Code 2.1.270 trở lên); Claude Code tra cứu mức sử dụng bằng thông tin đăng nhập của chính nó và trả lời với khoảng 5 giờ, khoảng hàng tuần và khoảng theo mô hình. `--safe-mode` ngăn các hook, máy chủ MCP và plugin của tài khoản khởi động, và không có phiên nào được lưu. Mỗi tài khoản cần một lần khởi động Claude Code, khoảng một giây, nên nguồn này chậm hơn `live`; các tài khoản được hỏi cùng lúc, mỗi tài khoản trong vòng 20 giây, và bộ nhớ đệm 60 giây vẫn áp dụng như thường. Claude Code đánh dấu yêu cầu này là thử nghiệm, nên nếu nó ngừng trả lời, ccam hiển thị các con số đã lưu và `ccam doctor` báo điều đó. Một lần `--dry-run` không khởi động Claude Code (vì việc đó ghi vào thư mục của tài khoản) và hiển thị các con số đã lưu. `usage_source` nhận `live` hoặc `claude`; `cache` chỉ là một lựa chọn của `--source`. `ccam usage` không nhận đối số.
 
 `ccam statusline` đọc JSON dòng trạng thái của Claude Code từ đầu vào chuẩn. Tùy chọn duy nhất của nó là `--wrap <command>`: một lệnh dòng trạng thái có sẵn, dòng đầu ra đầu tiên của lệnh đó sẽ được thêm tên tài khoản vào phía trước. `ccam statusline install` không nhận tùy chọn. Cả hai đều từ chối `--dry-run` với `` --dry-run is not supported by `ccam statusline`; nothing was changed ``.
 

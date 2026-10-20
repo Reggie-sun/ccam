@@ -4,7 +4,7 @@ description: ccam folder से कोई फ़ोल्डर और उसक
 updated: 2026-10-20
 order: 11
 translation: machine
-sourceHash: 5071b04a194d
+sourceHash: 46d1410a3d81
 ---
 
 `ccam folder work ~/code/company` से `~/code/company` के अंदर, और उसके नीचे के किसी भी फ़ोल्डर में, बिना अकाउंट नाम वाला हर launch Claude Code को `work` के रूप में शुरू करता है। उसके बाहर, डिफ़ॉल्ट अकाउंट पहले की तरह शुरू होता है। अकाउंट का नाम देने पर, `ccam personal` से या `ccpersonal` जैसे शॉर्टकट से, हमेशा वही अकाउंट शुरू होता है।
@@ -34,7 +34,7 @@ Here (/home/me/code/company/api): work, set for /home/me/code/company
 - `ccam -p "…"` और कोई भी दूसरा launch जिसका पहला आर्ग्युमेंट Claude Code का विकल्प हो
 - बिना नाम के `ccam run`, और `ccam --dry-run`
 - `ccam --fallback -p "…"` अपने पहले प्रयास के लिए
-- picker, यानी अकेला `ccam`, जो फ़ोल्डर के अकाउंट पर cursor के साथ खुलता है
+- डैशबोर्ड, यानी अकेला `ccam`, जो फ़ोल्डर के अकाउंट पर cursor के साथ खुलता है
 
 ## विकल्प
 

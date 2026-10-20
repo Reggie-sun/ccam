@@ -5,7 +5,7 @@ description: Ответы о ccam, аккаунтах Claude Code, лимита�
 updated: 2026-10-20
 order: 6
 translation: machine
-sourceHash: 80a5475ccfee
+sourceHash: "e7d4a2c877ac"
 ---
 
 ## Является ли ccam официальным инструментом Anthropic?
@@ -26,7 +26,7 @@ sourceHash: 80a5475ccfee
 
 ## Как продолжить разговор в другом аккаунте?
 
-Сделайте историю разговоров общей для двух аккаунтов командой `ccam share <name> --history on`, затем выполните `ccam next --continue`. Claude Code откроет в следующем аккаунте последний разговор текущей папки.
+Сделайте историю разговоров общей для аккаунтов командой `ccam group set default --add history` (или заведите для них отдельную группу: `ccam group add pair --items history --members work,side`), затем выполните `ccam next --continue`. Claude Code откроет в следующем аккаунте последний разговор текущей папки.
 
 ## Видит ли ccam мои данные входа и отправляет ли их куда-либо?
 

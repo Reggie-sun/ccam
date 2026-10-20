@@ -1,10 +1,10 @@
 ---
 title: Sao chép thiết lập hiện có
-description: "Sao chép cài đặt, CLAUDE.md, tiện ích mở rộng, máy chủ MCP và đăng nhập MCP của một ~/.claude hiện có vào một nhóm dùng chung của ccam bằng ccam migrate."
+description: "Sao chép cài đặt, CLAUDE.md, tiện ích mở rộng, máy chủ MCP và đăng nhập MCP của một ~/.claude hiện có vào một nhóm của ccam bằng ccam migrate."
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 95ce6ec9e220
+sourceHash: "7cee52e75749"
 ---
 
 Nếu bạn đã dùng Claude Code trước khi có ccam, thiết lập của bạn nằm trong `~/.claude` và `~/.claude.json`. `ccam migrate` sao chép nó vào một nhóm dùng chung, để mọi tài khoản dùng chung các mục đó qua nhóm đều bắt đầu với thiết lập bạn đã có. Thư mục nguồn chỉ được đọc, và `claude` thông thường vẫn hoạt động như trước. Hãy chạy lệnh này một lần sau `ccam add` đầu tiên, và chạy lại mỗi khi có tài khoản bắt đầu dùng chung máy chủ MCP.
@@ -59,7 +59,7 @@ Accounts that share these through group default:
   extensions  personal, work
 ```
 
-Một nhóm chỉ đến được các tài khoản dùng chung một mục qua nó, nên phần tóm tắt liệt kê các tài khoản đó theo từng mục. Với các tài khoản chưa dùng chung, ccam in ra các lệnh `ccam share <name> --<item> on` để bật dùng chung.
+Một nhóm chỉ đến được các tài khoản của chính nó, và chỉ với các mục nó dùng chung, nên phần tóm tắt liệt kê các tài khoản của nhóm. Khi nhóm chưa dùng chung một trong các mục đã sao chép, hoặc có tài khoản chưa thuộc nhóm, ccam in ra các lệnh `ccam group set <group> --add <items>` và `ccam group join <group> <accounts>` để thay đổi điều đó.
 
 ## Tùy chọn
 
@@ -84,7 +84,7 @@ Khi không có cờ chọn mục, trên terminal danh sách kiểm sẽ quyết 
 `internal/cli/migrate.go` chọn các mục, rồi `migrate.Build` đọc nguồn và nhóm và trả về một kế hoạch. Không có gì được ghi cho đến `Plan.Apply`, sau khi bạn xác nhận.
 
 1. **Tìm nguồn.** `checkSource` từ chối một đường dẫn không tồn tại, không phải thư mục, hoặc không chứa mục Claude Code nào đã biết. `migrate.ClaudeJSON` tìm `.claude.json` thuộc về thư mục: bên trong nó, hoặc với `~/.claude` không có tệp đó bên trong, là `~/.claude.json` nằm cạnh nó. Đó là nơi Claude Code giữ tệp này khi `CLAUDE_CONFIG_DIR` không được đặt.
-2. **Ánh xạ mục sang đường dẫn.** Mọi đường dẫn đều đến từ `share.Layout`, cũng là danh sách cho phép mà `ccam share` dùng. Các máy chủ MCP được đọc ra khỏi `.claude.json` bằng `mcp.LocalServers`, hàm này dùng bộ quét `profile.TopLevelValue` thay vì phân tích cả tệp.
+2. **Ánh xạ mục sang đường dẫn.** Mọi đường dẫn đều đến từ `share.Layout`, cũng là danh sách cho phép mà các nhóm dùng. Các máy chủ MCP được đọc ra khỏi `.claude.json` bằng `mcp.LocalServers`, hàm này dùng bộ quét `profile.TopLevelValue` thay vì phân tích cả tệp.
 3. **Sao chép, không bao giờ di chuyển.** Các tệp đi vào `~/.local/share/ccam/groups/<group>/` bằng `fsutil.AtomicWrite` hoặc `fsutil.CopyFile`; máy chủ MCP đi vào `mcp.json` của nhóm.
 
 Mỗi mục ánh xạ một đường dẫn nguồn tới một đường dẫn trong nhóm:

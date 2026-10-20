@@ -69,7 +69,7 @@ Claude Code runs [natively on Windows and inside WSL](https://code.claude.com/do
 
 **An MCP server shows up in only one account.** Servers added inside a session with `claude mcp add` belong to that account. Move one to all accounts with `ccam mcp import work <server>`.
 
-**Settings differ between accounts.** `ccam share work` prints what the account shares; `ccam share work --settings on` shares its settings, after showing what will change. `ccam doctor --fix` repairs broken links and keeps a backup of every file it changes.
+**Settings differ between accounts.** `ccam share work` prints what the account shares and through which group; `ccam group join default work` makes it share what `default` shares, after showing what will change. `ccam doctor --fix` repairs broken links and keeps a backup of every file it changes.
 
 **Two accounts open the same conversation.** Avoid working on one conversation in two accounts at the same time. ccam warns you when you try.
 

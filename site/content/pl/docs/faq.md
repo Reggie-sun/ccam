@@ -5,7 +5,7 @@ description: Odpowiedzi o ccam, kontach Claude Code, limitach użycia, współdz
 updated: 2026-10-20
 order: 6
 translation: machine
-sourceHash: 80a5475ccfee
+sourceHash: "e7d4a2c877ac"
 ---
 
 ## Czy ccam to oficjalne narzędzie Anthropic?
@@ -26,7 +26,7 @@ Daj każdemu kontu własny folder konfiguracji przez `CLAUDE_CONFIG_DIR`. ccam r
 
 ## Jak kontynuować rozmowę na innym koncie?
 
-Włącz współdzielenie historii rozmów między oboma kontami poleceniem `ccam share <name> --history on`, a potem uruchom `ccam next --continue`. Claude Code otworzy najnowszą rozmowę z bieżącego folderu na następnym koncie.
+Włącz współdzielenie historii rozmów między kontami poleceniem `ccam group set default --add history` (albo w osobnej grupie tylko dla nich: `ccam group add pair --items history --members work,side`), a potem uruchom `ccam next --continue`. Claude Code otworzy najnowszą rozmowę z bieżącego folderu na następnym koncie.
 
 ## Czy ccam widzi albo wysyła mój login?
 

@@ -4,7 +4,7 @@ description: Orodha moja ya seva za MCP kwa kila kikundi kwa ccam mcp add, add-j
 updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: f1de7db4b7be
+sourceHash: "6d3b3c38c6cb"
 ---
 
 Claude Code huhifadhi seva za MCP za mtumiaji katika `.claude.json`, faili ile ile inayohifadhi taarifa za kuingia za akaunti, kwa hiyo faili hiyo haiwezi kushirikiwa kati ya akaunti. ccam huhifadhi seva zinazoshirikiwa katika faili ya kikundi, `mcp.json`, na huikabidhi kila akaunti ya kikundi wakati wa kuanza. Tumia `ccam mcp` kuongeza seva mara moja kwa akaunti zako zote, na `ccam mcp import` kuhamisha seva uliyoiongeza ndani ya kipindi kimoja kwenda kwa nyingine.
@@ -36,7 +36,7 @@ group default (work, side)
 only in account work: pg
 ```
 
-Kuongeza jina ambalo kikundi tayari kinalo hubadilisha ufafanuzi wake na huchapisha `updated` badala ya `added`. Seva hufikia akaunti tu ikiwa inashiriki MCP na kikundi hicho (`ccam share <name> --mcp on`); ikiwa bado hakuna akaunti inayoshiriki MCP, `add` husema hivyo.
+Kuongeza jina ambalo kikundi tayari kinalo hubadilisha ufafanuzi wake na huchapisha `updated` badala ya `added`. Seva hufikia akaunti tu ikiwa iko katika kikundi hicho na kikundi kinashiriki MCP (`ccam group set <group> --add mcp`); kikundi kisiposhiriki, `add` husema hivyo.
 
 ## Chaguo
 
@@ -121,7 +121,7 @@ Kwa `--force` seva ya kikundi hubadilishwa, na `mcp.json` ya awali kwanza huhifa
 - **Akaunti zinazoendeshwa.** `import` hunakili kwenda kwenye kikundi lakini huacha vipengele vya akaunti inayoendeshwa na husema hivyo; iendeshe tena baada ya kipindi kuisha. Usawazishaji huruka akaunti zinazoendeshwa.
 - **Nakala kwa ajili ya Remote Control.** Nakala ya akaunti inayoendeshwa haiguswi: `Note: account side is running, so the copy in its .claude.json stays as it was until its next Remote Control launch.` Kwa `mcp_strategy = "sync"` hakuna kinachohitaji kusasishwa, kwa sababu kila uanzishaji husawazisha.
 - **Faili zilizoharibika.** Ikiwa `.claude.json` si JSON halali, usawazishaji huiacha bila kuigusa na huripoti kosa. Ikiwa kufuli haiwezi kuchukuliwa ndani ya sekunde 2, ccam huripoti `could not lock … (Claude Code is writing the file)`.
-- **Akaunti zisizoshiriki MCP.** `import` hukataa na hukuambia uendeshe `ccam share side --mcp on` kwanza.
+- **Akaunti zisizoshiriki MCP.** `import` hukataa na hukuambia uweke akaunti kwanza katika kikundi kinachoshiriki MCP (`ccam group join <group> side`).
 - **Majina ya vikundi.** `-g` hupokea jina la kikundi tu; huwa folda chini ya `groups/`, kwa hiyo majina kama `../x` hukataliwa.
 
 ## Zinazohusiana

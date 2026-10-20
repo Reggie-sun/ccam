@@ -5,7 +5,7 @@ description: "Zainstaluj ccam na Linuksie, macOS lub Windows jednym poleceniem, 
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: aea4984c1576
+sourceHash: "07fab3165030"
 ---
 
 Uruchom to w terminalu na Linux lub macOS:
@@ -80,7 +80,7 @@ Plugin ccam uczy sam Claude Code korzystać z ccam: sprawdzać, które konto ma 
 /plugin install ccam --marketplace jhyunwoo/ccam
 ```
 
-Dodaje jedną skill i dwa polecenia, `/ccam:usage` i `/ccam:ext`. Skill nigdy nie uruchamia poleceń, które logują lub przenoszą pliki; zamiast tego je proponuje.
+Dodaje skill, polecenia `/ccam:usage`, `/ccam:ext` i `/ccam:switch` oraz dwa hooki: gdy sesja zatrzyma się na limicie użycia, dostajesz powiadomienie w terminalu, a `/ccam:switch [account]` przekazuje rozmowę innemu kontu ([szczegóły](/features/next#inside-claude-code)). Hooki uruchamiają `ccam`, więc musi on być w `PATH`, który widzi Claude Code. Skill nigdy nie uruchamia poleceń, które logują lub przenoszą pliki; zamiast tego je proponuje.
 
 ## Sprawdzenie instalacji
 

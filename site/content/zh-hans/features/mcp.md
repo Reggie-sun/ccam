@@ -4,7 +4,7 @@ description: 用 ccam mcp add、add-json、list、remove 和 import 为每个组
 updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: f1de7db4b7be
+sourceHash: "6d3b3c38c6cb"
 ---
 
 Claude Code 把用户 MCP 服务器保存在 `.claude.json` 中，而这个文件同时保存着账号的登录，所以它不能在账号之间共享。ccam 把共享的服务器保存在组文件 `mcp.json` 中，并在启动时把它交给该组的每个账号。用 `ccam mcp` 可以一次性为所有账号添加服务器，用 `ccam mcp import` 可以把你在某个会话中添加的服务器转给其他账号。
@@ -36,7 +36,7 @@ group default (work, side)
 only in account work: pg
 ```
 
-添加组中已有的名称会替换它的定义，并打印 `updated` 而不是 `added`。只有与该组共享 MCP 的账号（`ccam share <name> --mcp on`）才会获得这些服务器；如果还没有任何账号共享 MCP，`add` 会提示你。
+添加组中已有的名称会替换它的定义，并打印 `updated` 而不是 `added`。只有属于该组、且该组共享 MCP 时（`ccam group set <group> --add mcp`），账号才会获得这些服务器；如果该组不共享 MCP，`add` 会提示你。
 
 ## 选项
 
@@ -121,7 +121,7 @@ Skipped gh: group default already has a different gh (`ccam mcp import work gh -
 - **正在运行的账号。** `import` 会复制到组中，但保留正在运行的账号自己的条目，并提示你；会话结束后请再运行一次。同步会跳过正在运行的账号。
 - **为 Remote Control 制作的副本。** 正在运行的账号的副本不会被改动，ccam 会提示 `Note: account side is running, so the copy in its .claude.json stays as it was until its next Remote Control launch.` 使用 `mcp_strategy = "sync"` 时无需更新，因为每次启动都会同步。
 - **损坏的文件。** 如果 `.claude.json` 不是有效的 JSON，同步不会改动它，并报告错误。如果 2 秒内无法获取锁，ccam 会报告 `could not lock … (Claude Code is writing the file)`。
-- **不共享 MCP 的账号。** `import` 会拒绝，并提示你先运行 `ccam share side --mcp on`。
+- **不共享 MCP 的账号。** `import` 会拒绝，并提示你先把该账号放进一个共享 MCP 的组（`ccam group join <group> side`）。
 - **组名。** `-g` 只接受组名；它会成为 `groups/` 下的一个文件夹，因此 `../x` 这样的名称会被拒绝。
 
 ## 相关内容

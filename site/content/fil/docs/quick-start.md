@@ -5,7 +5,7 @@ description: Magdagdag ng dalawang Claude Code account gamit ang ccam add, bigya
 updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 55f81dae9fc0
+sourceHash: d5b0e295f3f0
 ---
 
 Idagdag ang bawat account gamit ang `ccam add`, saka simulan ang Claude Code gamit ang `ccam <name>` o ang shortcut na ikaw mismo ang nagpangalan, gaya ng `ccwork`. Iyan lang ang kailangan ng karamihan.
@@ -79,7 +79,7 @@ ccam work
 ccam 2
 ```
 
-Kapag `ccam` lang ang pinatakbo mo, magbubukas ang isang picker: gamitin ang mga arrow key at Enter, o pindutin ang numero ng account.
+Kapag `ccam` lang ang pinatakbo mo, magbubukas ang [dashboard](/features/dashboard): pumunta sa isang account gamit ang mga arrow key o ang numero nito, saka pindutin ang Enter.
 
 Ipinapasa nang walang pagbabago sa Claude Code ang lahat ng kasunod ng shortcut o ng pangalan ng account, kaya patuloy mong magagamit ang mga option na alam mo na:
 
@@ -91,14 +91,13 @@ cat error.log | ccwork -p "what caused this?"
 
 ## 5. Piliin kung ano ang ishe-share
 
-Bilang default, shared sa pagitan ng mga account ang mga MCP server, `settings.json`, ang global na `CLAUDE.md`, at ang mga agent, command, skill at plugin. Hindi kasama ang kasaysayan ng usapan. I-on ito para sa parehong account kung gusto mong ituloy ang mga usapan sa pagitan nila:
+Bilang default, shared sa pagitan ng mga account ang mga MCP server, `settings.json`, ang global na `CLAUDE.md`, at ang mga agent, command, skill at plugin, sa pamamagitan ng group na `default`. Hindi kasama ang kasaysayan ng usapan. Idagdag ito sa group kung gusto mong ituloy ang mga usapan sa pagitan ng mga account:
 
 ```sh
-ccam share personal --history on
-ccam share work --history on
+ccam group set default --add history
 ```
 
-Ipinapakita ng ccam kung ano ang ililipat nito bago ito magbago ng anuman. Tingnan ang [sharing](/docs/sharing) para sa mga detalye.
+Ipinapakita ng ccam kung ano ang ililipat nito para sa bawat account bago ito magbago ng anuman. Tingnan ang [pag-share gamit ang mga group](/features/share) para sa mga detalye.
 
 ## 6. Kapag naabot ng isang account ang limit nito
 

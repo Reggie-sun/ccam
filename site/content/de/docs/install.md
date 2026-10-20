@@ -5,7 +5,7 @@ description: "ccam unter Linux, macOS oder Windows per Befehl, .deb-Paket oder Q
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: aea4984c1576
+sourceHash: 07fab3165030
 ---
 
 Führe dies in einem Terminal unter Linux oder macOS aus:
@@ -80,7 +80,7 @@ Das ccam-Plugin bringt Claude Code selbst bei, ccam zu verwenden: zu prüfen, we
 /plugin install ccam --marketplace jhyunwoo/ccam
 ```
 
-Es fügt einen Skill und zwei Befehle hinzu, `/ccam:usage` und `/ccam:ext`. Der Skill führt nie Befehle aus, die sich anmelden oder Dateien verschieben; er schlägt sie stattdessen vor.
+Es fügt einen Skill hinzu, die Befehle `/ccam:usage`, `/ccam:ext` und `/ccam:switch` sowie zwei Hooks: Wenn eine Sitzung an einem Nutzungslimit anhält, bekommst du eine Terminal-Benachrichtigung, und `/ccam:switch [account]` übergibt das Gespräch an ein anderes Konto ([Details](/features/next#inside-claude-code)). Die Hooks führen `ccam` aus, daher muss es im `PATH` liegen, den Claude Code sieht. Der Skill führt nie Befehle aus, die sich anmelden oder Dateien verschieben; er schlägt sie stattdessen vor.
 
 ## Installation prüfen
 

@@ -5,10 +5,10 @@ description: Bawat command at option ng ccam, mula sa ccam add at ccam <name> ha
 updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: da2594c672bc
+sourceHash: 116c5b34ac9a
 ---
 
-Ilagay ang `--dry-run` bago ang isang command para makita kung ano ang gagawin nito nang hindi ito talagang ginagawa, halimbawa `ccam --dry-run work`. Gumagana ito kapag sinisimulan ang Claude Code (`ccam <name>`, `ccam run`, `ccam next`) at sa `share`, `migrate`, `shortcut`, `update` at `doctor --fix`. Tinatanggihan ito ng ibang command na may binabago sa halip na tumakbo.
+Ilagay ang `--dry-run` bago ang isang command para makita kung ano ang gagawin nito nang hindi ito talagang ginagawa, halimbawa `ccam --dry-run work`. Gumagana ito kapag sinisimulan ang Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`) at sa `group`, `migrate`, `shortcut`, `update` at `doctor --fix`. Tinatanggihan ito ng ibang command na may binabago sa halip na tumakbo.
 
 <!-- commands -->
 
@@ -33,9 +33,10 @@ Sa parehong paraan sinisimulan ng isang shortcut gaya ng `ccwork` ang account ni
 
 ```sh
 ccam add                      # wizard
-ccam add work --share history=on
+ccam add work --group default --group team
 ccam add side --shortcut ccside
 ccam add ci --no-login        # log in later with: ccam login ci
+ccam login --expired          # log in every account whose login no longer works
 ccam rename work job
 ccam remove side              # folder moves to ~/.local/share/ccam/trash
 ccam import ~/.claude-old --name old
@@ -46,9 +47,9 @@ Kapag walang folder, hinahanap ng `ccam import` ang `~/.claude` at `~/.claude-*`
 
 Nagdadagdag ang `ccam add --api` ng account na gumagamit ng API key sa halip na Claude login; binabasa ng ccam ang key sa bawat pagsisimula at hindi ito kailanman iniimbak. Tingnan ang [Mga API key account](/features/api).
 
-Tumatanggi ang `ccam rename`, `ccam remove` at `ccam share` na baguhin ang isang account habang tumatakbo ang Claude Code bilang account na iyon. Isara muna ang session.
+Tumatanggi ang `ccam rename`, `ccam remove` at ang mga command na `ccam group` na baguhin ang isang account habang tumatakbo ang Claude Code bilang account na iyon. Isara muna ang session.
 
-Ipinapakita ng `ccam list --json` ang bawat account kasama ang slot, shortcut, email at folder nito. Ang `share` object nito ay nagtutugma sa bawat item (`mcp`, `settings`, `memory`, `extensions`, `history`) sa pangalan ng group o sa `local`.
+Ipinapakita ng `ccam list --json` ang bawat account kasama ang slot, shortcut, email at folder nito. Inililista ng `groups` array nito ang mga group ng account, at itinutugma ng `share` object nito ang bawat item (`mcp`, `settings`, `memory`, `extensions`, `history`) sa group na pinanggagalingan nito, o sa `local`.
 
 ## Mga shortcut
 
@@ -69,12 +70,15 @@ Pinapanatili ng `ccam rename` ang pangalan ng shortcut, at binubura ng `ccam rem
 ## Sharing
 
 ```sh
-ccam share work                       # show the current state
-ccam share work --history on --mcp team
-ccam share work --settings off --fresh
+ccam group                                  # the groups, what they share, their accounts
+ccam group add team --items history --members work,side
+ccam group set default --add history        # every account in default changes together
+ccam group join team personal
+ccam group leave team side --fresh
+ccam share work                             # what work shares, and through which group
 ```
 
-Tumatanggap ang bawat item ng `on` (ang `default` group), `off`, o pangalan ng group. Tingnan ang [sharing](/docs/sharing).
+Nagshe-share ang isang group ng mga item sa pagitan ng mga account nito; puwedeng kasapi ang isang account sa ilang group, pero iisang group lang ang pinanggagalingan ng bawat item. Tingnan ang [pag-share gamit ang mga group](/features/share).
 
 ## Pagkopya ng dati nang setup
 
@@ -106,14 +110,17 @@ Inililipat ng `ccam mcp import <account>` sa group nito ang mga server na ang ac
 ccam usage           # also: ccam u
 ccam usage --watch   # refresh every 60 seconds
 ccam usage --json
-ccam next --continue
+ccam usage --source claude      # Claude Code looks it up; ccam never touches a token
+ccam next --continue            # this folder's last conversation, as the next account
 ccam next --auto
 ccam next --auto --max-usage 80 --wait
 ccam pick                       # the account with the most room, for a script
 ccam "$(ccam pick)" -p "…"      # start a worker on it
+ccam agents                     # background sessions of every account
+ccam attach 49ec0028            # open one, as the account that started it
 ```
 
-Pareho ang paraan ng pagpili ng `next --auto`, `--fallback` at `ccam pick`: inuuna ang mga account na mas mababa sa `auto_max_usage` (`config.toml`, default 100), ayon sa `auto_strategy` (`headroom` o `expiring`), binibilang ang lingguhang window ng `--model`, at hindi kailanman pumipili ng account na nasa 100%. Kapag walang mapipili, lumalabas sila na may code 75, o sa `--wait` ay naghihintay sa unang account na mag-reset. Tingnan ang [Paglipat sa susunod na account](/features/next) at ang [Pagpili ng account para sa mga script](/features/pick).
+Pareho ang paraan ng pagpili ng `next --auto`, `--fallback` at `ccam pick`: inuuna ang mga account na mas mababa sa `auto_max_usage` (`config.toml`, default 100), ayon sa `auto_strategy` (`headroom`, `expiring` o `balance`), binibilang ang lingguhang window ng `--model`, hindi kailanman pumipili ng account na nasa 100%, at sa loob lang ng organisasyon ng account na pinagmumulan nila (`--cross-org` o `cross_org = true` para maghanap pa nang mas malayo). Kapag walang mapipili, lumalabas sila na may code 75, o sa `--wait` ay naghihintay sa unang account na mag-reset. Dinadala ng `ccam next --continue` ang isang usapan kahit sa pagitan ng mga account na hindi nagshe-share ng kasaysayan: kinokopya ito ng Claude Code sa bagong account. Sa loob ng Claude Code, ipinapasa ng `/ccam:switch [account]` ng plugin ang isang usapan, at ang `ccam hook` ang pinapatakbo ng mga hook nito. Tingnan ang [Paglipat sa susunod na account](/features/next), ang [Pagpili ng account para sa mga script](/features/pick) at ang [Mga background session ng bawat account](/features/agents).
 
 ## Maintenance
 
@@ -135,10 +142,10 @@ Sinusuri ng `ccam update` ang SHA-256 checksum ng release bago nito palitan ang 
 
 | Path | Nilalaman |
 | --- | --- |
-| `~/.config/ccam/config.toml` | Mga account at kung ano ang shine-share nila |
+| `~/.config/ccam/config.toml` | Mga account, group at setting (`theme`, `usage_source`, `relay`, `cross_org` …) |
 | `~/.local/share/ccam/profiles/<name>/` | Ang `CLAUDE_CONFIG_DIR` ng bawat account |
 | `~/.local/share/ccam/groups/<group>/` | Mga shared na setting, MCP server, extension at kasaysayan |
-| `~/.local/state/ccam/` | Usage cache at mga oras ng huling paggamit |
+| `~/.local/state/ccam/` | Usage cache, mga oras ng huling paggamit at ang mga talang iniiwan ng `/ccam:switch` at ng limit hook (`handoff/`) |
 | `~/.local/bin/<shortcut>` | Mga shortcut command gaya ng `ccwork`, mga link sa ccam |
 
 Inililipat ng mga variable na `XDG_CONFIG_HOME`, `XDG_DATA_HOME` at `XDG_STATE_HOME` ang mga folder na ito. Sa Windows, ang `~` ay `%USERPROFILE%` at ang mga shortcut ay `<shortcut>.exe`.

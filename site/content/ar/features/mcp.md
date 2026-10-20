@@ -4,7 +4,7 @@ description: احتفظ بقائمة واحدة من خوادم MCP لكل مج�
 updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: f1de7db4b7be
+sourceHash: 6d3b3c38c6cb
 ---
 
 يحتفظ Claude Code بخوادم MCP الخاصة بالمستخدم في `.claude.json`، وهو الملف نفسه الذي يحتوي على تسجيل دخول الحساب، لذلك لا يمكن مشاركة هذا الملف بين الحسابات. يحتفظ ccam بالخوادم المشتركة في ملف للمجموعة، `mcp.json`، ويسلّمه إلى كل حساب في المجموعة عند التشغيل. استخدم `ccam mcp` لإضافة خادم مرة واحدة لكل حساباتك، و`ccam mcp import` لنقل خادم أضفته داخل جلسة واحدة إلى الحسابات الأخرى.
@@ -36,7 +36,7 @@ group default (work, side)
 only in account work: pg
 ```
 
-إضافة اسم تملكه المجموعة بالفعل تستبدل تعريفه، وتطبع `updated` بدلًا من `added`. ولا تصل الخوادم إلى حساب إلا إذا كان يشارك MCP مع تلك المجموعة (`ccam share <name> --mcp on`)؛ وعندما لا يشارك أي حساب MCP بعد، يخبرك `add` بذلك.
+إضافة اسم تملكه المجموعة بالفعل تستبدل تعريفه، وتطبع `updated` بدلًا من `added`. ولا تصل الخوادم إلى حساب إلا إذا كان في تلك المجموعة وكانت المجموعة تشارك MCP (`ccam group set <group> --add mcp`)؛ وعندما لا تشاركه المجموعة، يخبرك `add` بذلك.
 
 ## الخيارات
 
@@ -121,7 +121,7 @@ Skipped gh: group default already has a different gh (`ccam mcp import work gh -
 - **الحسابات التي تعمل.** ينسخ `import` إلى المجموعة لكنه يترك المدخلات الخاصة بالحساب الذي يعمل ويخبرك بذلك؛ شغّله مرة أخرى بعد انتهاء الجلسة. وتتخطى المزامنة الحسابات التي تعمل.
 - **النسخ الخاصة بـ Remote Control.** لا تُمَس نسخة الحساب الذي يعمل: `Note: account side is running, so the copy in its .claude.json stays as it was until its next Remote Control launch.` ومع `mcp_strategy = "sync"` لا يحتاج شيء إلى تحديث، لأن كل تشغيل يُجري المزامنة.
 - **الملفات التالفة.** إذا لم يكن `.claude.json` بصيغة JSON صالحة، تتركه المزامنة دون تغيير وتبلّغ عن الخطأ. وإذا تعذّر أخذ القفل خلال ثانيتين، يبلّغ ccam بـ `could not lock … (Claude Code is writing the file)`.
-- **الحسابات التي لا تشارك MCP.** يرفض `import` ويطلب منك تشغيل `ccam share side --mcp on` أولًا.
+- **الحسابات التي لا تشارك MCP.** يرفض `import` ويطلب منك أولًا وضع الحساب في مجموعة تشارك MCP (`ccam group join <group> side`).
 - **أسماء المجموعات.** لا يأخذ `-g` إلا اسم مجموعة؛ فهو يصبح مجلدًا تحت `groups/`، لذلك تُرفض أسماء مثل `../x`.
 
 ## صفحات ذات صلة

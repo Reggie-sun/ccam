@@ -5,7 +5,7 @@ description: Mga sagot tungkol sa ccam, mga Claude Code account, usage limit, sh
 updated: 2026-10-20
 order: 6
 translation: machine
-sourceHash: 80a5475ccfee
+sourceHash: e7d4a2c877ac
 ---
 
 ## Opisyal bang tool ng Anthropic ang ccam?
@@ -26,7 +26,7 @@ Bigyan ang bawat account ng sariling configuration folder gamit ang `CLAUDE_CONF
 
 ## Paano ko itutuloy ang isang usapan sa ibang account?
 
-I-share ang kasaysayan ng usapan sa pagitan ng dalawang account gamit ang `ccam share <name> --history on`, saka patakbuhin ang `ccam next --continue`. Bubuksan ng Claude Code ang pinakahuling usapan ng kasalukuyang folder sa susunod na account.
+I-share ang kasaysayan ng usapan sa pagitan ng mga account gamit ang `ccam group set default --add history` (o sa isang group na para lang sa kanila: `ccam group add pair --items history --members work,side`), saka patakbuhin ang `ccam next --continue`. Bubuksan ng Claude Code ang pinakahuling usapan ng kasalukuyang folder sa susunod na account.
 
 ## Nakikita o ipinapadala ba ng ccam ang login ko?
 

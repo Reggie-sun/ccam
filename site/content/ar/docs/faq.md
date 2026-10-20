@@ -5,7 +5,7 @@ description: إجابات عن ccam وحسابات Claude Code وحدود الا
 updated: 2026-10-20
 order: 6
 translation: machine
-sourceHash: 80a5475ccfee
+sourceHash: e7d4a2c877ac
 ---
 
 ## هل ccam أداة رسمية من Anthropic؟
@@ -26,7 +26,7 @@ sourceHash: 80a5475ccfee
 
 ## كيف أتابع محادثة على حساب آخر؟
 
-شارك سجل المحادثات بين الحسابين باستخدام `ccam share <name> --history on`، ثم شغّل `ccam next --continue`. يفتح Claude Code أحدث محادثة في المجلد الحالي في الحساب التالي.
+شارك سجل المحادثات بين الحسابات باستخدام `ccam group set default --add history` (أو بمجموعة خاصة بها: `ccam group add pair --items history --members work,side`)، ثم شغّل `ccam next --continue`. يفتح Claude Code أحدث محادثة في المجلد الحالي في الحساب التالي.
 
 ## هل يرى ccam تسجيل دخولي أو يرسله؟
 

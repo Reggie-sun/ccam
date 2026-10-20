@@ -4,7 +4,7 @@ description: "Remote Control ya Claude Code kama akaunti yoyote kwa ccam <name> 
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 59b802c44bb3
+sourceHash: "5f0b90ea53d6"
 ---
 
 `ccam work rc` huanzisha Remote Control ya Claude Code kama akaunti `work`, ili uweze kuendesha vipindi kwenye kompyuta hii kutoka claude.ai/code au programu ya simu ya Claude. Hufanya kazi kama `claude rc` kwa tofauti moja tu: ikiwa akaunti inashiriki seva za MCP, ccam huuliza mara moja kama izinakili kwenda `.claude.json` ya akaunti, kwa sababu vipindi vya Remote Control havisomi seva kutoka mahali pengine popote.
@@ -33,7 +33,7 @@ Aina mbili za chaguo hukutana hapa: chaguo za ccam yenyewe, ambazo huja kabla ya
 | `--dry-run` (kabla ya akaunti) | Huchapisha mazingira na amri, pamoja na taarifa ya MCP ikiwa ipo. Haiulizi wala hainakili | imezimwa |
 | `Copy them into .claude.json (a backup is kept)? [y/N]` | Huulizwa wakati akaunti inashiriki seva za MCP na `.claude.json` yake haina orodha ya sasa ya kikundi. `y` huzinakili, `N` au Enter huanza bila hizo | `N` |
 | `mcp_strategy = "sync"` katika `~/.config/ccam/config.toml` | Hunakili seva za kikundi kwenda `.claude.json` kabla ya kila uanzishaji, iwe Remote Control au la, kwa hiyo hakuna kinachoulizwa kamwe | `"flag"` |
-| `ccam share work --mcp off` | Huacha kushiriki seva za MCP na akaunti; kisha Remote Control huanza na seva za akaunti yenyewe tu na hakuna kinachoulizwa | imewashwa |
+| `ccam group leave <group> work` | Hutoa akaunti kwenye kikundi kinachoshiriki MCP nayo; kisha Remote Control huanza na seva za akaunti yenyewe tu na hakuna kinachoulizwa | katika `default` |
 
 ### Chaguo za Remote Control
 
@@ -124,7 +124,7 @@ Kipindi cha `work` bado kiko wazi: `ccam work` ya kawaida, amri ya njia fupi, au
 
 ### ccam huuliza kila mara
 
-Bado hujanakili seva. Jibu `y` mara moja, au weka `mcp_strategy = "sync"`. Ikiwa hutaki kamwe seva hizo katika Remote Control, acha kushiriki MCP na akaunti: `ccam share work --mcp off`.
+Bado hujanakili seva. Jibu `y` mara moja, au weka `mcp_strategy = "sync"`. Ikiwa hutaki kamwe seva hizo katika Remote Control, acha kushiriki MCP na akaunti: itoe kwenye kikundi hicho (`ccam group leave default work`), au weka MCP katika kikundi chake chenyewe ambacho akaunti haimo.
 
 ### `ccam work rc` hushindwa mara moja kwa kosa kuhusu `--mcp-config`
 

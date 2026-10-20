@@ -4,7 +4,7 @@ description: "Consultez l'utilisation sur 5 heures et hebdomadaire de chaque com
 updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: a84df8e873d6
+sourceHash: 40aef0708c81
 ---
 
 `ccam usage` indique quelle part des limites sur 5 heures et sur la semaine chaque compte a utilisée. `ccam next --auto` ouvre le compte qui a le plus de marge, et `--continue` reprend la conversation en cours.
@@ -55,10 +55,10 @@ Claude Code affiche alors le nom du compte et son utilisation dans la ligne d'é
 ```sh
 ccam next             # the account after the one you used last
 ccam next --auto      # the account with the lowest 5-hour usage
-ccam next --continue  # the next account that shares your conversation history
+ccam next --continue  # carry this folder's conversation on as the next account
 ```
 
-`ccam next` ignore les comptes qui ne sont pas connectés, et `--auto` ignore les comptes à 100 %. Pour poursuivre une conversation, les deux comptes doivent partager l'historique des conversations ; voir [Partage](/docs/sharing).
+`ccam next` ignore les comptes qui ne sont pas connectés, et `--auto` ignore les comptes à 100 % et ceux d'une autre organisation. Quand les deux comptes partagent l'historique des conversations, `--continue` ouvre la même conversation ; sinon, Claude Code la copie dans le nouveau compte. Voir [Partage](/docs/sharing) et [Passer au compte suivant](/features/next#continue).
 
 Pour les scripts et les tâches planifiées qui exécutent `claude -p`, placez `--fallback` avant le nom du compte. Quand ce compte atteint sa limite, ccam relance la même commande avec le compte qui a le plus de marge, et seule la sortie de l'exécution qui a abouti est affichée :
 

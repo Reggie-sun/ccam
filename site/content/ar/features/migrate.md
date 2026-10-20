@@ -1,10 +1,10 @@
 ---
 title: نسخ إعداد موجود
-description: انسخ الإعدادات وCLAUDE.md والإضافات وخوادم MCP وتسجيلات الدخول إليها من ~/.claude موجود إلى مجموعة مشاركة في ccam باستخدام ccam migrate.
+description: انسخ الإعدادات وCLAUDE.md والإضافات وخوادم MCP وتسجيلات الدخول إليها من ~/.claude موجود إلى مجموعة في ccam باستخدام ccam migrate.
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 95ce6ec9e220
+sourceHash: 7cee52e75749
 ---
 
 إذا كنت قد استخدمت Claude Code قبل ccam، فإعدادك موجود في `~/.claude` و`~/.claude.json`. ينسخه `ccam migrate` إلى مجموعة مشاركة، فيبدأ كل حساب يشارك هذه العناصر عبر المجموعة بالإعداد الذي لديك بالفعل. يُقرأ المجلد المصدر فقط، ويستمر `claude` العادي في العمل كما كان. شغّله مرة واحدة بعد أول `ccam add`، ومرة أخرى كلما بدأ حساب ما بمشاركة خوادم MCP.
@@ -59,7 +59,7 @@ Accounts that share these through group default:
   extensions  personal, work
 ```
 
-لا تصل المجموعة إلا إلى الحسابات التي تشارك عنصرًا عبرها، لذلك يسرد الملخص هذه الحسابات لكل عنصر. وللحسابات التي لا تشاركه، يطبع ccam أوامر `ccam share <name> --<item> on` التي تفعّل المشاركة.
+لا تصل المجموعة إلا إلى حساباتها، وفي العناصر التي تشاركها فقط، لذلك يسرد الملخص حسابات المجموعة. وعندما لا تشارك المجموعة أحد العناصر المنسوخة، أو لا تكون بعض الحسابات فيها، يطبع ccam الأمرين `ccam group set <group> --add <items>` و`ccam group join <group> <accounts>` اللذين يغيّران ذلك.
 
 ## الخيارات
 
@@ -84,7 +84,7 @@ Accounts that share these through group default:
 يختار `internal/cli/migrate.go` العناصر، ثم يقرأ `migrate.Build` المصدر والمجموعة ويُرجع خطة. ولا يُكتب شيء حتى `Plan.Apply`، بعد أن تؤكد.
 
 1. **إيجاد المصدر.** يرفض `checkSource` المسار المفقود، أو الذي ليس مجلدًا، أو الذي لا يحتوي على أي مدخل معروف من Claude Code. ويجد `migrate.ClaudeJSON` ملف `.claude.json` الذي يخص المجلد: داخله، أو بالنسبة إلى `~/.claude` الذي ليس فيه واحد، `~/.claude.json` بجانبه. فهناك يحتفظ به Claude Code عندما لا يكون `CLAUDE_CONFIG_DIR` معيّنًا.
-2. **ربط العناصر بالمسارات.** يأتي كل مسار من `share.Layout`، وهي قائمة السماح نفسها التي يستخدمها `ccam share`. وتُقرأ خوادم MCP من `.claude.json` باستخدام `mcp.LocalServers`، الذي يستخدم الماسح `profile.TopLevelValue` بدلًا من تحليل الملف كله.
+2. **ربط العناصر بالمسارات.** يأتي كل مسار من `share.Layout`، وهي قائمة السماح نفسها التي تستخدمها المجموعات. وتُقرأ خوادم MCP من `.claude.json` باستخدام `mcp.LocalServers`، الذي يستخدم الماسح `profile.TopLevelValue` بدلًا من تحليل الملف كله.
 3. **النسخ لا النقل.** تذهب الملفات إلى `~/.local/share/ccam/groups/<group>/` باستخدام `fsutil.AtomicWrite` أو `fsutil.CopyFile`؛ وتذهب خوادم MCP إلى ملف `mcp.json` الخاص بالمجموعة.
 
 يربط كل عنصر مسارًا واحدًا في المصدر بمسار واحد في المجموعة:

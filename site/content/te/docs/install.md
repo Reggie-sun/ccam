@@ -5,7 +5,7 @@ description: Linux, macOS లేదా Windows లో ccam ను ఒకే క�
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: aea4984c1576
+sourceHash: "07fab3165030"
 ---
 
 Linux లేదా macOS లో టెర్మినల్‌లో ఇది రన్ చేయండి:
@@ -80,7 +80,7 @@ ccam plugin Claude Code కే ccam ను ఉపయోగించడం నే
 /plugin install ccam --marketplace jhyunwoo/ccam
 ```
 
-ఇది ఒక skill ను, రెండు commands ను జోడిస్తుంది, `/ccam:usage`, `/ccam:ext`. ఆ skill లాగిన్ చేసే లేదా ఫైల్‌లను తరలించే కమాండ్‌లను ఎప్పుడూ రన్ చేయదు; బదులుగా వాటిని సూచిస్తుంది.
+ఇది ఒక skill ను, `/ccam:usage`, `/ccam:ext`, `/ccam:switch` అనే commands ను, రెండు hooks ను జోడిస్తుంది: ఒక సెషన్ వినియోగ పరిమితి వద్ద ఆగినప్పుడు మీకు టెర్మినల్ నోటిఫికేషన్ వస్తుంది, `/ccam:switch [account]` సంభాషణను మరో ఖాతాకు అప్పగిస్తుంది ([వివరాలు](/features/next#inside-claude-code)). hooks `ccam` ను రన్ చేస్తాయి, కాబట్టి అది Claude Code చూసే `PATH` లో ఉండాలి. ఆ skill లాగిన్ చేసే లేదా ఫైల్‌లను తరలించే కమాండ్‌లను ఎప్పుడూ రన్ చేయదు; బదులుగా వాటిని సూచిస్తుంది.
 
 ## ఇన్‌స్టాలేషన్‌ను తనిఖీ చేయండి
 

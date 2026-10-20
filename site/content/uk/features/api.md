@@ -4,7 +4,7 @@ description: ccam add --api додає обліковий запис із клю
 updated: 2026-10-20
 order: 13
 translation: machine
-sourceHash: de2c5cde2c48
+sourceHash: "a903c92f2c50"
 ---
 
 Обліковий запис із ключем API запускає Claude Code з ключем API замість входу за підпискою Claude: для API Anthropic або для кінцевої точки, яка розуміє той самий формат Messages, як-от шлюз LiteLLM або OpenRouter. ccam не зберігає ключ. Він читає його під час кожного запуску облікового запису зі змінної середовища або з команди, наприклад менеджера паролів, і передає його лише цьому процесу Claude Code.
@@ -22,12 +22,12 @@ ccam list
 
 ```console
 $ ccam list
-   #  Name      Shortcut  Email                    Shared               Last used
-*  1  personal  -         me@example.com           mcp settings md ext  2h ago
-   2  gw        -         (API: llm.example.com)   mcp settings md ext  -
+   #  Name      Shortcut  Email                   Groups   Last used
+*  1  personal  -         me@example.com          default  2h ago
+   2  gw        -         (API: llm.example.com)  default  -
 ```
 
-Обліковий запис із ключем API спільно використовує налаштування, `CLAUDE.md`, розширення та сервери MCP, як будь-який інший обліковий запис, і працює з короткими командами, `ccam folder` і `ccam ext`.
+Обліковий запис із ключем API входить до груп, як будь-який інший обліковий запис (за замовчуванням до `default`: налаштування, `CLAUDE.md`, розширення та сервери MCP), і працює з короткими командами, `ccam folder` і `ccam ext`.
 
 ## Параметри
 
@@ -59,7 +59,7 @@ model = 'claude-sonnet-5-5'
 Під час кожного запуску облікового запису, після звичайних перевірок і до старту Claude Code:
 
 1. ccam читає ключ: `env:` із середовища, `command:` виконанням команди з обмеженням у 30 секунд. Команда може запитати пароль у терміналі; її потік помилок теж іде в термінал. Порожній ключ зупиняє запуск із повідомленням про те, де очікувався ключ.
-2. Він видаляє всі успадковані змінні, які визначають, як Claude Code виконує вхід або якого провайдера використовує: `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_BASE_URL`, `ANTHROPIC_MODEL`, `CLAUDE_CODE_USE_BEDROCK`, `CLAUDE_CODE_USE_VERTEX` і `CLAUDE_CODE_USE_FOUNDRY`. Ключ, заданий у вашій оболонці для чогось іншого, не потрапить до цього облікового запису, а вхід за підпискою не візьме гору над його ключем.
+2. Він видаляє всі успадковані змінні, які визначають, як Claude Code виконує вхід або якого провайдера використовує: ключі й токени (`ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN_FILE_DESCRIPTOR`, `CLAUDE_CODE_API_KEY_FILE_DESCRIPTOR`), кінцеву точку (`ANTHROPIC_BASE_URL`, `ANTHROPIC_UNIX_SOCKET`, `ANTHROPIC_MODEL`) і перемикачі провайдера (`CLAUDE_CODE_USE_BEDROCK`, `CLAUDE_CODE_USE_VERTEX`, `CLAUDE_CODE_USE_FOUNDRY`, `CLAUDE_CODE_USE_ANTHROPIC_AWS`, `CLAUDE_CODE_USE_ANTHROPIC_GOOGLE_CLOUD`, `CLAUDE_CODE_USE_MANTLE`, `CLAUDE_CODE_USE_GATEWAY`). Ключ, заданий у вашій оболонці для чогось іншого, не потрапить до цього облікового запису, а вхід за підпискою не візьме гору над його ключем.
 3. Він задає `ANTHROPIC_BASE_URL` і `ANTHROPIC_MODEL`, якщо їх указано, а ключ — як `ANTHROPIC_API_KEY` або `ANTHROPIC_AUTH_TOKEN`.
 
 Облікові записи зі входом за підпискою, як і раніше, отримують успадковане середовище. В інтерактивному сеансі Claude Code може один раз запитати, чи використовувати ключ, знайдений у середовищі.
@@ -70,7 +70,7 @@ model = 'claude-sonnet-5-5'
 - `ccam add --api` одразу перевіряє джерело `env:` і попереджає, якщо змінна порожня; джерело `command:` уперше виконується під час запуску.
 - `ccam login` і `ccam logout` відмовляються працювати з обліковим записом із ключем API, бо він не має входу. `ccam doctor` показує його кінцеву точку та джерело ключа й попереджає, коли змінна `env:` порожня.
 - `ccam usage` показує для нього `API`. `ccam next --auto`, `--fallback` і `ccam pick` вибирають лише серед облікових записів із підпискою, бо ключ API не має 5-годинного чи тижневого ліміту для порівняння.
-- Спільний `settings.json` із блоком `env` або `apiKeyHelper` застосовується до кожного облікового запису групи, зокрема до облікових записів із ключем API. Не тримайте налаштування провайдера в спільних налаштуваннях.
+- Спільний `settings.json` із блоком `env` або `apiKeyHelper` застосовується до кожного облікового запису групи, зокрема до облікових записів із ключем API. Не тримайте налаштування провайдера в спільних налаштуваннях або додайте обліковий запис із ключем API до групи без `settings`.
 
 ## Пов'язані сторінки
 

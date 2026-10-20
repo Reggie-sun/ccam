@@ -5,7 +5,7 @@ description: پاسخ به پرسش‌هایی درباره ccam، حساب‌ه
 updated: 2026-10-20
 order: 6
 translation: machine
-sourceHash: 80a5475ccfee
+sourceHash: e7d4a2c877ac
 ---
 
 ## آیا ccam ابزار رسمی Anthropic است؟
@@ -26,7 +26,7 @@ sourceHash: 80a5475ccfee
 
 ## چگونه یک گفتگو را در حساب دیگری ادامه دهم؟
 
-تاریخچه گفتگو را با `ccam share <name> --history on` بین دو حساب به اشتراک بگذارید، سپس `ccam next --continue` را اجرا کنید. Claude Code آخرین گفتگوی پوشه فعلی را در حساب بعدی باز می‌کند.
+تاریخچه گفتگو را با `ccam group set default --add history` بین حساب‌ها به اشتراک بگذارید (یا در گروهی مخصوص خودشان: `ccam group add pair --items history --members work,side`)، سپس `ccam next --continue` را اجرا کنید. Claude Code آخرین گفتگوی پوشه فعلی را در حساب بعدی باز می‌کند.
 
 ## آیا ccam اطلاعات ورود مرا می‌بیند یا جایی می‌فرستد؟
 

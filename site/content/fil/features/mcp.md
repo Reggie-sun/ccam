@@ -4,7 +4,7 @@ description: Iisang listahan ng MCP server bawat group gamit ang ccam mcp add, a
 updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: f1de7db4b7be
+sourceHash: 6d3b3c38c6cb
 ---
 
 Iniimbak ng Claude Code ang mga user MCP server sa `.claude.json`, ang parehong file na naglalaman ng login ng account, kaya hindi puwedeng i-share ang file na ito sa pagitan ng mga account. Iniimbak ng ccam ang mga shared na server sa isang group file, ang `mcp.json`, at ibinibigay ito sa bawat account ng group sa pagsisimula. Gamitin ang `ccam mcp` para magdagdag ng server nang isang beses para sa lahat ng iyong account, at ang `ccam mcp import` para ilipat sa iba ang server na idinagdag mo sa loob ng isang session.
@@ -36,7 +36,7 @@ group default (work, side)
 only in account work: pg
 ```
 
-Kapag nagdagdag ka ng pangalang mayroon na ang group, pinapalitan ang definition nito at ipi-print ang `updated` sa halip na `added`. Umaabot lang ang mga server sa isang account kung nagshe-share ito ng MCP sa group na iyon (`ccam share <name> --mcp on`); kapag wala pang account na nagshe-share ng MCP, sasabihin iyon ng `add`.
+Kapag nagdagdag ka ng pangalang mayroon na ang group, pinapalitan ang definition nito at ipi-print ang `updated` sa halip na `added`. Umaabot lang ang mga server sa isang account kung kasapi ito ng group na iyon at nagshe-share ng MCP ang group (`ccam group set <group> --add mcp`); kapag hindi, sasabihin iyon ng `add`.
 
 ## Mga option
 
@@ -121,7 +121,7 @@ Sa `--force`, pinapalitan ang server ng group, at sine-save muna ang dating `mcp
 - **Mga tumatakbong account.** Kumokopya ang `import` sa group pero iniiwan ang sariling entry ng tumatakbong account at sinasabi iyon; patakbuhin ulit pagkatapos ng session. Nilalaktawan ng sync ang mga tumatakbong account.
 - **Mga kopya para sa Remote Control.** Hindi ginagalaw ang kopya ng tumatakbong account: `Note: account side is running, so the copy in its .claude.json stays as it was until its next Remote Control launch.` Sa `mcp_strategy = "sync"`, walang kailangang i-update, dahil nagsi-sync ang bawat pagsisimula.
 - **Mga sirang file.** Kung hindi valid na JSON ang `.claude.json`, hindi ito ginagalaw ng sync at iniuulat ang error. Kung hindi makuha ang lock sa loob ng 2 segundo, iniuulat ng ccam ang `could not lock … (Claude Code is writing the file)`.
-- **Mga account na hindi nagshe-share ng MCP.** Tumatanggi ang `import` at sinasabing patakbuhin muna ang `ccam share side --mcp on`.
+- **Mga account na hindi nagshe-share ng MCP.** Tumatanggi ang `import` at sinasabing ilagay muna ang account sa isang group na nagshe-share ng MCP (`ccam group join <group> side`).
 - **Mga pangalan ng group.** Pangalan ng group lang ang tinatanggap ng `-g`; nagiging folder ito sa ilalim ng `groups/`, kaya tinatanggihan ang mga pangalang gaya ng `../x`.
 
 ## Kaugnay

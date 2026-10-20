@@ -4,7 +4,7 @@ description: Ipinapakita ng ccam usage ang 5-oras at lingguhang limit ng bawat a
 updated: 2026-10-20
 order: 7
 translation: machine
-sourceHash: 525174ceed0d
+sourceHash: "ec1d1ee27d9f"
 ---
 
 Ipinapakita ng `ccam usage` kung gaano kalaki na ang nagamit ng bawat account sa 5-oras at lingguhang limit, kasama ang oras bago mag-reset ang bawat window. Gamitin ito bago ka magsimula ng mahabang gawain, o kapag sinabi ng Claude Code na malapit na ang isang limit, para makita kung aling account ang may natitira pa. Ang `ccam statusline` ay ang status line command para sa Claude Code: ipinapakita nito ang pangalan ng account at usage sa loob ng Claude Code at sine-save ang mga numero para sa `ccam usage`.
@@ -20,6 +20,7 @@ ccam usage -v               # add per-model weekly limits and the data source
 ccam usage --json           # machine-readable, one object per account
 ccam usage --source cache   # saved numbers only, no network
 ccam usage --refresh        # also renew expired logins of accounts not running
+ccam usage --source claude  # let Claude Code look it up: ccam never touches a token
 ccam statusline install     # set the status line in every account's settings.json
 ```
 
@@ -32,7 +33,7 @@ $ ccam usage
 → Most headroom: personal   (open it with ccam next --auto)
 ```
 
-Sa terminal, lumalabas agad ang table na may `fetching…` sa bawat hilera, at iginuguhit ulit ang bawat hilera habang sumasagot ang account nito. Sinasabi ng `As of` kung gaano na katagal ang mga numero; ang ibig sabihin ng `(cached)` ay galing ang mga ito sa naka-save na file, hindi sa endpoint. Pinapangalanan ng huling linya ang account na may pinakamababang 5-oras na usage na mas mababa sa 100%, at lumalabas lang ito kapag mahigit sa isa ang account mo. Nagpapakita ng `not logged in → ccam login <name>` ang account na hindi naka-log in, at ng `no limits (API)` ang account na API key ang gamit.
+Sa terminal, lumalabas agad ang table na may `fetching…` sa bawat hilera, at iginuguhit ulit ang bawat hilera habang sumasagot ang account nito. Sinasabi ng `As of` kung gaano na katagal ang mga numero; ang ibig sabihin ng `(cached)` ay galing ang mga ito sa naka-save na file, hindi sa endpoint. Pinapangalanan ng huling linya ang account na pipiliin ng [`ccam next --auto`](/features/next) ayon sa parehong mga patakaran (`auto_max_usage`, `auto_strategy`, ang mga tumatakbong session, mga account lang ng organisasyon ng huling ginamit na account maliban kung nakatakda ang `cross_org`, nilalaktawan ang bawat window na nasa 100%, kaya hindi kailanman pinapangalanan ang account na puno na ang linggo), at lumalabas lang ito kapag mahigit sa isa ang account mo. Nagpapakita ng `not logged in → ccam login <name>` ang account na hindi naka-log in, at ng `no limits (API)` ang account na API key ang gamit.
 
 Pagkatapos ng `ccam statusline install`, magpapakita ang Claude Code ng linya gaya ng `[work] · Opus · 5h 24% · 7d 41%`.
 
@@ -44,11 +45,15 @@ Pagkatapos ng `ccam statusline install`, magpapakita ang Claude Code ng linya ga
 | `--watch[=N]` | Iguhit ulit tuwing `N` segundo hanggang pindutin mo ang Ctrl+C. Ang `--watch` lang, o value na 0 o mas mababa, ay nangangahulugang 60 | off |
 | `-v`, `--verbose` | Ipakita ang mga lingguhang limit bawat model at isang linyang `source:` (`live`, `cache` o `statusline`) | off |
 | `--no-cache` | Huwag pansinin ang 60 segundong cache at magtanong ulit sa endpoint | off |
-| `--source live\|cache` | Hindi kailanman nagtatanong sa endpoint ang `cache` at ipinapakita lang ang mga naka-save na numero; ang `live` ang default na kilos | live |
+| `--source live\|claude\|cache` | Nagtatanong sa endpoint ang `live` gamit ang token ng account; ipinapahanap ng `claude` ito sa Claude Code (tingnan sa ibaba); ipinapakita lang ng `cache` ang mga naka-save na numero | `usage_source`, kung wala ay `live` |
 | `--refresh` | I-renew ang mga expired na access token, para lang sa mga account na hindi tumatakbo | off |
 | `--dry-run` | Tinatanggap: walang binabago ang `ccam usage` maliban sa sarili nitong cache. Tinatanggihan kapag kasama ang `--refresh`: `--dry-run cannot be combined with --refresh, which rewrites login tokens` | off |
 
-Pumapalya ang anumang ibang value ng `--source` na may `--source must be live or cache`. Walang tinatanggap na argument ang `ccam usage`.
+Pumapalya ang anumang ibang value ng `--source` na may `--source must be live, claude or cache`.
+
+### Usage mula mismo sa Claude Code
+
+Kapag may `usage_source = "claude"` sa `config.toml` (o `--source claude`), hindi binabasa ng ccam ang login token kahit kailan. Para sa bawat account, sinisimulan nito ang `claude -p --input-format stream-json --output-format stream-json --verbose --safe-mode --no-session-persistence` sa folder ng account at ipinapadala ang `get_usage` request ng Claude Code sa standard input (Claude Code 2.1.270 o mas bago); hinahanap ng Claude Code ang usage gamit ang sarili nitong login at sumasagot ito ng 5-oras, lingguhan at model na mga window. Pinipigilan ng `--safe-mode` na magsimula ang mga hook, MCP server at plugin ng account, at walang session na sine-save. Isang pagsisimula ng Claude Code, mga isang segundo, ang kailangan ng bawat account, kaya mas mabagal ang source na ito kaysa sa `live`; sabay-sabay na tinatanong ang mga account, bawat isa sa loob ng 20 segundo, at gumagana ang 60-segundong cache gaya ng dati. Itinuturing ng Claude Code na experimental ang request, kaya kapag huminto itong sumagot, ipinapakita ng ccam ang mga naka-save na numero at iniuulat ito ng `ccam doctor`. Hindi sinisimulan ng `--dry-run` ang Claude Code (nagsusulat ito sa folder ng account) at ipinapakita nito ang mga naka-save na numero. Tumatanggap ang `usage_source` ng `live` o `claude`; pagpipilian lang ng `--source` ang `cache`. Walang tinatanggap na argument ang `ccam usage`.
 
 Binabasa ng `ccam statusline` ang status line JSON ng Claude Code mula sa standard input. Iisa ang option nito, ang `--wrap <command>`: isang umiiral na status line command na ang unang linya ng output ay lalagyan ng pangalan ng account sa unahan. Walang option ang `ccam statusline install`. Parehong tinatanggihan ng dalawa ang `--dry-run` na may `` --dry-run is not supported by `ccam statusline`; nothing was changed ``.
 

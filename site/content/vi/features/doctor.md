@@ -4,7 +4,7 @@ description: "Kiểm tra liên kết dùng chung, quyền tệp, thông tin đă
 updated: 2026-10-20
 order: 9
 translation: machine
-sourceHash: a45ca25bb722
+sourceHash: "6ae82bbf5585"
 ---
 
 `ccam doctor` kiểm tra bản cài đặt ccam của bạn: tệp thực thi Claude Code, thư mục, thông tin đăng nhập và liên kết dùng chung của mọi tài khoản, các máy chủ MCP dùng chung, endpoint mức sử dụng và các lệnh tắt của bạn. `ccam doctor --fix` sửa những gì nó có thể sửa mà không mất dữ liệu, và chuyển mọi tệp nó thay thế vào một thư mục sao lưu trước. Hãy chạy lệnh này khi `ccam <name>` dừng lại vì một vấn đề về liên kết dùng chung, sau khi bạn khôi phục tệp bằng tay, hoặc sau một lần cập nhật Claude Code.
@@ -71,14 +71,16 @@ Khối ở giữa chạy một lần cho mỗi tài khoản. Các kiểm tra, v�
 1. **Phiên bản Claude Code** (`checkClaude`). Tìm tệp thực thi `claude` theo cùng cách trình khởi chạy làm và chạy `claude --version`. Nếu phiên bản không bắt đầu bằng `2.1.302`, phiên bản mà cấu trúc thư mục của ccam đã được kiểm chứng (`doctor.LayoutVersion`), nó thêm `· ccam was verified against the folder layout of Claude Code 2.1.302. Any 'unknown entries' below may mean the layout changed`. Thiếu tệp thực thi hoặc `--version` thất bại là lỗi. Không có cách sửa.
 2. **Thông tin đăng nhập trong biến môi trường** (`checkAuthEnv`). Cảnh báo khi `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY` hoặc `ANTHROPIC_AUTH_TOKEN` được đặt: mọi tài khoản khởi động từ shell đó đều thừa hưởng nó, và Claude Code ưu tiên nó hơn thông tin đăng nhập riêng của tài khoản. Không có cách sửa; bạn tự bỏ đặt biến đó.
 3. **Thư mục** (`checkProfile`). Thiếu thư mục tài khoản là lỗi và kết thúc các kiểm tra của tài khoản đó. Quyền có bất kỳ bit group hoặc other nào được đặt là cảnh báo; `--fix` chạy `chmod 0700`. Windows không có bit quyền, nên kiểm tra này và kiểm tra `0600` bên dưới được bỏ qua ở đó; thư mục trong hồ sơ người dùng của bạn được bảo vệ bằng danh sách kiểm soát truy cập của nó.
-4. **Tệp đăng nhập** (`checkCredentials`). `.credentials.json` được kiểm tra bằng `lstat`. Một liên kết tượng trưng là lỗi, vì mỗi tài khoản phải có token riêng, và không được sửa. Quyền khác `0600` là cảnh báo; `--fix` chạy `chmod 0600`. Sau đó thông tin đăng nhập được đọc (trên macOS thì đọc từ Chuỗi khóa (Keychain) trước). Chưa đăng nhập là cảnh báo kèm gợi ý `ccam login <name>`. Refresh token hết hạn là lỗi `login expired`; access token hết hạn chỉ là thông tin, vì Claude Code sẽ gia hạn nó ở lần khởi động tiếp theo. Không trường hợp nào trong số này được sửa.
-5. **Liên kết dùng chung** (`share.Check`). So sánh mọi đường dẫn trong `share.Layout` với thiết lập dùng chung của tài khoản, chỉ dùng `lstat` và `readlink`. Nó báo bốn loại: thiếu liên kết, liên kết trỏ sang chỗ khác, một tệp thật ở nơi lẽ ra là liên kết, và liên kết còn sót lại cho một mục nay đã là riêng. Thiếu liên kết là cảnh báo, các loại còn lại là lỗi.
+4. **Tệp đăng nhập** (`checkCredentials`). `.credentials.json` được kiểm tra bằng `lstat`. Một liên kết tượng trưng là lỗi, vì mỗi tài khoản phải có token riêng, và không được sửa. Quyền khác `0600` là cảnh báo; `--fix` chạy `chmod 0600`. Sau đó thông tin đăng nhập được đọc (trên macOS thì đọc từ Chuỗi khóa (Keychain) trước). Chưa đăng nhập là cảnh báo kèm gợi ý `ccam login <name>`. Refresh token hết hạn là lỗi `login expired`; access token hết hạn chỉ là thông tin, vì Claude Code sẽ gia hạn nó ở lần khởi động tiếp theo. Một thông tin đăng nhập hợp lệ hiển thị email và gói (`login valid (dev@company.com, Claude Team · Acme)`). Không trường hợp nào trong số này được sửa; `ccam login --expired` đăng nhập mọi tài khoản cần đăng nhập lại.
+5. **Liên kết dùng chung** (`share.Check`). So sánh mọi đường dẫn trong `share.Layout` với các nhóm của tài khoản, chỉ dùng `lstat` và `readlink`. Nó báo bốn loại: thiếu liên kết, liên kết trỏ sang chỗ khác, một tệp thật ở nơi lẽ ra là liên kết, và liên kết còn sót lại cho một mục nay đã là riêng. Thiếu liên kết là cảnh báo, các loại còn lại là lỗi. Các đường dẫn được thêm vào một mục trong phiên bản ccam mới hơn (`file-history/`, `tasks/` và `paste-cache/` cho lịch sử, `keybindings.json` cho cài đặt) chỉ là cảnh báo khi tài khoản vẫn còn bản riêng: `is not shared with the group yet (ccam doctor --fix moves it in)`. Việc khởi chạy không bao giờ dừng lại vì chúng.
 6. **Mục không xác định** (`checkUnknownEntries`). Liệt kê các tên ở cấp cao nhất trong thư mục tài khoản mà ccam không biết (`share.Known`), như một dấu hiệu cho thấy cấu trúc của Claude Code đã thay đổi. Chỉ là thông tin.
 7. **Đường dẫn plugin** (`checkPlugins`). Các tệp đăng ký plugin (`installed_plugins.json`, `known_marketplaces.json`) lưu đường dẫn tuyệt đối. Trong `plugins/` của mỗi nhóm, các đường dẫn đi qua thư mục của một tài khoản sẽ hỏng khi tài khoản đó bị xóa hoặc đổi tên. `--fix` ghi lại chúng thành thư mục nhóm bằng `profile.RewritePluginPaths`, một lần ghi nguyên tử vào tệp đăng ký.
 8. **Máy chủ MCP** (`checkMCP`). Tải `mcp.json` của mỗi nhóm một lần. Tệp không đọc được là lỗi; máy chủ không qua được `mcp.Validate` là cảnh báo. Không có cách sửa.
 9. **Định dạng phản hồi mức sử dụng** (`checkUsageFormat`). Hỏi endpoint mức sử dụng, không dùng bộ nhớ đệm và với giới hạn 3 giây thông thường, lần lượt cho từng tài khoản cho đến khi có một tài khoản phản hồi. Nếu phản hồi không còn phân tích được, nó cảnh báo rằng `ccam usage` sẽ quay về dùng bộ nhớ đệm của dòng trạng thái. Đây là kiểm tra duy nhất dùng mạng.
 10. **Lệnh tắt** (`checkShims`). Chỉ khi có tài khoản có lệnh tắt. Thiếu liên kết trong `~/.local/bin` là cảnh báo; `--fix` gọi `shim.Install`, hàm này chỉ tạo các liên kết còn thiếu và không bao giờ động đến tệp khác. Thư mục bin không nằm trong `PATH` là cảnh báo và không được sửa.
 11. **Thư mục theo tài khoản** (`checkFolders`). Chỉ khi có mục [`ccam folder`](/features/folder). Mục có tài khoản không tồn tại là lỗi, và mục có thư mục đã mất là cảnh báo. Cả hai đều không được sửa, vì xóa một mục sẽ thay đổi tài khoản được khởi động ở đó.
+12. **Nhóm và cài đặt** (`checkGroups`). Một thành viên nhóm không phải là tài khoản, một tài khoản có tên về sau đã trở thành lệnh của ccam (khởi động nó bằng `ccam run <name>` hoặc đổi tên nó), và một `theme` hoặc `usage_source` không xác định trong `config.toml` đều là cảnh báo. Không sửa.
+13. **Đăng nhập** (`checkIdentities`). Đọc từ `.claude.json` của mỗi thư mục xem thư mục đó đang đăng nhập bằng ai. Một thư mục nay đăng nhập vào tài khoản khác với tài khoản mà `ccam login` đã ghi lại (ví dụ sau `/login` trong một phiên) là cảnh báo, và một thư mục đăng nhập vào cùng tài khoản Claude với một thư mục khác cũng vậy: hai thư mục đó dùng chung giới hạn sử dụng. Không sửa.
 
 ### Sửa liên kết dùng chung
 
@@ -91,7 +93,7 @@ ccam: stopped because of share link problems:
 Repair them with `ccam doctor --fix`, then run again
 ```
 
-Với bất kỳ vấn đề liên kết dùng chung nào, `--fix` gọi `share.Build` với thiết lập dùng chung của tài khoản làm cả trạng thái hiện tại lẫn trạng thái đích, rồi `Plan.Apply`. `Build` suy ra lại mọi bước từ những gì có trên đĩa, cũng là kế hoạch mà `ccam share` dùng, nên việc sửa tuân theo cùng các quy tắc như khi bật dùng chung.
+Với bất kỳ vấn đề liên kết dùng chung nào, `--fix` gọi `share.Build` với thiết lập dùng chung của tài khoản làm cả trạng thái hiện tại lẫn trạng thái đích, rồi `Plan.Apply`. `Build` suy ra lại mọi bước từ những gì có trên đĩa, cũng là kế hoạch mà một thay đổi `ccam group` dùng, nên việc sửa tuân theo cùng các quy tắc như khi tham gia một nhóm.
 
 <!-- motion:doctor-repair -->
 
@@ -110,7 +112,7 @@ Ngoài việc gỡ liên kết, mọi bước đều chuyển dữ liệu vào n
 - `ccam doctor` thông thường không bao giờ thay đổi gì. Hãy dùng `--dry-run` cùng `--fix` để chắc chắn trong script.
 - `doctor --fix` không kiểm tra tài khoản có đang chạy hay không. Hãy thoát Claude Code của một tài khoản trước khi sửa liên kết dùng chung của nó, vì phiên vẫn tiếp tục ghi vào các tệp đó.
 - Nếu việc sửa liên kết dùng chung thất bại, ccam báo `could not repair share links: <error>` cho tài khoản đó và bỏ qua kiểm tra mục không xác định của nó. Các tài khoản khác vẫn được kiểm tra.
-- Nếu `ccam share` thất bại giữa chừng, nó lưu thiết lập đích trước và nhắc bạn hoàn tất bằng `ccam doctor --fix`.
+- Nếu một thay đổi `ccam group` thất bại giữa chừng, các nhóm mới đã được lưu, và ccam nhắc bạn hoàn tất bằng `ccam doctor --fix`.
 - `.credentials.json` là liên kết tượng trưng, thông tin đăng nhập hết hạn và thông tin đăng nhập trong biến môi trường đều được báo nhưng không bao giờ bị thay đổi.
 - Việc ghi lại tệp đăng ký plugin được thực hiện nguyên tử nhưng không được sao vào `.ccam-backup/`.
 

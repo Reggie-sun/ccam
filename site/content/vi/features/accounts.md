@@ -4,7 +4,7 @@ description: "Thêm, đăng nhập, liệt kê, đổi tên, xóa và nhập tà
 updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 9eb992214132
+sourceHash: "8564517d0d71"
 ---
 
 Mỗi tài khoản ccam là một thư mục cấu hình Claude Code riêng với thông tin đăng nhập riêng. Các lệnh này tạo, đăng nhập, liệt kê, đổi tên và xóa tài khoản, cũng như đăng ký các thư mục bạn đã có.
@@ -12,10 +12,11 @@ Mỗi tài khoản ccam là một thư mục cấu hình Claude Code riêng vớ
 ## Cách dùng
 
 ```sh
-ccam add                                   # wizard on a terminal: name, shared items, shortcut, login
+ccam add                                   # wizard on a terminal: name, sign-in, groups, shortcut
 ccam add work --shortcut ccwork            # no wizard: log in, then create the ccwork command
-ccam add side --no-login --share history=team
+ccam add side --no-login --group default --group team
 ccam login side                            # run claude auth login inside the account
+ccam login --expired                       # every account never logged in, or whose login expired
 ccam logout side                           # remove the login token
 ccam list                                  # table of accounts; ccam ls is the same
 ccam list --json                           # machine-readable
@@ -29,25 +30,28 @@ ccam completion zsh > "${fpath[1]}/_ccam"
 
 Ở bất kỳ lệnh nào nhận `<name|number>`, bạn có thể đưa tên tài khoản hoặc số slot của nó, tức cột `#` của `ccam list`.
 
-`ccam add` chạy trên terminal mà không có tùy chọn nào sẽ mở một trình hướng dẫn. Nó hỏi tên, rồi hiển thị một danh sách kiểm (checklist) các mục dùng chung (mọi thứ trừ lịch sử hội thoại đã được đánh dấu), rồi hỏi `Create a shortcut command for work? [y/N]` và, nếu bạn trả lời `y`, hỏi tiếp `Shortcut name [ccwork]:`. Bất kỳ tùy chọn nào trong `--share`, `--shortcut` hoặc `--no-login`, hoặc một pipe thay cho terminal, đều bỏ qua trình hướng dẫn; khi đó bắt buộc phải có tên và không có lệnh tắt nào được tạo trừ khi `--shortcut` nêu tên một lệnh.
+`ccam add` chạy trên terminal mà không có tùy chọn nào sẽ mở một trình hướng dẫn. Nó hỏi tên và cách tài khoản đăng nhập (đăng nhập Claude ngay bây giờ, một API key, hoặc đăng nhập Claude sau), rồi hiển thị các nhóm để tham gia với `default` đã được đánh dấu (khi chưa có nhóm nào, đó là các mục mà nhóm `default` sẽ dùng chung), rồi hỏi `Create a shortcut command for work? [y/N]`, và kết thúc bằng một bản tóm tắt để xác nhận. `Esc` quay lại một bước. Bất kỳ tùy chọn nào trong `--group`, `--no-group`, `--shortcut` hoặc `--no-login`, hoặc một pipe thay cho terminal, đều bỏ qua trình hướng dẫn; khi đó bắt buộc phải có tên và không có lệnh tắt nào được tạo trừ khi `--shortcut` nêu tên một lệnh.
 
-`ccam list` hiển thị slot, tên, lệnh tắt, email, các mục dùng chung và lần dùng gần nhất, với `*` đứng trước tài khoản mặc định:
+Không có `--group`, tài khoản mới tham gia nhóm `default`. Tài khoản đầu tiên tạo nhóm này, dùng chung máy chủ MCP, cài đặt, `CLAUDE.md` và tiện ích mở rộng; xem [dùng chung bằng nhóm](/features/share).
+
+`ccam list` hiển thị slot, tên, lệnh tắt, email, các nhóm và lần dùng gần nhất, với `*` đứng trước tài khoản mặc định:
 
 ```console
 $ ccam list
-   #  Name      Shortcut  Email             Shared                        Last used
-*  1  work      ccwork    user@example.com  mcp settings md ext           -
-   2  personal  -         me@side.dev       settings md ext history@team  -
+   #  Name      Shortcut  Email             Groups        Last used
+*  1  work      ccwork    user@example.com  default team  -
+   2  personal  -         me@side.dev       default       -
 ```
 
-Với `--json`, mỗi tài khoản là một đối tượng gồm `slot`, `shortcut`, `name`, `email`, `default`, `dir`, `last_used` (bị bỏ đi khi tài khoản chưa từng được khởi động) và `share`. `share` ánh xạ từng mục (`mcp`, `settings`, `memory`, `extensions`, `history`) tới tên nhóm của nó hoặc tới `"local"`.
+Với `--json`, mỗi tài khoản là một đối tượng gồm `slot`, `shortcut`, `name`, `email`, `default`, `dir`, `last_used` (bị bỏ đi khi tài khoản chưa từng được khởi động), `groups` và `share`. `share` ánh xạ từng mục (`mcp`, `settings`, `memory`, `extensions`, `history`) tới nhóm mà mục đó đến từ, hoặc tới `"local"`.
 
 ## Tùy chọn
 
 | Tùy chọn | Tác dụng | Mặc định |
 | --- | --- | --- |
 | `ccam add --no-login` | Tạo tài khoản mà không đăng nhập; đăng nhập sau bằng `ccam login <name>` | tắt |
-| `ccam add --share <item=group>` | Dùng chung một mục với một nhóm, hoặc `item=local` để giữ riêng. Có thể lặp lại | `mcp`, `settings`, `memory`, `extensions` trong `default`; `history` riêng |
+| `ccam add --group <group>` | Tham gia nhóm này thay vì `default`. Có thể lặp lại; `default` được tạo khi chưa tồn tại | `default` |
+| `ccam add --no-group` | Không tham gia nhóm nào: tài khoản không dùng chung gì | tắt |
 | `ccam add --shortcut <command>` | Tạo thêm lệnh tắt này trong `~/.local/bin` | không có |
 | `ccam add --api --key-from <source>` | Tài khoản dùng API key thay cho đăng nhập; xem [Tài khoản API key](/features/api) | tắt |
 | `ccam list --json` | In các tài khoản dưới dạng JSON | tắt |
@@ -58,7 +62,7 @@ Với `--json`, mỗi tài khoản là một đối tượng gồm `slot`, `shor
 
 `ccam login`, `ccam logout`, `ccam use` và `ccam rename` không có tùy chọn riêng. `ccam completion` nhận `bash`, `zsh` hoặc `powershell`; giá trị khác sẽ thất bại với `only bash, zsh and powershell are supported`.
 
-Tên tài khoản dài từ 1 đến 32 ký tự gồm `a-z`, `0-9`, `-` và `_`, bắt đầu bằng một chữ cái hoặc chữ số. Tên không được chỉ gồm chữ số, vì `ccam 2` nghĩa là slot 2. Tên cũng không được trùng với một lệnh của ccam (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`, `folder`, `pick`, `ext`), nên `ccam <name>` không bao giờ mơ hồ. Danh sách này là `config.Reserved` trong `internal/config`.
+Tên tài khoản dài từ 1 đến 32 ký tự gồm `a-z`, `0-9`, `-` và `_`, bắt đầu bằng một chữ cái hoặc chữ số. Tên không được chỉ gồm chữ số, vì `ccam 2` nghĩa là slot 2. Tên cũng không được trùng với một lệnh của ccam (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`, `folder`, `pick`, `ext`, `group`, `groups`), nên `ccam <name>` không bao giờ mơ hồ. Danh sách này là `config.Reserved` trong `internal/config`.
 
 ## Cách hoạt động
 
@@ -68,15 +72,19 @@ Tên tài khoản dài từ 1 đến 32 ký tự gồm `a-z`, `0-9`, `-` và `_`
 
 1. `config.ValidateName` kiểm tra tên, và `shim.Check` kiểm tra lệnh tắt trước khi bất cứ thứ gì được tạo.
 2. `profile.Add` tạo `~/.local/share/ccam/profiles/work/` với quyền `0700` và gán cho tài khoản số slot trống thấp nhất (`Config.NextSlot`), nên số của một tài khoản đã xóa sẽ được dùng lại. Tài khoản đầu tiên trở thành tài khoản mặc định.
-3. `applyShare` liên kết thư mục mới, còn trống vào các nhóm dùng chung của nó bằng `share.Build` rồi `Apply`, ví dụ `settings.json` tới `groups/default/settings.json`. Nếu bước này thất bại, thư mục mới bị xóa, vì một thư mục còn sót lại sẽ chặn mọi lần thử lại với `folder already exists`.
+3. Tài khoản tham gia các nhóm của nó (`default`, trừ khi `--group` hoặc `--no-group` nói khác; tài khoản đầu tiên tạo `default`), và `applyShare` liên kết thư mục mới, còn trống vào các nhóm đó bằng `share.Build` rồi `Apply`, ví dụ `settings.json` tới `groups/default/settings.json`. Nếu bước này thất bại, thư mục mới bị xóa, vì một thư mục còn sót lại sẽ chặn mọi lần thử lại với `folder already exists`.
 4. Tài khoản được lưu vào `~/.config/ccam/config.toml` qua `fsutil.AtomicWrite`: một tệp tạm, `fsync`, rồi `rename`, nên một sự cố không bao giờ để lại cấu hình dở dang.
-5. `runLogin` khởi động `claude auth login` với `CLAUDE_CONFIG_DIR` trỏ tới thư mục tài khoản. Nếu đăng nhập thất bại, tài khoản vẫn được giữ, và ccam in ra lỗi cùng lời nhắc chạy `ccam login work` sau.
-6. `profile.ReadEmail` lấy `oauthAccount.emailAddress` ra khỏi `profiles/work/.claude.json`. Tệp đó có thể nặng vài megabyte, nên `TopLevelValue` chỉ quét tìm một khóa đó thay vì phân tích cả tệp.
+5. `runLogin` khởi động `claude auth login` với `CLAUDE_CONFIG_DIR` trỏ tới thư mục tài khoản, và `--email` với email gần nhất của tài khoản để trang đăng nhập được điền sẵn. Nếu đăng nhập thất bại, tài khoản vẫn được giữ, và ccam in ra lỗi cùng lời nhắc chạy `ccam login work` sau.
+6. `profile.ReadIdentity` lấy `oauthAccount` ra khỏi `profiles/work/.claude.json`: email, id của tài khoản và của tổ chức, tên tổ chức và gói (`claude_max`, `claude_team` …). Tệp đó có thể nặng vài megabyte, nên `TopLevelValue` chỉ quét tìm một khóa đó thay vì phân tích cả tệp. ccam giữ các thông tin này trong `[profile.login]` ở `config.toml`.
 7. `shim.Install` liên kết `~/.local/bin/ccwork` tới tệp thực thi ccam, và khi khởi động tệp này tra `argv[0]` trong `config.toml`.
 
 Việc đăng nhập có thể mất vài phút, và trong lúc đó một ccam khác có thể lưu cấu hình. Vì vậy các lệnh phải chờ sẽ lưu qua `env.update`, hàm này tải lại `config.toml`, áp dụng đúng một thay đổi (ở đây là email) rồi lưu. `ccam remove` cũng tải lại sau câu hỏi xác nhận vì lý do tương tự.
 
-`ccam login` chạy bước 5 và 6 cho một tài khoản đã có. `ccam logout` chạy `claude auth logout` trong tài khoản và xóa email đã lưu. `ccam use` chỉ ghi lại `default` trong `config.toml`.
+`ccam login` chạy bước 5 và 6 cho một tài khoản đã có. Claude Code chỉ dùng email như một gợi ý cho trang đăng nhập, nên một lần đăng nhập có thể rơi vào một tài khoản Claude khác với tài khoản mà tài khoản ccam từng dùng; ccam so sánh lần đăng nhập mới với `[profile.login]` và báo cho bạn (`ccam: this login is other@company.com, but work was dev@company.com before.`). Nó giữ lần đăng nhập mới và cho bạn biết cách hoàn tác: `ccam logout work`, rồi `ccam login work` và đăng nhập bằng đúng email. Khi một tài khoản ccam khác đã đăng nhập vào cùng tài khoản Claude đó, ccam cảnh báo rằng hai tài khoản dùng chung giới hạn sử dụng. `ccam login --expired` lần lượt đăng nhập mọi tài khoản chưa từng đăng nhập hoặc có thông tin đăng nhập (refresh token của nó) đã hết hạn.
+
+`ccam logout` chạy `claude auth logout` trong tài khoản và xóa email đã lưu; bản ghi đăng nhập vẫn được giữ, nên lần đăng nhập tiếp theo được kiểm tra với nó. `ccam use` chỉ ghi lại `default` trong `config.toml`.
+
+`ccam list` thêm cột `Organization` khi các tài khoản thuộc nhiều hơn một tổ chức (gói cá nhân hiển thị `personal`), và `ccam list --json` có `plan` và `org` cho mọi tài khoản.
 
 ### Đăng nhập trên máy từ xa
 
@@ -106,7 +114,7 @@ Trong lúc việc đăng nhập chờ nhập liệu trên terminal, ccam tắt c
 
 `ccam rename` đổi tên thư mục, ghi lại các đường dẫn plugin trong `plugins/` của nó từ thư mục cũ sang thư mục mới, giữ nguyên trạng thái mặc định, và chuyển các đường dẫn `nameState` sang tên mới. Lệnh tắt giữ nguyên tên. Nếu việc ghi lại plugin thất bại, thư mục được đổi lại tên cũ, vì cấu hình chưa được lưu.
 
-`ccam import` đăng ký một thư mục ngay tại chỗ, dưới dạng `dir` trong `config.toml`. Nó không bao giờ di chuyển hay sao chép thư mục: một refresh token bị sao chép sẽ khiến các bản sao đăng xuất lẫn nhau. Không có đối số thư mục, nó tìm các thư mục `~/.claude` và `~/.claude-*` chưa được đăng ký và hỏi về từng thư mục; tên được lấy từ thư mục (`~/.claude` là `main`, `~/.claude-work` là `work`, `~/.claude-2` là `acct2`), và thư mục không suy ra được tên sẽ được liệt kê kèm lệnh `--name` cần dùng. Khi không có `CLAUDE_CONFIG_DIR`, Claude Code giữ `.claude.json` trong thư mục home của bạn, cạnh `~/.claude`, nên khi bạn nhập `~/.claude` mà nó không có `.claude.json` riêng, ccam tạo liên kết `~/.claude/.claude.json` tới `~/.claude.json`. Khi đó `claude` thông thường và `ccam main` thấy cùng một tài khoản. Tài khoản được nhập không dùng chung gì cho đến khi bạn chạy `ccam share`, và không có lệnh tắt nào được tạo.
+`ccam import` đăng ký một thư mục ngay tại chỗ, dưới dạng `dir` trong `config.toml`. Nó không bao giờ di chuyển hay sao chép thư mục: một refresh token bị sao chép sẽ khiến các bản sao đăng xuất lẫn nhau. Không có đối số thư mục, nó tìm các thư mục `~/.claude` và `~/.claude-*` chưa được đăng ký và hỏi về từng thư mục; tên được lấy từ thư mục (`~/.claude` là `main`, `~/.claude-work` là `work`, `~/.claude-2` là `acct2`), và thư mục không suy ra được tên sẽ được liệt kê kèm lệnh `--name` cần dùng. Khi không có `CLAUDE_CONFIG_DIR`, Claude Code giữ `.claude.json` trong thư mục home của bạn, cạnh `~/.claude`, nên khi bạn nhập `~/.claude` mà nó không có `.claude.json` riêng, ccam tạo liên kết `~/.claude/.claude.json` tới `~/.claude.json`. Khi đó `claude` thông thường và `ccam main` thấy cùng một tài khoản. Tài khoản được nhập không thuộc nhóm nào cho đến khi bạn thêm nó vào một nhóm (`ccam group join <group> <name>`), và không có lệnh tắt nào được tạo.
 
 `ccam completion bash|zsh` in ra một script tự hoàn thành (completion), script này cũng hoàn thành cả tên tài khoản.
 

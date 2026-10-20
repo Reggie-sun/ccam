@@ -4,7 +4,7 @@ description: ccam usage से हर Claude Code अकाउंट का 5 �
 updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: a84df8e873d6
+sourceHash: 40aef0708c81
 ---
 
 `ccam usage` दिखाता है कि हर अकाउंट ने 5 घंटे और साप्ताहिक सीमा का कितना हिस्सा इस्तेमाल किया है। `ccam next --auto` सबसे ज़्यादा गुंजाइश वाला अकाउंट खोलता है, और `--continue` मौजूदा बातचीत को साथ ले जाता है।
@@ -55,10 +55,10 @@ ccam statusline install
 ```sh
 ccam next             # the account after the one you used last
 ccam next --auto      # the account with the lowest 5-hour usage
-ccam next --continue  # the next account that shares your conversation history
+ccam next --continue  # carry this folder's conversation on as the next account
 ```
 
-`ccam next` उन अकाउंट्स को छोड़ देता है जिनमें लॉगिन नहीं है, और `--auto` उन अकाउंट्स को छोड़ देता है जो 100% पर हैं। बातचीत जारी रखने के लिए दोनों अकाउंट्स को बातचीत का इतिहास साझा करना होगा; [साझा करना](/docs/sharing) देखें।
+`ccam next` उन अकाउंट्स को छोड़ देता है जिनमें लॉगिन नहीं है, और `--auto` उन अकाउंट्स को छोड़ देता है जो 100% पर हैं और जो किसी दूसरे संगठन के हैं। जब दोनों अकाउंट्स बातचीत का इतिहास साझा करते हैं, तो `--continue` वही बातचीत खोलता है; नहीं तो Claude Code उसे नए अकाउंट में कॉपी कर देता है। [साझा करना](/docs/sharing) और [अगले अकाउंट पर स्विच करना](/features/next#continue) देखें।
 
 `claude -p` चलाने वाली scripts और scheduled jobs के लिए, अकाउंट नाम से पहले `--fallback` लगाएँ। जब वह अकाउंट अपनी सीमा तक पहुँचता है, तो ccam वही कमांड सबसे ज़्यादा गुंजाइश वाले अकाउंट के रूप में फिर से चलाता है, और सिर्फ़ उस run का output छपता है जो पूरा हुआ:
 

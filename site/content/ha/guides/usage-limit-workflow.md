@@ -4,7 +4,7 @@ description: Jira iyakar ta sake farawa, ko ka ci gaba da tattaunawar a wani asu
 updated: 2026-10-19
 order: 3
 translation: machine
-sourceHash: ff765a189332
+sourceHash: 38b80d780bba
 ---
 
 Idan wani asusu ya kai iyakar amfaninsa (wanda ake yawan kira rate limit), kana da zaɓi biyu: jira har iyakar ta sake farawa, ko ka ci gaba da wannan tattaunawar yanzu a wani asusun da ka mallaka. Da ccam, zaɓi na biyu yana ɗaukar umarni ɗaya, `ccam next --auto --continue`, da zarar an raba tarihin tattaunawa tsakanin asusan.
@@ -25,8 +25,7 @@ Idan kana da asusu na biyu, za ka iya ci gaba nan take da wannan tattaunawar. Sa
 curl -fsSL https://ccam.dev/install.sh | sh
 ccam add personal
 ccam add work
-ccam share personal --history on
-ccam share work --history on
+ccam group set default --add history
 ccam statusline install
 ```
 
@@ -49,17 +48,19 @@ Buɗe tattaunawar a asusun da ya fi sarari:
 ccam next --auto --continue
 ```
 
-Claude Code yana farawa a matsayin `work` da tattaunawa ta baya-bayan nan ta foldar yanzu, har da duk abin da aka faɗa zuwa yanzu.
+Claude Code yana farawa a matsayin `work` da tattaunawa ta baya-bayan nan ta foldar yanzu, har da duk abin da aka faɗa zuwa yanzu. Raba tarihi (`ccam group set default --add history` a sama) yana sa ta zama tattaunawa ɗaya; ba tare da shi ba, Claude Code yana kwafar tattaunawar cikin `work`, kuma ccam yana gaya maka tokens nawa amsar farko za ta sake karantawa.
+
+Da [plugin ɗin ccam](/docs/install#claude-code-plugin) a Claude Code, zaman da ya tsaya a iyakarsa yana nuna sanarwa, kuma `/ccam:switch` (ko `/ccam:switch work`) yana rubuta bayanin tattaunawar don `ccam next --continue` ba tare da barin wani abu da za a yi hasashe ba.
 
 ## Shin ccam yana sauya asusu ta atomatik?
 
-A'a. ccam ba ya aiki yayin da kake aiki: yana fara Claude Code kuma ya maye gurbin kansa da shi. Kai ne kake yanke shawarar lokacin sauyawa, kuma `ccam next --auto` yana zaɓar asusun da amfaninsa na awa 5 ya fi ƙasa, yana tsallake asusan da suka kai 100% ko waɗanda ba a shiga ba. Wasu kayan aikin kuma suna musanya bayanan shiga na zaman da ke gudana maimakon haka; [ccam da sauran masu sauya asusu](/compare/account-switchers) yana bayyana bambancin.
+A'a. ccam ba ya aiki yayin da kake aiki: yana fara Claude Code kuma ya maye gurbin kansa da shi. Kai ne kake yanke shawarar lokacin sauyawa, kuma `ccam next --auto` yana zaɓar asusun da amfaninsa na awa 5 ya fi ƙasa, yana tsallake asusan da suka kai 100%, waɗanda ba a shiga ba, ko na wata ƙungiya (organization) dabam. Da `relay = true` a `config.toml`, ccam yana jira a gefen zaman maimakon haka, don haka `/ccam:switch` yana ci gaba da kansa. Wasu kayan aikin kuma suna musanya bayanan shiga na zaman da ke gudana maimakon haka; [ccam da sauran masu sauya asusu](/compare/account-switchers) yana bayyana bambancin.
 
 ## Abubuwan da za ka tuna
 
 - Gudanar da `ccam next --continue` a foldar da ka yi aiki a ciki; ana ajiye tattaunawa bisa foldar kowane project.
 - Ka guji gudanar da asusai biyu a kan tattaunawa ɗaya a lokaci guda. ccam yana gargaɗe ka idan ka gwada.
-- Dole ne ɗayan asusun ma ya raba tarihin tattaunawa, a rukuni ɗaya.
+- Ba tare da tarihin da aka raba ba, ana kwafar tattaunawar zuwa ɗayan asusun kuma kwafin biyu suna bin hanyoyinsu daban; checkpoints da `/rewind` ke maido da lamba daga gare su suna zama tare da asusun farko.
 - Saƙon farko a sabon asusun zai iya cinye iyakarsa fiye da yadda aka saba, domin wannan asusun bai riga ya ajiye tattaunawar a cache ba.
 - Ko an yarda ka sauya tsakanin asusai ta wannan hanya ya dogara da sharuɗɗan kowane asusu.
 

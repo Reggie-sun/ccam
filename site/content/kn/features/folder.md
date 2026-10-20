@@ -4,7 +4,7 @@ description: ಖಾತೆಯ ಹೆಸರಿಲ್ಲದೆ Claude Code ಆರ�
 updated: 2026-10-20
 order: 11
 translation: machine
-sourceHash: 5071b04a194d
+sourceHash: "46d1410a3d81"
 ---
 
 `ccam folder work ~/code/company` `~/code/company` ಒಳಗೆ, ಮತ್ತು ಅದರ ಕೆಳಗಿನ ಯಾವುದೇ ಫೋಲ್ಡರ್‌ನಲ್ಲಿ, ಖಾತೆಯ ಹೆಸರಿಲ್ಲದ ಪ್ರತಿ ಆರಂಭವೂ Claude Code ಅನ್ನು `work` ಆಗಿ ಆರಂಭಿಸುವಂತೆ ಮಾಡುತ್ತದೆ. ಅದರ ಹೊರಗೆ, ಡೀಫಾಲ್ಟ್ ಖಾತೆ ಮೊದಲಿನಂತೆಯೇ ಆರಂಭವಾಗುತ್ತದೆ. `ccam personal` ಅಥವಾ `ccpersonal` ನಂತಹ ಶಾರ್ಟ್‌ಕಟ್ ಮೂಲಕ ಖಾತೆಯನ್ನು ಹೆಸರಿಸಿದರೆ, ಯಾವಾಗಲೂ ಆ ಖಾತೆಯೇ ಆರಂಭವಾಗುತ್ತದೆ.
@@ -34,7 +34,7 @@ Here (/home/me/code/company/api): work, set for /home/me/code/company
 - `ccam -p "…"` ಮತ್ತು ಮೊದಲ ಆರ್ಗ್ಯುಮೆಂಟ್ Claude Code ಗಾಗಿ ಒಂದು ಆಯ್ಕೆಯಾಗಿರುವ ಇತರ ಯಾವುದೇ ಆರಂಭ
 - ಹೆಸರಿಲ್ಲದ `ccam run`, ಮತ್ತು `ccam --dry-run`
 - `ccam --fallback -p "…"`, ಅದರ ಮೊದಲ ಪ್ರಯತ್ನಕ್ಕೆ
-- ಪಿಕರ್, ಅಂದರೆ ಕೇವಲ `ccam`, ಅದು ಫೋಲ್ಡರ್‌ನ ಖಾತೆಯ ಮೇಲೆ ಕರ್ಸರ್ ಇಟ್ಟು ಆರಂಭವಾಗುತ್ತದೆ
+- ಡ್ಯಾಶ್‌ಬೋರ್ಡ್, ಅಂದರೆ ಕೇವಲ `ccam`, ಅದು ಫೋಲ್ಡರ್‌ನ ಖಾತೆಯ ಮೇಲೆ ಕರ್ಸರ್ ಇಟ್ಟು ಆರಂಭವಾಗುತ್ತದೆ
 
 ## ಆಯ್ಕೆಗಳು
 

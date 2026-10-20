@@ -4,7 +4,7 @@ description: "Remote Control na Claude Code ga kowane asusu da ccam <name> rc: z
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 59b802c44bb3
+sourceHash: 5f0b90ea53d6
 ---
 
 `ccam work rc` yana fara Remote Control na Claude Code a matsayin asusun `work`, don ka iya sarrafa zaman da ke kan wannan kwamfuta daga claude.ai/code ko manhajar Claude ta wayar hannu. Yana aiki kamar `claude rc` da bambanci guda ɗaya: idan asusun yana raba sabobin MCP, ccam yana tambaya sau ɗaya ko zai kwafe su cikin `.claude.json` na asusun, domin zaman Remote Control ba sa karanta sabobi daga ko'ina sai can.
@@ -33,7 +33,7 @@ Iri biyu na zaɓuɓɓuka suna haɗuwa a nan: na ccam kansa, waɗanda ke zuwa kaf
 | `--dry-run` (kafin asusun) | Yana buga muhalli da umarnin, da sanarwar MCP idan akwai. Ba ya tambaya kuma ba ya kwafi | a kashe |
 | `Copy them into .claude.json (a backup is kept)? [y/N]` | Ana tambaya idan asusun yana raba sabobin MCP kuma `.claude.json` ɗinsa ba shi da jerin rukunin na yanzu. `y` yana kwafar su, `N` ko Enter yana farawa ba tare da su ba | `N` |
 | `mcp_strategy = "sync"` a `~/.config/ccam/config.toml` | Yana kwafar sabobin rukunin cikin `.claude.json` kafin kowace farawa, Remote Control ko ba haka ba, don haka ba a taɓa tambaya ba | `"flag"` |
-| `ccam share work --mcp off` | Yana daina raba sabobin MCP da asusun; sannan Remote Control yana farawa da sabobin asusun kansa kawai kuma ba a tambayar komai | a kunne |
+| `ccam group leave <group> work` | Yana cire asusun daga rukunin da ke raba MCP da shi; sannan Remote Control yana farawa da sabobin asusun kansa kawai kuma ba a tambayar komai | a cikin `default` |
 
 ### Zaɓuɓɓukan Remote Control
 
@@ -124,7 +124,7 @@ Akwai zaman `work` da ke buɗe har yanzu: `ccam work` na yau da kullum, gajeren 
 
 ### ccam yana tambaya kowane lokaci
 
-Ba ka kwafi sabobin ba tukuna. Amsa `y` sau ɗaya, ko saita `mcp_strategy = "sync"`. Idan ba ka taɓa son sabobin a Remote Control ba, daina raba MCP da asusun: `ccam share work --mcp off`.
+Ba ka kwafi sabobin ba tukuna. Amsa `y` sau ɗaya, ko saita `mcp_strategy = "sync"`. Idan ba ka taɓa son sabobin a Remote Control ba, daina raba MCP da asusun: cire shi daga wannan rukunin (`ccam group leave default work`), ko ka ajiye MCP a rukuni nasa na kansa wanda asusun ba ya ciki.
 
 ### `ccam work rc` yana gazawa nan take da kuskure game da `--mcp-config`
 

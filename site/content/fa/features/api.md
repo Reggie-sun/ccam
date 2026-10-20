@@ -4,7 +4,7 @@ description: ccam add --api یک حساب کلید API برای API شرکت Ant
 updated: 2026-10-20
 order: 13
 translation: machine
-sourceHash: de2c5cde2c48
+sourceHash: "a903c92f2c50"
 ---
 
 حساب کلید API، Claude Code را به جای ورود با اشتراک Claude با یک کلید API آغاز می‌کند: API شرکت Anthropic، یا نقطه پایانی‌ای که همان قالب Messages را می‌فهمد، مانند یک درگاه LiteLLM یا OpenRouter. ccam کلید را ذخیره نمی‌کند. هر بار که حساب آغاز می‌شود آن را از یک متغیر محیطی یا از فرمانی مانند یک مدیر گذرواژه می‌خواند و فقط به همان فرایند Claude Code می‌دهد.
@@ -22,12 +22,12 @@ ccam list
 
 ```console
 $ ccam list
-   #  Name      Shortcut  Email                    Shared               Last used
-*  1  personal  -         me@example.com           mcp settings md ext  2h ago
-   2  gw        -         (API: llm.example.com)   mcp settings md ext  -
+   #  Name      Shortcut  Email                   Groups   Last used
+*  1  personal  -         me@example.com          default  2h ago
+   2  gw        -         (API: llm.example.com)  default  -
 ```
 
-حساب کلید API، مانند هر حساب دیگری، تنظیمات، `CLAUDE.md`، افزونه‌ها و سرورهای MCP را به اشتراک می‌گذارد و با میان‌برها، `ccam folder` و `ccam ext` کار می‌کند.
+حساب کلید API مانند هر حساب دیگری به گروه‌ها می‌پیوندد (به‌طور پیش‌فرض `default`: تنظیمات، `CLAUDE.md`، افزونه‌ها و سرورهای MCP) و با میان‌برها، `ccam folder` و `ccam ext` کار می‌کند.
 
 ## گزینه‌ها
 
@@ -59,7 +59,7 @@ model = 'claude-sonnet-5-5'
 در هر اجرای حساب، پس از بررسی‌های معمول و پیش از آغاز Claude Code:
 
 1. ccam کلید را می‌خواند: `env:` از محیط، و `command:` با اجرای فرمان با محدودیت ۳۰ ثانیه. فرمان می‌تواند در ترمینال گذرواژه بخواهد؛ خروجی خطای آن هم به ترمینال می‌رود. کلید خالی اجرا را با پیامی متوقف می‌کند که می‌گوید کلید کجا انتظار می‌رفت.
-2. هر متغیر به‌ارث‌رسیده‌ای را که تعیین می‌کند Claude Code چگونه وارد شود یا از کدام ارائه‌دهنده استفاده کند حذف می‌کند: `ANTHROPIC_API_KEY`، `ANTHROPIC_AUTH_TOKEN`، `CLAUDE_CODE_OAUTH_TOKEN`، `ANTHROPIC_BASE_URL`، `ANTHROPIC_MODEL`، `CLAUDE_CODE_USE_BEDROCK`، `CLAUDE_CODE_USE_VERTEX` و `CLAUDE_CODE_USE_FOUNDRY`. کلیدی که در شل شما برای کار دیگری تنظیم شده نمی‌تواند به این حساب برسد، و ورود با اشتراک نمی‌تواند بر کلید آن غلبه کند.
+2. هر متغیر به‌ارث‌رسیده‌ای را که تعیین می‌کند Claude Code چگونه وارد شود یا از کدام ارائه‌دهنده استفاده کند حذف می‌کند: کلیدها و توکن‌ها (`ANTHROPIC_API_KEY`، `ANTHROPIC_AUTH_TOKEN`، `CLAUDE_CODE_OAUTH_TOKEN`، `CLAUDE_CODE_OAUTH_TOKEN_FILE_DESCRIPTOR`، `CLAUDE_CODE_API_KEY_FILE_DESCRIPTOR`)، نقطه پایانی (`ANTHROPIC_BASE_URL`، `ANTHROPIC_UNIX_SOCKET`، `ANTHROPIC_MODEL`) و سوئیچ‌های انتخاب ارائه‌دهنده (`CLAUDE_CODE_USE_BEDROCK`، `CLAUDE_CODE_USE_VERTEX`، `CLAUDE_CODE_USE_FOUNDRY`، `CLAUDE_CODE_USE_ANTHROPIC_AWS`، `CLAUDE_CODE_USE_ANTHROPIC_GOOGLE_CLOUD`، `CLAUDE_CODE_USE_MANTLE`، `CLAUDE_CODE_USE_GATEWAY`). کلیدی که در شل شما برای کار دیگری تنظیم شده نمی‌تواند به این حساب برسد، و ورود با اشتراک نمی‌تواند بر کلید آن غلبه کند.
 3. `ANTHROPIC_BASE_URL` و `ANTHROPIC_MODEL` را در صورت داده شدن تنظیم می‌کند، و کلید را به‌عنوان `ANTHROPIC_API_KEY` یا `ANTHROPIC_AUTH_TOKEN`.
 
 حساب‌هایی که ورود با اشتراک دارند، مانند قبل، محیطی را که به ارث می‌برند نگه می‌دارند. در یک نشست تعاملی، Claude Code ممکن است یک بار بپرسد که آیا از کلیدی که در محیط پیدا می‌کند استفاده کند یا نه.
@@ -70,7 +70,7 @@ model = 'claude-sonnet-5-5'
 - `ccam add --api` منبع `env:` را بی‌درنگ بررسی می‌کند و اگر متغیر خالی باشد هشدار می‌دهد؛ منبع `command:` نخستین بار هنگام اجرا اجرا می‌شود.
 - `ccam login` و `ccam logout` حساب کلید API را رد می‌کنند، چون ورودی ندارد. `ccam doctor` نقطه پایانی و منبع کلید آن را نشان می‌دهد و وقتی یک متغیر `env:` خالی باشد هشدار می‌دهد.
 - `ccam usage` برای آن `API` نشان می‌دهد. `ccam next --auto`، `--fallback` و `ccam pick` فقط از میان حساب‌های اشتراکی انتخاب می‌کنند، چون کلید API سقف ۵ ساعته یا هفتگی‌ای برای مقایسه ندارد.
-- یک `settings.json` مشترک که بلوک `env` یا `apiKeyHelper` دارد، روی همه حساب‌های گروه اعمال می‌شود، از جمله حساب‌های کلید API. تنظیمات ارائه‌دهنده را بیرون از تنظیمات مشترک نگه دارید.
+- یک `settings.json` مشترک که بلوک `env` یا `apiKeyHelper` دارد، روی همه حساب‌های گروه اعمال می‌شود، از جمله حساب‌های کلید API. تنظیمات ارائه‌دهنده را بیرون از تنظیمات مشترک نگه دارید، یا حساب کلید API را در گروهی بدون `settings` بگذارید.
 
 ## مطالب مرتبط
 

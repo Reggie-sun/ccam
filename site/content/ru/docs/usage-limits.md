@@ -4,7 +4,7 @@ description: Смотрите использование за 5 часов и з
 updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: a84df8e873d6
+sourceHash: "40aef0708c81"
 ---
 
 `ccam usage` показывает, какую часть 5-часового и недельного лимитов уже использовал каждый аккаунт. `ccam next --auto` открывает аккаунт с наибольшим запасом, а `--continue` переносит текущий разговор.
@@ -55,10 +55,10 @@ ccam statusline install
 ```sh
 ccam next             # the account after the one you used last
 ccam next --auto      # the account with the lowest 5-hour usage
-ccam next --continue  # the next account that shares your conversation history
+ccam next --continue  # carry this folder's conversation on as the next account
 ```
 
-`ccam next` пропускает аккаунты, в которые не выполнен вход, а `--auto` пропускает аккаунты на 100%. Чтобы продолжить разговор, оба аккаунта должны иметь общую историю разговоров; см. раздел [общий доступ](/docs/sharing).
+`ccam next` пропускает аккаунты, в которые не выполнен вход, а `--auto` пропускает аккаунты на 100% и аккаунты другой организации. Если у двух аккаунтов общая история разговоров, `--continue` открывает тот же разговор; иначе Claude Code копирует его в новый аккаунт. См. разделы [общий доступ](/docs/sharing) и [переход к следующему аккаунту](/features/next#continue).
 
 Для скриптов и заданий по расписанию, которые запускают `claude -p`, поставьте `--fallback` перед именем аккаунта. Когда этот аккаунт достигает лимита, ccam снова выполняет ту же команду от имени аккаунта с наибольшим запасом, и выводится только результат завершившегося запуска:
 

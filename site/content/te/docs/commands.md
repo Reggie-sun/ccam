@@ -5,10 +5,10 @@ description: ccam add, ccam <name> నుంచి ccam usage, ccam next, ccam d
 updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: da2594c672bc
+sourceHash: "116c5b34ac9a"
 ---
 
-ఒక కమాండ్ అసలు చేయకుండా అది ఏమి చేస్తుందో చూడటానికి, దాని ముందు `--dry-run` పెట్టండి, ఉదాహరణకు `ccam --dry-run work`. ఇది Claude Code ను ప్రారంభించేటప్పుడు (`ccam <name>`, `ccam run`, `ccam next`), అలాగే `share`, `migrate`, `shortcut`, `update`, `doctor --fix` తో పనిచేస్తుంది. ఏదైనా మార్చే ఇతర కమాండ్‌లు రన్ అవ్వకుండా దాన్ని తిరస్కరిస్తాయి.
+ఒక కమాండ్ అసలు చేయకుండా అది ఏమి చేస్తుందో చూడటానికి, దాని ముందు `--dry-run` పెట్టండి, ఉదాహరణకు `ccam --dry-run work`. ఇది Claude Code ను ప్రారంభించేటప్పుడు (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`), అలాగే `group`, `migrate`, `shortcut`, `update`, `doctor --fix` తో పనిచేస్తుంది. ఏదైనా మార్చే ఇతర కమాండ్‌లు రన్ అవ్వకుండా దాన్ని తిరస్కరిస్తాయి.
 
 <!-- commands -->
 
@@ -33,9 +33,10 @@ ccam --fallback work -p "fix the tests"   # run again as another account at the 
 
 ```sh
 ccam add                      # wizard
-ccam add work --share history=on
+ccam add work --group default --group team
 ccam add side --shortcut ccside
 ccam add ci --no-login        # log in later with: ccam login ci
+ccam login --expired          # log in every account whose login no longer works
 ccam rename work job
 ccam remove side              # folder moves to ~/.local/share/ccam/trash
 ccam import ~/.claude-old --name old
@@ -46,9 +47,9 @@ ccam add gw --api --base-url https://llm.example.com --auth bearer --key-from en
 
 `ccam add --api` Claude లాగిన్ బదులు API కీ ఉపయోగించే ఖాతాను జోడిస్తుంది; ccam ప్రతి ప్రారంభంలో కీని చదువుతుంది, దాన్ని ఎప్పుడూ సేవ్ చేయదు. [API కీ ఖాతాలు](/features/api) చూడండి.
 
-Claude Code ఒక ఖాతాగా రన్ అవుతున్నప్పుడు `ccam rename`, `ccam remove`, `ccam share` ఆ ఖాతాను మార్చడానికి నిరాకరిస్తాయి. ముందుగా ఆ సెషన్ నుంచి నిష్క్రమించండి.
+Claude Code ఒక ఖాతాగా రన్ అవుతున్నప్పుడు `ccam rename`, `ccam remove`, `ccam group` కమాండ్‌లు ఆ ఖాతాను మార్చడానికి నిరాకరిస్తాయి. ముందుగా ఆ సెషన్ నుంచి నిష్క్రమించండి.
 
-`ccam list --json` ప్రతి ఖాతాను దాని స్లాట్, షార్ట్‌కట్, ఇమెయిల్, ఫోల్డర్‌తో ప్రింట్ చేస్తుంది. దానిలోని `share` ఆబ్జెక్ట్ ప్రతి అంశాన్ని (`mcp`, `settings`, `memory`, `extensions`, `history`) ఒక గ్రూప్ పేరుకు లేదా `local` కు మ్యాప్ చేస్తుంది.
+`ccam list --json` ప్రతి ఖాతాను దాని స్లాట్, షార్ట్‌కట్, ఇమెయిల్, ఫోల్డర్‌తో ప్రింట్ చేస్తుంది. దానిలోని `groups` అర్రే ఖాతా గ్రూప్‌లను జాబితా చేస్తుంది, `share` ఆబ్జెక్ట్ ప్రతి అంశాన్ని (`mcp`, `settings`, `memory`, `extensions`, `history`) అది వచ్చే గ్రూప్‌కు, లేదా `local` కు మ్యాప్ చేస్తుంది.
 
 ## షార్ట్‌కట్‌లు
 
@@ -69,12 +70,15 @@ ccam shortcut work --remove
 ## షేరింగ్
 
 ```sh
-ccam share work                       # show the current state
-ccam share work --history on --mcp team
-ccam share work --settings off --fresh
+ccam group                                  # the groups, what they share, their accounts
+ccam group add team --items history --members work,side
+ccam group set default --add history        # every account in default changes together
+ccam group join team personal
+ccam group leave team side --fresh
+ccam share work                             # what work shares, and through which group
 ```
 
-ప్రతి అంశం `on` (`default` గ్రూప్), `off`, లేదా ఒక గ్రూప్ పేరును తీసుకుంటుంది. [షేరింగ్](/docs/sharing) చూడండి.
+ఒక గ్రూప్ తన ఖాతాల మధ్య అంశాలను షేర్ చేస్తుంది; ఒక ఖాతా అనేక గ్రూప్‌లలో ఉండవచ్చు, కానీ ప్రతి అంశం ఒకే గ్రూప్ నుంచి వస్తుంది. [గ్రూప్‌లతో షేరింగ్](/features/share) చూడండి.
 
 ## ఇప్పటికే ఉన్న సెటప్‌ను కాపీ చేయడం
 
@@ -106,14 +110,17 @@ ccam mcp remove fs
 ccam usage           # also: ccam u
 ccam usage --watch   # refresh every 60 seconds
 ccam usage --json
-ccam next --continue
+ccam usage --source claude      # Claude Code looks it up; ccam never touches a token
+ccam next --continue            # this folder's last conversation, as the next account
 ccam next --auto
 ccam next --auto --max-usage 80 --wait
 ccam pick                       # the account with the most room, for a script
 ccam "$(ccam pick)" -p "…"      # start a worker on it
+ccam agents                     # background sessions of every account
+ccam attach 49ec0028            # open one, as the account that started it
 ```
 
-`next --auto`, `--fallback`, `ccam pick` ఒకే విధంగా ఎంచుకుంటాయి: ముందుగా `auto_max_usage` (`config.toml`, డిఫాల్ట్ 100) కంటే తక్కువ ఉన్నవి, `auto_strategy` (`headroom` లేదా `expiring`) ప్రకారం, `--model` వారపు విండోను కూడా లెక్కించి, 100% వద్ద ఉన్న ఖాతాను ఎప్పుడూ కాదు. ఏదీ ఎంచుకోలేనప్పుడు అవి కోడ్ 75 తో నిష్క్రమిస్తాయి, లేదా `--wait` తో మొదటి ఖాతా రీసెట్ అయ్యే వరకు వేచి ఉంటాయి. [తదుపరి ఖాతాకు మారడం](/features/next), [స్క్రిప్ట్‌ల కోసం ఖాతాను ఎంచుకోవడం](/features/pick) చూడండి.
+`next --auto`, `--fallback`, `ccam pick` ఒకే విధంగా ఎంచుకుంటాయి: ముందుగా `auto_max_usage` (`config.toml`, డిఫాల్ట్ 100) కంటే తక్కువ ఉన్నవి, `auto_strategy` (`headroom`, `expiring` లేదా `balance`) ప్రకారం, `--model` వారపు విండోను కూడా లెక్కించి, 100% వద్ద ఉన్న ఖాతాను ఎప్పుడూ కాదు, అవి ప్రారంభించే ఖాతా సంస్థలోనే (ఇంకా దూరం చూడటానికి `--cross-org` లేదా `cross_org = true`). ఏదీ ఎంచుకోలేనప్పుడు అవి కోడ్ 75 తో నిష్క్రమిస్తాయి, లేదా `--wait` తో మొదటి ఖాతా రీసెట్ అయ్యే వరకు వేచి ఉంటాయి. చరిత్రను షేర్ చేయని ఖాతాల మధ్య కూడా `ccam next --continue` సంభాషణను తీసుకువెళ్తుంది: అప్పుడు Claude Code దాన్ని కొత్త ఖాతాలోకి కాపీ చేస్తుంది. Claude Code లోపల, ప్లగిన్ యొక్క `/ccam:switch [account]` సంభాషణను ముందుకు అప్పగిస్తుంది, దాని hooks రన్ చేసేది `ccam hook`. [తదుపరి ఖాతాకు మారడం](/features/next), [స్క్రిప్ట్‌ల కోసం ఖాతాను ఎంచుకోవడం](/features/pick), [ప్రతి ఖాతా బ్యాక్‌గ్రౌండ్ సెషన్‌లు](/features/agents) చూడండి.
 
 ## నిర్వహణ
 
@@ -135,10 +142,10 @@ ccam completion bash # or zsh, powershell
 
 | పాత్ | విషయాలు |
 | --- | --- |
-| `~/.config/ccam/config.toml` | ఖాతాలు, అవి ఏమి షేర్ చేస్తాయి |
+| `~/.config/ccam/config.toml` | ఖాతాలు, గ్రూప్‌లు, సెట్టింగ్‌లు (`theme`, `usage_source`, `relay`, `cross_org` …) |
 | `~/.local/share/ccam/profiles/<name>/` | ప్రతి ఖాతా యొక్క `CLAUDE_CONFIG_DIR` |
 | `~/.local/share/ccam/groups/<group>/` | షేర్ చేసిన సెట్టింగ్‌లు, MCP సర్వర్లు, ఎక్స్‌టెన్షన్లు, చరిత్ర |
-| `~/.local/state/ccam/` | వినియోగ కాష్, చివరిగా ఉపయోగించిన సమయాలు |
+| `~/.local/state/ccam/` | వినియోగ కాష్, చివరిగా ఉపయోగించిన సమయాలు, `/ccam:switch`, పరిమితి hook వదిలే నోట్స్ (`handoff/`) |
 | `~/.local/bin/<shortcut>` | `ccwork` వంటి షార్ట్‌కట్ కమాండ్‌లు, ccam కు లింక్‌లు |
 
 `XDG_CONFIG_HOME`, `XDG_DATA_HOME`, `XDG_STATE_HOME` వేరియబుల్స్ ఈ ఫోల్డర్‌ల స్థానాన్ని మారుస్తాయి. Windows లో `~` అంటే `%USERPROFILE%`, షార్ట్‌కట్‌లు `<shortcut>.exe` గా ఉంటాయి.

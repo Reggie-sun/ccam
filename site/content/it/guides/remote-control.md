@@ -4,7 +4,7 @@ description: "Avvia il Remote Control di Claude Code con qualsiasi account usand
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 59b802c44bb3
+sourceHash: "5f0b90ea53d6"
 ---
 
 `ccam work rc` avvia il Remote Control di Claude Code con l'account `work`, così puoi guidare le sessioni su questo computer da claude.ai/code o dall'app mobile di Claude. Funziona come `claude rc` con una sola differenza: se l'account condivide server MCP, ccam chiede una volta se copiarli nel `.claude.json` dell'account, perché le sessioni di Remote Control non leggono i server da nessun'altra parte.
@@ -33,7 +33,7 @@ Qui si incontrano due tipi di opzioni: quelle di ccam, che vanno prima del nome 
 | `--dry-run` (prima dell'account) | Stampa l'ambiente e il comando, più l'avviso MCP se c'è. Non chiede e non copia nulla | disattivata |
 | `Copy them into .claude.json (a backup is kept)? [y/N]` | Viene chiesto quando l'account condivide server MCP e al suo `.claude.json` manca l'elenco attuale del gruppo. `y` li copia, `N` o Invio avvia senza di loro | `N` |
 | `mcp_strategy = "sync"` in `~/.config/ccam/config.toml` | Copia i server del gruppo in `.claude.json` prima di ogni avvio, che sia Remote Control o no, così non viene mai chiesto nulla | `"flag"` |
-| `ccam share work --mcp off` | Smette di condividere i server MCP con l'account; Remote Control si avvia allora solo con i server propri dell'account e non chiede nulla | attiva |
+| `ccam group leave <group> work` | Toglie l'account dal gruppo che condivide con esso i server MCP; Remote Control si avvia allora solo con i server propri dell'account e non chiede nulla | in `default` |
 
 ### Opzioni di Remote Control
 
@@ -124,7 +124,7 @@ Una sessione di `work` è ancora aperta: un normale `ccam work`, una scorciatoia
 
 ### ccam chiede ogni volta
 
-Non hai ancora copiato i server. Rispondi `y` una volta, oppure imposta `mcp_strategy = "sync"`. Se non vuoi mai i server in Remote Control, smetti di condividere MCP con l'account: `ccam share work --mcp off`.
+Non hai ancora copiato i server. Rispondi `y` una volta, oppure imposta `mcp_strategy = "sync"`. Se non vuoi mai i server in Remote Control, smetti di condividere MCP con l'account: toglilo da quel gruppo (`ccam group leave default work`), oppure tieni gli MCP in un gruppo a parte di cui l'account non fa parte.
 
 ### `ccam work rc` fallisce subito con un errore su `--mcp-config`
 

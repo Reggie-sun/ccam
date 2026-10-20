@@ -4,7 +4,7 @@ description: ccam pick imprime a conta com mais espaço para um script, dá cont
 updated: 2026-10-20
 order: 12
 translation: machine
-sourceHash: 65a5a7e179a5
+sourceHash: "2e8285b7c193"
 ---
 
 `ccam pick` imprime o nome da conta com login feito que tem mais espaço, para um script iniciar o Claude Code com ela. Workers iniciados ao mesmo tempo recebem cada um uma conta diferente enquanto houver contas com espaço suficientes, então um lote de jobs `claude -p` se espalha pelas suas contas em vez de esgotar uma só.
@@ -19,6 +19,8 @@ done; wait
 ccam pick --json                      # the account and its usage
 ccam pick --model opus                # also count the Opus weekly limit
 ccam pick --max-usage 80 --strategy expiring
+ccam pick --strategy balance          # spread over the weekly quota, fewer running sessions first
+ccam pick --cross-org                 # also accounts of other organizations
 ccam pick --wait=2h                   # nobody has room: wait for a reset
 ccam --fallback "$(ccam pick)" -p "…" # also switch if this account hits its limit mid-job
 ```
@@ -31,7 +33,8 @@ $ ccam pick --json
   "email": "dev@company.com",
   "five_hour": { "percent": 12, "resets_at": "2026-10-20T15:10:00Z", "known": true },
   "weekly": { "percent": 41, "resets_at": "2026-10-24T09:00:00Z", "known": true },
-  "source": "live"
+  "source": "live",
+  "reason": "12% of its 5 hours used, the least"
 }
 ```
 
@@ -41,16 +44,17 @@ Códigos de saída: `0` com um nome na saída padrão, `75` (`EX_TEMPFAIL`) quan
 
 | Opção | O que faz | Padrão |
 | --- | --- | --- |
-| `--json` | Imprime a conta, o uso de 5 horas e o semanal e de onde vêm os números | desativado |
+| `--json` | Imprime a conta, o uso de 5 horas e o semanal, de onde vêm os números e por que ela foi escolhida | desativado |
 | `--model <model>` | Também conta a janela semanal desse modelo, como `opus` | nenhum |
 | `--max-usage <1-100>` | Prefere as contas abaixo deste uso | `auto_max_usage`, senão 100 |
-| `--strategy headroom\|expiring` | O menor uso de 5 horas, ou o reinício de 5 horas mais próximo | `auto_strategy`, senão `headroom` |
+| `--strategy headroom\|expiring\|balance` | O menor uso de 5 horas, o reinício de 5 horas mais próximo ou a cota semanal que ficaria sem uso primeiro | `auto_strategy`, senão `headroom` |
+| `--cross-org` | Também escolhe contas de outras organizações | `cross_org`, senão desativado |
 | `--wait[=<duration>]` | Quando nenhuma conta tem espaço, espera o reinício da primeira, no máximo por este tempo | desativado; `5h` quando usado sozinho |
 | `--dry-run` | Escolhe sem registrar a escolha | desativado |
 
 ## Como funciona
 
-1. O ccam lista as contas com login feito (contas com chave de API não têm limites e ficam de fora).
+1. O ccam lista as contas com login feito (contas com chave de API não têm limites e ficam de fora) na organização da conta que esta pasta iniciaria (consulte [organizações](/features/next#auto)); uma pasta logada na mesma conta Claude que essa também fica de fora.
 2. Ele pega um lock (`~/.local/state/ccam/picks.lock`), para que escolhas feitas ao mesmo tempo aconteçam uma depois da outra.
 3. Consulta o uso de todas as contas ao mesmo tempo, do mesmo jeito que o `ccam usage`, com o cache de 60 segundos.
 4. Contas escolhidas nos últimos 2 minutos (`~/.local/state/ccam/picks/<name>`) ficam de fora primeiro, e as [regras de escolha](/features/next#auto) do `ccam next --auto` escolhem entre as restantes: primeiro as abaixo de `auto_max_usage`, pela estratégia, nunca uma conta em 100%.

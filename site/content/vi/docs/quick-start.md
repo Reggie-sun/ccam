@@ -5,7 +5,7 @@ description: Thêm hai tài khoản Claude Code bằng ccam add, đặt cho chú
 updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 55f81dae9fc0
+sourceHash: "d5b0e295f3f0"
 ---
 
 Thêm từng tài khoản bằng `ccam add`, rồi khởi động Claude Code bằng `ccam <name>` hoặc bằng một lệnh tắt do bạn tự đặt tên, chẳng hạn `ccwork`. Hầu hết mọi người chỉ cần như vậy.
@@ -79,7 +79,7 @@ ccam work
 ccam 2
 ```
 
-Chạy `ccam` một mình sẽ mở trình chọn: dùng các phím mũi tên và Enter, hoặc nhấn số của tài khoản.
+Chạy `ccam` một mình sẽ mở [bảng điều khiển](/features/dashboard): di chuyển tới một tài khoản bằng các phím mũi tên hoặc số của nó, rồi nhấn Enter.
 
 Mọi thứ sau lệnh tắt hoặc tên tài khoản được chuyển nguyên vẹn cho Claude Code, nên bạn vẫn dùng các tùy chọn quen thuộc:
 
@@ -91,14 +91,13 @@ cat error.log | ccwork -p "what caused this?"
 
 ## 5. Chọn những gì dùng chung
 
-Theo mặc định, máy chủ MCP, `settings.json`, `CLAUDE.md` toàn cục, cùng agent, lệnh, skill và plugin được dùng chung giữa các tài khoản. Lịch sử hội thoại thì không. Hãy bật nó cho cả hai tài khoản nếu bạn muốn tiếp tục hội thoại qua lại giữa chúng:
+Theo mặc định, máy chủ MCP, `settings.json`, `CLAUDE.md` toàn cục, cùng agent, lệnh, skill và plugin được dùng chung giữa các tài khoản qua nhóm `default`. Lịch sử hội thoại thì không. Hãy thêm nó vào nhóm nếu bạn muốn tiếp tục hội thoại qua lại giữa các tài khoản:
 
 ```sh
-ccam share personal --history on
-ccam share work --history on
+ccam group set default --add history
 ```
 
-ccam cho bạn xem những gì nó sẽ di chuyển trước khi thay đổi bất cứ thứ gì. Xem [dùng chung](/docs/sharing) để biết chi tiết.
+ccam cho bạn xem những gì nó sẽ di chuyển cho từng tài khoản trước khi thay đổi bất cứ thứ gì. Xem [dùng chung bằng nhóm](/features/share) để biết chi tiết.
 
 ## 6. Khi một tài khoản chạm giới hạn
 

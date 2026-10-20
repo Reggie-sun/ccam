@@ -5,7 +5,7 @@ description: "ccam add ने दोन Claude Code खाती जोडा, �
 updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 55f81dae9fc0
+sourceHash: "d5b0e295f3f0"
 ---
 
 प्रत्येक खाते `ccam add` ने जोडा, नंतर `ccam <name>` ने किंवा तुम्ही स्वतः नाव दिलेल्या शॉर्टकटने, जसे `ccwork`, Claude Code सुरू करा. बहुतेक लोकांना एवढेच लागते.
@@ -79,7 +79,7 @@ ccam work
 ccam 2
 ```
 
-फक्त `ccam` चालवल्यास निवडण्याची यादी उघडते: बाण की आणि Enter वापरा, किंवा खात्याचा क्रमांक दाबा.
+फक्त `ccam` चालवल्यास [डॅशबोर्ड](/features/dashboard) उघडतो: बाण की किंवा खात्याच्या क्रमांकाने खात्यावर जा, मग Enter दाबा.
 
 शॉर्टकट किंवा खात्याच्या नावानंतरचे सर्व काही न बदलता Claude Code ला जाते, त्यामुळे तुम्ही ओळखीचे पर्याय वापरत राहता:
 
@@ -91,14 +91,13 @@ cat error.log | ccwork -p "what caused this?"
 
 ## 5. काय शेअर करायचे ते निवडा
 
-डीफॉल्टनुसार MCP सर्व्हर, `settings.json`, global `CLAUDE.md`, आणि agents, commands, skills आणि plugins खात्यांमध्ये शेअर होतात. संभाषण इतिहास शेअर होत नाही. खात्यांमध्ये संभाषणे पुढे चालू ठेवायची असतील तर दोन्ही खात्यांसाठी तो चालू करा:
+डीफॉल्टनुसार MCP सर्व्हर, `settings.json`, global `CLAUDE.md`, आणि agents, commands, skills आणि plugins `default` या गटामार्फत खात्यांमध्ये शेअर होतात. संभाषण इतिहास शेअर होत नाही. खात्यांमध्ये संभाषणे पुढे चालू ठेवायची असतील तर तो गटात जोडा:
 
 ```sh
-ccam share personal --history on
-ccam share work --history on
+ccam group set default --add history
 ```
 
-काहीही बदलण्यापूर्वी ccam काय हलवणार आहे ते दाखवते. तपशीलासाठी [शेअरिंग](/docs/sharing) पाहा.
+काहीही बदलण्यापूर्वी ccam प्रत्येक खात्यासाठी काय हलवणार आहे ते दाखवते. तपशीलासाठी [गटांसह शेअरिंग](/features/share) पाहा.
 
 ## 6. खाते मर्यादेला पोहोचल्यावर
 

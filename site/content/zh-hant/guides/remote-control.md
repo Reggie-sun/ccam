@@ -4,7 +4,7 @@ description: 用 ccam <name> rc 以任一帳號啟動 Claude Code 的 Remote Con
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 59b802c44bb3
+sourceHash: "5f0b90ea53d6"
 ---
 
 `ccam work rc` 會以帳號 `work` 啟動 Claude Code 的 Remote Control，讓你可以從 claude.ai/code 或 Claude 行動應用程式操作這台電腦上的工作階段。它的用法和 `claude rc` 一樣，只有一個差別：如果該帳號共用 MCP 伺服器，ccam 會詢問一次是否要把它們複製到帳號的 `.claude.json`，因為 Remote Control 的工作階段不會從其他任何地方讀取伺服器。
@@ -33,7 +33,7 @@ ccam --dry-run work rc                # print the command instead of running it
 | `--dry-run`（寫在帳號之前） | 印出環境變數和指令，有 MCP 提示時也一併印出。不會詢問，也不會複製 | 關閉 |
 | `Copy them into .claude.json (a backup is kept)? [y/N]` | 當帳號共用 MCP 伺服器，而它的 `.claude.json` 缺少群組目前的清單時詢問。`y` 會複製，`N` 或 Enter 則不複製直接啟動 | `N` |
 | `~/.config/ccam/config.toml` 中的 `mcp_strategy = "sync"` | 每次啟動前都把群組的伺服器複製到 `.claude.json`，不論是否為 Remote Control，因此永遠不會詢問 | `"flag"` |
-| `ccam share work --mcp off` | 停止與該帳號共用 MCP 伺服器；之後 Remote Control 只會帶著帳號自己的伺服器啟動，也不會詢問 | 開啟 |
+| `ccam group leave <group> work` | 把帳號移出與它共用 MCP 的群組；之後 Remote Control 只會帶著帳號自己的伺服器啟動，也不會詢問 | 在 `default` 中 |
 
 ### Remote Control 選項
 
@@ -124,7 +124,7 @@ $ ccam mcp add ctx --url https://mcp.context7.com/mcp
 
 ### ccam 每次都會詢問
 
-你還沒有複製這些伺服器。回答一次 `y`，或設定 `mcp_strategy = "sync"`。如果你完全不想在 Remote Control 中使用這些伺服器，就停止與該帳號共用 MCP：`ccam share work --mcp off`。
+你還沒有複製這些伺服器。回答一次 `y`，或設定 `mcp_strategy = "sync"`。如果你完全不想在 Remote Control 中使用這些伺服器，就停止與該帳號共用 MCP：把它移出那個群組（`ccam group leave default work`），或把 MCP 放在一個該帳號不在其中的專屬群組。
 
 ### `ccam work rc` 立刻失敗，並出現與 `--mcp-config` 有關的錯誤
 

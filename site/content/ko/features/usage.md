@@ -4,7 +4,7 @@ description: ccam usage는 모든 계정의 5시간 한도와 주간 한도를 �
 updated: 2026-10-20
 order: 7
 translation: machine
-sourceHash: 525174ceed0d
+sourceHash: "ec1d1ee27d9f"
 ---
 
 `ccam usage`는 각 계정이 5시간 한도와 주간 한도를 얼마나 썼는지, 각 구간이 초기화되기까지 얼마나 남았는지 보여 줍니다. 긴 작업을 시작하기 전이나 Claude Code가 한도가 가까워졌다고 알릴 때 실행해, 어느 계정에 여유가 남았는지 확인하세요. `ccam statusline`은 Claude Code의 상태 표시줄 명령입니다. Claude Code 안에 계정 이름과 사용량을 표시하고, `ccam usage`가 쓸 수 있도록 수치를 저장합니다.
@@ -20,6 +20,7 @@ ccam usage -v               # add per-model weekly limits and the data source
 ccam usage --json           # machine-readable, one object per account
 ccam usage --source cache   # saved numbers only, no network
 ccam usage --refresh        # also renew expired logins of accounts not running
+ccam usage --source claude  # let Claude Code look it up: ccam never touches a token
 ccam statusline install     # set the status line in every account's settings.json
 ```
 
@@ -32,7 +33,7 @@ $ ccam usage
 → Most headroom: personal   (open it with ccam next --auto)
 ```
 
-터미널에서는 표가 바로 나타나고 각 행에 `fetching…`이 표시되며, 계정이 응답하는 대로 해당 행을 다시 그립니다. `As of`는 수치를 가져온 지 얼마나 되었는지 나타내고, `(cached)`는 엔드포인트가 아니라 저장된 파일에서 가져온 수치라는 뜻입니다. 마지막 줄은 5시간 사용량이 100% 미만인 계정 중 가장 낮은 계정을 알려 주며, 계정이 둘 이상일 때만 나타납니다. 로그인되지 않은 계정은 `not logged in → ccam login <name>`, API 키 계정은 `no limits (API)`로 표시됩니다.
+터미널에서는 표가 바로 나타나고 각 행에 `fetching…`이 표시되며, 계정이 응답하는 대로 해당 행을 다시 그립니다. `As of`는 수치를 가져온 지 얼마나 되었는지 나타내고, `(cached)`는 엔드포인트가 아니라 저장된 파일에서 가져온 수치라는 뜻입니다. 마지막 줄은 [`ccam next --auto`](/features/next)가 같은 규칙으로 고를 계정을 알려 줍니다(`auto_max_usage`, `auto_strategy`, 실행 중인 세션을 따지고, `cross_org`를 설정하지 않으면 마지막으로 사용한 계정과 같은 조직의 계정만 보며, 100%인 구간이 있는 계정은 건너뛰므로 주간 한도가 찬 계정은 절대 나오지 않습니다). 이 줄은 계정이 둘 이상일 때만 나타납니다. 로그인되지 않은 계정은 `not logged in → ccam login <name>`, API 키 계정은 `no limits (API)`로 표시됩니다.
 
 `ccam statusline install`을 실행하면 Claude Code에 `[work] · Opus · 5h 24% · 7d 41%` 같은 줄이 표시됩니다.
 
@@ -44,11 +45,15 @@ $ ccam usage
 | `--watch[=N]` | Ctrl+C를 누를 때까지 `N`초마다 다시 그립니다. `--watch`만 주거나 0 이하의 값을 주면 60초입니다 | 꺼짐 |
 | `-v`, `--verbose` | 모델별 주간 한도와 `source:` 줄(`live`, `cache`, `statusline`)을 표시합니다 | 꺼짐 |
 | `--no-cache` | 60초 캐시를 무시하고 엔드포인트에 다시 요청합니다 | 꺼짐 |
-| `--source live\|cache` | `cache`는 엔드포인트에 요청하지 않고 저장된 수치만 보여 주며, `live`는 기본 동작입니다 | live |
+| `--source live\|claude\|cache` | `live`는 계정의 토큰으로 엔드포인트에 요청하고, `claude`는 Claude Code가 조회하게 하며(아래 참고), `cache`는 저장된 수치만 보여 줍니다 | `usage_source`, 없으면 `live` |
 | `--refresh` | 만료된 액세스 토큰을 갱신합니다. 실행 중이 아닌 계정만 대상입니다 | 꺼짐 |
 | `--dry-run` | 받아들입니다. `ccam usage`는 자체 캐시 말고는 아무것도 바꾸지 않습니다. `--refresh`와 함께 쓰면 `--dry-run cannot be combined with --refresh, which rewrites login tokens`로 거부합니다 | 꺼짐 |
 
-`--source`에 다른 값을 주면 `--source must be live or cache`로 실패합니다. `ccam usage`는 인자를 받지 않습니다.
+`--source`에 다른 값을 주면 `--source must be live, claude or cache`로 실패합니다.
+
+### Claude Code 자체에서 사용량 받기
+
+`config.toml`에 `usage_source = "claude"`를 설정하면(또는 `--source claude`를 주면) ccam은 로그인 토큰을 전혀 읽지 않습니다. 계정마다 계정 폴더에서 `claude -p --input-format stream-json --output-format stream-json --verbose --safe-mode --no-session-persistence`를 시작하고, 표준 입력으로 Claude Code의 `get_usage` 요청을 보냅니다(Claude Code 2.1.270 이상). Claude Code가 자체 로그인으로 사용량을 조회해 5시간, 주간, 모델별 구간을 답합니다. `--safe-mode` 덕분에 계정의 훅, MCP 서버, 플러그인은 시작되지 않으며, 세션도 저장되지 않습니다. 계정마다 Claude Code를 한 번 시작해야 하므로 약 1초가 걸려 `live`보다 느립니다. 모든 계정에 동시에 요청하며 계정마다 제한 시간은 20초이고, 60초 캐시는 평소처럼 적용됩니다. Claude Code는 이 요청을 실험적 기능으로 표시하므로, 응답이 멈추면 ccam은 저장된 수치를 보여 주고 `ccam doctor`가 이를 보고합니다. `--dry-run`은 Claude Code를 시작하지 않고(시작하면 계정 폴더에 쓰기 때문입니다) 저장된 수치를 보여 줍니다. `usage_source`에는 `live`나 `claude`를 줄 수 있으며, `cache`는 `--source`에서만 고를 수 있습니다. `ccam usage`는 인자를 받지 않습니다.
 
 `ccam statusline`은 표준 입력으로 Claude Code의 상태 표시줄 JSON을 읽습니다. 옵션은 `--wrap <command>` 하나뿐이며, 기존 상태 표시줄 명령을 지정하면 그 출력의 첫 줄 앞에 계정 이름을 붙입니다. `ccam statusline install`은 옵션을 받지 않습니다. 두 명령 모두 `--dry-run`을 주면 `` --dry-run is not supported by `ccam statusline`; nothing was changed ``를 출력하고 거부합니다.
 

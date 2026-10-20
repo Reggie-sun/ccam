@@ -5,7 +5,7 @@ description: Aggiungi due account Claude Code con ccam add, dai loro scorciatoie
 updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 55f81dae9fc0
+sourceHash: "d5b0e295f3f0"
 ---
 
 Aggiungi ogni account con `ccam add`, poi avvia Claude Code con `ccam <name>` o con una scorciatoia a cui dai tu il nome, come `ccwork`. È tutto ciò che serve alla maggior parte delle persone.
@@ -79,7 +79,7 @@ ccam work
 ccam 2
 ```
 
-Eseguire `ccam` da solo apre un selettore: usa i tasti freccia e Invio, oppure premi il numero dell'account.
+Eseguire `ccam` da solo apre la [dashboard](/features/dashboard): spostati su un account con i tasti freccia o con il suo numero, poi premi Invio.
 
 Tutto ciò che segue la scorciatoia o il nome dell'account arriva a Claude Code invariato, quindi continui a usare le opzioni che conosci:
 
@@ -91,14 +91,13 @@ cat error.log | ccwork -p "what caused this?"
 
 ## 5. Scegli cosa condividere
 
-Per impostazione predefinita, i server MCP, `settings.json`, il `CLAUDE.md` globale e agenti, comandi, skill e plugin sono condivisi tra gli account. La cronologia delle conversazioni no. Attivala per entrambi gli account se vuoi continuare le conversazioni passando dall'uno all'altro:
+Per impostazione predefinita, i server MCP, `settings.json`, il `CLAUDE.md` globale e agenti, comandi, skill e plugin sono condivisi tra gli account tramite il gruppo `default`. La cronologia delle conversazioni no. Aggiungila al gruppo se vuoi continuare le conversazioni passando da un account all'altro:
 
 ```sh
-ccam share personal --history on
-ccam share work --history on
+ccam group set default --add history
 ```
 
-ccam mostra cosa sposterà prima di modificare qualsiasi cosa. Vedi [condivisione](/docs/sharing) per i dettagli.
+ccam mostra cosa sposterà per ogni account prima di modificare qualsiasi cosa. Vedi [condivisione con i gruppi](/features/share) per i dettagli.
 
 ## 6. Quando un account raggiunge il limite
 

@@ -1,10 +1,10 @@
 ---
 title: تشغيل Claude Code
-description: شغّل Claude Code بأي حساب باستخدام ccam <name|number> أو ccam run أو أداة الاختيار في ccam؛ تُمرَّر الوسائط إلى claude دون تغيير، ويعرض --dry-run الأمر.
+description: شغّل Claude Code بأي حساب باستخدام ccam <name|number> أو ccam run أو لوحة التحكم؛ تُمرَّر الوسائط إلى claude دون تغيير، ويعرض --dry-run الأمر.
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: e6b5a8d4df86
+sourceHash: 4812b197f143
 ---
 
 يشغّل `ccam work` برنامج Claude Code بالحساب `work`، وكل ما يأتي بعد الاسم يُمرَّر إلى `claude` كما هو. استخدمه في أي مكان كنت ستكتب فيه `claude`: في الطرفية، أو في سكربت، أو مع إدخال يصل عبر أنبوب.
@@ -21,7 +21,7 @@ ccam -p "summarise"              # no name: the folder's account, else the defau
 ccam use work                    # make work the default account
 ccam folder work ~/code/company  # use work in that folder when no name is given
 ccam run work --continue         # same as ccam work --continue
-ccam                             # the picker on a terminal, the list otherwise
+ccam                             # the dashboard on a terminal, the list otherwise
 ccam --dry-run work -p hi        # print the command instead of running it
 ccam --fallback work -p "fix the tests"   # run again as another account at the limit
 ```
@@ -30,22 +30,13 @@ ccam --fallback work -p "fix the tests"   # run again as another account at the 
 
 عندما يبدأ الوسيط الأول بـ `-` ولا يكون من خيارات ccam نفسه، يشغّل ccam حسابًا دون اسم، مع كل الوسائط. وهو الحساب المعيّن للمجلد الحالي باستخدام [`ccam folder`](/features/folder)، وإلا فالحساب الافتراضي: الحساب الذي عيّنته باستخدام `ccam use`، أو صاحب أدنى رقم إن لم تعيّن واحدًا.
 
-### أداة الاختيار
+### لوحة التحكم
 
-يفتح `ccam` دون وسائط أداة الاختيار عندما يكون الإدخال والإخراج القياسيان طرفية، ويطبع `ccam list` في غير ذلك. وتعرض لكل حساب رقمه وبريده الإلكتروني واستخدامه في نافذة الخمس ساعات وآخر استخدام له والعناصر المشتركة؛ ويظهر الاستخدام تباعًا كلما وصل رد حساب.
+يفتح `ccam` دون وسائط [لوحة التحكم](/features/dashboard) عندما يكون الإدخال والإخراج القياسيان طرفية، ويطبع `ccam list` في غير ذلك. انتقل إلى حساب (بالأسهم، أو بكتابة رقمه) واضغط `Enter` لتشغيله؛ ويشغّل `n` الحساب الذي لديه أكبر هامش، ويعرض `o` الخيارات `--continue` أو `--resume` أو وسائط أخرى. وتُغلق لوحة التحكم قبل أن يبدأ Claude Code، فتُستعاد الطرفية أولًا.
 
-| المفتاح | ما يفعله |
-| --- | --- |
-| `Enter` | يشغّل Claude Code بالحساب المحدد |
-| من `1` إلى `9` | يشغّل الحساب صاحب هذا الرقم |
-| `Up`/`Down`، `k`/`j` | ينقل التحديد |
-| `a` | يغلق أداة الاختيار ويشغّل معالج `ccam add` |
-| `s` | يعدّل العناصر المشتركة للحساب المحدد (`Space` أو `x` للتبديل، و`Enter` للتطبيق، و`Esc` للرجوع) |
-| `d` | يجعل الحساب المحدد هو الافتراضي |
-| `r` | يجلب الاستخدام مرة أخرى، دون ذاكرة التخزين المؤقت القصيرة |
-| `q`، `Esc`، `Ctrl+C` | خروج |
+عندما يكون `CLAUDE_CODE_OAUTH_TOKEN` أو `ANTHROPIC_API_KEY` أو `ANTHROPIC_AUTH_TOKEN` معيّنًا في الصدفة، سيستخدم Claude Code ذلك المفتاح أو الرمز بدلًا من تسجيل دخول الحساب نفسه، لذلك ينبّه ccam إلى ذلك في الخطأ القياسي قبل أن يبدأ (`ccam: $ANTHROPIC_API_KEY is set, so Claude Code may use that key instead of work's login…`). وهو يقرأ المتغيرات فقط؛ أما [حساب مفتاح API](/features/api) فيمسحها بدلًا من ذلك.
 
-تُغلق أداة الاختيار قبل أن تنفّذ أي إجراء، فتُستعاد الطرفية قبل أن يبدأ Claude Code. وبعد `d` أو تغيير في المشاركة تُفتح مرة أخرى. ويعرض تغيير المشاركة الخطة ويسألك أولًا، كما يفعل `ccam share`.
+مع `relay = true` في `config.toml`، يشغّل ccam الجلسات التفاعلية بوصفها عمليات فرعية ويبقى بجانبها، كي يستطيع `/ccam:switch` نقل المحادثة بنفسه ([التفاصيل](/features/next#inside-claude-code))؛ وإلا يستبدل ccam نفسه بـ Claude Code، ولا يعمل شيء بجانبه.
 
 ## الخيارات
 
@@ -84,7 +75,7 @@ $env:CLAUDE_CONFIG_DIR='C:\Users\me\.local\share\ccam\profiles\work'; & C:\Users
 يضيء كل مربع عندما تعمل خطوته، والأسطر في الأسفل هي البيئة والوسائط التي يبدأ بها Claude Code.
 
 1. يستدعي `cmd/ccam/main.go` الدالة `app.Main`. وإذا شُغّل ccam باسم آخر، فهو [أمر مختصر](/features/shortcuts) ويذهب مباشرة إلى المشغّل.
-2. ينظر `app.parse` في `os.Args` قبل أن يتدخل cobra. لا يذهب إلى `cli.Execute` إلا `ccam` وحده (أداة الاختيار)، واسم أمر من أوامر ccam (`config.Reserved`)، و`-h`/`--help` و`-v`/`--version`. وكل ما عدا ذلك تشغيل.
+2. ينظر `app.parse` في `os.Args` قبل أن يتدخل cobra. لا يذهب إلى `cli.Execute` إلا `ccam` وحده (لوحة التحكم)، واسم أمر من أوامر ccam (`config.Reserved`)، و`-h`/`--help` و`-v`/`--version`. وكل ما عدا ذلك تشغيل.
 3. يقرأ `launcher.Launch` الملف `~/.config/ccam/config.toml`، وهو الملف الوحيد الذي يحلّله.
 4. يجد `launcher.Prepare` الحساب بالاسم أو الرقم (ودون اسم، يأخذ `HereProfile` حساب المجلد، بمقارنة مجلد العمل مع إدخالات `[[folder]]` في `config.toml` كسلاسل نصية)، ويحذف `--` واحدًا في البداية، ويحدد الملف التنفيذي `claude` باستخدام `ResolveClaude`. تُخزَّن نتيجة البحث في PATH مؤقتًا في `~/.local/state/ccam/claude-path` مع وقت تعديل الملف، فلا يبحث ccam في `PATH` عند كل تشغيل. والملف المتغيّر أو المفقود يؤدي إلى بحث جديد. ويُستخدم مسار `claude_bin` في `config.toml` كما هو. ويرفض ccam أي `claude` يكون هو ccam نفسه، بالمقارنة حسب inode، لأن ذلك سيؤدي إلى حلقة.
 5. يقارن `checkLinks` مجلد الحساب `~/.local/share/ccam/profiles/<name>/` بإعدادات المشاركة الخاصة به باستخدام `share.Check`، الذي لا يستدعي إلا `lstat` و`readlink`، أي استدعاء نظام واحد أو اثنين لكل عنصر. ويُنشأ الرابط المفقود في الحال. وأي شيء قد يؤدي إلى فقدان بيانات يوقف التشغيل.

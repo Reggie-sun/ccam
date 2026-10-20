@@ -5,7 +5,7 @@ description: ccam, Claude Code खाती, वापर मर्यादा,
 updated: 2026-10-20
 order: 6
 translation: machine
-sourceHash: 80a5475ccfee
+sourceHash: "e7d4a2c877ac"
 ---
 
 ## ccam हे Anthropic चे अधिकृत टूल आहे का?
@@ -26,7 +26,7 @@ sourceHash: 80a5475ccfee
 
 ## दुसऱ्या खात्यावर संभाषण पुढे कसे चालू ठेवायचे?
 
-`ccam share <name> --history on` ने दोन्ही खात्यांमध्ये संभाषण इतिहास शेअर करा, नंतर `ccam next --continue` चालवा. Claude Code पुढच्या खात्यात चालू फोल्डरमधील सर्वात अलीकडचे संभाषण उघडते.
+`ccam group set default --add history` ने (किंवा त्यांच्या स्वतःच्या गटाने: `ccam group add pair --items history --members work,side`) खात्यांमध्ये संभाषण इतिहास शेअर करा, नंतर `ccam next --continue` चालवा. Claude Code पुढच्या खात्यात चालू फोल्डरमधील सर्वात अलीकडचे संभाषण उघडते.
 
 ## ccam माझे लॉगिन पाहते किंवा पाठवते का?
 

@@ -1,46 +1,45 @@
 ---
 title: Współdzielenie serwerów MCP, ustawień i historii
-description: Jak ccam współdzieli serwery MCP, settings.json, CLAUDE.md, agentów, umiejętności i historię rozmów między kontami Claude Code, zachowując osobne loginy.
+description: Jak grupy ccam współdzielą serwery MCP, settings.json, CLAUDE.md, umiejętności i historię rozmów między kontami Claude Code, przy osobnych loginach.
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 888d466b29e9
+sourceHash: "2606e4ec682e"
 ---
 
-Każde konto ma własny login. Wszystko inne można współdzielić element po elemencie: ccam linkuje plik lub folder konta do współdzielonego folderu grupy, więc zmiana wprowadzona na jednym koncie pojawia się na wszystkich kontach tej grupy.
+Każde konto ma własny login. Wszystko inne można współdzielić przez **grupy**: grupa wymienia elementy, które współdzieli, i należące do niej konta, a ccam linkuje pliki każdego z tych kont do folderu grupy, więc zmiana wprowadzona na jednym koncie pojawia się na wszystkich.
 
 ## Co można współdzielić
 
-| Element | Opcja | Co jest współdzielone |
-| --- | --- | --- |
-| Serwery MCP | `--mcp` | `mcp.json` grupy, przekazywany do Claude Code przy starcie |
-| Ustawienia | `--settings` | `settings.json`: uprawnienia, hooki, model, pasek stanu |
-| Pamięć globalna | `--memory` | `CLAUDE.md` |
-| Rozszerzenia | `--extensions` | `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/`, `rules/` |
-| Historia rozmów | `--history` | `projects/` i `history.jsonl` |
+| Element | Co jest współdzielone |
+| --- | --- |
+| `mcp` | serwery MCP: `mcp.json` grupy, przekazywany do Claude Code przy starcie |
+| `settings` | `settings.json`: uprawnienia, hooki, model, pasek stanu |
+| `memory` | globalny `CLAUDE.md` |
+| `extensions` | `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/`, `rules/` |
+| `history` | historia rozmów: `projects/` i `history.jsonl` |
 
-Nowe konta współdzielą wszystko oprócz historii rozmów.
+Pierwsze konto tworzy grupę `default`, która współdzieli wszystko oprócz historii rozmów, a kolejne konta do niej dołączają.
 
 Pliki logowania `.credentials.json` i `.claude.json` nigdy nie są współdzielone. ccam linkuje tylko ścieżki ze stałej listy, a tych dwóch na niej nie ma.
 
-Ta strona opisuje codzienne zadania. Wszystkie opcje są opisane na stronach funkcji: [współdzielenie między kontami](/features/share), [współdzielone serwery MCP](/features/mcp) i [kopiowanie istniejącej konfiguracji](/features/migrate).
+Ta strona opisuje codzienne zadania. Wszystkie opcje są opisane na stronach funkcji: [współdzielenie przez grupy](/features/share), [współdzielone serwery MCP](/features/mcp) i [kopiowanie istniejącej konfiguracji](/features/migrate).
 
 ## Grupy
 
-`on` oznacza grupę `default`. Możesz też podać nazwę, żeby tylko niektóre konta współdzieliły dany element:
-
 ```sh
-ccam share work --history team
-ccam share side --history team
+ccam group                                   # the groups, what they share, their accounts
+ccam group set default --add history         # every account in default shares history
+ccam group add team --items history --members work,side
 ```
 
-`work` i `side` współdzielą teraz rozmowy ze sobą, ale nie z pozostałymi kontami.
+Konto może należeć do kilku grup, ale każdy element pochodzi tylko z jednej grupy. Żeby więc współdzielić historię między `work` i `side`, ale nie z pozostałymi kontami, nie dodawaj historii do `default` i daj tym dwóm kontom osobną grupę, jak powyżej. `ccam share work` pokazuje, co konto współdzieli i przez którą grupę. [Panel](/features/dashboard) robi to samo na karcie Groups.
 
-## Włączanie współdzielenia
+## Gdy konto zaczyna współdzielić
 
-Gdy konto zaczyna współdzielić element, ccam:
+Gdy konto zaczyna współdzielić element (dołącza do grupy albo jego grupa dodaje ten element), ccam:
 
-1. wypisuje plan wszystkich plików, które przeniesie, skopiuje lub podlinkuje, i pyta o zgodę przed rozpoczęciem;
+1. wypisuje plan wszystkich plików, które przeniesie, skopiuje lub podlinkuje dla każdego konta, i pyta o zgodę przed rozpoczęciem;
 2. przenosi pliki konta do folderu grupy, jeśli grupa jest jeszcze pusta, albo dodaje pliki, których grupa jeszcze nie ma;
 3. gdy ten sam plik się różni, pyta, czy zachować wersję grupy, użyć twojej, czy scalić JSON;
 4. zachowuje oryginał w `.ccam-backup/<time>/` w folderze konta;
@@ -48,12 +47,13 @@ Gdy konto zaczyna współdzielić element, ccam:
 
 Pliki rozmów mają nazwy według identyfikatora sesji, więc historie z kilku kont łączą się bez konfliktów.
 
-ccam nie zmienia współdzielenia, gdy Claude Code działa jako to konto, bo sesja dalej zapisuje do przenoszonych plików. Najpierw ją zakończ.
+ccam nie zmienia konta, gdy Claude Code działa jako to konto, bo sesja dalej zapisuje do przenoszonych plików. Najpierw ją zakończ.
 
-## Wyłączanie współdzielenia
+## Gdy konto przestaje współdzielić
 
 ```sh
-ccam share work --history off
+ccam group leave team work                   # work leaves the group
+ccam group set default --remove history      # nobody in default shares history any more
 ```
 
 Link zostaje usunięty, a konto dostaje własną kopię bieżącej zawartości grupy. Dodaj `--fresh`, żeby zamiast tego zacząć od pustego folderu. Grupa zachowuje swoją zawartość dla pozostałych kont.
@@ -95,14 +95,12 @@ Copy from /home/me/.claude into group default (/home/me/.local/share/ccam/groups
   Conversation history (projects/, history.jsonl) is not included; add --history to copy it.
 Copy these into group default? [y/N] y
 ✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, commands/, skills/
-Accounts that share these through group default:
-  mcp         personal
-  settings    personal
-  memory      personal
-  extensions  personal
+Group default: personal
+To share them:
+  ccam group join default work
 ```
 
-Na końcu ccam wypisuje konta, które współdzielą każdy element przez grupę. Jeśli niektóre konta tego nie robią, podaje polecenia `ccam share`, które włączają dla nich współdzielenie.
+Na końcu ccam wypisuje konta grupy. Jeśli grupa nie współdzieli jeszcze któregoś z elementów albo niektóre konta do niej nie należą, podaje polecenia `ccam group`, które to zmieniają.
 
 Gdy grupa ma już inną kopię pliku, ccam pyta tak samo jak przy włączaniu współdzielenia: zachować kopię grupy czy użyć twojej. `settings.json` i inne pliki JSON można też scalić, a `history.jsonl` scalić wiersz po wierszu. Poprzednie kopie grupy są zapisywane w `.ccam-backup/<time>/` w folderze grupy.
 

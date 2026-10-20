@@ -1,10 +1,10 @@
 ---
 title: 기존 설정 복사하기
-description: ccam migrate로 기존 ~/.claude의 설정, CLAUDE.md, 확장 기능, MCP 서버, MCP 로그인 정보를 ccam 공유 그룹으로 복사합니다.
+description: ccam migrate로 기존 ~/.claude의 설정, CLAUDE.md, 확장 기능, MCP 서버, MCP 로그인 정보를 ccam 그룹으로 복사합니다.
 updated: 2026-10-19
 order: 6
 translation: machine
-sourceHash: 95ce6ec9e220
+sourceHash: "7cee52e75749"
 ---
 
 ccam을 쓰기 전에 Claude Code를 써 왔다면 설정이 `~/.claude`와 `~/.claude.json`에 있습니다. `ccam migrate`는 이 설정을 공유 그룹으로 복사하므로, 그룹을 통해 해당 항목을 공유하는 모든 계정이 기존 설정 그대로 시작합니다. 원본 폴더는 읽기만 하므로, `claude`를 그냥 실행해도 이전과 똑같이 동작합니다. 처음 `ccam add`를 실행한 뒤 한 번 실행하고, 어떤 계정이 MCP 서버 공유를 시작할 때마다 다시 실행하세요.
@@ -59,7 +59,7 @@ Accounts that share these through group default:
   extensions  personal, work
 ```
 
-그룹의 내용은 그 그룹을 통해 항목을 공유하는 계정에만 전달되므로, 요약에는 항목마다 그런 계정이 나열됩니다. 공유하지 않는 계정이 있으면 ccam은 공유를 켜는 `ccam share <name> --<item> on` 명령을 출력합니다.
+그룹의 내용은 그 그룹의 계정에게, 그것도 그룹이 공유하는 항목만 전달되므로, 요약에는 그룹의 계정이 나열됩니다. 복사한 항목 중 그룹이 공유하지 않는 항목이 있거나 그룹에 들어 있지 않은 계정이 있으면, ccam은 이를 바꾸는 `ccam group set <group> --add <items>`와 `ccam group join <group> <accounts>` 명령을 출력합니다.
 
 ## 옵션
 
@@ -84,7 +84,7 @@ Accounts that share these through group default:
 `internal/cli/migrate.go`가 항목을 고르면 `migrate.Build`가 원본과 그룹을 읽어 계획을 반환합니다. 확인을 받은 뒤 `Plan.Apply`가 실행되기 전에는 아무것도 기록하지 않습니다.
 
 1. **원본 찾기.** `checkSource`는 없는 경로, 폴더가 아닌 경로, 알려진 Claude Code 항목이 하나도 없는 경로를 거부합니다. `migrate.ClaudeJSON`은 폴더에 해당하는 `.claude.json`을 찾습니다. 폴더 안에 있으면 그것을 쓰고, 안에 없는 `~/.claude`라면 그 옆의 `~/.claude.json`을 씁니다. `CLAUDE_CONFIG_DIR`가 설정되지 않았을 때 Claude Code가 이 파일을 두는 곳입니다.
-2. **항목을 경로에 대응시키기.** 모든 경로는 `ccam share`가 쓰는 것과 같은 허용 목록인 `share.Layout`에서 나옵니다. MCP 서버는 `mcp.LocalServers`로 `.claude.json`에서 읽으며, 이 함수는 파일 전체를 해석하지 않고 `profile.TopLevelValue` 스캐너를 씁니다.
+2. **항목을 경로에 대응시키기.** 모든 경로는 그룹이 쓰는 것과 같은 허용 목록인 `share.Layout`에서 나옵니다. MCP 서버는 `mcp.LocalServers`로 `.claude.json`에서 읽으며, 이 함수는 파일 전체를 해석하지 않고 `profile.TopLevelValue` 스캐너를 씁니다.
 3. **옮기지 않고 복사만 하기.** 파일은 `fsutil.AtomicWrite`나 `fsutil.CopyFile`로 `~/.local/share/ccam/groups/<group>/`에 복사하고, MCP 서버는 그룹의 `mcp.json`에 넣습니다.
 
 각 항목은 원본 경로 하나를 그룹 경로 하나에 대응시킵니다.

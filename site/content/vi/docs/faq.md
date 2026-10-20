@@ -5,7 +5,7 @@ description: "Giải đáp về ccam, tài khoản Claude Code, giới hạn s�
 updated: 2026-10-20
 order: 6
 translation: machine
-sourceHash: 80a5475ccfee
+sourceHash: "e7d4a2c877ac"
 ---
 
 ## ccam có phải là công cụ chính thức của Anthropic không?
@@ -26,7 +26,7 @@ Hãy cho mỗi tài khoản một thư mục cấu hình riêng bằng `CLAUDE_C
 
 ## Làm sao để tiếp tục một cuộc hội thoại trên tài khoản khác?
 
-Bật dùng chung lịch sử hội thoại giữa hai tài khoản bằng `ccam share <name> --history on`, rồi chạy `ccam next --continue`. Claude Code sẽ mở cuộc hội thoại gần nhất của thư mục hiện tại trong tài khoản kế tiếp.
+Bật dùng chung lịch sử hội thoại giữa các tài khoản bằng `ccam group set default --add history` (hoặc bằng một nhóm riêng của chúng: `ccam group add pair --items history --members work,side`), rồi chạy `ccam next --continue`. Claude Code sẽ mở cuộc hội thoại gần nhất của thư mục hiện tại trong tài khoản kế tiếp.
 
 ## ccam có xem hoặc gửi thông tin đăng nhập của tôi đi không?
 

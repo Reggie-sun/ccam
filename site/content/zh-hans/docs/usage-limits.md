@@ -4,7 +4,7 @@ description: 用 ccam usage 查看每个 Claude Code 账号的 5 小时用量和
 updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: a84df8e873d6
+sourceHash: "40aef0708c81"
 ---
 
 `ccam usage` 显示每个账号已用掉多少 5 小时限额和每周限额。`ccam next --auto` 打开余量最多的账号，`--continue` 会把当前对话带过去。
@@ -55,10 +55,10 @@ ccam statusline install
 ```sh
 ccam next             # the account after the one you used last
 ccam next --auto      # the account with the lowest 5-hour usage
-ccam next --continue  # the next account that shares your conversation history
+ccam next --continue  # carry this folder's conversation on as the next account
 ```
 
-`ccam next` 会跳过未登录的账号，`--auto` 会跳过用量已达 100% 的账号。要继续对话，两个账号都必须共享对话历史；参见[共享](/docs/sharing)。
+`ccam next` 会跳过未登录的账号，`--auto` 会跳过用量已达 100% 的账号以及属于其他组织的账号。如果两个账号共享对话历史，`--continue` 会打开同一个对话；否则 Claude Code 会把它复制到新账号中。参见[共享](/docs/sharing)和[切换到下一个账号](/features/next#continue)。
 
 对于运行 `claude -p` 的脚本和定时任务，请把 `--fallback` 放在账号名之前。当该账号达到限制时，ccam 会以余量最多的账号重新运行同一个命令，并且只打印最终完成的那次运行的输出：
 

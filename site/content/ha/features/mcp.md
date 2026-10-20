@@ -4,7 +4,7 @@ description: Riƙe jerin sabobin MCP ɗaya ga kowane rukuni da ccam mcp add, add
 updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: f1de7db4b7be
+sourceHash: 6d3b3c38c6cb
 ---
 
 Claude Code yana ajiye sabobin MCP na mai amfani a `.claude.json`, fayil ɗaya da ke riƙe shigar asusun, don haka ba za a iya raba fayil ɗin tsakanin asusai ba. ccam yana ajiye sabobin da aka raba a fayil na rukuni, `mcp.json`, kuma yana miƙa shi ga kowane asusun rukunin lokacin farawa. Yi amfani da `ccam mcp` don ƙara sabar sau ɗaya ga dukkan asusanka, da `ccam mcp import` don matsar da sabar da ka ƙara a cikin zama ɗaya zuwa sauran.
@@ -36,7 +36,7 @@ group default (work, side)
 only in account work: pg
 ```
 
-Ƙara sunan da rukunin ya riga yana da shi yana maye gurbin ma'anarsa kuma yana buga `updated` maimakon `added`. Sabobin suna kai wa asusu ne kawai idan yana raba MCP da wannan rukunin (`ccam share <name> --mcp on`); idan babu asusun da ke raba MCP tukuna, `add` yana faɗin haka.
+Ƙara sunan da rukunin ya riga yana da shi yana maye gurbin ma'anarsa kuma yana buga `updated` maimakon `added`. Sabobin suna kai wa asusu ne kawai idan yana cikin wannan rukunin kuma rukunin yana raba MCP (`ccam group set <group> --add mcp`); idan rukunin ba ya yi, `add` yana faɗin haka.
 
 ## Zaɓuɓɓuka
 
@@ -121,7 +121,7 @@ Da `--force` ana maye gurbin sabar rukunin, kuma ana fara ajiye `mcp.json` na ba
 - **Asusan da ke aiki.** `import` yana kwafa zuwa rukunin amma yana barin shigarwar asusun da ke aiki kuma yana faɗin haka; sake gudanar da shi bayan zaman ya ƙare. Sync yana tsallake asusan da ke aiki.
 - **Kwafi don Remote Control.** Ba a taɓa kwafin asusun da ke aiki ba: `Note: account side is running, so the copy in its .claude.json stays as it was until its next Remote Control launch.` Da `mcp_strategy = "sync"` babu abin da ke buƙatar sabuntawa, domin kowace farawa tana yin sync.
 - **Fayilolin da suka lalace.** Idan `.claude.json` ba ingantaccen JSON ba ne, sync yana barin sa yadda yake kuma yana bayar da rahoton kuskuren. Idan ba za a iya ɗaukar kullen cikin daƙiƙa 2 ba, ccam yana bayar da rahoton `could not lock … (Claude Code is writing the file)`.
-- **Asusan da ba sa raba MCP.** `import` yana ƙi kuma yana gaya maka ka fara gudanar da `ccam share side --mcp on`.
+- **Asusan da ba sa raba MCP.** `import` yana ƙi kuma yana gaya maka ka fara saka asusun a rukunin da ke raba MCP (`ccam group join <group> side`).
 - **Sunayen rukunoni.** `-g` yana karɓar sunan rukuni kawai; yana zama folda ƙarƙashin `groups/`, don haka ana ƙin sunaye kamar `../x`.
 
 ## Masu alaƙa

@@ -1,46 +1,45 @@
 ---
 title: مشاركة خوادم MCP والإعدادات والسجل
-description: كيف يشارك ccam خوادم MCP وsettings.json وCLAUDE.md والوكلاء والمهارات وسجل المحادثات بين حسابات Claude Code مع إبقاء كل تسجيل دخول منفصلًا.
+description: كيف تشارك مجموعات ccam خوادم MCP وsettings.json وCLAUDE.md والمهارات وسجل المحادثات بين حسابات Claude Code، مع إبقاء كل تسجيل دخول منفصلًا.
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 888d466b29e9
+sourceHash: 2606e4ec682e
 ---
 
-يحتفظ كل حساب بتسجيل دخوله الخاص. أما كل ما عدا ذلك فيمكن مشاركته عنصرًا عنصرًا: يربط ccam ملف الحساب أو مجلده بمجلد مجموعة مشترك، فيظهر التغيير الذي يُجرى في حساب واحد في كل حسابات تلك المجموعة.
+يحتفظ كل حساب بتسجيل دخوله الخاص. أما كل ما عدا ذلك فيمكن مشاركته عبر **المجموعات**: تحدد المجموعة العناصر التي تشاركها والحسابات التي تضمها، ويربط ccam ملفات كل حساب من هذه الحسابات بمجلد المجموعة، فيظهر التغيير الذي يُجرى في حساب واحد فيها كلها.
 
 ## ما الذي يمكن مشاركته
 
-| العنصر | الخيار | ما يُشارَك |
-| --- | --- | --- |
-| خوادم MCP | `--mcp` | ملف `mcp.json` الخاص بالمجموعة، ويُمرَّر إلى Claude Code عند التشغيل |
-| الإعدادات | `--settings` | `settings.json`: الأذونات والخطافات (hooks) والنموذج وسطر الحالة |
-| الذاكرة العامة | `--memory` | `CLAUDE.md` |
-| الإضافات | `--extensions` | `agents/`، `commands/`، `skills/`، `plugins/`، `output-styles/`، `rules/` |
-| سجل المحادثات | `--history` | `projects/` و`history.jsonl` |
+| العنصر | ما يُشارَك |
+| --- | --- |
+| `mcp` | خوادم MCP: ملف `mcp.json` الخاص بالمجموعة، ويُمرَّر إلى Claude Code عند التشغيل |
+| `settings` | `settings.json`: الأذونات والخطافات (hooks) والنموذج وسطر الحالة |
+| `memory` | ملف `CLAUDE.md` العام |
+| `extensions` | `agents/`، `commands/`، `skills/`، `plugins/`، `output-styles/`، `rules/` |
+| `history` | سجل المحادثات: `projects/` و`history.jsonl` |
 
-تشارك الحسابات الجديدة كل شيء ما عدا سجل المحادثات.
+ينشئ حسابك الأول المجموعة `default`، التي تشارك كل شيء ما عدا سجل المحادثات، وتنضم إليها الحسابات اللاحقة.
 
 ملفا تسجيل الدخول `.credentials.json` و`.claude.json` لا يُشارَكان أبدًا. لا يربط ccam إلا مسارات من قائمة ثابتة، وهذان الملفان ليسا فيها.
 
-تتناول هذه الصفحة المهام اليومية. وتجد وصف كل خيار في صفحات الميزات: [المشاركة بين الحسابات](/features/share) و[خوادم MCP المشتركة](/features/mcp) و[نسخ إعداد موجود](/features/migrate).
+تتناول هذه الصفحة المهام اليومية. وتجد وصف كل خيار في صفحات الميزات: [المشاركة عبر المجموعات](/features/share) و[خوادم MCP المشتركة](/features/mcp) و[نسخ إعداد موجود](/features/migrate).
 
 ## المجموعات
 
-القيمة `on` تعني المجموعة `default`. ويمكنك أيضًا تحديد اسم، بحيث لا يشارك عنصرًا ما إلا بعض الحسابات:
-
 ```sh
-ccam share work --history team
-ccam share side --history team
+ccam group                                   # the groups, what they share, their accounts
+ccam group set default --add history         # every account in default shares history
+ccam group add team --items history --members work,side
 ```
 
-أصبح `work` و`side` الآن يتشاركان المحادثات فيما بينهما، ولكن ليس مع حساباتك الأخرى.
+يمكن أن يكون الحساب في عدة مجموعات، لكن كل عنصر يأتي من مجموعة واحدة فقط. لذلك لمشاركة السجل بين `work` و`side` دون حساباتك الأخرى، أبقِ السجل خارج `default` وامنح الحسابين مجموعة خاصة بهما، كما في المثال أعلاه. ويعرض `ccam share work` ما يشاركه الحساب وعبر أي مجموعة. وتفعل [لوحة التحكم](/features/dashboard) الشيء نفسه في تبويب Groups.
 
-## تفعيل المشاركة
+## عندما يبدأ حساب المشاركة
 
-عندما يبدأ حساب بمشاركة عنصر ما، فإن ccam:
+عندما يبدأ حساب مشاركة عنصر ما (بانضمامه إلى مجموعة، أو بإضافة مجموعته ذلك العنصر)، فإن ccam:
 
-1. يطبع خطة بكل ملف سينقله أو ينسخه أو يربطه، ويسألك قبل أن يبدأ؛
+1. يطبع خطة بكل ملف سينقله أو ينسخه أو يربطه لكل حساب، ويسألك قبل أن يبدأ؛
 2. ينقل ملفات الحساب إلى مجلد المجموعة إذا كانت المجموعة لا تزال فارغة، أو يضيف الملفات التي لا تملكها المجموعة بعد؛
 3. عندما يختلف الملف نفسه، يسألك هل تريد الاحتفاظ بنسخة المجموعة، أم استخدام نسختك، أم دمج JSON؛
 4. يحتفظ بملفك الأصلي في `.ccam-backup/<time>/` داخل مجلد الحساب؛
@@ -48,12 +47,13 @@ ccam share side --history team
 
 تُسمّى ملفات المحادثات باسم معرّف الجلسة، لذلك تُدمج السجلات القادمة من عدة حسابات دون تعارضات.
 
-لا يغيّر ccam المشاركة ما دام Claude Code يعمل بالحساب، لأن الجلسة تظل تكتب في الملفات التي يجري نقلها. أنهِها أولًا.
+لا يغيّر ccam حسابًا ما دام Claude Code يعمل به، لأن الجلسة تظل تكتب في الملفات التي يجري نقلها. أنهِها أولًا.
 
-## إيقاف المشاركة
+## عندما يتوقف حساب عن المشاركة
 
 ```sh
-ccam share work --history off
+ccam group leave team work                   # work leaves the group
+ccam group set default --remove history      # nobody in default shares history any more
 ```
 
 يُزال الرابط ويحصل الحساب على نسخته الخاصة من المحتوى الحالي للمجموعة. أضف `--fresh` لتبدأ فارغًا بدلًا من ذلك. وتحتفظ المجموعة بمحتواها للحسابات الأخرى.
@@ -95,14 +95,12 @@ Copy from /home/me/.claude into group default (/home/me/.local/share/ccam/groups
   Conversation history (projects/, history.jsonl) is not included; add --history to copy it.
 Copy these into group default? [y/N] y
 ✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, commands/, skills/
-Accounts that share these through group default:
-  mcp         personal
-  settings    personal
-  memory      personal
-  extensions  personal
+Group default: personal
+To share them:
+  ccam group join default work
 ```
 
-في النهاية، يسرد ccam الحسابات التي تشارك كل عنصر عبر المجموعة. وإذا كانت هناك حسابات لا تشاركه، يطبع أوامر `ccam share` التي تفعّل المشاركة لها.
+في النهاية، يسرد ccam حسابات المجموعة. وإذا كانت المجموعة لا تشارك أحد العناصر بعد، أو لم تكن بعض الحسابات فيها، يطبع أوامر `ccam group` التي تغيّر ذلك.
 
 عندما تملك المجموعة نسخة مختلفة من ملف ما، يسألك ccam كما يفعل عند تفعيل المشاركة: الاحتفاظ بنسخة المجموعة أم استخدام نسختك. ويمكن أيضًا دمج `settings.json` وملفات JSON الأخرى، ودمج `history.jsonl` سطرًا بسطر. تُحفظ النسخ السابقة للمجموعة في `.ccam-backup/<time>/` داخل مجلد المجموعة.
 

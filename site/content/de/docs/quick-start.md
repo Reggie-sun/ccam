@@ -5,7 +5,7 @@ description: Zwei Claude Code-Konten mit ccam add hinzufügen, ihnen Kurzbefehle
 updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 55f81dae9fc0
+sourceHash: d5b0e295f3f0
 ---
 
 Füge jedes Konto mit `ccam add` hinzu und starte Claude Code dann mit `ccam <name>` oder mit einem Kurzbefehl, den du selbst benennst, etwa `ccwork`. Mehr brauchen die meisten nicht.
@@ -79,7 +79,7 @@ ccam work
 ccam 2
 ```
 
-Wenn du `ccam` allein ausführst, öffnet sich eine Auswahl: Nutze die Pfeiltasten und Enter oder drücke die Nummer des Kontos.
+Wenn du `ccam` allein ausführst, öffnet sich das [Dashboard](/features/dashboard): Gehe mit den Pfeiltasten oder der Nummer zu einem Konto und drücke dann Enter.
 
 Alles nach dem Kurzbefehl oder dem Kontonamen geht unverändert an Claude Code, du nutzt also weiter die Optionen, die du kennst:
 
@@ -91,14 +91,13 @@ cat error.log | ccwork -p "what caused this?"
 
 ## 5. Festlegen, was geteilt wird
 
-Standardmäßig werden MCP-Server, `settings.json`, die globale `CLAUDE.md` sowie Agents, Commands, Skills und Plugins zwischen Konten geteilt. Der Gesprächsverlauf nicht. Schalte ihn für beide Konten ein, wenn du Gespräche kontoübergreifend fortsetzen willst:
+Standardmäßig werden MCP-Server, `settings.json`, die globale `CLAUDE.md` sowie Agents, Commands, Skills und Plugins über die Gruppe `default` zwischen Konten geteilt. Der Gesprächsverlauf nicht. Füge ihn der Gruppe hinzu, wenn du Gespräche kontoübergreifend fortsetzen willst:
 
 ```sh
-ccam share personal --history on
-ccam share work --history on
+ccam group set default --add history
 ```
 
-ccam zeigt, was es verschieben wird, bevor es etwas ändert. Details findest du unter [Teilen](/docs/sharing).
+ccam zeigt für jedes Konto, was es verschieben wird, bevor es etwas ändert. Details findest du unter [Teilen mit Gruppen](/features/share).
 
 ## 6. Wenn ein Konto sein Limit erreicht
 

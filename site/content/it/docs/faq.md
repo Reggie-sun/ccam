@@ -5,7 +5,7 @@ description: Risposte su ccam, account Claude Code, limiti di utilizzo, condivis
 updated: 2026-10-20
 order: 6
 translation: machine
-sourceHash: 80a5475ccfee
+sourceHash: "e7d4a2c877ac"
 ---
 
 ## ccam è uno strumento ufficiale di Anthropic?
@@ -26,7 +26,7 @@ Assegna a ogni account la propria cartella di configurazione con `CLAUDE_CONFIG_
 
 ## Come continuo una conversazione su un altro account?
 
-Condividi la cronologia delle conversazioni tra i due account con `ccam share <name> --history on`, poi esegui `ccam next --continue`. Claude Code apre la conversazione più recente della cartella corrente nell'account successivo.
+Condividi la cronologia delle conversazioni tra gli account con `ccam group set default --add history` (o con un gruppo tutto loro: `ccam group add pair --items history --members work,side`), poi esegui `ccam next --continue`. Claude Code apre la conversazione più recente della cartella corrente nell'account successivo.
 
 ## ccam vede o invia il mio login?
 

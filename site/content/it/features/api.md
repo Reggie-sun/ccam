@@ -4,7 +4,7 @@ description: ccam add --api aggiunge un account con chiave API per l'API di Anth
 updated: 2026-10-20
 order: 13
 translation: machine
-sourceHash: de2c5cde2c48
+sourceHash: "a903c92f2c50"
 ---
 
 Un account con chiave API avvia Claude Code con una chiave API invece che con il login di un abbonamento Claude: l'API di Anthropic, oppure un endpoint che usa lo stesso formato Messages, come un gateway LiteLLM o OpenRouter. ccam non salva la chiave. La legge ogni volta che l'account si avvia, da una variabile d'ambiente o da un comando come un gestore di password, e la passa solo a quel processo di Claude Code.
@@ -22,12 +22,12 @@ ccam list
 
 ```console
 $ ccam list
-   #  Name      Shortcut  Email                    Shared               Last used
-*  1  personal  -         me@example.com           mcp settings md ext  2h ago
-   2  gw        -         (API: llm.example.com)   mcp settings md ext  -
+   #  Name      Shortcut  Email                   Groups   Last used
+*  1  personal  -         me@example.com          default  2h ago
+   2  gw        -         (API: llm.example.com)  default  -
 ```
 
-Un account con chiave API condivide impostazioni, `CLAUDE.md`, estensioni e server MCP come qualsiasi altro account, e funziona con le scorciatoie, `ccam folder` e `ccam ext`.
+Un account con chiave API si unisce ai gruppi come qualsiasi altro account (per impostazione predefinita a `default`: impostazioni, `CLAUDE.md`, estensioni e server MCP), e funziona con le scorciatoie, `ccam folder` e `ccam ext`.
 
 ## Opzioni
 
@@ -59,7 +59,7 @@ model = 'claude-sonnet-5-5'
 A ogni avvio dell'account, dopo i soliti controlli e prima che Claude Code parta:
 
 1. ccam legge la chiave: `env:` dall'ambiente, `command:` eseguendo il comando con un limite di 30 secondi. Un comando può chiedere una password nel terminale; anche il suo output di errore va al terminale. Una chiave vuota ferma l'avvio con un messaggio che dice dove era attesa la chiave.
-2. Rimuove ogni variabile ereditata che decide come Claude Code accede o quale provider usa: `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_BASE_URL`, `ANTHROPIC_MODEL`, `CLAUDE_CODE_USE_BEDROCK`, `CLAUDE_CODE_USE_VERTEX` e `CLAUDE_CODE_USE_FOUNDRY`. Una chiave impostata nella tua shell per altro non può arrivare a questo account, e il login di un abbonamento non può prevalere sulla sua chiave.
+2. Rimuove ogni variabile ereditata che decide come Claude Code accede o quale provider usa: le chiavi e i token (`ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN_FILE_DESCRIPTOR`, `CLAUDE_CODE_API_KEY_FILE_DESCRIPTOR`), l'endpoint (`ANTHROPIC_BASE_URL`, `ANTHROPIC_UNIX_SOCKET`, `ANTHROPIC_MODEL`) e i selettori del provider (`CLAUDE_CODE_USE_BEDROCK`, `CLAUDE_CODE_USE_VERTEX`, `CLAUDE_CODE_USE_FOUNDRY`, `CLAUDE_CODE_USE_ANTHROPIC_AWS`, `CLAUDE_CODE_USE_ANTHROPIC_GOOGLE_CLOUD`, `CLAUDE_CODE_USE_MANTLE`, `CLAUDE_CODE_USE_GATEWAY`). Una chiave impostata nella tua shell per altro non può arrivare a questo account, e il login di un abbonamento non può prevalere sulla sua chiave.
 3. Imposta `ANTHROPIC_BASE_URL` e `ANTHROPIC_MODEL` quando indicati, e la chiave come `ANTHROPIC_API_KEY` o `ANTHROPIC_AUTH_TOKEN`.
 
 Gli account con il login di un abbonamento mantengono l'ambiente che ereditano, come prima. In una sessione interattiva Claude Code può chiedere una volta se usare la chiave che trova nell'ambiente.
@@ -70,7 +70,7 @@ Gli account con il login di un abbonamento mantengono l'ambiente che ereditano, 
 - `ccam add --api` controlla subito una sorgente `env:` e avvisa se la variabile è vuota; una sorgente `command:` viene eseguita per la prima volta all'avvio.
 - `ccam login` e `ccam logout` rifiutano un account con chiave API, perché non ha un login. `ccam doctor` mostra il suo endpoint e la sorgente della chiave, e avvisa quando una variabile `env:` è vuota.
 - `ccam usage` mostra `API` per questo account. `ccam next --auto`, `--fallback` e `ccam pick` scelgono solo tra gli account con abbonamento, perché una chiave API non ha limiti su 5 ore o settimanali da confrontare.
-- Un `settings.json` condiviso con un blocco `env` o `apiKeyHelper` vale per ogni account del gruppo, compresi gli account con chiave API. Tieni le impostazioni del provider fuori dalle impostazioni condivise.
+- Un `settings.json` condiviso con un blocco `env` o `apiKeyHelper` vale per ogni account del gruppo, compresi gli account con chiave API. Tieni le impostazioni del provider fuori dalle impostazioni condivise, oppure metti l'account con chiave API in un gruppo senza `settings`.
 
 ## Pagine correlate
 

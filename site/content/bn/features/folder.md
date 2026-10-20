@@ -4,7 +4,7 @@ description: "অ্যাকাউন্টের নাম ছাড়া Cla
 updated: 2026-10-20
 order: 11
 translation: machine
-sourceHash: 5071b04a194d
+sourceHash: 46d1410a3d81
 ---
 
 `ccam folder work ~/code/company` দিলে `~/code/company`-এর ভেতরে, এবং তার নিচের যেকোনো ফোল্ডারে, অ্যাকাউন্টের নাম ছাড়া প্রতিটি চালু করা Claude Code-কে `work` হিসেবে চালু করে। এর বাইরে আগের মতোই ডিফল্ট অ্যাকাউন্ট চালু হয়। `ccam personal` বা `ccpersonal`-এর মতো শর্টকাট দিয়ে অ্যাকাউন্টের নাম দিলে সবসময় সেই অ্যাকাউন্টই চালু হয়।
@@ -34,7 +34,7 @@ Here (/home/me/code/company/api): work, set for /home/me/code/company
 - `ccam -p "…"` এবং অন্য যেকোনো চালু করা যার প্রথম আর্গুমেন্ট Claude Code-এর একটি অপশন
 - নাম ছাড়া `ccam run`, এবং `ccam --dry-run`
 - `ccam --fallback -p "…"`, তার প্রথম চেষ্টার জন্য
-- পিকার, একা `ccam`, যা ফোল্ডারের অ্যাকাউন্টের ওপর কার্সর রেখে শুরু হয়
+- ড্যাশবোর্ড, একা `ccam`, যা ফোল্ডারের অ্যাকাউন্টের ওপর কার্সর রেখে শুরু হয়
 
 ## অপশন
 

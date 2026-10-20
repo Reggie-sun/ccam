@@ -4,7 +4,7 @@ description: Magpatakbo ng maraming Claude Code account nang magkatabi sa CLAUDE
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: f2982e4317a2
+sourceHash: ee92078b81c3
 ---
 
 Bigyan ang bawat account ng sariling configuration folder. Binabasa ng Claude Code ang folder mula sa environment variable na `CLAUDE_CONFIG_DIR`, at may sariling login, settings at kasaysayan ang bawat folder, kaya nananatiling naka-log in ang bawat account at puwede mo silang patakbuhin nang sabay. Puwede mo itong i-set up nang mano-mano gamit ang shell alias, o hayaang gawin ito ng ccam.
@@ -69,7 +69,7 @@ Tumatakbo ang Claude Code [nang native sa Windows at sa loob ng WSL](https://cod
 
 **Sa iisang account lang lumalabas ang isang MCP server.** Pag-aari ng account na iyon ang mga server na idinagdag sa loob ng session gamit ang `claude mcp add`. Ilipat ang isa sa lahat ng account gamit ang `ccam mcp import work <server>`.
 
-**Magkaiba ang settings ng mga account.** Ipinapakita ng `ccam share work` kung ano ang shine-share ng account; shine-share naman ng `ccam share work --settings on` ang settings nito, matapos ipakita kung ano ang magbabago. Inaayos ng `ccam doctor --fix` ang mga sirang link at nagtatabi ito ng backup ng bawat file na binabago nito.
+**Magkaiba ang settings ng mga account.** Ipinapakita ng `ccam share work` kung ano ang shine-share ng account at sa pamamagitan ng aling group; sa `ccam group join default work` naman, ishe-share nito ang shine-share ng `default`, matapos ipakita kung ano ang magbabago. Inaayos ng `ccam doctor --fix` ang mga sirang link at nagtatabi ito ng backup ng bawat file na binabago nito.
 
 **Iisang usapan ang binubuksan ng dalawang account.** Iwasang gumawa sa iisang usapan sa dalawang account nang sabay. Babalaan ka ng ccam kapag sinubukan mo.
 

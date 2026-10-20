@@ -5,7 +5,7 @@ description: ccam、Claude Codeのアカウント、使用量の上限、共有�
 updated: 2026-10-20
 order: 6
 translation: machine
-sourceHash: 80a5475ccfee
+sourceHash: "e7d4a2c877ac"
 ---
 
 ## ccamはAnthropicの公式ツールですか？
@@ -26,7 +26,7 @@ sourceHash: 80a5475ccfee
 
 ## 別のアカウントで会話を続けるにはどうすればよいですか？
 
-`ccam share <name> --history on`で2つのアカウント間で会話履歴を共有してから、`ccam next --continue`を実行します。Claude Codeが、現在のフォルダーで最も新しい会話を次のアカウントで開きます。
+`ccam group set default --add history`（またはそのアカウント専用のグループ: `ccam group add pair --items history --members work,side`）でアカウント間で会話履歴を共有してから、`ccam next --continue`を実行します。Claude Codeが、現在のフォルダーで最も新しい会話を次のアカウントで開きます。
 
 ## ccamはログイン情報を見たり送信したりしますか？
 

@@ -4,7 +4,7 @@ description: ccam folder faz uma pasta e tudo o que está dentro dela usarem uma
 updated: 2026-10-20
 order: 11
 translation: machine
-sourceHash: 5071b04a194d
+sourceHash: "46d1410a3d81"
 ---
 
 `ccam folder work ~/code/company` faz com que toda inicialização sem nome de conta dentro de `~/code/company`, e em qualquer pasta abaixo dela, inicie o Claude Code como `work`. Fora dela, a conta padrão inicia como antes. Nomear uma conta, com `ccam personal` ou com um atalho como `ccpersonal`, sempre inicia essa conta.
@@ -34,7 +34,7 @@ Estas inicializações usam a conta da pasta:
 - `ccam -p "…"` e qualquer outra inicialização cujo primeiro argumento seja uma opção para o Claude Code
 - `ccam run` sem nome, e `ccam --dry-run`
 - `ccam --fallback -p "…"` na primeira tentativa
-- o seletor, `ccam` sozinho, que começa com o cursor na conta da pasta
+- o painel, `ccam` sozinho, que começa com o cursor na conta da pasta
 
 ## Opções
 

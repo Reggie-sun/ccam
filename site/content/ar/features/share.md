@@ -1,133 +1,182 @@
 ---
-title: المشاركة بين الحسابات
-description: كيف يربط ccam share الإعدادات وCLAUDE.md والإضافات والسجل بمجلد مجموعة، مع خطة ونسخ احتياطية وخيارات للتعارضات، وكيف يعيد off النسخ إلى الحساب.
+title: المشاركة عبر المجموعات
+description: تشارك مجموعة ccam عناصر مختارة بين حساباتها عبر مجلد واحد؛ وينقل ccam group البيانات وفق خطة، مع نسخ احتياطية وخيارات للتعارضات.
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 16de29bbdd57
+sourceHash: 0c0338362ba2
 ---
 
-لكل حساب مجلده الخاص، لكن معظم ما فيه لا يحتاج إلى أن يكون منفصلًا. يفعّل `ccam share` المشاركة أو يوقفها لحساب واحد وعنصر واحد في كل مرة: يُنقل ملف الحساب أو مجلده إلى مجلد مجموعة ويُستبدل برابط رمزي، فتقرأ كل حسابات المجموعة النسخة نفسها وتكتب فيها. استخدمه بعد `ccam add` لتغيير ما يشاركه حساب ما، أو لوضع بضعة حسابات في مجموعة خاصة بها.
+لكل حساب مجلده الخاص، لكن معظم ما فيه لا يحتاج إلى أن يكون منفصلًا. تحدد **المجموعة** ما يُشارَك ومن يشاركه: يربط كل حساب في المجموعة تلك العناصر بمجلد واحد، `~/.local/share/ccam/groups/<group>/`، فتقرأ الحسابات كلها النسخة نفسها وتكتب فيها. ولا تُشارَك رموز تسجيل الدخول أبدًا.
+
+يمكن أن يكون الحساب في عدة مجموعات، لكن كل عنصر يأتي من مجموعة واحدة فقط. ومن الإعدادات الشائعة مجموعة للإعدادات والإضافات، ومجموعة ثانية لسجل المحادثات بين حسابين:
+
+```toml
+[[group]]
+name = 'default'
+items = ['mcp', 'settings', 'memory', 'extensions']
+members = ['personal', 'work', 'side']
+
+[[group]]
+name = 'team'
+items = ['history']
+members = ['work', 'side']
+```
+
+ينشئ أول حساب تضيفه المجموعة `default`، وتنضم إليها الحسابات اللاحقة ما لم تحدد غير ذلك.
 
 ## الاستخدام
 
 ```sh
-ccam share work                       # show what work shares, and with which group
-ccam share work --history on          # share conversation history with the default group
-ccam share side --history team        # share it with the group team instead
-ccam share work --settings off        # give work its own copy of settings.json again
-ccam share work --memory off --fresh  # stop sharing CLAUDE.md and start with no file
-ccam share work --settings on --yes --prefer merge   # no questions; merge JSON on conflicts
-ccam --dry-run share work --history on               # print the plan, change nothing
+ccam group                                        # the groups, what they share, their accounts
+ccam group show default                           # items, accounts, folder and MCP servers
+ccam group add team --items history --members work,side
+ccam group set default --add history              # every account in default moves together
+ccam group set default --remove history --fresh   # stop sharing; accounts start without it
+ccam group set team --items history,memory --from work   # work's CLAUDE.md goes in first
+ccam group join team personal                     # personal starts sharing team's items
+ccam group join team personal --replace           # leave the group that shares them now
+ccam group leave team side                        # side keeps a copy of team's items
+ccam group rename team pair                       # the folder keeps its name
+ccam group remove pair --leave                    # its accounts keep a copy; folder to the trash
+ccam share work                                   # what work shares, and through which group
+ccam --dry-run group set default --add history    # print the plan, change nothing
 ```
-
-دون خيارات العناصر، يطبع `ccam share` الحالة الحالية:
 
 ```console
+$ ccam group
+Group    Shares                          Accounts
+default  mcp settings memory extensions  personal, work, side
+team     history                         work, side
+
 $ ccam share work
 Sharing for work
-  MCP servers                        shared (group default)  --mcp
-  settings.json                      shared (group default)  --settings
-  global CLAUDE.md                   shared (group default)  --memory
-  agents, commands, skills, plugins  shared (group default)  --extensions
-  conversation history               local                   --history
+  mcp         MCP servers                        group default
+  settings    settings.json                      group default
+  memory      global CLAUDE.md                   group default
+  extensions  agents, commands, skills, plugins  group default
+  history     conversation history               group team
+Groups: default, team. Change them with `ccam group`.
 ```
 
-مع الخيارات، يطبع ccam خطة، ويسألك عن كل ملف يختلف عن نسخة المجموعة، ويسأل `Proceed? [y/N]` قبل أن يغيّر أي شيء. يشارك الحساب الجديد كل شيء ما عدا سجل المحادثات؛ وتصف صفحة [مشاركة خوادم MCP والإعدادات والسجل](/docs/sharing) كل عنصر من جهة المستخدم.
+كل أمر ينقل البيانات يطبع خطة، ويسألك عن كل ملف يختلف عن نسخة المجموعة، ويسأل `Proceed? [y/N]` قبل أن يغيّر أي شيء:
 
-## الخيارات
+```console
+$ ccam group set default --add history
+Plan (paths in /home/me/.local/share/ccam):
+personal: +history (group default)
+  move     projects, history.jsonl: profiles/personal → groups/default (first content of the group)
+  link     projects, history.jsonl: profiles/personal → groups/default
+work: +history (group default)
+  merge    new files in projects: profiles/work → groups/default
+  conflict profiles/work/history.jsonl ↔ groups/default/history.jsonl: merge by line
+  back up  projects, history.jsonl: profiles/work → profiles/work/.ccam-backup/20261020-153012
+  link     projects, history.jsonl: profiles/work → groups/default
+Proceed? [y/N]
+```
+
+التغييرات نفسها متاحة في تبويب **Groups** في [لوحة التحكم](/features/dashboard)، ويختار `s` على أي حساب مجموعاتِه.
+
+## العناصر
+
+| العنصر | ما يغطيه |
+| --- | --- |
+| `mcp` | خوادم MCP، عبر ملف `mcp.json` الخاص بالمجموعة ([خوادم MCP المشتركة](/features/mcp)) |
+| `settings` | `settings.json` |
+| `memory` | ملف `CLAUDE.md` العام |
+| `extensions` | `agents/` و`commands/` و`skills/` و`plugins/` و`output-styles/` و`rules/` |
+| `history` | `projects/` و`history.jsonl`، فيستطيع حساب آخر استخدام `--continue` |
+
+العنصر الذي لا تشاركه أي مجموعة من مجموعات الحساب يبقى في مجلد الحساب نفسه.
+
+## الأوامر والخيارات
+
+| الأمر | ما يفعله |
+| --- | --- |
+| `ccam group` أو `ccam group list` | يسرد المجموعات |
+| `ccam group show <group>` | ما تشاركه المجموعة، وحساباتها، ومجلدها، وخوادم MCP فيها |
+| `ccam group add <group> --items <items> [--members <accounts>]` | ينشئ مجموعة؛ وتنتقل إليها عناصر حساباتها |
+| `ccam group set <group> --add <items> \| --remove <items> \| --items <items>` | يغيّر ما تشاركه المجموعة، لكل حساب فيها |
+| `ccam group join <group> <account>...` | يضع حسابات في المجموعة |
+| `ccam group leave <group> <account>...` | يُخرج حسابات منها؛ ويحتفظ كل منها بنسخة |
+| `ccam group rename <group> <new-name>` | يعيد التسمية في الإعداد فقط |
+| `ccam group remove <group> [--leave]` | يزيل مجموعة |
 
 | الخيار | ما يفعله | القيمة الافتراضية |
 | --- | --- | --- |
-| `--mcp <on\|off\|group>` | خوادم MCP | دون تغيير |
-| `--settings <on\|off\|group>` | `settings.json` | دون تغيير |
-| `--memory <on\|off\|group>` | ملف `CLAUDE.md` العام | دون تغيير |
-| `--extensions <on\|off\|group>` | `agents/`، `commands/`، `skills/`، `plugins/`، `output-styles/`، `rules/` | دون تغيير |
-| `--history <on\|off\|group>` | `projects/` و`history.jsonl` | دون تغيير |
-| `--fresh` | عند إيقاف المشاركة، يبدأ فارغًا بدلًا من نسخ محتوى المجموعة | معطّل |
-| `--prefer <group\|mine\|merge>` | كيفية حسم التعارضات | السؤال؛ ومع `--yes` الخيار الافتراضي لكل عنصر |
+| `--from <account>` | مع `add` و`set`: الحساب الذي تدخل نسخته إلى المجموعة أولًا | الحساب الافتراضي، ثم حسب الرقم |
+| `--replace` | مع `join`: يغادر أولًا المجموعات التي تشارك العناصر نفسها | معطّل |
+| `--fresh` | الحسابات التي تتوقف عن مشاركة عنصر تبدأ دونه بدلًا من البدء بنسخة منه | معطّل |
+| `--leave` | مع `remove`: يُخرج حسابات المجموعة أولًا | مطلوب عندما تكون فيها حسابات |
+| `--prefer <group\|mine\|merge>` | كيفية حسم التعارضات | السؤال؛ ومع `--yes` الخيار الافتراضي لكل ملف |
 | `-y`، `--yes` | يعمل دون سؤال؛ وتتبع التعارضات `--prefer` | معطّل |
-| `-h`، `--help` | مساعدة `share` | |
-| `--dry-run` (عام) | مدعوم: يسأل عن التعارضات، ويطبع الخطة، ولا يغيّر شيئًا | معطّل |
+| `--dry-run` (عام) | يطبع الخطة، ولا يغيّر شيئًا | معطّل |
 
-القيمة `on` تعني المجموعة `default`، و`off` تعني محليًا (غير مشترك)، وأي قيمة أخرى اسم مجموعة. تصبح أسماء المجموعات أسماء مجلدات تحت `~/.local/share/ccam/groups/`، لذلك يفشل `ccam share side --history ../x` مع `invalid group name: "../x"`. يُحدَّد الحساب بالاسم أو بالرقم، ولا يتغيّر إلا ما تذكره من عناصر.
+تُحدَّد الحسابات بالاسم أو بالرقم، والعناصر قائمةً مفصولة بفواصل. ويأخذ `ccam add` الخيار `--group <group>` (ويمكن تكراره) أو `--no-group`.
 
 ## كيف يعمل
 
 الملفات المعنية:
 
-- `~/.config/ccam/config.toml`: الجدول `[profile.share]` لكل حساب، بقيمة واحدة لكل عنصر.
+- `~/.config/ccam/config.toml`: إدخالات `[[group]]`: `name` و`items` و`members`، و`dir` عندما يختلف اسم المجلد.
 - `~/.local/share/ccam/profiles/<name>/`: مجلد `CLAUDE_CONFIG_DIR` الخاص بالحساب.
-- `~/.local/share/ccam/groups/<group>/`: النسخ المشتركة.
+- `~/.local/share/ccam/groups/<folder>/`: النسخ المشتركة.
 
-1. يقرأ `internal/cli/share.go` الإعداد، ويطبّق كل قيمة `--<item>` على نسخة من إعدادات الحساب باستخدام `config.Share.Set`، ويرفض إذا كان الحساب يعمل.
-2. يقارن `share.Build` الإعدادات الحالية بالمستهدفة ويسرد الخطوات. وهو يقرأ القرص فقط: `os.Lstat` و`os.Readlink` لكل مسار في `share.Layout`. والخطة قائمة عمليات: النقل إلى خانة فارغة في المجموعة (تبنٍّ)، ونقل الملفات التي لا تملكها المجموعة (دمج مجلد)، وكتابة تعارض محسوم في المجموعة، والنسخ الاحتياطي، وإزالة الرابط، والربط، والنسخ إلى الحساب، وإعادة كتابة مسارات الإضافات، ودمج سجل الإضافات.
-3. تُحسم التعارضات، بالسؤال أو بـ `--prefer`.
-4. يطبع `Plan.Describe` الخطة، ويسألك ccam.
-5. تُكتب الإعدادات المستهدفة في `config.toml` قبل أن يُنقل أي شيء. وإذا توقف `Plan.Apply` في منتصف الطريق، يبني `ccam doctor --fix` وإعادة التشغيل خطتهما نحو الهدف المحفوظ ويُكملان التغيير.
-6. ينفّذ `Plan.Apply` الخطوات بالترتيب. كل خطوة تنقل البيانات إلى المجموعة أو إلى مجلد النسخ الاحتياطية؛ لا يُحذف شيء.
+عند قراءة `config.toml`، تُحَل مجموعات كل حساب إلى مجلد واحد لكل عنصر. ويستغرق ذلك نحو 25 µs لخمسة حسابات، فلا يزال التشغيل يقرأ `config.toml` وحده. والإعداد الذي يحصل فيه حساب على عنصر من مجموعتين خطأ، ولا يبدأ شيء حتى يُصلح.
 
-`share.Layout` قائمة سماح بالمسارات التي يغطيها كل عنصر. وأي شيء ليس فيها لا يمكن أن يصل إلى مجموعة أبدًا. يذكر `share.Never` الملفين `.credentials.json` و`.claude.json`، ويتوقف `Build` مع خطأ داخلي إذا ظهر أي منهما يومًا في البنية. وليس للعنصر `mcp` مسارات: فقائمة الخوادم موجودة داخل `.claude.json`، لذلك تعمل [مشاركة MCP](/features/mcp) عبر ملف `mcp.json` الخاص بالمجموعة بدلًا من ذلك، ولا يغيّر `--mcp` إلا الإعداد.
+يعمل التغيير على نسخة من الإعداد:
 
-هذا ما يحدث لمجلد واحد، `projects/`، عندما يفعّل `side` مشاركة السجل وفي المجموعة محتوى بالفعل:
+1. يعدّل الأمر النسخة (`AddGroup` و`SetGroupItems` و`JoinGroup` …)، وهذه الدوال تتحقق من القواعد.
+2. يقارن `internal/group` القديم بالجديد، ولكل حساب تتغيّر عناصره يبني خطة باستخدام `share.Build`. وتُبنى الخطط واحدة بعد أخرى، وترى كل منها ما ستضعه الخطط السابقة في مجلدات المجموعات، فلا ينقل نسخته إليها إلا الحساب الأول. وتأتي النسخة الأولى من مجلد المجموعة إن كانت فيه نسخة بالفعل، ثم من `--from`، ثم من الحساب الافتراضي، ثم من البقية حسب الرقم.
+3. يرفض ccam إذا كان أحد تلك الحسابات يعمل، وعلى Windows دون وضع المطور إذا كان ملف ما سيحتاج إلى رابط.
+4. تُحسم التعارضات، بالسؤال أو بـ `--prefer`، وتُطبع الخطة، ثم يسألك ccam.
+5. يُحفظ الإعداد الجديد قبل أن يُنقل أي شيء. وإذا توقفت خطوة في منتصف الطريق، يبني `ccam doctor --fix` وإعادة التشغيل خطتهما نحو المجموعات المحفوظة ويُكملان التغيير.
+6. تُنفَّذ الخطط بالترتيب. كل خطوة تنقل البيانات إلى المجموعة أو إلى مجلد النسخ الاحتياطية؛ لا يُحذف شيء.
+
+`share.Layout` قائمة سماح بالمسارات التي يغطيها كل عنصر. وأي شيء ليس فيها لا يمكن أن يصل إلى مجموعة أبدًا. يذكر `share.Never` الملفين `.credentials.json` و`.claude.json`، ويتوقف `Build` مع خطأ داخلي إذا ظهر أي منهما يومًا في البنية. وليس للعنصر `mcp` مسارات: فقائمة الخوادم موجودة داخل `.claude.json`، لذلك تعمل [مشاركة MCP](/features/mcp) عبر ملف `mcp.json` الخاص بالمجموعة.
+
+هذا ما يحدث لمجلد واحد، `projects/`، عندما يبدأ `side` مشاركة السجل وفي المجموعة محتوى بالفعل:
 
 <!-- motion:share-on -->
 
-إذا لم يكن لدى المجموعة شيء في ذلك المسار بعد، فالحساب هو أول من يشاركه، ويُنقل مجلده إلى هناك كما هو، دون نسخة احتياطية. وإلا ينقل `mergeDir` كل ملف لا تملكه المجموعة إلى المجموعة، وتبقى الملفات الموجودة في الجهتين في مجلد الحساب، فيُحتفظ بنسخة المجموعة. ثم يذهب مجلد الحساب إلى `.ccam-backup/<time>/` داخل مجلد الحساب، ويضع `os.Symlink` رابطًا مكانه. تُسمّى ملفات المحادثات باسم معرّف الجلسة، لذلك تُدمج السجلات القادمة من عدة حسابات دون تعارضات.
+إذا لم يكن لدى المجموعة شيء في ذلك المسار بعد، فالحساب هو أول من يشاركه، ويُنقل مجلده إلى هناك كما هو. وإلا يُنقل كل ملف لا تملكه المجموعة إلى المجموعة، وتبقى الملفات الموجودة في الجهتين في مجلد الحساب، فيُحتفظ بنسخة المجموعة. ثم يذهب مجلد الحساب إلى `.ccam-backup/<time>/` داخل مجلد الحساب، ويحل رابط محله. تُسمّى ملفات المحادثات باسم معرّف الجلسة، لذلك تُدمج السجلات القادمة من عدة حسابات دون تعارضات. وتخزّن سجلات `plugins/` مسارات مطلقة تمر عبر مجلد الحساب؛ فيوجّهها ccam إلى مجلد المجموعة، ويدمج مدخلات الحساب في السجل الذي تملكه المجموعة بالفعل.
 
-يستخدم النقل `rename(2)`، ويلجأ إلى النسخ ثم الحذف عبر أنظمة الملفات المختلفة. والرابط النسبي داخل الشجرة المنقولة الذي كان يشير إلى خارجها يُعاد كتابته رابطًا مطلقًا (`fsutil.PortableLink`)، فيظل يعمل من المكان الجديد. تخزّن سجلات `plugins/` (`installed_plugins.json` و`known_marketplaces.json`) مسارات مطلقة تمر عبر مجلد الحساب؛ فيوجّهها ccam إلى مجلد المجموعة، وعندما يكون لدى المجموعة سجل بالفعل، يدمج مدخلات الحساب فيه.
-
-إيقاف عنصر يعكس الرابط:
+مغادرة المجموعة تعكس الرابط:
 
 <!-- motion:share-off -->
 
-لا يزيل ccam الرابط إلا إذا كان يشير إلى داخل مجلد المجموعات، ثم ينسخ المحتوى الحالي للمجموعة إلى الحساب باستخدام `CopyTree`. ومع `--fresh` يُتخطّى النسخ ويبدأ الحساب دون شيء في ذلك المسار. وتحتفظ المجموعة بمحتواها للحسابات الأخرى. ونقل عنصر من مجموعة إلى أخرى يزيل رابطه ويربطه بالمجموعة الجديدة، تاركًا المجموعة القديمة كما هي؛ وتذكر الخطة ذلك في سطر `Note:`.
+لا يزيل ccam الرابط إلا إذا كان يشير إلى داخل مجلد المجموعات، ثم ينسخ المحتوى الحالي للمجموعة إلى الحساب. ومع `--fresh` يُتخطّى النسخ. وتحتفظ المجموعة بمحتواها للحسابات الأخرى. والحساب الذي ينقل عنصرًا إلى مجموعة لا يزال مجلدها فارغًا يجلب معه نسخة مما كان يراه، فيحتفظ بملفاته؛ وتنتقل خوادم MCP بالطريقة نفسها. أما الحساب الذي يتوقف عن مشاركة MCP فيفقد الخوادم التي نسخها ccam إلى ملف `.claude.json` الخاص به (مع الاحتفاظ بنسخة احتياطية)، لأنها جاءت من المجموعة.
 
 الملف الواحد الموجود في الجهتين بمحتوى مختلف تعارض:
 
 <!-- motion:share-conflict -->
 
-يسرد `share.NewConflict` الخيارات التي تناسب الملف. يعرض `history.jsonl` الخيارات `merge by line` و`keep group` و`use mine`، مع الدمج أولًا. وتعرض ملفات `.json` الأخرى `keep group` و`use mine` و`merge JSON`. وأي ملف آخر يعرض `keep group` و`use mine`. والخيار الأول هو الافتراضي:
+يعرض `history.jsonl` الخيارات `merge by line` و`keep group` و`use mine`، مع الدمج أولًا. وتعرض ملفات `.json` الأخرى `keep group` و`use mine` و`merge JSON`. وأي ملف آخر يعرض `keep group` و`use mine`. ويدمج `merge JSON` الكائنات بشكل متكرر، ويضم المصفوفات دون تكرار، ويحتفظ بقيمة المجموعة عندما تعيّن الجهتان المفتاح نفسه بقيمتين مختلفتين، فلا ترى الحسابات الأخرى أي تغيير. وكل خيار ما عدا `keep group` يحفظ أولًا نسخة المجموعة في المجلد `.ccam-backup/<time>/group/` الخاص بالحساب. ويذهب ملفك أنت دائمًا إلى النسخة الاحتياطية.
 
-```console
-history.jsonl differs from the group's copy.
-  mine:  ~/.local/share/ccam/profiles/side/history.jsonl
-  group: ~/.local/share/ccam/groups/default/history.jsonl
-  1) merge by line
-  2) keep group
-  3) use mine
-Choice [1]:
-```
+عند كل تشغيل، يقارن `share.Check` كل مسار في البنية بمجموعات الحساب باستخدام `lstat` و`readlink` فقط. ويُنشأ الرابط المفقود في الحال. أما الملف الحقيقي حيث يجب أن يكون رابط، أو الرابط إلى المكان الخطأ، أو الرابط المتبقي، فيوقف التشغيل ويوجّهك إلى `ccam doctor --fix`.
 
-يدمج `merge JSON` (`MergeJSONBytes`) الكائنات بشكل متكرر، ويضم المصفوفات دون تكرار، ويحتفظ بقيمة المجموعة عندما تعيّن الجهتان المفتاح نفسه بقيمتين مختلفتين، فلا ترى الحسابات الأخرى أي تغيير في السلوك. ويحتفظ `merge by line` بأسطر المجموعة، ثم يضيف أسطرك التي لا تملكها. وكل خيار ما عدا `keep group` يحفظ أولًا نسخة المجموعة في `.ccam-backup/<time>/group/` داخل مجلد الحساب، ثم يكتب النتيجة باستخدام `fsutil.AtomicWrite`. ويذهب ملفك أنت دائمًا إلى النسخة الاحتياطية.
+### إعادة التسمية والإزالة والتنسيق القديم
 
-يحسم `--prefer group` أو `mine` أو `merge` كل تعارض دون سؤال؛ وتعني `merge` الخيار `merge JSON` أو `merge by line`، أيهما يعرضه الملف، والملف الذي لا يعرض أيًا منهما يحتفظ بالخيار الافتراضي. ويأخذ `--yes` وحده الخيار الافتراضي لكل ملف.
-
-عند كل تشغيل، يقارن `share.Check` كل مسار في البنية بالإعداد باستخدام `lstat` و`readlink` فقط، مما يبقيه خفيفًا بما يكفي لمسار التشغيل. ويُنشأ الرابط المفقود في الحال، لأنه لا يوجد ما يُفقد. أما الملف الحقيقي حيث يجب أن يكون رابط، أو الرابط إلى المكان الخطأ، أو الرابط المتبقي، فيوقف التشغيل:
-
-```console
-ccam: stopped because of share link problems:
-  ~/.local/share/ccam/profiles/work/CLAUDE.md: set to shared but is a real file, not a link
-Repair them with `ccam doctor --fix`, then run again
-```
-
-يشغّل `ccam doctor --fix` الدالة `share.Build` مع الإعدادات المحفوظة في الجهتين، فيستنتج كل خطوة مما هو موجود على القرص، ويحتفظ بمحتوى المجموعة عند التعارضات، ويأخذ نسخة احتياطية من أي شيء يستبدله.
+- لا يغيّر `ccam group rename` إلا الإعداد. ويحتفظ المجلد باسمه وتسجّله المجموعة في `dir`، فلا يُنقل شيء ولا يمكن أن يضيع شيء.
+- يرفض `ccam group remove` إزالة مجموعة فيها حسابات ما لم تضف `--leave`. وعندها يحتفظ كل حساب بنسخة، ويذهب المجلد إلى `~/.local/share/ccam/trash/` ما لم تستخدمه مجموعة أخرى.
+- قبل المجموعات، كان `config.toml` يخزّن جدول `[profile.share]` لكل حساب. ويقرأ ccam ذلك التنسيق بوصفه مجموعات دون نقل أي شيء. وعند أول حفظ يكتب التنسيق الجديد ويحتفظ بالملف القديم باسم `config.toml.bak`. والعناصر التي تشاركها الحسابات نفسها تصبح مجموعة واحدة تحمل اسم المجلد؛ وتحصل البقية على أسماء مثل `default-history` وتواصل استخدام المجلد نفسه.
 
 ### على Windows
 
-لا ينشئ Windows الروابط الرمزية إلا في وضع المطور (Developer Mode، في الإعدادات > النظام > للمطورين) أو للمسؤول. يحاول `fsutil.Link` إنشاء رابط رمزي أولًا. ودون هذا الحق، يصبح المجلد المشترك (`agents` و`skills` و`projects` وغيرها) نقطة وصل مجلدات (directory junction)، يستطيع أي مستخدم إنشاءها، وتعمل بالطريقة نفسها مع Claude Code. أما الملف المشترك (`settings.json` و`CLAUDE.md` و`history.jsonl`) فلا يمكن أن يكون إلا رابطًا رمزيًا، لذا يتوقف ccam برسالة `Windows links files only in Developer Mode` ويقترح تفعيل هذا الوضع أو إبقاء ذلك العنصر محليًا. ويقرأ `share.Check` نقاط الوصل بوصفها روابط (`fsutil.LinkTarget`)، وإزالة مجلد حساب تزيل نقطة الوصل نفسها، ولا تزيل أبدًا محتوى المجموعة الذي تشير إليه.
+لا ينشئ Windows الروابط الرمزية إلا في وضع المطور (Developer Mode، في الإعدادات > النظام > للمطورين) أو للمسؤول. ودون هذا الحق، يصبح المجلد المشترك نقطة وصل مجلدات (directory junction)، وهي تعمل بالطريقة نفسها مع Claude Code. أما الملف المشترك (`settings.json` و`CLAUDE.md` و`history.jsonl`) فلا يمكن أن يكون إلا رابطًا رمزيًا، لذا يُرفض تغيير المجموعة الذي يحتاج إلى رابط كهذا قبل أن يُنقل أي شيء.
 
 ## الأمان والحالات الخاصة
 
-- **الحسابات التي تعمل.** يرفض ccam تغيير المشاركة ما دام Claude Code يعمل بالحساب (`account work is running; quit it first, then change its sharing`)، لأن الجلسة تظل تكتب في الملفات التي يجري نقلها، والأسطر التي تضيفها في أثناء ذلك ستضيع. ويظل `--dry-run` يطبع الخطة.
-- **النسخ الاحتياطية.** تحصل كل خطة على مجلد `.ccam-backup/<time>/` خاص بها داخل مجلد الحساب، مع لاحقة مرقّمة عندما تبدأ خطتان في الثانية نفسها. ولا يحذفها ccam أبدًا.
-- **الإخفاقات الجزئية.** إذا فشلت خطوة، يطبع ccam الخطأ ومكان الملفات الأصلية، ويطلب منك الإكمال باستخدام `ccam doctor --fix`. والهدف محفوظ بالفعل، فيتابع الإصلاح نحوه.
+- **الحسابات التي تعمل.** يُرفض التغيير ما دام Claude Code يعمل بأحد الحسابات التي ينقلها، لأن الجلسة تظل تكتب في تلك الملفات. ولا تخص المغادرة والانضمام إلا الحساب المذكور. ويظل `--dry-run` يطبع الخطة.
+- **النسخ الاحتياطية.** تحصل كل خطة على مجلد `.ccam-backup/<time>/` خاص بها داخل مجلد الحساب. ولا يحذفها ccam أبدًا.
 - **روابطك الخاصة.** إذا كان مسار ما رابطًا أنشأته بنفسك بالفعل، مثلًا إلى مستودع dotfiles، وكانت المجموعة فارغة، ينسخ ccam هدف الرابط إلى المجموعة وينقل الرابط نفسه إلى النسخة الاحتياطية. ولا يُمسّ الهدف.
-- **ملفات تسجيل الدخول.** لا يُربط `.credentials.json` و`.claude.json` أبدًا بمجموعة، ولا يُنقلان إليها ولا يُنسخان.
-- **حسابان في مجلد واحد.** الحسابات التي تتشارك السجل تكتب في الملفات نفسها. وعندما يبدأ حساب ثانٍ من مجموعة السجل نفسها في مجلد يعمل فيه حساب بالفعل، يحذّرك ccam ويسألك قبل أن يتابع.
+- **المجلدات المستوردة.** الحساب المسجَّل في مكانه باستخدام `ccam import` (مثل `~/.claude`) يتغيّر في مكانه، فيرى `claude` العادي التغيير أيضًا؛ وتذكر الخطة ذلك.
+- **حسابان في مجلد واحد.** الحسابات التي تتشارك السجل تكتب في الملفات نفسها. وعندما يبدأ حساب ثانٍ في مجلد يعمل فيه حساب بالفعل، يحذّرك ccam ويسألك.
+- **التعديلات اليدوية.** العضو الذي ليس حسابًا يُتجاهَل ويبلّغ عنه `ccam doctor`. ولا يمكن أن تكون الأسماء `local` و`on` و`off` و`none` أسماء مجموعات.
 
 ## صفحات ذات صلة
 
+- [لوحة التحكم](/features/dashboard)
 - [مشاركة خوادم MCP والإعدادات والسجل](/docs/sharing)
 - [خوادم MCP المشتركة](/features/mcp)
 - [نسخ إعداد موجود](/features/migrate)

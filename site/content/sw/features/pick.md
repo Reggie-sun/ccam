@@ -4,7 +4,7 @@ description: ccam pick huchapisha akaunti yenye nafasi kubwa zaidi kwa script, h
 updated: 2026-10-20
 order: 12
 translation: machine
-sourceHash: 65a5a7e179a5
+sourceHash: "2e8285b7c193"
 ---
 
 `ccam pick` huchapisha jina la akaunti iliyoingia yenye nafasi kubwa zaidi, ili script ianzishe Claude Code nayo. Workers walioanzishwa kwa wakati mmoja kila mmoja hupata akaunti tofauti maadamu kuna akaunti za kutosha zenye nafasi, kwa hiyo kundi la kazi za `claude -p` husambaa kwenye akaunti zako badala ya kumaliza moja.
@@ -19,6 +19,8 @@ done; wait
 ccam pick --json                      # the account and its usage
 ccam pick --model opus                # also count the Opus weekly limit
 ccam pick --max-usage 80 --strategy expiring
+ccam pick --strategy balance          # spread over the weekly quota, fewer running sessions first
+ccam pick --cross-org                 # also accounts of other organizations
 ccam pick --wait=2h                   # nobody has room: wait for a reset
 ccam --fallback "$(ccam pick)" -p "…" # also switch if this account hits its limit mid-job
 ```
@@ -31,7 +33,8 @@ $ ccam pick --json
   "email": "dev@company.com",
   "five_hour": { "percent": 12, "resets_at": "2026-10-20T15:10:00Z", "known": true },
   "weekly": { "percent": 41, "resets_at": "2026-10-24T09:00:00Z", "known": true },
-  "source": "live"
+  "source": "live",
+  "reason": "12% of its 5 hours used, the least"
 }
 ```
 
@@ -41,16 +44,17 @@ Exit codes: `0` pamoja na jina kwenye standard output, `75` (`EX_TEMPFAIL`) waka
 
 | Chaguo | Inachofanya | Chaguo-msingi |
 | --- | --- | --- |
-| `--json` | Huchapisha akaunti, matumizi yake ya saa 5 na ya wiki na chanzo cha namba | imezimwa |
+| `--json` | Huchapisha akaunti, matumizi yake ya saa 5 na ya wiki, chanzo cha namba na kwa nini ilichaguliwa | imezimwa |
 | `--model <model>` | Huhesabu pia kipindi cha wiki cha modeli hiyo, kama `opus` | hakuna |
 | `--max-usage <1-100>` | Hupendelea akaunti zilizo chini ya matumizi haya | `auto_max_usage`, vinginevyo 100 |
-| `--strategy headroom\|expiring` | Matumizi ya chini zaidi ya saa 5, au kipindi cha saa 5 kinachoanza upya mapema zaidi | `auto_strategy`, vinginevyo `headroom` |
+| `--strategy headroom\|expiring\|balance` | Matumizi ya chini zaidi ya saa 5, kipindi cha saa 5 kinachoanza upya mapema zaidi, au kiasi cha wiki ambacho kingebaki bila kutumika kwanza | `auto_strategy`, vinginevyo `headroom` |
+| `--cross-org` | Huchagua pia akaunti za mashirika mengine | `cross_org`, vinginevyo imezimwa |
 | `--wait[=<duration>]` | Hakuna akaunti yenye nafasi, husubiri ya kwanza ianze upya, si zaidi ya muda huu | imezimwa; `5h` ikitolewa peke yake |
 | `--dry-run` | Huchagua bila kurekodi uchaguzi | imezimwa |
 
 ## Jinsi inavyofanya kazi
 
-1. ccam huorodhesha akaunti zilizoingia (akaunti za API key hazina vikomo na huachwa nje).
+1. ccam huorodhesha akaunti zilizoingia (akaunti za API key hazina vikomo na huachwa nje) katika shirika la akaunti ambayo folda hii ingeanzisha (tazama [mashirika](/features/next#auto)); folda iliyoingia kwenye akaunti ile ile ya Claude kama hiyo huachwa nje pia.
 2. Huchukua kufuli (`~/.local/state/ccam/picks.lock`), ili uchaguzi unaoendeshwa kwa wakati mmoja ufanyike mmoja baada ya mwingine.
 3. Huomba matumizi ya kila akaunti kwa wakati mmoja, kwa njia ile ile kama `ccam usage`, pamoja na akiba ya sekunde 60.
 4. Akaunti zilizochaguliwa ndani ya dakika 2 zilizopita (`~/.local/state/ccam/picks/<name>`) huachwa nje kwanza, na [kanuni za uchaguzi](/features/next#auto) za `ccam next --auto` huchagua kati ya zilizobaki: zilizo chini ya `auto_max_usage` kwanza, kwa mkakati, na kamwe si akaunti iliyo kwenye 100%.

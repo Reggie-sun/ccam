@@ -5,7 +5,7 @@ description: 用 ccam add 新增兩個 Claude Code 帳號，為它們設定 ccwo
 updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 55f81dae9fc0
+sourceHash: "d5b0e295f3f0"
 ---
 
 用 `ccam add` 新增每個帳號，然後用 `ccam <name>` 或你自己命名的快捷指令（例如 `ccwork`）啟動 Claude Code。大多數人只需要這些。
@@ -79,7 +79,7 @@ ccam work
 ccam 2
 ```
 
-單獨執行 `ccam` 會開啟選擇器：用方向鍵和 Enter 選擇，或直接按下帳號的編號。
+單獨執行 `ccam` 會開啟[儀表板](/features/dashboard)：用方向鍵或帳號的編號移到某個帳號，再按 Enter。
 
 快捷指令或帳號名稱後面的所有內容都會原封不動地傳給 Claude Code，所以你可以繼續使用熟悉的選項：
 
@@ -91,14 +91,13 @@ cat error.log | ccwork -p "what caused this?"
 
 ## 5. 選擇要共用的項目
 
-預設情況下，MCP 伺服器、`settings.json`、全域 `CLAUDE.md`，以及 agents、commands、skills 和 plugins 都會在帳號之間共用，對話記錄則不會。如果想在帳號之間接續對話，請為兩個帳號都開啟對話記錄共用：
+預設情況下，MCP 伺服器、`settings.json`、全域 `CLAUDE.md`，以及 agents、commands、skills 和 plugins 都會透過群組 `default` 在帳號之間共用，對話記錄則不會。如果想在帳號之間接續對話，請把它加到群組中：
 
 ```sh
-ccam share personal --history on
-ccam share work --history on
+ccam group set default --add history
 ```
 
-ccam 在變更任何內容之前，會先顯示它將移動哪些項目。詳情請參閱[共用](/docs/sharing)。
+ccam 在變更任何內容之前，會先顯示它將為每個帳號移動哪些項目。詳情請參閱[用群組共用](/features/share)。
 
 ## 6. 帳號達到限制時
 

@@ -4,7 +4,7 @@ description: يطبع ccam pick للسكربت الحساب الذي لديه أ
 updated: 2026-10-20
 order: 12
 translation: machine
-sourceHash: 65a5a7e179a5
+sourceHash: 2e8285b7c193
 ---
 
 يطبع `ccam pick` اسم الحساب المسجَّل دخوله الذي لديه أكبر هامش، ليشغّل به السكربت برنامج Claude Code. ويحصل كل عامل من العمّال الذين يبدؤون في الوقت نفسه على حساب مختلف ما دامت هناك حسابات كافية لديها هامش، فتتوزع دفعة من مهام `claude -p` على حساباتك بدلًا من أن تستنزف حسابًا واحدًا.
@@ -19,6 +19,8 @@ done; wait
 ccam pick --json                      # the account and its usage
 ccam pick --model opus                # also count the Opus weekly limit
 ccam pick --max-usage 80 --strategy expiring
+ccam pick --strategy balance          # spread over the weekly quota, fewer running sessions first
+ccam pick --cross-org                 # also accounts of other organizations
 ccam pick --wait=2h                   # nobody has room: wait for a reset
 ccam --fallback "$(ccam pick)" -p "…" # also switch if this account hits its limit mid-job
 ```
@@ -31,7 +33,8 @@ $ ccam pick --json
   "email": "dev@company.com",
   "five_hour": { "percent": 12, "resets_at": "2026-10-20T15:10:00Z", "known": true },
   "weekly": { "percent": 41, "resets_at": "2026-10-24T09:00:00Z", "known": true },
-  "source": "live"
+  "source": "live",
+  "reason": "12% of its 5 hours used, the least"
 }
 ```
 
@@ -41,16 +44,17 @@ $ ccam pick --json
 
 | الخيار | ما يفعله | القيمة الافتراضية |
 | --- | --- | --- |
-| `--json` | يطبع الحساب واستخدامه في نافذتي الخمس ساعات والأسبوع ومصدر الأرقام | معطّل |
+| `--json` | يطبع الحساب واستخدامه في نافذتي الخمس ساعات والأسبوع ومصدر الأرقام وسبب اختياره | معطّل |
 | `--model <model>` | يحتسب أيضًا النافذة الأسبوعية لذلك النموذج، مثل `opus` | لا شيء |
 | `--max-usage <1-100>` | يفضّل الحسابات التي يقل استخدامها عن هذه القيمة | `auto_max_usage`، وإلا 100 |
-| `--strategy headroom\|expiring` | أدنى استخدام في نافذة الخمس ساعات، أو أقرب إعادة ضبط لنافذة الخمس ساعات | `auto_strategy`، وإلا `headroom` |
+| `--strategy headroom\|expiring\|balance` | أدنى استخدام في نافذة الخمس ساعات، أو أقرب إعادة ضبط لنافذة الخمس ساعات، أو الحصة الأسبوعية التي ستضيع أولًا دون استخدام | `auto_strategy`، وإلا `headroom` |
+| `--cross-org` | يختار أيضًا حسابات المؤسسات الأخرى | `cross_org`، وإلا معطّل |
 | `--wait[=<duration>]` | عندما لا يكون لأي حساب هامش، ينتظر حتى يُعاد ضبط أولها، بحد أقصى هذه المدة | معطّل؛ و`5h` عند تحديده وحده |
 | `--dry-run` | يختار دون تسجيل الاختيار | معطّل |
 
 ## كيف يعمل
 
-1. يسرد ccam الحسابات المسجَّل دخولها (حسابات مفاتيح API ليس لها حدود فتُستبعد).
+1. يسرد ccam الحسابات المسجَّل دخولها (حسابات مفاتيح API ليس لها حدود فتُستبعد) في مؤسسة الحساب الذي سيشغّله هذا المجلد (راجع [المؤسسات](/features/next#auto))؛ ويُستبعد أيضًا المجلد المسجَّل دخوله بحساب Claude نفسه الذي يستخدمه ذلك الحساب.
 2. يأخذ قفلًا (`~/.local/state/ccam/picks.lock`)، فتجري عمليات الاختيار المتزامنة واحدة بعد أخرى.
 3. يستعلم عن استخدام كل الحسابات في آن واحد، بالطريقة نفسها التي يتبعها `ccam usage`، مع الذاكرة المؤقتة لمدة 60 ثانية.
 4. تُستبعد أولًا الحسابات التي اختيرت خلال آخر دقيقتين (`~/.local/state/ccam/picks/<name>`)، وتختار [قواعد الاختيار](/features/next#auto) الخاصة بـ `ccam next --auto` من بين البقية: ما يقل عن `auto_max_usage` أولًا، وفق الاستراتيجية، ولا تختار أبدًا حسابًا بلغ 100%.

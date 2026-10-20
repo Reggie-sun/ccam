@@ -1,46 +1,45 @@
 ---
 title: Dùng chung máy chủ MCP, cài đặt và lịch sử
-description: "Cách ccam dùng chung máy chủ MCP, settings.json, CLAUDE.md, agent, skill và lịch sử hội thoại giữa các tài khoản Claude Code, nhưng giữ riêng mọi đăng nhập."
+description: "Cách các nhóm của ccam dùng chung máy chủ MCP, settings.json, CLAUDE.md, skill và lịch sử hội thoại giữa các tài khoản Claude Code, giữ riêng mọi đăng nhập."
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 888d466b29e9
+sourceHash: "2606e4ec682e"
 ---
 
-Mỗi tài khoản giữ thông tin đăng nhập riêng. Mọi thứ khác đều có thể dùng chung theo từng mục: ccam liên kết tệp hoặc thư mục của tài khoản đến một thư mục nhóm dùng chung, nên thay đổi thực hiện ở một tài khoản sẽ xuất hiện ở mọi tài khoản trong nhóm đó.
+Mỗi tài khoản giữ thông tin đăng nhập riêng. Mọi thứ khác đều có thể dùng chung qua **nhóm**: một nhóm nêu các mục nó dùng chung và các tài khoản thuộc nó, và ccam liên kết tệp của từng tài khoản đó đến thư mục của nhóm, nên thay đổi thực hiện ở một tài khoản sẽ xuất hiện ở mọi tài khoản.
 
 ## Những gì có thể dùng chung
 
-| Mục | Tùy chọn | Nội dung được dùng chung |
-| --- | --- | --- |
-| Máy chủ MCP | `--mcp` | `mcp.json` của nhóm, được truyền cho Claude Code khi khởi động |
-| Cài đặt | `--settings` | `settings.json`: quyền, hook, mô hình, dòng trạng thái |
-| Bộ nhớ toàn cục | `--memory` | `CLAUDE.md` |
-| Tiện ích mở rộng | `--extensions` | `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/`, `rules/` |
-| Lịch sử hội thoại | `--history` | `projects/` và `history.jsonl` |
+| Mục | Nội dung được dùng chung |
+| --- | --- |
+| `mcp` | Máy chủ MCP: `mcp.json` của nhóm, được truyền cho Claude Code khi khởi động |
+| `settings` | `settings.json`: quyền, hook, mô hình, dòng trạng thái |
+| `memory` | `CLAUDE.md` toàn cục |
+| `extensions` | `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/`, `rules/` |
+| `history` | lịch sử hội thoại: `projects/` và `history.jsonl` |
 
-Tài khoản mới dùng chung mọi thứ trừ lịch sử hội thoại.
+Tài khoản đầu tiên của bạn tạo nhóm `default`, nhóm này dùng chung mọi thứ trừ lịch sử hội thoại, và các tài khoản thêm sau sẽ tham gia nhóm đó.
 
 Các tệp đăng nhập `.credentials.json` và `.claude.json` không bao giờ được dùng chung. ccam chỉ liên kết các đường dẫn nằm trong một danh sách cố định, và hai tệp này không có trong danh sách đó.
 
-Trang này trình bày các tác vụ hằng ngày. Mọi tùy chọn được mô tả trên các trang tính năng: [dùng chung giữa các tài khoản](/features/share), [máy chủ MCP dùng chung](/features/mcp) và [sao chép thiết lập hiện có](/features/migrate).
+Trang này trình bày các tác vụ hằng ngày. Mọi tùy chọn được mô tả trên các trang tính năng: [dùng chung bằng nhóm](/features/share), [máy chủ MCP dùng chung](/features/mcp) và [sao chép thiết lập hiện có](/features/migrate).
 
 ## Nhóm
 
-`on` nghĩa là nhóm `default`. Bạn cũng có thể đặt một tên nhóm, để chỉ một số tài khoản dùng chung một mục:
-
 ```sh
-ccam share work --history team
-ccam share side --history team
+ccam group                                   # the groups, what they share, their accounts
+ccam group set default --add history         # every account in default shares history
+ccam group add team --items history --members work,side
 ```
 
-Giờ đây `work` và `side` dùng chung hội thoại với nhau, nhưng không dùng chung với các tài khoản khác của bạn.
+Một tài khoản có thể thuộc nhiều nhóm, nhưng mỗi mục chỉ đến từ một nhóm. Vì vậy, để dùng chung lịch sử giữa `work` và `side` mà không dùng chung với các tài khoản khác của bạn, hãy để lịch sử ngoài `default` và cho hai tài khoản đó một nhóm riêng, như trên. `ccam share work` cho thấy một tài khoản dùng chung những gì và qua nhóm nào. [Bảng điều khiển](/features/dashboard) làm điều tương tự trên thẻ Groups.
 
-## Bật dùng chung
+## Khi một tài khoản bắt đầu dùng chung
 
-Khi một tài khoản bắt đầu dùng chung một mục, ccam sẽ:
+Khi một tài khoản bắt đầu dùng chung một mục (nó tham gia một nhóm, hoặc nhóm của nó thêm mục đó), ccam sẽ:
 
-1. in ra kế hoạch gồm mọi tệp nó sẽ di chuyển, sao chép hoặc liên kết, và hỏi bạn trước khi bắt đầu;
+1. in ra kế hoạch gồm mọi tệp nó sẽ di chuyển, sao chép hoặc liên kết cho từng tài khoản, và hỏi bạn trước khi bắt đầu;
 2. chuyển các tệp của tài khoản vào thư mục nhóm nếu nhóm vẫn còn trống, hoặc thêm những tệp mà nhóm chưa có;
 3. khi cùng một tệp có nội dung khác nhau, hỏi bạn muốn giữ phiên bản của nhóm, dùng phiên bản của bạn, hay gộp JSON;
 4. giữ bản gốc của bạn trong `.ccam-backup/<time>/` bên trong thư mục tài khoản;
@@ -48,12 +47,13 @@ Khi một tài khoản bắt đầu dùng chung một mục, ccam sẽ:
 
 Các tệp hội thoại được đặt tên theo ID phiên, nên lịch sử từ nhiều tài khoản được gộp lại mà không xung đột.
 
-ccam không thay đổi việc dùng chung khi Claude Code đang chạy bằng tài khoản đó, vì phiên vẫn tiếp tục ghi vào các tệp đang được di chuyển. Hãy thoát phiên trước.
+ccam không thay đổi một tài khoản khi Claude Code đang chạy bằng tài khoản đó, vì phiên vẫn tiếp tục ghi vào các tệp đang được di chuyển. Hãy thoát phiên trước.
 
-## Tắt dùng chung
+## Khi một tài khoản ngừng dùng chung
 
 ```sh
-ccam share work --history off
+ccam group leave team work                   # work leaves the group
+ccam group set default --remove history      # nobody in default shares history any more
 ```
 
 Liên kết bị gỡ bỏ và tài khoản nhận một bản sao riêng của nội dung hiện tại trong nhóm. Thêm `--fresh` để bắt đầu từ trạng thái trống thay vào đó. Nhóm vẫn giữ nội dung của nó cho các tài khoản khác.
@@ -95,14 +95,12 @@ Copy from /home/me/.claude into group default (/home/me/.local/share/ccam/groups
   Conversation history (projects/, history.jsonl) is not included; add --history to copy it.
 Copy these into group default? [y/N] y
 ✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, commands/, skills/
-Accounts that share these through group default:
-  mcp         personal
-  settings    personal
-  memory      personal
-  extensions  personal
+Group default: personal
+To share them:
+  ccam group join default work
 ```
 
-Cuối cùng, ccam liệt kê các tài khoản dùng chung từng mục qua nhóm đó. Nếu có tài khoản chưa dùng chung, nó in ra các lệnh `ccam share` để bật dùng chung cho những tài khoản đó.
+Cuối cùng, ccam liệt kê các tài khoản của nhóm. Nếu nhóm chưa dùng chung một trong các mục, hoặc có tài khoản chưa thuộc nhóm, nó in ra các lệnh `ccam group` để thay đổi điều đó.
 
 Khi nhóm đã có một bản khác của một tệp, ccam hỏi bạn, giống như khi bật dùng chung: giữ bản của nhóm hay dùng bản của bạn. `settings.json` và các tệp JSON khác còn có thể được hợp nhất, và `history.jsonl` có thể được hợp nhất theo từng dòng. Các bản trước đó của nhóm được lưu trong `.ccam-backup/<time>/` bên trong thư mục nhóm.
 

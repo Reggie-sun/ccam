@@ -1,133 +1,182 @@
 ---
-title: Kushiriki kati ya akaunti
-description: Jinsi ccam share huunganisha mipangilio, CLAUDE.md, viendelezi na historia kwa folda ya kikundi kwa mpango, nakala rudufu na chaguo za mgongano; off hurudisha.
+title: Kushiriki kwa vikundi
+description: Kikundi cha ccam hushiriki vipengele ulivyochagua kati ya akaunti zake kupitia folda moja; ccam group huhamisha data kwa mpango, nakala rudufu na chaguo.
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 16de29bbdd57
+sourceHash: "0c0338362ba2"
 ---
 
-Kila akaunti ina folda yake, lakini sehemu kubwa ya yaliyomo ndani yake haihitaji kuwa tofauti. `ccam share` huwasha au huzima kushiriki kwa akaunti moja na kipengele kimoja kwa wakati: faili au folda ya akaunti huhamishwa kwenda folda ya kikundi na hubadilishwa kwa kiungo (symbolic link), ili kila akaunti katika kikundi isome na iandike nakala ile ile. Itumie baada ya `ccam add` kubadilisha kile akaunti inachoshiriki, au kuweka akaunti chache katika kikundi chao wenyewe.
+Kila akaunti ina folda yake, lakini sehemu kubwa ya yaliyomo ndani yake haihitaji kuwa tofauti. **Kikundi** husema kinachoshirikiwa na nani: kila akaunti katika kikundi huunganisha vipengele hivyo kwenye folda moja, `~/.local/share/ccam/groups/<group>/`, ili zote zisome na ziandike nakala ile ile. Tokeni za kuingia kamwe hazishirikiwi.
+
+Akaunti inaweza kuwa katika vikundi kadhaa, lakini kila kipengele hutoka kwenye kikundi kimoja tu. Mpangilio wa kawaida ni kikundi kimoja cha mipangilio na viendelezi, na cha pili cha historia ya mazungumzo kati ya akaunti mbili:
+
+```toml
+[[group]]
+name = 'default'
+items = ['mcp', 'settings', 'memory', 'extensions']
+members = ['personal', 'work', 'side']
+
+[[group]]
+name = 'team'
+items = ['history']
+members = ['work', 'side']
+```
+
+Akaunti ya kwanza unayoongeza huunda `default`, na akaunti zinazofuata hujiunga nacho usiposema vinginevyo.
 
 ## Matumizi
 
 ```sh
-ccam share work                       # show what work shares, and with which group
-ccam share work --history on          # share conversation history with the default group
-ccam share side --history team        # share it with the group team instead
-ccam share work --settings off        # give work its own copy of settings.json again
-ccam share work --memory off --fresh  # stop sharing CLAUDE.md and start with no file
-ccam share work --settings on --yes --prefer merge   # no questions; merge JSON on conflicts
-ccam --dry-run share work --history on               # print the plan, change nothing
+ccam group                                        # the groups, what they share, their accounts
+ccam group show default                           # items, accounts, folder and MCP servers
+ccam group add team --items history --members work,side
+ccam group set default --add history              # every account in default moves together
+ccam group set default --remove history --fresh   # stop sharing; accounts start without it
+ccam group set team --items history,memory --from work   # work's CLAUDE.md goes in first
+ccam group join team personal                     # personal starts sharing team's items
+ccam group join team personal --replace           # leave the group that shares them now
+ccam group leave team side                        # side keeps a copy of team's items
+ccam group rename team pair                       # the folder keeps its name
+ccam group remove pair --leave                    # its accounts keep a copy; folder to the trash
+ccam share work                                   # what work shares, and through which group
+ccam --dry-run group set default --add history    # print the plan, change nothing
 ```
-
-Bila chaguo za vipengele, `ccam share` huchapisha hali ya sasa:
 
 ```console
+$ ccam group
+Group    Shares                          Accounts
+default  mcp settings memory extensions  personal, work, side
+team     history                         work, side
+
 $ ccam share work
 Sharing for work
-  MCP servers                        shared (group default)  --mcp
-  settings.json                      shared (group default)  --settings
-  global CLAUDE.md                   shared (group default)  --memory
-  agents, commands, skills, plugins  shared (group default)  --extensions
-  conversation history               local                   --history
+  mcp         MCP servers                        group default
+  settings    settings.json                      group default
+  memory      global CLAUDE.md                   group default
+  extensions  agents, commands, skills, plugins  group default
+  history     conversation history               group team
+Groups: default, team. Change them with `ccam group`.
 ```
 
-Ukiwa na chaguo, ccam huchapisha mpango, huuliza kuhusu kila faili inayotofautiana na nakala ya kikundi, na huuliza `Proceed? [y/N]` kabla ya kubadilisha chochote. Akaunti mpya hushiriki kila kitu isipokuwa historia ya mazungumzo; [Shiriki seva za MCP, mipangilio na historia](/docs/sharing) inaeleza kila kipengele kwa mtazamo wa mtumiaji.
+Kila amri inayohamisha data huchapisha mpango, huuliza kuhusu kila faili inayotofautiana na nakala ya kikundi, na huuliza `Proceed? [y/N]` kabla ya kubadilisha chochote:
 
-## Chaguo
+```console
+$ ccam group set default --add history
+Plan (paths in /home/me/.local/share/ccam):
+personal: +history (group default)
+  move     projects, history.jsonl: profiles/personal → groups/default (first content of the group)
+  link     projects, history.jsonl: profiles/personal → groups/default
+work: +history (group default)
+  merge    new files in projects: profiles/work → groups/default
+  conflict profiles/work/history.jsonl ↔ groups/default/history.jsonl: merge by line
+  back up  projects, history.jsonl: profiles/work → profiles/work/.ccam-backup/20261020-153012
+  link     projects, history.jsonl: profiles/work → groups/default
+Proceed? [y/N]
+```
+
+Mabadiliko hayo hayo yako kwenye kichupo cha **Groups** cha [dashibodi](/features/dashboard), na `s` kwenye akaunti huchagua vikundi vyake.
+
+## Vipengele
+
+| Kipengele | Kinachojumuisha |
+| --- | --- |
+| `mcp` | seva za MCP, kupitia `mcp.json` ya kikundi ([Seva za MCP zinazoshirikiwa](/features/mcp)) |
+| `settings` | `settings.json` |
+| `memory` | `CLAUDE.md` ya jumla |
+| `extensions` | `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/`, `rules/` |
+| `history` | `projects/` na `history.jsonl`, ili akaunti nyingine iweze `--continue` |
+
+Kipengele ambacho hakuna kikundi cha akaunti kinachokishiriki hubaki katika folda ya akaunti yenyewe.
+
+## Amri na chaguo
+
+| Amri | Inachofanya |
+| --- | --- |
+| `ccam group` au `ccam group list` | huorodhesha vikundi |
+| `ccam group show <group>` | kile kikundi kinachoshiriki, akaunti zake, folda yake na seva za MCP |
+| `ccam group add <group> --items <items> [--members <accounts>]` | huunda kikundi; vipengele vya akaunti zake huhamia ndani yake |
+| `ccam group set <group> --add <items> \| --remove <items> \| --items <items>` | hubadilisha kile kikundi kinachoshiriki, kwa kila akaunti iliyomo |
+| `ccam group join <group> <account>...` | huweka akaunti katika kikundi |
+| `ccam group leave <group> <account>...` | hutoa akaunti; kila moja hubaki na nakala |
+| `ccam group rename <group> <new-name>` | hubadilisha jina katika usanidi pekee |
+| `ccam group remove <group> [--leave]` | huondoa kikundi |
 
 | Chaguo | Inachofanya | Chaguo-msingi |
 | --- | --- | --- |
-| `--mcp <on\|off\|group>` | Seva za MCP | haibadiliki |
-| `--settings <on\|off\|group>` | `settings.json` | haibadiliki |
-| `--memory <on\|off\|group>` | `CLAUDE.md` ya jumla | haibadiliki |
-| `--extensions <on\|off\|group>` | `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/`, `rules/` | haibadiliki |
-| `--history <on\|off\|group>` | `projects/` na `history.jsonl` | haibadiliki |
-| `--fresh` | unapozima kushiriki, anza ukiwa tupu badala ya kunakili maudhui ya kikundi | imezimwa |
-| `--prefer <group\|mine\|merge>` | jinsi ya kuamua migongano | huuliza; kwa `--yes`, chaguo-msingi la kila kipengele |
+| `--from <account>` | `add`, `set`: akaunti ambayo nakala yake huingia kwenye kikundi kwanza | akaunti chaguo-msingi, kisha kwa namba |
+| `--replace` | `join`: ondoka kwanza kwenye vikundi vinavyoshiriki vipengele hivyo hivyo | imezimwa |
+| `--fresh` | akaunti zinazoacha kushiriki kipengele huanza bila kipengele hicho badala ya kuwa na nakala | imezimwa |
+| `--leave` | `remove`: toa akaunti za kikundi kwanza | inahitajika kikundi kikiwa na akaunti |
+| `--prefer <group\|mine\|merge>` | jinsi ya kuamua migongano | huuliza; kwa `--yes`, chaguo-msingi la kila faili |
 | `-y`, `--yes` | huendesha bila kuuliza; migongano hufuata `--prefer` | imezimwa |
-| `-h`, `--help` | msaada wa `share` | |
-| `--dry-run` (jumla) | inaheshimiwa: huuliza kuhusu migongano, huchapisha mpango, haibadilishi chochote | imezimwa |
+| `--dry-run` (jumla) | huchapisha mpango, haibadilishi chochote | imezimwa |
 
-Thamani `on` inamaanisha kikundi `default`, `off` inamaanisha ya ndani (haishirikiwi), na thamani nyingine yoyote ni jina la kikundi. Majina ya vikundi huwa majina ya folda chini ya `~/.local/share/ccam/groups/`, kwa hiyo `ccam share side --history ../x` hushindwa na `invalid group name: "../x"`. Akaunti hutajwa kwa jina au kwa namba, na vipengele unavyovitaja pekee ndivyo hubadilika.
+Akaunti hutajwa kwa jina au kwa namba; vipengele kama orodha iliyotenganishwa kwa koma. `ccam add` hupokea `--group <group>` (inaweza kurudiwa) au `--no-group`.
 
 ## Jinsi inavyofanya kazi
 
 Faili zinazohusika:
 
-- `~/.config/ccam/config.toml`: jedwali la `[profile.share]` la kila akaunti, thamani moja kwa kila kipengele.
+- `~/.config/ccam/config.toml`: maingizo ya `[[group]]`: `name`, `items`, `members` na, jina la folda likiwa tofauti, `dir`.
 - `~/.local/share/ccam/profiles/<name>/`: `CLAUDE_CONFIG_DIR` ya akaunti.
-- `~/.local/share/ccam/groups/<group>/`: nakala zinazoshirikiwa.
+- `~/.local/share/ccam/groups/<folder>/`: nakala zinazoshirikiwa.
 
-1. `internal/cli/share.go` husoma usanidi, hutumia kila thamani ya `--<item>` kwenye nakala ya mipangilio ya akaunti kwa `config.Share.Set`, na hukataa ikiwa akaunti inaendeshwa.
-2. `share.Build` hulinganisha mipangilio ya sasa na lengo na huorodhesha hatua. Husoma diski tu: `os.Lstat` na `os.Readlink` kwa kila njia katika `share.Layout`. Mpango ni orodha ya operesheni: kuhamisha kwenda nafasi tupu ya kikundi (adopt), kuhamisha faili ambazo kikundi hakina (merge dir), kuandika mgongano uliotatuliwa kwenye kikundi, kuhifadhi nakala rudufu, kuondoa kiungo, kuunganisha, kunakili kurudi, kuandika upya njia za plugins na kuunganisha rejista ya plugins.
-3. Migongano huamuliwa, kwa swali au kwa `--prefer`.
-4. `Plan.Describe` huchapisha mpango, na ccam huuliza.
-5. Mipangilio lengwa huandikwa kwenye `config.toml` kabla ya kitu chochote kuhamishwa. Ikiwa `Plan.Apply` itasimama katikati, `ccam doctor --fix` na kuendesha tena huunda mpango wao kuelekea lengo lililohifadhiwa na hukamilisha badiliko.
-6. `Plan.Apply` huendesha hatua kwa mpangilio. Kila hatua huhamisha data kwenda kwenye kikundi au kwenye folda ya nakala rudufu; hakuna kinachofutwa.
+`config.toml` inaposomwa, vikundi vya kila akaunti hutatuliwa kuwa folda moja kwa kila kipengele. Hili huchukua takriban 25 µs kwa akaunti tano, kwa hiyo uanzishaji bado husoma `config.toml` pekee. Usanidi ambao akaunti ingepata kipengele kimoja kutoka vikundi viwili ni kosa, na hakuna kinachoanza hadi lirekebishwe.
 
-`share.Layout` ni orodha ya ruhusa ya njia ambazo kila kipengele hujumuisha. Kitu chochote kisichokuwamo kamwe hakiwezi kufika kwenye kikundi. `share.Never` hutaja `.credentials.json` na `.claude.json`, na `Build` husimama na kosa la ndani ikiwa yoyote kati ya hizo itaonekana kwenye mpangilio. Kipengele cha `mcp` hakina njia: orodha ya seva iko ndani ya `.claude.json`, kwa hiyo [kushiriki MCP](/features/mcp) hufanya kazi kupitia `mcp.json` ya kikundi badala yake, na `--mcp` hubadilisha mpangilio tu.
+Badiliko hufanya kazi kwenye nakala ya usanidi:
 
-Hiki ndicho kinachotokea kwa folda moja, `projects/`, wakati `side` inawasha historia na kikundi tayari kina maudhui:
+1. Amri huhariri nakala hiyo (`AddGroup`, `SetGroupItems`, `JoinGroup` …), ambayo hukagua kanuni.
+2. `internal/group` hulinganisha ya zamani na mpya na, kwa kila akaunti ambayo vipengele vyake vinabadilika, huunda mpango kwa `share.Build`. Mipango huundwa mmoja baada ya mwingine, na kila mmoja huona kile ambacho mipango ya awali itaweka kwenye folda za vikundi, kwa hiyo akaunti ya kwanza pekee ndiyo huhamisha nakala yake ndani. Nakala ya kwanza hutoka kwenye folda ya kikundi ikiwa tayari ina moja, kisha `--from`, kisha akaunti chaguo-msingi, kisha nyingine kwa namba.
+3. ccam hukataa ikiwa mojawapo ya akaunti hizo inaendeshwa, na kwenye Windows bila Developer Mode ikiwa faili ingehitaji kiungo.
+4. Migongano huamuliwa, kwa swali au kwa `--prefer`, mpango huchapishwa, na ccam huuliza.
+5. Usanidi mpya huhifadhiwa kabla ya kitu chochote kuhamishwa. Hatua ikisimama katikati, `ccam doctor --fix` na kuendesha tena huunda mpango wao kuelekea vikundi vilivyohifadhiwa na hukamilisha badiliko.
+6. Mipango huendeshwa kwa mpangilio. Kila hatua huhamisha data kwenda kwenye kikundi au kwenye folda ya nakala rudufu; hakuna kinachofutwa.
+
+`share.Layout` ni orodha ya ruhusa ya njia ambazo kila kipengele hujumuisha. Kitu chochote kisichokuwamo kamwe hakiwezi kufika kwenye kikundi. `share.Never` hutaja `.credentials.json` na `.claude.json`, na `Build` husimama na kosa la ndani ikiwa yoyote kati ya hizo itaonekana kwenye mpangilio. Kipengele cha `mcp` hakina njia: orodha ya seva iko ndani ya `.claude.json`, kwa hiyo [kushiriki MCP](/features/mcp) hufanya kazi kupitia `mcp.json` ya kikundi.
+
+Hiki ndicho kinachotokea kwa folda moja, `projects/`, wakati `side` inaanza kushiriki historia na kikundi tayari kina maudhui:
 
 <!-- motion:share-on -->
 
-Ikiwa kikundi bado hakina chochote kwenye njia hiyo, akaunti ndiyo ya kwanza kuishiriki na folda yake huhamishwa huko kama ilivyo, bila nakala rudufu. Vinginevyo `mergeDir` huhamisha kila faili ambayo kikundi hakina kwenda kwenye kikundi, na faili zilizopo pande zote mbili hubaki katika folda ya akaunti, kwa hiyo toleo la kikundi huhifadhiwa. Kisha folda ya akaunti huenda `.ccam-backup/<time>/` ndani ya folda ya akaunti, na `os.Symlink` huweka kiungo mahali pake. Faili za mazungumzo hupewa majina kwa kufuata session ID yake, kwa hiyo historia kutoka akaunti kadhaa huungana bila migongano.
+Ikiwa kikundi bado hakina chochote kwenye njia hiyo, akaunti ndiyo ya kwanza kuishiriki na folda yake huhamishwa huko kama ilivyo. Vinginevyo kila faili ambayo kikundi hakina huhamishwa kwenda kwenye kikundi, na faili zilizopo pande zote mbili hubaki katika folda ya akaunti, kwa hiyo toleo la kikundi huhifadhiwa. Kisha folda ya akaunti huenda `.ccam-backup/<time>/` ndani ya folda ya akaunti, na kiungo huchukua nafasi yake. Faili za mazungumzo hupewa majina kwa kufuata session ID yake, kwa hiyo historia kutoka akaunti kadhaa huungana bila migongano. Rejista za `plugins/` huhifadhi njia kamili kupitia folda ya akaunti; ccam huzielekeza kwenye folda ya kikundi na huunganisha vipengele vya akaunti kwenye rejista ambayo kikundi tayari kinayo.
 
-Kuhamisha hutumia `rename(2)` na hurudi kwenye kunakili na kufuta kati ya mifumo ya faili tofauti. Kiungo cha jamaa ndani ya mti uliohamishwa kilichoelekea nje yake huandikwa upya kama kiungo kamili (`fsutil.PortableLink`), ili bado kielekee mahali sahihi kutoka mahali papya. Rejista za `plugins/` (`installed_plugins.json`, `known_marketplaces.json`) huhifadhi njia kamili kupitia folda ya akaunti; ccam huzielekeza kwenye folda ya kikundi na, kikundi kikiwa tayari na rejista, huunganisha vipengele vya akaunti ndani yake.
-
-Kuzima kipengele hugeuza kiungo:
+Kuondoka hugeuza kiungo:
 
 <!-- motion:share-off -->
 
-ccam huondoa kiungo tu ikiwa kinaelekea ndani ya folda ya vikundi, kisha hunakili maudhui ya sasa ya kikundi kwenda kwenye akaunti kwa `CopyTree`. Kwa `--fresh` kunakili kunarukwa na akaunti huanza bila chochote kwenye njia hiyo. Kikundi huendelea kuhifadhi maudhui yake kwa ajili ya akaunti nyingine. Kuhamisha kipengele kutoka kikundi kimoja kwenda kingine huondoa kiungo na hukiunganisha na kikundi kipya, kikiacha kikundi cha zamani kama kilivyo; mpango husema hivyo katika mstari wa `Note:`.
+ccam huondoa kiungo tu ikiwa kinaelekea ndani ya folda ya vikundi, kisha hunakili maudhui ya sasa ya kikundi kwenda kwenye akaunti. Kwa `--fresh` kunakili kunarukwa. Kikundi huendelea kuhifadhi maudhui yake kwa ajili ya akaunti nyingine. Akaunti inayohamisha kipengele kwenda kikundi ambacho folda yake bado iko tupu huleta nakala ya kile ilichokiona, kwa hiyo huhifadhi faili zake; seva za MCP huja vivyo hivyo. Akaunti inayoacha kushiriki MCP hupoteza seva ambazo ccam ilikuwa imezinakili kwenye `.claude.json` yake (nakala rudufu huhifadhiwa), kwa kuwa zilitoka kwenye kikundi.
 
 Faili moja iliyopo pande zote mbili yenye maudhui tofauti ni mgongano:
 
 <!-- motion:share-conflict -->
 
-`share.NewConflict` huorodhesha chaguo zinazofaa faili hiyo. `history.jsonl` hutoa `merge by line`, `keep group` na `use mine`, uunganishaji ukiwa wa kwanza. Faili nyingine za `.json` hutoa `keep group`, `use mine` na `merge JSON`. Kitu kingine chochote hutoa `keep group` na `use mine`. Chaguo la kwanza ndilo chaguo-msingi:
+`history.jsonl` hutoa `merge by line`, `keep group` na `use mine`, uunganishaji ukiwa wa kwanza. Faili nyingine za `.json` hutoa `keep group`, `use mine` na `merge JSON`. Kitu kingine chochote hutoa `keep group` na `use mine`. `merge JSON` huunganisha vitu kwa kujirudia, huunganisha safu bila marudio, na huhifadhi thamani ya kikundi wakati pande zote mbili zinaweka ufunguo ule ule kwa njia tofauti, kwa hiyo akaunti nyingine hazioni badiliko. Kila chaguo isipokuwa `keep group` kwanza huhifadhi nakala ya kikundi katika `.ccam-backup/<time>/group/` ya akaunti. Faili yako mwenyewe daima huenda kwenye nakala rudufu.
 
-```console
-history.jsonl differs from the group's copy.
-  mine:  ~/.local/share/ccam/profiles/side/history.jsonl
-  group: ~/.local/share/ccam/groups/default/history.jsonl
-  1) merge by line
-  2) keep group
-  3) use mine
-Choice [1]:
-```
+Katika kila uanzishaji, `share.Check` hulinganisha kila njia katika mpangilio na vikundi vya akaunti kwa kutumia `lstat` na `readlink` tu. Kiungo kinachokosekana huundwa papo hapo. Faili halisi mahali ambapo kiungo kinapaswa kuwa, kiungo kinachoelekea mahali pasipo sahihi, au kiungo kilichopitwa na wakati husimamisha uanzishaji na huelekeza kwenye `ccam doctor --fix`.
 
-`merge JSON` (`MergeJSONBytes`) huunganisha vitu kwa kujirudia, huunganisha safu bila marudio, na huhifadhi thamani ya kikundi wakati pande zote mbili zinaweka ufunguo ule ule kwa njia tofauti, kwa hiyo akaunti nyingine hazioni badiliko la tabia. `merge by line` huhifadhi mistari ya kikundi, kisha huongeza mistari yako ambayo haina. Kila chaguo isipokuwa `keep group` kwanza huhifadhi nakala ya kikundi katika `.ccam-backup/<time>/group/` ndani ya folda ya akaunti, kisha huandika matokeo kwa `fsutil.AtomicWrite`. Faili yako mwenyewe daima huenda kwenye nakala rudufu.
+### Kubadilisha jina, kuondoa na muundo wa zamani
 
-`--prefer group`, `mine` au `merge` huamua kila mgongano bila kuuliza; `merge` inamaanisha `merge JSON` au `merge by line`, yoyote ambayo faili inatoa, na faili isiyotoa yoyote kati ya hizo huhifadhi chaguo-msingi. `--yes` peke yake huchukua chaguo-msingi la kila faili.
-
-Katika kila uanzishaji, `share.Check` hulinganisha kila njia katika mpangilio na mpangilio wa kushiriki kwa kutumia `lstat` na `readlink` tu, jambo linaloifanya kuwa nafuu vya kutosha kwa njia ya kuanzisha. Kiungo kinachokosekana huundwa papo hapo, kwa sababu hakuna cha kupoteza. Faili halisi mahali ambapo kiungo kinapaswa kuwa, kiungo kinachoelekea mahali pasipo sahihi, au kiungo kilichopitwa na wakati husimamisha uanzishaji:
-
-```console
-ccam: stopped because of share link problems:
-  ~/.local/share/ccam/profiles/work/CLAUDE.md: set to shared but is a real file, not a link
-Repair them with `ccam doctor --fix`, then run again
-```
-
-`ccam doctor --fix` huendesha `share.Build` kwa mipangilio iliyohifadhiwa pande zote mbili, jambo linalotoa kila hatua kutokana na kilichopo kwenye diski, huhifadhi maudhui ya kikundi kwenye migongano na huhifadhi nakala rudufu ya chochote inachokibadilisha.
+- `ccam group rename` hubadilisha usanidi pekee. Folda huhifadhi jina lake na kikundi hulirekodi kama `dir`, kwa hiyo hakuna kinachohama na hakuna kinachoweza kupotea.
+- `ccam group remove` hukataa kikundi chenye akaunti usipoongeza `--leave`. Kisha kila akaunti hubaki na nakala, na folda huenda `~/.local/share/ccam/trash/` isipokuwa kikundi kingine kinaitumia.
+- Kabla ya vikundi, `config.toml` ilihifadhi jedwali la `[profile.share]` kwa kila akaunti. ccam husoma muundo huo kama vikundi bila kuhamisha chochote. Katika uhifadhi wa kwanza huandika muundo mpya na huhifadhi faili ya zamani kama `config.toml.bak`. Vipengele vinavyoshirikiwa na akaunti zile zile huwa kikundi kimoja chenye jina la folda; vingine hupata majina kama `default-history` na huendelea kutumia folda ile ile.
 
 ### Kwenye Windows
 
-Windows huunda viungo vya ishara (symbolic links) katika Developer Mode pekee (Settings > System > For developers) au kwa msimamizi. `fsutil.Link` hujaribu kiungo cha ishara kwanza. Bila haki hiyo, folda inayoshirikiwa (`agents`, `skills`, `projects` na nyinginezo) huwa directory junction, ambayo mtumiaji yeyote anaweza kuunda, na hufanya kazi vivyo hivyo kwa Claude Code. Faili inayoshirikiwa (`settings.json`, `CLAUDE.md`, `history.jsonl`) inaweza kuwa kiungo cha ishara tu, kwa hiyo ccam husimama na `Windows links files only in Developer Mode` na hupendekeza kuiwasha au kuacha kipengele hicho kiwe cha ndani. `share.Check` husoma junctions kama viungo (`fsutil.LinkTarget`), na kuondoa folda ya akaunti huondoa junction yenyewe, kamwe si maudhui ya kikundi inayoyaelekea.
+Windows huunda viungo vya ishara (symbolic links) katika Developer Mode pekee (Settings > System > For developers) au kwa msimamizi. Bila haki hiyo, folda inayoshirikiwa huwa directory junction, ambayo hufanya kazi vivyo hivyo kwa Claude Code. Faili inayoshirikiwa (`settings.json`, `CLAUDE.md`, `history.jsonl`) inaweza kuwa kiungo cha ishara tu, kwa hiyo badiliko la kikundi linalohitaji kiungo kama hicho hukataliwa kabla ya kitu chochote kuhamishwa.
 
 ## Usalama na hali maalum
 
-- **Akaunti zinazoendeshwa.** ccam hukataa kubadilisha kushiriki wakati Claude Code inaendeshwa kama akaunti hiyo (`account work is running; quit it first, then change its sharing`), kwa sababu kipindi kinaendelea kuandika kwenye faili zinazohamishwa na mistari inayoongeza wakati huo ingepotea. `--dry-run` bado huchapisha mpango.
-- **Nakala rudufu.** Kila mpango hupata folda yake ya `.ccam-backup/<time>/` katika folda ya akaunti, yenye kiambishi cha namba mipango miwili inapoanza katika sekunde ile ile. ccam kamwe haizifuti.
-- **Kushindwa kwa sehemu.** Hatua ikishindwa, ccam huchapisha kosa na mahali faili asili zilipo, na hukuambia ukamilishe kwa `ccam doctor --fix`. Lengo tayari limehifadhiwa, kwa hiyo urekebishaji huendelea kuelekea huko.
+- **Akaunti zinazoendeshwa.** Badiliko hukataliwa wakati Claude Code inaendeshwa kama mojawapo ya akaunti linazozihamisha, kwa sababu kipindi kinaendelea kuandika kwenye faili hizo. Kuondoka na kujiunga huhusu akaunti iliyotajwa pekee. `--dry-run` bado huchapisha mpango.
+- **Nakala rudufu.** Kila mpango hupata folda yake ya `.ccam-backup/<time>/` katika folda ya akaunti. ccam kamwe haizifuti.
 - **Viungo vyako mwenyewe.** Ikiwa njia tayari ni kiungo ulichokiunda, kwa mfano kuelekea hazina ya dotfiles, na kikundi kiko tupu, ccam hunakili lengo la kiungo kwenda kwenye kikundi na huhamisha kiungo chenyewe kwenye nakala rudufu. Lengo haliguswi.
-- **Faili za kuingia.** `.credentials.json` na `.claude.json` kamwe haziunganishwi, kuhamishwa wala kunakiliwa kwenye kikundi.
-- **Akaunti mbili katika folda moja.** Akaunti zinazoshiriki historia huandika kwenye faili zile zile. Akaunti ya pili ya kikundi kile kile cha historia inapoanza katika folda ambamo moja tayari inaendeshwa, ccam huonya na huuliza kabla ya kuendelea.
+- **Folda zilizoingizwa.** Akaunti iliyosajiliwa pale ilipo kwa `ccam import` (kama `~/.claude`) hubadilika pale ilipo, kwa hiyo `claude` ya kawaida huona badiliko pia; mpango husema hivyo.
+- **Akaunti mbili katika folda moja.** Akaunti zinazoshiriki historia huandika kwenye faili zile zile. Akaunti ya pili inapoanza katika folda ambamo moja tayari inaendeshwa, ccam huonya na huuliza.
+- **Mabadiliko ya mkono.** Mwanachama ambaye si akaunti hupuuzwa na huripotiwa na `ccam doctor`. Majina `local`, `on`, `off` na `none` hayawezi kuwa majina ya vikundi.
 
 ## Zinazohusiana
 
+- [Dashibodi](/features/dashboard)
 - [Shiriki seva za MCP, mipangilio na historia](/docs/sharing)
 - [Seva za MCP zinazoshirikiwa](/features/mcp)
 - [Nakili usanidi uliopo](/features/migrate)

@@ -1,10 +1,10 @@
 ---
 title: 启动 Claude Code
-description: 用 ccam <name|number>、ccam run 或 ccam 选择器以任意账号启动 Claude Code；参数原样传给 claude，--dry-run 会显示将执行的命令。
+description: 用 ccam <name|number>、ccam run 或仪表盘以任意账号启动 Claude Code；参数原样传给 claude，--dry-run 会显示将执行的命令。
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: e6b5a8d4df86
+sourceHash: "4812b197f143"
 ---
 
 `ccam work` 以账号 `work` 启动 Claude Code，账号名之后的所有内容都原样传给 `claude`。凡是你会输入 `claude` 的地方都可以用它：在终端中、在脚本中，或者通过管道输入。
@@ -21,7 +21,7 @@ ccam -p "summarise"              # no name: the folder's account, else the defau
 ccam use work                    # make work the default account
 ccam folder work ~/code/company  # use work in that folder when no name is given
 ccam run work --continue         # same as ccam work --continue
-ccam                             # the picker on a terminal, the list otherwise
+ccam                             # the dashboard on a terminal, the list otherwise
 ccam --dry-run work -p hi        # print the command instead of running it
 ccam --fallback work -p "fix the tests"   # run again as another account at the limit
 ```
@@ -30,22 +30,13 @@ ccam --fallback work -p "fix the tests"   # run again as another account at the 
 
 当第一个参数以 `-` 开头且不是 ccam 自己的选项时，ccam 会用全部参数启动一个不指定名称的账号。这个账号是用 [`ccam folder`](/features/folder) 为当前文件夹设置的账号，否则就是默认账号：用 `ccam use` 设置的账号；如果没有设置，则是编号最小的账号。
 
-### 选择器
+### 仪表盘
 
-不带参数的 `ccam` 在标准输入和输出都是终端时打开选择器，否则打印 `ccam list`。它显示每个账号的编号、邮箱、5 小时用量、最近使用时间和共享项；用量会在每个账号返回结果时逐个填入。
+不带参数的 `ccam` 在标准输入和输出都是终端时打开[仪表盘](/features/dashboard)，否则打印 `ccam list`。移动到某个账号（用方向键，或输入它的编号），按 `Enter` 启动它；`n` 启动余量最多的账号，`o` 提供 `--continue`、`--resume` 或其他参数。仪表盘会在 Claude Code 启动之前关闭，因此终端会先恢复原状。
 
-| 按键 | 作用 |
-| --- | --- |
-| `Enter` | 以选中的账号启动 Claude Code |
-| `1` 到 `9` | 启动对应编号的账号 |
-| `Up`/`Down`、`k`/`j` | 移动选择 |
-| `a` | 关闭选择器并运行 `ccam add` 向导 |
-| `s` | 编辑选中账号的共享项（`Space` 或 `x` 切换，`Enter` 应用，`Esc` 返回） |
-| `d` | 把选中的账号设为默认账号 |
-| `r` | 不使用短期缓存，重新获取用量 |
-| `q`、`Esc`、`Ctrl+C` | 退出 |
+当 shell 设置了 `CLAUDE_CODE_OAUTH_TOKEN`、`ANTHROPIC_API_KEY` 或 `ANTHROPIC_AUTH_TOKEN` 时，Claude Code 会使用这个密钥或令牌，而不是账号自己的登录，所以 ccam 会在启动之前在标准错误上提示这一点（`ccam: $ANTHROPIC_API_KEY is set, so Claude Code may use that key instead of work's login…`）。它只读取这些变量；[API 密钥账号](/features/api)则会清除它们。
 
-选择器会在执行操作之前关闭，因此终端会在 Claude Code 启动前恢复原状。按 `d` 或更改共享之后，选择器会再次打开。更改共享时会像 `ccam share` 一样先显示计划并征求确认。
+在 `config.toml` 中设置 `relay = true` 时，ccam 以子进程方式启动交互式会话并留在它们旁边，这样 `/ccam:switch` 就能自己继续一次对话（[详情](/features/next#inside-claude-code)）；否则 ccam 会用 Claude Code 替换自身，旁边不会运行任何东西。
 
 ## 选项
 
@@ -84,7 +75,7 @@ $env:CLAUDE_CONFIG_DIR='C:\Users\me\.local\share\ccam\profiles\work'; & C:\Users
 每个方框会在对应步骤执行时亮起，下面的几行是 Claude Code 启动时使用的环境变量和参数。
 
 1. `cmd/ccam/main.go` 调用 `app.Main`。如果 ccam 是以其他名称启动的，那就是一个[快捷命令](/features/shortcuts)，直接进入启动器。
-2. `app.parse` 在 cobra 介入之前查看 `os.Args`。只有单独的 `ccam`（选择器）、ccam 命令名（`config.Reserved`）、`-h`/`--help` 和 `-v`/`--version` 会进入 `cli.Execute`。其他一切都是启动。
+2. `app.parse` 在 cobra 介入之前查看 `os.Args`。只有单独的 `ccam`（仪表盘）、ccam 命令名（`config.Reserved`）、`-h`/`--help` 和 `-v`/`--version` 会进入 `cli.Execute`。其他一切都是启动。
 3. `launcher.Launch` 读取 `~/.config/ccam/config.toml`，这是它解析的唯一文件。
 4. `launcher.Prepare` 按名称或编号找到账号（不指定名称时，`HereProfile` 会取当前文件夹的账号，它把工作目录与 `config.toml` 中的 `[[folder]]` 条目按字符串进行比较），去掉开头的一个 `--`，并用 `ResolveClaude` 解析 `claude` 可执行文件。PATH 查找结果连同文件的修改时间一起缓存在 `~/.local/state/ccam/claude-path` 中，因此 ccam 不会在每次启动时搜索 `PATH`。文件变化或不存在时会重新查找。`config.toml` 中的 `claude_bin` 路径会被原样使用。如果 `claude` 就是 ccam 自身（按 inode 比较），ccam 会拒绝它，因为那会造成循环。
 5. `checkLinks` 用 `share.Check` 把账号文件夹 `~/.local/share/ccam/profiles/<name>/` 与它的共享设置进行比较；它只调用 `lstat` 和 `readlink`，每项一到两次系统调用。缺少的链接会当场创建。任何可能丢失数据的情况都会中止启动。

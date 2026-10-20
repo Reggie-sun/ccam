@@ -4,7 +4,7 @@ description: "ccam folder fait utiliser un compte à un dossier et à son conten
 updated: 2026-10-20
 order: 11
 translation: machine
-sourceHash: 5071b04a194d
+sourceHash: 46d1410a3d81
 ---
 
 `ccam folder work ~/code/company` fait que tout lancement sans nom de compte dans `~/code/company`, et dans n'importe quel dossier en dessous, démarre Claude Code avec `work`. En dehors, le compte par défaut démarre comme avant. Nommer un compte, avec `ccam personal` ou un raccourci comme `ccpersonal`, lance toujours ce compte.
@@ -34,7 +34,7 @@ Ces lancements utilisent le compte du dossier :
 - `ccam -p "…"` et tout autre lancement dont le premier argument est une option destinée à Claude Code
 - `ccam run` sans nom, et `ccam --dry-run`
 - `ccam --fallback -p "…"` pour sa première tentative
-- le sélecteur, `ccam` seul, qui place d'abord son curseur sur le compte du dossier
+- le tableau de bord, `ccam` seul, qui place d'abord son curseur sur le compte du dossier
 
 ## Options
 

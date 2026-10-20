@@ -4,7 +4,7 @@ description: ccam pick ಸ್ಕ್ರಿಪ್ಟ್‌ಗಾಗಿ ಹೆಚ�
 updated: 2026-10-20
 order: 12
 translation: machine
-sourceHash: 65a5a7e179a5
+sourceHash: "2e8285b7c193"
 ---
 
 `ccam pick` ಲಾಗಿನ್ ಆಗಿರುವ, ಹೆಚ್ಚು ಅವಕಾಶ ಇರುವ ಖಾತೆಯ ಹೆಸರನ್ನು ಮುದ್ರಿಸುತ್ತದೆ, ಇದರಿಂದ ಸ್ಕ್ರಿಪ್ಟ್ ಆ ಖಾತೆಯಲ್ಲಿ Claude Code ಅನ್ನು ಆರಂಭಿಸಬಹುದು. ಅವಕಾಶ ಇರುವ ಸಾಕಷ್ಟು ಖಾತೆಗಳಿರುವವರೆಗೆ, ಒಂದೇ ಸಮಯದಲ್ಲಿ ಆರಂಭವಾದ ವರ್ಕರ್‌ಗಳಿಗೆ ತಲಾ ಬೇರೆ ಖಾತೆ ಸಿಗುತ್ತದೆ. ಹೀಗಾಗಿ `claude -p` ಕೆಲಸಗಳ ಗುಂಪು ಒಂದೇ ಖಾತೆಯನ್ನು ಖಾಲಿ ಮಾಡುವ ಬದಲು ನಿಮ್ಮ ಖಾತೆಗಳಾದ್ಯಂತ ಹಂಚಿಹೋಗುತ್ತದೆ.
@@ -19,6 +19,8 @@ done; wait
 ccam pick --json                      # the account and its usage
 ccam pick --model opus                # also count the Opus weekly limit
 ccam pick --max-usage 80 --strategy expiring
+ccam pick --strategy balance          # spread over the weekly quota, fewer running sessions first
+ccam pick --cross-org                 # also accounts of other organizations
 ccam pick --wait=2h                   # nobody has room: wait for a reset
 ccam --fallback "$(ccam pick)" -p "…" # also switch if this account hits its limit mid-job
 ```
@@ -31,7 +33,8 @@ $ ccam pick --json
   "email": "dev@company.com",
   "five_hour": { "percent": 12, "resets_at": "2026-10-20T15:10:00Z", "known": true },
   "weekly": { "percent": 41, "resets_at": "2026-10-24T09:00:00Z", "known": true },
-  "source": "live"
+  "source": "live",
+  "reason": "12% of its 5 hours used, the least"
 }
 ```
 
@@ -41,16 +44,17 @@ $ ccam pick --json
 
 | ಆಯ್ಕೆ | ಏನು ಮಾಡುತ್ತದೆ | ಡೀಫಾಲ್ಟ್ |
 | --- | --- | --- |
-| `--json` | ಖಾತೆ, ಅದರ 5 ಗಂಟೆಯ ಮತ್ತು ವಾರದ ಬಳಕೆ, ಮತ್ತು ಸಂಖ್ಯೆಗಳು ಎಲ್ಲಿಂದ ಬಂದವು ಎಂಬುದನ್ನು ಮುದ್ರಿಸುತ್ತದೆ | ಆಫ್ |
+| `--json` | ಖಾತೆ, ಅದರ 5 ಗಂಟೆಯ ಮತ್ತು ವಾರದ ಬಳಕೆ, ಸಂಖ್ಯೆಗಳು ಎಲ್ಲಿಂದ ಬಂದವು ಮತ್ತು ಅದನ್ನು ಏಕೆ ಆಯ್ಕೆಮಾಡಲಾಯಿತು ಎಂಬುದನ್ನು ಮುದ್ರಿಸುತ್ತದೆ | ಆಫ್ |
 | `--model <model>` | `opus` ನಂತಹ ಆ ಮಾಡೆಲ್‌ನ ವಾರದ ಅವಧಿಯನ್ನೂ ಎಣಿಸುತ್ತದೆ | ಇಲ್ಲ |
 | `--max-usage <1-100>` | ಈ ಬಳಕೆಗಿಂತ ಕೆಳಗಿರುವ ಖಾತೆಗಳಿಗೆ ಆದ್ಯತೆ | `auto_max_usage`, ಇಲ್ಲದಿದ್ದರೆ 100 |
-| `--strategy headroom\|expiring` | ಅತಿ ಕಡಿಮೆ 5 ಗಂಟೆಯ ಬಳಕೆ, ಅಥವಾ ಬೇಗ ಬರುವ 5 ಗಂಟೆಯ ರೀಸೆಟ್ | `auto_strategy`, ಇಲ್ಲದಿದ್ದರೆ `headroom` |
+| `--strategy headroom\|expiring\|balance` | ಅತಿ ಕಡಿಮೆ 5 ಗಂಟೆಯ ಬಳಕೆ, ಬೇಗ ಬರುವ 5 ಗಂಟೆಯ ರೀಸೆಟ್, ಅಥವಾ ಮೊದಲು ಬಳಕೆಯಾಗದೆ ಹೋಗುವ ವಾರದ ಕೋಟಾ | `auto_strategy`, ಇಲ್ಲದಿದ್ದರೆ `headroom` |
+| `--cross-org` | ಬೇರೆ ಸಂಸ್ಥೆಗಳ ಖಾತೆಗಳನ್ನೂ ಆಯ್ಕೆಮಾಡುತ್ತದೆ | `cross_org`, ಇಲ್ಲದಿದ್ದರೆ ಆಫ್ |
 | `--wait[=<duration>]` | ಯಾವ ಖಾತೆಯಲ್ಲೂ ಅವಕಾಶ ಇಲ್ಲದಿದ್ದಾಗ, ಮೊದಲ ಖಾತೆ ರೀಸೆಟ್ ಆಗುವವರೆಗೆ, ಗರಿಷ್ಠ ಇಷ್ಟು ಸಮಯ ಕಾಯುತ್ತದೆ | ಆಫ್; ಮೌಲ್ಯವಿಲ್ಲದೆ ನೀಡಿದರೆ `5h` |
 | `--dry-run` | ಆಯ್ಕೆಯನ್ನು ದಾಖಲಿಸದೆ ಆಯ್ಕೆಮಾಡುತ್ತದೆ | ಆಫ್ |
 
 ## ಇದು ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ
 
-1. ccam ಲಾಗಿನ್ ಆಗಿರುವ ಖಾತೆಗಳನ್ನು ಪಟ್ಟಿ ಮಾಡುತ್ತದೆ (API ಕೀ ಖಾತೆಗಳಿಗೆ ಮಿತಿಗಳಿಲ್ಲ, ಹೀಗಾಗಿ ಅವುಗಳನ್ನು ಬಿಡಲಾಗುತ್ತದೆ).
+1. ಈ ಫೋಲ್ಡರ್ ಆರಂಭಿಸುವ ಖಾತೆಯ ಸಂಸ್ಥೆಯಲ್ಲಿ ([ಸಂಸ್ಥೆಗಳು](/features/next#auto) ನೋಡಿ) ಲಾಗಿನ್ ಆಗಿರುವ ಖಾತೆಗಳನ್ನು ccam ಪಟ್ಟಿ ಮಾಡುತ್ತದೆ (API ಕೀ ಖಾತೆಗಳಿಗೆ ಮಿತಿಗಳಿಲ್ಲ, ಹೀಗಾಗಿ ಅವುಗಳನ್ನು ಬಿಡಲಾಗುತ್ತದೆ); ಅದೇ Claude ಖಾತೆಗೆ ಲಾಗಿನ್ ಆಗಿರುವ ಫೋಲ್ಡರ್ ಅನ್ನೂ ಬಿಡಲಾಗುತ್ತದೆ.
 2. ಅದು ಒಂದು ಲಾಕ್ (`~/.local/state/ccam/picks.lock`) ತೆಗೆದುಕೊಳ್ಳುತ್ತದೆ, ಹೀಗಾಗಿ ಒಂದೇ ಸಮಯದಲ್ಲಿ ನಡೆಯುವ ಆಯ್ಕೆಗಳು ಒಂದರ ನಂತರ ಒಂದು ನಡೆಯುತ್ತವೆ.
 3. ಅದು `ccam usage` ಮಾಡುವಂತೆಯೇ, 60 ಸೆಕೆಂಡ್ ಕ್ಯಾಶ್‌ನೊಂದಿಗೆ, ಎಲ್ಲಾ ಖಾತೆಗಳ ಬಳಕೆಯನ್ನು ಒಮ್ಮೆಗೇ ನೋಡುತ್ತದೆ.
 4. ಕೊನೆಯ 2 ನಿಮಿಷಗಳಲ್ಲಿ ಆಯ್ಕೆಯಾದ ಖಾತೆಗಳನ್ನು (`~/.local/state/ccam/picks/<name>`) ಮೊದಲು ಬಿಡಲಾಗುತ್ತದೆ, ಮತ್ತು `ccam next --auto` ನ [ಆಯ್ಕೆ ನಿಯಮಗಳು](/features/next#auto) ಉಳಿದವುಗಳಲ್ಲಿ ಆಯ್ಕೆಮಾಡುತ್ತವೆ: ಮೊದಲು `auto_max_usage` ಗಿಂತ ಕೆಳಗಿರುವವು, strategy ಪ್ರಕಾರ, 100% ತಲುಪಿದ ಖಾತೆ ಎಂದಿಗೂ ಅಲ್ಲ.

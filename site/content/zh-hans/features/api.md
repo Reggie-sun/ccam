@@ -4,7 +4,7 @@ description: ccam add --api 为 Anthropic 的 API 或网关添加 API 密钥账�
 updated: 2026-10-20
 order: 13
 translation: machine
-sourceHash: de2c5cde2c48
+sourceHash: "a903c92f2c50"
 ---
 
 API 密钥账号用 API 密钥而不是 Claude 订阅登录来启动 Claude Code：可以是 Anthropic 的 API，也可以是使用相同 Messages 格式的接口，例如 LiteLLM 或 OpenRouter 网关。ccam 不保存密钥。每次启动该账号时，它都会从环境变量或某个命令（例如密码管理器）中读取密钥，并只把它交给那个 Claude Code 进程。
@@ -22,12 +22,12 @@ ccam list
 
 ```console
 $ ccam list
-   #  Name      Shortcut  Email                    Shared               Last used
-*  1  personal  -         me@example.com           mcp settings md ext  2h ago
-   2  gw        -         (API: llm.example.com)   mcp settings md ext  -
+   #  Name      Shortcut  Email                   Groups   Last used
+*  1  personal  -         me@example.com          default  2h ago
+   2  gw        -         (API: llm.example.com)  default  -
 ```
 
-API 密钥账号和其他账号一样共享设置、`CLAUDE.md`、扩展和 MCP 服务器，也可以配合快捷命令、`ccam folder` 和 `ccam ext` 使用。
+API 密钥账号和其他账号一样加入组（默认是 `default`：设置、`CLAUDE.md`、扩展和 MCP 服务器），也可以配合快捷命令、`ccam folder` 和 `ccam ext` 使用。
 
 ## 选项
 
@@ -59,7 +59,7 @@ model = 'claude-sonnet-5-5'
 每次启动该账号时，在常规检查之后、Claude Code 启动之前：
 
 1. ccam 读取密钥：`env:` 从环境中读取，`command:` 通过运行该命令读取，限时 30 秒。命令可以在终端上询问密码，它的错误输出也会显示在终端上。如果密钥为空，启动会停止，并显示一条说明预期在哪里找到密钥的消息。
-2. 它会删除所有继承来的、决定 Claude Code 如何登录或使用哪个提供商的变量：`ANTHROPIC_API_KEY`、`ANTHROPIC_AUTH_TOKEN`、`CLAUDE_CODE_OAUTH_TOKEN`、`ANTHROPIC_BASE_URL`、`ANTHROPIC_MODEL`、`CLAUDE_CODE_USE_BEDROCK`、`CLAUDE_CODE_USE_VERTEX` 和 `CLAUDE_CODE_USE_FOUNDRY`。你在 shell 中为其他用途设置的密钥无法到达这个账号，订阅登录也无法压过它的密钥。
+2. 它会删除所有继承来的、决定 Claude Code 如何登录或使用哪个提供商的变量：密钥和令牌（`ANTHROPIC_API_KEY`、`ANTHROPIC_AUTH_TOKEN`、`CLAUDE_CODE_OAUTH_TOKEN`、`CLAUDE_CODE_OAUTH_TOKEN_FILE_DESCRIPTOR`、`CLAUDE_CODE_API_KEY_FILE_DESCRIPTOR`）、接口地址（`ANTHROPIC_BASE_URL`、`ANTHROPIC_UNIX_SOCKET`、`ANTHROPIC_MODEL`）以及提供商开关（`CLAUDE_CODE_USE_BEDROCK`、`CLAUDE_CODE_USE_VERTEX`、`CLAUDE_CODE_USE_FOUNDRY`、`CLAUDE_CODE_USE_ANTHROPIC_AWS`、`CLAUDE_CODE_USE_ANTHROPIC_GOOGLE_CLOUD`、`CLAUDE_CODE_USE_MANTLE`、`CLAUDE_CODE_USE_GATEWAY`）。你在 shell 中为其他用途设置的密钥无法到达这个账号，订阅登录也无法压过它的密钥。
 3. 如果给出了 `ANTHROPIC_BASE_URL` 和 `ANTHROPIC_MODEL`，就设置它们，并把密钥设置为 `ANTHROPIC_API_KEY` 或 `ANTHROPIC_AUTH_TOKEN`。
 
 使用订阅登录的账号和以前一样，保留它们继承的环境。在交互式会话中，Claude Code 可能会询问一次是否使用它在环境中找到的密钥。
@@ -70,7 +70,7 @@ model = 'claude-sonnet-5-5'
 - `ccam add --api` 会立即检查 `env:` 来源，如果该变量为空就发出警告；`command:` 来源在启动时才第一次运行。
 - API 密钥账号没有登录，因此 `ccam login` 和 `ccam logout` 会拒绝它。`ccam doctor` 会显示它的接口地址和密钥来源，并在 `env:` 变量为空时发出警告。
 - `ccam usage` 对它显示 `API`。`ccam next --auto`、`--fallback` 和 `ccam pick` 只在订阅账号中选择，因为 API 密钥没有可供比较的 5 小时或每周限制。
-- 带有 `env` 块或 `apiKeyHelper` 的共享 `settings.json` 会作用于组中的每个账号，包括 API 密钥账号。请不要把提供商设置放进共享设置。
+- 带有 `env` 块或 `apiKeyHelper` 的共享 `settings.json` 会作用于组中的每个账号，包括 API 密钥账号。请不要把提供商设置放进共享设置，或者把 API 密钥账号放进一个不共享 `settings` 的组。
 
 ## 相关内容
 

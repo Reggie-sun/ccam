@@ -5,7 +5,7 @@ description: Linux, macOS அல்லது Windows-இல் ccam-ஐ ஒர�
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: aea4984c1576
+sourceHash: "07fab3165030"
 ---
 
 Linux அல்லது macOS-இல் ஒரு டெர்மினலில் இதை இயக்குங்கள்:
@@ -80,7 +80,7 @@ ccam plugin, Claude Code-க்கே ccam-ஐப் பயன்படுத்
 /plugin install ccam --marketplace jhyunwoo/ccam
 ```
 
-அது ஒரு skill-ஐயும் இரண்டு commands-ஐயும் சேர்க்கிறது, `/ccam:usage` மற்றும் `/ccam:ext`. அந்த skill உள்நுழையும் அல்லது கோப்புகளை நகர்த்தும் கட்டளைகளை ஒருபோதும் இயக்காது; அதற்குப் பதிலாக அவற்றைப் பரிந்துரைக்கும்.
+அது ஒரு skill-ஐயும், `/ccam:usage`, `/ccam:ext`, `/ccam:switch` ஆகிய commands-ஐயும், இரண்டு hooks-ஐயும் சேர்க்கிறது: ஓர் அமர்வு பயன்பாட்டு வரம்பில் நிற்கும்போது உங்களுக்கு ஒரு டெர்மினல் அறிவிப்பு கிடைக்கும், `/ccam:switch [account]` உரையாடலை வேறொரு கணக்கிடம் ஒப்படைக்கும் ([விவரங்கள்](/features/next#inside-claude-code)). hooks `ccam`-ஐ இயக்குகின்றன, அதனால் Claude Code பார்க்கும் `PATH`-இல் அது இருக்க வேண்டும். அந்த skill உள்நுழையும் அல்லது கோப்புகளை நகர்த்தும் கட்டளைகளை ஒருபோதும் இயக்காது; அதற்குப் பதிலாக அவற்றைப் பரிந்துரைக்கும்.
 
 ## நிறுவலைச் சரிபார்த்தல்
 

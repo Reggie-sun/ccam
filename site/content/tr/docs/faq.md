@@ -5,7 +5,7 @@ description: ccam, Claude Code hesapları, kullanım limitleri, paylaşım, gizl
 updated: 2026-10-20
 order: 6
 translation: machine
-sourceHash: 80a5475ccfee
+sourceHash: "e7d4a2c877ac"
 ---
 
 ## ccam resmi bir Anthropic aracı mı?
@@ -26,7 +26,7 @@ Her hesaba `CLAUDE_CONFIG_DIR` ile kendi yapılandırma klasörünü verin. ccam
 
 ## Bir konuşmaya başka bir hesapta nasıl devam ederim?
 
-İki hesap arasında konuşma geçmişini `ccam share <name> --history on` ile paylaşın, ardından `ccam next --continue` komutunu çalıştırın. Claude Code, geçerli klasörün en son konuşmasını bir sonraki hesapta açar.
+Hesaplar arasında konuşma geçmişini `ccam group set default --add history` ile (ya da onlara özel bir grupla: `ccam group add pair --items history --members work,side`) paylaşın, ardından `ccam next --continue` komutunu çalıştırın. Claude Code, geçerli klasörün en son konuşmasını bir sonraki hesapta açar.
 
 ## ccam giriş bilgilerimi görüyor veya gönderiyor mu?
 

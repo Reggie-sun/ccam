@@ -4,7 +4,7 @@ description: "Remote Control Claude Code untuk akun mana pun via ccam <name> rc:
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 59b802c44bb3
+sourceHash: "5f0b90ea53d6"
 ---
 
 `ccam work rc` menjalankan Remote Control milik Claude Code sebagai akun `work`, sehingga Anda dapat mengendalikan sesi di komputer ini dari claude.ai/code atau aplikasi seluler Claude. Perintah ini bekerja seperti `claude rc` dengan satu perbedaan: jika akun berbagi server MCP, ccam bertanya sekali apakah server tersebut perlu disalin ke `.claude.json` milik akun, karena sesi Remote Control tidak membaca server dari tempat lain.
@@ -33,7 +33,7 @@ Ada dua jenis opsi di sini: opsi milik ccam, yang ditulis sebelum nama akun atau
 | `--dry-run` (sebelum akun) | Menampilkan environment dan perintah, serta pemberitahuan MCP jika ada. Tidak bertanya dan tidak menyalin | nonaktif |
 | `Copy them into .claude.json (a backup is kept)? [y/N]` | Ditanyakan jika akun berbagi server MCP dan `.claude.json` miliknya belum berisi daftar grup saat ini. `y` menyalinnya, `N` atau Enter memulai tanpa server tersebut | `N` |
 | `mcp_strategy = "sync"` di `~/.config/ccam/config.toml` | Menyalin server grup ke `.claude.json` sebelum setiap peluncuran, baik Remote Control maupun bukan, sehingga tidak pernah ada pertanyaan | `"flag"` |
-| `ccam share work --mcp off` | Berhenti berbagi server MCP dengan akun; Remote Control kemudian dimulai hanya dengan server milik akun sendiri dan tidak ada pertanyaan | aktif |
+| `ccam group leave <group> work` | Mengeluarkan akun dari grup yang membagikan MCP dengannya; Remote Control kemudian dimulai hanya dengan server milik akun sendiri dan tidak ada pertanyaan | di `default` |
 
 ### Opsi Remote Control
 
@@ -124,7 +124,7 @@ Sesi `work` masih terbuka: `ccam work` biasa, perintah pintasan, atau server Rem
 
 ### ccam selalu bertanya
 
-Anda belum menyalin server. Jawab `y` sekali, atau atur `mcp_strategy = "sync"`. Jika Anda tidak pernah ingin server tersebut ada di Remote Control, berhenti berbagi MCP dengan akun itu: `ccam share work --mcp off`.
+Anda belum menyalin server. Jawab `y` sekali, atau atur `mcp_strategy = "sync"`. Jika Anda tidak pernah ingin server tersebut ada di Remote Control, berhenti berbagi MCP dengan akun itu: keluarkan akun dari grup tersebut (`ccam group leave default work`), atau simpan MCP di grup tersendiri yang tidak mencakup akun itu.
 
 ### `ccam work rc` langsung gagal dengan error tentang `--mcp-config`
 

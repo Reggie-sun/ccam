@@ -5,10 +5,10 @@ description: 所有 ccam 指令和選項，從 ccam add、ccam <name> 到 ccam u
 updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: da2594c672bc
+sourceHash: "116c5b34ac9a"
 ---
 
-在指令前加上 `--dry-run`，就能查看它會做什麼而不實際執行，例如 `ccam --dry-run work`。它適用於啟動 Claude Code（`ccam <name>`、`ccam run`、`ccam next`）以及 `share`、`migrate`、`shortcut`、`update` 和 `doctor --fix`。其他會做出變更的指令則會拒絕它，而不會執行。
+在指令前加上 `--dry-run`，就能查看它會做什麼而不實際執行，例如 `ccam --dry-run work`。它適用於啟動 Claude Code（`ccam <name>`、`ccam run`、`ccam next`、`ccam attach`）以及 `group`、`migrate`、`shortcut`、`update` 和 `doctor --fix`。其他會做出變更的指令則會拒絕它，而不會執行。
 
 <!-- commands -->
 
@@ -33,9 +33,10 @@ ccam --fallback work -p "fix the tests"   # run again as another account at the 
 
 ```sh
 ccam add                      # wizard
-ccam add work --share history=on
+ccam add work --group default --group team
 ccam add side --shortcut ccside
 ccam add ci --no-login        # log in later with: ccam login ci
+ccam login --expired          # log in every account whose login no longer works
 ccam rename work job
 ccam remove side              # folder moves to ~/.local/share/ccam/trash
 ccam import ~/.claude-old --name old
@@ -46,9 +47,9 @@ ccam add gw --api --base-url https://llm.example.com --auth bearer --key-from en
 
 `ccam add --api` 會新增一個使用 API 金鑰而不是 Claude 登入的帳號；ccam 會在每次啟動時讀取金鑰，絕不儲存它。請參閱 [API 金鑰帳號](/features/api)。
 
-當 Claude Code 正以某個帳號執行時，`ccam rename`、`ccam remove` 和 `ccam share` 會拒絕變更該帳號。請先結束該工作階段。
+當 Claude Code 正以某個帳號執行時，`ccam rename`、`ccam remove` 和 `ccam group` 系列指令會拒絕變更該帳號。請先結束該工作階段。
 
-`ccam list --json` 會輸出每個帳號及其槽位、快捷指令、電子郵件和資料夾。其中的 `share` 物件會把每個項目（`mcp`、`settings`、`memory`、`extensions`、`history`）對應到一個群組名稱或 `local`。
+`ccam list --json` 會輸出每個帳號及其槽位、快捷指令、電子郵件和資料夾。其中的 `groups` 陣列會列出該帳號所屬的群組，`share` 物件則會把每個項目（`mcp`、`settings`、`memory`、`extensions`、`history`）對應到它所來自的群組，或 `local`。
 
 ## 快捷指令
 
@@ -69,12 +70,15 @@ ccam shortcut work --remove
 ## 共用
 
 ```sh
-ccam share work                       # show the current state
-ccam share work --history on --mcp team
-ccam share work --settings off --fresh
+ccam group                                  # the groups, what they share, their accounts
+ccam group add team --items history --members work,side
+ccam group set default --add history        # every account in default changes together
+ccam group join team personal
+ccam group leave team side --fresh
+ccam share work                             # what work shares, and through which group
 ```
 
-每個項目可以設為 `on`（`default` 群組）、`off` 或群組名稱。請參閱[共用](/docs/sharing)。
+群組會在其中的帳號之間共用項目；一個帳號可以屬於多個群組，但每個項目只會來自一個群組。請參閱[用群組共用](/features/share)。
 
 ## 複製現有的設定
 
@@ -106,14 +110,17 @@ ccam mcp remove fs
 ccam usage           # also: ccam u
 ccam usage --watch   # refresh every 60 seconds
 ccam usage --json
-ccam next --continue
+ccam usage --source claude      # Claude Code looks it up; ccam never touches a token
+ccam next --continue            # this folder's last conversation, as the next account
 ccam next --auto
 ccam next --auto --max-usage 80 --wait
 ccam pick                       # the account with the most room, for a script
 ccam "$(ccam pick)" -p "…"      # start a worker on it
+ccam agents                     # background sessions of every account
+ccam attach 49ec0028            # open one, as the account that started it
 ```
 
-`next --auto`、`--fallback` 和 `ccam pick` 的選擇方式相同：優先選低於 `auto_max_usage`（`config.toml`，預設 100）的帳號，依 `auto_strategy`（`headroom` 或 `expiring`）選擇，會計入 `--model` 的每週區間，絕不選擇用量 100% 的帳號。無法選出帳號時，它們會以代碼 75 結束，加上 `--wait` 時則等待第一個帳號重設。請參閱[切換到下一個帳號](/features/next)和[為指令碼選擇帳號](/features/pick)。
+`next --auto`、`--fallback` 和 `ccam pick` 的選擇方式相同：優先選低於 `auto_max_usage`（`config.toml`，預設 100）的帳號，依 `auto_strategy`（`headroom`、`expiring` 或 `balance`）選擇，會計入 `--model` 的每週區間，絕不選擇用量 100% 的帳號，而且只在起始帳號所屬的組織內選擇（加上 `--cross-org` 或設定 `cross_org = true` 可擴大範圍）。無法選出帳號時，它們會以代碼 75 結束，加上 `--wait` 時則等待第一個帳號重設。即使帳號之間沒有共用對話記錄，`ccam next --continue` 也能把對話帶過去：此時 Claude Code 會把對話複製到新的帳號。在 Claude Code 中，外掛的 `/ccam:switch [account]` 會把對話交接出去，而 `ccam hook` 就是它的 hook 所執行的指令。請參閱[切換到下一個帳號](/features/next)、[為指令碼選擇帳號](/features/pick)和[所有帳號的背景工作階段](/features/agents)。
 
 ## 維護
 
@@ -135,10 +142,10 @@ ccam completion bash # or zsh, powershell
 
 | 路徑 | 內容 |
 | --- | --- |
-| `~/.config/ccam/config.toml` | 帳號及其共用的項目 |
+| `~/.config/ccam/config.toml` | 帳號、群組和設定（`theme`、`usage_source`、`relay`、`cross_org` …） |
 | `~/.local/share/ccam/profiles/<name>/` | 每個帳號的 `CLAUDE_CONFIG_DIR` |
 | `~/.local/share/ccam/groups/<group>/` | 共用的設定、MCP 伺服器、擴充功能和對話記錄 |
-| `~/.local/state/ccam/` | 用量快取和上次使用時間 |
+| `~/.local/state/ccam/` | 用量快取、上次使用時間，以及 `/ccam:switch` 和上限 hook 留下的記錄（`handoff/`） |
 | `~/.local/bin/<shortcut>` | `ccwork` 這類快捷指令，也就是指向 ccam 的連結 |
 
 `XDG_CONFIG_HOME`、`XDG_DATA_HOME` 和 `XDG_STATE_HOME` 變數可以變更這些資料夾的位置。在 Windows 上，`~` 是 `%USERPROFILE%`，快捷指令則是 `<shortcut>.exe`。

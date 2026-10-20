@@ -4,7 +4,7 @@ description: Перегляньте 5-годинне й тижневе вико�
 updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: a84df8e873d6
+sourceHash: "40aef0708c81"
 ---
 
 `ccam usage` показує, яку частку 5-годинного та тижневого лімітів використав кожен обліковий запис. `ccam next --auto` відкриває обліковий запис із найбільшим запасом, а `--continue` переносить поточну розмову.
@@ -55,10 +55,10 @@ ccam statusline install
 ```sh
 ccam next             # the account after the one you used last
 ccam next --auto      # the account with the lowest 5-hour usage
-ccam next --continue  # the next account that shares your conversation history
+ccam next --continue  # carry this folder's conversation on as the next account
 ```
 
-`ccam next` пропускає облікові записи, у які не виконано вхід, а `--auto` пропускає облікові записи зі 100%. Щоб продовжити розмову, обидва облікові записи мають спільно використовувати історію розмов; див. [спільне використання](/docs/sharing).
+`ccam next` пропускає облікові записи, у які не виконано вхід, а `--auto` пропускає облікові записи зі 100% і облікові записи іншої організації. Коли два облікові записи мають спільну історію розмов, `--continue` відкриває ту саму розмову; інакше Claude Code копіює її в новий обліковий запис. Див. [спільне використання](/docs/sharing) і [перемикання на наступний обліковий запис](/features/next#continue).
 
 Для скриптів і запланованих завдань, які запускають `claude -p`, поставте `--fallback` перед назвою облікового запису. Коли цей обліковий запис досягає ліміту, ccam знову виконує ту саму команду від імені облікового запису, де найбільше запасу, і виводиться лише результат запуску, який завершився:
 

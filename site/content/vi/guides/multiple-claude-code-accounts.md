@@ -4,7 +4,7 @@ description: "Chạy song song nhiều tài khoản Claude Code với CLAUDE_CON
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: f2982e4317a2
+sourceHash: "ee92078b81c3"
 ---
 
 Hãy cho mỗi tài khoản một thư mục cấu hình riêng. Claude Code đọc thư mục này từ biến môi trường `CLAUDE_CONFIG_DIR`, và mỗi thư mục chứa thông tin đăng nhập, cài đặt và lịch sử riêng, nên mọi tài khoản đều giữ trạng thái đăng nhập và bạn có thể chạy chúng cùng lúc. Bạn có thể tự thiết lập bằng một alias của shell, hoặc để ccam làm việc đó.
@@ -69,7 +69,7 @@ Claude Code chạy [trực tiếp trên Windows và bên trong WSL](https://code
 
 **Một máy chủ MCP chỉ xuất hiện ở một tài khoản.** Máy chủ được thêm trong một phiên bằng `claude mcp add` thuộc về tài khoản đó. Chuyển nó sang mọi tài khoản bằng `ccam mcp import work <server>`.
 
-**Cài đặt khác nhau giữa các tài khoản.** `ccam share work` in ra những gì tài khoản đó dùng chung; `ccam share work --settings on` dùng chung cài đặt của nó, sau khi cho bạn xem những gì sẽ thay đổi. `ccam doctor --fix` sửa các liên kết bị hỏng và giữ bản sao lưu của mọi tệp mà nó thay đổi.
+**Cài đặt khác nhau giữa các tài khoản.** `ccam share work` in ra những gì tài khoản đó dùng chung và qua nhóm nào; `ccam group join default work` khiến nó dùng chung những gì `default` dùng chung, sau khi cho bạn xem những gì sẽ thay đổi. `ccam doctor --fix` sửa các liên kết bị hỏng và giữ bản sao lưu của mọi tệp mà nó thay đổi.
 
 **Hai tài khoản mở cùng một cuộc hội thoại.** Tránh làm việc trên một cuộc hội thoại bằng hai tài khoản cùng lúc. ccam sẽ cảnh báo nếu bạn thử.
 

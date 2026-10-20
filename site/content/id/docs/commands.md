@@ -5,10 +5,10 @@ description: Semua perintah dan opsi ccam, dari ccam add dan ccam <name> hingga 
 updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: da2594c672bc
+sourceHash: 116c5b34ac9a
 ---
 
-Letakkan `--dry-run` sebelum perintah untuk melihat apa yang akan dilakukannya tanpa benar-benar menjalankannya, misalnya `ccam --dry-run work`. Opsi ini berfungsi saat menjalankan Claude Code (`ccam <name>`, `ccam run`, `ccam next`) dan dengan `share`, `migrate`, `shortcut`, `update`, serta `doctor --fix`. Perintah lain yang mengubah sesuatu akan menolaknya alih-alih berjalan.
+Letakkan `--dry-run` sebelum perintah untuk melihat apa yang akan dilakukannya tanpa benar-benar menjalankannya, misalnya `ccam --dry-run work`. Opsi ini berfungsi saat menjalankan Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`) dan dengan `group`, `migrate`, `shortcut`, `update`, serta `doctor --fix`. Perintah lain yang mengubah sesuatu akan menolaknya alih-alih berjalan.
 
 <!-- commands -->
 
@@ -33,9 +33,10 @@ Pintasan seperti `ccwork` menjalankan akunnya dengan cara yang sama: `ccwork --r
 
 ```sh
 ccam add                      # wizard
-ccam add work --share history=on
+ccam add work --group default --group team
 ccam add side --shortcut ccside
 ccam add ci --no-login        # log in later with: ccam login ci
+ccam login --expired          # log in every account whose login no longer works
 ccam rename work job
 ccam remove side              # folder moves to ~/.local/share/ccam/trash
 ccam import ~/.claude-old --name old
@@ -46,9 +47,9 @@ ccam add gw --api --base-url https://llm.example.com --auth bearer --key-from en
 
 `ccam add --api` menambahkan akun yang memakai kunci API alih-alih login Claude; ccam membaca kunci itu setiap kali akun dijalankan dan tidak pernah menyimpannya. Lihat [akun kunci API](/features/api).
 
-`ccam rename`, `ccam remove`, dan `ccam share` menolak mengubah akun saat Claude Code sedang berjalan sebagai akun tersebut. Keluar dari sesi terlebih dahulu.
+`ccam rename`, `ccam remove`, dan perintah `ccam group` menolak mengubah akun saat Claude Code sedang berjalan sebagai akun tersebut. Keluar dari sesi terlebih dahulu.
 
-`ccam list --json` menampilkan setiap akun beserta slot, pintasan, email, dan foldernya. Objek `share` di dalamnya memetakan setiap item (`mcp`, `settings`, `memory`, `extensions`, `history`) ke nama grup atau `local`.
+`ccam list --json` menampilkan setiap akun beserta slot, pintasan, email, dan foldernya. Array `groups` di dalamnya mencantumkan grup-grup akun tersebut, dan objek `share` memetakan setiap item (`mcp`, `settings`, `memory`, `extensions`, `history`) ke grup asal item itu, atau `local`.
 
 ## Pintasan
 
@@ -69,12 +70,15 @@ Nama memakai karakter a-z, 0-9, `.`, `-`, dan `_`. Nama tidak boleh berupa perin
 ## Pembagian
 
 ```sh
-ccam share work                       # show the current state
-ccam share work --history on --mcp team
-ccam share work --settings off --fresh
+ccam group                                  # the groups, what they share, their accounts
+ccam group add team --items history --members work,side
+ccam group set default --add history        # every account in default changes together
+ccam group join team personal
+ccam group leave team side --fresh
+ccam share work                             # what work shares, and through which group
 ```
 
-Setiap item menerima `on` (grup `default`), `off`, atau nama grup. Lihat [pembagian](/docs/sharing).
+Sebuah grup membagikan item di antara akun-akunnya; satu akun bisa masuk ke beberapa grup, tetapi setiap item hanya berasal dari satu grup. Lihat [berbagi dengan grup](/features/share).
 
 ## Menyalin penyiapan yang sudah ada
 
@@ -106,14 +110,17 @@ ccam mcp remove fs
 ccam usage           # also: ccam u
 ccam usage --watch   # refresh every 60 seconds
 ccam usage --json
-ccam next --continue
+ccam usage --source claude      # Claude Code looks it up; ccam never touches a token
+ccam next --continue            # this folder's last conversation, as the next account
 ccam next --auto
 ccam next --auto --max-usage 80 --wait
 ccam pick                       # the account with the most room, for a script
 ccam "$(ccam pick)" -p "…"      # start a worker on it
+ccam agents                     # background sessions of every account
+ccam attach 49ec0028            # open one, as the account that started it
 ```
 
-`next --auto`, `--fallback`, dan `ccam pick` memilih dengan cara yang sama: akun di bawah `auto_max_usage` (`config.toml`, bawaan 100) lebih dulu, menurut `auto_strategy` (`headroom` atau `expiring`), dengan menghitung jendela mingguan `--model`, dan tidak pernah akun yang sudah 100%. Jika tidak ada yang bisa dipilih, semuanya keluar dengan kode 75, atau dengan `--wait` menunggu akun pertama di-reset. Lihat [Beralih ke akun berikutnya](/features/next) dan [Memilih akun untuk skrip](/features/pick).
+`next --auto`, `--fallback`, dan `ccam pick` memilih dengan cara yang sama: akun di bawah `auto_max_usage` (`config.toml`, bawaan 100) lebih dulu, menurut `auto_strategy` (`headroom`, `expiring`, atau `balance`), dengan menghitung jendela mingguan `--model`, tidak pernah akun yang sudah 100%, dan di dalam organisasi akun tempat mereka mulai (`--cross-org` atau `cross_org = true` untuk mencari lebih jauh). Jika tidak ada yang bisa dipilih, semuanya keluar dengan kode 75, atau dengan `--wait` menunggu akun pertama di-reset. `ccam next --continue` membawa percakapan bahkan di antara akun yang tidak berbagi riwayat: Claude Code lalu menyalinnya ke akun baru. Di dalam Claude Code, `/ccam:switch [account]` dari plugin meneruskan percakapan, dan `ccam hook` adalah yang dijalankan oleh hook-nya. Lihat [Beralih ke akun berikutnya](/features/next), [Memilih akun untuk skrip](/features/pick), dan [Sesi latar belakang semua akun](/features/agents).
 
 ## Pemeliharaan
 
@@ -135,10 +142,10 @@ ccam completion bash # or zsh, powershell
 
 | Path | Isi |
 | --- | --- |
-| `~/.config/ccam/config.toml` | Akun dan apa yang dibagikannya |
+| `~/.config/ccam/config.toml` | Akun, grup, dan pengaturan (`theme`, `usage_source`, `relay`, `cross_org` …) |
 | `~/.local/share/ccam/profiles/<name>/` | `CLAUDE_CONFIG_DIR` milik setiap akun |
 | `~/.local/share/ccam/groups/<group>/` | Pengaturan, server MCP, ekstensi, dan riwayat bersama |
-| `~/.local/state/ccam/` | Cache penggunaan dan waktu terakhir digunakan |
+| `~/.local/state/ccam/` | Cache penggunaan, waktu terakhir digunakan, dan catatan yang ditinggalkan `/ccam:switch` serta hook batas penggunaan (`handoff/`) |
 | `~/.local/bin/<shortcut>` | Perintah pintasan seperti `ccwork`, berupa tautan ke ccam |
 
 Variabel `XDG_CONFIG_HOME`, `XDG_DATA_HOME`, dan `XDG_STATE_HOME` memindahkan folder-folder ini. Di Windows, `~` adalah `%USERPROFILE%` dan pintasan berupa `<shortcut>.exe`.

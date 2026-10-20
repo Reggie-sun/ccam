@@ -4,7 +4,7 @@ description: ccam add --api, Anthropic API'si veya bir ağ geçidi için API ana
 updated: 2026-10-20
 order: 13
 translation: machine
-sourceHash: de2c5cde2c48
+sourceHash: "a903c92f2c50"
 ---
 
 API anahtarlı bir hesap, Claude Code'u Claude abonelik girişi yerine bir API anahtarıyla başlatır: Anthropic API'si ya da aynı Messages biçimini konuşan bir uç nokta, örneğin bir LiteLLM veya OpenRouter ağ geçidi. ccam anahtarı saklamaz. Hesap her başladığında anahtarı bir ortam değişkeninden ya da parola yöneticisi gibi bir komuttan okur ve yalnızca o Claude Code sürecine verir.
@@ -22,12 +22,12 @@ ccam list
 
 ```console
 $ ccam list
-   #  Name      Shortcut  Email                    Shared               Last used
-*  1  personal  -         me@example.com           mcp settings md ext  2h ago
-   2  gw        -         (API: llm.example.com)   mcp settings md ext  -
+   #  Name      Shortcut  Email                   Groups   Last used
+*  1  personal  -         me@example.com          default  2h ago
+   2  gw        -         (API: llm.example.com)  default  -
 ```
 
-API anahtarlı bir hesap, diğer her hesap gibi ayarları, `CLAUDE.md` dosyasını, uzantıları ve MCP sunucularını paylaşır; kısayollarla, `ccam folder` ve `ccam ext` ile de çalışır.
+API anahtarlı bir hesap, diğer her hesap gibi gruplara katılır (varsayılan olarak `default`: ayarlar, `CLAUDE.md`, uzantılar ve MCP sunucuları); kısayollarla, `ccam folder` ve `ccam ext` ile de çalışır.
 
 ## Seçenekler
 
@@ -59,7 +59,7 @@ model = 'claude-sonnet-5-5'
 Hesabın her başlatılışında, olağan kontrollerden sonra ve Claude Code başlamadan önce:
 
 1. ccam anahtarı okur: `env:` ortamdan, `command:` komutu 30 saniyelik bir sınırla çalıştırarak. Bir komut terminalde parola isteyebilir; hata çıktısı da terminale gider. Boş bir anahtar, anahtarın nerede beklendiğini söyleyen bir mesajla başlatmayı durdurur.
-2. Claude Code'un nasıl giriş yaptığını veya hangi sağlayıcıyı kullandığını belirleyen tüm devralınan değişkenleri kaldırır: `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_BASE_URL`, `ANTHROPIC_MODEL`, `CLAUDE_CODE_USE_BEDROCK`, `CLAUDE_CODE_USE_VERTEX` ve `CLAUDE_CODE_USE_FOUNDRY`. Kabuğunuzda başka bir şey için ayarlanmış bir anahtar bu hesaba ulaşamaz ve bir abonelik girişi onun anahtarının önüne geçemez.
+2. Claude Code'un nasıl giriş yaptığını veya hangi sağlayıcıyı kullandığını belirleyen tüm devralınan değişkenleri kaldırır: anahtarlar ve token'lar (`ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN_FILE_DESCRIPTOR`, `CLAUDE_CODE_API_KEY_FILE_DESCRIPTOR`), uç nokta (`ANTHROPIC_BASE_URL`, `ANTHROPIC_UNIX_SOCKET`, `ANTHROPIC_MODEL`) ve sağlayıcı anahtarları (`CLAUDE_CODE_USE_BEDROCK`, `CLAUDE_CODE_USE_VERTEX`, `CLAUDE_CODE_USE_FOUNDRY`, `CLAUDE_CODE_USE_ANTHROPIC_AWS`, `CLAUDE_CODE_USE_ANTHROPIC_GOOGLE_CLOUD`, `CLAUDE_CODE_USE_MANTLE`, `CLAUDE_CODE_USE_GATEWAY`). Kabuğunuzda başka bir şey için ayarlanmış bir anahtar bu hesaba ulaşamaz ve bir abonelik girişi onun anahtarının önüne geçemez.
 3. Verildiyse `ANTHROPIC_BASE_URL` ve `ANTHROPIC_MODEL` değişkenlerini, anahtarı da `ANTHROPIC_API_KEY` veya `ANTHROPIC_AUTH_TOKEN` olarak ayarlar.
 
 Abonelik girişli hesaplar, önceden olduğu gibi devraldıkları ortamı korur. Etkileşimli bir oturumda Claude Code, ortamda bulduğu anahtarı kullanıp kullanmayacağını bir kez sorabilir.
@@ -70,7 +70,7 @@ Abonelik girişli hesaplar, önceden olduğu gibi devraldıkları ortamı korur.
 - `ccam add --api` bir `env:` kaynağını hemen kontrol eder ve değişken boşsa uyarır; bir `command:` kaynağı ilk kez başlatmada çalıştırılır.
 - `ccam login` ve `ccam logout`, girişi olmadığı için API anahtarlı bir hesabı reddeder. `ccam doctor` onun uç noktasını ve anahtar kaynağını gösterir ve bir `env:` değişkeni boşsa uyarır.
 - `ccam usage` onun için `API` gösterir. `ccam next --auto`, `--fallback` ve `ccam pick` yalnızca abonelik hesapları arasından seçer, çünkü bir API anahtarının karşılaştırılacak 5 saatlik veya haftalık limiti yoktur.
-- Paylaşılan bir `settings.json`, içinde `env` bloğu veya `apiKeyHelper` varsa, API anahtarlı hesaplar dahil gruptaki her hesaba uygulanır. Sağlayıcı ayarlarını paylaşılan ayarların dışında tutun.
+- Paylaşılan bir `settings.json`, içinde `env` bloğu veya `apiKeyHelper` varsa, API anahtarlı hesaplar dahil gruptaki her hesaba uygulanır. Sağlayıcı ayarlarını paylaşılan ayarların dışında tutun ya da API anahtarlı hesabı `settings` içermeyen bir gruba koyun.
 
 ## İlgili
 

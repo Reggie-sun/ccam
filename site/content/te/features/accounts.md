@@ -4,7 +4,7 @@ description: ccam add, ccam login, ccam list, ccam rename, ccam remove, ccam imp
 updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 9eb992214132
+sourceHash: "8564517d0d71"
 ---
 
 ప్రతి ccam ఖాతా తన సొంత లాగిన్‌తో ఉన్న వేరే Claude Code కాన్ఫిగ్ ఫోల్డర్. ఈ కమాండ్‌లు ఖాతాలను సృష్టిస్తాయి, సైన్ ఇన్ చేస్తాయి, జాబితాగా చూపిస్తాయి, పేరు మారుస్తాయి, తీసివేస్తాయి, మీకు ఇప్పటికే ఉన్న ఫోల్డర్‌లను నమోదు చేస్తాయి.
@@ -12,10 +12,11 @@ sourceHash: 9eb992214132
 ## వినియోగం
 
 ```sh
-ccam add                                   # wizard on a terminal: name, shared items, shortcut, login
+ccam add                                   # wizard on a terminal: name, sign-in, groups, shortcut
 ccam add work --shortcut ccwork            # no wizard: log in, then create the ccwork command
-ccam add side --no-login --share history=team
+ccam add side --no-login --group default --group team
 ccam login side                            # run claude auth login inside the account
+ccam login --expired                       # every account never logged in, or whose login expired
 ccam logout side                           # remove the login token
 ccam list                                  # table of accounts; ccam ls is the same
 ccam list --json                           # machine-readable
@@ -29,25 +30,28 @@ ccam completion zsh > "${fpath[1]}/_ccam"
 
 ఏ కమాండ్ అయినా `<name|number>` తీసుకునే చోట, మీరు ఖాతా పేరును లేదా దాని స్లాట్ నంబర్‌ను, అంటే `ccam list` లోని `#` కాలమ్‌ను ఇవ్వవచ్చు.
 
-ఆప్షన్లు లేకుండా టెర్మినల్‌లో `ccam add` ఒక విజార్డ్‌ను తెరుస్తుంది. అది పేరు అడుగుతుంది, ఆపై షేర్ చేసే అంశాల చెక్‌లిస్ట్‌ను చూపిస్తుంది (సంభాషణ చరిత్ర తప్ప అన్నీ టిక్ చేసి ఉంటాయి), ఆపై `Create a shortcut command for work? [y/N]` అని అడుగుతుంది, `y` అంటే `Shortcut name [ccwork]:` అని అడుగుతుంది. `--share`, `--shortcut`, `--no-login` లో ఏదైనా ఉంటే, లేదా టెర్మినల్ బదులు పైప్ ఉంటే, విజార్డ్ దాటవేయబడుతుంది; అప్పుడు పేరు తప్పనిసరి, `--shortcut` ఒక పేరు ఇస్తే తప్ప షార్ట్‌కట్ సృష్టించబడదు.
+ఆప్షన్లు లేకుండా టెర్మినల్‌లో `ccam add` ఒక విజార్డ్‌ను తెరుస్తుంది. అది పేరును, ఖాతా ఎలా సైన్ ఇన్ అవుతుందో (ఇప్పుడే Claude లాగిన్, API కీ, లేదా తర్వాత Claude లాగిన్) అడుగుతుంది, ఆపై `default` టిక్ చేసి ఉన్న, చేరాల్సిన గ్రూప్‌లను చూపిస్తుంది (గ్రూప్‌లు ఇంకా లేకపోతే, `default` గ్రూప్ షేర్ చేయబోయే అంశాలను), ఆపై `Create a shortcut command for work? [y/N]` అని అడుగుతుంది, చివరగా నిర్ధారించడానికి ఒక సారాంశంతో ముగుస్తుంది. `Esc` ఒక దశ వెనక్కి వెళ్తుంది. `--group`, `--no-group`, `--shortcut`, `--no-login` లో ఏదైనా ఉంటే, లేదా టెర్మినల్ బదులు పైప్ ఉంటే, విజార్డ్ దాటవేయబడుతుంది; అప్పుడు పేరు తప్పనిసరి, `--shortcut` ఒక పేరు ఇస్తే తప్ప షార్ట్‌కట్ సృష్టించబడదు.
 
-`ccam list` స్లాట్, పేరు, షార్ట్‌కట్, ఇమెయిల్, షేర్ చేసిన అంశాలు, చివరి వినియోగాన్ని చూపిస్తుంది, డిఫాల్ట్ ఖాతా ముందు `*` ఉంటుంది:
+`--group` లేకుండా, కొత్త ఖాతా `default` గ్రూప్‌లో చేరుతుంది. మొదటి ఖాతా దాన్ని సృష్టిస్తుంది, అది MCP సర్వర్లు, సెట్టింగ్‌లు, `CLAUDE.md`, ఎక్స్‌టెన్షన్లను షేర్ చేస్తుంది; [గ్రూప్‌లతో షేరింగ్](/features/share) చూడండి.
+
+`ccam list` స్లాట్, పేరు, షార్ట్‌కట్, ఇమెయిల్, గ్రూప్‌లు, చివరి వినియోగాన్ని చూపిస్తుంది, డిఫాల్ట్ ఖాతా ముందు `*` ఉంటుంది:
 
 ```console
 $ ccam list
-   #  Name      Shortcut  Email             Shared                        Last used
-*  1  work      ccwork    user@example.com  mcp settings md ext           -
-   2  personal  -         me@side.dev       settings md ext history@team  -
+   #  Name      Shortcut  Email             Groups        Last used
+*  1  work      ccwork    user@example.com  default team  -
+   2  personal  -         me@side.dev       default       -
 ```
 
-`--json` తో, ప్రతి ఖాతా `slot`, `shortcut`, `name`, `email`, `default`, `dir`, `last_used` (ఖాతా ఎప్పుడూ ప్రారంభించబడకపోతే వదిలేయబడుతుంది), `share` ఉన్న ఒక ఆబ్జెక్ట్. `share` ప్రతి అంశాన్ని (`mcp`, `settings`, `memory`, `extensions`, `history`) దాని గ్రూప్ పేరుకు లేదా `"local"` కు మ్యాప్ చేస్తుంది.
+`--json` తో, ప్రతి ఖాతా `slot`, `shortcut`, `name`, `email`, `default`, `dir`, `last_used` (ఖాతా ఎప్పుడూ ప్రారంభించబడకపోతే వదిలేయబడుతుంది), `groups`, `share` ఉన్న ఒక ఆబ్జెక్ట్. `share` ప్రతి అంశాన్ని (`mcp`, `settings`, `memory`, `extensions`, `history`) అది వచ్చే గ్రూప్‌కు, లేదా `"local"` కు మ్యాప్ చేస్తుంది.
 
 ## ఆప్షన్లు
 
 | ఆప్షన్ | ఏమి చేస్తుంది | డిఫాల్ట్ |
 | --- | --- | --- |
 | `ccam add --no-login` | లాగిన్ చేయకుండా ఖాతాను సృష్టిస్తుంది; తర్వాత `ccam login <name>` తో లాగిన్ చేయండి | ఆఫ్ |
-| `ccam add --share <item=group>` | ఒక అంశాన్ని ఒక గ్రూప్‌తో షేర్ చేస్తుంది, లేదా దాన్ని ప్రైవేట్‌గా ఉంచడానికి `item=local`. మళ్లీ మళ్లీ ఇవ్వవచ్చు | `default` లో `mcp`, `settings`, `memory`, `extensions`; `history` లోకల్ |
+| `ccam add --group <group>` | `default` బదులు ఈ గ్రూప్‌లో చేరుతుంది. మళ్లీ మళ్లీ ఇవ్వవచ్చు; `default` లేకపోతే సృష్టించబడుతుంది | `default` |
+| `ccam add --no-group` | ఏ గ్రూప్‌లోనూ చేరదు: ఖాతా ఏదీ షేర్ చేయదు | ఆఫ్ |
 | `ccam add --shortcut <command>` | `~/.local/bin` లో ఈ షార్ట్‌కట్ కమాండ్‌ను కూడా సృష్టిస్తుంది | ఏమీ లేదు |
 | `ccam add --api --key-from <source>` | లాగిన్ బదులు API కీ ఉపయోగించే ఖాతా; [API కీ ఖాతాలు](/features/api) చూడండి | ఆఫ్ |
 | `ccam list --json` | ఖాతాలను JSON గా ప్రింట్ చేస్తుంది | ఆఫ్ |
@@ -58,7 +62,7 @@ $ ccam list
 
 `ccam login`, `ccam logout`, `ccam use`, `ccam rename` లకు సొంత ఆప్షన్లు లేవు. `ccam completion` `bash`, `zsh` లేదా `powershell` తీసుకుంటుంది; మరేదైనా `only bash, zsh and powershell are supported` తో విఫలమవుతుంది.
 
-ఖాతా పేర్లు `a-z`, `0-9`, `-`, `_` అక్షరాలతో 1 నుంచి 32 అక్షరాల వరకు ఉంటాయి, ఒక అక్షరం లేదా అంకెతో మొదలవుతాయి. పేరు మొత్తం అంకెలు కాకూడదు, ఎందుకంటే `ccam 2` అంటే స్లాట్ 2. పేరు ccam కమాండ్ కూడా కాకూడదు (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`, `folder`, `pick`, `ext`), కాబట్టి `ccam <name>` ఎప్పుడూ అస్పష్టంగా ఉండదు. ఈ జాబితా `internal/config` లోని `config.Reserved`.
+ఖాతా పేర్లు `a-z`, `0-9`, `-`, `_` అక్షరాలతో 1 నుంచి 32 అక్షరాల వరకు ఉంటాయి, ఒక అక్షరం లేదా అంకెతో మొదలవుతాయి. పేరు మొత్తం అంకెలు కాకూడదు, ఎందుకంటే `ccam 2` అంటే స్లాట్ 2. పేరు ccam కమాండ్ కూడా కాకూడదు (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`, `folder`, `pick`, `ext`, `group`, `groups`), కాబట్టి `ccam <name>` ఎప్పుడూ అస్పష్టంగా ఉండదు. ఈ జాబితా `internal/config` లోని `config.Reserved`.
 
 ## ఇది ఎలా పనిచేస్తుంది
 
@@ -68,15 +72,19 @@ $ ccam list
 
 1. ఏదైనా సృష్టించే ముందు `config.ValidateName` పేరును, `shim.Check` షార్ట్‌కట్‌ను తనిఖీ చేస్తాయి.
 2. `profile.Add` `0700` మోడ్‌తో `~/.local/share/ccam/profiles/work/` ను సృష్టించి, ఖాతాకు అతి తక్కువ ఖాళీ స్లాట్ నంబర్‌ను (`Config.NextSlot`) ఇస్తుంది, కాబట్టి తీసివేసిన ఖాతా నంబర్ మళ్లీ ఉపయోగించబడుతుంది. మొదటి ఖాతా డిఫాల్ట్ అవుతుంది.
-3. `applyShare` కొత్త, ఖాళీ ఫోల్డర్‌ను `share.Build` తో, ఆపై `Apply` తో దాని షేర్ గ్రూప్‌లకు లింక్ చేస్తుంది, ఉదాహరణకు `settings.json` ను `groups/default/settings.json` కు. ఇది విఫలమైతే, కొత్త ఫోల్డర్ తీసివేయబడుతుంది, ఎందుకంటే మిగిలిపోయిన ఫోల్డర్ ప్రతి మళ్లీ ప్రయత్నాన్ని `folder already exists` తో అడ్డుకుంటుంది.
+3. ఖాతా తన గ్రూప్‌లలో చేరుతుంది (`--group` లేదా `--no-group` వేరే చెప్పకపోతే `default`; మొదటి ఖాతా `default` ను సృష్టిస్తుంది), `applyShare` కొత్త, ఖాళీ ఫోల్డర్‌ను `share.Build` తో, ఆపై `Apply` తో వాటికి లింక్ చేస్తుంది, ఉదాహరణకు `settings.json` ను `groups/default/settings.json` కు. ఇది విఫలమైతే, కొత్త ఫోల్డర్ తీసివేయబడుతుంది, ఎందుకంటే మిగిలిపోయిన ఫోల్డర్ ప్రతి మళ్లీ ప్రయత్నాన్ని `folder already exists` తో అడ్డుకుంటుంది.
 4. ఖాతా `fsutil.AtomicWrite` ద్వారా `~/.config/ccam/config.toml` లో సేవ్ అవుతుంది: ఒక తాత్కాలిక ఫైల్, `fsync`, ఆపై `rename`, కాబట్టి క్రాష్ అయినా సగం కాన్ఫిగ్ ఎప్పుడూ మిగలదు.
-5. `runLogin` `CLAUDE_CONFIG_DIR` ను ఖాతా ఫోల్డర్‌కు సెట్ చేసి `claude auth login` ను ప్రారంభిస్తుంది. లాగిన్ విఫలమైతే, ఖాతా అలాగే ఉంటుంది, ccam ఎర్రర్‌ను ప్రింట్ చేసి తర్వాత `ccam login work` రన్ చేయమని చెబుతుంది.
-6. `profile.ReadEmail` `profiles/work/.claude.json` నుంచి `oauthAccount.emailAddress` ను తీసుకుంటుంది. ఆ ఫైల్ అనేక మెగాబైట్లు ఉండవచ్చు, కాబట్టి `TopLevelValue` మొత్తం ఫైల్‌ను పార్స్ చేయకుండా ఆ ఒక్క కీ కోసం స్కాన్ చేస్తుంది.
+5. `runLogin` `CLAUDE_CONFIG_DIR` ను ఖాతా ఫోల్డర్‌కు సెట్ చేసి, లాగిన్ పేజీ నిండి ఉండేలా ఖాతా చివరి ఇమెయిల్‌తో `--email` ఇచ్చి, `claude auth login` ను ప్రారంభిస్తుంది. లాగిన్ విఫలమైతే, ఖాతా అలాగే ఉంటుంది, ccam ఎర్రర్‌ను ప్రింట్ చేసి తర్వాత `ccam login work` రన్ చేయమని చెబుతుంది.
+6. `profile.ReadIdentity` `profiles/work/.claude.json` నుంచి `oauthAccount` ను తీసుకుంటుంది: ఇమెయిల్, ఖాతా, సంస్థ ids, సంస్థ పేరు, ప్లాన్ (`claude_max`, `claude_team` …). ఆ ఫైల్ అనేక మెగాబైట్లు ఉండవచ్చు, కాబట్టి `TopLevelValue` మొత్తం ఫైల్‌ను పార్స్ చేయకుండా ఆ ఒక్క కీ కోసం స్కాన్ చేస్తుంది. ccam వాటిని `config.toml` లోని `[profile.login]` లో ఉంచుతుంది.
 7. `shim.Install` `~/.local/bin/ccwork` ను ccam బైనరీకి లింక్ చేస్తుంది, అది ప్రారంభమైనప్పుడు `config.toml` లో `argv[0]` కోసం చూస్తుంది.
 
 లాగిన్‌కు నిమిషాలు పట్టవచ్చు, ఈలోగా మరో ccam కాన్ఫిగ్‌ను సేవ్ చేయవచ్చు. కాబట్టి వేచి ఉండే కమాండ్‌లు `env.update` ద్వారా సేవ్ చేస్తాయి, అది `config.toml` ను మళ్లీ లోడ్ చేసి, ఆ ఒక్క మార్పును (ఇక్కడ, ఇమెయిల్) వర్తింపజేసి సేవ్ చేస్తుంది. అదే కారణంతో `ccam remove` తన ప్రశ్న తర్వాత మళ్లీ లోడ్ చేస్తుంది.
 
-`ccam login` ఇప్పటికే ఉన్న ఖాతా కోసం దశ 5, 6 ను రన్ చేస్తుంది. `ccam logout` ఖాతాలో `claude auth logout` ను రన్ చేసి సేవ్ చేసిన ఇమెయిల్‌ను తొలగిస్తుంది. `ccam use` `config.toml` లోని `default` ను మాత్రమే మళ్లీ రాస్తుంది.
+`ccam login` ఇప్పటికే ఉన్న ఖాతా కోసం దశ 5, 6 ను రన్ చేస్తుంది. Claude Code ఇమెయిల్‌ను లాగిన్ పేజీ కోసం సూచనగా మాత్రమే తీసుకుంటుంది, కాబట్టి లాగిన్ ccam ఖాతా ఇంతకు ముందు ఉన్న Claude ఖాతా కాకుండా వేరే Claude ఖాతాలో ముగియవచ్చు; ccam కొత్త లాగిన్‌ను `[profile.login]` తో పోల్చి ఆ విషయం చెబుతుంది (`ccam: this login is other@company.com, but work was dev@company.com before.`). అది కొత్త లాగిన్‌ను ఉంచి, దాన్ని ఎలా రద్దు చేయాలో చెబుతుంది: `ccam logout work`, ఆపై `ccam login work`, సరైన ఇమెయిల్‌తో సైన్ ఇన్ చేయండి. మరో ccam ఖాతా అదే Claude ఖాతాలోకి లాగిన్ అయి ఉంటే, ఆ రెండూ తమ వినియోగ పరిమితులను పంచుకుంటాయని ccam హెచ్చరిస్తుంది. `ccam login --expired` ఎప్పుడూ లాగిన్ కాని, లేదా లాగిన్ (దాని రిఫ్రెష్ టోకెన్) గడువు ముగిసిన ప్రతి ఖాతాలో ఒకదాని తర్వాత ఒకటి లాగిన్ చేస్తుంది.
+
+`ccam logout` ఖాతాలో `claude auth logout` ను రన్ చేసి సేవ్ చేసిన ఇమెయిల్‌ను తొలగిస్తుంది; లాగిన్ రికార్డ్ అలాగే ఉంటుంది, కాబట్టి తర్వాతి లాగిన్ దానితో పోల్చి తనిఖీ చేయబడుతుంది. `ccam use` `config.toml` లోని `default` ను మాత్రమే మళ్లీ రాస్తుంది.
+
+ఖాతాలు ఒకటి కంటే ఎక్కువ సంస్థలకు చెందినప్పుడు `ccam list` ఒక `Organization` కాలమ్‌ను జోడిస్తుంది (వ్యక్తిగత ప్లాన్‌లు `personal` అని చూపిస్తాయి), `ccam list --json` లో ప్రతి ఖాతాకు `plan`, `org` ఉంటాయి.
 
 ### రిమోట్ మెషీన్‌లో సైన్ ఇన్ చేయడం
 
@@ -106,7 +114,7 @@ On a remote machine? If the browser ends on a http://localhost:…/callback page
 
 `ccam rename` ఫోల్డర్ పేరును మారుస్తుంది, దాని `plugins/` లోని ప్లగిన్ పాత్‌లను పాత ఫోల్డర్ నుంచి కొత్తదానికి మళ్లీ రాస్తుంది, డిఫాల్ట్‌ను కూడా తీసుకువెళ్తుంది, `nameState` పాత్‌లను కొత్త పేరుకు తరలిస్తుంది. షార్ట్‌కట్ కమాండ్ తన పేరును ఉంచుకుంటుంది. ప్లగిన్ పాత్‌లను మళ్లీ రాయడం విఫలమైతే, కాన్ఫిగ్ సేవ్ కాలేదు కాబట్టి ఫోల్డర్ పేరు వెనక్కి మార్చబడుతుంది.
 
-`ccam import` ఒక ఫోల్డర్‌ను ఉన్న చోటే, `config.toml` లో `dir` గా నమోదు చేస్తుంది. అది దాన్ని ఎప్పుడూ తరలించదు, కాపీ చేయదు: కాపీ చేసిన రిఫ్రెష్ టోకెన్ కాపీలు ఒకదాన్ని మరొకటి లాగ్ అవుట్ చేసేలా చేస్తుంది. ఫోల్డర్ ఆర్గ్యుమెంట్ లేకుండా, అది నమోదు కాని `~/.claude`, `~/.claude-*` ఫోల్డర్‌ల కోసం వెతికి ప్రతిదాని గురించి అడుగుతుంది; పేర్లు ఫోల్డర్ నుంచి వస్తాయి (`~/.claude` అంటే `main`, `~/.claude-work` అంటే `work`, `~/.claude-2` అంటే `acct2`), పేరు తీసుకోలేని ఫోల్డర్ ఉపయోగించాల్సిన `--name` కమాండ్‌తో జాబితాలో చూపబడుతుంది. `CLAUDE_CONFIG_DIR` లేకుండా, Claude Code `.claude.json` ను మీ హోమ్ ఫోల్డర్‌లో `~/.claude` పక్కన ఉంచుతుంది, కాబట్టి మీరు `~/.claude` ను ఇంపోర్ట్ చేసినప్పుడు దానికి సొంత `.claude.json` లేకపోతే, ccam `~/.claude/.claude.json` నుంచి `~/.claude.json` కు లింక్‌ను సృష్టిస్తుంది. అప్పుడు సాధారణ `claude`, `ccam main` ఒకే ఖాతాను చూస్తాయి. మీరు `ccam share` రన్ చేసే వరకు ఇంపోర్ట్ చేసిన ఖాతాలు ఏదీ షేర్ చేయవు, షార్ట్‌కట్ సృష్టించబడదు.
+`ccam import` ఒక ఫోల్డర్‌ను ఉన్న చోటే, `config.toml` లో `dir` గా నమోదు చేస్తుంది. అది దాన్ని ఎప్పుడూ తరలించదు, కాపీ చేయదు: కాపీ చేసిన రిఫ్రెష్ టోకెన్ కాపీలు ఒకదాన్ని మరొకటి లాగ్ అవుట్ చేసేలా చేస్తుంది. ఫోల్డర్ ఆర్గ్యుమెంట్ లేకుండా, అది నమోదు కాని `~/.claude`, `~/.claude-*` ఫోల్డర్‌ల కోసం వెతికి ప్రతిదాని గురించి అడుగుతుంది; పేర్లు ఫోల్డర్ నుంచి వస్తాయి (`~/.claude` అంటే `main`, `~/.claude-work` అంటే `work`, `~/.claude-2` అంటే `acct2`), పేరు తీసుకోలేని ఫోల్డర్ ఉపయోగించాల్సిన `--name` కమాండ్‌తో జాబితాలో చూపబడుతుంది. `CLAUDE_CONFIG_DIR` లేకుండా, Claude Code `.claude.json` ను మీ హోమ్ ఫోల్డర్‌లో `~/.claude` పక్కన ఉంచుతుంది, కాబట్టి మీరు `~/.claude` ను ఇంపోర్ట్ చేసినప్పుడు దానికి సొంత `.claude.json` లేకపోతే, ccam `~/.claude/.claude.json` నుంచి `~/.claude.json` కు లింక్‌ను సృష్టిస్తుంది. అప్పుడు సాధారణ `claude`, `ccam main` ఒకే ఖాతాను చూస్తాయి. మీరు ఒక గ్రూప్‌కు జోడించే వరకు (`ccam group join <group> <name>`) ఇంపోర్ట్ చేసిన ఖాతాలు ఏ గ్రూప్‌లోనూ ఉండవు, షార్ట్‌కట్ సృష్టించబడదు.
 
 `ccam completion bash|zsh` ఖాతా పేర్లను కూడా పూర్తి చేసే కంప్లీషన్ స్క్రిప్ట్‌ను ప్రింట్ చేస్తుంది.
 

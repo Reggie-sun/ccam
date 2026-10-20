@@ -4,7 +4,7 @@ description: ccam usage ప్రతి ఖాతా యొక్క 5 గంట
 updated: 2026-10-20
 order: 7
 translation: machine
-sourceHash: 525174ceed0d
+sourceHash: "ec1d1ee27d9f"
 ---
 
 ప్రతి ఖాతా 5 గంటల, వారపు పరిమితులలో ఎంత ఉపయోగించిందో, ప్రతి విండో రీసెట్ అయ్యే వరకు సమయంతో పాటు `ccam usage` చూపిస్తుంది. ఏ ఖాతాకు అవకాశం మిగిలి ఉందో చూడటానికి, పెద్ద పనిని మొదలుపెట్టే ముందు, లేదా పరిమితి దగ్గరలో ఉందని Claude Code చెప్పినప్పుడు దీన్ని ఉపయోగించండి. `ccam statusline` Claude Code కోసం స్టేటస్ లైన్ కమాండ్: ఇది Claude Code లోపల ఖాతా పేరును, వినియోగాన్ని చూపిస్తుంది, `ccam usage` కోసం సంఖ్యలను సేవ్ చేస్తుంది.
@@ -20,6 +20,7 @@ ccam usage -v               # add per-model weekly limits and the data source
 ccam usage --json           # machine-readable, one object per account
 ccam usage --source cache   # saved numbers only, no network
 ccam usage --refresh        # also renew expired logins of accounts not running
+ccam usage --source claude  # let Claude Code look it up: ccam never touches a token
 ccam statusline install     # set the status line in every account's settings.json
 ```
 
@@ -32,7 +33,7 @@ $ ccam usage
 → Most headroom: personal   (open it with ccam next --auto)
 ```
 
-టెర్మినల్‌లో టేబుల్ ప్రతి వరుసలో `fetching…` తో వెంటనే కనిపిస్తుంది, ప్రతి ఖాతా సమాధానం ఇచ్చినప్పుడు దాని వరుస మళ్లీ గీయబడుతుంది. సంఖ్యలు ఎంత పాతవో `As of` చెబుతుంది; `(cached)` అంటే అవి ఎండ్‌పాయింట్ నుంచి కాకుండా సేవ్ చేసిన ఫైల్ నుంచి వచ్చాయి. చివరి లైన్ 100% కంటే తక్కువ ఉన్న, అతి తక్కువ 5 గంటల వినియోగం గల ఖాతా పేరును చెబుతుంది, మీకు ఒకటి కంటే ఎక్కువ ఖాతాలు ఉన్నప్పుడు మాత్రమే కనిపిస్తుంది. లాగిన్ కాని ఖాతా `not logged in → ccam login <name>` ను, API కీ ఖాతా `no limits (API)` ను చూపిస్తాయి.
+టెర్మినల్‌లో టేబుల్ ప్రతి వరుసలో `fetching…` తో వెంటనే కనిపిస్తుంది, ప్రతి ఖాతా సమాధానం ఇచ్చినప్పుడు దాని వరుస మళ్లీ గీయబడుతుంది. సంఖ్యలు ఎంత పాతవో `As of` చెబుతుంది; `(cached)` అంటే అవి ఎండ్‌పాయింట్ నుంచి కాకుండా సేవ్ చేసిన ఫైల్ నుంచి వచ్చాయి. చివరి లైన్ [`ccam next --auto`](/features/next) అవే నియమాలతో ఎంచుకునే ఖాతా పేరును చెబుతుంది (`auto_max_usage`, `auto_strategy`, రన్ అవుతున్న సెషన్‌లు, `cross_org` సెట్ చేయకపోతే చివరిగా ఉపయోగించిన ఖాతా సంస్థకు చెందిన ఖాతాలు మాత్రమే, 100% వద్ద ఉన్న ప్రతి విండో వదిలేయబడుతుంది, కాబట్టి వారం నిండిన ఖాతా పేరు ఎప్పుడూ రాదు), మీకు ఒకటి కంటే ఎక్కువ ఖాతాలు ఉన్నప్పుడు మాత్రమే కనిపిస్తుంది. లాగిన్ కాని ఖాతా `not logged in → ccam login <name>` ను, API కీ ఖాతా `no limits (API)` ను చూపిస్తాయి.
 
 `ccam statusline install` తర్వాత, Claude Code `[work] · Opus · 5h 24% · 7d 41%` వంటి లైన్‌ను చూపిస్తుంది.
 
@@ -44,11 +45,15 @@ $ ccam usage
 | `--watch[=N]` | మీరు Ctrl+C నొక్కే వరకు ప్రతి `N` సెకన్లకు మళ్లీ గీస్తుంది. ఒంటరి `--watch`, లేదా 0 లేదా అంతకంటే తక్కువ విలువ అంటే 60 | ఆఫ్ |
 | `-v`, `--verbose` | మోడల్ వారీ వారపు పరిమితులను, ఒక `source:` లైన్‌ను (`live`, `cache` లేదా `statusline`) చూపిస్తుంది | ఆఫ్ |
 | `--no-cache` | 60 సెకన్ల కాష్‌ను పట్టించుకోకుండా ఎండ్‌పాయింట్‌ను మళ్లీ అడుగుతుంది | ఆఫ్ |
-| `--source live\|cache` | `cache` ఎప్పుడూ ఎండ్‌పాయింట్‌ను అడగదు, సేవ్ చేసిన సంఖ్యలను మాత్రమే చూపిస్తుంది; `live` డిఫాల్ట్ ప్రవర్తన | live |
+| `--source live\|claude\|cache` | `live` ఖాతా టోకెన్‌తో ఎండ్‌పాయింట్‌ను అడుగుతుంది; `claude` దాన్ని Claude Code చేత చూపిస్తుంది (కింద చూడండి); `cache` సేవ్ చేసిన సంఖ్యలను మాత్రమే చూపిస్తుంది | `usage_source`, లేకపోతే `live` |
 | `--refresh` | గడువు ముగిసిన యాక్సెస్ టోకెన్‌లను పునరుద్ధరిస్తుంది, రన్ అవ్వని ఖాతాలకు మాత్రమే | ఆఫ్ |
 | `--dry-run` | అంగీకరిస్తుంది: `ccam usage` తన సొంత కాష్ తప్ప ఏదీ మార్చదు. `--refresh` తో కలిపి ఇస్తే తిరస్కరిస్తుంది: `--dry-run cannot be combined with --refresh, which rewrites login tokens` | ఆఫ్ |
 
-మరే `--source` విలువైనా `--source must be live or cache` తో విఫలమవుతుంది. `ccam usage` ఆర్గ్యుమెంట్‌లు తీసుకోదు.
+మరే `--source` విలువైనా `--source must be live, claude or cache` తో విఫలమవుతుంది.
+
+### Claude Code నుంచే వినియోగం
+
+`config.toml` లో `usage_source = "claude"` (లేదా `--source claude`) తో, ccam లాగిన్ టోకెన్‌ను అసలు చదవదు. ప్రతి ఖాతా కోసం అది ఖాతా ఫోల్డర్‌లో `claude -p --input-format stream-json --output-format stream-json --verbose --safe-mode --no-session-persistence` ను ప్రారంభించి, స్టాండర్డ్ ఇన్‌పుట్‌పై Claude Code యొక్క `get_usage` అభ్యర్థనను పంపుతుంది (Claude Code 2.1.270 లేదా తర్వాతి వెర్షన్); Claude Code తన సొంత లాగిన్‌తో వినియోగాన్ని చూసి 5 గంటల, వారపు, మోడల్ విండోలతో సమాధానం ఇస్తుంది. `--safe-mode` ఖాతా hooks, MCP సర్వర్లు, ప్లగిన్లు ప్రారంభం కాకుండా ఆపుతుంది, ఏ సెషన్ సేవ్ అవ్వదు. ప్రతి ఖాతాకు ఒక Claude Code ప్రారంభం, సుమారు ఒక సెకను పడుతుంది, కాబట్టి ఈ సోర్స్ `live` కంటే నెమ్మదిగా ఉంటుంది; ఖాతాలను ఒకేసారి అడుగుతుంది, ప్రతిదానికి 20 సెకన్లలోపు, 60 సెకన్ల కాష్ ఎప్పటిలాగే వర్తిస్తుంది. Claude Code ఈ అభ్యర్థనను ప్రయోగాత్మకమైనదిగా గుర్తిస్తుంది, కాబట్టి అది సమాధానం ఇవ్వడం ఆపేస్తే, ccam సేవ్ చేసిన సంఖ్యలను చూపిస్తుంది, `ccam doctor` దాన్ని నివేదిస్తుంది. `--dry-run` Claude Code ను ప్రారంభించదు (అది ఖాతా ఫోల్డర్‌లో రాస్తుంది), సేవ్ చేసిన సంఖ్యలను చూపిస్తుంది. `usage_source` `live` లేదా `claude` ను తీసుకుంటుంది; `cache` కేవలం `--source` ఎంపిక. `ccam usage` ఆర్గ్యుమెంట్‌లు తీసుకోదు.
 
 `ccam statusline` స్టాండర్డ్ ఇన్‌పుట్ నుంచి Claude Code స్టేటస్ లైన్ JSON ను చదువుతుంది. దాని ఏకైక ఆప్షన్ `--wrap <command>`: ఇప్పటికే ఉన్న స్టేటస్ లైన్ కమాండ్, దాని మొదటి అవుట్‌పుట్ లైన్ ముందు ఖాతా పేరు పెట్టబడుతుంది. `ccam statusline install` ఆప్షన్లు తీసుకోదు. రెండూ `--dry-run` ను `` --dry-run is not supported by `ccam statusline`; nothing was changed `` తో తిరస్కరిస్తాయి.
 

@@ -5,7 +5,7 @@ description: "คำตอบเกี่ยวกับ ccam บัญชี Cl
 updated: 2026-10-20
 order: 6
 translation: machine
-sourceHash: 80a5475ccfee
+sourceHash: "e7d4a2c877ac"
 ---
 
 ## ccam เป็นเครื่องมืออย่างเป็นทางการของ Anthropic หรือไม่?
@@ -26,7 +26,7 @@ sourceHash: 80a5475ccfee
 
 ## จะสนทนาต่อในอีกบัญชีหนึ่งได้อย่างไร?
 
-ใช้ประวัติการสนทนาร่วมกันระหว่างสองบัญชีด้วย `ccam share <name> --history on` แล้วรัน `ccam next --continue` Claude Code จะเปิดการสนทนาล่าสุดของโฟลเดอร์ปัจจุบันในบัญชีถัดไป
+ใช้ประวัติการสนทนาร่วมกันระหว่างบัญชีด้วย `ccam group set default --add history` (หรือใช้กลุ่มของบัญชีเหล่านั้นเอง: `ccam group add pair --items history --members work,side`) แล้วรัน `ccam next --continue` Claude Code จะเปิดการสนทนาล่าสุดของโฟลเดอร์ปัจจุบันในบัญชีถัดไป
 
 ## ccam มองเห็นหรือส่งข้อมูลการเข้าสู่ระบบของฉันหรือไม่?
 

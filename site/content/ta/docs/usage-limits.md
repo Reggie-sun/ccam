@@ -4,7 +4,7 @@ description: ccam usage மூலம் ஒவ்வொரு Claude Code கண
 updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: a84df8e873d6
+sourceHash: "40aef0708c81"
 ---
 
 ஒவ்வொரு கணக்கும் 5 மணி நேர மற்றும் வாராந்திர வரம்புகளில் எவ்வளவு பயன்படுத்தியுள்ளது என்று `ccam usage` காட்டுகிறது. `ccam next --auto` அதிக இடம் உள்ள கணக்கைத் திறக்கிறது, `--continue` தற்போதைய உரையாடலை அதற்குக் கொண்டு செல்கிறது.
@@ -55,10 +55,10 @@ ccam statusline install
 ```sh
 ccam next             # the account after the one you used last
 ccam next --auto      # the account with the lowest 5-hour usage
-ccam next --continue  # the next account that shares your conversation history
+ccam next --continue  # carry this folder's conversation on as the next account
 ```
 
-`ccam next` உள்நுழையாத கணக்குகளைத் தவிர்க்கிறது, `--auto` 100%-இல் உள்ள கணக்குகளைத் தவிர்க்கிறது. ஓர் உரையாடலைத் தொடர, இரண்டு கணக்குகளும் உரையாடல் வரலாற்றைப் பகிர வேண்டும்; [பகிர்வு](/docs/sharing) பக்கத்தைப் பாருங்கள்.
+`ccam next` உள்நுழையாத கணக்குகளைத் தவிர்க்கிறது, `--auto` 100%-இல் உள்ள கணக்குகளையும் வேறொரு நிறுவனத்தின் கணக்குகளையும் தவிர்க்கிறது. இரண்டு கணக்குகளும் உரையாடல் வரலாற்றைப் பகிர்ந்தால், `--continue` அதே உரையாடலைத் திறக்கும்; இல்லையென்றால் Claude Code அதைப் புதிய கணக்குக்குள் நகலெடுக்கும். [பகிர்வு](/docs/sharing), [அடுத்த கணக்குக்கு மாறுதல்](/features/next#continue) பாருங்கள்.
 
 `claude -p` இயக்கும் scripts-க்கும் திட்டமிட்ட jobs-க்கும், கணக்குப் பெயருக்கு முன் `--fallback` வையுங்கள். அந்தக் கணக்கு தன் வரம்பை எட்டும்போது, ccam அதே கட்டளையை அதிக இடம் உள்ள கணக்காக மீண்டும் இயக்குகிறது, முடிந்த இயக்கத்தின் output மட்டுமே அச்சிடப்படுகிறது:
 

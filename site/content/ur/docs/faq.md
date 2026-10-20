@@ -5,7 +5,7 @@ description: "ccam، Claude Code اکاؤنٹس، استعمال کی حدوں،
 updated: 2026-10-20
 order: 6
 translation: machine
-sourceHash: 80a5475ccfee
+sourceHash: "e7d4a2c877ac"
 ---
 
 ## کیا ccam، Anthropic کا سرکاری ٹول ہے؟
@@ -26,7 +26,7 @@ sourceHash: 80a5475ccfee
 
 ## میں دوسرے اکاؤنٹ پر گفتگو کیسے جاری رکھوں؟
 
-`ccam share <name> --history on` سے دونوں اکاؤنٹس کے درمیان گفتگو کی ہسٹری شیئر کریں، پھر `ccam next --continue` چلائیں۔ Claude Code موجودہ فولڈر کی سب سے حالیہ گفتگو اگلے اکاؤنٹ میں کھول دیتا ہے۔
+`ccam group set default --add history` سے اکاؤنٹس کے درمیان گفتگو کی ہسٹری شیئر کریں (یا ان کے اپنے ایک گروپ سے: `ccam group add pair --items history --members work,side`)، پھر `ccam next --continue` چلائیں۔ Claude Code موجودہ فولڈر کی سب سے حالیہ گفتگو اگلے اکاؤنٹ میں کھول دیتا ہے۔
 
 ## کیا ccam میرا لاگ اِن دیکھتا یا کہیں بھیجتا ہے؟
 

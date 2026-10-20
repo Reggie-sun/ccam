@@ -5,7 +5,7 @@ description: Linux, macOS કે Windows પર ccam એક કમાન્ડ�
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: aea4984c1576
+sourceHash: 07fab3165030
 ---
 
 Linux કે macOS પર ટર્મિનલમાં આ ચલાવો:
@@ -80,7 +80,7 @@ ccam plugin Claude Code ને પોતાને ccam વાપરતાં શ
 /plugin install ccam --marketplace jhyunwoo/ccam
 ```
 
-તે એક skill અને બે commands ઉમેરે છે, `/ccam:usage` અને `/ccam:ext`. skill ક્યારેય લૉગિન કરતા કે ફાઇલો ખસેડતા commands ચલાવતી નથી; તેના બદલે તે તેમને સૂચવે છે.
+તે એક skill, `/ccam:usage`, `/ccam:ext` અને `/ccam:switch` commands, અને બે hooks ઉમેરે છે: કોઈ સેશન વપરાશ મર્યાદાએ અટકે ત્યારે તમને ટર્મિનલમાં સૂચના મળે છે, અને `/ccam:switch [account]` વાતચીત બીજા એકાઉન્ટને સોંપે છે ([વિગતો](/features/next#inside-claude-code)). hooks `ccam` ચલાવે છે, તેથી Claude Code જે `PATH` જુએ છે તેમાં તે હોવું જોઈએ. skill ક્યારેય લૉગિન કરતા કે ફાઇલો ખસેડતા commands ચલાવતી નથી; તેના બદલે તે તેમને સૂચવે છે.
 
 ## ઇન્સ્ટૉલેશન તપાસો
 

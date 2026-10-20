@@ -4,7 +4,7 @@ description: ccam folder باعث می‌شود یک پوشه و هر چه زی�
 updated: 2026-10-20
 order: 11
 translation: machine
-sourceHash: 5071b04a194d
+sourceHash: 46d1410a3d81
 ---
 
 `ccam folder work ~/code/company` باعث می‌شود هر اجرای بدون نام حساب در `~/code/company` و در هر پوشه‌ای زیر آن، Claude Code را با `work` آغاز کند. بیرون از آن، حساب پیش‌فرض مثل قبل اجرا می‌شود. نام بردن از یک حساب، با `ccam personal` یا میان‌بری مانند `ccpersonal`، همیشه همان حساب را اجرا می‌کند.
@@ -34,7 +34,7 @@ Here (/home/me/code/company/api): work, set for /home/me/code/company
 - `ccam -p "…"` و هر اجرای دیگری که آرگومان اولش گزینه‌ای برای Claude Code باشد
 - `ccam run` بدون نام، و `ccam --dry-run`
 - `ccam --fallback -p "…"` برای نخستین تلاشش
-- انتخابگر، یعنی `ccam` به‌تنهایی، که با مکان‌نما روی حساب پوشه آغاز می‌شود
+- داشبورد، یعنی `ccam` به‌تنهایی، که با مکان‌نما روی حساب پوشه آغاز می‌شود
 
 ## گزینه‌ها
 

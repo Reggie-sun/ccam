@@ -1,10 +1,10 @@
 ---
 title: Iniciar o Claude Code
-description: Inicie o Claude Code com qualquer conta via ccam <name|number>, ccam run ou o seletor; os argumentos chegam intactos ao claude e --dry-run mostra o comando.
+description: Inicie o Claude Code com qualquer conta via ccam <name|number>, ccam run ou o painel; os argumentos chegam intactos ao claude e --dry-run mostra o comando.
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: e6b5a8d4df86
+sourceHash: "4812b197f143"
 ---
 
 `ccam work` inicia o Claude Code com a conta `work`, e tudo o que vem depois do nome vai para o `claude` como está. Use-o onde você digitaria `claude`: em um terminal, em um script ou com uma entrada enviada por pipe.
@@ -21,7 +21,7 @@ ccam -p "summarise"              # no name: the folder's account, else the defau
 ccam use work                    # make work the default account
 ccam folder work ~/code/company  # use work in that folder when no name is given
 ccam run work --continue         # same as ccam work --continue
-ccam                             # the picker on a terminal, the list otherwise
+ccam                             # the dashboard on a terminal, the list otherwise
 ccam --dry-run work -p hi        # print the command instead of running it
 ccam --fallback work -p "fix the tests"   # run again as another account at the limit
 ```
@@ -30,22 +30,13 @@ Informe o nome de uma conta ou o número dela em `ccam list`. O ccam não lê os
 
 Quando o primeiro argumento começa com `-` e não é uma das opções do próprio ccam, o ccam inicia uma conta sem nome, com todos os argumentos. É a conta definida para a pasta atual com [`ccam folder`](/features/folder) ou, se não houver, a padrão: a conta definida com `ccam use` ou, se você não definiu nenhuma, a conta com o menor número.
 
-### O seletor
+### O painel
 
-`ccam` sem argumentos abre o seletor quando a entrada e a saída padrão são um terminal e, nos outros casos, imprime `ccam list`. Ele mostra o número, o e-mail, o uso de 5 horas, o último uso e os itens compartilhados de cada conta; o uso é preenchido à medida que cada conta responde.
+`ccam` sem argumentos abre o [painel](/features/dashboard) quando a entrada e a saída padrão são um terminal e, nos outros casos, imprime `ccam list`. Vá até uma conta (com as setas ou digitando o número dela) e pressione `Enter` para iniciá-la; `n` inicia a conta com mais espaço e `o` oferece `--continue`, `--resume` ou outros argumentos. O painel fecha antes de o Claude Code iniciar, então o terminal é restaurado primeiro.
 
-| Tecla | O que faz |
-| --- | --- |
-| `Enter` | Inicia o Claude Code com a conta selecionada |
-| `1` a `9` | Inicia a conta com esse número |
-| `Up`/`Down`, `k`/`j` | Move a seleção |
-| `a` | Fecha o seletor e executa o assistente do `ccam add` |
-| `s` | Edita os itens compartilhados da conta selecionada (`Space` ou `x` alterna, `Enter` aplica, `Esc` volta) |
-| `d` | Torna a conta selecionada a padrão |
-| `r` | Consulta o uso de novo, sem o cache curto |
-| `q`, `Esc`, `Ctrl+C` | Sai |
+Quando o shell tem `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY` ou `ANTHROPIC_AUTH_TOKEN` definida, o Claude Code usaria essa chave ou esse token em vez do login da própria conta, então o ccam avisa na saída de erro padrão antes de iniciar (`ccam: $ANTHROPIC_API_KEY is set, so Claude Code may use that key instead of work's login…`). Ele só lê as variáveis; uma [conta de chave de API](/features/api) as limpa.
 
-O seletor fecha antes de agir, então o terminal é restaurado antes de o Claude Code iniciar. Depois de `d` ou de uma alteração de compartilhamento, ele abre de novo. Uma alteração de compartilhamento mostra o plano e pergunta antes, como o `ccam share` faz.
+Com `relay = true` no `config.toml`, o ccam inicia as sessões interativas como processo filho e fica ao lado delas, para que o `/ccam:switch` possa levar uma conversa adiante sozinho ([detalhes](/features/next#inside-claude-code)); caso contrário, o ccam se substitui pelo Claude Code, e nada fica em execução ao lado dele.
 
 ## Opções
 
@@ -84,7 +75,7 @@ Cada inicialização segue as mesmas etapas, da linha de comando até o `exec`:
 Cada caixa acende quando a etapa dela é executada, e as linhas abaixo são o ambiente e os argumentos com que o Claude Code inicia.
 
 1. `cmd/ccam/main.go` chama `app.Main`. Se o ccam foi iniciado com outro nome, é um [atalho](/features/shortcuts) e vai direto para o inicializador.
-2. `app.parse` examina `os.Args` antes de o cobra entrar em ação. Só o `ccam` sozinho (o seletor), um nome de comando do ccam (`config.Reserved`), `-h`/`--help` e `-v`/`--version` vão para `cli.Execute`. Todo o resto é uma inicialização.
+2. `app.parse` examina `os.Args` antes de o cobra entrar em ação. Só o `ccam` sozinho (o painel), um nome de comando do ccam (`config.Reserved`), `-h`/`--help` e `-v`/`--version` vão para `cli.Execute`. Todo o resto é uma inicialização.
 3. `launcher.Launch` lê `~/.config/ccam/config.toml`, o único arquivo que ele analisa.
 4. `launcher.Prepare` encontra a conta pelo nome ou número (sem nome, `HereProfile` usa a conta da pasta, comparando o diretório de trabalho com as entradas `[[folder]]` do `config.toml` como strings), descarta um `--` inicial e localiza o executável `claude` com `ResolveClaude`. A busca no PATH fica em cache em `~/.local/state/ccam/claude-path`, junto com o horário de modificação do arquivo, para que o ccam não percorra o `PATH` a cada inicialização. Um arquivo alterado ou ausente provoca uma nova busca. Um caminho `claude_bin` no `config.toml` é usado como está. O ccam recusa um `claude` que seja o próprio ccam, comparado pelo inode, porque isso entraria em loop.
 5. `checkLinks` compara a pasta da conta `~/.local/share/ccam/profiles/<name>/` com as configurações de compartilhamento dela usando `share.Check`, que só chama `lstat` e `readlink`, uma ou duas chamadas de sistema por item. Um link ausente é criado na hora. Qualquer coisa que possa perder dados interrompe a inicialização.

@@ -32,7 +32,7 @@ Two kinds of options meet here: ccam's own, which go before the account name or 
 | `--dry-run` (before the account) | Print the environment and command, and the MCP notice if there is one. Neither asks nor copies | off |
 | `Copy them into .claude.json (a backup is kept)? [y/N]` | Asked when the account shares MCP servers and its `.claude.json` lacks the group's current list. `y` copies them, `N` or Enter starts without them | `N` |
 | `mcp_strategy = "sync"` in `~/.config/ccam/config.toml` | Copy the group's servers into `.claude.json` before every launch, Remote Control or not, so nothing is ever asked | `"flag"` |
-| `ccam share work --mcp off` | Stop sharing MCP servers with the account; Remote Control then starts with only the account's own servers and nothing is asked | on |
+| `ccam group leave <group> work` | Take the account out of the group that shares MCP with it; Remote Control then starts with only the account's own servers and nothing is asked | in `default` |
 
 ### Remote Control options
 
@@ -123,7 +123,7 @@ A session of `work` is still open: a normal `ccam work`, a shortcut, or another 
 
 ### ccam asks every time
 
-You have not copied the servers yet. Answer `y` once, or set `mcp_strategy = "sync"`. If you never want the servers in Remote Control, stop sharing MCP with the account: `ccam share work --mcp off`.
+You have not copied the servers yet. Answer `y` once, or set `mcp_strategy = "sync"`. If you never want the servers in Remote Control, stop sharing MCP with the account: take it out of that group (`ccam group leave default work`), or keep MCP in a group of its own that the account is not in.
 
 ### `ccam work rc` fails at once with an error about `--mcp-config`
 

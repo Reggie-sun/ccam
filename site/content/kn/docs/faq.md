@@ -5,7 +5,7 @@ description: ccam, Claude Code ಖಾತೆಗಳು, ಬಳಕೆಯ ಮಿತ�
 updated: 2026-10-20
 order: 6
 translation: machine
-sourceHash: 80a5475ccfee
+sourceHash: "e7d4a2c877ac"
 ---
 
 ## ccam, Anthropic ನ ಅಧಿಕೃತ ಟೂಲ್ ಆಗಿದೆಯೇ?
@@ -26,7 +26,7 @@ sourceHash: 80a5475ccfee
 
 ## ಸಂಭಾಷಣೆಯನ್ನು ಇನ್ನೊಂದು ಖಾತೆಯಲ್ಲಿ ಹೇಗೆ ಮುಂದುವರಿಸುವುದು?
 
-`ccam share <name> --history on` ಮೂಲಕ ಎರಡು ಖಾತೆಗಳ ನಡುವೆ ಸಂಭಾಷಣೆಯ ಇತಿಹಾಸವನ್ನು ಹಂಚಿಕೊಳ್ಳಿ, ನಂತರ `ccam next --continue` ರನ್ ಮಾಡಿ. Claude Code ಈಗಿನ ಫೋಲ್ಡರ್‌ನ ಇತ್ತೀಚಿನ ಸಂಭಾಷಣೆಯನ್ನು ಮುಂದಿನ ಖಾತೆಯಲ್ಲಿ ತೆರೆಯುತ್ತದೆ.
+`ccam group set default --add history` ಮೂಲಕ ಖಾತೆಗಳ ನಡುವೆ ಸಂಭಾಷಣೆಯ ಇತಿಹಾಸವನ್ನು ಹಂಚಿಕೊಳ್ಳಿ (ಅಥವಾ ಅವುಗಳಿಗೇ ಸ್ವಂತ ಗುಂಪಿನ ಮೂಲಕ: `ccam group add pair --items history --members work,side`), ನಂತರ `ccam next --continue` ರನ್ ಮಾಡಿ. Claude Code ಈಗಿನ ಫೋಲ್ಡರ್‌ನ ಇತ್ತೀಚಿನ ಸಂಭಾಷಣೆಯನ್ನು ಮುಂದಿನ ಖಾತೆಯಲ್ಲಿ ತೆರೆಯುತ್ತದೆ.
 
 ## ccam ನನ್ನ ಲಾಗಿನ್ ಅನ್ನು ನೋಡುತ್ತದೆಯೇ ಅಥವಾ ಕಳುಹಿಸುತ್ತದೆಯೇ?
 

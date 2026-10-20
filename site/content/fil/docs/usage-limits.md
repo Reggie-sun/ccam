@@ -4,7 +4,7 @@ description: Tingnan ang 5-oras at lingguhang usage ng bawat Claude Code account
 updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: a84df8e873d6
+sourceHash: 40aef0708c81
 ---
 
 Ipinapakita ng `ccam usage` kung gaano kalaki na ang nagamit ng bawat account sa 5-oras at lingguhang limit. Binubuksan ng `ccam next --auto` ang account na may pinakamaraming natitira, at dinadala ng `--continue` ang kasalukuyang usapan.
@@ -55,10 +55,10 @@ Ipapakita na ng Claude Code ang pangalan ng account at ang usage nito sa status 
 ```sh
 ccam next             # the account after the one you used last
 ccam next --auto      # the account with the lowest 5-hour usage
-ccam next --continue  # the next account that shares your conversation history
+ccam next --continue  # carry this folder's conversation on as the next account
 ```
 
-Nilalaktawan ng `ccam next` ang mga account na hindi naka-log in, at nilalaktawan ng `--auto` ang mga account na nasa 100%. Para maituloy ang isang usapan, dapat parehong nagshe-share ng kasaysayan ng usapan ang dalawang account; tingnan ang [sharing](/docs/sharing).
+Nilalaktawan ng `ccam next` ang mga account na hindi naka-log in, at nilalaktawan ng `--auto` ang mga account na nasa 100% at ang mga account ng ibang organisasyon. Kapag nagshe-share ng kasaysayan ng usapan ang dalawang account, binubuksan ng `--continue` ang parehong usapan; kung hindi, kinokopya ito ng Claude Code sa bagong account. Tingnan ang [sharing](/docs/sharing) at ang [paglipat sa susunod na account](/features/next#continue).
 
 Para sa mga script at naka-iskedyul na job na nagpapatakbo ng `claude -p`, ilagay ang `--fallback` bago ang pangalan ng account. Kapag naabot ng account na iyon ang limit nito, pinapatakbo ulit ng ccam ang parehong command bilang account na may pinakamaraming natitira, at ang output lang ng run na natapos ang ipi-print:
 

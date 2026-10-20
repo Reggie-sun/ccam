@@ -79,7 +79,7 @@ ccam work
 ccam 2
 ```
 
-Running `ccam` alone opens a picker: use the arrow keys and Enter, or press the account's number.
+Running `ccam` alone opens the [dashboard](/features/dashboard): move to an account with the arrow keys or its number, then press Enter.
 
 Everything after the shortcut or the account name goes to Claude Code unchanged, so you keep using the options you know:
 
@@ -91,14 +91,13 @@ cat error.log | ccwork -p "what caused this?"
 
 ## 5. Choose what to share
 
-By default, MCP servers, `settings.json`, the global `CLAUDE.md`, and agents, commands, skills and plugins are shared between accounts. Conversation history is not. Turn it on for both accounts if you want to continue conversations across them:
+By default, MCP servers, `settings.json`, the global `CLAUDE.md`, and agents, commands, skills and plugins are shared between accounts through the group `default`. Conversation history is not. Add it to the group if you want to continue conversations across accounts:
 
 ```sh
-ccam share personal --history on
-ccam share work --history on
+ccam group set default --add history
 ```
 
-ccam shows what it will move before it changes anything. See [sharing](/docs/sharing) for the details.
+ccam shows what it will move for each account before it changes anything. See [sharing with groups](/features/share) for the details.
 
 ## 6. When an account reaches its limit
 

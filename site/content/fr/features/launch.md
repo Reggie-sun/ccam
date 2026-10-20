@@ -1,10 +1,10 @@
 ---
 title: "Lancer Claude Code"
-description: "Lancez Claude Code avec tout compte via ccam <name|number>, ccam run ou le sélecteur ; les arguments passent tels quels et --dry-run affiche la commande."
+description: "Lancez Claude Code avec tout compte via ccam <name|number>, ccam run ou le tableau de bord ; les arguments passent tels quels et --dry-run affiche la commande."
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: e6b5a8d4df86
+sourceHash: 4812b197f143
 ---
 
 `ccam work` lance Claude Code avec le compte `work`, et tout ce qui suit le nom est transmis tel quel à `claude`. Utilisez-le partout où vous taperiez `claude` : dans un terminal, dans un script ou avec une entrée redirigée.
@@ -21,7 +21,7 @@ ccam -p "summarise"              # no name: the folder's account, else the defau
 ccam use work                    # make work the default account
 ccam folder work ~/code/company  # use work in that folder when no name is given
 ccam run work --continue         # same as ccam work --continue
-ccam                             # the picker on a terminal, the list otherwise
+ccam                             # the dashboard on a terminal, the list otherwise
 ccam --dry-run work -p hi        # print the command instead of running it
 ccam --fallback work -p "fix the tests"   # run again as another account at the limit
 ```
@@ -30,22 +30,13 @@ Indiquez le nom d'un compte ou son numéro dans `ccam list`. ccam ne lit pas les
 
 Quand le premier argument commence par `-` et n'est pas l'une des options propres à ccam, ccam lance un compte sans nom, avec tous les arguments. Il s'agit du compte défini pour le dossier courant avec [`ccam folder`](/features/folder), sinon du compte par défaut : celui défini avec `ccam use`, ou le compte au plus petit numéro si vous n'en avez pas défini.
 
-### Le sélecteur
+### Le tableau de bord
 
-`ccam` sans argument ouvre le sélecteur quand l'entrée et la sortie standard sont un terminal, et affiche `ccam list` dans le cas contraire. Il montre le numéro de chaque compte, son adresse e-mail, son utilisation sur 5 heures, sa dernière utilisation et ses éléments partagés ; l'utilisation s'affiche au fur et à mesure que chaque compte répond.
+`ccam` sans argument ouvre le [tableau de bord](/features/dashboard) quand l'entrée et la sortie standard sont un terminal, et affiche `ccam list` dans le cas contraire. Placez-vous sur un compte (avec les flèches, ou en tapant son numéro) et appuyez sur `Enter` pour le lancer ; `n` lance le compte qui a le plus de marge et `o` propose `--continue`, `--resume` ou d'autres arguments. Le tableau de bord se ferme avant le démarrage de Claude Code, si bien que le terminal est d'abord restauré.
 
-| Touche | Effet |
-| --- | --- |
-| `Enter` | Lancer Claude Code avec le compte sélectionné |
-| `1` à `9` | Lancer le compte portant ce numéro |
-| `Up`/`Down`, `k`/`j` | Déplacer la sélection |
-| `a` | Fermer le sélecteur et lancer l'assistant `ccam add` |
-| `s` | Modifier les éléments partagés du compte sélectionné (`Space` ou `x` bascule, `Enter` applique, `Esc` revient en arrière) |
-| `d` | Faire du compte sélectionné le compte par défaut |
-| `r` | Récupérer à nouveau l'utilisation, sans le cache court |
-| `q`, `Esc`, `Ctrl+C` | Quitter |
+Quand le shell définit `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY` ou `ANTHROPIC_AUTH_TOKEN`, Claude Code utiliserait cette clé ou ce jeton au lieu de la connexion propre au compte : ccam le signale donc sur la sortie d'erreur standard avant le lancement (`ccam: $ANTHROPIC_API_KEY is set, so Claude Code may use that key instead of work's login…`). Il se contente de lire ces variables ; un [compte à clé d'API](/features/api) les efface au contraire.
 
-Le sélecteur se ferme avant d'agir, si bien que le terminal est restauré avant le démarrage de Claude Code. Après `d` ou une modification du partage, il se rouvre. Une modification du partage affiche d'abord le plan et demande confirmation, comme le fait `ccam share`.
+Avec `relay = true` dans `config.toml`, ccam lance les sessions interactives comme processus enfant et reste à côté d'elles, pour que `/ccam:switch` puisse poursuivre une conversation de lui-même ([détails](/features/next#inside-claude-code)) ; sinon, ccam se remplace par Claude Code, et rien ne tourne à côté.
 
 ## Options
 
@@ -84,7 +75,7 @@ Chaque lancement suit les mêmes étapes, de la ligne de commande jusqu'à `exec
 Chaque case s'allume pendant l'exécution de son étape, et les lignes en dessous sont l'environnement et les arguments avec lesquels Claude Code démarre.
 
 1. `cmd/ccam/main.go` appelle `app.Main`. Si ccam a été lancé sous un autre nom, il s'agit d'un [raccourci](/features/shortcuts), qui va directement au lanceur.
-2. `app.parse` examine `os.Args` avant toute intervention de cobra. Seuls `ccam` seul (le sélecteur), un nom de commande ccam (`config.Reserved`), `-h`/`--help` et `-v`/`--version` vont à `cli.Execute`. Tout le reste est un lancement.
+2. `app.parse` examine `os.Args` avant toute intervention de cobra. Seuls `ccam` seul (le tableau de bord), un nom de commande ccam (`config.Reserved`), `-h`/`--help` et `-v`/`--version` vont à `cli.Execute`. Tout le reste est un lancement.
 3. `launcher.Launch` lit `~/.config/ccam/config.toml`, le seul fichier qu'il analyse.
 4. `launcher.Prepare` trouve le compte par son nom ou son numéro (sans nom, `HereProfile` prend le compte du dossier, en comparant le répertoire de travail aux entrées `[[folder]]` de `config.toml` sous forme de chaînes), retire un éventuel `--` initial et résout l'exécutable `claude` avec `ResolveClaude`. La recherche dans le PATH est mise en cache dans `~/.local/state/ccam/claude-path` avec la date de modification du fichier, si bien que ccam ne parcourt pas le `PATH` à chaque lancement. Un fichier modifié ou absent déclenche une nouvelle recherche. Un chemin `claude_bin` dans `config.toml` est utilisé tel quel. ccam refuse un `claude` qui serait ccam lui-même, comparé par inode, car cela tournerait en boucle.
 5. `checkLinks` compare le dossier du compte `~/.local/share/ccam/profiles/<name>/` avec ses paramètres de partage à l'aide de `share.Check`, qui n'appelle que `lstat` et `readlink`, un ou deux appels système par élément. Un lien manquant est créé sur-le-champ. Tout ce qui pourrait faire perdre des données arrête le lancement.

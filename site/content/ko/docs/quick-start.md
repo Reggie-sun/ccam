@@ -5,7 +5,7 @@ description: ccam add로 Claude Code 계정 두 개를 추가하고, ccwork 같�
 updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 55f81dae9fc0
+sourceHash: "d5b0e295f3f0"
 ---
 
 `ccam add`로 계정을 하나씩 추가한 뒤, `ccam <name>` 또는 `ccwork`처럼 직접 이름을 붙인 단축 명령으로 Claude Code를 시작합니다. 대부분은 이것만으로 충분합니다.
@@ -79,7 +79,7 @@ ccam work
 ccam 2
 ```
 
-`ccam`만 실행하면 계정 선택 화면이 열립니다. 화살표 키와 Enter로 고르거나 계정 번호를 누르세요.
+`ccam`만 실행하면 [대시보드](/features/dashboard)가 열립니다. 화살표 키나 계정 번호로 계정으로 이동한 뒤 Enter를 누르세요.
 
 단축 명령이나 계정 이름 뒤에 쓴 내용은 모두 그대로 Claude Code에 전달되므로, 평소 쓰던 옵션을 그대로 쓰면 됩니다.
 
@@ -91,14 +91,13 @@ cat error.log | ccwork -p "what caused this?"
 
 ## 5. 공유할 항목 고르기
 
-기본적으로 MCP 서버, `settings.json`, 전역 `CLAUDE.md`, 그리고 에이전트, 명령, 스킬, 플러그인은 계정 간에 공유됩니다. 대화 내역은 공유되지 않습니다. 계정을 오가며 대화를 이어 가려면 두 계정 모두 대화 내역 공유를 켜세요.
+기본적으로 MCP 서버, `settings.json`, 전역 `CLAUDE.md`, 그리고 에이전트, 명령, 스킬, 플러그인은 `default` 그룹을 통해 계정 간에 공유됩니다. 대화 내역은 공유되지 않습니다. 계정을 오가며 대화를 이어 가려면 대화 내역을 그룹에 추가하세요.
 
 ```sh
-ccam share personal --history on
-ccam share work --history on
+ccam group set default --add history
 ```
 
-ccam은 변경하기 전에 무엇을 옮길지 먼저 보여 줍니다. 자세한 내용은 [공유](/docs/sharing)를 참고하세요.
+ccam은 변경하기 전에 계정마다 무엇을 옮길지 먼저 보여 줍니다. 자세한 내용은 [그룹으로 공유하기](/features/share)를 참고하세요.
 
 ## 6. 계정이 한도에 도달했을 때
 

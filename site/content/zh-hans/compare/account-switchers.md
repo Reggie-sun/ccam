@@ -4,7 +4,7 @@ description: ccam 与 claude-swap、CCS、clausona、clauth、CAAM、cux 等 Cla
 updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 68048287f792
+sourceHash: "a90ede56b767"
 ---
 
 切换 Claude Code 账号的工具采用两种方式之一。大多数工具在同一个 `~/.claude` 文件夹中替换登录信息，所以同一时间只有一个账号处于活动状态。另一些工具（包括 ccam）用 `CLAUDE_CONFIG_DIR` 为每个账号提供单独的文件夹，所以每个账号都保持登录状态，并且可以同时运行多个账号。ccam 还提供共享的设置和 MCP 服务器，并能在另一个账号的文件夹中继续对话。
@@ -23,7 +23,7 @@ sourceHash: 68048287f792
 
 | 工具 | 方式 | 同时使用多个账号 | 5 小时和每周用量 | 达到限制时 | 平台 |
 | --- | --- | --- | --- | --- | --- |
-| ccam | 单独的文件夹 | 是 | 是，`ccam usage` | 你运行 `ccam next --auto --continue`，在余量最多的账号中继续对话；`ccam --fallback` 会自动在那里重新运行 `-p` 任务，`ccam pick` 把并行任务分散到各个账号 | Linux、macOS、Windows |
+| ccam | 单独的文件夹 | 是 | 是，`ccam usage` | 会话中弹出通知；`ccam next --auto --continue` 或 `/ccam:switch` 会把对话带到余量最多的账号，无论是否共享历史；`ccam --fallback` 会自动在那里重新运行 `-p` 任务，`ccam pick` 把并行任务分散到各个账号 | Linux、macOS、Windows |
 | [claude-swap](https://github.com/realiti4/claude-swap) | 替换登录信息；用 `cswap run` 时使用单独的文件夹 | 是，使用 `cswap run` | 是 | `cswap auto` 在达到阈值时切换登录信息；正在运行的会话继续进行 | Linux、macOS、Windows |
 | [CCS](https://github.com/kaitranntt/ccs) | 单独的文件夹 | 是 | 部分支持 | 账号池通过本地代理把请求转给下一个账号 | Linux、macOS、Windows |
 | [clausona](https://github.com/larcane97/clausona) | 单独的文件夹 | 是 | 是 | 每次运行前由路由选出还有配额的账号，可以等待重置，并给各个并行任务分配不同的账号 | Linux、macOS、Windows |
@@ -39,7 +39,7 @@ ccswap 是 claude-swap 的一个分支，还能管理 Codex 的登录。[claude-
 
 | 工具 | 编写语言 | Claude Code 运行时 | 是否在不同位置之间复制登录信息 | 账号之间可以共享什么 |
 | --- | --- | --- | --- | --- |
-| ccam | Go，单个静态二进制文件 | 什么也没有：ccam 用 `claude` 替换自身（Windows 无法这样做，ccam 会等待它结束） | 否 | 每一项单独设置：每个账号选择本地或某个命名分组 |
+| ccam | Go，单个静态二进制文件 | 什么也没有：ccam 用 `claude` 替换自身（Windows 无法这样做，ccam 会等待它结束；可选的中继进程会留在它旁边） | 否 | 组：每个组指定它共享的项和它的账号；一个账号可以属于多个组 |
 | claude-swap | Python 3.12+，用 uv 或 pipx 安装 | 用 `cswap run` 时什么也没有；`cswap auto` 和菜单栏应用会持续运行 | 是，在替换登录信息时 | 用 `cswap run` 时：设置、`CLAUDE.md` 和扩展一起共享，历史记录可选；MCP 服务器在每次启动时复制 |
 | CCS | Node.js 18+ 或 Bun | CCS 作为父进程留着；账号池会加一个本地代理 | 账号文件夹不复制；账号池保存自己的登录信息 | 每个账号选择共享或本地，历史记录按上下文分组；MCP 服务器会被复制 |
 | clausona | TypeScript，Node.js 20+ | 直接运行的 `claude` 经过一个 shell 函数；`clausona run` 让 Node 作为父进程留着；每次退出后有一个后台 Node 进程 | 否，但它会自行为闲置账号的令牌续期，以读取它们的用量 | 除每个账号自己的文件外，全部来自一个主账号；历史记录可选；用 `claude mcp add` 添加的服务器不共享 |
@@ -62,21 +62,21 @@ ccam 读取一个文件，检查它的链接，然后用 `claude` 替换自身�
 
 以这种方式启动账号大约只多花 4 ms，第 95 百分位低于 6 ms，峰值内存 8 MB（用 hyperfine 运行 [`scripts/perf-check.sh`](https://github.com/jhyunwoo/ccam/blob/main/scripts/perf-check.sh) 300 次）。在同一台笔记本电脑上，仅启动 Python 解释器就要 13 ms，Node.js 要 31 ms，这还是在程序做任何事情之前。
 
-### 逐项、按账号共享
+### 由组决定共享什么
 
-MCP 服务器、`settings.json`、`CLAUDE.md`、扩展（agents、commands、skills、插件）和对话历史是五个独立的项目。每个账号把每一项设为 `local` 或某个分组，所以两个工作账号可以在 `work` 分组中共享历史记录，个人账号保留自己的历史记录，而三个账号都使用同样的 MCP 服务器。
+MCP 服务器、`settings.json`、`CLAUDE.md`、扩展（agents、commands、skills、插件）和对话历史是五个独立的项目。组指定它共享的项以及其中的账号，所以两个工作账号可以在 `work` 组中共享历史记录，个人账号保留自己的历史记录，而三个账号都通过 `default` 使用同样的 MCP 服务器。`ccam group set work --add memory` 会在一个计划中移动该组的所有账号；[仪表盘](/features/dashboard)用复选框完成同样的操作，并把账号已经从另一个组获得的项显示为灰色。
 
-- MCP 服务器在启动时通过 `--mcp-config` 传入，所以默认情况下 ccam 从不编辑 `.claude.json`，也就是 Claude Code 运行时会改写的那个文件。`ccam mcp add` 一次就能为整个分组添加一个服务器。
-- 其他项目是指向分组文件夹的链接，所以在一个账号中做的修改会立即出现在其他账号中。启动时不复制任何东西。
+- MCP 服务器在启动时通过 `--mcp-config` 传入，所以默认情况下 ccam 从不编辑 `.claude.json`，也就是 Claude Code 运行时会改写的那个文件。`ccam mcp add` 一次就能为整个组添加一个服务器。
+- 其他项目是指向组文件夹的链接，所以在一个账号中做的修改会立即出现在其他账号中。启动时不复制任何东西。
 - 登录信息、`.claude.json` 和运行状态从不共享。
 
 ### 每项更改都先展示并备份
 
-`ccam share` 和 `ccam migrate` 会先打印计划，并在移动任何东西之前征求确认。当某个文件在账号和分组之间不同时，由你选择：保留分组的版本、使用你的版本，或者合并 JSON。原始文件放到 `.ccam-backup/<time>/`，被移除账号的文件夹放进回收文件夹，文件通过一次重命名完成替换，所以写入中断时旧文件仍然保留。`--dry-run` 会显示启动、共享、迁移、快捷命令、更新和修复将做什么。`ccam doctor --fix` 会修复损坏的链接和权限。
+`ccam group` 和 `ccam migrate` 会先打印计划，并在移动任何东西之前征求确认。当某个文件在账号和组之间不同时，由你选择：保留组的版本、使用你的版本，或者合并 JSON。原始文件放到 `.ccam-backup/<time>/`，被移除账号的文件夹放进回收文件夹，文件通过一次重命名完成替换，所以写入中断时旧文件仍然保留。`--dry-run` 会显示启动、共享、迁移、快捷命令、更新和修复将做什么。`ccam doctor --fix` 会修复损坏的链接和权限。
 
 ### 在下一个账号中继续同一个对话
 
-共享历史后，`ccam next --auto --continue` 会同时查询所有账号的用量，打开余量最多的账号并继续对话。何时切换由你决定；ccam 不会在后台监视你的用量。账号用量达到 90% 时，状态栏会提示这个命令。
+`ccam next --auto --continue` 会同时查询所有账号的用量，打开余量最多的账号并继续对话。共享历史时，这就是同一个对话；不共享时，Claude Code 会把它复制到新账号中（`--resume <file> --fork-session`），ccam 会告诉你第一次回复要重新读取多少 token。当用量限制使会话停止时，ccam 插件的钩子会显示一条通知，`/ccam:switch` 会把对话交接过去。何时切换由你决定；没有任何东西在后台监视你的用量，自动选择也只在同一个组织内进行，所以公司的对话绝不会意外落到私人账号上。账号用量达到 90% 时，状态栏会提示这个命令。
 
 脚本无法等你操作，所以 `ccam --fallback work -p "…"` 会替它们切换：当账号达到限制时，同一个命令会以余量最多的账号重新运行，并且只打印最终完成的那次运行的输出。不是用量限制造成的失败会原样传递。对于并行任务，`ccam pick` 会给每个任务分配一个还有余量的不同账号；当没有账号还有余量时，两者都以退出码 75 退出。
 
@@ -86,11 +86,11 @@ MCP 服务器、`settings.json`、`CLAUDE.md`、扩展（agents、commands、ski
 
 ### 单个二进制文件，经过校验的下载
 
-ccam 是一个约 10 MB 的静态二进制文件，无需安装任何运行时，支持 Linux、macOS 和 Windows。安装脚本（`install.sh`、`install.ps1`）和 `ccam update` 会用发布版本的 SHA-256 校验和检查每个下载，ccam 也从不自行检查更新。它没有遥测：它发出的请求只有向 Anthropic 查询你的账号用量（并行，3 秒超时，60 秒缓存），以及你要求的下载。
+ccam 是一个约 10 MB 的静态二进制文件，无需安装任何运行时，支持 Linux、macOS 和 Windows。安装脚本（`install.sh`、`install.ps1`）和 `ccam update` 会用发布版本的 SHA-256 校验和检查每个下载，ccam 也从不自行检查更新。它没有遥测：它发出的请求只有向 Anthropic 查询你的账号用量（并行，3 秒超时，60 秒缓存），以及你要求的下载。使用 `usage_source = "claude"` 时，连这些请求也通过 Claude Code 发出，ccam 从不接触令牌。
 
 ## 其他工具做得更多的地方
 
-- claude-swap、clauth、cux、CAAM 和 CCSwitcher 可以在账号超过用量阈值时自行切换正在运行的交互式会话。ccam 用 `--fallback` 切换 `-p` 运行，交互式会话则留给你。
+- claude-swap、clauth、cux、CAAM 和 CCSwitcher 可以在账号超过用量阈值时自行切换正在运行的交互式会话。ccam 用 `--fallback` 切换 `-p` 运行，交互式会话则留给你，并在达到限制时发出通知、提供 `/ccam:switch`。
 - 在未开启开发人员模式的 Windows 上，ccam 可以共享文件夹，但无法共享 `settings.json` 这样的单个文件；claude-swap 和 CCS 在这种情况下会改为复制它们。
 - CCSwitcher、Claude Switcher 和 claude-swap 会在 macOS 菜单栏中显示用量。
 - CCS、clausona、CAAM、clauth、ccswap 和 Claude Switcher 还能管理 Codex 和其他编程代理。

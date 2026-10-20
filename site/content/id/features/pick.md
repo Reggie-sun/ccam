@@ -4,7 +4,7 @@ description: ccam pick mencetak akun dengan ruang terbanyak untuk skrip, memberi
 updated: 2026-10-20
 order: 12
 translation: machine
-sourceHash: 65a5a7e179a5
+sourceHash: "2e8285b7c193"
 ---
 
 `ccam pick` mencetak nama akun yang sudah login dengan ruang terbanyak, agar skrip bisa menjalankan Claude Code dengannya. Worker yang dimulai pada waktu yang sama masing-masing mendapat akun berbeda selama masih cukup akun yang punya ruang, sehingga sekumpulan tugas `claude -p` tersebar ke akun-akun Anda alih-alih menghabiskan satu akun.
@@ -19,6 +19,8 @@ done; wait
 ccam pick --json                      # the account and its usage
 ccam pick --model opus                # also count the Opus weekly limit
 ccam pick --max-usage 80 --strategy expiring
+ccam pick --strategy balance          # spread over the weekly quota, fewer running sessions first
+ccam pick --cross-org                 # also accounts of other organizations
 ccam pick --wait=2h                   # nobody has room: wait for a reset
 ccam --fallback "$(ccam pick)" -p "…" # also switch if this account hits its limit mid-job
 ```
@@ -31,7 +33,8 @@ $ ccam pick --json
   "email": "dev@company.com",
   "five_hour": { "percent": 12, "resets_at": "2026-10-20T15:10:00Z", "known": true },
   "weekly": { "percent": 41, "resets_at": "2026-10-24T09:00:00Z", "known": true },
-  "source": "live"
+  "source": "live",
+  "reason": "12% of its 5 hours used, the least"
 }
 ```
 
@@ -41,16 +44,17 @@ Kode keluar: `0` dengan nama di output standar, `75` (`EX_TEMPFAIL`) jika tidak 
 
 | Opsi | Fungsinya | Default |
 | --- | --- | --- |
-| `--json` | Mencetak akun, penggunaan 5 jam dan mingguannya, serta asal angka-angka itu | nonaktif |
+| `--json` | Mencetak akun, penggunaan 5 jam dan mingguannya, asal angka-angka itu, dan alasan akun itu dipilih | nonaktif |
 | `--model <model>` | Juga menghitung jendela mingguan model itu, seperti `opus` | tidak ada |
 | `--max-usage <1-100>` | Utamakan akun di bawah penggunaan ini | `auto_max_usage`, jika tidak ada 100 |
-| `--strategy headroom\|expiring` | Penggunaan 5 jam terendah, atau reset 5 jam yang paling cepat | `auto_strategy`, jika tidak ada `headroom` |
+| `--strategy headroom\|expiring\|balance` | Penggunaan 5 jam terendah, reset 5 jam yang paling cepat, atau kuota mingguan yang paling dulu akan terbuang | `auto_strategy`, jika tidak ada `headroom` |
+| `--cross-org` | Juga memilih akun dari organisasi lain | `cross_org`, jika tidak ada nonaktif |
 | `--wait[=<duration>]` | Jika tidak ada akun yang punya ruang, tunggu akun pertama di-reset, paling lama selama ini | nonaktif; `5h` jika diberikan tanpa nilai |
 | `--dry-run` | Memilih tanpa mencatat pilihan itu | nonaktif |
 
 ## Cara kerjanya
 
-1. ccam membuat daftar akun yang sudah login (akun kunci API tidak punya batas dan tidak diikutkan).
+1. ccam membuat daftar akun yang sudah login (akun kunci API tidak punya batas dan tidak diikutkan) di organisasi akun yang akan dijalankan folder ini (lihat [organisasi](/features/next#auto)); folder yang login ke akun Claude yang sama dengan akun itu juga tidak diikutkan.
 2. ccam mengambil kunci (`~/.local/state/ccam/picks.lock`), sehingga pemilihan yang berjalan bersamaan dilakukan satu per satu.
 3. ccam menanyakan penggunaan semua akun sekaligus, dengan cara yang sama seperti `ccam usage`, memakai cache 60 detik.
 4. Akun yang dipilih dalam 2 menit terakhir (`~/.local/state/ccam/picks/<name>`) dikeluarkan lebih dulu, lalu [aturan pemilihan](/features/next#auto) `ccam next --auto` memilih di antara sisanya: akun di bawah `auto_max_usage` lebih dulu, menurut strategi, dan tidak pernah akun yang sudah 100%.

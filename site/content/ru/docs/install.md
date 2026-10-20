@@ -5,7 +5,7 @@ description: Установите ccam на Linux, macOS или Windows одно
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: aea4984c1576
+sourceHash: "07fab3165030"
 ---
 
 Выполните это в терминале на Linux или macOS:
@@ -80,7 +80,7 @@ ccam completion powershell >> $PROFILE
 /plugin install ccam --marketplace jhyunwoo/ccam
 ```
 
-Он добавляет навык и две команды, `/ccam:usage` и `/ccam:ext`. Навык никогда не выполняет команды, которые выполняют вход или перемещают файлы; вместо этого он их предлагает.
+Он добавляет навык, команды `/ccam:usage`, `/ccam:ext` и `/ccam:switch` и два хука: когда сессия останавливается на лимите использования, вы получаете уведомление в терминале, а `/ccam:switch [account]` передаёт разговор другому аккаунту ([подробнее](/features/next#inside-claude-code)). Хуки запускают `ccam`, поэтому он должен быть в `PATH`, который видит Claude Code. Навык никогда не выполняет команды, которые выполняют вход или перемещают файлы; вместо этого он их предлагает.
 
 ## Проверка установки
 

@@ -5,7 +5,7 @@ description: Amsoshi game da ccam, asusun Claude Code, iyakokin amfani, rabawa, 
 updated: 2026-10-20
 order: 6
 translation: machine
-sourceHash: 80a5475ccfee
+sourceHash: e7d4a2c877ac
 ---
 
 ## Shin ccam kayan aikin Anthropic ne na hukuma?
@@ -26,7 +26,7 @@ Ba kowane asusu foldar saitunsa ta kansa da `CLAUDE_CONFIG_DIR`. ccam yana yi ma
 
 ## Ta yaya zan ci gaba da tattaunawa a wani asusu?
 
-Raba tarihin tattaunawa tsakanin asusun biyu da `ccam share <name> --history on`, sannan ka gudanar da `ccam next --continue`. Claude Code yana buɗe tattaunawa ta baya-bayan nan ta foldar yanzu a asusu na gaba.
+Raba tarihin tattaunawa tsakanin asusan da `ccam group set default --add history` (ko rukuni nasu na kansu: `ccam group add pair --items history --members work,side`), sannan ka gudanar da `ccam next --continue`. Claude Code yana buɗe tattaunawa ta baya-bayan nan ta foldar yanzu a asusu na gaba.
 
 ## Shin ccam yana ganin bayanan shigata ko yana aika su?
 

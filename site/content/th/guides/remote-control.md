@@ -4,7 +4,7 @@ description: เริ่ม Remote Control ของ Claude Code ในชื�
 updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: 59b802c44bb3
+sourceHash: "5f0b90ea53d6"
 ---
 
 `ccam work rc` เริ่ม Remote Control ของ Claude Code ในชื่อบัญชี `work` คุณจึงควบคุมเซสชันบนคอมพิวเตอร์เครื่องนี้ได้จาก claude.ai/code หรือแอป Claude บนมือถือ คำสั่งนี้ทำงานเหมือน `claude rc` โดยต่างกันเพียงข้อเดียว: หากบัญชีใช้เซิร์ฟเวอร์ MCP ร่วมกัน ccam จะถามหนึ่งครั้งว่าจะคัดลอกเซิร์ฟเวอร์เหล่านั้นลงใน `.claude.json` ของบัญชีหรือไม่ เพราะเซสชันของ Remote Control อ่านเซิร์ฟเวอร์จากที่นั่นเท่านั้น
@@ -33,7 +33,7 @@ ccam --dry-run work rc                # print the command instead of running it
 | `--dry-run` (ก่อนชื่อบัญชี) | พิมพ์ตัวแปรสภาพแวดล้อมและคำสั่ง รวมถึงข้อความแจ้งเรื่อง MCP หากมี ไม่ถามและไม่คัดลอก | ปิด |
 | `Copy them into .claude.json (a backup is kept)? [y/N]` | ถามเมื่อบัญชีใช้เซิร์ฟเวอร์ MCP ร่วมกันและ `.claude.json` ของบัญชียังไม่มีรายการปัจจุบันของกลุ่ม `y` คัดลอกเซิร์ฟเวอร์ ส่วน `N` หรือ Enter จะเริ่มโดยไม่มีเซิร์ฟเวอร์เหล่านั้น | `N` |
 | `mcp_strategy = "sync"` ใน `~/.config/ccam/config.toml` | คัดลอกเซิร์ฟเวอร์ของกลุ่มลงใน `.claude.json` ก่อนการเริ่มทุกครั้ง ไม่ว่าจะเป็น Remote Control หรือไม่ จึงไม่มีการถามเลย | `"flag"` |
-| `ccam share work --mcp off` | เลิกใช้เซิร์ฟเวอร์ MCP ร่วมกับบัญชีนี้ จากนั้น Remote Control จะเริ่มด้วยเซิร์ฟเวอร์ของบัญชีเองเท่านั้นและไม่มีการถาม | เปิด |
+| `ccam group leave <group> work` | นำบัญชีออกจากกลุ่มที่ใช้ MCP ร่วมกับบัญชีนั้น จากนั้น Remote Control จะเริ่มด้วยเซิร์ฟเวอร์ของบัญชีเองเท่านั้นและไม่มีการถาม | อยู่ใน `default` |
 
 ### ตัวเลือกของ Remote Control
 
@@ -124,7 +124,7 @@ $ ccam mcp add ctx --url https://mcp.context7.com/mcp
 
 ### ccam ถามทุกครั้ง
 
-คุณยังไม่ได้คัดลอกเซิร์ฟเวอร์ ให้ตอบ `y` หนึ่งครั้ง หรือตั้ง `mcp_strategy = "sync"` หากไม่ต้องการเซิร์ฟเวอร์เหล่านี้ใน Remote Control เลย ให้เลิกใช้ MCP ร่วมกับบัญชีนี้: `ccam share work --mcp off`
+คุณยังไม่ได้คัดลอกเซิร์ฟเวอร์ ให้ตอบ `y` หนึ่งครั้ง หรือตั้ง `mcp_strategy = "sync"` หากไม่ต้องการเซิร์ฟเวอร์เหล่านี้ใน Remote Control เลย ให้เลิกใช้ MCP ร่วมกับบัญชีนี้: นำบัญชีออกจากกลุ่มนั้น (`ccam group leave default work`) หรือเก็บ MCP ไว้ในกลุ่มของมันเองที่บัญชีนี้ไม่ได้อยู่
 
 ### `ccam work rc` ล้มเหลวทันทีพร้อมข้อผิดพลาดเกี่ยวกับ `--mcp-config`
 

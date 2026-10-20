@@ -4,7 +4,7 @@ description: ccam mcp add, add-json, list, remove અને import વડે દ
 updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: f1de7db4b7be
+sourceHash: 6d3b3c38c6cb
 ---
 
 Claude Code user MCP સર્વર `.claude.json` માં રાખે છે, એ જ ફાઇલ જેમાં એકાઉન્ટનું લૉગિન હોય છે, તેથી આ ફાઇલ એકાઉન્ટ વચ્ચે શેર થઈ શકતી નથી. ccam શેર કરેલા સર્વર એક ગ્રુપ ફાઇલ, `mcp.json`, માં રાખે છે, અને શરૂઆત વખતે તે ગ્રુપના દરેક એકાઉન્ટને આપે છે. તમારાં બધાં એકાઉન્ટ માટે એક જ વાર સર્વર ઉમેરવા `ccam mcp` વાપરો, અને કોઈ એક સેશનમાં ઉમેરેલો સર્વર બીજાં એકાઉન્ટમાં ખસેડવા `ccam mcp import` વાપરો.
@@ -36,7 +36,7 @@ group default (work, side)
 only in account work: pg
 ```
 
-ગ્રુપ પાસે પહેલેથી હોય તેવું નામ ઉમેરવાથી તેની વ્યાખ્યા બદલાય છે અને `added` ને બદલે `updated` છપાય છે. સર્વર કોઈ એકાઉન્ટ સુધી ત્યારે જ પહોંચે છે જ્યારે તે એ ગ્રુપ સાથે MCP શેર કરતું હોય (`ccam share <name> --mcp on`); હજી કોઈ એકાઉન્ટ MCP શેર ન કરતું હોય, ત્યારે `add` એ જણાવે છે.
+ગ્રુપ પાસે પહેલેથી હોય તેવું નામ ઉમેરવાથી તેની વ્યાખ્યા બદલાય છે અને `added` ને બદલે `updated` છપાય છે. સર્વર કોઈ એકાઉન્ટ સુધી ત્યારે જ પહોંચે છે જ્યારે તે એ ગ્રુપમાં હોય અને ગ્રુપ MCP શેર કરતું હોય (`ccam group set <group> --add mcp`); ગ્રુપ MCP શેર ન કરતું હોય, ત્યારે `add` એ જણાવે છે.
 
 ## ઓપ્શન
 
@@ -121,7 +121,7 @@ Skipped gh: group default already has a different gh (`ccam mcp import work gh -
 - **ચાલતાં એકાઉન્ટ.** `import` ગ્રુપમાં કૉપિ કરે છે પણ ચાલતા એકાઉન્ટની પોતાની એન્ટ્રીઓ રહેવા દે છે અને તે જણાવે છે; સેશન પૂરું થયા પછી તેને ફરી ચલાવો. sync ચાલતાં એકાઉન્ટ છોડી દે છે.
 - **Remote Control માટેની કૉપિ.** ચાલતા એકાઉન્ટની કૉપિને અડવામાં આવતું નથી: `Note: account side is running, so the copy in its .claude.json stays as it was until its next Remote Control launch.` `mcp_strategy = "sync"` સાથે કશું અપડેટ કરવાની જરૂર નથી, કારણ કે દરેક શરૂઆત sync કરે છે.
 - **તૂટેલી ફાઇલો.** જો `.claude.json` માન્ય JSON ન હોય, તો sync તેને અડ્યા વગર રહેવા દે છે અને ભૂલ બતાવે છે. જો 2 સેકન્ડમાં lock ન લઈ શકાય, તો ccam `could not lock … (Claude Code is writing the file)` બતાવે છે.
-- **MCP શેર ન કરતાં એકાઉન્ટ.** `import` ઇનકાર કરે છે અને પહેલાં `ccam share side --mcp on` ચલાવવા કહે છે.
+- **MCP શેર ન કરતાં એકાઉન્ટ.** `import` ઇનકાર કરે છે અને પહેલાં એકાઉન્ટને MCP શેર કરતા ગ્રુપમાં મૂકવા કહે છે (`ccam group join <group> side`).
 - **ગ્રુપનાં નામ.** `-g` ફક્ત ગ્રુપનું નામ લે છે; તે `groups/` હેઠળ ફોલ્ડર બને છે, તેથી `../x` જેવાં નામનો ઇનકાર થાય છે.
 
 ## સંબંધિત

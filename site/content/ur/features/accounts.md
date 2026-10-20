@@ -4,7 +4,7 @@ description: "ccam add، ccam login، ccam list، ccam rename، ccam remove او
 updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 9eb992214132
+sourceHash: "8564517d0d71"
 ---
 
 ccam کا ہر اکاؤنٹ Claude Code کا ایک الگ کنفیگ فولڈر ہے جس کا اپنا لاگ اِن ہوتا ہے۔ یہ کمانڈز اکاؤنٹس بناتی ہیں، ان میں سائن اِن کرتی ہیں، ان کی فہرست دکھاتی ہیں، ان کے نام بدلتی ہیں اور انہیں ہٹاتی ہیں، اور ان فولڈرز کو رجسٹر کرتی ہیں جو آپ کے پاس پہلے سے ہیں۔
@@ -12,10 +12,11 @@ ccam کا ہر اکاؤنٹ Claude Code کا ایک الگ کنفیگ فولڈر
 ## استعمال
 
 ```sh
-ccam add                                   # wizard on a terminal: name, shared items, shortcut, login
+ccam add                                   # wizard on a terminal: name, sign-in, groups, shortcut
 ccam add work --shortcut ccwork            # no wizard: log in, then create the ccwork command
-ccam add side --no-login --share history=team
+ccam add side --no-login --group default --group team
 ccam login side                            # run claude auth login inside the account
+ccam login --expired                       # every account never logged in, or whose login expired
 ccam logout side                           # remove the login token
 ccam list                                  # table of accounts; ccam ls is the same
 ccam list --json                           # machine-readable
@@ -29,25 +30,28 @@ ccam completion zsh > "${fpath[1]}/_ccam"
 
 جہاں بھی کوئی کمانڈ `<name|number>` لیتی ہے، آپ اکاؤنٹ کا نام یا اس کا سلاٹ نمبر دے سکتے ہیں، یعنی `ccam list` کا `#` کالم۔
 
-ٹرمینل پر بغیر آپشنز کے `ccam add` ایک وزرڈ کھولتا ہے۔ یہ نام پوچھتا ہے، پھر شیئر کیے جانے والے آئٹمز کی ایک چیک لسٹ دکھاتا ہے (گفتگو کی ہسٹری کے سوا سب کچھ چیک ہوتا ہے)، پھر `Create a shortcut command for work? [y/N]` پوچھتا ہے اور `y` پر `Shortcut name [ccwork]:`۔ `--share`، `--shortcut` یا `--no-login` میں سے کوئی بھی، یا ٹرمینل کے بجائے pipe، وزرڈ کو چھوڑ دیتا ہے؛ تب نام دینا لازمی ہے اور کوئی شارٹ کٹ نہیں بنتا جب تک `--shortcut` کسی کا نام نہ دے۔
+ٹرمینل پر بغیر آپشنز کے `ccam add` ایک وزرڈ کھولتا ہے۔ یہ نام پوچھتا ہے اور یہ کہ اکاؤنٹ کیسے سائن اِن کرے گا (ابھی Claude لاگ اِن، API key، یا بعد میں Claude لاگ اِن)، پھر شامل ہونے کے لیے گروپس دکھاتا ہے جن میں `default` چیک ہوتا ہے (جب ابھی کوئی گروپ نہ ہو تو وہ آئٹمز جو گروپ `default` شیئر کرے گا)، پھر `Create a shortcut command for work? [y/N]` پوچھتا ہے، اور آخر میں تصدیق کے لیے ایک خلاصہ دکھاتا ہے۔ `Esc` ایک قدم پیچھے جاتا ہے۔ `--group`، `--no-group`، `--shortcut` یا `--no-login` میں سے کوئی بھی، یا ٹرمینل کے بجائے pipe، وزرڈ کو چھوڑ دیتا ہے؛ تب نام دینا لازمی ہے اور کوئی شارٹ کٹ نہیں بنتا جب تک `--shortcut` کسی کا نام نہ دے۔
 
-`ccam list` سلاٹ، نام، شارٹ کٹ، ای میل، شیئر کیے گئے آئٹمز اور آخری استعمال دکھاتا ہے، اور ڈیفالٹ اکاؤنٹ سے پہلے `*` ہوتا ہے:
+`--group` کے بغیر نیا اکاؤنٹ گروپ `default` میں شامل ہوتا ہے۔ پہلا اکاؤنٹ اسے بناتا ہے، جو MCP سرورز، سیٹنگز، `CLAUDE.md` اور ایکسٹینشنز شیئر کرتا ہے؛ دیکھیں [گروپس کے ساتھ شیئرنگ](/features/share)۔
+
+`ccam list` سلاٹ، نام، شارٹ کٹ، ای میل، گروپس اور آخری استعمال دکھاتا ہے، اور ڈیفالٹ اکاؤنٹ سے پہلے `*` ہوتا ہے:
 
 ```console
 $ ccam list
-   #  Name      Shortcut  Email             Shared                        Last used
-*  1  work      ccwork    user@example.com  mcp settings md ext           -
-   2  personal  -         me@side.dev       settings md ext history@team  -
+   #  Name      Shortcut  Email             Groups        Last used
+*  1  work      ccwork    user@example.com  default team  -
+   2  personal  -         me@side.dev       default       -
 ```
 
-`--json` کے ساتھ ہر اکاؤنٹ ایک آبجیکٹ ہے جس میں `slot`، `shortcut`، `name`، `email`، `default`، `dir`، `last_used` (جب اکاؤنٹ کبھی شروع نہ ہوا ہو تو شامل نہیں) اور `share` ہوتے ہیں۔ `share` ہر آئٹم (`mcp`، `settings`، `memory`، `extensions`، `history`) کو اس کے گروپ کے نام یا `"local"` سے جوڑتا ہے۔
+`--json` کے ساتھ ہر اکاؤنٹ ایک آبجیکٹ ہے جس میں `slot`، `shortcut`، `name`، `email`، `default`، `dir`، `last_used` (جب اکاؤنٹ کبھی شروع نہ ہوا ہو تو شامل نہیں)، `groups` اور `share` ہوتے ہیں۔ `share` ہر آئٹم (`mcp`، `settings`، `memory`، `extensions`، `history`) کو اس گروپ سے جوڑتا ہے جس سے وہ آتا ہے، یا `"local"` سے۔
 
 ## آپشنز
 
 | آپشن | کیا کرتا ہے | ڈیفالٹ |
 | --- | --- | --- |
 | `ccam add --no-login` | لاگ اِن کیے بغیر اکاؤنٹ بناتا ہے؛ بعد میں `ccam login <name>` سے لاگ اِن کریں | بند |
-| `ccam add --share <item=group>` | کسی آئٹم کو ایک گروپ کے ساتھ شیئر کرتا ہے، یا اسے نجی رکھنے کے لیے `item=local`۔ کئی بار دیا جا سکتا ہے | `mcp`، `settings`، `memory`، `extensions`، `default` میں؛ `history` لوکل |
+| `ccam add --group <group>` | `default` کے بجائے اس گروپ میں شامل ہوتا ہے۔ کئی بار دیا جا سکتا ہے؛ `default` موجود نہ ہو تو بنا دیا جاتا ہے | `default` |
+| `ccam add --no-group` | کسی گروپ میں شامل نہیں ہوتا: اکاؤنٹ کچھ شیئر نہیں کرتا | بند |
 | `ccam add --shortcut <command>` | `~/.local/bin` میں یہ شارٹ کٹ کمانڈ بھی بناتا ہے | کوئی نہیں |
 | `ccam add --api --key-from <source>` | ایسا اکاؤنٹ جو لاگ اِن کے بجائے API key استعمال کرتا ہے؛ دیکھیں [API key اکاؤنٹس](/features/api) | بند |
 | `ccam list --json` | اکاؤنٹس کو JSON میں پرنٹ کرتا ہے | بند |
@@ -58,7 +62,7 @@ $ ccam list
 
 `ccam login`، `ccam logout`، `ccam use` اور `ccam rename` کے اپنے کوئی آپشنز نہیں۔ `ccam completion`، `bash`، `zsh` یا `powershell` لیتا ہے؛ اس کے علاوہ کچھ بھی `only bash, zsh and powershell are supported` کے ساتھ ناکام ہوتا ہے۔
 
-اکاؤنٹ کے نام `a-z`، `0-9`، `-` اور `_` کے 1 سے 32 حروف ہوتے ہیں، جو کسی حرف یا ہندسے سے شروع ہوں۔ نام صرف ہندسوں پر مشتمل نہیں ہو سکتا، کیونکہ `ccam 2` کا مطلب سلاٹ 2 ہے۔ نام کوئی ccam کمانڈ بھی نہیں ہو سکتا (`add`، `list`، `ls`، `run`، `use`، `next`، `usage`، `u`، `share`، `mcp`، `login`، `logout`، `rename`، `remove`، `rm`، `import`، `migrate`، `doctor`، `shims`، `shortcut`، `completion`، `help`، `version`، `statusline`، `update`، `folder`، `pick`، `ext`)، اس لیے `ccam <name>` کبھی مبہم نہیں ہوتا۔ یہ فہرست `internal/config` میں `config.Reserved` ہے۔
+اکاؤنٹ کے نام `a-z`، `0-9`، `-` اور `_` کے 1 سے 32 حروف ہوتے ہیں، جو کسی حرف یا ہندسے سے شروع ہوں۔ نام صرف ہندسوں پر مشتمل نہیں ہو سکتا، کیونکہ `ccam 2` کا مطلب سلاٹ 2 ہے۔ نام کوئی ccam کمانڈ بھی نہیں ہو سکتا (`add`، `list`، `ls`، `run`، `use`، `next`، `usage`، `u`، `share`، `mcp`، `login`، `logout`، `rename`، `remove`، `rm`، `import`، `migrate`، `doctor`، `shims`، `shortcut`، `completion`، `help`، `version`، `statusline`، `update`، `folder`، `pick`، `ext`، `group`، `groups`)، اس لیے `ccam <name>` کبھی مبہم نہیں ہوتا۔ یہ فہرست `internal/config` میں `config.Reserved` ہے۔
 
 ## یہ کیسے کام کرتا ہے
 
@@ -68,15 +72,19 @@ $ ccam list
 
 1. کچھ بھی بنانے سے پہلے `config.ValidateName` نام جانچتا ہے، اور `shim.Check` شارٹ کٹ جانچتا ہے۔
 2. `profile.Add`، `~/.local/share/ccam/profiles/work/` کو موڈ `0700` کے ساتھ بناتا ہے اور اکاؤنٹ کو سب سے کم خالی سلاٹ نمبر (`Config.NextSlot`) دیتا ہے، اس لیے ہٹائے گئے اکاؤنٹ کا نمبر دوبارہ استعمال ہوتا ہے۔ پہلا اکاؤنٹ ڈیفالٹ بن جاتا ہے۔
-3. `applyShare` نئے، خالی فولڈر کو `share.Build` اور پھر `Apply` سے اس کے شیئر گروپس سے لنک کرتا ہے، مثلاً `settings.json` کو `groups/default/settings.json` سے۔ اگر یہ ناکام ہو تو نیا فولڈر ہٹا دیا جاتا ہے، کیونکہ بچا ہوا فولڈر ہر دوبارہ کوشش کو `folder already exists` کے ساتھ روک دے گا۔
+3. اکاؤنٹ اپنے گروپس میں شامل ہوتا ہے (`default`، جب تک `--group` یا `--no-group` کچھ اور نہ کہے؛ پہلا اکاؤنٹ `default` بناتا ہے)، اور `applyShare` نئے، خالی فولڈر کو `share.Build` اور پھر `Apply` سے ان سے لنک کرتا ہے، مثلاً `settings.json` کو `groups/default/settings.json` سے۔ اگر یہ ناکام ہو تو نیا فولڈر ہٹا دیا جاتا ہے، کیونکہ بچا ہوا فولڈر ہر دوبارہ کوشش کو `folder already exists` کے ساتھ روک دے گا۔
 4. اکاؤنٹ `fsutil.AtomicWrite` کے ذریعے `~/.config/ccam/config.toml` میں محفوظ ہوتا ہے: ایک عارضی فائل، `fsync`، پھر `rename`، اس لیے کریش کبھی آدھا کنفیگ نہیں چھوڑتا۔
-5. `runLogin`، `CLAUDE_CONFIG_DIR` کو اکاؤنٹ فولڈر پر مقرر کر کے `claude auth login` شروع کرتا ہے۔ اگر لاگ اِن ناکام ہو تو اکاؤنٹ برقرار رہتا ہے، اور ccam غلطی پرنٹ کر کے بتاتا ہے کہ بعد میں `ccam login work` چلائیں۔
-6. `profile.ReadEmail`، `profiles/work/.claude.json` سے `oauthAccount.emailAddress` نکالتا ہے۔ یہ فائل کئی میگا بائٹ کی ہو سکتی ہے، اس لیے `TopLevelValue` پوری فائل پارس کرنے کے بجائے صرف اسی ایک key کو تلاش کرتا ہے۔
+5. `runLogin`، `CLAUDE_CONFIG_DIR` کو اکاؤنٹ فولڈر پر مقرر کر کے `claude auth login` شروع کرتا ہے، اور اکاؤنٹ کی آخری ای میل کے ساتھ `--email` دیتا ہے تاکہ لاگ اِن صفحہ پہلے سے بھرا ہو۔ اگر لاگ اِن ناکام ہو تو اکاؤنٹ برقرار رہتا ہے، اور ccam غلطی پرنٹ کر کے بتاتا ہے کہ بعد میں `ccam login work` چلائیں۔
+6. `profile.ReadIdentity`، `profiles/work/.claude.json` سے `oauthAccount` نکالتا ہے: ای میل، اکاؤنٹ اور تنظیم کی ids، تنظیم کا نام اور پلان (`claude_max`، `claude_team` …)۔ یہ فائل کئی میگا بائٹ کی ہو سکتی ہے، اس لیے `TopLevelValue` پوری فائل پارس کرنے کے بجائے صرف اسی ایک key کو تلاش کرتا ہے۔ ccam انہیں `config.toml` میں `[profile.login]` میں رکھتا ہے۔
 7. `shim.Install`، `~/.local/bin/ccwork` کو ccam بائنری سے لنک کرتا ہے، جو شروع ہوتے وقت `argv[0]` کو `config.toml` میں تلاش کرتی ہے۔
 
 لاگ اِن میں کئی منٹ لگ سکتے ہیں، اور اس دوران کوئی دوسرا ccam کنفیگ محفوظ کر سکتا ہے۔ اس لیے انتظار کرنے والی کمانڈز `env.update` کے ذریعے محفوظ کرتی ہیں، جو `config.toml` دوبارہ لوڈ کرتا ہے، صرف ایک تبدیلی (یہاں، ای میل) لاگو کرتا ہے اور محفوظ کرتا ہے۔ اسی وجہ سے `ccam remove` اپنے سوال کے بعد دوبارہ لوڈ کرتا ہے۔
 
-`ccam login` کسی موجودہ اکاؤنٹ کے لیے مرحلہ 5 اور 6 چلاتا ہے۔ `ccam logout` اکاؤنٹ میں `claude auth logout` چلاتا ہے اور محفوظ ای میل صاف کر دیتا ہے۔ `ccam use` صرف `config.toml` میں `default` دوبارہ لکھتا ہے۔
+`ccam login` کسی موجودہ اکاؤنٹ کے لیے مرحلہ 5 اور 6 چلاتا ہے۔ Claude Code ای میل کو صرف لاگ اِن صفحے کے لیے ایک اشارے کے طور پر لیتا ہے، اس لیے لاگ اِن کسی ایسے Claude اکاؤنٹ میں بھی ہو سکتا ہے جو ccam اکاؤنٹ پہلے نہیں تھا؛ ccam نئے لاگ اِن کا `[profile.login]` سے موازنہ کرتا ہے اور یہ بتا دیتا ہے (`ccam: this login is other@company.com, but work was dev@company.com before.`)۔ یہ نیا لاگ اِن رکھتا ہے اور بتاتا ہے کہ اسے کیسے واپس کریں: `ccam logout work`، پھر `ccam login work` اور صحیح ای میل سے سائن اِن کریں۔ جب کوئی دوسرا ccam اکاؤنٹ اسی Claude اکاؤنٹ میں لاگ اِن ہو تو ccam خبردار کرتا ہے کہ دونوں اپنی استعمال کی حدیں شیئر کرتے ہیں۔ `ccam login --expired` ایک کے بعد ایک ہر اس اکاؤنٹ میں لاگ اِن کرتا ہے جس میں کبھی لاگ اِن نہیں ہوا یا جس کا لاگ اِن (اس کا ریفریش ٹوکن) ختم ہو چکا ہو۔
+
+`ccam logout` اکاؤنٹ میں `claude auth logout` چلاتا ہے اور محفوظ ای میل صاف کر دیتا ہے؛ لاگ اِن کا ریکارڈ باقی رہتا ہے، اس لیے اگلا لاگ اِن اس سے جانچا جاتا ہے۔ `ccam use` صرف `config.toml` میں `default` دوبارہ لکھتا ہے۔
+
+جب اکاؤنٹس ایک سے زیادہ تنظیموں کے ہوں تو `ccam list` ایک `Organization` کالم شامل کرتا ہے (ذاتی پلان `personal` دکھاتے ہیں)، اور `ccam list --json` میں ہر اکاؤنٹ کے لیے `plan` اور `org` ہوتے ہیں۔
 
 ### ریموٹ مشین پر سائن اِن
 
@@ -106,7 +114,7 @@ On a remote machine? If the browser ends on a http://localhost:…/callback page
 
 `ccam rename` فولڈر کا نام بدلتا ہے، اس کے `plugins/` میں پلگ اِن کے راستے پرانے فولڈر سے نئے فولڈر پر دوبارہ لکھتا ہے، ڈیفالٹ کو ساتھ لے جاتا ہے، اور `nameState` کے راستوں کو نئے نام پر منتقل کرتا ہے۔ شارٹ کٹ کمانڈ اپنا نام برقرار رکھتی ہے۔ اگر پلگ اِن کے راستے دوبارہ لکھنا ناکام ہو تو فولڈر کا نام واپس بدل دیا جاتا ہے، کیونکہ کنفیگ محفوظ نہیں ہوتا۔
 
-`ccam import` کسی فولڈر کو اس کی جگہ پر ہی، `config.toml` میں `dir` کے طور پر رجسٹر کرتا ہے۔ یہ اسے کبھی منتقل یا کاپی نہیں کرتا: کاپی کیا گیا ریفریش ٹوکن کاپیوں کو ایک دوسرے کو لاگ آؤٹ کروا دے گا۔ فولڈر آرگیومنٹ کے بغیر یہ غیر رجسٹر شدہ `~/.claude` اور `~/.claude-*` فولڈرز تلاش کرتا ہے اور ہر ایک کے بارے میں پوچھتا ہے؛ نام فولڈر سے آتے ہیں (`~/.claude` سے `main`، `~/.claude-work` سے `work`، `~/.claude-2` سے `acct2`)، اور جس فولڈر کا نام اخذ نہ ہو سکے وہ استعمال کرنے کے لیے `--name` کمانڈ کے ساتھ دکھایا جاتا ہے۔ `CLAUDE_CONFIG_DIR` کے بغیر Claude Code، `.claude.json` کو آپ کے ہوم فولڈر میں `~/.claude` کے ساتھ رکھتا ہے، اس لیے جب آپ `~/.claude` امپورٹ کریں اور اس میں اپنی `.claude.json` نہ ہو تو ccam، `~/.claude/.claude.json` سے `~/.claude.json` کا لنک بناتا ہے۔ تب سادہ `claude` اور `ccam main` ایک ہی اکاؤنٹ دیکھتے ہیں۔ امپورٹ کیے گئے اکاؤنٹس تب تک کچھ شیئر نہیں کرتے جب تک آپ `ccam share` نہ چلائیں، اور کوئی شارٹ کٹ نہیں بنتا۔
+`ccam import` کسی فولڈر کو اس کی جگہ پر ہی، `config.toml` میں `dir` کے طور پر رجسٹر کرتا ہے۔ یہ اسے کبھی منتقل یا کاپی نہیں کرتا: کاپی کیا گیا ریفریش ٹوکن کاپیوں کو ایک دوسرے کو لاگ آؤٹ کروا دے گا۔ فولڈر آرگیومنٹ کے بغیر یہ غیر رجسٹر شدہ `~/.claude` اور `~/.claude-*` فولڈرز تلاش کرتا ہے اور ہر ایک کے بارے میں پوچھتا ہے؛ نام فولڈر سے آتے ہیں (`~/.claude` سے `main`، `~/.claude-work` سے `work`، `~/.claude-2` سے `acct2`)، اور جس فولڈر کا نام اخذ نہ ہو سکے وہ استعمال کرنے کے لیے `--name` کمانڈ کے ساتھ دکھایا جاتا ہے۔ `CLAUDE_CONFIG_DIR` کے بغیر Claude Code، `.claude.json` کو آپ کے ہوم فولڈر میں `~/.claude` کے ساتھ رکھتا ہے، اس لیے جب آپ `~/.claude` امپورٹ کریں اور اس میں اپنی `.claude.json` نہ ہو تو ccam، `~/.claude/.claude.json` سے `~/.claude.json` کا لنک بناتا ہے۔ تب سادہ `claude` اور `ccam main` ایک ہی اکاؤنٹ دیکھتے ہیں۔ امپورٹ کیے گئے اکاؤنٹس کسی گروپ میں نہیں ہوتے جب تک آپ انہیں کسی گروپ میں شامل نہ کریں (`ccam group join <group> <name>`)، اور کوئی شارٹ کٹ نہیں بنتا۔
 
 `ccam completion bash|zsh` ایک completion اسکرپٹ پرنٹ کرتا ہے جو اکاؤنٹس کے نام بھی مکمل کرتا ہے۔
 

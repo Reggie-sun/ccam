@@ -4,7 +4,7 @@ description: Simpan satu daftar server MCP per grup dengan ccam mcp add, add-jso
 updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: f1de7db4b7be
+sourceHash: "6d3b3c38c6cb"
 ---
 
 Claude Code menyimpan server MCP pengguna di `.claude.json`, file yang sama yang menyimpan login akun, sehingga file itu tidak dapat dibagikan antarakun. ccam menyimpan server bersama di file grup, `mcp.json`, dan menyerahkannya ke setiap akun dalam grup saat peluncuran. Gunakan `ccam mcp` untuk menambahkan server sekali untuk semua akun Anda, dan `ccam mcp import` untuk memindahkan server yang Anda tambahkan di dalam satu sesi ke akun-akun lain.
@@ -36,7 +36,7 @@ group default (work, side)
 only in account work: pg
 ```
 
-Menambahkan nama yang sudah dimiliki grup akan mengganti definisinya dan menampilkan `updated` alih-alih `added`. Server hanya sampai ke akun yang membagikan MCP dengan grup tersebut (`ccam share <name> --mcp on`); jika belum ada akun yang membagikan MCP, `add` akan memberitahukannya.
+Menambahkan nama yang sudah dimiliki grup akan mengganti definisinya dan menampilkan `updated` alih-alih `added`. Server hanya sampai ke akun yang berada dalam grup tersebut, dan hanya jika grup itu membagikan MCP (`ccam group set <group> --add mcp`); jika grup itu tidak membagikannya, `add` akan memberitahukannya.
 
 ## Opsi
 
@@ -121,7 +121,7 @@ Dengan `--force`, server grup diganti, dan `mcp.json` sebelumnya terlebih dahulu
 - **Akun yang sedang berjalan.** `import` menyalin ke grup tetapi membiarkan entri milik akun yang sedang berjalan dan memberitahukannya; jalankan lagi setelah sesi berakhir. Sinkronisasi melewati akun yang sedang berjalan.
 - **Salinan untuk Remote Control.** Salinan milik akun yang sedang berjalan tidak disentuh: `Note: account side is running, so the copy in its .claude.json stays as it was until its next Remote Control launch.` Dengan `mcp_strategy = "sync"`, tidak ada yang perlu diperbarui, karena setiap peluncuran melakukan sinkronisasi.
 - **File rusak.** Jika `.claude.json` bukan JSON yang valid, sinkronisasi tidak menyentuhnya dan melaporkan galatnya. Jika lock tidak dapat diambil dalam 2 detik, ccam melaporkan `could not lock … (Claude Code is writing the file)`.
-- **Akun yang tidak membagikan MCP.** `import` menolak dan meminta Anda menjalankan `ccam share side --mcp on` terlebih dahulu.
+- **Akun yang tidak membagikan MCP.** `import` menolak dan meminta Anda memasukkan akun itu ke grup yang membagikan MCP terlebih dahulu (`ccam group join <group> side`).
 - **Nama grup.** `-g` hanya menerima nama grup; nama itu menjadi folder di bawah `groups/`, sehingga nama seperti `../x` ditolak.
 
 ## Terkait

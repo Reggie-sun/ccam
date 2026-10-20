@@ -4,7 +4,7 @@ description: Esegui più account Claude Code in parallelo con CLAUDE_CONFIG_DIR,
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: f2982e4317a2
+sourceHash: "ee92078b81c3"
 ---
 
 Dai a ogni account la sua cartella di configurazione. Claude Code legge la cartella dalla variabile d'ambiente `CLAUDE_CONFIG_DIR`, e ogni cartella contiene il proprio login, le impostazioni e la cronologia, quindi ogni account resta connesso e puoi eseguirli contemporaneamente. Puoi configurarlo a mano con un alias della shell oppure lasciare che se ne occupi ccam.
@@ -69,7 +69,7 @@ Claude Code gira [nativamente su Windows e dentro WSL](https://code.claude.com/d
 
 **Un server MCP compare in un solo account.** I server aggiunti dentro una sessione con `claude mcp add` appartengono a quell'account. Spostane uno su tutti gli account con `ccam mcp import work <server>`.
 
-**Le impostazioni sono diverse tra gli account.** `ccam share work` mostra cosa condivide l'account; `ccam share work --settings on` ne condivide le impostazioni, dopo aver mostrato cosa cambierà. `ccam doctor --fix` ripara i link interrotti e conserva un backup di ogni file che modifica.
+**Le impostazioni sono diverse tra gli account.** `ccam share work` mostra cosa condivide l'account e tramite quale gruppo; `ccam group join default work` gli fa condividere ciò che condivide `default`, dopo aver mostrato cosa cambierà. `ccam doctor --fix` ripara i link interrotti e conserva un backup di ogni file che modifica.
 
 **Due account aprono la stessa conversazione.** Evita di lavorare sulla stessa conversazione da due account contemporaneamente. ccam ti avvisa se ci provi.
 

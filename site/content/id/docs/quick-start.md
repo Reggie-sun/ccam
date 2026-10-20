@@ -5,7 +5,7 @@ description: Tambahkan dua akun Claude Code dengan ccam add, beri pintasan seper
 updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 55f81dae9fc0
+sourceHash: d5b0e295f3f0
 ---
 
 Tambahkan setiap akun dengan `ccam add`, lalu jalankan Claude Code dengan `ccam <name>` atau dengan pintasan yang namanya Anda pilih sendiri, seperti `ccwork`. Bagi kebanyakan orang, itu sudah cukup.
@@ -79,7 +79,7 @@ ccam work
 ccam 2
 ```
 
-Menjalankan `ccam` saja akan membuka pemilih akun: gunakan tombol panah dan Enter, atau tekan nomor akunnya.
+Menjalankan `ccam` saja akan membuka [dasbor](/features/dashboard): pindah ke sebuah akun dengan tombol panah atau nomornya, lalu tekan Enter.
 
 Semua yang ada setelah pintasan atau nama akun diteruskan ke Claude Code tanpa diubah, jadi Anda tetap bisa memakai opsi yang sudah Anda kenal:
 
@@ -91,14 +91,13 @@ cat error.log | ccwork -p "what caused this?"
 
 ## 5. Pilih apa yang dibagikan
 
-Secara default, server MCP, `settings.json`, `CLAUDE.md` global, serta agen, perintah, skill, dan plugin dibagikan antarakun. Riwayat percakapan tidak dibagikan. Aktifkan untuk kedua akun jika Anda ingin melanjutkan percakapan di antara keduanya:
+Secara default, server MCP, `settings.json`, `CLAUDE.md` global, serta agen, perintah, skill, dan plugin dibagikan antarakun melalui grup `default`. Riwayat percakapan tidak dibagikan. Tambahkan riwayat ke grup itu jika Anda ingin melanjutkan percakapan antarakun:
 
 ```sh
-ccam share personal --history on
-ccam share work --history on
+ccam group set default --add history
 ```
 
-ccam menampilkan apa yang akan dipindahkannya sebelum mengubah apa pun. Lihat [pembagian](/docs/sharing) untuk detailnya.
+ccam menampilkan apa yang akan dipindahkannya untuk setiap akun sebelum mengubah apa pun. Lihat [berbagi dengan grup](/features/share) untuk detailnya.
 
 ## 6. Saat sebuah akun mencapai batasnya
 

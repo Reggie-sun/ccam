@@ -4,7 +4,7 @@ description: "Utilisez plusieurs comptes Claude Code côte à côte avec CLAUDE_
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: f2982e4317a2
+sourceHash: ee92078b81c3
 ---
 
 Donnez à chaque compte son propre dossier de configuration. Claude Code lit ce dossier dans la variable d'environnement `CLAUDE_CONFIG_DIR`, et chaque dossier contient sa propre connexion, ses paramètres et son historique : chaque compte reste connecté et vous pouvez les utiliser en même temps. Vous pouvez configurer cela à la main avec un alias shell, ou laisser ccam s'en charger.
@@ -69,7 +69,7 @@ Claude Code fonctionne [nativement sous Windows et dans WSL](https://code.claude
 
 **Un serveur MCP n'apparaît que dans un seul compte.** Les serveurs ajoutés pendant une session avec `claude mcp add` appartiennent à ce compte. Pour en rendre un disponible dans tous les comptes, utilisez `ccam mcp import work <server>`.
 
-**Les paramètres diffèrent d'un compte à l'autre.** `ccam share work` affiche ce que le compte partage ; `ccam share work --settings on` partage ses paramètres, après avoir montré ce qui va changer. `ccam doctor --fix` répare les liens cassés et garde une sauvegarde de chaque fichier qu'il modifie.
+**Les paramètres diffèrent d'un compte à l'autre.** `ccam share work` affiche ce que le compte partage et par quel groupe ; `ccam group join default work` lui fait partager ce que partage `default`, après avoir montré ce qui va changer. `ccam doctor --fix` répare les liens cassés et garde une sauvegarde de chaque fichier qu'il modifie.
 
 **Deux comptes ouvrent la même conversation.** Évitez de travailler sur une même conversation dans deux comptes en même temps. ccam vous avertit si vous essayez.
 

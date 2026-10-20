@@ -4,7 +4,7 @@ description: Claude Code खाती बदलण्यासाठी ccam च
 updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: 68048287f792
+sourceHash: "a90ede56b767"
 ---
 
 Claude Code खाती बदलणारी टूल्स दोनपैकी एक पद्धत वापरतात. बहुतेक टूल्स एकाच `~/.claude` फोल्डरमध्ये लॉगिन बदलतात, त्यामुळे एका वेळी एकच खाते सक्रिय असते. इतर टूल्स, ज्यात ccam सुद्धा आहे, `CLAUDE_CONFIG_DIR` ने प्रत्येक खात्याला स्वतःचा फोल्डर देतात, त्यामुळे प्रत्येक खाते लॉगिन राहते आणि अनेक खाती एकाच वेळी चालू शकतात. ccam यात शेअर केलेल्या सेटिंग्ज आणि MCP सर्व्हर जोडते, आणि संभाषण दुसऱ्या खात्याच्या फोल्डरमध्ये पुढे चालू ठेवते.
@@ -23,7 +23,7 @@ Claude Code खाती बदलणारी टूल्स दोनपै�
 
 | टूल | पद्धत | एकाच वेळी अनेक खाती | 5 तासांचा आणि साप्ताहिक वापर | मर्यादा गाठल्यावर | प्लॅटफॉर्म |
 | --- | --- | --- | --- | --- | --- |
-| ccam | वेगळे फोल्डर | हो | हो, `ccam usage` | तुम्ही `ccam next --auto --continue` चालवता, आणि संभाषण सर्वात जास्त जागा असलेल्या खात्यात पुढे चालू राहते; `ccam --fallback` `-p` jobs तिथे आपोआप पुन्हा चालवते, आणि `ccam pick` workers ना खात्यांमध्ये वाटून देते | Linux, macOS, Windows |
+| ccam | वेगळे फोल्डर | हो | हो, `ccam usage` | सत्रात एक सूचना; `ccam next --auto --continue` किंवा `/ccam:switch` संभाषण सर्वात जास्त जागा असलेल्या खात्यात नेते, इतिहास शेअर केलेला असो वा नसो; `ccam --fallback` `-p` jobs तिथे आपोआप पुन्हा चालवते, आणि `ccam pick` workers ना खात्यांमध्ये वाटून देते | Linux, macOS, Windows |
 | [claude-swap](https://github.com/realiti4/claude-swap) | लॉगिन बदलते; `cswap run` ने वेगळे फोल्डर | हो, `cswap run` ने | हो | `cswap auto` ठरावीक पातळीवर लॉगिन बदलते; चालू सत्र पुढे चालू राहते | Linux, macOS, Windows |
 | [CCS](https://github.com/kaitranntt/ccs) | वेगळे फोल्डर | हो | अंशतः | खात्यांचे pools एका local proxy मधून विनंत्या पुढच्या खात्याकडे पाठवतात | Linux, macOS, Windows |
 | [clausona](https://github.com/larcane97/clausona) | वेगळे फोल्डर | हो | हो | Routes प्रत्येक run आधी quota असलेले खाते निवडतात, reset ची वाट पाहू शकतात, आणि workers ना वेगवेगळी खाती देतात | Linux, macOS, Windows |
@@ -39,7 +39,7 @@ ccswap हा claude-swap चा fork आहे, जो Codex लॉगिनह
 
 | टूल | कोणत्या भाषेत लिहिले | Claude Code चालू असताना | लॉगिन एका जागेवरून दुसरीकडे कॉपी करते | खाती काय शेअर करू शकतात |
 | --- | --- | --- | --- | --- |
-| ccam | Go, एक static binary | काहीही नाही: ccam स्वतःची जागा `claude` ला देते (Windows वर, जिथे हे शक्य नाही, ते त्याची वाट पाहते) | नाही | प्रत्येक आयटम स्वतंत्रपणे: प्रत्येक खात्यासाठी local किंवा नाव दिलेला group |
+| ccam | Go, एक static binary | काहीही नाही: ccam स्वतःची जागा `claude` ला देते (Windows वर, जिथे हे शक्य नाही, ते त्याची वाट पाहते; एक ऐच्छिक relay त्याच्या शेजारी राहतो) | नाही | Groups: प्रत्येक group तो शेअर करत असलेले आयटम आणि त्याची खाती ठरवतो; एक खाते अनेक groups मध्ये असू शकते |
 | claude-swap | Python 3.12+, uv किंवा pipx ने इन्स्टॉल | `cswap run` सह काहीही नाही; `cswap auto` आणि menu bar ॲप चालू राहतात | हो, लॉगिन बदलताना | `cswap run` सह: सेटिंग्ज, `CLAUDE.md` आणि extensions एकत्र, इतिहास ऐच्छिक; प्रत्येक launch ला MCP सर्व्हर कॉपी होतात |
 | CCS | Node.js 18+ किंवा Bun | CCS parent process म्हणून राहते; pools एक local proxy जोडतात | त्याच्या खाते फोल्डर्ससाठी नाही; pools स्वतःचे लॉगिन ठेवतात | प्रत्येक खात्यासाठी शेअर केलेले किंवा local, इतिहास context groups मध्ये; MCP सर्व्हर कॉपी होतात |
 | clausona | TypeScript, Node.js 20+ | साधे `claude` एका shell function मधून चालते; `clausona run` Node ला parent process म्हणून ठेवते; प्रत्येक exit नंतर एक background Node process | नाही, पण idle खात्यांचा वापर वाचण्यासाठी ते स्वतःच त्यांचे tokens नूतनीकरण करते | प्रत्येक खात्याच्या स्वतःच्या फाइल्स सोडून सर्व काही, एका primary मधून; इतिहास ऐच्छिक; `claude mcp add` ने जोडलेले सर्व्हर शेअर होत नाहीत |
@@ -62,9 +62,9 @@ ccam एक फाइल वाचते, आपले links तपासते 
 
 अशा प्रकारे खाते सुरू केल्याने सुमारे 4 ms वाढतात, 95 व्या percentile ला 6 ms पेक्षा कमी, आणि peak memory 8 MB ([`scripts/perf-check.sh`](https://github.com/jhyunwoo/ccam/blob/main/scripts/perf-check.sh) hyperfine सह, 300 runs). त्याच laptop वर, एखादा प्रोग्राम काही करण्याआधीच फक्त Python interpreter सुरू व्हायला 13 ms आणि Node.js ला 31 ms लागतात.
 
-### आयटमनुसार, खात्यानुसार शेअर करा
+### काय शेअर होते ते groups ठरवतात
 
-MCP सर्व्हर, `settings.json`, `CLAUDE.md`, extensions (agents, commands, skills, plugins) आणि संभाषणाचा इतिहास हे पाच वेगळे आयटम आहेत. प्रत्येक खाते प्रत्येक आयटम `local` किंवा एखाद्या group वर सेट करते, त्यामुळे दोन कामाची खाती `work` group मध्ये इतिहास शेअर करू शकतात, तर वैयक्तिक खाते स्वतःचा इतिहास वेगळा ठेवते, आणि तिन्ही खाती तेच MCP सर्व्हर शेअर करतात.
+MCP सर्व्हर, `settings.json`, `CLAUDE.md`, extensions (agents, commands, skills, plugins) आणि संभाषणाचा इतिहास हे पाच वेगळे आयटम आहेत. group तो शेअर करत असलेले आयटम आणि त्यातील खाती ठरवतो, त्यामुळे दोन कामाची खाती `work` group मध्ये इतिहास शेअर करू शकतात, तर वैयक्तिक खाते स्वतःचा इतिहास वेगळा ठेवते, आणि तिन्ही खाती `default` मधून तेच MCP सर्व्हर शेअर करतात. `ccam group set work --add memory` group मधील प्रत्येक खाते एकाच योजनेत हलवते; [डॅशबोर्ड](/features/dashboard) हेच checkboxes ने करतो, आणि एखाद्या खात्याला दुसऱ्या group मधून आधीच मिळणारा आयटम राखाडी करून दाखवतो.
 
 - MCP सर्व्हर launch च्या वेळी `--mcp-config` ने दिले जातात, त्यामुळे default नुसार ccam कधीही `.claude.json` संपादित करत नाही; ही फाइल Claude Code चालू असताना पुन्हा लिहिते. `ccam mcp add` संपूर्ण group साठी एकदाच सर्व्हर जोडते.
 - बाकीचे आयटम group फोल्डरकडे जाणारे links आहेत, त्यामुळे एका खात्यात केलेला बदल लगेच इतर खात्यांत दिसतो. launch च्या वेळी काहीही कॉपी होत नाही.
@@ -72,11 +72,11 @@ MCP सर्व्हर, `settings.json`, `CLAUDE.md`, extensions (agents, com
 
 ### प्रत्येक बदल आधी दाखवला जातो आणि त्याचा backup घेतला जातो
 
-`ccam share` आणि `ccam migrate` काहीही हलवण्यापूर्वी योजना दाखवतात आणि विचारतात. एखादी फाइल खाते आणि त्याचा group यांच्यात वेगळी असेल, तर तुम्ही निवडता: group ची ठेवायची, तुमची वापरायची, की JSON merge करायचे. मूळ फाइल्स `.ccam-backup/<time>/` मध्ये जातात, काढलेल्या खात्याचा फोल्डर trash फोल्डरमध्ये जातो, आणि फाइल्स एकाच rename मध्ये बदलल्या जातात, त्यामुळे अर्धवट थांबलेले लेखन जुनी फाइल तशीच ठेवते. `--dry-run` दाखवते की launch, sharing, migration, shortcuts, updates आणि दुरुस्त्या काय करतील. `ccam doctor --fix` तुटलेले links आणि permissions दुरुस्त करते.
+`ccam group` आणि `ccam migrate` काहीही हलवण्यापूर्वी योजना दाखवतात आणि विचारतात. एखादी फाइल खाते आणि त्याचा group यांच्यात वेगळी असेल, तर तुम्ही निवडता: group ची ठेवायची, तुमची वापरायची, की JSON merge करायचे. मूळ फाइल्स `.ccam-backup/<time>/` मध्ये जातात, काढलेल्या खात्याचा फोल्डर trash फोल्डरमध्ये जातो, आणि फाइल्स एकाच rename मध्ये बदलल्या जातात, त्यामुळे अर्धवट थांबलेले लेखन जुनी फाइल तशीच ठेवते. `--dry-run` दाखवते की launch, sharing, migration, shortcuts, updates आणि दुरुस्त्या काय करतील. `ccam doctor --fix` तुटलेले links आणि permissions दुरुस्त करते.
 
 ### पुढच्या खात्यात तेच संभाषण
 
-शेअर केलेल्या इतिहासासह, `ccam next --auto --continue` सर्व खात्यांना एकाच वेळी त्यांचा वापर विचारते, सर्वात जास्त जागा असलेले खाते उघडते आणि संभाषण पुढे चालू ठेवते. कधी बदलायचे ते तुम्ही ठरवता; ccam background मध्ये तुमच्या वापरावर लक्ष ठेवत नाही. एखाद्या खात्याने 90% गाठले की status line ही कमांड सुचवते.
+`ccam next --auto --continue` सर्व खात्यांना एकाच वेळी त्यांचा वापर विचारते, सर्वात जास्त जागा असलेले खाते उघडते आणि संभाषण पुढे चालू ठेवते. इतिहास शेअर केलेला असेल तर ते तेच संभाषण असते; नसेल तर Claude Code ते नवीन खात्यात कॉपी करते (`--resume <file> --fork-session`), आणि पहिले उत्तर किती tokens पुन्हा वाचेल ते ccam सांगते. मर्यादेमुळे सत्र थांबले की ccam plugin चा hook एक सूचना दाखवतो, आणि `/ccam:switch` संभाषण पुढे सोपवते. कधी बदलायचे ते तुम्ही ठरवता; background मध्ये तुमच्या वापरावर काहीही लक्ष ठेवत नाही, आणि आपोआप होणाऱ्या निवडी एकाच organization मध्ये राहतात, त्यामुळे कंपनीचे संभाषण चुकूनही खासगी खात्यावर जात नाही. एखाद्या खात्याने 90% गाठले की status line ही कमांड सुचवते.
 
 Scripts तुमची वाट पाहू शकत नाहीत, त्यामुळे `ccam --fallback work -p "…"` त्यांच्यासाठी खाते बदलते: खात्याने मर्यादा गाठली की तीच कमांड सर्वात जास्त जागा असलेल्या खात्याने पुन्हा चालते, आणि फक्त पूर्ण झालेल्या run चा output छापला जातो. वापर मर्यादेव्यतिरिक्त इतर कोणतेही अपयश जसेच्या तसे पुढे दिले जाते. समांतर workers साठी `ccam pick` प्रत्येकाला जागा असलेले वेगळे खाते देते, आणि कोणत्याही खात्यात जागा उरली नाही तर दोन्ही code 75 ने बाहेर पडतात.
 
@@ -86,11 +86,11 @@ Scripts तुमची वाट पाहू शकत नाहीत, त्
 
 ### एक binary, तपासलेले downloads
 
-ccam सुमारे 10 MB ची static binary आहे, ज्यासाठी कोणताही runtime इन्स्टॉल करावा लागत नाही, Linux, macOS आणि Windows साठी. install scripts (`install.sh`, `install.ps1`) आणि `ccam update` प्रत्येक download release च्या SHA-256 checksums शी जुळवून तपासतात, आणि ccam कधीही स्वतःहून updates शोधत नाही. त्यात telemetry नाही: ते फक्त तुमच्या खात्यांचा वापर जाणून घेण्यासाठी Anthropic कडे विनंत्या पाठवते, समांतरपणे, 3 सेकंदांच्या मर्यादेसह आणि 60 सेकंदांच्या cache सह, आणि तुम्ही मागितलेले downloads करते.
+ccam सुमारे 10 MB ची static binary आहे, ज्यासाठी कोणताही runtime इन्स्टॉल करावा लागत नाही, Linux, macOS आणि Windows साठी. install scripts (`install.sh`, `install.ps1`) आणि `ccam update` प्रत्येक download release च्या SHA-256 checksums शी जुळवून तपासतात, आणि ccam कधीही स्वतःहून updates शोधत नाही. त्यात telemetry नाही: ते फक्त तुमच्या खात्यांचा वापर जाणून घेण्यासाठी Anthropic कडे विनंत्या पाठवते, समांतरपणे, 3 सेकंदांच्या मर्यादेसह आणि 60 सेकंदांच्या cache सह, आणि तुम्ही मागितलेले downloads करते. `usage_source = "claude"` सह त्या विनंत्याही Claude Code मधूनच जातात, आणि ccam कधीही token हाताळत नाही.
 
 ## इतर टूल्स जिथे जास्त करतात
 
-- claude-swap, clauth, cux, CAAM आणि CCSwitcher एखाद्या खात्याचा वापर ठरावीक पातळी ओलांडला की चालू interactive सत्र आपोआप दुसऱ्या खात्यावर नेऊ शकतात. ccam `-p` runs `--fallback` ने बदलते आणि interactive सत्रे तुमच्यावर सोडते.
+- claude-swap, clauth, cux, CAAM आणि CCSwitcher एखाद्या खात्याचा वापर ठरावीक पातळी ओलांडला की चालू interactive सत्र आपोआप दुसऱ्या खात्यावर नेऊ शकतात. ccam `-p` runs `--fallback` ने बदलते आणि interactive सत्रे तुमच्यावर सोडते, मर्यादेवर एक सूचना आणि `/ccam:switch` सह.
 - Developer Mode शिवाय Windows वर ccam फोल्डर शेअर करते, पण `settings.json` सारख्या एकट्या फाइल्स शेअर करू शकत नाही; claude-swap आणि CCS तिथे त्या कॉपी करतात.
 - CCSwitcher, Claude Switcher आणि claude-swap वापर macOS menu bar मध्ये दाखवतात.
 - CCS, clausona, CAAM, clauth, ccswap आणि Claude Switcher, Codex आणि इतर coding agents सुद्धा सांभाळतात.

@@ -4,7 +4,7 @@ description: ccam usage menampilkan batas 5 jam dan mingguan semua akun sekaligu
 updated: 2026-10-20
 order: 7
 translation: machine
-sourceHash: 525174ceed0d
+sourceHash: "ec1d1ee27d9f"
 ---
 
 `ccam usage` menampilkan seberapa banyak batas 5 jam dan mingguan yang sudah digunakan setiap akun, beserta waktu hingga setiap jendela direset. Gunakan sebelum memulai tugas panjang, atau saat Claude Code memberi tahu bahwa batas sudah dekat, untuk melihat akun mana yang masih punya ruang. `ccam statusline` adalah perintah status line untuk Claude Code: perintah ini menampilkan nama akun dan penggunaan di dalam Claude Code serta menyimpan angkanya untuk `ccam usage`.
@@ -20,6 +20,7 @@ ccam usage -v               # add per-model weekly limits and the data source
 ccam usage --json           # machine-readable, one object per account
 ccam usage --source cache   # saved numbers only, no network
 ccam usage --refresh        # also renew expired logins of accounts not running
+ccam usage --source claude  # let Claude Code look it up: ccam never touches a token
 ccam statusline install     # set the status line in every account's settings.json
 ```
 
@@ -32,7 +33,7 @@ $ ccam usage
 → Most headroom: personal   (open it with ccam next --auto)
 ```
 
-Di terminal, tabel langsung muncul dengan `fetching…` di setiap baris, dan setiap baris digambar ulang begitu akunnya menjawab. `As of` menunjukkan umur angka-angka itu; `(cached)` berarti angkanya berasal dari file yang tersimpan, bukan dari endpoint. Baris terakhir menyebut akun dengan penggunaan 5 jam terendah di bawah 100%, dan hanya muncul jika Anda memiliki lebih dari satu akun. Akun yang belum login menampilkan `not logged in → ccam login <name>`, dan akun dengan kunci API menampilkan `no limits (API)`.
+Di terminal, tabel langsung muncul dengan `fetching…` di setiap baris, dan setiap baris digambar ulang begitu akunnya menjawab. `As of` menunjukkan umur angka-angka itu; `(cached)` berarti angkanya berasal dari file yang tersimpan, bukan dari endpoint. Baris terakhir menyebut akun yang akan dipilih [`ccam next --auto`](/features/next) dengan aturan yang sama (`auto_max_usage`, `auto_strategy`, sesi yang sedang berjalan, hanya akun dari organisasi akun yang terakhir dipakai kecuali `cross_org` diatur, setiap jendela yang sudah 100% dilewati, sehingga akun yang kuota mingguannya sudah penuh tidak pernah disebut), dan hanya muncul jika Anda memiliki lebih dari satu akun. Akun yang belum login menampilkan `not logged in → ccam login <name>`, dan akun dengan kunci API menampilkan `no limits (API)`.
 
 Setelah `ccam statusline install`, Claude Code menampilkan baris seperti `[work] · Opus · 5h 24% · 7d 41%`.
 
@@ -44,11 +45,15 @@ Setelah `ccam statusline install`, Claude Code menampilkan baris seperti `[work]
 | `--watch[=N]` | Menggambar ulang setiap `N` detik sampai Anda menekan Ctrl+C. `--watch` saja, atau nilai 0 atau kurang, berarti 60 | nonaktif |
 | `-v`, `--verbose` | Menampilkan batas mingguan per model dan baris `source:` (`live`, `cache`, atau `statusline`) | nonaktif |
 | `--no-cache` | Mengabaikan cache 60 detik dan bertanya ulang ke endpoint | nonaktif |
-| `--source live\|cache` | `cache` tidak pernah bertanya ke endpoint dan hanya menampilkan angka yang tersimpan; `live` adalah perilaku default | live |
+| `--source live\|claude\|cache` | `live` bertanya ke endpoint dengan token akun; `claude` meminta Claude Code mencarinya (lihat di bawah); `cache` hanya menampilkan angka yang tersimpan | `usage_source`, jika tidak ada `live` |
 | `--refresh` | Memperbarui token akses yang kedaluwarsa, hanya untuk akun yang tidak sedang berjalan | nonaktif |
 | `--dry-run` | Diterima: `ccam usage` tidak mengubah apa pun selain cache-nya sendiri. Ditolak jika dipakai bersama `--refresh`: `--dry-run cannot be combined with --refresh, which rewrites login tokens` | nonaktif |
 
-Nilai `--source` lainnya gagal dengan `--source must be live or cache`. `ccam usage` tidak menerima argumen.
+Nilai `--source` lainnya gagal dengan `--source must be live, claude or cache`.
+
+### Penggunaan dari Claude Code sendiri
+
+Dengan `usage_source = "claude"` di `config.toml` (atau `--source claude`), ccam sama sekali tidak membaca token login. Untuk setiap akun, ccam menjalankan `claude -p --input-format stream-json --output-format stream-json --verbose --safe-mode --no-session-persistence` di folder akun itu dan mengirim permintaan `get_usage` milik Claude Code lewat input standar (Claude Code 2.1.270 atau lebih baru); Claude Code mencari penggunaannya dengan login miliknya sendiri dan menjawab dengan jendela 5 jam, mingguan, dan per model. `--safe-mode` mencegah hook, server MCP, dan plugin akun itu dimulai, dan tidak ada sesi yang disimpan. Setiap akun memerlukan satu kali start Claude Code, sekitar satu detik, sehingga sumber ini lebih lambat daripada `live`; semua akun ditanya sekaligus, masing-masing dalam 20 detik, dan cache 60 detik berlaku seperti biasa. Claude Code menandai permintaan ini sebagai eksperimental, jadi jika permintaan itu berhenti dijawab, ccam menampilkan angka yang tersimpan dan `ccam doctor` melaporkannya. `--dry-run` tidak menjalankan Claude Code (karena Claude Code menulis ke folder akun) dan menampilkan angka yang tersimpan. `usage_source` menerima `live` atau `claude`; `cache` hanya bisa dipilih lewat `--source`. `ccam usage` tidak menerima argumen.
 
 `ccam statusline` membaca JSON status line milik Claude Code dari input standar. Satu-satunya opsinya adalah `--wrap <command>`: perintah status line yang sudah ada, yang baris keluaran pertamanya diberi nama akun di depannya. `ccam statusline install` tidak menerima opsi. Keduanya menolak `--dry-run` dengan `` --dry-run is not supported by `ccam statusline`; nothing was changed ``.
 
