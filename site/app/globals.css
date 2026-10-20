@@ -429,7 +429,10 @@ html:not([data-font="brand"]) .facts .big { line-height: 1.55; letter-spacing: 0
 .docs { display: grid; gap: 1.5rem; padding-block: 1.5rem 5rem; }
 /* The doc list is always open: a column from tablet width up, the header menu on phones. */
 .sidebar { display: none; }
-.sidebar nav { display: grid; gap: 1.5rem; }
+.sidebar nav { display: grid; gap: 1.25rem; }
+/* A hairline between sidebar groups (Getting started, Core features, ...). */
+.sidebar nav > div + div, .menu-docs > div + div { border-block-start: 1px solid var(--line); padding-block-start: 1.25rem; }
+.menu-docs > div + div { padding-block-start: 1rem; }
 .group-title { font-size: 0.8rem; font-weight: 600; color: var(--muted); margin: 0 0 0.4rem; padding-inline: 0.75rem; letter-spacing: 0.02em; }
 .sidebar ul, .menu-docs ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.1rem; }
 .sidebar a { display: block; color: var(--body); text-decoration: none; font-size: 0.94rem; padding: 0.4rem 0.75rem; border-radius: 8px; transition: background-color 200ms, color 200ms; }
@@ -550,6 +553,7 @@ html:not([data-font="brand"]) .article h1 { line-height: 1.3; }
 .footer-links { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
 .footer-links a { display: inline-flex; align-items: center; min-block-size: 2.75rem; padding-inline: 1rem; border: 1px solid var(--line-strong); border-radius: 999px; color: var(--ink); text-decoration: none; transition: border-color 200ms; }
 .footer-links a:hover { border-color: var(--ink); }
+.site-footer .copyright { font-size: 0.85rem; }
 @media (min-width: 60rem) { .site-footer .wrap { grid-template-columns: 1fr 1.6fr; align-items: start; } .site-footer .wrap > :not(.brand) { grid-column: 2; } .site-footer .brand { grid-row: 1 / span 3; } }
 
 /* Touch screens: every list link gets a 44px target. */

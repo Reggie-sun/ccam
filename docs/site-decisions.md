@@ -39,6 +39,7 @@ Decisions taken while building the site, where they differ from or add to docs/W
   - The commands table links each command to the feature page that documents it, and each "How it works" step on the landing page links to its feature page; the install label links to the install page.
   - Sidebar group titles are `<p>`, so the page's `<h1>` is its first heading; the sidebar `nav` has its own label.
   - The landing headline keeps "Claude Code" on one line: its words rise one by one and could break between the two.
+  - Footer: "© 2026 Moveto Team" and the repository address as a link on every page (check-static checks both); the WebSite JSON-LD carries the same holder and year. The copyright line is a name and a year, so it is not translated. Sidebar groups are separated by a hairline.
   - With the purpose-based sidebar (`lib/nav.ts`, `docs.groups`), `docs.sections` stays: section hubs, crumbs and their OG images are named after the URL's section, not the sidebar group.
   - Unchanged on purpose: Newsreader is preloaded on every page because the header wordmark uses it in every language; Inter is not preloaded (see "Display font" below); IndexNow needs `INDEXNOW_KEY` in CI (`scripts/indexnow.ts` exists).
 - **Browser tests**: run in CI. The WSL environment used for development does not produce frames in headless Chromium (`requestAnimationFrame` never fires, even on a blank page), so screenshots and frame-dependent checks time out locally.

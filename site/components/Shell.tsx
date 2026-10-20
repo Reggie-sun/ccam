@@ -144,6 +144,9 @@ export function Shell({ locale, alternates, active, menu, children }: Props) {
               <li><a href={REPO} target="_blank" rel="noopener">{m.footer.license}</a></li>
               <li><a href={`/${locale}/languages/`}>{m.footer.languages}</a></li>
             </ul>
+            <p className="copyright">
+              <bdi>© 2026 Moveto Team</bdi> · <a href={REPO} dir="ltr">{REPO.replace("https://", "")}</a>
+            </p>
           </div>
         </footer>
         <JsonLd data={websiteLd(l.lang)} />

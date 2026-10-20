@@ -3,6 +3,7 @@
 // (stands in for Next.js's ensureStatic until vinext supports it).
 import { existsSync, readFileSync } from "node:fs";
 import { relative } from "node:path";
+import { REPO } from "../lib/paths.ts";
 import { fail, htmlFile, OUT, routes, walk } from "./lib.ts";
 
 const errors: string[] = [];
@@ -14,6 +15,9 @@ for (const f of await walk(OUT)) {
   if (rel.endsWith(".html")) {
     const html = readFileSync(f, "utf8");
     if (/src="\/_next\//.test(html) || html.includes("vinext.navigationRuntime")) errors.push(`client runtime referenced in ${rel}`);
+    const footer = /<footer[\s\S]*<\/footer>/.exec(html)?.[0] ?? "";
+    if (!footer.includes("© 2026 Moveto Team")) errors.push(`no copyright line in the footer of ${rel}`);
+    if (!footer.includes(`href="${REPO}"`)) errors.push(`no GitHub link in the footer of ${rel}`);
   }
 }
 for (const f of ["404.html", "_headers", "_redirects", "robots.txt", "sitemap-index.xml", "llms.txt", "llms-full.txt"]) {

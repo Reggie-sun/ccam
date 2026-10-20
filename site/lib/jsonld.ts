@@ -11,7 +11,18 @@ export const AUTHOR = { "@type": "Person", name: "jhyunwoo", url: "https://githu
 
 export function websiteLd(lang: string) {
   return [
-    { "@context": "https://schema.org", "@type": "WebSite", ...WEBSITE, name: "ccam", alternateName: FULL_NAME, url: SITE + "/", inLanguage: lang, publisher: ORGANIZATION },
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      ...WEBSITE,
+      name: "ccam",
+      alternateName: FULL_NAME,
+      url: SITE + "/",
+      inLanguage: lang,
+      publisher: ORGANIZATION,
+      copyrightYear: 2026,
+      copyrightHolder: { "@type": "Organization", name: "Moveto Team" },
+    },
     {
       "@context": "https://schema.org",
       "@type": "Organization",
