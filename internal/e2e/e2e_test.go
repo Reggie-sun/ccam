@@ -17,6 +17,7 @@ import (
 
 var (
 	ccamBin   string
+	fakeBin   string // testdata/fakeclaude, the stand-in for claude
 	buildOnce sync.Once
 	buildErr  error
 )
@@ -26,7 +27,8 @@ func TestMain(m *testing.M) {
 	if err != nil {
 		panic(err)
 	}
-	ccamBin = filepath.Join(dir, "ccam")
+	ccamBin = filepath.Join(dir, "ccam"+exe)
+	fakeBin = filepath.Join(dir, "fakeclaude"+exe)
 	code := m.Run()
 	os.RemoveAll(dir)
 	os.Exit(code)
@@ -36,12 +38,21 @@ func TestMain(m *testing.M) {
 // recorded by the go test cache.
 func buildCcam(t *testing.T) {
 	buildOnce.Do(func() {
+		// Binaries built elsewhere, for machines without Go (a Windows host
+		// driven from WSL): CCAM_E2E_BIN, CCAM_E2E_FAKE and CCAM_E2E_ROOT.
+		if bin, fake := os.Getenv("CCAM_E2E_BIN"), os.Getenv("CCAM_E2E_FAKE"); bin != "" && fake != "" {
+			ccamBin, fakeBin = bin, fake
+			return
+		}
 		touchSources()
-		// -buildvcs=false: CI containers may refuse git on the checkout (ownership check).
-		build := exec.Command("go", "build", "-buildvcs=false", "-o", ccamBin, "./cmd/ccam")
-		build.Dir = repoRoot()
-		if out, err := build.CombinedOutput(); err != nil {
-			buildErr = fmt.Errorf("build failed: %v\n%s", err, out)
+		for bin, pkg := range map[string]string{ccamBin: "./cmd/ccam", fakeBin: "./testdata/fakeclaude"} {
+			// -buildvcs=false: CI containers may refuse git on the checkout (ownership check).
+			build := exec.Command("go", "build", "-buildvcs=false", "-o", bin, pkg)
+			build.Dir = repoRoot()
+			if out, err := build.CombinedOutput(); err != nil {
+				buildErr = fmt.Errorf("build of %s failed: %v\n%s", pkg, err, out)
+				return
+			}
 		}
 	})
 	if buildErr != nil {
@@ -63,9 +74,21 @@ func touchSources() {
 }
 
 func repoRoot() string {
+	if root := os.Getenv("CCAM_E2E_ROOT"); root != "" {
+		return root
+	}
 	_, file, _, _ := runtime.Caller(0)
 	return filepath.Join(filepath.Dir(file), "..", "..")
 }
+
+// systemPath is the PATH after the test's bin folder: system folders only.
+var systemPath = map[bool]string{true: `C:\Windows\System32;C:\Windows`, false: "/usr/bin:/bin"}[runtime.GOOS == "windows"]
+
+// perms is whether the platform has Unix permission bits (Windows does not).
+var perms = runtime.GOOS != "windows"
+
+// exe is the file name suffix of executables.
+var exe = map[bool]string{true: ".exe"}[runtime.GOOS == "windows"]
 
 // harness is one isolated ccam installation.
 type harness struct {
@@ -80,15 +103,14 @@ func newHarness(t *testing.T) *harness {
 	buildCcam(t)
 	home := t.TempDir()
 	h := &harness{t: t, home: home, log: filepath.Join(home, "claude.log")}
-	fake := filepath.Join(repoRoot(), "testdata", "fake-claude")
 	os.MkdirAll(filepath.Join(home, "config"), 0o700)
-	os.WriteFile(filepath.Join(home, "config", "config.toml"), []byte(fmt.Sprintf("claude_bin = %q\n", fake)), 0o600)
+	os.WriteFile(filepath.Join(home, "config", "config.toml"), []byte(fmt.Sprintf("claude_bin = %q\n", fakeBin)), 0o600)
 	h.env = append(os.Environ(),
 		"CCAM_HOME="+home,
 		"FAKE_CLAUDE_LOG="+h.log,
 		// Only system folders after bin: shortcut checks look for clashes on
 		// PATH, and the developer's own ~/.local/bin must not leak in.
-		"PATH="+filepath.Join(home, "bin")+":/usr/bin:/bin",
+		"PATH="+filepath.Join(home, "bin")+string(os.PathListSeparator)+systemPath,
 	)
 	return h
 }
@@ -101,11 +123,18 @@ type result struct {
 // run executes argv[0] (ccam, ccwork …) with extra env.
 func (h *harness) run(stdin string, extraEnv []string, argv ...string) result {
 	h.t.Helper()
+	return h.runIn("", stdin, extraEnv, argv...)
+}
+
+// runIn is run in the working directory dir ("" = the test's).
+func (h *harness) runIn(dir, stdin string, extraEnv []string, argv ...string) result {
+	h.t.Helper()
 	bin := ccamBin
 	if argv[0] != "ccam" {
-		bin = filepath.Join(h.home, "bin", argv[0])
+		bin = filepath.Join(h.home, "bin", argv[0]+exe)
 	}
 	cmd := exec.Command(bin, argv[1:]...)
+	cmd.Dir = dir
 	cmd.Env = append(append([]string{}, h.env...), extraEnv...)
 	cmd.Stdin = strings.NewReader(stdin)
 	var out, errb bytes.Buffer
@@ -167,7 +196,7 @@ func TestAddLogsInWithoutShortcutByDefault(t *testing.T) {
 		t.Fatalf("list:\n%s", out)
 	}
 	info, _ := os.Stat(h.profileDir("work"))
-	if info.Mode().Perm() != 0o700 {
+	if perms && info.Mode().Perm() != 0o700 {
 		t.Fatalf("profile dir perm %v", info.Mode())
 	}
 }
@@ -225,7 +254,11 @@ func TestDryRunAndErrors(t *testing.T) {
 	h.addAccounts()
 	os.Remove(h.log) // left behind by `auth login`
 	out := h.ok("ccam", "--dry-run", "work", "-c")
-	if !strings.Contains(out, "CLAUDE_CONFIG_DIR="+h.profileDir("work")) || !strings.HasSuffix(strings.TrimSpace(out), " -c") {
+	want := "CLAUDE_CONFIG_DIR=" + h.profileDir("work")
+	if runtime.GOOS == "windows" {
+		want = "$env:CLAUDE_CONFIG_DIR='" + h.profileDir("work") + "';"
+	}
+	if !strings.Contains(out, want) || !strings.HasSuffix(strings.TrimSpace(out), " -c") {
 		t.Fatalf("dry run: %s", out)
 	}
 	if _, err := os.Stat(h.log); err == nil {
@@ -301,7 +334,7 @@ func TestRemoveAndRename(t *testing.T) {
 	if _, err := os.Stat(h.profileDir("job")); err == nil {
 		t.Fatal("profile dir still there")
 	}
-	if _, err := os.Lstat(filepath.Join(h.home, "bin", "ccwork")); err == nil {
+	if _, err := os.Lstat(filepath.Join(h.home, "bin", "ccwork"+exe)); err == nil {
 		t.Fatal("ccwork shortcut still there")
 	}
 	trash, _ := os.ReadDir(filepath.Join(h.home, "data", "trash"))

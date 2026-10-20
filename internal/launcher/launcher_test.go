@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"runtime"
 	"strings"
 	"testing"
 	"time"
@@ -13,6 +14,9 @@ import (
 	"github.com/jhyunwoo/ccam/internal/config"
 	"github.com/jhyunwoo/ccam/internal/paths"
 )
+
+// exeSuffix makes a file found by PATH lookups: Windows looks for .exe.
+var exeSuffix = map[bool]string{true: ".exe"}[runtime.GOOS == "windows"]
 
 func setup(t testing.TB) (paths.Paths, *config.Config) {
 	root := t.TempDir()
@@ -60,6 +64,24 @@ func TestPrepareSelectsProfile(t *testing.T) {
 	}
 }
 
+func TestPrepareUsesTheFoldersAccount(t *testing.T) {
+	p, cfg := setup(t)
+	here := t.TempDir()
+	t.Chdir(here)
+	cwd, _ := os.Getwd()
+	cfg.SetFolder(filepath.Dir(cwd), "personal")
+	if pl, err := Prepare(p, cfg, "", nil); err != nil || pl.Profile.Name != "personal" {
+		t.Fatalf("no name inside the folder: %v %v", pl, err)
+	}
+	if pl, err := Prepare(p, cfg, "work", nil); err != nil || pl.Profile.Name != "work" {
+		t.Fatalf("a name wins over the folder: %v %v", pl, err)
+	}
+	cfg.SetFolder(cwd, "gone")
+	if _, err := Prepare(p, cfg, "", nil); err == nil || !strings.Contains(err.Error(), "ccam folder") {
+		t.Fatalf("missing account: %v", err)
+	}
+}
+
 func TestPrepareUnknownProfile(t *testing.T) {
 	p, cfg := setup(t)
 	if _, err := Prepare(p, cfg, "nope", nil); err == nil {
@@ -94,15 +116,32 @@ func TestDryRunQuotes(t *testing.T) {
 	var buf bytes.Buffer
 	pl.DryRun(&buf)
 	want := `CLAUDE_CONFIG_DIR=/d /bin/claude -p 'it'\''s ünïcode' --x` + "\n"
+	if runtime.GOOS == "windows" {
+		want = `$env:CLAUDE_CONFIG_DIR='/d'; & /bin/claude -p 'it''s ünïcode' --x` + "\n"
+	}
 	if buf.String() != want {
 		t.Fatalf("got %s", buf.String())
+	}
+}
+
+func TestPSQuote(t *testing.T) {
+	for in, want := range map[string]string{
+		`C:\Users\me\claude.exe`: `C:\Users\me\claude.exe`,
+		`C:\Program Files\x`:     `'C:\Program Files\x'`,
+		"it's":                   `'it''s'`,
+		"":                       `''`,
+		"$env:X":                 `'$env:X'`,
+	} {
+		if got := PSQuote(in); got != want {
+			t.Errorf("%q: %s", in, got)
+		}
 	}
 }
 
 func TestResolveClaudeCachesLookup(t *testing.T) {
 	p, _ := setup(t)
 	binDir := t.TempDir()
-	fake := filepath.Join(binDir, "claude-x")
+	fake := filepath.Join(binDir, "claude-x"+exeSuffix)
 	os.WriteFile(fake, []byte("#!/bin/sh\n"), 0o755)
 	t.Setenv("PATH", binDir)
 	got, err := ResolveClaude(p, "claude-x")
@@ -189,5 +228,21 @@ func TestRemoteControlCopiesMCPOnYes(t *testing.T) {
 	remoteControlMCP(pl, gdir, state, false, false)
 	if local, _ := os.ReadFile(filepath.Join(dir, ".claude.json")); asked != 2 || !strings.Contains(string(local), "fs-mcp-2") {
 		t.Fatalf("after the group changed: asked %d, .claude.json %s", asked, local)
+	}
+}
+
+func TestFolderHereFollowsSymlinks(t *testing.T) {
+	root := t.TempDir()
+	real := filepath.Join(root, "real")
+	os.MkdirAll(filepath.Join(real, "sub"), 0o700)
+	if err := os.Symlink(real, filepath.Join(root, "link")); err != nil {
+		t.Skip("no symlinks:", err)
+	}
+	resolved, _ := filepath.EvalSymlinks(real)
+	cfg := &config.Config{Profiles: []config.Profile{{Name: "work", Slot: 1}}}
+	cfg.SetFolder(resolved, "work")
+	t.Chdir(filepath.Join(root, "link", "sub"))
+	if f, ok := FolderHere(cfg); !ok || f.Account != "work" {
+		t.Fatalf("through the link: %v %v", f, ok)
 	}
 }

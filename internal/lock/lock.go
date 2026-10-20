@@ -10,11 +10,11 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
-	"syscall"
 	"time"
 )
 
-// Flock is an exclusive, non-blocking flock on a file.
+// Flock is an exclusive, non-blocking lock on a file: flock(2), or
+// LockFileEx on Windows.
 type Flock struct {
 	f *os.File
 }
@@ -31,18 +31,15 @@ func TryFlock(path string) (*Flock, error) {
 	if err != nil {
 		return nil, err
 	}
-	if err := syscall.Flock(int(f.Fd()), syscall.LOCK_EX|syscall.LOCK_NB); err != nil {
+	if err := tryLock(f); err != nil {
 		f.Close()
-		if errors.Is(err, syscall.EWOULDBLOCK) {
-			return nil, ErrBusy
-		}
 		return nil, err
 	}
 	return &Flock{f: f}, nil
 }
 
 func (l *Flock) Unlock() {
-	_ = syscall.Flock(int(l.f.Fd()), syscall.LOCK_UN) // closing releases it anyway
+	unlock(l.f) // closing releases it anyway
 	l.f.Close()
 }
 

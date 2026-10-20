@@ -5,10 +5,12 @@
 package launcher
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"os"
 	"os/exec"
+	"os/signal"
 	"path/filepath"
 	"runtime"
 	"strconv"
@@ -30,16 +32,19 @@ type Plan struct {
 	Bin     string   // absolute path of claude
 	Argv    []string // argv including argv[0]
 	Env     []string
+
+	sessions []string // session folders this process is registered in
 }
 
-// Prepare resolves the profile (sel == "" means the default one) and builds
-// the exec plan. User args are passed through untouched, except that one
-// leading "--" separator is dropped.
+// Prepare resolves the profile (sel == "" means the one set for the
+// current folder, else the default one) and builds the exec plan. User args
+// are passed through untouched, except that one leading "--" separator is
+// dropped.
 func Prepare(p paths.Paths, cfg *config.Config, sel string, args []string) (*Plan, error) {
 	var prof *config.Profile
 	var err error
 	if sel == "" {
-		prof, err = cfg.DefaultProfile()
+		prof, err = HereProfile(cfg)
 	} else {
 		prof, err = cfg.MustFind(sel)
 	}
@@ -61,6 +66,37 @@ func Prepare(p paths.Paths, cfg *config.Config, sel string, args []string) (*Pla
 	argv = append(argv, "claude")
 	argv = append(argv, args...)
 	return &Plan{Profile: prof, Dir: dir, Bin: bin, Argv: argv, Env: ProfileEnv(p, os.Environ(), dir, prof.Name)}, nil
+}
+
+// HereProfile is the account a launch without a name uses: the one set for
+// the current folder with `ccam folder`, else the default account.
+func HereProfile(cfg *config.Config) (*config.Profile, error) {
+	if len(cfg.Folders) > 0 {
+		if f, ok := FolderHere(cfg); ok {
+			if prof, ok := cfg.Find(f.Account); ok {
+				return prof, nil
+			}
+			return nil, fmt.Errorf("%s is set to account %q, which does not exist. Change it with `ccam folder`", f.Path, f.Account)
+		}
+	}
+	return cfg.DefaultProfile()
+}
+
+// FolderHere finds the `ccam folder` entry for the working directory. Entries
+// are stored with symlinks resolved; the working directory is resolved only
+// when it does not match as it is, which keeps the common case to one getcwd.
+func FolderHere(cfg *config.Config) (*config.Folder, bool) {
+	cwd, err := os.Getwd()
+	if err != nil {
+		return nil, false
+	}
+	if f, ok := cfg.FolderFor(cwd); ok {
+		return f, true
+	}
+	if real, err := filepath.EvalSymlinks(cwd); err == nil && real != cwd {
+		return cfg.FolderFor(real)
+	}
+	return nil, false
 }
 
 // InsertArgs puts ccam-generated args (e.g. --mcp-config) before the user's,
@@ -95,8 +131,18 @@ func buildEnv(environ []string, dir, name string, defaultStore bool) []string {
 	return env
 }
 
-// DryRun prints what would be executed.
+// DryRun prints what would be executed, as a line for sh, or for
+// PowerShell on Windows.
 func (pl *Plan) DryRun(w io.Writer) {
+	if runtime.GOOS == "windows" {
+		// The value of an assignment must be a string, so it is always quoted.
+		parts := []string{"$env:CLAUDE_CONFIG_DIR='" + strings.ReplaceAll(pl.Dir, "'", "''") + "';", "&", PSQuote(pl.Bin)}
+		for _, a := range pl.Argv[1:] {
+			parts = append(parts, PSQuote(a))
+		}
+		fmt.Fprintln(w, strings.Join(parts, " "))
+		return
+	}
 	parts := []string{"CLAUDE_CONFIG_DIR=" + ShellQuote(pl.Dir), ShellQuote(pl.Bin)}
 	for _, a := range pl.Argv[1:] {
 		parts = append(parts, ShellQuote(a))
@@ -104,20 +150,70 @@ func (pl *Plan) DryRun(w io.Writer) {
 	fmt.Fprintln(w, strings.Join(parts, " "))
 }
 
+// PSQuote quotes s for PowerShell when needed.
+func PSQuote(s string) string {
+	if s != "" && strings.IndexFunc(s, func(r rune) bool {
+		return !(r >= 'a' && r <= 'z' || r >= 'A' && r <= 'Z' || r >= '0' && r <= '9' || strings.ContainsRune("-_./:\\", r))
+	}) < 0 {
+		return s
+	}
+	return "'" + strings.ReplaceAll(s, "'", "''") + "'"
+}
+
 // BeforeExec runs right before exec, e.g. to flush a CPU profile.
 var BeforeExec func()
 
-// Exec replaces the current process with claude. It only returns on error.
-func (pl *Plan) Exec(p paths.Paths) error {
+// ExitCode is returned when claude ran and ended with a non-zero code that
+// ccam must exit with, without a message of its own.
+type ExitCode int
+
+func (e ExitCode) Error() string { return fmt.Sprintf("claude exited with code %d", int(e)) }
+
+// Run starts claude as a child process with the given standard streams,
+// waits for it and returns its exit code (128+n when signal n ended it).
+// Ctrl+C is not passed on: the terminal sends it to claude as well.
+func (pl *Plan) Run(p paths.Paths, stdin io.Reader, stdout, stderr io.Writer) (int, error) {
 	setTitle(pl.Profile.Name)
 	MarkUsed(p, pl.Profile.Name)
-	if BeforeExec != nil {
-		BeforeExec()
+	cmd := &exec.Cmd{Path: pl.Bin, Args: pl.Argv, Env: pl.Env, Stdin: stdin, Stdout: stdout, Stderr: stderr}
+	sig := make(chan os.Signal, 4)
+	signal.Notify(sig, passOn...)
+	defer signal.Stop(sig)
+	if err := cmd.Start(); err != nil {
+		return 0, err
 	}
-	return syscall.Exec(pl.Bin, pl.Argv, pl.Env)
+	done := make(chan struct{})
+	go func() {
+		for {
+			select {
+			case s := <-sig:
+				if s != os.Interrupt {
+					_ = cmd.Process.Signal(s)
+				}
+			case <-done:
+				return
+			}
+		}
+	}()
+	err := cmd.Wait()
+	close(done)
+	var ee *exec.ExitError
+	switch {
+	case err == nil:
+		return 0, nil
+	case errors.As(err, &ee):
+		if ws, ok := ee.Sys().(syscall.WaitStatus); ok && ws.Signaled() {
+			return 128 + int(ws.Signal()), nil
+		}
+		return ee.ExitCode(), nil
+	}
+	return 0, err
 }
 
 func setTitle(name string) {
+	if runtime.GOOS == "windows" {
+		return // the console shows escape sequences as text unless VT output is on
+	}
 	if fi, err := os.Stderr.Stat(); err == nil && fi.Mode()&os.ModeCharDevice != 0 {
 		fmt.Fprintf(os.Stderr, "\x1b]0;claude · %s\a", name)
 	}
@@ -164,7 +260,7 @@ func ResolveClaude(p paths.Paths, bin string) (string, error) {
 	if bin == "" {
 		bin = "claude"
 	}
-	if strings.Contains(bin, "/") {
+	if strings.ContainsRune(bin, '/') || strings.ContainsRune(bin, filepath.Separator) {
 		if isSelf(bin) {
 			return "", fmt.Errorf("%s points to ccam itself. Check claude_bin in config.toml", bin)
 		}

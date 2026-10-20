@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/jhyunwoo/ccam/internal/config"
+	"github.com/jhyunwoo/ccam/internal/fsutil"
 )
 
 type ProblemKind int
@@ -49,10 +50,10 @@ func Check(dir string, s config.Share, groupsRoot string) []Problem {
 		for _, e := range Layout[item] {
 			path := filepath.Join(dir, e.Name)
 			info, err := os.Lstat(path)
-			isLink := err == nil && info.Mode()&os.ModeSymlink != 0
 			var target string
-			if isLink {
-				target, _ = os.Readlink(path)
+			isLink := false
+			if err == nil {
+				target, isLink = fsutil.LinkTargetOf(path, info)
 			}
 			if group == config.Local {
 				if isLink && strings.HasPrefix(target, groupsRoot+string(filepath.Separator)) {
@@ -90,8 +91,9 @@ func QuickFix(problems []Problem) ([]Problem, error) {
 	return rest, nil
 }
 
-// linkEntry makes path a symlink to target, creating the group dir for
-// directory entries so the link is never dangling.
+// linkEntry makes path a link to target (a junction for a folder on
+// Windows without Developer Mode), creating the group dir for directory
+// entries so the link is never dangling.
 func linkEntry(e Entry, target, path string) error {
 	if e.Dir {
 		if err := os.MkdirAll(target, 0o700); err != nil {
@@ -100,5 +102,5 @@ func linkEntry(e Entry, target, path string) error {
 	} else if err := os.MkdirAll(filepath.Dir(target), 0o700); err != nil {
 		return err
 	}
-	return os.Symlink(target, path)
+	return fsutil.Link(target, path, e.Dir)
 }

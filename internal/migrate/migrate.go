@@ -608,12 +608,12 @@ func copyMissing(src, dst string) error {
 			return os.MkdirAll(target, info.Mode().Perm()|0o700)
 		case fsutil.Exists(target):
 			return nil
-		case d.Type()&fs.ModeSymlink != 0:
+		case fsutil.IsLink(path, d):
 			link, err := os.Readlink(path)
 			if err != nil {
 				return err
 			}
-			return os.Symlink(fsutil.PortableLink(path, link, src), target)
+			return fsutil.CopyLink(fsutil.PortableLink(path, link, src), target)
 		default:
 			return fsutil.CopyFile(path, target)
 		}

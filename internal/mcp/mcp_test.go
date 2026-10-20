@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"runtime"
 	"strings"
 	"testing"
 	"time"
@@ -41,7 +42,7 @@ func TestStoreRoundTripAndPerm(t *testing.T) {
 	if err := s.Save(path); err != nil {
 		t.Fatal(err)
 	}
-	if info, _ := os.Stat(path); info.Mode().Perm() != 0o600 {
+	if info, _ := os.Stat(path); runtime.GOOS != "windows" && info.Mode().Perm() != 0o600 {
 		t.Fatal("mcp.json must be 0600")
 	}
 	got, _ := Load(path)

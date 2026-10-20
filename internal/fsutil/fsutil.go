@@ -146,7 +146,7 @@ func PortableLink(path, link, root string) string {
 // in dst whose target lay outside root.
 func fixMovedLinks(src, dst, root string) error {
 	return filepath.WalkDir(dst, func(path string, d fs.DirEntry, err error) error {
-		if err != nil || d.Type()&fs.ModeSymlink == 0 {
+		if err != nil || !IsLink(path, d) {
 			return err
 		}
 		link, err := os.Readlink(path)
@@ -158,10 +158,7 @@ func fixMovedLinks(src, dst, root string) error {
 		if fixed == link {
 			return nil
 		}
-		if err := os.Remove(path); err != nil {
-			return err
-		}
-		return os.Symlink(fixed, path)
+		return CopyLink(fixed, path)
 	})
 }
 
@@ -181,13 +178,12 @@ func copyTree(src, dst, root string) error {
 		rel, _ := filepath.Rel(src, path)
 		target := filepath.Join(dst, rel)
 		switch {
-		case d.Type()&fs.ModeSymlink != 0:
+		case IsLink(path, d):
 			link, err := os.Readlink(path)
 			if err != nil {
 				return err
 			}
-			os.Remove(target)
-			return os.Symlink(PortableLink(path, link, root), target)
+			return CopyLink(PortableLink(path, link, root), target)
 		case d.IsDir():
 			info, err := d.Info()
 			if err != nil {

@@ -314,23 +314,23 @@ func TestJoiningMergesPluginRegistry(t *testing.T) {
 	a := f.profile(t, "a", nil)
 	os.MkdirAll(filepath.Join(a, "plugins", "cache", "mk", "one"), 0o700)
 	os.WriteFile(filepath.Join(a, "plugins", "installed_plugins.json"),
-		[]byte(`{"version":2,"plugins":{"one@mk":[{"installPath":"`+a+`/plugins/cache/mk/one"}]}}`), 0o600)
+		[]byte(`{"version":2,"plugins":{"one@mk":[{"installPath":"`+jp(a, "plugins/cache/mk/one")+`"}]}}`), 0o600)
 	share(t, f, a, config.Share{}, ext, Options{})
 
 	b := f.profile(t, "b", nil)
 	os.MkdirAll(filepath.Join(b, "plugins", "cache", "mk", "two"), 0o700)
 	os.WriteFile(filepath.Join(b, "plugins", "installed_plugins.json"),
-		[]byte(`{"version":2,"plugins":{"two@mk":[{"installPath":"`+b+`/plugins/cache/mk/two"}]}}`), 0o600)
+		[]byte(`{"version":2,"plugins":{"two@mk":[{"installPath":"`+jp(b, "plugins/cache/mk/two")+`"}]}}`), 0o600)
 	share(t, f, b, config.Share{}, ext, Options{})
 
 	grp := filepath.Join(f.groups, "default", "plugins")
 	data := read(t, filepath.Join(grp, "installed_plugins.json"))
-	for _, want := range []string{`"one@mk"`, `"two@mk"`, grp + "/cache/mk/one", grp + "/cache/mk/two"} {
+	for _, want := range []string{`"one@mk"`, `"two@mk"`, jp(grp, "cache/mk/one"), jp(grp, "cache/mk/two")} {
 		if !strings.Contains(data, want) {
 			t.Errorf("registry lacks %s:\n%s", want, data)
 		}
 	}
-	if strings.Contains(data, a+"/plugins") || strings.Contains(data, b+"/plugins") {
+	if strings.Contains(data, jp(a, "plugins")) || strings.Contains(data, jp(b, "plugins")) {
 		t.Errorf("paths still run through an account folder:\n%s", data)
 	}
 	if _, err := os.Stat(filepath.Join(grp, "cache", "mk", "two")); err != nil {
@@ -369,11 +369,11 @@ func TestLeavingRewritesPluginPathsBack(t *testing.T) {
 	a := f.profile(t, "a", nil)
 	os.MkdirAll(filepath.Join(a, "plugins", "cache", "mk", "one"), 0o700)
 	os.WriteFile(filepath.Join(a, "plugins", "installed_plugins.json"),
-		[]byte(`{"plugins":{"one@mk":[{"installPath":"`+a+`/plugins/cache/mk/one"}]}}`), 0o600)
+		[]byte(`{"plugins":{"one@mk":[{"installPath":"`+jp(a, "plugins/cache/mk/one")+`"}]}}`), 0o600)
 	share(t, f, a, config.Share{}, ext, Options{})
 	share(t, f, a, ext, config.Share{}, Options{})
 	data := read(t, filepath.Join(a, "plugins", "installed_plugins.json"))
-	if !strings.Contains(data, a+"/plugins/cache/mk/one") || strings.Contains(data, f.groups) {
+	if !strings.Contains(data, jp(a, "plugins/cache/mk/one")) || strings.Contains(data, jp(f.groups, "")) {
 		t.Fatalf("registry after leaving:\n%s", data)
 	}
 }
@@ -386,7 +386,7 @@ func TestJoiningDoesNotDuplicateSharedPlugin(t *testing.T) {
 		dir := f.profile(t, name, nil)
 		os.MkdirAll(filepath.Join(dir, "plugins", "cache", "mk", "one"), 0o700)
 		os.WriteFile(filepath.Join(dir, "plugins", "installed_plugins.json"),
-			[]byte(`{"plugins":{"one@mk":[{"installPath":"`+dir+`/plugins/cache/mk/one","version":"1.0"}]}}`), 0o600)
+			[]byte(`{"plugins":{"one@mk":[{"installPath":"`+jp(dir, "plugins/cache/mk/one")+`","version":"1.0"}]}}`), 0o600)
 		share(t, f, dir, config.Share{}, ext, Options{})
 	}
 	var reg struct {
@@ -418,4 +418,11 @@ func TestBackupsWithinOneSecondStayApart(t *testing.T) {
 	if len(got) != 2 || !strings.Contains(strings.Join(got, ""), `{"mine":1}`) {
 		t.Fatalf("backups: %v", got)
 	}
+}
+
+// jp is filepath.Join(base, rel) as it appears inside a JSON string, where
+// Windows backslashes are escaped.
+func jp(base, rel string) string {
+	b, _ := json.Marshal(filepath.Join(base, filepath.FromSlash(rel)))
+	return strings.Trim(string(b), `"`)
 }

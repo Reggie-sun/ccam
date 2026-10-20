@@ -97,7 +97,7 @@ func Import(p paths.Paths, cfg *config.Config, path, name string) (*config.Profi
 	inner := filepath.Join(path, ".claude.json")
 	outer := filepath.Join(p.Home, ".claude.json")
 	if path == filepath.Join(p.Home, ".claude") && !fsutil.Exists(inner) && fsutil.Exists(outer) {
-		if err := os.Symlink(outer, inner); err != nil {
+		if err := fsutil.Link(outer, inner, false); err != nil {
 			return nil, nil, err
 		}
 		notes = append(notes, fmt.Sprintf("created link %s → %s", inner, outer))

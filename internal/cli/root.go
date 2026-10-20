@@ -92,9 +92,12 @@ func ccamPath() (string, error) {
 
 func newRoot(e *env) *cobra.Command {
 	root := &cobra.Command{
-		Use:           "ccam",
-		Short:         "Claude Code multi-account manager",
-		Long:          "ccam adds and switches between several Claude Code accounts.\n\n  ccam <name|number> [claude args]  run Claude Code as that account\n  <shortcut> [claude args]          run by a shortcut command (ccam shortcut)",
+		Use:   "ccam",
+		Short: "Claude Code multi-account manager",
+		Long: "ccam adds and switches between several Claude Code accounts.\n\n" +
+			"  ccam <name|number> [claude args]  run Claude Code as that account\n" +
+			"  <shortcut> [claude args]          run by a shortcut command (ccam shortcut)\n" +
+			"  ccam --fallback <name> -p \"…\"     run again as another account at a usage limit (ccam help run)",
 		Version:       Version,
 		SilenceUsage:  true,
 		SilenceErrors: true,
@@ -116,7 +119,7 @@ func newRoot(e *env) *cobra.Command {
 	root.ValidArgsFunction = profileNames(e) // `ccam <tab>` lists accounts
 	root.AddCommand(
 		addCmd(e), listCmd(e), runCmd(e), useCmd(e), removeCmd(e), renameCmd(e),
-		loginCmd(e), logoutCmd(e), shimsCmd(e), versionCmd(e), shareCmd(e), doctorCmd(e), mcpCmd(e), nextCmd(e), usageCmd(e), statuslineCmd(e), importCmd(e), migrateCmd(e), shortcutCmd(e), updateCmd(e), completionCmd(e),
+		loginCmd(e), logoutCmd(e), shimsCmd(e), versionCmd(e), shareCmd(e), doctorCmd(e), mcpCmd(e), nextCmd(e), usageCmd(e), statuslineCmd(e), importCmd(e), migrateCmd(e), shortcutCmd(e), folderCmd(e), updateCmd(e), completionCmd(e),
 	)
 	for _, c := range root.Commands() {
 		switch c.Name() {
@@ -131,7 +134,7 @@ func newRoot(e *env) *cobra.Command {
 // refuses the flag instead of quietly doing the real thing.
 var dryRunCommands = map[string]bool{
 	"ccam": true, "ccam run": true, "ccam next": true, "ccam share": true, "ccam migrate": true,
-	"ccam shortcut": true, "ccam update": true, "ccam doctor": true, "ccam usage": true,
+	"ccam shortcut": true, "ccam folder": true, "ccam update": true, "ccam doctor": true, "ccam usage": true,
 	"ccam list": true, "ccam mcp list": true, "ccam version": true, "ccam completion": true,
 	"ccam help": true, "ccam __complete": true, "ccam __completeNoDesc": true,
 }
@@ -158,6 +161,10 @@ func ExecuteWith(args []string, p paths.Paths, stdin io.Reader, stdout, stderr i
 		var exit exitError
 		if errors.As(err, &exit) {
 			return int(exit)
+		}
+		var code launcher.ExitCode // claude's own exit code where ccam waits for it
+		if errors.As(err, &code) {
+			return int(code)
 		}
 		fmt.Fprintln(stderr, "ccam:", err)
 		return 1

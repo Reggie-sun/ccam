@@ -2,6 +2,7 @@ package e2e
 
 import (
 	"archive/tar"
+	"archive/zip"
 	"bytes"
 	"compress/gzip"
 	"crypto/sha256"
@@ -20,6 +21,19 @@ import (
 // buildRelease builds ccam as a release would, with its version set by ldflags.
 func buildRelease(t *testing.T, version, out string) {
 	t.Helper()
+	// Without Go (a Windows host driven from WSL), CCAM_E2E_RELEASES names
+	// a folder with prebuilt ccam-<version>[.exe] files.
+	if dir := os.Getenv("CCAM_E2E_RELEASES"); dir != "" {
+		data, err := os.ReadFile(filepath.Join(dir, "ccam-"+version+exe))
+		if err != nil {
+			t.Fatal(err)
+		}
+		os.MkdirAll(filepath.Dir(out), 0o755)
+		if err := os.WriteFile(out, data, 0o755); err != nil {
+			t.Fatal(err)
+		}
+		return
+	}
 	touchSources()
 	build := exec.Command("go", "build", "-buildvcs=false", "-trimpath",
 		"-ldflags", "-s -w -X github.com/jhyunwoo/ccam/internal/cli.Version="+version, "-o", out, "./cmd/ccam")
@@ -34,12 +48,12 @@ func buildRelease(t *testing.T, version, out string) {
 func TestUpdate(t *testing.T) {
 	h := newHarness(t)
 	tmp := t.TempDir()
-	newBin := filepath.Join(tmp, "new", "ccam")
+	newBin := filepath.Join(tmp, "new", "ccam"+exe)
 	buildRelease(t, "0.3.0", newBin)
-	exe := filepath.Join(h.home, "bin", "ccam")
-	buildRelease(t, "0.2.0", exe)
-	os.Symlink(exe, filepath.Join(h.home, "bin", "ccwork")) // a shortcut
-	shown, err := filepath.EvalSymlinks(exe) // ccam prints the resolved path (/private/var on macOS)
+	bin := filepath.Join(h.home, "bin", "ccam"+exe)
+	buildRelease(t, "0.2.0", bin)
+	os.Symlink(bin, filepath.Join(h.home, "bin", "ccwork"+exe)) // a shortcut
+	shown, err := filepath.EvalSymlinks(bin) // ccam prints the resolved path (/private/var on macOS)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -49,15 +63,23 @@ func TestUpdate(t *testing.T) {
 		t.Fatal(err)
 	}
 	var buf bytes.Buffer
-	gz := gzip.NewWriter(&buf)
-	tw := tar.NewWriter(gz)
-	tw.WriteHeader(&tar.Header{Name: "ccam", Mode: 0o755, Size: int64(len(data)), Typeflag: tar.TypeReg})
-	tw.Write(data)
-	tw.Close()
-	gz.Close()
+	asset := fmt.Sprintf("ccam_%s_%s.tar.gz", runtime.GOOS, runtime.GOARCH)
+	if runtime.GOOS == "windows" {
+		asset = fmt.Sprintf("ccam_windows_%s.zip", runtime.GOARCH)
+		zw := zip.NewWriter(&buf)
+		w, _ := zw.Create("ccam.exe")
+		w.Write(data)
+		zw.Close()
+	} else {
+		gz := gzip.NewWriter(&buf)
+		tw := tar.NewWriter(gz)
+		tw.WriteHeader(&tar.Header{Name: "ccam", Mode: 0o755, Size: int64(len(data)), Typeflag: tar.TypeReg})
+		tw.Write(data)
+		tw.Close()
+		gz.Close()
+	}
 	archive := buf.Bytes()
 	sum := sha256.Sum256(archive)
-	asset := fmt.Sprintf("ccam_%s_%s.tar.gz", runtime.GOOS, runtime.GOARCH)
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case "/latest":
@@ -73,7 +95,7 @@ func TestUpdate(t *testing.T) {
 	defer srv.Close()
 
 	run := func(argv ...string) result {
-		cmd := exec.Command(exe, argv...)
+		cmd := exec.Command(bin, argv...)
 		cmd.Env = append(append([]string{}, h.env...), "CCAM_RELEASES_URL="+srv.URL)
 		var out, errb bytes.Buffer
 		cmd.Stdout, cmd.Stderr = &out, &errb
@@ -106,10 +128,16 @@ func TestUpdate(t *testing.T) {
 	if r := run("update"); r.code != 0 || r.stdout != "ccam 0.3.0 is up to date.\n" {
 		t.Fatalf("second update: %+v", r)
 	}
-	if info, _ := os.Stat(exe); info.Mode().Perm()&0o111 == 0 {
+	if info, _ := os.Stat(bin); perms && info.Mode().Perm()&0o111 == 0 {
 		t.Fatalf("lost the executable bit: %v", info.Mode())
 	}
-	if got, _ := os.ReadFile(filepath.Join(h.home, "bin", "ccwork")); !bytes.Equal(got, data) {
+	if got, _ := os.ReadFile(filepath.Join(h.home, "bin", "ccwork"+exe)); !bytes.Equal(got, data) {
 		t.Fatal("the shortcut link does not reach the new binary")
+	}
+	if runtime.GOOS == "windows" {
+		// The running binary could only be renamed; the next update removes it.
+		if _, err := os.Stat(bin + ".old"); err != nil {
+			t.Fatalf("old binary: %v", err)
+		}
 	}
 }

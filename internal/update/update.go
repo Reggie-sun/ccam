@@ -4,6 +4,7 @@ package update
 
 import (
 	"archive/tar"
+	"archive/zip"
 	"bufio"
 	"bytes"
 	"compress/gzip"
@@ -35,6 +36,8 @@ const (
 	// <url>/tag/<tag>, assets live at <url>/download/<tag>/<asset>).
 	DefaultReleases = "https://github.com/jhyunwoo/ccam/releases"
 	InstallScript   = "curl -fsSL https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.sh | sh"
+	// InstallScriptWindows is the PowerShell install command.
+	InstallScriptWindows = "irm https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.ps1 | iex"
 
 	lookupTimeout   = 10 * time.Second
 	downloadTimeout = 2 * time.Minute
@@ -74,7 +77,7 @@ func New(current, exe, goos, goarch string) *Updater {
 		ResponseHeaderTimeout: lookupTimeout,
 		ForceAttemptHTTP2:     true,
 	}
-	return &Updater{
+	u := &Updater{
 		Releases:     releases,
 		Current:      current,
 		Exe:          exe,
@@ -84,10 +87,27 @@ func New(current, exe, goos, goarch string) *Updater {
 		SystemDirs:   []string{"/usr/bin", "/bin", "/usr/sbin", "/sbin"},
 		PackageOwned: dpkgOwned,
 	}
+	if goos == "windows" {
+		u.SystemDirs, u.PackageOwned = nil, nil
+	}
+	return u
 }
 
 // Asset is the release archive for one platform (.goreleaser.yaml).
-func Asset(goos, goarch string) string { return "ccam_" + goos + "_" + goarch + ".tar.gz" }
+func Asset(goos, goarch string) string {
+	if goos == "windows" {
+		return "ccam_windows_" + goarch + ".zip"
+	}
+	return "ccam_" + goos + "_" + goarch + ".tar.gz"
+}
+
+// installScript is the command that installs ccam on goos.
+func installScript(goos string) string {
+	if goos == "windows" {
+		return InstallScriptWindows
+	}
+	return InstallScript
+}
 
 // Run checks for a newer release and, unless o.Check or o.DryRun, installs it.
 func Run(ctx context.Context, u *Updater, o Options, out io.Writer) error {
@@ -124,7 +144,7 @@ func Run(ctx context.Context, u *Updater, o Options, out io.Writer) error {
 		return u.managedError(tag)
 	}
 	if err := writable(filepath.Dir(u.Exe)); err != nil {
-		return fmt.Errorf("cannot replace %s: %w.\nRerun the install script, which installs ccam in ~/.local/bin:\n  %s", u.Exe, err, InstallScript)
+		return fmt.Errorf("cannot replace %s: %w.\nRerun the install script, which installs ccam in ~/.local/bin:\n  %s", u.Exe, err, installScript(u.GOOS))
 	}
 	base := u.Releases + "/download/" + tag + "/"
 	asset := Asset(u.GOOS, u.GOARCH)
@@ -214,18 +234,47 @@ func (u *Updater) Fetch(ctx context.Context, tag string) ([]byte, error) {
 	if got := hex.EncodeToString(sum[:]); got != want {
 		return nil, fmt.Errorf("checksum mismatch for %s (expected %s, got %s); nothing was changed", asset, want, got)
 	}
+	if u.GOOS == "windows" {
+		return extractZip(archive)
+	}
 	return extract(archive)
 }
 
 // Install replaces the binary in one rename, keeping its permission bits.
 // Shortcut commands link to this path, so they run the new version.
+//
+// Windows does not let a running program's file be replaced or deleted,
+// only renamed: the old binary becomes <exe>.old, removed by the next
+// update, and the new one takes its name.
 func (u *Updater) Install(bin []byte) error {
 	info, err := os.Stat(u.Exe)
 	if err != nil {
 		return err
 	}
-	return fsutil.AtomicWrite(u.Exe, bin, info.Mode().Perm())
+	if u.GOOS != "windows" {
+		return fsutil.AtomicWrite(u.Exe, bin, info.Mode().Perm())
+	}
+	old := OldExe(u.Exe)
+	os.Remove(old) // from the update before; still running if this fails
+	tmp := u.Exe + ".new"
+	if err := os.WriteFile(tmp, bin, 0o755); err != nil {
+		os.Remove(tmp)
+		return err
+	}
+	if err := os.Rename(u.Exe, old); err != nil {
+		os.Remove(tmp)
+		return err
+	}
+	if err := os.Rename(tmp, u.Exe); err != nil {
+		_ = os.Rename(old, u.Exe)
+		os.Remove(tmp)
+		return err
+	}
+	return nil
 }
+
+// OldExe is where Install moves the replaced binary on Windows.
+func OldExe(exe string) string { return exe + ".old" }
 
 func (u *Updater) get(ctx context.Context, rawURL string) ([]byte, error) {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, rawURL, nil)
@@ -283,6 +332,36 @@ func checksumFor(sums []byte, asset string) (string, bool) {
 	return "", false
 }
 
+// extractZip returns ccam.exe from a .zip (the Windows archives).
+func extractZip(archive []byte) ([]byte, error) {
+	zr, err := zip.NewReader(bytes.NewReader(archive), int64(len(archive)))
+	if err != nil {
+		return nil, fmt.Errorf("could not read the archive: %w", err)
+	}
+	for _, f := range zr.File {
+		if path.Clean(f.Name) != "ccam.exe" || !f.Mode().IsRegular() {
+			continue
+		}
+		if f.UncompressedSize64 > maxDownload {
+			return nil, fmt.Errorf("the ccam binary in the archive is larger than %d MB", maxDownload>>20)
+		}
+		rc, err := f.Open()
+		if err != nil {
+			return nil, fmt.Errorf("could not read the archive: %w", err)
+		}
+		defer rc.Close()
+		bin, err := io.ReadAll(io.LimitReader(rc, maxDownload+1))
+		if err != nil {
+			return nil, fmt.Errorf("could not read the archive: %w", err)
+		}
+		if len(bin) > maxDownload {
+			return nil, fmt.Errorf("the ccam binary in the archive is larger than %d MB", maxDownload>>20)
+		}
+		return bin, nil
+	}
+	return nil, errors.New("the archive has no ccam.exe")
+}
+
 // extract returns the ccam file from a .tar.gz.
 func extract(archive []byte) ([]byte, error) {
 	gz, err := gzip.NewReader(bytes.NewReader(archive))
@@ -332,7 +411,7 @@ func (u *Updater) managedError(tag string) error {
 	} else {
 		b.WriteString("Install a copy in ~/.local/bin with the install script:\n")
 	}
-	b.WriteString("  " + InstallScript)
+	b.WriteString("  " + installScript(u.GOOS))
 	return errors.New(b.String())
 }
 

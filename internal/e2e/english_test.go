@@ -70,7 +70,7 @@ func TestSourceHasNoHangul(t *testing.T) {
 		}
 	}
 	scripts, _ := filepath.Glob(filepath.Join(root, "scripts", "*.sh"))
-	for _, path := range append(scripts, filepath.Join(root, "install.sh")) {
+	for _, path := range append(scripts, filepath.Join(root, "install.sh"), filepath.Join(root, "install.ps1")) {
 		src, err := os.ReadFile(path)
 		if err != nil {
 			t.Fatal(err)
@@ -216,8 +216,8 @@ func TestOutputHasNoHangul(t *testing.T) {
 		run("", argv...)
 	}
 	os.WriteFile(filepath.Join(h.home, "home", ".claude", "settings.json"), []byte(`{"theme":"dark"}`), 0o600)
-	run("2\nn\n", "ccam", "migrate", "--settings")              // conflict prompt, then no
-	os.Symlink(ccamBin, filepath.Join(h.home, "bin", "ccgone")) // link no account claims
+	run("2\nn\n", "ccam", "migrate", "--settings")                  // conflict prompt, then no
+	os.Symlink(ccamBin, filepath.Join(h.home, "bin", "ccgone"+exe)) // link no account claims
 	run("", "ccgone")
 	run("n\n", "ccam", "remove", "spare")
 	run("y\n", "ccam", "remove", "spare")

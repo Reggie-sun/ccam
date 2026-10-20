@@ -5,6 +5,7 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -91,7 +92,7 @@ func TestMCPSignInsGoToEachAccountNotTheGroup(t *testing.T) {
 			t.Fatalf("%s got sign-ins", a.Name)
 		}
 	}
-	if info, _ := os.Stat(filepath.Join(servers.Dir, ".credentials.json")); info.Mode().Perm() != 0o600 {
+	if info, _ := os.Stat(filepath.Join(servers.Dir, ".credentials.json")); runtime.GOOS != "windows" && info.Mode().Perm() != 0o600 {
 		t.Fatalf("login file mode %v", info.Mode())
 	}
 	if strings.Join(pl.Copied(), " ") == "" || !strings.Contains(strings.Join(pl.Copied(), ","), "MCP sign-ins for servers, plugins") {

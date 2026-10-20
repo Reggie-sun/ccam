@@ -2,6 +2,7 @@ package update
 
 import (
 	"archive/tar"
+	"archive/zip"
 	"bytes"
 	"compress/gzip"
 	"context"
@@ -12,10 +13,14 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"sync"
 	"testing"
 )
+
+// perms is whether the platform has Unix permission bits (Windows does not).
+var perms = runtime.GOOS != "windows"
 
 // fakeRelease serves a GitHub-like releases page whose latest tag is latest.
 // Every tag in bins has an archive with that ccam binary and a checksums.txt.
@@ -176,7 +181,7 @@ func TestUpdateReplacesBinary(t *testing.T) {
 	if out != want {
 		t.Fatalf("got %q\nwant %q", out, want)
 	}
-	if bin, mode := binary(t, u); bin != "bin-0.3.0" || mode != 0o751 {
+	if bin, mode := binary(t, u); bin != "bin-0.3.0" || perms && mode != 0o751 {
 		t.Fatalf("binary %q mode %o", bin, mode)
 	}
 	if l := leftovers(t, u); len(l) != 0 {
@@ -205,7 +210,7 @@ func TestChecksumMismatchChangesNothing(t *testing.T) {
 	if err == nil || !strings.Contains(err.Error(), "checksum mismatch") || !strings.Contains(err.Error(), "nothing was changed") {
 		t.Fatalf("err = %v", err)
 	}
-	if bin, mode := binary(t, u); bin != "old" || mode != 0o751 {
+	if bin, mode := binary(t, u); bin != "old" || perms && mode != 0o751 {
 		t.Fatalf("binary %q mode %o", bin, mode)
 	}
 	if l := leftovers(t, u); len(l) != 0 {
@@ -311,8 +316,8 @@ func TestDryRunChangesNothing(t *testing.T) {
 }
 
 func TestNotWritableDir(t *testing.T) {
-	if os.Geteuid() == 0 {
-		t.Skip("root can write anywhere")
+	if os.Geteuid() == 0 || !perms {
+		t.Skip("root can write anywhere; Windows has no permission bits")
 	}
 	u := setup(t, "0.2.0", release())
 	dir := filepath.Dir(u.Exe)
@@ -396,5 +401,46 @@ func TestCompareVersions(t *testing.T) {
 		if _, ok := parseVersion(v); ok {
 			t.Errorf("parseVersion(%q) ok", v)
 		}
+	}
+}
+
+func TestWindowsAssetAndZip(t *testing.T) {
+	if got := Asset("windows", "arm64"); got != "ccam_windows_arm64.zip" {
+		t.Fatal(got)
+	}
+	var buf bytes.Buffer
+	zw := zip.NewWriter(&buf)
+	for name, body := range map[string]string{"README.md": "readme", "ccam.exe": "new binary"} {
+		w, _ := zw.Create(name)
+		w.Write([]byte(body))
+	}
+	zw.Close()
+	bin, err := extractZip(buf.Bytes())
+	if err != nil || string(bin) != "new binary" {
+		t.Fatalf("%q %v", bin, err)
+	}
+	if _, err := extractZip([]byte("not a zip")); err == nil {
+		t.Fatal("garbage accepted")
+	}
+}
+
+// Windows cannot replace a running binary, only rename it.
+func TestWindowsInstallRenamesTheRunningBinary(t *testing.T) {
+	dir := t.TempDir()
+	exe := filepath.Join(dir, "ccam.exe")
+	os.WriteFile(exe, []byte("v1"), 0o755)
+	os.WriteFile(OldExe(exe), []byte("v0"), 0o755) // left by the update before
+	u := &Updater{Exe: exe, GOOS: "windows"}
+	if err := u.Install([]byte("v2")); err != nil {
+		t.Fatal(err)
+	}
+	if b, _ := os.ReadFile(exe); string(b) != "v2" {
+		t.Fatalf("exe %q", b)
+	}
+	if b, _ := os.ReadFile(OldExe(exe)); string(b) != "v1" {
+		t.Fatalf("old %q", b)
+	}
+	if _, err := os.Stat(exe + ".new"); err == nil {
+		t.Fatal("temp file left")
 	}
 }

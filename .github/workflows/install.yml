@@ -1,6 +1,6 @@
 name: install
 
-# Installs the published release the way users do, on Linux and macOS.
+# Installs the published release the way users do, on Linux, macOS and Windows.
 # Releases made with GITHUB_TOKEN do not trigger other workflows, so release.yml calls this one.
 on:
   workflow_dispatch:
@@ -23,6 +23,21 @@ jobs:
           curl -fsSL https://ccam.dev/install.sh | sh
           "$HOME/.local/bin/ccam" version
           "$HOME/.local/bin/ccam" --help | perl -CS -ne 'if (/\p{Hangul}/) { print "Hangul: $_"; $bad = 1 } END { exit($bad ? 1 : 0) }'
+
+  powershell:
+    strategy:
+      fail-fast: false
+      matrix:
+        shell: [pwsh, powershell] # PowerShell 7 and Windows PowerShell 5.1
+    runs-on: windows-latest
+    steps:
+      - name: irm https://ccam.dev/install.ps1 | iex
+        shell: ${{ matrix.shell }}
+        run: |
+          $env:CCAM_INSTALL_DIR = "$env:RUNNER_TEMP\bin"
+          irm https://ccam.dev/install.ps1 | iex
+          & "$env:RUNNER_TEMP\bin\ccam.exe" version
+          if ($LASTEXITCODE -ne 0) { exit 1 }
 
   deb:
     runs-on: ubuntu-24.04

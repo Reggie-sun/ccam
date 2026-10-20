@@ -8,11 +8,13 @@ import (
 
 func completionCmd(e *env) *cobra.Command {
 	return &cobra.Command{
-		Use:       "completion bash|zsh",
-		Short:     "Print a shell completion script",
-		Example:   "  ccam completion bash > ~/.local/share/bash-completion/completions/ccam\n  ccam completion zsh > \"${fpath[1]}/_ccam\"",
+		Use:   "completion bash|zsh|powershell",
+		Short: "Print a shell completion script",
+		Example: "  ccam completion bash > ~/.local/share/bash-completion/completions/ccam\n" +
+			"  ccam completion zsh > \"${fpath[1]}/_ccam\"\n" +
+			"  ccam completion powershell >> $PROFILE",
 		Args:      cobra.ExactArgs(1),
-		ValidArgs: []string{"bash", "zsh"},
+		ValidArgs: []string{"bash", "zsh", "powershell"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			root := cmd.Root()
 			switch args[0] {
@@ -20,8 +22,10 @@ func completionCmd(e *env) *cobra.Command {
 				return root.GenBashCompletionV2(e.stdout, true)
 			case "zsh":
 				return root.GenZshCompletion(e.stdout)
+			case "powershell":
+				return root.GenPowerShellCompletionWithDesc(e.stdout)
 			default:
-				return fmt.Errorf("only bash and zsh are supported")
+				return fmt.Errorf("only bash, zsh and powershell are supported")
 			}
 		},
 	}

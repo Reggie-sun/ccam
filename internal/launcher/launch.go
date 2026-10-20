@@ -29,24 +29,34 @@ func Launch(p paths.Paths, sel string, args []string, dry bool, stdout io.Writer
 
 // LaunchWith is Launch with an already loaded config.
 func LaunchWith(p paths.Paths, cfg *config.Config, sel string, args []string, dry bool, stdout io.Writer) error {
-	pl, err := Prepare(p, cfg, sel, args)
+	pl, err := Ready(p, cfg, sel, args, dry)
 	if err != nil {
 		return err
 	}
-	trace.Step("prepare")
-	if err := checkLinks(p, pl); err != nil {
-		return err
-	}
-	trace.Step("check links")
-	if err := prelaunch(p, cfg, pl, dry); err != nil {
-		return err
-	}
-	trace.Step("prelaunch")
 	if dry {
 		pl.DryRun(stdout)
 		return nil
 	}
 	return pl.Exec(p)
+}
+
+// Ready does everything before claude starts: build the plan, check links,
+// apply MCP sharing and, unless dry, register the session.
+func Ready(p paths.Paths, cfg *config.Config, sel string, args []string, dry bool) (*Plan, error) {
+	pl, err := Prepare(p, cfg, sel, args)
+	if err != nil {
+		return nil, err
+	}
+	trace.Step("prepare")
+	if err := checkLinks(p, pl); err != nil {
+		return nil, err
+	}
+	trace.Step("check links")
+	if err := prelaunch(p, cfg, pl, dry); err != nil {
+		return nil, err
+	}
+	trace.Step("prelaunch")
+	return pl, nil
 }
 
 // SessionDir holds markers of running sessions of a profile.
@@ -71,7 +81,25 @@ func prelaunch(p paths.Paths, cfg *config.Config, pl *Plan, dry bool) error {
 	if err := historyCheck(p, pl); err != nil {
 		return err
 	}
-	return session.Register(SessionDir(p, pl.Profile.Name))
+	return pl.register(SessionDir(p, pl.Profile.Name))
+}
+
+// register marks this process as a session in dir. After exec the marker
+// names claude; when ccam waits for claude instead, Done removes it.
+func (pl *Plan) register(dir string) error {
+	if err := session.Register(dir); err != nil {
+		return err
+	}
+	pl.sessions = append(pl.sessions, dir)
+	return nil
+}
+
+// Done removes the session markers of a launch that ran claude with Run.
+func (pl *Plan) Done() {
+	for _, dir := range pl.sessions {
+		session.Unregister(dir)
+	}
+	pl.sessions = nil
 }
 
 // HistoryDir guards one (history group, working dir) pair: two accounts
@@ -98,7 +126,7 @@ func historyCheck(p paths.Paths, pl *Plan) error {
 			return fmt.Errorf("cancelled")
 		}
 	}
-	return session.Register(dir)
+	return pl.register(dir)
 }
 
 // remoteControlMCP offers to copy the group's servers into the account's

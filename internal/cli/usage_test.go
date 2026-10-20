@@ -19,7 +19,7 @@ import (
 )
 
 // testCLI is an isolated CCAM_HOME with profiles whose tokens tell the fake
-// usage server which percentage to report.
+// usage server which percentage to report (-1: the lookup fails).
 type testCLI struct {
 	t *testing.T
 	p paths.Paths
@@ -29,6 +29,10 @@ func newTestCLI(t *testing.T, fiveHour map[string]int) *testCLI {
 	t.Setenv("CCAM_HOME", t.TempDir())
 	c := &testCLI{t: t, p: paths.FromEnv()}
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Header.Get("Authorization") == "Bearer unknown" {
+			w.WriteHeader(500)
+			return
+		}
 		var pct int
 		fmt.Sscanf(strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer pct-"), "%d", &pct)
 		fmt.Fprintf(w, `{"limits":[{"kind":"session","percent":%d,"resets_at":"2030-01-01T00:00:00Z"},{"kind":"weekly_all","percent":10,"resets_at":"2030-01-05T00:00:00Z"}]}`, pct)
@@ -49,7 +53,11 @@ func newTestCLI(t *testing.T, fiveHour map[string]int) *testCLI {
 		dir := c.p.ProfileDir(name)
 		os.MkdirAll(dir, 0o700)
 		if ok {
-			cred := fmt.Sprintf(`{"claudeAiOauth":{"accessToken":"pct-%d","expiresAt":%d}}`, pct, time.Now().Add(time.Hour).UnixMilli())
+			token := fmt.Sprintf("pct-%d", pct)
+			if pct < 0 {
+				token = "unknown"
+			}
+			cred := fmt.Sprintf(`{"claudeAiOauth":{"accessToken":%q,"expiresAt":%d}}`, token, time.Now().Add(time.Hour).UnixMilli())
 			os.WriteFile(filepath.Join(dir, ".credentials.json"), []byte(cred), 0o600)
 		}
 		cfg.Profiles = append(cfg.Profiles, config.Profile{Name: name, Slot: slot, Share: config.Share{History: "team"}})
@@ -93,6 +101,28 @@ func TestUsageReportsLoggedOut(t *testing.T) {
 	out, _, _ := c.run("", "usage")
 	if !strings.Contains(out, "not logged in → ccam login work") {
 		t.Fatalf("%s", out)
+	}
+}
+
+func TestStatuslineSuggestsTheNextAccountNearTheLimit(t *testing.T) {
+	c := newTestCLI(t, nil)
+	t.Setenv("CCAM_PROFILE", "work")
+	input := `{"model":{"display_name":"Opus"},"rate_limits":{"five_hour":{"used_percentage":%v,"resets_at":4102444800},"seven_day":{"used_percentage":%v,"resets_at":4102444800}}}`
+	for _, tc := range []struct {
+		five, week float64
+		hint       bool
+	}{{89, 10, false}, {90, 10, true}, {20, 95, true}} {
+		out, _, _ := c.run(fmt.Sprintf(input, tc.five, tc.week), "statusline")
+		if got := strings.Contains(out, "→ ccam next --auto --continue"); got != tc.hint {
+			t.Errorf("5h %v 7d %v: %q", tc.five, tc.week, out)
+		}
+	}
+	// With one account there is nothing to switch to.
+	cfg, _ := config.Load(c.p.ConfigFile())
+	cfg.Profiles = cfg.Profiles[:1]
+	cfg.Save(c.p.ConfigFile())
+	if out, _, _ := c.run(fmt.Sprintf(input, 99, 99), "statusline"); strings.Contains(out, "next") {
+		t.Errorf("single account: %q", out)
 	}
 }
 

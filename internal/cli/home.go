@@ -68,6 +68,10 @@ func runHome(e *env) error {
 
 func pick(e *env, cfg *config.Config) (tui.Result, error) {
 	def, _ := cfg.DefaultProfile()
+	var here *config.Profile
+	if len(cfg.Folders) > 0 {
+		here, _ = launcher.HereProfile(cfg)
+	}
 	accts := map[string]usage.Account{}
 	for _, a := range usageAccounts(e, cfg) {
 		accts[a.Name] = a
@@ -79,7 +83,7 @@ func pick(e *env, cfg *config.Config) (tui.Result, error) {
 		if t := launcher.LastUsed(e.paths, p.Name); !t.IsZero() {
 			last = Ago(time.Since(t))
 		}
-		rows = append(rows, tui.Row{Name: p.Name, Slot: p.Slot, Email: p.Email, Share: p.Share, LastUsed: last, Default: def == p})
+		rows = append(rows, tui.Row{Name: p.Name, Slot: p.Slot, Email: p.Email, Share: p.Share, LastUsed: last, Default: def == p, Here: here == p})
 	}
 	f := e.fetcher()
 	fetch := func(ctx context.Context, name string, fresh bool) usage.Report {

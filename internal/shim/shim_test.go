@@ -1,8 +1,10 @@
 package shim
 
 import (
+	"errors"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -42,7 +44,7 @@ func newBin(t *testing.T) binFixture {
 func TestInstallCreatesOnlyConfiguredShortcuts(t *testing.T) {
 	f := newBin(t)
 	os.WriteFile(filepath.Join(f.bin, "userfile"), []byte("user file"), 0o755) // not ours
-	os.Symlink(f.ccam, filepath.Join(f.bin, "mytool"))                         // ours, but not configured: left alone
+	os.Symlink(f.ccam, filepath.Join(f.bin, "mytool"+exe))                     // ours, but not configured: left alone
 
 	cfg := &config.Config{Profiles: []config.Profile{{Name: "a", Slot: 1, Shortcut: "cca"}, {Name: "b", Slot: 2}}}
 	created, err := Install(f.bin, f.ccam, cfg)
@@ -88,7 +90,7 @@ func fileExists(p string) bool { _, err := os.Lstat(p); return err == nil }
 
 func TestInstallRefusesForeignFile(t *testing.T) {
 	f := newBin(t)
-	os.WriteFile(filepath.Join(f.bin, "cca"), []byte("mine"), 0o755)
+	os.WriteFile(filepath.Join(f.bin, "cca"+exe), []byte("mine"), 0o755)
 	cfg := &config.Config{Profiles: []config.Profile{{Name: "a", Slot: 1, Shortcut: "cca"}}}
 	if _, err := Install(f.bin, f.ccam, cfg); err == nil {
 		t.Fatal("want error for a foreign cca")
@@ -99,10 +101,10 @@ func TestCheck(t *testing.T) {
 	f := newBin(t)
 	elsewhere := filepath.Join(f.dir, "usr-bin")
 	os.MkdirAll(elsewhere, 0o755)
-	os.WriteFile(filepath.Join(elsewhere, "taken"), []byte("#!/bin/sh\n"), 0o755)
+	os.WriteFile(filepath.Join(elsewhere, "taken"+exe), []byte("#!/bin/sh\n"), 0o755)
 	os.WriteFile(filepath.Join(elsewhere, "data"), []byte("not executable"), 0o644)
-	os.WriteFile(filepath.Join(f.bin, "foreign"), []byte("x"), 0o755)
-	os.Symlink(f.ccam, filepath.Join(f.bin, "ccwork"))
+	os.WriteFile(filepath.Join(f.bin, "foreign"+exe), []byte("x"), 0o755)
+	os.Symlink(f.ccam, filepath.Join(f.bin, "ccwork"+exe))
 	t.Setenv("PATH", f.bin+string(os.PathListSeparator)+elsewhere)
 	cfg := &config.Config{Profiles: []config.Profile{{Name: "work", Slot: 1, Shortcut: "ccwork"}, {Name: "home", Slot: 2}}}
 
@@ -115,7 +117,7 @@ func TestCheck(t *testing.T) {
 		"list":     "taken by ccam",
 		"shortcut": "taken by ccam",
 		"ccwork":   "already the shortcut of account work",
-		"taken":    "would hide " + filepath.Join(elsewhere, "taken"),
+		"taken":    "would hide " + filepath.Join(elsewhere, "taken"+exe),
 		"foreign":  "is not a ccam shortcut",
 	} {
 		err := Check(name, f.bin, f.ccam, cfg, "home")
@@ -142,5 +144,49 @@ func TestSuggest(t *testing.T) {
 		if !shortcutRe.MatchString(Suggest(name)) {
 			t.Errorf("suggestion for %s is not a valid shortcut name", name)
 		}
+	}
+}
+
+func TestNameOfTheRunningCommand(t *testing.T) {
+	cases := map[string]string{"/home/u/.local/bin/ccwork": "ccwork", "ccam": "ccam"}
+	if runtime.GOOS == "windows" {
+		cases = map[string]string{`C:\Users\u\.local\bin\ccwork.exe`: "ccwork", "CCWORK.EXE": "ccwork", "ccam": "ccam", `C:\x\ccam.exe`: "ccam"}
+	}
+	for in, want := range cases {
+		if got := Name(in); got != want {
+			t.Errorf("%s: %s", in, got)
+		}
+	}
+}
+
+// Windows without the right to symlink: shortcuts are hard links, and
+// Relink renews them after an update replaced the binary.
+func TestHardLinkShortcutsAndRelink(t *testing.T) {
+	if runtime.GOOS != "windows" {
+		t.Skip("Windows only")
+	}
+	orig := symlink
+	symlink = func(string, string) error { return errors.New("A required privilege is not held by the client.") }
+	t.Cleanup(func() { symlink = orig })
+	f := newBin(t)
+	cfg := &config.Config{Profiles: []config.Profile{{Name: "a", Slot: 1, Shortcut: "cca"}}}
+	if created, err := Install(f.bin, f.ccam, cfg); err != nil || len(created) != 1 {
+		t.Fatalf("%v %v", created, err)
+	}
+	if !Linked(f.bin, f.ccam, "cca") {
+		t.Fatal("a hard link is ours")
+	}
+	// ccam update: the old binary is renamed, a new one takes its place.
+	old := f.ccam + ".old"
+	os.Rename(f.ccam, old)
+	os.WriteFile(f.ccam, []byte("new"), 0o755)
+	if Linked(f.bin, f.ccam, "cca") {
+		t.Fatal("still the old binary")
+	}
+	if renewed := Relink(f.bin, f.ccam, old, cfg); len(renewed) != 1 {
+		t.Fatalf("renewed %v", renewed)
+	}
+	if b, _ := os.ReadFile(filepath.Join(f.bin, "cca.exe")); string(b) != "new" || !Linked(f.bin, f.ccam, "cca") {
+		t.Fatalf("after relink: %q", b)
 	}
 }

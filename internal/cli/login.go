@@ -11,11 +11,9 @@ import (
 	"os/signal"
 	"strings"
 	"sync"
-	"syscall"
 	"time"
 
 	"github.com/charmbracelet/x/term"
-	"golang.org/x/sys/unix"
 
 	"github.com/jhyunwoo/ccam/internal/config"
 	"github.com/jhyunwoo/ccam/internal/launcher"
@@ -70,15 +68,12 @@ func maskTyping(e *env) (io.Writer, func()) {
 	if err != nil {
 		return nil, func() {}
 	}
-	masked := *saved
-	masked.Lflag &^= unix.ECHO | unix.ICANON
-	masked.Cc[unix.VMIN], masked.Cc[unix.VTIME] = 1, 0
-	if term.SetState(fd, &masked) != nil {
+	if term.SetState(fd, noEcho(saved)) != nil {
 		return nil, func() {}
 	}
 	// Ctrl-C still ends ccam, but not before the echo is back on.
 	sig := make(chan os.Signal, 1)
-	signal.Notify(sig, os.Interrupt, syscall.SIGTERM, syscall.SIGHUP)
+	signal.Notify(sig, endSignals...)
 	var once sync.Once
 	restore := func() {
 		once.Do(func() {
@@ -90,7 +85,7 @@ func maskTyping(e *env) (io.Writer, func()) {
 	go func() {
 		if s, ok := <-sig; ok {
 			restore()
-			_ = syscall.Kill(os.Getpid(), s.(syscall.Signal))
+			resignal(s)
 		}
 	}()
 	return e.stderr, restore

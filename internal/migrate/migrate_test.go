@@ -10,6 +10,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -430,8 +431,8 @@ func TestPluginPathsPointAtTheGroup(t *testing.T) {
 	before := snapshot(t, f.home)
 	f.migrate(t, "extensions")
 	got := read(t, filepath.Join(f.group, "plugins", "installed_plugins.json"))
-	want := filepath.Join(f.group, "plugins", "cache", "mkt", "p", "1.0")
-	if !strings.Contains(got, want) || strings.Contains(got, f.src) {
+	want := jsonText(filepath.Join(f.group, "plugins", "cache", "mkt", "p", "1.0"))
+	if !strings.Contains(got, want) || strings.Contains(got, jsonText(f.src)) {
 		t.Fatalf("registry: %s", got)
 	}
 	if !reflect.DeepEqual(before, snapshot(t, f.home)) {
@@ -446,10 +447,10 @@ func TestPluginPathsPointAtTheGroup(t *testing.T) {
 		"plugins/installed_plugins.json": reg(filepath.Join(g.src, "plugins", "cache", "mkt", "p", "1.0")),
 		"plugins/cache/mkt/p/1.0/x.md":   "plugin",
 	})
-	write(t, g.group, map[string]string{"plugins/installed_plugins.json": `{"version":2,"plugins":{"q@mkt":[{"installPath":"` + other + `"}]}}`})
+	write(t, g.group, map[string]string{"plugins/installed_plugins.json": `{"version":2,"plugins":{"q@mkt":[{"installPath":"` + jsonText(other) + `"}]}}`})
 	pl := g.migrate(t, "extensions")
 	merged := read(t, filepath.Join(g.group, "plugins", "installed_plugins.json"))
-	if !strings.Contains(merged, "q@mkt") || !strings.Contains(merged, filepath.Join(g.group, "plugins", "cache", "mkt", "p", "1.0")) || strings.Contains(merged, g.src) {
+	if !strings.Contains(merged, "q@mkt") || !strings.Contains(merged, jsonText(filepath.Join(g.group, "plugins", "cache", "mkt", "p", "1.0"))) || strings.Contains(merged, jsonText(g.src)) {
 		t.Fatalf("merged registry: %s", merged)
 	}
 	if !strings.Contains(read(t, filepath.Join(pl.BackupDir, "plugins", "installed_plugins.json")), "q@mkt") {
@@ -582,7 +583,7 @@ func TestCopiedLinksResolveAndGroupIsPrivate(t *testing.T) {
 		t.Fatalf("link: %q", got)
 	}
 	for _, d := range []string{f.groups, f.group} {
-		if info, _ := os.Stat(d); info.Mode().Perm() != 0o700 {
+		if info, _ := os.Stat(d); runtime.GOOS != "windows" && info.Mode().Perm() != 0o700 {
 			t.Errorf("%s is %v", d, info.Mode().Perm())
 		}
 	}
@@ -621,4 +622,11 @@ func TestFoundReportsItemsTheSourceHas(t *testing.T) {
 	if got := Found(f.src, f.home); got["mcp"] {
 		t.Fatalf("empty mcpServers counted: %v", got)
 	}
+}
+
+// jsonText is s as it appears inside a JSON string (Windows backslashes
+// are escaped).
+func jsonText(s string) string {
+	b, _ := json.Marshal(s)
+	return strings.Trim(string(b), `"`)
 }

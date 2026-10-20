@@ -55,3 +55,9 @@ func Active(dir string) bool {
 	}
 	return active
 }
+
+// Unregister removes the marker of the current process from dir, for a
+// session that ended while ccam kept running.
+func Unregister(dir string) {
+	os.Remove(filepath.Join(dir, strconv.Itoa(os.Getpid())))
+}

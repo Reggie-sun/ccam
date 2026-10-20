@@ -30,10 +30,17 @@ func TestParse(t *testing.T) {
 		{[]string{"ccam", "work", "-v"}, route{kind: routeLaunch, sel: "work", args: []string{"-v"}}},
 		{[]string{"ccam", "__complete", "w"}, route{kind: routeCLI, args: []string{"__complete", "w"}}},
 		{[]string{"ccam", "--dry-run", "next"}, route{kind: routeCLI, args: []string{"--dry-run", "next"}, dry: false}},
+		{[]string{"ccam", "--fallback", "work", "-p", "hi"}, route{kind: routeLaunch, sel: "work", args: []string{"-p", "hi"}, fallback: true}},
+		{[]string{"ccam", "--fallback", "-p", "hi"}, route{kind: routeLaunch, args: []string{"-p", "hi"}, fallback: true}},
+		{[]string{"ccam", "--dry-run", "--fallback", "work", "-p"}, route{kind: routeLaunch, sel: "work", args: []string{"-p"}, dry: true, fallback: true}},
+		{[]string{"ccam", "--fallback", "--dry-run", "work", "-p"}, route{kind: routeLaunch, sel: "work", args: []string{"-p"}, dry: true, fallback: true}},
+		{[]string{"ccam", "run", "--fallback", "work", "-p"}, route{kind: routeLaunch, sel: "work", args: []string{"-p"}, fallback: true}},
+		{[]string{"ccam", "work", "--fallback"}, route{kind: routeLaunch, sel: "work", args: []string{"--fallback"}}}, // claude's argument
+		{[]string{"ccam", "--fallback", "usage"}, route{kind: routeCLI, args: []string{"--fallback"}}},
 	}
 	for _, c := range cases {
 		got := parse(c.argv)
-		if got.kind != c.want.kind || got.sel != c.want.sel || got.dry != c.want.dry || !sameArgs(got.args, c.want.args) {
+		if got.kind != c.want.kind || got.sel != c.want.sel || got.dry != c.want.dry || got.fallback != c.want.fallback || !sameArgs(got.args, c.want.args) {
 			t.Errorf("%q:\n got %+v\nwant %+v", c.argv, got, c.want)
 		}
 	}

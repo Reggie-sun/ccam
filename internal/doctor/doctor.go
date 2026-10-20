@@ -9,12 +9,14 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"sort"
 	"strings"
 	"time"
 
 	"github.com/jhyunwoo/ccam/internal/config"
 	"github.com/jhyunwoo/ccam/internal/creds"
+	"github.com/jhyunwoo/ccam/internal/fsutil"
 	"github.com/jhyunwoo/ccam/internal/launcher"
 	"github.com/jhyunwoo/ccam/internal/mcp"
 	"github.com/jhyunwoo/ccam/internal/paths"
@@ -83,7 +85,22 @@ func Run(p paths.Paths, cfg *config.Config, opt Options) []Finding {
 	checkMCP(r, p, cfg)
 	checkUsageFormat(r, p, cfg, opt.Usage)
 	checkShims(r, p, cfg, opt)
+	checkFolders(r, cfg)
 	return r.out
+}
+
+// checkFolders reports `ccam folder` entries that no longer work. They are
+// left for the user: removing one would change which account starts there.
+func checkFolders(r *report, cfg *config.Config) {
+	for _, f := range cfg.Folders {
+		if _, ok := cfg.Find(f.Account); !ok {
+			r.add(Error, "", "%s is set to account %q, which does not exist (ccam folder <account> %s, or ccam folder --remove %s)", f.Path, f.Account, f.Path, f.Path)
+			continue
+		}
+		if info, err := os.Stat(f.Path); err != nil || !info.IsDir() {
+			r.add(Warn, f.Account, "the folder %s set for this account is missing (ccam folder --remove %s)", f.Path, f.Path)
+		}
+	}
 }
 
 // Failed reports whether any finding is still an unfixed error.
@@ -152,7 +169,7 @@ func checkProfile(r *report, p paths.Paths, prof *config.Profile, fix bool) {
 		r.add(Error, prof.Name, "profile folder is missing: %s", dir)
 		return
 	}
-	if info.Mode().Perm()&0o077 != 0 {
+	if runtime.GOOS != "windows" && info.Mode().Perm()&0o077 != 0 {
 		f := r.add(Warn, prof.Name, "folder permissions are %o (should be 0700)", info.Mode().Perm())
 		if fix && os.Chmod(dir, 0o700) == nil {
 			f.Fixed = true
@@ -193,11 +210,12 @@ func checkProfile(r *report, p paths.Paths, prof *config.Profile, fix bool) {
 func checkCredentials(r *report, prof *config.Profile, dir, home string, fix bool) {
 	cred := creds.FilePath(dir)
 	if info, err := os.Lstat(cred); err == nil {
-		if info.Mode()&os.ModeSymlink != 0 {
+		if _, link := fsutil.LinkTarget(cred); link {
 			r.add(Error, prof.Name, ".credentials.json is a symlink. Each account must have its own token")
 			return
 		}
-		if info.Mode().Perm() != 0o600 {
+		// Windows has no permission bits; the profile folder's ACL protects it.
+		if runtime.GOOS != "windows" && info.Mode().Perm() != 0o600 {
 			f := r.add(Warn, prof.Name, ".credentials.json permissions are %o (should be 0600)", info.Mode().Perm())
 			if fix && os.Chmod(cred, 0o600) == nil {
 				f.Fixed = true

@@ -71,6 +71,15 @@ func TestPickerStartsOnDefaultAndLaunches(t *testing.T) {
 	}
 }
 
+func TestPickerStartsOnTheFoldersAccount(t *testing.T) {
+	r := rows()
+	r[2].Here = true
+	m, _ := run(t, NewPicker(r, nil), key("enter"))
+	if res := m.Result(); res.Action != Launch || res.Profile != "side" {
+		t.Fatalf("%+v", res)
+	}
+}
+
 func TestPickerNumberKeyLaunchesSlot(t *testing.T) {
 	m, _ := run(t, NewPicker(rows(), nil), key("3"))
 	if r := m.Result(); r.Action != Launch || r.Profile != "side" {

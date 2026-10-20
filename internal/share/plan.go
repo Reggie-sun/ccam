@@ -93,10 +93,10 @@ func Build(dir, groupsRoot string, current, target config.Share, opt Options) (*
 			mine := filepath.Join(dir, e.Name)
 			info, err := os.Lstat(mine)
 			exists := err == nil
-			isLink := exists && info.Mode()&os.ModeSymlink != 0
 			var linkTarget string
-			if isLink {
-				linkTarget, _ = os.Readlink(mine)
+			isLink := false
+			if exists {
+				linkTarget, isLink = fsutil.LinkTargetOf(mine, info)
 			}
 
 			if to == config.Local {

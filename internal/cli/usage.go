@@ -206,8 +206,23 @@ func runStatusline(e *env, wrap string) error {
 	if limits.Weekly.Known {
 		parts = append(parts, fmt.Sprintf("7d %.0f%%", limits.Weekly.Percent))
 	}
+	if nearLimit(limits) && hasOtherAccount(e) {
+		parts = append(parts, "→ ccam next --auto --continue")
+	}
 	e.printf("%s\n", strings.Join(parts, " · "))
 	return nil
+}
+
+// hintAt is the usage at which the status line suggests the next account.
+const hintAt = 90
+
+func nearLimit(l usage.Limits) bool {
+	return l.FiveHour.Known && l.FiveHour.Percent >= hintAt || l.Weekly.Known && l.Weekly.Percent >= hintAt
+}
+
+func hasOtherAccount(e *env) bool {
+	cfg, err := e.load()
+	return err == nil && len(cfg.Profiles) > 1
 }
 
 func profileByConfigDir(e *env, dir string) string {

@@ -22,7 +22,7 @@ func TestMCPFlagStrategy(t *testing.T) {
 
 	h.ok("ccam", "mcp", "add", "fs", "-e", "TOKEN=x", "--", "npx", "-y", "server-fs", "/code")
 	h.ok("ccam", "mcp", "add", "ctx", "--url", "https://mcp.example/mcp", "--header", "Authorization: Bearer t")
-	if info, _ := os.Stat(groupMCP); info.Mode().Perm() != 0o600 {
+	if info, _ := os.Stat(groupMCP); perms && info.Mode().Perm() != 0o600 {
 		t.Fatal("mcp.json must be 0600")
 	}
 	h.ok("ccam", "work", "--mcp-config", "mine.json", "-c")

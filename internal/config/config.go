@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"io/fs"
 	"os"
+	"path/filepath"
+	"runtime"
 	"slices"
 	"strconv"
 	"strings"
@@ -28,6 +30,14 @@ type Config struct {
 	ClaudeBin   string    `toml:"claude_bin,omitempty"`
 	MCPStrategy string    `toml:"mcp_strategy,omitempty"`
 	Profiles    []Profile `toml:"profile"`
+	Folders     []Folder  `toml:"folder,omitempty"`
+}
+
+// Folder makes Account the one a launch without a name uses inside Path
+// and every folder below it.
+type Folder struct {
+	Path    string `toml:"path"`
+	Account string `toml:"account"`
 }
 
 type Profile struct {
@@ -138,7 +148,7 @@ var Reserved = map[string]bool{
 	"usage": true, "u": true, "share": true, "mcp": true, "login": true, "logout": true,
 	"rename": true, "remove": true, "rm": true, "import": true, "migrate": true, "doctor": true,
 	"shims": true, "shortcut": true, "completion": true, "help": true, "version": true, "statusline": true,
-	"update": true,
+	"update": true, "folder": true,
 }
 
 // isName reports whether s matches ^[a-z0-9][a-z0-9_-]{0,31}$, the rule for
@@ -193,6 +203,11 @@ func Load(path string) (*Config, error) {
 	}
 	// Names and groups become folder names; a hand edit such as "../x"
 	// must not point ccam outside its own folders.
+	for _, f := range c.Folders {
+		if !filepath.IsAbs(f.Path) || !isName(f.Account) {
+			return nil, fmt.Errorf("%s: invalid folder entry (path %q, account %q)", path, f.Path, f.Account)
+		}
+	}
 	for i := range c.Profiles {
 		p := &c.Profiles[i]
 		if !isName(p.Name) {
@@ -287,12 +302,65 @@ func (c *Config) NextSlot() int {
 	return n
 }
 
-// Remove drops a profile and clears the default if it pointed at it.
+// Remove drops a profile, its folders, and the default if it pointed at it.
 func (c *Config) Remove(name string) {
 	c.Profiles = slices.DeleteFunc(c.Profiles, func(p Profile) bool { return p.Name == name })
+	c.Folders = slices.DeleteFunc(c.Folders, func(f Folder) bool { return f.Account == name })
 	if c.Default == name {
 		c.Default = ""
 	}
+}
+
+// FolderFor returns the folder entry that contains dir; when entries nest,
+// the deepest one wins. It compares strings only (no file access), as it
+// runs on every launch without an account name.
+func (c *Config) FolderFor(dir string) (*Folder, bool) {
+	var best *Folder
+	for i := range c.Folders {
+		f := &c.Folders[i]
+		if within(f.Path, dir) && (best == nil || len(f.Path) > len(best.Path)) {
+			best = f
+		}
+	}
+	return best, best != nil
+}
+
+// SetFolder makes account the one used in path, replacing any account
+// path had. path must be absolute.
+func (c *Config) SetFolder(path, account string) {
+	path = filepath.Clean(path)
+	for i := range c.Folders {
+		if SamePath(c.Folders[i].Path, path) {
+			c.Folders[i].Account = account
+			return
+		}
+	}
+	c.Folders = append(c.Folders, Folder{Path: path, Account: account})
+}
+
+// UnsetFolder removes the entry for exactly path and reports whether there was one.
+func (c *Config) UnsetFolder(path string) bool {
+	path = filepath.Clean(path)
+	n := len(c.Folders)
+	c.Folders = slices.DeleteFunc(c.Folders, func(f Folder) bool { return SamePath(f.Path, path) })
+	return len(c.Folders) != n
+}
+
+// within reports whether dir is base or inside it. Both are absolute.
+func within(base, dir string) bool {
+	base, dir = filepath.Clean(base), filepath.Clean(dir)
+	if len(dir) < len(base) || !SamePath(dir[:len(base)], base) {
+		return false
+	}
+	return len(dir) == len(base) || os.IsPathSeparator(dir[len(base)]) || os.IsPathSeparator(base[len(base)-1])
+}
+
+// SamePath compares two folder paths; Windows paths compare without case.
+func SamePath(a, b string) bool {
+	if runtime.GOOS == "windows" {
+		return strings.EqualFold(filepath.Clean(a), filepath.Clean(b))
+	}
+	return filepath.Clean(a) == filepath.Clean(b)
 }
 
 func (c *Config) Strategy() string {

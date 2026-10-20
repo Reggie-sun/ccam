@@ -1,8 +1,10 @@
 package doctor
 
 import (
+	"encoding/json"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -18,7 +20,8 @@ func TestPluginPathsRewrittenToGroup(t *testing.T) {
 	os.MkdirAll(pluginsDir, 0o700)
 	viaProfile := filepath.Join(p.ProfileDir("a"), "plugins", "cache", "mk", "demo", "1.0")
 	file := filepath.Join(pluginsDir, "installed_plugins.json")
-	os.WriteFile(file, []byte(`{"plugins":{"demo@mk":[{"installPath":"`+viaProfile+`"}]}}`), 0o600)
+	install, _ := json.Marshal(viaProfile)
+	os.WriteFile(file, []byte(`{"plugins":{"demo@mk":[{"installPath":`+string(install)+`}]}}`), 0o600)
 
 	r := &report{}
 	checkPlugins(r, p, cfg, false)
@@ -31,7 +34,8 @@ func TestPluginPathsRewrittenToGroup(t *testing.T) {
 		t.Fatal("not fixed")
 	}
 	data, _ := os.ReadFile(file)
-	if !strings.Contains(string(data), filepath.Join(pluginsDir, "cache", "mk", "demo", "1.0")) {
+	want, _ := json.Marshal(filepath.Join(pluginsDir, "cache", "mk", "demo", "1.0"))
+	if !strings.Contains(string(data), string(want)) {
 		t.Fatalf("rewritten: %s", data)
 	}
 }
@@ -43,6 +47,12 @@ func TestCredentialsChecks(t *testing.T) {
 	os.WriteFile(cred, []byte(`{"claudeAiOauth":{"expiresAt":1,"refreshTokenExpiresAt":2}}`), 0o644)
 	r := &report{}
 	checkCredentials(r, prof, dir, "/nonexistent-home", true)
+	if runtime.GOOS == "windows" { // no permission bits to check
+		if len(r.out) != 1 || r.out[0].Level != Error {
+			t.Fatalf("%v", r.out)
+		}
+		return
+	}
 	if len(r.out) != 2 || !r.out[0].Fixed || r.out[1].Level != Error {
 		t.Fatalf("%v", r.out)
 	}
@@ -59,5 +69,19 @@ func TestAuthEnvWarnsWithoutValue(t *testing.T) {
 	checkAuthEnv(r)
 	if len(r.out) != 1 || r.out[0].Level != Warn || strings.Contains(r.out[0].String(), "secret") {
 		t.Fatalf("findings %v", r.out)
+	}
+}
+
+func TestFolderChecks(t *testing.T) {
+	dir := t.TempDir()
+	cfg := &config.Config{Profiles: []config.Profile{{Name: "a", Slot: 1}}}
+	cfg.SetFolder(dir, "a")
+	cfg.SetFolder(filepath.Join(dir, "gone"), "a")
+	cfg.SetFolder(filepath.Join(dir, "x"), "nobody")
+	r := &report{}
+	checkFolders(r, cfg)
+	if len(r.out) != 2 || r.out[0].Level != Warn || !strings.Contains(r.out[0].Msg, "gone") ||
+		r.out[1].Level != Error || !strings.Contains(r.out[1].Msg, "nobody") {
+		t.Fatalf("%v", r.out)
 	}
 }

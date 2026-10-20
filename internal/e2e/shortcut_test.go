@@ -10,7 +10,7 @@ import (
 
 func (h *harness) link(name string) string {
 	h.t.Helper()
-	target, err := os.Readlink(filepath.Join(h.home, "bin", name))
+	target, err := os.Readlink(filepath.Join(h.home, "bin", name+exe))
 	if err != nil {
 		return ""
 	}
@@ -59,13 +59,14 @@ func TestAddRejectsBadShortcuts(t *testing.T) {
 	h := newHarness(t)
 	elsewhere := filepath.Join(h.home, "elsewhere")
 	os.MkdirAll(elsewhere, 0o755)
-	os.WriteFile(filepath.Join(elsewhere, "mytool"), []byte("#!/bin/sh\n"), 0o755)
-	env := []string{"PATH=" + filepath.Join(h.home, "bin") + ":" + elsewhere + ":/usr/bin:/bin"}
+	os.WriteFile(filepath.Join(elsewhere, "mytool"+exe), []byte("#!/bin/sh\n"), 0o755)
+	sep := string(os.PathListSeparator)
+	env := []string{"PATH=" + filepath.Join(h.home, "bin") + sep + elsewhere + sep + systemPath}
 	for name, want := range map[string]string{
 		"Bad":    "1-64 characters",
 		"ccam":   "taken by ccam",
 		"list":   "taken by ccam",
-		"mytool": "would hide " + filepath.Join(elsewhere, "mytool"),
+		"mytool": "would hide " + filepath.Join(elsewhere, "mytool"+exe),
 	} {
 		r := h.run("", env, "ccam", "add", "work", "--no-login", "--shortcut", name)
 		if r.code == 0 || !strings.Contains(r.stderr, want) {

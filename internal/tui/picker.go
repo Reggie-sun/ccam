@@ -41,6 +41,7 @@ type Row struct {
 	Share    config.Share
 	LastUsed string
 	Default  bool
+	Here     bool // set for the current folder (ccam folder); the cursor starts on it
 }
 
 // UsageFunc fetches one account's usage; fresh skips the short cache (the
@@ -76,6 +77,11 @@ func NewPicker(rows []Row, fetch UsageFunc) Model {
 	m := Model{rows: rows, width: 80, usage: map[string]*usage.Report{}, fetch: fetch}
 	for i, r := range rows {
 		if r.Default {
+			m.cursor = i
+		}
+	}
+	for i, r := range rows {
+		if r.Here {
 			m.cursor = i
 		}
 	}

@@ -3,6 +3,7 @@ package cli
 import (
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -15,8 +16,8 @@ import (
 // `doctor --fix` (or running the same command again) finishes the change
 // instead of undoing the half that was done.
 func TestFailedShareChangeCanBeFinished(t *testing.T) {
-	if os.Geteuid() == 0 {
-		t.Skip("root ignores the read-only folder this test relies on")
+	if os.Geteuid() == 0 || runtime.GOOS == "windows" {
+		t.Skip("root, and Windows, ignore the read-only folder this test relies on")
 	}
 	c := newTestCLI(t, nil)
 	work := c.p.ProfileDir("work")

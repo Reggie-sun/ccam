@@ -3,8 +3,12 @@ package fsutil
 import (
 	"os"
 	"path/filepath"
+	"runtime"
 	"testing"
 )
+
+// perms is whether the platform has Unix permission bits (Windows does not).
+var perms = runtime.GOOS != "windows"
 
 func TestAtomicWriteCreatesDirsAndPerm(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "a", "b", "f.toml")
@@ -16,7 +20,7 @@ func TestAtomicWriteCreatesDirsAndPerm(t *testing.T) {
 	}
 	got, _ := os.ReadFile(path)
 	info, _ := os.Stat(path)
-	if string(got) != "y" || info.Mode().Perm() != 0o600 {
+	if string(got) != "y" || perms && info.Mode().Perm() != 0o600 {
 		t.Fatalf("got %q %v", got, info.Mode())
 	}
 	entries, _ := os.ReadDir(filepath.Dir(path))
@@ -37,7 +41,7 @@ func TestCopyTreeKeepsSymlinks(t *testing.T) {
 	if b, _ := os.ReadFile(filepath.Join(dst, "sub", "f")); string(b) != "data" {
 		t.Fatalf("copy content %q", b)
 	}
-	if l, _ := os.Readlink(filepath.Join(dst, "link")); l != "sub/f" {
+	if l, _ := os.Readlink(filepath.Join(dst, "link")); l != filepath.FromSlash("sub/f") {
 		t.Fatalf("symlink %q", l)
 	}
 }
@@ -149,6 +153,9 @@ func TestMoveAndCopyKeepOutsideLinksWorking(t *testing.T) {
 }
 
 func TestCopyTreeParentsArePrivate(t *testing.T) {
+	if !perms {
+		t.Skip("no permission bits")
+	}
 	root := t.TempDir()
 	src := filepath.Join(root, "src")
 	os.MkdirAll(src, 0o755)
@@ -172,7 +179,7 @@ func TestCopyFileSetsPermOnExistingFile(t *testing.T) {
 	if err := CopyFile(src, dst); err != nil {
 		t.Fatal(err)
 	}
-	if info, _ := os.Stat(dst); info.Mode().Perm() != 0o600 {
+	if info, _ := os.Stat(dst); perms && info.Mode().Perm() != 0o600 {
 		t.Fatalf("perm %v", info.Mode().Perm())
 	}
 }

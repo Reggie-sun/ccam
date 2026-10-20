@@ -5,7 +5,7 @@ builds:
   - main: ./cmd/ccam
     binary: ccam
     env: [CGO_ENABLED=0]
-    goos: [linux, darwin]
+    goos: [linux, darwin, windows]
     goarch: [amd64, arm64]
     flags: [-trimpath]
     ldflags:
@@ -13,6 +13,10 @@ builds:
 
 archives:
   - formats: [tar.gz]
+    # Windows gets a .zip with ccam.exe (install.ps1, ccam update).
+    format_overrides:
+      - goos: windows
+        formats: [zip]
     name_template: "ccam_{{ .Os }}_{{ .Arch }}"
     files: [LICENSE, README.md, README.ko.md]
 
@@ -42,9 +46,10 @@ changelog:
       - '^\w+\(site\)'
 
 release:
-  # ccam.dev/install.sh serves the copy attached to the latest release.
+  # ccam.dev/install.sh and install.ps1 serve the copies attached to the latest release.
   extra_files:
     - glob: ./install.sh
+    - glob: ./install.ps1
   github:
     owner: jhyunwoo
     name: ccam

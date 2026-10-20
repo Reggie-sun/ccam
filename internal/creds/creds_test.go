@@ -3,10 +3,14 @@ package creds
 import (
 	"os"
 	"path/filepath"
+	"runtime"
 	"testing"
 )
 
 func TestKeychainService(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("the Keychain is macOS's; the vectors are Unix paths")
+	}
 	// Vector: sha256("/Users/me/.claude-work")[:8] == "1e91dd84".
 	if got := KeychainService("/Users/me/.claude-work", "/Users/me"); got != "Claude Code-credentials-1e91dd84" {
 		t.Fatalf("got %q", got)

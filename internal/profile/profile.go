@@ -92,6 +92,11 @@ func Rename(p paths.Paths, cfg *config.Config, oldName, newName string) error {
 	if cfg.Default == oldName {
 		cfg.Default = newName
 	}
+	for i := range cfg.Folders {
+		if cfg.Folders[i].Account == oldName {
+			cfg.Folders[i].Account = newName
+		}
+	}
 	return nil
 }
 

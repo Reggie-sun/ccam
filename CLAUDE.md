@@ -80,11 +80,12 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 - 사용자의 실제 ~/.claude, ~/.local/share/ccam은 절대 수정하지 않는다
 - 파일 쓰기는 fsutil.AtomicWrite, 데이터 이전은 share.Build → Apply 순서
 - 토큰 파일(.credentials.json)은 어떤 경우에도 공유 그룹에 링크하지 않는다 (share.Layout 허용 목록)
-- 프로그램 출력(도움말, 메시지, 오류, 질문, TUI, install.sh)은 모두 영어다. 한글은 절대 출력하지 않는다. 코드·주석·커밋도 영어. internal/e2e/english_test.go의 TestSourceHasNoHangul(cmd/·internal/의 테스트 외 Go 소스와 install.sh·scripts/*.sh에 한글 금지, 이스케이프 포함)과 TestOutputHasNoHangul(빌드한 바이너리의 모든 도움말과 주요 명령 출력 검사)이 강제한다
+- 프로그램 출력(도움말, 메시지, 오류, 질문, TUI, install.sh·install.ps1)은 모두 영어다. 한글은 절대 출력하지 않는다. 코드·주석·커밋도 영어. internal/e2e/english_test.go의 TestSourceHasNoHangul(cmd/·internal/의 테스트 외 Go 소스와 install.sh·install.ps1·scripts/*.sh에 한글 금지, 이스케이프 포함)과 TestOutputHasNoHangul(빌드한 바이너리의 모든 도움말과 주요 명령 출력 검사)이 강제한다
 
 ## 명령
 - 빌드: go build ./cmd/ccam
 - 테스트: go test ./...  (internal/e2e는 실제 바이너리를 빌드해 fake claude로 돌린다)
+- Windows 테스트(WSL에서): scripts/windows-test.sh  (교차 컴파일한 테스트를 Windows 호스트에서 실행, CI는 windows-latest)
 - 린트: golangci-lint run
 - 벤치마크: go test -bench=. -benchmem ./...
 - 실행 경로 측정: scripts/perf-check.sh (hyperfine), 회귀 비교: scripts/bench-compare.sh <base>
@@ -93,7 +94,7 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 - ccam <이름> 실행 경로는 10 ms 이하. 이 경로에서는 cobra·bubbletea·lipgloss·net/http를 쓰지 않는다
 - 패키지 init()에서 파일·터미널·네트워크에 접근하지 않는다. 의존성 추가 후 TestPackageInitIsCheap 확인 (huh는 이 이유로 뺐다)
 - 실행 경로에서 읽는 파일은 config.toml 하나, 링크 확인은 lstat만
-- claude 실행은 항상 syscall.Exec, 후처리는 다음 실행 때
+- claude 실행은 항상 syscall.Exec, 후처리는 다음 실행 때. 예외는 exec이 없는 Windows와 --fallback(-p 재시도)뿐이며, 둘 다 launcher.Plan.Run으로 자식 프로세스를 띄우고 종료 코드를 그대로 돌려준다
 - .claude.json은 통째로 파싱하지 않는다 (profile.TopLevelValue 스캐너)
 - 네트워크 호출은 병렬 + 제한 시간 + 캐시
 - 실행 경로나 사용량 조회를 바꾸면 benchstat 결과를 커밋 메시지에 남긴다

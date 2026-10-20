@@ -24,8 +24,11 @@ func TestRegisterAndActive(t *testing.T) {
 func TestStaleMarkersAreRemoved(t *testing.T) {
 	dir := t.TempDir()
 	// A finished process.
-	c := exec.Command("true")
-	c.Run()
+	self, _ := os.Executable()
+	c := exec.Command(self, "-test.run=^$") // this test binary, running no tests
+	if err := c.Run(); err != nil {
+		t.Fatal(err)
+	}
 	dead := filepath.Join(dir, strconv.Itoa(c.Process.Pid))
 	os.WriteFile(dead, []byte("1"), 0o600)
 	// A live PID with the wrong start time: the PID was reused.

@@ -1,8 +1,10 @@
 package profile
 
 import (
+	"encoding/json"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -30,7 +32,7 @@ func TestAddCreatesPrivateDirAndSlots(t *testing.T) {
 		t.Fatalf("second: %+v %v", b, err)
 	}
 	info, err := os.Stat(p.ProfileDir("work"))
-	if err != nil || info.Mode().Perm() != 0o700 {
+	if err != nil || runtime.GOOS != "windows" && info.Mode().Perm() != 0o700 {
 		t.Fatalf("dir perm %v %v", info, err)
 	}
 	if _, err := Add(p, cfg, "work", config.Share{}); err == nil {
@@ -68,10 +70,11 @@ func TestRename(t *testing.T) {
 	p := testPaths(t)
 	cfg := &config.Config{}
 	Add(p, cfg, "work", config.Share{})
+	cfg.SetFolder(t.TempDir(), "work")
 	if err := Rename(p, cfg, "work", "job"); err != nil {
 		t.Fatal(err)
 	}
-	if _, ok := cfg.Find("job"); !ok || cfg.Default != "job" {
+	if _, ok := cfg.Find("job"); !ok || cfg.Default != "job" || cfg.Folders[0].Account != "job" {
 		t.Fatal("config not renamed")
 	}
 	if _, err := os.Stat(p.ProfileDir("job")); err != nil {
@@ -100,13 +103,15 @@ func TestRenameRewritesPluginPaths(t *testing.T) {
 	Add(p, cfg, "work", config.Share{})
 	old := p.ProfileDir("work")
 	os.MkdirAll(filepath.Join(old, "plugins"), 0o700)
+	install, _ := json.Marshal(filepath.Join(old, "plugins", "cache", "m", "x", "1"))
 	os.WriteFile(filepath.Join(old, "plugins", "installed_plugins.json"),
-		[]byte(`{"plugins":{"x@m":[{"installPath":"`+old+`/plugins/cache/m/x/1"}]}}`), 0o600)
+		[]byte(`{"plugins":{"x@m":[{"installPath":`+string(install)+`}]}}`), 0o600)
 	if err := Rename(p, cfg, "work", "job"); err != nil {
 		t.Fatal(err)
 	}
 	data, _ := os.ReadFile(filepath.Join(p.ProfileDir("job"), "plugins", "installed_plugins.json"))
-	if !strings.Contains(string(data), p.ProfileDir("job")+"/plugins/cache/m/x/1") {
+	want, _ := json.Marshal(filepath.Join(p.ProfileDir("job"), "plugins", "cache", "m", "x", "1"))
+	if !strings.Contains(string(data), string(want)) {
 		t.Fatalf("%s", data)
 	}
 }

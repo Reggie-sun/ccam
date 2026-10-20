@@ -6,6 +6,7 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/jhyunwoo/ccam/internal/shim"
 	"github.com/jhyunwoo/ccam/internal/update"
 )
 
@@ -35,7 +36,16 @@ func updateCmd(e *env) *cobra.Command {
 			}
 			o.DryRun = e.dryRun
 			u := update.New(Version, exe, runtime.GOOS, runtime.GOARCH)
-			return update.Run(cmd.Context(), u, o, e.stdout)
+			if err := update.Run(cmd.Context(), u, o, e.stdout); err != nil {
+				return err
+			}
+			// Hard-linked shortcuts (Windows) still run the replaced binary.
+			if cfg, err := e.load(); err == nil && runtime.GOOS == "windows" && !e.dryRun {
+				for _, name := range shim.Relink(e.paths.Bin, exe, update.OldExe(exe), cfg) {
+					e.printf("✓ shortcut %s renewed\n", name)
+				}
+			}
+			return nil
 		},
 	}
 	cmd.Flags().BoolVar(&o.Check, "check", false, "only report whether a newer release exists")

@@ -144,3 +144,81 @@ func TestIsNameMatchesRule(t *testing.T) {
 		}
 	}
 }
+
+func TestFolderForPicksTheLongestContainingPath(t *testing.T) {
+	root := filepath.Join(t.TempDir(), "code")
+	c := &Config{}
+	c.SetFolder(root, "personal")
+	c.SetFolder(filepath.Join(root, "work"), "work")
+	cases := map[string]string{
+		root:                         "personal",
+		filepath.Join(root, "notes"): "personal",
+		filepath.Join(root, "work"):  "work",
+		filepath.Join(root, "work", "api", "src"):  "work",
+		filepath.Join(root, "workshop"):            "personal", // not inside root/work
+		filepath.Dir(root):                         "",
+		filepath.Join(filepath.Dir(root), "code2"): "",
+	}
+	for dir, want := range cases {
+		f, ok := c.FolderFor(dir)
+		got := ""
+		if ok {
+			got = f.Account
+		}
+		if got != want {
+			t.Errorf("FolderFor(%s) = %q, want %q", dir, got, want)
+		}
+	}
+}
+
+func TestSetFolderReplacesAndUnsetRemoves(t *testing.T) {
+	dir := t.TempDir()
+	c := &Config{}
+	c.SetFolder(dir, "a")
+	c.SetFolder(dir+string(filepath.Separator), "b") // same folder, written differently
+	if len(c.Folders) != 1 || c.Folders[0].Account != "b" {
+		t.Fatalf("%+v", c.Folders)
+	}
+	if !c.UnsetFolder(dir) || len(c.Folders) != 0 || c.UnsetFolder(dir) {
+		t.Fatalf("%+v", c.Folders)
+	}
+}
+
+func TestRemoveDropsTheAccountsFolders(t *testing.T) {
+	c := &Config{Profiles: []Profile{{Name: "a", Slot: 1}, {Name: "b", Slot: 2}}}
+	c.SetFolder(filepath.Join(t.TempDir(), "x"), "a")
+	c.SetFolder(filepath.Join(t.TempDir(), "y"), "b")
+	c.Remove("a")
+	if len(c.Folders) != 1 || c.Folders[0].Account != "b" {
+		t.Fatalf("%+v", c.Folders)
+	}
+}
+
+func TestFoldersRoundTripAndValidate(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "config.toml")
+	dir := t.TempDir()
+	c := &Config{Profiles: []Profile{{Name: "work", Slot: 1}}}
+	c.SetFolder(dir, "work")
+	if err := c.Save(path); err != nil {
+		t.Fatal(err)
+	}
+	raw, _ := os.ReadFile(path)
+	if !strings.Contains(string(raw), "[[folder]]") {
+		t.Fatalf("unexpected toml layout:\n%s", raw)
+	}
+	got, err := Load(path)
+	if err != nil || len(got.Folders) != 1 || got.Folders[0].Path != dir || got.Folders[0].Account != "work" {
+		t.Fatalf("%+v %v", got, err)
+	}
+	for _, bad := range []string{
+		"[[folder]]\npath = \"relative/dir\"\naccount = \"work\"\n",
+		"[[folder]]\npath = " + tomlLiteral(dir) + "\naccount = \"../x\"\n",
+	} {
+		os.WriteFile(path, []byte(bad), 0o600)
+		if _, err := Load(path); err == nil {
+			t.Fatalf("accepted %q", bad)
+		}
+	}
+}
+
+func tomlLiteral(s string) string { return `'` + s + `'` }

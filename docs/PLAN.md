@@ -469,3 +469,45 @@ history = "local"
 - 2026-10-19: 소유자 요청으로 `ccam migrate`가 터미널에서 항목 옵션(`--settings`·`--memory`·`--extensions`·`--mcp`·`--history`)과 `--yes` 없이 실행되면 복사할 항목을 체크 목록으로 고르게 했습니다. 기본 선택은 예전과 같이 대화 내역만 빼고 전부이고, 원본 폴더에 그 항목이 없으면 `not found`로 표시합니다(`migrate.Found`: 파일은 lstat, MCP는 `.claude.json`의 `mcpServers`). Space로 바꾸고 Enter로 계획을 보며, Esc는 `Cancelled.`, 아무것도 고르지 않으면 `Nothing selected.`로 끝납니다. `--dry-run`에서도 고를 수 있습니다. 터미널이 아니거나 항목 옵션·`--yes`를 주면 예전과 같습니다. 체크 목록은 `ccam add` 마법사와 같은 컴포넌트(`tui.checklist`)를 씁니다.
 - 2026-10-19: 소유자 요청으로 원격 서버(SSH)에서의 로그인을 돕습니다. `claude auth login`은 서버의 `http://localhost:<포트>/callback`에서 브라우저의 리다이렉트를 기다리는데, 브라우저는 사용자의 컴퓨터에서 돌아 그 주소가 열리지 않습니다. 그래서 `ccam add`·`ccam login`이 claude의 표준 입력을 직접 넘기지 않고 한 줄씩 전달하다가, `http://localhost|127.0.0.1|[::1]:<포트>/callback?code=…&state=…` 형태의 줄(스킴 생략 가능)이 오면 claude에 넘기지 않고 ccam이 서버에서 그 주소를 요청합니다(10초 제한, 리다이렉트는 따라가지 않음, 루프백 외 호스트는 받지 않음). 다른 입력(claude의 "Paste code here" 코드 등)은 그대로 claude에 갑니다. 확인: Claude Code 2.1.303의 `auth login`은 표준 입력이 파이프여도 같은 프롬프트로 기다립니다.
 - 2026-10-19: 소유자 요청으로 `ccam migrate`가 복사한 MCP 서버의 저장된 OAuth 로그인(원본 `.credentials.json`의 `mcpOAuth`)도 복사합니다. 그룹에는 넣지 않고(로그인 파일은 계정마다 따로), 그 서버를 그룹으로 받는 각 계정의 `.credentials.json`에 계정에 없는 항목만 더합니다. Claude Code 2.1.303은 이 항목의 키를 `<서버 이름>|sha256({type, url, headers})의 앞 16자`로 만들어(바이너리에서 확인) 폴더와 무관하므로, 원본과 정의가 같은 서버(새로 복사, 이미 같음, use mine)에만 적용됩니다. 플러그인 서버(`plugin:` 키)는 원본에 `plugins/`가 있고 확장 기능을 복사할 때만 따라갑니다. 실행 중인 계정, 로그인 전 계정, 제자리 등록(import)한 계정(그냥 `claude`도 그 파일을 쓸 수 있음), macOS 키체인 로그인은 건너뛰고 이유를 보여 줍니다. 나중에 MCP 공유를 켠 계정은 `ccam migrate`를 다시 실행하면 받습니다.
+
+## 2026-10-20 계획: Windows, 토큰 갱신 주소, 한도 재시도, 폴더별 계정
+
+소유자 요청으로 비교 조사에서 나온 단점 네 가지를 구현합니다. 순서는 작은 것부터이고, 단계마다 테스트를 먼저 쓰고 통과시킨 뒤 다음으로 넘어갑니다.
+
+| 단계 | 내용 | 확인 방법 |
+| --- | --- | --- |
+| A. 토큰 갱신 주소 | `usage.TokenURL`을 Claude Code 2.1.304가 쓰는 `https://platform.claude.com/v1/oauth/token`으로 바꿉니다(바이너리의 `TOKEN_URL`에서 확인). 429는 "로그인 다시"가 아니라 "잠시 뒤 다시"로 안내합니다. | 단위 테스트(가짜 서버 429·200), 실제 주소에 잘못된 토큰으로 요청해 엔드포인트가 응답하는지 확인(실제 토큰은 쓰지 않음) |
+| B. 폴더별 계정 | `config.toml`에 `[[folder]] path, account`를 두고, 이름 없이 실행할 때(`ccam -p …`, `ccam run`, `ccam --dry-run`) 현재 폴더와 가장 길게 겹치는 폴더의 계정을 기본 계정보다 먼저 씁니다. 명령은 `ccam folder [이름] [폴더] [--remove]`. 실행 경로에서 읽는 파일은 여전히 `config.toml` 하나이고 `os.Getwd` 한 번만 더합니다. 선택 화면은 그 계정에 커서를 둡니다. 이름을 준 실행과 단축 명령은 그대로 그 계정입니다. | config·launcher 단위 테스트(하위 폴더, 겹치는 폴더, 경로 경계 `/a/b` vs `/a/bc`), e2e(`ccam folder`, `-p` 실행 시 고른 계정), 벤치마크 비교 |
+| C. 한도 재시도 | `ccam --fallback <이름> -p …`(또는 `ccam run --fallback`): `-p`/`--print` 실행에서만 동작합니다. claude를 자식 프로세스로 돌려 표준 출력을 모아 두고, 0이 아닌 코드로 끝나면 그 계정의 사용량을 조회해 5시간·주간 한도가 찼을 때만 기록을 버리고 여유가 가장 많은 다른 계정에서 같은 명령을 다시 실행합니다(계정마다 한 번). 표준 입력은 먼저 다 읽어 두고 매번 다시 넣습니다. 대화형 실행은 지금처럼 `exec`이고, 대신 상태줄이 5시간이나 주간 사용률 90% 이상일 때 `→ ccam next --auto --continue`를 덧붙입니다. 백그라운드 감시는 하지 않습니다. | 가짜 claude가 계정별로 실패·성공하도록 하고 가짜 사용량 서버로 e2e(재시도, 한도가 아닌 실패는 재시도 안 함, 표준 입력 재전달, 종료 코드 전달, `-p` 없으면 거절), 상태줄 단위 테스트 |
+| D. Windows | 아래 표. Linux·macOS 동작은 바꾸지 않습니다. | 이 컴퓨터(WSL2)의 Windows 11 호스트에서 교차 컴파일한 테스트 바이너리와 e2e를 실행, 실제 `claude.exe`로 `CLAUDE_CONFIG_DIR` 확인, CI에 `windows-latest` 추가 |
+
+Windows에서 바뀌는 부분:
+
+| 영역 | Linux·macOS | Windows |
+| --- | --- | --- |
+| claude 실행 | `syscall.Exec` | `exec`이 없어 자식 프로세스로 실행하고 기다린 뒤 종료 코드를 그대로 돌려줍니다. Ctrl+C는 콘솔이 claude에도 보내므로 ccam은 무시합니다. |
+| 공유 링크 | 심볼릭 링크 | 심볼릭 링크를 먼저 시도하고, 권한이 없으면(개발자 모드 꺼짐) 폴더는 junction으로 만듭니다. 파일(`settings.json`, `CLAUDE.md`, `history.jsonl`)은 심볼릭 링크만 되므로 개발자 모드를 켜거나 그 항목을 `local`로 두라고 안내합니다. 점검은 junction도 링크로 봅니다. |
+| 단축 명령 | `~/.local/bin/<이름>` 링크 | `~/.local/bin/<이름>.exe`. 심볼릭 링크, 안 되면 하드 링크. 하드 링크는 `ccam update` 뒤에 다시 만듭니다. |
+| 잠금 | `flock` | `LockFileEx` |
+| 실행 중 판단 | PID + 시작 시각 | 같음(`GetProcessTimes`). ccam이 claude를 기다리는 동안 살아 있으므로 표시 파일은 ccam PID를 씁니다. |
+| 로그인 입력 가리기 | termios | 콘솔 모드(`ENABLE_ECHO_INPUT`, `ENABLE_LINE_INPUT` 끄기) |
+| 상태줄 `--wrap` | `sh -c` | Claude Code처럼 Git Bash, 없으면 PowerShell |
+| 상태줄 명령 경로 | 셸 따옴표 | `/` 구분자 경로(bash·PowerShell·cmd에서 모두 동작) |
+| `--dry-run` 출력 | sh 형식 | PowerShell 형식 |
+| 업데이트 | 이름 바꾸기로 교체 | 실행 중인 `ccam.exe`를 `ccam.exe.old`로 옮기고 새 파일을 놓습니다. `.old`는 다음 실행 때 지웁니다. 자산은 `ccam_windows_<arch>.zip` |
+| 설치 | `install.sh` | `install.ps1`(SHA-256 확인, `~/.local/bin`, 사용자 PATH 추가) |
+| 폴더 위치 | XDG | 같은 구조(`~/.config/ccam` 등, `%USERPROFILE%` 기준). Claude Code도 `%USERPROFILE%\.claude`, `%USERPROFILE%\.local\bin`을 씁니다. |
+| 권한 점검(0600) | doctor가 확인 | Windows에는 해당 없음, 건너뜁니다 |
+| 셸 자동 완성 | bash, zsh | powershell 추가 |
+
+문서: README 두 개, 사이트의 설치·명령·FAQ·비교 페이지와 기능 페이지를 고치고 30개 언어로 번역합니다. 비교 페이지의 "Windows는 지원하지 않음"과 "Nothing runs between you and Claude Code"는 Windows 예외를 적어 고칩니다.
+
+진행 기록 (2026-10-20):
+
+- A. 토큰 갱신 주소: `usage.TokenURL`을 `https://platform.claude.com/v1/oauth/token`으로 바꿨습니다. 잘못된 토큰으로 두 주소에 요청하면 둘 다 JSON `rate_limit_error`(429)로 답해, 엔드포인트는 둘 다 살아 있습니다. 갱신 요청이 429를 받으면 `ccam login` 대신 "잠시 뒤 다시"를 안내하고 로그인 파일은 건드리지 않습니다(`TestRefreshRateLimitedSaysWait`).
+- B. 폴더별 계정: `ccam folder`. 항목은 심볼릭 링크를 푼 절대 경로로 저장하고, 실행 때는 작업 폴더를 그대로 비교한 뒤 맞는 항목이 없을 때만 링크를 풀어 한 번 더 비교합니다(macOS의 `/var` → `/private/var`). 이름 변경은 항목을 따라가고, 계정 삭제는 그 계정의 항목을 지웁니다. 없는 계정을 가리키는 항목은 그 폴더에서 이름 없는 실행을 멈추고 `doctor`가 오류로 보고합니다. 측정: 항목 없음·불일치·일치 모두 hyperfine 평균 4.0~4.2 ms로 차이 없음.
+- C. 한도 재시도: `ccam --fallback [이름] -p …`. 한도 판단은 Claude Code의 메시지(`hit your limit`, `usage limit reached`)나 사용량 조회 결과(5시간·주간 100%) 중 하나입니다. 다음 계정은 5시간 사용률이 가장 낮은 계정, 그다음 사용량을 알 수 없는 계정을 번호순으로 고르고, `-c`·`--continue`·`-r`·`--resume`이 있으면 같은 대화 내역 그룹만 봅니다. 실패한 시도의 출력은 버리고, 한도가 아닌 실패는 출력과 종료 코드를 그대로 넘깁니다. e2e는 가짜 claude(`FAKE_LIMITED`)로 재시도·입력 재전달·전부 한도·대화형 거절을 확인합니다. 상태줄은 5시간이나 주간 90% 이상이고 다른 계정이 있으면 `→ ccam next --auto --continue`를 덧붙입니다.
+- 가짜 claude를 셸 스크립트(`testdata/fake-claude`)에서 Go 프로그램(`testdata/fakeclaude`)으로 바꿨습니다. 같은 e2e를 Windows에서도 돌리기 위해서입니다. e2e는 `CCAM_E2E_BIN`·`CCAM_E2E_FAKE`·`CCAM_E2E_ROOT`·`CCAM_E2E_RELEASES`로 미리 빌드한 바이너리를 받을 수 있어, Go가 없는 Windows 호스트에서도 돌아갑니다.
+- D. Windows: 이 컴퓨터(WSL2)의 Windows 11 호스트에서 교차 컴파일한 모든 패키지 테스트와 e2e가 통과합니다. 실제 `claude.exe` 2.1.302로 확인한 것: `ccam work --version`과 `ccwork.exe --version`이 실행되고, `ccam work auth status`의 `configDirectory`가 ccam 프로필 폴더이며, `--dry-run`이 출력한 줄을 PowerShell에 그대로 넣으면 실행됩니다. 공유 항목은 실제 심볼릭 링크로 만들어지고 `doctor`가 통과하며, `ccam folder`가 동작합니다. 사용자의 실제 `C:\Users\biost\.claude`와 `.claude.json`의 수정 시각은 전후로 같았습니다. 상태줄 명령(`C:/…/ccam.exe statusline`, `~/…`)은 Git Bash와 PowerShell 양쪽에서 실행됩니다. `install.ps1`은 로컬 릴리스 서버로 설치·덮어쓰기(실행 중 파일은 `.old`로)·체크섬 위조 거부를 확인했습니다. junction 대체 경로는 심볼릭 링크 실패를 흉내 낸 테스트로 확인했고, `RemoveAll`이 junction 너머를 지우지 않는 것도 테스트합니다.
+- Windows에서 확인하지 못한 것: 개발자 모드가 꺼진 실제 환경(이 컴퓨터는 심볼릭 링크가 허용됨, 테스트로 대체), 브라우저 로그인과 입력 가리기(대화형 콘솔 필요), 대화형 Claude Code 안의 상태줄 표시, `install.ps1`의 사용자 `PATH` 추가(실제 사용자 환경 변수를 바꾸므로 생략), ARM64.
+- 성능: `BenchmarkLaunchPath` main 76.78 µs → 78.18 µs (+1.82%). 처음 구현에서 `share.Check`가 항목마다 `lstat`을 두 번 불러 +24%였고, 첫 `lstat` 결과를 재사용해 고쳤습니다. hyperfine p95 4.5~4.9 ms, 최대 메모리 8.3 MB.

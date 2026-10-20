@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"text/tabwriter"
 	"time"
@@ -182,9 +183,18 @@ func installShims(e *env, cfg *config.Config) ([]string, error) {
 	}
 	created, err := shim.Install(e.paths.Bin, self, cfg)
 	if err == nil && len(created) > 0 && !shim.InPath(e.paths.Bin) {
-		fmt.Fprintf(e.stderr, "Note: %s is not in PATH. Add it to ~/.bashrc or ~/.zshrc:\n  export PATH=\"%s:$PATH\"\n", e.paths.Bin, e.paths.Bin)
+		fmt.Fprint(e.stderr, pathHint(e.paths.Bin))
 	}
 	return created, err
+}
+
+// pathHint tells how to put dir on PATH for good.
+func pathHint(dir string) string {
+	if runtime.GOOS == "windows" {
+		return fmt.Sprintf("Note: %s is not in PATH. Add it for your user in PowerShell, then open a new terminal:\n"+
+			"  [Environment]::SetEnvironmentVariable(\"Path\", \"%s;\" + [Environment]::GetEnvironmentVariable(\"Path\", \"User\"), \"User\")\n", dir, dir)
+	}
+	return fmt.Sprintf("Note: %s is not in PATH. Add it to ~/.bashrc or ~/.zshrc:\n  export PATH=\"%s:$PATH\"\n", dir, dir)
 }
 
 type listRow struct {
@@ -459,8 +469,16 @@ func shimsCmd(e *env) *cobra.Command {
 func runCmd(e *env) *cobra.Command {
 	// Only reached for `ccam help run`; real runs never get to cobra.
 	return &cobra.Command{
-		Use:                "run <name|number> [-- claude args]",
-		Short:              "Run claude as that account (same as `ccam <name>`)",
+		Use:   "run [--dry-run] [--fallback] [name|number] [claude args]",
+		Short: "Run claude as that account (same as `ccam <name>`)",
+		Long: "Runs Claude Code as the account. Without a name: the account set for this folder\n" +
+			"(ccam folder), else the default one (ccam use). Everything after the name goes to\n" +
+			"claude unchanged.\n\n" +
+			"  --dry-run   print the environment and command instead of running it\n" +
+			"  --fallback  for -p/--print runs: when the account reaches its usage limit, run\n" +
+			"              the same command again as the logged-in account with the most room\n" +
+			"              (output is held until a run finishes)",
+		Example:            "  ccam run work --resume\n  ccam run --fallback work -p \"fix the tests\"\n  ccam --fallback -p \"summarise\" < notes.txt",
 		DisableFlagParsing: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			sel := ""

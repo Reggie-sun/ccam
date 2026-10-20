@@ -2,10 +2,17 @@ package e2e
 
 import (
 	"os/exec"
+	"runtime"
 	"strconv"
 	"strings"
 	"testing"
 )
+
+// initLimit is the most one package init may take, in ms. On Windows net's
+// init loads Winsock and takes 2 to 7 ms depending on load, so the limit
+// there only catches real I/O such as the 110 ms clipboard probe; the launch
+// path still never uses the network.
+var initLimit = map[bool]float64{true: 10, false: 2}[runtime.GOOS == "windows"]
 
 // TestPackageInitIsCheap guards the launch path against dependencies whose
 // init() does I/O (a clipboard package once added ~110 ms to every launch).
@@ -24,12 +31,12 @@ func TestPackageInitIsCheap(t *testing.T) {
 		if len(f) > 5 && f[0] == "init" && f[5] == "ms" {
 			ms, _ := strconv.ParseFloat(f[4], 64)
 			total += ms
-			if ms > 2 {
+			if ms > initLimit {
 				t.Errorf("slow package init: %s", line)
 			}
 		}
 	}
-	if total > 5 {
+	if total > 2.5*initLimit {
 		t.Fatalf("package init takes %.1f ms in total", total)
 	}
 }
