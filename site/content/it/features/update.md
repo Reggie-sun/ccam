@@ -1,10 +1,10 @@
 ---
 title: Aggiornare ccam
 description: ccam update sostituisce ccam con l'ultima release su GitHub dopo un controllo SHA-256; --check segnala soltanto e --version installa un tag specifico.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 10
 translation: machine
-sourceHash: 83fc20191328
+sourceHash: d91499b95d3d
 ---
 
 `ccam update` scarica una release di ccam da GitHub, la verifica con il file `checksums.txt` della release e sostituisce il binario in esecuzione con un'unica rinomina. Usalo se hai installato ccam con lo script di installazione o da un archivio. ccam non controlla mai gli aggiornamenti di sua iniziativa: solo questo comando contatta GitHub, quindi ogni altro comando funziona allo stesso modo anche offline.
@@ -53,9 +53,9 @@ Il codice si trova in `internal/update`, importato solo da `ccam update`. Il per
 2. Senza `--version`, `Updater.Latest` richiede `<releases>/latest` senza seguire il reindirizzamento e legge il tag dall'intestazione `Location` (`…/tag/v0.5.0`). In questo modo usa la pagina delle release invece dell'API di GitHub, quindi il limite dell'API di 60 richieste all'ora non si applica. La ricerca ha 10 secondi.
 3. `parseVersion` verifica il tag con uno schema rigoroso. Un tag finisce negli URL di download e in un comando di shell stampato, quindi non passa nulla che contenga `/`, `%`, spazi o caratteri della shell. `compareVersions` lo confronta con la versione in esecuzione; una pre-release viene ordinata prima della sua release.
 4. `managed()` e `writable()` decidono se ccam può sostituire il binario (vedi sotto).
-5. `Updater.Fetch` scarica contemporaneamente `ccam_<os>_<arch>.tar.gz` e `checksums.txt`, con 2 minuti per entrambi. Ogni download è limitato a 256 MB.
+5. `Updater.Fetch` scarica contemporaneamente `ccam_<os>_<arch>.tar.gz` (su Windows `ccam_windows_<arch>.zip`) e `checksums.txt`, con 2 minuti per entrambi. Ogni download è limitato a 256 MB.
 6. Lo SHA-256 dell'archivio deve corrispondere alla sua riga in `checksums.txt` prima che succeda qualsiasi altra cosa. Una riga mancante o un checksum diverso interrompe l'aggiornamento con `nothing was changed`.
-7. `extract()` legge il tar e prende il primo file normale chiamato `ccam`. Cartelle, link e altre voci vengono ignorati, e anche il binario è limitato a 256 MB.
+7. `extract()` legge il tar e prende il primo file normale chiamato `ccam` (`extractZip` prende `ccam.exe` dallo zip). Cartelle, link e altre voci vengono ignorati, e anche il binario è limitato a 256 MB.
 8. `Updater.Install` scrive il nuovo binario con `fsutil.AtomicWrite`: un file temporaneo `.ccam.tmp*` accanto al binario, con i bit di permesso del vecchio file, scritto su disco e rinominato al posto di quello vecchio.
 
 L'intera sequenza, dalla ricerca del tag alla rinomina:
@@ -63,6 +63,8 @@ L'intera sequenza, dalla ricerca del tag alla rinomina:
 <!-- motion:update-pipeline -->
 
 L'archivio e `checksums.txt` vengono scaricati in parallelo, e non viene scritto nulla finché il checksum non corrisponde. La rinomina è atomica, quindi un crash o un disco pieno lasciano il vecchio binario o quello nuovo, mai metà di uno dei due. I comandi scorciatoia come `~/.local/bin/ccwork` sono link simbolici al binario di ccam, quindi eseguono la nuova versione senza alcuna modifica.
+
+Su Windows il file di un programma in esecuzione non può essere sostituito né eliminato, solo rinominato. `Updater.Install` scrive il nuovo binario in `ccam.exe.new`, rinomina il `ccam.exe` in esecuzione in `ccam.exe.old` e rinomina il nuovo file in `ccam.exe`. Se l'ultimo passaggio fallisce, il vecchio binario riprende il suo nome. L'aggiornamento successivo elimina `ccam.exe.old`. Le scorciatoie che sono hard link invece di link simbolici ([Comandi scorciatoia](/features/shortcuts)) vengono rinnovate subito dopo, così eseguono anch'esse la nuova versione.
 
 ### Installazioni gestite da un pacchetto
 
@@ -85,7 +87,7 @@ Or install a copy in ~/.local/bin with the install script:
   curl -fsSL https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.sh | sh
 ```
 
-Sui sistemi diversi da Linux viene stampata solo la riga dello script di installazione. Quando la cartella non è scrivibile, ccam suggerisce di eseguire di nuovo lo script di installazione, che installa ccam in `~/.local/bin`.
+Sui sistemi diversi da Linux viene stampata solo la riga dello script di installazione: `irm https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.ps1 | iex` su Windows. Quando la cartella non è scrivibile, ccam suggerisce di eseguire di nuovo lo script di installazione, che installa ccam in `~/.local/bin`.
 
 ## Sicurezza e casi limite
 

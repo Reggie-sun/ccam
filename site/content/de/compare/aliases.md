@@ -4,7 +4,7 @@ description: Shell-Aliase mit CLAUDE_CONFIG_DIR und ccam im direkten Vergleich, 
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: ea24bb091caf
+sourceHash: b9fbcb88f111
 ---
 
 Ein Shell-Alias pro Konto ist der einfachste Weg, mehrere Claude Code-Konten zu betreiben. ccam macht darunter dasselbe und ergänzt Teilen, Wechseln und das Verfolgen der Nutzung.
@@ -42,6 +42,8 @@ ccam add work --shortcut ccwork
 | Gespräch in einem anderen Konto fortsetzen | Nein | `ccam next --continue` |
 | Nutzung aller Konten | Nein | `ccam usage` |
 | Konto mit dem meisten Spielraum wählen | Nein | `ccam next --auto` |
+| Einen `-p`-Job am Limit mit einem anderen Konto erneut ausführen | Nein | `ccam --fallback` |
+| Ein Konto für jeden Projektordner | Nein | `ccam folder` |
 | Kontoname in der Statuszeile | Nein | `ccam statusline install` |
 | Defekte Links reparieren | Von Hand | `ccam doctor --fix` |
 | Zusätzliche Software | Keine | Eine statische Binärdatei |

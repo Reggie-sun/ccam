@@ -4,7 +4,7 @@ description: Jalankan Claude Code sebagai akun apa pun via ccam <name|number>, c
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 401eed57e533
+sourceHash: e6b5a8d4df86
 ---
 
 `ccam work` menjalankan Claude Code sebagai akun `work`, dan semua yang ada setelah nama diteruskan ke `claude` apa adanya. Gunakan di mana pun Anda biasa mengetik `claude`: di terminal, di skrip, atau dengan input dari pipe.
@@ -17,16 +17,18 @@ ccam 2                           # the account with number 2 (see ccam list)
 ccam work --resume               # claude --resume, as work
 ccam work -p "fix the tests" --output-format json
 cat log.txt | ccam work -p "find the cause"
-ccam -p "summarise"              # no name: the default account
+ccam -p "summarise"              # no name: the folder's account, else the default
 ccam use work                    # make work the default account
+ccam folder work ~/code/company  # use work in that folder when no name is given
 ccam run work --continue         # same as ccam work --continue
 ccam                             # the picker on a terminal, the list otherwise
 ccam --dry-run work -p hi        # print the command instead of running it
+ccam --fallback work -p "fix the tests"   # run again as another account at the limit
 ```
 
 Berikan nama akun atau nomornya dari `ccam list`. ccam tidak membaca argumen setelah nama, sehingga `ccam work --help` menampilkan bantuan Claude Code. `--` setelah nama bersifat opsional. Input standar, kode keluar, dan sinyal berperilaku seperti pada `claude`.
 
-Jika argumen pertama diawali `-` dan bukan salah satu flag milik ccam, ccam menjalankan akun default dengan semua argumen. Akun default adalah akun yang ditetapkan dengan `ccam use`, atau akun dengan nomor terkecil jika Anda belum menetapkannya.
+Jika argumen pertama diawali `-` dan bukan salah satu flag milik ccam, ccam menjalankan akun tanpa nama, dengan semua argumen. Akun itu adalah akun yang ditetapkan untuk folder saat ini dengan [`ccam folder`](/features/folder), atau jika tidak ada, akun default: akun yang ditetapkan dengan `ccam use`, atau akun dengan nomor terkecil jika Anda belum menetapkannya.
 
 ### Pemilih
 
@@ -50,21 +52,27 @@ Pemilih ditutup sebelum bertindak, sehingga terminal dipulihkan sebelum Claude C
 | Opsi | Fungsinya | Default |
 | --- | --- | --- |
 | `--dry-run` | Menampilkan environment dan perintah yang akan dijalankan ccam, lalu keluar | nonaktif |
+| `--fallback` | Untuk proses `-p`/`--print`: saat akun mencapai batas penggunaannya, menjalankan lagi perintah yang sama sebagai akun yang sudah login dengan sisa kuota terbanyak ([detail](/features/next#run-again-at-the-limit)) | nonaktif |
 | `-v`, `--version` | Menampilkan `ccam <version>` (hanya sebagai argumen pertama) | |
 | `-h`, `--help` | Bantuan ccam, sebagai `ccam --help` atau `ccam run --help` | |
 
 Aturan argumen:
 
 - ccam membaca flag miliknya hanya sebelum nama akun. Setelah nama, setiap argumen milik Claude Code, termasuk `--dry-run` dan `--help`.
-- `--dry-run` berfungsi sebagai `ccam --dry-run work`, `ccam run --dry-run work`, dan `ccam --dry-run` (akun default). Opsi ini dihormati, bukan ditolak.
-- `ccam run <name|number> [claude args]` adalah bentuk panjang dari `ccam <name>`. `ccam run` tanpa nama memakai akun default.
+- `--dry-run` berfungsi sebagai `ccam --dry-run work`, `ccam run --dry-run work`, dan `ccam --dry-run` (akun tanpa nama). Opsi ini dihormati, bukan ditolak. `--dry-run` dan `--fallback` boleh ditulis dalam urutan mana pun.
+- `ccam run <name|number> [claude args]` adalah bentuk panjang dari `ccam <name>`. `ccam run` tanpa nama memakai akun folder itu atau akun default.
 - Nama akun tidak boleh berupa nama perintah ccam seperti `add`, `list`, `run`, atau `usage`, sehingga `ccam <word>` tidak pernah ambigu.
 
-Dry run menampilkan satu baris yang bisa Anda tempel ke shell:
+Dry run menampilkan satu baris yang bisa Anda tempel ke shell, atau ke PowerShell di Windows:
 
 ```console
 $ ccam --dry-run work -p "fix the tests"
 CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/claude --mcp-config=/home/me/.local/share/ccam/groups/default/mcp.json -p 'fix the tests'
+```
+
+```console
+PS> ccam --dry-run work -p "fix the tests"
+$env:CLAUDE_CONFIG_DIR='C:\Users\me\.local\share\ccam\profiles\work'; & C:\Users\me\.local\bin\claude.exe --mcp-config=C:\Users\me\.local\share\ccam\groups\default\mcp.json -p 'fix the tests'
 ```
 
 ## Cara kerjanya
@@ -78,7 +86,7 @@ Setiap kotak menyala saat langkahnya berjalan, dan baris di bawahnya adalah envi
 1. `cmd/ccam/main.go` memanggil `app.Main`. Jika ccam dijalankan dengan nama lain, itu adalah [pintasan](/features/shortcuts) dan langsung menuju peluncur.
 2. `app.parse` memeriksa `os.Args` sebelum cobra terlibat. Hanya `ccam` saja (pemilih), nama perintah ccam (`config.Reserved`), `-h`/`--help`, dan `-v`/`--version` yang diteruskan ke `cli.Execute`. Selain itu adalah peluncuran.
 3. `launcher.Launch` membaca `~/.config/ccam/config.toml`, satu-satunya file yang di-parse-nya.
-4. `launcher.Prepare` mencari akun berdasarkan nama atau nomor, membuang satu `--` di depan, dan menemukan executable `claude` dengan `ResolveClaude`. Hasil pencarian PATH disimpan dalam cache di `~/.local/state/ccam/claude-path` bersama waktu modifikasi file, sehingga ccam tidak mencari di `PATH` setiap kali peluncuran. File yang berubah atau hilang memicu pencarian baru. Path `claude_bin` di `config.toml` dipakai apa adanya. ccam menolak `claude` yang ternyata ccam sendiri, dibandingkan berdasarkan inode, karena itu akan berulang tanpa akhir.
+4. `launcher.Prepare` mencari akun berdasarkan nama atau nomor (tanpa nama, `HereProfile` mengambil akun folder itu, dengan membandingkan direktori kerja dengan entri `[[folder]]` di `config.toml` sebagai string), membuang satu `--` di depan, dan menemukan executable `claude` dengan `ResolveClaude`. Hasil pencarian PATH disimpan dalam cache di `~/.local/state/ccam/claude-path` bersama waktu modifikasi file, sehingga ccam tidak mencari di `PATH` setiap kali peluncuran. File yang berubah atau hilang memicu pencarian baru. Path `claude_bin` di `config.toml` dipakai apa adanya. ccam menolak `claude` yang ternyata ccam sendiri, dibandingkan berdasarkan inode, karena itu akan berulang tanpa akhir.
 5. `checkLinks` membandingkan folder akun `~/.local/share/ccam/profiles/<name>/` dengan pengaturan pembagiannya menggunakan `share.Check`, yang hanya memanggil `lstat` dan `readlink`, satu atau dua system call per item. Tautan yang hilang langsung dibuat. Apa pun yang bisa menyebabkan kehilangan data akan menghentikan peluncuran.
 6. `applyMCP` menambahkan server MCP bersama (lihat di bawah).
 7. `session.Register` mencatat sesi. ccam menulis penanda yang dinamai sesuai PID-nya, berisi waktu mulai proses, ke `$XDG_RUNTIME_DIR/ccam/profile-<name>/<pid>` (atau `~/.local/state/ccam/locks/` tanpa `XDG_RUNTIME_DIR`). Untuk akun yang membagikan riwayat percakapan, `historyCheck` terlebih dahulu mencari sesi yang sedang berjalan di `history-<group>-<hash>`, dengan hash dari folder saat ini, lalu juga mendaftar di sana. `exec` mempertahankan PID, sehingga penanda itu kemudian menunjuk proses Claude Code itu sendiri. Penanda, bukan lock yang dipegang, karena proses yang dijalankan Claude Code akan mewarisi lock dan tetap memegangnya setelah sesi berakhir.
@@ -88,7 +96,9 @@ Claude Code berjalan dengan `CLAUDE_CONFIG_DIR` diatur ke folder akun dan `CCAM_
 
 ### Mengapa exec
 
-`syscall.Exec` mengganti proses ccam dengan `claude`, sehingga ccam tidak tetap berada di memori, penekanan tombol, sinyal, dan kode keluar sepenuhnya milik Claude Code, dan argumen tetap berupa array, bukan string shell. Pekerjaan setelah sesi, seperti mendeteksi server yang ditambahkan dengan `claude mcp add`, dilakukan pada peluncuran berikutnya: ccam membandingkan waktu modifikasi `.claude.json` dengan `~/.local/state/ccam/mcp/<name>/seen` dan mem-parse file itu hanya jika berubah.
+`syscall.Exec` mengganti proses ccam dengan `claude`, sehingga ccam tidak tetap berada di memori, penekanan tombol, sinyal, dan kode keluar sepenuhnya milik Claude Code, dan argumen tetap berupa array, bukan string shell.
+
+Windows tidak punya `exec`. Di sana, `Plan.Exec` menjalankan `claude.exe` sebagai proses anak dengan environment, argumen, dan konsol yang sama, menunggunya, lalu keluar dengan kode keluarnya. Ctrl+C sampai ke Claude Code langsung dari konsol, jadi ccam mengabaikannya. Penanda sesi berisi PID ccam, yang hidup persis selama Claude Code, dan dihapus saat Claude Code keluar. Selama menunggu, ccam tidak melakukan hal lain. Pekerjaan setelah sesi, seperti mendeteksi server yang ditambahkan dengan `claude mcp add`, dilakukan pada peluncuran berikutnya: ccam membandingkan waktu modifikasi `.claude.json` dengan `~/.local/state/ccam/mcp/<name>/seen` dan mem-parse file itu hanya jika berubah.
 
 ### Bagaimana baris perintah diarahkan
 

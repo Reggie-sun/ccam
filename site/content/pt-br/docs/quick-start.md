@@ -2,10 +2,10 @@
 title: Início rápido
 metaTitle: "Início rápido: crie e troque contas do Claude Code"
 description: Adicione duas contas do Claude Code com ccam add, dê a elas atalhos como ccwork, alterne entre elas e escolha o que elas compartilham.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: a10d91d2a64e
+sourceHash: 55f81dae9fc0
 ---
 
 Adicione cada conta com `ccam add` e depois inicie o Claude Code com `ccam <name>` ou com um atalho que você mesmo nomeia, como `ccwork`. Isso é tudo de que a maioria das pessoas precisa.
@@ -107,7 +107,7 @@ ccam usage
 ccam next --continue
 ```
 
-`ccam usage` mostra o uso de 5 horas e o uso semanal de todas as contas. `ccam next --continue` abre a mesma conversa na próxima conta. Consulte [limites de uso](/docs/usage-limits).
+`ccam usage` mostra o uso de 5 horas e o uso semanal de todas as contas. `ccam next --continue` abre a mesma conversa na próxima conta. Em scripts, `ccam --fallback work -p "…"` faz a troca sozinho. Consulte [limites de uso](/docs/usage-limits).
 
 ## Já usa ~/.claude?
 

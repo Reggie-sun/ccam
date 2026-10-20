@@ -1,10 +1,10 @@
 ---
 title: 사용량 한도와 계정 전환
 description: ccam usage로 모든 Claude Code 계정의 5시간·주간 사용량을 확인하고, ccam next --auto로 여유가 가장 많은 계정을 엽니다.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: d288177682d7
+sourceHash: a84df8e873d6
 ---
 
 `ccam usage`는 각 계정이 5시간 한도와 주간 한도를 얼마나 썼는지 보여 줍니다. `ccam next --auto`는 여유가 가장 많은 계정을 열고, `--continue`는 지금 대화를 그 계정에서 이어 갑니다.
@@ -48,7 +48,7 @@ ccam은 각 계정의 로그인 정보로 Anthropic의 사용량 엔드포인트
 ccam statusline install
 ```
 
-그러면 Claude Code 상태 표시줄에 계정 이름과 사용량이 표시됩니다(예: `[work] · Opus · 5h 24% · 7d 41%`). 이미 상태 표시줄 명령을 쓰고 있다면 ccam은 그 명령을 그대로 두고 앞에 계정 이름을 붙입니다. 상태 표시줄은 수치도 저장해 두며, 엔드포인트가 응답하지 않으면 `ccam usage`가 이 값을 사용합니다.
+그러면 Claude Code 상태 표시줄에 계정 이름과 사용량이 표시됩니다(예: `[work] · Opus · 5h 24% · 7d 41%`). 사용량이 90% 이상이면 상태 표시줄이 `ccam next --auto --continue`도 제안합니다. 이미 상태 표시줄 명령을 쓰고 있다면 ccam은 그 명령을 그대로 두고 앞에 계정 이름을 붙입니다. 상태 표시줄은 수치도 저장해 두며, 엔드포인트가 응답하지 않으면 `ccam usage`가 이 값을 사용합니다.
 
 ## 계정 전환
 
@@ -59,5 +59,13 @@ ccam next --continue  # the next account that shares your conversation history
 ```
 
 `ccam next`는 로그인되지 않은 계정을 건너뛰고, `--auto`는 사용량이 100%인 계정을 건너뜁니다. 대화를 이어 가려면 두 계정 모두 대화 내역을 공유해야 합니다. 자세한 내용은 [공유](/docs/sharing)를 참고하세요.
+
+`claude -p`를 실행하는 스크립트나 예약 작업에서는 계정 이름 앞에 `--fallback`을 붙이세요. 그 계정이 한도에 도달하면 ccam이 여유가 가장 많은 계정으로 같은 명령을 다시 실행하고, 끝까지 실행된 쪽의 출력만 표시합니다.
+
+```sh
+ccam --fallback work -p "review the diff" --output-format json
+```
+
+ccam이 어떻게 판단하는지는 [한도에서 다시 실행](/features/next#run-again-at-the-limit)을 참고하세요.
 
 [사용량 한도 대응 가이드](/guides/usage-limit-workflow)에서 전체 과정을 예시와 함께 살펴볼 수 있습니다.

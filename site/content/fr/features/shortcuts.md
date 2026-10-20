@@ -1,10 +1,10 @@
 ---
 title: "Commandes raccourcis"
 description: "Donnez à un compte sa propre commande, comme ccwork, avec ccam shortcut, et recréez les liens dans ~/.local/bin avec ccam shims install."
-updated: 2026-10-19
+updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 5f0cb5a57042
+sourceHash: 939256e7a67e
 ---
 
 Un raccourci est une commande que vous nommez vous-même et qui lance Claude Code avec un compte donné : `ccwork --resume` fait la même chose que `ccam work --resume`. C'est un lien vers ccam dans `~/.local/bin` ; il fonctionne donc dans bash, zsh, les scripts et tout ce qui lance des programmes depuis le `PATH`. Les raccourcis sont facultatifs ; créez-en un pour les comptes que vous lancez souvent.
@@ -82,13 +82,17 @@ Le shell trouve `ccwork` dans le `PATH`, le noyau suit le lien et lance le binai
 
 Pourquoi un lien symbolique plutôt qu'un alias de shell ou un script enveloppe : un lien symbolique fonctionne dans tous les shells et dans les scripts, il n'ajoute pas de démarrage de shell supplémentaire (environ 1 à 2 ms), et le lancement ne lit toujours qu'un seul fichier. `scripts/perf-check.sh` mesure un raccourci avec `hyperfine` par rapport à la même limite de 10 ms (p95) que `ccam <name>`.
 
+### Sous Windows
+
+Un raccourci est `ccwork.exe` dans `%USERPROFILE%\.local\bin`, et `shim.Name` retire le `.exe` (quelle que soit la casse) avant la recherche : `ccwork`, `ccwork.exe` et `CCWORK.EXE` lancent tous `work`. ccam crée d'abord un lien symbolique, ce que Windows permet en Mode développeur ou pour un administrateur. Sans ce droit, il crée un lien physique : un second nom pour le même fichier `ccam.exe`, qui ne demande aucun privilège. Un lien physique compte comme appartenant à ccam lorsqu'il s'agit du même fichier que `ccam.exe`. Comme `ccam update` met un nouveau fichier à la place de `ccam.exe`, il renouvelle ensuite chaque raccourci en lien physique avec `shim.Relink` et affiche `✓ shortcut ccwork renewed`. La vérification du nom cherche `<name>` avec chaque extension de `PATHEXT` (`.exe`, `.cmd`, etc.) dans les autres dossiers du `PATH`.
+
 ## Sécurité et cas particuliers
 
 - **Un lien qu'aucun compte ne revendique.** Si un lien vers ccam dans `~/.local/bin` porte un nom qu'aucun compte n'utilise, par exemple après avoir modifié `shortcut` à la main dans `config.toml`, ccam ne se rabat pas sur le compte par défaut. Il s'arrête avec `` ccam: ccold is not the shortcut of any account (see `ccam list`, `ccam shortcut`) ``. Redéfinissez le nom avec `ccam shortcut`, ou supprimez le lien.
 - **Fichiers existants.** ccam ne remplace jamais un fichier qu'il n'a pas créé. `ccam shims install` s'arrête avec `<path> already exists and is not a ccam link, so it was left alone`.
 - **Un binaire ccam déplacé.** Les anciens liens pointent alors vers un chemin qui n'existe plus, et ccam ne les considère pas comme les siens. Supprimez-les, puis lancez `ccam shims install`.
 - **Renommer et supprimer.** `ccam rename` conserve le nom du raccourci, et le lien continue de fonctionner, car il pointe vers ccam et ccam recherche le nom dans `config.toml`. `ccam remove` supprime le lien du compte. `ccam shortcut <account> <new>` supprime l'ancien lien avant de créer le nouveau.
-- **PATH.** Quand ccam crée un lien et que `~/.local/bin` n'est pas dans votre `PATH`, il affiche `Note: /home/me/.local/bin is not in PATH. Add it to ~/.bashrc or ~/.zshrc:` suivi de la ligne `export PATH=...` à ajouter.
+- **PATH.** Quand ccam crée un lien et que `~/.local/bin` n'est pas dans votre `PATH`, il affiche `Note: /home/me/.local/bin is not in PATH. Add it to ~/.bashrc or ~/.zshrc:` suivi de la ligne `export PATH=...` à ajouter. Sous Windows, il affiche à la place la ligne PowerShell qui ajoute le dossier à votre `PATH` utilisateur.
 - **Vérifier plus tard.** `ccam doctor` signale `missing shortcuts in /home/me/.local/bin: ccwork` et avertit quand le dossier n'est pas dans le `PATH`. `ccam doctor --fix` crée les liens manquants.
 
 ## Voir aussi

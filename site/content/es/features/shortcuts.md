@@ -1,10 +1,10 @@
 ---
 title: Atajos
 description: Dale a una cuenta su propio comando, como ccwork, con ccam shortcut, y vuelve a crear los enlaces en ~/.local/bin con ccam shims install.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 5f0cb5a57042
+sourceHash: 939256e7a67e
 ---
 
 Un atajo es un comando al que tú le pones nombre y que inicia Claude Code con una cuenta concreta: `ccwork --resume` hace lo mismo que `ccam work --resume`. Es un enlace a ccam en `~/.local/bin`, así que funciona en bash, zsh, scripts y cualquier otra cosa que ejecute programas desde `PATH`. Los atajos son opcionales; crea uno para las cuentas que inicias a menudo.
@@ -82,13 +82,17 @@ La shell encuentra `ccwork` en `PATH`, el kernel sigue el enlace e inicia el bin
 
 Por qué un enlace simbólico y no un alias de shell o un script envoltorio: un enlace simbólico funciona en todas las shells y en scripts, no agrega el inicio de una shell adicional (de 1 a 2 ms aproximadamente) y el inicio sigue leyendo un solo archivo. `scripts/perf-check.sh` mide un atajo con `hyperfine` contra el mismo límite de 10 ms (p95) que `ccam <name>`.
 
+### En Windows
+
+Un atajo es `ccwork.exe` en `%USERPROFILE%\.local\bin`, y `shim.Name` quita el `.exe` (en mayúsculas o minúsculas) antes de la búsqueda, así que `ccwork`, `ccwork.exe` y `CCWORK.EXE` inician `work`. ccam primero crea un enlace simbólico, que Windows permite en el modo de desarrollador o para un administrador. Sin ese permiso crea un enlace duro: un segundo nombre para el mismo archivo `ccam.exe`, que no necesita privilegios. Un enlace duro cuenta como propio de ccam cuando es el mismo archivo que `ccam.exe`. Como `ccam update` pone un archivo nuevo en lugar de `ccam.exe`, después renueva cada atajo con enlace duro mediante `shim.Relink` e imprime `✓ shortcut ccwork renewed`. La comprobación del nombre busca `<name>` con cada extensión de `PATHEXT` (`.exe`, `.cmd`, etc.) en las demás carpetas de `PATH`.
+
 ## Seguridad y casos límite
 
 - **Un enlace que ninguna cuenta reclama.** Si un enlace a ccam en `~/.local/bin` tiene un nombre que ninguna cuenta usa, por ejemplo después de editar `shortcut` a mano en `config.toml`, ccam no recurre a la cuenta predeterminada. Se detiene con `` ccam: ccold is not the shortcut of any account (see `ccam list`, `ccam shortcut`) ``. Vuelve a establecer el nombre con `ccam shortcut` o elimina el enlace.
 - **Archivos existentes.** ccam nunca reemplaza un archivo que no creó. `ccam shims install` se detiene con `<path> already exists and is not a ccam link, so it was left alone`.
 - **Un binario de ccam movido.** En ese caso, los enlaces antiguos apuntan a una ruta que ya no existe, y ccam no los considera propios. Elimínalos y luego ejecuta `ccam shims install`.
 - **Cambiar el nombre y quitar.** `ccam rename` conserva el nombre del atajo, y el enlace sigue funcionando, porque apunta a ccam y ccam busca el nombre en `config.toml`. `ccam remove` elimina el enlace de la cuenta. `ccam shortcut <account> <new>` elimina el enlace anterior antes de crear el nuevo.
-- **PATH.** Cuando ccam crea un enlace y `~/.local/bin` no está en tu `PATH`, imprime `Note: /home/me/.local/bin is not in PATH. Add it to ~/.bashrc or ~/.zshrc:` seguido de la línea `export PATH=...` que debes agregar.
+- **PATH.** Cuando ccam crea un enlace y `~/.local/bin` no está en tu `PATH`, imprime `Note: /home/me/.local/bin is not in PATH. Add it to ~/.bashrc or ~/.zshrc:` seguido de la línea `export PATH=...` que debes agregar. En Windows, en su lugar imprime la línea de PowerShell que agrega la carpeta a tu `PATH` de usuario.
 - **Comprobar más tarde.** `ccam doctor` informa `missing shortcuts in /home/me/.local/bin: ccwork` y avisa cuando la carpeta no está en `PATH`. `ccam doctor --fix` crea los enlaces que faltan.
 
 ## Relacionado

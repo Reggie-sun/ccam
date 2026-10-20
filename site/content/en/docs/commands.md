@@ -2,7 +2,7 @@
 title: Command reference
 metaTitle: ccam command reference
 description: Every ccam command and option, from ccam add and ccam <name> to ccam usage, ccam next and ccam doctor.
-updated: 2026-10-19
+updated: 2026-10-20
 published: 2026-10-19
 order: 3
 translation: source
@@ -16,7 +16,16 @@ Put `--dry-run` before a command to see what it would do without doing it, for e
 
 `ccam <name|number> [arguments]` starts Claude Code as that account. ccam does not read the arguments after the name; it passes them to `claude` in the same order, and standard input, the exit code and signals behave exactly as with `claude` itself. A `--` after the name is optional.
 
-`ccam` with arguments but no account name, such as `ccam -p "summarise"`, uses the default account. Set it with `ccam use <name>`.
+`ccam` with arguments but no account name, such as `ccam -p "summarise"`, uses the account set for the current folder, else the default account. Set them with `ccam folder <name> [folder]` and `ccam use <name>`.
+
+```sh
+ccam folder work ~/code/company   # work inside ~/code/company and below
+ccam folder                       # list folders and the account used here
+ccam folder --remove ~/code/company
+ccam --fallback work -p "fix the tests"   # run again as another account at the limit
+```
+
+`--fallback` before the account name is for `-p`/`--print` runs. When the account reaches its usage limit, ccam runs the same command again as the logged-in account with the most room and prints only the output of the run that finished. See [Accounts by folder](/features/folder) and [Run again at the limit](/features/next#run-again-at-the-limit).
 
 A shortcut such as `ccwork` starts its account the same way: `ccwork --resume` does what `ccam work --resume` does. See [shortcuts](/docs/commands#shortcuts).
 
@@ -108,6 +117,7 @@ ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
 ccam version         # also: ccam -v, ccam --version
+ccam completion bash # or zsh, powershell
 ```
 
 `ccam update` checks the release's SHA-256 checksum before it replaces ccam, and `--version v0.2.0` installs a particular release. A ccam installed from the `.deb` package is updated with apt instead. See [update](/docs/install#update).
@@ -122,4 +132,4 @@ ccam version         # also: ccam -v, ccam --version
 | `~/.local/state/ccam/` | Usage cache and last-used times |
 | `~/.local/bin/<shortcut>` | Shortcut commands such as `ccwork`, links to ccam |
 
-The `XDG_CONFIG_HOME`, `XDG_DATA_HOME` and `XDG_STATE_HOME` variables move these folders.
+The `XDG_CONFIG_HOME`, `XDG_DATA_HOME` and `XDG_STATE_HOME` variables move these folders. On Windows, `~` is `%USERPROFILE%` and shortcuts are `<shortcut>.exe`.

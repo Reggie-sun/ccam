@@ -2,10 +2,10 @@
 title: "Démarrage rapide"
 metaTitle: "Démarrage : ajouter et changer de compte Claude Code"
 description: Ajoutez deux comptes Claude Code avec ccam add, donnez-leur des raccourcis comme ccwork, passez de l'un à l'autre et choisissez ce qu'ils partagent.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: a10d91d2a64e
+sourceHash: 55f81dae9fc0
 ---
 
 Ajoutez chaque compte avec `ccam add`, puis lancez Claude Code avec `ccam <name>` ou avec un raccourci que vous nommez vous-même, par exemple `ccwork`. C'est tout ce dont la plupart des gens ont besoin.
@@ -107,7 +107,7 @@ ccam usage
 ccam next --continue
 ```
 
-`ccam usage` affiche l'utilisation sur 5 heures et sur la semaine de chaque compte. `ccam next --continue` ouvre la même conversation dans le compte suivant. Voir [Limites d'utilisation](/docs/usage-limits).
+`ccam usage` affiche l'utilisation sur 5 heures et sur la semaine de chaque compte. `ccam next --continue` ouvre la même conversation dans le compte suivant. Dans les scripts, `ccam --fallback work -p "…"` change de compte de lui-même. Voir [Limites d'utilisation](/docs/usage-limits).
 
 ## Vous utilisez déjà ~/.claude ?
 

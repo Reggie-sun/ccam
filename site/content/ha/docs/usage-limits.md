@@ -1,10 +1,10 @@
 ---
 title: Iyakokin amfani da sauya asusai
 description: Ga amfanin awa 5 da na mako na kowane asusun Claude Code da ccam usage, sannan ka buɗe asusun da ya fi sarari da ccam next --auto.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: d288177682d7
+sourceHash: a84df8e873d6
 ---
 
 `ccam usage` yana nuna nawa kowane asusu ya yi amfani da shi daga iyakar awa 5 da ta mako. `ccam next --auto` yana buɗe asusun da ya fi sauran sarari, kuma `--continue` yana ɗauko tattaunawar yanzu zuwa can.
@@ -48,7 +48,7 @@ Idan access token na asusu ya ƙare, ccam ba ya sabunta shi, domin sabunta shi y
 ccam statusline install
 ```
 
-Sannan Claude Code yana nuna sunan asusun da amfaninsa a layin matsayi (status line), misali `[work] · Opus · 5h 24% · 7d 41%`. Idan kana da umarnin layin matsayi tuni, ccam yana riƙe shi kuma yana saka sunan asusun a gabansa. Layin matsayi yana kuma ajiye lambobinsa, waɗanda `ccam usage` ke amfani da su idan endpoint ɗin bai amsa ba.
+Sannan Claude Code yana nuna sunan asusun da amfaninsa a layin matsayi (status line), misali `[work] · Opus · 5h 24% · 7d 41%`. Daga 90% zuwa sama, layin yana kuma ba da shawarar `ccam next --auto --continue`. Idan kana da umarnin layin matsayi tuni, ccam yana riƙe shi kuma yana saka sunan asusun a gabansa. Layin matsayi yana kuma ajiye lambobinsa, waɗanda `ccam usage` ke amfani da su idan endpoint ɗin bai amsa ba.
 
 ## Sauyawa
 
@@ -59,5 +59,13 @@ ccam next --continue  # the next account that shares your conversation history
 ```
 
 `ccam next` yana tsallake asusan da ba a shiga da su ba, kuma `--auto` yana tsallake asusan da suka kai 100%. Don ci gaba da tattaunawa, dole ne asusun biyu su raba tarihin tattaunawa; duba [rabawa](/docs/sharing).
+
+Don rubutun umarni (scripts) da ayyukan da aka tsara lokacinsu masu gudanar da `claude -p`, saka `--fallback` kafin sunan asusun. Idan wannan asusun ya kai iyakarsa, ccam yana sake gudanar da umarnin iri ɗaya a matsayin asusun da ya fi sarari, kuma sakamakon gudun da ya kammala kaɗai ake bugawa:
+
+```sh
+ccam --fallback work -p "review the diff" --output-format json
+```
+
+Duba [Sake gudanarwa a iyaka](/features/next#run-again-at-the-limit) don yadda ccam yake yanke shawara.
 
 [Jagorar matakan aiki idan an kai iyakar amfani](/guides/usage-limit-workflow) tana bin cikakken misali mataki-mataki.

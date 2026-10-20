@@ -1,10 +1,10 @@
 ---
 title: Amri za njia fupi
 description: Ipe akaunti amri yake yenyewe kama ccwork kwa ccam shortcut, na uunde upya viungo katika ~/.local/bin kwa ccam shims install.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 5f0cb5a57042
+sourceHash: 939256e7a67e
 ---
 
 Njia fupi ni amri unayoipa jina mwenyewe inayoanzisha Claude Code kama akaunti moja: `ccwork --resume` hufanya kile ambacho `ccam work --resume` hufanya. Ni kiungo cha ccam katika `~/.local/bin`, kwa hiyo inafanya kazi katika bash, zsh, scripts na kitu kingine chochote kinachoendesha programu kutoka `PATH`. Njia fupi ni za hiari; unda moja kwa akaunti unazoanzisha mara nyingi.
@@ -82,13 +82,17 @@ Shell hupata `ccwork` kwenye `PATH`, kernel hufuata kiungo na huanzisha binary y
 
 Kwa nini symlink na si alias ya shell au script ya kuzunguka: symlink hufanya kazi katika kila shell na katika scripts, haiongezi uanzishaji wa ziada wa shell (takriban ms 1 hadi 2), na uanzishaji bado husoma faili moja. `scripts/perf-check.sh` hupima njia fupi kwa `hyperfine` dhidi ya kikomo kile kile cha ms 10 (p95) kama `ccam <name>`.
 
+### Kwenye Windows
+
+Njia fupi ni `ccwork.exe` katika `%USERPROFILE%\.local\bin`, na `shim.Name` huondoa `.exe` (kwa herufi kubwa au ndogo) kabla ya kutafuta, kwa hiyo `ccwork`, `ccwork.exe` na `CCWORK.EXE` zote huanzisha `work`. ccam kwanza huunda kiungo cha ishara (symbolic link), ambacho Windows huruhusu katika Developer Mode au kwa msimamizi. Bila haki hiyo huunda hard link: jina la pili la faili ile ile ya `ccam.exe`, ambalo halihitaji ruhusa maalum. Hard link huhesabiwa kuwa ya ccam inapokuwa faili ile ile kama `ccam.exe`. Kwa sababu `ccam update` huweka faili jipya mahali pa `ccam.exe`, baadaye hufanya upya kila njia fupi ya hard link kwa `shim.Relink` na huchapisha `✓ shortcut ccwork renewed`. Ukaguzi wa jina hutafuta `<name>` pamoja na kila kiendelezi katika `PATHEXT` (`.exe`, `.cmd` na kadhalika) katika folda nyingine za `PATH`.
+
 ## Usalama na hali maalum
 
 - **Kiungo kisicho cha akaunti yoyote.** Ikiwa kiungo cha ccam katika `~/.local/bin` kina jina ambalo hakuna akaunti inayolitumia, kwa mfano baada ya kuhariri `shortcut` katika `config.toml` kwa mkono, ccam hairudi kwenye akaunti chaguo-msingi. Husimama na `` ccam: ccold is not the shortcut of any account (see `ccam list`, `ccam shortcut`) ``. Weka jina tena kwa `ccam shortcut`, au futa kiungo.
 - **Faili zilizopo.** ccam kamwe haibadilishi faili ambayo haikuiunda. `ccam shims install` husimama na `<path> already exists and is not a ccam link, so it was left alone`.
 - **Binary ya ccam iliyohamishwa.** Viungo vya zamani basi huelekea njia ambayo haipo tena, na ccam haivihesabu kuwa vyake. Vifute, kisha endesha `ccam shims install`.
 - **Kubadilisha jina na kuondoa.** `ccam rename` huhifadhi jina la njia fupi, na kiungo huendelea kufanya kazi, kwa sababu kinaelekea ccam na ccam hutafuta jina katika `config.toml`. `ccam remove` hufuta kiungo cha akaunti. `ccam shortcut <account> <new>` hufuta kiungo cha zamani kabla ya kuunda kipya.
-- **PATH.** ccam inapounda kiungo na `~/.local/bin` haiko kwenye `PATH` yako, huchapisha `Note: /home/me/.local/bin is not in PATH. Add it to ~/.bashrc or ~/.zshrc:` ikifuatiwa na mstari wa `export PATH=...` wa kuongeza.
+- **PATH.** ccam inapounda kiungo na `~/.local/bin` haiko kwenye `PATH` yako, huchapisha `Note: /home/me/.local/bin is not in PATH. Add it to ~/.bashrc or ~/.zshrc:` ikifuatiwa na mstari wa `export PATH=...` wa kuongeza. Kwenye Windows huchapisha badala yake mstari wa PowerShell unaoongeza folda hiyo kwenye `PATH` ya mtumiaji wako.
 - **Kukagua baadaye.** `ccam doctor` huripoti `missing shortcuts in /home/me/.local/bin: ccwork` na huonya wakati folda haiko kwenye `PATH`. `ccam doctor --fix` huunda viungo vinavyokosekana.
 
 ## Zinazohusiana

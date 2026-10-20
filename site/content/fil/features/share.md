@@ -1,10 +1,10 @@
 ---
 title: Sharing sa pagitan ng mga account
 description: Paano nili-link ng ccam share ang settings, CLAUDE.md, extension at kasaysayan sa group folder, may plano, backup at conflict choice; ibinabalik ito ng off.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: b30b7cdb2b15
+sourceHash: 16de29bbdd57
 ---
 
 May sariling folder ang bawat account, pero hindi kailangang hiwalay ang karamihan ng laman nito. Ino-on o ino-off ng `ccam share` ang sharing para sa isang account at isang item sa bawat pagkakataon: inililipat ang file o folder ng account sa isang group folder at pinapalitan ng symbolic link, kaya binabasa at sinusulatan ng bawat account sa group ang iisang kopya. Gamitin ito pagkatapos ng `ccam add` para baguhin kung ano ang shine-share ng isang account, o para ilagay ang ilang account sa sarili nilang group.
@@ -112,6 +112,10 @@ Repair them with `ccam doctor --fix`, then run again
 ```
 
 Pinapatakbo ng `ccam doctor --fix` ang `share.Build` na ang naka-save na settings ang nasa magkabilang panig, na hinahango ang bawat hakbang mula sa nasa disk, pinapanatili ang nilalaman ng group sa mga conflict at bina-back up ang anumang pinapalitan nito.
+
+### Sa Windows
+
+Gumagawa lang ang Windows ng mga symbolic link sa Developer Mode (Settings > System > For developers) o para sa isang administrator. Sinusubukan muna ng `fsutil.Link` ang symbolic link. Kapag wala ang karapatang iyon, nagiging directory junction ang shared na folder (`agents`, `skills`, `projects` at ang iba pa), na puwedeng gawin ng kahit sinong user, at pareho ang paggana nito para sa Claude Code. Symbolic link lang ang puwedeng maging shared na file (`settings.json`, `CLAUDE.md`, `history.jsonl`), kaya humihinto ang ccam na may `Windows links files only in Developer Mode` at iminumungkahing i-on ito o panatilihing lokal ang item na iyon. Binabasa ng `share.Check` ang mga junction bilang mga link (`fsutil.LinkTarget`), at ang pag-alis ng folder ng account ay nag-aalis ng junction mismo, hindi kailanman ng nilalaman ng group na itinuturo nito.
 
 ## Kaligtasan at mga espesyal na kaso
 

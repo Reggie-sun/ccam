@@ -1,10 +1,10 @@
 ---
 title: คำสั่งลัด
 description: "ให้บัญชีมีคำสั่งของตัวเอง เช่น ccwork ด้วย ccam shortcut และสร้างลิงก์ใน ~/.local/bin ขึ้นใหม่ด้วย ccam shims install"
-updated: 2026-10-19
+updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 5f0cb5a57042
+sourceHash: 939256e7a67e
 ---
 
 คำสั่งลัดคือคำสั่งที่คุณตั้งชื่อเองเพื่อเริ่ม Claude Code ในชื่อบัญชีหนึ่ง: `ccwork --resume` ทำงานเหมือนกับ `ccam work --resume` คำสั่งลัดเป็นลิงก์ไปยัง ccam ใน `~/.local/bin` จึงใช้ได้ใน bash, zsh, สคริปต์ และทุกอย่างที่รันโปรแกรมจาก `PATH` คำสั่งลัดเป็นตัวเลือกเสริม ให้สร้างไว้สำหรับบัญชีที่คุณเริ่มบ่อย
@@ -82,13 +82,17 @@ work: none (add one with `ccam shortcut work ccwork`)
 
 ทำไมจึงใช้ลิงก์สัญลักษณ์แทน alias ของเชลล์หรือสคริปต์ครอบ: ลิงก์สัญลักษณ์ใช้ได้ในทุกเชลล์และในสคริปต์ ไม่ต้องเริ่มเชลล์เพิ่ม (ประมาณ 1 ถึง 2 ms) และการเริ่มยังคงอ่านเพียงไฟล์เดียว `scripts/perf-check.sh` วัดคำสั่งลัดด้วย `hyperfine` เทียบกับขีดจำกัด 10 ms (p95) เดียวกับ `ccam <name>`
 
+### บน Windows
+
+คำสั่งลัดคือ `ccwork.exe` ใน `%USERPROFILE%\.local\bin` และ `shim.Name` จะตัด `.exe` ออก (ไม่ว่าตัวพิมพ์เล็กหรือใหญ่) ก่อนค้นหา ดังนั้น `ccwork`, `ccwork.exe` และ `CCWORK.EXE` จึงเริ่ม `work` ทั้งหมด ccam สร้างลิงก์สัญลักษณ์ก่อน ซึ่ง Windows อนุญาตใน Developer Mode หรือสำหรับผู้ดูแลระบบ หากไม่มีสิทธิ์นั้น ccam จะสร้างฮาร์ดลิงก์: ชื่อที่สองของไฟล์ `ccam.exe` ไฟล์เดียวกัน ซึ่งไม่ต้องใช้สิทธิ์พิเศษ ฮาร์ดลิงก์จะนับเป็นของ ccam เมื่อเป็นไฟล์เดียวกับ `ccam.exe` เนื่องจาก `ccam update` วางไฟล์ใหม่แทนที่ `ccam.exe` จากนั้นจึงต่ออายุคำสั่งลัดที่เป็นฮาร์ดลิงก์ทุกตัวด้วย `shim.Relink` และพิมพ์ `✓ shortcut ccwork renewed` การตรวจชื่อจะมองหา `<name>` พร้อมนามสกุลแต่ละตัวใน `PATHEXT` (`.exe`, `.cmd` และอื่น ๆ) ในโฟลเดอร์อื่นของ `PATH`
+
 ## ความปลอดภัยและกรณีพิเศษ
 
 - **ลิงก์ที่ไม่มีบัญชีใดเป็นเจ้าของ** หากลิงก์ไปยัง ccam ใน `~/.local/bin` มีชื่อที่ไม่มีบัญชีใดใช้ เช่น หลังจากที่คุณแก้ `shortcut` ใน `config.toml` ด้วยตัวเอง ccam จะไม่หันไปใช้บัญชีเริ่มต้น แต่จะหยุดด้วย `` ccam: ccold is not the shortcut of any account (see `ccam list`, `ccam shortcut`) `` ให้ตั้งชื่ออีกครั้งด้วย `ccam shortcut` หรือลบลิงก์นั้น
 - **ไฟล์ที่มีอยู่แล้ว** ccam ไม่เคยแทนที่ไฟล์ที่ตัวเองไม่ได้สร้าง `ccam shims install` จะหยุดด้วย `<path> already exists and is not a ccam link, so it was left alone`
 - **ไบนารี ccam ที่ถูกย้าย** ลิงก์เดิมจะชี้ไปยังพาธที่ไม่มีอยู่แล้ว และ ccam ไม่นับว่าเป็นของตัวเอง ให้ลบลิงก์เหล่านั้น แล้วรัน `ccam shims install`
 - **การเปลี่ยนชื่อและการลบ** `ccam rename` คงชื่อคำสั่งลัดไว้ และลิงก์ยังใช้ได้ เพราะลิงก์ชี้ไปที่ ccam และ ccam ค้นหาชื่อใน `config.toml` `ccam remove` ลบลิงก์ของบัญชี ส่วน `ccam shortcut <account> <new>` จะลบลิงก์เดิมก่อนสร้างลิงก์ใหม่
-- **PATH** เมื่อ ccam สร้างลิงก์และ `~/.local/bin` ไม่อยู่ใน `PATH` ของคุณ จะพิมพ์ `Note: /home/me/.local/bin is not in PATH. Add it to ~/.bashrc or ~/.zshrc:` ตามด้วยบรรทัด `export PATH=...` ที่ต้องเพิ่ม
+- **PATH** เมื่อ ccam สร้างลิงก์และ `~/.local/bin` ไม่อยู่ใน `PATH` ของคุณ จะพิมพ์ `Note: /home/me/.local/bin is not in PATH. Add it to ~/.bashrc or ~/.zshrc:` ตามด้วยบรรทัด `export PATH=...` ที่ต้องเพิ่ม บน Windows จะพิมพ์บรรทัด PowerShell ที่เพิ่มโฟลเดอร์นั้นลงใน `PATH` ของผู้ใช้แทน
 - **การตรวจภายหลัง** `ccam doctor` จะรายงาน `missing shortcuts in /home/me/.local/bin: ccwork` และเตือนเมื่อโฟลเดอร์ไม่อยู่ใน `PATH` ส่วน `ccam doctor --fix` จะสร้างลิงก์ที่หายไป
 
 ## หัวข้อที่เกี่ยวข้อง

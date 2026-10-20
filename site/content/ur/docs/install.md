@@ -1,11 +1,11 @@
 ---
 title: "ccam انسٹال کریں"
-metaTitle: "ccam کو Linux اور macOS پر انسٹال کریں"
-description: "ccam کو Linux یا macOS پر ایک کمانڈ، .deb پیکیج یا سورس سے انسٹال کریں اور ccam update سے اپ ڈیٹ کریں۔ اس سے پہلے Claude Code انسٹال ہونا ضروری ہے۔"
-updated: 2026-10-19
+metaTitle: "ccam کو Linux، macOS اور Windows پر انسٹال کریں"
+description: "ccam کو Linux، macOS یا Windows پر ایک کمانڈ، .deb پیکیج یا سورس سے انسٹال کریں اور ccam update سے اپ ڈیٹ کریں۔ اس سے پہلے Claude Code انسٹال ہونا ضروری ہے۔"
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 7ecd1ed00e09
+sourceHash: 07eadc0769c8
 ---
 
 Linux یا macOS پر ٹرمینل میں یہ کمانڈ چلائیں:
@@ -16,13 +16,22 @@ curl -fsSL https://ccam.dev/install.sh | sh
 
 اسکرپٹ آپ کے سسٹم کے لیے ریلیز ڈاؤن لوڈ کرتا ہے، اس کا SHA-256 چیک سم جانچتا ہے اور `ccam` کو `~/.local/bin` میں رکھتا ہے، جہاں ccam وہ شارٹ کٹ کمانڈز بھی بناتا ہے جو آپ بعد میں چنیں، جیسے `ccwork`۔ اگر وہ فولڈر آپ کے `PATH` میں نہیں ہے تو اسکرپٹ وہ لائن دکھاتا ہے جو `~/.bashrc` یا `~/.zshrc` میں شامل کرنی ہے۔
 
+Windows پر یہ PowerShell میں چلائیں:
+
+```powershell
+irm https://ccam.dev/install.ps1 | iex
+```
+
+یہ `ccam_windows_<arch>.zip` ڈاؤن لوڈ کرتا ہے، اس کا SHA-256 چیک سم جانچتا ہے، `ccam.exe` کو `%USERPROFILE%\.local\bin` میں رکھتا ہے، وہی فولڈر جس میں Claude Code کا انسٹالر `claude.exe` رکھتا ہے، اور اگر وہ فولڈر ابھی آپ کے یوزر `PATH` میں نہ ہو تو اسے شامل کر دیتا ہے۔ اس کے بعد نیا ٹرمینل کھولیں۔
+
 ccam آپ کے لیے Claude Code شروع کرتا ہے، اس لیے پہلے [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) انسٹال کریں اور یقینی بنائیں کہ `claude --version` کام کرتا ہے۔
 
 ## معاون سسٹمز
 
 - x86-64 اور ARM64 پر Linux: Ubuntu، Debian، Fedora، Arch، Alpine اور دیگر ڈسٹری بیوشنز۔ بائنری اسٹیٹک ہے اور اسے کسی اور چیز کی ضرورت نہیں۔
 - Apple silicon اور Intel پر macOS۔
-- Windows براہِ راست سپورٹ نہیں ہے۔ WSL کے اندر ccam کسی بھی Linux سسٹم کی طرح کام کرتا ہے۔
+- x86-64 اور ARM64 پر Windows 10 اور 11، PowerShell، Windows Terminal یا Git Bash میں۔ شیئر کیے گئے فولڈرز ہر یوزر کے لیے کام کرتے ہیں۔ شیئر کی گئی فائلوں (`settings.json`، `CLAUDE.md`، `history.jsonl`) کے لیے Developer Mode درکار ہے (Settings > System > For developers)، کیونکہ Windows فائلوں کے لنکس بنانے کی اجازت صرف اسی موڈ میں، یا ایڈمنسٹریٹر کو، دیتا ہے؛ دیکھیں [Windows پر شیئرنگ](/features/share#on-windows)۔
+- WSL کے اندر ccam کسی بھی Linux سسٹم کی طرح کام کرتا ہے۔
 
 ## انسٹال کرنے کے دوسرے طریقے
 
@@ -46,11 +55,19 @@ go install github.com/jhyunwoo/ccam/cmd/ccam@latest
 curl -fsSL https://ccam.dev/install.sh | CCAM_VERSION=v0.1.0 sh
 ```
 
+```powershell
+$env:CCAM_VERSION = 'v0.1.0'; irm https://ccam.dev/install.ps1 | iex
+```
+
 ## شیل کمپلیشن
 
 ```sh
 ccam completion bash > ~/.local/share/bash-completion/completions/ccam
 ccam completion zsh > "${fpath[1]}/_ccam"
+```
+
+```powershell
+ccam completion powershell >> $PROFILE
 ```
 
 کمپلیشن `ccam` کی تمام کمانڈز اور آپشنز کے لیے کام کرتی ہے، اکاؤنٹس کے ناموں سمیت۔
@@ -92,6 +109,8 @@ ccam --dry-run update
 
 انسٹال اسکرپٹ دوبارہ چلانے سے بھی `~/.local/bin` والی کاپی اپ ڈیٹ ہو جاتی ہے۔ اگر آپ نے ccam کو `go install` سے بنایا تھا تو وہی کمانڈ دوبارہ چلائیں۔
 
+**Windows۔** `ccam update` Windows کے لیے `.zip` ڈاؤن لوڈ کرتا ہے۔ Windows پر چلتے ہوئے پروگرام کو بدلا نہیں جا سکتا، اس لیے پرانی بائنری کا نام بدل کر `ccam.exe.old` کر دیا جاتا ہے، جسے اگلی اپ ڈیٹ حذف کر دیتی ہے۔
+
 **Debian اور Ubuntu پیکیج۔** apt کے ذریعے انسٹال کی گئی `/usr/bin/ccam` کو `ccam update` نہیں بدلتا بلکہ اس کے بجائے یہ مراحل دکھاتا ہے۔ [ریلیزز کے صفحے](https://github.com/jhyunwoo/ccam/releases) سے نئی `ccam_<version>_linux_amd64.deb` ڈاؤن لوڈ کریں اور اسے پرانی کے اوپر انسٹال کریں:
 
 ```sh
@@ -107,6 +126,14 @@ ccam list
 ccam shortcut work --remove   # once for each account that has a shortcut
 rm ~/.local/bin/ccam
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
+```
+
+Windows پر، PowerShell میں:
+
+```powershell
+ccam shortcut work --remove   # once for each account that has a shortcut
+Remove-Item ~\.local\bin\ccam.exe
+Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
 ```
 
 `~/.local/share/ccam` حذف کرنے سے وہاں محفوظ لاگ اِن اور گفتگو کی ہسٹری بھی حذف ہو جاتی ہے۔ جو `~/.claude` فولڈر آپ نے [امپورٹ کیا تھا](/docs/commands) وہ اپنی جگہ پر رہتا ہے۔

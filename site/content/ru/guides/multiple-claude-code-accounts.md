@@ -1,10 +1,10 @@
 ---
 title: Несколько аккаунтов Claude Code на одном компьютере
 description: Как запустить несколько аккаунтов Claude Code одновременно с CLAUDE_CONFIG_DIR, вручную через псевдонимы оболочки или с ccam, и переключаться между ними.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: e2f4deb40c81
+sourceHash: f2982e4317a2
 ---
 
 Дайте каждому аккаунту собственную папку конфигурации. Claude Code берёт путь к папке из переменной окружения `CLAUDE_CONFIG_DIR`, а в каждой папке хранятся свои данные входа, настройки и история, поэтому каждый аккаунт остаётся авторизованным и их можно запускать одновременно. Это можно настроить вручную через псевдоним оболочки или поручить ccam.
@@ -61,7 +61,7 @@ ccam add work --shortcut ccwork
 
 ## Работает ли это в Windows и WSL?
 
-Claude Code работает [нативно в Windows и внутри WSL](https://code.claude.com/docs/en/setup). `CLAUDE_CONFIG_DIR` действует в обоих случаях, поэтому в Windows без WSL достаточно псевдонима или функции PowerShell, описанных выше. ccam работает на Linux и macOS; в Windows установите его и пользуйтесь им внутри WSL, где он работает так же, как на Linux.
+Claude Code работает [нативно в Windows и внутри WSL](https://code.claude.com/docs/en/setup). `CLAUDE_CONFIG_DIR` действует в обоих случаях, поэтому в Windows без WSL достаточно псевдонима или функции PowerShell, описанных выше. ccam тоже работает в Windows нативно: установите его в PowerShell командой `irm https://ccam.dev/install.ps1 | iex` или внутри WSL командой для Linux. Короткие команды становятся `ccwork.exe`, а для общего доступа к файлам, например `settings.json`, нужен режим разработчика ([Установка ccam](/docs/install)).
 
 ## Устранение неполадок
 

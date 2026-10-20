@@ -4,7 +4,7 @@ description: "Chạy Claude Code bằng tài khoản bất kỳ với ccam <name
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 401eed57e533
+sourceHash: e6b5a8d4df86
 ---
 
 `ccam work` khởi động Claude Code bằng tài khoản `work`, và mọi thứ sau tên được chuyển nguyên vẹn cho `claude`. Hãy dùng nó ở bất cứ đâu bạn vẫn gõ `claude`: trong terminal, trong script, hoặc khi có đầu vào được pipe vào.
@@ -17,16 +17,18 @@ ccam 2                           # the account with number 2 (see ccam list)
 ccam work --resume               # claude --resume, as work
 ccam work -p "fix the tests" --output-format json
 cat log.txt | ccam work -p "find the cause"
-ccam -p "summarise"              # no name: the default account
+ccam -p "summarise"              # no name: the folder's account, else the default
 ccam use work                    # make work the default account
+ccam folder work ~/code/company  # use work in that folder when no name is given
 ccam run work --continue         # same as ccam work --continue
 ccam                             # the picker on a terminal, the list otherwise
 ccam --dry-run work -p hi        # print the command instead of running it
+ccam --fallback work -p "fix the tests"   # run again as another account at the limit
 ```
 
 Hãy đưa tên của một tài khoản hoặc số của nó trong `ccam list`. ccam không đọc các đối số sau tên, nên `ccam work --help` hiển thị trợ giúp của Claude Code. Dấu `--` sau tên là không bắt buộc. Đầu vào chuẩn, mã thoát và tín hiệu hoạt động giống như với `claude`.
 
-Khi đối số đầu tiên bắt đầu bằng `-` và không phải một cờ của chính ccam, ccam khởi động tài khoản mặc định với tất cả các đối số. Tài khoản mặc định là tài khoản được đặt bằng `ccam use`, hoặc tài khoản có số thấp nhất nếu bạn chưa đặt.
+Khi đối số đầu tiên bắt đầu bằng `-` và không phải một cờ của chính ccam, ccam khởi động một tài khoản không cần tên, với tất cả các đối số. Đó là tài khoản được đặt cho thư mục hiện tại bằng [`ccam folder`](/features/folder), nếu không thì là tài khoản mặc định: tài khoản được đặt bằng `ccam use`, hoặc tài khoản có số thấp nhất nếu bạn chưa đặt.
 
 ### Bộ chọn
 
@@ -50,21 +52,27 @@ Bộ chọn đóng lại trước khi thực hiện thao tác, nên terminal đ�
 | Tùy chọn | Tác dụng | Mặc định |
 | --- | --- | --- |
 | `--dry-run` | In ra biến môi trường và lệnh mà ccam sẽ chạy, rồi thoát | tắt |
+| `--fallback` | Cho các lần chạy `-p`/`--print`: khi tài khoản chạm giới hạn sử dụng, chạy lại cùng lệnh đó bằng tài khoản đã đăng nhập còn nhiều hạn mức nhất ([chi tiết](/features/next#run-again-at-the-limit)) | tắt |
 | `-v`, `--version` | In ra `ccam <version>` (chỉ khi là đối số đầu tiên) | |
 | `-h`, `--help` | Trợ giúp của ccam, dưới dạng `ccam --help` hoặc `ccam run --help` | |
 
 Quy tắc về đối số:
 
 - ccam chỉ đọc cờ của chính nó ở trước tên tài khoản. Sau tên, mọi đối số đều thuộc về Claude Code, kể cả `--dry-run` và `--help`.
-- `--dry-run` hoạt động dưới dạng `ccam --dry-run work`, `ccam run --dry-run work` và `ccam --dry-run` (tài khoản mặc định). Nó được hỗ trợ, không bị từ chối.
-- `ccam run <name|number> [claude args]` là dạng đầy đủ của `ccam <name>`. `ccam run` không kèm tên sẽ dùng tài khoản mặc định.
+- `--dry-run` hoạt động dưới dạng `ccam --dry-run work`, `ccam run --dry-run work` và `ccam --dry-run` (tài khoản không cần tên). Nó được hỗ trợ, không bị từ chối. `--dry-run` và `--fallback` có thể đứng theo thứ tự bất kỳ.
+- `ccam run <name|number> [claude args]` là dạng đầy đủ của `ccam <name>`. `ccam run` không kèm tên sẽ dùng tài khoản của thư mục hoặc tài khoản mặc định.
 - Tên tài khoản không được trùng với tên lệnh của ccam như `add`, `list`, `run` hoặc `usage`, nên `ccam <word>` không bao giờ mơ hồ.
 
-Lần chạy thử in ra một dòng mà bạn có thể dán vào shell:
+Lần chạy thử in ra một dòng mà bạn có thể dán vào shell, hoặc vào PowerShell trên Windows:
 
 ```console
 $ ccam --dry-run work -p "fix the tests"
 CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/claude --mcp-config=/home/me/.local/share/ccam/groups/default/mcp.json -p 'fix the tests'
+```
+
+```console
+PS> ccam --dry-run work -p "fix the tests"
+$env:CLAUDE_CONFIG_DIR='C:\Users\me\.local\share\ccam\profiles\work'; & C:\Users\me\.local\bin\claude.exe --mcp-config=C:\Users\me\.local\share\ccam\groups\default\mcp.json -p 'fix the tests'
 ```
 
 ## Cách hoạt động
@@ -78,7 +86,7 @@ Mỗi ô sáng lên khi bước của nó chạy, và các dòng bên dưới l�
 1. `cmd/ccam/main.go` gọi `app.Main`. Nếu ccam được khởi động dưới một tên khác, đó là một [lệnh tắt](/features/shortcuts) và đi thẳng tới trình khởi chạy.
 2. `app.parse` xem `os.Args` trước khi cobra tham gia. Chỉ `ccam` đứng một mình (bộ chọn), một tên lệnh của ccam (`config.Reserved`), `-h`/`--help` và `-v`/`--version` mới đi tới `cli.Execute`. Mọi thứ khác là một lần khởi động.
 3. `launcher.Launch` đọc `~/.config/ccam/config.toml`, tệp duy nhất nó phân tích.
-4. `launcher.Prepare` tìm tài khoản theo tên hoặc số, bỏ một dấu `--` đứng đầu, và tìm tệp thực thi `claude` bằng `ResolveClaude`. Kết quả tra cứu PATH được lưu đệm trong `~/.local/state/ccam/claude-path` cùng với thời điểm sửa đổi của tệp, nên ccam không phải tìm trong `PATH` ở mỗi lần khởi động. Tệp bị thay đổi hoặc không còn sẽ kích hoạt một lần tra cứu mới. Đường dẫn `claude_bin` trong `config.toml` được dùng nguyên như vậy. ccam từ chối một `claude` chính là ccam, so sánh theo inode, vì điều đó sẽ tạo vòng lặp.
+4. `launcher.Prepare` tìm tài khoản theo tên hoặc số (khi không có, `HereProfile` lấy tài khoản của thư mục, so sánh thư mục làm việc với các mục `[[folder]]` của `config.toml` dưới dạng chuỗi), bỏ một dấu `--` đứng đầu, và tìm tệp thực thi `claude` bằng `ResolveClaude`. Kết quả tra cứu PATH được lưu đệm trong `~/.local/state/ccam/claude-path` cùng với thời điểm sửa đổi của tệp, nên ccam không phải tìm trong `PATH` ở mỗi lần khởi động. Tệp bị thay đổi hoặc không còn sẽ kích hoạt một lần tra cứu mới. Đường dẫn `claude_bin` trong `config.toml` được dùng nguyên như vậy. ccam từ chối một `claude` chính là ccam, so sánh theo inode, vì điều đó sẽ tạo vòng lặp.
 5. `checkLinks` so sánh thư mục tài khoản `~/.local/share/ccam/profiles/<name>/` với thiết lập dùng chung của nó bằng `share.Check`, hàm này chỉ gọi `lstat` và `readlink`, một hoặc hai lời gọi hệ thống cho mỗi mục. Liên kết còn thiếu được tạo ngay lập tức. Bất cứ thứ gì có thể làm mất dữ liệu đều dừng việc khởi động.
 6. `applyMCP` thêm các máy chủ MCP dùng chung (xem bên dưới).
 7. `session.Register` ghi lại phiên. ccam ghi một tệp đánh dấu đặt tên theo PID của nó, chứa thời điểm bắt đầu tiến trình, vào `$XDG_RUNTIME_DIR/ccam/profile-<name>/<pid>` (hoặc `~/.local/state/ccam/locks/` khi không có `XDG_RUNTIME_DIR`). Với tài khoản dùng chung lịch sử hội thoại, `historyCheck` trước tiên tìm một phiên đang chạy trong `history-<group>-<hash>`, trong đó hash là của thư mục hiện tại, và cũng đăng ký ở đó. `exec` giữ nguyên PID, nên khi đó tệp đánh dấu chỉ đúng tiến trình Claude Code. Dùng tệp đánh dấu chứ không giữ khóa, vì các tiến trình do Claude Code khởi động sẽ thừa hưởng khóa và giữ nó sau khi phiên kết thúc.
@@ -88,7 +96,9 @@ Claude Code chạy với `CLAUDE_CONFIG_DIR` trỏ tới thư mục tài khoản
 
 ### Vì sao dùng exec
 
-`syscall.Exec` thay tiến trình ccam bằng `claude`, nên ccam không ở lại trong bộ nhớ, phím bấm, tín hiệu và mã thoát là của chính Claude Code, và đối số luôn là một mảng, không bao giờ là chuỗi shell. Công việc sau một phiên, như phát hiện các máy chủ được thêm bằng `claude mcp add`, diễn ra ở lần khởi động tiếp theo: ccam so sánh thời điểm sửa đổi của `.claude.json` với `~/.local/state/ccam/mcp/<name>/seen` và chỉ phân tích tệp khi nó đã thay đổi.
+`syscall.Exec` thay tiến trình ccam bằng `claude`, nên ccam không ở lại trong bộ nhớ, phím bấm, tín hiệu và mã thoát là của chính Claude Code, và đối số luôn là một mảng, không bao giờ là chuỗi shell.
+
+Windows không có `exec`. Ở đó, `Plan.Exec` khởi động `claude.exe` như một tiến trình con với cùng biến môi trường, đối số và console, chờ nó và thoát với mã thoát của nó. Ctrl+C đến thẳng Claude Code từ console, nên ccam bỏ qua nó. Tệp đánh dấu phiên mang PID của ccam, tiến trình sống đúng bằng thời gian của Claude Code, và bị xóa khi Claude Code thoát. Trong lúc chờ, ccam không làm gì khác. Công việc sau một phiên, như phát hiện các máy chủ được thêm bằng `claude mcp add`, diễn ra ở lần khởi động tiếp theo: ccam so sánh thời điểm sửa đổi của `.claude.json` với `~/.local/state/ccam/mcp/<name>/seen` và chỉ phân tích tệp khi nó đã thay đổi.
 
 ### Cách một dòng lệnh được định tuyến
 

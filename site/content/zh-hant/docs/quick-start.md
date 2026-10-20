@@ -2,10 +2,10 @@
 title: 快速入門
 metaTitle: "快速入門：新增和切換 Claude Code 帳號"
 description: 用 ccam add 新增兩個 Claude Code 帳號，為它們設定 ccwork 這類快捷指令並在帳號之間切換，再選擇要共用的項目。
-updated: 2026-10-19
+updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: a10d91d2a64e
+sourceHash: 55f81dae9fc0
 ---
 
 用 `ccam add` 新增每個帳號，然後用 `ccam <name>` 或你自己命名的快捷指令（例如 `ccwork`）啟動 Claude Code。大多數人只需要這些。
@@ -107,7 +107,7 @@ ccam usage
 ccam next --continue
 ```
 
-`ccam usage` 會顯示每個帳號的 5 小時用量和每週用量。`ccam next --continue` 會在下一個帳號開啟同一段對話。請參閱[用量限制](/docs/usage-limits)。
+`ccam usage` 會顯示每個帳號的 5 小時用量和每週用量。`ccam next --continue` 會在下一個帳號開啟同一段對話。在指令碼中，`ccam --fallback work -p "…"` 會自行切換。請參閱[用量限制](/docs/usage-limits)。
 
 ## 已經在使用 ~/.claude？
 

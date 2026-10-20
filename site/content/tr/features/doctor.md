@@ -1,10 +1,10 @@
 ---
 title: Kontrol etme ve onarma
 description: ccam doctor ile paylaşım bağlantılarını, dosya izinlerini, girişleri ve Claude Code sürümünü kontrol edin, güvenli olanı ccam doctor --fix ile onarın.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 9
 translation: machine
-sourceHash: a1b61efe2b1f
+sourceHash: a45ca25bb722
 ---
 
 `ccam doctor` ccam kurulumunuzu kontrol eder: Claude Code ikili dosyası, her hesabın klasörü, girişi ve paylaşım bağlantıları, paylaşılan MCP sunucuları, kullanım uç noktası ve kısayol komutlarınız. `ccam doctor --fix`, veri kaybetmeden yapabileceklerini onarır ve değiştirdiği her dosyayı önce bir yedek klasörüne taşır. `ccam <name>` bir paylaşım bağlantısı sorunuyla durduğunda, dosyaları elle geri yükledikten sonra veya bir Claude Code güncellemesinden sonra çalıştırın.
@@ -70,7 +70,7 @@ Ortadaki blok her hesap için bir kez çalışır. Kontroller ve `--fix` seçene
 
 1. **Claude Code sürümü** (`checkClaude`). `claude` ikili dosyasını başlatıcının yaptığı gibi bulur ve `claude --version` komutunu çalıştırır. Sürüm, ccam'in klasör düzeninin doğrulandığı sürüm olan `2.1.302` (`doctor.LayoutVersion`) ile başlamıyorsa `· ccam was verified against the folder layout of Claude Code 2.1.302. Any 'unknown entries' below may mean the layout changed` satırını ekler. Eksik bir ikili dosya veya başarısız olan bir `--version` hatadır. Onarım yok.
 2. **Ortamdaki kimlik bilgileri** (`checkAuthEnv`). `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY` veya `ANTHROPIC_AUTH_TOKEN` ayarlı olduğunda uyarır: o kabuktan başlatılan her hesap bunu devralır ve Claude Code bunu hesabın kendi girişine tercih eder. Onarım yok; değişkeni kendiniz kaldırın.
-3. **Klasör** (`checkProfile`). Eksik bir hesap klasörü hatadır ve o hesabın kontrollerini sonlandırır. Grup veya diğerleri için herhangi bir bit ayarlanmış izinler uyarıdır; `--fix`, `chmod 0700` çalıştırır.
+3. **Klasör** (`checkProfile`). Eksik bir hesap klasörü hatadır ve o hesabın kontrollerini sonlandırır. Grup veya diğerleri için herhangi bir bit ayarlanmış izinler uyarıdır; `--fix`, `chmod 0700` çalıştırır. Windows'ta izin bitleri yoktur; bu yüzden orada bu kontrol ve aşağıdaki `0600` kontrolü atlanır, kullanıcı profilinizdeki klasörü erişim listesi korur.
 4. **Giriş dosyası** (`checkCredentials`). `.credentials.json`, `lstat` ile kontrol edilir. Sembolik bağlantı bir hatadır, çünkü her hesabın kendi tokenı olmalıdır, ve onarılmaz. `0600` dışındaki bir mod uyarıdır; `--fix`, `chmod 0600` çalıştırır. Ardından giriş okunur (macOS'ta önce Anahtar Zinciri'nden). Giriş yoksa `ccam login <name>` komutunu gösteren bir uyarı verilir. Süresi dolmuş bir yenileme tokenı `login expired` hatasıdır; süresi dolmuş bir erişim tokenı ise yalnızca bilgidir, çünkü Claude Code onu bir sonraki başlatmada yeniler. Bunların hiçbiri onarılmaz.
 5. **Paylaşım bağlantıları** (`share.Check`). `share.Layout` içindeki her yolu, yalnızca `lstat` ve `readlink` kullanarak hesabın paylaşım ayarlarıyla karşılaştırır. Dört tür sorun bildirir: eksik bağlantı, başka bir yere yönelen bağlantı, bağlantı olması gereken yerde gerçek bir dosya ve artık yerel olan bir öğe için geride kalmış bir bağlantı. Eksik bağlantı uyarıdır, diğerleri hatadır.
 6. **Bilinmeyen girdiler** (`checkUnknownEntries`). Hesap klasöründe ccam'in bilmediği (`share.Known`) üst düzey adları, Claude Code düzeninin değiştiğine dair bir ipucu olarak listeler. Yalnızca bilgi.
@@ -78,6 +78,7 @@ Ortadaki blok her hesap için bir kez çalışır. Kontroller ve `--fix` seçene
 8. **MCP sunucuları** (`checkMCP`). Her grubun `mcp.json` dosyasını bir kez yükler. Okunamayan bir dosya hatadır; `mcp.Validate` kontrolünden geçemeyen bir sunucu uyarıdır. Onarım yok.
 9. **Kullanım yanıtı biçimi** (`checkUsageFormat`). Kullanım uç noktasına önbellek olmadan ve olağan 3 saniyelik sınırla, biri yanıt verene kadar hesapları sırayla sorar. Yanıt artık ayrıştırılamıyorsa `ccam usage` komutunun durum satırı önbelleğine geri döndüğü konusunda uyarır. Ağı kullanan tek kontrol budur.
 10. **Kısayollar** (`checkShims`). Yalnızca bir hesabın kısayolu olduğunda. `~/.local/bin` içindeki eksik bağlantılar uyarıdır; `--fix`, yalnızca eksik bağlantıları oluşturan ve diğer dosyalara hiç dokunmayan `shim.Install` fonksiyonunu çağırır. `PATH` üzerinde olmayan bir bin klasörü uyarıdır ve onarılmaz.
+11. **Klasörler** (`checkFolders`). Yalnızca [`ccam folder`](/features/folder) girdileri varsa. Hesabı bulunmayan bir girdi hatadır, klasörü artık olmayan bir girdi ise uyarıdır. Hiçbiri düzeltilmez, çünkü bir girdiyi kaldırmak orada hangi hesabın başlayacağını değiştirir.
 
 ### Paylaşım bağlantılarını onarma
 

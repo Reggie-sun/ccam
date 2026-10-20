@@ -2,10 +2,10 @@
 title: Справочник команд
 metaTitle: Справочник команд ccam
 description: Все команды и параметры ccam, от ccam add и ccam <name> до ccam usage, ccam next и ccam doctor.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 3342453e38d3
+sourceHash: 5d3275878535
 ---
 
 Поставьте `--dry-run` перед командой, чтобы увидеть, что она сделает, ничего не выполняя, например `ccam --dry-run work`. Это работает при запуске Claude Code (`ccam <name>`, `ccam run`, `ccam next`) и с `share`, `migrate`, `shortcut`, `update` и `doctor --fix`. Другие команды, которые что-то меняют, отклоняют этот флаг и не выполняются.
@@ -16,7 +16,16 @@ sourceHash: 3342453e38d3
 
 `ccam <name|number> [arguments]` запускает Claude Code от имени этого аккаунта. ccam не читает аргументы после имени; он передаёт их в `claude` в том же порядке, а стандартный ввод, код возврата и сигналы работают точно так же, как с самим `claude`. Указывать `--` после имени необязательно.
 
-`ccam` с аргументами, но без имени аккаунта, например `ccam -p "summarise"`, использует аккаунт по умолчанию. Задать его можно командой `ccam use <name>`.
+`ccam` с аргументами, но без имени аккаунта, например `ccam -p "summarise"`, использует аккаунт, заданный для текущей папки, а если его нет — аккаунт по умолчанию. Задать их можно командами `ccam folder <name> [folder]` и `ccam use <name>`.
+
+```sh
+ccam folder work ~/code/company   # work inside ~/code/company and below
+ccam folder                       # list folders and the account used here
+ccam folder --remove ~/code/company
+ccam --fallback work -p "fix the tests"   # run again as another account at the limit
+```
+
+`--fallback` перед именем аккаунта предназначен для запусков с `-p`/`--print`. Когда аккаунт достигает лимита использования, ccam снова выполняет ту же команду от имени аккаунта с входом и наибольшим запасом и выводит только результат завершившегося запуска. См. [Аккаунты по папкам](/features/folder) и [Повторный запуск при лимите](/features/next#run-again-at-the-limit).
 
 Короткая команда, например `ccwork`, запускает свой аккаунт так же: `ccwork --resume` делает то же, что и `ccam work --resume`. См. раздел [короткие команды](/docs/commands#shortcuts).
 
@@ -108,6 +117,7 @@ ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
 ccam version         # also: ccam -v, ccam --version
+ccam completion bash # or zsh, powershell
 ```
 
 `ccam update` проверяет контрольную сумму SHA-256 выпуска, прежде чем заменить ccam, а `--version v0.2.0` устанавливает определённый выпуск. ccam, установленный из пакета `.deb`, обновляется через apt. Подробности в разделе [обновление](/docs/install#update).
@@ -122,4 +132,4 @@ ccam version         # also: ccam -v, ccam --version
 | `~/.local/state/ccam/` | Кэш использования и время последнего использования |
 | `~/.local/bin/<shortcut>` | Короткие команды, например `ccwork`; ссылки на ccam |
 
-Переменные `XDG_CONFIG_HOME`, `XDG_DATA_HOME` и `XDG_STATE_HOME` позволяют перенести эти папки.
+Переменные `XDG_CONFIG_HOME`, `XDG_DATA_HOME` и `XDG_STATE_HOME` позволяют перенести эти папки. В Windows `~` — это `%USERPROFILE%`, а короткие команды — это `<shortcut>.exe`.

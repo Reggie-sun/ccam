@@ -4,7 +4,7 @@ description: "Alias shell avec CLAUDE_CONFIG_DIR ou ccam pour utiliser plusieurs
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: ea24bb091caf
+sourceHash: b9fbcb88f111
 ---
 
 Un alias shell par compte est le moyen le plus simple d'utiliser plusieurs comptes Claude Code. ccam fait la même chose en interne et ajoute le partage, le changement de compte et le suivi de l'utilisation.
@@ -42,6 +42,8 @@ ccam add work --shortcut ccwork
 | Poursuivre une conversation dans un autre compte | Non | `ccam next --continue` |
 | Utilisation de tous les comptes | Non | `ccam usage` |
 | Choisir le compte qui a le plus de marge | Non | `ccam next --auto` |
+| Relancer une tâche `-p` avec un autre compte à la limite | Non | `ccam --fallback` |
+| Un compte pour chaque dossier de projet | Non | `ccam folder` |
 | Nom du compte dans la ligne d'état | Non | `ccam statusline install` |
 | Réparer les liens cassés | À la main | `ccam doctor --fix` |
 | Logiciel supplémentaire | Aucun | Un seul binaire statique |

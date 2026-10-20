@@ -1,10 +1,10 @@
 ---
 title: Iyakokin amfani
 description: ccam usage yana nuna iyakokin awa 5 da na mako na kowane asusu a lokaci ɗaya, kuma ccam statusline yana saka sunan asusun da amfaninsa a Claude Code.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 7
 translation: machine
-sourceHash: 8306a8f6d950
+sourceHash: f08a2fdc6f0b
 ---
 
 `ccam usage` yana nuna nawa kowane asusu ya yi amfani da shi daga iyakar awa 5 da ta mako, tare da lokacin da ya rage kafin kowace taga ta sake saitawa. Yi amfani da shi kafin ka fara dogon aiki, ko idan Claude Code ya gaya maka iyaka ta kusa, don ganin asusun da ke da sauran sarari. `ccam statusline` shi ne umarnin layin matsayi (status line) na Claude Code: yana nuna sunan asusun da amfaninsa a cikin Claude Code kuma yana ajiye lambobin don `ccam usage`.
@@ -100,11 +100,12 @@ Claude Code yana gudanar da umarnin layin matsayi kuma yana tura masa takardar J
 1. `runStatusline` yana nemo asusun daga `CCAM_PROFILE`, wanda ccam ke saitawa lokacin da yake fara Claude Code, ko kuma ta kwatanta `CLAUDE_CONFIG_DIR` da foldojin asusai.
 2. `ParseStatusLine` yana karanta `rate_limits.five_hour` da `rate_limits.seven_day`. JSON ɗin ba shi da iyakokin amfani ga asusan API key, ko kafin amsar farko ta zaman; to ba a ajiye komai.
 3. `SaveStatusLine` yana rubuta `~/.local/state/ccam/usage/<name>.statusline.json`. `ccam usage` yana amfani da shi idan endpoint ɗin bai amsa ba.
-4. ccam yana buga `[name] · model · 5h N% · 7d N%`. Da `--wrap`, yana gudanar da umarninka ta `sh -c` da shigarwa iri ɗaya kuma yana buga `[name]` sannan layin farko na umarnin maimakon haka.
+4. ccam yana buga `[name] · model · 5h N% · 7d N%`. Da `--wrap`, yana gudanar da umarninka ta `sh -c` da shigarwa iri ɗaya kuma yana buga `[name]` sannan layin farko na umarnin maimakon haka. A Windows yana gudanar da umarnin yadda Claude Code ke yi: da Git Bash idan an girka shi, in ba haka ba da PowerShell.
+5. Idan amfanin awa 5 ko na mako ya kai 90% ko fiye kuma akwai wani asusu, layin yana ƙarewa da `→ ccam next --auto --continue`, misali `[work] · Opus · 5h 93% · 7d 41% · → ccam next --auto --continue`.
 
 Umarnin da aka naɗe yana samun daƙiƙa 2. Bayan haka ana kashe shi kuma layin yana nuna sunan asusun kaɗai, don haka umarni mai jinkiri ba zai iya toshe layin matsayi na Claude Code ba.
 
-`ccam statusline install` yana rubuta `statusLine` a cikin `settings.json` na kowane asusu. Idan asusu ya riga yana da umarnin layin matsayi, ccam yana riƙe shi a matsayin `--wrap '<old command>'`. `settings.json` da aka raba ta rukuni ana rubuta shi sau ɗaya, ta mahaɗinsa, don haka kowane asusu a rukunin yana samun sa. Sake gudanar da shi yana buga `(already set)` ga fayilolin da suka riga suna amfani da ccam.
+`ccam statusline install` yana rubuta `statusLine` a cikin `settings.json` na kowane asusu. Idan asusu ya riga yana da umarnin layin matsayi, ccam yana riƙe shi a matsayin `--wrap '<old command>'`. A Windows ana rubuta hanyar ccam da slash na gaba da `~` don foldar gida (`~/.local/bin/ccam.exe statusline`), wanda Git Bash da PowerShell duka suke fahimta. `settings.json` da aka raba ta rukuni ana rubuta shi sau ɗaya, ta mahaɗinsa, don haka kowane asusu a rukunin yana samun sa. Sake gudanar da shi yana buga `(already set)` ga fayilolin da suka riga suna amfani da ccam.
 
 ## Tsaro da yanayi na musamman
 

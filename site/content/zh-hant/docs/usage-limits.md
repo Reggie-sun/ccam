@@ -1,10 +1,10 @@
 ---
 title: 用量限制與切換帳號
 description: 用 ccam usage 查看每個 Claude Code 帳號的 5 小時和每週用量，並用 ccam next --auto 開啟剩餘額度最多的帳號。
-updated: 2026-10-19
+updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: d288177682d7
+sourceHash: a84df8e873d6
 ---
 
 `ccam usage` 會顯示每個帳號已使用了多少 5 小時限制和每週限制。`ccam next --auto` 會開啟剩餘額度最多的帳號，而 `--continue` 會把目前的對話帶過去。
@@ -48,7 +48,7 @@ ccam 會使用每個帳號自己的登入資訊，同時向 Anthropic 的用量�
 ccam statusline install
 ```
 
-之後 Claude Code 會在狀態列中顯示帳號名稱及其用量，例如 `[work] · Opus · 5h 24% · 7d 41%`。如果你已經有狀態列指令，ccam 會保留它，並在前面加上帳號名稱。狀態列也會儲存它的數字，當端點沒有回應時，`ccam usage` 會使用這些數字。
+之後 Claude Code 會在狀態列中顯示帳號名稱及其用量，例如 `[work] · Opus · 5h 24% · 7d 41%`。達到 90% 以上時，這一行也會建議執行 `ccam next --auto --continue`。如果你已經有狀態列指令，ccam 會保留它，並在前面加上帳號名稱。狀態列也會儲存它的數字，當端點沒有回應時，`ccam usage` 會使用這些數字。
 
 ## 切換
 
@@ -59,5 +59,13 @@ ccam next --continue  # the next account that shares your conversation history
 ```
 
 `ccam next` 會略過未登入的帳號，`--auto` 則會略過已達 100% 的帳號。要接續對話，兩個帳號都必須共用對話記錄；請參閱[共用](/docs/sharing)。
+
+對於執行 `claude -p` 的指令碼和排程工作，請在帳號名稱前加上 `--fallback`。該帳號達到上限時，ccam 會以剩餘額度最多的帳號再次執行同一個指令，並且只輸出完成的那次執行的結果：
+
+```sh
+ccam --fallback work -p "review the diff" --output-format json
+```
+
+ccam 如何決定，請參閱[達到上限時重新執行](/features/next#run-again-at-the-limit)。
 
 [用量限制工作流程指南](/guides/usage-limit-workflow)會帶你走過一個完整的範例。

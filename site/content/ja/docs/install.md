@@ -1,11 +1,11 @@
 ---
 title: ccamのインストール
-metaTitle: "LinuxとmacOSにccamをインストール"
-description: LinuxやmacOSにccamを1つのコマンド、.debパッケージ、ソースのいずれかでインストールし、ccam updateで更新します。Claude Codeを先にインストールしてください。
-updated: 2026-10-19
+metaTitle: "Linux、macOS、Windowsにccamをインストール"
+description: Linux、macOS、Windowsにccamを1つのコマンド、.debパッケージ、ソースでインストールし、ccam updateで更新します。Claude Codeを先に入れてください。
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 7ecd1ed00e09
+sourceHash: 07eadc0769c8
 ---
 
 LinuxまたはmacOSのターミナルで、次のコマンドを実行します。
@@ -16,13 +16,22 @@ curl -fsSL https://ccam.dev/install.sh | sh
 
 このスクリプトは、お使いのシステム用のリリースをダウンロードしてSHA-256チェックサムを検証し、`~/.local/bin`に`ccam`を配置します。後から`ccwork`のようなショートカットコマンドを選ぶと、ccamは同じフォルダーにそれを作成します。そのフォルダーが`PATH`に含まれていない場合は、`~/.bashrc`または`~/.zshrc`に追加する行をスクリプトが表示します。
 
+Windowsでは、PowerShellで次を実行します。
+
+```powershell
+irm https://ccam.dev/install.ps1 | iex
+```
+
+このスクリプトは`ccam_windows_<arch>.zip`をダウンロードしてSHA-256チェックサムを検証し、`ccam.exe`を`%USERPROFILE%\.local\bin`（Claude Codeのインストーラーが`claude.exe`を置くフォルダー）に配置し、そのフォルダーがまだユーザーの`PATH`になければ追加します。その後、新しいターミナルを開いてください。
+
 ccamがClaude Codeを起動するので、先に[Claude Code](https://docs.claude.com/en/docs/claude-code/overview)をインストールし、`claude --version`が動作することを確認してください。
 
 ## 対応システム
 
 - x86-64およびARM64のLinux: Ubuntu、Debian、Fedora、Arch、Alpine、その他のディストリビューション。バイナリは静的リンクで、依存関係はありません。
 - Appleシリコン搭載およびIntel搭載のmacOS。
-- Windowsには直接対応していません。WSLの中では、ccamはほかのLinuxシステムと同じように動作します。
+- x86-64およびARM64のWindows 10と11。PowerShell、Windows Terminal、Git Bashで使えます。共有フォルダーはどのユーザーでも動作します。共有ファイル（`settings.json`、`CLAUDE.md`、`history.jsonl`）には開発者モード（設定 > システム > 開発者向け）が必要です。Windowsでは、このモードか管理者でなければファイルへのリンクを作成できないためです。[Windowsでの共有](/features/share#on-windows)を参照してください。
+- WSLの中では、ccamはほかのLinuxシステムと同じように動作します。
 
 ## そのほかのインストール方法
 
@@ -46,11 +55,19 @@ go install github.com/jhyunwoo/ccam/cmd/ccam@latest
 curl -fsSL https://ccam.dev/install.sh | CCAM_VERSION=v0.1.0 sh
 ```
 
+```powershell
+$env:CCAM_VERSION = 'v0.1.0'; irm https://ccam.dev/install.ps1 | iex
+```
+
 ## シェル補完
 
 ```sh
 ccam completion bash > ~/.local/share/bash-completion/completions/ccam
 ccam completion zsh > "${fpath[1]}/_ccam"
+```
+
+```powershell
+ccam completion powershell >> $PROFILE
 ```
 
 補完は`ccam`のすべてのコマンドとオプションに対応し、アカウント名も補完します。
@@ -92,6 +109,8 @@ ccam --dry-run update
 
 インストールスクリプトをもう一度実行しても、`~/.local/bin`にあるccamが更新されます。`go install`でccamをビルドした場合は、同じコマンドをもう一度実行してください。
 
+**Windows。** `ccam update`はWindows用の`.zip`をダウンロードします。Windowsでは実行中のプログラムを置き換えられないため、古いバイナリは`ccam.exe.old`に名前を変更され、次のアップデートで削除されます。
+
 **DebianおよびUbuntuのパッケージ。** aptでインストールした`/usr/bin/ccam`は`ccam update`では置き換えず、代わりに次の手順を表示します。[リリースページ](https://github.com/jhyunwoo/ccam/releases)から新しい`ccam_<version>_linux_amd64.deb`をダウンロードし、古いパッケージの上からインストールします。
 
 ```sh
@@ -107,6 +126,14 @@ ccam list
 ccam shortcut work --remove   # once for each account that has a shortcut
 rm ~/.local/bin/ccam
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
+```
+
+Windowsでは、PowerShellで次を実行します。
+
+```powershell
+ccam shortcut work --remove   # once for each account that has a shortcut
+Remove-Item ~\.local\bin\ccam.exe
+Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
 ```
 
 `~/.local/share/ccam`を削除すると、そこに保存されているログインと会話履歴も削除されます。[インポートした](/docs/commands)`~/.claude`フォルダーは、その場所に残ります。

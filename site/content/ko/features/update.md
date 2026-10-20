@@ -1,10 +1,10 @@
 ---
 title: ccam 업데이트
 description: ccam update는 SHA-256을 확인한 뒤 ccam을 GitHub의 최신 릴리스로 교체합니다. --check는 확인만 하고, --version은 지정한 릴리스 태그를 설치합니다.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 10
 translation: machine
-sourceHash: 83fc20191328
+sourceHash: d91499b95d3d
 ---
 
 `ccam update`는 GitHub에서 ccam 릴리스를 내려받아 릴리스의 `checksums.txt`로 확인한 뒤, 실행 중인 바이너리를 이름 바꾸기 한 번으로 교체합니다. 설치 스크립트나 압축 파일로 ccam을 설치했을 때 쓰면 됩니다. ccam은 스스로 업데이트를 확인하지 않습니다. GitHub에 접속하는 명령은 이것 하나뿐이므로, 다른 모든 명령은 오프라인에서도 똑같이 동작합니다.
@@ -53,9 +53,9 @@ $ ccam update
 2. `--version`이 없으면 `Updater.Latest`가 리디렉션을 따라가지 않고 `<releases>/latest`를 요청한 뒤, `Location` 헤더(`…/tag/v0.5.0`)에서 태그를 읽습니다. GitHub API 대신 릴리스 페이지를 쓰므로, 시간당 60회라는 API 요청 한도가 적용되지 않습니다. 조회 제한 시간은 10초입니다.
 3. `parseVersion`이 엄격한 패턴으로 태그를 검사합니다. 태그는 다운로드 URL과 출력되는 셸 명령에 들어가므로, `/`, `%`, 공백, 셸 문자가 포함된 것은 통과하지 못합니다. `compareVersions`는 이 태그를 실행 중인 버전과 비교하며, 프리릴리스는 해당 정식 릴리스보다 앞선 버전으로 취급합니다.
 4. `managed()`와 `writable()`이 ccam이 바이너리를 교체해도 되는지 판단합니다(아래 참고).
-5. `Updater.Fetch`는 `ccam_<os>_<arch>.tar.gz`와 `checksums.txt`를 동시에 내려받으며, 두 파일을 합쳐 제한 시간은 2분입니다. 각 다운로드는 최대 256 MB입니다.
+5. `Updater.Fetch`는 `ccam_<os>_<arch>.tar.gz`(Windows에서는 `ccam_windows_<arch>.zip`)와 `checksums.txt`를 동시에 내려받으며, 두 파일을 합쳐 제한 시간은 2분입니다. 각 다운로드는 최대 256 MB입니다.
 6. 다른 작업을 하기 전에 압축 파일의 SHA-256이 `checksums.txt`의 해당 줄과 일치해야 합니다. 줄이 없거나 체크섬이 다르면 `nothing was changed`를 출력하고 업데이트를 멈춥니다.
-7. `extract()`는 tar를 읽어 `ccam`이라는 이름의 첫 번째 일반 파일을 꺼냅니다. 디렉터리, 링크 등 다른 항목은 무시하며, 바이너리도 최대 256 MB입니다.
+7. `extract()`는 tar를 읽어 `ccam`이라는 이름의 첫 번째 일반 파일을 꺼냅니다(`extractZip`은 zip에서 `ccam.exe`를 꺼냅니다). 디렉터리, 링크 등 다른 항목은 무시하며, 바이너리도 최대 256 MB입니다.
 8. `Updater.Install`은 `fsutil.AtomicWrite`로 새 바이너리를 기록합니다. 바이너리 옆에 이전 파일과 같은 권한 비트로 임시 파일 `.ccam.tmp*`를 만들고, 디스크에 기록한 뒤 이전 파일 위로 이름을 바꿉니다.
 
 태그 조회부터 이름 바꾸기까지의 전체 과정은 다음과 같습니다.
@@ -63,6 +63,8 @@ $ ccam update
 <!-- motion:update-pipeline -->
 
 압축 파일과 `checksums.txt`를 나란히 내려받고, 체크섬이 일치하기 전에는 아무것도 기록하지 않습니다. 이름 바꾸기는 원자적이므로, 도중에 비정상 종료되거나 디스크가 가득 차도 이전 바이너리나 새 바이너리 중 하나가 온전히 남습니다. 절반만 바뀐 파일은 생기지 않습니다. `~/.local/bin/ccwork` 같은 단축 명령은 ccam 바이너리를 가리키는 심볼릭 링크이므로, 아무것도 바꾸지 않아도 새 버전을 실행합니다.
+
+Windows에서는 실행 중인 프로그램의 파일을 교체하거나 지울 수 없고, 이름만 바꿀 수 있습니다. `Updater.Install`은 새 바이너리를 `ccam.exe.new`에 쓰고, 실행 중인 `ccam.exe`의 이름을 `ccam.exe.old`로 바꾼 뒤, 새 파일의 이름을 `ccam.exe`로 바꿉니다. 마지막 단계가 실패하면 이전 바이너리의 이름을 원래대로 되돌립니다. `ccam.exe.old`는 다음 업데이트 때 지웁니다. 심볼릭 링크가 아닌 하드 링크로 된 단축 명령([단축 명령](/features/shortcuts))은 바로 이어서 새로 만들어지므로, 이들도 새 버전을 실행합니다.
 
 ### 패키지로 설치한 경우
 
@@ -85,7 +87,7 @@ Or install a copy in ~/.local/bin with the install script:
   curl -fsSL https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.sh | sh
 ```
 
-Linux가 아닌 시스템에서는 설치 스크립트 줄만 출력합니다. 폴더에 쓸 수 없으면 ccam은 설치 스크립트를 다시 실행하라고 안내합니다. 설치 스크립트는 ccam을 `~/.local/bin`에 설치합니다.
+Linux가 아닌 시스템에서는 설치 스크립트 줄만 출력합니다. Windows에서는 `irm https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.ps1 | iex`입니다. 폴더에 쓸 수 없으면 ccam은 설치 스크립트를 다시 실행하라고 안내합니다. 설치 스크립트는 ccam을 `~/.local/bin`에 설치합니다.
 
 ## 안전장치와 예외 상황
 

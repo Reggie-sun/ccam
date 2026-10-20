@@ -1,10 +1,10 @@
 ---
 title: Lệnh tắt
 description: "Đặt cho một tài khoản một lệnh riêng như ccwork bằng ccam shortcut, và tạo lại các liên kết trong ~/.local/bin bằng ccam shims install."
-updated: 2026-10-19
+updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 5f0cb5a57042
+sourceHash: 939256e7a67e
 ---
 
 Lệnh tắt là một lệnh do bạn tự đặt tên, dùng để khởi động Claude Code bằng một tài khoản: `ccwork --resume` làm đúng những gì `ccam work --resume` làm. Nó là một liên kết đến ccam trong `~/.local/bin`, nên nó hoạt động trong bash, zsh, script và mọi thứ khác chạy chương trình từ `PATH`. Lệnh tắt là tùy chọn; hãy tạo cho các tài khoản bạn hay khởi động.
@@ -82,13 +82,17 @@ Shell tìm thấy `ccwork` trong `PATH`, nhân hệ điều hành đi theo liên
 
 Vì sao dùng liên kết tượng trưng mà không dùng alias của shell hay script bao bọc: liên kết tượng trưng hoạt động trong mọi shell và trong script, không phải khởi động thêm một shell (khoảng 1 đến 2 ms), và lần khởi động vẫn chỉ đọc một tệp. `scripts/perf-check.sh` đo một lệnh tắt bằng `hyperfine` với cùng giới hạn 10 ms (p95) như `ccam <name>`.
 
+### Trên Windows
+
+Một lệnh tắt là `ccwork.exe` trong `%USERPROFILE%\.local\bin`, và `shim.Name` bỏ phần `.exe` (không phân biệt hoa thường) trước khi tra cứu, nên `ccwork`, `ccwork.exe` và `CCWORK.EXE` đều khởi động `work`. ccam trước tiên tạo một liên kết tượng trưng, điều Windows cho phép trong Developer Mode hoặc cho quản trị viên. Khi không có quyền đó, nó tạo một liên kết cứng: tên thứ hai cho cùng tệp `ccam.exe`, không cần đặc quyền nào. Một liên kết cứng được coi là của ccam khi nó là cùng tệp với `ccam.exe`. Vì `ccam update` đặt một tệp mới vào chỗ của `ccam.exe`, sau đó nó làm mới mọi lệnh tắt dạng liên kết cứng bằng `shim.Relink` và in ra `✓ shortcut ccwork renewed`. Phép kiểm tra tên tìm `<name>` với từng phần mở rộng trong `PATHEXT` (`.exe`, `.cmd` và các phần mở rộng khác) trong các thư mục `PATH` khác.
+
 ## An toàn và các trường hợp đặc biệt
 
 - **Liên kết không thuộc tài khoản nào.** Nếu một liên kết đến ccam trong `~/.local/bin` có tên mà không tài khoản nào dùng, chẳng hạn sau khi bạn sửa `shortcut` trong `config.toml` bằng tay, ccam không quay về tài khoản mặc định. Nó dừng với `` ccam: ccold is not the shortcut of any account (see `ccam list`, `ccam shortcut`) ``. Hãy đặt lại tên bằng `ccam shortcut`, hoặc xóa liên kết.
 - **Tệp đã có.** ccam không bao giờ thay thế một tệp nó không tạo ra. `ccam shims install` dừng với `<path> already exists and is not a ccam link, so it was left alone`.
 - **Tệp thực thi ccam bị di chuyển.** Khi đó các liên kết cũ trỏ tới một đường dẫn không còn tồn tại, và ccam không coi chúng là của mình. Hãy xóa chúng, rồi chạy `ccam shims install`.
 - **Đổi tên và xóa.** `ccam rename` giữ nguyên tên lệnh tắt, và liên kết vẫn hoạt động, vì nó trỏ tới ccam và ccam tra tên trong `config.toml`. `ccam remove` xóa liên kết của tài khoản. `ccam shortcut <account> <new>` xóa liên kết cũ trước khi tạo liên kết mới.
-- **PATH.** Khi ccam tạo một liên kết mà `~/.local/bin` không nằm trong `PATH` của bạn, nó in ra `Note: /home/me/.local/bin is not in PATH. Add it to ~/.bashrc or ~/.zshrc:` theo sau là dòng `export PATH=...` cần thêm.
+- **PATH.** Khi ccam tạo một liên kết mà `~/.local/bin` không nằm trong `PATH` của bạn, nó in ra `Note: /home/me/.local/bin is not in PATH. Add it to ~/.bashrc or ~/.zshrc:` theo sau là dòng `export PATH=...` cần thêm. Trên Windows, thay vào đó nó in ra dòng PowerShell để thêm thư mục vào `PATH` của người dùng.
 - **Kiểm tra về sau.** `ccam doctor` báo `missing shortcuts in /home/me/.local/bin: ccwork` và cảnh báo khi thư mục không nằm trong `PATH`. `ccam doctor --fix` tạo các liên kết còn thiếu.
 
 ## Liên quan

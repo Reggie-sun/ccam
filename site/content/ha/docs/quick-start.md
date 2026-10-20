@@ -2,10 +2,10 @@
 title: Farawa da sauri
 metaTitle: "Farawa da sauri: ƙara da sauya asusun Claude Code"
 description: Ƙara asusun Claude Code biyu da ccam add, ba su gajerun umarni kamar ccwork, sauya tsakaninsu, kuma zaɓi abin da za su raba.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: a10d91d2a64e
+sourceHash: 55f81dae9fc0
 ---
 
 Ƙara kowane asusu da `ccam add`, sannan ka fara Claude Code da `ccam <name>` ko da gajeren umarni da kai da kanka ka sa masa suna, kamar `ccwork`. Wannan ne kawai abin da yawancin mutane suke buƙata.
@@ -107,7 +107,7 @@ ccam usage
 ccam next --continue
 ```
 
-`ccam usage` yana nuna amfanin awa 5 da na mako na kowane asusu. `ccam next --continue` yana buɗe wannan tattaunawar a asusu na gaba. Duba [iyakokin amfani](/docs/usage-limits).
+`ccam usage` yana nuna amfanin awa 5 da na mako na kowane asusu. `ccam next --continue` yana buɗe wannan tattaunawar a asusu na gaba. A cikin rubutun umarni (scripts), `ccam --fallback work -p "…"` yana sauyawa da kansa. Duba [iyakokin amfani](/docs/usage-limits).
 
 ## Kana amfani da ~/.claude tuni?
 

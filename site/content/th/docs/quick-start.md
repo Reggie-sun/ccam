@@ -2,10 +2,10 @@
 title: เริ่มต้นใช้งาน
 metaTitle: "เริ่มต้นใช้งาน: เพิ่มและสลับบัญชี Claude Code"
 description: เพิ่มบัญชี Claude Code สองบัญชีด้วย ccam add ตั้งคำสั่งลัดอย่าง ccwork สลับไปมาระหว่างบัญชี และเลือกสิ่งที่จะใช้ร่วมกัน
-updated: 2026-10-19
+updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: a10d91d2a64e
+sourceHash: 55f81dae9fc0
 ---
 
 เพิ่มแต่ละบัญชีด้วย `ccam add` จากนั้นเริ่ม Claude Code ด้วย `ccam <name>` หรือด้วยคำสั่งลัดที่คุณตั้งชื่อเอง เช่น `ccwork` เท่านี้ก็เพียงพอสำหรับผู้ใช้ส่วนใหญ่
@@ -107,7 +107,7 @@ ccam usage
 ccam next --continue
 ```
 
-`ccam usage` แสดงการใช้งานแบบ 5 ชั่วโมงและรายสัปดาห์ของทุกบัญชี `ccam next --continue` เปิดการสนทนาเดิมในบัญชีถัดไป ดูที่ [ขีดจำกัดการใช้งาน](/docs/usage-limits)
+`ccam usage` แสดงการใช้งานแบบ 5 ชั่วโมงและรายสัปดาห์ของทุกบัญชี `ccam next --continue` เปิดการสนทนาเดิมในบัญชีถัดไป ในสคริปต์ `ccam --fallback work -p "…"` จะสลับบัญชีให้เอง ดูที่ [ขีดจำกัดการใช้งาน](/docs/usage-limits)
 
 ## ใช้ ~/.claude อยู่แล้วใช่ไหม?
 

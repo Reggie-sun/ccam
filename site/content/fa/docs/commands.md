@@ -2,10 +2,10 @@
 title: مرجع فرمان‌ها
 metaTitle: مرجع فرمان‌های ccam
 description: همه فرمان‌ها و گزینه‌های ccam، از ccam add و ccam <name> تا ccam usage، ccam next و ccam doctor.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 3342453e38d3
+sourceHash: 5d3275878535
 ---
 
 برای اینکه ببینید یک فرمان چه کاری انجام می‌دهد بدون آنکه واقعاً انجامش دهد، `--dry-run` را پیش از آن بگذارید، برای مثال `ccam --dry-run work`. این گزینه هنگام اجرای Claude Code (`ccam <name>`، `ccam run`، `ccam next`) و با `share`، `migrate`، `shortcut`، `update` و `doctor --fix` کار می‌کند. فرمان‌های دیگری که چیزی را تغییر می‌دهند، به‌جای اجرا شدن آن را رد می‌کنند.
@@ -16,7 +16,16 @@ sourceHash: 3342453e38d3
 
 `ccam <name|number> [arguments]` اجرای Claude Code با آن حساب را آغاز می‌کند. ccam آرگومان‌های پس از نام را نمی‌خواند؛ آن‌ها را به همان ترتیب به `claude` می‌دهد، و ورودی استاندارد، کد خروج و سیگنال‌ها دقیقاً مانند خود `claude` رفتار می‌کنند. گذاشتن `--` پس از نام اختیاری است.
 
-`ccam` با آرگومان ولی بدون نام حساب، مانند `ccam -p "summarise"`، از حساب پیش‌فرض استفاده می‌کند. حساب پیش‌فرض را با `ccam use <name>` تعیین کنید.
+`ccam` با آرگومان ولی بدون نام حساب، مانند `ccam -p "summarise"`، از حسابی که برای پوشه فعلی تنظیم شده و در غیر این صورت از حساب پیش‌فرض استفاده می‌کند. آن‌ها را با `ccam folder <name> [folder]` و `ccam use <name>` تعیین کنید.
+
+```sh
+ccam folder work ~/code/company   # work inside ~/code/company and below
+ccam folder                       # list folders and the account used here
+ccam folder --remove ~/code/company
+ccam --fallback work -p "fix the tests"   # run again as another account at the limit
+```
+
+`--fallback` پیش از نام حساب برای اجراهای `-p`/`--print` است. وقتی حساب به سقف مصرفش برسد، ccam همان فرمان را دوباره با حساب واردشده‌ای که بیشترین ظرفیت را دارد اجرا می‌کند و فقط خروجی اجرایی را که به پایان رسیده چاپ می‌کند. [حساب‌ها بر اساس پوشه](/features/folder) و [اجرای دوباره هنگام رسیدن به سقف](/features/next#run-again-at-the-limit) را ببینید.
 
 میان‌بری مانند `ccwork` حساب خود را به همین شکل اجرا می‌کند: `ccwork --resume` همان کاری را می‌کند که `ccam work --resume` انجام می‌دهد. [میان‌برها](/docs/commands#shortcuts) را ببینید.
 
@@ -108,6 +117,7 @@ ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
 ccam version         # also: ccam -v, ccam --version
+ccam completion bash # or zsh, powershell
 ```
 
 `ccam update` پیش از جایگزین کردن ccam، checksum SHA-256 نسخه را بررسی می‌کند و `--version v0.2.0` یک نسخه مشخص را نصب می‌کند. ccam نصب‌شده از بسته `.deb` را باید با apt به‌روز کنید. [به‌روزرسانی](/docs/install#update) را ببینید.
@@ -122,4 +132,4 @@ ccam version         # also: ccam -v, ccam --version
 | `~/.local/state/ccam/` | حافظه نهان مصرف و زمان‌های آخرین استفاده |
 | `~/.local/bin/<shortcut>` | فرمان‌های میان‌بر مانند `ccwork`، که پیوندهایی به ccam هستند |
 
-متغیرهای `XDG_CONFIG_HOME`، `XDG_DATA_HOME` و `XDG_STATE_HOME` محل این پوشه‌ها را تغییر می‌دهند.
+متغیرهای `XDG_CONFIG_HOME`، `XDG_DATA_HOME` و `XDG_STATE_HOME` محل این پوشه‌ها را تغییر می‌دهند. در Windows، `~` همان `%USERPROFILE%` است و میان‌برها `<shortcut>.exe` هستند.

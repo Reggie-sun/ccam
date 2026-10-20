@@ -1,10 +1,10 @@
 ---
 title: Memeriksa dan memperbaiki
 description: Periksa tautan pembagian, izin file, login, dan versi Claude Code dengan ccam doctor, lalu perbaiki yang aman diperbaiki dengan ccam doctor --fix.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 9
 translation: machine
-sourceHash: a1b61efe2b1f
+sourceHash: a45ca25bb722
 ---
 
 `ccam doctor` memeriksa instalasi ccam Anda: biner Claude Code, folder setiap akun, login dan tautan pembagian, server MCP bersama, endpoint penggunaan, dan perintah pintasan Anda. `ccam doctor --fix` memperbaiki apa yang bisa diperbaiki tanpa kehilangan data dan terlebih dahulu memindahkan setiap file yang digantinya ke folder cadangan. Jalankan perintah ini saat `ccam <name>` berhenti karena masalah tautan pembagian, setelah Anda memulihkan file secara manual, atau setelah Claude Code diperbarui.
@@ -70,7 +70,7 @@ Blok tengah dijalankan sekali per akun. Pemeriksaannya, dan apa yang dilakukan `
 
 1. **Versi Claude Code** (`checkClaude`). Mencari biner `claude` dengan cara yang sama seperti peluncur dan menjalankan `claude --version`. Jika versinya tidak diawali `2.1.302`, yaitu versi yang menjadi acuan verifikasi tata letak folder ccam (`doctor.LayoutVersion`), pemeriksaan ini menambahkan `· ccam was verified against the folder layout of Claude Code 2.1.302. Any 'unknown entries' below may mean the layout changed`. Biner yang tidak ada atau `--version` yang gagal adalah galat. Tidak ada perbaikan.
 2. **Info masuk di environment** (`checkAuthEnv`). Memberi peringatan jika `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY`, atau `ANTHROPIC_AUTH_TOKEN` diatur: setiap akun yang dijalankan dari shell itu mewarisinya, dan Claude Code lebih mengutamakannya daripada login milik akun. Tidak ada perbaikan; hapus sendiri variabel itu.
-3. **Folder** (`checkProfile`). Folder akun yang tidak ada adalah galat dan mengakhiri pemeriksaan akun tersebut. Izin dengan bit group atau other yang diatur adalah peringatan; `--fix` menjalankan `chmod 0700`.
+3. **Folder** (`checkProfile`). Folder akun yang tidak ada adalah galat dan mengakhiri pemeriksaan akun tersebut. Izin dengan bit group atau other yang diatur adalah peringatan; `--fix` menjalankan `chmod 0700`. Windows tidak punya bit izin, jadi pemeriksaan ini dan pemeriksaan `0600` di bawah dilewati di sana; folder di profil pengguna Anda dilindungi oleh daftar aksesnya.
 4. **File login** (`checkCredentials`). `.credentials.json` diperiksa dengan `lstat`. Symlink adalah galat, karena setiap akun harus memiliki tokennya sendiri, dan tidak diperbaiki. Mode selain `0600` adalah peringatan; `--fix` menjalankan `chmod 0600`. Lalu login dibaca (di macOS dari Rantai Kunci (Keychain) terlebih dahulu). Tidak adanya login adalah peringatan yang mengarah ke `ccam login <name>`. Refresh token yang kedaluwarsa adalah galat `login expired`; token akses yang kedaluwarsa hanya informasi, karena Claude Code memperbaruinya saat dijalankan berikutnya. Tidak satu pun dari ini diperbaiki.
 5. **Tautan pembagian** (`share.Check`). Membandingkan setiap path di `share.Layout` dengan pengaturan pembagian akun, hanya menggunakan `lstat` dan `readlink`. Pemeriksaan ini melaporkan empat jenis: tautan yang hilang, tautan yang mengarah ke tempat lain, file asli di tempat yang seharusnya berisi tautan, dan tautan yang tertinggal untuk item yang kini lokal. Tautan yang hilang adalah peringatan, sisanya galat.
 6. **Entri tak dikenal** (`checkUnknownEntries`). Mendaftar nama tingkat atas di folder akun yang tidak dikenal ccam (`share.Known`), sebagai petunjuk bahwa tata letak Claude Code berubah. Hanya informasi.
@@ -78,6 +78,7 @@ Blok tengah dijalankan sekali per akun. Pemeriksaannya, dan apa yang dilakukan `
 8. **Server MCP** (`checkMCP`). Memuat `mcp.json` setiap grup sekali. File yang tidak dapat dibaca adalah galat; server yang gagal `mcp.Validate` adalah peringatan. Tidak ada perbaikan.
 9. **Format respons penggunaan** (`checkUsageFormat`). Menanyakan endpoint penggunaan, tanpa cache dan dengan batas 3 detik seperti biasa, untuk satu akun demi satu akun sampai ada yang menjawab. Jika respons tidak lagi dapat di-parse, pemeriksaan ini memperingatkan bahwa `ccam usage` beralih ke cache status line. Ini satu-satunya pemeriksaan yang memakai jaringan.
 10. **Pintasan** (`checkShims`). Hanya jika ada akun yang memiliki pintasan. Tautan yang hilang di `~/.local/bin` adalah peringatan; `--fix` memanggil `shim.Install`, yang hanya membuat tautan yang hilang dan tidak pernah menyentuh file lain. Folder bin yang tidak ada di `PATH` adalah peringatan dan tidak diperbaiki.
+11. **Folder proyek** (`checkFolders`). Hanya jika ada entri [`ccam folder`](/features/folder). Entri yang akunnya tidak ada adalah galat, dan entri yang foldernya sudah hilang adalah peringatan. Keduanya tidak diperbaiki, karena menghapus entri akan mengubah akun mana yang dijalankan di sana.
 
 ### Memperbaiki tautan pembagian
 

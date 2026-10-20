@@ -4,7 +4,7 @@ description: 並列比較用 CLAUDE_CONFIG_DIR 搭配 Shell 別名和使用 ccam
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: ea24bb091caf
+sourceHash: b9fbcb88f111
 ---
 
 為每個帳號設定一個 Shell 別名，是執行多個 Claude Code 帳號最簡單的方法。ccam 在底層做的是同一件事，並加上共用、切換和用量追蹤功能。
@@ -42,6 +42,8 @@ ccam add work --shortcut ccwork
 | 在另一個帳號接續對話 | 否 | `ccam next --continue` |
 | 所有帳號的用量 | 否 | `ccam usage` |
 | 選擇剩餘額度最多的帳號 | 否 | `ccam next --auto` |
+| 達到上限時以另一個帳號重新執行 `-p` 工作 | 否 | `ccam --fallback` |
+| 每個專案資料夾各用一個帳號 | 否 | `ccam folder` |
 | 在狀態列顯示帳號名稱 | 否 | `ccam statusline install` |
 | 修復損壞的連結 | 手動 | `ccam doctor --fix` |
 | 額外的軟體 | 無 | 一個靜態執行檔 |

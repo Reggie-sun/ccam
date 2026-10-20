@@ -2,10 +2,10 @@
 title: 자주 묻는 질문
 metaTitle: "ccam FAQ: Claude Code 여러 계정 쓰기"
 description: ccam, Claude Code 계정, 사용량 한도, 공유, 개인정보, 지원 시스템에 관한 질문과 답변입니다.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 6
 translation: machine
-sourceHash: 88bd249ec51c
+sourceHash: 80a5475ccfee
 ---
 
 ## ccam은 Anthropic 공식 도구인가요?
@@ -46,7 +46,7 @@ SSH 세션에서 평소처럼 `ccam add`나 `ccam login <name>`을 실행하세�
 
 ## ccam은 어떤 시스템을 지원하나요?
 
-Linux(Ubuntu, Debian, Fedora, Arch, Alpine 등)와 macOS를 지원합니다. Windows에서는 WSL 안에서 사용하세요.
+Linux(Ubuntu, Debian, Fedora, Arch, Alpine 등), macOS, Windows 10과 11을 지원하며, Windows에서는 기본 환경과 WSL 안 모두에서 쓸 수 있습니다. Windows에서 `settings.json` 같은 파일을 공유하려면 개발자 모드가 필요하고, 폴더 공유는 개발자 모드 없이도 됩니다([Windows에서 공유](/features/share#on-windows)).
 
 ## 왜 MCP 서버가 한 계정에서만 보이나요?
 
@@ -54,7 +54,7 @@ Linux(Ubuntu, Debian, Fedora, Arch, Alpine 등)와 macOS를 지원합니다. Win
 
 ## ccam을 쓰면 Claude Code가 느려지나요?
 
-ccam을 거쳐 Claude Code를 시작하면 약 4밀리초가 더 걸립니다. 노트북에서 `scripts/perf-check.sh`로 측정한 값입니다. ccam은 작은 파일 하나를 읽고 공유 링크를 확인한 다음 자기 프로세스를 `claude`로 바꾸므로, 작업하는 동안에는 실행되고 있지 않습니다.
+ccam을 거쳐 Claude Code를 시작하면 약 4밀리초가 더 걸립니다. 노트북에서 `scripts/perf-check.sh`로 측정한 값입니다. ccam은 작은 파일 하나를 읽고 공유 링크를 확인한 다음 자기 프로세스를 `claude`로 바꾸므로, 작업하는 동안에는 실행되고 있지 않습니다. Windows에서는 프로세스를 바꿀 수 없으므로, ccam이 Claude Code를 시작하고 끝날 때까지 기다릴 뿐 다른 일은 하지 않습니다.
 
 ## ccam은 어떻게 업데이트하나요?
 

@@ -2,10 +2,10 @@
 title: Preguntas frecuentes
 metaTitle: "Preguntas frecuentes: varias cuentas de Claude Code"
 description: Respuestas sobre ccam, cuentas de Claude Code, límites de uso, uso compartido, privacidad y sistemas compatibles.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 6
 translation: machine
-sourceHash: 88bd249ec51c
+sourceHash: 80a5475ccfee
 ---
 
 ## ¿ccam es una herramienta oficial de Anthropic?
@@ -46,7 +46,7 @@ Nada, a menos que ejecutes `ccam import` o `ccam migrate`. La importación regis
 
 ## ¿Qué sistemas admite ccam?
 
-Linux (Ubuntu, Debian, Fedora, Arch, Alpine y otros) y macOS. En Windows, úsalo dentro de WSL.
+Linux (Ubuntu, Debian, Fedora, Arch, Alpine y otros), macOS y Windows 10 y 11, de forma nativa o dentro de WSL. En Windows, compartir archivos como `settings.json` requiere el modo de desarrollador; las carpetas compartidas funcionan sin él ([compartir en Windows](/features/share#on-windows)).
 
 ## ¿Por qué un servidor MCP aparece solo en una cuenta?
 
@@ -54,7 +54,7 @@ Los servidores agregados dentro de una sesión con `claude mcp add` se guardan s
 
 ## ¿ccam hace más lento a Claude Code?
 
-Iniciar Claude Code a través de ccam agrega unos 4 milisegundos, medidos con `scripts/perf-check.sh` en una laptop. ccam lee un archivo pequeño, comprueba los enlaces compartidos y luego se reemplaza a sí mismo por `claude`, así que no se está ejecutando mientras trabajas.
+Iniciar Claude Code a través de ccam agrega unos 4 milisegundos, medidos con `scripts/perf-check.sh` en una laptop. ccam lee un archivo pequeño, comprueba los enlaces compartidos y luego se reemplaza a sí mismo por `claude`, así que no se está ejecutando mientras trabajas. Windows no puede reemplazar un proceso, así que allí ccam inicia Claude Code y lo espera, sin hacer nada más.
 
 ## ¿Cómo actualizo ccam?
 

@@ -2,10 +2,10 @@
 title: 빠른 시작
 metaTitle: "빠른 시작: Claude Code 계정 추가와 전환"
 description: ccam add로 Claude Code 계정 두 개를 추가하고, ccwork 같은 단축 명령을 붙여 계정을 전환한 뒤, 공유할 항목을 고릅니다.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: a10d91d2a64e
+sourceHash: 55f81dae9fc0
 ---
 
 `ccam add`로 계정을 하나씩 추가한 뒤, `ccam <name>` 또는 `ccwork`처럼 직접 이름을 붙인 단축 명령으로 Claude Code를 시작합니다. 대부분은 이것만으로 충분합니다.
@@ -107,7 +107,7 @@ ccam usage
 ccam next --continue
 ```
 
-`ccam usage`는 모든 계정의 5시간 사용량과 주간 사용량을 보여 줍니다. `ccam next --continue`는 다음 계정에서 같은 대화를 엽니다. 자세한 내용은 [사용량 한도](/docs/usage-limits)를 참고하세요.
+`ccam usage`는 모든 계정의 5시간 사용량과 주간 사용량을 보여 줍니다. `ccam next --continue`는 다음 계정에서 같은 대화를 엽니다. 스크립트에서는 `ccam --fallback work -p "…"`가 알아서 전환합니다. 자세한 내용은 [사용량 한도](/docs/usage-limits)를 참고하세요.
 
 ## 이미 ~/.claude를 쓰고 있다면
 

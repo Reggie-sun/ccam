@@ -2,10 +2,10 @@
 title: ಕಮಾಂಡ್ ಉಲ್ಲೇಖ
 metaTitle: ccam ಕಮಾಂಡ್ ಉಲ್ಲೇಖ
 description: ccam add ಮತ್ತು ccam <name> ನಿಂದ ccam usage, ccam next ಮತ್ತು ccam doctor ವರೆಗೆ, ccam ನ ಎಲ್ಲಾ ಕಮಾಂಡ್‌ಗಳು ಮತ್ತು ಆಯ್ಕೆಗಳು.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 3342453e38d3
+sourceHash: 5d3275878535
 ---
 
 ಕಮಾಂಡ್ ಏನು ಮಾಡುತ್ತದೆ ಎಂಬುದನ್ನು ನಿಜವಾಗಿ ಮಾಡದೆಯೇ ನೋಡಲು, ಅದರ ಮುಂದೆ `--dry-run` ಹಾಕಿ. ಉದಾಹರಣೆಗೆ `ccam --dry-run work`. ಇದು Claude Code ಆರಂಭಿಸುವಾಗ (`ccam <name>`, `ccam run`, `ccam next`) ಮತ್ತು `share`, `migrate`, `shortcut`, `update` ಹಾಗೂ `doctor --fix` ಜೊತೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ. ಏನನ್ನಾದರೂ ಬದಲಾಯಿಸುವ ಇತರ ಕಮಾಂಡ್‌ಗಳು ಚಾಲನೆಯಾಗುವ ಬದಲು ಇದನ್ನು ನಿರಾಕರಿಸುತ್ತವೆ.
@@ -16,7 +16,16 @@ sourceHash: 3342453e38d3
 
 `ccam <name|number> [arguments]` ಆ ಖಾತೆಯಾಗಿ Claude Code ಅನ್ನು ಆರಂಭಿಸುತ್ತದೆ. ಹೆಸರಿನ ನಂತರದ ಆರ್ಗ್ಯುಮೆಂಟ್‌ಗಳನ್ನು ccam ಓದುವುದಿಲ್ಲ; ಅದು ಅವುಗಳನ್ನು ಅದೇ ಕ್ರಮದಲ್ಲಿ `claude` ಗೆ ರವಾನಿಸುತ್ತದೆ. ಸ್ಟ್ಯಾಂಡರ್ಡ್ ಇನ್‌ಪುಟ್, ಎಕ್ಸಿಟ್ ಕೋಡ್ ಮತ್ತು ಸಿಗ್ನಲ್‌ಗಳು `claude` ನಲ್ಲಿ ಇರುವಂತೆಯೇ ವರ್ತಿಸುತ್ತವೆ. ಹೆಸರಿನ ನಂತರ `--` ಐಚ್ಛಿಕ.
 
-ಆರ್ಗ್ಯುಮೆಂಟ್‌ಗಳಿದ್ದು ಖಾತೆಯ ಹೆಸರು ಇಲ್ಲದ `ccam`, ಉದಾಹರಣೆಗೆ `ccam -p "summarise"`, ಡೀಫಾಲ್ಟ್ ಖಾತೆಯನ್ನು ಬಳಸುತ್ತದೆ. ಅದನ್ನು `ccam use <name>` ಮೂಲಕ ಹೊಂದಿಸಿ.
+ಆರ್ಗ್ಯುಮೆಂಟ್‌ಗಳಿದ್ದು ಖಾತೆಯ ಹೆಸರು ಇಲ್ಲದ `ccam`, ಉದಾಹರಣೆಗೆ `ccam -p "summarise"`, ಈಗಿನ ಫೋಲ್ಡರ್‌ಗೆ ಹೊಂದಿಸಿದ ಖಾತೆಯನ್ನು, ಇಲ್ಲದಿದ್ದರೆ ಡೀಫಾಲ್ಟ್ ಖಾತೆಯನ್ನು ಬಳಸುತ್ತದೆ. ಅವುಗಳನ್ನು `ccam folder <name> [folder]` ಮತ್ತು `ccam use <name>` ಮೂಲಕ ಹೊಂದಿಸಿ.
+
+```sh
+ccam folder work ~/code/company   # work inside ~/code/company and below
+ccam folder                       # list folders and the account used here
+ccam folder --remove ~/code/company
+ccam --fallback work -p "fix the tests"   # run again as another account at the limit
+```
+
+ಖಾತೆಯ ಹೆಸರಿನ ಮುಂದೆ ಇರುವ `--fallback`, `-p`/`--print` ರನ್‌ಗಳಿಗಾಗಿ. ಖಾತೆ ತನ್ನ ಬಳಕೆಯ ಮಿತಿ ತಲುಪಿದಾಗ, ccam ಅದೇ ಕಮಾಂಡ್ ಅನ್ನು ಹೆಚ್ಚು ಅವಕಾಶ ಇರುವ ಲಾಗಿನ್ ಆದ ಖಾತೆಯಾಗಿ ಮತ್ತೆ ರನ್ ಮಾಡುತ್ತದೆ ಮತ್ತು ಪೂರ್ಣಗೊಂಡ ರನ್‌ನ ಔಟ್‌ಪುಟ್ ಅನ್ನು ಮಾತ್ರ ಪ್ರಿಂಟ್ ಮಾಡುತ್ತದೆ. [ಫೋಲ್ಡರ್‌ವಾರು ಖಾತೆಗಳು](/features/folder) ಮತ್ತು [ಮಿತಿಯಲ್ಲಿ ಮತ್ತೆ ರನ್ ಮಾಡುವುದು](/features/next#run-again-at-the-limit) ನೋಡಿ.
 
 `ccwork` ನಂತಹ ಶಾರ್ಟ್‌ಕಟ್ ಕೂಡ ತನ್ನ ಖಾತೆಯನ್ನು ಇದೇ ರೀತಿ ಆರಂಭಿಸುತ್ತದೆ: `ccam work --resume` ಮಾಡುವುದನ್ನೇ `ccwork --resume` ಮಾಡುತ್ತದೆ. [ಶಾರ್ಟ್‌ಕಟ್‌ಗಳು](/docs/commands#shortcuts) ನೋಡಿ.
 
@@ -108,6 +117,7 @@ ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
 ccam version         # also: ccam -v, ccam --version
+ccam completion bash # or zsh, powershell
 ```
 
 ccam ಅನ್ನು ಬದಲಾಯಿಸುವ ಮೊದಲು `ccam update` ಬಿಡುಗಡೆಯ SHA-256 ಚೆಕ್‌ಸಮ್ ಅನ್ನು ಪರಿಶೀಲಿಸುತ್ತದೆ, ಮತ್ತು `--version v0.2.0` ಒಂದು ನಿರ್ದಿಷ್ಟ ಬಿಡುಗಡೆಯನ್ನು ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡುತ್ತದೆ. `.deb` ಪ್ಯಾಕೇಜ್‌ನಿಂದ ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಿದ ccam ಅನ್ನು ಬದಲಿಗೆ apt ಮೂಲಕ ಅಪ್‌ಡೇಟ್ ಮಾಡಲಾಗುತ್ತದೆ. [ಅಪ್‌ಡೇಟ್](/docs/install#update) ನೋಡಿ.
@@ -122,4 +132,4 @@ ccam ಅನ್ನು ಬದಲಾಯಿಸುವ ಮೊದಲು `ccam update` �
 | `~/.local/state/ccam/` | ಬಳಕೆಯ ಕ್ಯಾಶ್ ಮತ್ತು ಕೊನೆಯ ಬಾರಿ ಬಳಸಿದ ಸಮಯಗಳು |
 | `~/.local/bin/<shortcut>` | `ccwork` ನಂತಹ ಶಾರ್ಟ್‌ಕಟ್ ಕಮಾಂಡ್‌ಗಳು, ccam ಗೆ ಲಿಂಕ್‌ಗಳು |
 
-`XDG_CONFIG_HOME`, `XDG_DATA_HOME` ಮತ್ತು `XDG_STATE_HOME` ವೇರಿಯೇಬಲ್‌ಗಳು ಈ ಫೋಲ್ಡರ್‌ಗಳ ಸ್ಥಳವನ್ನು ಬದಲಾಯಿಸುತ್ತವೆ.
+`XDG_CONFIG_HOME`, `XDG_DATA_HOME` ಮತ್ತು `XDG_STATE_HOME` ವೇರಿಯೇಬಲ್‌ಗಳು ಈ ಫೋಲ್ಡರ್‌ಗಳ ಸ್ಥಳವನ್ನು ಬದಲಾಯಿಸುತ್ತವೆ. Windows ನಲ್ಲಿ, `~` ಎಂದರೆ `%USERPROFILE%`, ಮತ್ತು ಶಾರ್ಟ್‌ಕಟ್‌ಗಳು `<shortcut>.exe`.

@@ -1,10 +1,10 @@
 ---
 title: 사용량 한도
 description: ccam usage는 모든 계정의 5시간 한도와 주간 한도를 한 번에 보여 주고, ccam statusline은 Claude Code 안에 계정 이름과 사용량을 표시합니다.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 7
 translation: machine
-sourceHash: 8306a8f6d950
+sourceHash: f08a2fdc6f0b
 ---
 
 `ccam usage`는 각 계정이 5시간 한도와 주간 한도를 얼마나 썼는지, 각 구간이 초기화되기까지 얼마나 남았는지 보여 줍니다. 긴 작업을 시작하기 전이나 Claude Code가 한도가 가까워졌다고 알릴 때 실행해, 어느 계정에 여유가 남았는지 확인하세요. `ccam statusline`은 Claude Code의 상태 표시줄 명령입니다. Claude Code 안에 계정 이름과 사용량을 표시하고, `ccam usage`가 쓸 수 있도록 수치를 저장합니다.
@@ -100,11 +100,12 @@ Claude Code는 상태 표시줄 명령을 실행하면서 JSON 문서를 파이�
 1. `runStatusline`은 ccam이 Claude Code를 시작할 때 설정하는 `CCAM_PROFILE`로 계정을 찾고, 없으면 `CLAUDE_CONFIG_DIR`를 계정 폴더와 대조해 찾습니다.
 2. `ParseStatusLine`이 `rate_limits.five_hour`와 `rate_limits.seven_day`를 읽습니다. API 키 계정이거나 세션의 첫 응답 전이면 JSON에 사용량 한도가 없으며, 이때는 아무것도 저장하지 않습니다.
 3. `SaveStatusLine`이 `~/.local/state/ccam/usage/<name>.statusline.json`을 기록합니다. 엔드포인트가 응답하지 않으면 `ccam usage`가 이 파일을 씁니다.
-4. ccam은 `[name] · model · 5h N% · 7d N%`를 출력합니다. `--wrap`을 주면 같은 입력으로 `sh -c`를 통해 지정한 명령을 실행하고, 대신 `[name]` 뒤에 그 명령의 첫 줄을 붙여 출력합니다.
+4. ccam은 `[name] · model · 5h N% · 7d N%`를 출력합니다. `--wrap`을 주면 같은 입력으로 `sh -c`를 통해 지정한 명령을 실행하고, 대신 `[name]` 뒤에 그 명령의 첫 줄을 붙여 출력합니다. Windows에서는 Claude Code와 같은 방식으로 명령을 실행합니다. Git Bash가 설치되어 있으면 Git Bash로, 없으면 PowerShell로 실행합니다.
+5. 5시간이나 주간 사용량이 90% 이상이고 다른 계정이 있으면, 줄 끝에 `→ ccam next --auto --continue`가 붙습니다. 예: `[work] · Opus · 5h 93% · 7d 41% · → ccam next --auto --continue`.
 
 감싼 명령에는 2초가 주어집니다. 그 시간이 지나면 명령을 종료하고 계정 이름만 표시하므로, 느린 명령 때문에 Claude Code 상태 표시줄이 멈추지 않습니다.
 
-`ccam statusline install`은 각 계정의 `settings.json`에 `statusLine`을 기록합니다. 계정에 이미 상태 표시줄 명령이 있으면 ccam은 그 명령을 `--wrap '<old command>'`로 보존합니다. 그룹을 통해 공유되는 `settings.json`은 링크를 거쳐 한 번만 기록되므로, 그룹의 모든 계정에 적용됩니다. 다시 실행하면 이미 ccam을 쓰는 파일에는 `(already set)`를 출력합니다.
+`ccam statusline install`은 각 계정의 `settings.json`에 `statusLine`을 기록합니다. 계정에 이미 상태 표시줄 명령이 있으면 ccam은 그 명령을 `--wrap '<old command>'`로 보존합니다. Windows에서는 ccam 경로를 슬래시와 홈 폴더를 뜻하는 `~`로 기록하며(`~/.local/bin/ccam.exe statusline`), Git Bash와 PowerShell 모두 이 경로를 이해합니다. 그룹을 통해 공유되는 `settings.json`은 링크를 거쳐 한 번만 기록되므로, 그룹의 모든 계정에 적용됩니다. 다시 실행하면 이미 ccam을 쓰는 파일에는 `(already set)`를 출력합니다.
 
 ## 안전장치와 예외 상황
 

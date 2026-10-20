@@ -4,7 +4,7 @@ description: 并排对比两种运行多个 Claude Code 账号的方式：使用
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: ea24bb091caf
+sourceHash: b9fbcb88f111
 ---
 
 为每个账号设置一个 shell 别名，是运行多个 Claude Code 账号最简单的方法。ccam 在底层做的是同一件事，并增加了共享、切换和用量跟踪。
@@ -42,6 +42,8 @@ ccam add work --shortcut ccwork
 | 在另一个账号中继续对话 | 否 | `ccam next --continue` |
 | 查看所有账号的用量 | 否 | `ccam usage` |
 | 选择余量最多的账号 | 否 | `ccam next --auto` |
+| 达到限制时以另一个账号重新运行 `-p` 任务 | 否 | `ccam --fallback` |
+| 每个项目文件夹使用各自的账号 | 否 | `ccam folder` |
 | 在状态栏中显示账号名 | 否 | `ccam statusline install` |
 | 修复损坏的链接 | 手动 | `ccam doctor --fix` |
 | 额外软件 | 无 | 一个静态二进制文件 |

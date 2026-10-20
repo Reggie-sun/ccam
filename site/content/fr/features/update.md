@@ -1,10 +1,10 @@
 ---
 title: "Mettre à jour ccam"
 description: "ccam update remplace ccam par la dernière version de GitHub après vérification SHA-256 ; --check informe seulement et --version installe une version précise."
-updated: 2026-10-19
+updated: 2026-10-20
 order: 10
 translation: machine
-sourceHash: 83fc20191328
+sourceHash: d91499b95d3d
 ---
 
 `ccam update` télécharge une version de ccam depuis GitHub, la vérifie à l'aide du `checksums.txt` de la version et remplace le binaire en cours d'exécution en un seul renommage. Utilisez-le si vous avez installé ccam avec le script d'installation ou depuis une archive. ccam ne recherche jamais de mises à jour de lui-même : seule cette commande contacte GitHub, si bien que toutes les autres commandes fonctionnent de la même façon hors ligne.
@@ -53,9 +53,9 @@ Le code se trouve dans `internal/update`, que seul `ccam update` importe. Le che
 2. Sans `--version`, `Updater.Latest` demande `<releases>/latest` sans suivre la redirection, et lit l'étiquette dans l'en-tête `Location` (`…/tag/v0.5.0`). Cela passe par la page des versions plutôt que par l'API GitHub, si bien que la limite de 60 requêtes par heure de l'API ne s'applique pas. La recherche dispose de 10 secondes.
 3. `parseVersion` vérifie l'étiquette avec un motif strict. Une étiquette se retrouve dans des URL de téléchargement et dans une commande shell affichée, donc rien de ce qui contient `/`, `%`, des espaces ou des caractères spéciaux du shell ne passe. `compareVersions` la compare à la version en cours d'exécution ; une préversion est classée avant sa version finale.
 4. `managed()` et `writable()` décident si ccam a le droit de remplacer le binaire (voir plus bas).
-5. `Updater.Fetch` télécharge `ccam_<os>_<arch>.tar.gz` et `checksums.txt` en même temps, avec 2 minutes pour les deux. Chaque téléchargement est plafonné à 256 Mo.
+5. `Updater.Fetch` télécharge `ccam_<os>_<arch>.tar.gz` (sous Windows `ccam_windows_<arch>.zip`) et `checksums.txt` en même temps, avec 2 minutes pour les deux. Chaque téléchargement est plafonné à 256 Mo.
 6. La somme SHA-256 de l'archive doit correspondre à sa ligne dans `checksums.txt` avant toute autre chose. Une ligne absente ou une somme de contrôle différente arrête la mise à jour avec `nothing was changed`.
-7. `extract()` lit le tar et prend le premier fichier ordinaire nommé `ccam`. Les dossiers, les liens et les autres entrées sont ignorés, et le binaire est lui aussi plafonné à 256 Mo.
+7. `extract()` lit le tar et prend le premier fichier ordinaire nommé `ccam` (`extractZip` prend `ccam.exe` dans le zip). Les dossiers, les liens et les autres entrées sont ignorés, et le binaire est lui aussi plafonné à 256 Mo.
 8. `Updater.Install` écrit le nouveau binaire avec `fsutil.AtomicWrite` : un fichier temporaire `.ccam.tmp*` à côté du binaire, avec les bits de permission de l'ancien fichier, écrit sur le disque puis renommé par-dessus l'ancien.
 
 L'ensemble du processus, de la recherche de l'étiquette jusqu'au renommage :
@@ -63,6 +63,8 @@ L'ensemble du processus, de la recherche de l'étiquette jusqu'au renommage :
 <!-- motion:update-pipeline -->
 
 L'archive et `checksums.txt` sont téléchargés côte à côte, et rien n'est écrit tant que la somme de contrôle ne correspond pas. Le renommage est atomique : un plantage ou un disque plein laisse soit l'ancien binaire, soit le nouveau, jamais un binaire à moitié écrit. Les commandes raccourcis comme `~/.local/bin/ccwork` sont des liens symboliques vers le binaire ccam ; elles exécutent donc la nouvelle version sans aucune modification.
+
+Sous Windows, le fichier d'un programme en cours d'exécution ne peut être ni remplacé ni supprimé, seulement renommé. `Updater.Install` écrit le nouveau binaire dans `ccam.exe.new`, renomme le `ccam.exe` en cours d'exécution en `ccam.exe.old`, puis renomme le nouveau fichier en `ccam.exe`. Si la dernière étape échoue, l'ancien binaire reprend son nom. La mise à jour suivante supprime `ccam.exe.old`. Les raccourcis qui sont des liens physiques plutôt que des liens symboliques ([Commandes raccourcis](/features/shortcuts)) sont renouvelés juste après, pour qu'ils exécutent eux aussi la nouvelle version.
 
 ### Installations gérées par un paquet
 
@@ -85,7 +87,7 @@ Or install a copy in ~/.local/bin with the install script:
   curl -fsSL https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.sh | sh
 ```
 
-Sur les systèmes autres que Linux, seule la ligne du script d'installation est affichée. Quand le dossier n'est pas accessible en écriture, ccam propose de relancer le script d'installation, qui installe ccam dans `~/.local/bin`.
+Sur les systèmes autres que Linux, seule la ligne du script d'installation est affichée : `irm https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.ps1 | iex` sous Windows. Quand le dossier n'est pas accessible en écriture, ccam propose de relancer le script d'installation, qui installe ccam dans `~/.local/bin`.
 
 ## Sécurité et cas particuliers
 

@@ -4,7 +4,7 @@ description: Mga shell alias na may CLAUDE_CONFIG_DIR laban sa ccam para sa pagp
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: ea24bb091caf
+sourceHash: b9fbcb88f111
 ---
 
 Ang shell alias bawat account ang pinakasimpleng paraan para magpatakbo ng maraming Claude Code account. Ganoon din ang ginagawa ng ccam sa ilalim, at nagdadagdag ito ng sharing, paglipat at pagsubaybay sa usage.
@@ -42,6 +42,8 @@ Sinisimulan ng `ccam work` at `ccwork` ang account, at pareho rin silang gumagan
 | Ituloy ang usapan sa ibang account | Hindi | `ccam next --continue` |
 | Usage ng bawat account | Hindi | `ccam usage` |
 | Piliin ang account na may pinakamaraming natitira | Hindi | `ccam next --auto` |
+| Patakbuhin ulit ang isang `-p` job bilang ibang account kapag naabot ang limit | Hindi | `ccam --fallback` |
+| Isang account para sa bawat project folder | Hindi | `ccam folder` |
 | Pangalan ng account sa status line | Hindi | `ccam statusline install` |
 | Ayusin ang mga sirang link | Mano-mano | `ccam doctor --fix` |
 | Karagdagang software | Wala | Isang static na binary |

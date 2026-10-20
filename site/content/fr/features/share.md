@@ -1,10 +1,10 @@
 ---
 title: "Partage entre comptes"
 description: "Comment ccam share relie paramètres, CLAUDE.md, extensions et historique à un dossier de groupe, avec plan et sauvegardes, et comment off les recopie."
-updated: 2026-10-19
+updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: b30b7cdb2b15
+sourceHash: 16de29bbdd57
 ---
 
 Chaque compte a son propre dossier, mais la plupart de ce qu'il contient n'a pas besoin d'être séparé. `ccam share` active ou désactive le partage pour un compte et un élément à la fois : le fichier ou le dossier du compte est déplacé dans un dossier de groupe et remplacé par un lien symbolique, si bien que chaque compte du groupe lit et écrit la même copie. Utilisez-le après `ccam add` pour changer ce que partage un compte, ou pour placer quelques comptes dans un groupe à part.
@@ -112,6 +112,10 @@ Repair them with `ccam doctor --fix`, then run again
 ```
 
 `ccam doctor --fix` exécute `share.Build` avec les paramètres enregistrés des deux côtés, ce qui déduit chaque étape de ce qui se trouve sur le disque, garde le contenu du groupe en cas de conflit et sauvegarde tout ce qu'il remplace.
+
+### Sous Windows
+
+Windows ne crée de liens symboliques qu'en Mode développeur (Paramètres > Système > Pour les développeurs) ou pour un administrateur. `fsutil.Link` essaie d'abord un lien symbolique. Sans ce droit, un dossier partagé (`agents`, `skills`, `projects` et les autres) devient une jonction de répertoire, que tout utilisateur peut créer, et fonctionne de la même façon pour Claude Code. Un fichier partagé (`settings.json`, `CLAUDE.md`, `history.jsonl`) ne peut être qu'un lien symbolique : ccam s'arrête donc avec `Windows links files only in Developer Mode` et propose d'activer ce mode ou de garder cet élément local. `share.Check` lit les jonctions comme des liens (`fsutil.LinkTarget`), et supprimer un dossier de compte supprime la jonction elle-même, jamais le contenu du groupe vers lequel elle pointe.
 
 ## Sécurité et cas particuliers
 

@@ -2,10 +2,10 @@
 title: よくある質問
 metaTitle: "ccamのよくある質問：Claude Codeの複数アカウント"
 description: ccam、Claude Codeのアカウント、使用量の上限、共有、プライバシー、対応システムについての回答です。
-updated: 2026-10-19
+updated: 2026-10-20
 order: 6
 translation: machine
-sourceHash: 88bd249ec51c
+sourceHash: 80a5475ccfee
 ---
 
 ## ccamはAnthropicの公式ツールですか？
@@ -46,7 +46,7 @@ SSHセッションで、いつもどおり`ccam add`または`ccam login <name>`
 
 ## ccamはどのシステムに対応していますか？
 
-Linux（Ubuntu、Debian、Fedora、Arch、Alpineなど）とmacOSです。Windowsでは、WSLの中で使ってください。
+Linux（Ubuntu、Debian、Fedora、Arch、Alpineなど）、macOS、Windows 10と11（ネイティブ、またはWSLの中）です。Windowsで`settings.json`のようなファイルを共有するには開発者モードが必要です。共有フォルダーは開発者モードなしで動作します（[Windowsでの共有](/features/share#on-windows)）。
 
 ## MCPサーバーが1つのアカウントにしか表示されないのはなぜですか？
 
@@ -54,7 +54,7 @@ Linux（Ubuntu、Debian、Fedora、Arch、Alpineなど）とmacOSです。Window
 
 ## ccamを使うとClaude Codeは遅くなりますか？
 
-ccam経由でClaude Codeを起動すると、起動時間が約4ミリ秒増えます。これはノートパソコンで`scripts/perf-check.sh`を使って測定した値です。ccamは小さなファイルを1つ読み、共有リンクを確認してから自身を`claude`に置き換えるため、作業中にccamが動作していることはありません。
+ccam経由でClaude Codeを起動すると、起動時間が約4ミリ秒増えます。これはノートパソコンで`scripts/perf-check.sh`を使って測定した値です。ccamは小さなファイルを1つ読み、共有リンクを確認してから自身を`claude`に置き換えるため、作業中にccamが動作していることはありません。Windowsではプロセスを置き換えられないため、ccamはClaude Codeを起動して終了を待つだけで、ほかには何もしません。
 
 ## ccamをアップデートするにはどうすればよいですか？
 

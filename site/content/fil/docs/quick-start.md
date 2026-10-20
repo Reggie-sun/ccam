@@ -2,10 +2,10 @@
 title: Mabilis na pagsisimula
 metaTitle: "Mabilis na pagsisimula: magdagdag ng mga account"
 description: Magdagdag ng dalawang Claude Code account gamit ang ccam add, bigyan sila ng shortcut gaya ng ccwork, lumipat sa pagitan nila, at piliin ang ishe-share nila.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: a10d91d2a64e
+sourceHash: 55f81dae9fc0
 ---
 
 Idagdag ang bawat account gamit ang `ccam add`, saka simulan ang Claude Code gamit ang `ccam <name>` o ang shortcut na ikaw mismo ang nagpangalan, gaya ng `ccwork`. Iyan lang ang kailangan ng karamihan.
@@ -107,7 +107,7 @@ ccam usage
 ccam next --continue
 ```
 
-Ipinapakita ng `ccam usage` ang 5-oras at lingguhang usage ng bawat account. Binubuksan ng `ccam next --continue` ang parehong usapan sa susunod na account. Tingnan ang [mga usage limit](/docs/usage-limits).
+Ipinapakita ng `ccam usage` ang 5-oras at lingguhang usage ng bawat account. Binubuksan ng `ccam next --continue` ang parehong usapan sa susunod na account. Sa mga script, kusang lumilipat ang `ccam --fallback work -p "…"`. Tingnan ang [mga usage limit](/docs/usage-limits).
 
 ## Gumagamit ka na ba ng ~/.claude?
 

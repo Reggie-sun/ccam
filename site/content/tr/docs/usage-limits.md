@@ -1,10 +1,10 @@
 ---
 title: Kullanım limitleri ve hesap değiştirme
 description: Tüm Claude Code hesaplarının 5 saatlik ve haftalık kullanımını ccam usage ile görün, en çok pay kalan hesabı ccam next --auto ile açın.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: d288177682d7
+sourceHash: a84df8e873d6
 ---
 
 `ccam usage`, her hesabın 5 saatlik ve haftalık limitlerinin ne kadarını kullandığını gösterir. `ccam next --auto` en çok pay kalan hesabı açar, `--continue` ise mevcut konuşmayı o hesaba taşır.
@@ -48,7 +48,7 @@ Bir hesabın erişim tokenının süresi dolduğunda ccam onu yenilemez; çünk�
 ccam statusline install
 ```
 
-Bundan sonra Claude Code, durum satırında hesap adını ve kullanımını gösterir, örneğin `[work] · Opus · 5h 24% · 7d 41%`. Zaten bir durum satırı komutunuz varsa ccam onu korur ve hesap adını başına ekler. Durum satırı sayılarını da kaydeder; uç nokta yanıt vermediğinde `ccam usage` bu sayıları kullanır.
+Bundan sonra Claude Code, durum satırında hesap adını ve kullanımını gösterir, örneğin `[work] · Opus · 5h 24% · 7d 41%`. %90'dan itibaren satır ayrıca `ccam next --auto --continue` komutunu önerir. Zaten bir durum satırı komutunuz varsa ccam onu korur ve hesap adını başına ekler. Durum satırı sayılarını da kaydeder; uç nokta yanıt vermediğinde `ccam usage` bu sayıları kullanır.
 
 ## Geçiş
 
@@ -59,5 +59,13 @@ ccam next --continue  # the next account that shares your conversation history
 ```
 
 `ccam next` giriş yapılmamış hesapları atlar, `--auto` ise %100'deki hesapları atlar. Bir konuşmaya devam etmek için iki hesabın da konuşma geçmişini paylaşması gerekir; bkz. [paylaşım](/docs/sharing).
+
+`claude -p` çalıştıran betikler ve zamanlanmış işler için hesap adından önce `--fallback` koyun. O hesap limitine ulaştığında ccam aynı komutu en çok payı kalan hesapla yeniden çalıştırır ve yalnızca tamamlanan çalıştırmanın çıktısı yazdırılır:
+
+```sh
+ccam --fallback work -p "review the diff" --output-format json
+```
+
+ccam'in nasıl karar verdiği için [Limitte yeniden çalıştırma](/features/next#run-again-at-the-limit) bölümüne bakın.
 
 [Kullanım limiti iş akışı kılavuzu](/guides/usage-limit-workflow) eksiksiz bir örneği adım adım anlatır.

@@ -2,10 +2,10 @@
 title: क्विक स्टार्ट
 metaTitle: "क्विक स्टार्ट: Claude Code खाती जोडा आणि बदला"
 description: "ccam add ने दोन Claude Code खाती जोडा, त्यांना ccwork सारखे शॉर्टकट द्या, खाती बदला, आणि ती काय शेअर करतील ते निवडा."
-updated: 2026-10-19
+updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: a10d91d2a64e
+sourceHash: 55f81dae9fc0
 ---
 
 प्रत्येक खाते `ccam add` ने जोडा, नंतर `ccam <name>` ने किंवा तुम्ही स्वतः नाव दिलेल्या शॉर्टकटने, जसे `ccwork`, Claude Code सुरू करा. बहुतेक लोकांना एवढेच लागते.
@@ -107,7 +107,7 @@ ccam usage
 ccam next --continue
 ```
 
-`ccam usage` सर्व खात्यांचा 5 तासांचा आणि साप्ताहिक वापर दाखवते. `ccam next --continue` तेच संभाषण पुढच्या खात्यात उघडते. [वापर मर्यादा](/docs/usage-limits) पाहा.
+`ccam usage` सर्व खात्यांचा 5 तासांचा आणि साप्ताहिक वापर दाखवते. `ccam next --continue` तेच संभाषण पुढच्या खात्यात उघडते. Scripts मध्ये `ccam --fallback work -p "…"` आपोआप खाते बदलते. [वापर मर्यादा](/docs/usage-limits) पाहा.
 
 ## आधीच ~/.claude वापरत आहात?
 

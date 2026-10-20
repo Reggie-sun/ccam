@@ -1,10 +1,10 @@
 ---
 title: Verificar e reparar
 description: Verifique links de compartilhamento, permissões de arquivos, logins e a versão do Claude Code com ccam doctor, e corrija o que é seguro com ccam doctor --fix.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 9
 translation: machine
-sourceHash: a1b61efe2b1f
+sourceHash: a45ca25bb722
 ---
 
 `ccam doctor` verifica a sua instalação do ccam: o binário do Claude Code, a pasta, o login e os links de compartilhamento de cada conta, os servidores MCP compartilhados, o endpoint de uso e os seus atalhos. `ccam doctor --fix` repara o que consegue sem perder dados e, antes, move para uma pasta de backup qualquer arquivo que substituir. Execute-o quando `ccam <name>` parar com um problema de link de compartilhamento, depois de restaurar arquivos manualmente ou depois de uma atualização do Claude Code.
@@ -70,7 +70,7 @@ O bloco do meio é executado uma vez por conta. As verificações, e o que `--fi
 
 1. **Versão do Claude Code** (`checkClaude`). Localiza o binário `claude` como o inicializador faz e executa `claude --version`. Se a versão não começar com `2.1.302`, a versão contra a qual o layout de pastas do ccam foi verificado (`doctor.LayoutVersion`), ele adiciona `· ccam was verified against the folder layout of Claude Code 2.1.302. Any 'unknown entries' below may mean the layout changed`. Um binário ausente ou um `--version` que falha é um erro. Sem reparo.
 2. **Credenciais no ambiente** (`checkAuthEnv`). Avisa quando `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY` ou `ANTHROPIC_AUTH_TOKEN` está definida: toda conta iniciada nesse shell a herda, e o Claude Code a prefere ao login da própria conta. Sem reparo; remova a variável você mesmo.
-3. **Pasta** (`checkProfile`). Uma pasta de conta ausente é um erro e encerra as verificações dessa conta. Permissões com qualquer bit de grupo ou de outros definido são um aviso; `--fix` executa `chmod 0700`.
+3. **Pasta** (`checkProfile`). Uma pasta de conta ausente é um erro e encerra as verificações dessa conta. Permissões com qualquer bit de grupo ou de outros definido são um aviso; `--fix` executa `chmod 0700`. O Windows não tem bits de permissão, então lá esta verificação e a de `0600` abaixo são puladas; a pasta no seu perfil de usuário é protegida pela lista de controle de acesso dela.
 4. **Arquivo de login** (`checkCredentials`). `.credentials.json` é verificado com `lstat`. Um link simbólico é um erro, porque cada conta precisa ter o próprio token, e não é reparado. Um modo diferente de `0600` é um aviso; `--fix` executa `chmod 0600`. Depois o login é lido (no macOS, primeiro do Acesso às Chaves). A falta de login é um aviso que indica `ccam login <name>`. Um token de renovação expirado é o erro `login expired`; um token de acesso expirado é apenas informação, já que o Claude Code o renova na próxima inicialização. Nenhum desses é reparado.
 5. **Links de compartilhamento** (`share.Check`). Compara cada caminho de `share.Layout` com as configurações de compartilhamento da conta, usando só `lstat` e `readlink`. Ele informa quatro tipos: um link ausente, um link que aponta para outro lugar, um arquivo comum onde deveria haver um link e um link que sobrou de um item que agora é local. Um link ausente é um aviso; os outros são erros.
 6. **Entradas desconhecidas** (`checkUnknownEntries`). Lista os nomes de primeiro nível na pasta da conta que o ccam não conhece (`share.Known`), como um indício de que o layout do Claude Code mudou. Apenas informação.
@@ -78,6 +78,7 @@ O bloco do meio é executado uma vez por conta. As verificações, e o que `--fi
 8. **Servidores MCP** (`checkMCP`). Carrega o `mcp.json` de cada grupo uma vez. Um arquivo que não pode ser lido é um erro; um servidor que não passa em `mcp.Validate` é um aviso. Sem reparo.
 9. **Formato da resposta de uso** (`checkUsageFormat`). Consulta o endpoint de uso, sem o cache e com o limite habitual de 3 segundos, para uma conta após a outra, até que uma responda. Se a resposta não puder mais ser interpretada, ele avisa que `ccam usage` passa a usar o cache da linha de status. Esta é a única verificação que usa a rede.
 10. **Atalhos** (`checkShims`). Só quando uma conta tem um atalho. Links ausentes em `~/.local/bin` são um aviso; `--fix` chama `shim.Install`, que só cria os links ausentes e nunca mexe em outros arquivos. Uma pasta bin que não está no `PATH` é um aviso e não é reparada.
+11. **Pastas** (`checkFolders`). Só quando existem entradas de [`ccam folder`](/features/folder). Uma entrada cuja conta não existe é um erro, e uma entrada cuja pasta sumiu é um aviso. Nenhuma das duas é reparada, porque remover uma entrada mudaria qual conta inicia ali.
 
 ### Reparar links de compartilhamento
 

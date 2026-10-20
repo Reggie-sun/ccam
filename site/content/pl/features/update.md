@@ -1,10 +1,10 @@
 ---
 title: Aktualizacja ccam
 description: ccam update zastępuje ccam najnowszym wydaniem z GitHub po sprawdzeniu SHA-256; --check tylko informuje, a --version instaluje wskazany tag wydania.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 10
 translation: machine
-sourceHash: 83fc20191328
+sourceHash: d91499b95d3d
 ---
 
 `ccam update` pobiera wydanie ccam z GitHub, sprawdza je względem `checksums.txt` wydania i zastępuje działający plik binarny jedną zmianą nazwy. Używaj go, jeśli zainstalowałeś ccam skryptem instalacyjnym lub z archiwum. ccam nigdy sam nie sprawdza aktualizacji: tylko to polecenie łączy się z GitHub, więc każde inne polecenie działa tak samo bez sieci.
@@ -53,9 +53,9 @@ Kod znajduje się w `internal/update`, który importuje tylko `ccam update`. Śc
 2. Bez `--version` `Updater.Latest` wysyła żądanie `<releases>/latest` bez podążania za przekierowaniem i odczytuje tag z nagłówka `Location` (`…/tag/v0.5.0`). Używa strony wydań zamiast API GitHub, więc nie obowiązuje limit API wynoszący 60 żądań na godzinę. Sprawdzenie ma 10 sekund.
 3. `parseVersion` sprawdza tag ścisłym wzorcem. Tag trafia do adresów pobierania i do wypisywanego polecenia powłoki, więc nie przechodzi nic, co zawiera `/`, `%`, spacje lub znaki powłoki. `compareVersions` porównuje go z działającą wersją; wersja przedpremierowa jest sortowana przed swoim wydaniem.
 4. `managed()` i `writable()` decydują, czy ccam w ogóle może zastąpić plik binarny (zobacz niżej).
-5. `Updater.Fetch` pobiera jednocześnie `ccam_<os>_<arch>.tar.gz` i `checksums.txt`, z limitem 2 minut na oba. Każde pobranie jest ograniczone do 256 MB.
+5. `Updater.Fetch` pobiera jednocześnie `ccam_<os>_<arch>.tar.gz` (w Windows `ccam_windows_<arch>.zip`) i `checksums.txt`, z limitem 2 minut na oba. Każde pobranie jest ograniczone do 256 MB.
 6. SHA-256 archiwum musi zgadzać się z jego wierszem w `checksums.txt`, zanim stanie się cokolwiek innego. Brakujący wiersz lub inna suma kontrolna zatrzymuje aktualizację z komunikatem `nothing was changed`.
-7. `extract()` odczytuje archiwum tar i bierze pierwszy zwykły plik o nazwie `ccam`. Foldery, linki i inne wpisy są ignorowane, a plik binarny też jest ograniczony do 256 MB.
+7. `extract()` odczytuje archiwum tar i bierze pierwszy zwykły plik o nazwie `ccam` (`extractZip` bierze `ccam.exe` z archiwum zip). Foldery, linki i inne wpisy są ignorowane, a plik binarny też jest ograniczony do 256 MB.
 8. `Updater.Install` zapisuje nowy plik binarny przez `fsutil.AtomicWrite`: plik tymczasowy `.ccam.tmp*` obok pliku binarnego, z bitami uprawnień starego pliku, zrzucony na dysk i przemianowany w miejsce starego.
 
 Cały proces, od sprawdzenia tagu do zmiany nazwy:
@@ -63,6 +63,8 @@ Cały proces, od sprawdzenia tagu do zmiany nazwy:
 <!-- motion:update-pipeline -->
 
 Archiwum i `checksums.txt` są pobierane równolegle i nic nie jest zapisywane, dopóki suma kontrolna się nie zgadza. Zmiana nazwy jest atomowa, więc awaria lub pełny dysk zostawia albo stary plik binarny, albo nowy, nigdy połowę. Polecenia skrótów, takie jak `~/.local/bin/ccwork`, są dowiązaniami symbolicznymi do pliku binarnego ccam, więc uruchamiają nową wersję bez żadnych zmian.
+
+W Windows pliku działającego programu nie można podmienić ani usunąć, można tylko zmienić jego nazwę. `Updater.Install` zapisuje nowy plik binarny jako `ccam.exe.new`, zmienia nazwę działającego `ccam.exe` na `ccam.exe.old`, a nowego pliku na `ccam.exe`. Jeśli ostatni krok się nie powiedzie, stary plik binarny wraca do dawnej nazwy. Następna aktualizacja usuwa `ccam.exe.old`. Skróty będące dowiązaniami twardymi zamiast symbolicznych ([Polecenia skrótów](/features/shortcuts)) są odnawiane zaraz potem, więc też uruchamiają nową wersję.
 
 ### Instalacje zarządzane przez menedżer pakietów
 
@@ -85,7 +87,7 @@ Or install a copy in ~/.local/bin with the install script:
   curl -fsSL https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.sh | sh
 ```
 
-W systemach innych niż Linux wypisywany jest tylko wiersz ze skryptem instalacyjnym. Gdy do folderu nie da się zapisywać, ccam proponuje ponowne uruchomienie skryptu instalacyjnego, który instaluje ccam w `~/.local/bin`.
+W systemach innych niż Linux wypisywany jest tylko wiersz ze skryptem instalacyjnym, w Windows: `irm https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.ps1 | iex`. Gdy do folderu nie da się zapisywać, ccam proponuje ponowne uruchomienie skryptu instalacyjnego, który instaluje ccam w `~/.local/bin`.
 
 ## Bezpieczeństwo i przypadki brzegowe
 

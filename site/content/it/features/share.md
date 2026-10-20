@@ -1,10 +1,10 @@
 ---
 title: Condivisione tra account
 description: Come ccam share collega impostazioni, CLAUDE.md, estensioni e cronologia a una cartella di gruppo, con piano e backup, e come off ricopia i dati.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: b30b7cdb2b15
+sourceHash: 16de29bbdd57
 ---
 
 Ogni account ha la propria cartella, ma la maggior parte del suo contenuto non ha bisogno di essere separata. `ccam share` attiva o disattiva la condivisione per un account e un elemento alla volta: il file o la cartella dell'account viene spostato in una cartella di gruppo e sostituito da un link simbolico, così ogni account del gruppo legge e scrive la stessa copia. Usalo dopo `ccam add` per cambiare cosa condivide un account, oppure per mettere alcuni account in un gruppo a parte.
@@ -112,6 +112,10 @@ Repair them with `ccam doctor --fix`, then run again
 ```
 
 `ccam doctor --fix` esegue `share.Build` con le impostazioni salvate da entrambe le parti, il che ricava ogni passaggio da ciò che si trova su disco, mantiene il contenuto del gruppo in caso di conflitti e fa un backup di tutto ciò che sostituisce.
+
+### Su Windows
+
+Windows crea link simbolici solo in Modalità sviluppatore (Impostazioni > Sistema > Per sviluppatori) o per un amministratore. `fsutil.Link` prova prima un link simbolico. Senza quel diritto, una cartella condivisa (`agents`, `skills`, `projects` e le altre) diventa una giunzione di directory, che qualsiasi utente può creare, e per Claude Code funziona allo stesso modo. Un file condiviso (`settings.json`, `CLAUDE.md`, `history.jsonl`) può essere solo un link simbolico, quindi ccam si ferma con `Windows links files only in Developer Mode` e suggerisce di attivarla o di tenere quell'elemento locale. `share.Check` legge le giunzioni come link (`fsutil.LinkTarget`), e rimuovere la cartella di un account rimuove la giunzione stessa, mai il contenuto del gruppo a cui punta.
 
 ## Sicurezza e casi limite
 

@@ -2,10 +2,10 @@
 title: クイックスタート
 metaTitle: "クイックスタート：Claude Codeアカウントの追加と切替"
 description: ccam addで2つのClaude Codeアカウントを追加し、ccworkのようなショートカットを付けて切り替え、共有する項目を選びます。
-updated: 2026-10-19
+updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: a10d91d2a64e
+sourceHash: 55f81dae9fc0
 ---
 
 `ccam add`で各アカウントを追加し、`ccam <name>`、または`ccwork`のように自分で名前を付けたショートカットでClaude Codeを起動します。ほとんどの人にとって、必要なのはこれだけです。
@@ -107,7 +107,7 @@ ccam usage
 ccam next --continue
 ```
 
-`ccam usage`は、すべてのアカウントの5時間と週間の使用量を表示します。`ccam next --continue`は、次のアカウントで同じ会話を開きます。詳しくは[使用量の上限](/docs/usage-limits)を参照してください。
+`ccam usage`は、すべてのアカウントの5時間と週間の使用量を表示します。`ccam next --continue`は、次のアカウントで同じ会話を開きます。スクリプトでは、`ccam --fallback work -p "…"`が自動で切り替えます。詳しくは[使用量の上限](/docs/usage-limits)を参照してください。
 
 ## すでに~/.claudeを使っている場合
 

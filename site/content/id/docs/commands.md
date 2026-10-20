@@ -2,10 +2,10 @@
 title: Referensi perintah
 metaTitle: Referensi perintah ccam
 description: Semua perintah dan opsi ccam, dari ccam add dan ccam <name> hingga ccam usage, ccam next, dan ccam doctor.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 3342453e38d3
+sourceHash: 5d3275878535
 ---
 
 Letakkan `--dry-run` sebelum perintah untuk melihat apa yang akan dilakukannya tanpa benar-benar menjalankannya, misalnya `ccam --dry-run work`. Opsi ini berfungsi saat menjalankan Claude Code (`ccam <name>`, `ccam run`, `ccam next`) dan dengan `share`, `migrate`, `shortcut`, `update`, serta `doctor --fix`. Perintah lain yang mengubah sesuatu akan menolaknya alih-alih berjalan.
@@ -16,7 +16,16 @@ Letakkan `--dry-run` sebelum perintah untuk melihat apa yang akan dilakukannya t
 
 `ccam <name|number> [arguments]` menjalankan Claude Code sebagai akun tersebut. ccam tidak membaca argumen setelah nama akun; ccam meneruskannya ke `claude` dengan urutan yang sama, dan input standar, kode keluar, serta sinyal berperilaku persis seperti pada `claude` itu sendiri. `--` setelah nama akun bersifat opsional.
 
-`ccam` dengan argumen tetapi tanpa nama akun, seperti `ccam -p "summarise"`, menggunakan akun default. Tetapkan akun default dengan `ccam use <name>`.
+`ccam` dengan argumen tetapi tanpa nama akun, seperti `ccam -p "summarise"`, menggunakan akun yang ditetapkan untuk folder saat ini, atau jika tidak ada, akun default. Tetapkan keduanya dengan `ccam folder <name> [folder]` dan `ccam use <name>`.
+
+```sh
+ccam folder work ~/code/company   # work inside ~/code/company and below
+ccam folder                       # list folders and the account used here
+ccam folder --remove ~/code/company
+ccam --fallback work -p "fix the tests"   # run again as another account at the limit
+```
+
+`--fallback` sebelum nama akun ditujukan untuk proses `-p`/`--print`. Saat akun mencapai batas penggunaannya, ccam menjalankan lagi perintah yang sama sebagai akun yang sudah login dengan sisa kuota terbanyak dan hanya mencetak output dari proses yang selesai. Lihat [Akun per folder](/features/folder) dan [Jalankan ulang saat batas tercapai](/features/next#run-again-at-the-limit).
 
 Pintasan seperti `ccwork` menjalankan akunnya dengan cara yang sama: `ccwork --resume` melakukan hal yang sama dengan `ccam work --resume`. Lihat [pintasan](/docs/commands#shortcuts).
 
@@ -108,6 +117,7 @@ ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
 ccam version         # also: ccam -v, ccam --version
+ccam completion bash # or zsh, powershell
 ```
 
 `ccam update` memeriksa checksum SHA-256 rilis sebelum mengganti ccam, dan `--version v0.2.0` menginstal rilis tertentu. ccam yang diinstal dari paket `.deb` diperbarui dengan apt. Lihat [pembaruan](/docs/install#update).
@@ -122,4 +132,4 @@ ccam version         # also: ccam -v, ccam --version
 | `~/.local/state/ccam/` | Cache penggunaan dan waktu terakhir digunakan |
 | `~/.local/bin/<shortcut>` | Perintah pintasan seperti `ccwork`, berupa tautan ke ccam |
 
-Variabel `XDG_CONFIG_HOME`, `XDG_DATA_HOME`, dan `XDG_STATE_HOME` memindahkan folder-folder ini.
+Variabel `XDG_CONFIG_HOME`, `XDG_DATA_HOME`, dan `XDG_STATE_HOME` memindahkan folder-folder ini. Di Windows, `~` adalah `%USERPROFILE%` dan pintasan berupa `<shortcut>.exe`.

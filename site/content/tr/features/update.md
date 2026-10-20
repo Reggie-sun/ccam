@@ -1,10 +1,10 @@
 ---
 title: ccam'i güncelleme
 description: ccam update, bir SHA-256 kontrolünden sonra ccam'i en son GitHub sürümüyle değiştirir; --check yalnızca bildirir, --version belirli bir sürüm etiketini kurar.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 10
 translation: machine
-sourceHash: 83fc20191328
+sourceHash: d91499b95d3d
 ---
 
 `ccam update`, GitHub'dan bir ccam sürümü indirir, onu sürümün `checksums.txt` dosyasıyla doğrular ve çalışan ikili dosyayı tek bir yeniden adlandırmayla değiştirir. ccam'i kurulum betiğiyle veya bir arşivden kurduysanız kullanın. ccam güncellemeleri hiçbir zaman kendiliğinden kontrol etmez: GitHub ile yalnızca bu komut bağlantı kurar; bu yüzden diğer tüm komutlar çevrimdışı da aynı şekilde çalışır.
@@ -53,9 +53,9 @@ Kod, yalnızca `ccam update` komutunun içe aktardığı `internal/update` için
 2. `--version` olmadan `Updater.Latest`, yönlendirmeyi izlemeden `<releases>/latest` adresini ister ve etiketi `Location` başlığından okur (`…/tag/v0.5.0`). Bu, GitHub API'si yerine sürümler sayfasını kullanır; böylece API'nin saatte 60 istek sınırı uygulanmaz. Aramanın 10 saniyesi vardır.
 3. `parseVersion`, etiketi katı bir kalıba göre kontrol eder. Etiket, indirme URL'lerinde ve yazdırılan bir kabuk komutunda yer alır; bu yüzden `/`, `%`, boşluk veya kabuk karakterleri içeren hiçbir şey geçemez. `compareVersions` onu çalışan sürümle karşılaştırır; bir ön sürüm, kendi sürümünden önce sıralanır.
 4. `managed()` ve `writable()`, ccam'in ikili dosyayı değiştirip değiştiremeyeceğine karar verir (aşağıya bakın).
-5. `Updater.Fetch`, `ccam_<os>_<arch>.tar.gz` ve `checksums.txt` dosyalarını aynı anda, ikisi için toplam 2 dakikayla indirir. Her indirme 256 MB ile sınırlıdır.
+5. `Updater.Fetch`, `ccam_<os>_<arch>.tar.gz` (Windows'ta `ccam_windows_<arch>.zip`) ve `checksums.txt` dosyalarını aynı anda, ikisi için toplam 2 dakikayla indirir. Her indirme 256 MB ile sınırlıdır.
 6. Başka herhangi bir şey olmadan önce arşivin SHA-256 değeri `checksums.txt` içindeki satırıyla eşleşmelidir. Eksik bir satır veya farklı bir sağlama toplamı güncellemeyi `nothing was changed` ile durdurur.
-7. `extract()` tar dosyasını okur ve `ccam` adlı ilk normal dosyayı alır. Klasörler, bağlantılar ve diğer girdiler yok sayılır; ikili dosya da 256 MB ile sınırlıdır.
+7. `extract()` tar dosyasını okur ve `ccam` adlı ilk normal dosyayı alır (`extractZip` zip içinden `ccam.exe` dosyasını alır). Klasörler, bağlantılar ve diğer girdiler yok sayılır; ikili dosya da 256 MB ile sınırlıdır.
 8. `Updater.Install`, yeni ikili dosyayı `fsutil.AtomicWrite` ile yazar: ikili dosyanın yanında, eski dosyanın izin bitlerine sahip geçici bir `.ccam.tmp*` dosyası diske yazılır ve eskisinin üzerine yeniden adlandırılır.
 
 Etiket aramasından yeniden adlandırmaya kadar tüm akış:
@@ -63,6 +63,8 @@ Etiket aramasından yeniden adlandırmaya kadar tüm akış:
 <!-- motion:update-pipeline -->
 
 Arşiv ve `checksums.txt` yan yana indirilir ve sağlama toplamı eşleşene kadar hiçbir şey yazılmaz. Yeniden adlandırma atomiktir; bu yüzden bir çökme veya dolu bir disk ya eski ikili dosyayı ya da yenisini bırakır, hiçbir zaman yarım bir dosya bırakmaz. `~/.local/bin/ccwork` gibi kısayol komutları ccam ikili dosyasına giden sembolik bağlantılardır; bu yüzden hiçbir değişiklik olmadan yeni sürümü çalıştırırlar.
+
+Windows'ta çalışan bir programın dosyası değiştirilemez veya silinemez, yalnızca yeniden adlandırılabilir. `Updater.Install` yeni ikili dosyayı `ccam.exe.new` olarak yazar, çalışan `ccam.exe` dosyasını `ccam.exe.old` olarak, yeni dosyayı da `ccam.exe` olarak yeniden adlandırır. Son adım başarısız olursa eski ikili dosya geri adlandırılır. Bir sonraki güncelleme `ccam.exe.old` dosyasını siler. Sembolik bağlantı yerine sabit bağlantı olan kısayollar ([Kısayol komutları](/features/shortcuts)) hemen ardından yenilenir, böylece onlar da yeni sürümü çalıştırır.
 
 ### Paket yöneticisiyle yapılan kurulumlar
 
@@ -85,7 +87,7 @@ Or install a copy in ~/.local/bin with the install script:
   curl -fsSL https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.sh | sh
 ```
 
-Linux dışındaki sistemlerde yalnızca kurulum betiği satırı yazdırılır. Klasör yazılabilir değilse ccam, ccam'i `~/.local/bin` içine kuran kurulum betiğini yeniden çalıştırmayı önerir.
+Linux dışındaki sistemlerde yalnızca kurulum betiği satırı yazdırılır: Windows'ta `irm https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.ps1 | iex`. Klasör yazılabilir değilse ccam, ccam'i `~/.local/bin` içine kuran kurulum betiğini yeniden çalıştırmayı önerir.
 
 ## Güvenlik ve uç durumlar
 

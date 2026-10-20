@@ -1,10 +1,10 @@
 ---
 title: Кілька облікових записів Claude Code на одному ПК
 description: Як запустити кілька облікових записів Claude Code одночасно з CLAUDE_CONFIG_DIR, вручну через псевдоніми оболонки або з ccam, і перемикатися між ними.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: e2f4deb40c81
+sourceHash: f2982e4317a2
 ---
 
 Дайте кожному обліковому запису власну теку конфігурації. Claude Code бере шлях до теки зі змінної середовища `CLAUDE_CONFIG_DIR`, а в кожній теці зберігаються власні дані входу, налаштування та історія, тому кожен обліковий запис лишається авторизованим і їх можна запускати одночасно. Це можна налаштувати вручну через псевдонім оболонки або доручити ccam.
@@ -61,7 +61,7 @@ ccam add work --shortcut ccwork
 
 ## Чи працює це у Windows і WSL?
 
-Claude Code працює [нативно у Windows і всередині WSL](https://code.claude.com/docs/en/setup). `CLAUDE_CONFIG_DIR` діє в обох випадках, тому у Windows без WSL достатньо псевдоніма або функції PowerShell, описаних вище. ccam працює на Linux і macOS; у Windows установіть його й користуйтеся ним усередині WSL, де він працює так само, як на Linux.
+Claude Code працює [нативно у Windows і всередині WSL](https://code.claude.com/docs/en/setup). `CLAUDE_CONFIG_DIR` діє в обох випадках, тому у Windows без WSL достатньо псевдоніма або функції PowerShell, описаних вище. ccam теж працює у Windows нативно: установіть його в PowerShell командою `irm https://ccam.dev/install.ps1 | iex` або всередині WSL командою для Linux. Короткі команди стають `ccwork.exe`, а для спільного використання файлів, як-от `settings.json`, потрібен режим розробника ([Встановлення ccam](/docs/install)).
 
 ## Усунення проблем
 

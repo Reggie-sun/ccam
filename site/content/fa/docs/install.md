@@ -1,11 +1,11 @@
 ---
 title: نصب ccam
-metaTitle: نصب ccam روی Linux و macOS
-description: ccam را روی Linux یا macOS با یک فرمان، بسته .deb یا از کد منبع نصب کنید و با ccam update به‌روزش کنید. ابتدا باید Claude Code نصب شده باشد.
-updated: 2026-10-19
+metaTitle: نصب ccam روی Linux، macOS و Windows
+description: ccam را روی Linux، macOS یا Windows با یک فرمان، بسته .deb یا از کد منبع نصب کنید و با ccam update به‌روزش کنید. ابتدا باید Claude Code نصب شده باشد.
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 7ecd1ed00e09
+sourceHash: 07eadc0769c8
 ---
 
 این فرمان را در یک ترمینال روی Linux یا macOS اجرا کنید:
@@ -16,13 +16,22 @@ curl -fsSL https://ccam.dev/install.sh | sh
 
 اسکریپت نسخه مناسب سیستم شما را دانلود می‌کند، checksum SHA-256 آن را بررسی می‌کند و `ccam` را در `~/.local/bin` قرار می‌دهد؛ ccam فرمان‌های میان‌بری را هم که بعداً انتخاب می‌کنید، مانند `ccwork`، همان‌جا می‌سازد. اگر آن پوشه در `PATH` شما نباشد، اسکریپت خطی را که باید به `~/.bashrc` یا `~/.zshrc` اضافه کنید چاپ می‌کند.
 
+در Windows، این را در PowerShell اجرا کنید:
+
+```powershell
+irm https://ccam.dev/install.ps1 | iex
+```
+
+این فرمان `ccam_windows_<arch>.zip` را دانلود می‌کند، چک‌سام SHA-256 آن را بررسی می‌کند، `ccam.exe` را در `%USERPROFILE%\.local\bin` می‌گذارد، همان پوشه‌ای که نصب‌کننده Claude Code فایل `claude.exe` را در آن قرار می‌دهد، و اگر آن پوشه هنوز در `PATH` کاربری شما نباشد، آن را اضافه می‌کند. پس از آن یک ترمینال جدید باز کنید.
+
 ccam خودش Claude Code را برای شما اجرا می‌کند، پس ابتدا [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) را نصب کنید و مطمئن شوید که `claude --version` کار می‌کند.
 
 ## سیستم‌های پشتیبانی‌شده
 
 - Linux روی x86-64 و ARM64: Ubuntu، Debian، Fedora، Arch، Alpine و توزیع‌های دیگر. فایل اجرایی ایستا است و به هیچ وابستگی‌ای نیاز ندارد.
 - macOS روی Apple silicon و Intel.
-- Windows مستقیماً پشتیبانی نمی‌شود. داخل WSL، ccam مانند هر سیستم Linux دیگری کار می‌کند.
+- Windows 10 و 11 روی x86-64 و ARM64، در PowerShell، Windows Terminal یا Git Bash. پوشه‌های مشترک برای همه کاربران کار می‌کنند. فایل‌های مشترک (`settings.json`، `CLAUDE.md`، `history.jsonl`) به Developer Mode نیاز دارند (Settings > System > For developers)، چون Windows فقط در این حالت، یا به مدیر سیستم، اجازه ساختن پیوند به فایل‌ها را می‌دهد؛ [اشتراک در Windows](/features/share#on-windows) را ببینید.
+- داخل WSL، ccam مانند هر سیستم Linux دیگری کار می‌کند.
 
 ## روش‌های دیگر نصب
 
@@ -46,11 +55,19 @@ go install github.com/jhyunwoo/ccam/cmd/ccam@latest
 curl -fsSL https://ccam.dev/install.sh | CCAM_VERSION=v0.1.0 sh
 ```
 
+```powershell
+$env:CCAM_VERSION = 'v0.1.0'; irm https://ccam.dev/install.ps1 | iex
+```
+
 ## تکمیل خودکار در شل
 
 ```sh
 ccam completion bash > ~/.local/share/bash-completion/completions/ccam
 ccam completion zsh > "${fpath[1]}/_ccam"
+```
+
+```powershell
+ccam completion powershell >> $PROFILE
 ```
 
 تکمیل خودکار همه فرمان‌ها و گزینه‌های `ccam` را پوشش می‌دهد، از جمله نام حساب‌ها.
@@ -92,6 +109,8 @@ ccam --dry-run update
 
 اجرای دوباره اسکریپت نصب هم نسخه موجود در `~/.local/bin` را به‌روز می‌کند. اگر ccam را با `go install` ساخته‌اید، همان فرمان را دوباره اجرا کنید.
 
+**Windows.** `ccam update` فایل `.zip` مخصوص Windows را دانلود می‌کند. در Windows نمی‌توان برنامه‌ای را که در حال اجراست جایگزین کرد، پس نام فایل اجرایی قدیمی به `ccam.exe.old` تغییر می‌کند و به‌روزرسانی بعدی آن را پاک می‌کند.
+
 **بسته Debian و Ubuntu.** `ccam update` فایل `/usr/bin/ccam` را که apt نصب کرده است جایگزین نمی‌کند و به‌جای آن این مراحل را چاپ می‌کند. فایل جدید `ccam_<version>_linux_amd64.deb` را از [صفحه نسخه‌ها](https://github.com/jhyunwoo/ccam/releases) دانلود کنید و روی نسخه قبلی نصب کنید:
 
 ```sh
@@ -107,6 +126,14 @@ ccam list
 ccam shortcut work --remove   # once for each account that has a shortcut
 rm ~/.local/bin/ccam
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
+```
+
+در Windows، در PowerShell:
+
+```powershell
+ccam shortcut work --remove   # once for each account that has a shortcut
+Remove-Item ~\.local\bin\ccam.exe
+Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
 ```
 
 پاک کردن `~/.local/share/ccam` اطلاعات ورود و تاریخچه گفتگوی ذخیره‌شده در آن را هم پاک می‌کند. پوشه `~/.claude` که آن را [وارد کرده‌اید](/docs/commands) در جای خود باقی می‌ماند.

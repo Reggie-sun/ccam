@@ -4,7 +4,7 @@ description: अनेक Claude Code खाती चालवण्यास�
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: ea24bb091caf
+sourceHash: b9fbcb88f111
 ---
 
 प्रत्येक खात्यासाठी एक शेल alias हा अनेक Claude Code खाती चालवण्याचा सर्वात सोपा मार्ग आहे. ccam आतून तेच करते आणि त्यावर शेअरिंग, खाते बदलणे आणि वापराचा मागोवा जोडते.
@@ -42,6 +42,8 @@ ccam add work --shortcut ccwork
 | दुसऱ्या खात्यात संभाषण पुढे चालू ठेवणे | नाही | `ccam next --continue` |
 | प्रत्येक खात्याचा वापर | नाही | `ccam usage` |
 | सर्वात जास्त जागा असलेले खाते निवडणे | नाही | `ccam next --auto` |
+| मर्यादा गाठल्यावर `-p` job दुसऱ्या खात्याने पुन्हा चालवणे | नाही | `ccam --fallback` |
+| प्रत्येक प्रकल्प फोल्डरसाठी एक खाते | नाही | `ccam folder` |
 | स्टेटस लाइनमध्ये खात्याचे नाव | नाही | `ccam statusline install` |
 | तुटलेल्या लिंक्स दुरुस्त करणे | हाताने | `ccam doctor --fix` |
 | अतिरिक्त सॉफ्टवेअर | काहीही नाही | एक static बायनरी |

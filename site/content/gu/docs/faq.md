@@ -2,10 +2,10 @@
 title: વારંવાર પૂછાતા પ્રશ્નો
 metaTitle: "ccam FAQ: ઘણાં Claude Code એકાઉન્ટ"
 description: ccam, Claude Code એકાઉન્ટ, વપરાશ મર્યાદા, શેરિંગ, ગોપનીયતા અને સમર્થિત સિસ્ટમ વિશેના જવાબો.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 6
 translation: machine
-sourceHash: 88bd249ec51c
+sourceHash: 80a5475ccfee
 ---
 
 ## શું ccam, Anthropic નું સત્તાવાર ટૂલ છે?
@@ -46,7 +46,7 @@ SSH સેશનમાં હંમેશની જેમ `ccam add` કે `cca
 
 ## ccam કઈ સિસ્ટમને સમર્થન આપે છે?
 
-Linux (Ubuntu, Debian, Fedora, Arch, Alpine અને બીજાં) અને macOS. Windows પર તેને WSL ની અંદર વાપરો.
+Linux (Ubuntu, Debian, Fedora, Arch, Alpine અને બીજાં), macOS અને Windows 10 અને 11, સીધું કે WSL ની અંદર. Windows પર `settings.json` જેવી ફાઇલો શેર કરવા Developer Mode જોઈએ; શેર કરેલાં ફોલ્ડર તેના વગર પણ ચાલે છે ([Windows પર શેરિંગ](/features/share#on-windows)).
 
 ## કોઈ MCP સર્વર ફક્ત એક જ એકાઉન્ટમાં કેમ દેખાય છે?
 
@@ -54,7 +54,7 @@ Linux (Ubuntu, Debian, Fedora, Arch, Alpine અને બીજાં) અને
 
 ## શું ccam, Claude Code ને ધીમું કરે છે?
 
-ccam દ્વારા Claude Code શરૂ કરવાથી લગભગ 4 મિલિસેકન્ડ ઉમેરાય છે, જે એક લેપટૉપ પર `scripts/perf-check.sh` વડે માપ્યું છે. ccam એક નાની ફાઇલ વાંચે છે, શેર કરેલી લિંક તપાસે છે અને પછી પોતાની જગ્યાએ `claude` ચલાવે છે, તેથી તમે કામ કરો ત્યારે તે ચાલતું નથી.
+ccam દ્વારા Claude Code શરૂ કરવાથી લગભગ 4 મિલિસેકન્ડ ઉમેરાય છે, જે એક લેપટૉપ પર `scripts/perf-check.sh` વડે માપ્યું છે. ccam એક નાની ફાઇલ વાંચે છે, શેર કરેલી લિંક તપાસે છે અને પછી પોતાની જગ્યાએ `claude` ચલાવે છે, તેથી તમે કામ કરો ત્યારે તે ચાલતું નથી. Windows process ને બદલી શકતું નથી, તેથી ત્યાં ccam Claude Code શરૂ કરીને તેની રાહ જુએ છે, બીજું કંઈ કરતું નથી.
 
 ## ccam અપડેટ કેવી રીતે કરવું?
 

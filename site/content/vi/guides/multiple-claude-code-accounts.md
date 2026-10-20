@@ -1,10 +1,10 @@
 ---
 title: Dùng nhiều tài khoản Claude Code trên một máy tính
 description: "Chạy song song nhiều tài khoản Claude Code với CLAUDE_CONFIG_DIR, thủ công bằng alias của shell hoặc tự động bằng ccam, và đổi tài khoản khi cần."
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: e2f4deb40c81
+sourceHash: f2982e4317a2
 ---
 
 Hãy cho mỗi tài khoản một thư mục cấu hình riêng. Claude Code đọc thư mục này từ biến môi trường `CLAUDE_CONFIG_DIR`, và mỗi thư mục chứa thông tin đăng nhập, cài đặt và lịch sử riêng, nên mọi tài khoản đều giữ trạng thái đăng nhập và bạn có thể chạy chúng cùng lúc. Bạn có thể tự thiết lập bằng một alias của shell, hoặc để ccam làm việc đó.
@@ -61,7 +61,7 @@ Trong Claude Code, `/status` cho biết tài khoản bạn đang đăng nhập. 
 
 ## Cách này có dùng được trên Windows và WSL không?
 
-Claude Code chạy [trực tiếp trên Windows và bên trong WSL](https://code.claude.com/docs/en/setup). `CLAUDE_CONFIG_DIR` hoạt động ở cả hai, nên trên Windows gốc chỉ cần alias hoặc hàm PowerShell ở trên là đủ. ccam chạy trên Linux và macOS; trên Windows, hãy cài và dùng nó bên trong WSL, nơi nó hoạt động giống như trên Linux.
+Claude Code chạy [trực tiếp trên Windows và bên trong WSL](https://code.claude.com/docs/en/setup). `CLAUDE_CONFIG_DIR` hoạt động ở cả hai, nên trên Windows gốc chỉ cần alias hoặc hàm PowerShell ở trên là đủ. ccam cũng chạy trực tiếp trên Windows: cài nó trong PowerShell bằng `irm https://ccam.dev/install.ps1 | iex`, hoặc bên trong WSL bằng lệnh dành cho Linux. Lệnh tắt trở thành `ccwork.exe`, và việc dùng chung các tệp như `settings.json` cần bật Developer Mode ([Cài đặt ccam](/docs/install)).
 
 ## Khắc phục sự cố
 

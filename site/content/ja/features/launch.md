@@ -4,7 +4,7 @@ description: ccam <name|number>、ccam run、ピッカーで任意のアカウ�
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 401eed57e533
+sourceHash: e6b5a8d4df86
 ---
 
 `ccam work`は、アカウント`work`としてClaude Codeを起動し、名前より後のものはすべてそのまま`claude`に渡します。ターミナル、スクリプト、パイプで入力を渡す場合など、`claude`と入力するあらゆる場所で使えます。
@@ -17,16 +17,18 @@ ccam 2                           # the account with number 2 (see ccam list)
 ccam work --resume               # claude --resume, as work
 ccam work -p "fix the tests" --output-format json
 cat log.txt | ccam work -p "find the cause"
-ccam -p "summarise"              # no name: the default account
+ccam -p "summarise"              # no name: the folder's account, else the default
 ccam use work                    # make work the default account
+ccam folder work ~/code/company  # use work in that folder when no name is given
 ccam run work --continue         # same as ccam work --continue
 ccam                             # the picker on a terminal, the list otherwise
 ccam --dry-run work -p hi        # print the command instead of running it
+ccam --fallback work -p "fix the tests"   # run again as another account at the limit
 ```
 
 アカウントの名前か、`ccam list`に表示される番号を指定します。ccamは名前より後の引数を読まないので、`ccam work --help`はClaude Codeのヘルプを表示します。名前の後の`--`は省略できます。標準入力、終了コード、シグナルは`claude`と同じように動作します。
 
-最初の引数が`-`で始まり、ccam自身のフラグでない場合、ccamはすべての引数を付けてデフォルトのアカウントを起動します。デフォルトは`ccam use`で設定したアカウントで、設定していない場合は番号が最も小さいアカウントです。
+最初の引数が`-`で始まり、ccam自身のフラグでない場合、ccamはすべての引数を付けて、名前を指定しないときのアカウントを起動します。それは[`ccam folder`](/features/folder)で現在のフォルダーに設定したアカウントで、なければデフォルトのアカウントです。デフォルトは`ccam use`で設定したアカウントで、設定していない場合は番号が最も小さいアカウントです。
 
 ### ピッカー
 
@@ -50,21 +52,27 @@ ccam --dry-run work -p hi        # print the command instead of running it
 | オプション | 効果 | デフォルト |
 | --- | --- | --- |
 | `--dry-run` | ccamが実行する環境変数とコマンドを表示して終了します | オフ |
+| `--fallback` | `-p`/`--print`での実行用。アカウントが使用量の上限に達すると、同じコマンドを、ログイン済みで最も余裕があるアカウントで再実行します（[詳細](/features/next#run-again-at-the-limit)） | オフ |
 | `-v`、`--version` | `ccam <version>`を表示します（最初の引数の場合のみ） | |
 | `-h`、`--help` | `ccam --help`や`ccam run --help`として、ccamのヘルプを表示します | |
 
 引数の規則:
 
 - ccamが自身のフラグを読むのは、アカウント名より前だけです。名前より後の引数は、`--dry-run`や`--help`も含めてすべてClaude Codeのものです。
-- `--dry-run`は、`ccam --dry-run work`、`ccam run --dry-run work`、`ccam --dry-run`（デフォルトのアカウント）の形で使えます。拒否されることはなく、そのとおりに動作します。
-- `ccam run <name|number> [claude args]`は、`ccam <name>`の長い形式です。名前なしの`ccam run`はデフォルトのアカウントを使います。
+- `--dry-run`は、`ccam --dry-run work`、`ccam run --dry-run work`、`ccam --dry-run`（名前を指定しないときのアカウント）の形で使えます。拒否されることはなく、そのとおりに動作します。`--dry-run`と`--fallback`はどちらの順序でも指定できます。
+- `ccam run <name|number> [claude args]`は、`ccam <name>`の長い形式です。名前なしの`ccam run`は、フォルダーのアカウントかデフォルトのアカウントを使います。
 - アカウント名には`add`、`list`、`run`、`usage`などのccamのコマンド名を使えないので、`ccam <word>`が曖昧になることはありません。
 
-ドライランは、そのままシェルに貼り付けられる1行を出力します。
+ドライランは、そのままシェル（WindowsではPowerShell）に貼り付けられる1行を出力します。
 
 ```console
 $ ccam --dry-run work -p "fix the tests"
 CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/claude --mcp-config=/home/me/.local/share/ccam/groups/default/mcp.json -p 'fix the tests'
+```
+
+```console
+PS> ccam --dry-run work -p "fix the tests"
+$env:CLAUDE_CONFIG_DIR='C:\Users\me\.local\share\ccam\profiles\work'; & C:\Users\me\.local\bin\claude.exe --mcp-config=C:\Users\me\.local\share\ccam\groups\default\mcp.json -p 'fix the tests'
 ```
 
 ## しくみ
@@ -78,7 +86,7 @@ CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/c
 1. `cmd/ccam/main.go`が`app.Main`を呼び出します。ccamが別の名前で起動された場合、それは[ショートカット](/features/shortcuts)なので、直接起動処理に進みます。
 2. `app.parse`は、cobraが関わる前に`os.Args`を調べます。`cli.Execute`に進むのは、`ccam`単体（ピッカー）、ccamのコマンド名（`config.Reserved`）、`-h`/`--help`、`-v`/`--version`だけです。それ以外はすべて起動です。
 3. `launcher.Launch`が`~/.config/ccam/config.toml`を読み込みます。解析するファイルはこれだけです。
-4. `launcher.Prepare`が名前か番号でアカウントを見つけ、先頭の`--`を1つ取り除き、`ResolveClaude`で`claude`の実行ファイルを特定します。PATHの検索結果は、ファイルの更新日時とともに`~/.local/state/ccam/claude-path`にキャッシュされるので、ccamが起動のたびに`PATH`を検索することはありません。ファイルが変更されたか、なくなった場合は、検索し直します。`config.toml`の`claude_bin`のパスは、そのまま使われます。ループになるため、ccam自身である`claude`は、inodeで比較して拒否します。
+4. `launcher.Prepare`が名前か番号でアカウントを見つけ（指定がない場合は、`HereProfile`が作業ディレクトリと`config.toml`の`[[folder]]`エントリーを文字列として比較し、フォルダーのアカウントを選びます）、先頭の`--`を1つ取り除き、`ResolveClaude`で`claude`の実行ファイルを特定します。PATHの検索結果は、ファイルの更新日時とともに`~/.local/state/ccam/claude-path`にキャッシュされるので、ccamが起動のたびに`PATH`を検索することはありません。ファイルが変更されたか、なくなった場合は、検索し直します。`config.toml`の`claude_bin`のパスは、そのまま使われます。ループになるため、ccam自身である`claude`は、inodeで比較して拒否します。
 5. `checkLinks`が、アカウントのフォルダー`~/.local/share/ccam/profiles/<name>/`を共有設定と比較します。使う`share.Check`は`lstat`と`readlink`だけを呼び出すので、システムコールは項目ごとに1回か2回です。足りないリンクはその場で作成します。データを失う可能性があるものがあれば、起動を停止します。
 6. `applyMCP`が共有MCPサーバーを追加します（後述）。
 7. `session.Register`がセッションを記録します。ccamは、自身のPIDを名前とし、プロセスの開始時刻を内容とするマーカーを`$XDG_RUNTIME_DIR/ccam/profile-<name>/<pid>`（`XDG_RUNTIME_DIR`がない場合は`~/.local/state/ccam/locks/`）に書き込みます。会話履歴を共有するアカウントの場合は、まず`historyCheck`が`history-<group>-<hash>`（ハッシュは現在のフォルダーから求めます）で実行中のセッションを探し、そこにも登録します。`exec`はPIDを変えないので、マーカーはそのままClaude Codeのプロセス自体を指すことになります。保持し続けるロックではなくマーカーを使うのは、Claude Codeが起動したプロセスがロックを引き継ぎ、セッション終了後もロックを持ち続けてしまうためです。
@@ -88,7 +96,9 @@ Claude Codeは、`CLAUDE_CONFIG_DIR`にアカウントのフォルダー、`CCAM
 
 ### execを使う理由
 
-`syscall.Exec`はccamのプロセスを`claude`に置き換えます。そのため、ccamがメモリーに残ることはなく、キー入力、シグナル、終了コードはClaude Code自身のものになり、引数はシェルの文字列ではなく配列のまま保たれます。`claude mcp add`で追加したサーバーの検出など、セッション後に必要な処理は次の起動時に行います。ccamは`.claude.json`の更新日時を`~/.local/state/ccam/mcp/<name>/seen`と比較し、変更があった場合だけファイルを解析します。
+`syscall.Exec`はccamのプロセスを`claude`に置き換えます。そのため、ccamがメモリーに残ることはなく、キー入力、シグナル、終了コードはClaude Code自身のものになり、引数はシェルの文字列ではなく配列のまま保たれます。
+
+Windowsには`exec`がありません。そこでは`Plan.Exec`が、同じ環境変数、引数、コンソールで`claude.exe`を子プロセスとして起動し、終了を待って、その終了コードで終了します。Ctrl+Cはコンソールから直接Claude Codeに届くので、ccamはそれを無視します。セッションのマーカーにはccamのPIDが入ります。ccamはClaude Codeとちょうど同じ時間だけ動作し、マーカーはClaude Codeの終了時に削除されます。待っている間、ccamはほかに何もしません。`claude mcp add`で追加したサーバーの検出など、セッション後に必要な処理は次の起動時に行います。ccamは`.claude.json`の更新日時を`~/.local/state/ccam/mcp/<name>/seen`と比較し、変更があった場合だけファイルを解析します。
 
 ### コマンドラインの振り分け
 

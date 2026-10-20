@@ -1,10 +1,10 @@
 ---
 title: استفاده از چند حساب Claude Code روی یک رایانه
 description: اجرای هم‌زمان چند حساب Claude Code با CLAUDE_CONFIG_DIR، به‌صورت دستی با نام مستعار شل یا خودکار با ccam، و جابه‌جایی بین آن‌ها.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: e2f4deb40c81
+sourceHash: f2982e4317a2
 ---
 
 به هر حساب یک پوشه پیکربندی جداگانه بدهید. Claude Code پوشه را از متغیر محیطی `CLAUDE_CONFIG_DIR` می‌خواند و هر پوشه ورود، تنظیمات و تاریخچه خودش را دارد، بنابراین هر حساب وارد‌شده باقی می‌ماند و می‌توانید حساب‌ها را هم‌زمان اجرا کنید. می‌توانید این کار را دستی با یک نام مستعار شل انجام دهید یا آن را به ccam بسپارید.
@@ -61,7 +61,7 @@ ccam add work --shortcut ccwork
 
 ## آیا این روش در Windows و WSL کار می‌کند؟
 
-Claude Code [به‌صورت بومی در Windows و داخل WSL](https://code.claude.com/docs/en/setup) اجرا می‌شود. `CLAUDE_CONFIG_DIR` در هر دو کار می‌کند، پس در Windows بومی همان نام مستعار یا تابع PowerShell بالا کافی است. ccam روی Linux و macOS اجرا می‌شود؛ در Windows آن را داخل WSL نصب و استفاده کنید، که در آنجا مانند Linux کار می‌کند.
+Claude Code [به‌صورت بومی در Windows و داخل WSL](https://code.claude.com/docs/en/setup) اجرا می‌شود. `CLAUDE_CONFIG_DIR` در هر دو کار می‌کند، پس در Windows بومی همان نام مستعار یا تابع PowerShell بالا کافی است. ccam هم به‌صورت بومی در Windows اجرا می‌شود: آن را در PowerShell با `irm https://ccam.dev/install.ps1 | iex` نصب کنید، یا داخل WSL با فرمان Linux. میان‌برها `ccwork.exe` می‌شوند و مشترک کردن فایل‌هایی مانند `settings.json` به Developer Mode نیاز دارد ([نصب ccam](/docs/install)).
 
 ## عیب‌یابی
 

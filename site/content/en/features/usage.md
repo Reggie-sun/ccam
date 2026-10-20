@@ -1,7 +1,7 @@
 ---
 title: Usage limits
 description: ccam usage shows the 5-hour and weekly limits of every account at once, and ccam statusline puts the account name and usage in Claude Code.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 7
 translation: source
 ---
@@ -99,11 +99,12 @@ Claude Code runs the status line command and pipes it a JSON document. ccam read
 1. `runStatusline` finds the account from `CCAM_PROFILE`, which ccam sets when it starts Claude Code, or else by matching `CLAUDE_CONFIG_DIR` against the account folders.
 2. `ParseStatusLine` reads `rate_limits.five_hour` and `rate_limits.seven_day`. The JSON has no rate limits for API key accounts, or before the session's first response; then nothing is saved.
 3. `SaveStatusLine` writes `~/.local/state/ccam/usage/<name>.statusline.json`. `ccam usage` uses it when the endpoint does not answer.
-4. ccam prints `[name] · model · 5h N% · 7d N%`. With `--wrap`, it runs your command through `sh -c` with the same input and prints `[name]` followed by the command's first line instead.
+4. ccam prints `[name] · model · 5h N% · 7d N%`. With `--wrap`, it runs your command through `sh -c` with the same input and prints `[name]` followed by the command's first line instead. On Windows it runs the command the way Claude Code does: with Git Bash when it is installed, else with PowerShell.
+5. When the 5-hour or weekly usage is at 90% or more and there is another account, the line ends with `→ ccam next --auto --continue`, for example `[work] · Opus · 5h 93% · 7d 41% · → ccam next --auto --continue`.
 
 The wrapped command gets 2 seconds. After that it is killed and the line shows the account name alone, so a slow command cannot block Claude Code's status line.
 
-`ccam statusline install` writes `statusLine` into each account's `settings.json`. When an account already has a status line command, ccam keeps it as `--wrap '<old command>'`. A `settings.json` shared through a group is written once, through its link, so every account in the group gets it. Running it again prints `(already set)` for files that already use ccam.
+`ccam statusline install` writes `statusLine` into each account's `settings.json`. When an account already has a status line command, ccam keeps it as `--wrap '<old command>'`. On Windows the path to ccam is written with forward slashes and `~` for the home folder (`~/.local/bin/ccam.exe statusline`), which both Git Bash and PowerShell understand. A `settings.json` shared through a group is written once, through its link, so every account in the group gets it. Running it again prints `(already set)` for files that already use ccam.
 
 ## Safety and edge cases
 

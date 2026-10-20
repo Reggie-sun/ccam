@@ -1,10 +1,10 @@
 ---
 title: ショートカットコマンド
 description: ccam shortcutで、アカウントにccworkのような専用のコマンドを付け、ccam shims installで~/.local/binのリンクを作り直します。
-updated: 2026-10-19
+updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 5f0cb5a57042
+sourceHash: 939256e7a67e
 ---
 
 ショートカットは、1つのアカウントとしてClaude Codeを起動する、自分で名前を付けたコマンドです。`ccwork --resume`は`ccam work --resume`と同じ動作をします。実体は`~/.local/bin`にあるccamへのリンクなので、bash、zsh、スクリプトなど、`PATH`からプログラムを実行するあらゆる場所で動作します。ショートカットは任意です。よく起動するアカウントに作成してください。
@@ -82,13 +82,17 @@ work: none (add one with `ccam shortcut work ccwork`)
 
 シェルのエイリアスやラッパースクリプトではなくシンボリックリンクを使う理由は、すべてのシェルとスクリプトで動作し、シェルの起動が余分に発生せず（約1～2 ms）、起動時に読むファイルも1つのままだからです。`scripts/perf-check.sh`は、`ccam <name>`と同じ10 ms（p95）の上限で、`hyperfine`を使ってショートカットを計測します。
 
+### Windowsの場合
+
+ショートカットは`%USERPROFILE%\.local\bin`にある`ccwork.exe`で、`shim.Name`は検索の前に`.exe`を（大文字小文字を問わず）取り除きます。そのため、`ccwork`、`ccwork.exe`、`CCWORK.EXE`はどれも`work`を起動します。ccamはまずシンボリックリンクを作成します。Windowsでこれができるのは、開発者モードのときか管理者の場合です。その権限がない場合はハードリンクを作成します。これは同じ`ccam.exe`ファイルの2つ目の名前で、権限は必要ありません。ハードリンクは、`ccam.exe`と同じファイルであればccam自身のものと見なされます。`ccam update`は`ccam.exe`の場所に新しいファイルを置くので、その後`shim.Relink`でハードリンクのショートカットをすべて作り直し、`✓ shortcut ccwork renewed`と表示します。名前の確認では、ほかの`PATH`フォルダーで、`PATHEXT`の各拡張子（`.exe`、`.cmd`など）を付けた`<name>`を探します。
+
 ## 安全性と特殊なケース
 
 - **どのアカウントのものでもないリンク。** `config.toml`の`shortcut`を手動で編集した後などに、`~/.local/bin`にあるccamへのリンクの名前をどのアカウントも使っていない場合、ccamはデフォルトのアカウントにフォールバックしません。`` ccam: ccold is not the shortcut of any account (see `ccam list`, `ccam shortcut`) ``で停止します。`ccam shortcut`で名前を設定し直すか、リンクを削除してください。
 - **既存のファイル。** ccamは自分で作成していないファイルを置き換えることはありません。`ccam shims install`は`<path> already exists and is not a ccam link, so it was left alone`で停止します。
 - **ccamのバイナリを移動した場合。** 古いリンクは存在しないパスを指すことになり、ccamはそれを自身のものとみなしません。それらを削除してから`ccam shims install`を実行してください。
 - **名前の変更と削除。** `ccam rename`ではショートカットの名前は変わらず、リンクも動作し続けます。リンクはccamを指しており、ccamが`config.toml`で名前を調べるためです。`ccam remove`はアカウントのリンクを削除します。`ccam shortcut <account> <new>`は、新しいリンクを作成する前に古いリンクを削除します。
-- **PATH。** ccamがリンクを作成したときに`~/.local/bin`が`PATH`にない場合、`Note: /home/me/.local/bin is not in PATH. Add it to ~/.bashrc or ~/.zshrc:`に続けて、追加すべき`export PATH=...`の行を表示します。
+- **PATH。** ccamがリンクを作成したときに`~/.local/bin`が`PATH`にない場合、`Note: /home/me/.local/bin is not in PATH. Add it to ~/.bashrc or ~/.zshrc:`に続けて、追加すべき`export PATH=...`の行を表示します。Windowsでは、代わりにユーザーの`PATH`にフォルダーを追加するPowerShellの行を表示します。
 - **あとから確認する。** `ccam doctor`は`missing shortcuts in /home/me/.local/bin: ccwork`と報告し、フォルダーが`PATH`にない場合は警告します。`ccam doctor --fix`は足りないリンクを作成します。
 
 ## 関連項目

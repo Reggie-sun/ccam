@@ -1,10 +1,10 @@
 ---
 title: Rabawa tsakanin asusai
 description: Yadda ccam share ke haɗa saituna, CLAUDE.md, extensions da tarihi da foldar rukuni, tare da shiri, kwafin ajiya da zaɓin rikici, da yadda off ke mayar da kwafi.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: b30b7cdb2b15
+sourceHash: 16de29bbdd57
 ---
 
 Kowane asusu yana da foldarsa, amma yawancin abin da ke cikinta ba ya buƙatar zama daban. `ccam share` yana kunna ko kashe rabawa ga asusu ɗaya da abu ɗaya a lokaci ɗaya: ana matsar da fayil ko foldar asusun cikin foldar rukuni kuma ana maye gurbinsa da mahaɗi (symbolic link), don haka kowane asusu a rukunin yana karantawa da rubutawa a kwafi ɗaya. Yi amfani da shi bayan `ccam add` don canza abin da asusu ke rabawa, ko don sanya wasu asusai a rukunin nasu.
@@ -112,6 +112,10 @@ Repair them with `ccam doctor --fix`, then run again
 ```
 
 `ccam doctor --fix` yana gudanar da `share.Build` da saitunan da aka ajiye a ɓangarorin biyu, wanda ke samar da kowane mataki daga abin da ke kan faifai, yana riƙe abin da ke cikin rukunin idan an yi rikici kuma yana ajiye kwafin duk abin da ya maye gurbinsa.
+
+### A Windows
+
+Windows yana ƙirƙirar symbolic links ne kawai a Developer Mode (Settings > System > For developers) ko ga administrator. `fsutil.Link` yana fara gwada symbolic link. Ba tare da wannan izinin ba, foldar da aka raba (`agents`, `skills`, `projects` da sauransu) tana zama directory junction, wanda kowane mai amfani zai iya ƙirƙira, kuma yana aiki iri ɗaya ga Claude Code. Fayil da aka raba (`settings.json`, `CLAUDE.md`, `history.jsonl`) zai iya zama symbolic link ne kawai, don haka ccam yana tsayawa da `Windows links files only in Developer Mode` kuma yana ba da shawarar kunna shi ko barin wannan abin a matsayin na gida. `share.Check` yana karanta junctions a matsayin mahaɗai (`fsutil.LinkTarget`), kuma cire foldar asusu yana cire junction ɗin kansa, ba taɓa abin da ke cikin rukunin da yake nufi ba.
 
 ## Tsaro da yanayi na musamman
 

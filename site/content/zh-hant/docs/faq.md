@@ -2,10 +2,10 @@
 title: 常見問題
 metaTitle: "ccam 常見問題：Claude Code 多帳號"
 description: 關於 ccam、Claude Code 多帳號、用量限制、共用、隱私和支援的作業系統的常見問題解答。
-updated: 2026-10-19
+updated: 2026-10-20
 order: 6
 translation: machine
-sourceHash: 88bd249ec51c
+sourceHash: 80a5475ccfee
 ---
 
 ## ccam 是 Anthropic 的官方工具嗎？
@@ -46,7 +46,7 @@ ccam 絕不會在帳號之間共用你的 Claude 登入資訊。它讀取帳號�
 
 ## ccam 支援哪些系統？
 
-Linux（Ubuntu、Debian、Fedora、Arch、Alpine 等）和 macOS。在 Windows 上，請在 WSL 中使用。
+Linux（Ubuntu、Debian、Fedora、Arch、Alpine 等）、macOS，以及 Windows 10 和 11（原生執行或在 WSL 中執行）。在 Windows 上，共用 `settings.json` 這類檔案需要開發人員模式；共用資料夾則不需要（[Windows 上的共用](/features/share#on-windows)）。
 
 ## 為什麼某個 MCP 伺服器只出現在一個帳號中？
 
@@ -54,7 +54,7 @@ Linux（Ubuntu、Debian、Fedora、Arch、Alpine 等）和 macOS。在 Windows �
 
 ## ccam 會拖慢 Claude Code 嗎？
 
-透過 ccam 啟動 Claude Code 大約會增加 4 毫秒，這是在一台筆記型電腦上用 `scripts/perf-check.sh` 測得的。ccam 會讀取一個小檔案、檢查共用連結，然後以 `claude` 取代自身，所以你工作時它並不在執行。
+透過 ccam 啟動 Claude Code 大約會增加 4 毫秒，這是在一台筆記型電腦上用 `scripts/perf-check.sh` 測得的。ccam 會讀取一個小檔案、檢查共用連結，然後以 `claude` 取代自身，所以你工作時它並不在執行。Windows 無法取代行程，所以在那裡 ccam 會啟動 Claude Code 並等待它結束，除此之外什麼都不做。
 
 ## 如何更新 ccam？
 

@@ -2,10 +2,10 @@
 title: ತ್ವರಿತ ಆರಂಭ
 metaTitle: "ತ್ವರಿತ ಆರಂಭ: Claude Code ಖಾತೆ ಸೇರಿಸಿ, ಬದಲಾಯಿಸಿ"
 description: ccam add ಮೂಲಕ ಎರಡು Claude Code ಖಾತೆಗಳನ್ನು ಸೇರಿಸಿ, ccwork ನಂತಹ ಶಾರ್ಟ್‌ಕಟ್‌ ನೀಡಿ, ಅವುಗಳ ನಡುವೆ ಬದಲಾಯಿಸಿ ಮತ್ತು ಏನನ್ನು ಹಂಚಬೇಕು ಎಂದು ಆಯ್ಕೆಮಾಡಿ.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: a10d91d2a64e
+sourceHash: 55f81dae9fc0
 ---
 
 ಪ್ರತಿ ಖಾತೆಯನ್ನು `ccam add` ಮೂಲಕ ಸೇರಿಸಿ, ನಂತರ `ccam <name>` ಮೂಲಕ ಅಥವಾ `ccwork` ನಂತಹ ನೀವೇ ಹೆಸರಿಡುವ ಶಾರ್ಟ್‌ಕಟ್ ಮೂಲಕ Claude Code ಆರಂಭಿಸಿ. ಹೆಚ್ಚಿನವರಿಗೆ ಬೇಕಾಗಿರುವುದು ಇಷ್ಟೇ.
@@ -107,7 +107,7 @@ ccam usage
 ccam next --continue
 ```
 
-`ccam usage` ಎಲ್ಲಾ ಖಾತೆಗಳ 5 ಗಂಟೆಯ ಮತ್ತು ವಾರದ ಬಳಕೆಯನ್ನು ತೋರಿಸುತ್ತದೆ. `ccam next --continue` ಅದೇ ಸಂಭಾಷಣೆಯನ್ನು ಮುಂದಿನ ಖಾತೆಯಲ್ಲಿ ತೆರೆಯುತ್ತದೆ. [ಬಳಕೆಯ ಮಿತಿಗಳು](/docs/usage-limits) ನೋಡಿ.
+`ccam usage` ಎಲ್ಲಾ ಖಾತೆಗಳ 5 ಗಂಟೆಯ ಮತ್ತು ವಾರದ ಬಳಕೆಯನ್ನು ತೋರಿಸುತ್ತದೆ. `ccam next --continue` ಅದೇ ಸಂಭಾಷಣೆಯನ್ನು ಮುಂದಿನ ಖಾತೆಯಲ್ಲಿ ತೆರೆಯುತ್ತದೆ. ಸ್ಕ್ರಿಪ್ಟ್‌ಗಳಲ್ಲಿ, `ccam --fallback work -p "…"` ತಾನಾಗಿಯೇ ಬದಲಾಯಿಸುತ್ತದೆ. [ಬಳಕೆಯ ಮಿತಿಗಳು](/docs/usage-limits) ನೋಡಿ.
 
 ## ಈಗಾಗಲೇ ~/.claude ಬಳಸುತ್ತಿದ್ದೀರಾ?
 

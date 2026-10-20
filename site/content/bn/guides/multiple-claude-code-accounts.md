@@ -1,10 +1,10 @@
 ---
 title: "এক কম্পিউটারে একাধিক Claude Code অ্যাকাউন্ট ব্যবহার"
 description: "CLAUDE_CONFIG_DIR দিয়ে একাধিক Claude Code অ্যাকাউন্ট পাশাপাশি চালান, শেল অ্যালিয়াস দিয়ে হাতে বা ccam দিয়ে স্বয়ংক্রিয়ভাবে, এবং অ্যাকাউন্ট বদল করুন।"
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: e2f4deb40c81
+sourceHash: f2982e4317a2
 ---
 
 প্রতিটি অ্যাকাউন্টকে আলাদা কনফিগারেশন ফোল্ডার দিন। Claude Code `CLAUDE_CONFIG_DIR` এনভায়রনমেন্ট ভেরিয়েবল থেকে ফোল্ডারটি পড়ে, এবং প্রতিটি ফোল্ডারে নিজস্ব লগইন, সেটিংস ও ইতিহাস থাকে। তাই প্রতিটি অ্যাকাউন্ট লগইন অবস্থায় থাকে এবং আপনি সেগুলো একই সময়ে চালাতে পারেন। আপনি এটি শেল অ্যালিয়াস দিয়ে হাতে সেট আপ করতে পারেন, অথবা ccam-কে দিয়ে করাতে পারেন।
@@ -61,7 +61,7 @@ Claude Code-এর ভেতরে `/status` দেখায় আপনি ক
 
 ## এটি কি Windows ও WSL-এ কাজ করে?
 
-Claude Code [সরাসরি Windows-এ এবং WSL-এর ভেতরে](https://code.claude.com/docs/en/setup) চলে। `CLAUDE_CONFIG_DIR` দুই জায়গাতেই কাজ করে, তাই নেটিভ Windows-এ ওপরের অ্যালিয়াস বা PowerShell ফাংশনই যথেষ্ট। ccam Linux ও macOS-এ চলে; Windows-এ এটি WSL-এর ভেতরে ইনস্টল করে ব্যবহার করুন, সেখানে এটি Linux-এর মতোই কাজ করে।
+Claude Code [সরাসরি Windows-এ এবং WSL-এর ভেতরে](https://code.claude.com/docs/en/setup) চলে। `CLAUDE_CONFIG_DIR` দুই জায়গাতেই কাজ করে, তাই নেটিভ Windows-এ ওপরের অ্যালিয়াস বা PowerShell ফাংশনই যথেষ্ট। ccam-ও সরাসরি Windows-এ চলে: PowerShell-এ `irm https://ccam.dev/install.ps1 | iex` দিয়ে ইনস্টল করুন, অথবা WSL-এর ভেতরে Linux-এর কমান্ড দিয়ে। শর্টকাটগুলো `ccwork.exe` হয়ে যায়, এবং `settings.json`-এর মতো ফাইল শেয়ার করতে Developer Mode লাগে ([ccam ইনস্টল করুন](/docs/install))।
 
 ## সমস্যা সমাধান
 

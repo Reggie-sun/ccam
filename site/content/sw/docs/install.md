@@ -1,11 +1,11 @@
 ---
 title: Sakinisha ccam
-metaTitle: Sakinisha ccam kwenye Linux na macOS
-description: Sakinisha ccam kwenye Linux au macOS kwa amri moja, kifurushi cha .deb au msimbo chanzo, na uisasishe kwa ccam update. Sakinisha Claude Code kwanza.
-updated: 2026-10-19
+metaTitle: Sakinisha ccam kwenye Linux, macOS na Windows
+description: Sakinisha ccam kwenye Linux, macOS au Windows kwa amri moja, kifurushi cha .deb au msimbo chanzo, na uisasishe kwa ccam update. Sakinisha Claude Code kwanza.
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 7ecd1ed00e09
+sourceHash: 07eadc0769c8
 ---
 
 Endesha hii kwenye terminal ya Linux au macOS:
@@ -16,13 +16,22 @@ curl -fsSL https://ccam.dev/install.sh | sh
 
 Skripti hupakua toleo la mfumo wako, hukagua checksum yake ya SHA-256 na huweka `ccam` katika `~/.local/bin`, ambapo ccam pia huunda amri za njia fupi utakazochagua baadaye, kama `ccwork`. Ikiwa folda hiyo haiko kwenye `PATH` yako, skripti huchapisha mstari wa kuongeza kwenye `~/.bashrc` au `~/.zshrc`.
 
+Kwenye Windows, endesha hii katika PowerShell:
+
+```powershell
+irm https://ccam.dev/install.ps1 | iex
+```
+
+Skripti hupakua `ccam_windows_<arch>.zip`, hukagua checksum yake ya SHA-256, huweka `ccam.exe` katika `%USERPROFILE%\.local\bin`, folda ambayo kisakinishi cha Claude Code huweka `claude.exe`, na huongeza folda hiyo kwenye `PATH` ya mtumiaji wako ikiwa haipo tayari. Fungua terminal mpya baadaye.
+
 ccam hukuanzishia Claude Code, kwa hiyo sakinisha [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) kwanza na uhakikishe kuwa `claude --version` inafanya kazi.
 
 ## Mifumo inayotumika
 
 - Linux kwenye x86-64 na ARM64: Ubuntu, Debian, Fedora, Arch, Alpine na distribution nyingine. Faili ya binary ni static na haina utegemezi wowote.
 - macOS kwenye Apple silicon na Intel.
-- Windows haitumiki moja kwa moja. Ndani ya WSL, ccam hufanya kazi kama kwenye mfumo wowote wa Linux.
+- Windows 10 na 11 kwenye x86-64 na ARM64, katika PowerShell, Windows Terminal au Git Bash. Folda zinazoshirikiwa hufanya kazi kwa kila mtumiaji. Faili zinazoshirikiwa (`settings.json`, `CLAUDE.md`, `history.jsonl`) zinahitaji Developer Mode (Settings > System > For developers), kwa sababu Windows huruhusu hali hiyo pekee, au msimamizi, kuunda viungo vya faili; tazama [kushiriki kwenye Windows](/features/share#on-windows).
+- Ndani ya WSL, ccam hufanya kazi kama kwenye mfumo wowote wa Linux.
 
 ## Njia nyingine za kusakinisha
 
@@ -46,11 +55,19 @@ go install github.com/jhyunwoo/ccam/cmd/ccam@latest
 curl -fsSL https://ccam.dev/install.sh | CCAM_VERSION=v0.1.0 sh
 ```
 
+```powershell
+$env:CCAM_VERSION = 'v0.1.0'; irm https://ccam.dev/install.ps1 | iex
+```
+
 ## Ukamilishaji wa shell
 
 ```sh
 ccam completion bash > ~/.local/share/bash-completion/completions/ccam
 ccam completion zsh > "${fpath[1]}/_ccam"
+```
+
+```powershell
+ccam completion powershell >> $PROFILE
 ```
 
 Ukamilishaji unashughulikia amri na chaguo zote za `ccam`, pamoja na majina ya akaunti.
@@ -92,6 +109,8 @@ ccam --dry-run update
 
 Kuendesha skripti ya usakinishaji tena pia husasisha nakala iliyo katika `~/.local/bin`. Ikiwa ulijenga ccam kwa `go install`, endesha amri ile ile tena.
 
+**Windows.** `ccam update` hupakua `.zip` ya Windows. Programu inayoendeshwa haiwezi kubadilishwa kwenye Windows, kwa hiyo binary ya zamani hupewa jina jipya `ccam.exe.old`, ambalo sasisho linalofuata hulifuta.
+
 **Kifurushi cha Debian na Ubuntu.** `ccam update` haibadilishi `/usr/bin/ccam` iliyosakinishwa na apt, na badala yake huchapisha hatua hizi. Pakua kifurushi kipya `ccam_<version>_linux_amd64.deb` kutoka [ukurasa wa matoleo](https://github.com/jhyunwoo/ccam/releases) na ukisakinishe juu ya kile cha zamani:
 
 ```sh
@@ -107,6 +126,14 @@ ccam list
 ccam shortcut work --remove   # once for each account that has a shortcut
 rm ~/.local/bin/ccam
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
+```
+
+Kwenye Windows, katika PowerShell:
+
+```powershell
+ccam shortcut work --remove   # once for each account that has a shortcut
+Remove-Item ~\.local\bin\ccam.exe
+Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
 ```
 
 Kufuta `~/.local/share/ccam` pia hufuta taarifa za kuingia na historia ya mazungumzo zilizohifadhiwa humo. Folda ya `~/.claude` ambayo [uliiingiza](/docs/commands) hubaki pale ilipo.

@@ -1,10 +1,10 @@
 ---
 title: Pagsusuri at pagkukumpuni
 description: Suriin ang mga share link, permission ng file, login at bersyon ng Claude Code gamit ang ccam doctor, at ayusin ang ligtas ayusin gamit ang ccam doctor --fix.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 9
 translation: machine
-sourceHash: a1b61efe2b1f
+sourceHash: a45ca25bb722
 ---
 
 Sinusuri ng `ccam doctor` ang iyong ccam installation: ang Claude Code binary, ang folder, login at mga share link ng bawat account, ang mga shared na MCP server, ang usage endpoint at ang iyong mga shortcut command. Kinukumpuni ng `ccam doctor --fix` ang kaya nitong ayusin nang walang nawawalang data, at inililipat muna sa backup folder ang anumang file na papalitan nito. Patakbuhin ito kapag huminto ang `ccam <name>` dahil sa problema sa share link, pagkatapos mong mano-manong ibalik ang mga file, o pagkatapos ng update ng Claude Code.
@@ -70,7 +70,7 @@ Isang beses bawat account tumatakbo ang gitnang bahagi. Ang mga pagsusuri, at an
 
 1. **Bersyon ng Claude Code** (`checkClaude`). Hinahanap ang `claude` binary gaya ng ginagawa ng launcher at pinapatakbo ang `claude --version`. Kung hindi nagsisimula sa `2.1.302` ang bersyon, ang bersyong pinagbatayan ng pag-verify sa folder layout ng ccam (`doctor.LayoutVersion`), idinadagdag nito ang `· ccam was verified against the folder layout of Claude Code 2.1.302. Any 'unknown entries' below may mean the layout changed`. Error ang nawawalang binary o pumapalyang `--version`. Walang fix.
 2. **Mga credential sa environment** (`checkAuthEnv`). Nagbababala kapag nakatakda ang `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY` o `ANTHROPIC_AUTH_TOKEN`: minamana ito ng bawat account na sinimulan mula sa shell na iyon, at mas inuuna ito ng Claude Code kaysa sa sariling login ng account. Walang fix; ikaw mismo ang mag-unset nito.
-3. **Folder** (`checkProfile`). Error ang nawawalang folder ng account at tinatapos nito ang mga pagsusuri ng account na iyon. Babala ang mga permission na may nakatakdang group o other bit; pinapatakbo ng `--fix` ang `chmod 0700`.
+3. **Folder** (`checkProfile`). Error ang nawawalang folder ng account at tinatapos nito ang mga pagsusuri ng account na iyon. Babala ang mga permission na may nakatakdang group o other bit; pinapatakbo ng `--fix` ang `chmod 0700`. Walang permission bit ang Windows, kaya nilalaktawan doon ang pagsusuring ito at ang pagsusuri ng `0600` sa ibaba; pinoprotektahan ng access list nito ang folder sa user profile mo.
 4. **Login file** (`checkCredentials`). Sinusuri ang `.credentials.json` gamit ang `lstat`. Error ang symlink, dahil dapat may sariling token ang bawat account, at hindi ito kinukumpuni. Babala ang mode na hindi `0600`; pinapatakbo ng `--fix` ang `chmod 0600`. Pagkatapos ay binabasa ang login (sa macOS, mula muna sa Keychain). Babala ang walang login at itinuturo nito ang `ccam login <name>`. Ang expired na refresh token ay ang error na `login expired`; impormasyon lang ang expired na access token, dahil nire-refresh ito ng Claude Code sa susunod na pagsisimula. Wala sa mga ito ang kinukumpuni.
 5. **Mga share link** (`share.Check`). Ikinukumpara ang bawat path sa `share.Layout` sa share settings ng account, gamit lang ang `lstat` at `readlink`. Apat na uri ang iniuulat nito: nawawalang link, link na tumuturo sa ibang lugar, totoong file kung saan dapat may link, at link na naiwan para sa item na local na ngayon. Babala ang nawawalang link, error ang iba.
 6. **Mga hindi kilalang entry** (`checkUnknownEntries`). Inililista ang mga pangalan sa itaas na antas ng folder ng account na hindi kilala ng ccam (`share.Known`), bilang pahiwatig na nagbago ang layout ng Claude Code. Impormasyon lang.
@@ -78,6 +78,7 @@ Isang beses bawat account tumatakbo ang gitnang bahagi. Ang mga pagsusuri, at an
 8. **Mga MCP server** (`checkMCP`). Nilo-load nang isang beses ang `mcp.json` ng bawat group. Error ang file na hindi mabasa; babala ang server na pumapalya sa `mcp.Validate`. Walang fix.
 9. **Format ng usage response** (`checkUsageFormat`). Nagtatanong sa usage endpoint, nang walang cache at may karaniwang 3 segundong limit, para sa isang account kasunod ng isa pa hanggang may sumagot. Kapag hindi na ma-parse ang response, nagbababala ito na babalik ang `ccam usage` sa status line cache. Ito lang ang pagsusuring gumagamit ng network.
 10. **Mga shortcut** (`checkShims`). Kapag may shortcut lang ang isang account. Babala ang mga nawawalang link sa `~/.local/bin`; tinatawag ng `--fix` ang `shim.Install`, na gumagawa lang ng mga nawawalang link at hindi kailanman ginagalaw ang ibang file. Babala ang bin folder na wala sa `PATH` at hindi ito kinukumpuni.
+11. **Mga folder** (`checkFolders`). Kapag may mga entry lang ng [`ccam folder`](/features/folder). Error ang entry na hindi umiiral ang account, at babala ang entry na wala na ang folder. Hindi kinukumpuni ang alinman, dahil mababago ng pag-alis ng entry kung aling account ang nagsisimula roon.
 
 ### Pagkukumpuni ng mga share link
 

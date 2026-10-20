@@ -1,10 +1,10 @@
 ---
 title: Comandi scorciatoia
 description: Assegna a un account un comando tutto suo, come ccwork, con ccam shortcut, e ricrea i link in ~/.local/bin con ccam shims install.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 5f0cb5a57042
+sourceHash: 939256e7a67e
 ---
 
 Una scorciatoia è un comando a cui dai tu il nome e che avvia Claude Code con un determinato account: `ccwork --resume` fa ciò che fa `ccam work --resume`. È un link a ccam in `~/.local/bin`, quindi funziona in bash, zsh, negli script e in qualsiasi altra cosa che esegua programmi dal `PATH`. Le scorciatoie sono facoltative; creane una per gli account che avvii spesso.
@@ -82,13 +82,17 @@ La shell trova `ccwork` nel `PATH`, il kernel segue il link e avvia il binario d
 
 Perché un link simbolico e non un alias della shell o uno script wrapper: un link simbolico funziona in ogni shell e negli script, non aggiunge l'avvio di un'altra shell (circa da 1 a 2 ms) e l'avvio legge comunque un solo file. `scripts/perf-check.sh` misura una scorciatoia con `hyperfine` rispetto allo stesso limite di 10 ms (p95) di `ccam <name>`.
 
+### Su Windows
+
+Una scorciatoia è `ccwork.exe` in `%USERPROFILE%\.local\bin`, e `shim.Name` toglie il `.exe` (maiuscolo o minuscolo) prima della ricerca, quindi `ccwork`, `ccwork.exe` e `CCWORK.EXE` avviano tutti `work`. ccam crea prima un link simbolico, che Windows consente in Modalità sviluppatore o a un amministratore. Senza quel diritto crea un hard link: un secondo nome per lo stesso file `ccam.exe`, che non richiede privilegi. Un hard link conta come di ccam quando è lo stesso file di `ccam.exe`. Poiché `ccam update` mette un nuovo file al posto di `ccam.exe`, rinnova poi ogni scorciatoia creata come hard link con `shim.Relink` e stampa `✓ shortcut ccwork renewed`. Il controllo del nome cerca `<name>` con ogni estensione di `PATHEXT` (`.exe`, `.cmd` e così via) nelle altre cartelle del `PATH`.
+
 ## Sicurezza e casi limite
 
 - **Un link che nessun account rivendica.** Se un link a ccam in `~/.local/bin` ha un nome che nessun account usa, per esempio dopo che hai modificato `shortcut` in `config.toml` a mano, ccam non ripiega sull'account predefinito. Si ferma con `` ccam: ccold is not the shortcut of any account (see `ccam list`, `ccam shortcut`) ``. Imposta di nuovo il nome con `ccam shortcut`, oppure elimina il link.
 - **File esistenti.** ccam non sostituisce mai un file che non ha creato. `ccam shims install` si ferma con `<path> already exists and is not a ccam link, so it was left alone`.
 - **Un binario di ccam spostato.** I vecchi link puntano allora a un percorso che non esiste più, e ccam non li considera suoi. Eliminali, poi esegui `ccam shims install`.
 - **Rinomina e rimozione.** `ccam rename` mantiene il nome della scorciatoia, e il link continua a funzionare, perché punta a ccam e ccam cerca il nome in `config.toml`. `ccam remove` elimina il link dell'account. `ccam shortcut <account> <new>` elimina il vecchio link prima di creare quello nuovo.
-- **PATH.** Quando ccam crea un link e `~/.local/bin` non è nel tuo `PATH`, stampa `Note: /home/me/.local/bin is not in PATH. Add it to ~/.bashrc or ~/.zshrc:` seguito dalla riga `export PATH=...` da aggiungere.
+- **PATH.** Quando ccam crea un link e `~/.local/bin` non è nel tuo `PATH`, stampa `Note: /home/me/.local/bin is not in PATH. Add it to ~/.bashrc or ~/.zshrc:` seguito dalla riga `export PATH=...` da aggiungere. Su Windows stampa invece la riga PowerShell che aggiunge la cartella al `PATH` del tuo utente.
 - **Controllare in seguito.** `ccam doctor` segnala `missing shortcuts in /home/me/.local/bin: ccwork` e avvisa quando la cartella non è nel `PATH`. `ccam doctor --fix` crea i link mancanti.
 
 ## Pagine correlate

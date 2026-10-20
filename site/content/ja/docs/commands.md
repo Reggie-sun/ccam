@@ -2,10 +2,10 @@
 title: コマンドリファレンス
 metaTitle: "ccamコマンドリファレンス"
 description: ccam addやccam <name>から、ccam usage、ccam next、ccam doctorまで、ccamのすべてのコマンドとオプションを説明します。
-updated: 2026-10-19
+updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 3342453e38d3
+sourceHash: 5d3275878535
 ---
 
 コマンドの前に`--dry-run`を付けると、実際には実行せずに何をするかを確認できます。たとえば`ccam --dry-run work`のように使います。これが使えるのは、Claude Codeを起動するとき（`ccam <name>`、`ccam run`、`ccam next`）と、`share`、`migrate`、`shortcut`、`update`、`doctor --fix`です。何かを変更するそれ以外のコマンドは、実行せずにこのオプションを拒否します。
@@ -16,7 +16,16 @@ sourceHash: 3342453e38d3
 
 `ccam <name|number> [arguments]`は、そのアカウントでClaude Codeを起動します。ccamは名前より後の引数を読まず、同じ順序で`claude`に渡します。標準入力、終了コード、シグナルも`claude`そのものとまったく同じように動作します。名前の後の`--`は省略できます。
 
-`ccam -p "summarise"`のように、引数はあってもアカウント名がない`ccam`は、デフォルトのアカウントを使います。デフォルトのアカウントは`ccam use <name>`で設定します。
+`ccam -p "summarise"`のように、引数はあってもアカウント名がない`ccam`は、現在のフォルダーに設定されたアカウントを使い、なければデフォルトのアカウントを使います。これらは`ccam folder <name> [folder]`と`ccam use <name>`で設定します。
+
+```sh
+ccam folder work ~/code/company   # work inside ~/code/company and below
+ccam folder                       # list folders and the account used here
+ccam folder --remove ~/code/company
+ccam --fallback work -p "fix the tests"   # run again as another account at the limit
+```
+
+アカウント名の前に置く`--fallback`は、`-p`/`--print`での実行用です。アカウントが使用量の上限に達すると、ccamは同じコマンドを、ログイン済みで最も余裕があるアカウントで再実行し、最後まで完了した実行の出力だけを表示します。詳しくは[フォルダーごとのアカウント](/features/folder)と[上限に達したら再実行](/features/next#run-again-at-the-limit)を参照してください。
 
 `ccwork`のようなショートカットも、同じようにそのアカウントを起動します。`ccwork --resume`は`ccam work --resume`と同じ動作です。詳しくは[ショートカット](/docs/commands#shortcuts)を参照してください。
 
@@ -108,6 +117,7 @@ ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
 ccam version         # also: ccam -v, ccam --version
+ccam completion bash # or zsh, powershell
 ```
 
 `ccam update`は、ccamを置き換える前にリリースのSHA-256チェックサムを検証します。`--version v0.2.0`を指定すると、特定のリリースをインストールします。`.deb`パッケージからインストールしたccamは、代わりにaptで更新します。詳しくは[アップデート](/docs/install#update)を参照してください。
@@ -122,4 +132,4 @@ ccam version         # also: ccam -v, ccam --version
 | `~/.local/state/ccam/` | 使用量のキャッシュと最終使用日時 |
 | `~/.local/bin/<shortcut>` | `ccwork`のようなショートカットコマンド（ccamへのリンク） |
 
-`XDG_CONFIG_HOME`、`XDG_DATA_HOME`、`XDG_STATE_HOME`の各変数を設定すると、これらのフォルダーの場所が変わります。
+`XDG_CONFIG_HOME`、`XDG_DATA_HOME`、`XDG_STATE_HOME`の各変数を設定すると、これらのフォルダーの場所が変わります。Windowsでは`~`は`%USERPROFILE%`で、ショートカットは`<shortcut>.exe`です。

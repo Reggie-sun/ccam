@@ -4,7 +4,7 @@ description: مقارنة جنبًا إلى جنب بين الأسماء الم�
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: ea24bb091caf
+sourceHash: b9fbcb88f111
 ---
 
 الاسم المستعار (alias) في الصدفة لكل حساب هو أبسط طريقة لتشغيل عدة حسابات Claude Code. يفعل ccam الشيء نفسه في الخلفية، ويضيف المشاركة والتبديل وتتبّع الاستخدام.
@@ -42,6 +42,8 @@ ccam add work --shortcut ccwork
 | متابعة محادثة في حساب آخر | لا | `ccam next --continue` |
 | استخدام كل الحسابات | لا | `ccam usage` |
 | اختيار الحساب الأكثر سعة متبقية | لا | `ccam next --auto` |
+| إعادة تشغيل مهمة `-p` بحساب آخر عند بلوغ الحد | لا | `ccam --fallback` |
+| حساب لكل مجلد مشروع | لا | `ccam folder` |
 | اسم الحساب في سطر الحالة | لا | `ccam statusline install` |
 | إصلاح الروابط المعطلة | يدويًا | `ccam doctor --fix` |
 | برامج إضافية | لا شيء | ملف تنفيذي ثابت واحد |

@@ -1,10 +1,10 @@
 ---
 title: Mga usage limit
 description: Ipinapakita ng ccam usage ang 5-oras at lingguhang limit ng bawat account nang sabay, at inilalagay ng ccam statusline ang account at usage nito sa Claude Code.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 7
 translation: machine
-sourceHash: 8306a8f6d950
+sourceHash: f08a2fdc6f0b
 ---
 
 Ipinapakita ng `ccam usage` kung gaano kalaki na ang nagamit ng bawat account sa 5-oras at lingguhang limit, kasama ang oras bago mag-reset ang bawat window. Gamitin ito bago ka magsimula ng mahabang gawain, o kapag sinabi ng Claude Code na malapit na ang isang limit, para makita kung aling account ang may natitira pa. Ang `ccam statusline` ay ang status line command para sa Claude Code: ipinapakita nito ang pangalan ng account at usage sa loob ng Claude Code at sine-save ang mga numero para sa `ccam usage`.
@@ -100,11 +100,12 @@ Pinapatakbo ng Claude Code ang status line command at ipina-pipe dito ang isang 
 1. Hinahanap ng `runStatusline` ang account mula sa `CCAM_PROFILE`, na itinatakda ng ccam kapag sinisimulan nito ang Claude Code, o kung hindi ay sa pagtutugma ng `CLAUDE_CONFIG_DIR` sa mga folder ng account.
 2. Binabasa ng `ParseStatusLine` ang `rate_limits.five_hour` at `rate_limits.seven_day`. Walang rate limit ang JSON para sa mga account na API key ang gamit, o bago ang unang response ng session; sa ganitong kaso, walang sine-save.
 3. Isinusulat ng `SaveStatusLine` ang `~/.local/state/ccam/usage/<name>.statusline.json`. Ginagamit ito ng `ccam usage` kapag hindi sumasagot ang endpoint.
-4. Ipi-print ng ccam ang `[name] · model · 5h N% · 7d N%`. Sa `--wrap`, pinapatakbo nito ang iyong command sa pamamagitan ng `sh -c` na may parehong input at ipi-print ang `[name]` kasunod ang unang linya ng command sa halip.
+4. Ipi-print ng ccam ang `[name] · model · 5h N% · 7d N%`. Sa `--wrap`, pinapatakbo nito ang iyong command sa pamamagitan ng `sh -c` na may parehong input at ipi-print ang `[name]` kasunod ang unang linya ng command sa halip. Sa Windows, pinapatakbo nito ang command sa paraan ng Claude Code: gamit ang Git Bash kapag naka-install ito, o kung hindi, gamit ang PowerShell.
+5. Kapag nasa 90% o higit pa ang 5-oras o lingguhang usage at may iba pang account, nagtatapos ang linya sa `→ ccam next --auto --continue`, halimbawa `[work] · Opus · 5h 93% · 7d 41% · → ccam next --auto --continue`.
 
 May 2 segundo ang naka-wrap na command. Pagkatapos noon, pinapatay ito at pangalan lang ng account ang ipinapakita ng linya, kaya hindi mahaharangan ng mabagal na command ang status line ng Claude Code.
 
-Isinusulat ng `ccam statusline install` ang `statusLine` sa `settings.json` ng bawat account. Kapag may status line command na ang isang account, pinapanatili ito ng ccam bilang `--wrap '<old command>'`. Isang beses lang isinusulat ang `settings.json` na shine-share sa pamamagitan ng group, sa pamamagitan ng link nito, kaya nakukuha ito ng bawat account sa group. Kapag pinatakbo ulit, ipi-print ang `(already set)` para sa mga file na gumagamit na ng ccam.
+Isinusulat ng `ccam statusline install` ang `statusLine` sa `settings.json` ng bawat account. Kapag may status line command na ang isang account, pinapanatili ito ng ccam bilang `--wrap '<old command>'`. Sa Windows, isinusulat ang path papunta sa ccam gamit ang forward slash at `~` para sa home folder (`~/.local/bin/ccam.exe statusline`), na naiintindihan ng Git Bash at ng PowerShell. Isang beses lang isinusulat ang `settings.json` na shine-share sa pamamagitan ng group, sa pamamagitan ng link nito, kaya nakukuha ito ng bawat account sa group. Kapag pinatakbo ulit, ipi-print ang `(already set)` para sa mga file na gumagamit na ng ccam.
 
 ## Kaligtasan at mga espesyal na kaso
 

@@ -4,7 +4,7 @@ description: "So sánh song song alias của shell dùng CLAUDE_CONFIG_DIR với
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: ea24bb091caf
+sourceHash: b9fbcb88f111
 ---
 
 Mỗi tài khoản một alias của shell là cách đơn giản nhất để chạy Claude Code nhiều tài khoản. ccam bên dưới cũng làm điều tương tự, và bổ sung thêm việc dùng chung, chuyển đổi tài khoản và theo dõi mức sử dụng.
@@ -42,6 +42,8 @@ ccam add work --shortcut ccwork
 | Tiếp tục cuộc hội thoại ở tài khoản khác | Không | `ccam next --continue` |
 | Mức sử dụng của mọi tài khoản | Không | `ccam usage` |
 | Chọn tài khoản còn nhiều hạn mức nhất | Không | `ccam next --auto` |
+| Chạy lại một tác vụ `-p` bằng tài khoản khác khi chạm giới hạn | Không | `ccam --fallback` |
+| Một tài khoản cho mỗi thư mục dự án | Không | `ccam folder` |
 | Tên tài khoản trên dòng trạng thái | Không | `ccam statusline install` |
 | Sửa liên kết bị hỏng | Thủ công | `ccam doctor --fix` |
 | Phần mềm bổ sung | Không có | Một tệp thực thi tĩnh |

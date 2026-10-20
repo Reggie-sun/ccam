@@ -4,7 +4,7 @@ description: Alias za shell zenye CLAUDE_CONFIG_DIR dhidi ya ccam kwa kuendesha 
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: ea24bb091caf
+sourceHash: b9fbcb88f111
 ---
 
 Alias ya shell kwa kila akaunti ndiyo njia rahisi zaidi ya kuendesha akaunti kadhaa za Claude Code. ccam hufanya jambo hilo hilo kwa ndani na huongeza kushiriki, kubadili na kufuatilia matumizi.
@@ -42,6 +42,8 @@ ccam add work --shortcut ccwork
 | Endeleza mazungumzo kwenye akaunti nyingine | Hapana | `ccam next --continue` |
 | Matumizi ya kila akaunti | Hapana | `ccam usage` |
 | Chagua akaunti yenye nafasi kubwa zaidi | Hapana | `ccam next --auto` |
+| Endesha tena kazi ya `-p` kama akaunti nyingine kwenye kikomo | Hapana | `ccam --fallback` |
+| Akaunti kwa kila folda ya mradi | Hapana | `ccam folder` |
 | Jina la akaunti kwenye mstari wa hali (status line) | Hapana | `ccam statusline install` |
 | Rekebisha viungo vilivyoharibika | Kwa mkono | `ccam doctor --fix` |
 | Programu ya ziada | Hakuna | Binary moja ya static |

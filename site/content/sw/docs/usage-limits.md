@@ -1,10 +1,10 @@
 ---
 title: Vikomo vya matumizi na kubadili akaunti
 description: Ona matumizi ya saa 5 na ya wiki ya kila akaunti ya Claude Code kwa ccam usage, na ufungue akaunti yenye nafasi kubwa zaidi kwa ccam next --auto.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: d288177682d7
+sourceHash: a84df8e873d6
 ---
 
 `ccam usage` huonyesha kiasi cha vikomo vya saa 5 na vya wiki ambacho kila akaunti imetumia. `ccam next --auto` hufungua akaunti yenye nafasi kubwa zaidi, na `--continue` huhamisha mazungumzo ya sasa.
@@ -48,7 +48,7 @@ Tokeni ya ufikiaji ya akaunti inapoisha muda, ccam haiifanyi upya, kwa sababu ku
 ccam statusline install
 ```
 
-Kisha Claude Code huonyesha jina la akaunti na matumizi yake kwenye mstari wa hali (status line), kwa mfano `[work] · Opus · 5h 24% · 7d 41%`. Ikiwa tayari una amri ya mstari wa hali, ccam huihifadhi na huweka jina la akaunti mbele yake. Mstari wa hali pia huhifadhi namba zake, ambazo `ccam usage` hutumia wakati endpoint haijibu.
+Kisha Claude Code huonyesha jina la akaunti na matumizi yake kwenye mstari wa hali (status line), kwa mfano `[work] · Opus · 5h 24% · 7d 41%`. Kuanzia 90%, mstari pia hupendekeza `ccam next --auto --continue`. Ikiwa tayari una amri ya mstari wa hali, ccam huihifadhi na huweka jina la akaunti mbele yake. Mstari wa hali pia huhifadhi namba zake, ambazo `ccam usage` hutumia wakati endpoint haijibu.
 
 ## Kubadili
 
@@ -59,5 +59,13 @@ ccam next --continue  # the next account that shares your conversation history
 ```
 
 `ccam next` huruka akaunti ambazo hazijaingia, na `--auto` huruka akaunti zilizofikia 100%. Ili kuendeleza mazungumzo, akaunti zote mbili lazima zishiriki historia ya mazungumzo; tazama [kushiriki](/docs/sharing).
+
+Kwa script na kazi zilizopangwa zinazoendesha `claude -p`, weka `--fallback` kabla ya jina la akaunti. Akaunti hiyo inapofikia kikomo chake, ccam huendesha amri ile ile tena kama akaunti yenye nafasi kubwa zaidi, na matokeo ya uendeshaji uliokamilika pekee ndiyo huchapishwa:
+
+```sh
+ccam --fallback work -p "review the diff" --output-format json
+```
+
+Tazama [Endesha tena kwenye kikomo](/features/next#run-again-at-the-limit) kuona jinsi ccam inavyoamua.
 
 [Mwongozo wa hatua za kufuata kikomo cha matumizi kinapofikiwa](/guides/usage-limit-workflow) unapitia mfano kamili.

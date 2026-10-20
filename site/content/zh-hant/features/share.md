@@ -1,10 +1,10 @@
 ---
 title: 帳號之間的共用
 description: ccam share 如何把設定、CLAUDE.md、擴充功能和對話記錄連結到群組資料夾，並提供計畫、備份和衝突選擇，以及 off 如何複製回來。
-updated: 2026-10-19
+updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: b30b7cdb2b15
+sourceHash: 16de29bbdd57
 ---
 
 每個帳號都有自己的資料夾，但裡面大部分的內容並不需要分開。`ccam share` 一次針對一個帳號的一個項目開啟或關閉共用：帳號的檔案或資料夾會被移到群組資料夾，並以符號連結取代，所以群組中的每個帳號讀寫的都是同一份副本。在 `ccam add` 之後用它來變更帳號共用的項目，或讓幾個帳號組成自己的群組。
@@ -112,6 +112,10 @@ Repair them with `ccam doctor --fix`, then run again
 ```
 
 `ccam doctor --fix` 會以已儲存的設定同時作為兩邊執行 `share.Build`，根據磁碟上的實際內容推導每個步驟，發生衝突時保留群組的內容，並備份所有被取代的東西。
+
+### 在 Windows 上
+
+Windows 只有在開發人員模式（設定 > 系統 > 開發人員專用）下或對系統管理員才會建立符號連結。`fsutil.Link` 會先嘗試建立符號連結。沒有這項權限時，共用的資料夾（`agents`、`skills`、`projects` 等）會變成目錄連接點（directory junction），任何使用者都能建立，對 Claude Code 來說運作方式也相同。共用的檔案（`settings.json`、`CLAUDE.md`、`history.jsonl`）只能是符號連結，所以 ccam 會以 `Windows links files only in Developer Mode` 停止，並建議你開啟該模式，或讓該項目保持本機。`share.Check` 會把目錄連接點當成連結讀取（`fsutil.LinkTarget`），移除帳號資料夾時只會移除目錄連接點本身，絕不會移除它指向的群組內容。
 
 ## 安全性和特殊情況
 

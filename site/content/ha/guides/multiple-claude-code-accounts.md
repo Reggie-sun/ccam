@@ -1,10 +1,10 @@
 ---
 title: Amfani da asusun Claude Code da dama a kwamfuta ɗaya
 description: Gudanar da asusun Claude Code da dama gefe da gefe da CLAUDE_CONFIG_DIR, da hannu ta shell alias ko ta atomatik da ccam, kuma ka sauya tsakaninsu.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: e2f4deb40c81
+sourceHash: f2982e4317a2
 ---
 
 Ba kowane asusu foldar saitunsa ta kansa. Claude Code yana karanta foldar daga environment variable ɗin `CLAUDE_CONFIG_DIR`, kuma kowace folda tana riƙe bayanan shigarta, saitunanta da tarihinta, don haka kowane asusu yana nan a shiga kuma za ka iya gudanar da su a lokaci guda. Za ka iya saita wannan da hannu da shell alias, ko ka bar ccam ya yi maka.
@@ -61,7 +61,7 @@ A cikin Claude Code, `/status` yana nuna asusun da ka shiga da shi. Da ccam, gud
 
 ## Shin wannan yana aiki a Windows da WSL?
 
-Claude Code yana aiki [kai tsaye a Windows da kuma cikin WSL](https://code.claude.com/docs/en/setup). `CLAUDE_CONFIG_DIR` yana aiki a duka biyun, don haka alias ko function na PowerShell da ke sama ya isa a Windows ba tare da WSL ba. ccam yana aiki a Linux da macOS; a Windows, girka shi kuma ka yi amfani da shi a cikin WSL, inda yake aiki kamar a Linux.
+Claude Code yana aiki [kai tsaye a Windows da kuma cikin WSL](https://code.claude.com/docs/en/setup). `CLAUDE_CONFIG_DIR` yana aiki a duka biyun, don haka alias ko function na PowerShell da ke sama ya isa a Windows ba tare da WSL ba. ccam ma yana aiki kai tsaye a Windows: girka shi a PowerShell da `irm https://ccam.dev/install.ps1 | iex`, ko a cikin WSL da umarnin Linux. Gajerun umarni suna zama `ccwork.exe`, kuma raba fayiloli kamar `settings.json` yana buƙatar Developer Mode ([Girka ccam](/docs/install)).
 
 ## Magance matsaloli
 

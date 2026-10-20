@@ -4,7 +4,7 @@ description: เริ่ม Claude Code ในชื่อบัญชีใด
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 401eed57e533
+sourceHash: e6b5a8d4df86
 ---
 
 `ccam work` เริ่ม Claude Code ในชื่อบัญชี `work` และทุกอย่างหลังชื่อบัญชีจะส่งต่อให้ `claude` ตามเดิม ใช้ได้ทุกที่ที่คุณจะพิมพ์ `claude`: ในเทอร์มินัล ในสคริปต์ หรือเมื่อส่งอินพุตเข้ามาทางไปป์
@@ -17,16 +17,18 @@ ccam 2                           # the account with number 2 (see ccam list)
 ccam work --resume               # claude --resume, as work
 ccam work -p "fix the tests" --output-format json
 cat log.txt | ccam work -p "find the cause"
-ccam -p "summarise"              # no name: the default account
+ccam -p "summarise"              # no name: the folder's account, else the default
 ccam use work                    # make work the default account
+ccam folder work ~/code/company  # use work in that folder when no name is given
 ccam run work --continue         # same as ccam work --continue
 ccam                             # the picker on a terminal, the list otherwise
 ccam --dry-run work -p hi        # print the command instead of running it
+ccam --fallback work -p "fix the tests"   # run again as another account at the limit
 ```
 
 ระบุชื่อบัญชีหรือหมายเลขบัญชีจาก `ccam list` ccam ไม่อ่านอาร์กิวเมนต์ที่อยู่หลังชื่อบัญชี ดังนั้น `ccam work --help` จะแสดงความช่วยเหลือของ Claude Code จะใส่ `--` หลังชื่อบัญชีหรือไม่ก็ได้ อินพุตมาตรฐาน รหัสออก (exit code) และสัญญาณ (signal) ทำงานเหมือนกับ `claude`
 
-เมื่ออาร์กิวเมนต์แรกขึ้นต้นด้วย `-` และไม่ใช่แฟล็กของ ccam เอง ccam จะเริ่มบัญชีเริ่มต้นพร้อมอาร์กิวเมนต์ทั้งหมด บัญชีเริ่มต้นคือบัญชีที่ตั้งไว้ด้วย `ccam use` หรือบัญชีที่มีหมายเลขต่ำสุดหากคุณยังไม่ได้ตั้ง
+เมื่ออาร์กิวเมนต์แรกขึ้นต้นด้วย `-` และไม่ใช่แฟล็กของ ccam เอง ccam จะเริ่มบัญชีโดยไม่ระบุชื่อพร้อมอาร์กิวเมนต์ทั้งหมด ซึ่งก็คือบัญชีที่ตั้งไว้สำหรับโฟลเดอร์ปัจจุบันด้วย [`ccam folder`](/features/folder) หากไม่มีจะใช้บัญชีเริ่มต้น: บัญชีที่ตั้งไว้ด้วย `ccam use` หรือบัญชีที่มีหมายเลขต่ำสุดหากคุณยังไม่ได้ตั้ง
 
 ### ตัวเลือกบัญชี
 
@@ -50,21 +52,27 @@ ccam --dry-run work -p hi        # print the command instead of running it
 | ตัวเลือก | สิ่งที่ทำ | ค่าเริ่มต้น |
 | --- | --- | --- |
 | `--dry-run` | พิมพ์ตัวแปรสภาพแวดล้อมและคำสั่งที่ ccam จะรัน แล้วออก | ปิด |
+| `--fallback` | สำหรับการรันแบบ `-p`/`--print`: เมื่อบัญชีถึงขีดจำกัดการใช้งาน จะรันคำสั่งเดิมอีกครั้งด้วยบัญชีที่เข้าสู่ระบบอยู่และเหลือโควตามากที่สุด ([รายละเอียด](/features/next#run-again-at-the-limit)) | ปิด |
 | `-v`, `--version` | พิมพ์ `ccam <version>` (เฉพาะเมื่อเป็นอาร์กิวเมนต์แรก) | |
 | `-h`, `--help` | ความช่วยเหลือของ ccam ในรูป `ccam --help` หรือ `ccam run --help` | |
 
 กฎของอาร์กิวเมนต์:
 
 - ccam อ่านแฟล็กของตัวเองเฉพาะที่อยู่ก่อนชื่อบัญชี หลังชื่อบัญชี ทุกอาร์กิวเมนต์เป็นของ Claude Code รวมถึง `--dry-run` และ `--help`
-- `--dry-run` ใช้ได้ในรูป `ccam --dry-run work`, `ccam run --dry-run work` และ `ccam --dry-run` (บัญชีเริ่มต้น) ตัวเลือกนี้ได้รับการรองรับ ไม่ถูกปฏิเสธ
-- `ccam run <name|number> [claude args]` คือรูปแบบเต็มของ `ccam <name>` ส่วน `ccam run` ที่ไม่มีชื่อบัญชีจะใช้บัญชีเริ่มต้น
+- `--dry-run` ใช้ได้ในรูป `ccam --dry-run work`, `ccam run --dry-run work` และ `ccam --dry-run` (บัญชีที่ไม่ได้ระบุชื่อ) ตัวเลือกนี้ได้รับการรองรับ ไม่ถูกปฏิเสธ `--dry-run` และ `--fallback` จะใส่ลำดับใดก่อนก็ได้
+- `ccam run <name|number> [claude args]` คือรูปแบบเต็มของ `ccam <name>` ส่วน `ccam run` ที่ไม่มีชื่อบัญชีจะใช้บัญชีของโฟลเดอร์หรือบัญชีเริ่มต้น
 - ชื่อบัญชีต้องไม่ซ้ำกับชื่อคำสั่งของ ccam เช่น `add`, `list`, `run` หรือ `usage` ดังนั้น `ccam <word>` จึงไม่กำกวม
 
-การทดลองรัน (dry run) จะพิมพ์หนึ่งบรรทัดที่คุณนำไปวางในเชลล์ได้:
+การทดลองรัน (dry run) จะพิมพ์หนึ่งบรรทัดที่คุณนำไปวางในเชลล์ได้ หรือใน PowerShell บน Windows:
 
 ```console
 $ ccam --dry-run work -p "fix the tests"
 CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/claude --mcp-config=/home/me/.local/share/ccam/groups/default/mcp.json -p 'fix the tests'
+```
+
+```console
+PS> ccam --dry-run work -p "fix the tests"
+$env:CLAUDE_CONFIG_DIR='C:\Users\me\.local\share\ccam\profiles\work'; & C:\Users\me\.local\bin\claude.exe --mcp-config=C:\Users\me\.local\share\ccam\groups\default\mcp.json -p 'fix the tests'
 ```
 
 ## วิธีการทำงาน
@@ -78,7 +86,7 @@ CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/c
 1. `cmd/ccam/main.go` เรียก `app.Main` หาก ccam ถูกเริ่มด้วยชื่ออื่น แสดงว่าเป็น[คำสั่งลัด](/features/shortcuts) และจะไปที่ตัวเริ่มโปรแกรมโดยตรง
 2. `app.parse` ตรวจ `os.Args` ก่อนที่ cobra จะเข้ามาเกี่ยวข้อง มีเพียง `ccam` เดี่ยว ๆ (ตัวเลือกบัญชี) ชื่อคำสั่งของ ccam (`config.Reserved`) `-h`/`--help` และ `-v`/`--version` ที่ไปยัง `cli.Execute` นอกนั้นถือเป็นการเริ่ม Claude Code
 3. `launcher.Launch` อ่าน `~/.config/ccam/config.toml` ซึ่งเป็นไฟล์เดียวที่พาร์ส
-4. `launcher.Prepare` หาบัญชีจากชื่อหรือหมายเลข ตัด `--` ตัวแรกที่นำหน้าออกหนึ่งตัว และหาไฟล์ปฏิบัติการ `claude` ด้วย `ResolveClaude` ผลการค้นหาใน PATH จะถูกแคชไว้ใน `~/.local/state/ccam/claude-path` พร้อมเวลาแก้ไขของไฟล์ ccam จึงไม่ต้องค้นหาใน `PATH` ทุกครั้งที่เริ่ม หากไฟล์เปลี่ยนหรือหายไปจะค้นหาใหม่ พาธ `claude_bin` ใน `config.toml` จะถูกใช้ตามที่ระบุ ccam จะปฏิเสธ `claude` ที่เป็นตัว ccam เอง (เปรียบเทียบด้วย inode) เพราะจะทำให้วนซ้ำไม่สิ้นสุด
+4. `launcher.Prepare` หาบัญชีจากชื่อหรือหมายเลข (หากไม่มีชื่อ `HereProfile` จะเลือกบัญชีของโฟลเดอร์ โดยเปรียบเทียบไดเรกทอรีทำงานกับรายการ `[[folder]]` ใน `config.toml` แบบสตริง) ตัด `--` ตัวแรกที่นำหน้าออกหนึ่งตัว และหาไฟล์ปฏิบัติการ `claude` ด้วย `ResolveClaude` ผลการค้นหาใน PATH จะถูกแคชไว้ใน `~/.local/state/ccam/claude-path` พร้อมเวลาแก้ไขของไฟล์ ccam จึงไม่ต้องค้นหาใน `PATH` ทุกครั้งที่เริ่ม หากไฟล์เปลี่ยนหรือหายไปจะค้นหาใหม่ พาธ `claude_bin` ใน `config.toml` จะถูกใช้ตามที่ระบุ ccam จะปฏิเสธ `claude` ที่เป็นตัว ccam เอง (เปรียบเทียบด้วย inode) เพราะจะทำให้วนซ้ำไม่สิ้นสุด
 5. `checkLinks` เปรียบเทียบโฟลเดอร์บัญชี `~/.local/share/ccam/profiles/<name>/` กับการตั้งค่าการใช้ร่วมกันด้วย `share.Check` ซึ่งเรียกเพียง `lstat` และ `readlink` หนึ่งหรือสอง system call ต่อรายการ ลิงก์ที่หายไปจะถูกสร้างทันที สิ่งใดที่อาจทำให้ข้อมูลสูญหายจะหยุดการเริ่ม
 6. `applyMCP` เพิ่มเซิร์ฟเวอร์ MCP ที่ใช้ร่วมกัน (ดูด้านล่าง)
 7. `session.Register` บันทึกเซสชัน ccam เขียนไฟล์เครื่องหมายที่ตั้งชื่อตาม PID ซึ่งเก็บเวลาเริ่มของโปรเซส ไว้ที่ `$XDG_RUNTIME_DIR/ccam/profile-<name>/<pid>` (หรือ `~/.local/state/ccam/locks/` หากไม่มี `XDG_RUNTIME_DIR`) สำหรับบัญชีที่ใช้ประวัติการสนทนาร่วมกัน `historyCheck` จะค้นหาเซสชันที่กำลังทำงานใน `history-<group>-<hash>` ก่อน โดย hash คำนวณจากโฟลเดอร์ปัจจุบัน แล้วลงทะเบียนไว้ที่นั่นด้วย `exec` คง PID ไว้ เครื่องหมายจึงระบุถึงโปรเซสของ Claude Code เอง ที่ใช้เครื่องหมายแทนการถือล็อก เพราะโปรเซสที่ Claude Code เริ่มจะสืบทอดล็อกไปและถือไว้ต่อหลังจากเซสชันจบแล้ว
@@ -88,7 +96,9 @@ Claude Code ทำงานโดยตั้ง `CLAUDE_CONFIG_DIR` เป็�
 
 ### ทำไมจึงใช้ exec
 
-`syscall.Exec` แทนที่โปรเซสของ ccam ด้วย `claude` ccam จึงไม่ค้างอยู่ในหน่วยความจำ การกดแป้น สัญญาณ และรหัสออกเป็นของ Claude Code เอง และอาร์กิวเมนต์ยังคงเป็นอาร์เรย์ ไม่เคยเป็นสตริงของเชลล์ งานหลังจบเซสชัน เช่น การตรวจพบเซิร์ฟเวอร์ที่เพิ่มด้วย `claude mcp add` จะเกิดขึ้นในการเริ่มครั้งถัดไป: ccam เปรียบเทียบเวลาแก้ไขของ `.claude.json` กับ `~/.local/state/ccam/mcp/<name>/seen` และพาร์สไฟล์เฉพาะเมื่อไฟล์เปลี่ยนไป
+`syscall.Exec` แทนที่โปรเซสของ ccam ด้วย `claude` ccam จึงไม่ค้างอยู่ในหน่วยความจำ การกดแป้น สัญญาณ และรหัสออกเป็นของ Claude Code เอง และอาร์กิวเมนต์ยังคงเป็นอาร์เรย์ ไม่เคยเป็นสตริงของเชลล์
+
+Windows ไม่มี `exec` บน Windows `Plan.Exec` จะเริ่ม `claude.exe` เป็นโปรเซสลูกด้วยตัวแปรสภาพแวดล้อม อาร์กิวเมนต์ และคอนโซลเดียวกัน รอให้มันจบ แล้วออกด้วยรหัสออกของมัน Ctrl+C ไปถึง Claude Code จากคอนโซลโดยตรง ccam จึงไม่สนใจสัญญาณนี้ ไฟล์เครื่องหมายของเซสชันใช้ PID ของ ccam ซึ่งมีอายุเท่ากับ Claude Code พอดี และจะถูกลบเมื่อ Claude Code จบการทำงาน ระหว่างรอ ccam ไม่ทำอย่างอื่น งานหลังจบเซสชัน เช่น การตรวจพบเซิร์ฟเวอร์ที่เพิ่มด้วย `claude mcp add` จะเกิดขึ้นในการเริ่มครั้งถัดไป: ccam เปรียบเทียบเวลาแก้ไขของ `.claude.json` กับ `~/.local/state/ccam/mcp/<name>/seen` และพาร์สไฟล์เฉพาะเมื่อไฟล์เปลี่ยนไป
 
 ### บรรทัดคำสั่งถูกส่งต่ออย่างไร
 

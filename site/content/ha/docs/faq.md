@@ -2,10 +2,10 @@
 title: Tambayoyin da ake yawan yi
 metaTitle: "Tambayoyi game da ccam: asusun Claude Code da dama"
 description: Amsoshi game da ccam, asusun Claude Code, iyakokin amfani, rabawa, sirri da tsarukan da ake tallafawa.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 6
 translation: machine
-sourceHash: 88bd249ec51c
+sourceHash: 80a5475ccfee
 ---
 
 ## Shin ccam kayan aikin Anthropic ne na hukuma?
@@ -46,7 +46,7 @@ Babu komai, sai idan ka gudanar da `ccam import` ko `ccam migrate`. Import yana 
 
 ## Waɗanne tsaruka ne ccam yake tallafawa?
 
-Linux (Ubuntu, Debian, Fedora, Arch, Alpine da sauransu) da macOS. A Windows, yi amfani da shi a cikin WSL.
+Linux (Ubuntu, Debian, Fedora, Arch, Alpine da sauransu), macOS da Windows 10 da 11, kai tsaye ko a cikin WSL. A Windows, raba fayiloli kamar `settings.json` yana buƙatar Developer Mode; foldojin da aka raba suna aiki ba tare da shi ba ([rabawa a Windows](/features/share#on-windows)).
 
 ## Me yasa sabar MCP take bayyana a asusu ɗaya kawai?
 
@@ -54,7 +54,7 @@ Sabobin da aka ƙara a cikin zama (session) da `claude mcp add` ana ajiye su ga 
 
 ## Shin ccam yana rage saurin Claude Code?
 
-Fara Claude Code ta ccam yana ƙara kusan millisecond 4, wanda aka auna da `scripts/perf-check.sh` a kwamfutar tafi-da-gidanka. ccam yana karanta ƙaramin fayil ɗaya, yana duba mahaɗan da aka raba, sannan yana maye gurbin kansa da `claude`, don haka ba ya aiki yayin da kake aiki.
+Fara Claude Code ta ccam yana ƙara kusan millisecond 4, wanda aka auna da `scripts/perf-check.sh` a kwamfutar tafi-da-gidanka. ccam yana karanta ƙaramin fayil ɗaya, yana duba mahaɗan da aka raba, sannan yana maye gurbin kansa da `claude`, don haka ba ya aiki yayin da kake aiki. Windows ba zai iya maye gurbin process ba, don haka a can ccam yana fara Claude Code kuma yana jiran sa, ba tare da yin wani abu ba.
 
 ## Ta yaya zan sabunta ccam?
 

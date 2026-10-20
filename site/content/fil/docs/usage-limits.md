@@ -1,10 +1,10 @@
 ---
 title: Mga usage limit at paglipat ng account
 description: Tingnan ang 5-oras at lingguhang usage ng bawat Claude Code account gamit ang ccam usage, at buksan ang may pinakamaraming natitira gamit ang ccam next --auto.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: d288177682d7
+sourceHash: a84df8e873d6
 ---
 
 Ipinapakita ng `ccam usage` kung gaano kalaki na ang nagamit ng bawat account sa 5-oras at lingguhang limit. Binubuksan ng `ccam next --auto` ang account na may pinakamaraming natitira, at dinadala ng `--continue` ang kasalukuyang usapan.
@@ -48,7 +48,7 @@ Nire-renew mismo ng `ccam usage --refresh` ang mga expired na token, pero para l
 ccam statusline install
 ```
 
-Ipapakita na ng Claude Code ang pangalan ng account at ang usage nito sa status line, halimbawa `[work] · Opus · 5h 24% · 7d 41%`. Kung may status line command ka na, pinapanatili ito ng ccam at inilalagay sa unahan ang pangalan ng account. Sine-save din ng status line ang mga numero nito, na ginagamit ng `ccam usage` kapag hindi sumasagot ang endpoint.
+Ipapakita na ng Claude Code ang pangalan ng account at ang usage nito sa status line, halimbawa `[work] · Opus · 5h 24% · 7d 41%`. Mula 90% pataas, iminumungkahi rin ng linya ang `ccam next --auto --continue`. Kung may status line command ka na, pinapanatili ito ng ccam at inilalagay sa unahan ang pangalan ng account. Sine-save din ng status line ang mga numero nito, na ginagamit ng `ccam usage` kapag hindi sumasagot ang endpoint.
 
 ## Paglipat
 
@@ -59,5 +59,13 @@ ccam next --continue  # the next account that shares your conversation history
 ```
 
 Nilalaktawan ng `ccam next` ang mga account na hindi naka-log in, at nilalaktawan ng `--auto` ang mga account na nasa 100%. Para maituloy ang isang usapan, dapat parehong nagshe-share ng kasaysayan ng usapan ang dalawang account; tingnan ang [sharing](/docs/sharing).
+
+Para sa mga script at naka-iskedyul na job na nagpapatakbo ng `claude -p`, ilagay ang `--fallback` bago ang pangalan ng account. Kapag naabot ng account na iyon ang limit nito, pinapatakbo ulit ng ccam ang parehong command bilang account na may pinakamaraming natitira, at ang output lang ng run na natapos ang ipi-print:
+
+```sh
+ccam --fallback work -p "review the diff" --output-format json
+```
+
+Tingnan ang [Patakbuhin ulit sa limit](/features/next#run-again-at-the-limit) para sa kung paano nagpapasya ang ccam.
 
 Ang [gabay sa workflow kapag naabot ang usage limit](/guides/usage-limit-workflow) ay nagpapakita ng isang buong halimbawa.

@@ -1,11 +1,11 @@
 ---
 title: Instalacja ccam
-metaTitle: "Instalacja ccam w systemach Linux i macOS"
-description: "Zainstaluj ccam na Linux lub macOS jednym poleceniem, z pakietu .deb albo ze źródeł, i aktualizuj przez ccam update. Najpierw zainstaluj Claude Code."
-updated: 2026-10-19
+metaTitle: "Instalacja ccam w systemach Linux, macOS i Windows"
+description: "Zainstaluj ccam na Linuksie, macOS lub Windows jednym poleceniem, z pakietu .deb lub ze źródeł; aktualizuj przez ccam update. Najpierw zainstaluj Claude Code."
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 7ecd1ed00e09
+sourceHash: 07eadc0769c8
 ---
 
 Uruchom to w terminalu na Linux lub macOS:
@@ -16,13 +16,22 @@ curl -fsSL https://ccam.dev/install.sh | sh
 
 Skrypt pobiera wydanie dla twojego systemu, sprawdza jego sumę kontrolną SHA-256 i umieszcza `ccam` w `~/.local/bin`, gdzie ccam tworzy też później wybrane przez ciebie skróty, na przykład `ccwork`. Jeśli tego folderu nie ma w `PATH`, skrypt wypisuje wiersz, który trzeba dodać do `~/.bashrc` lub `~/.zshrc`.
 
+W Windows uruchom to w PowerShell:
+
+```powershell
+irm https://ccam.dev/install.ps1 | iex
+```
+
+Skrypt pobiera `ccam_windows_<arch>.zip`, sprawdza jego sumę kontrolną SHA-256, umieszcza `ccam.exe` w `%USERPROFILE%\.local\bin`, czyli w folderze, do którego instalator Claude Code wstawia `claude.exe`, i dodaje ten folder do `PATH` twojego użytkownika, jeśli jeszcze go tam nie ma. Potem otwórz nowy terminal.
+
 ccam uruchamia za ciebie Claude Code, więc najpierw zainstaluj [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) i upewnij się, że `claude --version` działa.
 
 ## Obsługiwane systemy
 
 - Linux na x86-64 i ARM64: Ubuntu, Debian, Fedora, Arch, Alpine i inne dystrybucje. Plik binarny jest statyczny i nie ma zależności.
 - macOS na Apple silicon i Intel.
-- Windows nie jest obsługiwany bezpośrednio. W WSL ccam działa jak w każdym systemie Linux.
+- Windows 10 i 11 na x86-64 i ARM64, w PowerShell, Windows Terminal lub Git Bash. Współdzielone foldery działają dla każdego użytkownika. Współdzielone pliki (`settings.json`, `CLAUDE.md`, `history.jsonl`) wymagają Trybu dewelopera (Ustawienia > System > Dla deweloperów), bo Windows pozwala tworzyć linki do plików tylko w tym trybie albo administratorowi; zobacz [współdzielenie w Windows](/features/share#on-windows).
+- W WSL ccam działa jak w każdym systemie Linux.
 
 ## Inne sposoby instalacji
 
@@ -46,11 +55,19 @@ go install github.com/jhyunwoo/ccam/cmd/ccam@latest
 curl -fsSL https://ccam.dev/install.sh | CCAM_VERSION=v0.1.0 sh
 ```
 
+```powershell
+$env:CCAM_VERSION = 'v0.1.0'; irm https://ccam.dev/install.ps1 | iex
+```
+
 ## Uzupełnianie w powłoce
 
 ```sh
 ccam completion bash > ~/.local/share/bash-completion/completions/ccam
 ccam completion zsh > "${fpath[1]}/_ccam"
+```
+
+```powershell
+ccam completion powershell >> $PROFILE
 ```
 
 Uzupełnianie obejmuje wszystkie polecenia i opcje `ccam`, łącznie z nazwami kont.
@@ -92,6 +109,8 @@ ccam --dry-run update
 
 Ponowne uruchomienie skryptu instalacyjnego też aktualizuje kopię w `~/.local/bin`. Jeśli zbudowano ccam przez `go install`, uruchom to samo polecenie jeszcze raz.
 
+**Windows.** `ccam update` pobiera plik `.zip` dla Windows. W Windows nie da się podmienić działającego programu, więc stary plik binarny dostaje nazwę `ccam.exe.old`, a następna aktualizacja go usuwa.
+
 **Pakiet dla Debiana i Ubuntu.** `ccam update` nie podmienia `/usr/bin/ccam` zainstalowanego przez apt, tylko wypisuje poniższe kroki. Pobierz nowy `ccam_<version>_linux_amd64.deb` ze [strony wydań](https://github.com/jhyunwoo/ccam/releases) i zainstaluj go na miejsce starego:
 
 ```sh
@@ -107,6 +126,14 @@ ccam list
 ccam shortcut work --remove   # once for each account that has a shortcut
 rm ~/.local/bin/ccam
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
+```
+
+W Windows, w PowerShell:
+
+```powershell
+ccam shortcut work --remove   # once for each account that has a shortcut
+Remove-Item ~\.local\bin\ccam.exe
+Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
 ```
 
 Usunięcie `~/.local/share/ccam` usuwa też zapisane tam loginy i historię rozmów. Folder `~/.claude`, który został [zaimportowany](/docs/commands), zostaje tam, gdzie jest.

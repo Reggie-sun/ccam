@@ -1,7 +1,7 @@
 ---
 title: Sharing between accounts
 description: How ccam share links settings, CLAUDE.md, extensions and history into a group folder, with a plan, backups and conflict choices, and how off copies back.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 4
 translation: source
 ---
@@ -111,6 +111,10 @@ Repair them with `ccam doctor --fix`, then run again
 ```
 
 `ccam doctor --fix` runs `share.Build` with the saved settings on both sides, which derives every step from what is on disk, keeps the group's content on conflicts and backs up anything it replaces.
+
+### On Windows
+
+Windows creates symbolic links only in Developer Mode (Settings > System > For developers) or for an administrator. `fsutil.Link` tries a symbolic link first. Without that right, a shared folder (`agents`, `skills`, `projects` and the others) becomes a directory junction, which any user may create, and works the same for Claude Code. A shared file (`settings.json`, `CLAUDE.md`, `history.jsonl`) can only be a symbolic link, so ccam stops with `Windows links files only in Developer Mode` and suggests turning it on or keeping that item local. `share.Check` reads junctions as links (`fsutil.LinkTarget`), and removing an account folder removes a junction itself, never the group content it points to.
 
 ## Safety and edge cases
 

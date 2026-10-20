@@ -1,11 +1,11 @@
 ---
 title: ccam 설치
-metaTitle: "Linux와 macOS에 ccam 설치하기"
-description: "Linux나 macOS에서 명령 하나, .deb 패키지 또는 소스로 ccam을 설치하고 ccam update로 업데이트합니다. Claude Code를 먼저 설치해야 합니다."
-updated: 2026-10-19
+metaTitle: "Linux, macOS, Windows에 ccam 설치하기"
+description: "Linux, macOS, Windows에서 명령 하나, .deb 패키지 또는 소스로 ccam을 설치하고 ccam update로 업데이트합니다. Claude Code를 먼저 설치해야 합니다."
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 7ecd1ed00e09
+sourceHash: 07eadc0769c8
 ---
 
 Linux나 macOS 터미널에서 다음 명령을 실행하세요.
@@ -16,13 +16,22 @@ curl -fsSL https://ccam.dev/install.sh | sh
 
 스크립트는 시스템에 맞는 릴리스를 내려받아 SHA-256 체크섬을 확인한 뒤 `ccam`을 `~/.local/bin`에 설치합니다. 나중에 `ccwork`처럼 직접 고른 단축 명령을 ccam이 만드는 곳도 이 폴더입니다. 이 폴더가 `PATH`에 없으면 스크립트가 `~/.bashrc`나 `~/.zshrc`에 추가할 줄을 알려 줍니다.
 
+Windows에서는 PowerShell에서 다음 명령을 실행하세요.
+
+```powershell
+irm https://ccam.dev/install.ps1 | iex
+```
+
+이 스크립트는 `ccam_windows_<arch>.zip`을 내려받아 SHA-256 체크섬을 확인하고, Claude Code 설치 프로그램이 `claude.exe`를 두는 폴더인 `%USERPROFILE%\.local\bin`에 `ccam.exe`를 넣은 뒤, 이 폴더가 사용자 `PATH`에 없으면 추가합니다. 설치가 끝나면 새 터미널을 여세요.
+
 ccam은 Claude Code를 대신 실행해 주는 도구이므로, 먼저 [Claude Code](https://docs.claude.com/en/docs/claude-code/overview)를 설치하고 `claude --version`이 제대로 실행되는지 확인하세요.
 
 ## 지원 시스템
 
 - Linux(x86-64, ARM64): Ubuntu, Debian, Fedora, Arch, Alpine 등 여러 배포판. 정적 바이너리라 별도 의존성이 없습니다.
 - macOS(Apple 실리콘, Intel).
-- Windows는 직접 지원하지 않습니다. WSL에서는 일반 Linux 시스템과 똑같이 동작합니다.
+- Windows 10, 11(x86-64, ARM64): PowerShell, Windows 터미널, Git Bash에서 실행합니다. 폴더 공유는 모든 사용자가 쓸 수 있습니다. 파일 공유(`settings.json`, `CLAUDE.md`, `history.jsonl`)에는 개발자 모드(설정 > 시스템 > 개발자용)가 필요합니다. Windows에서는 이 모드이거나 관리자일 때만 파일 링크를 만들 수 있기 때문입니다. [Windows에서 공유](/features/share#on-windows)를 참고하세요.
+- WSL에서는 일반 Linux 시스템과 똑같이 동작합니다.
 
 ## 다른 설치 방법
 
@@ -46,11 +55,19 @@ go install github.com/jhyunwoo/ccam/cmd/ccam@latest
 curl -fsSL https://ccam.dev/install.sh | CCAM_VERSION=v0.1.0 sh
 ```
 
+```powershell
+$env:CCAM_VERSION = 'v0.1.0'; irm https://ccam.dev/install.ps1 | iex
+```
+
 ## 셸 자동완성
 
 ```sh
 ccam completion bash > ~/.local/share/bash-completion/completions/ccam
 ccam completion zsh > "${fpath[1]}/_ccam"
+```
+
+```powershell
+ccam completion powershell >> $PROFILE
 ```
 
 자동완성은 계정 이름을 포함해 `ccam`의 모든 명령과 옵션을 지원합니다.
@@ -92,6 +109,8 @@ ccam --dry-run update
 
 설치 스크립트를 다시 실행해도 `~/.local/bin`의 ccam이 업데이트됩니다. `go install`로 설치했다면 같은 명령을 다시 실행하세요.
 
+**Windows.** `ccam update`는 Windows용 `.zip`을 내려받습니다. Windows에서는 실행 중인 프로그램을 교체할 수 없으므로, 기존 바이너리의 이름을 `ccam.exe.old`로 바꿔 두고 다음 업데이트 때 지웁니다.
+
 **Debian, Ubuntu 패키지.** apt로 설치한 `/usr/bin/ccam`은 `ccam update`가 교체하지 않고, 대신 아래 방법을 알려 줍니다. [릴리스 페이지](https://github.com/jhyunwoo/ccam/releases)에서 새 `ccam_<version>_linux_amd64.deb`를 내려받아 기존 패키지 위에 설치하세요.
 
 ```sh
@@ -107,6 +126,14 @@ ccam list
 ccam shortcut work --remove   # once for each account that has a shortcut
 rm ~/.local/bin/ccam
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
+```
+
+Windows에서는 PowerShell에서 다음을 실행합니다.
+
+```powershell
+ccam shortcut work --remove   # once for each account that has a shortcut
+Remove-Item ~\.local\bin\ccam.exe
+Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
 ```
 
 `~/.local/share/ccam`을 지우면 그 안에 저장된 로그인 정보와 대화 내역도 함께 지워집니다. [가져온](/docs/commands) `~/.claude` 폴더는 원래 위치에 그대로 남습니다.

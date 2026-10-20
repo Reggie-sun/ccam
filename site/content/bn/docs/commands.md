@@ -2,10 +2,10 @@
 title: "কমান্ড রেফারেন্স"
 metaTitle: "ccam কমান্ড রেফারেন্স"
 description: "ccam add ও ccam <name> থেকে ccam usage, ccam next ও ccam doctor পর্যন্ত ccam-এর প্রতিটি কমান্ড ও অপশন।"
-updated: 2026-10-19
+updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 3342453e38d3
+sourceHash: 5d3275878535
 ---
 
 কোনো কমান্ড আসলে না চালিয়ে সেটি কী করবে তা দেখতে কমান্ডের আগে `--dry-run` দিন, যেমন `ccam --dry-run work`। এটি Claude Code চালু করার সময় (`ccam <name>`, `ccam run`, `ccam next`) এবং `share`, `migrate`, `shortcut`, `update` ও `doctor --fix`-এর সঙ্গে কাজ করে। কিছু বদলায় এমন অন্য কমান্ডগুলো চলার বদলে এটি প্রত্যাখ্যান করে।
@@ -16,7 +16,16 @@ sourceHash: 3342453e38d3
 
 `ccam <name|number> [arguments]` ওই অ্যাকাউন্ট হিসেবে Claude Code চালু করে। নামের পরের আর্গুমেন্টগুলো ccam পড়ে না; সেগুলো একই ক্রমে `claude`-এ পাঠিয়ে দেয়, এবং স্ট্যান্ডার্ড ইনপুট, এক্সিট কোড ও সিগন্যাল ঠিক `claude`-এর মতোই আচরণ করে। নামের পরে `--` দেওয়া ঐচ্ছিক।
 
-অ্যাকাউন্টের নাম ছাড়া কিন্তু আর্গুমেন্টসহ `ccam`, যেমন `ccam -p "summarise"`, ডিফল্ট অ্যাকাউন্ট ব্যবহার করে। এটি `ccam use <name>` দিয়ে নির্ধারণ করুন।
+অ্যাকাউন্টের নাম ছাড়া কিন্তু আর্গুমেন্টসহ `ccam`, যেমন `ccam -p "summarise"`, বর্তমান ফোল্ডারের জন্য নির্ধারিত অ্যাকাউন্ট ব্যবহার করে, না থাকলে ডিফল্ট অ্যাকাউন্ট। এগুলো `ccam folder <name> [folder]` ও `ccam use <name>` দিয়ে নির্ধারণ করুন।
+
+```sh
+ccam folder work ~/code/company   # work inside ~/code/company and below
+ccam folder                       # list folders and the account used here
+ccam folder --remove ~/code/company
+ccam --fallback work -p "fix the tests"   # run again as another account at the limit
+```
+
+অ্যাকাউন্টের নামের আগে `--fallback` হলো `-p`/`--print` রানের জন্য। অ্যাকাউন্টটি ব্যবহারের সীমায় পৌঁছালে ccam একই কমান্ড সবচেয়ে বেশি জায়গা থাকা লগইন করা অ্যাকাউন্ট হিসেবে আবার চালায় এবং শুধু যে রানটি শেষ হয়েছে তার আউটপুট প্রিন্ট করে। [ফোল্ডার অনুযায়ী অ্যাকাউন্ট](/features/folder) ও [সীমায় আবার চালানো](/features/next#run-again-at-the-limit) দেখুন।
 
 `ccwork`-এর মতো একটি শর্টকাট তার অ্যাকাউন্টকে একইভাবে চালু করে: `ccwork --resume` ঠিক তাই করে যা `ccam work --resume` করে। [শর্টকাট](/docs/commands#shortcuts) দেখুন।
 
@@ -108,6 +117,7 @@ ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
 ccam version         # also: ccam -v, ccam --version
+ccam completion bash # or zsh, powershell
 ```
 
 ccam বদলানোর আগে `ccam update` রিলিজের SHA-256 চেকসাম যাচাই করে, আর `--version v0.2.0` একটি নির্দিষ্ট রিলিজ ইনস্টল করে। `.deb` প্যাকেজ থেকে ইনস্টল করা ccam এর বদলে apt দিয়ে আপডেট করুন। [আপডেট](/docs/install#update) দেখুন।
@@ -122,4 +132,4 @@ ccam বদলানোর আগে `ccam update` রিলিজের SHA-256
 | `~/.local/state/ccam/` | ব্যবহারের ক্যাশ ও সর্বশেষ ব্যবহারের সময় |
 | `~/.local/bin/<shortcut>` | `ccwork`-এর মতো শর্টকাট কমান্ড, ccam-এর লিংক |
 
-`XDG_CONFIG_HOME`, `XDG_DATA_HOME` ও `XDG_STATE_HOME` ভেরিয়েবল এই ফোল্ডারগুলোর অবস্থান বদলায়।
+`XDG_CONFIG_HOME`, `XDG_DATA_HOME` ও `XDG_STATE_HOME` ভেরিয়েবল এই ফোল্ডারগুলোর অবস্থান বদলায়। Windows-এ `~` হলো `%USERPROFILE%` এবং শর্টকাটগুলো `<shortcut>.exe`।

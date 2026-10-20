@@ -1,10 +1,10 @@
 ---
 title: Gajerun umarni
 description: Ba asusu umarninsa kamar ccwork da ccam shortcut, kuma sake ƙirƙirar mahaɗai a ~/.local/bin da ccam shims install.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 5f0cb5a57042
+sourceHash: 939256e7a67e
 ---
 
 Gajeren umarni umarni ne da kai da kanka ka sa masa suna, wanda ke fara Claude Code a matsayin asusu ɗaya: `ccwork --resume` yana yin abin da `ccam work --resume` ke yi. Mahaɗi ne zuwa ccam a cikin `~/.local/bin`, don haka yana aiki a bash, zsh, rubutun (scripts) da duk wani abu da ke gudanar da shirye-shirye daga `PATH`. Gajerun umarni zaɓi ne; ƙirƙiri ɗaya ga asusan da kake farawa sau da yawa.
@@ -82,13 +82,17 @@ Shell yana samun `ccwork` a `PATH`, kernel yana bin mahaɗin kuma yana fara bina
 
 Me ya sa symlink ba alias na shell ko rubutun naɗewa (wrapper script) ba: symlink yana aiki a kowane shell da a rubutun, ba ya ƙara farawar shell (kusan 1 zuwa 2 ms), kuma farawar har yanzu tana karanta fayil ɗaya. `scripts/perf-check.sh` yana auna gajeren umarni da `hyperfine` a kan iyakar 10 ms (p95) ɗaya da `ccam <name>`.
 
+### A Windows
+
+Gajeren umarni shi ne `ccwork.exe` a `%USERPROFILE%\.local\bin`, kuma `shim.Name` yana cire `.exe` (a kowane irin rubutun haruffa) kafin nema, don haka `ccwork`, `ccwork.exe` da `CCWORK.EXE` duka suna fara `work`. ccam yana fara ƙirƙirar symbolic link, wanda Windows ke bari a Developer Mode ko ga administrator. Ba tare da wannan izinin ba yana ƙirƙirar hard link: suna na biyu ga fayil ɗin `ccam.exe` ɗaya, wanda ba ya buƙatar wani izini na musamman. Hard link yana ƙirguwa a matsayin na ccam idan fayil ɗaya ne da `ccam.exe`. Saboda `ccam update` yana sa sabon fayil a wurin `ccam.exe`, sai ya sabunta kowane gajeren umarni da ke hard link da `shim.Relink` kuma ya buga `✓ shortcut ccwork renewed`. Duba sunan yana neman `<name>` da kowane extension a `PATHEXT` (`.exe`, `.cmd` da sauransu) a sauran foldojin `PATH`.
+
 ## Tsaro da yanayi na musamman
 
 - **Mahaɗin da babu asusun da ke da shi.** Idan mahaɗi zuwa ccam a `~/.local/bin` yana da sunan da babu asusun da ke amfani da shi, misali bayan ka gyara `shortcut` a `config.toml` da hannu, ccam ba ya komawa ga asusun tsoho. Yana tsayawa da `` ccam: ccold is not the shortcut of any account (see `ccam list`, `ccam shortcut`) ``. Sake saita sunan da `ccam shortcut`, ko goge mahaɗin.
 - **Fayilolin da ke akwai.** ccam ba ya taɓa maye gurbin fayil da bai ƙirƙira ba. `ccam shims install` yana tsayawa da `<path> already exists and is not a ccam link, so it was left alone`.
 - **Binary na ccam da aka matsar.** Tsofaffin mahaɗai sai su nuna hanyar da babu ita kuma, kuma ccam ba ya ɗaukar su a matsayin nasa. Goge su, sannan gudanar da `ccam shims install`.
 - **Sake suna da cirewa.** `ccam rename` yana riƙe sunan gajeren umarnin, kuma mahaɗin yana ci gaba da aiki, domin yana nuna ccam kuma ccam yana neman sunan a `config.toml`. `ccam remove` yana goge mahaɗin asusun. `ccam shortcut <account> <new>` yana goge tsohon mahaɗin kafin ya ƙirƙiri sabon.
-- **PATH.** Idan ccam ya ƙirƙiri mahaɗi kuma `~/.local/bin` ba ya cikin `PATH` naka, yana buga `Note: /home/me/.local/bin is not in PATH. Add it to ~/.bashrc or ~/.zshrc:` sannan layin `export PATH=...` da za a ƙara.
+- **PATH.** Idan ccam ya ƙirƙiri mahaɗi kuma `~/.local/bin` ba ya cikin `PATH` naka, yana buga `Note: /home/me/.local/bin is not in PATH. Add it to ~/.bashrc or ~/.zshrc:` sannan layin `export PATH=...` da za a ƙara. A Windows yana buga layin PowerShell da ke ƙara foldar a `PATH` na mai amfaninka maimakon haka.
 - **Dubawa daga baya.** `ccam doctor` yana bayar da rahoton `missing shortcuts in /home/me/.local/bin: ccwork` kuma yana gargaɗi idan foldar ba ta cikin `PATH`. `ccam doctor --fix` yana ƙirƙirar mahaɗan da suka ɓace.
 
 ## Masu alaƙa

@@ -42,6 +42,8 @@ ccam add work --shortcut ccwork
 | Continue a conversation in another account | No | `ccam next --continue` |
 | Usage of every account | No | `ccam usage` |
 | Pick the account with the most room | No | `ccam next --auto` |
+| Run a `-p` job again as another account at the limit | No | `ccam --fallback` |
+| An account for each project folder | No | `ccam folder` |
 | Account name in the status line | No | `ccam statusline install` |
 | Repair broken links | By hand | `ccam doctor --fix` |
 | Extra software | None | One static binary |

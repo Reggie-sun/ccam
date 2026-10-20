@@ -73,3 +73,12 @@ The owner found the sidebar hard to scan: one "Documentation" list mixed setup, 
 - **One reading path**: previous and next follow the whole sidebar across groups; `llms.txt` uses the same groups and order.
 - **Search**: `scripts/search.ts` writes `/search/<locale>.json` at build: each page split at its headings, with the same anchors the page uses (`lib/headings.ts`). The site script loads it the first time the dialog opens (`Ctrl K`, `⌘K`, `/` or the header button), so pages that are never searched download nothing. Every word must appear in the page title, heading or text of a section; headings weigh most, and at most three sections per page are shown. No search library: the index is 39 to 53 KB gzip per locale and substring matching works for scripts without spaces. Without JavaScript the button stays hidden.
 - **Dialog**: native `<dialog>` with a combobox input and a listbox of options (no links inside options, which axe reports as nested interactive controls); Enter or a click opens the result. Strings (`nav.search`, `search.*`) are rendered into the HTML, not shipped as a bundle.
+
+## Comparison page, 2026-10-20
+
+`/compare/account-switchers` now argues for ccam as well as listing tools. Rules for what it says:
+
+- **Facts from each project's own docs and source**, dated on the page. A claim that could not be checked in source is left out, not guessed.
+- **Design, not bug counts**: the page says that tools which copy logins have to keep refresh tokens in step and that lost logins are a common fix in those projects. It does not list other projects' issues by number.
+- **Speed is measured, not compared by name**: ccam's numbers come from `scripts/perf-check.sh`; the Python and Node.js start-up times are `python3 -c pass` and `node -e 0` under hyperfine on the same laptop. No other tool was installed or timed.
+- **"Where other tools do more" stays**, and grows with each thing ccam lacks (Windows, automatic switching, folder-based accounts, menu bar, other agents, Homebrew, signed checksums).

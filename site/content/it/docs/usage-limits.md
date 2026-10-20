@@ -1,10 +1,10 @@
 ---
 title: Limiti di utilizzo e cambio di account
 description: Visualizza l'utilizzo su 5 ore e settimanale di ogni account Claude Code con ccam usage e apri quello con più margine con ccam next --auto.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: d288177682d7
+sourceHash: a84df8e873d6
 ---
 
 `ccam usage` mostra quanta parte dei limiti su 5 ore e settimanali ha usato ogni account. `ccam next --auto` apre l'account con più margine, e `--continue` porta con sé la conversazione corrente.
@@ -48,7 +48,7 @@ Quando il token di accesso di un account è scaduto, ccam non lo rinnova, perch�
 ccam statusline install
 ```
 
-Claude Code mostra quindi il nome dell'account e il suo utilizzo nella riga di stato, per esempio `[work] · Opus · 5h 24% · 7d 41%`. Se hai già un comando per la riga di stato, ccam lo mantiene e mette davanti il nome dell'account. La riga di stato salva anche i propri numeri, che `ccam usage` usa quando l'endpoint non risponde.
+Claude Code mostra quindi il nome dell'account e il suo utilizzo nella riga di stato, per esempio `[work] · Opus · 5h 24% · 7d 41%`. Dal 90% in su, la riga suggerisce anche `ccam next --auto --continue`. Se hai già un comando per la riga di stato, ccam lo mantiene e mette davanti il nome dell'account. La riga di stato salva anche i propri numeri, che `ccam usage` usa quando l'endpoint non risponde.
 
 ## Cambiare account
 
@@ -59,5 +59,13 @@ ccam next --continue  # the next account that shares your conversation history
 ```
 
 `ccam next` salta gli account che non hanno effettuato il login, e `--auto` salta gli account al 100%. Per continuare una conversazione, entrambi gli account devono condividere la cronologia delle conversazioni; vedi [condivisione](/docs/sharing).
+
+Per script e job pianificati che eseguono `claude -p`, metti `--fallback` prima del nome dell'account. Quando quell'account raggiunge il limite, ccam riesegue lo stesso comando con l'account con più margine, e viene stampato solo l'output dell'esecuzione portata a termine:
+
+```sh
+ccam --fallback work -p "review the diff" --output-format json
+```
+
+Vedi [Rieseguire al limite](/features/next#run-again-at-the-limit) per come decide ccam.
 
 La [guida al flusso di lavoro per i limiti di utilizzo](/guides/usage-limit-workflow) illustra un esempio completo.

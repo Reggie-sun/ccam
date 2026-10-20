@@ -1,10 +1,10 @@
 ---
 title: Giới hạn sử dụng
 description: "ccam usage hiển thị giới hạn 5 giờ và hàng tuần của mọi tài khoản cùng lúc, và ccam statusline đưa tên tài khoản cùng mức sử dụng vào Claude Code."
-updated: 2026-10-19
+updated: 2026-10-20
 order: 7
 translation: machine
-sourceHash: 8306a8f6d950
+sourceHash: f08a2fdc6f0b
 ---
 
 `ccam usage` cho biết mỗi tài khoản đã dùng bao nhiêu trong giới hạn 5 giờ và giới hạn hàng tuần, cùng thời gian cho đến khi mỗi khoảng được đặt lại. Hãy dùng nó trước khi bắt đầu một tác vụ dài, hoặc khi Claude Code báo rằng sắp chạm giới hạn, để xem tài khoản nào còn hạn mức. `ccam statusline` là lệnh dòng trạng thái cho Claude Code: nó hiển thị tên tài khoản và mức sử dụng bên trong Claude Code và lưu các con số cho `ccam usage`.
@@ -100,11 +100,12 @@ Claude Code chạy lệnh dòng trạng thái và pipe cho nó một tài liệu
 1. `runStatusline` tìm tài khoản từ `CCAM_PROFILE`, biến mà ccam đặt khi khởi động Claude Code, hoặc nếu không có thì bằng cách so khớp `CLAUDE_CONFIG_DIR` với các thư mục tài khoản.
 2. `ParseStatusLine` đọc `rate_limits.five_hour` và `rate_limits.seven_day`. JSON không có giới hạn tần suất đối với tài khoản dùng khóa API, hoặc trước phản hồi đầu tiên của phiên; khi đó không có gì được lưu.
 3. `SaveStatusLine` ghi `~/.local/state/ccam/usage/<name>.statusline.json`. `ccam usage` dùng tệp này khi endpoint không phản hồi.
-4. ccam in ra `[name] · model · 5h N% · 7d N%`. Với `--wrap`, nó chạy lệnh của bạn qua `sh -c` với cùng đầu vào và in ra `[name]` theo sau là dòng đầu tiên của lệnh thay vào đó.
+4. ccam in ra `[name] · model · 5h N% · 7d N%`. Với `--wrap`, nó chạy lệnh của bạn qua `sh -c` với cùng đầu vào và in ra `[name]` theo sau là dòng đầu tiên của lệnh thay vào đó. Trên Windows, nó chạy lệnh theo cách Claude Code làm: bằng Git Bash khi đã được cài, nếu không thì bằng PowerShell.
+5. Khi mức sử dụng 5 giờ hoặc hàng tuần ở mức 90% trở lên và có một tài khoản khác, dòng này kết thúc bằng `→ ccam next --auto --continue`, ví dụ `[work] · Opus · 5h 93% · 7d 41% · → ccam next --auto --continue`.
 
 Lệnh được bao bọc có 2 giây. Sau đó nó bị dừng và dòng chỉ hiển thị tên tài khoản, nên một lệnh chậm không thể chặn dòng trạng thái của Claude Code.
 
-`ccam statusline install` ghi `statusLine` vào `settings.json` của từng tài khoản. Khi một tài khoản đã có lệnh dòng trạng thái, ccam giữ nó dưới dạng `--wrap '<old command>'`. Một `settings.json` được dùng chung qua nhóm chỉ được ghi một lần, qua liên kết của nó, nên mọi tài khoản trong nhóm đều nhận được. Chạy lại lệnh sẽ in ra `(already set)` cho các tệp đã dùng ccam.
+`ccam statusline install` ghi `statusLine` vào `settings.json` của từng tài khoản. Khi một tài khoản đã có lệnh dòng trạng thái, ccam giữ nó dưới dạng `--wrap '<old command>'`. Trên Windows, đường dẫn tới ccam được ghi bằng dấu gạch chéo xuôi và `~` cho thư mục home (`~/.local/bin/ccam.exe statusline`), cách viết mà cả Git Bash lẫn PowerShell đều hiểu. Một `settings.json` được dùng chung qua nhóm chỉ được ghi một lần, qua liên kết của nó, nên mọi tài khoản trong nhóm đều nhận được. Chạy lại lệnh sẽ in ra `(already set)` cho các tệp đã dùng ccam.
 
 ## An toàn và các trường hợp đặc biệt
 

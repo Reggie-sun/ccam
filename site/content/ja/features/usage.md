@@ -1,10 +1,10 @@
 ---
 title: 使用量の上限
 description: ccam usageはすべてのアカウントの5時間と週間の上限を一度に表示し、ccam statuslineはClaude Codeにアカウント名と使用量を表示します。
-updated: 2026-10-19
+updated: 2026-10-20
 order: 7
 translation: machine
-sourceHash: 8306a8f6d950
+sourceHash: f08a2fdc6f0b
 ---
 
 `ccam usage`は、各アカウントが5時間と週間の上限をどれだけ使ったかを、それぞれの時間枠がリセットされるまでの時間とともに表示します。長い作業を始める前や、Claude Codeが上限に近いことを知らせたときに使い、どのアカウントに余裕が残っているかを確認します。`ccam statusline`はClaude Code用のステータスラインのコマンドです。Claude Codeの中にアカウント名と使用量を表示し、その数値を`ccam usage`のために保存します。
@@ -100,11 +100,12 @@ Claude Codeはステータスラインのコマンドを実行し、JSONドキ�
 1. `runStatusline`は、ccamがClaude Codeを起動するときに設定する`CCAM_PROFILE`からアカウントを特定します。ない場合は、`CLAUDE_CONFIG_DIR`をアカウントのフォルダーと照合します。
 2. `ParseStatusLine`が`rate_limits.five_hour`と`rate_limits.seven_day`を読み取ります。APIキーのアカウントや、セッションの最初の応答より前では、JSONにレート制限が含まれません。その場合は何も保存しません。
 3. `SaveStatusLine`が`~/.local/state/ccam/usage/<name>.statusline.json`に書き込みます。エンドポイントが応答しないとき、`ccam usage`はこれを使います。
-4. ccamは`[name] · model · 5h N% · 7d N%`を出力します。`--wrap`を付けた場合は、同じ入力でコマンドを`sh -c`で実行し、代わりに`[name]`に続けてコマンドの出力の1行目を表示します。
+4. ccamは`[name] · model · 5h N% · 7d N%`を出力します。`--wrap`を付けた場合は、同じ入力でコマンドを`sh -c`で実行し、代わりに`[name]`に続けてコマンドの出力の1行目を表示します。Windowsでは、Claude Codeと同じ方法でコマンドを実行します。Git Bashがインストールされていればそれを使い、なければPowerShellを使います。
+5. 5時間または週間の使用量が90%以上で、ほかのアカウントがある場合、行の最後に`→ ccam next --auto --continue`が付きます。たとえば`[work] · Opus · 5h 93% · 7d 41% · → ccam next --auto --continue`のようになります。
 
 ラップしたコマンドの制限時間は2秒です。それを過ぎるとコマンドは終了させられ、行にはアカウント名だけが表示されるので、遅いコマンドがClaude Codeのステータスラインを止めることはありません。
 
-`ccam statusline install`は、各アカウントの`settings.json`に`statusLine`を書き込みます。アカウントにすでにステータスラインのコマンドがある場合、ccamはそれを`--wrap '<old command>'`として残します。グループで共有されている`settings.json`は、リンクを通じて1回だけ書き込まれるので、グループのすべてのアカウントに反映されます。もう一度実行すると、すでにccamを使っているファイルについては`(already set)`と表示します。
+`ccam statusline install`は、各アカウントの`settings.json`に`statusLine`を書き込みます。アカウントにすでにステータスラインのコマンドがある場合、ccamはそれを`--wrap '<old command>'`として残します。Windowsでは、ccamへのパスをスラッシュとホームフォルダーを表す`~`で書き込みます（`~/.local/bin/ccam.exe statusline`）。これはGit BashとPowerShellのどちらでも解釈できます。グループで共有されている`settings.json`は、リンクを通じて1回だけ書き込まれるので、グループのすべてのアカウントに反映されます。もう一度実行すると、すでにccamを使っているファイルについては`(already set)`と表示します。
 
 ## 安全性と特殊なケース
 

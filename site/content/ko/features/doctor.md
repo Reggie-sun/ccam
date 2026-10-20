@@ -1,10 +1,10 @@
 ---
 title: 점검과 복구
 description: ccam doctor로 공유 링크, 파일 권한, 로그인, Claude Code 버전을 점검하고, ccam doctor --fix로 안전하게 고칠 수 있는 문제를 복구합니다.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 9
 translation: machine
-sourceHash: a1b61efe2b1f
+sourceHash: a45ca25bb722
 ---
 
 `ccam doctor`는 ccam 설치 상태를 점검합니다. Claude Code 실행 파일, 모든 계정의 폴더, 로그인, 공유 링크, 공유 MCP 서버, 사용량 엔드포인트, 단축 명령을 확인합니다. `ccam doctor --fix`는 데이터를 잃지 않고 고칠 수 있는 문제를 복구하며, 교체하는 파일은 먼저 백업 폴더로 옮깁니다. `ccam <name>`이 공유 링크 문제로 멈췄을 때, 파일을 직접 복원한 뒤, 또는 Claude Code를 업데이트한 뒤에 실행하세요.
@@ -70,7 +70,7 @@ $ ccam doctor --fix
 
 1. **Claude Code 버전**(`checkClaude`). 실행기와 같은 방식으로 `claude` 실행 파일을 찾아 `claude --version`을 실행합니다. 버전이 ccam이 폴더 구조를 검증한 버전(`doctor.LayoutVersion`)인 `2.1.302`로 시작하지 않으면 `· ccam was verified against the folder layout of Claude Code 2.1.302. Any 'unknown entries' below may mean the layout changed`를 추가합니다. 실행 파일이 없거나 `--version`이 실패하면 오류입니다. 복구하지 않습니다.
 2. **환경 변수의 로그인 정보**(`checkAuthEnv`). `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN` 중 하나가 설정되어 있으면 경고합니다. 그 셸에서 시작하는 모든 계정이 이 값을 물려받고, Claude Code는 계정 자체의 로그인보다 이 값을 우선하기 때문입니다. 복구하지 않으니 직접 해제하세요.
-3. **폴더**(`checkProfile`). 계정 폴더가 없으면 오류이며, 그 계정의 점검은 여기서 끝납니다. 그룹이나 기타 사용자 권한 비트가 하나라도 설정되어 있으면 경고이고, `--fix`가 `chmod 0700`을 실행합니다.
+3. **폴더**(`checkProfile`). 계정 폴더가 없으면 오류이며, 그 계정의 점검은 여기서 끝납니다. 그룹이나 기타 사용자 권한 비트가 하나라도 설정되어 있으면 경고이고, `--fix`가 `chmod 0700`을 실행합니다. Windows에는 권한 비트가 없으므로 이 점검과 아래의 `0600` 점검은 건너뜁니다. 사용자 프로필 안의 폴더는 액세스 목록으로 보호됩니다.
 4. **로그인 파일**(`checkCredentials`). `.credentials.json`을 `lstat`으로 확인합니다. 계정마다 자체 토큰이 있어야 하므로 심볼릭 링크이면 오류이며, 복구하지 않습니다. 권한이 `0600`이 아니면 경고이고, `--fix`가 `chmod 0600`을 실행합니다. 그다음 로그인 정보를 읽습니다(macOS에서는 키체인을 먼저 봅니다). 로그인 정보가 없으면 `ccam login <name>`을 안내하는 경고입니다. 리프레시 토큰이 만료되었으면 `login expired` 오류이고, 액세스 토큰만 만료되었으면 Claude Code가 다음 실행 때 갱신하므로 정보로만 표시합니다. 이 중 어느 것도 복구하지 않습니다.
 5. **공유 링크**(`share.Check`). `share.Layout`의 모든 경로를 계정의 공유 설정과 비교하며, `lstat`과 `readlink`만 사용합니다. 링크가 없는 경우, 링크가 다른 곳을 가리키는 경우, 링크가 있어야 할 자리에 일반 파일이 있는 경우, 이제 로컬인 항목에 링크가 남아 있는 경우의 네 가지를 보고합니다. 링크가 없는 경우는 경고이고, 나머지는 오류입니다.
 6. **알 수 없는 항목**(`checkUnknownEntries`). 계정 폴더 최상위에서 ccam이 모르는 이름(`share.Known`에 없는 이름)을 나열해, Claude Code 폴더 구조가 바뀌었을 수 있다는 단서를 줍니다. 정보로만 표시합니다.
@@ -78,6 +78,7 @@ $ ccam doctor --fix
 8. **MCP 서버**(`checkMCP`). 그룹마다 `mcp.json`을 한 번 읽습니다. 파일을 읽을 수 없으면 오류이고, `mcp.Validate`를 통과하지 못한 서버는 경고입니다. 복구하지 않습니다.
 9. **사용량 응답 형식**(`checkUsageFormat`). 캐시 없이, 평소처럼 3초 제한으로 계정을 하나씩 돌아가며 응답이 올 때까지 사용량 엔드포인트에 요청합니다. 응답을 더 이상 해석할 수 없으면 `ccam usage`가 상태 표시줄 캐시를 대신 쓴다고 경고합니다. 네트워크를 쓰는 점검은 이것뿐입니다.
 10. **단축 명령**(`checkShims`). 단축 명령이 있는 계정이 있을 때만 실행합니다. `~/.local/bin`에 링크가 없으면 경고이고, `--fix`가 `shim.Install`을 호출합니다. 이 함수는 없는 링크만 만들고 다른 파일은 절대 건드리지 않습니다. bin 폴더가 `PATH`에 없으면 경고이며, 복구하지 않습니다.
+11. **폴더별 계정**(`checkFolders`). [`ccam folder`](/features/folder) 항목이 있을 때만 실행합니다. 항목의 계정이 존재하지 않으면 오류이고, 항목의 폴더가 사라졌으면 경고입니다. 항목을 지우면 그 폴더에서 시작되는 계정이 바뀌므로, 둘 다 복구하지 않습니다.
 
 ### 공유 링크 복구
 

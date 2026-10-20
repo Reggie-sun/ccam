@@ -4,7 +4,7 @@ description: Claude Code را با ccam <name|number>، ccam run یا فهرست
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 401eed57e533
+sourceHash: e6b5a8d4df86
 ---
 
 `ccam work` اجرای Claude Code را با حساب `work` آغاز می‌کند و هر چه پس از نام بیاید همان‌طور که هست به `claude` می‌رسد. هر جا که `claude` را تایپ می‌کردید از آن استفاده کنید: در ترمینال، در یک اسکریپت یا با ورودی‌ای که از طریق pipe داده می‌شود.
@@ -17,16 +17,18 @@ ccam 2                           # the account with number 2 (see ccam list)
 ccam work --resume               # claude --resume, as work
 ccam work -p "fix the tests" --output-format json
 cat log.txt | ccam work -p "find the cause"
-ccam -p "summarise"              # no name: the default account
+ccam -p "summarise"              # no name: the folder's account, else the default
 ccam use work                    # make work the default account
+ccam folder work ~/code/company  # use work in that folder when no name is given
 ccam run work --continue         # same as ccam work --continue
 ccam                             # the picker on a terminal, the list otherwise
 ccam --dry-run work -p hi        # print the command instead of running it
+ccam --fallback work -p "fix the tests"   # run again as another account at the limit
 ```
 
 نام یک حساب یا شماره آن در `ccam list` را بدهید. ccam آرگومان‌های پس از نام را نمی‌خواند، بنابراین `ccam work --help` راهنمای Claude Code را نشان می‌دهد. گذاشتن `--` پس از نام اختیاری است. ورودی استاندارد، کد خروج و سیگنال‌ها مانند `claude` رفتار می‌کنند.
 
-وقتی آرگومان اول با `-` شروع شود و یکی از گزینه‌های خود ccam نباشد، ccam حساب پیش‌فرض را با همه آرگومان‌ها اجرا می‌کند. حساب پیش‌فرض همان حسابی است که با `ccam use` تعیین شده، یا اگر حسابی تعیین نکرده باشید، حسابی که کمترین شماره را دارد.
+وقتی آرگومان اول با `-` شروع شود و یکی از گزینه‌های خود ccam نباشد، ccam حسابی را بدون نام، با همه آرگومان‌ها اجرا می‌کند. این حسابی است که با [`ccam folder`](/features/folder) برای پوشه فعلی تعیین شده، وگرنه حساب پیش‌فرض: حسابی که با `ccam use` تعیین شده، یا اگر حسابی تعیین نکرده باشید، حسابی که کمترین شماره را دارد.
 
 ### فهرست انتخاب
 
@@ -50,21 +52,27 @@ ccam --dry-run work -p hi        # print the command instead of running it
 | گزینه | کار آن | پیش‌فرض |
 | --- | --- | --- |
 | `--dry-run` | محیط و فرمانی را که ccam اجرا می‌کرد چاپ می‌کند و خارج می‌شود | خاموش |
+| `--fallback` | برای اجراهای `-p`/`--print`: وقتی حساب به سقف مصرفش برسد، همان فرمان را دوباره با حساب واردشده‌ای که بیشترین ظرفیت را دارد اجرا می‌کند ([جزئیات](/features/next#run-again-at-the-limit)) | خاموش |
 | `-v`، `--version` | `ccam <version>` را چاپ می‌کند (فقط به‌عنوان آرگومان اول) | |
 | `-h`، `--help` | راهنمای ccam، به شکل `ccam --help` یا `ccam run --help` | |
 
 قواعد آرگومان‌ها:
 
 - ccam گزینه‌های خودش را فقط پیش از نام حساب می‌خواند. پس از نام، همه آرگومان‌ها متعلق به Claude Code هستند، از جمله `--dry-run` و `--help`.
-- `--dry-run` به شکل‌های `ccam --dry-run work`، `ccam run --dry-run work` و `ccam --dry-run` (حساب پیش‌فرض) کار می‌کند. این گزینه پذیرفته می‌شود، نه رد.
-- `ccam run <name|number> [claude args]` شکل بلند `ccam <name>` است. `ccam run` بدون نام از حساب پیش‌فرض استفاده می‌کند.
+- `--dry-run` به شکل‌های `ccam --dry-run work`، `ccam run --dry-run work` و `ccam --dry-run` (حساب بدون نام) کار می‌کند. این گزینه پذیرفته می‌شود، نه رد. `--dry-run` و `--fallback` به هر ترتیبی می‌توانند بیایند.
+- `ccam run <name|number> [claude args]` شکل بلند `ccam <name>` است. `ccam run` بدون نام از حساب پوشه یا حساب پیش‌فرض استفاده می‌کند.
 - نام حساب‌ها نمی‌تواند نام فرمان‌های ccam مانند `add`، `list`، `run` یا `usage` باشد، بنابراین `ccam <word>` هرگز مبهم نیست.
 
-اجرای آزمایشی یک خط چاپ می‌کند که می‌توانید آن را در shell بچسبانید:
+اجرای آزمایشی یک خط چاپ می‌کند که می‌توانید آن را در shell، یا در Windows در PowerShell، بچسبانید:
 
 ```console
 $ ccam --dry-run work -p "fix the tests"
 CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/claude --mcp-config=/home/me/.local/share/ccam/groups/default/mcp.json -p 'fix the tests'
+```
+
+```console
+PS> ccam --dry-run work -p "fix the tests"
+$env:CLAUDE_CONFIG_DIR='C:\Users\me\.local\share\ccam\profiles\work'; & C:\Users\me\.local\bin\claude.exe --mcp-config=C:\Users\me\.local\share\ccam\groups\default\mcp.json -p 'fix the tests'
 ```
 
 ## چگونه کار می‌کند
@@ -78,7 +86,7 @@ CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/c
 1. `cmd/ccam/main.go` تابع `app.Main` را فراخوانی می‌کند. اگر ccam با نام دیگری اجرا شده باشد، یک [میان‌بر](/features/shortcuts) است و مستقیم به اجراکننده می‌رود.
 2. `app.parse` پیش از دخالت cobra به `os.Args` نگاه می‌کند. فقط `ccam` به‌تنهایی (فهرست انتخاب)، نام یک فرمان ccam (`config.Reserved`)، `-h`/`--help` و `-v`/`--version` به `cli.Execute` می‌روند. هر چیز دیگری یک اجراست.
 3. `launcher.Launch` فایل `~/.config/ccam/config.toml` را می‌خواند، تنها فایلی که تجزیه می‌کند.
-4. `launcher.Prepare` حساب را با نام یا شماره پیدا می‌کند، یک `--` آغازین را حذف می‌کند و فایل اجرایی `claude` را با `ResolveClaude` پیدا می‌کند. نتیجه جست‌وجو در PATH همراه با زمان تغییر فایل در `~/.local/state/ccam/claude-path` ذخیره می‌شود، بنابراین ccam در هر اجرا `PATH` را جست‌وجو نمی‌کند. اگر فایل تغییر کرده یا وجود نداشته باشد، جست‌وجوی تازه‌ای انجام می‌شود. مسیر `claude_bin` در `config.toml` همان‌طور که هست استفاده می‌شود. ccam فایل `claude` را که خود ccam باشد (با مقایسه inode) رد می‌کند، چون به یک حلقه بی‌پایان می‌انجامد.
+4. `launcher.Prepare` حساب را با نام یا شماره پیدا می‌کند (بدون نام، `HereProfile` حساب پوشه را برمی‌دارد و پوشه کاری را به‌صورت رشته با ورودی‌های `[[folder]]` در `config.toml` مقایسه می‌کند)، یک `--` آغازین را حذف می‌کند و فایل اجرایی `claude` را با `ResolveClaude` پیدا می‌کند. نتیجه جست‌وجو در PATH همراه با زمان تغییر فایل در `~/.local/state/ccam/claude-path` ذخیره می‌شود، بنابراین ccam در هر اجرا `PATH` را جست‌وجو نمی‌کند. اگر فایل تغییر کرده یا وجود نداشته باشد، جست‌وجوی تازه‌ای انجام می‌شود. مسیر `claude_bin` در `config.toml` همان‌طور که هست استفاده می‌شود. ccam فایل `claude` را که خود ccam باشد (با مقایسه inode) رد می‌کند، چون به یک حلقه بی‌پایان می‌انجامد.
 5. `checkLinks` پوشه حساب `~/.local/share/ccam/profiles/<name>/` را با تنظیمات اشتراک‌گذاری آن با استفاده از `share.Check` مقایسه می‌کند، که فقط `lstat` و `readlink` را فراخوانی می‌کند، یعنی یک یا دو فراخوانی سیستمی برای هر مورد. پیوندی که وجود نداشته باشد در همان لحظه ساخته می‌شود. هر چیزی که ممکن است به از دست رفتن داده بینجامد اجرا را متوقف می‌کند.
 6. `applyMCP` سرورهای MCP مشترک را اضافه می‌کند (پایین‌تر را ببینید).
 7. `session.Register` نشست را ثبت می‌کند. ccam یک نشانگر به نام PID خود، که زمان شروع فرایند را در خود دارد، در `$XDG_RUNTIME_DIR/ccam/profile-<name>/<pid>` می‌نویسد (یا در `~/.local/state/ccam/locks/` اگر `XDG_RUNTIME_DIR` تعریف نشده باشد). برای حسابی که تاریخچه گفتگو را به اشتراک می‌گذارد، `historyCheck` ابتدا در `history-<group>-<hash>`، که hash آن از پوشه فعلی گرفته می‌شود، به دنبال نشستی در حال اجرا می‌گردد و آنجا هم ثبت می‌کند. `exec` همان PID را نگه می‌دارد، بنابراین نشانگر سپس به خود فرایند Claude Code اشاره می‌کند. از نشانگر استفاده می‌شود نه قفل نگه‌داشته‌شده، چون فرایندهایی که Claude Code اجرا می‌کند قفل را به ارث می‌برند و پس از پایان نشست آن را نگه می‌دارند.
@@ -88,7 +96,9 @@ Claude Code با `CLAUDE_CONFIG_DIR` برابر با پوشه حساب و `CCAM_
 
 ### چرا exec
 
-`syscall.Exec` فرایند ccam را با `claude` جایگزین می‌کند، بنابراین ccam در حافظه باقی نمی‌ماند، کلیدها، سیگنال‌ها و کد خروج متعلق به خود Claude Code هستند و آرگومان‌ها به شکل آرایه می‌مانند، هرگز رشته shell نمی‌شوند. کارهای پس از نشست، مانند تشخیص سرورهایی که با `claude mcp add` اضافه شده‌اند، در اجرای بعدی انجام می‌شود: ccam زمان تغییر `.claude.json` را با `~/.local/state/ccam/mcp/<name>/seen` مقایسه می‌کند و فقط وقتی فایل تغییر کرده باشد آن را تجزیه می‌کند.
+`syscall.Exec` فرایند ccam را با `claude` جایگزین می‌کند، بنابراین ccam در حافظه باقی نمی‌ماند، کلیدها، سیگنال‌ها و کد خروج متعلق به خود Claude Code هستند و آرگومان‌ها به شکل آرایه می‌مانند، هرگز رشته shell نمی‌شوند.
+
+Windows `exec` ندارد. آنجا `Plan.Exec` فایل `claude.exe` را به‌عنوان فرایند فرزند با همان محیط، آرگومان‌ها و کنسول اجرا می‌کند، منتظرش می‌ماند و با کد خروج آن خارج می‌شود. Ctrl+C مستقیم از کنسول به Claude Code می‌رسد، پس ccam آن را نادیده می‌گیرد. نشانگر نشست PID خود ccam را دارد که دقیقاً به اندازه Claude Code زنده می‌ماند و وقتی Claude Code خارج شود حذف می‌شود. ccam هنگام انتظار کار دیگری انجام نمی‌دهد. کارهای پس از نشست، مانند تشخیص سرورهایی که با `claude mcp add` اضافه شده‌اند، در اجرای بعدی انجام می‌شود: ccam زمان تغییر `.claude.json` را با `~/.local/state/ccam/mcp/<name>/seen` مقایسه می‌کند و فقط وقتی فایل تغییر کرده باشد آن را تجزیه می‌کند.
 
 ### مسیر یک خط فرمان
 

@@ -1,10 +1,10 @@
 ---
 title: ccam aktualisieren
 description: ccam update ersetzt ccam nach einer SHA-256-Prüfung durch das neueste GitHub-Release; --check meldet nur, und --version installiert ein bestimmtes Release-Tag.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 10
 translation: machine
-sourceHash: 83fc20191328
+sourceHash: d91499b95d3d
 ---
 
 `ccam update` lädt ein ccam-Release von GitHub herunter, prüft es gegen die `checksums.txt` des Releases und ersetzt die laufende Binärdatei mit einem einzigen Umbenennen. Verwende es, wenn du ccam mit dem Installationsskript oder aus einem Archiv installiert hast. ccam sucht nie von selbst nach Updates: Nur dieser Befehl kontaktiert GitHub, daher funktioniert jeder andere Befehl offline genauso.
@@ -53,9 +53,9 @@ Der Code liegt in `internal/update`, das nur `ccam update` importiert. Der Start
 2. Ohne `--version` ruft `Updater.Latest` die Adresse `<releases>/latest` ab, ohne der Weiterleitung zu folgen, und liest das Tag aus dem Header `Location` (`…/tag/v0.5.0`). Dabei wird die Release-Seite statt der GitHub-API verwendet, daher gilt das Limit der API von 60 Anfragen pro Stunde nicht. Die Abfrage hat 10 Sekunden Zeit.
 3. `parseVersion` prüft das Tag gegen ein strenges Muster. Ein Tag landet in Download-URLs und in einem ausgegebenen Shell-Befehl, daher kommt nichts mit `/`, `%`, Leerzeichen oder Shell-Zeichen durch. `compareVersions` vergleicht es mit der laufenden Version; eine Vorabversion wird vor ihrem Release einsortiert.
 4. `managed()` und `writable()` entscheiden, ob ccam die Binärdatei überhaupt ersetzen darf (siehe unten).
-5. `Updater.Fetch` lädt `ccam_<os>_<arch>.tar.gz` und `checksums.txt` gleichzeitig herunter, mit 2 Minuten für beide. Jeder Download ist auf 256 MB begrenzt.
+5. `Updater.Fetch` lädt `ccam_<os>_<arch>.tar.gz` (unter Windows `ccam_windows_<arch>.zip`) und `checksums.txt` gleichzeitig herunter, mit 2 Minuten für beide. Jeder Download ist auf 256 MB begrenzt.
 6. Die SHA-256-Prüfsumme des Archivs muss mit seiner Zeile in `checksums.txt` übereinstimmen, bevor irgendetwas anderes geschieht. Eine fehlende Zeile oder eine abweichende Prüfsumme bricht das Update mit `nothing was changed` ab.
-7. `extract()` liest das tar-Archiv und nimmt die erste reguläre Datei namens `ccam`. Ordner, Links und andere Einträge werden ignoriert, und auch die Binärdatei ist auf 256 MB begrenzt.
+7. `extract()` liest das tar-Archiv und nimmt die erste reguläre Datei namens `ccam` (`extractZip` nimmt `ccam.exe` aus dem zip). Ordner, Links und andere Einträge werden ignoriert, und auch die Binärdatei ist auf 256 MB begrenzt.
 8. `Updater.Install` schreibt die neue Binärdatei mit `fsutil.AtomicWrite`: eine temporäre Datei `.ccam.tmp*` neben der Binärdatei, mit den Berechtigungsbits der alten Datei, auf die Festplatte geschrieben und über die alte umbenannt.
 
 Die gesamte Abfolge, von der Tag-Abfrage bis zum Umbenennen:
@@ -63,6 +63,8 @@ Die gesamte Abfolge, von der Tag-Abfrage bis zum Umbenennen:
 <!-- motion:update-pipeline -->
 
 Das Archiv und `checksums.txt` werden nebeneinander heruntergeladen, und nichts wird geschrieben, bis die Prüfsumme stimmt. Das Umbenennen ist atomar, daher hinterlässt ein Absturz oder eine volle Festplatte entweder die alte oder die neue Binärdatei, nie eine halbe. Kurzbefehle wie `~/.local/bin/ccwork` sind symbolische Links auf die ccam-Binärdatei, daher führen sie ohne jede Änderung die neue Version aus.
+
+Unter Windows lässt sich die Datei eines laufenden Programms nicht ersetzen oder löschen, nur umbenennen. `Updater.Install` schreibt die neue Binärdatei nach `ccam.exe.new`, benennt das laufende `ccam.exe` in `ccam.exe.old` um und die neue Datei in `ccam.exe`. Schlägt der letzte Schritt fehl, wird die alte Binärdatei zurückbenannt. Das nächste Update löscht `ccam.exe.old`. Kurzbefehle, die Hardlinks statt symbolischer Links sind ([Kurzbefehle](/features/shortcuts)), werden direkt danach erneuert, sodass auch sie die neue Version ausführen.
 
 ### Über Paketverwaltung installiert
 
@@ -85,7 +87,7 @@ Or install a copy in ~/.local/bin with the install script:
   curl -fsSL https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.sh | sh
 ```
 
-Auf anderen Systemen als Linux wird nur die Zeile mit dem Installationsskript ausgegeben. Ist der Ordner nicht beschreibbar, schlägt ccam vor, das Installationsskript erneut auszuführen, das ccam in `~/.local/bin` installiert.
+Auf anderen Systemen als Linux wird nur die Zeile mit dem Installationsskript ausgegeben: unter Windows `irm https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.ps1 | iex`. Ist der Ordner nicht beschreibbar, schlägt ccam vor, das Installationsskript erneut auszuführen, das ccam in `~/.local/bin` installiert.
 
 ## Sicherheit und Sonderfälle
 

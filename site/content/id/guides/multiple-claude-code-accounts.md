@@ -1,10 +1,10 @@
 ---
 title: Gunakan beberapa akun Claude Code di satu komputer
 description: Jalankan beberapa akun Claude Code berdampingan dengan CLAUDE_CONFIG_DIR, secara manual lewat alias shell atau otomatis dengan ccam, lalu ganti akun kapan saja.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: e2f4deb40c81
+sourceHash: f2982e4317a2
 ---
 
 Beri setiap akun folder konfigurasinya sendiri. Claude Code membaca folder itu dari variabel lingkungan `CLAUDE_CONFIG_DIR`, dan setiap folder menyimpan login, pengaturan, dan riwayatnya sendiri, sehingga setiap akun tetap login dan Anda bisa menjalankannya bersamaan. Anda bisa menyiapkannya secara manual dengan alias shell, atau membiarkan ccam melakukannya.
@@ -61,7 +61,7 @@ Di dalam Claude Code, `/status` menampilkan akun yang sedang Anda pakai untuk lo
 
 ## Apakah ini berfungsi di Windows dan WSL?
 
-Claude Code berjalan [secara native di Windows dan di dalam WSL](https://code.claude.com/docs/en/setup). `CLAUDE_CONFIG_DIR` berfungsi di keduanya, jadi alias atau fungsi PowerShell di atas sudah cukup di Windows native. ccam berjalan di Linux dan macOS; di Windows, instal dan gunakan ccam di dalam WSL, tempat ccam bekerja seperti di Linux.
+Claude Code berjalan [secara native di Windows dan di dalam WSL](https://code.claude.com/docs/en/setup). `CLAUDE_CONFIG_DIR` berfungsi di keduanya, jadi alias atau fungsi PowerShell di atas sudah cukup di Windows native. ccam juga berjalan secara native di Windows: instal di PowerShell dengan `irm https://ccam.dev/install.ps1 | iex`, atau di dalam WSL dengan perintah Linux. Pintasan menjadi `ccwork.exe`, dan membagikan file seperti `settings.json` memerlukan Mode Pengembang ([Instal ccam](/docs/install)).
 
 ## Pemecahan masalah
 

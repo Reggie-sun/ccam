@@ -1,10 +1,10 @@
 ---
 title: Limity użycia i przełączanie kont
 description: Sprawdź 5-godzinne i tygodniowe użycie każdego konta Claude Code przez ccam usage i otwórz konto z największym zapasem przez ccam next --auto.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: d288177682d7
+sourceHash: a84df8e873d6
 ---
 
 `ccam usage` pokazuje, jaką część 5-godzinnego i tygodniowego limitu wykorzystało każde konto. `ccam next --auto` otwiera konto z największym zapasem, a `--continue` przenosi bieżącą rozmowę.
@@ -48,7 +48,7 @@ Gdy token dostępu konta wygaśnie, ccam go nie odnawia, ponieważ odnowienie go
 ccam statusline install
 ```
 
-Claude Code pokazuje wtedy nazwę konta i jego użycie na pasku stanu, na przykład `[work] · Opus · 5h 24% · 7d 41%`. Jeśli masz już polecenie paska stanu, ccam je zachowuje i dodaje przed nim nazwę konta. Pasek stanu zapisuje też swoje liczby, z których `ccam usage` korzysta, gdy endpoint nie odpowiada.
+Claude Code pokazuje wtedy nazwę konta i jego użycie na pasku stanu, na przykład `[work] · Opus · 5h 24% · 7d 41%`. Od 90% pasek podpowiada też `ccam next --auto --continue`. Jeśli masz już polecenie paska stanu, ccam je zachowuje i dodaje przed nim nazwę konta. Pasek stanu zapisuje też swoje liczby, z których `ccam usage` korzysta, gdy endpoint nie odpowiada.
 
 ## Przełączanie
 
@@ -59,5 +59,13 @@ ccam next --continue  # the next account that shares your conversation history
 ```
 
 `ccam next` pomija konta, które nie są zalogowane, a `--auto` pomija konta na poziomie 100%. Aby kontynuować rozmowę, oba konta muszą współdzielić historię rozmów; zobacz [współdzielenie](/docs/sharing).
+
+W skryptach i zaplanowanych zadaniach, które uruchamiają `claude -p`, umieść `--fallback` przed nazwą konta. Gdy to konto osiągnie limit, ccam uruchamia to samo polecenie ponownie na koncie z największym zapasem, a wypisywane jest tylko wyjście przebiegu, który się zakończył:
+
+```sh
+ccam --fallback work -p "review the diff" --output-format json
+```
+
+Zobacz [Ponowienie po osiągnięciu limitu](/features/next#run-again-at-the-limit), jak ccam podejmuje decyzję.
 
 [Poradnik o pracy z limitem użycia](/guides/usage-limit-workflow) pokazuje pełny przykład.

@@ -1,10 +1,10 @@
 ---
 title: 檢查和修復
 description: 用 ccam doctor 檢查共用連結、檔案權限、登入和 Claude Code 版本，並用 ccam doctor --fix 修復可以安全修復的問題。
-updated: 2026-10-19
+updated: 2026-10-20
 order: 9
 translation: machine
-sourceHash: a1b61efe2b1f
+sourceHash: a45ca25bb722
 ---
 
 `ccam doctor` 會檢查你的 ccam 安裝：Claude Code 執行檔、每個帳號的資料夾、登入和共用連結、共用的 MCP 伺服器、用量端點，以及你的快捷指令。`ccam doctor --fix` 會修復不會遺失資料的問題，並先把要取代的檔案移到備份資料夾。當 `ccam <name>` 因共用連結問題而停止、你手動還原檔案之後，或 Claude Code 更新之後，請執行它。
@@ -70,7 +70,7 @@ $ ccam doctor --fix
 
 1. **Claude Code 版本**（`checkClaude`）。以和啟動器相同的方式找出 `claude` 執行檔，並執行 `claude --version`。如果版本不是以 `2.1.302` 開頭（這是 ccam 驗證資料夾結構時所用的版本，`doctor.LayoutVersion`），會加上 `· ccam was verified against the folder layout of Claude Code 2.1.302. Any 'unknown entries' below may mean the layout changed`。找不到執行檔或 `--version` 失敗則為錯誤。不修復。
 2. **環境變數中的登入資訊**（`checkAuthEnv`）。設定了 `CLAUDE_CODE_OAUTH_TOKEN`、`ANTHROPIC_API_KEY` 或 `ANTHROPIC_AUTH_TOKEN` 時發出警告：從該 shell 啟動的每個帳號都會繼承它，而且 Claude Code 會優先使用它，而不是帳號自己的登入。不修復；請自行取消設定。
-3. **資料夾**（`checkProfile`）。帳號資料夾不存在時為錯誤，並結束該帳號的檢查。權限中設定了任何群組或其他使用者的位元時為警告；`--fix` 會執行 `chmod 0700`。
+3. **資料夾**（`checkProfile`）。帳號資料夾不存在時為錯誤，並結束該帳號的檢查。權限中設定了任何群組或其他使用者的位元時為警告；`--fix` 會執行 `chmod 0700`。Windows 沒有權限位元，所以在那裡會略過這項檢查和下方的 `0600` 檢查；位於使用者設定檔中的資料夾由其存取清單保護。
 4. **登入檔案**（`checkCredentials`）。以 `lstat` 檢查 `.credentials.json`。符號連結是錯誤，因為每個帳號都必須有自己的權杖，而且不會修復。權限不是 `0600` 時為警告；`--fix` 會執行 `chmod 0600`。接著讀取登入資訊（在 macOS 上會先從鑰匙圈讀取）。沒有登入是警告，並提示使用 `ccam login <name>`。更新權杖過期是錯誤 `login expired`；存取權杖過期只是資訊，因為 Claude Code 會在下次啟動時更新它。這些都不會修復。
 5. **共用連結**（`share.Check`）。只用 `lstat` 和 `readlink`，把 `share.Layout` 中的每個路徑和帳號的共用設定比對。它會回報四種情況：缺少連結、連結指向別處、應該是連結的地方是實際檔案，以及已改為 local 的項目仍殘留連結。缺少連結是警告，其他都是錯誤。
 6. **未知項目**（`checkUnknownEntries`）。列出帳號資料夾中 ccam 不認得的頂層名稱（`share.Known`），作為 Claude Code 資料夾結構可能已變更的提示。僅供參考。
@@ -78,6 +78,7 @@ $ ccam doctor --fix
 8. **MCP 伺服器**（`checkMCP`）。每個群組的 `mcp.json` 只載入一次。無法讀取的檔案是錯誤；未通過 `mcp.Validate` 的伺服器是警告。不修復。
 9. **用量回應格式**（`checkUsageFormat`）。不使用快取，以一般的 3 秒限制逐一向用量端點查詢帳號，直到有一個回應為止。如果回應已經無法解析，它會警告 `ccam usage` 將改用狀態列的快取。這是唯一使用網路的檢查。
 10. **快捷指令**（`checkShims`）。只在有帳號設定了快捷指令時執行。`~/.local/bin` 中缺少連結是警告；`--fix` 會呼叫 `shim.Install`，它只建立缺少的連結，絕不碰其他檔案。bin 資料夾不在 `PATH` 上時為警告，不會修復。
+11. **資料夾設定**（`checkFolders`）。只在有 [`ccam folder`](/features/folder) 項目時執行。項目的帳號不存在時為錯誤，項目的資料夾已不存在時為警告。兩者都不會修復，因為移除項目會改變在那裡啟動的帳號。
 
 ### 修復共用連結
 

@@ -1,10 +1,10 @@
 ---
 title: Polecenia skrótów
 description: Daj kontu własne polecenie, takie jak ccwork, przez ccam shortcut, a linki w ~/.local/bin odtwórz poleceniem ccam shims install.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 5f0cb5a57042
+sourceHash: 939256e7a67e
 ---
 
 Skrót to polecenie o nazwie wybranej przez ciebie, które uruchamia Claude Code jako jedno konto: `ccwork --resume` robi to samo co `ccam work --resume`. Jest to link do ccam w `~/.local/bin`, więc działa w bash, zsh, skryptach i wszędzie tam, gdzie programy są uruchamiane z `PATH`. Skróty są opcjonalne; utwórz je dla kont, które uruchamiasz często.
@@ -82,13 +82,17 @@ Powłoka znajduje `ccwork` w `PATH`, jądro podąża za linkiem i uruchamia plik
 
 Dlaczego dowiązanie symboliczne, a nie alias powłoki czy skrypt opakowujący: dowiązanie działa w każdej powłoce i w skryptach, nie dodaje uruchomienia kolejnej powłoki (około 1 do 2 ms), a uruchomienie nadal odczytuje jeden plik. `scripts/perf-check.sh` mierzy skrót za pomocą `hyperfine` względem tego samego limitu 10 ms (p95) co `ccam <name>`.
 
+### W Windows
+
+Skrót to `ccwork.exe` w `%USERPROFILE%\.local\bin`, a `shim.Name` przed wyszukaniem obcina `.exe` (bez względu na wielkość liter), więc `ccwork`, `ccwork.exe` i `CCWORK.EXE` uruchamiają `work`. ccam najpierw tworzy dowiązanie symboliczne, na które Windows pozwala w Trybie dewelopera albo administratorowi. Bez tego uprawnienia tworzy dowiązanie twarde: drugą nazwę tego samego pliku `ccam.exe`, która nie wymaga uprawnień. Dowiązanie twarde uznawane jest za należące do ccam, gdy jest tym samym plikiem co `ccam.exe`. Ponieważ `ccam update` wstawia nowy plik w miejsce `ccam.exe`, odnawia potem każdy skrót będący dowiązaniem twardym przez `shim.Relink` i wypisuje `✓ shortcut ccwork renewed`. Sprawdzenie nazwy szuka `<name>` z każdym rozszerzeniem z `PATHEXT` (`.exe`, `.cmd` i tak dalej) w pozostałych folderach `PATH`.
+
 ## Bezpieczeństwo i przypadki brzegowe
 
 - **Link, do którego nie przyznaje się żadne konto.** Jeśli link do ccam w `~/.local/bin` ma nazwę, której nie używa żadne konto, na przykład po ręcznej edycji `shortcut` w `config.toml`, ccam nie przechodzi na domyślne konto. Zatrzymuje się z komunikatem `` ccam: ccold is not the shortcut of any account (see `ccam list`, `ccam shortcut`) ``. Ustaw nazwę ponownie przez `ccam shortcut` albo usuń link.
 - **Istniejące pliki.** ccam nigdy nie zastępuje pliku, którego nie utworzył. `ccam shims install` zatrzymuje się z komunikatem `<path> already exists and is not a ccam link, so it was left alone`.
 - **Przeniesiony plik binarny ccam.** Stare linki wskazują wtedy ścieżkę, która już nie istnieje, i ccam nie uznaje ich za swoje. Usuń je, a potem uruchom `ccam shims install`.
 - **Zmiana nazwy i usuwanie.** `ccam rename` zachowuje nazwę skrótu, a link dalej działa, bo wskazuje na ccam, a ccam szuka nazwy w `config.toml`. `ccam remove` usuwa link konta. `ccam shortcut <account> <new>` usuwa stary link, zanim utworzy nowy.
-- **PATH.** Gdy ccam tworzy link, a `~/.local/bin` nie ma w twoim `PATH`, wypisuje `Note: /home/me/.local/bin is not in PATH. Add it to ~/.bashrc or ~/.zshrc:`, a po tym wiersz `export PATH=...` do dodania.
+- **PATH.** Gdy ccam tworzy link, a `~/.local/bin` nie ma w twoim `PATH`, wypisuje `Note: /home/me/.local/bin is not in PATH. Add it to ~/.bashrc or ~/.zshrc:`, a po tym wiersz `export PATH=...` do dodania. W Windows wypisuje zamiast tego wiersz PowerShell, który dodaje folder do `PATH` twojego użytkownika.
 - **Późniejsze sprawdzenie.** `ccam doctor` zgłasza `missing shortcuts in /home/me/.local/bin: ccwork` i ostrzega, gdy folderu nie ma w `PATH`. `ccam doctor --fix` tworzy brakujące linki.
 
 ## Powiązane

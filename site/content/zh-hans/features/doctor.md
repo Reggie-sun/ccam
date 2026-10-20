@@ -1,10 +1,10 @@
 ---
 title: 检查与修复
 description: 用 ccam doctor 检查共享链接、文件权限、登录和 Claude Code 版本，并用 ccam doctor --fix 修复可以安全修复的问题。
-updated: 2026-10-19
+updated: 2026-10-20
 order: 9
 translation: machine
-sourceHash: a1b61efe2b1f
+sourceHash: a45ca25bb722
 ---
 
 `ccam doctor` 检查你的 ccam 安装：Claude Code 可执行文件、每个账号的文件夹、登录和共享链接、共享的 MCP 服务器、用量接口以及你的快捷命令。`ccam doctor --fix` 修复它能在不丢失数据的前提下修复的问题，并先把它要替换的文件移到备份文件夹中。当 `ccam <name>` 因共享链接问题而停止、你手动恢复了文件之后，或者 Claude Code 更新之后，都可以运行它。
@@ -70,7 +70,7 @@ $ ccam doctor --fix
 
 1. **Claude Code 版本**（`checkClaude`）。像启动器一样解析 `claude` 可执行文件，并运行 `claude --version`。如果版本不以 `2.1.302` 开头（ccam 的文件夹布局就是针对这个版本验证的，即 `doctor.LayoutVersion`），会加上 `· ccam was verified against the folder layout of Claude Code 2.1.302. Any 'unknown entries' below may mean the layout changed`。找不到可执行文件或 `--version` 失败属于错误。不修复。
 2. **环境中的凭据**（`checkAuthEnv`）。当设置了 `CLAUDE_CODE_OAUTH_TOKEN`、`ANTHROPIC_API_KEY` 或 `ANTHROPIC_AUTH_TOKEN` 时发出警告：从该 shell 启动的每个账号都会继承它，而且 Claude Code 会优先使用它而不是账号自己的登录。不修复；请自行取消设置。
-3. **文件夹**（`checkProfile`）。账号文件夹不存在属于错误，并结束该账号的检查。权限中设置了任何组或其他用户的位属于警告；`--fix` 会执行 `chmod 0700`。
+3. **文件夹**（`checkProfile`）。账号文件夹不存在属于错误，并结束该账号的检查。权限中设置了任何组或其他用户的位属于警告；`--fix` 会执行 `chmod 0700`。Windows 没有权限位，所以在 Windows 上会跳过这项检查以及下面的 `0600` 检查；用户配置文件中的文件夹由其访问控制列表保护。
 4. **登录文件**（`checkCredentials`）。用 `lstat` 检查 `.credentials.json`。符号链接属于错误，因为每个账号必须有自己的令牌，且不会被修复。权限不是 `0600` 属于警告；`--fix` 会执行 `chmod 0600`。然后读取登录（在 macOS 上先从钥匙串读取）。没有登录属于警告，并提示使用 `ccam login <name>`。刷新令牌过期是错误 `login expired`；访问令牌过期只是信息，因为 Claude Code 会在下次启动时为它续期。这些都不会被修复。
 5. **共享链接**（`share.Check`）。只使用 `lstat` 和 `readlink`，把 `share.Layout` 中的每个路径与账号的共享设置进行比较。它报告四种情况：缺少链接、链接指向别处、应为链接的位置是普通文件，以及某项已改为本地却仍残留链接。缺少链接属于警告，其他属于错误。
 6. **未知条目**（`checkUnknownEntries`）。列出账号文件夹中 ccam 不认识（`share.Known`）的顶层名称，作为 Claude Code 布局可能已变化的提示。仅为信息。
@@ -78,6 +78,7 @@ $ ccam doctor --fix
 8. **MCP 服务器**（`checkMCP`）。每个组的 `mcp.json` 只加载一次。无法读取的文件属于错误；未通过 `mcp.Validate` 的服务器属于警告。不修复。
 9. **用量响应格式**（`checkUsageFormat`）。不使用缓存，并采用通常的 3 秒时限，依次为各个账号查询用量接口，直到有一个响应为止。如果响应已无法解析，它会警告 `ccam usage` 将退回到状态栏缓存。这是唯一使用网络的检查。
 10. **快捷命令**（`checkShims`）。仅在有账号设置了快捷命令时执行。`~/.local/bin` 中缺少链接属于警告；`--fix` 调用 `shim.Install`，它只创建缺少的链接，从不触碰其他文件。bin 文件夹不在 `PATH` 上属于警告，不会被修复。
+11. **文件夹设置**（`checkFolders`）。仅在存在 [`ccam folder`](/features/folder) 条目时执行。条目对应的账号不存在属于错误，条目对应的文件夹已不存在属于警告。两者都不会被修复，因为删除条目会改变在那里启动的账号。
 
 ### 修复共享链接
 

@@ -1,7 +1,7 @@
 ---
 title: Checking and repairing
 description: Check share links, file permissions, logins and the Claude Code version with ccam doctor, and repair what is safe to repair with ccam doctor --fix.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 9
 translation: source
 ---
@@ -69,7 +69,7 @@ The middle block runs once per account. The checks, and what `--fix` does for ea
 
 1. **Claude Code version** (`checkClaude`). Resolves the `claude` binary as the launcher does and runs `claude --version`. If the version does not start with `2.1.302`, the version ccam's folder layout was verified against (`doctor.LayoutVersion`), it adds `· ccam was verified against the folder layout of Claude Code 2.1.302. Any 'unknown entries' below may mean the layout changed`. A missing binary or a failing `--version` is an error. No fix.
 2. **Credentials in the environment** (`checkAuthEnv`). Warns when `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY` or `ANTHROPIC_AUTH_TOKEN` is set: every account launched from that shell inherits it, and Claude Code prefers it over the account's own login. No fix; unset it yourself.
-3. **Folder** (`checkProfile`). A missing account folder is an error and ends that account's checks. Permissions with any group or other bits set are a warning; `--fix` runs `chmod 0700`.
+3. **Folder** (`checkProfile`). A missing account folder is an error and ends that account's checks. Permissions with any group or other bits set are a warning; `--fix` runs `chmod 0700`. Windows has no permission bits, so this check and the `0600` check below are skipped there; the folder in your user profile is protected by its access list.
 4. **Login file** (`checkCredentials`). `.credentials.json` is checked with `lstat`. A symlink is an error, because each account must have its own token, and is not fixed. A mode other than `0600` is a warning; `--fix` runs `chmod 0600`. Then the login is read (on macOS from the Keychain first). No login is a warning that points to `ccam login <name>`. An expired refresh token is the error `login expired`; an expired access token is only information, since Claude Code refreshes it on the next launch. None of these are fixed.
 5. **Share links** (`share.Check`). Compares every path in `share.Layout` with the account's share settings, using only `lstat` and `readlink`. It reports four kinds: a missing link, a link that points elsewhere, a real file where a link belongs, and a link left over for an item that is now local. A missing link is a warning, the others are errors.
 6. **Unknown entries** (`checkUnknownEntries`). Lists top-level names in the account folder that ccam does not know (`share.Known`), as a hint that the Claude Code layout changed. Information only.
@@ -77,6 +77,7 @@ The middle block runs once per account. The checks, and what `--fix` does for ea
 8. **MCP servers** (`checkMCP`). Loads each group's `mcp.json` once. A file that cannot be read is an error; a server that fails `mcp.Validate` is a warning. No fix.
 9. **Usage response format** (`checkUsageFormat`). Asks the usage endpoint, without the cache and with the usual 3-second limit, for one account after another until one answers. If the response no longer parses, it warns that `ccam usage` falls back to the status line cache. This is the only check that uses the network.
 10. **Shortcuts** (`checkShims`). Only when an account has a shortcut. Missing links in `~/.local/bin` are a warning; `--fix` calls `shim.Install`, which only creates missing links and never touches other files. A bin folder that is not on `PATH` is a warning and is not fixed.
+11. **Folders** (`checkFolders`). Only when [`ccam folder`](/features/folder) entries exist. An entry whose account does not exist is an error, and an entry whose folder is gone is a warning. Neither is fixed, because removing an entry would change which account starts there.
 
 ### Repairing share links
 

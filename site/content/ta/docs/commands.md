@@ -2,10 +2,10 @@
 title: கட்டளைக் குறிப்பு
 metaTitle: ccam கட்டளைக் குறிப்பு
 description: ccam add, ccam <name> முதல் ccam usage, ccam next, ccam doctor வரை, ccam-இன் ஒவ்வொரு கட்டளையும் option-உம்.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 3342453e38d3
+sourceHash: 5d3275878535
 ---
 
 ஒரு கட்டளை உண்மையில் எதையும் செய்யாமல் என்ன செய்யும் என்று பார்க்க, அதற்கு முன் `--dry-run` வையுங்கள், எடுத்துக்காட்டாக `ccam --dry-run work`. Claude Code-ஐத் தொடங்கும்போது (`ccam <name>`, `ccam run`, `ccam next`) மற்றும் `share`, `migrate`, `shortcut`, `update`, `doctor --fix` ஆகியவற்றுடன் இது வேலை செய்யும். எதையாவது மாற்றும் மற்ற கட்டளைகள் இயங்குவதற்குப் பதிலாக இதை மறுக்கும்.
@@ -16,7 +16,16 @@ sourceHash: 3342453e38d3
 
 `ccam <name|number> [arguments]` அந்தக் கணக்காக Claude Code-ஐத் தொடங்குகிறது. பெயருக்குப் பின் உள்ள arguments-ஐ ccam படிப்பதில்லை; அவற்றை அதே வரிசையில் `claude`-க்கு அனுப்புகிறது. standard input, exit code, signals ஆகியவை `claude`-ஐ நேரடியாக இயக்குவது போலவே செயல்படும். பெயருக்குப் பின் `--` விருப்பத்தேர்வு மட்டுமே.
 
-கணக்குப் பெயர் இல்லாமல் arguments உடன் இயக்கும் `ccam`, எடுத்துக்காட்டாக `ccam -p "summarise"`, இயல்புநிலைக் கணக்கைப் பயன்படுத்தும். அதை `ccam use <name>` மூலம் அமைக்கலாம்.
+கணக்குப் பெயர் இல்லாமல் arguments உடன் இயக்கும் `ccam`, எடுத்துக்காட்டாக `ccam -p "summarise"`, தற்போதைய கோப்புறைக்கு அமைக்கப்பட்ட கணக்கை, இல்லையெனில் இயல்புநிலைக் கணக்கைப் பயன்படுத்தும். அவற்றை `ccam folder <name> [folder]`, `ccam use <name>` மூலம் அமைக்கலாம்.
+
+```sh
+ccam folder work ~/code/company   # work inside ~/code/company and below
+ccam folder                       # list folders and the account used here
+ccam folder --remove ~/code/company
+ccam --fallback work -p "fix the tests"   # run again as another account at the limit
+```
+
+கணக்குப் பெயருக்கு முன் வரும் `--fallback` என்பது `-p`/`--print` இயக்கங்களுக்கானது. கணக்கு தன் பயன்பாட்டு வரம்பை எட்டும்போது, ccam அதே கட்டளையை அதிக இடம் உள்ள உள்நுழைந்த கணக்காக மீண்டும் இயக்கி, முடிந்த இயக்கத்தின் output-ஐ மட்டும் அச்சிடுகிறது. பார்க்க: [கோப்புறை வாரியான கணக்குகள்](/features/folder), [வரம்பில் மீண்டும் இயக்குதல்](/features/next#run-again-at-the-limit).
 
 `ccwork` போன்ற ஒரு குறுக்குவழியும் அதன் கணக்கை இதே முறையில் தொடங்கும்: `ccam work --resume` செய்வதையே `ccwork --resume` செய்யும். [குறுக்குவழிகள்](/docs/commands#shortcuts) பகுதியைப் பாருங்கள்.
 
@@ -108,6 +117,7 @@ ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
 ccam version         # also: ccam -v, ccam --version
+ccam completion bash # or zsh, powershell
 ```
 
 `ccam update` ccam-ஐ மாற்றுவதற்கு முன் வெளியீட்டின் SHA-256 checksum-ஐச் சரிபார்க்கிறது, `--version v0.2.0` ஒரு குறிப்பிட்ட வெளியீட்டை நிறுவுகிறது. `.deb` தொகுப்பிலிருந்து நிறுவிய ccam-ஐ apt மூலம் புதுப்பியுங்கள். [புதுப்பித்தல்](/docs/install#update) பகுதியைப் பாருங்கள்.
@@ -122,4 +132,4 @@ ccam version         # also: ccam -v, ccam --version
 | `~/.local/state/ccam/` | பயன்பாட்டு cache மற்றும் கடைசியாகப் பயன்படுத்திய நேரங்கள் |
 | `~/.local/bin/<shortcut>` | `ccwork` போன்ற குறுக்குவழிக் கட்டளைகள், ccam-க்கான இணைப்புகள் |
 
-`XDG_CONFIG_HOME`, `XDG_DATA_HOME`, `XDG_STATE_HOME` மாறிகள் இந்தக் கோப்புறைகளின் இடத்தை மாற்றுகின்றன.
+`XDG_CONFIG_HOME`, `XDG_DATA_HOME`, `XDG_STATE_HOME` மாறிகள் இந்தக் கோப்புறைகளின் இடத்தை மாற்றுகின்றன. Windows-இல் `~` என்பது `%USERPROFILE%`, குறுக்குவழிகள் `<shortcut>.exe` ஆக இருக்கும்.

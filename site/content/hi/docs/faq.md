@@ -2,10 +2,10 @@
 title: अक्सर पूछे जाने वाले प्रश्न
 metaTitle: "ccam FAQ: कई Claude Code अकाउंट"
 description: ccam, Claude Code अकाउंट, उपयोग सीमाएँ, साझा करना, निजता और समर्थित सिस्टम के बारे में जवाब।
-updated: 2026-10-19
+updated: 2026-10-20
 order: 6
 translation: machine
-sourceHash: 88bd249ec51c
+sourceHash: 80a5475ccfee
 ---
 
 ## क्या ccam, Anthropic का आधिकारिक टूल है?
@@ -46,7 +46,7 @@ SSH सेशन में हमेशा की तरह `ccam add` या `c
 
 ## ccam किन सिस्टम पर चलता है?
 
-Linux (Ubuntu, Debian, Fedora, Arch, Alpine और दूसरे) और macOS। Windows पर इसे WSL के अंदर इस्तेमाल करें।
+Linux (Ubuntu, Debian, Fedora, Arch, Alpine और दूसरे), macOS और Windows 10 और 11, सीधे या WSL के अंदर। Windows पर `settings.json` जैसी फ़ाइलें साझा करने के लिए Developer Mode चाहिए; साझा फ़ोल्डर इसके बिना भी काम करते हैं ([Windows पर साझा करना](/features/share#on-windows))।
 
 ## कोई MCP सर्वर केवल एक अकाउंट में क्यों दिखता है?
 
@@ -54,7 +54,7 @@ Session के अंदर `claude mcp add` से जोड़े गए स�
 
 ## क्या ccam से Claude Code धीमा होता है?
 
-ccam के ज़रिए Claude Code शुरू करने में लगभग 4 मिलीसेकंड जुड़ते हैं, जिसे एक लैपटॉप पर `scripts/perf-check.sh` से मापा गया है। ccam एक छोटी फ़ाइल पढ़ता है, साझा लिंक जाँचता है और फिर ख़ुद की जगह `claude` चला देता है, इसलिए आपके काम करते समय यह चल नहीं रहा होता।
+ccam के ज़रिए Claude Code शुरू करने में लगभग 4 मिलीसेकंड जुड़ते हैं, जिसे एक लैपटॉप पर `scripts/perf-check.sh` से मापा गया है। ccam एक छोटी फ़ाइल पढ़ता है, साझा लिंक जाँचता है और फिर ख़ुद की जगह `claude` चला देता है, इसलिए आपके काम करते समय यह चल नहीं रहा होता। Windows किसी process को बदल नहीं सकता, इसलिए वहाँ ccam Claude Code को शुरू करता है और उसका इंतज़ार करता है, इसके अलावा कुछ नहीं करता।
 
 ## ccam को अपडेट कैसे करें?
 

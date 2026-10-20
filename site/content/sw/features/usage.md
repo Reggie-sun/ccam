@@ -1,10 +1,10 @@
 ---
 title: Vikomo vya matumizi
 description: ccam usage huonyesha vikomo vya saa 5 na vya wiki vya kila akaunti kwa pamoja, na ccam statusline huweka jina la akaunti na matumizi yake ndani ya Claude Code.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 7
 translation: machine
-sourceHash: 8306a8f6d950
+sourceHash: f08a2fdc6f0b
 ---
 
 `ccam usage` huonyesha kiasi cha vikomo vya saa 5 na vya wiki ambacho kila akaunti imetumia, pamoja na muda uliobaki hadi kila kipindi kianze upya. Itumie kabla ya kuanza kazi ndefu, au Claude Code inapokuambia kikomo kiko karibu, ili kuona ni akaunti ipi bado ina nafasi. `ccam statusline` ni amri ya mstari wa hali (status line) kwa Claude Code: huonyesha jina la akaunti na matumizi ndani ya Claude Code na huhifadhi namba kwa ajili ya `ccam usage`.
@@ -100,11 +100,12 @@ Claude Code huendesha amri ya mstari wa hali na huipitishia hati ya JSON. ccam h
 1. `runStatusline` hupata akaunti kutoka `CCAM_PROFILE`, ambayo ccam huiweka inapoanzisha Claude Code, au vinginevyo kwa kulinganisha `CLAUDE_CONFIG_DIR` na folda za akaunti.
 2. `ParseStatusLine` husoma `rate_limits.five_hour` na `rate_limits.seven_day`. JSON haina vikomo vya maombi kwa akaunti za API key, au kabla ya jibu la kwanza la kipindi; basi hakuna kinachohifadhiwa.
 3. `SaveStatusLine` huandika `~/.local/state/ccam/usage/<name>.statusline.json`. `ccam usage` huitumia wakati endpoint haijibu.
-4. ccam huchapisha `[name] · model · 5h N% · 7d N%`. Kwa `--wrap`, huendesha amri yako kupitia `sh -c` kwa ingizo lile lile na huchapisha `[name]` ikifuatiwa na mstari wa kwanza wa amri badala yake.
+4. ccam huchapisha `[name] · model · 5h N% · 7d N%`. Kwa `--wrap`, huendesha amri yako kupitia `sh -c` kwa ingizo lile lile na huchapisha `[name]` ikifuatiwa na mstari wa kwanza wa amri badala yake. Kwenye Windows huendesha amri kama Claude Code inavyofanya: kwa Git Bash ikiwa imesakinishwa, la sivyo kwa PowerShell.
+5. Matumizi ya saa 5 au ya wiki yanapokuwa 90% au zaidi na kuna akaunti nyingine, mstari huishia na `→ ccam next --auto --continue`, kwa mfano `[work] · Opus · 5h 93% · 7d 41% · → ccam next --auto --continue`.
 
 Amri iliyozungukwa hupata sekunde 2. Baada ya hapo husimamishwa kwa nguvu na mstari huonyesha jina la akaunti peke yake, kwa hiyo amri ya polepole haiwezi kuzuia mstari wa hali wa Claude Code.
 
-`ccam statusline install` huandika `statusLine` katika `settings.json` ya kila akaunti. Akaunti ikiwa tayari ina amri ya mstari wa hali, ccam huihifadhi kama `--wrap '<old command>'`. `settings.json` inayoshirikiwa kupitia kikundi huandikwa mara moja, kupitia kiungo chake, kwa hiyo kila akaunti katika kikundi huipata. Kuiendesha tena huchapisha `(already set)` kwa faili ambazo tayari zinatumia ccam.
+`ccam statusline install` huandika `statusLine` katika `settings.json` ya kila akaunti. Akaunti ikiwa tayari ina amri ya mstari wa hali, ccam huihifadhi kama `--wrap '<old command>'`. Kwenye Windows njia ya ccam huandikwa kwa mikwaju ya mbele na `~` kwa folda ya nyumbani (`~/.local/bin/ccam.exe statusline`), ambayo Git Bash na PowerShell zote huielewa. `settings.json` inayoshirikiwa kupitia kikundi huandikwa mara moja, kupitia kiungo chake, kwa hiyo kila akaunti katika kikundi huipata. Kuiendesha tena huchapisha `(already set)` kwa faili ambazo tayari zinatumia ccam.
 
 ## Usalama na hali maalum
 

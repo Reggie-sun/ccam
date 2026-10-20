@@ -1,11 +1,11 @@
 ---
 title: Cài đặt ccam
-metaTitle: "Cài đặt ccam trên Linux và macOS"
-description: "Cài đặt ccam trên Linux hoặc macOS bằng một lệnh, từ gói .deb hoặc từ mã nguồn, và cập nhật bằng ccam update. Cần cài Claude Code trước."
-updated: 2026-10-19
+metaTitle: "Cài đặt ccam trên Linux, macOS và Windows"
+description: "Cài đặt ccam trên Linux, macOS hoặc Windows bằng một lệnh, từ gói .deb hoặc từ mã nguồn, và cập nhật bằng ccam update. Cần cài Claude Code trước."
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 7ecd1ed00e09
+sourceHash: 07eadc0769c8
 ---
 
 Chạy lệnh này trong terminal trên Linux hoặc macOS:
@@ -16,13 +16,22 @@ curl -fsSL https://ccam.dev/install.sh | sh
 
 Script tải về bản phát hành cho hệ thống của bạn, kiểm tra mã băm SHA-256 và đặt `ccam` vào `~/.local/bin`, nơi ccam cũng tạo các lệnh tắt mà bạn chọn sau này, chẳng hạn `ccwork`. Nếu thư mục đó chưa nằm trong `PATH`, script sẽ in ra dòng cần thêm vào `~/.bashrc` hoặc `~/.zshrc`.
 
+Trên Windows, hãy chạy lệnh này trong PowerShell:
+
+```powershell
+irm https://ccam.dev/install.ps1 | iex
+```
+
+Script tải về `ccam_windows_<arch>.zip`, kiểm tra mã băm SHA-256, đặt `ccam.exe` vào `%USERPROFILE%\.local\bin`, thư mục mà trình cài đặt của Claude Code đặt `claude.exe`, và thêm thư mục đó vào `PATH` của người dùng nếu chưa có. Sau đó hãy mở một terminal mới.
+
 ccam khởi động Claude Code cho bạn, vì vậy hãy cài [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) trước và đảm bảo `claude --version` chạy được.
 
 ## Hệ điều hành được hỗ trợ
 
 - Linux trên x86-64 và ARM64: Ubuntu, Debian, Fedora, Arch, Alpine và các bản phân phối khác. Tệp thực thi là tệp tĩnh và không có phụ thuộc.
 - macOS trên Apple silicon và Intel.
-- Windows không được hỗ trợ trực tiếp. Bên trong WSL, ccam hoạt động như trên bất kỳ hệ thống Linux nào.
+- Windows 10 và 11 trên x86-64 và ARM64, trong PowerShell, Windows Terminal hoặc Git Bash. Thư mục dùng chung hoạt động với mọi người dùng. Tệp dùng chung (`settings.json`, `CLAUDE.md`, `history.jsonl`) cần bật Developer Mode (Settings > System > For developers), vì Windows chỉ cho phép chế độ này, hoặc quản trị viên, tạo liên kết tới tệp; xem [dùng chung trên Windows](/features/share#on-windows).
+- Bên trong WSL, ccam hoạt động như trên bất kỳ hệ thống Linux nào.
 
 ## Các cách cài đặt khác
 
@@ -46,11 +55,19 @@ go install github.com/jhyunwoo/ccam/cmd/ccam@latest
 curl -fsSL https://ccam.dev/install.sh | CCAM_VERSION=v0.1.0 sh
 ```
 
+```powershell
+$env:CCAM_VERSION = 'v0.1.0'; irm https://ccam.dev/install.ps1 | iex
+```
+
 ## Tự động hoàn thành trong shell
 
 ```sh
 ccam completion bash > ~/.local/share/bash-completion/completions/ccam
 ccam completion zsh > "${fpath[1]}/_ccam"
+```
+
+```powershell
+ccam completion powershell >> $PROFILE
 ```
 
 Tính năng tự động hoàn thành áp dụng cho mọi lệnh và tùy chọn của `ccam`, bao gồm cả tên tài khoản.
@@ -92,6 +109,8 @@ ccam --dry-run update
 
 Chạy lại script cài đặt cũng sẽ cập nhật bản sao trong `~/.local/bin`. Nếu bạn đã build ccam bằng `go install`, hãy chạy lại chính lệnh đó.
 
+**Windows.** `ccam update` tải về tệp `.zip` cho Windows. Trên Windows không thể thay thế một chương trình đang chạy, nên tệp thực thi cũ được đổi tên thành `ccam.exe.old`, và lần cập nhật tiếp theo sẽ xóa nó.
+
 **Gói cho Debian và Ubuntu.** `ccam update` không thay thế `/usr/bin/ccam` do apt cài đặt mà in ra các bước sau. Tải `ccam_<version>_linux_amd64.deb` mới từ [trang phát hành](https://github.com/jhyunwoo/ccam/releases) rồi cài đè lên bản cũ:
 
 ```sh
@@ -107,6 +126,14 @@ ccam list
 ccam shortcut work --remove   # once for each account that has a shortcut
 rm ~/.local/bin/ccam
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
+```
+
+Trên Windows, trong PowerShell:
+
+```powershell
+ccam shortcut work --remove   # once for each account that has a shortcut
+Remove-Item ~\.local\bin\ccam.exe
+Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
 ```
 
 Xóa `~/.local/share/ccam` cũng xóa luôn thông tin đăng nhập và lịch sử hội thoại được lưu ở đó. Thư mục `~/.claude` mà bạn đã [nhập](/docs/commands) vẫn nằm nguyên tại chỗ.

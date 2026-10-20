@@ -2,10 +2,10 @@
 title: Часто задаваемые вопросы
 metaTitle: "FAQ по ccam: несколько аккаунтов Claude Code"
 description: Ответы о ccam, аккаунтах Claude Code, лимитах использования, общем доступе, конфиденциальности и поддерживаемых системах.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 6
 translation: machine
-sourceHash: 88bd249ec51c
+sourceHash: 80a5475ccfee
 ---
 
 ## Является ли ccam официальным инструментом Anthropic?
@@ -46,7 +46,7 @@ ccam никогда не делает ваши данные входа Claude о
 
 ## Какие системы поддерживает ccam?
 
-Linux (Ubuntu, Debian, Fedora, Arch, Alpine и другие) и macOS. В Windows используйте его внутри WSL.
+Linux (Ubuntu, Debian, Fedora, Arch, Alpine и другие), macOS и Windows 10 и 11, нативно или внутри WSL. В Windows для общего доступа к файлам, например `settings.json`, нужен режим разработчика; общие папки работают и без него ([общий доступ в Windows](/features/share#on-windows)).
 
 ## Почему MCP-сервер виден только в одном аккаунте?
 
@@ -54,7 +54,7 @@ Linux (Ubuntu, Debian, Fedora, Arch, Alpine и другие) и macOS. В Window
 
 ## Замедляет ли ccam работу Claude Code?
 
-Запуск Claude Code через ccam добавляет около 4 миллисекунд; это измерено с помощью `scripts/perf-check.sh` на ноутбуке. ccam читает один небольшой файл, проверяет общие ссылки и затем заменяет себя на `claude`, поэтому во время вашей работы он не запущен.
+Запуск Claude Code через ccam добавляет около 4 миллисекунд; это измерено с помощью `scripts/perf-check.sh` на ноутбуке. ccam читает один небольшой файл, проверяет общие ссылки и затем заменяет себя на `claude`, поэтому во время вашей работы он не запущен. Windows не умеет заменять процесс, поэтому там ccam запускает Claude Code и ждёт его завершения, больше ничего не делая.
 
 ## Как обновить ccam?
 

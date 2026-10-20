@@ -1,7 +1,7 @@
 ---
 title: Updating ccam
 description: ccam update replaces ccam with the latest GitHub release after a SHA-256 check; --check only reports and --version installs a given release tag.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 10
 translation: source
 ---
@@ -52,9 +52,9 @@ The code is in `internal/update`, which only `ccam update` imports. The launch p
 2. Without `--version`, `Updater.Latest` requests `<releases>/latest` without following the redirect, and reads the tag from the `Location` header (`…/tag/v0.5.0`). This uses the releases page instead of the GitHub API, so the API's limit of 60 requests an hour does not apply. The lookup has 10 seconds.
 3. `parseVersion` checks the tag against a strict pattern. A tag ends up in download URLs and in a printed shell command, so nothing with `/`, `%`, spaces or shell characters gets through. `compareVersions` compares it with the running version; a pre-release sorts before its release.
 4. `managed()` and `writable()` decide whether ccam may replace the binary at all (see below).
-5. `Updater.Fetch` downloads `ccam_<os>_<arch>.tar.gz` and `checksums.txt` at the same time, with 2 minutes for both. Each download is capped at 256 MB.
+5. `Updater.Fetch` downloads `ccam_<os>_<arch>.tar.gz` (on Windows `ccam_windows_<arch>.zip`) and `checksums.txt` at the same time, with 2 minutes for both. Each download is capped at 256 MB.
 6. The archive's SHA-256 must match its line in `checksums.txt` before anything else happens. A missing line or a different checksum stops the update with `nothing was changed`.
-7. `extract()` reads the tar and takes the first regular file named `ccam`. Directories, links and other entries are ignored, and the binary is capped at 256 MB too.
+7. `extract()` reads the tar and takes the first regular file named `ccam` (`extractZip` takes `ccam.exe` from the zip). Directories, links and other entries are ignored, and the binary is capped at 256 MB too.
 8. `Updater.Install` writes the new binary with `fsutil.AtomicWrite`: a temporary file `.ccam.tmp*` next to the binary, with the old file's permission bits, flushed to disk and renamed over the old one.
 
 The whole pipeline, from tag lookup to the rename:
@@ -62,6 +62,8 @@ The whole pipeline, from tag lookup to the rename:
 <!-- motion:update-pipeline -->
 
 The archive and `checksums.txt` are downloaded side by side, and nothing is written until the checksum matches. The rename is atomic, so a crash or a full disk leaves either the old binary or the new one, never half of one. Shortcut commands such as `~/.local/bin/ccwork` are symlinks to the ccam binary, so they run the new version without any change.
+
+On Windows a running program's file cannot be replaced or deleted, only renamed. `Updater.Install` writes the new binary to `ccam.exe.new`, renames the running `ccam.exe` to `ccam.exe.old`, and renames the new file to `ccam.exe`. If the last step fails, the old binary is renamed back. The next update deletes `ccam.exe.old`. Shortcuts that are hard links instead of symbolic links ([Shortcut commands](/features/shortcuts)) are renewed right after, so they also run the new version.
 
 ### Package-managed installs
 
@@ -84,7 +86,7 @@ Or install a copy in ~/.local/bin with the install script:
   curl -fsSL https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.sh | sh
 ```
 
-On systems other than Linux, only the install script line is printed. When the folder is not writable, ccam suggests rerunning the install script, which installs ccam in `~/.local/bin`.
+On systems other than Linux, only the install script line is printed: `irm https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.ps1 | iex` on Windows. When the folder is not writable, ccam suggests rerunning the install script, which installs ccam in `~/.local/bin`.
 
 ## Safety and edge cases
 

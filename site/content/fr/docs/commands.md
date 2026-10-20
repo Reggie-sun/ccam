@@ -2,10 +2,10 @@
 title: "Référence des commandes"
 metaTitle: "Référence des commandes ccam"
 description: "Toutes les commandes et options de ccam, de ccam add et ccam <name> à ccam usage, ccam next et ccam doctor."
-updated: 2026-10-19
+updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 3342453e38d3
+sourceHash: 5d3275878535
 ---
 
 Placez `--dry-run` avant une commande pour voir ce qu'elle ferait sans l'exécuter, par exemple `ccam --dry-run work`. Cela fonctionne au démarrage de Claude Code (`ccam <name>`, `ccam run`, `ccam next`) et avec `share`, `migrate`, `shortcut`, `update` et `doctor --fix`. Les autres commandes qui modifient quelque chose la refusent au lieu de s'exécuter.
@@ -16,7 +16,16 @@ Placez `--dry-run` avant une commande pour voir ce qu'elle ferait sans l'exécut
 
 `ccam <name|number> [arguments]` lance Claude Code avec ce compte. ccam ne lit pas les arguments qui suivent le nom ; il les transmet à `claude` dans le même ordre, et l'entrée standard, le code de sortie et les signaux se comportent exactement comme avec `claude` lui-même. Un `--` après le nom est facultatif.
 
-`ccam` avec des arguments mais sans nom de compte, comme `ccam -p "summarise"`, utilise le compte par défaut. Définissez-le avec `ccam use <name>`.
+`ccam` avec des arguments mais sans nom de compte, comme `ccam -p "summarise"`, utilise le compte défini pour le dossier courant, sinon le compte par défaut. Définissez-les avec `ccam folder <name> [folder]` et `ccam use <name>`.
+
+```sh
+ccam folder work ~/code/company   # work inside ~/code/company and below
+ccam folder                       # list folders and the account used here
+ccam folder --remove ~/code/company
+ccam --fallback work -p "fix the tests"   # run again as another account at the limit
+```
+
+`--fallback` avant le nom du compte s'applique aux exécutions `-p`/`--print`. Quand le compte atteint sa limite d'utilisation, ccam relance la même commande avec le compte connecté qui a le plus de marge et n'affiche que la sortie de l'exécution qui a abouti. Voir [Comptes par dossier](/features/folder) et [Relancer à la limite](/features/next#run-again-at-the-limit).
 
 Un raccourci comme `ccwork` lance son compte de la même façon : `ccwork --resume` fait la même chose que `ccam work --resume`. Voir [Raccourcis](/docs/commands#shortcuts).
 
@@ -108,6 +117,7 @@ ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
 ccam version         # also: ccam -v, ccam --version
+ccam completion bash # or zsh, powershell
 ```
 
 `ccam update` vérifie la somme de contrôle SHA-256 de la version avant de remplacer ccam, et `--version v0.2.0` installe une version précise. Un ccam installé depuis le paquet `.deb` se met à jour avec apt. Voir [Mettre à jour](/docs/install#update).
@@ -122,4 +132,4 @@ ccam version         # also: ccam -v, ccam --version
 | `~/.local/state/ccam/` | Cache d'utilisation et heures de dernière utilisation |
 | `~/.local/bin/<shortcut>` | Raccourcis comme `ccwork`, des liens vers ccam |
 
-Les variables `XDG_CONFIG_HOME`, `XDG_DATA_HOME` et `XDG_STATE_HOME` changent l'emplacement de ces dossiers.
+Les variables `XDG_CONFIG_HOME`, `XDG_DATA_HOME` et `XDG_STATE_HOME` changent l'emplacement de ces dossiers. Sous Windows, `~` correspond à `%USERPROFILE%` et les raccourcis sont des `<shortcut>.exe`.

@@ -1,10 +1,10 @@
 ---
 title: Batas penggunaan dan perpindahan akun
 description: Lihat penggunaan 5 jam dan mingguan setiap akun Claude Code dengan ccam usage, lalu buka akun dengan sisa kuota terbanyak lewat ccam next --auto.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: d288177682d7
+sourceHash: a84df8e873d6
 ---
 
 `ccam usage` menampilkan seberapa banyak batas 5 jam dan mingguan yang sudah digunakan setiap akun. `ccam next --auto` membuka akun dengan sisa kuota terbanyak, dan `--continue` membawa percakapan saat ini ke akun tersebut.
@@ -48,7 +48,7 @@ Saat token akses sebuah akun sudah kedaluwarsa, ccam tidak memperbaruinya, karen
 ccam statusline install
 ```
 
-Claude Code kemudian menampilkan nama akun dan penggunaannya di status line, misalnya `[work] · Opus · 5h 24% · 7d 41%`. Jika Anda sudah memiliki perintah status line, ccam mempertahankannya dan menaruh nama akun di depannya. Status line juga menyimpan angkanya, yang dipakai `ccam usage` saat endpoint tidak menjawab.
+Claude Code kemudian menampilkan nama akun dan penggunaannya di status line, misalnya `[work] · Opus · 5h 24% · 7d 41%`. Mulai dari 90%, baris itu juga menyarankan `ccam next --auto --continue`. Jika Anda sudah memiliki perintah status line, ccam mempertahankannya dan menaruh nama akun di depannya. Status line juga menyimpan angkanya, yang dipakai `ccam usage` saat endpoint tidak menjawab.
 
 ## Berpindah akun
 
@@ -59,5 +59,13 @@ ccam next --continue  # the next account that shares your conversation history
 ```
 
 `ccam next` melewati akun yang belum login, dan `--auto` melewati akun yang sudah mencapai 100%. Untuk melanjutkan percakapan, kedua akun harus berbagi riwayat percakapan; lihat [pembagian](/docs/sharing).
+
+Untuk skrip dan tugas terjadwal yang menjalankan `claude -p`, letakkan `--fallback` sebelum nama akun. Saat akun itu mencapai batasnya, ccam menjalankan lagi perintah yang sama sebagai akun dengan sisa kuota terbanyak, dan hanya output dari proses yang selesai yang dicetak:
+
+```sh
+ccam --fallback work -p "review the diff" --output-format json
+```
+
+Lihat [Jalankan ulang saat batas tercapai](/features/next#run-again-at-the-limit) untuk cara ccam memutuskannya.
 
 [Panduan alur kerja batas penggunaan](/guides/usage-limit-workflow) menjelaskan contoh lengkapnya.

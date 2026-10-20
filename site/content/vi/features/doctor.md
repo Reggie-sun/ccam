@@ -1,10 +1,10 @@
 ---
 title: Kiểm tra và sửa chữa
 description: "Kiểm tra liên kết dùng chung, quyền tệp, thông tin đăng nhập và phiên bản Claude Code bằng ccam doctor, và sửa những gì an toàn để sửa bằng ccam doctor --fix."
-updated: 2026-10-19
+updated: 2026-10-20
 order: 9
 translation: machine
-sourceHash: a1b61efe2b1f
+sourceHash: a45ca25bb722
 ---
 
 `ccam doctor` kiểm tra bản cài đặt ccam của bạn: tệp thực thi Claude Code, thư mục, thông tin đăng nhập và liên kết dùng chung của mọi tài khoản, các máy chủ MCP dùng chung, endpoint mức sử dụng và các lệnh tắt của bạn. `ccam doctor --fix` sửa những gì nó có thể sửa mà không mất dữ liệu, và chuyển mọi tệp nó thay thế vào một thư mục sao lưu trước. Hãy chạy lệnh này khi `ccam <name>` dừng lại vì một vấn đề về liên kết dùng chung, sau khi bạn khôi phục tệp bằng tay, hoặc sau một lần cập nhật Claude Code.
@@ -70,7 +70,7 @@ Khối ở giữa chạy một lần cho mỗi tài khoản. Các kiểm tra, v�
 
 1. **Phiên bản Claude Code** (`checkClaude`). Tìm tệp thực thi `claude` theo cùng cách trình khởi chạy làm và chạy `claude --version`. Nếu phiên bản không bắt đầu bằng `2.1.302`, phiên bản mà cấu trúc thư mục của ccam đã được kiểm chứng (`doctor.LayoutVersion`), nó thêm `· ccam was verified against the folder layout of Claude Code 2.1.302. Any 'unknown entries' below may mean the layout changed`. Thiếu tệp thực thi hoặc `--version` thất bại là lỗi. Không có cách sửa.
 2. **Thông tin đăng nhập trong biến môi trường** (`checkAuthEnv`). Cảnh báo khi `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY` hoặc `ANTHROPIC_AUTH_TOKEN` được đặt: mọi tài khoản khởi động từ shell đó đều thừa hưởng nó, và Claude Code ưu tiên nó hơn thông tin đăng nhập riêng của tài khoản. Không có cách sửa; bạn tự bỏ đặt biến đó.
-3. **Thư mục** (`checkProfile`). Thiếu thư mục tài khoản là lỗi và kết thúc các kiểm tra của tài khoản đó. Quyền có bất kỳ bit group hoặc other nào được đặt là cảnh báo; `--fix` chạy `chmod 0700`.
+3. **Thư mục** (`checkProfile`). Thiếu thư mục tài khoản là lỗi và kết thúc các kiểm tra của tài khoản đó. Quyền có bất kỳ bit group hoặc other nào được đặt là cảnh báo; `--fix` chạy `chmod 0700`. Windows không có bit quyền, nên kiểm tra này và kiểm tra `0600` bên dưới được bỏ qua ở đó; thư mục trong hồ sơ người dùng của bạn được bảo vệ bằng danh sách kiểm soát truy cập của nó.
 4. **Tệp đăng nhập** (`checkCredentials`). `.credentials.json` được kiểm tra bằng `lstat`. Một liên kết tượng trưng là lỗi, vì mỗi tài khoản phải có token riêng, và không được sửa. Quyền khác `0600` là cảnh báo; `--fix` chạy `chmod 0600`. Sau đó thông tin đăng nhập được đọc (trên macOS thì đọc từ Chuỗi khóa (Keychain) trước). Chưa đăng nhập là cảnh báo kèm gợi ý `ccam login <name>`. Refresh token hết hạn là lỗi `login expired`; access token hết hạn chỉ là thông tin, vì Claude Code sẽ gia hạn nó ở lần khởi động tiếp theo. Không trường hợp nào trong số này được sửa.
 5. **Liên kết dùng chung** (`share.Check`). So sánh mọi đường dẫn trong `share.Layout` với thiết lập dùng chung của tài khoản, chỉ dùng `lstat` và `readlink`. Nó báo bốn loại: thiếu liên kết, liên kết trỏ sang chỗ khác, một tệp thật ở nơi lẽ ra là liên kết, và liên kết còn sót lại cho một mục nay đã là riêng. Thiếu liên kết là cảnh báo, các loại còn lại là lỗi.
 6. **Mục không xác định** (`checkUnknownEntries`). Liệt kê các tên ở cấp cao nhất trong thư mục tài khoản mà ccam không biết (`share.Known`), như một dấu hiệu cho thấy cấu trúc của Claude Code đã thay đổi. Chỉ là thông tin.
@@ -78,6 +78,7 @@ Khối ở giữa chạy một lần cho mỗi tài khoản. Các kiểm tra, v�
 8. **Máy chủ MCP** (`checkMCP`). Tải `mcp.json` của mỗi nhóm một lần. Tệp không đọc được là lỗi; máy chủ không qua được `mcp.Validate` là cảnh báo. Không có cách sửa.
 9. **Định dạng phản hồi mức sử dụng** (`checkUsageFormat`). Hỏi endpoint mức sử dụng, không dùng bộ nhớ đệm và với giới hạn 3 giây thông thường, lần lượt cho từng tài khoản cho đến khi có một tài khoản phản hồi. Nếu phản hồi không còn phân tích được, nó cảnh báo rằng `ccam usage` sẽ quay về dùng bộ nhớ đệm của dòng trạng thái. Đây là kiểm tra duy nhất dùng mạng.
 10. **Lệnh tắt** (`checkShims`). Chỉ khi có tài khoản có lệnh tắt. Thiếu liên kết trong `~/.local/bin` là cảnh báo; `--fix` gọi `shim.Install`, hàm này chỉ tạo các liên kết còn thiếu và không bao giờ động đến tệp khác. Thư mục bin không nằm trong `PATH` là cảnh báo và không được sửa.
+11. **Thư mục theo tài khoản** (`checkFolders`). Chỉ khi có mục [`ccam folder`](/features/folder). Mục có tài khoản không tồn tại là lỗi, và mục có thư mục đã mất là cảnh báo. Cả hai đều không được sửa, vì xóa một mục sẽ thay đổi tài khoản được khởi động ở đó.
 
 ### Sửa liên kết dùng chung
 

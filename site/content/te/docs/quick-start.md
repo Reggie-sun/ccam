@@ -2,10 +2,10 @@
 title: క్విక్ స్టార్ట్
 metaTitle: "క్విక్ స్టార్ట్: Claude Code ఖాతాలను జోడించి మార్చండి"
 description: ccam add తో రెండు Claude Code ఖాతాలను జోడించి, వాటికి ccwork వంటి షార్ట్‌కట్‌లు ఇచ్చి, వాటి మధ్య మారి, అవి ఏమి షేర్ చేయాలో ఎంచుకోండి.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: a10d91d2a64e
+sourceHash: 55f81dae9fc0
 ---
 
 `ccam add` తో ప్రతి ఖాతాను జోడించండి, తర్వాత `ccam <name>` తో లేదా `ccwork` వంటి మీరే పేరు పెట్టిన షార్ట్‌కట్‌తో Claude Code ను ప్రారంభించండి. చాలా మందికి కావలసింది ఇంతే.
@@ -107,7 +107,7 @@ ccam usage
 ccam next --continue
 ```
 
-`ccam usage` అన్ని ఖాతాల 5 గంటల, వారపు వినియోగాన్ని చూపిస్తుంది. `ccam next --continue` అదే సంభాషణను తర్వాతి ఖాతాలో తెరుస్తుంది. [వినియోగ పరిమితులు](/docs/usage-limits) చూడండి.
+`ccam usage` అన్ని ఖాతాల 5 గంటల, వారపు వినియోగాన్ని చూపిస్తుంది. `ccam next --continue` అదే సంభాషణను తర్వాతి ఖాతాలో తెరుస్తుంది. స్క్రిప్ట్‌లలో `ccam --fallback work -p "…"` తనంతట తానే మారుస్తుంది. [వినియోగ పరిమితులు](/docs/usage-limits) చూడండి.
 
 ## ఇప్పటికే ~/.claude ఉపయోగిస్తున్నారా?
 

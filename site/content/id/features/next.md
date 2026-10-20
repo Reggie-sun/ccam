@@ -1,13 +1,13 @@
 ---
 title: Beralih ke akun berikutnya
-description: ccam next membuka Claude Code sebagai akun setelah akun terakhir Anda; --auto memilih penggunaan 5 jam terendah dan --continue melanjutkan percakapan.
-updated: 2026-10-19
+description: ccam next membuka Claude Code sebagai akun setelah akun terakhir; --auto memilih ruang terbanyak, --continue melanjutkan, --fallback mengulang tugas -p.
+updated: 2026-10-20
 order: 8
 translation: machine
-sourceHash: 92352f532e74
+sourceHash: 7bc55c2dd520
 ---
 
-`ccam next` membuka Claude Code sebagai akun lain tanpa Anda perlu menyebutkan namanya. Gunakan saat sebuah akun mencapai batas penggunaannya: `ccam next` biasa mengambil akun setelah akun yang terakhir Anda pakai, `--auto` mengambil akun dengan ruang terbanyak di jendela 5 jamnya, dan `--continue` melanjutkan percakapan terakhir di akun baru.
+`ccam next` membuka Claude Code sebagai akun lain tanpa Anda perlu menyebutkan namanya. Gunakan saat sebuah akun mencapai batas penggunaannya: `ccam next` biasa mengambil akun setelah akun yang terakhir Anda pakai, `--auto` mengambil akun dengan ruang terbanyak di jendela 5 jamnya, dan `--continue` melanjutkan percakapan terakhir di akun baru. Untuk skrip yang menjalankan `claude -p`, `ccam --fallback` melakukan pergantian itu dengan sendirinya (lihat [Jalankan ulang saat batas tercapai](#run-again-at-the-limit)).
 
 ## Penggunaan
 
@@ -66,6 +66,34 @@ Penelusuran dimulai dari akun yang terakhir dipakai dan berhenti di akun pertama
 
 `--continue` milik Claude Code membuka percakapan terbaru di folder saat ini, yang hanya berhasil jika akun baru dapat melihat percakapan itu. Jadi dengan `--continue`, ccam hanya mempertimbangkan akun dalam grup `history` yang sama dengan akun yang terakhir Anda pakai, lalu menempatkan `--continue` di depan argumen Anda. Akun yang riwayatnya `local` tidak berbagi dengan siapa pun, sehingga `--continue` dari akun seperti itu selalu gagal. Aktifkan pembagian terlebih dahulu dengan `ccam share <name> --history on` (lihat [pembagian](/docs/sharing)).
 
+## Jalankan ulang saat batas tercapai
+
+`ccam next` ditujukan untuk sesi interaktif yang sudah berhenti. Proses non-interaktif, yaitu `claude -p` di skrip atau tugas terjadwal, tidak bisa menunggu Anda, jadi `--fallback` sebelum nama akun membuat ccam berganti akun untuknya:
+
+```sh
+ccam --fallback work -p "fix the failing tests" --output-format json
+ccam --fallback -p "summarise" < notes.txt      # the folder's account or the default
+ccam run --fallback work -p "review the diff"
+```
+
+```console
+$ ccam --fallback personal -p "summarise" < notes.txt
+ccam: personal reached its usage limit; running the command again as work
+Summary: …
+```
+
+1. `--fallback` hanya berfungsi bersama `-p` atau `--print`; jika tidak, ccam berhenti dan mengarahkan ke `ccam next --auto --continue`.
+2. Input standar dibaca sekali dan diberikan ke setiap percobaan.
+3. ccam menjalankan `claude` sebagai proses anak alih-alih `exec`, menahan output standarnya, dan meneruskan error standar begitu muncul.
+4. Saat `claude` keluar dengan 0, atau gagal karena alasan lain, output yang ditahan dan kode keluarnya diteruskan tanpa diubah.
+5. Kegagalan dianggap sebagai batas penggunaan jika pesan Claude Code menyatakannya (`You've hit your limit`, `usage limit reached`), atau jika pengecekan penggunaan akun menunjukkan jendela 5 jam atau mingguannya di 100%.
+6. Kemudian output percobaan itu dibuang dan perintah yang sama dijalankan sebagai akun lain yang sudah login: akun dengan penggunaan 5 jam terendah, lalu akun yang penggunaannya tidak bisa dicek, sesuai urutan nomor. Akun di 100% dilewati, dan setiap akun dicoba paling banyak sekali.
+7. Jika ada `-c`, `--continue`, `-r`, atau `--resume` di antara argumen, hanya akun dalam grup riwayat yang sama yang dicoba, sehingga percakapannya bisa ditemukan.
+
+Jika tidak ada akun yang tersisa, ccam mencetak output percobaan terakhir, menyatakan bahwa tidak ada akun yang sudah login yang masih punya ruang, dan keluar dengan kode percobaan itu. `ccam --dry-run --fallback work -p …` mencetak perintah percobaan pertama.
+
+Sesi interaktif tidak berganti akun dengan sendirinya. Sebagai gantinya, dengan `ccam statusline install`, baris status menambahkan `→ ccam next --auto --continue` begitu penggunaan 5 jam atau mingguan mencapai 90% ([Batas penggunaan](/features/usage)).
+
 ## Keamanan dan kasus khusus
 
 - Akun tanpa login tidak pernah dipilih. Jika tidak ada akun lain yang sudah login, `ccam next` biasa berhenti dengan `no logged-in account other than <name>`.
@@ -74,6 +102,7 @@ Penelusuran dimulai dari akun yang terakhir dipakai dan berhenti di akun pertama
 - `--auto` membuat permintaan jaringan bahkan dengan `--dry-run`. Opsi ini hanya membaca, dan tidak pernah menulis file token.
 - Akun yang dipilih dijalankan melalui jalur yang sama dengan `ccam <name>`, sehingga pemeriksaan yang sama berlaku, termasuk peringatan jika Claude Code lain yang berbagi riwayat yang sama sudah berjalan di folder ini.
 - `last-used` hanya ditulis saat Claude Code benar-benar dimulai. `--dry-run` tidak menyentuhnya, sehingga dry run tidak memajukan rotasi.
+- `--fallback` menahan output standar sampai sebuah percobaan selesai, sehingga output streaming seperti `--output-format stream-json` tiba sekaligus di akhir. File yang diubah percobaan pertama sebelum mencapai batas tetap berubah; percobaan berikutnya memulai prompt dari awal.
 
 ## Terkait
 

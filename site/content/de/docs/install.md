@@ -1,11 +1,11 @@
 ---
 title: ccam installieren
-metaTitle: "ccam unter Linux und macOS installieren"
-description: "ccam unter Linux oder macOS per Befehl, als .deb-Paket oder aus dem Quellcode installieren und mit ccam update aktualisieren. Claude Code vorher installieren."
-updated: 2026-10-19
+metaTitle: "ccam unter Linux, macOS und Windows installieren"
+description: "ccam unter Linux, macOS oder Windows per Befehl, .deb-Paket oder Quellcode installieren und mit ccam update aktualisieren. Claude Code vorher installieren."
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 7ecd1ed00e09
+sourceHash: 07eadc0769c8
 ---
 
 Führe dies in einem Terminal unter Linux oder macOS aus:
@@ -16,13 +16,22 @@ curl -fsSL https://ccam.dev/install.sh | sh
 
 Das Skript lädt das Release für dein System herunter, prüft seine SHA-256-Prüfsumme und legt `ccam` in `~/.local/bin` ab, wo ccam später auch die Kurzbefehle anlegt, die du wählst, etwa `ccwork`. Wenn dieser Ordner nicht in deinem `PATH` liegt, gibt das Skript die Zeile aus, die du zu `~/.bashrc` oder `~/.zshrc` hinzufügen musst.
 
+Unter Windows führst du dies in PowerShell aus:
+
+```powershell
+irm https://ccam.dev/install.ps1 | iex
+```
+
+Es lädt `ccam_windows_<arch>.zip` herunter, prüft seine SHA-256-Prüfsumme, legt `ccam.exe` in `%USERPROFILE%\.local\bin` ab, den Ordner, in den das Installationsprogramm von Claude Code `claude.exe` legt, und fügt diesen Ordner deinem Benutzer-`PATH` hinzu, falls er dort noch fehlt. Öffne danach ein neues Terminal.
+
 ccam startet Claude Code für dich, also installiere zuerst [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) und stelle sicher, dass `claude --version` funktioniert.
 
 ## Unterstützte Systeme
 
 - Linux auf x86-64 und ARM64: Ubuntu, Debian, Fedora, Arch, Alpine und andere Distributionen. Die Binärdatei ist statisch und hat keine Abhängigkeiten.
 - macOS auf Apple Silicon und Intel.
-- Windows wird nicht direkt unterstützt. Innerhalb von WSL funktioniert ccam wie auf jedem Linux-System.
+- Windows 10 und 11 auf x86-64 und ARM64, in PowerShell, Windows Terminal oder Git Bash. Geteilte Ordner funktionieren für jeden Benutzer. Geteilte Dateien (`settings.json`, `CLAUDE.md`, `history.jsonl`) brauchen den Entwicklermodus (Einstellungen > System > Für Entwickler), weil Windows nur in diesem Modus oder einem Administrator erlaubt, Links auf Dateien anzulegen; siehe [Teilen unter Windows](/features/share#on-windows).
+- Innerhalb von WSL funktioniert ccam wie auf jedem Linux-System.
 
 ## Andere Installationswege
 
@@ -46,11 +55,19 @@ go install github.com/jhyunwoo/ccam/cmd/ccam@latest
 curl -fsSL https://ccam.dev/install.sh | CCAM_VERSION=v0.1.0 sh
 ```
 
+```powershell
+$env:CCAM_VERSION = 'v0.1.0'; irm https://ccam.dev/install.ps1 | iex
+```
+
 ## Shell-Vervollständigung
 
 ```sh
 ccam completion bash > ~/.local/share/bash-completion/completions/ccam
 ccam completion zsh > "${fpath[1]}/_ccam"
+```
+
+```powershell
+ccam completion powershell >> $PROFILE
 ```
 
 Die Vervollständigung deckt alle Befehle und Optionen von `ccam` ab, einschließlich der Kontonamen.
@@ -92,6 +109,8 @@ ccam --dry-run update
 
 Wenn du das Installationsskript erneut ausführst, wird die Kopie in `~/.local/bin` ebenfalls aktualisiert. Hast du ccam mit `go install` gebaut, führe denselben Befehl noch einmal aus.
 
+**Windows.** `ccam update` lädt das `.zip` für Windows herunter. Ein laufendes Programm kann unter Windows nicht ersetzt werden, deshalb wird die alte Binärdatei in `ccam.exe.old` umbenannt, die das nächste Update löscht.
+
 **Paket für Debian und Ubuntu.** `ccam update` ersetzt kein `/usr/bin/ccam`, das über apt installiert wurde, und gibt stattdessen diese Schritte aus. Lade das neue `ccam_<version>_linux_amd64.deb` von der [Release-Seite](https://github.com/jhyunwoo/ccam/releases) herunter und installiere es über das alte:
 
 ```sh
@@ -107,6 +126,14 @@ ccam list
 ccam shortcut work --remove   # once for each account that has a shortcut
 rm ~/.local/bin/ccam
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
+```
+
+Unter Windows, in PowerShell:
+
+```powershell
+ccam shortcut work --remove   # once for each account that has a shortcut
+Remove-Item ~\.local\bin\ccam.exe
+Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
 ```
 
 Wenn du `~/.local/share/ccam` löschst, werden auch die dort gespeicherten Anmeldungen und Gesprächsverläufe gelöscht. Ein `~/.claude`-Ordner, den du [importiert](/docs/commands) hast, bleibt, wo er ist.

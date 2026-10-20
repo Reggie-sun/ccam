@@ -1,10 +1,10 @@
 ---
 title: એક કમ્પ્યુટર પર ઘણાં Claude Code એકાઉન્ટ વાપરો
 description: CLAUDE_CONFIG_DIR વડે ઘણાં Claude Code એકાઉન્ટ સાથે-સાથે ચલાવો, શેલ alias થી હાથે કે ccam થી આપમેળે, અને તેમની વચ્ચે સ્વિચ કરો.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: e2f4deb40c81
+sourceHash: f2982e4317a2
 ---
 
 દરેક એકાઉન્ટને પોતાનું કૉન્ફિગરેશન ફોલ્ડર આપો. Claude Code આ ફોલ્ડર `CLAUDE_CONFIG_DIR` environment variable પરથી વાંચે છે, અને દરેક ફોલ્ડરમાં પોતાનું લૉગિન, સેટિંગ્સ અને ઇતિહાસ હોય છે, તેથી દરેક એકાઉન્ટ લૉગિન રહે છે અને તમે તેમને એકસાથે ચલાવી શકો છો. તમે આ હાથથી શેલ alias વડે સેટ કરી શકો છો, અથવા ccam ને તે કરવા દઈ શકો છો.
@@ -61,7 +61,7 @@ Claude Code ની અંદર, `/status` બતાવે છે કે તમ�
 
 ## શું આ Windows અને WSL પર કામ કરે છે?
 
-Claude Code [Windows પર સીધું અને WSL ની અંદર ચાલે છે](https://code.claude.com/docs/en/setup). `CLAUDE_CONFIG_DIR` બંનેમાં કામ કરે છે, તેથી સીધા Windows પર ઉપરનો alias કે PowerShell function પૂરતો છે. ccam Linux અને macOS પર ચાલે છે; Windows પર તેને WSL ની અંદર ઇન્સ્ટૉલ કરીને વાપરો, જ્યાં તે Linux ની જેમ જ કામ કરે છે.
+Claude Code [Windows પર સીધું અને WSL ની અંદર ચાલે છે](https://code.claude.com/docs/en/setup). `CLAUDE_CONFIG_DIR` બંનેમાં કામ કરે છે, તેથી સીધા Windows પર ઉપરનો alias કે PowerShell function પૂરતો છે. ccam પણ Windows પર સીધું ચાલે છે: તેને PowerShell માં `irm https://ccam.dev/install.ps1 | iex` વડે, કે WSL ની અંદર Linux કમાન્ડ વડે ઇન્સ્ટૉલ કરો. શૉર્ટકટ `ccwork.exe` બને છે, અને `settings.json` જેવી ફાઇલો શેર કરવા Developer Mode જોઈએ ([ccam ઇન્સ્ટૉલ કરો](/docs/install)).
 
 ## સમસ્યાનું નિવારણ
 

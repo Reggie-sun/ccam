@@ -1,10 +1,10 @@
 ---
 title: Usar varias cuentas de Claude Code en una computadora
 description: Ejecuta varias cuentas de Claude Code en paralelo con CLAUDE_CONFIG_DIR, a mano con alias del shell o automáticamente con ccam, y cambia entre ellas.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: e2f4deb40c81
+sourceHash: f2982e4317a2
 ---
 
 Dale a cada cuenta su propia carpeta de configuración. Claude Code lee la carpeta de la variable de entorno `CLAUDE_CONFIG_DIR`, y cada carpeta guarda su propio inicio de sesión, configuración e historial, así que todas las cuentas siguen con la sesión iniciada y puedes ejecutarlas a la vez. Puedes configurarlo a mano con un alias del shell o dejar que ccam lo haga.
@@ -61,7 +61,7 @@ Dentro de Claude Code, `/status` muestra la cuenta con la que iniciaste sesión.
 
 ## ¿Funciona en Windows y WSL?
 
-Claude Code se ejecuta [de forma nativa en Windows y dentro de WSL](https://code.claude.com/docs/en/setup). `CLAUDE_CONFIG_DIR` funciona en ambos, así que en Windows nativo basta con el alias o la función de PowerShell de arriba. ccam funciona en Linux y macOS; en Windows, instálalo y úsalo dentro de WSL, donde funciona igual que en Linux.
+Claude Code se ejecuta [de forma nativa en Windows y dentro de WSL](https://code.claude.com/docs/en/setup). `CLAUDE_CONFIG_DIR` funciona en ambos, así que en Windows nativo basta con el alias o la función de PowerShell de arriba. ccam también funciona de forma nativa en Windows: instálalo en PowerShell con `irm https://ccam.dev/install.ps1 | iex`, o dentro de WSL con el comando de Linux. Los atajos pasan a ser `ccwork.exe`, y compartir archivos como `settings.json` requiere el modo de desarrollador ([Instalar ccam](/docs/install)).
 
 ## Solución de problemas
 

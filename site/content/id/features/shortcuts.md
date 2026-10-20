@@ -1,10 +1,10 @@
 ---
 title: Perintah pintasan
 description: Berikan akun perintahnya sendiri seperti ccwork dengan ccam shortcut, dan buat ulang tautan di ~/.local/bin dengan ccam shims install.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 5f0cb5a57042
+sourceHash: 939256e7a67e
 ---
 
 Pintasan adalah perintah yang namanya Anda pilih sendiri dan menjalankan Claude Code sebagai satu akun: `ccwork --resume` melakukan hal yang sama dengan `ccam work --resume`. Pintasan adalah tautan ke ccam di `~/.local/bin`, sehingga berfungsi di bash, zsh, skrip, dan apa pun yang menjalankan program dari `PATH`. Pintasan bersifat opsional; buatlah untuk akun yang sering Anda jalankan.
@@ -82,13 +82,17 @@ Shell menemukan `ccwork` di `PATH`, kernel mengikuti tautan dan menjalankan bine
 
 Mengapa symlink dan bukan alias shell atau skrip pembungkus: symlink berfungsi di setiap shell dan di skrip, tidak menambah proses shell tambahan (sekitar 1 sampai 2 ms), dan peluncuran tetap hanya membaca satu file. `scripts/perf-check.sh` mengukur pintasan dengan `hyperfine` terhadap batas 10 ms (p95) yang sama dengan `ccam <name>`.
 
+### Di Windows
+
+Pintasan berupa `ccwork.exe` di `%USERPROFILE%\.local\bin`, dan `shim.Name` membuang `.exe` (huruf besar atau kecil) sebelum pencarian, sehingga `ccwork`, `ccwork.exe`, dan `CCWORK.EXE` semuanya menjalankan `work`. ccam terlebih dahulu membuat tautan simbolik, yang diizinkan Windows dalam Mode Pengembang atau untuk administrator. Tanpa hak itu, ccam membuat hard link: nama kedua untuk file `ccam.exe` yang sama, yang tidak memerlukan hak khusus. Hard link dianggap milik ccam jika merupakan file yang sama dengan `ccam.exe`. Karena `ccam update` menaruh file baru menggantikan `ccam.exe`, ccam lalu memperbarui setiap pintasan hard link dengan `shim.Relink` dan menampilkan `✓ shortcut ccwork renewed`. Pemeriksaan nama mencari `<name>` dengan setiap ekstensi di `PATHEXT` (`.exe`, `.cmd`, dan seterusnya) di folder `PATH` lainnya.
+
 ## Keamanan dan kasus khusus
 
 - **Tautan yang tidak dimiliki akun mana pun.** Jika tautan ke ccam di `~/.local/bin` memiliki nama yang tidak dipakai akun mana pun, misalnya setelah Anda mengubah `shortcut` di `config.toml` secara manual, ccam tidak beralih ke akun default. ccam berhenti dengan `` ccam: ccold is not the shortcut of any account (see `ccam list`, `ccam shortcut`) ``. Tetapkan nama itu lagi dengan `ccam shortcut`, atau hapus tautannya.
 - **File yang sudah ada.** ccam tidak pernah mengganti file yang tidak dibuatnya. `ccam shims install` berhenti dengan `<path> already exists and is not a ccam link, so it was left alone`.
 - **Biner ccam yang dipindahkan.** Tautan lama kemudian mengarah ke path yang sudah tidak ada, dan ccam tidak menganggapnya sebagai miliknya. Hapus tautan itu, lalu jalankan `ccam shims install`.
 - **Mengganti nama dan menghapus.** `ccam rename` mempertahankan nama pintasan, dan tautannya tetap berfungsi, karena mengarah ke ccam dan ccam mencari nama itu di `config.toml`. `ccam remove` menghapus tautan akun. `ccam shortcut <account> <new>` menghapus tautan lama sebelum membuat yang baru.
-- **PATH.** Saat ccam membuat tautan dan `~/.local/bin` tidak ada di `PATH` Anda, ccam menampilkan `Note: /home/me/.local/bin is not in PATH. Add it to ~/.bashrc or ~/.zshrc:` diikuti baris `export PATH=...` yang perlu ditambahkan.
+- **PATH.** Saat ccam membuat tautan dan `~/.local/bin` tidak ada di `PATH` Anda, ccam menampilkan `Note: /home/me/.local/bin is not in PATH. Add it to ~/.bashrc or ~/.zshrc:` diikuti baris `export PATH=...` yang perlu ditambahkan. Di Windows, ccam menampilkan baris PowerShell yang menambahkan folder itu ke `PATH` pengguna Anda sebagai gantinya.
 - **Memeriksa belakangan.** `ccam doctor` melaporkan `missing shortcuts in /home/me/.local/bin: ccwork` dan memperingatkan jika folder itu tidak ada di `PATH`. `ccam doctor --fix` membuat tautan yang hilang.
 
 ## Terkait

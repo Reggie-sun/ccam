@@ -1,10 +1,10 @@
 ---
 title: ใช้ Claude Code หลายบัญชีบนคอมพิวเตอร์เครื่องเดียว
 description: "ใช้ Claude Code หลายบัญชีควบคู่กันด้วย CLAUDE_CONFIG_DIR ทั้งแบบทำเองด้วย shell alias หรือแบบอัตโนมัติด้วย ccam และสลับบัญชีไปมาได้"
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: e2f4deb40c81
+sourceHash: f2982e4317a2
 ---
 
 ให้แต่ละบัญชีมีโฟลเดอร์การตั้งค่าของตัวเอง Claude Code อ่านโฟลเดอร์จากตัวแปรสภาพแวดล้อม `CLAUDE_CONFIG_DIR` และแต่ละโฟลเดอร์เก็บการเข้าสู่ระบบ การตั้งค่า และประวัติของตัวเองไว้ ทุกบัญชีจึงยังเข้าสู่ระบบอยู่เสมอ และคุณรันหลายบัญชีพร้อมกันได้ คุณตั้งค่านี้เองได้ด้วย shell alias หรือให้ ccam จัดการให้ก็ได้
@@ -61,7 +61,7 @@ ccam add work --shortcut ccwork
 
 ## ใช้บน Windows และ WSL ได้ไหม?
 
-Claude Code ทำงาน[บน Windows โดยตรงและภายใน WSL](https://code.claude.com/docs/en/setup) `CLAUDE_CONFIG_DIR` ใช้ได้ทั้งสองแบบ ดังนั้นบน Windows แบบเนทีฟ alias หรือฟังก์ชัน PowerShell ข้างต้นก็เพียงพอ ccam ทำงานบน Linux และ macOS ส่วนบน Windows ให้ติดตั้งและใช้งานภายใน WSL ซึ่งจะทำงานเหมือนบน Linux
+Claude Code ทำงาน[บน Windows โดยตรงและภายใน WSL](https://code.claude.com/docs/en/setup) `CLAUDE_CONFIG_DIR` ใช้ได้ทั้งสองแบบ ดังนั้นบน Windows แบบเนทีฟ alias หรือฟังก์ชัน PowerShell ข้างต้นก็เพียงพอ ccam ก็ทำงานบน Windows แบบเนทีฟได้เช่นกัน: ติดตั้งใน PowerShell ด้วย `irm https://ccam.dev/install.ps1 | iex` หรือติดตั้งภายใน WSL ด้วยคำสั่งของ Linux คำสั่งลัดจะกลายเป็น `ccwork.exe` และการใช้ไฟล์อย่าง `settings.json` ร่วมกันต้องเปิด Developer Mode ([ติดตั้ง ccam](/docs/install))
 
 ## การแก้ไขปัญหา
 

@@ -2,10 +2,10 @@
 title: Referência de comandos
 metaTitle: Referência de comandos do ccam
 description: Todos os comandos e opções do ccam, de ccam add e ccam <name> a ccam usage, ccam next e ccam doctor.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 3342453e38d3
+sourceHash: 5d3275878535
 ---
 
 Coloque `--dry-run` antes de um comando para ver o que ele faria sem fazê-lo, por exemplo `ccam --dry-run work`. Funciona ao iniciar o Claude Code (`ccam <name>`, `ccam run`, `ccam next`) e com `share`, `migrate`, `shortcut`, `update` e `doctor --fix`. Outros comandos que alteram algo recusam a opção em vez de executar.
@@ -16,7 +16,16 @@ Coloque `--dry-run` antes de um comando para ver o que ele faria sem fazê-lo, p
 
 `ccam <name|number> [arguments]` inicia o Claude Code como essa conta. O ccam não lê os argumentos depois do nome; ele os repassa ao `claude` na mesma ordem, e a entrada padrão, o código de saída e os sinais se comportam exatamente como no próprio `claude`. Um `--` depois do nome é opcional.
 
-`ccam` com argumentos, mas sem nome de conta, como `ccam -p "summarise"`, usa a conta padrão. Defina-a com `ccam use <name>`.
+`ccam` com argumentos, mas sem nome de conta, como `ccam -p "summarise"`, usa a conta definida para a pasta atual ou, se não houver, a conta padrão. Defina-as com `ccam folder <name> [folder]` e `ccam use <name>`.
+
+```sh
+ccam folder work ~/code/company   # work inside ~/code/company and below
+ccam folder                       # list folders and the account used here
+ccam folder --remove ~/code/company
+ccam --fallback work -p "fix the tests"   # run again as another account at the limit
+```
+
+`--fallback` antes do nome da conta serve para execuções `-p`/`--print`. Quando a conta atinge o limite de uso, o ccam executa o mesmo comando de novo com a conta logada que tem mais espaço e imprime só a saída da execução que terminou. Consulte [Contas por pasta](/features/folder) e [Executar de novo no limite](/features/next#run-again-at-the-limit).
 
 Um atalho como `ccwork` inicia a conta dele do mesmo jeito: `ccwork --resume` faz o mesmo que `ccam work --resume`. Consulte [atalhos](/docs/commands#shortcuts).
 
@@ -108,6 +117,7 @@ ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
 ccam version         # also: ccam -v, ccam --version
+ccam completion bash # or zsh, powershell
 ```
 
 `ccam update` verifica o checksum SHA-256 da versão antes de substituir o ccam, e `--version v0.2.0` instala uma versão específica. Um ccam instalado pelo pacote `.deb` é atualizado com o apt. Consulte [atualização](/docs/install#update).
@@ -122,4 +132,4 @@ ccam version         # also: ccam -v, ccam --version
 | `~/.local/state/ccam/` | Cache de uso e horários do último uso |
 | `~/.local/bin/<shortcut>` | Atalhos como `ccwork`, links para o ccam |
 
-As variáveis `XDG_CONFIG_HOME`, `XDG_DATA_HOME` e `XDG_STATE_HOME` mudam o local dessas pastas.
+As variáveis `XDG_CONFIG_HOME`, `XDG_DATA_HOME` e `XDG_STATE_HOME` mudam o local dessas pastas. No Windows, `~` é `%USERPROFILE%` e os atalhos são `<shortcut>.exe`.

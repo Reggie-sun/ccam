@@ -1,10 +1,10 @@
 ---
 title: 用量限制
 description: ccam usage 一次顯示每個帳號的 5 小時和每週限制，ccam statusline 則在 Claude Code 中顯示帳號名稱和用量。
-updated: 2026-10-19
+updated: 2026-10-20
 order: 7
 translation: machine
-sourceHash: 8306a8f6d950
+sourceHash: f08a2fdc6f0b
 ---
 
 `ccam usage` 會顯示每個帳號已使用了多少 5 小時限制和每週限制，以及每個時間區間距離重設的時間。在開始一項長時間的工作之前，或 Claude Code 告訴你快要達到限制時，可以用它查看哪個帳號還有剩餘額度。`ccam statusline` 是 Claude Code 的狀態列指令：它會在 Claude Code 中顯示帳號名稱和用量，並為 `ccam usage` 儲存這些數字。
@@ -100,11 +100,12 @@ Claude Code 會執行狀態列指令，並透過管線傳給它一份 JSON 文�
 1. `runStatusline` 從 `CCAM_PROFILE`（ccam 啟動 Claude Code 時會設定）找出帳號，否則就把 `CLAUDE_CONFIG_DIR` 和各帳號資料夾比對。
 2. `ParseStatusLine` 讀取 `rate_limits.five_hour` 和 `rate_limits.seven_day`。API 金鑰帳號的 JSON 中沒有頻率限制，工作階段的第一個回應之前也沒有；這時不會儲存任何東西。
 3. `SaveStatusLine` 寫入 `~/.local/state/ccam/usage/<name>.statusline.json`。端點沒有回應時，`ccam usage` 會使用它。
-4. ccam 印出 `[name] · model · 5h N% · 7d N%`。加上 `--wrap` 時，它會以相同的輸入透過 `sh -c` 執行你的指令，改為印出 `[name]` 再接上該指令的第一行。
+4. ccam 印出 `[name] · model · 5h N% · 7d N%`。加上 `--wrap` 時，它會以相同的輸入透過 `sh -c` 執行你的指令，改為印出 `[name]` 再接上該指令的第一行。在 Windows 上，它會用和 Claude Code 相同的方式執行指令：有安裝 Git Bash 時使用 Git Bash，否則使用 PowerShell。
+5. 當 5 小時或每週用量達到 90% 以上，而且還有其他帳號時，這一行的結尾會加上 `→ ccam next --auto --continue`，例如 `[work] · Opus · 5h 93% · 7d 41% · → ccam next --auto --continue`。
 
 被包裝的指令有 2 秒時間。超過之後會被終止，該行只顯示帳號名稱，所以緩慢的指令無法卡住 Claude Code 的狀態列。
 
-`ccam statusline install` 會把 `statusLine` 寫入每個帳號的 `settings.json`。如果帳號已經有狀態列指令，ccam 會以 `--wrap '<old command>'` 保留它。透過群組共用的 `settings.json` 只會經由它的連結寫入一次，群組中的每個帳號都會取得這項設定。再次執行時，對已經使用 ccam 的檔案會印出 `(already set)`。
+`ccam statusline install` 會把 `statusLine` 寫入每個帳號的 `settings.json`。如果帳號已經有狀態列指令，ccam 會以 `--wrap '<old command>'` 保留它。在 Windows 上，ccam 的路徑會以正斜線和代表主資料夾的 `~` 寫入（`~/.local/bin/ccam.exe statusline`），Git Bash 和 PowerShell 都能理解。透過群組共用的 `settings.json` 只會經由它的連結寫入一次，群組中的每個帳號都會取得這項設定。再次執行時，對已經使用 ccam 的檔案會印出 `(already set)`。
 
 ## 安全性和特殊情況
 

@@ -1,10 +1,10 @@
 ---
 title: 在一台电脑上使用多个 Claude Code 账号
 description: 借助 CLAUDE_CONFIG_DIR 让多个 Claude Code 账号并行运行：可以用 shell 别名手动设置，也可以用 ccam 自动完成，并在账号之间切换。
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: e2f4deb40c81
+sourceHash: f2982e4317a2
 ---
 
 为每个账号指定单独的配置文件夹。Claude Code 从 `CLAUDE_CONFIG_DIR` 环境变量中读取文件夹位置，每个文件夹都保存各自的登录信息、设置和历史记录，所以每个账号都保持登录状态，你也可以同时运行它们。你可以用 shell 别名手动设置，也可以交给 ccam 完成。
@@ -61,7 +61,7 @@ ccam add work --shortcut ccwork
 
 ## 在 Windows 和 WSL 上可以用吗？
 
-Claude Code [可以在 Windows 上原生运行，也可以在 WSL 中运行](https://code.claude.com/docs/en/setup)。`CLAUDE_CONFIG_DIR` 在两者中都有效，所以在原生 Windows 上，用上面的别名或 PowerShell 函数就够了。ccam 支持 Linux 和 macOS；在 Windows 上，请在 WSL 中安装和使用它，用法与 Linux 相同。
+Claude Code [可以在 Windows 上原生运行，也可以在 WSL 中运行](https://code.claude.com/docs/en/setup)。`CLAUDE_CONFIG_DIR` 在两者中都有效，所以在原生 Windows 上，用上面的别名或 PowerShell 函数就够了。ccam 也可以在 Windows 上原生运行：在 PowerShell 中用 `irm https://ccam.dev/install.ps1 | iex` 安装，或者在 WSL 中用 Linux 的命令安装。快捷命令会变成 `ccwork.exe`，共享 `settings.json` 这样的文件需要开启开发人员模式（[安装 ccam](/docs/install)）。
 
 ## 故障排除
 

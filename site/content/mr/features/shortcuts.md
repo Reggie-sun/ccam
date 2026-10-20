@@ -1,10 +1,10 @@
 ---
 title: शॉर्टकट कमांड्स
 description: ccam shortcut ने खात्याला ccwork सारखी स्वतःची कमांड द्या, आणि ccam shims install ने ~/.local/bin मधील लिंक्स पुन्हा तयार करा.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 5f0cb5a57042
+sourceHash: 939256e7a67e
 ---
 
 शॉर्टकट ही तुम्ही स्वतः नाव दिलेली कमांड आहे, जी Claude Code एका खात्याने सुरू करते: `ccwork --resume` तेच करते जे `ccam work --resume` करते. ती `~/.local/bin` मधील ccam ची लिंक आहे, त्यामुळे ती bash, zsh, scripts आणि `PATH` वरून प्रोग्राम चालवणाऱ्या इतर सर्व गोष्टींमध्ये चालते. शॉर्टकट ऐच्छिक आहेत; तुम्ही वारंवार सुरू करता त्या खात्यांसाठी एक तयार करा.
@@ -82,13 +82,17 @@ shell ला `PATH` वर `ccwork` सापडतो, kernel लिंक प�
 
 shell alias किंवा wrapper script नाही तर symlink का: symlink प्रत्येक shell मध्ये आणि scripts मध्ये चालते, ती अतिरिक्त shell सुरू करण्याचा वेळ (सुमारे 1 ते 2 ms) जोडत नाही, आणि सुरू करताना तरीही एकच फाइल वाचली जाते. `scripts/perf-check.sh` `hyperfine` ने शॉर्टकट मोजते, `ccam <name>` च्याच 10 ms (p95) मर्यादेवर.
 
+### Windows वर
+
+शॉर्टकट म्हणजे `%USERPROFILE%\.local\bin` मधील `ccwork.exe`, आणि `shim.Name` शोधण्यापूर्वी `.exe` (कोणत्याही case मध्ये) काढून टाकते, त्यामुळे `ccwork`, `ccwork.exe` आणि `CCWORK.EXE` तिन्ही `work` सुरू करतात. ccam आधी symbolic link तयार करते, जी Windows Developer Mode मध्ये किंवा administrator साठी परवानगी देते. तो अधिकार नसल्यास ते hard link तयार करते: त्याच `ccam.exe` फाइलचे दुसरे नाव, ज्याला कोणताही विशेषाधिकार लागत नाही. hard link `ccam.exe` चीच फाइल असेल तर ती ccam ची स्वतःची मानली जाते. `ccam update` `ccam.exe` च्या जागी नवीन फाइल ठेवते, त्यामुळे ते नंतर `shim.Relink` ने hard link असलेला प्रत्येक शॉर्टकट नवा करते आणि `✓ shortcut ccwork renewed` छापते. नावाची तपासणी इतर `PATH` फोल्डर्समध्ये `PATHEXT` मधील प्रत्येक extension (`.exe`, `.cmd` वगैरे) सह `<name>` शोधते.
+
 ## सुरक्षितता आणि अपवादात्मक स्थिती
 
 - **कोणत्याही खात्याची नसलेली लिंक.** `~/.local/bin` मधील ccam च्या लिंकचे नाव कोणतेही खाते वापरत नसेल, उदाहरणार्थ तुम्ही `config.toml` मधील `shortcut` हाताने बदलल्यानंतर, तर ccam डीफॉल्ट खात्यावर जात नाही. ते `` ccam: ccold is not the shortcut of any account (see `ccam list`, `ccam shortcut`) `` ने थांबते. `ccam shortcut` ने नाव पुन्हा सेट करा, किंवा लिंक हटवा.
 - **आधीपासून असलेल्या फाइल्स.** ccam ने तयार न केलेली फाइल ते कधीच बदलत नाही. `ccam shims install` `<path> already exists and is not a ccam link, so it was left alone` ने थांबते.
 - **हलवलेली ccam binary.** तेव्हा जुन्या लिंक्स आता अस्तित्वात नसलेल्या पाथकडे निर्देश करतात, आणि ccam त्यांना स्वतःच्या मानत नाही. त्या हटवा, मग `ccam shims install` चालवा.
 - **नाव बदलणे आणि काढणे.** `ccam rename` शॉर्टकटचे नाव तेच ठेवते, आणि लिंक चालत राहते, कारण ती ccam कडे निर्देश करते आणि ccam `config.toml` मध्ये नाव शोधते. `ccam remove` खात्याची लिंक हटवते. `ccam shortcut <account> <new>` नवीन लिंक तयार करण्यापूर्वी जुनी हटवते.
-- **PATH.** ccam लिंक तयार करते आणि `~/.local/bin` तुमच्या `PATH` वर नसतो, तेव्हा ते `Note: /home/me/.local/bin is not in PATH. Add it to ~/.bashrc or ~/.zshrc:` आणि त्यानंतर जोडायची `export PATH=...` ओळ छापते.
+- **PATH.** ccam लिंक तयार करते आणि `~/.local/bin` तुमच्या `PATH` वर नसतो, तेव्हा ते `Note: /home/me/.local/bin is not in PATH. Add it to ~/.bashrc or ~/.zshrc:` आणि त्यानंतर जोडायची `export PATH=...` ओळ छापते. Windows वर त्याऐवजी ते फोल्डर तुमच्या user `PATH` मध्ये जोडणारी PowerShell ओळ छापते.
 - **नंतर तपासणे.** `ccam doctor` `missing shortcuts in /home/me/.local/bin: ccwork` नोंदवते आणि फोल्डर `PATH` वर नसल्यास इशारा देते. `ccam doctor --fix` नसलेल्या लिंक्स तयार करते.
 
 ## संबंधित

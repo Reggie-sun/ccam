@@ -2,10 +2,10 @@
 title: Komut başvurusu
 metaTitle: ccam komut başvurusu
 description: ccam add ve ccam <name> komutlarından ccam usage, ccam next ve ccam doctor komutlarına kadar tüm ccam komutları ve seçenekleri.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 3342453e38d3
+sourceHash: 5d3275878535
 ---
 
 Bir komutun ne yapacağını, yapmadan görmek için komuttan önce `--dry-run` yazın, örneğin `ccam --dry-run work`. Bu, Claude Code başlatılırken (`ccam <name>`, `ccam run`, `ccam next`) ve `share`, `migrate`, `shortcut`, `update` ile `doctor --fix` komutlarında çalışır. Bir şeyi değiştiren diğer komutlar çalışmak yerine bunu reddeder.
@@ -16,7 +16,16 @@ Bir komutun ne yapacağını, yapmadan görmek için komuttan önce `--dry-run` 
 
 `ccam <name|number> [arguments]`, Claude Code'u o hesapla başlatır. ccam, addan sonraki argümanları okumaz; bunları aynı sırayla `claude` komutuna iletir. Standart girdi, çıkış kodu ve sinyaller de tam olarak `claude` komutunun kendisinde olduğu gibi davranır. Addan sonra `--` yazmak isteğe bağlıdır.
 
-Hesap adı olmadan argümanlarla çalıştırılan `ccam`, örneğin `ccam -p "summarise"`, varsayılan hesabı kullanır. Varsayılan hesabı `ccam use <name>` ile ayarlayın.
+Hesap adı olmadan argümanlarla çalıştırılan `ccam`, örneğin `ccam -p "summarise"`, geçerli klasör için ayarlanan hesabı, yoksa varsayılan hesabı kullanır. Bunları `ccam folder <name> [folder]` ve `ccam use <name>` ile ayarlayın.
+
+```sh
+ccam folder work ~/code/company   # work inside ~/code/company and below
+ccam folder                       # list folders and the account used here
+ccam folder --remove ~/code/company
+ccam --fallback work -p "fix the tests"   # run again as another account at the limit
+```
+
+Hesap adından önce gelen `--fallback`, `-p`/`--print` çalıştırmaları içindir. Hesap kullanım limitine ulaştığında ccam aynı komutu en çok payı kalan girişli hesapla yeniden çalıştırır ve yalnızca tamamlanan çalıştırmanın çıktısını yazdırır. [Klasöre göre hesaplar](/features/folder) ve [Limitte yeniden çalıştırma](/features/next#run-again-at-the-limit) sayfalarına bakın.
 
 `ccwork` gibi bir kısayol, kendi hesabını aynı şekilde başlatır: `ccwork --resume`, `ccam work --resume` ile aynı işi yapar. [Kısayollar](/docs/commands#shortcuts) bölümüne bakın.
 
@@ -108,6 +117,7 @@ ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
 ccam version         # also: ccam -v, ccam --version
+ccam completion bash # or zsh, powershell
 ```
 
 `ccam update`, ccam'ı değiştirmeden önce sürümün SHA-256 sağlama toplamını kontrol eder; `--version v0.2.0` ise belirli bir sürümü kurar. `.deb` paketinden kurulan ccam bunun yerine apt ile güncellenir. [Güncelleme](/docs/install#update) bölümüne bakın.
@@ -122,4 +132,4 @@ ccam version         # also: ccam -v, ccam --version
 | `~/.local/state/ccam/` | Kullanım önbelleği ve son kullanım zamanları |
 | `~/.local/bin/<shortcut>` | `ccwork` gibi kısayol komutları, ccam'e giden bağlantılar |
 
-`XDG_CONFIG_HOME`, `XDG_DATA_HOME` ve `XDG_STATE_HOME` değişkenleri bu klasörlerin yerini değiştirir.
+`XDG_CONFIG_HOME`, `XDG_DATA_HOME` ve `XDG_STATE_HOME` değişkenleri bu klasörlerin yerini değiştirir. Windows'ta `~`, `%USERPROFILE%` anlamına gelir ve kısayollar `<shortcut>.exe` olur.

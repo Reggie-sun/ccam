@@ -1,11 +1,11 @@
 ---
 title: Girka ccam
-metaTitle: Girka ccam a Linux da macOS
-description: Girka ccam a Linux ko macOS da umarni ɗaya, kunshin .deb ko lambar tushe, ka kuma sabunta shi da ccam update. Fara girka Claude Code tukuna.
-updated: 2026-10-19
+metaTitle: Girka ccam a Linux, macOS da Windows
+description: Girka ccam a Linux, macOS ko Windows da umarni ɗaya, kunshin .deb ko lambar tushe, ka kuma sabunta shi da ccam update. Fara girka Claude Code tukuna.
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 7ecd1ed00e09
+sourceHash: 07eadc0769c8
 ---
 
 Gudanar da wannan a terminal a Linux ko macOS:
@@ -16,13 +16,22 @@ curl -fsSL https://ccam.dev/install.sh | sh
 
 Rubutun yana sauke sakin da ya dace da tsarinka, yana duba checksum na SHA-256 nasa, kuma yana sa `ccam` a `~/.local/bin`, inda ccam kuma yake ƙirƙirar gajerun umarnin da ka zaɓa daga baya, kamar `ccwork`. Idan wannan foldar ba ta cikin `PATH` naka, rubutun yana buga layin da za ka ƙara a `~/.bashrc` ko `~/.zshrc`.
 
+A Windows, gudanar da wannan a PowerShell:
+
+```powershell
+irm https://ccam.dev/install.ps1 | iex
+```
+
+Yana sauke `ccam_windows_<arch>.zip`, yana duba checksum na SHA-256 nasa, yana sa `ccam.exe` a `%USERPROFILE%\.local\bin`, foldar da mai girka Claude Code yake sa `claude.exe`, kuma yana ƙara wannan foldar a `PATH` na mai amfani idan ba ta can tukuna. Buɗe sabon terminal bayan haka.
+
 ccam ne ke fara maka Claude Code, don haka ka fara girka [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) kuma ka tabbata `claude --version` yana aiki.
 
 ## Tsarukan da ake tallafawa
 
 - Linux a x86-64 da ARM64: Ubuntu, Debian, Fedora, Arch, Alpine da sauran distributions. Binary ɗin static ne kuma ba shi da dependencies.
 - macOS a Apple silicon da Intel.
-- Ba a tallafa wa Windows kai tsaye ba. A cikin WSL, ccam yana aiki kamar a kowane tsarin Linux.
+- Windows 10 da 11 a x86-64 da ARM64, a PowerShell, Windows Terminal ko Git Bash. Foldojin da aka raba suna aiki ga kowane mai amfani. Fayilolin da aka raba (`settings.json`, `CLAUDE.md`, `history.jsonl`) suna buƙatar Developer Mode (Settings > System > For developers), saboda Windows yana bari wannan yanayin kaɗai, ko administrator, ya ƙirƙiri mahaɗai zuwa fayiloli; duba [rabawa a Windows](/features/share#on-windows).
+- A cikin WSL, ccam yana aiki kamar a kowane tsarin Linux.
 
 ## Wasu hanyoyin girkawa
 
@@ -46,11 +55,19 @@ go install github.com/jhyunwoo/ccam/cmd/ccam@latest
 curl -fsSL https://ccam.dev/install.sh | CCAM_VERSION=v0.1.0 sh
 ```
 
+```powershell
+$env:CCAM_VERSION = 'v0.1.0'; irm https://ccam.dev/install.ps1 | iex
+```
+
 ## Cike umarni a shell (shell completion)
 
 ```sh
 ccam completion bash > ~/.local/share/bash-completion/completions/ccam
 ccam completion zsh > "${fpath[1]}/_ccam"
+```
+
+```powershell
+ccam completion powershell >> $PROFILE
 ```
 
 Completion yana aiki ga dukkan umarni da zaɓuɓɓukan `ccam`, har da sunayen asusai.
@@ -92,6 +109,8 @@ ccam --dry-run update
 
 Sake gudanar da rubutun girkawa shi ma yana sabunta kwafin da ke `~/.local/bin`. Idan ka gina ccam da `go install`, sake gudanar da wannan umarnin.
 
+**Windows.** `ccam update` yana sauke `.zip` na Windows. Ba za a iya maye gurbin shirin da ke gudana a Windows ba, don haka ana sauya sunan tsohon binary zuwa `ccam.exe.old`, wanda sabuntawa ta gaba ke gogewa.
+
 **Kunshin Debian da Ubuntu.** `ccam update` ba ya maye gurbin `/usr/bin/ccam` da apt ya girka, a maimakon haka yana buga waɗannan matakan. Sauke sabon `ccam_<version>_linux_amd64.deb` daga [shafin saki](https://github.com/jhyunwoo/ccam/releases) sannan ka girka shi a kan tsohon:
 
 ```sh
@@ -107,6 +126,14 @@ ccam list
 ccam shortcut work --remove   # once for each account that has a shortcut
 rm ~/.local/bin/ccam
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
+```
+
+A Windows, a PowerShell:
+
+```powershell
+ccam shortcut work --remove   # once for each account that has a shortcut
+Remove-Item ~\.local\bin\ccam.exe
+Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
 ```
 
 Share `~/.local/share/ccam` yana share bayanan shiga da tarihin tattaunawa da aka ajiye a can ma. Foldar `~/.claude` da ka [shigo da ita](/docs/commands) tana nan a inda take.

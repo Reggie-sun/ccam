@@ -4,7 +4,7 @@ description: 用 ccam <name|number>、ccam run 或 ccam 選擇器以任一帳號
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 401eed57e533
+sourceHash: e6b5a8d4df86
 ---
 
 `ccam work` 會以帳號 `work` 啟動 Claude Code，名稱後面的所有內容都原樣傳給 `claude`。凡是你會輸入 `claude` 的地方都可以使用它：在終端機中、在腳本中，或搭配管線輸入。
@@ -17,16 +17,18 @@ ccam 2                           # the account with number 2 (see ccam list)
 ccam work --resume               # claude --resume, as work
 ccam work -p "fix the tests" --output-format json
 cat log.txt | ccam work -p "find the cause"
-ccam -p "summarise"              # no name: the default account
+ccam -p "summarise"              # no name: the folder's account, else the default
 ccam use work                    # make work the default account
+ccam folder work ~/code/company  # use work in that folder when no name is given
 ccam run work --continue         # same as ccam work --continue
 ccam                             # the picker on a terminal, the list otherwise
 ccam --dry-run work -p hi        # print the command instead of running it
+ccam --fallback work -p "fix the tests"   # run again as another account at the limit
 ```
 
 指定帳號的名稱，或它在 `ccam list` 中的編號。ccam 不會讀取名稱後面的參數，所以 `ccam work --help` 顯示的是 Claude Code 的說明。名稱後面的 `--` 可加可不加。標準輸入、結束代碼和訊號的行為都和 `claude` 相同。
 
-當第一個參數以 `-` 開頭，而且不是 ccam 自己的旗標時，ccam 會帶著所有參數啟動預設帳號。預設帳號是用 `ccam use` 設定的帳號；如果你沒有設定，則是編號最小的帳號。
+當第一個參數以 `-` 開頭，而且不是 ccam 自己的旗標時，ccam 會帶著所有參數啟動未指定名稱時的帳號。那是用 [`ccam folder`](/features/folder) 為目前資料夾設定的帳號，否則就是預設帳號：用 `ccam use` 設定的帳號；如果你沒有設定，則是編號最小的帳號。
 
 ### 選擇器
 
@@ -50,21 +52,27 @@ ccam --dry-run work -p hi        # print the command instead of running it
 | 選項 | 作用 | 預設值 |
 | --- | --- | --- |
 | `--dry-run` | 印出 ccam 會使用的環境變數和指令，然後結束 | 關閉 |
+| `--fallback` | 用於 `-p`/`--print` 執行：帳號達到用量上限時，以剩餘額度最多的已登入帳號再次執行同一個指令（[詳細說明](/features/next#run-again-at-the-limit)） | 關閉 |
 | `-v`、`--version` | 印出 `ccam <version>`（只能作為第一個參數） | |
 | `-h`、`--help` | ccam 的說明，可用 `ccam --help` 或 `ccam run --help` | |
 
 參數規則：
 
 - ccam 只讀取帳號名稱前面的自身旗標。名稱後面的每個參數都屬於 Claude Code，包括 `--dry-run` 和 `--help`。
-- `--dry-run` 可以寫成 `ccam --dry-run work`、`ccam run --dry-run work` 和 `ccam --dry-run`（預設帳號）。它會被接受，不會被拒絕。
-- `ccam run <name|number> [claude args]` 是 `ccam <name>` 的完整寫法。不帶名稱的 `ccam run` 會使用預設帳號。
+- `--dry-run` 可以寫成 `ccam --dry-run work`、`ccam run --dry-run work` 和 `ccam --dry-run`（未指定名稱時的帳號）。它會被接受，不會被拒絕。`--dry-run` 和 `--fallback` 的順序不拘。
+- `ccam run <name|number> [claude args]` 是 `ccam <name>` 的完整寫法。不帶名稱的 `ccam run` 會使用該資料夾的帳號或預設帳號。
 - 帳號名稱不能是 `add`、`list`、`run` 或 `usage` 這類 ccam 指令名稱，所以 `ccam <word>` 永遠不會有歧義。
 
-試執行會印出一行可以直接貼到 shell 的指令：
+試執行會印出一行可以直接貼到 shell（在 Windows 上則是 PowerShell）的指令：
 
 ```console
 $ ccam --dry-run work -p "fix the tests"
 CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/claude --mcp-config=/home/me/.local/share/ccam/groups/default/mcp.json -p 'fix the tests'
+```
+
+```console
+PS> ccam --dry-run work -p "fix the tests"
+$env:CLAUDE_CONFIG_DIR='C:\Users\me\.local\share\ccam\profiles\work'; & C:\Users\me\.local\bin\claude.exe --mcp-config=C:\Users\me\.local\share\ccam\groups\default\mcp.json -p 'fix the tests'
 ```
 
 ## 運作方式
@@ -78,7 +86,7 @@ CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/c
 1. `cmd/ccam/main.go` 呼叫 `app.Main`。如果 ccam 是以其他名稱啟動的，那就是[快捷指令](/features/shortcuts)，會直接交給啟動器。
 2. `app.parse` 在 cobra 介入之前檢查 `os.Args`。只有單獨的 `ccam`（選擇器）、ccam 指令名稱（`config.Reserved`）、`-h`/`--help` 和 `-v`/`--version` 會交給 `cli.Execute`。其他一切都是啟動。
 3. `launcher.Launch` 讀取 `~/.config/ccam/config.toml`，這是它唯一解析的檔案。
-4. `launcher.Prepare` 依名稱或編號找到帳號，去掉開頭的一個 `--`，並用 `ResolveClaude` 找出 `claude` 執行檔。PATH 查詢的結果會連同檔案的修改時間快取在 `~/.local/state/ccam/claude-path`，所以 ccam 不會在每次啟動時搜尋 `PATH`。檔案變更或不存在時會重新查詢。`config.toml` 中的 `claude_bin` 路徑會直接使用。如果 `claude` 就是 ccam 本身（以 inode 比對），ccam 會拒絕，因為那樣會無限循環。
+4. `launcher.Prepare` 依名稱或編號找到帳號（沒有名稱時，`HereProfile` 會取用該資料夾的帳號，以字串比對工作目錄和 `config.toml` 中的 `[[folder]]` 項目），去掉開頭的一個 `--`，並用 `ResolveClaude` 找出 `claude` 執行檔。PATH 查詢的結果會連同檔案的修改時間快取在 `~/.local/state/ccam/claude-path`，所以 ccam 不會在每次啟動時搜尋 `PATH`。檔案變更或不存在時會重新查詢。`config.toml` 中的 `claude_bin` 路徑會直接使用。如果 `claude` 就是 ccam 本身（以 inode 比對），ccam 會拒絕，因為那樣會無限循環。
 5. `checkLinks` 用 `share.Check` 把帳號資料夾 `~/.local/share/ccam/profiles/<name>/` 和它的共用設定比對，過程中只呼叫 `lstat` 和 `readlink`，每個項目一到兩次系統呼叫。缺少的連結會當場建立。任何可能遺失資料的情況都會中止啟動。
 6. `applyMCP` 加入共用的 MCP 伺服器（見下文）。
 7. `session.Register` 記錄工作階段。ccam 會在 `$XDG_RUNTIME_DIR/ccam/profile-<name>/<pid>`（沒有 `XDG_RUNTIME_DIR` 時為 `~/.local/state/ccam/locks/`）寫入一個以其 PID 命名、記錄行程啟動時間的標記。對於共用對話記錄的帳號，`historyCheck` 會先在 `history-<group>-<hash>`（hash 取自目前的資料夾）中尋找正在執行的工作階段，並同樣在那裡登錄。`exec` 會保留 PID，所以標記之後指的就是 Claude Code 行程本身。使用標記而不是持有鎖，是因為 Claude Code 啟動的行程會繼承鎖，並在工作階段結束後繼續持有它。
@@ -88,7 +96,9 @@ Claude Code 執行時，`CLAUDE_CONFIG_DIR` 會設為帳號資料夾，`CCAM_PRO
 
 ### 為什麼用 exec
 
-`syscall.Exec` 會以 `claude` 取代 ccam 行程，所以 ccam 不會留在記憶體中，按鍵、訊號和結束代碼都直接屬於 Claude Code，參數也始終是陣列，絕不會變成 shell 字串。工作階段之後的工作，例如發現用 `claude mcp add` 新增的伺服器，會在下次啟動時進行：ccam 會把 `.claude.json` 的修改時間和 `~/.local/state/ccam/mcp/<name>/seen` 比對，只在檔案變更時才解析它。
+`syscall.Exec` 會以 `claude` 取代 ccam 行程，所以 ccam 不會留在記憶體中，按鍵、訊號和結束代碼都直接屬於 Claude Code，參數也始終是陣列，絕不會變成 shell 字串。
+
+Windows 沒有 `exec`。在那裡，`Plan.Exec` 會以相同的環境變數、參數和主控台，把 `claude.exe` 作為子行程啟動，等待它結束，並以它的結束代碼結束。Ctrl+C 會直接從主控台送到 Claude Code，所以 ccam 會忽略它。工作階段標記帶有 ccam 的 PID，它的存活時間和 Claude Code 完全相同，並在 Claude Code 結束時移除。等待期間，ccam 不做任何其他事。工作階段之後的工作，例如發現用 `claude mcp add` 新增的伺服器，會在下次啟動時進行：ccam 會把 `.claude.json` 的修改時間和 `~/.local/state/ccam/mcp/<name>/seen` 比對，只在檔案變更時才解析它。
 
 ### 命令列如何分派
 

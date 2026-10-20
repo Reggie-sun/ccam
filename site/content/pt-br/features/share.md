@@ -1,10 +1,10 @@
 ---
 title: Compartilhamento entre contas
 description: Como o ccam share vincula configurações, CLAUDE.md, extensões e histórico a uma pasta de grupo, com plano e backups, e como off copia tudo de volta.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: b30b7cdb2b15
+sourceHash: 16de29bbdd57
 ---
 
 Cada conta tem a própria pasta, mas a maior parte do que há nela não precisa ficar separada. O `ccam share` ativa ou desativa o compartilhamento de uma conta e de um item por vez: o arquivo ou a pasta da conta é movido para uma pasta de grupo e substituído por um link simbólico, então todas as contas do grupo leem e gravam a mesma cópia. Use-o depois do `ccam add` para mudar o que uma conta compartilha, ou para colocar algumas contas em um grupo só delas.
@@ -112,6 +112,10 @@ Repair them with `ccam doctor --fix`, then run again
 ```
 
 `ccam doctor --fix` executa `share.Build` com as configurações salvas dos dois lados, o que deriva cada etapa a partir do que está no disco, mantém o conteúdo do grupo nos conflitos e faz backup de tudo o que substitui.
+
+### No Windows
+
+O Windows só cria links simbólicos no Modo de Desenvolvedor (Configurações > Sistema > Para desenvolvedores) ou para um administrador. `fsutil.Link` tenta primeiro um link simbólico. Sem essa permissão, uma pasta compartilhada (`agents`, `skills`, `projects` e as outras) vira uma junção de diretório, que qualquer usuário pode criar, e funciona do mesmo jeito para o Claude Code. Um arquivo compartilhado (`settings.json`, `CLAUDE.md`, `history.jsonl`) só pode ser um link simbólico, então o ccam para com `Windows links files only in Developer Mode` e sugere ativar o modo ou manter esse item local. `share.Check` lê junções como links (`fsutil.LinkTarget`), e remover a pasta de uma conta remove a própria junção, nunca o conteúdo do grupo para o qual ela aponta.
 
 ## Segurança e casos especiais
 

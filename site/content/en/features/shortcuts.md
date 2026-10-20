@@ -1,7 +1,7 @@
 ---
 title: Shortcut commands
 description: Give an account its own command such as ccwork with ccam shortcut, and recreate the links in ~/.local/bin with ccam shims install.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 3
 translation: source
 ---
@@ -81,13 +81,17 @@ The shell finds `ccwork` on `PATH`, the kernel follows the link and starts the c
 
 Why a symlink and not a shell alias or a wrapper script: a symlink works in every shell and in scripts, it adds no extra shell start (about 1 to 2 ms), and the launch still reads one file. `scripts/perf-check.sh` measures a shortcut with `hyperfine` against the same 10 ms (p95) limit as `ccam <name>`.
 
+### On Windows
+
+A shortcut is `ccwork.exe` in `%USERPROFILE%\.local\bin`, and `shim.Name` drops the `.exe` (in any case) before the lookup, so `ccwork`, `ccwork.exe` and `CCWORK.EXE` all start `work`. ccam first creates a symbolic link, which Windows allows in Developer Mode or for an administrator. Without that right it creates a hard link: a second name for the same `ccam.exe` file, which needs no privilege. A hard link counts as ccam's own when it is the same file as `ccam.exe`. Because `ccam update` puts a new file in place of `ccam.exe`, it then renews every hard-linked shortcut with `shim.Relink` and prints `✓ shortcut ccwork renewed`. The name check looks for `<name>` with each extension in `PATHEXT` (`.exe`, `.cmd` and so on) in the other `PATH` folders.
+
 ## Safety and edge cases
 
 - **A link no account claims.** If a link to ccam in `~/.local/bin` has a name that no account uses, for example after you edited `shortcut` in `config.toml` by hand, ccam does not fall back to the default account. It stops with `` ccam: ccold is not the shortcut of any account (see `ccam list`, `ccam shortcut`) ``. Set the name again with `ccam shortcut`, or delete the link.
 - **Existing files.** ccam never replaces a file it did not create. `ccam shims install` stops with `<path> already exists and is not a ccam link, so it was left alone`.
 - **A moved ccam binary.** Old links then point to a path that no longer exists, and ccam does not count them as its own. Delete them, then run `ccam shims install`.
 - **Rename and remove.** `ccam rename` keeps the shortcut name, and the link keeps working, because it points to ccam and ccam looks up the name in `config.toml`. `ccam remove` deletes the account's link. `ccam shortcut <account> <new>` deletes the old link before it creates the new one.
-- **PATH.** When ccam creates a link and `~/.local/bin` is not on your `PATH`, it prints `Note: /home/me/.local/bin is not in PATH. Add it to ~/.bashrc or ~/.zshrc:` followed by the `export PATH=...` line to add.
+- **PATH.** When ccam creates a link and `~/.local/bin` is not on your `PATH`, it prints `Note: /home/me/.local/bin is not in PATH. Add it to ~/.bashrc or ~/.zshrc:` followed by the `export PATH=...` line to add. On Windows it prints the PowerShell line that adds the folder to your user `PATH` instead.
 - **Checking later.** `ccam doctor` reports `missing shortcuts in /home/me/.local/bin: ccwork` and warns when the folder is not on `PATH`. `ccam doctor --fix` creates the missing links.
 
 ## Related

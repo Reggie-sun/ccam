@@ -1,10 +1,10 @@
 ---
 title: Kushiriki kati ya akaunti
 description: Jinsi ccam share huunganisha mipangilio, CLAUDE.md, viendelezi na historia kwa folda ya kikundi kwa mpango, nakala rudufu na chaguo za mgongano; off hurudisha.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: b30b7cdb2b15
+sourceHash: 16de29bbdd57
 ---
 
 Kila akaunti ina folda yake, lakini sehemu kubwa ya yaliyomo ndani yake haihitaji kuwa tofauti. `ccam share` huwasha au huzima kushiriki kwa akaunti moja na kipengele kimoja kwa wakati: faili au folda ya akaunti huhamishwa kwenda folda ya kikundi na hubadilishwa kwa kiungo (symbolic link), ili kila akaunti katika kikundi isome na iandike nakala ile ile. Itumie baada ya `ccam add` kubadilisha kile akaunti inachoshiriki, au kuweka akaunti chache katika kikundi chao wenyewe.
@@ -112,6 +112,10 @@ Repair them with `ccam doctor --fix`, then run again
 ```
 
 `ccam doctor --fix` huendesha `share.Build` kwa mipangilio iliyohifadhiwa pande zote mbili, jambo linalotoa kila hatua kutokana na kilichopo kwenye diski, huhifadhi maudhui ya kikundi kwenye migongano na huhifadhi nakala rudufu ya chochote inachokibadilisha.
+
+### Kwenye Windows
+
+Windows huunda viungo vya ishara (symbolic links) katika Developer Mode pekee (Settings > System > For developers) au kwa msimamizi. `fsutil.Link` hujaribu kiungo cha ishara kwanza. Bila haki hiyo, folda inayoshirikiwa (`agents`, `skills`, `projects` na nyinginezo) huwa directory junction, ambayo mtumiaji yeyote anaweza kuunda, na hufanya kazi vivyo hivyo kwa Claude Code. Faili inayoshirikiwa (`settings.json`, `CLAUDE.md`, `history.jsonl`) inaweza kuwa kiungo cha ishara tu, kwa hiyo ccam husimama na `Windows links files only in Developer Mode` na hupendekeza kuiwasha au kuacha kipengele hicho kiwe cha ndani. `share.Check` husoma junctions kama viungo (`fsutil.LinkTarget`), na kuondoa folda ya akaunti huondoa junction yenyewe, kamwe si maudhui ya kikundi inayoyaelekea.
 
 ## Usalama na hali maalum
 

@@ -1,11 +1,11 @@
 ---
 title: ccam kurulumu
-metaTitle: ccam'ı Linux ve macOS üzerine kurun
-description: ccam'ı Linux veya macOS üzerine tek komutla, bir .deb paketiyle ya da kaynak koddan kurun ve ccam update ile güncelleyin. Önce Claude Code kurulu olmalıdır.
-updated: 2026-10-19
+metaTitle: ccam'ı Linux, macOS ve Windows üzerine kurun
+description: ccam'ı Linux, macOS veya Windows'a tek komutla, bir .deb paketiyle ya da kaynak koddan kurun, ccam update ile güncelleyin. Önce Claude Code kurulu olmalıdır.
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 7ecd1ed00e09
+sourceHash: 07eadc0769c8
 ---
 
 Linux veya macOS üzerinde bir terminalde şunu çalıştırın:
@@ -16,13 +16,22 @@ curl -fsSL https://ccam.dev/install.sh | sh
 
 Betik, sisteminize uygun sürümü indirir, SHA-256 sağlama toplamını doğrular ve `ccam` komutunu `~/.local/bin` klasörüne yerleştirir; ccam daha sonra seçtiğiniz `ccwork` gibi kısayol komutlarını da aynı klasörde oluşturur. Bu klasör `PATH` içinde değilse betik, `~/.bashrc` veya `~/.zshrc` dosyasına eklemeniz gereken satırı yazdırır.
 
+Windows'ta bunu PowerShell'de çalıştırın:
+
+```powershell
+irm https://ccam.dev/install.ps1 | iex
+```
+
+Betik `ccam_windows_<arch>.zip` dosyasını indirir, SHA-256 sağlama toplamını denetler, `ccam.exe` dosyasını Claude Code yükleyicisinin `claude.exe` dosyasını koyduğu klasöre, yani `%USERPROFILE%\.local\bin` içine koyar ve henüz orada değilse bu klasörü kullanıcı `PATH` değişkeninize ekler. Ardından yeni bir terminal açın.
+
 ccam, Claude Code'u sizin için başlatır; bu nedenle önce [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) kurun ve `claude --version` komutunun çalıştığından emin olun.
 
 ## Desteklenen sistemler
 
 - x86-64 ve ARM64 üzerinde Linux: Ubuntu, Debian, Fedora, Arch, Alpine ve diğer dağıtımlar. İkili dosya statiktir ve hiçbir bağımlılığı yoktur.
 - Apple silicon ve Intel üzerinde macOS.
-- Windows doğrudan desteklenmez. WSL içinde ccam, herhangi bir Linux sisteminde olduğu gibi çalışır.
+- x86-64 ve ARM64 üzerinde Windows 10 ve 11; PowerShell, Windows Terminal veya Git Bash içinde. Paylaşılan klasörler her kullanıcı için çalışır. Paylaşılan dosyalar (`settings.json`, `CLAUDE.md`, `history.jsonl`) Geliştirici Modu (Ayarlar > Sistem > Geliştiriciler için) gerektirir, çünkü Windows dosyalara bağlantı oluşturmaya yalnızca bu modda veya bir yöneticiye izin verir; bkz. [Windows'ta paylaşım](/features/share#on-windows).
+- WSL içinde ccam, herhangi bir Linux sisteminde olduğu gibi çalışır.
 
 ## Diğer kurulum yolları
 
@@ -46,11 +55,19 @@ go install github.com/jhyunwoo/ccam/cmd/ccam@latest
 curl -fsSL https://ccam.dev/install.sh | CCAM_VERSION=v0.1.0 sh
 ```
 
+```powershell
+$env:CCAM_VERSION = 'v0.1.0'; irm https://ccam.dev/install.ps1 | iex
+```
+
 ## Kabuk tamamlama
 
 ```sh
 ccam completion bash > ~/.local/share/bash-completion/completions/ccam
 ccam completion zsh > "${fpath[1]}/_ccam"
+```
+
+```powershell
+ccam completion powershell >> $PROFILE
 ```
 
 Tamamlama, hesap adları da dahil olmak üzere `ccam` komutunun tüm alt komutları ve seçenekleri için çalışır.
@@ -92,6 +109,8 @@ ccam --dry-run update
 
 Kurulum betiğini yeniden çalıştırmak da `~/.local/bin` içindeki kopyayı günceller. ccam'ı `go install` ile derlediyseniz aynı komutu yeniden çalıştırın.
 
+**Windows.** `ccam update`, Windows için `.zip` dosyasını indirir. Windows'ta çalışan bir program değiştirilemez; bu yüzden eski ikili dosya `ccam.exe.old` olarak yeniden adlandırılır ve bir sonraki güncelleme onu siler.
+
 **Debian ve Ubuntu paketi.** `ccam update`, apt ile kurulmuş bir `/usr/bin/ccam` dosyasını değiştirmez; bunun yerine bu adımları yazdırır. Yeni `ccam_<version>_linux_amd64.deb` dosyasını [sürümler sayfasından](https://github.com/jhyunwoo/ccam/releases) indirin ve eskisinin üzerine kurun:
 
 ```sh
@@ -107,6 +126,14 @@ ccam list
 ccam shortcut work --remove   # once for each account that has a shortcut
 rm ~/.local/bin/ccam
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
+```
+
+Windows'ta, PowerShell'de:
+
+```powershell
+ccam shortcut work --remove   # once for each account that has a shortcut
+Remove-Item ~\.local\bin\ccam.exe
+Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
 ```
 
 `~/.local/share/ccam` klasörünü silmek, orada saklanan giriş bilgilerini ve konuşma geçmişini de siler. [İçe aktardığınız](/docs/commands) bir `~/.claude` klasörü olduğu yerde kalır.

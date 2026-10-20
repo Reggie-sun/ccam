@@ -1,10 +1,10 @@
 ---
 title: فرمان‌های میان‌بر
 description: با ccam shortcut به یک حساب فرمانی مخصوص خودش مانند ccwork بدهید و پیوندهای ~/.local/bin را با ccam shims install دوباره بسازید.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 5f0cb5a57042
+sourceHash: 939256e7a67e
 ---
 
 میان‌بر فرمانی است که نامش را خودتان انتخاب می‌کنید و Claude Code را با یک حساب اجرا می‌کند: `ccwork --resume` همان کاری را می‌کند که `ccam work --resume` انجام می‌دهد. میان‌بر یک پیوند به ccam در `~/.local/bin` است، بنابراین در bash، zsh، اسکریپت‌ها و هر چیز دیگری که برنامه‌ها را از `PATH` اجرا می‌کند کار می‌کند. میان‌برها اختیاری‌اند؛ برای حساب‌هایی که زیاد اجرا می‌کنید یکی بسازید.
@@ -82,13 +82,17 @@ work: none (add one with `ccam shortcut work ccwork`)
 
 چرا پیوند نمادین و نه alias پوسته یا اسکریپت پوشاننده: پیوند نمادین در هر پوسته و در اسکریپت‌ها کار می‌کند، هیچ اجرای اضافه پوسته‌ای (حدود ۱ تا ۲ میلی‌ثانیه) اضافه نمی‌کند و اجرا همچنان فقط یک فایل را می‌خواند. `scripts/perf-check.sh` یک میان‌بر را با `hyperfine` در برابر همان حد ۱۰ میلی‌ثانیه (p95) که برای `ccam <name>` است اندازه می‌گیرد.
 
+### در Windows
+
+یک میان‌بر فایل `ccwork.exe` در `%USERPROFILE%\.local\bin` است و `shim.Name` پیش از جست‌وجو پسوند `.exe` را (با هر حالت حروف) حذف می‌کند، پس `ccwork`، `ccwork.exe` و `CCWORK.EXE` همه `work` را اجرا می‌کنند. ccam ابتدا یک پیوند نمادین می‌سازد که Windows آن را در Developer Mode یا برای مدیر سیستم مجاز می‌داند. بدون این حق، یک hard link می‌سازد: نام دومی برای همان فایل `ccam.exe` که به هیچ دسترسی ویژه‌ای نیاز ندارد. یک hard link وقتی متعلق به ccam شمرده می‌شود که همان فایل `ccam.exe` باشد. چون `ccam update` فایل جدیدی را جای `ccam.exe` می‌گذارد، پس از آن هر میان‌بری را که hard link است با `shim.Relink` تازه می‌کند و `✓ shortcut ccwork renewed` را چاپ می‌کند. بررسی نام، `<name>` را با هر پسوند موجود در `PATHEXT` (`.exe`، `.cmd` و غیره) در دیگر پوشه‌های `PATH` جست‌وجو می‌کند.
+
 ## ایمنی و موارد خاص
 
 - **پیوندی که هیچ حسابی ادعایش را ندارد.** اگر پیوندی به ccam در `~/.local/bin` نامی داشته باشد که هیچ حسابی از آن استفاده نمی‌کند، برای مثال پس از آنکه `shortcut` را در `config.toml` دستی ویرایش کرده‌اید، ccam به حساب پیش‌فرض برنمی‌گردد. با پیام `` ccam: ccold is not the shortcut of any account (see `ccam list`, `ccam shortcut`) `` متوقف می‌شود. نام را دوباره با `ccam shortcut` تنظیم کنید، یا پیوند را حذف کنید.
 - **فایل‌های موجود.** ccam هرگز فایلی را که خودش نساخته جایگزین نمی‌کند. `ccam shims install` با پیام `<path> already exists and is not a ccam link, so it was left alone` متوقف می‌شود.
 - **فایل اجرایی ccam جابه‌جاشده.** در این حالت پیوندهای قدیمی به مسیری اشاره می‌کنند که دیگر وجود ندارد و ccam آن‌ها را متعلق به خود نمی‌شمارد. آن‌ها را حذف کنید، سپس `ccam shims install` را اجرا کنید.
 - **تغییر نام و حذف.** `ccam rename` نام میان‌بر را نگه می‌دارد و پیوند همچنان کار می‌کند، چون به ccam اشاره می‌کند و ccam نام را در `config.toml` جست‌وجو می‌کند. `ccam remove` پیوند حساب را حذف می‌کند. `ccam shortcut <account> <new>` پیش از ساختن پیوند جدید، پیوند قدیمی را حذف می‌کند.
-- **PATH.** وقتی ccam یک پیوند می‌سازد و `~/.local/bin` در `PATH` شما نیست، `Note: /home/me/.local/bin is not in PATH. Add it to ~/.bashrc or ~/.zshrc:` را چاپ می‌کند و پس از آن خط `export PATH=...` را که باید اضافه کنید.
+- **PATH.** وقتی ccam یک پیوند می‌سازد و `~/.local/bin` در `PATH` شما نیست، `Note: /home/me/.local/bin is not in PATH. Add it to ~/.bashrc or ~/.zshrc:` را چاپ می‌کند و پس از آن خط `export PATH=...` را که باید اضافه کنید. در Windows به جای آن خط PowerShell را چاپ می‌کند که پوشه را به `PATH` کاربری شما اضافه می‌کند.
 - **بررسی در زمان بعد.** `ccam doctor` پیام `missing shortcuts in /home/me/.local/bin: ccwork` را گزارش می‌کند و وقتی پوشه در `PATH` نباشد هشدار می‌دهد. `ccam doctor --fix` پیوندهای ناموجود را می‌سازد.
 
 ## مرتبط

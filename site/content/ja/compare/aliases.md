@@ -4,7 +4,7 @@ description: 複数のClaude Codeアカウントを使う方法として、CLAUD
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: ea24bb091caf
+sourceHash: b9fbcb88f111
 ---
 
 アカウントごとにシェルエイリアスを作るのが、複数のClaude Codeアカウントを使う最も簡単な方法です。ccamも内部では同じことを行い、そのうえで共有、切り替え、使用量の確認の機能を加えています。
@@ -42,6 +42,8 @@ ccam add work --shortcut ccwork
 | 別のアカウントで会話を続ける | 不可 | `ccam next --continue` |
 | すべてのアカウントの使用量 | 不可 | `ccam usage` |
 | 最も余裕があるアカウントを選ぶ | 不可 | `ccam next --auto` |
+| 上限に達した`-p`ジョブを別のアカウントで再実行する | 不可 | `ccam --fallback` |
+| プロジェクトのフォルダーごとのアカウント | 不可 | `ccam folder` |
 | ステータスラインへのアカウント名の表示 | 不可 | `ccam statusline install` |
 | 壊れたリンクの修復 | 手動 | `ccam doctor --fix` |
 | 追加のソフトウェア | なし | 静的バイナリ1つ |

@@ -1,10 +1,10 @@
 ---
 title: 1台のPCで複数のClaude Codeアカウントを使う
 description: CLAUDE_CONFIG_DIRで複数のClaude Codeアカウントを並行して使い、切り替える方法。シェルエイリアスによる手動設定とccamによる自動設定を説明します。
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: e2f4deb40c81
+sourceHash: f2982e4317a2
 ---
 
 アカウントごとに専用の設定フォルダーを割り当てます。Claude Codeは`CLAUDE_CONFIG_DIR`環境変数からフォルダーを読み取り、各フォルダーにはそれぞれのログイン、設定、履歴が保存されます。そのため、どのアカウントもログインしたままになり、同時に実行することもできます。シェルエイリアスを使って手動で設定することも、ccamに任せることもできます。
@@ -61,7 +61,7 @@ Claude Codeの中では、`/status`でログイン中のアカウントを確認
 
 ## WindowsやWSLでも使えますか？
 
-Claude Codeは[Windowsでネイティブに、またはWSLの中で動作します](https://code.claude.com/docs/en/setup)。`CLAUDE_CONFIG_DIR`はどちらでも機能するため、ネイティブのWindowsでは上記のエイリアスやPowerShell関数で十分です。ccamはLinuxとmacOSで動作します。Windowsでは、WSLの中にインストールして使ってください。Linuxと同じように動作します。
+Claude Codeは[Windowsでネイティブに、またはWSLの中で動作します](https://code.claude.com/docs/en/setup)。`CLAUDE_CONFIG_DIR`はどちらでも機能するため、ネイティブのWindowsでは上記のエイリアスやPowerShell関数で十分です。ccamもWindowsでネイティブに動作します。PowerShellで`irm https://ccam.dev/install.ps1 | iex`を実行してインストールするか、WSLの中でLinuxのコマンドを使ってインストールします。ショートカットは`ccwork.exe`になり、`settings.json`のようなファイルの共有には開発者モードが必要です（[ccamのインストール](/docs/install)）。
 
 ## トラブルシューティング
 

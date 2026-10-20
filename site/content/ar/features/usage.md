@@ -1,10 +1,10 @@
 ---
 title: حدود الاستخدام
 description: يعرض ccam usage حدّي الخمس ساعات والأسبوع لكل الحسابات دفعة واحدة، ويضع ccam statusline اسم الحساب واستخدامه داخل Claude Code.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 7
 translation: machine
-sourceHash: 8306a8f6d950
+sourceHash: f08a2fdc6f0b
 ---
 
 يعرض `ccam usage` مقدار ما استخدمه كل حساب من حدّي الخمس ساعات والأسبوع، مع الوقت المتبقي حتى إعادة ضبط كل نافذة. استخدمه قبل أن تبدأ مهمة طويلة، أو عندما يخبرك Claude Code أن حدًا ما يقترب، لترى أي حساب لا تزال لديه سعة. و`ccam statusline` هو أمر سطر الحالة في Claude Code: يعرض اسم الحساب واستخدامه داخل Claude Code ويحفظ الأرقام لـ `ccam usage`.
@@ -100,11 +100,12 @@ $ ccam usage
 1. يجد `runStatusline` الحساب من `CCAM_PROFILE`، الذي يعيّنه ccam عندما يشغّل Claude Code، وإلا فبمطابقة `CLAUDE_CONFIG_DIR` مع مجلدات الحسابات.
 2. يقرأ `ParseStatusLine` القيمتين `rate_limits.five_hour` و`rate_limits.seven_day`. لا يحتوي JSON على حدود للطلبات في حسابات مفاتيح API، أو قبل أول رد في الجلسة؛ وعندها لا يُحفظ شيء.
 3. يكتب `SaveStatusLine` الملف `~/.local/state/ccam/usage/<name>.statusline.json`. ويستخدمه `ccam usage` عندما لا تستجيب نقطة النهاية.
-4. يطبع ccam السطر `[name] · model · 5h N% · 7d N%`. ومع `--wrap`، يشغّل أمرك عبر `sh -c` بالإدخال نفسه ويطبع بدلًا من ذلك `[name]` متبوعًا بأول سطر من مخرجات الأمر.
+4. يطبع ccam السطر `[name] · model · 5h N% · 7d N%`. ومع `--wrap`، يشغّل أمرك عبر `sh -c` بالإدخال نفسه ويطبع بدلًا من ذلك `[name]` متبوعًا بأول سطر من مخرجات الأمر. وعلى Windows يشغّل الأمر كما يفعل Claude Code: باستخدام Git Bash إذا كان مثبّتًا، وإلا باستخدام PowerShell.
+5. عندما يكون الاستخدام في نافذة الخمس ساعات أو النافذة الأسبوعية 90% أو أكثر ويوجد حساب آخر، ينتهي السطر بـ `→ ccam next --auto --continue`، مثلًا `[work] · Opus · 5h 93% · 7d 41% · → ccam next --auto --continue`.
 
 للأمر المغلَّف ثانيتان. بعدها يُنهى، ويعرض السطر اسم الحساب وحده، فلا يستطيع أمر بطيء أن يعطّل سطر الحالة في Claude Code.
 
-يكتب `ccam statusline install` المدخل `statusLine` في ملف `settings.json` لكل حساب. وعندما يكون لدى الحساب أمر لسطر الحالة بالفعل، يحتفظ به ccam بالشكل `--wrap '<old command>'`. وملف `settings.json` المشترك عبر مجموعة يُكتب مرة واحدة، عبر رابطه، فتحصل عليه كل حسابات المجموعة. وتشغيله مرة أخرى يطبع `(already set)` للملفات التي تستخدم ccam بالفعل.
+يكتب `ccam statusline install` المدخل `statusLine` في ملف `settings.json` لكل حساب. وعندما يكون لدى الحساب أمر لسطر الحالة بالفعل، يحتفظ به ccam بالشكل `--wrap '<old command>'`. وعلى Windows يُكتب مسار ccam بشرطات مائلة أمامية و`~` لمجلد المنزل (`~/.local/bin/ccam.exe statusline`)، وهو ما يفهمه Git Bash وPowerShell كلاهما. وملف `settings.json` المشترك عبر مجموعة يُكتب مرة واحدة، عبر رابطه، فتحصل عليه كل حسابات المجموعة. وتشغيله مرة أخرى يطبع `(already set)` للملفات التي تستخدم ccam بالفعل.
 
 ## الأمان والحالات الخاصة
 

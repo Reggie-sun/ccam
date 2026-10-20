@@ -2,10 +2,10 @@
 title: 명령어 레퍼런스
 metaTitle: "ccam 명령어 레퍼런스"
 description: ccam add, ccam <name>부터 ccam usage, ccam next, ccam doctor까지 ccam의 모든 명령과 옵션을 정리했습니다.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 3342453e38d3
+sourceHash: 5d3275878535
 ---
 
 명령 앞에 `--dry-run`을 붙이면 실제로 실행하지 않고 무엇을 할지만 보여 줍니다(예: `ccam --dry-run work`). Claude Code를 시작할 때(`ccam <name>`, `ccam run`, `ccam next`)와 `share`, `migrate`, `shortcut`, `update`, `doctor --fix`에서 쓸 수 있습니다. 무언가를 바꾸는 다른 명령은 실행하지 않고 이 옵션을 거부합니다.
@@ -16,7 +16,16 @@ sourceHash: 3342453e38d3
 
 `ccam <name|number> [arguments]`는 해당 계정으로 Claude Code를 시작합니다. ccam은 이름 뒤의 인자를 해석하지 않고 같은 순서 그대로 `claude`에 넘기며, 표준 입력, 종료 코드, 시그널도 `claude`를 직접 실행할 때와 똑같이 동작합니다. 이름 뒤의 `--`는 넣어도 되고 생략해도 됩니다.
 
-`ccam -p "summarise"`처럼 계정 이름 없이 인자만 넘겨 `ccam`을 실행하면 기본 계정을 사용합니다. 기본 계정은 `ccam use <name>`으로 지정합니다.
+`ccam -p "summarise"`처럼 계정 이름 없이 인자만 넘겨 `ccam`을 실행하면 현재 폴더에 지정된 계정을, 없으면 기본 계정을 사용합니다. 각각 `ccam folder <name> [folder]`와 `ccam use <name>`으로 지정합니다.
+
+```sh
+ccam folder work ~/code/company   # work inside ~/code/company and below
+ccam folder                       # list folders and the account used here
+ccam folder --remove ~/code/company
+ccam --fallback work -p "fix the tests"   # run again as another account at the limit
+```
+
+계정 이름 앞의 `--fallback`은 `-p`/`--print` 실행용입니다. 계정이 사용량 한도에 도달하면 ccam은 로그인된 계정 중 여유가 가장 많은 계정으로 같은 명령을 다시 실행하고, 끝까지 실행된 쪽의 출력만 표시합니다. [폴더별 계정](/features/folder)과 [한도에서 다시 실행](/features/next#run-again-at-the-limit)을 참고하세요.
 
 `ccwork` 같은 단축 명령도 같은 방식으로 해당 계정을 시작합니다. `ccwork --resume`은 `ccam work --resume`과 똑같이 동작합니다. 자세한 내용은 [단축 명령](/docs/commands#shortcuts)을 참고하세요.
 
@@ -108,6 +117,7 @@ ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
 ccam version         # also: ccam -v, ccam --version
+ccam completion bash # or zsh, powershell
 ```
 
 `ccam update`는 ccam을 교체하기 전에 릴리스의 SHA-256 체크섬을 확인하고, `--version v0.2.0`을 주면 특정 릴리스를 설치합니다. `.deb` 패키지로 설치한 ccam은 apt로 업데이트합니다. 자세한 내용은 [업데이트](/docs/install#update)를 참고하세요.
@@ -122,4 +132,4 @@ ccam version         # also: ccam -v, ccam --version
 | `~/.local/state/ccam/` | 사용량 캐시와 마지막 사용 시각 |
 | `~/.local/bin/<shortcut>` | `ccwork` 같은 단축 명령(ccam 링크) |
 
-`XDG_CONFIG_HOME`, `XDG_DATA_HOME`, `XDG_STATE_HOME` 변수로 이 폴더들의 위치를 바꿀 수 있습니다.
+`XDG_CONFIG_HOME`, `XDG_DATA_HOME`, `XDG_STATE_HOME` 변수로 이 폴더들의 위치를 바꿀 수 있습니다. Windows에서는 `~`가 `%USERPROFILE%`이고, 단축 명령은 `<shortcut>.exe`입니다.

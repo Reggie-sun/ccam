@@ -1,10 +1,10 @@
 ---
 title: 계정 간 공유
 description: ccam share가 계획, 백업, 충돌 선택을 거쳐 설정, CLAUDE.md, 확장 기능, 대화 내역을 그룹 폴더에 링크하는 방식과 off로 끌 때 내용을 다시 복사하는 방식입니다.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: b30b7cdb2b15
+sourceHash: 16de29bbdd57
 ---
 
 계정마다 자체 폴더가 있지만, 그 안의 내용 대부분은 따로 둘 필요가 없습니다. `ccam share`는 한 계정의 한 항목씩 공유를 켜거나 끕니다. 계정의 파일이나 폴더를 그룹 폴더로 옮기고 그 자리를 심볼릭 링크로 바꾸므로, 그룹의 모든 계정이 같은 사본을 읽고 씁니다. `ccam add` 이후에 계정이 공유하는 항목을 바꾸거나, 일부 계정만 따로 그룹으로 묶을 때 쓰세요.
@@ -112,6 +112,10 @@ Repair them with `ccam doctor --fix`, then run again
 ```
 
 `ccam doctor --fix`는 저장된 설정을 현재와 목표 양쪽에 넘겨 `share.Build`를 실행합니다. 디스크의 실제 상태로부터 모든 단계를 만들어 내고, 충돌하면 그룹의 내용을 유지하며, 바꾸는 것은 모두 백업합니다.
+
+### Windows에서
+
+Windows는 개발자 모드(설정 > 시스템 > 개발자용)이거나 관리자일 때만 심볼릭 링크를 만들 수 있습니다. `fsutil.Link`는 먼저 심볼릭 링크를 시도합니다. 그 권한이 없으면 공유 폴더(`agents`, `skills`, `projects` 등)는 어떤 사용자든 만들 수 있는 디렉터리 정션이 되며, Claude Code에서는 똑같이 동작합니다. 공유 파일(`settings.json`, `CLAUDE.md`, `history.jsonl`)은 심볼릭 링크로만 만들 수 있으므로, ccam은 `Windows links files only in Developer Mode`를 출력하고 멈춘 뒤 개발자 모드를 켜거나 그 항목을 로컬로 두라고 안내합니다. `share.Check`는 정션도 링크로 읽으며(`fsutil.LinkTarget`), 계정 폴더를 지울 때는 정션 자체만 지우고 정션이 가리키는 그룹 내용은 절대 지우지 않습니다.
 
 ## 안전장치와 예외 상황
 

@@ -2,10 +2,10 @@
 title: తరచుగా అడిగే ప్రశ్నలు
 metaTitle: "ccam FAQ: అనేక Claude Code ఖాతాలు"
 description: ccam, Claude Code ఖాతాలు, వినియోగ పరిమితులు, షేరింగ్, గోప్యత, మద్దతు ఉన్న సిస్టమ్‌ల గురించి సమాధానాలు.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 6
 translation: machine
-sourceHash: 88bd249ec51c
+sourceHash: 80a5475ccfee
 ---
 
 ## ccam అనేది Anthropic యొక్క అధికారిక టూలా?
@@ -46,7 +46,7 @@ SSH సెషన్‌లో ఎప్పటిలాగే `ccam add` లేద
 
 ## ccam ఏ సిస్టమ్‌లకు మద్దతు ఇస్తుంది?
 
-Linux (Ubuntu, Debian, Fedora, Arch, Alpine, ఇతరాలు), macOS. Windows లో, దాన్ని WSL లోపల ఉపయోగించండి.
+Linux (Ubuntu, Debian, Fedora, Arch, Alpine, ఇతరాలు), macOS, Windows 10, 11, నేరుగా లేదా WSL లోపల. Windows లో `settings.json` వంటి ఫైల్‌లను షేర్ చేయడానికి Developer Mode అవసరం; షేర్డ్ ఫోల్డర్‌లు అది లేకుండానే పనిచేస్తాయి ([Windows లో షేరింగ్](/features/share#on-windows)).
 
 ## ఒక MCP సర్వర్ ఒకే ఖాతాలో ఎందుకు కనిపిస్తుంది?
 
@@ -54,7 +54,7 @@ Linux (Ubuntu, Debian, Fedora, Arch, Alpine, ఇతరాలు), macOS. Windows
 
 ## ccam వల్ల Claude Code నెమ్మదిస్తుందా?
 
-ccam ద్వారా Claude Code ను ప్రారంభిస్తే సుమారు 4 మిల్లీసెకన్లు పెరుగుతాయి, ఇది ఒక ల్యాప్‌టాప్‌పై `scripts/perf-check.sh` తో కొలిచినది. ccam ఒక చిన్న ఫైల్‌ను చదివి, షేర్డ్ లింక్‌లను తనిఖీ చేసి, తర్వాత తన స్థానంలో `claude` ను పెడుతుంది, కాబట్టి మీరు పనిచేస్తున్నప్పుడు అది రన్ అవ్వదు.
+ccam ద్వారా Claude Code ను ప్రారంభిస్తే సుమారు 4 మిల్లీసెకన్లు పెరుగుతాయి, ఇది ఒక ల్యాప్‌టాప్‌పై `scripts/perf-check.sh` తో కొలిచినది. ccam ఒక చిన్న ఫైల్‌ను చదివి, షేర్డ్ లింక్‌లను తనిఖీ చేసి, తర్వాత తన స్థానంలో `claude` ను పెడుతుంది, కాబట్టి మీరు పనిచేస్తున్నప్పుడు అది రన్ అవ్వదు. Windows ఒక ప్రాసెస్‌ను మార్చలేదు, కాబట్టి అక్కడ ccam Claude Code ను ప్రారంభించి దాని కోసం వేచి ఉంటుంది, ఇంకేమీ చేయదు.
 
 ## ccam ను ఎలా అప్‌డేట్ చేయాలి?
 

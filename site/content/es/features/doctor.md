@@ -1,10 +1,10 @@
 ---
 title: Comprobar y reparar
 description: Comprueba enlaces compartidos, permisos de archivos, inicios de sesión y la versión de Claude Code con ccam doctor, y repara lo seguro con ccam doctor --fix.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 9
 translation: machine
-sourceHash: a1b61efe2b1f
+sourceHash: a45ca25bb722
 ---
 
 `ccam doctor` comprueba tu instalación de ccam: el binario de Claude Code, la carpeta, el inicio de sesión y los enlaces compartidos de cada cuenta, los servidores MCP compartidos, el endpoint de uso y tus atajos. `ccam doctor --fix` repara lo que puede sin perder datos y antes mueve a una carpeta de copia de seguridad cualquier archivo que reemplace. Ejecútalo cuando `ccam <name>` se detenga por un problema con un enlace compartido, después de restaurar archivos a mano o después de una actualización de Claude Code.
@@ -70,7 +70,7 @@ El bloque central se ejecuta una vez por cuenta. Las comprobaciones, y lo que ha
 
 1. **Versión de Claude Code** (`checkClaude`). Resuelve el binario `claude` igual que el iniciador y ejecuta `claude --version`. Si la versión no empieza con `2.1.302`, la versión con la que se verificó la estructura de carpetas de ccam (`doctor.LayoutVersion`), agrega `· ccam was verified against the folder layout of Claude Code 2.1.302. Any 'unknown entries' below may mean the layout changed`. Un binario que falta o un `--version` que falla es un error. Sin reparación.
 2. **Credenciales en el entorno** (`checkAuthEnv`). Advierte cuando está definida `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY` o `ANTHROPIC_AUTH_TOKEN`: todas las cuentas que se inician desde esa shell la heredan, y Claude Code la prefiere al inicio de sesión propio de la cuenta. Sin reparación; quítala tú.
-3. **Carpeta** (`checkProfile`). Una carpeta de cuenta que falta es un error y termina las comprobaciones de esa cuenta. Los permisos con algún bit de grupo u otros activado son una advertencia; `--fix` ejecuta `chmod 0700`.
+3. **Carpeta** (`checkProfile`). Una carpeta de cuenta que falta es un error y termina las comprobaciones de esa cuenta. Los permisos con algún bit de grupo u otros activado son una advertencia; `--fix` ejecuta `chmod 0700`. Windows no tiene bits de permisos, así que allí se omiten esta comprobación y la de `0600` de más abajo; la carpeta de tu perfil de usuario está protegida por su lista de acceso.
 4. **Archivo de inicio de sesión** (`checkCredentials`). `.credentials.json` se comprueba con `lstat`. Un enlace simbólico es un error, porque cada cuenta debe tener su propio token, y no se repara. Un modo distinto de `0600` es una advertencia; `--fix` ejecuta `chmod 0600`. Después se lee el inicio de sesión (en macOS, primero desde el Llavero). La falta de inicio de sesión es una advertencia que remite a `ccam login <name>`. Un token de actualización vencido es el error `login expired`; un token de acceso vencido es solo información, ya que Claude Code lo renueva en el siguiente inicio. Nada de esto se repara.
 5. **Enlaces compartidos** (`share.Check`). Compara cada ruta de `share.Layout` con la configuración de uso compartido de la cuenta, usando solo `lstat` y `readlink`. Informa de cuatro tipos: un enlace que falta, un enlace que apunta a otro sitio, un archivo normal donde debería haber un enlace y un enlace que sobra para un elemento que ahora es local. Un enlace que falta es una advertencia; los demás son errores.
 6. **Entradas desconocidas** (`checkUnknownEntries`). Lista los nombres de primer nivel de la carpeta de la cuenta que ccam no conoce (`share.Known`), como indicio de que la estructura de Claude Code cambió. Solo información.
@@ -78,6 +78,7 @@ El bloque central se ejecuta una vez por cuenta. Las comprobaciones, y lo que ha
 8. **Servidores MCP** (`checkMCP`). Carga una vez el `mcp.json` de cada grupo. Un archivo que no se puede leer es un error; un servidor que no pasa `mcp.Validate` es una advertencia. Sin reparación.
 9. **Formato de la respuesta de uso** (`checkUsageFormat`). Consulta el endpoint de uso, sin la caché y con el límite habitual de 3 segundos, para una cuenta tras otra hasta que una responde. Si la respuesta ya no se puede analizar, advierte que `ccam usage` recurre a la caché de la línea de estado. Es la única comprobación que usa la red.
 10. **Atajos** (`checkShims`). Solo cuando una cuenta tiene un atajo. Los enlaces que faltan en `~/.local/bin` son una advertencia; `--fix` llama a `shim.Install`, que solo crea los enlaces que faltan y nunca toca otros archivos. Una carpeta bin que no está en `PATH` es una advertencia y no se repara.
+11. **Carpetas** (`checkFolders`). Solo cuando existen entradas de [`ccam folder`](/features/folder). Una entrada cuya cuenta no existe es un error, y una entrada cuya carpeta ya no está es una advertencia. Ninguna se repara, porque quitar una entrada cambiaría qué cuenta se inicia allí.
 
 ### Reparar enlaces compartidos
 

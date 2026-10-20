@@ -1,11 +1,11 @@
 ---
 title: ccam ઇન્સ્ટૉલ કરો
-metaTitle: Linux અને macOS પર ccam ઇન્સ્ટૉલ કરો
-description: Linux કે macOS પર ccam એક કમાન્ડથી, .deb પેકેજથી કે સોર્સમાંથી ઇન્સ્ટૉલ કરો, અને ccam update વડે અપડેટ કરો. પહેલાં Claude Code ઇન્સ્ટૉલ હોવું જોઈએ.
-updated: 2026-10-19
+metaTitle: Linux, macOS અને Windows પર ccam ઇન્સ્ટૉલ કરો
+description: Linux, macOS કે Windows પર ccam એક કમાન્ડથી, .deb પેકેજથી કે સોર્સમાંથી ઇન્સ્ટૉલ કરો, અને ccam update વડે અપડેટ કરો. પહેલાં Claude Code ઇન્સ્ટૉલ હોવું જોઈએ.
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 7ecd1ed00e09
+sourceHash: 07eadc0769c8
 ---
 
 Linux કે macOS પર ટર્મિનલમાં આ ચલાવો:
@@ -16,13 +16,22 @@ curl -fsSL https://ccam.dev/install.sh | sh
 
 સ્ક્રિપ્ટ તમારી સિસ્ટમ માટેની રિલીઝ ડાઉનલોડ કરે છે, તેનો SHA-256 checksum તપાસે છે અને `ccam` ને `~/.local/bin` માં મૂકે છે; તમે પછીથી પસંદ કરો તે શૉર્ટકટ કમાન્ડ, જેમ કે `ccwork`, ccam આ જ ફોલ્ડરમાં બનાવે છે. જો આ ફોલ્ડર તમારા `PATH` માં ન હોય, તો સ્ક્રિપ્ટ `~/.bashrc` કે `~/.zshrc` માં ઉમેરવાની લાઇન છાપે છે.
 
+Windows પર, PowerShell માં આ ચલાવો:
+
+```powershell
+irm https://ccam.dev/install.ps1 | iex
+```
+
+તે `ccam_windows_<arch>.zip` ડાઉનલોડ કરે છે, તેનો SHA-256 checksum તપાસે છે, `ccam.exe` ને `%USERPROFILE%\.local\bin` માં મૂકે છે, એ જ ફોલ્ડર જ્યાં Claude Code નું ઇન્સ્ટૉલર `claude.exe` મૂકે છે, અને જો તે ફોલ્ડર તમારા યુઝર `PATH` માં ન હોય તો તેને ઉમેરે છે. પછી નવું ટર્મિનલ ખોલો.
+
 ccam તમારા માટે Claude Code શરૂ કરે છે, તેથી પહેલાં [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) ઇન્સ્ટૉલ કરો અને ખાતરી કરો કે `claude --version` કામ કરે છે.
 
 ## સમર્થિત સિસ્ટમ
 
 - x86-64 અને ARM64 પર Linux: Ubuntu, Debian, Fedora, Arch, Alpine અને બીજાં ડિસ્ટ્રિબ્યુશન. બાઇનરી સ્ટેટિક છે અને તેને કોઈ ડિપેન્ડન્સીની જરૂર નથી.
 - Apple silicon અને Intel પર macOS.
-- Windows સીધું સમર્થિત નથી. WSL ની અંદર ccam કોઈ પણ Linux સિસ્ટમની જેમ કામ કરે છે.
+- x86-64 અને ARM64 પર Windows 10 અને 11, PowerShell, Windows Terminal કે Git Bash માં. શેર કરેલાં ફોલ્ડર દરેક યુઝર માટે કામ કરે છે. શેર કરેલી ફાઇલો (`settings.json`, `CLAUDE.md`, `history.jsonl`) માટે Developer Mode (Settings > System > For developers) જોઈએ, કારણ કે Windows ફક્ત એ મોડમાં, કે ઍડમિનિસ્ટ્રેટરને જ, ફાઇલની લિંક બનાવવા દે છે; જુઓ [Windows પર શેરિંગ](/features/share#on-windows).
+- WSL ની અંદર ccam કોઈ પણ Linux સિસ્ટમની જેમ કામ કરે છે.
 
 ## ઇન્સ્ટૉલ કરવાની બીજી રીતો
 
@@ -46,11 +55,19 @@ go install github.com/jhyunwoo/ccam/cmd/ccam@latest
 curl -fsSL https://ccam.dev/install.sh | CCAM_VERSION=v0.1.0 sh
 ```
 
+```powershell
+$env:CCAM_VERSION = 'v0.1.0'; irm https://ccam.dev/install.ps1 | iex
+```
+
 ## શેલ completion
 
 ```sh
 ccam completion bash > ~/.local/share/bash-completion/completions/ccam
 ccam completion zsh > "${fpath[1]}/_ccam"
+```
+
+```powershell
+ccam completion powershell >> $PROFILE
 ```
 
 Completion `ccam` ના બધા કમાન્ડ અને વિકલ્પોને આવરી લે છે, એકાઉન્ટનાં નામ સહિત.
@@ -92,6 +109,8 @@ ccam --dry-run update
 
 ઇન્સ્ટૉલ સ્ક્રિપ્ટ ફરીથી ચલાવવાથી પણ `~/.local/bin` માંની કૉપી અપડેટ થાય છે. જો તમે ccam ને `go install` વડે બનાવ્યું હોય, તો એ જ કમાન્ડ ફરીથી ચલાવો.
 
+**Windows.** `ccam update` Windows માટેની `.zip` ડાઉનલોડ કરે છે. Windows પર ચાલતો પ્રોગ્રામ બદલી શકાતો નથી, તેથી જૂની બાઇનરીનું નામ બદલીને `ccam.exe.old` કરાય છે, જેને આગલું અપડેટ કાઢી નાખે છે.
+
 **Debian અને Ubuntu પેકેજ.** apt એ ઇન્સ્ટૉલ કરેલા `/usr/bin/ccam` ને `ccam update` બદલતું નથી, અને તેના બદલે આ પગલાં છાપે છે. [રિલીઝ પેજ](https://github.com/jhyunwoo/ccam/releases) પરથી નવું `ccam_<version>_linux_amd64.deb` ડાઉનલોડ કરો અને તેને જૂના પેકેજ પર ઇન્સ્ટૉલ કરો:
 
 ```sh
@@ -107,6 +126,14 @@ ccam list
 ccam shortcut work --remove   # once for each account that has a shortcut
 rm ~/.local/bin/ccam
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
+```
+
+Windows પર, PowerShell માં:
+
+```powershell
+ccam shortcut work --remove   # once for each account that has a shortcut
+Remove-Item ~\.local\bin\ccam.exe
+Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
 ```
 
 `~/.local/share/ccam` કાઢી નાખવાથી તેમાં રાખેલાં લૉગિન અને વાતચીતનો ઇતિહાસ પણ કાઢી નખાય છે. તમે [ઇમ્પોર્ટ કરેલું](/docs/commands) `~/.claude` ફોલ્ડર જ્યાં છે ત્યાં જ રહે છે.

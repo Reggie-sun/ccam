@@ -1,10 +1,10 @@
 ---
 title: Tek bilgisayarda birden fazla Claude Code hesabı
 description: CLAUDE_CONFIG_DIR ile birden fazla Claude Code hesabını yan yana çalıştırın; elle takma adlarla ya da ccam ile otomatik kurun ve hesaplar arasında geçiş yapın.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: e2f4deb40c81
+sourceHash: f2982e4317a2
 ---
 
 Her hesaba kendi yapılandırma klasörünü verin. Claude Code klasörü `CLAUDE_CONFIG_DIR` ortam değişkeninden okur ve her klasör kendi giriş bilgilerini, ayarlarını ve geçmişini tutar; böylece her hesap oturum açık kalır ve hesapları aynı anda çalıştırabilirsiniz. Bunu bir kabuk takma adıyla elle kurabilir ya da ccam'a bırakabilirsiniz.
@@ -61,7 +61,7 @@ Claude Code içinde `/status`, oturum açtığınız hesabı gösterir. ccam ile
 
 ## Bu Windows ve WSL'de çalışır mı?
 
-Claude Code [Windows'ta yerel olarak ve WSL içinde](https://code.claude.com/docs/en/setup) çalışır. `CLAUDE_CONFIG_DIR` ikisinde de çalışır; bu yüzden yerel Windows'ta yukarıdaki takma ad veya PowerShell fonksiyonu yeterlidir. ccam Linux ve macOS üzerinde çalışır; Windows'ta onu WSL içinde kurup kullanın, orada Linux'taki gibi çalışır.
+Claude Code [Windows'ta yerel olarak ve WSL içinde](https://code.claude.com/docs/en/setup) çalışır. `CLAUDE_CONFIG_DIR` ikisinde de çalışır; bu yüzden yerel Windows'ta yukarıdaki takma ad veya PowerShell fonksiyonu yeterlidir. ccam de Windows'ta yerel olarak çalışır: PowerShell'de `irm https://ccam.dev/install.ps1 | iex` ile ya da WSL içinde Linux komutuyla kurun. Kısayollar `ccwork.exe` olur ve `settings.json` gibi dosyaları paylaşmak Geliştirici Modu gerektirir ([ccam kurulumu](/docs/install)).
 
 ## Sorun giderme
 

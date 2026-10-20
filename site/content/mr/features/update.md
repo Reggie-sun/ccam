@@ -1,10 +1,10 @@
 ---
 title: ccam अपडेट करणे
 description: ccam update SHA-256 तपासणीनंतर ccam च्या जागी GitHub वरील सर्वात नवीन रिलीज ठेवते; --check फक्त कळवते आणि --version दिलेला रिलीज tag इन्स्टॉल करते.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 10
 translation: machine
-sourceHash: 83fc20191328
+sourceHash: d91499b95d3d
 ---
 
 `ccam update` GitHub वरून ccam रिलीज डाउनलोड करते, तो रिलीजच्या `checksums.txt` शी तपासते आणि चालू binary एका rename ने बदलते. तुम्ही ccam install script ने किंवा archive मधून इन्स्टॉल केले असेल तेव्हा ते वापरा. ccam कधीच स्वतःहून अपडेट्स तपासत नाही: फक्त हीच कमांड GitHub शी संपर्क करते, त्यामुळे इतर प्रत्येक कमांड offline सुद्धा तशीच चालते.
@@ -53,9 +53,9 @@ $ ccam update
 2. `--version` शिवाय, `Updater.Latest` redirect न पाळता `<releases>/latest` ची request करते, आणि `Location` header (`…/tag/v0.5.0`) मधून tag वाचते. हे GitHub API ऐवजी releases page वापरते, त्यामुळे API ची तासाला 60 requests ची मर्यादा लागू होत नाही. या शोधाला 10 सेकंद असतात.
 3. `parseVersion` tag एका कडक pattern शी तपासते. tag download URLs मध्ये आणि छापलेल्या shell कमांडमध्ये जातो, त्यामुळे `/`, `%`, spaces किंवा shell अक्षरे असलेले काहीही पुढे जात नाही. `compareVersions` त्याची चालू आवृत्तीशी तुलना करते; pre-release त्याच्या रिलीजच्या आधी येतो.
 4. `managed()` आणि `writable()` ठरवतात की ccam binary बदलू शकते की नाही (खाली पाहा).
-5. `Updater.Fetch` `ccam_<os>_<arch>.tar.gz` आणि `checksums.txt` एकाच वेळी डाउनलोड करते, दोन्हीसाठी 2 मिनिटे. प्रत्येक डाउनलोड 256 MB पर्यंत मर्यादित असतो.
+5. `Updater.Fetch` `ccam_<os>_<arch>.tar.gz` (Windows वर `ccam_windows_<arch>.zip`) आणि `checksums.txt` एकाच वेळी डाउनलोड करते, दोन्हीसाठी 2 मिनिटे. प्रत्येक डाउनलोड 256 MB पर्यंत मर्यादित असतो.
 6. इतर काहीही होण्यापूर्वी archive चा SHA-256 `checksums.txt` मधील त्याच्या ओळीशी जुळणे आवश्यक आहे. ओळ नसल्यास किंवा checksum वेगळा असल्यास अपडेट `nothing was changed` सह थांबतो.
-7. `extract()` tar वाचते आणि `ccam` नावाची पहिली regular फाइल घेते. फोल्डर, लिंक्स आणि इतर नोंदी दुर्लक्षित केल्या जातात, आणि binary सुद्धा 256 MB पर्यंत मर्यादित असते.
+7. `extract()` tar वाचते आणि `ccam` नावाची पहिली regular फाइल घेते (`extractZip` zip मधून `ccam.exe` घेते). फोल्डर, लिंक्स आणि इतर नोंदी दुर्लक्षित केल्या जातात, आणि binary सुद्धा 256 MB पर्यंत मर्यादित असते.
 8. `Updater.Install` नवीन binary `fsutil.AtomicWrite` ने लिहिते: binary शेजारी `.ccam.tmp*` ही तात्पुरती फाइल, जुन्या फाइलच्या permission bits सह, डिस्कवर flush करून जुन्या फाइलवर rename केलेली.
 
 tag शोधण्यापासून rename पर्यंत संपूर्ण pipeline:
@@ -63,6 +63,8 @@ tag शोधण्यापासून rename पर्यंत संपू�
 <!-- motion:update-pipeline -->
 
 archive आणि `checksums.txt` शेजारी शेजारी डाउनलोड होतात, आणि checksum जुळेपर्यंत काहीही लिहिले जात नाही. rename atomic आहे, त्यामुळे crash किंवा भरलेली डिस्क एकतर जुनी binary किंवा नवीन binary ठेवते, कधीच अर्धवट नाही. `~/.local/bin/ccwork` सारख्या शॉर्टकट कमांड्स ccam binary च्या symlinks आहेत, त्यामुळे त्या कोणत्याही बदलाशिवाय नवीन आवृत्ती चालवतात.
+
+Windows वर चालू प्रोग्रामची फाइल बदलता किंवा हटवता येत नाही, फक्त तिचे नाव बदलता येते. `Updater.Install` नवीन binary `ccam.exe.new` मध्ये लिहिते, चालू `ccam.exe` चे नाव `ccam.exe.old` करते, आणि नवीन फाइलचे नाव `ccam.exe` करते. शेवटचा टप्पा अयशस्वी झाला, तर जुन्या binary चे नाव परत पूर्वीसारखे केले जाते. पुढचा अपडेट `ccam.exe.old` हटवतो. symbolic links ऐवजी hard links असलेले शॉर्टकट ([शॉर्टकट कमांड्स](/features/shortcuts)) लगेच नंतर नवे केले जातात, त्यामुळे तेही नवीन आवृत्ती चालवतात.
 
 ### पॅकेजने इन्स्टॉल केलेले
 
@@ -85,7 +87,7 @@ Or install a copy in ~/.local/bin with the install script:
   curl -fsSL https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.sh | sh
 ```
 
-Linux शिवाय इतर systems वर फक्त install script ची ओळ छापली जाते. फोल्डरमध्ये लिहिता येत नसेल, तर ccam install script पुन्हा चालवायला सुचवते, जे ccam `~/.local/bin` मध्ये इन्स्टॉल करते.
+Linux शिवाय इतर systems वर फक्त install script ची ओळ छापली जाते: Windows वर `irm https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.ps1 | iex`. फोल्डरमध्ये लिहिता येत नसेल, तर ccam install script पुन्हा चालवायला सुचवते, जे ccam `~/.local/bin` मध्ये इन्स्टॉल करते.
 
 ## सुरक्षितता आणि अपवादात्मक स्थिती
 

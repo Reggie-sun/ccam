@@ -1,10 +1,10 @@
 ---
 title: 컴퓨터 한 대에서 Claude Code 여러 계정 사용하기
 description: CLAUDE_CONFIG_DIR로 여러 Claude Code 계정을 나란히 실행하고 전환하는 방법입니다. 셸 별칭으로 직접 설정하거나 ccam으로 자동화할 수 있습니다.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: e2f4deb40c81
+sourceHash: f2982e4317a2
 ---
 
 계정마다 설정 폴더를 따로 두면 됩니다. Claude Code는 `CLAUDE_CONFIG_DIR` 환경 변수로 사용할 폴더를 정하고, 폴더마다 로그인 정보, 설정, 대화 내역이 따로 저장됩니다. 그래서 모든 계정이 로그인 상태를 유지하고, 여러 계정을 동시에 실행할 수 있습니다. 셸 별칭으로 직접 설정할 수도 있고, ccam에 맡길 수도 있습니다.
@@ -61,7 +61,7 @@ Claude Code 안에서 `/status`를 입력하면 로그인한 계정이 표시됩
 
 ## Windows와 WSL에서도 되나요?
 
-Claude Code는 [Windows에서 네이티브로, 그리고 WSL 안에서](https://code.claude.com/docs/en/setup) 실행됩니다. `CLAUDE_CONFIG_DIR`은 두 환경 모두에서 동작하므로, 네이티브 Windows에서는 위의 별칭이나 PowerShell 함수로 충분합니다. ccam은 Linux와 macOS에서 실행됩니다. Windows에서는 WSL 안에 설치해 사용하면 Linux에서와 똑같이 동작합니다.
+Claude Code는 [Windows에서 네이티브로, 그리고 WSL 안에서](https://code.claude.com/docs/en/setup) 실행됩니다. `CLAUDE_CONFIG_DIR`은 두 환경 모두에서 동작하므로, 네이티브 Windows에서는 위의 별칭이나 PowerShell 함수로 충분합니다. ccam도 Windows에서 네이티브로 실행됩니다. PowerShell에서 `irm https://ccam.dev/install.ps1 | iex`로 설치하거나, WSL 안에서 Linux용 명령으로 설치하세요. 단축 명령은 `ccwork.exe`가 되고, `settings.json` 같은 파일을 공유하려면 개발자 모드가 필요합니다([ccam 설치](/docs/install)).
 
 ## 문제 해결
 

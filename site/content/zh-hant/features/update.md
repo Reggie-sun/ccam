@@ -1,10 +1,10 @@
 ---
 title: 更新 ccam
 description: ccam update 會在檢查 SHA-256 之後以最新的 GitHub 發行版本取代 ccam；--check 只回報，--version 安裝指定的發行版本標籤。
-updated: 2026-10-19
+updated: 2026-10-20
 order: 10
 translation: machine
-sourceHash: 83fc20191328
+sourceHash: d91499b95d3d
 ---
 
 `ccam update` 會從 GitHub 下載 ccam 的發行版本，以該發行版本的 `checksums.txt` 驗證，然後透過一次 rename 取代正在執行的執行檔。如果你是用安裝腳本或壓縮檔安裝 ccam，請使用它。ccam 絕不會自行檢查更新：只有這個指令會連線到 GitHub，所以其他所有指令在離線時都一樣能運作。
@@ -53,9 +53,9 @@ $ ccam update
 2. 沒有 `--version` 時，`Updater.Latest` 會請求 `<releases>/latest` 但不跟隨重新導向，並從 `Location` 標頭（`…/tag/v0.5.0`）讀取標籤。這裡使用的是發行版本頁面而不是 GitHub API，所以不受 API 每小時 60 次請求的限制。查詢的時間限制為 10 秒。
 3. `parseVersion` 以嚴格的格式檢查標籤。標籤會出現在下載 URL 和印出的 shell 指令中，所以任何含有 `/`、`%`、空白或 shell 字元的內容都無法通過。`compareVersions` 會把它和正在執行的版本比較；預發行版本排在其正式版本之前。
 4. `managed()` 和 `writable()` 決定 ccam 是否能取代這個執行檔（見下文）。
-5. `Updater.Fetch` 同時下載 `ccam_<os>_<arch>.tar.gz` 和 `checksums.txt`，兩者合計的時間限制為 2 分鐘。每個下載的上限為 256 MB。
+5. `Updater.Fetch` 同時下載 `ccam_<os>_<arch>.tar.gz`（在 Windows 上為 `ccam_windows_<arch>.zip`）和 `checksums.txt`，兩者合計的時間限制為 2 分鐘。每個下載的上限為 256 MB。
 6. 在做任何其他事之前，壓縮檔的 SHA-256 必須和 `checksums.txt` 中對應的那一行相符。缺少那一行或總和檢查碼不同時，更新會以 `nothing was changed` 停止。
-7. `extract()` 讀取 tar，取出第一個名為 `ccam` 的一般檔案。資料夾、連結和其他項目都會被忽略，執行檔的上限同樣是 256 MB。
+7. `extract()` 讀取 tar，取出第一個名為 `ccam` 的一般檔案（`extractZip` 則從 zip 中取出 `ccam.exe`）。資料夾、連結和其他項目都會被忽略，執行檔的上限同樣是 256 MB。
 8. `Updater.Install` 以 `fsutil.AtomicWrite` 寫入新的執行檔：在執行檔旁邊建立暫存檔 `.ccam.tmp*`，套用舊檔案的權限位元，寫入磁碟後再 rename 覆蓋舊檔案。
 
 從查詢標籤到 rename 的完整流程：
@@ -63,6 +63,8 @@ $ ccam update
 <!-- motion:update-pipeline -->
 
 壓縮檔和 `checksums.txt` 會並行下載，在總和檢查碼相符之前不會寫入任何東西。rename 是原子操作，所以當機或磁碟已滿時，留下的不是舊執行檔就是新執行檔，絕不會只有一半。`~/.local/bin/ccwork` 這類快捷指令是指向 ccam 執行檔的符號連結，所以不需任何變更就會執行新版本。
+
+在 Windows 上，執行中程式的檔案無法被取代或刪除，只能重新命名。`Updater.Install` 會把新的執行檔寫入 `ccam.exe.new`，把執行中的 `ccam.exe` 重新命名為 `ccam.exe.old`，再把新檔案重新命名為 `ccam.exe`。如果最後一步失敗，舊的執行檔會被改回原來的名稱。下次更新時會刪除 `ccam.exe.old`。以永久連結而非符號連結建立的快捷指令（[快捷指令](/features/shortcuts)）會在之後立即更新，所以它們也會執行新版本。
 
 ### 由套件管理的安裝
 
@@ -85,7 +87,7 @@ Or install a copy in ~/.local/bin with the install script:
   curl -fsSL https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.sh | sh
 ```
 
-在 Linux 以外的系統上，只會印出安裝腳本那一行。資料夾無法寫入時，ccam 會建議重新執行安裝腳本，把 ccam 安裝到 `~/.local/bin`。
+在 Linux 以外的系統上，只會印出安裝腳本那一行：在 Windows 上是 `irm https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.ps1 | iex`。資料夾無法寫入時，ccam 會建議重新執行安裝腳本，把 ccam 安裝到 `~/.local/bin`。
 
 ## 安全性和特殊情況
 

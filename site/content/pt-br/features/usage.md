@@ -1,10 +1,10 @@
 ---
 title: Limites de uso
 description: ccam usage mostra os limites de 5 horas e semanais de todas as contas de uma vez, e ccam statusline coloca o nome da conta e o uso no Claude Code.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 7
 translation: machine
-sourceHash: 8306a8f6d950
+sourceHash: f08a2fdc6f0b
 ---
 
 `ccam usage` mostra quanto dos limites de 5 horas e semanal cada conta já usou, com o tempo até cada janela reiniciar. Use-o antes de começar uma tarefa longa, ou quando o Claude Code avisar que um limite está próximo, para ver qual conta ainda tem espaço. `ccam statusline` é o comando de linha de status do Claude Code: ele mostra o nome da conta e o uso dentro do Claude Code e salva os números para o `ccam usage`.
@@ -100,11 +100,12 @@ O Claude Code executa o comando de linha de status e envia a ele um documento JS
 1. `runStatusline` encontra a conta por `CCAM_PROFILE`, que o ccam define ao iniciar o Claude Code, ou então comparando `CLAUDE_CONFIG_DIR` com as pastas das contas.
 2. `ParseStatusLine` lê `rate_limits.five_hour` e `rate_limits.seven_day`. O JSON não tem limites de taxa para contas com chave de API, nem antes da primeira resposta da sessão; nesses casos, nada é salvo.
 3. `SaveStatusLine` grava `~/.local/state/ccam/usage/<name>.statusline.json`. O `ccam usage` o usa quando o endpoint não responde.
-4. O ccam imprime `[name] · model · 5h N% · 7d N%`. Com `--wrap`, ele executa o seu comando com `sh -c` e a mesma entrada e, em vez disso, imprime `[name]` seguido da primeira linha do comando.
+4. O ccam imprime `[name] · model · 5h N% · 7d N%`. Com `--wrap`, ele executa o seu comando com `sh -c` e a mesma entrada e, em vez disso, imprime `[name]` seguido da primeira linha do comando. No Windows, ele executa o comando como o Claude Code faz: com o Git Bash, se estiver instalado, senão com o PowerShell.
+5. Quando o uso de 5 horas ou o semanal está em 90% ou mais e existe outra conta, a linha termina com `→ ccam next --auto --continue`, por exemplo `[work] · Opus · 5h 93% · 7d 41% · → ccam next --auto --continue`.
 
 O comando encapsulado tem 2 segundos. Depois disso, ele é encerrado e a linha mostra só o nome da conta, então um comando lento não consegue travar a linha de status do Claude Code.
 
-`ccam statusline install` grava `statusLine` no `settings.json` de cada conta. Quando uma conta já tem um comando de linha de status, o ccam o mantém como `--wrap '<old command>'`. Um `settings.json` compartilhado por um grupo é gravado uma única vez, pelo link, então todas as contas do grupo o recebem. Executá-lo de novo imprime `(already set)` para os arquivos que já usam o ccam.
+`ccam statusline install` grava `statusLine` no `settings.json` de cada conta. Quando uma conta já tem um comando de linha de status, o ccam o mantém como `--wrap '<old command>'`. No Windows, o caminho do ccam é gravado com barras normais e `~` para a pasta pessoal (`~/.local/bin/ccam.exe statusline`), que tanto o Git Bash quanto o PowerShell entendem. Um `settings.json` compartilhado por um grupo é gravado uma única vez, pelo link, então todas as contas do grupo o recebem. Executá-lo de novo imprime `(already set)` para os arquivos que já usam o ccam.
 
 ## Segurança e casos especiais
 

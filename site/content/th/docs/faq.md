@@ -2,10 +2,10 @@
 title: คำถามที่พบบ่อย
 metaTitle: "ccam FAQ: ใช้ Claude Code หลายบัญชี"
 description: "คำตอบเกี่ยวกับ ccam บัญชี Claude Code ขีดจำกัดการใช้งาน การใช้ร่วมกัน ความเป็นส่วนตัว และระบบที่รองรับ"
-updated: 2026-10-19
+updated: 2026-10-20
 order: 6
 translation: machine
-sourceHash: 88bd249ec51c
+sourceHash: 80a5475ccfee
 ---
 
 ## ccam เป็นเครื่องมืออย่างเป็นทางการของ Anthropic หรือไม่?
@@ -46,7 +46,7 @@ ccam ไม่เคยแชร์การเข้าสู่ระบบ Cl
 
 ## ccam รองรับระบบใดบ้าง?
 
-Linux (Ubuntu, Debian, Fedora, Arch, Alpine และอื่น ๆ) และ macOS บน Windows ให้ใช้งานภายใน WSL
+Linux (Ubuntu, Debian, Fedora, Arch, Alpine และอื่น ๆ), macOS และ Windows 10 และ 11 ทั้งแบบเนทีฟและภายใน WSL บน Windows การใช้ไฟล์อย่าง `settings.json` ร่วมกันต้องเปิด Developer Mode ส่วนโฟลเดอร์ที่ใช้ร่วมกันทำงานได้โดยไม่ต้องเปิด ([การใช้ร่วมกันบน Windows](/features/share#on-windows))
 
 ## ทำไมเซิร์ฟเวอร์ MCP จึงแสดงอยู่ในบัญชีเดียวเท่านั้น?
 
@@ -54,7 +54,7 @@ Linux (Ubuntu, Debian, Fedora, Arch, Alpine และอื่น ๆ) และ
 
 ## ccam ทำให้ Claude Code ช้าลงหรือไม่?
 
-การเริ่ม Claude Code ผ่าน ccam ใช้เวลาเพิ่มประมาณ 4 มิลลิวินาที ซึ่งวัดด้วย `scripts/perf-check.sh` บนแล็ปท็อป ccam อ่านไฟล์ขนาดเล็กหนึ่งไฟล์ ตรวจสอบลิงก์ที่ใช้ร่วมกัน แล้วแทนที่ตัวเองด้วย `claude` จึงไม่ได้ทำงานอยู่ระหว่างที่คุณทำงาน
+การเริ่ม Claude Code ผ่าน ccam ใช้เวลาเพิ่มประมาณ 4 มิลลิวินาที ซึ่งวัดด้วย `scripts/perf-check.sh` บนแล็ปท็อป ccam อ่านไฟล์ขนาดเล็กหนึ่งไฟล์ ตรวจสอบลิงก์ที่ใช้ร่วมกัน แล้วแทนที่ตัวเองด้วย `claude` จึงไม่ได้ทำงานอยู่ระหว่างที่คุณทำงาน Windows แทนที่โปรเซสไม่ได้ บน Windows ccam จึงเริ่ม Claude Code และรอให้มันจบ โดยไม่ทำอย่างอื่น
 
 ## จะอัปเดต ccam ได้อย่างไร?
 

@@ -1,10 +1,10 @@
 ---
 title: एका कॉम्प्युटरवर अनेक Claude Code खाती वापरा
 description: CLAUDE_CONFIG_DIR वापरून अनेक Claude Code खाती शेजारी शेजारी चालवा, शेल aliases ने हाताने किंवा ccam ने आपोआप, आणि खाती बदला.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: e2f4deb40c81
+sourceHash: f2982e4317a2
 ---
 
 प्रत्येक खात्याला स्वतःचा configuration फोल्डर द्या. Claude Code हा फोल्डर `CLAUDE_CONFIG_DIR` environment variable मधून वाचते, आणि प्रत्येक फोल्डरमध्ये स्वतःचे लॉगिन, सेटिंग्ज आणि इतिहास असतो. त्यामुळे प्रत्येक खाते लॉगिन राहते आणि तुम्ही ती एकाच वेळी चालवू शकता. हे तुम्ही शेल alias ने हाताने सेट करू शकता, किंवा ccam ला करू देऊ शकता.
@@ -61,7 +61,7 @@ Claude Code मध्ये `/status` तुम्ही कोणत्या �
 
 ## हे Windows आणि WSL वर चालते का?
 
-Claude Code [थेट Windows वर आणि WSL मध्येही](https://code.claude.com/docs/en/setup) चालते. `CLAUDE_CONFIG_DIR` दोन्हीकडे काम करते, त्यामुळे native Windows वर वरील alias किंवा PowerShell function पुरेसे आहे. ccam Linux आणि macOS वर चालते; Windows वर ते WSL मध्ये इन्स्टॉल करून वापरा, तिथे ते Linux सारखेच काम करते.
+Claude Code [थेट Windows वर आणि WSL मध्येही](https://code.claude.com/docs/en/setup) चालते. `CLAUDE_CONFIG_DIR` दोन्हीकडे काम करते, त्यामुळे native Windows वर वरील alias किंवा PowerShell function पुरेसे आहे. ccam सुद्धा थेट Windows वर चालते: PowerShell मध्ये `irm https://ccam.dev/install.ps1 | iex` ने ते इन्स्टॉल करा, किंवा WSL मध्ये Linux च्या कमांडने. शॉर्टकट `ccwork.exe` बनतात, आणि `settings.json` सारख्या फाइल्स शेअर करण्यासाठी Developer Mode लागतो ([ccam इन्स्टॉल करा](/docs/install)).
 
 ## समस्या निवारण
 

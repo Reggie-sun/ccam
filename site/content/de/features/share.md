@@ -1,10 +1,10 @@
 ---
 title: Teilen zwischen Konten
 description: Wie ccam share Einstellungen, CLAUDE.md, Erweiterungen und Verlauf mit Plan und Sicherungen in einen Gruppenordner verlinkt und wie off zurückkopiert.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: b30b7cdb2b15
+sourceHash: 16de29bbdd57
 ---
 
 Jedes Konto hat seinen eigenen Ordner, aber das meiste darin muss nicht getrennt sein. `ccam share` schaltet das Teilen für ein Konto und ein Element nach dem anderen ein oder aus: Die Datei oder der Ordner des Kontos wird in einen Gruppenordner verschoben und durch einen symbolischen Link ersetzt, sodass jedes Konto der Gruppe dieselbe Kopie liest und schreibt. Verwende es nach `ccam add`, um zu ändern, was ein Konto teilt, oder um einige Konten in eine eigene Gruppe zu stecken.
@@ -112,6 +112,10 @@ Repair them with `ccam doctor --fix`, then run again
 ```
 
 `ccam doctor --fix` führt `share.Build` mit den gespeicherten Einstellungen auf beiden Seiten aus. Es leitet jeden Schritt aus dem ab, was auf der Festplatte liegt, behält bei Konflikten den Inhalt der Gruppe und sichert alles, was es ersetzt.
+
+### Unter Windows
+
+Windows legt symbolische Links nur im Entwicklermodus (Einstellungen > System > Für Entwickler) oder für einen Administrator an. `fsutil.Link` versucht zuerst einen symbolischen Link. Ohne dieses Recht wird ein geteilter Ordner (`agents`, `skills`, `projects` und die anderen) zu einer Verzeichnisverbindung (Junction), die jeder Benutzer anlegen darf und die für Claude Code genauso funktioniert. Eine geteilte Datei (`settings.json`, `CLAUDE.md`, `history.jsonl`) kann nur ein symbolischer Link sein, deshalb hält ccam mit `Windows links files only in Developer Mode` an und schlägt vor, den Modus einzuschalten oder das Element lokal zu belassen. `share.Check` liest Junctions als Links (`fsutil.LinkTarget`), und beim Entfernen eines Kontoordners wird nur die Junction selbst entfernt, nie der Gruppeninhalt, auf den sie zeigt.
 
 ## Sicherheit und Sonderfälle
 

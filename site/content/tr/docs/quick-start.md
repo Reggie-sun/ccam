@@ -2,10 +2,10 @@
 title: Hızlı başlangıç
 metaTitle: "Hızlı başlangıç: Claude Code hesabı ekle ve değiştir"
 description: ccam add ile iki Claude Code hesabı ekleyin, onlara ccwork gibi kısayollar verin, aralarında geçiş yapın ve neyi paylaşacaklarını seçin.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: a10d91d2a64e
+sourceHash: 55f81dae9fc0
 ---
 
 Her hesabı `ccam add` ile ekleyin, ardından Claude Code'u `ccam <name>` ile veya adını kendiniz seçtiğiniz `ccwork` gibi bir kısayolla başlatın. Çoğu kişi için bu kadarı yeterlidir.
@@ -107,7 +107,7 @@ ccam usage
 ccam next --continue
 ```
 
-`ccam usage`, tüm hesapların 5 saatlik ve haftalık kullanımını gösterir. `ccam next --continue`, aynı konuşmayı bir sonraki hesapta açar. [Kullanım limitleri](/docs/usage-limits) sayfasına bakın.
+`ccam usage`, tüm hesapların 5 saatlik ve haftalık kullanımını gösterir. `ccam next --continue`, aynı konuşmayı bir sonraki hesapta açar. Betiklerde `ccam --fallback work -p "…"` kendiliğinden geçiş yapar. [Kullanım limitleri](/docs/usage-limits) sayfasına bakın.
 
 ## Zaten ~/.claude kullanıyor musunuz?
 

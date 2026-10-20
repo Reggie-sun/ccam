@@ -4,7 +4,7 @@ description: Birden fazla Claude Code hesabı çalıştırmak için CLAUDE_CONFI
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: ea24bb091caf
+sourceHash: b9fbcb88f111
 ---
 
 Her hesap için bir kabuk takma adı (alias), birden fazla Claude Code hesabı çalıştırmanın en basit yoludur. ccam arka planda aynı şeyi yapar ve buna paylaşım, hesap değiştirme ve kullanım takibi ekler.
@@ -42,6 +42,8 @@ ccam add work --shortcut ccwork
 | Bir konuşmaya başka hesapta devam etme | Hayır | `ccam next --continue` |
 | Tüm hesapların kullanımı | Hayır | `ccam usage` |
 | En çok pay kalan hesabı seçme | Hayır | `ccam next --auto` |
+| Limitte bir `-p` işini başka bir hesapla yeniden çalıştırma | Hayır | `ccam --fallback` |
+| Her proje klasörü için bir hesap | Hayır | `ccam folder` |
 | Durum satırında hesap adı | Hayır | `ccam statusline install` |
 | Bozuk bağlantıları onarma | Elle | `ccam doctor --fix` |
 | Ek yazılım | Yok | Tek bir statik ikili dosya |

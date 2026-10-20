@@ -1,10 +1,10 @@
 ---
 title: વપરાશ મર્યાદા
 description: ccam usage દરેક એકાઉન્ટની 5 કલાકની અને સાપ્તાહિક મર્યાદા એકસાથે બતાવે છે, અને ccam statusline એકાઉન્ટનું નામ અને વપરાશ Claude Code માં મૂકે છે.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 7
 translation: machine
-sourceHash: 8306a8f6d950
+sourceHash: f08a2fdc6f0b
 ---
 
 `ccam usage` બતાવે છે કે દરેક એકાઉન્ટે 5 કલાકની અને સાપ્તાહિક મર્યાદામાંથી કેટલું વાપર્યું છે, અને દરેક વિન્ડો રીસેટ થવામાં કેટલો સમય બાકી છે. કોઈ લાંબું કામ શરૂ કરતાં પહેલાં, અથવા Claude Code મર્યાદા નજીક હોવાનું કહે ત્યારે, કયા એકાઉન્ટ પાસે જગ્યા બાકી છે તે જોવા તેને વાપરો. `ccam statusline` એ Claude Code માટેનો સ્ટેટસ લાઇન કમાન્ડ છે: તે Claude Code ની અંદર એકાઉન્ટનું નામ અને વપરાશ બતાવે છે અને `ccam usage` માટે આંકડા સેવ કરે છે.
@@ -100,11 +100,12 @@ Claude Code સ્ટેટસ લાઇન કમાન્ડ ચલાવે �
 1. `runStatusline` `CCAM_PROFILE` પરથી એકાઉન્ટ શોધે છે, જે ccam Claude Code શરૂ કરતી વખતે સેટ કરે છે, અથવા નહીં તો `CLAUDE_CONFIG_DIR` ને એકાઉન્ટ ફોલ્ડર સાથે મેળવીને.
 2. `ParseStatusLine` `rate_limits.five_hour` અને `rate_limits.seven_day` વાંચે છે. API key વાળાં એકાઉન્ટ માટે, અથવા સેશનના પહેલા જવાબ પહેલાં, JSON માં rate limit હોતી નથી; ત્યારે કંઈ સેવ થતું નથી.
 3. `SaveStatusLine` `~/.local/state/ccam/usage/<name>.statusline.json` લખે છે. endpoint જવાબ ન આપે ત્યારે `ccam usage` તેને વાપરે છે.
-4. ccam `[name] · model · 5h N% · 7d N%` છાપે છે. `--wrap` સાથે, તે એ જ input સાથે તમારો કમાન્ડ `sh -c` દ્વારા ચલાવે છે અને તેના બદલે `[name]` અને પછી કમાન્ડની પહેલી લાઇન છાપે છે.
+4. ccam `[name] · model · 5h N% · 7d N%` છાપે છે. `--wrap` સાથે, તે એ જ input સાથે તમારો કમાન્ડ `sh -c` દ્વારા ચલાવે છે અને તેના બદલે `[name]` અને પછી કમાન્ડની પહેલી લાઇન છાપે છે. Windows પર તે કમાન્ડ Claude Code ની જેમ ચલાવે છે: Git Bash ઇન્સ્ટૉલ હોય તો તેનાથી, નહીં તો PowerShell થી.
+5. જ્યારે 5 કલાકનો કે સાપ્તાહિક વપરાશ 90% કે વધુ હોય અને બીજું એકાઉન્ટ હોય, ત્યારે લાઇનના અંતે `→ ccam next --auto --continue` આવે છે, ઉદાહરણ તરીકે `[work] · Opus · 5h 93% · 7d 41% · → ccam next --auto --continue`.
 
 wrap કરેલા કમાન્ડને 2 સેકન્ડ મળે છે. ત્યાર પછી તેને બંધ કરવામાં આવે છે અને લાઇન ફક્ત એકાઉન્ટનું નામ બતાવે છે, તેથી ધીમો કમાન્ડ Claude Code ની સ્ટેટસ લાઇનને અટકાવી શકતો નથી.
 
-`ccam statusline install` દરેક એકાઉન્ટની `settings.json` માં `statusLine` લખે છે. જ્યારે કોઈ એકાઉન્ટ પાસે પહેલેથી સ્ટેટસ લાઇન કમાન્ડ હોય, ત્યારે ccam તેને `--wrap '<old command>'` તરીકે રાખે છે. ગ્રુપ દ્વારા શેર થયેલી `settings.json` તેની લિંક દ્વારા એક જ વાર લખાય છે, તેથી ગ્રુપના દરેક એકાઉન્ટને તે મળે છે. તેને ફરી ચલાવવાથી પહેલેથી ccam વાપરતી ફાઇલો માટે `(already set)` છપાય છે.
+`ccam statusline install` દરેક એકાઉન્ટની `settings.json` માં `statusLine` લખે છે. જ્યારે કોઈ એકાઉન્ટ પાસે પહેલેથી સ્ટેટસ લાઇન કમાન્ડ હોય, ત્યારે ccam તેને `--wrap '<old command>'` તરીકે રાખે છે. Windows પર ccam નો પાથ forward slashes અને હોમ ફોલ્ડર માટે `~` સાથે લખાય છે (`~/.local/bin/ccam.exe statusline`), જે Git Bash અને PowerShell બંને સમજે છે. ગ્રુપ દ્વારા શેર થયેલી `settings.json` તેની લિંક દ્વારા એક જ વાર લખાય છે, તેથી ગ્રુપના દરેક એકાઉન્ટને તે મળે છે. તેને ફરી ચલાવવાથી પહેલેથી ccam વાપરતી ફાઇલો માટે `(already set)` છપાય છે.
 
 ## સલામતી અને ખાસ કિસ્સા
 

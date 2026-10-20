@@ -2,10 +2,10 @@
 title: "কুইক স্টার্ট"
 metaTitle: "কুইক স্টার্ট: Claude Code অ্যাকাউন্ট যোগ ও বদল করুন"
 description: "ccam add দিয়ে দুটি Claude Code অ্যাকাউন্ট যোগ করুন, সেগুলোকে ccwork-এর মতো শর্টকাট দিন, অ্যাকাউন্ট বদল করুন, এবং কী শেয়ার হবে তা বেছে নিন।"
-updated: 2026-10-19
+updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: a10d91d2a64e
+sourceHash: 55f81dae9fc0
 ---
 
 `ccam add` দিয়ে প্রতিটি অ্যাকাউন্ট যোগ করুন, তারপর `ccam <name>` দিয়ে বা নিজের দেওয়া নামের একটি শর্টকাট, যেমন `ccwork`, দিয়ে Claude Code চালু করুন। বেশিরভাগ মানুষের এটুকুই দরকার।
@@ -107,7 +107,7 @@ ccam usage
 ccam next --continue
 ```
 
-`ccam usage` সব অ্যাকাউন্টের ৫ ঘণ্টা ও সাপ্তাহিক ব্যবহার দেখায়। `ccam next --continue` একই কথোপকথন পরের অ্যাকাউন্টে খোলে। দেখুন [ব্যবহারের সীমা](/docs/usage-limits)।
+`ccam usage` সব অ্যাকাউন্টের ৫ ঘণ্টা ও সাপ্তাহিক ব্যবহার দেখায়। `ccam next --continue` একই কথোপকথন পরের অ্যাকাউন্টে খোলে। স্ক্রিপ্টে `ccam --fallback work -p "…"` নিজে থেকেই বদল করে। দেখুন [ব্যবহারের সীমা](/docs/usage-limits)।
 
 ## আগে থেকেই ~/.claude ব্যবহার করছেন?
 

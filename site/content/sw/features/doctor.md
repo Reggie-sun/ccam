@@ -1,10 +1,10 @@
 ---
 title: Kukagua na kurekebisha
 description: Kagua viungo vya kushiriki, ruhusa za faili, kuingia na toleo la Claude Code kwa ccam doctor, na urekebishe kilicho salama kurekebisha kwa ccam doctor --fix.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 9
 translation: machine
-sourceHash: a1b61efe2b1f
+sourceHash: a45ca25bb722
 ---
 
 `ccam doctor` hukagua usakinishaji wako wa ccam: binary ya Claude Code, folda ya kila akaunti, taarifa za kuingia na viungo vya kushiriki, seva za MCP zinazoshirikiwa, endpoint ya matumizi na amri zako za njia fupi. `ccam doctor --fix` hurekebisha kile inachoweza bila kupoteza data, na kwanza huhamisha faili yoyote inayoibadilisha kwenda kwenye folda ya nakala rudufu. Iendeshe `ccam <name>` inaposimama kwa sababu ya tatizo la kiungo cha kushiriki, baada ya kurejesha faili kwa mkono, au baada ya kusasisha Claude Code.
@@ -70,7 +70,7 @@ Sehemu ya kati huendeshwa mara moja kwa kila akaunti. Ukaguzi, na kile `--fix` h
 
 1. **Toleo la Claude Code** (`checkClaude`). Hutafuta binary ya `claude` kama launcher inavyofanya na huendesha `claude --version`. Ikiwa toleo halianzi na `2.1.302`, toleo ambalo mpangilio wa folda wa ccam ulithibitishwa dhidi yake (`doctor.LayoutVersion`), huongeza `· ccam was verified against the folder layout of Claude Code 2.1.302. Any 'unknown entries' below may mean the layout changed`. Binary inayokosekana au `--version` inayoshindwa ni hitilafu. Hakuna urekebishaji.
 2. **Taarifa za kuingia kwenye mazingira** (`checkAuthEnv`). Huonya wakati `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY` au `ANTHROPIC_AUTH_TOKEN` imewekwa: kila akaunti inayoanzishwa kutoka shell hiyo huirithi, na Claude Code huipendelea kuliko taarifa za kuingia za akaunti yenyewe. Hakuna urekebishaji; iondoe mwenyewe.
-3. **Folda** (`checkProfile`). Folda ya akaunti inayokosekana ni hitilafu na humaliza ukaguzi wa akaunti hiyo. Ruhusa zenye biti zozote za group au other ni onyo; `--fix` huendesha `chmod 0700`.
+3. **Folda** (`checkProfile`). Folda ya akaunti inayokosekana ni hitilafu na humaliza ukaguzi wa akaunti hiyo. Ruhusa zenye biti zozote za group au other ni onyo; `--fix` huendesha `chmod 0700`. Windows haina biti za ruhusa, kwa hiyo ukaguzi huu na ukaguzi wa `0600` ulio hapa chini hurukwa huko; folda iliyo katika profaili yako ya mtumiaji inalindwa na orodha yake ya ufikiaji.
 4. **Faili ya kuingia** (`checkCredentials`). `.credentials.json` hukaguliwa kwa `lstat`. Symlink ni hitilafu, kwa sababu kila akaunti lazima iwe na tokeni yake yenyewe, na hairekebishwi. Mode isiyo `0600` ni onyo; `--fix` huendesha `chmod 0600`. Kisha taarifa za kuingia husomwa (kwenye macOS kutoka Keychain kwanza). Kukosa taarifa za kuingia ni onyo linaloelekeza kwa `ccam login <name>`. Refresh token iliyoisha muda ni hitilafu `login expired`; access token iliyoisha muda ni taarifa tu, kwa kuwa Claude Code huifanya upya wakati wa kuanza unaofuata. Hakuna kati ya haya kinachorekebishwa.
 5. **Viungo vya kushiriki** (`share.Check`). Hulinganisha kila njia katika `share.Layout` na mipangilio ya kushiriki ya akaunti, ikitumia `lstat` na `readlink` tu. Huripoti aina nne: kiungo kinachokosekana, kiungo kinachoelekea mahali pengine, faili halisi mahali ambapo kiungo kinapaswa kuwa, na kiungo kilichobaki kwa kipengele ambacho sasa ni cha ndani. Kiungo kinachokosekana ni onyo, vingine ni hitilafu.
 6. **Vipengee visivyojulikana** (`checkUnknownEntries`). Huorodhesha majina ya ngazi ya juu katika folda ya akaunti ambayo ccam haiyajui (`share.Known`), kama ishara kwamba mpangilio wa Claude Code umebadilika. Taarifa tu.
@@ -78,6 +78,7 @@ Sehemu ya kati huendeshwa mara moja kwa kila akaunti. Ukaguzi, na kile `--fix` h
 8. **Seva za MCP** (`checkMCP`). Hupakia `mcp.json` ya kila kikundi mara moja. Faili isiyoweza kusomwa ni hitilafu; seva inayoshindwa `mcp.Validate` ni onyo. Hakuna urekebishaji.
 9. **Muundo wa jibu la matumizi** (`checkUsageFormat`). Huuliza endpoint ya matumizi, bila cache na kwa kikomo cha kawaida cha sekunde 3, kwa akaunti moja baada ya nyingine hadi moja ijibu. Ikiwa jibu haliwezi tena kuchanganuliwa, huonya kwamba `ccam usage` hurudi kwenye cache ya mstari wa hali. Huu ndio ukaguzi pekee unaotumia mtandao.
 10. **Njia fupi** (`checkShims`). Tu wakati akaunti ina njia fupi. Viungo vinavyokosekana katika `~/.local/bin` ni onyo; `--fix` huita `shim.Install`, ambayo huunda tu viungo vinavyokosekana na kamwe haigusi faili nyingine. Folda ya bin isiyo kwenye `PATH` ni onyo na hairekebishwi.
+11. **Folda** (`checkFolders`). Tu wakati maingizo ya [`ccam folder`](/features/folder) yapo. Ingizo ambalo akaunti yake haipo ni hitilafu, na ingizo ambalo folda yake imetoweka ni onyo. Hakuna kati yao kinachorekebishwa, kwa sababu kuondoa ingizo kungebadilisha akaunti inayoanza hapo.
 
 ### Kurekebisha viungo vya kushiriki
 

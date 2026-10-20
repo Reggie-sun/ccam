@@ -1,10 +1,10 @@
 ---
 title: Akaunti kadhaa za Claude Code kwenye kompyuta moja
 description: Endesha akaunti kadhaa za Claude Code sambamba kwa CLAUDE_CONFIG_DIR, kwa mkono kwa alias za shell au kiotomatiki kwa ccam, na ubadili kati yao.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: e2f4deb40c81
+sourceHash: f2982e4317a2
 ---
 
 Ipe kila akaunti folda yake ya usanidi. Claude Code husoma folda kutoka kigezo cha mazingira `CLAUDE_CONFIG_DIR`, na kila folda huhifadhi taarifa zake za kuingia, mipangilio na historia, kwa hiyo kila akaunti hubaki imeingia na unaweza kuziendesha kwa wakati mmoja. Unaweza kusanidi hili kwa mkono kwa alias ya shell, au uiachie ccam ifanye.
@@ -61,7 +61,7 @@ Ndani ya Claude Code, `/status` huonyesha akaunti uliyoingia nayo. Kwa ccam, end
 
 ## Je, hii inafanya kazi kwenye Windows na WSL?
 
-Claude Code huendeshwa [moja kwa moja kwenye Windows na ndani ya WSL](https://code.claude.com/docs/en/setup). `CLAUDE_CONFIG_DIR` hufanya kazi katika zote mbili, kwa hiyo alias au function ya PowerShell iliyo hapo juu inatosha kwenye Windows bila WSL. ccam huendeshwa kwenye Linux na macOS; kwenye Windows, isakinishe na uitumie ndani ya WSL, ambako hufanya kazi kama kwenye Linux.
+Claude Code huendeshwa [moja kwa moja kwenye Windows na ndani ya WSL](https://code.claude.com/docs/en/setup). `CLAUDE_CONFIG_DIR` hufanya kazi katika zote mbili, kwa hiyo alias au function ya PowerShell iliyo hapo juu inatosha kwenye Windows bila WSL. ccam nayo huendeshwa moja kwa moja kwenye Windows: isakinishe katika PowerShell kwa `irm https://ccam.dev/install.ps1 | iex`, au ndani ya WSL kwa amri ya Linux. Njia fupi huwa `ccwork.exe`, na kushiriki faili kama `settings.json` kunahitaji Developer Mode ([Sakinisha ccam](/docs/install)).
 
 ## Kutatua matatizo
 

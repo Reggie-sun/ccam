@@ -4,7 +4,7 @@ description: Anzisha Claude Code kama akaunti yoyote kwa ccam <name|number>, cca
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 401eed57e533
+sourceHash: e6b5a8d4df86
 ---
 
 `ccam work` huanzisha Claude Code kama akaunti `work`, na kila kitu kinachokuja baada ya jina huenda kwa `claude` kama kilivyo. Itumie popote ambapo ungecharaza `claude`: kwenye terminal, katika script, au ingizo likipitishwa kwa pipe.
@@ -17,16 +17,18 @@ ccam 2                           # the account with number 2 (see ccam list)
 ccam work --resume               # claude --resume, as work
 ccam work -p "fix the tests" --output-format json
 cat log.txt | ccam work -p "find the cause"
-ccam -p "summarise"              # no name: the default account
+ccam -p "summarise"              # no name: the folder's account, else the default
 ccam use work                    # make work the default account
+ccam folder work ~/code/company  # use work in that folder when no name is given
 ccam run work --continue         # same as ccam work --continue
 ccam                             # the picker on a terminal, the list otherwise
 ccam --dry-run work -p hi        # print the command instead of running it
+ccam --fallback work -p "fix the tests"   # run again as another account at the limit
 ```
 
 Toa jina la akaunti au namba yake kutoka `ccam list`. ccam haisomi hoja zinazokuja baada ya jina, kwa hiyo `ccam work --help` huonyesha msaada wa Claude Code. `--` baada ya jina ni hiari. Standard input, exit code na signals hufanya kazi kama kwa `claude`.
 
-Hoja ya kwanza inapoanza na `-` na si mojawapo ya chaguo za ccam yenyewe, ccam huanzisha akaunti chaguo-msingi pamoja na hoja zote. Chaguo-msingi ni akaunti iliyowekwa kwa `ccam use`, au akaunti yenye namba ya chini zaidi ikiwa hujaweka moja.
+Hoja ya kwanza inapoanza na `-` na si mojawapo ya chaguo za ccam yenyewe, ccam huanzisha akaunti bila jina, pamoja na hoja zote. Hiyo ni akaunti iliyowekwa kwa folda ya sasa kwa [`ccam folder`](/features/folder), la sivyo ile chaguo-msingi: akaunti iliyowekwa kwa `ccam use`, au akaunti yenye namba ya chini zaidi ikiwa hujaweka moja.
 
 ### Kichaguzi
 
@@ -50,21 +52,27 @@ Kichaguzi hujifunga kabla ya kutenda, kwa hiyo terminal hurejeshwa kabla Claude 
 | Chaguo | Inachofanya | Chaguo-msingi |
 | --- | --- | --- |
 | `--dry-run` | Huchapisha mazingira na amri ambayo ccam ingeendesha, kisha hutoka | imezimwa |
+| `--fallback` | Kwa uendeshaji wa `-p`/`--print`: akaunti inapofikia kikomo chake cha matumizi, huendesha amri ile ile tena kama akaunti iliyoingia yenye nafasi kubwa zaidi ([maelezo](/features/next#run-again-at-the-limit)) | imezimwa |
 | `-v`, `--version` | Huchapisha `ccam <version>` (kama hoja ya kwanza tu) | |
 | `-h`, `--help` | Msaada wa ccam, kama `ccam --help` au `ccam run --help` | |
 
 Kanuni za hoja:
 
 - ccam husoma chaguo zake yenyewe kabla ya jina la akaunti tu. Baada ya jina, kila hoja ni ya Claude Code, pamoja na `--dry-run` na `--help`.
-- `--dry-run` hufanya kazi kama `ccam --dry-run work`, `ccam run --dry-run work` na `ccam --dry-run` (akaunti chaguo-msingi). Inaheshimiwa, haikataliwi.
-- `ccam run <name|number> [claude args]` ni muundo mrefu wa `ccam <name>`. `ccam run` bila jina hutumia akaunti chaguo-msingi.
+- `--dry-run` hufanya kazi kama `ccam --dry-run work`, `ccam run --dry-run work` na `ccam --dry-run` (akaunti bila jina). Inaheshimiwa, haikataliwi. `--dry-run` na `--fallback` zinaweza kuja kwa mpangilio wowote.
+- `ccam run <name|number> [claude args]` ni muundo mrefu wa `ccam <name>`. `ccam run` bila jina hutumia akaunti ya folda au ile chaguo-msingi.
 - Majina ya akaunti hayawezi kuwa majina ya amri za ccam kama `add`, `list`, `run` au `usage`, kwa hiyo `ccam <word>` kamwe haina utata.
 
-Jaribio la dry run huchapisha mstari mmoja ambao unaweza kubandika kwenye shell:
+Jaribio la dry run huchapisha mstari mmoja ambao unaweza kubandika kwenye shell, au kwenye PowerShell kwenye Windows:
 
 ```console
 $ ccam --dry-run work -p "fix the tests"
 CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/claude --mcp-config=/home/me/.local/share/ccam/groups/default/mcp.json -p 'fix the tests'
+```
+
+```console
+PS> ccam --dry-run work -p "fix the tests"
+$env:CLAUDE_CONFIG_DIR='C:\Users\me\.local\share\ccam\profiles\work'; & C:\Users\me\.local\bin\claude.exe --mcp-config=C:\Users\me\.local\share\ccam\groups\default\mcp.json -p 'fix the tests'
 ```
 
 ## Jinsi inavyofanya kazi
@@ -78,7 +86,7 @@ Kila kisanduku huwaka hatua yake inapoendeshwa, na mistari iliyo chini ni mazing
 1. `cmd/ccam/main.go` huita `app.Main`. Ikiwa ccam ilianzishwa kwa jina lingine, ni [njia fupi](/features/shortcuts) na huenda moja kwa moja kwa launcher.
 2. `app.parse` huangalia `os.Args` kabla cobra haijahusika. `ccam` peke yake (kichaguzi), jina la amri ya ccam (`config.Reserved`), `-h`/`--help` na `-v`/`--version` pekee ndizo huenda kwa `cli.Execute`. Kila kitu kingine ni uanzishaji.
 3. `launcher.Launch` husoma `~/.config/ccam/config.toml`, faili pekee ambayo huichanganua.
-4. `launcher.Prepare` hupata akaunti kwa jina au namba, huondoa `--` moja ya mwanzo, na hutafuta programu ya `claude` kwa `ResolveClaude`. Utafutaji katika PATH huhifadhiwa kwenye cache katika `~/.local/state/ccam/claude-path` pamoja na muda wa mwisho wa kubadilishwa kwa faili, kwa hiyo ccam haitafuti `PATH` kila inapoanzisha. Faili iliyobadilika au inayokosekana husababisha utafutaji mpya. Njia ya `claude_bin` katika `config.toml` hutumiwa kama ilivyo. ccam hukataa `claude` ambayo ni ccam yenyewe, ikilinganisha kwa inode, kwa sababu hilo lingesababisha mzunguko usioisha.
+4. `launcher.Prepare` hupata akaunti kwa jina au namba (bila jina, `HereProfile` huchukua akaunti ya folda, ikilinganisha folda ya kazi na maingizo ya `[[folder]]` ya `config.toml` kama mifuatano ya maandishi), huondoa `--` moja ya mwanzo, na hutafuta programu ya `claude` kwa `ResolveClaude`. Utafutaji katika PATH huhifadhiwa kwenye cache katika `~/.local/state/ccam/claude-path` pamoja na muda wa mwisho wa kubadilishwa kwa faili, kwa hiyo ccam haitafuti `PATH` kila inapoanzisha. Faili iliyobadilika au inayokosekana husababisha utafutaji mpya. Njia ya `claude_bin` katika `config.toml` hutumiwa kama ilivyo. ccam hukataa `claude` ambayo ni ccam yenyewe, ikilinganisha kwa inode, kwa sababu hilo lingesababisha mzunguko usioisha.
 5. `checkLinks` hulinganisha folda ya akaunti `~/.local/share/ccam/profiles/<name>/` na mipangilio yake ya kushiriki kwa `share.Check`, ambayo huita `lstat` na `readlink` tu, system call moja au mbili kwa kila kipengele. Kiungo kinachokosekana huundwa papo hapo. Chochote kinachoweza kupoteza data husimamisha uanzishaji.
 6. `applyMCP` huongeza seva za MCP zinazoshirikiwa (tazama hapa chini).
 7. `session.Register` hurekodi kipindi. ccam huandika alama yenye jina la PID yake, ikiwa na muda wa kuanza wa mchakato, kwenye `$XDG_RUNTIME_DIR/ccam/profile-<name>/<pid>` (au `~/.local/state/ccam/locks/` bila `XDG_RUNTIME_DIR`). Kwa akaunti inayoshiriki historia ya mazungumzo, `historyCheck` kwanza hutafuta kipindi kinachoendeshwa katika `history-<group>-<hash>`, ambapo hash ni ya folda ya sasa, na husajili hapo pia. `exec` huhifadhi PID, kwa hiyo baadaye alama hutaja mchakato wa Claude Code wenyewe. Ni alama, si kufuli inayoshikiliwa, kwa sababu michakato ambayo Claude Code huanzisha ingerithi kufuli na kuiendelea kuishikilia baada ya kipindi kuisha.
@@ -88,7 +96,9 @@ Claude Code huendeshwa ikiwa `CLAUDE_CONFIG_DIR` imewekwa kuwa folda ya akaunti 
 
 ### Kwa nini exec
 
-`syscall.Exec` hubadilisha mchakato wa ccam kwa `claude`, kwa hiyo ccam haibaki kwenye kumbukumbu, vibonyezo vya vitufe, signals na exit code ni vya Claude Code yenyewe, na hoja hubaki kuwa safu (array), kamwe si mfuatano wa shell. Kazi baada ya kipindi, kama kugundua seva zilizoongezwa kwa `claude mcp add`, hufanyika katika uanzishaji unaofuata: ccam hulinganisha muda wa kubadilishwa wa `.claude.json` na `~/.local/state/ccam/mcp/<name>/seen` na huichanganua faili tu ilipobadilika.
+`syscall.Exec` hubadilisha mchakato wa ccam kwa `claude`, kwa hiyo ccam haibaki kwenye kumbukumbu, vibonyezo vya vitufe, signals na exit code ni vya Claude Code yenyewe, na hoja hubaki kuwa safu (array), kamwe si mfuatano wa shell.
+
+Windows haina `exec`. Huko, `Plan.Exec` huanzisha `claude.exe` kama mchakato mtoto kwa mazingira, hoja na console zile zile, huusubiri na hutoka kwa exit code yake. Ctrl+C hufika kwa Claude Code moja kwa moja kutoka kwenye console, kwa hiyo ccam huipuuza. Alama ya kipindi hubeba PID ya ccam, ambayo huishi muda sawasawa na Claude Code, na huondolewa Claude Code inapotoka. Wakati inasubiri, ccam haifanyi kitu kingine. Kazi baada ya kipindi, kama kugundua seva zilizoongezwa kwa `claude mcp add`, hufanyika katika uanzishaji unaofuata: ccam hulinganisha muda wa kubadilishwa wa `.claude.json` na `~/.local/state/ccam/mcp/<name>/seen` na huichanganua faili tu ilipobadilika.
 
 ### Jinsi mstari wa amri unavyoelekezwa
 

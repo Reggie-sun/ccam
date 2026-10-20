@@ -1,10 +1,10 @@
 ---
 title: Cập nhật ccam
 description: "ccam update thay ccam bằng bản phát hành mới nhất trên GitHub sau khi kiểm tra SHA-256; --check chỉ báo cáo và --version cài một thẻ phát hành cụ thể."
-updated: 2026-10-19
+updated: 2026-10-20
 order: 10
 translation: machine
-sourceHash: 83fc20191328
+sourceHash: d91499b95d3d
 ---
 
 `ccam update` tải một bản phát hành ccam từ GitHub, kiểm tra nó với `checksums.txt` của bản phát hành và thay tệp thực thi đang chạy bằng một lần đổi tên. Hãy dùng lệnh này khi bạn cài ccam bằng script cài đặt hoặc từ một tệp nén. ccam không bao giờ tự kiểm tra cập nhật: chỉ lệnh này liên lạc với GitHub, nên mọi lệnh khác vẫn hoạt động như nhau khi không có mạng.
@@ -53,9 +53,9 @@ Mã nằm trong `internal/update`, gói chỉ được `ccam update` import. Đ�
 2. Không có `--version`, `Updater.Latest` gửi yêu cầu tới `<releases>/latest` mà không đi theo chuyển hướng, và đọc thẻ từ header `Location` (`…/tag/v0.5.0`). Cách này dùng trang releases thay cho GitHub API, nên giới hạn 60 yêu cầu mỗi giờ của API không áp dụng. Việc tra cứu có 10 giây.
 3. `parseVersion` kiểm tra thẻ theo một mẫu nghiêm ngặt. Thẻ sẽ xuất hiện trong URL tải về và trong một lệnh shell được in ra, nên không có gì chứa `/`, `%`, khoảng trắng hay ký tự shell lọt qua được. `compareVersions` so sánh nó với phiên bản đang chạy; một bản pre-release được xếp trước bản phát hành của nó.
 4. `managed()` và `writable()` quyết định ccam có được phép thay tệp thực thi hay không (xem bên dưới).
-5. `Updater.Fetch` tải `ccam_<os>_<arch>.tar.gz` và `checksums.txt` cùng lúc, với 2 phút cho cả hai. Mỗi lần tải giới hạn ở 256 MB.
+5. `Updater.Fetch` tải `ccam_<os>_<arch>.tar.gz` (trên Windows là `ccam_windows_<arch>.zip`) và `checksums.txt` cùng lúc, với 2 phút cho cả hai. Mỗi lần tải giới hạn ở 256 MB.
 6. SHA-256 của tệp nén phải khớp với dòng của nó trong `checksums.txt` trước khi bất cứ việc gì khác xảy ra. Thiếu dòng hoặc mã kiểm tra khác nhau sẽ dừng việc cập nhật với `nothing was changed`.
-7. `extract()` đọc tệp tar và lấy tệp thông thường đầu tiên có tên `ccam`. Thư mục, liên kết và các mục khác bị bỏ qua, và tệp thực thi cũng bị giới hạn ở 256 MB.
+7. `extract()` đọc tệp tar và lấy tệp thông thường đầu tiên có tên `ccam` (`extractZip` lấy `ccam.exe` từ tệp zip). Thư mục, liên kết và các mục khác bị bỏ qua, và tệp thực thi cũng bị giới hạn ở 256 MB.
 8. `Updater.Install` ghi tệp thực thi mới bằng `fsutil.AtomicWrite`: một tệp tạm `.ccam.tmp*` cạnh tệp thực thi, với các bit quyền của tệp cũ, được ghi xuống đĩa rồi đổi tên đè lên tệp cũ.
 
 Toàn bộ quy trình, từ tra thẻ đến đổi tên:
@@ -63,6 +63,8 @@ Toàn bộ quy trình, từ tra thẻ đến đổi tên:
 <!-- motion:update-pipeline -->
 
 Tệp nén và `checksums.txt` được tải song song, và không có gì được ghi cho đến khi mã kiểm tra khớp. Việc đổi tên là nguyên tử, nên một sự cố hay đĩa đầy chỉ để lại tệp thực thi cũ hoặc mới, không bao giờ là một nửa. Các lệnh tắt như `~/.local/bin/ccwork` là liên kết tượng trưng tới tệp thực thi ccam, nên chúng chạy phiên bản mới mà không cần thay đổi gì.
+
+Trên Windows, tệp của một chương trình đang chạy không thể bị thay thế hay xóa, chỉ có thể đổi tên. `Updater.Install` ghi tệp thực thi mới vào `ccam.exe.new`, đổi tên `ccam.exe` đang chạy thành `ccam.exe.old`, rồi đổi tên tệp mới thành `ccam.exe`. Nếu bước cuối thất bại, tệp thực thi cũ được đổi tên trở lại. Lần cập nhật tiếp theo xóa `ccam.exe.old`. Các lệnh tắt là liên kết cứng thay vì liên kết tượng trưng ([Lệnh tắt](/features/shortcuts)) được làm mới ngay sau đó, nên chúng cũng chạy phiên bản mới.
 
 ### Bản cài qua trình quản lý gói
 
@@ -85,7 +87,7 @@ Or install a copy in ~/.local/bin with the install script:
   curl -fsSL https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.sh | sh
 ```
 
-Trên các hệ thống không phải Linux, chỉ dòng script cài đặt được in ra. Khi thư mục không ghi được, ccam gợi ý chạy lại script cài đặt, script này cài ccam vào `~/.local/bin`.
+Trên các hệ thống không phải Linux, chỉ dòng script cài đặt được in ra: `irm https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.ps1 | iex` trên Windows. Khi thư mục không ghi được, ccam gợi ý chạy lại script cài đặt, script này cài ccam vào `~/.local/bin`.
 
 ## An toàn và các trường hợp đặc biệt
 

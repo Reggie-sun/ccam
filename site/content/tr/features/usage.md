@@ -1,10 +1,10 @@
 ---
 title: Kullanım limitleri
 description: ccam usage tüm hesapların 5 saatlik ve haftalık limitlerini aynı anda gösterir, ccam statusline ise hesap adını ve kullanımı Claude Code içine yerleştirir.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 7
 translation: machine
-sourceHash: 8306a8f6d950
+sourceHash: f08a2fdc6f0b
 ---
 
 `ccam usage`, her hesabın 5 saatlik ve haftalık limitlerinin ne kadarını kullandığını, her pencerenin sıfırlanmasına kalan süreyle birlikte gösterir. Uzun bir işe başlamadan önce veya Claude Code bir limitin yaklaştığını söylediğinde, hangi hesapta pay kaldığını görmek için kullanın. `ccam statusline`, Claude Code için durum satırı komutudur: hesap adını ve kullanımı Claude Code içinde gösterir ve sayıları `ccam usage` için kaydeder.
@@ -100,11 +100,12 @@ Claude Code durum satırı komutunu çalıştırır ve ona boruyla bir JSON belg
 1. `runStatusline` hesabı, ccam'in Claude Code'u başlatırken ayarladığı `CCAM_PROFILE` değişkeninden, yoksa `CLAUDE_CONFIG_DIR` değerini hesap klasörleriyle eşleştirerek bulur.
 2. `ParseStatusLine`, `rate_limits.five_hour` ve `rate_limits.seven_day` değerlerini okur. API anahtarlı hesaplarda veya oturumun ilk yanıtından önce JSON'da hız limitleri yoktur; bu durumda hiçbir şey kaydedilmez.
 3. `SaveStatusLine`, `~/.local/state/ccam/usage/<name>.statusline.json` dosyasını yazar. `ccam usage`, uç nokta yanıt vermediğinde bunu kullanır.
-4. ccam `[name] · model · 5h N% · 7d N%` yazdırır. `--wrap` ile komutunuzu aynı girdiyle `sh -c` üzerinden çalıştırır ve bunun yerine `[name]` ve ardından komutun ilk satırını yazdırır.
+4. ccam `[name] · model · 5h N% · 7d N%` yazdırır. `--wrap` ile komutunuzu aynı girdiyle `sh -c` üzerinden çalıştırır ve bunun yerine `[name]` ve ardından komutun ilk satırını yazdırır. Windows'ta komutu Claude Code'un yaptığı gibi çalıştırır: kuruluysa Git Bash ile, değilse PowerShell ile.
+5. 5 saatlik veya haftalık kullanım %90 ya da üzerindeyse ve başka bir hesap varsa satır `→ ccam next --auto --continue` ile biter, örneğin `[work] · Opus · 5h 93% · 7d 41% · → ccam next --auto --continue`.
 
 Sarmalanan komuta 2 saniye verilir. Sonrasında sonlandırılır ve satır yalnızca hesap adını gösterir; böylece yavaş bir komut Claude Code'un durum satırını engelleyemez.
 
-`ccam statusline install`, her hesabın `settings.json` dosyasına `statusLine` yazar. Bir hesabın zaten bir durum satırı komutu varsa ccam onu `--wrap '<old command>'` olarak korur. Bir grup üzerinden paylaşılan `settings.json` bağlantısı aracılığıyla bir kez yazılır; böylece gruptaki her hesap onu alır. Yeniden çalıştırmak, zaten ccam kullanan dosyalar için `(already set)` yazdırır.
+`ccam statusline install`, her hesabın `settings.json` dosyasına `statusLine` yazar. Bir hesabın zaten bir durum satırı komutu varsa ccam onu `--wrap '<old command>'` olarak korur. Windows'ta ccam'in yolu eğik çizgilerle ve ev klasörü için `~` ile yazılır (`~/.local/bin/ccam.exe statusline`); bunu hem Git Bash hem PowerShell anlar. Bir grup üzerinden paylaşılan `settings.json` bağlantısı aracılığıyla bir kez yazılır; böylece gruptaki her hesap onu alır. Yeniden çalıştırmak, zaten ccam kullanan dosyalar için `(already set)` yazdırır.
 
 ## Güvenlik ve uç durumlar
 

@@ -1,10 +1,10 @@
 ---
 title: Współdzielenie między kontami
 description: Jak ccam share linkuje ustawienia, CLAUDE.md, rozszerzenia i historię do folderu grupy z planem, kopiami i wyborem przy konfliktach, a off kopiuje je wstecz.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: b30b7cdb2b15
+sourceHash: 16de29bbdd57
 ---
 
 Każde konto ma własny folder, ale większość jego zawartości nie musi być osobna. `ccam share` włącza lub wyłącza współdzielenie dla jednego konta i jednego elementu naraz: plik lub folder konta jest przenoszony do folderu grupy i zastępowany dowiązaniem symbolicznym, więc każde konto w grupie czyta i zapisuje tę samą kopię. Używaj go po `ccam add`, żeby zmienić, co konto współdzieli, albo żeby umieścić kilka kont w osobnej grupie.
@@ -112,6 +112,10 @@ Repair them with `ccam doctor --fix`, then run again
 ```
 
 `ccam doctor --fix` uruchamia `share.Build` z zapisanymi ustawieniami po obu stronach, co wyprowadza każdy krok z tego, co jest na dysku, zachowuje zawartość grupy przy konfliktach i robi kopię zapasową wszystkiego, co zastępuje.
+
+### W Windows
+
+Windows tworzy dowiązania symboliczne tylko w Trybie dewelopera (Ustawienia > System > Dla deweloperów) albo dla administratora. `fsutil.Link` najpierw próbuje utworzyć dowiązanie symboliczne. Bez tego uprawnienia współdzielony folder (`agents`, `skills`, `projects` i pozostałe) staje się punktem połączenia katalogu, który może utworzyć każdy użytkownik, a dla Claude Code działa tak samo. Współdzielony plik (`settings.json`, `CLAUDE.md`, `history.jsonl`) może być tylko dowiązaniem symbolicznym, więc ccam zatrzymuje się z komunikatem `Windows links files only in Developer Mode` i proponuje włączenie trybu albo pozostawienie tego elementu jako lokalnego. `share.Check` traktuje punkty połączenia jak linki (`fsutil.LinkTarget`), a usunięcie folderu konta usuwa sam punkt połączenia, nigdy zawartość grupy, na którą wskazuje.
 
 ## Bezpieczeństwo i przypadki brzegowe
 

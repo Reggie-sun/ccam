@@ -1,11 +1,11 @@
 ---
 title: ccam ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಿ
-metaTitle: Linux ಮತ್ತು macOS ನಲ್ಲಿ ccam ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಿ
-description: Linux ಅಥವಾ macOS ನಲ್ಲಿ ಒಂದೇ ಕಮಾಂಡ್, .deb ಪ್ಯಾಕೇಜ್ ಅಥವಾ ಸೋರ್ಸ್‌ನಿಂದ ccam ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಿ, ccam update ಮೂಲಕ ಅಪ್‌ಡೇಟ್ ಮಾಡಿ. ಮೊದಲು Claude Code ಬೇಕು.
-updated: 2026-10-19
+metaTitle: Linux, macOS ಮತ್ತು Windows ನಲ್ಲಿ ccam ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಿ
+description: Linux, macOS ಅಥವಾ Windows ನಲ್ಲಿ ಒಂದೇ ಕಮಾಂಡ್, .deb ಪ್ಯಾಕೇಜ್ ಅಥವಾ ಸೋರ್ಸ್‌ನಿಂದ ccam ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಿ, ccam update ಮೂಲಕ ಅಪ್‌ಡೇಟ್ ಮಾಡಿ. ಮೊದಲು Claude Code ಬೇಕು.
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 7ecd1ed00e09
+sourceHash: 07eadc0769c8
 ---
 
 Linux ಅಥವಾ macOS ನ ಟರ್ಮಿನಲ್‌ನಲ್ಲಿ ಇದನ್ನು ರನ್ ಮಾಡಿ:
@@ -16,13 +16,22 @@ curl -fsSL https://ccam.dev/install.sh | sh
 
 ಈ ಸ್ಕ್ರಿಪ್ಟ್ ನಿಮ್ಮ ಸಿಸ್ಟಮ್‌ಗೆ ಹೊಂದುವ ಬಿಡುಗಡೆಯನ್ನು ಡೌನ್‌ಲೋಡ್ ಮಾಡುತ್ತದೆ, ಅದರ SHA-256 ಚೆಕ್‌ಸಮ್ ಪರಿಶೀಲಿಸುತ್ತದೆ ಮತ್ತು `ccam` ಅನ್ನು `~/.local/bin` ನಲ್ಲಿ ಇರಿಸುತ್ತದೆ; ನೀವು ನಂತರ ಆಯ್ಕೆಮಾಡುವ `ccwork` ನಂತಹ ಶಾರ್ಟ್‌ಕಟ್ ಕಮಾಂಡ್‌ಗಳನ್ನೂ ccam ಅದೇ ಫೋಲ್ಡರ್‌ನಲ್ಲಿ ರಚಿಸುತ್ತದೆ. ಆ ಫೋಲ್ಡರ್ ನಿಮ್ಮ `PATH` ನಲ್ಲಿ ಇಲ್ಲದಿದ್ದರೆ, `~/.bashrc` ಅಥವಾ `~/.zshrc` ಗೆ ಸೇರಿಸಬೇಕಾದ ಸಾಲನ್ನು ಸ್ಕ್ರಿಪ್ಟ್ ಮುದ್ರಿಸುತ್ತದೆ.
 
+Windows ನಲ್ಲಿ, ಇದನ್ನು PowerShell ನಲ್ಲಿ ರನ್ ಮಾಡಿ:
+
+```powershell
+irm https://ccam.dev/install.ps1 | iex
+```
+
+ಇದು `ccam_windows_<arch>.zip` ಅನ್ನು ಡೌನ್‌ಲೋಡ್ ಮಾಡುತ್ತದೆ, ಅದರ SHA-256 ಚೆಕ್‌ಸಮ್ ಪರಿಶೀಲಿಸುತ್ತದೆ, `ccam.exe` ಅನ್ನು `%USERPROFILE%\.local\bin` ನಲ್ಲಿ ಇರಿಸುತ್ತದೆ (Claude Code ನ ಇನ್‌ಸ್ಟಾಲರ್ `claude.exe` ಅನ್ನು ಇರಿಸುವ ಫೋಲ್ಡರ್ ಇದೇ), ಮತ್ತು ಆ ಫೋಲ್ಡರ್ ನಿಮ್ಮ ಬಳಕೆದಾರ `PATH` ನಲ್ಲಿ ಇನ್ನೂ ಇಲ್ಲದಿದ್ದರೆ ಅದನ್ನು ಸೇರಿಸುತ್ತದೆ. ನಂತರ ಹೊಸ ಟರ್ಮಿನಲ್ ತೆರೆಯಿರಿ.
+
 ccam ನಿಮಗಾಗಿ Claude Code ಅನ್ನು ಆರಂಭಿಸುತ್ತದೆ. ಆದ್ದರಿಂದ ಮೊದಲು [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಿ ಮತ್ತು `claude --version` ಕೆಲಸ ಮಾಡುತ್ತದೆಯೇ ಎಂದು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ.
 
 ## ಬೆಂಬಲಿತ ಸಿಸ್ಟಮ್‌ಗಳು
 
 - x86-64 ಮತ್ತು ARM64 ನಲ್ಲಿ Linux: Ubuntu, Debian, Fedora, Arch, Alpine ಮತ್ತು ಇತರ ಡಿಸ್ಟ್ರಿಬ್ಯೂಷನ್‌ಗಳು. ಬೈನರಿ ಸ್ಟ್ಯಾಟಿಕ್ ಆಗಿದೆ ಮತ್ತು ಅದಕ್ಕೆ ಯಾವುದೇ ಡಿಪೆಂಡೆನ್ಸಿ ಇಲ್ಲ.
 - Apple silicon ಮತ್ತು Intel ನಲ್ಲಿ macOS.
-- Windows ಗೆ ನೇರ ಬೆಂಬಲ ಇಲ್ಲ. WSL ಒಳಗೆ ccam ಯಾವುದೇ Linux ಸಿಸ್ಟಮ್‌ನಲ್ಲಿ ಕೆಲಸ ಮಾಡುವಂತೆಯೇ ಕೆಲಸ ಮಾಡುತ್ತದೆ.
+- x86-64 ಮತ್ತು ARM64 ನಲ್ಲಿ Windows 10 ಮತ್ತು 11, PowerShell, Windows Terminal ಅಥವಾ Git Bash ನಲ್ಲಿ. ಹಂಚಿಕೊಂಡ ಫೋಲ್ಡರ್‌ಗಳು ಎಲ್ಲಾ ಬಳಕೆದಾರರಿಗೂ ಕೆಲಸ ಮಾಡುತ್ತವೆ. ಹಂಚಿಕೊಂಡ ಫೈಲ್‌ಗಳಿಗೆ (`settings.json`, `CLAUDE.md`, `history.jsonl`) Developer Mode (Settings > System > For developers) ಬೇಕು, ಏಕೆಂದರೆ Windows ಆ ಮೋಡ್‌ಗೆ ಅಥವಾ ನಿರ್ವಾಹಕರಿಗೆ ಮಾತ್ರ ಫೈಲ್‌ಗಳಿಗೆ ಲಿಂಕ್ ರಚಿಸಲು ಬಿಡುತ್ತದೆ; [Windows ನಲ್ಲಿ ಹಂಚಿಕೆ](/features/share#on-windows) ನೋಡಿ.
+- WSL ಒಳಗೆ ccam ಯಾವುದೇ Linux ಸಿಸ್ಟಮ್‌ನಲ್ಲಿ ಕೆಲಸ ಮಾಡುವಂತೆಯೇ ಕೆಲಸ ಮಾಡುತ್ತದೆ.
 
 ## ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡುವ ಇತರ ವಿಧಾನಗಳು
 
@@ -46,11 +55,19 @@ go install github.com/jhyunwoo/ccam/cmd/ccam@latest
 curl -fsSL https://ccam.dev/install.sh | CCAM_VERSION=v0.1.0 sh
 ```
 
+```powershell
+$env:CCAM_VERSION = 'v0.1.0'; irm https://ccam.dev/install.ps1 | iex
+```
+
 ## ಶೆಲ್ completion
 
 ```sh
 ccam completion bash > ~/.local/share/bash-completion/completions/ccam
 ccam completion zsh > "${fpath[1]}/_ccam"
+```
+
+```powershell
+ccam completion powershell >> $PROFILE
 ```
 
 Completion ಖಾತೆಗಳ ಹೆಸರುಗಳನ್ನೂ ಒಳಗೊಂಡಂತೆ `ccam` ನ ಎಲ್ಲಾ ಕಮಾಂಡ್‌ಗಳು ಮತ್ತು ಆಯ್ಕೆಗಳಿಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ.
@@ -92,6 +109,8 @@ ccam --dry-run update
 
 ಇನ್‌ಸ್ಟಾಲ್ ಸ್ಕ್ರಿಪ್ಟ್ ಅನ್ನು ಮತ್ತೆ ರನ್ ಮಾಡಿದರೂ `~/.local/bin` ನಲ್ಲಿರುವ ಪ್ರತಿ ಅಪ್‌ಡೇಟ್ ಆಗುತ್ತದೆ. ನೀವು ccam ಅನ್ನು `go install` ಮೂಲಕ ಬಿಲ್ಡ್ ಮಾಡಿದ್ದರೆ, ಅದೇ ಕಮಾಂಡ್ ಅನ್ನು ಮತ್ತೆ ರನ್ ಮಾಡಿ.
 
+**Windows.** `ccam update` Windows ಗಾಗಿ `.zip` ಅನ್ನು ಡೌನ್‌ಲೋಡ್ ಮಾಡುತ್ತದೆ. Windows ನಲ್ಲಿ ರನ್ ಆಗುತ್ತಿರುವ ಪ್ರೋಗ್ರಾಂ ಅನ್ನು ಬದಲಾಯಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ, ಆದ್ದರಿಂದ ಹಳೆಯ ಬೈನರಿಯನ್ನು `ccam.exe.old` ಎಂದು ಮರುಹೆಸರಿಸಲಾಗುತ್ತದೆ; ಮುಂದಿನ ಅಪ್‌ಡೇಟ್ ಅದನ್ನು ಅಳಿಸುತ್ತದೆ.
+
 **Debian ಮತ್ತು Ubuntu ಪ್ಯಾಕೇಜ್.** apt ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಿದ `/usr/bin/ccam` ಅನ್ನು `ccam update` ಬದಲಾಯಿಸುವುದಿಲ್ಲ; ಬದಲಿಗೆ ಈ ಹಂತಗಳನ್ನು ಮುದ್ರಿಸುತ್ತದೆ. [ಬಿಡುಗಡೆಗಳ ಪುಟದಿಂದ](https://github.com/jhyunwoo/ccam/releases) ಹೊಸ `ccam_<version>_linux_amd64.deb` ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ, ಹಳೆಯ ಪ್ಯಾಕೇಜ್‌ನ ಮೇಲೆಯೇ ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಿ:
 
 ```sh
@@ -107,6 +126,14 @@ ccam list
 ccam shortcut work --remove   # once for each account that has a shortcut
 rm ~/.local/bin/ccam
 rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
+```
+
+Windows ನಲ್ಲಿ, PowerShell ನಲ್ಲಿ:
+
+```powershell
+ccam shortcut work --remove   # once for each account that has a shortcut
+Remove-Item ~\.local\bin\ccam.exe
+Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
 ```
 
 `~/.local/share/ccam` ಅನ್ನು ಅಳಿಸಿದರೆ ಅಲ್ಲಿ ಸಂಗ್ರಹವಾಗಿರುವ ಲಾಗಿನ್‌ಗಳು ಮತ್ತು ಸಂಭಾಷಣೆಯ ಇತಿಹಾಸವೂ ಅಳಿಸಿಹೋಗುತ್ತವೆ. ನೀವು [ಇಂಪೋರ್ಟ್ ಮಾಡಿದ](/docs/commands) `~/.claude` ಫೋಲ್ಡರ್ ಇದ್ದಲ್ಲೇ ಉಳಿಯುತ್ತದೆ.

@@ -4,7 +4,7 @@ description: 여러 Claude Code 계정을 쓸 때, CLAUDE_CONFIG_DIR 기반 셸 
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: ea24bb091caf
+sourceHash: b9fbcb88f111
 ---
 
 여러 Claude Code 계정을 쓰는 가장 간단한 방법은 계정마다 셸 별칭을 하나씩 만드는 것입니다. ccam도 내부적으로는 같은 방식을 쓰며, 여기에 공유, 계정 전환, 사용량 확인 기능을 더합니다.
@@ -42,6 +42,8 @@ ccam add work --shortcut ccwork
 | 다른 계정에서 대화 이어 가기 | 아니요 | `ccam next --continue` |
 | 모든 계정의 사용량 확인 | 아니요 | `ccam usage` |
 | 여유가 가장 많은 계정 선택 | 아니요 | `ccam next --auto` |
+| 한도에 도달한 `-p` 작업을 다른 계정으로 다시 실행 | 아니요 | `ccam --fallback` |
+| 프로젝트 폴더마다 계정 지정 | 아니요 | `ccam folder` |
 | 상태 표시줄에 계정 이름 표시 | 아니요 | `ccam statusline install` |
 | 깨진 링크 복구 | 직접 | `ccam doctor --fix` |
 | 추가 소프트웨어 | 없음 | 정적 바이너리 하나 |

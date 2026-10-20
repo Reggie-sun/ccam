@@ -1,10 +1,10 @@
 ---
 title: Memperbarui ccam
 description: ccam update mengganti ccam dengan rilis GitHub terbaru setelah pemeriksaan SHA-256; --check hanya melaporkan dan --version menginstal tag rilis tertentu.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 10
 translation: machine
-sourceHash: 83fc20191328
+sourceHash: d91499b95d3d
 ---
 
 `ccam update` mengunduh rilis ccam dari GitHub, memeriksanya terhadap `checksums.txt` milik rilis tersebut, dan mengganti biner yang sedang berjalan dengan satu rename. Gunakan jika Anda menginstal ccam dengan skrip instalasi atau dari arsip. ccam tidak pernah memeriksa pembaruan dengan sendirinya: hanya perintah ini yang menghubungi GitHub, sehingga setiap perintah lain bekerja sama saja secara offline.
@@ -53,9 +53,9 @@ Kodenya ada di `internal/update`, yang hanya diimpor oleh `ccam update`. Jalur p
 2. Tanpa `--version`, `Updater.Latest` meminta `<releases>/latest` tanpa mengikuti pengalihan, dan membaca tag dari header `Location` (`…/tag/v0.5.0`). Cara ini memakai halaman rilis alih-alih API GitHub, sehingga batas API sebesar 60 permintaan per jam tidak berlaku. Pencarian ini diberi waktu 10 detik.
 3. `parseVersion` memeriksa tag terhadap pola yang ketat. Tag akan masuk ke URL unduhan dan ke perintah shell yang ditampilkan, sehingga tidak ada yang mengandung `/`, `%`, spasi, atau karakter shell yang lolos. `compareVersions` membandingkannya dengan versi yang sedang berjalan; pre-release diurutkan sebelum rilisnya.
 4. `managed()` dan `writable()` memutuskan apakah ccam boleh mengganti biner sama sekali (lihat di bawah).
-5. `Updater.Fetch` mengunduh `ccam_<os>_<arch>.tar.gz` dan `checksums.txt` secara bersamaan, dengan waktu 2 menit untuk keduanya. Setiap unduhan dibatasi 256 MB.
+5. `Updater.Fetch` mengunduh `ccam_<os>_<arch>.tar.gz` (di Windows `ccam_windows_<arch>.zip`) dan `checksums.txt` secara bersamaan, dengan waktu 2 menit untuk keduanya. Setiap unduhan dibatasi 256 MB.
 6. SHA-256 arsip harus cocok dengan barisnya di `checksums.txt` sebelum hal lain terjadi. Baris yang tidak ada atau checksum yang berbeda menghentikan pembaruan dengan `nothing was changed`.
-7. `extract()` membaca tar dan mengambil file biasa pertama bernama `ccam`. Direktori, tautan, dan entri lain diabaikan, dan biner juga dibatasi 256 MB.
+7. `extract()` membaca tar dan mengambil file biasa pertama bernama `ccam` (`extractZip` mengambil `ccam.exe` dari zip). Direktori, tautan, dan entri lain diabaikan, dan biner juga dibatasi 256 MB.
 8. `Updater.Install` menulis biner baru dengan `fsutil.AtomicWrite`: file sementara `.ccam.tmp*` di samping biner, dengan bit izin file lama, di-flush ke disk dan di-rename menimpa file lama.
 
 Seluruh alurnya, dari pencarian tag sampai rename:
@@ -63,6 +63,8 @@ Seluruh alurnya, dari pencarian tag sampai rename:
 <!-- motion:update-pipeline -->
 
 Arsip dan `checksums.txt` diunduh berdampingan, dan tidak ada yang ditulis sampai checksum cocok. Rename bersifat atomik, sehingga crash atau disk penuh hanya meninggalkan biner lama atau biner baru, tidak pernah setengahnya. Perintah pintasan seperti `~/.local/bin/ccwork` adalah symlink ke biner ccam, sehingga langsung menjalankan versi baru tanpa perubahan apa pun.
+
+Di Windows, file program yang sedang berjalan tidak bisa diganti atau dihapus, hanya diganti namanya. `Updater.Install` menulis biner baru ke `ccam.exe.new`, mengganti nama `ccam.exe` yang sedang berjalan menjadi `ccam.exe.old`, lalu mengganti nama file baru menjadi `ccam.exe`. Jika langkah terakhir gagal, nama biner lama dikembalikan. Pembaruan berikutnya menghapus `ccam.exe.old`. Pintasan yang berupa hard link alih-alih tautan simbolik ([Perintah pintasan](/features/shortcuts)) langsung diperbarui setelahnya, sehingga juga menjalankan versi baru.
 
 ### Instalasi yang dikelola paket
 
@@ -85,7 +87,7 @@ Or install a copy in ~/.local/bin with the install script:
   curl -fsSL https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.sh | sh
 ```
 
-Di sistem selain Linux, hanya baris skrip instalasi yang ditampilkan. Jika foldernya tidak dapat ditulisi, ccam menyarankan menjalankan ulang skrip instalasi, yang menginstal ccam di `~/.local/bin`.
+Di sistem selain Linux, hanya baris skrip instalasi yang ditampilkan: `irm https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.ps1 | iex` di Windows. Jika foldernya tidak dapat ditulisi, ccam menyarankan menjalankan ulang skrip instalasi, yang menginstal ccam di `~/.local/bin`.
 
 ## Keamanan dan kasus khusus
 

@@ -1,10 +1,10 @@
 ---
 title: Hesaplar arasında paylaşım
 description: ccam share ayarları, CLAUDE.md dosyasını, uzantıları ve geçmişi plan, yedek ve çakışma seçenekleriyle grup klasörüne nasıl bağlar, off nasıl geri kopyalar.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: b30b7cdb2b15
+sourceHash: 16de29bbdd57
 ---
 
 Her hesabın kendi klasörü vardır, ancak içindekilerin çoğunun ayrı olması gerekmez. `ccam share`, paylaşımı her seferinde bir hesap ve bir öğe için açar veya kapatır: hesabın dosyası veya klasörü bir grup klasörüne taşınır ve yerine sembolik bir bağlantı konur; böylece gruptaki her hesap aynı kopyayı okur ve yazar. Bir hesabın neyi paylaştığını değiştirmek veya birkaç hesabı kendilerine ait bir gruba koymak için `ccam add` sonrasında kullanın.
@@ -112,6 +112,10 @@ Repair them with `ccam doctor --fix`, then run again
 ```
 
 `ccam doctor --fix`, `share.Build` fonksiyonunu kayıtlı ayarları her iki tarafa vererek çalıştırır; bu, her adımı diskte bulunandan türetir, çakışmalarda grubun içeriğini korur ve değiştirdiği her şeyi yedekler.
+
+### Windows'ta
+
+Windows sembolik bağlantıları yalnızca Geliştirici Modu'nda (Ayarlar > Sistem > Geliştiriciler için) veya bir yönetici için oluşturur. `fsutil.Link` önce sembolik bağlantıyı dener. Bu hak olmadan paylaşılan bir klasör (`agents`, `skills`, `projects` ve diğerleri), her kullanıcının oluşturabildiği bir dizin bağlantı noktasına (junction) dönüşür ve Claude Code için aynı şekilde çalışır. Paylaşılan bir dosya (`settings.json`, `CLAUDE.md`, `history.jsonl`) yalnızca sembolik bağlantı olabilir; bu yüzden ccam `Windows links files only in Developer Mode` ile durur ve modu açmayı ya da o öğeyi yerel tutmayı önerir. `share.Check` bağlantı noktalarını bağlantı olarak okur (`fsutil.LinkTarget`) ve bir hesap klasörünü kaldırmak bağlantı noktasının kendisini kaldırır, işaret ettiği grup içeriğini asla kaldırmaz.
 
 ## Güvenlik ve uç durumlar
 

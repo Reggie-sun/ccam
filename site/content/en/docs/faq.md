@@ -2,7 +2,7 @@
 title: Frequently asked questions
 metaTitle: "ccam FAQ: multiple Claude Code accounts"
 description: Answers about ccam, Claude Code accounts, usage limits, sharing, privacy and supported systems.
-updated: 2026-10-19
+updated: 2026-10-20
 published: 2026-10-19
 order: 6
 translation: source
@@ -46,7 +46,7 @@ Nothing, unless you run `ccam import` or `ccam migrate`. Import registers the fo
 
 ## Which systems does ccam support?
 
-Linux (Ubuntu, Debian, Fedora, Arch, Alpine and others) and macOS. On Windows, use it inside WSL.
+Linux (Ubuntu, Debian, Fedora, Arch, Alpine and others), macOS and Windows 10 and 11, natively or inside WSL. On Windows, sharing files such as `settings.json` needs Developer Mode; shared folders work without it ([sharing on Windows](/features/share#on-windows)).
 
 ## Why does an MCP server show up in only one account?
 
@@ -54,7 +54,7 @@ Servers added inside a session with `claude mcp add` are stored for that account
 
 ## Does ccam slow Claude Code down?
 
-Starting Claude Code through ccam adds about 4 milliseconds, measured with `scripts/perf-check.sh` on a laptop. ccam reads one small file, checks the shared links and then replaces itself with `claude`, so it is not running while you work.
+Starting Claude Code through ccam adds about 4 milliseconds, measured with `scripts/perf-check.sh` on a laptop. ccam reads one small file, checks the shared links and then replaces itself with `claude`, so it is not running while you work. Windows cannot replace a process, so there ccam starts Claude Code and waits for it, doing nothing else.
 
 ## How do I update ccam?
 

@@ -2,10 +2,10 @@
 title: Pertanyaan yang sering diajukan
 metaTitle: "FAQ ccam: beberapa akun Claude Code"
 description: Jawaban seputar ccam, akun Claude Code, batas penggunaan, pembagian, privasi, dan sistem yang didukung.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 6
 translation: machine
-sourceHash: 88bd249ec51c
+sourceHash: 80a5475ccfee
 ---
 
 ## Apakah ccam alat resmi dari Anthropic?
@@ -46,7 +46,7 @@ Tidak ada, kecuali Anda menjalankan `ccam import` atau `ccam migrate`. Impor men
 
 ## Sistem apa saja yang didukung ccam?
 
-Linux (Ubuntu, Debian, Fedora, Arch, Alpine, dan lainnya) serta macOS. Di Windows, gunakan ccam di dalam WSL.
+Linux (Ubuntu, Debian, Fedora, Arch, Alpine, dan lainnya), macOS, serta Windows 10 dan 11, secara native atau di dalam WSL. Di Windows, membagikan file seperti `settings.json` memerlukan Mode Pengembang (Developer Mode); folder bersama berfungsi tanpanya ([berbagi di Windows](/features/share#on-windows)).
 
 ## Mengapa server MCP hanya muncul di satu akun?
 
@@ -54,7 +54,7 @@ Server yang ditambahkan di dalam sesi dengan `claude mcp add` hanya disimpan unt
 
 ## Apakah ccam memperlambat Claude Code?
 
-Menjalankan Claude Code melalui ccam menambah sekitar 4 milidetik, diukur dengan `scripts/perf-check.sh` di sebuah laptop. ccam membaca satu file kecil, memeriksa tautan bersama, lalu menggantikan dirinya dengan `claude`, sehingga ccam tidak berjalan saat Anda bekerja.
+Menjalankan Claude Code melalui ccam menambah sekitar 4 milidetik, diukur dengan `scripts/perf-check.sh` di sebuah laptop. ccam membaca satu file kecil, memeriksa tautan bersama, lalu menggantikan dirinya dengan `claude`, sehingga ccam tidak berjalan saat Anda bekerja. Windows tidak bisa mengganti sebuah proses, jadi di sana ccam menjalankan Claude Code dan menunggunya, tanpa melakukan hal lain.
 
 ## Bagaimana cara memperbarui ccam?
 

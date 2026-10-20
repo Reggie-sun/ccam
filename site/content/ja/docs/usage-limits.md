@@ -1,10 +1,10 @@
 ---
 title: 使用量の上限とアカウントの切り替え
 description: ccam usageですべてのClaude Codeアカウントの5時間と週間の使用量を確認し、ccam next --autoで最も余裕があるアカウントを開きます。
-updated: 2026-10-19
+updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: d288177682d7
+sourceHash: a84df8e873d6
 ---
 
 `ccam usage`は、各アカウントが5時間と週間の上限をどれだけ使ったかを表示します。`ccam next --auto`は最も余裕があるアカウントを開き、`--continue`を付けると現在の会話を引き継ぎます。
@@ -48,7 +48,7 @@ ccamは、各アカウント自身のログインを使って、すべてのア�
 ccam statusline install
 ```
 
-これで、Claude Codeのステータスラインにアカウント名とその使用量が表示されます。たとえば`[work] · Opus · 5h 24% · 7d 41%`のようになります。すでにステータスラインのコマンドを設定している場合、ccamはそれを残し、先頭にアカウント名を追加します。ステータスラインは取得した数値の保存も行い、エンドポイントが応答しないときは`ccam usage`がその数値を使います。
+これで、Claude Codeのステータスラインにアカウント名とその使用量が表示されます。たとえば`[work] · Opus · 5h 24% · 7d 41%`のようになります。90%以上になると、ステータスラインは`ccam next --auto --continue`も提案します。すでにステータスラインのコマンドを設定している場合、ccamはそれを残し、先頭にアカウント名を追加します。ステータスラインは取得した数値の保存も行い、エンドポイントが応答しないときは`ccam usage`がその数値を使います。
 
 ## 切り替え
 
@@ -59,5 +59,13 @@ ccam next --continue  # the next account that shares your conversation history
 ```
 
 `ccam next`はログインしていないアカウントを飛ばし、`--auto`は使用量が100%のアカウントを飛ばします。会話を続けるには、両方のアカウントが会話履歴を共有している必要があります。詳しくは[共有](/docs/sharing)を参照してください。
+
+`claude -p`を実行するスクリプトや定期実行ジョブでは、アカウント名の前に`--fallback`を付けます。そのアカウントが上限に達すると、ccamは同じコマンドを最も余裕があるアカウントで再実行し、最後まで完了した実行の出力だけを表示します。
+
+```sh
+ccam --fallback work -p "review the diff" --output-format json
+```
+
+ccamがどのように判断するかは、[上限に達したら再実行](/features/next#run-again-at-the-limit)を参照してください。
 
 [使用量の上限に達したときのワークフローガイド](/guides/usage-limit-workflow)で、一連の流れを例に沿って説明しています。

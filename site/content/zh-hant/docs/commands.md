@@ -2,10 +2,10 @@
 title: 指令參考
 metaTitle: "ccam 指令參考"
 description: 所有 ccam 指令和選項，從 ccam add、ccam <name> 到 ccam usage、ccam next 和 ccam doctor。
-updated: 2026-10-19
+updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 3342453e38d3
+sourceHash: 5d3275878535
 ---
 
 在指令前加上 `--dry-run`，就能查看它會做什麼而不實際執行，例如 `ccam --dry-run work`。它適用於啟動 Claude Code（`ccam <name>`、`ccam run`、`ccam next`）以及 `share`、`migrate`、`shortcut`、`update` 和 `doctor --fix`。其他會做出變更的指令則會拒絕它，而不會執行。
@@ -16,7 +16,16 @@ sourceHash: 3342453e38d3
 
 `ccam <name|number> [arguments]` 會以該帳號啟動 Claude Code。ccam 不會讀取名稱後面的參數，而是依相同順序傳給 `claude`；標準輸入、結束代碼和訊號的行為都和直接執行 `claude` 完全相同。名稱後面的 `--` 可加可不加。
 
-只有參數而沒有帳號名稱的 `ccam`，例如 `ccam -p "summarise"`，會使用預設帳號。用 `ccam use <name>` 設定預設帳號。
+只有參數而沒有帳號名稱的 `ccam`，例如 `ccam -p "summarise"`，會使用為目前資料夾設定的帳號，否則使用預設帳號。分別用 `ccam folder <name> [folder]` 和 `ccam use <name>` 設定。
+
+```sh
+ccam folder work ~/code/company   # work inside ~/code/company and below
+ccam folder                       # list folders and the account used here
+ccam folder --remove ~/code/company
+ccam --fallback work -p "fix the tests"   # run again as another account at the limit
+```
+
+帳號名稱前的 `--fallback` 用於 `-p`/`--print` 執行。帳號達到用量上限時，ccam 會以剩餘額度最多的已登入帳號再次執行同一個指令，並且只輸出完成的那次執行的結果。請參閱[依資料夾使用帳號](/features/folder)和[達到上限時重新執行](/features/next#run-again-at-the-limit)。
 
 `ccwork` 這類快捷指令也會以同樣的方式啟動對應的帳號：`ccwork --resume` 的效果和 `ccam work --resume` 相同。請參閱[快捷指令](/docs/commands#shortcuts)。
 
@@ -108,6 +117,7 @@ ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
 ccam version         # also: ccam -v, ccam --version
+ccam completion bash # or zsh, powershell
 ```
 
 `ccam update` 會在取代 ccam 之前檢查發行版本的 SHA-256 總和檢查碼，`--version v0.2.0` 則可安裝特定的發行版本。從 `.deb` 套件安裝的 ccam 則改用 apt 更新。請參閱[更新](/docs/install#update)。
@@ -122,4 +132,4 @@ ccam version         # also: ccam -v, ccam --version
 | `~/.local/state/ccam/` | 用量快取和上次使用時間 |
 | `~/.local/bin/<shortcut>` | `ccwork` 這類快捷指令，也就是指向 ccam 的連結 |
 
-`XDG_CONFIG_HOME`、`XDG_DATA_HOME` 和 `XDG_STATE_HOME` 變數可以變更這些資料夾的位置。
+`XDG_CONFIG_HOME`、`XDG_DATA_HOME` 和 `XDG_STATE_HOME` 變數可以變更這些資料夾的位置。在 Windows 上，`~` 是 `%USERPROFILE%`，快捷指令則是 `<shortcut>.exe`。

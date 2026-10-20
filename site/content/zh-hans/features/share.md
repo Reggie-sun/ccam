@@ -1,10 +1,10 @@
 ---
 title: 在账号之间共享
 description: ccam share 如何把设置、CLAUDE.md、扩展和历史记录链接到组文件夹（附带计划、备份和冲突选择），以及 off 如何把内容复制回来。
-updated: 2026-10-19
+updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: b30b7cdb2b15
+sourceHash: 16de29bbdd57
 ---
 
 每个账号都有自己的文件夹，但其中的大部分内容并不需要分开。`ccam share` 每次为一个账号的一个项开启或关闭共享：账号的文件或文件夹被移入组文件夹，并替换为一个符号链接，这样组中的每个账号读写的都是同一份副本。在 `ccam add` 之后可以用它更改账号共享的内容，或者让几个账号单独组成一个组。
@@ -112,6 +112,10 @@ Repair them with `ccam doctor --fix`, then run again
 ```
 
 `ccam doctor --fix` 以已保存的设置同时作为两边运行 `share.Build`，从而根据磁盘上的实际情况推导每一步，冲突时保留组中的内容，并备份它所替换的任何内容。
+
+### 在 Windows 上
+
+Windows 只在开发人员模式（设置 > 系统 > 开发者选项）下或为管理员创建符号链接。`fsutil.Link` 会先尝试创建符号链接。没有这项权限时，共享的文件夹（`agents`、`skills`、`projects` 等）会变成目录联接，任何用户都可以创建它，对 Claude Code 来说效果相同。共享的文件（`settings.json`、`CLAUDE.md`、`history.jsonl`）只能是符号链接，所以 ccam 会以 `Windows links files only in Developer Mode` 停止，并建议开启该模式或把这一项保持为本地。`share.Check` 把目录联接视为链接读取（`fsutil.LinkTarget`），删除账号文件夹时只会删除目录联接本身，绝不会删除它指向的组内容。
 
 ## 安全性与边界情况
 

@@ -1,10 +1,10 @@
 ---
 title: 단축 명령
 description: ccam shortcut으로 계정에 ccwork 같은 전용 명령을 붙이고, ccam shims install로 ~/.local/bin의 링크를 다시 만듭니다.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 5f0cb5a57042
+sourceHash: 939256e7a67e
 ---
 
 단축 명령은 직접 이름을 붙여 한 계정으로 Claude Code를 시작하는 명령입니다. `ccwork --resume`은 `ccam work --resume`과 똑같이 동작합니다. 단축 명령은 `~/.local/bin`에 있는 ccam 링크이므로 bash, zsh, 스크립트 등 `PATH`에서 프로그램을 실행하는 곳이라면 어디서나 동작합니다. 단축 명령은 필수가 아니니, 자주 시작하는 계정에만 만들면 됩니다.
@@ -82,13 +82,17 @@ work: none (add one with `ccam shortcut work ccwork`)
 
 셸 별칭이나 래퍼 스크립트 대신 심볼릭 링크를 쓰는 이유는 다음과 같습니다. 심볼릭 링크는 모든 셸과 스크립트에서 동작하고, 셸을 추가로 시작하지 않으며(약 1~2 ms 절약), 실행할 때 읽는 파일도 여전히 하나입니다. `scripts/perf-check.sh`는 `hyperfine`으로 단축 명령을 측정해 `ccam <name>`과 같은 10 ms(p95) 한도와 비교합니다.
 
+### Windows에서
+
+단축 명령은 `%USERPROFILE%\.local\bin`의 `ccwork.exe`이며, `shim.Name`이 조회 전에 대소문자에 관계없이 `.exe`를 떼어 내므로 `ccwork`, `ccwork.exe`, `CCWORK.EXE` 모두 `work`를 시작합니다. ccam은 먼저 심볼릭 링크를 만드는데, Windows에서는 개발자 모드이거나 관리자일 때만 허용됩니다. 그 권한이 없으면 하드 링크를 만듭니다. 하드 링크는 같은 `ccam.exe` 파일의 두 번째 이름이며, 권한이 필요 없습니다. 하드 링크는 `ccam.exe`와 같은 파일일 때 ccam의 것으로 인정됩니다. `ccam update`는 `ccam.exe` 자리에 새 파일을 두므로, 이어서 하드 링크로 된 단축 명령을 모두 `shim.Relink`로 새로 만들고 `✓ shortcut ccwork renewed`를 출력합니다. 이름 검사는 다른 `PATH` 폴더에서 `PATHEXT`의 각 확장자(`.exe`, `.cmd` 등)를 붙인 `<name>`을 찾습니다.
+
 ## 안전장치와 예외 상황
 
 - **어느 계정의 것도 아닌 링크.** `config.toml`의 `shortcut`을 직접 고친 경우처럼 `~/.local/bin`에 있는 ccam 링크의 이름을 쓰는 계정이 없으면, ccam은 기본 계정으로 대신 실행하지 않습니다. `` ccam: ccold is not the shortcut of any account (see `ccam list`, `ccam shortcut`) `` 오류를 내고 멈춥니다. `ccam shortcut`으로 이름을 다시 지정하거나 링크를 삭제하세요.
 - **이미 있는 파일.** ccam은 자신이 만들지 않은 파일을 절대 바꾸지 않습니다. `ccam shims install`은 `<path> already exists and is not a ccam link, so it was left alone`를 출력하고 멈춥니다.
 - **ccam 실행 파일을 옮긴 경우.** 이전 링크는 더 이상 없는 경로를 가리키므로, ccam은 이 링크를 자신의 것으로 보지 않습니다. 링크를 삭제한 뒤 `ccam shims install`을 실행하세요.
 - **이름 변경과 삭제.** `ccam rename`은 단축 명령 이름을 그대로 두며, 링크도 계속 동작합니다. 링크는 ccam을 가리키고 ccam이 `config.toml`에서 이름을 찾기 때문입니다. `ccam remove`는 계정의 링크를 삭제합니다. `ccam shortcut <account> <new>`는 새 링크를 만들기 전에 이전 링크를 삭제합니다.
-- **PATH.** ccam이 링크를 만들 때 `~/.local/bin`이 `PATH`에 없으면 `Note: /home/me/.local/bin is not in PATH. Add it to ~/.bashrc or ~/.zshrc:`와 함께 추가할 `export PATH=...` 줄을 출력합니다.
+- **PATH.** ccam이 링크를 만들 때 `~/.local/bin`이 `PATH`에 없으면 `Note: /home/me/.local/bin is not in PATH. Add it to ~/.bashrc or ~/.zshrc:`와 함께 추가할 `export PATH=...` 줄을 출력합니다. Windows에서는 대신 이 폴더를 사용자 `PATH`에 추가하는 PowerShell 명령 줄을 출력합니다.
 - **나중에 확인하기.** `ccam doctor`는 `missing shortcuts in /home/me/.local/bin: ccwork`를 보고하고, 폴더가 `PATH`에 없으면 경고합니다. `ccam doctor --fix`는 없는 링크를 만듭니다.
 
 ## 관련 문서

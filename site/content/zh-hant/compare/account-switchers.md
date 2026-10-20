@@ -1,10 +1,10 @@
 ---
 title: ccam 與其他 Claude Code 帳號切換工具比較
 description: ccam 與 claude-swap、CCS、clauth、CAAM、cux 等 Claude Code 帳號切換工具的比較，以及哪種做法適合哪種用途。
-updated: 2026-10-19
+updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: dc907c88e2bf
+sourceHash: d058da937218
 ---
 
 切換 Claude Code 帳號的工具採用兩種做法之一。大多數工具在同一個 `~/.claude` 資料夾中替換登入資訊，所以同一時間只有一個帳號處於使用中。另一些工具（包括 ccam）則用 `CLAUDE_CONFIG_DIR` 為每個帳號提供獨立的資料夾，因此每個帳號都會保持登入，也能同時執行多個帳號。ccam 還提供共用的設定和 MCP 伺服器，並能在另一個帳號的資料夾中接續對話。
@@ -13,41 +13,89 @@ sourceHash: dc907c88e2bf
 
 **替換登入資訊**只保留一套設定、MCP 伺服器和對話記錄，因為只有一個資料夾。切換很快，執行中的工作階段也能套用新的登入資訊。但同一時間只有一個帳號處於使用中，而且會同時影響所有終端機和編輯器。
 
-**獨立的資料夾**是 [Claude Code 文件中說明的方法](https://code.claude.com/docs/en/authentication#log-in-with-multiple-accounts)。每個帳號都保持登入，你可以讓工作和個人的工作階段同時執行。代價是每個資料夾一開始都有各自的設定、MCP 伺服器和對話記錄，除非有工具幫你共用。
+為了替換，工具會為其他每個帳號保存一份登入資訊的副本，並在切換時把它寫回原位。Claude Code 每次更新登入時都會換掉其中的重新整理權杖，所以每份保存的副本都必須和執行中的工作階段保持同步。切換後帳號被登出，或需要重新 `/login`，是這些專案最常修正的問題之一。
+
+**獨立的資料夾**是 [Claude Code 文件中說明的方法](https://code.claude.com/docs/en/authentication#log-in-with-multiple-accounts)。每個帳號都保持登入，你可以讓工作和個人的工作階段同時執行。每份登入資訊都留在各自的資料夾中，由 Claude Code 照常在那裡更新。代價是每個資料夾一開始都有各自的設定、MCP 伺服器和對話記錄，除非有工具幫你共用。
 
 ## 各工具比較
 
-資料取自各專案自己的文件（2026-10-19）。「未說明」表示專案沒有提到，而不是缺少該功能。
+資料取自各專案自己的文件與原始碼（2026-10-20）。「未說明」表示專案沒有提到，而不是缺少該功能。
 
 | 工具 | 做法 | 同時使用多個帳號 | 5 小時和每週用量 | 達到限制時 | 平台 |
 | --- | --- | --- | --- | --- | --- |
-| ccam | 獨立的資料夾 | 是 | 是，`ccam usage` | 由你執行 `ccam next --auto --continue`，在剩餘額度最多的帳號中接續對話 | Linux、macOS、WSL |
+| ccam | 獨立的資料夾 | 是 | 是，`ccam usage` | 由你執行 `ccam next --auto --continue`，在剩餘額度最多的帳號中接續對話；`ccam --fallback` 會自動在那裡重新執行 `-p` 工作 | Linux、macOS、Windows |
 | [claude-swap](https://github.com/realiti4/claude-swap) | 替換登入資訊；`cswap run` 時使用獨立的資料夾 | 是，使用 `cswap run` | 是 | `cswap auto` 在達到門檻時切換登入資訊；執行中的工作階段會繼續 | Linux、macOS、Windows |
-| [CCS](https://github.com/kaitranntt/ccs) | 獨立的資料夾 | 是 | 部分支援，在 macOS 選單列 App 中 | 帳號池透過本機 Proxy 把請求轉給下一個帳號 | Linux、macOS、Windows |
+| [CCS](https://github.com/kaitranntt/ccs) | 獨立的資料夾 | 是 | 部分支援 | 帳號池透過本機 Proxy 把請求轉給下一個帳號 | Linux、macOS、Windows |
 | [clauth](https://github.com/uwuclxdy/clauth) | 替換登入資訊；`clauth start` 時使用獨立的資料夾 | 是，使用 `clauth start` | 是 | 沿著備援鏈依序切換 | Linux、macOS、Windows |
 | [CAAM](https://github.com/Dicklesworthstone/coding_agent_account_manager) | 替換登入資訊，或使用隔離的設定檔 | 是，使用隔離的設定檔 | 是 | `caam run` 在另一個帳號上重試非互動式指令 | Linux、macOS、Windows |
-| [cux](https://github.com/inulute/cux) | 替換登入資訊並包裝 `claude` | 未說明 | 是 | 替換登入資訊並恢復同一個對話 | Linux、macOS、Windows |
-| [CCSwitcher](https://github.com/XueshiQiao/CCSwitcher) | 替換登入資訊 | 否 | 是 | 未說明 | macOS |
+| [cux](https://github.com/inulute/cux) | 替換登入資訊並包裝 `claude` | 否，只有一個使用中的帳號 | 是 | 替換登入資訊並恢復同一個對話 | Linux、macOS、Windows |
+| [CCSwitcher](https://github.com/XueshiQiao/CCSwitcher) | 替換登入資訊 | 否 | 是 | 可選擇在達到門檻時切換 | macOS |
 | [Claude Switcher](https://github.com/Symbioose/claude-account-switcher) | 替換登入資訊 | 否 | 是 | 可選擇在 100% 時切換 | macOS |
 
-ccswap 是 claude-swap 的分支，也能管理 Codex 的登入。其中幾個工具也支援其他程式設計代理，例如 Codex 或 Gemini。
+ccswap 是 claude-swap 的分支，也能管理 Codex 的登入。[claude-account](https://github.com/hamzarehmandeveloper/claude-account)、[claude-multiprofile](https://github.com/jmdarre-v/claude-multiprofile) 和 [claude-code-profiles](https://github.com/quinnjr/claude-code-profiles) 也為每個帳號提供獨立的資料夾。其中幾個工具也支援其他程式設計代理，例如 Codex 或 Gemini。
 
-## ccam 的重點
+## 各工具的實作方式
 
-- 每個帳號都保持登入。切換時絕不會讓帳號登出，`ccam work` 和 `ccam personal` 可以同時在兩個終端機中執行。
-- MCP 伺服器、`settings.json`、`CLAUDE.md`、agents、skills 和外掛透過連結在資料夾之間共用，可以逐項、依帳號選擇。登入資訊絕不共用。
-- 共用對話記錄後，只要一個指令 `ccam next --auto --continue`，就能在剩餘額度最多的帳號的資料夾中開啟同一個對話。
-- ccam 啟動 Claude Code 後就用它取代自己，所以沒有任何東西在背景執行。它不會監看你的用量，也不會自行切換；何時切換由你決定。
+| 工具 | 撰寫語言 | Claude Code 執行時 | 是否在不同位置之間複製登入資訊 | 帳號之間可以共用什麼 |
+| --- | --- | --- | --- | --- |
+| ccam | Go，單一靜態執行檔 | 什麼都沒有：ccam 會以 `claude` 取代自己（在無法這樣做的 Windows 上，則等待它結束） | 否 | 每一項各自設定：每個帳號選擇本機或某個具名群組 |
+| claude-swap | Python 3.12+，以 uv 或 pipx 安裝 | 用 `cswap run` 時什麼都沒有；`cswap auto` 和選單列 App 會持續執行 | 是，在替換登入資訊時 | 用 `cswap run` 時：設定、`CLAUDE.md` 和擴充功能一起共用，對話記錄可選；MCP 伺服器在每次啟動時複製 |
+| CCS | Node.js 18+ 或 Bun | CCS 以父行程留著；帳號池會加上本機 Proxy | 帳號資料夾不複製；帳號池保存自己的登入資訊 | 每個帳號選擇共用或本機，對話記錄以情境群組共用；MCP 伺服器會被複製 |
+| clauth | Rust | clauth 以父行程留著 | 是，在替換登入資訊時 | 整個 `~/.claude`，或什麼都不共用 |
+| CAAM | Go | 視模式而定；可選用的常駐程式 | 是，在其保管庫模式下 | 由模式決定；MCP 伺服器在每次啟動時複製 |
+| cux | Go | 包裝程式一直包在 `claude` 外面 | 是 | 全部：只有一個資料夾 |
+| CCSwitcher, Claude Switcher | macOS App（Swift、Python） | 選單列 App | 是 | 全部：只有一個資料夾 |
+
+## ccam 的優勢
+
+### 登入資訊留在 Claude Code 存放的位置
+
+ccam 絕不會把 Claude 的登入資訊從一個地方複製到另一個地方。每個帳號的登入資訊都留在自己的資料夾中，在 macOS 上則留在該資料夾專屬的鑰匙圈項目中，由 Claude Code 負責更新。不存在會失去同步的保存副本。以 `ccam import` 註冊的現有 `~/.claude` 會繼續使用一般 `claude` 所用的鑰匙圈項目，所以不論用哪種方式啟動，都會保持登入。
+
+只有在你執行 `ccam usage --refresh` 時，ccam 才會自己更新過期的權杖。它會先取得鎖定，並在該帳號執行中時拒絕更新，所以絕不會在執行中的工作階段底下輪替權杖。
+
+### 你和 Claude Code 之間沒有任何東西在執行
+
+ccam 讀取一個檔案，檢查它的連結，然後以 `claude` 取代自己（`exec`）。你工作時沒有 ccam 行程、包裝程式、Proxy 或常駐程式：標準輸入、訊號和結束代碼都屬於 Claude Code，它的請求直接送往 Anthropic。Windows 無法取代行程，所以在那裡 ccam 會以同一個主控台啟動 Claude Code，並等待它的結束代碼，除此之外什麼都不做。
+
+以這種方式啟動帳號大約只多花 4 ms，第 95 百分位低於 6 ms，峰值記憶體 8 MB（用 hyperfine 執行 [`scripts/perf-check.sh`](https://github.com/jhyunwoo/ccam/blob/main/scripts/perf-check.sh) 300 次）。在同一台筆電上，光是啟動 Python 直譯器就要 13 ms，Node.js 要 31 ms，這還是在程式做任何事之前。
+
+### 逐項、依帳號共用
+
+MCP 伺服器、`settings.json`、`CLAUDE.md`、擴充功能（agents、commands、skills、外掛）和對話記錄是五個獨立的項目。每個帳號把每一項設為 `local` 或某個群組，所以兩個工作帳號可以在 `work` 群組中共用對話記錄，個人帳號保留自己的對話記錄，而三個帳號都使用同樣的 MCP 伺服器。
+
+- MCP 伺服器在啟動時透過 `--mcp-config` 傳入，所以預設情況下 ccam 絕不會編輯 `.claude.json`，也就是 Claude Code 執行時會改寫的那個檔案。`ccam mcp add` 一次就能為整個群組新增一個伺服器。
+- 其他項目是指向群組資料夾的連結，所以在一個帳號中做的變更會立即出現在其他帳號中。啟動時不複製任何東西。
+- 登入資訊、`.claude.json` 和執行狀態絕不共用。
+
+### 每項變更都先顯示並備份
+
+`ccam share` 和 `ccam migrate` 會先列出計畫，並在移動任何東西之前詢問你。當某個檔案在帳號和群組之間不同時，由你選擇：保留群組的版本、使用你的版本，或合併 JSON。原始檔案放到 `.ccam-backup/<time>/`，被移除帳號的資料夾放進垃圾桶資料夾，檔案以一次重新命名完成替換，所以寫入中斷時舊檔案仍會保留。`--dry-run` 會顯示啟動、共用、遷移、快捷指令、更新和修復將做什麼。`ccam doctor --fix` 會修復損壞的連結和權限。
+
+### 在下一個帳號中接續同一個對話
+
+共用對話記錄後，`ccam next --auto --continue` 會同時查詢所有帳號的用量，開啟剩餘額度最多的帳號並接續對話。何時切換由你決定；ccam 不會在背景監看你的用量。帳號達到 90% 時，狀態列會建議這個指令。
+
+指令碼無法等你，所以 `ccam --fallback work -p "…"` 會替它們切換：帳號達到上限時，同一個指令會以剩餘額度最多的帳號再次執行，而且只會輸出完成的那次執行的結果。不是用量上限造成的失敗則原樣傳回。
+
+### 每個資料夾使用正確的帳號
+
+`ccam folder work ~/code/company` 會讓在該資料夾中未指定帳號名稱的每次啟動都使用 `work`，其他專案則繼續使用預設帳號。這項設定存放在每次啟動都會讀取的同一個 `config.toml` 中，所以不會多花任何時間。
+
+### 單一執行檔，經過驗證的下載
+
+ccam 是一個約 10 MB 的靜態執行檔，不需要安裝任何執行環境，支援 Linux、macOS 和 Windows。安裝指令碼（`install.sh`、`install.ps1`）和 `ccam update` 會用發行版本的 SHA-256 校驗碼檢查每個下載，ccam 也絕不會自行檢查更新。它沒有遙測：它發出的請求只有向 Anthropic 查詢你帳號的用量（平行處理，3 秒逾時，60 秒快取），以及你要求的下載。
 
 ## 其他工具做得更多的地方
 
-- claude-swap、CCS、clauth、CAAM 和 cux 不需要 WSL 就能在 Windows 上執行。ccam 不行。
-- claude-swap、clauth 和 cux 會在帳號超過用量門檻時自行切換。ccam 把切換交給你。
+- claude-swap、clauth、cux、CAAM 和 CCSwitcher 可以在帳號超過用量門檻時，自行切換執行中的互動式工作階段。ccam 以 `--fallback` 切換 `-p` 執行，互動式工作階段則交給你。
+- 在未開啟開發人員模式的 Windows 上，ccam 可以共用資料夾，但無法共用 `settings.json` 這類單一檔案；claude-swap 和 CCS 則會改為複製這些檔案。
 - CCSwitcher、Claude Switcher 和 claude-swap 會在 macOS 選單列中顯示用量。
-- CCS、CAAM、ccswap 和 Claude Switcher 也能管理 Codex 和其他程式設計代理。
+- CCS、CAAM、clauth、ccswap 和 Claude Switcher 也能管理 Codex 和其他程式設計代理。
+- CAAM、CCSwitcher 和 Claude Switcher 可以用 Homebrew 安裝，clauth 和 CAAM 會為發行的校驗碼簽章。ccam 以安裝指令碼、`.deb` 或 `go install` 安裝，會檢查校驗碼但沒有簽章。
 
 ## 哪一種適合你？
 
-如果你一次只用一個帳號、希望自動切換，或是在沒有 WSL 的 Windows 上，請選擇替換登入資訊的工具。如果你想讓多個帳號同時執行、共用一套設定，並在下一個帳號接續同一個對話，請選擇 ccam。如果什麼都不需要共用，[一般的 Shell 別名](/compare/aliases)就夠了。
+如果你一次只用一個帳號，或希望執行中的工作階段自動切換，請選擇替換登入資訊的工具。如果你想讓多個帳號同時執行、共用一套設定、在下一個帳號接續同一個對話，而且不希望有任何東西在 Claude Code 旁邊執行，請選擇 ccam，在 Linux、macOS 或 Windows 上都可以。如果什麼都不需要共用，[一般的 Shell 別名](/compare/aliases)就夠了。
 
 是否可以使用多個帳號取決於各帳號的條款。使用前請先確認。

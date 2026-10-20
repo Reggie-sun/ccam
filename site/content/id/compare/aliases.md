@@ -4,7 +4,7 @@ description: Perbandingan alias shell dengan CLAUDE_CONFIG_DIR dan ccam untuk me
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: ea24bb091caf
+sourceHash: b9fbcb88f111
 ---
 
 Satu alias shell per akun adalah cara paling sederhana untuk menjalankan beberapa akun Claude Code. ccam melakukan hal yang sama di baliknya, lalu menambahkan pembagian, perpindahan akun, dan pemantauan penggunaan.
@@ -42,6 +42,8 @@ ccam add work --shortcut ccwork
 | Melanjutkan percakapan di akun lain | Tidak | `ccam next --continue` |
 | Penggunaan semua akun | Tidak | `ccam usage` |
 | Memilih akun dengan sisa kuota terbanyak | Tidak | `ccam next --auto` |
+| Menjalankan ulang tugas `-p` sebagai akun lain saat batas tercapai | Tidak | `ccam --fallback` |
+| Satu akun untuk setiap folder proyek | Tidak | `ccam folder` |
 | Nama akun di status line | Tidak | `ccam statusline install` |
 | Memperbaiki tautan yang rusak | Manual | `ccam doctor --fix` |
 | Perangkat lunak tambahan | Tidak ada | Satu binary statis |

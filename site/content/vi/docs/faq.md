@@ -2,10 +2,10 @@
 title: Câu hỏi thường gặp
 metaTitle: "ccam FAQ: dùng nhiều tài khoản Claude Code"
 description: "Giải đáp về ccam, tài khoản Claude Code, giới hạn sử dụng, việc dùng chung, quyền riêng tư và các hệ điều hành được hỗ trợ."
-updated: 2026-10-19
+updated: 2026-10-20
 order: 6
 translation: machine
-sourceHash: 88bd249ec51c
+sourceHash: 80a5475ccfee
 ---
 
 ## ccam có phải là công cụ chính thức của Anthropic không?
@@ -46,7 +46,7 @@ Không có gì thay đổi, trừ khi bạn chạy `ccam import` hoặc `ccam mi
 
 ## ccam hỗ trợ những hệ điều hành nào?
 
-Linux (Ubuntu, Debian, Fedora, Arch, Alpine và các bản phân phối khác) và macOS. Trên Windows, hãy dùng ccam bên trong WSL.
+Linux (Ubuntu, Debian, Fedora, Arch, Alpine và các bản phân phối khác), macOS và Windows 10 và 11, chạy trực tiếp hoặc bên trong WSL. Trên Windows, việc dùng chung các tệp như `settings.json` cần bật Developer Mode; thư mục dùng chung thì hoạt động mà không cần chế độ này ([dùng chung trên Windows](/features/share#on-windows)).
 
 ## Vì sao một máy chủ MCP chỉ xuất hiện ở một tài khoản?
 
@@ -54,7 +54,7 @@ Máy chủ được thêm trong một phiên bằng `claude mcp add` chỉ đư�
 
 ## ccam có làm Claude Code chậm đi không?
 
-Khởi động Claude Code thông qua ccam tốn thêm khoảng 4 mili giây, đo bằng `scripts/perf-check.sh` trên một máy tính xách tay. ccam đọc một tệp nhỏ, kiểm tra các liên kết dùng chung rồi tự thay thế mình bằng `claude`, nên nó không chạy trong lúc bạn làm việc.
+Khởi động Claude Code thông qua ccam tốn thêm khoảng 4 mili giây, đo bằng `scripts/perf-check.sh` trên một máy tính xách tay. ccam đọc một tệp nhỏ, kiểm tra các liên kết dùng chung rồi tự thay thế mình bằng `claude`, nên nó không chạy trong lúc bạn làm việc. Windows không thể thay thế một tiến trình, nên ở đó ccam khởi động Claude Code và chờ nó, ngoài ra không làm gì khác.
 
 ## Làm sao để cập nhật ccam?
 

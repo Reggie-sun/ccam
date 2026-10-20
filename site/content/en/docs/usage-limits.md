@@ -1,7 +1,7 @@
 ---
 title: Usage limits and switching accounts
 description: See the 5-hour and weekly usage of every Claude Code account with ccam usage, and open the account with the most room with ccam next --auto.
-updated: 2026-10-19
+updated: 2026-10-20
 published: 2026-10-19
 order: 5
 translation: source
@@ -48,7 +48,7 @@ When an account's access token has expired, ccam does not renew it, because rene
 ccam statusline install
 ```
 
-Claude Code then shows the account name and its usage in the status line, for example `[work] · Opus · 5h 24% · 7d 41%`. If you already have a status line command, ccam keeps it and puts the account name in front. The status line also saves its numbers, which `ccam usage` uses when the endpoint does not answer.
+Claude Code then shows the account name and its usage in the status line, for example `[work] · Opus · 5h 24% · 7d 41%`. From 90% on, the line also suggests `ccam next --auto --continue`. If you already have a status line command, ccam keeps it and puts the account name in front. The status line also saves its numbers, which `ccam usage` uses when the endpoint does not answer.
 
 ## Switching
 
@@ -59,5 +59,13 @@ ccam next --continue  # the next account that shares your conversation history
 ```
 
 `ccam next` skips accounts that are not logged in, and `--auto` skips accounts at 100%. To continue a conversation, both accounts must share conversation history; see [sharing](/docs/sharing).
+
+For scripts and scheduled jobs that run `claude -p`, put `--fallback` before the account name. When that account reaches its limit, ccam runs the same command again as the account with the most room, and only the output of the run that finished is printed:
+
+```sh
+ccam --fallback work -p "review the diff" --output-format json
+```
+
+See [Run again at the limit](/features/next#run-again-at-the-limit) for how ccam decides.
 
 The [usage limit workflow guide](/guides/usage-limit-workflow) walks through a full example.

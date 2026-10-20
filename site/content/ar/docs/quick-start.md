@@ -2,10 +2,10 @@
 title: البدء السريع
 metaTitle: "البدء السريع: أضف حسابات Claude Code وبدّل بينها"
 description: أضف حسابَي Claude Code باستخدام ccam add، وامنحهما أوامر مختصرة مثل ccwork، وبدّل بينهما، واختر ما يشاركانه.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 2
 translation: machine
-sourceHash: a10d91d2a64e
+sourceHash: 55f81dae9fc0
 ---
 
 أضف كل حساب باستخدام `ccam add`، ثم شغّل Claude Code باستخدام `ccam <name>` أو بأمر مختصر تختار اسمه بنفسك، مثل `ccwork`. هذا كل ما يحتاجه معظم الناس.
@@ -107,7 +107,7 @@ ccam usage
 ccam next --continue
 ```
 
-يعرض `ccam usage` استخدام كل حساب خلال 5 ساعات وخلال الأسبوع. ويفتح `ccam next --continue` المحادثة نفسها في الحساب التالي. راجع [حدود الاستخدام](/docs/usage-limits).
+يعرض `ccam usage` استخدام كل حساب خلال 5 ساعات وخلال الأسبوع. ويفتح `ccam next --continue` المحادثة نفسها في الحساب التالي. وفي السكربتات، يبدّل `ccam --fallback work -p "…"` الحساب بنفسه. راجع [حدود الاستخدام](/docs/usage-limits).
 
 ## هل تستخدم ~/.claude بالفعل؟
 

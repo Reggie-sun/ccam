@@ -1,10 +1,10 @@
 ---
 title: "Limites d'utilisation et changement de compte"
 description: "Consultez l'utilisation sur 5 heures et hebdomadaire de chaque compte Claude Code avec ccam usage, et ouvrez celui qui a le plus de marge avec ccam next --auto."
-updated: 2026-10-19
+updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: d288177682d7
+sourceHash: a84df8e873d6
 ---
 
 `ccam usage` indique quelle part des limites sur 5 heures et sur la semaine chaque compte a utilisée. `ccam next --auto` ouvre le compte qui a le plus de marge, et `--continue` reprend la conversation en cours.
@@ -48,7 +48,7 @@ Quand le jeton d'accès d'un compte a expiré, ccam ne le renouvelle pas, car le
 ccam statusline install
 ```
 
-Claude Code affiche alors le nom du compte et son utilisation dans la ligne d'état, par exemple `[work] · Opus · 5h 24% · 7d 41%`. Si vous avez déjà une commande de ligne d'état, ccam la conserve et place le nom du compte devant. La ligne d'état enregistre aussi ses chiffres, que `ccam usage` utilise quand le point de terminaison ne répond pas.
+Claude Code affiche alors le nom du compte et son utilisation dans la ligne d'état, par exemple `[work] · Opus · 5h 24% · 7d 41%`. À partir de 90 %, la ligne suggère aussi `ccam next --auto --continue`. Si vous avez déjà une commande de ligne d'état, ccam la conserve et place le nom du compte devant. La ligne d'état enregistre aussi ses chiffres, que `ccam usage` utilise quand le point de terminaison ne répond pas.
 
 ## Changer de compte
 
@@ -59,5 +59,13 @@ ccam next --continue  # the next account that shares your conversation history
 ```
 
 `ccam next` ignore les comptes qui ne sont pas connectés, et `--auto` ignore les comptes à 100 %. Pour poursuivre une conversation, les deux comptes doivent partager l'historique des conversations ; voir [Partage](/docs/sharing).
+
+Pour les scripts et les tâches planifiées qui exécutent `claude -p`, placez `--fallback` avant le nom du compte. Quand ce compte atteint sa limite, ccam relance la même commande avec le compte qui a le plus de marge, et seule la sortie de l'exécution qui a abouti est affichée :
+
+```sh
+ccam --fallback work -p "review the diff" --output-format json
+```
+
+Voir [Relancer à la limite](/features/next#run-again-at-the-limit) pour savoir comment ccam décide.
 
 Le [guide sur la limite d'utilisation](/guides/usage-limit-workflow) présente un exemple complet.

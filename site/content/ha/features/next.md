@@ -1,13 +1,13 @@
 ---
 title: Sauyawa zuwa asusu na gaba
-description: ccam next yana buɗe Claude Code da asusun da ke bin wanda ka yi amfani da shi na ƙarshe; --auto yana zaɓar mafi ƙarancin amfanin awa 5, --continue yana ci gaba.
-updated: 2026-10-19
+description: ccam next yana buɗe Claude Code da asusun da ke bin na ƙarshe; --auto yana zaɓar mafi sarari, --continue yana ci gaba, --fallback yana maimaita ayyukan -p.
+updated: 2026-10-20
 order: 8
 translation: machine
-sourceHash: 92352f532e74
+sourceHash: 7bc55c2dd520
 ---
 
-`ccam next` yana buɗe Claude Code a matsayin wani asusu ba tare da ka ambaci sunansa ba. Yi amfani da shi idan asusu ya kai iyakar amfaninsa: `ccam next` kawai yana ɗaukar asusun da ke bayan wanda ka yi amfani da shi na ƙarshe, `--auto` yana ɗaukar wanda ya fi sarari a tagar awa 5 ɗinsa, kuma `--continue` yana ci gaba da tattaunawar ƙarshe a sabon asusun.
+`ccam next` yana buɗe Claude Code a matsayin wani asusu ba tare da ka ambaci sunansa ba. Yi amfani da shi idan asusu ya kai iyakar amfaninsa: `ccam next` kawai yana ɗaukar asusun da ke bayan wanda ka yi amfani da shi na ƙarshe, `--auto` yana ɗaukar wanda ya fi sarari a tagar awa 5 ɗinsa, kuma `--continue` yana ci gaba da tattaunawar ƙarshe a sabon asusun. Don rubutun umarni (scripts) masu gudanar da `claude -p`, `ccam --fallback` yana yin wannan sauyawar da kansa (duba [Sake gudanarwa a iyaka](#run-again-at-the-limit)).
 
 ## Amfani
 
@@ -66,6 +66,34 @@ An fara `work` kwanan nan, don haka tafiyar tana farawa bayan sa. `side` ba shi 
 
 `--continue` na Claude Code yana buɗe tattaunawa ta kwanan nan a foldar yanzu, wanda ke aiki ne kawai idan sabon asusun zai iya ganin wannan tattaunawar. Don haka da `--continue`, ccam yana duba asusan da ke rukunin `history` ɗaya da asusun da ka yi amfani da shi na ƙarshe kawai, sannan yana saka `--continue` a gaban arguments naka. Asusan da tarihinsu `local` ne ba sa raba wa kowa, don haka `--continue` daga irin wannan asusu koyaushe yana gazawa. Fara kunna rabawa da `ccam share <name> --history on` (duba [rabawa](/docs/sharing)).
 
+## Sake gudanarwa a iyaka
+
+`ccam next` na zaman mu'amala ne da ya tsaya. Gudu wanda ba na mu'amala ba, `claude -p` a rubutun umarni ko a aikin da aka tsara lokacinsa, ba zai iya jiranka ba, don haka `--fallback` kafin sunan asusun yana bar ccam ya sauya a madadinsa:
+
+```sh
+ccam --fallback work -p "fix the failing tests" --output-format json
+ccam --fallback -p "summarise" < notes.txt      # the folder's account or the default
+ccam run --fallback work -p "review the diff"
+```
+
+```console
+$ ccam --fallback personal -p "summarise" < notes.txt
+ccam: personal reached its usage limit; running the command again as work
+Summary: …
+```
+
+1. `--fallback` yana aiki ne kawai tare da `-p` ko `--print`; in ba haka ba ccam yana tsayawa kuma yana nuna `ccam next --auto --continue`.
+2. Ana karanta standard input sau ɗaya kuma ana ba kowane yunƙuri shi.
+3. ccam yana fara `claude` a matsayin child process maimakon `exec`, yana riƙe standard output ɗinsa, kuma yana miƙa standard error yadda yake zuwa.
+4. Idan `claude` ya fita da 0, ko ya gaza saboda wani dalili, ana miƙa output ɗin da aka riƙe da exit code ba tare da canji ba.
+5. Gazawa tana ƙirguwa a matsayin iyakar amfani idan saƙon Claude Code ya faɗi haka (`You've hit your limit`, `usage limit reached`), ko idan neman amfanin asusun ya nuna tagarsa ta awa 5 ko ta mako a 100%.
+6. Sannan ana watsar da output ɗin wannan yunƙurin kuma umarnin iri ɗaya yana gudana a matsayin wani asusu da aka shiga da shi: wanda ke da mafi ƙarancin amfanin awa 5, sannan asusan da ba za a iya neman amfaninsu ba, bisa tsarin lambobi. Ana tsallake asusan da suka kai 100%, kuma ana gwada kowane asusu sau ɗaya kawai.
+7. Idan akwai `-c`, `--continue`, `-r` ko `--resume` a cikin arguments, asusan da ke rukunin tarihi ɗaya ne kawai ake gwadawa, don a sami tattaunawar.
+
+Idan babu sauran asusu, ccam yana buga output na yunƙurin ƙarshe, yana cewa babu asusun da aka shiga da shi da ke da sauran sarari, kuma yana fita da code na wannan yunƙurin. `ccam --dry-run --fallback work -p …` yana buga umarnin yunƙuri na farko.
+
+Ba a sauya zaman mu'amala da kansu. Maimakon haka, da `ccam statusline install`, layin matsayi yana ƙara `→ ccam next --auto --continue` da zarar amfanin awa 5 ko na mako ya kai 90% ([Iyakokin amfani](/features/usage)).
+
 ## Tsaro da yanayi na musamman
 
 - Ba a taɓa zaɓar asusan da ba su da shiga. Idan babu wani asusu da aka shiga da shi, `ccam next` kawai yana tsayawa da `no logged-in account other than <name>`.
@@ -74,6 +102,7 @@ An fara `work` kwanan nan, don haka tafiyar tana farawa bayan sa. `side` ba shi 
 - `--auto` yana yin buƙatun network ko da `--dry-run`. Yana karantawa ne kawai, kuma ba ya taɓa rubuta fayilolin token.
 - Asusun da aka zaɓa yana farawa ta hanya ɗaya da `ccam <name>`, don haka dubawa iri ɗaya suna aiki, har da gargaɗin idan wani Claude Code da ke raba tarihi ɗaya yana aiki tuni a wannan foldar.
 - Ana rubuta `last-used` ne kawai idan Claude Code ya fara da gaske. `--dry-run` yana barin sa, don haka dry run ba ya matsar da juyawar gaba.
+- `--fallback` yana riƙe standard output har sai yunƙuri ya ƙare, don haka output mai gudana kamar `--output-format stream-json` yana zuwa gaba ɗaya a ƙarshe. Fayilolin da yunƙurin farko ya canza kafin ya kai iyaka suna nan a canje; yunƙuri na gaba yana sake fara prompt ɗin.
 
 ## Masu alaƙa
 

@@ -2,10 +2,10 @@
 title: Maswali yanayoulizwa mara kwa mara
 metaTitle: "Maswali kuhusu ccam: akaunti kadhaa za Claude Code"
 description: Majibu kuhusu ccam, akaunti za Claude Code, vikomo vya matumizi, kushiriki, faragha na mifumo inayotumika.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 6
 translation: machine
-sourceHash: 88bd249ec51c
+sourceHash: 80a5475ccfee
 ---
 
 ## Je, ccam ni zana rasmi ya Anthropic?
@@ -46,7 +46,7 @@ Hakuna kitu, isipokuwa uendeshe `ccam import` au `ccam migrate`. Import husajili
 
 ## ccam inatumika kwenye mifumo gani?
 
-Linux (Ubuntu, Debian, Fedora, Arch, Alpine na mingineyo) na macOS. Kwenye Windows, itumie ndani ya WSL.
+Linux (Ubuntu, Debian, Fedora, Arch, Alpine na mingineyo), macOS na Windows 10 na 11, moja kwa moja au ndani ya WSL. Kwenye Windows, kushiriki faili kama `settings.json` kunahitaji Developer Mode; folda zinazoshirikiwa hufanya kazi bila hiyo ([kushiriki kwenye Windows](/features/share#on-windows)).
 
 ## Kwa nini seva ya MCP inaonekana katika akaunti moja tu?
 
@@ -54,7 +54,7 @@ Seva zilizoongezwa ndani ya kipindi kwa `claude mcp add` huhifadhiwa kwa akaunti
 
 ## Je, ccam hupunguza kasi ya Claude Code?
 
-Kuanzisha Claude Code kupitia ccam huongeza takriban milisekunde 4, zilizopimwa kwa `scripts/perf-check.sh` kwenye kompyuta mpakato. ccam husoma faili moja ndogo, hukagua viungo vinavyoshirikiwa kisha hujibadilisha yenyewe kuwa `claude`, kwa hiyo haiendeshwi wakati unafanya kazi.
+Kuanzisha Claude Code kupitia ccam huongeza takriban milisekunde 4, zilizopimwa kwa `scripts/perf-check.sh` kwenye kompyuta mpakato. ccam husoma faili moja ndogo, hukagua viungo vinavyoshirikiwa kisha hujibadilisha yenyewe kuwa `claude`, kwa hiyo haiendeshwi wakati unafanya kazi. Windows haiwezi kubadilisha mchakato, kwa hiyo huko ccam huanzisha Claude Code na kuisubiri, bila kufanya kitu kingine.
 
 ## Nitasasishaje ccam?
 

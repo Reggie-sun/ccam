@@ -2,10 +2,10 @@
 title: الأسئلة الشائعة
 metaTitle: "أسئلة شائعة عن ccam: عدة حسابات Claude Code"
 description: إجابات عن ccam وحسابات Claude Code وحدود الاستخدام والمشاركة والخصوصية والأنظمة المدعومة.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 6
 translation: machine
-sourceHash: 88bd249ec51c
+sourceHash: 80a5475ccfee
 ---
 
 ## هل ccam أداة رسمية من Anthropic؟
@@ -46,7 +46,7 @@ sourceHash: 88bd249ec51c
 
 ## ما الأنظمة التي يدعمها ccam؟
 
-Linux (Ubuntu وDebian وFedora وArch وAlpine وغيرها) وmacOS. على Windows، استخدمه داخل WSL.
+Linux (Ubuntu وDebian وFedora وArch وAlpine وغيرها) وmacOS وWindows 10 و11، أصليًا أو داخل WSL. على Windows، تحتاج مشاركة الملفات مثل `settings.json` إلى وضع المطور (Developer Mode)؛ أما المجلدات المشتركة فتعمل دونه ([المشاركة على Windows](/features/share#on-windows)).
 
 ## لماذا يظهر خادم MCP في حساب واحد فقط؟
 
@@ -54,7 +54,7 @@ Linux (Ubuntu وDebian وFedora وArch وAlpine وغيرها) وmacOS. على Wi
 
 ## هل يبطئ ccam برنامج Claude Code؟
 
-تشغيل Claude Code عبر ccam يضيف نحو 4 أجزاء من الألف من الثانية، وقد قيس ذلك باستخدام `scripts/perf-check.sh` على حاسوب محمول. يقرأ ccam ملفًا صغيرًا واحدًا، ويفحص الروابط المشتركة، ثم يستبدل نفسه بـ `claude`، لذلك لا يكون قيد التشغيل أثناء عملك.
+تشغيل Claude Code عبر ccam يضيف نحو 4 أجزاء من الألف من الثانية، وقد قيس ذلك باستخدام `scripts/perf-check.sh` على حاسوب محمول. يقرأ ccam ملفًا صغيرًا واحدًا، ويفحص الروابط المشتركة، ثم يستبدل نفسه بـ `claude`، لذلك لا يكون قيد التشغيل أثناء عملك. لا يستطيع Windows استبدال عملية، لذا يشغّل ccam هناك Claude Code وينتظره، دون أن يفعل أي شيء آخر.
 
 ## كيف أحدّث ccam؟
 

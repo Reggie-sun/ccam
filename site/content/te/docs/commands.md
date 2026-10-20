@@ -2,10 +2,10 @@
 title: కమాండ్ రిఫరెన్స్
 metaTitle: ccam కమాండ్ రిఫరెన్స్
 description: ccam add, ccam <name> నుంచి ccam usage, ccam next, ccam doctor వరకు ccam యొక్క ప్రతి కమాండ్, ఆప్షన్.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 3342453e38d3
+sourceHash: 5d3275878535
 ---
 
 ఒక కమాండ్ అసలు చేయకుండా అది ఏమి చేస్తుందో చూడటానికి, దాని ముందు `--dry-run` పెట్టండి, ఉదాహరణకు `ccam --dry-run work`. ఇది Claude Code ను ప్రారంభించేటప్పుడు (`ccam <name>`, `ccam run`, `ccam next`), అలాగే `share`, `migrate`, `shortcut`, `update`, `doctor --fix` తో పనిచేస్తుంది. ఏదైనా మార్చే ఇతర కమాండ్‌లు రన్ అవ్వకుండా దాన్ని తిరస్కరిస్తాయి.
@@ -16,7 +16,16 @@ sourceHash: 3342453e38d3
 
 `ccam <name|number> [arguments]` ఆ ఖాతాగా Claude Code ను ప్రారంభిస్తుంది. పేరు తర్వాత ఉన్న ఆర్గ్యుమెంట్‌లను ccam చదవదు; వాటిని అదే క్రమంలో `claude` కు పంపుతుంది. స్టాండర్డ్ ఇన్‌పుట్, ఎగ్జిట్ కోడ్, సిగ్నల్స్ అన్నీ `claude` తో నేరుగా ఉన్నట్లే పనిచేస్తాయి. పేరు తర్వాత `--` ఐచ్ఛికం.
 
-ఖాతా పేరు లేకుండా ఆర్గ్యుమెంట్‌లతో `ccam`, ఉదాహరణకు `ccam -p "summarise"`, డిఫాల్ట్ ఖాతాను ఉపయోగిస్తుంది. దాన్ని `ccam use <name>` తో సెట్ చేయండి.
+ఖాతా పేరు లేకుండా ఆర్గ్యుమెంట్‌లతో `ccam`, ఉదాహరణకు `ccam -p "summarise"`, ప్రస్తుత ఫోల్డర్‌కు సెట్ చేసిన ఖాతాను, లేకపోతే డిఫాల్ట్ ఖాతాను ఉపయోగిస్తుంది. వాటిని `ccam folder <name> [folder]`, `ccam use <name>` తో సెట్ చేయండి.
+
+```sh
+ccam folder work ~/code/company   # work inside ~/code/company and below
+ccam folder                       # list folders and the account used here
+ccam folder --remove ~/code/company
+ccam --fallback work -p "fix the tests"   # run again as another account at the limit
+```
+
+ఖాతా పేరుకు ముందు `--fallback` అనేది `-p`/`--print` రన్‌ల కోసం. ఖాతా తన వినియోగ పరిమితిని చేరినప్పుడు, ccam అదే కమాండ్‌ను ఎక్కువ అవకాశం ఉన్న లాగిన్ అయిన ఖాతాగా మళ్లీ రన్ చేసి, పూర్తయిన రన్ output ను మాత్రమే ప్రింట్ చేస్తుంది. చూడండి [ఫోల్డర్ వారీగా ఖాతాలు](/features/folder), [పరిమితి వద్ద మళ్లీ రన్ చేయడం](/features/next#run-again-at-the-limit).
 
 `ccwork` వంటి షార్ట్‌కట్ కూడా తన ఖాతాను ఇదే విధంగా ప్రారంభిస్తుంది: `ccam work --resume` చేసేదే `ccwork --resume` చేస్తుంది. [షార్ట్‌కట్‌లు](/docs/commands#shortcuts) చూడండి.
 
@@ -108,6 +117,7 @@ ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
 ccam version         # also: ccam -v, ccam --version
+ccam completion bash # or zsh, powershell
 ```
 
 `ccam update` ccam ను మార్చే ముందు రిలీజ్ SHA-256 చెక్‌సమ్‌ను తనిఖీ చేస్తుంది, `--version v0.2.0` ఒక నిర్దిష్ట రిలీజ్‌ను ఇన్‌స్టాల్ చేస్తుంది. `.deb` ప్యాకేజీ నుంచి ఇన్‌స్టాల్ చేసిన ccam ను apt తో అప్‌డేట్ చేయండి. వివరాల కోసం [అప్‌డేట్ చేయడం](/docs/install#update) చూడండి.
@@ -122,4 +132,4 @@ ccam version         # also: ccam -v, ccam --version
 | `~/.local/state/ccam/` | వినియోగ కాష్, చివరిగా ఉపయోగించిన సమయాలు |
 | `~/.local/bin/<shortcut>` | `ccwork` వంటి షార్ట్‌కట్ కమాండ్‌లు, ccam కు లింక్‌లు |
 
-`XDG_CONFIG_HOME`, `XDG_DATA_HOME`, `XDG_STATE_HOME` వేరియబుల్స్ ఈ ఫోల్డర్‌ల స్థానాన్ని మారుస్తాయి.
+`XDG_CONFIG_HOME`, `XDG_DATA_HOME`, `XDG_STATE_HOME` వేరియబుల్స్ ఈ ఫోల్డర్‌ల స్థానాన్ని మారుస్తాయి. Windows లో `~` అంటే `%USERPROFILE%`, షార్ట్‌కట్‌లు `<shortcut>.exe` గా ఉంటాయి.

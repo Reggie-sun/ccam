@@ -2,10 +2,10 @@
 title: Mga madalas itanong
 metaTitle: "ccam FAQ: maraming Claude Code account"
 description: Mga sagot tungkol sa ccam, mga Claude Code account, usage limit, sharing, privacy at mga suportadong system.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 6
 translation: machine
-sourceHash: 88bd249ec51c
+sourceHash: 80a5475ccfee
 ---
 
 ## Opisyal bang tool ng Anthropic ang ccam?
@@ -46,7 +46,7 @@ Wala, maliban kung patakbuhin mo ang `ccam import` o `ccam migrate`. Nirerehistr
 
 ## Aling mga system ang suportado ng ccam?
 
-Linux (Ubuntu, Debian, Fedora, Arch, Alpine at iba pa) at macOS. Sa Windows, gamitin ito sa loob ng WSL.
+Linux (Ubuntu, Debian, Fedora, Arch, Alpine at iba pa), macOS at Windows 10 at 11, direkta o sa loob ng WSL. Sa Windows, kailangan ng Developer Mode para mag-share ng mga file gaya ng `settings.json`; gumagana ang mga shared na folder kahit wala ito ([sharing sa Windows](/features/share#on-windows)).
 
 ## Bakit sa iisang account lang lumalabas ang isang MCP server?
 
@@ -54,7 +54,7 @@ Ang mga server na idinagdag sa loob ng session gamit ang `claude mcp add` ay nak
 
 ## Pinababagal ba ng ccam ang Claude Code?
 
-Nagdadagdag ng mga 4 millisecond ang pagsisimula ng Claude Code sa pamamagitan ng ccam, na sinukat gamit ang `scripts/perf-check.sh` sa isang laptop. Nagbabasa ang ccam ng isang maliit na file, sinusuri ang mga shared na link at saka pinapalitan ang sarili nito ng `claude`, kaya hindi ito tumatakbo habang nagtatrabaho ka.
+Nagdadagdag ng mga 4 millisecond ang pagsisimula ng Claude Code sa pamamagitan ng ccam, na sinukat gamit ang `scripts/perf-check.sh` sa isang laptop. Nagbabasa ang ccam ng isang maliit na file, sinusuri ang mga shared na link at saka pinapalitan ang sarili nito ng `claude`, kaya hindi ito tumatakbo habang nagtatrabaho ka. Hindi kayang palitan ng Windows ang isang process, kaya doon sinisimulan ng ccam ang Claude Code at hinihintay ito, nang walang ibang ginagawa.
 
 ## Paano i-update ang ccam?
 

@@ -2,7 +2,7 @@
 title: Quick start
 metaTitle: "Quick start: add and switch Claude Code accounts"
 description: Add two Claude Code accounts with ccam add, give them shortcuts such as ccwork, switch between them, and pick what they share.
-updated: 2026-10-19
+updated: 2026-10-20
 published: 2026-10-19
 order: 2
 translation: source
@@ -107,7 +107,7 @@ ccam usage
 ccam next --continue
 ```
 
-`ccam usage` shows the 5-hour and weekly usage of every account. `ccam next --continue` opens the same conversation in the next account. See [usage limits](/docs/usage-limits).
+`ccam usage` shows the 5-hour and weekly usage of every account. `ccam next --continue` opens the same conversation in the next account. In scripts, `ccam --fallback work -p "…"` switches by itself. See [usage limits](/docs/usage-limits).
 
 ## Already using ~/.claude?
 

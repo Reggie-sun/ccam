@@ -1,10 +1,10 @@
 ---
 title: Maraming Claude Code account sa iisang computer
 description: Magpatakbo ng maraming Claude Code account nang magkatabi sa CLAUDE_CONFIG_DIR, mano-mano sa shell alias o awtomatiko sa ccam, at lumipat sa pagitan nila.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: e2f4deb40c81
+sourceHash: f2982e4317a2
 ---
 
 Bigyan ang bawat account ng sariling configuration folder. Binabasa ng Claude Code ang folder mula sa environment variable na `CLAUDE_CONFIG_DIR`, at may sariling login, settings at kasaysayan ang bawat folder, kaya nananatiling naka-log in ang bawat account at puwede mo silang patakbuhin nang sabay. Puwede mo itong i-set up nang mano-mano gamit ang shell alias, o hayaang gawin ito ng ccam.
@@ -61,7 +61,7 @@ Sa loob ng Claude Code, ipinapakita ng `/status` ang account na naka-log in. Sa 
 
 ## Gumagana ba ito sa Windows at WSL?
 
-Tumatakbo ang Claude Code [nang native sa Windows at sa loob ng WSL](https://code.claude.com/docs/en/setup). Gumagana ang `CLAUDE_CONFIG_DIR` sa pareho, kaya sapat na ang alias o ang PowerShell function sa itaas sa native na Windows. Tumatakbo ang ccam sa Linux at macOS; sa Windows, i-install at gamitin ito sa loob ng WSL, kung saan gumagana ito gaya ng sa Linux.
+Tumatakbo ang Claude Code [nang native sa Windows at sa loob ng WSL](https://code.claude.com/docs/en/setup). Gumagana ang `CLAUDE_CONFIG_DIR` sa pareho, kaya sapat na ang alias o ang PowerShell function sa itaas sa native na Windows. Tumatakbo rin nang native ang ccam sa Windows: i-install ito sa PowerShell gamit ang `irm https://ccam.dev/install.ps1 | iex`, o sa loob ng WSL gamit ang Linux na command. Nagiging `ccwork.exe` ang mga shortcut, at kailangan ng Developer Mode para mag-share ng mga file gaya ng `settings.json` ([I-install ang ccam](/docs/install)).
 
 ## Pag-troubleshoot
 

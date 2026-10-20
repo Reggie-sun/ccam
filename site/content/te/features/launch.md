@@ -4,7 +4,7 @@ description: ccam <name|number>, ccam run లేదా పికర్‌తో 
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 401eed57e533
+sourceHash: e6b5a8d4df86
 ---
 
 `ccam work` Claude Code ను `work` ఖాతాగా ప్రారంభిస్తుంది, పేరు తర్వాత ఉన్నదంతా ఉన్నది ఉన్నట్లుగా `claude` కు వెళ్తుంది. మీరు `claude` అని టైప్ చేసే ప్రతి చోటా దీన్ని ఉపయోగించండి: టెర్మినల్‌లో, స్క్రిప్ట్‌లో, లేదా పైప్ ద్వారా ఇన్‌పుట్ ఇచ్చి.
@@ -17,16 +17,18 @@ ccam 2                           # the account with number 2 (see ccam list)
 ccam work --resume               # claude --resume, as work
 ccam work -p "fix the tests" --output-format json
 cat log.txt | ccam work -p "find the cause"
-ccam -p "summarise"              # no name: the default account
+ccam -p "summarise"              # no name: the folder's account, else the default
 ccam use work                    # make work the default account
+ccam folder work ~/code/company  # use work in that folder when no name is given
 ccam run work --continue         # same as ccam work --continue
 ccam                             # the picker on a terminal, the list otherwise
 ccam --dry-run work -p hi        # print the command instead of running it
+ccam --fallback work -p "fix the tests"   # run again as another account at the limit
 ```
 
 ఖాతా పేరును లేదా `ccam list` లోని దాని నంబర్‌ను ఇవ్వండి. పేరు తర్వాతి ఆర్గ్యుమెంట్‌లను ccam చదవదు, కాబట్టి `ccam work --help` Claude Code సహాయాన్ని చూపిస్తుంది. పేరు తర్వాత `--` ఐచ్ఛికం. స్టాండర్డ్ ఇన్‌పుట్, ఎగ్జిట్ కోడ్, సిగ్నల్స్ `claude` తో ఉన్నట్లే పనిచేస్తాయి.
 
-మొదటి ఆర్గ్యుమెంట్ `-` తో మొదలై, ccam సొంత ఫ్లాగ్‌లలో ఒకటి కాకపోతే, ccam అన్ని ఆర్గ్యుమెంట్‌లతో డిఫాల్ట్ ఖాతాను ప్రారంభిస్తుంది. డిఫాల్ట్ అంటే `ccam use` తో సెట్ చేసిన ఖాతా, మీరు ఏదీ సెట్ చేయకపోతే అతి తక్కువ నంబర్ ఉన్న ఖాతా.
+మొదటి ఆర్గ్యుమెంట్ `-` తో మొదలై, ccam సొంత ఫ్లాగ్‌లలో ఒకటి కాకపోతే, ccam అన్ని ఆర్గ్యుమెంట్‌లతో పేరు లేకుండా ఒక ఖాతాను ప్రారంభిస్తుంది. అది [`ccam folder`](/features/folder) తో ప్రస్తుత ఫోల్డర్‌కు సెట్ చేసిన ఖాతా, లేకపోతే డిఫాల్ట్: `ccam use` తో సెట్ చేసిన ఖాతా, మీరు ఏదీ సెట్ చేయకపోతే అతి తక్కువ నంబర్ ఉన్న ఖాతా.
 
 ### పికర్
 
@@ -50,21 +52,27 @@ ccam --dry-run work -p hi        # print the command instead of running it
 | ఆప్షన్ | ఏమి చేస్తుంది | డిఫాల్ట్ |
 | --- | --- | --- |
 | `--dry-run` | ccam రన్ చేసే ఎన్విరాన్‌మెంట్, కమాండ్‌ను ప్రింట్ చేసి నిష్క్రమిస్తుంది | ఆఫ్ |
+| `--fallback` | `-p`/`--print` రన్‌ల కోసం: ఖాతా తన వినియోగ పరిమితిని చేరినప్పుడు, అదే కమాండ్‌ను ఎక్కువ అవకాశం ఉన్న లాగిన్ అయిన ఖాతాగా మళ్లీ రన్ చేస్తుంది ([వివరాలు](/features/next#run-again-at-the-limit)) | ఆఫ్ |
 | `-v`, `--version` | `ccam <version>` ను ప్రింట్ చేస్తుంది (మొదటి ఆర్గ్యుమెంట్‌గా మాత్రమే) | |
 | `-h`, `--help` | `ccam --help` లేదా `ccam run --help` గా, ccam సహాయం | |
 
 ఆర్గ్యుమెంట్ నియమాలు:
 
 - ccam తన సొంత ఫ్లాగ్‌లను ఖాతా పేరుకు ముందు మాత్రమే చదువుతుంది. పేరు తర్వాత, `--dry-run`, `--help` తో సహా ప్రతి ఆర్గ్యుమెంట్ Claude Code కు చెందుతుంది.
-- `--dry-run` `ccam --dry-run work`, `ccam run --dry-run work`, `ccam --dry-run` (డిఫాల్ట్ ఖాతా) గా పనిచేస్తుంది. ఇది పాటించబడుతుంది, తిరస్కరించబడదు.
-- `ccam run <name|number> [claude args]` అనేది `ccam <name>` యొక్క పొడవైన రూపం. పేరు లేని `ccam run` డిఫాల్ట్ ఖాతాను ఉపయోగిస్తుంది.
+- `--dry-run` `ccam --dry-run work`, `ccam run --dry-run work`, `ccam --dry-run` (పేరు లేని ఖాతా) గా పనిచేస్తుంది. ఇది పాటించబడుతుంది, తిరస్కరించబడదు. `--dry-run`, `--fallback` ఏ క్రమంలోనైనా రావచ్చు.
+- `ccam run <name|number> [claude args]` అనేది `ccam <name>` యొక్క పొడవైన రూపం. పేరు లేని `ccam run` ఫోల్డర్ ఖాతాను లేదా డిఫాల్ట్ ఖాతాను ఉపయోగిస్తుంది.
 - ఖాతా పేర్లు `add`, `list`, `run` లేదా `usage` వంటి ccam కమాండ్ పేర్లు కాకూడదు, కాబట్టి `ccam <word>` ఎప్పుడూ అస్పష్టంగా ఉండదు.
 
-డ్రై రన్ మీరు షెల్‌లో పేస్ట్ చేయగల ఒక లైన్‌ను ప్రింట్ చేస్తుంది:
+డ్రై రన్ మీరు షెల్‌లో, లేదా Windows లో PowerShell లో పేస్ట్ చేయగల ఒక లైన్‌ను ప్రింట్ చేస్తుంది:
 
 ```console
 $ ccam --dry-run work -p "fix the tests"
 CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/claude --mcp-config=/home/me/.local/share/ccam/groups/default/mcp.json -p 'fix the tests'
+```
+
+```console
+PS> ccam --dry-run work -p "fix the tests"
+$env:CLAUDE_CONFIG_DIR='C:\Users\me\.local\share\ccam\profiles\work'; & C:\Users\me\.local\bin\claude.exe --mcp-config=C:\Users\me\.local\share\ccam\groups\default\mcp.json -p 'fix the tests'
 ```
 
 ## ఇది ఎలా పనిచేస్తుంది
@@ -78,7 +86,7 @@ CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/c
 1. `cmd/ccam/main.go` `app.Main` ను పిలుస్తుంది. ccam మరో పేరుతో ప్రారంభించబడితే, అది ఒక [షార్ట్‌కట్](/features/shortcuts), నేరుగా లాంచర్‌కు వెళ్తుంది.
 2. cobra జోక్యం చేసుకునే ముందే `app.parse` `os.Args` ను చూస్తుంది. ఒంటరి `ccam` (పికర్), ఒక ccam కమాండ్ పేరు (`config.Reserved`), `-h`/`--help`, `-v`/`--version` మాత్రమే `cli.Execute` కు వెళ్తాయి. మిగతావన్నీ ప్రారంభాలు.
 3. `launcher.Launch` `~/.config/ccam/config.toml` ను చదువుతుంది, అది పార్స్ చేసే ఏకైక ఫైల్ ఇదే.
-4. `launcher.Prepare` పేరు లేదా నంబర్ ద్వారా ఖాతాను కనుగొని, ముందున్న ఒక `--` ను తొలగించి, `ResolveClaude` తో `claude` ఎగ్జిక్యూటబుల్‌ను కనుగొంటుంది. PATH లుకప్ ఫైల్ మార్పు సమయంతో పాటు `~/.local/state/ccam/claude-path` లో కాష్ అవుతుంది, కాబట్టి ccam ప్రతి ప్రారంభంలో `PATH` ను వెతకదు. ఫైల్ మారినా లేకపోయినా కొత్త లుకప్ జరుగుతుంది. `config.toml` లోని `claude_bin` పాత్ ఉన్నది ఉన్నట్లుగా ఉపయోగించబడుతుంది. ccam తానే అయిన `claude` ను, inode ద్వారా పోల్చి, ccam తిరస్కరిస్తుంది, ఎందుకంటే అది లూప్ అవుతుంది.
+4. `launcher.Prepare` పేరు లేదా నంబర్ ద్వారా ఖాతాను కనుగొని (పేరు లేకపోతే `HereProfile` ఫోల్డర్ ఖాతాను తీసుకుంటుంది, working directory ని `config.toml` లోని `[[folder]]` ఎంట్రీలతో strings గా పోల్చి), ముందున్న ఒక `--` ను తొలగించి, `ResolveClaude` తో `claude` ఎగ్జిక్యూటబుల్‌ను కనుగొంటుంది. PATH లుకప్ ఫైల్ మార్పు సమయంతో పాటు `~/.local/state/ccam/claude-path` లో కాష్ అవుతుంది, కాబట్టి ccam ప్రతి ప్రారంభంలో `PATH` ను వెతకదు. ఫైల్ మారినా లేకపోయినా కొత్త లుకప్ జరుగుతుంది. `config.toml` లోని `claude_bin` పాత్ ఉన్నది ఉన్నట్లుగా ఉపయోగించబడుతుంది. ccam తానే అయిన `claude` ను, inode ద్వారా పోల్చి, ccam తిరస్కరిస్తుంది, ఎందుకంటే అది లూప్ అవుతుంది.
 5. `checkLinks` ఖాతా ఫోల్డర్ `~/.local/share/ccam/profiles/<name>/` ను దాని షేరింగ్ సెట్టింగ్‌లతో `share.Check` ద్వారా పోలుస్తుంది, అది `lstat`, `readlink` ను మాత్రమే పిలుస్తుంది, ఒక్కో అంశానికి ఒకటి లేదా రెండు సిస్టమ్ కాల్స్. లేని లింక్ అక్కడికక్కడే సృష్టించబడుతుంది. డేటా కోల్పోయే అవకాశం ఉన్న ఏదైనా ప్రారంభాన్ని ఆపుతుంది.
 6. `applyMCP` షేర్ చేసిన MCP సర్వర్లను జోడిస్తుంది (కింద చూడండి).
 7. `session.Register` సెషన్‌ను నమోదు చేస్తుంది. ccam తన PID పేరుతో, ప్రాసెస్ ప్రారంభ సమయాన్ని కలిగిన ఒక మార్కర్‌ను `$XDG_RUNTIME_DIR/ccam/profile-<name>/<pid>` లో (లేదా `XDG_RUNTIME_DIR` లేకపోతే `~/.local/state/ccam/locks/` లో) రాస్తుంది. సంభాషణ చరిత్రను షేర్ చేసే ఖాతా కోసం, `historyCheck` ముందుగా `history-<group>-<hash>` లో రన్ అవుతున్న సెషన్ కోసం చూస్తుంది, ఇక్కడ హాష్ ప్రస్తుత ఫోల్డర్‌ది, అక్కడ కూడా నమోదు చేస్తుంది. `exec` PID ను ఉంచుతుంది, కాబట్టి ఆ తర్వాత మార్కర్ Claude Code ప్రాసెస్‌నే సూచిస్తుంది. పట్టుకున్న లాక్ కాకుండా మార్కర్ ఎందుకంటే, Claude Code ప్రారంభించే ప్రాసెస్‌లు లాక్‌ను వారసత్వంగా పొంది సెషన్ ముగిసిన తర్వాత కూడా దాన్ని ఉంచుకుంటాయి.
@@ -88,7 +96,9 @@ Claude Code `CLAUDE_CONFIG_DIR` ఖాతా ఫోల్డర్‌కు, `CC
 
 ### exec ఎందుకు
 
-`syscall.Exec` ccam ప్రాసెస్‌ను `claude` తో భర్తీ చేస్తుంది, కాబట్టి ccam మెమరీలో ఉండదు, కీస్ట్రోక్‌లు, సిగ్నల్స్, ఎగ్జిట్ కోడ్ Claude Code సొంతమే, ఆర్గ్యుమెంట్‌లు ఎప్పుడూ షెల్ స్ట్రింగ్ కాకుండా అర్రేగానే ఉంటాయి. `claude mcp add` తో జోడించిన సర్వర్లను గమనించడం వంటి సెషన్ తర్వాతి పని, తదుపరి ప్రారంభంలో జరుగుతుంది: ccam `.claude.json` మార్పు సమయాన్ని `~/.local/state/ccam/mcp/<name>/seen` తో పోల్చి, ఫైల్ మారినప్పుడు మాత్రమే దాన్ని పార్స్ చేస్తుంది.
+`syscall.Exec` ccam ప్రాసెస్‌ను `claude` తో భర్తీ చేస్తుంది, కాబట్టి ccam మెమరీలో ఉండదు, కీస్ట్రోక్‌లు, సిగ్నల్స్, ఎగ్జిట్ కోడ్ Claude Code సొంతమే, ఆర్గ్యుమెంట్‌లు ఎప్పుడూ షెల్ స్ట్రింగ్ కాకుండా అర్రేగానే ఉంటాయి.
+
+Windows లో `exec` లేదు. అక్కడ `Plan.Exec` అదే ఎన్విరాన్‌మెంట్, ఆర్గ్యుమెంట్‌లు, console తో `claude.exe` ను చైల్డ్ ప్రాసెస్‌గా ప్రారంభించి, దాని కోసం వేచి ఉండి, దాని ఎగ్జిట్ కోడ్‌తో నిష్క్రమిస్తుంది. Ctrl+C console నుంచి నేరుగా Claude Code కు చేరుతుంది, కాబట్టి ccam దాన్ని పట్టించుకోదు. సెషన్ మార్కర్‌లో ccam PID ఉంటుంది, అది సరిగ్గా Claude Code ఉన్నంత కాలం ఉంటుంది, Claude Code నిష్క్రమించినప్పుడు మార్కర్ తొలగించబడుతుంది. వేచి ఉన్నప్పుడు ccam ఇంకేమీ చేయదు. `claude mcp add` తో జోడించిన సర్వర్లను గమనించడం వంటి సెషన్ తర్వాతి పని, తదుపరి ప్రారంభంలో జరుగుతుంది: ccam `.claude.json` మార్పు సమయాన్ని `~/.local/state/ccam/mcp/<name>/seen` తో పోల్చి, ఫైల్ మారినప్పుడు మాత్రమే దాన్ని పార్స్ చేస్తుంది.
 
 ### కమాండ్ లైన్ ఎలా దారి మళ్లించబడుతుంది
 

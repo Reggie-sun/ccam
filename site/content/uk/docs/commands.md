@@ -2,10 +2,10 @@
 title: Довідник команд
 metaTitle: Довідник команд ccam
 description: Усі команди та параметри ccam, від ccam add і ccam <name> до ccam usage, ccam next і ccam doctor.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 3342453e38d3
+sourceHash: 5d3275878535
 ---
 
 Додайте `--dry-run` перед командою, щоб побачити, що вона зробила б, не виконуючи її, наприклад `ccam --dry-run work`. Це працює під час запуску Claude Code (`ccam <name>`, `ccam run`, `ccam next`) і з `share`, `migrate`, `shortcut`, `update` та `doctor --fix`. Інші команди, які щось змінюють, відхиляють цей параметр і не виконуються.
@@ -16,7 +16,16 @@ sourceHash: 3342453e38d3
 
 `ccam <name|number> [arguments]` запускає Claude Code від імені цього облікового запису. ccam не читає аргументи після назви; він передає їх у `claude` у тому самому порядку, а стандартне введення, код виходу та сигнали поводяться так само, як із самим `claude`. `--` після назви необов'язковий.
 
-`ccam` з аргументами, але без назви облікового запису, наприклад `ccam -p "summarise"`, використовує обліковий запис за замовчуванням. Задайте його командою `ccam use <name>`.
+`ccam` з аргументами, але без назви облікового запису, наприклад `ccam -p "summarise"`, використовує обліковий запис, заданий для поточної теки, а якщо його немає — обліковий запис за замовчуванням. Задайте їх командами `ccam folder <name> [folder]` і `ccam use <name>`.
+
+```sh
+ccam folder work ~/code/company   # work inside ~/code/company and below
+ccam folder                       # list folders and the account used here
+ccam folder --remove ~/code/company
+ccam --fallback work -p "fix the tests"   # run again as another account at the limit
+```
+
+`--fallback` перед назвою облікового запису призначений для запусків із `-p`/`--print`. Коли обліковий запис досягає ліміту використання, ccam знову виконує ту саму команду від імені облікового запису з входом, де найбільше запасу, і виводить лише результат запуску, який завершився. Див. [Облікові записи за теками](/features/folder) і [Повторний запуск при ліміті](/features/next#run-again-at-the-limit).
 
 Коротка команда, наприклад `ccwork`, запускає свій обліковий запис так само: `ccwork --resume` робить те саме, що й `ccam work --resume`. Див. [короткі команди](/docs/commands#shortcuts).
 
@@ -108,6 +117,7 @@ ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
 ccam version         # also: ccam -v, ccam --version
+ccam completion bash # or zsh, powershell
 ```
 
 `ccam update` перевіряє контрольну суму SHA-256 випуску, перш ніж замінити ccam, а `--version v0.2.0` встановлює певний випуск. ccam, встановлений з пакета `.deb`, натомість оновлюється через apt. Див. [оновлення](/docs/install#update).
@@ -122,4 +132,4 @@ ccam version         # also: ccam -v, ccam --version
 | `~/.local/state/ccam/` | Кеш використання та час останнього використання |
 | `~/.local/bin/<shortcut>` | Короткі команди, наприклад `ccwork`; посилання на ccam |
 
-Змінні `XDG_CONFIG_HOME`, `XDG_DATA_HOME` і `XDG_STATE_HOME` змінюють розташування цих тек.
+Змінні `XDG_CONFIG_HOME`, `XDG_DATA_HOME` і `XDG_STATE_HOME` змінюють розташування цих тек. У Windows `~` — це `%USERPROFILE%`, а короткі команди — це `<shortcut>.exe`.

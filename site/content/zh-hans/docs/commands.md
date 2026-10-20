@@ -2,10 +2,10 @@
 title: 命令参考
 metaTitle: "ccam 命令参考"
 description: ccam 的所有命令和选项，从 ccam add、ccam <name> 到 ccam usage、ccam next 和 ccam doctor。
-updated: 2026-10-19
+updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 3342453e38d3
+sourceHash: 5d3275878535
 ---
 
 在命令前加上 `--dry-run`，可以查看它会做什么而不实际执行，例如 `ccam --dry-run work`。它适用于启动 Claude Code（`ccam <name>`、`ccam run`、`ccam next`）以及 `share`、`migrate`、`shortcut`、`update` 和 `doctor --fix`。其他会做出更改的命令会拒绝它，而不会执行。
@@ -16,7 +16,16 @@ sourceHash: 3342453e38d3
 
 `ccam <name|number> [arguments]` 以该账号启动 Claude Code。ccam 不会读取账号名之后的参数，而是按相同顺序把它们传给 `claude`；标准输入、退出码和信号的行为与直接运行 `claude` 完全相同。账号名之后的 `--` 是可选的。
 
-`ccam` 带参数但不带账号名时（例如 `ccam -p "summarise"`），会使用默认账号。用 `ccam use <name>` 设置默认账号。
+`ccam` 带参数但不带账号名时（例如 `ccam -p "summarise"`），会使用为当前文件夹设置的账号，否则使用默认账号。分别用 `ccam folder <name> [folder]` 和 `ccam use <name>` 设置。
+
+```sh
+ccam folder work ~/code/company   # work inside ~/code/company and below
+ccam folder                       # list folders and the account used here
+ccam folder --remove ~/code/company
+ccam --fallback work -p "fix the tests"   # run again as another account at the limit
+```
+
+账号名之前的 `--fallback` 用于 `-p`/`--print` 运行。当账号达到用量限制时，ccam 会以余量最多的已登录账号重新运行同一个命令，并只打印最终完成的那次运行的输出。参见[按文件夹使用账号](/features/folder)和[达到限制时重新运行](/features/next#run-again-at-the-limit)。
 
 `ccwork` 这样的快捷命令也以同样的方式启动对应账号：`ccwork --resume` 的效果与 `ccam work --resume` 相同。参见[快捷命令](/docs/commands#shortcuts)。
 
@@ -108,6 +117,7 @@ ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
 ccam version         # also: ccam -v, ccam --version
+ccam completion bash # or zsh, powershell
 ```
 
 `ccam update` 在替换 ccam 之前会校验版本的 SHA-256 校验和，`--version v0.2.0` 用于安装特定版本。通过 `.deb` 软件包安装的 ccam 则用 apt 更新。参见[更新](/docs/install#update)。
@@ -122,4 +132,4 @@ ccam version         # also: ccam -v, ccam --version
 | `~/.local/state/ccam/` | 用量缓存和最近使用时间 |
 | `~/.local/bin/<shortcut>` | `ccwork` 这样的快捷命令，即指向 ccam 的链接 |
 
-`XDG_CONFIG_HOME`、`XDG_DATA_HOME` 和 `XDG_STATE_HOME` 变量可以改变这些文件夹的位置。
+`XDG_CONFIG_HOME`、`XDG_DATA_HOME` 和 `XDG_STATE_HOME` 变量可以改变这些文件夹的位置。在 Windows 上，`~` 是 `%USERPROFILE%`，快捷命令是 `<shortcut>.exe`。

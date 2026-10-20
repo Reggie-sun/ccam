@@ -1,10 +1,10 @@
 ---
 title: Pag-update ng ccam
 description: Pinapalitan ng ccam update ang ccam ng pinakabagong GitHub release matapos ang SHA-256 check; nag-uulat lang ang --check; nag-i-install ng tag ang --version.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 10
 translation: machine
-sourceHash: 83fc20191328
+sourceHash: d91499b95d3d
 ---
 
 Nagda-download ang `ccam update` ng ccam release mula sa GitHub, sinusuri ito laban sa `checksums.txt` ng release at pinapalitan ang tumatakbong binary sa isang rename. Gamitin ito kapag in-install mo ang ccam gamit ang install script o mula sa isang archive. Hindi kailanman kusang tumitingin ang ccam ng mga update: ang command na ito lang ang kumokontak sa GitHub, kaya gumagana nang pareho offline ang bawat ibang command.
@@ -53,9 +53,9 @@ Nasa `internal/update` ang code, na ang `ccam update` lang ang nag-i-import. Hin
 2. Kapag walang `--version`, hinihiling ng `Updater.Latest` ang `<releases>/latest` nang hindi sinusundan ang redirect, at binabasa ang tag mula sa header na `Location` (`…/tag/v0.5.0`). Ginagamit nito ang releases page sa halip na ang GitHub API, kaya hindi nalalapat ang limit ng API na 60 request kada oras. May 10 segundo ang paghahanap.
 3. Sinusuri ng `parseVersion` ang tag laban sa isang mahigpit na pattern. Napupunta ang tag sa mga download URL at sa isang ipini-print na shell command, kaya walang nakakalusot na may `/`, `%`, espasyo o shell character. Ikinukumpara ito ng `compareVersions` sa tumatakbong bersyon; nauuna ang pre-release bago ang release nito.
 4. Pinagpapasyahan ng `managed()` at `writable()` kung puwede bang palitan ng ccam ang binary (tingnan sa ibaba).
-5. Sabay na dina-download ng `Updater.Fetch` ang `ccam_<os>_<arch>.tar.gz` at `checksums.txt`, na may 2 minuto para sa dalawa. Hanggang 256 MB lang ang bawat download.
+5. Sabay na dina-download ng `Updater.Fetch` ang `ccam_<os>_<arch>.tar.gz` (sa Windows ang `ccam_windows_<arch>.zip`) at `checksums.txt`, na may 2 minuto para sa dalawa. Hanggang 256 MB lang ang bawat download.
 6. Dapat tumugma ang SHA-256 ng archive sa linya nito sa `checksums.txt` bago mangyari ang anumang iba. Pinapahinto ng nawawalang linya o ng naiibang checksum ang update na may `nothing was changed`.
-7. Binabasa ng `extract()` ang tar at kinukuha ang unang regular na file na may pangalang `ccam`. Hindi pinapansin ang mga directory, link at ibang entry, at hanggang 256 MB lang din ang binary.
+7. Binabasa ng `extract()` ang tar at kinukuha ang unang regular na file na may pangalang `ccam` (kinukuha ng `extractZip` ang `ccam.exe` mula sa zip). Hindi pinapansin ang mga directory, link at ibang entry, at hanggang 256 MB lang din ang binary.
 8. Isinusulat ng `Updater.Install` ang bagong binary gamit ang `fsutil.AtomicWrite`: isang pansamantalang file na `.ccam.tmp*` katabi ng binary, na may permission bit ng lumang file, na fina-flush sa disk at nire-rename sa ibabaw ng luma.
 
 Ang buong pipeline, mula sa paghahanap ng tag hanggang sa rename:
@@ -63,6 +63,8 @@ Ang buong pipeline, mula sa paghahanap ng tag hanggang sa rename:
 <!-- motion:update-pipeline -->
 
 Magkatabing dina-download ang archive at `checksums.txt`, at walang isinusulat hangga't hindi tumutugma ang checksum. Atomic ang rename, kaya ang crash o punong disk ay mag-iiwan ng lumang binary o ng bago, hindi kailanman kalahati ng isa. Mga symlink sa ccam binary ang mga shortcut command gaya ng `~/.local/bin/ccwork`, kaya pinapatakbo nila ang bagong bersyon nang walang anumang pagbabago.
+
+Sa Windows, hindi mapapalitan o mabubura ang file ng tumatakbong program, mapapalitan lang ang pangalan nito. Isinusulat ng `Updater.Install` ang bagong binary sa `ccam.exe.new`, pinapalitan ang pangalan ng tumatakbong `ccam.exe` ng `ccam.exe.old`, at pinapalitan ang pangalan ng bagong file ng `ccam.exe`. Kapag pumalya ang huling hakbang, ibinabalik ang pangalan ng lumang binary. Binubura ng susunod na update ang `ccam.exe.old`. Nire-renew agad pagkatapos ang mga shortcut na hard link sa halip na symbolic link ([Mga shortcut command](/features/shortcuts)), kaya pinapatakbo rin nila ang bagong bersyon.
 
 ### Mga installation na pinamamahalaan ng package
 
@@ -85,7 +87,7 @@ Or install a copy in ~/.local/bin with the install script:
   curl -fsSL https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.sh | sh
 ```
 
-Sa mga system na hindi Linux, ang linya ng install script lang ang ipi-print. Kapag hindi masulatan ang folder, imumungkahi ng ccam na patakbuhin ulit ang install script, na nag-i-install ng ccam sa `~/.local/bin`.
+Sa mga system na hindi Linux, ang linya ng install script lang ang ipi-print: `irm https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.ps1 | iex` sa Windows. Kapag hindi masulatan ang folder, imumungkahi ng ccam na patakbuhin ulit ang install script, na nag-i-install ng ccam sa `~/.local/bin`.
 
 ## Kaligtasan at mga espesyal na kaso
 

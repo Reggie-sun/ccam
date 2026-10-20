@@ -1,13 +1,13 @@
 ---
 title: Przełączanie na następne konto
-description: ccam next otwiera Claude Code jako konto następne po ostatnio używanym; --auto wybiera najniższe użycie 5-godzinne, a --continue wznawia rozmowę.
-updated: 2026-10-19
+description: ccam next otwiera Claude Code jako konto po ostatnio używanym; --auto wybiera konto z największym zapasem, --continue wznawia, --fallback ponawia zadania -p.
+updated: 2026-10-20
 order: 8
 translation: machine
-sourceHash: 92352f532e74
+sourceHash: 7bc55c2dd520
 ---
 
-`ccam next` otwiera Claude Code jako inne konto bez podawania jego nazwy. Używaj go, gdy konto osiągnie limit użycia: samo `ccam next` wybiera konto następne po ostatnio używanym, `--auto` wybiera konto z największym zapasem w 5-godzinnym oknie, a `--continue` kontynuuje ostatnią rozmowę na nowym koncie.
+`ccam next` otwiera Claude Code jako inne konto bez podawania jego nazwy. Używaj go, gdy konto osiągnie limit użycia: samo `ccam next` wybiera konto następne po ostatnio używanym, `--auto` wybiera konto z największym zapasem w 5-godzinnym oknie, a `--continue` kontynuuje ostatnią rozmowę na nowym koncie. W skryptach, które uruchamiają `claude -p`, `ccam --fallback` przełącza konto samo (zobacz [Ponowienie po osiągnięciu limitu](#run-again-at-the-limit)).
 
 ## Użycie
 
@@ -66,6 +66,34 @@ Przejście zaczyna się od ostatnio używanego konta i zatrzymuje na pierwszym z
 
 `--continue` w Claude Code otwiera najnowszą rozmowę w bieżącym folderze, co działa tylko wtedy, gdy nowe konto widzi tę rozmowę. Dlatego z `--continue` ccam bierze pod uwagę tylko konta z tej samej grupy `history` co ostatnio używane konto, a potem umieszcza `--continue` przed twoimi argumentami. Konta z historią `local` nie współdzielą jej z nikim, więc `--continue` z takiego konta zawsze się nie powiedzie. Najpierw włącz współdzielenie przez `ccam share <name> --history on` (zobacz [współdzielenie](/docs/sharing)).
 
+## Ponowienie po osiągnięciu limitu
+
+`ccam next` służy do sesji interaktywnej, która się zatrzymała. Przebieg nieinteraktywny, `claude -p` w skrypcie lub zaplanowanym zadaniu, nie może na ciebie czekać, więc `--fallback` przed nazwą konta pozwala ccam przełączyć konto za niego:
+
+```sh
+ccam --fallback work -p "fix the failing tests" --output-format json
+ccam --fallback -p "summarise" < notes.txt      # the folder's account or the default
+ccam run --fallback work -p "review the diff"
+```
+
+```console
+$ ccam --fallback personal -p "summarise" < notes.txt
+ccam: personal reached its usage limit; running the command again as work
+Summary: …
+```
+
+1. `--fallback` działa tylko razem z `-p` lub `--print`; w przeciwnym razie ccam zatrzymuje się i odsyła do `ccam next --auto --continue`.
+2. Standardowe wejście jest odczytywane raz i przekazywane każdej próbie.
+3. ccam uruchamia `claude` jako proces potomny zamiast przez `exec`, wstrzymuje jego standardowe wyjście, a standardowe wyjście błędów przekazuje na bieżąco.
+4. Gdy `claude` zakończy się kodem 0 albo nie powiedzie się z innego powodu, wstrzymane wyjście i kod wyjścia są przekazywane bez zmian.
+5. Błąd jest uznawany za limit użycia, gdy tak mówi komunikat Claude Code (`You've hit your limit`, `usage limit reached`) albo gdy sprawdzenie użycia konta pokazuje okno 5-godzinne lub tygodniowe na poziomie 100%.
+6. Wtedy wyjście tej próby jest odrzucane, a to samo polecenie uruchamia się na innym zalogowanym koncie: najpierw na tym z najniższym użyciem 5-godzinnym, potem na kontach, których użycia nie da się sprawdzić, według numerów. Konta na poziomie 100% są pomijane, a każde konto jest próbowane najwyżej raz.
+7. Gdy wśród argumentów jest `-c`, `--continue`, `-r` lub `--resume`, próbowane są tylko konta z tej samej grupy historii, żeby dało się znaleźć rozmowę.
+
+Gdy nie zostanie żadne konto, ccam wypisuje wyjście ostatniej próby, informuje, że żadne zalogowane konto nie ma już zapasu, i kończy działanie z kodem tej próby. `ccam --dry-run --fallback work -p …` wypisuje polecenie pierwszej próby.
+
+Sesje interaktywne nie przełączają się same. Zamiast tego, po `ccam statusline install`, pasek stanu dodaje `→ ccam next --auto --continue`, gdy użycie 5-godzinne lub tygodniowe osiągnie 90% ([Limity użycia](/features/usage)).
+
 ## Bezpieczeństwo i przypadki brzegowe
 
 - Konta bez loginu nigdy nie są wybierane. Gdy nie ma innego zalogowanego konta, samo `ccam next` kończy się komunikatem `no logged-in account other than <name>`.
@@ -74,6 +102,7 @@ Przejście zaczyna się od ostatnio używanego konta i zatrzymuje na pierwszym z
 - `--auto` wysyła zapytania sieciowe nawet z `--dry-run`. Tylko odczytuje i nigdy nie zapisuje plików z tokenami.
 - Wybrane konto startuje tą samą ścieżką co `ccam <name>`, więc obowiązują te same sprawdzenia, w tym ostrzeżenie, gdy w tym folderze działa już inny Claude Code współdzielący tę samą historię.
 - `last-used` jest zapisywany tylko wtedy, gdy Claude Code rzeczywiście wystartuje. `--dry-run` go nie zmienia, więc próbne uruchomienie nie przesuwa rotacji.
+- `--fallback` wstrzymuje standardowe wyjście do końca próby, więc wyjście strumieniowe, takie jak `--output-format stream-json`, przychodzi w całości na końcu. Pliki zmienione przez pierwszą próbę przed osiągnięciem limitu pozostają zmienione; następna próba zaczyna prompt od nowa.
 
 ## Powiązane
 

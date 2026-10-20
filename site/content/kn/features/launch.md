@@ -4,7 +4,7 @@ description: ccam <name|number>, ccam run ಅಥವಾ ಪಿಕರ್ ಮೂಲ
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 401eed57e533
+sourceHash: e6b5a8d4df86
 ---
 
 `ccam work` `work` ಖಾತೆಯಾಗಿ Claude Code ಅನ್ನು ಆರಂಭಿಸುತ್ತದೆ, ಮತ್ತು ಹೆಸರಿನ ನಂತರದ ಎಲ್ಲವೂ ಇದ್ದಂತೆಯೇ `claude` ಗೆ ಹೋಗುತ್ತದೆ. ನೀವು `claude` ಎಂದು ಟೈಪ್ ಮಾಡುವ ಎಲ್ಲೆಡೆ ಇದನ್ನು ಬಳಸಿ: ಟರ್ಮಿನಲ್‌ನಲ್ಲಿ, ಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ, ಅಥವಾ ಪೈಪ್ ಮೂಲಕ ಇನ್‌ಪುಟ್ ನೀಡುವಾಗ.
@@ -17,16 +17,18 @@ ccam 2                           # the account with number 2 (see ccam list)
 ccam work --resume               # claude --resume, as work
 ccam work -p "fix the tests" --output-format json
 cat log.txt | ccam work -p "find the cause"
-ccam -p "summarise"              # no name: the default account
+ccam -p "summarise"              # no name: the folder's account, else the default
 ccam use work                    # make work the default account
+ccam folder work ~/code/company  # use work in that folder when no name is given
 ccam run work --continue         # same as ccam work --continue
 ccam                             # the picker on a terminal, the list otherwise
 ccam --dry-run work -p hi        # print the command instead of running it
+ccam --fallback work -p "fix the tests"   # run again as another account at the limit
 ```
 
 ಖಾತೆಯ ಹೆಸರನ್ನು ಅಥವಾ `ccam list` ನಲ್ಲಿರುವ ಅದರ ಸಂಖ್ಯೆಯನ್ನು ನೀಡಿ. ಹೆಸರಿನ ನಂತರದ ಆರ್ಗ್ಯುಮೆಂಟ್‌ಗಳನ್ನು ccam ಓದುವುದಿಲ್ಲ, ಹೀಗಾಗಿ `ccam work --help` Claude Code ನ ಸಹಾಯವನ್ನು ತೋರಿಸುತ್ತದೆ. ಹೆಸರಿನ ನಂತರ `--` ಐಚ್ಛಿಕ. ಸ್ಟ್ಯಾಂಡರ್ಡ್ ಇನ್‌ಪುಟ್, ಎಕ್ಸಿಟ್ ಕೋಡ್ ಮತ್ತು ಸಿಗ್ನಲ್‌ಗಳು `claude` ನಲ್ಲಿ ಇರುವಂತೆಯೇ ವರ್ತಿಸುತ್ತವೆ.
 
-ಮೊದಲ ಆರ್ಗ್ಯುಮೆಂಟ್ `-` ನಿಂದ ಆರಂಭವಾಗಿ ccam ನ ಸ್ವಂತ ಫ್ಲ್ಯಾಗ್‌ಗಳಲ್ಲಿ ಒಂದಲ್ಲದಿದ್ದರೆ, ccam ಎಲ್ಲಾ ಆರ್ಗ್ಯುಮೆಂಟ್‌ಗಳೊಂದಿಗೆ ಡೀಫಾಲ್ಟ್ ಖಾತೆಯನ್ನು ಆರಂಭಿಸುತ್ತದೆ. ಡೀಫಾಲ್ಟ್ ಎಂದರೆ `ccam use` ಮೂಲಕ ಹೊಂದಿಸಿದ ಖಾತೆ, ಅಥವಾ ನೀವು ಹೊಂದಿಸದಿದ್ದರೆ ಅತ್ಯಂತ ಕಡಿಮೆ ಸಂಖ್ಯೆಯ ಖಾತೆ.
+ಮೊದಲ ಆರ್ಗ್ಯುಮೆಂಟ್ `-` ನಿಂದ ಆರಂಭವಾಗಿ ccam ನ ಸ್ವಂತ ಫ್ಲ್ಯಾಗ್‌ಗಳಲ್ಲಿ ಒಂದಲ್ಲದಿದ್ದರೆ, ccam ಎಲ್ಲಾ ಆರ್ಗ್ಯುಮೆಂಟ್‌ಗಳೊಂದಿಗೆ ಹೆಸರಿಲ್ಲದೆ ಒಂದು ಖಾತೆಯನ್ನು ಆರಂಭಿಸುತ್ತದೆ. ಅದು [`ccam folder`](/features/folder) ಮೂಲಕ ಈಗಿನ ಫೋಲ್ಡರ್‌ಗೆ ಹೊಂದಿಸಿದ ಖಾತೆ, ಇಲ್ಲದಿದ್ದರೆ ಡೀಫಾಲ್ಟ್: `ccam use` ಮೂಲಕ ಹೊಂದಿಸಿದ ಖಾತೆ, ಅಥವಾ ನೀವು ಹೊಂದಿಸದಿದ್ದರೆ ಅತ್ಯಂತ ಕಡಿಮೆ ಸಂಖ್ಯೆಯ ಖಾತೆ.
 
 ### ಪಿಕರ್
 
@@ -50,21 +52,27 @@ ccam --dry-run work -p hi        # print the command instead of running it
 | ಆಯ್ಕೆ | ಏನು ಮಾಡುತ್ತದೆ | ಡೀಫಾಲ್ಟ್ |
 | --- | --- | --- |
 | `--dry-run` | ccam ರನ್ ಮಾಡುವ ಪರಿಸರ ಮತ್ತು ಕಮಾಂಡ್ ಅನ್ನು ಮುದ್ರಿಸಿ ನಿರ್ಗಮಿಸುತ್ತದೆ | ಆಫ್ |
+| `--fallback` | `-p`/`--print` ರನ್‌ಗಳಿಗಾಗಿ: ಖಾತೆ ತನ್ನ ಬಳಕೆಯ ಮಿತಿ ತಲುಪಿದಾಗ, ಅದೇ ಕಮಾಂಡ್ ಅನ್ನು ಹೆಚ್ಚು ಅವಕಾಶ ಇರುವ ಲಾಗಿನ್ ಆದ ಖಾತೆಯಾಗಿ ಮತ್ತೆ ರನ್ ಮಾಡುತ್ತದೆ ([ವಿವರಗಳು](/features/next#run-again-at-the-limit)) | ಆಫ್ |
 | `-v`, `--version` | `ccam <version>` ಅನ್ನು ಮುದ್ರಿಸುತ್ತದೆ (ಮೊದಲ ಆರ್ಗ್ಯುಮೆಂಟ್ ಆಗಿ ಮಾತ್ರ) | |
 | `-h`, `--help` | ccam ನ ಸಹಾಯ, `ccam --help` ಅಥವಾ `ccam run --help` ಆಗಿ | |
 
 ಆರ್ಗ್ಯುಮೆಂಟ್ ನಿಯಮಗಳು:
 
 - ccam ತನ್ನ ಸ್ವಂತ ಫ್ಲ್ಯಾಗ್‌ಗಳನ್ನು ಖಾತೆಯ ಹೆಸರಿನ ಮೊದಲು ಮಾತ್ರ ಓದುತ್ತದೆ. ಹೆಸರಿನ ನಂತರ, `--dry-run` ಮತ್ತು `--help` ಸೇರಿದಂತೆ ಪ್ರತಿ ಆರ್ಗ್ಯುಮೆಂಟ್ Claude Code ಗೆ ಸೇರಿದ್ದು.
-- `--dry-run` `ccam --dry-run work`, `ccam run --dry-run work` ಮತ್ತು `ccam --dry-run` (ಡೀಫಾಲ್ಟ್ ಖಾತೆ) ಆಗಿ ಕೆಲಸ ಮಾಡುತ್ತದೆ. ಇದನ್ನು ನಿರಾಕರಿಸಲಾಗುವುದಿಲ್ಲ, ಪಾಲಿಸಲಾಗುತ್ತದೆ.
-- `ccam run <name|number> [claude args]` ಎಂಬುದು `ccam <name>` ನ ದೀರ್ಘ ರೂಪ. ಹೆಸರಿಲ್ಲದ `ccam run` ಡೀಫಾಲ್ಟ್ ಖಾತೆಯನ್ನು ಬಳಸುತ್ತದೆ.
+- `--dry-run` `ccam --dry-run work`, `ccam run --dry-run work` ಮತ್ತು `ccam --dry-run` (ಹೆಸರಿಲ್ಲದ ಖಾತೆ) ಆಗಿ ಕೆಲಸ ಮಾಡುತ್ತದೆ. ಇದನ್ನು ನಿರಾಕರಿಸಲಾಗುವುದಿಲ್ಲ, ಪಾಲಿಸಲಾಗುತ್ತದೆ. `--dry-run` ಮತ್ತು `--fallback` ಯಾವುದೇ ಕ್ರಮದಲ್ಲಿ ಬರಬಹುದು.
+- `ccam run <name|number> [claude args]` ಎಂಬುದು `ccam <name>` ನ ದೀರ್ಘ ರೂಪ. ಹೆಸರಿಲ್ಲದ `ccam run` ಫೋಲ್ಡರ್‌ನ ಖಾತೆಯನ್ನು ಅಥವಾ ಡೀಫಾಲ್ಟ್ ಖಾತೆಯನ್ನು ಬಳಸುತ್ತದೆ.
 - ಖಾತೆಯ ಹೆಸರುಗಳು `add`, `list`, `run` ಅಥವಾ `usage` ನಂತಹ ccam ಕಮಾಂಡ್ ಹೆಸರುಗಳಾಗಿರಬಾರದು, ಹೀಗಾಗಿ `ccam <word>` ಎಂದಿಗೂ ಅಸ್ಪಷ್ಟವಾಗುವುದಿಲ್ಲ.
 
-ಡ್ರೈ ರನ್ ನೀವು ಶೆಲ್‌ಗೆ ಪೇಸ್ಟ್ ಮಾಡಬಹುದಾದ ಒಂದು ಸಾಲನ್ನು ಮುದ್ರಿಸುತ್ತದೆ:
+ಡ್ರೈ ರನ್ ನೀವು ಶೆಲ್‌ಗೆ, ಅಥವಾ Windows ನಲ್ಲಿ PowerShell ಗೆ, ಪೇಸ್ಟ್ ಮಾಡಬಹುದಾದ ಒಂದು ಸಾಲನ್ನು ಮುದ್ರಿಸುತ್ತದೆ:
 
 ```console
 $ ccam --dry-run work -p "fix the tests"
 CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/claude --mcp-config=/home/me/.local/share/ccam/groups/default/mcp.json -p 'fix the tests'
+```
+
+```console
+PS> ccam --dry-run work -p "fix the tests"
+$env:CLAUDE_CONFIG_DIR='C:\Users\me\.local\share\ccam\profiles\work'; & C:\Users\me\.local\bin\claude.exe --mcp-config=C:\Users\me\.local\share\ccam\groups\default\mcp.json -p 'fix the tests'
 ```
 
 ## ಇದು ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ
@@ -78,7 +86,7 @@ CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/c
 1. `cmd/ccam/main.go` `app.Main` ಅನ್ನು ಕರೆಯುತ್ತದೆ. ccam ಬೇರೆ ಹೆಸರಿನಲ್ಲಿ ಆರಂಭವಾಗಿದ್ದರೆ, ಅದು ಒಂದು [ಶಾರ್ಟ್‌ಕಟ್](/features/shortcuts) ಮತ್ತು ನೇರವಾಗಿ ಲಾಂಚರ್‌ಗೆ ಹೋಗುತ್ತದೆ.
 2. cobra ತೊಡಗುವ ಮೊದಲೇ `app.parse` `os.Args` ಅನ್ನು ನೋಡುತ್ತದೆ. ಕೇವಲ `ccam` (ಪಿಕರ್), ccam ಕಮಾಂಡ್ ಹೆಸರು (`config.Reserved`), `-h`/`--help` ಮತ್ತು `-v`/`--version` ಮಾತ್ರ `cli.Execute` ಗೆ ಹೋಗುತ್ತವೆ. ಉಳಿದೆಲ್ಲವೂ ಆರಂಭ.
 3. `launcher.Launch` `~/.config/ccam/config.toml` ಅನ್ನು ಓದುತ್ತದೆ, ಅದು ಪಾರ್ಸ್ ಮಾಡುವ ಏಕೈಕ ಫೈಲ್.
-4. `launcher.Prepare` ಹೆಸರು ಅಥವಾ ಸಂಖ್ಯೆಯಿಂದ ಖಾತೆಯನ್ನು ಕಂಡುಹಿಡಿಯುತ್ತದೆ, ಮುಂದಿರುವ ಒಂದು `--` ಅನ್ನು ತೆಗೆದುಹಾಕುತ್ತದೆ, ಮತ್ತು `ResolveClaude` ಮೂಲಕ `claude` ಎಕ್ಸಿಕ್ಯೂಟಬಲ್ ಅನ್ನು ಕಂಡುಹಿಡಿಯುತ್ತದೆ. PATH ಹುಡುಕಾಟವನ್ನು ಫೈಲ್‌ನ ಮಾರ್ಪಾಡು ಸಮಯದೊಂದಿಗೆ `~/.local/state/ccam/claude-path` ನಲ್ಲಿ ಕ್ಯಾಶ್ ಮಾಡಲಾಗುತ್ತದೆ, ಹೀಗಾಗಿ ccam ಪ್ರತಿ ಆರಂಭದಲ್ಲೂ `PATH` ಅನ್ನು ಹುಡುಕುವುದಿಲ್ಲ. ಫೈಲ್ ಬದಲಾದರೆ ಅಥವಾ ಇಲ್ಲದಿದ್ದರೆ ಹೊಸ ಹುಡುಕಾಟ ನಡೆಯುತ್ತದೆ. `config.toml` ನಲ್ಲಿರುವ `claude_bin` ಪಾತ್ ಅನ್ನು ಇದ್ದಂತೆಯೇ ಬಳಸಲಾಗುತ್ತದೆ. ccam ಸ್ವತಃ ccam ಆಗಿರುವ `claude` ಅನ್ನು inode ಮೂಲಕ ಹೋಲಿಸಿ ನಿರಾಕರಿಸುತ್ತದೆ, ಏಕೆಂದರೆ ಅದು ಲೂಪ್ ಆಗುತ್ತದೆ.
+4. `launcher.Prepare` ಹೆಸರು ಅಥವಾ ಸಂಖ್ಯೆಯಿಂದ ಖಾತೆಯನ್ನು ಕಂಡುಹಿಡಿಯುತ್ತದೆ (ಅದಿಲ್ಲದಿದ್ದರೆ, `HereProfile` ಕೆಲಸದ ಡೈರೆಕ್ಟರಿಯನ್ನು `config.toml` ನ `[[folder]]` ನಮೂದುಗಳೊಂದಿಗೆ ಸ್ಟ್ರಿಂಗ್‌ಗಳಾಗಿ ಹೋಲಿಸಿ ಫೋಲ್ಡರ್‌ನ ಖಾತೆಯನ್ನು ತೆಗೆದುಕೊಳ್ಳುತ್ತದೆ), ಮುಂದಿರುವ ಒಂದು `--` ಅನ್ನು ತೆಗೆದುಹಾಕುತ್ತದೆ, ಮತ್ತು `ResolveClaude` ಮೂಲಕ `claude` ಎಕ್ಸಿಕ್ಯೂಟಬಲ್ ಅನ್ನು ಕಂಡುಹಿಡಿಯುತ್ತದೆ. PATH ಹುಡುಕಾಟವನ್ನು ಫೈಲ್‌ನ ಮಾರ್ಪಾಡು ಸಮಯದೊಂದಿಗೆ `~/.local/state/ccam/claude-path` ನಲ್ಲಿ ಕ್ಯಾಶ್ ಮಾಡಲಾಗುತ್ತದೆ, ಹೀಗಾಗಿ ccam ಪ್ರತಿ ಆರಂಭದಲ್ಲೂ `PATH` ಅನ್ನು ಹುಡುಕುವುದಿಲ್ಲ. ಫೈಲ್ ಬದಲಾದರೆ ಅಥವಾ ಇಲ್ಲದಿದ್ದರೆ ಹೊಸ ಹುಡುಕಾಟ ನಡೆಯುತ್ತದೆ. `config.toml` ನಲ್ಲಿರುವ `claude_bin` ಪಾತ್ ಅನ್ನು ಇದ್ದಂತೆಯೇ ಬಳಸಲಾಗುತ್ತದೆ. ccam ಸ್ವತಃ ccam ಆಗಿರುವ `claude` ಅನ್ನು inode ಮೂಲಕ ಹೋಲಿಸಿ ನಿರಾಕರಿಸುತ್ತದೆ, ಏಕೆಂದರೆ ಅದು ಲೂಪ್ ಆಗುತ್ತದೆ.
 5. `checkLinks` ಖಾತೆಯ ಫೋಲ್ಡರ್ `~/.local/share/ccam/profiles/<name>/` ಅನ್ನು ಅದರ ಹಂಚಿಕೆ ಸೆಟ್ಟಿಂಗ್‌ಗಳೊಂದಿಗೆ `share.Check` ಬಳಸಿ ಹೋಲಿಸುತ್ತದೆ; ಅದು `lstat` ಮತ್ತು `readlink` ಅನ್ನು ಮಾತ್ರ ಕರೆಯುತ್ತದೆ, ಪ್ರತಿ ಐಟಂಗೆ ಒಂದು ಅಥವಾ ಎರಡು ಸಿಸ್ಟಮ್ ಕಾಲ್‌ಗಳು. ಇಲ್ಲದ ಲಿಂಕ್ ಅನ್ನು ಅಲ್ಲೇ ರಚಿಸಲಾಗುತ್ತದೆ. ಡೇಟಾ ಕಳೆದುಹೋಗಬಹುದಾದ ಯಾವುದಾದರೂ ಆರಂಭವನ್ನು ನಿಲ್ಲಿಸುತ್ತದೆ.
 6. `applyMCP` ಹಂಚಿಕೊಂಡ MCP ಸರ್ವರ್‌ಗಳನ್ನು ಸೇರಿಸುತ್ತದೆ (ಕೆಳಗೆ ನೋಡಿ).
 7. `session.Register` ಸೆಷನ್ ಅನ್ನು ದಾಖಲಿಸುತ್ತದೆ. ccam ತನ್ನ PID ಹೆಸರಿನ, ಪ್ರಕ್ರಿಯೆಯ ಆರಂಭ ಸಮಯವನ್ನು ಹೊಂದಿರುವ ಒಂದು ಗುರುತನ್ನು `$XDG_RUNTIME_DIR/ccam/profile-<name>/<pid>` ಗೆ ಬರೆಯುತ್ತದೆ (ಅಥವಾ `XDG_RUNTIME_DIR` ಇಲ್ಲದಿದ್ದರೆ `~/.local/state/ccam/locks/` ಗೆ). ಸಂಭಾಷಣೆಯ ಇತಿಹಾಸವನ್ನು ಹಂಚಿಕೊಳ್ಳುವ ಖಾತೆಗೆ, `historyCheck` ಮೊದಲು `history-<group>-<hash>` ನಲ್ಲಿ ಚಾಲನೆಯಲ್ಲಿರುವ ಸೆಷನ್‌ಗಾಗಿ ಹುಡುಕುತ್ತದೆ (ಹ್ಯಾಶ್ ಈಗಿನ ಫೋಲ್ಡರ್‌ನದು), ಮತ್ತು ಅಲ್ಲಿಯೂ ನೋಂದಾಯಿಸುತ್ತದೆ. `exec` PID ಅನ್ನು ಉಳಿಸಿಕೊಳ್ಳುತ್ತದೆ, ಹೀಗಾಗಿ ಆ ಗುರುತು ನಂತರ Claude Code ಪ್ರಕ್ರಿಯೆಯನ್ನೇ ಸೂಚಿಸುತ್ತದೆ. ಹಿಡಿದಿಟ್ಟ ಲಾಕ್ ಬದಲು ಗುರುತು ಏಕೆಂದರೆ, Claude Code ಆರಂಭಿಸುವ ಪ್ರಕ್ರಿಯೆಗಳು ಲಾಕ್ ಅನ್ನು ಪಡೆದು ಸೆಷನ್ ಮುಗಿದ ನಂತರವೂ ಅದನ್ನು ಇಟ್ಟುಕೊಳ್ಳುತ್ತವೆ.
@@ -88,7 +96,9 @@ Claude Code `CLAUDE_CONFIG_DIR` ಅನ್ನು ಖಾತೆಯ ಫೋಲ್ಡ�
 
 ### exec ಏಕೆ
 
-`syscall.Exec` ccam ಪ್ರಕ್ರಿಯೆಯನ್ನು `claude` ನಿಂದ ಬದಲಾಯಿಸುತ್ತದೆ. ಹೀಗಾಗಿ ccam ಮೆಮೊರಿಯಲ್ಲಿ ಉಳಿಯುವುದಿಲ್ಲ, ಕೀಸ್ಟ್ರೋಕ್‌ಗಳು, ಸಿಗ್ನಲ್‌ಗಳು ಮತ್ತು ಎಕ್ಸಿಟ್ ಕೋಡ್ Claude Code ನದೇ ಆಗಿರುತ್ತವೆ, ಮತ್ತು ಆರ್ಗ್ಯುಮೆಂಟ್‌ಗಳು ಎಂದಿಗೂ ಶೆಲ್ ಸ್ಟ್ರಿಂಗ್ ಆಗದೆ ಅರೇ ಆಗಿಯೇ ಉಳಿಯುತ್ತವೆ. ಸೆಷನ್ ನಂತರದ ಕೆಲಸ, ಉದಾಹರಣೆಗೆ `claude mcp add` ಮೂಲಕ ಸೇರಿಸಿದ ಸರ್ವರ್‌ಗಳನ್ನು ಗಮನಿಸುವುದು, ಮುಂದಿನ ಆರಂಭದಲ್ಲಿ ನಡೆಯುತ್ತದೆ: ccam `.claude.json` ನ ಮಾರ್ಪಾಡು ಸಮಯವನ್ನು `~/.local/state/ccam/mcp/<name>/seen` ಜೊತೆ ಹೋಲಿಸುತ್ತದೆ ಮತ್ತು ಅದು ಬದಲಾದಾಗ ಮಾತ್ರ ಫೈಲ್ ಅನ್ನು ಪಾರ್ಸ್ ಮಾಡುತ್ತದೆ.
+`syscall.Exec` ccam ಪ್ರಕ್ರಿಯೆಯನ್ನು `claude` ನಿಂದ ಬದಲಾಯಿಸುತ್ತದೆ. ಹೀಗಾಗಿ ccam ಮೆಮೊರಿಯಲ್ಲಿ ಉಳಿಯುವುದಿಲ್ಲ, ಕೀಸ್ಟ್ರೋಕ್‌ಗಳು, ಸಿಗ್ನಲ್‌ಗಳು ಮತ್ತು ಎಕ್ಸಿಟ್ ಕೋಡ್ Claude Code ನದೇ ಆಗಿರುತ್ತವೆ, ಮತ್ತು ಆರ್ಗ್ಯುಮೆಂಟ್‌ಗಳು ಎಂದಿಗೂ ಶೆಲ್ ಸ್ಟ್ರಿಂಗ್ ಆಗದೆ ಅರೇ ಆಗಿಯೇ ಉಳಿಯುತ್ತವೆ.
+
+Windows ನಲ್ಲಿ `exec` ಇಲ್ಲ. ಅಲ್ಲಿ, `Plan.Exec` ಅದೇ ಪರಿಸರ, ಆರ್ಗ್ಯುಮೆಂಟ್‌ಗಳು ಮತ್ತು console ಜೊತೆ `claude.exe` ಅನ್ನು ಚೈಲ್ಡ್ ಪ್ರಕ್ರಿಯೆಯಾಗಿ ಆರಂಭಿಸುತ್ತದೆ, ಅದಕ್ಕಾಗಿ ಕಾಯುತ್ತದೆ ಮತ್ತು ಅದರ ಎಕ್ಸಿಟ್ ಕೋಡ್‌ನೊಂದಿಗೆ ನಿರ್ಗಮಿಸುತ್ತದೆ. Ctrl+C console ನಿಂದ ನೇರವಾಗಿ Claude Code ಅನ್ನು ತಲುಪುತ್ತದೆ, ಆದ್ದರಿಂದ ccam ಅದನ್ನು ನಿರ್ಲಕ್ಷಿಸುತ್ತದೆ. ಸೆಷನ್ ಗುರುತು ccam ನ PID ಅನ್ನು ಹೊಂದಿರುತ್ತದೆ, ಅದು Claude Code ಇರುವಷ್ಟೇ ಕಾಲ ಜೀವಿಸುತ್ತದೆ, ಮತ್ತು Claude Code ನಿರ್ಗಮಿಸಿದಾಗ ಅದನ್ನು ತೆಗೆದುಹಾಕಲಾಗುತ್ತದೆ. ಕಾಯುತ್ತಿರುವಾಗ ccam ಬೇರೇನೂ ಮಾಡುವುದಿಲ್ಲ. ಸೆಷನ್ ನಂತರದ ಕೆಲಸ, ಉದಾಹರಣೆಗೆ `claude mcp add` ಮೂಲಕ ಸೇರಿಸಿದ ಸರ್ವರ್‌ಗಳನ್ನು ಗಮನಿಸುವುದು, ಮುಂದಿನ ಆರಂಭದಲ್ಲಿ ನಡೆಯುತ್ತದೆ: ccam `.claude.json` ನ ಮಾರ್ಪಾಡು ಸಮಯವನ್ನು `~/.local/state/ccam/mcp/<name>/seen` ಜೊತೆ ಹೋಲಿಸುತ್ತದೆ ಮತ್ತು ಅದು ಬದಲಾದಾಗ ಮಾತ್ರ ಫೈಲ್ ಅನ್ನು ಪಾರ್ಸ್ ಮಾಡುತ್ತದೆ.
 
 ### ಕಮಾಂಡ್ ಲೈನ್ ಹೇಗೆ ಮಾರ್ಗ ಪಡೆಯುತ್ತದೆ
 

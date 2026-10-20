@@ -1,10 +1,10 @@
 ---
 title: Batas penggunaan
 description: ccam usage menampilkan batas 5 jam dan mingguan semua akun sekaligus, dan ccam statusline menampilkan nama akun dan penggunaannya di Claude Code.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 7
 translation: machine
-sourceHash: 8306a8f6d950
+sourceHash: f08a2fdc6f0b
 ---
 
 `ccam usage` menampilkan seberapa banyak batas 5 jam dan mingguan yang sudah digunakan setiap akun, beserta waktu hingga setiap jendela direset. Gunakan sebelum memulai tugas panjang, atau saat Claude Code memberi tahu bahwa batas sudah dekat, untuk melihat akun mana yang masih punya ruang. `ccam statusline` adalah perintah status line untuk Claude Code: perintah ini menampilkan nama akun dan penggunaan di dalam Claude Code serta menyimpan angkanya untuk `ccam usage`.
@@ -100,11 +100,12 @@ Claude Code menjalankan perintah status line dan mengirimkan dokumen JSON kepada
 1. `runStatusline` menemukan akun dari `CCAM_PROFILE`, yang diatur ccam saat menjalankan Claude Code, atau jika tidak ada, dengan mencocokkan `CLAUDE_CONFIG_DIR` dengan folder akun.
 2. `ParseStatusLine` membaca `rate_limits.five_hour` dan `rate_limits.seven_day`. JSON tidak berisi batas laju untuk akun kunci API, atau sebelum respons pertama sesi; dalam hal itu tidak ada yang disimpan.
 3. `SaveStatusLine` menulis `~/.local/state/ccam/usage/<name>.statusline.json`. `ccam usage` memakainya jika endpoint tidak menjawab.
-4. ccam menampilkan `[name] · model · 5h N% · 7d N%`. Dengan `--wrap`, ccam menjalankan perintah Anda melalui `sh -c` dengan input yang sama dan menampilkan `[name]` diikuti baris pertama perintah itu sebagai gantinya.
+4. ccam menampilkan `[name] · model · 5h N% · 7d N%`. Dengan `--wrap`, ccam menjalankan perintah Anda melalui `sh -c` dengan input yang sama dan menampilkan `[name]` diikuti baris pertama perintah itu sebagai gantinya. Di Windows, ccam menjalankan perintah itu dengan cara yang sama seperti Claude Code: dengan Git Bash jika terpasang, atau dengan PowerShell jika tidak.
+5. Saat penggunaan 5 jam atau mingguan mencapai 90% atau lebih dan ada akun lain, baris itu diakhiri dengan `→ ccam next --auto --continue`, misalnya `[work] · Opus · 5h 93% · 7d 41% · → ccam next --auto --continue`.
 
 Perintah yang dibungkus diberi waktu 2 detik. Setelah itu perintah dihentikan dan baris hanya menampilkan nama akun, sehingga perintah yang lambat tidak dapat memblokir status line Claude Code.
 
-`ccam statusline install` menulis `statusLine` ke `settings.json` setiap akun. Jika sebuah akun sudah memiliki perintah status line, ccam mempertahankannya sebagai `--wrap '<old command>'`. `settings.json` yang dibagikan melalui grup ditulis sekali, melalui tautannya, sehingga setiap akun dalam grup mendapatkannya. Menjalankannya lagi menampilkan `(already set)` untuk file yang sudah memakai ccam.
+`ccam statusline install` menulis `statusLine` ke `settings.json` setiap akun. Jika sebuah akun sudah memiliki perintah status line, ccam mempertahankannya sebagai `--wrap '<old command>'`. Di Windows, path ke ccam ditulis dengan garis miring biasa dan `~` untuk folder home (`~/.local/bin/ccam.exe statusline`), yang dipahami oleh Git Bash maupun PowerShell. `settings.json` yang dibagikan melalui grup ditulis sekali, melalui tautannya, sehingga setiap akun dalam grup mendapatkannya. Menjalankannya lagi menampilkan `(already set)` untuk file yang sudah memakai ccam.
 
 ## Keamanan dan kasus khusus
 

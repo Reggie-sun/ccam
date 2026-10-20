@@ -1,10 +1,10 @@
 ---
 title: ஒரே கணினியில் பல Claude Code கணக்குகளை இயக்குதல்
 description: CLAUDE_CONFIG_DIR மூலம் பல Claude Code கணக்குகளைப் பக்கம் பக்கமாக இயக்கி, அவற்றுக்கு இடையே மாறுங்கள். shell aliases மூலம் கையால், அல்லது ccam மூலம் தானாக.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: e2f4deb40c81
+sourceHash: f2982e4317a2
 ---
 
 ஒவ்வொரு கணக்குக்கும் அதன் சொந்த config கோப்புறையைக் கொடுங்கள். Claude Code அந்தக் கோப்புறையை `CLAUDE_CONFIG_DIR` சூழல் மாறியிலிருந்து படிக்கிறது. ஒவ்வொரு கோப்புறையும் தன் சொந்த உள்நுழைவு, அமைப்புகள், வரலாற்றை வைத்திருக்கும், அதனால் ஒவ்வொரு கணக்கும் உள்நுழைந்த நிலையிலேயே இருக்கும், அவற்றை ஒரே நேரத்தில் இயக்கலாம். இதை ஒரு shell alias மூலம் கையால் அமைக்கலாம், அல்லது ccam-ஐச் செய்ய விடலாம்.
@@ -61,7 +61,7 @@ Claude Code-க்குள், நீங்கள் உள்நுழைந�
 
 ## இது Windows, WSL-இல் வேலை செய்யுமா?
 
-Claude Code [Windows-இல் நேரடியாகவும் WSL-க்குள்ளும்](https://code.claude.com/docs/en/setup) இயங்குகிறது. `CLAUDE_CONFIG_DIR` இரண்டிலும் வேலை செய்கிறது, அதனால் நேரடி Windows-இல் மேலே உள்ள alias அல்லது PowerShell function போதும். ccam Linux, macOS-இல் இயங்குகிறது; Windows-இல் அதை WSL-க்குள் நிறுவிப் பயன்படுத்துங்கள், அங்கே அது Linux-இல் போலவே வேலை செய்யும்.
+Claude Code [Windows-இல் நேரடியாகவும் WSL-க்குள்ளும்](https://code.claude.com/docs/en/setup) இயங்குகிறது. `CLAUDE_CONFIG_DIR` இரண்டிலும் வேலை செய்கிறது, அதனால் நேரடி Windows-இல் மேலே உள்ள alias அல்லது PowerShell function போதும். ccam-உம் Windows-இல் நேரடியாக இயங்குகிறது: அதை PowerShell-இல் `irm https://ccam.dev/install.ps1 | iex` மூலம், அல்லது WSL-க்குள் Linux கட்டளை மூலம் நிறுவுங்கள். குறுக்குவழிகள் `ccwork.exe` ஆகின்றன, `settings.json` போன்ற கோப்புகளைப் பகிர Developer Mode தேவை ([ccam-ஐ நிறுவுதல்](/docs/install)).
 
 ## சிக்கல் தீர்வு
 

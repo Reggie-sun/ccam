@@ -1,10 +1,10 @@
 ---
 title: Prüfen und reparieren
 description: Mit ccam doctor Freigabelinks, Dateiberechtigungen, Anmeldungen und die Claude Code-Version prüfen und mit ccam doctor --fix gefahrlos Reparierbares beheben.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 9
 translation: machine
-sourceHash: a1b61efe2b1f
+sourceHash: a45ca25bb722
 ---
 
 `ccam doctor` prüft deine ccam-Installation: die Claude Code-Binärdatei, Ordner, Anmeldung und Freigabelinks jedes Kontos, die geteilten MCP-Server, den Nutzungs-Endpunkt und deine Kurzbefehle. `ccam doctor --fix` repariert, was ohne Datenverlust möglich ist, und verschiebt jede Datei, die es ersetzt, vorher in einen Sicherungsordner. Führe es aus, wenn `ccam <name>` mit einem Problem bei den Freigabelinks anhält, nachdem du Dateien von Hand wiederhergestellt hast oder nach einem Update von Claude Code.
@@ -70,7 +70,7 @@ Der mittlere Block läuft einmal pro Konto. Die Prüfungen und was `--fix` jewei
 
 1. **Claude Code-Version** (`checkClaude`). Ermittelt die Binärdatei `claude` wie der Starter und führt `claude --version` aus. Beginnt die Version nicht mit `2.1.302`, der Version, gegen die ccam die Ordnerstruktur geprüft hat (`doctor.LayoutVersion`), fügt es `· ccam was verified against the folder layout of Claude Code 2.1.302. Any 'unknown entries' below may mean the layout changed` hinzu. Eine fehlende Binärdatei oder ein fehlschlagendes `--version` ist ein Fehler. Keine Reparatur.
 2. **Zugangsdaten in der Umgebung** (`checkAuthEnv`). Warnt, wenn `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY` oder `ANTHROPIC_AUTH_TOKEN` gesetzt ist: Jedes aus dieser Shell gestartete Konto erbt die Variable, und Claude Code zieht sie der eigenen Anmeldung des Kontos vor. Keine Reparatur; entferne die Variable selbst.
-3. **Ordner** (`checkProfile`). Ein fehlender Kontoordner ist ein Fehler und beendet die Prüfungen dieses Kontos. Berechtigungen mit gesetzten Gruppen- oder Fremd-Bits sind eine Warnung; `--fix` führt `chmod 0700` aus.
+3. **Ordner** (`checkProfile`). Ein fehlender Kontoordner ist ein Fehler und beendet die Prüfungen dieses Kontos. Berechtigungen mit gesetzten Gruppen- oder Fremd-Bits sind eine Warnung; `--fix` führt `chmod 0700` aus. Windows hat keine Berechtigungsbits, deshalb werden diese Prüfung und die `0600`-Prüfung unten dort übersprungen; den Ordner in deinem Benutzerprofil schützt seine Zugriffsliste.
 4. **Anmeldedatei** (`checkCredentials`). `.credentials.json` wird mit `lstat` geprüft. Ein symbolischer Link ist ein Fehler, weil jedes Konto ein eigenes Token haben muss, und wird nicht repariert. Ein anderer Modus als `0600` ist eine Warnung; `--fix` führt `chmod 0600` aus. Dann wird die Anmeldung gelesen (unter macOS zuerst aus dem Schlüsselbund). Keine Anmeldung ist eine Warnung, die auf `ccam login <name>` verweist. Ein abgelaufenes Refresh-Token ist der Fehler `login expired`; ein abgelaufenes Zugriffstoken ist nur eine Information, da Claude Code es beim nächsten Start erneuert. Nichts davon wird repariert.
 5. **Freigabelinks** (`share.Check`). Vergleicht jeden Pfad in `share.Layout` mit den Freigabeeinstellungen des Kontos und verwendet dabei nur `lstat` und `readlink`. Es meldet vier Arten: einen fehlenden Link, einen Link, der woandershin zeigt, eine echte Datei, wo ein Link hingehört, und einen übrig gebliebenen Link für ein Element, das inzwischen lokal ist. Ein fehlender Link ist eine Warnung, die anderen sind Fehler.
 6. **Unbekannte Einträge** (`checkUnknownEntries`). Listet Namen auf der obersten Ebene des Kontoordners auf, die ccam nicht kennt (`share.Known`), als Hinweis darauf, dass sich die Ordnerstruktur von Claude Code geändert hat. Nur Information.
@@ -78,6 +78,7 @@ Der mittlere Block läuft einmal pro Konto. Die Prüfungen und was `--fix` jewei
 8. **MCP-Server** (`checkMCP`). Lädt die `mcp.json` jeder Gruppe einmal. Eine Datei, die sich nicht lesen lässt, ist ein Fehler; ein Server, der `mcp.Validate` nicht besteht, ist eine Warnung. Keine Reparatur.
 9. **Antwortformat der Nutzung** (`checkUsageFormat`). Fragt den Nutzungs-Endpunkt ohne Cache und mit dem üblichen Limit von 3 Sekunden für ein Konto nach dem anderen ab, bis eines antwortet. Lässt sich die Antwort nicht mehr auswerten, warnt es, dass `ccam usage` auf den Cache der Statuszeile zurückgreift. Das ist die einzige Prüfung, die das Netzwerk nutzt.
 10. **Kurzbefehle** (`checkShims`). Nur wenn ein Konto einen Kurzbefehl hat. Fehlende Links in `~/.local/bin` sind eine Warnung; `--fix` ruft `shim.Install` auf, das nur fehlende Links anlegt und nie andere Dateien anfasst. Ein bin-Ordner, der nicht im `PATH` liegt, ist eine Warnung und wird nicht repariert.
+11. **Ordner** (`checkFolders`). Nur wenn es Einträge von [`ccam folder`](/features/folder) gibt. Ein Eintrag, dessen Konto nicht existiert, ist ein Fehler, und ein Eintrag, dessen Ordner verschwunden ist, ist eine Warnung. Keines von beiden wird repariert, weil das Entfernen eines Eintrags ändern würde, welches Konto dort startet.
 
 ### Freigabelinks reparieren
 

@@ -4,7 +4,7 @@ description: مقایسه نام‌های مستعار شل همراه با CLAU
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: ea24bb091caf
+sourceHash: b9fbcb88f111
 ---
 
 یک نام مستعار شل برای هر حساب ساده‌ترین راه اجرای چند حساب Claude Code است. ccam در اساس همین کار را می‌کند و اشتراک‌گذاری، جابه‌جایی و پیگیری مصرف را به آن اضافه می‌کند.
@@ -42,6 +42,8 @@ ccam add work --shortcut ccwork
 | ادامه گفتگو در حساب دیگر | خیر | `ccam next --continue` |
 | مصرف همه حساب‌ها | خیر | `ccam usage` |
 | انتخاب حسابی که بیشترین ظرفیت را دارد | خیر | `ccam next --auto` |
+| اجرای دوباره یک کار `-p` با حساب دیگر هنگام رسیدن به سقف | خیر | `ccam --fallback` |
+| یک حساب برای هر پوشه پروژه | خیر | `ccam folder` |
 | نام حساب در خط وضعیت | خیر | `ccam statusline install` |
 | تعمیر پیوندهای خراب | دستی | `ccam doctor --fix` |
 | نرم‌افزار اضافی | هیچ | یک فایل اجرایی ایستا |

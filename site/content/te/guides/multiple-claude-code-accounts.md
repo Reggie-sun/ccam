@@ -1,10 +1,10 @@
 ---
 title: ఒకే కంప్యూటర్‌లో అనేక Claude Code ఖాతాలు
 description: CLAUDE_CONFIG_DIR తో అనేక Claude Code ఖాతాలను పక్కపక్కనే రన్ చేయండి, షెల్ అలియాస్‌లతో చేతితో లేదా ccam తో ఆటోమేటిక్‌గా, వాటి మధ్య మారండి.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: e2f4deb40c81
+sourceHash: f2982e4317a2
 ---
 
 ప్రతి ఖాతాకు దాని సొంత కాన్ఫిగరేషన్ ఫోల్డర్ ఇవ్వండి. Claude Code ఫోల్డర్‌ను `CLAUDE_CONFIG_DIR` ఎన్విరాన్‌మెంట్ వేరియబుల్ నుంచి చదువుతుంది. ప్రతి ఫోల్డర్‌లో దాని సొంత లాగిన్, సెట్టింగ్‌లు, చరిత్ర ఉంటాయి, కాబట్టి ప్రతి ఖాతా సైన్ ఇన్ అయ్యే ఉంటుంది, వాటిని ఒకేసారి రన్ చేయవచ్చు. దీన్ని షెల్ అలియాస్‌తో చేతితో సెటప్ చేయవచ్చు, లేదా ccam కు వదిలేయవచ్చు.
@@ -61,7 +61,7 @@ Claude Code లోపల `/status` మీరు సైన్ ఇన్ అయి
 
 ## ఇది Windows, WSL లో పనిచేస్తుందా?
 
-Claude Code [Windows లో నేరుగా, WSL లోపల కూడా](https://code.claude.com/docs/en/setup) రన్ అవుతుంది. `CLAUDE_CONFIG_DIR` రెండింటిలోనూ పనిచేస్తుంది, కాబట్టి నేటివ్ Windows లో పైన చెప్పిన అలియాస్ లేదా PowerShell ఫంక్షన్ సరిపోతుంది. ccam Linux, macOS లో రన్ అవుతుంది; Windows లో దాన్ని WSL లోపల ఇన్‌స్టాల్ చేసి ఉపయోగించండి, అక్కడ అది Linux లో లాగే పనిచేస్తుంది.
+Claude Code [Windows లో నేరుగా, WSL లోపల కూడా](https://code.claude.com/docs/en/setup) రన్ అవుతుంది. `CLAUDE_CONFIG_DIR` రెండింటిలోనూ పనిచేస్తుంది, కాబట్టి నేటివ్ Windows లో పైన చెప్పిన అలియాస్ లేదా PowerShell ఫంక్షన్ సరిపోతుంది. ccam కూడా Windows లో నేరుగా రన్ అవుతుంది: దాన్ని PowerShell లో `irm https://ccam.dev/install.ps1 | iex` తో, లేదా WSL లోపల Linux కమాండ్‌తో ఇన్‌స్టాల్ చేయండి. షార్ట్‌కట్‌లు `ccwork.exe` అవుతాయి, `settings.json` వంటి ఫైల్‌లను షేర్ చేయడానికి Developer Mode అవసరం ([ccam ను ఇన్‌స్టాల్ చేయండి](/docs/install)).
 
 ## సమస్యల పరిష్కారం
 

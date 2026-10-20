@@ -1,13 +1,13 @@
 ---
 title: 다음 계정으로 전환
-description: ccam next는 마지막으로 사용한 계정의 다음 계정으로 Claude Code를 엽니다. --auto는 5시간 사용량이 가장 적은 계정을 고르고, --continue는 대화를 이어 갑니다.
-updated: 2026-10-19
+description: ccam next는 마지막에 쓴 다음 계정으로 Claude Code를 엽니다. --auto는 가장 여유 있는 계정을 쓰고, --continue는 이어 가며, --fallback은 -p 작업을 재실행합니다.
+updated: 2026-10-20
 order: 8
 translation: machine
-sourceHash: 92352f532e74
+sourceHash: 7bc55c2dd520
 ---
 
-`ccam next`는 계정 이름을 지정하지 않아도 다른 계정으로 Claude Code를 엽니다. 계정이 사용량 한도에 도달했을 때 쓰면 됩니다. 그냥 `ccam next`를 실행하면 마지막으로 사용한 계정의 다음 계정을, `--auto`를 붙이면 5시간 구간의 여유가 가장 많은 계정을 고릅니다. `--continue`를 붙이면 마지막 대화를 새 계정에서 이어 갑니다.
+`ccam next`는 계정 이름을 지정하지 않아도 다른 계정으로 Claude Code를 엽니다. 계정이 사용량 한도에 도달했을 때 쓰면 됩니다. 그냥 `ccam next`를 실행하면 마지막으로 사용한 계정의 다음 계정을, `--auto`를 붙이면 5시간 구간의 여유가 가장 많은 계정을 고릅니다. `--continue`를 붙이면 마지막 대화를 새 계정에서 이어 갑니다. `claude -p`를 실행하는 스크립트에서는 `ccam --fallback`이 이 전환을 알아서 합니다([한도에서 다시 실행](#run-again-at-the-limit) 참고).
 
 ## 사용법
 
@@ -66,6 +66,34 @@ ccam으로 실행할 때마다 그 시각이 `~/.local/state/ccam/last-used/<nam
 
 Claude Code의 `--continue`는 현재 폴더의 가장 최근 대화를 여는데, 새 계정이 그 대화를 볼 수 있어야만 동작합니다. 그래서 `--continue`를 쓰면 ccam은 마지막으로 사용한 계정과 같은 `history` 그룹에 있는 계정만 고려하고, 직접 넘긴 인자 앞에 `--continue`를 붙입니다. 대화 내역이 `local`인 계정은 어떤 계정과도 공유하지 않으므로, 그런 계정에서 `--continue`를 쓰면 항상 실패합니다. 먼저 `ccam share <name> --history on`으로 공유를 켜세요([공유](/docs/sharing) 참고).
 
+## 한도에서 다시 실행
+
+`ccam next`는 멈춘 대화형 세션을 위한 명령입니다. 스크립트나 예약 작업에서 실행하는 `claude -p` 같은 비대화형 실행은 사용자를 기다릴 수 없으므로, 계정 이름 앞에 `--fallback`을 붙이면 ccam이 대신 전환합니다.
+
+```sh
+ccam --fallback work -p "fix the failing tests" --output-format json
+ccam --fallback -p "summarise" < notes.txt      # the folder's account or the default
+ccam run --fallback work -p "review the diff"
+```
+
+```console
+$ ccam --fallback personal -p "summarise" < notes.txt
+ccam: personal reached its usage limit; running the command again as work
+Summary: …
+```
+
+1. `--fallback`은 `-p`나 `--print`와 함께 쓸 때만 동작합니다. 그렇지 않으면 ccam은 멈추고 `ccam next --auto --continue`를 안내합니다.
+2. 표준 입력은 한 번 읽어 두고 모든 시도에 똑같이 넘깁니다.
+3. ccam은 `exec` 대신 `claude`를 자식 프로세스로 시작하고, 표준 출력은 붙잡아 두며, 표준 오류는 나오는 대로 그대로 전달합니다.
+4. `claude`가 0으로 종료하거나 다른 이유로 실패하면, 붙잡아 둔 출력과 종료 코드를 바꾸지 않고 그대로 전달합니다.
+5. Claude Code의 메시지가 사용량 한도를 알릴 때(`You've hit your limit`, `usage limit reached`), 또는 계정의 사용량 조회에서 5시간이나 주간 구간이 100%로 나올 때 그 실패를 사용량 한도로 봅니다.
+6. 그러면 그 시도의 출력은 버리고, 로그인된 다른 계정으로 같은 명령을 실행합니다. 5시간 사용량이 가장 낮은 계정부터, 그다음 사용량을 조회할 수 없는 계정을 번호 순서대로 시도합니다. 100%인 계정은 건너뛰고, 계정마다 최대 한 번만 시도합니다.
+7. 인자에 `-c`, `--continue`, `-r`, `--resume`이 있으면 대화를 찾을 수 있도록 같은 대화 내역 그룹의 계정만 시도합니다.
+
+남은 계정이 없으면 ccam은 마지막 시도의 출력을 표시하고, 여유가 남은 로그인 계정이 없다고 알린 뒤, 그 시도의 종료 코드로 종료합니다. `ccam --dry-run --fallback work -p …`는 첫 번째 시도의 명령을 출력합니다.
+
+대화형 세션은 자동으로 전환하지 않습니다. 대신 `ccam statusline install`을 해 두면, 5시간이나 주간 사용량이 90%에 도달했을 때 상태 표시줄 끝에 `→ ccam next --auto --continue`가 붙습니다([사용량 한도](/features/usage)).
+
 ## 안전장치와 예외 상황
 
 - 로그인되지 않은 계정은 절대 선택되지 않습니다. 로그인된 다른 계정이 없으면 일반 `ccam next`는 `no logged-in account other than <name>` 오류를 내고 멈춥니다.
@@ -74,6 +102,7 @@ Claude Code의 `--continue`는 현재 폴더의 가장 최근 대화를 여는�
 - `--auto`는 `--dry-run`을 붙여도 네트워크 요청을 보냅니다. 읽기만 하며 토큰 파일에는 절대 쓰지 않습니다.
 - 선택된 계정은 `ccam <name>`과 같은 경로로 시작하므로 같은 검사가 적용됩니다. 같은 대화 내역을 공유하는 다른 Claude Code가 이 폴더에서 이미 실행 중일 때 나오는 경고도 마찬가지입니다.
 - `last-used`는 Claude Code가 실제로 시작될 때만 기록됩니다. `--dry-run`은 이 파일을 건드리지 않으므로, 시험 실행으로 순환 순서가 넘어가지 않습니다.
+- `--fallback`은 시도가 끝날 때까지 표준 출력을 붙잡아 두므로, `--output-format stream-json` 같은 스트리밍 출력도 마지막에 한꺼번에 나옵니다. 첫 번째 시도가 한도에 도달하기 전에 바꾼 파일은 그대로 남고, 다음 시도는 프롬프트를 처음부터 다시 시작합니다.
 
 ## 관련 문서
 

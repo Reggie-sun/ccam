@@ -4,7 +4,7 @@ description: ccam <name|number>, ccam run, ccam 선택 화면으로 원하는 �
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 401eed57e533
+sourceHash: e6b5a8d4df86
 ---
 
 `ccam work`는 `work` 계정으로 Claude Code를 시작하며, 이름 뒤의 모든 것은 그대로 `claude`에 전달됩니다. 터미널, 스크립트, 파이프로 입력을 넘길 때 등 `claude`를 입력하던 곳이면 어디서나 쓸 수 있습니다.
@@ -17,16 +17,18 @@ ccam 2                           # the account with number 2 (see ccam list)
 ccam work --resume               # claude --resume, as work
 ccam work -p "fix the tests" --output-format json
 cat log.txt | ccam work -p "find the cause"
-ccam -p "summarise"              # no name: the default account
+ccam -p "summarise"              # no name: the folder's account, else the default
 ccam use work                    # make work the default account
+ccam folder work ~/code/company  # use work in that folder when no name is given
 ccam run work --continue         # same as ccam work --continue
 ccam                             # the picker on a terminal, the list otherwise
 ccam --dry-run work -p hi        # print the command instead of running it
+ccam --fallback work -p "fix the tests"   # run again as another account at the limit
 ```
 
 계정 이름이나 `ccam list`의 번호를 지정하세요. ccam은 이름 뒤의 인자를 해석하지 않으므로, `ccam work --help`는 Claude Code의 도움말을 보여 줍니다. 이름 뒤의 `--`는 넣어도 되고 생략해도 됩니다. 표준 입력, 종료 코드, 시그널은 `claude`를 직접 실행할 때와 똑같이 동작합니다.
 
-첫 번째 인자가 `-`로 시작하고 ccam 자체 옵션이 아니면, ccam은 모든 인자를 넘겨 기본 계정을 시작합니다. 기본 계정은 `ccam use`로 지정한 계정이며, 지정하지 않았다면 번호가 가장 낮은 계정입니다.
+첫 번째 인자가 `-`로 시작하고 ccam 자체 옵션이 아니면, ccam은 모든 인자를 넘겨 이름 없이 계정을 시작합니다. 이때는 [`ccam folder`](/features/folder)로 현재 폴더에 지정한 계정을, 없으면 기본 계정을 씁니다. 기본 계정은 `ccam use`로 지정한 계정이며, 지정하지 않았다면 번호가 가장 낮은 계정입니다.
 
 ### 선택 화면
 
@@ -50,21 +52,27 @@ ccam --dry-run work -p hi        # print the command instead of running it
 | 옵션 | 동작 | 기본값 |
 | --- | --- | --- |
 | `--dry-run` | ccam이 실행할 환경 변수와 명령을 출력하고 종료합니다 | 꺼짐 |
+| `--fallback` | `-p`/`--print` 실행용: 계정이 사용량 한도에 도달하면 로그인된 계정 중 여유가 가장 많은 계정으로 같은 명령을 다시 실행합니다([자세히](/features/next#run-again-at-the-limit)) | 꺼짐 |
 | `-v`, `--version` | `ccam <version>`을 출력합니다(첫 번째 인자일 때만) | |
 | `-h`, `--help` | ccam 도움말. `ccam --help` 또는 `ccam run --help`로 씁니다 | |
 
 인자 규칙은 다음과 같습니다.
 
 - ccam은 계정 이름 앞의 자체 옵션만 읽습니다. 이름 뒤의 모든 인자는 `--dry-run`과 `--help`를 포함해 Claude Code의 것입니다.
-- `--dry-run`은 `ccam --dry-run work`, `ccam run --dry-run work`, `ccam --dry-run`(기본 계정)으로 쓸 수 있습니다. 거부하지 않고 지원합니다.
-- `ccam run <name|number> [claude args]`는 `ccam <name>`의 긴 형식입니다. 이름 없이 `ccam run`을 실행하면 기본 계정을 씁니다.
+- `--dry-run`은 `ccam --dry-run work`, `ccam run --dry-run work`, `ccam --dry-run`(이름 없이 시작하는 계정)으로 쓸 수 있습니다. 거부하지 않고 지원합니다. `--dry-run`과 `--fallback`은 순서를 바꿔 써도 됩니다.
+- `ccam run <name|number> [claude args]`는 `ccam <name>`의 긴 형식입니다. 이름 없이 `ccam run`을 실행하면 폴더에 지정된 계정이나 기본 계정을 씁니다.
 - 계정 이름에는 `add`, `list`, `run`, `usage` 같은 ccam 명령 이름을 쓸 수 없으므로, `ccam <word>`가 모호해지는 일은 없습니다.
 
-시험 실행은 셸에 그대로 붙여 넣을 수 있는 한 줄을 출력합니다.
+시험 실행은 셸에, Windows에서는 PowerShell에 그대로 붙여 넣을 수 있는 한 줄을 출력합니다.
 
 ```console
 $ ccam --dry-run work -p "fix the tests"
 CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/claude --mcp-config=/home/me/.local/share/ccam/groups/default/mcp.json -p 'fix the tests'
+```
+
+```console
+PS> ccam --dry-run work -p "fix the tests"
+$env:CLAUDE_CONFIG_DIR='C:\Users\me\.local\share\ccam\profiles\work'; & C:\Users\me\.local\bin\claude.exe --mcp-config=C:\Users\me\.local\share\ccam\groups\default\mcp.json -p 'fix the tests'
 ```
 
 ## 동작 방식
@@ -78,7 +86,7 @@ CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/c
 1. `cmd/ccam/main.go`가 `app.Main`을 호출합니다. ccam이 다른 이름으로 시작되었다면 [단축 명령](/features/shortcuts)이므로 바로 실행기로 넘어갑니다.
 2. `app.parse`는 cobra가 관여하기 전에 `os.Args`를 살펴봅니다. `ccam`만 입력한 경우(선택 화면), ccam 명령 이름(`config.Reserved`), `-h`/`--help`, `-v`/`--version`만 `cli.Execute`로 갑니다. 나머지는 모두 실행입니다.
 3. `launcher.Launch`가 `~/.config/ccam/config.toml`을 읽습니다. 해석하는 파일은 이것 하나뿐입니다.
-4. `launcher.Prepare`가 이름이나 번호로 계정을 찾고, 맨 앞의 `--` 하나를 제거한 뒤, `ResolveClaude`로 `claude` 실행 파일을 찾습니다. PATH 검색 결과는 파일의 수정 시각과 함께 `~/.local/state/ccam/claude-path`에 캐시되므로, ccam은 실행할 때마다 `PATH`를 검색하지 않습니다. 파일이 바뀌었거나 없어졌으면 다시 검색합니다. `config.toml`에 `claude_bin` 경로가 있으면 그대로 씁니다. `claude`가 ccam 자신이면 무한 반복이 되므로, inode로 비교해 거부합니다.
+4. `launcher.Prepare`가 이름이나 번호로 계정을 찾고(이름이 없으면 `HereProfile`이 작업 폴더를 `config.toml`의 `[[folder]]` 항목과 문자열로 비교해 폴더의 계정을 고릅니다), 맨 앞의 `--` 하나를 제거한 뒤, `ResolveClaude`로 `claude` 실행 파일을 찾습니다. PATH 검색 결과는 파일의 수정 시각과 함께 `~/.local/state/ccam/claude-path`에 캐시되므로, ccam은 실행할 때마다 `PATH`를 검색하지 않습니다. 파일이 바뀌었거나 없어졌으면 다시 검색합니다. `config.toml`에 `claude_bin` 경로가 있으면 그대로 씁니다. `claude`가 ccam 자신이면 무한 반복이 되므로, inode로 비교해 거부합니다.
 5. `checkLinks`가 계정 폴더 `~/.local/share/ccam/profiles/<name>/`를 공유 설정과 비교합니다. 이때 쓰는 `share.Check`는 `lstat`과 `readlink`만 호출하므로 항목당 시스템 호출은 한두 번입니다. 없는 링크는 그 자리에서 만듭니다. 데이터를 잃을 수 있는 문제가 있으면 실행을 멈춥니다.
 6. `applyMCP`가 공유 MCP 서버를 추가합니다(아래 참고).
 7. `session.Register`가 세션을 기록합니다. ccam은 PID를 이름으로 하고 프로세스 시작 시각을 담은 표시 파일을 `$XDG_RUNTIME_DIR/ccam/profile-<name>/<pid>`(`XDG_RUNTIME_DIR`가 없으면 `~/.local/state/ccam/locks/`)에 기록합니다. 대화 내역을 공유하는 계정이라면 `historyCheck`가 먼저 `history-<group>-<hash>`에서 실행 중인 세션을 찾고(해시는 현재 폴더의 해시), 그곳에도 등록합니다. `exec`는 PID를 유지하므로, 이후 표시 파일은 Claude Code 프로세스 자체를 가리킵니다. 잠금을 잡아 두지 않고 표시 파일을 쓰는 이유는, Claude Code가 시작하는 프로세스가 잠금을 물려받아 세션이 끝난 뒤에도 쥐고 있게 되기 때문입니다.
@@ -88,7 +96,9 @@ Claude Code는 `CLAUDE_CONFIG_DIR`가 계정 폴더로, `CCAM_PROFILE`이 계정
 
 ### exec를 쓰는 이유
 
-`syscall.Exec`는 ccam 프로세스를 `claude`로 바꿉니다. 그래서 ccam이 메모리에 남지 않고, 키 입력, 시그널, 종료 코드가 모두 Claude Code 자체의 것이 되며, 인자는 셸 문자열이 아닌 배열로 유지됩니다. `claude mcp add`로 추가한 서버를 알아차리는 것처럼 세션 이후의 작업은 다음 실행 때 처리합니다. ccam은 `.claude.json`의 수정 시각을 `~/.local/state/ccam/mcp/<name>/seen`과 비교하고, 바뀌었을 때만 파일을 해석합니다.
+`syscall.Exec`는 ccam 프로세스를 `claude`로 바꿉니다. 그래서 ccam이 메모리에 남지 않고, 키 입력, 시그널, 종료 코드가 모두 Claude Code 자체의 것이 되며, 인자는 셸 문자열이 아닌 배열로 유지됩니다.
+
+Windows에는 `exec`가 없습니다. 그래서 Windows에서는 `Plan.Exec`가 같은 환경 변수, 인자, 콘솔로 `claude.exe`를 자식 프로세스로 시작하고, 끝날 때까지 기다린 뒤 그 종료 코드로 종료합니다. Ctrl+C는 콘솔에서 Claude Code로 바로 전달되므로 ccam은 이를 무시합니다. 세션 표시 파일에는 ccam의 PID가 들어가는데, ccam은 Claude Code와 정확히 같은 시간 동안 살아 있으며, 표시 파일은 Claude Code가 끝나면 지워집니다. 기다리는 동안 ccam은 다른 일을 하지 않습니다. `claude mcp add`로 추가한 서버를 알아차리는 것처럼 세션 이후의 작업은 다음 실행 때 처리합니다. ccam은 `.claude.json`의 수정 시각을 `~/.local/state/ccam/mcp/<name>/seen`과 비교하고, 바뀌었을 때만 파일을 해석합니다.
 
 ### 명령줄이 처리되는 경로
 

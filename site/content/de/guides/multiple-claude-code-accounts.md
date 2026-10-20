@@ -1,10 +1,10 @@
 ---
 title: Mehrere Claude Code-Konten auf einem Rechner nutzen
 description: Mehrere Claude Code-Konten parallel mit CLAUDE_CONFIG_DIR betreiben, von Hand mit Shell-Aliasen oder automatisch mit ccam, und zwischen ihnen wechseln.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: e2f4deb40c81
+sourceHash: f2982e4317a2
 ---
 
 Gib jedem Konto einen eigenen Konfigurationsordner. Claude Code liest den Ordner aus der Umgebungsvariable `CLAUDE_CONFIG_DIR`, und jeder Ordner enthält seine eigene Anmeldung, Einstellungen und seinen eigenen Verlauf. So bleibt jedes Konto angemeldet, und du kannst sie gleichzeitig nutzen. Das kannst du von Hand mit einem Shell-Alias einrichten oder ccam erledigen lassen.
@@ -61,7 +61,7 @@ In Claude Code zeigt `/status` das Konto, bei dem du angemeldet bist. Mit ccam f
 
 ## Funktioniert das unter Windows und WSL?
 
-Claude Code läuft [nativ unter Windows und in WSL](https://code.claude.com/docs/en/setup). `CLAUDE_CONFIG_DIR` funktioniert in beiden, unter nativem Windows reichen also der Alias oder die PowerShell-Funktion von oben. ccam läuft unter Linux und macOS; unter Windows installierst und nutzt du es in WSL, wo es wie unter Linux funktioniert.
+Claude Code läuft [nativ unter Windows und in WSL](https://code.claude.com/docs/en/setup). `CLAUDE_CONFIG_DIR` funktioniert in beiden, unter nativem Windows reichen also der Alias oder die PowerShell-Funktion von oben. ccam läuft ebenfalls nativ unter Windows: Installiere es in PowerShell mit `irm https://ccam.dev/install.ps1 | iex` oder in WSL mit dem Linux-Befehl. Kurzbefehle werden zu `ccwork.exe`, und das Teilen von Dateien wie `settings.json` braucht den Entwicklermodus ([ccam installieren](/docs/install)).
 
 ## Fehlerbehebung
 

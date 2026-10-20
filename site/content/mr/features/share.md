@@ -1,10 +1,10 @@
 ---
 title: खात्यांमध्ये शेअरिंग
 description: ccam share सेटिंग्ज, CLAUDE.md, एक्स्टेंशन्स आणि इतिहास योजना, बॅकअप आणि conflict पर्यायांसह गट फोल्डरशी कसे लिंक करते, आणि off कसे परत कॉपी करते.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: b30b7cdb2b15
+sourceHash: 16de29bbdd57
 ---
 
 प्रत्येक खात्याचा स्वतःचा फोल्डर असतो, पण त्यातील बहुतेक गोष्टी वेगळ्या असण्याची गरज नसते. `ccam share` एका वेळी एका खात्यासाठी आणि एका आयटमसाठी शेअरिंग चालू किंवा बंद करते: खात्याची फाइल किंवा फोल्डर एका गट फोल्डरमध्ये हलवला जातो आणि त्याच्या जागी symbolic link ठेवली जाते, त्यामुळे गटातील प्रत्येक खाते तीच प्रत वाचते आणि लिहिते. खाते काय शेअर करते ते बदलण्यासाठी, किंवा काही खाती त्यांच्या स्वतःच्या गटात ठेवण्यासाठी `ccam add` नंतर ते वापरा.
@@ -112,6 +112,10 @@ Repair them with `ccam doctor --fix`, then run again
 ```
 
 `ccam doctor --fix` दोन्ही बाजूंना सेव्ह केलेल्या सेटिंग्ज देऊन `share.Build` चालवते, जे प्रत्येक टप्पा डिस्कवर जे आहे त्यावरून ठरवते, conflicts मध्ये गटाचा मजकूर ठेवते आणि ज्याच्या जागी काही ठेवते त्याचा बॅकअप घेते.
+
+### Windows वर
+
+Windows symbolic links फक्त Developer Mode (Settings > System > For developers) मध्ये किंवा administrator साठी तयार करते. `fsutil.Link` आधी symbolic link वापरून पाहते. तो अधिकार नसल्यास, शेअर केलेला फोल्डर (`agents`, `skills`, `projects` आणि इतर) directory junction बनतो, जे कोणताही user तयार करू शकतो, आणि Claude Code साठी तो तसाच चालतो. शेअर केलेली फाइल (`settings.json`, `CLAUDE.md`, `history.jsonl`) फक्त symbolic link च असू शकते, त्यामुळे ccam `Windows links files only in Developer Mode` ने थांबते आणि तो mode चालू करण्याचे किंवा तो आयटम local ठेवण्याचे सुचवते. `share.Check` junctions ना links म्हणून वाचते (`fsutil.LinkTarget`), आणि खात्याचा फोल्डर काढताना junction स्वतःच काढले जाते, ते ज्या गटाच्या मजकुराकडे निर्देश करते तो कधीच नाही.
 
 ## सुरक्षितता आणि अपवादात्मक स्थिती
 

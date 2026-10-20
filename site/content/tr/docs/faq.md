@@ -2,10 +2,10 @@
 title: Sık sorulan sorular
 metaTitle: "ccam SSS: birden fazla Claude Code hesabı"
 description: ccam, Claude Code hesapları, kullanım limitleri, paylaşım, gizlilik ve desteklenen sistemler hakkında yanıtlar.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 6
 translation: machine
-sourceHash: 88bd249ec51c
+sourceHash: 80a5475ccfee
 ---
 
 ## ccam resmi bir Anthropic aracı mı?
@@ -46,7 +46,7 @@ Her hesap için bir klasör olmak üzere `~/.local/share/ccam/profiles/<name>/` 
 
 ## ccam hangi sistemleri destekliyor?
 
-Linux (Ubuntu, Debian, Fedora, Arch, Alpine ve diğerleri) ve macOS. Windows üzerinde WSL içinde kullanın.
+Linux (Ubuntu, Debian, Fedora, Arch, Alpine ve diğerleri), macOS ve Windows 10 ile 11, yerel olarak veya WSL içinde. Windows'ta `settings.json` gibi dosyaları paylaşmak Geliştirici Modu gerektirir; paylaşılan klasörler onsuz da çalışır ([Windows'ta paylaşım](/features/share#on-windows)).
 
 ## Bir MCP sunucusu neden yalnızca bir hesapta görünüyor?
 
@@ -54,7 +54,7 @@ Bir oturum içinde `claude mcp add` ile eklenen sunucular yalnızca o hesap içi
 
 ## ccam, Claude Code'u yavaşlatır mı?
 
-Claude Code'u ccam üzerinden başlatmak yaklaşık 4 milisaniye ekler; bu süre bir dizüstü bilgisayarda `scripts/perf-check.sh` ile ölçülmüştür. ccam küçük bir dosya okur, paylaşılan bağlantıları kontrol eder ve ardından kendini `claude` ile değiştirir; dolayısıyla siz çalışırken çalışır durumda değildir.
+Claude Code'u ccam üzerinden başlatmak yaklaşık 4 milisaniye ekler; bu süre bir dizüstü bilgisayarda `scripts/perf-check.sh` ile ölçülmüştür. ccam küçük bir dosya okur, paylaşılan bağlantıları kontrol eder ve ardından kendini `claude` ile değiştirir; dolayısıyla siz çalışırken çalışır durumda değildir. Windows bir süreci değiştiremez; bu yüzden orada ccam, Claude Code'u başlatır ve başka hiçbir şey yapmadan onu bekler.
 
 ## ccam'ı nasıl güncellerim?
 

@@ -1,10 +1,10 @@
 ---
 title: "ایک کمپیوٹر پر Claude Code کے کئی اکاؤنٹس چلائیں"
 description: "CLAUDE_CONFIG_DIR سے Claude Code کے کئی اکاؤنٹس ساتھ ساتھ چلائیں، شیل ایلیاسز کے ذریعے ہاتھ سے یا ccam سے خودکار طور پر، اور ان کے درمیان تبدیل کریں۔"
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: e2f4deb40c81
+sourceHash: f2982e4317a2
 ---
 
 ہر اکاؤنٹ کو اس کا اپنا کنفیگریشن فولڈر دیں۔ Claude Code یہ فولڈر `CLAUDE_CONFIG_DIR` انوائرنمنٹ ویری ایبل سے پڑھتا ہے، اور ہر فولڈر میں اس کا اپنا لاگ اِن، سیٹنگز اور ہسٹری ہوتی ہے، اس لیے ہر اکاؤنٹ لاگ اِن رہتا ہے اور آپ انہیں بیک وقت چلا سکتے ہیں۔ آپ اسے شیل ایلیاس کے ذریعے ہاتھ سے سیٹ اپ کر سکتے ہیں، یا یہ کام ccam پر چھوڑ سکتے ہیں۔
@@ -61,7 +61,7 @@ Claude Code کے اندر `/status` وہ اکاؤنٹ دکھاتا ہے جس س�
 
 ## کیا یہ Windows اور WSL پر کام کرتا ہے؟
 
-Claude Code [Windows پر براہِ راست اور WSL کے اندر](https://code.claude.com/docs/en/setup) چلتا ہے۔ `CLAUDE_CONFIG_DIR` دونوں میں کام کرتا ہے، اس لیے براہِ راست Windows پر اوپر والا ایلیاس یا PowerShell فنکشن کافی ہے۔ ccam، Linux اور macOS پر چلتا ہے؛ Windows پر اسے WSL کے اندر انسٹال اور استعمال کریں، جہاں یہ Linux کی طرح کام کرتا ہے۔
+Claude Code [Windows پر براہِ راست اور WSL کے اندر](https://code.claude.com/docs/en/setup) چلتا ہے۔ `CLAUDE_CONFIG_DIR` دونوں میں کام کرتا ہے، اس لیے براہِ راست Windows پر اوپر والا ایلیاس یا PowerShell فنکشن کافی ہے۔ ccam بھی Windows پر براہِ راست چلتا ہے: اسے PowerShell میں `irm https://ccam.dev/install.ps1 | iex` سے انسٹال کریں، یا WSL کے اندر Linux والی کمانڈ سے۔ شارٹ کٹس `ccwork.exe` بن جاتے ہیں، اور `settings.json` جیسی فائلیں شیئر کرنے کے لیے Developer Mode درکار ہے ([ccam انسٹال کریں](/docs/install))۔
 
 ## مسائل کا حل
 

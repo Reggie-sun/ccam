@@ -1,10 +1,10 @@
 ---
 title: Kilka kont Claude Code na jednym komputerze
 description: Uruchamiaj kilka kont Claude Code obok siebie dzięki CLAUDE_CONFIG_DIR, ręcznie z aliasami powłoki albo automatycznie z ccam, i przełączaj się między nimi.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: e2f4deb40c81
+sourceHash: f2982e4317a2
 ---
 
 Daj każdemu kontu własny folder konfiguracji. Claude Code odczytuje folder ze zmiennej środowiskowej `CLAUDE_CONFIG_DIR`, a każdy folder przechowuje własny login, ustawienia i historię, więc każde konto pozostaje zalogowane i możesz używać ich jednocześnie. Możesz to skonfigurować ręcznie za pomocą aliasu powłoki albo zostawić to ccam.
@@ -61,7 +61,7 @@ W Claude Code `/status` pokazuje konto, na które jesteś zalogowany. Z ccam uru
 
 ## Czy to działa w Windows i WSL?
 
-Claude Code działa [natywnie w Windows i w WSL](https://code.claude.com/docs/en/setup). `CLAUDE_CONFIG_DIR` działa w obu, więc w natywnym Windows wystarczy alias lub funkcja PowerShell opisane wyżej. ccam działa na Linux i macOS; w Windows zainstaluj go i używaj w WSL, gdzie działa tak samo jak na Linux.
+Claude Code działa [natywnie w Windows i w WSL](https://code.claude.com/docs/en/setup). `CLAUDE_CONFIG_DIR` działa w obu, więc w natywnym Windows wystarczy alias lub funkcja PowerShell opisane wyżej. ccam też działa natywnie w Windows: zainstaluj go w PowerShell poleceniem `irm https://ccam.dev/install.ps1 | iex` albo w WSL poleceniem dla Linux. Skróty stają się plikami `ccwork.exe`, a współdzielenie plików takich jak `settings.json` wymaga Trybu dewelopera ([Instalacja ccam](/docs/install)).
 
 ## Rozwiązywanie problemów
 

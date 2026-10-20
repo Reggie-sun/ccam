@@ -1,10 +1,10 @@
 ---
 title: Nutzungslimits und Kontowechsel
 description: Die 5-Stunden- und Wochennutzung aller Claude Code-Konten mit ccam usage sehen und mit ccam next --auto das Konto mit dem meisten Spielraum öffnen.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 5
 translation: machine
-sourceHash: d288177682d7
+sourceHash: a84df8e873d6
 ---
 
 `ccam usage` zeigt, wie viel jedes Konto von seinem 5-Stunden- und seinem Wochenlimit verbraucht hat. `ccam next --auto` öffnet das Konto mit dem meisten Spielraum, und `--continue` nimmt das aktuelle Gespräch mit.
@@ -48,7 +48,7 @@ Wenn das Zugriffstoken eines Kontos abgelaufen ist, erneuert ccam es nicht, denn
 ccam statusline install
 ```
 
-Claude Code zeigt dann den Kontonamen und seine Nutzung in der Statuszeile an, zum Beispiel `[work] · Opus · 5h 24% · 7d 41%`. Wenn du bereits einen Befehl für die Statuszeile hast, behält ccam ihn bei und stellt den Kontonamen voran. Die Statuszeile speichert außerdem ihre Zahlen, die `ccam usage` verwendet, wenn der Endpunkt nicht antwortet.
+Claude Code zeigt dann den Kontonamen und seine Nutzung in der Statuszeile an, zum Beispiel `[work] · Opus · 5h 24% · 7d 41%`. Ab 90 % schlägt die Zeile außerdem `ccam next --auto --continue` vor. Wenn du bereits einen Befehl für die Statuszeile hast, behält ccam ihn bei und stellt den Kontonamen voran. Die Statuszeile speichert außerdem ihre Zahlen, die `ccam usage` verwendet, wenn der Endpunkt nicht antwortet.
 
 ## Wechseln
 
@@ -59,5 +59,13 @@ ccam next --continue  # the next account that shares your conversation history
 ```
 
 `ccam next` überspringt Konten, die nicht angemeldet sind, und `--auto` überspringt Konten bei 100 %. Um ein Gespräch fortzusetzen, müssen beide Konten den Gesprächsverlauf teilen; siehe [Teilen](/docs/sharing).
+
+Für Skripte und geplante Jobs, die `claude -p` ausführen, setze `--fallback` vor den Kontonamen. Wenn dieses Konto sein Limit erreicht, führt ccam denselben Befehl erneut mit dem Konto mit dem meisten Spielraum aus, und nur die Ausgabe des Durchlaufs, der fertig wurde, wird ausgegeben:
+
+```sh
+ccam --fallback work -p "review the diff" --output-format json
+```
+
+Wie ccam entscheidet, steht unter [Am Limit erneut ausführen](/features/next#run-again-at-the-limit).
 
 Die [Anleitung zum Umgang mit Nutzungslimits](/guides/usage-limit-workflow) geht ein vollständiges Beispiel durch.

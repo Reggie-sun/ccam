@@ -1,10 +1,10 @@
 ---
 title: Mga shortcut command
 description: Bigyan ang isang account ng sariling command gaya ng ccwork gamit ang ccam shortcut, at gawin muli ang mga link sa ~/.local/bin gamit ang ccam shims install.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 5f0cb5a57042
+sourceHash: 939256e7a67e
 ---
 
 Ang shortcut ay isang command na ikaw mismo ang nagpangalan at nagsisimula ng Claude Code bilang isang account: ginagawa ng `ccwork --resume` ang ginagawa ng `ccam work --resume`. Isa itong link sa ccam sa `~/.local/bin`, kaya gumagana ito sa bash, zsh, mga script at anumang ibang nagpapatakbo ng program mula sa `PATH`. Opsyonal ang mga shortcut; gumawa ng isa para sa mga account na madalas mong sinisimulan.
@@ -82,13 +82,17 @@ Hinahanap ng shell ang `ccwork` sa `PATH`, sinusundan ng kernel ang link at sini
 
 Bakit symlink at hindi shell alias o wrapper script: gumagana ang symlink sa bawat shell at sa mga script, hindi ito nagdadagdag ng karagdagang pagsisimula ng shell (mga 1 hanggang 2 ms), at iisang file pa rin ang binabasa ng pagsisimula. Sinusukat ng `scripts/perf-check.sh` ang isang shortcut gamit ang `hyperfine` laban sa parehong 10 ms (p95) na limit ng `ccam <name>`.
 
+### Sa Windows
+
+Ang shortcut ay `ccwork.exe` sa `%USERPROFILE%\.local\bin`, at inaalis ng `shim.Name` ang `.exe` (anuman ang laki ng titik) bago ang paghahanap, kaya sinisimulan ng `ccwork`, `ccwork.exe` at `CCWORK.EXE` lahat ang `work`. Gumagawa muna ang ccam ng symbolic link, na pinapayagan ng Windows sa Developer Mode o para sa isang administrator. Kapag wala ang karapatang iyon, gumagawa ito ng hard link: pangalawang pangalan para sa parehong `ccam.exe` file, na hindi nangangailangan ng pribilehiyo. Itinuturing na sariling link ng ccam ang hard link kapag ito ang parehong file ng `ccam.exe`. Dahil naglalagay ang `ccam update` ng bagong file kapalit ng `ccam.exe`, nire-renew nito pagkatapos ang bawat shortcut na hard link gamit ang `shim.Relink` at ipi-print ang `✓ shortcut ccwork renewed`. Hinahanap ng pagsusuri ng pangalan ang `<name>` kasama ang bawat extension sa `PATHEXT` (`.exe`, `.cmd` at iba pa) sa ibang mga folder ng `PATH`.
+
 ## Kaligtasan at mga espesyal na kaso
 
 - **Link na walang account na umaangkin.** Kung may link sa ccam sa `~/.local/bin` na may pangalang hindi ginagamit ng anumang account, halimbawa pagkatapos mong mano-manong baguhin ang `shortcut` sa `config.toml`, hindi babalik ang ccam sa default na account. Humihinto ito na may `` ccam: ccold is not the shortcut of any account (see `ccam list`, `ccam shortcut`) ``. Itakda ulit ang pangalan gamit ang `ccam shortcut`, o burahin ang link.
 - **Mga umiiral na file.** Hindi kailanman pinapalitan ng ccam ang file na hindi nito ginawa. Humihinto ang `ccam shims install` na may `<path> already exists and is not a ccam link, so it was left alone`.
 - **Inilipat na ccam binary.** Tumuturo na ang mga lumang link sa path na wala na, at hindi itinuturing ng ccam na sarili nito ang mga ito. Burahin ang mga ito, saka patakbuhin ang `ccam shims install`.
 - **Rename at remove.** Pinapanatili ng `ccam rename` ang pangalan ng shortcut, at gumagana pa rin ang link, dahil tumuturo ito sa ccam at hinahanap ng ccam ang pangalan sa `config.toml`. Binubura ng `ccam remove` ang link ng account. Binubura ng `ccam shortcut <account> <new>` ang lumang link bago gawin ang bago.
-- **PATH.** Kapag gumawa ang ccam ng link at wala sa iyong `PATH` ang `~/.local/bin`, ipi-print nito ang `Note: /home/me/.local/bin is not in PATH. Add it to ~/.bashrc or ~/.zshrc:` kasunod ang linyang `export PATH=...` na idadagdag.
+- **PATH.** Kapag gumawa ang ccam ng link at wala sa iyong `PATH` ang `~/.local/bin`, ipi-print nito ang `Note: /home/me/.local/bin is not in PATH. Add it to ~/.bashrc or ~/.zshrc:` kasunod ang linyang `export PATH=...` na idadagdag. Sa Windows, ipi-print na lang nito ang PowerShell na linya na nagdadagdag ng folder sa user `PATH` mo.
 - **Pagsusuri sa ibang pagkakataon.** Iniuulat ng `ccam doctor` ang `missing shortcuts in /home/me/.local/bin: ccwork` at nagbababala kapag wala sa `PATH` ang folder. Ginagawa ng `ccam doctor --fix` ang mga nawawalang link.
 
 ## Kaugnay

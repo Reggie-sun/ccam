@@ -1,10 +1,10 @@
 ---
 title: ccam અપડેટ કરવું
 description: ccam update SHA-256 તપાસ પછી ccam ને GitHub ની નવીનતમ રિલીઝથી બદલે છે; --check ફક્ત જણાવે છે અને --version આપેલો રિલીઝ tag ઇન્સ્ટૉલ કરે છે.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 10
 translation: machine
-sourceHash: 83fc20191328
+sourceHash: d91499b95d3d
 ---
 
 `ccam update` GitHub પરથી ccam ની રિલીઝ ડાઉનલોડ કરે છે, તેને રિલીઝની `checksums.txt` સામે તપાસે છે અને ચાલતી binary ને એક rename માં બદલે છે. જો તમે ccam ને install સ્ક્રિપ્ટ વડે કે archive માંથી ઇન્સ્ટૉલ કર્યું હોય તો તેને વાપરો. ccam ક્યારેય જાતે અપડેટ તપાસતું નથી: ફક્ત આ કમાન્ડ જ GitHub નો સંપર્ક કરે છે, તેથી બાકીનો દરેક કમાન્ડ offline પણ એ જ રીતે કામ કરે છે.
@@ -53,9 +53,9 @@ environment variable `CCAM_RELEASES_URL` mirror માટે કે tests મા
 2. `--version` વગર, `Updater.Latest` redirect અનુસર્યા વગર `<releases>/latest` ને request કરે છે, અને `Location` header (`…/tag/v0.5.0`) માંથી tag વાંચે છે. આ GitHub API ને બદલે releases પેજ વાપરે છે, તેથી API ની કલાકના 60 request ની મર્યાદા લાગુ પડતી નથી. lookup પાસે 10 સેકન્ડ છે.
 3. `parseVersion` tag ને કડક pattern સામે તપાસે છે. tag download URL માં અને છપાયેલા shell કમાન્ડમાં જાય છે, તેથી `/`, `%`, space કે shell અક્ષરોવાળું કંઈ પણ પસાર થતું નથી. `compareVersions` તેની ચાલતા વર્ઝન સાથે સરખામણી કરે છે; pre-release તેની રિલીઝ પહેલાં આવે છે.
 4. `managed()` અને `writable()` નક્કી કરે છે કે ccam binary બદલી શકે કે નહીં (નીચે જુઓ).
-5. `Updater.Fetch` `ccam_<os>_<arch>.tar.gz` અને `checksums.txt` એકસાથે ડાઉનલોડ કરે છે, બંને માટે 2 મિનિટ સાથે. દરેક download 256 MB સુધી મર્યાદિત છે.
+5. `Updater.Fetch` `ccam_<os>_<arch>.tar.gz` (Windows પર `ccam_windows_<arch>.zip`) અને `checksums.txt` એકસાથે ડાઉનલોડ કરે છે, બંને માટે 2 મિનિટ સાથે. દરેક download 256 MB સુધી મર્યાદિત છે.
 6. બીજું કંઈ પણ થાય તે પહેલાં archive નો SHA-256 `checksums.txt` માંની તેની લાઇન સાથે મેળ ખાવો જોઈએ. લાઇન ન હોય કે checksum જુદો હોય તો અપડેટ `nothing was changed` સાથે અટકે છે.
-7. `extract()` tar વાંચે છે અને `ccam` નામની પહેલી સામાન્ય ફાઇલ લે છે. ફોલ્ડર, લિંક અને બીજી એન્ટ્રીઓ અવગણાય છે, અને binary પણ 256 MB સુધી મર્યાદિત છે.
+7. `extract()` tar વાંચે છે અને `ccam` નામની પહેલી સામાન્ય ફાઇલ લે છે (`extractZip` zip માંથી `ccam.exe` લે છે). ફોલ્ડર, લિંક અને બીજી એન્ટ્રીઓ અવગણાય છે, અને binary પણ 256 MB સુધી મર્યાદિત છે.
 8. `Updater.Install` નવી binary `fsutil.AtomicWrite` વડે લખે છે: binary ની બાજુમાં કામચલાઉ ફાઇલ `.ccam.tmp*`, જૂની ફાઇલના permission bits સાથે, જે ડિસ્ક પર flush થાય છે અને જૂની ફાઇલ પર rename થાય છે.
 
 tag lookup થી rename સુધીની આખી pipeline:
@@ -63,6 +63,8 @@ tag lookup થી rename સુધીની આખી pipeline:
 <!-- motion:update-pipeline -->
 
 archive અને `checksums.txt` બાજુબાજુમાં ડાઉનલોડ થાય છે, અને checksum મેળ ન ખાય ત્યાં સુધી કંઈ લખાતું નથી. rename atomic છે, તેથી crash કે ભરાયેલી ડિસ્ક જૂની કે નવી binary છોડે છે, ક્યારેય અડધી નહીં. `~/.local/bin/ccwork` જેવા શૉર્ટકટ કમાન્ડ ccam binary ની symlink છે, તેથી તેઓ કોઈ ફેરફાર વગર નવું વર્ઝન ચલાવે છે.
+
+Windows પર ચાલતા પ્રોગ્રામની ફાઇલ બદલી કે કાઢી શકાતી નથી, ફક્ત તેનું નામ બદલી શકાય છે. `Updater.Install` નવી binary `ccam.exe.new` માં લખે છે, ચાલતી `ccam.exe` નું નામ `ccam.exe.old` કરે છે, અને નવી ફાઇલનું નામ `ccam.exe` કરે છે. છેલ્લું પગલું નિષ્ફળ જાય તો જૂની binary નું નામ પાછું બદલાય છે. આગલું અપડેટ `ccam.exe.old` કાઢી નાખે છે. symbolic links ને બદલે hard links હોય તેવા શૉર્ટકટ ([શૉર્ટકટ કમાન્ડ](/features/shortcuts)) તરત પછી નવા કરાય છે, જેથી તેઓ પણ નવું વર્ઝન ચલાવે.
 
 ### package થી ઇન્સ્ટૉલ થયેલું
 
@@ -85,7 +87,7 @@ Or install a copy in ~/.local/bin with the install script:
   curl -fsSL https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.sh | sh
 ```
 
-Linux સિવાયની સિસ્ટમ પર ફક્ત install સ્ક્રિપ્ટની લાઇન છપાય છે. જ્યારે ફોલ્ડરમાં લખી ન શકાય, ત્યારે ccam install સ્ક્રિપ્ટ ફરી ચલાવવાનું સૂચવે છે, જે ccam ને `~/.local/bin` માં ઇન્સ્ટૉલ કરે છે.
+Linux સિવાયની સિસ્ટમ પર ફક્ત install સ્ક્રિપ્ટની લાઇન છપાય છે: Windows પર `irm https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.ps1 | iex`. જ્યારે ફોલ્ડરમાં લખી ન શકાય, ત્યારે ccam install સ્ક્રિપ્ટ ફરી ચલાવવાનું સૂચવે છે, જે ccam ને `~/.local/bin` માં ઇન્સ્ટૉલ કરે છે.
 
 ## સલામતી અને ખાસ કિસ્સા
 

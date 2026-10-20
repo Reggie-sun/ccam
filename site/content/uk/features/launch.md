@@ -4,7 +4,7 @@ description: Запускайте Claude Code з будь-якого облік�
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 401eed57e533
+sourceHash: e6b5a8d4df86
 ---
 
 `ccam work` запускає Claude Code від імені облікового запису `work`, і все, що йде після назви, передається в `claude` як є. Використовуйте його всюди, де ви ввели б `claude`: у терміналі, у скрипті або з введенням через конвеєр.
@@ -17,16 +17,18 @@ ccam 2                           # the account with number 2 (see ccam list)
 ccam work --resume               # claude --resume, as work
 ccam work -p "fix the tests" --output-format json
 cat log.txt | ccam work -p "find the cause"
-ccam -p "summarise"              # no name: the default account
+ccam -p "summarise"              # no name: the folder's account, else the default
 ccam use work                    # make work the default account
+ccam folder work ~/code/company  # use work in that folder when no name is given
 ccam run work --continue         # same as ccam work --continue
 ccam                             # the picker on a terminal, the list otherwise
 ccam --dry-run work -p hi        # print the command instead of running it
+ccam --fallback work -p "fix the tests"   # run again as another account at the limit
 ```
 
 Вкажіть назву облікового запису або його номер із `ccam list`. ccam не читає аргументи після назви, тож `ccam work --help` показує довідку Claude Code. `--` після назви необов'язковий. Стандартне введення, код виходу та сигнали поводяться так само, як із `claude`.
 
-Коли перший аргумент починається з `-` і не є одним із власних прапорців ccam, ccam запускає обліковий запис за замовчуванням з усіма аргументами. Обліковий запис за замовчуванням — це той, який задано через `ccam use`, або обліковий запис із найменшим номером, якщо ви його не задали.
+Коли перший аргумент починається з `-` і не є одним із власних прапорців ccam, ccam запускає обліковий запис без назви з усіма аргументами. Це обліковий запис, заданий для поточної теки через [`ccam folder`](/features/folder), а якщо його немає — обліковий запис за замовчуванням: той, який задано через `ccam use`, або обліковий запис із найменшим номером, якщо ви його не задали.
 
 ### Вікно вибору
 
@@ -50,21 +52,27 @@ ccam --dry-run work -p hi        # print the command instead of running it
 | Параметр | Дія | За замовчуванням |
 | --- | --- | --- |
 | `--dry-run` | Вивести середовище й команду, які виконав би ccam, і завершитися | вимкнено |
+| `--fallback` | Для запусків із `-p`/`--print`: коли обліковий запис досягає ліміту використання, знову виконати ту саму команду від імені облікового запису з входом, де найбільше запасу ([докладніше](/features/next#run-again-at-the-limit)) | вимкнено |
 | `-v`, `--version` | Вивести `ccam <version>` (лише як перший аргумент) | |
 | `-h`, `--help` | Довідка ccam, як `ccam --help` або `ccam run --help` | |
 
 Правила для аргументів:
 
 - ccam читає власні прапорці лише перед назвою облікового запису. Після назви кожен аргумент належить Claude Code, зокрема `--dry-run` і `--help`.
-- `--dry-run` працює як `ccam --dry-run work`, `ccam run --dry-run work` і `ccam --dry-run` (обліковий запис за замовчуванням). Його враховують, а не відхиляють.
-- `ccam run <name|number> [claude args]` — повна форма `ccam <name>`. `ccam run` без назви використовує обліковий запис за замовчуванням.
+- `--dry-run` працює як `ccam --dry-run work`, `ccam run --dry-run work` і `ccam --dry-run` (обліковий запис без назви). Його враховують, а не відхиляють. `--dry-run` і `--fallback` можна вказувати в будь-якому порядку.
+- `ccam run <name|number> [claude args]` — повна форма `ccam <name>`. `ccam run` без назви використовує обліковий запис теки або обліковий запис за замовчуванням.
 - Назви облікових записів не можуть збігатися з назвами команд ccam, як-от `add`, `list`, `run` чи `usage`, тож `ccam <word>` ніколи не буває неоднозначним.
 
-Пробний запуск виводить один рядок, який можна вставити в оболонку:
+Пробний запуск виводить один рядок, який можна вставити в оболонку, а у Windows — у PowerShell:
 
 ```console
 $ ccam --dry-run work -p "fix the tests"
 CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/claude --mcp-config=/home/me/.local/share/ccam/groups/default/mcp.json -p 'fix the tests'
+```
+
+```console
+PS> ccam --dry-run work -p "fix the tests"
+$env:CLAUDE_CONFIG_DIR='C:\Users\me\.local\share\ccam\profiles\work'; & C:\Users\me\.local\bin\claude.exe --mcp-config=C:\Users\me\.local\share\ccam\groups\default\mcp.json -p 'fix the tests'
 ```
 
 ## Як це працює
@@ -78,7 +86,7 @@ CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/c
 1. `cmd/ccam/main.go` викликає `app.Main`. Якщо ccam запущено під іншою назвою, це [коротка команда](/features/shortcuts), і виклик іде безпосередньо до засобу запуску.
 2. `app.parse` переглядає `os.Args` ще до cobra. Лише `ccam` без нічого (вікно вибору), назва команди ccam (`config.Reserved`), `-h`/`--help` і `-v`/`--version` потрапляють до `cli.Execute`. Усе інше є запуском.
 3. `launcher.Launch` читає `~/.config/ccam/config.toml`, єдиний файл, який він розбирає.
-4. `launcher.Prepare` знаходить обліковий запис за назвою або номером, відкидає один початковий `--` і знаходить виконуваний файл `claude` через `ResolveClaude`. Результат пошуку в PATH кешується в `~/.local/state/ccam/claude-path` разом із часом зміни файлу, тож ccam не шукає в `PATH` під час кожного запуску. Змінений або відсутній файл запускає новий пошук. Шлях `claude_bin` у `config.toml` використовується як є. ccam відхиляє `claude`, який є самим ccam (порівняння за inode), бо це спричинило б зациклення.
+4. `launcher.Prepare` знаходить обліковий запис за назвою або номером (без назви `HereProfile` бере обліковий запис теки, порівнюючи робочий каталог із записами `[[folder]]` у `config.toml` як рядки), відкидає один початковий `--` і знаходить виконуваний файл `claude` через `ResolveClaude`. Результат пошуку в PATH кешується в `~/.local/state/ccam/claude-path` разом із часом зміни файлу, тож ccam не шукає в `PATH` під час кожного запуску. Змінений або відсутній файл запускає новий пошук. Шлях `claude_bin` у `config.toml` використовується як є. ccam відхиляє `claude`, який є самим ccam (порівняння за inode), бо це спричинило б зациклення.
 5. `checkLinks` порівнює теку облікового запису `~/.local/share/ccam/profiles/<name>/` з її налаштуваннями спільного використання через `share.Check`, який викликає лише `lstat` і `readlink`, один або два системні виклики на елемент. Відсутнє посилання створюється одразу. Усе, що може призвести до втрати даних, зупиняє запуск.
 6. `applyMCP` додає спільні сервери MCP (див. нижче).
 7. `session.Register` реєструє сеанс. ccam записує позначку з назвою за своїм PID, що містить час запуску процесу, у `$XDG_RUNTIME_DIR/ccam/profile-<name>/<pid>` (або в `~/.local/state/ccam/locks/` без `XDG_RUNTIME_DIR`). Для облікового запису, який спільно використовує історію розмов, `historyCheck` спершу шукає запущений сеанс у `history-<group>-<hash>`, де хеш обчислено від поточної теки, і реєструється й там. `exec` зберігає PID, тож позначка потім вказує на сам процес Claude Code. Саме позначка, а не утримуване блокування, бо процеси, які запускає Claude Code, успадкували б блокування й утримували б його після завершення сеансу.
@@ -88,7 +96,9 @@ Claude Code працює зі змінною `CLAUDE_CONFIG_DIR`, що вказ�
 
 ### Чому exec
 
-`syscall.Exec` замінює процес ccam на `claude`, тож ccam не залишається в пам'яті, натискання клавіш, сигнали й код виходу належать самому Claude Code, а аргументи залишаються масивом і ніколи не стають рядком оболонки. Робота після сеансу, як-от виявлення серверів, доданих через `claude mcp add`, відбувається під час наступного запуску: ccam порівнює час зміни `.claude.json` з `~/.local/state/ccam/mcp/<name>/seen` і розбирає файл лише тоді, коли він змінився.
+`syscall.Exec` замінює процес ccam на `claude`, тож ccam не залишається в пам'яті, натискання клавіш, сигнали й код виходу належать самому Claude Code, а аргументи залишаються масивом і ніколи не стають рядком оболонки.
+
+У Windows немає `exec`. Там `Plan.Exec` запускає `claude.exe` як дочірній процес із тим самим середовищем, аргументами й консоллю, чекає на нього й завершується з його кодом виходу. Ctrl+C доходить до Claude Code безпосередньо з консолі, тому ccam його ігнорує. Маркер сеансу містить PID ccam, який живе рівно стільки ж, скільки Claude Code, і видаляється, коли Claude Code завершується. Поки ccam чекає, він нічого іншого не робить. Робота після сеансу, як-от виявлення серверів, доданих через `claude mcp add`, відбувається під час наступного запуску: ccam порівнює час зміни `.claude.json` з `~/.local/state/ccam/mcp/<name>/seen` і розбирає файл лише тоді, коли він змінився.
 
 ### Як маршрутизується командний рядок
 

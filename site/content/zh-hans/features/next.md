@@ -1,13 +1,13 @@
 ---
 title: 切换到下一个账号
-description: ccam next 以你上次使用的账号之后的账号打开 Claude Code；--auto 选择 5 小时用量最低的账号，--continue 继续当前对话。
-updated: 2026-10-19
+description: ccam next 以你上次使用的账号之后的账号打开 Claude Code；--auto 选择余量最多的账号，--continue 继续对话，--fallback 重新运行 -p 任务。
+updated: 2026-10-20
 order: 8
 translation: machine
-sourceHash: 92352f532e74
+sourceHash: 7bc55c2dd520
 ---
 
-`ccam next` 无需你指定账号名，就能以另一个账号打开 Claude Code。当某个账号达到用量限制时使用它：单纯的 `ccam next` 选择你上次使用的账号之后的那个账号，`--auto` 选择 5 小时时间窗口内余量最多的账号，`--continue` 则在新账号中继续上一次对话。
+`ccam next` 无需你指定账号名，就能以另一个账号打开 Claude Code。当某个账号达到用量限制时使用它：单纯的 `ccam next` 选择你上次使用的账号之后的那个账号，`--auto` 选择 5 小时时间窗口内余量最多的账号，`--continue` 则在新账号中继续上一次对话。对于运行 `claude -p` 的脚本，`ccam --fallback` 会自动完成这种切换（参见[达到限制时重新运行](#run-again-at-the-limit)）。
 
 ## 用法
 
@@ -66,6 +66,34 @@ ccam 在标准错误上以 `→ <from> → <to>` 的形式打印这次切换，�
 
 Claude Code 的 `--continue` 会打开当前文件夹中最近的一次对话，这只有在新账号能看到那次对话时才有效。因此使用 `--continue` 时，ccam 只考虑与你上次使用的账号处于同一个 `history` 组的账号，然后把 `--continue` 放在你的参数前面。历史记录为 `local` 的账号不与任何账号共享，所以从这样的账号使用 `--continue` 总会失败。请先用 `ccam share <name> --history on` 开启共享（参见[共享](/docs/sharing)）。
 
+## 达到限制时重新运行
+
+`ccam next` 用于已经停下来的交互式会话。非交互式运行，即脚本或定时任务中的 `claude -p`，无法等你操作，所以在账号名之前加上 `--fallback`，就能让 ccam 替它切换：
+
+```sh
+ccam --fallback work -p "fix the failing tests" --output-format json
+ccam --fallback -p "summarise" < notes.txt      # the folder's account or the default
+ccam run --fallback work -p "review the diff"
+```
+
+```console
+$ ccam --fallback personal -p "summarise" < notes.txt
+ccam: personal reached its usage limit; running the command again as work
+Summary: …
+```
+
+1. `--fallback` 只能与 `-p` 或 `--print` 一起使用；否则 ccam 会停止，并提示使用 `ccam next --auto --continue`。
+2. 标准输入只读取一次，并提供给每一次尝试。
+3. ccam 以子进程方式启动 `claude`，而不是使用 `exec`；它会暂存标准输出，标准错误则随产生随时传出。
+4. 当 `claude` 以 0 退出，或因其他原因失败时，暂存的输出和退出码会原样传递。
+5. 当 Claude Code 的消息表明达到了用量限制（`You've hit your limit`、`usage limit reached`），或者该账号的用量查询显示其 5 小时或每周时间窗口已达 100% 时，这次失败就被视为达到用量限制。
+6. 此时会丢弃这次尝试的输出，并以另一个已登录账号运行同一个命令：先选 5 小时用量最低的账号，然后是无法查询用量的账号，按编号顺序。用量已达 100% 的账号会被跳过，每个账号最多尝试一次。
+7. 如果参数中有 `-c`、`--continue`、`-r` 或 `--resume`，只会尝试同一历史组中的账号，以便找到那次对话。
+
+当没有剩余账号时，ccam 会打印最后一次尝试的输出，说明没有已登录账号还有余量，并以那次尝试的退出码退出。`ccam --dry-run --fallback work -p …` 会打印第一次尝试的命令。
+
+交互式会话不会自动切换。作为替代，使用 `ccam statusline install` 后，当 5 小时或每周用量达到 90% 时，状态栏会加上 `→ ccam next --auto --continue`（[用量限制](/features/usage)）。
+
 ## 安全性与边界情况
 
 - 没有登录的账号永远不会被选中。如果没有其他已登录的账号，单纯的 `ccam next` 会以 `no logged-in account other than <name>` 停止。
@@ -74,6 +102,7 @@ Claude Code 的 `--continue` 会打开当前文件夹中最近的一次对话，
 - 即使带有 `--dry-run`，`--auto` 也会发出网络请求。它只读取，从不写入令牌文件。
 - 所选账号通过与 `ccam <name>` 相同的路径启动，因此适用相同的检查，包括当另一个共享同一历史记录的 Claude Code 已在此文件夹中运行时发出的警告。
 - `last-used` 只在 Claude Code 实际启动时写入。`--dry-run` 不会改动它，因此试运行不会推进轮换。
+- `--fallback` 会暂存标准输出直到一次尝试结束，所以 `--output-format stream-json` 这样的流式输出会在最后一次性到达。第一次尝试在达到限制之前修改过的文件会保持修改后的状态；下一次尝试会重新开始执行提示。
 
 ## 相关内容
 

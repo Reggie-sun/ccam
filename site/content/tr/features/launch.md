@@ -4,7 +4,7 @@ description: Claude Code'u herhangi bir hesapla ccam <name|number>, ccam run vey
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: 401eed57e533
+sourceHash: e6b5a8d4df86
 ---
 
 `ccam work`, Claude Code'u `work` hesabıyla başlatır ve addan sonraki her şey `claude` komutuna olduğu gibi iletilir. `claude` yazacağınız her yerde kullanın: terminalde, bir betikte veya girdiyi boruyla aktararak.
@@ -17,16 +17,18 @@ ccam 2                           # the account with number 2 (see ccam list)
 ccam work --resume               # claude --resume, as work
 ccam work -p "fix the tests" --output-format json
 cat log.txt | ccam work -p "find the cause"
-ccam -p "summarise"              # no name: the default account
+ccam -p "summarise"              # no name: the folder's account, else the default
 ccam use work                    # make work the default account
+ccam folder work ~/code/company  # use work in that folder when no name is given
 ccam run work --continue         # same as ccam work --continue
 ccam                             # the picker on a terminal, the list otherwise
 ccam --dry-run work -p hi        # print the command instead of running it
+ccam --fallback work -p "fix the tests"   # run again as another account at the limit
 ```
 
 Bir hesabın adını veya `ccam list` çıktısındaki numarasını verin. ccam addan sonraki argümanları okumaz; bu yüzden `ccam work --help` Claude Code'un yardımını gösterir. Addan sonra `--` yazmak isteğe bağlıdır. Standart girdi, çıkış kodu ve sinyaller `claude` komutundaki gibi davranır.
 
-İlk argüman `-` ile başlıyorsa ve ccam'in kendi seçeneklerinden biri değilse ccam, varsayılan hesabı tüm argümanlarla başlatır. Varsayılan, `ccam use` ile ayarlanan hesaptır; ayarlamadıysanız en küçük numaralı hesaptır.
+İlk argüman `-` ile başlıyorsa ve ccam'in kendi seçeneklerinden biri değilse ccam, adsız bir hesabı tüm argümanlarla başlatır. Bu, geçerli klasör için [`ccam folder`](/features/folder) ile ayarlanan hesaptır; yoksa varsayılan hesaptır: `ccam use` ile ayarlanan hesap ya da ayarlamadıysanız en küçük numaralı hesap.
 
 ### Seçici
 
@@ -50,21 +52,27 @@ Seçici bir işlem yapmadan önce kapanır; böylece terminal Claude Code başla
 | Seçenek | Ne yapar | Varsayılan |
 | --- | --- | --- |
 | `--dry-run` | ccam'in çalıştıracağı ortamı ve komutu yazdırır, ardından çıkar | kapalı |
+| `--fallback` | `-p`/`--print` çalıştırmaları için: hesap kullanım limitine ulaştığında aynı komutu en çok payı kalan girişli hesapla yeniden çalıştırır ([ayrıntılar](/features/next#run-again-at-the-limit)) | kapalı |
 | `-v`, `--version` | `ccam <version>` yazdırır (yalnızca ilk argüman olarak) | |
 | `-h`, `--help` | `ccam --help` veya `ccam run --help` olarak ccam'in yardımı | |
 
 Argüman kuralları:
 
 - ccam kendi seçeneklerini yalnızca hesap adından önce okur. Addan sonra `--dry-run` ve `--help` dahil her argüman Claude Code'a aittir.
-- `--dry-run`, `ccam --dry-run work`, `ccam run --dry-run work` ve `ccam --dry-run` (varsayılan hesap) olarak çalışır. Reddedilmez, dikkate alınır.
-- `ccam run <name|number> [claude args]`, `ccam <name>` komutunun uzun biçimidir. Adsız `ccam run` varsayılan hesabı kullanır.
+- `--dry-run`, `ccam --dry-run work`, `ccam run --dry-run work` ve `ccam --dry-run` (adsız hesap) olarak çalışır. Reddedilmez, dikkate alınır. `--dry-run` ve `--fallback` herhangi bir sırayla yazılabilir.
+- `ccam run <name|number> [claude args]`, `ccam <name>` komutunun uzun biçimidir. Adsız `ccam run` klasörün hesabını ya da varsayılan hesabı kullanır.
 - Hesap adları `add`, `list`, `run` veya `usage` gibi ccam komut adları olamaz; böylece `ccam <word>` hiçbir zaman belirsiz olmaz.
 
-Kuru çalıştırma, bir kabuğa yapıştırabileceğiniz tek bir satır yazdırır:
+Kuru çalıştırma, bir kabuğa ya da Windows'ta PowerShell'e yapıştırabileceğiniz tek bir satır yazdırır:
 
 ```console
 $ ccam --dry-run work -p "fix the tests"
 CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/claude --mcp-config=/home/me/.local/share/ccam/groups/default/mcp.json -p 'fix the tests'
+```
+
+```console
+PS> ccam --dry-run work -p "fix the tests"
+$env:CLAUDE_CONFIG_DIR='C:\Users\me\.local\share\ccam\profiles\work'; & C:\Users\me\.local\bin\claude.exe --mcp-config=C:\Users\me\.local\share\ccam\groups\default\mcp.json -p 'fix the tests'
 ```
 
 ## Nasıl çalışır
@@ -78,7 +86,7 @@ Her kutu, adımı çalışırken yanar; alttaki satırlar ise Claude Code'un ba�
 1. `cmd/ccam/main.go`, `app.Main` fonksiyonunu çağırır. ccam başka bir adla başlatıldıysa bu bir [kısayoldur](/features/shortcuts) ve doğrudan başlatıcıya gider.
 2. `app.parse`, cobra devreye girmeden önce `os.Args` değerine bakar. Yalnızca tek başına `ccam` (seçici), bir ccam komut adı (`config.Reserved`), `-h`/`--help` ve `-v`/`--version`, `cli.Execute` fonksiyonuna gider. Geri kalan her şey bir başlatmadır.
 3. `launcher.Launch`, ayrıştırdığı tek dosya olan `~/.config/ccam/config.toml` dosyasını okur.
-4. `launcher.Prepare` hesabı ada veya numaraya göre bulur, baştaki bir `--` değerini atar ve `claude` yürütülebilir dosyasını `ResolveClaude` ile bulur. PATH araması, dosyanın değiştirilme zamanıyla birlikte `~/.local/state/ccam/claude-path` içinde önbelleğe alınır; böylece ccam her başlatmada `PATH` içinde arama yapmaz. Değişmiş veya eksik bir dosya yeni bir aramayı tetikler. `config.toml` içindeki bir `claude_bin` yolu olduğu gibi kullanılır. ccam, inode ile karşılaştırarak ccam'in kendisi olan bir `claude` dosyasını reddeder, çünkü bu bir döngüye yol açar.
+4. `launcher.Prepare` hesabı ada veya numaraya göre bulur (ad yoksa `HereProfile`, çalışma dizinini `config.toml` içindeki `[[folder]]` girdileriyle dize olarak karşılaştırıp klasörün hesabını alır), baştaki bir `--` değerini atar ve `claude` yürütülebilir dosyasını `ResolveClaude` ile bulur. PATH araması, dosyanın değiştirilme zamanıyla birlikte `~/.local/state/ccam/claude-path` içinde önbelleğe alınır; böylece ccam her başlatmada `PATH` içinde arama yapmaz. Değişmiş veya eksik bir dosya yeni bir aramayı tetikler. `config.toml` içindeki bir `claude_bin` yolu olduğu gibi kullanılır. ccam, inode ile karşılaştırarak ccam'in kendisi olan bir `claude` dosyasını reddeder, çünkü bu bir döngüye yol açar.
 5. `checkLinks`, hesap klasörü `~/.local/share/ccam/profiles/<name>/` ile paylaşım ayarlarını `share.Check` ile karşılaştırır; bu fonksiyon yalnızca `lstat` ve `readlink` çağırır, öğe başına bir veya iki sistem çağrısı. Eksik bir bağlantı anında oluşturulur. Veri kaybettirebilecek her şey başlatmayı durdurur.
 6. `applyMCP`, paylaşılan MCP sunucularını ekler (aşağıya bakın).
 7. `session.Register` oturumu kaydeder. ccam, PID'sinin adını taşıyan ve süreç başlangıç zamanını içeren bir işaret dosyasını `$XDG_RUNTIME_DIR/ccam/profile-<name>/<pid>` konumuna (`XDG_RUNTIME_DIR` yoksa `~/.local/state/ccam/locks/` içine) yazar. Konuşma geçmişini paylaşan bir hesap için `historyCheck`, önce `history-<group>-<hash>` içinde çalışan bir oturum arar (hash, geçerli klasörün hash'idir) ve oraya da kaydolur. `exec` PID'yi korur; böylece işaret dosyası artık Claude Code sürecinin kendisini adlandırır. Tutulan bir kilit değil, bir işaret dosyası kullanılır; çünkü Claude Code'un başlattığı süreçler bir kilidi devralır ve oturum bittikten sonra da tutar.
@@ -88,7 +96,9 @@ Claude Code, `CLAUDE_CONFIG_DIR` hesap klasörüne ve `CCAM_PROFILE` hesap adın
 
 ### Neden exec
 
-`syscall.Exec`, ccam sürecini `claude` ile değiştirir; böylece ccam bellekte kalmaz, tuş vuruşları, sinyaller ve çıkış kodu doğrudan Claude Code'a aittir ve argümanlar hiçbir zaman bir kabuk dizesi olmadan dizi olarak kalır. Bir oturumdan sonraki işler, örneğin `claude mcp add` ile eklenen sunucuları fark etmek, bir sonraki başlatmada yapılır: ccam, `.claude.json` dosyasının değiştirilme zamanını `~/.local/state/ccam/mcp/<name>/seen` ile karşılaştırır ve dosyayı yalnızca değiştiyse ayrıştırır.
+`syscall.Exec`, ccam sürecini `claude` ile değiştirir; böylece ccam bellekte kalmaz, tuş vuruşları, sinyaller ve çıkış kodu doğrudan Claude Code'a aittir ve argümanlar hiçbir zaman bir kabuk dizesi olmadan dizi olarak kalır.
+
+Windows'ta `exec` yoktur. Orada `Plan.Exec`, `claude.exe` dosyasını aynı ortam, argümanlar ve konsolla bir alt süreç olarak başlatır, onu bekler ve onun çıkış koduyla çıkar. Ctrl+C, Claude Code'a doğrudan konsoldan ulaşır; bu yüzden ccam onu yok sayar. Oturum işaretçisi, tam olarak Claude Code kadar yaşayan ccam'in PID'sini taşır ve Claude Code çıktığında kaldırılır. Beklerken ccam başka hiçbir şey yapmaz. Bir oturumdan sonraki işler, örneğin `claude mcp add` ile eklenen sunucuları fark etmek, bir sonraki başlatmada yapılır: ccam, `.claude.json` dosyasının değiştirilme zamanını `~/.local/state/ccam/mcp/<name>/seen` ile karşılaştırır ve dosyayı yalnızca değiştiyse ayrıştırır.
 
 ### Bir komut satırı nasıl yönlendirilir
 

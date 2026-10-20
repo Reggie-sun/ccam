@@ -1,10 +1,10 @@
 ---
 title: Dùng chung giữa các tài khoản
 description: "Cách ccam share liên kết cài đặt, CLAUDE.md, tiện ích và lịch sử vào thư mục nhóm với kế hoạch, bản sao lưu, lựa chọn khi xung đột, và cách off sao chép lại."
-updated: 2026-10-19
+updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: b30b7cdb2b15
+sourceHash: 16de29bbdd57
 ---
 
 Mỗi tài khoản có thư mục riêng, nhưng phần lớn nội dung trong đó không cần tách riêng. `ccam share` bật hoặc tắt dùng chung cho một tài khoản và một mục mỗi lần: tệp hoặc thư mục của tài khoản được chuyển vào một thư mục nhóm và được thay bằng một liên kết tượng trưng, nên mọi tài khoản trong nhóm đọc và ghi cùng một bản. Hãy dùng nó sau `ccam add` để thay đổi những gì một tài khoản dùng chung, hoặc để đưa một vài tài khoản vào một nhóm riêng.
@@ -112,6 +112,10 @@ Repair them with `ccam doctor --fix`, then run again
 ```
 
 `ccam doctor --fix` chạy `share.Build` với thiết lập đã lưu ở cả hai phía, suy ra mọi bước từ những gì có trên đĩa, giữ nội dung của nhóm khi xung đột và sao lưu mọi thứ nó thay thế.
+
+### Trên Windows
+
+Windows chỉ tạo liên kết tượng trưng trong Developer Mode (Settings > System > For developers) hoặc cho quản trị viên. `fsutil.Link` thử tạo liên kết tượng trưng trước. Khi không có quyền đó, một thư mục dùng chung (`agents`, `skills`, `projects` và các thư mục khác) trở thành một directory junction, thứ mà mọi người dùng đều tạo được, và hoạt động như nhau với Claude Code. Một tệp dùng chung (`settings.json`, `CLAUDE.md`, `history.jsonl`) chỉ có thể là liên kết tượng trưng, nên ccam dừng lại với `Windows links files only in Developer Mode` và gợi ý bật chế độ này hoặc giữ mục đó là cục bộ. `share.Check` đọc junction như liên kết (`fsutil.LinkTarget`), và xóa một thư mục tài khoản chỉ xóa bản thân junction, không bao giờ xóa nội dung nhóm mà nó trỏ tới.
 
 ## An toàn và các trường hợp đặc biệt
 

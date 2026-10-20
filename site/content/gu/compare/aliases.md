@@ -4,7 +4,7 @@ description: ઘણાં Claude Code એકાઉન્ટ ચલાવવા �
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: ea24bb091caf
+sourceHash: b9fbcb88f111
 ---
 
 દરેક એકાઉન્ટ માટે એક શેલ alias એ ઘણાં Claude Code એકાઉન્ટ ચલાવવાની સૌથી સરળ રીત છે. ccam અંદરથી આ જ કામ કરે છે અને તેમાં શેરિંગ, સ્વિચિંગ અને વપરાશ પર નજર રાખવાની સુવિધા ઉમેરે છે.
@@ -42,6 +42,8 @@ ccam add work --shortcut ccwork
 | બીજા એકાઉન્ટમાં વાતચીત ચાલુ રાખવી | ના | `ccam next --continue` |
 | દરેક એકાઉન્ટનો વપરાશ | ના | `ccam usage` |
 | સૌથી વધુ જગ્યાવાળું એકાઉન્ટ પસંદ કરવું | ના | `ccam next --auto` |
+| મર્યાદાએ પહોંચતાં `-p` job બીજા એકાઉન્ટ તરીકે ફરી ચલાવવો | ના | `ccam --fallback` |
+| દરેક પ્રોજેક્ટ ફોલ્ડર માટે એક એકાઉન્ટ | ના | `ccam folder` |
 | સ્ટેટસ લાઇનમાં એકાઉન્ટનું નામ | ના | `ccam statusline install` |
 | તૂટેલી લિંક સુધારવી | હાથથી | `ccam doctor --fix` |
 | વધારાનું સૉફ્ટવેર | કંઈ નહીં | એક સ્ટેટિક બાઇનરી |

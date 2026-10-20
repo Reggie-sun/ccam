@@ -2,10 +2,10 @@
 title: پرسش‌های متداول
 metaTitle: "پرسش‌های متداول ccam: چند حساب Claude Code"
 description: پاسخ به پرسش‌هایی درباره ccam، حساب‌های Claude Code، سقف مصرف، اشتراک‌گذاری، حریم خصوصی و سیستم‌های پشتیبانی‌شده.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 6
 translation: machine
-sourceHash: 88bd249ec51c
+sourceHash: 80a5475ccfee
 ---
 
 ## آیا ccam ابزار رسمی Anthropic است؟
@@ -46,7 +46,7 @@ ccam هرگز اطلاعات ورود Claude شما را بین حساب‌ها 
 
 ## ccam از کدام سیستم‌ها پشتیبانی می‌کند؟
 
-Linux (Ubuntu، Debian، Fedora، Arch، Alpine و توزیع‌های دیگر) و macOS. در Windows، آن را داخل WSL به کار ببرید.
+Linux (Ubuntu، Debian، Fedora، Arch، Alpine و توزیع‌های دیگر)، macOS و Windows 10 و 11، به‌صورت بومی یا داخل WSL. در Windows، مشترک کردن فایل‌هایی مانند `settings.json` به Developer Mode نیاز دارد؛ پوشه‌های مشترک بدون آن هم کار می‌کنند ([اشتراک در Windows](/features/share#on-windows)).
 
 ## چرا یک سرور MCP فقط در یک حساب دیده می‌شود؟
 
@@ -54,7 +54,7 @@ Linux (Ubuntu، Debian، Fedora، Arch، Alpine و توزیع‌های دیگر)
 
 ## آیا ccam سرعت Claude Code را کم می‌کند؟
 
-اجرای Claude Code از طریق ccam حدود ۴ میلی‌ثانیه اضافه می‌کند؛ این عدد با `scripts/perf-check.sh` روی یک لپ‌تاپ اندازه‌گیری شده است. ccam یک فایل کوچک را می‌خواند، پیوندهای مشترک را بررسی می‌کند و سپس خودش را با `claude` جایگزین می‌کند، بنابراین هنگام کار شما در حال اجرا نیست.
+اجرای Claude Code از طریق ccam حدود ۴ میلی‌ثانیه اضافه می‌کند؛ این عدد با `scripts/perf-check.sh` روی یک لپ‌تاپ اندازه‌گیری شده است. ccam یک فایل کوچک را می‌خواند، پیوندهای مشترک را بررسی می‌کند و سپس خودش را با `claude` جایگزین می‌کند، بنابراین هنگام کار شما در حال اجرا نیست. Windows نمی‌تواند یک فرایند را جایگزین کند، پس آنجا ccam برنامه Claude Code را اجرا می‌کند و منتظرش می‌ماند، بی‌آنکه کار دیگری انجام دهد.
 
 ## چگونه ccam را به‌روز کنم؟
 

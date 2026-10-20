@@ -4,7 +4,7 @@ description: कई Claude Code अकाउंट चलाने के लि
 updated: 2026-10-20
 order: 1
 translation: machine
-sourceHash: ea24bb091caf
+sourceHash: b9fbcb88f111
 ---
 
 हर अकाउंट के लिए एक shell alias, कई Claude Code अकाउंट चलाने का सबसे आसान तरीका है। ccam अंदर से यही करता है और साथ में साझा करना, स्विच करना और उपयोग की निगरानी जोड़ता है।
@@ -42,6 +42,8 @@ ccam add work --shortcut ccwork
 | दूसरे अकाउंट में बातचीत जारी रखना | नहीं | `ccam next --continue` |
 | हर अकाउंट का उपयोग | नहीं | `ccam usage` |
 | सबसे ज़्यादा गुंजाइश वाला अकाउंट चुनना | नहीं | `ccam next --auto` |
+| सीमा पर `-p` job को दूसरे अकाउंट के रूप में फिर से चलाना | नहीं | `ccam --fallback` |
+| हर प्रोजेक्ट फ़ोल्डर के लिए एक अकाउंट | नहीं | `ccam folder` |
 | स्टेटस लाइन में अकाउंट का नाम | नहीं | `ccam statusline install` |
 | टूटे लिंक ठीक करना | हाथ से | `ccam doctor --fix` |
 | अतिरिक्त सॉफ़्टवेयर | कोई नहीं | एक static बाइनरी |

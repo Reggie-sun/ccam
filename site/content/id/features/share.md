@@ -1,10 +1,10 @@
 ---
 title: Berbagi antarakun
 description: Cara ccam share menautkan pengaturan, CLAUDE.md, ekstensi, dan riwayat ke folder grup, dengan rencana, cadangan, dan pilihan konflik; off menyalinnya kembali.
-updated: 2026-10-19
+updated: 2026-10-20
 order: 4
 translation: machine
-sourceHash: b30b7cdb2b15
+sourceHash: 16de29bbdd57
 ---
 
 Setiap akun memiliki foldernya sendiri, tetapi sebagian besar isinya tidak perlu terpisah. `ccam share` mengaktifkan atau menonaktifkan pembagian untuk satu akun dan satu item sekaligus: file atau folder milik akun dipindahkan ke folder grup dan diganti dengan tautan simbolik, sehingga setiap akun dalam grup membaca dan menulis salinan yang sama. Gunakan setelah `ccam add` untuk mengubah apa yang dibagikan sebuah akun, atau untuk menempatkan beberapa akun dalam grup tersendiri.
@@ -112,6 +112,10 @@ Repair them with `ccam doctor --fix`, then run again
 ```
 
 `ccam doctor --fix` menjalankan `share.Build` dengan pengaturan tersimpan di kedua sisi, yang menurunkan setiap langkah dari apa yang ada di disk, mempertahankan isi grup saat terjadi konflik, dan mencadangkan apa pun yang digantinya.
+
+### Di Windows
+
+Windows hanya membuat tautan simbolik dalam Mode Pengembang (Settings > System > For developers) atau untuk administrator. `fsutil.Link` mencoba tautan simbolik terlebih dahulu. Tanpa hak itu, folder bersama (`agents`, `skills`, `projects`, dan lainnya) menjadi directory junction, yang boleh dibuat oleh pengguna mana pun, dan berfungsi sama bagi Claude Code. File bersama (`settings.json`, `CLAUDE.md`, `history.jsonl`) hanya bisa berupa tautan simbolik, jadi ccam berhenti dengan `Windows links files only in Developer Mode` dan menyarankan untuk mengaktifkannya atau mempertahankan item itu sebagai lokal. `share.Check` membaca junction sebagai tautan (`fsutil.LinkTarget`), dan menghapus folder akun hanya menghapus junction itu sendiri, tidak pernah isi grup yang ditunjuknya.
 
 ## Keamanan dan kasus khusus
 

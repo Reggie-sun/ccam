@@ -1,10 +1,10 @@
 ---
 title: 快捷指令
 description: 用 ccam shortcut 為帳號建立 ccwork 這類專屬指令，並用 ccam shims install 重新建立 ~/.local/bin 中的連結。
-updated: 2026-10-19
+updated: 2026-10-20
 order: 3
 translation: machine
-sourceHash: 5f0cb5a57042
+sourceHash: 939256e7a67e
 ---
 
 快捷指令是你自己命名、用來以某個帳號啟動 Claude Code 的指令：`ccwork --resume` 的效果和 `ccam work --resume` 相同。它是 `~/.local/bin` 中指向 ccam 的連結，所以在 bash、zsh、腳本以及任何從 `PATH` 執行程式的地方都能使用。快捷指令是選用的；請為你常啟動的帳號建立一個。
@@ -82,13 +82,17 @@ shell 在 `PATH` 上找到 `ccwork`，核心跟隨連結啟動 ccam 執行檔，
 
 為什麼用符號連結，而不是 shell 別名或包裝腳本：符號連結在每種 shell 和腳本中都能運作，不會多啟動一次 shell（大約 1 到 2 ms），而且啟動時仍然只讀取一個檔案。`scripts/perf-check.sh` 會用 `hyperfine` 測量快捷指令，標準和 `ccam <name>` 一樣是 10 ms（p95）。
 
+### 在 Windows 上
+
+快捷指令是 `%USERPROFILE%\.local\bin` 中的 `ccwork.exe`，`shim.Name` 會在查詢前去掉 `.exe`（不分大小寫），所以 `ccwork`、`ccwork.exe` 和 `CCWORK.EXE` 都會啟動 `work`。ccam 會先建立符號連結，Windows 只在開發人員模式下或對系統管理員允許這麼做。沒有這項權限時，它會建立永久連結：同一個 `ccam.exe` 檔案的第二個名稱，不需要任何權限。永久連結和 `ccam.exe` 是同一個檔案時，就會被視為 ccam 自己的連結。由於 `ccam update` 會以新檔案取代 `ccam.exe`，它接著會用 `shim.Relink` 更新每個以永久連結建立的快捷指令，並印出 `✓ shortcut ccwork renewed`。名稱檢查會在其他 `PATH` 資料夾中，以 `PATHEXT` 中的每個副檔名（`.exe`、`.cmd` 等）尋找 `<name>`。
+
 ## 安全性和特殊情況
 
 - **沒有帳號認領的連結。** 如果 `~/.local/bin` 中某個指向 ccam 的連結名稱沒有任何帳號使用（例如你手動編輯了 `config.toml` 中的 `shortcut` 之後），ccam 不會改用預設帳號，而是以 `` ccam: ccold is not the shortcut of any account (see `ccam list`, `ccam shortcut`) `` 停止。請用 `ccam shortcut` 重新設定名稱，或刪除該連結。
 - **已存在的檔案。** ccam 絕不取代它沒有建立的檔案。`ccam shims install` 會以 `<path> already exists and is not a ccam link, so it was left alone` 停止。
 - **移動過的 ccam 執行檔。** 這時舊的連結會指向已不存在的路徑，ccam 不會把它們視為自己的連結。請刪除它們，然後執行 `ccam shims install`。
 - **重新命名和移除。** `ccam rename` 會保留快捷指令的名稱，連結也繼續有效，因為它指向 ccam，而 ccam 會在 `config.toml` 中查詢名稱。`ccam remove` 會刪除帳號的連結。`ccam shortcut <account> <new>` 會先刪除舊連結再建立新連結。
-- **PATH。** 當 ccam 建立連結而 `~/.local/bin` 不在你的 `PATH` 上時，它會印出 `Note: /home/me/.local/bin is not in PATH. Add it to ~/.bashrc or ~/.zshrc:`，後面接著要加入的 `export PATH=...` 那一行。
+- **PATH。** 當 ccam 建立連結而 `~/.local/bin` 不在你的 `PATH` 上時，它會印出 `Note: /home/me/.local/bin is not in PATH. Add it to ~/.bashrc or ~/.zshrc:`，後面接著要加入的 `export PATH=...` 那一行。在 Windows 上，它會改為印出把該資料夾加到使用者 `PATH` 的 PowerShell 指令。
 - **事後檢查。** `ccam doctor` 會回報 `missing shortcuts in /home/me/.local/bin: ccwork`，並在該資料夾不在 `PATH` 上時發出警告。`ccam doctor --fix` 會建立缺少的連結。
 
 ## 相關內容
