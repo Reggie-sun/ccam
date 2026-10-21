@@ -234,7 +234,7 @@ func (d *Dashboard) healthView(w int) ([]string, int) {
 	if fails == 0 {
 		out = append(out, " "+t.success().Render(symOK)+" everything looks fine")
 	} else {
-		out = append(out, " "+plural(fails, "problem")+"; f repairs what can be repaired safely (ccam doctor --fix).")
+		out = append(out, " "+plural(fails, "problem")+"; f repairs the selected box, F all of them (ccam doctor --fix).")
 	}
 	return out, cur
 }
@@ -355,15 +355,32 @@ func healthRows(t Theme, b healthBox, boxW int) (string, []string) {
 	return title, rows
 }
 
+// healthKey: f repairs the selected box (one account, or General), F
+// everything, like `ccam doctor --fix`.
 func (d *Dashboard) healthKey(k tea.KeyPressMsg) tea.Cmd {
-	if k.String() != "f" {
+	only, title, scope := "", "Repair everything that can be repaired?", ""
+	switch k.String() {
+	case "F":
+	case "f":
+		boxes := healthBoxes(d.health)
+		if len(boxes) == 0 {
+			return nil
+		}
+		b := boxes[min(d.cursor[tabHealth], len(boxes)-1)]
+		only, scope = cmp.Or(b.profile, doctor.General), " in "+cmp.Or(b.profile, "General")
+		if b.problems() == 0 {
+			d.notice = notice{text: "nothing to repair" + scope}
+			return nil
+		}
+		title = "Repair what can be repaired" + scope + "?"
+	default:
 		return d.moveCursor(k) // ↑/↓ go from box to box
 	}
-	d.dlg = newConfirm("Repair what can be repaired?", "Like `ccam doctor --fix`: missing links are made, and a real file where a link belongs is backed up first. Nothing is deleted.", "Yes, repair", func(d *Dashboard) tea.Cmd {
+	d.dlg = newConfirm(title, "Like `ccam doctor --fix`: missing links are made, and a real file where a link belongs is backed up first. Nothing is deleted.", "Yes, repair", func(d *Dashboard) tea.Cmd {
 		d.busy = "Repairing…"
 		return tea.Batch(func() tea.Msg {
-			f, err := d.be.Doctor(true)
-			return healthMsg{findings: f, err: err, fixed: true}
+			f, err := d.be.Doctor(true, only)
+			return healthMsg{findings: f, err: err, fixed: true, scope: scope}
 		}, d.tick())
 	})
 	return nil

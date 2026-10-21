@@ -46,7 +46,9 @@ type Backend interface {
 	PlanGroups(edit func(*config.Config) error) (*group.Change, error)
 	ApplyGroups(edit func(*config.Config) error, ch *group.Change) (*config.Config, error)
 	Extensions() (ExtView, error)
-	Doctor(fix bool) ([]doctor.Finding, error)
+	// Doctor runs the checks; with fix it repairs what is safe, only the
+	// findings of account only (doctor.General: of no account) when set.
+	Doctor(fix bool, only string) ([]doctor.Finding, error)
 }
 
 // ExtView is `ccam ext` prepared for the Extensions tab.
@@ -126,7 +128,8 @@ type (
 	healthMsg struct {
 		findings []doctor.Finding
 		err      error
-		fixed    bool // the result of f (doctor --fix)
+		fixed    bool   // the result of f or F (doctor --fix)
+		scope    string // what was repaired, for the notice
 	}
 )
 
@@ -318,7 +321,7 @@ func (d *Dashboard) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if msg.fixed {
 			d.busy, d.loaded[tabHealth] = "", true
 			if msg.err == nil {
-				d.notice = notice{text: "repaired what could be repaired"}
+				d.notice = notice{text: "repaired what could be repaired" + msg.scope}
 			}
 		}
 		return d, nil
@@ -427,7 +430,7 @@ func (d *Dashboard) openTab() tea.Cmd {
 		return tea.Batch(func() tea.Msg { v, err := d.be.Extensions(); return extMsg{v, err} }, d.tick())
 	case tabHealth:
 		d.health, d.hErr = nil, nil
-		return tea.Batch(func() tea.Msg { f, err := d.be.Doctor(false); return healthMsg{findings: f, err: err} }, d.tick())
+		return tea.Batch(func() tea.Msg { f, err := d.be.Doctor(false, ""); return healthMsg{findings: f, err: err} }, d.tick())
 	}
 	return nil
 }
@@ -579,7 +582,7 @@ func (d *Dashboard) keysLine() string {
 	case tabExtensions:
 		keys = []string{"r to reload"}
 	case tabHealth:
-		keys = []string{"f to fix", "r to check again"}
+		keys = []string{"f to fix the selected box", "F to fix all", "r to check again"}
 	}
 	if !(d.tab == tabGroups && d.groups.editing) {
 		keys = append(keys, "? for shortcuts")
@@ -609,7 +612,7 @@ func (d *Dashboard) helpView(w int) []string {
 	case tabFolders:
 		rows = append(rows, [][2]string{{"n", "use an account here"}, {"enter", "change the account"}, {"x", "remove the rule"}}...)
 	case tabHealth:
-		rows = append(rows, [][2]string{{"f", "repair (doctor --fix)"}}...)
+		rows = append(rows, [][2]string{{"↑/↓", "select a box"}, {"f", "repair the selected box"}, {"F", "repair all (doctor --fix)"}}...)
 	}
 	cell := func(r [2]string) string { return t.accent().Render(padRight(r[0], 8)) + " " + r[1] }
 	out := []string{" " + t.bold().Render("Shortcuts"), ""}

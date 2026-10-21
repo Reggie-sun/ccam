@@ -295,7 +295,7 @@ func (b backend) RemoveGroup(name string, ch *group.Change) (*config.Config, str
 	return cfg, "group " + name + " removed; its folder is in " + dst, nil
 }
 
-func (b backend) Doctor(fix bool) ([]doctor.Finding, error) {
+func (b backend) Doctor(fix bool, only string) ([]doctor.Finding, error) {
 	cfg, err := b.e.load()
 	if err != nil {
 		return nil, err
@@ -307,7 +307,7 @@ func (b backend) Doctor(fix bool) ([]doctor.Finding, error) {
 	}
 	self, _ := ccamPath()
 	// No live usage check: the dashboard looks usage up itself.
-	return doctor.Run(b.e.paths, cfg, doctor.Options{Fix: fix, CcamPath: self}), nil
+	return doctor.Run(b.e.paths, cfg, doctor.Options{Fix: fix, FixOnly: only, CcamPath: self}), nil
 }
 
 func (b backend) Extensions() (tui.ExtView, error) {

@@ -585,3 +585,7 @@ clausona(larcane97/clausona v0.12.0-beta) 조사에서 나온 단점을 보완�
 - 소유자 요청으로 대시보드(`ccam`)의 Health 탭을 계정별 상자로 바꿨습니다. 맨 위 한 줄에 `✔ General   ⚠ c1   ✔ c2 …`로 전체 상태를 요약하고, 상자마다 제목에 가장 나쁜 상태와 문제 수, 줄마다 점검 영역(Folder·Login·Share links 등)과 ✔/ℹ/⚠/✘를 보여 줍니다. 계정 상자는 Folder → Login → Share links 순서이고, 폴더 점검은 문제가 있을 때만 결과를 남기므로 문제가 없으면 `Folder OK` 줄을 넣습니다. 계정과 무관한 결과는 General 상자에 모읍니다. ↑/↓는 상자 사이를 움직이고 선택한 상자의 테두리를 강조색으로 그립니다. 이를 위해 `doctor.Finding`에 `Area`를 더했습니다. `ccam doctor`도 같은 요약 줄과 상자를 출력합니다(`tui.HealthReport`, 예전 `✓ 이름: 내용` 줄과 `Finding.String`은 없앰). 터미널이면 그 폭에 맞춰 줄을 바꾸고, 파이프로 보내면 색 없이 줄을 바꾸지도 자르지도 않으며 모든 상자를 가장 넓은 줄에 맞춥니다(grep으로 메시지를 찾을 수 있도록). 색은 터미널 자체 팔레트(`light-ansi`)이고 `NO_COLOR`를 따릅니다. 종료 코드와 `--fix` 안내 줄은 그대로입니다.
 - 모든 탭의 이름 줄 아래에 그 탭이 무엇을 하는지 한 문장(`tabAbout`, 79칸 이하)을 흐리게 보여 줍니다.
 - Accounts 탭의 사용량 열을 `5-hour`·`Weekly`·`Fable` 세 칸(6칸 막대와 퍼센트)으로 바꿨습니다. Fable 칸은 이름에 `fable`이 들어간 모델별 주간 창입니다. 사용량 상세 창의 `7-day`도 `Weekly`로 맞췄습니다.
+
+## 2026-10-21: Health 탭에서 고른 상자만 수리
+
+- 소유자 요청으로 대시보드 Health 탭의 `f`가 선택한 상자만 수리합니다. 계정 상자면 그 계정의 결과만, General 상자면 계정과 무관한 결과(플러그인 경로, 단축 명령)만 `ccam doctor --fix`처럼 고치고, 나머지 계정은 점검만 합니다. 문제가 없는 상자에서는 `nothing to repair in <이름>`만 보여 줍니다. 예전처럼 모두 고치는 키는 `F`입니다. 이를 위해 `doctor.Options.FixOnly`(계정 이름, 또는 `doctor.General`)를 더했고 `Backend.Doctor`가 그 값을 받습니다. `ccam doctor --fix` 명령은 그대로 전부 고칩니다.

@@ -45,9 +45,28 @@ type Finding struct {
 }
 
 type Options struct {
-	Fix      bool
+	Fix bool
+	// FixOnly limits Fix to the findings of one account, or with General to
+	// the findings of no account. Empty repairs everything.
+	FixOnly  string
 	CcamPath string         // the real ccam binary, for shim checks
 	Usage    *usage.Fetcher // nil skips the live usage-format check
+}
+
+// General is FixOnly for the findings of no account; no account can be
+// named so (config names start with a letter or digit).
+const General = "(general)"
+
+// fixes reports whether Run repairs the findings of profile prof ("" for
+// those of no account).
+func (o Options) fixes(prof string) bool {
+	switch {
+	case !o.Fix:
+		return false
+	case o.FixOnly == General:
+		return prof == ""
+	}
+	return o.FixOnly == "" || o.FixOnly == prof
 }
 
 // LayoutVersion is the Claude Code version docs/claude-layout.md was checked with.
@@ -69,9 +88,9 @@ func Run(p paths.Paths, cfg *config.Config, opt Options) []Finding {
 	checkClaude(r, p, cfg)
 	checkAuthEnv(r)
 	for i := range cfg.Profiles {
-		checkProfile(r, p, &cfg.Profiles[i], opt.Fix)
+		checkProfile(r, p, &cfg.Profiles[i], opt.fixes(cfg.Profiles[i].Name))
 	}
-	checkPlugins(r, p, cfg, opt.Fix)
+	checkPlugins(r, p, cfg, opt.fixes(""))
 	checkMCP(r, p, cfg)
 	checkUsageFormat(r, p, cfg, opt.Usage)
 	checkShims(r, p, cfg, opt)
@@ -468,7 +487,7 @@ func checkShims(r *report, p paths.Paths, cfg *config.Config, opt Options) {
 		r.add(OK, "", "shortcuts OK (%s)", strings.Join(names, ", "))
 	} else {
 		f := r.add(Warn, "", "missing shortcuts in %s: %s", p.Bin, strings.Join(missing, ", "))
-		if opt.Fix {
+		if opt.fixes("") {
 			_, err := shim.Install(p.Bin, opt.CcamPath, cfg)
 			f.Fixed = err == nil
 		}

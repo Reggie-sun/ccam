@@ -175,3 +175,26 @@ func TestFindingsSayTheirArea(t *testing.T) {
 		t.Fatalf("areas of a: %v", areas)
 	}
 }
+
+// The dashboard repairs one box at a time: one account's findings, or with
+// General those of no account.
+func TestFixOnlyOneAccount(t *testing.T) {
+	t.Setenv("CCAM_HOME", t.TempDir())
+	p := paths.FromEnv()
+	cfg := &config.Config{Profiles: []config.Profile{{Name: "a", Slot: 1}, {Name: "b", Slot: 2}}}
+	for _, n := range []string{"a", "b"} {
+		os.MkdirAll(p.ProfileDir(n), 0o755)
+	}
+	if runtime.GOOS == "windows" {
+		t.Skip("no permission bits to repair")
+	}
+	perm := func(n string) os.FileMode { info, _ := os.Stat(p.ProfileDir(n)); return info.Mode().Perm() }
+	Run(p, cfg, Options{Fix: true, FixOnly: General})
+	if perm("a") != 0o755 || perm("b") != 0o755 {
+		t.Fatal("General repaired an account")
+	}
+	Run(p, cfg, Options{Fix: true, FixOnly: "b"})
+	if perm("a") != 0o755 || perm("b") != 0o700 {
+		t.Fatalf("a %o, b %o", perm("a"), perm("b"))
+	}
+}

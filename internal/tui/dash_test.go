@@ -77,8 +77,8 @@ func (f *fake) LastUsed(string) time.Time           { return time.Time{} }
 func (f *fake) SuggestShortcut(name string) string  { return "cc" + name }
 func (f *fake) CheckShortcut(name, sc string) error { return nil }
 func (f *fake) Extensions() (ExtView, error)        { return ExtView{}, nil }
-func (f *fake) Doctor(fix bool) ([]doctor.Finding, error) {
-	f.calls = append(f.calls, fmt.Sprint("doctor ", fix))
+func (f *fake) Doctor(fix bool, only string) ([]doctor.Finding, error) {
+	f.calls = append(f.calls, fmt.Sprint("doctor ", fix, " ", only))
 	return []doctor.Finding{{Level: doctor.OK, Msg: "fine"}}, nil
 }
 
@@ -392,8 +392,12 @@ func TestTabsHelpAndHealth(t *testing.T) {
 	if s := screen(m); !strings.Contains(s, "fine") || !strings.Contains(s, "everything looks fine") {
 		t.Fatal(s)
 	}
-	m = press(t, m, "f", "enter")
-	if !slices.Contains(f.calls, "doctor true") || !strings.Contains(screen(m), "repaired") {
+	m = press(t, m, "f") // the only box has nothing to repair
+	if !strings.Contains(screen(m), "nothing to repair in General") || slices.Contains(f.calls, "doctor true ") {
+		t.Fatalf("%v\n%s", f.calls, screen(m))
+	}
+	m = press(t, m, "F", "enter")
+	if !slices.Contains(f.calls, "doctor true ") || !strings.Contains(screen(m), "repaired") {
 		t.Fatalf("%v", f.calls)
 	}
 }
@@ -532,6 +536,15 @@ func TestHealthBoxPerAccount(t *testing.T) {
 	m := press(t, d, "down", "down")
 	if c := m.(*Dashboard).cursor[tabHealth]; c != 2 {
 		t.Fatalf("cursor %d", c)
+	}
+	// f repairs only the selected account's box.
+	m = press(t, m, "f")
+	if s := screen(m); !strings.Contains(s, "Repair what can be repaired in work?") {
+		t.Fatal(s)
+	}
+	m = press(t, m, "enter")
+	if !slices.Contains(f.calls, "doctor true work") || !strings.Contains(screen(m), "repaired what could be repaired in work") {
+		t.Fatalf("%v\n%s", f.calls, screen(m))
 	}
 }
 
