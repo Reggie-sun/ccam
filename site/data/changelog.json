@@ -1,5 +1,11 @@
 [
   {
+    "tag": "v0.10.3",
+    "date": "2026-10-21",
+    "url": "https://github.com/jhyunwoo/ccam/releases/tag/v0.10.3",
+    "notes": "<h3>Fixed</h3>\n<ul>\n<li>ccam ext no longer reports skills/synced as a skill without SKILL.md</li>\n</ul>\n"
+  },
+  {
     "tag": "v0.10.2",
     "date": "2026-10-21",
     "url": "https://github.com/jhyunwoo/ccam/releases/tag/v0.10.2",
