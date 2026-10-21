@@ -23,6 +23,22 @@ for (const f of await walk(OUT)) {
 for (const f of ["404.html", "_headers", "_redirects", "robots.txt", "sitemap-index.xml", "llms.txt", "llms-full.txt"]) {
   if (!existsSync(`${OUT}/${f}`)) errors.push(`missing ${f}`);
 }
+// robots.txt uses only directives Lighthouse 13 accepts. Lighthouse CI
+// (12.6.1) predates content-signal, so lighthouserc.json skips its
+// robots-txt audit and this check stands in for it.
+const ROBOTS_DIRECTIVES = new Set(["user-agent", "allow", "disallow", "sitemap", "crawl-delay", "clean-param", "host", "request-rate", "visit-time", "noindex", "content-signal"]);
+if (existsSync(`${OUT}/robots.txt`)) {
+  let group = false;
+  readFileSync(`${OUT}/robots.txt`, "utf8").split("\n").forEach((raw, i) => {
+    const line = raw.replace(/#.*/, "").trim();
+    if (!line) return;
+    const m = /^([a-z-]+)\s*:\s*(.*)$/i.exec(line);
+    const name = m?.[1].toLowerCase();
+    if (!m || !ROBOTS_DIRECTIVES.has(name!)) errors.push(`robots.txt line ${i + 1} is not a known directive: ${raw}`);
+    else if (name === "user-agent") group = true;
+    else if ((name === "allow" || name === "disallow" || name === "content-signal") && !group) errors.push(`robots.txt line ${i + 1} is outside any User-agent group: ${raw}`);
+  });
+}
 // Cloudflare rejects the whole deploy when a _headers line is longer than this.
 if (existsSync(`${OUT}/_headers`)) {
   readFileSync(`${OUT}/_headers`, "utf8").split("\n").forEach((line, i) => {
