@@ -1,24 +1,32 @@
 ---
 title: Mga usage limit at paglipat ng account
-description: Tingnan ang 5-oras at lingguhang usage ng bawat Claude Code account gamit ang ccam usage, at buksan ang may pinakamaraming natitira gamit ang ccam next --auto.
-updated: 2026-10-20
+description: Tingnan bilang mga bar ang 5-oras, lingguhan at Fable na usage ng bawat Claude Code account gamit ang ccam usage, at buksan ang may pinakamaraming natitira gamit ang ccam next --auto.
+updated: 2026-10-21
 order: 5
 translation: machine
-sourceHash: 40aef0708c81
+sourceHash: "0e64e3251c69"
 ---
 
-Ipinapakita ng `ccam usage` kung gaano kalaki na ang nagamit ng bawat account sa 5-oras at lingguhang limit. Binubuksan ng `ccam next --auto` ang account na may pinakamaraming natitira, at dinadala ng `--continue` ang kasalukuyang usapan.
+Ipinapakita ng `ccam usage` kung gaano kalaki na ang nagamit ng bawat account sa 5-oras na limit, sa lingguhang limit at sa sariling lingguhang limit ng bawat model (gaya ng Fable). Binubuksan ng `ccam next --auto` ang account na may pinakamaraming natitira, at dinadala ng `--continue` ang kasalukuyang usapan.
 
 ```console
 $ ccam usage
- Account     5-hour        Resets    Weekly        Resets    As of
- 1 personal  ██████░░  72% 1h 40m    ███░░░░░  41% 3d 6h     just now
- 2 work      █░░░░░░░   8% 4h 12m    ██░░░░░░  19% 5d 2h     just now
- 3 side      ████████ 100% 22m       █████░░░  68% 1d 9h     12m ago (cached)
+ 1 personal  just now
+   5-hour   ██████████████░░░░░░  72%  resets in 1h 40m
+   Weekly   ████████░░░░░░░░░░░░  41%  resets in 3d 6h
+   Fable    ██████████████████░░  88%  resets in 1d 6h
+ 2 work      just now
+   5-hour   ██░░░░░░░░░░░░░░░░░░   8%  resets in 4h 12m
+   Weekly   ████░░░░░░░░░░░░░░░░  19%  resets in 5d 2h
+   Fable    █░░░░░░░░░░░░░░░░░░░   3%  resets in 5d 2h
+ 3 side      12m ago (cached)
+   5-hour   ████████████████████ 100%  resets in 22m
+   Weekly   ██████████████░░░░░░  68%  resets in 1d 9h
+   Fable    ████████░░░░░░░░░░░░  40%  resets in 1d 9h
 → Most headroom: work   (open it with ccam next --auto)
 ```
 
-Ang mga column ay: account, 5-oras na usage, oras bago ito mag-reset, lingguhang usage, oras bago ito mag-reset, at kung gaano na katagal ang mga numero.
+Bawat account ay may linyang nagsasabi kung gaano na katagal ang mga numero nito, at pagkatapos ay isang bar bawat limit kasama ang oras bago ito mag-reset: ang 5-oras na window, ang lingguhang window para sa lahat ng model, at ang sariling lingguhang window ng bawat model, gaya ng Fable. Mula 80% nagiging dilaw ang bar, at pula sa 100%. Pinapangalanan ng huling linya ang account na bubuksan ng `ccam next --auto`.
 
 ## Saan galing ang mga numero
 
@@ -32,7 +40,7 @@ Muling ginagamit ang mga numerong kinuha wala pang 60 segundo ang nakalipas. Mga
 | --- | --- |
 | `--watch [seconds]` | Tuloy-tuloy na i-refresh, tuwing 60 segundo bilang default |
 | `--json` | Output na nababasa ng makina |
-| `-v` | Ipakita rin ang mga lingguhang limit ng bawat model at kung saan galing ang bawat numero |
+| `-v` | Ipakita rin kung saan galing ang mga numero ng bawat account |
 | `--no-cache` | Laging magtanong ulit |
 | `--source cache` | Huwag kailanman magtanong; ipakita lang ang mga naka-save na numero |
 

@@ -1,10 +1,10 @@
 ---
 title: Проверка и исправление
 description: Проверяйте ссылки общего доступа, права файлов, входы и версию Claude Code командой ccam doctor, а безопасные исправления делайте через ccam doctor --fix.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 9
 translation: machine
-sourceHash: "6ae82bbf5585"
+sourceHash: "9be63350cb69"
 ---
 
 `ccam doctor` проверяет вашу установку ccam: исполняемый файл Claude Code, папку, вход и ссылки общего доступа каждого аккаунта, общие MCP-серверы, эндпоинт использования и ваши короткие команды. `ccam doctor --fix` исправляет то, что можно исправить без потери данных, и предварительно перемещает каждый заменяемый файл в папку резервных копий. Запускайте его, когда `ccam <name>` останавливается из-за проблемы со ссылкой общего доступа, после того как вы восстановили файлы вручную, или после обновления Claude Code.
@@ -17,37 +17,64 @@ ccam doctor --fix            # check, then repair what is safe to repair
 ccam --dry-run doctor --fix  # report only: what --fix would repair
 ```
 
-Каждый результат занимает одну строку с отметкой: `✓` всё в порядке, `·` информация, `!` предупреждение, `✗` ошибка. Результаты по аккаунтам начинаются с имени аккаунта.
+Первая строка сразу отмечает все аккаунты, поэтому вы видите, где проблемы, ещё до того, как прочтёте что-то другое. Под ней у каждого аккаунта своя рамка, а результаты, не относящиеся ни к одному аккаунту (Claude Code, переменные окружения, плагины, MCP-серверы, короткие команды, правила папок, группы и настройки), попадают в рамку `General`. В заголовке рамки указаны худшая отметка аккаунта и число его проблем. Каждая строка внутри соответствует одной проверенной области, всегда сначала `Folder`, `Login` и `Share links` в этом порядке, затем остальные, с отметкой: `✔` всё в порядке, `ℹ` информация, `⚠` предупреждение, `✘` ошибка. Папка без проблем показывает `✔ Folder  OK`.
 
 ```console
 $ ccam doctor
-✓ Claude Code 2.1.302 (Claude Code) (/home/me/.local/bin/claude)
-! personal: folder permissions are 755 (should be 0700)
-! personal: .credentials.json permissions are 644 (should be 0600)
-✓ personal: login valid (me@example.com)
-✗ personal: /home/me/.local/share/ccam/profiles/personal/settings.json: set to shared but is a real file, not a link
-· personal: unknown entries (Claude Code layout may have changed): newthing
-! work: not logged in → `ccam login work`
-✓ work: share links OK
-! missing shortcuts in /home/me/.local/bin: ccp
+ ⚠ General   ✘ personal   ⚠ work
+
+ ╭─ ⚠ General · 1 problem ────────────────────────────────────────────────────╮
+ │ ✔ Claude Code  Claude Code 2.1.302 (Claude Code)                           │
+ │                (/home/me/.local/bin/claude)                                │
+ │ ⚠ Shortcuts    missing shortcuts in /home/me/.local/bin: ccp               │
+ ╰────────────────────────────────────────────────────────────────────────────╯
+ ╭─ ✘ personal · 3 problems ──────────────────────────────────────────────────╮
+ │ ⚠ Folder       folder permissions are 755 (should be 0700)                 │
+ │ ℹ              unknown entries (Claude Code layout may have changed):      │
+ │                newthing                                                    │
+ │ ⚠ Login        .credentials.json permissions are 644 (should be 0600)      │
+ │ ✔              login valid (me@example.com)                                │
+ │ ✘ Share links  /home/me/.local/share/ccam/profiles/personal/settings.json: │
+ │                set to shared but is a real file, not a link                │
+ ╰────────────────────────────────────────────────────────────────────────────╯
+ ╭─ ⚠ work · 1 problem ───────────────────────────────────────────────────────╮
+ │ ✔ Folder       OK                                                          │
+ │ ⚠ Login        not logged in → `ccam login work`                           │
+ │ ✔ Share links  share links OK                                              │
+ ╰────────────────────────────────────────────────────────────────────────────╯
 
 `ccam doctor --fix` repairs what it can.
 ```
 
-С `--fix` каждый исправленный результат заканчивается на `→ fixed`:
+С `--fix` каждый исправленный результат заканчивается на `→ fixed` и больше не считается проблемой:
 
 ```console
 $ ccam doctor --fix
-✓ Claude Code 2.1.302 (Claude Code) (/home/me/.local/bin/claude)
-! personal: folder permissions are 755 (should be 0700) → fixed
-! personal: .credentials.json permissions are 644 (should be 0600) → fixed
-✓ personal: login valid (me@example.com)
-✗ personal: /home/me/.local/share/ccam/profiles/personal/settings.json: set to shared but is a real file, not a link → fixed
-· personal: unknown entries (Claude Code layout may have changed): newthing
-! work: not logged in → `ccam login work`
-✓ work: share links OK
-! missing shortcuts in /home/me/.local/bin: ccp → fixed
+ ✔ General   ✔ personal   ⚠ work
+
+ ╭─ ✔ General ────────────────────────────────────────────────────────────────╮
+ │ ✔ Claude Code  Claude Code 2.1.302 (Claude Code)                           │
+ │                (/home/me/.local/bin/claude)                                │
+ │ ⚠ Shortcuts    missing shortcuts in /home/me/.local/bin: ccp → fixed       │
+ ╰────────────────────────────────────────────────────────────────────────────╯
+ ╭─ ✔ personal ───────────────────────────────────────────────────────────────╮
+ │ ⚠ Folder       folder permissions are 755 (should be 0700) → fixed         │
+ │ ℹ              unknown entries (Claude Code layout may have changed):      │
+ │                newthing                                                    │
+ │ ⚠ Login        .credentials.json permissions are 644 (should be 0600) →    │
+ │                fixed                                                       │
+ │ ✔              login valid (me@example.com)                                │
+ │ ✘ Share links  /home/me/.local/share/ccam/profiles/personal/settings.json: │
+ │                set to shared but is a real file, not a link → fixed        │
+ ╰────────────────────────────────────────────────────────────────────────────╯
+ ╭─ ⚠ work · 1 problem ───────────────────────────────────────────────────────╮
+ │ ✔ Folder       OK                                                          │
+ │ ⚠ Login        not logged in → `ccam login work`                           │
+ │ ✔ Share links  share links OK                                              │
+ ╰────────────────────────────────────────────────────────────────────────────╯
 ```
+
+В терминале рамки подстраиваются под его ширину, а длинные сообщения переносятся, в собственных цветах терминала (`NO_COLOR` отключает их). При выводе в конвейер или файл цветов нет и ни одно сообщение не переносится и не обрезается, поэтому `ccam doctor | grep settings.json` находит строку целиком; каждая рамка тогда имеет ширину самой длинной строки. Вкладка Health панели показывает те же рамки.
 
 ## Параметры
 
@@ -58,17 +85,17 @@ $ ccam doctor --fix
 
 `ccam doctor` не принимает аргументов. Он учитывает `--dry-run`: `ccam --dry-run doctor --fix` выводит те же результаты, что и `ccam doctor`, и ничего не меняет.
 
-Код возврата равен `1`, если остался хотя бы один неисправленный результат `✗`, и `0` в остальных случаях. Предупреждения и информация никогда не приводят к ошибке. Если запуск без `--fix` завершился ошибкой, ccam в конце выводит пустую строку и `` `ccam doctor --fix` repairs what it can. ``. Если конфигурацию не удаётся загрузить, команда также завершается с `1` и ошибкой `ccam:`.
+Код возврата равен `1`, если остался хотя бы один неисправленный результат `✘`, и `0` в остальных случаях. Предупреждения и информация никогда не приводят к ошибке. Если запуск без `--fix` завершился ошибкой, ccam в конце выводит пустую строку и `` `ccam doctor --fix` repairs what it can. ``. Если конфигурацию не удаётся загрузить, команда также завершается с `1` и ошибкой `ccam:`.
 
 ## Как это работает
 
-`internal/cli/doctor.go` загружает `~/.config/ccam/config.toml` и вызывает `doctor.Run` в `internal/doctor/doctor.go`, который выполняет проверки в фиксированном порядке и возвращает результаты. `--fix` передаётся как `Options.Fix`, а в пробном запуске устанавливается в false.
+`internal/cli/doctor.go` загружает `~/.config/ccam/config.toml` и вызывает `doctor.Run` в `internal/doctor/doctor.go`, который выполняет проверки в фиксированном порядке и возвращает результаты, каждый с аккаунтом, к которому он относится, и проверенной областью. `tui.HealthReport` группирует их в рамки. `--fix` передаётся как `Options.Fix`, а в пробном запуске устанавливается в false.
 
 <!-- motion:doctor-checks -->
 
 Средний блок выполняется один раз для каждого аккаунта. Проверки и то, что делает `--fix` для каждой из них:
 
-1. **Версия Claude Code** (`checkClaude`). Находит исполняемый файл `claude` так же, как это делает запуск, и выполняет `claude --version`. Если версия не начинается с `2.1.302`, то есть с версии, для которой проверялась структура папок ccam (`doctor.LayoutVersion`), добавляется `· ccam was verified against the folder layout of Claude Code 2.1.302. Any 'unknown entries' below may mean the layout changed`. Отсутствующий исполняемый файл или ошибка `--version` считаются ошибкой. Не исправляется.
+1. **Версия Claude Code** (`checkClaude`). Находит исполняемый файл `claude` так же, как это делает запуск, и выполняет `claude --version`. Если версия не начинается с `2.1.302`, то есть с версии, для которой проверялась структура папок ccam (`doctor.LayoutVersion`), добавляется информация `ccam was verified against the folder layout of Claude Code 2.1.302. Any 'unknown entries' below may mean the layout changed`. Отсутствующий исполняемый файл или ошибка `--version` считаются ошибкой. Не исправляется.
 2. **Данные входа в окружении** (`checkAuthEnv`). Предупреждает, если задана `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY` или `ANTHROPIC_AUTH_TOKEN`: каждый аккаунт, запущенный из этой оболочки, наследует её, и Claude Code предпочитает её собственному входу аккаунта. Не исправляется; удалите переменную сами.
 3. **Папка** (`checkProfile`). Отсутствующая папка аккаунта считается ошибкой и завершает проверки этого аккаунта. Права, в которых установлены биты группы или остальных, дают предупреждение; `--fix` выполняет `chmod 0700`. В Windows нет битов прав, поэтому там эта проверка и проверка `0600` ниже пропускаются; папку в вашем профиле пользователя защищает её список доступа.
 4. **Файл входа** (`checkCredentials`). `.credentials.json` проверяется через `lstat`. Символическая ссылка считается ошибкой, потому что у каждого аккаунта должен быть собственный токен, и не исправляется. Права, отличные от `0600`, дают предупреждение; `--fix` выполняет `chmod 0600`. Затем читается вход (в macOS сначала из Связки ключей). Отсутствие входа даёт предупреждение со ссылкой на `ccam login <name>`. Истёкший токен обновления даёт ошибку `login expired`; истёкший токен доступа считается только информацией, так как Claude Code обновит его при следующем запуске. Действующий вход показывает email и тариф (`login valid (dev@company.com, Claude Team · Acme)`). Ничего из этого не исправляется; `ccam login --expired` выполняет вход во все аккаунты, которым он нужен.
@@ -110,7 +137,7 @@ Repair them with `ccam doctor --fix`, then run again
 ## Безопасность и особые случаи
 
 - Обычный `ccam doctor` никогда ничего не меняет. В скриптах для надёжности используйте `--dry-run` вместе с `--fix`.
-- `doctor --fix` не проверяет, запущен ли аккаунт. Завершите Claude Code для аккаунта, прежде чем исправлять его ссылки общего доступа, потому что сессия продолжает записывать в эти файлы.
+- Для запущенного аккаунта `doctor --fix` только создаёт отсутствующие ссылки и добавляет `` is running; quit Claude Code there, then run `ccam doctor --fix` again to repair the rest ``, потому что сессия продолжает записывать в файлы, которые исправление переместило бы.
 - Если исправить общий доступ не удалось, ccam сообщает `could not repair share links: <error>` для этого аккаунта и пропускает для него проверку неизвестных записей. Остальные аккаунты всё равно проверяются.
 - Если изменение через `ccam group` прерывается на середине, новые группы уже сохранены, и ccam предлагает завершить работу командой `ccam doctor --fix`.
 - О символической ссылке на `.credentials.json`, истёкшем входе и данных входа в окружении сообщается, но они никогда не изменяются.

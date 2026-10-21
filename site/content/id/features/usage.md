@@ -1,13 +1,13 @@
 ---
 title: Batas penggunaan
-description: ccam usage menampilkan batas 5 jam dan mingguan semua akun sekaligus, dan ccam statusline menampilkan nama akun dan penggunaannya di Claude Code.
-updated: 2026-10-20
+description: ccam usage menampilkan batas 5 jam, mingguan, dan per model (Fable) semua akun sekaligus sebagai bilah, dan ccam statusline menampilkan nama akun dan penggunaannya di Claude Code.
+updated: 2026-10-21
 order: 7
 translation: machine
-sourceHash: "ec1d1ee27d9f"
+sourceHash: "0e9587b79ce8"
 ---
 
-`ccam usage` menampilkan seberapa banyak batas 5 jam dan mingguan yang sudah digunakan setiap akun, beserta waktu hingga setiap jendela direset. Gunakan sebelum memulai tugas panjang, atau saat Claude Code memberi tahu bahwa batas sudah dekat, untuk melihat akun mana yang masih punya ruang. `ccam statusline` adalah perintah status line untuk Claude Code: perintah ini menampilkan nama akun dan penggunaan di dalam Claude Code serta menyimpan angkanya untuk `ccam usage`.
+`ccam usage` menampilkan seberapa banyak batas 5 jam, batas mingguan, dan batas mingguan khusus setiap model (seperti Fable) yang sudah digunakan setiap akun, sebagai satu bilah per batas beserta waktu hingga direset. Gunakan sebelum memulai tugas panjang, atau saat Claude Code memberi tahu bahwa batas sudah dekat, untuk melihat akun mana yang masih punya ruang. `ccam statusline` adalah perintah status line untuk Claude Code: perintah ini menampilkan nama akun dan penggunaan di dalam Claude Code serta menyimpan angkanya untuk `ccam usage`.
 
 ## Penggunaan
 
@@ -16,7 +16,7 @@ ccam usage                  # every account, once
 ccam u                      # the same, shorter
 ccam usage --watch          # redraw every 60 seconds until Ctrl+C
 ccam usage --watch=10       # redraw every 10 seconds
-ccam usage -v               # add per-model weekly limits and the data source
+ccam usage -v               # add where the numbers came from
 ccam usage --json           # machine-readable, one object per account
 ccam usage --source cache   # saved numbers only, no network
 ccam usage --refresh        # also renew expired logins of accounts not running
@@ -26,14 +26,19 @@ ccam statusline install     # set the status line in every account's settings.js
 
 ```console
 $ ccam usage
- Account     5-hour        Resets    Weekly        Resets    As of
- 1 personal  ░░░░░░░░   0% -         ██████░░  70% 2d 16h    9h 36m ago (cached)
- 2 work      ██░░░░░░  24% 2h 29m    ███░░░░░  41% 3d 11h    just now (cached)
+ 1 personal  9h 36m ago (cached)
+   5-hour   ░░░░░░░░░░░░░░░░░░░░   0%
+   Weekly   ██████████████░░░░░░  70%  resets in 2d 16h
+   Fable    ██░░░░░░░░░░░░░░░░░░  12%  resets in 2d 16h
+ 2 work      just now (cached)
+   5-hour   █████░░░░░░░░░░░░░░░  24%  resets in 2h 29m
+   Weekly   ████████░░░░░░░░░░░░  41%  resets in 3d 11h
+   Fable    ███████████░░░░░░░░░  55%  resets in 5d 2h
  3 side      login expired, run `ccam side` once to refresh
 → Most headroom: personal   (open it with ccam next --auto)
 ```
 
-Di terminal, tabel langsung muncul dengan `fetching…` di setiap baris, dan setiap baris digambar ulang begitu akunnya menjawab. `As of` menunjukkan umur angka-angka itu; `(cached)` berarti angkanya berasal dari file yang tersimpan, bukan dari endpoint. Baris terakhir menyebut akun yang akan dipilih [`ccam next --auto`](/features/next) dengan aturan yang sama (`auto_max_usage`, `auto_strategy`, sesi yang sedang berjalan, hanya akun dari organisasi akun yang terakhir dipakai kecuali `cross_org` diatur, setiap jendela yang sudah 100% dilewati, sehingga akun yang kuota mingguannya sudah penuh tidak pernah disebut), dan hanya muncul jika Anda memiliki lebih dari satu akun. Akun yang belum login menampilkan `not logged in → ccam login <name>`, dan akun dengan kunci API menampilkan `no limits (API)`.
+Setiap akun mendapat satu baris berisi nomornya, namanya, dan umur angka-angkanya; `(cached)` berarti angkanya berasal dari file yang tersimpan, bukan dari endpoint. Di bawahnya, satu baris per batas menampilkan bilah 20 sel, persentase, dan waktu hingga jendela direset: `5-hour`, `Weekly` (semua model), lalu jendela mingguan khusus setiap model, seperti `Fable`. Jendela yang tidak dimiliki akun menampilkan `-`. Persentase berubah kuning mulai 80% dan merah pada 100%. Di terminal, setiap akun langsung muncul sebagai `fetching…`, dan baris-barisnya digambar begitu akun itu menjawab. Baris terakhir menyebut akun yang akan dipilih [`ccam next --auto`](/features/next) dengan aturan yang sama (`auto_max_usage`, `auto_strategy`, sesi yang sedang berjalan, hanya akun dari organisasi akun yang terakhir dipakai kecuali `cross_org` diatur, setiap jendela yang sudah 100% dilewati, sehingga akun yang kuota mingguannya sudah penuh tidak pernah disebut), dan hanya muncul jika Anda memiliki lebih dari satu akun. Akun yang belum login menampilkan `not logged in → ccam login <name>`, dan akun dengan kunci API menampilkan `no limits (API)`.
 
 Setelah `ccam statusline install`, Claude Code menampilkan baris seperti `[work] · Opus · 5h 24% · 7d 41%`.
 
@@ -43,7 +48,7 @@ Setelah `ccam statusline install`, Claude Code menampilkan baris seperti `[work]
 | --- | --- | --- |
 | `--json` | Menampilkan laporan sebagai JSON: `name`, `slot`, `status`, `limits`, `source`, `at`, `error` | nonaktif |
 | `--watch[=N]` | Menggambar ulang setiap `N` detik sampai Anda menekan Ctrl+C. `--watch` saja, atau nilai 0 atau kurang, berarti 60 | nonaktif |
-| `-v`, `--verbose` | Menampilkan batas mingguan per model dan baris `source:` (`live`, `cache`, atau `statusline`) | nonaktif |
+| `-v`, `--verbose` | Menambahkan baris `source:` di bawah setiap akun: asal angka-angkanya (endpoint penggunaan, Claude Code, status line, atau file yang tersimpan) | nonaktif |
 | `--no-cache` | Mengabaikan cache 60 detik dan bertanya ulang ke endpoint | nonaktif |
 | `--source live\|claude\|cache` | `live` bertanya ke endpoint dengan token akun; `claude` meminta Claude Code mencarinya (lihat di bawah); `cache` hanya menampilkan angka yang tersimpan | `usage_source`, jika tidak ada `live` |
 | `--refresh` | Memperbarui token akses yang kedaluwarsa, hanya untuk akun yang tidak sedang berjalan | nonaktif |
@@ -69,7 +74,7 @@ Setiap akun berjalan di goroutine-nya sendiri terhadap endpoint; akun yang melew
 
 <!-- motion:usage-fetch -->
 
-`personal` dan `work` menjawab tepat waktu dan menampilkan angka langsung. `side` membutuhkan lebih dari 3 detik, sehingga `fallback()` membaca dua file cache-nya dan memakai yang paling akhir ditulis. `usage.Table()` menggambar baris-barisnya dan `usage.Best()` memilih akun yang disebut di baris terakhir.
+`personal` dan `work` menjawab tepat waktu dan menampilkan angka langsung. `side` membutuhkan lebih dari 3 detik, sehingga `fallback()` membaca dua file cache-nya dan memakai yang paling akhir ditulis. `usage.Table()` menggambar satu blok per akun dan `usage.Best()` memilih akun yang disebut di baris terakhir.
 
 Untuk satu akun, `Fetcher.Fetch` melakukan pemeriksaan ini secara berurutan:
 
@@ -117,7 +122,7 @@ Perintah yang dibungkus diberi waktu 2 detik. Setelah itu perintah dihentikan da
 - `ccam usage` tidak pernah mengubah file token kecuali Anda memberikan `--refresh`. Jika login sudah kedaluwarsa, jalankan akun tersebut sekali dengan `ccam <name>` dan Claude Code akan memperbaruinya.
 - `--refresh` tidak pernah menyentuh akun yang sedang berjalan, akun yang diimpor, atau login Rantai Kunci (Keychain). Pembaruan yang ditolak menampilkan angka tersimpan beserta alasannya.
 - Endpoint penggunaan tidak didokumentasikan secara publik dan dapat berubah. Jika berubah, Anda tetap melihat angka yang tersimpan, dan `ccam doctor` melaporkan perubahan format.
-- Jika tidak ada angka tersimpan dan tidak ada jawaban, baris menampilkan `lookup failed:` beserta alasannya, misalnya `no saved usage` dengan `--source cache`.
+- Jika tidak ada angka tersimpan dan tidak ada jawaban, baris akun menampilkan `lookup failed:` beserta alasannya, misalnya `no saved usage` dengan `--source cache`.
 - File cache hanya berisi persentase dan waktu reset, tidak pernah token.
 
 ## Terkait

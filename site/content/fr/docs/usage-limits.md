@@ -1,24 +1,32 @@
 ---
 title: "Limites d'utilisation et changement de compte"
-description: "Consultez l'utilisation sur 5 heures et hebdomadaire de chaque compte Claude Code avec ccam usage, et ouvrez celui qui a le plus de marge avec ccam next --auto."
-updated: 2026-10-20
+description: "Consultez sous forme de barres l'utilisation sur 5 heures, hebdomadaire et Fable de chaque compte Claude Code avec ccam usage, et ouvrez celui qui a le plus de marge avec ccam next --auto."
+updated: 2026-10-21
 order: 5
 translation: machine
-sourceHash: 40aef0708c81
+sourceHash: 0e64e3251c69
 ---
 
-`ccam usage` indique quelle part des limites sur 5 heures et sur la semaine chaque compte a utilisée. `ccam next --auto` ouvre le compte qui a le plus de marge, et `--continue` reprend la conversation en cours.
+`ccam usage` indique quelle part de la limite sur 5 heures, de la limite hebdomadaire et de la limite hebdomadaire propre à chaque modèle (comme Fable) chaque compte a utilisée. `ccam next --auto` ouvre le compte qui a le plus de marge, et `--continue` reprend la conversation en cours.
 
 ```console
 $ ccam usage
- Account     5-hour        Resets    Weekly        Resets    As of
- 1 personal  ██████░░  72% 1h 40m    ███░░░░░  41% 3d 6h     just now
- 2 work      █░░░░░░░   8% 4h 12m    ██░░░░░░  19% 5d 2h     just now
- 3 side      ████████ 100% 22m       █████░░░  68% 1d 9h     12m ago (cached)
+ 1 personal  just now
+   5-hour   ██████████████░░░░░░  72%  resets in 1h 40m
+   Weekly   ████████░░░░░░░░░░░░  41%  resets in 3d 6h
+   Fable    ██████████████████░░  88%  resets in 1d 6h
+ 2 work      just now
+   5-hour   ██░░░░░░░░░░░░░░░░░░   8%  resets in 4h 12m
+   Weekly   ████░░░░░░░░░░░░░░░░  19%  resets in 5d 2h
+   Fable    █░░░░░░░░░░░░░░░░░░░   3%  resets in 5d 2h
+ 3 side      12m ago (cached)
+   5-hour   ████████████████████ 100%  resets in 22m
+   Weekly   ██████████████░░░░░░  68%  resets in 1d 9h
+   Fable    ████████░░░░░░░░░░░░  40%  resets in 1d 9h
 → Most headroom: work   (open it with ccam next --auto)
 ```
 
-Les colonnes sont : le compte, l'utilisation sur 5 heures, le temps restant avant sa réinitialisation, l'utilisation sur la semaine, le temps restant avant sa réinitialisation et l'ancienneté des chiffres.
+Chaque compte a une ligne qui indique l'ancienneté de ses chiffres, puis une barre par limite avec le temps restant avant sa réinitialisation : la fenêtre de 5 heures, la fenêtre hebdomadaire de tous les modèles et la fenêtre hebdomadaire propre à chaque modèle, comme Fable. À partir de 80 % une barre passe au jaune, et à 100 % au rouge. La dernière ligne nomme le compte que `ccam next --auto` ouvrirait.
 
 ## D'où viennent les chiffres
 
@@ -32,7 +40,7 @@ Les chiffres récupérés il y a moins de 60 secondes sont réutilisés. Options
 | --- | --- |
 | `--watch [seconds]` | Actualiser en continu, toutes les 60 secondes par défaut |
 | `--json` | Sortie lisible par une machine |
-| `-v` | Afficher aussi les limites hebdomadaires propres à chaque modèle et la provenance de chaque chiffre |
+| `-v` | Afficher aussi la provenance des chiffres de chaque compte |
 | `--no-cache` | Toujours redemander |
 | `--source cache` | Ne jamais demander ; afficher uniquement les chiffres enregistrés |
 

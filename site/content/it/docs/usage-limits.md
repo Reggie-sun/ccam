@@ -1,24 +1,32 @@
 ---
 title: Limiti di utilizzo e cambio di account
-description: Visualizza l'utilizzo su 5 ore e settimanale di ogni account Claude Code con ccam usage e apri quello con più margine con ccam next --auto.
-updated: 2026-10-20
+description: Visualizza come barre l'utilizzo su 5 ore, settimanale e di Fable di ogni account Claude Code con ccam usage e apri quello con più margine con ccam next --auto.
+updated: 2026-10-21
 order: 5
 translation: machine
-sourceHash: "40aef0708c81"
+sourceHash: "0e64e3251c69"
 ---
 
-`ccam usage` mostra quanta parte dei limiti su 5 ore e settimanali ha usato ogni account. `ccam next --auto` apre l'account con più margine, e `--continue` porta con sé la conversazione corrente.
+`ccam usage` mostra quanta parte del limite su 5 ore, del limite settimanale e del limite settimanale proprio di ogni modello (come Fable) ha usato ogni account. `ccam next --auto` apre l'account con più margine, e `--continue` porta con sé la conversazione corrente.
 
 ```console
 $ ccam usage
- Account     5-hour        Resets    Weekly        Resets    As of
- 1 personal  ██████░░  72% 1h 40m    ███░░░░░  41% 3d 6h     just now
- 2 work      █░░░░░░░   8% 4h 12m    ██░░░░░░  19% 5d 2h     just now
- 3 side      ████████ 100% 22m       █████░░░  68% 1d 9h     12m ago (cached)
+ 1 personal  just now
+   5-hour   ██████████████░░░░░░  72%  resets in 1h 40m
+   Weekly   ████████░░░░░░░░░░░░  41%  resets in 3d 6h
+   Fable    ██████████████████░░  88%  resets in 1d 6h
+ 2 work      just now
+   5-hour   ██░░░░░░░░░░░░░░░░░░   8%  resets in 4h 12m
+   Weekly   ████░░░░░░░░░░░░░░░░  19%  resets in 5d 2h
+   Fable    █░░░░░░░░░░░░░░░░░░░   3%  resets in 5d 2h
+ 3 side      12m ago (cached)
+   5-hour   ████████████████████ 100%  resets in 22m
+   Weekly   ██████████████░░░░░░  68%  resets in 1d 9h
+   Fable    ████████░░░░░░░░░░░░  40%  resets in 1d 9h
 → Most headroom: work   (open it with ccam next --auto)
 ```
 
-Le colonne sono: account, utilizzo su 5 ore, tempo mancante all'azzeramento, utilizzo settimanale, tempo mancante all'azzeramento e quanto sono recenti i dati.
+Ogni account ha una riga che indica quanto sono recenti i suoi dati, poi una barra per limite con il tempo mancante all'azzeramento: la finestra di 5 ore, la finestra settimanale per tutti i modelli e la finestra settimanale propria di ogni modello, come Fable. Dall'80% una barra diventa gialla, e al 100% rossa. L'ultima riga indica l'account che `ccam next --auto` aprirebbe.
 
 ## Da dove vengono i numeri
 
@@ -32,7 +40,7 @@ I numeri ottenuti meno di 60 secondi prima vengono riutilizzati. Opzioni:
 | --- | --- |
 | `--watch [seconds]` | Aggiorna di continuo, ogni 60 secondi per impostazione predefinita |
 | `--json` | Output leggibile da una macchina |
-| `-v` | Mostra anche i limiti settimanali specifici per modello e da dove viene ogni numero |
+| `-v` | Mostra anche da dove vengono i numeri di ogni account |
 | `--no-cache` | Chiede sempre di nuovo |
 | `--source cache` | Non chiede mai; mostra solo i numeri salvati |
 

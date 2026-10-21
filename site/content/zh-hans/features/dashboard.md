@@ -1,39 +1,41 @@
 ---
 title: 仪表盘
 description: 在终端中运行 ccam 会打开全屏仪表盘，显示账号、组、文件夹规则、扩展和检查结果；每项更改都会先显示计划。
-updated: 2026-10-20
+updated: 2026-10-21
 order: 15
 translation: machine
-sourceHash: "decdd5fa54c9"
+sourceHash: "27bd153b48b2"
 ---
 
 `ccam` 不带参数运行时，如果标准输入和标准输出都是终端，就会打开全屏仪表盘；否则打印 `ccam list` 的输出。仪表盘显示每个账号及其用量和组，并能完成各个命令所做的事：启动、添加、登录、更改组、设置文件夹规则、检查和修复。启动 Claude Code 时仪表盘会关闭；添加账号或登录时会暂时离开仪表盘回到终端，完成后再返回。
 
 ```console
- ccam v0.9.0 · 3 accounts · 2 groups         ✔ default · ▸ this folder · • running
+ ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
   Accounts   Groups   Folders   Extensions   Health
+ Your Claude accounts and their usage limits; enter launches the selected one.
 
-    # Account     Email             5-hour         7-day Last  Groups
- ❯ 1. personal ✔   me@example.com    █████▊░░  72%   41% 2h    default
-   2. work      ▸• dev@company.com   ██░░░░░░  25%  100% now   default team
-   3. side         -                 ✘ not logged in         -     no group
+    # Account      5-hour       Weekly       Fable        Last  Groups
+   1. personal ✔   ████▍░  72%  ██▌░░░  41%  █████▎  88%  -     default
+ ❯ 2. work      ▸• █▌░░░░  25%  ██████ 100%  ▋░░░░░  10%  -     default team
+   3. side         ✘ not logged in                        -     no group
 
- ✔ personal is the default account
  enter to launch · n for most room · a to add · s for groups · ? for shortcuts
 ```
 
-第一帧只根据 `config.toml` 绘制，用时远低于 100 ms；用量会在每个账号返回结果后陆续填入。百分比从 80% 起变为黄色，达到 100% 时变为红色；查询失败后取自缓存的值会以淡色显示。
+选项卡名称下面的一行用一句话说明当前选项卡的用途。终端较宽时，Accounts 选项卡还会显示每个账号的邮箱。
+
+第一帧只根据 `config.toml` 绘制，用时远低于 100 ms；用量会在每个账号返回结果后陆续填入。每项限额都有自己的用量条：5 小时窗口、所有模型共用的每周窗口，以及 Fable 自己的每周窗口；`-` 表示该账号没有这个窗口。百分比从 80% 起变为黄色，达到 100% 时变为红色；查询失败后取自缓存的值会以淡色显示。
 
 ## 选项卡
 
 | 选项卡 | 显示内容 | 按键 |
 | --- | --- | --- |
-| Accounts | 编号、名称、邮箱、5 小时用量条、7 天用量、上次使用时间、组；`✔` 表示默认账号，`▸` 表示当前文件夹的账号，`•` 表示正在运行 | 见下文 |
+| Accounts | 编号、名称、邮箱、5 小时、每周和 Fable 用量条、上次使用时间、组；`✔` 表示默认账号，`▸` 表示当前文件夹的账号，`•` 表示正在运行 | 见下文 |
 | Groups | 每个组、它共享的内容和它的账号，以及不在任何组中的账号 | `enter` 编辑，`n` 新建，`e` 重命名，`x` 删除 |
 | Folders | [`ccam folder`](/features/folder) 的规则，以及在当前位置生效的那一条 | `n` 在此处使用某个账号，`enter` 更改，`x` 删除 |
 | Extensions | [`ccam ext`](/features/ext) 显示的内容，每个扩展只列一次，并注明它来自哪些组 | `r` 重新加载 |
-| Health | [`ccam doctor`](/features/doctor) 报告的内容 | `f` 修复（`doctor --fix`） |
+| Health | [`ccam doctor`](/features/doctor) 报告的内容，每个账号一个框（见下文） | `f` 修复选中的框，`F` 修复全部（`doctor --fix`），`↑`/`↓` 在框之间移动 |
 
 `←`/`→` 或 `Tab` 切换选项卡，`?` 列出当前选项卡的按键，`r` 跳过短期缓存重新查询用量，`q` 或 `Esc` 退出。
 
@@ -46,7 +48,7 @@ sourceHash: "decdd5fa54c9"
 | `↑`/`↓`、`k`/`j` | 移动 |
 | `n` | 启动 [`ccam next --auto`](/features/next) 会选择的账号 |
 | `o` | 带选项启动：`--continue`、`--resume`、其他参数，或试运行 |
-| `u` | 用量详情：5 小时、7 天和各模型的时间窗口，以及它们的重置时间和数字的来源 |
+| `u` | 用量详情：5 小时、每周和各模型的时间窗口，以及它们的重置时间和数字的来源 |
 | `a` | 添加账号（见下文的向导） |
 | `l` | 重新登录 |
 | `s` | 选择账号所属的组 |
@@ -55,6 +57,33 @@ sourceHash: "decdd5fa54c9"
 | `e` | 重命名 |
 | `c` | 设置或删除它的快捷命令 |
 | `x` | 删除它（先询问，默认选中 No） |
+
+## Health 选项卡
+
+打开 Health 选项卡时，它会运行 [`ccam doctor`](/features/doctor) 的检查并绘制相同的视图：第一行为每个账号显示一个标记，下面每个账号一个框。框内每一行是一个检查过的方面，`Folder`、`Login` 和 `Share links` 在前，标记为 `✔` 正常、`ℹ` 信息、`⚠` 警告或 `✘` 错误，让你一眼看出哪个账号在哪里有问题。不属于任何账号的结果放在 `General` 框中。
+
+```console
+ ✘ personal   ⚠ work
+
+ ╭─ ✘ personal · 3 problems ──────────────────────────────────────────────────╮
+ │ ⚠ Folder       folder permissions are 755 (should be 0700)                 │
+ │ ℹ              unknown entries (Claude Code layout may have changed):      │
+ │                newthing                                                    │
+ │ ⚠ Login        .credentials.json permissions are 644 (should be 0600)      │
+ │ ✔              login valid (me@example.com)                                │
+ │ ✘ Share links  /home/me/.local/share/ccam/profiles/personal/settings.json: │
+ │                set to shared but is a real file, not a link                │
+ ╰────────────────────────────────────────────────────────────────────────────╯
+ ╭─ ⚠ work · 1 problem ───────────────────────────────────────────────────────╮
+ │ ✔ Folder       OK                                                          │
+ │ ⚠ Login        not logged in → `ccam login work`                           │
+ │ ✔ Share links  share links OK                                              │
+ ╰────────────────────────────────────────────────────────────────────────────╯
+
+ 4 problems; f repairs the selected box, F all of them (ccam doctor --fix).
+```
+
+`↑`/`↓` 在框之间移动，选中的框带有强调色边框。`f` 只修复选中的框，方式与 `ccam doctor --fix` 相同：在账号的框上只修复该账号，在 `General` 框上修复不属于任何账号的结果（插件路径和快捷命令）；其他账号只会重新检查。它会先询问，没有可修复内容的框只显示 `nothing to repair in <name>`。`F` 像 `ccam doctor --fix` 一样一次修复全部；`r` 重新检查。
 
 ## 更改组
 

@@ -1,10 +1,10 @@
 ---
 title: Memeriksa dan memperbaiki
 description: Periksa tautan pembagian, izin file, login, dan versi Claude Code dengan ccam doctor, lalu perbaiki yang aman diperbaiki dengan ccam doctor --fix.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 9
 translation: machine
-sourceHash: "6ae82bbf5585"
+sourceHash: "9be63350cb69"
 ---
 
 `ccam doctor` memeriksa instalasi ccam Anda: biner Claude Code, folder setiap akun, login dan tautan pembagian, server MCP bersama, endpoint penggunaan, dan perintah pintasan Anda. `ccam doctor --fix` memperbaiki apa yang bisa diperbaiki tanpa kehilangan data dan terlebih dahulu memindahkan setiap file yang digantinya ke folder cadangan. Jalankan perintah ini saat `ccam <name>` berhenti karena masalah tautan pembagian, setelah Anda memulihkan file secara manual, atau setelah Claude Code diperbarui.
@@ -17,37 +17,64 @@ ccam doctor --fix            # check, then repair what is safe to repair
 ccam --dry-run doctor --fix  # report only: what --fix would repair
 ```
 
-Setiap temuan berupa satu baris dengan tanda: `✓` OK, `·` informasi, `!` peringatan, `✗` galat. Temuan akun diawali dengan nama akun.
+Baris pertama menandai semua akun sekaligus, sehingga Anda melihat letak masalahnya sebelum membaca yang lain. Di bawahnya, setiap akun mendapat satu kotak, dan temuan yang bukan milik akun mana pun (Claude Code, variabel environment, plugin, server MCP, pintasan, aturan folder, grup, dan pengaturan) masuk ke kotak `General`. Judul kotak menampilkan tanda terburuk akun itu dan jumlah masalahnya. Setiap baris di dalamnya adalah satu area yang diperiksa, selalu `Folder`, `Login`, dan `Share links` dengan urutan itu, lalu area lainnya, dengan tanda: `✔` OK, `ℹ` informasi, `⚠` peringatan, `✘` galat. Folder yang tidak bermasalah menampilkan `✔ Folder  OK`.
 
 ```console
 $ ccam doctor
-✓ Claude Code 2.1.302 (Claude Code) (/home/me/.local/bin/claude)
-! personal: folder permissions are 755 (should be 0700)
-! personal: .credentials.json permissions are 644 (should be 0600)
-✓ personal: login valid (me@example.com)
-✗ personal: /home/me/.local/share/ccam/profiles/personal/settings.json: set to shared but is a real file, not a link
-· personal: unknown entries (Claude Code layout may have changed): newthing
-! work: not logged in → `ccam login work`
-✓ work: share links OK
-! missing shortcuts in /home/me/.local/bin: ccp
+ ⚠ General   ✘ personal   ⚠ work
+
+ ╭─ ⚠ General · 1 problem ────────────────────────────────────────────────────╮
+ │ ✔ Claude Code  Claude Code 2.1.302 (Claude Code)                           │
+ │                (/home/me/.local/bin/claude)                                │
+ │ ⚠ Shortcuts    missing shortcuts in /home/me/.local/bin: ccp               │
+ ╰────────────────────────────────────────────────────────────────────────────╯
+ ╭─ ✘ personal · 3 problems ──────────────────────────────────────────────────╮
+ │ ⚠ Folder       folder permissions are 755 (should be 0700)                 │
+ │ ℹ              unknown entries (Claude Code layout may have changed):      │
+ │                newthing                                                    │
+ │ ⚠ Login        .credentials.json permissions are 644 (should be 0600)      │
+ │ ✔              login valid (me@example.com)                                │
+ │ ✘ Share links  /home/me/.local/share/ccam/profiles/personal/settings.json: │
+ │                set to shared but is a real file, not a link                │
+ ╰────────────────────────────────────────────────────────────────────────────╯
+ ╭─ ⚠ work · 1 problem ───────────────────────────────────────────────────────╮
+ │ ✔ Folder       OK                                                          │
+ │ ⚠ Login        not logged in → `ccam login work`                           │
+ │ ✔ Share links  share links OK                                              │
+ ╰────────────────────────────────────────────────────────────────────────────╯
 
 `ccam doctor --fix` repairs what it can.
 ```
 
-Dengan `--fix`, setiap temuan yang berhasil diperbaiki diakhiri dengan `→ fixed`:
+Dengan `--fix`, setiap temuan yang berhasil diperbaiki diakhiri dengan `→ fixed`, dan tidak lagi dihitung sebagai masalah:
 
 ```console
 $ ccam doctor --fix
-✓ Claude Code 2.1.302 (Claude Code) (/home/me/.local/bin/claude)
-! personal: folder permissions are 755 (should be 0700) → fixed
-! personal: .credentials.json permissions are 644 (should be 0600) → fixed
-✓ personal: login valid (me@example.com)
-✗ personal: /home/me/.local/share/ccam/profiles/personal/settings.json: set to shared but is a real file, not a link → fixed
-· personal: unknown entries (Claude Code layout may have changed): newthing
-! work: not logged in → `ccam login work`
-✓ work: share links OK
-! missing shortcuts in /home/me/.local/bin: ccp → fixed
+ ✔ General   ✔ personal   ⚠ work
+
+ ╭─ ✔ General ────────────────────────────────────────────────────────────────╮
+ │ ✔ Claude Code  Claude Code 2.1.302 (Claude Code)                           │
+ │                (/home/me/.local/bin/claude)                                │
+ │ ⚠ Shortcuts    missing shortcuts in /home/me/.local/bin: ccp → fixed       │
+ ╰────────────────────────────────────────────────────────────────────────────╯
+ ╭─ ✔ personal ───────────────────────────────────────────────────────────────╮
+ │ ⚠ Folder       folder permissions are 755 (should be 0700) → fixed         │
+ │ ℹ              unknown entries (Claude Code layout may have changed):      │
+ │                newthing                                                    │
+ │ ⚠ Login        .credentials.json permissions are 644 (should be 0600) →    │
+ │                fixed                                                       │
+ │ ✔              login valid (me@example.com)                                │
+ │ ✘ Share links  /home/me/.local/share/ccam/profiles/personal/settings.json: │
+ │                set to shared but is a real file, not a link → fixed        │
+ ╰────────────────────────────────────────────────────────────────────────────╯
+ ╭─ ⚠ work · 1 problem ───────────────────────────────────────────────────────╮
+ │ ✔ Folder       OK                                                          │
+ │ ⚠ Login        not logged in → `ccam login work`                           │
+ │ ✔ Share links  share links OK                                              │
+ ╰────────────────────────────────────────────────────────────────────────────╯
 ```
+
+Di terminal, kotak-kotak menyesuaikan lebar terminal dan pesan panjang dibungkus ke baris berikutnya, dengan warna terminal itu sendiri (`NO_COLOR` mematikannya). Jika dikirim ke pipe atau file, keluarannya tanpa warna dan tidak ada pesan yang dibungkus atau dipotong, sehingga `ccam doctor | grep settings.json` menemukan baris utuhnya; setiap kotak lalu selebar baris terpanjang. Tab Health di dasbor menampilkan kotak-kotak yang sama.
 
 ## Opsi
 
@@ -58,17 +85,17 @@ $ ccam doctor --fix
 
 `ccam doctor` tidak menerima argumen. Perintah ini menghormati `--dry-run`: `ccam --dry-run doctor --fix` menampilkan temuan yang sama dengan `ccam doctor` dan tidak mengubah apa pun.
 
-Kode keluarnya `1` jika setidaknya satu temuan `✗` tidak diperbaiki, dan `0` jika tidak. Peringatan dan informasi tidak pernah menggagalkan proses. Jika proses gagal tanpa `--fix`, ccam diakhiri dengan baris kosong dan `` `ccam doctor --fix` repairs what it can. ``. Konfigurasi yang tidak dapat dimuat juga berakhir dengan `1` dan galat `ccam:`.
+Kode keluarnya `1` jika setidaknya satu temuan `✘` tidak diperbaiki, dan `0` jika tidak. Peringatan dan informasi tidak pernah menggagalkan proses. Jika proses gagal tanpa `--fix`, ccam diakhiri dengan baris kosong dan `` `ccam doctor --fix` repairs what it can. ``. Konfigurasi yang tidak dapat dimuat juga berakhir dengan `1` dan galat `ccam:`.
 
 ## Cara kerjanya
 
-`internal/cli/doctor.go` memuat `~/.config/ccam/config.toml` dan memanggil `doctor.Run` di `internal/doctor/doctor.go`, yang menjalankan pemeriksaan dengan urutan tetap dan mengembalikan temuan. `--fix` diteruskan sebagai `Options.Fix`, yang diatur ke false saat dry run.
+`internal/cli/doctor.go` memuat `~/.config/ccam/config.toml` dan memanggil `doctor.Run` di `internal/doctor/doctor.go`, yang menjalankan pemeriksaan dengan urutan tetap dan mengembalikan temuan, masing-masing dengan akun pemiliknya dan area yang diperiksanya. `tui.HealthReport` mengelompokkannya ke dalam kotak-kotak. `--fix` diteruskan sebagai `Options.Fix`, yang diatur ke false saat dry run.
 
 <!-- motion:doctor-checks -->
 
 Blok tengah dijalankan sekali per akun. Pemeriksaannya, dan apa yang dilakukan `--fix` untuk masing-masing:
 
-1. **Versi Claude Code** (`checkClaude`). Mencari biner `claude` dengan cara yang sama seperti peluncur dan menjalankan `claude --version`. Jika versinya tidak diawali `2.1.302`, yaitu versi yang menjadi acuan verifikasi tata letak folder ccam (`doctor.LayoutVersion`), pemeriksaan ini menambahkan `· ccam was verified against the folder layout of Claude Code 2.1.302. Any 'unknown entries' below may mean the layout changed`. Biner yang tidak ada atau `--version` yang gagal adalah galat. Tidak ada perbaikan.
+1. **Versi Claude Code** (`checkClaude`). Mencari biner `claude` dengan cara yang sama seperti peluncur dan menjalankan `claude --version`. Jika versinya tidak diawali `2.1.302`, yaitu versi yang menjadi acuan verifikasi tata letak folder ccam (`doctor.LayoutVersion`), pemeriksaan ini menambahkan informasi `ccam was verified against the folder layout of Claude Code 2.1.302. Any 'unknown entries' below may mean the layout changed`. Biner yang tidak ada atau `--version` yang gagal adalah galat. Tidak ada perbaikan.
 2. **Info masuk di environment** (`checkAuthEnv`). Memberi peringatan jika `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY`, atau `ANTHROPIC_AUTH_TOKEN` diatur: setiap akun yang dijalankan dari shell itu mewarisinya, dan Claude Code lebih mengutamakannya daripada login milik akun. Tidak ada perbaikan; hapus sendiri variabel itu.
 3. **Folder** (`checkProfile`). Folder akun yang tidak ada adalah galat dan mengakhiri pemeriksaan akun tersebut. Izin dengan bit group atau other yang diatur adalah peringatan; `--fix` menjalankan `chmod 0700`. Windows tidak punya bit izin, jadi pemeriksaan ini dan pemeriksaan `0600` di bawah dilewati di sana; folder di profil pengguna Anda dilindungi oleh daftar aksesnya.
 4. **File login** (`checkCredentials`). `.credentials.json` diperiksa dengan `lstat`. Symlink adalah galat, karena setiap akun harus memiliki tokennya sendiri, dan tidak diperbaiki. Mode selain `0600` adalah peringatan; `--fix` menjalankan `chmod 0600`. Lalu login dibaca (di macOS dari Rantai Kunci (Keychain) terlebih dahulu). Tidak adanya login adalah peringatan yang mengarah ke `ccam login <name>`. Refresh token yang kedaluwarsa adalah galat `login expired`; token akses yang kedaluwarsa hanya informasi, karena Claude Code memperbaruinya saat dijalankan berikutnya. Login yang valid menampilkan email dan paketnya (`login valid (dev@company.com, Claude Team · Acme)`). Tidak satu pun dari ini diperbaiki; `ccam login --expired` melakukan login untuk setiap akun yang memerlukannya.
@@ -110,7 +137,7 @@ Selain menghapus tautan, setiap langkah memindahkan data ke grup atau ke folder 
 ## Keamanan dan kasus khusus
 
 - `ccam doctor` biasa tidak pernah mengubah apa pun. Gunakan `--dry-run` bersama `--fix` agar pasti aman di skrip.
-- `doctor --fix` tidak memeriksa apakah sebuah akun sedang berjalan. Keluar dari Claude Code untuk akun tersebut sebelum memperbaiki tautan pembagiannya, karena sesi terus menulis ke file-file itu.
+- Untuk akun yang sedang berjalan, `doctor --fix` hanya membuat tautan yang hilang dan menambahkan `` is running; quit Claude Code there, then run `ccam doctor --fix` again to repair the rest ``, karena sesi terus menulis ke file-file yang akan dipindahkan oleh perbaikan.
 - Jika perbaikan pembagian gagal, ccam melaporkan `could not repair share links: <error>` untuk akun tersebut dan melewati pemeriksaan entri tak dikenalnya. Akun lain tetap diperiksa.
 - Jika perubahan `ccam group` gagal di tengah jalan, grup-grup yang baru sudah tersimpan, dan ccam meminta Anda menyelesaikannya dengan `ccam doctor --fix`.
 - `.credentials.json` yang berupa symlink, login yang kedaluwarsa, dan info masuk di environment dilaporkan tetapi tidak pernah diubah.

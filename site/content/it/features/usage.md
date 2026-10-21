@@ -1,13 +1,13 @@
 ---
 title: Limiti di utilizzo
-description: ccam usage mostra insieme i limiti su 5 ore e settimanali di tutti gli account, e ccam statusline mette il nome dell'account e l'utilizzo in Claude Code.
-updated: 2026-10-20
+description: ccam usage mostra insieme, come barre, i limiti su 5 ore, settimanali e per modello (Fable) di tutti gli account, e ccam statusline mette il nome dell'account e l'utilizzo in Claude Code.
+updated: 2026-10-21
 order: 7
 translation: machine
-sourceHash: "ec1d1ee27d9f"
+sourceHash: "0e9587b79ce8"
 ---
 
-`ccam usage` mostra quanta parte dei limiti su 5 ore e settimanali ha usato ogni account, con il tempo mancante all'azzeramento di ogni finestra. Usalo prima di iniziare un'attività lunga, o quando Claude Code ti avvisa che un limite è vicino, per vedere quale account ha ancora margine. `ccam statusline` è il comando per la riga di stato di Claude Code: mostra il nome dell'account e l'utilizzo dentro Claude Code e salva i numeri per `ccam usage`.
+`ccam usage` mostra quanta parte del limite su 5 ore, del limite settimanale e del limite settimanale proprio di ogni modello (come Fable) ha usato ogni account, con una barra per limite e il tempo mancante al suo azzeramento. Usalo prima di iniziare un'attività lunga, o quando Claude Code ti avvisa che un limite è vicino, per vedere quale account ha ancora margine. `ccam statusline` è il comando per la riga di stato di Claude Code: mostra il nome dell'account e l'utilizzo dentro Claude Code e salva i numeri per `ccam usage`.
 
 ## Utilizzo
 
@@ -16,7 +16,7 @@ ccam usage                  # every account, once
 ccam u                      # the same, shorter
 ccam usage --watch          # redraw every 60 seconds until Ctrl+C
 ccam usage --watch=10       # redraw every 10 seconds
-ccam usage -v               # add per-model weekly limits and the data source
+ccam usage -v               # add where the numbers came from
 ccam usage --json           # machine-readable, one object per account
 ccam usage --source cache   # saved numbers only, no network
 ccam usage --refresh        # also renew expired logins of accounts not running
@@ -26,14 +26,19 @@ ccam statusline install     # set the status line in every account's settings.js
 
 ```console
 $ ccam usage
- Account     5-hour        Resets    Weekly        Resets    As of
- 1 personal  ░░░░░░░░   0% -         ██████░░  70% 2d 16h    9h 36m ago (cached)
- 2 work      ██░░░░░░  24% 2h 29m    ███░░░░░  41% 3d 11h    just now (cached)
+ 1 personal  9h 36m ago (cached)
+   5-hour   ░░░░░░░░░░░░░░░░░░░░   0%
+   Weekly   ██████████████░░░░░░  70%  resets in 2d 16h
+   Fable    ██░░░░░░░░░░░░░░░░░░  12%  resets in 2d 16h
+ 2 work      just now (cached)
+   5-hour   █████░░░░░░░░░░░░░░░  24%  resets in 2h 29m
+   Weekly   ████████░░░░░░░░░░░░  41%  resets in 3d 11h
+   Fable    ███████████░░░░░░░░░  55%  resets in 5d 2h
  3 side      login expired, run `ccam side` once to refresh
 → Most headroom: personal   (open it with ccam next --auto)
 ```
 
-In un terminale la tabella compare subito con `fetching…` in ogni riga, e ogni riga viene ridisegnata quando il suo account risponde. `As of` indica quanto sono vecchi i numeri; `(cached)` significa che provengono da un file salvato e non dall'endpoint. L'ultima riga indica l'account che [`ccam next --auto`](/features/next) sceglierebbe con le stesse regole (`auto_max_usage`, `auto_strategy`, le sessioni in esecuzione, solo gli account dell'organizzazione dell'ultimo account usato a meno che non sia impostato `cross_org`, ogni finestra al 100% saltata, così un account con la settimana esaurita non viene mai indicato), e compare solo quando hai più di un account. Un account senza login mostra `not logged in → ccam login <name>`, e un account con chiave API mostra `no limits (API)`.
+Ogni account ha una riga con il suo numero, il suo nome e quanto sono vecchi i suoi numeri; `(cached)` significa che provengono da un file salvato e non dall'endpoint. Sotto, una riga per limite mostra una barra di 20 celle, la percentuale e il tempo mancante all'azzeramento della finestra: `5-hour`, `Weekly` (tutti i modelli), poi la finestra settimanale propria di ogni modello, come `Fable`. Una finestra che l'account non ha mostra `-`. Una percentuale diventa gialla dall'80% e rossa al 100%. In un terminale ogni account compare subito come `fetching…`, e le sue righe vengono disegnate quando risponde. L'ultima riga indica l'account che [`ccam next --auto`](/features/next) sceglierebbe con le stesse regole (`auto_max_usage`, `auto_strategy`, le sessioni in esecuzione, solo gli account dell'organizzazione dell'ultimo account usato a meno che non sia impostato `cross_org`, ogni finestra al 100% saltata, così un account con la settimana esaurita non viene mai indicato), e compare solo quando hai più di un account. Un account senza login mostra `not logged in → ccam login <name>`, e un account con chiave API mostra `no limits (API)`.
 
 Dopo `ccam statusline install`, Claude Code mostra una riga come `[work] · Opus · 5h 24% · 7d 41%`.
 
@@ -43,7 +48,7 @@ Dopo `ccam statusline install`, Claude Code mostra una riga come `[work] · Opus
 | --- | --- | --- |
 | `--json` | Stampa i risultati in JSON: `name`, `slot`, `status`, `limits`, `source`, `at`, `error` | disattivata |
 | `--watch[=N]` | Ridisegna ogni `N` secondi finché non premi Ctrl+C. `--watch` da solo, o un valore pari o inferiore a 0, indica 60 | disattivata |
-| `-v`, `--verbose` | Mostra i limiti settimanali per modello e una riga `source:` (`live`, `cache` o `statusline`) | disattivata |
+| `-v`, `--verbose` | Aggiunge sotto ogni account una riga `source:`: da dove vengono i suoi numeri (l'endpoint di utilizzo, Claude Code, la riga di stato o un file salvato) | disattivata |
 | `--no-cache` | Ignora la cache di 60 secondi e interroga di nuovo l'endpoint | disattivata |
 | `--source live\|claude\|cache` | `live` interroga l'endpoint con il token dell'account; `claude` fa consultare l'utilizzo a Claude Code (vedi sotto); `cache` mostra solo i numeri salvati | `usage_source`, altrimenti `live` |
 | `--refresh` | Rinnova i token di accesso scaduti, solo per gli account che non sono in esecuzione | disattivata |
@@ -69,7 +74,7 @@ Ogni account interroga l'endpoint nella propria goroutine; quello che supera il 
 
 <!-- motion:usage-fetch -->
 
-`personal` e `work` rispondono in tempo e mostrano numeri aggiornati. `side` impiega più di 3 s, quindi `fallback()` legge i suoi due file di cache e usa quello scritto per ultimo. `usage.Table()` disegna le righe e `usage.Best()` sceglie l'account indicato nell'ultima riga.
+`personal` e `work` rispondono in tempo e mostrano numeri aggiornati. `side` impiega più di 3 s, quindi `fallback()` legge i suoi due file di cache e usa quello scritto per ultimo. `usage.Table()` disegna un blocco per account e `usage.Best()` sceglie l'account indicato nell'ultima riga.
 
 Per un singolo account, `Fetcher.Fetch` esegue questi controlli in ordine:
 
@@ -117,7 +122,7 @@ Il comando avvolto ha 2 secondi. Dopo viene terminato e la riga mostra solo il n
 - `ccam usage` non modifica mai un file di token a meno che tu non passi `--refresh`. Quando un login è scaduto, avvia l'account una volta con `ccam <name>` e sarà Claude Code a rinnovarlo.
 - `--refresh` non tocca mai gli account in esecuzione, gli account importati o i login nel Portachiavi. Un rinnovo rifiutato mostra i numeri salvati e il motivo.
 - L'endpoint di utilizzo non è documentato pubblicamente e potrebbe cambiare. Se succede, vedi comunque i numeri salvati, e `ccam doctor` segnala il cambio di formato.
-- Senza numeri salvati e senza risposta, la riga mostra `lookup failed:` e il motivo, per esempio `no saved usage` con `--source cache`.
+- Senza numeri salvati e senza risposta, la riga dell'account mostra `lookup failed:` e il motivo, per esempio `no saved usage` con `--source cache`.
 - I file di cache contengono solo percentuali e orari di azzeramento, mai token.
 
 ## Pagine correlate

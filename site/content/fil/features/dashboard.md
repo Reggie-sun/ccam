@@ -1,39 +1,41 @@
 ---
 title: Ang dashboard
 description: Sa terminal, nagbubukas ang ccam ng full-screen dashboard ng mga account, group, folder rule, extension at pagsusuri; may plano muna ang bawat pagbabago.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 15
 translation: machine
-sourceHash: "decdd5fa54c9"
+sourceHash: "27bd153b48b2"
 ---
 
 Binubuksan ng `ccam` na walang argument ang isang full-screen dashboard kapag terminal ang standard input at output; kung hindi, ipi-print nito ang `ccam list`. Ipinapakita ng dashboard ang bawat account kasama ang usage at mga group nito, at ginagawa nito ang ginagawa ng mga command: magsimula, magdagdag, mag-log in, magbago ng mga group, magtakda ng mga folder rule, magsuri at mag-ayos. Nagsasara ito kapag nagsimula ang isang account; kapag nagdagdag ng account o nag-log in, iniiwan nito ang screen para sa terminal at bumabalik pagkatapos.
 
 ```console
- ccam v0.9.0 · 3 accounts · 2 groups         ✔ default · ▸ this folder · • running
+ ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
   Accounts   Groups   Folders   Extensions   Health
+ Your Claude accounts and their usage limits; enter launches the selected one.
 
-    # Account     Email             5-hour         7-day Last  Groups
- ❯ 1. personal ✔   me@example.com    █████▊░░  72%   41% 2h    default
-   2. work      ▸• dev@company.com   ██░░░░░░  25%  100% now   default team
-   3. side         -                 ✘ not logged in         -     no group
+    # Account      5-hour       Weekly       Fable        Last  Groups
+   1. personal ✔   ████▍░  72%  ██▌░░░  41%  █████▎  88%  -     default
+ ❯ 2. work      ▸• █▌░░░░  25%  ██████ 100%  ▋░░░░░  10%  -     default team
+   3. side         ✘ not logged in                        -     no group
 
- ✔ personal is the default account
  enter to launch · n for most room · a to add · s for groups · ? for shortcuts
 ```
 
-Iginuguhit ang unang frame mula sa `config.toml` lang, sa mas mababa pa nang husto sa 100 ms; napupunan ang usage habang sumasagot ang bawat account. Nagiging dilaw ang porsiyento mula 80% at pula sa 100%, at malabong iginuguhit ang mga value na galing sa cache pagkatapos ng nabigong lookup.
+Sinasabi ng linya sa ilalim ng mga pangalan ng tab, sa isang pangungusap, kung para saan ang kasalukuyang tab. Sa mas malapad na terminal, ipinapakita rin ng tab na Accounts ang email ng bawat account.
+
+Iginuguhit ang unang frame mula sa `config.toml` lang, sa mas mababa pa nang husto sa 100 ms; napupunan ang usage habang sumasagot ang bawat account. May sariling bar ang bawat limit: ang 5-oras na window, ang lingguhang window para sa lahat ng model, at ang sariling lingguhang window ng Fable; ang ibig sabihin ng `-` ay walang ganoong window ang account. Nagiging dilaw ang porsiyento mula 80% at pula sa 100%, at malabong iginuguhit ang mga value na galing sa cache pagkatapos ng nabigong lookup.
 
 ## Mga tab
 
 | Tab | Ano ang ipinapakita | Mga key |
 | --- | --- | --- |
-| Accounts | numero, pangalan, email, 5-oras na bar, 7-araw na usage, huling paggamit, mga group; `✔` ang default, `▸` ang account ng folder na ito, `•` tumatakbo | sa ibaba |
+| Accounts | numero, pangalan, email, mga bar ng 5-oras, lingguhan at Fable, huling paggamit, mga group; `✔` ang default, `▸` ang account ng folder na ito, `•` tumatakbo | sa ibaba |
 | Groups | bawat group, kung ano ang shine-share nito at ang mga account nito, at ang mga account na walang group | `enter` baguhin, `n` bago, `e` palitan ang pangalan, `x` alisin |
 | Folders | ang mga patakaran ng [`ccam folder`](/features/folder) at ang nalalapat dito | `n` gumamit ng account dito, `enter` baguhin, `x` alisin |
 | Extensions | ang ipinapakita ng [`ccam ext`](/features/ext), bawat extension nang isang beses kasama ang mga group na pinanggagalingan nito | `r` i-reload |
-| Health | ang iniuulat ng [`ccam doctor`](/features/doctor) | `f` ayusin (`doctor --fix`) |
+| Health | ang iniuulat ng [`ccam doctor`](/features/doctor), bilang isang kahon bawat account (sa ibaba) | `f` ayusin ang napiling kahon, `F` ayusin lahat (`doctor --fix`), `↑`/`↓` lumipat sa pagitan ng mga kahon |
 
 Nagpapalit ng tab ang `←`/`→` o `Tab`, inililista ng `?` ang mga key ng kasalukuyang tab, hinahanap ulit ng `r` ang usage nang hindi ginagamit ang maikling cache, at lumalabas ang `q` o `Esc`.
 
@@ -46,7 +48,7 @@ Nagpapalit ng tab ang `←`/`→` o `Tab`, inililista ng `?` ang mga key ng kasa
 | `↑`/`↓`, `k`/`j` | Lumipat |
 | `n` | Simulan ang account na pipiliin ng [`ccam next --auto`](/features/next) |
 | `o` | Simulan nang may mga option: `--continue`, `--resume`, ibang argument, o dry run |
-| `u` | Mga detalye ng usage: ang 5-oras, 7-araw at model na mga window, kasama ang mga reset nila at kung saan galing ang mga numero |
+| `u` | Mga detalye ng usage: ang 5-oras, lingguhan at model na mga window, kasama ang mga reset nila at kung saan galing ang mga numero |
 | `a` | Magdagdag ng account (ang wizard sa ibaba) |
 | `l` | Mag-log in muli |
 | `s` | Piliin ang mga group ng account |
@@ -55,6 +57,33 @@ Nagpapalit ng tab ang `←`/`→` o `Tab`, inililista ng `?` ang mga key ng kasa
 | `e` | Palitan ang pangalan nito |
 | `c` | Itakda o alisin ang shortcut command nito |
 | `x` | Alisin ito (nagtatanong muna, nakatapat sa No) |
+
+## Ang tab na Health
+
+Pinapatakbo ng tab na Health ang mga pagsusuri ng [`ccam doctor`](/features/doctor) kapag binuksan mo ito at iginuguhit ang parehong view: isang unang linya na may marka bawat account, saka isang kahon bawat account. Ang bawat hilera sa isang kahon ay isang bahaging sinuri, `Folder`, `Login` at `Share links` muna, na may markang `✔` OK, `ℹ` impormasyon, `⚠` babala o `✘` error, kaya makikita mo agad kung aling account ang may problema at saan. Napupunta sa kahong `General` ang mga natuklasang hindi kabilang sa anumang account.
+
+```console
+ ✘ personal   ⚠ work
+
+ ╭─ ✘ personal · 3 problems ──────────────────────────────────────────────────╮
+ │ ⚠ Folder       folder permissions are 755 (should be 0700)                 │
+ │ ℹ              unknown entries (Claude Code layout may have changed):      │
+ │                newthing                                                    │
+ │ ⚠ Login        .credentials.json permissions are 644 (should be 0600)      │
+ │ ✔              login valid (me@example.com)                                │
+ │ ✘ Share links  /home/me/.local/share/ccam/profiles/personal/settings.json: │
+ │                set to shared but is a real file, not a link                │
+ ╰────────────────────────────────────────────────────────────────────────────╯
+ ╭─ ⚠ work · 1 problem ───────────────────────────────────────────────────────╮
+ │ ✔ Folder       OK                                                          │
+ │ ⚠ Login        not logged in → `ccam login work`                           │
+ │ ✔ Share links  share links OK                                              │
+ ╰────────────────────────────────────────────────────────────────────────────╯
+
+ 4 problems; f repairs the selected box, F all of them (ccam doctor --fix).
+```
+
+Lumilipat ang `↑`/`↓` mula kahon papunta sa kahon, at may border na kulay accent ang napiling kahon. Kinukumpuni lang ng `f` ang napiling kahon, sa paraang gagawin ng `ccam doctor --fix`: sa kahon ng isang account, ang account na iyon lang ang kinukumpuni nito, at sa kahong `General`, ang mga natuklasang hindi kabilang sa anumang account (mga path ng plugin at mga shortcut); sinusuri lang ulit ang bawat iba pang account. Nagtatanong muna ito, at ang kahong walang kailangang kumpunihin ay nagsasabi lang ng `nothing to repair in <name>`. Kinukumpuni ng `F` ang lahat nang sabay-sabay, gaya ng `ccam doctor --fix`, at sinusuri ulit ng `r`.
 
 ## Pagbabago ng mga group
 

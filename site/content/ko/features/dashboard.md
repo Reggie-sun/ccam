@@ -1,39 +1,41 @@
 ---
 title: 대시보드
 description: 터미널에서 ccam을 실행하면 계정, 그룹, 폴더 규칙, 확장, 점검을 보여 주는 전체 화면 대시보드가 열리며, 모든 변경은 계획을 먼저 보여 줍니다.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 15
 translation: machine
-sourceHash: "decdd5fa54c9"
+sourceHash: "27bd153b48b2"
 ---
 
 표준 입력과 출력이 터미널이면 인자 없는 `ccam`은 전체 화면 대시보드를 엽니다. 터미널이 아니면 `ccam list`를 출력합니다. 대시보드는 모든 계정을 사용량, 그룹과 함께 보여 주며, 명령으로 하는 일을 그대로 할 수 있습니다. 실행, 추가, 로그인, 그룹 변경, 폴더 규칙 지정, 점검과 복구가 모두 됩니다. 실행하면 대시보드가 닫히고, 계정을 추가하거나 로그인할 때는 잠시 터미널로 나갔다가 돌아옵니다.
 
 ```console
- ccam v0.9.0 · 3 accounts · 2 groups         ✔ default · ▸ this folder · • running
+ ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
   Accounts   Groups   Folders   Extensions   Health
+ Your Claude accounts and their usage limits; enter launches the selected one.
 
-    # Account     Email             5-hour         7-day Last  Groups
- ❯ 1. personal ✔   me@example.com    █████▊░░  72%   41% 2h    default
-   2. work      ▸• dev@company.com   ██░░░░░░  25%  100% now   default team
-   3. side         -                 ✘ not logged in         -     no group
+    # Account      5-hour       Weekly       Fable        Last  Groups
+   1. personal ✔   ████▍░  72%  ██▌░░░  41%  █████▎  88%  -     default
+ ❯ 2. work      ▸• █▌░░░░  25%  ██████ 100%  ▋░░░░░  10%  -     default team
+   3. side         ✘ not logged in                        -     no group
 
- ✔ personal is the default account
  enter to launch · n for most room · a to add · s for groups · ? for shortcuts
 ```
 
-첫 화면은 `config.toml`만 읽어 100 ms보다 훨씬 짧은 시간에 그리며, 사용량은 계정마다 응답이 오는 대로 채워집니다. 비율은 80%부터 노란색, 100%에서 빨간색으로 바뀌고, 조회에 실패해 캐시에서 가져온 값은 흐리게 표시됩니다.
+탭 이름 아래 줄은 현재 탭이 무엇을 하는지 한 문장으로 알려 줍니다. 터미널이 넓으면 Accounts 탭에 각 계정의 이메일도 표시됩니다.
+
+첫 화면은 `config.toml`만 읽어 100 ms보다 훨씬 짧은 시간에 그리며, 사용량은 계정마다 응답이 오는 대로 채워집니다. 한도마다 막대가 따로 있습니다. 5시간 구간, 모든 모델에 대한 주간 구간, Fable 전용 주간 구간이며, `-`는 그 계정에 해당 구간이 없다는 뜻입니다. 비율은 80%부터 노란색, 100%에서 빨간색으로 바뀌고, 조회에 실패해 캐시에서 가져온 값은 흐리게 표시됩니다.
 
 ## 탭
 
 | 탭 | 보여 주는 내용 | 키 |
 | --- | --- | --- |
-| Accounts | 번호, 이름, 이메일, 5시간 막대, 7일 사용량, 마지막 사용, 그룹. `✔`는 기본 계정, `▸`는 이 폴더의 계정, `•`는 실행 중 | 아래 참고 |
+| Accounts | 번호, 이름, 이메일, 5시간·주간·Fable 막대, 마지막 사용, 그룹. `✔`는 기본 계정, `▸`는 이 폴더의 계정, `•`는 실행 중 | 아래 참고 |
 | Groups | 각 그룹, 그룹이 공유하는 항목과 계정, 어느 그룹에도 속하지 않은 계정 | `enter` 편집, `n` 새로 만들기, `e` 이름 바꾸기, `x` 삭제 |
 | Folders | [`ccam folder`](/features/folder) 규칙과 여기에 적용되는 규칙 | `n` 여기서 쓸 계정 지정, `enter` 변경, `x` 삭제 |
 | Extensions | [`ccam ext`](/features/ext)가 보여 주는 내용. 확장마다 한 번씩, 출처 그룹과 함께 표시 | `r` 다시 불러오기 |
-| Health | [`ccam doctor`](/features/doctor)가 보고하는 내용 | `f` 복구(`doctor --fix`) |
+| Health | [`ccam doctor`](/features/doctor)가 보고하는 내용을 계정마다 상자로 표시(아래 참고) | `f` 선택한 상자 복구, `F` 전체 복구(`doctor --fix`), `↑`/`↓` 상자 사이 이동 |
 
 `←`/`→`나 `Tab`으로 탭을 바꾸고, `?`는 현재 탭의 키를 보여 주며, `r`은 짧은 캐시를 쓰지 않고 사용량을 다시 조회하고, `q`나 `Esc`는 종료합니다.
 
@@ -46,7 +48,7 @@ sourceHash: "decdd5fa54c9"
 | `↑`/`↓`, `k`/`j` | 이동 |
 | `n` | [`ccam next --auto`](/features/next)가 고를 계정으로 시작 |
 | `o` | 옵션을 주고 시작: `--continue`, `--resume`, 그 밖의 인자, 또는 시험 실행 |
-| `u` | 사용량 자세히 보기: 5시간, 7일, 모델별 구간과 초기화 시각, 수치의 출처 |
+| `u` | 사용량 자세히 보기: 5시간, 주간, 모델별 구간과 초기화 시각, 수치의 출처 |
 | `a` | 계정 추가(아래 마법사) |
 | `l` | 다시 로그인 |
 | `s` | 계정의 그룹 고르기 |
@@ -55,6 +57,33 @@ sourceHash: "decdd5fa54c9"
 | `e` | 이름 바꾸기 |
 | `c` | 단축 명령 지정 또는 삭제 |
 | `x` | 삭제(먼저 묻고, 선택은 No에서 시작) |
+
+## Health 탭
+
+Health 탭은 열 때 [`ccam doctor`](/features/doctor)의 점검을 실행하고 같은 화면을 그립니다. 첫 줄에 계정마다 표시가 하나씩 있고, 그 아래에 계정마다 상자가 하나씩 있습니다. 상자의 각 행은 점검한 영역 하나이며 `Folder`, `Login`, `Share links`가 먼저 나오고, `✔`는 정상, `ℹ`는 정보, `⚠`는 경고, `✘`는 오류를 뜻합니다. 그래서 어느 계정의 어디에 문제가 있는지 한눈에 알 수 있습니다. 어느 계정에도 속하지 않는 결과는 `General` 상자에 들어갑니다.
+
+```console
+ ✘ personal   ⚠ work
+
+ ╭─ ✘ personal · 3 problems ──────────────────────────────────────────────────╮
+ │ ⚠ Folder       folder permissions are 755 (should be 0700)                 │
+ │ ℹ              unknown entries (Claude Code layout may have changed):      │
+ │                newthing                                                    │
+ │ ⚠ Login        .credentials.json permissions are 644 (should be 0600)      │
+ │ ✔              login valid (me@example.com)                                │
+ │ ✘ Share links  /home/me/.local/share/ccam/profiles/personal/settings.json: │
+ │                set to shared but is a real file, not a link                │
+ ╰────────────────────────────────────────────────────────────────────────────╯
+ ╭─ ⚠ work · 1 problem ───────────────────────────────────────────────────────╮
+ │ ✔ Folder       OK                                                          │
+ │ ⚠ Login        not logged in → `ccam login work`                           │
+ │ ✔ Share links  share links OK                                              │
+ ╰────────────────────────────────────────────────────────────────────────────╯
+
+ 4 problems; f repairs the selected box, F all of them (ccam doctor --fix).
+```
+
+`↑`/`↓`로 상자 사이를 이동하며, 선택한 상자는 강조색 테두리로 표시됩니다. `f`는 선택한 상자만 `ccam doctor --fix`와 같은 방식으로 복구합니다. 계정 상자에서는 그 계정만 복구하고, `General` 상자에서는 어느 계정에도 속하지 않는 결과(플러그인 경로와 단축 명령)를 복구하며, 나머지 계정은 다시 점검만 합니다. 먼저 물어보며, 복구할 것이 없는 상자에서는 `nothing to repair in <name>`이라고만 표시합니다. `F`는 `ccam doctor --fix`처럼 모든 것을 한 번에 복구하고, `r`은 다시 점검합니다.
 
 ## 그룹 바꾸기
 

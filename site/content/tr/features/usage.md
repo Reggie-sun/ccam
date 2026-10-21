@@ -1,13 +1,13 @@
 ---
 title: Kullanım limitleri
-description: ccam usage tüm hesapların 5 saatlik ve haftalık limitlerini aynı anda gösterir, ccam statusline ise hesap adını ve kullanımı Claude Code içine yerleştirir.
-updated: 2026-10-20
+description: ccam usage tüm hesapların 5 saatlik, haftalık ve modele özgü (Fable) limitlerini aynı anda çubuklar halinde gösterir, ccam statusline ise hesap adını ve kullanımı Claude Code içine yerleştirir.
+updated: 2026-10-21
 order: 7
 translation: machine
-sourceHash: "ec1d1ee27d9f"
+sourceHash: "0e9587b79ce8"
 ---
 
-`ccam usage`, her hesabın 5 saatlik ve haftalık limitlerinin ne kadarını kullandığını, her pencerenin sıfırlanmasına kalan süreyle birlikte gösterir. Uzun bir işe başlamadan önce veya Claude Code bir limitin yaklaştığını söylediğinde, hangi hesapta pay kaldığını görmek için kullanın. `ccam statusline`, Claude Code için durum satırı komutudur: hesap adını ve kullanımı Claude Code içinde gösterir ve sayıları `ccam usage` için kaydeder.
+`ccam usage`, her hesabın 5 saatlik limitin, haftalık limitin ve her modelin kendi haftalık limitinin (Fable gibi) ne kadarını kullandığını, her limit için bir çubuk ve sıfırlanmasına kalan süreyle gösterir. Uzun bir işe başlamadan önce veya Claude Code bir limitin yaklaştığını söylediğinde, hangi hesapta pay kaldığını görmek için kullanın. `ccam statusline`, Claude Code için durum satırı komutudur: hesap adını ve kullanımı Claude Code içinde gösterir ve sayıları `ccam usage` için kaydeder.
 
 ## Kullanım
 
@@ -16,7 +16,7 @@ ccam usage                  # every account, once
 ccam u                      # the same, shorter
 ccam usage --watch          # redraw every 60 seconds until Ctrl+C
 ccam usage --watch=10       # redraw every 10 seconds
-ccam usage -v               # add per-model weekly limits and the data source
+ccam usage -v               # add where the numbers came from
 ccam usage --json           # machine-readable, one object per account
 ccam usage --source cache   # saved numbers only, no network
 ccam usage --refresh        # also renew expired logins of accounts not running
@@ -26,14 +26,19 @@ ccam statusline install     # set the status line in every account's settings.js
 
 ```console
 $ ccam usage
- Account     5-hour        Resets    Weekly        Resets    As of
- 1 personal  ░░░░░░░░   0% -         ██████░░  70% 2d 16h    9h 36m ago (cached)
- 2 work      ██░░░░░░  24% 2h 29m    ███░░░░░  41% 3d 11h    just now (cached)
+ 1 personal  9h 36m ago (cached)
+   5-hour   ░░░░░░░░░░░░░░░░░░░░   0%
+   Weekly   ██████████████░░░░░░  70%  resets in 2d 16h
+   Fable    ██░░░░░░░░░░░░░░░░░░  12%  resets in 2d 16h
+ 2 work      just now (cached)
+   5-hour   █████░░░░░░░░░░░░░░░  24%  resets in 2h 29m
+   Weekly   ████████░░░░░░░░░░░░  41%  resets in 3d 11h
+   Fable    ███████████░░░░░░░░░  55%  resets in 5d 2h
  3 side      login expired, run `ccam side` once to refresh
 → Most headroom: personal   (open it with ccam next --auto)
 ```
 
-Terminalde tablo, her satırda `fetching…` ile hemen görünür ve her satır, hesabı yanıt verdikçe yeniden çizilir. `As of` sayıların ne kadar eski olduğunu söyler; `(cached)` sayıların uç noktadan değil, kayıtlı bir dosyadan geldiği anlamına gelir. Son satır, [`ccam next --auto`](/features/next) komutunun aynı kurallarla seçeceği hesabı adlandırır (`auto_max_usage`, `auto_strategy`, çalışan oturumlar, `cross_org` ayarlanmadıkça yalnızca son kullanılan hesabın kuruluşundaki hesaplar ve %100'deki her pencere atlanarak; böylece haftası dolmuş bir hesap hiçbir zaman adlandırılmaz) ve yalnızca birden fazla hesabınız olduğunda görünür. Giriş yapılmamış bir hesap `not logged in → ccam login <name>`, API anahtarlı bir hesap ise `no limits (API)` gösterir.
+Her hesap; numarası, adı ve sayılarının ne kadar eski olduğunu gösteren bir satır alır; `(cached)` sayıların uç noktadan değil, kayıtlı bir dosyadan geldiği anlamına gelir. Altında her limit için bir satır, 20 hücrelik bir çubuk, yüzdeyi ve pencerenin sıfırlanmasına kalan süreyi gösterir: `5-hour`, `Weekly` (tüm modeller), ardından her modelin kendi haftalık penceresi, örneğin `Fable`. Hesabın sahip olmadığı bir pencere `-` gösterir. Yüzde %80'den itibaren sarıya, %100'de kırmızıya döner. Terminalde her hesap hemen `fetching…` olarak görünür ve satırları hesap yanıt verdikçe çizilir. Son satır, [`ccam next --auto`](/features/next) komutunun aynı kurallarla seçeceği hesabı adlandırır (`auto_max_usage`, `auto_strategy`, çalışan oturumlar, `cross_org` ayarlanmadıkça yalnızca son kullanılan hesabın kuruluşundaki hesaplar ve %100'deki her pencere atlanarak; böylece haftası dolmuş bir hesap hiçbir zaman adlandırılmaz) ve yalnızca birden fazla hesabınız olduğunda görünür. Giriş yapılmamış bir hesap `not logged in → ccam login <name>`, API anahtarlı bir hesap ise `no limits (API)` gösterir.
 
 `ccam statusline install` sonrasında Claude Code, `[work] · Opus · 5h 24% · 7d 41%` gibi bir satır gösterir.
 
@@ -43,7 +48,7 @@ Terminalde tablo, her satırda `fetching…` ile hemen görünür ve her satır,
 | --- | --- | --- |
 | `--json` | Raporları JSON olarak yazdırır: `name`, `slot`, `status`, `limits`, `source`, `at`, `error` | kapalı |
 | `--watch[=N]` | Ctrl+C'ye basana kadar her `N` saniyede bir yeniden çizer. Tek başına `--watch` veya 0 ya da daha küçük bir değer 60 anlamına gelir | kapalı |
-| `-v`, `--verbose` | Modele özgü haftalık limitleri ve bir `source:` satırını (`live`, `cache` veya `statusline`) gösterir | kapalı |
+| `-v`, `--verbose` | Her hesabın altına bir `source:` satırı ekler: sayılarının nereden geldiği (kullanım uç noktası, Claude Code, durum satırı veya kayıtlı bir dosya) | kapalı |
 | `--no-cache` | 60 saniyelik önbelleği yok sayar ve uç noktaya yeniden sorar | kapalı |
 | `--source live\|claude\|cache` | `live` uç noktaya hesabın token'ıyla sorar; `claude` kullanımı Claude Code'a sorgulatır (aşağıda); `cache` yalnızca kayıtlı sayıları gösterir | `usage_source`, yoksa `live` |
 | `--refresh` | Süresi dolmuş erişim tokenlarını yalnızca çalışmayan hesaplar için yeniler | kapalı |
@@ -69,7 +74,7 @@ Her hesap uç noktaya karşı kendi goroutine'inde çalışır; zaman aşımına
 
 <!-- motion:usage-fetch -->
 
-`personal` ve `work` zamanında yanıt verir ve canlı sayılar gösterir. `side` 3 sn'den uzun sürer; bu yüzden `fallback()` iki önbellek dosyasını okur ve en son yazılanı kullanır. `usage.Table()` satırları çizer ve `usage.Best()` son satırda adı geçen hesabı seçer.
+`personal` ve `work` zamanında yanıt verir ve canlı sayılar gösterir. `side` 3 sn'den uzun sürer; bu yüzden `fallback()` iki önbellek dosyasını okur ve en son yazılanı kullanır. `usage.Table()` her hesap için bir blok çizer ve `usage.Best()` son satırda adı geçen hesabı seçer.
 
 Tek bir hesap için `Fetcher.Fetch` şu kontrolleri sırayla yapar:
 
@@ -117,7 +122,7 @@ Sarmalanan komuta 2 saniye verilir. Sonrasında sonlandırılır ve satır yaln�
 - `ccam usage`, siz `--refresh` vermedikçe hiçbir zaman bir token dosyasını değiştirmez. Bir girişin süresi dolduğunda hesabı bir kez `ccam <name>` ile çalıştırın, Claude Code onu yeniler.
 - `--refresh` çalışan hesaplara, içe aktarılmış hesaplara veya Anahtar Zinciri girişlerine hiçbir zaman dokunmaz. Reddedilen bir yenileme, kayıtlı sayıları ve nedeni gösterir.
 - Kullanım uç noktası herkese açık olarak belgelenmemiştir ve değişebilir. Değiştiğinde kayıtlı sayıları yine görürsünüz ve `ccam doctor` biçim değişikliğini bildirir.
-- Kayıtlı sayı ve yanıt olmadığında satır `lookup failed:` ve nedeni gösterir, örneğin `--source cache` ile `no saved usage`.
+- Kayıtlı sayı ve yanıt olmadığında hesap satırı `lookup failed:` ve nedeni gösterir, örneğin `--source cache` ile `no saved usage`.
 - Önbellek dosyaları yalnızca yüzdeleri ve sıfırlanma zamanlarını tutar, hiçbir zaman token tutmaz.
 
 ## İlgili

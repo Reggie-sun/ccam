@@ -1,13 +1,13 @@
 ---
 title: Giới hạn sử dụng
-description: "ccam usage hiển thị giới hạn 5 giờ và hàng tuần của mọi tài khoản cùng lúc, và ccam statusline đưa tên tài khoản cùng mức sử dụng vào Claude Code."
-updated: 2026-10-20
+description: "ccam usage hiển thị giới hạn 5 giờ, hàng tuần và theo mô hình (Fable) của mọi tài khoản cùng lúc dưới dạng thanh, và ccam statusline đưa tên tài khoản cùng mức sử dụng vào Claude Code."
+updated: 2026-10-21
 order: 7
 translation: machine
-sourceHash: "ec1d1ee27d9f"
+sourceHash: "0e9587b79ce8"
 ---
 
-`ccam usage` cho biết mỗi tài khoản đã dùng bao nhiêu trong giới hạn 5 giờ và giới hạn hàng tuần, cùng thời gian cho đến khi mỗi khoảng được đặt lại. Hãy dùng nó trước khi bắt đầu một tác vụ dài, hoặc khi Claude Code báo rằng sắp chạm giới hạn, để xem tài khoản nào còn hạn mức. `ccam statusline` là lệnh dòng trạng thái cho Claude Code: nó hiển thị tên tài khoản và mức sử dụng bên trong Claude Code và lưu các con số cho `ccam usage`.
+`ccam usage` cho biết mỗi tài khoản đã dùng bao nhiêu trong giới hạn 5 giờ, giới hạn hàng tuần và giới hạn hàng tuần riêng của từng mô hình (như Fable), với một thanh cho mỗi giới hạn cùng thời gian đến lần đặt lại. Hãy dùng nó trước khi bắt đầu một tác vụ dài, hoặc khi Claude Code báo rằng sắp chạm giới hạn, để xem tài khoản nào còn hạn mức. `ccam statusline` là lệnh dòng trạng thái cho Claude Code: nó hiển thị tên tài khoản và mức sử dụng bên trong Claude Code và lưu các con số cho `ccam usage`.
 
 ## Cách dùng
 
@@ -16,7 +16,7 @@ ccam usage                  # every account, once
 ccam u                      # the same, shorter
 ccam usage --watch          # redraw every 60 seconds until Ctrl+C
 ccam usage --watch=10       # redraw every 10 seconds
-ccam usage -v               # add per-model weekly limits and the data source
+ccam usage -v               # add where the numbers came from
 ccam usage --json           # machine-readable, one object per account
 ccam usage --source cache   # saved numbers only, no network
 ccam usage --refresh        # also renew expired logins of accounts not running
@@ -26,14 +26,19 @@ ccam statusline install     # set the status line in every account's settings.js
 
 ```console
 $ ccam usage
- Account     5-hour        Resets    Weekly        Resets    As of
- 1 personal  ░░░░░░░░   0% -         ██████░░  70% 2d 16h    9h 36m ago (cached)
- 2 work      ██░░░░░░  24% 2h 29m    ███░░░░░  41% 3d 11h    just now (cached)
+ 1 personal  9h 36m ago (cached)
+   5-hour   ░░░░░░░░░░░░░░░░░░░░   0%
+   Weekly   ██████████████░░░░░░  70%  resets in 2d 16h
+   Fable    ██░░░░░░░░░░░░░░░░░░  12%  resets in 2d 16h
+ 2 work      just now (cached)
+   5-hour   █████░░░░░░░░░░░░░░░  24%  resets in 2h 29m
+   Weekly   ████████░░░░░░░░░░░░  41%  resets in 3d 11h
+   Fable    ███████████░░░░░░░░░  55%  resets in 5d 2h
  3 side      login expired, run `ccam side` once to refresh
 → Most headroom: personal   (open it with ccam next --auto)
 ```
 
-Trên terminal, bảng xuất hiện ngay với `fetching…` ở mỗi hàng, và mỗi hàng được vẽ lại khi tài khoản của nó phản hồi. `As of` cho biết độ cũ của các con số; `(cached)` nghĩa là chúng lấy từ một tệp đã lưu, không phải từ endpoint. Dòng cuối nêu tên tài khoản mà [`ccam next --auto`](/features/next) sẽ chọn theo cùng các quy tắc (`auto_max_usage`, `auto_strategy`, các phiên đang chạy, chỉ các tài khoản thuộc tổ chức của tài khoản dùng gần nhất trừ khi đặt `cross_org`, bỏ qua mọi khoảng ở mức 100%, nên một tài khoản đã đầy hạn mức tuần không bao giờ được nêu tên), và chỉ xuất hiện khi bạn có nhiều hơn một tài khoản. Tài khoản chưa đăng nhập hiển thị `not logged in → ccam login <name>`, còn tài khoản dùng khóa API hiển thị `no limits (API)`.
+Mỗi tài khoản có một dòng gồm số thứ tự, tên và độ cũ của các con số; `(cached)` nghĩa là chúng lấy từ một tệp đã lưu, không phải từ endpoint. Bên dưới, mỗi giới hạn có một dòng với thanh 20 ô, tỷ lệ phần trăm và thời gian đến khi khoảng đó được đặt lại: `5-hour`, `Weekly` (mọi mô hình), rồi đến khoảng hàng tuần riêng của từng mô hình, như `Fable`. Khoảng mà tài khoản không có thì hiển thị `-`. Tỷ lệ phần trăm chuyển sang màu vàng từ 80% và màu đỏ ở 100%. Trên terminal, mọi tài khoản xuất hiện ngay cùng lúc dưới dạng `fetching…`, và các dòng của từng tài khoản được vẽ khi nó phản hồi. Dòng cuối nêu tên tài khoản mà [`ccam next --auto`](/features/next) sẽ chọn theo cùng các quy tắc (`auto_max_usage`, `auto_strategy`, các phiên đang chạy, chỉ các tài khoản thuộc tổ chức của tài khoản dùng gần nhất trừ khi đặt `cross_org`, bỏ qua mọi khoảng ở mức 100%, nên một tài khoản đã đầy hạn mức tuần không bao giờ được nêu tên), và chỉ xuất hiện khi bạn có nhiều hơn một tài khoản. Tài khoản chưa đăng nhập hiển thị `not logged in → ccam login <name>`, còn tài khoản dùng khóa API hiển thị `no limits (API)`.
 
 Sau `ccam statusline install`, Claude Code hiển thị một dòng như `[work] · Opus · 5h 24% · 7d 41%`.
 
@@ -43,7 +48,7 @@ Sau `ccam statusline install`, Claude Code hiển thị một dòng như `[work]
 | --- | --- | --- |
 | `--json` | In các báo cáo dưới dạng JSON: `name`, `slot`, `status`, `limits`, `source`, `at`, `error` | tắt |
 | `--watch[=N]` | Vẽ lại mỗi `N` giây cho đến khi bạn nhấn Ctrl+C. `--watch` không kèm giá trị, hoặc giá trị từ 0 trở xuống, nghĩa là 60 | tắt |
-| `-v`, `--verbose` | Hiển thị giới hạn hàng tuần theo từng mô hình và một dòng `source:` (`live`, `cache` hoặc `statusline`) | tắt |
+| `-v`, `--verbose` | Thêm một dòng `source:` dưới mỗi tài khoản: nơi các con số của nó được lấy (endpoint mức sử dụng, Claude Code, dòng trạng thái hoặc một tệp đã lưu) | tắt |
 | `--no-cache` | Bỏ qua bộ nhớ đệm 60 giây và hỏi lại endpoint | tắt |
 | `--source live\|claude\|cache` | `live` hỏi endpoint bằng token của tài khoản; `claude` để Claude Code tra cứu (bên dưới); `cache` chỉ hiển thị các con số đã lưu | `usage_source`, nếu không thì `live` |
 | `--refresh` | Gia hạn các access token đã hết hạn, chỉ cho những tài khoản không đang chạy | tắt |
@@ -69,7 +74,7 @@ Mỗi tài khoản chạy trong goroutine riêng để gọi endpoint; tài kho�
 
 <!-- motion:usage-fetch -->
 
-`personal` và `work` phản hồi kịp và hiển thị số liệu trực tiếp. `side` mất hơn 3 giây, nên `fallback()` đọc hai tệp bộ nhớ đệm của nó và dùng tệp nào được ghi sau cùng. `usage.Table()` vẽ các hàng và `usage.Best()` chọn tài khoản được nêu tên ở dòng cuối.
+`personal` và `work` phản hồi kịp và hiển thị số liệu trực tiếp. `side` mất hơn 3 giây, nên `fallback()` đọc hai tệp bộ nhớ đệm của nó và dùng tệp nào được ghi sau cùng. `usage.Table()` vẽ một khối cho mỗi tài khoản và `usage.Best()` chọn tài khoản được nêu tên ở dòng cuối.
 
 Với một tài khoản, `Fetcher.Fetch` thực hiện các kiểm tra sau theo thứ tự:
 
@@ -117,7 +122,7 @@ Lệnh được bao bọc có 2 giây. Sau đó nó bị dừng và dòng chỉ 
 - `ccam usage` không bao giờ thay đổi tệp token trừ khi bạn truyền `--refresh`. Khi một thông tin đăng nhập đã hết hạn, hãy khởi động tài khoản một lần bằng `ccam <name>` và Claude Code sẽ gia hạn nó.
 - `--refresh` không bao giờ động đến tài khoản đang chạy, tài khoản đã nhập hay thông tin đăng nhập trong Chuỗi khóa (Keychain). Một lần gia hạn bị từ chối sẽ hiển thị các con số đã lưu và lý do.
 - Endpoint mức sử dụng không được công bố tài liệu chính thức và có thể thay đổi. Khi nó thay đổi, bạn vẫn thấy các con số đã lưu, và `ccam doctor` báo việc định dạng đã thay đổi.
-- Khi không có con số đã lưu và không có phản hồi, hàng đó hiển thị `lookup failed:` kèm lý do, ví dụ `no saved usage` với `--source cache`.
+- Khi không có con số đã lưu và không có phản hồi, dòng của tài khoản đó hiển thị `lookup failed:` kèm lý do, ví dụ `no saved usage` với `--source cache`.
 - Các tệp bộ nhớ đệm chỉ chứa tỷ lệ phần trăm và thời điểm đặt lại, không bao giờ chứa token.
 
 ## Liên quan

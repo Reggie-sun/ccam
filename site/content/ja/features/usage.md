@@ -1,13 +1,13 @@
 ---
 title: 使用量の上限
-description: ccam usageはすべてのアカウントの5時間と週間の上限を一度に表示し、ccam statuslineはClaude Codeにアカウント名と使用量を表示します。
-updated: 2026-10-20
+description: ccam usageはすべてのアカウントの5時間、週間、モデル別（Fable）の上限を一度にバーで表示し、ccam statuslineはClaude Codeにアカウント名と使用量を表示します。
+updated: 2026-10-21
 order: 7
 translation: machine
-sourceHash: "ec1d1ee27d9f"
+sourceHash: "0e9587b79ce8"
 ---
 
-`ccam usage`は、各アカウントが5時間と週間の上限をどれだけ使ったかを、それぞれの時間枠がリセットされるまでの時間とともに表示します。長い作業を始める前や、Claude Codeが上限に近いことを知らせたときに使い、どのアカウントに余裕が残っているかを確認します。`ccam statusline`はClaude Code用のステータスラインのコマンドです。Claude Codeの中にアカウント名と使用量を表示し、その数値を`ccam usage`のために保存します。
+`ccam usage`は、各アカウントが5時間の上限、週間の上限、モデルごとの週間上限（Fableなど）をどれだけ使ったかを、上限ごとのバーとリセットまでの時間で表示します。長い作業を始める前や、Claude Codeが上限に近いことを知らせたときに使い、どのアカウントに余裕が残っているかを確認します。`ccam statusline`はClaude Code用のステータスラインのコマンドです。Claude Codeの中にアカウント名と使用量を表示し、その数値を`ccam usage`のために保存します。
 
 ## 使い方
 
@@ -16,7 +16,7 @@ ccam usage                  # every account, once
 ccam u                      # the same, shorter
 ccam usage --watch          # redraw every 60 seconds until Ctrl+C
 ccam usage --watch=10       # redraw every 10 seconds
-ccam usage -v               # add per-model weekly limits and the data source
+ccam usage -v               # add where the numbers came from
 ccam usage --json           # machine-readable, one object per account
 ccam usage --source cache   # saved numbers only, no network
 ccam usage --refresh        # also renew expired logins of accounts not running
@@ -26,14 +26,19 @@ ccam statusline install     # set the status line in every account's settings.js
 
 ```console
 $ ccam usage
- Account     5-hour        Resets    Weekly        Resets    As of
- 1 personal  ░░░░░░░░   0% -         ██████░░  70% 2d 16h    9h 36m ago (cached)
- 2 work      ██░░░░░░  24% 2h 29m    ███░░░░░  41% 3d 11h    just now (cached)
+ 1 personal  9h 36m ago (cached)
+   5-hour   ░░░░░░░░░░░░░░░░░░░░   0%
+   Weekly   ██████████████░░░░░░  70%  resets in 2d 16h
+   Fable    ██░░░░░░░░░░░░░░░░░░  12%  resets in 2d 16h
+ 2 work      just now (cached)
+   5-hour   █████░░░░░░░░░░░░░░░  24%  resets in 2h 29m
+   Weekly   ████████░░░░░░░░░░░░  41%  resets in 3d 11h
+   Fable    ███████████░░░░░░░░░  55%  resets in 5d 2h
  3 side      login expired, run `ccam side` once to refresh
 → Most headroom: personal   (open it with ccam next --auto)
 ```
 
-ターミナルでは、各行に`fetching…`と表示された表がすぐに現れ、各アカウントの応答があるたびにその行が描き直されます。`As of`は数値がどれだけ前のものかを示し、`(cached)`はエンドポイントではなく保存済みのファイルから取得した数値であることを意味します。最後の行は、[`ccam next --auto`](/features/next)が同じ規則で選ぶアカウントを示します（`auto_max_usage`、`auto_strategy`、実行中のセッション、`cross_org`を設定しない限り最後に使ったアカウントと同じ組織のアカウントだけ、100%の枠はすべてスキップ。そのため、週間の枠が満杯のアカウントが示されることはありません）。この行は、アカウントが2つ以上ある場合だけ表示されます。ログインしていないアカウントには`not logged in → ccam login <name>`、APIキーのアカウントには`no limits (API)`と表示されます。
+各アカウントには、番号、名前、数値がどれだけ前のものかを示す行があります。`(cached)`はエンドポイントではなく保存済みのファイルから取得した数値であることを意味します。その下には上限ごとに1行ずつ、20マスのバー、割合、枠がリセットされるまでの時間が表示されます。`5-hour`、`Weekly`（全モデル）、そして`Fable`のようなモデルごとの週間の枠の順です。アカウントにない枠は`-`と表示されます。割合は80%から黄色、100%で赤になります。ターミナルでは、すべてのアカウントがまず`fetching…`として一度に表示され、応答があり次第その行が描画されます。最後の行は、[`ccam next --auto`](/features/next)が同じ規則で選ぶアカウントを示します（`auto_max_usage`、`auto_strategy`、実行中のセッション、`cross_org`を設定しない限り最後に使ったアカウントと同じ組織のアカウントだけ、100%の枠はすべてスキップ。そのため、週間の枠が満杯のアカウントが示されることはありません）。この行は、アカウントが2つ以上ある場合だけ表示されます。ログインしていないアカウントには`not logged in → ccam login <name>`、APIキーのアカウントには`no limits (API)`と表示されます。
 
 `ccam statusline install`の後は、Claude Codeに`[work] · Opus · 5h 24% · 7d 41%`のような行が表示されます。
 
@@ -43,7 +48,7 @@ $ ccam usage
 | --- | --- | --- |
 | `--json` | 結果をJSONで出力します。`name`、`slot`、`status`、`limits`、`source`、`at`、`error`を含みます | オフ |
 | `--watch[=N]` | Ctrl+Cを押すまで`N`秒ごとに描き直します。`--watch`だけの場合や、0以下の値の場合は60です | オフ |
-| `-v`、`--verbose` | モデル別の週間上限と、`source:`の行（`live`、`cache`、`statusline`）を表示します | オフ |
+| `-v`、`--verbose` | 各アカウントの下に`source:`の行を追加し、数値の取得元（使用量エンドポイント、Claude Code、ステータスライン、保存済みのファイル）を示します | オフ |
 | `--no-cache` | 60秒のキャッシュを無視し、エンドポイントに問い合わせ直します | オフ |
 | `--source live\|claude\|cache` | `live`はアカウントのトークンでエンドポイントに問い合わせます。`claude`はClaude Codeに問い合わせさせます（後述）。`cache`は保存済みの数値だけを表示します | `usage_source`、なければ`live` |
 | `--refresh` | 期限切れのアクセストークンを更新します。対象は実行中でないアカウントだけです | オフ |
@@ -69,7 +74,7 @@ $ ccam usage
 
 <!-- motion:usage-fetch -->
 
-`personal`と`work`は時間内に応答し、最新の数値を表示します。`side`は3秒より長くかかるので、`fallback()`が2つのキャッシュファイルを読み、最後に書き込まれたほうを使います。`usage.Table()`が行を描画し、`usage.Best()`が最後の行に示すアカウントを選びます。
+`personal`と`work`は時間内に応答し、最新の数値を表示します。`side`は3秒より長くかかるので、`fallback()`が2つのキャッシュファイルを読み、最後に書き込まれたほうを使います。`usage.Table()`がアカウントごとのブロックを描画し、`usage.Best()`が最後の行に示すアカウントを選びます。
 
 1つのアカウントについて、`Fetcher.Fetch`は次の順序で確認します。
 
@@ -117,7 +122,7 @@ Claude Codeはステータスラインのコマンドを実行し、JSONドキ�
 - `--refresh`を付けない限り、`ccam usage`がトークンファイルを変更することはありません。ログインの期限が切れたときは、`ccam <name>`でそのアカウントを一度起動すれば、Claude Codeが更新します。
 - `--refresh`は、実行中のアカウント、インポートしたアカウント、キーチェーンのログインには一切触れません。更新を拒否した場合は、保存済みの数値とその理由を表示します。
 - 使用量エンドポイントは公開ドキュメントに記載されておらず、変更される可能性があります。変更された場合でも保存済みの数値は表示され、`ccam doctor`が形式の変更を報告します。
-- 保存済みの数値も応答もない場合、その行には`lookup failed:`と理由が表示されます。たとえば`--source cache`では`no saved usage`となります。
+- 保存済みの数値も応答もない場合、そのアカウントの行には`lookup failed:`と理由が表示されます。たとえば`--source cache`では`no saved usage`となります。
 - キャッシュファイルに保存されるのは割合とリセット時刻だけで、トークンが保存されることはありません。
 
 ## 関連項目

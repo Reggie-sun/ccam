@@ -1,24 +1,32 @@
 ---
 title: Kullanım limitleri ve hesap değiştirme
-description: Tüm Claude Code hesaplarının 5 saatlik ve haftalık kullanımını ccam usage ile görün, en çok pay kalan hesabı ccam next --auto ile açın.
-updated: 2026-10-20
+description: Tüm Claude Code hesaplarının 5 saatlik, haftalık ve Fable kullanımını ccam usage ile çubuklar halinde görün, en çok pay kalan hesabı ccam next --auto ile açın.
+updated: 2026-10-21
 order: 5
 translation: machine
-sourceHash: "40aef0708c81"
+sourceHash: "0e64e3251c69"
 ---
 
-`ccam usage`, her hesabın 5 saatlik ve haftalık limitlerinin ne kadarını kullandığını gösterir. `ccam next --auto` en çok pay kalan hesabı açar, `--continue` ise mevcut konuşmayı o hesaba taşır.
+`ccam usage`, her hesabın 5 saatlik limitin, haftalık limitin ve her modelin kendi haftalık limitinin (Fable gibi) ne kadarını kullandığını gösterir. `ccam next --auto` en çok pay kalan hesabı açar, `--continue` ise mevcut konuşmayı o hesaba taşır.
 
 ```console
 $ ccam usage
- Account     5-hour        Resets    Weekly        Resets    As of
- 1 personal  ██████░░  72% 1h 40m    ███░░░░░  41% 3d 6h     just now
- 2 work      █░░░░░░░   8% 4h 12m    ██░░░░░░  19% 5d 2h     just now
- 3 side      ████████ 100% 22m       █████░░░  68% 1d 9h     12m ago (cached)
+ 1 personal  just now
+   5-hour   ██████████████░░░░░░  72%  resets in 1h 40m
+   Weekly   ████████░░░░░░░░░░░░  41%  resets in 3d 6h
+   Fable    ██████████████████░░  88%  resets in 1d 6h
+ 2 work      just now
+   5-hour   ██░░░░░░░░░░░░░░░░░░   8%  resets in 4h 12m
+   Weekly   ████░░░░░░░░░░░░░░░░  19%  resets in 5d 2h
+   Fable    █░░░░░░░░░░░░░░░░░░░   3%  resets in 5d 2h
+ 3 side      12m ago (cached)
+   5-hour   ████████████████████ 100%  resets in 22m
+   Weekly   ██████████████░░░░░░  68%  resets in 1d 9h
+   Fable    ████████░░░░░░░░░░░░  40%  resets in 1d 9h
 → Most headroom: work   (open it with ccam next --auto)
 ```
 
-Sütunlar şunlardır: hesap, 5 saatlik kullanım, sıfırlanmaya kalan süre, haftalık kullanım, sıfırlanmaya kalan süre ve sayıların ne kadar eski olduğu.
+Her hesap, sayılarının ne kadar eski olduğunu gösteren bir satır alır; ardından her limit için sıfırlanmaya kalan süreyle birlikte bir çubuk gelir: 5 saatlik pencere, tüm modeller için haftalık pencere ve her modelin kendi haftalık penceresi, örneğin Fable. Çubuk %80'den itibaren sarıya, %100'de kırmızıya döner. Son satır, `ccam next --auto` komutunun açacağı hesabı adlandırır.
 
 ## Sayılar nereden geliyor
 
@@ -32,7 +40,7 @@ Bu uç nokta herkese açık olarak belgelenmemiştir ve değişebilir. Bir istek
 | --- | --- |
 | `--watch [seconds]` | Sürekli yeniler, varsayılan olarak 60 saniyede bir |
 | `--json` | Makinece okunabilir çıktı |
-| `-v` | Modele özgü haftalık limitleri ve her sayının nereden geldiğini de gösterir |
+| `-v` | Her hesabın sayılarının nereden geldiğini de gösterir |
 | `--no-cache` | Her zaman yeniden sorar |
 | `--source cache` | Hiç sormaz; yalnızca kayıtlı sayıları gösterir |
 

@@ -1,39 +1,41 @@
 ---
 title: ダッシュボード
 description: ターミナルでccamを実行すると、アカウント、グループ、フォルダーのルール、拡張機能、点検結果の全画面ダッシュボードが開きます。どの変更も先に計画を示します。
-updated: 2026-10-20
+updated: 2026-10-21
 order: 15
 translation: machine
-sourceHash: "decdd5fa54c9"
+sourceHash: "27bd153b48b2"
 ---
 
 引数なしの`ccam`は、標準入力と標準出力がターミナルであれば全画面のダッシュボードを開き、そうでなければ`ccam list`を出力します。ダッシュボードはすべてのアカウントを使用量とグループとともに表示し、起動、追加、ログイン、グループの変更、フォルダーのルールの設定、点検と修復といった、コマンドと同じことを行えます。起動するとダッシュボードは閉じます。アカウントの追加やログインでは、いったんターミナルに切り替わり、終わるとダッシュボードに戻ります。
 
 ```console
- ccam v0.9.0 · 3 accounts · 2 groups         ✔ default · ▸ this folder · • running
+ ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
   Accounts   Groups   Folders   Extensions   Health
+ Your Claude accounts and their usage limits; enter launches the selected one.
 
-    # Account     Email             5-hour         7-day Last  Groups
- ❯ 1. personal ✔   me@example.com    █████▊░░  72%   41% 2h    default
-   2. work      ▸• dev@company.com   ██░░░░░░  25%  100% now   default team
-   3. side         -                 ✘ not logged in         -     no group
+    # Account      5-hour       Weekly       Fable        Last  Groups
+   1. personal ✔   ████▍░  72%  ██▌░░░  41%  █████▎  88%  -     default
+ ❯ 2. work      ▸• █▌░░░░  25%  ██████ 100%  ▋░░░░░  10%  -     default team
+   3. side         ✘ not logged in                        -     no group
 
- ✔ personal is the default account
  enter to launch · n for most room · a to add · s for groups · ? for shortcuts
 ```
 
-最初の画面は`config.toml`だけから描画され、100 msを大きく下回る時間で表示されます。使用量は、各アカウントの応答があり次第表示されます。割合は80%から黄色、100%で赤になり、取得に失敗したときにキャッシュから表示した値は薄く描画されます。
+タブ名の下の行は、現在のタブが何のためのものかを1文で説明します。幅の広いターミナルでは、Accountsタブに各アカウントのメールアドレスも表示されます。
+
+最初の画面は`config.toml`だけから描画され、100 msを大きく下回る時間で表示されます。使用量は、各アカウントの応答があり次第表示されます。上限ごとに専用のバーがあります。5時間の枠、全モデル共通の週間の枠、Fable専用の週間の枠です。`-`はそのアカウントにその枠がないことを示します。割合は80%から黄色、100%で赤になり、取得に失敗したときにキャッシュから表示した値は薄く描画されます。
 
 ## タブ
 
 | タブ | 表示内容 | キー |
 | --- | --- | --- |
-| Accounts | 番号、名前、メールアドレス、5時間のバー、7日間の使用量、最終使用、グループ。`✔`はデフォルト、`▸`はこのフォルダーのアカウント、`•`は実行中 | 下記を参照 |
+| Accounts | 番号、名前、メールアドレス、5時間・週間・Fableのバー、最終使用、グループ。`✔`はデフォルト、`▸`はこのフォルダーのアカウント、`•`は実行中 | 下記を参照 |
 | Groups | 各グループと、その共有項目とアカウント、どのグループにも入っていないアカウント | `enter`で編集、`n`で新規作成、`e`で名前変更、`x`で削除 |
 | Folders | [`ccam folder`](/features/folder)のルールと、ここで適用されるルール | `n`でここでアカウントを使う、`enter`で変更、`x`で削除 |
 | Extensions | [`ccam ext`](/features/ext)の表示内容。各拡張機能を、出どころのグループとともに一度だけ表示 | `r`で再読み込み |
-| Health | [`ccam doctor`](/features/doctor)の報告内容 | `f`で修復（`doctor --fix`） |
+| Health | [`ccam doctor`](/features/doctor)の報告内容をアカウントごとのボックスで表示（下記） | `f`で選択中のボックスを修復、`F`ですべて修復（`doctor --fix`）、`↑`/`↓`でボックス間を移動 |
 
 `←`/`→`か`Tab`でタブを切り替え、`?`で現在のタブのキーを一覧表示し、`r`で短期キャッシュを使わずに使用量を取得し直し、`q`か`Esc`で終了します。
 
@@ -46,7 +48,7 @@ sourceHash: "decdd5fa54c9"
 | `↑`/`↓`、`k`/`j` | 移動します |
 | `n` | [`ccam next --auto`](/features/next)が選ぶアカウントを起動します |
 | `o` | オプションを付けて起動します: `--continue`、`--resume`、そのほかの引数、ドライラン |
-| `u` | 使用量の詳細: 5時間、7日間、モデルごとの期間と、それぞれのリセット時刻、数値の出どころ |
+| `u` | 使用量の詳細: 5時間、週間、モデルごとの期間と、それぞれのリセット時刻、数値の出どころ |
 | `a` | アカウントを追加します（後述のウィザード） |
 | `l` | もう一度ログインします |
 | `s` | アカウントのグループを選びます |
@@ -55,6 +57,33 @@ sourceHash: "decdd5fa54c9"
 | `e` | 名前を変更します |
 | `c` | ショートカットコマンドを設定または削除します |
 | `x` | 削除します（先に確認し、最初はNoが選ばれています） |
+
+## Healthタブ
+
+Healthタブは、開いたときに[`ccam doctor`](/features/doctor)の点検を実行し、同じ表示を描画します。最初の行にアカウントごとの記号が並び、その下にアカウントごとのボックスがあります。ボックスの各行は点検した領域1つで、`Folder`、`Login`、`Share links`が先頭に来ます。記号は`✔`が正常、`ℹ`が情報、`⚠`が警告、`✘`がエラーで、どのアカウントのどこに問題があるかがひと目でわかります。どのアカウントにも属さない結果は`General`ボックスに入ります。
+
+```console
+ ✘ personal   ⚠ work
+
+ ╭─ ✘ personal · 3 problems ──────────────────────────────────────────────────╮
+ │ ⚠ Folder       folder permissions are 755 (should be 0700)                 │
+ │ ℹ              unknown entries (Claude Code layout may have changed):      │
+ │                newthing                                                    │
+ │ ⚠ Login        .credentials.json permissions are 644 (should be 0600)      │
+ │ ✔              login valid (me@example.com)                                │
+ │ ✘ Share links  /home/me/.local/share/ccam/profiles/personal/settings.json: │
+ │                set to shared but is a real file, not a link                │
+ ╰────────────────────────────────────────────────────────────────────────────╯
+ ╭─ ⚠ work · 1 problem ───────────────────────────────────────────────────────╮
+ │ ✔ Folder       OK                                                          │
+ │ ⚠ Login        not logged in → `ccam login work`                           │
+ │ ✔ Share links  share links OK                                              │
+ ╰────────────────────────────────────────────────────────────────────────────╯
+
+ 4 problems; f repairs the selected box, F all of them (ccam doctor --fix).
+```
+
+`↑`/`↓`でボックス間を移動でき、選択中のボックスはアクセントカラーの枠線で表示されます。`f`は選択中のボックスだけを`ccam doctor --fix`と同じやり方で修復します。アカウントのボックスではそのアカウントだけを、`General`ボックスではどのアカウントにも属さない結果（プラグインのパスとショートカットコマンド）を修復し、ほかのアカウントはもう一度点検するだけです。修復の前に確認し、修復するものがないボックスでは`nothing to repair in <name>`と表示するだけです。`F`は`ccam doctor --fix`と同じようにすべてを一度に修復し、`r`はもう一度点検します。
 
 ## グループの変更
 

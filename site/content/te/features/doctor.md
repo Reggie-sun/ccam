@@ -1,10 +1,10 @@
 ---
 title: తనిఖీ చేయడం, సరిచేయడం
 description: ccam doctor తో షేర్ లింక్‌లు, ఫైల్ అనుమతులు, లాగిన్‌లు, Claude Code వెర్షన్‌ను తనిఖీ చేయండి, సురక్షితంగా సరిచేయగలిగిన వాటిని ccam doctor --fix తో సరిచేయండి.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 9
 translation: machine
-sourceHash: "6ae82bbf5585"
+sourceHash: "9be63350cb69"
 ---
 
 `ccam doctor` మీ ccam ఇన్‌స్టాలేషన్‌ను తనిఖీ చేస్తుంది: Claude Code బైనరీ, ప్రతి ఖాతా ఫోల్డర్, లాగిన్, షేర్ లింక్‌లు, షేర్ చేసిన MCP సర్వర్లు, వినియోగ ఎండ్‌పాయింట్, మీ షార్ట్‌కట్ కమాండ్‌లు. `ccam doctor --fix` డేటా కోల్పోకుండా చేయగలిగిన వాటిని సరిచేస్తుంది, తాను భర్తీ చేసే ఏ ఫైల్‌నైనా ముందుగా బ్యాకప్ ఫోల్డర్‌కు తరలిస్తుంది. `ccam <name>` షేర్ లింక్ సమస్యతో ఆగినప్పుడు, మీరు ఫైళ్లను చేతితో పునరుద్ధరించిన తర్వాత, లేదా Claude Code అప్‌డేట్ తర్వాత దీన్ని రన్ చేయండి.
@@ -17,37 +17,64 @@ ccam doctor --fix            # check, then repair what is safe to repair
 ccam --dry-run doctor --fix  # report only: what --fix would repair
 ```
 
-ప్రతి ఫలితం ఒక గుర్తుతో ఉన్న ఒక లైన్: `✓` సరే, `·` సమాచారం, `!` హెచ్చరిక, `✗` ఎర్రర్. ఖాతా ఫలితాలు ఖాతా పేరుతో మొదలవుతాయి.
+మొదటి లైన్ ప్రతి ఖాతాను ఒకేసారి గుర్తిస్తుంది, కాబట్టి ఇంకేదైనా చదవక ముందే సమస్యలు ఎక్కడ ఉన్నాయో మీకు కనిపిస్తుంది. దాని కింద, ప్రతి ఖాతాకు ఒక బాక్స్ ఉంటుంది, ఏ ఖాతాకూ చెందని ఫలితాలు (Claude Code, ఎన్విరాన్‌మెంట్ వేరియబుల్స్, ప్లగిన్లు, MCP సర్వర్లు, షార్ట్‌కట్‌లు, ఫోల్డర్ నియమాలు, గ్రూప్‌లు, సెట్టింగ్‌లు) ఒక `General` బాక్స్‌లోకి వెళ్తాయి. బాక్స్ శీర్షిక ఖాతా యొక్క అత్యంత తీవ్రమైన గుర్తును, దానికి ఎన్ని సమస్యలు ఉన్నాయో చూపిస్తుంది. లోపలి ప్రతి వరుస తనిఖీ చేసిన ఒక విభాగం, ఎల్లప్పుడూ `Folder`, `Login`, `Share links` ఆ క్రమంలో, తర్వాత మిగతావి, ఒక గుర్తుతో: `✔` సరే, `ℹ` సమాచారం, `⚠` హెచ్చరిక, `✘` ఎర్రర్. ఏ సమస్యా లేని ఫోల్డర్ `✔ Folder  OK` ను చూపిస్తుంది.
 
 ```console
 $ ccam doctor
-✓ Claude Code 2.1.302 (Claude Code) (/home/me/.local/bin/claude)
-! personal: folder permissions are 755 (should be 0700)
-! personal: .credentials.json permissions are 644 (should be 0600)
-✓ personal: login valid (me@example.com)
-✗ personal: /home/me/.local/share/ccam/profiles/personal/settings.json: set to shared but is a real file, not a link
-· personal: unknown entries (Claude Code layout may have changed): newthing
-! work: not logged in → `ccam login work`
-✓ work: share links OK
-! missing shortcuts in /home/me/.local/bin: ccp
+ ⚠ General   ✘ personal   ⚠ work
+
+ ╭─ ⚠ General · 1 problem ────────────────────────────────────────────────────╮
+ │ ✔ Claude Code  Claude Code 2.1.302 (Claude Code)                           │
+ │                (/home/me/.local/bin/claude)                                │
+ │ ⚠ Shortcuts    missing shortcuts in /home/me/.local/bin: ccp               │
+ ╰────────────────────────────────────────────────────────────────────────────╯
+ ╭─ ✘ personal · 3 problems ──────────────────────────────────────────────────╮
+ │ ⚠ Folder       folder permissions are 755 (should be 0700)                 │
+ │ ℹ              unknown entries (Claude Code layout may have changed):      │
+ │                newthing                                                    │
+ │ ⚠ Login        .credentials.json permissions are 644 (should be 0600)      │
+ │ ✔              login valid (me@example.com)                                │
+ │ ✘ Share links  /home/me/.local/share/ccam/profiles/personal/settings.json: │
+ │                set to shared but is a real file, not a link                │
+ ╰────────────────────────────────────────────────────────────────────────────╯
+ ╭─ ⚠ work · 1 problem ───────────────────────────────────────────────────────╮
+ │ ✔ Folder       OK                                                          │
+ │ ⚠ Login        not logged in → `ccam login work`                           │
+ │ ✔ Share links  share links OK                                              │
+ ╰────────────────────────────────────────────────────────────────────────────╯
 
 `ccam doctor --fix` repairs what it can.
 ```
 
-`--fix` తో, సరిచేయబడిన ప్రతి ఫలితం `→ fixed` తో ముగుస్తుంది:
+`--fix` తో, సరిచేయబడిన ప్రతి ఫలితం `→ fixed` తో ముగుస్తుంది, ఇక అది సమస్యగా లెక్కించబడదు:
 
 ```console
 $ ccam doctor --fix
-✓ Claude Code 2.1.302 (Claude Code) (/home/me/.local/bin/claude)
-! personal: folder permissions are 755 (should be 0700) → fixed
-! personal: .credentials.json permissions are 644 (should be 0600) → fixed
-✓ personal: login valid (me@example.com)
-✗ personal: /home/me/.local/share/ccam/profiles/personal/settings.json: set to shared but is a real file, not a link → fixed
-· personal: unknown entries (Claude Code layout may have changed): newthing
-! work: not logged in → `ccam login work`
-✓ work: share links OK
-! missing shortcuts in /home/me/.local/bin: ccp → fixed
+ ✔ General   ✔ personal   ⚠ work
+
+ ╭─ ✔ General ────────────────────────────────────────────────────────────────╮
+ │ ✔ Claude Code  Claude Code 2.1.302 (Claude Code)                           │
+ │                (/home/me/.local/bin/claude)                                │
+ │ ⚠ Shortcuts    missing shortcuts in /home/me/.local/bin: ccp → fixed       │
+ ╰────────────────────────────────────────────────────────────────────────────╯
+ ╭─ ✔ personal ───────────────────────────────────────────────────────────────╮
+ │ ⚠ Folder       folder permissions are 755 (should be 0700) → fixed         │
+ │ ℹ              unknown entries (Claude Code layout may have changed):      │
+ │                newthing                                                    │
+ │ ⚠ Login        .credentials.json permissions are 644 (should be 0600) →    │
+ │                fixed                                                       │
+ │ ✔              login valid (me@example.com)                                │
+ │ ✘ Share links  /home/me/.local/share/ccam/profiles/personal/settings.json: │
+ │                set to shared but is a real file, not a link → fixed        │
+ ╰────────────────────────────────────────────────────────────────────────────╯
+ ╭─ ⚠ work · 1 problem ───────────────────────────────────────────────────────╮
+ │ ✔ Folder       OK                                                          │
+ │ ⚠ Login        not logged in → `ccam login work`                           │
+ │ ✔ Share links  share links OK                                              │
+ ╰────────────────────────────────────────────────────────────────────────────╯
 ```
+
+టెర్మినల్‌లో బాక్స్‌లు దాని వెడల్పుకు సరిపోతాయి, పొడవైన సందేశాలు తర్వాతి లైన్‌కు చుట్టబడతాయి, టెర్మినల్ సొంత రంగుల్లో (`NO_COLOR` వాటిని ఆపేస్తుంది). పైప్ లేదా ఫైల్‌కు పంపినప్పుడు, అవుట్‌పుట్‌లో రంగులు ఉండవు, ఏ సందేశమూ చుట్టబడదు లేదా కత్తిరించబడదు, కాబట్టి `ccam doctor | grep settings.json` మొత్తం లైన్‌ను కనుగొంటుంది; అప్పుడు ప్రతి బాక్స్ పొడవైన లైన్ అంత వెడల్పు ఉంటుంది. డాష్‌బోర్డ్ Health ట్యాబ్ అవే బాక్స్‌లను చూపిస్తుంది.
 
 ## ఆప్షన్లు
 
@@ -58,17 +85,17 @@ $ ccam doctor --fix
 
 `ccam doctor` ఆర్గ్యుమెంట్‌లు తీసుకోదు. ఇది `--dry-run` ను పాటిస్తుంది: `ccam --dry-run doctor --fix` `ccam doctor` లాంటి ఫలితాలనే ప్రింట్ చేస్తుంది, ఏదీ మార్చదు.
 
-కనీసం ఒక `✗` ఫలితం సరిచేయబడకుండా మిగిలితే ఎగ్జిట్ కోడ్ `1`, లేకపోతే `0`. హెచ్చరికలు, సమాచారం ఎప్పుడూ రన్‌ను విఫలం చేయవు. `--fix` లేకుండా రన్ విఫలమైనప్పుడు, ccam ఒక ఖాళీ లైన్‌తో, `` `ccam doctor --fix` repairs what it can. `` తో ముగుస్తుంది. లోడ్ చేయలేని కాన్ఫిగ్ కూడా `1` తో, ఒక `ccam:` ఎర్రర్‌తో ముగుస్తుంది.
+కనీసం ఒక `✘` ఫలితం సరిచేయబడకుండా మిగిలితే ఎగ్జిట్ కోడ్ `1`, లేకపోతే `0`. హెచ్చరికలు, సమాచారం ఎప్పుడూ రన్‌ను విఫలం చేయవు. `--fix` లేకుండా రన్ విఫలమైనప్పుడు, ccam ఒక ఖాళీ లైన్‌తో, `` `ccam doctor --fix` repairs what it can. `` తో ముగుస్తుంది. లోడ్ చేయలేని కాన్ఫిగ్ కూడా `1` తో, ఒక `ccam:` ఎర్రర్‌తో ముగుస్తుంది.
 
 ## ఇది ఎలా పనిచేస్తుంది
 
-`internal/cli/doctor.go` `~/.config/ccam/config.toml` ను లోడ్ చేసి `internal/doctor/doctor.go` లోని `doctor.Run` ను పిలుస్తుంది, అది తనిఖీలను ఒక స్థిరమైన క్రమంలో రన్ చేసి ఫలితాలను తిరిగి ఇస్తుంది. `--fix` `Options.Fix` గా పంపబడుతుంది, డ్రై రన్‌లో అది false గా సెట్ అవుతుంది.
+`internal/cli/doctor.go` `~/.config/ccam/config.toml` ను లోడ్ చేసి `internal/doctor/doctor.go` లోని `doctor.Run` ను పిలుస్తుంది, అది తనిఖీలను ఒక స్థిరమైన క్రమంలో రన్ చేసి ఫలితాలను తిరిగి ఇస్తుంది, ప్రతిదానితో అది చెందిన ఖాతా, తనిఖీ చేసిన విభాగం. `tui.HealthReport` వాటిని బాక్స్‌లుగా గ్రూప్ చేస్తుంది. `--fix` `Options.Fix` గా పంపబడుతుంది, డ్రై రన్‌లో అది false గా సెట్ అవుతుంది.
 
 <!-- motion:doctor-checks -->
 
 మధ్య భాగం ప్రతి ఖాతాకు ఒకసారి రన్ అవుతుంది. తనిఖీలు, ప్రతిదానికి `--fix` ఏమి చేస్తుందో:
 
-1. **Claude Code వెర్షన్** (`checkClaude`). లాంచర్ చేసే విధంగానే `claude` బైనరీని కనుగొని `claude --version` ను రన్ చేస్తుంది. వెర్షన్ `2.1.302` తో, అంటే ccam ఫోల్డర్ లేఅవుట్‌ను ధృవీకరించిన వెర్షన్‌తో (`doctor.LayoutVersion`), మొదలు కాకపోతే, అది `· ccam was verified against the folder layout of Claude Code 2.1.302. Any 'unknown entries' below may mean the layout changed` ను జోడిస్తుంది. బైనరీ లేకపోవడం లేదా `--version` విఫలమవడం ఎర్రర్. సరిచేయడం లేదు.
+1. **Claude Code వెర్షన్** (`checkClaude`). లాంచర్ చేసే విధంగానే `claude` బైనరీని కనుగొని `claude --version` ను రన్ చేస్తుంది. వెర్షన్ `2.1.302` తో, అంటే ccam ఫోల్డర్ లేఅవుట్‌ను ధృవీకరించిన వెర్షన్‌తో (`doctor.LayoutVersion`), మొదలు కాకపోతే, అది `ccam was verified against the folder layout of Claude Code 2.1.302. Any 'unknown entries' below may mean the layout changed` అనే సమాచారాన్ని జోడిస్తుంది. బైనరీ లేకపోవడం లేదా `--version` విఫలమవడం ఎర్రర్. సరిచేయడం లేదు.
 2. **ఎన్విరాన్‌మెంట్‌లో క్రెడెన్షియల్స్** (`checkAuthEnv`). `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY` లేదా `ANTHROPIC_AUTH_TOKEN` సెట్ అయి ఉంటే హెచ్చరిస్తుంది: ఆ షెల్ నుంచి ప్రారంభించిన ప్రతి ఖాతా దాన్ని వారసత్వంగా పొందుతుంది, Claude Code ఖాతా సొంత లాగిన్ కంటే దానికే ప్రాధాన్యం ఇస్తుంది. సరిచేయడం లేదు; దాన్ని మీరే అన్‌సెట్ చేయండి.
 3. **ఫోల్డర్** (`checkProfile`). ఖాతా ఫోల్డర్ లేకపోవడం ఎర్రర్, అది ఆ ఖాతా తనిఖీలను ముగిస్తుంది. గ్రూప్ లేదా ఇతర బిట్‌లు ఏవైనా సెట్ అయిన అనుమతులు హెచ్చరిక; `--fix` `chmod 0700` ను రన్ చేస్తుంది. Windows లో permission bits లేవు, కాబట్టి అక్కడ ఈ తనిఖీ, కింద ఉన్న `0600` తనిఖీ వదిలేయబడతాయి; మీ యూజర్ ప్రొఫైల్‌లోని ఫోల్డర్ దాని access list తో రక్షించబడుతుంది.
 4. **లాగిన్ ఫైల్** (`checkCredentials`). `.credentials.json` `lstat` తో తనిఖీ చేయబడుతుంది. సింలింక్ ఎర్రర్, ఎందుకంటే ప్రతి ఖాతాకు సొంత టోకెన్ ఉండాలి, దాన్ని సరిచేయదు. `0600` కాని మోడ్ హెచ్చరిక; `--fix` `chmod 0600` ను రన్ చేస్తుంది. ఆపై లాగిన్ చదవబడుతుంది (macOS లో ముందుగా Keychain నుంచి). లాగిన్ లేకపోవడం `ccam login <name>` ను సూచించే హెచ్చరిక. గడువు ముగిసిన రిఫ్రెష్ టోకెన్ `login expired` ఎర్రర్; గడువు ముగిసిన యాక్సెస్ టోకెన్ కేవలం సమాచారం, ఎందుకంటే Claude Code తదుపరి ప్రారంభంలో దాన్ని పునరుద్ధరిస్తుంది. చెల్లుబాటు అయ్యే లాగిన్ ఇమెయిల్‌ను, ప్లాన్‌ను చూపిస్తుంది (`login valid (dev@company.com, Claude Team · Acme)`). వీటిలో ఏదీ సరిచేయబడదు; `ccam login --expired` అవసరమైన ప్రతి ఖాతాలో లాగిన్ చేస్తుంది.
@@ -110,7 +137,7 @@ Repair them with `ccam doctor --fix`, then run again
 ## భద్రత, ప్రత్యేక సందర్భాలు
 
 - సాధారణ `ccam doctor` ఎప్పుడూ ఏదీ మార్చదు. స్క్రిప్ట్‌లలో నిశ్చింతగా ఉండటానికి `--fix` తో `--dry-run` ను ఉపయోగించండి.
-- ఖాతా రన్ అవుతుందో లేదో `doctor --fix` తనిఖీ చేయదు. సెషన్ ఆ ఫైళ్లలో రాస్తూనే ఉంటుంది కాబట్టి, ఒక ఖాతా షేర్ లింక్‌లను సరిచేసే ముందు దాని Claude Code నుంచి నిష్క్రమించండి.
+- రన్ అవుతున్న ఖాతా కోసం, `doctor --fix` లేని లింక్‌లను మాత్రమే తయారు చేసి `` is running; quit Claude Code there, then run `ccam doctor --fix` again to repair the rest `` ను జోడిస్తుంది, ఎందుకంటే సరిచేయడం తరలించే ఫైళ్లలో సెషన్ రాస్తూనే ఉంటుంది.
 - షేర్ సరిచేయడం విఫలమైతే, ccam ఆ ఖాతాకు `could not repair share links: <error>` అని నివేదించి, దాని తెలియని ఎంట్రీల తనిఖీని దాటవేస్తుంది. ఇతర ఖాతాలు ఇంకా తనిఖీ చేయబడతాయి.
 - `ccam group` మార్పు మధ్యలో విఫలమైతే, కొత్త గ్రూప్‌లు ఇప్పటికే సేవ్ అయి ఉంటాయి, `ccam doctor --fix` తో పూర్తి చేయమని ccam చెబుతుంది.
 - సింలింక్ అయిన `.credentials.json`, గడువు ముగిసిన లాగిన్, ఎన్విరాన్‌మెంట్ క్రెడెన్షియల్స్ నివేదించబడతాయి కానీ ఎప్పుడూ మార్చబడవు.

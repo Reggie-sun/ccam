@@ -1,24 +1,32 @@
 ---
 title: 사용량 한도와 계정 전환
-description: ccam usage로 모든 Claude Code 계정의 5시간·주간 사용량을 확인하고, ccam next --auto로 여유가 가장 많은 계정을 엽니다.
-updated: 2026-10-20
+description: ccam usage로 모든 Claude Code 계정의 5시간·주간·Fable 사용량을 막대로 확인하고, ccam next --auto로 여유가 가장 많은 계정을 엽니다.
+updated: 2026-10-21
 order: 5
 translation: machine
-sourceHash: "40aef0708c81"
+sourceHash: "0e64e3251c69"
 ---
 
-`ccam usage`는 각 계정이 5시간 한도와 주간 한도를 얼마나 썼는지 보여 줍니다. `ccam next --auto`는 여유가 가장 많은 계정을 열고, `--continue`는 지금 대화를 그 계정에서 이어 갑니다.
+`ccam usage`는 각 계정이 5시간 한도, 주간 한도, 모델별 주간 한도(Fable 등)를 얼마나 썼는지 보여 줍니다. `ccam next --auto`는 여유가 가장 많은 계정을 열고, `--continue`는 지금 대화를 그 계정에서 이어 갑니다.
 
 ```console
 $ ccam usage
- Account     5-hour        Resets    Weekly        Resets    As of
- 1 personal  ██████░░  72% 1h 40m    ███░░░░░  41% 3d 6h     just now
- 2 work      █░░░░░░░   8% 4h 12m    ██░░░░░░  19% 5d 2h     just now
- 3 side      ████████ 100% 22m       █████░░░  68% 1d 9h     12m ago (cached)
+ 1 personal  just now
+   5-hour   ██████████████░░░░░░  72%  resets in 1h 40m
+   Weekly   ████████░░░░░░░░░░░░  41%  resets in 3d 6h
+   Fable    ██████████████████░░  88%  resets in 1d 6h
+ 2 work      just now
+   5-hour   ██░░░░░░░░░░░░░░░░░░   8%  resets in 4h 12m
+   Weekly   ████░░░░░░░░░░░░░░░░  19%  resets in 5d 2h
+   Fable    █░░░░░░░░░░░░░░░░░░░   3%  resets in 5d 2h
+ 3 side      12m ago (cached)
+   5-hour   ████████████████████ 100%  resets in 22m
+   Weekly   ██████████████░░░░░░  68%  resets in 1d 9h
+   Fable    ████████░░░░░░░░░░░░  40%  resets in 1d 9h
 → Most headroom: work   (open it with ccam next --auto)
 ```
 
-각 열은 순서대로 계정, 5시간 사용량, 초기화까지 남은 시간, 주간 사용량, 초기화까지 남은 시간, 수치를 가져온 시점을 나타냅니다.
+계정마다 수치를 가져온 시점을 적은 줄이 먼저 나오고, 그 아래에 한도마다 막대 하나와 초기화까지 남은 시간이 표시됩니다. 5시간 구간, 모든 모델에 대한 주간 구간, 그리고 Fable처럼 모델마다 따로 있는 주간 구간입니다. 막대는 80%부터 노란색, 100%에서 빨간색으로 바뀝니다. 마지막 줄은 `ccam next --auto`가 열 계정을 알려 줍니다.
 
 ## 수치의 출처
 
@@ -32,7 +40,7 @@ ccam은 각 계정의 로그인 정보로 Anthropic의 사용량 엔드포인트
 | --- | --- |
 | `--watch [seconds]` | 계속 새로 고침(기본 60초 간격) |
 | `--json` | 기계가 읽기 쉬운 형식으로 출력 |
-| `-v` | 모델별 주간 한도와 각 수치의 출처도 표시 |
+| `-v` | 각 계정의 수치를 어디서 가져왔는지도 표시 |
 | `--no-cache` | 항상 새로 요청 |
 | `--source cache` | 새로 요청하지 않고 저장된 수치만 표시 |
 

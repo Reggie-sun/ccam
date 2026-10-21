@@ -1,13 +1,13 @@
 ---
 title: વપરાશ મર્યાદા
-description: ccam usage દરેક એકાઉન્ટની 5 કલાકની અને સાપ્તાહિક મર્યાદા એકસાથે બતાવે છે, અને ccam statusline એકાઉન્ટનું નામ અને વપરાશ Claude Code માં મૂકે છે.
-updated: 2026-10-20
+description: ccam usage દરેક એકાઉન્ટની 5 કલાકની, સાપ્તાહિક અને મૉડલ પ્રમાણેની (Fable) મર્યાદા એકસાથે બાર તરીકે બતાવે છે, અને ccam statusline એકાઉન્ટનું નામ અને વપરાશ Claude Code માં મૂકે છે.
+updated: 2026-10-21
 order: 7
 translation: machine
-sourceHash: "ec1d1ee27d9f"
+sourceHash: "0e9587b79ce8"
 ---
 
-`ccam usage` બતાવે છે કે દરેક એકાઉન્ટે 5 કલાકની અને સાપ્તાહિક મર્યાદામાંથી કેટલું વાપર્યું છે, અને દરેક વિન્ડો રીસેટ થવામાં કેટલો સમય બાકી છે. કોઈ લાંબું કામ શરૂ કરતાં પહેલાં, અથવા Claude Code મર્યાદા નજીક હોવાનું કહે ત્યારે, કયા એકાઉન્ટ પાસે જગ્યા બાકી છે તે જોવા તેને વાપરો. `ccam statusline` એ Claude Code માટેનો સ્ટેટસ લાઇન કમાન્ડ છે: તે Claude Code ની અંદર એકાઉન્ટનું નામ અને વપરાશ બતાવે છે અને `ccam usage` માટે આંકડા સેવ કરે છે.
+`ccam usage` બતાવે છે કે દરેક એકાઉન્ટે 5 કલાકની મર્યાદા, સાપ્તાહિક મર્યાદા અને દરેક મૉડલની પોતાની સાપ્તાહિક મર્યાદા (જેમ કે Fable) માંથી કેટલું વાપર્યું છે, દરેક મર્યાદા માટે એક બાર અને તે રીસેટ થવામાં બાકી સમય સાથે. કોઈ લાંબું કામ શરૂ કરતાં પહેલાં, અથવા Claude Code મર્યાદા નજીક હોવાનું કહે ત્યારે, કયા એકાઉન્ટ પાસે જગ્યા બાકી છે તે જોવા તેને વાપરો. `ccam statusline` એ Claude Code માટેનો સ્ટેટસ લાઇન કમાન્ડ છે: તે Claude Code ની અંદર એકાઉન્ટનું નામ અને વપરાશ બતાવે છે અને `ccam usage` માટે આંકડા સેવ કરે છે.
 
 ## ઉપયોગ
 
@@ -16,7 +16,7 @@ ccam usage                  # every account, once
 ccam u                      # the same, shorter
 ccam usage --watch          # redraw every 60 seconds until Ctrl+C
 ccam usage --watch=10       # redraw every 10 seconds
-ccam usage -v               # add per-model weekly limits and the data source
+ccam usage -v               # add where the numbers came from
 ccam usage --json           # machine-readable, one object per account
 ccam usage --source cache   # saved numbers only, no network
 ccam usage --refresh        # also renew expired logins of accounts not running
@@ -26,14 +26,19 @@ ccam statusline install     # set the status line in every account's settings.js
 
 ```console
 $ ccam usage
- Account     5-hour        Resets    Weekly        Resets    As of
- 1 personal  ░░░░░░░░   0% -         ██████░░  70% 2d 16h    9h 36m ago (cached)
- 2 work      ██░░░░░░  24% 2h 29m    ███░░░░░  41% 3d 11h    just now (cached)
+ 1 personal  9h 36m ago (cached)
+   5-hour   ░░░░░░░░░░░░░░░░░░░░   0%
+   Weekly   ██████████████░░░░░░  70%  resets in 2d 16h
+   Fable    ██░░░░░░░░░░░░░░░░░░  12%  resets in 2d 16h
+ 2 work      just now (cached)
+   5-hour   █████░░░░░░░░░░░░░░░  24%  resets in 2h 29m
+   Weekly   ████████░░░░░░░░░░░░  41%  resets in 3d 11h
+   Fable    ███████████░░░░░░░░░  55%  resets in 5d 2h
  3 side      login expired, run `ccam side` once to refresh
 → Most headroom: personal   (open it with ccam next --auto)
 ```
 
-ટર્મિનલ પર table તરત દેખાય છે, દરેક હરોળમાં `fetching…` સાથે, અને દરેક એકાઉન્ટ જવાબ આપે તેમ તેની હરોળ ફરીથી દોરાય છે. `As of` બતાવે છે કે આંકડા કેટલા જૂના છે; `(cached)` નો અર્થ છે કે તે endpoint માંથી નહીં, સેવ કરેલી ફાઇલમાંથી આવે છે. છેલ્લી લાઇન એ એકાઉન્ટનું નામ આપે છે જે [`ccam next --auto`](/features/next) એ જ નિયમો પ્રમાણે પસંદ કરે (`auto_max_usage`, `auto_strategy`, ચાલી રહેલાં સેશન, `cross_org` સેટ ન હોય તો ફક્ત છેલ્લે વપરાયેલા એકાઉન્ટની સંસ્થાનાં એકાઉન્ટ, 100% પરની દરેક વિન્ડો છોડી દેવાય છે, તેથી જેનું અઠવાડિયું ભરાઈ ગયું હોય તે એકાઉન્ટનું નામ ક્યારેય આવતું નથી), અને તમારી પાસે એક કરતાં વધુ એકાઉન્ટ હોય ત્યારે જ દેખાય છે. લૉગિન ન થયેલું એકાઉન્ટ `not logged in → ccam login <name>` બતાવે છે, અને API key વાળું એકાઉન્ટ `no limits (API)` બતાવે છે.
+દરેક એકાઉન્ટને એક લાઇન મળે છે જેમાં તેનો નંબર, તેનું નામ અને તેના આંકડા કેટલા જૂના છે તે હોય છે; `(cached)` નો અર્થ છે કે તે endpoint માંથી નહીં, સેવ કરેલી ફાઇલમાંથી આવે છે. તેની નીચે, દરેક મર્યાદા માટે એક લાઇન 20 ખાનાંનો બાર, ટકાવારી અને વિન્ડો રીસેટ થવામાં બાકી સમય બતાવે છે: `5-hour`, `Weekly` (બધાં મૉડલ), પછી દરેક મૉડલની પોતાની સાપ્તાહિક વિન્ડો, જેમ કે `Fable`. જે વિન્ડો એકાઉન્ટ પાસે ન હોય તે `-` બતાવે છે. ટકાવારી 80% થી પીળી અને 100% પર લાલ થાય છે. ટર્મિનલ પર દરેક એકાઉન્ટ તરત `fetching…` તરીકે દેખાય છે, અને તે જવાબ આપે તેમ તેની લાઇનો દોરાય છે. છેલ્લી લાઇન એ એકાઉન્ટનું નામ આપે છે જે [`ccam next --auto`](/features/next) એ જ નિયમો પ્રમાણે પસંદ કરે (`auto_max_usage`, `auto_strategy`, ચાલી રહેલાં સેશન, `cross_org` સેટ ન હોય તો ફક્ત છેલ્લે વપરાયેલા એકાઉન્ટની સંસ્થાનાં એકાઉન્ટ, 100% પરની દરેક વિન્ડો છોડી દેવાય છે, તેથી જેનું અઠવાડિયું ભરાઈ ગયું હોય તે એકાઉન્ટનું નામ ક્યારેય આવતું નથી), અને તમારી પાસે એક કરતાં વધુ એકાઉન્ટ હોય ત્યારે જ દેખાય છે. લૉગિન ન થયેલું એકાઉન્ટ `not logged in → ccam login <name>` બતાવે છે, અને API key વાળું એકાઉન્ટ `no limits (API)` બતાવે છે.
 
 `ccam statusline install` પછી, Claude Code `[work] · Opus · 5h 24% · 7d 41%` જેવી લાઇન બતાવે છે.
 
@@ -43,7 +48,7 @@ $ ccam usage
 | --- | --- | --- |
 | `--json` | રિપોર્ટ JSON તરીકે છાપે છે: `name`, `slot`, `status`, `limits`, `source`, `at`, `error` | off |
 | `--watch[=N]` | તમે Ctrl+C દબાવો ત્યાં સુધી દર `N` સેકન્ડે ફરીથી દોરે છે. એકલું `--watch`, અથવા 0 કે તેથી ઓછું મૂલ્ય, એટલે 60 | off |
-| `-v`, `--verbose` | મૉડલ પ્રમાણેની સાપ્તાહિક મર્યાદા અને `source:` લાઇન (`live`, `cache` કે `statusline`) બતાવે છે | off |
+| `-v`, `--verbose` | દરેક એકાઉન્ટ નીચે `source:` લાઇન ઉમેરે છે: તેના આંકડા ક્યાંથી આવ્યા (usage endpoint, Claude Code, સ્ટેટસ લાઇન કે સેવ કરેલી ફાઇલ) | off |
 | `--no-cache` | 60 સેકન્ડનો કૅશ અવગણીને endpoint ને ફરીથી પૂછે છે | off |
 | `--source live\|claude\|cache` | `live` એકાઉન્ટના token વડે endpoint ને પૂછે છે; `claude` Claude Code પાસે તે જોવડાવે છે (નીચે જુઓ); `cache` ફક્ત સેવ કરેલા આંકડા બતાવે છે | `usage_source`, નહીં તો `live` |
 | `--refresh` | મુદત પૂરી થયેલા access token રિન્યૂ કરે છે, ફક્ત ચાલતાં ન હોય તેવાં એકાઉન્ટ માટે | off |
@@ -69,7 +74,7 @@ $ ccam usage
 
 <!-- motion:usage-fetch -->
 
-`personal` અને `work` સમયસર જવાબ આપે છે અને live આંકડા બતાવે છે. `side` ને 3 s કરતાં વધુ લાગે છે, તેથી `fallback()` તેની બે કૅશ ફાઇલો વાંચે છે અને જે છેલ્લે લખાઈ હોય તે વાપરે છે. `usage.Table()` હરોળો દોરે છે અને `usage.Best()` છેલ્લી લાઇનમાં જેનું નામ આવે છે તે એકાઉન્ટ પસંદ કરે છે.
+`personal` અને `work` સમયસર જવાબ આપે છે અને live આંકડા બતાવે છે. `side` ને 3 s કરતાં વધુ લાગે છે, તેથી `fallback()` તેની બે કૅશ ફાઇલો વાંચે છે અને જે છેલ્લે લખાઈ હોય તે વાપરે છે. `usage.Table()` દરેક એકાઉન્ટ માટે એક બ્લૉક દોરે છે અને `usage.Best()` છેલ્લી લાઇનમાં જેનું નામ આવે છે તે એકાઉન્ટ પસંદ કરે છે.
 
 એક એકાઉન્ટ માટે, `Fetcher.Fetch` આ તપાસો ક્રમમાં કરે છે:
 
@@ -117,7 +122,7 @@ wrap કરેલા કમાન્ડને 2 સેકન્ડ મળે છ
 - તમે `--refresh` ન આપો ત્યાં સુધી `ccam usage` ક્યારેય ટોકન ફાઇલ બદલતું નથી. જ્યારે લૉગિનની મુદત પૂરી થઈ જાય, ત્યારે એકાઉન્ટને `ccam <name>` વડે એક વાર ચલાવો, અને Claude Code તેને રિન્યૂ કરે છે.
 - `--refresh` ક્યારેય ચાલતાં એકાઉન્ટ, ઇમ્પોર્ટ કરેલાં એકાઉન્ટ કે Keychain લૉગિનને અડતું નથી. ઇનકાર થયેલું refresh સેવ કરેલા આંકડા અને કારણ બતાવે છે.
 - usage endpoint જાહેર રીતે દસ્તાવેજીકૃત નથી અને બદલાઈ શકે છે. જ્યારે તે બદલાય, ત્યારે પણ તમે સેવ કરેલા આંકડા જુઓ છો, અને `ccam doctor` ફૉર્મેટના ફેરફાર વિશે જણાવે છે.
-- સેવ કરેલા આંકડા અને જવાબ બંને ન હોય ત્યારે, હરોળ `lookup failed:` અને કારણ બતાવે છે, ઉદાહરણ તરીકે `--source cache` સાથે `no saved usage`.
+- સેવ કરેલા આંકડા અને જવાબ બંને ન હોય ત્યારે, એકાઉન્ટ લાઇન `lookup failed:` અને કારણ બતાવે છે, ઉદાહરણ તરીકે `--source cache` સાથે `no saved usage`.
 - કૅશ ફાઇલોમાં ફક્ત ટકાવારી અને રીસેટ સમય હોય છે, ક્યારેય ટોકન નહીં.
 
 ## સંબંધિત

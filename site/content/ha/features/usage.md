@@ -1,13 +1,13 @@
 ---
 title: Iyakokin amfani
-description: ccam usage yana nuna iyakokin awa 5 da na mako na kowane asusu a lokaci ɗaya, kuma ccam statusline yana saka sunan asusun da amfaninsa a Claude Code.
-updated: 2026-10-20
+description: ccam usage yana nuna iyakokin awa 5, na mako da na kowane model (Fable) na kowane asusu a lokaci ɗaya a matsayin sanduna, kuma ccam statusline yana saka sunan asusun da amfaninsa a Claude Code.
+updated: 2026-10-21
 order: 7
 translation: machine
-sourceHash: "ec1d1ee27d9f"
+sourceHash: "0e9587b79ce8"
 ---
 
-`ccam usage` yana nuna nawa kowane asusu ya yi amfani da shi daga iyakar awa 5 da ta mako, tare da lokacin da ya rage kafin kowace taga ta sake saitawa. Yi amfani da shi kafin ka fara dogon aiki, ko idan Claude Code ya gaya maka iyaka ta kusa, don ganin asusun da ke da sauran sarari. `ccam statusline` shi ne umarnin layin matsayi (status line) na Claude Code: yana nuna sunan asusun da amfaninsa a cikin Claude Code kuma yana ajiye lambobin don `ccam usage`.
+`ccam usage` yana nuna nawa kowane asusu ya yi amfani da shi daga iyakar awa 5, iyakar mako da iyakar mako ta kowane model (kamar Fable), a matsayin sanda ɗaya ga kowace iyaka tare da lokacin da ya rage kafin ta sake saitawa. Yi amfani da shi kafin ka fara dogon aiki, ko idan Claude Code ya gaya maka iyaka ta kusa, don ganin asusun da ke da sauran sarari. `ccam statusline` shi ne umarnin layin matsayi (status line) na Claude Code: yana nuna sunan asusun da amfaninsa a cikin Claude Code kuma yana ajiye lambobin don `ccam usage`.
 
 ## Amfani
 
@@ -16,7 +16,7 @@ ccam usage                  # every account, once
 ccam u                      # the same, shorter
 ccam usage --watch          # redraw every 60 seconds until Ctrl+C
 ccam usage --watch=10       # redraw every 10 seconds
-ccam usage -v               # add per-model weekly limits and the data source
+ccam usage -v               # add where the numbers came from
 ccam usage --json           # machine-readable, one object per account
 ccam usage --source cache   # saved numbers only, no network
 ccam usage --refresh        # also renew expired logins of accounts not running
@@ -26,14 +26,19 @@ ccam statusline install     # set the status line in every account's settings.js
 
 ```console
 $ ccam usage
- Account     5-hour        Resets    Weekly        Resets    As of
- 1 personal  ░░░░░░░░   0% -         ██████░░  70% 2d 16h    9h 36m ago (cached)
- 2 work      ██░░░░░░  24% 2h 29m    ███░░░░░  41% 3d 11h    just now (cached)
+ 1 personal  9h 36m ago (cached)
+   5-hour   ░░░░░░░░░░░░░░░░░░░░   0%
+   Weekly   ██████████████░░░░░░  70%  resets in 2d 16h
+   Fable    ██░░░░░░░░░░░░░░░░░░  12%  resets in 2d 16h
+ 2 work      just now (cached)
+   5-hour   █████░░░░░░░░░░░░░░░  24%  resets in 2h 29m
+   Weekly   ████████░░░░░░░░░░░░  41%  resets in 3d 11h
+   Fable    ███████████░░░░░░░░░  55%  resets in 5d 2h
  3 side      login expired, run `ccam side` once to refresh
 → Most headroom: personal   (open it with ccam next --auto)
 ```
 
-A terminal teburin yana bayyana nan take da `fetching…` a kowane layi, kuma ana sake zana kowane layi yayin da asusunsa ya amsa. `As of` yana faɗin tsawon lokacin da lambobin suka yi; `(cached)` yana nufin sun fito daga fayil da aka ajiye, ba daga endpoint ba. Layin ƙarshe yana ambaton asusun da [`ccam next --auto`](/features/next) zai zaɓa bisa ƙa'idodi iri ɗaya (`auto_max_usage`, `auto_strategy`, zaman da ke gudana, asusan ƙungiyar asusun da aka yi amfani da shi na ƙarshe kawai sai dai idan an saita `cross_org`, ana tsallake duk tagar da ta kai 100%, don haka asusun da makonsa ya cika ba a taɓa ambaton sa ba), kuma yana bayyana ne kawai idan kana da asusu fiye da ɗaya. Asusun da ba a shiga da shi ba yana nuna `not logged in → ccam login <name>`, kuma asusun API key yana nuna `no limits (API)`.
+Kowane asusu yana samun layi mai lambarsa, sunansa da tsawon lokacin da lambobinsa suka yi; `(cached)` yana nufin sun fito daga fayil da aka ajiye, ba daga endpoint ba. A ƙarƙashinsa, layi ɗaya ga kowace iyaka yana nuna sanda mai ƙofofi 20, kashi da lokacin da ya rage kafin taga ta sake saitawa: `5-hour`, `Weekly` (dukkan model), sannan taga ta mako ta kowane model, kamar `Fable`. Tagar da asusun ba shi da ita tana nuna `-`. Kashi yana zama rawaya daga 80% kuma ja a 100%. A terminal kowane asusu yana bayyana nan take a matsayin `fetching…`, kuma ana zana layukansa yayin da ya amsa. Layin ƙarshe yana ambaton asusun da [`ccam next --auto`](/features/next) zai zaɓa bisa ƙa'idodi iri ɗaya (`auto_max_usage`, `auto_strategy`, zaman da ke gudana, asusan ƙungiyar asusun da aka yi amfani da shi na ƙarshe kawai sai dai idan an saita `cross_org`, ana tsallake duk tagar da ta kai 100%, don haka asusun da makonsa ya cika ba a taɓa ambaton sa ba), kuma yana bayyana ne kawai idan kana da asusu fiye da ɗaya. Asusun da ba a shiga da shi ba yana nuna `not logged in → ccam login <name>`, kuma asusun API key yana nuna `no limits (API)`.
 
 Bayan `ccam statusline install`, Claude Code yana nuna layi kamar `[work] · Opus · 5h 24% · 7d 41%`.
 
@@ -43,7 +48,7 @@ Bayan `ccam statusline install`, Claude Code yana nuna layi kamar `[work] · Opu
 | --- | --- | --- |
 | `--json` | Buga rahotannin a matsayin JSON: `name`, `slot`, `status`, `limits`, `source`, `at`, `error` | a kashe |
 | `--watch[=N]` | Sake zanawa kowane daƙiƙa `N` har sai ka danna Ctrl+C. `--watch` shi kaɗai, ko ƙima ta 0 ko ƙasa da haka, yana nufin 60 | a kashe |
-| `-v`, `--verbose` | Nuna iyakokin mako na kowane model da layin `source:` (`live`, `cache` ko `statusline`) | a kashe |
+| `-v`, `--verbose` | Ƙara layin `source:` ƙarƙashin kowane asusu: inda lambobinsa suka fito (endpoint na amfani, Claude Code, layin matsayi ko fayil da aka ajiye) | a kashe |
 | `--no-cache` | Yi watsi da cache na daƙiƙa 60 kuma sake tambayar endpoint | a kashe |
 | `--source live\|claude\|cache` | `live` yana tambayar endpoint da token na asusun; `claude` yana sa Claude Code ya nemo shi (a ƙasa); `cache` yana nuna lambobin da aka ajiye kawai | `usage_source`, in ba haka ba `live` |
 | `--refresh` | Sabunta access tokens da suka ƙare, ga asusan da ba sa aiki kawai | a kashe |
@@ -69,7 +74,7 @@ Kowane asusu yana gudana a goroutine nasa a kan endpoint ɗin; wanda lokacinsa y
 
 <!-- motion:usage-fetch -->
 
-`personal` da `work` suna amsawa a kan lokaci kuma suna nuna lambobi kai tsaye. `side` yana ɗaukar fiye da 3 s, don haka `fallback()` yana karanta fayilolin cache nasa biyu kuma yana amfani da wanda aka rubuta na ƙarshe. `usage.Table()` yana zana layukan kuma `usage.Best()` yana zaɓar asusun da aka ambata a layin ƙarshe.
+`personal` da `work` suna amsawa a kan lokaci kuma suna nuna lambobi kai tsaye. `side` yana ɗaukar fiye da 3 s, don haka `fallback()` yana karanta fayilolin cache nasa biyu kuma yana amfani da wanda aka rubuta na ƙarshe. `usage.Table()` yana zana toshe ɗaya ga kowane asusu kuma `usage.Best()` yana zaɓar asusun da aka ambata a layin ƙarshe.
 
 Ga asusu ɗaya, `Fetcher.Fetch` yana yin waɗannan dubawa a tsari:
 
@@ -117,7 +122,7 @@ Umarnin da aka naɗe yana samun daƙiƙa 2. Bayan haka ana kashe shi kuma layin 
 - `ccam usage` ba ya taɓa canza fayil ɗin token sai dai idan ka ba da `--refresh`. Idan shiga ta ƙare, fara asusun sau ɗaya da `ccam <name>` kuma Claude Code zai sabunta ta.
 - `--refresh` ba ya taɓa asusan da ke aiki, asusan da aka shigo da su ko shigar Keychain. Sabuntawar da aka ƙi tana nuna lambobin da aka ajiye da dalilin.
 - Ba a rubuta bayanin endpoint na amfani a bainar jama'a ba, kuma yana iya canzawa. Idan ya canza, har yanzu kana ganin lambobin da aka ajiye, kuma `ccam doctor` yana bayar da rahoton canjin tsarin.
-- Idan babu lambobin da aka ajiye kuma babu amsa, layin yana nuna `lookup failed:` da dalilin, misali `no saved usage` da `--source cache`.
+- Idan babu lambobin da aka ajiye kuma babu amsa, layin asusun yana nuna `lookup failed:` da dalilin, misali `no saved usage` da `--source cache`.
 - Fayilolin cache suna riƙe kashi da lokutan sake saiti kawai, ba taɓa token ba.
 
 ## Masu alaƙa

@@ -1,24 +1,32 @@
 ---
 title: Nutzungslimits und Kontowechsel
-description: Die 5-Stunden- und Wochennutzung aller Claude Code-Konten mit ccam usage sehen und mit ccam next --auto das Konto mit dem meisten Spielraum öffnen.
-updated: 2026-10-20
+description: Die 5-Stunden-, Wochen- und Fable-Nutzung aller Claude Code-Konten mit ccam usage als Balken sehen und mit ccam next --auto das Konto mit dem meisten Spielraum öffnen.
+updated: 2026-10-21
 order: 5
 translation: machine
-sourceHash: 40aef0708c81
+sourceHash: 0e64e3251c69
 ---
 
-`ccam usage` zeigt, wie viel jedes Konto von seinem 5-Stunden- und seinem Wochenlimit verbraucht hat. `ccam next --auto` öffnet das Konto mit dem meisten Spielraum, und `--continue` nimmt das aktuelle Gespräch mit.
+`ccam usage` zeigt, wie viel jedes Konto von seinem 5-Stunden-Limit, seinem Wochenlimit und dem eigenen Wochenlimit jedes Modells (etwa Fable) verbraucht hat. `ccam next --auto` öffnet das Konto mit dem meisten Spielraum, und `--continue` nimmt das aktuelle Gespräch mit.
 
 ```console
 $ ccam usage
- Account     5-hour        Resets    Weekly        Resets    As of
- 1 personal  ██████░░  72% 1h 40m    ███░░░░░  41% 3d 6h     just now
- 2 work      █░░░░░░░   8% 4h 12m    ██░░░░░░  19% 5d 2h     just now
- 3 side      ████████ 100% 22m       █████░░░  68% 1d 9h     12m ago (cached)
+ 1 personal  just now
+   5-hour   ██████████████░░░░░░  72%  resets in 1h 40m
+   Weekly   ████████░░░░░░░░░░░░  41%  resets in 3d 6h
+   Fable    ██████████████████░░  88%  resets in 1d 6h
+ 2 work      just now
+   5-hour   ██░░░░░░░░░░░░░░░░░░   8%  resets in 4h 12m
+   Weekly   ████░░░░░░░░░░░░░░░░  19%  resets in 5d 2h
+   Fable    █░░░░░░░░░░░░░░░░░░░   3%  resets in 5d 2h
+ 3 side      12m ago (cached)
+   5-hour   ████████████████████ 100%  resets in 22m
+   Weekly   ██████████████░░░░░░  68%  resets in 1d 9h
+   Fable    ████████░░░░░░░░░░░░  40%  resets in 1d 9h
 → Most headroom: work   (open it with ccam next --auto)
 ```
 
-Die Spalten sind: Konto, 5-Stunden-Nutzung, Zeit bis zum Zurücksetzen, Wochennutzung, Zeit bis zum Zurücksetzen und wie alt die Zahlen sind.
+Jedes Konto bekommt eine Zeile, die zeigt, wie alt seine Zahlen sind, darunter einen Balken pro Limit mit der Zeit bis zum Zurücksetzen: das 5-Stunden-Fenster, das Wochenfenster für alle Modelle und das eigene Wochenfenster jedes Modells, etwa Fable. Ab 80 % wird ein Balken gelb, bei 100 % rot. Die letzte Zeile nennt das Konto, das `ccam next --auto` öffnen würde.
 
 ## Woher die Zahlen kommen
 
@@ -32,7 +40,7 @@ Zahlen, die vor weniger als 60 Sekunden abgerufen wurden, werden wiederverwendet
 | --- | --- |
 | `--watch [seconds]` | Laufend aktualisieren, standardmäßig alle 60 Sekunden |
 | `--json` | Maschinenlesbare Ausgabe |
-| `-v` | Zusätzlich modellspezifische Wochenlimits zeigen und woher jede Zahl stammt |
+| `-v` | Zusätzlich zeigen, woher die Zahlen jedes Kontos stammen |
 | `--no-cache` | Immer neu abfragen |
 | `--source cache` | Nie abfragen; nur gespeicherte Zahlen zeigen |
 

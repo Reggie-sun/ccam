@@ -1,39 +1,41 @@
 ---
 title: डॅशबोर्ड
 description: टर्मिनलवर ccam खाती, गट, फोल्डर नियम, extensions आणि तपासण्यांचा पूर्ण स्क्रीन डॅशबोर्ड उघडते; प्रत्येक बदल आधी आपली योजना दाखवतो.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 15
 translation: machine
-sourceHash: "decdd5fa54c9"
+sourceHash: "27bd153b48b2"
 ---
 
 standard input आणि output टर्मिनल असताना आर्ग्युमेंट्सशिवाय `ccam` पूर्ण स्क्रीन डॅशबोर्ड उघडते; इतर वेळी ते `ccam list` छापते. डॅशबोर्ड प्रत्येक खाते त्याच्या वापर आणि गटांसह दाखवतो, आणि कमांड्स जे करतात ते करतो: सुरू करणे, जोडणे, लॉग इन करणे, गट बदलणे, फोल्डर नियम सेट करणे, तपासणे आणि दुरुस्त करणे. खाते सुरू केल्यावर तो बंद होतो; खाते जोडताना किंवा लॉग इन करताना तो टर्मिनल सोडून देतो आणि नंतर परत येतो.
 
 ```console
- ccam v0.9.0 · 3 accounts · 2 groups         ✔ default · ▸ this folder · • running
+ ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
   Accounts   Groups   Folders   Extensions   Health
+ Your Claude accounts and their usage limits; enter launches the selected one.
 
-    # Account     Email             5-hour         7-day Last  Groups
- ❯ 1. personal ✔   me@example.com    █████▊░░  72%   41% 2h    default
-   2. work      ▸• dev@company.com   ██░░░░░░  25%  100% now   default team
-   3. side         -                 ✘ not logged in         -     no group
+    # Account      5-hour       Weekly       Fable        Last  Groups
+   1. personal ✔   ████▍░  72%  ██▌░░░  41%  █████▎  88%  -     default
+ ❯ 2. work      ▸• █▌░░░░  25%  ██████ 100%  ▋░░░░░  10%  -     default team
+   3. side         ✘ not logged in                        -     no group
 
- ✔ personal is the default account
  enter to launch · n for most room · a to add · s for groups · ? for shortcuts
 ```
 
-पहिली frame फक्त `config.toml` वरून, 100 ms पेक्षा खूप कमी वेळात काढली जाते; प्रत्येक खाते उत्तर देईल तसा वापर भरला जातो. टक्केवारी 80% पासून पिवळी आणि 100% वर लाल होते, आणि अयशस्वी शोधानंतर cache मधून आलेली मूल्ये फिकट दाखवली जातात.
+tab नावांखालची ओळ सध्याचा tab कशासाठी आहे ते एका वाक्यात सांगते. जास्त रुंद टर्मिनलवर Accounts tab प्रत्येक खात्याचा ईमेलही दाखवतो.
+
+पहिली frame फक्त `config.toml` वरून, 100 ms पेक्षा खूप कमी वेळात काढली जाते; प्रत्येक खाते उत्तर देईल तसा वापर भरला जातो. प्रत्येक मर्यादेचा स्वतःचा bar असतो: 5 तासांची window, सर्व मॉडेल्ससाठीची साप्ताहिक window, आणि Fable ची स्वतःची साप्ताहिक window; `-` म्हणजे खात्याकडे अशी window नाही. टक्केवारी 80% पासून पिवळी आणि 100% वर लाल होते, आणि अयशस्वी शोधानंतर cache मधून आलेली मूल्ये फिकट दाखवली जातात.
 
 ## Tabs
 
 | Tab | काय दाखवते | की |
 | --- | --- | --- |
-| Accounts | क्रमांक, नाव, ईमेल, 5 तासांचा bar, 7 दिवसांचा वापर, शेवटचा वापर, गट; `✔` डीफॉल्ट, `▸` या फोल्डरचे खाते, `•` चालू | खाली |
+| Accounts | क्रमांक, नाव, ईमेल, 5 तासांचा, साप्ताहिक आणि Fable bars, शेवटचा वापर, गट; `✔` डीफॉल्ट, `▸` या फोल्डरचे खाते, `•` चालू | खाली |
 | Groups | प्रत्येक गट, तो काय शेअर करतो आणि त्याची खाती, आणि कोणत्याही गटात नसलेली खाती | `enter` संपादित करा, `n` नवीन, `e` नाव बदला, `x` काढा |
 | Folders | [`ccam folder`](/features/folder) चे नियम आणि इथे लागू होणारा नियम | `n` इथे एखादे खाते वापरा, `enter` बदला, `x` काढा |
 | Extensions | [`ccam ext`](/features/ext) जे दाखवते ते, प्रत्येक extension एकदाच, ते ज्या गटांमधून येते त्यांच्यासह | `r` पुन्हा लोड करा |
-| Health | [`ccam doctor`](/features/doctor) जे नोंदवते ते | `f` दुरुस्त करा (`doctor --fix`) |
+| Health | [`ccam doctor`](/features/doctor) जे नोंदवते ते, प्रत्येक खात्यासाठी एक box म्हणून (खाली) | `f` निवडलेला box दुरुस्त करा, `F` सर्व दुरुस्त करा (`doctor --fix`), `↑`/`↓` boxes मध्ये फिरा |
 
 `←`/`→` किंवा `Tab` tabs बदलतात, `?` सध्याच्या tab च्या की दाखवतो, `r` छोट्या cache शिवाय वापर पुन्हा शोधतो, आणि `q` किंवा `Esc` बाहेर पडतो.
 
@@ -46,7 +48,7 @@ standard input आणि output टर्मिनल असताना आर�
 | `↑`/`↓`, `k`/`j` | हलवा |
 | `n` | [`ccam next --auto`](/features/next) जे खाते निवडेल ते सुरू करा |
 | `o` | पर्यायांसह सुरू करा: `--continue`, `--resume`, इतर आर्ग्युमेंट्स, किंवा dry run |
-| `u` | वापराचा तपशील: 5 तासांच्या, 7 दिवसांच्या आणि model windows, त्यांचे resets आणि आकडे कुठून येतात |
+| `u` | वापराचा तपशील: 5 तासांच्या, साप्ताहिक आणि model windows, त्यांचे resets आणि आकडे कुठून येतात |
 | `a` | खाते जोडा (खालील विझार्ड) |
 | `l` | पुन्हा लॉग इन करा |
 | `s` | खात्याचे गट निवडा |
@@ -55,6 +57,33 @@ standard input आणि output टर्मिनल असताना आर�
 | `e` | त्याचे नाव बदला |
 | `c` | त्याची शॉर्टकट कमांड सेट करा किंवा काढा |
 | `x` | ते काढा (आधी विचारते, No वर सुरू होते) |
+
+## Health tab
+
+तुम्ही Health tab उघडता तेव्हा तो [`ccam doctor`](/features/doctor) च्या तपासण्या चालवतो आणि तेच दृश्य काढतो: प्रत्येक खात्यासाठी एक चिन्ह असलेली पहिली ओळ, आणि मग प्रत्येक खात्यासाठी एक box. box मधील प्रत्येक ओळ तपासलेले एक क्षेत्र आहे, आधी `Folder`, `Login` आणि `Share links`, ज्यावर `✔` ठीक, `ℹ` माहिती, `⚠` इशारा किंवा `✘` त्रुटी असे चिन्ह असते, त्यामुळे कोणत्या खात्यात समस्या आहे आणि कुठे ते तुम्हाला लगेच दिसते. कोणत्याही खात्याशी संबंधित नसलेले निष्कर्ष `General` box मध्ये जातात.
+
+```console
+ ✘ personal   ⚠ work
+
+ ╭─ ✘ personal · 3 problems ──────────────────────────────────────────────────╮
+ │ ⚠ Folder       folder permissions are 755 (should be 0700)                 │
+ │ ℹ              unknown entries (Claude Code layout may have changed):      │
+ │                newthing                                                    │
+ │ ⚠ Login        .credentials.json permissions are 644 (should be 0600)      │
+ │ ✔              login valid (me@example.com)                                │
+ │ ✘ Share links  /home/me/.local/share/ccam/profiles/personal/settings.json: │
+ │                set to shared but is a real file, not a link                │
+ ╰────────────────────────────────────────────────────────────────────────────╯
+ ╭─ ⚠ work · 1 problem ───────────────────────────────────────────────────────╮
+ │ ✔ Folder       OK                                                          │
+ │ ⚠ Login        not logged in → `ccam login work`                           │
+ │ ✔ Share links  share links OK                                              │
+ ╰────────────────────────────────────────────────────────────────────────────╯
+
+ 4 problems; f repairs the selected box, F all of them (ccam doctor --fix).
+```
+
+`↑`/`↓` एका box मधून दुसऱ्या box मध्ये नेतात, आणि निवडलेल्या box ची border accent रंगाची असते. `f` फक्त निवडलेला box दुरुस्त करतो, `ccam doctor --fix` ज्या प्रकारे करतो त्याच प्रकारे: एखाद्या खात्याच्या box वर तो फक्त तेच खाते दुरुस्त करतो, आणि `General` box वर कोणत्याही खात्याशी संबंधित नसलेले निष्कर्ष (plugin paths आणि शॉर्टकट्स); बाकी प्रत्येक खाते फक्त पुन्हा तपासले जाते. तो आधी विचारतो, आणि दुरुस्त करण्यासारखे काहीच नसलेला box फक्त `nothing to repair in <name>` असे सांगतो. `F` सर्व काही एकाच वेळी दुरुस्त करतो, `ccam doctor --fix` प्रमाणे, आणि `r` पुन्हा तपासतो.
 
 ## गट बदलणे
 

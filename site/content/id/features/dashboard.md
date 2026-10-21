@@ -1,39 +1,41 @@
 ---
 title: Dasbor
 description: ccam di terminal membuka dasbor layar penuh berisi akun, grup, aturan folder, ekstensi, dan pemeriksaan; setiap perubahan menampilkan rencananya dulu.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 15
 translation: machine
-sourceHash: "decdd5fa54c9"
+sourceHash: "27bd153b48b2"
 ---
 
 `ccam` tanpa argumen membuka dasbor layar penuh jika input dan output standar adalah terminal; jika bukan, ccam mencetak `ccam list`. Dasbor menampilkan setiap akun beserta penggunaan dan grupnya, dan melakukan apa yang dilakukan perintah-perintahnya: menjalankan, menambahkan, login, mengubah grup, menetapkan aturan folder, memeriksa, dan memperbaiki. Menjalankan akun akan menutupnya; menambahkan akun atau login meninggalkannya sebentar untuk terminal lalu kembali lagi.
 
 ```console
- ccam v0.9.0 · 3 accounts · 2 groups         ✔ default · ▸ this folder · • running
+ ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
   Accounts   Groups   Folders   Extensions   Health
+ Your Claude accounts and their usage limits; enter launches the selected one.
 
-    # Account     Email             5-hour         7-day Last  Groups
- ❯ 1. personal ✔   me@example.com    █████▊░░  72%   41% 2h    default
-   2. work      ▸• dev@company.com   ██░░░░░░  25%  100% now   default team
-   3. side         -                 ✘ not logged in         -     no group
+    # Account      5-hour       Weekly       Fable        Last  Groups
+   1. personal ✔   ████▍░  72%  ██▌░░░  41%  █████▎  88%  -     default
+ ❯ 2. work      ▸• █▌░░░░  25%  ██████ 100%  ▋░░░░░  10%  -     default team
+   3. side         ✘ not logged in                        -     no group
 
- ✔ personal is the default account
  enter to launch · n for most room · a to add · s for groups · ? for shortcuts
 ```
 
-Bingkai pertama digambar hanya dari `config.toml`, jauh di bawah 100 ms; penggunaan terisi begitu setiap akun menjawab. Persentase berubah kuning mulai 80% dan merah pada 100%, dan nilai dari cache setelah pencarian yang gagal digambar redup.
+Baris di bawah nama-nama tab menjelaskan dalam satu kalimat kegunaan tab yang sedang dibuka. Di terminal yang lebih lebar, tab Accounts juga menampilkan email setiap akun.
+
+Bingkai pertama digambar hanya dari `config.toml`, jauh di bawah 100 ms; penggunaan terisi begitu setiap akun menjawab. Setiap batas punya bilahnya sendiri: jendela 5 jam, jendela mingguan untuk semua model, dan jendela mingguan khusus Fable; `-` berarti akun tidak memiliki jendela tersebut. Persentase berubah kuning mulai 80% dan merah pada 100%, dan nilai dari cache setelah pencarian yang gagal digambar redup.
 
 ## Tab
 
 | Tab | Yang ditampilkan | Tombol |
 | --- | --- | --- |
-| Accounts | nomor, nama, email, bilah 5 jam, penggunaan 7 hari, pemakaian terakhir, grup; `✔` akun default, `▸` akun folder ini, `•` sedang berjalan | lihat di bawah |
+| Accounts | nomor, nama, email, bilah 5 jam, mingguan, dan Fable, pemakaian terakhir, grup; `✔` akun default, `▸` akun folder ini, `•` sedang berjalan | lihat di bawah |
 | Groups | setiap grup, apa yang dibagikannya dan akun-akunnya, serta akun yang tidak ada di grup mana pun | `enter` sunting, `n` baru, `e` ganti nama, `x` hapus |
 | Folders | aturan [`ccam folder`](/features/folder) dan aturan yang berlaku di sini | `n` pakai sebuah akun di sini, `enter` ubah, `x` hapus |
 | Extensions | apa yang ditampilkan [`ccam ext`](/features/ext), setiap ekstensi satu kali beserta grup asalnya | `r` muat ulang |
-| Health | apa yang dilaporkan [`ccam doctor`](/features/doctor) | `f` perbaiki (`doctor --fix`) |
+| Health | apa yang dilaporkan [`ccam doctor`](/features/doctor), sebagai satu kotak per akun (lihat di bawah) | `f` perbaiki kotak yang dipilih, `F` perbaiki semua (`doctor --fix`), `↑`/`↓` berpindah antarkotak |
 
 `←`/`→` atau `Tab` berpindah tab, `?` menampilkan tombol-tombol tab yang sedang dibuka, `r` mencari penggunaan lagi tanpa cache singkat, dan `q` atau `Esc` keluar.
 
@@ -46,7 +48,7 @@ Bingkai pertama digambar hanya dari `config.toml`, jauh di bawah 100 ms; penggun
 | `↑`/`↓`, `k`/`j` | Berpindah |
 | `n` | Menjalankan akun yang akan dipilih [`ccam next --auto`](/features/next) |
 | `o` | Menjalankan dengan opsi: `--continue`, `--resume`, argumen lain, atau uji coba (dry run) |
-| `u` | Rincian penggunaan: jendela 5 jam, 7 hari, dan per model beserta waktu reset-nya dan asal angka-angkanya |
+| `u` | Rincian penggunaan: jendela 5 jam, mingguan, dan per model beserta waktu reset-nya dan asal angka-angkanya |
 | `a` | Menambahkan akun (wizard di bawah) |
 | `l` | Login ulang |
 | `s` | Memilih grup akun tersebut |
@@ -55,6 +57,33 @@ Bingkai pertama digambar hanya dari `config.toml`, jauh di bawah 100 ms; penggun
 | `e` | Mengganti namanya |
 | `c` | Menetapkan atau menghapus perintah pintasannya |
 | `x` | Menghapusnya (bertanya dulu, dimulai dari No) |
+
+## Tab Health
+
+Tab Health menjalankan pemeriksaan [`ccam doctor`](/features/doctor) saat Anda membukanya dan menggambar tampilan yang sama: baris pertama dengan tanda untuk setiap akun, lalu satu kotak per akun. Setiap baris dalam kotak adalah satu area yang diperiksa, diawali `Folder`, `Login`, dan `Share links`, dengan tanda `✔` OK, `ℹ` informasi, `⚠` peringatan, atau `✘` galat, sehingga Anda langsung melihat akun mana yang bermasalah dan di mana. Temuan yang bukan milik akun mana pun masuk ke kotak `General`.
+
+```console
+ ✘ personal   ⚠ work
+
+ ╭─ ✘ personal · 3 problems ──────────────────────────────────────────────────╮
+ │ ⚠ Folder       folder permissions are 755 (should be 0700)                 │
+ │ ℹ              unknown entries (Claude Code layout may have changed):      │
+ │                newthing                                                    │
+ │ ⚠ Login        .credentials.json permissions are 644 (should be 0600)      │
+ │ ✔              login valid (me@example.com)                                │
+ │ ✘ Share links  /home/me/.local/share/ccam/profiles/personal/settings.json: │
+ │                set to shared but is a real file, not a link                │
+ ╰────────────────────────────────────────────────────────────────────────────╯
+ ╭─ ⚠ work · 1 problem ───────────────────────────────────────────────────────╮
+ │ ✔ Folder       OK                                                          │
+ │ ⚠ Login        not logged in → `ccam login work`                           │
+ │ ✔ Share links  share links OK                                              │
+ ╰────────────────────────────────────────────────────────────────────────────╯
+
+ 4 problems; f repairs the selected box, F all of them (ccam doctor --fix).
+```
+
+`↑`/`↓` berpindah dari kotak ke kotak, dan kotak yang dipilih memiliki bingkai berwarna aksen. `f` hanya memperbaiki kotak yang dipilih, dengan cara yang sama seperti `ccam doctor --fix`: pada kotak sebuah akun, ia hanya memperbaiki akun itu, dan pada kotak `General`, temuan yang bukan milik akun mana pun (path plugin dan pintasan); akun lainnya hanya diperiksa lagi. Ia bertanya dulu, dan kotak yang tidak punya apa pun untuk diperbaiki hanya menampilkan `nothing to repair in <name>`. `F` memperbaiki semuanya sekaligus, seperti `ccam doctor --fix`, dan `r` memeriksa lagi.
 
 ## Mengubah grup
 

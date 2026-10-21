@@ -1,7 +1,7 @@
 ---
 title: The dashboard
 description: ccam on a terminal opens a full-screen dashboard of accounts, groups, folder rules, extensions and checks; every change shows its plan first.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 15
 translation: source
 ---
@@ -9,30 +9,32 @@ translation: source
 `ccam` without arguments opens a full-screen dashboard when standard input and output are a terminal; otherwise it prints `ccam list`. The dashboard shows every account with its usage and groups, and does what the commands do: launch, add, log in, change groups, set folder rules, check and repair. Launching closes it; adding an account or logging in leaves it for the terminal and comes back.
 
 ```console
- ccam v0.9.0 · 3 accounts · 2 groups         ✔ default · ▸ this folder · • running
+ ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
   Accounts   Groups   Folders   Extensions   Health
+ Your Claude accounts and their usage limits; enter launches the selected one.
 
-    # Account     Email             5-hour         7-day Last  Groups
- ❯ 1. personal ✔   me@example.com    █████▊░░  72%   41% 2h    default
-   2. work      ▸• dev@company.com   ██░░░░░░  25%  100% now   default team
-   3. side         -                 ✘ not logged in         -     no group
+    # Account      5-hour       Weekly       Fable        Last  Groups
+   1. personal ✔   ████▍░  72%  ██▌░░░  41%  █████▎  88%  -     default
+ ❯ 2. work      ▸• █▌░░░░  25%  ██████ 100%  ▋░░░░░  10%  -     default team
+   3. side         ✘ not logged in                        -     no group
 
- ✔ personal is the default account
  enter to launch · n for most room · a to add · s for groups · ? for shortcuts
 ```
 
-The first frame draws from `config.toml` alone, in well under 100 ms; usage fills in as each account answers. A percentage turns yellow from 80% and red at 100%, and values from a cache after a failed lookup are drawn faint.
+The line under the tab names says in one sentence what the current tab is for. On a wider terminal the Accounts tab also shows each account's email.
+
+The first frame draws from `config.toml` alone, in well under 100 ms; usage fills in as each account answers. Each limit has its own bar: the 5-hour window, the weekly window for all models, and Fable's own weekly window; `-` means the account has no such window. A percentage turns yellow from 80% and red at 100%, and values from a cache after a failed lookup are drawn faint.
 
 ## Tabs
 
 | Tab | What it shows | Keys |
 | --- | --- | --- |
-| Accounts | number, name, email, 5-hour bar, 7-day usage, last use, groups; `✔` the default, `▸` this folder's account, `•` running | below |
+| Accounts | number, name, email, 5-hour, weekly and Fable bars, last use, groups; `✔` the default, `▸` this folder's account, `•` running | below |
 | Groups | each group, what it shares and its accounts, and the accounts in no group | `enter` edit, `n` new, `e` rename, `x` remove |
 | Folders | the [`ccam folder`](/features/folder) rules and the one that applies here | `n` use an account here, `enter` change, `x` remove |
 | Extensions | what [`ccam ext`](/features/ext) shows, each extension once with the groups it comes from | `r` reload |
-| Health | what [`ccam doctor`](/features/doctor) reports | `f` repair (`doctor --fix`) |
+| Health | what [`ccam doctor`](/features/doctor) reports, as a box per account (below) | `f` repair the selected box, `F` repair all (`doctor --fix`), `↑`/`↓` move between boxes |
 
 `←`/`→` or `Tab` switch tabs, `?` lists the keys of the current tab, `r` looks usage up again without the short cache, and `q` or `Esc` quits.
 
@@ -45,7 +47,7 @@ The first frame draws from `config.toml` alone, in well under 100 ms; usage fill
 | `↑`/`↓`, `k`/`j` | Move |
 | `n` | Start the account [`ccam next --auto`](/features/next) would choose |
 | `o` | Start with options: `--continue`, `--resume`, other arguments, or a dry run |
-| `u` | Usage details: 5-hour, 7-day and model windows with their resets and where the numbers come from |
+| `u` | Usage details: 5-hour, weekly and model windows with their resets and where the numbers come from |
 | `a` | Add an account (the wizard below) |
 | `l` | Log in again |
 | `s` | Choose the account's groups |
@@ -54,6 +56,33 @@ The first frame draws from `config.toml` alone, in well under 100 ms; usage fill
 | `e` | Rename it |
 | `c` | Set or remove its shortcut command |
 | `x` | Remove it (asks first, starting on No) |
+
+## The Health tab
+
+The Health tab runs the checks of [`ccam doctor`](/features/doctor) when you open it and draws the same view: a first line with a mark per account, then a box per account. Each row in a box is one area that was checked, `Folder`, `Login` and `Share links` first, marked `✔` OK, `ℹ` information, `⚠` a warning or `✘` an error, so you see at once which account has a problem and where. Findings that belong to no account go in a `General` box.
+
+```console
+ ✘ personal   ⚠ work
+
+ ╭─ ✘ personal · 3 problems ──────────────────────────────────────────────────╮
+ │ ⚠ Folder       folder permissions are 755 (should be 0700)                 │
+ │ ℹ              unknown entries (Claude Code layout may have changed):      │
+ │                newthing                                                    │
+ │ ⚠ Login        .credentials.json permissions are 644 (should be 0600)      │
+ │ ✔              login valid (me@example.com)                                │
+ │ ✘ Share links  /home/me/.local/share/ccam/profiles/personal/settings.json: │
+ │                set to shared but is a real file, not a link                │
+ ╰────────────────────────────────────────────────────────────────────────────╯
+ ╭─ ⚠ work · 1 problem ───────────────────────────────────────────────────────╮
+ │ ✔ Folder       OK                                                          │
+ │ ⚠ Login        not logged in → `ccam login work`                           │
+ │ ✔ Share links  share links OK                                              │
+ ╰────────────────────────────────────────────────────────────────────────────╯
+
+ 4 problems; f repairs the selected box, F all of them (ccam doctor --fix).
+```
+
+`↑`/`↓` move from box to box, and the selected box has an accent-colored border. `f` repairs only the selected box, the way `ccam doctor --fix` would: on an account's box it repairs that account alone, and on the `General` box the findings of no account (plugin paths and shortcuts); every other account is only checked again. It asks first, and a box with nothing to repair just says `nothing to repair in <name>`. `F` repairs everything at once, like `ccam doctor --fix`, and `r` checks again.
 
 ## Changing groups
 

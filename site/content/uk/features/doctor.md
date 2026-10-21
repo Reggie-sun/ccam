@@ -1,10 +1,10 @@
 ---
 title: Перевірка та виправлення
 description: Перевірте спільні посилання, права доступу до файлів, входи й версію Claude Code через ccam doctor і виправте безпечні проблеми через ccam doctor --fix.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 9
 translation: machine
-sourceHash: "6ae82bbf5585"
+sourceHash: "9be63350cb69"
 ---
 
 `ccam doctor` перевіряє ваше встановлення ccam: виконуваний файл Claude Code, теку, вхід і спільні посилання кожного облікового запису, спільні сервери MCP, кінцеву точку використання та ваші короткі команди. `ccam doctor --fix` виправляє те, що може виправити без втрати даних, і спершу переміщує кожен файл, який замінює, до теки резервних копій. Запускайте його, коли `ccam <name>` зупиняється через проблему зі спільним посиланням, після того як ви відновили файли вручну, або після оновлення Claude Code.
@@ -17,37 +17,64 @@ ccam doctor --fix            # check, then repair what is safe to repair
 ccam --dry-run doctor --fix  # report only: what --fix would repair
 ```
 
-Кожен результат — це один рядок із позначкою: `✓` гаразд, `·` інформація, `!` попередження, `✗` помилка. Результати для облікових записів починаються з назви облікового запису.
+Перший рядок позначає всі облікові записи одразу, тож ви бачите, де проблеми, ще до того, як читатимете щось інше. Під ним кожен обліковий запис отримує рамку, а результати, що не належать жодному обліковому запису (Claude Code, змінні середовища, плагіни, сервери MCP, короткі команди, правила тек, групи й налаштування), потрапляють до рамки `General`. Заголовок рамки показує найгіршу позначку облікового запису та кількість його проблем. Кожен рядок усередині — це одна перевірена ділянка, завжди `Folder`, `Login` і `Share links` у такому порядку, потім решта, з позначкою: `✔` гаразд, `ℹ` інформація, `⚠` попередження, `✘` помилка. Тека без проблем показує `✔ Folder  OK`.
 
 ```console
 $ ccam doctor
-✓ Claude Code 2.1.302 (Claude Code) (/home/me/.local/bin/claude)
-! personal: folder permissions are 755 (should be 0700)
-! personal: .credentials.json permissions are 644 (should be 0600)
-✓ personal: login valid (me@example.com)
-✗ personal: /home/me/.local/share/ccam/profiles/personal/settings.json: set to shared but is a real file, not a link
-· personal: unknown entries (Claude Code layout may have changed): newthing
-! work: not logged in → `ccam login work`
-✓ work: share links OK
-! missing shortcuts in /home/me/.local/bin: ccp
+ ⚠ General   ✘ personal   ⚠ work
+
+ ╭─ ⚠ General · 1 problem ────────────────────────────────────────────────────╮
+ │ ✔ Claude Code  Claude Code 2.1.302 (Claude Code)                           │
+ │                (/home/me/.local/bin/claude)                                │
+ │ ⚠ Shortcuts    missing shortcuts in /home/me/.local/bin: ccp               │
+ ╰────────────────────────────────────────────────────────────────────────────╯
+ ╭─ ✘ personal · 3 problems ──────────────────────────────────────────────────╮
+ │ ⚠ Folder       folder permissions are 755 (should be 0700)                 │
+ │ ℹ              unknown entries (Claude Code layout may have changed):      │
+ │                newthing                                                    │
+ │ ⚠ Login        .credentials.json permissions are 644 (should be 0600)      │
+ │ ✔              login valid (me@example.com)                                │
+ │ ✘ Share links  /home/me/.local/share/ccam/profiles/personal/settings.json: │
+ │                set to shared but is a real file, not a link                │
+ ╰────────────────────────────────────────────────────────────────────────────╯
+ ╭─ ⚠ work · 1 problem ───────────────────────────────────────────────────────╮
+ │ ✔ Folder       OK                                                          │
+ │ ⚠ Login        not logged in → `ccam login work`                           │
+ │ ✔ Share links  share links OK                                              │
+ ╰────────────────────────────────────────────────────────────────────────────╯
 
 `ccam doctor --fix` repairs what it can.
 ```
 
-З `--fix` кожен виправлений результат закінчується на `→ fixed`:
+З `--fix` кожен виправлений результат закінчується на `→ fixed` і більше не вважається проблемою:
 
 ```console
 $ ccam doctor --fix
-✓ Claude Code 2.1.302 (Claude Code) (/home/me/.local/bin/claude)
-! personal: folder permissions are 755 (should be 0700) → fixed
-! personal: .credentials.json permissions are 644 (should be 0600) → fixed
-✓ personal: login valid (me@example.com)
-✗ personal: /home/me/.local/share/ccam/profiles/personal/settings.json: set to shared but is a real file, not a link → fixed
-· personal: unknown entries (Claude Code layout may have changed): newthing
-! work: not logged in → `ccam login work`
-✓ work: share links OK
-! missing shortcuts in /home/me/.local/bin: ccp → fixed
+ ✔ General   ✔ personal   ⚠ work
+
+ ╭─ ✔ General ────────────────────────────────────────────────────────────────╮
+ │ ✔ Claude Code  Claude Code 2.1.302 (Claude Code)                           │
+ │                (/home/me/.local/bin/claude)                                │
+ │ ⚠ Shortcuts    missing shortcuts in /home/me/.local/bin: ccp → fixed       │
+ ╰────────────────────────────────────────────────────────────────────────────╯
+ ╭─ ✔ personal ───────────────────────────────────────────────────────────────╮
+ │ ⚠ Folder       folder permissions are 755 (should be 0700) → fixed         │
+ │ ℹ              unknown entries (Claude Code layout may have changed):      │
+ │                newthing                                                    │
+ │ ⚠ Login        .credentials.json permissions are 644 (should be 0600) →    │
+ │                fixed                                                       │
+ │ ✔              login valid (me@example.com)                                │
+ │ ✘ Share links  /home/me/.local/share/ccam/profiles/personal/settings.json: │
+ │                set to shared but is a real file, not a link → fixed        │
+ ╰────────────────────────────────────────────────────────────────────────────╯
+ ╭─ ⚠ work · 1 problem ───────────────────────────────────────────────────────╮
+ │ ✔ Folder       OK                                                          │
+ │ ⚠ Login        not logged in → `ccam login work`                           │
+ │ ✔ Share links  share links OK                                              │
+ ╰────────────────────────────────────────────────────────────────────────────╯
 ```
+
+У терміналі рамки підлаштовуються під його ширину, а довгі повідомлення переносяться, у власних кольорах термінала (`NO_COLOR` вимикає їх). Коли вивід іде в конвеєр або файл, у ньому немає кольорів і жодне повідомлення не переноситься й не обрізається, тож `ccam doctor | grep settings.json` знаходить увесь рядок; тоді кожна рамка має ширину найдовшого рядка. Вкладка Health панелі керування показує ті самі рамки.
 
 ## Параметри
 
@@ -58,17 +85,17 @@ $ ccam doctor --fix
 
 `ccam doctor` не приймає аргументів. Він враховує `--dry-run`: `ccam --dry-run doctor --fix` виводить ті самі результати, що й `ccam doctor`, і нічого не змінює.
 
-Код виходу дорівнює `1`, коли залишився хоча б один невиправлений результат `✗`, і `0` в інших випадках. Попередження та інформація ніколи не призводять до невдалого завершення. Коли запуск без `--fix` завершується невдало, ccam виводить порожній рядок і `` `ccam doctor --fix` repairs what it can. ``. Конфігурація, яку не вдається завантажити, теж дає `1` і помилку `ccam:`.
+Код виходу дорівнює `1`, коли залишився хоча б один невиправлений результат `✘`, і `0` в інших випадках. Попередження та інформація ніколи не призводять до невдалого завершення. Коли запуск без `--fix` завершується невдало, ccam виводить порожній рядок і `` `ccam doctor --fix` repairs what it can. ``. Конфігурація, яку не вдається завантажити, теж дає `1` і помилку `ccam:`.
 
 ## Як це працює
 
-`internal/cli/doctor.go` завантажує `~/.config/ccam/config.toml` і викликає `doctor.Run` у `internal/doctor/doctor.go`, який виконує перевірки у фіксованому порядку й повертає результати. `--fix` передається як `Options.Fix`, що в пробному запуску дорівнює false.
+`internal/cli/doctor.go` завантажує `~/.config/ccam/config.toml` і викликає `doctor.Run` у `internal/doctor/doctor.go`, який виконує перевірки у фіксованому порядку й повертає результати, кожен з обліковим записом, якому він належить, і ділянкою, яку він перевірив. `tui.HealthReport` групує їх у рамки. `--fix` передається як `Options.Fix`, що в пробному запуску дорівнює false.
 
 <!-- motion:doctor-checks -->
 
 Середній блок виконується один раз для кожного облікового запису. Перевірки та те, що `--fix` робить для кожної з них:
 
-1. **Версія Claude Code** (`checkClaude`). Знаходить виконуваний файл `claude` так само, як засіб запуску, і виконує `claude --version`. Якщо версія не починається з `2.1.302`, тобто з версії, для якої перевірено структуру тек ccam (`doctor.LayoutVersion`), додається `· ccam was verified against the folder layout of Claude Code 2.1.302. Any 'unknown entries' below may mean the layout changed`. Відсутній виконуваний файл або невдалий `--version` є помилкою. Без виправлення.
+1. **Версія Claude Code** (`checkClaude`). Знаходить виконуваний файл `claude` так само, як засіб запуску, і виконує `claude --version`. Якщо версія не починається з `2.1.302`, тобто з версії, для якої перевірено структуру тек ccam (`doctor.LayoutVersion`), додається інформація `ccam was verified against the folder layout of Claude Code 2.1.302. Any 'unknown entries' below may mean the layout changed`. Відсутній виконуваний файл або невдалий `--version` є помилкою. Без виправлення.
 2. **Дані входу в середовищі** (`checkAuthEnv`). Попереджає, коли задано `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY` або `ANTHROPIC_AUTH_TOKEN`: кожен обліковий запис, запущений із цієї оболонки, успадковує змінну, і Claude Code віддає їй перевагу над власним входом облікового запису. Без виправлення; видаліть змінну самостійно.
 3. **Тека** (`checkProfile`). Відсутня тека облікового запису є помилкою й завершує перевірки цього облікового запису. Права доступу з будь-якими бітами для групи чи інших є попередженням; `--fix` виконує `chmod 0700`. У Windows немає бітів прав доступу, тому там цю перевірку й перевірку `0600` нижче пропущено; теку у вашому профілі користувача захищає її список доступу.
 4. **Файл входу** (`checkCredentials`). `.credentials.json` перевіряється через `lstat`. Символьне посилання є помилкою, бо кожен обліковий запис повинен мати власний токен, і не виправляється. Режим, відмінний від `0600`, є попередженням; `--fix` виконує `chmod 0600`. Потім зчитується вхід (на macOS спершу з в'язки ключів). Відсутність входу є попередженням, що вказує на `ccam login <name>`. Прострочений токен оновлення дає помилку `login expired`; прострочений токен доступу є лише інформацією, бо Claude Code оновить його під час наступного запуску. Дійсний вхід показує адресу електронної пошти й тарифний план (`login valid (dev@company.com, Claude Team · Acme)`). Жодне з цього не виправляється; `ccam login --expired` виконує вхід у кожен обліковий запис, якому це потрібно.
@@ -110,7 +137,7 @@ Repair them with `ccam doctor --fix`, then run again
 ## Безпека та граничні випадки
 
 - Звичайний `ccam doctor` ніколи нічого не змінює. У скриптах використовуйте `--dry-run` разом із `--fix`, щоб бути певними.
-- `doctor --fix` не перевіряє, чи запущено обліковий запис. Завершіть Claude Code для облікового запису, перш ніж виправляти його спільні посилання, бо сеанс і далі записує в ці файли.
+- Для запущеного облікового запису `doctor --fix` лише створює відсутні посилання й додає `` is running; quit Claude Code there, then run `ccam doctor --fix` again to repair the rest ``, бо сеанс і далі записує у файли, які виправлення перемістило б.
 - Якщо виправити спільні посилання не вдається, ccam повідомляє `could not repair share links: <error>` для цього облікового запису й пропускає для нього перевірку невідомих записів. Інші облікові записи все одно перевіряються.
 - Якщо зміна через `ccam group` зазнає невдачі посередині, нові групи вже збережено, і ccam радить завершити через `ccam doctor --fix`.
 - Про `.credentials.json`, що є символьним посиланням, прострочений вхід і дані входу в середовищі повідомляється, але вони ніколи не змінюються.

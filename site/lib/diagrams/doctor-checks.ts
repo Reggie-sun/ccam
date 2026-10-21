@@ -1,21 +1,21 @@
 import { box, figure, glow, label, line, packet, reveal } from "../motion.ts";
 
 // `ccam doctor`: the checks of doctor.Run in order, each with the mark it
-// prints (✓ OK, · info, ! warning, ✗ error). The middle block runs once per
-// account. Any unfixed ✗ makes the exit code 1.
+// prints (✔ OK, ℹ info, ⚠ warning, ✘ error). The middle block runs once per
+// account. Any unfixed ✘ makes the exit code 1.
 export default function doctorChecks(): string {
   const x = 40, w = 280, h = 40, gap = 50, mx = 352, cx = x + w / 2, step = 1;
   const rows = [
-    { label: "claude --version", sub: "checkClaude()", mark: "✓" },
-    { label: "$ANTHROPIC_API_KEY", sub: "checkAuthEnv()", mark: "!" },
-    { label: "profiles/work/", sub: "os.Stat · 0700", mark: "✓", acct: true },
-    { label: ".credentials.json", sub: "lstat · 0600 · expiresAt", mark: "✓", acct: true },
-    { label: "share.Check()", sub: "lstat · readlink", mark: "✗", acct: true },
-    { label: "os.ReadDir()", sub: "share.Known", mark: "·", acct: true },
-    { label: "plugins/*.json", sub: "checkPlugins()", mark: "✓" },
-    { label: "mcp.json", sub: "mcp.Validate()", mark: "✓" },
-    { label: "/api/oauth/usage", sub: "checkUsageFormat()", mark: "✓" },
-    { label: "~/.local/bin/ccwork", sub: "checkShims()", mark: "✓" },
+    { label: "claude --version", sub: "checkClaude()", mark: "✔" },
+    { label: "$ANTHROPIC_API_KEY", sub: "checkAuthEnv()", mark: "⚠" },
+    { label: "profiles/work/", sub: "os.Stat · 0700", mark: "✔", acct: true },
+    { label: ".credentials.json", sub: "lstat · 0600 · expiresAt", mark: "✔", acct: true },
+    { label: "share.Check()", sub: "lstat · readlink", mark: "✘", acct: true },
+    { label: "os.ReadDir()", sub: "share.Known", mark: "ℹ", acct: true },
+    { label: "plugins/*.json", sub: "checkPlugins()", mark: "✔" },
+    { label: "mcp.json", sub: "mcp.Validate()", mark: "✔" },
+    { label: "/api/oauth/usage", sub: "checkUsageFormat()", mark: "✔" },
+    { label: "~/.local/bin/ccwork", sub: "checkShims()", mark: "✔" },
   ];
   const top = 8;
   const y = (i: number) => top + i * gap + (i >= 2 ? 10 : 0) + (i >= 6 ? 10 : 0);

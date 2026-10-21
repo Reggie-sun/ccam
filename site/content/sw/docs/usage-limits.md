@@ -1,24 +1,32 @@
 ---
 title: Vikomo vya matumizi na kubadili akaunti
-description: Ona matumizi ya saa 5 na ya wiki ya kila akaunti ya Claude Code kwa ccam usage, na ufungue akaunti yenye nafasi kubwa zaidi kwa ccam next --auto.
-updated: 2026-10-20
+description: Ona matumizi ya saa 5, ya wiki na ya Fable ya kila akaunti ya Claude Code kama pau kwa ccam usage, na ufungue akaunti yenye nafasi kubwa zaidi kwa ccam next --auto.
+updated: 2026-10-21
 order: 5
 translation: machine
-sourceHash: "40aef0708c81"
+sourceHash: "0e64e3251c69"
 ---
 
-`ccam usage` huonyesha kiasi cha vikomo vya saa 5 na vya wiki ambacho kila akaunti imetumia. `ccam next --auto` hufungua akaunti yenye nafasi kubwa zaidi, na `--continue` huhamisha mazungumzo ya sasa.
+`ccam usage` huonyesha kiasi cha kikomo cha saa 5, kikomo cha wiki na kikomo cha wiki cha kila model (kama Fable) ambacho kila akaunti imetumia. `ccam next --auto` hufungua akaunti yenye nafasi kubwa zaidi, na `--continue` huhamisha mazungumzo ya sasa.
 
 ```console
 $ ccam usage
- Account     5-hour        Resets    Weekly        Resets    As of
- 1 personal  ██████░░  72% 1h 40m    ███░░░░░  41% 3d 6h     just now
- 2 work      █░░░░░░░   8% 4h 12m    ██░░░░░░  19% 5d 2h     just now
- 3 side      ████████ 100% 22m       █████░░░  68% 1d 9h     12m ago (cached)
+ 1 personal  just now
+   5-hour   ██████████████░░░░░░  72%  resets in 1h 40m
+   Weekly   ████████░░░░░░░░░░░░  41%  resets in 3d 6h
+   Fable    ██████████████████░░  88%  resets in 1d 6h
+ 2 work      just now
+   5-hour   ██░░░░░░░░░░░░░░░░░░   8%  resets in 4h 12m
+   Weekly   ████░░░░░░░░░░░░░░░░  19%  resets in 5d 2h
+   Fable    █░░░░░░░░░░░░░░░░░░░   3%  resets in 5d 2h
+ 3 side      12m ago (cached)
+   5-hour   ████████████████████ 100%  resets in 22m
+   Weekly   ██████████████░░░░░░  68%  resets in 1d 9h
+   Fable    ████████░░░░░░░░░░░░  40%  resets in 1d 9h
 → Most headroom: work   (open it with ccam next --auto)
 ```
 
-Safu ni: akaunti, matumizi ya saa 5, muda hadi yaanze upya, matumizi ya wiki, muda hadi yaanze upya, na umri wa namba hizo.
+Kila akaunti hupata mstari unaoonyesha umri wa namba zake, kisha upau mmoja kwa kila kikomo pamoja na muda hadi kianze upya: kipindi cha saa 5, kipindi cha wiki kwa model zote, na kipindi cha wiki cha kila model yenyewe, kama Fable. Kuanzia 80% upau hugeuka manjano, na kwa 100% nyekundu. Mstari wa mwisho hutaja akaunti ambayo `ccam next --auto` ingefungua.
 
 ## Namba zinatoka wapi
 
@@ -32,7 +40,7 @@ Namba zilizopatikana chini ya sekunde 60 zilizopita hutumiwa tena. Chaguo:
 | --- | --- |
 | `--watch [seconds]` | Onyesha upya mfululizo, kila sekunde 60 kwa chaguo-msingi |
 | `--json` | Matokeo yanayosomeka na mashine |
-| `-v` | Onyesha pia vikomo vya wiki vya kila model na kila namba ilikotoka |
+| `-v` | Onyesha pia namba za kila akaunti zilikotoka |
 | `--no-cache` | Uliza upya kila mara |
 | `--source cache` | Usiulize kamwe; onyesha namba zilizohifadhiwa tu |
 

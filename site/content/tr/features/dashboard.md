@@ -1,39 +1,41 @@
 ---
 title: Kontrol paneli
 description: Terminalde ccam; hesapların, grupların, klasör kurallarının, uzantıların ve denetimlerin tam ekran kontrol panelini açar; her değişiklik önce planını gösterir.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 15
 translation: machine
-sourceHash: "decdd5fa54c9"
+sourceHash: "27bd153b48b2"
 ---
 
 Argümansız `ccam`, standart girdi ve çıktı bir terminal olduğunda tam ekran bir kontrol paneli açar; aksi halde `ccam list` çıktısını yazdırır. Kontrol paneli her hesabı kullanımı ve gruplarıyla birlikte gösterir ve komutların yaptığını yapar: başlatma, ekleme, giriş yapma, grupları değiştirme, klasör kuralları belirleme, denetleme ve onarma. Başlatma paneli kapatır; bir hesap eklemek veya giriş yapmak paneli terminale bırakır ve sonra geri döner.
 
 ```console
- ccam v0.9.0 · 3 accounts · 2 groups         ✔ default · ▸ this folder · • running
+ ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
   Accounts   Groups   Folders   Extensions   Health
+ Your Claude accounts and their usage limits; enter launches the selected one.
 
-    # Account     Email             5-hour         7-day Last  Groups
- ❯ 1. personal ✔   me@example.com    █████▊░░  72%   41% 2h    default
-   2. work      ▸• dev@company.com   ██░░░░░░  25%  100% now   default team
-   3. side         -                 ✘ not logged in         -     no group
+    # Account      5-hour       Weekly       Fable        Last  Groups
+   1. personal ✔   ████▍░  72%  ██▌░░░  41%  █████▎  88%  -     default
+ ❯ 2. work      ▸• █▌░░░░  25%  ██████ 100%  ▋░░░░░  10%  -     default team
+   3. side         ✘ not logged in                        -     no group
 
- ✔ personal is the default account
  enter to launch · n for most room · a to add · s for groups · ? for shortcuts
 ```
 
-İlk kare yalnızca `config.toml` dosyasından, 100 ms'nin çok altında çizilir; kullanım her hesap yanıt verdikçe dolar. Bir yüzde %80'den itibaren sarıya, %100'de kırmızıya döner; başarısız bir sorgudan sonra önbellekten gelen değerler soluk çizilir.
+Sekme adlarının altındaki satır, geçerli sekmenin ne işe yaradığını tek bir cümleyle söyler. Daha geniş bir terminalde Accounts sekmesi her hesabın e-postasını da gösterir.
+
+İlk kare yalnızca `config.toml` dosyasından, 100 ms'nin çok altında çizilir; kullanım her hesap yanıt verdikçe dolar. Her limitin kendi çubuğu vardır: 5 saatlik pencere, tüm modeller için haftalık pencere ve Fable'ın kendi haftalık penceresi; `-` hesabın böyle bir penceresi olmadığı anlamına gelir. Bir yüzde %80'den itibaren sarıya, %100'de kırmızıya döner; başarısız bir sorgudan sonra önbellekten gelen değerler soluk çizilir.
 
 ## Sekmeler
 
 | Sekme | Gösterdiği | Tuşlar |
 | --- | --- | --- |
-| Accounts | numara, ad, e-posta, 5 saatlik çubuk, 7 günlük kullanım, son kullanım, gruplar; `✔` varsayılan, `▸` bu klasörün hesabı, `•` çalışıyor | aşağıda |
+| Accounts | numara, ad, e-posta, 5 saatlik, haftalık ve Fable çubukları, son kullanım, gruplar; `✔` varsayılan, `▸` bu klasörün hesabı, `•` çalışıyor | aşağıda |
 | Groups | her grup, neyi paylaştığı ve hesapları, ayrıca hiçbir grupta olmayan hesaplar | `enter` düzenle, `n` yeni, `e` yeniden adlandır, `x` kaldır |
 | Folders | [`ccam folder`](/features/folder) kuralları ve burada geçerli olan kural | `n` burada bir hesap kullan, `enter` değiştir, `x` kaldır |
 | Extensions | [`ccam ext`](/features/ext) komutunun gösterdikleri, her uzantı bir kez ve geldiği gruplarla | `r` yeniden yükle |
-| Health | [`ccam doctor`](/features/doctor) komutunun bildirdikleri | `f` onar (`doctor --fix`) |
+| Health | [`ccam doctor`](/features/doctor) komutunun bildirdikleri, hesap başına bir kutu olarak (aşağıda) | `f` seçili kutuyu onarır, `F` hepsini onarır (`doctor --fix`), `↑`/`↓` kutular arasında geçer |
 
 `←`/`→` veya `Tab` sekmeler arasında geçer, `?` geçerli sekmenin tuşlarını listeler, `r` kısa önbelleği kullanmadan kullanımı yeniden sorgular, `q` veya `Esc` ise çıkar.
 
@@ -46,7 +48,7 @@ Argümansız `ccam`, standart girdi ve çıktı bir terminal olduğunda tam ekra
 | `↑`/`↓`, `k`/`j` | Hareket eder |
 | `n` | [`ccam next --auto`](/features/next) komutunun seçeceği hesabı başlatır |
 | `o` | Seçeneklerle başlatır: `--continue`, `--resume`, başka argümanlar ya da bir kuru çalıştırma |
-| `u` | Kullanım ayrıntıları: sıfırlanma zamanlarıyla 5 saatlik, 7 günlük ve model pencereleri ve sayıların nereden geldiği |
+| `u` | Kullanım ayrıntıları: sıfırlanma zamanlarıyla 5 saatlik, haftalık ve model pencereleri ve sayıların nereden geldiği |
 | `a` | Bir hesap ekler (aşağıdaki sihirbaz) |
 | `l` | Yeniden giriş yapar |
 | `s` | Hesabın gruplarını seçer |
@@ -55,6 +57,33 @@ Argümansız `ccam`, standart girdi ve çıktı bir terminal olduğunda tam ekra
 | `e` | Hesabı yeniden adlandırır |
 | `c` | Hesabın kısayol komutunu ayarlar veya kaldırır |
 | `x` | Hesabı kaldırır (önce, Hayır seçili olarak sorar) |
+
+## Health sekmesi
+
+Health sekmesi, açtığınızda [`ccam doctor`](/features/doctor) kontrollerini çalıştırır ve aynı görünümü çizer: her hesap için bir işaret içeren ilk satır, ardından hesap başına bir kutu. Bir kutudaki her satır kontrol edilen bir alandır; önce `Folder`, `Login` ve `Share links` gelir ve `✔` sorun yok, `ℹ` bilgi, `⚠` uyarı veya `✘` hata ile işaretlenir; böylece hangi hesabın nerede sorunu olduğunu hemen görürsünüz. Hiçbir hesaba ait olmayan bulgular bir `General` kutusuna girer.
+
+```console
+ ✘ personal   ⚠ work
+
+ ╭─ ✘ personal · 3 problems ──────────────────────────────────────────────────╮
+ │ ⚠ Folder       folder permissions are 755 (should be 0700)                 │
+ │ ℹ              unknown entries (Claude Code layout may have changed):      │
+ │                newthing                                                    │
+ │ ⚠ Login        .credentials.json permissions are 644 (should be 0600)      │
+ │ ✔              login valid (me@example.com)                                │
+ │ ✘ Share links  /home/me/.local/share/ccam/profiles/personal/settings.json: │
+ │                set to shared but is a real file, not a link                │
+ ╰────────────────────────────────────────────────────────────────────────────╯
+ ╭─ ⚠ work · 1 problem ───────────────────────────────────────────────────────╮
+ │ ✔ Folder       OK                                                          │
+ │ ⚠ Login        not logged in → `ccam login work`                           │
+ │ ✔ Share links  share links OK                                              │
+ ╰────────────────────────────────────────────────────────────────────────────╯
+
+ 4 problems; f repairs the selected box, F all of them (ccam doctor --fix).
+```
+
+`↑`/`↓` kutudan kutuya geçer ve seçili kutunun kenarlığı vurgu rengindedir. `f` yalnızca seçili kutuyu, `ccam doctor --fix` komutunun yapacağı şekilde onarır: bir hesabın kutusunda yalnızca o hesabı, `General` kutusunda ise hiçbir hesaba ait olmayan bulguları (eklenti yolları ve kısayollar) onarır; diğer tüm hesaplar yalnızca yeniden kontrol edilir. Önce sorar ve onarılacak bir şey olmayan bir kutu için yalnızca `nothing to repair in <name>` der. `F` her şeyi bir kerede, `ccam doctor --fix` gibi onarır; `r` yeniden kontrol eder.
 
 ## Grupları değiştirme
 

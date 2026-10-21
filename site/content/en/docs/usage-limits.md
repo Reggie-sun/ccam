@@ -1,24 +1,32 @@
 ---
 title: Usage limits and switching accounts
-description: See the 5-hour and weekly usage of every Claude Code account with ccam usage, and open the account with the most room with ccam next --auto.
-updated: 2026-10-20
+description: See the 5-hour, weekly and Fable usage of every Claude Code account as bars with ccam usage, and open the account with the most room with ccam next --auto.
+updated: 2026-10-21
 published: 2026-10-19
 order: 5
 translation: source
 ---
 
-`ccam usage` shows how much of the 5-hour and weekly limits each account has used. `ccam next --auto` opens the account with the most room, and `--continue` carries the current conversation over.
+`ccam usage` shows how much of the 5-hour limit, the weekly limit and each model's own weekly limit (such as Fable) every account has used. `ccam next --auto` opens the account with the most room, and `--continue` carries the current conversation over.
 
 ```console
 $ ccam usage
- Account     5-hour        Resets    Weekly        Resets    As of
- 1 personal  ██████░░  72% 1h 40m    ███░░░░░  41% 3d 6h     just now
- 2 work      █░░░░░░░   8% 4h 12m    ██░░░░░░  19% 5d 2h     just now
- 3 side      ████████ 100% 22m       █████░░░  68% 1d 9h     12m ago (cached)
+ 1 personal  just now
+   5-hour   ██████████████░░░░░░  72%  resets in 1h 40m
+   Weekly   ████████░░░░░░░░░░░░  41%  resets in 3d 6h
+   Fable    ██████████████████░░  88%  resets in 1d 6h
+ 2 work      just now
+   5-hour   ██░░░░░░░░░░░░░░░░░░   8%  resets in 4h 12m
+   Weekly   ████░░░░░░░░░░░░░░░░  19%  resets in 5d 2h
+   Fable    █░░░░░░░░░░░░░░░░░░░   3%  resets in 5d 2h
+ 3 side      12m ago (cached)
+   5-hour   ████████████████████ 100%  resets in 22m
+   Weekly   ██████████████░░░░░░  68%  resets in 1d 9h
+   Fable    ████████░░░░░░░░░░░░  40%  resets in 1d 9h
 → Most headroom: work   (open it with ccam next --auto)
 ```
 
-The columns are: account, 5-hour usage, time until it resets, weekly usage, time until it resets, and how old the numbers are.
+Each account gets a line with how old its numbers are, then one bar per limit with the time until it resets: the 5-hour window, the weekly window for all models, and each model's own weekly window, such as Fable. From 80% a bar turns yellow, and at 100% red. The last line names the account `ccam next --auto` would open.
 
 ## Where the numbers come from
 
@@ -32,7 +40,7 @@ Numbers fetched less than 60 seconds ago are reused. Options:
 | --- | --- |
 | `--watch [seconds]` | Refresh continuously, every 60 seconds by default |
 | `--json` | Machine-readable output |
-| `-v` | Also show model-specific weekly limits and where each number came from |
+| `-v` | Also show where each account's numbers came from |
 | `--no-cache` | Always ask again |
 | `--source cache` | Never ask; show saved numbers only |
 

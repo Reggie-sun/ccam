@@ -1,39 +1,41 @@
 ---
 title: La dashboard
 description: ccam in un terminale apre una dashboard a schermo intero con account, gruppi, regole per cartella, estensioni e controlli; ogni modifica mostra prima il piano.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 15
 translation: machine
-sourceHash: "decdd5fa54c9"
+sourceHash: "27bd153b48b2"
 ---
 
 `ccam` senza argomenti apre una dashboard a schermo intero quando standard input e standard output sono un terminale; altrimenti stampa `ccam list`. La dashboard mostra ogni account con il suo utilizzo e i suoi gruppi, e fa ciò che fanno i comandi: avviare, aggiungere, effettuare il login, cambiare i gruppi, impostare le regole delle cartelle, controllare e riparare. Avviare un account la chiude; aggiungere un account o effettuare il login la lascia per il terminale e poi vi ritorna.
 
 ```console
- ccam v0.9.0 · 3 accounts · 2 groups         ✔ default · ▸ this folder · • running
+ ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
   Accounts   Groups   Folders   Extensions   Health
+ Your Claude accounts and their usage limits; enter launches the selected one.
 
-    # Account     Email             5-hour         7-day Last  Groups
- ❯ 1. personal ✔   me@example.com    █████▊░░  72%   41% 2h    default
-   2. work      ▸• dev@company.com   ██░░░░░░  25%  100% now   default team
-   3. side         -                 ✘ not logged in         -     no group
+    # Account      5-hour       Weekly       Fable        Last  Groups
+   1. personal ✔   ████▍░  72%  ██▌░░░  41%  █████▎  88%  -     default
+ ❯ 2. work      ▸• █▌░░░░  25%  ██████ 100%  ▋░░░░░  10%  -     default team
+   3. side         ✘ not logged in                        -     no group
 
- ✔ personal is the default account
  enter to launch · n for most room · a to add · s for groups · ? for shortcuts
 ```
 
-Il primo fotogramma viene disegnato a partire dal solo `config.toml`, in molto meno di 100 ms; l'utilizzo compare man mano che ogni account risponde. Una percentuale diventa gialla dall'80% e rossa al 100%, e i valori presi da una cache dopo una consultazione fallita vengono mostrati attenuati.
+La riga sotto i nomi delle schede dice in una frase a cosa serve la scheda corrente. In un terminale più largo la scheda Accounts mostra anche l'email di ogni account.
+
+Il primo fotogramma viene disegnato a partire dal solo `config.toml`, in molto meno di 100 ms; l'utilizzo compare man mano che ogni account risponde. Ogni limite ha la sua barra: la finestra di 5 ore, la finestra settimanale per tutti i modelli e la finestra settimanale propria di Fable; `-` significa che l'account non ha quella finestra. Una percentuale diventa gialla dall'80% e rossa al 100%, e i valori presi da una cache dopo una consultazione fallita vengono mostrati attenuati.
 
 ## Schede
 
 | Scheda | Cosa mostra | Tasti |
 | --- | --- | --- |
-| Accounts | numero, nome, email, barra delle 5 ore, utilizzo su 7 giorni, ultimo uso, gruppi; `✔` l'account predefinito, `▸` l'account di questa cartella, `•` in esecuzione | vedi sotto |
+| Accounts | numero, nome, email, barre delle 5 ore, settimanale e di Fable, ultimo uso, gruppi; `✔` l'account predefinito, `▸` l'account di questa cartella, `•` in esecuzione | vedi sotto |
 | Groups | ogni gruppo, cosa condivide e i suoi account, e gli account che non fanno parte di alcun gruppo | `enter` modifica, `n` nuovo, `e` rinomina, `x` rimuovi |
 | Folders | le regole di [`ccam folder`](/features/folder) e quella che vale qui | `n` usa un account qui, `enter` cambia, `x` rimuovi |
 | Extensions | ciò che mostra [`ccam ext`](/features/ext), ogni estensione una sola volta con i gruppi da cui proviene | `r` ricarica |
-| Health | ciò che segnala [`ccam doctor`](/features/doctor) | `f` ripara (`doctor --fix`) |
+| Health | ciò che segnala [`ccam doctor`](/features/doctor), con un riquadro per account (vedi sotto) | `f` ripara il riquadro selezionato, `F` ripara tutto (`doctor --fix`), `↑`/`↓` passa da un riquadro all'altro |
 
 `←`/`→` o `Tab` cambiano scheda, `?` elenca i tasti della scheda corrente, `r` consulta di nuovo l'utilizzo senza la cache breve, e `q` o `Esc` escono.
 
@@ -46,7 +48,7 @@ Il primo fotogramma viene disegnato a partire dal solo `config.toml`, in molto m
 | `↑`/`↓`, `k`/`j` | Sposta la selezione |
 | `n` | Avvia l'account che sceglierebbe [`ccam next --auto`](/features/next) |
 | `o` | Avvia con opzioni: `--continue`, `--resume`, altri argomenti, oppure un dry run |
-| `u` | Dettagli dell'utilizzo: le finestre su 5 ore, su 7 giorni e per modello, con i loro azzeramenti e la provenienza dei numeri |
+| `u` | Dettagli dell'utilizzo: le finestre su 5 ore, settimanali e per modello, con i loro azzeramenti e la provenienza dei numeri |
 | `a` | Aggiunge un account (la procedura guidata qui sotto) |
 | `l` | Esegue di nuovo il login |
 | `s` | Sceglie i gruppi dell'account |
@@ -55,6 +57,33 @@ Il primo fotogramma viene disegnato a partire dal solo `config.toml`, in molto m
 | `e` | Lo rinomina |
 | `c` | Imposta o rimuove il suo comando scorciatoia |
 | `x` | Lo rimuove (chiede prima, partendo da No) |
+
+## La scheda Health
+
+La scheda Health esegue i controlli di [`ccam doctor`](/features/doctor) quando la apri e disegna la stessa vista: una prima riga con un simbolo per account, poi un riquadro per account. Ogni riga di un riquadro è un'area controllata, prima `Folder`, `Login` e `Share links`, segnata con `✔` OK, `ℹ` informazione, `⚠` un avviso o `✘` un errore, così vedi subito quale account ha un problema e dove. I risultati che non appartengono a nessun account finiscono in un riquadro `General`.
+
+```console
+ ✘ personal   ⚠ work
+
+ ╭─ ✘ personal · 3 problems ──────────────────────────────────────────────────╮
+ │ ⚠ Folder       folder permissions are 755 (should be 0700)                 │
+ │ ℹ              unknown entries (Claude Code layout may have changed):      │
+ │                newthing                                                    │
+ │ ⚠ Login        .credentials.json permissions are 644 (should be 0600)      │
+ │ ✔              login valid (me@example.com)                                │
+ │ ✘ Share links  /home/me/.local/share/ccam/profiles/personal/settings.json: │
+ │                set to shared but is a real file, not a link                │
+ ╰────────────────────────────────────────────────────────────────────────────╯
+ ╭─ ⚠ work · 1 problem ───────────────────────────────────────────────────────╮
+ │ ✔ Folder       OK                                                          │
+ │ ⚠ Login        not logged in → `ccam login work`                           │
+ │ ✔ Share links  share links OK                                              │
+ ╰────────────────────────────────────────────────────────────────────────────╯
+
+ 4 problems; f repairs the selected box, F all of them (ccam doctor --fix).
+```
+
+`↑`/`↓` passano da un riquadro all'altro, e il riquadro selezionato ha il bordo nel colore di accento. `f` ripara solo il riquadro selezionato, come farebbe `ccam doctor --fix`: sul riquadro di un account ripara solo quell'account, e sul riquadro `General` i risultati che non appartengono a nessun account (percorsi dei plugin e scorciatoie); tutti gli altri account vengono solo controllati di nuovo. Chiede prima, e un riquadro senza nulla da riparare dice solo `nothing to repair in <name>`. `F` ripara tutto in una volta, come `ccam doctor --fix`, e `r` controlla di nuovo.
 
 ## Cambiare i gruppi
 

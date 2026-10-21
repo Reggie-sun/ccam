@@ -1,39 +1,41 @@
 ---
 title: Bảng điều khiển
 description: "ccam trên terminal mở bảng điều khiển toàn màn hình gồm tài khoản, nhóm, quy tắc thư mục, tiện ích mở rộng và kiểm tra; mọi thay đổi đều hiện kế hoạch trước."
-updated: 2026-10-20
+updated: 2026-10-21
 order: 15
 translation: machine
-sourceHash: "decdd5fa54c9"
+sourceHash: "27bd153b48b2"
 ---
 
 `ccam` không kèm đối số sẽ mở một bảng điều khiển toàn màn hình khi đầu vào và đầu ra chuẩn là terminal; nếu không, nó in ra `ccam list`. Bảng điều khiển hiển thị mọi tài khoản cùng mức sử dụng và các nhóm của chúng, và làm được những gì các lệnh làm: khởi động, thêm, đăng nhập, thay đổi nhóm, đặt quy tắc thư mục, kiểm tra và sửa chữa. Khởi động một tài khoản sẽ đóng bảng điều khiển; thêm tài khoản hoặc đăng nhập thì tạm rời nó để dùng terminal rồi quay lại.
 
 ```console
- ccam v0.9.0 · 3 accounts · 2 groups         ✔ default · ▸ this folder · • running
+ ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
   Accounts   Groups   Folders   Extensions   Health
+ Your Claude accounts and their usage limits; enter launches the selected one.
 
-    # Account     Email             5-hour         7-day Last  Groups
- ❯ 1. personal ✔   me@example.com    █████▊░░  72%   41% 2h    default
-   2. work      ▸• dev@company.com   ██░░░░░░  25%  100% now   default team
-   3. side         -                 ✘ not logged in         -     no group
+    # Account      5-hour       Weekly       Fable        Last  Groups
+   1. personal ✔   ████▍░  72%  ██▌░░░  41%  █████▎  88%  -     default
+ ❯ 2. work      ▸• █▌░░░░  25%  ██████ 100%  ▋░░░░░  10%  -     default team
+   3. side         ✘ not logged in                        -     no group
 
- ✔ personal is the default account
  enter to launch · n for most room · a to add · s for groups · ? for shortcuts
 ```
 
-Khung hình đầu tiên được vẽ chỉ từ `config.toml`, trong chưa đến 100 ms; mức sử dụng được điền vào khi từng tài khoản phản hồi. Một tỷ lệ phần trăm chuyển sang màu vàng từ 80% và màu đỏ ở 100%, và các giá trị lấy từ bộ nhớ đệm sau một lần tra cứu thất bại được vẽ mờ.
+Dòng dưới tên các thẻ cho biết trong một câu thẻ hiện tại dùng để làm gì. Trên terminal rộng hơn, thẻ Accounts còn hiển thị email của từng tài khoản.
+
+Khung hình đầu tiên được vẽ chỉ từ `config.toml`, trong chưa đến 100 ms; mức sử dụng được điền vào khi từng tài khoản phản hồi. Mỗi giới hạn có thanh riêng: khoảng 5 giờ, khoảng hàng tuần cho mọi mô hình, và khoảng hàng tuần riêng của Fable; `-` nghĩa là tài khoản không có khoảng đó. Một tỷ lệ phần trăm chuyển sang màu vàng từ 80% và màu đỏ ở 100%, và các giá trị lấy từ bộ nhớ đệm sau một lần tra cứu thất bại được vẽ mờ.
 
 ## Các thẻ
 
 | Thẻ | Nội dung hiển thị | Phím |
 | --- | --- | --- |
-| Accounts | số, tên, email, thanh 5 giờ, mức sử dụng 7 ngày, lần dùng gần nhất, nhóm; `✔` tài khoản mặc định, `▸` tài khoản của thư mục này, `•` đang chạy | bên dưới |
+| Accounts | số, tên, email, thanh 5 giờ, hàng tuần và Fable, lần dùng gần nhất, nhóm; `✔` tài khoản mặc định, `▸` tài khoản của thư mục này, `•` đang chạy | bên dưới |
 | Groups | từng nhóm, những gì nhóm dùng chung và các tài khoản của nhóm, cùng các tài khoản không thuộc nhóm nào | `enter` sửa, `n` tạo mới, `e` đổi tên, `x` xóa |
 | Folders | các quy tắc [`ccam folder`](/features/folder) và quy tắc áp dụng ở đây | `n` dùng một tài khoản ở đây, `enter` thay đổi, `x` xóa |
 | Extensions | những gì [`ccam ext`](/features/ext) hiển thị, mỗi tiện ích mở rộng một lần cùng các nhóm mà nó đến từ | `r` tải lại |
-| Health | những gì [`ccam doctor`](/features/doctor) báo cáo | `f` sửa chữa (`doctor --fix`) |
+| Health | những gì [`ccam doctor`](/features/doctor) báo cáo, dưới dạng một hộp cho mỗi tài khoản (bên dưới) | `f` sửa chữa hộp đang chọn, `F` sửa chữa tất cả (`doctor --fix`), `↑`/`↓` di chuyển giữa các hộp |
 
 `←`/`→` hoặc `Tab` chuyển thẻ, `?` liệt kê các phím của thẻ hiện tại, `r` tra cứu lại mức sử dụng mà không dùng bộ nhớ đệm ngắn hạn, và `q` hoặc `Esc` để thoát.
 
@@ -46,7 +48,7 @@ Khung hình đầu tiên được vẽ chỉ từ `config.toml`, trong chưa đ�
 | `↑`/`↓`, `k`/`j` | Di chuyển |
 | `n` | Khởi động tài khoản mà [`ccam next --auto`](/features/next) sẽ chọn |
 | `o` | Khởi động với tùy chọn: `--continue`, `--resume`, các đối số khác, hoặc chạy thử |
-| `u` | Chi tiết mức sử dụng: khoảng 5 giờ, 7 ngày và theo mô hình, cùng thời điểm đặt lại và nguồn của các con số |
+| `u` | Chi tiết mức sử dụng: khoảng 5 giờ, hàng tuần và theo mô hình, cùng thời điểm đặt lại và nguồn của các con số |
 | `a` | Thêm một tài khoản (trình hướng dẫn bên dưới) |
 | `l` | Đăng nhập lại |
 | `s` | Chọn các nhóm của tài khoản |
@@ -55,6 +57,33 @@ Khung hình đầu tiên được vẽ chỉ từ `config.toml`, trong chưa đ�
 | `e` | Đổi tên nó |
 | `c` | Đặt hoặc xóa lệnh tắt của nó |
 | `x` | Xóa nó (hỏi trước, con trỏ bắt đầu ở No) |
+
+## Thẻ Health
+
+Thẻ Health chạy các kiểm tra của [`ccam doctor`](/features/doctor) khi bạn mở nó và vẽ cùng một giao diện: dòng đầu có một ký hiệu cho mỗi tài khoản, rồi đến một hộp cho mỗi tài khoản. Mỗi hàng trong hộp là một mục đã được kiểm tra, `Folder`, `Login` và `Share links` đứng đầu, được đánh dấu `✔` ổn, `ℹ` thông tin, `⚠` cảnh báo hoặc `✘` lỗi, nên bạn thấy ngay tài khoản nào có vấn đề và ở đâu. Các kết quả không thuộc tài khoản nào nằm trong hộp `General`.
+
+```console
+ ✘ personal   ⚠ work
+
+ ╭─ ✘ personal · 3 problems ──────────────────────────────────────────────────╮
+ │ ⚠ Folder       folder permissions are 755 (should be 0700)                 │
+ │ ℹ              unknown entries (Claude Code layout may have changed):      │
+ │                newthing                                                    │
+ │ ⚠ Login        .credentials.json permissions are 644 (should be 0600)      │
+ │ ✔              login valid (me@example.com)                                │
+ │ ✘ Share links  /home/me/.local/share/ccam/profiles/personal/settings.json: │
+ │                set to shared but is a real file, not a link                │
+ ╰────────────────────────────────────────────────────────────────────────────╯
+ ╭─ ⚠ work · 1 problem ───────────────────────────────────────────────────────╮
+ │ ✔ Folder       OK                                                          │
+ │ ⚠ Login        not logged in → `ccam login work`                           │
+ │ ✔ Share links  share links OK                                              │
+ ╰────────────────────────────────────────────────────────────────────────────╯
+
+ 4 problems; f repairs the selected box, F all of them (ccam doctor --fix).
+```
+
+`↑`/`↓` di chuyển từ hộp này sang hộp khác, và hộp đang chọn có viền màu nhấn. `f` chỉ sửa chữa hộp đang chọn, theo cách `ccam doctor --fix` sẽ làm: trên hộp của một tài khoản, nó chỉ sửa chữa tài khoản đó, còn trên hộp `General` là các kết quả không thuộc tài khoản nào (đường dẫn plugin và lệnh tắt); mọi tài khoản khác chỉ được kiểm tra lại. Nó hỏi trước, và một hộp không có gì để sửa chữa chỉ hiển thị `nothing to repair in <name>`. `F` sửa chữa mọi thứ cùng lúc, như `ccam doctor --fix`, và `r` kiểm tra lại.
 
 ## Thay đổi nhóm
 

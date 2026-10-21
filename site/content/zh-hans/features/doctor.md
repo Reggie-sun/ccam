@@ -1,10 +1,10 @@
 ---
 title: 检查与修复
 description: 用 ccam doctor 检查共享链接、文件权限、登录和 Claude Code 版本，并用 ccam doctor --fix 修复可以安全修复的问题。
-updated: 2026-10-20
+updated: 2026-10-21
 order: 9
 translation: machine
-sourceHash: "6ae82bbf5585"
+sourceHash: "9be63350cb69"
 ---
 
 `ccam doctor` 检查你的 ccam 安装：Claude Code 可执行文件、每个账号的文件夹、登录和共享链接、共享的 MCP 服务器、用量接口以及你的快捷命令。`ccam doctor --fix` 修复它能在不丢失数据的前提下修复的问题，并先把它要替换的文件移到备份文件夹中。当 `ccam <name>` 因共享链接问题而停止、你手动恢复了文件之后，或者 Claude Code 更新之后，都可以运行它。
@@ -17,37 +17,64 @@ ccam doctor --fix            # check, then repair what is safe to repair
 ccam --dry-run doctor --fix  # report only: what --fix would repair
 ```
 
-每条检查结果占一行，并带有一个标记：`✓` 正常，`·` 信息，`!` 警告，`✗` 错误。与账号相关的结果以账号名开头。
+第一行一次性标出所有账号，让你在阅读其他内容之前就知道问题在哪里。下面每个账号有一个框，不属于任何账号的结果（Claude Code、环境变量、插件、MCP 服务器、快捷命令、文件夹规则、组和设置）放在 `General` 框中。框的标题显示该账号最严重的标记和问题数量。框内每一行是一个检查过的方面，总是依次为 `Folder`、`Login` 和 `Share links`，然后是其他方面，并带有一个标记：`✔` 正常，`ℹ` 信息，`⚠` 警告，`✘` 错误。没有任何问题的文件夹显示 `✔ Folder  OK`。
 
 ```console
 $ ccam doctor
-✓ Claude Code 2.1.302 (Claude Code) (/home/me/.local/bin/claude)
-! personal: folder permissions are 755 (should be 0700)
-! personal: .credentials.json permissions are 644 (should be 0600)
-✓ personal: login valid (me@example.com)
-✗ personal: /home/me/.local/share/ccam/profiles/personal/settings.json: set to shared but is a real file, not a link
-· personal: unknown entries (Claude Code layout may have changed): newthing
-! work: not logged in → `ccam login work`
-✓ work: share links OK
-! missing shortcuts in /home/me/.local/bin: ccp
+ ⚠ General   ✘ personal   ⚠ work
+
+ ╭─ ⚠ General · 1 problem ────────────────────────────────────────────────────╮
+ │ ✔ Claude Code  Claude Code 2.1.302 (Claude Code)                           │
+ │                (/home/me/.local/bin/claude)                                │
+ │ ⚠ Shortcuts    missing shortcuts in /home/me/.local/bin: ccp               │
+ ╰────────────────────────────────────────────────────────────────────────────╯
+ ╭─ ✘ personal · 3 problems ──────────────────────────────────────────────────╮
+ │ ⚠ Folder       folder permissions are 755 (should be 0700)                 │
+ │ ℹ              unknown entries (Claude Code layout may have changed):      │
+ │                newthing                                                    │
+ │ ⚠ Login        .credentials.json permissions are 644 (should be 0600)      │
+ │ ✔              login valid (me@example.com)                                │
+ │ ✘ Share links  /home/me/.local/share/ccam/profiles/personal/settings.json: │
+ │                set to shared but is a real file, not a link                │
+ ╰────────────────────────────────────────────────────────────────────────────╯
+ ╭─ ⚠ work · 1 problem ───────────────────────────────────────────────────────╮
+ │ ✔ Folder       OK                                                          │
+ │ ⚠ Login        not logged in → `ccam login work`                           │
+ │ ✔ Share links  share links OK                                              │
+ ╰────────────────────────────────────────────────────────────────────────────╯
 
 `ccam doctor --fix` repairs what it can.
 ```
 
-使用 `--fix` 时，每条已修复的结果都以 `→ fixed` 结尾：
+使用 `--fix` 时，每条已修复的结果都以 `→ fixed` 结尾，并且不再算作问题：
 
 ```console
 $ ccam doctor --fix
-✓ Claude Code 2.1.302 (Claude Code) (/home/me/.local/bin/claude)
-! personal: folder permissions are 755 (should be 0700) → fixed
-! personal: .credentials.json permissions are 644 (should be 0600) → fixed
-✓ personal: login valid (me@example.com)
-✗ personal: /home/me/.local/share/ccam/profiles/personal/settings.json: set to shared but is a real file, not a link → fixed
-· personal: unknown entries (Claude Code layout may have changed): newthing
-! work: not logged in → `ccam login work`
-✓ work: share links OK
-! missing shortcuts in /home/me/.local/bin: ccp → fixed
+ ✔ General   ✔ personal   ⚠ work
+
+ ╭─ ✔ General ────────────────────────────────────────────────────────────────╮
+ │ ✔ Claude Code  Claude Code 2.1.302 (Claude Code)                           │
+ │                (/home/me/.local/bin/claude)                                │
+ │ ⚠ Shortcuts    missing shortcuts in /home/me/.local/bin: ccp → fixed       │
+ ╰────────────────────────────────────────────────────────────────────────────╯
+ ╭─ ✔ personal ───────────────────────────────────────────────────────────────╮
+ │ ⚠ Folder       folder permissions are 755 (should be 0700) → fixed         │
+ │ ℹ              unknown entries (Claude Code layout may have changed):      │
+ │                newthing                                                    │
+ │ ⚠ Login        .credentials.json permissions are 644 (should be 0600) →    │
+ │                fixed                                                       │
+ │ ✔              login valid (me@example.com)                                │
+ │ ✘ Share links  /home/me/.local/share/ccam/profiles/personal/settings.json: │
+ │                set to shared but is a real file, not a link → fixed        │
+ ╰────────────────────────────────────────────────────────────────────────────╯
+ ╭─ ⚠ work · 1 problem ───────────────────────────────────────────────────────╮
+ │ ✔ Folder       OK                                                          │
+ │ ⚠ Login        not logged in → `ccam login work`                           │
+ │ ✔ Share links  share links OK                                              │
+ ╰────────────────────────────────────────────────────────────────────────────╯
 ```
+
+在终端中，框会适应终端宽度，过长的消息会换行，并使用终端自己的颜色（`NO_COLOR` 可以关闭颜色）。输出到管道或文件时，没有颜色，任何消息都不会被换行或截断，因此 `ccam doctor | grep settings.json` 能找到完整的一行；此时每个框都与最长的一行一样宽。仪表盘的 Health 选项卡显示同样的框。
 
 ## 选项
 
@@ -58,17 +85,17 @@ $ ccam doctor --fix
 
 `ccam doctor` 不接受参数。它支持 `--dry-run`：`ccam --dry-run doctor --fix` 打印与 `ccam doctor` 相同的结果，且不做任何更改。
 
-只要至少有一条 `✗` 结果未被修复，退出码就是 `1`，否则为 `0`。警告和信息永远不会让运行失败。在不带 `--fix` 的情况下运行失败时，ccam 会以一个空行和 `` `ccam doctor --fix` repairs what it can. `` 结尾。无法加载配置时，也会以 `1` 和一条 `ccam:` 错误结束。
+只要至少有一条 `✘` 结果未被修复，退出码就是 `1`，否则为 `0`。警告和信息永远不会让运行失败。在不带 `--fix` 的情况下运行失败时，ccam 会以一个空行和 `` `ccam doctor --fix` repairs what it can. `` 结尾。无法加载配置时，也会以 `1` 和一条 `ccam:` 错误结束。
 
 ## 工作原理
 
-`internal/cli/doctor.go` 加载 `~/.config/ccam/config.toml`，并调用 `internal/doctor/doctor.go` 中的 `doctor.Run`；后者按固定顺序执行检查并返回结果。`--fix` 作为 `Options.Fix` 传入，在试运行时设为 false。
+`internal/cli/doctor.go` 加载 `~/.config/ccam/config.toml`，并调用 `internal/doctor/doctor.go` 中的 `doctor.Run`；后者按固定顺序执行检查并返回结果，每条结果都带有它所属的账号和检查的方面。`tui.HealthReport` 把它们归入各个框。`--fix` 作为 `Options.Fix` 传入，在试运行时设为 false。
 
 <!-- motion:doctor-checks -->
 
 中间那一组检查对每个账号各执行一次。各项检查以及 `--fix` 对它们的处理如下：
 
-1. **Claude Code 版本**（`checkClaude`）。像启动器一样解析 `claude` 可执行文件，并运行 `claude --version`。如果版本不以 `2.1.302` 开头（ccam 的文件夹布局就是针对这个版本验证的，即 `doctor.LayoutVersion`），会加上 `· ccam was verified against the folder layout of Claude Code 2.1.302. Any 'unknown entries' below may mean the layout changed`。找不到可执行文件或 `--version` 失败属于错误。不修复。
+1. **Claude Code 版本**（`checkClaude`）。像启动器一样解析 `claude` 可执行文件，并运行 `claude --version`。如果版本不以 `2.1.302` 开头（ccam 的文件夹布局就是针对这个版本验证的，即 `doctor.LayoutVersion`），会加上 信息 `ccam was verified against the folder layout of Claude Code 2.1.302. Any 'unknown entries' below may mean the layout changed`。找不到可执行文件或 `--version` 失败属于错误。不修复。
 2. **环境中的凭据**（`checkAuthEnv`）。当设置了 `CLAUDE_CODE_OAUTH_TOKEN`、`ANTHROPIC_API_KEY` 或 `ANTHROPIC_AUTH_TOKEN` 时发出警告：从该 shell 启动的每个账号都会继承它，而且 Claude Code 会优先使用它而不是账号自己的登录。不修复；请自行取消设置。
 3. **文件夹**（`checkProfile`）。账号文件夹不存在属于错误，并结束该账号的检查。权限中设置了任何组或其他用户的位属于警告；`--fix` 会执行 `chmod 0700`。Windows 没有权限位，所以在 Windows 上会跳过这项检查以及下面的 `0600` 检查；用户配置文件中的文件夹由其访问控制列表保护。
 4. **登录文件**（`checkCredentials`）。用 `lstat` 检查 `.credentials.json`。符号链接属于错误，因为每个账号必须有自己的令牌，且不会被修复。权限不是 `0600` 属于警告；`--fix` 会执行 `chmod 0600`。然后读取登录（在 macOS 上先从钥匙串读取）。没有登录属于警告，并提示使用 `ccam login <name>`。刷新令牌过期是错误 `login expired`；访问令牌过期只是信息，因为 Claude Code 会在下次启动时为它续期。有效的登录会显示邮箱和套餐（`login valid (dev@company.com, Claude Team · Acme)`）。这些都不会被修复；`ccam login --expired` 会登录所有需要登录的账号。
@@ -110,7 +137,7 @@ Repair them with `ccam doctor --fix`, then run again
 ## 安全性与边界情况
 
 - 单纯的 `ccam doctor` 从不更改任何内容。在脚本中，请把 `--dry-run` 与 `--fix` 一起使用以确保安全。
-- `doctor --fix` 不检查账号是否正在运行。修复某个账号的共享链接之前，请先退出该账号的 Claude Code，因为会话会继续写入这些文件。
+- 对于正在运行的账号，`doctor --fix` 只创建缺失的链接，并加上 `` is running; quit Claude Code there, then run `ccam doctor --fix` again to repair the rest ``，因为会话会继续写入修复时要移动的文件。
 - 如果共享修复失败，ccam 会为该账号报告 `could not repair share links: <error>`，并跳过它的未知条目检查。其他账号仍会被检查。
 - 如果 `ccam group` 的更改中途失败，新的组已经保存，ccam 会提示你用 `ccam doctor --fix` 完成。
 - 作为符号链接的 `.credentials.json`、过期的登录和环境中的凭据只会被报告，从不会被更改。

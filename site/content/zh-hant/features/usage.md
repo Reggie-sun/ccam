@@ -1,13 +1,13 @@
 ---
 title: 用量限制
-description: ccam usage 一次顯示每個帳號的 5 小時和每週限制，ccam statusline 則在 Claude Code 中顯示帳號名稱和用量。
-updated: 2026-10-20
+description: ccam usage 以長條一次顯示每個帳號的 5 小時、每週和各模型（Fable）的限制，ccam statusline 則在 Claude Code 中顯示帳號名稱和用量。
+updated: 2026-10-21
 order: 7
 translation: machine
-sourceHash: "ec1d1ee27d9f"
+sourceHash: "0e9587b79ce8"
 ---
 
-`ccam usage` 會顯示每個帳號已使用了多少 5 小時限制和每週限制，以及每個時間區間距離重設的時間。在開始一項長時間的工作之前，或 Claude Code 告訴你快要達到限制時，可以用它查看哪個帳號還有剩餘額度。`ccam statusline` 是 Claude Code 的狀態列指令：它會在 Claude Code 中顯示帳號名稱和用量，並為 `ccam usage` 儲存這些數字。
+`ccam usage` 會顯示每個帳號已使用了多少 5 小時限制、每週限制，以及各模型自己的每週限制（例如 Fable），每項限制一個長條，並附上距離重設的時間。在開始一項長時間的工作之前，或 Claude Code 告訴你快要達到限制時，可以用它查看哪個帳號還有剩餘額度。`ccam statusline` 是 Claude Code 的狀態列指令：它會在 Claude Code 中顯示帳號名稱和用量，並為 `ccam usage` 儲存這些數字。
 
 ## 用法
 
@@ -16,7 +16,7 @@ ccam usage                  # every account, once
 ccam u                      # the same, shorter
 ccam usage --watch          # redraw every 60 seconds until Ctrl+C
 ccam usage --watch=10       # redraw every 10 seconds
-ccam usage -v               # add per-model weekly limits and the data source
+ccam usage -v               # add where the numbers came from
 ccam usage --json           # machine-readable, one object per account
 ccam usage --source cache   # saved numbers only, no network
 ccam usage --refresh        # also renew expired logins of accounts not running
@@ -26,14 +26,19 @@ ccam statusline install     # set the status line in every account's settings.js
 
 ```console
 $ ccam usage
- Account     5-hour        Resets    Weekly        Resets    As of
- 1 personal  ░░░░░░░░   0% -         ██████░░  70% 2d 16h    9h 36m ago (cached)
- 2 work      ██░░░░░░  24% 2h 29m    ███░░░░░  41% 3d 11h    just now (cached)
+ 1 personal  9h 36m ago (cached)
+   5-hour   ░░░░░░░░░░░░░░░░░░░░   0%
+   Weekly   ██████████████░░░░░░  70%  resets in 2d 16h
+   Fable    ██░░░░░░░░░░░░░░░░░░  12%  resets in 2d 16h
+ 2 work      just now (cached)
+   5-hour   █████░░░░░░░░░░░░░░░  24%  resets in 2h 29m
+   Weekly   ████████░░░░░░░░░░░░  41%  resets in 3d 11h
+   Fable    ███████████░░░░░░░░░  55%  resets in 5d 2h
  3 side      login expired, run `ccam side` once to refresh
 → Most headroom: personal   (open it with ccam next --auto)
 ```
 
-在終端機中，表格會立即出現，每一列顯示 `fetching…`，並在各帳號回應時重新繪製該列。`As of` 表示數字的新舊程度；`(cached)` 代表數字來自已儲存的檔案，而不是端點。最後一行會列出 [`ccam next --auto`](/features/next) 依相同規則會選擇的帳號（`auto_max_usage`、`auto_strategy`、執行中的工作階段；除非設定了 `cross_org`，否則只考慮上次使用的帳號所屬組織的帳號；任何區間達到 100% 的帳號都會略過，所以每週額度已用完的帳號絕不會被列出），只在你有多個帳號時才會出現。未登入的帳號會顯示 `not logged in → ccam login <name>`，API 金鑰帳號則顯示 `no limits (API)`。
+每個帳號先有一行，顯示編號、名稱和數字的新舊程度；`(cached)` 代表數字來自已儲存的檔案，而不是端點。下面每項限制佔一行，顯示 20 格的長條、百分比和距離區間重設的時間：`5-hour`、`Weekly`（所有模型），接著是各模型自己的每週區間，例如 `Fable`。帳號沒有的區間會顯示 `-`。百分比從 80% 起變成黃色，達到 100% 時變成紅色。在終端機中，所有帳號會先一起顯示為 `fetching…`，並在各帳號回應時繪製它的各行。最後一行會列出 [`ccam next --auto`](/features/next) 依相同規則會選擇的帳號（`auto_max_usage`、`auto_strategy`、執行中的工作階段；除非設定了 `cross_org`，否則只考慮上次使用的帳號所屬組織的帳號；任何區間達到 100% 的帳號都會略過，所以每週額度已用完的帳號絕不會被列出），只在你有多個帳號時才會出現。未登入的帳號會顯示 `not logged in → ccam login <name>`，API 金鑰帳號則顯示 `no limits (API)`。
 
 執行 `ccam statusline install` 之後，Claude Code 會顯示 `[work] · Opus · 5h 24% · 7d 41%` 這樣的一行。
 
@@ -43,7 +48,7 @@ $ ccam usage
 | --- | --- | --- |
 | `--json` | 以 JSON 輸出報告：`name`、`slot`、`status`、`limits`、`source`、`at`、`error` | 關閉 |
 | `--watch[=N]` | 每 `N` 秒重新繪製，直到你按下 Ctrl+C。只寫 `--watch`，或值為 0 以下時，代表 60 | 關閉 |
-| `-v`、`--verbose` | 顯示各模型的每週限制，以及 `source:` 一行（`live`、`cache` 或 `statusline`） | 關閉 |
+| `-v`、`--verbose` | 在每個帳號下加上 `source:` 一行，說明數字的來源（用量端點、Claude Code、狀態列或已儲存的檔案） | 關閉 |
 | `--no-cache` | 忽略 60 秒快取，重新查詢端點 | 關閉 |
 | `--source live\|claude\|cache` | `live` 以帳號的權杖查詢端點；`claude` 讓 Claude Code 查詢（見下文）；`cache` 只顯示已儲存的數字 | `usage_source`，否則為 `live` |
 | `--refresh` | 更新過期的存取權杖，只針對沒有在執行的帳號 | 關閉 |
@@ -69,7 +74,7 @@ $ ccam usage
 
 <!-- motion:usage-fetch -->
 
-`personal` 和 `work` 及時回應，顯示即時的數字。`side` 花了超過 3 秒，所以 `fallback()` 讀取它的兩個快取檔案，並使用最後寫入的那一個。`usage.Table()` 繪製各列，`usage.Best()` 選出最後一行列出的帳號。
+`personal` 和 `work` 及時回應，顯示即時的數字。`side` 花了超過 3 秒，所以 `fallback()` 讀取它的兩個快取檔案，並使用最後寫入的那一個。`usage.Table()` 為每個帳號繪製一個區塊，`usage.Best()` 選出最後一行列出的帳號。
 
 對於單一帳號，`Fetcher.Fetch` 依序進行以下檢查：
 
@@ -117,7 +122,7 @@ Claude Code 會執行狀態列指令，並透過管線傳給它一份 JSON 文�
 - 除非你加上 `--refresh`，否則 `ccam usage` 絕不變更權杖檔案。登入過期時，用 `ccam <name>` 啟動該帳號一次，Claude Code 就會更新它。
 - `--refresh` 絕不碰正在執行的帳號、匯入的帳號或鑰匙圈中的登入資訊。被拒絕的更新會顯示已儲存的數字和原因。
 - 用量端點沒有公開的文件，可能會變更。變更時你仍會看到已儲存的數字，`ccam doctor` 也會回報格式的變更。
-- 既沒有已儲存的數字也沒有回應時，該列會顯示 `lookup failed:` 和原因，例如加上 `--source cache` 時的 `no saved usage`。
+- 既沒有已儲存的數字也沒有回應時，該帳號的那一行會顯示 `lookup failed:` 和原因，例如加上 `--source cache` 時的 `no saved usage`。
 - 快取檔案只存放百分比和重設時間，絕不存放權杖。
 
 ## 相關內容

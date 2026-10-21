@@ -1,24 +1,32 @@
 ---
 title: Iyakokin amfani da sauya asusai
-description: Ga amfanin awa 5 da na mako na kowane asusun Claude Code da ccam usage, sannan ka buɗe asusun da ya fi sarari da ccam next --auto.
-updated: 2026-10-20
+description: Ga amfanin awa 5, na mako da na Fable na kowane asusun Claude Code a matsayin sanduna da ccam usage, sannan ka buɗe asusun da ya fi sarari da ccam next --auto.
+updated: 2026-10-21
 order: 5
 translation: machine
-sourceHash: 40aef0708c81
+sourceHash: 0e64e3251c69
 ---
 
-`ccam usage` yana nuna nawa kowane asusu ya yi amfani da shi daga iyakar awa 5 da ta mako. `ccam next --auto` yana buɗe asusun da ya fi sauran sarari, kuma `--continue` yana ɗauko tattaunawar yanzu zuwa can.
+`ccam usage` yana nuna nawa kowane asusu ya yi amfani da shi daga iyakar awa 5, iyakar mako da iyakar mako ta kowane model (kamar Fable). `ccam next --auto` yana buɗe asusun da ya fi sauran sarari, kuma `--continue` yana ɗauko tattaunawar yanzu zuwa can.
 
 ```console
 $ ccam usage
- Account     5-hour        Resets    Weekly        Resets    As of
- 1 personal  ██████░░  72% 1h 40m    ███░░░░░  41% 3d 6h     just now
- 2 work      █░░░░░░░   8% 4h 12m    ██░░░░░░  19% 5d 2h     just now
- 3 side      ████████ 100% 22m       █████░░░  68% 1d 9h     12m ago (cached)
+ 1 personal  just now
+   5-hour   ██████████████░░░░░░  72%  resets in 1h 40m
+   Weekly   ████████░░░░░░░░░░░░  41%  resets in 3d 6h
+   Fable    ██████████████████░░  88%  resets in 1d 6h
+ 2 work      just now
+   5-hour   ██░░░░░░░░░░░░░░░░░░   8%  resets in 4h 12m
+   Weekly   ████░░░░░░░░░░░░░░░░  19%  resets in 5d 2h
+   Fable    █░░░░░░░░░░░░░░░░░░░   3%  resets in 5d 2h
+ 3 side      12m ago (cached)
+   5-hour   ████████████████████ 100%  resets in 22m
+   Weekly   ██████████████░░░░░░  68%  resets in 1d 9h
+   Fable    ████████░░░░░░░░░░░░  40%  resets in 1d 9h
 → Most headroom: work   (open it with ccam next --auto)
 ```
 
-Ginshiƙan su ne: asusu, amfanin awa 5, lokacin da ya rage kafin a sake saita shi, amfanin mako, lokacin da ya rage kafin a sake saita shi, da kuma tsawon lokacin da lambobin suka yi.
+Kowane asusu yana samun layi mai nuna tsawon lokacin da lambobinsa suka yi, sannan sanda ɗaya ga kowace iyaka tare da lokacin da ya rage kafin a sake saita ta: taga ta awa 5, taga ta mako ga dukkan model, da taga ta mako ta kowane model, kamar Fable. Daga 80% sanda tana zama rawaya, a 100% kuma ja. Layin ƙarshe yana faɗin asusun da `ccam next --auto` zai buɗe.
 
 ## Daga ina lambobin suke fitowa
 
@@ -32,7 +40,7 @@ Ana sake amfani da lambobin da aka samo ƙasa da daƙiƙa 60 da suka wuce. Zaɓu
 | --- | --- |
 | `--watch [seconds]` | Sabuntawa koyaushe, kowane daƙiƙa 60 ta tsohuwa |
 | `--json` | Sakamakon da na'ura za ta iya karantawa |
-| `-v` | Nuna kuma iyakokin mako na kowane model da inda kowace lamba ta fito |
+| `-v` | Nuna kuma inda lambobin kowane asusu suka fito |
 | `--no-cache` | Koyaushe a sake tambaya |
 | `--source cache` | Kada a taɓa tambaya; nuna lambobin da aka ajiye kawai |
 

@@ -1,10 +1,10 @@
 ---
 title: Kukagua na kurekebisha
 description: Kagua viungo vya kushiriki, ruhusa za faili, kuingia na toleo la Claude Code kwa ccam doctor, na urekebishe kilicho salama kurekebisha kwa ccam doctor --fix.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 9
 translation: machine
-sourceHash: "6ae82bbf5585"
+sourceHash: "9be63350cb69"
 ---
 
 `ccam doctor` hukagua usakinishaji wako wa ccam: binary ya Claude Code, folda ya kila akaunti, taarifa za kuingia na viungo vya kushiriki, seva za MCP zinazoshirikiwa, endpoint ya matumizi na amri zako za njia fupi. `ccam doctor --fix` hurekebisha kile inachoweza bila kupoteza data, na kwanza huhamisha faili yoyote inayoibadilisha kwenda kwenye folda ya nakala rudufu. Iendeshe `ccam <name>` inaposimama kwa sababu ya tatizo la kiungo cha kushiriki, baada ya kurejesha faili kwa mkono, au baada ya kusasisha Claude Code.
@@ -17,37 +17,64 @@ ccam doctor --fix            # check, then repair what is safe to repair
 ccam --dry-run doctor --fix  # report only: what --fix would repair
 ```
 
-Kila matokeo ni mstari mmoja wenye alama: `✓` sawa, `·` taarifa, `!` onyo, `✗` hitilafu. Matokeo ya akaunti huanza na jina la akaunti.
+Mstari wa kwanza huweka alama kwa kila akaunti kwa pamoja, ili uone matatizo yalipo kabla ya kusoma kitu kingine chochote. Chini yake, kila akaunti hupata kisanduku, na matokeo yasiyo ya akaunti yoyote (Claude Code, vigezo vya mazingira, plugins, seva za MCP, njia fupi, kanuni za folda, vikundi na mipangilio) huenda kwenye kisanduku cha `General`. Kichwa cha kisanduku huonyesha alama mbaya zaidi ya akaunti na idadi ya matatizo yake. Kila safu ndani yake ni eneo moja lililokaguliwa, kila mara `Folder`, `Login` na `Share links` kwa mpangilio huo, kisha mengine yoyote, yakiwa na alama: `✔` sawa, `ℹ` taarifa, `⚠` onyo, `✘` hitilafu. Folda isiyo na tatizo lolote huonyesha `✔ Folder  OK`.
 
 ```console
 $ ccam doctor
-✓ Claude Code 2.1.302 (Claude Code) (/home/me/.local/bin/claude)
-! personal: folder permissions are 755 (should be 0700)
-! personal: .credentials.json permissions are 644 (should be 0600)
-✓ personal: login valid (me@example.com)
-✗ personal: /home/me/.local/share/ccam/profiles/personal/settings.json: set to shared but is a real file, not a link
-· personal: unknown entries (Claude Code layout may have changed): newthing
-! work: not logged in → `ccam login work`
-✓ work: share links OK
-! missing shortcuts in /home/me/.local/bin: ccp
+ ⚠ General   ✘ personal   ⚠ work
+
+ ╭─ ⚠ General · 1 problem ────────────────────────────────────────────────────╮
+ │ ✔ Claude Code  Claude Code 2.1.302 (Claude Code)                           │
+ │                (/home/me/.local/bin/claude)                                │
+ │ ⚠ Shortcuts    missing shortcuts in /home/me/.local/bin: ccp               │
+ ╰────────────────────────────────────────────────────────────────────────────╯
+ ╭─ ✘ personal · 3 problems ──────────────────────────────────────────────────╮
+ │ ⚠ Folder       folder permissions are 755 (should be 0700)                 │
+ │ ℹ              unknown entries (Claude Code layout may have changed):      │
+ │                newthing                                                    │
+ │ ⚠ Login        .credentials.json permissions are 644 (should be 0600)      │
+ │ ✔              login valid (me@example.com)                                │
+ │ ✘ Share links  /home/me/.local/share/ccam/profiles/personal/settings.json: │
+ │                set to shared but is a real file, not a link                │
+ ╰────────────────────────────────────────────────────────────────────────────╯
+ ╭─ ⚠ work · 1 problem ───────────────────────────────────────────────────────╮
+ │ ✔ Folder       OK                                                          │
+ │ ⚠ Login        not logged in → `ccam login work`                           │
+ │ ✔ Share links  share links OK                                              │
+ ╰────────────────────────────────────────────────────────────────────────────╯
 
 `ccam doctor --fix` repairs what it can.
 ```
 
-Kwa `--fix`, kila matokeo yaliyorekebishwa huishia na `→ fixed`:
+Kwa `--fix`, kila matokeo yaliyorekebishwa huishia na `→ fixed`, na hayahesabiwi tena kama tatizo:
 
 ```console
 $ ccam doctor --fix
-✓ Claude Code 2.1.302 (Claude Code) (/home/me/.local/bin/claude)
-! personal: folder permissions are 755 (should be 0700) → fixed
-! personal: .credentials.json permissions are 644 (should be 0600) → fixed
-✓ personal: login valid (me@example.com)
-✗ personal: /home/me/.local/share/ccam/profiles/personal/settings.json: set to shared but is a real file, not a link → fixed
-· personal: unknown entries (Claude Code layout may have changed): newthing
-! work: not logged in → `ccam login work`
-✓ work: share links OK
-! missing shortcuts in /home/me/.local/bin: ccp → fixed
+ ✔ General   ✔ personal   ⚠ work
+
+ ╭─ ✔ General ────────────────────────────────────────────────────────────────╮
+ │ ✔ Claude Code  Claude Code 2.1.302 (Claude Code)                           │
+ │                (/home/me/.local/bin/claude)                                │
+ │ ⚠ Shortcuts    missing shortcuts in /home/me/.local/bin: ccp → fixed       │
+ ╰────────────────────────────────────────────────────────────────────────────╯
+ ╭─ ✔ personal ───────────────────────────────────────────────────────────────╮
+ │ ⚠ Folder       folder permissions are 755 (should be 0700) → fixed         │
+ │ ℹ              unknown entries (Claude Code layout may have changed):      │
+ │                newthing                                                    │
+ │ ⚠ Login        .credentials.json permissions are 644 (should be 0600) →    │
+ │                fixed                                                       │
+ │ ✔              login valid (me@example.com)                                │
+ │ ✘ Share links  /home/me/.local/share/ccam/profiles/personal/settings.json: │
+ │                set to shared but is a real file, not a link → fixed        │
+ ╰────────────────────────────────────────────────────────────────────────────╯
+ ╭─ ⚠ work · 1 problem ───────────────────────────────────────────────────────╮
+ │ ✔ Folder       OK                                                          │
+ │ ⚠ Login        not logged in → `ccam login work`                           │
+ │ ✔ Share links  share links OK                                              │
+ ╰────────────────────────────────────────────────────────────────────────────╯
 ```
+
+Kwenye terminal visanduku hulingana na upana wake na ujumbe mrefu hufungwa kwenye mstari unaofuata, kwa rangi za terminal yenyewe (`NO_COLOR` huzizima). Yakitumwa kwenye pipe au faili, matokeo hayana rangi na hakuna ujumbe unaofungwa wala kukatwa, kwa hiyo `ccam doctor | grep settings.json` hupata mstari mzima; kisha kila kisanduku huwa na upana wa mstari mrefu zaidi. Kichupo cha Health cha dashibodi huonyesha visanduku vile vile.
 
 ## Chaguo
 
@@ -58,17 +85,17 @@ $ ccam doctor --fix
 
 `ccam doctor` haipokei hoja. Hukubali `--dry-run`: `ccam --dry-run doctor --fix` huchapisha matokeo yale yale kama `ccam doctor` na haibadilishi kitu.
 
-Exit code ni `1` wakati angalau tokeo moja la `✗` limebaki bila kurekebishwa, na `0` vinginevyo. Maonyo na taarifa kamwe hayasababishi kushindwa. Uendeshaji unaposhindwa bila `--fix`, ccam humalizia kwa mstari mtupu na `` `ccam doctor --fix` repairs what it can. ``. Usanidi usioweza kupakiwa pia humalizika kwa `1` na hitilafu ya `ccam:`.
+Exit code ni `1` wakati angalau tokeo moja la `✘` limebaki bila kurekebishwa, na `0` vinginevyo. Maonyo na taarifa kamwe hayasababishi kushindwa. Uendeshaji unaposhindwa bila `--fix`, ccam humalizia kwa mstari mtupu na `` `ccam doctor --fix` repairs what it can. ``. Usanidi usioweza kupakiwa pia humalizika kwa `1` na hitilafu ya `ccam:`.
 
 ## Jinsi inavyofanya kazi
 
-`internal/cli/doctor.go` hupakia `~/.config/ccam/config.toml` na huita `doctor.Run` katika `internal/doctor/doctor.go`, ambayo huendesha ukaguzi kwa mpangilio maalum na hurudisha matokeo. `--fix` hupitishwa kama `Options.Fix`, ambayo huwekwa false katika dry run.
+`internal/cli/doctor.go` hupakia `~/.config/ccam/config.toml` na huita `doctor.Run` katika `internal/doctor/doctor.go`, ambayo huendesha ukaguzi kwa mpangilio maalum na hurudisha matokeo, kila moja likiwa na akaunti linalohusika nayo na eneo lililokagua. `tui.HealthReport` huyapanga kwenye visanduku. `--fix` hupitishwa kama `Options.Fix`, ambayo huwekwa false katika dry run.
 
 <!-- motion:doctor-checks -->
 
 Sehemu ya kati huendeshwa mara moja kwa kila akaunti. Ukaguzi, na kile `--fix` hufanya kwa kila mmoja:
 
-1. **Toleo la Claude Code** (`checkClaude`). Hutafuta binary ya `claude` kama launcher inavyofanya na huendesha `claude --version`. Ikiwa toleo halianzi na `2.1.302`, toleo ambalo mpangilio wa folda wa ccam ulithibitishwa dhidi yake (`doctor.LayoutVersion`), huongeza `· ccam was verified against the folder layout of Claude Code 2.1.302. Any 'unknown entries' below may mean the layout changed`. Binary inayokosekana au `--version` inayoshindwa ni hitilafu. Hakuna urekebishaji.
+1. **Toleo la Claude Code** (`checkClaude`). Hutafuta binary ya `claude` kama launcher inavyofanya na huendesha `claude --version`. Ikiwa toleo halianzi na `2.1.302`, toleo ambalo mpangilio wa folda wa ccam ulithibitishwa dhidi yake (`doctor.LayoutVersion`), huongeza taarifa `ccam was verified against the folder layout of Claude Code 2.1.302. Any 'unknown entries' below may mean the layout changed`. Binary inayokosekana au `--version` inayoshindwa ni hitilafu. Hakuna urekebishaji.
 2. **Taarifa za kuingia kwenye mazingira** (`checkAuthEnv`). Huonya wakati `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY` au `ANTHROPIC_AUTH_TOKEN` imewekwa: kila akaunti inayoanzishwa kutoka shell hiyo huirithi, na Claude Code huipendelea kuliko taarifa za kuingia za akaunti yenyewe. Hakuna urekebishaji; iondoe mwenyewe.
 3. **Folda** (`checkProfile`). Folda ya akaunti inayokosekana ni hitilafu na humaliza ukaguzi wa akaunti hiyo. Ruhusa zenye biti zozote za group au other ni onyo; `--fix` huendesha `chmod 0700`. Windows haina biti za ruhusa, kwa hiyo ukaguzi huu na ukaguzi wa `0600` ulio hapa chini hurukwa huko; folda iliyo katika profaili yako ya mtumiaji inalindwa na orodha yake ya ufikiaji.
 4. **Faili ya kuingia** (`checkCredentials`). `.credentials.json` hukaguliwa kwa `lstat`. Symlink ni hitilafu, kwa sababu kila akaunti lazima iwe na tokeni yake yenyewe, na hairekebishwi. Mode isiyo `0600` ni onyo; `--fix` huendesha `chmod 0600`. Kisha taarifa za kuingia husomwa (kwenye macOS kutoka Keychain kwanza). Kukosa taarifa za kuingia ni onyo linaloelekeza kwa `ccam login <name>`. Refresh token iliyoisha muda ni hitilafu `login expired`; access token iliyoisha muda ni taarifa tu, kwa kuwa Claude Code huifanya upya wakati wa kuanza unaofuata. Taarifa halali za kuingia huonyesha barua pepe na mpango (`login valid (dev@company.com, Claude Team · Acme)`). Hakuna kati ya haya kinachorekebishwa; `ccam login --expired` huingiza kila akaunti inayohitaji.
@@ -110,7 +137,7 @@ Mbali na kuondoa viungo, kila hatua huhamisha data kwenda kwenye kikundi au fold
 ## Usalama na hali maalum
 
 - `ccam doctor` ya kawaida kamwe haibadilishi chochote. Tumia `--dry-run` pamoja na `--fix` ili kuwa na uhakika katika scripts.
-- `doctor --fix` haikagui kama akaunti inaendeshwa. Funga Claude Code ya akaunti kabla ya kurekebisha viungo vyake vya kushiriki, kwa sababu kipindi kinaendelea kuandika kwenye faili hizo.
+- Kwa akaunti inayoendeshwa, `doctor --fix` huunda tu viungo vinavyokosekana na huongeza `` is running; quit Claude Code there, then run `ccam doctor --fix` again to repair the rest ``, kwa sababu kipindi kinaendelea kuandika kwenye faili ambazo urekebishaji ungezihamisha.
 - Urekebishaji wa kushiriki ukishindwa, ccam huripoti `could not repair share links: <error>` kwa akaunti hiyo na huruka ukaguzi wake wa vipengee visivyojulikana. Akaunti nyingine bado hukaguliwa.
 - Ikiwa badiliko la `ccam group` linashindwa katikati, vikundi vipya tayari vimehifadhiwa, na ccam hukuambia umalizie kwa `ccam doctor --fix`.
 - `.credentials.json` iliyo symlink, taarifa za kuingia zilizoisha muda na taarifa za kuingia za mazingira huripotiwa lakini kamwe hazibadilishwi.

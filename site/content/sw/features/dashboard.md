@@ -1,39 +1,41 @@
 ---
 title: Dashibodi
 description: ccam kwenye terminal hufungua dashibodi ya skrini nzima ya akaunti, vikundi, kanuni za folda, viendelezi na ukaguzi; kila badiliko huonyesha mpango wake kwanza.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 15
 translation: machine
-sourceHash: "decdd5fa54c9"
+sourceHash: "27bd153b48b2"
 ---
 
 `ccam` bila hoja hufungua dashibodi ya skrini nzima wakati ingizo na matokeo ya kawaida ni terminal; vinginevyo huchapisha `ccam list`. Dashibodi huonyesha kila akaunti pamoja na matumizi yake na vikundi vyake, na hufanya kile ambacho amri hufanya: kuanzisha, kuongeza, kuingia, kubadilisha vikundi, kuweka kanuni za folda, kukagua na kurekebisha. Kuanzisha huifunga; kuongeza akaunti au kuingia huiacha kwa ajili ya terminal kisha hurudi.
 
 ```console
- ccam v0.9.0 · 3 accounts · 2 groups         ✔ default · ▸ this folder · • running
+ ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
   Accounts   Groups   Folders   Extensions   Health
+ Your Claude accounts and their usage limits; enter launches the selected one.
 
-    # Account     Email             5-hour         7-day Last  Groups
- ❯ 1. personal ✔   me@example.com    █████▊░░  72%   41% 2h    default
-   2. work      ▸• dev@company.com   ██░░░░░░  25%  100% now   default team
-   3. side         -                 ✘ not logged in         -     no group
+    # Account      5-hour       Weekly       Fable        Last  Groups
+   1. personal ✔   ████▍░  72%  ██▌░░░  41%  █████▎  88%  -     default
+ ❯ 2. work      ▸• █▌░░░░  25%  ██████ 100%  ▋░░░░░  10%  -     default team
+   3. side         ✘ not logged in                        -     no group
 
- ✔ personal is the default account
  enter to launch · n for most room · a to add · s for groups · ? for shortcuts
 ```
 
-Fremu ya kwanza huchorwa kutoka `config.toml` pekee, kwa muda mfupi sana chini ya 100 ms; matumizi hujazwa kadiri kila akaunti inavyojibu. Asilimia hugeuka manjano kuanzia 80% na nyekundu kwenye 100%, na thamani kutoka kwenye akiba (cache) baada ya utafutaji kushindwa huchorwa hafifu.
+Mstari ulio chini ya majina ya vichupo husema kwa sentensi moja kichupo cha sasa ni cha nini. Kwenye terminal pana zaidi, kichupo cha Accounts pia huonyesha barua pepe ya kila akaunti.
+
+Fremu ya kwanza huchorwa kutoka `config.toml` pekee, kwa muda mfupi sana chini ya 100 ms; matumizi hujazwa kadiri kila akaunti inavyojibu. Kila kikomo kina upau wake: dirisha la saa 5, dirisha la wiki kwa model zote, na dirisha la wiki la Fable lenyewe; `-` inamaanisha akaunti haina dirisha hilo. Asilimia hugeuka manjano kuanzia 80% na nyekundu kwenye 100%, na thamani kutoka kwenye akiba (cache) baada ya utafutaji kushindwa huchorwa hafifu.
 
 ## Vichupo
 
 | Kichupo | Kinachoonyesha | Vitufe |
 | --- | --- | --- |
-| Accounts | namba, jina, barua pepe, upau wa saa 5, matumizi ya siku 7, matumizi ya mwisho, vikundi; `✔` akaunti chaguo-msingi, `▸` akaunti ya folda hii, `•` inaendeshwa | hapa chini |
+| Accounts | namba, jina, barua pepe, pau za saa 5, za wiki na za Fable, matumizi ya mwisho, vikundi; `✔` akaunti chaguo-msingi, `▸` akaunti ya folda hii, `•` inaendeshwa | hapa chini |
 | Groups | kila kikundi, kile kinachoshiriki na akaunti zake, pamoja na akaunti zisizo katika kikundi chochote | `enter` hariri, `n` kipya, `e` badilisha jina, `x` ondoa |
 | Folders | kanuni za [`ccam folder`](/features/folder) na ile inayotumika hapa | `n` tumia akaunti hapa, `enter` badilisha, `x` ondoa |
 | Extensions | kile ambacho [`ccam ext`](/features/ext) huonyesha, kila kiendelezi mara moja pamoja na vikundi kinakotoka | `r` pakia upya |
-| Health | kile ambacho [`ccam doctor`](/features/doctor) huripoti | `f` rekebisha (`doctor --fix`) |
+| Health | kile ambacho [`ccam doctor`](/features/doctor) huripoti, kama kisanduku kimoja kwa kila akaunti (hapa chini) | `f` rekebisha kisanduku kilichochaguliwa, `F` rekebisha vyote (`doctor --fix`), `↑`/`↓` sogea kati ya visanduku |
 
 `←`/`→` au `Tab` hubadilisha vichupo, `?` huorodhesha vitufe vya kichupo cha sasa, `r` hutafuta matumizi tena bila akiba fupi, na `q` au `Esc` hufunga.
 
@@ -46,7 +48,7 @@ Fremu ya kwanza huchorwa kutoka `config.toml` pekee, kwa muda mfupi sana chini y
 | `↑`/`↓`, `k`/`j` | Sogea |
 | `n` | Anzisha akaunti ambayo [`ccam next --auto`](/features/next) ingechagua |
 | `o` | Anzisha kwa chaguo: `--continue`, `--resume`, hoja nyingine, au jaribio (dry run) |
-| `u` | Maelezo ya matumizi: madirisha ya saa 5, siku 7 na ya model pamoja na nyakati zake za kuwekwa upya na mahali namba zinapotoka |
+| `u` | Maelezo ya matumizi: madirisha ya saa 5, ya wiki na ya model pamoja na nyakati zake za kuwekwa upya na mahali namba zinapotoka |
 | `a` | Ongeza akaunti (mchawi ulio hapa chini) |
 | `l` | Ingia tena |
 | `s` | Chagua vikundi vya akaunti |
@@ -55,6 +57,33 @@ Fremu ya kwanza huchorwa kutoka `config.toml` pekee, kwa muda mfupi sana chini y
 | `e` | Badilisha jina lake |
 | `c` | Weka au ondoa amri yake ya njia fupi |
 | `x` | Iondoe (huuliza kwanza, ikianzia kwenye No) |
+
+## Kichupo cha Health
+
+Kichupo cha Health huendesha ukaguzi wa [`ccam doctor`](/features/doctor) unapokifungua na huchora mwonekano ule ule: mstari wa kwanza wenye alama kwa kila akaunti, kisha kisanduku kimoja kwa kila akaunti. Kila safu katika kisanduku ni eneo moja lililokaguliwa, `Folder`, `Login` na `Share links` kwanza, likiwa na alama `✔` sawa, `ℹ` taarifa, `⚠` onyo au `✘` hitilafu, kwa hiyo unaona mara moja ni akaunti ipi ina tatizo na wapi. Matokeo yasiyo ya akaunti yoyote huenda kwenye kisanduku cha `General`.
+
+```console
+ ✘ personal   ⚠ work
+
+ ╭─ ✘ personal · 3 problems ──────────────────────────────────────────────────╮
+ │ ⚠ Folder       folder permissions are 755 (should be 0700)                 │
+ │ ℹ              unknown entries (Claude Code layout may have changed):      │
+ │                newthing                                                    │
+ │ ⚠ Login        .credentials.json permissions are 644 (should be 0600)      │
+ │ ✔              login valid (me@example.com)                                │
+ │ ✘ Share links  /home/me/.local/share/ccam/profiles/personal/settings.json: │
+ │                set to shared but is a real file, not a link                │
+ ╰────────────────────────────────────────────────────────────────────────────╯
+ ╭─ ⚠ work · 1 problem ───────────────────────────────────────────────────────╮
+ │ ✔ Folder       OK                                                          │
+ │ ⚠ Login        not logged in → `ccam login work`                           │
+ │ ✔ Share links  share links OK                                              │
+ ╰────────────────────────────────────────────────────────────────────────────╯
+
+ 4 problems; f repairs the selected box, F all of them (ccam doctor --fix).
+```
+
+`↑`/`↓` husogea kutoka kisanduku kimoja hadi kingine, na kisanduku kilichochaguliwa kina mpaka wa rangi ya msisitizo. `f` hurekebisha kisanduku kilichochaguliwa pekee, kwa namna ile ile ambayo `ccam doctor --fix` hurekebisha: kwenye kisanduku cha akaunti hurekebisha akaunti hiyo pekee, na kwenye kisanduku cha `General` matokeo yasiyo ya akaunti yoyote (njia za plugins na njia fupi); kila akaunti nyingine hukaguliwa tena tu. Huuliza kwanza, na kisanduku kisicho na chochote cha kurekebisha husema tu `nothing to repair in <name>`. `F` hurekebisha kila kitu kwa mara moja, kama `ccam doctor --fix`, na `r` hukagua tena.
 
 ## Kubadilisha vikundi
 

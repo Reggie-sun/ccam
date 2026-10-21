@@ -1,24 +1,32 @@
 ---
 title: Limity użycia i przełączanie kont
-description: Sprawdź 5-godzinne i tygodniowe użycie każdego konta Claude Code przez ccam usage i otwórz konto z największym zapasem przez ccam next --auto.
-updated: 2026-10-20
+description: Sprawdź 5-godzinne, tygodniowe i Fable użycie każdego konta Claude Code jako paski przez ccam usage i otwórz konto z największym zapasem przez ccam next --auto.
+updated: 2026-10-21
 order: 5
 translation: machine
-sourceHash: "40aef0708c81"
+sourceHash: "0e64e3251c69"
 ---
 
-`ccam usage` pokazuje, jaką część 5-godzinnego i tygodniowego limitu wykorzystało każde konto. `ccam next --auto` otwiera konto z największym zapasem, a `--continue` przenosi bieżącą rozmowę.
+`ccam usage` pokazuje, jaką część 5-godzinnego limitu, tygodniowego limitu i własnego tygodniowego limitu każdego modelu (takiego jak Fable) wykorzystało każde konto. `ccam next --auto` otwiera konto z największym zapasem, a `--continue` przenosi bieżącą rozmowę.
 
 ```console
 $ ccam usage
- Account     5-hour        Resets    Weekly        Resets    As of
- 1 personal  ██████░░  72% 1h 40m    ███░░░░░  41% 3d 6h     just now
- 2 work      █░░░░░░░   8% 4h 12m    ██░░░░░░  19% 5d 2h     just now
- 3 side      ████████ 100% 22m       █████░░░  68% 1d 9h     12m ago (cached)
+ 1 personal  just now
+   5-hour   ██████████████░░░░░░  72%  resets in 1h 40m
+   Weekly   ████████░░░░░░░░░░░░  41%  resets in 3d 6h
+   Fable    ██████████████████░░  88%  resets in 1d 6h
+ 2 work      just now
+   5-hour   ██░░░░░░░░░░░░░░░░░░   8%  resets in 4h 12m
+   Weekly   ████░░░░░░░░░░░░░░░░  19%  resets in 5d 2h
+   Fable    █░░░░░░░░░░░░░░░░░░░   3%  resets in 5d 2h
+ 3 side      12m ago (cached)
+   5-hour   ████████████████████ 100%  resets in 22m
+   Weekly   ██████████████░░░░░░  68%  resets in 1d 9h
+   Fable    ████████░░░░░░░░░░░░  40%  resets in 1d 9h
 → Most headroom: work   (open it with ccam next --auto)
 ```
 
-Kolumny to: konto, użycie 5-godzinne, czas do resetu, użycie tygodniowe, czas do resetu oraz wiek danych.
+Każde konto ma wiersz z informacją, jak stare są jego liczby, a pod nim jeden pasek na każdy limit z czasem do resetu: okno 5-godzinne, tygodniowe okno dla wszystkich modeli i własne tygodniowe okno każdego modelu, takie jak Fable. Od 80% pasek zmienia kolor na żółty, a przy 100% na czerwony. Ostatni wiersz wskazuje konto, które otworzyłby `ccam next --auto`.
 
 ## Skąd pochodzą liczby
 
@@ -32,7 +40,7 @@ Liczby pobrane mniej niż 60 sekund temu są używane ponownie. Opcje:
 | --- | --- |
 | `--watch [seconds]` | Odświeżaj stale, domyślnie co 60 sekund |
 | `--json` | Wynik czytelny dla maszyn |
-| `-v` | Pokaż też tygodniowe limity dla poszczególnych modeli i źródło każdej liczby |
+| `-v` | Pokaż też, skąd pochodzą liczby każdego konta |
 | `--no-cache` | Zawsze pytaj ponownie |
 | `--source cache` | Nigdy nie pytaj; pokazuj tylko zapisane liczby |
 

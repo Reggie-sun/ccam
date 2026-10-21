@@ -1,13 +1,13 @@
 ---
 title: حدود الاستخدام
-description: يعرض ccam usage حدّي الخمس ساعات والأسبوع لكل الحسابات دفعة واحدة، ويضع ccam statusline اسم الحساب واستخدامه داخل Claude Code.
-updated: 2026-10-20
+description: يعرض ccam usage حد الخمس ساعات والحد الأسبوعي وحد كل نموذج (Fable) لكل الحسابات دفعة واحدة على شكل أشرطة، ويضع ccam statusline اسم الحساب واستخدامه داخل Claude Code.
+updated: 2026-10-21
 order: 7
 translation: machine
-sourceHash: "ec1d1ee27d9f"
+sourceHash: "0e9587b79ce8"
 ---
 
-يعرض `ccam usage` مقدار ما استخدمه كل حساب من حدّي الخمس ساعات والأسبوع، مع الوقت المتبقي حتى إعادة ضبط كل نافذة. استخدمه قبل أن تبدأ مهمة طويلة، أو عندما يخبرك Claude Code أن حدًا ما يقترب، لترى أي حساب لا تزال لديه سعة. و`ccam statusline` هو أمر سطر الحالة في Claude Code: يعرض اسم الحساب واستخدامه داخل Claude Code ويحفظ الأرقام لـ `ccam usage`.
+يعرض `ccam usage` مقدار ما استخدمه كل حساب من حد الخمس ساعات والحد الأسبوعي والحد الأسبوعي الخاص بكل نموذج (مثل Fable)، على شكل شريط لكل حد مع الوقت المتبقي حتى إعادة ضبطه. استخدمه قبل أن تبدأ مهمة طويلة، أو عندما يخبرك Claude Code أن حدًا ما يقترب، لترى أي حساب لا تزال لديه سعة. و`ccam statusline` هو أمر سطر الحالة في Claude Code: يعرض اسم الحساب واستخدامه داخل Claude Code ويحفظ الأرقام لـ `ccam usage`.
 
 ## الاستخدام
 
@@ -16,7 +16,7 @@ ccam usage                  # every account, once
 ccam u                      # the same, shorter
 ccam usage --watch          # redraw every 60 seconds until Ctrl+C
 ccam usage --watch=10       # redraw every 10 seconds
-ccam usage -v               # add per-model weekly limits and the data source
+ccam usage -v               # add where the numbers came from
 ccam usage --json           # machine-readable, one object per account
 ccam usage --source cache   # saved numbers only, no network
 ccam usage --refresh        # also renew expired logins of accounts not running
@@ -26,14 +26,19 @@ ccam statusline install     # set the status line in every account's settings.js
 
 ```console
 $ ccam usage
- Account     5-hour        Resets    Weekly        Resets    As of
- 1 personal  ░░░░░░░░   0% -         ██████░░  70% 2d 16h    9h 36m ago (cached)
- 2 work      ██░░░░░░  24% 2h 29m    ███░░░░░  41% 3d 11h    just now (cached)
+ 1 personal  9h 36m ago (cached)
+   5-hour   ░░░░░░░░░░░░░░░░░░░░   0%
+   Weekly   ██████████████░░░░░░  70%  resets in 2d 16h
+   Fable    ██░░░░░░░░░░░░░░░░░░  12%  resets in 2d 16h
+ 2 work      just now (cached)
+   5-hour   █████░░░░░░░░░░░░░░░  24%  resets in 2h 29m
+   Weekly   ████████░░░░░░░░░░░░  41%  resets in 3d 11h
+   Fable    ███████████░░░░░░░░░  55%  resets in 5d 2h
  3 side      login expired, run `ccam side` once to refresh
 → Most headroom: personal   (open it with ccam next --auto)
 ```
 
-في الطرفية يظهر الجدول فورًا مع `fetching…` في كل صف، ويُعاد رسم كل صف عندما يصل رد حسابه. يبيّن `As of` عمر الأرقام؛ وتعني `(cached)` أنها تأتي من ملف محفوظ، لا من نقطة النهاية. يذكر السطر الأخير الحساب الذي سيختاره [`ccam next --auto`](/features/next) وفق القواعد نفسها (`auto_max_usage` و`auto_strategy` والجلسات العاملة، وحسابات مؤسسة آخر حساب مستخدَم فقط ما لم يُعيَّن `cross_org`، مع تخطي كل نافذة بلغت 100%، فلا يُذكر أبدًا حساب امتلأ أسبوعه)، ولا يظهر إلا إذا كان لديك أكثر من حساب. ويعرض الحساب غير المسجَّل دخوله `not logged in → ccam login <name>`، ويعرض حساب مفتاح API الرسالة `no limits (API)`.
+يحصل كل حساب على سطر فيه رقمه واسمه وعمر أرقامه؛ وتعني `(cached)` أنها تأتي من ملف محفوظ، لا من نقطة النهاية. وتحته يعرض سطر لكل حد شريطًا من 20 خانة والنسبة المئوية والوقت المتبقي حتى إعادة ضبط النافذة: `5-hour`، ثم `Weekly` (كل النماذج)، ثم النافذة الأسبوعية الخاصة بكل نموذج، مثل `Fable`. وتظهر النافذة التي لا يملكها الحساب بالرمز `-`. وتتحول النسبة إلى الأصفر بدءًا من 80% وإلى الأحمر عند 100%. في الطرفية تظهر كل الحسابات فورًا بالحالة `fetching…`، وتُرسم أسطر كل حساب عندما يصل رده. يذكر السطر الأخير الحساب الذي سيختاره [`ccam next --auto`](/features/next) وفق القواعد نفسها (`auto_max_usage` و`auto_strategy` والجلسات العاملة، وحسابات مؤسسة آخر حساب مستخدَم فقط ما لم يُعيَّن `cross_org`، مع تخطي كل نافذة بلغت 100%، فلا يُذكر أبدًا حساب امتلأ أسبوعه)، ولا يظهر إلا إذا كان لديك أكثر من حساب. ويعرض الحساب غير المسجَّل دخوله `not logged in → ccam login <name>`، ويعرض حساب مفتاح API الرسالة `no limits (API)`.
 
 بعد `ccam statusline install`، يعرض Claude Code سطرًا مثل `[work] · Opus · 5h 24% · 7d 41%`.
 
@@ -43,7 +48,7 @@ $ ccam usage
 | --- | --- | --- |
 | `--json` | يطبع التقارير بصيغة JSON: `name` و`slot` و`status` و`limits` و`source` و`at` و`error` | معطّل |
 | `--watch[=N]` | يعيد الرسم كل `N` ثانية حتى تضغط Ctrl+C. و`--watch` وحده، أو قيمة 0 أو أقل، يعني 60 | معطّل |
-| `-v`، `--verbose` | يعرض الحدود الأسبوعية لكل نموذج وسطر `source:` (`live` أو `cache` أو `statusline`) | معطّل |
+| `-v`، `--verbose` | يضيف سطر `source:` تحت كل حساب: مصدر أرقامه (نقطة نهاية الاستخدام، أو Claude Code، أو سطر الحالة، أو ملف محفوظ) | معطّل |
 | `--no-cache` | يتجاهل ذاكرة التخزين المؤقت ذات الستين ثانية ويطلب من نقطة النهاية مرة أخرى | معطّل |
 | `--source live\|claude\|cache` | يطلب `live` من نقطة النهاية باستخدام رمز الحساب؛ ويجعل `claude` برنامج Claude Code يستعلم عنه (انظر أدناه)؛ ويعرض `cache` الأرقام المحفوظة فقط | `usage_source`، وإلا `live` |
 | `--refresh` | يجدّد رموز الوصول المنتهية، للحسابات التي لا تعمل فقط | معطّل |
@@ -69,7 +74,7 @@ $ ccam usage
 
 <!-- motion:usage-fetch -->
 
-يستجيب `personal` و`work` في الوقت المحدد ويعرضان أرقامًا حية. أما `side` فيستغرق أكثر من 3 s، لذلك يقرأ `fallback()` ملفي ذاكرة التخزين المؤقت الخاصين به ويستخدم الأحدث كتابةً منهما. يرسم `usage.Table()` الصفوف، ويختار `usage.Best()` الحساب المذكور في السطر الأخير.
+يستجيب `personal` و`work` في الوقت المحدد ويعرضان أرقامًا حية. أما `side` فيستغرق أكثر من 3 s، لذلك يقرأ `fallback()` ملفي ذاكرة التخزين المؤقت الخاصين به ويستخدم الأحدث كتابةً منهما. يرسم `usage.Table()` كتلة لكل حساب، ويختار `usage.Best()` الحساب المذكور في السطر الأخير.
 
 لحساب واحد، يجري `Fetcher.Fetch` هذه الفحوص بالترتيب:
 
@@ -117,7 +122,7 @@ $ ccam usage
 - لا يغيّر `ccam usage` أبدًا ملف رموز ما لم تمرّر `--refresh`. وعندما ينتهي تسجيل دخول، شغّل الحساب مرة واحدة باستخدام `ccam <name>` وسيجدّده Claude Code.
 - لا يلمس `--refresh` أبدًا الحسابات التي تعمل أو الحسابات المستوردة أو تسجيلات الدخول في سلسلة المفاتيح. والتجديد المرفوض يعرض الأرقام المحفوظة والسبب.
 - نقطة نهاية الاستخدام غير موثقة علنًا وقد تتغير. وعندما يحدث ذلك، تظل ترى الأرقام المحفوظة، ويبلّغ `ccam doctor` عن تغيّر التنسيق.
-- عندما لا توجد أرقام محفوظة ولا رد، يعرض الصف `lookup failed:` والسبب، مثلًا `no saved usage` مع `--source cache`.
+- عندما لا توجد أرقام محفوظة ولا رد، يعرض سطر الحساب `lookup failed:` والسبب، مثلًا `no saved usage` مع `--source cache`.
 - لا تحتوي ملفات ذاكرة التخزين المؤقت إلا على النسب وأوقات إعادة الضبط، ولا تحتوي على رموز أبدًا.
 
 ## صفحات ذات صلة

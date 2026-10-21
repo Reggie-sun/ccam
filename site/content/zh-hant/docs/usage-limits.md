@@ -1,24 +1,32 @@
 ---
 title: 用量限制與切換帳號
-description: 用 ccam usage 查看每個 Claude Code 帳號的 5 小時和每週用量，並用 ccam next --auto 開啟剩餘額度最多的帳號。
-updated: 2026-10-20
+description: 用 ccam usage 以長條查看每個 Claude Code 帳號的 5 小時、每週和 Fable 用量，並用 ccam next --auto 開啟剩餘額度最多的帳號。
+updated: 2026-10-21
 order: 5
 translation: machine
-sourceHash: "40aef0708c81"
+sourceHash: "0e64e3251c69"
 ---
 
-`ccam usage` 會顯示每個帳號已使用了多少 5 小時限制和每週限制。`ccam next --auto` 會開啟剩餘額度最多的帳號，而 `--continue` 會把目前的對話帶過去。
+`ccam usage` 會顯示每個帳號已使用了多少 5 小時限制、每週限制，以及各模型自己的每週限制（例如 Fable）。`ccam next --auto` 會開啟剩餘額度最多的帳號，而 `--continue` 會把目前的對話帶過去。
 
 ```console
 $ ccam usage
- Account     5-hour        Resets    Weekly        Resets    As of
- 1 personal  ██████░░  72% 1h 40m    ███░░░░░  41% 3d 6h     just now
- 2 work      █░░░░░░░   8% 4h 12m    ██░░░░░░  19% 5d 2h     just now
- 3 side      ████████ 100% 22m       █████░░░  68% 1d 9h     12m ago (cached)
+ 1 personal  just now
+   5-hour   ██████████████░░░░░░  72%  resets in 1h 40m
+   Weekly   ████████░░░░░░░░░░░░  41%  resets in 3d 6h
+   Fable    ██████████████████░░  88%  resets in 1d 6h
+ 2 work      just now
+   5-hour   ██░░░░░░░░░░░░░░░░░░   8%  resets in 4h 12m
+   Weekly   ████░░░░░░░░░░░░░░░░  19%  resets in 5d 2h
+   Fable    █░░░░░░░░░░░░░░░░░░░   3%  resets in 5d 2h
+ 3 side      12m ago (cached)
+   5-hour   ████████████████████ 100%  resets in 22m
+   Weekly   ██████████████░░░░░░  68%  resets in 1d 9h
+   Fable    ████████░░░░░░░░░░░░  40%  resets in 1d 9h
 → Most headroom: work   (open it with ccam next --auto)
 ```
 
-各欄依序為：帳號、5 小時用量、距離重設的時間、每週用量、距離重設的時間，以及數字的新舊程度。
+每個帳號先有一行，顯示數字的新舊程度，接著每項限制各有一個長條，並附上距離重設的時間：5 小時區間、所有模型共用的每週區間，以及各模型自己的每週區間，例如 Fable。長條從 80% 起變成黃色，達到 100% 時變成紅色。最後一行會列出 `ccam next --auto` 會開啟的帳號。
 
 ## 數字從哪裡來
 
@@ -32,7 +40,7 @@ ccam 會使用每個帳號自己的登入資訊，同時向 Anthropic 的用量�
 | --- | --- |
 | `--watch [seconds]` | 持續重新整理，預設每 60 秒一次 |
 | `--json` | 機器可讀的輸出 |
-| `-v` | 另外顯示各模型的每週限制，以及每個數字的來源 |
+| `-v` | 另外顯示每個帳號的數字來源 |
 | `--no-cache` | 一律重新查詢 |
 | `--source cache` | 絕不查詢；只顯示已儲存的數字 |
 

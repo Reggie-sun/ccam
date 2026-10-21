@@ -1,24 +1,32 @@
 ---
 title: 使用量の上限とアカウントの切り替え
-description: ccam usageですべてのClaude Codeアカウントの5時間と週間の使用量を確認し、ccam next --autoで最も余裕があるアカウントを開きます。
-updated: 2026-10-20
+description: ccam usageですべてのClaude Codeアカウントの5時間、週間、Fableの使用量をバーで確認し、ccam next --autoで最も余裕があるアカウントを開きます。
+updated: 2026-10-21
 order: 5
 translation: machine
-sourceHash: "40aef0708c81"
+sourceHash: "0e64e3251c69"
 ---
 
-`ccam usage`は、各アカウントが5時間と週間の上限をどれだけ使ったかを表示します。`ccam next --auto`は最も余裕があるアカウントを開き、`--continue`を付けると現在の会話を引き継ぎます。
+`ccam usage`は、各アカウントが5時間の上限、週間の上限、モデルごとの週間上限（Fableなど）をどれだけ使ったかを表示します。`ccam next --auto`は最も余裕があるアカウントを開き、`--continue`を付けると現在の会話を引き継ぎます。
 
 ```console
 $ ccam usage
- Account     5-hour        Resets    Weekly        Resets    As of
- 1 personal  ██████░░  72% 1h 40m    ███░░░░░  41% 3d 6h     just now
- 2 work      █░░░░░░░   8% 4h 12m    ██░░░░░░  19% 5d 2h     just now
- 3 side      ████████ 100% 22m       █████░░░  68% 1d 9h     12m ago (cached)
+ 1 personal  just now
+   5-hour   ██████████████░░░░░░  72%  resets in 1h 40m
+   Weekly   ████████░░░░░░░░░░░░  41%  resets in 3d 6h
+   Fable    ██████████████████░░  88%  resets in 1d 6h
+ 2 work      just now
+   5-hour   ██░░░░░░░░░░░░░░░░░░   8%  resets in 4h 12m
+   Weekly   ████░░░░░░░░░░░░░░░░  19%  resets in 5d 2h
+   Fable    █░░░░░░░░░░░░░░░░░░░   3%  resets in 5d 2h
+ 3 side      12m ago (cached)
+   5-hour   ████████████████████ 100%  resets in 22m
+   Weekly   ██████████████░░░░░░  68%  resets in 1d 9h
+   Fable    ████████░░░░░░░░░░░░  40%  resets in 1d 9h
 → Most headroom: work   (open it with ccam next --auto)
 ```
 
-各列は、アカウント、5時間の使用量、リセットまでの時間、週間の使用量、リセットまでの時間、数値がどれだけ前のものか、を表します。
+アカウントごとに、数値がどれだけ前のものかを示す行があり、その下に上限ごとのバーとリセットまでの時間が並びます。5時間の枠、全モデル共通の週間の枠、そしてFableのようなモデルごとの週間の枠です。バーは80%から黄色、100%で赤になります。最後の行は、`ccam next --auto`が開くアカウントを示します。
 
 ## 数値の取得元
 
@@ -32,7 +40,7 @@ ccamは、各アカウント自身のログインを使って、すべてのア�
 | --- | --- |
 | `--watch [seconds]` | 継続的に更新します。デフォルトは60秒ごと |
 | `--json` | 機械可読な形式で出力します |
-| `-v` | モデル別の週間上限と、各数値の取得元も表示します |
+| `-v` | 各アカウントの数値の取得元も表示します |
 | `--no-cache` | 常に問い合わせ直します |
 | `--source cache` | 問い合わせを行わず、保存済みの数値だけを表示します |
 

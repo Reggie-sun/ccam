@@ -1,13 +1,13 @@
 ---
 title: Vikomo vya matumizi
-description: ccam usage huonyesha vikomo vya saa 5 na vya wiki vya kila akaunti kwa pamoja, na ccam statusline huweka jina la akaunti na matumizi yake katika Claude Code.
-updated: 2026-10-20
+description: ccam usage huonyesha vikomo vya saa 5, vya wiki na vya kila model (Fable) vya kila akaunti kwa pamoja kama pau, na ccam statusline huweka jina la akaunti na matumizi yake katika Claude Code.
+updated: 2026-10-21
 order: 7
 translation: machine
-sourceHash: "ec1d1ee27d9f"
+sourceHash: "0e9587b79ce8"
 ---
 
-`ccam usage` huonyesha kiasi cha vikomo vya saa 5 na vya wiki ambacho kila akaunti imetumia, pamoja na muda uliobaki hadi kila kipindi kianze upya. Itumie kabla ya kuanza kazi ndefu, au Claude Code inapokuambia kikomo kiko karibu, ili kuona ni akaunti ipi bado ina nafasi. `ccam statusline` ni amri ya mstari wa hali (status line) kwa Claude Code: huonyesha jina la akaunti na matumizi ndani ya Claude Code na huhifadhi namba kwa ajili ya `ccam usage`.
+`ccam usage` huonyesha kiasi cha kikomo cha saa 5, kikomo cha wiki na kikomo cha wiki cha kila model (kama Fable) ambacho kila akaunti imetumia, kama upau mmoja kwa kila kikomo pamoja na muda hadi kianze upya. Itumie kabla ya kuanza kazi ndefu, au Claude Code inapokuambia kikomo kiko karibu, ili kuona ni akaunti ipi bado ina nafasi. `ccam statusline` ni amri ya mstari wa hali (status line) kwa Claude Code: huonyesha jina la akaunti na matumizi ndani ya Claude Code na huhifadhi namba kwa ajili ya `ccam usage`.
 
 ## Matumizi
 
@@ -16,7 +16,7 @@ ccam usage                  # every account, once
 ccam u                      # the same, shorter
 ccam usage --watch          # redraw every 60 seconds until Ctrl+C
 ccam usage --watch=10       # redraw every 10 seconds
-ccam usage -v               # add per-model weekly limits and the data source
+ccam usage -v               # add where the numbers came from
 ccam usage --json           # machine-readable, one object per account
 ccam usage --source cache   # saved numbers only, no network
 ccam usage --refresh        # also renew expired logins of accounts not running
@@ -26,14 +26,19 @@ ccam statusline install     # set the status line in every account's settings.js
 
 ```console
 $ ccam usage
- Account     5-hour        Resets    Weekly        Resets    As of
- 1 personal  ░░░░░░░░   0% -         ██████░░  70% 2d 16h    9h 36m ago (cached)
- 2 work      ██░░░░░░  24% 2h 29m    ███░░░░░  41% 3d 11h    just now (cached)
+ 1 personal  9h 36m ago (cached)
+   5-hour   ░░░░░░░░░░░░░░░░░░░░   0%
+   Weekly   ██████████████░░░░░░  70%  resets in 2d 16h
+   Fable    ██░░░░░░░░░░░░░░░░░░  12%  resets in 2d 16h
+ 2 work      just now (cached)
+   5-hour   █████░░░░░░░░░░░░░░░  24%  resets in 2h 29m
+   Weekly   ████████░░░░░░░░░░░░  41%  resets in 3d 11h
+   Fable    ███████████░░░░░░░░░  55%  resets in 5d 2h
  3 side      login expired, run `ccam side` once to refresh
 → Most headroom: personal   (open it with ccam next --auto)
 ```
 
-Kwenye terminal jedwali huonekana mara moja likiwa na `fetching…` katika kila safu, na kila safu huchorwa upya akaunti yake inapojibu. `As of` husema namba zina umri gani; `(cached)` inamaanisha zinatoka kwenye faili iliyohifadhiwa, si kwenye endpoint. Mstari wa mwisho hutaja akaunti ambayo [`ccam next --auto`](/features/next) ingechagua kwa kanuni zile zile (`auto_max_usage`, `auto_strategy`, vipindi vinavyoendeshwa, akaunti za shirika la akaunti iliyotumika mwisho pekee isipokuwa `cross_org` imewekwa, kila kipindi kilicho 100% kikirukwa, kwa hiyo akaunti ambayo wiki yake imejaa haitajwi kamwe), na huonekana tu ukiwa na zaidi ya akaunti moja. Akaunti ambayo haijaingia huonyesha `not logged in → ccam login <name>`, na akaunti ya API key huonyesha `no limits (API)`.
+Kila akaunti hupata mstari wenye namba yake, jina lake na umri wa namba zake; `(cached)` inamaanisha zinatoka kwenye faili iliyohifadhiwa, si kwenye endpoint. Chini yake, mstari mmoja kwa kila kikomo huonyesha upau wa visanduku 20, asilimia na muda hadi kipindi kianze upya: `5-hour`, `Weekly` (model zote), kisha kipindi cha wiki cha kila model yenyewe, kama `Fable`. Kipindi ambacho akaunti haina huonyesha `-`. Asilimia hugeuka manjano kuanzia 80% na nyekundu kwa 100%. Kwenye terminal kila akaunti huonekana mara moja kama `fetching…`, na mistari yake huchorwa inapojibu. Mstari wa mwisho hutaja akaunti ambayo [`ccam next --auto`](/features/next) ingechagua kwa kanuni zile zile (`auto_max_usage`, `auto_strategy`, vipindi vinavyoendeshwa, akaunti za shirika la akaunti iliyotumika mwisho pekee isipokuwa `cross_org` imewekwa, kila kipindi kilicho 100% kikirukwa, kwa hiyo akaunti ambayo wiki yake imejaa haitajwi kamwe), na huonekana tu ukiwa na zaidi ya akaunti moja. Akaunti ambayo haijaingia huonyesha `not logged in → ccam login <name>`, na akaunti ya API key huonyesha `no limits (API)`.
 
 Baada ya `ccam statusline install`, Claude Code huonyesha mstari kama `[work] · Opus · 5h 24% · 7d 41%`.
 
@@ -43,7 +48,7 @@ Baada ya `ccam statusline install`, Claude Code huonyesha mstari kama `[work] ·
 | --- | --- | --- |
 | `--json` | Huchapisha ripoti kama JSON: `name`, `slot`, `status`, `limits`, `source`, `at`, `error` | imezimwa |
 | `--watch[=N]` | Huchora upya kila sekunde `N` hadi ubonyeze Ctrl+C. `--watch` peke yake, au thamani ya 0 au chini, inamaanisha 60 | imezimwa |
-| `-v`, `--verbose` | Huonyesha vikomo vya wiki vya kila model na mstari wa `source:` (`live`, `cache` au `statusline`) | imezimwa |
+| `-v`, `--verbose` | Huongeza mstari wa `source:` chini ya kila akaunti: namba zake zilikotoka (endpoint ya matumizi, Claude Code, mstari wa hali au faili iliyohifadhiwa) | imezimwa |
 | `--no-cache` | Hupuuza cache ya sekunde 60 na huuliza endpoint tena | imezimwa |
 | `--source live\|claude\|cache` | `live` huuliza endpoint kwa tokeni ya akaunti; `claude` huiachia Claude Code itafute (hapa chini); `cache` huonyesha namba zilizohifadhiwa tu | `usage_source`, vinginevyo `live` |
 | `--refresh` | Hufanya upya tokeni za ufikiaji zilizoisha muda, kwa akaunti ambazo haziendeshwi tu | imezimwa |
@@ -69,7 +74,7 @@ Kila akaunti huendeshwa katika goroutine yake dhidi ya endpoint; ile inayopitwa 
 
 <!-- motion:usage-fetch -->
 
-`personal` na `work` hujibu kwa wakati na huonyesha namba za moja kwa moja. `side` huchukua zaidi ya sekunde 3, kwa hiyo `fallback()` husoma faili zake mbili za cache na hutumia ile iliyoandikwa mwisho. `usage.Table()` huchora safu na `usage.Best()` huchagua akaunti inayotajwa kwenye mstari wa mwisho.
+`personal` na `work` hujibu kwa wakati na huonyesha namba za moja kwa moja. `side` huchukua zaidi ya sekunde 3, kwa hiyo `fallback()` husoma faili zake mbili za cache na hutumia ile iliyoandikwa mwisho. `usage.Table()` huchora kizuizi kimoja kwa kila akaunti na `usage.Best()` huchagua akaunti inayotajwa kwenye mstari wa mwisho.
 
 Kwa akaunti moja, `Fetcher.Fetch` hufanya ukaguzi huu kwa mpangilio:
 
@@ -117,7 +122,7 @@ Amri iliyozungukwa hupata sekunde 2. Baada ya hapo husimamishwa kwa nguvu na mst
 - `ccam usage` kamwe haibadilishi faili ya tokeni isipokuwa utoe `--refresh`. Kuingia kukiisha muda, anzisha akaunti mara moja kwa `ccam <name>` na Claude Code itakufanya upya.
 - `--refresh` kamwe haigusi akaunti zinazoendeshwa, akaunti zilizoingizwa wala taarifa za kuingia za Keychain. Ufanyaji upya uliokataliwa huonyesha namba zilizohifadhiwa na sababu.
 - Endpoint ya matumizi haijaandikiwa nyaraka hadharani na inaweza kubadilika. Ikibadilika, bado unaona namba zilizohifadhiwa, na `ccam doctor` huripoti badiliko la muundo.
-- Bila namba zilizohifadhiwa na bila jibu, safu huonyesha `lookup failed:` na sababu, kwa mfano `no saved usage` kwa `--source cache`.
+- Bila namba zilizohifadhiwa na bila jibu, mstari wa akaunti huonyesha `lookup failed:` na sababu, kwa mfano `no saved usage` kwa `--source cache`.
 - Faili za cache huhifadhi asilimia na nyakati za kuanza upya tu, kamwe si tokeni.
 
 ## Zinazohusiana

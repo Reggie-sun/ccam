@@ -1,13 +1,13 @@
 ---
 title: "Limites d'utilisation"
-description: "ccam usage affiche d'un coup les limites sur 5 heures et hebdomadaires de chaque compte, et ccam statusline met le compte et l'utilisation dans Claude Code."
-updated: 2026-10-20
+description: "ccam usage affiche d'un coup, sous forme de barres, les limites sur 5 heures, hebdomadaires et par modèle (Fable) de chaque compte, et ccam statusline met le compte et l'utilisation dans Claude Code."
+updated: 2026-10-21
 order: 7
 translation: machine
-sourceHash: "ec1d1ee27d9f"
+sourceHash: "0e9587b79ce8"
 ---
 
-`ccam usage` indique quelle part des limites sur 5 heures et sur la semaine chaque compte a utilisée, avec le temps restant avant la réinitialisation de chaque fenêtre. Utilisez-le avant de commencer une longue tâche, ou quand Claude Code vous signale qu'une limite approche, pour voir quel compte a encore de la marge. `ccam statusline` est la commande de ligne d'état pour Claude Code : elle affiche le nom du compte et l'utilisation dans Claude Code et enregistre les chiffres pour `ccam usage`.
+`ccam usage` indique quelle part de la limite sur 5 heures, de la limite hebdomadaire et de la limite hebdomadaire propre à chaque modèle (comme Fable) chaque compte a utilisée, avec une barre par limite et le temps restant avant sa réinitialisation. Utilisez-le avant de commencer une longue tâche, ou quand Claude Code vous signale qu'une limite approche, pour voir quel compte a encore de la marge. `ccam statusline` est la commande de ligne d'état pour Claude Code : elle affiche le nom du compte et l'utilisation dans Claude Code et enregistre les chiffres pour `ccam usage`.
 
 ## Utilisation
 
@@ -16,7 +16,7 @@ ccam usage                  # every account, once
 ccam u                      # the same, shorter
 ccam usage --watch          # redraw every 60 seconds until Ctrl+C
 ccam usage --watch=10       # redraw every 10 seconds
-ccam usage -v               # add per-model weekly limits and the data source
+ccam usage -v               # add where the numbers came from
 ccam usage --json           # machine-readable, one object per account
 ccam usage --source cache   # saved numbers only, no network
 ccam usage --refresh        # also renew expired logins of accounts not running
@@ -26,14 +26,19 @@ ccam statusline install     # set the status line in every account's settings.js
 
 ```console
 $ ccam usage
- Account     5-hour        Resets    Weekly        Resets    As of
- 1 personal  ░░░░░░░░   0% -         ██████░░  70% 2d 16h    9h 36m ago (cached)
- 2 work      ██░░░░░░  24% 2h 29m    ███░░░░░  41% 3d 11h    just now (cached)
+ 1 personal  9h 36m ago (cached)
+   5-hour   ░░░░░░░░░░░░░░░░░░░░   0%
+   Weekly   ██████████████░░░░░░  70%  resets in 2d 16h
+   Fable    ██░░░░░░░░░░░░░░░░░░  12%  resets in 2d 16h
+ 2 work      just now (cached)
+   5-hour   █████░░░░░░░░░░░░░░░  24%  resets in 2h 29m
+   Weekly   ████████░░░░░░░░░░░░  41%  resets in 3d 11h
+   Fable    ███████████░░░░░░░░░  55%  resets in 5d 2h
  3 side      login expired, run `ccam side` once to refresh
 → Most headroom: personal   (open it with ccam next --auto)
 ```
 
-Dans un terminal, le tableau apparaît immédiatement avec `fetching…` dans chaque ligne, et chaque ligne est redessinée quand son compte répond. `As of` indique l'ancienneté des chiffres ; `(cached)` signifie qu'ils proviennent d'un fichier enregistré et non du point de terminaison. La dernière ligne nomme le compte que [`ccam next --auto`](/features/next) choisirait selon les mêmes règles (`auto_max_usage`, `auto_strategy`, les sessions en cours, uniquement les comptes de l'organisation du dernier compte utilisé sauf si `cross_org` est défini, toute fenêtre à 100 % écartée : un compte dont la semaine est pleine n'est donc jamais nommé), et n'apparaît que si vous avez plus d'un compte. Un compte non connecté affiche `not logged in → ccam login <name>`, et un compte à clé d'API affiche `no limits (API)`.
+Chaque compte a une ligne avec son numéro, son nom et l'ancienneté de ses chiffres ; `(cached)` signifie qu'ils proviennent d'un fichier enregistré et non du point de terminaison. En dessous, une ligne par limite affiche une barre de 20 cases, le pourcentage et le temps restant avant la réinitialisation de la fenêtre : `5-hour`, `Weekly` (tous les modèles), puis la fenêtre hebdomadaire propre à chaque modèle, comme `Fable`. Une fenêtre que le compte n'a pas affiche `-`. Un pourcentage passe au jaune à partir de 80 % et au rouge à 100 %. Dans un terminal, tous les comptes apparaissent immédiatement sous la forme `fetching…`, et leurs lignes sont dessinées à mesure qu'ils répondent. La dernière ligne nomme le compte que [`ccam next --auto`](/features/next) choisirait selon les mêmes règles (`auto_max_usage`, `auto_strategy`, les sessions en cours, uniquement les comptes de l'organisation du dernier compte utilisé sauf si `cross_org` est défini, toute fenêtre à 100 % écartée : un compte dont la semaine est pleine n'est donc jamais nommé), et n'apparaît que si vous avez plus d'un compte. Un compte non connecté affiche `not logged in → ccam login <name>`, et un compte à clé d'API affiche `no limits (API)`.
 
 Après `ccam statusline install`, Claude Code affiche une ligne comme `[work] · Opus · 5h 24% · 7d 41%`.
 
@@ -43,7 +48,7 @@ Après `ccam statusline install`, Claude Code affiche une ligne comme `[work] ·
 | --- | --- | --- |
 | `--json` | Afficher les rapports en JSON : `name`, `slot`, `status`, `limits`, `source`, `at`, `error` | désactivé |
 | `--watch[=N]` | Redessiner toutes les `N` secondes jusqu'à ce que vous appuyiez sur Ctrl+C. `--watch` seul, ou une valeur inférieure ou égale à 0, signifie 60 | désactivé |
-| `-v`, `--verbose` | Afficher les limites hebdomadaires propres à chaque modèle et une ligne `source:` (`live`, `cache` ou `statusline`) | désactivé |
+| `-v`, `--verbose` | Ajouter sous chaque compte une ligne `source:` : la provenance de ses chiffres (le point de terminaison d'utilisation, Claude Code, la ligne d'état ou un fichier enregistré) | désactivé |
 | `--no-cache` | Ignorer le cache de 60 secondes et interroger à nouveau le point de terminaison | désactivé |
 | `--source live\|claude\|cache` | `live` interroge le point de terminaison avec le jeton du compte ; `claude` fait faire la consultation par Claude Code (voir ci-dessous) ; `cache` n'affiche que les chiffres enregistrés | `usage_source`, sinon `live` |
 | `--refresh` | Renouveler les jetons d'accès expirés, uniquement pour les comptes qui ne sont pas en cours d'exécution | désactivé |
@@ -69,7 +74,7 @@ Chaque compte interroge le point de terminaison dans sa propre goroutine ; celui
 
 <!-- motion:usage-fetch -->
 
-`personal` et `work` répondent à temps et affichent des chiffres en direct. `side` met plus de 3 s, donc `fallback()` lit ses deux fichiers de cache et utilise le plus récemment écrit. `usage.Table()` dessine les lignes et `usage.Best()` choisit le compte nommé sur la dernière ligne.
+`personal` et `work` répondent à temps et affichent des chiffres en direct. `side` met plus de 3 s, donc `fallback()` lit ses deux fichiers de cache et utilise le plus récemment écrit. `usage.Table()` dessine un bloc par compte et `usage.Best()` choisit le compte nommé sur la dernière ligne.
 
 Pour un compte, `Fetcher.Fetch` effectue ces vérifications dans l'ordre :
 
@@ -117,7 +122,7 @@ La commande enveloppée dispose de 2 secondes. Au-delà, elle est tuée et la li
 - `ccam usage` ne modifie jamais un fichier de jetons sauf si vous passez `--refresh`. Quand une connexion a expiré, lancez le compte une fois avec `ccam <name>` et Claude Code la renouvellera.
 - `--refresh` ne touche jamais aux comptes en cours d'exécution, aux comptes importés ni aux connexions du trousseau. Un renouvellement refusé affiche les chiffres enregistrés et la raison.
 - Le point de terminaison d'utilisation n'est pas documenté publiquement et peut changer. Dans ce cas, vous voyez toujours les chiffres enregistrés, et `ccam doctor` signale le changement de format.
-- Sans chiffres enregistrés ni réponse, la ligne affiche `lookup failed:` et la raison, par exemple `no saved usage` avec `--source cache`.
+- Sans chiffres enregistrés ni réponse, la ligne du compte affiche `lookup failed:` et la raison, par exemple `no saved usage` avec `--source cache`.
 - Les fichiers de cache ne contiennent que des pourcentages et des heures de réinitialisation, jamais de jetons.
 
 ## Voir aussi

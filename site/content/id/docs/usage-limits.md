@@ -1,24 +1,32 @@
 ---
 title: Batas penggunaan dan perpindahan akun
-description: Lihat penggunaan 5 jam dan mingguan setiap akun Claude Code dengan ccam usage, lalu buka akun dengan sisa kuota terbanyak lewat ccam next --auto.
-updated: 2026-10-20
+description: Lihat penggunaan 5 jam, mingguan, dan Fable setiap akun Claude Code sebagai bilah dengan ccam usage, lalu buka akun dengan sisa kuota terbanyak lewat ccam next --auto.
+updated: 2026-10-21
 order: 5
 translation: machine
-sourceHash: 40aef0708c81
+sourceHash: "0e64e3251c69"
 ---
 
-`ccam usage` menampilkan seberapa banyak batas 5 jam dan mingguan yang sudah digunakan setiap akun. `ccam next --auto` membuka akun dengan sisa kuota terbanyak, dan `--continue` membawa percakapan saat ini ke akun tersebut.
+`ccam usage` menampilkan seberapa banyak batas 5 jam, batas mingguan, dan batas mingguan khusus setiap model (seperti Fable) yang sudah digunakan setiap akun. `ccam next --auto` membuka akun dengan sisa kuota terbanyak, dan `--continue` membawa percakapan saat ini ke akun tersebut.
 
 ```console
 $ ccam usage
- Account     5-hour        Resets    Weekly        Resets    As of
- 1 personal  ██████░░  72% 1h 40m    ███░░░░░  41% 3d 6h     just now
- 2 work      █░░░░░░░   8% 4h 12m    ██░░░░░░  19% 5d 2h     just now
- 3 side      ████████ 100% 22m       █████░░░  68% 1d 9h     12m ago (cached)
+ 1 personal  just now
+   5-hour   ██████████████░░░░░░  72%  resets in 1h 40m
+   Weekly   ████████░░░░░░░░░░░░  41%  resets in 3d 6h
+   Fable    ██████████████████░░  88%  resets in 1d 6h
+ 2 work      just now
+   5-hour   ██░░░░░░░░░░░░░░░░░░   8%  resets in 4h 12m
+   Weekly   ████░░░░░░░░░░░░░░░░  19%  resets in 5d 2h
+   Fable    █░░░░░░░░░░░░░░░░░░░   3%  resets in 5d 2h
+ 3 side      12m ago (cached)
+   5-hour   ████████████████████ 100%  resets in 22m
+   Weekly   ██████████████░░░░░░  68%  resets in 1d 9h
+   Fable    ████████░░░░░░░░░░░░  40%  resets in 1d 9h
 → Most headroom: work   (open it with ccam next --auto)
 ```
 
-Kolomnya adalah: akun, penggunaan 5 jam, waktu hingga direset, penggunaan mingguan, waktu hingga direset, dan sudah berapa lama sejak angka-angka itu diambil.
+Setiap akun mendapat satu baris yang menunjukkan umur angka-angkanya, lalu satu bilah per batas beserta waktu hingga direset: jendela 5 jam, jendela mingguan untuk semua model, dan jendela mingguan khusus setiap model, seperti Fable. Mulai 80% bilah berubah kuning, dan pada 100% merah. Baris terakhir menyebut akun yang akan dibuka `ccam next --auto`.
 
 ## Dari mana angkanya berasal
 
@@ -32,7 +40,7 @@ Angka yang diambil kurang dari 60 detik yang lalu akan dipakai ulang. Opsi:
 | --- | --- |
 | `--watch [seconds]` | Memperbarui terus-menerus, setiap 60 detik secara default |
 | `--json` | Keluaran yang dapat dibaca mesin |
-| `-v` | Juga menampilkan batas mingguan per model dan asal setiap angka |
+| `-v` | Juga menampilkan asal angka setiap akun |
 | `--no-cache` | Selalu bertanya ulang |
 | `--source cache` | Tidak pernah bertanya; hanya menampilkan angka yang tersimpan |
 

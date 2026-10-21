@@ -1,24 +1,32 @@
 ---
 title: Giới hạn sử dụng và chuyển đổi tài khoản
-description: "Xem mức sử dụng 5 giờ và hàng tuần của mọi tài khoản Claude Code bằng ccam usage, và mở tài khoản còn nhiều hạn mức nhất bằng ccam next --auto."
-updated: 2026-10-20
+description: "Xem mức sử dụng 5 giờ, hàng tuần và Fable của mọi tài khoản Claude Code dưới dạng thanh bằng ccam usage, và mở tài khoản còn nhiều hạn mức nhất bằng ccam next --auto."
+updated: 2026-10-21
 order: 5
 translation: machine
-sourceHash: "40aef0708c81"
+sourceHash: "0e64e3251c69"
 ---
 
-`ccam usage` cho biết mỗi tài khoản đã dùng bao nhiêu trong giới hạn 5 giờ và giới hạn hàng tuần. `ccam next --auto` mở tài khoản còn nhiều hạn mức nhất, và `--continue` mang cuộc hội thoại hiện tại sang tài khoản đó.
+`ccam usage` cho biết mỗi tài khoản đã dùng bao nhiêu trong giới hạn 5 giờ, giới hạn hàng tuần và giới hạn hàng tuần riêng của từng mô hình (như Fable). `ccam next --auto` mở tài khoản còn nhiều hạn mức nhất, và `--continue` mang cuộc hội thoại hiện tại sang tài khoản đó.
 
 ```console
 $ ccam usage
- Account     5-hour        Resets    Weekly        Resets    As of
- 1 personal  ██████░░  72% 1h 40m    ███░░░░░  41% 3d 6h     just now
- 2 work      █░░░░░░░   8% 4h 12m    ██░░░░░░  19% 5d 2h     just now
- 3 side      ████████ 100% 22m       █████░░░  68% 1d 9h     12m ago (cached)
+ 1 personal  just now
+   5-hour   ██████████████░░░░░░  72%  resets in 1h 40m
+   Weekly   ████████░░░░░░░░░░░░  41%  resets in 3d 6h
+   Fable    ██████████████████░░  88%  resets in 1d 6h
+ 2 work      just now
+   5-hour   ██░░░░░░░░░░░░░░░░░░   8%  resets in 4h 12m
+   Weekly   ████░░░░░░░░░░░░░░░░  19%  resets in 5d 2h
+   Fable    █░░░░░░░░░░░░░░░░░░░   3%  resets in 5d 2h
+ 3 side      12m ago (cached)
+   5-hour   ████████████████████ 100%  resets in 22m
+   Weekly   ██████████████░░░░░░  68%  resets in 1d 9h
+   Fable    ████████░░░░░░░░░░░░  40%  resets in 1d 9h
 → Most headroom: work   (open it with ccam next --auto)
 ```
 
-Các cột lần lượt là: tài khoản, mức sử dụng 5 giờ, thời gian đến lần đặt lại, mức sử dụng hàng tuần, thời gian đến lần đặt lại, và độ cũ của các con số.
+Mỗi tài khoản có một dòng cho biết độ cũ của các con số, tiếp theo là một thanh cho mỗi giới hạn cùng thời gian đến lần đặt lại: khoảng 5 giờ, khoảng hàng tuần cho mọi mô hình, và khoảng hàng tuần riêng của từng mô hình, như Fable. Từ 80% thanh chuyển sang màu vàng, và ở 100% thì màu đỏ. Dòng cuối nêu tên tài khoản mà `ccam next --auto` sẽ mở.
 
 ## Các con số lấy từ đâu
 
@@ -32,7 +40,7 @@ Các con số được lấy cách đây chưa đến 60 giây sẽ được dù
 | --- | --- |
 | `--watch [seconds]` | Làm mới liên tục, mặc định mỗi 60 giây |
 | `--json` | Đầu ra máy đọc được |
-| `-v` | Hiển thị thêm giới hạn hàng tuần theo từng mô hình và nguồn gốc của từng con số |
+| `-v` | Hiển thị thêm nguồn gốc các con số của từng tài khoản |
 | `--no-cache` | Luôn hỏi lại |
 | `--source cache` | Không bao giờ hỏi; chỉ hiển thị các con số đã lưu |
 

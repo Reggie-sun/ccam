@@ -1,13 +1,13 @@
 ---
 title: Mga usage limit
-description: Ipinapakita ng ccam usage ang 5-oras at lingguhang limit ng bawat account nang sabay; inilalagay ng ccam statusline ang account at usage nito sa Claude Code.
-updated: 2026-10-20
+description: Ipinapakita ng ccam usage bilang mga bar ang 5-oras, lingguhan at bawat-model (Fable) na limit ng bawat account nang sabay; inilalagay ng ccam statusline ang account at usage nito sa Claude Code.
+updated: 2026-10-21
 order: 7
 translation: machine
-sourceHash: "ec1d1ee27d9f"
+sourceHash: "0e9587b79ce8"
 ---
 
-Ipinapakita ng `ccam usage` kung gaano kalaki na ang nagamit ng bawat account sa 5-oras at lingguhang limit, kasama ang oras bago mag-reset ang bawat window. Gamitin ito bago ka magsimula ng mahabang gawain, o kapag sinabi ng Claude Code na malapit na ang isang limit, para makita kung aling account ang may natitira pa. Ang `ccam statusline` ay ang status line command para sa Claude Code: ipinapakita nito ang pangalan ng account at usage sa loob ng Claude Code at sine-save ang mga numero para sa `ccam usage`.
+Ipinapakita ng `ccam usage` kung gaano kalaki na ang nagamit ng bawat account sa 5-oras na limit, sa lingguhang limit at sa sariling lingguhang limit ng bawat model (gaya ng Fable), bilang isang bar bawat limit kasama ang oras bago ito mag-reset. Gamitin ito bago ka magsimula ng mahabang gawain, o kapag sinabi ng Claude Code na malapit na ang isang limit, para makita kung aling account ang may natitira pa. Ang `ccam statusline` ay ang status line command para sa Claude Code: ipinapakita nito ang pangalan ng account at usage sa loob ng Claude Code at sine-save ang mga numero para sa `ccam usage`.
 
 ## Paggamit
 
@@ -16,7 +16,7 @@ ccam usage                  # every account, once
 ccam u                      # the same, shorter
 ccam usage --watch          # redraw every 60 seconds until Ctrl+C
 ccam usage --watch=10       # redraw every 10 seconds
-ccam usage -v               # add per-model weekly limits and the data source
+ccam usage -v               # add where the numbers came from
 ccam usage --json           # machine-readable, one object per account
 ccam usage --source cache   # saved numbers only, no network
 ccam usage --refresh        # also renew expired logins of accounts not running
@@ -26,14 +26,19 @@ ccam statusline install     # set the status line in every account's settings.js
 
 ```console
 $ ccam usage
- Account     5-hour        Resets    Weekly        Resets    As of
- 1 personal  ░░░░░░░░   0% -         ██████░░  70% 2d 16h    9h 36m ago (cached)
- 2 work      ██░░░░░░  24% 2h 29m    ███░░░░░  41% 3d 11h    just now (cached)
+ 1 personal  9h 36m ago (cached)
+   5-hour   ░░░░░░░░░░░░░░░░░░░░   0%
+   Weekly   ██████████████░░░░░░  70%  resets in 2d 16h
+   Fable    ██░░░░░░░░░░░░░░░░░░  12%  resets in 2d 16h
+ 2 work      just now (cached)
+   5-hour   █████░░░░░░░░░░░░░░░  24%  resets in 2h 29m
+   Weekly   ████████░░░░░░░░░░░░  41%  resets in 3d 11h
+   Fable    ███████████░░░░░░░░░  55%  resets in 5d 2h
  3 side      login expired, run `ccam side` once to refresh
 → Most headroom: personal   (open it with ccam next --auto)
 ```
 
-Sa terminal, lumalabas agad ang table na may `fetching…` sa bawat hilera, at iginuguhit ulit ang bawat hilera habang sumasagot ang account nito. Sinasabi ng `As of` kung gaano na katagal ang mga numero; ang ibig sabihin ng `(cached)` ay galing ang mga ito sa naka-save na file, hindi sa endpoint. Pinapangalanan ng huling linya ang account na pipiliin ng [`ccam next --auto`](/features/next) ayon sa parehong mga patakaran (`auto_max_usage`, `auto_strategy`, ang mga tumatakbong session, mga account lang ng organisasyon ng huling ginamit na account maliban kung nakatakda ang `cross_org`, nilalaktawan ang bawat window na nasa 100%, kaya hindi kailanman pinapangalanan ang account na puno na ang linggo), at lumalabas lang ito kapag mahigit sa isa ang account mo. Nagpapakita ng `not logged in → ccam login <name>` ang account na hindi naka-log in, at ng `no limits (API)` ang account na API key ang gamit.
+Bawat account ay may linyang may numero nito, pangalan nito at kung gaano na katagal ang mga numero nito; ang ibig sabihin ng `(cached)` ay galing ang mga ito sa naka-save na file, hindi sa endpoint. Sa ilalim nito, ipinapakita ng isang linya bawat limit ang 20-cell na bar, ang porsiyento at ang oras bago mag-reset ang window: `5-hour`, `Weekly` (lahat ng model), at pagkatapos ang sariling lingguhang window ng bawat model, gaya ng `Fable`. Nagpapakita ng `-` ang window na wala sa account. Nagiging dilaw ang porsiyento mula 80% at pula sa 100%. Sa terminal, lumalabas agad ang bawat account bilang `fetching…`, at iginuguhit ang mga linya nito habang sumasagot ito. Pinapangalanan ng huling linya ang account na pipiliin ng [`ccam next --auto`](/features/next) ayon sa parehong mga patakaran (`auto_max_usage`, `auto_strategy`, ang mga tumatakbong session, mga account lang ng organisasyon ng huling ginamit na account maliban kung nakatakda ang `cross_org`, nilalaktawan ang bawat window na nasa 100%, kaya hindi kailanman pinapangalanan ang account na puno na ang linggo), at lumalabas lang ito kapag mahigit sa isa ang account mo. Nagpapakita ng `not logged in → ccam login <name>` ang account na hindi naka-log in, at ng `no limits (API)` ang account na API key ang gamit.
 
 Pagkatapos ng `ccam statusline install`, magpapakita ang Claude Code ng linya gaya ng `[work] · Opus · 5h 24% · 7d 41%`.
 
@@ -43,7 +48,7 @@ Pagkatapos ng `ccam statusline install`, magpapakita ang Claude Code ng linya ga
 | --- | --- | --- |
 | `--json` | I-print ang mga ulat bilang JSON: `name`, `slot`, `status`, `limits`, `source`, `at`, `error` | off |
 | `--watch[=N]` | Iguhit ulit tuwing `N` segundo hanggang pindutin mo ang Ctrl+C. Ang `--watch` lang, o value na 0 o mas mababa, ay nangangahulugang 60 | off |
-| `-v`, `--verbose` | Ipakita ang mga lingguhang limit bawat model at isang linyang `source:` (`live`, `cache` o `statusline`) | off |
+| `-v`, `--verbose` | Magdagdag ng linyang `source:` sa ilalim ng bawat account: kung saan galing ang mga numero nito (ang usage endpoint, ang Claude Code, ang status line o isang naka-save na file) | off |
 | `--no-cache` | Huwag pansinin ang 60 segundong cache at magtanong ulit sa endpoint | off |
 | `--source live\|claude\|cache` | Nagtatanong sa endpoint ang `live` gamit ang token ng account; ipinapahanap ng `claude` ito sa Claude Code (tingnan sa ibaba); ipinapakita lang ng `cache` ang mga naka-save na numero | `usage_source`, kung wala ay `live` |
 | `--refresh` | I-renew ang mga expired na access token, para lang sa mga account na hindi tumatakbo | off |
@@ -69,7 +74,7 @@ Tumatakbo ang bawat account sa sarili nitong goroutine laban sa endpoint; ang na
 
 <!-- motion:usage-fetch -->
 
-Sumasagot sa oras ang `personal` at `work` at nagpapakita ng mga live na numero. Lumalampas sa 3 s ang `side`, kaya binabasa ng `fallback()` ang dalawang cache file nito at ginagamit ang pinakahuling naisulat. Iginuguhit ng `usage.Table()` ang mga hilera at pinipili ng `usage.Best()` ang account na pinapangalanan sa huling linya.
+Sumasagot sa oras ang `personal` at `work` at nagpapakita ng mga live na numero. Lumalampas sa 3 s ang `side`, kaya binabasa ng `fallback()` ang dalawang cache file nito at ginagamit ang pinakahuling naisulat. Iginuguhit ng `usage.Table()` ang isang block bawat account at pinipili ng `usage.Best()` ang account na pinapangalanan sa huling linya.
 
 Para sa isang account, ginagawa ng `Fetcher.Fetch` ang mga pagsusuring ito nang sunod-sunod:
 
@@ -117,7 +122,7 @@ Isinusulat ng `ccam statusline install` ang `statusLine` sa `settings.json` ng b
 - Hindi kailanman binabago ng `ccam usage` ang token file maliban kung ipapasa mo ang `--refresh`. Kapag nag-expire ang isang login, patakbuhin nang isang beses ang account gamit ang `ccam <name>` at ire-renew ito ng Claude Code.
 - Hindi kailanman ginagalaw ng `--refresh` ang mga tumatakbong account, in-import na account o Keychain login. Ipinapakita ng tinanggihang refresh ang mga naka-save na numero at ang dahilan.
 - Hindi pampublikong dokumentado ang usage endpoint at puwede itong magbago. Kapag nangyari iyon, makikita mo pa rin ang mga naka-save na numero, at iuulat ng `ccam doctor` ang pagbabago sa format.
-- Kapag walang naka-save na numero at walang sagot, ipinapakita ng hilera ang `lookup failed:` at ang dahilan, halimbawa `no saved usage` kapag may `--source cache`.
+- Kapag walang naka-save na numero at walang sagot, ipinapakita ng linya ng account ang `lookup failed:` at ang dahilan, halimbawa `no saved usage` kapag may `--source cache`.
 - Mga porsiyento at oras ng reset lang ang laman ng mga cache file, hindi kailanman mga token.
 
 ## Kaugnay
