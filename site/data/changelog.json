@@ -1,5 +1,11 @@
 [
   {
+    "tag": "v0.10.0",
+    "date": "2026-10-21",
+    "url": "https://github.com/jhyunwoo/ccam/releases/tag/v0.10.0",
+    "notes": "<h3>New</h3>\n<ul>\n<li>Usage bars for the 5-hour, weekly and Fable limits, and a box per account in ccam doctor and the Health tab</li>\n</ul>\n<h3>Fixed</h3>\n<ul>\n<li>ccam doctor --fix leaves out the &quot;makes it&quot; hint on a link it makes</li>\n</ul>\n"
+  },
+  {
     "tag": "v0.9.1",
     "date": "2026-10-21",
     "url": "https://github.com/jhyunwoo/ccam/releases/tag/v0.9.1",
