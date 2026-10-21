@@ -1,10 +1,10 @@
 ---
 title: "Passer au compte suivant"
 description: "ccam next ouvre Claude Code avec un autre compte ; --auto prend le plus de marge, --continue y emporte la conversation et --fallback relance les tâches -p."
-updated: 2026-10-20
+updated: 2026-10-21
 order: 8
 translation: machine
-sourceHash: "6a5dcb1d5c01"
+sourceHash: "afee5cce02cd"
 ---
 
 `ccam next` ouvre Claude Code avec un autre compte sans que vous ayez à le nommer. Utilisez-le quand un compte atteint sa limite d'utilisation : `ccam next` seul prend le compte qui suit celui utilisé en dernier, `--auto` prend celui qui a le plus de marge, et `--continue` emporte la dernière conversation de ce dossier dans le nouveau compte, que les deux partagent l'historique ou non. Dans Claude Code, le [plugin ccam](#inside-claude-code) vous prévient quand une limite arrête une session, et `/ccam:switch` passe la conversation à un autre compte. Pour les scripts qui exécutent `claude -p`, `ccam --fallback` fait le changement de lui-même (voir [Relancer à la limite](#run-again-at-the-limit)).
@@ -20,7 +20,7 @@ ccam next --auto --max-usage 80 # prefer accounts below 80%
 ccam next --auto --strategy balance   # the weekly quota that would go unused first
 ccam next --auto --cross-org    # also accounts of other organizations
 ccam next --auto --wait         # nobody has room: wait for the first reset (up to 5 hours)
-ccam next -- -p "summarize"     # pass arguments to claude after --
+ccam next -c --auto -- --dangerously-skip-permissions   # claude's own options go after --
 ccam --dry-run next --auto      # print the choice and the command, start nothing
 ```
 
@@ -48,6 +48,8 @@ ccam affiche le changement sous la forme `→ <from> → <to>` sur la sortie d'e
 
 `--auto` et `--continue` fonctionnent ensemble. Avec `--continue`, les arguments `--resume` sont placés avant les vôtres.
 
+Les options propres à Claude Code, comme `--dangerously-skip-permissions` ou `--model`, se placent après `--`. Contrairement à `ccam <name>`, qui transmet tout ce qui suit le nom, `ccam next` lit lui-même ses arguments : sans le `--`, il s'arrête donc avec `ccam: unknown flag: --dangerously-skip-permissions`.
+
 ## Fonctionnement
 
 Chaque lancement via ccam écrit l'heure dans `~/.local/state/ccam/last-used/<name>`. `ccam next` lit ces fichiers, vérifie quels comptes sont connectés, puis choisit.
@@ -69,7 +71,7 @@ Le parcours commence au compte utilisé en dernier et s'arrête au premier compt
 
 <!-- motion:next-auto -->
 
-Un compte est jugé sur ses fenêtres de 5 heures et hebdomadaire et, quand `--model` figure parmi les arguments de Claude Code, aussi sur la fenêtre hebdomadaire de ce modèle (`opus`, `sonnet`, `haiku` ou `fable` dans le nom). `Policy.Choose()` répartit les comptes en trois groupes :
+Un compte est jugé sur ses fenêtres de 5 heures et hebdomadaire et, quand `--model` figure parmi les arguments de Claude Code (après `--`), aussi sur la fenêtre hebdomadaire de ce modèle (`opus`, `sonnet`, `haiku` ou `fable` dans le nom). `Policy.Choose()` répartit les comptes en trois groupes :
 
 1. **Marge** : chaque fenêtre sous `auto_max_usage` (`config.toml`, 100 par défaut). La stratégie choisit parmi eux : `headroom` (par défaut) prend l'utilisation sur 5 heures la plus basse ; `expiring` prend la fenêtre de 5 heures qui se réinitialise le plus tôt, afin que son quota restant serve avant d'être perdu ; `balance` prend le compte auquel il reste le plus de quota hebdomadaire par jour jusqu'à la réinitialisation de sa semaine, en décomptant chaque session ccam en cours, afin que le quota hebdomadaire ne reste pas inutilisé et que les sessions parallèles se répartissent.
 2. **Au-dessus** : sous 100 %, mais à `auto_max_usage` ou au-delà. Utilisés seulement quand aucun compte n'a de marge, l'utilisation sur 5 heures la plus basse d'abord.

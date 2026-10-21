@@ -1,10 +1,10 @@
 ---
 title: "اگلے اکاؤنٹ پر جانا"
 description: "ccam next کسی دوسرے اکاؤنٹ سے Claude Code کھولتا ہے؛ --auto زیادہ گنجائش والا چنتا ہے، --continue گفتگو ساتھ لے جاتا ہے، --fallback -p جابز دوبارہ چلاتا ہے۔"
-updated: 2026-10-20
+updated: 2026-10-21
 order: 8
 translation: machine
-sourceHash: "6a5dcb1d5c01"
+sourceHash: "afee5cce02cd"
 ---
 
 `ccam next`، Claude Code کو کسی دوسرے اکاؤنٹ کے طور پر کھولتا ہے، بغیر اس کے کہ آپ اس کا نام لیں۔ اسے تب استعمال کریں جب کوئی اکاؤنٹ اپنی استعمال کی حد تک پہنچ جائے: سادہ `ccam next` آخری بار استعمال کیے گئے اکاؤنٹ کے بعد والا اکاؤنٹ لیتا ہے، `--auto` وہ اکاؤنٹ لیتا ہے جس میں سب سے زیادہ گنجائش ہو، اور `--continue` اس فولڈر کی آخری گفتگو نئے اکاؤنٹ میں لے جاتا ہے، چاہے دونوں ہسٹری شیئر کرتے ہوں یا نہیں۔ Claude Code کے اندر، [ccam پلگ اِن](#inside-claude-code) آپ کو بتاتا ہے جب کوئی حد سیشن کو روک دے، اور `/ccam:switch` گفتگو آگے سونپ دیتا ہے۔ `claude -p` چلانے والے اسکرپٹس کے لیے `ccam --fallback` یہ تبدیلی خود کرتا ہے (دیکھیں [حد پر دوبارہ چلانا](#run-again-at-the-limit))۔
@@ -20,7 +20,7 @@ ccam next --auto --max-usage 80 # prefer accounts below 80%
 ccam next --auto --strategy balance   # the weekly quota that would go unused first
 ccam next --auto --cross-org    # also accounts of other organizations
 ccam next --auto --wait         # nobody has room: wait for the first reset (up to 5 hours)
-ccam next -- -p "summarize"     # pass arguments to claude after --
+ccam next -c --auto -- --dangerously-skip-permissions   # claude's own options go after --
 ccam --dry-run next --auto      # print the choice and the command, start nothing
 ```
 
@@ -48,6 +48,8 @@ ccam تبدیلی کو اسٹینڈرڈ ایرر پر `→ <from> → <to>` کی
 
 `--auto` اور `--continue` ایک ساتھ کام کرتے ہیں۔ `--continue` کے ساتھ، `--resume` والے آرگیومنٹس آپ کے اپنے آرگیومنٹس سے پہلے رکھے جاتے ہیں۔
 
+Claude Code کے اپنے آپشنز، جیسے `--dangerously-skip-permissions` یا `--model`، `--` کے بعد آتے ہیں۔ `ccam <name>` کے برعکس، جو نام کے بعد سب کچھ آگے بھیج دیتا ہے، `ccam next` اپنے آرگیومنٹس خود پڑھتا ہے، اس لیے `--` کے بغیر یہ `ccam: unknown flag: --dangerously-skip-permissions` کے ساتھ رک جاتا ہے۔
+
 ## یہ کیسے کام کرتا ہے
 
 ccam کے ذریعے ہر لانچ وقت کو `~/.local/state/ccam/last-used/<name>` میں لکھتا ہے۔ `ccam next` یہ فائلیں پڑھتا ہے، دیکھتا ہے کہ کون سے اکاؤنٹس لاگ اِن ہیں، اور انتخاب کرتا ہے۔
@@ -69,7 +71,7 @@ ccam کے ذریعے ہر لانچ وقت کو `~/.local/state/ccam/last-used/<n
 
 <!-- motion:next-auto -->
 
-ہر اکاؤنٹ کو اس کی 5 گھنٹے اور ہفتہ وار ونڈوز سے پرکھا جاتا ہے، اور جب Claude Code کے آرگیومنٹس میں `--model` ہو تو اس ماڈل کی ہفتہ وار ونڈو سے بھی (نام میں `opus`، `sonnet`، `haiku` یا `fable`)۔ `Policy.Choose()` اکاؤنٹس کو تین حصوں میں بانٹتا ہے:
+ہر اکاؤنٹ کو اس کی 5 گھنٹے اور ہفتہ وار ونڈوز سے پرکھا جاتا ہے، اور جب Claude Code کے آرگیومنٹس میں `--model` ہو (`--` کے بعد) تو اس ماڈل کی ہفتہ وار ونڈو سے بھی (نام میں `opus`، `sonnet`، `haiku` یا `fable`)۔ `Policy.Choose()` اکاؤنٹس کو تین حصوں میں بانٹتا ہے:
 
 1. **گنجائش**: ہر ونڈو `auto_max_usage` (`config.toml`، ڈیفالٹ 100) سے کم۔ ان میں سے حکمتِ عملی چنتی ہے: `headroom` (ڈیفالٹ) سب سے کم 5 گھنٹے کا استعمال لیتا ہے؛ `expiring` وہ 5 گھنٹے کی ونڈو لیتا ہے جو سب سے جلد ری سیٹ ہو، تاکہ اس کا بچا ہوا کوٹا ضائع ہونے سے پہلے استعمال ہو جائے؛ `balance` وہ اکاؤنٹ لیتا ہے جس کے ہفتے کے ری سیٹ تک فی دن سب سے زیادہ ہفتہ وار کوٹا بچا ہو، اور ہر چلتے ccam سیشن کو اس کے حساب میں شمار کرتا ہے، تاکہ ہفتہ وار کوٹا بغیر استعمال کے نہ رہ جائے اور متوازی سیشنز بٹ جائیں۔
 2. **حد سے اوپر**: 100% سے کم لیکن `auto_max_usage` کے برابر یا اس سے زیادہ۔ صرف تب استعمال ہوتا ہے جب کسی اکاؤنٹ میں گنجائش نہ ہو، سب سے کم 5 گھنٹے کے استعمال والا پہلے۔

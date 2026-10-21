@@ -1,10 +1,10 @@
 ---
 title: अगले अकाउंट पर स्विच करना
 description: ccam next किसी दूसरे अकाउंट से Claude Code खोलता है; --auto सबसे ज़्यादा गुंजाइश वाला चुनता है, --continue बातचीत आगे ले जाता है, --fallback -p jobs दोहराता है।
-updated: 2026-10-20
+updated: 2026-10-21
 order: 8
 translation: machine
-sourceHash: "6a5dcb1d5c01"
+sourceHash: "afee5cce02cd"
 ---
 
 `ccam next` आपके नाम बताए बिना Claude Code को किसी दूसरे अकाउंट से खोलता है। इसे तब इस्तेमाल करें जब कोई अकाउंट अपनी उपयोग सीमा तक पहुँच जाए: सादा `ccam next` पिछली बार इस्तेमाल किए गए अकाउंट के बाद वाला अकाउंट लेता है, `--auto` वह लेता है जिसमें सबसे ज़्यादा गुंजाइश हो, और `--continue` इस फ़ोल्डर की आख़िरी बातचीत को नए अकाउंट में ले जाता है, चाहे दोनों इतिहास साझा करते हों या नहीं। Claude Code के अंदर, [ccam plugin](#inside-claude-code) बताता है कि कब कोई सीमा session को रोकती है, और `/ccam:switch` बातचीत आगे सौंप देता है। `claude -p` चलाने वाली scripts के लिए, `ccam --fallback` यह स्विच अपने-आप करता है ([सीमा पर फिर से चलाना](#run-again-at-the-limit) देखें)।
@@ -20,7 +20,7 @@ ccam next --auto --max-usage 80 # prefer accounts below 80%
 ccam next --auto --strategy balance   # the weekly quota that would go unused first
 ccam next --auto --cross-org    # also accounts of other organizations
 ccam next --auto --wait         # nobody has room: wait for the first reset (up to 5 hours)
-ccam next -- -p "summarize"     # pass arguments to claude after --
+ccam next -c --auto -- --dangerously-skip-permissions   # claude's own options go after --
 ccam --dry-run next --auto      # print the choice and the command, start nothing
 ```
 
@@ -48,6 +48,8 @@ ccam स्विच को standard error पर `→ <from> → <to>` के �
 
 `--auto` और `--continue` एक साथ काम करते हैं। `--continue` के साथ, `--resume` वाले आर्ग्युमेंट आपके अपने आर्ग्युमेंट से पहले रखे जाते हैं।
 
+Claude Code के अपने विकल्प, जैसे `--dangerously-skip-permissions` या `--model`, `--` के बाद आते हैं। `ccam <name>` के उलट, जो नाम के बाद की हर चीज़ आगे भेज देता है, `ccam next` अपने आर्ग्युमेंट ख़ुद पढ़ता है, इसलिए `--` के बिना यह `ccam: unknown flag: --dangerously-skip-permissions` के साथ रुक जाता है।
+
 ## यह कैसे काम करता है
 
 ccam से होने वाली हर शुरुआत समय को `~/.local/state/ccam/last-used/<name>` में लिखती है। `ccam next` इन फ़ाइलों को पढ़ता है, जाँचता है कि कौन से अकाउंट लॉगिन किए हुए हैं, और चुनता है।
@@ -69,7 +71,7 @@ ccam से होने वाली हर शुरुआत समय को
 
 <!-- motion:next-auto -->
 
-हर अकाउंट को उसकी 5 घंटे और साप्ताहिक विंडो से आँका जाता है, और जब Claude Code के आर्ग्युमेंट में `--model` हो, तो उस मॉडल की साप्ताहिक विंडो से भी (नाम में `opus`, `sonnet`, `haiku` या `fable`)। `Policy.Choose()` अकाउंट्स को तीन हिस्सों में बाँटता है:
+हर अकाउंट को उसकी 5 घंटे और साप्ताहिक विंडो से आँका जाता है, और जब Claude Code के आर्ग्युमेंट में `--model` हो (`--` के बाद), तो उस मॉडल की साप्ताहिक विंडो से भी (नाम में `opus`, `sonnet`, `haiku` या `fable`)। `Policy.Choose()` अकाउंट्स को तीन हिस्सों में बाँटता है:
 
 1. **गुंजाइश**: हर विंडो `auto_max_usage` (`config.toml`, डिफ़ॉल्ट 100) से नीचे। इनमें से strategy चुनती है: `headroom` (डिफ़ॉल्ट) सबसे कम 5 घंटे का उपयोग लेती है; `expiring` वह 5 घंटे की विंडो लेती है जो सबसे जल्दी reset होती है, ताकि उसका बचा हुआ quota ख़त्म होने से पहले इस्तेमाल हो जाए; `balance` वह अकाउंट लेती है जिसके हफ़्ते के reset होने तक हर दिन के हिसाब से सबसे ज़्यादा साप्ताहिक quota बचा हो, और उस अकाउंट पर चल रहे हर ccam session को उसके ख़िलाफ़ गिनती है, ताकि साप्ताहिक quota बिना इस्तेमाल के न रह जाए और समानांतर sessions बँट जाएँ।
 2. **सीमा से ऊपर**: 100% से नीचे, लेकिन `auto_max_usage` पर या उससे ऊपर। केवल तब इस्तेमाल होते हैं जब किसी अकाउंट में गुंजाइश न हो, सबसे कम 5 घंटे के उपयोग वाला पहले।

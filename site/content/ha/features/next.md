@@ -1,10 +1,10 @@
 ---
 title: Sauyawa zuwa asusu na gaba
 description: ccam next yana buɗe Claude Code a matsayin wani asusu; --auto yana zaɓar mafi sarari, --continue yana kai tattaunawar gaba, --fallback yana maimaita ayyukan -p.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 8
 translation: machine
-sourceHash: "6a5dcb1d5c01"
+sourceHash: "afee5cce02cd"
 ---
 
 `ccam next` yana buɗe Claude Code a matsayin wani asusu ba tare da ka ambaci sunansa ba. Yi amfani da shi idan asusu ya kai iyakar amfaninsa: `ccam next` kawai yana ɗaukar asusun da ke bayan wanda ka yi amfani da shi na ƙarshe, `--auto` yana ɗaukar wanda ya fi sarari, kuma `--continue` yana kai tattaunawar ƙarshe ta wannan foldar zuwa sabon asusun, ko asusun biyu suna raba tarihi ko ba sa raba. A cikin Claude Code, [plugin ɗin ccam](#inside-claude-code) yana sanar da kai idan iyaka ta dakatar da zama, kuma `/ccam:switch` yana miƙa tattaunawar gaba. Don rubutun umarni (scripts) masu gudanar da `claude -p`, `ccam --fallback` yana yin sauyawar da kansa (duba [Sake gudanarwa a iyaka](#run-again-at-the-limit)).
@@ -20,7 +20,7 @@ ccam next --auto --max-usage 80 # prefer accounts below 80%
 ccam next --auto --strategy balance   # the weekly quota that would go unused first
 ccam next --auto --cross-org    # also accounts of other organizations
 ccam next --auto --wait         # nobody has room: wait for the first reset (up to 5 hours)
-ccam next -- -p "summarize"     # pass arguments to claude after --
+ccam next -c --auto -- --dangerously-skip-permissions   # claude's own options go after --
 ccam --dry-run next --auto      # print the choice and the command, start nothing
 ```
 
@@ -48,6 +48,8 @@ ccam yana buga sauyawar a matsayin `→ <from> → <to>` a standard error, tare 
 
 `--auto` da `--continue` suna aiki tare. Da `--continue`, ana saka arguments na `--resume` kafin naka.
 
+Zaɓuɓɓukan Claude Code na kansa, kamar `--dangerously-skip-permissions` ko `--model`, suna zuwa bayan `--`. Ba kamar `ccam <name>` ba, wanda ke miƙa duk abin da ke bayan sunan gaba, `ccam next` yana karanta arguments ɗinsa da kansa, don haka ba tare da `--` ba yana tsayawa da `ccam: unknown flag: --dangerously-skip-permissions`.
+
 ## Yadda yake aiki
 
 Kowane farawa ta ccam yana rubuta lokacin zuwa `~/.local/state/ccam/last-used/<name>`. `ccam next` yana karanta waɗannan fayiloli, yana duba asusan da aka shiga da su, kuma yana zaɓa.
@@ -69,7 +71,7 @@ An fara `work` kwanan nan, don haka tafiyar tana farawa bayan sa. `side` ba shi 
 
 <!-- motion:next-auto -->
 
-Ana auna asusu da tagoginsa na awa 5 da na mako, kuma, idan `--model` yana cikin arguments na Claude Code, da tagar mako ta wannan model ɗin ma (`opus`, `sonnet`, `haiku` ko `fable` a cikin sunan). `Policy.Choose()` yana raba asusan zuwa rukuni uku:
+Ana auna asusu da tagoginsa na awa 5 da na mako, kuma, idan `--model` yana cikin arguments na Claude Code (bayan `--`), da tagar mako ta wannan model ɗin ma (`opus`, `sonnet`, `haiku` ko `fable` a cikin sunan). `Policy.Choose()` yana raba asusan zuwa rukuni uku:
 
 1. **Sarari**: kowace taga tana ƙasa da `auto_max_usage` (`config.toml`, tsoho 100). Dabarar ce ke zaɓa a cikinsu: `headroom` (tsoho) yana ɗaukar mafi ƙarancin amfanin awa 5, `expiring` yana ɗaukar tagar awa 5 da za ta sake saitawa da wuri, don a yi amfani da sauran quota ɗinta kafin ta ɓace; `balance` yana ɗaukar asusun da ke da mafi yawan quota na mako da ya rage ga kowace rana har makonsa ya sake saitawa, yana ƙirga kowane zaman ccam da ke gudana a kansa, don kada a bar quota na mako ba a yi amfani da shi ba kuma zaman da ke gudana a lokaci ɗaya su rarrabu.
 2. **Sama**: ƙasa da 100% amma a ko sama da `auto_max_usage`. Ana amfani da su ne kawai idan babu asusun da ke da sarari, mafi ƙarancin amfanin awa 5 da farko.

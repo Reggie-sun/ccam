@@ -2,10 +2,10 @@
 title: Довідник команд
 metaTitle: Довідник команд ccam
 description: Усі команди та параметри ccam, від ccam add і ccam <name> до ccam usage, ccam next і ccam doctor.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 3
 translation: machine
-sourceHash: "116c5b34ac9a"
+sourceHash: "338ac11a0b5a"
 ---
 
 Додайте `--dry-run` перед командою, щоб побачити, що вона зробила б, не виконуючи її, наприклад `ccam --dry-run work`. Це працює під час запуску Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`) і з `group`, `migrate`, `shortcut`, `update` та `doctor --fix`. Інші команди, які щось змінюють, відхиляють цей параметр і не виконуються.
@@ -114,13 +114,14 @@ ccam usage --source claude      # Claude Code looks it up; ccam never touches a 
 ccam next --continue            # this folder's last conversation, as the next account
 ccam next --auto
 ccam next --auto --max-usage 80 --wait
+ccam next -c --auto -- --dangerously-skip-permissions   # claude's own options after --
 ccam pick                       # the account with the most room, for a script
 ccam "$(ccam pick)" -p "…"      # start a worker on it
 ccam agents                     # background sessions of every account
 ccam attach 49ec0028            # open one, as the account that started it
 ```
 
-`next --auto`, `--fallback` і `ccam pick` вибирають однаково: спершу облікові записи нижче `auto_max_usage` (`config.toml`, за замовчуванням 100), за стратегією `auto_strategy` (`headroom`, `expiring` або `balance`), з урахуванням тижневого вікна `--model`, ніколи не обліковий запис на 100% і в межах організації облікового запису, з якого вони починають (`--cross-org` або `cross_org = true`, щоб шукати ширше). Коли вибрати нікого, вони завершуються з кодом 75 або, з `--wait`, чекають на скидання першого облікового запису. `ccam next --continue` переносить розмову навіть між обліковими записами, які не мають спільної історії: тоді Claude Code копіює її в новий обліковий запис. Усередині Claude Code `/ccam:switch [account]` із плагіна передає розмову далі, а `ccam hook` — це те, що запускають його хуки. Див. [Перемикання на наступний обліковий запис](/features/next), [Вибір облікового запису для скриптів](/features/pick) і [Фонові сеанси всіх облікових записів](/features/agents).
+`next --auto`, `--fallback` і `ccam pick` вибирають однаково: спершу облікові записи нижче `auto_max_usage` (`config.toml`, за замовчуванням 100), за стратегією `auto_strategy` (`headroom`, `expiring` або `balance`), з урахуванням тижневого вікна `--model`, ніколи не обліковий запис на 100% і в межах організації облікового запису, з якого вони починають (`--cross-org` або `cross_org = true`, щоб шукати ширше). Коли вибрати нікого, вони завершуються з кодом 75 або, з `--wait`, чекають на скидання першого облікового запису. `ccam next --continue` переносить розмову навіть між обліковими записами, які не мають спільної історії: тоді Claude Code копіює її в новий обліковий запис. На відміну від `ccam <name>`, `ccam next` читає власні параметри, тож параметри Claude Code ставляться після `--`; без нього ccam зупиняється з `unknown flag`. Усередині Claude Code `/ccam:switch [account]` із плагіна передає розмову далі, а `ccam hook` — це те, що запускають його хуки. Див. [Перемикання на наступний обліковий запис](/features/next), [Вибір облікового запису для скриптів](/features/pick) і [Фонові сеанси всіх облікових записів](/features/agents).
 
 ## Обслуговування
 

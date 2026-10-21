@@ -2,10 +2,10 @@
 title: Bayanin umarnai
 metaTitle: Bayanin umarnan ccam
 description: Kowane umarni da zaɓi na ccam, daga ccam add da ccam <name> zuwa ccam usage, ccam next da ccam doctor.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 3
 translation: machine
-sourceHash: 116c5b34ac9a
+sourceHash: 338ac11a0b5a
 ---
 
 Saka `--dry-run` kafin umarni don ganin abin da zai yi ba tare da ya yi shi ba, misali `ccam --dry-run work`. Yana aiki lokacin fara Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`) da kuma tare da `group`, `migrate`, `shortcut`, `update` da `doctor --fix`. Sauran umarnin da ke canza wani abu suna ƙin shi maimakon su gudana.
@@ -114,13 +114,14 @@ ccam usage --source claude      # Claude Code looks it up; ccam never touches a 
 ccam next --continue            # this folder's last conversation, as the next account
 ccam next --auto
 ccam next --auto --max-usage 80 --wait
+ccam next -c --auto -- --dangerously-skip-permissions   # claude's own options after --
 ccam pick                       # the account with the most room, for a script
 ccam "$(ccam pick)" -p "…"      # start a worker on it
 ccam agents                     # background sessions of every account
 ccam attach 49ec0028            # open one, as the account that started it
 ```
 
-`next --auto`, `--fallback` da `ccam pick` suna zaɓa ta hanya ɗaya: na farko waɗanda ke ƙasa da `auto_max_usage` (`config.toml`, tsoho 100), bisa `auto_strategy` (`headroom`, `expiring` ko `balance`), suna ƙirga tagar mako ta `--model`, ba sa taɓa zaɓar asusun da ya kai 100%, kuma suna zama a cikin ƙungiya (organization) ta asusun da suka fara daga gare shi (`--cross-org` ko `cross_org = true` don duba gaba da haka). Idan ba za a iya zaɓar kowanne ba, suna fita da code 75, ko da `--wait` suna jiran asusun farko ya sake saitawa. `ccam next --continue` yana kai tattaunawa gaba har ma tsakanin asusan da ba sa raba tarihi: a lokacin Claude Code yana kwafar ta cikin sabon asusun. A cikin Claude Code, `/ccam:switch [account]` na plugin ɗin yana miƙa tattaunawa gaba, kuma `ccam hook` shi ne abin da hooks ɗinsa ke gudanarwa. Duba [Sauyawa zuwa asusu na gaba](/features/next), [Zaɓar asusu don rubutun umarni](/features/pick) da [Zaman bayan fage na kowane asusu](/features/agents).
+`next --auto`, `--fallback` da `ccam pick` suna zaɓa ta hanya ɗaya: na farko waɗanda ke ƙasa da `auto_max_usage` (`config.toml`, tsoho 100), bisa `auto_strategy` (`headroom`, `expiring` ko `balance`), suna ƙirga tagar mako ta `--model`, ba sa taɓa zaɓar asusun da ya kai 100%, kuma suna zama a cikin ƙungiya (organization) ta asusun da suka fara daga gare shi (`--cross-org` ko `cross_org = true` don duba gaba da haka). Idan ba za a iya zaɓar kowanne ba, suna fita da code 75, ko da `--wait` suna jiran asusun farko ya sake saitawa. `ccam next --continue` yana kai tattaunawa gaba har ma tsakanin asusan da ba sa raba tarihi: a lokacin Claude Code yana kwafar ta cikin sabon asusun. Ba kamar `ccam <name>` ba, `ccam next` yana karanta zaɓuɓɓukansa da kansa, don haka zaɓuɓɓukan Claude Code suna zuwa bayan `--`; ba tare da shi ba ccam yana tsayawa da `unknown flag`. A cikin Claude Code, `/ccam:switch [account]` na plugin ɗin yana miƙa tattaunawa gaba, kuma `ccam hook` shi ne abin da hooks ɗinsa ke gudanarwa. Duba [Sauyawa zuwa asusu na gaba](/features/next), [Zaɓar asusu don rubutun umarni](/features/pick) da [Zaman bayan fage na kowane asusu](/features/agents).
 
 ## Kulawa
 

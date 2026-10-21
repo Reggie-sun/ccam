@@ -86,7 +86,7 @@ Signing in on a remote machine over SSH: the browser on your computer ends on a 
 | `ccam use <name>` | Default account for name-less runs such as `ccam -p "…"` |
 | `ccam folder [name] [folder] [--remove]` | Account for name-less runs in a folder and below; without arguments, list them |
 | `ccam --fallback [name] -p …` | Run again as the account with the most room when the account reaches its usage limit (`-p` runs only) |
-| `ccam next [--auto] [--continue]` | Next account; `--auto` picks by usage (`--max-usage`, `--strategy headroom\|expiring\|balance`, `--wait`) and says why |
+| `ccam next [--auto] [--continue] [-- claude args]` | Next account; `--auto` picks by usage (`--max-usage`, `--strategy headroom\|expiring\|balance`, `--wait`) and says why. Claude's own options go after `--`: `ccam next -c --auto -- --dangerously-skip-permissions` |
 | `ccam pick [--json] [--model m] [--wait]` | Print the account with the most room for a script; workers started together get different accounts; exit 75 when none |
 | `ccam ext [name] [--json]` | Skills, commands, plugins, MCP servers and hooks each account loads, with their source and problems |
 | `ccam usage [--watch] [--json] [-v]` | Usage (`ccam u`) |

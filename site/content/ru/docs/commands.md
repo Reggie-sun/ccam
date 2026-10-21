@@ -2,10 +2,10 @@
 title: Справочник команд
 metaTitle: Справочник команд ccam
 description: Все команды и параметры ccam, от ccam add и ccam <name> до ccam usage, ccam next и ccam doctor.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 3
 translation: machine
-sourceHash: "116c5b34ac9a"
+sourceHash: "338ac11a0b5a"
 ---
 
 Поставьте `--dry-run` перед командой, чтобы увидеть, что она сделает, ничего не выполняя, например `ccam --dry-run work`. Это работает при запуске Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`) и с `group`, `migrate`, `shortcut`, `update` и `doctor --fix`. Другие команды, которые что-то меняют, отклоняют этот флаг и не выполняются.
@@ -114,13 +114,14 @@ ccam usage --source claude      # Claude Code looks it up; ccam never touches a 
 ccam next --continue            # this folder's last conversation, as the next account
 ccam next --auto
 ccam next --auto --max-usage 80 --wait
+ccam next -c --auto -- --dangerously-skip-permissions   # claude's own options after --
 ccam pick                       # the account with the most room, for a script
 ccam "$(ccam pick)" -p "…"      # start a worker on it
 ccam agents                     # background sessions of every account
 ccam attach 49ec0028            # open one, as the account that started it
 ```
 
-`next --auto`, `--fallback` и `ccam pick` выбирают одинаково: сначала аккаунты ниже `auto_max_usage` (`config.toml`, по умолчанию 100), по стратегии `auto_strategy` (`headroom`, `expiring` или `balance`), с учётом недельного окна `--model`, никогда не аккаунт на 100% и в пределах организации аккаунта, с которого они начинают (`--cross-org` или `cross_org = true`, чтобы искать дальше). Когда выбрать некого, они завершаются с кодом 75 или, с `--wait`, ждут сброса первого аккаунта. `ccam next --continue` переносит разговор даже между аккаунтами без общей истории: тогда Claude Code копирует его в новый аккаунт. Внутри Claude Code команда плагина `/ccam:switch [account]` передаёт разговор дальше, а `ccam hook` — то, что запускают его хуки. См. [Переключение на следующий аккаунт](/features/next), [Выбор аккаунта для скриптов](/features/pick) и [Фоновые сессии всех аккаунтов](/features/agents).
+`next --auto`, `--fallback` и `ccam pick` выбирают одинаково: сначала аккаунты ниже `auto_max_usage` (`config.toml`, по умолчанию 100), по стратегии `auto_strategy` (`headroom`, `expiring` или `balance`), с учётом недельного окна `--model`, никогда не аккаунт на 100% и в пределах организации аккаунта, с которого они начинают (`--cross-org` или `cross_org = true`, чтобы искать дальше). Когда выбрать некого, они завершаются с кодом 75 или, с `--wait`, ждут сброса первого аккаунта. `ccam next --continue` переносит разговор даже между аккаунтами без общей истории: тогда Claude Code копирует его в новый аккаунт. В отличие от `ccam <name>`, `ccam next` сам разбирает свои опции, поэтому опции Claude Code указываются после `--`; без него ccam останавливается с `unknown flag`. Внутри Claude Code команда плагина `/ccam:switch [account]` передаёт разговор дальше, а `ccam hook` — то, что запускают его хуки. См. [Переключение на следующий аккаунт](/features/next), [Выбор аккаунта для скриптов](/features/pick) и [Фоновые сессии всех аккаунтов](/features/agents).
 
 ## Обслуживание
 

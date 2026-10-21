@@ -1,10 +1,10 @@
 ---
 title: Sonraki hesaba geçme
 description: ccam next, Claude Code'u başka bir hesapla açar; --auto en çok payı kalanı seçer, --continue konuşmayı taşır, --fallback -p işlerini yeniden çalıştırır.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 8
 translation: machine
-sourceHash: "6a5dcb1d5c01"
+sourceHash: "afee5cce02cd"
 ---
 
 `ccam next`, Claude Code'u adını vermenize gerek kalmadan başka bir hesapla açar. Bir hesap kullanım limitine ulaştığında kullanın: düz `ccam next` en son kullandığınız hesaptan sonraki hesabı alır, `--auto` en çok pay kalan hesabı alır, `--continue` ise bu klasörün son konuşmasını, iki hesap geçmişi paylaşsın ya da paylaşmasın, yeni hesaba taşır. Claude Code'un içinde [ccam eklentisi](#inside-claude-code) bir limit oturumu durdurduğunda size haber verir ve `/ccam:switch` konuşmayı devreder. `claude -p` çalıştıran betikler için `ccam --fallback` geçişi kendiliğinden yapar (bkz. [Limitte yeniden çalıştırma](#run-again-at-the-limit)).
@@ -20,7 +20,7 @@ ccam next --auto --max-usage 80 # prefer accounts below 80%
 ccam next --auto --strategy balance   # the weekly quota that would go unused first
 ccam next --auto --cross-org    # also accounts of other organizations
 ccam next --auto --wait         # nobody has room: wait for the first reset (up to 5 hours)
-ccam next -- -p "summarize"     # pass arguments to claude after --
+ccam next -c --auto -- --dangerously-skip-permissions   # claude's own options go after --
 ccam --dry-run next --auto      # print the choice and the command, start nothing
 ```
 
@@ -48,6 +48,8 @@ ccam geçişi, bir `--auto` seçiminde nedeniyle birlikte, standart hataya `→ 
 
 `--auto` ve `--continue` birlikte çalışır. `--continue` kullanıldığında `--resume` argümanları sizin argümanlarınızdan önce yerleştirilir.
 
+Claude Code'un kendi seçenekleri, örneğin `--dangerously-skip-permissions` veya `--model`, `--` sonrasına yazılır. Adın ardından gelen her şeyi olduğu gibi ileten `ccam <name>` komutunun aksine `ccam next` argümanlarını kendisi okur; bu yüzden `--` olmadan `ccam: unknown flag: --dangerously-skip-permissions` hatasıyla durur.
+
 ## Nasıl çalışır
 
 ccam üzerinden yapılan her başlatma, zamanı `~/.local/state/ccam/last-used/<name>` dosyasına yazar. `ccam next` bu dosyaları okur, hangi hesaplarda giriş yapıldığını kontrol eder ve seçer.
@@ -69,7 +71,7 @@ En son `work` başlatıldığı için ilerleme ondan sonra başlar. `side` hesab
 
 <!-- motion:next-auto -->
 
-Bir hesap 5 saatlik ve haftalık pencerelerine göre, Claude Code argümanları arasında `--model` varsa o modelin haftalık penceresine göre de değerlendirilir (adında `opus`, `sonnet`, `haiku` veya `fable` geçen). `Policy.Choose()` hesapları üç gruba ayırır:
+Bir hesap 5 saatlik ve haftalık pencerelerine göre, Claude Code argümanları arasında `--model` varsa (`--` sonrasında) o modelin haftalık penceresine göre de değerlendirilir (adında `opus`, `sonnet`, `haiku` veya `fable` geçen). `Policy.Choose()` hesapları üç gruba ayırır:
 
 1. **Payı olan**: her pencere `auto_max_usage` (`config.toml`, varsayılan 100) altında. Aralarından strateji seçer: `headroom` (varsayılan) en düşük 5 saatlik kullanımı alır; `expiring` en erken sıfırlanacak 5 saatlik pencereyi alır, böylece kalan kotası kaybolmadan kullanılır; `balance` haftası sıfırlanana kadar gün başına en çok haftalık kotası kalan hesabı alır ve çalışan her ccam oturumunu bu kotadan sayar; böylece haftalık kota kullanılmadan kalmaz ve paralel oturumlar dağılır.
 2. **Eşiği aşan**: %100'ün altında ama `auto_max_usage` değerinde veya üstünde. Yalnızca hiçbir hesapta pay yoksa, en düşük 5 saatlik kullanımdan başlayarak kullanılır.

@@ -2,10 +2,10 @@
 title: Marejeo ya amri
 metaTitle: Marejeo ya amri za ccam
 description: Kila amri na chaguo la ccam, kuanzia ccam add na ccam <name> hadi ccam usage, ccam next na ccam doctor.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 3
 translation: machine
-sourceHash: "116c5b34ac9a"
+sourceHash: "338ac11a0b5a"
 ---
 
 Weka `--dry-run` kabla ya amri ili kuona itakachofanya bila kukifanya, kwa mfano `ccam --dry-run work`. Inafanya kazi unapoanzisha Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`) na pamoja na `group`, `migrate`, `shortcut`, `update` na `doctor --fix`. Amri nyingine zinazobadilisha kitu huikataa badala ya kufanya kazi.
@@ -114,13 +114,14 @@ ccam usage --source claude      # Claude Code looks it up; ccam never touches a 
 ccam next --continue            # this folder's last conversation, as the next account
 ccam next --auto
 ccam next --auto --max-usage 80 --wait
+ccam next -c --auto -- --dangerously-skip-permissions   # claude's own options after --
 ccam pick                       # the account with the most room, for a script
 ccam "$(ccam pick)" -p "…"      # start a worker on it
 ccam agents                     # background sessions of every account
 ccam attach 49ec0028            # open one, as the account that started it
 ```
 
-`next --auto`, `--fallback` na `ccam pick` huchagua kwa njia ile ile: kwanza zilizo chini ya `auto_max_usage` (`config.toml`, chaguo-msingi 100), kwa `auto_strategy` (`headroom`, `expiring` au `balance`), zikihesabu kipindi cha wiki cha `--model`, kamwe si akaunti iliyo kwenye 100%, na ndani ya shirika la akaunti wanayoanzia (`--cross-org` au `cross_org = true` ili kutafuta zaidi). Isipowezekana kuchagua yoyote, hutoka na msimbo 75, au kwa `--wait` husubiri kipindi cha akaunti ya kwanza kianze upya. `ccam next --continue` huhamisha mazungumzo hata kati ya akaunti zisizoshiriki historia: hapo Claude Code huyanakili kwenye akaunti mpya. Ndani ya Claude Code, `/ccam:switch [account]` ya plugin hukabidhi mazungumzo, na `ccam hook` ndicho ambacho hooks zake huendesha. Tazama [Kubadili kwenda akaunti inayofuata](/features/next), [Kuchagua akaunti kwa ajili ya script](/features/pick) na [Vipindi vya chinichini vya kila akaunti](/features/agents).
+`next --auto`, `--fallback` na `ccam pick` huchagua kwa njia ile ile: kwanza zilizo chini ya `auto_max_usage` (`config.toml`, chaguo-msingi 100), kwa `auto_strategy` (`headroom`, `expiring` au `balance`), zikihesabu kipindi cha wiki cha `--model`, kamwe si akaunti iliyo kwenye 100%, na ndani ya shirika la akaunti wanayoanzia (`--cross-org` au `cross_org = true` ili kutafuta zaidi). Isipowezekana kuchagua yoyote, hutoka na msimbo 75, au kwa `--wait` husubiri kipindi cha akaunti ya kwanza kianze upya. `ccam next --continue` huhamisha mazungumzo hata kati ya akaunti zisizoshiriki historia: hapo Claude Code huyanakili kwenye akaunti mpya. Tofauti na `ccam <name>`, `ccam next` husoma chaguo zake yenyewe, kwa hiyo chaguo za Claude Code huwekwa baada ya `--`; bila hiyo ccam husimama na `unknown flag`. Ndani ya Claude Code, `/ccam:switch [account]` ya plugin hukabidhi mazungumzo, na `ccam hook` ndicho ambacho hooks zake huendesha. Tazama [Kubadili kwenda akaunti inayofuata](/features/next), [Kuchagua akaunti kwa ajili ya script](/features/pick) na [Vipindi vya chinichini vya kila akaunti](/features/agents).
 
 ## Matengenezo
 

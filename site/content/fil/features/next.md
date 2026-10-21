@@ -1,10 +1,10 @@
 ---
 title: Paglipat sa susunod na account
 description: Sa ccam next, bubukas ang Claude Code bilang ibang account; --auto para sa pinakamaluwag, --continue para dalhin ang usapan, --fallback para ulitin ang -p job.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 8
 translation: machine
-sourceHash: "6a5dcb1d5c01"
+sourceHash: "afee5cce02cd"
 ---
 
 Binubuksan ng `ccam next` ang Claude Code bilang ibang account nang hindi mo ito pinapangalanan. Gamitin ito kapag naabot ng isang account ang usage limit nito: kinukuha ng simpleng `ccam next` ang account na kasunod ng huli mong ginamit, kinukuha ng `--auto` ang may pinakamaraming natitira, at dinadala ng `--continue` ang huling usapan ng folder na ito sa bagong account, nagshe-share man o hindi ng kasaysayan ang dalawa. Sa loob ng Claude Code, sinasabi sa iyo ng [ccam plugin](#inside-claude-code) kapag pinahinto ng limit ang isang session, at ipinapasa ng `/ccam:switch` ang usapan. Para sa mga script na nagpapatakbo ng `claude -p`, kusang ginagawa ng `ccam --fallback` ang paglipat (tingnan ang [Patakbuhin ulit sa limit](#run-again-at-the-limit)).
@@ -20,7 +20,7 @@ ccam next --auto --max-usage 80 # prefer accounts below 80%
 ccam next --auto --strategy balance   # the weekly quota that would go unused first
 ccam next --auto --cross-org    # also accounts of other organizations
 ccam next --auto --wait         # nobody has room: wait for the first reset (up to 5 hours)
-ccam next -- -p "summarize"     # pass arguments to claude after --
+ccam next -c --auto -- --dangerously-skip-permissions   # claude's own options go after --
 ccam --dry-run next --auto      # print the choice and the command, start nothing
 ```
 
@@ -48,6 +48,8 @@ Ipi-print ng ccam ang paglipat bilang `→ <from> → <to>` sa standard error, k
 
 Gumagana nang magkasama ang `--auto` at `--continue`. Sa `--continue`, inilalagay ang mga argument ng `--resume` bago ang sarili mong mga argument.
 
+Ang sariling mga option ng Claude Code, gaya ng `--dangerously-skip-permissions` o `--model`, ay inilalagay pagkatapos ng `--`. Hindi tulad ng `ccam <name>`, na ipinapasa ang lahat ng kasunod ng pangalan, binabasa mismo ng `ccam next` ang mga argument nito, kaya kapag walang `--` ay humihinto ito sa `ccam: unknown flag: --dangerously-skip-permissions`.
+
 ## Paano ito gumagana
 
 Isinusulat ng bawat pagsisimula sa pamamagitan ng ccam ang oras sa `~/.local/state/ccam/last-used/<name>`. Binabasa ng `ccam next` ang mga file na ito, tinitingnan kung aling mga account ang naka-log in, at pumipili.
@@ -69,7 +71,7 @@ Nagpapasya ang `--auto` ayon sa usage sa halip na sa pagkakasunod-sunod ng slot.
 
 <!-- motion:next-auto -->
 
-Hinuhusgahan ang isang account ayon sa 5-oras at lingguhang window nito, at, kapag kasama ang `--model` sa mga argument para sa Claude Code, ayon din sa lingguhang window ng model na iyon (`opus`, `sonnet`, `haiku` o `fable` sa pangalan). Hinahati ng `Policy.Choose()` ang mga account sa tatlo:
+Hinuhusgahan ang isang account ayon sa 5-oras at lingguhang window nito, at, kapag kasama ang `--model` sa mga argument para sa Claude Code (pagkatapos ng `--`), ayon din sa lingguhang window ng model na iyon (`opus`, `sonnet`, `haiku` o `fable` sa pangalan). Hinahati ng `Policy.Choose()` ang mga account sa tatlo:
 
 1. **May natitira**: bawat window ay mas mababa sa `auto_max_usage` (`config.toml`, default 100). Ang strategy ang pumipili sa kanila: kinukuha ng `headroom` (default) ang pinakamababang 5-oras na usage; kinukuha ng `expiring` ang 5-oras na window na pinakamalapit mag-reset, para magamit ang natitirang quota nito bago ito mawala; kinukuha ng `balance` ang account na may pinakamaraming natitirang lingguhang quota bawat araw hanggang mag-reset ang linggo nito, na ibinibilang laban dito ang bawat tumatakbong ccam session, para hindi masayang ang lingguhang quota at kumalat ang mga parallel session.
 2. **Lampas**: mas mababa sa 100% pero nasa o lampas sa `auto_max_usage`. Ginagamit lang kapag walang account na may natitira, inuuna ang pinakamababang 5-oras na usage.

@@ -1,7 +1,7 @@
 ---
 title: Switching to the next account
 description: ccam next opens Claude Code as another account; --auto picks the most room, --continue carries the conversation over, and --fallback reruns -p jobs.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 8
 translation: source
 ---
@@ -19,7 +19,7 @@ ccam next --auto --max-usage 80 # prefer accounts below 80%
 ccam next --auto --strategy balance   # the weekly quota that would go unused first
 ccam next --auto --cross-org    # also accounts of other organizations
 ccam next --auto --wait         # nobody has room: wait for the first reset (up to 5 hours)
-ccam next -- -p "summarize"     # pass arguments to claude after --
+ccam next -c --auto -- --dangerously-skip-permissions   # claude's own options go after --
 ccam --dry-run next --auto      # print the choice and the command, start nothing
 ```
 
@@ -47,6 +47,8 @@ ccam prints the switch as `→ <from> → <to>` on standard error, with the reas
 
 `--auto` and `--continue` work together. With `--continue`, the `--resume` arguments are placed before your own.
 
+Claude Code's own options, such as `--dangerously-skip-permissions` or `--model`, go after `--`. Unlike `ccam <name>`, which passes everything after the name on, `ccam next` reads its arguments itself, so without the `--` it stops with `ccam: unknown flag: --dangerously-skip-permissions`.
+
 ## How it works
 
 Every launch through ccam writes the time to `~/.local/state/ccam/last-used/<name>`. `ccam next` reads these files, checks which accounts are logged in, and chooses.
@@ -68,7 +70,7 @@ The walk starts at the account used last and stops at the first logged-in accoun
 
 <!-- motion:next-auto -->
 
-An account is judged by its 5-hour and weekly windows, and, when `--model` is among the arguments for Claude Code, by that model's weekly window too (`opus`, `sonnet`, `haiku` or `fable` in the name). `Policy.Choose()` sorts the accounts in three:
+An account is judged by its 5-hour and weekly windows, and, when `--model` is among the arguments for Claude Code (after `--`), by that model's weekly window too (`opus`, `sonnet`, `haiku` or `fable` in the name). `Policy.Choose()` sorts the accounts in three:
 
 1. **Room**: every window below `auto_max_usage` (`config.toml`, default 100). The strategy chooses among them: `headroom` (default) takes the lowest 5-hour usage; `expiring` takes the 5-hour window that resets soonest, so its remaining quota is used before it is lost; `balance` takes the account with the most weekly quota left per day until its week resets, counting each running ccam session against it, so weekly quota is not left unused and parallel sessions spread out.
 2. **Over**: below 100% but at or over `auto_max_usage`. Used only when no account has room, the lowest 5-hour usage first.

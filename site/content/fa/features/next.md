@@ -1,10 +1,10 @@
 ---
 title: جابه‌جایی به حساب بعدی
 description: ccam next، Claude Code را با حساب دیگری باز می‌کند؛ --auto پرظرفیت‌ترین را می‌گیرد، --continue گفتگو را منتقل می‌کند و --fallback کارهای -p را تکرار می‌کند.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 8
 translation: machine
-sourceHash: "6a5dcb1d5c01"
+sourceHash: "afee5cce02cd"
 ---
 
 `ccam next` بدون آنکه نام حسابی را بدهید، Claude Code را با حساب دیگری باز می‌کند. وقتی حسابی به سقف مصرف خود رسید از آن استفاده کنید: `ccam next` ساده حساب پس از حسابی را که آخرین بار استفاده کردید برمی‌دارد، `--auto` حسابی را که بیشترین ظرفیت را دارد برمی‌دارد و `--continue` آخرین گفتگوی این پوشه را به حساب جدید منتقل می‌کند، چه آن دو تاریخچه را به اشتراک بگذارند چه نه. درون Claude Code، [پلاگین ccam](#inside-claude-code) به شما می‌گوید کی سقف مصرف یک نشست را متوقف کرده است و `/ccam:switch` گفتگو را به حساب دیگری می‌سپارد. برای اسکریپت‌هایی که `claude -p` را اجرا می‌کنند، `ccam --fallback` جابه‌جایی را خودش انجام می‌دهد ([اجرای دوباره هنگام رسیدن به سقف](#run-again-at-the-limit) را ببینید).
@@ -20,7 +20,7 @@ ccam next --auto --max-usage 80 # prefer accounts below 80%
 ccam next --auto --strategy balance   # the weekly quota that would go unused first
 ccam next --auto --cross-org    # also accounts of other organizations
 ccam next --auto --wait         # nobody has room: wait for the first reset (up to 5 hours)
-ccam next -- -p "summarize"     # pass arguments to claude after --
+ccam next -c --auto -- --dangerously-skip-permissions   # claude's own options go after --
 ccam --dry-run next --auto      # print the choice and the command, start nothing
 ```
 
@@ -48,6 +48,8 @@ ccam جابه‌جایی را به شکل `→ <from> → <to>` در خطای ا
 
 `--auto` و `--continue` با هم کار می‌کنند. با `--continue`، آرگومان‌های `--resume` پیش از آرگومان‌های خود شما قرار می‌گیرند.
 
+گزینه‌های خود Claude Code، مانند `--dangerously-skip-permissions` یا `--model`، پس از `--` می‌آیند. برخلاف `ccam <name>` که هر چه پس از نام بیاید را منتقل می‌کند، `ccam next` آرگومان‌هایش را خودش می‌خواند، پس بدون `--` با `ccam: unknown flag: --dangerously-skip-permissions` متوقف می‌شود.
+
 ## سازوکار
 
 هر اجرا از طریق ccam زمان را در `~/.local/state/ccam/last-used/<name>` می‌نویسد. `ccam next` این فایل‌ها را می‌خواند، بررسی می‌کند کدام حساب‌ها وارد شده‌اند و انتخاب می‌کند.
@@ -69,7 +71,7 @@ ccam جابه‌جایی را به شکل `→ <from> → <to>` در خطای ا
 
 <!-- motion:next-auto -->
 
-هر حساب با پنجره‌های ۵ ساعته و هفتگی‌اش سنجیده می‌شود، و وقتی `--model` میان آرگومان‌های Claude Code باشد، با پنجره هفتگی همان مدل هم (`opus`، `sonnet`، `haiku` یا `fable` در نام). `Policy.Choose()` حساب‌ها را در سه دسته قرار می‌دهد:
+هر حساب با پنجره‌های ۵ ساعته و هفتگی‌اش سنجیده می‌شود، و وقتی `--model` میان آرگومان‌های Claude Code باشد (پس از `--`)، با پنجره هفتگی همان مدل هم (`opus`، `sonnet`، `haiku` یا `fable` در نام). `Policy.Choose()` حساب‌ها را در سه دسته قرار می‌دهد:
 
 1. **ظرفیت دارد**: همه پنجره‌ها زیر `auto_max_usage` (`config.toml`، پیش‌فرض ۱۰۰). راهبرد از میان آن‌ها انتخاب می‌کند: `headroom` (پیش‌فرض) کمترین مصرف ۵ ساعته را برمی‌دارد؛ `expiring` پنجره ۵ ساعته‌ای را که زودتر از همه بازنشانی می‌شود، تا سهمیه باقی‌مانده‌اش پیش از هدر رفتن مصرف شود؛ `balance` حسابی را برمی‌دارد که تا بازنشانی هفته‌اش، به ازای هر روز بیشترین سهمیه هفتگی را باقی دارد، و هر نشست ccam در حال اجرا را به حساب آن می‌گذارد، تا سهمیه هفتگی بی‌استفاده نماند و نشست‌های موازی پخش شوند.
 2. **بالای حد**: زیر ۱۰۰٪ اما برابر یا بالاتر از `auto_max_usage`. فقط وقتی استفاده می‌شود که هیچ حسابی ظرفیت نداشته باشد، از کمترین مصرف ۵ ساعته به بعد.

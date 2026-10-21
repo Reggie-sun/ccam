@@ -2,10 +2,10 @@
 title: Tham chiếu lệnh
 metaTitle: "Tham chiếu lệnh ccam"
 description: "Mọi lệnh và tùy chọn của ccam, từ ccam add và ccam <name> đến ccam usage, ccam next và ccam doctor."
-updated: 2026-10-20
+updated: 2026-10-21
 order: 3
 translation: machine
-sourceHash: "116c5b34ac9a"
+sourceHash: "338ac11a0b5a"
 ---
 
 Đặt `--dry-run` trước một lệnh để xem lệnh đó sẽ làm gì mà không thực sự thực hiện, ví dụ `ccam --dry-run work`. Tùy chọn này dùng được khi khởi động Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`) và với `group`, `migrate`, `shortcut`, `update` và `doctor --fix`. Các lệnh khác có thay đổi một thứ gì đó sẽ từ chối tùy chọn này thay vì chạy.
@@ -114,13 +114,14 @@ ccam usage --source claude      # Claude Code looks it up; ccam never touches a 
 ccam next --continue            # this folder's last conversation, as the next account
 ccam next --auto
 ccam next --auto --max-usage 80 --wait
+ccam next -c --auto -- --dangerously-skip-permissions   # claude's own options after --
 ccam pick                       # the account with the most room, for a script
 ccam "$(ccam pick)" -p "…"      # start a worker on it
 ccam agents                     # background sessions of every account
 ccam attach 49ec0028            # open one, as the account that started it
 ```
 
-`next --auto`, `--fallback` và `ccam pick` chọn theo cùng một cách: ưu tiên các tài khoản dưới `auto_max_usage` (`config.toml`, mặc định 100), theo `auto_strategy` (`headroom`, `expiring` hoặc `balance`), có tính khoảng hàng tuần của `--model`, không bao giờ chọn tài khoản ở mức 100%, và chỉ trong tổ chức của tài khoản xuất phát (`--cross-org` hoặc `cross_org = true` để tìm rộng hơn). Khi không chọn được tài khoản nào, chúng thoát với mã 75, hoặc với `--wait` thì chờ tài khoản đầu tiên được đặt lại. `ccam next --continue` chuyển một cuộc hội thoại sang ngay cả giữa các tài khoản không dùng chung lịch sử: khi đó Claude Code sao chép nó vào tài khoản mới. Bên trong Claude Code, `/ccam:switch [account]` của plugin chuyển một cuộc hội thoại đi tiếp, và `ccam hook` là lệnh mà các hook của plugin chạy. Xem [Chuyển sang tài khoản tiếp theo](/features/next), [Chọn tài khoản cho script](/features/pick) và [Phiên chạy nền của mọi tài khoản](/features/agents).
+`next --auto`, `--fallback` và `ccam pick` chọn theo cùng một cách: ưu tiên các tài khoản dưới `auto_max_usage` (`config.toml`, mặc định 100), theo `auto_strategy` (`headroom`, `expiring` hoặc `balance`), có tính khoảng hàng tuần của `--model`, không bao giờ chọn tài khoản ở mức 100%, và chỉ trong tổ chức của tài khoản xuất phát (`--cross-org` hoặc `cross_org = true` để tìm rộng hơn). Khi không chọn được tài khoản nào, chúng thoát với mã 75, hoặc với `--wait` thì chờ tài khoản đầu tiên được đặt lại. `ccam next --continue` chuyển một cuộc hội thoại sang ngay cả giữa các tài khoản không dùng chung lịch sử: khi đó Claude Code sao chép nó vào tài khoản mới. Khác với `ccam <name>`, `ccam next` tự đọc các tùy chọn của nó, nên các tùy chọn của Claude Code đặt sau `--`; thiếu nó, ccam sẽ dừng với `unknown flag`. Bên trong Claude Code, `/ccam:switch [account]` của plugin chuyển một cuộc hội thoại đi tiếp, và `ccam hook` là lệnh mà các hook của plugin chạy. Xem [Chuyển sang tài khoản tiếp theo](/features/next), [Chọn tài khoản cho script](/features/pick) và [Phiên chạy nền của mọi tài khoản](/features/agents).
 
 ## Bảo trì
 

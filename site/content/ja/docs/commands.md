@@ -2,10 +2,10 @@
 title: コマンドリファレンス
 metaTitle: "ccamコマンドリファレンス"
 description: ccam addやccam <name>から、ccam usage、ccam next、ccam doctorまで、ccamのすべてのコマンドとオプションを説明します。
-updated: 2026-10-20
+updated: 2026-10-21
 order: 3
 translation: machine
-sourceHash: "116c5b34ac9a"
+sourceHash: "338ac11a0b5a"
 ---
 
 コマンドの前に`--dry-run`を付けると、実際には実行せずに何をするかを確認できます。たとえば`ccam --dry-run work`のように使います。これが使えるのは、Claude Codeを起動するとき（`ccam <name>`、`ccam run`、`ccam next`、`ccam attach`）と、`group`、`migrate`、`shortcut`、`update`、`doctor --fix`です。何かを変更するそれ以外のコマンドは、実行せずにこのオプションを拒否します。
@@ -114,13 +114,14 @@ ccam usage --source claude      # Claude Code looks it up; ccam never touches a 
 ccam next --continue            # this folder's last conversation, as the next account
 ccam next --auto
 ccam next --auto --max-usage 80 --wait
+ccam next -c --auto -- --dangerously-skip-permissions   # claude's own options after --
 ccam pick                       # the account with the most room, for a script
 ccam "$(ccam pick)" -p "…"      # start a worker on it
 ccam agents                     # background sessions of every account
 ccam attach 49ec0028            # open one, as the account that started it
 ```
 
-`next --auto`、`--fallback`、`ccam pick`は同じ方法で選びます。まず`auto_max_usage`（`config.toml`、デフォルトは100）未満のアカウントを優先し、`auto_strategy`（`headroom`、`expiring`、`balance`）に従って選びます。`--model`の週間の枠も数え、100%のアカウントは決して選ばず、起点となるアカウントと同じ組織の中から選びます（範囲を広げるには`--cross-org`か`cross_org = true`）。選べるアカウントがない場合は終了コード75で終了するか、`--wait`を付けていれば最初のアカウントがリセットされるまで待ちます。`ccam next --continue`は、履歴を共有していないアカウントの間でも会話を持ち越します。その場合はClaude Codeが会話を新しいアカウントにコピーします。Claude Codeの中では、プラグインの`/ccam:switch [account]`が会話を引き渡し、そのフックが実行するのが`ccam hook`です。[次のアカウントへの切り替え](/features/next)、[スクリプト用のアカウント選び](/features/pick)、[すべてのアカウントのバックグラウンドセッション](/features/agents)を参照してください。
+`next --auto`、`--fallback`、`ccam pick`は同じ方法で選びます。まず`auto_max_usage`（`config.toml`、デフォルトは100）未満のアカウントを優先し、`auto_strategy`（`headroom`、`expiring`、`balance`）に従って選びます。`--model`の週間の枠も数え、100%のアカウントは決して選ばず、起点となるアカウントと同じ組織の中から選びます（範囲を広げるには`--cross-org`か`cross_org = true`）。選べるアカウントがない場合は終了コード75で終了するか、`--wait`を付けていれば最初のアカウントがリセットされるまで待ちます。`ccam next --continue`は、履歴を共有していないアカウントの間でも会話を持ち越します。その場合はClaude Codeが会話を新しいアカウントにコピーします。`ccam <name>`と違い、`ccam next`は自分のオプションを読むので、Claude Codeのオプションは`--`の後に置きます。付けないとccamは`unknown flag`で止まります。Claude Codeの中では、プラグインの`/ccam:switch [account]`が会話を引き渡し、そのフックが実行するのが`ccam hook`です。[次のアカウントへの切り替え](/features/next)、[スクリプト用のアカウント選び](/features/pick)、[すべてのアカウントのバックグラウンドセッション](/features/agents)を参照してください。
 
 ## メンテナンス
 

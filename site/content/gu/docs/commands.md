@@ -2,10 +2,10 @@
 title: કમાન્ડ સંદર્ભ
 metaTitle: ccam કમાન્ડ સંદર્ભ
 description: ccam ના બધા કમાન્ડ અને ઓપ્શન, ccam add અને ccam <name> થી લઈને ccam usage, ccam next અને ccam doctor સુધી.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 3
 translation: machine
-sourceHash: 116c5b34ac9a
+sourceHash: 338ac11a0b5a
 ---
 
 કોઈ કમાન્ડ ખરેખર ચલાવ્યા વગર તે શું કરશે તે જોવા માટે તેની આગળ `--dry-run` મૂકો, ઉદાહરણ તરીકે `ccam --dry-run work`. તે Claude Code શરૂ કરતી વખતે (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`) અને `group`, `migrate`, `shortcut`, `update` તથા `doctor --fix` સાથે કામ કરે છે. કંઈક બદલતા બીજા કમાન્ડ ચાલવાને બદલે તેનો ઇનકાર કરે છે.
@@ -114,13 +114,14 @@ ccam usage --source claude      # Claude Code looks it up; ccam never touches a 
 ccam next --continue            # this folder's last conversation, as the next account
 ccam next --auto
 ccam next --auto --max-usage 80 --wait
+ccam next -c --auto -- --dangerously-skip-permissions   # claude's own options after --
 ccam pick                       # the account with the most room, for a script
 ccam "$(ccam pick)" -p "…"      # start a worker on it
 ccam agents                     # background sessions of every account
 ccam attach 49ec0028            # open one, as the account that started it
 ```
 
-`next --auto`, `--fallback` અને `ccam pick` એક જ રીતે પસંદ કરે છે: પહેલાં `auto_max_usage` (`config.toml`, ડિફૉલ્ટ 100) થી નીચેનાં, `auto_strategy` (`headroom`, `expiring` કે `balance`) પ્રમાણે, `--model` ની સાપ્તાહિક વિન્ડો ગણીને, 100% પરનું એકાઉન્ટ ક્યારેય નહીં, અને જે એકાઉન્ટથી તેઓ શરૂ કરે તેની સંસ્થાની અંદર (વધુ આગળ જોવા માટે `--cross-org` કે `cross_org = true`). કોઈ પસંદ ન થઈ શકે ત્યારે તેઓ code 75 સાથે બહાર નીકળે છે, અથવા `--wait` સાથે પહેલું એકાઉન્ટ રીસેટ થાય તેની રાહ જુએ છે. `ccam next --continue` ઇતિહાસ શેર ન કરતાં એકાઉન્ટ વચ્ચે પણ વાતચીત આગળ લઈ જાય છે: ત્યારે Claude Code તેની નકલ નવા એકાઉન્ટમાં કરે છે. Claude Code ની અંદર, plugin નું `/ccam:switch [account]` વાતચીત આગળ સોંપે છે, અને તેના hooks `ccam hook` ચલાવે છે. જુઓ [આગલા એકાઉન્ટ પર સ્વિચ કરવું](/features/next), [scripts માટે એકાઉન્ટ પસંદ કરવું](/features/pick) અને [દરેક એકાઉન્ટનાં બૅકગ્રાઉન્ડ સેશન](/features/agents).
+`next --auto`, `--fallback` અને `ccam pick` એક જ રીતે પસંદ કરે છે: પહેલાં `auto_max_usage` (`config.toml`, ડિફૉલ્ટ 100) થી નીચેનાં, `auto_strategy` (`headroom`, `expiring` કે `balance`) પ્રમાણે, `--model` ની સાપ્તાહિક વિન્ડો ગણીને, 100% પરનું એકાઉન્ટ ક્યારેય નહીં, અને જે એકાઉન્ટથી તેઓ શરૂ કરે તેની સંસ્થાની અંદર (વધુ આગળ જોવા માટે `--cross-org` કે `cross_org = true`). કોઈ પસંદ ન થઈ શકે ત્યારે તેઓ code 75 સાથે બહાર નીકળે છે, અથવા `--wait` સાથે પહેલું એકાઉન્ટ રીસેટ થાય તેની રાહ જુએ છે. `ccam next --continue` ઇતિહાસ શેર ન કરતાં એકાઉન્ટ વચ્ચે પણ વાતચીત આગળ લઈ જાય છે: ત્યારે Claude Code તેની નકલ નવા એકાઉન્ટમાં કરે છે. `ccam <name>` થી અલગ, `ccam next` પોતાના ઓપ્શન જાતે વાંચે છે, તેથી Claude Code ના ઓપ્શન `--` પછી આવે છે; તેના વગર ccam `unknown flag` સાથે અટકી જાય છે. Claude Code ની અંદર, plugin નું `/ccam:switch [account]` વાતચીત આગળ સોંપે છે, અને તેના hooks `ccam hook` ચલાવે છે. જુઓ [આગલા એકાઉન્ટ પર સ્વિચ કરવું](/features/next), [scripts માટે એકાઉન્ટ પસંદ કરવું](/features/pick) અને [દરેક એકાઉન્ટનાં બૅકગ્રાઉન્ડ સેશન](/features/agents).
 
 ## જાળવણી
 

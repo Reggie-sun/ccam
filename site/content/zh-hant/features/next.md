@@ -1,10 +1,10 @@
 ---
 title: 切換到下一個帳號
 description: ccam next 會以另一個帳號開啟 Claude Code；--auto 選擇剩餘額度最多的帳號，--continue 把對話帶過去，--fallback 會重新執行 -p 工作。
-updated: 2026-10-20
+updated: 2026-10-21
 order: 8
 translation: machine
-sourceHash: "6a5dcb1d5c01"
+sourceHash: "afee5cce02cd"
 ---
 
 `ccam next` 不需要你指定名稱，就能以另一個帳號開啟 Claude Code。當某個帳號達到用量限制時使用它：單純的 `ccam next` 會選擇你上次使用的帳號的下一個帳號，`--auto` 會選擇剩餘額度最多的帳號，`--continue` 則會把這個資料夾的上一段對話帶到新帳號，無論兩個帳號是否共用對話記錄。在 Claude Code 中，[ccam 外掛](#inside-claude-code)會在用量上限讓工作階段停止時通知你，`/ccam:switch` 則會把對話交接出去。對於執行 `claude -p` 的指令碼，`ccam --fallback` 會自行完成切換（請參閱[達到上限時重新執行](#run-again-at-the-limit)）。
@@ -20,7 +20,7 @@ ccam next --auto --max-usage 80 # prefer accounts below 80%
 ccam next --auto --strategy balance   # the weekly quota that would go unused first
 ccam next --auto --cross-org    # also accounts of other organizations
 ccam next --auto --wait         # nobody has room: wait for the first reset (up to 5 hours)
-ccam next -- -p "summarize"     # pass arguments to claude after --
+ccam next -c --auto -- --dangerously-skip-permissions   # claude's own options go after --
 ccam --dry-run next --auto      # print the choice and the command, start nothing
 ```
 
@@ -48,6 +48,8 @@ ccam 會在標準錯誤上以 `→ <from> → <to>` 印出切換，`--auto` 選�
 
 `--auto` 和 `--continue` 可以一起使用。使用 `--continue` 時，`--resume` 參數會放在你自己的參數之前。
 
+Claude Code 自己的選項，例如 `--dangerously-skip-permissions` 或 `--model`，要放在 `--` 後面。`ccam <name>` 會把名稱後面的所有內容原封不動地傳下去，`ccam next` 則會自己讀取參數，所以少了 `--` 時會以 `ccam: unknown flag: --dangerously-skip-permissions` 停止。
+
 ## 運作方式
 
 每次透過 ccam 啟動，都會把時間寫入 `~/.local/state/ccam/last-used/<name>`。`ccam next` 會讀取這些檔案，檢查哪些帳號已登入，然後做出選擇。
@@ -69,7 +71,7 @@ ccam 會在標準錯誤上以 `→ <from> → <to>` 印出切換，`--auto` 選�
 
 <!-- motion:next-auto -->
 
-帳號依它的 5 小時和每週區間判斷；當 Claude Code 的參數中有 `--model` 時，也會依該模型的每週區間判斷（名稱中含有 `opus`、`sonnet`、`haiku` 或 `fable`）。`Policy.Choose()` 把帳號分成三類：
+帳號依它的 5 小時和每週區間判斷；當 Claude Code 的參數中（`--` 後面）有 `--model` 時，也會依該模型的每週區間判斷（名稱中含有 `opus`、`sonnet`、`haiku` 或 `fable`）。`Policy.Choose()` 把帳號分成三類：
 
 1. **有餘裕**：每個區間都低於 `auto_max_usage`（`config.toml`，預設 100）。策略會在其中選擇：`headroom`（預設）選 5 小時用量最低的帳號，`expiring` 選 5 小時區間最早重設的帳號，讓它剩下的額度在失效前用掉；`balance` 選在每週區間重設前，平均每天剩餘每週額度最多的帳號，並把每個執行中的 ccam 工作階段計入該帳號，讓每週額度不會閒置，平行的工作階段也會分散開來。
 2. **超過**：低於 100%，但達到或超過 `auto_max_usage`。只有在沒有帳號有餘裕時才會使用，先選 5 小時用量最低的帳號。

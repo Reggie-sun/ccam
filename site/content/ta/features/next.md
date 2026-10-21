@@ -1,10 +1,10 @@
 ---
 title: அடுத்த கணக்குக்கு மாறுதல்
 description: ccam next வேறு கணக்காக Claude Code-ஐத் திறக்கிறது; --auto அதிக இடமுள்ளதை எடுக்கும், --continue உரையாடலைக் கொண்டுசெல்லும், --fallback -p jobs-ஐ மறுபடி இயக்கும்.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 8
 translation: machine
-sourceHash: "6a5dcb1d5c01"
+sourceHash: "afee5cce02cd"
 ---
 
 `ccam next` நீங்கள் பெயரிடாமலே மற்றொரு கணக்காக Claude Code-ஐத் திறக்கிறது. ஒரு கணக்கு அதன் பயன்பாட்டு வரம்பை அடையும்போது இதைப் பயன்படுத்துங்கள்: வெறும் `ccam next` நீங்கள் கடைசியாகப் பயன்படுத்தியதற்கு அடுத்த கணக்கை எடுக்கும், `--auto` அதிக இடம் உள்ள கணக்கை எடுக்கும், `--continue` இந்தக் கோப்புறையின் கடைசி உரையாடலை, இரண்டு கணக்குகளும் வரலாற்றைப் பகிர்ந்தாலும் பகிராவிட்டாலும், புதிய கணக்குக்குக் கொண்டுசெல்லும். Claude Code-க்குள், ஒரு வரம்பு அமர்வை நிறுத்தும்போது [ccam plugin](#inside-claude-code) உங்களுக்குச் சொல்லும், `/ccam:switch` உரையாடலை ஒப்படைக்கும். `claude -p` இயக்கும் scripts-க்கு, `ccam --fallback` அந்த மாற்றத்தைத் தானாகவே செய்கிறது (பார்க்க [வரம்பில் மீண்டும் இயக்குதல்](#run-again-at-the-limit)).
@@ -20,7 +20,7 @@ ccam next --auto --max-usage 80 # prefer accounts below 80%
 ccam next --auto --strategy balance   # the weekly quota that would go unused first
 ccam next --auto --cross-org    # also accounts of other organizations
 ccam next --auto --wait         # nobody has room: wait for the first reset (up to 5 hours)
-ccam next -- -p "summarize"     # pass arguments to claude after --
+ccam next -c --auto -- --dangerously-skip-permissions   # claude's own options go after --
 ccam --dry-run next --auto      # print the choice and the command, start nothing
 ```
 
@@ -48,6 +48,8 @@ ccam மாற்றத்தை, `--auto` தேர்வுக்கான க
 
 `--auto`, `--continue` இரண்டும் சேர்ந்து வேலை செய்யும். `--continue` கொடுத்தால், `--resume` arguments உங்கள் சொந்த arguments-க்கு முன் வைக்கப்படும்.
 
+`--dangerously-skip-permissions` அல்லது `--model` போன்ற Claude Code-இன் சொந்த options `--`-க்குப் பிறகு வர வேண்டும். பெயருக்குப் பிறகு உள்ள அனைத்தையும் அப்படியே அனுப்பும் `ccam <name>` போல அல்லாமல், `ccam next` தன் arguments-ஐத் தானே படிக்கிறது, எனவே `--` இல்லாமல் அது `ccam: unknown flag: --dangerously-skip-permissions` என்று நின்றுவிடும்.
+
 ## இது எப்படி வேலை செய்கிறது
 
 ccam வழியான ஒவ்வொரு தொடக்கமும் நேரத்தை `~/.local/state/ccam/last-used/<name>`-இல் எழுதுகிறது. `ccam next` இந்தக் கோப்புகளைப் படித்து, எந்தக் கணக்குகள் உள்நுழைந்துள்ளன என்று சரிபார்த்து, தேர்ந்தெடுக்கிறது.
@@ -69,7 +71,7 @@ ccam வழியான ஒவ்வொரு தொடக்கமும் ந
 
 <!-- motion:next-auto -->
 
-ஒரு கணக்கு அதன் 5 மணி நேர மற்றும் வாராந்திரக் கால அளவுகளால் மதிப்பிடப்படுகிறது, Claude Code-க்கான arguments-இல் `--model` இருந்தால் அந்த model-இன் வாராந்திரக் கால அளவாலும் (பெயரில் `opus`, `sonnet`, `haiku` அல்லது `fable`). `Policy.Choose()` கணக்குகளை மூன்றாகப் பிரிக்கிறது:
+ஒரு கணக்கு அதன் 5 மணி நேர மற்றும் வாராந்திரக் கால அளவுகளால் மதிப்பிடப்படுகிறது, Claude Code-க்கான arguments-இல் (`--`-க்குப் பிறகு) `--model` இருந்தால் அந்த model-இன் வாராந்திரக் கால அளவாலும் (பெயரில் `opus`, `sonnet`, `haiku` அல்லது `fable`). `Policy.Choose()` கணக்குகளை மூன்றாகப் பிரிக்கிறது:
 
 1. **இடம் உள்ளவை**: ஒவ்வொரு கால அளவும் `auto_max_usage`-க்குக் (`config.toml`, இயல்புநிலை 100) கீழ். அவற்றுள் strategy தேர்ந்தெடுக்கிறது: `headroom` (இயல்புநிலை) மிகக் குறைந்த 5 மணி நேரப் பயன்பாட்டை எடுக்கிறது; `expiring` மிக விரைவில் மீட்டமைக்கப்படும் 5 மணி நேரக் கால அளவை எடுக்கிறது, அதனால் அதன் மீதமுள்ள quota இழக்கப்படும் முன் பயன்படுத்தப்படுகிறது; `balance` தன் வாரம் மீட்டமைக்கப்படும் வரை ஒரு நாளுக்கு அதிக வாராந்திர quota மீதமுள்ள கணக்கை எடுக்கிறது, இயங்கும் ஒவ்வொரு ccam அமர்வையும் அதற்கு எதிராகக் கணக்கிடுகிறது, அதனால் வாராந்திர quota பயன்படுத்தப்படாமல் விடப்படுவதில்லை, இணையான அமர்வுகள் பரவுகின்றன.
 2. **மேலே உள்ளவை**: 100%-க்குக் கீழ், ஆனால் `auto_max_usage`-இல் அல்லது அதற்கு மேல். எந்தக் கணக்கிலும் இடம் இல்லாதபோது மட்டுமே பயன்படுத்தப்படுகின்றன, மிகக் குறைந்த 5 மணி நேரப் பயன்பாடு முதலில்.

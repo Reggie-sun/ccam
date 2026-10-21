@@ -1,10 +1,10 @@
 ---
 title: తదుపరి ఖాతాకు మారడం
 description: ccam next Claude Code ను మరో ఖాతాగా తెరుస్తుంది; --auto ఎక్కువ అవకాశం ఉన్నది, --continue సంభాషణను తీసుకువెళ్తుంది, --fallback -p jobs మళ్లీ నడుపుతుంది.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 8
 translation: machine
-sourceHash: "6a5dcb1d5c01"
+sourceHash: "afee5cce02cd"
 ---
 
 `ccam next` మీరు పేరు చెప్పకుండానే Claude Code ను మరో ఖాతాగా తెరుస్తుంది. ఒక ఖాతా తన వినియోగ పరిమితిని చేరుకున్నప్పుడు దీన్ని ఉపయోగించండి: సాధారణ `ccam next` మీరు చివరిగా ఉపయోగించిన ఖాతా తర్వాతి ఖాతాను తీసుకుంటుంది, `--auto` ఎక్కువ అవకాశం ఉన్న ఖాతాను తీసుకుంటుంది, `--continue` ఈ ఫోల్డర్ యొక్క చివరి సంభాషణను కొత్త ఖాతాకు తీసుకువెళ్తుంది, ఆ రెండూ చరిత్రను షేర్ చేసినా చేయకపోయినా. Claude Code లోపల, ఒక పరిమితి సెషన్‌ను ఆపినప్పుడు [ccam ప్లగిన్](#inside-claude-code) మీకు చెబుతుంది, `/ccam:switch` సంభాషణను ముందుకు అప్పగిస్తుంది. `claude -p` రన్ చేసే స్క్రిప్ట్‌ల కోసం, `ccam --fallback` ఆ మార్పును తనంతట తానే చేస్తుంది (చూడండి [పరిమితి వద్ద మళ్లీ రన్ చేయడం](#run-again-at-the-limit)).
@@ -20,7 +20,7 @@ ccam next --auto --max-usage 80 # prefer accounts below 80%
 ccam next --auto --strategy balance   # the weekly quota that would go unused first
 ccam next --auto --cross-org    # also accounts of other organizations
 ccam next --auto --wait         # nobody has room: wait for the first reset (up to 5 hours)
-ccam next -- -p "summarize"     # pass arguments to claude after --
+ccam next -c --auto -- --dangerously-skip-permissions   # claude's own options go after --
 ccam --dry-run next --auto      # print the choice and the command, start nothing
 ```
 
@@ -48,6 +48,8 @@ ccam మార్పును స్టాండర్డ్ ఎర్రర్�
 
 `--auto`, `--continue` కలిసి పనిచేస్తాయి. `--continue` తో, `--resume` ఆర్గ్యుమెంట్‌లు మీ సొంత ఆర్గ్యుమెంట్‌ల ముందు పెట్టబడతాయి.
 
+`--dangerously-skip-permissions` లేదా `--model` వంటి Claude Code సొంత ఆప్షన్‌లు `--` తర్వాత వస్తాయి. పేరు తర్వాత ఉన్న ప్రతిదాన్నీ ముందుకు పంపే `ccam <name>` లా కాకుండా, `ccam next` తన ఆర్గ్యుమెంట్‌లను తానే చదువుతుంది, కాబట్టి `--` లేకుండా అది `ccam: unknown flag: --dangerously-skip-permissions` తో ఆగిపోతుంది.
+
 ## ఇది ఎలా పనిచేస్తుంది
 
 ccam ద్వారా జరిగే ప్రతి ప్రారంభం సమయాన్ని `~/.local/state/ccam/last-used/<name>` లో రాస్తుంది. `ccam next` ఈ ఫైళ్లను చదివి, ఏ ఖాతాలు లాగిన్ అయి ఉన్నాయో తనిఖీ చేసి, ఎంచుకుంటుంది.
@@ -69,7 +71,7 @@ ccam ద్వారా జరిగే ప్రతి ప్రారంభం
 
 <!-- motion:next-auto -->
 
-ఒక ఖాతాను దాని 5 గంటల, వారపు విండోలతో అంచనా వేస్తారు, Claude Code కోసం ఇచ్చిన ఆర్గ్యుమెంట్‌లలో `--model` ఉంటే ఆ మోడల్ వారపు విండోతో కూడా (పేరులో `opus`, `sonnet`, `haiku` లేదా `fable`). `Policy.Choose()` ఖాతాలను మూడు వర్గాలుగా విభజిస్తుంది:
+ఒక ఖాతాను దాని 5 గంటల, వారపు విండోలతో అంచనా వేస్తారు, Claude Code కోసం ఇచ్చిన ఆర్గ్యుమెంట్‌లలో (`--` తర్వాత) `--model` ఉంటే ఆ మోడల్ వారపు విండోతో కూడా (పేరులో `opus`, `sonnet`, `haiku` లేదా `fable`). `Policy.Choose()` ఖాతాలను మూడు వర్గాలుగా విభజిస్తుంది:
 
 1. **అవకాశం ఉన్నవి**: ప్రతి విండో `auto_max_usage` (`config.toml`, డిఫాల్ట్ 100) కంటే తక్కువ. వాటిలో strategy ఎంచుకుంటుంది: `headroom` (డిఫాల్ట్) అతి తక్కువ 5 గంటల వినియోగాన్ని తీసుకుంటుంది; `expiring` అన్నిటికంటే ముందు రీసెట్ అయ్యే 5 గంటల విండోను తీసుకుంటుంది, కాబట్టి దాని మిగిలిన quota కోల్పోక ముందే ఉపయోగించబడుతుంది; `balance` వారం రీసెట్ అయ్యే వరకు రోజుకు ఎక్కువ వారపు quota మిగిలి ఉన్న ఖాతాను తీసుకుంటుంది, రన్ అవుతున్న ప్రతి ccam సెషన్‌ను దానికి వ్యతిరేకంగా లెక్కిస్తూ, కాబట్టి వారపు quota వృథా కాదు, సమాంతర సెషన్‌లు పంచబడతాయి.
 2. **మించినవి**: 100% కంటే తక్కువ, కానీ `auto_max_usage` వద్ద లేదా అంతకంటే ఎక్కువ. ఏ ఖాతాలోనూ అవకాశం లేనప్పుడే ఉపయోగించబడతాయి, అతి తక్కువ 5 గంటల వినియోగం ముందుగా.

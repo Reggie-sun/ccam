@@ -1,10 +1,10 @@
 ---
 title: 切换到下一个账号
 description: ccam next 以另一个账号打开 Claude Code；--auto 选择余量最多的账号，--continue 把对话带到新账号，--fallback 重新运行 -p 任务。
-updated: 2026-10-20
+updated: 2026-10-21
 order: 8
 translation: machine
-sourceHash: "6a5dcb1d5c01"
+sourceHash: "afee5cce02cd"
 ---
 
 `ccam next` 无需你指定账号名，就能以另一个账号打开 Claude Code。当某个账号达到用量限制时使用它：单纯的 `ccam next` 选择你上次使用的账号之后的那个账号，`--auto` 选择余量最多的账号，`--continue` 则把此文件夹中的上一次对话带到新账号继续，无论两个账号是否共享历史记录。在 Claude Code 中，[ccam 插件](#inside-claude-code)会在用量限制让会话停下时提醒你，`/ccam:switch` 则把对话交接出去。对于运行 `claude -p` 的脚本，`ccam --fallback` 会自动完成这种切换（参见[达到限制时重新运行](#run-again-at-the-limit)）。
@@ -20,7 +20,7 @@ ccam next --auto --max-usage 80 # prefer accounts below 80%
 ccam next --auto --strategy balance   # the weekly quota that would go unused first
 ccam next --auto --cross-org    # also accounts of other organizations
 ccam next --auto --wait         # nobody has room: wait for the first reset (up to 5 hours)
-ccam next -- -p "summarize"     # pass arguments to claude after --
+ccam next -c --auto -- --dangerously-skip-permissions   # claude's own options go after --
 ccam --dry-run next --auto      # print the choice and the command, start nothing
 ```
 
@@ -48,6 +48,8 @@ ccam 在标准错误上以 `→ <from> → <to>` 的形式打印这次切换，�
 
 `--auto` 和 `--continue` 可以一起使用。使用 `--continue` 时，`--resume` 参数会放在你自己的参数之前。
 
+Claude Code 自己的选项，例如 `--dangerously-skip-permissions` 或 `--model`，要放在 `--` 之后。`ccam <name>` 会把名称之后的所有内容原样传下去，而 `ccam next` 会自己读取参数，所以没有 `--` 时它会以 `ccam: unknown flag: --dangerously-skip-permissions` 停止。
+
 ## 工作原理
 
 每次通过 ccam 启动都会把时间写入 `~/.local/state/ccam/last-used/<name>`。`ccam next` 读取这些文件，检查哪些账号已登录，然后做出选择。
@@ -69,7 +71,7 @@ ccam 在标准错误上以 `→ <from> → <to>` 的形式打印这次切换，�
 
 <!-- motion:next-auto -->
 
-账号按其 5 小时和每周时间窗口来判断；当传给 Claude Code 的参数中有 `--model` 时，还会计入该模型的每周时间窗口（名称中含有 `opus`、`sonnet`、`haiku` 或 `fable`）。`Policy.Choose()` 把账号分为三类：
+账号按其 5 小时和每周时间窗口来判断；当传给 Claude Code 的参数中（`--` 之后）有 `--model` 时，还会计入该模型的每周时间窗口（名称中含有 `opus`、`sonnet`、`haiku` 或 `fable`）。`Policy.Choose()` 把账号分为三类：
 
 1. **有余量**：每个时间窗口都低于 `auto_max_usage`（`config.toml`，默认 100）。由策略在其中选择：`headroom`（默认）选 5 小时用量最低的账号；`expiring` 选 5 小时时间窗口最早重置的账号，让它剩余的配额在失效前被用掉；`balance` 选在每周时间窗口重置之前平均每天剩余配额最多的账号，并把每个正在运行的 ccam 会话计入其中，这样每周配额不会被浪费，并行的会话也会分散开。
 2. **超出**：低于 100%，但达到或超过 `auto_max_usage`。只在没有账号有余量时使用，先选 5 小时用量最低的。

@@ -1,10 +1,10 @@
 ---
 title: Перемикання на наступний обліковий запис
 description: ccam next відкриває Claude Code з іншого облікового запису; --auto бере найвільніший, --continue переносить розмову, а --fallback перезапускає завдання -p.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 8
 translation: machine
-sourceHash: "6a5dcb1d5c01"
+sourceHash: "afee5cce02cd"
 ---
 
 `ccam next` відкриває Claude Code від імені іншого облікового запису, і вам не потрібно його називати. Використовуйте цю команду, коли обліковий запис досягає ліміту використання: звичайний `ccam next` бере обліковий запис, що йде після останнього використаного, `--auto` бере той, у якого найбільше запасу, а `--continue` переносить останню розмову цієї теки в новий обліковий запис, незалежно від того, чи мають вони спільну історію. Усередині Claude Code [плагін ccam](#inside-claude-code) повідомляє, коли ліміт зупиняє сеанс, а `/ccam:switch` передає розмову далі. Для скриптів, які запускають `claude -p`, `ccam --fallback` робить перемикання сам (див. [Повторний запуск при ліміті](#run-again-at-the-limit)).
@@ -20,7 +20,7 @@ ccam next --auto --max-usage 80 # prefer accounts below 80%
 ccam next --auto --strategy balance   # the weekly quota that would go unused first
 ccam next --auto --cross-org    # also accounts of other organizations
 ccam next --auto --wait         # nobody has room: wait for the first reset (up to 5 hours)
-ccam next -- -p "summarize"     # pass arguments to claude after --
+ccam next -c --auto -- --dangerously-skip-permissions   # claude's own options go after --
 ccam --dry-run next --auto      # print the choice and the command, start nothing
 ```
 
@@ -48,6 +48,8 @@ ccam виводить перемикання як `→ <from> → <to>` у ст�
 
 `--auto` і `--continue` працюють разом. З `--continue` аргументи `--resume` ставляться перед вашими власними.
 
+Власні параметри Claude Code, як-от `--dangerously-skip-permissions` чи `--model`, ставляться після `--`. На відміну від `ccam <name>`, який передає далі все, що йде після імені, `ccam next` сам читає свої аргументи, тож без `--` він зупиняється з `ccam: unknown flag: --dangerously-skip-permissions`.
+
 ## Як це працює
 
 Кожен запуск через ccam записує час у `~/.local/state/ccam/last-used/<name>`. `ccam next` читає ці файли, перевіряє, які облікові записи мають вхід, і робить вибір.
@@ -69,7 +71,7 @@ ccam виводить перемикання як `→ <from> → <to>` у ст�
 
 <!-- motion:next-auto -->
 
-Обліковий запис оцінюється за його 5-годинним і тижневим вікнами, а коли серед аргументів для Claude Code є `--model`, то й за тижневим вікном цієї моделі (`opus`, `sonnet`, `haiku` або `fable` у назві). `Policy.Choose()` поділяє облікові записи на три групи:
+Обліковий запис оцінюється за його 5-годинним і тижневим вікнами, а коли серед аргументів для Claude Code є `--model` (після `--`), то й за тижневим вікном цієї моделі (`opus`, `sonnet`, `haiku` або `fable` у назві). `Policy.Choose()` поділяє облікові записи на три групи:
 
 1. **Є запас**: кожне вікно нижче `auto_max_usage` (`config.toml`, за замовчуванням 100). Серед них вибирає стратегія: `headroom` (за замовчуванням) бере найменше 5-годинне використання; `expiring` бере 5-годинне вікно, яке скинеться найраніше, щоб його залишок квоти було використано, поки він не пропав; `balance` бере обліковий запис, у якого найбільше тижневої квоти лишається на кожен день до скидання його тижня, зараховуючи на нього кожен запущений сеанс ccam, щоб тижнева квота не лишалася невикористаною, а паралельні сеанси розподілялися.
 2. **Понад поріг**: нижче 100%, але на рівні `auto_max_usage` або вище. Використовуються лише тоді, коли в жодного облікового запису немає запасу, починаючи з найменшого 5-годинного використання.

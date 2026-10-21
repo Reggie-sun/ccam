@@ -1,10 +1,10 @@
 ---
 title: Kubadili kwenda akaunti inayofuata
 description: ccam next hufungua Claude Code kama akaunti nyingine; --auto huchagua nafasi kubwa zaidi, --continue huhamisha mazungumzo, --fallback hurudia kazi za -p.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 8
 translation: machine
-sourceHash: "6a5dcb1d5c01"
+sourceHash: "afee5cce02cd"
 ---
 
 `ccam next` hufungua Claude Code kama akaunti nyingine bila wewe kuitaja. Itumie akaunti inapofikia kikomo chake cha matumizi: `ccam next` ya kawaida huchukua akaunti inayofuata ile uliyotumia mwisho, `--auto` huchukua ile yenye nafasi kubwa zaidi, na `--continue` huhamisha mazungumzo ya mwisho ya folda hii kwenda akaunti mpya, iwe hizo mbili zinashiriki historia au la. Ndani ya Claude Code, [plugin ya ccam](#inside-claude-code) hukujulisha kikomo kinaposimamisha kipindi na `/ccam:switch` hukabidhi mazungumzo. Kwa script zinazoendesha `claude -p`, `ccam --fallback` hufanya ubadilishaji yenyewe (tazama [Endesha tena kwenye kikomo](#run-again-at-the-limit)).
@@ -20,7 +20,7 @@ ccam next --auto --max-usage 80 # prefer accounts below 80%
 ccam next --auto --strategy balance   # the weekly quota that would go unused first
 ccam next --auto --cross-org    # also accounts of other organizations
 ccam next --auto --wait         # nobody has room: wait for the first reset (up to 5 hours)
-ccam next -- -p "summarize"     # pass arguments to claude after --
+ccam next -c --auto -- --dangerously-skip-permissions   # claude's own options go after --
 ccam --dry-run next --auto      # print the choice and the command, start nothing
 ```
 
@@ -48,6 +48,8 @@ ccam huchapisha ubadilishaji kama `→ <from> → <to>` kwenye standard error, p
 
 `--auto` na `--continue` hufanya kazi pamoja. Kwa `--continue`, hoja za `--resume` huwekwa kabla ya hoja zako mwenyewe.
 
+Chaguo za Claude Code yenyewe, kama vile `--dangerously-skip-permissions` au `--model`, huwekwa baada ya `--`. Tofauti na `ccam <name>`, ambayo hupitisha kila kitu kilicho baada ya jina, `ccam next` husoma hoja zake yenyewe, kwa hiyo bila `--` husimama na `ccam: unknown flag: --dangerously-skip-permissions`.
+
 ## Jinsi inavyofanya kazi
 
 Kila uanzishaji kupitia ccam huandika muda katika `~/.local/state/ccam/last-used/<name>`. `ccam next` husoma faili hizi, hukagua ni akaunti zipi zimeingia, na huchagua.
@@ -69,7 +71,7 @@ Mzunguko huanza kwenye akaunti iliyotumiwa mwisho na husimama kwenye akaunti ya 
 
 <!-- motion:next-auto -->
 
-Akaunti hupimwa kwa vipindi vyake vya saa 5 na vya wiki, na, `--model` ikiwa miongoni mwa hoja za Claude Code, pia kwa kipindi cha wiki cha modeli hiyo (`opus`, `sonnet`, `haiku` au `fable` katika jina). `Policy.Choose()` hupanga akaunti katika makundi matatu:
+Akaunti hupimwa kwa vipindi vyake vya saa 5 na vya wiki, na, `--model` ikiwa miongoni mwa hoja za Claude Code (baada ya `--`), pia kwa kipindi cha wiki cha modeli hiyo (`opus`, `sonnet`, `haiku` au `fable` katika jina). `Policy.Choose()` hupanga akaunti katika makundi matatu:
 
 1. **Nafasi**: kila kipindi kiko chini ya `auto_max_usage` (`config.toml`, chaguo-msingi 100). Mkakati huchagua kati yao: `headroom` (chaguo-msingi) huchukua matumizi ya chini zaidi ya saa 5, `expiring` huchukua kipindi cha saa 5 kitakachoanza upya mapema zaidi, ili kiasi chake kilichobaki kitumike kabla hakijapotea; `balance` huchukua akaunti yenye kiasi kikubwa zaidi cha wiki kilichobaki kwa kila siku hadi wiki yake ianze upya, ikihesabu kila kipindi cha ccam kinachoendeshwa dhidi yake, ili kiasi cha wiki kisibaki bila kutumika na vipindi sambamba vienee.
 2. **Juu**: chini ya 100% lakini kwenye au juu ya `auto_max_usage`. Hutumiwa tu wakati hakuna akaunti yenye nafasi, ile yenye matumizi ya chini zaidi ya saa 5 kwanza.

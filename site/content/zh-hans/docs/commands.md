@@ -2,10 +2,10 @@
 title: 命令参考
 metaTitle: "ccam 命令参考"
 description: ccam 的所有命令和选项，从 ccam add、ccam <name> 到 ccam usage、ccam next 和 ccam doctor。
-updated: 2026-10-20
+updated: 2026-10-21
 order: 3
 translation: machine
-sourceHash: "116c5b34ac9a"
+sourceHash: "338ac11a0b5a"
 ---
 
 在命令前加上 `--dry-run`，可以查看它会做什么而不实际执行，例如 `ccam --dry-run work`。它适用于启动 Claude Code（`ccam <name>`、`ccam run`、`ccam next`、`ccam attach`）以及 `group`、`migrate`、`shortcut`、`update` 和 `doctor --fix`。其他会做出更改的命令会拒绝它，而不会执行。
@@ -114,13 +114,14 @@ ccam usage --source claude      # Claude Code looks it up; ccam never touches a 
 ccam next --continue            # this folder's last conversation, as the next account
 ccam next --auto
 ccam next --auto --max-usage 80 --wait
+ccam next -c --auto -- --dangerously-skip-permissions   # claude's own options after --
 ccam pick                       # the account with the most room, for a script
 ccam "$(ccam pick)" -p "…"      # start a worker on it
 ccam agents                     # background sessions of every account
 ccam attach 49ec0028            # open one, as the account that started it
 ```
 
-`next --auto`、`--fallback` 和 `ccam pick` 的选择方式相同：优先选择低于 `auto_max_usage`（`config.toml`，默认 100）的账号，按 `auto_strategy`（`headroom`、`expiring` 或 `balance`）选择，并计入 `--model` 的每周时间窗口，从不选择已达 100% 的账号，并且只在出发账号所属的组织内选择（用 `--cross-org` 或 `cross_org = true` 扩大范围）。当没有可选的账号时，它们以退出码 75 退出，或者在使用 `--wait` 时等待第一个账号重置。即使两个账号不共享历史记录，`ccam next --continue` 也能把对话带过去：此时由 Claude Code 把对话复制到新账号中。在 Claude Code 中，插件的 `/ccam:switch [account]` 用于交接对话，`ccam hook` 则是插件的钩子所运行的命令。参见[切换到下一个账号](/features/next)、[为脚本选择账号](/features/pick)和[所有账号的后台会话](/features/agents)。
+`next --auto`、`--fallback` 和 `ccam pick` 的选择方式相同：优先选择低于 `auto_max_usage`（`config.toml`，默认 100）的账号，按 `auto_strategy`（`headroom`、`expiring` 或 `balance`）选择，并计入 `--model` 的每周时间窗口，从不选择已达 100% 的账号，并且只在出发账号所属的组织内选择（用 `--cross-org` 或 `cross_org = true` 扩大范围）。当没有可选的账号时，它们以退出码 75 退出，或者在使用 `--wait` 时等待第一个账号重置。即使两个账号不共享历史记录，`ccam next --continue` 也能把对话带过去：此时由 Claude Code 把对话复制到新账号中。与 `ccam <name>` 不同，`ccam next` 会读取自己的选项，所以 Claude Code 的选项要放在 `--` 之后；没有它时 ccam 会以 `unknown flag` 停止。在 Claude Code 中，插件的 `/ccam:switch [account]` 用于交接对话，`ccam hook` 则是插件的钩子所运行的命令。参见[切换到下一个账号](/features/next)、[为脚本选择账号](/features/pick)和[所有账号的后台会话](/features/agents)。
 
 ## 维护
 

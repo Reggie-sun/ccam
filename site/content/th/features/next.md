@@ -1,10 +1,10 @@
 ---
 title: การสลับไปยังบัญชีถัดไป
 description: "ccam next เปิด Claude Code ด้วยบัญชีอื่น --auto เลือกบัญชีที่เหลือโควตามากที่สุด --continue พาการสนทนาไปต่อ และ --fallback รันงาน -p ซ้ำ"
-updated: 2026-10-20
+updated: 2026-10-21
 order: 8
 translation: machine
-sourceHash: "6a5dcb1d5c01"
+sourceHash: "afee5cce02cd"
 ---
 
 `ccam next` เปิด Claude Code ด้วยบัญชีอื่นโดยที่คุณไม่ต้องระบุชื่อ ใช้เมื่อบัญชีถึงขีดจำกัดการใช้งาน: `ccam next` แบบธรรมดาจะเลือกบัญชีถัดจากบัญชีที่คุณใช้ล่าสุด `--auto` จะเลือกบัญชีที่เหลือโควตามากที่สุด และ `--continue` จะพาการสนทนาล่าสุดของโฟลเดอร์นี้ไปยังบัญชีใหม่ ไม่ว่าทั้งสองบัญชีจะใช้ประวัติร่วมกันหรือไม่ ภายใน Claude Code [ปลั๊กอิน ccam](#inside-claude-code) จะบอกคุณเมื่อขีดจำกัดทำให้เซสชันหยุด และ `/ccam:switch` จะส่งต่อการสนทนาไป สำหรับสคริปต์ที่รัน `claude -p` นั้น `ccam --fallback` จะสลับบัญชีให้เอง (ดู [รันอีกครั้งเมื่อถึงขีดจำกัด](#run-again-at-the-limit))
@@ -20,7 +20,7 @@ ccam next --auto --max-usage 80 # prefer accounts below 80%
 ccam next --auto --strategy balance   # the weekly quota that would go unused first
 ccam next --auto --cross-org    # also accounts of other organizations
 ccam next --auto --wait         # nobody has room: wait for the first reset (up to 5 hours)
-ccam next -- -p "summarize"     # pass arguments to claude after --
+ccam next -c --auto -- --dangerously-skip-permissions   # claude's own options go after --
 ccam --dry-run next --auto      # print the choice and the command, start nothing
 ```
 
@@ -48,6 +48,8 @@ ccam พิมพ์การสลับเป็น `→ <from> → <to>` ท�
 
 `--auto` และ `--continue` ใช้ร่วมกันได้ เมื่อใช้ `--continue` อาร์กิวเมนต์ `--resume` จะถูกวางไว้ก่อนอาร์กิวเมนต์ของคุณ
 
+ตัวเลือกของ Claude Code เอง เช่น `--dangerously-skip-permissions` หรือ `--model` ต้องวางไว้หลัง `--` ต่างจาก `ccam <name>` ที่ส่งต่อทุกอย่างหลังชื่อไปให้ `ccam next` อ่านอาร์กิวเมนต์เอง ดังนั้นหากไม่มี `--` จะหยุดพร้อมข้อความ `ccam: unknown flag: --dangerously-skip-permissions`
+
 ## วิธีการทำงาน
 
 การเริ่มทุกครั้งผ่าน ccam จะเขียนเวลาลงใน `~/.local/state/ccam/last-used/<name>` `ccam next` อ่านไฟล์เหล่านี้ ตรวจว่าบัญชีใดเข้าสู่ระบบแล้ว แล้วจึงเลือก
@@ -69,7 +71,7 @@ ccam พิมพ์การสลับเป็น `→ <from> → <to>` ท�
 
 <!-- motion:next-auto -->
 
-บัญชีจะถูกตัดสินจากช่วง 5 ชั่วโมงและรายสัปดาห์ และเมื่อมี `--model` อยู่ในอาร์กิวเมนต์สำหรับ Claude Code ก็จะดูช่วงรายสัปดาห์ของโมเดลนั้นด้วย (`opus`, `sonnet`, `haiku` หรือ `fable` ในชื่อ) `Policy.Choose()` แบ่งบัญชีออกเป็นสามกลุ่ม:
+บัญชีจะถูกตัดสินจากช่วง 5 ชั่วโมงและรายสัปดาห์ และเมื่อมี `--model` อยู่ในอาร์กิวเมนต์สำหรับ Claude Code (หลัง `--`) ก็จะดูช่วงรายสัปดาห์ของโมเดลนั้นด้วย (`opus`, `sonnet`, `haiku` หรือ `fable` ในชื่อ) `Policy.Choose()` แบ่งบัญชีออกเป็นสามกลุ่ม:
 
 1. **มีโควตาเหลือ**: ทุกช่วงต่ำกว่า `auto_max_usage` (`config.toml` ค่าเริ่มต้น 100) กลยุทธ์จะเลือกจากกลุ่มนี้: `headroom` (ค่าเริ่มต้น) เลือกบัญชีที่ใช้งาน 5 ชั่วโมงต่ำที่สุด `expiring` เลือกช่วง 5 ชั่วโมงที่จะรีเซ็ตเร็วที่สุด เพื่อให้ใช้โควตาที่เหลือก่อนที่จะหายไป ส่วน `balance` เลือกบัญชีที่เหลือโควตารายสัปดาห์ต่อวันมากที่สุดจนกว่าสัปดาห์ของบัญชีนั้นจะรีเซ็ต โดยนับเซสชัน ccam ที่กำลังทำงานแต่ละเซสชันหักออกจากบัญชีนั้นด้วย โควตารายสัปดาห์จึงไม่ถูกปล่อยทิ้ง และเซสชันที่ทำงานขนานกันจะกระจายออกไป
 2. **เกิน**: ต่ำกว่า 100% แต่เท่ากับหรือเกิน `auto_max_usage` ใช้เฉพาะเมื่อไม่มีบัญชีใดมีโควตาเหลือ โดยเลือกบัญชีที่ใช้งาน 5 ชั่วโมงต่ำที่สุดก่อน

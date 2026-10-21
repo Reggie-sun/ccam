@@ -1,10 +1,10 @@
 ---
 title: التبديل إلى الحساب التالي
 description: يفتح ccam next برنامج Claude Code بحساب آخر؛ ويختار --auto الأوسع هامشًا، وينقل --continue المحادثة إليه، ويعيد --fallback تشغيل مهام -p.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 8
 translation: machine
-sourceHash: "6a5dcb1d5c01"
+sourceHash: "afee5cce02cd"
 ---
 
 يفتح `ccam next` برنامج Claude Code بحساب آخر دون أن تحدد اسمه. استخدمه عندما يبلغ حساب ما حد الاستخدام: يأخذ `ccam next` وحده الحساب الذي يلي آخر حساب استخدمته، ويأخذ `--auto` الحساب الأكثر سعة، وينقل `--continue` آخر محادثة في هذا المجلد إلى الحساب الجديد، سواء تشارك الحسابان السجل أم لا. وداخل Claude Code، يخبرك [المكوّن الإضافي لـ ccam](#inside-claude-code) عندما يوقف الحد جلسةً، ويسلّم `/ccam:switch` المحادثة إلى حساب آخر. وفي السكربتات التي تشغّل `claude -p`، يجري `ccam --fallback` التبديل بنفسه (راجع [إعادة التشغيل عند بلوغ الحد](#run-again-at-the-limit)).
@@ -20,7 +20,7 @@ ccam next --auto --max-usage 80 # prefer accounts below 80%
 ccam next --auto --strategy balance   # the weekly quota that would go unused first
 ccam next --auto --cross-org    # also accounts of other organizations
 ccam next --auto --wait         # nobody has room: wait for the first reset (up to 5 hours)
-ccam next -- -p "summarize"     # pass arguments to claude after --
+ccam next -c --auto -- --dangerously-skip-permissions   # claude's own options go after --
 ccam --dry-run next --auto      # print the choice and the command, start nothing
 ```
 
@@ -48,6 +48,8 @@ CLAUDE_CONFIG_DIR=/home/you/.local/share/ccam/profiles/work /usr/local/bin/claud
 
 يعمل `--auto` و`--continue` معًا. ومع `--continue` توضع وسائط `--resume` قبل وسائطك.
 
+توضع خيارات Claude Code الخاصة، مثل `--dangerously-skip-permissions` أو `--model`، بعد `--`. وعلى خلاف `ccam <name>` الذي يمرّر كل ما يلي الاسم، يقرأ `ccam next` وسائطه بنفسه، لذا يتوقف من دون `--` برسالة `ccam: unknown flag: --dangerously-skip-permissions`.
+
 ## كيف يعمل
 
 كل تشغيل عبر ccam يكتب الوقت في `~/.local/state/ccam/last-used/<name>`. يقرأ `ccam next` هذه الملفات، ويتحقق من الحسابات المسجَّل دخولها، ثم يختار.
@@ -69,7 +71,7 @@ CLAUDE_CONFIG_DIR=/home/you/.local/share/ccam/profiles/work /usr/local/bin/claud
 
 <!-- motion:next-auto -->
 
-يُحكم على الحساب بنافذتيه للخمس ساعات والأسبوع، وكذلك بالنافذة الأسبوعية للنموذج عندما يكون `--model` بين وسائط Claude Code (`opus` أو `sonnet` أو `haiku` أو `fable` في الاسم). ويوزّع `Policy.Choose()` الحسابات على ثلاث فئات:
+يُحكم على الحساب بنافذتيه للخمس ساعات والأسبوع، وكذلك بالنافذة الأسبوعية للنموذج عندما يكون `--model` بين وسائط Claude Code بعد `--` (`opus` أو `sonnet` أو `haiku` أو `fable` في الاسم). ويوزّع `Policy.Choose()` الحسابات على ثلاث فئات:
 
 1. **هامش**: كل نافذة أقل من `auto_max_usage` (`config.toml`، والقيمة الافتراضية 100). وتختار الاستراتيجية من بينها: يأخذ `headroom` (الافتراضي) أدنى استخدام في نافذة الخمس ساعات، ويأخذ `expiring` نافذة الخمس ساعات التي تُعاد ضبطها أولًا، فتُستهلك حصتها المتبقية قبل أن تضيع؛ ويأخذ `balance` الحساب الذي تتبقى له أكبر حصة أسبوعية لكل يوم حتى إعادة ضبط أسبوعه، محتسبًا عليه كل جلسة ccam قيد التشغيل، فلا تبقى الحصة الأسبوعية دون استخدام وتتوزع الجلسات المتوازية.
 2. **تجاوز**: أقل من 100% لكن عند `auto_max_usage` أو فوقه. لا يُستخدم إلا عندما لا يكون لأي حساب هامش، بدءًا بأدنى استخدام في نافذة الخمس ساعات.

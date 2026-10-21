@@ -2,10 +2,10 @@
 title: Riferimento dei comandi
 metaTitle: Riferimento dei comandi di ccam
 description: Tutti i comandi e le opzioni di ccam, da ccam add e ccam <name> fino a ccam usage, ccam next e ccam doctor.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 3
 translation: machine
-sourceHash: "116c5b34ac9a"
+sourceHash: "338ac11a0b5a"
 ---
 
 Metti `--dry-run` prima di un comando per vedere cosa farebbe senza eseguirlo, per esempio `ccam --dry-run work`. Funziona quando avvii Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`) e con `group`, `migrate`, `shortcut`, `update` e `doctor --fix`. Gli altri comandi che modificano qualcosa lo rifiutano invece di essere eseguiti.
@@ -114,13 +114,14 @@ ccam usage --source claude      # Claude Code looks it up; ccam never touches a 
 ccam next --continue            # this folder's last conversation, as the next account
 ccam next --auto
 ccam next --auto --max-usage 80 --wait
+ccam next -c --auto -- --dangerously-skip-permissions   # claude's own options after --
 ccam pick                       # the account with the most room, for a script
 ccam "$(ccam pick)" -p "…"      # start a worker on it
 ccam agents                     # background sessions of every account
 ccam attach 49ec0028            # open one, as the account that started it
 ```
 
-`next --auto`, `--fallback` e `ccam pick` scelgono allo stesso modo: prima gli account sotto `auto_max_usage` (`config.toml`, predefinito 100), secondo `auto_strategy` (`headroom`, `expiring` o `balance`), contando la finestra settimanale di `--model`, mai un account al 100%, e dentro l'organizzazione dell'account da cui partono (`--cross-org` o `cross_org = true` per cercare oltre). Quando non possono scegliere nessun account escono con codice 75, oppure con `--wait` attendono il reset del primo account. `ccam next --continue` porta una conversazione nell'altro account anche tra account che non condividono la cronologia: in quel caso Claude Code la copia nel nuovo account. Dentro Claude Code, il comando `/ccam:switch [account]` del plugin passa una conversazione a un altro account, e `ccam hook` è ciò che eseguono i suoi hook. Vedi [Passare all'account successivo](/features/next), [Scegliere un account per gli script](/features/pick) e [Sessioni in background di ogni account](/features/agents).
+`next --auto`, `--fallback` e `ccam pick` scelgono allo stesso modo: prima gli account sotto `auto_max_usage` (`config.toml`, predefinito 100), secondo `auto_strategy` (`headroom`, `expiring` o `balance`), contando la finestra settimanale di `--model`, mai un account al 100%, e dentro l'organizzazione dell'account da cui partono (`--cross-org` o `cross_org = true` per cercare oltre). Quando non possono scegliere nessun account escono con codice 75, oppure con `--wait` attendono il reset del primo account. `ccam next --continue` porta una conversazione nell'altro account anche tra account che non condividono la cronologia: in quel caso Claude Code la copia nel nuovo account. A differenza di `ccam <name>`, `ccam next` legge le proprie opzioni, quindi le opzioni di Claude Code vanno dopo `--`; senza, ccam si ferma con `unknown flag`. Dentro Claude Code, il comando `/ccam:switch [account]` del plugin passa una conversazione a un altro account, e `ccam hook` è ciò che eseguono i suoi hook. Vedi [Passare all'account successivo](/features/next), [Scegliere un account per gli script](/features/pick) e [Sessioni in background di ogni account](/features/agents).
 
 ## Manutenzione
 

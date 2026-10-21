@@ -1,10 +1,10 @@
 ---
 title: 次のアカウントへの切り替え
 description: ccam nextは別のアカウントでClaude Codeを開きます。--autoは余裕が最も多いものを選び、--continueは会話を持ち越し、--fallbackは-pのジョブを再実行します。
-updated: 2026-10-20
+updated: 2026-10-21
 order: 8
 translation: machine
-sourceHash: "6a5dcb1d5c01"
+sourceHash: "afee5cce02cd"
 ---
 
 `ccam next`は、アカウント名を指定しなくても、別のアカウントとしてClaude Codeを開きます。アカウントが使用量の上限に達したときに使います。オプションなしの`ccam next`は最後に使ったアカウントの次のアカウントを、`--auto`は最も余裕があるアカウントを選び、`--continue`は、2つのアカウントが履歴を共有しているかどうかにかかわらず、このフォルダーの最後の会話を新しいアカウントに持ち越します。Claude Codeの中では、[ccamプラグイン](#inside-claude-code)が、上限でセッションが止まったことを知らせ、`/ccam:switch`が会話を引き渡します。`claude -p`を実行するスクリプトでは、`ccam --fallback`がこの切り替えを自動で行います（[上限に達したら再実行](#run-again-at-the-limit)を参照）。
@@ -20,7 +20,7 @@ ccam next --auto --max-usage 80 # prefer accounts below 80%
 ccam next --auto --strategy balance   # the weekly quota that would go unused first
 ccam next --auto --cross-org    # also accounts of other organizations
 ccam next --auto --wait         # nobody has room: wait for the first reset (up to 5 hours)
-ccam next -- -p "summarize"     # pass arguments to claude after --
+ccam next -c --auto -- --dangerously-skip-permissions   # claude's own options go after --
 ccam --dry-run next --auto      # print the choice and the command, start nothing
 ```
 
@@ -48,6 +48,8 @@ ccamは切り替えを`→ <from> → <to>`として標準エラー出力に表�
 
 `--auto`と`--continue`は一緒に使えます。`--continue`を付けると、`--resume`の引数は自分で指定した引数より前に置かれます。
 
+`--dangerously-skip-permissions`や`--model`のようなClaude Code自身のオプションは、`--`の後に置きます。名前の後ろをすべてそのまま渡す`ccam <name>`と違い、`ccam next`は引数を自分で読むので、`--`がないと`ccam: unknown flag: --dangerously-skip-permissions`で止まります。
+
 ## しくみ
 
 ccamを通じて起動するたびに、その時刻が`~/.local/state/ccam/last-used/<name>`に書き込まれます。`ccam next`はこれらのファイルを読み、どのアカウントがログイン済みかを確認して、アカウントを選びます。
@@ -69,7 +71,7 @@ ccamを通じて起動するたびに、その時刻が`~/.local/state/ccam/last
 
 <!-- motion:next-auto -->
 
-アカウントは5時間と週間の枠で判断され、Claude Codeへの引数に`--model`がある場合は、そのモデルの週間の枠でも判断されます（名前に`opus`、`sonnet`、`haiku`、`fable`を含むもの）。`Policy.Choose()`はアカウントを3つに分けます。
+アカウントは5時間と週間の枠で判断され、Claude Codeへの引数（`--`の後）に`--model`がある場合は、そのモデルの週間の枠でも判断されます（名前に`opus`、`sonnet`、`haiku`、`fable`を含むもの）。`Policy.Choose()`はアカウントを3つに分けます。
 
 1. **余裕あり**: すべての枠が`auto_max_usage`（`config.toml`、デフォルトは100）未満。この中から戦略で選びます。`headroom`（デフォルト）は5時間の使用量が最も少ないものを選びます。`expiring`は5時間の枠のリセットが最も早いものを選び、残りのクォータが失われる前に使い切ります。`balance`は、週がリセットされるまでの1日あたりの残り週間クォータが最も多いアカウントを選びます。その際、実行中のccamのセッションをそれぞれ差し引いて数えるので、週間のクォータが使われないまま残ることがなく、並行するセッションも分散されます。
 2. **超過**: 100%未満だが`auto_max_usage`以上。余裕のあるアカウントがないときだけ使い、5時間の使用量が最も少ないものから選びます。

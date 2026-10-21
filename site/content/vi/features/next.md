@@ -1,10 +1,10 @@
 ---
 title: Chuyển sang tài khoản tiếp theo
 description: "ccam next mở Claude Code bằng tài khoản khác; --auto chọn tài khoản còn nhiều hạn mức nhất, --continue chuyển hội thoại sang, --fallback chạy lại tác vụ -p."
-updated: 2026-10-20
+updated: 2026-10-21
 order: 8
 translation: machine
-sourceHash: "6a5dcb1d5c01"
+sourceHash: "afee5cce02cd"
 ---
 
 `ccam next` mở Claude Code bằng một tài khoản khác mà bạn không cần nêu tên. Hãy dùng nó khi một tài khoản chạm giới hạn sử dụng: `ccam next` không kèm tùy chọn chọn tài khoản đứng sau tài khoản bạn dùng gần nhất, `--auto` chọn tài khoản còn nhiều hạn mức nhất, và `--continue` chuyển cuộc hội thoại gần nhất của thư mục này sang tài khoản mới, dù hai tài khoản có dùng chung lịch sử hay không. Bên trong Claude Code, [plugin ccam](#inside-claude-code) báo cho bạn khi một giới hạn dừng một phiên, và `/ccam:switch` chuyển cuộc hội thoại đi tiếp. Với các script chạy `claude -p`, `ccam --fallback` tự thực hiện việc đổi (xem [Chạy lại khi chạm giới hạn](#run-again-at-the-limit)).
@@ -20,7 +20,7 @@ ccam next --auto --max-usage 80 # prefer accounts below 80%
 ccam next --auto --strategy balance   # the weekly quota that would go unused first
 ccam next --auto --cross-org    # also accounts of other organizations
 ccam next --auto --wait         # nobody has room: wait for the first reset (up to 5 hours)
-ccam next -- -p "summarize"     # pass arguments to claude after --
+ccam next -c --auto -- --dangerously-skip-permissions   # claude's own options go after --
 ccam --dry-run next --auto      # print the choice and the command, start nothing
 ```
 
@@ -48,6 +48,8 @@ ccam in việc chuyển đổi dưới dạng `→ <from> → <to>` ra đầu ra
 
 `--auto` và `--continue` dùng được cùng nhau. Với `--continue`, các đối số `--resume` được đặt trước các đối số của bạn.
 
+Các tùy chọn riêng của Claude Code, như `--dangerously-skip-permissions` hoặc `--model`, đặt sau `--`. Khác với `ccam <name>`, vốn chuyển tiếp mọi thứ sau tên, `ccam next` tự đọc các đối số của nó, nên nếu thiếu `--` nó sẽ dừng với `ccam: unknown flag: --dangerously-skip-permissions`.
+
 ## Cách hoạt động
 
 Mỗi lần khởi động qua ccam đều ghi thời điểm vào `~/.local/state/ccam/last-used/<name>`. `ccam next` đọc các tệp này, kiểm tra những tài khoản nào đã đăng nhập, rồi chọn.
@@ -69,7 +71,7 @@ Vòng duyệt bắt đầu ở tài khoản dùng gần nhất và dừng ở t�
 
 <!-- motion:next-auto -->
 
-Một tài khoản được đánh giá theo khoảng 5 giờ và khoảng hàng tuần của nó, và khi `--model` nằm trong các đối số cho Claude Code, theo cả khoảng hàng tuần của mô hình đó (`opus`, `sonnet`, `haiku` hoặc `fable` trong tên). `Policy.Choose()` chia các tài khoản thành ba nhóm:
+Một tài khoản được đánh giá theo khoảng 5 giờ và khoảng hàng tuần của nó, và khi `--model` nằm trong các đối số cho Claude Code (sau `--`), theo cả khoảng hàng tuần của mô hình đó (`opus`, `sonnet`, `haiku` hoặc `fable` trong tên). `Policy.Choose()` chia các tài khoản thành ba nhóm:
 
 1. **Còn hạn mức**: mọi khoảng đều dưới `auto_max_usage` (`config.toml`, mặc định 100). Chiến lược chọn trong số này: `headroom` (mặc định) lấy mức sử dụng 5 giờ thấp nhất; `expiring` lấy khoảng 5 giờ được đặt lại sớm nhất, để hạn mức còn lại được dùng trước khi mất; `balance` lấy tài khoản còn nhiều hạn mức hàng tuần nhất cho mỗi ngày cho đến khi tuần của nó được đặt lại, có tính cả từng phiên ccam đang chạy trên tài khoản đó, để hạn mức hàng tuần không bị bỏ phí và các phiên song song được phân tán.
 2. **Vượt ngưỡng**: dưới 100% nhưng bằng hoặc vượt `auto_max_usage`. Chỉ được dùng khi không tài khoản nào còn hạn mức, ưu tiên mức sử dụng 5 giờ thấp nhất.

@@ -1,10 +1,10 @@
 ---
 title: पुढच्या खात्यावर जाणे
 description: ccam next दुसऱ्या खात्याने Claude Code उघडते; --auto सर्वाधिक जागेचे खाते निवडते, --continue संभाषण पुढे नेते, --fallback -p jobs पुन्हा चालवते.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 8
 translation: machine
-sourceHash: "6a5dcb1d5c01"
+sourceHash: "afee5cce02cd"
 ---
 
 `ccam next` तुम्ही नाव न देता दुसऱ्या खात्याने Claude Code उघडते. एखादे खाते वापर मर्यादेला पोहोचल्यावर ते वापरा: साधे `ccam next` तुम्ही शेवटी वापरलेल्या खात्यानंतरचे खाते घेते, `--auto` सर्वात जास्त जागा असलेले खाते घेते, आणि `--continue` या फोल्डरमधील शेवटचे संभाषण नवीन खात्यात पुढे नेते, दोन्ही खाती इतिहास शेअर करत असोत वा नसोत. Claude Code मध्ये, मर्यादेमुळे सत्र थांबले की [ccam plugin](#inside-claude-code) तुम्हाला सांगते आणि `/ccam:switch` संभाषण पुढे सोपवते. `claude -p` चालवणाऱ्या scripts साठी `ccam --fallback` हा बदल आपोआप करते ([मर्यादेवर पुन्हा चालवणे](#run-again-at-the-limit) पाहा).
@@ -20,7 +20,7 @@ ccam next --auto --max-usage 80 # prefer accounts below 80%
 ccam next --auto --strategy balance   # the weekly quota that would go unused first
 ccam next --auto --cross-org    # also accounts of other organizations
 ccam next --auto --wait         # nobody has room: wait for the first reset (up to 5 hours)
-ccam next -- -p "summarize"     # pass arguments to claude after --
+ccam next -c --auto -- --dangerously-skip-permissions   # claude's own options go after --
 ccam --dry-run next --auto      # print the choice and the command, start nothing
 ```
 
@@ -48,6 +48,8 @@ ccam हा बदल standard error वर `→ <from> → <to>` असा छ�
 
 `--auto` आणि `--continue` एकत्र चालतात. `--continue` सह, `--resume` चे आर्ग्युमेंट्स तुमच्या स्वतःच्या आर्ग्युमेंट्सच्या आधी ठेवले जातात.
 
+Claude Code चे स्वतःचे पर्याय, जसे `--dangerously-skip-permissions` किंवा `--model`, `--` नंतर येतात. `ccam <name>` नावानंतरचे सर्व काही पुढे देते, पण `ccam next` त्याचे आर्ग्युमेंट्स स्वतः वाचते, म्हणून `--` शिवाय ते `ccam: unknown flag: --dangerously-skip-permissions` देऊन थांबते.
+
 ## हे कसे काम करते
 
 ccam मार्फत प्रत्येक वेळी सुरू करताना वेळ `~/.local/state/ccam/last-used/<name>` मध्ये लिहिली जाते. `ccam next` या फाइल्स वाचते, कोणती खाती लॉग इन आहेत ते तपासते, आणि निवड करते.
@@ -69,7 +71,7 @@ ccam मार्फत प्रत्येक वेळी सुरू क�
 
 <!-- motion:next-auto -->
 
-खाते त्याच्या 5 तासांच्या आणि साप्ताहिक windows वरून ठरवले जाते, आणि Claude Code च्या arguments मध्ये `--model` असेल तर त्या model च्या साप्ताहिक window वरूनही (नावात `opus`, `sonnet`, `haiku` किंवा `fable`). `Policy.Choose()` खात्यांची तीन गटांत विभागणी करते:
+खाते त्याच्या 5 तासांच्या आणि साप्ताहिक windows वरून ठरवले जाते, आणि Claude Code च्या arguments मध्ये (`--` नंतर) `--model` असेल तर त्या model च्या साप्ताहिक window वरूनही (नावात `opus`, `sonnet`, `haiku` किंवा `fable`). `Policy.Choose()` खात्यांची तीन गटांत विभागणी करते:
 
 1. **जागा आहे**: प्रत्येक window `auto_max_usage` (`config.toml`, डीफॉल्ट 100) खाली. त्यांच्यातून strategy निवडते: `headroom` (डीफॉल्ट) सर्वात कमी 5 तासांचा वापर घेते, `expiring` सर्वात लवकर reset होणारी 5 तासांची window घेते, म्हणजे तिचा उरलेला quota वाया जाण्याआधी वापरला जातो; `balance` आठवडा reset होईपर्यंत दररोज सर्वात जास्त साप्ताहिक quota उरलेले खाते घेते, आणि चालू असलेले प्रत्येक ccam सत्र त्याच्या विरुद्ध मोजते, त्यामुळे साप्ताहिक quota न वापरता राहत नाही आणि समांतर सत्रे विखुरली जातात.
 2. **मर्यादेवर**: 100% खाली, पण `auto_max_usage` वर किंवा त्याहून जास्त. कोणत्याही खात्यात जागा नसेल तेव्हाच वापरली जातात, सर्वात कमी 5 तासांचा वापर आधी.

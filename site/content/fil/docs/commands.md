@@ -2,10 +2,10 @@
 title: Sanggunian ng mga command
 metaTitle: Sanggunian ng mga command ng ccam
 description: Bawat command at option ng ccam, mula sa ccam add at ccam <name> hanggang ccam usage, ccam next at ccam doctor.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 3
 translation: machine
-sourceHash: 116c5b34ac9a
+sourceHash: 338ac11a0b5a
 ---
 
 Ilagay ang `--dry-run` bago ang isang command para makita kung ano ang gagawin nito nang hindi ito talagang ginagawa, halimbawa `ccam --dry-run work`. Gumagana ito kapag sinisimulan ang Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`) at sa `group`, `migrate`, `shortcut`, `update` at `doctor --fix`. Tinatanggihan ito ng ibang command na may binabago sa halip na tumakbo.
@@ -114,13 +114,14 @@ ccam usage --source claude      # Claude Code looks it up; ccam never touches a 
 ccam next --continue            # this folder's last conversation, as the next account
 ccam next --auto
 ccam next --auto --max-usage 80 --wait
+ccam next -c --auto -- --dangerously-skip-permissions   # claude's own options after --
 ccam pick                       # the account with the most room, for a script
 ccam "$(ccam pick)" -p "…"      # start a worker on it
 ccam agents                     # background sessions of every account
 ccam attach 49ec0028            # open one, as the account that started it
 ```
 
-Pareho ang paraan ng pagpili ng `next --auto`, `--fallback` at `ccam pick`: inuuna ang mga account na mas mababa sa `auto_max_usage` (`config.toml`, default 100), ayon sa `auto_strategy` (`headroom`, `expiring` o `balance`), binibilang ang lingguhang window ng `--model`, hindi kailanman pumipili ng account na nasa 100%, at sa loob lang ng organisasyon ng account na pinagmumulan nila (`--cross-org` o `cross_org = true` para maghanap pa nang mas malayo). Kapag walang mapipili, lumalabas sila na may code 75, o sa `--wait` ay naghihintay sa unang account na mag-reset. Dinadala ng `ccam next --continue` ang isang usapan kahit sa pagitan ng mga account na hindi nagshe-share ng kasaysayan: kinokopya ito ng Claude Code sa bagong account. Sa loob ng Claude Code, ipinapasa ng `/ccam:switch [account]` ng plugin ang isang usapan, at ang `ccam hook` ang pinapatakbo ng mga hook nito. Tingnan ang [Paglipat sa susunod na account](/features/next), ang [Pagpili ng account para sa mga script](/features/pick) at ang [Mga background session ng bawat account](/features/agents).
+Pareho ang paraan ng pagpili ng `next --auto`, `--fallback` at `ccam pick`: inuuna ang mga account na mas mababa sa `auto_max_usage` (`config.toml`, default 100), ayon sa `auto_strategy` (`headroom`, `expiring` o `balance`), binibilang ang lingguhang window ng `--model`, hindi kailanman pumipili ng account na nasa 100%, at sa loob lang ng organisasyon ng account na pinagmumulan nila (`--cross-org` o `cross_org = true` para maghanap pa nang mas malayo). Kapag walang mapipili, lumalabas sila na may code 75, o sa `--wait` ay naghihintay sa unang account na mag-reset. Dinadala ng `ccam next --continue` ang isang usapan kahit sa pagitan ng mga account na hindi nagshe-share ng kasaysayan: kinokopya ito ng Claude Code sa bagong account. Hindi tulad ng `ccam <name>`, binabasa ng `ccam next` ang sarili nitong mga option, kaya inilalagay ang mga option ng Claude Code pagkatapos ng `--`; kapag wala ito, humihinto ang ccam sa `unknown flag`. Sa loob ng Claude Code, ipinapasa ng `/ccam:switch [account]` ng plugin ang isang usapan, at ang `ccam hook` ang pinapatakbo ng mga hook nito. Tingnan ang [Paglipat sa susunod na account](/features/next), ang [Pagpili ng account para sa mga script](/features/pick) at ang [Mga background session ng bawat account](/features/agents).
 
 ## Maintenance
 

@@ -1,10 +1,10 @@
 ---
 title: 다음 계정으로 전환
 description: ccam next는 다른 계정으로 Claude Code를 엽니다. --auto는 여유가 가장 많은 계정을 고르고, --continue는 대화를 넘겨받으며, --fallback은 -p 작업을 재실행합니다.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 8
 translation: machine
-sourceHash: "6a5dcb1d5c01"
+sourceHash: "afee5cce02cd"
 ---
 
 `ccam next`는 계정 이름을 지정하지 않아도 다른 계정으로 Claude Code를 엽니다. 계정이 사용량 한도에 도달했을 때 쓰면 됩니다. 그냥 `ccam next`를 실행하면 마지막으로 사용한 계정의 다음 계정을, `--auto`를 붙이면 여유가 가장 많은 계정을 고릅니다. `--continue`를 붙이면 두 계정이 대화 내역을 공유하든 안 하든 이 폴더의 마지막 대화를 새 계정으로 넘겨 이어 갑니다. Claude Code 안에서는 [ccam 플러그인](#inside-claude-code)이 한도 때문에 세션이 멈추면 알려 주고, `/ccam:switch`로 대화를 넘길 수 있습니다. `claude -p`를 실행하는 스크립트에서는 `ccam --fallback`이 이 전환을 알아서 합니다([한도에서 다시 실행](#run-again-at-the-limit) 참고).
@@ -20,7 +20,7 @@ ccam next --auto --max-usage 80 # prefer accounts below 80%
 ccam next --auto --strategy balance   # the weekly quota that would go unused first
 ccam next --auto --cross-org    # also accounts of other organizations
 ccam next --auto --wait         # nobody has room: wait for the first reset (up to 5 hours)
-ccam next -- -p "summarize"     # pass arguments to claude after --
+ccam next -c --auto -- --dangerously-skip-permissions   # claude's own options go after --
 ccam --dry-run next --auto      # print the choice and the command, start nothing
 ```
 
@@ -48,6 +48,8 @@ ccam은 표준 오류에 전환 내용을 `→ <from> → <to>` 형식으로 출
 
 `--auto`와 `--continue`는 함께 쓸 수 있습니다. `--continue`를 쓰면 `--resume` 인자가 직접 넘긴 인자보다 앞에 놓입니다.
 
+`--dangerously-skip-permissions`나 `--model` 같은 Claude Code 자체 옵션은 `--` 뒤에 둡니다. 이름 뒤의 모든 것을 그대로 넘기는 `ccam <name>`과 달리 `ccam next`는 인자를 직접 읽으므로, `--`가 없으면 `ccam: unknown flag: --dangerously-skip-permissions` 오류를 내고 멈춥니다.
+
 ## 동작 방식
 
 ccam으로 실행할 때마다 그 시각이 `~/.local/state/ccam/last-used/<name>`에 기록됩니다. `ccam next`는 이 파일들을 읽고, 어떤 계정이 로그인되어 있는지 확인한 뒤 계정을 고릅니다.
@@ -69,7 +71,7 @@ ccam으로 실행할 때마다 그 시각이 `~/.local/state/ccam/last-used/<nam
 
 <!-- motion:next-auto -->
 
-계정은 5시간 구간과 주간 구간으로 판단하며, Claude Code에 넘기는 인자에 `--model`이 있으면 그 모델의 주간 구간도 따집니다(이름에 `opus`, `sonnet`, `haiku`, `fable`이 들어간 경우). `Policy.Choose()`는 계정을 세 부류로 나눕니다.
+계정은 5시간 구간과 주간 구간으로 판단하며, Claude Code에 넘기는 인자(`--` 뒤)에 `--model`이 있으면 그 모델의 주간 구간도 따집니다(이름에 `opus`, `sonnet`, `haiku`, `fable`이 들어간 경우). `Policy.Choose()`는 계정을 세 부류로 나눕니다.
 
 1. **여유**: 모든 구간이 `auto_max_usage`(`config.toml`, 기본값 100) 미만인 계정. 이 중에서는 전략에 따라 고릅니다. `headroom`(기본값)은 5시간 사용량이 가장 낮은 계정을, `expiring`은 5시간 구간이 가장 먼저 초기화되는 계정을 골라, 남은 할당량이 사라지기 전에 쓰게 합니다. `balance`는 주간 구간이 초기화될 때까지 하루당 남은 주간 할당량이 가장 많은 계정을 고르며, 실행 중인 ccam 세션도 그 계정의 몫으로 계산합니다. 그래서 주간 할당량이 쓰이지 못하고 남지 않으며, 병렬 세션이 여러 계정에 고루 나뉩니다.
 2. **초과**: 100% 미만이지만 `auto_max_usage` 이상인 계정. 여유 있는 계정이 하나도 없을 때만 쓰며, 5시간 사용량이 가장 낮은 계정부터 고릅니다.

@@ -2,10 +2,10 @@
 title: கட்டளைக் குறிப்பு
 metaTitle: ccam கட்டளைக் குறிப்பு
 description: ccam add, ccam <name> முதல் ccam usage, ccam next, ccam doctor வரை, ccam-இன் ஒவ்வொரு கட்டளையும் option-உம்.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 3
 translation: machine
-sourceHash: "116c5b34ac9a"
+sourceHash: "338ac11a0b5a"
 ---
 
 ஒரு கட்டளை உண்மையில் எதையும் செய்யாமல் என்ன செய்யும் என்று பார்க்க, அதற்கு முன் `--dry-run` வையுங்கள், எடுத்துக்காட்டாக `ccam --dry-run work`. Claude Code-ஐத் தொடங்கும்போது (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`) மற்றும் `group`, `migrate`, `shortcut`, `update`, `doctor --fix` ஆகியவற்றுடன் இது வேலை செய்யும். எதையாவது மாற்றும் மற்ற கட்டளைகள் இயங்குவதற்குப் பதிலாக இதை மறுக்கும்.
@@ -114,13 +114,14 @@ ccam usage --source claude      # Claude Code looks it up; ccam never touches a 
 ccam next --continue            # this folder's last conversation, as the next account
 ccam next --auto
 ccam next --auto --max-usage 80 --wait
+ccam next -c --auto -- --dangerously-skip-permissions   # claude's own options after --
 ccam pick                       # the account with the most room, for a script
 ccam "$(ccam pick)" -p "…"      # start a worker on it
 ccam agents                     # background sessions of every account
 ccam attach 49ec0028            # open one, as the account that started it
 ```
 
-`next --auto`, `--fallback`, `ccam pick` மூன்றும் ஒரே முறையில் தேர்ந்தெடுக்கும்: முதலில் `auto_max_usage`-க்குக் (`config.toml`, இயல்புநிலை 100) கீழ் உள்ளவை, `auto_strategy` (`headroom`, `expiring` அல்லது `balance`) படி, `--model`-இன் வாராந்திரக் கால அளவையும் கணக்கிட்டு, 100%-இல் உள்ள கணக்கை ஒருபோதும் அல்ல, அவை தொடங்கும் கணக்கின் நிறுவனத்துக்குள்ளேயே (அதற்கு அப்பாலும் தேட `--cross-org` அல்லது `cross_org = true`). எதையும் தேர்ந்தெடுக்க முடியாதபோது அவை code 75 உடன் வெளியேறும், அல்லது `--wait` உடன் முதல் கணக்கு மீட்டமைக்கப்படும் வரை காத்திருக்கும். வரலாற்றைப் பகிராத கணக்குகளுக்கு இடையிலும் `ccam next --continue` உரையாடலைக் கொண்டுசெல்கிறது: அப்போது Claude Code அதைப் புதிய கணக்குக்குள் நகலெடுக்கிறது. Claude Code-க்குள், plugin-இன் `/ccam:switch [account]` உரையாடலை ஒப்படைக்கிறது, அதன் hooks இயக்குவது `ccam hook`. [அடுத்த கணக்குக்கு மாறுதல்](/features/next), [scripts-க்கு ஒரு கணக்கைத் தேர்ந்தெடுத்தல்](/features/pick), [எல்லாக் கணக்குகளின் பின்னணி அமர்வுகள்](/features/agents) பாருங்கள்.
+`next --auto`, `--fallback`, `ccam pick` மூன்றும் ஒரே முறையில் தேர்ந்தெடுக்கும்: முதலில் `auto_max_usage`-க்குக் (`config.toml`, இயல்புநிலை 100) கீழ் உள்ளவை, `auto_strategy` (`headroom`, `expiring` அல்லது `balance`) படி, `--model`-இன் வாராந்திரக் கால அளவையும் கணக்கிட்டு, 100%-இல் உள்ள கணக்கை ஒருபோதும் அல்ல, அவை தொடங்கும் கணக்கின் நிறுவனத்துக்குள்ளேயே (அதற்கு அப்பாலும் தேட `--cross-org` அல்லது `cross_org = true`). எதையும் தேர்ந்தெடுக்க முடியாதபோது அவை code 75 உடன் வெளியேறும், அல்லது `--wait` உடன் முதல் கணக்கு மீட்டமைக்கப்படும் வரை காத்திருக்கும். வரலாற்றைப் பகிராத கணக்குகளுக்கு இடையிலும் `ccam next --continue` உரையாடலைக் கொண்டுசெல்கிறது: அப்போது Claude Code அதைப் புதிய கணக்குக்குள் நகலெடுக்கிறது. `ccam <name>` போல அல்லாமல், `ccam next` தன் சொந்த options-ஐப் படிக்கிறது, எனவே Claude Code-இன் options `--`-க்குப் பிறகு வர வேண்டும்; அது இல்லாமல் ccam `unknown flag` என்று நின்றுவிடும். Claude Code-க்குள், plugin-இன் `/ccam:switch [account]` உரையாடலை ஒப்படைக்கிறது, அதன் hooks இயக்குவது `ccam hook`. [அடுத்த கணக்குக்கு மாறுதல்](/features/next), [scripts-க்கு ஒரு கணக்கைத் தேர்ந்தெடுத்தல்](/features/pick), [எல்லாக் கணக்குகளின் பின்னணி அமர்வுகள்](/features/agents) பாருங்கள்.
 
 ## பராமரிப்பு
 

@@ -84,7 +84,7 @@ SSH로 접속한 원격 서버에서 로그인할 때는 내 컴퓨터의 브라
 | `ccam use <이름>` | 기본 계정 (`ccam -p "…"`처럼 이름 없이 실행할 때) |
 | `ccam folder [이름] [폴더] [--remove]` | 그 폴더와 하위 폴더에서 이름 없이 실행할 때 쓸 계정. 인자가 없으면 목록 |
 | `ccam --fallback [이름] -p …` | 계정이 사용량 한도에 걸리면 여유가 가장 많은 계정으로 다시 실행 (`-p` 실행만) |
-| `ccam next [--auto] [--continue]` | 다음 계정으로. `--auto`는 사용량으로 고르고 이유를 알려 줌 (`--max-usage`, `--strategy headroom\|expiring\|balance`, `--wait`) |
+| `ccam next [--auto] [--continue] [-- claude 인자]` | 다음 계정으로. `--auto`는 사용량으로 고르고 이유를 알려 줌 (`--max-usage`, `--strategy headroom\|expiring\|balance`, `--wait`). claude 옵션은 `--` 뒤에: `ccam next -c --auto -- --dangerously-skip-permissions` |
 | `ccam pick [--json] [--model m] [--wait]` | 스크립트용으로 여유가 가장 많은 계정 이름 출력. 함께 시작한 작업자는 서로 다른 계정, 없으면 종료 코드 75 |
 | `ccam ext [이름] [--json]` | 계정마다 로드되는 스킬·명령·플러그인·MCP 서버·훅과 그 출처, 문제 |
 | `ccam usage [--watch] [--json] [-v]` | 사용량 (줄임 `ccam u`) |

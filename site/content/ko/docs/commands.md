@@ -2,10 +2,10 @@
 title: 명령어 레퍼런스
 metaTitle: "ccam 명령어 레퍼런스"
 description: ccam add, ccam <name>부터 ccam usage, ccam next, ccam doctor까지 ccam의 모든 명령과 옵션을 정리했습니다.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 3
 translation: machine
-sourceHash: "116c5b34ac9a"
+sourceHash: "338ac11a0b5a"
 ---
 
 명령 앞에 `--dry-run`을 붙이면 실제로 실행하지 않고 무엇을 할지만 보여 줍니다(예: `ccam --dry-run work`). Claude Code를 시작할 때(`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`)와 `group`, `migrate`, `shortcut`, `update`, `doctor --fix`에서 쓸 수 있습니다. 무언가를 바꾸는 다른 명령은 실행하지 않고 이 옵션을 거부합니다.
@@ -114,13 +114,14 @@ ccam usage --source claude      # Claude Code looks it up; ccam never touches a 
 ccam next --continue            # this folder's last conversation, as the next account
 ccam next --auto
 ccam next --auto --max-usage 80 --wait
+ccam next -c --auto -- --dangerously-skip-permissions   # claude's own options after --
 ccam pick                       # the account with the most room, for a script
 ccam "$(ccam pick)" -p "…"      # start a worker on it
 ccam agents                     # background sessions of every account
 ccam attach 49ec0028            # open one, as the account that started it
 ```
 
-`next --auto`, `--fallback`, `ccam pick`은 같은 방식으로 고릅니다. `auto_max_usage`(`config.toml`, 기본값 100) 미만인 계정을 먼저, `auto_strategy`(`headroom`, `expiring` 또는 `balance`)에 따라 고르며, `--model`의 주간 구간도 따지고, 100%인 계정은 절대 고르지 않고, 시작한 계정과 같은 조직 안에서만 고릅니다(더 넓게 찾으려면 `--cross-org` 또는 `cross_org = true`). 고를 수 있는 계정이 없으면 종료 코드 75로 끝나며, `--wait`를 주면 첫 번째 계정이 초기화될 때까지 기다립니다. `ccam next --continue`는 대화 내역을 공유하지 않는 계정 사이에서도 대화를 넘깁니다. 이때는 Claude Code가 대화를 새 계정으로 복사합니다. Claude Code 안에서는 플러그인의 `/ccam:switch [account]`가 대화를 넘기며, `ccam hook`은 플러그인의 훅이 실행하는 명령입니다. [다음 계정으로 전환](/features/next), [스크립트용 계정 고르기](/features/pick), [모든 계정의 백그라운드 세션](/features/agents)을 참고하세요.
+`next --auto`, `--fallback`, `ccam pick`은 같은 방식으로 고릅니다. `auto_max_usage`(`config.toml`, 기본값 100) 미만인 계정을 먼저, `auto_strategy`(`headroom`, `expiring` 또는 `balance`)에 따라 고르며, `--model`의 주간 구간도 따지고, 100%인 계정은 절대 고르지 않고, 시작한 계정과 같은 조직 안에서만 고릅니다(더 넓게 찾으려면 `--cross-org` 또는 `cross_org = true`). 고를 수 있는 계정이 없으면 종료 코드 75로 끝나며, `--wait`를 주면 첫 번째 계정이 초기화될 때까지 기다립니다. `ccam next --continue`는 대화 내역을 공유하지 않는 계정 사이에서도 대화를 넘깁니다. 이때는 Claude Code가 대화를 새 계정으로 복사합니다. `ccam <name>`과 달리 `ccam next`는 자기 옵션을 직접 읽으므로 Claude Code의 옵션은 `--` 뒤에 둡니다. 그렇지 않으면 ccam은 `unknown flag` 오류를 내고 멈춥니다. Claude Code 안에서는 플러그인의 `/ccam:switch [account]`가 대화를 넘기며, `ccam hook`은 플러그인의 훅이 실행하는 명령입니다. [다음 계정으로 전환](/features/next), [스크립트용 계정 고르기](/features/pick), [모든 계정의 백그라운드 세션](/features/agents)을 참고하세요.
 
 ## 유지 관리
 

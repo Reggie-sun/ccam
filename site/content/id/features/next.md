@@ -1,10 +1,10 @@
 ---
 title: Beralih ke akun berikutnya
 description: ccam next membuka Claude Code sebagai akun lain; --auto memilih ruang terbanyak, --continue membawa percakapan, dan --fallback mengulang tugas -p.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 8
 translation: machine
-sourceHash: "6a5dcb1d5c01"
+sourceHash: "afee5cce02cd"
 ---
 
 `ccam next` membuka Claude Code sebagai akun lain tanpa Anda perlu menyebutkan namanya. Gunakan saat sebuah akun mencapai batas penggunaannya: `ccam next` biasa mengambil akun setelah akun yang terakhir Anda pakai, `--auto` mengambil akun dengan ruang terbanyak, dan `--continue` membawa percakapan terakhir di folder ini ke akun baru, baik kedua akun berbagi riwayat maupun tidak. Di dalam Claude Code, [plugin ccam](#inside-claude-code) memberi tahu Anda saat sebuah batas menghentikan sesi, dan `/ccam:switch` meneruskan percakapan. Untuk skrip yang menjalankan `claude -p`, `ccam --fallback` melakukan pergantian itu dengan sendirinya (lihat [Jalankan ulang saat batas tercapai](#run-again-at-the-limit)).
@@ -20,7 +20,7 @@ ccam next --auto --max-usage 80 # prefer accounts below 80%
 ccam next --auto --strategy balance   # the weekly quota that would go unused first
 ccam next --auto --cross-org    # also accounts of other organizations
 ccam next --auto --wait         # nobody has room: wait for the first reset (up to 5 hours)
-ccam next -- -p "summarize"     # pass arguments to claude after --
+ccam next -c --auto -- --dangerously-skip-permissions   # claude's own options go after --
 ccam --dry-run next --auto      # print the choice and the command, start nothing
 ```
 
@@ -48,6 +48,8 @@ ccam menampilkan perpindahan sebagai `→ <from> → <to>` di error standar, bes
 
 `--auto` dan `--continue` dapat dipakai bersama. Dengan `--continue`, argumen `--resume` ditempatkan sebelum argumen Anda sendiri.
 
+Opsi milik Claude Code sendiri, seperti `--dangerously-skip-permissions` atau `--model`, ditaruh setelah `--`. Tidak seperti `ccam <name>`, yang meneruskan semua yang ada setelah nama, `ccam next` membaca argumennya sendiri, jadi tanpa `--` ccam berhenti dengan `ccam: unknown flag: --dangerously-skip-permissions`.
+
 ## Cara kerjanya
 
 Setiap peluncuran melalui ccam menulis waktunya ke `~/.local/state/ccam/last-used/<name>`. `ccam next` membaca file-file ini, memeriksa akun mana yang sudah login, lalu memilih.
@@ -69,7 +71,7 @@ Penelusuran dimulai dari akun yang terakhir dipakai dan berhenti di akun pertama
 
 <!-- motion:next-auto -->
 
-Akun dinilai berdasarkan jendela 5 jam dan mingguannya, dan, jika `--model` ada di antara argumen untuk Claude Code, juga berdasarkan jendela mingguan model itu (`opus`, `sonnet`, `haiku`, atau `fable` di namanya). `Policy.Choose()` membagi akun menjadi tiga kelompok:
+Akun dinilai berdasarkan jendela 5 jam dan mingguannya, dan, jika `--model` ada di antara argumen untuk Claude Code (setelah `--`), juga berdasarkan jendela mingguan model itu (`opus`, `sonnet`, `haiku`, atau `fable` di namanya). `Policy.Choose()` membagi akun menjadi tiga kelompok:
 
 1. **Ada ruang**: setiap jendela di bawah `auto_max_usage` (`config.toml`, bawaan 100). Strategi memilih di antaranya: `headroom` (bawaan) mengambil penggunaan 5 jam terendah; `expiring` mengambil jendela 5 jam yang paling cepat di-reset, sehingga sisa kuotanya terpakai sebelum hangus; `balance` mengambil akun dengan sisa kuota mingguan terbanyak per hari hingga minggunya di-reset, dengan menghitung setiap sesi ccam yang sedang berjalan sebagai beban akun itu, sehingga kuota mingguan tidak dibiarkan tak terpakai dan sesi paralel tersebar.
 2. **Lewat batas**: di bawah 100% tetapi sama dengan atau di atas `auto_max_usage`. Hanya dipakai jika tidak ada akun yang punya ruang, dimulai dari penggunaan 5 jam terendah.
