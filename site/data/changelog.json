@@ -1,5 +1,11 @@
 [
   {
+    "tag": "v0.9.1",
+    "date": "2026-10-21",
+    "url": "https://github.com/jhyunwoo/ccam/releases/tag/v0.9.1",
+    "notes": "<h3>Fixed</h3>\n<ul>\n<li>ccam doctor says how a missing share link gets made, and ccam hook --help is accurate</li>\n</ul>\n"
+  },
+  {
     "tag": "v0.9.0",
     "date": "2026-10-20",
     "url": "https://github.com/jhyunwoo/ccam/releases/tag/v0.9.0",
