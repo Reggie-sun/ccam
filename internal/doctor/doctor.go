@@ -250,6 +250,8 @@ func checkProfile(r *report, p paths.Paths, prof *config.Profile, fix bool) {
 		switch {
 		case pr.Waits(p.GroupsRoot()):
 			r.add(Warn, prof.Name, "%s is not shared with the group yet (ccam doctor --fix moves it in)", pr.Path)
+		case pr.Kind == share.MissingLink && fix:
+			r.add(Warn, prof.Name, "%s", pr)
 		case pr.Kind == share.MissingLink:
 			// Usual right after an upgrade that shares more paths.
 			r.add(Warn, prof.Name, "%s (the next launch or ccam doctor --fix makes it)", pr)

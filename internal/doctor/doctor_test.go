@@ -128,3 +128,30 @@ func TestIdentityChecks(t *testing.T) {
 		t.Fatalf("%v", r.out)
 	}
 }
+
+// A missing share link says how it gets made, unless --fix makes it now.
+func TestMissingLinkSaysHowItIsMade(t *testing.T) {
+	t.Setenv("CCAM_HOME", t.TempDir())
+	p := paths.FromEnv()
+	cfg := &config.Config{Profiles: []config.Profile{{Name: "a", Slot: 1}}}
+	if err := cfg.AddGroup("default", []string{"memory"}, []string{"a"}); err != nil {
+		t.Fatal(err)
+	}
+	os.MkdirAll(p.ProfileDir("a"), 0o700)
+	os.MkdirAll(p.GroupDir("default"), 0o700)
+	os.WriteFile(filepath.Join(p.GroupDir("default"), "CLAUDE.md"), []byte("shared"), 0o600)
+	line := func(fix bool) string {
+		for _, f := range Run(p, cfg, Options{Fix: fix}) {
+			if f.Profile == "a" && strings.Contains(f.Msg, "CLAUDE.md") {
+				return f.Msg
+			}
+		}
+		return ""
+	}
+	if got := line(false); !strings.Contains(got, "share link is missing") || !strings.HasSuffix(got, "(the next launch or ccam doctor --fix makes it)") {
+		t.Fatalf("%q", got)
+	}
+	if got := line(true); got == "" || strings.Contains(got, "makes it") {
+		t.Fatalf("with --fix: %q", got)
+	}
+}
