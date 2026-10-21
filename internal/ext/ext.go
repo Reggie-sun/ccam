@@ -200,7 +200,9 @@ func sourceOf(dir, name, groupsRoot string) string {
 }
 
 // skills lists the skill folders in dir. A skill is a folder (or a link to
-// one) with a SKILL.md.
+// one) with a SKILL.md. skills/synced without one is where Claude Code keeps
+// the skills it syncs from claude.ai (a folder per account, each with a
+// manifest.json), so it is neither a skill nor a problem.
 func skills(dir, source string) []Item {
 	entries, err := os.ReadDir(dir)
 	if err != nil {
@@ -220,6 +222,8 @@ func skills(dir, source string) []Item {
 			it.Problem = "broken link to " + target
 		case !info.IsDir():
 			continue // a stray file, not a skill
+		case !fsutil.Exists(filepath.Join(path, "SKILL.md")) && e.Name() == "synced":
+			continue // Claude Code's synced skills, see above
 		case !fsutil.Exists(filepath.Join(path, "SKILL.md")):
 			it.Problem = "no SKILL.md, so Claude Code does not load it"
 		}

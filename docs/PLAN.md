@@ -595,3 +595,7 @@ clausona(larcane97/clausona v0.12.0-beta) 조사에서 나온 단점을 보완�
 - 소유자 요청으로 "ccam은 스스로 업데이트를 확인하지 않는다"는 2026-10-19 결정을 바꿨습니다. 대시보드(터미널에서 `ccam`)가 열릴 때마다 백그라운드에서 GitHub의 최신 릴리스를 묻습니다(`update.Updater.Newer`, `ccam update`와 같은 `/releases/latest` 리다이렉트, 10초 제한). 소유자가 고른 대로 하루 캐시나 끄는 설정은 두지 않았습니다. 첫 화면은 기다리지 않고, 오프라인이거나 개발 빌드면 아무것도 표시하지 않습니다.
 - 새 버전이 있으면 제목 줄 아래에 `● ccam <새 버전> is available (you have <지금 버전>) · press U to update`를 보여 주고, `U`는 확인 창을 거쳐 `ccam update`와 같은 단계(`env.runUpdate`: 체크섬 확인, 한 번의 이름 바꾸기, Windows 단축 명령 다시 연결)로 설치합니다. 실행 중인 대시보드는 옛 바이너리이므로 "quit and start ccam again"을 안내합니다. apt로 설치한 경우 등 실패하면 `ccam update`와 같은 안내를 오류로 보여 주고 권유는 남깁니다. dry run에서는 설치를 거절합니다.
 - 다른 명령(`ccam <이름>` 실행 경로 포함)은 여전히 네트워크에 접근하지 않습니다.
+
+## 2026-10-21: ext가 skills/synced를 문제로 보지 않음
+
+- 소유자가 `/ccam:ext`에서 본 `synced: no SKILL.md` 경고는 오탐이었습니다. `skills/synced/`는 Claude Code가 claude.ai에서 동기화한 스킬을 두는 폴더(계정마다 `<조직>_<계정>/`, 그 안에 `manifest.json`과 스킬 폴더)입니다. `ext.skills`는 `SKILL.md`가 없는 `synced`를 건너뜁니다. `SKILL.md`가 있으면 이름이 synced인 보통 스킬로 그대로 보여 줍니다. `ccam ext`, 대시보드 Extensions 탭, `/ccam:ext`가 같은 코드를 씁니다. `ccam doctor`는 이 검사를 쓰지 않습니다.

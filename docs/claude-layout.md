@@ -13,6 +13,7 @@ throw-away `CLAUDE_CONFIG_DIR` folders; the real `~/.claude` was only read (key 
 | `settings.json` | permissions, hooks, model, env, statusLine, enabledPlugins | shareable (symlink) | yes |
 | `CLAUDE.md` | global memory | shareable (symlink) | by docs |
 | `agents/` `commands/` `skills/` `plugins/` `output-styles/` `rules/` | extensions | shareable as one toggle (symlinks) | yes (`skills`, `plugins`, `output-styles`, `rules` exist) |
+| `skills/synced/` | skills synced from claude.ai: `<org>_<account>/` per account, each with `manifest.json`, `.last-complete-round` and the skill folders; `.bucket-*` markers beside them | shared with extensions (inside `skills/`); per-account folder names, so accounts do not overwrite each other | yes (2026-10-21, ccam ext skips it) |
 | `projects/` | `<slug>/<session-id>.jsonl` transcripts and `<slug>/memory/` (auto-memory) | shareable with history | yes |
 | `history.jsonl` | prompt history (interactive only; `-p` does not write it) | shared with history | yes |
 | `sessions/` `session-env/` `shell-snapshots/` `state/` `cache/` `downloads/` `security/` `bridge-spawn/` `policy-limits.json*` `remote-settings.json*` `mcp-needs-auth-cache.json` | runtime state and caches | always local | yes |

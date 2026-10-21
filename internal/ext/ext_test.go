@@ -35,6 +35,10 @@ func TestScanAccount(t *testing.T) {
 	// Skills shared through the group: one fine, one without SKILL.md.
 	write(t, filepath.Join(group, "skills", "review", "SKILL.md"), "---\nname: review\n---\n")
 	os.MkdirAll(filepath.Join(group, "skills", "empty"), 0o700)
+	// Claude Code's own store of skills synced from claude.ai: not a skill
+	// and not a problem.
+	write(t, filepath.Join(group, "skills", "synced", "org_account", "pdf", "SKILL.md"), "---\nname: pdf\n---\n")
+	write(t, filepath.Join(group, "skills", "synced", "org_account", "manifest.json"), "{}")
 	os.MkdirAll(dir, 0o700)
 	if err := os.Symlink(filepath.Join(group, "skills"), filepath.Join(dir, "skills")); err != nil {
 		t.Skip("no symlinks:", err)
