@@ -4,7 +4,7 @@ description: "ccam dans un terminal ouvre un tableau de bord plein écran : comp
 updated: 2026-10-21
 order: 15
 translation: machine
-sourceHash: "27bd153b48b2"
+sourceHash: "19a99adef661"
 ---
 
 `ccam` sans argument ouvre un tableau de bord plein écran quand l'entrée et la sortie standard sont un terminal ; sinon, il affiche `ccam list`. Le tableau de bord montre chaque compte avec son utilisation et ses groupes, et fait ce que font les commandes : lancer, ajouter, connecter, changer de groupes, définir des règles de dossier, vérifier et réparer. Un lancement le ferme ; ajouter un compte ou se connecter le quitte le temps de passer au terminal, puis y revient.
@@ -24,6 +24,14 @@ sourceHash: "27bd153b48b2"
 ```
 
 La ligne sous les noms des onglets indique en une phrase à quoi sert l'onglet courant. Dans un terminal plus large, l'onglet Accounts affiche aussi l'adresse e-mail de chaque compte.
+
+À chaque ouverture, le tableau de bord demande en arrière-plan à GitHub si une version plus récente de ccam existe ; la première image ne l'attend jamais, et hors ligne rien n'est affiché. S'il y en a une, une ligne sous le titre la recommande :
+
+```console
+ ● ccam 0.10.2 is available (you have 0.10.1) · press U to update
+```
+
+`U` demande d'abord confirmation, puis met à jour comme le fait [`ccam update`](/features/update) : la version est vérifiée avec ses sommes de contrôle SHA-256 et remplace ccam en une seule étape. Le tableau de bord dans lequel vous êtes reste l'ancienne version : quittez-le et relancez `ccam`. Quand la mise à jour ne peut pas se faire ici, par exemple pour un ccam installé depuis le paquet `.deb`, le tableau de bord affiche le même conseil que `ccam update` et garde la proposition.
 
 La première image n'est dessinée qu'à partir de `config.toml`, en bien moins de 100 ms ; l'utilisation s'affiche au fur et à mesure que chaque compte répond. Chaque limite a sa propre barre : la fenêtre de 5 heures, la fenêtre hebdomadaire de tous les modèles et la fenêtre hebdomadaire propre à Fable ; `-` signifie que le compte n'a pas cette fenêtre. Un pourcentage passe au jaune à partir de 80 % et au rouge à 100 %, et les valeurs tirées d'un cache après un échec de consultation sont affichées en atténué.
 

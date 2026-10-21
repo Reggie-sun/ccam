@@ -2,10 +2,10 @@
 title: Sakinisha ccam
 metaTitle: Sakinisha ccam kwenye Linux, macOS na Windows
 description: Sakinisha ccam kwenye Linux, macOS au Windows kwa amri moja, kifurushi cha .deb au msimbo chanzo, na uisasishe kwa ccam update. Sakinisha Claude Code kwanza.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 1
 translation: machine
-sourceHash: "07fab3165030"
+sourceHash: "1e3a53623de0"
 ---
 
 Endesha hii kwenye terminal ya Linux au macOS:
@@ -110,7 +110,7 @@ $ ccam update
 ccam 0.3.0 is up to date.
 ```
 
-ccam kamwe haikagui masasisho yenyewe. Hutafuta toleo jipya tu unapoendesha amri hii. Ili kusakinisha toleo mahususi, hata la zamani, tumia `--version`. `ccam --dry-run update` huonyesha kile ambacho kingepakuliwa na kubadilishwa, bila kubadilisha chochote.
+Dashibodi (`ccam` kwenye terminal) pia hutafuta toleo jipya kila inapofunguliwa na, likiwepo, hulitoa: bonyeza `U` kisha uthibitishe. Hakuna amri nyingine inayotafuta, na ccam kamwe haijisasishi bila kuuliza. Ili kusakinisha toleo mahususi, hata la zamani, tumia `--version`. `ccam --dry-run update` huonyesha kile ambacho kingepakuliwa na kubadilishwa, bila kubadilisha chochote.
 
 ```sh
 ccam update --version v0.2.0

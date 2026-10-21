@@ -1,10 +1,10 @@
 ---
 title: ccam અને બીજાં Claude Code એકાઉન્ટ સ્વિચર
 description: claude-swap, CCS, clausona, clauth, CAAM, cux અને Claude Code એકાઉન્ટ સ્વિચ કરવાનાં બીજાં ટૂલ સાથે ccam ની સરખામણી, અને કઈ રીત કયા ઉપયોગ માટે યોગ્ય છે.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 2
 translation: machine
-sourceHash: a90ede56b767
+sourceHash: c74be64d2978
 ---
 
 Claude Code એકાઉન્ટ સ્વિચ કરવાનાં ટૂલ બેમાંથી એક રીત અપનાવે છે. મોટા ભાગનાં ટૂલ એક જ `~/.claude` ફોલ્ડરની અંદર લૉગિન બદલે છે, તેથી એક સમયે એક જ એકાઉન્ટ સક્રિય રહે છે. બીજાં ટૂલ, જેમાં ccam પણ છે, `CLAUDE_CONFIG_DIR` વડે દરેક એકાઉન્ટને પોતાનું ફોલ્ડર આપે છે, તેથી દરેક એકાઉન્ટ લૉગિન રહે છે અને ઘણાં એકાઉન્ટ એકસાથે ચાલી શકે છે. ccam તેમાં શેર કરેલાં સેટિંગ્સ અને MCP સર્વર ઉમેરે છે, અને વાતચીતને બીજા એકાઉન્ટના ફોલ્ડરમાં ચાલુ રાખે છે.
@@ -86,7 +86,7 @@ Scripts તમારી રાહ જોઈ શકતી નથી, તેથી
 
 ### એક binary, ચકાસેલાં downloads
 
-ccam Linux, macOS અને Windows માટે લગભગ 10 MB ની static binary છે, અને તેના માટે કોઈ runtime ઇન્સ્ટોલ કરવો પડતો નથી. install scripts (`install.sh`, `install.ps1`) અને `ccam update` દરેક download ને release નાં SHA-256 checksums સાથે ચકાસે છે, અને ccam ક્યારેય જાતે updates શોધતું નથી. તેમાં કોઈ telemetry નથી: તે ફક્ત તમારાં એકાઉન્ટનો વપરાશ જાણવા Anthropic ને request મોકલે છે, સમાંતર રીતે, 3 સેકન્ડની મર્યાદા અને 60 સેકન્ડના cache સાથે, અને તમે માગેલાં downloads કરે છે. `usage_source = "claude"` સાથે એ requests પણ Claude Code દ્વારા જાય છે, અને ccam ક્યારેય token ને હાથ લગાડતું નથી.
+ccam Linux, macOS અને Windows માટે લગભગ 10 MB ની static binary છે, અને તેના માટે કોઈ runtime ઇન્સ્ટોલ કરવો પડતો નથી. install scripts (`install.sh`, `install.ps1`) અને `ccam update` દરેક download ને release નાં SHA-256 checksums સાથે ચકાસે છે, અને ccam પૂછ્યા વગર ક્યારેય update થતું નથી. તેમાં કોઈ telemetry નથી: તે ફક્ત તમારાં એકાઉન્ટનો વપરાશ જાણવા Anthropic ને request મોકલે છે, સમાંતર રીતે, 3 સેકન્ડની મર્યાદા અને 60 સેકન્ડના cache સાથે, ડેશબોર્ડ ખૂલે ત્યારે નવીનતમ release વિશે GitHub ને પૂછે છે, અને તમે માગેલાં downloads કરે છે. `usage_source = "claude"` સાથે એ requests પણ Claude Code દ્વારા જાય છે, અને ccam ક્યારેય token ને હાથ લગાડતું નથી.
 
 ## બીજાં ટૂલ ક્યાં વધુ કરે છે
 

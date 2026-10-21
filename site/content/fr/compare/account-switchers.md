@@ -1,10 +1,10 @@
 ---
 title: "ccam et les autres sélecteurs de compte Claude Code"
 description: "ccam comparé à claude-swap, CCS, clausona, clauth, CAAM, cux et d'autres outils pour changer de compte Claude Code, et quelle approche pour quel usage."
-updated: 2026-10-20
+updated: 2026-10-21
 order: 2
 translation: machine
-sourceHash: a90ede56b767
+sourceHash: c74be64d2978
 ---
 
 Les outils pour changer de compte Claude Code suivent l'une de deux approches. La plupart échangent la connexion à l'intérieur de l'unique dossier `~/.claude` : un seul compte est donc actif à la fois. D'autres, dont ccam, donnent à chaque compte son propre dossier avec `CLAUDE_CONFIG_DIR` : chaque compte reste connecté et plusieurs peuvent tourner en même temps. ccam y ajoute le partage des paramètres et des serveurs MCP, et poursuit une conversation dans le dossier d'un autre compte.
@@ -86,7 +86,7 @@ Les scripts ne peuvent pas vous attendre : `ccam --fallback work -p "…"` chang
 
 ### Un seul binaire, des téléchargements vérifiés
 
-ccam est un binaire statique d'environ 10 Mo, sans environnement d'exécution à installer, pour Linux, macOS et Windows. Les scripts d'installation (`install.sh`, `install.ps1`) et `ccam update` vérifient chaque téléchargement avec les sommes de contrôle SHA-256 de la version, et ccam ne cherche jamais de mises à jour de lui-même. Il n'y a aucune télémétrie : les seules requêtes qu'il envoie sont les consultations d'utilisation de vos comptes auprès d'Anthropic, en parallèle avec une limite de 3 secondes et un cache de 60 secondes, et les téléchargements que vous demandez. Avec `usage_source = "claude"`, même celles-ci passent par Claude Code, et ccam ne manipule jamais de jeton.
+ccam est un binaire statique d'environ 10 Mo, sans environnement d'exécution à installer, pour Linux, macOS et Windows. Les scripts d'installation (`install.sh`, `install.ps1`) et `ccam update` vérifient chaque téléchargement avec les sommes de contrôle SHA-256 de la version, et ccam ne se met jamais à jour sans demander. Il n'y a aucune télémétrie : les seules requêtes qu'il envoie sont les consultations d'utilisation de vos comptes auprès d'Anthropic, en parallèle avec une limite de 3 secondes et un cache de 60 secondes, la question que le tableau de bord pose à GitHub sur la dernière version quand il s'ouvre, et les téléchargements que vous demandez. Avec `usage_source = "claude"`, même celles-ci passent par Claude Code, et ccam ne manipule jamais de jeton.
 
 ## Ce que les autres outils font de plus
 

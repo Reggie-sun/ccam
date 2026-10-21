@@ -2,10 +2,10 @@
 title: 자주 묻는 질문
 metaTitle: "ccam FAQ: Claude Code 여러 계정 쓰기"
 description: ccam, Claude Code 계정, 사용량 한도, 공유, 개인정보, 지원 시스템에 관한 질문과 답변입니다.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 6
 translation: machine
-sourceHash: "e7d4a2c877ac"
+sourceHash: "bc944d7dcab9"
 ---
 
 ## ccam은 Anthropic 공식 도구인가요?
@@ -30,7 +30,7 @@ sourceHash: "e7d4a2c877ac"
 
 ## ccam이 제 로그인 정보를 보거나 외부로 보내나요?
 
-ccam은 계정 사이에 Claude 로그인 정보를 절대 공유하지 않습니다. 계정의 액세스 토큰은 `ccam usage`, `ccam next --auto`, `ccam doctor`를 실행할 때 Anthropic의 사용량 엔드포인트에 해당 계정의 사용량을 조회하는 용도로만 읽습니다. `ccam migrate`는 `~/.claude`에 저장된 MCP 서버의 로그인 정보를 같은 컴퓨터에 있는 각 계정 자체의 로그인 파일로 복사합니다. ccam에는 원격 측정(telemetry) 기능이 없으며, 그 밖의 어디에도 데이터를 보내지 않습니다.
+ccam은 계정 사이에 Claude 로그인 정보를 절대 공유하지 않습니다. 계정의 액세스 토큰은 `ccam usage`, `ccam next --auto`, `ccam doctor`를 실행할 때 Anthropic의 사용량 엔드포인트에 해당 계정의 사용량을 조회하는 용도로만 읽습니다. `ccam migrate`는 `~/.claude`에 저장된 MCP 서버의 로그인 정보를 같은 컴퓨터에 있는 각 계정 자체의 로그인 파일로 복사합니다. ccam에는 원격 측정(telemetry) 기능이 없습니다. 이 조회 외에 ccam이 스스로 보내는 요청은 대시보드가 최신 ccam 릴리스를 GitHub에 묻는 것 하나뿐이며, 이 요청에는 사용자나 계정에 관한 정보가 전혀 담기지 않습니다.
 
 ## 원격 서버에서는 어떻게 로그인하나요?
 
@@ -58,7 +58,7 @@ ccam을 거쳐 Claude Code를 시작하면 약 4밀리초가 더 걸립니다. �
 
 ## ccam은 어떻게 업데이트하나요?
 
-`ccam update`를 실행하세요. 최신 릴리스를 내려받아 체크섬을 확인한 뒤 `ccam` 파일을 교체합니다. `ccam update --check`는 새 릴리스가 있는지 알려 주기만 합니다. ccam이 스스로 업데이트하는 일은 없습니다. `.deb` 패키지로 설치했다면 새 `.deb`를 apt로 설치하세요. 자세한 내용은 [업데이트](/docs/install#update)를 참고하세요.
+`ccam update`를 실행하세요. 최신 릴리스를 내려받아 체크섬을 확인한 뒤 `ccam` 파일을 교체합니다. `ccam update --check`는 새 릴리스가 있는지 알려 주기만 합니다. 대시보드도 새 릴리스가 있으면 알려 주며, `U`를 누르면 확인을 받은 뒤 설치합니다. ccam이 스스로 업데이트하는 일은 없습니다. `.deb` 패키지로 설치했다면 새 `.deb`를 apt로 설치하세요. 자세한 내용은 [업데이트](/docs/install#update)를 참고하세요.
 
 ## ccam은 어떻게 제거하나요?
 

@@ -1,13 +1,13 @@
 ---
 title: Sabunta ccam
 description: ccam update yana maye gurbin ccam da sabon sakin GitHub bayan duba SHA-256; --check yana bayar da rahoto kawai, --version yana girka takamaiman tag na saki.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 10
 translation: machine
-sourceHash: d91499b95d3d
+sourceHash: a92dbf37399f
 ---
 
-`ccam update` yana sauke sakin ccam daga GitHub, yana duba shi da `checksums.txt` na sakin kuma yana maye gurbin binary da ke gudana da rename ɗaya. Yi amfani da shi idan ka girka ccam da rubutun girkawa (install script) ko daga archive. ccam ba ya taɓa neman sabuntawa da kansa: wannan umarni ne kaɗai ke tuntuɓar GitHub, don haka kowane sauran umarni yana aiki iri ɗaya ba tare da intanet ba.
+`ccam update` yana sauke sakin ccam daga GitHub, yana duba shi da `checksums.txt` na sakin kuma yana maye gurbin binary da ke gudana da rename ɗaya. Yi amfani da shi idan ka girka ccam da rubutun girkawa (install script) ko daga archive. [Dashboard](/features/dashboard) ma yana tambayar GitHub sabon saki duk lokacin da ya buɗe kuma yana ba da shi da `U`, wanda ke bin matakai iri ɗaya bayan ya tambaya. Babu wani umarni dabam da ke tuntuɓar GitHub, don haka suna aiki iri ɗaya ba tare da intanet ba.
 
 ## Amfani
 

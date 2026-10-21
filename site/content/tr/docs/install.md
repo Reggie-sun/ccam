@@ -2,10 +2,10 @@
 title: ccam kurulumu
 metaTitle: ccam'ı Linux, macOS ve Windows üzerine kurun
 description: ccam'ı Linux, macOS veya Windows'a tek komutla, bir .deb paketiyle ya da kaynak koddan kurun, ccam update ile güncelleyin. Önce Claude Code kurulu olmalıdır.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 1
 translation: machine
-sourceHash: "07fab3165030"
+sourceHash: "1e3a53623de0"
 ---
 
 Linux veya macOS üzerinde bir terminalde şunu çalıştırın:
@@ -110,7 +110,7 @@ $ ccam update
 ccam 0.3.0 is up to date.
 ```
 
-ccam güncellemeleri hiçbir zaman kendiliğinden kontrol etmez; yeni bir sürümü yalnızca bu komutu çalıştırdığınızda arar. Daha eski bir sürüm de dahil olmak üzere belirli bir sürümü kurmak için `--version` seçeneğini verin. `ccam --dry-run update`, hiçbir şeyi değiştirmeden neyin indirilip neyin değiştirileceğini gösterir.
+Kontrol paneli (terminalde `ccam`) de her açıldığında yeni bir sürüm arar ve varsa önerir: `U` tuşuna basıp onaylayın. Başka hiçbir komut aramaz ve ccam size sormadan asla güncellenmez. Daha eski bir sürüm de dahil olmak üzere belirli bir sürümü kurmak için `--version` seçeneğini verin. `ccam --dry-run update`, hiçbir şeyi değiştirmeden neyin indirilip neyin değiştirileceğini gösterir.
 
 ```sh
 ccam update --version v0.2.0

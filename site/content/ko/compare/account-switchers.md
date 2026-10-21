@@ -1,10 +1,10 @@
 ---
 title: ccam과 다른 Claude Code 계정 전환 도구 비교
 description: claude-swap, CCS, clausona, clauth, CAAM, cux 등 Claude Code 계정 전환 도구와 ccam을 비교하고, 어떤 방식이 어떤 용도에 맞는지 설명합니다.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 2
 translation: machine
-sourceHash: "a90ede56b767"
+sourceHash: "c74be64d2978"
 ---
 
 Claude Code 계정을 전환하는 도구는 두 가지 방식 중 하나를 씁니다. 대부분은 하나뿐인 `~/.claude` 폴더 안에서 로그인을 바꿔 끼우므로, 한 번에 한 계정만 활성화됩니다. ccam을 비롯한 나머지는 `CLAUDE_CONFIG_DIR`로 계정마다 폴더를 따로 두므로, 모든 계정이 로그인 상태를 유지하고 여러 계정을 동시에 실행할 수 있습니다. ccam은 여기에 설정과 MCP 서버 공유를 더하고, 다른 계정의 폴더에서 대화를 이어 갈 수 있게 합니다.
@@ -86,7 +86,7 @@ MCP 서버, `settings.json`, `CLAUDE.md`, 확장(에이전트, 명령, 스킬, �
 
 ### 바이너리 하나, 검증된 다운로드
 
-ccam은 약 10 MB의 정적 바이너리이며, 따로 설치할 런타임이 없고, Linux, macOS, Windows를 지원합니다. 설치 스크립트(`install.sh`, `install.ps1`)와 `ccam update`는 모든 다운로드를 릴리스의 SHA-256 체크섬과 대조하며, ccam이 스스로 업데이트를 확인하는 일은 없습니다. 텔레메트리도 없습니다. ccam이 보내는 요청은 내 계정의 사용량을 Anthropic에 조회하는 것(병렬, 3초 제한, 60초 캐시)과 사용자가 요청한 다운로드뿐입니다. `usage_source = "claude"`로 설정하면 이 조회도 Claude Code를 거치므로, ccam은 토큰을 전혀 다루지 않습니다.
+ccam은 약 10 MB의 정적 바이너리이며, 따로 설치할 런타임이 없고, Linux, macOS, Windows를 지원합니다. 설치 스크립트(`install.sh`, `install.ps1`)와 `ccam update`는 모든 다운로드를 릴리스의 SHA-256 체크섬과 대조하며, ccam이 묻지 않고 업데이트하는 일은 없습니다. 텔레메트리도 없습니다. ccam이 보내는 요청은 내 계정의 사용량을 Anthropic에 조회하는 것(병렬, 3초 제한, 60초 캐시), 대시보드가 열릴 때 최신 릴리스를 GitHub에 묻는 것, 사용자가 요청한 다운로드뿐입니다. `usage_source = "claude"`로 설정하면 이 조회도 Claude Code를 거치므로, ccam은 토큰을 전혀 다루지 않습니다.
 
 ## 다른 도구가 더 잘하는 점
 

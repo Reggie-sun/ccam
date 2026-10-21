@@ -1,10 +1,10 @@
 ---
 title: ccam ve diğer Claude Code hesap değiştirme araçları
 description: ccam'ın claude-swap, CCS, clausona, clauth, CAAM, cux ve diğer Claude Code hesap değiştiricileriyle karşılaştırması ve hangi yaklaşımın neye uyduğu.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 2
 translation: machine
-sourceHash: "a90ede56b767"
+sourceHash: "c74be64d2978"
 ---
 
 Claude Code hesap değiştirme araçları iki yaklaşımdan birini izler. Çoğu, tek `~/.claude` klasörünün içindeki girişi değiştirir; bu yüzden aynı anda yalnızca bir hesap etkindir. ccam'ın da aralarında olduğu diğerleri, `CLAUDE_CONFIG_DIR` ile her hesaba kendi klasörünü verir; böylece her hesap oturum açık kalır ve birkaçı aynı anda çalışabilir. ccam buna paylaşılan ayarları ve MCP sunucularını ekler ve bir konuşmaya başka bir hesabın klasöründe devam eder.
@@ -86,7 +86,7 @@ Betikler sizi bekleyemez; bu yüzden `ccam --fallback work -p "…"` onların ye
 
 ### Tek ikili dosya, denetlenen indirmeler
 
-ccam, Linux, macOS ve Windows için, ayrıca bir çalışma zamanı kurmayı gerektirmeyen, yaklaşık 10 MB'lık statik bir ikili dosyadır. Kurulum betikleri (`install.sh`, `install.ps1`) ve `ccam update` her indirmeyi sürümün SHA-256 sağlama toplamlarıyla denetler ve ccam güncellemeleri asla kendiliğinden denetlemez. Telemetrisi yoktur: yaptığı tek istekler, hesaplarınız için Anthropic'e yapılan kullanım sorguları (paralel, 3 saniyelik sınır ve 60 saniyelik önbellekle) ve sizin istediğiniz indirmelerdir. `usage_source = "claude"` ile bunlar bile Claude Code üzerinden geçer ve ccam hiçbir token'a dokunmaz.
+ccam, Linux, macOS ve Windows için, ayrıca bir çalışma zamanı kurmayı gerektirmeyen, yaklaşık 10 MB'lık statik bir ikili dosyadır. Kurulum betikleri (`install.sh`, `install.ps1`) ve `ccam update` her indirmeyi sürümün SHA-256 sağlama toplamlarıyla denetler ve ccam size sormadan asla güncellenmez. Telemetrisi yoktur: yaptığı tek istekler, hesaplarınız için Anthropic'e yapılan kullanım sorguları (paralel, 3 saniyelik sınır ve 60 saniyelik önbellekle), kontrol paneli açıldığında GitHub'a en son sürümü sorması ve sizin istediğiniz indirmelerdir. `usage_source = "claude"` ile bunlar bile Claude Code üzerinden geçer ve ccam hiçbir token'a dokunmaz.
 
 ## Diğer araçlar nerede daha fazlasını yapar?
 

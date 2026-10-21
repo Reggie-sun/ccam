@@ -1,10 +1,10 @@
 ---
 title: ccam na vibadilisha akaunti vingine vya Claude Code
 description: Jinsi ccam inavyolinganishwa na claude-swap, CCS, clausona, clauth, CAAM, cux na zana nyingine za kubadili akaunti za Claude Code, na njia ipi inafaa wapi.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 2
 translation: machine
-sourceHash: "a90ede56b767"
+sourceHash: "c74be64d2978"
 ---
 
 Zana za kubadili akaunti za Claude Code hufuata mojawapo ya njia mbili. Nyingi hubadilisha taarifa za kuingia ndani ya folda moja ya `~/.claude`, kwa hiyo akaunti moja tu hutumika kwa wakati mmoja. Nyingine, ikiwemo ccam, huipa kila akaunti folda yake kwa `CLAUDE_CONFIG_DIR`, kwa hiyo kila akaunti hubaki imeingia na kadhaa zinaweza kuendeshwa kwa pamoja. ccam huongeza mipangilio na seva za MCP zinazoshirikiwa, na huendeleza mazungumzo katika folda ya akaunti nyingine.
@@ -86,7 +86,7 @@ Script haziwezi kukusubiri, kwa hiyo `ccam --fallback work -p "…"` hubadili kw
 
 ### Binary moja, vipakuliwa vilivyokaguliwa
 
-ccam ni binary tuli ya takriban 10 MB bila runtime ya kusakinisha, kwa Linux, macOS na Windows. Hati za usakinishaji (`install.sh`, `install.ps1`) na `ccam update` hukagua kila kipakuliwa dhidi ya checksum za SHA-256 za toleo, na ccam kamwe haitafuti masasisho yenyewe. Haina telemetry: maombi pekee inayotuma ni maswali ya matumizi kwa Anthropic kwa ajili ya akaunti zako, kwa sambamba na kikomo cha sekunde 3 na akiba ya sekunde 60, pamoja na vipakuliwa unavyoomba. Kwa `usage_source = "claude"`, hata maombi hayo hupitia Claude Code, na ccam kamwe haishiki tokeni.
+ccam ni binary tuli ya takriban 10 MB bila runtime ya kusakinisha, kwa Linux, macOS na Windows. Hati za usakinishaji (`install.sh`, `install.ps1`) na `ccam update` hukagua kila kipakuliwa dhidi ya checksum za SHA-256 za toleo, na ccam kamwe haijisasishi bila kuuliza. Haina telemetry: maombi pekee inayotuma ni maswali ya matumizi kwa Anthropic kwa ajili ya akaunti zako, kwa sambamba na kikomo cha sekunde 3 na akiba ya sekunde 60, swali la dashibodi kwa GitHub kuhusu toleo jipya zaidi inapofunguliwa, pamoja na vipakuliwa unavyoomba. Kwa `usage_source = "claude"`, hata maombi hayo hupitia Claude Code, na ccam kamwe haishiki tokeni.
 
 ## Pale zana nyingine zinapofanya zaidi
 

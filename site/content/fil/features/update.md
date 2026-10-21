@@ -1,13 +1,13 @@
 ---
 title: Pag-update ng ccam
 description: Pinapalitan ng ccam update ang ccam ng pinakabagong GitHub release matapos ang SHA-256 check; nag-uulat lang ang --check; nag-i-install ng tag ang --version.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 10
 translation: machine
-sourceHash: d91499b95d3d
+sourceHash: a92dbf37399f
 ---
 
-Nagda-download ang `ccam update` ng ccam release mula sa GitHub, sinusuri ito laban sa `checksums.txt` ng release at pinapalitan ang tumatakbong binary sa isang rename. Gamitin ito kapag in-install mo ang ccam gamit ang install script o mula sa isang archive. Hindi kailanman kusang tumitingin ang ccam ng mga update: ang command na ito lang ang kumokontak sa GitHub, kaya gumagana nang pareho offline ang bawat ibang command.
+Nagda-download ang `ccam update` ng ccam release mula sa GitHub, sinusuri ito laban sa `checksums.txt` ng release at pinapalitan ang tumatakbong binary sa isang rename. Gamitin ito kapag in-install mo ang ccam gamit ang install script o mula sa isang archive. Nagtatanong din ang [dashboard](/features/dashboard) sa GitHub tungkol sa pinakabagong release tuwing nagbubukas ito at iniaalok ito gamit ang `U`, na nagpapatakbo ng parehong mga hakbang pagkatapos magtanong. Walang ibang command na kumokontak sa GitHub, kaya gumagana sila nang pareho offline.
 
 ## Paggamit
 

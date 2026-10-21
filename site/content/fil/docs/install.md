@@ -2,10 +2,10 @@
 title: I-install ang ccam
 metaTitle: I-install ang ccam sa Linux, macOS at Windows
 description: I-install ang ccam sa Linux, macOS o Windows gamit ang isang command, .deb package o source, at i-update sa ccam update. Kailangan munang may Claude Code.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 1
 translation: machine
-sourceHash: 07fab3165030
+sourceHash: 1e3a53623de0
 ---
 
 Patakbuhin ito sa terminal sa Linux o macOS:
@@ -110,7 +110,7 @@ $ ccam update
 ccam 0.3.0 is up to date.
 ```
 
-Hindi kailanman kusang naghahanap ng update ang ccam; naghahanap lang ito ng bagong release kapag pinatakbo mo ang command na ito. Para mag-install ng partikular na release, kahit mas luma, ipasa ang `--version`. Ipinapakita ng `ccam --dry-run update` kung ano ang ida-download at papalitan, nang walang binabago.
+Naghahanap din ng bagong release ang dashboard (`ccam` sa isang terminal) tuwing nagbubukas ito at, kapag mayroon, iniaalok ito: pindutin ang `U` at kumpirmahin. Walang ibang command na naghahanap, at hindi kailanman nag-a-update ang ccam nang hindi nagtatanong. Para mag-install ng partikular na release, kahit mas luma, ipasa ang `--version`. Ipinapakita ng `ccam --dry-run update` kung ano ang ida-download at papalitan, nang walang binabago.
 
 ```sh
 ccam update --version v0.2.0

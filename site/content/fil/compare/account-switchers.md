@@ -1,10 +1,10 @@
 ---
 title: Ang ccam at iba pang Claude Code account switcher
 description: Ang ccam kumpara sa claude-swap, CCS, clausona, clauth, CAAM, cux at iba pang tool sa pag-switch ng Claude Code account, at aling paraan ang bagay saan.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 2
 translation: machine
-sourceHash: a90ede56b767
+sourceHash: c74be64d2978
 ---
 
 May dalawang paraan ang mga tool sa pag-switch ng Claude Code account. Karamihan ay nagpapalit ng login sa loob ng iisang `~/.claude` folder, kaya isang account lang ang aktibo sa bawat pagkakataon. Ang iba, kasama ang ccam, ay nagbibigay sa bawat account ng sariling folder gamit ang `CLAUDE_CONFIG_DIR`, kaya nananatiling naka-log in ang bawat account at puwedeng tumakbo nang sabay ang ilan. Nagdadagdag ang ccam ng shared na settings at MCP server, at itinutuloy nito ang isang usapan sa folder ng ibang account.
@@ -86,7 +86,7 @@ Ginagawa ng `ccam folder work ~/code/company` na gamitin ang `work` ng bawat lau
 
 ### Iisang binary, sinusuring download
 
-Ang ccam ay static binary na mga 10 MB at walang runtime na kailangang i-install, para sa Linux, macOS at Windows. Sinusuri ng mga install script (`install.sh`, `install.ps1`) at ng `ccam update` ang bawat download laban sa mga SHA-256 checksum ng release, at hindi kusang naghahanap ng update ang ccam. Wala itong telemetry: ang tanging mga request nito ay ang mga usage lookup sa Anthropic para sa mga account mo, nang sabay-sabay na may 3-segundong limit at 60-segundong cache, at ang mga download na hinihingi mo. Sa `usage_source = "claude"`, dumaraan pa ang mga iyon sa Claude Code, at hindi kailanman humahawak ng token ang ccam.
+Ang ccam ay static binary na mga 10 MB at walang runtime na kailangang i-install, para sa Linux, macOS at Windows. Sinusuri ng mga install script (`install.sh`, `install.ps1`) at ng `ccam update` ang bawat download laban sa mga SHA-256 checksum ng release, at hindi kailanman nag-a-update ang ccam nang hindi nagtatanong. Wala itong telemetry: ang tanging mga request nito ay ang mga usage lookup sa Anthropic para sa mga account mo, nang sabay-sabay na may 3-segundong limit at 60-segundong cache, ang tanong ng dashboard sa GitHub tungkol sa pinakabagong release kapag nagbukas ito, at ang mga download na hinihingi mo. Sa `usage_source = "claude"`, dumaraan pa ang mga iyon sa Claude Code, at hindi kailanman humahawak ng token ang ccam.
 
 ## Kung saan mas marami ang nagagawa ng ibang tool
 

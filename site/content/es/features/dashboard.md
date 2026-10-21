@@ -4,7 +4,7 @@ description: ccam en una terminal abre un panel a pantalla completa con cuentas,
 updated: 2026-10-21
 order: 15
 translation: machine
-sourceHash: "27bd153b48b2"
+sourceHash: "19a99adef661"
 ---
 
 `ccam` sin argumentos abre un panel a pantalla completa cuando la entrada y la salida estándar son una terminal; si no, imprime `ccam list`. El panel muestra cada cuenta con su uso y sus grupos, y hace lo mismo que los comandos: iniciar, agregar, iniciar sesión, cambiar grupos, definir reglas de carpeta, comprobar y reparar. Al iniciar una cuenta se cierra; al agregar una cuenta o iniciar sesión, deja la terminal libre y luego vuelve.
@@ -24,6 +24,14 @@ sourceHash: "27bd153b48b2"
 ```
 
 La línea bajo los nombres de las pestañas dice en una frase para qué sirve la pestaña actual. En una terminal más ancha, la pestaña Accounts también muestra el correo electrónico de cada cuenta.
+
+Cada vez que se abre, el panel pregunta a GitHub en segundo plano si existe una versión más reciente de ccam; el primer fotograma nunca la espera y, sin conexión, no se muestra nada. Si la hay, una línea bajo el título la recomienda:
+
+```console
+ ● ccam 0.10.2 is available (you have 0.10.1) · press U to update
+```
+
+`U` pregunta primero y luego actualiza como lo hace [`ccam update`](/features/update): la versión se comprueba con sus sumas de comprobación SHA-256 y reemplaza ccam en un solo paso. El panel en el que estás sigue siendo la versión anterior, así que sal y vuelve a iniciar `ccam`. Cuando la actualización no se puede hacer aquí, por ejemplo con un ccam instalado desde el paquete `.deb`, el panel muestra el mismo consejo que `ccam update` y mantiene la oferta.
 
 El primer fotograma se dibuja solo a partir de `config.toml`, en mucho menos de 100 ms; el uso se completa a medida que responde cada cuenta. Cada límite tiene su propia barra: la ventana de 5 horas, la ventana semanal de todos los modelos y la ventana semanal propia de Fable; `-` significa que la cuenta no tiene esa ventana. Un porcentaje se vuelve amarillo a partir del 80 % y rojo al 100 %, y los valores tomados de una caché tras una consulta fallida se dibujan atenuados.
 

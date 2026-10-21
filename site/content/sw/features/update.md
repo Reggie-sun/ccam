@@ -1,13 +1,13 @@
 ---
 title: Kusasisha ccam
 description: ccam update hubadilisha ccam kwa toleo jipya zaidi la GitHub baada ya ukaguzi wa SHA-256; --check huripoti tu na --version husakinisha tagi mahususi ya toleo.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 10
 translation: machine
-sourceHash: d91499b95d3d
+sourceHash: a92dbf37399f
 ---
 
-`ccam update` hupakua toleo la ccam kutoka GitHub, hulikagua dhidi ya `checksums.txt` ya toleo hilo na hubadilisha binary inayoendeshwa kwa kubadilisha jina mara moja. Itumie ikiwa ulisakinisha ccam kwa script ya kusakinisha au kutoka kwenye archive. ccam kamwe haikagui masasisho yenyewe: amri hii pekee ndiyo huwasiliana na GitHub, kwa hiyo kila amri nyingine hufanya kazi vivyo hivyo bila mtandao.
+`ccam update` hupakua toleo la ccam kutoka GitHub, hulikagua dhidi ya `checksums.txt` ya toleo hilo na hubadilisha binary inayoendeshwa kwa kubadilisha jina mara moja. Itumie ikiwa ulisakinisha ccam kwa script ya kusakinisha au kutoka kwenye archive. [Dashibodi](/features/dashboard) pia huuliza GitHub kuhusu toleo jipya zaidi kila inapofunguliwa na hulitoa kwa `U`, ambayo hufanya hatua hizo hizo baada ya kuuliza. Hakuna amri nyingine inayowasiliana na GitHub, kwa hiyo hufanya kazi vivyo hivyo bila mtandao.
 
 ## Matumizi
 

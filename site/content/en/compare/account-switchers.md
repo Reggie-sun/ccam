@@ -1,7 +1,7 @@
 ---
 title: ccam and other Claude Code account switchers
 description: How ccam compares with claude-swap, CCS, clausona, clauth, CAAM, cux and other tools for switching Claude Code accounts, and which approach fits which use.
-updated: 2026-10-20
+updated: 2026-10-21
 published: 2026-10-19
 order: 2
 translation: source
@@ -86,7 +86,7 @@ Scripts cannot wait for you, so `ccam --fallback work -p "…"` switches for the
 
 ### One binary, checked downloads
 
-ccam is a static binary of about 10 MB with no runtime to install, for Linux, macOS and Windows. The install scripts (`install.sh`, `install.ps1`) and `ccam update` check every download against the release's SHA-256 checksums, and ccam never checks for updates on its own. It has no telemetry: the only requests it makes are usage lookups to Anthropic for your accounts, in parallel with a 3-second limit and a 60-second cache, and the downloads you ask for. With `usage_source = "claude"`, even those go through Claude Code, and ccam never handles a token.
+ccam is a static binary of about 10 MB with no runtime to install, for Linux, macOS and Windows. The install scripts (`install.sh`, `install.ps1`) and `ccam update` check every download against the release's SHA-256 checksums, and ccam never updates without asking. It has no telemetry: the only requests it makes are usage lookups to Anthropic for your accounts, in parallel with a 3-second limit and a 60-second cache, the dashboard's question to GitHub about the latest release when it opens, and the downloads you ask for. With `usage_source = "claude"`, even those go through Claude Code, and ccam never handles a token.
 
 ## Where other tools do more
 

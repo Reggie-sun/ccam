@@ -1,10 +1,10 @@
 ---
 title: "Trocar de conta no Claude Code: ccam e alternativas"
 description: Como o ccam se compara a claude-swap, CCS, clausona, clauth, CAAM, cux e outras ferramentas de troca de conta do Claude Code, e qual abordagem escolher.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 2
 translation: machine
-sourceHash: "a90ede56b767"
+sourceHash: "c74be64d2978"
 ---
 
 As ferramentas para trocar de conta no Claude Code seguem uma de duas abordagens. A maioria troca o login dentro da única pasta `~/.claude`, então só uma conta fica ativa por vez. Outras, entre elas o ccam, dão a cada conta a própria pasta com `CLAUDE_CONFIG_DIR`, então todas as contas continuam logadas e várias podem rodar ao mesmo tempo. O ccam acrescenta configurações e servidores MCP compartilhados e continua uma conversa na pasta de outra conta.
@@ -86,7 +86,7 @@ Scripts não podem esperar por você, então `ccam --fallback work -p "…"` faz
 
 ### Um binário, downloads verificados
 
-O ccam é um binário estático de cerca de 10 MB, sem runtime para instalar, para Linux, macOS e Windows. Os scripts de instalação (`install.sh`, `install.ps1`) e o `ccam update` verificam cada download com os checksums SHA-256 da versão, e o ccam nunca procura atualizações por conta própria. Não há telemetria: as únicas requisições que ele faz são consultas de uso das suas contas à Anthropic, em paralelo com limite de 3 segundos e cache de 60 segundos, e os downloads que você pede. Com `usage_source = "claude"`, até essas consultas passam pelo Claude Code, e o ccam nunca lida com um token.
+O ccam é um binário estático de cerca de 10 MB, sem runtime para instalar, para Linux, macOS e Windows. Os scripts de instalação (`install.sh`, `install.ps1`) e o `ccam update` verificam cada download com os checksums SHA-256 da versão, e o ccam nunca se atualiza sem perguntar. Não há telemetria: as únicas requisições que ele faz são consultas de uso das suas contas à Anthropic, em paralelo com limite de 3 segundos e cache de 60 segundos, a pergunta do painel ao GitHub sobre a versão mais recente quando ele abre, e os downloads que você pede. Com `usage_source = "claude"`, até essas consultas passam pelo Claude Code, e o ccam nunca lida com um token.
 
 ## Onde outras ferramentas fazem mais
 

@@ -2,10 +2,10 @@
 title: Instal ccam
 metaTitle: Instal ccam di Linux, macOS, dan Windows
 description: Instal ccam di Linux, macOS, atau Windows dengan satu perintah, paket .deb, atau kode sumber, lalu perbarui dengan ccam update. Instal Claude Code dulu.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 1
 translation: machine
-sourceHash: 07fab3165030
+sourceHash: 1e3a53623de0
 ---
 
 Jalankan ini di terminal pada Linux atau macOS:
@@ -110,7 +110,7 @@ $ ccam update
 ccam 0.3.0 is up to date.
 ```
 
-ccam tidak pernah memeriksa pembaruan dengan sendirinya; ccam hanya mencari rilis baru saat Anda menjalankan perintah ini. Untuk menginstal rilis tertentu, termasuk rilis yang lebih lama, berikan `--version`. `ccam --dry-run update` menampilkan apa yang akan diunduh dan diganti tanpa mengubah apa pun.
+Dasbor (`ccam` di terminal) juga mencari rilis baru setiap kali dibuka dan, jika ada, menawarkannya: tekan `U` lalu konfirmasi. Tidak ada perintah lain yang mencarinya, dan ccam tidak pernah memperbarui diri tanpa bertanya. Untuk menginstal rilis tertentu, termasuk rilis yang lebih lama, berikan `--version`. `ccam --dry-run update` menampilkan apa yang akan diunduh dan diganti tanpa mengubah apa pun.
 
 ```sh
 ccam update --version v0.2.0

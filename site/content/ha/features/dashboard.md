@@ -4,7 +4,7 @@ description: ccam a terminal yana buɗe dashboard mai cike allo na asusai, rukun
 updated: 2026-10-21
 order: 15
 translation: machine
-sourceHash: "27bd153b48b2"
+sourceHash: "19a99adef661"
 ---
 
 `ccam` ba tare da arguments ba yana buɗe dashboard mai cike allo idan standard input da output terminal ne; in ba haka ba yana buga `ccam list`. Dashboard yana nuna kowane asusu tare da amfaninsa da rukunoninsa, kuma yana yin abin da umarnan ke yi: farawa, ƙarawa, shiga, canza rukunoni, saita ƙa'idodin folda, dubawa da gyarawa. Farawa yana rufe shi; ƙara asusu ko shiga yana barin sa zuwa terminal sannan ya dawo.
@@ -24,6 +24,14 @@ sourceHash: "27bd153b48b2"
 ```
 
 Layin da ke ƙarƙashin sunayen shafuka yana faɗin a jimla ɗaya abin da shafin yanzu yake yi. A terminal mai faɗi, shafin Accounts yana kuma nuna imel ɗin kowane asusu.
+
+Duk lokacin da ya buɗe, dashboard yana tambayar GitHub a bayan fage ko akwai sabon sakin ccam; firam na farko ba ya taɓa jiran sa, kuma ba tare da intanet ba ba a nuna komai. Idan akwai, layi a ƙarƙashin take yana ba da shawarar sa:
+
+```console
+ ● ccam 0.10.2 is available (you have 0.10.1) · press U to update
+```
+
+`U` yana tambaya da farko, sannan yana sabuntawa yadda [`ccam update`](/features/update) ke yi: ana duba sakin da SHA-256 checksums nasa kuma yana maye gurbin ccam a mataki ɗaya. Dashboard ɗin da kake ciki har yanzu tsohon sigar ne, don haka ka fita ka sake fara `ccam`. Idan ba za a iya yin sabuntawar a nan ba, misali ga ccam da aka girka daga kunshin `.deb`, dashboard yana nuna shawara ɗaya da ta `ccam update` kuma yana riƙe tayin.
 
 Firam na farko yana zana daga `config.toml` kaɗai, cikin ƙasa da 100 ms sosai; amfani yana cika yayin da kowane asusu ya amsa. Kowace iyaka tana da nata sandar: taga ta awa 5, taga ta mako ga dukkan model, da taga ta mako ta Fable kanta; `-` yana nufin asusun ba shi da irin wannan taga. Kashi yana zama rawaya daga 80% kuma ja a 100%, kuma ƙimomin da suka fito daga cache bayan neman da ya gaza ana zana su a dusashe.
 

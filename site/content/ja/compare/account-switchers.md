@@ -1,10 +1,10 @@
 ---
 title: ccamとほかのClaude Codeアカウント切り替えツール
 description: ccamとclaude-swap、CCS、clausona、clauth、CAAM、cuxなど、Claude Codeのアカウントを切り替えるツールを比較し、用途に合う方式を説明します。
-updated: 2026-10-20
+updated: 2026-10-21
 order: 2
 translation: machine
-sourceHash: "a90ede56b767"
+sourceHash: "c74be64d2978"
 ---
 
 Claude Codeのアカウントを切り替えるツールの方式は2つに分かれます。多くは1つの`~/.claude`フォルダーの中でログインを入れ替えるので、使えるアカウントは一度に1つです。ccamを含むほかのツールは、`CLAUDE_CONFIG_DIR`でアカウントごとに専用のフォルダーを割り当てるので、どのアカウントもログインしたままで、複数を同時に実行できます。ccamはさらに設定とMCPサーバーを共有し、別のアカウントのフォルダーで会話を続けられます。
@@ -86,7 +86,7 @@ MCPサーバー、`settings.json`、`CLAUDE.md`、拡張機能（エージェン
 
 ### バイナリ1つ、検証済みのダウンロード
 
-ccamは約10 MBの静的バイナリで、インストールが必要なランタイムはなく、Linux、macOS、Windowsに対応しています。インストールスクリプト（`install.sh`、`install.ps1`）と`ccam update`は、すべてのダウンロードをリリースのSHA-256チェックサムと照合します。ccamが自分からアップデートを確認することはありません。テレメトリーもありません。ccamが送るリクエストは、あなたのアカウントの使用量をAnthropicに問い合わせるもの（並列、3秒の制限時間、60秒のキャッシュ）と、あなたが指示したダウンロードだけです。`usage_source = "claude"`を設定すると、その問い合わせもClaude Codeを通じて行われ、ccamがトークンを扱うことは一切ありません。
+ccamは約10 MBの静的バイナリで、インストールが必要なランタイムはなく、Linux、macOS、Windowsに対応しています。インストールスクリプト（`install.sh`、`install.ps1`）と`ccam update`は、すべてのダウンロードをリリースのSHA-256チェックサムと照合します。ccamが確認なしにアップデートすることはありません。テレメトリーもありません。ccamが送るリクエストは、あなたのアカウントの使用量をAnthropicに問い合わせるもの（並列、3秒の制限時間、60秒のキャッシュ）、ダッシュボードを開いたときに最新のリリースをGitHubに問い合わせるもの、あなたが指示したダウンロードだけです。`usage_source = "claude"`を設定すると、その問い合わせもClaude Codeを通じて行われ、ccamがトークンを扱うことは一切ありません。
 
 ## ほかのツールのほうが得意なこと
 

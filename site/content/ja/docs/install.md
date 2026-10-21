@@ -2,10 +2,10 @@
 title: ccamのインストール
 metaTitle: "Linux、macOS、Windowsにccamをインストール"
 description: Linux、macOS、Windowsにccamを1つのコマンド、.debパッケージ、ソースでインストールし、ccam updateで更新します。Claude Codeを先に入れてください。
-updated: 2026-10-20
+updated: 2026-10-21
 order: 1
 translation: machine
-sourceHash: "07fab3165030"
+sourceHash: "1e3a53623de0"
 ---
 
 LinuxまたはmacOSのターミナルで、次のコマンドを実行します。
@@ -110,7 +110,7 @@ $ ccam update
 ccam 0.3.0 is up to date.
 ```
 
-ccamが自分から更新を確認することはありません。新しいリリースを探すのは、このコマンドを実行したときだけです。古いリリースも含めて特定のリリースをインストールするには、`--version`を指定します。`ccam --dry-run update`は、何も変更せずに、何をダウンロードして何を置き換えるかを表示します。
+ダッシュボード（ターミナルで実行した`ccam`）も、開くたびに新しいリリースを探し、見つかればアップデートを提案します。`U`を押して確認すれば更新されます。ほかのコマンドが新しいリリースを探すことはなく、ccamが確認なしに更新することもありません。古いリリースも含めて特定のリリースをインストールするには、`--version`を指定します。`ccam --dry-run update`は、何も変更せずに、何をダウンロードして何を置き換えるかを表示します。
 
 ```sh
 ccam update --version v0.2.0

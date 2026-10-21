@@ -2,7 +2,7 @@
 title: Frequently asked questions
 metaTitle: "ccam FAQ: multiple Claude Code accounts"
 description: Answers about ccam, Claude Code accounts, usage limits, sharing, privacy and supported systems.
-updated: 2026-10-20
+updated: 2026-10-21
 published: 2026-10-19
 order: 6
 translation: source
@@ -30,7 +30,7 @@ Share conversation history between the accounts with `ccam group set default --a
 
 ## Does ccam see or send my login?
 
-ccam never shares your Claude login between accounts. It reads an account's access token only to ask Anthropic's usage endpoint for that account's usage, when you run `ccam usage`, `ccam next --auto` or `ccam doctor`. `ccam migrate` copies the saved sign-ins of MCP servers from `~/.claude` into your accounts' own login files on the same computer. ccam has no telemetry and sends nothing anywhere else.
+ccam never shares your Claude login between accounts. It reads an account's access token only to ask Anthropic's usage endpoint for that account's usage, when you run `ccam usage`, `ccam next --auto` or `ccam doctor`. `ccam migrate` copies the saved sign-ins of MCP servers from `~/.claude` into your accounts' own login files on the same computer. ccam has no telemetry. Apart from those lookups, the only request it makes on its own is the dashboard's question to GitHub about the latest ccam release, which carries nothing about you or your accounts.
 
 ## How do I sign in on a remote server?
 
@@ -58,7 +58,7 @@ Starting Claude Code through ccam adds about 4 milliseconds, measured with `scri
 
 ## How do I update ccam?
 
-Run `ccam update`. It downloads the latest release, checks its checksum and replaces the `ccam` file; `ccam update --check` only tells you whether a newer release exists. ccam never updates on its own. If you installed the `.deb` package, install the new `.deb` with apt instead. See [update](/docs/install#update).
+Run `ccam update`. It downloads the latest release, checks its checksum and replaces the `ccam` file; `ccam update --check` only tells you whether a newer release exists. The dashboard also tells you when a newer release exists, and `U` installs it after asking; ccam never updates on its own. If you installed the `.deb` package, install the new `.deb` with apt instead. See [update](/docs/install#update).
 
 ## How do I uninstall ccam?
 

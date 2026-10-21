@@ -4,7 +4,7 @@ description: ccam in un terminale apre una dashboard a schermo intero con accoun
 updated: 2026-10-21
 order: 15
 translation: machine
-sourceHash: "27bd153b48b2"
+sourceHash: "19a99adef661"
 ---
 
 `ccam` senza argomenti apre una dashboard a schermo intero quando standard input e standard output sono un terminale; altrimenti stampa `ccam list`. La dashboard mostra ogni account con il suo utilizzo e i suoi gruppi, e fa ciò che fanno i comandi: avviare, aggiungere, effettuare il login, cambiare i gruppi, impostare le regole delle cartelle, controllare e riparare. Avviare un account la chiude; aggiungere un account o effettuare il login la lascia per il terminale e poi vi ritorna.
@@ -24,6 +24,14 @@ sourceHash: "27bd153b48b2"
 ```
 
 La riga sotto i nomi delle schede dice in una frase a cosa serve la scheda corrente. In un terminale più largo la scheda Accounts mostra anche l'email di ogni account.
+
+Ogni volta che si apre, la dashboard chiede a GitHub in background se esiste una release più recente di ccam; il primo fotogramma non la aspetta mai e, offline, non viene mostrato nulla. Se ce n'è una, una riga sotto il titolo la consiglia:
+
+```console
+ ● ccam 0.10.2 is available (you have 0.10.1) · press U to update
+```
+
+`U` chiede prima conferma, poi aggiorna come fa [`ccam update`](/features/update): la release viene verificata con i suoi checksum SHA-256 e sostituisce ccam in un solo passaggio. La dashboard in cui ti trovi è ancora la versione vecchia, quindi esci e avvia di nuovo `ccam`. Quando l'aggiornamento non si può fare da qui, per esempio per un ccam installato dal pacchetto `.deb`, la dashboard mostra lo stesso consiglio di `ccam update` e mantiene la proposta.
 
 Il primo fotogramma viene disegnato a partire dal solo `config.toml`, in molto meno di 100 ms; l'utilizzo compare man mano che ogni account risponde. Ogni limite ha la sua barra: la finestra di 5 ore, la finestra settimanale per tutti i modelli e la finestra settimanale propria di Fable; `-` significa che l'account non ha quella finestra. Una percentuale diventa gialla dall'80% e rossa al 100%, e i valori presi da una cache dopo una consultazione fallita vengono mostrati attenuati.
 

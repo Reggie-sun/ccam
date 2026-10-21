@@ -1,10 +1,10 @@
 ---
 title: ccam और दूसरे Claude Code account switchers
 description: Claude Code अकाउंट स्विच करने के लिए ccam की तुलना claude-swap, CCS, clausona, clauth, CAAM, cux और दूसरे टूल्स से, और कौन-सा तरीका किस काम के लिए ठीक है।
-updated: 2026-10-20
+updated: 2026-10-21
 order: 2
 translation: machine
-sourceHash: a90ede56b767
+sourceHash: c74be64d2978
 ---
 
 Claude Code अकाउंट स्विच करने वाले टूल दो में से एक तरीका अपनाते हैं। ज़्यादातर टूल एक ही `~/.claude` फ़ोल्डर के अंदर लॉगिन बदलते हैं, इसलिए एक समय में एक ही अकाउंट सक्रिय रहता है। दूसरे टूल, जिनमें ccam भी है, `CLAUDE_CONFIG_DIR` से हर अकाउंट को उसका अपना फ़ोल्डर देते हैं, इसलिए हर अकाउंट लॉग इन रहता है और कई अकाउंट एक साथ चल सकते हैं। ccam इसमें साझा सेटिंग्स और MCP सर्वर जोड़ता है, और किसी बातचीत को दूसरे अकाउंट के फ़ोल्डर में जारी रखता है।
@@ -86,7 +86,7 @@ Scripts आपका इंतज़ार नहीं कर सकतीं, 
 
 ### एक binary, जाँचे गए downloads
 
-ccam लगभग 10 MB की एक static binary है, जिसके लिए कोई runtime इंस्टॉल नहीं करना पड़ता, Linux, macOS और Windows के लिए। install scripts (`install.sh`, `install.ps1`) और `ccam update` हर download को release के SHA-256 checksums से जाँचते हैं, और ccam अपने-आप कभी updates नहीं खोजता। इसमें कोई telemetry नहीं है: यह सिर्फ़ आपके अकाउंट्स का उपयोग जानने के लिए Anthropic को requests भेजता है, समानांतर में, 3 सेकंड की सीमा और 60 सेकंड के cache के साथ, और वे downloads करता है जो आप माँगते हैं। `usage_source = "claude"` के साथ ये requests भी Claude Code के ज़रिए जाती हैं, और ccam कभी किसी token को नहीं छूता।
+ccam लगभग 10 MB की एक static binary है, जिसके लिए कोई runtime इंस्टॉल नहीं करना पड़ता, Linux, macOS और Windows के लिए। install scripts (`install.sh`, `install.ps1`) और `ccam update` हर download को release के SHA-256 checksums से जाँचते हैं, और ccam बिना पूछे कभी update नहीं होता। इसमें कोई telemetry नहीं है: यह सिर्फ़ आपके अकाउंट्स का उपयोग जानने के लिए Anthropic को requests भेजता है, समानांतर में, 3 सेकंड की सीमा और 60 सेकंड के cache के साथ, डैशबोर्ड खुलने पर GitHub से latest release के बारे में पूछता है, और वे downloads करता है जो आप माँगते हैं। `usage_source = "claude"` के साथ ये requests भी Claude Code के ज़रिए जाती हैं, और ccam कभी किसी token को नहीं छूता।
 
 ## जहाँ दूसरे टूल ज़्यादा करते हैं
 

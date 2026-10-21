@@ -1,10 +1,10 @@
 ---
 title: ccam 与其他 Claude Code 账号切换工具对比
 description: ccam 与 claude-swap、CCS、clausona、clauth、CAAM、cux 等 Claude Code 账号切换工具的对比，以及哪种方式适合哪种用途。
-updated: 2026-10-20
+updated: 2026-10-21
 order: 2
 translation: machine
-sourceHash: "a90ede56b767"
+sourceHash: "c74be64d2978"
 ---
 
 切换 Claude Code 账号的工具采用两种方式之一。大多数工具在同一个 `~/.claude` 文件夹中替换登录信息，所以同一时间只有一个账号处于活动状态。另一些工具（包括 ccam）用 `CLAUDE_CONFIG_DIR` 为每个账号提供单独的文件夹，所以每个账号都保持登录状态，并且可以同时运行多个账号。ccam 还提供共享的设置和 MCP 服务器，并能在另一个账号的文件夹中继续对话。
@@ -86,7 +86,7 @@ MCP 服务器、`settings.json`、`CLAUDE.md`、扩展（agents、commands、ski
 
 ### 单个二进制文件，经过校验的下载
 
-ccam 是一个约 10 MB 的静态二进制文件，无需安装任何运行时，支持 Linux、macOS 和 Windows。安装脚本（`install.sh`、`install.ps1`）和 `ccam update` 会用发布版本的 SHA-256 校验和检查每个下载，ccam 也从不自行检查更新。它没有遥测：它发出的请求只有向 Anthropic 查询你的账号用量（并行，3 秒超时，60 秒缓存），以及你要求的下载。使用 `usage_source = "claude"` 时，连这些请求也通过 Claude Code 发出，ccam 从不接触令牌。
+ccam 是一个约 10 MB 的静态二进制文件，无需安装任何运行时，支持 Linux、macOS 和 Windows。安装脚本（`install.sh`、`install.ps1`）和 `ccam update` 会用发布版本的 SHA-256 校验和检查每个下载，ccam 也从不未经询问就更新。它没有遥测：它发出的请求只有向 Anthropic 查询你的账号用量（并行，3 秒超时，60 秒缓存）、仪表盘打开时向 GitHub 询问最新版本，以及你要求的下载。使用 `usage_source = "claude"` 时，连这些请求也通过 Claude Code 发出，ccam 从不接触令牌。
 
 ## 其他工具做得更多的地方
 

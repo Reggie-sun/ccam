@@ -1,10 +1,10 @@
 ---
 title: ccam आणि इतर Claude Code account switchers
 description: Claude Code खाती बदलण्यासाठी ccam ची claude-swap, CCS, clausona, clauth, CAAM, cux आणि इतर टूल्सशी तुलना, आणि कोणती पद्धत कोणत्या वापरासाठी योग्य आहे.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 2
 translation: machine
-sourceHash: "a90ede56b767"
+sourceHash: "c74be64d2978"
 ---
 
 Claude Code खाती बदलणारी टूल्स दोनपैकी एक पद्धत वापरतात. बहुतेक टूल्स एकाच `~/.claude` फोल्डरमध्ये लॉगिन बदलतात, त्यामुळे एका वेळी एकच खाते सक्रिय असते. इतर टूल्स, ज्यात ccam सुद्धा आहे, `CLAUDE_CONFIG_DIR` ने प्रत्येक खात्याला स्वतःचा फोल्डर देतात, त्यामुळे प्रत्येक खाते लॉगिन राहते आणि अनेक खाती एकाच वेळी चालू शकतात. ccam यात शेअर केलेल्या सेटिंग्ज आणि MCP सर्व्हर जोडते, आणि संभाषण दुसऱ्या खात्याच्या फोल्डरमध्ये पुढे चालू ठेवते.
@@ -86,7 +86,7 @@ Scripts तुमची वाट पाहू शकत नाहीत, त्
 
 ### एक binary, तपासलेले downloads
 
-ccam सुमारे 10 MB ची static binary आहे, ज्यासाठी कोणताही runtime इन्स्टॉल करावा लागत नाही, Linux, macOS आणि Windows साठी. install scripts (`install.sh`, `install.ps1`) आणि `ccam update` प्रत्येक download release च्या SHA-256 checksums शी जुळवून तपासतात, आणि ccam कधीही स्वतःहून updates शोधत नाही. त्यात telemetry नाही: ते फक्त तुमच्या खात्यांचा वापर जाणून घेण्यासाठी Anthropic कडे विनंत्या पाठवते, समांतरपणे, 3 सेकंदांच्या मर्यादेसह आणि 60 सेकंदांच्या cache सह, आणि तुम्ही मागितलेले downloads करते. `usage_source = "claude"` सह त्या विनंत्याही Claude Code मधूनच जातात, आणि ccam कधीही token हाताळत नाही.
+ccam सुमारे 10 MB ची static binary आहे, ज्यासाठी कोणताही runtime इन्स्टॉल करावा लागत नाही, Linux, macOS आणि Windows साठी. install scripts (`install.sh`, `install.ps1`) आणि `ccam update` प्रत्येक download release च्या SHA-256 checksums शी जुळवून तपासतात, आणि ccam तुम्हाला विचारल्याशिवाय कधीही update होत नाही. त्यात telemetry नाही: ते फक्त तुमच्या खात्यांचा वापर जाणून घेण्यासाठी Anthropic कडे विनंत्या पाठवते, समांतरपणे, 3 सेकंदांच्या मर्यादेसह आणि 60 सेकंदांच्या cache सह, डॅशबोर्ड उघडताना नवीनतम release बद्दल GitHub ला विचारते, आणि तुम्ही मागितलेले downloads करते. `usage_source = "claude"` सह त्या विनंत्याही Claude Code मधूनच जातात, आणि ccam कधीही token हाताळत नाही.
 
 ## इतर टूल्स जिथे जास्त करतात
 

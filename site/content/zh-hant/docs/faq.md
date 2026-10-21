@@ -2,10 +2,10 @@
 title: 常見問題
 metaTitle: "ccam 常見問題：Claude Code 多帳號"
 description: 關於 ccam、Claude Code 多帳號、用量限制、共用、隱私和支援的作業系統的常見問題解答。
-updated: 2026-10-20
+updated: 2026-10-21
 order: 6
 translation: machine
-sourceHash: "e7d4a2c877ac"
+sourceHash: "bc944d7dcab9"
 ---
 
 ## ccam 是 Anthropic 的官方工具嗎？
@@ -30,7 +30,7 @@ sourceHash: "e7d4a2c877ac"
 
 ## ccam 會看到或傳送我的登入資訊嗎？
 
-ccam 絕不會在帳號之間共用你的 Claude 登入資訊。它讀取帳號的存取權杖只有一個用途：在你執行 `ccam usage`、`ccam next --auto` 或 `ccam doctor` 時，向 Anthropic 的用量端點查詢該帳號的用量。`ccam migrate` 會把 MCP 伺服器已儲存的登入從 `~/.claude` 複製到同一台電腦上你各個帳號自己的登入檔案。ccam 沒有遙測功能，也不會將任何資料傳送到其他地方。
+ccam 絕不會在帳號之間共用你的 Claude 登入資訊。它讀取帳號的存取權杖只有一個用途：在你執行 `ccam usage`、`ccam next --auto` 或 `ccam doctor` 時，向 Anthropic 的用量端點查詢該帳號的用量。`ccam migrate` 會把 MCP 伺服器已儲存的登入從 `~/.claude` 複製到同一台電腦上你各個帳號自己的登入檔案。ccam 沒有遙測功能。除了這些查詢，它唯一會自行發出的請求是儀表板向 GitHub 詢問最新的 ccam 發行版本，其中不含任何關於你或你帳號的資訊。
 
 ## 如何在遠端伺服器上登入？
 
@@ -58,7 +58,7 @@ Linux（Ubuntu、Debian、Fedora、Arch、Alpine 等）、macOS，以及 Windows
 
 ## 如何更新 ccam？
 
-執行 `ccam update`。它會下載最新的發行版本，檢查總和檢查碼，然後取代 `ccam` 檔案；`ccam update --check` 只會告訴你是否有更新的發行版本。ccam 不會自行更新。如果你安裝的是 `.deb` 套件，請改用 apt 安裝新的 `.deb`。請參閱[更新](/docs/install#update)。
+執行 `ccam update`。它會下載最新的發行版本，檢查總和檢查碼，然後取代 `ccam` 檔案；`ccam update --check` 只會告訴你是否有更新的發行版本。儀表板也會在有更新的發行版本時告訴你，按下 `U` 會先詢問再安裝；ccam 不會自行更新。如果你安裝的是 `.deb` 套件，請改用 apt 安裝新的 `.deb`。請參閱[更新](/docs/install#update)。
 
 ## 如何解除安裝 ccam？
 

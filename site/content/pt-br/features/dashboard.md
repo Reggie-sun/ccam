@@ -4,7 +4,7 @@ description: O ccam em um terminal abre um painel em tela cheia com contas, grup
 updated: 2026-10-21
 order: 15
 translation: machine
-sourceHash: "27bd153b48b2"
+sourceHash: "19a99adef661"
 ---
 
 `ccam` sem argumentos abre um painel em tela cheia quando a entrada e a saída padrão são um terminal; caso contrário, imprime `ccam list`. O painel mostra todas as contas com o uso e os grupos de cada uma e faz o que os comandos fazem: iniciar, adicionar, fazer login, alterar grupos, definir regras de pasta, verificar e reparar. Iniciar uma conta fecha o painel; adicionar uma conta ou fazer login sai dele para o terminal e depois volta.
@@ -24,6 +24,14 @@ sourceHash: "27bd153b48b2"
 ```
 
 A linha abaixo dos nomes das abas diz em uma frase para que serve a aba atual. Em um terminal mais largo, a aba Accounts também mostra o e-mail de cada conta.
+
+Toda vez que abre, o painel pergunta ao GitHub em segundo plano se existe uma versão mais recente do ccam; o primeiro quadro nunca espera por isso e, sem conexão, nada é mostrado. Quando há uma, uma linha abaixo do título a recomenda:
+
+```console
+ ● ccam 0.10.2 is available (you have 0.10.1) · press U to update
+```
+
+`U` pergunta primeiro e depois atualiza do mesmo jeito que o [`ccam update`](/features/update): a versão é conferida com seus checksums SHA-256 e substitui o ccam em um único passo. O painel em que você está continua sendo a versão antiga, então saia e inicie o `ccam` de novo. Quando a atualização não pode ser feita aqui, por exemplo com um ccam instalado pelo pacote `.deb`, o painel mostra o mesmo conselho que o `ccam update` e mantém a oferta.
 
 O primeiro quadro é desenhado só a partir do `config.toml`, em bem menos de 100 ms; o uso aparece à medida que cada conta responde. Cada limite tem a própria barra: a janela de 5 horas, a janela semanal de todos os modelos e a janela semanal própria do Fable; `-` significa que a conta não tem essa janela. Uma porcentagem fica amarela a partir de 80% e vermelha em 100%, e os valores vindos de um cache depois de uma consulta que falhou aparecem esmaecidos.
 

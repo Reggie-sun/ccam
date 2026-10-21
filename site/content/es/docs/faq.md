@@ -2,10 +2,10 @@
 title: Preguntas frecuentes
 metaTitle: "Preguntas frecuentes: varias cuentas de Claude Code"
 description: Respuestas sobre ccam, cuentas de Claude Code, límites de uso, uso compartido, privacidad y sistemas compatibles.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 6
 translation: machine
-sourceHash: e7d4a2c877ac
+sourceHash: bc944d7dcab9
 ---
 
 ## ¿ccam es una herramienta oficial de Anthropic?
@@ -30,7 +30,7 @@ Comparte el historial de conversaciones entre las cuentas con `ccam group set de
 
 ## ¿ccam ve o envía mi inicio de sesión?
 
-ccam nunca comparte tu inicio de sesión de Claude entre cuentas. Lee el token de acceso de una cuenta solo para consultar al endpoint de uso de Anthropic el uso de esa cuenta, cuando ejecutas `ccam usage`, `ccam next --auto` o `ccam doctor`. `ccam migrate` copia los inicios de sesión guardados de los servidores MCP de `~/.claude` a los archivos de inicio de sesión propios de tus cuentas en la misma computadora. ccam no tiene telemetría y no envía nada a ningún otro lugar.
+ccam nunca comparte tu inicio de sesión de Claude entre cuentas. Lee el token de acceso de una cuenta solo para consultar al endpoint de uso de Anthropic el uso de esa cuenta, cuando ejecutas `ccam usage`, `ccam next --auto` o `ccam doctor`. `ccam migrate` copia los inicios de sesión guardados de los servidores MCP de `~/.claude` a los archivos de inicio de sesión propios de tus cuentas en la misma computadora. ccam no tiene telemetría. Aparte de esas consultas, la única solicitud que hace por su cuenta es la pregunta del panel a GitHub por la última versión de ccam, que no lleva nada sobre ti ni sobre tus cuentas.
 
 ## ¿Cómo inicio sesión en un servidor remoto?
 
@@ -58,7 +58,7 @@ Iniciar Claude Code a través de ccam agrega unos 4 milisegundos, medidos con `s
 
 ## ¿Cómo actualizo ccam?
 
-Ejecuta `ccam update`. Descarga la versión más reciente, comprueba su suma de verificación y reemplaza el archivo `ccam`; `ccam update --check` solo te indica si hay una versión más reciente. ccam nunca se actualiza por su cuenta. Si instalaste el paquete `.deb`, instala el nuevo `.deb` con apt. Consulta [actualizar](/docs/install#update).
+Ejecuta `ccam update`. Descarga la versión más reciente, comprueba su suma de verificación y reemplaza el archivo `ccam`; `ccam update --check` solo te indica si hay una versión más reciente. El panel también te avisa cuando hay una versión más reciente, y `U` la instala después de preguntar; ccam nunca se actualiza por su cuenta. Si instalaste el paquete `.deb`, instala el nuevo `.deb` con apt. Consulta [actualizar](/docs/install#update).
 
 ## ¿Cómo desinstalo ccam?
 

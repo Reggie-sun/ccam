@@ -4,7 +4,7 @@ description: ccam öffnet im Terminal ein Vollbild-Dashboard mit Konten, Gruppen
 updated: 2026-10-21
 order: 15
 translation: machine
-sourceHash: "27bd153b48b2"
+sourceHash: "19a99adef661"
 ---
 
 `ccam` ohne Argumente öffnet ein Vollbild-Dashboard, wenn Standardeingabe und -ausgabe ein Terminal sind; andernfalls gibt es `ccam list` aus. Das Dashboard zeigt jedes Konto mit seiner Nutzung und seinen Gruppen und erledigt, was die Befehle tun: starten, hinzufügen, anmelden, Gruppen ändern, Ordnerregeln setzen, prüfen und reparieren. Ein Start schließt es; beim Hinzufügen eines Kontos oder bei der Anmeldung überlässt es das Terminal kurz der Aufgabe und kehrt dann zurück.
@@ -24,6 +24,14 @@ sourceHash: "27bd153b48b2"
 ```
 
 Die Zeile unter den Tab-Namen sagt in einem Satz, wofür der aktuelle Tab da ist. In einem breiteren Terminal zeigt der Tab Accounts außerdem die E-Mail-Adresse jedes Kontos.
+
+Bei jedem Öffnen fragt das Dashboard im Hintergrund bei GitHub nach, ob es ein neueres ccam-Release gibt; das erste Bild wartet nie darauf, und offline wird nichts angezeigt. Gibt es eines, empfiehlt eine Zeile unter dem Titel das Update:
+
+```console
+ ● ccam 0.10.2 is available (you have 0.10.1) · press U to update
+```
+
+`U` fragt zuerst nach und aktualisiert dann so wie [`ccam update`](/features/update): Das Release wird gegen seine SHA-256-Prüfsummen geprüft und ersetzt ccam in einem Schritt. Das Dashboard, in dem du gerade bist, ist noch die alte Version, also beende es und starte `ccam` neu. Wenn das Update hier nicht möglich ist, etwa bei einem aus dem `.deb`-Paket installierten ccam, zeigt das Dashboard denselben Hinweis wie `ccam update` und behält das Angebot bei.
 
 Das erste Bild entsteht allein aus `config.toml`, in deutlich unter 100 ms; die Nutzung erscheint, sobald das jeweilige Konto antwortet. Jedes Limit hat seinen eigenen Balken: das 5-Stunden-Fenster, das Wochenfenster für alle Modelle und das eigene Wochenfenster von Fable; `-` bedeutet, dass das Konto kein solches Fenster hat. Ein Prozentwert wird ab 80 % gelb und bei 100 % rot, und Werte aus einem Cache nach einer fehlgeschlagenen Abfrage werden blass dargestellt.
 

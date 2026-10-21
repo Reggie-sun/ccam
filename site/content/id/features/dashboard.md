@@ -4,7 +4,7 @@ description: ccam di terminal membuka dasbor layar penuh berisi akun, grup, atur
 updated: 2026-10-21
 order: 15
 translation: machine
-sourceHash: "27bd153b48b2"
+sourceHash: "19a99adef661"
 ---
 
 `ccam` tanpa argumen membuka dasbor layar penuh jika input dan output standar adalah terminal; jika bukan, ccam mencetak `ccam list`. Dasbor menampilkan setiap akun beserta penggunaan dan grupnya, dan melakukan apa yang dilakukan perintah-perintahnya: menjalankan, menambahkan, login, mengubah grup, menetapkan aturan folder, memeriksa, dan memperbaiki. Menjalankan akun akan menutupnya; menambahkan akun atau login meninggalkannya sebentar untuk terminal lalu kembali lagi.
@@ -24,6 +24,14 @@ sourceHash: "27bd153b48b2"
 ```
 
 Baris di bawah nama-nama tab menjelaskan dalam satu kalimat kegunaan tab yang sedang dibuka. Di terminal yang lebih lebar, tab Accounts juga menampilkan email setiap akun.
+
+Setiap kali dibuka, dasbor bertanya ke GitHub di latar belakang apakah ada rilis ccam yang lebih baru; bingkai pertama tidak pernah menunggunya, dan saat offline tidak ada yang ditampilkan. Jika ada, sebuah baris di bawah judul merekomendasikannya:
+
+```console
+ ● ccam 0.10.2 is available (you have 0.10.1) · press U to update
+```
+
+`U` bertanya dulu, lalu memperbarui seperti [`ccam update`](/features/update): rilis diperiksa terhadap checksum SHA-256-nya dan menggantikan ccam dalam satu langkah. Dasbor yang sedang Anda buka masih versi lama, jadi keluar lalu jalankan `ccam` lagi. Jika pembaruan tidak bisa dilakukan di sini, misalnya untuk ccam yang diinstal dari paket `.deb`, dasbor menampilkan saran yang sama seperti `ccam update` dan tetap menyimpan tawarannya.
 
 Bingkai pertama digambar hanya dari `config.toml`, jauh di bawah 100 ms; penggunaan terisi begitu setiap akun menjawab. Setiap batas punya bilahnya sendiri: jendela 5 jam, jendela mingguan untuk semua model, dan jendela mingguan khusus Fable; `-` berarti akun tidak memiliki jendela tersebut. Persentase berubah kuning mulai 80% dan merah pada 100%, dan nilai dari cache setelah pencarian yang gagal digambar redup.
 

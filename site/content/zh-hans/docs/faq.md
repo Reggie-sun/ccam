@@ -2,10 +2,10 @@
 title: 常见问题
 metaTitle: "ccam 常见问题：Claude Code 多账号"
 description: 关于 ccam、Claude Code 多账号、用量限制、共享、隐私和支持的操作系统的常见问题解答。
-updated: 2026-10-20
+updated: 2026-10-21
 order: 6
 translation: machine
-sourceHash: "e7d4a2c877ac"
+sourceHash: "bc944d7dcab9"
 ---
 
 ## ccam 是 Anthropic 的官方工具吗？
@@ -30,7 +30,7 @@ sourceHash: "e7d4a2c877ac"
 
 ## ccam 会查看或发送我的登录信息吗？
 
-ccam 从不在账号之间共享你的 Claude 登录信息。它读取账号的访问令牌，只是为了在你运行 `ccam usage`、`ccam next --auto` 或 `ccam doctor` 时，向 Anthropic 的用量接口查询该账号的用量。`ccam migrate` 会把 MCP 服务器已保存的登录从 `~/.claude` 复制到同一台电脑上你各个账号自己的登录文件中。ccam 没有遥测，也不会向其他任何地方发送数据。
+ccam 从不在账号之间共享你的 Claude 登录信息。它读取账号的访问令牌，只是为了在你运行 `ccam usage`、`ccam next --auto` 或 `ccam doctor` 时，向 Anthropic 的用量接口查询该账号的用量。`ccam migrate` 会把 MCP 服务器已保存的登录从 `~/.claude` 复制到同一台电脑上你各个账号自己的登录文件中。ccam 没有遥测。除了这些查询，它唯一会自行发出的请求是仪表盘向 GitHub 询问最新的 ccam 版本，其中不包含任何关于你或你的账号的信息。
 
 ## 如何在远程服务器上登录？
 
@@ -58,7 +58,7 @@ Linux（Ubuntu、Debian、Fedora、Arch、Alpine 等）、macOS 以及 Windows 1
 
 ## 如何更新 ccam？
 
-运行 `ccam update`。它会下载最新版本，校验其校验和，然后替换 `ccam` 文件；`ccam update --check` 只告诉你是否有更新的版本。ccam 从不自行更新。如果你安装的是 `.deb` 软件包，请改用 apt 安装新的 `.deb`。参见[更新](/docs/install#update)。
+运行 `ccam update`。它会下载最新版本，校验其校验和，然后替换 `ccam` 文件；`ccam update --check` 只告诉你是否有更新的版本。仪表盘也会在有更新版本时告诉你，按 `U` 会先询问再安装；ccam 从不自行更新。如果你安装的是 `.deb` 软件包，请改用 apt 安装新的 `.deb`。参见[更新](/docs/install#update)。
 
 ## 如何卸载 ccam？
 

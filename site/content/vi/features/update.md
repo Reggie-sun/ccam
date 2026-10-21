@@ -1,13 +1,13 @@
 ---
 title: Cập nhật ccam
 description: "ccam update thay ccam bằng bản phát hành mới nhất trên GitHub sau khi kiểm tra SHA-256; --check chỉ báo cáo và --version cài một thẻ phát hành cụ thể."
-updated: 2026-10-20
+updated: 2026-10-21
 order: 10
 translation: machine
-sourceHash: d91499b95d3d
+sourceHash: a92dbf37399f
 ---
 
-`ccam update` tải một bản phát hành ccam từ GitHub, kiểm tra nó với `checksums.txt` của bản phát hành và thay tệp thực thi đang chạy bằng một lần đổi tên. Hãy dùng lệnh này khi bạn cài ccam bằng script cài đặt hoặc từ một tệp nén. ccam không bao giờ tự kiểm tra cập nhật: chỉ lệnh này liên lạc với GitHub, nên mọi lệnh khác vẫn hoạt động như nhau khi không có mạng.
+`ccam update` tải một bản phát hành ccam từ GitHub, kiểm tra nó với `checksums.txt` của bản phát hành và thay tệp thực thi đang chạy bằng một lần đổi tên. Hãy dùng lệnh này khi bạn cài ccam bằng script cài đặt hoặc từ một tệp nén. [Bảng điều khiển](/features/dashboard) cũng hỏi GitHub về bản phát hành mới nhất mỗi lần mở và đề nghị cập nhật bằng `U`, phím này chạy cùng các bước sau khi hỏi. Không lệnh nào khác liên lạc với GitHub, nên chúng vẫn hoạt động như nhau khi không có mạng.
 
 ## Cách dùng
 

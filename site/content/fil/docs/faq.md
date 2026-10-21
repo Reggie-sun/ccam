@@ -2,10 +2,10 @@
 title: Mga madalas itanong
 metaTitle: "ccam FAQ: maraming Claude Code account"
 description: Mga sagot tungkol sa ccam, mga Claude Code account, usage limit, sharing, privacy at mga suportadong system.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 6
 translation: machine
-sourceHash: e7d4a2c877ac
+sourceHash: bc944d7dcab9
 ---
 
 ## Opisyal bang tool ng Anthropic ang ccam?
@@ -30,7 +30,7 @@ I-share ang kasaysayan ng usapan sa pagitan ng mga account gamit ang `ccam group
 
 ## Nakikita o ipinapadala ba ng ccam ang login ko?
 
-Hindi kailanman ishe-share ng ccam ang iyong Claude login sa pagitan ng mga account. Binabasa lang nito ang access token ng isang account para itanong sa usage endpoint ng Anthropic ang usage ng account na iyon, kapag pinatakbo mo ang `ccam usage`, `ccam next --auto` o `ccam doctor`. Kinokopya ng `ccam migrate` ang mga naka-save na sign-in ng mga MCP server mula sa `~/.claude` papunta sa sariling login file ng iyong mga account sa parehong computer. Walang telemetry ang ccam at wala itong ipinapadala saanman bukod doon.
+Hindi kailanman ishe-share ng ccam ang iyong Claude login sa pagitan ng mga account. Binabasa lang nito ang access token ng isang account para itanong sa usage endpoint ng Anthropic ang usage ng account na iyon, kapag pinatakbo mo ang `ccam usage`, `ccam next --auto` o `ccam doctor`. Kinokopya ng `ccam migrate` ang mga naka-save na sign-in ng mga MCP server mula sa `~/.claude` papunta sa sariling login file ng iyong mga account sa parehong computer. Walang telemetry ang ccam. Bukod sa mga lookup na iyon, ang tanging request na kusa nitong ginagawa ay ang tanong ng dashboard sa GitHub tungkol sa pinakabagong ccam release, na walang dalang anuman tungkol sa iyo o sa iyong mga account.
 
 ## Paano mag-sign in sa isang remote server?
 
@@ -58,7 +58,7 @@ Nagdadagdag ng mga 4 millisecond ang pagsisimula ng Claude Code sa pamamagitan n
 
 ## Paano i-update ang ccam?
 
-Patakbuhin ang `ccam update`. Dina-download nito ang pinakabagong release, sinusuri ang checksum nito at pinapalitan ang `ccam` file; sinasabi lang ng `ccam update --check` kung may mas bagong release. Hindi kailanman kusang nag-a-update ang ccam. Kung in-install mo ang `.deb` package, i-install na lang ang bagong `.deb` gamit ang apt. Tingnan ang [pag-update](/docs/install#update).
+Patakbuhin ang `ccam update`. Dina-download nito ang pinakabagong release, sinusuri ang checksum nito at pinapalitan ang `ccam` file; sinasabi lang ng `ccam update --check` kung may mas bagong release. Sinasabi rin sa iyo ng dashboard kapag may mas bagong release, at ini-install ito ng `U` pagkatapos magtanong; hindi kailanman kusang nag-a-update ang ccam. Kung in-install mo ang `.deb` package, i-install na lang ang bagong `.deb` gamit ang apt. Tingnan ang [pag-update](/docs/install#update).
 
 ## Paano i-uninstall ang ccam?
 

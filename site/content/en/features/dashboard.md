@@ -24,6 +24,14 @@ translation: source
 
 The line under the tab names says in one sentence what the current tab is for. On a wider terminal the Accounts tab also shows each account's email.
 
+Each time it opens, the dashboard asks GitHub in the background whether a newer ccam release exists; the first frame never waits for it, and offline nothing is shown. When there is one, a line under the title recommends it:
+
+```console
+ ● ccam 0.10.2 is available (you have 0.10.1) · press U to update
+```
+
+`U` asks first, then updates the way [`ccam update`](/features/update) does: the release is checked against its SHA-256 checksums and replaces ccam in one step. The dashboard you are in is still the old version, so quit and start `ccam` again. When the update cannot be done here, for example for a ccam installed from the `.deb` package, the dashboard shows the same advice as `ccam update` and keeps the offer.
+
 The first frame draws from `config.toml` alone, in well under 100 ms; usage fills in as each account answers. Each limit has its own bar: the 5-hour window, the weekly window for all models, and Fable's own weekly window; `-` means the account has no such window. A percentage turns yellow from 80% and red at 100%, and values from a cache after a failed lookup are drawn faint.
 
 ## Tabs

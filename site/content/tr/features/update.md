@@ -1,13 +1,13 @@
 ---
 title: ccam'i güncelleme
 description: ccam update, bir SHA-256 kontrolünden sonra ccam'i en son GitHub sürümüyle değiştirir; --check yalnızca bildirir, --version belirli bir sürüm etiketini kurar.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 10
 translation: machine
-sourceHash: d91499b95d3d
+sourceHash: a92dbf37399f
 ---
 
-`ccam update`, GitHub'dan bir ccam sürümü indirir, onu sürümün `checksums.txt` dosyasıyla doğrular ve çalışan ikili dosyayı tek bir yeniden adlandırmayla değiştirir. ccam'i kurulum betiğiyle veya bir arşivden kurduysanız kullanın. ccam güncellemeleri hiçbir zaman kendiliğinden kontrol etmez: GitHub ile yalnızca bu komut bağlantı kurar; bu yüzden diğer tüm komutlar çevrimdışı da aynı şekilde çalışır.
+`ccam update`, GitHub'dan bir ccam sürümü indirir, onu sürümün `checksums.txt` dosyasıyla doğrular ve çalışan ikili dosyayı tek bir yeniden adlandırmayla değiştirir. ccam'i kurulum betiğiyle veya bir arşivden kurduysanız kullanın. [Kontrol paneli](/features/dashboard) de her açıldığında GitHub'a en son sürümü sorar ve onu `U` ile önerir; bu tuş sorduktan sonra aynı adımları çalıştırır. Başka hiçbir komut GitHub ile bağlantı kurmaz; bu yüzden onlar çevrimdışı da aynı şekilde çalışır.
 
 ## Kullanım
 

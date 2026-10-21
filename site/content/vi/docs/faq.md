@@ -2,10 +2,10 @@
 title: Câu hỏi thường gặp
 metaTitle: "ccam FAQ: dùng nhiều tài khoản Claude Code"
 description: "Giải đáp về ccam, tài khoản Claude Code, giới hạn sử dụng, việc dùng chung, quyền riêng tư và các hệ điều hành được hỗ trợ."
-updated: 2026-10-20
+updated: 2026-10-21
 order: 6
 translation: machine
-sourceHash: "e7d4a2c877ac"
+sourceHash: "bc944d7dcab9"
 ---
 
 ## ccam có phải là công cụ chính thức của Anthropic không?
@@ -30,7 +30,7 @@ Bật dùng chung lịch sử hội thoại giữa các tài khoản bằng `cca
 
 ## ccam có xem hoặc gửi thông tin đăng nhập của tôi đi không?
 
-ccam không bao giờ dùng chung thông tin đăng nhập Claude của bạn giữa các tài khoản. Nó chỉ đọc access token của một tài khoản để hỏi endpoint mức sử dụng của Anthropic về mức sử dụng của tài khoản đó, khi bạn chạy `ccam usage`, `ccam next --auto` hoặc `ccam doctor`. `ccam migrate` sao chép thông tin đăng nhập đã lưu của các máy chủ MCP từ `~/.claude` vào tệp đăng nhập riêng của các tài khoản của bạn trên cùng một máy tính. ccam không có telemetry và không gửi gì đến bất kỳ nơi nào khác.
+ccam không bao giờ dùng chung thông tin đăng nhập Claude của bạn giữa các tài khoản. Nó chỉ đọc access token của một tài khoản để hỏi endpoint mức sử dụng của Anthropic về mức sử dụng của tài khoản đó, khi bạn chạy `ccam usage`, `ccam next --auto` hoặc `ccam doctor`. `ccam migrate` sao chép thông tin đăng nhập đã lưu của các máy chủ MCP từ `~/.claude` vào tệp đăng nhập riêng của các tài khoản của bạn trên cùng một máy tính. ccam không có telemetry. Ngoài các lượt tra cứu đó, yêu cầu duy nhất nó tự gửi là câu hỏi của bảng điều khiển tới GitHub về bản phát hành ccam mới nhất, và yêu cầu này không mang thông tin gì về bạn hay các tài khoản của bạn.
 
 ## Làm sao để đăng nhập trên máy chủ từ xa?
 
@@ -58,7 +58,7 @@ Khởi động Claude Code thông qua ccam tốn thêm khoảng 4 mili giây, đ
 
 ## Làm sao để cập nhật ccam?
 
-Chạy `ccam update`. Lệnh này tải về bản phát hành mới nhất, kiểm tra mã băm rồi thay thế tệp `ccam`; `ccam update --check` chỉ cho biết có bản phát hành mới hơn hay không. ccam không bao giờ tự cập nhật. Nếu bạn đã cài gói `.deb`, hãy dùng apt để cài gói `.deb` mới. Xem [cập nhật](/docs/install#update).
+Chạy `ccam update`. Lệnh này tải về bản phát hành mới nhất, kiểm tra mã băm rồi thay thế tệp `ccam`; `ccam update --check` chỉ cho biết có bản phát hành mới hơn hay không. Bảng điều khiển cũng báo cho bạn khi có bản phát hành mới hơn, và `U` sẽ cài nó sau khi hỏi; ccam không bao giờ tự cập nhật. Nếu bạn đã cài gói `.deb`, hãy dùng apt để cài gói `.deb` mới. Xem [cập nhật](/docs/install#update).
 
 ## Làm sao để gỡ cài đặt ccam?
 

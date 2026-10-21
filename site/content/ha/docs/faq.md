@@ -2,10 +2,10 @@
 title: Tambayoyin da ake yawan yi
 metaTitle: "Tambayoyi game da ccam: asusun Claude Code da dama"
 description: Amsoshi game da ccam, asusun Claude Code, iyakokin amfani, rabawa, sirri da tsarukan da ake tallafawa.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 6
 translation: machine
-sourceHash: e7d4a2c877ac
+sourceHash: bc944d7dcab9
 ---
 
 ## Shin ccam kayan aikin Anthropic ne na hukuma?
@@ -30,7 +30,7 @@ Raba tarihin tattaunawa tsakanin asusan da `ccam group set default --add history
 
 ## Shin ccam yana ganin bayanan shigata ko yana aika su?
 
-ccam ba ya taɓa raba bayanan shigar Claude naka tsakanin asusu. Yana karanta access token na asusu ne kawai don tambayar endpoint na amfani na Anthropic game da amfanin wannan asusun, lokacin da ka gudanar da `ccam usage`, `ccam next --auto` ko `ccam doctor`. `ccam migrate` yana kwafar bayanan shigar sabobin MCP da aka ajiye daga `~/.claude` zuwa fayilolin shiga na asusunka a kwamfuta ɗaya. ccam ba shi da telemetry kuma ba ya aika komai zuwa wani wuri dabam.
+ccam ba ya taɓa raba bayanan shigar Claude naka tsakanin asusu. Yana karanta access token na asusu ne kawai don tambayar endpoint na amfani na Anthropic game da amfanin wannan asusun, lokacin da ka gudanar da `ccam usage`, `ccam next --auto` ko `ccam doctor`. `ccam migrate` yana kwafar bayanan shigar sabobin MCP da aka ajiye daga `~/.claude` zuwa fayilolin shiga na asusunka a kwamfuta ɗaya. ccam ba shi da telemetry. Ban da waɗannan tambayoyin, buƙata ɗaya tak da yake yi da kansa ita ce tambayar dashboard ga GitHub game da sabon sakin ccam, wadda ba ta ɗauke da komai game da kai ko asusunka.
 
 ## Ta yaya zan shiga a sabar nesa?
 
@@ -58,7 +58,7 @@ Fara Claude Code ta ccam yana ƙara kusan millisecond 4, wanda aka auna da `scri
 
 ## Ta yaya zan sabunta ccam?
 
-Gudanar da `ccam update`. Yana sauke sakin baya-bayan nan, yana duba checksum nasa, sannan yana maye gurbin fayil ɗin `ccam`; `ccam update --check` yana gaya maka kawai ko akwai sabon saki. ccam ba ya taɓa sabunta kansa da kansa. Idan ka girka kunshin `.deb`, ka girka sabon `.deb` da apt a maimakon haka. Duba [sabuntawa](/docs/install#update).
+Gudanar da `ccam update`. Yana sauke sakin baya-bayan nan, yana duba checksum nasa, sannan yana maye gurbin fayil ɗin `ccam`; `ccam update --check` yana gaya maka kawai ko akwai sabon saki. Dashboard ma yana gaya maka idan akwai sabon saki, kuma `U` yana girka shi bayan ya tambaya; ccam ba ya taɓa sabunta kansa da kansa. Idan ka girka kunshin `.deb`, ka girka sabon `.deb` da apt a maimakon haka. Duba [sabuntawa](/docs/install#update).
 
 ## Ta yaya zan cire ccam?
 

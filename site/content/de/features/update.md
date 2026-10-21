@@ -1,13 +1,13 @@
 ---
 title: ccam aktualisieren
 description: ccam update ersetzt ccam nach einer SHA-256-Prüfung durch das neueste GitHub-Release; --check meldet nur, und --version installiert ein bestimmtes Release-Tag.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 10
 translation: machine
-sourceHash: d91499b95d3d
+sourceHash: a92dbf37399f
 ---
 
-`ccam update` lädt ein ccam-Release von GitHub herunter, prüft es gegen die `checksums.txt` des Releases und ersetzt die laufende Binärdatei mit einem einzigen Umbenennen. Verwende es, wenn du ccam mit dem Installationsskript oder aus einem Archiv installiert hast. ccam sucht nie von selbst nach Updates: Nur dieser Befehl kontaktiert GitHub, daher funktioniert jeder andere Befehl offline genauso.
+`ccam update` lädt ein ccam-Release von GitHub herunter, prüft es gegen die `checksums.txt` des Releases und ersetzt die laufende Binärdatei mit einem einzigen Umbenennen. Verwende es, wenn du ccam mit dem Installationsskript oder aus einem Archiv installiert hast. Auch das [Dashboard](/features/dashboard) fragt bei jedem Öffnen GitHub nach dem neuesten Release und bietet es mit `U` an, das nach einer Rückfrage dieselben Schritte ausführt. Kein anderer Befehl kontaktiert GitHub, daher funktionieren sie offline genauso.
 
 ## Verwendung
 

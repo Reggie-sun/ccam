@@ -1,13 +1,13 @@
 ---
 title: ccam 업데이트
 description: ccam update는 SHA-256을 확인한 뒤 ccam을 GitHub의 최신 릴리스로 교체합니다. --check는 확인만 하고, --version은 지정한 릴리스 태그를 설치합니다.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 10
 translation: machine
-sourceHash: d91499b95d3d
+sourceHash: a92dbf37399f
 ---
 
-`ccam update`는 GitHub에서 ccam 릴리스를 내려받아 릴리스의 `checksums.txt`로 확인한 뒤, 실행 중인 바이너리를 이름 바꾸기 한 번으로 교체합니다. 설치 스크립트나 압축 파일로 ccam을 설치했을 때 쓰면 됩니다. ccam은 스스로 업데이트를 확인하지 않습니다. GitHub에 접속하는 명령은 이것 하나뿐이므로, 다른 모든 명령은 오프라인에서도 똑같이 동작합니다.
+`ccam update`는 GitHub에서 ccam 릴리스를 내려받아 릴리스의 `checksums.txt`로 확인한 뒤, 실행 중인 바이너리를 이름 바꾸기 한 번으로 교체합니다. 설치 스크립트나 압축 파일로 ccam을 설치했을 때 쓰면 됩니다. [대시보드](/features/dashboard)도 열릴 때마다 GitHub에 최신 릴리스를 묻고 `U`로 업데이트를 제안하며, 이 키는 확인을 받은 뒤 같은 단계를 실행합니다. 그 밖의 명령은 GitHub에 접속하지 않으므로 오프라인에서도 똑같이 동작합니다.
 
 ## 사용법
 

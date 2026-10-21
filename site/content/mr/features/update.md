@@ -1,13 +1,13 @@
 ---
 title: ccam अपडेट करणे
 description: ccam update SHA-256 तपासणीनंतर ccam च्या जागी GitHub वरील सर्वात नवीन रिलीज ठेवते; --check फक्त कळवते आणि --version दिलेला रिलीज tag इन्स्टॉल करते.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 10
 translation: machine
-sourceHash: d91499b95d3d
+sourceHash: a92dbf37399f
 ---
 
-`ccam update` GitHub वरून ccam रिलीज डाउनलोड करते, तो रिलीजच्या `checksums.txt` शी तपासते आणि चालू binary एका rename ने बदलते. तुम्ही ccam install script ने किंवा archive मधून इन्स्टॉल केले असेल तेव्हा ते वापरा. ccam कधीच स्वतःहून अपडेट्स तपासत नाही: फक्त हीच कमांड GitHub शी संपर्क करते, त्यामुळे इतर प्रत्येक कमांड offline सुद्धा तशीच चालते.
+`ccam update` GitHub वरून ccam रिलीज डाउनलोड करते, तो रिलीजच्या `checksums.txt` शी तपासते आणि चालू binary एका rename ने बदलते. तुम्ही ccam install script ने किंवा archive मधून इन्स्टॉल केले असेल तेव्हा ते वापरा. [डॅशबोर्ड](/features/dashboard) देखील प्रत्येक वेळी उघडताना GitHub ला नवीनतम रिलीज विचारतो आणि `U` ने तो देऊ करतो, जे विचारल्यानंतर हीच पावले चालवते. इतर कोणतीही कमांड GitHub शी संपर्क करत नाही, त्यामुळे त्या offline सुद्धा तशाच चालतात.
 
 ## वापर
 

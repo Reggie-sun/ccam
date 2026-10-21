@@ -1,10 +1,10 @@
 ---
 title: ccam da sauran masu sauya asusun Claude Code
 description: Yadda ccam ya kwatanta da claude-swap, CCS, clausona, clauth, CAAM, cux da sauran kayan aikin sauya asusun Claude Code, da wace hanya ta dace da wane amfani.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 2
 translation: machine
-sourceHash: a90ede56b767
+sourceHash: c74be64d2978
 ---
 
 Kayan aikin sauya asusun Claude Code suna bin ɗaya daga cikin hanyoyi biyu. Yawancinsu suna musanya bayanan shiga a cikin foldar `~/.claude` guda ɗaya, don haka asusu ɗaya ne kawai yake aiki a lokaci guda. Wasu, ciki har da ccam, suna ba kowane asusu foldarsa da `CLAUDE_CONFIG_DIR`, don haka kowane asusu yana nan a shiga kuma da dama za su iya aiki tare. ccam yana ƙara saituna da sabobin MCP da aka raba, kuma yana ci gaba da tattaunawa a foldar wani asusun.
@@ -86,7 +86,7 @@ Rubutun umarni (scripts) ba za su iya jiranka ba, don haka `ccam --fallback work
 
 ### Binary ɗaya, saukarwa da aka tantance
 
-ccam static binary ne mai kusan 10 MB ba tare da runtime da za a shigar ba, don Linux, macOS da Windows. Rubutun shigarwa (`install.sh`, `install.ps1`) da `ccam update` suna tantance kowace saukarwa da SHA-256 checksums na release, kuma ccam ba ya taɓa neman sabuntawa da kansa. Ba shi da telemetry: buƙatun da yake yi kawai su ne tambayoyin amfani ga Anthropic don asusanka, a lokaci ɗaya tare da iyakar daƙiƙa 3 da cache na daƙiƙa 60, da saukarwar da ka nema. Da `usage_source = "claude"`, har waɗannan ma suna bi ta Claude Code, kuma ccam ba ya taɓa riƙe token.
+ccam static binary ne mai kusan 10 MB ba tare da runtime da za a shigar ba, don Linux, macOS da Windows. Rubutun shigarwa (`install.sh`, `install.ps1`) da `ccam update` suna tantance kowace saukarwa da SHA-256 checksums na release, kuma ccam ba ya taɓa sabunta kansa ba tare da tambaya ba. Ba shi da telemetry: buƙatun da yake yi kawai su ne tambayoyin amfani ga Anthropic don asusanka, a lokaci ɗaya tare da iyakar daƙiƙa 3 da cache na daƙiƙa 60, tambayar dashboard ga GitHub game da sabon release lokacin da ya buɗe, da saukarwar da ka nema. Da `usage_source = "claude"`, har waɗannan ma suna bi ta Claude Code, kuma ccam ba ya taɓa riƙe token.
 
 ## Inda sauran kayan aikin suka fi
 

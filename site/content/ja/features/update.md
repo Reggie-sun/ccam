@@ -1,13 +1,13 @@
 ---
 title: ccamのアップデート
 description: ccam updateは、SHA-256チェックサムを検証してccamをGitHubの最新リリースに置き換えます。--checkは確認のみ、--versionは指定したリリースタグをインストールします。
-updated: 2026-10-20
+updated: 2026-10-21
 order: 10
 translation: machine
-sourceHash: d91499b95d3d
+sourceHash: a92dbf37399f
 ---
 
-`ccam update`は、GitHubからccamのリリースをダウンロードし、リリースの`checksums.txt`で検証してから、実行中のバイナリを1回のrenameで置き換えます。インストールスクリプトやアーカイブからccamをインストールした場合に使います。ccamが自分から更新を確認することはありません。GitHubに接続するのはこのコマンドだけなので、ほかのコマンドはすべてオフラインでも同じように動作します。
+`ccam update`は、GitHubからccamのリリースをダウンロードし、リリースの`checksums.txt`で検証してから、実行中のバイナリを1回のrenameで置き換えます。インストールスクリプトやアーカイブからccamをインストールした場合に使います。[ダッシュボード](/features/dashboard)も、開くたびにGitHubに最新のリリースを問い合わせ、`U`でアップデートを提案します。このキーは確認を取ってから同じ手順を実行します。ほかのコマンドはGitHubに接続しないので、オフラインでも同じように動作します。
 
 ## 使い方
 

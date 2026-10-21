@@ -1,13 +1,13 @@
 ---
 title: 更新 ccam
 description: ccam update 會在檢查 SHA-256 之後以最新的 GitHub 發行版本取代 ccam；--check 只回報，--version 安裝指定的發行版本標籤。
-updated: 2026-10-20
+updated: 2026-10-21
 order: 10
 translation: machine
-sourceHash: d91499b95d3d
+sourceHash: a92dbf37399f
 ---
 
-`ccam update` 會從 GitHub 下載 ccam 的發行版本，以該發行版本的 `checksums.txt` 驗證，然後透過一次 rename 取代正在執行的執行檔。如果你是用安裝腳本或壓縮檔安裝 ccam，請使用它。ccam 絕不會自行檢查更新：只有這個指令會連線到 GitHub，所以其他所有指令在離線時都一樣能運作。
+`ccam update` 會從 GitHub 下載 ccam 的發行版本，以該發行版本的 `checksums.txt` 驗證，然後透過一次 rename 取代正在執行的執行檔。如果你是用安裝腳本或壓縮檔安裝 ccam，請使用它。[儀表板](/features/dashboard)也會在每次開啟時向 GitHub 詢問最新的發行版本，並以 `U` 提供更新，此鍵會先詢問，再執行相同的步驟。其他指令都不會連線到 GitHub，所以它們在離線時一樣能運作。
 
 ## 用法
 

@@ -1,13 +1,13 @@
 ---
 title: "Mettre à jour ccam"
 description: "ccam update remplace ccam par la dernière version de GitHub après vérification SHA-256 ; --check informe seulement et --version installe une version précise."
-updated: 2026-10-20
+updated: 2026-10-21
 order: 10
 translation: machine
-sourceHash: d91499b95d3d
+sourceHash: a92dbf37399f
 ---
 
-`ccam update` télécharge une version de ccam depuis GitHub, la vérifie à l'aide du `checksums.txt` de la version et remplace le binaire en cours d'exécution en un seul renommage. Utilisez-le si vous avez installé ccam avec le script d'installation ou depuis une archive. ccam ne recherche jamais de mises à jour de lui-même : seule cette commande contacte GitHub, si bien que toutes les autres commandes fonctionnent de la même façon hors ligne.
+`ccam update` télécharge une version de ccam depuis GitHub, la vérifie à l'aide du `checksums.txt` de la version et remplace le binaire en cours d'exécution en un seul renommage. Utilisez-le si vous avez installé ccam avec le script d'installation ou depuis une archive. Le [tableau de bord](/features/dashboard) demande aussi la dernière version à GitHub à chaque ouverture et la propose avec `U`, qui exécute les mêmes étapes après confirmation. Aucune autre commande ne contacte GitHub, si bien qu'elles fonctionnent de la même façon hors ligne.
 
 ## Utilisation
 

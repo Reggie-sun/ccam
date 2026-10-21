@@ -4,7 +4,7 @@ description: "ccam trên terminal mở bảng điều khiển toàn màn hình g
 updated: 2026-10-21
 order: 15
 translation: machine
-sourceHash: "27bd153b48b2"
+sourceHash: "19a99adef661"
 ---
 
 `ccam` không kèm đối số sẽ mở một bảng điều khiển toàn màn hình khi đầu vào và đầu ra chuẩn là terminal; nếu không, nó in ra `ccam list`. Bảng điều khiển hiển thị mọi tài khoản cùng mức sử dụng và các nhóm của chúng, và làm được những gì các lệnh làm: khởi động, thêm, đăng nhập, thay đổi nhóm, đặt quy tắc thư mục, kiểm tra và sửa chữa. Khởi động một tài khoản sẽ đóng bảng điều khiển; thêm tài khoản hoặc đăng nhập thì tạm rời nó để dùng terminal rồi quay lại.
@@ -24,6 +24,14 @@ sourceHash: "27bd153b48b2"
 ```
 
 Dòng dưới tên các thẻ cho biết trong một câu thẻ hiện tại dùng để làm gì. Trên terminal rộng hơn, thẻ Accounts còn hiển thị email của từng tài khoản.
+
+Mỗi lần mở, bảng điều khiển hỏi GitHub ở chế độ nền xem có bản phát hành ccam mới hơn không; khung hình đầu tiên không bao giờ chờ việc này, và khi không có mạng thì không hiển thị gì. Khi có bản mới, một dòng dưới tiêu đề sẽ đề xuất nó:
+
+```console
+ ● ccam 0.10.2 is available (you have 0.10.1) · press U to update
+```
+
+`U` hỏi trước, rồi cập nhật theo cách của [`ccam update`](/features/update): bản phát hành được kiểm tra với checksum SHA-256 của nó và thay thế ccam trong một bước. Bảng điều khiển bạn đang dùng vẫn là phiên bản cũ, nên hãy thoát rồi chạy lại `ccam`. Khi không thể cập nhật tại đây, ví dụ với ccam được cài từ gói `.deb`, bảng điều khiển hiển thị cùng lời khuyên như `ccam update` và vẫn giữ lời đề nghị.
 
 Khung hình đầu tiên được vẽ chỉ từ `config.toml`, trong chưa đến 100 ms; mức sử dụng được điền vào khi từng tài khoản phản hồi. Mỗi giới hạn có thanh riêng: khoảng 5 giờ, khoảng hàng tuần cho mọi mô hình, và khoảng hàng tuần riêng của Fable; `-` nghĩa là tài khoản không có khoảng đó. Một tỷ lệ phần trăm chuyển sang màu vàng từ 80% và màu đỏ ở 100%, và các giá trị lấy từ bộ nhớ đệm sau một lần tra cứu thất bại được vẽ mờ.
 

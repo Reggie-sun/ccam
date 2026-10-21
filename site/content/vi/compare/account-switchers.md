@@ -1,10 +1,10 @@
 ---
 title: ccam và các công cụ đổi tài khoản Claude Code khác
 description: "So sánh ccam với claude-swap, CCS, clausona, clauth, CAAM, cux và các công cụ đổi tài khoản Claude Code khác, và cách tiếp cận nào hợp với nhu cầu nào."
-updated: 2026-10-20
+updated: 2026-10-21
 order: 2
 translation: machine
-sourceHash: "a90ede56b767"
+sourceHash: "c74be64d2978"
 ---
 
 Các công cụ đổi tài khoản Claude Code đi theo một trong hai cách. Phần lớn hoán đổi thông tin đăng nhập bên trong một thư mục `~/.claude` duy nhất, nên mỗi lúc chỉ có một tài khoản hoạt động. Một số khác, trong đó có ccam, cho mỗi tài khoản một thư mục riêng bằng `CLAUDE_CONFIG_DIR`, nên mọi tài khoản đều giữ trạng thái đăng nhập và có thể chạy nhiều tài khoản cùng lúc. ccam còn bổ sung việc dùng chung cài đặt và máy chủ MCP, và tiếp tục một cuộc hội thoại trong thư mục của tài khoản khác.
@@ -86,7 +86,7 @@ Script không thể chờ bạn, nên `ccam --fallback work -p "…"` tự đổ
 
 ### Một tệp nhị phân, tải xuống được kiểm tra
 
-ccam là một tệp nhị phân tĩnh khoảng 10 MB, không cần cài thêm môi trường chạy nào, cho Linux, macOS và Windows. Các script cài đặt (`install.sh`, `install.ps1`) và `ccam update` kiểm tra mọi tệp tải xuống với checksum SHA-256 của bản phát hành, và ccam không bao giờ tự kiểm tra cập nhật. Nó không có telemetry: các yêu cầu duy nhất nó gửi là tra cứu mức sử dụng các tài khoản của bạn tới Anthropic, chạy song song với giới hạn 3 giây và bộ nhớ đệm 60 giây, cùng các lượt tải xuống mà bạn yêu cầu. Với `usage_source = "claude"`, ngay cả các yêu cầu đó cũng đi qua Claude Code, và ccam không bao giờ chạm vào token.
+ccam là một tệp nhị phân tĩnh khoảng 10 MB, không cần cài thêm môi trường chạy nào, cho Linux, macOS và Windows. Các script cài đặt (`install.sh`, `install.ps1`) và `ccam update` kiểm tra mọi tệp tải xuống với checksum SHA-256 của bản phát hành, và ccam không bao giờ cập nhật mà không hỏi. Nó không có telemetry: các yêu cầu duy nhất nó gửi là tra cứu mức sử dụng các tài khoản của bạn tới Anthropic, chạy song song với giới hạn 3 giây và bộ nhớ đệm 60 giây, câu hỏi bảng điều khiển gửi tới GitHub về bản phát hành mới nhất khi nó mở, cùng các lượt tải xuống mà bạn yêu cầu. Với `usage_source = "claude"`, ngay cả các yêu cầu đó cũng đi qua Claude Code, và ccam không bao giờ chạm vào token.
 
 ## Những điểm công cụ khác làm được nhiều hơn
 

@@ -2,10 +2,10 @@
 title: Cài đặt ccam
 metaTitle: "Cài đặt ccam trên Linux, macOS và Windows"
 description: "Cài đặt ccam trên Linux, macOS hoặc Windows bằng một lệnh, từ gói .deb hoặc từ mã nguồn, và cập nhật bằng ccam update. Cần cài Claude Code trước."
-updated: 2026-10-20
+updated: 2026-10-21
 order: 1
 translation: machine
-sourceHash: "07fab3165030"
+sourceHash: "1e3a53623de0"
 ---
 
 Chạy lệnh này trong terminal trên Linux hoặc macOS:
@@ -110,7 +110,7 @@ $ ccam update
 ccam 0.3.0 is up to date.
 ```
 
-ccam không bao giờ tự kiểm tra cập nhật; nó chỉ tìm bản phát hành mới khi bạn chạy lệnh này. Để cài một bản phát hành cụ thể, kể cả bản cũ hơn, hãy truyền `--version`. `ccam --dry-run update` cho biết những gì sẽ được tải về và thay thế mà không thay đổi gì.
+Bảng điều khiển (`ccam` trên terminal) cũng tìm bản phát hành mới mỗi lần mở và, khi có, sẽ đề nghị cập nhật: nhấn `U` rồi xác nhận. Không lệnh nào khác tìm, và ccam không bao giờ cập nhật mà không hỏi. Để cài một bản phát hành cụ thể, kể cả bản cũ hơn, hãy truyền `--version`. `ccam --dry-run update` cho biết những gì sẽ được tải về và thay thế mà không thay đổi gì.
 
 ```sh
 ccam update --version v0.2.0

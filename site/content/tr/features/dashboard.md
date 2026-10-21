@@ -4,7 +4,7 @@ description: Terminalde ccam; hesapların, grupların, klasör kurallarının, u
 updated: 2026-10-21
 order: 15
 translation: machine
-sourceHash: "27bd153b48b2"
+sourceHash: "19a99adef661"
 ---
 
 Argümansız `ccam`, standart girdi ve çıktı bir terminal olduğunda tam ekran bir kontrol paneli açar; aksi halde `ccam list` çıktısını yazdırır. Kontrol paneli her hesabı kullanımı ve gruplarıyla birlikte gösterir ve komutların yaptığını yapar: başlatma, ekleme, giriş yapma, grupları değiştirme, klasör kuralları belirleme, denetleme ve onarma. Başlatma paneli kapatır; bir hesap eklemek veya giriş yapmak paneli terminale bırakır ve sonra geri döner.
@@ -24,6 +24,14 @@ Argümansız `ccam`, standart girdi ve çıktı bir terminal olduğunda tam ekra
 ```
 
 Sekme adlarının altındaki satır, geçerli sekmenin ne işe yaradığını tek bir cümleyle söyler. Daha geniş bir terminalde Accounts sekmesi her hesabın e-postasını da gösterir.
+
+Kontrol paneli her açıldığında arka planda GitHub'a daha yeni bir ccam sürümü olup olmadığını sorar; ilk kare bunu asla beklemez ve çevrimdışıyken hiçbir şey gösterilmez. Yeni bir sürüm varsa başlığın altındaki bir satır onu önerir:
+
+```console
+ ● ccam 0.10.2 is available (you have 0.10.1) · press U to update
+```
+
+`U` önce sorar, sonra [`ccam update`](/features/update) gibi günceller: sürüm SHA-256 sağlama toplamlarıyla doğrulanır ve tek adımda ccam'in yerini alır. İçinde bulunduğunuz kontrol paneli hâlâ eski sürümdür; bu yüzden çıkın ve `ccam` komutunu yeniden başlatın. Güncelleme burada yapılamadığında, örneğin `.deb` paketinden kurulmuş bir ccam için, kontrol paneli `ccam update` ile aynı öneriyi gösterir ve teklifi korur.
 
 İlk kare yalnızca `config.toml` dosyasından, 100 ms'nin çok altında çizilir; kullanım her hesap yanıt verdikçe dolar. Her limitin kendi çubuğu vardır: 5 saatlik pencere, tüm modeller için haftalık pencere ve Fable'ın kendi haftalık penceresi; `-` hesabın böyle bir penceresi olmadığı anlamına gelir. Bir yüzde %80'den itibaren sarıya, %100'de kırmızıya döner; başarısız bir sorgudan sonra önbellekten gelen değerler soluk çizilir.
 

@@ -1,10 +1,10 @@
 ---
 title: "Przełączanie kont Claude Code: ccam i inne narzędzia"
 description: Porównanie ccam z claude-swap, CCS, clausona, clauth, CAAM, cux i innymi narzędziami do przełączania kont Claude Code oraz które podejście do czego pasuje.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 2
 translation: machine
-sourceHash: "a90ede56b767"
+sourceHash: "c74be64d2978"
 ---
 
 Narzędzia do przełączania kont Claude Code stosują jedno z dwóch podejść. Większość podmienia login w jednym folderze `~/.claude`, więc naraz aktywne jest tylko jedno konto. Inne, w tym ccam, dają każdemu kontu własny folder przez `CLAUDE_CONFIG_DIR`, więc każde konto pozostaje zalogowane i kilka może działać jednocześnie. ccam dodaje współdzielone ustawienia i serwery MCP oraz kontynuuje rozmowę w folderze innego konta.
@@ -86,7 +86,7 @@ Skrypty nie mogą na ciebie czekać, więc `ccam --fallback work -p "…"` prze�
 
 ### Jeden plik binarny, sprawdzane pobrania
 
-ccam to statyczny plik binarny o rozmiarze około 10 MB, bez środowiska uruchomieniowego do instalowania, dla systemów Linux, macOS i Windows. Skrypty instalacyjne (`install.sh`, `install.ps1`) i `ccam update` sprawdzają każde pobranie z sumami kontrolnymi SHA-256 wydania, a ccam nigdy sam nie sprawdza aktualizacji. Nie ma telemetrii: jedyne żądania, jakie wysyła, to zapytania do Anthropic o użycie twoich kont, równoległe, z limitem 3 sekund i 60-sekundową pamięcią podręczną, oraz pobrania, o które sam poprosisz. Z `usage_source = "claude"` nawet te zapytania przechodzą przez Claude Code, a ccam nigdy nie dotyka tokena.
+ccam to statyczny plik binarny o rozmiarze około 10 MB, bez środowiska uruchomieniowego do instalowania, dla systemów Linux, macOS i Windows. Skrypty instalacyjne (`install.sh`, `install.ps1`) i `ccam update` sprawdzają każde pobranie z sumami kontrolnymi SHA-256 wydania, a ccam nigdy nie aktualizuje się bez pytania. Nie ma telemetrii: jedyne żądania, jakie wysyła, to zapytania do Anthropic o użycie twoich kont, równoległe, z limitem 3 sekund i 60-sekundową pamięcią podręczną, pytanie panelu do GitHub o najnowsze wydanie przy jego otwarciu oraz pobrania, o które sam poprosisz. Z `usage_source = "claude"` nawet te zapytania przechodzą przez Claude Code, a ccam nigdy nie dotyka tokena.
 
 ## W czym inne narzędzia robią więcej
 

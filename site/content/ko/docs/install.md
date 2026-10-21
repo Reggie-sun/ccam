@@ -2,10 +2,10 @@
 title: ccam 설치
 metaTitle: "Linux, macOS, Windows에 ccam 설치하기"
 description: "Linux, macOS, Windows에서 명령 하나, .deb 패키지 또는 소스로 ccam을 설치하고 ccam update로 업데이트합니다. Claude Code를 먼저 설치해야 합니다."
-updated: 2026-10-20
+updated: 2026-10-21
 order: 1
 translation: machine
-sourceHash: "07fab3165030"
+sourceHash: "1e3a53623de0"
 ---
 
 Linux나 macOS 터미널에서 다음 명령을 실행하세요.
@@ -110,7 +110,7 @@ $ ccam update
 ccam 0.3.0 is up to date.
 ```
 
-ccam은 스스로 업데이트를 확인하지 않습니다. 새 릴리스는 이 명령을 실행할 때만 찾습니다. 이전 버전을 포함해 특정 릴리스를 설치하려면 `--version`을 지정합니다. `ccam --dry-run update`는 아무것도 바꾸지 않고, 무엇을 내려받아 어떤 파일을 교체할지만 보여 줍니다.
+대시보드(터미널에서 실행한 `ccam`)도 열릴 때마다 새 릴리스를 찾고, 새 릴리스가 있으면 업데이트를 제안합니다. `U`를 누르고 확인하면 됩니다. 다른 명령은 새 릴리스를 찾지 않으며, ccam이 묻지 않고 업데이트하는 일은 없습니다. 이전 버전을 포함해 특정 릴리스를 설치하려면 `--version`을 지정합니다. `ccam --dry-run update`는 아무것도 바꾸지 않고, 무엇을 내려받아 어떤 파일을 교체할지만 보여 줍니다.
 
 ```sh
 ccam update --version v0.2.0

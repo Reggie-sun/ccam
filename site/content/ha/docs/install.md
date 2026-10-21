@@ -2,10 +2,10 @@
 title: Girka ccam
 metaTitle: Girka ccam a Linux, macOS da Windows
 description: Girka ccam a Linux, macOS ko Windows da umarni ɗaya, kunshin .deb ko lambar tushe, ka kuma sabunta shi da ccam update. Fara girka Claude Code tukuna.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 1
 translation: machine
-sourceHash: 07fab3165030
+sourceHash: 1e3a53623de0
 ---
 
 Gudanar da wannan a terminal a Linux ko macOS:
@@ -110,7 +110,7 @@ $ ccam update
 ccam 0.3.0 is up to date.
 ```
 
-ccam ba ya taɓa duba sabuntawa da kansa; yana neman sabon saki ne kawai idan ka gudanar da wannan umarnin. Don girka takamaiman saki, har da tsoho, ka ba da `--version`. `ccam --dry-run update` yana nuna abin da za a sauke da abin da za a maye gurbinsa, ba tare da canza komai ba.
+Dashboard (`ccam` a terminal) ma yana neman sabon saki duk lokacin da ya buɗe kuma, idan akwai, yana ba da shi: danna `U` ka tabbatar. Babu wani umarni dabam da ke nema, kuma ccam ba ya taɓa sabunta kansa ba tare da tambaya ba. Don girka takamaiman saki, har da tsoho, ka ba da `--version`. `ccam --dry-run update` yana nuna abin da za a sauke da abin da za a maye gurbinsa, ba tare da canza komai ba.
 
 ```sh
 ccam update --version v0.2.0

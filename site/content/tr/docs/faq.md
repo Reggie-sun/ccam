@@ -2,10 +2,10 @@
 title: Sık sorulan sorular
 metaTitle: "ccam SSS: birden fazla Claude Code hesabı"
 description: ccam, Claude Code hesapları, kullanım limitleri, paylaşım, gizlilik ve desteklenen sistemler hakkında yanıtlar.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 6
 translation: machine
-sourceHash: "e7d4a2c877ac"
+sourceHash: "bc944d7dcab9"
 ---
 
 ## ccam resmi bir Anthropic aracı mı?
@@ -30,7 +30,7 @@ Hesaplar arasında konuşma geçmişini `ccam group set default --add history` i
 
 ## ccam giriş bilgilerimi görüyor veya gönderiyor mu?
 
-ccam, Claude girişinizi hesaplar arasında asla paylaşmaz. Bir hesabın erişim tokenını yalnızca `ccam usage`, `ccam next --auto` veya `ccam doctor` çalıştırdığınızda, o hesabın kullanımını Anthropic'in kullanım uç noktasına sormak için okur. `ccam migrate`, MCP sunucularının kaydedilmiş girişlerini `~/.claude` içinden aynı bilgisayardaki hesaplarınızın kendi giriş dosyalarına kopyalar. ccam'da telemetri yoktur ve başka hiçbir yere bir şey göndermez.
+ccam, Claude girişinizi hesaplar arasında asla paylaşmaz. Bir hesabın erişim tokenını yalnızca `ccam usage`, `ccam next --auto` veya `ccam doctor` çalıştırdığınızda, o hesabın kullanımını Anthropic'in kullanım uç noktasına sormak için okur. `ccam migrate`, MCP sunucularının kaydedilmiş girişlerini `~/.claude` içinden aynı bilgisayardaki hesaplarınızın kendi giriş dosyalarına kopyalar. ccam'da telemetri yoktur. Bu sorguların dışında kendiliğinden yaptığı tek istek, kontrol panelinin GitHub'a en son ccam sürümünü sormasıdır ve bu istek sizin ya da hesaplarınız hakkında hiçbir şey taşımaz.
 
 ## Uzak bir sunucuda nasıl giriş yaparım?
 
@@ -58,7 +58,7 @@ Claude Code'u ccam üzerinden başlatmak yaklaşık 4 milisaniye ekler; bu süre
 
 ## ccam'ı nasıl güncellerim?
 
-`ccam update` komutunu çalıştırın. Bu komut en son sürümü indirir, sağlama toplamını kontrol eder ve `ccam` dosyasını değiştirir; `ccam update --check` ise yalnızca daha yeni bir sürüm olup olmadığını söyler. ccam hiçbir zaman kendiliğinden güncellenmez. `.deb` paketini kurduysanız bunun yerine yeni `.deb` dosyasını apt ile kurun. [Güncelleme](/docs/install#update) bölümüne bakın.
+`ccam update` komutunu çalıştırın. Bu komut en son sürümü indirir, sağlama toplamını kontrol eder ve `ccam` dosyasını değiştirir; `ccam update --check` ise yalnızca daha yeni bir sürüm olup olmadığını söyler. Kontrol paneli de daha yeni bir sürüm olduğunda bunu söyler ve `U` onu sorduktan sonra kurar; ccam hiçbir zaman kendiliğinden güncellenmez. `.deb` paketini kurduysanız bunun yerine yeni `.deb` dosyasını apt ile kurun. [Güncelleme](/docs/install#update) bölümüne bakın.
 
 ## ccam'ı nasıl kaldırırım?
 

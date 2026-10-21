@@ -2,10 +2,10 @@
 title: تثبيت ccam
 metaTitle: تثبيت ccam على Linux وmacOS وWindows
 description: ثبّت ccam على Linux أو macOS أو Windows بأمر واحد أو من حزمة .deb أو من الشيفرة المصدرية، وحدّثه باستخدام ccam update. يجب تثبيت Claude Code أولًا.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 1
 translation: machine
-sourceHash: 07fab3165030
+sourceHash: 1e3a53623de0
 ---
 
 شغّل هذا الأمر في طرفية على Linux أو macOS:
@@ -110,7 +110,7 @@ $ ccam update
 ccam 0.3.0 is up to date.
 ```
 
-لا يبحث ccam عن التحديثات من تلقاء نفسه أبدًا، بل يبحث عن إصدار جديد فقط عندما تشغّل هذا الأمر. لتثبيت إصدار محدد، حتى لو كان أقدم، مرّر الخيار `--version`. ويعرض `ccam --dry-run update` ما سيُنزَّل وما سيُستبدَل دون تغيير أي شيء.
+تبحث لوحة التحكم (`ccam` في الطرفية) أيضًا عن إصدار جديد في كل مرة تُفتح فيها، وإذا وُجد إصدار عرضته عليك: اضغط `U` ثم أكّد. لا يبحث أي أمر آخر، ولا يحدّث ccam نفسه أبدًا دون أن يسألك. لتثبيت إصدار محدد، حتى لو كان أقدم، مرّر الخيار `--version`. ويعرض `ccam --dry-run update` ما سيُنزَّل وما سيُستبدَل دون تغيير أي شيء.
 
 ```sh
 ccam update --version v0.2.0

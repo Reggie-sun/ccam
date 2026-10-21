@@ -1,10 +1,10 @@
 ---
 title: "Cambiar cuenta de Claude Code: ccam y alternativas"
 description: ccam frente a claude-swap, CCS, clausona, clauth, CAAM, cux y otras herramientas para cambiar de cuenta en Claude Code, y qué enfoque conviene en cada caso.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 2
 translation: machine
-sourceHash: a90ede56b767
+sourceHash: c74be64d2978
 ---
 
 Las herramientas para cambiar de cuenta en Claude Code siguen uno de dos enfoques. La mayoría intercambia el inicio de sesión dentro de la única carpeta `~/.claude`, así que solo hay una cuenta activa a la vez. Otras, entre ellas ccam, le dan a cada cuenta su propia carpeta con `CLAUDE_CONFIG_DIR`, así que todas las cuentas siguen con la sesión iniciada y varias pueden ejecutarse a la vez. ccam agrega configuración y servidores MCP compartidos, y continúa una conversación en la carpeta de otra cuenta.
@@ -86,7 +86,7 @@ Los scripts no pueden esperarte, así que `ccam --fallback work -p "…"` cambia
 
 ### Un solo binario, descargas verificadas
 
-ccam es un binario estático de unos 10 MB, sin entorno de ejecución que instalar, para Linux, macOS y Windows. Los scripts de instalación (`install.sh`, `install.ps1`) y `ccam update` verifican cada descarga con las sumas de comprobación SHA-256 de la versión, y ccam nunca busca actualizaciones por su cuenta. No tiene telemetría: las únicas solicitudes que hace son las consultas de uso de tus cuentas a Anthropic, en paralelo con un límite de 3 segundos y una caché de 60 segundos, y las descargas que tú pides. Con `usage_source = "claude"`, incluso esas pasan por Claude Code, y ccam nunca maneja un token.
+ccam es un binario estático de unos 10 MB, sin entorno de ejecución que instalar, para Linux, macOS y Windows. Los scripts de instalación (`install.sh`, `install.ps1`) y `ccam update` verifican cada descarga con las sumas de comprobación SHA-256 de la versión, y ccam nunca se actualiza sin preguntar. No tiene telemetría: las únicas solicitudes que hace son las consultas de uso de tus cuentas a Anthropic, en paralelo con un límite de 3 segundos y una caché de 60 segundos, la pregunta del panel a GitHub por la última versión cuando se abre, y las descargas que tú pides. Con `usage_source = "claude"`, incluso esas pasan por Claude Code, y ccam nunca maneja un token.
 
 ## Dónde otras herramientas hacen más
 

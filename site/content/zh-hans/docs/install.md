@@ -2,10 +2,10 @@
 title: 安装 ccam
 metaTitle: "在 Linux、macOS 和 Windows 上安装 ccam"
 description: 用一条命令在 Linux、macOS 或 Windows 上安装 ccam，也可以使用 .deb 软件包或从源码安装，并用 ccam update 保持最新。需要先安装 Claude Code。
-updated: 2026-10-20
+updated: 2026-10-21
 order: 1
 translation: machine
-sourceHash: "07fab3165030"
+sourceHash: "1e3a53623de0"
 ---
 
 在 Linux 或 macOS 的终端中运行：
@@ -110,7 +110,7 @@ $ ccam update
 ccam 0.3.0 is up to date.
 ```
 
-ccam 从不自动检查更新，只有在你运行这个命令时才会查找新版本。要安装特定版本（包括较旧的版本），请传入 `--version`。`ccam --dry-run update` 会显示将要下载和替换的内容，但不做任何更改。
+仪表盘（在终端中运行 `ccam`）也会在每次打开时查找新版本，有新版本时会提供更新：按 `U` 并确认即可。其他命令都不会查找，ccam 也从不未经询问就更新。要安装特定版本（包括较旧的版本），请传入 `--version`。`ccam --dry-run update` 会显示将要下载和替换的内容，但不做任何更改。
 
 ```sh
 ccam update --version v0.2.0

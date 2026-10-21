@@ -1,10 +1,10 @@
 ---
 title: ccam dan pengalih akun Claude Code lainnya
 description: Perbandingan ccam dengan claude-swap, CCS, clausona, clauth, CAAM, cux, dan alat lain untuk ganti akun Claude Code, serta pendekatan mana yang cocok.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 2
 translation: machine
-sourceHash: a90ede56b767
+sourceHash: c74be64d2978
 ---
 
 Alat untuk berganti akun Claude Code memakai salah satu dari dua pendekatan. Sebagian besar menukar login di dalam satu folder `~/.claude`, sehingga hanya satu akun yang aktif pada satu waktu. Yang lain, termasuk ccam, memberi setiap akun foldernya sendiri dengan `CLAUDE_CONFIG_DIR`, sehingga setiap akun tetap login dan beberapa akun bisa berjalan bersamaan. ccam menambahkan pengaturan dan server MCP bersama, serta bisa melanjutkan percakapan di folder akun lain.
@@ -86,7 +86,7 @@ Skrip tidak bisa menunggu Anda, jadi `ccam --fallback work -p "…"` berganti ak
 
 ### Satu biner, unduhan yang diperiksa
 
-ccam adalah biner statis sekitar 10 MB tanpa runtime yang perlu dipasang, untuk Linux, macOS, dan Windows. Skrip instalasi (`install.sh`, `install.ps1`) dan `ccam update` memeriksa setiap unduhan terhadap checksum SHA-256 rilis, dan ccam tidak pernah memeriksa pembaruan sendiri. Tidak ada telemetri: satu-satunya permintaan yang dibuatnya adalah pengecekan penggunaan akun Anda ke Anthropic, secara paralel dengan batas 3 detik dan cache 60 detik, serta unduhan yang Anda minta. Dengan `usage_source = "claude"`, permintaan itu pun melewati Claude Code, dan ccam tidak pernah menyentuh token sama sekali.
+ccam adalah biner statis sekitar 10 MB tanpa runtime yang perlu dipasang, untuk Linux, macOS, dan Windows. Skrip instalasi (`install.sh`, `install.ps1`) dan `ccam update` memeriksa setiap unduhan terhadap checksum SHA-256 rilis, dan ccam tidak pernah memperbarui diri tanpa bertanya. Tidak ada telemetri: satu-satunya permintaan yang dibuatnya adalah pengecekan penggunaan akun Anda ke Anthropic, secara paralel dengan batas 3 detik dan cache 60 detik, pertanyaan dasbor ke GitHub tentang rilis terbaru saat dasbor dibuka, serta unduhan yang Anda minta. Dengan `usage_source = "claude"`, permintaan itu pun melewati Claude Code, dan ccam tidak pernah menyentuh token sama sekali.
 
 ## Di mana alat lain lebih unggul
 

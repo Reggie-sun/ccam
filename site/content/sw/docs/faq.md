@@ -2,10 +2,10 @@
 title: Maswali yanayoulizwa mara kwa mara
 metaTitle: "Maswali kuhusu ccam: akaunti kadhaa za Claude Code"
 description: Majibu kuhusu ccam, akaunti za Claude Code, vikomo vya matumizi, kushiriki, faragha na mifumo inayotumika.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 6
 translation: machine
-sourceHash: "e7d4a2c877ac"
+sourceHash: "bc944d7dcab9"
 ---
 
 ## Je, ccam ni zana rasmi ya Anthropic?
@@ -30,7 +30,7 @@ Shiriki historia ya mazungumzo kati ya akaunti kwa `ccam group set default --add
 
 ## Je, ccam huona au kutuma taarifa zangu za kuingia?
 
-ccam kamwe haishiriki taarifa zako za kuingia za Claude kati ya akaunti. Husoma tokeni ya ufikiaji ya akaunti ili tu kuuliza endpoint ya matumizi ya Anthropic kuhusu matumizi ya akaunti hiyo, unapoendesha `ccam usage`, `ccam next --auto` au `ccam doctor`. `ccam migrate` hunakili taarifa za kuingia zilizohifadhiwa za seva za MCP kutoka `~/.claude` kwenda kwenye faili za kuingia za akaunti zako zenyewe kwenye kompyuta hiyo hiyo. ccam haina telemetry na haitumi chochote mahali pengine popote.
+ccam kamwe haishiriki taarifa zako za kuingia za Claude kati ya akaunti. Husoma tokeni ya ufikiaji ya akaunti ili tu kuuliza endpoint ya matumizi ya Anthropic kuhusu matumizi ya akaunti hiyo, unapoendesha `ccam usage`, `ccam next --auto` au `ccam doctor`. `ccam migrate` hunakili taarifa za kuingia zilizohifadhiwa za seva za MCP kutoka `~/.claude` kwenda kwenye faili za kuingia za akaunti zako zenyewe kwenye kompyuta hiyo hiyo. ccam haina telemetry. Mbali na maswali hayo, ombi pekee inalotuma yenyewe ni swali la dashibodi kwa GitHub kuhusu toleo jipya zaidi la ccam, ambalo halibebi chochote kukuhusu wewe au akaunti zako.
 
 ## Nitaingiaje kwenye seva ya mbali?
 
@@ -58,7 +58,7 @@ Kuanzisha Claude Code kupitia ccam huongeza takriban milisekunde 4, zilizopimwa 
 
 ## Nitasasishaje ccam?
 
-Endesha `ccam update`. Hupakua toleo jipya zaidi, hukagua checksum yake na hubadilisha faili ya `ccam`, huku `ccam update --check` ikikuambia tu kama kuna toleo jipya zaidi. ccam kamwe haijisasishi yenyewe. Ikiwa ulisakinisha kifurushi cha `.deb`, badala yake sakinisha `.deb` mpya kwa apt. Tazama [kusasisha ccam](/docs/install#update).
+Endesha `ccam update`. Hupakua toleo jipya zaidi, hukagua checksum yake na hubadilisha faili ya `ccam`, huku `ccam update --check` ikikuambia tu kama kuna toleo jipya zaidi. Dashibodi pia hukuambia kunapokuwa na toleo jipya zaidi, na `U` hulisakinisha baada ya kuuliza; ccam kamwe haijisasishi yenyewe. Ikiwa ulisakinisha kifurushi cha `.deb`, badala yake sakinisha `.deb` mpya kwa apt. Tazama [kusasisha ccam](/docs/install#update).
 
 ## Nitaondoaje ccam?
 

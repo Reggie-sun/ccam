@@ -2,10 +2,10 @@
 title: Häufig gestellte Fragen
 metaTitle: "ccam-FAQ: mehrere Claude Code-Konten"
 description: Antworten zu ccam, Claude Code-Konten, Nutzungslimits, Teilen, Datenschutz und unterstützten Systemen.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 6
 translation: machine
-sourceHash: e7d4a2c877ac
+sourceHash: bc944d7dcab9
 ---
 
 ## Ist ccam ein offizielles Tool von Anthropic?
@@ -30,7 +30,7 @@ Teile den Gesprächsverlauf zwischen den Konten mit `ccam group set default --ad
 
 ## Sieht oder sendet ccam meine Anmeldung?
 
-ccam teilt deine Claude-Anmeldung nie zwischen Konten. Es liest das Zugriffstoken eines Kontos nur, um beim Nutzungs-Endpunkt von Anthropic die Nutzung dieses Kontos abzufragen, wenn du `ccam usage`, `ccam next --auto` oder `ccam doctor` ausführst. `ccam migrate` kopiert die gespeicherten Anmeldungen von MCP-Servern aus `~/.claude` in die eigenen Anmeldedateien deiner Konten auf demselben Computer. ccam hat keine Telemetrie und sendet an keine andere Stelle etwas.
+ccam teilt deine Claude-Anmeldung nie zwischen Konten. Es liest das Zugriffstoken eines Kontos nur, um beim Nutzungs-Endpunkt von Anthropic die Nutzung dieses Kontos abzufragen, wenn du `ccam usage`, `ccam next --auto` oder `ccam doctor` ausführst. `ccam migrate` kopiert die gespeicherten Anmeldungen von MCP-Servern aus `~/.claude` in die eigenen Anmeldedateien deiner Konten auf demselben Computer. ccam hat keine Telemetrie. Abgesehen von diesen Abfragen stellt es von sich aus nur eine einzige Anfrage: die Frage des Dashboards an GitHub nach dem neuesten ccam-Release, die nichts über dich oder deine Konten enthält.
 
 ## Wie melde ich mich auf einem entfernten Server an?
 
@@ -58,7 +58,7 @@ Claude Code über ccam zu starten kostet etwa 4 Millisekunden, gemessen mit `scr
 
 ## Wie aktualisiere ich ccam?
 
-Führe `ccam update` aus. Der Befehl lädt das neueste Release herunter, prüft seine Prüfsumme und ersetzt die Datei `ccam`; `ccam update --check` zeigt nur an, ob es ein neueres Release gibt. ccam aktualisiert sich nie von selbst. Wenn du das `.deb`-Paket installiert hast, installiere stattdessen das neue `.deb` mit apt. Siehe [Aktualisieren](/docs/install#update).
+Führe `ccam update` aus. Der Befehl lädt das neueste Release herunter, prüft seine Prüfsumme und ersetzt die Datei `ccam`; `ccam update --check` zeigt nur an, ob es ein neueres Release gibt. Auch das Dashboard zeigt dir, wenn es ein neueres Release gibt, und `U` installiert es nach einer Rückfrage; ccam aktualisiert sich nie von selbst. Wenn du das `.deb`-Paket installiert hast, installiere stattdessen das neue `.deb` mit apt. Siehe [Aktualisieren](/docs/install#update).
 
 ## Wie deinstalliere ich ccam?
 

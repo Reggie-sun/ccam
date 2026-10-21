@@ -2,10 +2,10 @@
 title: Pertanyaan yang sering diajukan
 metaTitle: "FAQ ccam: beberapa akun Claude Code"
 description: Jawaban seputar ccam, akun Claude Code, batas penggunaan, pembagian, privasi, dan sistem yang didukung.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 6
 translation: machine
-sourceHash: e7d4a2c877ac
+sourceHash: bc944d7dcab9
 ---
 
 ## Apakah ccam alat resmi dari Anthropic?
@@ -30,7 +30,7 @@ Bagikan riwayat percakapan antarakun dengan `ccam group set default --add histor
 
 ## Apakah ccam melihat atau mengirim login saya?
 
-ccam tidak pernah membagikan login Claude Anda antarakun. ccam membaca token akses sebuah akun hanya untuk menanyakan penggunaan akun itu ke endpoint penggunaan Anthropic, saat Anda menjalankan `ccam usage`, `ccam next --auto`, atau `ccam doctor`. `ccam migrate` menyalin info masuk server MCP yang tersimpan dari `~/.claude` ke file login milik akun-akun Anda sendiri di komputer yang sama. ccam tidak memiliki telemetri dan tidak mengirim apa pun ke tempat lain.
+ccam tidak pernah membagikan login Claude Anda antarakun. ccam membaca token akses sebuah akun hanya untuk menanyakan penggunaan akun itu ke endpoint penggunaan Anthropic, saat Anda menjalankan `ccam usage`, `ccam next --auto`, atau `ccam doctor`. `ccam migrate` menyalin info masuk server MCP yang tersimpan dari `~/.claude` ke file login milik akun-akun Anda sendiri di komputer yang sama. ccam tidak memiliki telemetri. Selain pengecekan itu, satu-satunya permintaan yang dibuatnya sendiri adalah pertanyaan dasbor ke GitHub tentang rilis ccam terbaru, yang tidak membawa apa pun tentang Anda atau akun-akun Anda.
 
 ## Bagaimana cara masuk di server jarak jauh?
 
@@ -58,7 +58,7 @@ Menjalankan Claude Code melalui ccam menambah sekitar 4 milidetik, diukur dengan
 
 ## Bagaimana cara memperbarui ccam?
 
-Jalankan `ccam update`. Perintah ini mengunduh rilis terbaru, memeriksa checksum-nya, lalu mengganti file `ccam`; `ccam update --check` hanya memberi tahu apakah ada rilis yang lebih baru. ccam tidak pernah memperbarui dirinya sendiri. Jika Anda menginstal paket `.deb`, instal `.deb` yang baru dengan apt. Lihat [pembaruan](/docs/install#update).
+Jalankan `ccam update`. Perintah ini mengunduh rilis terbaru, memeriksa checksum-nya, lalu mengganti file `ccam`; `ccam update --check` hanya memberi tahu apakah ada rilis yang lebih baru. Dasbor juga memberi tahu jika ada rilis yang lebih baru, dan `U` menginstalnya setelah bertanya; ccam tidak pernah memperbarui dirinya sendiri. Jika Anda menginstal paket `.deb`, instal `.deb` yang baru dengan apt. Lihat [pembaruan](/docs/install#update).
 
 ## Bagaimana cara menghapus instalasi ccam?
 

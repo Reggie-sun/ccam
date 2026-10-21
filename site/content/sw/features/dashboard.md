@@ -4,7 +4,7 @@ description: ccam kwenye terminal hufungua dashibodi ya skrini nzima ya akaunti,
 updated: 2026-10-21
 order: 15
 translation: machine
-sourceHash: "27bd153b48b2"
+sourceHash: "19a99adef661"
 ---
 
 `ccam` bila hoja hufungua dashibodi ya skrini nzima wakati ingizo na matokeo ya kawaida ni terminal; vinginevyo huchapisha `ccam list`. Dashibodi huonyesha kila akaunti pamoja na matumizi yake na vikundi vyake, na hufanya kile ambacho amri hufanya: kuanzisha, kuongeza, kuingia, kubadilisha vikundi, kuweka kanuni za folda, kukagua na kurekebisha. Kuanzisha huifunga; kuongeza akaunti au kuingia huiacha kwa ajili ya terminal kisha hurudi.
@@ -24,6 +24,14 @@ sourceHash: "27bd153b48b2"
 ```
 
 Mstari ulio chini ya majina ya vichupo husema kwa sentensi moja kichupo cha sasa ni cha nini. Kwenye terminal pana zaidi, kichupo cha Accounts pia huonyesha barua pepe ya kila akaunti.
+
+Kila inapofunguliwa, dashibodi huuliza GitHub chinichini kama kuna toleo jipya zaidi la ccam; fremu ya kwanza kamwe haisubiri jibu hilo, na bila mtandao hakuna kinachoonyeshwa. Likiwepo, mstari ulio chini ya kichwa hulipendekeza:
+
+```console
+ ● ccam 0.10.2 is available (you have 0.10.1) · press U to update
+```
+
+`U` huuliza kwanza, kisha husasisha kama [`ccam update`](/features/update) inavyofanya: toleo hukaguliwa dhidi ya checksum zake za SHA-256 na huchukua nafasi ya ccam kwa hatua moja. Dashibodi uliyomo bado ni toleo la zamani, kwa hiyo toka kisha uanzishe `ccam` tena. Sasisho lisipoweza kufanywa hapa, kwa mfano kwa ccam iliyosakinishwa kutoka kifurushi cha `.deb`, dashibodi huonyesha ushauri ule ule kama `ccam update` na huendelea kulitoa toleo hilo.
 
 Fremu ya kwanza huchorwa kutoka `config.toml` pekee, kwa muda mfupi sana chini ya 100 ms; matumizi hujazwa kadiri kila akaunti inavyojibu. Kila kikomo kina upau wake: dirisha la saa 5, dirisha la wiki kwa model zote, na dirisha la wiki la Fable lenyewe; `-` inamaanisha akaunti haina dirisha hilo. Asilimia hugeuka manjano kuanzia 80% na nyekundu kwenye 100%, na thamani kutoka kwenye akiba (cache) baada ya utafutaji kushindwa huchorwa hafifu.
 

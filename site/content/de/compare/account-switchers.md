@@ -1,10 +1,10 @@
 ---
 title: "Claude Code-Konto wechseln: ccam und andere Tools"
 description: Wie sich ccam von claude-swap, CCS, clausona, clauth, CAAM, cux und anderen Tools für Claude Code-Kontowechsel unterscheidet und welcher Ansatz wozu passt.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 2
 translation: machine
-sourceHash: a90ede56b767
+sourceHash: c74be64d2978
 ---
 
 Tools zum Wechseln von Claude Code-Konten verfolgen einen von zwei Ansätzen. Die meisten tauschen die Anmeldung im einen `~/.claude`-Ordner aus, sodass immer nur ein Konto aktiv ist. Andere, darunter ccam, geben jedem Konto mit `CLAUDE_CONFIG_DIR` einen eigenen Ordner, sodass jedes Konto angemeldet bleibt und mehrere gleichzeitig laufen können. ccam ergänzt geteilte Einstellungen und MCP-Server und setzt ein Gespräch im Ordner eines anderen Kontos fort.
@@ -86,7 +86,7 @@ Skripte können nicht auf dich warten, deshalb wechselt `ccam --fallback work -p
 
 ### Eine Binärdatei, geprüfte Downloads
 
-ccam ist eine statische Binärdatei von etwa 10 MB, ohne Laufzeitumgebung, die installiert werden müsste, für Linux, macOS und Windows. Die Installationsskripte (`install.sh`, `install.ps1`) und `ccam update` prüfen jeden Download gegen die SHA-256-Prüfsummen des Releases, und ccam sucht nie von sich aus nach Updates. Es gibt keine Telemetrie: Die einzigen Anfragen sind Nutzungsabfragen bei Anthropic für deine Konten, parallel mit 3 Sekunden Zeitlimit und 60 Sekunden Cache, und die Downloads, die du anforderst. Mit `usage_source = "claude"` laufen sogar diese über Claude Code, und ccam fasst nie ein Token an.
+ccam ist eine statische Binärdatei von etwa 10 MB, ohne Laufzeitumgebung, die installiert werden müsste, für Linux, macOS und Windows. Die Installationsskripte (`install.sh`, `install.ps1`) und `ccam update` prüfen jeden Download gegen die SHA-256-Prüfsummen des Releases, und ccam aktualisiert sich nie, ohne zu fragen. Es gibt keine Telemetrie: Die einzigen Anfragen sind Nutzungsabfragen bei Anthropic für deine Konten, parallel mit 3 Sekunden Zeitlimit und 60 Sekunden Cache, die Frage des Dashboards an GitHub nach dem neuesten Release, wenn es sich öffnet, und die Downloads, die du anforderst. Mit `usage_source = "claude"` laufen sogar diese über Claude Code, und ccam fasst nie ein Token an.
 
 ## Wo andere Tools mehr können
 

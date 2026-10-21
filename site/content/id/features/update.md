@@ -1,13 +1,13 @@
 ---
 title: Memperbarui ccam
 description: ccam update mengganti ccam dengan rilis GitHub terbaru setelah pemeriksaan SHA-256; --check hanya melaporkan dan --version menginstal tag rilis tertentu.
-updated: 2026-10-20
+updated: 2026-10-21
 order: 10
 translation: machine
-sourceHash: d91499b95d3d
+sourceHash: a92dbf37399f
 ---
 
-`ccam update` mengunduh rilis ccam dari GitHub, memeriksanya terhadap `checksums.txt` milik rilis tersebut, dan mengganti biner yang sedang berjalan dengan satu rename. Gunakan jika Anda menginstal ccam dengan skrip instalasi atau dari arsip. ccam tidak pernah memeriksa pembaruan dengan sendirinya: hanya perintah ini yang menghubungi GitHub, sehingga setiap perintah lain bekerja sama saja secara offline.
+`ccam update` mengunduh rilis ccam dari GitHub, memeriksanya terhadap `checksums.txt` milik rilis tersebut, dan mengganti biner yang sedang berjalan dengan satu rename. Gunakan jika Anda menginstal ccam dengan skrip instalasi atau dari arsip. [Dasbor](/features/dashboard) juga menanyakan rilis terbaru ke GitHub setiap kali dibuka dan menawarkannya lewat `U`, yang menjalankan langkah yang sama setelah bertanya. Tidak ada perintah lain yang menghubungi GitHub, sehingga perintah-perintah itu bekerja sama saja secara offline.
 
 ## Penggunaan
 

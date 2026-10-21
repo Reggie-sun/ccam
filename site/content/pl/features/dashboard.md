@@ -4,7 +4,7 @@ description: ccam w terminalu otwiera pełnoekranowy panel kont, grup, reguł fo
 updated: 2026-10-21
 order: 15
 translation: machine
-sourceHash: "27bd153b48b2"
+sourceHash: "19a99adef661"
 ---
 
 `ccam` bez argumentów otwiera pełnoekranowy panel, gdy standardowe wejście i wyjście są terminalem; w przeciwnym razie wypisuje `ccam list`. Panel pokazuje każde konto z jego użyciem i grupami i robi to samo co polecenia: uruchamia, dodaje, loguje, zmienia grupy, ustawia reguły folderów, sprawdza i naprawia. Uruchomienie konta go zamyka; dodawanie konta lub logowanie oddaje na chwilę terminal i potem do niego wraca.
@@ -24,6 +24,14 @@ sourceHash: "27bd153b48b2"
 ```
 
 Wiersz pod nazwami kart mówi jednym zdaniem, do czego służy bieżąca karta. W szerszym terminalu karta Accounts pokazuje też adres e-mail każdego konta.
+
+Przy każdym otwarciu panel pyta w tle GitHub, czy istnieje nowsze wydanie ccam; pierwsza klatka nigdy na to nie czeka, a bez sieci nic się nie pojawia. Gdy takie wydanie jest, wiersz pod tytułem je poleca:
+
+```console
+ ● ccam 0.10.2 is available (you have 0.10.1) · press U to update
+```
+
+`U` najpierw pyta, a potem aktualizuje tak jak [`ccam update`](/features/update): wydanie jest sprawdzane z jego sumami kontrolnymi SHA-256 i zastępuje ccam w jednym kroku. Otwarty panel to wciąż stara wersja, więc wyjdź i uruchom `ccam` ponownie. Gdy aktualizacji nie da się wykonać tutaj, na przykład dla ccam zainstalowanego z pakietu `.deb`, panel pokazuje tę samą wskazówkę co `ccam update` i zachowuje propozycję.
 
 Pierwsza klatka jest rysowana wyłącznie z `config.toml`, w znacznie mniej niż 100 ms; użycie pojawia się, gdy tylko dane konto odpowie. Każdy limit ma własny pasek: okno 5-godzinne, tygodniowe okno dla wszystkich modeli i własne tygodniowe okno Fable; `-` oznacza, że konto nie ma takiego okna. Procent zmienia kolor na żółty od 80% i na czerwony przy 100%, a wartości z pamięci podręcznej po nieudanym zapytaniu są rysowane bladym kolorem.
 
