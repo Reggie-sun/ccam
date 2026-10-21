@@ -22,6 +22,7 @@ import (
 	"github.com/jhyunwoo/ccam/internal/session"
 	"github.com/jhyunwoo/ccam/internal/shim"
 	"github.com/jhyunwoo/ccam/internal/tui"
+	"github.com/jhyunwoo/ccam/internal/update"
 	"github.com/jhyunwoo/ccam/internal/usage"
 )
 
@@ -293,6 +294,16 @@ func (b backend) RemoveGroup(name string, ch *group.Change) (*config.Config, str
 		return cfg, "", fmt.Errorf("group %s is removed, but its folder could not go to the trash: %w", name, err)
 	}
 	return cfg, "group " + name + " removed; its folder is in " + dst, nil
+}
+
+func (b backend) NewerRelease(ctx context.Context) string { return newerRelease(ctx) }
+
+func (b backend) Update(ctx context.Context) error {
+	if err := b.changing(); err != nil {
+		return err
+	}
+	// The dashboard says what happened; the steps' lines are not shown.
+	return b.e.runUpdate(ctx, update.Options{}, io.Discard)
 }
 
 func (b backend) Doctor(fix bool, only string) ([]doctor.Finding, error) {

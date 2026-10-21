@@ -29,6 +29,8 @@ type fake struct {
 	slow    time.Duration
 	running map[string]bool
 	calls   []string
+	newer   string // what NewerRelease answers
+	updErr  error
 }
 
 func newFake(t *testing.T) *fake {
@@ -80,6 +82,12 @@ func (f *fake) Extensions() (ExtView, error)        { return ExtView{}, nil }
 func (f *fake) Doctor(fix bool, only string) ([]doctor.Finding, error) {
 	f.calls = append(f.calls, fmt.Sprint("doctor ", fix, " ", only))
 	return []doctor.Finding{{Level: doctor.OK, Msg: "fine"}}, nil
+}
+
+func (f *fake) NewerRelease(context.Context) string { return f.newer }
+func (f *fake) Update(context.Context) error {
+	f.calls = append(f.calls, "update")
+	return f.updErr
 }
 
 func (f *fake) change(call string, edit func(*config.Config) error) (*config.Config, error) {
@@ -593,5 +601,43 @@ func TestHealthReportForAPipe(t *testing.T) {
 		if ansi.StringWidth(l) != w {
 			t.Fatalf("boxes of different widths:\n%s", out)
 		}
+	}
+}
+
+// A newer release is recommended under the title; U asks, then updates.
+func TestOffersANewerRelease(t *testing.T) {
+	f := newFake(t)
+	m := tea.Model(dash(f))
+	m = drain(m, m.Init())
+	if s := screen(m); strings.Contains(s, "is available") {
+		t.Fatalf("no newer release, but:\n%s", s)
+	}
+	m = press(t, m, "U")
+	if m.(*Dashboard).dlg != nil {
+		t.Fatal("U without a newer release opened a dialog")
+	}
+
+	f.newer = "v0.11.0"
+	d := dash(f)
+	m = drain(d, d.Init())
+	if s := screen(m); !strings.Contains(s, "● ccam 0.11.0 is available (you have v0.9.0) · press U to update") {
+		t.Fatal(s)
+	}
+	m = press(t, m, "U")
+	if s := screen(m); !strings.Contains(s, "Update ccam v0.9.0 → 0.11.0?") {
+		t.Fatal(s)
+	}
+	m = press(t, m, "enter")
+	s := screen(m)
+	if !slices.Contains(f.calls, "update") || !strings.Contains(s, "ccam 0.11.0 is installed; quit and start ccam again") || strings.Contains(s, "is available") {
+		t.Fatalf("%v\n%s", f.calls, s)
+	}
+
+	// A failed update says why and keeps the offer.
+	f.updErr = fmt.Errorf("/usr/bin/ccam was installed by a package")
+	d = dash(f)
+	m = press(t, drain(d, d.Init()), "U", "enter")
+	if s := screen(m); !strings.Contains(s, "installed by a package") || !strings.Contains(s, "is available") {
+		t.Fatal(s)
 	}
 }

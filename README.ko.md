@@ -48,7 +48,7 @@ ccam update            # 최신 릴리스 설치
 ccam update --check    # 새 릴리스가 있는지 알려 주기만 함
 ```
 
-`ccam update`는 내 시스템용 릴리스를 받아 릴리스의 `checksums.txt`(SHA-256)로 확인한 뒤, `ccam` 바이너리를 파일 이름 바꾸기 한 번으로 교체합니다. 단축 명령은 이 파일을 가리키는 링크라 함께 새 버전이 됩니다. `--version v0.2.0`은 그 릴리스를 설치하고(이전 버전도 가능), `ccam --dry-run update`는 받을 파일과 바꿀 파일만 보여줍니다. ccam이 스스로 업데이트를 확인하는 일은 없습니다. `.deb`로 설치했다면 apt에 맡깁니다. [릴리스](https://github.com/jhyunwoo/ccam/releases)에서 새 `.deb`를 받아 `sudo apt install ./ccam_<버전>_linux_<아키텍처>.deb`를 실행하세요. 설치 스크립트를 다시 실행해도 `~/.local/bin`의 ccam이 업데이트됩니다.
+`ccam update`는 내 시스템용 릴리스를 받아 릴리스의 `checksums.txt`(SHA-256)로 확인한 뒤, `ccam` 바이너리를 파일 이름 바꾸기 한 번으로 교체합니다. 단축 명령은 이 파일을 가리키는 링크라 함께 새 버전이 됩니다. `--version v0.2.0`은 그 릴리스를 설치하고(이전 버전도 가능), `ccam --dry-run update`는 받을 파일과 바꿀 파일만 보여줍니다. 대시보드(터미널에서 `ccam`)는 열 때마다 GitHub에 최신 릴리스를 묻고, 새 버전이 있으면 알려 줍니다. `U`를 누르고 확인하면 업데이트합니다. 다른 명령은 확인하지 않고, 묻지 않고 업데이트하는 일은 없습니다. `.deb`로 설치했다면 apt에 맡깁니다. [릴리스](https://github.com/jhyunwoo/ccam/releases)에서 새 `.deb`를 받아 `sudo apt install ./ccam_<버전>_linux_<아키텍처>.deb`를 실행하세요. 설치 스크립트를 다시 실행해도 `~/.local/bin`의 ccam이 업데이트됩니다.
 
 ## 빠른 시작
 

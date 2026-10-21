@@ -49,6 +49,11 @@ type Backend interface {
 	// Doctor runs the checks; with fix it repairs what is safe, only the
 	// findings of account only (doctor.General: of no account) when set.
 	Doctor(fix bool, only string) ([]doctor.Finding, error)
+	// NewerRelease is the latest ccam release tag when it is newer than this
+	// ccam, else "" (also offline). The dashboard asks it each time it opens.
+	NewerRelease(ctx context.Context) string
+	// Update installs the latest release, as `ccam update` does.
+	Update(ctx context.Context) error
 }
 
 // ExtView is `ccam ext` prepared for the Extensions tab.
@@ -131,6 +136,8 @@ type (
 		fixed    bool   // the result of f or F (doctor --fix)
 		scope    string // what was repaired, for the notice
 	}
+	newerMsg   struct{ tag string }
+	updatedMsg struct{ err error }
 )
 
 // notice is the line above the keys: a result or an error, cleared by the
@@ -173,6 +180,10 @@ type Dashboard struct {
 	health []doctor.Finding
 	hErr   error
 	loaded [5]bool
+	newer  string // a newer ccam release, offered with U
+	// updated is set once U installed newer; this process still runs the
+	// old binary until it is started again.
+	updated bool
 
 	dlg    dialog
 	help   bool
@@ -241,7 +252,8 @@ func (d *Dashboard) rowCount(tab int) int {
 }
 
 func (d *Dashboard) Init() tea.Cmd {
-	return tea.Batch(tea.RequestBackgroundColor, d.fetchAll(false), d.tick())
+	newer := func() tea.Msg { return newerMsg{d.be.NewerRelease(context.Background())} }
+	return tea.Batch(tea.RequestBackgroundColor, d.fetchAll(false), newer, d.tick())
 }
 
 func (d *Dashboard) fetchAll(fresh bool) tea.Cmd {
@@ -313,6 +325,18 @@ func (d *Dashboard) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case extMsg:
 		d.ext, d.extErr = &msg.view, msg.err
 		return d, nil
+	case newerMsg:
+		d.newer = strings.TrimPrefix(msg.tag, "v") // shown like d.version, which has no v
+		return d, nil
+	case updatedMsg:
+		d.busy = ""
+		if msg.err != nil {
+			d.notice = notice{text: msg.err.Error(), err: true}
+		} else {
+			d.updated = true
+			d.notice = notice{text: "ccam " + d.newer + " is installed; quit and start ccam again to use it"}
+		}
+		return d, nil
 	case healthMsg:
 		d.health, d.hErr = msg.findings, msg.err
 		if d.health == nil && d.hErr == nil {
@@ -369,6 +393,11 @@ func (d *Dashboard) key(k tea.KeyPressMsg) tea.Cmd {
 	case "?":
 		d.help = true
 		return nil
+	case "U":
+		if d.newer != "" && !d.updated && !(d.tab == tabGroups && d.groups.editing) {
+			d.dlg = d.confirmUpdate()
+			return nil
+		}
 	case "tab", "right":
 		if d.tab == tabGroups && d.groups.editing && k.String() == "tab" {
 			break
@@ -459,7 +488,11 @@ func (d *Dashboard) render() string {
 			head += strings.Repeat(" ", gap) + legend
 		}
 	}
-	top = append(top, head, "")
+	top = append(top, head)
+	if d.newer != "" && !d.updated {
+		top = append(top, " "+t.accent().Render(symItem+" ccam "+d.newer+" is available (you have "+d.version+")")+t.dim().Render(symDot+"press U to update"))
+	}
+	top = append(top, "")
 	var tabs []string
 	for i, n := range tabNames {
 		if i == d.tab {
@@ -614,6 +647,9 @@ func (d *Dashboard) helpView(w int) []string {
 	case tabHealth:
 		rows = append(rows, [][2]string{{"↑/↓", "select a box"}, {"f", "repair the selected box"}, {"F", "repair all (doctor --fix)"}}...)
 	}
+	if d.newer != "" && !d.updated {
+		rows = append(rows, [2]string{"U", "update ccam to " + d.newer})
+	}
 	cell := func(r [2]string) string { return t.accent().Render(padRight(r[0], 8)) + " " + r[1] }
 	out := []string{" " + t.bold().Render("Shortcuts"), ""}
 	if w < 72 {
@@ -632,4 +668,14 @@ func (d *Dashboard) helpView(w int) []string {
 		out = append(out, line)
 	}
 	return out
+}
+
+// confirmUpdate asks before U installs the newer release.
+func (d *Dashboard) confirmUpdate() dialog {
+	return newConfirm("Update ccam "+d.version+" → "+d.newer+"?",
+		"Like `ccam update`: the release is downloaded from GitHub, checked against its SHA-256 checksums and put in place of this ccam in one step. Start ccam again afterwards to use it.",
+		"Yes, update", func(d *Dashboard) tea.Cmd {
+			d.busy = "Updating ccam to " + d.newer + "…"
+			return tea.Batch(func() tea.Msg { return updatedMsg{d.be.Update(context.Background())} }, d.tick())
+		})
 }

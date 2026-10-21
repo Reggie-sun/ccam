@@ -1,5 +1,5 @@
 // Package update replaces the running ccam binary with a GitHub release.
-// Only `ccam update` uses it; nothing checks for updates on its own.
+// `ccam update` uses it, and the dashboard asks Newer each time it opens.
 package update
 
 import (
@@ -170,6 +170,20 @@ func orDev(v string) string {
 		return "dev"
 	}
 	return v
+}
+
+// Newer returns the latest release tag when it is newer than the running
+// version, and "" otherwise. A development build has nothing to compare
+// with, so it gets "" without a request.
+func (u *Updater) Newer(ctx context.Context) (string, error) {
+	if _, release := parseVersion(u.Current); !release {
+		return "", nil
+	}
+	tag, err := u.Latest(ctx)
+	if err != nil || compareVersions(u.Current, strings.TrimPrefix(tag, "v")) >= 0 {
+		return "", err
+	}
+	return tag, nil
 }
 
 // Latest asks the releases page which tag is the latest. GitHub answers

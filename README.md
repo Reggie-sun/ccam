@@ -50,7 +50,7 @@ ccam update            # install the latest release
 ccam update --check    # only say whether a newer release exists
 ```
 
-`ccam update` downloads the release for your system, checks it against the release's `checksums.txt` (SHA-256) and replaces the `ccam` binary in one rename; shortcut commands link to it, so they update too. `--version v0.2.0` installs a specific release (also an older one), and `ccam --dry-run update` shows what would be downloaded and replaced. ccam never checks for updates on its own. A `.deb` install is left to apt: download the new `.deb` from [Releases](https://github.com/jhyunwoo/ccam/releases) and run `sudo apt install ./ccam_<version>_linux_<arch>.deb`. Rerunning the install script also updates a `~/.local/bin` install.
+`ccam update` downloads the release for your system, checks it against the release's `checksums.txt` (SHA-256) and replaces the `ccam` binary in one rename; shortcut commands link to it, so they update too. `--version v0.2.0` installs a specific release (also an older one), and `ccam --dry-run update` shows what would be downloaded and replaced. The dashboard (`ccam` on a terminal) asks GitHub for the latest release each time it opens and, when there is a newer one, offers it: press `U` and confirm. No other command checks, and ccam never updates without asking. A `.deb` install is left to apt: download the new `.deb` from [Releases](https://github.com/jhyunwoo/ccam/releases) and run `sudo apt install ./ccam_<version>_linux_<arch>.deb`. Rerunning the install script also updates a `~/.local/bin` install.
 
 ## Quick start
 

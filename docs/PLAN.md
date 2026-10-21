@@ -589,3 +589,9 @@ clausona(larcane97/clausona v0.12.0-beta) 조사에서 나온 단점을 보완�
 ## 2026-10-21: Health 탭에서 고른 상자만 수리
 
 - 소유자 요청으로 대시보드 Health 탭의 `f`가 선택한 상자만 수리합니다. 계정 상자면 그 계정의 결과만, General 상자면 계정과 무관한 결과(플러그인 경로, 단축 명령)만 `ccam doctor --fix`처럼 고치고, 나머지 계정은 점검만 합니다. 문제가 없는 상자에서는 `nothing to repair in <이름>`만 보여 줍니다. 예전처럼 모두 고치는 키는 `F`입니다. 이를 위해 `doctor.Options.FixOnly`(계정 이름, 또는 `doctor.General`)를 더했고 `Backend.Doctor`가 그 값을 받습니다. `ccam doctor --fix` 명령은 그대로 전부 고칩니다.
+
+## 2026-10-21: 대시보드의 업데이트 권유
+
+- 소유자 요청으로 "ccam은 스스로 업데이트를 확인하지 않는다"는 2026-10-19 결정을 바꿨습니다. 대시보드(터미널에서 `ccam`)가 열릴 때마다 백그라운드에서 GitHub의 최신 릴리스를 묻습니다(`update.Updater.Newer`, `ccam update`와 같은 `/releases/latest` 리다이렉트, 10초 제한). 소유자가 고른 대로 하루 캐시나 끄는 설정은 두지 않았습니다. 첫 화면은 기다리지 않고, 오프라인이거나 개발 빌드면 아무것도 표시하지 않습니다.
+- 새 버전이 있으면 제목 줄 아래에 `● ccam <새 버전> is available (you have <지금 버전>) · press U to update`를 보여 주고, `U`는 확인 창을 거쳐 `ccam update`와 같은 단계(`env.runUpdate`: 체크섬 확인, 한 번의 이름 바꾸기, Windows 단축 명령 다시 연결)로 설치합니다. 실행 중인 대시보드는 옛 바이너리이므로 "quit and start ccam again"을 안내합니다. apt로 설치한 경우 등 실패하면 `ccam update`와 같은 안내를 오류로 보여 주고 권유는 남깁니다. dry run에서는 설치를 거절합니다.
+- 다른 명령(`ccam <이름>` 실행 경로 포함)은 여전히 네트워크에 접근하지 않습니다.

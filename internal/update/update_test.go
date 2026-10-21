@@ -444,3 +444,22 @@ func TestWindowsInstallRenamesTheRunningBinary(t *testing.T) {
 		t.Fatal("temp file left")
 	}
 }
+
+// The dashboard asks Newer each time it opens: a tag only when it is newer,
+// and no request at all from a development build.
+func TestNewer(t *testing.T) {
+	f := release()
+	u := setup(t, "0.2.0", f)
+	if tag, err := u.Newer(context.Background()); err != nil || tag != "v0.3.0" {
+		t.Fatalf("%q %v", tag, err)
+	}
+	u.Current = "0.3.0"
+	if tag, err := u.Newer(context.Background()); err != nil || tag != "" {
+		t.Fatalf("up to date: %q %v", tag, err)
+	}
+	n := len(f.requests())
+	u.Current = "dev"
+	if tag, err := u.Newer(context.Background()); err != nil || tag != "" || len(f.requests()) != n {
+		t.Fatalf("dev: %q %v %v", tag, err, f.requests())
+	}
+}
