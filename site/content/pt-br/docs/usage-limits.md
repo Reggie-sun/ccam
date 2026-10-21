@@ -1,10 +1,10 @@
 ---
 title: Limites de uso e troca de contas
-description: Veja em barras o uso de 5 horas, semanal e do Fable de cada conta do Claude Code com ccam usage e abra a conta com mais espaço com ccam next --auto.
+description: Veja o uso de 5 horas e o uso semanal de cada conta do Claude Code com ccam usage e abra a conta com mais espaço com ccam next --auto.
 updated: 2026-10-21
 order: 5
 translation: machine
-sourceHash: "0e64e3251c69"
+sourceHash: "fadb998482da"
 ---
 
 `ccam usage` mostra quanto cada conta já usou do limite de 5 horas, do limite semanal e do limite semanal próprio de cada modelo (como o Fable). `ccam next --auto` abre a conta com mais espaço, e `--continue` leva junto a conversa atual.

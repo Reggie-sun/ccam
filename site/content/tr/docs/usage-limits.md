@@ -1,10 +1,10 @@
 ---
 title: Kullanım limitleri ve hesap değiştirme
-description: Tüm Claude Code hesaplarının 5 saatlik, haftalık ve Fable kullanımını ccam usage ile çubuklar halinde görün, en çok pay kalan hesabı ccam next --auto ile açın.
+description: Tüm Claude Code hesaplarının 5 saatlik ve haftalık kullanımını ccam usage ile görün, en çok pay kalan hesabı ccam next --auto ile açın.
 updated: 2026-10-21
 order: 5
 translation: machine
-sourceHash: "0e64e3251c69"
+sourceHash: "fadb998482da"
 ---
 
 `ccam usage`, her hesabın 5 saatlik limitin, haftalık limitin ve her modelin kendi haftalık limitinin (Fable gibi) ne kadarını kullandığını gösterir. `ccam next --auto` en çok pay kalan hesabı açar, `--continue` ise mevcut konuşmayı o hesaba taşır.

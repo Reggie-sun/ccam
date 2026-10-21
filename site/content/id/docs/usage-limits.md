@@ -1,10 +1,10 @@
 ---
 title: Batas penggunaan dan perpindahan akun
-description: Lihat penggunaan 5 jam, mingguan, dan Fable setiap akun Claude Code sebagai bilah dengan ccam usage, lalu buka akun dengan sisa kuota terbanyak lewat ccam next --auto.
+description: Lihat penggunaan 5 jam dan mingguan setiap akun Claude Code dengan ccam usage, lalu buka akun dengan sisa kuota terbanyak lewat ccam next --auto.
 updated: 2026-10-21
 order: 5
 translation: machine
-sourceHash: "0e64e3251c69"
+sourceHash: "fadb998482da"
 ---
 
 `ccam usage` menampilkan seberapa banyak batas 5 jam, batas mingguan, dan batas mingguan khusus setiap model (seperti Fable) yang sudah digunakan setiap akun. `ccam next --auto` membuka akun dengan sisa kuota terbanyak, dan `--continue` membawa percakapan saat ini ke akun tersebut.

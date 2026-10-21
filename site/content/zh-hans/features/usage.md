@@ -1,10 +1,10 @@
 ---
 title: 用量限制
-description: ccam usage 以用量条一次显示每个账号的 5 小时、每周和按模型（Fable）的限额，ccam statusline 在 Claude Code 中显示账号名和用量。
+description: ccam usage 一次显示每个账号的 5 小时限额和每周限额，ccam statusline 在 Claude Code 中显示账号名和用量。
 updated: 2026-10-21
 order: 7
 translation: machine
-sourceHash: "0e9587b79ce8"
+sourceHash: "b26800c6fa54"
 ---
 
 `ccam usage` 显示每个账号已用掉多少 5 小时限额、每周限额以及各模型自己的每周限额（例如 Fable），每项限额一个用量条，并附上距离重置的时间。在开始一项长任务之前，或者当 Claude Code 提示你快到限额时，用它查看哪个账号还有余量。`ccam statusline` 是供 Claude Code 使用的状态栏命令：它在 Claude Code 中显示账号名和用量，并为 `ccam usage` 保存这些数字。

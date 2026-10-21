@@ -1,10 +1,10 @@
 ---
 title: 사용량 한도
-description: ccam usage는 모든 계정의 5시간 한도, 주간 한도, 모델별(Fable) 한도를 막대로 한 번에 보여 주고, ccam statusline은 Claude Code 안에 계정 이름과 사용량을 표시합니다.
+description: ccam usage는 모든 계정의 5시간 한도와 주간 한도를 한 번에 보여 주고, ccam statusline은 Claude Code 안에 계정 이름과 사용량을 표시합니다.
 updated: 2026-10-21
 order: 7
 translation: machine
-sourceHash: "0e9587b79ce8"
+sourceHash: "b26800c6fa54"
 ---
 
 `ccam usage`는 각 계정이 5시간 한도, 주간 한도, 모델별 주간 한도(Fable 등)를 얼마나 썼는지 한도마다 막대 하나로 보여 주고, 초기화까지 남은 시간도 함께 표시합니다. 긴 작업을 시작하기 전이나 Claude Code가 한도가 가까워졌다고 알릴 때 실행해, 어느 계정에 여유가 남았는지 확인하세요. `ccam statusline`은 Claude Code의 상태 표시줄 명령입니다. Claude Code 안에 계정 이름과 사용량을 표시하고, `ccam usage`가 쓸 수 있도록 수치를 저장합니다.

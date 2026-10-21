@@ -1,10 +1,10 @@
 ---
 title: Nutzungslimits und Kontowechsel
-description: Die 5-Stunden-, Wochen- und Fable-Nutzung aller Claude Code-Konten mit ccam usage als Balken sehen und mit ccam next --auto das Konto mit dem meisten Spielraum öffnen.
+description: Die 5-Stunden- und Wochennutzung aller Claude Code-Konten mit ccam usage sehen und mit ccam next --auto das Konto mit dem meisten Spielraum öffnen.
 updated: 2026-10-21
 order: 5
 translation: machine
-sourceHash: 0e64e3251c69
+sourceHash: fadb998482da
 ---
 
 `ccam usage` zeigt, wie viel jedes Konto von seinem 5-Stunden-Limit, seinem Wochenlimit und dem eigenen Wochenlimit jedes Modells (etwa Fable) verbraucht hat. `ccam next --auto` öffnet das Konto mit dem meisten Spielraum, und `--continue` nimmt das aktuelle Gespräch mit.

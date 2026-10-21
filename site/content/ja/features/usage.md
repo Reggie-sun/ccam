@@ -1,10 +1,10 @@
 ---
 title: 使用量の上限
-description: ccam usageはすべてのアカウントの5時間、週間、モデル別（Fable）の上限を一度にバーで表示し、ccam statuslineはClaude Codeにアカウント名と使用量を表示します。
+description: ccam usageはすべてのアカウントの5時間と週間の上限を一度に表示し、ccam statuslineはClaude Codeにアカウント名と使用量を表示します。
 updated: 2026-10-21
 order: 7
 translation: machine
-sourceHash: "0e9587b79ce8"
+sourceHash: "b26800c6fa54"
 ---
 
 `ccam usage`は、各アカウントが5時間の上限、週間の上限、モデルごとの週間上限（Fableなど）をどれだけ使ったかを、上限ごとのバーとリセットまでの時間で表示します。長い作業を始める前や、Claude Codeが上限に近いことを知らせたときに使い、どのアカウントに余裕が残っているかを確認します。`ccam statusline`はClaude Code用のステータスラインのコマンドです。Claude Codeの中にアカウント名と使用量を表示し、その数値を`ccam usage`のために保存します。

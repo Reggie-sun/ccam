@@ -1,10 +1,10 @@
 ---
 title: Limiti di utilizzo
-description: ccam usage mostra insieme, come barre, i limiti su 5 ore, settimanali e per modello (Fable) di tutti gli account, e ccam statusline mette il nome dell'account e l'utilizzo in Claude Code.
+description: ccam usage mostra insieme i limiti su 5 ore e settimanali di tutti gli account, e ccam statusline mette il nome dell'account e l'utilizzo in Claude Code.
 updated: 2026-10-21
 order: 7
 translation: machine
-sourceHash: "0e9587b79ce8"
+sourceHash: "b26800c6fa54"
 ---
 
 `ccam usage` mostra quanta parte del limite su 5 ore, del limite settimanale e del limite settimanale proprio di ogni modello (come Fable) ha usato ogni account, con una barra per limite e il tempo mancante al suo azzeramento. Usalo prima di iniziare un'attività lunga, o quando Claude Code ti avvisa che un limite è vicino, per vedere quale account ha ancora margine. `ccam statusline` è il comando per la riga di stato di Claude Code: mostra il nome dell'account e l'utilizzo dentro Claude Code e salva i numeri per `ccam usage`.

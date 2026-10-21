@@ -1,10 +1,10 @@
 ---
 title: 用量限制
-description: ccam usage 以長條一次顯示每個帳號的 5 小時、每週和各模型（Fable）的限制，ccam statusline 則在 Claude Code 中顯示帳號名稱和用量。
+description: ccam usage 一次顯示每個帳號的 5 小時和每週限制，ccam statusline 則在 Claude Code 中顯示帳號名稱和用量。
 updated: 2026-10-21
 order: 7
 translation: machine
-sourceHash: "0e9587b79ce8"
+sourceHash: "b26800c6fa54"
 ---
 
 `ccam usage` 會顯示每個帳號已使用了多少 5 小時限制、每週限制，以及各模型自己的每週限制（例如 Fable），每項限制一個長條，並附上距離重設的時間。在開始一項長時間的工作之前，或 Claude Code 告訴你快要達到限制時，可以用它查看哪個帳號還有剩餘額度。`ccam statusline` 是 Claude Code 的狀態列指令：它會在 Claude Code 中顯示帳號名稱和用量，並為 `ccam usage` 儲存這些數字。

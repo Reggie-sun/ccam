@@ -1,10 +1,10 @@
 ---
 title: Iyakokin amfani
-description: ccam usage yana nuna iyakokin awa 5, na mako da na kowane model (Fable) na kowane asusu a lokaci ɗaya a matsayin sanduna, kuma ccam statusline yana saka sunan asusun da amfaninsa a Claude Code.
+description: ccam usage yana nuna iyakokin awa 5 da na mako na kowane asusu a lokaci ɗaya, kuma ccam statusline yana saka sunan asusun da amfaninsa a Claude Code.
 updated: 2026-10-21
 order: 7
 translation: machine
-sourceHash: "0e9587b79ce8"
+sourceHash: "b26800c6fa54"
 ---
 
 `ccam usage` yana nuna nawa kowane asusu ya yi amfani da shi daga iyakar awa 5, iyakar mako da iyakar mako ta kowane model (kamar Fable), a matsayin sanda ɗaya ga kowace iyaka tare da lokacin da ya rage kafin ta sake saitawa. Yi amfani da shi kafin ka fara dogon aiki, ko idan Claude Code ya gaya maka iyaka ta kusa, don ganin asusun da ke da sauran sarari. `ccam statusline` shi ne umarnin layin matsayi (status line) na Claude Code: yana nuna sunan asusun da amfaninsa a cikin Claude Code kuma yana ajiye lambobin don `ccam usage`.

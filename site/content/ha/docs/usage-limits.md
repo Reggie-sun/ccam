@@ -1,10 +1,10 @@
 ---
 title: Iyakokin amfani da sauya asusai
-description: Ga amfanin awa 5, na mako da na Fable na kowane asusun Claude Code a matsayin sanduna da ccam usage, sannan ka buɗe asusun da ya fi sarari da ccam next --auto.
+description: Ga amfanin awa 5 da na mako na kowane asusun Claude Code da ccam usage, sannan ka buɗe asusun da ya fi sarari da ccam next --auto.
 updated: 2026-10-21
 order: 5
 translation: machine
-sourceHash: 0e64e3251c69
+sourceHash: fadb998482da
 ---
 
 `ccam usage` yana nuna nawa kowane asusu ya yi amfani da shi daga iyakar awa 5, iyakar mako da iyakar mako ta kowane model (kamar Fable). `ccam next --auto` yana buɗe asusun da ya fi sauran sarari, kuma `--continue` yana ɗauko tattaunawar yanzu zuwa can.

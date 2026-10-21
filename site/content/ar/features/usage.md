@@ -1,10 +1,10 @@
 ---
 title: حدود الاستخدام
-description: يعرض ccam usage حد الخمس ساعات والحد الأسبوعي وحد كل نموذج (Fable) لكل الحسابات دفعة واحدة على شكل أشرطة، ويضع ccam statusline اسم الحساب واستخدامه داخل Claude Code.
+description: يعرض ccam usage حدّي الخمس ساعات والأسبوع لكل الحسابات دفعة واحدة، ويضع ccam statusline اسم الحساب واستخدامه داخل Claude Code.
 updated: 2026-10-21
 order: 7
 translation: machine
-sourceHash: "0e9587b79ce8"
+sourceHash: "b26800c6fa54"
 ---
 
 يعرض `ccam usage` مقدار ما استخدمه كل حساب من حد الخمس ساعات والحد الأسبوعي والحد الأسبوعي الخاص بكل نموذج (مثل Fable)، على شكل شريط لكل حد مع الوقت المتبقي حتى إعادة ضبطه. استخدمه قبل أن تبدأ مهمة طويلة، أو عندما يخبرك Claude Code أن حدًا ما يقترب، لترى أي حساب لا تزال لديه سعة. و`ccam statusline` هو أمر سطر الحالة في Claude Code: يعرض اسم الحساب واستخدامه داخل Claude Code ويحفظ الأرقام لـ `ccam usage`.

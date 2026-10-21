@@ -1,10 +1,10 @@
 ---
 title: Kullanım limitleri
-description: ccam usage tüm hesapların 5 saatlik, haftalık ve modele özgü (Fable) limitlerini aynı anda çubuklar halinde gösterir, ccam statusline ise hesap adını ve kullanımı Claude Code içine yerleştirir.
+description: ccam usage tüm hesapların 5 saatlik ve haftalık limitlerini aynı anda gösterir, ccam statusline ise hesap adını ve kullanımı Claude Code içine yerleştirir.
 updated: 2026-10-21
 order: 7
 translation: machine
-sourceHash: "0e9587b79ce8"
+sourceHash: "b26800c6fa54"
 ---
 
 `ccam usage`, her hesabın 5 saatlik limitin, haftalık limitin ve her modelin kendi haftalık limitinin (Fable gibi) ne kadarını kullandığını, her limit için bir çubuk ve sıfırlanmasına kalan süreyle gösterir. Uzun bir işe başlamadan önce veya Claude Code bir limitin yaklaştığını söylediğinde, hangi hesapta pay kaldığını görmek için kullanın. `ccam statusline`, Claude Code için durum satırı komutudur: hesap adını ve kullanımı Claude Code içinde gösterir ve sayıları `ccam usage` için kaydeder.

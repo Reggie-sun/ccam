@@ -1,10 +1,10 @@
 ---
 title: 사용량 한도와 계정 전환
-description: ccam usage로 모든 Claude Code 계정의 5시간·주간·Fable 사용량을 막대로 확인하고, ccam next --auto로 여유가 가장 많은 계정을 엽니다.
+description: ccam usage로 모든 Claude Code 계정의 5시간·주간 사용량을 확인하고, ccam next --auto로 여유가 가장 많은 계정을 엽니다.
 updated: 2026-10-21
 order: 5
 translation: machine
-sourceHash: "0e64e3251c69"
+sourceHash: "fadb998482da"
 ---
 
 `ccam usage`는 각 계정이 5시간 한도, 주간 한도, 모델별 주간 한도(Fable 등)를 얼마나 썼는지 보여 줍니다. `ccam next --auto`는 여유가 가장 많은 계정을 열고, `--continue`는 지금 대화를 그 계정에서 이어 갑니다.

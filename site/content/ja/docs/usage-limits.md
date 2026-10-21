@@ -1,10 +1,10 @@
 ---
 title: 使用量の上限とアカウントの切り替え
-description: ccam usageですべてのClaude Codeアカウントの5時間、週間、Fableの使用量をバーで確認し、ccam next --autoで最も余裕があるアカウントを開きます。
+description: ccam usageですべてのClaude Codeアカウントの5時間と週間の使用量を確認し、ccam next --autoで最も余裕があるアカウントを開きます。
 updated: 2026-10-21
 order: 5
 translation: machine
-sourceHash: "0e64e3251c69"
+sourceHash: "fadb998482da"
 ---
 
 `ccam usage`は、各アカウントが5時間の上限、週間の上限、モデルごとの週間上限（Fableなど）をどれだけ使ったかを表示します。`ccam next --auto`は最も余裕があるアカウントを開き、`--continue`を付けると現在の会話を引き継ぎます。

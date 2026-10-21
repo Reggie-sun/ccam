@@ -1,10 +1,10 @@
 ---
 title: Giới hạn sử dụng và chuyển đổi tài khoản
-description: "Xem mức sử dụng 5 giờ, hàng tuần và Fable của mọi tài khoản Claude Code dưới dạng thanh bằng ccam usage, và mở tài khoản còn nhiều hạn mức nhất bằng ccam next --auto."
+description: "Xem mức sử dụng 5 giờ và hàng tuần của mọi tài khoản Claude Code bằng ccam usage, và mở tài khoản còn nhiều hạn mức nhất bằng ccam next --auto."
 updated: 2026-10-21
 order: 5
 translation: machine
-sourceHash: "0e64e3251c69"
+sourceHash: "fadb998482da"
 ---
 
 `ccam usage` cho biết mỗi tài khoản đã dùng bao nhiêu trong giới hạn 5 giờ, giới hạn hàng tuần và giới hạn hàng tuần riêng của từng mô hình (như Fable). `ccam next --auto` mở tài khoản còn nhiều hạn mức nhất, và `--continue` mang cuộc hội thoại hiện tại sang tài khoản đó.

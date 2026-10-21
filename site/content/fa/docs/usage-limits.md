@@ -1,10 +1,10 @@
 ---
 title: سقف مصرف و جابه‌جایی بین حساب‌ها
-description: مصرف ۵ ساعته، هفتگی و Fable همه حساب‌های Claude Code را با ccam usage به‌صورت نوار ببینید و حسابی را که بیشترین ظرفیت را دارد با ccam next --auto باز کنید.
+description: مصرف ۵ ساعته و هفتگی همه حساب‌های Claude Code را با ccam usage ببینید و حسابی را که بیشترین ظرفیت را دارد با ccam next --auto باز کنید.
 updated: 2026-10-21
 order: 5
 translation: machine
-sourceHash: 0e64e3251c69
+sourceHash: fadb998482da
 ---
 
 `ccam usage` نشان می‌دهد هر حساب چه مقدار از سقف ۵ ساعته، سقف هفتگی و سقف هفتگی ویژه هر مدل (مانند Fable) را مصرف کرده است. `ccam next --auto` حسابی را که بیشترین ظرفیت را دارد باز می‌کند و `--continue` گفتگوی فعلی را به آن منتقل می‌کند.

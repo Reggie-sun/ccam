@@ -1,6 +1,6 @@
 ---
 title: Usage limits
-description: ccam usage shows the 5-hour, weekly and per-model (Fable) limits of every account at once as bars, and ccam statusline puts the account name and usage in Claude Code.
+description: ccam usage shows the 5-hour and weekly limits of every account at once, and ccam statusline puts the account name and usage in Claude Code.
 updated: 2026-10-21
 order: 7
 translation: source
