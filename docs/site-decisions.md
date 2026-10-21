@@ -82,3 +82,12 @@ The owner found the sidebar hard to scan: one "Documentation" list mixed setup, 
 - **Design, not bug counts**: the page says that tools which copy logins have to keep refresh tokens in step and that lost logins are a common fix in those projects. It does not list other projects' issues by number.
 - **Speed is measured, not compared by name**: ccam's numbers come from `scripts/perf-check.sh`; the Python and Node.js start-up times are `python3 -c pass` and `node -e 0` under hyperfine on the same laptop. No other tool was installed or timed.
 - **"Where other tools do more" stays**, and grows with each thing ccam lacks (Windows, automatic switching, folder-based accounts, menu bar, other agents, Homebrew, signed checksums).
+
+## Reading by LLMs, 2026-10-21
+
+The owner asked for a site that an LLM can read and learn ccam from quickly. Already in place: `llms.txt` per locale, `llms-full.txt`, a Markdown copy of every docs page linked with `rel="alternate" type="text/markdown"`, and pages that render without JavaScript.
+
+- **Usage in llms.txt itself**: `scripts/llms.ts` puts the install commands and twelve essential commands (usage from `data/commands.json`, descriptions from the locale's `commands` messages) before the page lists, with links to `llms-full.txt` and the command reference. The few connecting lines are English in every locale, since adding message keys would touch all 30 message files for text only LLMs read.
+- **Home pages as Markdown**: each locale's `llms.txt` is also written as its home page's `index.md` (`/index.md`, `/<locale>/index.md`), and `lib/seo.ts` links it from the home page.
+- **Content-Signal**: `robots.txt` says `search=yes, ai-input=yes, ai-train=yes` (the owner's choice). It is a stated preference, not enforcement.
+- **No `Accept: text/markdown` negotiation**: it would put the Worker in front of every page view; the `.md` addresses and alternate links give the same content without that cost.

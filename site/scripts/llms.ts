@@ -14,6 +14,29 @@ function commandTable(code: string): string {
   return [`| ${m.docs.commandsTable.command} | ${m.docs.commandsTable.does} |`, "| --- | --- |", ...rows].join("\n");
 }
 
+// The commands an LLM needs first, in the order people use them; the rest
+// are in the command reference.
+const essentials = ["add", "name", "ccam", "list", "usage", "next", "fallback", "pick", "group", "folder", "doctor", "update"];
+
+/** How to use ccam at a glance: install, then the essential commands with
+ *  the locale's descriptions, so a reader need not open any page first. */
+function quickUsage(code: string): string {
+  const m = messages(code);
+  const lines = [
+    "- `curl -fsSL https://ccam.dev/install.sh | sh` (Linux, macOS) or `irm https://ccam.dev/install.ps1 | iex` (Windows PowerShell): install ccam; Claude Code must be installed first",
+    ...essentials.map((key) => {
+      const c = commands.find((c) => c.key === key)!;
+      return `- \`${c.usage}\`: ${m.commands[key]}`;
+    }),
+  ];
+  return [
+    `Documentation in one file: ${abs("/llms-full.txt")}`,
+    "Every page listed below is plain Markdown; its HTML version is the same address without `.md`.",
+    `Main commands (all of them: ${abs(`/${code}/docs/commands.md`)}):`,
+    lines.join("\n"),
+  ].join("\n\n");
+}
+
 /** Absolute links, so the Markdown works outside the site. */
 function toMarkdown(p: SourcePage): string {
   const body = p.body
@@ -46,11 +69,14 @@ for (const l of builtLocales()) {
     `> ${m.facts.what}`,
     [m.facts.how, m.facts.install + " `curl -fsSL https://ccam.dev/install.sh | sh`", m.facts.official].map((f) => `- ${f}`).join("\n"),
     `Website: ${abs(homePath(l.code))}\nSource code: https://github.com/jhyunwoo/ccam`,
+    quickUsage(l.code),
     ...groups.filter(Boolean),
   ].join("\n\n");
-  const file = l.code === "en" ? join(OUT, "llms.txt") : join(OUT, l.code, "llms.txt");
-  await mkdir(dirname(file), { recursive: true });
-  await writeFile(file, text + "\n");
+  // llms.txt, and the same text as the home page's Markdown version.
+  const dir = l.code === "en" ? OUT : join(OUT, l.code);
+  await mkdir(dir, { recursive: true });
+  await writeFile(join(dir, "llms.txt"), text + "\n");
+  await writeFile(join(dir, "index.md"), text + "\n");
 }
 
 const full = pages.filter((p) => p.locale === "en").map(toMarkdown).join("\n---\n\n");

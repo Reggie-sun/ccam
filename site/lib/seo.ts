@@ -43,10 +43,12 @@ export function seo({ locale, title, description, path, alternates, og, type = "
   };
 }
 
-/** Docs pages also exist as plain Markdown next to the HTML (for LLMs). */
+/** Docs pages also exist as plain Markdown next to the HTML (for LLMs), and
+ *  each home page as index.md, the locale's llms.txt (scripts/llms.ts). */
 function markdownAlternate(path: string): Record<string, string> | undefined {
   const m = /^\/([^/]+)\/(docs|guides|features|compare|blog)\/([^/]+)\/$/.exec(path);
-  return m ? { "text/markdown": abs(`/${m[1]}/${m[2]}/${m[3]}.md`) } : undefined;
+  if (m) return { "text/markdown": abs(`/${m[1]}/${m[2]}/${m[3]}.md`) };
+  return /^\/([a-z-]+\/)?$/.test(path) ? { "text/markdown": abs(`${path}index.md`) } : undefined;
 }
 
 /** "<page> | ccam for Claude Code", or "<page> | ccam" when the page title

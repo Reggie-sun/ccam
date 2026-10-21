@@ -28,5 +28,7 @@ const index = builtLocales().map((l) => `  <sitemap>\n    <loc>${abs(`/sitemaps/
 await writeFile(join(OUT, "sitemap-index.xml"), `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${index.join("\n")}\n</sitemapindex>\n`);
 
 // Search and AI crawlers are all welcome (docs/WEBSITE_PLAN.md 9.4).
-await writeFile(join(OUT, "robots.txt"), `User-agent: *\nAllow: /\n\nSitemap: ${abs("/sitemap-index.xml")}\n`);
+// Content-Signal (contentsignals.org): search, answers built from the pages
+// and model training are all welcome; it is a stated preference only.
+await writeFile(join(OUT, "robots.txt"), `User-agent: *\nContent-Signal: search=yes, ai-input=yes, ai-train=yes\nAllow: /\n\nSitemap: ${abs("/sitemap-index.xml")}\n`);
 console.log(`sitemap: ${all.length} URLs in ${builtLocales().length} locale sitemaps`);
