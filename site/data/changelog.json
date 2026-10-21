@@ -1,5 +1,11 @@
 [
   {
+    "tag": "v0.10.1",
+    "date": "2026-10-21",
+    "url": "https://github.com/jhyunwoo/ccam/releases/tag/v0.10.1",
+    "notes": "<h3>New</h3>\n<ul>\n<li>F in the dashboard&#39;s Health tab repairs only the selected box; F repairs everything</li>\n</ul>\n"
+  },
+  {
     "tag": "v0.10.0",
     "date": "2026-10-21",
     "url": "https://github.com/jhyunwoo/ccam/releases/tag/v0.10.0",
