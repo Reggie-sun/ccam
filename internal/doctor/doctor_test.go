@@ -68,7 +68,7 @@ func TestAuthEnvWarnsWithoutValue(t *testing.T) {
 	t.Setenv("ANTHROPIC_AUTH_TOKEN", "")
 	r := &report{}
 	checkAuthEnv(r)
-	if len(r.out) != 1 || r.out[0].Level != Warn || strings.Contains(r.out[0].String(), "secret") {
+	if len(r.out) != 1 || r.out[0].Level != Warn || strings.Contains(r.out[0].Msg, "secret") {
 		t.Fatalf("findings %v", r.out)
 	}
 }
@@ -123,8 +123,8 @@ func TestIdentityChecks(t *testing.T) {
 	write("c", "u9", "other@x")
 	r := &report{}
 	checkIdentities(r, p, cfg)
-	all := fmt.Sprint(r.out)
-	if !strings.Contains(all, "b: logged in to the same Claude account as a") || !strings.Contains(all, "c: now logged in as other@x, but ccam recorded c@x") || len(r.out) != 2 {
+	if len(r.out) != 2 || r.out[0].Profile != "b" || !strings.HasPrefix(r.out[0].Msg, "logged in to the same Claude account as a") ||
+		r.out[1].Profile != "c" || !strings.HasPrefix(r.out[1].Msg, "now logged in as other@x, but ccam recorded c@x") {
 		t.Fatalf("%v", r.out)
 	}
 }
@@ -153,5 +153,25 @@ func TestMissingLinkSaysHowItIsMade(t *testing.T) {
 	}
 	if got := line(true); got == "" || strings.Contains(got, "makes it") {
 		t.Fatalf("with --fix: %q", got)
+	}
+}
+
+// The dashboard's Health tab groups findings by account and area.
+func TestFindingsSayTheirArea(t *testing.T) {
+	t.Setenv("CCAM_HOME", t.TempDir())
+	p := paths.FromEnv()
+	cfg := &config.Config{Profiles: []config.Profile{{Name: "a", Slot: 1}}}
+	os.MkdirAll(p.ProfileDir("a"), 0o700)
+	areas := map[string]bool{}
+	for _, f := range Run(p, cfg, Options{}) {
+		if f.Profile == "a" {
+			areas[f.Area] = true
+		}
+		if f.Area == "" {
+			t.Errorf("no area: %v", f)
+		}
+	}
+	if !areas["Login"] || !areas["Share links"] {
+		t.Fatalf("areas of a: %v", areas)
 	}
 }

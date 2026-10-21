@@ -62,7 +62,7 @@ ccwork               # Claude Code as account work (via its shortcut)
 ccam work --resume   # by name; everything after the name goes to claude unchanged
 ccam                 # dashboard: accounts, groups, folders, extensions, health
 ccam folder work ~/code/company   # name-less launches in that folder use work
-ccam usage           # 5-hour and weekly usage of every account
+ccam usage           # 5-hour, weekly and per-model (Fable) usage of every account
 ccam next --continue # out of quota? continue the same conversation on the next account
 ccam --fallback work -p "fix the tests"   # in scripts: rerun on another account at the limit
 ```

@@ -495,3 +495,90 @@ func TestFolderColumnsLineUp(t *testing.T) {
 		t.Fatal(screen(m))
 	}
 }
+
+// The Health tab draws a box per account with a row per area, so where a
+// problem is shows at a glance; ↓ moves to the next box.
+func TestHealthBoxPerAccount(t *testing.T) {
+	f := newFake(t)
+	d := dash(f)
+	d.width, d.height = 80, 40
+	d.tab, d.loaded[tabHealth] = tabHealth, true
+	d.health = []doctor.Finding{
+		{Level: doctor.OK, Area: "Claude Code", Msg: "Claude Code 2.1.304"},
+		{Level: doctor.OK, Profile: "personal", Area: "Login", Msg: "login valid"},
+		{Level: doctor.OK, Profile: "personal", Area: "Share links", Msg: "share links OK"},
+		{Level: doctor.Info, Profile: "personal", Area: "Folder", Msg: "unknown entries: x.json"},
+		{Level: doctor.OK, Profile: "work", Area: "Login", Msg: "login valid"},
+		{Level: doctor.Error, Profile: "work", Area: "Share links", Msg: "settings.json is a real file"},
+	}
+	s := screen(d)
+	for _, want := range []string{
+		"Checks Claude Code and each account's folder",
+		"✔ General   ✔ personal   ✘ work",
+		"╭─ ✘ work · 1 problem ─",
+		"│ ✔ Folder       OK                                                          │\n │ ℹ              unknown entries: x.json",
+		"│ ✘ Share links  settings.json is a real file",
+		"1 problem; f repairs",
+	} {
+		if !strings.Contains(s, want) {
+			t.Errorf("missing %q in\n%s", want, s)
+		}
+	}
+	for _, l := range strings.Split(s, "\n") {
+		if w := ansi.StringWidth(l); w > 80 {
+			t.Errorf("wider than 80 (%d): %s", w, l)
+		}
+	}
+	m := press(t, d, "down", "down")
+	if c := m.(*Dashboard).cursor[tabHealth]; c != 2 {
+		t.Fatalf("cursor %d", c)
+	}
+}
+
+func TestEveryTabSaysWhatItIsFor(t *testing.T) {
+	if len(tabAbout) != len(tabNames) {
+		t.Fatal("a tab has no description")
+	}
+	for _, a := range tabAbout {
+		if len(a) > 79 {
+			t.Errorf("wider than the screen: %s", a)
+		}
+	}
+}
+
+func TestAccountsShowFiveHourWeeklyAndFable(t *testing.T) {
+	f := newFake(t)
+	w := func(p float64) usage.Window { return usage.Window{Percent: p, Known: true} }
+	f.usage["personal"] = usage.Report{Name: "personal", Status: usage.StatusOK, Limits: &usage.Limits{
+		FiveHour: w(50), Weekly: w(25), Scoped: []usage.Scoped{{Name: "Fable", Window: w(100)}}}}
+	f.usage["work"] = usage.Report{Name: "work", Status: usage.StatusOK, Limits: &usage.Limits{FiveHour: w(2)}}
+	d := dash(f)
+	d.width, d.height = 100, 30
+	m := drain(d, d.fetchAll(false))
+	s := screen(m)
+	for _, want := range []string{"5-hour       Weekly       Fable", "███░░░  50%  █▌░░░░  25%  ██████ 100%", "  2%  -            -"} {
+		if !strings.Contains(s, want) {
+			t.Errorf("missing %q in\n%s", want, s)
+		}
+	}
+}
+
+// `ccam doctor` into a pipe: plain text, nothing wrapped or cut, and every
+// box as wide as the widest.
+func TestHealthReportForAPipe(t *testing.T) {
+	long := strings.Repeat("x", 120)
+	lines := HealthReport([]doctor.Finding{
+		{Level: doctor.OK, Area: "Claude Code", Msg: "2.1.304"},
+		{Level: doctor.Warn, Profile: "a", Area: "Share links", Msg: long},
+	}, 0, false)
+	out := strings.Join(lines, "\n")
+	if strings.Contains(out, "\x1b[") || !strings.Contains(out, long) || !strings.Contains(out, "✔ General   ⚠ a") {
+		t.Fatal(out)
+	}
+	w := ansi.StringWidth(lines[2])
+	for _, l := range lines[2:] {
+		if ansi.StringWidth(l) != w {
+			t.Fatalf("boxes of different widths:\n%s", out)
+		}
+	}
+}

@@ -18,10 +18,10 @@ import (
 )
 
 const (
-	fiveW  = 13 // "████████ 100%"
-	weekW  = 4  // "100%"
-	usageW = fiveW + 2 + weekW
-	lastW  = 4
+	cellBarW = 6
+	cellW    = cellBarW + 5 // "██████ 100%"
+	usageW   = 3*cellW + 4  // 5-hour, weekly and Fable
+	lastW    = 4
 )
 
 func (d *Dashboard) current() *config.Profile {
@@ -78,7 +78,7 @@ func (d *Dashboard) accountsView(w int) ([]string, int) {
 	if showEmail {
 		head += padRight("Email", emailW) + "  "
 	}
-	head += padRight("5-hour", fiveW) + "  " + "7-day" + " "
+	head += padRight("5-hour", cellW) + "  " + padRight("Weekly", cellW) + "  " + padRight("Fable", cellW) + "  "
 	if showLast {
 		head += padRight("Last", lastW) + "  "
 	}
@@ -127,7 +127,7 @@ func (d *Dashboard) accountsView(w int) ([]string, int) {
 	return out, d.cursor[tabAccounts] + 1
 }
 
-// usageCell is the 5-hour and 7-day columns, usageW wide.
+// usageCell is the 5-hour, weekly and Fable columns, usageW wide.
 func (d *Dashboard) usageCell(p *config.Profile) string {
 	t := d.theme
 	r, ok := d.usage[p.Name]
@@ -145,24 +145,29 @@ func (d *Dashboard) usageCell(p *config.Profile) string {
 	}
 	// Values from a cache after a failed lookup are drawn faint.
 	stale := r.Status != usage.StatusOK
-	five, week := padRight(t.dim().Render("-"), fiveW), padLeft(t.dim().Render("-"), weekW)
-	if fh := r.Limits.FiveHour; fh.Known {
-		pct := fmt.Sprintf("%3.0f%%", fh.Percent)
+	cell := func(w usage.Window) string {
+		if !w.Known {
+			return padRight(t.dim().Render("-"), cellW)
+		}
+		pct := fmt.Sprintf("%3.0f%%", w.Percent)
 		if stale {
-			five = t.dim().Render(plainBar(fh.Percent, 8) + " " + pct)
-		} else {
-			five = t.bar(fh.Percent, 8) + " " + t.percentStyle(fh.Percent).Render(pct)
+			return t.dim().Render(plainBar(w.Percent, cellBarW) + " " + pct)
+		}
+		return t.bar(w.Percent, cellBarW) + " " + t.percentStyle(w.Percent).Render(pct)
+	}
+	l := r.Limits
+	return cell(l.FiveHour) + "  " + cell(l.Weekly) + "  " + cell(modelWindow(l, "fable"))
+}
+
+// modelWindow is the model-specific weekly window whose name contains
+// family, such as Fable's.
+func modelWindow(l *usage.Limits, family string) usage.Window {
+	for _, s := range l.Scoped {
+		if strings.Contains(strings.ToLower(s.Name), family) {
+			return s.Window
 		}
 	}
-	if wk := r.Limits.Weekly; wk.Known {
-		pct := fmt.Sprintf("%3.0f%%", wk.Percent)
-		if stale {
-			week = t.dim().Render(pct)
-		} else {
-			week = t.percentStyle(wk.Percent).Render(pct)
-		}
-	}
-	return five + "  " + week
+	return usage.Window{}
 }
 
 func plainBar(percent float64, width int) string {
@@ -407,7 +412,7 @@ func (d *Dashboard) usageDetail(p *config.Profile) dialog {
 		}
 		return line
 	}
-	lines := []string{row("5-hour", r.Limits.FiveHour), row("7-day", r.Limits.Weekly)}
+	lines := []string{row("5-hour", r.Limits.FiveHour), row("Weekly", r.Limits.Weekly)}
 	for _, s := range r.Limits.Scoped {
 		lines = append(lines, row(s.Name+" weekly", s.Window))
 	}

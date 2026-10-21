@@ -293,7 +293,8 @@ func TestDoctorFixWaitsForARunningAccount(t *testing.T) {
 	}
 	os.MkdirAll(filepath.Join(c.p.ProfileDir("work"), "projects"), 0o700) // a real folder where team's link belongs
 	out, _, _ := c.run("", "doctor", "--fix")
-	if !strings.Contains(out, "work: is running; quit Claude Code there") {
+	box := out[strings.Index(out, "╭─ ✘ work"):]
+	if !strings.Contains(box[:strings.Index(box, "╰")], "is running; quit Claude Code there") {
 		t.Fatal(out)
 	}
 	if info, err := os.Lstat(filepath.Join(c.p.ProfileDir("work"), "projects")); err != nil || info.Mode()&os.ModeSymlink != 0 {

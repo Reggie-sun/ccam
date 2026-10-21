@@ -60,7 +60,7 @@ ccwork               # 단축 명령으로 work 계정의 Claude Code
 ccam work --resume   # 이름으로 열기, 뒤의 인자는 그대로 claude에 전달
 ccam                 # 대시보드: 계정·그룹·폴더·확장 기능·점검
 ccam folder work ~/code/company   # 그 폴더에서 이름 없이 실행하면 work
-ccam usage           # 모든 계정의 5시간·주간 사용률
+ccam usage           # 모든 계정의 5시간·주간·모델별(Fable) 사용률
 ccam next --continue # 한도에 걸리면 다음 계정에서 같은 대화 이어가기
 ccam --fallback work -p "fix the tests"   # 스크립트: 한도에 걸리면 다른 계정으로 다시 실행
 ```
@@ -123,10 +123,16 @@ SSH로 접속한 원격 서버에서 로그인할 때는 내 컴퓨터의 브라
 
 ```
 $ ccam usage
- Account     5-hour        Resets    Weekly        Resets    As of
- 1 personal  ██████░░  72% 1h 40m    ███░░░░░  41% 3d 6h     just now
- 2 work      █░░░░░░░   8% 4h 12m    ██░░░░░░  19% 5d 2h     just now
- 3 side      ████████ 100% 22m       █████░░░  68% 1d 9h     12m ago (cached)
+ 1 personal  just now
+   5-hour   ██████████████░░░░░░  72%  resets in 1h 40m
+   Weekly   ████████░░░░░░░░░░░░  41%  resets in 3d 6h
+   Fable    ██████████████████░░  88%  resets in 1d 6h
+ 2 work      just now
+   5-hour   ██░░░░░░░░░░░░░░░░░░   8%  resets in 4h 12m
+   Weekly   ████░░░░░░░░░░░░░░░░  19%  resets in 5d 2h
+ 3 side      12m ago (cached)
+   5-hour   ████████████████████ 100%  resets in 22m
+   Weekly   ██████████████░░░░░░  68%  resets in 1d 9h
 → Most headroom: work   (open it with ccam next --auto)
 ```
 

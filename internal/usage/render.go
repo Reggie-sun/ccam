@@ -16,83 +16,86 @@ type RenderOptions struct {
 	Now     time.Time
 }
 
-const barWidth = 8
+const barWidth = 20
 
-// resetWidth fits the longest Duration below a week, "23h 59m".
-const resetWidth = 8
+// labelWidth fits "5-hour", "Weekly" and most model names ("Fable", "Opus").
+const labelWidth = 8
 
 // width measures terminal columns. Box-drawing blocks are "ambiguous width";
 // Korean locales would count them as 2, but terminals draw them as 1.
 var width = &runewidth.Condition{EastAsianWidth: false}
 
-// Table renders reports as aligned lines: header first, one line per
-// account (plus model-specific lines with Verbose). Pending reports render
-// as "fetching…" so a live view can redraw in place.
+// Table renders reports as one block per account: a line with the slot,
+// name and age of the numbers, then one bar per limit (5-hour, weekly and
+// each model-specific weekly window). Pending reports render as
+// "fetching…" on the account line so a live view can redraw in place.
 func Table(reports []*Report, o RenderOptions) []string {
-	nameW := 5 // fits the "Account" header with the slot column
+	nameW := 0
 	for _, r := range reports {
 		if r != nil {
 			nameW = max(nameW, width.StringWidth(r.Name))
 		}
 	}
-	lines := []string{fmt.Sprintf(" %s  %s %s  %s %s  %s",
-		pad("Account", nameW+2), pad("5-hour", barWidth+5), pad("Resets", resetWidth), pad("Weekly", barWidth+5), pad("Resets", resetWidth), "As of")}
+	var lines []string
 	for _, r := range reports {
 		if r == nil {
 			continue
 		}
-		lines = append(lines, row(r, nameW, o)...)
+		lines = append(lines, block(r, nameW, o)...)
 	}
 	return lines
 }
 
-func row(r *Report, nameW int, o RenderOptions) []string {
-	head := fmt.Sprintf(" %d %s", r.Slot, pad(r.Name, nameW))
-	var body string
+func block(r *Report, nameW int, o RenderOptions) []string {
+	head := fmt.Sprintf(" %d %s  ", r.Slot, pad(r.Name, nameW))
 	switch {
 	case r.Status == StatusPending:
-		body = "fetching…"
+		return []string{head + "fetching…"}
 	case r.Status == StatusAPI:
-		body = "no limits (API)"
+		return []string{head + "no limits (API)"}
 	case r.Status == StatusLoggedOut:
-		body = fmt.Sprintf("not logged in → ccam login %s", r.Name)
+		return []string{head + fmt.Sprintf("not logged in → ccam login %s", r.Name)}
 	case r.Limits == nil && r.Status == StatusExpired:
-		body = fmt.Sprintf("login expired, run `ccam %s` once to refresh", r.Name)
+		return []string{head + fmt.Sprintf("login expired, run `ccam %s` once to refresh", r.Name)}
 	case r.Limits == nil:
-		body = "lookup failed: " + r.Err
-	default:
-		l := r.Limits
-		body = fmt.Sprintf("%s %s  %s %s  %s",
-			gauge(l.FiveHour, o), pad(until(l.FiveHour, o.Now), resetWidth),
-			gauge(l.Weekly, o), pad(until(l.Weekly, o.Now), resetWidth), basis(r, o.Now))
+		return []string{head + "lookup failed: " + r.Err}
 	}
-	out := []string{head + "  " + body}
-	if o.Verbose && r.Limits != nil {
-		labelW := barWidth + 5 + 1 + resetWidth // the 5-hour and its reset column
-		for _, s := range r.Limits.Scoped {
-			label := width.Truncate("· "+s.Name+" weekly", labelW, "…")
-			out = append(out, fmt.Sprintf(" %s  %s  %s", pad("", nameW+2), pad(label, labelW),
-				gauge(s.Window, o)+" "+until(s.Window, o.Now)))
-		}
+	l := r.Limits
+	out := []string{head + basis(r, o.Now),
+		limitLine("5-hour", l.FiveHour, o),
+		limitLine("Weekly", l.Weekly, o)}
+	for _, s := range l.Scoped {
+		out = append(out, limitLine(s.Name, s.Window, o))
+	}
+	if o.Verbose {
 		// "(cached)" already says the numbers are saved ones; the line adds
 		// where they came from, which "(cached)" does not tell.
 		switch r.Source {
 		case "live":
-			out = append(out, fmt.Sprintf(" %s  source: live, from the usage endpoint", pad("", nameW+2)))
+			out = append(out, "   source: live, from the usage endpoint")
 		case "claude":
-			out = append(out, fmt.Sprintf(" %s  source: live, from Claude Code (usage_source = \"claude\")", pad("", nameW+2)))
+			out = append(out, "   source: live, from Claude Code (usage_source = \"claude\")")
 		case "statusline":
-			out = append(out, fmt.Sprintf(" %s  source: saved by the status line", pad("", nameW+2)))
+			out = append(out, "   source: saved by the status line")
 		case "cache":
-			out = append(out, fmt.Sprintf(" %s  source: saved from the usage endpoint", pad("", nameW+2)))
+			out = append(out, "   source: saved from the usage endpoint")
 		}
 	}
 	return out
 }
 
+// limitLine is one window: label, bar, percent and time to reset.
+func limitLine(label string, w Window, o RenderOptions) string {
+	s := "   " + pad(width.Truncate(label, labelWidth, "…"), labelWidth) + " " + gauge(w, o)
+	if w.Known && !w.ResetsAt.IsZero() {
+		s += "  resets in " + until(w, o.Now)
+	}
+	return s
+}
+
 func gauge(w Window, o RenderOptions) string {
 	if !w.Known {
-		return pad("-", barWidth+5)
+		return "-"
 	}
 	filled := int(math.Round(math.Min(w.Percent, 100) / 100 * barWidth))
 	bar := strings.Repeat("█", filled) + strings.Repeat("░", barWidth-filled)

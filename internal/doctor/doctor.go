@@ -39,21 +39,9 @@ const (
 type Finding struct {
 	Level   Level
 	Profile string
+	Area    string // what was checked: "Login", "Share links", "Claude Code"…
 	Msg     string
 	Fixed   bool
-}
-
-func (f Finding) String() string {
-	mark := [...]string{"✓", "·", "!", "✗"}[f.Level]
-	prefix := ""
-	if f.Profile != "" {
-		prefix = f.Profile + ": "
-	}
-	suffix := ""
-	if f.Fixed {
-		suffix = " → fixed"
-	}
-	return fmt.Sprintf("%s %s%s%s", mark, prefix, f.Msg, suffix)
 }
 
 type Options struct {
@@ -66,11 +54,12 @@ type Options struct {
 const LayoutVersion = "2.1.302"
 
 type report struct {
-	out []Finding
+	out  []Finding
+	area string // the Area of the findings added next
 }
 
 func (r *report) add(level Level, prof, format string, a ...any) *Finding {
-	r.out = append(r.out, Finding{Level: level, Profile: prof, Msg: fmt.Sprintf(format, a...)})
+	r.out = append(r.out, Finding{Level: level, Profile: prof, Area: r.area, Msg: fmt.Sprintf(format, a...)})
 	return &r.out[len(r.out)-1]
 }
 
@@ -96,6 +85,7 @@ func Run(p paths.Paths, cfg *config.Config, opt Options) []Finding {
 // ccam recorded (a /login inside a session), and folders logged in to one
 // Claude account, which share its limits.
 func checkIdentities(r *report, p paths.Paths, cfg *config.Config) {
+	r.area = "Login"
 	seen := map[string]string{} // account and organization → first profile
 	for i := range cfg.Profiles {
 		prof := &cfg.Profiles[i]
@@ -121,6 +111,7 @@ func checkIdentities(r *report, p paths.Paths, cfg *config.Config) {
 // checkGroups reports group entries that do nothing, and account names that
 // became ccam commands since the account was added.
 func checkGroups(r *report, cfg *config.Config) {
+	r.area = "Groups"
 	for _, g := range cfg.Groups {
 		for _, m := range g.Members {
 			if !cfg.IsAccount(m) {
@@ -128,12 +119,14 @@ func checkGroups(r *report, cfg *config.Config) {
 			}
 		}
 	}
+	r.area = "Config"
 	if s := cfg.UsageSource; s != "" && s != "live" && s != "claude" {
 		r.add(Warn, "", "usage_source %q is neither live nor claude; ccam asks the usage endpoint (live)", s)
 	}
 	if t := cfg.Theme; t != "" && t != "auto" && !slices.Contains(config.Themes, t) {
 		r.add(Warn, "", "theme %q is not one ccam knows (auto, %s); the screens follow the terminal's background", t, strings.Join(config.Themes, ", "))
 	}
+	r.area = "Name"
 	for _, prof := range cfg.Profiles {
 		if config.Reserved[prof.Name] {
 			r.add(Warn, prof.Name, "`ccam %s` is now a ccam command; start this account with `ccam run %s` or rename it (ccam rename %s <new-name>)", prof.Name, prof.Name, prof.Name)
@@ -157,6 +150,7 @@ func checkAPIKey(r *report, name string, api *config.API) {
 // checkFolders reports `ccam folder` entries that no longer work. They are
 // left for the user: removing one would change which account starts there.
 func checkFolders(r *report, cfg *config.Config) {
+	r.area = "Folder rules"
 	for _, f := range cfg.Folders {
 		if _, ok := cfg.Find(f.Account); !ok {
 			r.add(Error, "", "%s is set to account %q, which does not exist (ccam folder <account> %s, or ccam folder --remove %s)", f.Path, f.Account, f.Path, f.Path)
@@ -179,6 +173,7 @@ func Failed(fs []Finding) bool {
 }
 
 func checkClaude(r *report, p paths.Paths, cfg *config.Config) {
+	r.area = "Claude Code"
 	bin, err := launcher.ResolveClaude(p, cfg.ClaudeBin)
 	if err != nil {
 		r.add(Error, "", "%v", err)
@@ -199,6 +194,7 @@ func checkClaude(r *report, p paths.Paths, cfg *config.Config) {
 // checkAuthEnv warns about credentials in the environment: every account
 // inherits them, and Claude Code prefers them over the account's own login.
 func checkAuthEnv(r *report) {
+	r.area = "Environment"
 	for _, v := range []string{"CLAUDE_CODE_OAUTH_TOKEN", "ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN"} {
 		if os.Getenv(v) != "" {
 			r.add(Warn, "", "%s is set in this shell; every account launched from it may use that credential instead of its own login", v)
@@ -212,6 +208,7 @@ func checkUsageFormat(r *report, p paths.Paths, cfg *config.Config, f *usage.Fet
 	if f == nil {
 		return
 	}
+	r.area = "Usage"
 	for i := range cfg.Profiles {
 		prof := &cfg.Profiles[i]
 		a := usage.Account{Name: prof.Name, Slot: prof.Slot, Dir: profile.Dir(p, prof), SessionDir: launcher.SessionDir(p, prof.Name)}
@@ -229,6 +226,7 @@ func checkUsageFormat(r *report, p paths.Paths, cfg *config.Config, f *usage.Fet
 
 func checkProfile(r *report, p paths.Paths, prof *config.Profile, fix bool) {
 	dir := profile.Dir(p, prof)
+	r.area = "Folder"
 	info, err := os.Stat(dir)
 	if err != nil {
 		r.add(Error, prof.Name, "profile folder is missing: %s", dir)
@@ -242,6 +240,7 @@ func checkProfile(r *report, p paths.Paths, prof *config.Profile, fix bool) {
 	}
 	checkCredentials(r, prof, dir, p.Home, fix)
 
+	r.area = "Share links"
 	problems := share.Check(dir, prof.Share, p.GroupsRoot())
 	if len(problems) == 0 {
 		r.add(OK, prof.Name, "share links OK")
@@ -291,6 +290,7 @@ func checkProfile(r *report, p paths.Paths, prof *config.Profile, fix bool) {
 }
 
 func checkCredentials(r *report, prof *config.Profile, dir, home string, fix bool) {
+	r.area = "Login"
 	cred := creds.FilePath(dir)
 	if info, err := os.Lstat(cred); err == nil {
 		if _, link := fsutil.LinkTarget(cred); link {
@@ -358,6 +358,7 @@ func orDash(s string) string {
 // checkUnknownEntries flags files Claude Code started creating that ccam
 // does not know about, a hint that the layout changed.
 func checkUnknownEntries(r *report, prof *config.Profile, dir string) {
+	r.area = "Folder"
 	entries, err := os.ReadDir(dir)
 	if err != nil {
 		return
@@ -378,6 +379,7 @@ func checkUnknownEntries(r *report, prof *config.Profile, dir string) {
 // into a shared group. They break when that profile is removed or renamed,
 // so --fix rewrites them to the group folder itself.
 func checkPlugins(r *report, p paths.Paths, cfg *config.Config, fix bool) {
+	r.area = "Plugins"
 	groups, _ := os.ReadDir(p.GroupsRoot())
 	sep := string(filepath.Separator)
 	for _, g := range groups {
@@ -426,6 +428,7 @@ func countPrefix(pluginsDir, prefix string) int {
 }
 
 func checkMCP(r *report, p paths.Paths, cfg *config.Config) {
+	r.area = "MCP"
 	for _, g := range cfg.Groups {
 		if !g.Has("mcp") {
 			continue
@@ -447,6 +450,7 @@ func checkShims(r *report, p paths.Paths, cfg *config.Config, opt Options) {
 	if opt.CcamPath == "" {
 		return
 	}
+	r.area = "Shortcuts"
 	var names, missing []string
 	for _, prof := range cfg.Profiles {
 		if prof.Shortcut == "" {

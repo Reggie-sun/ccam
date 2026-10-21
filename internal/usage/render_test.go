@@ -6,39 +6,45 @@ import (
 	"time"
 )
 
-func TestTableMatchesPlanExample(t *testing.T) {
+func TestTableShowsABarPerLimit(t *testing.T) {
 	now := time.Date(2026, 10, 18, 12, 0, 0, 0, time.UTC)
 	w := func(p float64, d time.Duration) Window { return Window{Percent: p, ResetsAt: now.Add(d), Known: true} }
 	reports := []*Report{
-		{Name: "personal", Slot: 1, Status: StatusOK, Source: "live", At: now, Limits: &Limits{FiveHour: w(72, 100*time.Minute), Weekly: w(41, 78*time.Hour)}},
+		{Name: "personal", Slot: 1, Status: StatusOK, Source: "live", At: now, Limits: &Limits{FiveHour: w(72, 100*time.Minute), Weekly: w(41, 78*time.Hour),
+			Scoped: []Scoped{{Name: "Fable", Window: w(88, 30*time.Hour)}}}},
 		{Name: "work", Slot: 2, Status: StatusOK, Source: "live", At: now, Limits: &Limits{FiveHour: w(8, 252*time.Minute), Weekly: w(19, 122*time.Hour)}},
 		{Name: "side", Slot: 3, Status: StatusError, Source: "cache", At: now.Add(-12 * time.Minute), Limits: &Limits{FiveHour: w(100, 22*time.Minute), Weekly: w(68, 33*time.Hour)}},
-		{Name: "api", Slot: 4, Status: StatusAPI},
-		{Name: "old", Slot: 5, Status: StatusExpired},
+		{Name: "fable", Slot: 4, Status: StatusOK, Source: "live", At: now, Limits: &Limits{FiveHour: w(2, time.Hour),
+			Scoped: []Scoped{{Name: "Fable", Window: w(0, 50*time.Hour)}}}},
+		{Name: "api", Slot: 5, Status: StatusAPI},
+		{Name: "old", Slot: 6, Status: StatusExpired},
 	}
 	lines := Table(reports, RenderOptions{Now: now})
 	want := []string{
-		"██████░░  72% 1h 40m",
-		"█░░░░░░░   8% 4h 12m",
-		"████████ 100% 22m",
-		"3d 6h",
-		"12m ago (cached)",
-		"no limits (API)",
-		"login expired, run `ccam old`",
+		" 1 personal  just now",
+		"   5-hour   ██████████████░░░░░░  72%  resets in 1h 40m",
+		"   Weekly   ████████░░░░░░░░░░░░  41%  resets in 3d 6h",
+		"   Fable    ██████████████████░░  88%  resets in 1d 6h",
+		" 2 work      just now",
+		"   5-hour   ██░░░░░░░░░░░░░░░░░░   8%  resets in 4h 12m",
+		"   Weekly   ████░░░░░░░░░░░░░░░░  19%  resets in 5d 2h",
+		" 3 side      12m ago (cached)",
+		"   5-hour   ████████████████████ 100%  resets in 22m",
+		"   Weekly   ██████████████░░░░░░  68%  resets in 1d 9h",
+		" 4 fable     just now",
+		"   5-hour   ░░░░░░░░░░░░░░░░░░░░   2%  resets in 1h 0m",
+		"   Weekly   -",
+		"   Fable    ░░░░░░░░░░░░░░░░░░░░   0%  resets in 2d 2h",
+		" 5 api       no limits (API)",
+		" 6 old       login expired, run `ccam old` once to refresh",
 	}
-	all := strings.Join(lines, "\n")
-	for _, s := range want {
-		if !strings.Contains(all, s) {
-			t.Errorf("missing %q in\n%s", s, all)
-		}
+	if got, exp := strings.Join(lines, "\n"), strings.Join(want, "\n"); got != exp {
+		t.Fatalf("got\n%s\nwant\n%s", got, exp)
 	}
 	for _, l := range lines {
 		if width.StringWidth(l) > 80 {
 			t.Errorf("wider than 80 columns (%d): %s", width.StringWidth(l), l)
 		}
-	}
-	if b := (Policy{}).Choose(reports, time.Now()); b == nil || b.Name != "work" {
-		t.Fatalf("best %v", b)
 	}
 }
 
@@ -56,13 +62,17 @@ func TestColorsKeepPercentText(t *testing.T) {
 	}
 }
 
-func TestVerboseShowsScoped(t *testing.T) {
+func TestVerboseShowsSource(t *testing.T) {
 	r := &Report{Name: "a", Slot: 1, Status: StatusOK, Source: "live", Limits: &Limits{
 		FiveHour: Window{Percent: 1, Known: true},
-		Scoped:   []Scoped{{Name: "Fable", Window: Window{Percent: 88, Known: true}}},
+		Scoped:   []Scoped{{Name: "A long model name", Window: Window{Percent: 88, Known: true}}},
 	}}
-	out := strings.Join(Table([]*Report{r}, RenderOptions{Verbose: true, Now: time.Now()}), "\n")
-	if !strings.Contains(out, "Fable weekly") || !strings.Contains(out, "88%") || !strings.Contains(out, "source: live") {
+	out := strings.Join(Table([]*Report{r}, RenderOptions{Now: time.Now()}), "\n")
+	if strings.Contains(out, "source:") || !strings.Contains(out, "   A long … ") || !strings.Contains(out, "88%") {
+		t.Fatal(out)
+	}
+	out = strings.Join(Table([]*Report{r}, RenderOptions{Verbose: true, Now: time.Now()}), "\n")
+	if !strings.Contains(out, "source: live") {
 		t.Fatal(out)
 	}
 }

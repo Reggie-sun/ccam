@@ -99,6 +99,15 @@ const (
 
 var tabNames = []string{"Accounts", "Groups", "Folders", "Extensions", "Health"}
 
+// tabAbout says in one line what each tab is for; it shows under the tabs.
+var tabAbout = []string{
+	"Your Claude accounts and their usage limits; enter launches the selected one.",
+	"Groups share settings, memory, extensions, MCP or history between accounts.",
+	"A folder rule picks the account that plain `ccam` starts in that folder.",
+	"Skills, commands, agents, plugins, MCP and hooks, and which accounts see them.",
+	"Checks Claude Code and each account's folder, login and links (ccam doctor).",
+}
+
 type (
 	usageMsg struct {
 		name   string
@@ -222,6 +231,8 @@ func (d *Dashboard) rowCount(tab int) int {
 		return len(d.cfg.Groups)
 	case tabFolders:
 		return len(d.cfg.Folders)
+	case tabHealth:
+		return len(healthBoxes(d.health))
 	}
 	return 0
 }
@@ -454,7 +465,7 @@ func (d *Dashboard) render() string {
 			tabs = append(tabs, t.dim().Render(" "+n+" "))
 		}
 	}
-	top = append(top, " "+strings.Join(tabs, " "), "")
+	top = append(top, " "+strings.Join(tabs, " "), " "+t.dim().Render(tabAbout[d.tab]), "")
 
 	var dialog []string
 	if d.dlg != nil {

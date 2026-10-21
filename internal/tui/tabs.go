@@ -1,6 +1,8 @@
 package tui
 
 import (
+	"cmp"
+	"slices"
 	"strings"
 
 	tea "charm.land/bubbletea/v2"
@@ -158,6 +160,67 @@ func (d *Dashboard) extView(w int) []string {
 	return out
 }
 
+// healthBox is the findings of one account, or of ccam as a whole when
+// profile is "".
+type healthBox struct {
+	profile  string
+	findings []doctor.Finding
+}
+
+// healthBoxes groups findings into a General box (when it has any) and one
+// box per account, in the order doctor checked them.
+func healthBoxes(fs []doctor.Finding) []healthBox {
+	var boxes []healthBox
+	at := map[string]int{}
+	for _, f := range fs {
+		i, ok := at[f.Profile]
+		if !ok {
+			i = len(boxes)
+			at[f.Profile] = i
+			boxes = append(boxes, healthBox{profile: f.Profile})
+		}
+		boxes[i].findings = append(boxes[i].findings, f)
+	}
+	slices.SortStableFunc(boxes, func(a, b healthBox) int {
+		return cmp.Compare(min(len(a.profile), 1), min(len(b.profile), 1)) // General first
+	})
+	return boxes
+}
+
+// problems counts the findings that still need attention.
+func (b healthBox) problems() int {
+	n := 0
+	for _, f := range b.findings {
+		if f.Level >= doctor.Warn && !f.Fixed {
+			n++
+		}
+	}
+	return n
+}
+
+// worst is the level the box's title shows.
+func (b healthBox) worst() doctor.Level {
+	l := doctor.OK
+	for _, f := range b.findings {
+		if f.Level >= doctor.Warn && !f.Fixed {
+			l = max(l, f.Level)
+		}
+	}
+	return l
+}
+
+func (t Theme) levelIcon(l doctor.Level) string {
+	return map[doctor.Level]string{
+		doctor.OK: t.success().Render(symOK), doctor.Info: t.dim().Render(symInfo),
+		doctor.Warn: t.warning().Render(symWarn), doctor.Error: t.error().Render(symFail),
+	}[l]
+}
+
+// healthAreaW fits the longest area name, "Share links" and "Folder rules".
+const healthAreaW = 12
+
+// healthView draws a summary line, then one box per account with a row per
+// checked area, so a problem shows where it is at a glance.
 func (d *Dashboard) healthView(w int) ([]string, int) {
 	t := d.theme
 	switch {
@@ -166,43 +229,135 @@ func (d *Dashboard) healthView(w int) ([]string, int) {
 	case d.health == nil:
 		return []string{" " + t.accent().Render(spinner[d.frame%len(spinner)]) + " Checking…"}, -1
 	}
-	var out []string
-	fails := 0
-	for _, f := range d.health {
-		icon := map[doctor.Level]string{
-			doctor.OK: t.success().Render(symOK), doctor.Info: t.dim().Render(symInfo),
-			doctor.Warn: t.warning().Render(symWarn), doctor.Error: t.error().Render(symFail),
-		}[f.Level]
-		if f.Level >= doctor.Warn && !f.Fixed {
-			fails++
-		}
-		text := f.Msg
-		if f.Profile != "" {
-			text = f.Profile + ": " + text
-		}
-		if f.Fixed {
-			text += " " + t.success().Render("→ fixed")
-		}
-		for i, l := range wrap(text, w-5) {
-			if i == 0 {
-				out = append(out, " "+icon+" "+l)
-			} else {
-				out = append(out, "   "+l)
-			}
-		}
-	}
+	out, cur, fails := healthLines(t, d.health, w, min(d.cursor[tabHealth], len(healthBoxes(d.health))-1))
 	out = append(out, "")
 	if fails == 0 {
 		out = append(out, " "+t.success().Render(symOK)+" everything looks fine")
 	} else {
 		out = append(out, " "+plural(fails, "problem")+"; f repairs what can be repaired safely (ccam doctor --fix).")
 	}
-	return out, -1
+	return out, cur
+}
+
+// HealthReport is `ccam doctor`'s output: the Health tab's summary line and
+// boxes, width columns wide (0 fits each box to its longest line and wraps
+// nothing, for output that is not a terminal), in the terminal's own colors.
+func HealthReport(fs []doctor.Finding, width int, color bool) []string {
+	out, _, _ := healthLines(ThemeFor("light-ansi", false), fs, width, -1)
+	if !color {
+		for i, l := range out {
+			out[i] = ansi.Strip(l)
+		}
+	}
+	return out
+}
+
+// healthLines is the summary line and one box per account, w columns wide
+// (0: see HealthReport). Box sel (-1: none) gets the accent border; cur is
+// its first line. fails counts the findings that still need attention.
+func healthLines(t Theme, fs []doctor.Finding, w, sel int) (out []string, cur, fails int) {
+	boxes := healthBoxes(fs)
+	var summary []string
+	for _, b := range boxes {
+		fails += b.problems()
+		summary = append(summary, t.levelIcon(b.worst())+" "+cmp.Or(b.profile, "General"))
+	}
+	out = []string{" " + strings.Join(summary, "   "), ""}
+	boxW := w - 2
+	if w <= 0 {
+		// Every box as wide as the widest line, so they line up.
+		boxW = 0
+		for _, b := range boxes {
+			_, rows := healthRows(t, b, 0)
+			for _, r := range rows {
+				boxW = max(boxW, ansi.StringWidth(r)+4)
+			}
+		}
+	}
+	cur = -1
+	for i, b := range boxes {
+		if i == sel {
+			cur = len(out)
+		}
+		out = append(out, healthBoxLines(t, b, boxW, i == sel)...)
+	}
+	return out, cur, fails
+}
+
+// healthBoxLines draws one box boxW wide (at least as wide as its title):
+// the title names the account and its problem count, and each row is an
+// area with its findings.
+func healthBoxLines(t Theme, b healthBox, boxW int, selected bool) []string {
+	border := t.subtle()
+	if selected {
+		border = t.accent()
+	}
+	title, rows := healthRows(t, b, boxW)
+	boxW = max(boxW, ansi.StringWidth(title)+6)
+	inner := boxW - 4
+	top := border.Render("╭─ ") + title + " "
+	top += border.Render(strings.Repeat("─", max(0, boxW-ansi.StringWidth(top)-1)) + "╮")
+	out := []string{" " + top}
+	for _, r := range rows {
+		out = append(out, " "+border.Render("│")+" "+padRight(ansi.Truncate(r, inner, symMore), inner)+" "+border.Render("│"))
+	}
+	out = append(out, " "+border.Render("╰"+strings.Repeat("─", max(0, boxW-2))+"╯"))
+	return out
+}
+
+// healthRows is a box's title and rows, wrapped to fit a box boxW wide
+// (0: not wrapped). An account's folder has a finding only when something
+// is wrong with it, so its row says OK otherwise.
+func healthRows(t Theme, b healthBox, boxW int) (string, []string) {
+	title := t.levelIcon(b.worst()) + " " + t.bold().Render(cmp.Or(b.profile, "General"))
+	if n := b.problems(); n > 0 {
+		title += t.dim().Render(symDot + plural(n, "problem"))
+	}
+	fs := b.findings
+	if b.profile != "" {
+		// The same rows in the same order in every account's box.
+		if !slices.ContainsFunc(fs, func(f doctor.Finding) bool { return f.Area == "Folder" && f.Level != doctor.Info }) {
+			fs = append([]doctor.Finding{{Level: doctor.OK, Area: "Folder", Msg: "OK"}}, fs...)
+		}
+		rank := func(f doctor.Finding) int {
+			if i := slices.Index([]string{"Folder", "Login", "Share links"}, f.Area); i >= 0 {
+				return i
+			}
+			return 3
+		}
+		fs = slices.Clone(fs)
+		slices.SortStableFunc(fs, func(a, b doctor.Finding) int { return cmp.Compare(rank(a), rank(b)) })
+	}
+	var rows []string
+	prev := ""
+	for _, f := range fs {
+		label := ""
+		if f.Area != prev {
+			label = f.Area
+		}
+		prev = f.Area
+		text := f.Msg
+		if f.Fixed {
+			text += " " + t.success().Render("→ fixed")
+		}
+		lines := strings.Split(text, "\n")
+		if boxW > 0 {
+			lines = wrap(text, boxW-4-2-healthAreaW-1)
+		}
+		for i, l := range lines {
+			if i == 0 {
+				rows = append(rows, t.levelIcon(f.Level)+" "+padRight(t.dim().Render(label), healthAreaW)+" "+l)
+			} else {
+				rows = append(rows, strings.Repeat(" ", 2+healthAreaW+1)+l)
+			}
+		}
+	}
+	return title, rows
 }
 
 func (d *Dashboard) healthKey(k tea.KeyPressMsg) tea.Cmd {
 	if k.String() != "f" {
-		return nil
+		return d.moveCursor(k) // ↑/↓ go from box to box
 	}
 	d.dlg = newConfirm("Repair what can be repaired?", "Like `ccam doctor --fix`: missing links are made, and a real file where a link belongs is backed up first. Nothing is deleted.", "Yes, repair", func(d *Dashboard) tea.Cmd {
 		d.busy = "Repairing…"

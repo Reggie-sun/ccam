@@ -162,7 +162,7 @@ func TestMigrateCopiesIntoTheSharedGroup(t *testing.T) {
 	if !strings.Contains(string(b), "opus") || !strings.Contains(string(b), "dark") {
 		t.Fatalf("merged settings: %s", b)
 	}
-	if out := h.ok("ccam", "doctor"); strings.Contains(out, "✗") {
+	if out := h.ok("ccam", "doctor"); strings.Contains(out, "✘") {
 		t.Fatalf("doctor after migrate:\n%s", out)
 	}
 }

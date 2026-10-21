@@ -31,7 +31,7 @@ func usageCmd(e *env) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "usage",
 		Aliases: []string{"u"},
-		Short:   "5-hour and weekly usage of every account, with reset times",
+		Short:   "5-hour, weekly and per-model usage of every account, with reset times",
 		Args:    cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if opt.Source != "" && opt.Source != "live" && opt.Source != "cache" && opt.Source != "claude" {
@@ -72,7 +72,7 @@ func usageCmd(e *env) *cobra.Command {
 	cmd.Flags().BoolVar(&asJSON, "json", false, "print as JSON")
 	cmd.Flags().IntVar(&watch, "watch", 60, "refresh every N seconds")
 	cmd.Flags().Lookup("watch").NoOptDefVal = "60"
-	cmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "show per-model limits and the data source")
+	cmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "show where the numbers came from")
 	cmd.Flags().StringVar(&opt.Source, "source", "", "live (ccam asks the usage endpoint), claude (Claude Code does, slower) or cache (saved values) (config: usage_source)")
 	cmd.Flags().BoolVar(&opt.NoCache, "no-cache", false, "ignore the 60-second cache")
 	cmd.Flags().BoolVar(&opt.Refresh, "refresh", false, "refresh expired tokens (only for accounts not running)")
