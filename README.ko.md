@@ -11,15 +11,17 @@
 
 > **이용약관을 먼저 확인하세요.** 계정을 여러 개 쓰는 것이 허용되는지는 각 계정의 Anthropic 이용약관과 소속 조직의 정책에 따릅니다. ccam은 계정 전환을 편하게 할 뿐, 사용량 한도를 우회하지 않습니다.
 
+> **Team·Enterprise 시트.** 자동 선택(`ccam next`, `--fallback`, `ccam pick`, 대시보드의 `n`)은 같은 Claude Team이나 Enterprise 조직의 시트 사이에서도 계정을 바꿉니다. Anthropic 고객센터는 "팀 플랜의 각 시트는 한 명의 지정된 개인에게 할당되며, 그 사람만 사용할 수 있습니다", "사용자는 다른 사용자의 계정을 통해 작업을 라우팅하여 해당 사용자의 남은 사용량을 사용할 수 없습니다"라고 안내합니다([Team 플랜](https://support.claude.com/ko/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129), [Enterprise 플랜](https://support.claude.com/ko/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)도 마찬가지). 따라서 시트 사이에서 자동 선택을 쓰면 Anthropic 이용약관을 위반할 수 있습니다. 이 기능에 기대기 전에 소속 조직과 Anthropic에 확인하세요. 개인 요금제(Pro, Max)는 위의 안내를 따릅니다.
+
 프로그램 출력(메시지, 질문, 도움말)은 모두 영어입니다.
 
 ## ccam을 쓰는 이유
 
 - **로그인을 복사하지 않습니다.** 계정마다 자기 폴더에서 한 번 로그인하고, 토큰 갱신은 Claude Code가 그 폴더에서 직접 합니다. 계정을 바꿔도 다른 계정이 로그아웃되지 않고, 여러 계정을 동시에 실행할 수 있습니다.
 - **Claude Code 옆에서 돌아가는 프로세스가 없습니다.** ccam은 `exec`로 `claude`가 됩니다. 래퍼·프록시·데몬이 없고, 실행할 때 더해지는 시간은 약 4 ms입니다. (`exec`이 없는 Windows에서는 Claude Code가 끝날 때까지 기다렸다가 종료 코드를 그대로 돌려줍니다.)
-- **그룹이 공유할 것을 정합니다.** 그룹은 공유할 항목(MCP 서버·설정·CLAUDE.md·확장 기능·대화 내역)과 계정을 정하고, 계정은 여러 그룹에 들 수 있습니다. MCP 서버는 `--mcp-config`로 넘기므로 `.claude.json`을 고치지 않습니다.
-- **바꾸기 전에 계획을 보여 주고 백업합니다.** 파일을 옮기기 전의 계획 출력, 백업, `--dry-run`, 원자적 쓰기, `ccam doctor --fix`.
-- **스크립트도 한도에 대응합니다.** `ccam --fallback work -p "…"`는 `work`가 한도에 걸리면 여유가 가장 많은 계정으로 같은 명령을 다시 실행하고, `ccam pick`은 병렬 작업자마다 다른 계정을 줍니다. 여유 있는 계정이 없으면 둘 다 종료 코드 75로 끝내거나 `--wait`로 기다립니다. 대화형 세션은 상태줄이 `ccam next --auto --continue`를 알려 줍니다.
+- **그룹이 공유할 것을 정합니다.** 그룹은 공유할 항목(MCP 서버·설정·CLAUDE.md·확장 기능·대화 내역)과 계정을 정하고, 계정은 여러 그룹에 들 수 있습니다. MCP 서버는 `--mcp-config`로 넘기므로 실행할 때 `.claude.json`을 고치지 않습니다. (계정이 MCP 공유를 그만두거나 다시 시작할 때, `ccam mcp import`, Remote Control에서만 백업을 남기고 고칩니다.)
+- **바꾸기 전에 계획을 보여 주고 백업합니다.** 파일을 옮기기 전의 계획 출력(폴더 안에서 서로 다른 파일도 알려 줌), 백업, `--dry-run`, 원자적 쓰기, 그리고 중간에 멈춘 변경까지 마무리하는 `ccam doctor --fix`.
+- **스크립트도 한도에 대응합니다.** `ccam --fallback work -p "…"`는 `work`가 한도에 걸리면 여유가 가장 많은 계정으로 같은 명령을 다시 실행하고, `ccam pick`은 병렬 작업자마다 다른 계정을 줍니다. 여유 있는 계정이 없으면 둘 다 종료 코드 75로 끝내거나 `--wait`로 기다립니다. 대화형 세션은 상태줄이 `ccam next --auto --continue`를 알려 줍니다. 같은 Team이나 Enterprise 조직 안에서는 이 선택이 작업을 다른 시트로 옮기므로 Anthropic 이용약관 위반이 될 수 있습니다(위의 "Team·Enterprise 시트" 참고).
 - **프로젝트마다 맞는 계정.** `ccam folder work ~/code/company`로 그 폴더에서 이름 없이 실행하면 `work`가 열립니다.
 - **정적 바이너리 하나입니다.** Linux, macOS, Windows를 지원하고, 설치할 런타임이 없고, 설치와 업데이트는 체크섬을 확인하며, 텔레메트리가 없습니다.
 
@@ -33,9 +35,9 @@ curl -fsSL https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.sh | sh
 
 리눅스(우분투·데비안·페도라·아치·알파인 등)와 macOS를 지원합니다. `~/.local/bin/ccam`이 생깁니다. 체크섬을 확인한 뒤 설치하고, `~/.local/bin`이 `PATH`에 없으면 알려 줍니다. 그 밖의 방법:
 
-- Windows 10·11: PowerShell에서 `irm https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.ps1 | iex`. 체크섬을 확인한 뒤 `%USERPROFILE%\.local\bin\ccam.exe`를 설치하고 그 폴더를 사용자 `PATH`에 더합니다. 폴더 공유는 그대로 되고, 파일 하나를 공유하려면(`settings.json`, `CLAUDE.md`, `history.jsonl`) 개발자 모드가 필요합니다. Windows는 그 모드(또는 관리자)에서만 파일 링크를 만들게 해 주기 때문입니다.
+- Windows 10·11: PowerShell에서 `irm https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.ps1 | iex`. 체크섬을 확인한 뒤 `%USERPROFILE%\.local\bin\ccam.exe`를 설치하고 그 폴더를 사용자 `PATH`에 더합니다. 폴더 공유는 그대로 되고, 파일 하나를 공유하려면(`settings.json`, `CLAUDE.md`, `history.jsonl`) 개발자 모드가 필요합니다. Windows는 그 모드(또는 관리자)에서만 파일 링크를 만들게 해 주기 때문입니다. 그래서 개발자 모드가 아니면 첫 `ccam add`가 MCP 서버와 확장 기능만 공유하는 `default` 그룹을 만듭니다. 스크립트를 다시 실행하면 세션이 옛 바이너리로 돌고 있어도 업데이트되고, 하드 링크로 만든 단축 명령도 새 버전으로 바꿉니다.
 - `.deb`: [릴리스](https://github.com/jhyunwoo/ccam/releases)에서 받아 `sudo apt install ./ccam_*.deb`
-- 소스: `go install github.com/jhyunwoo/ccam/cmd/ccam@latest` (Go 1.26 이상)
+- 소스: `go install github.com/jhyunwoo/ccam/cmd/ccam@latest` (Go 1.26 이상. 릴리스 태그로 빌드하면 그 버전을 알려 주므로 `ccam update`도 됩니다)
 
 Claude Code(`claude`)가 먼저 설치되어 있어야 합니다.
 
@@ -67,7 +69,7 @@ ccam --fallback work -p "fix the tests"   # 스크립트: 한도에 걸리면 �
 
 이미 쓰던 `~/.claude`가 있으면 `ccam import`로 제자리에 등록합니다 (옮기거나 복사하지 않음).
 
-쓰던 설정을 공유 설정의 출발점으로 삼으려면 `ccam migrate`를 실행합니다. `~/.claude`의 settings.json, CLAUDE.md, 확장 기능, MCP 서버를 공유 그룹으로 복사합니다. 원래 폴더는 읽기만 하고, 대화 내역은 `--history`를 줄 때만 복사합니다. 터미널에서는 먼저 복사할 항목을 체크 목록에서 고르고, 그다음 복사할 내용을 보여준 뒤 확인을 받습니다 (`ccam --dry-run migrate`는 보여주기만 함). 복사한 MCP 서버의 저장된 로그인(OAuth)은 그룹이 아니라 각 계정의 로그인 파일에 넣습니다.
+쓰던 설정을 공유 설정의 출발점으로 삼으려면 `ccam migrate`를 실행합니다. `~/.claude`의 settings.json, CLAUDE.md, 확장 기능, MCP 서버를 공유 그룹으로 복사합니다. 원래 폴더는 읽기만 하고, 대화 내역은 `--history`를 줄 때만 복사합니다. 터미널에서는 먼저 복사할 항목을 체크 목록에서 고르고, 그다음 복사할 내용을 보여준 뒤 확인을 받습니다 (`ccam --dry-run migrate`는 보여주기만 함). MCP 서버의 저장된 로그인(OAuth)은 복사하지 않습니다. 복사한 로그인은 다른 쪽을 로그아웃시키기 때문입니다. 대신 `/mcp`로 직접 로그인할 계정을 계획에 알려 줍니다.
 
 SSH로 접속한 원격 서버에서 로그인할 때는 내 컴퓨터의 브라우저가 열리지 않는 `http://localhost:<포트>/callback?code=…` 페이지에서 멈춥니다. 그 주소를 `ccam add`나 `ccam login`이 실행 중인 터미널에 붙여 넣으면 ccam이 서버의 Claude Code에 전달해 로그인을 마칩니다.
 
@@ -91,8 +93,8 @@ SSH로 접속한 원격 서버에서 로그인할 때는 내 컴퓨터의 브라
 | `ccam group [add\|set\|join\|leave\|show\|rename\|remove]` | 그룹: 계정 여럿이 공유할 것. 바꿀 때는 계획을 보여 주고 확인 후 실행 |
 | `ccam share <이름>` | 계정이 무엇을 어느 그룹으로 공유하는지 보기 |
 | `ccam mcp add\|add-json\|list\|remove\|import` | 공유 MCP 서버 |
-| `ccam login\|logout <이름>` | 다시 로그인 / 토큰 삭제 |
-| `ccam rename` / `ccam remove` | 이름 변경 / 삭제 (폴더는 휴지통으로) |
+| `ccam login\|logout <이름>` | 다시 로그인 / 로그아웃 (로그인과 MCP 서버 로그인을 지움. 함께 사라지는 것이 있으면 먼저 물어봄) |
+| `ccam rename` / `ccam remove` | 이름 변경 / 삭제 (먼저 로그아웃하고, 폴더는 휴지통으로) |
 | `ccam import [폴더]` | 기존 폴더 등록 |
 | `ccam migrate [폴더]` | 기존 설정(기본 `~/.claude`)을 공유 그룹으로 복사. 원본은 바꾸지 않음. `--group`, 항목 옵션, `--history`, `--yes` |
 | `ccam doctor [--fix]` | 링크·권한·로그인·버전·사용량 형식 점검과 수리 |
@@ -108,14 +110,14 @@ SSH로 접속한 원격 서버에서 로그인할 때는 내 컴퓨터의 브라
 
 | 항목 | 방식 |
 | --- | --- |
-| MCP 서버 | 그룹의 `mcp.json`을 실행할 때 `--mcp-config`로 전달 (`.claude.json`은 건드리지 않음) |
+| MCP 서버 | 그룹의 `mcp.json`을 실행할 때 `--mcp-config`로 전달 (실행할 때 `.claude.json`은 건드리지 않음. 공유를 그만두는 계정은 그룹 서버를 자기 `.claude.json`에 받음) |
 | settings.json, 전역 CLAUDE.md | 그룹 파일로 심볼릭 링크 |
 | 에이전트·명령·스킬·플러그인 | `agents/ commands/ skills/ plugins/ output-styles/ rules/` 폴더 링크 |
 | 대화 내역 | `projects/`와 `history.jsonl` 링크 → 다른 계정에서 `--continue`/`--resume` |
 
 로그인 파일(`.credentials.json`, `.claude.json`)은 어떤 경우에도 공유되지 않습니다. 그룹을 바꾸면 영향받는 모든 계정을 계획 하나로 옮기고, 원본을 `.ccam-backup/<시각>/`에 남기고, 파일이 서로 다르면 "keep group / use mine / merge JSON" 중에서 고르게 합니다. 그룹 이전의 `config.toml`은 그룹으로 읽고 다음 저장 때 새 형식으로 쓰며, 옛 파일은 `config.toml.bak`으로 남깁니다.
 
-세션 안에서 `claude mcp add`로 넣은 서버는 그 계정에만 저장됩니다. 다음 실행 때 ccam이 알려 주면 `ccam mcp import <계정> <서버>`로 그룹에 옮기세요. `.claude.json`을 직접 고치는 방식이 필요하면 `config.toml`에 `mcp_strategy = "sync"`를 둡니다.
+세션 안에서 `claude mcp add`로 넣은 서버는 그 계정에만, `-s user`가 없으면 그 폴더에서만 쓰이게 저장됩니다. 다음 실행 때 ccam이 폴더와 함께 알려 주면 `ccam mcp import <계정> <서버>`로 그룹에 옮기세요. `.claude.json`을 직접 고치는 방식이 필요하면 `config.toml` 맨 위(첫 `[[group]]`, `[[profile]]`, `[[folder]]`보다 위)에 `mcp_strategy = "sync"`를 둡니다. 계정이 따로 가진 같은 이름의 서버는 그대로 둡니다.
 
 대화 내역을 공유하는 두 계정이 같은 폴더에서 동시에 돌면 경고합니다.
 
@@ -136,7 +138,7 @@ $ ccam usage
 → Most headroom: work   (open it with ccam next --auto)
 ```
 
-각 계정의 토큰으로 사용량 API를 동시에 조회합니다 (계정당 3초 제한, 60초 캐시). 이 API는 공개 문서가 없어 바뀔 수 있습니다. 실패하면 마지막 값이나 상태줄이 모아 둔 값을 보여주고, `ccam doctor`가 형식 변경을 알려 줍니다. 만료된 토큰은 직접 갱신하지 않습니다 (`--refresh`는 그 계정이 실행 중이 아닐 때만).
+각 계정의 토큰으로 사용량 API를 동시에 조회합니다 (계정당 3초 제한, 60초 캐시). 이 API는 공개 문서가 없어 바뀔 수 있습니다. 실패하면 마지막 값이나 상태줄이 모아 둔 값을 보여주고, `ccam doctor`가 형식 변경을 알려 줍니다. Claude Code가 한도에 걸렸다고 알린 구간은(플러그인 훅이 기록) 초기화될 때까지 100%로 봅니다. 만료된 토큰은 직접 갱신하지 않습니다 (`--refresh`는 Claude Code를 어떻게 시작했든 그 계정이 실행 중이 아닐 때만, 갱신에는 30초까지 걸릴 수 있음).
 
 ## 파일 위치
 
@@ -144,8 +146,8 @@ $ ccam usage
 ~/.config/ccam/config.toml           계정 목록과 공유 설정
 ~/.local/share/ccam/profiles/<이름>/  계정별 CLAUDE_CONFIG_DIR
 ~/.local/share/ccam/groups/<그룹>/    공유 저장소
-~/.local/state/ccam/                 사용량 캐시, 마지막 사용 시각
-$XDG_RUNTIME_DIR/ccam/               잠금 파일
+~/.local/state/ccam/                 사용량 캐시, 한도 기록, 마지막 사용 시각, 메모
+~/.local/state/ccam/locks/           실행 표시와 잠금 파일
 ~/.local/bin/<단축 명령>              ccam을 가리키는 링크 (만든 계정만)
 ```
 
@@ -158,8 +160,8 @@ $XDG_RUNTIME_DIR/ccam/               잠금 파일
 ## 문제 해결
 
 - 무엇이든 이상하면 `ccam doctor`, 고칠 수 있는 것은 `ccam doctor --fix` (바뀌는 파일은 백업).
-- "공유 링크에 문제가 있어 실행을 멈췄습니다" → 공유 항목 자리에 실제 파일이 생긴 경우입니다. `doctor --fix`가 그룹으로 합치고 원본을 백업합니다.
-- 로그인 만료 → `ccam login <이름>`.
+- "공유 링크에 문제가 있어 실행을 멈췄습니다" → 공유 항목 자리에 실제 파일이 생긴 경우입니다. `doctor --fix`가 다시 그룹에 링크합니다. 그룹에 사본이 없으면 그 파일이 그룹 사본이 되고, 있으면 그룹 사본을 두고 원본을 백업합니다.
+- 로그인 만료 → `ccam login <이름>`. 액세스 토큰만 만료됐다면(`access token expired`) 그 계정을 한 번 실행하면 Claude Code가 갱신합니다.
 
 ## 개발
 

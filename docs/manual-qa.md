@@ -26,6 +26,18 @@
 - [ ] `ccam` 선택 화면: 화살표·Enter, 숫자 키, 80열 터미널에서 줄바꿈 없음
 - [ ] 터미널 제목이 `claude · <이름>`
 
+## relay(`relay = true`)
+
+- [ ] Linux·macOS: `ccam p1 --permission-mode plan --add-dir /tmp`로 연 세션에서 Shift+Tab으로 acceptEdits로 바꾸고 `/ccam:switch p2` → Claude Code가 끝나고 `ccam: carrying the conversation on (ccam next --continue)` 뒤 p2로 같은 대화가 열림. 권한 모드는 acceptEdits, `/tmp`가 추가 폴더로 보이고, 끝나는 동안 친 글자는 입력란에 없음(`ccam: what you typed during the switch was discarded.`)
+- [ ] 한 계정으로 두 터미널(서로 다른 폴더)에서 대화를 열고 둘 다 `/ccam:switch` → 각 터미널이 자기 대화를 자기 폴더에서 이어 감
+- [ ] 대화 내역을 공유하는 다른 계정이 같은 폴더에서 열려 있어도 hop은 `Run anyway?`를 묻지 않음
+- [ ] `/ccam:switch` 직후 Claude Code가 끝나는 동안 Ctrl+C → `ccam: switch cancelled. …`로 끝나고 `ccam next --continue`가 그 대화를 이어 감. 그 사이 창을 닫으면 남는 ccam·claude 프로세스 없음(`ps`)
+- [ ] 업데이트 전에 시작한 relay 세션(옛 ccam)에서 `/ccam:switch` → 세션이 닫히지 않고 /exit 안내
+- [ ] Windows 11 호스트: `/ccam:switch p2` → `type /exit; ccam then carries this conversation on as p2.` → `/exit` → p2로 이어 감
+- [ ] Windows 11 호스트: 위 hop 뒤 p2의 Claude Code에서 Ctrl+C(입력 지우기) → 셸 프롬프트가 돌아오지 않고 Claude Code가 그대로 받음. `/exit` 뒤 셸이 claude의 종료 코드를 받음(`$LASTEXITCODE`)
+- [ ] Windows 11 호스트: 바로가기(`ccwork`, 심볼릭 링크와 `mklink /H` 하드 링크 둘 다)로 연 세션에서 `/ccam:switch` → `/exit` → 다른 계정으로 같은 대화가 이어 감
+- [ ] Windows: npm으로 설치한 Claude Code(`claude.cmd`)로 `ccam p1 -p "a & echo X> x.txt"` → claude가 그 문장을 그대로 받고 `x.txt`가 생기지 않음. 작업 폴더의 `claude.bat`은 실행되지 않음
+
 ## 공유
 
 - [ ] settings 공유: 한 계정에서 `/config` 변경 → 다른 계정에 반영, 링크 유지
@@ -45,6 +57,18 @@
 
 - [ ] 공유 항목 자리에 실제 파일을 만들고 실행 → 멈춤 → `ccam doctor --fix` → 백업 후 정상
 - [ ] `ccam remove`가 폴더를 휴지통으로 옮기고 단축 명령 정리
+- [ ] `ccam remove <계정>` → `logged out first`, 휴지통 폴더에 `.credentials.json` 없음, 그 계정의 refresh token이 폐기됨(다른 계정은 그대로)
+
+## 로그인 보존 (테스트 계정으로만)
+
+- [ ] `ccam usage --refresh`(만료된 테스트 계정): 갱신 뒤 `.credentials.json`의 mcpOAuth가 그대로, 바로 `ccam <계정>`이 로그인 없이 열림. 갱신 중 Ctrl+C도 같음
+- [ ] `ccam logout <계정>`: MCP 로그인이 있으면 서버 이름과 함께 묻고, n이면 그대로
+- [ ] macOS: `ccam add t1` → 로그인 → `ccam rename t1 t2` → `its folder stays …` 출력, `ccam t2`가 로그인된 채 열리고 MCP 로그인도 남음
+- [ ] macOS: `ccam remove t2` → 키체인에서 `Claude Code-credentials-<해시>` 항목이 사라짐(`security find-generic-password -s …`가 44로 끝남), `ccam add t1 --no-login`이 로그아웃 상태
+- [ ] macOS: 예전 ccam으로 지운 계정의 항목이 남은 상태에서 `ccam add <그 이름>` → `security delete-generic-password …` 안내로 멈춤
+- [ ] macOS: `USER`를 지운 셸(`env -u USER`)에서 로그인한 계정을 `ccam usage`가 같은 셸에서 읽음
+- [ ] Windows(Developer Mode 꺼짐): `ccam shortcut p1 ccp1` → install.ps1을 다시 실행 → `OK 1 shortcuts now run the new ccam`, `ccam doctor`의 Shortcuts가 OK. 세션이 열린 채로 install.ps1을 두 번 더 실행해도 성공(`ccam.exe.old-<숫자>`)
+- [ ] Windows: `CLAUDE_CODE_FORCE_WINDOWS_CREDMAN=1`로 로그인한 계정이 `ccam doctor`에서 Info(Credential Manager), `ccam next`의 후보에 남고 `ccam login --expired`에 들지 않음
 
 ## 기록
 

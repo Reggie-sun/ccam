@@ -11,15 +11,17 @@
 
 > **Check the terms first.** Whether using several accounts is allowed depends on each account's Anthropic terms and your organization's policy. ccam makes switching convenient; it does not work around usage limits.
 
+> **Team and Enterprise seats.** Automatic choice (`ccam next`, `--fallback`, `ccam pick`, the dashboard's `n`) also switches between seats of the same Claude Team or Enterprise organization. Anthropic's help center says "Each seat on a Team plan is assigned to one named individual, and only that person may use it" and "Users can't route their work through another user's account to use that user's remaining usage" ([Team plans](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); likewise for [Enterprise plans](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Using automatic choice between seats may therefore violate Anthropic's terms. Check with your organization and Anthropic before you rely on it. Personal plans (Pro, Max) are covered by the note above.
+
 All program output (messages, prompts, help) is in English.
 
 ## Why ccam
 
 - **Logins are never copied.** Each account signs in once in its own folder, and Claude Code renews its own token there. Switching never logs an account out, and several accounts can run at once.
 - **Nothing runs beside Claude Code.** ccam `exec`s into `claude`: no wrapper, proxy or daemon, and about 4 ms added at launch. (Windows has no `exec`; there ccam waits for Claude Code and passes its exit code on.)
-- **Groups decide what is shared.** A group names the items it shares (MCP servers, settings, CLAUDE.md, extensions, history) and its accounts; an account can be in several. MCP servers go through `--mcp-config`, so `.claude.json` is not edited.
-- **Changes are planned and backed up.** A plan before any files move, backups, `--dry-run`, atomic writes and `ccam doctor --fix`.
-- **Limits handled for scripts too.** `ccam --fallback work -p "…"` runs the same command again as the account with the most room when `work` reaches its limit, and `ccam pick` gives each parallel worker its own account; both exit with 75 (or `--wait`) when nobody has room. Interactive sessions get a `ccam next --auto --continue` hint in the status line.
+- **Groups decide what is shared.** A group names the items it shares (MCP servers, settings, CLAUDE.md, extensions, history) and its accounts; an account can be in several. MCP servers go through `--mcp-config`, so a launch leaves `.claude.json` alone (ccam writes it, with a backup, only when an account leaves or rejoins MCP sharing, on `ccam mcp import`, and for Remote Control).
+- **Changes are planned and backed up.** A plan before any files move (naming the files inside folders that differ), backups, `--dry-run`, atomic writes, and `ccam doctor --fix`, which also finishes a change that stopped halfway.
+- **Limits handled for scripts too.** `ccam --fallback work -p "…"` runs the same command again as the account with the most room when `work` reaches its limit, and `ccam pick` gives each parallel worker its own account; both exit with 75 (or `--wait`) when nobody has room. Interactive sessions get a `ccam next --auto --continue` hint in the status line. Within one Team or Enterprise organization these choices also move work between seats, which may violate Anthropic's terms (see "Team and Enterprise seats" above).
 - **The right account per project.** `ccam folder work ~/code/company` makes name-less launches there use `work`.
 - **One static binary.** Linux, macOS and Windows, no runtime to install, checksum-verified install and update, no telemetry.
 
@@ -39,7 +41,7 @@ On Windows 10 or 11, in PowerShell:
 irm https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.ps1 | iex
 ```
 
-This installs `%USERPROFILE%\.local\bin\ccam.exe` after verifying the checksum and adds the folder to your user `PATH`. Shared folders work as they are; sharing single files (`settings.json`, `CLAUDE.md`, `history.jsonl`) needs Developer Mode, because Windows lets only that mode (or an administrator) link files. Alternatives: the `.deb` from [Releases](https://github.com/jhyunwoo/ccam/releases), or `go install github.com/jhyunwoo/ccam/cmd/ccam@latest` (Go 1.26+). Claude Code (`claude`) must be installed.
+This installs `%USERPROFILE%\.local\bin\ccam.exe` after verifying the checksum and adds the folder to your user `PATH`. Shared folders work as they are; sharing single files (`settings.json`, `CLAUDE.md`, `history.jsonl`) needs Developer Mode, because Windows lets only that mode (or an administrator) link files, so without it the first `ccam add` creates group `default` with MCP servers and extensions only. Running the script again updates ccam, also while a session runs from the old binary, and renews shortcuts that are hard links. Alternatives: the `.deb` from [Releases](https://github.com/jhyunwoo/ccam/releases), or `go install github.com/jhyunwoo/ccam/cmd/ccam@latest` (Go 1.26+; a build of a release tag reports its version, so `ccam update` works for it). Claude Code (`claude`) must be installed.
 
 Claude Code plugin (Claude Code 2.1.275+): `/plugin install ccam --marketplace jhyunwoo/ccam` teaches Claude Code to check usage, start workers on other accounts with `ccam pick`, and explain missing skills with `ccam ext`.
 
@@ -69,7 +71,7 @@ ccam --fallback work -p "fix the tests"   # in scripts: rerun on another account
 
 An existing `~/.claude` can be registered in place with `ccam import` (nothing is moved or copied).
 
-To start the shared settings from the setup you already have, `ccam migrate` copies `~/.claude`'s settings.json, CLAUDE.md, extensions and MCP servers into the shared group. The original folder is only read; conversation history is copied only with `--history`. On a terminal it first shows a checklist of the items to copy, then prints the plan and asks (`ccam --dry-run migrate` only prints it). The saved sign-ins (OAuth) of the copied MCP servers go into each account's own login file, never into the group.
+To start the shared settings from the setup you already have, `ccam migrate` copies `~/.claude`'s settings.json, CLAUDE.md, extensions and MCP servers into the shared group. The original folder is only read; conversation history is copied only with `--history`. On a terminal it first shows a checklist of the items to copy, then prints the plan and asks (`ccam --dry-run migrate` only prints it). The saved sign-ins (OAuth) of MCP servers are not copied, since a copied sign-in logs the other holders out; the plan names the accounts that sign in with `/mcp`.
 
 Signing in on a remote machine over SSH: the browser on your computer ends on a `http://localhost:<port>/callback?code=…` page that does not load. Paste that address into the terminal where `ccam add` or `ccam login` runs, and ccam passes it to Claude Code on the server.
 
@@ -93,8 +95,8 @@ Signing in on a remote machine over SSH: the browser on your computer ends on a 
 | `ccam group [add\|set\|join\|leave\|show\|rename\|remove]` | Groups: what a set of accounts share; changes print a plan and ask first |
 | `ccam share <name>` | What an account shares, and through which group |
 | `ccam mcp add\|add-json\|list\|remove\|import` | Shared MCP servers |
-| `ccam login\|logout <name>` | Log in again / remove the token |
-| `ccam rename` / `ccam remove` | Rename / remove (folder goes to a trash folder) |
+| `ccam login\|logout <name>` | Log in again / log out (the login and its MCP sign-ins; asks first when something goes with it) |
+| `ccam rename` / `ccam remove` | Rename / remove (logged out first, then the folder goes to a trash folder) |
 | `ccam import [dir]` | Register an existing config folder |
 | `ccam migrate [dir]` | Copy an existing setup (default `~/.claude`) into the shared group; `--group`, item flags, `--history`, `--yes` |
 | `ccam doctor [--fix]` | Check links, permissions, login, version, usage format; repair |
@@ -106,11 +108,11 @@ Put `--dry-run` first to print what would happen (`ccam --dry-run work`). It wor
 
 ## Sharing
 
-A group shares the items it names between the accounts in it: `ccam group add team --items history --members work,side`. An account can be in several groups, but each item comes from one group only; the first account creates `default` (MCP servers, settings, CLAUDE.md, extensions) and later ones join it. MCP servers are passed with `--mcp-config <group>/mcp.json` at launch (`.claude.json` untouched; `mcp_strategy = "sync"` merges into it instead). Settings, CLAUDE.md, extension folders and `projects/` + `history.jsonl` are symlinked to the group folder. `.credentials.json` and `.claude.json` are never shared. A group change moves every account it concerns in one plan, backs originals up to `.ccam-backup/<time>/` and lets you resolve differing files (keep group / use mine / merge JSON). A `config.toml` from before groups is read as groups and rewritten at the next save, with the old file kept as `config.toml.bak`.
+A group shares the items it names between the accounts in it: `ccam group add team --items history --members work,side`. An account can be in several groups, but each item comes from one group only; the first account creates `default` (MCP servers, settings, CLAUDE.md, extensions) and later ones join it. MCP servers are passed with `--mcp-config <group>/mcp.json` at launch (`.claude.json` untouched at launch; `mcp_strategy = "sync"` merges into it instead, keeping the account's own servers). An account that leaves MCP sharing keeps the group's servers in its `.claude.json`, unless `--fresh`. Settings, CLAUDE.md, extension folders and `projects/` + `history.jsonl` are symlinked to the group folder. `.credentials.json` and `.claude.json` are never shared. A group change moves every account it concerns in one plan, backs originals up to `.ccam-backup/<time>/` and lets you resolve differing files (keep group / use mine / merge JSON). A `config.toml` from before groups is read as groups and rewritten at the next save, with the old file kept as `config.toml.bak`.
 
 ## Usage lookup
 
-Queries every account's usage in parallel with its own token (3 s per account, 60 s cache). The endpoint is undocumented and may change; on failure the last known or status-line values are shown and `ccam doctor` reports format changes. Expired tokens are not refreshed unless you pass `--refresh`, and never while that account is running.
+Queries every account's usage in parallel with its own token (3 s per account, 60 s cache). The endpoint is undocumented and may change; on failure the last known or status-line values are shown and `ccam doctor` reports format changes. A window Claude Code reported full (through the plugin's hook) counts as 100% until its reset. Expired tokens are not refreshed unless you pass `--refresh` (a renewal may take up to 30 s), and never while that account is running, however Claude Code was started.
 
 ## Performance
 
