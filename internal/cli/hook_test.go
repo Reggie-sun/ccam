@@ -129,14 +129,13 @@ func TestSwitchHook(t *testing.T) {
 }
 
 // Under a relay of this ccam, /ccam:switch ends Claude Code once its answer
-// has been read, and the note tells the relay which claude that was. An
-// older relay (whose CCAM_RELAY is a bare pid) would not carry the note on,
-// and a claude that is not the relay's own is no session it runs: both are
-// told to /exit, and nothing is ended.
+// has been read (on Windows it is not ended, and the relay carries on after
+// /exit), and the note tells the relay which claude that was. An older
+// relay (whose CCAM_RELAY is a bare pid) would not carry the note on, and a
+// claude that is not the relay's own is no session it runs: both are told
+// to /exit, and nothing is ended.
 func TestSwitchHookUnderARelay(t *testing.T) {
-	if runtime.GOOS == "windows" {
-		t.Skip("Claude Code is not ended on Windows")
-	}
+	windows := runtime.GOOS == "windows"
 	hookEnv(t)
 	c := newTestCLI(t, nil)
 	cwd, _ := os.Getwd()
@@ -148,6 +147,9 @@ func TestSwitchHookUnderARelay(t *testing.T) {
 	t.Cleanup(func() { endClaude = old })
 	// This test is the relay; its child stands in for Claude Code.
 	claude := exec.Command("sleep", "5")
+	if windows {
+		claude = exec.Command("ping", "-n", "6", "127.0.0.1") // 5 s
+	}
 	if err := claude.Start(); err != nil {
 		t.Fatal(err)
 	}
@@ -165,8 +167,13 @@ func TestSwitchHookUnderARelay(t *testing.T) {
 		return stopReason(t, out), tk
 	}
 	me := "2:" + strconv.Itoa(os.Getpid())
-	if r, tk := run(me); !strings.Contains(r, "moving this conversation to side") || !reflect.DeepEqual(ended, []int{pid}) ||
-		tk.Relay != me || tk.Child != pid || !tk.Stopped || tk.Effort != "high" {
+	says, ends, most := "moving this conversation to side", []int{pid}, "moving this conversation to the account with the most room"
+	if windows {
+		// Nothing is ended there: the relay carries on after /exit.
+		says, ends, most = "type /exit; ccam then carries this conversation on as side.", nil, "type /exit; ccam then carries this conversation on as the account with the most room."
+	}
+	if r, tk := run(me); !strings.Contains(r, says) || !reflect.DeepEqual(ended, ends) ||
+		tk.Relay != me || tk.Child != pid || tk.Stopped == windows || tk.Effort != "high" {
 		t.Fatalf("%q %v %+v", r, ended, tk)
 	}
 	for _, relay := range []string{strconv.Itoa(os.Getpid()), "2:" + strconv.Itoa(os.Getppid())} {
@@ -189,7 +196,7 @@ func TestSwitchHookUnderARelay(t *testing.T) {
 	// With no account named, the relay takes the one with the most room.
 	t.Setenv("CLAUDE_PID", strconv.Itoa(pid))
 	out, _, _ := c.run(hookJSON(t, map[string]string{"session_id": "s2", "transcript_path": conv, "cwd": cwd}), "hook", "switch")
-	if r := stopReason(t, out); !strings.Contains(r, "moving this conversation to the account with the most room") {
+	if r := stopReason(t, out); !strings.Contains(r, most) {
 		t.Fatal(r)
 	}
 }

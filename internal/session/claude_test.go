@@ -1,12 +1,16 @@
 package session
 
 import (
+	"bufio"
 	"encoding/json"
+	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strconv"
+	"strings"
 	"testing"
 	"time"
 )
@@ -48,6 +52,84 @@ func TestHelperSleeps(t *testing.T) {
 		t.Skip("only run by sleeper")
 	}
 	time.Sleep(time.Minute)
+}
+
+// zombie runs a process under a helper that never reaps it, and returns its
+// pid and what ends it: after that it has ended, but stays a zombie while
+// the helper runs, as an orphan does in a container whose PID 1 reaps
+// nothing.
+func zombie(t *testing.T) (int, func()) {
+	t.Helper()
+	self, _ := os.Executable()
+	c := exec.Command(self, "-test.run=^TestHelperLeavesAZombie$")
+	c.Env = append(os.Environ(), "SESSION_HELPER_ZOMBIE=1")
+	in, _ := c.StdinPipe()
+	out, _ := c.StdoutPipe()
+	if err := c.Start(); err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { c.Process.Kill(); c.Wait() })
+	r := bufio.NewReader(out)
+	line, _ := r.ReadString('\n')
+	pid, err := strconv.Atoi(strings.TrimSpace(line))
+	if err != nil {
+		t.Fatalf("the helper said %q", line)
+	}
+	// Ended while the helper still holds it, so that its pid names nothing else.
+	t.Cleanup(func() {
+		if p, err := os.FindProcess(pid); err == nil {
+			p.Kill()
+		}
+	})
+	return pid, func() {
+		in.Close()
+		if line, _ := r.ReadString('\n'); line != "ended\n" {
+			t.Fatalf("the helper said %q", line)
+		}
+	}
+}
+
+// TestHelperLeavesAZombie is the helper zombie starts: it runs a sleeper and
+// says its pid; once its input ends, it ends the sleeper without reaping it,
+// says so, and waits.
+func TestHelperLeavesAZombie(t *testing.T) {
+	if os.Getenv("SESSION_HELPER_ZOMBIE") == "" {
+		t.Skip("only run by zombie")
+	}
+	c, _ := sleeper(t)
+	fmt.Println(c.Process.Pid)
+	io.Copy(io.Discard, os.Stdin)
+	c.Process.Kill()
+	waitEnded(t, c)
+	fmt.Println("ended")
+	time.Sleep(time.Minute)
+}
+
+// A process that has ended no longer runs, also while its parent has not
+// reaped it (a zombie): neither ccam's marker nor Claude Code's record of
+// it counts then.
+func TestUnreapedProcessesDoNotRun(t *testing.T) {
+	if _, ok := StartTime(os.Getpid()); !ok {
+		t.Skip("no process start times on this platform")
+	}
+	pid, end := zombie(t)
+	now, ok := StartTime(pid)
+	if !ok {
+		t.Fatal("no start time while it runs")
+	}
+	markers, dir := t.TempDir(), t.TempDir()
+	os.WriteFile(filepath.Join(markers, strconv.Itoa(pid)), []byte(now), 0o600)
+	os.Mkdir(filepath.Join(dir, "sessions"), 0o700)
+	os.WriteFile(filepath.Join(dir, "sessions", strconv.Itoa(pid)+".json"),
+		[]byte(record(map[string]any{"pid": pid, "procStart": claudeStart(t, pid), "startedAt": time.Now().UnixMilli()})), 0o644)
+	if Count(markers) != 1 || !ClaudeRuns(dir) {
+		t.Fatal("it does not count while it runs")
+	}
+	end()
+	_, started := StartTime(pid)
+	if n, runs := Count(markers), ClaudeRuns(dir); started || n != 0 || runs {
+		t.Fatalf("after it ended: start time %v, %d marker(s), Claude Code's record counts %v", started, n, runs)
+	}
 }
 
 func TestClaudeRunsReadsClaudeCodesRecords(t *testing.T) {
@@ -109,7 +191,7 @@ func TestClaudeRunsReadsClaudeCodesRecords(t *testing.T) {
 // A Claude Code this ccam started itself (the usage probe of usage_source
 // = "claude") is not someone else's session.
 func TestClaudeRunsLeavesOutItsOwnChildren(t *testing.T) {
-	if runtime.GOOS != "linux" && runtime.GOOS != "darwin" {
+	if runtime.GOOS != "linux" && runtime.GOOS != "darwin" && runtime.GOOS != "windows" {
 		t.Skip("no process tree here")
 	}
 	child, start := sleeper(t)

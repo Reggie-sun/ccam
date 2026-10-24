@@ -98,6 +98,13 @@ func isBatch(bin string) bool {
 	return strings.EqualFold(ext, ".cmd") || strings.EqualFold(ext, ".bat")
 }
 
+// batchShell reports whether fi is the cmd.exe that batchCommand runs a
+// batch claude in, which runs Claude Code as its child.
+func batchShell(fi os.FileInfo) bool {
+	cmd, err := os.Stat(cmdExe())
+	return err == nil && os.SameFile(fi, cmd)
+}
+
 // batchCommand runs the batch file bin (claude.cmd, as npm installs it)
 // with args. Started as it is, Windows hands the command line to cmd.exe,
 // which looks argv[0] up again by itself, the working folder first, and

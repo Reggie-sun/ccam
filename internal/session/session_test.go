@@ -53,7 +53,7 @@ func TestStartTimeHandlesSpacesInName(t *testing.T) {
 }
 
 func TestParentAndExe(t *testing.T) {
-	if runtime.GOOS != "linux" && runtime.GOOS != "darwin" {
+	if runtime.GOOS != "linux" && runtime.GOOS != "darwin" && runtime.GOOS != "windows" {
 		t.Skip("no process tree here")
 	}
 	if p, ok := Parent(os.Getpid()); !ok || p != os.Getppid() {

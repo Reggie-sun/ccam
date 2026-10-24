@@ -7,6 +7,8 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"golang.org/x/sys/unix"
 )
 
 // claudeStart is the start time Claude Code records for pid on macOS: what
@@ -24,6 +26,21 @@ func claudeStart(t *testing.T, pid int) string {
 
 // otherStart is a start time in Claude Code's form that no test process has.
 const otherStart = "Thu Jan  1 00:00:00 1970"
+
+// waitEnded waits until c's process has ended, without reaping it: until
+// c.Wait it is a zombie.
+func waitEnded(t *testing.T, c *exec.Cmd) {
+	t.Helper()
+	for deadline := time.Now().Add(5 * time.Second); ; time.Sleep(10 * time.Millisecond) {
+		kp, err := unix.SysctlKinfoProc("kern.proc.pid", c.Process.Pid)
+		if err == nil && kp.Proc.P_stat == szomb {
+			return
+		}
+		if time.Now().After(deadline) {
+			t.Fatalf("%d did not end", c.Process.Pid)
+		}
+	}
+}
 
 func TestSameStartReadsPsLstart(t *testing.T) {
 	at := func(y int, mo time.Month, d, h, mi, s int) string {

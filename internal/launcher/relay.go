@@ -38,8 +38,9 @@ func RelayPID(v string) (int, bool) {
 // RelayChild is the relay's own child for the Claude Code process claude
 // (its CLAUDE_PID): claude itself when relay started it, or its parent when
 // Claude Code started itself again (as gateway, Bedrock and Vertex settings
-// make it) and that parent is the same program. Any other claude, such as
-// one Claude ran in its shell with CCAM_RELAY inherited, is not the relay's.
+// make it) and that parent is the same program, or the cmd.exe that runs a
+// batch claude (npm's claude.cmd) on Windows. Any other claude, such as one
+// Claude ran in its shell with CCAM_RELAY inherited, is not the relay's.
 func RelayChild(claude, relay int) (int, bool) {
 	parent, ok := session.Parent(claude)
 	if !ok {
@@ -58,7 +59,7 @@ func RelayChild(claude, relay int) (int, bool) {
 	}
 	fa, err1 := os.Stat(a)
 	fb, err2 := os.Stat(b)
-	if err1 != nil || err2 != nil || !os.SameFile(fa, fb) {
+	if err1 != nil || err2 != nil || !os.SameFile(fa, fb) && !batchShell(fa) {
 		return 0, false
 	}
 	return parent, true

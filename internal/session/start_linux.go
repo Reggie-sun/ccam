@@ -8,12 +8,29 @@ import (
 )
 
 // StartTime reads field 22 of /proc/<pid>/stat (clock ticks since boot).
+// A process that has ended but that its parent has not reaped yet has
+// none: it no longer runs, and in a container whose PID 1 reaps nothing an
+// orphan stays so.
 func StartTime(pid int) (string, bool) {
 	fields, ok := stat(pid)
-	if !ok || len(fields) < 20 {
+	if !ok || len(fields) < 20 || ended(fields) {
 		return "", false
 	}
 	return fields[19], true
+}
+
+// ended reports whether stat fields (from field 3 on) are those of an
+// ended process: state X, or Z with at most one thread. A process whose
+// main thread exited while others run also shows Z, with more threads.
+func ended(fields []string) bool {
+	switch fields[0] {
+	case "X":
+		return true
+	case "Z":
+		threads, err := strconv.Atoi(fields[17])
+		return err != nil || threads <= 1
+	}
+	return false
 }
 
 // stat is /proc/<pid>/stat from field 3 on. The command name in field 2 may

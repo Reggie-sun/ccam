@@ -225,6 +225,7 @@ func hookSwitch(e *env, in hookInput, account string) error {
 	exit := "ccam: type /exit, then run `ccam next --continue` to carry this conversation on as " + cmp.Or(target, "the next account") + "."
 	// Without a target the relay goes on with `ccam next --continue --auto`.
 	who := cmp.Or(target, "the account with the most room")
+	carry := "ccam: type /exit; ccam then carries this conversation on as " + who + "."
 	save := func(msg string) error {
 		if err := handoff.Save(e.paths.State, t); err != nil {
 			return stop("ccam: " + err.Error())
@@ -240,11 +241,11 @@ func hookSwitch(e *env, in hookInput, account string) error {
 		return save(exit)
 	}
 	claude, _ := strconv.Atoi(os.Getenv("CLAUDE_PID"))
-	if runtime.GOOS == "windows" || claude <= 0 {
-		// Claude Code cannot be ended from here (Windows, or Claude Code
-		// before 2.1.214 without CLAUDE_PID): the relay carries on after /exit.
+	if claude <= 0 {
+		// Claude Code before 2.1.214 has no CLAUDE_PID, so it cannot be
+		// ended from here: the relay carries on after /exit.
 		t.Relay = os.Getenv("CCAM_RELAY")
-		return save("ccam: type /exit; ccam then carries this conversation on as " + who + ".")
+		return save(carry)
 	}
 	child, ok := launcher.RelayChild(claude, relay)
 	if !ok {
@@ -252,13 +253,18 @@ func hookSwitch(e *env, in hookInput, account string) error {
 		// CCAM_RELAY too, but is not what the relay runs.
 		return save(exit)
 	}
-	t.Relay, t.Child, t.Stopped = os.Getenv("CCAM_RELAY"), child, true
+	t.Relay, t.Child = os.Getenv("CCAM_RELAY"), child
+	if runtime.GOOS == "windows" {
+		// Claude Code cannot be ended from here: the relay carries on after /exit.
+		return save(carry)
+	}
+	t.Stopped = true
 	if err := handoff.Save(e.paths.State, t); err != nil {
 		return stop("ccam: " + err.Error())
 	}
 	if err := endClaude(claude); err != nil {
 		t.Stopped = false
-		return save("ccam: type /exit; ccam then carries this conversation on as " + who + ".")
+		return save(carry)
 	}
 	return stop("ccam: moving this conversation to " + who + "…")
 }

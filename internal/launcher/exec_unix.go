@@ -51,6 +51,9 @@ func commandLine(bin string, args []string) (string, string, error) {
 // isBatch is for Windows' batch files.
 func isBatch(string) bool { return false }
 
+// batchShell is for Windows' batch files.
+func batchShell(os.FileInfo) bool { return false }
+
 func batchCommand(ctx context.Context, bin string, args []string) (*exec.Cmd, error) {
 	return exec.CommandContext(ctx, bin, args...), nil
 }

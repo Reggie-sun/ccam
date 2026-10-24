@@ -399,10 +399,12 @@ running Claude Code writes (`rename`, `remove`, group changes, `doctor --fix`, `
   could not read it (its `ps` call has a 1 s timeout); `startedAt` (ms since 1970) is in every record, `daemon.lock`
   too. Claude Code counts no pid 1, and removes only records whose pid is gone (code read).
 - ccam counts a record while its pid (above 1) runs and its start time matches (to the second on macOS and Windows);
-  without a start time it can compare, the process must not have started more than a minute after the record's
-  `startedAt`, so a record whose pid was reused does not block. A record of a process ccam itself started (the
-  `usage_source = "claude"` probe, `claude -p --no-session-persistence`, which registers too) does not count; Windows
-  has no parent lookup, so there it does. Records are never removed by ccam.
+  a process that has ended but that its parent has not reaped (a zombie, which an orphan stays in a container whose
+  PID 1 reaps nothing) does not run. Without a start time it can compare, the process must not have started more than
+  a minute after the record's `startedAt`, so a record whose pid was reused does not block. A record of a process ccam
+  itself started (the `usage_source = "claude"` probe, `claude -p --no-session-persistence`, which registers too) does
+  not count; on Windows the parent comes from a process snapshot, and one that has ended or started after the child
+  is none. Records are never removed by ccam.
 - The daemon behind background sessions (`--bg`, `claude agents`) starts through a path of its own and is not in
   `sessions/` (code read): it holds `daemon.lock` in the config folder, `{pid, version, jsonPath, logPath, startedAt, origin, spawnedBy, procStart (procStartFt on Windows),
   launchTarget, processWrapper}`, and its workers list themselves as `kind: "bg"`. It renews the account's login

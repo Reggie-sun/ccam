@@ -9,18 +9,24 @@ import (
 	"golang.org/x/sys/unix"
 )
 
-// StartTime asks the kernel (kern.proc.pid) when the process started.
+// StartTime asks the kernel (kern.proc.pid) when the process started. A
+// process that has ended but that its parent has not reaped yet (szomb)
+// has none: it no longer runs.
 func StartTime(pid int) (string, bool) {
 	if pid <= 0 {
 		return "", false
 	}
 	kp, err := unix.SysctlKinfoProc("kern.proc.pid", pid)
-	if err != nil || kp.Proc.P_pid != int32(pid) {
+	if err != nil || kp.Proc.P_pid != int32(pid) || kp.Proc.P_stat == szomb {
 		return "", false
 	}
 	t := kp.Proc.P_starttime
 	return fmt.Sprintf("%d.%06d", t.Sec, t.Usec), true
 }
+
+// szomb is SZOMB of <sys/proc.h>: the state of a process that has ended
+// and waits for its parent to reap it.
+const szomb = 5
 
 // sameStart compares a start time Claude Code recorded (procStart) with
 // StartTime's. Claude Code records what `ps -o lstart=` prints in the C

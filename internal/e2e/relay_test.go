@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"reflect"
 	"regexp"
+	"runtime"
 	"strconv"
 	"strings"
 	"testing"
@@ -246,9 +247,12 @@ func TestRelayFlushesTypeAhead(t *testing.T) {
 
 // A hook of this ccam ends Claude Code only under a relay of this ccam, and
 // only the claude that relay runs: a relay of an older ccam (CCAM_RELAY a
-// bare pid), started before an update, would not carry the note on.
+// bare pid), started before an update, would not carry the note on. On
+// Windows the hook ends nothing, and only the relay's own claude is told
+// that ccam carries the conversation on after /exit.
 func TestRelayOldProtocol(t *testing.T) {
-	if _, err := exec.LookPath("sh"); err != nil {
+	windows := runtime.GOOS == "windows"
+	if _, err := exec.LookPath("sh"); err != nil && !windows {
 		t.Skip("needs sh")
 	}
 	h := newHarness(t)
@@ -258,8 +262,9 @@ func TestRelayOldProtocol(t *testing.T) {
 	in := fmt.Sprintf(`{"session_id":"s1","transcript_path":%q,"cwd":%q,"command_args":"work"}`, conv, h.home)
 	for _, c := range []struct {
 		relay string
-		ends  bool
+		ours  bool // the relay's own claude: this test started it
 	}{{"%d", false}, {"2:1", false}, {"2:%d", true}} {
+		ends := c.ours && !windows
 		claude := exec.Command(fakeBin) // a claude this test runs
 		claude.Env = append(append([]string{}, h.env...), "FAKE_ONLY_SLEEP=5")
 		if err := claude.Start(); err != nil {
@@ -274,17 +279,23 @@ func TestRelayOldProtocol(t *testing.T) {
 		r := h.run(in, []string{"CCAM_PROFILE=personal", "CCAM_RELAY=" + relay, "CLAUDE_PID=" + strconv.Itoa(claude.Process.Pid)}, "ccam", "hook", "switch")
 		select {
 		case <-ended:
-			if !c.ends {
+			if !ends {
 				t.Fatalf("CCAM_RELAY=%s ended claude: %+v", relay, r)
 			}
 		case <-time.After(2 * time.Second):
 			claude.Process.Kill()
 			<-ended
-			if c.ends {
+			if ends {
 				t.Fatalf("CCAM_RELAY=%s left claude running: %+v", relay, r)
 			}
 		}
-		want := map[bool]string{true: "moving this conversation to work", false: "/exit, then run `ccam next --continue`"}[c.ends]
+		want := "/exit, then run `ccam next --continue`"
+		switch {
+		case ends:
+			want = "moving this conversation to work"
+		case c.ours:
+			want = "type /exit; ccam then carries this conversation on as work."
+		}
 		if !strings.Contains(r.stdout, want) {
 			t.Fatalf("CCAM_RELAY=%s: %+v", relay, r)
 		}

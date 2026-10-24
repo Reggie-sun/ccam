@@ -5,6 +5,7 @@ package cli
 import (
 	"os"
 	"path/filepath"
+	"runtime"
 	"strconv"
 	"strings"
 	"syscall"
@@ -37,8 +38,35 @@ func TestWrappedStatusLineEndsWithCcam(t *testing.T) {
 		t.Fatal(err)
 	}
 	time.Sleep(100 * time.Millisecond)
-	if err := syscall.Kill(-pid, 0); err == nil {
+	if groupRuns(pid) {
 		syscall.Kill(-pid, syscall.SIGKILL)
 		t.Fatal("the command's process group outlived ccam")
 	}
+}
+
+// groupRuns reports whether a process of process group pgid still runs.
+// One that has ended but that nobody has reaped yet (a zombie: in a
+// container whose PID 1 reaps nothing, an orphan stays one) does not: on
+// Linux /proc/<pid>/stat tells them apart, elsewhere any member counts.
+func groupRuns(pgid int) bool {
+	if runtime.GOOS != "linux" {
+		return syscall.Kill(-pgid, 0) == nil
+	}
+	entries, _ := os.ReadDir("/proc")
+	for _, e := range entries {
+		if _, err := strconv.Atoi(e.Name()); err != nil {
+			continue
+		}
+		data, err := os.ReadFile(filepath.Join("/proc", e.Name(), "stat"))
+		s := string(data)
+		i := strings.LastIndexByte(s, ')')
+		if err != nil || i < 0 {
+			continue // ended meanwhile
+		}
+		// State, parent and process group follow the command's name.
+		if f := strings.Fields(s[i+1:]); len(f) > 2 && f[2] == strconv.Itoa(pgid) && f[0] != "Z" && f[0] != "X" {
+			return true
+		}
+	}
+	return false
 }

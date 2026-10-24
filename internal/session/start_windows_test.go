@@ -2,8 +2,11 @@ package session
 
 import (
 	"os"
+	"os/exec"
 	"strconv"
 	"testing"
+
+	"golang.org/x/sys/windows"
 )
 
 // claudeStart is the start time Claude Code records for pid on Windows: the
@@ -21,6 +24,20 @@ func claudeStart(t *testing.T, pid int) string {
 // otherStart is a start time in Claude Code's form that no test process has
 // (1970).
 const otherStart = "116444736000000000"
+
+// waitEnded waits until c's process has ended, without letting go of it:
+// until c.Wait, its handle keeps the process (and its pid) there.
+func waitEnded(t *testing.T, c *exec.Cmd) {
+	t.Helper()
+	h, err := windows.OpenProcess(windows.SYNCHRONIZE, false, uint32(c.Process.Pid))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer windows.CloseHandle(h)
+	if ev, err := windows.WaitForSingleObject(h, 5000); err != nil || ev != windows.WAIT_OBJECT_0 {
+		t.Fatalf("%d did not end: %v", c.Process.Pid, err)
+	}
+}
 
 func TestSameStartReadsFiletimes(t *testing.T) {
 	const ns = "1792661750632000000" // 2026-10-22, nanoseconds since 1970

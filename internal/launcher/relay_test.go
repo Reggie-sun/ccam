@@ -1,6 +1,7 @@
 package launcher
 
 import (
+	"cmp"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -41,7 +42,10 @@ func TestHopOK(t *testing.T) {
 		{"the terminal is gone", note(nil), func(h *hop) { h.terminal = false }, false, ""},
 		{"another claude's note", note(nil), func(h *hop) { h.child = 101 }, false, ""},
 		{"a note from before claude started", note(func(n *handoff.Ticket) { n.At = start.Add(-time.Second) }), nil, false, ""},
-		// Windows, or Claude Code without CLAUDE_PID: nothing was ended, the person typed /exit.
+		// Windows: the note names claude, but nothing was ended; the person typed /exit.
+		{"nothing ended, /exit", note(func(n *handoff.Ticket) { n.Stopped = false }), func(h *hop) { h.code = 0 }, true, ""},
+		{"nothing ended, another claude's note", note(func(n *handoff.Ticket) { n.Stopped = false }), func(h *hop) { h.code, h.child = 0, 101 }, false, ""},
+		// Claude Code without CLAUDE_PID: nothing was ended, the person typed /exit.
 		{"no process named, /exit", note(func(n *handoff.Ticket) { n.Child, n.Stopped = 0, false }), func(h *hop) { h.code = 0 }, true, ""},
 		{"no process named, SIGTERM", note(func(n *handoff.Ticket) { n.Child, n.Stopped = 0, false }), nil, false, closed},
 		{"stopped without a process", note(func(n *handoff.Ticket) { n.Child = 0 }), nil, false, ""},
@@ -73,11 +77,11 @@ func TestRelayPID(t *testing.T) {
 
 // TestHelperReexec stands in for Claude Code that starts itself again
 // (as gateway settings make it): this test binary runs another copy of
-// itself, which sleeps.
+// itself (or CCAM_TEST_INNER), which says its pid and sleeps.
 func TestHelperReexec(t *testing.T) {
 	switch os.Getenv("CCAM_TEST_REEXEC") {
 	case "outer":
-		c := exec.Command(os.Args[0], "-test.run=^TestHelperReexec$")
+		c := exec.Command(cmp.Or(os.Getenv("CCAM_TEST_INNER"), os.Args[0]), "-test.run=^TestHelperReexec$")
 		c.Env = append(os.Environ(), "CCAM_TEST_REEXEC=inner")
 		c.Stdout = os.Stdout
 		c.Run()
@@ -92,7 +96,7 @@ func TestHelperReexec(t *testing.T) {
 // shell) does not.
 func TestRelayChild(t *testing.T) {
 	if runtime.GOOS != "linux" && runtime.GOOS != "darwin" {
-		t.Skip("no process tree here")
+		t.Skip("no process tree here (Windows: TestRelayChildOnWindows)")
 	}
 	sleep := exec.Command("sleep", "5")
 	if err := sleep.Start(); err != nil {
