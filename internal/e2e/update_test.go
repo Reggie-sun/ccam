@@ -53,7 +53,7 @@ func TestUpdate(t *testing.T) {
 	bin := filepath.Join(h.home, "bin", "ccam"+exe)
 	buildRelease(t, "0.2.0", bin)
 	os.Symlink(bin, filepath.Join(h.home, "bin", "ccwork"+exe)) // a shortcut
-	shown, err := filepath.EvalSymlinks(bin) // ccam prints the resolved path (/private/var on macOS)
+	shown, err := filepath.EvalSymlinks(bin)                    // ccam prints the resolved path (/private/var on macOS)
 	if err != nil {
 		t.Fatal(err)
 	}
