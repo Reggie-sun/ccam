@@ -1,10 +1,10 @@
 ---
 title: 폴더별 계정
 description: ccam folder를 쓰면 계정 이름 없이 Claude Code를 시작할 때 폴더와 그 아래 모든 폴더에서 한 계정을 씁니다. 예를 들어 회사 코드에는 work 계정을 쓸 수 있습니다.
-updated: 2026-10-20
+updated: 2026-10-23
 order: 11
 translation: machine
-sourceHash: "46d1410a3d81"
+sourceHash: "48de98d42b99"
 ---
 
 `ccam folder work ~/code/company`를 실행하면 `~/code/company`와 그 아래 모든 폴더에서 계정 이름 없이 실행할 때 Claude Code가 `work`로 시작합니다. 그 밖의 폴더에서는 전처럼 기본 계정이 시작됩니다. `ccam personal`이나 `ccpersonal` 같은 단축 명령으로 계정 이름을 지정하면 언제나 그 계정이 시작됩니다.
@@ -34,7 +34,7 @@ Here (/home/me/code/company/api): work, set for /home/me/code/company
 - `ccam -p "…"`처럼 첫 번째 인자가 Claude Code 옵션인 모든 실행
 - 이름 없는 `ccam run`과 `ccam --dry-run`
 - `ccam --fallback -p "…"`의 첫 번째 시도
-- 대시보드(`ccam`만 실행). 커서가 폴더에 지정된 계정에 놓인 상태로 열립니다
+- 대시보드(`ccam`만 실행). 커서가 폴더에 지정된 계정에 놓인 상태로 열립니다. 심볼릭 링크를 거쳐 그 폴더로 들어온 경우에도 마찬가지입니다
 
 ## 옵션
 
@@ -59,7 +59,7 @@ account = 'work'
 2. 이름 없이 실행하면 `launcher.HereProfile`을 호출합니다. 항목이 없으면 곧바로 기본 계정을 고릅니다.
 3. 항목이 있으면 작업 폴더를 각 `path`와 문자열로 비교합니다. 그 폴더 자체이거나 그 아래 폴더여야 하며, 이름의 앞부분만 같은 폴더는 해당하지 않습니다(`/code/company`는 `/code/companyx`를 포함하지 않습니다). 가장 깊은 항목이 이기므로, `~/code`는 `personal`, `~/code/company`는 `work`로 둘 수 있습니다.
 4. 작업 폴더를 있는 그대로 비교해 일치하는 항목이 없을 때만, ccam은 작업 폴더의 심볼릭 링크를 풀어 한 번 더 비교합니다.
-5. Windows에서는 Windows와 마찬가지로 대소문자를 구분하지 않고 비교합니다.
+5. Windows와 macOS에서는 두 운영체제의 파일 시스템이 보통 그렇듯 대소문자를 구분하지 않고 비교합니다.
 
 `config.toml` 외에는 어떤 파일도 읽지 않으므로, 폴더 안에서 실행해도 측정할 만한 시간이 더 들지 않습니다(항목이 있든 없든 4.0 ms, `hyperfine`, 300회 실행).
 

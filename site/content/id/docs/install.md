@@ -2,10 +2,10 @@
 title: Instal ccam
 metaTitle: Instal ccam di Linux, macOS, dan Windows
 description: Instal ccam di Linux, macOS, atau Windows dengan satu perintah, paket .deb, atau kode sumber, lalu perbarui dengan ccam update. Instal Claude Code dulu.
-updated: 2026-10-21
+updated: 2026-10-23
 order: 1
 translation: machine
-sourceHash: 1e3a53623de0
+sourceHash: af21dcc24169
 ---
 
 Jalankan ini di terminal pada Linux atau macOS:
@@ -22,7 +22,7 @@ Di Windows, jalankan ini di PowerShell:
 irm https://ccam.dev/install.ps1 | iex
 ```
 
-Skrip ini mengunduh `ccam_windows_<arch>.zip`, memeriksa checksum SHA-256-nya, menaruh `ccam.exe` di `%USERPROFILE%\.local\bin`, folder tempat installer Claude Code menaruh `claude.exe`, dan menambahkan folder itu ke `PATH` pengguna Anda jika belum ada. Setelah itu, buka terminal baru.
+Skrip ini mengunduh `ccam_windows_<arch>.zip`, memeriksa checksum SHA-256-nya, menaruh `ccam.exe` di `%USERPROFILE%\.local\bin`, folder tempat installer Claude Code menaruh `claude.exe`, dan menambahkan folder itu ke `PATH` pengguna Anda jika belum ada, dengan membiarkan entri seperti `%USERPROFILE%\bin` apa adanya. Setelah itu, buka terminal baru. Menjalankannya lagi akan mengganti ccam, juga saat sesi Claude Code masih berjalan dari binary lama (binary itu diganti namanya menjadi `ccam.exe.old`, atau `ccam.exe.old-<number>` jika yang lebih lama masih dipakai), dan memperbarui pintasan yang berupa hard link: `OK 2 shortcuts now run the new ccam`.
 
 ccam menjalankan Claude Code untuk Anda, jadi instal [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) terlebih dahulu dan pastikan `claude --version` berfungsi.
 
@@ -30,7 +30,7 @@ ccam menjalankan Claude Code untuk Anda, jadi instal [Claude Code](https://docs.
 
 - Linux di x86-64 dan ARM64: Ubuntu, Debian, Fedora, Arch, Alpine, dan distribusi lainnya. Binary-nya statis dan tidak memiliki dependensi.
 - macOS di Apple silicon dan Intel.
-- Windows 10 dan 11 di x86-64 dan ARM64, di PowerShell, Windows Terminal, atau Git Bash. Folder bersama berfungsi untuk semua pengguna. File bersama (`settings.json`, `CLAUDE.md`, `history.jsonl`) memerlukan Mode Pengembang (Settings > System > For developers), karena Windows hanya mengizinkan mode itu, atau administrator, untuk membuat tautan ke file; lihat [berbagi di Windows](/features/share#on-windows).
+- Windows 10 dan 11 di x86-64 dan ARM64, di PowerShell, Windows Terminal, atau Git Bash. Folder bersama berfungsi untuk semua pengguna. File bersama (`settings.json`, `CLAUDE.md`, `history.jsonl`) memerlukan Mode Pengembang (Settings > System > For developers), karena Windows hanya mengizinkan mode itu, atau administrator, untuk membuat tautan ke file; lihat [berbagi di Windows](/features/share#on-windows). Tanpa mode itu, `ccam add` pertama membuat grup `default` yang hanya berisi server MCP dan ekstensi, dan memberi tahu cara menambahkan sisanya setelah Mode Pengembang aktif.
 - Di dalam WSL, ccam berfungsi seperti di sistem Linux mana pun.
 
 ## Cara instalasi lainnya
@@ -48,6 +48,8 @@ Paket ini menginstal `/usr/bin/ccam`.
 ```sh
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
 ```
+
+Build dari tag rilis (`@latest` atau `@vX.Y.Z`) melaporkan versi itu, sehingga `ccam update` berfungsi untuknya; build dari `@main` atau dari checkout lokal yang sudah melewati sebuah tag melaporkan `dev`.
 
 **Versi tertentu.** Tetapkan `CCAM_VERSION`:
 
@@ -117,9 +119,9 @@ ccam update --version v0.2.0
 ccam --dry-run update
 ```
 
-Menjalankan skrip instalasi lagi juga memperbarui salinan di `~/.local/bin`. Jika Anda membangun ccam dengan `go install`, jalankan lagi perintah yang sama.
+Menjalankan skrip instalasi lagi juga memperbarui salinan di `~/.local/bin`. Jika Anda membangun ccam dengan `go install` dari tag rilis, `ccam update` juga berfungsi, atau jalankan lagi perintah yang sama.
 
-**Windows.** `ccam update` mengunduh `.zip` untuk Windows. Program yang sedang berjalan tidak bisa diganti di Windows, jadi binary lama diganti namanya menjadi `ccam.exe.old`, yang akan dihapus oleh pembaruan berikutnya.
+**Windows.** `ccam update` mengunduh `.zip` untuk Windows. Program yang sedang berjalan tidak bisa diganti di Windows, jadi binary lama diganti namanya menjadi `ccam.exe.old`, yang akan dihapus oleh pembaruan berikutnya; selama sebuah sesi masih berjalan dari `ccam.exe.old` sebelumnya, namanya menjadi `ccam.exe.old-<time>`. Pintasan yang berupa hard link langsung diperbarui setelahnya.
 
 **Paket Debian dan Ubuntu.** `ccam update` tidak mengganti `/usr/bin/ccam` yang diinstal oleh apt, dan sebagai gantinya menampilkan langkah-langkah berikut. Unduh `ccam_<version>_linux_amd64.deb` yang baru dari [halaman rilis](https://github.com/jhyunwoo/ccam/releases) lalu instal di atas versi yang lama:
 
@@ -146,4 +148,4 @@ Remove-Item ~\.local\bin\ccam.exe
 Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
 ```
 
-Menghapus `~/.local/share/ccam` juga menghapus login dan riwayat percakapan yang tersimpan di sana. Folder `~/.claude` yang Anda [impor](/docs/commands) tetap berada di tempatnya.
+Menghapus `~/.local/share/ccam` juga menghapus login dan riwayat percakapan yang tersimpan di sana. Folder `~/.claude` yang Anda [impor](/docs/commands) tetap berada di tempatnya, tetapi selama folder itu ada di sebuah grup, file yang dibagikannya berada di `~/.local/share/ccam/groups/`. Jalankan `ccam remove <name>` untuknya terlebih dahulu (atau `ccam group leave`): folder itu keluar dari grup-grupnya dengan membawa salinan dari semua yang dibagikannya.

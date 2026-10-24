@@ -1,13 +1,13 @@
 ---
 title: ಈಗಿರುವ ಸೆಟಪ್ ಅನ್ನು ನಕಲಿಸುವುದು
-description: ಈಗಿರುವ ~/.claude ನ ಸೆಟ್ಟಿಂಗ್‌ಗಳು, CLAUDE.md, ವಿಸ್ತರಣೆಗಳು, MCP ಸರ್ವರ್‌ಗಳು ಮತ್ತು MCP ಸೈನ್-ಇನ್‌ಗಳನ್ನು ccam migrate ಮೂಲಕ ccam ಗುಂಪಿಗೆ ನಕಲಿಸಿ.
-updated: 2026-10-19
+description: ಈಗಿರುವ ~/.claude ನ ಸೆಟ್ಟಿಂಗ್‌ಗಳು, CLAUDE.md, ವಿಸ್ತರಣೆಗಳು ಮತ್ತು MCP ಸರ್ವರ್‌ಗಳನ್ನು ccam migrate ಮೂಲಕ ccam ಗುಂಪಿಗೆ ನಕಲಿಸಿ.
+updated: 2026-10-23
 order: 6
 translation: machine
-sourceHash: "7cee52e75749"
+sourceHash: "7bca9efb6eb0"
 ---
 
-ccam ಗಿಂತ ಮೊದಲು ನೀವು Claude Code ಬಳಸಿದ್ದರೆ, ನಿಮ್ಮ ಸೆಟಪ್ `~/.claude` ಮತ್ತು `~/.claude.json` ನಲ್ಲಿದೆ. `ccam migrate` ಅದನ್ನು ಒಂದು ಹಂಚಿಕೆಯ ಗುಂಪಿಗೆ ನಕಲಿಸುತ್ತದೆ. ಹೀಗಾಗಿ ಆ ಗುಂಪಿನ ಮೂಲಕ ಆ ಐಟಂಗಳನ್ನು ಹಂಚಿಕೊಳ್ಳುವ ಪ್ರತಿ ಖಾತೆಯೂ ನಿಮ್ಮ ಈಗಿನ ಸೆಟಪ್‌ನೊಂದಿಗೇ ಆರಂಭವಾಗುತ್ತದೆ. ಮೂಲ ಫೋಲ್ಡರ್ ಅನ್ನು ಓದಲಾಗುತ್ತದೆ ಅಷ್ಟೇ, ಮತ್ತು ಸಾಮಾನ್ಯ `claude` ಮೊದಲಿನಂತೆಯೇ ಕೆಲಸ ಮಾಡುತ್ತದೆ. ನಿಮ್ಮ ಮೊದಲ `ccam add` ನಂತರ ಇದನ್ನು ಒಮ್ಮೆ ರನ್ ಮಾಡಿ, ಮತ್ತು ಯಾವುದಾದರೂ ಖಾತೆ MCP ಸರ್ವರ್‌ಗಳನ್ನು ಹಂಚಿಕೊಳ್ಳಲು ಆರಂಭಿಸಿದಾಗಲೆಲ್ಲಾ ಮತ್ತೆ ರನ್ ಮಾಡಿ.
+ccam ಗಿಂತ ಮೊದಲು ನೀವು Claude Code ಬಳಸಿದ್ದರೆ, ನಿಮ್ಮ ಸೆಟಪ್ `~/.claude` ಮತ್ತು `~/.claude.json` ನಲ್ಲಿದೆ. `ccam migrate` ಅದನ್ನು ಒಂದು ಹಂಚಿಕೆಯ ಗುಂಪಿಗೆ ನಕಲಿಸುತ್ತದೆ. ಹೀಗಾಗಿ ಆ ಗುಂಪಿನ ಮೂಲಕ ಆ ಐಟಂಗಳನ್ನು ಹಂಚಿಕೊಳ್ಳುವ ಪ್ರತಿ ಖಾತೆಯೂ ನಿಮ್ಮ ಈಗಿನ ಸೆಟಪ್‌ನೊಂದಿಗೇ ಆರಂಭವಾಗುತ್ತದೆ. ಮೂಲ ಫೋಲ್ಡರ್ ಅನ್ನು ಓದಲಾಗುತ್ತದೆ ಅಷ್ಟೇ, ಮತ್ತು ಸಾಮಾನ್ಯ `claude` ಮೊದಲಿನಂತೆಯೇ ಕೆಲಸ ಮಾಡುತ್ತದೆ. ನಿಮ್ಮ ಮೊದಲ `ccam add` ನಂತರ ಇದನ್ನು ಒಮ್ಮೆ ರನ್ ಮಾಡಿ; `~/.claude.json` ನಲ್ಲಿ MCP ಸರ್ವರ್‌ಗಳಿದ್ದರೆ, ಮೊದಲ `ccam add` ತನ್ನ ಸಲಹೆಯಲ್ಲಿ ಅವುಗಳನ್ನು ಹೆಸರಿಸುತ್ತದೆ.
 
 ## ಬಳಕೆ
 
@@ -43,20 +43,17 @@ Space (ಅಥವಾ `x`) ಕರ್ಸರ್ ಕೆಳಗಿನ ಐಟಂ ಅನ�
 $ ccam migrate --yes
 Copy from /home/me/.claude into group default (/home/me/.local/share/ccam/groups/default):
   mcp         ~/.claude.json  new: fs, linear
-              sign-ins        linear → personal; skipped: work (not logged in yet)
+              sign-ins        not copied (a sign-in works for one account only); sign in with /mcp: linear in personal, work
   settings    settings.json   new: 61 B
+              not found, skipped: keybindings.json
   memory      CLAUDE.md       new: 11 B
   extensions  agents/         add 1 file the group lacks (6 B)
               skills/         add 1 file the group lacks (13 B)
               not found, skipped: commands/, plugins/, output-styles/, rules/
   Conversation history (projects/, history.jsonl) is not included; add --history to copy it.
-✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, skills/, MCP sign-ins for personal
-MCP sign-ins were not copied to: work (not logged in yet). Sign in to those servers there with /mcp.
-Accounts that share these through group default:
-  mcp         personal, work
-  settings    personal, work
-  memory      personal, work
-  extensions  personal, work
+✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, skills/
+MCP sign-ins are not copied (a sign-in works for one account only). Sign in with /mcp to linear in personal, work.
+Group default: personal, work
 ```
 
 ಒಂದು ಗುಂಪು ತನ್ನದೇ ಖಾತೆಗಳನ್ನು ಮಾತ್ರ, ಅದೂ ತಾನು ಹಂಚಿಕೊಳ್ಳುವ ಐಟಂಗಳಿಗೆ ಮಾತ್ರ ತಲುಪುತ್ತದೆ, ಹೀಗಾಗಿ ಸಾರಾಂಶವು ಗುಂಪಿನ ಖಾತೆಗಳನ್ನು ಪಟ್ಟಿ ಮಾಡುತ್ತದೆ. ನಕಲಿಸಿದ ಐಟಂಗಳಲ್ಲಿ ಒಂದನ್ನು ಗುಂಪು ಹಂಚಿಕೊಳ್ಳದಿದ್ದರೆ, ಅಥವಾ ಕೆಲವು ಖಾತೆಗಳು ಅದರಲ್ಲಿ ಇಲ್ಲದಿದ್ದರೆ, ccam ಅದನ್ನು ಬದಲಾಯಿಸುವ `ccam group set <group> --add <items>` ಮತ್ತು `ccam group join <group> <accounts>` ಕಮಾಂಡ್‌ಗಳನ್ನು ಮುದ್ರಿಸುತ್ತದೆ.
@@ -83,9 +80,9 @@ Accounts that share these through group default:
 
 `internal/cli/migrate.go` ಐಟಂಗಳನ್ನು ಆಯ್ಕೆಮಾಡುತ್ತದೆ, ನಂತರ `migrate.Build` ಮೂಲ ಮತ್ತು ಗುಂಪನ್ನು ಓದಿ ಒಂದು ಯೋಜನೆಯನ್ನು ಹಿಂತಿರುಗಿಸುತ್ತದೆ. ನೀವು ದೃಢೀಕರಿಸಿದ ನಂತರ `Plan.Apply` ಆಗುವವರೆಗೆ ಏನನ್ನೂ ಬರೆಯಲಾಗುವುದಿಲ್ಲ.
 
-1. **ಮೂಲವನ್ನು ಹುಡುಕುವುದು.** ಇಲ್ಲದ, ಫೋಲ್ಡರ್ ಅಲ್ಲದ, ಅಥವಾ ಯಾವುದೇ ತಿಳಿದಿರುವ Claude Code ನಮೂದು ಇಲ್ಲದ ಪಾತ್ ಅನ್ನು `checkSource` ನಿರಾಕರಿಸುತ್ತದೆ. `migrate.ClaudeJSON` ಫೋಲ್ಡರ್‌ಗೆ ಸೇರಿದ `.claude.json` ಅನ್ನು ಹುಡುಕುತ್ತದೆ: ಅದರೊಳಗೆ, ಅಥವಾ ಒಳಗೆ ಅದಿಲ್ಲದ `~/.claude` ಗಾಗಿ, ಅದರ ಪಕ್ಕದ `~/.claude.json`. `CLAUDE_CONFIG_DIR` ಹೊಂದಿಸದಿದ್ದಾಗ Claude Code ಅದನ್ನು ಇಡುವುದು ಅಲ್ಲೇ.
+1. **ಮೂಲವನ್ನು ಹುಡುಕುವುದು.** ಇಲ್ಲದ, ಫೋಲ್ಡರ್ ಅಲ್ಲದ, ಅಥವಾ ಯಾವುದೇ ತಿಳಿದಿರುವ Claude Code ನಮೂದು ಇಲ್ಲದ ಪಾತ್ ಅನ್ನು `checkSource` ನಿರಾಕರಿಸುತ್ತದೆ. MCP ಸರ್ವರ್‌ಗಳನ್ನು ಮಾತ್ರ ನಕಲಿಸುವಾಗ, `~/.claude.json` ನಲ್ಲಿ ಸರ್ವರ್‌ಗಳಿರುವವರೆಗೆ ಖಾಲಿ ಅಥವಾ ಇಲ್ಲದ `~/.claude` ಪರವಾಗಿಲ್ಲ. `migrate.ClaudeJSON` ಫೋಲ್ಡರ್‌ಗೆ ಸೇರಿದ `.claude.json` ಅನ್ನು ಹುಡುಕುತ್ತದೆ: ಅದರೊಳಗೆ, ಅಥವಾ ಒಳಗೆ ಅದಿಲ್ಲದ `~/.claude` ಗಾಗಿ, ಅದರ ಪಕ್ಕದ `~/.claude.json`. `CLAUDE_CONFIG_DIR` ಹೊಂದಿಸದಿದ್ದಾಗ Claude Code ಅದನ್ನು ಇಡುವುದು ಅಲ್ಲೇ.
 2. **ಐಟಂಗಳನ್ನು ಪಾತ್‌ಗಳಿಗೆ ಹೊಂದಿಸುವುದು.** ಪ್ರತಿ ಪಾತ್ `share.Layout` ನಿಂದ ಬರುತ್ತದೆ, ಇದು ಗುಂಪುಗಳು ಬಳಸುವ ಅದೇ ಅನುಮತಿ ಪಟ್ಟಿ. MCP ಸರ್ವರ್‌ಗಳನ್ನು `.claude.json` ನಿಂದ `mcp.LocalServers` ಮೂಲಕ ಓದಲಾಗುತ್ತದೆ, ಇದು ಇಡೀ ಫೈಲ್ ಅನ್ನು ಪಾರ್ಸ್ ಮಾಡುವ ಬದಲು `profile.TopLevelValue` ಸ್ಕ್ಯಾನರ್ ಬಳಸುತ್ತದೆ.
-3. **ನಕಲಿಸುವುದು, ಎಂದಿಗೂ ಸ್ಥಳಾಂತರಿಸುವುದಿಲ್ಲ.** ಫೈಲ್‌ಗಳು `fsutil.AtomicWrite` ಅಥವಾ `fsutil.CopyFile` ಮೂಲಕ `~/.local/share/ccam/groups/<group>/` ಗೆ ಹೋಗುತ್ತವೆ; MCP ಸರ್ವರ್‌ಗಳು ಗುಂಪಿನ `mcp.json` ಗೆ ಹೋಗುತ್ತವೆ.
+3. **ನಕಲಿಸುವುದು, ಎಂದಿಗೂ ಸ್ಥಳಾಂತರಿಸುವುದಿಲ್ಲ.** ಫೈಲ್‌ಗಳು `fsutil.AtomicWrite` ಅಥವಾ `fsutil.CopyFile` ಮೂಲಕ `~/.local/share/ccam/groups/<group>/` ಗೆ ಹೋಗುತ್ತವೆ; ಅದು ಗುರಿಯ ಪಕ್ಕದಲ್ಲಿ ತಾತ್ಕಾಲಿಕ ಫೈಲ್ ಬರೆದು ಅದನ್ನು ಮರುಹೆಸರಿಸುತ್ತದೆ, ಹೀಗಾಗಿ ಅರ್ಧದಲ್ಲಿ ನಿಂತ ನಕಲು ಎಂದಿಗೂ ಕತ್ತರಿಸಿದ ಫೈಲ್ ಅನ್ನು ಬಿಡುವುದಿಲ್ಲ. MCP ಸರ್ವರ್‌ಗಳು ಗುಂಪಿನ `mcp.json` ಗೆ ಅದರ ಲಾಕ್ ಅಡಿಯಲ್ಲಿ ಹೋಗುತ್ತವೆ: ಈ ನಡುವೆ ಇನ್ನೊಂದು ccam ಸೇರಿಸುವ ಸರ್ವರ್ ಉಳಿಯುತ್ತದೆ, ಮತ್ತು [Remote Control](/guides/remote-control) ಗಾಗಿ ಮಾಡಿದ ನಕಲುಗಳನ್ನು ನಂತರ ನವೀಕರಿಸಲಾಗುತ್ತದೆ.
 
 ಪ್ರತಿ ಐಟಂ ಒಂದು ಮೂಲ ಪಾತ್ ಅನ್ನು ಒಂದು ಗುಂಪಿನ ಪಾತ್‌ಗೆ ಹೊಂದಿಸುತ್ತದೆ:
 
@@ -108,18 +105,7 @@ Accounts that share these through group default:
 
 ### MCP ಸೈನ್-ಇನ್‌ಗಳು
 
-OAuth ಮೂಲಕ ಸೈನ್ ಇನ್ ಆಗುವ MCP ಸರ್ವರ್‌ಗಳು ತಮ್ಮ ಟೋಕನ್‌ಗಳನ್ನು ಸರ್ವರ್ ಪಟ್ಟಿಯಲ್ಲಿ ಅಲ್ಲ, ಲಾಗಿನ್ ಫೈಲ್ `.credentials.json` ನಲ್ಲಿ `mcpOAuth` ಅಡಿಯಲ್ಲಿ ಇಡುತ್ತವೆ. Claude Code ಪ್ರತಿ ನಮೂದಿನ ಕೀಯನ್ನು `<name>|` ಜೊತೆಗೆ ಸರ್ವರ್‌ನ `type`, `url` ಮತ್ತು `headers` ನ `sha256` ಹ್ಯಾಶ್‌ನ ಮೊದಲ 16 ಅಕ್ಷರಗಳಾಗಿ ರಚಿಸುತ್ತದೆ. ಕೀ ಫೋಲ್ಡರ್ ಮೇಲೆ ಅವಲಂಬಿತವಾಗಿಲ್ಲ, ಹೀಗಾಗಿ ಸರ್ವರ್ ವ್ಯಾಖ್ಯಾನ ಒಂದೇ ಆಗಿರುವವರೆಗೆ ನಕಲಿಸಿದ ನಮೂದು ಇನ್ನೊಂದು ಖಾತೆಯಲ್ಲೂ ಕೆಲಸ ಮಾಡುತ್ತದೆ. ಆದ್ದರಿಂದ `internal/migrate/logins.go` ನಲ್ಲಿನ `buildLogins`, ಕೊನೆಗೆ ಗುಂಪಿನಲ್ಲಿ ಮೂಲದ ವ್ಯಾಖ್ಯಾನದಲ್ಲೇ ಉಳಿಯುವ ಸರ್ವರ್‌ಗಳ ನಮೂದುಗಳನ್ನು ಮಾತ್ರ ನಕಲಿಸುತ್ತದೆ: ಹೊಸವು, ಈಗಾಗಲೇ ಒಂದೇ ಆಗಿರುವವು, ಅಥವಾ ನೀವು `use mine` ಆಯ್ಕೆಮಾಡಿದ ಸಂಘರ್ಷಗಳು. ನೀವು ವಿಸ್ತರಣೆಗಳನ್ನು ನಕಲಿಸಿದಾಗ ಮತ್ತು ಮೂಲದಲ್ಲಿ `plugins/` ಇದ್ದಾಗ, ಪ್ಲಗಿನ್ ಸರ್ವರ್‌ಗಳ ಸೈನ್-ಇನ್‌ಗಳೂ (`plugin:` ನಿಂದ ಆರಂಭವಾಗುವ ಕೀಗಳು) ಜೊತೆಗೆ ಹೋಗುತ್ತವೆ.
-
-<!-- motion:migrate-signins -->
-
-ನಮೂದುಗಳು ಪಡೆಯುವ ಪ್ರತಿ ಖಾತೆಯ ಸ್ವಂತ `.credentials.json` ಗೆ ಹೋಗುತ್ತವೆ, `fsutil.AtomicWrite` ಮೂಲಕ `0600` ಮೋಡ್‌ನಲ್ಲಿ ಬರೆಯಲಾಗುತ್ತದೆ. ಅವು ಎಂದಿಗೂ ಗುಂಪಿಗೆ ಹೋಗುವುದಿಲ್ಲ. ಒಂದು ಖಾತೆ ಗುರಿ ಗುಂಪಿನ ಮೂಲಕ `mcp` (ಅಥವಾ, ಪ್ಲಗಿನ್ ಸರ್ವರ್‌ಗಳಿಗೆ, `extensions`) ಹಂಚಿಕೊಂಡಿದ್ದರೆ ಮಾತ್ರ ಅವುಗಳನ್ನು ಪಡೆಯುತ್ತದೆ, ಮತ್ತು ಅದರಲ್ಲಿ ಇಲ್ಲದ ಕೀಗಳನ್ನು ಮಾತ್ರ ಸೇರಿಸಲಾಗುತ್ತದೆ: ಈಗಾಗಲೇ ಇರುವ, ಬಹುಶಃ ಹೊಸದಾದ ನಮೂದುಗಳನ್ನು ಉಳಿಸಿಕೊಳ್ಳಲಾಗುತ್ತದೆ. ಯೋಜನೆಯ `sign-ins` ಸಾಲು ಸರ್ವರ್‌ಗಳು, ಪಡೆಯುವ ಖಾತೆಗಳು ಮತ್ತು ಬಿಟ್ಟುಬಿಟ್ಟ ಖಾತೆಗಳನ್ನು ಪಟ್ಟಿ ಮಾಡುತ್ತದೆ. ಒಂದು ಖಾತೆ ಈ ಕೆಳಗಿನಂತಿದ್ದರೆ ccam ಅದನ್ನು ಬಿಟ್ಟುಬಿಡುತ್ತದೆ ಮತ್ತು ಕಾರಣದೊಂದಿಗೆ ಅದರ ಹೆಸರನ್ನು ತಿಳಿಸುತ್ತದೆ:
-
-- `ccam import` ಮೂಲಕ ಇದ್ದಲ್ಲೇ ನೋಂದಣಿಯಾಗಿದ್ದರೆ, ಏಕೆಂದರೆ ಸಾಮಾನ್ಯ `claude` ಅದರ ಲಾಗಿನ್ ಫೈಲ್ ಅನ್ನು ಬಳಸುತ್ತಿರಬಹುದು;
-- ಚಾಲನೆಯಲ್ಲಿದ್ದರೆ, ಏಕೆಂದರೆ Claude Code ಅದರ ಲಾಗಿನ್ ಫೈಲ್ ಅನ್ನು ಮತ್ತೆ ಬರೆಯುತ್ತದೆ (ಬರೆಯುವ ಸ್ವಲ್ಪ ಮೊದಲು ಮತ್ತೆ ಪರಿಶೀಲಿಸಲಾಗುತ್ತದೆ, `started meanwhile` ಎಂದು ತಿಳಿಸಲಾಗುತ್ತದೆ);
-- ಇನ್ನೂ ಲಾಗಿನ್ ಆಗಿಲ್ಲದಿದ್ದರೆ;
-- ತನ್ನ ಲಾಗಿನ್ ಅನ್ನು macOS Keychain ನಲ್ಲಿ ಇಟ್ಟಿದ್ದರೆ, ಅದಕ್ಕೆ ccam ಬರೆಯುವುದಿಲ್ಲ.
-
-ಬಿಟ್ಟುಬಿಟ್ಟ ಖಾತೆಯಲ್ಲಿ `/mcp` ಮೂಲಕ ಸರ್ವರ್‌ಗಳಿಗೆ ಸೈನ್ ಇನ್ ಆಗಿ. ನಂತರ MCP ಸರ್ವರ್‌ಗಳನ್ನು ಹಂಚಿಕೊಳ್ಳಲು ಆರಂಭಿಸುವ ಖಾತೆಗೆ, ನೀವು `ccam migrate` ಅನ್ನು ಮತ್ತೆ ರನ್ ಮಾಡಿದಾಗ ಸೈನ್-ಇನ್‌ಗಳು ಸಿಗುತ್ತವೆ; ಸಾರಾಂಶವು ಇದನ್ನು ``Then run `ccam migrate` again to give them the MCP sign-ins too.`` ಎಂದು ತಿಳಿಸುತ್ತದೆ.
+OAuth ಮೂಲಕ ಸೈನ್ ಇನ್ ಆಗುವ MCP ಸರ್ವರ್‌ಗಳು ತಮ್ಮ ಟೋಕನ್‌ಗಳನ್ನು ಸರ್ವರ್ ಪಟ್ಟಿಯಲ್ಲಿ ಅಲ್ಲ, ಲಾಗಿನ್ ಫೈಲ್ `.credentials.json` ನಲ್ಲಿ `mcpOAuth` ಅಡಿಯಲ್ಲಿ ಇಡುತ್ತವೆ. ccam ಅವುಗಳನ್ನು ನಕಲಿಸುವುದಿಲ್ಲ. ನಕಲಿಸಿದ ಸೈನ್-ಇನ್ ಮೂಲದಲ್ಲಿರುವ ಅದೇ ರಿಫ್ರೆಶ್ ಟೋಕನ್ ಅನ್ನು ಹೊಂದಿರುತ್ತದೆ, ಮತ್ತು ಮೊದಲ ನವೀಕರಣದಲ್ಲೇ ಸರ್ವರ್ ಆ ಟೋಕನ್ ಅನ್ನು ಬದಲಾಯಿಸುತ್ತದೆ: ಆಗ ಅದನ್ನು ಹೊಂದಿರುವ ಉಳಿದೆಲ್ಲರೂ, ಮೂಲ `~/.claude` ಸೇರಿದಂತೆ, ಆ ಸರ್ವರ್‌ನಿಂದ ಲಾಗ್ ಔಟ್ ಆಗುತ್ತಾರೆ. ಆದ್ದರಿಂದ ಯೋಜನೆಯ `sign-ins` ಸಾಲು, ಮೂಲ ಸೈನ್ ಇನ್ ಆಗಿರುವ ಪ್ರತಿ ನಕಲಿಸಿದ ಸರ್ವರ್‌ಗೆ, `/mcp` ಮೂಲಕ ತಾವೇ ಸೈನ್ ಇನ್ ಆಗುವ ಗುಂಪಿನ ಖಾತೆಗಳನ್ನು ಹೆಸರಿಸುತ್ತದೆ, ಮತ್ತು ಸಾರಾಂಶ ಅದನ್ನು ಪುನರಾವರ್ತಿಸುತ್ತದೆ. ಟೋಕನ್ ಇಲ್ಲದ ನಮೂದು ಸೈನ್-ಇನ್ ಅಲ್ಲ ಮತ್ತು ಅದನ್ನು ಪಟ್ಟಿ ಮಾಡಲಾಗುವುದಿಲ್ಲ; ಈಗಾಗಲೇ ತನ್ನದೇ ಸೈನ್-ಇನ್ ಹೊಂದಿರುವ ಖಾತೆಯನ್ನೂ, ಗುಂಪು ತನ್ನ ವ್ಯಾಖ್ಯಾನವನ್ನು ಉಳಿಸಿಕೊಳ್ಳುವ ಸರ್ವರ್ ಅನ್ನೂ ಪಟ್ಟಿ ಮಾಡಲಾಗುವುದಿಲ್ಲ. ಯಾವುದೇ ಲಾಗಿನ್ ಫೈಲ್ ಅನ್ನು ಬರೆಯಲಾಗುವುದಿಲ್ಲ.
 
 ## ಸುರಕ್ಷತೆ ಮತ್ತು ವಿಶೇಷ ಸಂದರ್ಭಗಳು
 
@@ -127,7 +113,8 @@ OAuth ಮೂಲಕ ಸೈನ್ ಇನ್ ಆಗುವ MCP ಸರ್ವರ್‌
 - `use mine`, ವಿಲೀನ, ಅಥವಾ ಈಗಿರುವ `mcp.json` ನಲ್ಲಿ ಹೊಸ MCP ಸರ್ವರ್‌ಗಳಿಂದ ಗುಂಪಿನ ಫೈಲ್ ಬದಲಾಗುವ ಮೊದಲು, ಗುಂಪಿನ ನಕಲನ್ನು `<group>/.ccam-backup/<time>/` ನಲ್ಲಿ ಉಳಿಸಲಾಗುತ್ತದೆ. ಫೋಲ್ಡರ್ ಹೆಸರು ಪ್ರತಿ ರನ್‌ಗೆ ಅನನ್ಯ, ಹೀಗಾಗಿ ಒಂದೇ ಸೆಕೆಂಡಿನ ಎರಡು ರನ್‌ಗಳು ಪರಸ್ಪರರ ಬ್ಯಾಕಪ್‌ಗಳನ್ನು ತಿದ್ದಿ ಬರೆಯುವುದಿಲ್ಲ. ಸಾರಾಂಶವು ಪಾತ್ ಅನ್ನು ಮುದ್ರಿಸುತ್ತದೆ.
 - `--yes` ಇದ್ದಾಗ, ಪ್ರತಿ ಸಂಘರ್ಷದಲ್ಲೂ ಗುಂಪಿನ ನಕಲು ಉಳಿಯುತ್ತದೆ, ಮತ್ತು ಬದಲಿಗೆ ಹೇಗೆ ಆಯ್ಕೆಮಾಡಬೇಕು ಎಂದು ccam ಹೇಳುತ್ತದೆ: ಅದೇ ಕಮಾಂಡ್ ಅನ್ನು `--yes` ಇಲ್ಲದೆ ರನ್ ಮಾಡಿ.
 - ಏನೂ ಬದಲಾಗದಿದ್ದರೆ, ccam `Nothing to copy.` ಎಂದು ಮುದ್ರಿಸುತ್ತದೆ; ಪ್ರತಿ ಸಂಘರ್ಷದಲ್ಲೂ ಗುಂಪಿನ ನಕಲು ಉಳಿದರೆ, `Nothing to copy: the group keeps its own copies.`
-- ನಕಲು ಅರ್ಧದಲ್ಲಿ ವಿಫಲವಾದರೆ, ccam `The source folder was not changed. Group files replaced so far are saved in` ಮತ್ತು ಅದರ ನಂತರ ಬ್ಯಾಕಪ್ ಫೋಲ್ಡರ್‌ನೊಂದಿಗೆ ನಿಲ್ಲುತ್ತದೆ.
+- ನಕಲು ಅರ್ಧದಲ್ಲಿ ವಿಫಲವಾದರೆ, ccam `The source folder was not changed. Group files replaced so far are saved in` ಮತ್ತು ಅದರ ನಂತರ ಬ್ಯಾಕಪ್ ಫೋಲ್ಡರ್‌ನೊಂದಿಗೆ ನಿಲ್ಲುತ್ತದೆ. ಮತ್ತೆ ರನ್ ಮಾಡಿದರೆ ಪೂರ್ತಿಯಾಗಿ ತಲುಪದ ಫೈಲ್‌ಗಳು ನಕಲಾಗುತ್ತವೆ.
+- ಹಲವು ಗುಂಪುಗಳು MCP ಹಂಚಿಕೊಂಡಾಗ, `ccam doctor`, `ccam ext` ಮತ್ತು `ccam mcp list` ಸೂಚಿಸುವ ಕಮಾಂಡ್‌ಗಳು `ccam migrate --mcp --group <a|b>` ಎಂದಿರುತ್ತವೆ.
 - ಮೂಲ ಇಲ್ಲದಿದ್ದರೆ `no Claude Code folder at <path>. Give the folder to copy from: ccam migrate <folder>` ಎಂದು ಮುಗಿಯುತ್ತದೆ.
 
 ## ಸಂಬಂಧಿತ

@@ -1,10 +1,10 @@
 ---
 title: سرورهای MCP مشترک
 description: برای هر گروه یک فهرست سرور MCP با ccam mcp add، add-json، list، remove و import نگه دارید که با --mcp-config داده یا در هر حساب همگام‌سازی می‌شود.
-updated: 2026-10-20
+updated: 2026-10-23
 order: 5
 translation: machine
-sourceHash: 6d3b3c38c6cb
+sourceHash: fefca7f8d857
 ---
 
 Claude Code سرورهای MCP کاربر را در `.claude.json` نگه می‌دارد، همان فایلی که ورود حساب را در خود دارد، بنابراین این فایل را نمی‌توان بین حساب‌ها به اشتراک گذاشت. ccam سرورهای مشترک را در یک فایل گروه، `mcp.json`، نگه می‌دارد و هنگام اجرا آن را به همه حساب‌های گروه می‌دهد. با `ccam mcp` یک سرور را یک بار برای همه حساب‌هایتان اضافه کنید و با `ccam mcp import` سروری را که داخل یک نشست اضافه کرده‌اید به حساب‌های دیگر منتقل کنید.
@@ -18,7 +18,7 @@ ccam mcp add docs --url https://example.com/sse --transport sse
 ccam mcp add db -e PGHOST=localhost -- pg-mcp                    # with an environment variable
 ccam mcp add-json gh '{"type":"http","url":"https://api.githubcopilot.com/mcp/"}'
 ccam mcp add tools -g team -- tools-mcp                           # into the group team
-ccam mcp list                                                     # every group, and servers only one account has
+ccam mcp list                                                     # every group, and servers only one account or folder has
 ccam mcp remove ctx
 ccam mcp import work                                              # move work's own servers into its group
 ccam mcp import work gh --force                                   # replace the group's different gh
@@ -34,7 +34,10 @@ group default (work, side)
   ctx                  http https://mcp.context7.com/mcp
   fs                   stdio npx -y @modelcontextprotocol/server-filesystem /home/me/code
 only in account work: pg
+only in account side, for /home/me/code/app only: notes
 ```
+
+زیر گروه‌ها، `ccam mcp list` هر سروری را که به حساب‌های دیگر نمی‌رسد نام می‌برد: `only in account work: pg` برای سروری که یک حساب برای خودش اضافه کرده، `only in account side, for /home/me/code/app only: notes` برای سروری که برای یک پوشه اضافه شده (`claude mcp add` ساده، پایین‌تر را ببینید)، `account work has its own …, used in its sessions in place of the group's` وقتی سرور خود یک حساب نام یک سرور گروه را دارد، `.mcp.json` این پوشه همراه با حساب‌هایی که تأییدشان `waiting for approval in` است، و سرورهایی که `in no account, only in ~/.claude.json (plain claude's)` هستند، همراه با فرمان [`ccam migrate --mcp`](/features/migrate) که آن‌ها را کپی می‌کند.
 
 افزودن نامی که گروه از قبل دارد، تعریف آن را جایگزین می‌کند و به‌جای `added`، `updated` چاپ می‌کند. سرورها فقط به حسابی می‌رسند که در آن گروه باشد و گروه MCP را به اشتراک بگذارد (`ccam group set <group> --add mcp`)؛ وقتی گروه این کار را نمی‌کند، `add` این را اعلام می‌کند.
 
@@ -59,9 +62,9 @@ only in account work: pg
 
 فایل‌های درگیر:
 
-- `~/.local/share/ccam/groups/<group>/mcp.json`: سرورهای مشترک، `{"mcpServers": {…}}`، همان قالبی که `--mcp-config` می‌خواند. این فایل با `fsutil.AtomicWrite` و حالت `0600` نوشته می‌شود، چون ورودی‌های سرور اغلب کلیدهای API دارند.
+- `~/.local/share/ccam/groups/<group>/mcp.json`: سرورهای مشترک، `{"mcpServers": {…}}`، همان قالبی که `--mcp-config` می‌خواند. این فایل با `fsutil.AtomicWrite` و حالت `0600` نوشته می‌شود، چون ورودی‌های سرور اغلب کلیدهای API دارند، و فقط زیر قفل `<group>/.mcp.json.lock`، تا دو `ccam mcp add` هم‌زمان هر دو سرورشان را نگه دارند.
 - `~/.local/share/ccam/profiles/<name>/.claude.json`: فایل خود Claude Code با سرورهای حساب. ccam فقط مقدار `mcpServers` آن را با پویشگر `profile.TopLevelValue` می‌خواند و هرگز کل فایل را در مسیر اجرا تجزیه نمی‌کند.
-- `~/.local/state/ccam/mcp/<name>/`: فایل `seen`، فایل `sync-stamp` و نسخه‌های پشتیبان `.claude.json`.
+- `~/.local/state/ccam/mcp/<name>/`: فایل `seen`، فایل `sync-stamp` (با یک hash از هر کپی که ccam نوشته، تا بتواند کپی‌ای را که کسی تغییرش نداده از کپی‌ای که ویرایش کرده‌اید تشخیص دهد)، `sync-checked` (آنچه راهبرد sync آخرین بار دید)، `kept` (سرورهایی که حساب هنگام بیرون رفتن از اشتراک MCP نگه داشت) و نسخه‌های پشتیبان `.claude.json`.
 
 دو راهبرد وجود دارد که با `mcp_strategy` در `~/.config/ccam/config.toml` تعیین می‌شوند. پیش‌فرض، راهبرد flag است:
 
@@ -72,9 +75,9 @@ only in account work: pg
 3. `mcp.NewLocal` بررسی می‌کند که آیا `.claude.json` حساب از اجرای قبلی تغییر کرده است و فقط در آن صورت سرورهای آن را تجزیه می‌کند.
 4. `syscall.Exec` ccam را با Claude Code جایگزین می‌کند.
 
-مسیر به‌صورت یک آرگومان، `--mcp-config=<path>`، داده می‌شود نه دو آرگومان. `--mcp-config` در Claude Code چند مقدار می‌پذیرد، بنابراین `claude --mcp-config a.json "prompt"` پرامپت را به‌عنوان فایل پیکربندی دوم می‌خواند و با `MCP config file not found` شکست می‌خورد. شکل تک‌آرگومانی همان‌جا تمام می‌شود و پرامپت یا زیرفرمانی مانند `mcp list` که پس از آن بیاید کار می‌کند. Claude Code سرورهای `--mcp-config` را علاوه بر سرورهای خود حساب بارگذاری می‌کند؛ در صورت تداخل نام، ورودی `.claude.json` برنده است. راهبرد flag فقط برای Remote Control در `.claude.json` می‌نویسد.
+مسیر به‌صورت یک آرگومان، `--mcp-config=<path>`، داده می‌شود نه دو آرگومان. `--mcp-config` در Claude Code چند مقدار می‌پذیرد، بنابراین `claude --mcp-config a.json "prompt"` پرامپت را به‌عنوان فایل پیکربندی دوم می‌خواند و با `MCP config file not found` شکست می‌خورد. شکل تک‌آرگومانی همان‌جا تمام می‌شود و پرامپت یا زیرفرمانی که پس از آن بیاید کار می‌کند. `ccam work mcp list`، `get` و `remove` این گزینه را نمی‌گیرند، چون Claude Code آنجا ردش می‌کند؛ به جای آن ccam سرورهای گروه را در خطای استاندارد نام می‌برد ([جزئیات](/features/launch#shared-mcp-servers)). Claude Code سرورهای `--mcp-config` را علاوه بر سرورهای خود حساب بارگذاری می‌کند؛ در صورت تداخل نام، ورودی `.claude.json` برنده است. راهبرد flag فقط برای Remote Control، وقتی حسابی از اشتراک MCP بیرون می‌رود یا دوباره به آن می‌پیوندد ([پایین‌تر](#leaving-and-joining))، و برای `ccam mcp import` در `.claude.json` می‌نویسد.
 
-`claude remote-control` (`rc`) گزینه `--mcp-config` را نمی‌پذیرد و نشست‌های آن سرورها را فقط از `.claude.json` می‌خوانند. برای `ccam work rc`، ccam این گزینه را کنار می‌گذارد و در ترمینال می‌پرسد که آیا سرورهای گروه را، با نسخه پشتیبان، در `.claude.json` کپی کند یا نه، همان‌طور که راهبرد `sync` انجام می‌دهد. تا وقتی کپی‌ای وجود نداشته باشد می‌پرسد و پس از آن فقط بعد از تغییر `mcp.json` گروه دوباره می‌پرسد ([Remote Control](/features/launch#remote-control)). چون چنین کپی‌ای در صورت تداخل نام بر `--mcp-config` برتری دارد، `ccam mcp add`، `add-json`، `remove` و `import` کپی‌هایی را که حساب‌های دیگر گروه نگه می‌دارند به‌روز می‌کنند:
+`claude remote-control` (`rc`) گزینه `--mcp-config` را نمی‌پذیرد و نشست‌های آن سرورها را فقط از `.claude.json` می‌خوانند. برای `ccam work rc`، ccam این گزینه را کنار می‌گذارد و در ترمینال می‌پرسد که آیا سرورهای گروه را، با نسخه پشتیبان، در `.claude.json` کپی کند یا نه، همان‌طور که راهبرد `sync` انجام می‌دهد. تا وقتی کپی‌ای وجود نداشته باشد می‌پرسد و پس از آن فقط بعد از تغییر `mcp.json` گروه یا حذف شدن یک سرور کپی‌شده دوباره می‌پرسد ([Remote Control](/features/launch#remote-control)). چون چنین کپی‌ای در صورت تداخل نام بر `--mcp-config` برتری دارد، `ccam mcp add`، `add-json`، `remove` و `import` کپی‌هایی را که حساب‌های دیگر گروه نگه می‌دارند به‌روز می‌کنند:
 
 ```console
 $ ccam mcp add ctx --url https://mcp.context7.com/mcp
@@ -82,30 +85,40 @@ $ ccam mcp add ctx --url https://mcp.context7.com/mcp
 ✓ Updated the copy in account side's .claude.json (made for Remote Control)
 ```
 
-سروری که داخل یک نشست با `claude mcp add` اضافه شود فقط در `.claude.json` همان حساب قرار می‌گیرد. ccam در آن لحظه نمی‌تواند آن را ببیند، چون Claude Code جای آن را گرفته است، بنابراین در اجرای بعدی بررسی می‌کند. فایل `seen` زمان تغییر `.claude.json` و نام سرورهایی را که قبلاً گزارش شده‌اند نگه می‌دارد. وقتی زمان متفاوت باشد، ccam نام‌ها را با گروه مقایسه می‌کند و برای هر سرور جدید یک بار یک راهنمایی چاپ می‌کند، بدون اینکه منتظر ورودی بماند:
+خط `✓ Updated` فقط وقتی ظاهر می‌شود که یک کپی تغییر کرده باشد. کپی‌ای که یک ccam قدیمی‌تر ساخته به همین شکل به‌روز می‌شود، و همچنین کپی‌ای پس از `ccam migrate`.
+
+سروری که داخل یک نشست با `claude mcp add` اضافه شود فقط در `.claude.json` همان حساب قرار می‌گیرد. `claude mcp add` ساده از دامنه local استفاده می‌کند: سرور فقط برای همان یک حساب در همان یک پوشه بارگذاری می‌شود (`-s user` آن را در همه پوشه‌ها مال آن حساب می‌کند). ccam در آن لحظه نمی‌تواند آن را ببیند، چون Claude Code جای آن را گرفته است، بنابراین در اجرای بعدی بررسی می‌کند. فایل `seen` زمان تغییر `.claude.json` و نام سرورهایی را که قبلاً گزارش شده‌اند نگه می‌دارد. وقتی زمان متفاوت باشد، ccam نام‌ها را با گروه مقایسه می‌کند و برای هر سرور جدید یک بار یک راهنمایی چاپ می‌کند، بدون اینکه منتظر ورودی بماند، با هر دو راهبرد:
 
 ```console
 ccam: MCP servers only account work has: pg
       To share them with other accounts: ccam mcp import work pg
+ccam: MCP servers account work has for one folder only (claude mcp add without -s user): notes (/home/me/code/app)
+      To share them with other accounts, in every folder: ccam mcp import work notes
 ```
+
+این راهنمایی سرور خود یک حساب را هم که نام یک سرور گروه را دارد نام می‌برد، چون سرور حساب در نشست‌های آن برنده است.
 
 با `mcp_strategy = "sync"`، سرورها در `claude mcp list` و `/mcp` به شکل سرورهای عادی کاربر دیده می‌شوند و ccam پیش از اجرا آن‌ها را در `.claude.json` هر حساب می‌نویسد:
 
 <!-- motion:mcp-sync -->
 
-1. `mcp.Sync` زمان تغییر `mcp.json` گروه را با `sync-stamp` مقایسه می‌کند. اگر تغییری نکرده باشد، `.claude.json` حساب باز نمی‌شود.
+1. `mcp.Sync` زمان تغییر `mcp.json` گروه را با `sync-stamp` مقایسه می‌کند، و `.claude.json` حساب را با آنچه آخرین بار دیده است. اگر هیچ‌کدام تغییر نکرده باشند، کار دیگری انجام نمی‌شود. در غیر این صورت بررسی می‌کند که هر سرور گروه هنوز در `.claude.json` باشد، و کپی‌ای را که حذف شده برمی‌گرداند (`put back group default's MCP servers that were gone from account work's .claude.json: ctx`).
 2. قفل خود Claude Code را می‌گیرد، یعنی پوشه `.claude.json.lock` کنار فایل که با `mkdir` ساخته می‌شود. تا ۲ ثانیه صبر می‌کند و قفلی را که بیش از ۱۰ ثانیه از عمرش گذشته باشد کهنه در نظر می‌گیرد، همان کاری که کتابخانه قفل Claude Code انجام می‌دهد.
 3. `.claude.json` فعلی را در `backups/` در پوشه وضعیت ذخیره می‌کند و ۵ نسخه جدیدتر را نگه می‌دارد.
-4. همه سرورهای گروه را در `mcpServers` قرار می‌دهد، سرورهایی را که قبلاً نوشته و گروه دیگر ندارد حذف می‌کند، سرورهای خود حساب را نگه می‌دارد و فایل را به‌صورت اتمی با حالت اصلی‌اش می‌نویسد.
-5. مهر زمانی جدید و نام‌هایی را که مدیریت می‌کند ثبت می‌کند و Claude Code بدون `--mcp-config` شروع می‌شود.
+4. همه سرورهای گروه را در `mcpServers` قرار می‌دهد، سرورهایی را که قبلاً نوشته و گروه دیگر ندارد حذف می‌کند و فایل را به‌صورت اتمی با حالت اصلی‌اش می‌نویسد، فقط وقتی چیزی تغییر کرده باشد. فقط کپی‌هایی را تغییر می‌دهد یا حذف می‌کند که خودش نوشته و از آن پس کسی تغییرشان نداده است. سروری که حساب با نام یک سرور گروه از خودش دارد مال همان حساب می‌ماند و ccam یک بار این را می‌گوید: `account work has its own MCP servers fs, so group default's of those names are not copied there`.
+5. مهر زمانی جدید را همراه با یک hash از هر کپی ثبت می‌کند و Claude Code بدون `--mcp-config` شروع می‌شود.
 
-وقتی نشستی از حساب در حال اجرا باشد، همگام‌سازی با پیام `ccam: account work is already running, skipping MCP sync` انجام نمی‌شود، چون Claude Code در حین اجرا `.claude.json` را بازنویسی می‌کند. همگام‌سازی ناموفق `ccam: MCP sync failed (launching anyway): …` را چاپ می‌کند و با این حال اجرا را ادامه می‌دهد. راهنمایی درباره سرورهایی که داخل نشست اضافه شده‌اند فقط مربوط به راهبرد flag است.
+وقتی نشستی از حساب در حال اجرا باشد، Claude Code به هر شکلی که شروع شده باشد، همگام‌سازی با پیام `ccam: account work is already running, skipping MCP sync` انجام نمی‌شود، چون Claude Code در حین اجرا `.claude.json` را بازنویسی می‌کند. همگام‌سازی ناموفق `ccam: MCP sync failed (launching anyway): …` را چاپ می‌کند و با این حال اجرا را ادامه می‌دهد.
+
+### بیرون رفتن و پیوستن
+
+حسابی که اشتراک MCP را متوقف می‌کند (`ccam group leave`، `ccam group set --remove mcp`، `ccam group remove --leave`) سرورهای گروه را نگه می‌دارد: برنامه آن‌ها را با یک نسخه پشتیبان در `.claude.json` آن کپی می‌کند و سرورهای خودش با همان نام‌ها می‌مانند. با `--fresh` هیچ‌کدام را نمی‌گیرد و برنامه سرورهایی را که دیگر بارگذاری نمی‌شوند فهرست می‌کند. وقتی دوباره به گروهی بپیوندد که آن سرورها را دارد، کپی‌های نگه‌داشته‌شده‌ای که کسی تغییرشان نداده حذف می‌شوند تا ویرایش‌های بعدی گروه به آن برسند.
 
 `ccam mcp import` سرورهای خود یک حساب را به گروه آن منتقل می‌کند:
 
 <!-- motion:mcp-import -->
 
-ccam سرورهای حساب را با `mcp.LocalServers` می‌خواند و هر کدام را با سرور هم‌نام گروه با استفاده از `mcp.SameDef` مقایسه می‌کند، که ترتیب کلیدها و فاصله‌ها را نادیده می‌گیرد. سروری که گروه ندارد یا با همان تعریف دارد کپی می‌شود. سرور متفاوت رد می‌شود، چون تعریف گروه همان چیزی است که همه حساب‌های دیگر از آن استفاده می‌کنند:
+ccam سرورهای حساب را، سرورهای خودش و آن‌هایی که فقط برای یک پوشه دارد، می‌خواند و هر کدام را با سرور هم‌نام گروه با استفاده از `mcp.SameDef` مقایسه می‌کند، که ترتیب کلیدها و فاصله‌ها را نادیده می‌گیرد. سرور یک پوشه به سرور گروه برای همه پوشه‌ها تبدیل می‌شود (`notes loaded for one folder of account work only; from the group, every account in it gets them in every folder`)؛ یک نام با دو تعریف متفاوت در پوشه‌ها رد می‌شود. سرورهای پلاگین پیشنهاد نمی‌شوند، چون پلاگین خودش آن‌ها را می‌آورد. سروری که گروه ندارد یا با همان تعریف دارد کپی می‌شود. سرور متفاوت رد می‌شود، چون تعریف گروه همان چیزی است که همه حساب‌های دیگر از آن استفاده می‌کنند:
 
 ```console
 Skipped gh: group default already has a different gh (`ccam mcp import work gh --force` replaces it)
@@ -113,12 +126,12 @@ Skipped gh: group default already has a different gh (`ccam mcp import work gh -
 ✓ Removed account work's own entries (.claude.json backed up)
 ```
 
-با `--force` سرور گروه جایگزین می‌شود و `mcp.json` قبلی ابتدا در `.ccam-backup/<time>/mcp.json` داخل پوشه گروه ذخیره می‌شود. سپس `mcp.RemoveLocal` ورودی‌های کپی‌شده را از `.claude.json` حساب حذف می‌کند، با همان قفل و پس از گرفتن پشتیبان در پوشه وضعیت. این کار لازم است، چون در صورت تداخل نام، ورودی حساب بر ورودی گروه برنده می‌شود. `--keep-local` آن‌ها را باقی می‌گذارد.
+با `--force` سرور گروه جایگزین می‌شود و `mcp.json` قبلی ابتدا در `.ccam-backup/<time>/mcp.json` داخل پوشه گروه ذخیره می‌شود. سپس `mcp.Remove` ورودی‌های کپی‌شده را از `.claude.json` حساب حذف می‌کند، ورودی‌های خودش و پوشه را در یک نوشتن، با همان قفل و پس از گرفتن پشتیبان در پوشه وضعیت. `mcp.json` گروه از زمان بارگذاری آن تا حذف شدن آن ورودی‌ها قفل می‌ماند، تا کسی در این فاصله سرور را از گروه حذف نکند. این کار لازم است، چون در صورت تداخل نام، ورودی حساب بر ورودی گروه برنده می‌شود. `--keep-local` آن‌ها را باقی می‌گذارد.
 
 ## ایمنی و حالت‌های خاص
 
-- **ورودها.** سرورهایی که با OAuth وارد می‌شوند توکن‌های خود را در `.credentials.json` هر حساب (`mcpOAuth`) نگه می‌دارند، نه در فهرست سرورها، بنابراین اشتراک یک سرور ورود آن را به اشتراک نمی‌گذارد. در هر حساب یک بار با `/mcp` وارد شوید، یا ورودها را با [`ccam migrate`](/features/migrate) از `~/.claude` کپی کنید. گروه هرگز فایل ورود دریافت نمی‌کند.
-- **حساب‌های در حال اجرا.** `import` در گروه کپی می‌کند، اما ورودی‌های خود حسابی را که در حال اجراست باقی می‌گذارد و این را اعلام می‌کند؛ پس از پایان نشست آن را دوباره اجرا کنید. همگام‌سازی از حساب‌های در حال اجرا می‌گذرد.
+- **ورودها.** سرورهایی که با OAuth وارد می‌شوند توکن‌های خود را در `.credentials.json` هر حساب (`mcpOAuth`) نگه می‌دارند، نه در فهرست سرورها، بنابراین اشتراک یک سرور ورود آن را به اشتراک نمی‌گذارد. در هر حساب یک بار با `/mcp` وارد شوید. ccam هرگز ورودها را کپی نمی‌کند، حتی [`ccam migrate`](/features/migrate): یک توکن تمدید کپی‌شده همه دارندگان دیگر را از سیستم خارج می‌کند. [`ccam ext`](/features/ext) و `ccam doctor` سرورهایی را نام می‌برند که یک حساب واردشان نشده اما حساب دیگری وارد شده است، و `ccam next --continue` می‌گوید حساب جدید کدام‌ها را ندارد. گروه هرگز فایل ورود دریافت نمی‌کند.
+- **حساب‌های در حال اجرا.** `import` در گروه کپی می‌کند، اما ورودی‌های خود حسابی را که در حال اجراست باقی می‌گذارد و این را اعلام می‌کند؛ پس از پایان نشست آن را دوباره اجرا کنید. همگام‌سازی از حساب‌های در حال اجرا می‌گذرد. هر دو Claude Code را که بدون ccam شروع شده هم به حساب می‌آورند.
 - **کپی‌های مربوط به Remote Control.** به کپی حسابی که در حال اجراست دست زده نمی‌شود: `Note: account side is running, so the copy in its .claude.json stays as it was until its next Remote Control launch.` با `mcp_strategy = "sync"` چیزی نیاز به به‌روزرسانی ندارد، چون هر اجرا همگام‌سازی می‌کند.
 - **فایل‌های خراب.** اگر `.claude.json` JSON معتبر نباشد، همگام‌سازی به آن دست نمی‌زند و خطا را گزارش می‌کند. اگر قفل در ۲ ثانیه گرفته نشود، ccam پیام `could not lock … (Claude Code is writing the file)` را گزارش می‌کند.
 - **حساب‌هایی که MCP را به اشتراک نمی‌گذارند.** `import` رد می‌کند و از شما می‌خواهد ابتدا حساب را در گروهی بگذارید که MCP را به اشتراک می‌گذارد (`ccam group join <group> side`).

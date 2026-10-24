@@ -1,10 +1,10 @@
 ---
 title: Limites de uso e troca de contas
 description: Veja o uso de 5 horas e o uso semanal de cada conta do Claude Code com ccam usage e abra a conta com mais espaço com ccam next --auto.
-updated: 2026-10-21
+updated: 2026-10-24
 order: 5
 translation: machine
-sourceHash: "fadb998482da"
+sourceHash: "ccaed084207a"
 ---
 
 `ccam usage` mostra quanto cada conta já usou do limite de 5 horas, do limite semanal e do limite semanal próprio de cada modelo (como o Fable). `ccam next --auto` abre a conta com mais espaço, e `--continue` leva junto a conversa atual.
@@ -26,7 +26,9 @@ $ ccam usage
 → Most headroom: work   (open it with ccam next --auto)
 ```
 
-Cada conta ganha uma linha com a idade dos seus números e, abaixo, uma barra por limite com o tempo até reiniciar: a janela de 5 horas, a janela semanal de todos os modelos e a janela semanal própria de cada modelo, como o Fable. A partir de 80% a barra fica amarela, e em 100%, vermelha. A última linha mostra a conta que `ccam next --auto` abriria.
+Cada conta ganha uma linha com a idade dos seus números e, abaixo, uma barra por limite com o tempo até reiniciar: a janela de 5 horas, a janela semanal de todos os modelos e a janela semanal própria de cada modelo, como o Fable. A partir de 80% a barra fica amarela, e em 100%, vermelha. A última linha mostra a conta que `ccam next --auto` abriria; com `auto_strategy = "expiring"` ou `"balance"`, ela diz `→ next --auto picks <name>: <reason>`.
+
+**Assentos dos planos Team e Enterprise.** A escolha automática (`ccam next`, `--fallback`, `ccam pick`, a tecla `n` do painel) também alterna entre assentos da mesma organização Claude Team ou Enterprise. A central de ajuda da Anthropic diz "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (cada assento de um plano Team é atribuído a uma pessoa específica, e só essa pessoa pode usá-lo) e "Users can't route their work through another user's account to use that user's remaining usage" (os usuários não podem encaminhar o próprio trabalho pela conta de outro usuário para aproveitar o uso restante desse usuário) ([planos Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); o mesmo vale para os [planos Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Por isso, usar a escolha automática entre assentos pode violar os termos da Anthropic. Consulte a sua organização e a Anthropic antes de contar com ela. Os planos pessoais (Pro, Max) são tratados na [nota sobre os termos nas perguntas frequentes](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 ## De onde vêm os números
 
@@ -34,11 +36,13 @@ O ccam consulta o endpoint de uso da Anthropic para todas as contas ao mesmo tem
 
 Esse endpoint não é documentado publicamente e pode mudar. Quando uma solicitação falha, o ccam mostra os últimos números conhecidos e os marca como cache. Uma janela que reiniciou depois que esses números foram salvos mostra 0%. `ccam doctor` avisa se o formato da resposta mudou.
 
+Quando o Claude Code interrompe uma sessão em um limite de uso, o [plugin do ccam](/docs/install#claude-code-plugin) registra qual janela ficou cheia e quando ela reinicia. Até lá, essa janela mostra 100%, não importa o que digam os outros números, então `ccam next --auto` e `--fallback` não escolhem a conta de novo cedo demais.
+
 Números obtidos há menos de 60 segundos são reaproveitados. Opções:
 
 | Opção | Efeito |
 | --- | --- |
-| `--watch [seconds]` | Atualiza continuamente, a cada 60 segundos por padrão |
+| `--watch[=seconds]` | Atualiza continuamente, a cada 60 segundos por padrão |
 | `--json` | Saída legível por máquina |
 | `-v` | Também mostra a origem dos números de cada conta |
 | `--no-cache` | Sempre consulta de novo |
@@ -46,9 +50,9 @@ Números obtidos há menos de 60 segundos são reaproveitados. Opções:
 
 ## Logins expirados
 
-Quando o token de acesso de uma conta expira, o ccam não o renova, porque renová-lo enquanto uma sessão do Claude Code usa o mesmo login poderia desconectar essa sessão. Inicie a conta uma vez com `ccam <name>` e o Claude Code renova o token.
+Quando o token de acesso de uma conta expira, o ccam não o renova, porque renová-lo enquanto uma sessão do Claude Code usa o mesmo login poderia desconectar essa sessão. A conta mostra ``access token expired; `ccam <name>` renews it when it starts``: inicie-a uma vez com `ccam <name>` e o Claude Code renova o token. Um login que expirou por inteiro, ou que o Claude Code apagou, mostra `` login expired → `ccam login <name>` `` e precisa de um novo login.
 
-`ccam usage --refresh` renova os tokens expirados por conta própria, mas apenas das contas que não estão em execução. Ele nunca renova logins armazenados no Acesso às Chaves do macOS ou em um `~/.claude` importado.
+`ccam usage --refresh` renova os tokens expirados por conta própria, mas apenas das contas que não estão em execução, seja qual for a forma como o Claude Code foi iniciado. Ele nunca renova logins armazenados no Acesso às Chaves do macOS ou em um `~/.claude` importado, e uma renovação pode levar até 30 segundos.
 
 ## Uso na linha de status
 
@@ -66,7 +70,7 @@ ccam next --auto      # the account with the lowest 5-hour usage
 ccam next --continue  # carry this folder's conversation on as the next account
 ```
 
-`ccam next` pula as contas que não estão com login feito, e `--auto` pula as contas em 100% e as contas de outra organização. Quando as duas contas compartilham o histórico de conversas, `--continue` abre a mesma conversa; caso contrário, o Claude Code a copia para a nova conta. Consulte [compartilhamento](/docs/sharing) e [trocar para a próxima conta](/features/next#continue).
+`ccam next` pula as contas que não estão com login feito, e `--auto` pula as contas em 100% (inclusive uma janela que o Claude Code informou como cheia, até ela reiniciar) e as contas de outra organização. Quando as duas contas compartilham o histórico de conversas, `--continue` abre a mesma conversa; caso contrário, o Claude Code a copia para a nova conta. Consulte [compartilhamento](/docs/sharing) e [trocar para a próxima conta](/features/next#continue).
 
 Para scripts e jobs agendados que executam `claude -p`, coloque `--fallback` antes do nome da conta. Quando essa conta atinge o limite, o ccam executa o mesmo comando de novo com a conta que tem mais espaço, e só a saída da execução que terminou é impressa:
 

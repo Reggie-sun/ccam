@@ -1,10 +1,10 @@
 ---
 title: الأوامر المختصرة
 description: امنح حسابًا أمرًا خاصًا به مثل ccwork باستخدام ccam shortcut، وأعد إنشاء الروابط في ~/.local/bin باستخدام ccam shims install.
-updated: 2026-10-20
+updated: 2026-10-23
 order: 3
 translation: machine
-sourceHash: 939256e7a67e
+sourceHash: 38e2d1aba397
 ---
 
 الأمر المختصر أمر تختار اسمه بنفسك، ويشغّل Claude Code بحساب واحد: يفعل `ccwork --resume` ما يفعله `ccam work --resume`. وهو رابط إلى ccam في `~/.local/bin`، لذلك يعمل في bash وzsh والسكربتات وأي شيء آخر يشغّل البرامج من `PATH`. الأوامر المختصرة اختيارية؛ أنشئ واحدًا للحسابات التي تشغّلها كثيرًا.
@@ -18,7 +18,7 @@ ccam shortcut work            # show it
 ccam shortcut work ccw        # rename it; the old link is removed
 ccam shortcut work --remove   # delete it
 ccam add side --shortcut ccside
-ccam shims install            # recreate missing links of all accounts
+ccam shims install            # recreate missing or outdated links of all accounts
 ccwork -p "summarise" --output-format json
 ```
 
@@ -54,8 +54,10 @@ work: none (add one with `ccam shortcut work ccwork`)
 - من 1 إلى 64 حرفًا من `a-z` و`0-9` و`.` و`-` و`_`، ويبدأ بحرف أو رقم؛
 - ليس `ccam` أو `claude` أو أمرًا من أوامر ccam مثل `run` أو `usage`؛
 - ليس أمرًا مختصرًا لحساب آخر؛
-- ليس ملفًا في `~/.local/bin` إلا إذا كان رابطًا إلى ccam بالفعل؛
+- ليس ملفًا في `~/.local/bin` إلا إذا كان رابط ccam بالفعل (أو الأمر المختصر الخاص بهذا الحساب، الذي أنشأه ccam)؛
 - ليس اسم برنامج تنفيذي آخر في `PATH`.
+
+يُفحص `config.toml` وفق القواعد نفسها عند تحميله: فالأمر المختصر المعدَّل يدويًا الذي يخالف النمط، أو يكون `claude` أو `ccam`، أو يُعطى لحسابين، يجعل كل أمر يفشل مع رسالة تذكر الحساب، حتى يُصلح.
 
 تحديد أمر مع `--remove` معًا يتوقف مع `give a command or --remove, not both`. وتعيين الاسم الذي يملكه الحساب بالفعل يطبع `work: ccwork (unchanged)` ويعيد إنشاء رابطه إذا كان مفقودًا.
 
@@ -70,9 +72,9 @@ work: none (add one with `ccam shortcut work ccwork`)
 1. يطابق `shim.Check` الاسم مع `^[a-z0-9][a-z0-9._-]{0,63}$`، ثم مع `config.Reserved`، ثم مع `cfg.FindShortcut`. ويستدعي `os.Lstat` على `~/.local/bin/<name>`، ولكل مجلد آخر في `PATH` يستدعي `os.Stat` ويرفض الملف التنفيذي الذي ليس رابطًا إلى ccam.
 2. يحفظ ccam الملف `config.toml` باستخدام `fsutil.AtomicWrite` (ملف مؤقت، ثم `fsync`، ثم إعادة تسمية).
 3. يحذف `shim.Remove` رابط الأمر المختصر القديم، ولكن فقط إذا كان رابطًا إلى ccam.
-4. ينشئ `shim.Install` رابط كل أمر مختصر مُعدّ ومفقود، باستخدام `os.Symlink` إلى ملف ccam التنفيذي، الذي يُحدَّد مساره باستخدام `os.Executable` و`filepath.EvalSymlinks`. ولا يحذف أي شيء أبدًا.
+4. يمرّ `shim.Install` على كل أمر مختصر مُعدّ بترتيب الأسماء وينشئ رابط كل أمر مفقود، باستخدام `os.Symlink` إلى ملف ccam التنفيذي، الذي يُحدَّد مساره باستخدام `os.Executable` و`filepath.EvalSymlinks`. والملف الذي يعترض أمرًا مختصرًا واحدًا لا يوقف الأوامر الأخرى؛ ويذكر الخطأ كلًّا منها.
 
-يُعدّ الرابط خاصًا بـ ccam عندما يُرجع `os.Readlink` مسار ccam، أو عندما يشير الرابط ومسار ccam إلى الملف نفسه. وكل عملية حذف وكل فحص استبدال يمرّ عبر هذا الاختبار، فلا يلمس ccam ملفات لم ينشئها.
+يسجّل ccam كل رابط ينشئه، والملف التنفيذي الذي جعله يشغّله، في `~/.local/state/ccam/shortcuts.json`. ويُعدّ الرابط خاصًا بـ ccam عندما يُرجع `os.Readlink` مسار ccam، أو عندما يشير الرابط ومسار ccam إلى الملف نفسه. والرابط المسجَّل الذي نُقل ملفه التنفيذي أو استُبدل منذ ذلك الحين (ccam نُقل إلى مجلد آخر، أو إعادة تثبيت) قديم، ويوجّهه `shim.Install` إلى ccam هذا. أما الرابط المسجَّل إلى ccam آخر لا يزال مثبّتًا فيُترك كما هو. وكل عملية حذف وكل فحص استبدال يمرّ عبر هذه الاختبارات، فلا يلمس ccam ملفات لم ينشئها، مثل نسختك الخاصة من ccam أو رابط أنشأته بنفسك.
 
 عندما تشغّل أمرًا مختصرًا، فالاسم الذي كتبته هو كل ما يحتاجه ccam:
 
@@ -84,16 +86,18 @@ work: none (add one with `ccam shortcut work ccwork`)
 
 ### على Windows
 
-الأمر المختصر هو `ccwork.exe` في `%USERPROFILE%\.local\bin`، ويحذف `shim.Name` اللاحقة `.exe` (بأي حالة أحرف) قبل البحث، لذا تشغّل `ccwork` و`ccwork.exe` و`CCWORK.EXE` كلها الحساب `work`. ينشئ ccam أولًا رابطًا رمزيًا، يسمح به Windows في وضع المطور أو للمسؤول. ودون هذا الحق ينشئ رابطًا صلبًا (hard link): اسمًا ثانيًا للملف `ccam.exe` نفسه، لا يحتاج إلى أي صلاحية. ويُعدّ الرابط الصلب تابعًا لـ ccam عندما يكون هو الملف `ccam.exe` نفسه. ولأن `ccam update` يضع ملفًا جديدًا مكان `ccam.exe`، فإنه يجدّد بعد ذلك كل أمر مختصر قائم على رابط صلب باستخدام `shim.Relink` ويطبع `✓ shortcut ccwork renewed`. ويبحث فحص الاسم عن `<name>` مع كل لاحقة في `PATHEXT` (`.exe` و`.cmd` وغيرهما) في مجلدات `PATH` الأخرى.
+الأمر المختصر هو `ccwork.exe` في `%USERPROFILE%\.local\bin`، ويحذف `shim.Name` اللاحقة `.exe` (بأي حالة أحرف) قبل البحث، لذا تشغّل `ccwork` و`ccwork.exe` و`CCWORK.EXE` كلها الحساب `work`. ينشئ ccam أولًا رابطًا رمزيًا، يسمح به Windows في وضع المطور أو للمسؤول. ودون هذا الحق ينشئ رابطًا صلبًا (hard link): اسمًا ثانيًا للملف `ccam.exe` نفسه، لا يحتاج إلى أي صلاحية. ويُعدّ الرابط الصلب تابعًا لـ ccam عندما يكون هو الملف `ccam.exe` نفسه. ويظل الرابط الصلب يشغّل الملف الذي أُنشئ منه، لذا عندما يضع `ccam update` ملفًا جديدًا مكان `ccam.exe`، فإنه يجدّد كل أمر مختصر قائم على رابط صلب باستخدام `shim.Relink` ويطبع `✓ shortcut ccwork renewed`. وتشغيل `install.ps1` مرة أخرى يفعل الشيء نفسه عبر `ccam shims install` (`OK 2 shortcuts now run the new ccam`)، وكذلك يفعل `ccam shims install` و`ccam doctor --fix` لأي أمر مختصر هو نسخة من ccam أقدم. ويبحث فحص الاسم عن `<name>` مع كل لاحقة في `PATHEXT` (`.exe` و`.cmd` وغيرهما) في مجلدات `PATH` الأخرى.
+
+اكتب الأمر المختصر في صدفة (PowerShell أو cmd.exe أو Git Bash). فالرابط الرمزي الذي يُفتح من مستكشف الملفات (Explorer) أو مربع الحوار Run أو `Start-Process` يبدأ بوصفه `ccam` العادي، فيفتح لوحة التحكم بدلًا من الحساب.
 
 ## الأمان والحالات الخاصة
 
 - **رابط لا يملكه أي حساب.** إذا كان في `~/.local/bin` رابط إلى ccam باسم لا يستخدمه أي حساب، مثلًا بعد أن عدّلت `shortcut` في `config.toml` يدويًا، فلا يلجأ ccam إلى الحساب الافتراضي. بل يتوقف مع `` ccam: ccold is not the shortcut of any account (see `ccam list`, `ccam shortcut`) ``. عيّن الاسم مرة أخرى باستخدام `ccam shortcut`، أو احذف الرابط.
-- **الملفات الموجودة.** لا يستبدل ccam أبدًا ملفًا لم ينشئه. ويتوقف `ccam shims install` مع `<path> already exists and is not a ccam link, so it was left alone`.
-- **نقل ملف ccam التنفيذي.** عندها تشير الروابط القديمة إلى مسار لم يعد موجودًا، ولا يعدّها ccam خاصة به. احذفها، ثم شغّل `ccam shims install`.
+- **الملفات الموجودة.** لا يستبدل ccam أبدًا ملفًا لم ينشئه. ويبلّغ `ccam shims install` بـ `<path> already exists and is not a ccam link, so it was left alone` ويظل ينشئ الروابط الأخرى. ثم يطبع `ccam add` و`ccam import` السطر `shortcut: ccwork (not created; see above)`.
+- **نقل ملف ccam التنفيذي.** عندها تشير الروابط التي أنشأها ccam إلى مسار لم يعد موجودًا. ويوجّهها `ccam shims install` (أو `ccam doctor --fix`) إلى ccam الذي تشغّله به.
 - **إعادة التسمية والإزالة.** يحتفظ `ccam rename` باسم الأمر المختصر، ويظل الرابط يعمل، لأنه يشير إلى ccam ويبحث ccam عن الاسم في `config.toml`. ويحذف `ccam remove` رابط الحساب. ويحذف `ccam shortcut <account> <new>` الرابط القديم قبل أن ينشئ الجديد.
 - **PATH.** عندما ينشئ ccam رابطًا ولا يكون `~/.local/bin` في `PATH` لديك، يطبع `Note: /home/me/.local/bin is not in PATH. Add it to ~/.bashrc or ~/.zshrc:` متبوعًا بسطر `export PATH=...` الذي تضيفه. وعلى Windows يطبع بدلًا من ذلك سطر PowerShell الذي يضيف المجلد إلى `PATH` الخاص بمستخدمك.
-- **الفحص لاحقًا.** يبلّغ `ccam doctor` بـ `missing shortcuts in /home/me/.local/bin: ccwork` ويحذّر عندما لا يكون المجلد في `PATH`. وينشئ `ccam doctor --fix` الروابط المفقودة.
+- **الفحص لاحقًا.** يبلّغ `ccam doctor` بـ `missing shortcuts in /home/me/.local/bin: ccwork`، وبالأوامر المختصرة التي تشغّل ccam أقدم، ويحذّر عندما لا يكون المجلد في `PATH`. وينشئ `ccam doctor --fix` الروابط المفقودة ويجدّد القديمة، ولا يقول `→ fixed` إلا لما أنشأه. والأمر المختصر الذي يشغّل ccam آخر لا يزال مثبّتًا يعمل وهو معلومة فقط؛ ويوجّهه `ccam doctor --fix` إلى ccam الذي تشغّله به، ويعرضه `ccam add` و`ccam import` بالشكل ``shortcut: ccwork (runs another ccam, <path>; `ccam doctor --fix` points it at this one)``.
 
 ## صفحات ذات صلة
 

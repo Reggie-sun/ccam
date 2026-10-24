@@ -2,10 +2,10 @@
 title: تثبيت ccam
 metaTitle: تثبيت ccam على Linux وmacOS وWindows
 description: ثبّت ccam على Linux أو macOS أو Windows بأمر واحد أو من حزمة .deb أو من الشيفرة المصدرية، وحدّثه باستخدام ccam update. يجب تثبيت Claude Code أولًا.
-updated: 2026-10-21
+updated: 2026-10-23
 order: 1
 translation: machine
-sourceHash: 1e3a53623de0
+sourceHash: af21dcc24169
 ---
 
 شغّل هذا الأمر في طرفية على Linux أو macOS:
@@ -22,7 +22,7 @@ curl -fsSL https://ccam.dev/install.sh | sh
 irm https://ccam.dev/install.ps1 | iex
 ```
 
-ينزّل الملف `ccam_windows_<arch>.zip`، ويتحقق من مجموع SHA-256 الخاص به، ويضع `ccam.exe` في `%USERPROFILE%\.local\bin`، وهو المجلد الذي يضع فيه مثبّت Claude Code الملف `claude.exe`، ويضيف ذلك المجلد إلى `PATH` الخاص بمستخدمك إن لم يكن فيه بعد. افتح طرفية جديدة بعد ذلك.
+ينزّل الملف `ccam_windows_<arch>.zip`، ويتحقق من مجموع SHA-256 الخاص به، ويضع `ccam.exe` في `%USERPROFILE%\.local\bin`، وهو المجلد الذي يضع فيه مثبّت Claude Code الملف `claude.exe`، ويضيف ذلك المجلد إلى `PATH` الخاص بمستخدمك إن لم يكن فيه بعد، مع إبقاء مدخلات مثل `%USERPROFILE%\bin` كما هي. افتح طرفية جديدة بعد ذلك. وتشغيله مرة أخرى يستبدل ccam، حتى أثناء عمل جلسة Claude Code من الملف التنفيذي القديم (فيُعاد تسمية ذلك الملف إلى `ccam.exe.old`، أو إلى `ccam.exe.old-<number>` عندما يكون ملف أقدم لا يزال قيد الاستخدام)، ويجدّد الأوامر المختصرة التي هي روابط صلبة: `OK 2 shortcuts now run the new ccam`.
 
 يشغّل ccam برنامج Claude Code نيابةً عنك، لذا ثبّت [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) أولًا وتأكد من أن `claude --version` يعمل.
 
@@ -30,7 +30,7 @@ irm https://ccam.dev/install.ps1 | iex
 
 - Linux على x86-64 وARM64: Ubuntu وDebian وFedora وArch وAlpine وتوزيعات أخرى. الملف التنفيذي ثابت (static) وليست له أي تبعيات.
 - macOS على معالجات Apple silicon وIntel.
-- Windows 10 و11 على x86-64 وARM64، في PowerShell أو Windows Terminal أو Git Bash. تعمل المجلدات المشتركة لكل مستخدم. أما الملفات المشتركة (`settings.json` و`CLAUDE.md` و`history.jsonl`) فتحتاج إلى وضع المطور (Developer Mode، في الإعدادات > النظام > للمطورين)، لأن Windows لا يسمح بإنشاء روابط إلى الملفات إلا في هذا الوضع أو للمسؤول؛ راجع [المشاركة على Windows](/features/share#on-windows).
+- Windows 10 و11 على x86-64 وARM64، في PowerShell أو Windows Terminal أو Git Bash. تعمل المجلدات المشتركة لكل مستخدم. أما الملفات المشتركة (`settings.json` و`CLAUDE.md` و`history.jsonl`) فتحتاج إلى وضع المطور (Developer Mode، في الإعدادات > النظام > للمطورين)، لأن Windows لا يسمح بإنشاء روابط إلى الملفات إلا في هذا الوضع أو للمسؤول؛ راجع [المشاركة على Windows](/features/share#on-windows). ودونه ينشئ أول `ccam add` المجموعة `default` بخوادم MCP والإضافات فقط، ويخبرك كيف تضيف البقية بعد تشغيل وضع المطور.
 - داخل WSL، يعمل ccam كما يعمل على أي نظام Linux.
 
 ## طرق تثبيت أخرى
@@ -48,6 +48,8 @@ sudo apt install ./ccam_*_linux_amd64.deb
 ```sh
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
 ```
+
+البناء من وسم إصدار (`@latest` أو `@vX.Y.Z`) يُبلغ عن ذلك الإصدار، فيعمل `ccam update` معه؛ أما البناء من `@main` أو من نسخة محلية تجاوزت وسمًا فيُبلغ عن `dev`.
 
 **إصدار محدد.** عيّن `CCAM_VERSION`:
 
@@ -117,9 +119,9 @@ ccam update --version v0.2.0
 ccam --dry-run update
 ```
 
-تشغيل سكربت التثبيت مرة أخرى يحدّث أيضًا النسخة الموجودة في `~/.local/bin`. وإذا بنيت ccam باستخدام `go install`، فشغّل الأمر نفسه مرة أخرى.
+تشغيل سكربت التثبيت مرة أخرى يحدّث أيضًا النسخة الموجودة في `~/.local/bin`. وإذا بنيت ccam باستخدام `go install` من وسم إصدار، فيعمل `ccam update` أيضًا، أو شغّل الأمر نفسه مرة أخرى.
 
-**Windows.** ينزّل `ccam update` ملف `.zip` الخاص بـ Windows. لا يمكن استبدال برنامج قيد التشغيل على Windows، لذا يُعاد تسمية الملف التنفيذي القديم إلى `ccam.exe.old`، ويحذفه التحديث التالي.
+**Windows.** ينزّل `ccam update` ملف `.zip` الخاص بـ Windows. لا يمكن استبدال برنامج قيد التشغيل على Windows، لذا يُعاد تسمية الملف التنفيذي القديم إلى `ccam.exe.old`، ويحذفه التحديث التالي؛ وما دامت جلسة لا تزال تعمل من `ccam.exe.old` سابق، يكون الاسم `ccam.exe.old-<time>`. وتُجدَّد الأوامر المختصرة التي هي روابط صلبة بعد ذلك مباشرة.
 
 **حزمة Debian وUbuntu.** لا يستبدل `ccam update` الملف `/usr/bin/ccam` الذي ثبّته apt، بل يطبع هذه الخطوات بدلًا من ذلك. نزّل الملف الجديد `ccam_<version>_linux_amd64.deb` من [صفحة الإصدارات](https://github.com/jhyunwoo/ccam/releases) وثبّته فوق القديم:
 
@@ -146,4 +148,4 @@ Remove-Item ~\.local\bin\ccam.exe
 Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
 ```
 
-حذف `~/.local/share/ccam` يحذف أيضًا تسجيلات الدخول وسجل المحادثات المخزنة فيه. أما مجلد `~/.claude` الذي [استوردته](/docs/commands) فيبقى في مكانه.
+حذف `~/.local/share/ccam` يحذف أيضًا تسجيلات الدخول وسجل المحادثات المخزنة فيه. أما مجلد `~/.claude` الذي [استوردته](/docs/commands) فيبقى في مكانه، لكن ما دام في مجموعة، فإن الملفات التي يشاركها موجودة في `~/.local/share/ccam/groups/`. شغّل `ccam remove <name>` له أولًا (أو `ccam group leave`): فيغادر مجموعاته محتفظًا بنسخة من كل ما كان يشاركه.

@@ -1,13 +1,13 @@
 ---
 title: Sao chép thiết lập hiện có
-description: "Sao chép cài đặt, CLAUDE.md, tiện ích mở rộng, máy chủ MCP và đăng nhập MCP của một ~/.claude hiện có vào một nhóm của ccam bằng ccam migrate."
-updated: 2026-10-19
+description: "Sao chép cài đặt, CLAUDE.md, tiện ích mở rộng và máy chủ MCP của một ~/.claude hiện có vào một nhóm của ccam bằng ccam migrate."
+updated: 2026-10-23
 order: 6
 translation: machine
-sourceHash: "7cee52e75749"
+sourceHash: "7bca9efb6eb0"
 ---
 
-Nếu bạn đã dùng Claude Code trước khi có ccam, thiết lập của bạn nằm trong `~/.claude` và `~/.claude.json`. `ccam migrate` sao chép nó vào một nhóm dùng chung, để mọi tài khoản dùng chung các mục đó qua nhóm đều bắt đầu với thiết lập bạn đã có. Thư mục nguồn chỉ được đọc, và `claude` thông thường vẫn hoạt động như trước. Hãy chạy lệnh này một lần sau `ccam add` đầu tiên, và chạy lại mỗi khi có tài khoản bắt đầu dùng chung máy chủ MCP.
+Nếu bạn đã dùng Claude Code trước khi có ccam, thiết lập của bạn nằm trong `~/.claude` và `~/.claude.json`. `ccam migrate` sao chép nó vào một nhóm dùng chung, để mọi tài khoản dùng chung các mục đó qua nhóm đều bắt đầu với thiết lập bạn đã có. Thư mục nguồn chỉ được đọc, và `claude` thông thường vẫn hoạt động như trước. Hãy chạy lệnh này một lần sau `ccam add` đầu tiên; khi `~/.claude.json` có máy chủ MCP, lần `ccam add` đầu tiên sẽ nêu tên chúng trong lời gợi ý của nó.
 
 ## Cách dùng
 
@@ -43,20 +43,17 @@ Sau đó ccam in ra kế hoạch và hỏi trước khi sao chép:
 $ ccam migrate --yes
 Copy from /home/me/.claude into group default (/home/me/.local/share/ccam/groups/default):
   mcp         ~/.claude.json  new: fs, linear
-              sign-ins        linear → personal; skipped: work (not logged in yet)
+              sign-ins        not copied (a sign-in works for one account only); sign in with /mcp: linear in personal, work
   settings    settings.json   new: 61 B
+              not found, skipped: keybindings.json
   memory      CLAUDE.md       new: 11 B
   extensions  agents/         add 1 file the group lacks (6 B)
               skills/         add 1 file the group lacks (13 B)
               not found, skipped: commands/, plugins/, output-styles/, rules/
   Conversation history (projects/, history.jsonl) is not included; add --history to copy it.
-✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, skills/, MCP sign-ins for personal
-MCP sign-ins were not copied to: work (not logged in yet). Sign in to those servers there with /mcp.
-Accounts that share these through group default:
-  mcp         personal, work
-  settings    personal, work
-  memory      personal, work
-  extensions  personal, work
+✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, skills/
+MCP sign-ins are not copied (a sign-in works for one account only). Sign in with /mcp to linear in personal, work.
+Group default: personal, work
 ```
 
 Một nhóm chỉ đến được các tài khoản của chính nó, và chỉ với các mục nó dùng chung, nên phần tóm tắt liệt kê các tài khoản của nhóm. Khi nhóm chưa dùng chung một trong các mục đã sao chép, hoặc có tài khoản chưa thuộc nhóm, ccam in ra các lệnh `ccam group set <group> --add <items>` và `ccam group join <group> <accounts>` để thay đổi điều đó.
@@ -83,9 +80,9 @@ Khi không có cờ chọn mục, trên terminal danh sách kiểm sẽ quyết 
 
 `internal/cli/migrate.go` chọn các mục, rồi `migrate.Build` đọc nguồn và nhóm và trả về một kế hoạch. Không có gì được ghi cho đến `Plan.Apply`, sau khi bạn xác nhận.
 
-1. **Tìm nguồn.** `checkSource` từ chối một đường dẫn không tồn tại, không phải thư mục, hoặc không chứa mục Claude Code nào đã biết. `migrate.ClaudeJSON` tìm `.claude.json` thuộc về thư mục: bên trong nó, hoặc với `~/.claude` không có tệp đó bên trong, là `~/.claude.json` nằm cạnh nó. Đó là nơi Claude Code giữ tệp này khi `CLAUDE_CONFIG_DIR` không được đặt.
+1. **Tìm nguồn.** `checkSource` từ chối một đường dẫn không tồn tại, không phải thư mục, hoặc không chứa mục Claude Code nào đã biết. Chỉ riêng với máy chủ MCP, một `~/.claude` trống hoặc không có vẫn được, miễn là `~/.claude.json` có máy chủ. `migrate.ClaudeJSON` tìm `.claude.json` thuộc về thư mục: bên trong nó, hoặc với `~/.claude` không có tệp đó bên trong, là `~/.claude.json` nằm cạnh nó. Đó là nơi Claude Code giữ tệp này khi `CLAUDE_CONFIG_DIR` không được đặt.
 2. **Ánh xạ mục sang đường dẫn.** Mọi đường dẫn đều đến từ `share.Layout`, cũng là danh sách cho phép mà các nhóm dùng. Các máy chủ MCP được đọc ra khỏi `.claude.json` bằng `mcp.LocalServers`, hàm này dùng bộ quét `profile.TopLevelValue` thay vì phân tích cả tệp.
-3. **Sao chép, không bao giờ di chuyển.** Các tệp đi vào `~/.local/share/ccam/groups/<group>/` bằng `fsutil.AtomicWrite` hoặc `fsutil.CopyFile`; máy chủ MCP đi vào `mcp.json` của nhóm.
+3. **Sao chép, không bao giờ di chuyển.** Các tệp đi vào `~/.local/share/ccam/groups/<group>/` bằng `fsutil.AtomicWrite` hoặc `fsutil.CopyFile`, hàm này ghi một tệp tạm bên cạnh đích rồi đổi tên nó, nên một lần sao chép bị dừng không bao giờ để lại tệp bị cắt dở. Máy chủ MCP đi vào `mcp.json` của nhóm dưới khóa của nó: một máy chủ mà ccam khác thêm vào trong lúc đó vẫn được giữ, và các bản sao được tạo cho [Remote Control](/guides/remote-control) được cập nhật sau đó.
 
 Mỗi mục ánh xạ một đường dẫn nguồn tới một đường dẫn trong nhóm:
 
@@ -108,18 +105,7 @@ Bản thân danh sách kiểm là `tui.MigratePicker`, được dựng trên th�
 
 ### Thông tin đăng nhập MCP
 
-Các máy chủ MCP đăng nhập bằng OAuth giữ token trong tệp đăng nhập, `.credentials.json` dưới `mcpOAuth`, không phải trong danh sách máy chủ. Claude Code đặt khóa cho mỗi mục là `<name>|` cộng với 16 ký tự đầu của mã băm `sha256` từ `type`, `url` và `headers` của máy chủ. Khóa không phụ thuộc vào thư mục, nên một mục được sao chép vẫn hoạt động ở tài khoản khác miễn là định nghĩa máy chủ giống hệt. Vì vậy `buildLogins` trong `internal/migrate/logins.go` chỉ sao chép các mục của những máy chủ mà cuối cùng nhóm có theo định nghĩa của nguồn: mới, đã giống nhau, hoặc xung đột mà bạn chọn `use mine`. Thông tin đăng nhập của các máy chủ plugin (khóa bắt đầu bằng `plugin:`) được sao chép theo khi bạn sao chép tiện ích mở rộng và nguồn có `plugins/`.
-
-<!-- motion:migrate-signins -->
-
-Các mục được ghi vào `.credentials.json` riêng của từng tài khoản nhận, bằng `fsutil.AtomicWrite` với quyền `0600`. Chúng không bao giờ đi vào nhóm. Một tài khoản chỉ nhận chúng nếu nó dùng chung `mcp` (hoặc, với máy chủ plugin, `extensions`) qua nhóm đích, và chỉ những khóa nó còn thiếu được thêm vào: các mục nó đã có, có thể mới hơn, được giữ nguyên. Dòng `sign-ins` trong kế hoạch liệt kê các máy chủ, các tài khoản nhận và các tài khoản bị bỏ qua. ccam bỏ qua một tài khoản, và nêu tên nó kèm lý do, khi tài khoản đó:
-
-- được đăng ký tại chỗ bằng `ccam import`, vì `claude` thông thường có thể đang dùng tệp đăng nhập của nó;
-- đang chạy, vì Claude Code ghi lại tệp đăng nhập của nó (được kiểm tra lại ngay trước khi ghi, và báo là `started meanwhile`);
-- chưa đăng nhập;
-- giữ thông tin đăng nhập trong Chuỗi khóa (Keychain) của macOS, nơi ccam không ghi vào.
-
-Hãy đăng nhập vào các máy chủ ở tài khoản bị bỏ qua bằng `/mcp`. Tài khoản bắt đầu dùng chung máy chủ MCP về sau sẽ nhận được thông tin đăng nhập khi bạn chạy lại `ccam migrate`; phần tóm tắt nhắc điều này bằng ``Then run `ccam migrate` again to give them the MCP sign-ins too.``
+Các máy chủ MCP đăng nhập bằng OAuth giữ token trong tệp đăng nhập, `.credentials.json` dưới `mcpOAuth`, không phải trong danh sách máy chủ. ccam không sao chép chúng. Một lần đăng nhập bị sao chép giữ cùng refresh token với bản gốc, và máy chủ xoay vòng token đó ở lần gia hạn đầu tiên: khi đó mọi nơi khác đang giữ nó, kể cả `~/.claude` nguồn, đều bị đăng xuất khỏi máy chủ đó. Vì vậy dòng `sign-ins` trong kế hoạch nêu tên, cho mỗi máy chủ được sao chép mà nguồn đã đăng nhập, các tài khoản của nhóm cần tự đăng nhập bằng `/mcp`, và phần tóm tắt nhắc lại điều đó. Một mục không có token thì không phải là lần đăng nhập và không được liệt kê, tài khoản đã có lần đăng nhập riêng cũng vậy, và cả máy chủ mà nhóm giữ định nghĩa của mình. Không tệp đăng nhập nào được ghi.
 
 ## An toàn và các trường hợp đặc biệt
 
@@ -127,7 +113,8 @@ Hãy đăng nhập vào các máy chủ ở tài khoản bị bỏ qua bằng `/
 - Trước khi một tệp của nhóm bị thay thế, do `use mine`, do gộp, hoặc do có máy chủ MCP mới trong một `mcp.json` đã có, bản của nhóm được lưu trong `<group>/.ccam-backup/<time>/`. Tên thư mục là duy nhất cho mỗi lần chạy, nên hai lần chạy trong cùng một giây không ghi đè bản sao lưu của nhau. Phần tóm tắt in ra đường dẫn.
 - Với `--yes`, mọi xung đột đều giữ bản của nhóm, và ccam cho biết cách để tự chọn: chạy lại cùng lệnh mà không có `--yes`.
 - Nếu không có gì thay đổi, ccam in ra `Nothing to copy.`; nếu mọi xung đột đều giữ bản của nhóm, nó in ra `Nothing to copy: the group keeps its own copies.`
-- Nếu việc sao chép thất bại giữa chừng, ccam dừng với `The source folder was not changed. Group files replaced so far are saved in` theo sau là thư mục sao lưu.
+- Nếu việc sao chép thất bại giữa chừng, ccam dừng với `The source folder was not changed. Group files replaced so far are saved in` theo sau là thư mục sao lưu. Chạy lại sẽ sao chép các tệp chưa đến được nguyên vẹn.
+- Khi nhiều nhóm dùng chung MCP, các lệnh mà `ccam doctor`, `ccam ext` và `ccam mcp list` gợi ý có dạng `ccam migrate --mcp --group <a|b>`.
 - Nguồn không tồn tại sẽ kết thúc với `no Claude Code folder at <path>. Give the folder to copy from: ccam migrate <folder>`.
 
 ## Liên quan

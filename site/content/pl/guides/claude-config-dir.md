@@ -1,10 +1,10 @@
 ---
 title: CLAUDE_CONFIG_DIR wyjaśnione
 description: Co robi CLAUDE_CONFIG_DIR w Claude Code, co jest w tym folderze, gdzie macOS trzyma login i które pliki można współdzielić między kontami.
-updated: 2026-10-19
+updated: 2026-10-23
 order: 2
 translation: machine
-sourceHash: ef9317030e42
+sourceHash: "2cf08478085f"
 ---
 
 `CLAUDE_CONFIG_DIR` mówi Claude Code, którego folderu użyć zamiast `~/.claude`. Znajduje się w nim wszystko, co dotyczy konta: login, ustawienia, serwery MCP, wtyczki i historia rozmów. Wskazanie różnych folderów daje osobne konta.
@@ -19,7 +19,7 @@ Tak. Claude Code wymienia tę zmienną wśród swoich [zmiennych środowiskowych
 
 ## Co jest w folderze?
 
-Sprawdzono z Claude Code 2.1.302:
+Sprawdzono z Claude Code 2.1.309:
 
 | Ścieżka | Zawartość | Można współdzielić |
 | --- | --- | --- |
@@ -34,15 +34,15 @@ Sprawdzono z Claude Code 2.1.302:
 
 ## Co najczęściej zaskakuje?
 
-**Bez `CLAUDE_CONFIG_DIR` plik `.claude.json` nie znajduje się w `~/.claude`.** Claude Code trzyma go wtedy w `~/.claude.json`, obok folderu. Jeśli zaczniesz używać `CLAUDE_CONFIG_DIR=~/.claude`, Claude Code będzie szukać `~/.claude/.claude.json` i nie znajdzie twojego konta. `ccam import` rozwiązuje to, linkując oba pliki.
+**Bez `CLAUDE_CONFIG_DIR` plik `.claude.json` nie znajduje się w `~/.claude`.** Claude Code trzyma go wtedy w `~/.claude.json`, obok folderu. Jeśli zaczniesz używać `CLAUDE_CONFIG_DIR=~/.claude`, Claude Code będzie szukać `~/.claude/.claude.json` i nie znajdzie twojego konta. `ccam import` rozwiązuje to, linkując oba pliki. Jeśli `~/.claude` ma już własny `.claude.json`, z wcześniejszego uruchomienia z `CLAUDE_CONFIG_DIR=~/.claude`, ccam zostawia oba pliki i o tym informuje, bo tylko ty wiesz, który jest właściwy.
 
-**Na macOS login jest w pęku kluczy, a nie w folderze.** Claude Code zapisuje go pod nazwą `Claude Code-credentials`, po której, gdy ustawiono `CLAUDE_CONFIG_DIR`, następuje krótki skrót ścieżki folderu. Osobne foldery dostają więc osobne wpisy w pęku kluczy. Jeśli pęk kluczy odmówi zapisu, Claude Code zapisuje login w `.credentials.json` w folderze, jak opisuje [jego dokumentacja](https://code.claude.com/docs/en/authentication#credential-management).
+**Na macOS login jest w pęku kluczy, a nie w folderze.** Claude Code zapisuje go pod nazwą `Claude Code-credentials`, po której, gdy ustawiono `CLAUDE_CONFIG_DIR`, następuje `-` i pierwsze 8 cyfr szesnastkowych skrótu SHA-256 ścieżki folderu, dla konta wskazanego przez `$USER`. Osobne foldery dostają więc osobne wpisy w pęku kluczy, a folder przeniesiony lub przemianowany traci login; dlatego `ccam rename` na macOS zachowuje nazwę folderu. Jeśli pęk kluczy odmówi zapisu, Claude Code zapisuje login w `.credentials.json` w folderze, jak opisuje [jego dokumentacja](https://code.claude.com/docs/en/authentication#credential-management).
 
 **Nie każdy login jest przechowywany w folderze.** Logowanie do Claude Console bez klucza API jest zapisywane poza nim, więc osobne foldery nie rozdzielą dwóch takich logowań. Loginy claude.ai i klucze API są przechowywane osobno dla każdego folderu.
 
 ## Gdzie jest folder w Windows?
 
-Domyślnie w `%USERPROFILE%\.claude`, z loginem w pliku `.credentials.json` wewnątrz. Dla każdego dodatkowego konta ustaw `CLAUDE_CONFIG_DIR` na inny folder, tak samo jak na Linux i macOS.
+Domyślnie w `%USERPROFILE%\.claude`, z loginem w pliku `.credentials.json` wewnątrz albo w Menedżerze poświadczeń Windows, gdy Claude Code jest ustawiony, żeby go używać, pod nazwą utworzoną ze ścieżki folderu, tak jak na macOS. Dla każdego dodatkowego konta ustaw `CLAUDE_CONFIG_DIR` na inny folder, tak samo jak na Linux i macOS.
 
 ## Czy foldery mogą współdzielić pliki?
 

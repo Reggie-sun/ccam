@@ -1,10 +1,10 @@
 ---
 title: डॅशबोर्ड
 description: टर्मिनलवर ccam खाती, गट, फोल्डर नियम, extensions आणि तपासण्यांचा पूर्ण स्क्रीन डॅशबोर्ड उघडते; प्रत्येक बदल आधी आपली योजना दाखवतो.
-updated: 2026-10-21
+updated: 2026-10-24
 order: 15
 translation: machine
-sourceHash: "19a99adef661"
+sourceHash: "e48ca2c5a643"
 ---
 
 standard input आणि output टर्मिनल असताना आर्ग्युमेंट्सशिवाय `ccam` पूर्ण स्क्रीन डॅशबोर्ड उघडते; इतर वेळी ते `ccam list` छापते. डॅशबोर्ड प्रत्येक खाते त्याच्या वापर आणि गटांसह दाखवतो, आणि कमांड्स जे करतात ते करतो: सुरू करणे, जोडणे, लॉग इन करणे, गट बदलणे, फोल्डर नियम सेट करणे, तपासणे आणि दुरुस्त करणे. खाते सुरू केल्यावर तो बंद होतो; खाते जोडताना किंवा लॉग इन करताना तो टर्मिनल सोडून देतो आणि नंतर परत येतो.
@@ -33,16 +33,16 @@ tab नावांखालची ओळ सध्याचा tab कशास
 
 `U` आधी विचारतो, मग [`ccam update`](/features/update) प्रमाणेच अपडेट करतो: रिलीज त्याच्या SHA-256 checksums शी तपासला जातो आणि एकाच पायरीत ccam ची जागा घेतो. तुम्ही ज्या डॅशबोर्डमध्ये आहात तो अजूनही जुनी आवृत्ती आहे, त्यामुळे बाहेर पडा आणि `ccam` पुन्हा सुरू करा. अपडेट इथे करता येत नसेल, उदाहरणार्थ `.deb` पॅकेजमधून इन्स्टॉल केलेल्या ccam साठी, तर डॅशबोर्ड `ccam update` सारखाच सल्ला दाखवतो आणि ऑफर कायम ठेवतो.
 
-पहिली frame फक्त `config.toml` वरून, 100 ms पेक्षा खूप कमी वेळात काढली जाते; प्रत्येक खाते उत्तर देईल तसा वापर भरला जातो. प्रत्येक मर्यादेचा स्वतःचा bar असतो: 5 तासांची window, सर्व मॉडेल्ससाठीची साप्ताहिक window, आणि Fable ची स्वतःची साप्ताहिक window; `-` म्हणजे खात्याकडे अशी window नाही. टक्केवारी 80% पासून पिवळी आणि 100% वर लाल होते, आणि अयशस्वी शोधानंतर cache मधून आलेली मूल्ये फिकट दाखवली जातात.
+पहिली frame फक्त `config.toml` वरून, 100 ms पेक्षा खूप कमी वेळात काढली जाते; प्रत्येक खाते उत्तर देईल तसा वापर भरला जातो. प्रत्येक मर्यादेचा स्वतःचा bar असतो: 5 तासांची window, सर्व मॉडेल्ससाठीची साप्ताहिक window, आणि Fable ची स्वतःची साप्ताहिक window; `-` म्हणजे खात्याकडे अशी window नाही. टक्केवारी 80% पासून पिवळी आणि 100% वर लाल होते, आणि अयशस्वी शोधानंतर cache मधून आलेली मूल्ये फिकट दाखवली जातात. Claude Code ने भरलेली म्हणून नोंदवलेली window तिच्या reset पर्यंत 100% दाखवते. कालबाह्य access token फिकट `⚠ token expired` दाखवते (पुढच्या सुरुवातीला Claude Code त्याचे नूतनीकरण करते), तर `⚠ login expired` म्हणजे खात्याला `ccam login` लागते.
 
 ## Tabs
 
 | Tab | काय दाखवते | की |
 | --- | --- | --- |
-| Accounts | क्रमांक, नाव, ईमेल, 5 तासांचा, साप्ताहिक आणि Fable bars, शेवटचा वापर, गट; `✔` डीफॉल्ट, `▸` या फोल्डरचे खाते, `•` चालू | खाली |
+| Accounts | क्रमांक, नाव, ईमेल, 5 तासांचा, साप्ताहिक आणि Fable bars, शेवटचा वापर, गट; `✔` डीफॉल्ट, `▸` या फोल्डरचे खाते, `•` चालू (ccam शिवाय सुरू केलेले Claude Code सुद्धा: साधे `claude`, IDE, background सत्रे आणि त्यांचा daemon) | खाली |
 | Groups | प्रत्येक गट, तो काय शेअर करतो आणि त्याची खाती, आणि कोणत्याही गटात नसलेली खाती | `enter` संपादित करा, `n` नवीन, `e` नाव बदला, `x` काढा |
-| Folders | [`ccam folder`](/features/folder) चे नियम आणि इथे लागू होणारा नियम | `n` इथे एखादे खाते वापरा, `enter` बदला, `x` काढा |
-| Extensions | [`ccam ext`](/features/ext) जे दाखवते ते, प्रत्येक extension एकदाच, ते ज्या गटांमधून येते त्यांच्यासह | `r` पुन्हा लोड करा |
+| Folders | [`ccam folder`](/features/folder) चे नियम आणि इथे लागू होणारा नियम, तुम्ही symbolic link मधून फोल्डरमध्ये पोहोचला असाल तरीही (नवीन नियम links resolve करून साठवले जातात) | `n` इथे एखादे खाते वापरा, `enter` बदला, `x` काढा |
+| Extensions | [`ccam ext`](/features/ext) जे दाखवते ते, प्रत्येक extension एकदाच, ते ज्या गटांमधून येते त्यांच्यासह, `off:` म्हणजे ज्या खात्यांमध्ये plugin चालू नाही ती खाती, खात्याच्या स्वतःच्या सर्व्हरमध्ये फक्त या फोल्डरसाठी असलेले सर्व्हर, `This folder's project`, आणि कोणत्याही खात्याशी संबंधित नसलेल्या समस्या | `r` पुन्हा लोड करा |
 | Health | [`ccam doctor`](/features/doctor) जे नोंदवते ते, प्रत्येक खात्यासाठी एक box म्हणून (खाली) | `f` निवडलेला box दुरुस्त करा, `F` सर्व दुरुस्त करा (`doctor --fix`), `↑`/`↓` boxes मध्ये फिरा |
 
 `←`/`→` किंवा `Tab` tabs बदलतात, `?` सध्याच्या tab च्या की दाखवतो, `r` छोट्या cache शिवाय वापर पुन्हा शोधतो, आणि `q` किंवा `Esc` बाहेर पडतो.
@@ -66,6 +66,8 @@ tab नावांखालची ओळ सध्याचा tab कशास
 | `c` | त्याची शॉर्टकट कमांड सेट करा किंवा काढा |
 | `x` | ते काढा (आधी विचारते, No वर सुरू होते) |
 
+**Team आणि Enterprise सीट्स.** आपोआप होणारी निवड (`ccam next`, `--fallback`, `ccam pick`, डॅशबोर्डमधील `n`) एकाच Claude Team किंवा Enterprise organization मधील एका सीटवरून दुसऱ्या सीटवरही जाते. Anthropic च्या मदत केंद्रात म्हटले आहे की "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team प्लॅनमधील प्रत्येक सीट नावानिशी एका व्यक्तीला नेमून दिलेली असते, आणि फक्त तीच व्यक्ती ती वापरू शकते) आणि "Users can't route their work through another user's account to use that user's remaining usage" (दुसऱ्या वापरकर्त्याच्या उरलेल्या वापराचा लाभ घेण्यासाठी वापरकर्ते आपले काम त्याच्या खात्यामार्फत चालवू शकत नाहीत) ([Team प्लॅन](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise प्लॅन](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) साठीही असेच). त्यामुळे सीट्सदरम्यान आपोआप होणारी निवड वापरल्यास Anthropic च्या अटींचे उल्लंघन होऊ शकते. त्यावर अवलंबून राहण्यापूर्वी तुमच्या संस्थेकडे आणि Anthropic कडे चौकशी करा. वैयक्तिक प्लॅनबद्दल (Pro, Max) [FAQ मधील अटींविषयीची टीप](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) सांगते.
+
 ## Health tab
 
 तुम्ही Health tab उघडता तेव्हा तो [`ccam doctor`](/features/doctor) च्या तपासण्या चालवतो आणि तेच दृश्य काढतो: प्रत्येक खात्यासाठी एक चिन्ह असलेली पहिली ओळ, आणि मग प्रत्येक खात्यासाठी एक box. box मधील प्रत्येक ओळ तपासलेले एक क्षेत्र आहे, आधी `Folder`, `Login` आणि `Share links`, ज्यावर `✔` ठीक, `ℹ` माहिती, `⚠` इशारा किंवा `✘` त्रुटी असे चिन्ह असते, त्यामुळे कोणत्या खात्यात समस्या आहे आणि कुठे ते तुम्हाला लगेच दिसते. कोणत्याही खात्याशी संबंधित नसलेले निष्कर्ष `General` box मध्ये जातात.
@@ -73,25 +75,26 @@ tab नावांखालची ओळ सध्याचा tab कशास
 ```console
  ✘ personal   ⚠ work
 
- ╭─ ✘ personal · 3 problems ──────────────────────────────────────────────────╮
- │ ⚠ Folder       folder permissions are 755 (should be 0700)                 │
- │ ℹ              unknown entries (Claude Code layout may have changed):      │
- │                newthing                                                    │
- │ ⚠ Login        .credentials.json permissions are 644 (should be 0600)      │
- │ ✔              login valid (me@example.com)                                │
- │ ✘ Share links  /home/me/.local/share/ccam/profiles/personal/settings.json: │
- │                set to shared but is a real file, not a link                │
- ╰────────────────────────────────────────────────────────────────────────────╯
- ╭─ ⚠ work · 1 problem ───────────────────────────────────────────────────────╮
- │ ✔ Folder       OK                                                          │
- │ ⚠ Login        not logged in → `ccam login work`                           │
- │ ✔ Share links  share links OK                                              │
- ╰────────────────────────────────────────────────────────────────────────────╯
+ ╭─ ✘ personal · 3 problems ─────────────────────────────────────────────────╮
+ │ ⚠ Folder       folder permissions are 755 (should be 0700)                │
+ │ ℹ              unknown entries (ccam knows the folder layout of Claude    │
+ │                Code 2.1.309; it may have changed): newthing               │
+ │ ⚠ Login        .credentials.json permissions are 644 (should be 0600)     │
+ │ ✔              login valid (me@example.com, Claude Team · Acme)           │
+ │ ✘ Share links  /home/me/.local/share/ccam/profiles/personal/settings.json │
+ │                : set to shared but is a real file, not a link             │
+ │ ✔ Usage        usage lookup OK                                            │
+ ╰───────────────────────────────────────────────────────────────────────────╯
+ ╭─ ⚠ work · 1 problem ──────────────────────────────────────────────────────╮
+ │ ✔ Folder       OK                                                         │
+ │ ⚠ Login        not logged in → `ccam login work`                          │
+ │ ✔ Share links  share links OK                                             │
+ ╰───────────────────────────────────────────────────────────────────────────╯
 
  4 problems; f repairs the selected box, F all of them (ccam doctor --fix).
 ```
 
-`↑`/`↓` एका box मधून दुसऱ्या box मध्ये नेतात, आणि निवडलेल्या box ची border accent रंगाची असते. `f` फक्त निवडलेला box दुरुस्त करतो, `ccam doctor --fix` ज्या प्रकारे करतो त्याच प्रकारे: एखाद्या खात्याच्या box वर तो फक्त तेच खाते दुरुस्त करतो, आणि `General` box वर कोणत्याही खात्याशी संबंधित नसलेले निष्कर्ष (plugin paths आणि शॉर्टकट्स); बाकी प्रत्येक खाते फक्त पुन्हा तपासले जाते. तो आधी विचारतो, आणि दुरुस्त करण्यासारखे काहीच नसलेला box फक्त `nothing to repair in <name>` असे सांगतो. `F` सर्व काही एकाच वेळी दुरुस्त करतो, `ccam doctor --fix` प्रमाणे, आणि `r` पुन्हा तपासतो.
+`↑`/`↓` एका box मधून दुसऱ्या box मध्ये नेतात, आणि निवडलेल्या box ची border accent रंगाची असते. `f` फक्त निवडलेला box दुरुस्त करतो, `ccam doctor --fix` ज्या प्रकारे करतो त्याच प्रकारे: एखाद्या खात्याच्या box वर तो फक्त तेच खाते दुरुस्त करतो, आणि `General` box वर कोणत्याही खात्याशी संबंधित नसलेले निष्कर्ष (plugin paths आणि शॉर्टकट्स); बाकी प्रत्येक खाते फक्त पुन्हा तपासले जाते. तो आधी विचारतो (``Like `ccam doctor --fix`: missing links and group folders are made, and a real file where a link belongs is backed up first; where the group has its own copy, the account then sees the group's. Nothing is lost.``), आणि दुरुस्त करण्यासारखे काहीच नसलेला box फक्त `nothing to repair in <name>` असे सांगतो. `F` सर्व काही एकाच वेळी दुरुस्त करतो, `ccam doctor --fix` प्रमाणे, आणि `r` पुन्हा तपासतो.
 
 ## गट बदलणे
 
@@ -109,7 +112,7 @@ Groups tab वर `Enter` editor उघडतो: डावीकडे आय�
     2. No
 ```
 
-गटाच्या प्रतीपेक्षा वेगळ्या असलेल्या फाइलबद्दल आधी विचारले जाते (गटाची ठेवा, माझी वापरा, किंवा merge करा). मग बदल [`ccam group`](/features/share) च्याच code ने पार्श्वभूमीत चालतो: आधी config सेव्ह होते, प्रत्येक खात्याचा डेटा क्रमाने हलतो, आणि मूळ फाइल्स `.ccam-backup/` मध्ये जातात. चालू खात्याचा डेटा हलवणारा बदल त्या खात्याच्या नावासह नाकारला जातो.
+गटाच्या प्रतीपेक्षा वेगळ्या असलेल्या फाइलबद्दल आधी विचारले जाते (गटाची ठेवा, माझी वापरा, किंवा merge करा). मग बदल [`ccam group`](/features/share) च्याच code ने पार्श्वभूमीत चालतो: आधी config सेव्ह होते, प्रत्येक खात्याचा डेटा क्रमाने हलतो, आणि मूळ फाइल्स `.ccam-backup/` मध्ये जातात; MCP शेअरिंग सोडणारे खाते गटाचे सर्व्हर आपल्या `.claude.json` मध्ये ठेवते. चालू खात्याचा डेटा हलवणारा बदल त्या खात्याच्या नावासह नाकारला जातो, योजना उघडी असताना ते खाते सुरू झाले तरीही, आणि दुसऱ्या ccam च्या गटांच्या बदलामुळे जुनी झालेली योजना `the groups changed while this plan waited; nothing was moved, make the change again` देऊन नाकारली जाते. दुसरे ccam गट बदलत असताना, नवीन बदल, नाव बदलणे किंवा काढणे `another ccam is changing the groups right now` असे सांगते; एखादा बदल अर्ध्यावर थांबल्यानंतर, Health tab वरील `F` (किंवा `ccam doctor --fix`) तो पूर्ण करेपर्यंत ते थांबतात.
 
 ## खाते जोडणे
 
@@ -124,9 +127,13 @@ Groups tab वर `Enter` editor उघडतो: डावीकडे आय�
 
 `Esc` एक टप्पा मागे जातो, आणि पहिल्या टप्प्यावर विझार्ड बंद करतो.
 
+## खाते काढणे
+
+काहीही होण्यापूर्वी `x` विचारतो, No वर सुरू होऊन, आणि काढल्याने काय होते ते सांगतो: `It is logged out first (its login is revoked), then its folder goes to ccam's trash; the groups' shared files stay.` API key खात्यासाठी रद्द करण्यासारखे लॉगिन नसते, आणि दुसऱ्या खात्याकडे तेच लॉगिन असेल तेव्हा ते लॉग आउट केले जात नाही. इम्पोर्ट केलेले खाते आपला फोल्डर ठेवते: `It was imported, so its folder /home/me/.claude stays where it is: it leaves its groups first and keeps a copy of what they share, then ccam forgets it.`
+
 ## रंग
 
-रंग Claude Code च्या terminal UI मधील भूमिकांनुसार असतात, त्यामुळे ccam त्याच्या शेजारी अगदी घरच्यासारखे दिसते; गटांच्या नावांना त्यांच्या नावावरून रंग मिळतो. ccam टर्मिनलला त्याची पार्श्वभूमी विचारते आणि light किंवा dark theme निवडते. `config.toml` मध्ये स्वतः theme सेट करा:
+रंग Claude Code च्या terminal UI मधील भूमिकांनुसार असतात, त्यामुळे ccam त्याच्या शेजारी अगदी घरच्यासारखे दिसते; गटांच्या नावांना त्यांच्या नावावरून रंग मिळतो. ccam टर्मिनलला त्याची पार्श्वभूमी विचारते आणि light किंवा dark theme निवडते. `config.toml` च्या सुरुवातीला, पहिल्या `[[group]]`, `[[profile]]` किंवा `[[folder]]` च्या वर, स्वतः theme सेट करा:
 
 ```toml
 theme = 'dark'   # auto (default), dark, light, dark-daltonized, light-daltonized, dark-ansi, light-ansi
@@ -139,7 +146,9 @@ theme = 'dark'   # auto (default), dark, light, dark-daltonized, light-daltonize
 - डॅशबोर्ड कमांड्सचीच functions वापरतो, त्यामुळे प्रत्येक नियम लागू राहतो: डेटा हलण्यापूर्वी योजना, चालू खात्यांसाठी नकार, बॅकअप, आणि खात्याबाहेर कधीच न जाणारे लॉगिन tokens.
 - डॅशबोर्डमध्ये dry run नाही: नावाशिवाय `ccam --dry-run` या फोल्डरचे खाते कसे सुरू होईल ते छापते, आणि एखाद्या खात्यावर `o` दाबल्यास फक्त त्या एका सुरुवातीचा dry run करण्याचा पर्याय मिळतो.
 - Claude Code सुरू होण्यापूर्वी किंवा लॉगिन उघडण्यापूर्वी टर्मिनल पूर्ववत होतो.
-- dialog साठी स्क्रीन खूप लहान असेल तर आधी tab च्या ओळी वगळल्या जातात; ओळी wrap होण्याऐवजी `…` ने कापल्या जातात.
+- dialog साठी स्क्रीन खूप लहान असेल तर आधी tab च्या ओळी वगळल्या जातात; ओळी wrap होण्याऐवजी `…` ने कापल्या जातात. कमी उंचीच्या स्क्रीनवर त्यानंतर रिकाम्या ओळी आणि tab चे वर्णन वगळले जाते, त्यामुळे की ची ओळ राहते. 40 columns किंवा 8 rows पेक्षा कमी असल्यास डॅशबोर्ड फक्त `Too small: ccam needs 40x8 (now 36x7)` दाखवतो.
+- बदल, काढणे, अपडेट किंवा दुरुस्ती लागू होत असताना दाबलेले `Ctrl+C` ते पूर्ण होण्याची वाट पाहते: स्टेटस लाइन `ccam quits when it is done.` असे सांगते.
+- `U` ने ccam अपडेट केल्यानंतर, खाते जोडून किंवा लॉग इन करून डॅशबोर्ड परत आल्यावर ऑफर पुन्हा दिसत नाही.
 
 ## संबंधित
 

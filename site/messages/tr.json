@@ -70,8 +70,8 @@
         "body": "Claude Code'u o hesapla başlatır. Addan sonra gelen her şey Claude Code'a değiştirilmeden iletilir ve ccam, başlatmadan önce yaklaşık 4 milisaniye ekler."
       },
       {
-        "command": "ccam share work --history on",
-        "body": "Hesabın diğer hesaplarınızla neyi paylaşacağını seçer. MCP sunucuları, ayarlar, CLAUDE.md ve uzantılar baştan paylaşılır; giriş bilgileri hiçbir zaman paylaşılmaz."
+        "command": "ccam group set default --add history",
+        "body": "Bir gruptaki hesapların birbiriyle neyi paylaşacağını seçer. MCP sunucuları, ayarlar, CLAUDE.md ve uzantılar baştan paylaşılır; giriş bilgileri hiçbir zaman paylaşılmaz."
       },
       {
         "command": "ccam usage",
@@ -145,9 +145,9 @@
     "mcp": "Paylaşılan MCP sunucularını yönetir",
     "migrate": "Mevcut bir Claude Code kurulumunu (~/.claude) paylaşılan bir gruba kopyalar",
     "login": "Bir hesapta yeniden giriş yapar; --expired gereken her hesapta giriş yapar",
-    "logout": "Bir hesabın giriş bilgilerini kaldırır",
+    "logout": "Bir hesabın oturumunu kapatır: girişini ve MCP sunucusu girişlerini",
     "rename": "Bir hesabı yeniden adlandırır; kısayolu adını korur",
-    "remove": "Bir hesabı kaldırır; klasörü çöp klasörüne taşınır",
+    "remove": "Bir hesabı kaldırır: oturumu kapatılır ve klasörü çöp klasörüne taşınır",
     "import": "Mevcut bir ~/.claude klasörünü yerinde kaydeder",
     "doctor": "Bağlantıları, izinleri, girişleri ve sürümleri kontrol eder ve onarır",
     "statusline": "Hesabı ve kullanımı Claude Code'un durum satırında gösterir",

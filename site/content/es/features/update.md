@@ -1,10 +1,10 @@
 ---
 title: Actualizar ccam
 description: ccam update reemplaza ccam por la última versión de GitHub tras comprobar su SHA-256; --check solo informa y --version instala una versión concreta.
-updated: 2026-10-21
+updated: 2026-10-23
 order: 10
 translation: machine
-sourceHash: a92dbf37399f
+sourceHash: 000d37de5f29
 ---
 
 `ccam update` descarga una versión de ccam desde GitHub, la comprueba con el `checksums.txt` de la versión y reemplaza el binario en ejecución con un solo cambio de nombre. Úsalo si instalaste ccam con el script de instalación o desde un archivo comprimido. El [panel](/features/dashboard) también pregunta a GitHub por la última versión cada vez que se abre y la ofrece con `U`, que ejecuta los mismos pasos después de preguntar. Ningún otro comando se conecta a GitHub, así que funcionan igual sin conexión.
@@ -64,7 +64,7 @@ El proceso completo, desde la búsqueda de la etiqueta hasta el cambio de nombre
 
 El archivo comprimido y `checksums.txt` se descargan en paralelo, y no se escribe nada hasta que la suma de verificación coincide. El cambio de nombre es atómico, así que un fallo o un disco lleno deja el binario anterior o el nuevo, nunca la mitad de uno. Los atajos como `~/.local/bin/ccwork` son enlaces simbólicos al binario de ccam, así que ejecutan la versión nueva sin ningún cambio.
 
-En Windows, el archivo de un programa en ejecución no se puede reemplazar ni eliminar, solo renombrar. `Updater.Install` escribe el binario nuevo en `ccam.exe.new`, renombra el `ccam.exe` en ejecución a `ccam.exe.old` y renombra el archivo nuevo a `ccam.exe`. Si el último paso falla, el binario anterior recupera su nombre. La siguiente actualización elimina `ccam.exe.old`. Los atajos que son enlaces duros en lugar de enlaces simbólicos ([Atajos](/features/shortcuts)) se renuevan justo después, así que también ejecutan la versión nueva.
+En Windows, el archivo de un programa en ejecución no se puede reemplazar ni eliminar, solo renombrar. `Updater.Install` escribe el binario nuevo en `ccam.exe.new`, renombra el `ccam.exe` en ejecución a `ccam.exe.old` y renombra el archivo nuevo a `ccam.exe`. Si el último paso falla, el binario anterior recupera su nombre. La siguiente actualización elimina los archivos `ccam.exe.old` que puede; mientras una sesión sigue ejecutándose desde un `ccam.exe.old` anterior, el binario en ejecución pasa a ser `ccam.exe.old-<time>`. Los atajos que son enlaces duros en lugar de enlaces simbólicos ([Atajos](/features/shortcuts)) se renuevan justo después, así que también ejecutan la versión nueva; eso abarca los enlaces duros de cualquier ccam anterior que creó ccam, no solo los del binario recién reemplazado.
 
 ### Instalaciones administradas por paquetes
 
@@ -91,7 +91,7 @@ En sistemas que no son Linux, solo se imprime la línea del script de instalaci�
 
 ## Seguridad y casos límite
 
-- Una compilación de desarrollo informa su versión como `dev` y no tiene una versión publicada con la cual compararse, así que `ccam update` y `ccam update --check` la rechazan. `ccam update --version vX.Y.Z` instala una versión publicada encima.
+- Una compilación de desarrollo informa su versión como `dev` y no tiene una versión publicada con la cual compararse, así que `ccam update` y `ccam update --check` la rechazan. `ccam update --version vX.Y.Z` instala una versión publicada encima. Una compilación hecha con `go install github.com/jhyunwoo/ccam/cmd/ccam@vX.Y.Z` (o `@latest`) informa esa versión, así que `ccam update` y la oferta del panel funcionan con ella; `@main` o una compilación local posterior a una etiqueta sigue siendo `dev`.
 - Una descarga fallida, un archivo que falta para tu plataforma o una suma de verificación que no coincide dejan el binario instalado como estaba.
 - Una versión que no existe falla con `there is no release <tag>`. Cuando GitHub rechaza la solicitud con HTTP 403 o 429, ccam indica que probablemente sea un límite de solicitudes y te pide que lo intentes de nuevo más tarde.
 - `--check` solo lee. No comprueba si el binario está administrado por paquetes ni si se puede escribir en él.

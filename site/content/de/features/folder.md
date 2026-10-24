@@ -1,10 +1,10 @@
 ---
 title: Konten nach Ordner
 description: ccam folder lässt einen Ordner und alles darunter ein Konto nutzen, wenn du Claude Code ohne Kontonamen startest, etwa work für den Code deiner Firma.
-updated: 2026-10-20
+updated: 2026-10-23
 order: 11
 translation: machine
-sourceHash: 46d1410a3d81
+sourceHash: 48de98d42b99
 ---
 
 `ccam folder work ~/code/company` sorgt dafür, dass jeder Start ohne Kontonamen in `~/code/company` und in jedem Ordner darunter Claude Code als `work` startet. Außerhalb davon startet wie bisher das Standardkonto. Wenn du ein Konto nennst, mit `ccam personal` oder einem Kurzbefehl wie `ccpersonal`, startet immer dieses Konto.
@@ -34,7 +34,7 @@ Diese Starts verwenden das Konto des Ordners:
 - `ccam -p "…"` und jeder andere Start, dessen erstes Argument eine Option für Claude Code ist
 - `ccam run` ohne Namen und `ccam --dry-run`
 - `ccam --fallback -p "…"` für seinen ersten Versuch
-- das Dashboard, `ccam` allein, das mit dem Cursor auf dem Konto des Ordners beginnt
+- das Dashboard, `ccam` allein, das mit dem Cursor auf dem Konto des Ordners beginnt, auch wenn du den Ordner über einen symbolischen Link erreicht hast
 
 ## Optionen
 
@@ -59,7 +59,7 @@ account = 'work'
 2. Ein Start ohne Namen ruft `launcher.HereProfile` auf. Ohne Einträge nimmt er sofort das Standardkonto.
 3. Andernfalls vergleicht er das Arbeitsverzeichnis als Zeichenkette mit jedem `path`: der Ordner selbst oder einer darunter, nie ein Ordner, der nur mit denselben Buchstaben beginnt (`/code/company` umfasst nicht `/code/companyx`). Der tiefste Eintrag gewinnt, sodass `~/code` `personal` sein kann, während `~/code/company` `work` ist.
 4. Nur wenn das Arbeitsverzeichnis so, wie es ist, auf nichts passt, löst ccam seine symbolischen Links auf und vergleicht noch einmal.
-5. Unter Windows ignoriert der Vergleich Groß- und Kleinschreibung, wie Windows selbst.
+5. Unter Windows und macOS ignoriert der Vergleich Groß- und Kleinschreibung, wie es ihre Dateisysteme meist tun.
 
 Außer `config.toml` wird keine Datei gelesen, daher kostet ein Start in einem Ordner keine messbare Zeit (4,0 ms mit oder ohne Einträge, `hyperfine`, 300 Durchläufe).
 

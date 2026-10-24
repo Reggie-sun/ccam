@@ -1,10 +1,10 @@
 ---
 title: 在一台电脑上使用多个 Claude Code 账号
 description: 借助 CLAUDE_CONFIG_DIR 让多个 Claude Code 账号并行运行：可以用 shell 别名手动设置，也可以用 ccam 自动完成，并在账号之间切换。
-updated: 2026-10-20
+updated: 2026-10-24
 order: 1
 translation: machine
-sourceHash: "ee92078b81c3"
+sourceHash: "5463dec2f6eb"
 ---
 
 为每个账号指定单独的配置文件夹。Claude Code 从 `CLAUDE_CONFIG_DIR` 环境变量中读取文件夹位置，每个文件夹都保存各自的登录信息、设置和历史记录，所以每个账号都保持登录状态，你也可以同时运行它们。你可以用 shell 别名手动设置，也可以交给 ccam 完成。
@@ -51,7 +51,7 @@ ccam add work --shortcut ccwork
 
 现在，`ccam personal` 和 `ccam work` 可以启动这两个账号，你为 work 账号设置的快捷命令 `ccwork` 也可以。因为它们是真正的程序而不是别名，所以在脚本中也能使用。单独运行 `ccam` 可以从列表中选择账号，运行 `ccam use work` 可以把某个账号设为默认账号。
 
-设置、`CLAUDE.md`、MCP 服务器和扩展从一开始就共享；你还可以开启对话历史共享，用 `ccam next --continue` 在另一个账号上继续对话。`ccam usage` 会一次显示所有账号的 5 小时用量和每周用量。
+设置、`CLAUDE.md`、MCP 服务器和扩展从一开始就共享。`ccam next --continue` 会把对话带到另一个账号；你还可以开启对话历史共享，让它始终是同一个对话。`ccam usage` 会一次显示所有账号的 5 小时用量和每周用量。
 
 如果你已经在使用 `~/.claude`，请运行 `ccam import`，而不是再次添加该账号；或者运行 `ccam migrate`，把其中的设置、MCP 服务器和扩展复制到共享设置中。
 
@@ -67,7 +67,7 @@ Claude Code [可以在 Windows 上原生运行，也可以在 WSL 中运行](htt
 
 **Claude Code 每次都要求我登录。** 在新文件夹中首次启动时总会要求登录。如果一直要求登录，说明登录已过期或被删除：运行 `ccam login work`（或者通过别名启动一次并登录）。
 
-**某个 MCP 服务器只出现在一个账号中。** 在会话中用 `claude mcp add` 添加的服务器属于该账号。用 `ccam mcp import work <server>` 把它移到所有账号。
+**某个 MCP 服务器只出现在一个账号中。** 在会话中用 `claude mcp add` 添加的服务器属于该账号，不加 `-s user` 时还只属于当前文件夹。用 `ccam mcp import work <server>` 把它移到所有账号。
 
 **各账号的设置不一致。** `ccam share work` 会列出该账号共享的内容以及通过哪个组共享；`ccam group join default work` 会先显示将要发生的变更，再让它共享 `default` 所共享的内容。`ccam doctor --fix` 会修复损坏的链接，并为它修改的每个文件保留备份。
 
@@ -78,3 +78,5 @@ Claude Code [可以在 Windows 上原生运行，也可以在 WSL 中运行](htt
 如果只有两个账号且不需要共享任何内容，用别名就够了。如果你想要共享设置和 MCP 服务器、使用更多账号、一眼看清用量或继续对话，ccam 可以省去这些繁琐的管理工作。[与别名的对比](/compare/aliases)并排列出了两者的差异，[ccam 与其他账号切换工具](/compare/account-switchers)则介绍了那些切换同一份登录信息的工具。
 
 是否可以使用多个账号取决于每个账号的条款。使用前请先确认。
+
+**Team 和 Enterprise 席位。** 自动选择（`ccam next`、`--fallback`、`ccam pick`、仪表盘中的 `n`）也会在同一个 Claude Team 或 Enterprise 组织的席位之间切换。Anthropic 帮助中心关于 [Team 套餐](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)的说明写道："Each seat on a Team plan is assigned to one named individual, and only that person may use it"（Team 套餐的每个席位都分配给一位指定的个人，只有此人可以使用），以及 "Users can't route their work through another user's account to use that user's remaining usage"（用户不能通过另一位用户的账号完成自己的工作，以使用该用户剩余的用量）；关于 [Enterprise 套餐](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)的说明也是如此。因此，在席位之间使用自动选择可能违反 Anthropic 的条款。在依赖这项功能之前，请先向你所在的组织和 Anthropic 确认。个人套餐（Pro、Max）的情况请参见上面的说明。

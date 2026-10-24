@@ -1,10 +1,10 @@
 ---
 title: Akaunti kwa folda
 description: ccam folder hufanya folda na kila kitu chini yake kitumie akaunti moja unapoanzisha Claude Code bila jina la akaunti, kama work kwa msimbo wa kampuni yako.
-updated: 2026-10-20
+updated: 2026-10-23
 order: 11
 translation: machine
-sourceHash: "46d1410a3d81"
+sourceHash: "48de98d42b99"
 ---
 
 `ccam folder work ~/code/company` hufanya kila uanzishaji usio na jina la akaunti ndani ya `~/code/company`, na katika folda yoyote iliyo chini yake, uanzishe Claude Code kama `work`. Nje yake, akaunti chaguo-msingi huanza kama hapo awali. Kutaja akaunti, kwa `ccam personal` au njia fupi kama `ccpersonal`, huanzisha akaunti hiyo kila mara.
@@ -34,7 +34,7 @@ Uanzishaji huu hutumia akaunti ya folda:
 - `ccam -p "…"` na uanzishaji mwingine wowote ambao hoja yake ya kwanza ni chaguo la Claude Code
 - `ccam run` bila jina, na `ccam --dry-run`
 - `ccam --fallback -p "…"` kwa jaribio lake la kwanza
-- dashibodi, `ccam` peke yake, ambacho huanza kiashiria chake kikiwa kwenye akaunti ya folda
+- dashibodi, `ccam` peke yake, ambacho huanza kiashiria chake kikiwa kwenye akaunti ya folda, hata ulipofika kwenye folda kupitia symbolic link
 
 ## Chaguo
 
@@ -59,7 +59,7 @@ account = 'work'
 2. Uanzishaji bila jina huita `launcher.HereProfile`. Kukiwa hakuna maingizo, huchukua akaunti chaguo-msingi mara moja.
 3. Vinginevyo hulinganisha folda ya kazi na kila `path` kama mifuatano ya maandishi: folda yenyewe au iliyo chini yake, kamwe si folda inayoanza tu kwa herufi zile zile (`/code/company` haihusishi `/code/companyx`). Ingizo lenye kina zaidi hushinda, kwa hiyo `~/code` inaweza kuwa `personal` wakati `~/code/company` ni `work`.
 4. Ikiwa tu folda ya kazi kama ilivyo hailingani na chochote, ccam hufuatilia viungo vyake vya ishara na kulinganisha mara moja zaidi.
-5. Kwenye Windows ulinganisho hupuuza herufi kubwa na ndogo, kama Windows inavyofanya.
+5. Kwenye Windows na macOS ulinganisho hupuuza herufi kubwa na ndogo, kama mifumo yao ya faili kwa kawaida hufanya.
 
 Hakuna faili jingine linalosomwa isipokuwa `config.toml`, kwa hiyo uanzishaji ndani ya folda hauongezi muda unaoweza kupimwa (4.0 ms ikiwa na maingizo au bila, `hyperfine`, mizunguko 300).
 

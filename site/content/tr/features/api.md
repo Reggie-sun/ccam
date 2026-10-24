@@ -1,10 +1,10 @@
 ---
 title: API anahtarlı hesaplar
 description: ccam add --api, Anthropic API'si veya bir ağ geçidi için API anahtarlı hesap ekler; anahtar başlatmada bir değişkenden ya da komuttan okunur, saklanmaz.
-updated: 2026-10-20
+updated: 2026-10-23
 order: 13
 translation: machine
-sourceHash: "a903c92f2c50"
+sourceHash: "232a71525e42"
 ---
 
 API anahtarlı bir hesap, Claude Code'u Claude abonelik girişi yerine bir API anahtarıyla başlatır: Anthropic API'si ya da aynı Messages biçimini konuşan bir uç nokta, örneğin bir LiteLLM veya OpenRouter ağ geçidi. ccam anahtarı saklamaz. Hesap her başladığında anahtarı bir ortam değişkeninden ya da parola yöneticisi gibi bir komuttan okur ve yalnızca o Claude Code sürecine verir.
@@ -35,7 +35,7 @@ API anahtarlı bir hesap, diğer her hesap gibi gruplara katılır (varsayılan 
 | --- | --- | --- |
 | `--api` | Giriş yapmak yerine API anahtarlı bir hesap ekler | kapalı |
 | `--key-from env:NAME` | Anahtarı `NAME` ortam değişkeninden okur | |
-| `--key-from command:COMMAND` | `COMMAND` komutunu çalıştırır (`sh -c` ile, Windows'ta `cmd /C` ile) ve yazdırdığı ilk satırı kullanır | |
+| `--key-from command:COMMAND` | `COMMAND` komutunu çalıştırır (`sh -c` ile, Windows'ta ise tırnaklar korunarak, `cmd /d /s /c "…"` içine yazılmış gibi) ve yazdırdığı ilk satırı kullanır | |
 | `--base-url <url>` | Uç nokta (`ANTHROPIC_BASE_URL`) | Anthropic API'si |
 | `--auth api-key\|bearer` | Anahtarı `ANTHROPIC_API_KEY` (`x-api-key`) olarak ya da `ANTHROPIC_AUTH_TOKEN` (`Authorization: Bearer`, ağ geçitlerinin genellikle istediği) olarak gönderir | `api-key` |
 | `--model <model>` | Model (`ANTHROPIC_MODEL`) | Claude Code'un varsayılanı |
@@ -66,10 +66,17 @@ Abonelik girişli hesaplar, önceden olduğu gibi devraldıkları ortamı korur.
 
 ## Güvenlik ve uç durumlar
 
-- Anahtar hiçbir zaman `config.toml` dosyasına, bir önbelleğe veya bir günlüğe yazılmaz ve `ccam --dry-run gw` onu okumaz: bir `command:` kaynağı kuru çalıştırmada çalıştırılmaz.
+- Anahtar hiçbir zaman `config.toml` dosyasına, bir önbelleğe veya bir günlüğe yazılmaz ve `ccam --dry-run gw` onu okumaz: bir `command:` kaynağı kuru çalıştırmada çalıştırılmaz. Kuru çalıştırma bunun yerine uç noktayı, modeli ve anahtarın nereden geldiğini gösterir:
+
+  ```console
+  $ ccam --dry-run gw -p hi
+  CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/gw CCAM_PROFILE=gw ANTHROPIC_BASE_URL=https://llm.example.com ANTHROPIC_MODEL=claude-sonnet-5-5 ANTHROPIC_AUTH_TOKEN="$(pass show llm/gateway-key | head -n 1)" /home/me/.local/bin/claude -p hi
+  ```
+
+  Başlatmanın kaldırdığı devralınmış bir değişken başta `env -u <name>` olarak görünür. Değişkeni boş olan bir `env:` kaynağıyla kuru çalıştırma, başlatmanın yapacağı gibi başarısız olur.
 - `ccam add --api` bir `env:` kaynağını hemen kontrol eder ve değişken boşsa uyarır; bir `command:` kaynağı ilk kez başlatmada çalıştırılır.
 - `ccam login` ve `ccam logout`, girişi olmadığı için API anahtarlı bir hesabı reddeder. `ccam doctor` onun uç noktasını ve anahtar kaynağını gösterir ve bir `env:` değişkeni boşsa uyarır.
-- `ccam usage` onun için `API` gösterir. `ccam next --auto`, `--fallback` ve `ccam pick` yalnızca abonelik hesapları arasından seçer, çünkü bir API anahtarının karşılaştırılacak 5 saatlik veya haftalık limiti yoktur.
+- `ccam usage` onun için `no limits (API)` gösterir. `ccam next --auto`, `--fallback` ve `ccam pick` yalnızca abonelik hesapları arasından seçer, çünkü bir API anahtarının karşılaştırılacak 5 saatlik veya haftalık limiti yoktur.
 - Paylaşılan bir `settings.json`, içinde `env` bloğu veya `apiKeyHelper` varsa, API anahtarlı hesaplar dahil gruptaki her hesaba uygulanır. Sağlayıcı ayarlarını paylaşılan ayarların dışında tutun ya da API anahtarlı hesabı `settings` içermeyen bir gruba koyun.
 
 ## İlgili

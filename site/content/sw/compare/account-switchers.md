@@ -1,10 +1,10 @@
 ---
 title: ccam na vibadilisha akaunti vingine vya Claude Code
 description: Jinsi ccam inavyolinganishwa na claude-swap, CCS, clausona, clauth, CAAM, cux na zana nyingine za kubadili akaunti za Claude Code, na njia ipi inafaa wapi.
-updated: 2026-10-21
+updated: 2026-10-24
 order: 2
 translation: machine
-sourceHash: "c74be64d2978"
+sourceHash: "6d08203f1ea6"
 ---
 
 Zana za kubadili akaunti za Claude Code hufuata mojawapo ya njia mbili. Nyingi hubadilisha taarifa za kuingia ndani ya folda moja ya `~/.claude`, kwa hiyo akaunti moja tu hutumika kwa wakati mmoja. Nyingine, ikiwemo ccam, huipa kila akaunti folda yake kwa `CLAUDE_CONFIG_DIR`, kwa hiyo kila akaunti hubaki imeingia na kadhaa zinaweza kuendeshwa kwa pamoja. ccam huongeza mipangilio na seva za MCP zinazoshirikiwa, na huendeleza mazungumzo katika folda ya akaunti nyingine.
@@ -54,7 +54,7 @@ ccswap ni fork ya claude-swap ambayo pia husimamia kuingia kwa Codex. [claude-ac
 
 ccam kamwe hainakili taarifa za kuingia za Claude kutoka mahali pamoja hadi pengine. Taarifa za kuingia za kila akaunti hubaki katika folda yake, au kwenye macOS katika kipengee cha Keychain cha folda hiyo, na Claude Code ndiyo programu inayozifanya upya. Hakuna nakala iliyohifadhiwa inayoweza kupoteza ulinganifu. `~/.claude` iliyopo iliyosajiliwa kwa `ccam import` huhifadhi kipengee cha Keychain kinachotumiwa na `claude` ya kawaida, kwa hiyo hubaki imeingia kwa njia zote mbili.
 
-ccam hufanya upya tokeni iliyokwisha muda yenyewe tu unapoendesha `ccam usage --refresh`. Huchukua kufuli kwanza na hukataa wakati akaunti hiyo inaendeshwa, kwa hiyo kamwe haibadilishi tokeni chini ya kipindi kinachoendelea.
+ccam hufanya upya tokeni iliyokwisha muda yenyewe tu unapoendesha `ccam usage --refresh`. Huchukua kufuli kwanza na hukataa wakati akaunti hiyo inaendeshwa, bila kujali Claude Code ilianzishwa vipi (pamoja na vipindi vya chinichini na daemon yao), na wakati Claude Code yenyewe inafanya upya kuingia huko, kwa hiyo kamwe haibadilishi tokeni chini ya kipindi kinachoendelea.
 
 ### Hakuna kinachoendeshwa kati yako na Claude Code
 
@@ -66,19 +66,21 @@ Kuanzisha akaunti kwa njia hii huongeza takriban 4 ms, chini ya 6 ms kwenye asil
 
 Seva za MCP, `settings.json`, `CLAUDE.md`, viendelezi (agents, commands, skills, plugins) na historia ya mazungumzo ni vipengele vitano tofauti. Kundi hutaja vipengele linavyoshiriki na akaunti zilizomo, kwa hiyo akaunti mbili za kazi zinaweza kushiriki historia katika kundi la `work` wakati akaunti ya binafsi inabaki na yake, na zote tatu hushiriki seva zile zile za MCP kupitia `default`. `ccam group set work --add memory` huhamisha kila akaunti ya kundi katika mpango mmoja; [dashibodi](/features/dashboard) hufanya vivyo hivyo kwa visanduku vya kuteua na hufifisha kipengele ambacho akaunti tayari inakipata kutoka kundi jingine.
 
-- Seva za MCP hupitishwa kwa `--mcp-config` wakati wa kuanzisha, kwa hiyo kwa chaguo-msingi ccam kamwe haihariri `.claude.json`, faili ambalo Claude Code huliandika upya inapoendeshwa. `ccam mcp add` huongeza seva mara moja kwa kundi zima.
+- Seva za MCP hupitishwa kwa `--mcp-config` wakati wa kuanzisha, kwa hiyo kwa chaguo-msingi uanzishaji hauligusi `.claude.json`, faili ambalo Claude Code huliandika upya inapoendeshwa. ccam huandika humo tu katika hatua zinazosema hivyo, chini ya kufuli ya Claude Code na kwa nakala rudufu: kwa Remote Control baada ya kuuliza, akaunti inapoacha au kurudi kwenye kushiriki MCP, na kwa `ccam mcp import`. `ccam mcp add` huongeza seva mara moja kwa kundi zima.
 - Vipengele vingine ni viungo vinavyoelekea folda ya kundi, kwa hiyo badiliko lililofanywa katika akaunti moja huonekana katika nyingine mara moja. Hakuna kinachonakiliwa wakati wa kuanzisha.
 - Taarifa za kuingia, `.claude.json` na hali ya uendeshaji hazishirikiwi kamwe.
 
 ### Kila badiliko huonyeshwa kwanza na kuhifadhiwa nakala
 
-`ccam group` na `ccam migrate` huchapisha mpango na kuuliza kabla ya kuhamisha chochote. Faili linapotofautiana kati ya akaunti na kundi lake, unachagua: kubaki na la kundi, kutumia lako, au kuunganisha JSON. Faili za asili huenda `.ccam-backup/<time>/`, folda ya akaunti iliyoondolewa huenda kwenye folda ya taka, na faili hubadilishwa kwa rename moja, kwa hiyo uandishi uliokatizwa huacha faili la zamani. `--dry-run` huonyesha kile ambacho kuanzisha, kushiriki, kuhamisha, njia za mkato, masasisho na marekebisho yangefanya. `ccam doctor --fix` hurekebisha viungo na ruhusa zilizoharibika.
+`ccam group` na `ccam migrate` huchapisha mpango na kuuliza kabla ya kuhamisha chochote. Faili linapotofautiana kati ya akaunti na kundi lake, unachagua: kubaki na la kundi, kutumia lako, au kuunganisha JSON; ndani ya folda nakala ya kundi hubaki na mpango hutaja faili zinazotofautiana. Faili za asili huenda `.ccam-backup/<time>/`, ccam hutoka kwenye akaunti iliyoondolewa na folda yake huenda kwenye folda ya taka, na faili hubadilishwa kwa rename moja, kwa hiyo uandishi uliokatizwa huacha faili la zamani. `--dry-run` huonyesha kile ambacho kuanzisha, kushiriki, kuhamisha, njia za mkato, masasisho na marekebisho yangefanya. `ccam doctor --fix` hurekebisha viungo na ruhusa zilizoharibika.
 
 ### Mazungumzo yale yale katika akaunti inayofuata
 
 `ccam next --auto --continue` huuliza kila akaunti matumizi yake kwa wakati mmoja, hufungua ile yenye nafasi kubwa zaidi na kuendeleza mazungumzo. Historia ikishirikiwa ni mazungumzo yale yale; isiposhirikiwa, Claude Code huyanakili kwenye akaunti mpya (`--resume <file> --fork-session`), na ccam husema ni tokeni ngapi jibu la kwanza husoma tena. Kikomo kinaposimamisha kipindi, hook ya plugin ya ccam huonyesha arifa, na `/ccam:switch` hukabidhi mazungumzo. Wewe ndiye unaamua lini kubadili; hakuna kinachofuatilia matumizi yako chinichini, na chaguo za kiotomatiki hubaki ndani ya shirika moja, kwa hiyo mazungumzo ya kampuni kamwe hayaishii kwenye akaunti ya binafsi kwa bahati mbaya. Mstari wa hali hupendekeza amri hiyo akaunti inapofikia 90%.
 
 Script haziwezi kukusubiri, kwa hiyo `ccam --fallback work -p "…"` hubadili kwa ajili yao: akaunti inapofikia kikomo chake, amri ile ile huendeshwa tena kama akaunti yenye nafasi kubwa zaidi, na matokeo ya uendeshaji uliokamilika pekee ndiyo huchapishwa. Kushindwa kusikotokana na kikomo cha matumizi hupitishwa kama kulivyo. Kwa workers wanaoendeshwa sambamba, `ccam pick` humpa kila mmoja akaunti tofauti yenye nafasi, na zote mbili hutoka na msimbo 75 wakati hakuna akaunti yenye nafasi iliyobaki.
+
+**Viti (seats) vya Team na Enterprise.** Chaguo za kiotomatiki (`ccam next`, `--fallback`, `ccam pick`, kitufe `n` cha dashibodi) pia hubadili kati ya viti vya shirika lile lile la Claude Team au Enterprise. Kituo cha usaidizi cha Anthropic kinasema "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (kila kiti katika mpango wa Team hutolewa kwa mtu mmoja aliyetajwa kwa jina, na ni mtu huyo pekee anayeruhusiwa kukitumia) na "Users can't route their work through another user's account to use that user's remaining usage" (watumiaji hawaruhusiwi kuelekeza kazi yao kupitia akaunti ya mtumiaji mwingine ili kutumia kiasi cha matumizi kilichobaki cha mtumiaji huyo) ([mipango ya Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); vivyo hivyo kwa [mipango ya Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Kwa hiyo, kutumia chaguo za kiotomatiki kati ya viti kunaweza kukiuka masharti ya Anthropic. Wasiliana na shirika lako na Anthropic kabla ya kuzitegemea. Mipango ya binafsi (Pro, Max) inaelezwa katika [dokezo la masharti kwenye Maswali yanayoulizwa mara kwa mara](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 ### Akaunti sahihi katika kila folda
 
@@ -91,7 +93,7 @@ ccam ni binary tuli ya takriban 10 MB bila runtime ya kusakinisha, kwa Linux, ma
 ## Pale zana nyingine zinapofanya zaidi
 
 - claude-swap, clauth, cux, CAAM na CCSwitcher zinaweza kubadili zenyewe kipindi shirikishi kinachoendelea akaunti inapovuka kiwango fulani cha matumizi. ccam hubadili uendeshaji wa `-p` kwa `--fallback` na hukuachia vipindi shirikishi, pamoja na arifa kwenye kikomo na `/ccam:switch`.
-- Kwenye Windows bila Developer Mode, ccam hushiriki folda lakini haiwezi kushiriki faili moja moja kama `settings.json`; claude-swap na CCS huyanakili huko badala yake.
+- Kwenye Windows bila Developer Mode, ccam hushiriki folda lakini haiwezi kushiriki faili moja moja kama `settings.json` (hapo `ccam add` ya kwanza hushiriki seva za MCP na viendelezi pekee); claude-swap na CCS huyanakili huko badala yake.
 - CCSwitcher, Claude Switcher na claude-swap huonyesha matumizi kwenye menu bar ya macOS.
 - CCS, clausona, CAAM, clauth, ccswap na Claude Switcher pia husimamia Codex na mawakala wengine wa kuandika msimbo.
 - clausona pia huwasha na kuzima viendelezi kwa kila akaunti (`ccam ext` ya ccam huvionyesha tu), hufuatilia gharama ya tokeni ya ndani, na huja na plugins za Claude Code zinazoendesha makundi ya workers katika tmux na terminal nyingine.

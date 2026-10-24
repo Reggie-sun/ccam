@@ -1,10 +1,10 @@
 ---
 title: Claude Code'u başlatma
 description: Claude Code'u herhangi bir hesapla ccam <name|number>, ccam run veya kontrol paneliyle başlatın; argümanlar claude'a aynen gider, --dry-run komutu gösterir.
-updated: 2026-10-20
+updated: 2026-10-24
 order: 1
 translation: machine
-sourceHash: "4812b197f143"
+sourceHash: "e279341eb59b"
 ---
 
 `ccam work`, Claude Code'u `work` hesabıyla başlatır ve addan sonraki her şey `claude` komutuna olduğu gibi iletilir. `claude` yazacağınız her yerde kullanın: terminalde, bir betikte veya girdiyi boruyla aktararak.
@@ -34,9 +34,11 @@ Bir hesabın adını veya `ccam list` çıktısındaki numarasını verin. ccam 
 
 Argümansız `ccam`, standart girdi ve çıktı bir terminal olduğunda [kontrol panelini](/features/dashboard) açar, aksi halde `ccam list` çıktısını yazdırır. Bir hesaba gidin (ok tuşlarıyla ya da numarasını yazarak) ve başlatmak için `Enter` tuşuna basın; `n` en çok payı kalan hesabı başlatır, `o` ise `--continue`, `--resume` veya başka argümanlar sunar. Kontrol paneli Claude Code başlamadan önce kapanır; böylece terminal önce eski haline gelir.
 
+**Team ve Enterprise koltukları.** Otomatik seçim (`ccam next`, `--fallback`, `ccam pick`, kontrol panelindeki `n` tuşu), aynı Claude Team veya Enterprise kuruluşunun koltukları arasında da geçiş yapar. Anthropic'in yardım merkezinde şöyle belirtilir: "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team planındaki her koltuk, adı belirli tek bir kişiye atanır ve onu yalnızca o kişi kullanabilir) ve "Users can't route their work through another user's account to use that user's remaining usage" (kullanıcılar, başka bir kullanıcının kalan kullanım hakkından yararlanmak için işlerini o kullanıcının hesabı üzerinden yürütemez) ([Team planları](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise planları](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) için de durum aynıdır). Bu nedenle otomatik seçimi koltuklar arasında kullanmak Anthropic'in koşullarını ihlal edebilir. Buna güvenmeden önce kuruluşunuza ve Anthropic'e danışın. Kişisel planlar (Pro, Max), [SSS'deki koşullar notunda](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) ele alınır.
+
 Kabukta `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY` veya `ANTHROPIC_AUTH_TOKEN` ayarlıysa Claude Code, hesabın kendi girişi yerine o anahtarı ya da token'ı kullanabilir; bu yüzden ccam başlamadan önce bunu standart hataya yazar (`ccam: $ANTHROPIC_API_KEY is set, so Claude Code may use that key instead of work's login…`). Değişkenleri yalnızca okur; bir [API anahtarlı hesap](/features/api) ise onları temizler.
 
-`config.toml` içinde `relay = true` olduğunda ccam etkileşimli oturumları bir alt süreç olarak başlatır ve yanlarında kalır; böylece `/ccam:switch` bir konuşmayı kendiliğinden sürdürebilir ([ayrıntılar](/features/next#inside-claude-code)). Aksi halde ccam kendini Claude Code ile değiştirir ve yanında hiçbir şey çalışmaz.
+`config.toml` dosyasının en üstünde (ilk `[[group]]`, `[[profile]]` veya `[[folder]]` satırının üstünde) `relay = true` olduğunda ccam etkileşimli oturumları bir alt süreç olarak başlatır ve yanlarında kalır; böylece `/ccam:switch` bir konuşmayı oturumun seçenekleri, izin modu ve efor düzeyiyle kendiliğinden sürdürebilir ([ayrıntılar](/features/next#relay)). Aksi halde ccam kendini Claude Code ile değiştirir ve yanında hiçbir şey çalışmaz.
 
 ## Seçenekler
 
@@ -54,17 +56,19 @@ Argüman kuralları:
 - `ccam run <name|number> [claude args]`, `ccam <name>` komutunun uzun biçimidir. Adsız `ccam run` klasörün hesabını ya da varsayılan hesabı kullanır.
 - Hesap adları `add`, `list`, `run` veya `usage` gibi ccam komut adları olamaz; böylece `ccam <word>` hiçbir zaman belirsiz olmaz.
 
-Kuru çalıştırma, bir kabuğa ya da Windows'ta PowerShell'e yapıştırabileceğiniz tek bir satır yazdırır:
+Kuru çalıştırma, bir kabuğa ya da Windows'ta PowerShell'e yapıştırabileceğiniz tek bir satır yazdırır. Satır, başlatmanın ortamda değiştirdikleriyle başlar: her zaman `CLAUDE_CONFIG_DIR` ve `CCAM_PROFILE`, kaldırdığı bir değişken için (devralınmış bir `CCAM_RELAY` gibi) `env -u <name>` ve bir [API anahtarlı hesap](/features/api) için uç noktası, modeli ve anahtarın kendisi asla değil, kaynağı olarak anahtar (`ANTHROPIC_API_KEY="$WORK_KEY"`):
 
 ```console
 $ ccam --dry-run work -p "fix the tests"
-CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/claude --mcp-config=/home/me/.local/share/ccam/groups/default/mcp.json -p 'fix the tests'
+CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work CCAM_PROFILE=work /home/me/.local/bin/claude --mcp-config=/home/me/.local/share/ccam/groups/default/mcp.json -p 'fix the tests'
 ```
 
 ```console
 PS> ccam --dry-run work -p "fix the tests"
-$env:CLAUDE_CONFIG_DIR='C:\Users\me\.local\share\ccam\profiles\work'; & C:\Users\me\.local\bin\claude.exe --mcp-config=C:\Users\me\.local\share\ccam\groups\default\mcp.json -p 'fix the tests'
+& { $saved = @{}; foreach ($k in 'CLAUDE_CONFIG_DIR','CCAM_PROFILE') { $saved[$k] = [Environment]::GetEnvironmentVariable($k) }; $env:CLAUDE_CONFIG_DIR='C:\Users\me\.local\share\ccam\profiles\work'; $env:CCAM_PROFILE='work'; try { $p = Start-Process -FilePath 'C:\Users\me\.local\bin\claude.exe' -ArgumentList '--mcp-config=C:\Users\me\.local\share\ccam\groups\default\mcp.json -p "fix the tests"' -NoNewWindow -Wait -PassThru; $global:LASTEXITCODE = $p.ExitCode } finally { foreach ($k in $saved.Keys) { [Environment]::SetEnvironmentVariable($k, $saved[$k]) } } }
 ```
+
+PowerShell satırı, bir kabuktaki `VAR=x cmd` gibi değişkenleri sonradan geri koyar ve komut satırını Claude Code'a `Start-Process` üzerinden verir; böylece Windows PowerShell 5.1 ve PowerShell 7 onu aynı şekilde çalıştırır. Bir başlatma bir değişkeni boş bir değere ayarladığında, altındaki bir `#` satırı PowerShell 7.5'ten önceki sürümlerin böyle bir değişkeni bunun yerine kaldırdığını söyler. npm ile kurulmuş bir `claude.cmd` için satır, başlatmanın kullanacağı `cmd.exe` komutunu çalıştırır (aşağıya bakın) ve başlatmanın orada reddedeceği bir argüman kuru çalıştırmayı da başarısız kılar.
 
 ## Nasıl çalışır
 
@@ -77,19 +81,19 @@ Her kutu, adımı çalışırken yanar; alttaki satırlar ise Claude Code'un ba�
 1. `cmd/ccam/main.go`, `app.Main` fonksiyonunu çağırır. ccam başka bir adla başlatıldıysa bu bir [kısayoldur](/features/shortcuts) ve doğrudan başlatıcıya gider.
 2. `app.parse`, cobra devreye girmeden önce `os.Args` değerine bakar. Yalnızca tek başına `ccam` (kontrol paneli), bir ccam komut adı (`config.Reserved`), `-h`/`--help` ve `-v`/`--version`, `cli.Execute` fonksiyonuna gider. Geri kalan her şey bir başlatmadır.
 3. `launcher.Launch`, ayrıştırdığı tek dosya olan `~/.config/ccam/config.toml` dosyasını okur.
-4. `launcher.Prepare` hesabı ada veya numaraya göre bulur (ad yoksa `HereProfile`, çalışma dizinini `config.toml` içindeki `[[folder]]` girdileriyle dize olarak karşılaştırıp klasörün hesabını alır), baştaki bir `--` değerini atar ve `claude` yürütülebilir dosyasını `ResolveClaude` ile bulur. PATH araması, dosyanın değiştirilme zamanıyla birlikte `~/.local/state/ccam/claude-path` içinde önbelleğe alınır; böylece ccam her başlatmada `PATH` içinde arama yapmaz. Değişmiş veya eksik bir dosya yeni bir aramayı tetikler. `config.toml` içindeki bir `claude_bin` yolu olduğu gibi kullanılır. ccam, inode ile karşılaştırarak ccam'in kendisi olan bir `claude` dosyasını reddeder, çünkü bu bir döngüye yol açar.
+4. `launcher.Prepare` hesabı ada veya numaraya göre bulur (ad yoksa `HereProfile`, çalışma dizinini `config.toml` içindeki `[[folder]]` girdileriyle dize olarak, macOS ve Windows'ta büyük/küçük harfe bakmadan karşılaştırıp klasörün hesabını alır), baştaki bir `--` değerini atar ve `claude` yürütülebilir dosyasını `ResolveClaude` ile bulur. PATH araması, dosyanın değiştirilme zamanı ve `PATH` değerinin bir hash'iyle birlikte `~/.local/state/ccam/claude-path` içinde önbelleğe alınır; böylece ccam her başlatmada `PATH` içinde arama yapmaz. Değişmiş veya eksik bir dosya ya da değişmiş bir `PATH` yeni bir aramayı tetikler. `config.toml` içindeki bir `claude_bin` yolu (`~/` genişletilir) çalıştırılabilir bir dosya olmalıdır; değilse başlatma, herhangi bir şey yazılmadan önce `claude_bin X is not an executable file. Check claude_bin in config.toml` ile durur. ccam, inode ile karşılaştırarak ccam'in kendisi olan bir `claude` dosyasını reddeder, çünkü bu bir döngüye yol açar.
 5. `checkLinks`, hesap klasörü `~/.local/share/ccam/profiles/<name>/` ile paylaşım ayarlarını `share.Check` ile karşılaştırır; bu fonksiyon yalnızca `lstat` ve `readlink` çağırır, öğe başına bir veya iki sistem çağrısı. Eksik bir bağlantı anında oluşturulur. Veri kaybettirebilecek her şey başlatmayı durdurur.
 6. `applyMCP`, paylaşılan MCP sunucularını ekler (aşağıya bakın).
-7. `session.Register` oturumu kaydeder. ccam, PID'sinin adını taşıyan ve süreç başlangıç zamanını içeren bir işaret dosyasını `$XDG_RUNTIME_DIR/ccam/profile-<name>/<pid>` konumuna (`XDG_RUNTIME_DIR` yoksa `~/.local/state/ccam/locks/` içine) yazar. Konuşma geçmişini paylaşan bir hesap için `historyCheck`, önce `history-<group>-<hash>` içinde çalışan bir oturum arar (hash, geçerli klasörün hash'idir) ve oraya da kaydolur. `exec` PID'yi korur; böylece işaret dosyası artık Claude Code sürecinin kendisini adlandırır. Tutulan bir kilit değil, bir işaret dosyası kullanılır; çünkü Claude Code'un başlattığı süreçler bir kilidi devralır ve oturum bittikten sonra da tutar.
+7. `session.Register` oturumu kaydeder. ccam, PID'sinin adını taşıyan ve süreç başlangıç zamanını içeren bir işaret dosyasını, `XDG_RUNTIME_DIR` ne derse desin, `~/.local/state/ccam/locks/profile-<name>/<pid>` konumuna yazar; böylece her kabuk aynı işaretleri görür. Konuşma geçmişini paylaşan bir hesap için `historyCheck`, önce `history-<group>-<hash>` içinde çalışan bir oturum arar (hash, sembolik bağlantıları çözülmüş geçerli klasörün hash'idir) ve oraya da kaydolur. `exec` PID'yi korur; böylece işaret dosyası artık Claude Code sürecinin kendisini adlandırır. Tutulan bir kilit değil, bir işaret dosyası kullanılır; çünkü Claude Code'un başlattığı süreçler bir kilidi devralır ve oturum bittikten sonra da tutar. Yazılamayan bir işaret başlatmayı durdurmaz: ccam `ccam: could not mark the session as running (…); starting Claude Code anyway` der. ccam'in bir hesabın çalışıp çalışmadığına dair diğer denetimleri (yeniden adlandırma, kaldırma, grup değişiklikleri, `doctor --fix`, MCP eşitlemesi) hesap klasöründeki Claude Code'un kendi kayıtlarını da (`sessions/<pid>.json`, `daemon.lock`) okur; böylece ccam olmadan başlatılan Claude Code'u da görürler: düz `claude`, bir IDE, arka plan oturumları ve onların daemon'ı.
 8. `Plan.Exec`, terminal başlığını `claude · <name>` olarak ayarlar (standart hata bir terminal olduğunda), başlatma zamanını `fsync` olmadan `~/.local/state/ccam/last-used/<name>` dosyasına yazar ve `syscall.Exec` çağırır.
 
-Claude Code, `CLAUDE_CONFIG_DIR` hesap klasörüne ve `CCAM_PROFILE` hesap adına ayarlanmış olarak çalışır. ccam, bunların devraldığı değerlerini kaldırır. macOS'ta `ccam import` ile kaydedilmiş bir `~/.claude` klasörü için ayrıca `CLAUDE_SECURESTORAGE_CONFIG_DIR` değişkenini boş bir değere ayarlar; böylece hesap ve düz `claude` aynı Anahtar Zinciri girişini kullanır.
+Claude Code, `CLAUDE_CONFIG_DIR` hesap klasörüne ve `CCAM_PROFILE` hesap adına ayarlanmış olarak çalışır. ccam, bunların devraldığı değerlerini ve devralınmış bir `CCAM_RELAY` değişkenini kaldırır. macOS'ta `ccam import` ile kaydedilmiş bir `~/.claude` klasörü için ayrıca `CLAUDE_SECURESTORAGE_CONFIG_DIR` değişkenini boş bir değere ayarlar; böylece hesap ve düz `claude` aynı Anahtar Zinciri girişini kullanır; Windows'ta Claude Code girişi Kimlik Bilgileri Yöneticisi'nde tuttuğunda da aynısını yapar.
 
 ### Neden exec
 
 `syscall.Exec`, ccam sürecini `claude` ile değiştirir; böylece ccam bellekte kalmaz, tuş vuruşları, sinyaller ve çıkış kodu doğrudan Claude Code'a aittir ve argümanlar hiçbir zaman bir kabuk dizesi olmadan dizi olarak kalır.
 
-Windows'ta `exec` yoktur. Orada `Plan.Exec`, `claude.exe` dosyasını aynı ortam, argümanlar ve konsolla bir alt süreç olarak başlatır, onu bekler ve onun çıkış koduyla çıkar. Ctrl+C, Claude Code'a doğrudan konsoldan ulaşır; bu yüzden ccam onu yok sayar. Oturum işaretçisi, tam olarak Claude Code kadar yaşayan ccam'in PID'sini taşır ve Claude Code çıktığında kaldırılır. Beklerken ccam başka hiçbir şey yapmaz. Bir oturumdan sonraki işler, örneğin `claude mcp add` ile eklenen sunucuları fark etmek, bir sonraki başlatmada yapılır: ccam, `.claude.json` dosyasının değiştirilme zamanını `~/.local/state/ccam/mcp/<name>/seen` ile karşılaştırır ve dosyayı yalnızca değiştiyse ayrıştırır.
+Windows'ta `exec` yoktur. Orada `Plan.Exec`, `claude.exe` dosyasını aynı ortam, argümanlar ve konsolla bir alt süreç olarak başlatır, onu bekler ve onun çıkış koduyla çıkar. npm'in kurduğu bir `claude.cmd`, tam yoluyla ve `cmd.exe` hiçbirini kendi sözdizimi (`&`, `%PATH%`) olarak okumasın diye her argümanı tırnak içine alınarak `cmd.exe` içinde çalışır; satır sonu içeren bir argüman bu şekilde iletilemez ve yerel Claude Code'u kurma önerisiyle reddedilir. Ctrl+C, Claude Code'a doğrudan konsoldan ulaşır; bu yüzden ccam onu yok sayar. Oturum işaretçisi, tam olarak Claude Code kadar yaşayan ccam'in PID'sini taşır ve Claude Code çıktığında kaldırılır. Beklerken ccam başka hiçbir şey yapmaz. Bir oturumdan sonraki işler, örneğin `claude mcp add` ile eklenen sunucuları fark etmek, bir sonraki başlatmada yapılır: ccam, `.claude.json` dosyasının değiştirilme zamanını `~/.local/state/ccam/mcp/<name>/seen` ile karşılaştırır ve dosyayı yalnızca değiştiyse ayrıştırır.
 
 ### Bir komut satırı nasıl yönlendirilir
 
@@ -107,7 +111,16 @@ Varsayılan `flag` stratejisiyle ccam, grubun MCP sunucularını Claude Code'a s
 
 `mcp.FlagArgs` yalnızca grubun `mcp.json` dosyası varsa bir argüman döndürür ve `Plan.InsertArgs` bunu `claude` komutunun hemen arkasına koyar. Kendi `--mcp-config` veya `--strict-mcp-config` seçeneğiniz bunun üzerine yine uygulanır. Bu tek bir argümandır, `--mcp-config=<path>`, çünkü Claude Code'un `--mcp-config` seçeneği birden fazla değer alır: iki argüman olarak yazılsaydı ardından gelen bir istemi de yapılandırma dosyası olarak okurdu.
 
-`config.toml` içinde `mcp_strategy = "sync"` ile ccam bunun yerine sunucuları hesabın `.claude.json` dosyasına yazar ve hesap zaten çalışıyorsa bunu atlar.
+Bayrağın nereye gidemeyeceğine `claudeVerb` karar verir. Claude Code'un alt komutunu, Claude Code'un yaptığı gibi, seçenekleri değerleriyle birlikte atlayarak argümanlardan okur. `remote-control` veya `rc` bayrak almaz (aşağıda); ilk sırada verilen bir arka plan oturumu alt komutu da (`attach`, `logs`, `stop`, `kill`, `respawn`, `rm`) almaz. Claude Code orada bayrağı reddettiği için `ccam work mcp list`, `get` ve `remove` de almaz; bunun yerine ccam standart hataya grubun sunucularının hesabın oturumlarında da yüklendiğini yazar:
+
+```console
+ccam: `claude mcp list` sees only account work's own MCP servers; its sessions also load group default's: ctx, fs
+      See all of them with `ccam mcp list`; change the group's with `ccam mcp add|remove`.
+```
+
+Diğer her alt komut ve her oturum bayrağı korur.
+
+`config.toml` içinde `mcp_strategy = "sync"` ile ccam bunun yerine sunucuları hesabın `.claude.json` dosyasına yazar ve hesap zaten çalışıyorsa bunu atlar. Son denetimden beri ne grubun `mcp.json` dosyası ne de `.claude.json` değiştiyse bir başlatma bu işi de atlar. Eşitleme, hesabın bir grup sunucusunun adı altında kendine ait olan bir sunucusunu asla değiştirmez (bunu bir kez söyler), `.claude.json` dosyasından kaybolmuş bir kopyayı geri koyar (`put back group default's MCP servers …`) ve yalnızca kendi yazdığı ve o zamandan beri kimsenin değiştirmediği kopyaları değiştirir veya kaldırır.
 
 ### Remote Control
 
@@ -115,18 +128,18 @@ Varsayılan `flag` stratejisiyle ccam, grubun MCP sunucularını Claude Code'a s
 
 <!-- motion:launch-rc -->
 
-1. `remoteControl`, hesaptan sonra gelen ve `-` ile başlamayan ilk argümanı Claude Code'un alt komutu olarak alır. Bu `remote-control` veya `rc` olduğunda `mcp.FlagArgs` hiçbir şey eklemez.
-2. `mcp.Synced`, grubun `mcp.json` dosyasının değiştirilme zamanını hesabın `sync-stamp` dosyasıyla karşılaştırır. `.claude.json` grubun güncel sunucularını zaten içeriyorsa veya grubun hiç sunucusu yoksa Remote Control soru sormadan başlar.
+1. `claudeVerb`, seçeneklerden ve değerlerinden sonra da (`ccam work --model opus rc`) Claude Code'un alt komutu olarak `remote-control` veya `rc` bulur. Bu durumda `mcp.FlagArgs` hiçbir şey eklemez.
+2. `mcp.Synced`, grubun `mcp.json` dosyasının değiştirilme zamanını hesabın `sync-stamp` dosyasıyla karşılaştırır ve her grup sunucusunun hâlâ `.claude.json` içinde olduğunu denetler. `.claude.json` grubun güncel sunucularını zaten içeriyorsa veya grubun hiç sunucusu yoksa Remote Control soru sormadan başlar.
 3. Aksi halde ccam, oturumlarda eksik kalacak sunucuları adlarıyla belirtir ve sorar:
 
    ```console
    ccam: Remote Control sessions only get MCP servers stored in account work's .claude.json, not the shared MCP servers (ctx, fs).
-   Copy them into .claude.json (a backup is kept)? [y/N]
+   Copy them into .claude.json (a backup is kept; servers of the account's own stay)? [y/N]
    ```
 
 4. `y` yanıtında `mcp.Sync` bunları `sync` stratejisinin yaptığı gibi kopyalar: Claude Code'un kilidi altında, bir yedek aldıktan sonra ve hesabın kendi sunucularını koruyarak. `N` yanıtında veya terminal yoksa Remote Control onlar olmadan başlar ve ccam, bunları her başlatmadan önce kopyalayan `mcp_strategy = "sync"` ayarını önerir.
 
-ccam, sunucular kopyalanana kadar her Remote Control başlatmasında sorar; kopyalamadan sonra ise yalnızca grubun `mcp.json` dosyası yeniden değiştiğinde sorar. `.claude.json` içindeki bir kopya, sonraki normal başlatmalarda `--mcp-config` seçeneğine üstün gelir; bu yüzden `ccam mcp add`, `remove` ve `import` diğer hesapların tuttuğu kopyaları günceller ([Paylaşılan MCP sunucuları](/features/mcp)).
+ccam, sunucular kopyalanana kadar her Remote Control başlatmasında sorar; kopyalamadan sonra ise yalnızca grubun `mcp.json` dosyası yeniden değiştiğinde veya kopyalanmış bir sunucu `.claude.json` dosyasından kaybolduğunda sorar. `.claude.json` içindeki bir kopya, sonraki normal başlatmalarda `--mcp-config` seçeneğine üstün gelir; bu yüzden `ccam mcp add`, `remove` ve `import` diğer hesapların tuttuğu kopyaları günceller ([Paylaşılan MCP sunucuları](/features/mcp)).
 
 ### 10 ms bütçesi
 
@@ -145,8 +158,8 @@ ccam trace: prelaunch             0.083ms (total 3.661ms)
 
 - Bilinmeyen bir ad veya numara `no account "<name>"` ile durur ve `ccam list` komutunu gösterir. Hiç hesap yoksa ccam, `ccam add <name>` ile bir hesap eklemenizi ister.
 - Paylaşılan bir yol sıradan bir dosyaya dönüştüyse veya yanlış yere yöneliyorsa ccam `stopped because of share link problems:` ile durur, sorunları listeler ve `ccam doctor --fix` çalıştırmanızı ister. Başlatma yolunda veri taşımaz.
-- Bu hesapla konuşma geçmişini paylaşan (aynı gruptaki) başka bir Claude Code aynı klasörde çalışıyorsa ccam, geçmişin karışabileceği konusunda uyarır ve `Run anyway? [y/N]` diye sorar. Terminal yoksa uyarıyı gösterir ve devam eder.
-- `--dry-run`; MCP eşitlemesini, yeni sunucu bildirimini, geçmiş kontrolünü, oturum işaretini, başlığı ve son kullanım zamanını atlar ve exec yapmaz. Paylaşım bağlantılarını yine kontrol eder ve eksik bir bağlantıyı normal bir başlatmanın yapacağı gibi oluşturur.
+- Bu hesapla konuşma geçmişini paylaşan (aynı gruptaki) başka bir Claude Code aynı klasörde çalışıyorsa ccam, geçmişin karışabileceği konusunda uyarır ve `Run anyway? [y/N]` diye sorar. Klasör, sembolik bağlantıları çözülmüş olarak eşleştirilir. Terminal yoksa (`/dev/null` üzerinden gelen standart girdi de yok sayılır) ya da arka plandaki bir işten çalıştırıldığında uyarıyı gösterir ve devam eder. Yeni bir `-p` çalıştırması kendi konuşmasını başlatır ve uyarı almaz; `--version`, `--help` ve `mcp`, `auth` veya `plugin` gibi konuşma açmayan alt komutlar hiç denetlenmez.
+- `--dry-run`; MCP eşitlemesini, yeni sunucu bildirimini, `mcp list` notunu, geçmiş kontrolünü, oturum işaretini, başlığı ve son kullanım zamanını atlar ve exec yapmaz. Paylaşım bağlantılarını yine kontrol eder ve eksik bir bağlantıyı normal bir başlatmanın yapacağı gibi oluşturur.
 - `ccam work rc`, `work` zaten çalışırken `.claude.json` dosyasına dokunmaz, bunu belirtir ve Remote Control'ü grubun sunucuları olmadan başlatır; bunları kopyalamak için oturum bittikten sonra yeniden çalıştırın. `--dry-run` ile mesajı yazdırır ama ne sorar ne de kopyalar.
 - `mcp_strategy = "sync"` ile başarısız bir eşitleme `ccam: MCP sync failed (launching anyway): …` yazdırır ve Claude Code zaten sahip olduğu sunucularla başlar.
 

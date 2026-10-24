@@ -1,10 +1,10 @@
 ---
 title: 更新 ccam
 description: ccam update 會在檢查 SHA-256 之後以最新的 GitHub 發行版本取代 ccam；--check 只回報，--version 安裝指定的發行版本標籤。
-updated: 2026-10-21
+updated: 2026-10-23
 order: 10
 translation: machine
-sourceHash: a92dbf37399f
+sourceHash: "000d37de5f29"
 ---
 
 `ccam update` 會從 GitHub 下載 ccam 的發行版本，以該發行版本的 `checksums.txt` 驗證，然後透過一次 rename 取代正在執行的執行檔。如果你是用安裝腳本或壓縮檔安裝 ccam，請使用它。[儀表板](/features/dashboard)也會在每次開啟時向 GitHub 詢問最新的發行版本，並以 `U` 提供更新，此鍵會先詢問，再執行相同的步驟。其他指令都不會連線到 GitHub，所以它們在離線時一樣能運作。
@@ -64,7 +64,7 @@ $ ccam update
 
 壓縮檔和 `checksums.txt` 會並行下載，在總和檢查碼相符之前不會寫入任何東西。rename 是原子操作，所以當機或磁碟已滿時，留下的不是舊執行檔就是新執行檔，絕不會只有一半。`~/.local/bin/ccwork` 這類快捷指令是指向 ccam 執行檔的符號連結，所以不需任何變更就會執行新版本。
 
-在 Windows 上，執行中程式的檔案無法被取代或刪除，只能重新命名。`Updater.Install` 會把新的執行檔寫入 `ccam.exe.new`，把執行中的 `ccam.exe` 重新命名為 `ccam.exe.old`，再把新檔案重新命名為 `ccam.exe`。如果最後一步失敗，舊的執行檔會被改回原來的名稱。下次更新時會刪除 `ccam.exe.old`。以永久連結而非符號連結建立的快捷指令（[快捷指令](/features/shortcuts)）會在之後立即更新，所以它們也會執行新版本。
+在 Windows 上，執行中程式的檔案無法被取代或刪除，只能重新命名。`Updater.Install` 會把新的執行檔寫入 `ccam.exe.new`，把執行中的 `ccam.exe` 重新命名為 `ccam.exe.old`，再把新檔案重新命名為 `ccam.exe`。如果最後一步失敗，舊的執行檔會被改回原來的名稱。下次更新時會刪除它能刪除的 `ccam.exe.old` 檔案；若仍有工作階段從先前的 `ccam.exe.old` 執行，執行中的執行檔則會改名為 `ccam.exe.old-<time>`。以永久連結而非符號連結建立的快捷指令（[快捷指令](/features/shortcuts)）會在之後立即更新，所以它們也會執行新版本；這涵蓋 ccam 為任何較舊 ccam 建立的永久連結，而不只是剛被取代的那個執行檔。
 
 ### 由套件管理的安裝
 
@@ -91,7 +91,7 @@ Or install a copy in ~/.local/bin with the install script:
 
 ## 安全性和特殊情況
 
-- 開發版組建的版本會顯示為 `dev`，沒有可比較的發行版本，所以 `ccam update` 和 `ccam update --check` 會拒絕執行。`ccam update --version vX.Y.Z` 可以在它上面安裝發行版本。
+- 開發版組建的版本會顯示為 `dev`，沒有可比較的發行版本，所以 `ccam update` 和 `ccam update --check` 會拒絕執行。`ccam update --version vX.Y.Z` 可以在它上面安裝發行版本。以 `go install github.com/jhyunwoo/ccam/cmd/ccam@vX.Y.Z`（或 `@latest`）建置的版本會回報該發行版本，所以 `ccam update` 和儀表板的更新提示都能用在它上面；`@main` 或超過標籤的本機建置則仍是 `dev`。
 - 下載失敗、找不到你平台的檔案，或總和檢查碼不符時，已安裝的執行檔都會維持原樣。
 - 不存在的發行版本會以 `there is no release <tag>` 失敗。當 GitHub 以 HTTP 403 或 429 拒絕時，ccam 會說明這可能是頻率限制，並請你稍後再試。
 - `--check` 只會讀取。它不會檢查執行檔是否由套件管理或是否可寫入。

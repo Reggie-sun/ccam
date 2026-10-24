@@ -1,10 +1,10 @@
 ---
 title: Kutumia Remote Control na ccam
 description: "Remote Control ya Claude Code kama akaunti yoyote kwa ccam <name> rc: chaguo zinazotumika, kwa nini ccam hutoa kunakili seva za MCP zinazoshirikiwa, na utatuzi."
-updated: 2026-10-20
+updated: 2026-10-23
 order: 4
 translation: machine
-sourceHash: "5f0b90ea53d6"
+sourceHash: "3e17d89f98c8"
 ---
 
 `ccam work rc` huanzisha Remote Control ya Claude Code kama akaunti `work`, ili uweze kuendesha vipindi kwenye kompyuta hii kutoka claude.ai/code au programu ya simu ya Claude. Hufanya kazi kama `claude rc` kwa tofauti moja tu: ikiwa akaunti inashiriki seva za MCP, ccam huuliza mara moja kama izinakili kwenda `.claude.json` ya akaunti, kwa sababu vipindi vya Remote Control havisomi seva kutoka mahali pengine popote.
@@ -31,9 +31,9 @@ Aina mbili za chaguo hukutana hapa: chaguo za ccam yenyewe, ambazo huja kabla ya
 | Chaguo au mpangilio | Inachofanya | Chaguo-msingi |
 | --- | --- | --- |
 | `--dry-run` (kabla ya akaunti) | Huchapisha mazingira na amri, pamoja na taarifa ya MCP ikiwa ipo. Haiulizi wala hainakili | imezimwa |
-| `Copy them into .claude.json (a backup is kept)? [y/N]` | Huulizwa wakati akaunti inashiriki seva za MCP na `.claude.json` yake haina orodha ya sasa ya kikundi. `y` huzinakili, `N` au Enter huanza bila hizo | `N` |
-| `mcp_strategy = "sync"` katika `~/.config/ccam/config.toml` | Hunakili seva za kikundi kwenda `.claude.json` kabla ya kila uanzishaji, iwe Remote Control au la, kwa hiyo hakuna kinachoulizwa kamwe | `"flag"` |
-| `ccam group leave <group> work` | Hutoa akaunti kwenye kikundi kinachoshiriki MCP nayo; kisha Remote Control huanza na seva za akaunti yenyewe tu na hakuna kinachoulizwa | katika `default` |
+| `Copy them into .claude.json (a backup is kept; servers of the account's own stay)? [y/N]` | Huulizwa wakati akaunti inashiriki seva za MCP na `.claude.json` yake haina orodha ya sasa ya kikundi, au seva iliyonakiliwa imetoweka ndani yake. `y` huzinakili, `N` au Enter huanza bila hizo | `N` |
+| `mcp_strategy = "sync"` juu kabisa ya `~/.config/ccam/config.toml` | Hunakili seva za kikundi kwenda `.claude.json` kabla ya kila uanzishaji, iwe Remote Control au la, kwa hiyo hakuna kinachoulizwa kamwe | `"flag"` |
+| `ccam group leave <group> work` | Hutoa akaunti kwenye kikundi kinachoshiriki MCP nayo. Seva za kikundi hunakiliwa katika `.claude.json` yake kama seva zake yenyewe, kwa hiyo Remote Control huwa nazo na hakuna kinachoulizwa; kwa `--fresh` huanza na seva za akaunti yenyewe tu | katika `default` |
 
 ### Chaguo za Remote Control
 
@@ -52,7 +52,7 @@ Kila kitu baada ya `rc` ni mali ya Claude Code. Hizi ni chaguo za `claude remote
 | `--[no-]chrome` | Claude in Chrome kwa vipindi vipya (chaguo-msingi imezimwa) |
 | `-d`, `--debug`, `--debug-file <path>`, `-v`, `--verbose` | Matokeo ya utatuzi na ya kina |
 
-Weka `rc` mara moja baada ya jina la akaunti. ccam huchukua hoja ya kwanza isiyoanza na `-` kama amri ya Claude Code, kwa hiyo katika `ccam work rc --name laptop` huona `rc`, lakini katika `ccam work --model opus rc` huona `opus`.
+ccam husoma amri ya Claude Code kwa njia ile ile ambayo Claude Code hufanya, ikiruka chaguo pamoja na thamani zake, kwa hiyo `ccam work rc --name laptop` na `ccam work --model opus rc` zote huanzisha Remote Control. Chaguo ambalo ccam hailijui huhesabiwa kama lisilo na thamani; ili kuwa salama, weka `rc` mara moja baada ya jina la akaunti.
 
 ## ccam inachofanya
 
@@ -60,16 +60,16 @@ Uanzishaji hufuata njia ya kawaida ([Kuanzisha Claude Code](/features/launch)) u
 
 1. ccam hupata akaunti, hukagua viungo vyake vya kushiriki na hutafuta `claude`, kama ilivyo kwa uanzishaji wowote.
 2. Huona kwamba amri ni `rc` au `remote-control` na huacha `--mcp-config` nje.
-3. Ikiwa akaunti inashiriki seva za MCP, hulinganisha `mcp.json` ya kikundi na `sync-stamp` iliyo katika `~/.local/state/ccam/mcp/work/`. Ikiwa `.claude.json` tayari ina seva za sasa, au kikundi hakina seva yoyote, huenda moja kwa moja hadi hatua ya 6.
+3. Ikiwa akaunti inashiriki seva za MCP, hulinganisha `mcp.json` ya kikundi na `sync-stamp` iliyo katika `~/.local/state/ccam/mcp/work/`, na hukagua kwamba kila seva ya kikundi bado iko katika `.claude.json`. Ikiwa `.claude.json` tayari ina seva za sasa, au kikundi hakina seva yoyote, huenda moja kwa moja hadi hatua ya 6.
 4. Vinginevyo hutaja seva ambazo vipindi vingezikosa:
 
    ```console
    $ ccam work rc
    ccam: Remote Control sessions only get MCP servers stored in account work's .claude.json, not the shared MCP servers (ctx, fs).
-   Copy them into .claude.json (a backup is kept)? [y/N]
+   Copy them into .claude.json (a backup is kept; servers of the account's own stay)? [y/N]
    ```
 
-5. Kwa `y` huhifadhi nakala rudufu ya `.claude.json`, huchukua kufuli ya Claude Code yenyewe, huongeza seva za kikundi kwenye `mcpServers` na huhifadhi seva nyingine za akaunti. Kwa `N`, bila terminal, au wakati akaunti inaendeshwa, haibadilishi chochote na husema hivyo:
+5. Kwa `y` huhifadhi nakala rudufu ya `.claude.json`, huchukua kufuli ya Claude Code yenyewe, huongeza seva za kikundi kwenye `mcpServers` na huhifadhi seva nyingine za akaunti; seva ya akaunti yenyewe yenye jina la seva ya kikundi hubaki kuwa ya akaunti, na ccam husema hivyo. Kwa `N`, bila terminal, au wakati akaunti inaendeshwa, haibadilishi chochote na husema hivyo:
 
    ```console
          Starting without them. To copy them before every launch instead, set mcp_strategy = "sync" in ~/.config/ccam/config.toml
@@ -77,17 +77,17 @@ Uanzishaji hufuata njia ya kawaida ([Kuanzisha Claude Code](/features/launch)) u
 
 6. Hurekodi kipindi, huweka `CLAUDE_CONFIG_DIR` kuwa folda ya akaunti na hujibadilisha yenyewe kuwa `claude rc` kupitia `exec`.
 
-Kisha Remote Control huendelea kufanya kazi kama seva. Kila kipindi inachokuanzishia ni mchakato mtoto wa mchakato huo, kwa hiyo huendeshwa kama `work`: kwa taarifa za kuingia, mipangilio na historia ya mazungumzo ya `work`, na huhesabiwa dhidi ya kikomo cha matumizi cha `work`. Wakati seva inafanya kazi, ccam huichukulia akaunti kuwa inaendeshwa.
+Kisha Remote Control huendelea kufanya kazi kama seva. Kila kipindi inachokuanzishia ni mchakato mtoto wa mchakato huo, kwa hiyo huendeshwa kama `work`: kwa taarifa za kuingia, mipangilio na historia ya mazungumzo ya `work`, na huhesabiwa dhidi ya kikomo cha matumizi cha `work`. Wakati seva iliyoanzishwa na ccam inafanya kazi, ccam huichukulia akaunti kuwa inaendeshwa, vivyo hivyo kwa seva iliyoanzishwa kwa `claude remote-control` ya kawaida inapokuwa na vipindi; seva kama hiyo ambayo bado haina kipindi haionekani.
 
 Jaribio (dry run) huonyesha tofauti. Uanzishaji wa kawaida hubeba seva za kikundi kama hoja, Remote Control haibebi:
 
 ```console
 $ ccam --dry-run work
-CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/claude --mcp-config=/home/me/.local/share/ccam/groups/default/mcp.json
+CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work CCAM_PROFILE=work /home/me/.local/bin/claude --mcp-config=/home/me/.local/share/ccam/groups/default/mcp.json
 $ ccam --dry-run work rc
 ccam: Remote Control sessions only get MCP servers stored in account work's .claude.json, not the shared MCP servers (ctx, fs).
       Starting without them. To copy them before every launch instead, set mcp_strategy = "sync" in ~/.config/ccam/config.toml
-CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/claude rc
+CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work CCAM_PROFILE=work /home/me/.local/bin/claude rc
 ```
 
 ## Kwa nini inafanya kazi hivi
@@ -96,13 +96,13 @@ CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/c
 
 **Vipindi vyake husoma seva kutoka `.claude.json` tu.** Vipindi ambavyo Remote Control huanzisha havirithi chaguo kutoka kwenye mstari wa amri. Mahali pekee vinapopata seva za MCP za mtumiaji ni `.claude.json` ya akaunti. Faili hiyo pia hushikilia taarifa za kuingia za akaunti na hali ya kila folda, kwa hiyo ccam haiwezi kuiunganisha na nakala inayoshirikiwa kama inavyofanya kwa `settings.json`. Kunakili seva ndani yake ndiyo njia pekee ya kuvipa vipindi orodha inayoshirikiwa.
 
-**ccam huuliza kabla ya kuandika.** Kwa mkakati wa flag ambao ni chaguo-msingi, ccam huahidi kuacha `.claude.json` bila kuigusa. Remote Control ndiyo hali pekee ambapo inalazimika kuandika humo, kwa hiyo huuliza kwanza, huweka nakala rudufu, na haigusi chochote isipokuwa `mcpServers`.
+**ccam huuliza kabla ya kuandika.** Kwa mkakati wa flag ambao ni chaguo-msingi, ccam huacha `.claude.json` bila kuigusa wakati wa uanzishaji. Remote Control ndiyo uanzishaji pekee ambapo inalazimika kuandika humo, kwa hiyo huuliza kwanza, huweka nakala rudufu, na haigusi chochote isipokuwa `mcpServers`. (Nje ya uanzishaji, kuacha au kujiunga na kushiriki MCP na `ccam mcp import` nazo huandika humo, kama mipango yake inavyosema.)
 
-**Haiandiki wakati akaunti inaendeshwa.** Claude Code huandika upya `.claude.json` wakati wa kipindi, na badiliko lililofanywa kutoka nje lingepotea au kuandikwa juu yake. Ndiyo maana ccam huruka kunakili wakati kipindi chochote cha akaunti kinaendeshwa, ikiwemo seva nyingine ya Remote Control.
+**Haiandiki wakati akaunti inaendeshwa.** Claude Code huandika upya `.claude.json` wakati wa kipindi, na badiliko lililofanywa kutoka nje lingepotea au kuandikwa juu yake. Ndiyo maana ccam huruka kunakili wakati kipindi chochote cha akaunti kinaendeshwa, ikiwemo seva nyingine ya Remote Control na Claude Code iliyoanzishwa bila ccam.
 
-**Huuliza mara moja kwa kila badiliko.** Baada ya kunakili, `sync-stamp` hushikilia muda wa kubadilishwa wa `mcp.json` ya kikundi. ccam huuliza tena tu faili hiyo inapobadilika, kwa mfano baada ya `ccam mcp add`. Ukijibu `N`, bado hakuna nakala, kwa hiyo huuliza kwa kila uanzishaji wa Remote Control.
+**Huuliza mara moja kwa kila badiliko.** Baada ya kunakili, `sync-stamp` hushikilia muda wa kubadilishwa wa `mcp.json` ya kikundi. ccam huuliza tena tu faili hiyo inapobadilika, kwa mfano baada ya `ccam mcp add`, au seva iliyonakiliwa inapotoweka kutoka `.claude.json`. Ukijibu `N`, bado hakuna nakala, kwa hiyo huuliza kwa kila uanzishaji wa Remote Control.
 
-**`ccam mcp` huweka nakala zikiwa za sasa.** Kipengele kilicho katika `.claude.json` hushinda `--mcp-config` majina yanapogongana, kwa hiyo nakala ya zamani ingeficha ufafanuzi mpya zaidi hata katika uanzishaji wa kawaida. Kwa sababu hiyo `ccam mcp add`, `add-json`, `remove` na `import` husasisha nakala za kila akaunti isiyoendeshwa:
+**`ccam mcp` huweka nakala zikiwa za sasa.** Kipengele kilicho katika `.claude.json` hushinda `--mcp-config` majina yanapogongana, kwa hiyo nakala ya zamani ingeficha ufafanuzi mpya zaidi hata katika uanzishaji wa kawaida. Kwa sababu hiyo `ccam mcp add`, `add-json`, `remove` na `import`, pamoja na `ccam migrate`, husasisha nakala za kila akaunti isiyoendeshwa, na husema hivyo nakala inapobadilika:
 
 ```console
 $ ccam mcp add ctx --url https://mcp.context7.com/mcp
@@ -124,19 +124,19 @@ Kipindi cha `work` bado kiko wazi: `ccam work` ya kawaida, amri ya njia fupi, au
 
 ### ccam huuliza kila mara
 
-Bado hujanakili seva. Jibu `y` mara moja, au weka `mcp_strategy = "sync"`. Ikiwa hutaki kamwe seva hizo katika Remote Control, acha kushiriki MCP na akaunti: itoe kwenye kikundi hicho (`ccam group leave default work`), au weka MCP katika kikundi chake chenyewe ambacho akaunti haimo.
+Bado hujanakili seva. Jibu `y` mara moja, au weka `mcp_strategy = "sync"`. Ikiwa hutaki kamwe seva hizo katika Remote Control, acha kushiriki MCP na akaunti bila kuzihifadhi: `ccam group leave default work --fresh`, au weka MCP katika kikundi chake chenyewe ambacho akaunti haimo. `ccam group leave` ya kawaida hunakili seva za kikundi katika `.claude.json` ya akaunti, kwa hiyo Remote Control huwa nazo.
 
 ### `ccam work rc` hushindwa mara moja kwa kosa kuhusu `--mcp-config`
 
-ccam yako ni ya zamani kuliko 0.6.0 na hupitisha `--mcp-config` kwa Remote Control. Endesha `ccam update`. Kosa lile lile kwa ccam ya sasa linamaanisha kwamba chaguo lenye thamani lilikuja kabla ya `rc`, kama katika `ccam work --model opus rc`, kwa hiyo ccam ilichukua `opus` kama amri; weka `rc` mara moja baada ya jina la akaunti.
+ccam yako ni ya zamani kuliko 0.6.0 na hupitisha `--mcp-config` kwa Remote Control. Endesha `ccam update`. Kosa lile lile kwa ccam ya sasa linamaanisha kwamba chaguo ambalo ccam hailijui, lenye thamani, lilikuja kabla ya `rc`, kwa hiyo ccam ilichukua thamani hiyo kama amri; weka `rc` mara moja baada ya jina la akaunti.
 
 ### Badiliko lililofanywa kwa `ccam mcp` halifiki kwa Remote Control
 
 `ccam mcp add` na `remove` husasisha nakala katika akaunti zisizoendeshwa tu, na husema hivyo: `Note: account work is running, so the copy in its .claude.json stays as it was until its next Remote Control launch.` Simamisha Remote Control na uianzishe tena; ccam huona `mcp.json` iliyobadilika na huuliza tena.
 
-### Nakala ilibadilisha seva yangu mwenyewe
+### Seva yangu mwenyewe hutumika badala ya ile ya kikundi
 
-Ikiwa akaunti ilikuwa na seva yake yenye jina sawa na seva ya kikundi, nakala iliibadilisha. `.claude.json` ya awali iko katika `~/.local/state/ccam/mcp/work/backups/`, ambayo huhifadhi tano za karibuni zaidi. Ili kuhifadhi toleo lako kwa kila akaunti, lihamishie kwenye kikundi kwa `ccam mcp import work <server> --force` kabla ya uanzishaji unaofuata wa Remote Control.
+Ikiwa akaunti ina seva yake yenye jina sawa na seva ya kikundi, unakili huiacha mahali pake na husema hivyo: `account work has its own MCP servers fs, so group default's of those names are not copied there`. Ili kutumia ya kikundi, ondoa ya akaunti (`claude mcp remove -s user <name>`); ili kuwapa akaunti zote toleo lako, lihamishie kwenye kikundi kwa `ccam mcp import work <server> --force`. Nakala rudufu za `.claude.json` ziko katika `~/.local/state/ccam/mcp/work/backups/`, ambayo huhifadhi tano za karibuni zaidi.
 
 ### Nataka kuondoa seva zilizonakiliwa
 

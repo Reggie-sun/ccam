@@ -70,8 +70,8 @@
         "body": "以該帳號啟動 Claude Code。名稱後面的所有內容都會原封不動地傳給 Claude Code，ccam 在啟動前大約只增加 4 毫秒。"
       },
       {
-        "command": "ccam share work --history on",
-        "body": "選擇這個帳號要和其他帳號共用哪些項目。MCP 伺服器、設定、CLAUDE.md 和擴充功能從一開始就會共用；登入資訊則永遠不會共用。"
+        "command": "ccam group set default --add history",
+        "body": "選擇同一群組中的帳號彼此共用哪些項目。MCP 伺服器、設定、CLAUDE.md 和擴充功能從一開始就會共用；登入資訊則永遠不會共用。"
       },
       {
         "command": "ccam usage",
@@ -145,9 +145,9 @@
     "mcp": "管理共用的 MCP 伺服器",
     "migrate": "將現有的 Claude Code 設定（~/.claude）複製到共用群組",
     "login": "重新登入帳號；--expired 會登入所有需要重新登入的帳號",
-    "logout": "移除帳號的登入資訊",
+    "logout": "將帳號登出：移除其登入資訊與 MCP 伺服器的登入",
     "rename": "重新命名帳號；快捷指令維持原名",
-    "remove": "移除帳號；其資料夾會移到垃圾桶資料夾",
+    "remove": "移除帳號：先將其登出，再把其資料夾移到垃圾桶資料夾",
     "import": "在原位置登錄現有的 ~/.claude 資料夾",
     "doctor": "檢查連結、權限、登入狀態和版本，並進行修復",
     "statusline": "在 Claude Code 的狀態列顯示帳號和用量",

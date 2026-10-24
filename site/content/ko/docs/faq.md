@@ -2,10 +2,10 @@
 title: 자주 묻는 질문
 metaTitle: "ccam FAQ: Claude Code 여러 계정 쓰기"
 description: ccam, Claude Code 계정, 사용량 한도, 공유, 개인정보, 지원 시스템에 관한 질문과 답변입니다.
-updated: 2026-10-21
+updated: 2026-10-24
 order: 6
 translation: machine
-sourceHash: "bc944d7dcab9"
+sourceHash: "c4e3b89bb4ea"
 ---
 
 ## ccam은 Anthropic 공식 도구인가요?
@@ -15,6 +15,8 @@ sourceHash: "bc944d7dcab9"
 ## Claude Code 계정을 여러 개 써도 되나요?
 
 각 계정의 약관과, 회사 계정이라면 소속 조직의 정책에 따라 다릅니다. 여러 계정을 쓰기 전에 확인하세요. ccam은 이미 가지고 있는 계정 간 전환을 쉽게 해 줄 뿐입니다.
+
+**Team·Enterprise 시트.** 자동 선택(`ccam next`, `--fallback`, `ccam pick`, 대시보드의 `n`)은 같은 Claude Team이나 Enterprise 조직의 시트 사이에서도 계정을 바꿉니다. Anthropic 고객센터는 "Each seat on a Team plan is assigned to one named individual, and only that person may use it"(팀 플랜의 각 시트는 한 명의 지정된 개인에게 할당되며, 그 사람만 사용할 수 있습니다), "Users can't route their work through another user's account to use that user's remaining usage"(사용자는 다른 사용자의 계정을 통해 작업을 라우팅하여 해당 사용자의 남은 사용량을 사용할 수 없습니다)라고 안내합니다([Team 요금제](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129), [Enterprise 요금제](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)도 마찬가지). 따라서 시트 사이에서 자동 선택을 쓰면 Anthropic의 약관을 위반할 수 있습니다. 이 기능에 의존하기 전에 소속 조직과 Anthropic에 확인하세요. 개인 요금제(Pro, Max)에 대해서는 위 문단을 참고하세요.
 
 ## ccam으로 사용량 한도를 우회할 수 있나요?
 
@@ -26,11 +28,11 @@ sourceHash: "bc944d7dcab9"
 
 ## 다른 계정에서 대화를 이어 가려면 어떻게 하나요?
 
-`ccam group set default --add history`로 계정들이 대화 내역을 공유하도록 설정한 뒤(두 계정만의 그룹을 따로 만들어도 됩니다: `ccam group add pair --items history --members work,side`) `ccam next --continue`를 실행하세요. 그러면 Claude Code가 다음 계정에서 현재 폴더의 가장 최근 대화를 엽니다.
+폴더에서 `ccam next --continue`를 실행하세요. 그 폴더의 마지막 대화를 다음 계정으로 넘깁니다(여유가 가장 많은 계정으로 넘기려면 `--auto`). Claude Code 안에서는 [ccam 플러그인](/docs/install#claude-code-plugin)의 `/ccam:switch`가 지금 있는 세션에 대해 같은 일을 합니다. 두 계정이 대화 내역을 공유하면(`ccam group set default --add history`, 또는 두 계정만의 그룹: `ccam group add pair --items history --members work,side`) 새 계정이 바로 그 대화를 엽니다. 공유하지 않으면 Claude Code가 대화를 새 계정의 내역으로 복사합니다.
 
 ## ccam이 제 로그인 정보를 보거나 외부로 보내나요?
 
-ccam은 계정 사이에 Claude 로그인 정보를 절대 공유하지 않습니다. 계정의 액세스 토큰은 `ccam usage`, `ccam next --auto`, `ccam doctor`를 실행할 때 Anthropic의 사용량 엔드포인트에 해당 계정의 사용량을 조회하는 용도로만 읽습니다. `ccam migrate`는 `~/.claude`에 저장된 MCP 서버의 로그인 정보를 같은 컴퓨터에 있는 각 계정 자체의 로그인 파일로 복사합니다. ccam에는 원격 측정(telemetry) 기능이 없습니다. 이 조회 외에 ccam이 스스로 보내는 요청은 대시보드가 최신 ccam 릴리스를 GitHub에 묻는 것 하나뿐이며, 이 요청에는 사용자나 계정에 관한 정보가 전혀 담기지 않습니다.
+ccam은 계정 사이에 Claude 로그인 정보를 절대 공유하거나 복사하지 않으며, MCP 서버의 로그인도 복사하지 않습니다. 계정의 액세스 토큰은 `ccam usage`, `ccam next --auto`, `ccam doctor`를 실행할 때 Anthropic의 사용량 엔드포인트에 해당 계정의 사용량을 조회하는 용도로만 읽고, 만료된 토큰은 `ccam usage --refresh`를 실행할 때만 갱신합니다. `usage_source = "claude"`이면 토큰을 아예 읽지 않습니다. `ccam ext`와 `ccam doctor`는 계정의 MCP 로그인 이름만 읽고 토큰은 읽지 않습니다. ccam에는 원격 측정(telemetry) 기능이 없습니다. 이 조회 외에 ccam이 스스로 보내는 요청은 대시보드가 최신 ccam 릴리스를 GitHub에 묻는 것 하나뿐이며, 이 요청에는 사용자나 계정에 관한 정보가 전혀 담기지 않습니다.
 
 ## 원격 서버에서는 어떻게 로그인하나요?
 
@@ -38,7 +40,7 @@ SSH 세션에서 평소처럼 `ccam add`나 `ccam login <name>`을 실행하세�
 
 ## 계정은 어디에 저장되나요?
 
-`~/.local/share/ccam/profiles/<name>/`에 계정마다 폴더가 하나씩 만들어집니다. macOS에서는 Claude Code가 로그인 정보 자체를 키체인에 보관하며, 항목 이름은 그 폴더를 바탕으로 정해집니다.
+`~/.local/share/ccam/profiles/<name>/`에 계정마다 폴더가 하나씩 만들어집니다. macOS에서는 Claude Code가 로그인 정보 자체를 키체인에 보관하며, 항목 이름은 그 폴더를 바탕으로 정해집니다. 그래서 `ccam rename`은 폴더의 원래 이름을 그대로 둡니다.
 
 ## 기존 ~/.claude는 어떻게 되나요?
 
@@ -46,11 +48,11 @@ SSH 세션에서 평소처럼 `ccam add`나 `ccam login <name>`을 실행하세�
 
 ## ccam은 어떤 시스템을 지원하나요?
 
-Linux(Ubuntu, Debian, Fedora, Arch, Alpine 등), macOS, Windows 10과 11을 지원하며, Windows에서는 기본 환경과 WSL 안 모두에서 쓸 수 있습니다. Windows에서 `settings.json` 같은 파일을 공유하려면 개발자 모드가 필요하고, 폴더 공유는 개발자 모드 없이도 됩니다([Windows에서 공유](/features/share#on-windows)).
+Linux(Ubuntu, Debian, Fedora, Arch, Alpine 등), macOS, Windows 10과 11을 지원하며, Windows에서는 기본 환경과 WSL 안 모두에서 쓸 수 있습니다. Windows에서 `settings.json` 같은 파일을 공유하려면 개발자 모드가 필요하고, 폴더 공유는 개발자 모드 없이도 됩니다. 개발자 모드가 없으면 처음 `ccam add`를 실행할 때 MCP 서버와 확장 기능만 공유하는 `default` 그룹을 만듭니다([Windows에서 공유](/features/share#on-windows)).
 
 ## 왜 MCP 서버가 한 계정에서만 보이나요?
 
-세션 안에서 `claude mcp add`로 추가한 서버는 해당 계정에만 저장됩니다. 다음에 그 계정을 시작하면 ccam이 알려 주니, `ccam mcp import <account> <server>`로 서버를 공유 그룹으로 옮기세요.
+세션 안에서 `claude mcp add`로 추가한 서버는 해당 계정에만 저장되고, `-s user` 없이 추가했다면 현재 폴더에만 저장됩니다. 다음에 그 계정을 시작하면 ccam이 알려 주고 `ccam mcp list`와 `ccam ext`에도 표시되니, `ccam mcp import <account> <server>`로 서버를 공유 그룹으로 옮기세요.
 
 ## ccam을 쓰면 Claude Code가 느려지나요?
 
@@ -62,4 +64,4 @@ ccam을 거쳐 Claude Code를 시작하면 약 4밀리초가 더 걸립니다. �
 
 ## ccam은 어떻게 제거하나요?
 
-계정마다 `ccam shortcut <account> --remove`로 단축 명령을 지우고 `~/.local/bin`에서 `ccam`을 삭제한 뒤, 계정이 더 이상 필요 없다면 `~/.config/ccam`, `~/.local/share/ccam`, `~/.local/state/ccam`도 삭제하세요. 자세한 내용은 [설치](/docs/install#uninstall)를 참고하세요.
+계정마다 `ccam shortcut <account> --remove`로 단축 명령을 지우세요. `~/.claude`를 가져왔고 그 계정이 그룹에 속해 있다면, 먼저 그 계정에 `ccam remove <name>`을 실행해 공유하던 항목의 사본을 돌려받으세요. 그다음 `~/.local/bin`에서 `ccam`을 삭제하고, 계정이 더 이상 필요 없다면 `~/.config/ccam`, `~/.local/share/ccam`, `~/.local/state/ccam`도 삭제하세요. 자세한 내용은 [설치](/docs/install#uninstall)를 참고하세요.

@@ -1,10 +1,10 @@
 ---
 title: Raba sabobin MCP, saituna da tarihi
 description: Yadda rukunonin ccam ke raba sabobin MCP, settings.json, CLAUDE.md, skills da tarihin tattaunawa tsakanin asusun Claude Code, kowane shiga yana zama daban.
-updated: 2026-10-20
+updated: 2026-10-23
 order: 4
 translation: machine
-sourceHash: 2606e4ec682e
+sourceHash: 27e0a0e5abbd
 ---
 
 Kowane asusu yana riƙe bayanan shigarsa. Duk sauran abubuwa za a iya raba su ta **rukunoni**: rukuni yana ambaton abubuwan da yake rabawa da asusan da ke cikinsa, kuma ccam yana haɗa fayilolin kowane ɗaya daga cikin waɗannan asusai da foldar rukunin ta mahaɗi, don haka canjin da aka yi a asusu ɗaya yana bayyana a dukansu.
@@ -47,7 +47,7 @@ Idan asusu ya fara raba wani abu (ya shiga rukuni, ko rukuninsa ya ƙara abin), 
 
 Ana sanya wa fayilolin tattaunawa suna bisa session ID ɗinsu, don haka tarihi daga asusai da dama yana haɗuwa ba tare da rikici ba.
 
-ccam ba ya canza asusu yayin da Claude Code ke gudana a matsayinsa, saboda zaman yana ci gaba da rubutu a cikin fayilolin da ake motsawa. Ka rufe shi tukuna.
+ccam ba ya canza asusu yayin da Claude Code ke gudana a matsayinsa, ko ta yaya aka fara Claude Code (har da zaman bayan fage), saboda zaman yana ci gaba da rubutu a cikin fayilolin da ake motsawa. Ka rufe shi tukuna. ccam yana sake dubawa daidai kafin ya ajiye, don haka ana kama zaman da aka fara yayin da shirin ke jira ma.
 
 ## Idan asusu ya daina rabawa
 
@@ -56,7 +56,7 @@ ccam group leave team work                   # work leaves the group
 ccam group set default --remove history      # nobody in default shares history any more
 ```
 
-Ana cire mahaɗin, kuma asusun yana samun kwafinsa na abin da ke cikin rukunin a yanzu. Ƙara `--fresh` don farawa babu komai a maimakon haka. Rukunin yana riƙe abin da ke cikinsa don sauran asusai.
+Ana cire mahaɗin, kuma asusun yana samun kwafinsa na abin da ke cikin rukunin a yanzu; sabobin MCP na rukunin suna shiga `.claude.json` nasa, kusa da sabobinsa na kansa. Ƙara `--fresh` don farawa babu komai a maimakon haka; sannan shirin yana lissafa sabobin MCP da za su daina lodawa. Foldar da aka shigo da ita kamar `~/.claude` koyaushe tana riƙe kwafi. Rukunin yana riƙe abin da ke cikinsa don sauran asusai.
 
 ## Kwafi saitin da ke akwai
 
@@ -73,12 +73,11 @@ Abin da yake kwafa:
 - `settings.json` da `CLAUDE.md` na gaba ɗaya;
 - extensions `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/` da `rules/`;
 - sabobin MCP naka na mai amfani, wato shigarwar `mcpServers` ta `~/.claude.json`, zuwa `mcp.json` na rukunin;
-- bayanan shiga (OAuth) da aka ajiye na sabobin MCP da yake kwafa, zuwa fayil ɗin shiga na kowane asusu;
 - tarihin tattaunawa (`projects/` da `history.jsonl`), amma sai idan ka ƙara `--history`.
 
 Ana karanta foldar tushe ne kawai: ba a matsar, haɗa ko canza komai a cikinta, kuma `claude` na yau da kullum yana ci gaba da aiki kamar da. Ba a taɓa kwafar fayilolin shiga `.credentials.json` da `.claude.json` zuwa rukunin ba.
 
-Sabobin MCP da ke shiga da OAuth suna ajiye token ɗinsu a cikin bayanan shiga, ba a cikin jerin sabobin ba. Don kada ka sake shiga cikinsu, ccam yana kwafar waɗannan bayanan shiga zuwa fayil ɗin shiga na kowane asusu da ke samun sabobin ta rukunin, sai dai idan asusun yana da nasa tuni. Yana tsallake asusun da ke aiki, waɗanda ba a shiga ba tukuna, waɗanda aka yi wa rajista a wurinsu da `ccam import`, ko waɗanda ke ajiye bayanan shigarsu a Keychain na macOS, kuma yana ambatar sunayensu; a cikinsu, shiga sabobin da `/mcp`. Asusun da ya fara raba sabobin MCP daga baya zai sami bayanan shigar idan ka sake gudanar da `ccam migrate`.
+Sabobin MCP da ke shiga da OAuth suna ajiye token ɗinsu a cikin bayanan shiga, ba a cikin jerin sabobin ba. ccam ba ya kwafar waɗannan bayanan shiga: shigar da aka kwafa tana riƙe da refresh token iri ɗaya, kuma sabuntawa ta farko tana fitar da kowane mai riƙe da ita daga wannan sabar, har da `~/.claude`. Shirin da taƙaitawar suna ambaton asusan da za su shiga sabobin da kansu da `/mcp`.
 
 ccam yana buga shirin kuma yana tambaya kafin ya kwafi komai:
 
@@ -121,7 +120,7 @@ ccam mcp add fs -- npx -y @modelcontextprotocol/server-filesystem ~/code
 ccam mcp list
 ```
 
-Sabar da ka ƙara a cikin zama (session) da `claude mcp add` ana ajiye ta ga wannan asusun kawai. A gaba da ka fara wannan asusun, ccam yana faɗin sunan sabar da umarnin da zai motsa ta zuwa rukunin:
+Sabar da ka ƙara a cikin zama (session) da `claude mcp add` ana ajiye ta ga wannan asusun kawai, kuma ga foldar da kake ciki (local scope na Claude Code; `-s user` yana mai da ita ta asusun a kowace folda). A gaba da ka fara wannan asusun, ccam yana faɗin sunan sabar, tare da foldarta, da umarnin da zai motsa ta zuwa rukunin:
 
 ```sh
 ccam mcp import work gh
@@ -129,9 +128,9 @@ ccam mcp import work gh
 
 Idan rukunin ya riga yana da wata sabar daban mai wannan sunan, ccam yana tsallake ta kuma yana faɗa. `--force` yana maye gurbin sabar rukunin kuma yana ajiye tsohon `mcp.json` a cikin foldar `.ccam-backup/` na rukunin.
 
-Sabobin MCP da ke shiga da OAuth suna ajiye token ɗinsu tare da bayanan shigar asusun, don haka ka ba su izini sau ɗaya a kowane asusu, ko ka kwafi bayanan shigar daga `~/.claude` da `ccam migrate`.
+Sabobin MCP da ke shiga da OAuth suna ajiye token ɗinsu tare da bayanan shigar asusun, don haka ka ba su izini sau ɗaya a kowane asusu da `/mcp`. `ccam ext` da `ccam doctor` suna ambaton sabobin da asusu bai shiga ba alhali wani asusu ya shiga.
 
-Idan ka fi so sabobin su bayyana a `claude mcp list` da `/mcp` a matsayin sabobin mai amfani na yau da kullum, saita `mcp_strategy = "sync"` a `~/.config/ccam/config.toml`. Sannan ccam yana rubuta su a cikin `.claude.json` na kowane asusu kafin farawa, ƙarƙashin kullen fayil na Claude Code kansa kuma tare da kwafin ajiya.
+Idan ka fi so sabobin su bayyana a `claude mcp list` da `/mcp` a matsayin sabobin mai amfani na yau da kullum, saita `mcp_strategy = "sync"` a saman `~/.config/ccam/config.toml`, kafin `[[group]]`, `[[profile]]` ko `[[folder]]` na farko. Sannan ccam yana rubuta su a cikin `.claude.json` na kowane asusu kafin farawa, ƙarƙashin kullen fayil na Claude Code kansa kuma tare da kwafin ajiya. Sabar da asusun yake da ita ta kansa mai suna iri ɗaya tana zama ta asusun, kuma ccam yana faɗin haka.
 
 ## Asusai biyu a folda ɗaya
 
@@ -144,4 +143,4 @@ ccam doctor
 ccam doctor --fix
 ```
 
-Idan hanyar da aka raba ta zama fayil na yau da kullum, misali bayan ka maido da kwafin ajiya da hannu, ccam yana tsayawa kafin ya fara Claude Code kuma yana nuna maka `ccam doctor --fix`, wanda ke haɗa fayil ɗin cikin rukunin kuma yana ajiye kwafin ajiya.
+Idan hanyar da aka raba ta zama fayil na yau da kullum, misali bayan ka maido da kwafin ajiya da hannu, ccam yana tsayawa kafin ya fara Claude Code kuma yana nuna maka `ccam doctor --fix`, wanda ke sake haɗa ta da rukunin: fayil ɗin yana zama kwafin rukunin idan rukunin ba shi da shi, in ba haka ba rukunin yana riƙe nasa kuma naka yana zuwa kwafin ajiya, wanda `--fix` ke ambata. Canjin rukunoni da ya tsaya rabi `ccam doctor --fix` ne ke kammala shi ma.

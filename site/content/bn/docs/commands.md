@@ -2,10 +2,10 @@
 title: "কমান্ড রেফারেন্স"
 metaTitle: "ccam কমান্ড রেফারেন্স"
 description: "ccam add ও ccam <name> থেকে ccam usage, ccam next ও ccam doctor পর্যন্ত ccam-এর প্রতিটি কমান্ড ও অপশন।"
-updated: 2026-10-21
+updated: 2026-10-24
 order: 3
 translation: machine
-sourceHash: 338ac11a0b5a
+sourceHash: 36af7e209cd9
 ---
 
 কোনো কমান্ড আসলে না চালিয়ে সেটি কী করবে তা দেখতে কমান্ডের আগে `--dry-run` দিন, যেমন `ccam --dry-run work`। এটি Claude Code চালু করার সময় (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`) এবং `group`, `migrate`, `shortcut`, `update` ও `doctor --fix`-এর সঙ্গে কাজ করে। কিছু বদলায় এমন অন্য কমান্ডগুলো চলার বদলে এটি প্রত্যাখ্যান করে।
@@ -27,6 +27,8 @@ ccam --fallback work -p "fix the tests"   # run again as another account at the 
 
 অ্যাকাউন্টের নামের আগে `--fallback` হলো `-p`/`--print` রানের জন্য। অ্যাকাউন্টটি ব্যবহারের সীমায় পৌঁছালে ccam একই কমান্ড সবচেয়ে বেশি জায়গা থাকা লগইন করা অ্যাকাউন্ট হিসেবে আবার চালায় এবং শুধু যে রানটি শেষ হয়েছে তার আউটপুট প্রিন্ট করে। [ফোল্ডার অনুযায়ী অ্যাকাউন্ট](/features/folder) ও [সীমায় আবার চালানো](/features/next#run-again-at-the-limit) দেখুন।
 
+**Team ও Enterprise সিট।** স্বয়ংক্রিয় বাছাই (`ccam next`, `--fallback`, `ccam pick`, ড্যাশবোর্ডের `n`) একই Claude Team বা Enterprise প্রতিষ্ঠানের সিটগুলোর মধ্যেও বদল করে। Anthropic-এর সহায়তা কেন্দ্রে বলা হয়েছে, "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team প্ল্যানের প্রতিটি সিট একজন নির্দিষ্ট ব্যক্তির নামে বরাদ্দ করা হয়, এবং কেবল সেই ব্যক্তিই সেটি ব্যবহার করতে পারেন) এবং "Users can't route their work through another user's account to use that user's remaining usage" (ব্যবহারকারীরা অন্য কোনো ব্যবহারকারীর অ্যাকাউন্টের মধ্য দিয়ে নিজেদের কাজ চালিয়ে তাঁর ব্যবহারের সীমার বাকি অংশ কাজে লাগাতে পারেন না) ([Team প্ল্যান](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise প্ল্যানের](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) ক্ষেত্রেও একই কথা)। তাই সিটগুলোর মধ্যে স্বয়ংক্রিয় বাছাই ব্যবহার করলে Anthropic-এর শর্তাবলি লঙ্ঘন হতে পারে। এর ওপর নির্ভর করার আগে আপনার প্রতিষ্ঠান ও Anthropic-এর কাছ থেকে জেনে নিন। ব্যক্তিগত প্ল্যানের (Pro, Max) কথা [প্রশ্নোত্তরের শর্তাবলি-বিষয়ক নোটে](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) বলা আছে।
+
 `ccwork`-এর মতো একটি শর্টকাট তার অ্যাকাউন্টকে একইভাবে চালু করে: `ccwork --resume` ঠিক তাই করে যা `ccam work --resume` করে। [শর্টকাট](/docs/commands#shortcuts) দেখুন।
 
 ## অ্যাকাউন্ট যোগ করা ও সরানো
@@ -37,17 +39,20 @@ ccam add work --group default --group team
 ccam add side --shortcut ccside
 ccam add ci --no-login        # log in later with: ccam login ci
 ccam login --expired          # log in every account whose login no longer works
+ccam logout side              # asks first when MCP sign-ins go with the login
 ccam rename work job
-ccam remove side              # folder moves to ~/.local/share/ccam/trash
+ccam remove side              # logs out, then the folder moves to ~/.local/share/ccam/trash
 ccam import ~/.claude-old --name old
 ccam add gw --api --base-url https://llm.example.com --auth bearer --key-from env:GW_KEY
 ```
 
-ফোল্ডার না দিয়ে `ccam import` চালালে এটি `~/.claude` ও `~/.claude-*` খোঁজে এবং প্রতিটির বিষয়ে আপনাকে জিজ্ঞেস করে। ইমপোর্ট করা ফোল্ডার যেখানে আছে সেখানেই নিবন্ধিত হয়; ccam কখনও কোনো লগইন সরায় বা কপি করে না।
+ফোল্ডার না দিয়ে `ccam import` চালালে এটি `~/.claude` ও `~/.claude-*` খোঁজে এবং প্রতিটির বিষয়ে আপনাকে জিজ্ঞেস করে; যে ফোল্ডার ব্যর্থ হয় সেটি `Skipped <path>: <reason>` হিসেবে জানানো হয় এবং বাকিগুলো নিবন্ধিত হয়, আর যে ফোল্ডারের নাম ইতিমধ্যে কোনো অ্যাকাউন্টের, তার জন্য `--name` লাগে, যা ফোল্ডারের সঙ্গে দেওয়া হয়। ইমপোর্ট করা ফোল্ডার যেখানে আছে সেখানেই নিবন্ধিত হয়; ccam কখনও কোনো লগইন সরায় বা কপি করে না।
+
+`ccam login --expired` সেই অ্যাকাউন্টগুলোতেও লগইন করে, যাদের লগইন Claude Code মুছে দিয়েছে। `ccam remove` কোনো পরিচালিত অ্যাকাউন্টের ফোল্ডার ট্র্যাশে যাওয়ার আগে সেটিকে লগআউট করে (অন্য কোনো অ্যাকাউন্ট একই লগইন রাখলে নয়), আর ইমপোর্ট করা অ্যাকাউন্টের `ccam remove` তার গ্রুপগুলো যা শেয়ার করে তার একটি কপি রেখে যায়। macOS-এ `ccam rename` ফোল্ডারের নাম অপরিবর্তিত রাখে, কারণ Keychain লগইনটি ফোল্ডারের পাথের নামে রাখে।
 
 `ccam add --api` এমন একটি অ্যাকাউন্ট যোগ করে যা Claude লগইনের বদলে API key ব্যবহার করে; ccam প্রতিবার চালু করার সময় key পড়ে এবং কখনও সংরক্ষণ করে না। দেখুন [API key অ্যাকাউন্ট](/features/api)।
 
-কোনো অ্যাকাউন্ট হিসেবে Claude Code চলতে থাকলে `ccam rename`, `ccam remove` ও `ccam group` কমান্ডগুলো সেই অ্যাকাউন্ট বদলাতে রাজি হয় না। আগে সেশনটি বন্ধ করুন।
+কোনো অ্যাকাউন্ট হিসেবে Claude Code চলতে থাকলে, যেভাবেই তা চালু হোক (ব্যাকগ্রাউন্ড সেশনও), `ccam rename`, `ccam remove` ও `ccam group` কমান্ডগুলো সেই অ্যাকাউন্ট বদলাতে রাজি হয় না। আগে সেশনটি বন্ধ করুন। গ্রুপের কোনো পরিবর্তন অসমাপ্ত থাকলেও এগুলো রাজি হয় না: ``the last change of groups stopped halfway; finish it with `ccam doctor --fix` first``।
 
 `ccam list --json` প্রতিটি অ্যাকাউন্ট তার স্লট নম্বর, শর্টকাট, ইমেইল ও ফোল্ডারসহ দেখায়। এর `groups` অ্যারে অ্যাকাউন্টটির গ্রুপগুলোর তালিকা দেয়, আর এর `share` অবজেক্ট প্রতিটি আইটেমকে (`mcp`, `settings`, `memory`, `extensions`, `history`) সেই গ্রুপের সঙ্গে মেলায় যেখান থেকে আইটেমটি আসে, অথবা `local`-এর সঙ্গে।
 
@@ -63,9 +68,9 @@ ccam shortcut work --remove
 
 শর্টকাট ঐচ্ছিক। `ccam add` উইজার্ড শর্টকাট তৈরি করবে কি না জিজ্ঞেস করে, `ccam add <name> --shortcut <command>` কিছু জিজ্ঞেস না করেই একটি তৈরি করে, আর `ccam list` প্রতিটি অ্যাকাউন্টের শর্টকাট দেখায়, শর্টকাট না থাকলে `-`।
 
-নামে a-z, 0-9, `.`, `-` ও `_` অক্ষর ব্যবহার করা যায়। নামটি কোনো ccam কমান্ড, অন্য অ্যাকাউন্টের শর্টকাট, বা আপনার `PATH`-এ থাকা অন্য কোনো প্রোগ্রামের নাম হতে পারে না।
+নামে a-z, 0-9, `.`, `-` ও `_` অক্ষর ব্যবহার করা যায়। নামটি কোনো ccam কমান্ড, অন্য অ্যাকাউন্টের শর্টকাট, বা আপনার `PATH`-এ থাকা অন্য কোনো প্রোগ্রামের নাম হতে পারে না, আবার `~/.local/bin`-এ এমন কোনো ফাইলও নয় যা ccam তৈরি করেনি, যেমন ccam-এর আপনার নিজের কপি বা লিংক। `config.toml`-এ হাতে সম্পাদনা করা কোনো শর্টকাট এই নিয়ম ভাঙলে, `claude` বা `ccam` হলে, অথবা দুটি অ্যাকাউন্টকে দেওয়া হলে `config.toml` লোড হয় না, এবং অ্যাকাউন্টটির নাম জানানো হয়।
 
-`ccam rename` শর্টকাটের নাম একই রাখে, আর `ccam remove` অ্যাকাউন্টের সঙ্গে তার শর্টকাটও মুছে দেয়। `ccam shims install` সব অ্যাকাউন্টের লিংক আবার তৈরি করে, যেমন ccam অন্য জায়গায় সরানোর পরে।
+`ccam rename` শর্টকাটের নাম একই রাখে, আর `ccam remove` অ্যাকাউন্টের সঙ্গে তার শর্টকাটও মুছে দেয়। `ccam shims install` সব অ্যাকাউন্টের লিংক আবার তৈরি করে, যেমন ccam অন্য জায়গায় সরানোর পরে; একটি শর্টকাটের পথে কোনো ফাইল থাকলেও বাকিগুলো থেমে থাকে না।
 
 ## শেয়ার করা
 
@@ -89,7 +94,7 @@ ccam migrate ~/.claude-work --group work --settings --mcp
 ccam migrate --history --yes    # conversation history only
 ```
 
-`ccam migrate` একটি Claude Code ফোল্ডার থেকে `settings.json`, `CLAUDE.md`, এক্সটেনশন ও ইউজার MCP সার্ভার একটি গ্রুপে কপি করে, যাতে ওই আইটেমগুলো শেয়ার করা প্রতিটি অ্যাকাউন্ট সেগুলো পায়। ফোল্ডারটি শুধু পড়া হয়। `--settings`, `--memory`, `--extensions`, `--mcp` ও `--history` অপশন শুধু আপনার উল্লেখ করা আইটেমগুলো কপি করে। এগুলো ছাড়া টার্মিনালে একটি চেকলিস্ট থেকে আপনি বেছে নিতে পারেন, যেখানে কথোপকথনের ইতিহাস বাদে সবকিছু চেক করা থাকে; অন্য ক্ষেত্রে কথোপকথনের ইতিহাস বাদে সবকিছু কপি হয়। `-g` বা `--group` গ্রুপ বেছে নেয়, আর `-y` বা `--yes` জিজ্ঞেস না করেই কপি করে এবং কোনো ফাইল আলাদা হলে গ্রুপের কপি রাখে। এটি সার্ভারগুলোর সংরক্ষিত সাইন-ইনও প্রতিটি অ্যাকাউন্টের নিজস্ব লগইন ফাইলে কপি করে। [আগের সেটআপ কপি করা](/docs/sharing#copy-an-existing-setup) দেখুন।
+`ccam migrate` একটি Claude Code ফোল্ডার থেকে `settings.json`, `CLAUDE.md`, এক্সটেনশন ও ইউজার MCP সার্ভার একটি গ্রুপে কপি করে, যাতে ওই আইটেমগুলো শেয়ার করা প্রতিটি অ্যাকাউন্ট সেগুলো পায়। ফোল্ডারটি শুধু পড়া হয়। `--settings`, `--memory`, `--extensions`, `--mcp` ও `--history` অপশন শুধু আপনার উল্লেখ করা আইটেমগুলো কপি করে। এগুলো ছাড়া টার্মিনালে একটি চেকলিস্ট থেকে আপনি বেছে নিতে পারেন, যেখানে কথোপকথনের ইতিহাস বাদে সবকিছু চেক করা থাকে; অন্য ক্ষেত্রে কথোপকথনের ইতিহাস বাদে সবকিছু কপি হয়। `-g` বা `--group` গ্রুপ বেছে নেয়, আর `-y` বা `--yes` জিজ্ঞেস না করেই কপি করে এবং কোনো ফাইল আলাদা হলে গ্রুপের কপি রাখে। MCP সাইন-ইন কপি করা হয় না, কারণ কপি করা সাইন-ইন অন্য ধারকদের লগআউট করে দেয়; পরিকল্পনাটি সেই অ্যাকাউন্টগুলোর নাম দেখায় যেগুলো `/mcp` দিয়ে সাইন ইন করবে। `~/.claude` খালি বা অনুপস্থিত হলেও `~/.claude.json`-এ সার্ভার থাকলে `--mcp` কাজ করে। [আগের সেটআপ কপি করা](/docs/sharing#copy-an-existing-setup) দেখুন।
 
 ## MCP সার্ভার
 
@@ -102,7 +107,7 @@ ccam mcp import work gh
 ccam mcp remove fs
 ```
 
-`ccam mcp import <account>` শুধু ওই অ্যাকাউন্টে থাকা সার্ভারগুলোকে তার গ্রুপে সরায়। যে সার্ভারের নাম গ্রুপ ইতিমধ্যে অন্য কোনো সংজ্ঞার জন্য ব্যবহার করছে, সেটি বাদ দেওয়া হয়; গ্রুপের কপি বদলাতে `--force` যোগ করুন, ccam আগে সেটির ব্যাকআপ রাখে।
+`ccam mcp import <account>` শুধু ওই অ্যাকাউন্টে থাকা সার্ভারগুলোকে তার গ্রুপে সরায়, যেগুলো এটি শুধু একটি ফোল্ডারের জন্য রাখে সেগুলোসহ (সাধারণ `claude mcp add`), যা তারপর প্রতিটি ফোল্ডারে লোড হয়। যে সার্ভারের নাম গ্রুপ ইতিমধ্যে অন্য কোনো সংজ্ঞার জন্য ব্যবহার করছে, সেটি বাদ দেওয়া হয়; গ্রুপের কপি বদলাতে `--force` যোগ করুন, ccam আগে সেটির ব্যাকআপ রাখে।
 
 ## ব্যবহার ও অ্যাকাউন্ট বদল
 
@@ -118,10 +123,10 @@ ccam next -c --auto -- --dangerously-skip-permissions   # claude's own options a
 ccam pick                       # the account with the most room, for a script
 ccam "$(ccam pick)" -p "…"      # start a worker on it
 ccam agents                     # background sessions of every account
-ccam attach 49ec0028            # open one, as the account that started it
+ccam attach 49ec0028            # open one, as the account that started it (or by its name)
 ```
 
-`next --auto`, `--fallback` ও `ccam pick` একইভাবে বেছে নেয়: প্রথমে `auto_max_usage`-এর (`config.toml`, ডিফল্ট 100) নিচে থাকা অ্যাকাউন্ট, `auto_strategy` (`headroom`, `expiring` বা `balance`) অনুযায়ী, `--model`-এর সাপ্তাহিক উইন্ডো ধরে, ১০০%-এ থাকা অ্যাকাউন্ট কখনও নয়, এবং যে অ্যাকাউন্ট থেকে শুরু হয় তার প্রতিষ্ঠানের ভেতরে (আরও দূরে খুঁজতে `--cross-org` বা `cross_org = true`)। কিছুই বেছে নেওয়া না গেলে এগুলো কোড 75 দিয়ে বেরিয়ে যায়, অথবা `--wait` দিলে প্রথম অ্যাকাউন্টটি রিসেট হওয়া পর্যন্ত অপেক্ষা করে। `ccam next --continue` ইতিহাস শেয়ার করে না এমন অ্যাকাউন্টগুলোর মধ্যেও কথোপকথন নিয়ে যায়: তখন Claude Code সেটি নতুন অ্যাকাউন্টে কপি করে। `ccam <name>`-এর মতো নয়, `ccam next` নিজের অপশন নিজেই পড়ে, তাই Claude Code-এর অপশন `--`-এর পরে বসে; তা না দিলে ccam `unknown flag` দেখিয়ে থেমে যায়। Claude Code-এর ভেতরে প্লাগইনের `/ccam:switch [account]` কথোপকথন অন্য অ্যাকাউন্টের হাতে তুলে দেয়, আর এর হুকগুলো যা চালায় তা হলো `ccam hook`। দেখুন [পরের অ্যাকাউন্টে যাওয়া](/features/next), [স্ক্রিপ্টের জন্য অ্যাকাউন্ট বেছে নেওয়া](/features/pick) ও [প্রতিটি অ্যাকাউন্টের ব্যাকগ্রাউন্ড সেশন](/features/agents)।
+`next --auto`, `--fallback` ও `ccam pick` একইভাবে বেছে নেয়: প্রথমে `auto_max_usage`-এর (`config.toml`, ডিফল্ট 100) নিচে থাকা অ্যাকাউন্ট, `auto_strategy` (`headroom`, `expiring` বা `balance`) অনুযায়ী, `--model`-এর সাপ্তাহিক উইন্ডো ধরে, ১০০%-এ থাকা অ্যাকাউন্ট কখনও নয় (Claude Code যে উইন্ডোকে পূর্ণ বলে জানিয়েছে, তা রিসেট পর্যন্ত ১০০% ধরা হয়), API key লগইন কখনও নয়, এবং যে অ্যাকাউন্ট থেকে শুরু হয় তার প্রতিষ্ঠানের ভেতরে (আরও দূরে খুঁজতে `--cross-org` বা `cross_org = true`)। `--wait` তার মান `=`-এর পরে নেয় (`--wait=2h`); ফাঁকা জায়গা দিয়ে লিখলে একটি ইঙ্গিতসহ তা প্রত্যাখ্যাত হয়। কিছুই বেছে নেওয়া না গেলে এগুলো কোড 75 দিয়ে বেরিয়ে যায়, অথবা `--wait` দিলে প্রথম অ্যাকাউন্টটি রিসেট হওয়া পর্যন্ত অপেক্ষা করে। `ccam next --continue` ইতিহাস শেয়ার করে না এমন অ্যাকাউন্টগুলোর মধ্যেও কথোপকথন নিয়ে যায়: তখন Claude Code সেটি নতুন অ্যাকাউন্টে কপি করে। `ccam <name>`-এর মতো নয়, `ccam next` নিজের অপশন নিজেই পড়ে, তাই Claude Code-এর অপশন `--`-এর পরে বসে; তা না দিলে ccam `unknown flag` দেখিয়ে থেমে যায়। Claude Code-এর ভেতরে প্লাগইনের `/ccam:switch [account]` কথোপকথন অন্য অ্যাকাউন্টের হাতে তুলে দেয়, আর এর হুকগুলো যা চালায় তা হলো `ccam hook`। দেখুন [পরের অ্যাকাউন্টে যাওয়া](/features/next), [স্ক্রিপ্টের জন্য অ্যাকাউন্ট বেছে নেওয়া](/features/pick) ও [প্রতিটি অ্যাকাউন্টের ব্যাকগ্রাউন্ড সেশন](/features/agents)।
 
 ## রক্ষণাবেক্ষণ
 
@@ -143,10 +148,10 @@ ccam বদলানোর আগে `ccam update` রিলিজের SHA-256
 
 | পাথ | বিষয়বস্তু |
 | --- | --- |
-| `~/.config/ccam/config.toml` | অ্যাকাউন্ট, গ্রুপ ও সেটিংস (`theme`, `usage_source`, `relay`, `cross_org` …) |
+| `~/.config/ccam/config.toml` | অ্যাকাউন্ট, গ্রুপ ও সেটিংস (`theme`, `usage_source`, `relay`, `cross_org` …)। সেটিংস একেবারে ওপরে বসে, প্রথম `[[group]]`, `[[profile]]` বা `[[folder]]`-এর ওপরে: কোনো টেবিলের নিচে থাকা সেটিং সেই টেবিলেরই অংশ, তাই ccam প্রতিবার চালু করার সময় ও `ccam doctor`-এ তার নাম জানায়, এবং কনফিগ সংরক্ষণ করা কমান্ডগুলো সেটি সরানো না পর্যন্ত রাজি হয় না। ccam ফাইলটি সংরক্ষণ করলে মন্তব্যগুলো থাকে না |
 | `~/.local/share/ccam/profiles/<name>/` | প্রতিটি অ্যাকাউন্টের `CLAUDE_CONFIG_DIR` |
 | `~/.local/share/ccam/groups/<group>/` | শেয়ার করা সেটিংস, MCP সার্ভার, এক্সটেনশন ও ইতিহাস |
-| `~/.local/state/ccam/` | ব্যবহারের ক্যাশ, সর্বশেষ ব্যবহারের সময়, এবং `/ccam:switch` ও সীমার হুক যে নোট রেখে যায় (`handoff/`) |
+| `~/.local/state/ccam/` | ব্যবহারের ক্যাশ ও সীমার রেকর্ড (`usage/<name>.json`, `usage/<name>.limit.json`), সর্বশেষ ব্যবহারের সময়, সেশন মার্কার ও লক (`locks/`), ccam-এর তৈরি শর্টকাট (`shortcuts.json`), গ্রুপের অসমাপ্ত পরিবর্তন (`group-change.json`), এবং `/ccam:switch` ও সীমার হুক যে নোট রেখে যায় (`handoff/<account>/<session>.json`) |
 | `~/.local/bin/<shortcut>` | `ccwork`-এর মতো শর্টকাট কমান্ড, ccam-এর লিংক |
 
 `XDG_CONFIG_HOME`, `XDG_DATA_HOME` ও `XDG_STATE_HOME` ভেরিয়েবল এই ফোল্ডারগুলোর অবস্থান বদলায়। Windows-এ `~` হলো `%USERPROFILE%` এবং শর্টকাটগুলো `<shortcut>.exe`।

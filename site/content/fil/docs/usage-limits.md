@@ -1,10 +1,10 @@
 ---
 title: Mga usage limit at paglipat ng account
 description: Tingnan ang 5-oras at lingguhang usage ng bawat Claude Code account gamit ang ccam usage, at buksan ang may pinakamaraming natitira gamit ang ccam next --auto.
-updated: 2026-10-21
+updated: 2026-10-24
 order: 5
 translation: machine
-sourceHash: "fadb998482da"
+sourceHash: "ccaed084207a"
 ---
 
 Ipinapakita ng `ccam usage` kung gaano kalaki na ang nagamit ng bawat account sa 5-oras na limit, sa lingguhang limit at sa sariling lingguhang limit ng bawat model (gaya ng Fable). Binubuksan ng `ccam next --auto` ang account na may pinakamaraming natitira, at dinadala ng `--continue` ang kasalukuyang usapan.
@@ -26,7 +26,9 @@ $ ccam usage
 → Most headroom: work   (open it with ccam next --auto)
 ```
 
-Bawat account ay may linyang nagsasabi kung gaano na katagal ang mga numero nito, at pagkatapos ay isang bar bawat limit kasama ang oras bago ito mag-reset: ang 5-oras na window, ang lingguhang window para sa lahat ng model, at ang sariling lingguhang window ng bawat model, gaya ng Fable. Mula 80% nagiging dilaw ang bar, at pula sa 100%. Pinapangalanan ng huling linya ang account na bubuksan ng `ccam next --auto`.
+Bawat account ay may linyang nagsasabi kung gaano na katagal ang mga numero nito, at pagkatapos ay isang bar bawat limit kasama ang oras bago ito mag-reset: ang 5-oras na window, ang lingguhang window para sa lahat ng model, at ang sariling lingguhang window ng bawat model, gaya ng Fable. Mula 80% nagiging dilaw ang bar, at pula sa 100%. Pinapangalanan ng huling linya ang account na bubuksan ng `ccam next --auto`; kapag `auto_strategy = "expiring"` o `"balance"`, `→ next --auto picks <name>: <reason>` na lang ang nakasulat dito.
+
+**Mga seat ng Team at Enterprise.** Lumilipat din ang awtomatikong pagpili (`ccam next`, `--fallback`, `ccam pick`, ang `n` ng dashboard) sa pagitan ng mga seat ng iisang Claude Team o Enterprise na organisasyon. Sinasabi ng help center ng Anthropic na "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (nakatalaga ang bawat seat ng Team plan sa iisang partikular na tao, at siya lang ang puwedeng gumamit nito) at "Users can't route their work through another user's account to use that user's remaining usage" (hindi puwedeng idaan ng mga user ang trabaho nila sa account ng ibang user para magamit ang natitirang usage ng user na iyon) ([mga Team plan](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); ganoon din sa [mga Enterprise plan](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Kaya maaaring lumabag sa terms ng Anthropic ang paggamit ng awtomatikong pagpili sa pagitan ng mga seat. Magtanong muna sa iyong organisasyon at sa Anthropic bago ka umasa rito. Saklaw ng [paalala tungkol sa terms sa FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) ang mga personal na plan (Pro, Max).
 
 ## Saan galing ang mga numero
 
@@ -34,11 +36,13 @@ Sabay-sabay na nagtatanong ang ccam sa usage endpoint ng Anthropic para sa bawat
 
 Hindi pampublikong dokumentado ang endpoint na ito at puwede itong magbago. Kapag pumalya ang isang request, ipinapakita ng ccam ang huling alam na mga numero at minamarkahan ang mga ito bilang cached. Ang window na nag-reset na mula nang i-save ang mga numerong iyon ay nagpapakita ng 0%. Sasabihin sa iyo ng `ccam doctor` kung nagbago ang format ng response.
 
+Kapag pinahinto ng Claude Code ang isang session sa usage limit, itinatala ng [ccam plugin](/docs/install#claude-code-plugin) kung aling window ang puno at kung kailan ito magre-reset. Hanggang doon, 100% ang ipinapakita ng window na iyon anuman ang sabihin ng ibang mga numero, kaya hindi pinipili ulit nang masyadong maaga ng `ccam next --auto` at `--fallback` ang account.
+
 Muling ginagamit ang mga numerong kinuha wala pang 60 segundo ang nakalipas. Mga option:
 
 | Option | Epekto |
 | --- | --- |
-| `--watch [seconds]` | Tuloy-tuloy na i-refresh, tuwing 60 segundo bilang default |
+| `--watch[=seconds]` | Tuloy-tuloy na i-refresh, tuwing 60 segundo bilang default |
 | `--json` | Output na nababasa ng makina |
 | `-v` | Ipakita rin kung saan galing ang mga numero ng bawat account |
 | `--no-cache` | Laging magtanong ulit |
@@ -46,9 +50,9 @@ Muling ginagamit ang mga numerong kinuha wala pang 60 segundo ang nakalipas. Mga
 
 ## Mga expired na login
 
-Kapag nag-expire na ang access token ng isang account, hindi ito nire-renew ng ccam, dahil kapag ni-renew ito habang ginagamit ng isang Claude Code session ang parehong login, puwedeng ma-sign out ang session na iyon. Simulan nang isang beses ang account gamit ang `ccam <name>` at ire-renew ito ng Claude Code.
+Kapag nag-expire na ang access token ng isang account, hindi ito nire-renew ng ccam, dahil kapag ni-renew ito habang ginagamit ng isang Claude Code session ang parehong login, puwedeng ma-sign out ang session na iyon. Ipinapakita ng account ang ``access token expired; `ccam <name>` renews it when it starts``: simulan ito nang isang beses gamit ang `ccam <name>` at ire-renew ito ng Claude Code. Ang login na buong nag-expire, o na binura ng Claude Code, ay nagpapakita ng `` login expired → `ccam login <name>` `` at nangangailangan ng bagong login.
 
-Nire-renew mismo ng `ccam usage --refresh` ang mga expired na token, pero para lang sa mga account na hindi tumatakbo. Hindi nito kailanman nire-renew ang mga login na naka-store sa macOS Keychain o sa isang in-import na `~/.claude`.
+Nire-renew mismo ng `ccam usage --refresh` ang mga expired na token, pero para lang sa mga account na hindi tumatakbo, paano man sinimulan ang Claude Code. Hindi nito kailanman nire-renew ang mga login na naka-store sa macOS Keychain o sa isang in-import na `~/.claude`, at puwedeng tumagal nang hanggang 30 segundo ang isang pag-renew.
 
 ## Usage sa status line
 
@@ -66,7 +70,7 @@ ccam next --auto      # the account with the lowest 5-hour usage
 ccam next --continue  # carry this folder's conversation on as the next account
 ```
 
-Nilalaktawan ng `ccam next` ang mga account na hindi naka-log in, at nilalaktawan ng `--auto` ang mga account na nasa 100% at ang mga account ng ibang organisasyon. Kapag nagshe-share ng kasaysayan ng usapan ang dalawang account, binubuksan ng `--continue` ang parehong usapan; kung hindi, kinokopya ito ng Claude Code sa bagong account. Tingnan ang [sharing](/docs/sharing) at ang [paglipat sa susunod na account](/features/next#continue).
+Nilalaktawan ng `ccam next` ang mga account na hindi naka-log in, at nilalaktawan ng `--auto` ang mga account na nasa 100% (pati ang window na iniulat ng Claude Code na puno na, hanggang sa reset nito) at ang mga account ng ibang organisasyon. Kapag nagshe-share ng kasaysayan ng usapan ang dalawang account, binubuksan ng `--continue` ang parehong usapan; kung hindi, kinokopya ito ng Claude Code sa bagong account. Tingnan ang [sharing](/docs/sharing) at ang [paglipat sa susunod na account](/features/next#continue).
 
 Para sa mga script at naka-iskedyul na job na nagpapatakbo ng `claude -p`, ilagay ang `--fallback` bago ang pangalan ng account. Kapag naabot ng account na iyon ang limit nito, pinapatakbo ulit ng ccam ang parehong command bilang account na may pinakamaraming natitira, at ang output lang ng run na natapos ang ipi-print:
 

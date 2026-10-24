@@ -70,8 +70,8 @@
         "body": "Startet Claude Code mit diesem Konto. Alles nach dem Namen geht unverändert an Claude Code, und ccam braucht vor dem Start etwa 4 Millisekunden."
       },
       {
-        "command": "ccam share work --history on",
-        "body": "Legt fest, was das Konto mit deinen anderen Konten teilt. MCP-Server, Einstellungen, CLAUDE.md und Erweiterungen werden von Anfang an geteilt, Anmeldungen nie."
+        "command": "ccam group set default --add history",
+        "body": "Legt fest, was die Konten einer Gruppe miteinander teilen. MCP-Server, Einstellungen, CLAUDE.md und Erweiterungen werden von Anfang an geteilt, Anmeldungen nie."
       },
       {
         "command": "ccam usage",
@@ -145,9 +145,9 @@
     "mcp": "Geteilte MCP-Server verwalten",
     "migrate": "Eine vorhandene Claude Code-Einrichtung (~/.claude) in eine geteilte Gruppe kopieren",
     "login": "Ein Konto erneut anmelden; --expired meldet jedes Konto an, das es braucht",
-    "logout": "Die Anmeldung eines Kontos entfernen",
+    "logout": "Ein Konto abmelden: seine Anmeldung und seine Anmeldungen bei MCP-Servern",
     "rename": "Ein Konto umbenennen; sein Kurzbefehl behält seinen Namen",
-    "remove": "Ein Konto entfernen; sein Ordner kommt in den Papierkorbordner",
+    "remove": "Ein Konto entfernen: Es wird abgemeldet, und sein Ordner kommt in den Papierkorbordner",
     "import": "Einen vorhandenen ~/.claude-Ordner an Ort und Stelle registrieren",
     "doctor": "Links, Berechtigungen, Anmeldungen und Versionen prüfen und reparieren",
     "statusline": "Konto und Nutzung in der Statuszeile von Claude Code anzeigen",

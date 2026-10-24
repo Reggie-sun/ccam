@@ -1,10 +1,10 @@
 ---
 title: Contas por pasta
 description: ccam folder faz uma pasta e tudo o que está dentro dela usarem uma conta quando você inicia o Claude Code sem nome de conta, como work para o código da empresa.
-updated: 2026-10-20
+updated: 2026-10-23
 order: 11
 translation: machine
-sourceHash: "46d1410a3d81"
+sourceHash: "48de98d42b99"
 ---
 
 `ccam folder work ~/code/company` faz com que toda inicialização sem nome de conta dentro de `~/code/company`, e em qualquer pasta abaixo dela, inicie o Claude Code como `work`. Fora dela, a conta padrão inicia como antes. Nomear uma conta, com `ccam personal` ou com um atalho como `ccpersonal`, sempre inicia essa conta.
@@ -34,7 +34,7 @@ Estas inicializações usam a conta da pasta:
 - `ccam -p "…"` e qualquer outra inicialização cujo primeiro argumento seja uma opção para o Claude Code
 - `ccam run` sem nome, e `ccam --dry-run`
 - `ccam --fallback -p "…"` na primeira tentativa
-- o painel, `ccam` sozinho, que começa com o cursor na conta da pasta
+- o painel, `ccam` sozinho, que começa com o cursor na conta da pasta, inclusive quando você chegou à pasta por um link simbólico
 
 ## Opções
 
@@ -59,7 +59,7 @@ account = 'work'
 2. Uma inicialização sem nome chama `launcher.HereProfile`. Sem entradas, ela pega a conta padrão na hora.
 3. Caso contrário, compara o diretório de trabalho com cada `path` como strings: a própria pasta ou uma abaixo dela, nunca uma pasta que só começa com as mesmas letras (`/code/company` não cobre `/code/companyx`). A entrada mais profunda vence, então `~/code` pode ser `personal` enquanto `~/code/company` é `work`.
 4. Só se o diretório de trabalho, como está, não corresponder a nada, o ccam resolve os links simbólicos dele e compara mais uma vez.
-5. No Windows, a comparação ignora maiúsculas e minúsculas, como o Windows faz.
+5. No Windows e no macOS, a comparação ignora maiúsculas e minúsculas, como os sistemas de arquivos deles costumam fazer.
 
 Nenhum arquivo além do `config.toml` é lido, então uma inicialização dentro de uma pasta não custa tempo mensurável (4,0 ms com ou sem entradas, `hyperfine`, 300 execuções).
 

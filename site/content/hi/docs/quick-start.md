@@ -2,10 +2,10 @@
 title: क्विक स्टार्ट
 metaTitle: "क्विक स्टार्ट: Claude Code अकाउंट जोड़ें, स्विच करें"
 description: "ccam add से दो Claude Code अकाउंट जोड़ें, उन्हें ccwork जैसे शॉर्टकट दें, उनके बीच स्विच करें, और चुनें कि वे क्या साझा करें।"
-updated: 2026-10-20
+updated: 2026-10-24
 order: 2
 translation: machine
-sourceHash: d5b0e295f3f0
+sourceHash: e98d0637356a
 ---
 
 हर अकाउंट को `ccam add` से जोड़ें, फिर Claude Code को `ccam <name>` से या अपने रखे नाम वाले शॉर्टकट, जैसे `ccwork`, से शुरू करें। ज़्यादातर लोगों को बस इतना ही चाहिए।
@@ -107,6 +107,8 @@ ccam next --continue
 ```
 
 `ccam usage` हर अकाउंट का 5 घंटे और साप्ताहिक उपयोग दिखाता है। `ccam next --continue` वही बातचीत अगले अकाउंट में खोलता है। Scripts में, `ccam --fallback work -p "…"` अपने-आप स्विच करता है। [उपयोग सीमाएँ](/docs/usage-limits) देखें।
+
+**Team और Enterprise सीटें।** अपने-आप होने वाला चुनाव (`ccam next`, `--fallback`, `ccam pick`, डैशबोर्ड का `n`) एक ही Claude Team या Enterprise संगठन की सीटों के बीच भी स्विच करता है। Anthropic का सहायता केंद्र कहता है कि "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team प्लान की हर सीट एक नामित व्यक्ति को सौंपी जाती है, और केवल वही व्यक्ति उसका इस्तेमाल कर सकता है) और "Users can't route their work through another user's account to use that user's remaining usage" (उपयोगकर्ता किसी दूसरे उपयोगकर्ता के बचे हुए उपयोग का इस्तेमाल करने के लिए अपना काम उसके अकाउंट के ज़रिए नहीं चला सकते) ([Team प्लान](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise प्लान](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) के लिए भी इसी तरह)। इसलिए सीटों के बीच अपने-आप होने वाला चुनाव इस्तेमाल करना Anthropic की शर्तों का उल्लंघन हो सकता है। इस पर भरोसा करने से पहले अपने संगठन और Anthropic से पता कर लें। Personal प्लान (Pro, Max) के बारे में [FAQ का शर्तों वाला नोट](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) बताता है।
 
 ## पहले से ~/.claude इस्तेमाल कर रहे हैं?
 

@@ -70,8 +70,8 @@
         "body": "Menjalankan Claude Code sebagai akun tersebut. Semua yang ada setelah nama akun diteruskan ke Claude Code tanpa diubah, dan ccam hanya menambah sekitar 4 milidetik sebelum Claude Code dimulai."
       },
       {
-        "command": "ccam share work --history on",
-        "body": "Memilih apa yang dibagikan akun ini dengan akun Anda yang lain. Server MCP, pengaturan, CLAUDE.md, dan ekstensi dibagikan sejak awal; login tidak pernah dibagikan."
+        "command": "ccam group set default --add history",
+        "body": "Memilih apa yang dibagikan bersama oleh akun-akun dalam satu grup. Server MCP, pengaturan, CLAUDE.md, dan ekstensi dibagikan sejak awal; login tidak pernah dibagikan."
       },
       {
         "command": "ccam usage",
@@ -145,9 +145,9 @@
     "mcp": "Mengelola server MCP bersama",
     "migrate": "Menyalin penyiapan Claude Code yang sudah ada (~/.claude) ke grup bersama",
     "login": "Login ulang ke sebuah akun; --expired melakukan login untuk setiap akun yang memerlukannya",
-    "logout": "Menghapus login sebuah akun",
+    "logout": "Me-logout sebuah akun: login-nya dan info masuk server MCP-nya",
     "rename": "Mengganti nama akun; pintasannya tetap memakai nama yang sama",
-    "remove": "Menghapus akun; foldernya dipindahkan ke folder sampah",
+    "remove": "Menghapus akun: akun di-logout, dan foldernya dipindahkan ke folder sampah",
     "import": "Mendaftarkan folder ~/.claude yang sudah ada di tempatnya",
     "doctor": "Memeriksa tautan, izin, login, dan versi, lalu memperbaiki",
     "statusline": "Menampilkan akun dan penggunaannya di status line Claude Code",

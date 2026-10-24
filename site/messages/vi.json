@@ -70,8 +70,8 @@
         "body": "Khởi động Claude Code bằng tài khoản đó. Mọi thứ sau tên tài khoản được chuyển nguyên vẹn cho Claude Code, và ccam thêm khoảng 4 mili giây trước khi Claude Code khởi động."
       },
       {
-        "command": "ccam share work --history on",
-        "body": "Chọn những gì tài khoản dùng chung với các tài khoản khác của bạn. Máy chủ MCP, cài đặt, CLAUDE.md và tiện ích mở rộng được dùng chung ngay từ đầu; thông tin đăng nhập thì không bao giờ."
+        "command": "ccam group set default --add history",
+        "body": "Chọn những gì các tài khoản trong một nhóm dùng chung với nhau. Máy chủ MCP, cài đặt, CLAUDE.md và tiện ích mở rộng được dùng chung ngay từ đầu; thông tin đăng nhập thì không bao giờ."
       },
       {
         "command": "ccam usage",
@@ -145,9 +145,9 @@
     "mcp": "Quản lý các máy chủ MCP dùng chung",
     "migrate": "Sao chép thiết lập Claude Code hiện có (~/.claude) vào một nhóm dùng chung",
     "login": "Đăng nhập lại một tài khoản; --expired đăng nhập mọi tài khoản cần đăng nhập lại",
-    "logout": "Xóa thông tin đăng nhập của một tài khoản",
+    "logout": "Đăng xuất một tài khoản: thông tin đăng nhập và các lần đăng nhập máy chủ MCP của nó",
     "rename": "Đổi tên một tài khoản; lệnh tắt của nó giữ nguyên tên",
-    "remove": "Xóa một tài khoản; thư mục của nó được chuyển vào thư mục thùng rác",
+    "remove": "Xóa một tài khoản: tài khoản được đăng xuất, và thư mục của nó được chuyển vào thư mục thùng rác",
     "import": "Đăng ký tại chỗ một thư mục ~/.claude có sẵn",
     "doctor": "Kiểm tra liên kết, quyền truy cập, đăng nhập và phiên bản, rồi sửa chữa",
     "statusline": "Hiển thị tài khoản và mức sử dụng trên dòng trạng thái của Claude Code",

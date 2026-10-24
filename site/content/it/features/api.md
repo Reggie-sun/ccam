@@ -1,10 +1,10 @@
 ---
 title: Account con chiave API
 description: ccam add --api aggiunge un account con chiave API per l'API di Anthropic o un gateway; la chiave si legge all'avvio da variabile o comando, mai salvata.
-updated: 2026-10-20
+updated: 2026-10-23
 order: 13
 translation: machine
-sourceHash: "a903c92f2c50"
+sourceHash: "232a71525e42"
 ---
 
 Un account con chiave API avvia Claude Code con una chiave API invece che con il login di un abbonamento Claude: l'API di Anthropic, oppure un endpoint che usa lo stesso formato Messages, come un gateway LiteLLM o OpenRouter. ccam non salva la chiave. La legge ogni volta che l'account si avvia, da una variabile d'ambiente o da un comando come un gestore di password, e la passa solo a quel processo di Claude Code.
@@ -35,7 +35,7 @@ Un account con chiave API si unisce ai gruppi come qualsiasi altro account (per 
 | --- | --- | --- |
 | `--api` | Aggiunge un account con chiave API invece di fare il login | disattivata |
 | `--key-from env:NAME` | Legge la chiave dalla variabile d'ambiente `NAME` | |
-| `--key-from command:COMMAND` | Esegue `COMMAND` (con `sh -c`, oppure `cmd /C` su Windows) e usa la prima riga che stampa | |
+| `--key-from command:COMMAND` | Esegue `COMMAND` (con `sh -c`, oppure su Windows come se fosse digitato in `cmd /d /s /c "…"`, virgolette comprese) e usa la prima riga che stampa | |
 | `--base-url <url>` | L'endpoint (`ANTHROPIC_BASE_URL`) | l'API di Anthropic |
 | `--auth api-key\|bearer` | Invia la chiave come `ANTHROPIC_API_KEY` (`x-api-key`) oppure come `ANTHROPIC_AUTH_TOKEN` (`Authorization: Bearer`, che di solito chiedono i gateway) | `api-key` |
 | `--model <model>` | Il modello (`ANTHROPIC_MODEL`) | quello predefinito di Claude Code |
@@ -66,10 +66,17 @@ Gli account con il login di un abbonamento mantengono l'ambiente che ereditano, 
 
 ## Sicurezza e casi limite
 
-- La chiave non viene mai scritta in `config.toml`, in una cache o in un log, e `ccam --dry-run gw` non la legge: un dry run non esegue una sorgente `command:`.
+- La chiave non viene mai scritta in `config.toml`, in una cache o in un log, e `ccam --dry-run gw` non la legge: un dry run non esegue una sorgente `command:`. Il dry run mostra invece l'endpoint, il modello e da dove viene la chiave:
+
+  ```console
+  $ ccam --dry-run gw -p hi
+  CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/gw CCAM_PROFILE=gw ANTHROPIC_BASE_URL=https://llm.example.com ANTHROPIC_MODEL=claude-sonnet-5-5 ANTHROPIC_AUTH_TOKEN="$(pass show llm/gateway-key | head -n 1)" /home/me/.local/bin/claude -p hi
+  ```
+
+  Una variabile ereditata che l'avvio rimuove compare come `env -u <name>` all'inizio. Con una sorgente `env:` la cui variabile è vuota, il dry run fallisce come farebbe l'avvio.
 - `ccam add --api` controlla subito una sorgente `env:` e avvisa se la variabile è vuota; una sorgente `command:` viene eseguita per la prima volta all'avvio.
 - `ccam login` e `ccam logout` rifiutano un account con chiave API, perché non ha un login. `ccam doctor` mostra il suo endpoint e la sorgente della chiave, e avvisa quando una variabile `env:` è vuota.
-- `ccam usage` mostra `API` per questo account. `ccam next --auto`, `--fallback` e `ccam pick` scelgono solo tra gli account con abbonamento, perché una chiave API non ha limiti su 5 ore o settimanali da confrontare.
+- `ccam usage` mostra `no limits (API)` per questo account. `ccam next --auto`, `--fallback` e `ccam pick` scelgono solo tra gli account con abbonamento, perché una chiave API non ha limiti su 5 ore o settimanali da confrontare.
 - Un `settings.json` condiviso con un blocco `env` o `apiKeyHelper` vale per ogni account del gruppo, compresi gli account con chiave API. Tieni le impostazioni del provider fuori dalle impostazioni condivise, oppure metti l'account con chiave API in un gruppo senza `settings`.
 
 ## Pagine correlate

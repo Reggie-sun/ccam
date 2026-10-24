@@ -1,13 +1,15 @@
 ---
 title: Wybór konta dla skryptów
 description: ccam pick wypisuje konto z największym zapasem dla skryptu, daje workerom uruchomionym razem różne konta i kończy się kodem 75, gdy żadne nie ma zapasu.
-updated: 2026-10-20
+updated: 2026-10-24
 order: 12
 translation: machine
-sourceHash: "2e8285b7c193"
+sourceHash: "a8baeb64de99"
 ---
 
 `ccam pick` wypisuje nazwę zalogowanego konta z największym zapasem, żeby skrypt mógł na nim uruchomić Claude Code. Workery uruchomione w tym samym czasie dostają każdy inne konto, dopóki jest wystarczająco wiele kont z zapasem, więc partia zadań `claude -p` rozkłada się na twoje konta, zamiast wyczerpywać jedno.
+
+**Miejsca w planach Team i Enterprise.** Automatyczny wybór konta (`ccam next`, `--fallback`, `ccam pick`, klawisz `n` w panelu) przełącza też między miejscami w tej samej organizacji Claude Team lub Enterprise. Centrum pomocy Anthropic podaje: „Each seat on a Team plan is assigned to one named individual, and only that person may use it” (każde miejsce w planie Team jest przypisane do jednej imiennie wskazanej osoby i tylko ta osoba może z niego korzystać) oraz „Users can't route their work through another user's account to use that user's remaining usage” (użytkownicy nie mogą kierować swojej pracy przez konto innego użytkownika, aby wykorzystać pozostały limit użycia tego użytkownika) ([plany Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); podobnie w przypadku [planów Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Dlatego korzystanie z automatycznego wyboru między miejscami może naruszać warunki Anthropic. Zanim zaczniesz na nim polegać, skonsultuj to ze swoją organizacją i z Anthropic. Planów prywatnych (Pro, Max) dotyczy [uwaga o warunkach w FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 ## Użycie
 
@@ -49,15 +51,15 @@ Kody wyjścia: `0` z nazwą na standardowym wyjściu, `75` (`EX_TEMPFAIL`), gdy 
 | `--max-usage <1-100>` | Preferuje konta poniżej tego użycia | `auto_max_usage`, w przeciwnym razie 100 |
 | `--strategy headroom\|expiring\|balance` | Najniższe użycie 5-godzinne, najbliższy reset okna 5-godzinnego albo tygodniowy limit, który najwcześniej przepadłby niewykorzystany | `auto_strategy`, w przeciwnym razie `headroom` |
 | `--cross-org` | Wybiera też konta innych organizacji | `cross_org`, w przeciwnym razie wyłączone |
-| `--wait[=<duration>]` | Gdy żadne konto nie ma zapasu, czeka na reset pierwszego, najwyżej tyle | wyłączone; `5h`, gdy podano samą opcję |
+| `--wait[=<duration>]` | Gdy żadne konto nie ma zapasu, czeka na reset pierwszego, najwyżej tyle. Wartość podaje się po `=`: `--wait 30m` jest odrzucane z podpowiedzią `--wait takes its value after '=': --wait=30m` | wyłączone; `5h`, gdy podano samą opcję |
 | `--dry-run` | Wybiera bez zapisywania wyboru | wyłączone |
 
 ## Jak to działa
 
-1. ccam wyświetla listę zalogowanych kont (konta z kluczem API nie mają limitów i są pomijane) w organizacji konta, które uruchomiłby ten folder (zobacz [organizacje](/features/next#auto)); folder zalogowany na to samo konto Claude co to konto również jest pomijany.
+1. ccam wyświetla listę zalogowanych kont (konta z kluczem API i loginy Console nie mają limitów i są pomijane) w organizacji konta, które uruchomiłby ten folder (zobacz [organizacje](/features/next#auto)); folder zalogowany na to samo konto Claude co to konto również jest pomijany.
 2. Zakłada blokadę (`~/.local/state/ccam/picks.lock`), więc wybory uruchomione w tym samym czasie odbywają się jeden po drugim.
-3. Sprawdza użycie wszystkich kont naraz, tak samo jak `ccam usage`, z 60-sekundową pamięcią podręczną.
-4. Konta wybrane w ciągu ostatnich 2 minut (`~/.local/state/ccam/picks/<name>`) są najpierw pomijane, a [zasady wyboru](/features/next#auto) z `ccam next --auto` wybierają spośród pozostałych: najpierw poniżej `auto_max_usage`, według strategii, nigdy konto na poziomie 100%.
+3. Sprawdza użycie wszystkich kont naraz, tak samo jak `ccam usage`, z 60-sekundową pamięcią podręczną. Okno, które Claude Code zgłosił jako pełne, liczy się jako 100% aż do resetu ([zapis limitu](/features/usage#the-limit-record)), więc konto, które właśnie osiągnęło limit, pozostaje pominięte, nawet gdy zapisane liczby pokazują zapas.
+4. Konta wybrane w ciągu ostatnich 2 minut (`~/.local/state/ccam/picks/<name>`; wybór z datą późniejszą niż czas zegara się nie liczy) są najpierw pomijane, a [zasady wyboru](/features/next#auto) z `ccam next --auto` wybierają spośród pozostałych: najpierw poniżej `auto_max_usage`, według strategii, nigdy konto na poziomie 100%.
 5. Jeśli każde konto z zapasem zostało niedawno wybrane, zasady wybierają ponownie spośród wszystkich, więc czwarty worker na trzech kontach dzieli jedno z nich.
 6. Wybór zostaje zapisany, blokada zwolniona, a potem wypisywana jest nazwa.
 

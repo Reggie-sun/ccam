@@ -2,7 +2,7 @@
 title: Quick start
 metaTitle: "Quick start: add and switch Claude Code accounts"
 description: Add two Claude Code accounts with ccam add, give them shortcuts such as ccwork, switch between them, and pick what they share.
-updated: 2026-10-20
+updated: 2026-10-24
 published: 2026-10-19
 order: 2
 translation: source
@@ -107,6 +107,8 @@ ccam next --continue
 ```
 
 `ccam usage` shows the 5-hour and weekly usage of every account. `ccam next --continue` opens the same conversation in the next account. In scripts, `ccam --fallback work -p "…"` switches by itself. See [usage limits](/docs/usage-limits).
+
+**Team and Enterprise seats.** Automatic choice (`ccam next`, `--fallback`, `ccam pick`, the dashboard's `n`) also switches between seats of the same Claude Team or Enterprise organization. Anthropic's help center says "Each seat on a Team plan is assigned to one named individual, and only that person may use it" and "Users can't route their work through another user's account to use that user's remaining usage" ([Team plans](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); likewise for [Enterprise plans](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Using automatic choice between seats may therefore violate Anthropic's terms. Check with your organization and Anthropic before you rely on it. Personal plans (Pro, Max) are covered by the [terms note in the FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 ## Already using ~/.claude?
 

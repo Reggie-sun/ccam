@@ -1,10 +1,10 @@
 ---
 title: توضیح CLAUDE_CONFIG_DIR
 description: CLAUDE_CONFIG_DIR در Claude Code چه می‌کند، چه چیزهایی در پوشه آن ذخیره می‌شود، macOS ورود را کجا نگه می‌دارد و کدام فایل‌ها بین حساب‌ها قابل اشتراک‌اند.
-updated: 2026-10-19
+updated: 2026-10-23
 order: 2
 translation: machine
-sourceHash: ef9317030e42
+sourceHash: 2cf08478085f
 ---
 
 `CLAUDE_CONFIG_DIR` به Claude Code می‌گوید به‌جای `~/.claude` از کدام پوشه استفاده کند. هر چیزی که به حساب وابسته است در همان پوشه قرار دارد: ورود، تنظیمات، سرورهای MCP، پلاگین‌ها و تاریخچه گفتگو. اگر آن را به پوشه‌های مختلف اشاره دهید، حساب‌های جداگانه خواهید داشت.
@@ -19,7 +19,7 @@ CLAUDE_CONFIG_DIR=~/.claude-work claude
 
 ## داخل پوشه چه چیزهایی هست؟
 
-بررسی‌شده با Claude Code 2.1.302:
+بررسی‌شده با Claude Code 2.1.309:
 
 | مسیر | محتوا | قابل اشتراک |
 | --- | --- | --- |
@@ -34,15 +34,15 @@ CLAUDE_CONFIG_DIR=~/.claude-work claude
 
 ## چه چیزهایی کاربران را غافلگیر می‌کند؟
 
-**بدون `CLAUDE_CONFIG_DIR`، فایل `.claude.json` داخل `~/.claude` نیست.** در این حالت Claude Code آن را در `~/.claude.json`، کنار پوشه، نگه می‌دارد. اگر شروع به استفاده از `CLAUDE_CONFIG_DIR=~/.claude` کنید، Claude Code به‌جای آن به دنبال `~/.claude/.claude.json` می‌گردد و حساب شما را پیدا نمی‌کند. `ccam import` این مشکل را با پیوند دادن این دو حل می‌کند.
+**بدون `CLAUDE_CONFIG_DIR`، فایل `.claude.json` داخل `~/.claude` نیست.** در این حالت Claude Code آن را در `~/.claude.json`، کنار پوشه، نگه می‌دارد. اگر شروع به استفاده از `CLAUDE_CONFIG_DIR=~/.claude` کنید، Claude Code به‌جای آن به دنبال `~/.claude/.claude.json` می‌گردد و حساب شما را پیدا نمی‌کند. `ccam import` این مشکل را با پیوند دادن این دو حل می‌کند. اگر `~/.claude` از قبل یک `.claude.json` از خودش داشته باشد، از یک اجرای قبلی با `CLAUDE_CONFIG_DIR=~/.claude`، ccam هر دو فایل را دست‌نخورده می‌گذارد و این را می‌گوید، چون فقط شما می‌دانید کدام درست است.
 
-**در macOS ورود در Keychain است، نه در پوشه.** Claude Code آن را با نام `Claude Code-credentials` ذخیره می‌کند و وقتی `CLAUDE_CONFIG_DIR` تنظیم شده باشد، یک هش کوتاه از مسیر پوشه را به دنبال آن می‌آورد. بنابراین پوشه‌های جداگانه مدخل‌های جداگانه‌ای در Keychain می‌گیرند. اگر Keychain نوشتن را نپذیرد، Claude Code همان‌طور که [مستنداتش](https://code.claude.com/docs/en/authentication#credential-management) شرح می‌دهد، به‌جای آن از `.credentials.json` داخل پوشه استفاده می‌کند.
+**در macOS ورود در Keychain است، نه در پوشه.** Claude Code آن را با نام `Claude Code-credentials` ذخیره می‌کند و وقتی `CLAUDE_CONFIG_DIR` تنظیم شده باشد، `-` و نخستین ۸ رقم هگزادسیمال SHA-256 مسیر پوشه را به دنبال آن می‌آورد، برای حسابی که `$USER` نام می‌برد. بنابراین پوشه‌های جداگانه مدخل‌های جداگانه‌ای در Keychain می‌گیرند و پوشه‌ای که جابه‌جا یا تغییر نام داده شود ورودش را از دست می‌دهد؛ به همین دلیل `ccam rename` در macOS نام پوشه را نگه می‌دارد. اگر Keychain نوشتن را نپذیرد، Claude Code همان‌طور که [مستنداتش](https://code.claude.com/docs/en/authentication#credential-management) شرح می‌دهد، به‌جای آن از `.credentials.json` داخل پوشه استفاده می‌کند.
 
 **همه ورودها داخل پوشه نیستند.** ورود به Claude Console بدون کلید API بیرون از پوشه ذخیره می‌شود، بنابراین پوشه‌های جداگانه دو ورود از این نوع را از هم جدا نگه نمی‌دارند. ورودهای claude.ai و کلیدهای API برای هر پوشه جداگانه نگه داشته می‌شوند.
 
 ## پوشه در Windows کجاست؟
 
-به‌طور پیش‌فرض `%USERPROFILE%\.claude`، و ورود در `.credentials.json` داخل آن است. برای هر حساب اضافی، `CLAUDE_CONFIG_DIR` را روی پوشه دیگری تنظیم کنید، به همان شکلی که در Linux و macOS انجام می‌دهید.
+به‌طور پیش‌فرض `%USERPROFILE%\.claude`، و ورود در `.credentials.json` داخل آن است، یا وقتی Claude Code برای استفاده از Credential Manager سیستم Windows تنظیم شده باشد، در آنجا، زیر نامی که مانند macOS از مسیر پوشه ساخته می‌شود. برای هر حساب اضافی، `CLAUDE_CONFIG_DIR` را روی پوشه دیگری تنظیم کنید، به همان شکلی که در Linux و macOS انجام می‌دهید.
 
 ## آیا پوشه‌ها می‌توانند فایل‌ها را به اشتراک بگذارند؟
 

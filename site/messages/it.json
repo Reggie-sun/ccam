@@ -70,8 +70,8 @@
         "body": "Avvia Claude Code con quell'account. Tutto ciò che segue il nome arriva a Claude Code invariato, e ccam aggiunge circa 4 millisecondi prima dell'avvio."
       },
       {
-        "command": "ccam share work --history on",
-        "body": "Sceglie cosa l'account condivide con gli altri tuoi account. Server MCP, impostazioni, CLAUDE.md ed estensioni sono condivisi fin dall'inizio; i login mai."
+        "command": "ccam group set default --add history",
+        "body": "Sceglie cosa condividono tra loro gli account di un gruppo. Server MCP, impostazioni, CLAUDE.md ed estensioni sono condivisi fin dall'inizio; i login mai."
       },
       {
         "command": "ccam usage",
@@ -145,9 +145,9 @@
     "mcp": "Gestisce i server MCP condivisi",
     "migrate": "Copia una configurazione di Claude Code esistente (~/.claude) in un gruppo condiviso",
     "login": "Esegue di nuovo il login di un account; --expired fa il login in ogni account che ne ha bisogno",
-    "logout": "Rimuove il login di un account",
+    "logout": "Disconnette un account: il suo login e i suoi accessi ai server MCP",
     "rename": "Rinomina un account; la sua scorciatoia mantiene il nome",
-    "remove": "Rimuove un account; la sua cartella finisce nella cartella del cestino",
+    "remove": "Rimuove un account: viene disconnesso, e la sua cartella finisce nella cartella del cestino",
     "import": "Registra una cartella ~/.claude esistente dove si trova",
     "doctor": "Controlla link, permessi, login e versioni, e ripara",
     "statusline": "Mostra l'account e l'utilizzo nella riga di stato di Claude Code",

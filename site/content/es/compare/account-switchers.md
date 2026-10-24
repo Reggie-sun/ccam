@@ -1,10 +1,10 @@
 ---
 title: "Cambiar cuenta de Claude Code: ccam y alternativas"
 description: ccam frente a claude-swap, CCS, clausona, clauth, CAAM, cux y otras herramientas para cambiar de cuenta en Claude Code, y qué enfoque conviene en cada caso.
-updated: 2026-10-21
+updated: 2026-10-24
 order: 2
 translation: machine
-sourceHash: c74be64d2978
+sourceHash: 6d08203f1ea6
 ---
 
 Las herramientas para cambiar de cuenta en Claude Code siguen uno de dos enfoques. La mayoría intercambia el inicio de sesión dentro de la única carpeta `~/.claude`, así que solo hay una cuenta activa a la vez. Otras, entre ellas ccam, le dan a cada cuenta su propia carpeta con `CLAUDE_CONFIG_DIR`, así que todas las cuentas siguen con la sesión iniciada y varias pueden ejecutarse a la vez. ccam agrega configuración y servidores MCP compartidos, y continúa una conversación en la carpeta de otra cuenta.
@@ -54,7 +54,7 @@ ccswap es un fork de claude-swap que también gestiona inicios de sesión de Cod
 
 ccam nunca copia un inicio de sesión de Claude de un lugar a otro. El inicio de sesión de cada cuenta se queda en su propia carpeta, o en macOS en el ítem del llavero propio de esa carpeta, y Claude Code es el programa que lo renueva. No hay ninguna copia guardada que pueda desincronizarse. Un `~/.claude` existente registrado con `ccam import` conserva el ítem del llavero que usa `claude` a secas, así que sigue con la sesión iniciada en ambos casos.
 
-ccam solo renueva por sí mismo un token caducado cuando ejecutas `ccam usage --refresh`. Antes toma un bloqueo y se niega mientras esa cuenta esté en ejecución, así que nunca rota un token bajo una sesión activa.
+ccam solo renueva por sí mismo un token caducado cuando ejecutas `ccam usage --refresh`. Antes toma un bloqueo y se niega mientras esa cuenta esté en ejecución, sin importar cómo se haya iniciado Claude Code (también las sesiones en segundo plano y su daemon), y mientras el propio Claude Code esté renovando ese inicio de sesión, así que nunca rota un token bajo una sesión activa.
 
 ### Nada se ejecuta entre tú y Claude Code
 
@@ -66,19 +66,21 @@ Iniciar una cuenta así añade unos 4 ms, menos de 6 ms en el percentil 95, con 
 
 Los servidores MCP, `settings.json`, `CLAUDE.md`, las extensiones (agentes, comandos, skills, plugins) y el historial de conversaciones son cinco elementos separados. Un grupo nombra los elementos que comparte y las cuentas que contiene, así que dos cuentas de trabajo pueden compartir el historial en un grupo `work` mientras una cuenta personal conserva el suyo, y las tres comparten los mismos servidores MCP a través de `default`. `ccam group set work --add memory` mueve todas las cuentas del grupo en un solo plan; el [panel](/features/dashboard) hace lo mismo con casillas y atenúa un elemento que una cuenta ya recibe de otro grupo.
 
-- Los servidores MCP se pasan con `--mcp-config` al iniciar, así que por defecto ccam nunca edita `.claude.json`, el archivo que Claude Code reescribe mientras se ejecuta. `ccam mcp add` agrega un servidor una sola vez para todo el grupo.
+- Los servidores MCP se pasan con `--mcp-config` al iniciar, así que por defecto un inicio no toca `.claude.json`, el archivo que Claude Code reescribe mientras se ejecuta. ccam solo escribe allí en los pasos que lo indican, con el bloqueo de Claude Code y con una copia de seguridad: para Remote Control después de preguntar, cuando una cuenta deja de compartir servidores MCP o vuelve a hacerlo, y en `ccam mcp import`. `ccam mcp add` agrega un servidor una sola vez para todo el grupo.
 - Los demás elementos son enlaces a la carpeta del grupo, así que un cambio hecho en una cuenta aparece en las otras al instante. No se copia nada al iniciar.
 - Los inicios de sesión, `.claude.json` y el estado de ejecución nunca se comparten.
 
 ### Cada cambio se muestra primero y se respalda
 
-`ccam group` y `ccam migrate` muestran un plan y preguntan antes de mover nada. Cuando un archivo difiere entre una cuenta y su grupo, tú eliges: conservar el del grupo, usar el tuyo o combinar el JSON. Los originales van a `.ccam-backup/<time>/`, la carpeta de una cuenta eliminada va a una carpeta de papelera, y los archivos se reemplazan con un solo cambio de nombre, así que una escritura interrumpida deja el archivo anterior. `--dry-run` muestra lo que harían el inicio, el uso compartido, la migración, los atajos, las actualizaciones y las reparaciones. `ccam doctor --fix` repara enlaces rotos y permisos.
+`ccam group` y `ccam migrate` muestran un plan y preguntan antes de mover nada. Cuando un archivo difiere entre una cuenta y su grupo, tú eliges: conservar el del grupo, usar el tuyo o combinar el JSON; dentro de las carpetas se queda la copia del grupo y el plan nombra los archivos que difieren. Los originales van a `.ccam-backup/<time>/`, una cuenta eliminada cierra su sesión y su carpeta va a una carpeta de papelera, y los archivos se reemplazan con un solo cambio de nombre, así que una escritura interrumpida deja el archivo anterior. `--dry-run` muestra lo que harían el inicio, el uso compartido, la migración, los atajos, las actualizaciones y las reparaciones. `ccam doctor --fix` repara enlaces rotos y permisos.
 
 ### La misma conversación en la siguiente cuenta
 
 `ccam next --auto --continue` consulta el uso de todas las cuentas a la vez, abre la que tiene más margen y continúa la conversación. Con el historial compartido es la misma conversación; sin él, Claude Code la copia en la nueva cuenta (`--resume <file> --fork-session`), y ccam indica cuántos tokens vuelve a leer la primera respuesta. Cuando un límite detiene una sesión, el hook del plugin de ccam muestra una notificación, y `/ccam:switch` pasa la conversación a otra cuenta. Tú decides cuándo cambiar; nada vigila tu uso en segundo plano, y las elecciones automáticas se quedan dentro de una misma organización, así que una conversación de la empresa nunca acaba por accidente en una cuenta privada. La línea de estado sugiere el comando cuando una cuenta llega al 90 %.
 
 Los scripts no pueden esperarte, así que `ccam --fallback work -p "…"` cambia por ellos: cuando la cuenta llega a su límite, el mismo comando se ejecuta de nuevo con la cuenta con más margen, y solo se imprime la salida de la ejecución que terminó. Un fallo que no sea un límite de uso se transmite tal cual. Para workers en paralelo, `ccam pick` le da a cada uno una cuenta distinta con margen, y ambos salen con el código 75 cuando ya ninguna cuenta tiene margen.
+
+**Asientos de Team y Enterprise.** La elección automática (`ccam next`, `--fallback`, `ccam pick`, la tecla `n` del panel) también pasa de un asiento a otro dentro de una misma organización de Claude Team o Enterprise. El centro de ayuda de Anthropic indica: "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (cada asiento de un plan Team se asigna a una persona específica, y solo esa persona puede usarlo) y "Users can't route their work through another user's account to use that user's remaining usage" (los usuarios no pueden hacer pasar su trabajo por la cuenta de otro usuario para consumir el uso restante de ese usuario) ([planes Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); lo mismo para los [planes Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Por lo tanto, usar la elección automática entre asientos puede infringir los términos de Anthropic. Consulta con tu organización y con Anthropic antes de depender de ella. Los planes personales (Pro, Max) se tratan en la [nota de las preguntas frecuentes sobre los términos](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 ### La cuenta correcta en cada carpeta
 
@@ -91,7 +93,7 @@ ccam es un binario estático de unos 10 MB, sin entorno de ejecución que instal
 ## Dónde otras herramientas hacen más
 
 - claude-swap, clauth, cux, CAAM y CCSwitcher pueden cambiar por su cuenta una sesión interactiva en curso cuando una cuenta supera un umbral de uso. ccam cambia las ejecuciones `-p` con `--fallback` y deja las sesiones interactivas en tus manos, con una notificación al llegar al límite y `/ccam:switch`.
-- En Windows sin el modo de desarrollador, ccam comparte carpetas pero no puede compartir archivos sueltos como `settings.json`; claude-swap y CCS los copian allí en su lugar.
+- En Windows sin el modo de desarrollador, ccam comparte carpetas pero no puede compartir archivos sueltos como `settings.json` (el primer `ccam add` comparte entonces solo los servidores MCP y las extensiones); claude-swap y CCS los copian allí en su lugar.
 - CCSwitcher, Claude Switcher y claude-swap muestran el uso en la barra de menús de macOS.
 - CCS, clausona, CAAM, clauth, ccswap y Claude Switcher también gestionan Codex y otros agentes de programación.
 - clausona también activa y desactiva extensiones por cuenta (`ccam ext` de ccam solo las muestra), registra el coste local en tokens e incluye plugins de Claude Code que ejecutan flotas de workers en tmux y otras terminales.

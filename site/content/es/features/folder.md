@@ -1,10 +1,10 @@
 ---
 title: Cuentas por carpeta
 description: ccam folder hace que una carpeta y todo su contenido usen una cuenta al iniciar Claude Code sin nombre de cuenta, como work para el código de tu empresa.
-updated: 2026-10-20
+updated: 2026-10-23
 order: 11
 translation: machine
-sourceHash: 46d1410a3d81
+sourceHash: 48de98d42b99
 ---
 
 `ccam folder work ~/code/company` hace que todo inicio sin nombre de cuenta dentro de `~/code/company`, y en cualquier carpeta debajo de ella, inicie Claude Code como `work`. Fuera de ella, se inicia la cuenta predeterminada como antes. Si nombras una cuenta, con `ccam personal` o un atajo como `ccpersonal`, siempre se inicia esa cuenta.
@@ -34,7 +34,7 @@ Estos inicios usan la cuenta de la carpeta:
 - `ccam -p "…"` y cualquier otro inicio cuyo primer argumento sea una opción para Claude Code
 - `ccam run` sin nombre, y `ccam --dry-run`
 - `ccam --fallback -p "…"` en su primer intento
-- el panel, `ccam` a secas, que empieza con el cursor en la cuenta de la carpeta
+- el panel, `ccam` a secas, que empieza con el cursor en la cuenta de la carpeta, también cuando llegaste a la carpeta mediante un enlace simbólico
 
 ## Opciones
 
@@ -59,7 +59,7 @@ account = 'work'
 2. Un inicio sin nombre llama a `launcher.HereProfile`. Sin entradas, toma la cuenta predeterminada de inmediato.
 3. Si no, compara el directorio de trabajo con cada `path` como cadenas: la propia carpeta o una debajo de ella, nunca una carpeta que solo empieza con las mismas letras (`/code/company` no abarca `/code/companyx`). Gana la entrada más profunda, así que `~/code` puede ser `personal` mientras `~/code/company` es `work`.
 4. Solo si el directorio de trabajo tal cual no coincide con nada, ccam resuelve sus enlaces simbólicos y compara una vez más.
-5. En Windows, la comparación no distingue mayúsculas de minúsculas, igual que Windows.
+5. En Windows y macOS, la comparación no distingue mayúsculas de minúsculas, como suelen hacer sus sistemas de archivos.
 
 No se lee ningún archivo aparte de `config.toml`, así que un inicio dentro de una carpeta no cuesta un tiempo medible (4,0 ms con o sin entradas, `hyperfine`, 300 ejecuciones).
 

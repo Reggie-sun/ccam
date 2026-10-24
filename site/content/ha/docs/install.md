@@ -2,10 +2,10 @@
 title: Girka ccam
 metaTitle: Girka ccam a Linux, macOS da Windows
 description: Girka ccam a Linux, macOS ko Windows da umarni ɗaya, kunshin .deb ko lambar tushe, ka kuma sabunta shi da ccam update. Fara girka Claude Code tukuna.
-updated: 2026-10-21
+updated: 2026-10-23
 order: 1
 translation: machine
-sourceHash: 1e3a53623de0
+sourceHash: af21dcc24169
 ---
 
 Gudanar da wannan a terminal a Linux ko macOS:
@@ -22,7 +22,7 @@ A Windows, gudanar da wannan a PowerShell:
 irm https://ccam.dev/install.ps1 | iex
 ```
 
-Yana sauke `ccam_windows_<arch>.zip`, yana duba checksum na SHA-256 nasa, yana sa `ccam.exe` a `%USERPROFILE%\.local\bin`, foldar da mai girka Claude Code yake sa `claude.exe`, kuma yana ƙara wannan foldar a `PATH` na mai amfani idan ba ta can tukuna. Buɗe sabon terminal bayan haka.
+Yana sauke `ccam_windows_<arch>.zip`, yana duba checksum na SHA-256 nasa, yana sa `ccam.exe` a `%USERPROFILE%\.local\bin`, foldar da mai girka Claude Code yake sa `claude.exe`, kuma yana ƙara wannan foldar a `PATH` na mai amfani idan ba ta can tukuna, ba tare da canza abubuwan da ke cikinsa kamar `%USERPROFILE%\bin` ba. Buɗe sabon terminal bayan haka. Sake gudanar da shi yana maye gurbin ccam, har ma yayin da zaman Claude Code ke gudana daga tsohon binary (ana sauya sunan wancan zuwa `ccam.exe.old`, ko `ccam.exe.old-<number>` idan wani tsoho yana kan aiki har yanzu), kuma yana sabunta gajerun umarnin da suke hard links: `OK 2 shortcuts now run the new ccam`.
 
 ccam ne ke fara maka Claude Code, don haka ka fara girka [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) kuma ka tabbata `claude --version` yana aiki.
 
@@ -30,7 +30,7 @@ ccam ne ke fara maka Claude Code, don haka ka fara girka [Claude Code](https://d
 
 - Linux a x86-64 da ARM64: Ubuntu, Debian, Fedora, Arch, Alpine da sauran distributions. Binary ɗin static ne kuma ba shi da dependencies.
 - macOS a Apple silicon da Intel.
-- Windows 10 da 11 a x86-64 da ARM64, a PowerShell, Windows Terminal ko Git Bash. Foldojin da aka raba suna aiki ga kowane mai amfani. Fayilolin da aka raba (`settings.json`, `CLAUDE.md`, `history.jsonl`) suna buƙatar Developer Mode (Settings > System > For developers), saboda Windows yana bari wannan yanayin kaɗai, ko administrator, ya ƙirƙiri mahaɗai zuwa fayiloli; duba [rabawa a Windows](/features/share#on-windows).
+- Windows 10 da 11 a x86-64 da ARM64, a PowerShell, Windows Terminal ko Git Bash. Foldojin da aka raba suna aiki ga kowane mai amfani. Fayilolin da aka raba (`settings.json`, `CLAUDE.md`, `history.jsonl`) suna buƙatar Developer Mode (Settings > System > For developers), saboda Windows yana bari wannan yanayin kaɗai, ko administrator, ya ƙirƙiri mahaɗai zuwa fayiloli; duba [rabawa a Windows](/features/share#on-windows). Ba tare da shi ba, `ccam add` na farko yana ƙirƙirar rukunin `default` da sabobin MCP da extensions kawai, kuma yana faɗin yadda za a ƙara sauran da zarar an kunna Developer Mode.
 - A cikin WSL, ccam yana aiki kamar a kowane tsarin Linux.
 
 ## Wasu hanyoyin girkawa
@@ -48,6 +48,8 @@ Kunshin yana girka `/usr/bin/ccam`.
 ```sh
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
 ```
+
+Ginin tag na saki (`@latest` ko `@vX.Y.Z`) yana ba da rahoton wannan sigar, don haka `ccam update` yana aiki a kansa; ginin `@main` ko na checkout na gida da ya wuce tag yana ba da rahoton `dev`.
 
 **Wata siga ta musamman.** Saita `CCAM_VERSION`:
 
@@ -117,9 +119,9 @@ ccam update --version v0.2.0
 ccam --dry-run update
 ```
 
-Sake gudanar da rubutun girkawa shi ma yana sabunta kwafin da ke `~/.local/bin`. Idan ka gina ccam da `go install`, sake gudanar da wannan umarnin.
+Sake gudanar da rubutun girkawa shi ma yana sabunta kwafin da ke `~/.local/bin`. Idan ka gina ccam da `go install` daga tag na saki, `ccam update` shi ma yana aiki, ko ka sake gudanar da wannan umarnin.
 
-**Windows.** `ccam update` yana sauke `.zip` na Windows. Ba za a iya maye gurbin shirin da ke gudana a Windows ba, don haka ana sauya sunan tsohon binary zuwa `ccam.exe.old`, wanda sabuntawa ta gaba ke gogewa.
+**Windows.** `ccam update` yana sauke `.zip` na Windows. Ba za a iya maye gurbin shirin da ke gudana a Windows ba, don haka ana sauya sunan tsohon binary zuwa `ccam.exe.old`, wanda sabuntawa ta gaba ke gogewa; yayin da wani zama ke gudana har yanzu daga `ccam.exe.old` na baya, sunan shi ne `ccam.exe.old-<time>`. Ana sabunta gajerun umarnin da suke hard links nan da nan bayan haka.
 
 **Kunshin Debian da Ubuntu.** `ccam update` ba ya maye gurbin `/usr/bin/ccam` da apt ya girka, a maimakon haka yana buga waɗannan matakan. Sauke sabon `ccam_<version>_linux_amd64.deb` daga [shafin saki](https://github.com/jhyunwoo/ccam/releases) sannan ka girka shi a kan tsohon:
 
@@ -146,4 +148,4 @@ Remove-Item ~\.local\bin\ccam.exe
 Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
 ```
 
-Share `~/.local/share/ccam` yana share bayanan shiga da tarihin tattaunawa da aka ajiye a can ma. Foldar `~/.claude` da ka [shigo da ita](/docs/commands) tana nan a inda take.
+Share `~/.local/share/ccam` yana share bayanan shiga da tarihin tattaunawa da aka ajiye a can ma. Foldar `~/.claude` da ka [shigo da ita](/docs/commands) tana nan a inda take, amma yayin da take cikin rukuni, fayilolin da take rabawa suna zaune a `~/.local/share/ccam/groups/`. Fara gudanar da `ccam remove <name>` a kanta (ko `ccam group leave`): tana fita daga rukunoninta tare da kwafin duk abin da ta raba.

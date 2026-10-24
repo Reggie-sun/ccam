@@ -1,10 +1,10 @@
 ---
 title: การจัดการบัญชี
 description: "เพิ่ม เข้าสู่ระบบ แสดงรายการ เปลี่ยนชื่อ ลบ และนำเข้าบัญชี Claude Code ด้วย ccam add, ccam login, ccam list, ccam rename, ccam remove และ ccam import"
-updated: 2026-10-20
+updated: 2026-10-23
 order: 2
 translation: machine
-sourceHash: "8564517d0d71"
+sourceHash: "f4c09f92ce7d"
 ---
 
 บัญชี ccam แต่ละบัญชีคือโฟลเดอร์การตั้งค่า Claude Code แยกกันที่มีการเข้าสู่ระบบของตัวเอง คำสั่งเหล่านี้ใช้สร้าง ลงชื่อเข้าใช้ แสดงรายการ เปลี่ยนชื่อ และลบบัญชี รวมถึงลงทะเบียนโฟลเดอร์ที่คุณมีอยู่แล้ว
@@ -17,12 +17,12 @@ ccam add work --shortcut ccwork            # no wizard: log in, then create the 
 ccam add side --no-login --group default --group team
 ccam login side                            # run claude auth login inside the account
 ccam login --expired                       # every account never logged in, or whose login expired
-ccam logout side                           # remove the login token
+ccam logout side                           # log out: the login and its MCP sign-ins
 ccam list                                  # table of accounts; ccam ls is the same
 ccam list --json                           # machine-readable
 ccam use 2                                 # make slot 2 the default account
 ccam rename side personal
-ccam remove personal                       # asks, then moves the folder to the trash
+ccam remove personal                       # asks, logs out, then moves the folder to the trash
 ccam import                                # find ~/.claude and ~/.claude-* and ask about each
 ccam import ~/.claude-ops --name ops
 ccam completion zsh > "${fpath[1]}/_ccam"
@@ -32,9 +32,9 @@ ccam completion zsh > "${fpath[1]}/_ccam"
 
 `ccam add` บนเทอร์มินัลโดยไม่ใส่ตัวเลือกจะเปิดตัวช่วยตั้งค่า โดยจะถามชื่อและวิธีที่บัญชีลงชื่อเข้าใช้ (เข้าสู่ระบบ Claude ตอนนี้ ใช้ API key หรือเข้าสู่ระบบ Claude ภายหลัง) จากนั้นแสดงกลุ่มที่จะเข้าร่วมโดยเลือก `default` ไว้ (หากยังไม่มีกลุ่มใดเลย จะแสดงรายการที่กลุ่ม `default` จะใช้ร่วมกันแทน) แล้วถาม `Create a shortcut command for work? [y/N]` และปิดท้ายด้วยสรุปให้ยืนยัน `Esc` ใช้ย้อนกลับไปหนึ่งขั้น การใส่ `--group`, `--no-group`, `--shortcut` หรือ `--no-login` ตัวใดตัวหนึ่ง หรือการส่งข้อมูลผ่านไปป์แทนเทอร์มินัล จะข้ามตัวช่วยตั้งค่า ในกรณีนั้นต้องระบุชื่อ และจะไม่มีการสร้างคำสั่งลัดเว้นแต่ `--shortcut` จะระบุชื่อไว้
 
-หากไม่ใส่ `--group` บัญชีใหม่จะเข้าร่วมกลุ่ม `default` บัญชีแรกจะสร้างกลุ่มนี้ขึ้น โดยใช้เซิร์ฟเวอร์ MCP การตั้งค่า `CLAUDE.md` และส่วนขยายร่วมกัน ดู[การใช้ร่วมกันด้วยกลุ่ม](/features/share)
+หากไม่ใส่ `--group` บัญชีใหม่จะเข้าร่วมกลุ่ม `default` บัญชีแรกจะสร้างกลุ่มนี้ขึ้น โดยใช้เซิร์ฟเวอร์ MCP การตั้งค่า `CLAUDE.md` และส่วนขยายร่วมกัน ดู[การใช้ร่วมกันด้วยกลุ่ม](/features/share) บน Windows ที่ไม่ได้เปิด Developer Mode ซึ่งจำเป็นต่อการลิงก์ไฟล์ บัญชีแรกจะสร้าง `default` ที่มีเพียง `mcp` และ `extensions` และแจ้งให้ทราบ (`Note: files can be linked on Windows only in Developer Mode (Settings > System > For developers), so group default shares only mcp, extensions. …`) และ `--group` ไปยังกลุ่มที่ใช้การตั้งค่า หน่วยความจำ หรือประวัติร่วมกันจะถูกปฏิเสธ
 
-`ccam list` แสดงสล็อต ชื่อ คำสั่งลัด อีเมล กลุ่ม และเวลาที่ใช้ล่าสุด โดยมี `*` อยู่หน้าบัญชีเริ่มต้น:
+`ccam list` แสดงสล็อต ชื่อ คำสั่งลัด อีเมล กลุ่ม และเวลาที่ใช้ล่าสุด โดยมี `*` อยู่หน้าบัญชีเริ่มต้น อีเมลคืออีเมลที่โฟลเดอร์เข้าสู่ระบบอยู่ในตอนนี้ (จาก `.claude.json` ของโฟลเดอร์) เมื่ออีเมลนั้นต่างจากที่ ccam บันทึกไว้ อีเมลที่บันทึกไว้จะตามมาในรูป `(was …)`:
 
 ```console
 $ ccam list
@@ -43,7 +43,13 @@ $ ccam list
    2  personal  -         me@side.dev       default       -
 ```
 
-เมื่อใช้ `--json` แต่ละบัญชีจะเป็นออบเจ็กต์ที่มี `slot`, `shortcut`, `name`, `email`, `default`, `dir`, `last_used` (ไม่มีหากบัญชีไม่เคยถูกเริ่ม), `groups` และ `share` โดย `share` จะจับคู่แต่ละรายการ (`mcp`, `settings`, `memory`, `extensions`, `history`) กับกลุ่มที่รายการนั้นมาจาก หรือ `"local"`
+```console
+$ ccam list
+   #  Name      Shortcut  Email                                     Groups   Last used
+*  1  work      ccwork    other@company.com (was work@example.com)  default  2m ago
+```
+
+เมื่อใช้ `--json` แต่ละบัญชีจะเป็นออบเจ็กต์ที่มี `slot`, `shortcut`, `name`, `email` (ของการเข้าสู่ระบบปัจจุบัน เช่นเดียวกับในตาราง), `default`, `dir`, `last_used` (ไม่มีหากบัญชีไม่เคยถูกเริ่ม), `groups` และ `share` โดย `share` จะจับคู่แต่ละรายการ (`mcp`, `settings`, `memory`, `extensions`, `history`) กับกลุ่มที่รายการนั้นมาจาก หรือ `"local"`
 
 ## ตัวเลือก
 
@@ -56,11 +62,12 @@ $ ccam list
 | `ccam add --api --key-from <source>` | บัญชีที่ใช้ API key แทนการเข้าสู่ระบบ ดู[บัญชี API key](/features/api) | ปิด |
 | `ccam list --json` | พิมพ์รายการบัญชีเป็น JSON | ปิด |
 | `ccam remove -y`, `--yes` | ลบโดยไม่ถาม | ปิด |
-| `ccam import --name <name>` | ชื่อบัญชีสำหรับโฟลเดอร์ที่คุณระบุ | ได้มาจากชื่อโฟลเดอร์ |
+| `ccam logout -y`, `--yes` | ออกจากระบบโดยไม่ถาม | ปิด |
+| `ccam import --name <name>` | ชื่อบัญชีสำหรับโฟลเดอร์ที่คุณระบุ ถูกปฏิเสธหากไม่ระบุโฟลเดอร์ (`--name needs a folder: ccam import <folder> --name ops`) | ได้มาจากชื่อโฟลเดอร์ |
 | `ccam import -y`, `--yes` | นำเข้าทุกโฟลเดอร์ที่พบโดยไม่ถาม | ปิด |
 | `--dry-run` | `ccam list` และ `ccam completion` ซึ่งไม่เปลี่ยนแปลงสิ่งใดจะรองรับตัวเลือกนี้ ส่วน `add`, `login`, `logout`, `use`, `rename`, `remove` และ `import` จะปฏิเสธด้วยข้อความ `` --dry-run is not supported by `ccam add`; nothing was changed `` (โดยระบุชื่อคำสั่งนั้น) | ปิด |
 
-`ccam login`, `ccam logout`, `ccam use` และ `ccam rename` ไม่มีตัวเลือกของตัวเอง `ccam completion` รับ `bash`, `zsh` หรือ `powershell` ค่าอื่นจะล้มเหลวด้วย `only bash, zsh and powershell are supported`
+`ccam login` (นอกจาก `--expired`), `ccam use` และ `ccam rename` ไม่มีตัวเลือกของตัวเอง `ccam completion` รับ `bash`, `zsh` หรือ `powershell` ค่าอื่นจะล้มเหลวด้วย `only bash, zsh and powershell are supported`
 
 ชื่อบัญชียาว 1 ถึง 32 อักขระ ประกอบด้วย `a-z`, `0-9`, `-` และ `_` และต้องขึ้นต้นด้วยตัวอักษรหรือตัวเลข ชื่อต้องไม่เป็นตัวเลขล้วน เพราะ `ccam 2` หมายถึงสล็อต 2 และชื่อต้องไม่ซ้ำกับคำสั่งของ ccam (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`, `folder`, `pick`, `ext`, `group`, `groups`) เพื่อให้ `ccam <name>` ไม่กำกวม รายการนี้คือ `config.Reserved` ใน `internal/config`
 
@@ -76,13 +83,21 @@ $ ccam list
 4. บัญชีจะถูกบันทึกลงใน `~/.config/ccam/config.toml` ผ่าน `fsutil.AtomicWrite`: เขียนไฟล์ชั่วคราว เรียก `fsync` แล้วจึง `rename` ดังนั้นการแครชจะไม่ทิ้งการตั้งค่าไว้ครึ่ง ๆ กลาง ๆ
 5. `runLogin` เริ่ม `claude auth login` โดยตั้ง `CLAUDE_CONFIG_DIR` เป็นโฟลเดอร์ของบัญชี และใส่ `--email` เป็นอีเมลล่าสุดของบัญชี เพื่อให้หน้าเข้าสู่ระบบกรอกไว้ให้ หากเข้าสู่ระบบไม่สำเร็จ บัญชีจะยังคงอยู่ และ ccam จะพิมพ์ข้อผิดพลาดพร้อมบอกให้คุณรัน `ccam login work` ภายหลัง
 6. `profile.ReadIdentity` ดึง `oauthAccount` ออกจาก `profiles/work/.claude.json` ได้แก่ อีเมล id ของบัญชีและองค์กร ชื่อองค์กร และแพ็กเกจ (`claude_max`, `claude_team` …) ไฟล์นั้นอาจมีขนาดหลายเมกะไบต์ `TopLevelValue` จึงสแกนหาเพียงคีย์เดียวแทนการพาร์สทั้งไฟล์ ccam เก็บค่าเหล่านี้ไว้ใน `[profile.login]` ใน `config.toml`
-7. `shim.Install` ลิงก์ `~/.local/bin/ccwork` ไปยังไบนารีของ ccam ซึ่งจะค้นหา `argv[0]` ใน `config.toml` เมื่อเริ่มทำงาน
+7. `shim.Install` ลิงก์ `~/.local/bin/ccwork` ไปยังไบนารีของ ccam ซึ่งจะค้นหา `argv[0]` ใน `config.toml` เมื่อเริ่มทำงาน และบันทึกลิงก์ไว้ใน `~/.local/state/ccam/shortcuts.json` หากสร้างลิงก์ไม่ได้ บัญชีจะยังถูกเพิ่ม ccam จะบอกเหตุผล (`Could not create shortcuts: …`) และสรุปผลจะแสดง `shortcut: ccwork (not created; see above)`
 
 การเข้าสู่ระบบอาจใช้เวลาหลายนาที และ ccam อีกตัวอาจบันทึกการตั้งค่าในระหว่างนั้น คำสั่งที่ต้องรอจึงบันทึกผ่าน `env.update` ซึ่งโหลด `config.toml` ใหม่ ใช้การเปลี่ยนแปลงเพียงรายการเดียว (ในที่นี้คืออีเมล) แล้วบันทึก `ccam remove` ก็โหลดใหม่หลังจากถามด้วยเหตุผลเดียวกัน
 
-`ccam login` ทำขั้นตอนที่ 5 และ 6 สำหรับบัญชีที่มีอยู่แล้ว Claude Code ใช้อีเมลเป็นเพียงคำใบ้สำหรับหน้าเข้าสู่ระบบ การเข้าสู่ระบบจึงอาจไปจบที่บัญชี Claude อื่นที่ไม่ใช่บัญชีเดิมของบัญชี ccam นั้นได้ ccam จะเปรียบเทียบการเข้าสู่ระบบใหม่กับ `[profile.login]` และแจ้งให้ทราบ (`ccam: this login is other@company.com, but work was dev@company.com before.`) ccam จะเก็บการเข้าสู่ระบบใหม่ไว้และบอกวิธีย้อนกลับ: `ccam logout work` จากนั้น `ccam login work` แล้วลงชื่อเข้าใช้ด้วยอีเมลที่ถูกต้อง เมื่อบัญชี ccam อื่นเข้าสู่ระบบด้วยบัญชี Claude เดียวกัน ccam จะเตือนว่าทั้งสองใช้ขีดจำกัดการใช้งานร่วมกัน `ccam login --expired` จะเข้าสู่ระบบทีละบัญชีให้กับทุกบัญชีที่ไม่เคยเข้าสู่ระบบ หรือที่การเข้าสู่ระบบ (refresh token) หมดอายุแล้ว
+`ccam login` ทำขั้นตอนที่ 5 และ 6 สำหรับบัญชีที่มีอยู่แล้ว Claude Code ใช้อีเมลเป็นเพียงคำใบ้สำหรับหน้าเข้าสู่ระบบ การเข้าสู่ระบบจึงอาจไปจบที่บัญชี Claude อื่นที่ไม่ใช่บัญชีเดิมของบัญชี ccam นั้นได้ ccam จะเปรียบเทียบการเข้าสู่ระบบใหม่กับ `[profile.login]` และแจ้งให้ทราบ (`ccam: this login is other@company.com, but work was dev@company.com before.`) ccam จะเก็บการเข้าสู่ระบบใหม่ไว้และบอกวิธีย้อนกลับ: ``To undo it, run `ccam login work` again and sign in as dev@company.com.`` การเข้าสู่ระบบไปยังบัญชี Claude อื่นยังทำให้[บันทึกขีดจำกัด](/features/usage#the-limit-record)ของบัญชีถูกทิ้งไปด้วย เพราะขีดจำกัดเหล่านั้นเป็นของอีกบัญชีหนึ่ง เมื่อบัญชี ccam อื่นเข้าสู่ระบบด้วยบัญชี Claude เดียวกัน ccam จะเตือนว่าทั้งสองใช้ขีดจำกัดการใช้งานร่วมกัน `ccam login --expired` จะเข้าสู่ระบบทีละบัญชีให้กับทุกบัญชีที่ไม่เคยเข้าสู่ระบบ หรือที่การเข้าสู่ระบบหมดอายุแล้ว: refresh token หมดอายุ หรือ Claude Code ล้างการเข้าสู่ระบบหลังจากเซิร์ฟเวอร์ปฏิเสธ ก่อนเปิดเบราว์เซอร์ครั้งแรก คำสั่งนี้จะตรวจสอบว่าบันทึก `config.toml` ได้
 
-`ccam logout` รัน `claude auth logout` ในบัญชีนั้นและล้างอีเมลที่บันทึกไว้ แต่บันทึกการเข้าสู่ระบบยังคงอยู่ การเข้าสู่ระบบครั้งถัดไปจึงถูกตรวจเทียบกับบันทึกนั้น ส่วน `ccam use` เพียงเขียนค่า `default` ใน `config.toml` ใหม่
+`ccam logout` รัน `claude auth logout` ในบัญชีนั้นและล้างอีเมลที่บันทึกไว้ แต่บันทึกการเข้าสู่ระบบยังคงอยู่ การเข้าสู่ระบบครั้งถัดไปจึงถูกตรวจเทียบกับบันทึกนั้น Claude Code จะเพิกถอนการเข้าสู่ระบบและลบสิ่งที่เก็บไว้สำหรับบัญชีนั้น รวมถึงการลงชื่อเข้าใช้เซิร์ฟเวอร์ MCP ด้วย ccam จึงบอกก่อนว่าอะไรจะหายไปพร้อมกันและถาม (`--yes` ข้ามคำถาม): เมื่อการเข้าสู่ระบบมีการลงชื่อเข้าใช้ MCP อยู่ เมื่อบัญชีกำลังทำงาน (เซสชันของบัญชีจะถูกออกจากระบบด้วย) และเมื่อโฟลเดอร์ของบัญชีอื่นถือการเข้าสู่ระบบเดียวกัน (โฟลเดอร์ที่ถูกคัดลอก) ซึ่งการออกจากระบบจะเพิกถอนด้วยเช่นกัน:
+
+```console
+$ ccam logout side
+Logging out also removes side's MCP server sign-ins (linear); sign in to them again with /mcp.
+Log out side? [y/N]
+```
+
+หากต้องการเข้าสู่ระบบเป็นบัญชี Claude อื่น ใช้เพียง `ccam login <name>` ก็พอ และจะคงการลงชื่อเข้าใช้ MCP ไว้ ส่วน `ccam use` เพียงเขียนค่า `default` ใน `config.toml` ใหม่
 
 `ccam list` จะเพิ่มคอลัมน์ `Organization` เมื่อบัญชีอยู่ในองค์กรมากกว่าหนึ่งแห่ง (แพ็กเกจส่วนตัวแสดงเป็น `personal`) และ `ccam list --json` มี `plan` และ `org` สำหรับทุกบัญชี
 
@@ -106,25 +121,28 @@ On a remote machine? If the browser ends on a http://localhost:…/callback page
 
 ### การเปลี่ยนชื่อ การลบ และการนำเข้า
 
-`ccam rename` และ `ccam remove` ทำงานกับโฟลเดอร์ของบัญชี และกับสิ่งที่ ccam เก็บไว้ภายใต้ชื่อบัญชีในที่อื่น `nameState` ระบุพาธเหล่านั้น: `~/.local/state/ccam/last-used/<name>`, `~/.local/state/ccam/mcp/<name>` และแคชการใช้งาน `~/.local/state/ccam/usage/<name>.json` และ `<name>.statusline.json` โดย `ccam remove work` จัดการตามลำดับนี้:
+`ccam rename` และ `ccam remove` ทำงานกับโฟลเดอร์ของบัญชี และกับสิ่งที่ ccam เก็บไว้ภายใต้ชื่อบัญชีในที่อื่น `nameState` ระบุพาธเหล่านั้น: `~/.local/state/ccam/last-used/<name>`, `~/.local/state/ccam/mcp/<name>` แคชการใช้งาน `~/.local/state/ccam/usage/<name>.json` และ `<name>.statusline.json` บันทึกขีดจำกัด `<name>.limit.json` และบันทึกของเซสชันใน `~/.local/state/ccam/handoff/<name>/` โดย `ccam remove work` จัดการตามลำดับนี้:
 
 <!-- motion:accounts-remove -->
 
-`ccam remove` จะปฏิเสธก่อนหากบัญชีกำลังทำงาน แล้วจึงถาม หากบัญชีใช้ส่วนขยายร่วมกัน `RewritePluginPaths` จะเขียน `installed_plugins.json` และ `known_marketplaces.json` ของกลุ่มใหม่ เพราะ Claude Code เก็บพาธปลั๊กอินแบบสัมบูรณ์ซึ่งอาจผ่านโฟลเดอร์ของบัญชีนี้ `profile.Trash` ย้ายโฟลเดอร์ไปยัง `~/.local/share/ccam/trash/<name>-<time>/` บัญชีจะถูกนำออกจาก `config.toml` พาธใน `nameState` จะถูกลบเพื่อไม่ให้บัญชีที่สร้างภายหลังด้วยชื่อเดียวกันได้รับสืบทอดไป และลิงก์คำสั่งลัดจะถูกลบ หากต้องการกู้คืน ให้ย้ายโฟลเดอร์กลับมาจากถังขยะ
+`ccam remove` จะปฏิเสธก่อนหากบัญชีกำลังทำงาน แล้วจึงถาม และตรวจสอบอีกครั้งหลังได้คำตอบ (เซสชันที่เริ่มขึ้นระหว่างที่คำถามรออยู่จะถูกตรวจพบ) คำสั่งนี้ตรวจสอบว่าบันทึก `config.toml` ได้ก่อนจะเปลี่ยนแปลงสิ่งใด หากบัญชีใช้ส่วนขยายร่วมกัน `RewritePluginPaths` จะเขียน `installed_plugins.json` และ `known_marketplaces.json` ของกลุ่มใหม่ เพราะ Claude Code เก็บพาธปลั๊กอินแบบสัมบูรณ์ซึ่งอาจผ่านโฟลเดอร์ของบัญชีนี้ จากนั้นบัญชีที่ ccam จัดการจะถูกออกจากระบบ: `claude auth logout` จะรันในโฟลเดอร์ของบัญชี เพื่อไม่ให้มีการเข้าสู่ระบบที่ยังใช้งานได้ค้างอยู่ในถังขยะ (หรือบน macOS ในรายการพวงกุญแจ (Keychain) ที่ตั้งชื่อตามโฟลเดอร์ ซึ่งบัญชีที่สร้างภายหลังด้วยชื่อนั้นจะได้รับสืบทอดไป) ขั้นตอนนี้จะถูกข้ามสำหรับบัญชี API key และเมื่อโฟลเดอร์ของบัญชีอื่นถือการเข้าสู่ระบบเดียวกัน ซึ่งการออกจากระบบจะเพิกถอนไปด้วย การออกจากระบบที่ล้มเหลวจะถูกรายงาน และการลบจะดำเนินต่อไป `profile.Trash` ย้ายโฟลเดอร์ไปยัง `~/.local/share/ccam/trash/<name>-<time>/` บัญชีจะถูกนำออกจาก `config.toml` พาธใน `nameState` จะถูกลบเพื่อไม่ให้บัญชีที่สร้างภายหลังด้วยชื่อเดียวกันได้รับสืบทอดไป และลิงก์คำสั่งลัดจะถูกลบ: `✓ side removed (folder moved to /home/you/.local/share/ccam/trash/side-20261023-212306; logged out first)` หากสุดท้ายบันทึก `config.toml` ไม่ได้ โฟลเดอร์จะกลับมาจากถังขยะ หากต้องการกู้คืนบัญชีที่ลบไป ให้ย้ายโฟลเดอร์กลับมาจากถังขยะแล้วเข้าสู่ระบบอีกครั้ง
 
-`ccam rename` เปลี่ยนชื่อโฟลเดอร์ เขียนพาธปลั๊กอินใน `plugins/` ของบัญชีใหม่จากโฟลเดอร์เดิมเป็นโฟลเดอร์ใหม่ คงสถานะบัญชีเริ่มต้นไว้ และย้ายพาธใน `nameState` ไปใช้ชื่อใหม่ คำสั่งลัดยังคงชื่อเดิม หากการเขียนพาธปลั๊กอินใหม่ล้มเหลว โฟลเดอร์จะถูกเปลี่ยนชื่อกลับ เนื่องจากยังไม่ได้บันทึกการตั้งค่า
+`ccam rename` เปลี่ยนชื่อโฟลเดอร์ เขียนพาธปลั๊กอินใน `plugins/` ของบัญชีใหม่จากโฟลเดอร์เดิมเป็นโฟลเดอร์ใหม่ คงสถานะบัญชีเริ่มต้นไว้ และย้ายพาธใน `nameState` ไปใช้ชื่อใหม่ บันทึกของเซสชันจะถูกปรับให้ `ccam next --continue` ยังหาเจอ คำสั่งลัดยังคงชื่อเดิม หากการเขียนพาธปลั๊กอินใหม่ล้มเหลว หรือบันทึก `config.toml` ไม่ได้ โฟลเดอร์จะถูกเปลี่ยนชื่อกลับ บน macOS โฟลเดอร์จะคงชื่อเดิมไว้ เพราะพวงกุญแจ (Keychain) เก็บการเข้าสู่ระบบและการลงชื่อเข้าใช้ MCP ไว้ภายใต้พาธของโฟลเดอร์ และโฟลเดอร์ที่ถูกย้ายจะหลุดจากระบบ เช่นเดียวกับบน Windows เมื่อ Claude Code เก็บการเข้าสู่ระบบไว้ใน Credential Manager การตั้งค่าจึงบันทึกโฟลเดอร์ไว้เป็น `folder` ข้างชื่อใหม่ และ ccam จะแจ้งว่า `its folder stays …: the macOS Keychain keeps the login under the folder's path`
 
-`ccam import` ลงทะเบียนโฟลเดอร์ไว้ในตำแหน่งเดิม โดยเก็บเป็น `dir` ใน `config.toml` ccam ไม่ย้ายหรือคัดลอกโฟลเดอร์เลย เพราะ refresh token ที่ถูกคัดลอกจะทำให้สำเนาแต่ละชุดทำให้กันและกันออกจากระบบ หากไม่ระบุโฟลเดอร์ ccam จะค้นหาโฟลเดอร์ `~/.claude` และ `~/.claude-*` ที่ยังไม่ได้ลงทะเบียนแล้วถามทีละโฟลเดอร์ ชื่อบัญชีได้มาจากชื่อโฟลเดอร์ (`~/.claude` เป็น `main`, `~/.claude-work` เป็น `work`, `~/.claude-2` เป็น `acct2`) และโฟลเดอร์ที่หาชื่อไม่ได้จะแสดงพร้อมคำสั่ง `--name` ที่ต้องใช้ หากไม่มี `CLAUDE_CONFIG_DIR` Claude Code จะเก็บ `.claude.json` ไว้ในโฟลเดอร์ home ข้าง ๆ `~/.claude` ดังนั้นเมื่อคุณนำเข้า `~/.claude` และโฟลเดอร์นั้นไม่มี `.claude.json` ของตัวเอง ccam จะสร้างลิงก์ `~/.claude/.claude.json` ไปยัง `~/.claude.json` จากนั้น `claude` แบบปกติและ `ccam main` จะเห็นบัญชีเดียวกัน บัญชีที่นำเข้าจะไม่อยู่ในกลุ่มใดจนกว่าคุณจะเพิ่มเข้าไปในกลุ่มหนึ่ง (`ccam group join <group> <name>`) และจะไม่มีการสร้างคำสั่งลัด
+`ccam import` ลงทะเบียนโฟลเดอร์ไว้ในตำแหน่งเดิม โดยเก็บเป็น `dir` ใน `config.toml` ccam ไม่ย้ายหรือคัดลอกโฟลเดอร์เลย เพราะ refresh token ที่ถูกคัดลอกจะทำให้สำเนาแต่ละชุดทำให้กันและกันออกจากระบบ หากไม่ระบุโฟลเดอร์ ccam จะค้นหาโฟลเดอร์ `~/.claude` และ `~/.claude-*` ที่ยังไม่ได้ลงทะเบียนแล้วถามทีละโฟลเดอร์ ชื่อบัญชีได้มาจากชื่อโฟลเดอร์ (`~/.claude` เป็น `main`, `~/.claude-work` เป็น `work`, `~/.claude-2` เป็น `acct2`) และโฟลเดอร์ที่หาชื่อไม่ได้ หรือชื่อซ้ำกับบัญชีที่มีอยู่ จะแสดงพร้อมคำสั่ง `--name` ที่ต้องใช้ โฟลเดอร์ที่พบแต่ไม่สำเร็จจะถูกรายงานเป็น `Skipped <path>: <reason>` และโฟลเดอร์อื่นจะถูกนำเข้าตามปกติ คำตอบจะถูกรวบรวมก่อน แล้วจึงลงทะเบียนโฟลเดอร์ลงใน `config.toml` ตามสภาพในขณะนั้น สิ่งที่คำสั่ง ccam อื่นบันทึกไว้ระหว่างนั้นจึงยังคงอยู่ บรรทัด `✓` จะแสดงหลังการบันทึก หากไม่มี `CLAUDE_CONFIG_DIR` Claude Code จะเก็บ `.claude.json` ไว้ในโฟลเดอร์ home ข้าง ๆ `~/.claude` ดังนั้นเมื่อคุณนำเข้า `~/.claude` และโฟลเดอร์นั้นไม่มี `.claude.json` ของตัวเอง ccam จะสร้างลิงก์ `~/.claude/.claude.json` ไปยัง `~/.claude.json` จากนั้น `claude` แบบปกติและ `ccam main` จะเห็นบัญชีเดียวกัน หาก `~/.claude` มี `.claude.json` ของตัวเองอยู่ข้าง `~/.claude.json` ccam จะปล่อยทั้งสองไฟล์ไว้และแจ้งให้ทราบ: `ccam main` จะใช้ไฟล์ด้านใน ส่วน `claude` แบบปกติจะใช้ไฟล์ด้านนอก ทำให้รายละเอียดการเข้าสู่ระบบและเซิร์ฟเวอร์ MCP แยกจากกัน ให้แทนที่ไฟล์ด้านในด้วยลิงก์เพื่อให้เหลือไฟล์เดียว ([doctor](/features/doctor) ก็รายงานเรื่องนี้เช่นกัน) เมื่อโฟลเดอร์ถือการเข้าสู่ระบบเดียวกับบัญชีที่ลงทะเบียนไว้ (โฟลเดอร์ที่ถูกคัดลอก) ccam จะแจ้งให้ทราบ: บัญชีใดต่ออายุก่อนจะทำให้อีกบัญชีหลุดจากระบบ ดังนั้นให้รัน `ccam login <name>` ก่อนใช้งาน บัญชีที่นำเข้าจะไม่อยู่ในกลุ่มใดจนกว่าคุณจะเพิ่มเข้าไปในกลุ่มหนึ่ง (`ccam group join <group> <name>`) และจะไม่มีการสร้างคำสั่งลัด
 
 `ccam completion bash|zsh` พิมพ์สคริปต์ completion ที่เติมชื่อบัญชีให้ด้วย
 
 ## ความปลอดภัยและกรณีพิเศษ
 
-- `ccam rename` และ `ccam remove` จะปฏิเสธขณะที่บัญชีกำลังทำงาน (`refuseRunning`) ด้วยข้อความ `work is running; quit its Claude Code session first` เพราะเซสชันยังคงเขียนลงในโฟลเดอร์
-- `ccam remove` กับบัญชีที่นำเข้ามาจะเพียงยกเลิกการลงทะเบียน: `✓ main unregistered (folder ... left in place)` โดย `~/.claude` ของคุณจะไม่ถูกย้ายไปถังขยะ
-- `ccam add` จะปฏิเสธชื่อที่มีโฟลเดอร์อยู่แล้วใน `profiles/` และแนะนำให้ใช้ `ccam import`
-- `ccam import` จะปฏิเสธโฟลเดอร์ที่ลงทะเบียนไว้แล้ว พาธที่ไม่ใช่โฟลเดอร์ และชื่อที่ถูกใช้ไปแล้ว
-- `ccam logout` และ `ccam login` ไม่ตรวจสอบว่าบัญชีกำลังทำงานอยู่หรือไม่
+- `ccam rename` และ `ccam remove` จะปฏิเสธขณะที่บัญชีกำลังทำงาน (`refuseRunning`) ด้วยข้อความ ``work is running; quit its Claude Code sessions first (`ccam agents` lists them, `ccam work stop <id>` ends a background one)`` เพราะเซสชันยังคงเขียนลงในโฟลเดอร์ การตรวจสอบนี้ครอบคลุม Claude Code ไม่ว่าจะเริ่มด้วยวิธีใด: ผ่าน ccam, `claude` แบบปกติ, IDE, เซสชันเบื้องหลังและ daemon ของเซสชันเหล่านั้น
+- `ccam rename`, `ccam remove` และ `ccam logout` จะปฏิเสธขณะที่ ccam อื่นกำลังต่ออายุหรือเปลี่ยนการเข้าสู่ระบบนั้น: ``another ccam is using the login of work right now (a refresh, rename, remove or logout); try again in a moment``
+- ขณะที่ ccam อื่นกำลังเปลี่ยนกลุ่มอยู่ `ccam rename` และ `ccam remove` จะปฏิเสธด้วย `another ccam is changing the groups right now; try again when it is done` และหลังจากการเปลี่ยนกลุ่มหยุดกลางคัน จะปฏิเสธด้วย ``the last change of groups stopped halfway; finish it with `ccam doctor --fix` first``
+- `ccam remove` กับบัญชีที่นำเข้ามาจะคงโฟลเดอร์และการเข้าสู่ระบบไว้สำหรับ `claude` แบบปกติ หากบัญชีอยู่ในกลุ่ม จะออกจากกลุ่มก่อนแบบเดียวกับ `ccam group leave`: ทุกรายการที่ใช้ร่วมกันจะกลายเป็นสำเนาของกลุ่มในโฟลเดอร์ และเซิร์ฟเวอร์ MCP ของกลุ่มจะไปอยู่ใน `.claude.json` ของโฟลเดอร์ จากนั้นจึงยกเลิกการลงทะเบียน: `✓ main unregistered (folder ... left in place; it left its groups with a copy of what they share)` ข้อมูลสำรองของ `.claude.json` ที่ ccam สร้างไว้จะย้ายไปที่ `<folder>/.ccam-backup/mcp-<time>` หากย้ายไม่ได้ จะยังอยู่ใน `~/.local/state/ccam/mcp/<name>/backups` และข้อความจะแจ้งไว้ `~/.claude` ของคุณจะไม่ถูกย้ายไปถังขยะ
+- สองบัญชีจะใช้โฟลเดอร์เดียวกันไม่ได้: `config.toml` ที่ระบุโฟลเดอร์เดียวซ้ำสองครั้งจะโหลดไม่สำเร็จ
+- `ccam add` จะปฏิเสธชื่อที่มีโฟลเดอร์อยู่แล้วใน `profiles/` และแนะนำให้ใช้ `ccam import` บน macOS คำสั่งนี้ยังหยุดเมื่อพวงกุญแจ (Keychain) ยังเก็บการเข้าสู่ระบบหรือการลงชื่อเข้าใช้ MCP สำหรับพาธของโฟลเดอร์ใหม่ไว้ ซึ่ง ccam รุ่นเก่าทิ้งไว้ และจะระบุคำสั่ง `security delete-generic-password` ที่ใช้ลบรายการเหล่านั้น หากบันทึก `config.toml` ไม่ได้ โฟลเดอร์ใหม่จะถูกลบออกอีกครั้ง
+- `ccam import` จะปฏิเสธโฟลเดอร์ที่ลงทะเบียนไว้แล้ว พาธที่ไม่ใช่โฟลเดอร์ และชื่อที่ถูกใช้ไปแล้ว สำเนาของ `~/.claude` ของ `claude` แบบปกติก็จะถูกตรวจพบเช่นกันเมื่อ `~/.claude` ยังไม่ได้ลงทะเบียน
+- `ccam logout` จะถามก่อนเมื่อบัญชีกำลังทำงานอยู่ ส่วน `ccam login` ไม่ตรวจสอบ
 - หากตัวส่งต่อติดต่อ Claude Code ไม่ได้ เช่น หลังจากการเข้าสู่ระบบสิ้นสุดไปแล้ว จะพิมพ์ `ccam: could not pass the sign-in to Claude Code:` พร้อมเหตุผล ข้อผิดพลาด HTTP มักหมายความว่ารหัสหมดอายุแล้ว ให้เริ่มเข้าสู่ระบบใหม่
 
 ## หัวข้อที่เกี่ยวข้อง

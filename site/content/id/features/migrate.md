@@ -1,13 +1,13 @@
 ---
 title: Menyalin penyiapan yang sudah ada
-description: Salin pengaturan, CLAUDE.md, ekstensi, server MCP, dan info masuk MCP dari ~/.claude yang sudah ada ke grup ccam dengan ccam migrate.
-updated: 2026-10-19
+description: Salin pengaturan, CLAUDE.md, ekstensi, dan server MCP dari ~/.claude yang sudah ada ke grup ccam dengan ccam migrate.
+updated: 2026-10-23
 order: 6
 translation: machine
-sourceHash: "7cee52e75749"
+sourceHash: "7bca9efb6eb0"
 ---
 
-Jika Anda sudah memakai Claude Code sebelum ccam, penyiapan Anda ada di `~/.claude` dan `~/.claude.json`. `ccam migrate` menyalinnya ke sebuah grup pembagian, sehingga setiap akun yang membagikan item tersebut melalui grup itu dimulai dengan penyiapan yang sudah Anda miliki. Folder sumber hanya dibaca, dan `claude` biasa tetap berfungsi seperti sebelumnya. Jalankan sekali setelah `ccam add` pertama Anda, dan lagi setiap kali sebuah akun mulai membagikan server MCP.
+Jika Anda sudah memakai Claude Code sebelum ccam, penyiapan Anda ada di `~/.claude` dan `~/.claude.json`. `ccam migrate` menyalinnya ke sebuah grup pembagian, sehingga setiap akun yang membagikan item tersebut melalui grup itu dimulai dengan penyiapan yang sudah Anda miliki. Folder sumber hanya dibaca, dan `claude` biasa tetap berfungsi seperti sebelumnya. Jalankan sekali setelah `ccam add` pertama Anda; jika `~/.claude.json` memiliki server MCP, `ccam add` pertama menyebutkannya di tipnya.
 
 ## Penggunaan
 
@@ -43,20 +43,17 @@ Lalu ccam menampilkan rencana dan bertanya sebelum menyalin:
 $ ccam migrate --yes
 Copy from /home/me/.claude into group default (/home/me/.local/share/ccam/groups/default):
   mcp         ~/.claude.json  new: fs, linear
-              sign-ins        linear → personal; skipped: work (not logged in yet)
+              sign-ins        not copied (a sign-in works for one account only); sign in with /mcp: linear in personal, work
   settings    settings.json   new: 61 B
+              not found, skipped: keybindings.json
   memory      CLAUDE.md       new: 11 B
   extensions  agents/         add 1 file the group lacks (6 B)
               skills/         add 1 file the group lacks (13 B)
               not found, skipped: commands/, plugins/, output-styles/, rules/
   Conversation history (projects/, history.jsonl) is not included; add --history to copy it.
-✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, skills/, MCP sign-ins for personal
-MCP sign-ins were not copied to: work (not logged in yet). Sign in to those servers there with /mcp.
-Accounts that share these through group default:
-  mcp         personal, work
-  settings    personal, work
-  memory      personal, work
-  extensions  personal, work
+✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, skills/
+MCP sign-ins are not copied (a sign-in works for one account only). Sign in with /mcp to linear in personal, work.
+Group default: personal, work
 ```
 
 Grup hanya menjangkau akun-akunnya sendiri, dan hanya untuk item yang dibagikannya, sehingga ringkasan mendaftar akun-akun dalam grup itu. Jika grup tidak membagikan salah satu item yang disalin, atau ada akun yang tidak berada di dalamnya, ccam menampilkan perintah `ccam group set <group> --add <items>` dan `ccam group join <group> <accounts>` untuk mengubahnya.
@@ -83,9 +80,9 @@ Tanpa opsi item, daftar centang yang menentukan di terminal. Di luar terminal, a
 
 `internal/cli/migrate.go` memilih item, lalu `migrate.Build` membaca sumber dan grup serta mengembalikan rencana. Tidak ada yang ditulis sampai `Plan.Apply`, setelah Anda mengonfirmasi.
 
-1. **Menemukan sumber.** `checkSource` menolak path yang tidak ada, bukan folder, atau tidak berisi entri Claude Code yang dikenal. `migrate.ClaudeJSON` menemukan `.claude.json` milik folder tersebut: di dalamnya, atau untuk `~/.claude` yang tidak memilikinya di dalam, `~/.claude.json` di sampingnya. Di situlah Claude Code menyimpannya jika `CLAUDE_CONFIG_DIR` tidak diatur.
+1. **Menemukan sumber.** `checkSource` menolak path yang tidak ada, bukan folder, atau tidak berisi entri Claude Code yang dikenal. Untuk server MCP saja, `~/.claude` yang kosong atau tidak ada tidak masalah selama `~/.claude.json` memiliki server. `migrate.ClaudeJSON` menemukan `.claude.json` milik folder tersebut: di dalamnya, atau untuk `~/.claude` yang tidak memilikinya di dalam, `~/.claude.json` di sampingnya. Di situlah Claude Code menyimpannya jika `CLAUDE_CONFIG_DIR` tidak diatur.
 2. **Memetakan item ke path.** Setiap path berasal dari `share.Layout`, daftar izin yang sama dengan yang dipakai grup. Server MCP dibaca dari `.claude.json` dengan `mcp.LocalServers`, yang memakai pemindai `profile.TopLevelValue` alih-alih mem-parse seluruh file.
-3. **Menyalin, tidak pernah memindahkan.** File masuk ke `~/.local/share/ccam/groups/<group>/` dengan `fsutil.AtomicWrite` atau `fsutil.CopyFile`; server MCP masuk ke `mcp.json` milik grup.
+3. **Menyalin, tidak pernah memindahkan.** File masuk ke `~/.local/share/ccam/groups/<group>/` dengan `fsutil.AtomicWrite` atau `fsutil.CopyFile`, yang menulis file sementara di samping target lalu mengganti namanya, sehingga salinan yang terhenti tidak pernah meninggalkan file yang terpotong. Server MCP masuk ke `mcp.json` milik grup di bawah lock-nya: server yang ditambahkan ccam lain selama itu tetap ada, dan salinan yang dibuat untuk [Remote Control](/guides/remote-control) diperbarui setelahnya.
 
 Setiap item memetakan satu path sumber ke satu path grup:
 
@@ -108,18 +105,7 @@ Daftar centang itu sendiri adalah `tui.MigratePicker` yang dibangun di atas komp
 
 ### Info masuk MCP
 
-Server MCP yang masuk dengan OAuth menyimpan tokennya di file login, `.credentials.json` di bawah `mcpOAuth`, bukan di daftar server. Claude Code memberi kunci setiap entri berupa `<name>|` ditambah 16 karakter pertama hash `sha256` dari `type`, `url`, dan `headers` server. Kunci itu tidak bergantung pada folder, sehingga entri yang disalin berfungsi di akun lain selama definisi servernya identik. Karena itu `buildLogins` di `internal/migrate/logins.go` hanya menyalin entri server yang akhirnya dimiliki grup dengan definisi dari sumber: baru, sudah sama, atau konflik yang Anda putuskan dengan `use mine`. Info masuk server plugin (kunci yang diawali `plugin:`) ikut disalin saat Anda menyalin ekstensi dan sumbernya memiliki `plugins/`.
-
-<!-- motion:migrate-signins -->
-
-Entri itu masuk ke `.credentials.json` milik setiap akun penerima, ditulis dengan `fsutil.AtomicWrite` dengan mode `0600`. Entri itu tidak pernah masuk ke grup. Akun hanya menerimanya jika akun itu membagikan `mcp` (atau, untuk server plugin, `extensions`) melalui grup tujuan, dan hanya kunci yang belum dimilikinya yang ditambahkan: entri yang sudah dimilikinya, yang mungkin lebih baru, dipertahankan. Baris rencana `sign-ins` mendaftar server, akun penerima, dan akun yang dilewati. ccam melewati sebuah akun, dan menyebutkan namanya beserta alasannya, jika akun itu:
-
-- didaftarkan di tempatnya dengan `ccam import`, karena `claude` biasa mungkin sedang memakai file login-nya;
-- sedang berjalan, karena Claude Code menulis ulang file login-nya (diperiksa lagi tepat sebelum menulis, dilaporkan sebagai `started meanwhile`);
-- belum login;
-- menyimpan login-nya di Rantai Kunci (Keychain) macOS, yang tidak ditulis oleh ccam.
-
-Masuklah ke server di akun yang dilewati dengan `/mcp`. Akun yang baru mulai membagikan server MCP belakangan akan mendapatkan info masuk itu saat Anda menjalankan `ccam migrate` lagi; ringkasan menyebutkannya dengan ``Then run `ccam migrate` again to give them the MCP sign-ins too.``
+Server MCP yang masuk dengan OAuth menyimpan tokennya di file login, `.credentials.json` di bawah `mcpOAuth`, bukan di daftar server. ccam tidak menyalinnya. Info masuk yang disalin memegang refresh token yang sama dengan aslinya, dan server merotasi token itu pada pembaruan pertama: semua pemegang lainnya, termasuk `~/.claude` sumber, lalu ter-logout dari server itu. Karena itu baris rencana `sign-ins` menyebutkan, untuk setiap server yang disalin dan sudah dimasuki sumber, akun-akun dalam grup yang perlu masuk sendiri dengan `/mcp`, dan ringkasan mengulanginya. Entri tanpa token bukanlah info masuk dan tidak dicantumkan, begitu juga akun yang sudah memiliki info masuknya sendiri, atau server yang definisinya dipertahankan grup. Tidak ada file login yang ditulis.
 
 ## Keamanan dan kasus khusus
 
@@ -127,7 +113,8 @@ Masuklah ke server di akun yang dilewati dengan `/mcp`. Akun yang baru mulai mem
 - Sebelum file grup diganti, oleh `use mine`, penggabungan, atau server MCP baru di `mcp.json` yang sudah ada, salinan milik grup disimpan di `<group>/.ccam-backup/<time>/`. Nama folder itu unik per proses, sehingga dua proses dalam detik yang sama tidak saling menimpa cadangan. Ringkasan menampilkan path-nya.
 - Dengan `--yes`, setiap konflik mempertahankan salinan milik grup, dan ccam memberi tahu cara memilih sendiri: jalankan perintah yang sama tanpa `--yes`.
 - Jika tidak ada yang berubah, ccam menampilkan `Nothing to copy.`; jika setiap konflik mempertahankan salinan milik grup, `Nothing to copy: the group keeps its own copies.`
-- Jika penyalinan gagal di tengah jalan, ccam berhenti dengan `The source folder was not changed. Group files replaced so far are saved in` diikuti folder cadangannya.
+- Jika penyalinan gagal di tengah jalan, ccam berhenti dengan `The source folder was not changed. Group files replaced so far are saved in` diikuti folder cadangannya. Menjalankan ulang akan menyalin file yang belum sampai dengan utuh.
+- Jika beberapa grup membagikan MCP, perintah yang disarankan `ccam doctor`, `ccam ext`, dan `ccam mcp list` berbunyi `ccam migrate --mcp --group <a|b>`.
 - Sumber yang tidak ada berakhir dengan `no Claude Code folder at <path>. Give the folder to copy from: ccam migrate <folder>`.
 
 ## Terkait

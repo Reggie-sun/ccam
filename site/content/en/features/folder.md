@@ -1,7 +1,7 @@
 ---
 title: Accounts by folder
 description: ccam folder makes a folder and everything below it use one account when you start Claude Code without an account name, such as work for your company code.
-updated: 2026-10-20
+updated: 2026-10-23
 order: 11
 translation: source
 ---
@@ -33,7 +33,7 @@ These launches use the folder's account:
 - `ccam -p "…"` and any other launch whose first argument is an option for Claude Code
 - `ccam run` without a name, and `ccam --dry-run`
 - `ccam --fallback -p "…"` for its first attempt
-- the dashboard, `ccam` alone, which starts with its cursor on the folder's account
+- the dashboard, `ccam` alone, which starts with its cursor on the folder's account, also when you reached the folder through a symbolic link
 
 ## Options
 
@@ -58,7 +58,7 @@ account = 'work'
 2. A launch without a name calls `launcher.HereProfile`. With no entries it takes the default account at once.
 3. Otherwise it compares the working directory with each `path` as strings: the folder itself or one below it, never a folder that only starts with the same letters (`/code/company` does not cover `/code/companyx`). The deepest entry wins, so `~/code` can be `personal` while `~/code/company` is `work`.
 4. Only if the working directory as it is matches nothing, ccam resolves its symbolic links and compares once more.
-5. On Windows the comparison ignores upper and lower case, as Windows does.
+5. On Windows and macOS the comparison ignores upper and lower case, as their file systems usually do.
 
 No file besides `config.toml` is read, so a launch inside a folder costs no measurable time (4.0 ms with or without entries, `hyperfine`, 300 runs).
 

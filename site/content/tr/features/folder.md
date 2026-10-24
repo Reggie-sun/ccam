@@ -1,10 +1,10 @@
 ---
 title: Klasöre göre hesaplar
 description: ccam folder, Claude Code'u hesap adı vermeden başlattığınızda bir klasörün ve altındakilerin tek bir hesap kullanmasını sağlar; örneğin şirket kodu için work.
-updated: 2026-10-20
+updated: 2026-10-23
 order: 11
 translation: machine
-sourceHash: "46d1410a3d81"
+sourceHash: "48de98d42b99"
 ---
 
 `ccam folder work ~/code/company`, `~/code/company` içinde ve altındaki her klasörde hesap adı verilmeden yapılan her başlatmanın Claude Code'u `work` olarak başlatmasını sağlar. Bu klasörün dışında varsayılan hesap eskisi gibi başlar. Bir hesabın adını vermek, `ccam personal` ile ya da `ccpersonal` gibi bir kısayolla, her zaman o hesabı başlatır.
@@ -34,7 +34,7 @@ Here (/home/me/code/company/api): work, set for /home/me/code/company
 - `ccam -p "…"` ve ilk argümanı Claude Code için bir seçenek olan diğer tüm başlatmalar
 - adsız `ccam run` ve `ccam --dry-run`
 - ilk denemesi için `ccam --fallback -p "…"`
-- imleci klasörün hesabında açılan kontrol paneli, yani tek başına `ccam`
+- imleci klasörün hesabında açılan kontrol paneli, yani tek başına `ccam`; klasöre sembolik bir bağlantı üzerinden ulaştığınızda da
 
 ## Seçenekler
 
@@ -59,7 +59,7 @@ account = 'work'
 2. Adsız bir başlatma `launcher.HereProfile` çağırır. Hiç girdi yoksa hemen varsayılan hesabı alır.
 3. Aksi halde çalışma dizinini her `path` ile dize olarak karşılaştırır: klasörün kendisi veya altındaki bir klasör eşleşir, yalnızca aynı harflerle başlayan bir klasör asla eşleşmez (`/code/company`, `/code/companyx` klasörünü kapsamaz). En derin girdi kazanır; böylece `~/code` `personal`, `~/code/company` ise `work` olabilir.
 4. Yalnızca çalışma dizini olduğu haliyle hiçbir şeyle eşleşmezse ccam sembolik bağlantılarını çözer ve bir kez daha karşılaştırır.
-5. Windows'ta karşılaştırma, Windows'un yaptığı gibi büyük ve küçük harfi yok sayar.
+5. Windows ve macOS'ta karşılaştırma, dosya sistemlerinin genellikle yaptığı gibi büyük ve küçük harfi yok sayar.
 
 `config.toml` dışında hiçbir dosya okunmaz; bu yüzden bir klasörün içinde başlatmak ölçülebilir bir süre eklemez (girdilerle veya girdiler olmadan 4,0 ms, `hyperfine`, 300 çalıştırma).
 

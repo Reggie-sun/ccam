@@ -1,13 +1,15 @@
 ---
 title: 为脚本选择账号
 description: ccam pick 为脚本输出余量最多的账号，让同时启动的并行任务各用不同的账号，并在没有账号还有余量时以 75 退出。
-updated: 2026-10-20
+updated: 2026-10-24
 order: 12
 translation: machine
-sourceHash: "2e8285b7c193"
+sourceHash: "a8baeb64de99"
 ---
 
 `ccam pick` 输出已登录账号中余量最多的那个账号的名称，供脚本用它启动 Claude Code。只要还有足够多有余量的账号，同时启动的并行任务就会各自拿到不同的账号，这样一批 `claude -p` 任务会分散到你的各个账号上，而不是耗尽其中一个。
+
+**Team 和 Enterprise 席位。** 自动选择（`ccam next`、`--fallback`、`ccam pick`、仪表盘中的 `n`）也会在同一个 Claude Team 或 Enterprise 组织的席位之间切换。Anthropic 帮助中心关于 [Team 套餐](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)的说明写道："Each seat on a Team plan is assigned to one named individual, and only that person may use it"（Team 套餐的每个席位都分配给一位指定的个人，只有此人可以使用），以及 "Users can't route their work through another user's account to use that user's remaining usage"（用户不能通过另一位用户的账号完成自己的工作，以使用该用户剩余的用量）；关于 [Enterprise 套餐](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)的说明也是如此。因此，在席位之间使用自动选择可能违反 Anthropic 的条款。在依赖这项功能之前，请先向你所在的组织和 Anthropic 确认。个人套餐（Pro、Max）的情况请参见[常见问题中关于条款的说明](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)。
 
 ## 用法
 
@@ -49,15 +51,15 @@ $ ccam pick --json
 | `--max-usage <1-100>` | 优先选择用量低于此值的账号 | `auto_max_usage`，否则为 100 |
 | `--strategy headroom\|expiring\|balance` | 5 小时用量最低的账号、5 小时时间窗口最早重置的账号，或每周配额最先会被浪费的账号 | `auto_strategy`，否则为 `headroom` |
 | `--cross-org` | 也选择其他组织的账号 | `cross_org`，否则为关闭 |
-| `--wait[=<duration>]` | 没有账号还有余量时，等待第一个账号重置，最多等待这么久 | 关闭；单独给出时为 `5h` |
+| `--wait[=<duration>]` | 没有账号还有余量时，等待第一个账号重置，最多等待这么久。值写在 `=` 之后：`--wait 30m` 会被拒绝，并给出提示 `--wait takes its value after '=': --wait=30m` | 关闭；单独给出时为 `5h` |
 | `--dry-run` | 只做选择，不记录这次选择 | 关闭 |
 
 ## 工作原理
 
-1. ccam 列出此文件夹将要启动的账号所属组织中已登录的账号（API 密钥账号没有限制，因此不包括在内；参见[组织](/features/next#auto)）；与该账号登录到同一个 Claude 账号的文件夹也会被排除。
+1. ccam 列出此文件夹将要启动的账号所属组织中已登录的账号（API 密钥账号和 Console 登录没有限制，因此不包括在内；参见[组织](/features/next#auto)）；与该账号登录到同一个 Claude 账号的文件夹也会被排除。
 2. 它获取一个锁（`~/.local/state/ccam/picks.lock`），所以同时运行的选择会一个接一个地进行。
-3. 它以与 `ccam usage` 相同的方式、使用 60 秒缓存，一次性查询每个账号的用量。
-4. 先排除最近 2 分钟内被选中过的账号（`~/.local/state/ccam/picks/<name>`），再用 `ccam next --auto` 的[选择规则](/features/next#auto)在其余账号中选择：优先选择低于 `auto_max_usage` 的账号，按策略选择，从不选择已达 100% 的账号。
+3. 它以与 `ccam usage` 相同的方式、使用 60 秒缓存，一次性查询每个账号的用量。Claude Code 报告已满的时间窗口在重置前按 100% 计算（[用量限制记录](/features/usage#the-limit-record)），因此刚刚达到限制的账号即使保存的数字显示还有余量，也会被排除在外。
+4. 先排除最近 2 分钟内被选中过的账号（`~/.local/state/ccam/picks/<name>`；日期晚于当前时钟时间的选择不计算在内），再用 `ccam next --auto` 的[选择规则](/features/next#auto)在其余账号中选择：优先选择低于 `auto_max_usage` 的账号，按策略选择，从不选择已达 100% 的账号。
 5. 如果每个有余量的账号最近都被选中过，规则会重新在所有这些账号中选择，因此三个账号上的第四个并行任务会与其中一个共用账号。
 6. 记录这次选择并释放锁，然后输出名称。
 

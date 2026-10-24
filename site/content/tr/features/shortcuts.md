@@ -1,10 +1,10 @@
 ---
 title: Kısayol komutları
 description: ccam shortcut ile bir hesaba ccwork gibi kendi komutunu verin ve ~/.local/bin içindeki bağlantıları ccam shims install ile yeniden oluşturun.
-updated: 2026-10-20
+updated: 2026-10-23
 order: 3
 translation: machine
-sourceHash: 939256e7a67e
+sourceHash: "38e2d1aba397"
 ---
 
 Kısayol, adını kendiniz verdiğiniz ve Claude Code'u tek bir hesapla başlatan bir komuttur: `ccwork --resume`, `ccam work --resume` ile aynı işi yapar. `~/.local/bin` içinde ccam'e giden bir bağlantıdır; bu yüzden bash, zsh, betikler ve programları `PATH` üzerinden çalıştıran her şeyde çalışır. Kısayollar isteğe bağlıdır; sık başlattığınız hesaplar için bir tane oluşturun.
@@ -18,7 +18,7 @@ ccam shortcut work            # show it
 ccam shortcut work ccw        # rename it; the old link is removed
 ccam shortcut work --remove   # delete it
 ccam add side --shortcut ccside
-ccam shims install            # recreate missing links of all accounts
+ccam shims install            # recreate missing or outdated links of all accounts
 ccwork -p "summarise" --output-format json
 ```
 
@@ -54,8 +54,10 @@ Ad kuralları, bu sırayla kontrol edilir:
 - `a-z`, `0-9`, `.`, `-` ve `_` karakterlerinden oluşan, harf veya rakamla başlayan 1 ile 64 karakter;
 - `ccam`, `claude` veya `run` ya da `usage` gibi bir ccam komutu olamaz;
 - başka bir hesabın kısayolu olamaz;
-- `~/.local/bin` içinde zaten ccam'e giden bir bağlantı olmayan bir dosya olamaz;
+- `~/.local/bin` içinde zaten ccam'in bağlantısı (ya da ccam'in oluşturduğu, bu hesabın kendi kısayolu) olmayan bir dosya olamaz;
 - `PATH` üzerindeki başka bir yürütülebilir dosyanın adı olamaz.
+
+`config.toml` yüklenirken aynı kurallara göre denetlenir: kalıba uymayan, `claude` ya da `ccam` olan veya iki hesaba verilmiş, elle düzenlenmiş bir kısayol, düzeltilene kadar her komutun hesabın adını veren bir mesajla başarısız olmasına yol açar.
 
 Bir komutu ve `--remove` seçeneğini birlikte vermek `give a command or --remove, not both` ile durur. Bir hesaba zaten sahip olduğu adı vermek `work: ccwork (unchanged)` yazdırır ve eksikse bağlantısını yeniden oluşturur.
 
@@ -70,9 +72,9 @@ Ad, kontrollerden sırayla geçer. Her kontrolün yanında reddettiği bir ad bu
 1. `shim.Check` adı önce `^[a-z0-9][a-z0-9._-]{0,63}$`, ardından `config.Reserved`, sonra `cfg.FindShortcut` ile karşılaştırır. `~/.local/bin/<name>` üzerinde `os.Lstat` çağırır; `PATH` üzerindeki diğer her klasör için `os.Stat` çağırır ve ccam'e giden bir bağlantı olmayan yürütülebilir bir dosyayı reddeder.
 2. ccam, `config.toml` dosyasını `fsutil.AtomicWrite` ile kaydeder (geçici dosya, `fsync`, yeniden adlandırma).
 3. `shim.Remove` eski kısayolun bağlantısını siler, ancak yalnızca ccam'e giden bir bağlantıysa.
-4. `shim.Install`, yapılandırılmış her kısayolun eksik bağlantısını `os.Executable` ve `filepath.EvalSymlinks` ile çözümlenen ccam ikili dosyasına `os.Symlink` ile oluşturur. Hiçbir zaman bir şey kaldırmaz.
+4. `shim.Install`, yapılandırılmış her kısayolu ad sırasıyla dolaşır ve eksik olan her birinin bağlantısını `os.Executable` ve `filepath.EvalSymlinks` ile çözümlenen ccam ikili dosyasına `os.Symlink` ile oluşturur. Bir kısayolun yolundaki bir dosya diğerlerini durdurmaz; hata her birini adlandırır.
 
-`os.Readlink` ccam yolunu döndürdüğünde veya bağlantı ile ccam yolu aynı dosyaya çözümlendiğinde bir bağlantı ccam'in kendisine ait sayılır. Her kaldırma ve her üzerine yazma kontrolü bu testten geçer; böylece ccam kendi oluşturmadığı dosyalara dokunmaz.
+ccam oluşturduğu her bağlantıyı ve onu çalıştırdığı ikili dosyayı `~/.local/state/ccam/shortcuts.json` dosyasına kaydeder. `os.Readlink` ccam yolunu döndürdüğünde veya bağlantı ile ccam yolu aynı dosyaya çözümlendiğinde bir bağlantı ccam'in kendisine ait sayılır. İkili dosyası o zamandan beri taşınmış veya değiştirilmiş (başka bir klasöre taşınmış bir ccam, yeniden kurulum) kayıtlı bir bağlantı eskimiştir ve `shim.Install` onu bu ccam'e yönlendirir. Hâlâ kurulu olan başka bir ccam'e giden kayıtlı bir bağlantı olduğu gibi bırakılır. Her kaldırma ve her üzerine yazma kontrolü bu testlerden geçer; böylece ccam, ccam'in kendi kopyanız veya kendiniz oluşturduğunuz bir bağlantı gibi, kendi oluşturmadığı dosyalara dokunmaz.
 
 Bir kısayolu çalıştırdığınızda ccam'in ihtiyaç duyduğu tek şey yazdığınız addır:
 
@@ -84,16 +86,18 @@ Neden kabuk takma adı veya sarmalayıcı betik değil de sembolik bağlantı: s
 
 ### Windows'ta
 
-Kısayol, `%USERPROFILE%\.local\bin` içindeki `ccwork.exe` dosyasıdır ve `shim.Name` aramadan önce `.exe` uzantısını (büyük veya küçük harf fark etmeksizin) atar; böylece `ccwork`, `ccwork.exe` ve `CCWORK.EXE` hepsi `work` hesabını başlatır. ccam önce bir sembolik bağlantı oluşturur; Windows buna Geliştirici Modu'nda veya bir yöneticiye izin verir. Bu hak olmadan bir sabit bağlantı oluşturur: aynı `ccam.exe` dosyası için ikinci bir ad; bunun için ayrıcalık gerekmez. Bir sabit bağlantı, `ccam.exe` ile aynı dosyaysa ccam'in kendi bağlantısı sayılır. `ccam update`, `ccam.exe` yerine yeni bir dosya koyduğu için ardından sabit bağlantılı her kısayolu `shim.Relink` ile yeniler ve `✓ shortcut ccwork renewed` yazdırır. Ad kontrolü, diğer `PATH` klasörlerinde `PATHEXT` içindeki her uzantıyla (`.exe`, `.cmd` vb.) `<name>` arar.
+Kısayol, `%USERPROFILE%\.local\bin` içindeki `ccwork.exe` dosyasıdır ve `shim.Name` aramadan önce `.exe` uzantısını (büyük veya küçük harf fark etmeksizin) atar; böylece `ccwork`, `ccwork.exe` ve `CCWORK.EXE` hepsi `work` hesabını başlatır. ccam önce bir sembolik bağlantı oluşturur; Windows buna Geliştirici Modu'nda veya bir yöneticiye izin verir. Bu hak olmadan bir sabit bağlantı oluşturur: aynı `ccam.exe` dosyası için ikinci bir ad; bunun için ayrıcalık gerekmez. Bir sabit bağlantı, `ccam.exe` ile aynı dosyaysa ccam'in kendi bağlantısı sayılır. Bir sabit bağlantı oluşturulduğu dosyayı çalıştırmaya devam eder; bu yüzden `ccam update`, `ccam.exe` yerine yeni bir dosya koyduğunda sabit bağlantılı her kısayolu `shim.Relink` ile yeniler ve `✓ shortcut ccwork renewed` yazdırır. `install.ps1` betiğini yeniden çalıştırmak da `ccam shims install` üzerinden aynısını yapar (`OK 2 shortcuts now run the new ccam`); daha eski bir ccam'in kopyası olan her kısayol için `ccam shims install` ve `ccam doctor --fix` de öyle. Ad kontrolü, diğer `PATH` klasörlerinde `PATHEXT` içindeki her uzantıyla (`.exe`, `.cmd` vb.) `<name>` arar.
+
+Bir kısayolu bir kabukta (PowerShell, cmd.exe, Git Bash) yazın. Dosya Gezgini'nden, Çalıştır iletişim kutusundan veya `Start-Process` ile açılan bir sembolik bağlantı düz `ccam` olarak başlar ve hesap yerine kontrol panelini açar.
 
 ## Güvenlik ve uç durumlar
 
 - **Hiçbir hesabın sahiplenmediği bir bağlantı.** `~/.local/bin` içindeki ccam'e giden bir bağlantının adı hiçbir hesap tarafından kullanılmıyorsa, örneğin `config.toml` içindeki `shortcut` değerini elle düzenledikten sonra, ccam varsayılan hesaba geri dönmez. `` ccam: ccold is not the shortcut of any account (see `ccam list`, `ccam shortcut`) `` ile durur. Adı `ccam shortcut` ile yeniden ayarlayın veya bağlantıyı silin.
-- **Mevcut dosyalar.** ccam kendi oluşturmadığı bir dosyayı hiçbir zaman değiştirmez. `ccam shims install`, `<path> already exists and is not a ccam link, so it was left alone` ile durur.
-- **Taşınmış bir ccam ikili dosyası.** Eski bağlantılar artık var olmayan bir yolu gösterir ve ccam bunları kendine ait saymaz. Bunları silin, ardından `ccam shims install` çalıştırın.
+- **Mevcut dosyalar.** ccam kendi oluşturmadığı bir dosyayı hiçbir zaman değiştirmez. `ccam shims install`, `<path> already exists and is not a ccam link, so it was left alone` bildirir ve diğer bağlantıları yine de oluşturur. `ccam add` ve `ccam import` bu durumda `shortcut: ccwork (not created; see above)` yazdırır.
+- **Taşınmış bir ccam ikili dosyası.** ccam'in oluşturduğu bağlantılar bu durumda artık var olmayan bir yolu gösterir. `ccam shims install` (veya `ccam doctor --fix`) onları, komutu çalıştırdığınız ccam'e yönlendirir.
 - **Yeniden adlandırma ve kaldırma.** `ccam rename` kısayol adını korur ve bağlantı çalışmaya devam eder, çünkü ccam'i gösterir ve ccam adı `config.toml` içinde arar. `ccam remove` hesabın bağlantısını siler. `ccam shortcut <account> <new>` yenisini oluşturmadan önce eski bağlantıyı siler.
 - **PATH.** ccam bir bağlantı oluşturduğunda `~/.local/bin` `PATH` üzerinde değilse, `Note: /home/me/.local/bin is not in PATH. Add it to ~/.bashrc or ~/.zshrc:` ve ardından eklenecek `export PATH=...` satırını yazdırır. Windows'ta bunun yerine klasörü kullanıcı `PATH` değişkeninize ekleyen PowerShell satırını yazdırır.
-- **Sonradan kontrol.** `ccam doctor`, `missing shortcuts in /home/me/.local/bin: ccwork` bildirir ve klasör `PATH` üzerinde değilse uyarır. `ccam doctor --fix` eksik bağlantıları oluşturur.
+- **Sonradan kontrol.** `ccam doctor`, `missing shortcuts in /home/me/.local/bin: ccwork` ve daha eski bir ccam'i çalıştıran kısayolları bildirir, klasör `PATH` üzerinde değilse uyarır. `ccam doctor --fix` eksik bağlantıları oluşturur, eskimiş olanları yeniler ve yalnızca oluşturduğu bağlantılar için `→ fixed` der. Hâlâ kurulu olan başka bir ccam'i çalıştıran bir kısayol çalışır ve yalnızca bilgidir; `ccam doctor --fix` onu komutu çalıştırdığınız ccam'e yönlendirir, `ccam add` ve `ccam import` ise onu ``shortcut: ccwork (runs another ccam, <path>; `ccam doctor --fix` points it at this one)`` olarak gösterir.
 
 ## İlgili
 

@@ -2,10 +2,10 @@
 title: ccam kurulumu
 metaTitle: ccam'ı Linux, macOS ve Windows üzerine kurun
 description: ccam'ı Linux, macOS veya Windows'a tek komutla, bir .deb paketiyle ya da kaynak koddan kurun, ccam update ile güncelleyin. Önce Claude Code kurulu olmalıdır.
-updated: 2026-10-21
+updated: 2026-10-23
 order: 1
 translation: machine
-sourceHash: "1e3a53623de0"
+sourceHash: "af21dcc24169"
 ---
 
 Linux veya macOS üzerinde bir terminalde şunu çalıştırın:
@@ -22,7 +22,7 @@ Windows'ta bunu PowerShell'de çalıştırın:
 irm https://ccam.dev/install.ps1 | iex
 ```
 
-Betik `ccam_windows_<arch>.zip` dosyasını indirir, SHA-256 sağlama toplamını denetler, `ccam.exe` dosyasını Claude Code yükleyicisinin `claude.exe` dosyasını koyduğu klasöre, yani `%USERPROFILE%\.local\bin` içine koyar ve henüz orada değilse bu klasörü kullanıcı `PATH` değişkeninize ekler. Ardından yeni bir terminal açın.
+Betik `ccam_windows_<arch>.zip` dosyasını indirir, SHA-256 sağlama toplamını denetler, `ccam.exe` dosyasını Claude Code yükleyicisinin `claude.exe` dosyasını koyduğu klasöre, yani `%USERPROFILE%\.local\bin` içine koyar ve henüz orada değilse bu klasörü kullanıcı `PATH` değişkeninize ekler; `%USERPROFILE%\bin` gibi girdileri olduğu gibi bırakır. Ardından yeni bir terminal açın. Betiği yeniden çalıştırmak ccam'ı değiştirir; bir Claude Code oturumu hâlâ eski ikili dosyadan çalışıyor olsa bile (o dosya `ccam.exe.old` olarak, daha eskisi hâlâ kullanımdaysa `ccam.exe.old-<number>` olarak yeniden adlandırılır) bunu yapar ve sabit bağlantı olan kısayolları yeniler: `OK 2 shortcuts now run the new ccam`.
 
 ccam, Claude Code'u sizin için başlatır; bu nedenle önce [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) kurun ve `claude --version` komutunun çalıştığından emin olun.
 
@@ -30,7 +30,7 @@ ccam, Claude Code'u sizin için başlatır; bu nedenle önce [Claude Code](https
 
 - x86-64 ve ARM64 üzerinde Linux: Ubuntu, Debian, Fedora, Arch, Alpine ve diğer dağıtımlar. İkili dosya statiktir ve hiçbir bağımlılığı yoktur.
 - Apple silicon ve Intel üzerinde macOS.
-- x86-64 ve ARM64 üzerinde Windows 10 ve 11; PowerShell, Windows Terminal veya Git Bash içinde. Paylaşılan klasörler her kullanıcı için çalışır. Paylaşılan dosyalar (`settings.json`, `CLAUDE.md`, `history.jsonl`) Geliştirici Modu (Ayarlar > Sistem > Geliştiriciler için) gerektirir, çünkü Windows dosyalara bağlantı oluşturmaya yalnızca bu modda veya bir yöneticiye izin verir; bkz. [Windows'ta paylaşım](/features/share#on-windows).
+- x86-64 ve ARM64 üzerinde Windows 10 ve 11; PowerShell, Windows Terminal veya Git Bash içinde. Paylaşılan klasörler her kullanıcı için çalışır. Paylaşılan dosyalar (`settings.json`, `CLAUDE.md`, `history.jsonl`) Geliştirici Modu (Ayarlar > Sistem > Geliştiriciler için) gerektirir, çünkü Windows dosyalara bağlantı oluşturmaya yalnızca bu modda veya bir yöneticiye izin verir; bkz. [Windows'ta paylaşım](/features/share#on-windows). Geliştirici Modu olmadan ilk `ccam add`, yalnızca MCP sunucuları ve uzantılarla `default` grubunu oluşturur ve Geliştirici Modu açıldığında gerisinin nasıl ekleneceğini söyler.
 - WSL içinde ccam, herhangi bir Linux sisteminde olduğu gibi çalışır.
 
 ## Diğer kurulum yolları
@@ -48,6 +48,8 @@ Paket, `/usr/bin/ccam` dosyasını kurar.
 ```sh
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
 ```
+
+Bir sürüm etiketinden (`@latest` veya `@vX.Y.Z`) yapılan derleme o sürümü bildirir, böylece `ccam update` onunla da çalışır; `@main` ya da bir etiketin ötesindeki yerel bir çalışma kopyasından yapılan derleme `dev` bildirir.
 
 **Belirli bir sürüm.** `CCAM_VERSION` değişkenini ayarlayın:
 
@@ -117,9 +119,9 @@ ccam update --version v0.2.0
 ccam --dry-run update
 ```
 
-Kurulum betiğini yeniden çalıştırmak da `~/.local/bin` içindeki kopyayı günceller. ccam'ı `go install` ile derlediyseniz aynı komutu yeniden çalıştırın.
+Kurulum betiğini yeniden çalıştırmak da `~/.local/bin` içindeki kopyayı günceller. ccam'ı bir sürüm etiketinden `go install` ile derlediyseniz `ccam update` de çalışır; ya da aynı komutu yeniden çalıştırın.
 
-**Windows.** `ccam update`, Windows için `.zip` dosyasını indirir. Windows'ta çalışan bir program değiştirilemez; bu yüzden eski ikili dosya `ccam.exe.old` olarak yeniden adlandırılır ve bir sonraki güncelleme onu siler.
+**Windows.** `ccam update`, Windows için `.zip` dosyasını indirir. Windows'ta çalışan bir program değiştirilemez; bu yüzden eski ikili dosya `ccam.exe.old` olarak yeniden adlandırılır ve bir sonraki güncelleme onu siler; daha önceki bir `ccam.exe.old` dosyasından hâlâ bir oturum çalışıyorsa ad `ccam.exe.old-<time>` olur. Sabit bağlantı olan kısayollar hemen ardından yenilenir.
 
 **Debian ve Ubuntu paketi.** `ccam update`, apt ile kurulmuş bir `/usr/bin/ccam` dosyasını değiştirmez; bunun yerine bu adımları yazdırır. Yeni `ccam_<version>_linux_amd64.deb` dosyasını [sürümler sayfasından](https://github.com/jhyunwoo/ccam/releases) indirin ve eskisinin üzerine kurun:
 
@@ -146,4 +148,4 @@ Remove-Item ~\.local\bin\ccam.exe
 Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
 ```
 
-`~/.local/share/ccam` klasörünü silmek, orada saklanan giriş bilgilerini ve konuşma geçmişini de siler. [İçe aktardığınız](/docs/commands) bir `~/.claude` klasörü olduğu yerde kalır.
+`~/.local/share/ccam` klasörünü silmek, orada saklanan giriş bilgilerini ve konuşma geçmişini de siler. [İçe aktardığınız](/docs/commands) bir `~/.claude` klasörü olduğu yerde kalır, ancak bir gruptayken paylaştığı dosyalar `~/.local/share/ccam/groups/` içinde durur. Önce onun için `ccam remove <name>` (veya `ccam group leave`) çalıştırın: gruplarından, paylaştığı her şeyin bir kopyasıyla ayrılır.

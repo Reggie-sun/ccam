@@ -70,8 +70,8 @@
         "body": "Sinisimulan ang Claude Code bilang account na iyon. Ipinapasa nang walang pagbabago sa Claude Code ang lahat ng kasunod ng pangalan, at nagdadagdag ang ccam ng mga 4 millisecond bago ito magsimula."
       },
       {
-        "command": "ccam share work --history on",
-        "body": "Pinipili kung ano ang ishe-share ng account sa iba mo pang account. Shared na mula sa simula ang mga MCP server, settings, CLAUDE.md at extension; hindi kailanman ang mga login."
+        "command": "ccam group set default --add history",
+        "body": "Pinipili kung ano ang ishe-share sa isa't isa ng mga account na nasa iisang group. Shared na mula sa simula ang mga MCP server, settings, CLAUDE.md at extension; hindi kailanman ang mga login."
       },
       {
         "command": "ccam usage",
@@ -145,9 +145,9 @@
     "mcp": "Pamahalaan ang mga shared na MCP server",
     "migrate": "Kopyahin ang dati nang Claude Code setup (~/.claude) sa isang shared na group",
     "login": "Mag-log in muli sa isang account; ina-log in ng --expired ang bawat account na nangangailangan nito",
-    "logout": "Alisin ang login ng isang account",
+    "logout": "Mag-log out ng isang account: ang login nito at ang mga sign-in nito sa mga MCP server",
     "rename": "Palitan ang pangalan ng account; hindi nagbabago ang pangalan ng shortcut nito",
-    "remove": "Mag-alis ng account; mapupunta ang folder nito sa trash folder",
+    "remove": "Mag-alis ng account: ina-log out ito, at mapupunta ang folder nito sa trash folder",
     "import": "Irehistro ang umiiral na ~/.claude folder kung nasaan ito",
     "doctor": "Suriin ang mga link, permission, login at bersyon, at mag-ayos",
     "statusline": "Ipakita ang account at usage sa status line ng Claude Code",

@@ -1,10 +1,10 @@
 ---
 title: Dasbor
 description: ccam di terminal membuka dasbor layar penuh berisi akun, grup, aturan folder, ekstensi, dan pemeriksaan; setiap perubahan menampilkan rencananya dulu.
-updated: 2026-10-21
+updated: 2026-10-24
 order: 15
 translation: machine
-sourceHash: "19a99adef661"
+sourceHash: e48ca2c5a643
 ---
 
 `ccam` tanpa argumen membuka dasbor layar penuh jika input dan output standar adalah terminal; jika bukan, ccam mencetak `ccam list`. Dasbor menampilkan setiap akun beserta penggunaan dan grupnya, dan melakukan apa yang dilakukan perintah-perintahnya: menjalankan, menambahkan, login, mengubah grup, menetapkan aturan folder, memeriksa, dan memperbaiki. Menjalankan akun akan menutupnya; menambahkan akun atau login meninggalkannya sebentar untuk terminal lalu kembali lagi.
@@ -33,16 +33,16 @@ Setiap kali dibuka, dasbor bertanya ke GitHub di latar belakang apakah ada rilis
 
 `U` bertanya dulu, lalu memperbarui seperti [`ccam update`](/features/update): rilis diperiksa terhadap checksum SHA-256-nya dan menggantikan ccam dalam satu langkah. Dasbor yang sedang Anda buka masih versi lama, jadi keluar lalu jalankan `ccam` lagi. Jika pembaruan tidak bisa dilakukan di sini, misalnya untuk ccam yang diinstal dari paket `.deb`, dasbor menampilkan saran yang sama seperti `ccam update` dan tetap menyimpan tawarannya.
 
-Bingkai pertama digambar hanya dari `config.toml`, jauh di bawah 100 ms; penggunaan terisi begitu setiap akun menjawab. Setiap batas punya bilahnya sendiri: jendela 5 jam, jendela mingguan untuk semua model, dan jendela mingguan khusus Fable; `-` berarti akun tidak memiliki jendela tersebut. Persentase berubah kuning mulai 80% dan merah pada 100%, dan nilai dari cache setelah pencarian yang gagal digambar redup.
+Bingkai pertama digambar hanya dari `config.toml`, jauh di bawah 100 ms; penggunaan terisi begitu setiap akun menjawab. Setiap batas punya bilahnya sendiri: jendela 5 jam, jendela mingguan untuk semua model, dan jendela mingguan khusus Fable; `-` berarti akun tidak memiliki jendela tersebut. Persentase berubah kuning mulai 80% dan merah pada 100%, dan nilai dari cache setelah pencarian yang gagal digambar redup. Jendela yang dilaporkan penuh oleh Claude Code menampilkan 100% sampai di-reset. Token akses yang kedaluwarsa menampilkan `⚠ token expired` yang redup (Claude Code memperbaruinya pada saat dijalankan berikutnya), sedangkan `⚠ login expired` berarti akun itu memerlukan `ccam login`.
 
 ## Tab
 
 | Tab | Yang ditampilkan | Tombol |
 | --- | --- | --- |
-| Accounts | nomor, nama, email, bilah 5 jam, mingguan, dan Fable, pemakaian terakhir, grup; `✔` akun default, `▸` akun folder ini, `•` sedang berjalan | lihat di bawah |
+| Accounts | nomor, nama, email, bilah 5 jam, mingguan, dan Fable, pemakaian terakhir, grup; `✔` akun default, `▸` akun folder ini, `•` sedang berjalan (juga Claude Code yang dijalankan tanpa ccam: `claude` biasa, IDE, sesi latar belakang, dan daemon-nya) | lihat di bawah |
 | Groups | setiap grup, apa yang dibagikannya dan akun-akunnya, serta akun yang tidak ada di grup mana pun | `enter` sunting, `n` baru, `e` ganti nama, `x` hapus |
-| Folders | aturan [`ccam folder`](/features/folder) dan aturan yang berlaku di sini | `n` pakai sebuah akun di sini, `enter` ubah, `x` hapus |
-| Extensions | apa yang ditampilkan [`ccam ext`](/features/ext), setiap ekstensi satu kali beserta grup asalnya | `r` muat ulang |
+| Folders | aturan [`ccam folder`](/features/folder) dan aturan yang berlaku di sini, juga saat Anda mencapai folder itu melalui tautan simbolik (aturan baru disimpan dengan tautan yang sudah di-resolve) | `n` pakai sebuah akun di sini, `enter` ubah, `x` hapus |
+| Extensions | apa yang ditampilkan [`ccam ext`](/features/ext), setiap ekstensi satu kali beserta grup asalnya, `off:` akun-akun tempat sebuah plugin tidak diaktifkan, server yang dimiliki sebuah akun hanya untuk folder ini di antara server miliknya sendiri, `This folder's project`, dan masalah yang bukan milik akun mana pun | `r` muat ulang |
 | Health | apa yang dilaporkan [`ccam doctor`](/features/doctor), sebagai satu kotak per akun (lihat di bawah) | `f` perbaiki kotak yang dipilih, `F` perbaiki semua (`doctor --fix`), `↑`/`↓` berpindah antarkotak |
 
 `←`/`→` atau `Tab` berpindah tab, `?` menampilkan tombol-tombol tab yang sedang dibuka, `r` mencari penggunaan lagi tanpa cache singkat, dan `q` atau `Esc` keluar.
@@ -66,6 +66,8 @@ Bingkai pertama digambar hanya dari `config.toml`, jauh di bawah 100 ms; penggun
 | `c` | Menetapkan atau menghapus perintah pintasannya |
 | `x` | Menghapusnya (bertanya dulu, dimulai dari No) |
 
+**Kursi Team dan Enterprise.** Pilihan otomatis (`ccam next`, `--fallback`, `ccam pick`, tombol `n` di dasbor) juga berganti di antara kursi dalam organisasi Claude Team atau Enterprise yang sama. Pusat bantuan Anthropic menyatakan "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (setiap kursi pada paket Team diberikan kepada satu orang tertentu, dan hanya orang itu yang boleh menggunakannya) dan "Users can't route their work through another user's account to use that user's remaining usage" (pengguna tidak boleh menyalurkan pekerjaannya melalui akun pengguna lain untuk memakai sisa kuota pengguna tersebut) ([paket Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); begitu pula untuk [paket Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Karena itu, memakai pilihan otomatis di antara kursi dapat melanggar ketentuan Anthropic. Tanyakan kepada organisasi Anda dan Anthropic sebelum Anda mengandalkannya. Paket pribadi (Pro, Max) dibahas dalam [catatan tentang ketentuan di FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+
 ## Tab Health
 
 Tab Health menjalankan pemeriksaan [`ccam doctor`](/features/doctor) saat Anda membukanya dan menggambar tampilan yang sama: baris pertama dengan tanda untuk setiap akun, lalu satu kotak per akun. Setiap baris dalam kotak adalah satu area yang diperiksa, diawali `Folder`, `Login`, dan `Share links`, dengan tanda `✔` OK, `ℹ` informasi, `⚠` peringatan, atau `✘` galat, sehingga Anda langsung melihat akun mana yang bermasalah dan di mana. Temuan yang bukan milik akun mana pun masuk ke kotak `General`.
@@ -73,25 +75,26 @@ Tab Health menjalankan pemeriksaan [`ccam doctor`](/features/doctor) saat Anda m
 ```console
  ✘ personal   ⚠ work
 
- ╭─ ✘ personal · 3 problems ──────────────────────────────────────────────────╮
- │ ⚠ Folder       folder permissions are 755 (should be 0700)                 │
- │ ℹ              unknown entries (Claude Code layout may have changed):      │
- │                newthing                                                    │
- │ ⚠ Login        .credentials.json permissions are 644 (should be 0600)      │
- │ ✔              login valid (me@example.com)                                │
- │ ✘ Share links  /home/me/.local/share/ccam/profiles/personal/settings.json: │
- │                set to shared but is a real file, not a link                │
- ╰────────────────────────────────────────────────────────────────────────────╯
- ╭─ ⚠ work · 1 problem ───────────────────────────────────────────────────────╮
- │ ✔ Folder       OK                                                          │
- │ ⚠ Login        not logged in → `ccam login work`                           │
- │ ✔ Share links  share links OK                                              │
- ╰────────────────────────────────────────────────────────────────────────────╯
+ ╭─ ✘ personal · 3 problems ─────────────────────────────────────────────────╮
+ │ ⚠ Folder       folder permissions are 755 (should be 0700)                │
+ │ ℹ              unknown entries (ccam knows the folder layout of Claude    │
+ │                Code 2.1.309; it may have changed): newthing               │
+ │ ⚠ Login        .credentials.json permissions are 644 (should be 0600)     │
+ │ ✔              login valid (me@example.com, Claude Team · Acme)           │
+ │ ✘ Share links  /home/me/.local/share/ccam/profiles/personal/settings.json │
+ │                : set to shared but is a real file, not a link             │
+ │ ✔ Usage        usage lookup OK                                            │
+ ╰───────────────────────────────────────────────────────────────────────────╯
+ ╭─ ⚠ work · 1 problem ──────────────────────────────────────────────────────╮
+ │ ✔ Folder       OK                                                         │
+ │ ⚠ Login        not logged in → `ccam login work`                          │
+ │ ✔ Share links  share links OK                                             │
+ ╰───────────────────────────────────────────────────────────────────────────╯
 
  4 problems; f repairs the selected box, F all of them (ccam doctor --fix).
 ```
 
-`↑`/`↓` berpindah dari kotak ke kotak, dan kotak yang dipilih memiliki bingkai berwarna aksen. `f` hanya memperbaiki kotak yang dipilih, dengan cara yang sama seperti `ccam doctor --fix`: pada kotak sebuah akun, ia hanya memperbaiki akun itu, dan pada kotak `General`, temuan yang bukan milik akun mana pun (path plugin dan pintasan); akun lainnya hanya diperiksa lagi. Ia bertanya dulu, dan kotak yang tidak punya apa pun untuk diperbaiki hanya menampilkan `nothing to repair in <name>`. `F` memperbaiki semuanya sekaligus, seperti `ccam doctor --fix`, dan `r` memeriksa lagi.
+`↑`/`↓` berpindah dari kotak ke kotak, dan kotak yang dipilih memiliki bingkai berwarna aksen. `f` hanya memperbaiki kotak yang dipilih, dengan cara yang sama seperti `ccam doctor --fix`: pada kotak sebuah akun, ia hanya memperbaiki akun itu, dan pada kotak `General`, temuan yang bukan milik akun mana pun (path plugin dan pintasan); akun lainnya hanya diperiksa lagi. Ia bertanya dulu (``Like `ccam doctor --fix`: missing links and group folders are made, and a real file where a link belongs is backed up first; where the group has its own copy, the account then sees the group's. Nothing is lost.``), dan kotak yang tidak punya apa pun untuk diperbaiki hanya menampilkan `nothing to repair in <name>`. `F` memperbaiki semuanya sekaligus, seperti `ccam doctor --fix`, dan `r` memeriksa lagi.
 
 ## Mengubah grup
 
@@ -109,7 +112,7 @@ Di tab Groups, `Enter` membuka penyunting: item di kiri, akun di kanan, `Tab` un
     2. No
 ```
 
-File yang berbeda dari salinan milik grup ditanyakan lebih dulu (pertahankan milik grup, pakai milik saya, atau gabungkan). Lalu perubahan berjalan di latar belakang dengan kode yang sama seperti [`ccam group`](/features/share): konfigurasi disimpan lebih dulu, data setiap akun dipindahkan secara berurutan, dan file aslinya masuk ke `.ccam-backup/`. Perubahan yang akan memindahkan data akun yang sedang berjalan ditolak dengan menyebut nama akunnya.
+File yang berbeda dari salinan milik grup ditanyakan lebih dulu (pertahankan milik grup, pakai milik saya, atau gabungkan). Lalu perubahan berjalan di latar belakang dengan kode yang sama seperti [`ccam group`](/features/share): konfigurasi disimpan lebih dulu, data setiap akun dipindahkan secara berurutan, dan file aslinya masuk ke `.ccam-backup/`; akun yang keluar dari berbagi MCP mempertahankan server grup di `.claude.json` miliknya. Perubahan yang akan memindahkan data akun yang sedang berjalan ditolak dengan menyebut nama akunnya, juga jika akun itu dimulai selagi rencana terbuka, dan rencana yang sudah usang karena perubahan grup oleh ccam lain ditolak dengan `the groups changed while this plan waited; nothing was moved, make the change again`. Selama ccam lain mengubah grup, perubahan baru, penggantian nama, atau penghapusan menampilkan `another ccam is changing the groups right now`; setelah perubahan yang terhenti di tengah jalan, semuanya menunggu sampai `F` di tab Health (atau `ccam doctor --fix`) menyelesaikannya.
 
 ## Menambahkan akun
 
@@ -124,9 +127,13 @@ File yang berbeda dari salinan milik grup ditanyakan lebih dulu (pertahankan mil
 
 `Esc` kembali satu langkah, dan pada langkah pertama menutup wizard.
 
+## Menghapus akun
+
+`x` bertanya sebelum apa pun terjadi, dengan pilihan awal No, dan menjelaskan apa yang dilakukan penghapusan: `It is logged out first (its login is revoked), then its folder goes to ccam's trash; the groups' shared files stay.` Untuk akun kunci API tidak ada login yang perlu dicabut, dan jika akun lain memegang login yang sama, akun itu tidak di-logout. Akun yang diimpor mempertahankan foldernya: `It was imported, so its folder /home/me/.claude stays where it is: it leaves its groups first and keeps a copy of what they share, then ccam forgets it.`
+
 ## Warna
 
-Warna mengikuti peran warna di UI terminal Claude Code, sehingga ccam terlihat serasi di sampingnya; nama grup mendapat warna berdasarkan namanya. ccam menanyakan warna latar belakang ke terminal lalu memilih tema terang atau gelap. Tetapkan sendiri di `config.toml`:
+Warna mengikuti peran warna di UI terminal Claude Code, sehingga ccam terlihat serasi di sampingnya; nama grup mendapat warna berdasarkan namanya. ccam menanyakan warna latar belakang ke terminal lalu memilih tema terang atau gelap. Tetapkan sendiri di bagian atas `config.toml`, di atas `[[group]]`, `[[profile]]`, atau `[[folder]]` pertama:
 
 ```toml
 theme = 'dark'   # auto (default), dark, light, dark-daltonized, light-daltonized, dark-ansi, light-ansi
@@ -139,7 +146,9 @@ Tema `-daltonized` ditujukan untuk buta warna merah-hijau, dan tema `-ansi` mema
 - Dasbor memanggil fungsi yang sama dengan perintah-perintahnya, jadi setiap aturan tetap berlaku: rencana sebelum data dipindahkan, penolakan untuk akun yang sedang berjalan, cadangan, dan token login yang tidak pernah meninggalkan akunnya.
 - Dasbor tidak punya uji coba (dry run): `ccam --dry-run` tanpa nama mencetak bagaimana akun folder ini akan dijalankan, dan `o` pada sebuah akun menawarkan uji coba untuk satu kali menjalankan akun itu saja.
 - Terminal dipulihkan sebelum Claude Code dimulai atau login dibuka.
-- Layar yang terlalu kecil untuk sebuah dialog lebih dulu membuang baris-baris tab; baris dipotong dengan `…` alih-alih dibungkus ke baris berikutnya.
+- Layar yang terlalu kecil untuk sebuah dialog lebih dulu membuang baris-baris tab; baris dipotong dengan `…` alih-alih dibungkus ke baris berikutnya. Di layar yang pendek, baris kosong dan deskripsi tab dibuang berikutnya, sehingga baris tombol tetap ada. Di bawah 40 kolom atau 8 baris, dasbor hanya menampilkan `Too small: ccam needs 40x8 (now 36x7)`.
+- `Ctrl+C` saat sebuah perubahan, penghapusan, pembaruan, atau perbaikan sedang diterapkan akan menunggunya selesai: baris status menampilkan `ccam quits when it is done.`
+- Setelah `U` memperbarui ccam, tawarannya tidak muncul lagi saat dasbor kembali dari menambahkan akun atau login.
 
 ## Terkait
 

@@ -2,10 +2,10 @@
 title: वारंवार विचारले जाणारे प्रश्न
 metaTitle: "ccam FAQ: अनेक Claude Code खाती"
 description: ccam, Claude Code खाती, वापर मर्यादा, शेअरिंग, गोपनीयता आणि समर्थित सिस्टिम्सबद्दल उत्तरे.
-updated: 2026-10-21
+updated: 2026-10-24
 order: 6
 translation: machine
-sourceHash: "bc944d7dcab9"
+sourceHash: "c4e3b89bb4ea"
 ---
 
 ## ccam हे Anthropic चे अधिकृत टूल आहे का?
@@ -15,6 +15,8 @@ sourceHash: "bc944d7dcab9"
 ## मला अनेक Claude Code खाती वापरण्याची परवानगी आहे का?
 
 ते प्रत्येक खात्याच्या अटींवर आणि कामाच्या खात्यांसाठी तुमच्या संस्थेच्या धोरणावर अवलंबून आहे. अनेक खाती वापरण्यापूर्वी त्या तपासा. ccam फक्त तुमच्याकडे आधीपासून असलेल्या खात्यांमध्ये बदल करणे सोपे करते.
+
+**Team आणि Enterprise सीट्स.** आपोआप होणारी निवड (`ccam next`, `--fallback`, `ccam pick`, डॅशबोर्डमधील `n`) एकाच Claude Team किंवा Enterprise organization मधील एका सीटवरून दुसऱ्या सीटवरही जाते. Anthropic च्या मदत केंद्रात म्हटले आहे की "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team प्लॅनमधील प्रत्येक सीट नावानिशी एका व्यक्तीला नेमून दिलेली असते, आणि फक्त तीच व्यक्ती ती वापरू शकते) आणि "Users can't route their work through another user's account to use that user's remaining usage" (दुसऱ्या वापरकर्त्याच्या उरलेल्या वापराचा लाभ घेण्यासाठी वापरकर्ते आपले काम त्याच्या खात्यामार्फत चालवू शकत नाहीत) ([Team प्लॅन](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise प्लॅन](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) साठीही असेच). त्यामुळे सीट्सदरम्यान आपोआप होणारी निवड वापरल्यास Anthropic च्या अटींचे उल्लंघन होऊ शकते. त्यावर अवलंबून राहण्यापूर्वी तुमच्या संस्थेकडे आणि Anthropic कडे चौकशी करा. वैयक्तिक प्लॅनबद्दल (Pro, Max) वरचा परिच्छेद सांगतो.
 
 ## ccam वापर मर्यादा टाळते का?
 
@@ -26,11 +28,11 @@ sourceHash: "bc944d7dcab9"
 
 ## दुसऱ्या खात्यावर संभाषण पुढे कसे चालू ठेवायचे?
 
-`ccam group set default --add history` ने (किंवा त्यांच्या स्वतःच्या गटाने: `ccam group add pair --items history --members work,side`) खात्यांमध्ये संभाषण इतिहास शेअर करा, नंतर `ccam next --continue` चालवा. Claude Code पुढच्या खात्यात चालू फोल्डरमधील सर्वात अलीकडचे संभाषण उघडते.
+त्या फोल्डरमध्ये `ccam next --continue` चालवा: ते फोल्डरचे शेवटचे संभाषण पुढच्या खात्यावर नेते (सर्वात जास्त जागा असलेल्या खात्यासाठी `--auto`). Claude Code मध्ये, [ccam plugin](/docs/install#claude-code-plugin) मधील `/ccam:switch` तुम्ही ज्या सत्रात आहात त्यासाठी हेच करते. दोन्ही खाती संभाषण इतिहास शेअर करत असतील (`ccam group set default --add history`, किंवा त्यांचा स्वतःचा गट: `ccam group add pair --items history --members work,side`), तर नवीन खाते तेच संभाषण उघडते; नाहीतर Claude Code ते नवीन खात्याच्या इतिहासात कॉपी करते.
 
 ## ccam माझे लॉगिन पाहते किंवा पाठवते का?
 
-ccam तुमचे Claude लॉगिन खात्यांमध्ये कधीही शेअर करत नाही. तुम्ही `ccam usage`, `ccam next --auto` किंवा `ccam doctor` चालवता तेव्हा, त्या खात्याचा वापर Anthropic च्या usage endpoint कडून विचारण्यासाठीच ते खात्याचे access token वाचते. `ccam migrate` MCP सर्व्हरची सेव्ह केलेली साइन-इन्स `~/.claude` मधून त्याच कॉम्प्युटरवरील तुमच्या खात्यांच्या स्वतःच्या लॉगिन फाइल्समध्ये कॉपी करते. ccam मध्ये कोणतीही telemetry नाही. या विचारण्यांव्यतिरिक्त, ते स्वतःहून करत असलेली एकमेव विनंती म्हणजे नवीनतम ccam रिलीजबद्दल डॅशबोर्डने GitHub ला विचारलेला प्रश्न, ज्यात तुमच्याबद्दल किंवा तुमच्या खात्यांबद्दल काहीही नसते.
+ccam तुमचे Claude लॉगिन खात्यांमध्ये कधीही शेअर किंवा कॉपी करत नाही, आणि MCP सर्व्हरची साइन-इन्स कधीही कॉपी करत नाही. तुम्ही `ccam usage`, `ccam next --auto` किंवा `ccam doctor` चालवता तेव्हा, त्या खात्याचा वापर Anthropic च्या usage endpoint कडून विचारण्यासाठीच ते खात्याचे access token वाचते, आणि कालबाह्य token चे नूतनीकरण फक्त `ccam usage --refresh` ने करते; `usage_source = "claude"` सह ते token मुळीच वाचत नाही. `ccam ext` आणि `ccam doctor` खात्याच्या MCP साइन-इन्सची फक्त नावे वाचतात, त्यांचे tokens कधीच नाही. ccam मध्ये कोणतीही telemetry नाही. या विचारण्यांव्यतिरिक्त, ते स्वतःहून करत असलेली एकमेव विनंती म्हणजे नवीनतम ccam रिलीजबद्दल डॅशबोर्डने GitHub ला विचारलेला प्रश्न, ज्यात तुमच्याबद्दल किंवा तुमच्या खात्यांबद्दल काहीही नसते.
 
 ## रिमोट सर्व्हरवर साइन इन कसे करायचे?
 
@@ -38,7 +40,7 @@ SSH सेशनमध्ये नेहमीप्रमाणे `ccam add` 
 
 ## माझी खाती कुठे साठवली जातात?
 
-`~/.local/share/ccam/profiles/<name>/` मध्ये, प्रत्येक खात्यासाठी एक फोल्डर. macOS वर Claude Code लॉगिन स्वतः Keychain मध्ये, त्या फोल्डरवरून बनवलेल्या नावाखाली ठेवते.
+`~/.local/share/ccam/profiles/<name>/` मध्ये, प्रत्येक खात्यासाठी एक फोल्डर. macOS वर Claude Code लॉगिन स्वतः Keychain मध्ये, त्या फोल्डरवरून बनवलेल्या नावाखाली ठेवते, म्हणून तिथे `ccam rename` फोल्डरचे जुने नाव तसेच ठेवते.
 
 ## माझ्या आधीच्या ~/.claude चे काय होते?
 
@@ -46,11 +48,11 @@ SSH सेशनमध्ये नेहमीप्रमाणे `ccam add` 
 
 ## ccam कोणत्या सिस्टिम्सना समर्थन देते?
 
-Linux (Ubuntu, Debian, Fedora, Arch, Alpine आणि इतर), macOS आणि Windows 10 व 11, थेट किंवा WSL मध्ये. Windows वर `settings.json` सारख्या फाइल्स शेअर करण्यासाठी Developer Mode लागतो; शेअर केलेले फोल्डर त्याशिवाय चालतात ([Windows वर शेअरिंग](/features/share#on-windows)).
+Linux (Ubuntu, Debian, Fedora, Arch, Alpine आणि इतर), macOS आणि Windows 10 व 11, थेट किंवा WSL मध्ये. Windows वर `settings.json` सारख्या फाइल्स शेअर करण्यासाठी Developer Mode लागतो; शेअर केलेले फोल्डर त्याशिवाय चालतात, आणि Developer Mode नसताना पहिले `ccam add` फक्त MCP सर्व्हर आणि एक्स्टेंशन्स असलेला `default` गट तयार करते ([Windows वर शेअरिंग](/features/share#on-windows)).
 
 ## एखादा MCP सर्व्हर फक्त एकाच खात्यात का दिसतो?
 
-session मध्ये `claude mcp add` ने जोडलेले सर्व्हर फक्त त्याच खात्यासाठी साठवले जातात. पुढच्या वेळी तुम्ही ते खाते सुरू कराल तेव्हा ccam तुम्हाला सांगते; `ccam mcp import <account> <server>` ने तो सर्व्हर शेअर केलेल्या गटात हलवा.
+session मध्ये `claude mcp add` ने जोडलेले सर्व्हर फक्त त्याच खात्यासाठी साठवले जातात, आणि `-s user` शिवाय फक्त चालू फोल्डरसाठी. पुढच्या वेळी तुम्ही ते खाते सुरू कराल तेव्हा ccam तुम्हाला सांगते, आणि `ccam mcp list` व `ccam ext` ते दाखवतात; `ccam mcp import <account> <server>` ने तो सर्व्हर शेअर केलेल्या गटात हलवा.
 
 ## ccam मुळे Claude Code धीमे होते का?
 
@@ -62,4 +64,4 @@ ccam मार्फत Claude Code सुरू केल्याने सु
 
 ## ccam अनइन्स्टॉल कसे करायचे?
 
-प्रत्येक खात्याचा शॉर्टकट `ccam shortcut <account> --remove` ने काढा, `~/.local/bin` मधून `ccam` हटवा, नंतर खाती आता लागत नसतील तर `~/.config/ccam`, `~/.local/share/ccam` आणि `~/.local/state/ccam` काढा. [इन्स्टॉल](/docs/install#uninstall) पाहा.
+प्रत्येक खात्याचा शॉर्टकट `ccam shortcut <account> --remove` ने काढा. तुम्ही `~/.claude` इम्पोर्ट केला असेल आणि तो एखाद्या गटात असेल, तर आधी त्याच्यासाठी `ccam remove <name>` चालवा, म्हणजे तो जे शेअर करतो त्याची प्रत त्याला परत मिळते. नंतर `~/.local/bin` मधून `ccam` हटवा, आणि खाती आता लागत नसतील तर `~/.config/ccam`, `~/.local/share/ccam` आणि `~/.local/state/ccam` काढा. [इन्स्टॉल](/docs/install#uninstall) पाहा.

@@ -1,10 +1,10 @@
 ---
 title: फ़ोल्डर के हिसाब से अकाउंट
 description: ccam folder से कोई फ़ोल्डर और उसके नीचे का सब कुछ एक अकाउंट इस्तेमाल करता है जब आप बिना अकाउंट नाम के Claude Code शुरू करें, जैसे कंपनी के code के लिए work।
-updated: 2026-10-20
+updated: 2026-10-23
 order: 11
 translation: machine
-sourceHash: 46d1410a3d81
+sourceHash: 48de98d42b99
 ---
 
 `ccam folder work ~/code/company` से `~/code/company` के अंदर, और उसके नीचे के किसी भी फ़ोल्डर में, बिना अकाउंट नाम वाला हर launch Claude Code को `work` के रूप में शुरू करता है। उसके बाहर, डिफ़ॉल्ट अकाउंट पहले की तरह शुरू होता है। अकाउंट का नाम देने पर, `ccam personal` से या `ccpersonal` जैसे शॉर्टकट से, हमेशा वही अकाउंट शुरू होता है।
@@ -34,7 +34,7 @@ Here (/home/me/code/company/api): work, set for /home/me/code/company
 - `ccam -p "…"` और कोई भी दूसरा launch जिसका पहला आर्ग्युमेंट Claude Code का विकल्प हो
 - बिना नाम के `ccam run`, और `ccam --dry-run`
 - `ccam --fallback -p "…"` अपने पहले प्रयास के लिए
-- डैशबोर्ड, यानी अकेला `ccam`, जो फ़ोल्डर के अकाउंट पर cursor के साथ खुलता है
+- डैशबोर्ड, यानी अकेला `ccam`, जो फ़ोल्डर के अकाउंट पर cursor के साथ खुलता है, तब भी जब आप उस फ़ोल्डर तक symbolic link से पहुँचे हों
 
 ## विकल्प
 
@@ -59,7 +59,7 @@ account = 'work'
 2. बिना नाम वाला launch `launcher.HereProfile` को बुलाता है। कोई entry न होने पर यह तुरंत डिफ़ॉल्ट अकाउंट लेता है।
 3. वरना यह working directory की तुलना हर `path` से strings के रूप में करता है: ख़ुद वह फ़ोल्डर या उसके नीचे का कोई फ़ोल्डर, कभी ऐसा फ़ोल्डर नहीं जो सिर्फ़ उन्हीं अक्षरों से शुरू होता हो (`/code/company`, `/code/companyx` को कवर नहीं करता)। सबसे गहरी entry जीतती है, इसलिए `~/code` `personal` हो सकता है जबकि `~/code/company` `work` है।
 4. केवल तभी जब working directory जैसी है वैसी किसी से मेल नहीं खाती, ccam उसके symbolic links सुलझाता है और एक बार फिर तुलना करता है।
-5. Windows पर तुलना बड़े और छोटे अक्षरों को अनदेखा करती है, जैसे Windows करता है।
+5. Windows और macOS पर तुलना बड़े और छोटे अक्षरों को अनदेखा करती है, जैसे आम तौर पर उनके file systems करते हैं।
 
 `config.toml` के अलावा कोई फ़ाइल नहीं पढ़ी जाती, इसलिए किसी फ़ोल्डर के अंदर launch में मापने लायक कोई समय नहीं लगता (entries के साथ या बिना 4.0 ms, `hyperfine`, 300 runs)।
 

@@ -1,10 +1,10 @@
 ---
 title: Rabawa da rukunoni
 description: Rukunin ccam yana raba abubuwan da aka zaɓa tsakanin asusansa ta folda ɗaya; ccam group yana matsar da bayanai tare da shiri, kwafin ajiya da zaɓin rikici.
-updated: 2026-10-20
+updated: 2026-10-23
 order: 4
 translation: machine
-sourceHash: 0c0338362ba2
+sourceHash: e4f05b0fd572
 ---
 
 Kowane asusu yana da foldarsa, amma yawancin abin da ke cikinta ba ya buƙatar zama daban. **Rukuni** yana faɗin abin da ake rabawa da kuma su wa ke rabawa: kowane asusu a rukunin yana haɗa waɗannan abubuwa da folda ɗaya ta mahaɗi, `~/.local/share/ccam/groups/<group>/`, don haka dukansu suna karantawa da rubutawa a kwafi ɗaya. Ba a taɓa raba tokens na shiga ba.
@@ -66,12 +66,13 @@ $ ccam group set default --add history
 Plan (paths in /home/me/.local/share/ccam):
 personal: +history (group default)
   move     projects, history.jsonl: profiles/personal → groups/default (first content of the group)
-  link     projects, history.jsonl: profiles/personal → groups/default
+  link     projects, history.jsonl, file-history, tasks, paste-cache: profiles/personal → groups/default
 work: +history (group default)
   merge    new files in projects: profiles/work → groups/default
   conflict profiles/work/history.jsonl ↔ groups/default/history.jsonl: merge by line
-  back up  projects, history.jsonl: profiles/work → profiles/work/.ccam-backup/20261020-153012
-  link     projects, history.jsonl: profiles/work → groups/default
+  back up  projects, history.jsonl: profiles/work → profiles/work/.ccam-backup/20261023-213057
+  link     projects, history.jsonl, file-history, tasks, paste-cache: profiles/work → groups/default
+  Note: projects: 1 file differs from the group's copy (-home-me-code-app/s1.jsonl); the group's is kept, the account's stays in profiles/work/.ccam-backup/20261023-213057/projects
 Proceed? [y/N]
 ```
 
@@ -98,7 +99,7 @@ Abin da babu rukunin asusun da ke raba shi yana zama a foldar asusun kansa.
 | `ccam group add <group> --items <items> [--members <accounts>]` | ƙirƙiri rukuni; abubuwan asusansa suna motsawa cikinsa |
 | `ccam group set <group> --add <items> \| --remove <items> \| --items <items>` | canza abin da rukunin ke rabawa, ga kowane asusu a cikinsa |
 | `ccam group join <group> <account>...` | saka asusai a rukunin |
-| `ccam group leave <group> <account>...` | fitar da asusai; kowanne yana riƙe kwafi |
+| `ccam group leave <group> <account>...` | fitar da asusai; kowanne yana riƙe kwafi, har da sabobin MCP |
 | `ccam group rename <group> <new-name>` | sake suna a cikin saitin kawai |
 | `ccam group remove <group> [--leave]` | cire rukuni |
 
@@ -106,7 +107,7 @@ Abin da babu rukunin asusun da ke raba shi yana zama a foldar asusun kansa.
 | --- | --- | --- |
 | `--from <account>` | `add`, `set`: asusun da kwafinsa ke fara shiga rukunin | asusun tsoho, sannan bisa lamba |
 | `--replace` | `join`: fara fita daga rukunonin da ke raba abubuwa iri ɗaya | a kashe |
-| `--fresh` | asusan da suka daina raba wani abu suna farawa ba tare da shi ba maimakon da kwafi | a kashe |
+| `--fresh` | asusan da suka daina raba wani abu suna farawa ba tare da shi ba maimakon da kwafi (foldar da aka shigo da ita har yanzu tana riƙe ɗaya) | a kashe |
 | `--leave` | `remove`: fara fitar da asusan rukunin | ana buƙata idan yana da asusai |
 | `--prefer <group\|mine\|merge>` | yadda za a yanke hukuncin rikici | tambaya; da `--yes`, tsohon zaɓin kowane fayil |
 | `-y`, `--yes` | gudana ba tare da tambaya ba; rikici yana bin `--prefer` | a kashe |
@@ -128,10 +129,10 @@ Canji yana aiki a kan kwafin saitin:
 
 1. Umarnin yana gyara kwafin (`AddGroup`, `SetGroupItems`, `JoinGroup` …), wanda ke duba ƙa'idodin.
 2. `internal/group` yana kwatanta tsoho da sabo kuma, ga kowane asusu da abubuwansa ke canzawa, yana gina shiri da `share.Build`. Ana gina shirye-shiryen ɗaya bayan ɗaya, kuma kowanne yana ganin abin da na farkon za su saka a foldojin rukuni, don haka asusun farko ne kaɗai ke matsar da kwafinsa ciki. Kwafin farko yana fitowa daga foldar rukunin idan tana da shi tuni, sannan `--from`, sannan asusun tsoho, sannan sauran bisa lamba.
-3. ccam yana ƙi idan ɗaya daga cikin waɗannan asusai yana aiki, kuma a Windows ba tare da Developer Mode ba idan fayil zai buƙaci mahaɗi.
+3. ccam yana ƙi idan ɗaya daga cikin waɗannan asusai yana aiki, ko ta yaya aka fara Claude Code (``work is running; quit Claude Code there first, then change the groups (`ccam agents` lists the sessions)``), kuma a Windows ba tare da Developer Mode ba idan fayil zai buƙaci mahaɗi.
 4. Ana yanke hukuncin rikici, ta tambaya ko ta `--prefer`, ana buga shirin, kuma ccam yana tambaya.
-5. Ana ajiye sabon saitin kafin komai ya motsa. Idan mataki ya tsaya a tsakiya, `ccam doctor --fix` da sake gudanarwa suna gina shirinsu zuwa ga rukunonin da aka ajiye kuma suna kammala canjin.
-6. Shirye-shiryen suna gudana a tsari. Kowane mataki yana matsar da bayanai cikin rukunin ko cikin foldar ajiya; ba a goge komai.
+5. Daidai kafin ajiyewa, ccam yana sake dubawa: asusun da ya fara yayin da tambayoyin ke jira yana dakatar da canjin, haka ma canjin wani ccam na rukunoni iri ɗaya (`the groups changed while this plan waited; nothing was moved, make the change again`). Ana ajiye sabon saitin kafin komai ya motsa, kuma ana rubuta canjin a `~/.local/state/ccam/group-change.json`. Idan mataki ya tsaya a tsakiya, bayanin yana zama: `ccam doctor --fix` yana kammala canjin a tsarinsa, tare da amsoshin da ka bayar, har da matakan MCP, kuma har zuwa lokacin babu wani canjin rukunoni da ke farawa (``the last change of groups stopped halfway; finish it with `ccam doctor --fix` first``).
+6. Matakan MCP ne ke fara gudana. Idan asusai suka fitar da extensions daga rukuni, ana nuna jerin plugins na rukunin zuwa foldar rukunin duk inda hanyoyinsu ke ratsa foldar wani asusu (`group plugin lists:` a cikin shirin). Sannan shirye-shiryen suna gudana a tsari. Kowane mataki yana matsar da bayanai cikin rukunin ko cikin foldar ajiya; fayilolin da rukunin ke riƙe da su tuni daidai byte da byte ne kawai ake watsarwa maimakon a ajiye su.
 
 `share.Layout` jerin izini ne na hanyoyin da kowane abu ya ƙunsa. Duk abin da ba ya cikinsa ba zai taɓa kai wa rukuni ba. `share.Never` yana ambaton `.credentials.json` da `.claude.json`, kuma `Build` yana tsayawa da kuskure na ciki idan ɗaya daga cikinsu ya taɓa bayyana a tsarin. Abin `mcp` ba shi da hanyoyi: jerin sabobin yana cikin `.claude.json`, don haka [rabawar MCP](/features/mcp) tana aiki ta `mcp.json` na rukunin.
 
@@ -139,19 +140,19 @@ Ga abin da ke faruwa ga folda ɗaya, `projects/`, idan `side` ya fara raba tarih
 
 <!-- motion:share-on -->
 
-Idan rukunin bai da komai a wannan hanyar tukuna, asusun shi ne na farko da ya raba ta kuma ana matsar da foldarsa can kamar yadda take. In ba haka ba ana matsar da kowane fayil da rukunin ba shi da shi cikin rukunin, kuma fayilolin da ke ɓangarorin biyu suna zama a foldar asusun, don haka ana riƙe sigar rukunin. Sannan foldar asusun tana zuwa `.ccam-backup/<time>/` a cikin foldar asusun, kuma mahaɗi yana ɗaukar wurinta. Ana sanya wa fayilolin tattaunawa suna bisa session ID ɗinsu, don haka tarihi daga asusai da dama yana haɗuwa ba tare da karo ba. Rajistocin `plugins/` suna ajiye cikakkun hanyoyi ta foldar asusun; ccam yana nuna su zuwa foldar rukunin kuma yana haɗa shigarwar asusun cikin rajistar da rukunin ke da ita tuni.
+Idan rukunin bai da komai a wannan hanyar tukuna, asusun shi ne na farko da ya raba ta kuma ana matsar da foldarsa can kamar yadda take. In ba haka ba ana matsar da kowane fayil da rukunin ba shi da shi cikin rukunin, kuma fayilolin da ke ɓangarorin biyu suna zama a foldar asusun, don haka ana riƙe sigar rukunin. Ana watsar da fayilolin da suka yi daidai da na rukunin, kuma shirin yana ambaton waɗanda suka bambanta (`Note: projects: 1 file differs from the group's copy (…); the group's is kept, the account's stays in …`). Sannan foldar asusun tana zuwa `.ccam-backup/<time>/` a cikin foldar asusun, kuma mahaɗi yana ɗaukar wurinta. Idan shigarwar rukunin ita kanta mahaɗi ce zuwa shigarwar asusun da ke shiga, abin da ke cikin asusun yana shiga rukunin a madadinta. Ana sanya wa fayilolin tattaunawa suna bisa session ID ɗinsu, don haka tarihi daga asusai da dama yana haɗuwa ba tare da karo ba. Rajistocin `plugins/` suna ajiye cikakkun hanyoyi ta foldar asusun; ccam yana nuna su zuwa foldar rukunin kuma yana haɗa shigarwar asusun cikin rajistar da rukunin ke da ita tuni.
 
 Fita tana juya mahaɗin:
 
 <!-- motion:share-off -->
 
-ccam yana cire mahaɗin ne kawai idan yana nuna cikin foldar groups, sannan yana kwafar abin da ke cikin rukunin a yanzu zuwa asusun. Da `--fresh` ana tsallake kwafin. Rukunin yana riƙe abin da ke cikinsa don sauran asusai. Asusun da ke matsar da abu zuwa rukunin da foldarsa har yanzu babu komai a ciki yana kawo kwafin abin da ya gani, don haka yana riƙe fayilolinsa; sabobin MCP suna zuwa ta hanya ɗaya. Asusun da ya daina raba MCP yana rasa sabobin da ccam ya kwafa cikin `.claude.json` ɗinsa (ana ajiye kwafin ajiya), tunda daga rukunin suka fito.
+ccam yana fara kwafar abin da ke cikin rukunin a yanzu zuwa `.ccam-backup/incomplete-<name>` a cikin foldar asusun, kuma yana maye gurbin mahaɗin ne kawai da zarar kwafin ya kammala, don haka kwafin da ya tsaya yana barin mahaɗin a wurinsa kuma `ccam doctor --fix` yana sake kwafa (shirin irin wannan kammalawa yana nuna `restore <entry>: … (copied back from the group before a stop)`). Yana cire mahaɗin ne kawai idan har yanzu yana nuna cikin foldar groups kamar yadda yake lokacin da aka yi shirin; hanyar da ta canza tun daga lokacin, kamar fayil na gaske inda mahaɗin yake, ana barin ta yadda take kuma canjin yana tsayawa. Da `--fresh` ana tsallake kwafin. Rukunin yana riƙe abin da ke cikinsa don sauran asusai. Asusun da ke matsar da abu zuwa rukunin da foldarsa har yanzu babu komai a ciki yana kawo kwafin abin da ya gani, don haka yana riƙe fayilolinsa; ana shirya wannan kwafin a `<group>/.ccam-incomplete-<name>` har sai ya kammala. Asusun da ya daina raba MCP yana riƙe sabobin rukunin: suna shiga `.claude.json` nasa (ana ajiye kwafin ajiya), kusa da sabobinsa na kansa masu suna iri ɗaya, waɗanda suke nan. Da `--fresh` maimakon haka shirin yana lissafa sabobin da za su daina lodawa. Sake shiga yana cire kwafin da ba wanda ya canza. Barin `extensions` yana kuma nuna jerin plugins na rukunin zuwa foldar rukunin inda hanyoyinsu suka ratsa foldar asusun da ke fita; ga sauran asusai ma'anarsu ɗaya ce.
 
 Fayil ɗaya da ke ɓangarorin biyu mai abubuwa daban rikici ne:
 
 <!-- motion:share-conflict -->
 
-`history.jsonl` yana ba da `merge by line`, `keep group` da `use mine`, tare da haɗawa a farko. Sauran fayilolin `.json` suna ba da `keep group`, `use mine` da `merge JSON`. Duk wani abu dabam yana ba da `keep group` da `use mine`. `merge JSON` yana haɗa abubuwa (objects) a maimaice, yana haɗa arrays ba tare da maimaitawa ba, kuma yana riƙe ƙimar rukunin idan ɓangarorin biyu sun saita maɓalli ɗaya daban-daban, don haka sauran asusai ba sa ganin canji. Kowane zaɓi banda `keep group` yana fara ajiye kwafin rukunin a `.ccam-backup/<time>/group/` na asusun. Fayil ɗinka koyaushe yana zuwa ajiya.
+Kai ne kake zaɓa ga fayiloli guda ɗaya kamar `settings.json`; a cikin foldoji kwafin rukunin yana zama, kuma shirin yana ambaton fayilolin da suka bambanta. `history.jsonl` yana ba da `merge by line`, `keep group` da `use mine`, tare da haɗawa a farko. Sauran fayilolin `.json` suna ba da `keep group`, `use mine` da `merge JSON`. Duk wani abu dabam yana ba da `keep group` da `use mine`. `merge JSON` yana haɗa abubuwa (objects) a maimaice, yana haɗa arrays ba tare da maimaitawa ba, kuma yana riƙe ƙimar rukunin idan ɓangarorin biyu sun saita maɓalli ɗaya daban-daban, don haka sauran asusai ba sa ganin canji. Kowane zaɓi banda `keep group` yana fara ajiye kwafin rukunin a `.ccam-backup/<time>/group/` na asusun. Fayil ɗinka koyaushe yana zuwa ajiya.
 
 A kowane farawa, `share.Check` yana kwatanta kowace hanya a tsarin da rukunonin asusun ta amfani da `lstat` da `readlink` kawai. Ana ƙirƙirar mahaɗin da ya ɓace nan take. Fayil na gaske inda ya kamata mahaɗi ya kasance, mahaɗi zuwa wurin da bai dace ba, ko tsohon mahaɗi yana dakatar da farawar kuma yana nuna `ccam doctor --fix`.
 
@@ -163,14 +164,14 @@ A kowane farawa, `share.Check` yana kwatanta kowace hanya a tsarin da rukunonin 
 
 ### A Windows
 
-Windows yana ƙirƙirar symbolic links ne kawai a Developer Mode (Settings > System > For developers) ko ga administrator. Ba tare da wannan izinin ba, foldar da aka raba tana zama directory junction, wanda ke aiki iri ɗaya ga Claude Code. Fayil da aka raba (`settings.json`, `CLAUDE.md`, `history.jsonl`) zai iya zama symbolic link ne kawai, don haka ana ƙin canjin rukuni da ke buƙatar ɗaya kafin komai ya motsa.
+Windows yana ƙirƙirar symbolic links ne kawai a Developer Mode (Settings > System > For developers) ko ga administrator. Ba tare da wannan izinin ba, foldar da aka raba tana zama directory junction, wanda ke aiki iri ɗaya ga Claude Code. Fayil da aka raba (`settings.json`, `CLAUDE.md`, `history.jsonl`) zai iya zama symbolic link ne kawai, don haka ana ƙin canjin rukuni da ke buƙatar ɗaya kafin komai ya motsa. Saboda wannan dalili `ccam add` na farko a can yana ƙirƙirar rukunin `default` da `mcp` da `extensions` kawai kuma yana faɗin haka, kuma ana ƙin `ccam add --group` zuwa rukunin da ke raba saituna, memory ko tarihi.
 
 ## Tsaro da yanayi na musamman
 
-- **Asusan da ke aiki.** Ana ƙin canji yayin da Claude Code ke gudana a matsayin ɗaya daga cikin asusan da yake matsarwa, domin zaman yana ci gaba da rubutu a cikin waɗannan fayiloli. Fita da shiga sun shafi asusun da aka ambata ne kawai. `--dry-run` har yanzu yana buga shirin.
+- **Asusan da ke aiki.** Ana ƙin canji yayin da Claude Code ke gudana a matsayin ɗaya daga cikin asusan da yake matsarwa, domin zaman yana ci gaba da rubutu a cikin waɗannan fayiloli, ko ccam ne ya fara shi ko ba shi ba (`claude` na yau da kullum, IDE, zaman bayan fage). Ana maimaita binciken daidai kafin ajiyewa. Fita da shiga sun shafi asusun da aka ambata ne kawai; barin `extensions` yana kuma sake rubuta hanyoyi a jerin plugins na rukunin, ba tare da canza ma'anarsu ga sauran ba. `--dry-run` har yanzu yana buga shirin.
 - **Kwafin ajiya.** Kowane shiri yana samun foldar `.ccam-backup/<time>/` nasa a cikin foldar asusun. ccam ba ya taɓa goge su.
 - **Mahaɗanka na kanka.** Idan hanya ta riga ta zama mahaɗin da ka yi, misali zuwa ma'ajiyar dotfiles, kuma rukunin babu komai a ciki, ccam yana kwafar abin da mahaɗin ke nunawa cikin rukunin kuma yana matsar da mahaɗin kansa zuwa ajiya. Ba a taɓa abin da ake nunawa ba.
-- **Foldojin da aka shigo da su.** Asusun da aka yi wa rajista a wurinsa da `ccam import` (kamar `~/.claude`) yana canzawa a wurinsa, don haka `claude` na yau da kullum ma yana ganin canjin; shirin yana faɗin haka.
+- **Foldojin da aka shigo da su.** Asusun da aka yi wa rajista a wurinsa da `ccam import` (kamar `~/.claude`) yana canzawa a wurinsa, don haka `claude` na yau da kullum ma yana ganin canjin; shirin yana faɗin haka. Idan ya fita daga rukuni koyaushe yana riƙe kwafi, har da `--fresh`, kuma `ccam remove` yana fitar da shi daga rukunoninsa ta wannan hanya kafin ya manta da asusun. Fayilolinsa da aka raba suna zaune a foldar rukunin yayin da yake cikin rukuni, don haka cire asusun (ko ka fita daga rukunonin) kafin ka goge `~/.local/share/ccam`.
 - **Asusai biyu a folda ɗaya.** Asusan da ke raba tarihi suna rubutu a fayiloli iri ɗaya. Idan na biyu ya fara a foldar da ɗaya ke aiki tuni, ccam yana gargaɗi kuma yana tambaya.
 - **Gyara da hannu.** Memba da ba asusu ba ne ana watsi da shi kuma `ccam doctor` yana bayar da rahotonsa. Sunayen `local`, `on`, `off` da `none` ba za su iya zama sunayen rukuni ba.
 

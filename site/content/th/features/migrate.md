@@ -1,13 +1,13 @@
 ---
 title: การคัดลอกการตั้งค่าที่มีอยู่
-description: "คัดลอกการตั้งค่า, CLAUDE.md, ส่วนขยาย, เซิร์ฟเวอร์ MCP และการลงชื่อเข้าใช้ MCP จาก ~/.claude ที่มีอยู่ไปยังกลุ่มของ ccam ด้วย ccam migrate"
-updated: 2026-10-19
+description: "คัดลอกการตั้งค่า, CLAUDE.md, ส่วนขยาย และเซิร์ฟเวอร์ MCP จาก ~/.claude ที่มีอยู่ไปยังกลุ่มของ ccam ด้วย ccam migrate"
+updated: 2026-10-23
 order: 6
 translation: machine
-sourceHash: "7cee52e75749"
+sourceHash: "7bca9efb6eb0"
 ---
 
-หากคุณเคยใช้ Claude Code ก่อนใช้ ccam การตั้งค่าของคุณจะอยู่ใน `~/.claude` และ `~/.claude.json` คำสั่ง `ccam migrate` จะคัดลอกการตั้งค่าเหล่านั้นไปยังกลุ่มที่ใช้ร่วมกัน เพื่อให้ทุกบัญชีที่ใช้รายการเหล่านั้นร่วมกันผ่านกลุ่มได้เริ่มต้นด้วยการตั้งค่าที่คุณมีอยู่แล้ว โฟลเดอร์ต้นทางจะถูกอ่านอย่างเดียว และ `claude` แบบปกติยังทำงานได้เหมือนเดิม ให้รันหนึ่งครั้งหลัง `ccam add` ครั้งแรก และรันอีกครั้งทุกครั้งที่มีบัญชีเริ่มใช้เซิร์ฟเวอร์ MCP ร่วมกัน
+หากคุณเคยใช้ Claude Code ก่อนใช้ ccam การตั้งค่าของคุณจะอยู่ใน `~/.claude` และ `~/.claude.json` คำสั่ง `ccam migrate` จะคัดลอกการตั้งค่าเหล่านั้นไปยังกลุ่มที่ใช้ร่วมกัน เพื่อให้ทุกบัญชีที่ใช้รายการเหล่านั้นร่วมกันผ่านกลุ่มได้เริ่มต้นด้วยการตั้งค่าที่คุณมีอยู่แล้ว โฟลเดอร์ต้นทางจะถูกอ่านอย่างเดียว และ `claude` แบบปกติยังทำงานได้เหมือนเดิม ให้รันหนึ่งครั้งหลัง `ccam add` ครั้งแรก เมื่อ `~/.claude.json` มีเซิร์ฟเวอร์ MCP อยู่ `ccam add` ครั้งแรกจะระบุชื่อเซิร์ฟเวอร์เหล่านั้นไว้ในคำแนะนำ
 
 ## การใช้งาน
 
@@ -43,20 +43,17 @@ Space (หรือ `x`) สลับรายการที่เคอร์�
 $ ccam migrate --yes
 Copy from /home/me/.claude into group default (/home/me/.local/share/ccam/groups/default):
   mcp         ~/.claude.json  new: fs, linear
-              sign-ins        linear → personal; skipped: work (not logged in yet)
+              sign-ins        not copied (a sign-in works for one account only); sign in with /mcp: linear in personal, work
   settings    settings.json   new: 61 B
+              not found, skipped: keybindings.json
   memory      CLAUDE.md       new: 11 B
   extensions  agents/         add 1 file the group lacks (6 B)
               skills/         add 1 file the group lacks (13 B)
               not found, skipped: commands/, plugins/, output-styles/, rules/
   Conversation history (projects/, history.jsonl) is not included; add --history to copy it.
-✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, skills/, MCP sign-ins for personal
-MCP sign-ins were not copied to: work (not logged in yet). Sign in to those servers there with /mcp.
-Accounts that share these through group default:
-  mcp         personal, work
-  settings    personal, work
-  memory      personal, work
-  extensions  personal, work
+✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, skills/
+MCP sign-ins are not copied (a sign-in works for one account only). Sign in with /mcp to linear in personal, work.
+Group default: personal, work
 ```
 
 กลุ่มจะไปถึงเฉพาะบัญชีของกลุ่มเอง และเฉพาะรายการที่กลุ่มใช้ร่วมกัน สรุปผลจึงแสดงรายชื่อบัญชีของกลุ่ม เมื่อกลุ่มไม่ได้ใช้รายการใดที่คัดลอกมาร่วมกัน หรือบางบัญชีไม่ได้อยู่ในกลุ่ม ccam จะพิมพ์คำสั่ง `ccam group set <group> --add <items>` และ `ccam group join <group> <accounts>` สำหรับเปลี่ยนสิ่งนั้น
@@ -83,9 +80,9 @@ Accounts that share these through group default:
 
 `internal/cli/migrate.go` เลือกรายการ จากนั้น `migrate.Build` อ่านต้นทางและกลุ่มแล้วคืนแผนกลับมา ไม่มีสิ่งใดถูกเขียนจนกว่าจะถึง `Plan.Apply` หลังจากที่คุณยืนยัน
 
-1. **หาต้นทาง** `checkSource` จะปฏิเสธพาธที่ไม่มีอยู่ ไม่ใช่โฟลเดอร์ หรือไม่มีรายการของ Claude Code ที่รู้จักเลย `migrate.ClaudeJSON` หา `.claude.json` ที่เป็นของโฟลเดอร์นั้น: อยู่ภายในโฟลเดอร์ หรือสำหรับ `~/.claude` ที่ไม่มีไฟล์นี้อยู่ภายใน คือ `~/.claude.json` ที่อยู่ข้าง ๆ ซึ่งเป็นตำแหน่งที่ Claude Code เก็บไฟล์นี้เมื่อไม่ได้ตั้ง `CLAUDE_CONFIG_DIR`
+1. **หาต้นทาง** `checkSource` จะปฏิเสธพาธที่ไม่มีอยู่ ไม่ใช่โฟลเดอร์ หรือไม่มีรายการของ Claude Code ที่รู้จักเลย สำหรับเซิร์ฟเวอร์ MCP อย่างเดียว `~/.claude` ที่ว่างเปล่าหรือไม่มีอยู่ก็ใช้ได้ ตราบที่ `~/.claude.json` มีเซิร์ฟเวอร์อยู่ `migrate.ClaudeJSON` หา `.claude.json` ที่เป็นของโฟลเดอร์นั้น: อยู่ภายในโฟลเดอร์ หรือสำหรับ `~/.claude` ที่ไม่มีไฟล์นี้อยู่ภายใน คือ `~/.claude.json` ที่อยู่ข้าง ๆ ซึ่งเป็นตำแหน่งที่ Claude Code เก็บไฟล์นี้เมื่อไม่ได้ตั้ง `CLAUDE_CONFIG_DIR`
 2. **จับคู่รายการกับพาธ** ทุกพาธมาจาก `share.Layout` ซึ่งเป็นรายการที่อนุญาตชุดเดียวกับที่กลุ่มใช้ เซิร์ฟเวอร์ MCP ถูกอ่านออกจาก `.claude.json` ด้วย `mcp.LocalServers` ซึ่งใช้ตัวสแกน `profile.TopLevelValue` แทนการพาร์สทั้งไฟล์
-3. **คัดลอก ไม่ย้าย** ไฟล์จะไปที่ `~/.local/share/ccam/groups/<group>/` ด้วย `fsutil.AtomicWrite` หรือ `fsutil.CopyFile` ส่วนเซิร์ฟเวอร์ MCP จะไปอยู่ใน `mcp.json` ของกลุ่ม
+3. **คัดลอก ไม่ย้าย** ไฟล์จะไปที่ `~/.local/share/ccam/groups/<group>/` ด้วย `fsutil.AtomicWrite` หรือ `fsutil.CopyFile` ซึ่งเขียนไฟล์ชั่วคราวไว้ข้างไฟล์เป้าหมายแล้วเปลี่ยนชื่อ การคัดลอกที่หยุดกลางคันจึงไม่เหลือไฟล์ที่ขาดครึ่ง ส่วนเซิร์ฟเวอร์ MCP จะไปอยู่ใน `mcp.json` ของกลุ่มภายใต้ล็อกของไฟล์: เซิร์ฟเวอร์ที่ ccam อื่นเพิ่มในระหว่างนั้นจะยังคงอยู่ และสำเนาที่สร้างไว้สำหรับ [Remote Control](/guides/remote-control) จะถูกอัปเดตหลังจากนั้น
 
 แต่ละรายการจับคู่พาธต้นทางหนึ่งพาธกับพาธของกลุ่มหนึ่งพาธ:
 
@@ -108,18 +105,7 @@ Accounts that share these through group default:
 
 ### การลงชื่อเข้าใช้ MCP
 
-เซิร์ฟเวอร์ MCP ที่ลงชื่อเข้าใช้ด้วย OAuth เก็บโทเค็นไว้ในไฟล์เข้าสู่ระบบ `.credentials.json` ภายใต้ `mcpOAuth` ไม่ได้อยู่ในรายการเซิร์ฟเวอร์ Claude Code ใช้คีย์ของแต่ละรายการเป็น `<name>|` ตามด้วย 16 อักขระแรกของแฮช `sha256` ของ `type`, `url` และ `headers` ของเซิร์ฟเวอร์ คีย์นี้ไม่ขึ้นกับโฟลเดอร์ รายการที่คัดลอกจึงใช้ได้ในบัญชีอื่นตราบใดที่นิยามเซิร์ฟเวอร์เหมือนกันทุกประการ ดังนั้น `buildLogins` ใน `internal/migrate/logins.go` จึงคัดลอกเฉพาะรายการของเซิร์ฟเวอร์ที่กลุ่มจะได้รับตามนิยามของต้นทาง ได้แก่ เซิร์ฟเวอร์ใหม่ เซิร์ฟเวอร์ที่เหมือนกันอยู่แล้ว หรือความขัดแย้งที่คุณเลือก `use mine` การลงชื่อเข้าใช้ของเซิร์ฟเวอร์ปลั๊กอิน (คีย์ที่ขึ้นต้นด้วย `plugin:`) จะถูกคัดลอกไปด้วยเมื่อคุณคัดลอกส่วนขยายและต้นทางมี `plugins/`
-
-<!-- motion:migrate-signins -->
-
-รายการเหล่านี้จะไปอยู่ใน `.credentials.json` ของแต่ละบัญชีที่ได้รับ ซึ่งเขียนด้วย `fsutil.AtomicWrite` ในโหมด `0600` และไม่มีวันไปอยู่ในกลุ่ม บัญชีจะได้รับก็ต่อเมื่อใช้ `mcp` ร่วมกัน (หรือ `extensions` สำหรับเซิร์ฟเวอร์ปลั๊กอิน) ผ่านกลุ่มเป้าหมาย และจะเพิ่มเฉพาะคีย์ที่บัญชียังไม่มี: รายการที่บัญชีมีอยู่แล้ว ซึ่งอาจใหม่กว่า จะถูกเก็บไว้ บรรทัด `sign-ins` ในแผนแสดงเซิร์ฟเวอร์ บัญชีที่ได้รับ และบัญชีที่ถูกข้าม ccam จะข้ามบัญชีและระบุชื่อพร้อมเหตุผล เมื่อบัญชีนั้น:
-
-- ลงทะเบียนไว้ในตำแหน่งเดิมด้วย `ccam import` เพราะ `claude` แบบปกติอาจกำลังใช้ไฟล์เข้าสู่ระบบของบัญชีนั้นอยู่
-- กำลังทำงาน เพราะ Claude Code เขียนไฟล์เข้าสู่ระบบใหม่ (ตรวจซ้ำอีกครั้งก่อนเขียน และรายงานเป็น `started meanwhile`)
-- ยังไม่ได้เข้าสู่ระบบ
-- เก็บการเข้าสู่ระบบไว้ในพวงกุญแจ (Keychain) ของ macOS ซึ่ง ccam ไม่เขียน
-
-ให้ลงชื่อเข้าใช้เซิร์ฟเวอร์ในบัญชีที่ถูกข้ามด้วย `/mcp` บัญชีที่เริ่มใช้เซิร์ฟเวอร์ MCP ร่วมกันภายหลังจะได้รับการลงชื่อเข้าใช้เมื่อคุณรัน `ccam migrate` อีกครั้ง โดยสรุปผลจะแจ้งด้วย ``Then run `ccam migrate` again to give them the MCP sign-ins too.``
+เซิร์ฟเวอร์ MCP ที่ลงชื่อเข้าใช้ด้วย OAuth เก็บโทเค็นไว้ในไฟล์เข้าสู่ระบบ `.credentials.json` ภายใต้ `mcpOAuth` ไม่ได้อยู่ในรายการเซิร์ฟเวอร์ ccam ไม่คัดลอกโทเค็นเหล่านั้น การลงชื่อเข้าใช้ที่ถูกคัดลอกจะถือ refresh token เดียวกับต้นฉบับ และเซิร์ฟเวอร์จะหมุนเวียนโทเค็นนั้นเมื่อต่ออายุครั้งแรก: ผู้ถือรายอื่นทั้งหมด รวมถึง `~/.claude` ต้นทาง จะหลุดจากเซิร์ฟเวอร์นั้น ดังนั้น สำหรับแต่ละเซิร์ฟเวอร์ที่คัดลอกซึ่งต้นทางลงชื่อเข้าใช้อยู่ บรรทัด `sign-ins` ของแผนจะระบุชื่อบัญชีในกลุ่มที่ต้องลงชื่อเข้าใช้เองด้วย `/mcp` และสรุปผลจะแจ้งซ้ำอีกครั้ง รายการที่ไม่มีโทเค็นไม่ถือเป็นการลงชื่อเข้าใช้และจะไม่แสดง เช่นเดียวกับบัญชีที่มีการลงชื่อเข้าใช้ของตัวเองอยู่แล้ว หรือเซิร์ฟเวอร์ที่กลุ่มเก็บนิยามของตัวเองไว้ ไม่มีไฟล์เข้าสู่ระบบใดถูกเขียน
 
 ## ความปลอดภัยและกรณีพิเศษ
 
@@ -127,7 +113,8 @@ Accounts that share these through group default:
 - ก่อนที่ไฟล์ของกลุ่มจะถูกแทนที่ ไม่ว่าจะด้วย `use mine` การรวม หรือเซิร์ฟเวอร์ MCP ใหม่ใน `mcp.json` ที่มีอยู่ สำเนาของกลุ่มจะถูกบันทึกไว้ใน `<group>/.ccam-backup/<time>/` ชื่อโฟลเดอร์ไม่ซ้ำกันในแต่ละครั้งที่รัน การรันสองครั้งในวินาทีเดียวกันจึงไม่เขียนทับสำรองของกันและกัน สรุปผลจะพิมพ์พาธนั้น
 - เมื่อใช้ `--yes` ทุกความขัดแย้งจะเก็บสำเนาของกลุ่มไว้ และ ccam จะบอกวิธีเลือกเอง: รันคำสั่งเดิมโดยไม่ใส่ `--yes`
 - หากไม่มีสิ่งใดเปลี่ยน ccam จะพิมพ์ `Nothing to copy.` และหากทุกความขัดแย้งเก็บสำเนาของกลุ่มไว้ จะพิมพ์ `Nothing to copy: the group keeps its own copies.`
-- หากการคัดลอกล้มเหลวกลางคัน ccam จะหยุดด้วย `The source folder was not changed. Group files replaced so far are saved in` ตามด้วยโฟลเดอร์สำรอง
+- หากการคัดลอกล้มเหลวกลางคัน ccam จะหยุดด้วย `The source folder was not changed. Group files replaced so far are saved in` ตามด้วยโฟลเดอร์สำรอง การรันอีกครั้งจะคัดลอกไฟล์ที่มาถึงไม่ครบ
+- เมื่อหลายกลุ่มใช้ MCP ร่วมกัน คำสั่งที่ `ccam doctor`, `ccam ext` และ `ccam mcp list` แนะนำจะเป็น `ccam migrate --mcp --group <a|b>`
 - ต้นทางที่ไม่มีอยู่จะจบด้วย `no Claude Code folder at <path>. Give the folder to copy from: ccam migrate <folder>`
 
 ## หัวข้อที่เกี่ยวข้อง

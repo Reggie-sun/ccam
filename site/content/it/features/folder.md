@@ -1,10 +1,10 @@
 ---
 title: Account per cartella
 description: ccam folder fa usare un account a una cartella e a tutto ciò che contiene quando avvii Claude Code senza nome di account, come work per il codice dell'azienda.
-updated: 2026-10-20
+updated: 2026-10-23
 order: 11
 translation: machine
-sourceHash: "46d1410a3d81"
+sourceHash: "48de98d42b99"
 ---
 
 `ccam folder work ~/code/company` fa sì che ogni avvio senza nome di account dentro `~/code/company`, e in qualsiasi cartella al suo interno, avvii Claude Code con `work`. Fuori da lì, l'account predefinito si avvia come prima. Indicare un account, con `ccam personal` o con una scorciatoia come `ccpersonal`, avvia sempre quell'account.
@@ -34,7 +34,7 @@ Questi avvii usano l'account della cartella:
 - `ccam -p "…"` e qualsiasi altro avvio il cui primo argomento è un'opzione per Claude Code
 - `ccam run` senza nome, e `ccam --dry-run`
 - `ccam --fallback -p "…"` per il suo primo tentativo
-- la dashboard, `ccam` da solo, che parte con il cursore sull'account della cartella
+- la dashboard, `ccam` da solo, che parte con il cursore sull'account della cartella, anche quando sei arrivato nella cartella tramite un link simbolico
 
 ## Opzioni
 
@@ -59,7 +59,7 @@ account = 'work'
 2. Un avvio senza nome chiama `launcher.HereProfile`. Se non ci sono voci, prende subito l'account predefinito.
 3. Altrimenti confronta la directory di lavoro con ogni `path` come stringhe: la cartella stessa o una al suo interno, mai una cartella che inizia soltanto con le stesse lettere (`/code/company` non copre `/code/companyx`). Vince la voce più profonda, quindi `~/code` può essere `personal` mentre `~/code/company` è `work`.
 4. Solo se la directory di lavoro così com'è non corrisponde a nulla, ccam ne risolve i link simbolici e confronta ancora una volta.
-5. Su Windows il confronto ignora maiuscole e minuscole, come fa Windows.
+5. Su Windows e macOS il confronto ignora maiuscole e minuscole, come di solito fanno i loro file system.
 
 Nessun file oltre a `config.toml` viene letto, quindi un avvio dentro una cartella non costa un tempo misurabile (4,0 ms con o senza voci, `hyperfine`, 300 esecuzioni).
 

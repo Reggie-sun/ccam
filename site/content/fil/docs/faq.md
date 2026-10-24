@@ -2,10 +2,10 @@
 title: Mga madalas itanong
 metaTitle: "ccam FAQ: maraming Claude Code account"
 description: Mga sagot tungkol sa ccam, mga Claude Code account, usage limit, sharing, privacy at mga suportadong system.
-updated: 2026-10-21
+updated: 2026-10-24
 order: 6
 translation: machine
-sourceHash: bc944d7dcab9
+sourceHash: c4e3b89bb4ea
 ---
 
 ## Opisyal bang tool ng Anthropic ang ccam?
@@ -15,6 +15,8 @@ Hindi. Ang ccam ay hindi opisyal na open-source na proyekto at hindi kaanib o in
 ## Pinapayagan ba akong gumamit ng maraming Claude Code account?
 
 Nakadepende iyan sa terms ng bawat account at, para sa mga work account, sa patakaran ng iyong organisasyon. Suriin muna ang mga ito bago ka gumamit ng maraming account. Pinapadali lang ng ccam ang paglipat sa pagitan ng mga account na mayroon ka na.
+
+**Mga seat ng Team at Enterprise.** Lumilipat din ang awtomatikong pagpili (`ccam next`, `--fallback`, `ccam pick`, ang `n` ng dashboard) sa pagitan ng mga seat ng iisang Claude Team o Enterprise na organisasyon. Sinasabi ng help center ng Anthropic na "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (nakatalaga ang bawat seat ng Team plan sa iisang partikular na tao, at siya lang ang puwedeng gumamit nito) at "Users can't route their work through another user's account to use that user's remaining usage" (hindi puwedeng idaan ng mga user ang trabaho nila sa account ng ibang user para magamit ang natitirang usage ng user na iyon) ([mga Team plan](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); ganoon din sa [mga Enterprise plan](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Kaya maaaring lumabag sa terms ng Anthropic ang paggamit ng awtomatikong pagpili sa pagitan ng mga seat. Magtanong muna sa iyong organisasyon at sa Anthropic bago ka umasa rito. Saklaw ng talata sa itaas ang mga personal na plan (Pro, Max).
 
 ## Nalulusutan ba ng ccam ang mga usage limit?
 
@@ -26,11 +28,11 @@ Bigyan ang bawat account ng sariling configuration folder gamit ang `CLAUDE_CONF
 
 ## Paano ko itutuloy ang isang usapan sa ibang account?
 
-I-share ang kasaysayan ng usapan sa pagitan ng mga account gamit ang `ccam group set default --add history` (o sa isang group na para lang sa kanila: `ccam group add pair --items history --members work,side`), saka patakbuhin ang `ccam next --continue`. Bubuksan ng Claude Code ang pinakahuling usapan ng kasalukuyang folder sa susunod na account.
+Patakbuhin ang `ccam next --continue` sa folder: dinadala nito ang huling usapan ng folder sa susunod na account (`--auto` para sa may pinakamaraming natitira). Sa loob ng Claude Code, ganoon din ang ginagawa ng `/ccam:switch` mula sa [ccam plugin](/docs/install#claude-code-plugin) para sa session na kinaroroonan mo. Kapag nagshe-share ng kasaysayan ng usapan ang dalawang account (`ccam group set default --add history`, o sa isang group na para lang sa kanila: `ccam group add pair --items history --members work,side`), binubuksan ng bagong account ang mismong usapang iyon; kung hindi, kinokopya ito ng Claude Code sa kasaysayan ng bagong account.
 
 ## Nakikita o ipinapadala ba ng ccam ang login ko?
 
-Hindi kailanman ishe-share ng ccam ang iyong Claude login sa pagitan ng mga account. Binabasa lang nito ang access token ng isang account para itanong sa usage endpoint ng Anthropic ang usage ng account na iyon, kapag pinatakbo mo ang `ccam usage`, `ccam next --auto` o `ccam doctor`. Kinokopya ng `ccam migrate` ang mga naka-save na sign-in ng mga MCP server mula sa `~/.claude` papunta sa sariling login file ng iyong mga account sa parehong computer. Walang telemetry ang ccam. Bukod sa mga lookup na iyon, ang tanging request na kusa nitong ginagawa ay ang tanong ng dashboard sa GitHub tungkol sa pinakabagong ccam release, na walang dalang anuman tungkol sa iyo o sa iyong mga account.
+Hindi kailanman ishe-share o kokopyahin ng ccam ang iyong Claude login sa pagitan ng mga account, at hindi nito kailanman kinokopya ang mga sign-in ng mga MCP server. Binabasa lang nito ang access token ng isang account para itanong sa usage endpoint ng Anthropic ang usage ng account na iyon, kapag pinatakbo mo ang `ccam usage`, `ccam next --auto` o `ccam doctor`, at nire-renew lang nito ang expired na token gamit ang `ccam usage --refresh`; kapag `usage_source = "claude"`, hindi nito binabasa ang token kahit kailan. Binabasa ng `ccam ext` at `ccam doctor` ang mga pangalan ng mga MCP sign-in ng isang account, hindi kailanman ang mga token nila. Walang telemetry ang ccam. Bukod sa mga lookup na iyon, ang tanging request na kusa nitong ginagawa ay ang tanong ng dashboard sa GitHub tungkol sa pinakabagong ccam release, na walang dalang anuman tungkol sa iyo o sa iyong mga account.
 
 ## Paano mag-sign in sa isang remote server?
 
@@ -38,7 +40,7 @@ Patakbuhin ang `ccam add` o `ccam login <name>` sa SSH session gaya ng dati. Nag
 
 ## Saan naka-store ang mga account ko?
 
-Sa `~/.local/share/ccam/profiles/<name>/`, isang folder bawat account. Sa macOS, iniimbak mismo ng Claude Code ang login sa Keychain, sa ilalim ng pangalang hango sa folder na iyon.
+Sa `~/.local/share/ccam/profiles/<name>/`, isang folder bawat account. Sa macOS, iniimbak mismo ng Claude Code ang login sa Keychain, sa ilalim ng pangalang hango sa folder na iyon, kaya sa macOS, pinapanatili ng `ccam rename` ang lumang pangalan ng folder.
 
 ## Ano ang mangyayari sa dati kong ~/.claude?
 
@@ -46,11 +48,11 @@ Wala, maliban kung patakbuhin mo ang `ccam import` o `ccam migrate`. Nirerehistr
 
 ## Aling mga system ang suportado ng ccam?
 
-Linux (Ubuntu, Debian, Fedora, Arch, Alpine at iba pa), macOS at Windows 10 at 11, direkta o sa loob ng WSL. Sa Windows, kailangan ng Developer Mode para mag-share ng mga file gaya ng `settings.json`; gumagana ang mga shared na folder kahit wala ito ([sharing sa Windows](/features/share#on-windows)).
+Linux (Ubuntu, Debian, Fedora, Arch, Alpine at iba pa), macOS at Windows 10 at 11, direkta o sa loob ng WSL. Sa Windows, kailangan ng Developer Mode para mag-share ng mga file gaya ng `settings.json`; gumagana ang mga shared na folder kahit wala ito, at kapag wala ito, ginagawa ng unang `ccam add` ang group na `default` na may mga MCP server at extension lang ([sharing sa Windows](/features/share#on-windows)).
 
 ## Bakit sa iisang account lang lumalabas ang isang MCP server?
 
-Ang mga server na idinagdag sa loob ng session gamit ang `claude mcp add` ay naka-store para sa account na iyon lang. Sasabihin ito sa iyo ng ccam sa susunod na simulan mo ang account; ilipat ang server sa shared group gamit ang `ccam mcp import <account> <server>`.
+Ang mga server na idinagdag sa loob ng session gamit ang `claude mcp add` ay naka-store para sa account na iyon lang, at kapag walang `-s user`, para sa kasalukuyang folder lang. Sasabihin ito sa iyo ng ccam sa susunod na simulan mo ang account, at ipinapakita sila ng `ccam mcp list` at `ccam ext`; ilipat ang server sa shared group gamit ang `ccam mcp import <account> <server>`.
 
 ## Pinababagal ba ng ccam ang Claude Code?
 
@@ -62,4 +64,4 @@ Patakbuhin ang `ccam update`. Dina-download nito ang pinakabagong release, sinus
 
 ## Paano i-uninstall ang ccam?
 
-Alisin ang shortcut ng bawat account gamit ang `ccam shortcut <account> --remove`, burahin ang `ccam` mula sa `~/.local/bin`, saka alisin ang `~/.config/ccam`, `~/.local/share/ccam` at `~/.local/state/ccam` kung hindi mo na kailangan ang mga account. Tingnan ang [install](/docs/install#uninstall).
+Alisin ang shortcut ng bawat account gamit ang `ccam shortcut <account> --remove`. Kung in-import mo ang `~/.claude` at nasa isang group ito, patakbuhin muna ang `ccam remove <name>` para dito, para maibalik dito ang kopya ng mga shine-share nito. Saka burahin ang `ccam` mula sa `~/.local/bin`, at alisin ang `~/.config/ccam`, `~/.local/share/ccam` at `~/.local/state/ccam` kung hindi mo na kailangan ang mga account. Tingnan ang [install](/docs/install#uninstall).

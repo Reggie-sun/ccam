@@ -1,10 +1,10 @@
 ---
 title: Sabunta ccam
 description: ccam update yana maye gurbin ccam da sabon sakin GitHub bayan duba SHA-256; --check yana bayar da rahoto kawai, --version yana girka takamaiman tag na saki.
-updated: 2026-10-21
+updated: 2026-10-23
 order: 10
 translation: machine
-sourceHash: a92dbf37399f
+sourceHash: 000d37de5f29
 ---
 
 `ccam update` yana sauke sakin ccam daga GitHub, yana duba shi da `checksums.txt` na sakin kuma yana maye gurbin binary da ke gudana da rename ɗaya. Yi amfani da shi idan ka girka ccam da rubutun girkawa (install script) ko daga archive. [Dashboard](/features/dashboard) ma yana tambayar GitHub sabon saki duk lokacin da ya buɗe kuma yana ba da shi da `U`, wanda ke bin matakai iri ɗaya bayan ya tambaya. Babu wani umarni dabam da ke tuntuɓar GitHub, don haka suna aiki iri ɗaya ba tare da intanet ba.
@@ -64,7 +64,7 @@ Dukkan hanyar, daga neman tag zuwa rename:
 
 Ana sauke archive da `checksums.txt` gefe da gefe, kuma ba a rubuta komai har sai checksum ya yi daidai. Rename ɗin atomic ne, don haka faɗuwar shiri ko cikakken faifai yana barin ko dai tsohon binary ko sabon, ba taɓa rabin ɗaya ba. Gajerun umarni kamar `~/.local/bin/ccwork` symlinks ne zuwa binary na ccam, don haka suna gudanar da sabuwar sigar ba tare da wani canji ba.
 
-A Windows ba za a iya maye gurbin ko goge fayil na shirin da ke gudana ba, sai dai a sauya sunansa. `Updater.Install` yana rubuta sabon binary zuwa `ccam.exe.new`, yana sauya sunan `ccam.exe` da ke gudana zuwa `ccam.exe.old`, kuma yana sauya sunan sabon fayil zuwa `ccam.exe`. Idan mataki na ƙarshe ya gaza, ana mayar da sunan tsohon binary. Sabuntawa ta gaba tana goge `ccam.exe.old`. Gajerun umarni da ke hard links maimakon symbolic links ([Gajerun umarni](/features/shortcuts)) ana sabunta su nan take bayan haka, don haka su ma suna gudanar da sabuwar sigar.
+A Windows ba za a iya maye gurbin ko goge fayil na shirin da ke gudana ba, sai dai a sauya sunansa. `Updater.Install` yana rubuta sabon binary zuwa `ccam.exe.new`, yana sauya sunan `ccam.exe` da ke gudana zuwa `ccam.exe.old`, kuma yana sauya sunan sabon fayil zuwa `ccam.exe`. Idan mataki na ƙarshe ya gaza, ana mayar da sunan tsohon binary. Sabuntawa ta gaba tana goge fayilolin `ccam.exe.old` da za ta iya; yayin da wani zama ke gudana har yanzu daga `ccam.exe.old` na baya, binary da ke gudana yana zama `ccam.exe.old-<time>` maimakon haka. Gajerun umarni da ke hard links maimakon symbolic links ([Gajerun umarni](/features/shortcuts)) ana sabunta su nan take bayan haka, don haka su ma suna gudanar da sabuwar sigar; hakan ya haɗa da hard links na kowane tsohon ccam da ccam ya yi, ba na binary da aka maye gurbinsa yanzu kawai ba.
 
 ### Girkin da mai sarrafa kunshi ke sarrafawa
 
@@ -91,7 +91,7 @@ A tsarin da ba Linux ba, layin rubutun girkawa ne kawai ake bugawa: `irm https:/
 
 ## Tsaro da yanayi na musamman
 
-- Build na haɓakawa (development) yana bayar da sigarsa a matsayin `dev` kuma ba shi da sakin da za a kwatanta da shi, don haka `ccam update` da `ccam update --check` suna ƙin sa. `ccam update --version vX.Y.Z` yana girka saki a kansa.
+- Build na haɓakawa (development) yana bayar da sigarsa a matsayin `dev` kuma ba shi da sakin da za a kwatanta da shi, don haka `ccam update` da `ccam update --check` suna ƙin sa. `ccam update --version vX.Y.Z` yana girka saki a kansa. Build da aka yi da `go install github.com/jhyunwoo/ccam/cmd/ccam@vX.Y.Z` (ko `@latest`) yana bayar da rahoton wannan sakin, don haka `ccam update` da tayin dashboard suna aiki a kansa; `@main` ko build na gida da ya wuce tag yana zama `dev`.
 - Saukewa da ya gaza, asset da ya ɓace ga dandalinka, ko checksum da bai yi daidai ba yana barin binary da aka girka yadda yake.
 - Sakin da babu shi yana gazawa da `there is no release <tag>`. Idan GitHub ya ƙi da HTTP 403 ko 429, ccam yana cewa wataƙila iyakar buƙatu ce kuma yana roƙon ka ka sake gwadawa daga baya.
 - `--check` yana karantawa ne kawai. Ba ya duba ko kunshi ke sarrafa binary ɗin ko ana iya rubutu a kansa.

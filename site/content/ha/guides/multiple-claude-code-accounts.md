@@ -1,10 +1,10 @@
 ---
 title: Amfani da asusun Claude Code da dama a kwamfuta ɗaya
 description: Gudanar da asusun Claude Code da dama gefe da gefe da CLAUDE_CONFIG_DIR, da hannu ta shell alias ko ta atomatik da ccam, kuma ka sauya tsakaninsu.
-updated: 2026-10-20
+updated: 2026-10-24
 order: 1
 translation: machine
-sourceHash: ee92078b81c3
+sourceHash: 5463dec2f6eb
 ---
 
 Ba kowane asusu foldar saitunsa ta kansa. Claude Code yana karanta foldar daga environment variable ɗin `CLAUDE_CONFIG_DIR`, kuma kowace folda tana riƙe bayanan shigarta, saitunanta da tarihinta, don haka kowane asusu yana nan a shiga kuma za ka iya gudanar da su a lokaci guda. Za ka iya saita wannan da hannu da shell alias, ko ka bar ccam ya yi maka.
@@ -51,7 +51,7 @@ ccam add work --shortcut ccwork
 
 Yanzu `ccam personal` da `ccam work` suna fara asusun biyu, haka ma `ccwork`, gajeren umarnin da ka ba asusun work. Saboda shirye-shirye ne na gaske ba alias ba, suna aiki a scripts ma. Gudanar da `ccam` shi kaɗai don zaɓar asusu daga jeri, da `ccam use work` don mayar da ɗaya tsoho (default).
 
-Ana raba saituna, `CLAUDE.md`, sabobin MCP da extensions tun daga farko, kuma za ka iya kunna raba tarihin tattaunawa don ci gaba da tattaunawa a ɗayan asusun da `ccam next --continue`. `ccam usage` yana nuna amfanin awa 5 da na mako na kowane asusu a lokaci ɗaya.
+Ana raba saituna, `CLAUDE.md`, sabobin MCP da extensions tun daga farko. `ccam next --continue` yana kai tattaunawa zuwa ɗayan asusun, kuma raba tarihin tattaunawa, wanda za ka iya kunnawa, yana riƙe ta a matsayin tattaunawa ɗaya. `ccam usage` yana nuna amfanin awa 5 da na mako na kowane asusu a lokaci ɗaya.
 
 Idan kana amfani da `~/.claude` tuni, gudanar da `ccam import` maimakon sake ƙara wannan asusun, ko `ccam migrate` don kwafar saitunansa, sabobin MCP da extensions zuwa saitunan da aka raba.
 
@@ -67,7 +67,7 @@ Claude Code yana aiki [kai tsaye a Windows da kuma cikin WSL](https://code.claud
 
 **Claude Code yana tambaya na shiga kowane lokaci.** Farkon farawa a sabuwar folda koyaushe yana tambaya. Idan ya ci gaba da tambaya, shigar ta ƙare ko an cire ta: gudanar da `ccam login work` (ko ka fara alias ɗin sau ɗaya ka shiga).
 
-**Sabar MCP tana bayyana a asusu ɗaya kawai.** Sabobin da aka ƙara a cikin zama da `claude mcp add` na wannan asusun ne. Matsar da ɗaya zuwa duk asusai da `ccam mcp import work <server>`.
+**Sabar MCP tana bayyana a asusu ɗaya kawai.** Sabobin da aka ƙara a cikin zama da `claude mcp add` na wannan asusun ne, kuma ba tare da `-s user` ba na wannan foldar kawai. Matsar da ɗaya zuwa duk asusai da `ccam mcp import work <server>`.
 
 **Saituna sun bambanta tsakanin asusai.** `ccam share work` yana nuna abin da asusun ke rabawa da kuma ta wane rukuni; `ccam group join default work` yana sa shi ya raba abin da `default` ke rabawa, bayan ya nuna abin da zai canza. `ccam doctor --fix` yana gyara mahaɗan da suka lalace kuma yana ajiye kwafin kowane fayil da ya canza.
 
@@ -78,3 +78,5 @@ Claude Code yana aiki [kai tsaye a Windows da kuma cikin WSL](https://code.claud
 Ga asusai biyu ba tare da raba komai ba, alias ya isa. Idan kana son saituna da sabobin MCP da aka raba, ƙarin asusai, ganin amfani a kallo ɗaya ko ci gaba da tattaunawa, ccam yana ɗauke maka aikin bin diddigi. [Kwatance da alias](/compare/aliases) yana jera bambance-bambancen gefe da gefe, kuma [ccam da sauran masu sauya asusu](/compare/account-switchers) yana bayani kan kayan aikin da ke musanya bayanan shiga ɗaya maimakon haka.
 
 Ko an yarda ka yi amfani da asusai da dama ya dogara da sharuɗɗan kowane asusu. Duba su kafin ka yi haka.
+
+**Kujeru (seats) na Team da Enterprise.** Zaɓin atomatik (`ccam next`, `--fallback`, `ccam pick`, maɓallin `n` na dashboard) yana kuma sauyawa tsakanin kujerun ƙungiyar Claude Team ko Enterprise iri ɗaya. Cibiyar taimako ta Anthropic ta ce "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (ana ba da kowace kujera a tsarin Team da sunan takamaiman mutum ɗaya, kuma wannan mutumin kaɗai ne aka yarda ya yi amfani da ita) da "Users can't route their work through another user's account to use that user's remaining usage" (masu amfani ba za su iya tura aikinsu ta asusun wani mai amfani ba domin su ci gajiyar ragowar amfanin wannan mai amfanin) ([Tsare-tsaren Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); haka ma ga [tsare-tsaren Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Don haka yin amfani da zaɓin atomatik tsakanin kujeru na iya saɓa wa sharuɗɗan Anthropic. Ka tuntuɓi ƙungiyarka da Anthropic kafin ka dogara da shi. Don tsare-tsaren kai (Pro, Max), duba bayanin da ke sama.

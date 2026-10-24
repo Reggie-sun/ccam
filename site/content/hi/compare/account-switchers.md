@@ -1,10 +1,10 @@
 ---
 title: ccam और दूसरे Claude Code account switchers
 description: Claude Code अकाउंट स्विच करने के लिए ccam की तुलना claude-swap, CCS, clausona, clauth, CAAM, cux और दूसरे टूल्स से, और कौन-सा तरीका किस काम के लिए ठीक है।
-updated: 2026-10-21
+updated: 2026-10-24
 order: 2
 translation: machine
-sourceHash: c74be64d2978
+sourceHash: 6d08203f1ea6
 ---
 
 Claude Code अकाउंट स्विच करने वाले टूल दो में से एक तरीका अपनाते हैं। ज़्यादातर टूल एक ही `~/.claude` फ़ोल्डर के अंदर लॉगिन बदलते हैं, इसलिए एक समय में एक ही अकाउंट सक्रिय रहता है। दूसरे टूल, जिनमें ccam भी है, `CLAUDE_CONFIG_DIR` से हर अकाउंट को उसका अपना फ़ोल्डर देते हैं, इसलिए हर अकाउंट लॉग इन रहता है और कई अकाउंट एक साथ चल सकते हैं। ccam इसमें साझा सेटिंग्स और MCP सर्वर जोड़ता है, और किसी बातचीत को दूसरे अकाउंट के फ़ोल्डर में जारी रखता है।
@@ -54,7 +54,7 @@ ccswap, claude-swap का एक fork है जो Codex लॉगिन भ�
 
 ccam कभी किसी Claude लॉगिन को एक जगह से दूसरी जगह कॉपी नहीं करता। हर अकाउंट का लॉगिन उसके अपने फ़ोल्डर में रहता है, या macOS पर उस फ़ोल्डर के अपने कीचेन आइटम में, और उसे renew करने वाला प्रोग्राम Claude Code ही है। ऐसी कोई सहेजी गई कॉपी नहीं है जो मेल से बाहर हो सके। मौजूदा `~/.claude`, जिसे `ccam import` से रजिस्टर किया गया है, वही कीचेन आइटम रखता है जिसे साधारण `claude` इस्तेमाल करता है, इसलिए दोनों तरह से वह लॉग इन रहता है।
 
-ccam किसी expired token को ख़ुद तभी renew करता है जब आप `ccam usage --refresh` चलाते हैं। यह पहले एक lock लेता है और वह अकाउंट चल रहा हो तो मना कर देता है, इसलिए यह किसी चालू session के नीचे से token कभी नहीं बदलता।
+ccam किसी expired token को ख़ुद तभी renew करता है जब आप `ccam usage --refresh` चलाते हैं। यह पहले एक lock लेता है और वह अकाउंट चल रहा हो तो मना कर देता है, चाहे Claude Code किसी भी तरह शुरू हुआ हो (background sessions और उनका daemon भी), और तब भी जब Claude Code ख़ुद उस लॉगिन को renew कर रहा हो, इसलिए यह किसी चालू session के नीचे से token कभी नहीं बदलता।
 
 ### आपके और Claude Code के बीच कुछ नहीं चलता
 
@@ -66,19 +66,21 @@ ccam एक फ़ाइल पढ़ता है, अपने links जाँ
 
 MCP सर्वर, `settings.json`, `CLAUDE.md`, extensions (agents, commands, skills, plugins) और बातचीत का इतिहास पाँच अलग आइटम हैं। एक group उन आइटम के नाम बताता है जिन्हें वह साझा करता है और उसमें शामिल अकाउंट्स के भी, इसलिए दो work अकाउंट `work` group में इतिहास साझा कर सकते हैं जबकि personal अकाउंट अपना इतिहास अलग रखता है, और तीनों `default` के ज़रिए एक ही MCP सर्वर साझा करते हैं। `ccam group set work --add memory` group के हर अकाउंट को एक ही plan में बदलता है; [डैशबोर्ड](/features/dashboard) checkboxes से यही करता है और उस आइटम को धुंधला कर देता है जो किसी अकाउंट को पहले से किसी दूसरे group से मिलता है।
 
-- MCP सर्वर launch के समय `--mcp-config` से दिए जाते हैं, इसलिए default रूप से ccam कभी `.claude.json` को edit नहीं करता, जिसे Claude Code चलते समय दोबारा लिखता है। `ccam mcp add` पूरे group के लिए एक ही बार में सर्वर जोड़ता है।
+- MCP सर्वर launch के समय `--mcp-config` से दिए जाते हैं, इसलिए default रूप से launch `.claude.json` को, जिसे Claude Code चलते समय दोबारा लिखता है, नहीं छूता। ccam वहाँ केवल उन्हीं चरणों में लिखता है जो यह बताते हैं, Claude Code के lock के अंदर और backup के साथ: Remote Control के लिए पूछने के बाद, जब कोई अकाउंट MCP sharing छोड़ता है या उसमें फिर से जुड़ता है, और `ccam mcp import` के लिए। `ccam mcp add` पूरे group के लिए एक ही बार में सर्वर जोड़ता है।
 - बाक़ी आइटम group फ़ोल्डर की ओर links हैं, इसलिए एक अकाउंट में किया गया बदलाव तुरंत बाक़ी अकाउंट में दिखता है। launch के समय कुछ भी कॉपी नहीं होता।
 - लॉगिन, `.claude.json` और running state कभी साझा नहीं होते।
 
 ### हर बदलाव पहले दिखाया जाता है और उसका backup बनता है
 
-`ccam group` और `ccam migrate` कुछ भी खिसकाने से पहले एक plan दिखाते हैं और पूछते हैं। जब किसी अकाउंट और उसके group में कोई फ़ाइल अलग हो, तो आप चुनते हैं: group वाली रखें, अपनी इस्तेमाल करें, या JSON merge करें। मूल फ़ाइलें `.ccam-backup/<time>/` में जाती हैं, हटाए गए अकाउंट का फ़ोल्डर एक trash फ़ोल्डर में जाता है, और फ़ाइलें एक ही rename में बदली जाती हैं, इसलिए बीच में रुका write पुरानी फ़ाइल को जस का तस छोड़ देता है। `--dry-run` दिखाता है कि launch, sharing, migration, shortcuts, updates और repairs क्या करेंगे। `ccam doctor --fix` टूटे links और permissions ठीक करता है।
+`ccam group` और `ccam migrate` कुछ भी खिसकाने से पहले एक plan दिखाते हैं और पूछते हैं। जब किसी अकाउंट और उसके group में कोई फ़ाइल अलग हो, तो आप चुनते हैं: group वाली रखें, अपनी इस्तेमाल करें, या JSON merge करें; फ़ोल्डरों के अंदर group की कॉपी बनी रहती है और plan उन फ़ाइलों के नाम बताता है जो अलग हैं। मूल फ़ाइलें `.ccam-backup/<time>/` में जाती हैं, हटाया गया अकाउंट लॉग आउट होता है और उसका फ़ोल्डर एक trash फ़ोल्डर में जाता है, और फ़ाइलें एक ही rename में बदली जाती हैं, इसलिए बीच में रुका write पुरानी फ़ाइल को जस का तस छोड़ देता है। `--dry-run` दिखाता है कि launch, sharing, migration, shortcuts, updates और repairs क्या करेंगे। `ccam doctor --fix` टूटे links और permissions ठीक करता है।
 
 ### अगले अकाउंट में वही बातचीत
 
 `ccam next --auto --continue` हर अकाउंट से एक साथ उसका उपयोग पूछता है, सबसे ज़्यादा गुंजाइश वाला अकाउंट खोलता है और बातचीत जारी रखता है। साझा इतिहास के साथ यह वही बातचीत होती है; उसके बिना Claude Code उसे नए अकाउंट में कॉपी कर देता है (`--resume <file> --fork-session`), और ccam बताता है कि पहला जवाब कितने tokens फिर से पढ़ता है। जब कोई सीमा किसी session को रोकती है, तो ccam plugin का hook एक notification दिखाता है, और `/ccam:switch` बातचीत आगे सौंप देता है। कब स्विच करना है, यह आप तय करते हैं; background में कोई आपके उपयोग पर नज़र नहीं रखता, और अपने-आप होने वाले चुनाव एक ही संगठन के भीतर रहते हैं, इसलिए किसी कंपनी की बातचीत कभी गलती से किसी निजी अकाउंट पर नहीं पहुँचती। किसी अकाउंट के 90% तक पहुँचने पर status line यह कमांड सुझाती है।
 
 Scripts आपका इंतज़ार नहीं कर सकतीं, इसलिए `ccam --fallback work -p "…"` उनके लिए स्विच करता है: जब अकाउंट अपनी सीमा तक पहुँचता है, तो वही कमांड सबसे ज़्यादा गुंजाइश वाले अकाउंट के रूप में फिर से चलती है, और सिर्फ़ उस run का output छपता है जो पूरा हुआ। जो विफलता उपयोग की सीमा नहीं है, उसे जस का तस आगे दे दिया जाता है। समानांतर workers के लिए, `ccam pick` हर एक को गुंजाइश वाला अलग अकाउंट देता है, और जब किसी अकाउंट में गुंजाइश नहीं बचती तो दोनों code 75 के साथ बाहर निकलते हैं।
+
+**Team और Enterprise सीटें।** अपने-आप होने वाला चुनाव (`ccam next`, `--fallback`, `ccam pick`, डैशबोर्ड का `n`) एक ही Claude Team या Enterprise संगठन की सीटों के बीच भी स्विच करता है। Anthropic का सहायता केंद्र कहता है कि "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team प्लान की हर सीट एक नामित व्यक्ति को सौंपी जाती है, और केवल वही व्यक्ति उसका इस्तेमाल कर सकता है) और "Users can't route their work through another user's account to use that user's remaining usage" (उपयोगकर्ता किसी दूसरे उपयोगकर्ता के बचे हुए उपयोग का इस्तेमाल करने के लिए अपना काम उसके अकाउंट के ज़रिए नहीं चला सकते) ([Team प्लान](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise प्लान](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) के लिए भी इसी तरह)। इसलिए सीटों के बीच अपने-आप होने वाला चुनाव इस्तेमाल करना Anthropic की शर्तों का उल्लंघन हो सकता है। इस पर भरोसा करने से पहले अपने संगठन और Anthropic से पता कर लें। Personal प्लान (Pro, Max) के बारे में [FAQ का शर्तों वाला नोट](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) बताता है।
 
 ### हर फ़ोल्डर में सही अकाउंट
 
@@ -91,7 +93,7 @@ ccam लगभग 10 MB की एक static binary है, जिसके ल�
 ## जहाँ दूसरे टूल ज़्यादा करते हैं
 
 - claude-swap, clauth, cux, CAAM और CCSwitcher, किसी अकाउंट के उपयोग की तय सीमा पार होने पर चल रहे interactive session को अपने-आप स्विच कर सकते हैं। ccam `-p` runs को `--fallback` से स्विच करता है और interactive sessions आप पर छोड़ता है, सीमा पर एक notification और `/ccam:switch` के साथ।
-- Developer Mode के बिना Windows पर ccam फ़ोल्डर साझा करता है, लेकिन `settings.json` जैसी अकेली फ़ाइलें साझा नहीं कर सकता; claude-swap और CCS वहाँ उन्हें कॉपी कर देते हैं।
+- Developer Mode के बिना Windows पर ccam फ़ोल्डर साझा करता है, लेकिन `settings.json` जैसी अकेली फ़ाइलें साझा नहीं कर सकता (तब पहला `ccam add` केवल MCP सर्वर और एक्सटेंशन साझा करता है); claude-swap और CCS वहाँ उन्हें कॉपी कर देते हैं।
 - CCSwitcher, Claude Switcher और claude-swap उपयोग को macOS menu bar में दिखाते हैं।
 - CCS, clausona, CAAM, clauth, ccswap और Claude Switcher, Codex और दूसरे coding agents भी संभालते हैं।
 - clausona हर अकाउंट के लिए extensions को चालू और बंद भी करता है (ccam का `ccam ext` उन्हें सिर्फ़ दिखाता है), local token लागत का हिसाब रखता है, और ऐसे Claude Code plugins देता है जो tmux और दूसरे terminals में workers के पूरे समूह चलाते हैं।

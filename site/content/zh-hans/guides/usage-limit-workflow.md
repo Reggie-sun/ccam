@@ -1,13 +1,13 @@
 ---
 title: Claude Code 达到用量限制时该怎么办
 description: 等待额度重置，或立即在另一个 Claude Code 账号上继续同一个对话。逐步说明 5 小时限制和每周限制的工作方式。
-updated: 2026-10-19
+updated: 2026-10-24
 order: 3
 translation: machine
-sourceHash: "38b80d780bba"
+sourceHash: "049a46684c7b"
 ---
 
-当一个账号达到用量限制（常被称为 rate limit）时，你有两个选择：等到限制重置，或者现在就在你拥有的另一个账号上继续同一个对话。使用 ccam 时，只要账号之间共享了对话历史，第二种做法只需一条命令：`ccam next --auto --continue`。
+当一个账号达到用量限制（常被称为 rate limit）时，你有两个选择：等到限制重置，或者现在就在你拥有的另一个账号上继续同一个对话。使用 ccam 时，第二种做法只需一条命令：`ccam next --auto --continue`。
 
 ## Claude Code 有哪些限制？
 
@@ -38,8 +38,13 @@ ccam usage
 ```
 
 ```console
- 1 personal  ████████ 100% 22m       █████░░░  68% 1d 9h     just now
- 2 work      █░░░░░░░   8% 4h 12m    ██░░░░░░  19% 5d 2h     just now
+ 1 personal  just now
+   5-hour   ████████████████████ 100%  resets in 22m
+   Weekly   ██████████████░░░░░░  68%  resets in 1d 9h
+ 2 work      just now
+   5-hour   ██░░░░░░░░░░░░░░░░░░   8%  resets in 4h 12m
+   Weekly   ████░░░░░░░░░░░░░░░░  19%  resets in 5d 2h
+→ Most headroom: work   (open it with ccam next --auto)
 ```
 
 在余量最多的账号中打开这个对话：
@@ -50,11 +55,13 @@ ccam next --auto --continue
 
 Claude Code 会以 `work` 账号启动，并打开当前文件夹中最近的对话，包括之前的全部内容。共享历史（上面的 `ccam group set default --add history`）能让它保持为同一个对话；不共享时，Claude Code 会把对话复制到 `work` 中，ccam 会告诉你第一次回复要重新读取多少 token。
 
-在 Claude Code 中安装 [ccam 插件](/docs/install#claude-code-plugin)后，因达到限制而停止的会话会显示一条通知，`/ccam:switch`（或 `/ccam:switch work`）会为 `ccam next --continue` 记下这个对话，不留任何需要猜测的地方。
+在 Claude Code 中安装 [ccam 插件](/docs/install#claude-code-plugin)后，因达到限制而停止的会话会显示一条通知，并记录已满的时间窗口，这样 `ccam next --auto` 在其重置之前不会再次选中这个账号；`/ccam:switch`（或 `/ccam:switch work`）会为 `ccam next --continue` 记下这个对话，不留任何需要猜测的地方。
+
+**Team 和 Enterprise 席位。** 自动选择（`ccam next`、`--fallback`、`ccam pick`、仪表盘中的 `n`）也会在同一个 Claude Team 或 Enterprise 组织的席位之间切换。Anthropic 帮助中心关于 [Team 套餐](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)的说明写道："Each seat on a Team plan is assigned to one named individual, and only that person may use it"（Team 套餐的每个席位都分配给一位指定的个人，只有此人可以使用），以及 "Users can't route their work through another user's account to use that user's remaining usage"（用户不能通过另一位用户的账号完成自己的工作，以使用该用户剩余的用量）；关于 [Enterprise 套餐](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)的说明也是如此。因此，在席位之间使用自动选择可能违反 Anthropic 的条款。在依赖这项功能之前，请先向你所在的组织和 Anthropic 确认。个人套餐（Pro、Max）的情况请参见[常见问题中关于条款的说明](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)。
 
 ## ccam 会自动切换账号吗？
 
-不会。你工作时 ccam 并没有在运行：它启动 Claude Code 后就用 Claude Code 替换了自身。何时切换由你决定，`ccam next --auto` 会选择 5 小时用量最低的账号，并跳过用量已达 100%、未登录或属于其他组织的账号。在 `config.toml` 中设置 `relay = true` 后，ccam 会改为在会话旁边等待，这样 `/ccam:switch` 就能自行继续。另一些工具则是替换正在运行的会话的登录信息；[ccam 与其他账号切换工具](/compare/account-switchers)解释了两者的区别。
+不会。你工作时 ccam 并没有在运行：它启动 Claude Code 后就用 Claude Code 替换了自身。何时切换由你决定，`ccam next --auto` 会选择 5 小时用量最低的账号，并跳过用量已达 100%、未登录或属于其他组织的账号。在 `config.toml` 中设置 `relay = true` 后，ccam 会改为在会话旁边等待，这样 `/ccam:switch` 就能自行继续，并沿用会话的选项、权限模式和推理强度。另一些工具则是替换正在运行的会话的登录信息；[ccam 与其他账号切换工具](/compare/account-switchers)解释了两者的区别。
 
 ## 注意事项
 

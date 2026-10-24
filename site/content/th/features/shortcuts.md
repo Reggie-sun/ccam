@@ -1,10 +1,10 @@
 ---
 title: คำสั่งลัด
 description: "ให้บัญชีมีคำสั่งของตัวเอง เช่น ccwork ด้วย ccam shortcut และสร้างลิงก์ใน ~/.local/bin ขึ้นใหม่ด้วย ccam shims install"
-updated: 2026-10-20
+updated: 2026-10-23
 order: 3
 translation: machine
-sourceHash: 939256e7a67e
+sourceHash: "38e2d1aba397"
 ---
 
 คำสั่งลัดคือคำสั่งที่คุณตั้งชื่อเองเพื่อเริ่ม Claude Code ในชื่อบัญชีหนึ่ง: `ccwork --resume` ทำงานเหมือนกับ `ccam work --resume` คำสั่งลัดเป็นลิงก์ไปยัง ccam ใน `~/.local/bin` จึงใช้ได้ใน bash, zsh, สคริปต์ และทุกอย่างที่รันโปรแกรมจาก `PATH` คำสั่งลัดเป็นตัวเลือกเสริม ให้สร้างไว้สำหรับบัญชีที่คุณเริ่มบ่อย
@@ -18,7 +18,7 @@ ccam shortcut work            # show it
 ccam shortcut work ccw        # rename it; the old link is removed
 ccam shortcut work --remove   # delete it
 ccam add side --shortcut ccside
-ccam shims install            # recreate missing links of all accounts
+ccam shims install            # recreate missing or outdated links of all accounts
 ccwork -p "summarise" --output-format json
 ```
 
@@ -54,8 +54,10 @@ work: none (add one with `ccam shortcut work ccwork`)
 - ยาว 1 ถึง 64 อักขระ ประกอบด้วย `a-z`, `0-9`, `.`, `-` และ `_` และขึ้นต้นด้วยตัวอักษรหรือตัวเลข
 - ไม่ใช่ `ccam`, `claude` หรือคำสั่งของ ccam เช่น `run` หรือ `usage`
 - ไม่ใช่คำสั่งลัดของบัญชีอื่น
-- ไม่ใช่ไฟล์ใน `~/.local/bin` ที่ไม่ได้เป็นลิงก์ไปยัง ccam อยู่แล้ว
+- ไม่ใช่ไฟล์ใน `~/.local/bin` ที่ไม่ได้เป็นลิงก์ของ ccam อยู่แล้ว (หรือคำสั่งลัดของบัญชีนี้เองที่ ccam สร้างไว้)
 - ไม่ใช่ชื่อของโปรแกรมอื่นใน `PATH` ของคุณ
+
+`config.toml` จะถูกตรวจตามกฎเดียวกันเมื่อโหลด: คำสั่งลัดที่แก้ไขด้วยมือแล้วไม่ตรงตามรูปแบบ เป็น `claude` หรือ `ccam` หรือถูกกำหนดให้สองบัญชี จะทำให้ทุกคำสั่งล้มเหลวพร้อมข้อความที่ระบุชื่อบัญชี จนกว่าจะแก้ไข
 
 การระบุคำสั่งพร้อมกับ `--remove` จะหยุดด้วย `give a command or --remove, not both` การตั้งชื่อที่บัญชีมีอยู่แล้วจะพิมพ์ `work: ccwork (unchanged)` และสร้างลิงก์ใหม่หากลิงก์หายไป
 
@@ -70,9 +72,9 @@ work: none (add one with `ccam shortcut work ccwork`)
 1. `shim.Check` จับคู่ชื่อกับ `^[a-z0-9][a-z0-9._-]{0,63}$` จากนั้นกับ `config.Reserved` แล้วจึงกับ `cfg.FindShortcut` จะเรียก `os.Lstat` กับ `~/.local/bin/<name>` และสำหรับทุกโฟลเดอร์อื่นใน `PATH` จะเรียก `os.Stat` และปฏิเสธไฟล์ปฏิบัติการที่ไม่ได้เป็นลิงก์ไปยัง ccam
 2. ccam บันทึก `config.toml` ด้วย `fsutil.AtomicWrite` (ไฟล์ชั่วคราว `fsync` แล้ว rename)
 3. `shim.Remove` ลบลิงก์ของคำสั่งลัดเดิม แต่เฉพาะเมื่อเป็นลิงก์ไปยัง ccam
-4. `shim.Install` สร้างลิงก์ของทุกคำสั่งลัดที่ตั้งค่าไว้ซึ่งยังไม่มี ด้วย `os.Symlink` ไปยังไบนารี ccam ซึ่งหาพาธด้วย `os.Executable` และ `filepath.EvalSymlinks` ขั้นตอนนี้ไม่เคยลบสิ่งใด
+4. `shim.Install` ไล่ดูทุกคำสั่งลัดที่ตั้งค่าไว้ตามลำดับชื่อ และสร้างลิงก์ของคำสั่งลัดที่ยังไม่มี ด้วย `os.Symlink` ไปยังไบนารี ccam ซึ่งหาพาธด้วย `os.Executable` และ `filepath.EvalSymlinks` ไฟล์ที่ขวางคำสั่งลัดหนึ่งอยู่จะไม่ทำให้คำสั่งลัดอื่นหยุดไปด้วย โดยข้อผิดพลาดจะระบุแต่ละรายการ
 
-ลิงก์จะนับเป็นของ ccam เมื่อ `os.Readlink` คืนพาธของ ccam หรือเมื่อลิงก์และพาธของ ccam ชี้ไปที่ไฟล์เดียวกัน การลบและการตรวจก่อนเขียนทับทุกครั้งจะผ่านการทดสอบนี้ ccam จึงไม่แตะไฟล์ที่ตัวเองไม่ได้สร้าง
+ccam บันทึกทุกลิงก์ที่สร้าง พร้อมไบนารีที่ลิงก์นั้นถูกสร้างให้รัน ไว้ใน `~/.local/state/ccam/shortcuts.json` ลิงก์จะนับเป็นของ ccam เมื่อ `os.Readlink` คืนพาธของ ccam หรือเมื่อลิงก์และพาธของ ccam ชี้ไปที่ไฟล์เดียวกัน ลิงก์ที่บันทึกไว้ซึ่งไบนารีถูกย้ายหรือถูกแทนที่ไปแล้ว (ccam ที่ถูกย้ายไปโฟลเดอร์อื่น หรือการติดตั้งใหม่) ถือว่าล้าสมัย และ `shim.Install` จะชี้ลิงก์นั้นมาที่ ccam ตัวนี้ ลิงก์ที่บันทึกไว้ซึ่งชี้ไปยัง ccam อีกตัวที่ยังติดตั้งอยู่จะถูกปล่อยไว้ตามเดิม การลบและการตรวจก่อนเขียนทับทุกครั้งจะผ่านการทดสอบเหล่านี้ ccam จึงไม่แตะไฟล์ที่ตัวเองไม่ได้สร้าง เช่น สำเนา ccam ของคุณเองหรือลิงก์ที่คุณสร้างเอง
 
 เมื่อคุณรันคำสั่งลัด ชื่อที่คุณพิมพ์คือสิ่งเดียวที่ ccam ต้องการ:
 
@@ -84,16 +86,18 @@ work: none (add one with `ccam shortcut work ccwork`)
 
 ### บน Windows
 
-คำสั่งลัดคือ `ccwork.exe` ใน `%USERPROFILE%\.local\bin` และ `shim.Name` จะตัด `.exe` ออก (ไม่ว่าตัวพิมพ์เล็กหรือใหญ่) ก่อนค้นหา ดังนั้น `ccwork`, `ccwork.exe` และ `CCWORK.EXE` จึงเริ่ม `work` ทั้งหมด ccam สร้างลิงก์สัญลักษณ์ก่อน ซึ่ง Windows อนุญาตใน Developer Mode หรือสำหรับผู้ดูแลระบบ หากไม่มีสิทธิ์นั้น ccam จะสร้างฮาร์ดลิงก์: ชื่อที่สองของไฟล์ `ccam.exe` ไฟล์เดียวกัน ซึ่งไม่ต้องใช้สิทธิ์พิเศษ ฮาร์ดลิงก์จะนับเป็นของ ccam เมื่อเป็นไฟล์เดียวกับ `ccam.exe` เนื่องจาก `ccam update` วางไฟล์ใหม่แทนที่ `ccam.exe` จากนั้นจึงต่ออายุคำสั่งลัดที่เป็นฮาร์ดลิงก์ทุกตัวด้วย `shim.Relink` และพิมพ์ `✓ shortcut ccwork renewed` การตรวจชื่อจะมองหา `<name>` พร้อมนามสกุลแต่ละตัวใน `PATHEXT` (`.exe`, `.cmd` และอื่น ๆ) ในโฟลเดอร์อื่นของ `PATH`
+คำสั่งลัดคือ `ccwork.exe` ใน `%USERPROFILE%\.local\bin` และ `shim.Name` จะตัด `.exe` ออก (ไม่ว่าตัวพิมพ์เล็กหรือใหญ่) ก่อนค้นหา ดังนั้น `ccwork`, `ccwork.exe` และ `CCWORK.EXE` จึงเริ่ม `work` ทั้งหมด ccam สร้างลิงก์สัญลักษณ์ก่อน ซึ่ง Windows อนุญาตใน Developer Mode หรือสำหรับผู้ดูแลระบบ หากไม่มีสิทธิ์นั้น ccam จะสร้างฮาร์ดลิงก์: ชื่อที่สองของไฟล์ `ccam.exe` ไฟล์เดียวกัน ซึ่งไม่ต้องใช้สิทธิ์พิเศษ ฮาร์ดลิงก์จะนับเป็นของ ccam เมื่อเป็นไฟล์เดียวกับ `ccam.exe` ฮาร์ดลิงก์จะยังคงรันไฟล์ที่ใช้สร้างมันขึ้นมา ดังนั้นเมื่อ `ccam update` วางไฟล์ใหม่แทนที่ `ccam.exe` จึงต่ออายุคำสั่งลัดที่เป็นฮาร์ดลิงก์ทุกตัวด้วย `shim.Relink` และพิมพ์ `✓ shortcut ccwork renewed` การรัน `install.ps1` อีกครั้งก็ทำแบบเดียวกันผ่าน `ccam shims install` (`OK 2 shortcuts now run the new ccam`) และ `ccam shims install` กับ `ccam doctor --fix` ก็ทำเช่นกันกับคำสั่งลัดใดก็ตามที่เป็นสำเนาของ ccam รุ่นเก่า การตรวจชื่อจะมองหา `<name>` พร้อมนามสกุลแต่ละตัวใน `PATHEXT` (`.exe`, `.cmd` และอื่น ๆ) ในโฟลเดอร์อื่นของ `PATH`
+
+ให้พิมพ์คำสั่งลัดในเชลล์ (PowerShell, cmd.exe, Git Bash) ลิงก์สัญลักษณ์ที่เปิดจาก Explorer, กล่องโต้ตอบ Run หรือ `Start-Process` จะเริ่มเป็น `ccam` ธรรมดา ซึ่งจะเปิดแดชบอร์ดแทนบัญชีนั้น
 
 ## ความปลอดภัยและกรณีพิเศษ
 
 - **ลิงก์ที่ไม่มีบัญชีใดเป็นเจ้าของ** หากลิงก์ไปยัง ccam ใน `~/.local/bin` มีชื่อที่ไม่มีบัญชีใดใช้ เช่น หลังจากที่คุณแก้ `shortcut` ใน `config.toml` ด้วยตัวเอง ccam จะไม่หันไปใช้บัญชีเริ่มต้น แต่จะหยุดด้วย `` ccam: ccold is not the shortcut of any account (see `ccam list`, `ccam shortcut`) `` ให้ตั้งชื่ออีกครั้งด้วย `ccam shortcut` หรือลบลิงก์นั้น
-- **ไฟล์ที่มีอยู่แล้ว** ccam ไม่เคยแทนที่ไฟล์ที่ตัวเองไม่ได้สร้าง `ccam shims install` จะหยุดด้วย `<path> already exists and is not a ccam link, so it was left alone`
-- **ไบนารี ccam ที่ถูกย้าย** ลิงก์เดิมจะชี้ไปยังพาธที่ไม่มีอยู่แล้ว และ ccam ไม่นับว่าเป็นของตัวเอง ให้ลบลิงก์เหล่านั้น แล้วรัน `ccam shims install`
+- **ไฟล์ที่มีอยู่แล้ว** ccam ไม่เคยแทนที่ไฟล์ที่ตัวเองไม่ได้สร้าง `ccam shims install` จะรายงาน `<path> already exists and is not a ccam link, so it was left alone` และยังคงสร้างลิงก์อื่นต่อไป ในกรณีนี้ `ccam add` และ `ccam import` จะพิมพ์ `shortcut: ccwork (not created; see above)`
+- **ไบนารี ccam ที่ถูกย้าย** ลิงก์ที่ ccam สร้างไว้จะชี้ไปยังพาธที่ไม่มีอยู่แล้ว `ccam shims install` (หรือ `ccam doctor --fix`) จะชี้ลิงก์เหล่านั้นมาที่ ccam ที่คุณใช้รันคำสั่ง
 - **การเปลี่ยนชื่อและการลบ** `ccam rename` คงชื่อคำสั่งลัดไว้ และลิงก์ยังใช้ได้ เพราะลิงก์ชี้ไปที่ ccam และ ccam ค้นหาชื่อใน `config.toml` `ccam remove` ลบลิงก์ของบัญชี ส่วน `ccam shortcut <account> <new>` จะลบลิงก์เดิมก่อนสร้างลิงก์ใหม่
 - **PATH** เมื่อ ccam สร้างลิงก์และ `~/.local/bin` ไม่อยู่ใน `PATH` ของคุณ จะพิมพ์ `Note: /home/me/.local/bin is not in PATH. Add it to ~/.bashrc or ~/.zshrc:` ตามด้วยบรรทัด `export PATH=...` ที่ต้องเพิ่ม บน Windows จะพิมพ์บรรทัด PowerShell ที่เพิ่มโฟลเดอร์นั้นลงใน `PATH` ของผู้ใช้แทน
-- **การตรวจภายหลัง** `ccam doctor` จะรายงาน `missing shortcuts in /home/me/.local/bin: ccwork` และเตือนเมื่อโฟลเดอร์ไม่อยู่ใน `PATH` ส่วน `ccam doctor --fix` จะสร้างลิงก์ที่หายไป
+- **การตรวจภายหลัง** `ccam doctor` จะรายงาน `missing shortcuts in /home/me/.local/bin: ccwork` รายงานคำสั่งลัดที่รัน ccam รุ่นเก่า และเตือนเมื่อโฟลเดอร์ไม่อยู่ใน `PATH` ส่วน `ccam doctor --fix` จะสร้างลิงก์ที่หายไปและต่ออายุลิงก์ที่ล้าสมัย และจะแสดง `→ fixed` เฉพาะลิงก์ที่สร้างได้ คำสั่งลัดที่รัน ccam อีกตัวซึ่งยังติดตั้งอยู่ยังใช้งานได้และเป็นเพียงข้อมูล `ccam doctor --fix` จะชี้คำสั่งลัดนั้นมาที่ ccam ที่คุณใช้รันคำสั่ง และ `ccam add` กับ `ccam import` จะแสดงเป็น ``shortcut: ccwork (runs another ccam, <path>; `ccam doctor --fix` points it at this one)``
 
 ## หัวข้อที่เกี่ยวข้อง
 

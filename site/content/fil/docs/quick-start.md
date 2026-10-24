@@ -2,10 +2,10 @@
 title: Mabilis na pagsisimula
 metaTitle: "Mabilis na pagsisimula: magdagdag ng mga account"
 description: Magdagdag ng dalawang Claude Code account gamit ang ccam add, bigyan sila ng shortcut gaya ng ccwork, lumipat sa pagitan nila, at piliin ang ishe-share nila.
-updated: 2026-10-20
+updated: 2026-10-24
 order: 2
 translation: machine
-sourceHash: d5b0e295f3f0
+sourceHash: e98d0637356a
 ---
 
 Idagdag ang bawat account gamit ang `ccam add`, saka simulan ang Claude Code gamit ang `ccam <name>` o ang shortcut na ikaw mismo ang nagpangalan, gaya ng `ccwork`. Iyan lang ang kailangan ng karamihan.
@@ -107,6 +107,8 @@ ccam next --continue
 ```
 
 Ipinapakita ng `ccam usage` ang 5-oras at lingguhang usage ng bawat account. Binubuksan ng `ccam next --continue` ang parehong usapan sa susunod na account. Sa mga script, kusang lumilipat ang `ccam --fallback work -p "…"`. Tingnan ang [mga usage limit](/docs/usage-limits).
+
+**Mga seat ng Team at Enterprise.** Lumilipat din ang awtomatikong pagpili (`ccam next`, `--fallback`, `ccam pick`, ang `n` ng dashboard) sa pagitan ng mga seat ng iisang Claude Team o Enterprise na organisasyon. Sinasabi ng help center ng Anthropic na "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (nakatalaga ang bawat seat ng Team plan sa iisang partikular na tao, at siya lang ang puwedeng gumamit nito) at "Users can't route their work through another user's account to use that user's remaining usage" (hindi puwedeng idaan ng mga user ang trabaho nila sa account ng ibang user para magamit ang natitirang usage ng user na iyon) ([mga Team plan](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); ganoon din sa [mga Enterprise plan](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Kaya maaaring lumabag sa terms ng Anthropic ang paggamit ng awtomatikong pagpili sa pagitan ng mga seat. Magtanong muna sa iyong organisasyon at sa Anthropic bago ka umasa rito. Saklaw ng [paalala tungkol sa terms sa FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) ang mga personal na plan (Pro, Max).
 
 ## Gumagamit ka na ba ng ~/.claude?
 

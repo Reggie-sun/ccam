@@ -1,10 +1,10 @@
 ---
 title: ccam અપડેટ કરવું
 description: ccam update SHA-256 તપાસ પછી ccam ને GitHub ની નવીનતમ રિલીઝથી બદલે છે; --check ફક્ત જણાવે છે અને --version આપેલો રિલીઝ tag ઇન્સ્ટૉલ કરે છે.
-updated: 2026-10-21
+updated: 2026-10-23
 order: 10
 translation: machine
-sourceHash: a92dbf37399f
+sourceHash: 000d37de5f29
 ---
 
 `ccam update` GitHub પરથી ccam ની રિલીઝ ડાઉનલોડ કરે છે, તેને રિલીઝની `checksums.txt` સામે તપાસે છે અને ચાલતી binary ને એક rename માં બદલે છે. જો તમે ccam ને install સ્ક્રિપ્ટ વડે કે archive માંથી ઇન્સ્ટૉલ કર્યું હોય તો તેને વાપરો. [ડેશબોર્ડ](/features/dashboard) પણ દરેક વખતે ખૂલે ત્યારે GitHub ને નવીનતમ રિલીઝ વિશે પૂછે છે અને `U` વડે તે ઑફર કરે છે, જે પૂછ્યા પછી આ જ પગલાં ચલાવે છે. બીજો કોઈ કમાન્ડ GitHub નો સંપર્ક કરતો નથી, તેથી તે offline પણ એ જ રીતે કામ કરે છે.
@@ -64,7 +64,7 @@ tag lookup થી rename સુધીની આખી pipeline:
 
 archive અને `checksums.txt` બાજુબાજુમાં ડાઉનલોડ થાય છે, અને checksum મેળ ન ખાય ત્યાં સુધી કંઈ લખાતું નથી. rename atomic છે, તેથી crash કે ભરાયેલી ડિસ્ક જૂની કે નવી binary છોડે છે, ક્યારેય અડધી નહીં. `~/.local/bin/ccwork` જેવા શૉર્ટકટ કમાન્ડ ccam binary ની symlink છે, તેથી તેઓ કોઈ ફેરફાર વગર નવું વર્ઝન ચલાવે છે.
 
-Windows પર ચાલતા પ્રોગ્રામની ફાઇલ બદલી કે કાઢી શકાતી નથી, ફક્ત તેનું નામ બદલી શકાય છે. `Updater.Install` નવી binary `ccam.exe.new` માં લખે છે, ચાલતી `ccam.exe` નું નામ `ccam.exe.old` કરે છે, અને નવી ફાઇલનું નામ `ccam.exe` કરે છે. છેલ્લું પગલું નિષ્ફળ જાય તો જૂની binary નું નામ પાછું બદલાય છે. આગલું અપડેટ `ccam.exe.old` કાઢી નાખે છે. symbolic links ને બદલે hard links હોય તેવા શૉર્ટકટ ([શૉર્ટકટ કમાન્ડ](/features/shortcuts)) તરત પછી નવા કરાય છે, જેથી તેઓ પણ નવું વર્ઝન ચલાવે.
+Windows પર ચાલતા પ્રોગ્રામની ફાઇલ બદલી કે કાઢી શકાતી નથી, ફક્ત તેનું નામ બદલી શકાય છે. `Updater.Install` નવી binary `ccam.exe.new` માં લખે છે, ચાલતી `ccam.exe` નું નામ `ccam.exe.old` કરે છે, અને નવી ફાઇલનું નામ `ccam.exe` કરે છે. છેલ્લું પગલું નિષ્ફળ જાય તો જૂની binary નું નામ પાછું બદલાય છે. આગલું અપડેટ જે `ccam.exe.old` ફાઇલો કાઢી શકે તે કાઢી નાખે છે; અગાઉની `ccam.exe.old` માંથી કોઈ સેશન હજી ચાલતું હોય ત્યારે, ચાલતી binary તેના બદલે `ccam.exe.old-<time>` બને છે. symbolic links ને બદલે hard links હોય તેવા શૉર્ટકટ ([શૉર્ટકટ કમાન્ડ](/features/shortcuts)) તરત પછી નવા કરાય છે, જેથી તેઓ પણ નવું વર્ઝન ચલાવે; તેમાં ccam એ બનાવેલી, કોઈ પણ જૂના ccam ની hard links આવી જાય છે, ફક્ત હમણાં બદલાયેલી binary ની જ નહીં.
 
 ### package થી ઇન્સ્ટૉલ થયેલું
 
@@ -91,7 +91,7 @@ Linux સિવાયની સિસ્ટમ પર ફક્ત install સ�
 
 ## સલામતી અને ખાસ કિસ્સા
 
-- development build પોતાનું વર્ઝન `dev` બતાવે છે અને તેની પાસે સરખામણી માટે કોઈ રિલીઝ નથી, તેથી `ccam update` અને `ccam update --check` તેનો ઇનકાર કરે છે. `ccam update --version vX.Y.Z` તેના પર રિલીઝ ઇન્સ્ટૉલ કરે છે.
+- development build પોતાનું વર્ઝન `dev` બતાવે છે અને તેની પાસે સરખામણી માટે કોઈ રિલીઝ નથી, તેથી `ccam update` અને `ccam update --check` તેનો ઇનકાર કરે છે. `ccam update --version vX.Y.Z` તેના પર રિલીઝ ઇન્સ્ટૉલ કરે છે. `go install github.com/jhyunwoo/ccam/cmd/ccam@vX.Y.Z` (કે `@latest`) વડે બનાવેલી binary એ રિલીઝ જણાવે છે, તેથી તેના માટે `ccam update` અને ડેશબોર્ડની ઑફર કામ કરે છે; `@main` કે tag પછીનું local build `dev` જ રહે છે.
 - નિષ્ફળ download, તમારા platform માટે ખૂટતું asset, કે checksum નો મેળ ન ખાવો ઇન્સ્ટૉલ થયેલી binary ને જેમ હતી તેમ રહેવા દે છે.
 - અસ્તિત્વમાં ન હોય તેવી રિલીઝ `there is no release <tag>` સાથે નિષ્ફળ જાય છે. જ્યારે GitHub HTTP 403 કે 429 સાથે ઇનકાર કરે, ત્યારે ccam કહે છે કે તે કદાચ rate limit છે અને પછીથી ફરી પ્રયાસ કરવા કહે છે.
 - `--check` ફક્ત વાંચે છે. તે binary package-managed છે કે લખી શકાય તેવી છે તે તપાસતું નથી.

@@ -2,10 +2,10 @@
 title: "اکثر پوچھے جانے والے سوالات"
 metaTitle: "ccam سوالات: Claude Code کے کئی اکاؤنٹس"
 description: "ccam، Claude Code اکاؤنٹس، استعمال کی حدوں، شیئرنگ، پرائیویسی اور معاون سسٹمز کے بارے میں سوالات کے جوابات۔"
-updated: 2026-10-21
+updated: 2026-10-24
 order: 6
 translation: machine
-sourceHash: "bc944d7dcab9"
+sourceHash: "c4e3b89bb4ea"
 ---
 
 ## کیا ccam، Anthropic کا سرکاری ٹول ہے؟
@@ -15,6 +15,8 @@ sourceHash: "bc944d7dcab9"
 ## کیا مجھے Claude Code کے کئی اکاؤنٹس استعمال کرنے کی اجازت ہے؟
 
 یہ ہر اکاؤنٹ کی شرائط پر منحصر ہے، اور کام کے اکاؤنٹس کے معاملے میں آپ کے ادارے کی پالیسی پر بھی۔ کئی اکاؤنٹس استعمال کرنے سے پہلے انہیں چیک کریں۔ ccam صرف ان اکاؤنٹس کے درمیان تبدیل کرنا آسان بناتا ہے جو آپ کے پاس پہلے سے موجود ہیں۔
+
+**Team اور Enterprise سیٹیں۔** خودکار انتخاب (`ccam next`، `--fallback`، `ccam pick`، ڈیش بورڈ کی `n` کلید) ایک ہی Claude Team یا Enterprise تنظیم کی سیٹوں کے درمیان بھی اکاؤنٹ بدلتا ہے۔ Anthropic کا ہیلپ سینٹر کہتا ہے کہ "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (کسی Team پلان کی ہر سیٹ ایک نامزد فرد کو تفویض کی جاتی ہے، اور صرف اسی شخص کو اسے استعمال کرنے کی اجازت ہے) اور "Users can't route their work through another user's account to use that user's remaining usage" (صارفین کسی دوسرے صارف کا باقی ماندہ استعمال کام میں لانے کے لیے اپنا کام اس کے اکاؤنٹ کے ذریعے نہیں چلا سکتے) ([Team پلانز](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)؛ اسی طرح [Enterprise پلانز](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) کے لیے بھی)۔ اس لیے سیٹوں کے درمیان خودکار انتخاب استعمال کرنے سے Anthropic کی شرائط کی خلاف ورزی ہو سکتی ہے۔ اس پر انحصار کرنے سے پہلے اپنی تنظیم اور Anthropic سے تصدیق کر لیں۔ ذاتی پلانز (Pro، Max) کی بات اوپر والے پیراگراف میں کی گئی ہے۔
 
 ## کیا ccam استعمال کی حدوں کو بائی پاس کرتا ہے؟
 
@@ -26,11 +28,11 @@ sourceHash: "bc944d7dcab9"
 
 ## میں دوسرے اکاؤنٹ پر گفتگو کیسے جاری رکھوں؟
 
-`ccam group set default --add history` سے اکاؤنٹس کے درمیان گفتگو کی ہسٹری شیئر کریں (یا ان کے اپنے ایک گروپ سے: `ccam group add pair --items history --members work,side`)، پھر `ccam next --continue` چلائیں۔ Claude Code موجودہ فولڈر کی سب سے حالیہ گفتگو اگلے اکاؤنٹ میں کھول دیتا ہے۔
+فولڈر میں `ccam next --continue` چلائیں: یہ فولڈر کی آخری گفتگو اگلے اکاؤنٹ پر لے جاتا ہے (سب سے زیادہ گنجائش والے اکاؤنٹ کے لیے `--auto`)۔ Claude Code کے اندر، [ccam پلگ اِن](/docs/install#claude-code-plugin) کا `/ccam:switch` اسی سیشن کے لیے یہی کام کرتا ہے جس میں آپ ہیں۔ جب دونوں اکاؤنٹس گفتگو کی ہسٹری شیئر کرتے ہوں (`ccam group set default --add history`، یا ان کا اپنا ایک گروپ: `ccam group add pair --items history --members work,side`) تو نیا اکاؤنٹ بالکل وہی گفتگو کھولتا ہے؛ ورنہ Claude Code اسے نئے اکاؤنٹ کی ہسٹری میں کاپی کر دیتا ہے۔
 
 ## کیا ccam میرا لاگ اِن دیکھتا یا کہیں بھیجتا ہے؟
 
-ccam آپ کا Claude لاگ اِن کبھی اکاؤنٹس کے درمیان شیئر نہیں کرتا۔ یہ کسی اکاؤنٹ کا ایکسیس ٹوکن صرف اس لیے پڑھتا ہے کہ Anthropic کے usage اینڈ پوائنٹ سے اسی اکاؤنٹ کا استعمال معلوم کرے، اور یہ تب ہوتا ہے جب آپ `ccam usage`، `ccam next --auto` یا `ccam doctor` چلاتے ہیں۔ `ccam migrate` MCP سرورز کے محفوظ کیے گئے سائن اِن `~/.claude` سے اسی کمپیوٹر پر آپ کے اکاؤنٹس کی اپنی لاگ اِن فائلوں میں کاپی کرتا ہے۔ ccam میں کوئی ٹیلی میٹری نہیں ہے۔ ان درخواستوں کے علاوہ یہ خود سے صرف ایک درخواست کرتا ہے: ڈیش بورڈ GitHub سے ccam کی تازہ ترین ریلیز کے بارے میں پوچھتا ہے، اور اس میں آپ یا آپ کے اکاؤنٹس کے بارے میں کچھ نہیں ہوتا۔
+ccam آپ کا Claude لاگ اِن کبھی اکاؤنٹس کے درمیان شیئر یا کاپی نہیں کرتا، اور MCP سرورز کے سائن اِن بھی کبھی کاپی نہیں کرتا۔ یہ کسی اکاؤنٹ کا ایکسیس ٹوکن صرف اس لیے پڑھتا ہے کہ Anthropic کے usage اینڈ پوائنٹ سے اسی اکاؤنٹ کا استعمال معلوم کرے، اور یہ تب ہوتا ہے جب آپ `ccam usage`، `ccam next --auto` یا `ccam doctor` چلاتے ہیں، اور میعاد ختم ٹوکن کی تجدید صرف `ccam usage --refresh` سے کرتا ہے؛ `usage_source = "claude"` کے ساتھ یہ ٹوکن بالکل نہیں پڑھتا۔ `ccam ext` اور `ccam doctor` کسی اکاؤنٹ کے MCP سائن اِن کے نام پڑھتے ہیں، ان کے ٹوکن کبھی نہیں۔ ccam میں کوئی ٹیلی میٹری نہیں ہے۔ ان درخواستوں کے علاوہ یہ خود سے صرف ایک درخواست کرتا ہے: ڈیش بورڈ GitHub سے ccam کی تازہ ترین ریلیز کے بارے میں پوچھتا ہے، اور اس میں آپ یا آپ کے اکاؤنٹس کے بارے میں کچھ نہیں ہوتا۔
 
 ## میں ریموٹ سرور پر سائن اِن کیسے کروں؟
 
@@ -38,7 +40,7 @@ SSH سیشن میں معمول کے مطابق `ccam add` یا `ccam login <name
 
 ## میرے اکاؤنٹس کہاں محفوظ ہوتے ہیں؟
 
-`~/.local/share/ccam/profiles/<name>/` میں، ہر اکاؤنٹ کے لیے ایک فولڈر۔ macOS پر لاگ اِن بذاتِ خود Keychain میں رہتا ہے، جہاں Claude Code اسے اسی فولڈر سے اخذ کیے گئے ایک نام کے تحت رکھتا ہے۔
+`~/.local/share/ccam/profiles/<name>/` میں، ہر اکاؤنٹ کے لیے ایک فولڈر۔ macOS پر لاگ اِن بذاتِ خود Keychain میں رہتا ہے، جہاں Claude Code اسے اسی فولڈر سے اخذ کیے گئے ایک نام کے تحت رکھتا ہے، اس لیے `ccam rename` وہاں فولڈر کا پرانا نام برقرار رکھتا ہے۔
 
 ## میرے موجودہ ~/.claude کا کیا ہوگا؟
 
@@ -46,11 +48,11 @@ SSH سیشن میں معمول کے مطابق `ccam add` یا `ccam login <name
 
 ## ccam کن سسٹمز پر چلتا ہے؟
 
-Linux (Ubuntu، Debian، Fedora، Arch، Alpine اور دیگر)، macOS اور Windows 10 اور 11، براہِ راست یا WSL کے اندر۔ Windows پر `settings.json` جیسی فائلیں شیئر کرنے کے لیے Developer Mode درکار ہے؛ شیئر کیے گئے فولڈرز اس کے بغیر بھی کام کرتے ہیں ([Windows پر شیئرنگ](/features/share#on-windows))۔
+Linux (Ubuntu، Debian، Fedora، Arch، Alpine اور دیگر)، macOS اور Windows 10 اور 11، براہِ راست یا WSL کے اندر۔ Windows پر `settings.json` جیسی فائلیں شیئر کرنے کے لیے Developer Mode درکار ہے؛ شیئر کیے گئے فولڈرز اس کے بغیر بھی کام کرتے ہیں، اور اس کے بغیر پہلا `ccam add` گروپ `default` صرف MCP سرورز اور ایکسٹینشنز کے ساتھ بناتا ہے ([Windows پر شیئرنگ](/features/share#on-windows))۔
 
 ## کوئی MCP سرور صرف ایک اکاؤنٹ میں کیوں نظر آتا ہے؟
 
-سیشن کے اندر `claude mcp add` سے شامل کیے گئے سرورز صرف اسی اکاؤنٹ کے لیے محفوظ ہوتے ہیں۔ اگلی بار جب آپ وہ اکاؤنٹ شروع کریں گے تو ccam آپ کو اس کے بارے میں بتائے گا؛ سرور کو `ccam mcp import <account> <server>` سے شیئر شدہ گروپ میں منتقل کریں۔
+سیشن کے اندر `claude mcp add` سے شامل کیے گئے سرورز صرف اسی اکاؤنٹ کے لیے محفوظ ہوتے ہیں، اور `-s user` کے بغیر صرف موجودہ فولڈر کے لیے۔ اگلی بار جب آپ وہ اکاؤنٹ شروع کریں گے تو ccam آپ کو اس کے بارے میں بتائے گا، اور `ccam mcp list` اور `ccam ext` انہیں دکھاتے ہیں؛ سرور کو `ccam mcp import <account> <server>` سے شیئر شدہ گروپ میں منتقل کریں۔
 
 ## کیا ccam سے Claude Code سست ہو جاتا ہے؟
 
@@ -62,4 +64,4 @@ ccam کے ذریعے Claude Code شروع کرنے میں تقریباً 4 مل�
 
 ## میں ccam کو اَن انسٹال کیسے کروں؟
 
-ہر اکاؤنٹ کا شارٹ کٹ `ccam shortcut <account> --remove` سے ہٹائیں، `~/.local/bin` سے `ccam` حذف کریں، پھر اگر اکاؤنٹس کی مزید ضرورت نہیں تو `~/.config/ccam`، `~/.local/share/ccam` اور `~/.local/state/ccam` ہٹا دیں۔ [انسٹال](/docs/install#uninstall) دیکھیں۔
+ہر اکاؤنٹ کا شارٹ کٹ `ccam shortcut <account> --remove` سے ہٹائیں۔ اگر آپ نے `~/.claude` امپورٹ کیا تھا اور وہ کسی گروپ میں ہے تو پہلے اس کے لیے `ccam remove <name>` چلائیں، تاکہ اسے اس چیز کی کاپی واپس مل جائے جو وہ شیئر کرتا ہے۔ پھر `~/.local/bin` سے `ccam` حذف کریں، اور اگر اکاؤنٹس کی مزید ضرورت نہیں تو `~/.config/ccam`، `~/.local/share/ccam` اور `~/.local/state/ccam` ہٹا دیں۔ [انسٹال](/docs/install#uninstall) دیکھیں۔

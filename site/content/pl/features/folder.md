@@ -1,10 +1,10 @@
 ---
 title: Konta według folderu
 description: ccam folder sprawia, że folder i wszystko w nim używa jednego konta, gdy uruchamiasz Claude Code bez nazwy konta, na przykład work dla kodu firmy.
-updated: 2026-10-20
+updated: 2026-10-23
 order: 11
 translation: machine
-sourceHash: "46d1410a3d81"
+sourceHash: "48de98d42b99"
 ---
 
 `ccam folder work ~/code/company` sprawia, że każde uruchomienie bez nazwy konta w `~/code/company` i w każdym folderze poniżej uruchamia Claude Code jako `work`. Poza nim konto domyślne uruchamia się jak wcześniej. Podanie nazwy konta, przez `ccam personal` albo skrót taki jak `ccpersonal`, zawsze uruchamia to konto.
@@ -34,7 +34,7 @@ Te uruchomienia używają konta folderu:
 - `ccam -p "…"` i każde inne uruchomienie, którego pierwszy argument jest opcją dla Claude Code
 - `ccam run` bez nazwy oraz `ccam --dry-run`
 - `ccam --fallback -p "…"` przy pierwszej próbie
-- panel, czyli samo `ccam`, który startuje z kursorem na koncie folderu
+- panel, czyli samo `ccam`, który startuje z kursorem na koncie folderu, także gdy trafiłeś do folderu przez link symboliczny
 
 ## Opcje
 
@@ -59,7 +59,7 @@ account = 'work'
 2. Uruchomienie bez nazwy wywołuje `launcher.HereProfile`. Gdy nie ma wpisów, od razu bierze konto domyślne.
 3. W przeciwnym razie porównuje katalog roboczy z każdym `path` jako ciągi znaków: sam folder albo folder poniżej, nigdy folder, który tylko zaczyna się od tych samych liter (`/code/company` nie obejmuje `/code/companyx`). Wygrywa najgłębszy wpis, więc `~/code` może być `personal`, a `~/code/company` `work`.
 4. Dopiero gdy katalog roboczy w obecnej postaci do niczego nie pasuje, ccam rozwiązuje jego dowiązania symboliczne i porównuje jeszcze raz.
-5. W Windows porównanie ignoruje wielkość liter, tak jak sam Windows.
+5. W Windows i macOS porównanie ignoruje wielkość liter, tak jak zwykle robią ich systemy plików.
 
 Poza `config.toml` nie jest czytany żaden plik, więc uruchomienie w folderze nie kosztuje mierzalnego czasu (4,0 ms z wpisami i bez, `hyperfine`, 300 przebiegów).
 

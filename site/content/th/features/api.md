@@ -1,10 +1,10 @@
 ---
 title: บัญชี API key
 description: ccam add --api เพิ่มบัญชี API key สำหรับ API ของ Anthropic หรือเกตเวย์ คีย์ถูกอ่านตอนเริ่มจากตัวแปรหรือคำสั่ง และไม่เคยถูกเก็บไว้
-updated: 2026-10-20
+updated: 2026-10-23
 order: 13
 translation: machine
-sourceHash: "a903c92f2c50"
+sourceHash: "232a71525e42"
 ---
 
 บัญชี API key เริ่ม Claude Code ด้วย API key แทนการเข้าสู่ระบบแบบสมัครสมาชิก Claude: API ของ Anthropic หรือ endpoint ที่ใช้รูปแบบ Messages เดียวกัน เช่น เกตเวย์ LiteLLM หรือ OpenRouter ccam ไม่เก็บคีย์ไว้ แต่จะอ่านคีย์ทุกครั้งที่บัญชีเริ่มทำงาน จากตัวแปรสภาพแวดล้อมหรือจากคำสั่ง เช่น โปรแกรมจัดการรหัสผ่าน และส่งให้เฉพาะโปรเซส Claude Code นั้นเท่านั้น
@@ -35,7 +35,7 @@ $ ccam list
 | --- | --- | --- |
 | `--api` | เพิ่มบัญชี API key แทนการเข้าสู่ระบบ | ปิด |
 | `--key-from env:NAME` | อ่านคีย์จากตัวแปรสภาพแวดล้อม `NAME` | |
-| `--key-from command:COMMAND` | รัน `COMMAND` (ด้วย `sh -c` หรือ `cmd /C` บน Windows) และใช้บรรทัดแรกที่พิมพ์ออกมา | |
+| `--key-from command:COMMAND` | รัน `COMMAND` (ด้วย `sh -c` หรือบน Windows ตามที่พิมพ์ไว้ใน `cmd /d /s /c "…"` โดยคงเครื่องหมายคำพูดไว้) และใช้บรรทัดแรกที่พิมพ์ออกมา | |
 | `--base-url <url>` | endpoint (`ANTHROPIC_BASE_URL`) | API ของ Anthropic |
 | `--auth api-key\|bearer` | ส่งคีย์เป็น `ANTHROPIC_API_KEY` (`x-api-key`) หรือเป็น `ANTHROPIC_AUTH_TOKEN` (`Authorization: Bearer` ซึ่งเกตเวย์มักต้องการ) | `api-key` |
 | `--model <model>` | โมเดล (`ANTHROPIC_MODEL`) | ค่าเริ่มต้นของ Claude Code |
@@ -66,10 +66,17 @@ model = 'claude-sonnet-5-5'
 
 ## ความปลอดภัยและกรณีพิเศษ
 
-- คีย์ไม่เคยถูกเขียนลงใน `config.toml` แคช หรือล็อก และ `ccam --dry-run gw` ไม่อ่านคีย์: การทดลองรันจะไม่รันแหล่ง `command:`
+- คีย์ไม่เคยถูกเขียนลงใน `config.toml` แคช หรือล็อก และ `ccam --dry-run gw` ไม่อ่านคีย์: การทดลองรันจะไม่รันแหล่ง `command:` การทดลองรันจะแสดง endpoint โมเดล และแหล่งที่มาของคีย์แทน:
+
+  ```console
+  $ ccam --dry-run gw -p hi
+  CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/gw CCAM_PROFILE=gw ANTHROPIC_BASE_URL=https://llm.example.com ANTHROPIC_MODEL=claude-sonnet-5-5 ANTHROPIC_AUTH_TOKEN="$(pass show llm/gateway-key | head -n 1)" /home/me/.local/bin/claude -p hi
+  ```
+
+  ตัวแปรที่สืบทอดมาซึ่งการเปิดลบออกจะแสดงเป็น `env -u <name>` ที่ส่วนต้น เมื่อแหล่ง `env:` มีตัวแปรที่ว่างเปล่า การทดลองรันจะล้มเหลวแบบเดียวกับการเปิดจริง
 - `ccam add --api` ตรวจแหล่ง `env:` ทันทีและเตือนหากตัวแปรว่าง ส่วนแหล่ง `command:` จะถูกรันครั้งแรกตอนเริ่มบัญชี
 - `ccam login` และ `ccam logout` ปฏิเสธบัญชี API key เพราะบัญชีนี้ไม่มีการเข้าสู่ระบบ `ccam doctor` แสดง endpoint และแหล่งของคีย์ และเตือนเมื่อตัวแปร `env:` ว่าง
-- `ccam usage` แสดง `API` สำหรับบัญชีนี้ `ccam next --auto`, `--fallback` และ `ccam pick` เลือกจากบัญชีแบบสมัครสมาชิกเท่านั้น เพราะ API key ไม่มีขีดจำกัด 5 ชั่วโมงหรือรายสัปดาห์ให้เปรียบเทียบ
+- `ccam usage` แสดง `no limits (API)` สำหรับบัญชีนี้ `ccam next --auto`, `--fallback` และ `ccam pick` เลือกจากบัญชีแบบสมัครสมาชิกเท่านั้น เพราะ API key ไม่มีขีดจำกัด 5 ชั่วโมงหรือรายสัปดาห์ให้เปรียบเทียบ
 - `settings.json` ที่ใช้ร่วมกันซึ่งมีบล็อก `env` หรือ `apiKeyHelper` จะมีผลกับทุกบัญชีในกลุ่ม รวมถึงบัญชี API key ด้วย อย่าใส่การตั้งค่าผู้ให้บริการไว้ในการตั้งค่าที่ใช้ร่วมกัน หรือนำบัญชี API key ไปไว้ในกลุ่มที่ไม่มี `settings`
 
 ## หัวข้อที่เกี่ยวข้อง

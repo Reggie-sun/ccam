@@ -1,10 +1,10 @@
 ---
 title: Aktualizacja ccam
 description: ccam update zastępuje ccam najnowszym wydaniem z GitHub po sprawdzeniu SHA-256; --check tylko informuje, a --version instaluje wskazany tag wydania.
-updated: 2026-10-21
+updated: 2026-10-23
 order: 10
 translation: machine
-sourceHash: a92dbf37399f
+sourceHash: "000d37de5f29"
 ---
 
 `ccam update` pobiera wydanie ccam z GitHub, sprawdza je względem `checksums.txt` wydania i zastępuje działający plik binarny jedną zmianą nazwy. Używaj go, jeśli zainstalowałeś ccam skryptem instalacyjnym lub z archiwum. [Panel](/features/dashboard) także pyta GitHub o najnowsze wydanie przy każdym otwarciu i proponuje je pod `U`, które po zapytaniu wykonuje te same kroki. Żadne inne polecenie nie łączy się z GitHub, więc działają one tak samo bez sieci.
@@ -64,7 +64,7 @@ Cały proces, od sprawdzenia tagu do zmiany nazwy:
 
 Archiwum i `checksums.txt` są pobierane równolegle i nic nie jest zapisywane, dopóki suma kontrolna się nie zgadza. Zmiana nazwy jest atomowa, więc awaria lub pełny dysk zostawia albo stary plik binarny, albo nowy, nigdy połowę. Polecenia skrótów, takie jak `~/.local/bin/ccwork`, są dowiązaniami symbolicznymi do pliku binarnego ccam, więc uruchamiają nową wersję bez żadnych zmian.
 
-W Windows pliku działającego programu nie można podmienić ani usunąć, można tylko zmienić jego nazwę. `Updater.Install` zapisuje nowy plik binarny jako `ccam.exe.new`, zmienia nazwę działającego `ccam.exe` na `ccam.exe.old`, a nowego pliku na `ccam.exe`. Jeśli ostatni krok się nie powiedzie, stary plik binarny wraca do dawnej nazwy. Następna aktualizacja usuwa `ccam.exe.old`. Skróty będące dowiązaniami twardymi zamiast symbolicznych ([Polecenia skrótów](/features/shortcuts)) są odnawiane zaraz potem, więc też uruchamiają nową wersję.
+W Windows pliku działającego programu nie można podmienić ani usunąć, można tylko zmienić jego nazwę. `Updater.Install` zapisuje nowy plik binarny jako `ccam.exe.new`, zmienia nazwę działającego `ccam.exe` na `ccam.exe.old`, a nowego pliku na `ccam.exe`. Jeśli ostatni krok się nie powiedzie, stary plik binarny wraca do dawnej nazwy. Następna aktualizacja usuwa te pliki `ccam.exe.old`, które może; gdy sesja wciąż działa z wcześniejszego `ccam.exe.old`, działający plik binarny dostaje zamiast tego nazwę `ccam.exe.old-<time>`. Skróty będące dowiązaniami twardymi zamiast symbolicznych ([Polecenia skrótów](/features/shortcuts)) są odnawiane zaraz potem, więc też uruchamiają nową wersję; dotyczy to dowiązań twardych każdego starszego ccam utworzonych przez ccam, nie tylko właśnie podmienionego pliku binarnego.
 
 ### Instalacje zarządzane przez menedżer pakietów
 
@@ -91,7 +91,7 @@ W systemach innych niż Linux wypisywany jest tylko wiersz ze skryptem instalacy
 
 ## Bezpieczeństwo i przypadki brzegowe
 
-- Wersja deweloperska zgłasza swoją wersję jako `dev` i nie ma wydania do porównania, więc `ccam update` i `ccam update --check` ją odrzucają. `ccam update --version vX.Y.Z` instaluje na niej wydanie.
+- Wersja deweloperska zgłasza swoją wersję jako `dev` i nie ma wydania do porównania, więc `ccam update` i `ccam update --check` ją odrzucają. `ccam update --version vX.Y.Z` instaluje na niej wydanie. Kompilacja przez `go install github.com/jhyunwoo/ccam/cmd/ccam@vX.Y.Z` (lub `@latest`) podaje to wydanie, więc działają dla niej `ccam update` i propozycja w panelu; `@main` albo lokalna kompilacja za tagiem pozostaje `dev`.
 - Nieudane pobranie, brak zasobu dla twojej platformy lub niezgodna suma kontrolna zostawiają zainstalowany plik binarny bez zmian.
 - Nieistniejące wydanie kończy się błędem `there is no release <tag>`. Gdy GitHub odmawia z kodem HTTP 403 lub 429, ccam informuje, że to prawdopodobnie limit zapytań, i prosi o ponowną próbę później.
 - `--check` tylko odczytuje. Nie sprawdza, czy plik binarny jest zarządzany przez menedżer pakietów ani czy można do niego zapisywać.

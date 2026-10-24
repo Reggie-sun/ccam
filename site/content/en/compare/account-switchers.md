@@ -1,7 +1,7 @@
 ---
 title: ccam and other Claude Code account switchers
 description: How ccam compares with claude-swap, CCS, clausona, clauth, CAAM, cux and other tools for switching Claude Code accounts, and which approach fits which use.
-updated: 2026-10-21
+updated: 2026-10-24
 published: 2026-10-19
 order: 2
 translation: source
@@ -54,7 +54,7 @@ ccswap is a fork of claude-swap that also manages Codex logins. [claude-account]
 
 ccam never copies a Claude login from one place to another. Each account's login stays in its own folder, or on macOS in that folder's own Keychain item, and Claude Code is the program that renews it. There is no saved copy that can fall out of step. An existing `~/.claude` registered with `ccam import` keeps the Keychain item that plain `claude` uses, so it stays signed in either way.
 
-ccam renews an expired token itself only when you run `ccam usage --refresh`. It takes a lock first and refuses while that account is running, so it never rotates a token under a live session.
+ccam renews an expired token itself only when you run `ccam usage --refresh`. It takes a lock first and refuses while that account is running, however Claude Code was started (also background sessions and their daemon), and while Claude Code itself is renewing that login, so it never rotates a token under a live session.
 
 ### Nothing runs between you and Claude Code
 
@@ -66,19 +66,21 @@ Starting an account this way adds about 4 ms, under 6 ms at the 95th percentile,
 
 MCP servers, `settings.json`, `CLAUDE.md`, extensions (agents, commands, skills, plugins) and conversation history are five separate items. A group names the items it shares and the accounts in it, so two work accounts can share history in a `work` group while a personal account keeps its own, and all three share the same MCP servers through `default`. `ccam group set work --add memory` moves every account of the group in one plan; the [dashboard](/features/dashboard) does the same with checkboxes and greys out an item an account already gets from another group.
 
-- MCP servers are passed with `--mcp-config` at launch, so by default ccam never edits `.claude.json`, the file Claude Code rewrites while it runs. `ccam mcp add` adds a server once for the whole group.
+- MCP servers are passed with `--mcp-config` at launch, so by default a launch leaves `.claude.json`, the file Claude Code rewrites while it runs, alone. ccam writes there only in steps that say so, under Claude Code's lock and with a backup: for Remote Control after asking, when an account leaves or rejoins MCP sharing, and for `ccam mcp import`. `ccam mcp add` adds a server once for the whole group.
 - The other items are links into the group folder, so a change made in one account shows up in the others at once. Nothing is copied at launch.
 - Logins, `.claude.json` and running state are never shared.
 
 ### Every change is shown first and backed up
 
-`ccam group` and `ccam migrate` print a plan and ask before they move anything. When a file differs between an account and its group, you choose: keep the group's, use yours, or merge the JSON. Originals go to `.ccam-backup/<time>/`, a removed account's folder goes to a trash folder, and files are replaced in one rename, so an interrupted write leaves the old file. `--dry-run` shows what launching, sharing, migrating, shortcuts, updates and repairs would do. `ccam doctor --fix` repairs broken links and permissions.
+`ccam group` and `ccam migrate` print a plan and ask before they move anything. When a file differs between an account and its group, you choose: keep the group's, use yours, or merge the JSON; inside folders the group's copy stays and the plan names the files that differ. Originals go to `.ccam-backup/<time>/`, a removed account is logged out and its folder goes to a trash folder, and files are replaced in one rename, so an interrupted write leaves the old file. `--dry-run` shows what launching, sharing, migrating, shortcuts, updates and repairs would do. `ccam doctor --fix` repairs broken links and permissions.
 
 ### The same conversation in the next account
 
 `ccam next --auto --continue` asks every account for its usage at once, opens the one with the most room and continues the conversation. With shared history it is the same conversation; without, Claude Code copies it into the new account (`--resume <file> --fork-session`), and ccam says how many tokens the first reply reads again. When a limit stops a session, the ccam plugin's hook shows a notification, and `/ccam:switch` hands the conversation on. You decide when to switch; nothing watches your usage in the background, and automatic choices stay within one organization, so a company conversation never lands on a private account by accident. The status line suggests the command once an account reaches 90%.
 
 Scripts cannot wait for you, so `ccam --fallback work -p "…"` switches for them: when the account reaches its limit, the same command runs again as the account with the most room, and only the output of the run that finished is printed. A failure that is not a usage limit is passed on as it is. For parallel workers, `ccam pick` hands each one a different account with room, and both exit with code 75 when no account has any left.
+
+**Team and Enterprise seats.** Automatic choice (`ccam next`, `--fallback`, `ccam pick`, the dashboard's `n`) also switches between seats of the same Claude Team or Enterprise organization. Anthropic's help center says "Each seat on a Team plan is assigned to one named individual, and only that person may use it" and "Users can't route their work through another user's account to use that user's remaining usage" ([Team plans](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); likewise for [Enterprise plans](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Using automatic choice between seats may therefore violate Anthropic's terms. Check with your organization and Anthropic before you rely on it. Personal plans (Pro, Max) are covered by the [terms note in the FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 ### The right account in each folder
 
@@ -91,7 +93,7 @@ ccam is a static binary of about 10 MB with no runtime to install, for Linux, ma
 ## Where other tools do more
 
 - claude-swap, clauth, cux, CAAM and CCSwitcher can switch a running interactive session on their own when an account crosses a usage threshold. ccam switches `-p` runs with `--fallback` and leaves interactive sessions to you, with a notification at the limit and `/ccam:switch`.
-- On Windows without Developer Mode, ccam shares folders but cannot share single files such as `settings.json`; claude-swap and CCS copy them there instead.
+- On Windows without Developer Mode, ccam shares folders but cannot share single files such as `settings.json` (the first `ccam add` then shares only MCP servers and extensions); claude-swap and CCS copy them there instead.
 - CCSwitcher, Claude Switcher and claude-swap show usage in the macOS menu bar.
 - CCS, clausona, CAAM, clauth, ccswap and Claude Switcher also manage Codex and other coding agents.
 - clausona also turns extensions on and off per account (ccam's `ccam ext` only shows them), tracks local token cost, and ships Claude Code plugins that run fleets of workers in tmux and other terminals.

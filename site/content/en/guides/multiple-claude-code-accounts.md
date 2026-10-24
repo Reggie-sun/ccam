@@ -1,7 +1,7 @@
 ---
 title: Use multiple Claude Code accounts on one computer
 description: Run several Claude Code accounts side by side with CLAUDE_CONFIG_DIR, by hand with shell aliases or automatically with ccam, and switch between them.
-updated: 2026-10-20
+updated: 2026-10-24
 published: 2026-10-19
 order: 1
 translation: source
@@ -51,7 +51,7 @@ ccam add work --shortcut ccwork
 
 Now `ccam personal` and `ccam work` start the two accounts, and so does `ccwork`, the shortcut you gave the work account. Because they are real programs rather than aliases, they also work in scripts. Run `ccam` on its own to pick an account from a list, and `ccam use work` to make one the default.
 
-Settings, `CLAUDE.md`, MCP servers and extensions are shared from the start, and you can turn on shared conversation history to continue a conversation on the other account with `ccam next --continue`. `ccam usage` shows the 5-hour and weekly usage of every account at once.
+Settings, `CLAUDE.md`, MCP servers and extensions are shared from the start. `ccam next --continue` carries a conversation over to the other account, and shared conversation history, which you can turn on, keeps it one conversation. `ccam usage` shows the 5-hour and weekly usage of every account at once.
 
 If you already use `~/.claude`, run `ccam import` instead of adding that account again, or `ccam migrate` to copy its settings, MCP servers and extensions into the shared settings.
 
@@ -67,7 +67,7 @@ Claude Code runs [natively on Windows and inside WSL](https://code.claude.com/do
 
 **Claude Code asks me to log in every time.** The first start in a new folder always asks. If it keeps asking, the login has expired or was removed: run `ccam login work` (or start the alias once and log in).
 
-**An MCP server shows up in only one account.** Servers added inside a session with `claude mcp add` belong to that account. Move one to all accounts with `ccam mcp import work <server>`.
+**An MCP server shows up in only one account.** Servers added inside a session with `claude mcp add` belong to that account, and without `-s user` to that folder only. Move one to all accounts with `ccam mcp import work <server>`.
 
 **Settings differ between accounts.** `ccam share work` prints what the account shares and through which group; `ccam group join default work` makes it share what `default` shares, after showing what will change. `ccam doctor --fix` repairs broken links and keeps a backup of every file it changes.
 
@@ -78,3 +78,5 @@ Claude Code runs [natively on Windows and inside WSL](https://code.claude.com/do
 For two accounts and nothing shared, an alias is enough. When you want shared settings and MCP servers, more accounts, usage at a glance or continuing conversations, ccam saves the bookkeeping. The [comparison with aliases](/compare/aliases) lists the differences side by side, and [ccam and other account switchers](/compare/account-switchers) covers tools that swap one login instead.
 
 Whether you may use several accounts depends on each account's terms. Check them before you do.
+
+**Team and Enterprise seats.** Automatic choice (`ccam next`, `--fallback`, `ccam pick`, the dashboard's `n`) also switches between seats of the same Claude Team or Enterprise organization. Anthropic's help center says "Each seat on a Team plan is assigned to one named individual, and only that person may use it" and "Users can't route their work through another user's account to use that user's remaining usage" ([Team plans](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); likewise for [Enterprise plans](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Using automatic choice between seats may therefore violate Anthropic's terms. Check with your organization and Anthropic before you rely on it. Personal plans (Pro, Max) are covered by the note above.

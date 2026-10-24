@@ -2,10 +2,10 @@
 title: ccamのインストール
 metaTitle: "Linux、macOS、Windowsにccamをインストール"
 description: Linux、macOS、Windowsにccamを1つのコマンド、.debパッケージ、ソースでインストールし、ccam updateで更新します。Claude Codeを先に入れてください。
-updated: 2026-10-21
+updated: 2026-10-23
 order: 1
 translation: machine
-sourceHash: "1e3a53623de0"
+sourceHash: "af21dcc24169"
 ---
 
 LinuxまたはmacOSのターミナルで、次のコマンドを実行します。
@@ -22,7 +22,7 @@ Windowsでは、PowerShellで次を実行します。
 irm https://ccam.dev/install.ps1 | iex
 ```
 
-このスクリプトは`ccam_windows_<arch>.zip`をダウンロードしてSHA-256チェックサムを検証し、`ccam.exe`を`%USERPROFILE%\.local\bin`（Claude Codeのインストーラーが`claude.exe`を置くフォルダー）に配置し、そのフォルダーがまだユーザーの`PATH`になければ追加します。その後、新しいターミナルを開いてください。
+このスクリプトは`ccam_windows_<arch>.zip`をダウンロードしてSHA-256チェックサムを検証し、`ccam.exe`を`%USERPROFILE%\.local\bin`（Claude Codeのインストーラーが`claude.exe`を置くフォルダー）に配置し、そのフォルダーがまだユーザーの`PATH`になければ追加します。このとき、`%USERPROFILE%\bin`のような項目はそのまま残します。その後、新しいターミナルを開いてください。もう一度実行するとccamが置き換えられます。古いバイナリからClaude Codeのセッションがまだ動いている場合も同じで、そのバイナリは`ccam.exe.old`に名前が変わります（さらに古いものがまだ使われている場合は`ccam.exe.old-<number>`）。また、ハードリンクのショートカットも作り直されます: `OK 2 shortcuts now run the new ccam`。
 
 ccamがClaude Codeを起動するので、先に[Claude Code](https://docs.claude.com/en/docs/claude-code/overview)をインストールし、`claude --version`が動作することを確認してください。
 
@@ -30,7 +30,7 @@ ccamがClaude Codeを起動するので、先に[Claude Code](https://docs.claud
 
 - x86-64およびARM64のLinux: Ubuntu、Debian、Fedora、Arch、Alpine、その他のディストリビューション。バイナリは静的リンクで、依存関係はありません。
 - Appleシリコン搭載およびIntel搭載のmacOS。
-- x86-64およびARM64のWindows 10と11。PowerShell、Windows Terminal、Git Bashで使えます。共有フォルダーはどのユーザーでも動作します。共有ファイル（`settings.json`、`CLAUDE.md`、`history.jsonl`）には開発者モード（設定 > システム > 開発者向け）が必要です。Windowsでは、このモードか管理者でなければファイルへのリンクを作成できないためです。[Windowsでの共有](/features/share#on-windows)を参照してください。
+- x86-64およびARM64のWindows 10と11。PowerShell、Windows Terminal、Git Bashで使えます。共有フォルダーはどのユーザーでも動作します。共有ファイル（`settings.json`、`CLAUDE.md`、`history.jsonl`）には開発者モード（設定 > システム > 開発者向け）が必要です。Windowsでは、このモードか管理者でなければファイルへのリンクを作成できないためです。[Windowsでの共有](/features/share#on-windows)を参照してください。開発者モードがない場合、最初の`ccam add`はMCPサーバーと拡張機能だけを含むグループ`default`を作成し、開発者モードを有効にした後で残りを追加する方法を表示します。
 - WSLの中では、ccamはほかのLinuxシステムと同じように動作します。
 
 ## そのほかのインストール方法
@@ -48,6 +48,8 @@ sudo apt install ./ccam_*_linux_amd64.deb
 ```sh
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
 ```
+
+リリースタグ（`@latest`または`@vX.Y.Z`）からのビルドはそのバージョンを報告するので、`ccam update`が使えます。`@main`や、タグより先のローカルのチェックアウトからのビルドは`dev`と報告します。
 
 **特定のバージョン。** `CCAM_VERSION`を設定します。
 
@@ -117,9 +119,9 @@ ccam update --version v0.2.0
 ccam --dry-run update
 ```
 
-インストールスクリプトをもう一度実行しても、`~/.local/bin`にあるccamが更新されます。`go install`でccamをビルドした場合は、同じコマンドをもう一度実行してください。
+インストールスクリプトをもう一度実行しても、`~/.local/bin`にあるccamが更新されます。リリースタグから`go install`でccamをビルドした場合は、`ccam update`も使えますし、同じコマンドをもう一度実行してもかまいません。
 
-**Windows。** `ccam update`はWindows用の`.zip`をダウンロードします。Windowsでは実行中のプログラムを置き換えられないため、古いバイナリは`ccam.exe.old`に名前を変更され、次のアップデートで削除されます。
+**Windows。** `ccam update`はWindows用の`.zip`をダウンロードします。Windowsでは実行中のプログラムを置き換えられないため、古いバイナリは`ccam.exe.old`に名前を変更され、次のアップデートで削除されます。以前の`ccam.exe.old`からまだセッションが動いている場合、名前は`ccam.exe.old-<time>`になります。ハードリンクのショートカットはその直後に作り直されます。
 
 **DebianおよびUbuntuのパッケージ。** aptでインストールした`/usr/bin/ccam`は`ccam update`では置き換えず、代わりに次の手順を表示します。[リリースページ](https://github.com/jhyunwoo/ccam/releases)から新しい`ccam_<version>_linux_amd64.deb`をダウンロードし、古いパッケージの上からインストールします。
 
@@ -146,4 +148,4 @@ Remove-Item ~\.local\bin\ccam.exe
 Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
 ```
 
-`~/.local/share/ccam`を削除すると、そこに保存されているログインと会話履歴も削除されます。[インポートした](/docs/commands)`~/.claude`フォルダーは、その場所に残ります。
+`~/.local/share/ccam`を削除すると、そこに保存されているログインと会話履歴も削除されます。[インポートした](/docs/commands)`~/.claude`フォルダーは、その場所に残ります。ただし、グループに入っている間は、共有しているファイルが`~/.local/share/ccam/groups/`にあります。先にそのアカウントに対して`ccam remove <name>`（または`ccam group leave`）を実行してください。共有していたものすべてのコピーを持ってグループから抜けます。

@@ -1,13 +1,13 @@
 ---
 title: 複製現有的設定
-description: 用 ccam migrate 把現有 ~/.claude 中的設定、CLAUDE.md、擴充功能、MCP 伺服器和 MCP 登入複製到 ccam 群組。
-updated: 2026-10-19
+description: 用 ccam migrate 把現有 ~/.claude 中的設定、CLAUDE.md、擴充功能和 MCP 伺服器複製到 ccam 群組。
+updated: 2026-10-23
 order: 6
 translation: machine
-sourceHash: "7cee52e75749"
+sourceHash: "7bca9efb6eb0"
 ---
 
-如果你在使用 ccam 之前就用過 Claude Code，你的設定都在 `~/.claude` 和 `~/.claude.json` 中。`ccam migrate` 會把它們複製到一個共用群組，讓透過該群組共用這些項目的每個帳號，一開始就擁有你現有的設定。來源資料夾只會被讀取，直接執行 `claude` 也會和以前一樣運作。請在第一次 `ccam add` 之後執行一次，並在每次有帳號開始共用 MCP 伺服器時再執行一次。
+如果你在使用 ccam 之前就用過 Claude Code，你的設定都在 `~/.claude` 和 `~/.claude.json` 中。`ccam migrate` 會把它們複製到一個共用群組，讓透過該群組共用這些項目的每個帳號，一開始就擁有你現有的設定。來源資料夾只會被讀取，直接執行 `claude` 也會和以前一樣運作。請在第一次 `ccam add` 之後執行一次；當 `~/.claude.json` 中有 MCP 伺服器時，第一次 `ccam add` 會在提示中列出它們。
 
 ## 用法
 
@@ -43,20 +43,17 @@ Space（或 `x`）切換游標所在的項目，方向鍵或 `j`/`k` 移動游�
 $ ccam migrate --yes
 Copy from /home/me/.claude into group default (/home/me/.local/share/ccam/groups/default):
   mcp         ~/.claude.json  new: fs, linear
-              sign-ins        linear → personal; skipped: work (not logged in yet)
+              sign-ins        not copied (a sign-in works for one account only); sign in with /mcp: linear in personal, work
   settings    settings.json   new: 61 B
+              not found, skipped: keybindings.json
   memory      CLAUDE.md       new: 11 B
   extensions  agents/         add 1 file the group lacks (6 B)
               skills/         add 1 file the group lacks (13 B)
               not found, skipped: commands/, plugins/, output-styles/, rules/
   Conversation history (projects/, history.jsonl) is not included; add --history to copy it.
-✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, skills/, MCP sign-ins for personal
-MCP sign-ins were not copied to: work (not logged in yet). Sign in to those servers there with /mcp.
-Accounts that share these through group default:
-  mcp         personal, work
-  settings    personal, work
-  memory      personal, work
-  extensions  personal, work
+✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, skills/
+MCP sign-ins are not copied (a sign-in works for one account only). Sign in with /mcp to linear in personal, work.
+Group default: personal, work
 ```
 
 群組只會送達它自己的帳號，而且只限於它共用的項目，所以摘要會列出群組的帳號。如果群組沒有共用某個已複製的項目，或有些帳號不在群組中，ccam 會印出用來變更的 `ccam group set <group> --add <items>` 和 `ccam group join <group> <accounts>` 指令。
@@ -83,9 +80,9 @@ Accounts that share these through group default:
 
 `internal/cli/migrate.go` 會選出項目，接著 `migrate.Build` 讀取來源和群組並傳回一份計畫。在你確認、執行 `Plan.Apply` 之前，不會寫入任何東西。
 
-1. **找出來源。** `checkSource` 會拒絕不存在、不是資料夾，或沒有任何已知 Claude Code 項目的路徑。`migrate.ClaudeJSON` 會找出屬於該資料夾的 `.claude.json`：在資料夾內，或者對於內部沒有這個檔案的 `~/.claude`，則是它旁邊的 `~/.claude.json`。沒有設定 `CLAUDE_CONFIG_DIR` 時，Claude Code 就把它放在那裡。
+1. **找出來源。** `checkSource` 會拒絕不存在、不是資料夾，或沒有任何已知 Claude Code 項目的路徑。只複製 MCP 伺服器時，只要 `~/.claude.json` 中有伺服器，`~/.claude` 是空的或不存在也沒關係。`migrate.ClaudeJSON` 會找出屬於該資料夾的 `.claude.json`：在資料夾內，或者對於內部沒有這個檔案的 `~/.claude`，則是它旁邊的 `~/.claude.json`。沒有設定 `CLAUDE_CONFIG_DIR` 時，Claude Code 就把它放在那裡。
 2. **把項目對應到路徑。** 每個路徑都來自 `share.Layout`，也就是群組使用的同一份允許清單。MCP 伺服器是用 `mcp.LocalServers` 從 `.claude.json` 讀出的，它使用 `profile.TopLevelValue` 掃描器，而不解析整個檔案。
-3. **只複製，絕不移動。** 檔案以 `fsutil.AtomicWrite` 或 `fsutil.CopyFile` 寫到 `~/.local/share/ccam/groups/<group>/`；MCP 伺服器則寫入群組的 `mcp.json`。
+3. **只複製，絕不移動。** 檔案以 `fsutil.AtomicWrite` 或 `fsutil.CopyFile` 寫到 `~/.local/share/ccam/groups/<group>/`，它會在目標旁邊寫入暫存檔再重新命名，所以中途停止的複製絕不會留下不完整的檔案。MCP 伺服器則在持有群組 `mcp.json` 的鎖時寫入其中：其他 ccam 在這段期間新增的伺服器會保留，為 [Remote Control](/guides/remote-control) 建立的副本也會在之後更新。
 
 每個項目都把一個來源路徑對應到一個群組路徑：
 
@@ -108,18 +105,7 @@ Accounts that share these through group default:
 
 ### MCP 登入
 
-使用 OAuth 登入的 MCP 伺服器會把權杖存放在登入檔案中，也就是 `.credentials.json` 的 `mcpOAuth` 底下，而不是伺服器清單中。Claude Code 以 `<name>|` 加上伺服器 `type`、`url` 和 `headers` 的 `sha256` 雜湊值前 16 個字元作為每個項目的鍵。這個鍵與資料夾無關，所以只要伺服器定義完全相同，複製過去的項目在其他帳號中也能使用。因此 `internal/migrate/logins.go` 中的 `buildLogins` 只會複製群組最終採用來源定義的那些伺服器的項目：新的、原本就相同的，或你在衝突中選擇了 `use mine` 的。外掛伺服器的登入（鍵以 `plugin:` 開頭）會在你複製擴充功能且來源有 `plugins/` 時一併複製。
-
-<!-- motion:migrate-signins -->
-
-這些項目會寫入每個接收帳號自己的 `.credentials.json`，以 `fsutil.AtomicWrite` 和權限 `0600` 寫入。它們絕不會進入群組。帳號只有在透過目標群組共用 `mcp`（外掛伺服器則是 `extensions`）時才會收到，而且只加入它缺少的鍵：它已經有的項目（可能是較新的）會保留。計畫中的 `sign-ins` 那一行會列出伺服器、接收的帳號和被略過的帳號。符合以下情況的帳號會被 ccam 略過，並列出名稱和原因：
-
-- 以 `ccam import` 就地登錄的帳號，因為直接執行的 `claude` 可能正在使用它的登入檔案；
-- 正在執行的帳號，因為 Claude Code 會改寫它的登入檔案（寫入前會再檢查一次，回報為 `started meanwhile`）；
-- 尚未登入的帳號；
-- 把登入資訊存放在 macOS 鑰匙圈中的帳號，ccam 不會寫入鑰匙圈。
-
-請在被略過的帳號中用 `/mcp` 登入這些伺服器。之後才開始共用 MCP 伺服器的帳號，會在你再次執行 `ccam migrate` 時取得這些登入；摘要會以 ``Then run `ccam migrate` again to give them the MCP sign-ins too.`` 提醒你。
+使用 OAuth 登入的 MCP 伺服器會把權杖存放在登入檔案中，也就是 `.credentials.json` 的 `mcpOAuth` 底下，而不是伺服器清單中。ccam 不會複製它們。複製的登入和原本的登入持有相同的更新權杖，而伺服器會在第一次更新時輪替這個權杖：此時其他所有持有者（包括來源 `~/.claude`）都會從該伺服器登出。因此，對於來源已登入的每個複製伺服器，計畫中的 `sign-ins` 那一行會列出群組中需要自行用 `/mcp` 登入的帳號，摘要也會再列一次。沒有權杖的項目不算登入，不會列出；已經有自己登入的帳號，或群組保留了自己定義的伺服器，也不會列出。不會寫入任何登入檔案。
 
 ## 安全性和特殊情況
 
@@ -127,7 +113,8 @@ Accounts that share these through group default:
 - 在群組檔案因 `use mine`、合併或現有 `mcp.json` 中新增 MCP 伺服器而被取代之前，群組的副本會儲存在 `<group>/.ccam-backup/<time>/`。資料夾名稱每次執行都不同，所以同一秒內執行兩次也不會覆蓋彼此的備份。摘要會印出這個路徑。
 - 加上 `--yes` 時，每個衝突都會保留群組的副本，ccam 也會告訴你如何改為自行選擇：不加 `--yes` 執行同一個指令。
 - 如果沒有任何變更，ccam 會印出 `Nothing to copy.`；如果每個衝突都保留群組的副本，則印出 `Nothing to copy: the group keeps its own copies.`
-- 如果複製中途失敗，ccam 會停止並印出 `The source folder was not changed. Group files replaced so far are saved in`，後面接著備份資料夾。
+- 如果複製中途失敗，ccam 會停止並印出 `The source folder was not changed. Group files replaced so far are saved in`，後面接著備份資料夾。再次執行時，會複製沒有完整送達的檔案。
+- 有多個群組共用 MCP 時，`ccam doctor`、`ccam ext` 和 `ccam mcp list` 建議的指令會是 `ccam migrate --mcp --group <a|b>`。
 - 來源不存在時，會以 `no Claude Code folder at <path>. Give the folder to copy from: ccam migrate <folder>` 結束。
 
 ## 相關內容

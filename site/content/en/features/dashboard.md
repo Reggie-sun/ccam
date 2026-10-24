@@ -1,7 +1,7 @@
 ---
 title: The dashboard
 description: ccam on a terminal opens a full-screen dashboard of accounts, groups, folder rules, extensions and checks; every change shows its plan first.
-updated: 2026-10-21
+updated: 2026-10-24
 order: 15
 translation: source
 ---
@@ -32,16 +32,16 @@ Each time it opens, the dashboard asks GitHub in the background whether a newer 
 
 `U` asks first, then updates the way [`ccam update`](/features/update) does: the release is checked against its SHA-256 checksums and replaces ccam in one step. The dashboard you are in is still the old version, so quit and start `ccam` again. When the update cannot be done here, for example for a ccam installed from the `.deb` package, the dashboard shows the same advice as `ccam update` and keeps the offer.
 
-The first frame draws from `config.toml` alone, in well under 100 ms; usage fills in as each account answers. Each limit has its own bar: the 5-hour window, the weekly window for all models, and Fable's own weekly window; `-` means the account has no such window. A percentage turns yellow from 80% and red at 100%, and values from a cache after a failed lookup are drawn faint.
+The first frame draws from `config.toml` alone, in well under 100 ms; usage fills in as each account answers. Each limit has its own bar: the 5-hour window, the weekly window for all models, and Fable's own weekly window; `-` means the account has no such window. A percentage turns yellow from 80% and red at 100%, and values from a cache after a failed lookup are drawn faint. A window Claude Code reported full shows 100% until its reset. An expired access token shows a faint `⚠ token expired` (Claude Code renews it at the next start), while `⚠ login expired` means the account needs `ccam login`.
 
 ## Tabs
 
 | Tab | What it shows | Keys |
 | --- | --- | --- |
-| Accounts | number, name, email, 5-hour, weekly and Fable bars, last use, groups; `✔` the default, `▸` this folder's account, `•` running | below |
+| Accounts | number, name, email, 5-hour, weekly and Fable bars, last use, groups; `✔` the default, `▸` this folder's account, `•` running (also Claude Code started without ccam: plain `claude`, an IDE, background sessions and their daemon) | below |
 | Groups | each group, what it shares and its accounts, and the accounts in no group | `enter` edit, `n` new, `e` rename, `x` remove |
-| Folders | the [`ccam folder`](/features/folder) rules and the one that applies here | `n` use an account here, `enter` change, `x` remove |
-| Extensions | what [`ccam ext`](/features/ext) shows, each extension once with the groups it comes from | `r` reload |
+| Folders | the [`ccam folder`](/features/folder) rules and the one that applies here, also when you reached the folder through a symbolic link (new rules are stored with links resolved) | `n` use an account here, `enter` change, `x` remove |
+| Extensions | what [`ccam ext`](/features/ext) shows, each extension once with the groups it comes from, `off:` the accounts where a plugin is not turned on, servers an account has for this folder only among its own, `This folder's project`, and problems that belong to no account | `r` reload |
 | Health | what [`ccam doctor`](/features/doctor) reports, as a box per account (below) | `f` repair the selected box, `F` repair all (`doctor --fix`), `↑`/`↓` move between boxes |
 
 `←`/`→` or `Tab` switch tabs, `?` lists the keys of the current tab, `r` looks usage up again without the short cache, and `q` or `Esc` quits.
@@ -65,6 +65,8 @@ The first frame draws from `config.toml` alone, in well under 100 ms; usage fill
 | `c` | Set or remove its shortcut command |
 | `x` | Remove it (asks first, starting on No) |
 
+**Team and Enterprise seats.** Automatic choice (`ccam next`, `--fallback`, `ccam pick`, the dashboard's `n`) also switches between seats of the same Claude Team or Enterprise organization. Anthropic's help center says "Each seat on a Team plan is assigned to one named individual, and only that person may use it" and "Users can't route their work through another user's account to use that user's remaining usage" ([Team plans](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); likewise for [Enterprise plans](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Using automatic choice between seats may therefore violate Anthropic's terms. Check with your organization and Anthropic before you rely on it. Personal plans (Pro, Max) are covered by the [terms note in the FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+
 ## The Health tab
 
 The Health tab runs the checks of [`ccam doctor`](/features/doctor) when you open it and draws the same view: a first line with a mark per account, then a box per account. Each row in a box is one area that was checked, `Folder`, `Login` and `Share links` first, marked `✔` OK, `ℹ` information, `⚠` a warning or `✘` an error, so you see at once which account has a problem and where. Findings that belong to no account go in a `General` box.
@@ -72,25 +74,26 @@ The Health tab runs the checks of [`ccam doctor`](/features/doctor) when you ope
 ```console
  ✘ personal   ⚠ work
 
- ╭─ ✘ personal · 3 problems ──────────────────────────────────────────────────╮
- │ ⚠ Folder       folder permissions are 755 (should be 0700)                 │
- │ ℹ              unknown entries (Claude Code layout may have changed):      │
- │                newthing                                                    │
- │ ⚠ Login        .credentials.json permissions are 644 (should be 0600)      │
- │ ✔              login valid (me@example.com)                                │
- │ ✘ Share links  /home/me/.local/share/ccam/profiles/personal/settings.json: │
- │                set to shared but is a real file, not a link                │
- ╰────────────────────────────────────────────────────────────────────────────╯
- ╭─ ⚠ work · 1 problem ───────────────────────────────────────────────────────╮
- │ ✔ Folder       OK                                                          │
- │ ⚠ Login        not logged in → `ccam login work`                           │
- │ ✔ Share links  share links OK                                              │
- ╰────────────────────────────────────────────────────────────────────────────╯
+ ╭─ ✘ personal · 3 problems ─────────────────────────────────────────────────╮
+ │ ⚠ Folder       folder permissions are 755 (should be 0700)                │
+ │ ℹ              unknown entries (ccam knows the folder layout of Claude    │
+ │                Code 2.1.309; it may have changed): newthing               │
+ │ ⚠ Login        .credentials.json permissions are 644 (should be 0600)     │
+ │ ✔              login valid (me@example.com, Claude Team · Acme)           │
+ │ ✘ Share links  /home/me/.local/share/ccam/profiles/personal/settings.json │
+ │                : set to shared but is a real file, not a link             │
+ │ ✔ Usage        usage lookup OK                                            │
+ ╰───────────────────────────────────────────────────────────────────────────╯
+ ╭─ ⚠ work · 1 problem ──────────────────────────────────────────────────────╮
+ │ ✔ Folder       OK                                                         │
+ │ ⚠ Login        not logged in → `ccam login work`                          │
+ │ ✔ Share links  share links OK                                             │
+ ╰───────────────────────────────────────────────────────────────────────────╯
 
  4 problems; f repairs the selected box, F all of them (ccam doctor --fix).
 ```
 
-`↑`/`↓` move from box to box, and the selected box has an accent-colored border. `f` repairs only the selected box, the way `ccam doctor --fix` would: on an account's box it repairs that account alone, and on the `General` box the findings of no account (plugin paths and shortcuts); every other account is only checked again. It asks first, and a box with nothing to repair just says `nothing to repair in <name>`. `F` repairs everything at once, like `ccam doctor --fix`, and `r` checks again.
+`↑`/`↓` move from box to box, and the selected box has an accent-colored border. `f` repairs only the selected box, the way `ccam doctor --fix` would: on an account's box it repairs that account alone, and on the `General` box the findings of no account (plugin paths and shortcuts); every other account is only checked again. It asks first (``Like `ccam doctor --fix`: missing links and group folders are made, and a real file where a link belongs is backed up first; where the group has its own copy, the account then sees the group's. Nothing is lost.``), and a box with nothing to repair just says `nothing to repair in <name>`. `F` repairs everything at once, like `ccam doctor --fix`, and `r` checks again.
 
 ## Changing groups
 
@@ -108,7 +111,7 @@ On the Groups tab, `Enter` opens the editor: the items on the left, the accounts
     2. No
 ```
 
-A file that differs from the group's copy is asked about first (keep the group's, use mine, or merge). Then the change runs in the background with the same code as [`ccam group`](/features/share): the config is saved first, each account's data moves in order, and the originals go to `.ccam-backup/`. A change that would move the data of a running account is refused with the account's name.
+A file that differs from the group's copy is asked about first (keep the group's, use mine, or merge). Then the change runs in the background with the same code as [`ccam group`](/features/share): the config is saved first, each account's data moves in order, and the originals go to `.ccam-backup/`; an account that leaves MCP sharing keeps the group's servers in its `.claude.json`. A change that would move the data of a running account is refused with the account's name, also when the account started while the plan was open, and a plan that another ccam's change of groups made stale is refused with `the groups changed while this plan waited; nothing was moved, make the change again`. While another ccam changes the groups, a new change, rename or remove says `another ccam is changing the groups right now`; after a change that stopped halfway, they wait until `F` on the Health tab (or `ccam doctor --fix`) has finished it.
 
 ## Adding an account
 
@@ -123,9 +126,13 @@ A file that differs from the group's copy is asked about first (keep the group's
 
 `Esc` goes back one step, and on the first step closes the wizard.
 
+## Removing an account
+
+`x` asks before anything happens, starting on No, and says what the removal does: `It is logged out first (its login is revoked), then its folder goes to ccam's trash; the groups' shared files stay.` For an API key account there is no login to revoke, and when another account holds the same login it is not logged out. An imported account keeps its folder: `It was imported, so its folder /home/me/.claude stays where it is: it leaves its groups first and keeps a copy of what they share, then ccam forgets it.`
+
 ## Colors
 
-The colors follow the roles of Claude Code's terminal UI, so ccam looks at home next to it; group names get a color from their name. ccam asks the terminal for its background and picks a light or dark theme. Set one yourself in `config.toml`:
+The colors follow the roles of Claude Code's terminal UI, so ccam looks at home next to it; group names get a color from their name. ccam asks the terminal for its background and picks a light or dark theme. Set one yourself at the top of `config.toml`, above the first `[[group]]`, `[[profile]]` or `[[folder]]`:
 
 ```toml
 theme = 'dark'   # auto (default), dark, light, dark-daltonized, light-daltonized, dark-ansi, light-ansi
@@ -138,7 +145,9 @@ The `-daltonized` themes are for red-green color blindness and the `-ansi` theme
 - The dashboard calls the same functions as the commands, so every rule holds: plans before data moves, refusals for running accounts, backups, and login tokens that never leave an account.
 - The dashboard has no dry run: `ccam --dry-run` without a name prints how this folder's account would start, and `o` on an account offers a dry run of that one launch.
 - The terminal is restored before Claude Code starts or the login opens.
-- A screen too small for a dialog drops the tab's rows first; lines are cut with `…` rather than wrapped.
+- A screen too small for a dialog drops the tab's rows first; lines are cut with `…` rather than wrapped. On a short screen the blank lines and the tab description go next, so the line of keys stays. Below 40 columns or 8 rows the dashboard shows only `Too small: ccam needs 40x8 (now 36x7)`.
+- `Ctrl+C` while a change, a removal, an update or a repair is being applied waits for it: the status line says `ccam quits when it is done.`
+- After `U` has updated ccam, the offer does not come back when the dashboard returns from adding an account or a login.
 
 ## Related
 

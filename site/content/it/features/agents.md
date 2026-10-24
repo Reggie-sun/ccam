@@ -1,13 +1,13 @@
 ---
 title: Sessioni in background di ogni account
 description: ccam agents elenca in una tabella gli agenti in background e le sessioni aperte di Claude Code di tutti i tuoi account; ccam attach ne apre una per id.
-updated: 2026-10-20
+updated: 2026-10-23
 order: 16
 translation: machine
-sourceHash: "1f459764d66d"
+sourceHash: "092368f63363"
 ---
 
-Claude Code tiene le sessioni in background (`claude --bg`, la vista degli agenti) per account: `claude agents` mostra solo le sessioni dell'account con cui è in esecuzione. `ccam agents` interroga tutti gli account contemporaneamente e le elenca insieme, e `ccam attach <id>` apre una sessione in background con l'account che l'ha avviata, qualunque esso sia.
+Claude Code tiene le sessioni in background (`claude --bg`, la vista degli agenti) per account: `claude agents` mostra solo le sessioni dell'account con cui è in esecuzione. `ccam agents` interroga tutti gli account contemporaneamente e le elenca insieme, e `ccam attach <id|name>` apre una sessione in background con l'account che l'ha avviata, qualunque esso sia.
 
 ## Utilizzo
 
@@ -18,6 +18,7 @@ ccam agents --all                     # also finished background sessions
 ccam agents --json                    # for scripts
 ccam attach 49ec0028                  # open it, as the account that started it
 ccam attach 49ec                      # a unique start of the id is enough
+ccam attach probe                     # or part of the session's name
 ```
 
 ```console
@@ -37,18 +38,18 @@ Open a background session with `ccam attach <id>`.
 | `--all` | Elenca anche le sessioni in background terminate, fallite o fermate | disattivata |
 | `--json` | Stampa le sessioni in JSON, ciascuna con l'`account` a cui appartiene | disattivata |
 
-`ccam attach <id> [claude args]` passa a `claude attach` gli argomenti che seguono l'id. Con `--dry-run` stampa il comando.
+`ccam attach <id|name> [claude args]` passa a `claude attach` tutto ciò che segue l'id senza modificarlo, opzioni comprese: `ccam attach 49ec --dry-run` passa `--dry-run` a Claude Code. Per stampare invece il comando, metti `--dry-run` prima dell'id (`ccam --dry-run attach 49ec` o `ccam attach --dry-run 49ec`).
 
 ## Come funziona
 
 1. Per ogni account, ccam esegue `claude agents --json` (con `--all` se indicata) con la `CLAUDE_CONFIG_DIR` dell'account, tutti contemporaneamente, ciascuno entro 15 secondi. Questo legge l'elenco delle sessioni proprio dell'account e non avvia il servizio in background di Claude Code.
 2. Ogni voce riceve il nome dell'account, e l'elenco viene ordinato per ora di avvio, dalla più recente. Un account che non risponde viene indicato sullo standard error ed escluso, e poi ccam esce con codice 1, così uno script non scambia un errore per un elenco vuoto.
-3. `ccam attach` cerca `jobs/<id>` nella cartella di ogni account, dove Claude Code tiene una sessione in background, ed esegue `claude attach <id>` con quell'account, nello stesso modo in cui `ccam <name>` avvia Claude Code.
+3. `ccam attach` cerca `jobs/<id>` nella cartella di ogni account, dove Claude Code tiene una sessione in background, ed esegue `claude attach <id>` con quell'account, nello stesso modo in cui `ccam <name>` avvia Claude Code. Una parola che non è l'inizio di un id viene cercata nei nomi delle sessioni, senza distinguere maiuscole e minuscole; una parola che sembra un id non viene mai presa per un nome.
 
 ## Sicurezza e casi limite
 
 - Gli id delle sessioni in background appartengono a un solo account: `claude attach` eseguito con un altro account non riesce a trovarli, ed è proprio questo che `ccam attach` risolve.
-- Due account potrebbero avere sessioni i cui id iniziano allo stesso modo; in quel caso `ccam attach` le indica entrambe e chiede una parte più lunga dell'id.
+- Due account potrebbero avere sessioni i cui id iniziano allo stesso modo, o i cui nomi contengono la stessa parola; in quel caso `ccam attach` le indica e chiede una parte più lunga dell'id o del nome.
 - ccam passa i suoi server MCP condivisi a Claude Code con `--mcp-config=<file>` in un solo argomento, che `claude agents` e `claude attach` accettano; le sessioni in background continuano a usare quel file quando si riavviano.
 - Il servizio in background di un account con chiave API prende la chiave dalla shell che lo ha avviato. Avvia tramite ccam la prima sessione in background di un account del genere (`ccam gw --bg …`), così il servizio ha la chiave.
 

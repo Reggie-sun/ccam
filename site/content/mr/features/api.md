@@ -1,10 +1,10 @@
 ---
 title: API key खाती
 description: ccam add --api, Anthropic च्या API किंवा gateway साठी API key खाते जोडते; key launch वेळी variable किंवा कमांडमधून वाचली जाते, कधीही साठवली जात नाही.
-updated: 2026-10-20
+updated: 2026-10-23
 order: 13
 translation: machine
-sourceHash: "a903c92f2c50"
+sourceHash: "232a71525e42"
 ---
 
 API key खाते Claude subscription लॉगिनऐवजी API key ने Claude Code सुरू करते: Anthropic चा API, किंवा तोच Messages format समजणारा एखादा endpoint, जसे LiteLLM किंवा OpenRouter gateway. ccam key साठवत नाही. खाते प्रत्येक वेळी सुरू होताना ते key एखाद्या environment variable मधून किंवा password manager सारख्या कमांडमधून वाचते, आणि फक्त त्या Claude Code process ला देते.
@@ -35,7 +35,7 @@ API key खाते इतर कोणत्याही खात्याप
 | --- | --- | --- |
 | `--api` | लॉगिन करण्याऐवजी API key खाते जोडा | बंद |
 | `--key-from env:NAME` | key environment variable `NAME` मधून वाचा | |
-| `--key-from command:COMMAND` | `COMMAND` चालवा (`sh -c` ने, किंवा Windows वर `cmd /C` ने) आणि ती छापत असलेली पहिली ओळ वापरा | |
+| `--key-from command:COMMAND` | `COMMAND` चालवा (`sh -c` ने, किंवा Windows वर जशी टाइप केली तशी `cmd /d /s /c "…"` मध्ये, quotes तसेच ठेवून) आणि ती छापत असलेली पहिली ओळ वापरा | |
 | `--base-url <url>` | endpoint (`ANTHROPIC_BASE_URL`) | Anthropic चा API |
 | `--auth api-key\|bearer` | key `ANTHROPIC_API_KEY` (`x-api-key`) म्हणून किंवा `ANTHROPIC_AUTH_TOKEN` (`Authorization: Bearer`, जे gateways सहसा मागतात) म्हणून पाठवा | `api-key` |
 | `--model <model>` | model (`ANTHROPIC_MODEL`) | Claude Code चा डीफॉल्ट |
@@ -66,10 +66,17 @@ subscription लॉगिन असलेली खाती पूर्वी�
 
 ## सुरक्षितता आणि अपवादात्मक स्थिती
 
-- key कधीही `config.toml`, cache किंवा log मध्ये लिहिली जात नाही, आणि `ccam --dry-run gw` ती वाचत नाही: dry run मध्ये `command:` source चालवला जात नाही.
+- key कधीही `config.toml`, cache किंवा log मध्ये लिहिली जात नाही, आणि `ccam --dry-run gw` ती वाचत नाही: dry run मध्ये `command:` source चालवला जात नाही. त्याऐवजी dry run endpoint, model आणि key कुठून येते ते दाखवतो:
+
+  ```console
+  $ ccam --dry-run gw -p hi
+  CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/gw CCAM_PROFILE=gw ANTHROPIC_BASE_URL=https://llm.example.com ANTHROPIC_MODEL=claude-sonnet-5-5 ANTHROPIC_AUTH_TOKEN="$(pass show llm/gateway-key | head -n 1)" /home/me/.local/bin/claude -p hi
+  ```
+
+  launch काढून टाकणारा वारशाने मिळालेला variable सुरुवातीला `env -u <name>` म्हणून दिसतो. `env:` source चा variable रिकामा असेल, तर launch जसे अयशस्वी होईल तसाच dry run अयशस्वी होतो.
 - `ccam add --api` `env:` source लगेच तपासते आणि variable रिकामा असल्यास इशारा देते; `command:` source पहिल्यांदा launch वेळी चालतो.
 - `ccam login` आणि `ccam logout` API key खाते नाकारतात, कारण त्याला लॉगिन नसते. `ccam doctor` त्याचा endpoint आणि key source दाखवते, आणि `env:` variable रिकामा असल्यास इशारा देते.
-- `ccam usage` त्यासाठी `API` दाखवते. `ccam next --auto`, `--fallback` आणि `ccam pick` फक्त subscription खात्यांमधून निवडतात, कारण API key ला तुलना करण्यासारखी 5 तासांची किंवा साप्ताहिक मर्यादा नसते.
+- `ccam usage` त्यासाठी `no limits (API)` दाखवते. `ccam next --auto`, `--fallback` आणि `ccam pick` फक्त subscription खात्यांमधून निवडतात, कारण API key ला तुलना करण्यासारखी 5 तासांची किंवा साप्ताहिक मर्यादा नसते.
 - `env` block किंवा `apiKeyHelper` असलेली शेअर केलेली `settings.json` गटातील प्रत्येक खात्याला लागू होते, API key खात्यांनाही. provider सेटिंग्ज शेअर केलेल्या सेटिंग्जबाहेर ठेवा, किंवा API key खाते `settings` शेअर न करणाऱ्या गटात ठेवा.
 
 ## संबंधित

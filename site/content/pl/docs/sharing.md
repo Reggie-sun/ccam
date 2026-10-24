@@ -1,10 +1,10 @@
 ---
 title: Współdzielenie serwerów MCP, ustawień i historii
 description: Jak grupy ccam współdzielą serwery MCP, settings.json, CLAUDE.md, umiejętności i historię rozmów między kontami Claude Code, przy osobnych loginach.
-updated: 2026-10-20
+updated: 2026-10-23
 order: 4
 translation: machine
-sourceHash: "2606e4ec682e"
+sourceHash: "27e0a0e5abbd"
 ---
 
 Każde konto ma własny login. Wszystko inne można współdzielić przez **grupy**: grupa wymienia elementy, które współdzieli, i należące do niej konta, a ccam linkuje pliki każdego z tych kont do folderu grupy, więc zmiana wprowadzona na jednym koncie pojawia się na wszystkich.
@@ -47,7 +47,7 @@ Gdy konto zaczyna współdzielić element (dołącza do grupy albo jego grupa do
 
 Pliki rozmów mają nazwy według identyfikatora sesji, więc historie z kilku kont łączą się bez konfliktów.
 
-ccam nie zmienia konta, gdy Claude Code działa jako to konto, bo sesja dalej zapisuje do przenoszonych plików. Najpierw ją zakończ.
+ccam nie zmienia konta, gdy Claude Code działa jako to konto, niezależnie od tego, jak go uruchomiono (także sesje w tle), bo sesja dalej zapisuje do przenoszonych plików. Najpierw ją zakończ. ccam sprawdza to ponownie tuż przed zapisem, więc wychwytuje też sesję uruchomioną w czasie, gdy plan czekał.
 
 ## Gdy konto przestaje współdzielić
 
@@ -56,7 +56,7 @@ ccam group leave team work                   # work leaves the group
 ccam group set default --remove history      # nobody in default shares history any more
 ```
 
-Link zostaje usunięty, a konto dostaje własną kopię bieżącej zawartości grupy. Dodaj `--fresh`, żeby zamiast tego zacząć od pustego folderu. Grupa zachowuje swoją zawartość dla pozostałych kont.
+Link zostaje usunięty, a konto dostaje własną kopię bieżącej zawartości grupy; serwery MCP grupy trafiają do jego własnego `.claude.json`, obok jego własnych serwerów. Dodaj `--fresh`, żeby zamiast tego zacząć od pustego folderu; plan wymienia wtedy serwery MCP, które przestaną się ładować. Zaimportowany folder, taki jak `~/.claude`, zawsze zachowuje kopię. Grupa zachowuje swoją zawartość dla pozostałych kont.
 
 ## Kopiowanie istniejącej konfiguracji
 
@@ -73,12 +73,11 @@ Co jest kopiowane:
 - `settings.json` i globalny `CLAUDE.md`;
 - rozszerzenia `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/` i `rules/`;
 - twoje serwery MCP użytkownika, czyli wpis `mcpServers` z `~/.claude.json`, do pliku grupy `mcp.json`;
-- zapisane logowania (OAuth) kopiowanych serwerów MCP, do własnego pliku logowania każdego konta;
 - historia rozmów (`projects/` i `history.jsonl`), ale tylko gdy dodasz `--history`.
 
 Folder źródłowy jest tylko odczytywany: nic w nim nie jest przenoszone, linkowane ani zmieniane, a zwykłe `claude` działa jak dotąd. Pliki logowania `.credentials.json` i `.claude.json` nigdy nie są kopiowane do grupy.
 
-Serwery MCP logujące się przez OAuth przechowują swoje tokeny w loginie, a nie na liście serwerów. Żebyś nie musiał logować się do nich ponownie, ccam kopiuje te logowania do pliku logowania każdego konta, które dostaje serwery przez grupę, chyba że konto ma już własne. Pomija konta, które są uruchomione, nie są jeszcze zalogowane, zostały zarejestrowane w miejscu poleceniem `ccam import` albo przechowują login w pęku kluczy macOS, i podaje ich nazwy; zaloguj się tam do serwerów przez `/mcp`. Konto, które zacznie współdzielić serwery MCP później, dostanie logowania, gdy ponownie uruchomisz `ccam migrate`.
+Serwery MCP logujące się przez OAuth przechowują swoje tokeny w loginie, a nie na liście serwerów. ccam nie kopiuje tych logowań: skopiowane logowanie zawiera ten sam token odświeżania, a pierwsze odnowienie wylogowuje z tego serwera wszystkich pozostałych posiadaczy, w tym `~/.claude`. Plan i podsumowanie wymieniają konta, które same logują się do serwerów przez `/mcp`.
 
 Zanim cokolwiek skopiuje, ccam wypisuje plan i pyta o zgodę:
 
@@ -121,7 +120,7 @@ ccam mcp add fs -- npx -y @modelcontextprotocol/server-filesystem ~/code
 ccam mcp list
 ```
 
-Serwer dodany w trakcie sesji przez `claude mcp add` jest zapisywany tylko dla tego konta. Przy następnym uruchomieniu tego konta ccam poda nazwę serwera i polecenie, które przeniesie go do grupy:
+Serwer dodany w trakcie sesji przez `claude mcp add` jest zapisywany tylko dla tego konta i dla folderu, w którym byłeś (zakres lokalny Claude Code; `-s user` przypisuje go kontu we wszystkich folderach). Przy następnym uruchomieniu tego konta ccam poda nazwę serwera wraz z jego folderem i polecenie, które przeniesie go do grupy:
 
 ```sh
 ccam mcp import work gh
@@ -129,9 +128,9 @@ ccam mcp import work gh
 
 Jeśli grupa ma już inny serwer o tej nazwie, ccam go pomija i o tym informuje. `--force` zastępuje serwer grupy i zachowuje stary `mcp.json` w folderze `.ccam-backup/` grupy.
 
-Serwery MCP logujące się przez OAuth przechowują swoje tokeny razem z loginem konta, więc autoryzuj je raz na każdym koncie albo skopiuj logowania z `~/.claude` poleceniem `ccam migrate`.
+Serwery MCP logujące się przez OAuth przechowują swoje tokeny razem z loginem konta, więc autoryzuj je raz na każdym koncie przez `/mcp`. `ccam ext` i `ccam doctor` wymieniają serwery, do których konto nie jest zalogowane, a inne konto jest.
 
-Jeśli wolisz, żeby serwery pojawiały się w `claude mcp list` i `/mcp` jako zwykłe serwery użytkownika, ustaw `mcp_strategy = "sync"` w `~/.config/ccam/config.toml`. ccam zapisuje je wtedy w `.claude.json` każdego konta przed startem, z użyciem blokady pliku samego Claude Code i z kopią zapasową.
+Jeśli wolisz, żeby serwery pojawiały się w `claude mcp list` i `/mcp` jako zwykłe serwery użytkownika, ustaw `mcp_strategy = "sync"` na górze `~/.config/ccam/config.toml`, nad pierwszym `[[group]]`, `[[profile]]` lub `[[folder]]`. ccam zapisuje je wtedy w `.claude.json` każdego konta przed startem, z użyciem blokady pliku samego Claude Code i z kopią zapasową. Własny serwer konta o tej samej nazwie pozostaje serwerem konta, a ccam o tym informuje.
 
 ## Dwa konta w tym samym folderze
 
@@ -144,4 +143,4 @@ ccam doctor
 ccam doctor --fix
 ```
 
-Jeśli współdzielona ścieżka stała się zwykłym plikiem, na przykład po ręcznym przywróceniu kopii zapasowej, ccam zatrzymuje się przed uruchomieniem Claude Code i wskazuje `ccam doctor --fix`, które scala plik z grupą i zachowuje kopię zapasową.
+Jeśli współdzielona ścieżka stała się zwykłym plikiem, na przykład po ręcznym przywróceniu kopii zapasowej, ccam zatrzymuje się przed uruchomieniem Claude Code i wskazuje `ccam doctor --fix`, które ponownie łączy go z grupą: plik staje się kopią grupy, gdy grupa nie ma własnej, a w przeciwnym razie grupa zachowuje swoją, a twój trafia do kopii zapasowej, którą `--fix` wskazuje. Zmianę grup, która zatrzymała się w połowie, także kończy `ccam doctor --fix`.

@@ -1,10 +1,10 @@
 ---
 title: 컴퓨터 한 대에서 Claude Code 여러 계정 사용하기
 description: CLAUDE_CONFIG_DIR로 여러 Claude Code 계정을 나란히 실행하고 전환하는 방법입니다. 셸 별칭으로 직접 설정하거나 ccam으로 자동화할 수 있습니다.
-updated: 2026-10-20
+updated: 2026-10-24
 order: 1
 translation: machine
-sourceHash: "ee92078b81c3"
+sourceHash: "5463dec2f6eb"
 ---
 
 계정마다 설정 폴더를 따로 두면 됩니다. Claude Code는 `CLAUDE_CONFIG_DIR` 환경 변수로 사용할 폴더를 정하고, 폴더마다 로그인 정보, 설정, 대화 내역이 따로 저장됩니다. 그래서 모든 계정이 로그인 상태를 유지하고, 여러 계정을 동시에 실행할 수 있습니다. 셸 별칭으로 직접 설정할 수도 있고, ccam에 맡길 수도 있습니다.
@@ -51,7 +51,7 @@ ccam add work --shortcut ccwork
 
 이제 `ccam personal`과 `ccam work`로 두 계정을 실행할 수 있고, work 계정에 붙인 단축 명령 `ccwork`로도 실행할 수 있습니다. 별칭이 아니라 실제 프로그램이므로 스크립트에서도 동작합니다. `ccam`만 실행하면 목록에서 계정을 고를 수 있고, `ccam use work`로 기본 계정을 정할 수 있습니다.
 
-설정, `CLAUDE.md`, MCP 서버, 확장 기능은 처음부터 공유됩니다. 대화 내역 공유를 켜면 `ccam next --continue`로 다른 계정에서 대화를 이어 갈 수 있습니다. `ccam usage`는 모든 계정의 5시간·주간 사용량을 한 번에 보여 줍니다.
+설정, `CLAUDE.md`, MCP 서버, 확장 기능은 처음부터 공유됩니다. `ccam next --continue`는 대화를 다른 계정으로 넘겨 이어 가고, 직접 켤 수 있는 대화 내역 공유를 쓰면 그 대화가 하나로 유지됩니다. `ccam usage`는 모든 계정의 5시간·주간 사용량을 한 번에 보여 줍니다.
 
 이미 `~/.claude`를 사용하고 있다면 그 계정을 다시 추가하지 말고 `ccam import`를 실행하세요. 또는 `ccam migrate`로 그 폴더의 설정, MCP 서버, 확장 기능을 공유 설정으로 복사할 수 있습니다.
 
@@ -67,7 +67,7 @@ Claude Code는 [Windows에서 네이티브로, 그리고 WSL 안에서](https://
 
 **Claude Code가 매번 로그인을 요청합니다.** 새 폴더에서 처음 실행할 때는 항상 로그인을 요청합니다. 그 뒤에도 계속 요청한다면 로그인이 만료되었거나 삭제된 것입니다. `ccam login work`를 실행하세요(또는 별칭을 한 번 실행해 로그인하세요).
 
-**MCP 서버가 한 계정에만 보입니다.** 세션 안에서 `claude mcp add`로 추가한 서버는 그 계정에만 속합니다. `ccam mcp import work <server>`로 모든 계정에 옮길 수 있습니다.
+**MCP 서버가 한 계정에만 보입니다.** 세션 안에서 `claude mcp add`로 추가한 서버는 그 계정에만 속하고, `-s user` 없이 추가했다면 그 폴더에만 속합니다. `ccam mcp import work <server>`로 모든 계정에 옮길 수 있습니다.
 
 **계정마다 설정이 다릅니다.** `ccam share work`는 그 계정이 무엇을 어느 그룹으로 공유하는지 보여 줍니다. `ccam group join default work`는 바뀔 내용을 먼저 보여 준 뒤 이 계정이 `default`가 공유하는 항목을 함께 공유하게 합니다. `ccam doctor --fix`는 깨진 링크를 복구하고, 바꾸는 파일은 모두 백업해 둡니다.
 
@@ -78,3 +78,5 @@ Claude Code는 [Windows에서 네이티브로, 그리고 WSL 안에서](https://
 계정이 두 개이고 공유할 것이 없다면 별칭으로 충분합니다. 설정과 MCP 서버를 공유하거나, 계정을 더 늘리거나, 사용량을 한눈에 보거나, 대화를 이어 가고 싶다면 ccam이 번거로운 관리 작업을 덜어 줍니다. [별칭과의 비교](/compare/aliases)에 차이를 나란히 정리했고, [ccam과 다른 계정 전환 도구](/compare/account-switchers)에서는 로그인 하나를 바꿔 끼우는 도구들을 다룹니다.
 
 여러 계정을 써도 되는지는 각 계정의 약관에 따라 다릅니다. 사용하기 전에 확인하세요.
+
+**Team·Enterprise 시트.** 자동 선택(`ccam next`, `--fallback`, `ccam pick`, 대시보드의 `n`)은 같은 Claude Team이나 Enterprise 조직의 시트 사이에서도 계정을 바꿉니다. Anthropic 고객센터는 "Each seat on a Team plan is assigned to one named individual, and only that person may use it"(팀 플랜의 각 시트는 한 명의 지정된 개인에게 할당되며, 그 사람만 사용할 수 있습니다), "Users can't route their work through another user's account to use that user's remaining usage"(사용자는 다른 사용자의 계정을 통해 작업을 라우팅하여 해당 사용자의 남은 사용량을 사용할 수 없습니다)라고 안내합니다([Team 요금제](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129), [Enterprise 요금제](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)도 마찬가지). 따라서 시트 사이에서 자동 선택을 쓰면 Anthropic의 약관을 위반할 수 있습니다. 이 기능에 의존하기 전에 소속 조직과 Anthropic에 확인하세요. 개인 요금제(Pro, Max)에 대해서는 위의 안내를 참고하세요.

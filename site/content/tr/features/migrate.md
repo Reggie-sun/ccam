@@ -1,13 +1,13 @@
 ---
 title: Mevcut bir kurulumu kopyalama
-description: Mevcut bir ~/.claude klasörünün ayarlarını, CLAUDE.md dosyasını, uzantılarını, MCP sunucularını ve MCP girişlerini ccam migrate ile bir ccam grubuna kopyalayın.
-updated: 2026-10-19
+description: Mevcut bir ~/.claude klasörünün ayarlarını, CLAUDE.md dosyasını, uzantılarını ve MCP sunucularını ccam migrate ile bir ccam grubuna kopyalayın.
+updated: 2026-10-23
 order: 6
 translation: machine
-sourceHash: "7cee52e75749"
+sourceHash: "7bca9efb6eb0"
 ---
 
-Claude Code'u ccam'den önce kullandıysanız kurulumunuz `~/.claude` ve `~/.claude.json` içindedir. `ccam migrate` bunu bir paylaşım grubuna kopyalar; böylece bu öğeleri grup üzerinden paylaşan her hesap, zaten sahip olduğunuz kurulumla başlar. Kaynak klasör yalnızca okunur ve düz `claude` eskisi gibi çalışmaya devam eder. İlk `ccam add` komutunuzdan sonra bir kez, bir hesap MCP sunucularını paylaşmaya başladığında da yeniden çalıştırın.
+Claude Code'u ccam'den önce kullandıysanız kurulumunuz `~/.claude` ve `~/.claude.json` içindedir. `ccam migrate` bunu bir paylaşım grubuna kopyalar; böylece bu öğeleri grup üzerinden paylaşan her hesap, zaten sahip olduğunuz kurulumla başlar. Kaynak klasör yalnızca okunur ve düz `claude` eskisi gibi çalışmaya devam eder. İlk `ccam add` komutunuzdan sonra bir kez çalıştırın; `~/.claude.json` içinde MCP sunucuları varsa ilk `ccam add` ipucunda onları adlarıyla belirtir.
 
 ## Kullanım
 
@@ -43,20 +43,17 @@ Ardından ccam planı yazdırır ve kopyalamadan önce onay ister:
 $ ccam migrate --yes
 Copy from /home/me/.claude into group default (/home/me/.local/share/ccam/groups/default):
   mcp         ~/.claude.json  new: fs, linear
-              sign-ins        linear → personal; skipped: work (not logged in yet)
+              sign-ins        not copied (a sign-in works for one account only); sign in with /mcp: linear in personal, work
   settings    settings.json   new: 61 B
+              not found, skipped: keybindings.json
   memory      CLAUDE.md       new: 11 B
   extensions  agents/         add 1 file the group lacks (6 B)
               skills/         add 1 file the group lacks (13 B)
               not found, skipped: commands/, plugins/, output-styles/, rules/
   Conversation history (projects/, history.jsonl) is not included; add --history to copy it.
-✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, skills/, MCP sign-ins for personal
-MCP sign-ins were not copied to: work (not logged in yet). Sign in to those servers there with /mcp.
-Accounts that share these through group default:
-  mcp         personal, work
-  settings    personal, work
-  memory      personal, work
-  extensions  personal, work
+✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, skills/
+MCP sign-ins are not copied (a sign-in works for one account only). Sign in with /mcp to linear in personal, work.
+Group default: personal, work
 ```
 
 Bir grup yalnızca kendi hesaplarına ve yalnızca paylaştığı öğeler için ulaşır; bu yüzden özet, grubun hesaplarını listeler. Grup kopyalanan öğelerden birini paylaşmıyorsa ya da bazı hesaplar grupta değilse ccam, bunu değiştiren `ccam group set <group> --add <items>` ve `ccam group join <group> <accounts>` komutlarını yazdırır.
@@ -83,9 +80,9 @@ Bir grup yalnızca kendi hesaplarına ve yalnızca paylaştığı öğeler için
 
 `internal/cli/migrate.go` öğeleri seçer, ardından `migrate.Build` kaynağı ve grubu okur ve bir plan döndürür. Siz onaylayıp `Plan.Apply` çalışana kadar hiçbir şey yazılmaz.
 
-1. **Kaynağı bulma.** `checkSource`; eksik olan, klasör olmayan veya bilinen hiçbir Claude Code girdisi içermeyen bir yolu reddeder. `migrate.ClaudeJSON`, klasöre ait `.claude.json` dosyasını bulur: klasörün içinde ya da içinde olmayan `~/.claude` için yanındaki `~/.claude.json`. `CLAUDE_CONFIG_DIR` ayarlı olmadığında Claude Code onu orada tutar.
+1. **Kaynağı bulma.** `checkSource`; eksik olan, klasör olmayan veya bilinen hiçbir Claude Code girdisi içermeyen bir yolu reddeder. Yalnızca MCP sunucuları için, `~/.claude.json` içinde sunucular olduğu sürece boş ya da eksik bir `~/.claude` sorun değildir. `migrate.ClaudeJSON`, klasöre ait `.claude.json` dosyasını bulur: klasörün içinde ya da içinde olmayan `~/.claude` için yanındaki `~/.claude.json`. `CLAUDE_CONFIG_DIR` ayarlı olmadığında Claude Code onu orada tutar.
 2. **Öğeleri yollara eşleme.** Her yol, grupların kullandığı izin listesinin aynısı olan `share.Layout` içinden gelir. MCP sunucuları, dosyanın tamamını ayrıştırmak yerine `profile.TopLevelValue` tarayıcısını kullanan `mcp.LocalServers` ile `.claude.json` dosyasından okunur.
-3. **Taşımadan kopyalama.** Dosyalar `fsutil.AtomicWrite` veya `fsutil.CopyFile` ile `~/.local/share/ccam/groups/<group>/` içine gider; MCP sunucuları grubun `mcp.json` dosyasına gider.
+3. **Taşımadan kopyalama.** Dosyalar `fsutil.AtomicWrite` veya `fsutil.CopyFile` ile `~/.local/share/ccam/groups/<group>/` içine gider; bu ikisi hedefin yanına geçici bir dosya yazıp onu yeniden adlandırır, böylece yarıda kalan bir kopyalama asla kesik bir dosya bırakmaz. MCP sunucuları, kilidi altında grubun `mcp.json` dosyasına gider: başka bir ccam'in bu arada eklediği bir sunucu kalır ve [Remote Control](/guides/remote-control) için yapılmış kopyalar ardından güncellenir.
 
 Her öğe bir kaynak yolu bir grup yoluna eşler:
 
@@ -108,18 +105,7 @@ Kontrol listesinin kendisi, `ccam add` komutunun kullandığı `checklist` bile�
 
 ### MCP oturum açmaları
 
-OAuth ile oturum açan MCP sunucuları tokenlarını sunucu listesinde değil, giriş dosyasında, `.credentials.json` içinde `mcpOAuth` altında tutar. Claude Code her girdinin anahtarını `<name>|` artı sunucunun `type`, `url` ve `headers` değerlerinin `sha256` hash'inin ilk 16 karakteri olarak oluşturur. Anahtar klasöre bağlı değildir; bu yüzden kopyalanmış bir girdi, sunucu tanımı aynı olduğu sürece başka bir hesapta da çalışır. Bu nedenle `internal/migrate/logins.go` içindeki `buildLogins`, yalnızca grubun sonunda kaynaktaki tanımla sahip olduğu sunucuların girdilerini kopyalar: yeni olanlar, zaten aynı olanlar veya `use mine` seçtiğiniz çakışmalar. Eklenti sunucularının oturum açmaları (`plugin:` ile başlayan anahtarlar), uzantıları kopyaladığınızda ve kaynakta `plugins/` varsa birlikte gider.
-
-<!-- motion:migrate-signins -->
-
-Girdiler, alan her hesabın kendi `.credentials.json` dosyasına `fsutil.AtomicWrite` ile `0600` modunda yazılır. Hiçbir zaman gruba gitmez. Bir hesap bunları yalnızca `mcp` (eklenti sunucuları için `extensions`) öğesini hedef grup üzerinden paylaşıyorsa alır ve yalnızca hesapta olmayan anahtarlar eklenir: hesabın zaten sahip olduğu, belki daha yeni girdiler korunur. `sign-ins` plan satırı sunucuları, alan hesapları ve atlananları listeler. ccam bir hesabı şu durumlarda atlar ve nedeniyle birlikte adını verir:
-
-- `ccam import` ile yerinde kaydedilmişse, çünkü düz `claude` onun giriş dosyasını kullanıyor olabilir;
-- çalışıyorsa, çünkü Claude Code giriş dosyasını yeniden yazar (yazmadan hemen önce yeniden kontrol edilir, `started meanwhile` olarak bildirilir);
-- henüz giriş yapılmamışsa;
-- girişini ccam'in yazmadığı macOS Anahtar Zinciri'nde tutuyorsa.
-
-Atlanan bir hesapta sunuculara `/mcp` ile oturum açın. MCP sunucularını sonradan paylaşmaya başlayan bir hesap, `ccam migrate` komutunu yeniden çalıştırdığınızda oturum açmaları alır; özet bunu ``Then run `ccam migrate` again to give them the MCP sign-ins too.`` ile belirtir.
+OAuth ile oturum açan MCP sunucuları tokenlarını sunucu listesinde değil, giriş dosyasında, `.credentials.json` içinde `mcpOAuth` altında tutar. ccam bunları kopyalamaz. Kopyalanmış bir oturum açma, orijinaliyle aynı yenileme tokenını taşır ve sunucu bu tokenı ilk yenilemede değiştirir: kaynak `~/.claude` dahil, onu tutan diğer herkesin o sunucudaki oturumu kapanır. Bu yüzden `sign-ins` plan satırı, kaynağın oturum açtığı her kopyalanan sunucu için grubun kendi başına `/mcp` ile oturum açacak hesaplarını adlandırır ve özet bunu yineler. Tokenı olmayan bir girdi oturum açma sayılmaz ve listelenmez; zaten kendi oturum açması olan bir hesap ya da tanımını grubun koruduğu bir sunucu da listelenmez. Hiçbir giriş dosyası yazılmaz.
 
 ## Güvenlik ve uç durumlar
 
@@ -127,7 +113,8 @@ Atlanan bir hesapta sunuculara `/mcp` ile oturum açın. MCP sunucularını sonr
 - Bir grup dosyası `use mine`, bir birleştirme veya mevcut bir `mcp.json` içindeki yeni MCP sunucuları ile değiştirilmeden önce grubun kopyası `<group>/.ccam-backup/<time>/` içine kaydedilir. Klasör adı her çalıştırmada benzersizdir; böylece aynı saniyedeki iki çalıştırma birbirinin yedeklerinin üzerine yazmaz. Özet yolu yazdırır.
 - `--yes` ile her çakışmada grubun kopyası korunur ve ccam bunun yerine nasıl seçim yapılacağını söyler: aynı komutu `--yes` olmadan çalıştırın.
 - Hiçbir şey değişmeyecekse ccam `Nothing to copy.` yazdırır; her çakışmada grubun kopyası korunuyorsa `Nothing to copy: the group keeps its own copies.` yazdırır.
-- Bir kopyalama yarıda başarısız olursa ccam `The source folder was not changed. Group files replaced so far are saved in` ve ardından yedek klasörüyle durur.
+- Bir kopyalama yarıda başarısız olursa ccam `The source folder was not changed. Group files replaced so far are saved in` ve ardından yedek klasörüyle durur. Yeniden çalıştırma, bütün olarak ulaşmamış dosyaları kopyalar.
+- Birkaç grup MCP paylaştığında `ccam doctor`, `ccam ext` ve `ccam mcp list` komutlarının önerdiği komutlar `ccam migrate --mcp --group <a|b>` biçimindedir.
 - Eksik bir kaynak `no Claude Code folder at <path>. Give the folder to copy from: ccam migrate <folder>` ile biter.
 
 ## İlgili

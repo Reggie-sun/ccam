@@ -1,13 +1,15 @@
 ---
 title: scripts साठी खाते निवडणे
 description: ccam pick script साठी सर्वाधिक जागा असलेले खाते छापते, एकत्र सुरू झालेल्या workers ना वेगवेगळी खाती देते, आणि जागा नसेल तर 75 ने बाहेर पडते.
-updated: 2026-10-20
+updated: 2026-10-24
 order: 12
 translation: machine
-sourceHash: "2e8285b7c193"
+sourceHash: "a8baeb64de99"
 ---
 
 `ccam pick` सर्वाधिक जागा असलेल्या लॉग इन केलेल्या खात्याचे नाव छापते, जेणेकरून एखादी script त्याने Claude Code सुरू करू शकेल. जागा असलेली खाती पुरेशी असेपर्यंत एकाच वेळी सुरू झालेल्या प्रत्येक worker ला वेगळे खाते मिळते, त्यामुळे `claude -p` jobs चा एक संच एकच खाते संपवण्याऐवजी तुमच्या खात्यांमध्ये विभागला जातो.
+
+**Team आणि Enterprise सीट्स.** आपोआप होणारी निवड (`ccam next`, `--fallback`, `ccam pick`, डॅशबोर्डमधील `n`) एकाच Claude Team किंवा Enterprise organization मधील एका सीटवरून दुसऱ्या सीटवरही जाते. Anthropic च्या मदत केंद्रात म्हटले आहे की "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team प्लॅनमधील प्रत्येक सीट नावानिशी एका व्यक्तीला नेमून दिलेली असते, आणि फक्त तीच व्यक्ती ती वापरू शकते) आणि "Users can't route their work through another user's account to use that user's remaining usage" (दुसऱ्या वापरकर्त्याच्या उरलेल्या वापराचा लाभ घेण्यासाठी वापरकर्ते आपले काम त्याच्या खात्यामार्फत चालवू शकत नाहीत) ([Team प्लॅन](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise प्लॅन](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) साठीही असेच). त्यामुळे सीट्सदरम्यान आपोआप होणारी निवड वापरल्यास Anthropic च्या अटींचे उल्लंघन होऊ शकते. त्यावर अवलंबून राहण्यापूर्वी तुमच्या संस्थेकडे आणि Anthropic कडे चौकशी करा. वैयक्तिक प्लॅनबद्दल (Pro, Max) [FAQ मधील अटींविषयीची टीप](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) सांगते.
 
 ## वापर
 
@@ -49,15 +51,15 @@ Exit codes: standard output वर नावासह `0`, कोणत्या
 | `--max-usage <1-100>` | या वापराखालील खात्यांना प्राधान्य द्या | `auto_max_usage`, नाहीतर 100 |
 | `--strategy headroom\|expiring\|balance` | सर्वात कमी 5 तासांचा वापर, सर्वात लवकर होणारा 5 तासांचा reset, किंवा सर्वात आधी न वापरता वाया जाणारा साप्ताहिक quota | `auto_strategy`, नाहीतर `headroom` |
 | `--cross-org` | इतर organizations ची खातीसुद्धा निवडा | `cross_org`, नाहीतर बंद |
-| `--wait[=<duration>]` | कोणत्याही खात्यात जागा नसेल तर पहिले खाते reset होण्याची वाट पाहा, जास्तीत जास्त इतका वेळ | बंद; एकटे दिल्यास `5h` |
+| `--wait[=<duration>]` | कोणत्याही खात्यात जागा नसेल तर पहिले खाते reset होण्याची वाट पाहा, जास्तीत जास्त इतका वेळ. मूल्य `=` नंतर येते: `--wait 30m` हे `--wait takes its value after '=': --wait=30m` या सूचनेसह नाकारले जाते | बंद; एकटे दिल्यास `5h` |
 | `--dry-run` | निवड नोंदवल्याशिवाय निवडा | बंद |
 
 ## हे कसे काम करते
 
-1. ccam हा फोल्डर जे खाते सुरू करेल त्या खात्याच्या organization मधील लॉग इन केलेल्या खात्यांची यादी करते (API key खात्यांना मर्यादा नसते, त्यामुळे ती वगळली जातात; [organizations](/features/next#auto) पाहा); त्याच Claude खात्यात लॉग इन असलेला फोल्डरसुद्धा वगळला जातो.
+1. ccam हा फोल्डर जे खाते सुरू करेल त्या खात्याच्या organization मधील लॉग इन केलेल्या खात्यांची यादी करते (API key खाती आणि Console लॉगिन यांना मर्यादा नसते, त्यामुळे ती वगळली जातात; [organizations](/features/next#auto) पाहा); त्याच Claude खात्यात लॉग इन असलेला फोल्डरसुद्धा वगळला जातो.
 2. ते एक lock (`~/.local/state/ccam/picks.lock`) घेते, जेणेकरून एकाच वेळी चालणाऱ्या निवडी एकामागून एक होतात.
-3. ते प्रत्येक खात्याचा वापर एकाच वेळी विचारते, `ccam usage` प्रमाणेच, 60 सेकंदांच्या cache सह.
-4. मागील 2 मिनिटांत निवडलेली खाती (`~/.local/state/ccam/picks/<name>`) आधी वगळली जातात, आणि उरलेल्यांतून `ccam next --auto` चे [निवडीचे नियम](/features/next#auto) निवडतात: आधी `auto_max_usage` खालची, strategy नुसार, आणि 100% वरचे खाते कधीच नाही.
+3. ते प्रत्येक खात्याचा वापर एकाच वेळी विचारते, `ccam usage` प्रमाणेच, 60 सेकंदांच्या cache सह. Claude Code ने भरलेली म्हणून नोंदवलेली window तिच्या reset पर्यंत 100% मोजली जाते ([मर्यादेची नोंद](/features/usage#the-limit-record)), त्यामुळे नुकतीच मर्यादा गाठलेले खाते, त्याचे साठवलेले आकडे जागा दाखवत असले तरी, बाहेरच राहते.
+4. मागील 2 मिनिटांत निवडलेली खाती (`~/.local/state/ccam/picks/<name>`; घड्याळाच्या वेळेनंतरची तारीख असलेली निवड मोजली जात नाही) आधी वगळली जातात, आणि उरलेल्यांतून `ccam next --auto` चे [निवडीचे नियम](/features/next#auto) निवडतात: आधी `auto_max_usage` खालची, strategy नुसार, आणि 100% वरचे खाते कधीच नाही.
 5. जागा असलेले प्रत्येक खाते नुकतेच निवडले गेले असेल तर नियम पुन्हा त्या सर्वांतून निवडतात, त्यामुळे तीन खात्यांवर चौथा worker एखादे खाते शेअर करतो.
 6. निवड नोंदवली जाते आणि lock सोडला जातो, मग नाव छापले जाते.
 

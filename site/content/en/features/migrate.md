@@ -1,12 +1,12 @@
 ---
 title: Copying an existing setup
-description: Copy the settings, CLAUDE.md, extensions, MCP servers and MCP sign-ins of an existing ~/.claude into a ccam group with ccam migrate.
-updated: 2026-10-19
+description: Copy the settings, CLAUDE.md, extensions and MCP servers of an existing ~/.claude into a ccam group with ccam migrate.
+updated: 2026-10-23
 order: 6
 translation: source
 ---
 
-If you used Claude Code before ccam, your setup lives in `~/.claude` and `~/.claude.json`. `ccam migrate` copies it into a share group, so every account that shares those items through the group starts with the setup you already have. The source folder is only read, and plain `claude` keeps working as before. Run it once after your first `ccam add`, and again whenever an account starts sharing MCP servers.
+If you used Claude Code before ccam, your setup lives in `~/.claude` and `~/.claude.json`. `ccam migrate` copies it into a share group, so every account that shares those items through the group starts with the setup you already have. The source folder is only read, and plain `claude` keeps working as before. Run it once after your first `ccam add`; when `~/.claude.json` has MCP servers, the first `ccam add` names them in its tip.
 
 ## Usage
 
@@ -42,20 +42,17 @@ Then ccam prints the plan and asks before it copies:
 $ ccam migrate --yes
 Copy from /home/me/.claude into group default (/home/me/.local/share/ccam/groups/default):
   mcp         ~/.claude.json  new: fs, linear
-              sign-ins        linear → personal; skipped: work (not logged in yet)
+              sign-ins        not copied (a sign-in works for one account only); sign in with /mcp: linear in personal, work
   settings    settings.json   new: 61 B
+              not found, skipped: keybindings.json
   memory      CLAUDE.md       new: 11 B
   extensions  agents/         add 1 file the group lacks (6 B)
               skills/         add 1 file the group lacks (13 B)
               not found, skipped: commands/, plugins/, output-styles/, rules/
   Conversation history (projects/, history.jsonl) is not included; add --history to copy it.
-✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, skills/, MCP sign-ins for personal
-MCP sign-ins were not copied to: work (not logged in yet). Sign in to those servers there with /mcp.
-Accounts that share these through group default:
-  mcp         personal, work
-  settings    personal, work
-  memory      personal, work
-  extensions  personal, work
+✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, skills/
+MCP sign-ins are not copied (a sign-in works for one account only). Sign in with /mcp to linear in personal, work.
+Group default: personal, work
 ```
 
 A group only reaches its own accounts, and only for the items it shares, so the summary lists the group's accounts. When the group does not share one of the copied items, or some accounts are not in it, ccam prints the `ccam group set <group> --add <items>` and `ccam group join <group> <accounts>` commands that change that.
@@ -82,9 +79,9 @@ With no item flag, the checklist decides on a terminal. Outside a terminal, or w
 
 `internal/cli/migrate.go` picks the items, then `migrate.Build` reads the source and the group and returns a plan. Nothing is written until `Plan.Apply`, after you confirm.
 
-1. **Find the source.** `checkSource` refuses a path that is missing, not a folder, or holds no known Claude Code entry. `migrate.ClaudeJSON` finds the `.claude.json` that belongs to the folder: inside it, or for `~/.claude` without one inside, `~/.claude.json` next to it. That is where Claude Code keeps it when `CLAUDE_CONFIG_DIR` is not set.
+1. **Find the source.** `checkSource` refuses a path that is missing, not a folder, or holds no known Claude Code entry. For MCP servers alone, an empty or missing `~/.claude` is fine as long as `~/.claude.json` has servers. `migrate.ClaudeJSON` finds the `.claude.json` that belongs to the folder: inside it, or for `~/.claude` without one inside, `~/.claude.json` next to it. That is where Claude Code keeps it when `CLAUDE_CONFIG_DIR` is not set.
 2. **Map items to paths.** Every path comes from `share.Layout`, the same allow list groups use. The MCP servers are read out of `.claude.json` with `mcp.LocalServers`, which uses the `profile.TopLevelValue` scanner rather than parsing the whole file.
-3. **Copy, never move.** Files go to `~/.local/share/ccam/groups/<group>/` with `fsutil.AtomicWrite` or `fsutil.CopyFile`; MCP servers go into the group's `mcp.json`.
+3. **Copy, never move.** Files go to `~/.local/share/ccam/groups/<group>/` with `fsutil.AtomicWrite` or `fsutil.CopyFile`, which writes a temporary file beside the target and renames it, so a copy that stops never leaves a cut-off file. MCP servers go into the group's `mcp.json` under its lock: a server another ccam adds meanwhile stays, and the copies made for [Remote Control](/guides/remote-control) are updated afterwards.
 
 Each item maps one source path to one group path:
 
@@ -107,18 +104,7 @@ The checklist itself is `tui.MigratePicker` built on the `checklist` component t
 
 ### MCP sign-ins
 
-MCP servers that sign in with OAuth keep their tokens in the login file, `.credentials.json` under `mcpOAuth`, not in the server list. Claude Code keys each entry as `<name>|` plus the first 16 characters of a `sha256` hash of the server's `type`, `url` and `headers`. The key does not depend on the folder, so a copied entry works in another account as long as the server definition is identical. `buildLogins` in `internal/migrate/logins.go` therefore copies only the entries of servers the group ends up with in the source's definition: new, already the same, or a conflict where you chose `use mine`. Sign-ins of plugin servers (keys starting with `plugin:`) go along when you copy extensions and the source has `plugins/`.
-
-<!-- motion:migrate-signins -->
-
-The entries go into each receiving account's own `.credentials.json`, written with `fsutil.AtomicWrite` at mode `0600`. They never go into the group. An account receives them only if it shares `mcp` (or, for plugin servers, `extensions`) through the target group, and only the keys it lacks are added: entries it already has, perhaps newer, are kept. The plan line `sign-ins` lists the servers, the receiving accounts and the skipped ones. ccam skips an account, and names it with the reason, when it is:
-
-- registered in place with `ccam import`, since plain `claude` may be using its login file;
-- running, since Claude Code rewrites its login file (checked again right before writing, reported as `started meanwhile`);
-- not logged in yet;
-- keeping its login in the macOS Keychain, which ccam does not write.
-
-Sign in to the servers in a skipped account with `/mcp`. An account that starts sharing MCP servers later gets the sign-ins when you run `ccam migrate` again; the summary says so with ``Then run `ccam migrate` again to give them the MCP sign-ins too.``
+MCP servers that sign in with OAuth keep their tokens in the login file, `.credentials.json` under `mcpOAuth`, not in the server list. ccam does not copy them. A copied sign-in holds the same refresh token as the original, and the server rotates that token at the first renewal: every other holder, the source `~/.claude` included, is then logged out of that server. So the plan line `sign-ins` names, for each copied server the source is signed in to, the accounts of the group that sign in on their own with `/mcp`, and the summary repeats it. An entry without a token is no sign-in and is not listed, nor is an account that has its own sign-in already, or a server whose definition the group keeps. No login file is written.
 
 ## Safety and edge cases
 
@@ -126,7 +112,8 @@ Sign in to the servers in a skipped account with `/mcp`. An account that starts 
 - Before a group file is replaced, by `use mine`, a merge, or new MCP servers in an existing `mcp.json`, the group's copy is saved in `<group>/.ccam-backup/<time>/`. The folder name is unique per run, so two runs in the same second do not overwrite each other's backups. The summary prints the path.
 - With `--yes`, every conflict keeps the group's copy, and ccam says how to choose instead: run the same command without `--yes`.
 - If nothing would change, ccam prints `Nothing to copy.`; if every conflict keeps the group's copy, `Nothing to copy: the group keeps its own copies.`
-- If a copy fails halfway, ccam stops with `The source folder was not changed. Group files replaced so far are saved in` followed by the backup folder.
+- If a copy fails halfway, ccam stops with `The source folder was not changed. Group files replaced so far are saved in` followed by the backup folder. A rerun copies the files that did not arrive whole.
+- When several groups share MCP, the commands that `ccam doctor`, `ccam ext` and `ccam mcp list` suggest read `ccam migrate --mcp --group <a|b>`.
 - A missing source ends with `no Claude Code folder at <path>. Give the folder to copy from: ccam migrate <folder>`.
 
 ## Related

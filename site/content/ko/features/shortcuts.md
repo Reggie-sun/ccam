@@ -1,10 +1,10 @@
 ---
 title: 단축 명령
 description: ccam shortcut으로 계정에 ccwork 같은 전용 명령을 붙이고, ccam shims install로 ~/.local/bin의 링크를 다시 만듭니다.
-updated: 2026-10-20
+updated: 2026-10-23
 order: 3
 translation: machine
-sourceHash: 939256e7a67e
+sourceHash: "38e2d1aba397"
 ---
 
 단축 명령은 직접 이름을 붙여 한 계정으로 Claude Code를 시작하는 명령입니다. `ccwork --resume`은 `ccam work --resume`과 똑같이 동작합니다. 단축 명령은 `~/.local/bin`에 있는 ccam 링크이므로 bash, zsh, 스크립트 등 `PATH`에서 프로그램을 실행하는 곳이라면 어디서나 동작합니다. 단축 명령은 필수가 아니니, 자주 시작하는 계정에만 만들면 됩니다.
@@ -18,7 +18,7 @@ ccam shortcut work            # show it
 ccam shortcut work ccw        # rename it; the old link is removed
 ccam shortcut work --remove   # delete it
 ccam add side --shortcut ccside
-ccam shims install            # recreate missing links of all accounts
+ccam shims install            # recreate missing or outdated links of all accounts
 ccwork -p "summarise" --output-format json
 ```
 
@@ -54,8 +54,10 @@ work: none (add one with `ccam shortcut work ccwork`)
 - `a-z`, `0-9`, `.`, `-`, `_`로 이루어진 1~64자이며, 문자나 숫자로 시작해야 합니다.
 - `ccam`, `claude`, 또는 `run`이나 `usage` 같은 ccam 명령 이름은 쓸 수 없습니다.
 - 다른 계정의 단축 명령은 쓸 수 없습니다.
-- `~/.local/bin`에 있는 파일 중 ccam 링크가 아닌 파일의 이름은 쓸 수 없습니다.
+- `~/.local/bin`에 있는 파일 중 이미 ccam의 링크(또는 ccam이 만든 이 계정 자체의 단축 명령)가 아닌 파일의 이름은 쓸 수 없습니다.
 - `PATH`에 있는 다른 실행 파일의 이름은 쓸 수 없습니다.
+
+`config.toml`을 불러올 때도 같은 규칙으로 검사합니다. 직접 고친 단축 명령이 패턴에 맞지 않거나, `claude`나 `ccam`이거나, 두 계정에 주어졌으면, 고칠 때까지 모든 명령이 그 계정을 알리는 메시지와 함께 실패합니다.
 
 명령 이름과 `--remove`를 함께 주면 `give a command or --remove, not both` 오류를 내고 멈춥니다. 계정에 이미 있는 이름을 다시 지정하면 `work: ccwork (unchanged)`를 출력하고, 링크가 없으면 다시 만듭니다.
 
@@ -70,9 +72,9 @@ work: none (add one with `ccam shortcut work ccwork`)
 1. `shim.Check`는 이름을 `^[a-z0-9][a-z0-9._-]{0,63}$`, `config.Reserved`, `cfg.FindShortcut` 순서로 확인합니다. `~/.local/bin/<name>`에는 `os.Lstat`을 호출하고, `PATH`의 나머지 폴더마다 `os.Stat`을 호출해 ccam 링크가 아닌 실행 파일이 있으면 거부합니다.
 2. ccam은 `fsutil.AtomicWrite`(임시 파일, `fsync`, 이름 바꾸기)로 `config.toml`을 저장합니다.
 3. `shim.Remove`는 이전 단축 명령의 링크를 삭제하지만, ccam 링크일 때만 삭제합니다.
-4. `shim.Install`은 설정된 단축 명령 중 링크가 없는 것을 모두 만듭니다. `os.Executable`과 `filepath.EvalSymlinks`로 찾은 ccam 실행 파일을 가리키도록 `os.Symlink`를 호출합니다. 이 함수는 아무것도 삭제하지 않습니다.
+4. `shim.Install`은 설정된 단축 명령을 이름순으로 돌며 링크가 없는 것을 모두 만듭니다. `os.Executable`과 `filepath.EvalSymlinks`로 찾은 ccam 실행 파일을 가리키도록 `os.Symlink`를 호출합니다. 한 단축 명령 자리에 다른 파일이 있어도 나머지는 계속 만들며, 오류에 그 이름들을 모두 알려 줍니다.
 
-`os.Readlink`가 ccam 경로를 반환하거나, 링크와 ccam 경로가 같은 파일로 해석되면 그 링크는 ccam의 것으로 간주합니다. 모든 삭제와 덮어쓰기 검사가 이 확인을 거치므로, ccam은 자신이 만들지 않은 파일을 건드리지 않습니다.
+ccam은 자신이 만든 모든 링크와 그 링크가 실행하게 한 바이너리를 `~/.local/state/ccam/shortcuts.json`에 기록합니다. `os.Readlink`가 ccam 경로를 반환하거나, 링크와 ccam 경로가 같은 파일로 해석되면 그 링크는 ccam의 것으로 간주합니다. 기록된 링크의 바이너리가 그 뒤에 옮겨지거나 교체되었으면(ccam을 다른 폴더로 옮겼거나 다시 설치한 경우) 그 링크는 낡은 것이며, `shim.Install`이 이 ccam을 가리키게 바꿉니다. 아직 설치되어 있는 다른 ccam을 가리키는 기록된 링크는 그대로 둡니다. 모든 삭제와 덮어쓰기 검사가 이 확인을 거치므로, ccam은 직접 만든 ccam 사본이나 직접 만든 링크처럼 자신이 만들지 않은 파일을 건드리지 않습니다.
 
 단축 명령을 실행하면 ccam에게 필요한 것은 입력한 이름뿐입니다.
 
@@ -84,16 +86,18 @@ work: none (add one with `ccam shortcut work ccwork`)
 
 ### Windows에서
 
-단축 명령은 `%USERPROFILE%\.local\bin`의 `ccwork.exe`이며, `shim.Name`이 조회 전에 대소문자에 관계없이 `.exe`를 떼어 내므로 `ccwork`, `ccwork.exe`, `CCWORK.EXE` 모두 `work`를 시작합니다. ccam은 먼저 심볼릭 링크를 만드는데, Windows에서는 개발자 모드이거나 관리자일 때만 허용됩니다. 그 권한이 없으면 하드 링크를 만듭니다. 하드 링크는 같은 `ccam.exe` 파일의 두 번째 이름이며, 권한이 필요 없습니다. 하드 링크는 `ccam.exe`와 같은 파일일 때 ccam의 것으로 인정됩니다. `ccam update`는 `ccam.exe` 자리에 새 파일을 두므로, 이어서 하드 링크로 된 단축 명령을 모두 `shim.Relink`로 새로 만들고 `✓ shortcut ccwork renewed`를 출력합니다. 이름 검사는 다른 `PATH` 폴더에서 `PATHEXT`의 각 확장자(`.exe`, `.cmd` 등)를 붙인 `<name>`을 찾습니다.
+단축 명령은 `%USERPROFILE%\.local\bin`의 `ccwork.exe`이며, `shim.Name`이 조회 전에 대소문자에 관계없이 `.exe`를 떼어 내므로 `ccwork`, `ccwork.exe`, `CCWORK.EXE` 모두 `work`를 시작합니다. ccam은 먼저 심볼릭 링크를 만드는데, Windows에서는 개발자 모드이거나 관리자일 때만 허용됩니다. 그 권한이 없으면 하드 링크를 만듭니다. 하드 링크는 같은 `ccam.exe` 파일의 두 번째 이름이며, 권한이 필요 없습니다. 하드 링크는 `ccam.exe`와 같은 파일일 때 ccam의 것으로 인정됩니다. 하드 링크는 자신이 만들어진 파일을 계속 실행하므로, `ccam update`가 `ccam.exe` 자리에 새 파일을 두면 하드 링크로 된 단축 명령을 모두 `shim.Relink`로 새로 만들고 `✓ shortcut ccwork renewed`를 출력합니다. `install.ps1`을 다시 실행하면 `ccam shims install`을 통해 같은 일을 하며(`OK 2 shortcuts now run the new ccam`), `ccam shims install`과 `ccam doctor --fix`도 이전 ccam의 사본인 단축 명령에 대해 같은 일을 합니다. 이름 검사는 다른 `PATH` 폴더에서 `PATHEXT`의 각 확장자(`.exe`, `.cmd` 등)를 붙인 `<name>`을 찾습니다.
+
+단축 명령은 셸(PowerShell, cmd.exe, Git Bash)에 입력해 실행하세요. 탐색기, 실행 대화 상자, `Start-Process`로 연 심볼릭 링크는 그냥 `ccam`으로 시작되어, 계정 대신 대시보드가 열립니다.
 
 ## 안전장치와 예외 상황
 
 - **어느 계정의 것도 아닌 링크.** `config.toml`의 `shortcut`을 직접 고친 경우처럼 `~/.local/bin`에 있는 ccam 링크의 이름을 쓰는 계정이 없으면, ccam은 기본 계정으로 대신 실행하지 않습니다. `` ccam: ccold is not the shortcut of any account (see `ccam list`, `ccam shortcut`) `` 오류를 내고 멈춥니다. `ccam shortcut`으로 이름을 다시 지정하거나 링크를 삭제하세요.
-- **이미 있는 파일.** ccam은 자신이 만들지 않은 파일을 절대 바꾸지 않습니다. `ccam shims install`은 `<path> already exists and is not a ccam link, so it was left alone`를 출력하고 멈춥니다.
-- **ccam 실행 파일을 옮긴 경우.** 이전 링크는 더 이상 없는 경로를 가리키므로, ccam은 이 링크를 자신의 것으로 보지 않습니다. 링크를 삭제한 뒤 `ccam shims install`을 실행하세요.
+- **이미 있는 파일.** ccam은 자신이 만들지 않은 파일을 절대 바꾸지 않습니다. `ccam shims install`은 `<path> already exists and is not a ccam link, so it was left alone`를 알리고 나머지 링크는 계속 만듭니다. 이때 `ccam add`와 `ccam import`는 `shortcut: ccwork (not created; see above)`를 출력합니다.
+- **ccam 실행 파일을 옮긴 경우.** ccam이 만든 링크는 더 이상 없는 경로를 가리킵니다. `ccam shims install`(또는 `ccam doctor --fix`)이 그 링크를 실행한 ccam을 가리키게 바꿉니다.
 - **이름 변경과 삭제.** `ccam rename`은 단축 명령 이름을 그대로 두며, 링크도 계속 동작합니다. 링크는 ccam을 가리키고 ccam이 `config.toml`에서 이름을 찾기 때문입니다. `ccam remove`는 계정의 링크를 삭제합니다. `ccam shortcut <account> <new>`는 새 링크를 만들기 전에 이전 링크를 삭제합니다.
 - **PATH.** ccam이 링크를 만들 때 `~/.local/bin`이 `PATH`에 없으면 `Note: /home/me/.local/bin is not in PATH. Add it to ~/.bashrc or ~/.zshrc:`와 함께 추가할 `export PATH=...` 줄을 출력합니다. Windows에서는 대신 이 폴더를 사용자 `PATH`에 추가하는 PowerShell 명령 줄을 출력합니다.
-- **나중에 확인하기.** `ccam doctor`는 `missing shortcuts in /home/me/.local/bin: ccwork`를 보고하고, 폴더가 `PATH`에 없으면 경고합니다. `ccam doctor --fix`는 없는 링크를 만듭니다.
+- **나중에 확인하기.** `ccam doctor`는 `missing shortcuts in /home/me/.local/bin: ccwork`와 이전 ccam을 실행하는 단축 명령을 보고하고, 폴더가 `PATH`에 없으면 경고합니다. `ccam doctor --fix`는 없는 링크를 만들고 낡은 링크를 새로 고치며, 자신이 만든 링크에 대해서만 `→ fixed`를 표시합니다. 아직 설치되어 있는 다른 ccam을 실행하는 단축 명령은 동작하므로 정보로만 표시합니다. `ccam doctor --fix`가 그 단축 명령을 실행한 ccam을 가리키게 바꾸고, `ccam add`와 `ccam import`는 ``shortcut: ccwork (runs another ccam, <path>; `ccam doctor --fix` points it at this one)``로 표시합니다.
 
 ## 관련 문서
 

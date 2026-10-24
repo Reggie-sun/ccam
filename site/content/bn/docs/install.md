@@ -2,10 +2,10 @@
 title: "ccam ইনস্টল করুন"
 metaTitle: "Linux, macOS ও Windows-এ ccam ইনস্টল করুন"
 description: "Linux, macOS বা Windows-এ একটি কমান্ডে, .deb প্যাকেজ বা সোর্স থেকে ccam ইনস্টল করুন, আর ccam update দিয়ে আপডেট করুন। আগে Claude Code ইনস্টল থাকতে হবে।"
-updated: 2026-10-21
+updated: 2026-10-23
 order: 1
 translation: machine
-sourceHash: 1e3a53623de0
+sourceHash: af21dcc24169
 ---
 
 Linux বা macOS-এ একটি টার্মিনালে এটি চালান:
@@ -22,7 +22,7 @@ Windows-এ PowerShell-এ এটি চালান:
 irm https://ccam.dev/install.ps1 | iex
 ```
 
-এটি `ccam_windows_<arch>.zip` ডাউনলোড করে, তার SHA-256 চেকসাম যাচাই করে, `ccam.exe`-কে `%USERPROFILE%\.local\bin`-এ রাখে, যে ফোল্ডারে Claude Code-এর ইনস্টলার `claude.exe` রাখে, এবং ফোল্ডারটি আপনার ইউজার `PATH`-এ না থাকলে সেখানে যোগ করে। এরপর একটি নতুন টার্মিনাল খুলুন।
+এটি `ccam_windows_<arch>.zip` ডাউনলোড করে, তার SHA-256 চেকসাম যাচাই করে, `ccam.exe`-কে `%USERPROFILE%\.local\bin`-এ রাখে, যে ফোল্ডারে Claude Code-এর ইনস্টলার `claude.exe` রাখে, এবং ফোল্ডারটি আপনার ইউজার `PATH`-এ না থাকলে সেখানে যোগ করে, `%USERPROFILE%\bin`-এর মতো এন্ট্রিগুলো যেমন আছে তেমনই রেখে। এরপর একটি নতুন টার্মিনাল খুলুন। এটি আবার চালালে ccam বদলে যায়, এমনকি পুরোনো বাইনারি থেকে কোনো Claude Code সেশন তখনও চললেও (সেটির নাম বদলে `ccam.exe.old` হয়, অথবা কোনো পুরোনোটি তখনও ব্যবহারে থাকলে `ccam.exe.old-<number>`), এবং হার্ড লিংক শর্টকাটগুলো নবায়ন করে: `OK 2 shortcuts now run the new ccam`।
 
 ccam আপনার হয়ে Claude Code চালু করে, তাই আগে [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) ইনস্টল করুন এবং নিশ্চিত হন যে `claude --version` কাজ করে।
 
@@ -30,7 +30,7 @@ ccam আপনার হয়ে Claude Code চালু করে, তাই 
 
 - x86-64 ও ARM64-এ Linux: Ubuntu, Debian, Fedora, Arch, Alpine এবং অন্যান্য ডিস্ট্রিবিউশন। বাইনারিটি স্ট্যাটিক এবং এর কোনো নির্ভরতা নেই।
 - Apple silicon ও Intel-এ macOS।
-- x86-64 ও ARM64-এ Windows 10 ও 11, PowerShell, Windows Terminal বা Git Bash-এ। শেয়ার করা ফোল্ডার প্রত্যেক ব্যবহারকারীর জন্য কাজ করে। শেয়ার করা ফাইলের (`settings.json`, `CLAUDE.md`, `history.jsonl`) জন্য Developer Mode (Settings > System > For developers) লাগে, কারণ Windows শুধু এই মোডে, বা একজন অ্যাডমিনিস্ট্রেটরকে, ফাইলের লিংক তৈরি করতে দেয়; [Windows-এ শেয়ার করা](/features/share#on-windows) দেখুন।
+- x86-64 ও ARM64-এ Windows 10 ও 11, PowerShell, Windows Terminal বা Git Bash-এ। শেয়ার করা ফোল্ডার প্রত্যেক ব্যবহারকারীর জন্য কাজ করে। শেয়ার করা ফাইলের (`settings.json`, `CLAUDE.md`, `history.jsonl`) জন্য Developer Mode (Settings > System > For developers) লাগে, কারণ Windows শুধু এই মোডে, বা একজন অ্যাডমিনিস্ট্রেটরকে, ফাইলের লিংক তৈরি করতে দেয়; [Windows-এ শেয়ার করা](/features/share#on-windows) দেখুন। এটি ছাড়া প্রথম `ccam add` শুধু MCP সার্ভার ও এক্সটেনশন নিয়ে `default` গ্রুপ তৈরি করে, এবং Developer Mode চালু হলে বাকিগুলো কীভাবে যোগ করবেন তা জানায়।
 - WSL-এর ভেতরে ccam অন্য যেকোনো Linux সিস্টেমের মতোই কাজ করে।
 
 ## ইনস্টলের অন্যান্য উপায়
@@ -48,6 +48,8 @@ sudo apt install ./ccam_*_linux_amd64.deb
 ```sh
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
 ```
+
+কোনো রিলিজ ট্যাগের বিল্ড (`@latest` বা `@vX.Y.Z`) সেই সংস্করণ জানায়, তাই এর জন্য `ccam update` কাজ করে; `@main`-এর বা কোনো ট্যাগের পরের লোকাল চেকআউটের বিল্ড `dev` জানায়।
 
 **একটি নির্দিষ্ট সংস্করণ।** `CCAM_VERSION` নির্ধারণ করুন:
 
@@ -117,9 +119,9 @@ ccam update --version v0.2.0
 ccam --dry-run update
 ```
 
-ইনস্টল স্ক্রিপ্টটি আবার চালালেও `~/.local/bin`-এর কপিটি আপডেট হয়। ccam যদি `go install` দিয়ে বিল্ড করে থাকেন, তাহলে একই কমান্ড আবার চালান।
+ইনস্টল স্ক্রিপ্টটি আবার চালালেও `~/.local/bin`-এর কপিটি আপডেট হয়। ccam যদি কোনো রিলিজ ট্যাগ থেকে `go install` দিয়ে বিল্ড করে থাকেন, তাহলে `ccam update`-ও কাজ করে, অথবা একই কমান্ড আবার চালান।
 
-**Windows।** `ccam update` Windows-এর জন্য `.zip` ডাউনলোড করে। Windows-এ চলমান প্রোগ্রাম বদলানো যায় না, তাই পুরোনো বাইনারির নাম বদলে `ccam.exe.old` করা হয়, যা পরের আপডেট মুছে দেয়।
+**Windows।** `ccam update` Windows-এর জন্য `.zip` ডাউনলোড করে। Windows-এ চলমান প্রোগ্রাম বদলানো যায় না, তাই পুরোনো বাইনারির নাম বদলে `ccam.exe.old` করা হয়, যা পরের আপডেট মুছে দেয়; আগের কোনো `ccam.exe.old` থেকে কোনো সেশন তখনও চললে নামটি হয় `ccam.exe.old-<time>`। হার্ড লিংক শর্টকাটগুলো ঠিক পরেই নবায়ন করা হয়।
 
 **Debian ও Ubuntu প্যাকেজ।** apt দিয়ে ইনস্টল করা `/usr/bin/ccam` ফাইলটি `ccam update` বদলায় না, বরং এর বদলে এই ধাপগুলো প্রিন্ট করে। [রিলিজ পাতা](https://github.com/jhyunwoo/ccam/releases) থেকে নতুন `ccam_<version>_linux_amd64.deb` ডাউনলোড করে পুরোনোটির ওপর ইনস্টল করুন:
 
@@ -146,4 +148,4 @@ Remove-Item ~\.local\bin\ccam.exe
 Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
 ```
 
-`~/.local/share/ccam` মুছলে সেখানে সংরক্ষিত লগইন ও কথোপকথনের ইতিহাসও মুছে যায়। আপনি যে `~/.claude` ফোল্ডার [ইমপোর্ট করেছেন](/docs/commands) সেটি যেখানে আছে সেখানেই থাকে।
+`~/.local/share/ccam` মুছলে সেখানে সংরক্ষিত লগইন ও কথোপকথনের ইতিহাসও মুছে যায়। আপনি যে `~/.claude` ফোল্ডার [ইমপোর্ট করেছেন](/docs/commands) সেটি যেখানে আছে সেখানেই থাকে, কিন্তু সেটি কোনো গ্রুপে থাকা অবস্থায় এর শেয়ার করা ফাইলগুলো থাকে `~/.local/share/ccam/groups/`-এ। আগে এর জন্য `ccam remove <name>` চালান (অথবা `ccam group leave`): এটি যা যা শেয়ার করত তার একটি কপি নিয়ে গ্রুপগুলো ছেড়ে যায়।

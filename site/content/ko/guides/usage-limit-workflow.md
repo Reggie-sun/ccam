@@ -1,13 +1,13 @@
 ---
 title: Claude Code 사용량 한도에 도달했을 때 할 일
 description: 한도가 초기화될 때까지 기다리거나 다른 Claude Code 계정에서 같은 대화를 바로 이어 가는 방법입니다. 5시간 한도와 주간 한도도 설명합니다.
-updated: 2026-10-19
+updated: 2026-10-24
 order: 3
 translation: machine
-sourceHash: "38b80d780bba"
+sourceHash: "049a46684c7b"
 ---
 
-계정이 사용량 한도(흔히 rate limit이라고 부릅니다)에 도달하면 선택지는 두 가지입니다. 한도가 초기화될 때까지 기다리거나, 가지고 있는 다른 계정에서 같은 대화를 지금 이어 가는 것입니다. 계정 간에 대화 내역을 공유해 두었다면, ccam에서는 두 번째 방법이 명령 하나 `ccam next --auto --continue`로 끝납니다.
+계정이 사용량 한도(흔히 rate limit이라고 부릅니다)에 도달하면 선택지는 두 가지입니다. 한도가 초기화될 때까지 기다리거나, 가지고 있는 다른 계정에서 같은 대화를 지금 이어 가는 것입니다. ccam에서는 두 번째 방법이 명령 하나 `ccam next --auto --continue`로 끝납니다.
 
 ## Claude Code에는 어떤 한도가 있나요?
 
@@ -38,8 +38,13 @@ ccam usage
 ```
 
 ```console
- 1 personal  ████████ 100% 22m       █████░░░  68% 1d 9h     just now
- 2 work      █░░░░░░░   8% 4h 12m    ██░░░░░░  19% 5d 2h     just now
+ 1 personal  just now
+   5-hour   ████████████████████ 100%  resets in 22m
+   Weekly   ██████████████░░░░░░  68%  resets in 1d 9h
+ 2 work      just now
+   5-hour   ██░░░░░░░░░░░░░░░░░░   8%  resets in 4h 12m
+   Weekly   ████░░░░░░░░░░░░░░░░  19%  resets in 5d 2h
+→ Most headroom: work   (open it with ccam next --auto)
 ```
 
 여유가 가장 많은 계정에서 대화를 엽니다.
@@ -50,11 +55,13 @@ ccam next --auto --continue
 
 Claude Code가 `work` 계정으로 시작되고, 현재 폴더의 가장 최근 대화를 지금까지 나눈 내용 그대로 불러옵니다. 대화 내역을 공유하면(위의 `ccam group set default --add history`) 대화가 하나로 유지됩니다. 공유하지 않으면 Claude Code가 대화를 `work`로 복사하고, ccam은 첫 응답이 토큰을 얼마나 다시 읽는지 알려 줍니다.
 
-Claude Code에 [ccam 플러그인](/docs/install#claude-code-plugin)을 설치해 두면, 한도에 걸려 멈춘 세션에서 알림이 뜨고, `/ccam:switch`(또는 `/ccam:switch work`)가 `ccam next --continue`를 위해 대화를 기록해 두므로 어느 대화를 이어 갈지 헷갈릴 일이 없습니다.
+Claude Code에 [ccam 플러그인](/docs/install#claude-code-plugin)을 설치해 두면, 한도에 걸려 멈춘 세션에서 알림이 뜨고 가득 찬 구간을 기록하므로 `ccam next --auto`가 초기화 전에 그 계정을 다시 고르지 않으며, `/ccam:switch`(또는 `/ccam:switch work`)가 `ccam next --continue`를 위해 대화를 기록해 두므로 어느 대화를 이어 갈지 헷갈릴 일이 없습니다.
+
+**Team·Enterprise 시트.** 자동 선택(`ccam next`, `--fallback`, `ccam pick`, 대시보드의 `n`)은 같은 Claude Team이나 Enterprise 조직의 시트 사이에서도 계정을 바꿉니다. Anthropic 고객센터는 "Each seat on a Team plan is assigned to one named individual, and only that person may use it"(팀 플랜의 각 시트는 한 명의 지정된 개인에게 할당되며, 그 사람만 사용할 수 있습니다), "Users can't route their work through another user's account to use that user's remaining usage"(사용자는 다른 사용자의 계정을 통해 작업을 라우팅하여 해당 사용자의 남은 사용량을 사용할 수 없습니다)라고 안내합니다([Team 요금제](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129), [Enterprise 요금제](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)도 마찬가지). 따라서 시트 사이에서 자동 선택을 쓰면 Anthropic의 약관을 위반할 수 있습니다. 이 기능에 의존하기 전에 소속 조직과 Anthropic에 확인하세요. 개인 요금제(Pro, Max)에 대해서는 [FAQ의 약관 안내](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)를 참고하세요.
 
 ## ccam이 자동으로 계정을 전환하나요?
 
-아니요. 작업하는 동안 ccam은 실행되고 있지 않습니다. ccam은 Claude Code를 시작하면서 자기 자신을 Claude Code로 대체합니다. 언제 전환할지는 사용자가 정하며, `ccam next --auto`는 5시간 사용량이 가장 낮은 계정을 고르고 100%에 도달했거나, 로그인하지 않았거나, 다른 조직에 속한 계정은 건너뜁니다. `config.toml`에 `relay = true`를 설정하면 ccam이 대신 세션 옆에서 기다리므로, `/ccam:switch`가 스스로 대화를 이어 갑니다. 다른 도구 중에는 실행 중인 세션의 로그인을 바꿔 끼우는 것도 있습니다. 그 차이는 [ccam과 다른 계정 전환 도구](/compare/account-switchers)에서 설명합니다.
+아니요. 작업하는 동안 ccam은 실행되고 있지 않습니다. ccam은 Claude Code를 시작하면서 자기 자신을 Claude Code로 대체합니다. 언제 전환할지는 사용자가 정하며, `ccam next --auto`는 5시간 사용량이 가장 낮은 계정을 고르고 100%에 도달했거나, 로그인하지 않았거나, 다른 조직에 속한 계정은 건너뜁니다. `config.toml`에 `relay = true`를 설정하면 ccam이 대신 세션 옆에서 기다리므로, `/ccam:switch`가 세션의 옵션, 권한 모드, 추론 수준을 유지한 채 스스로 대화를 이어 갑니다. 다른 도구 중에는 실행 중인 세션의 로그인을 바꿔 끼우는 것도 있습니다. 그 차이는 [ccam과 다른 계정 전환 도구](/compare/account-switchers)에서 설명합니다.
 
 ## 알아 둘 점
 

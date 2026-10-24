@@ -2,10 +2,10 @@
 title: ccam 설치
 metaTitle: "Linux, macOS, Windows에 ccam 설치하기"
 description: "Linux, macOS, Windows에서 명령 하나, .deb 패키지 또는 소스로 ccam을 설치하고 ccam update로 업데이트합니다. Claude Code를 먼저 설치해야 합니다."
-updated: 2026-10-21
+updated: 2026-10-23
 order: 1
 translation: machine
-sourceHash: "1e3a53623de0"
+sourceHash: "af21dcc24169"
 ---
 
 Linux나 macOS 터미널에서 다음 명령을 실행하세요.
@@ -22,7 +22,7 @@ Windows에서는 PowerShell에서 다음 명령을 실행하세요.
 irm https://ccam.dev/install.ps1 | iex
 ```
 
-이 스크립트는 `ccam_windows_<arch>.zip`을 내려받아 SHA-256 체크섬을 확인하고, Claude Code 설치 프로그램이 `claude.exe`를 두는 폴더인 `%USERPROFILE%\.local\bin`에 `ccam.exe`를 넣은 뒤, 이 폴더가 사용자 `PATH`에 없으면 추가합니다. 설치가 끝나면 새 터미널을 여세요.
+이 스크립트는 `ccam_windows_<arch>.zip`을 내려받아 SHA-256 체크섬을 확인하고, Claude Code 설치 프로그램이 `claude.exe`를 두는 폴더인 `%USERPROFILE%\.local\bin`에 `ccam.exe`를 넣은 뒤, 이 폴더가 사용자 `PATH`에 없으면 추가합니다. 이때 `%USERPROFILE%\bin` 같은 항목은 그대로 둡니다. 설치가 끝나면 새 터미널을 여세요. 스크립트를 다시 실행하면 ccam을 교체하며, 이전 바이너리로 Claude Code 세션이 아직 실행 중이어도 됩니다(그 바이너리는 `ccam.exe.old`로, 더 이전 것이 아직 쓰이고 있으면 `ccam.exe.old-<number>`로 이름이 바뀝니다). 하드 링크로 된 단축 명령도 새로 만듭니다: `OK 2 shortcuts now run the new ccam`.
 
 ccam은 Claude Code를 대신 실행해 주는 도구이므로, 먼저 [Claude Code](https://docs.claude.com/en/docs/claude-code/overview)를 설치하고 `claude --version`이 제대로 실행되는지 확인하세요.
 
@@ -30,7 +30,7 @@ ccam은 Claude Code를 대신 실행해 주는 도구이므로, 먼저 [Claude C
 
 - Linux(x86-64, ARM64): Ubuntu, Debian, Fedora, Arch, Alpine 등 여러 배포판. 정적 바이너리라 별도 의존성이 없습니다.
 - macOS(Apple 실리콘, Intel).
-- Windows 10, 11(x86-64, ARM64): PowerShell, Windows 터미널, Git Bash에서 실행합니다. 폴더 공유는 모든 사용자가 쓸 수 있습니다. 파일 공유(`settings.json`, `CLAUDE.md`, `history.jsonl`)에는 개발자 모드(설정 > 시스템 > 개발자용)가 필요합니다. Windows에서는 이 모드이거나 관리자일 때만 파일 링크를 만들 수 있기 때문입니다. [Windows에서 공유](/features/share#on-windows)를 참고하세요.
+- Windows 10, 11(x86-64, ARM64): PowerShell, Windows 터미널, Git Bash에서 실행합니다. 폴더 공유는 모든 사용자가 쓸 수 있습니다. 파일 공유(`settings.json`, `CLAUDE.md`, `history.jsonl`)에는 개발자 모드(설정 > 시스템 > 개발자용)가 필요합니다. Windows에서는 이 모드이거나 관리자일 때만 파일 링크를 만들 수 있기 때문입니다. [Windows에서 공유](/features/share#on-windows)를 참고하세요. 개발자 모드가 없으면 처음 `ccam add`를 실행할 때 MCP 서버와 확장 기능만 공유하는 `default` 그룹을 만들고, 개발자 모드를 켠 뒤 나머지를 추가하는 방법을 알려 줍니다.
 - WSL에서는 일반 Linux 시스템과 똑같이 동작합니다.
 
 ## 다른 설치 방법
@@ -48,6 +48,8 @@ sudo apt install ./ccam_*_linux_amd64.deb
 ```sh
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
 ```
+
+릴리스 태그(`@latest` 또는 `@vX.Y.Z`)로 만든 빌드는 그 버전을 표시하므로 `ccam update`가 동작합니다. `@main`이나 태그 이후의 로컬 체크아웃으로 만든 빌드는 `dev`로 표시됩니다.
 
 **특정 버전 설치.** `CCAM_VERSION`을 지정합니다.
 
@@ -117,9 +119,9 @@ ccam update --version v0.2.0
 ccam --dry-run update
 ```
 
-설치 스크립트를 다시 실행해도 `~/.local/bin`의 ccam이 업데이트됩니다. `go install`로 설치했다면 같은 명령을 다시 실행하세요.
+설치 스크립트를 다시 실행해도 `~/.local/bin`의 ccam이 업데이트됩니다. 릴리스 태그로 `go install`해서 설치했다면 `ccam update`도 동작하고, 같은 명령을 다시 실행해도 됩니다.
 
-**Windows.** `ccam update`는 Windows용 `.zip`을 내려받습니다. Windows에서는 실행 중인 프로그램을 교체할 수 없으므로, 기존 바이너리의 이름을 `ccam.exe.old`로 바꿔 두고 다음 업데이트 때 지웁니다.
+**Windows.** `ccam update`는 Windows용 `.zip`을 내려받습니다. Windows에서는 실행 중인 프로그램을 교체할 수 없으므로, 기존 바이너리의 이름을 `ccam.exe.old`로 바꿔 두고 다음 업데이트 때 지웁니다. 이전의 `ccam.exe.old`로 실행 중인 세션이 아직 있으면 이름은 `ccam.exe.old-<time>`이 됩니다. 하드 링크로 된 단축 명령은 바로 이어서 새로 만듭니다.
 
 **Debian, Ubuntu 패키지.** apt로 설치한 `/usr/bin/ccam`은 `ccam update`가 교체하지 않고, 대신 아래 방법을 알려 줍니다. [릴리스 페이지](https://github.com/jhyunwoo/ccam/releases)에서 새 `ccam_<version>_linux_amd64.deb`를 내려받아 기존 패키지 위에 설치하세요.
 
@@ -146,4 +148,4 @@ Remove-Item ~\.local\bin\ccam.exe
 Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
 ```
 
-`~/.local/share/ccam`을 지우면 그 안에 저장된 로그인 정보와 대화 내역도 함께 지워집니다. [가져온](/docs/commands) `~/.claude` 폴더는 원래 위치에 그대로 남습니다.
+`~/.local/share/ccam`을 지우면 그 안에 저장된 로그인 정보와 대화 내역도 함께 지워집니다. [가져온](/docs/commands) `~/.claude` 폴더는 원래 위치에 그대로 남지만, 그룹에 속해 있는 동안에는 공유하는 파일이 `~/.local/share/ccam/groups/`에 있습니다. 먼저 그 계정에 `ccam remove <name>`(또는 `ccam group leave`)을 실행하세요. 그러면 공유하던 모든 항목의 사본을 받고 그룹에서 빠집니다.

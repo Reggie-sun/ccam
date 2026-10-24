@@ -70,8 +70,8 @@
         "body": "Inicia Claude Code con esa cuenta. Todo lo que va después del nombre pasa a Claude Code sin cambios, y ccam agrega unos 4 milisegundos antes de que inicie."
       },
       {
-        "command": "ccam share work --history on",
-        "body": "Elige qué comparte la cuenta con tus otras cuentas. Los servidores MCP, la configuración, CLAUDE.md y las extensiones se comparten desde el principio; los inicios de sesión, nunca."
+        "command": "ccam group set default --add history",
+        "body": "Elige qué comparten entre sí las cuentas de un grupo. Los servidores MCP, la configuración, CLAUDE.md y las extensiones se comparten desde el principio; los inicios de sesión, nunca."
       },
       {
         "command": "ccam usage",
@@ -145,9 +145,9 @@
     "mcp": "Administrar los servidores MCP compartidos",
     "migrate": "Copiar una configuración existente de Claude Code (~/.claude) a un grupo compartido",
     "login": "Volver a iniciar sesión en una cuenta; --expired inicia sesión en todas las cuentas que lo necesitan",
-    "logout": "Quitar el inicio de sesión de una cuenta",
+    "logout": "Cerrar la sesión de una cuenta: su inicio de sesión y los inicios de sesión de sus servidores MCP",
     "rename": "Cambiar el nombre de una cuenta; su atajo conserva el nombre",
-    "remove": "Quitar una cuenta; su carpeta va a la carpeta de papelera",
+    "remove": "Quitar una cuenta: se cierra su sesión y su carpeta va a la carpeta de papelera",
     "import": "Registrar una carpeta ~/.claude existente donde está",
     "doctor": "Revisar enlaces, permisos, inicios de sesión y versiones, y reparar",
     "statusline": "Mostrar la cuenta y el uso en la línea de estado de Claude Code",

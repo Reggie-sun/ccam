@@ -70,8 +70,8 @@
         "body": "Yana fara Claude Code a matsayin wannan asusun. Duk abin da ke bayan sunan yana zuwa Claude Code ba tare da canji ba, kuma ccam yana ƙara kusan millisecond 4 kafin ya fara."
       },
       {
-        "command": "ccam share work --history on",
-        "body": "Yana zaɓar abin da asusun zai raba da sauran asusunka. Ana raba sabobin MCP, saituna, CLAUDE.md da extensions tun daga farko; ba a taɓa raba bayanan shiga ba."
+        "command": "ccam group set default --add history",
+        "body": "Yana zaɓar abin da asusai da ke cikin rukuni ɗaya za su raba da juna. Ana raba sabobin MCP, saituna, CLAUDE.md da extensions tun daga farko; ba a taɓa raba bayanan shiga ba."
       },
       {
         "command": "ccam usage",
@@ -145,9 +145,9 @@
     "mcp": "Sarrafa sabobin MCP da aka raba",
     "migrate": "Kwafi saitin Claude Code da ke akwai (~/.claude) zuwa rukunin da aka raba",
     "login": "Sake shiga da asusu; --expired yana shiga kowane asusu da ke buƙatar hakan",
-    "logout": "Cire bayanan shigar asusu",
+    "logout": "Fitar da asusu: bayanan shigarsa da shigarsa a sabobin MCP",
     "rename": "Sauya sunan asusu; sunan gajeren umarninsa ba ya canzawa",
-    "remove": "Cire asusu; foldarsa tana komawa foldar shara",
+    "remove": "Cire asusu: ana fitar da shi, kuma foldarsa tana komawa foldar shara",
     "import": "Yi rajistar foldar ~/.claude da ke akwai a inda take",
     "doctor": "Duba mahaɗai, izini, bayanan shiga da sigogi, sannan ka gyara",
     "statusline": "Nuna asusun da amfaninsa a layin matsayi na Claude Code",

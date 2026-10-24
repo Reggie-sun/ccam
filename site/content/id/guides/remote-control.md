@@ -1,10 +1,10 @@
 ---
 title: Menggunakan Remote Control dengan ccam
 description: "Remote Control Claude Code untuk akun mana pun via ccam <name> rc: opsi yang berlaku, alasan ccam menawarkan salinan server MCP bersama, dan solusi masalah."
-updated: 2026-10-20
+updated: 2026-10-23
 order: 4
 translation: machine
-sourceHash: "5f0b90ea53d6"
+sourceHash: "3e17d89f98c8"
 ---
 
 `ccam work rc` menjalankan Remote Control milik Claude Code sebagai akun `work`, sehingga Anda dapat mengendalikan sesi di komputer ini dari claude.ai/code atau aplikasi seluler Claude. Perintah ini bekerja seperti `claude rc` dengan satu perbedaan: jika akun berbagi server MCP, ccam bertanya sekali apakah server tersebut perlu disalin ke `.claude.json` milik akun, karena sesi Remote Control tidak membaca server dari tempat lain.
@@ -31,9 +31,9 @@ Ada dua jenis opsi di sini: opsi milik ccam, yang ditulis sebelum nama akun atau
 | Opsi atau pengaturan | Fungsinya | Default |
 | --- | --- | --- |
 | `--dry-run` (sebelum akun) | Menampilkan environment dan perintah, serta pemberitahuan MCP jika ada. Tidak bertanya dan tidak menyalin | nonaktif |
-| `Copy them into .claude.json (a backup is kept)? [y/N]` | Ditanyakan jika akun berbagi server MCP dan `.claude.json` miliknya belum berisi daftar grup saat ini. `y` menyalinnya, `N` atau Enter memulai tanpa server tersebut | `N` |
-| `mcp_strategy = "sync"` di `~/.config/ccam/config.toml` | Menyalin server grup ke `.claude.json` sebelum setiap peluncuran, baik Remote Control maupun bukan, sehingga tidak pernah ada pertanyaan | `"flag"` |
-| `ccam group leave <group> work` | Mengeluarkan akun dari grup yang membagikan MCP dengannya; Remote Control kemudian dimulai hanya dengan server milik akun sendiri dan tidak ada pertanyaan | di `default` |
+| `Copy them into .claude.json (a backup is kept; servers of the account's own stay)? [y/N]` | Ditanyakan jika akun berbagi server MCP dan `.claude.json` miliknya belum berisi daftar grup saat ini, atau sebuah server yang disalin hilang darinya. `y` menyalinnya, `N` atau Enter memulai tanpa server tersebut | `N` |
+| `mcp_strategy = "sync"` di bagian atas `~/.config/ccam/config.toml` | Menyalin server grup ke `.claude.json` sebelum setiap peluncuran, baik Remote Control maupun bukan, sehingga tidak pernah ada pertanyaan | `"flag"` |
+| `ccam group leave <group> work` | Mengeluarkan akun dari grup yang membagikan MCP dengannya. Server grup disalin ke `.claude.json` miliknya sebagai server miliknya sendiri, sehingga Remote Control memilikinya dan tidak ada pertanyaan; dengan `--fresh`, Remote Control dimulai hanya dengan server milik akun sendiri | di `default` |
 
 ### Opsi Remote Control
 
@@ -52,7 +52,7 @@ Semua yang ada setelah `rc` adalah milik Claude Code. Berikut opsi `claude remot
 | `--[no-]chrome` | Claude in Chrome untuk sesi baru (default nonaktif) |
 | `-d`, `--debug`, `--debug-file <path>`, `-v`, `--verbose` | Output debug dan output rinci |
 
-Tulis `rc` tepat setelah nama akun. ccam menganggap argumen pertama yang tidak diawali `-` sebagai subperintah Claude Code, jadi dalam `ccam work rc --name laptop` ccam melihat `rc`, tetapi dalam `ccam work --model opus rc` ccam melihat `opus`.
+ccam membaca subperintah Claude Code seperti yang dilakukan Claude Code, dengan melewati opsi beserta nilainya, sehingga `ccam work rc --name laptop` dan `ccam work --model opus rc` sama-sama memulai Remote Control. Opsi yang tidak dikenal ccam dianggap opsi tanpa nilai; agar aman, tulis `rc` tepat setelah nama akun.
 
 ## Yang dilakukan ccam
 
@@ -60,16 +60,16 @@ Peluncuran mengikuti jalur biasa ([Menjalankan Claude Code](/features/launch)) d
 
 1. ccam menemukan akun, memeriksa tautan berbaginya, dan mencari `claude`, seperti pada peluncuran lainnya.
 2. ccam melihat bahwa subperintahnya adalah `rc` atau `remote-control`, lalu tidak menyertakan `--mcp-config`.
-3. Jika akun berbagi server MCP, ccam membandingkan `mcp.json` milik grup dengan `sync-stamp` di `~/.local/state/ccam/mcp/work/`. Jika `.claude.json` sudah berisi server saat ini, atau grup tidak punya server, ccam langsung ke langkah 6.
+3. Jika akun berbagi server MCP, ccam membandingkan `mcp.json` milik grup dengan `sync-stamp` di `~/.local/state/ccam/mcp/work/`, dan memeriksa bahwa setiap server grup masih ada di `.claude.json`. Jika `.claude.json` sudah berisi server saat ini, atau grup tidak punya server, ccam langsung ke langkah 6.
 4. Jika tidak, ccam menyebutkan server yang tidak akan didapat sesi:
 
    ```console
    $ ccam work rc
    ccam: Remote Control sessions only get MCP servers stored in account work's .claude.json, not the shared MCP servers (ctx, fs).
-   Copy them into .claude.json (a backup is kept)? [y/N]
+   Copy them into .claude.json (a backup is kept; servers of the account's own stay)? [y/N]
    ```
 
-5. Jika Anda menjawab `y`, ccam menyimpan cadangan `.claude.json`, mengambil lock milik Claude Code, menambahkan server grup ke `mcpServers`, dan mempertahankan server lain milik akun. Jika menjawab `N`, tanpa terminal, atau saat akun sedang berjalan, ccam tidak mengubah apa pun dan memberitahukannya:
+5. Jika Anda menjawab `y`, ccam menyimpan cadangan `.claude.json`, mengambil lock milik Claude Code, menambahkan server grup ke `mcpServers`, dan mempertahankan server lain milik akun; server milik akun sendiri yang memakai nama server grup tetap menjadi milik akun, dan ccam memberitahukannya. Jika menjawab `N`, tanpa terminal, atau saat akun sedang berjalan, ccam tidak mengubah apa pun dan memberitahukannya:
 
    ```console
          Starting without them. To copy them before every launch instead, set mcp_strategy = "sync" in ~/.config/ccam/config.toml
@@ -77,17 +77,17 @@ Peluncuran mengikuti jalur biasa ([Menjalankan Claude Code](/features/launch)) d
 
 6. ccam mencatat sesi, mengatur `CLAUDE_CONFIG_DIR` ke folder akun, lalu menggantikan dirinya dengan `claude rc` melalui `exec`.
 
-Setelah itu Remote Control terus berjalan sebagai server. Setiap sesi yang dimulainya untuk Anda adalah proses anak dari proses tersebut, sehingga berjalan sebagai `work`: dengan login, pengaturan, dan riwayat percakapan milik `work`, serta dihitung terhadap batas penggunaan `work`. Selama server berjalan, ccam menganggap akun sedang berjalan.
+Setelah itu Remote Control terus berjalan sebagai server. Setiap sesi yang dimulainya untuk Anda adalah proses anak dari proses tersebut, sehingga berjalan sebagai `work`: dengan login, pengaturan, dan riwayat percakapan milik `work`, serta dihitung terhadap batas penggunaan `work`. Selama server yang dijalankan ccam berjalan, ccam menganggap akun sedang berjalan, begitu pula server yang dijalankan dengan `claude remote-control` biasa selama server itu memiliki sesi; server seperti itu yang belum memiliki sesi tidak terlihat.
 
 Uji coba (dry run) menunjukkan perbedaannya. Peluncuran normal membawa server grup sebagai argumen, sedangkan Remote Control tidak:
 
 ```console
 $ ccam --dry-run work
-CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/claude --mcp-config=/home/me/.local/share/ccam/groups/default/mcp.json
+CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work CCAM_PROFILE=work /home/me/.local/bin/claude --mcp-config=/home/me/.local/share/ccam/groups/default/mcp.json
 $ ccam --dry-run work rc
 ccam: Remote Control sessions only get MCP servers stored in account work's .claude.json, not the shared MCP servers (ctx, fs).
       Starting without them. To copy them before every launch instead, set mcp_strategy = "sync" in ~/.config/ccam/config.toml
-CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/claude rc
+CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work CCAM_PROFILE=work /home/me/.local/bin/claude rc
 ```
 
 ## Mengapa cara kerjanya begini
@@ -96,13 +96,13 @@ CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/c
 
 **Sesinya hanya membaca server dari `.claude.json`.** Sesi yang dimulai Remote Control tidak mewarisi opsi dari baris perintah. Satu-satunya tempat sesi menemukan server MCP pengguna adalah `.claude.json` milik akun. File itu juga menyimpan detail login akun dan state per folder, sehingga ccam tidak dapat menautkannya ke salinan bersama seperti yang dilakukannya pada `settings.json`. Menyalin server ke file tersebut adalah satu-satunya cara memberi sesi daftar bersama.
 
-**ccam bertanya sebelum menulis.** Dengan strategi flag default, ccam berjanji tidak menyentuh `.claude.json`. Remote Control adalah satu-satunya kasus ccam harus menulis ke sana, jadi ccam bertanya dulu, menyimpan cadangan, dan hanya menyentuh `mcpServers`.
+**ccam bertanya sebelum menulis.** Dengan strategi flag default, ccam tidak menyentuh `.claude.json` saat peluncuran. Remote Control adalah satu-satunya peluncuran yang mengharuskan ccam menulis ke sana, jadi ccam bertanya dulu, menyimpan cadangan, dan hanya menyentuh `mcpServers`. (Di luar peluncuran, keluar dari atau bergabung ke berbagi MCP dan `ccam mcp import` juga menulis ke sana, seperti yang disebutkan rencananya.)
 
-**ccam tidak menulis saat akun berjalan.** Claude Code menulis ulang `.claude.json` selama sesi, sehingga perubahan dari luar akan hilang atau tertimpa. Itulah sebabnya ccam melewati penyalinan saat ada sesi akun yang berjalan, termasuk server Remote Control lain.
+**ccam tidak menulis saat akun berjalan.** Claude Code menulis ulang `.claude.json` selama sesi, sehingga perubahan dari luar akan hilang atau tertimpa. Itulah sebabnya ccam melewati penyalinan saat ada sesi akun yang berjalan, termasuk server Remote Control lain dan Claude Code yang dijalankan tanpa ccam.
 
-**ccam bertanya sekali untuk setiap perubahan.** Setelah penyalinan, `sync-stamp` menyimpan waktu modifikasi `mcp.json` milik grup. ccam bertanya lagi hanya jika file itu berubah, misalnya setelah `ccam mcp add`. Jika Anda menjawab `N`, belum ada salinan, jadi ccam bertanya pada setiap peluncuran Remote Control.
+**ccam bertanya sekali untuk setiap perubahan.** Setelah penyalinan, `sync-stamp` menyimpan waktu modifikasi `mcp.json` milik grup. ccam bertanya lagi hanya jika file itu berubah, misalnya setelah `ccam mcp add`, atau jika sebuah server yang disalin hilang dari `.claude.json`. Jika Anda menjawab `N`, belum ada salinan, jadi ccam bertanya pada setiap peluncuran Remote Control.
 
-**`ccam mcp` menjaga salinan tetap mutakhir.** Entri di `.claude.json` menang atas `--mcp-config` jika namanya bentrok, sehingga salinan lama akan menyembunyikan definisi yang lebih baru pada peluncuran normal juga. Karena itu `ccam mcp add`, `add-json`, `remove`, dan `import` memperbarui salinan di setiap akun yang tidak sedang berjalan:
+**`ccam mcp` menjaga salinan tetap mutakhir.** Entri di `.claude.json` menang atas `--mcp-config` jika namanya bentrok, sehingga salinan lama akan menyembunyikan definisi yang lebih baru pada peluncuran normal juga. Karena itu `ccam mcp add`, `add-json`, `remove`, dan `import`, serta `ccam migrate`, memperbarui salinan di setiap akun yang tidak sedang berjalan, dan memberitahukannya jika sebuah salinan berubah:
 
 ```console
 $ ccam mcp add ctx --url https://mcp.context7.com/mcp
@@ -124,19 +124,19 @@ Sesi `work` masih terbuka: `ccam work` biasa, perintah pintasan, atau server Rem
 
 ### ccam selalu bertanya
 
-Anda belum menyalin server. Jawab `y` sekali, atau atur `mcp_strategy = "sync"`. Jika Anda tidak pernah ingin server tersebut ada di Remote Control, berhenti berbagi MCP dengan akun itu: keluarkan akun dari grup tersebut (`ccam group leave default work`), atau simpan MCP di grup tersendiri yang tidak mencakup akun itu.
+Anda belum menyalin server. Jawab `y` sekali, atau atur `mcp_strategy = "sync"`. Jika Anda tidak pernah ingin server tersebut ada di Remote Control, berhenti berbagi MCP dengan akun itu tanpa mempertahankan servernya: `ccam group leave default work --fresh`, atau simpan MCP di grup tersendiri yang tidak mencakup akun itu. `ccam group leave` biasa menyalin server grup ke `.claude.json` milik akun, sehingga Remote Control memilikinya.
 
 ### `ccam work rc` langsung gagal dengan error tentang `--mcp-config`
 
-ccam Anda lebih lama dari 0.6.0 dan meneruskan `--mcp-config` ke Remote Control. Jalankan `ccam update`. Error yang sama pada ccam versi terbaru berarti ada opsi bernilai sebelum `rc`, seperti dalam `ccam work --model opus rc`, sehingga ccam mengira `opus` adalah subperintahnya; tulis `rc` tepat setelah nama akun.
+ccam Anda lebih lama dari 0.6.0 dan meneruskan `--mcp-config` ke Remote Control. Jalankan `ccam update`. Error yang sama pada ccam versi terbaru berarti ada opsi yang tidak dikenal ccam, dengan nilai, sebelum `rc`, sehingga ccam mengira nilai itu adalah subperintahnya; tulis `rc` tepat setelah nama akun.
 
 ### Perubahan lewat `ccam mcp` tidak sampai ke Remote Control
 
 `ccam mcp add` dan `remove` hanya memperbarui salinan di akun yang tidak sedang berjalan, dan memberitahukannya: `Note: account work is running, so the copy in its .claude.json stays as it was until its next Remote Control launch.` Hentikan Remote Control lalu mulai lagi; ccam melihat `mcp.json` yang berubah dan bertanya lagi.
 
-### Salinan menggantikan server milik saya sendiri
+### Server milik saya sendiri dipakai alih-alih milik grup
 
-Jika akun punya server sendiri dengan nama yang sama seperti server grup, salinan menggantikannya. `.claude.json` sebelumnya ada di `~/.local/state/ccam/mcp/work/backups/`, yang menyimpan lima cadangan terbaru. Untuk mempertahankan versi Anda bagi semua akun, pindahkan ke grup dengan `ccam mcp import work <server> --force` sebelum peluncuran Remote Control berikutnya.
+Jika akun punya server sendiri dengan nama yang sama seperti server grup, salinan membiarkannya di tempatnya dan memberitahukannya: `account work has its own MCP servers fs, so group default's of those names are not copied there`. Untuk memakai milik grup, hapus milik akun (`claude mcp remove -s user <name>`); untuk memberikan versi Anda ke semua akun, pindahkan ke grup dengan `ccam mcp import work <server> --force`. Cadangan `.claude.json` ada di `~/.local/state/ccam/mcp/work/backups/`, yang menyimpan lima cadangan terbaru.
 
 ### Saya ingin menghapus server yang disalin
 

@@ -2,10 +2,10 @@
 title: نصب ccam
 metaTitle: نصب ccam روی Linux، macOS و Windows
 description: ccam را روی Linux، macOS یا Windows با یک فرمان، بسته .deb یا از کد منبع نصب کنید و با ccam update به‌روزش کنید. ابتدا باید Claude Code نصب شده باشد.
-updated: 2026-10-21
+updated: 2026-10-23
 order: 1
 translation: machine
-sourceHash: 1e3a53623de0
+sourceHash: af21dcc24169
 ---
 
 این فرمان را در یک ترمینال روی Linux یا macOS اجرا کنید:
@@ -22,7 +22,7 @@ curl -fsSL https://ccam.dev/install.sh | sh
 irm https://ccam.dev/install.ps1 | iex
 ```
 
-این فرمان `ccam_windows_<arch>.zip` را دانلود می‌کند، چک‌سام SHA-256 آن را بررسی می‌کند، `ccam.exe` را در `%USERPROFILE%\.local\bin` می‌گذارد، همان پوشه‌ای که نصب‌کننده Claude Code فایل `claude.exe` را در آن قرار می‌دهد، و اگر آن پوشه هنوز در `PATH` کاربری شما نباشد، آن را اضافه می‌کند. پس از آن یک ترمینال جدید باز کنید.
+این فرمان `ccam_windows_<arch>.zip` را دانلود می‌کند، چک‌سام SHA-256 آن را بررسی می‌کند، `ccam.exe` را در `%USERPROFILE%\.local\bin` می‌گذارد، همان پوشه‌ای که نصب‌کننده Claude Code فایل `claude.exe` را در آن قرار می‌دهد، و اگر آن پوشه هنوز در `PATH` کاربری شما نباشد، آن را اضافه می‌کند و ورودی‌هایی مانند `%USERPROFILE%\bin` را همان‌طور که هستند نگه می‌دارد. پس از آن یک ترمینال جدید باز کنید. اجرای دوباره آن ccam را جایگزین می‌کند، حتی وقتی یک نشست Claude Code هنوز از فایل اجرایی قدیمی اجرا می‌شود (نام آن به `ccam.exe.old` تغییر می‌کند، یا وقتی یک نسخه قدیمی‌تر هنوز در حال استفاده است به `ccam.exe.old-<number>`)، و میان‌برهایی را که hard link هستند تازه می‌کند: `OK 2 shortcuts now run the new ccam`.
 
 ccam خودش Claude Code را برای شما اجرا می‌کند، پس ابتدا [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) را نصب کنید و مطمئن شوید که `claude --version` کار می‌کند.
 
@@ -30,7 +30,7 @@ ccam خودش Claude Code را برای شما اجرا می‌کند، پس ا�
 
 - Linux روی x86-64 و ARM64: Ubuntu، Debian، Fedora، Arch، Alpine و توزیع‌های دیگر. فایل اجرایی ایستا است و به هیچ وابستگی‌ای نیاز ندارد.
 - macOS روی Apple silicon و Intel.
-- Windows 10 و 11 روی x86-64 و ARM64، در PowerShell، Windows Terminal یا Git Bash. پوشه‌های مشترک برای همه کاربران کار می‌کنند. فایل‌های مشترک (`settings.json`، `CLAUDE.md`، `history.jsonl`) به Developer Mode نیاز دارند (Settings > System > For developers)، چون Windows فقط در این حالت، یا به مدیر سیستم، اجازه ساختن پیوند به فایل‌ها را می‌دهد؛ [اشتراک در Windows](/features/share#on-windows) را ببینید.
+- Windows 10 و 11 روی x86-64 و ARM64، در PowerShell، Windows Terminal یا Git Bash. پوشه‌های مشترک برای همه کاربران کار می‌کنند. فایل‌های مشترک (`settings.json`، `CLAUDE.md`، `history.jsonl`) به Developer Mode نیاز دارند (Settings > System > For developers)، چون Windows فقط در این حالت، یا به مدیر سیستم، اجازه ساختن پیوند به فایل‌ها را می‌دهد؛ [اشتراک در Windows](/features/share#on-windows) را ببینید. بدون آن، نخستین `ccam add` گروه `default` را فقط با سرورهای MCP و افزونه‌ها می‌سازد و می‌گوید پس از روشن شدن Developer Mode بقیه را چگونه اضافه کنید.
 - داخل WSL، ccam مانند هر سیستم Linux دیگری کار می‌کند.
 
 ## روش‌های دیگر نصب
@@ -48,6 +48,8 @@ sudo apt install ./ccam_*_linux_amd64.deb
 ```sh
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
 ```
+
+ساختی از یک برچسب نسخه (`@latest` یا `@vX.Y.Z`) همان نسخه را گزارش می‌کند، پس `ccam update` برای آن کار می‌کند؛ ساختی از `@main` یا از یک checkout محلی که از یک برچسب جلوتر است `dev` را گزارش می‌کند.
 
 **یک نسخه مشخص.** متغیر `CCAM_VERSION` را تنظیم کنید:
 
@@ -117,9 +119,9 @@ ccam update --version v0.2.0
 ccam --dry-run update
 ```
 
-اجرای دوباره اسکریپت نصب هم نسخه موجود در `~/.local/bin` را به‌روز می‌کند. اگر ccam را با `go install` ساخته‌اید، همان فرمان را دوباره اجرا کنید.
+اجرای دوباره اسکریپت نصب هم نسخه موجود در `~/.local/bin` را به‌روز می‌کند. اگر ccam را با `go install` از یک برچسب نسخه ساخته‌اید، `ccam update` هم کار می‌کند، یا همان فرمان را دوباره اجرا کنید.
 
-**Windows.** `ccam update` فایل `.zip` مخصوص Windows را دانلود می‌کند. در Windows نمی‌توان برنامه‌ای را که در حال اجراست جایگزین کرد، پس نام فایل اجرایی قدیمی به `ccam.exe.old` تغییر می‌کند و به‌روزرسانی بعدی آن را پاک می‌کند.
+**Windows.** `ccam update` فایل `.zip` مخصوص Windows را دانلود می‌کند. در Windows نمی‌توان برنامه‌ای را که در حال اجراست جایگزین کرد، پس نام فایل اجرایی قدیمی به `ccam.exe.old` تغییر می‌کند و به‌روزرسانی بعدی آن را پاک می‌کند؛ وقتی یک نشست هنوز از یک `ccam.exe.old` قدیمی‌تر اجرا می‌شود، نام `ccam.exe.old-<time>` است. میان‌برهایی که hard link هستند بلافاصله پس از آن تازه می‌شوند.
 
 **بسته Debian و Ubuntu.** `ccam update` فایل `/usr/bin/ccam` را که apt نصب کرده است جایگزین نمی‌کند و به‌جای آن این مراحل را چاپ می‌کند. فایل جدید `ccam_<version>_linux_amd64.deb` را از [صفحه نسخه‌ها](https://github.com/jhyunwoo/ccam/releases) دانلود کنید و روی نسخه قبلی نصب کنید:
 
@@ -146,4 +148,4 @@ Remove-Item ~\.local\bin\ccam.exe
 Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
 ```
 
-پاک کردن `~/.local/share/ccam` اطلاعات ورود و تاریخچه گفتگوی ذخیره‌شده در آن را هم پاک می‌کند. پوشه `~/.claude` که آن را [وارد کرده‌اید](/docs/commands) در جای خود باقی می‌ماند.
+پاک کردن `~/.local/share/ccam` اطلاعات ورود و تاریخچه گفتگوی ذخیره‌شده در آن را هم پاک می‌کند. پوشه `~/.claude` که آن را [وارد کرده‌اید](/docs/commands) در جای خود باقی می‌ماند، اما تا وقتی در یک گروه است، فایل‌هایی که به اشتراک می‌گذارد در `~/.local/share/ccam/groups/` قرار دارند. اول `ccam remove <name>` را برای آن اجرا کنید (یا `ccam group leave`): از گروه‌هایش با یک کپی از همه آنچه به اشتراک می‌گذاشت بیرون می‌رود.

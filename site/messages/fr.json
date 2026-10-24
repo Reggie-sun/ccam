@@ -70,8 +70,8 @@
         "body": "Lance Claude Code avec ce compte. Tout ce qui suit le nom est transmis tel quel à Claude Code, et ccam ajoute environ 4 millisecondes avant le démarrage."
       },
       {
-        "command": "ccam share work --history on",
-        "body": "Choisit ce que le compte partage avec vos autres comptes. Les serveurs MCP, les paramètres, CLAUDE.md et les extensions sont partagés dès le départ ; les connexions ne le sont jamais."
+        "command": "ccam group set default --add history",
+        "body": "Choisit ce que les comptes d'un groupe partagent entre eux. Les serveurs MCP, les paramètres, CLAUDE.md et les extensions sont partagés dès le départ ; les connexions ne le sont jamais."
       },
       {
         "command": "ccam usage",
@@ -145,9 +145,9 @@
     "mcp": "Gérer les serveurs MCP partagés",
     "migrate": "Copier une configuration Claude Code existante (~/.claude) dans un groupe partagé",
     "login": "Reconnecter un compte ; --expired reconnecte tous les comptes qui en ont besoin",
-    "logout": "Supprimer la connexion d'un compte",
+    "logout": "Déconnecter un compte : sa connexion et ses connexions aux serveurs MCP",
     "rename": "Renommer un compte ; son raccourci garde son nom",
-    "remove": "Supprimer un compte ; son dossier est placé dans le dossier de corbeille",
+    "remove": "Supprimer un compte : il est déconnecté, et son dossier est placé dans le dossier de corbeille",
     "import": "Enregistrer un dossier ~/.claude existant sans le déplacer",
     "doctor": "Vérifier les liens, les permissions, les connexions et les versions, puis réparer",
     "statusline": "Afficher le compte et l'utilisation dans la ligne d'état de Claude Code",

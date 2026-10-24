@@ -1,10 +1,10 @@
 ---
 title: Akaunti za API key
 description: ccam add --api huongeza akaunti ya API key kwa API ya Anthropic au gateway; key husomwa wakati wa kuanza kutoka kwa kigezo au amri, haihifadhiwi kamwe.
-updated: 2026-10-20
+updated: 2026-10-23
 order: 13
 translation: machine
-sourceHash: "a903c92f2c50"
+sourceHash: "232a71525e42"
 ---
 
 Akaunti ya API key huanzisha Claude Code kwa API key badala ya kuingia kwa usajili wa Claude: API ya Anthropic, au endpoint inayozungumza muundo ule ule wa Messages, kama gateway ya LiteLLM au OpenRouter. ccam haihifadhi key. Huisoma kila akaunti inapoanza, kutoka kwa kigezo cha mazingira au kutoka kwa amri kama kidhibiti cha nywila, na huikabidhi kwa mchakato huo wa Claude Code pekee.
@@ -35,7 +35,7 @@ Akaunti ya API key hujiunga na vikundi kama akaunti nyingine yoyote (kwa chaguo-
 | --- | --- | --- |
 | `--api` | Huongeza akaunti ya API key badala ya kuingia | imezimwa |
 | `--key-from env:NAME` | Husoma key kutoka kwa kigezo cha mazingira `NAME` | |
-| `--key-from command:COMMAND` | Huendesha `COMMAND` (kwa `sh -c`, au `cmd /C` kwenye Windows) na hutumia mstari wa kwanza inaouchapisha | |
+| `--key-from command:COMMAND` | Huendesha `COMMAND` (kwa `sh -c`, au kwenye Windows kama ilivyoandikwa ndani ya `cmd /d /s /c "…"`, alama za nukuu zikibaki) na hutumia mstari wa kwanza inaouchapisha | |
 | `--base-url <url>` | Endpoint (`ANTHROPIC_BASE_URL`) | API ya Anthropic |
 | `--auth api-key\|bearer` | Hutuma key kama `ANTHROPIC_API_KEY` (`x-api-key`) au kama `ANTHROPIC_AUTH_TOKEN` (`Authorization: Bearer`, ambayo gateway kwa kawaida huhitaji) | `api-key` |
 | `--model <model>` | Modeli (`ANTHROPIC_MODEL`) | Chaguo-msingi la Claude Code |
@@ -66,10 +66,17 @@ Akaunti zenye kuingia kwa usajili huhifadhi mazingira zinayorithi, kama hapo awa
 
 ## Usalama na hali maalum
 
-- Key kamwe haiandikwi kwenye `config.toml`, akiba au kumbukumbu (log), na `ccam --dry-run gw` haiisomi: chanzo cha `command:` hakiendeshwi na dry run.
+- Key kamwe haiandikwi kwenye `config.toml`, akiba au kumbukumbu (log), na `ccam --dry-run gw` haiisomi: chanzo cha `command:` hakiendeshwi na dry run. Badala yake dry run huonyesha endpoint, model na mahali key inapotoka:
+
+  ```console
+  $ ccam --dry-run gw -p hi
+  CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/gw CCAM_PROFILE=gw ANTHROPIC_BASE_URL=https://llm.example.com ANTHROPIC_MODEL=claude-sonnet-5-5 ANTHROPIC_AUTH_TOKEN="$(pass show llm/gateway-key | head -n 1)" /home/me/.local/bin/claude -p hi
+  ```
+
+  Kigezo kilichorithiwa ambacho uanzishaji huondoa huonekana kama `env -u <name>` mwanzoni. Kwa chanzo cha `env:` ambacho kigezo chake ni tupu, dry run hushindwa kama uanzishaji ungeshindwa.
 - `ccam add --api` hukagua chanzo cha `env:` papo hapo na huonya ikiwa kigezo ni tupu; chanzo cha `command:` huendeshwa kwa mara ya kwanza wakati wa kuanzisha.
 - `ccam login` na `ccam logout` hukataa akaunti ya API key, kwa kuwa haina kuingia. `ccam doctor` huonyesha endpoint yake na chanzo cha key, na huonya kigezo cha `env:` kikiwa tupu.
-- `ccam usage` huonyesha `API` kwa ajili yake. `ccam next --auto`, `--fallback` na `ccam pick` huchagua kati ya akaunti za usajili pekee, kwa sababu API key haina kikomo cha saa 5 wala cha wiki cha kulinganisha.
+- `ccam usage` huonyesha `no limits (API)` kwa ajili yake. `ccam next --auto`, `--fallback` na `ccam pick` huchagua kati ya akaunti za usajili pekee, kwa sababu API key haina kikomo cha saa 5 wala cha wiki cha kulinganisha.
 - `settings.json` inayoshirikiwa yenye sehemu ya `env` au `apiKeyHelper` hutumika kwa kila akaunti katika kundi, pamoja na akaunti za API key. Weka mipangilio ya mtoa huduma nje ya mipangilio inayoshirikiwa, au weka akaunti ya API key katika kundi lisilo na `settings`.
 
 ## Zinazohusiana

@@ -70,8 +70,8 @@
         "body": "해당 계정으로 Claude Code를 시작합니다. 이름 뒤에 쓴 내용은 모두 그대로 Claude Code에 전달되며, 시작 전에 ccam이 더하는 시간은 약 4밀리초입니다."
       },
       {
-        "command": "ccam share work --history on",
-        "body": "이 계정이 다른 계정과 무엇을 공유할지 정합니다. MCP 서버, 설정, CLAUDE.md, 확장 기능은 처음부터 공유되며, 로그인 정보는 절대 공유되지 않습니다."
+        "command": "ccam group set default --add history",
+        "body": "그룹에 속한 계정끼리 무엇을 공유할지 정합니다. MCP 서버, 설정, CLAUDE.md, 확장 기능은 처음부터 공유되며, 로그인 정보는 절대 공유되지 않습니다."
       },
       {
         "command": "ccam usage",
@@ -145,9 +145,9 @@
     "mcp": "공유 MCP 서버 관리",
     "migrate": "기존 Claude Code 설정(~/.claude)을 공유 그룹으로 복사",
     "login": "계정에 다시 로그인(--expired: 로그인이 필요한 모든 계정에 로그인)",
-    "logout": "계정의 로그인 정보 삭제",
+    "logout": "계정 로그아웃: 로그인과 MCP 서버 로그인을 지웁니다",
     "rename": "계정 이름 변경(단축 명령 이름은 그대로 유지)",
-    "remove": "계정 삭제(폴더는 휴지통 폴더로 이동)",
+    "remove": "계정 삭제: 로그아웃한 뒤 폴더를 휴지통 폴더로 옮깁니다",
     "import": "기존 ~/.claude 폴더를 옮기지 않고 그대로 등록",
     "doctor": "링크, 권한, 로그인, 버전 점검 및 복구",
     "statusline": "Claude Code 상태 표시줄에 계정과 사용량 표시",

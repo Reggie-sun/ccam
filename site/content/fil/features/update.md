@@ -1,10 +1,10 @@
 ---
 title: Pag-update ng ccam
 description: Pinapalitan ng ccam update ang ccam ng pinakabagong GitHub release matapos ang SHA-256 check; nag-uulat lang ang --check; nag-i-install ng tag ang --version.
-updated: 2026-10-21
+updated: 2026-10-23
 order: 10
 translation: machine
-sourceHash: a92dbf37399f
+sourceHash: 000d37de5f29
 ---
 
 Nagda-download ang `ccam update` ng ccam release mula sa GitHub, sinusuri ito laban sa `checksums.txt` ng release at pinapalitan ang tumatakbong binary sa isang rename. Gamitin ito kapag in-install mo ang ccam gamit ang install script o mula sa isang archive. Nagtatanong din ang [dashboard](/features/dashboard) sa GitHub tungkol sa pinakabagong release tuwing nagbubukas ito at iniaalok ito gamit ang `U`, na nagpapatakbo ng parehong mga hakbang pagkatapos magtanong. Walang ibang command na kumokontak sa GitHub, kaya gumagana sila nang pareho offline.
@@ -64,7 +64,7 @@ Ang buong pipeline, mula sa paghahanap ng tag hanggang sa rename:
 
 Magkatabing dina-download ang archive at `checksums.txt`, at walang isinusulat hangga't hindi tumutugma ang checksum. Atomic ang rename, kaya ang crash o punong disk ay mag-iiwan ng lumang binary o ng bago, hindi kailanman kalahati ng isa. Mga symlink sa ccam binary ang mga shortcut command gaya ng `~/.local/bin/ccwork`, kaya pinapatakbo nila ang bagong bersyon nang walang anumang pagbabago.
 
-Sa Windows, hindi mapapalitan o mabubura ang file ng tumatakbong program, mapapalitan lang ang pangalan nito. Isinusulat ng `Updater.Install` ang bagong binary sa `ccam.exe.new`, pinapalitan ang pangalan ng tumatakbong `ccam.exe` ng `ccam.exe.old`, at pinapalitan ang pangalan ng bagong file ng `ccam.exe`. Kapag pumalya ang huling hakbang, ibinabalik ang pangalan ng lumang binary. Binubura ng susunod na update ang `ccam.exe.old`. Nire-renew agad pagkatapos ang mga shortcut na hard link sa halip na symbolic link ([Mga shortcut command](/features/shortcuts)), kaya pinapatakbo rin nila ang bagong bersyon.
+Sa Windows, hindi mapapalitan o mabubura ang file ng tumatakbong program, mapapalitan lang ang pangalan nito. Isinusulat ng `Updater.Install` ang bagong binary sa `ccam.exe.new`, pinapalitan ang pangalan ng tumatakbong `ccam.exe` ng `ccam.exe.old`, at pinapalitan ang pangalan ng bagong file ng `ccam.exe`. Kapag pumalya ang huling hakbang, ibinabalik ang pangalan ng lumang binary. Binubura ng susunod na update ang mga `ccam.exe.old` file na kaya nitong burahin; habang may session pang tumatakbo mula sa mas naunang `ccam.exe.old`, nagiging `ccam.exe.old-<time>` na lang ang tumatakbong binary. Nire-renew agad pagkatapos ang mga shortcut na hard link sa halip na symbolic link ([Mga shortcut command](/features/shortcuts)), kaya pinapatakbo rin nila ang bagong bersyon; saklaw nito ang mga hard link ng anumang mas lumang ccam na ginawa ng ccam, hindi lang ng binary na kapapalit lang.
 
 ### Mga installation na pinamamahalaan ng package
 
@@ -91,7 +91,7 @@ Sa mga system na hindi Linux, ang linya ng install script lang ang ipi-print: `i
 
 ## Kaligtasan at mga espesyal na kaso
 
-- Iniuulat ng development build ang bersyon nito bilang `dev` at walang release na maikukumpara, kaya tinatanggihan ito ng `ccam update` at `ccam update --check`. Nag-i-install ang `ccam update --version vX.Y.Z` ng release sa ibabaw nito.
+- Iniuulat ng development build ang bersyon nito bilang `dev` at walang release na maikukumpara, kaya tinatanggihan ito ng `ccam update` at `ccam update --check`. Nag-i-install ang `ccam update --version vX.Y.Z` ng release sa ibabaw nito. Ang build na ginawa gamit ang `go install github.com/jhyunwoo/ccam/cmd/ccam@vX.Y.Z` (o `@latest`) ay nag-uulat ng release na iyon, kaya gumagana para dito ang `ccam update` at ang alok ng dashboard; nananatiling `dev` ang `@main` o ang local build na lampas sa isang tag.
 - Iniiwan nang gaya ng dati ang naka-install na binary kapag pumalya ang download, nawawala ang asset para sa iyong platform, o hindi tumugma ang checksum.
 - Pumapalya ang release na hindi umiiral na may `there is no release <tag>`. Kapag tumanggi ang GitHub na may HTTP 403 o 429, sasabihin ng ccam na malamang rate limit ito at hihilingin na subukan mo ulit mamaya.
 - Nagbabasa lang ang `--check`. Hindi nito sinusuri kung pinamamahalaan ng package ang binary o kung masusulatan ito.

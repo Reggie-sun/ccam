@@ -21,14 +21,18 @@ const css = (vars: Record<string, string | number | undefined>) =>
 
 export type Kind = "proc" | "file" | "dir" | "net" | "group";
 
-/** A labelled box: a process, a file, a folder, a network endpoint or a group of them. */
-export function box(x: number, y: number, w: number, h: number, label: string, o: { kind?: Kind; sub?: string } = {}): string {
+/**
+ * A labelled box: a process, a file, a folder, a network endpoint or a group
+ * of them. sub is a smaller line under the label, or several lines.
+ */
+export function box(x: number, y: number, w: number, h: number, label: string, o: { kind?: Kind; sub?: string | string[] } = {}): string {
   const kind = o.kind ?? "proc";
-  const cy = o.sub ? y + h / 2 - 5 : y + h / 2 + 4.5;
+  const subs = o.sub ? [o.sub].flat() : [];
+  const cy = subs.length ? y + h / 2 - 5 - (subs.length - 1) * 6.5 : y + h / 2 + 4.5;
   return (
     `<g class="mo-box mo-${kind}"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${kind === "group" ? 14 : 8}"/>` +
     `<text x="${x + w / 2}" y="${cy}" text-anchor="middle">${esc(label)}</text>` +
-    (o.sub ? `<text class="mo-sub" x="${x + w / 2}" y="${cy + 15}" text-anchor="middle">${esc(o.sub)}</text>` : "") +
+    subs.map((s, i) => `<text class="mo-sub" x="${x + w / 2}" y="${cy + 15 + i * 13}" text-anchor="middle">${esc(s)}</text>`).join("") +
     `</g>`
   );
 }

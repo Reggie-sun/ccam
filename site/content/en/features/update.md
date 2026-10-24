@@ -1,7 +1,7 @@
 ---
 title: Updating ccam
 description: ccam update replaces ccam with the latest GitHub release after a SHA-256 check; --check only reports and --version installs a given release tag.
-updated: 2026-10-21
+updated: 2026-10-23
 order: 10
 translation: source
 ---
@@ -63,7 +63,7 @@ The whole pipeline, from tag lookup to the rename:
 
 The archive and `checksums.txt` are downloaded side by side, and nothing is written until the checksum matches. The rename is atomic, so a crash or a full disk leaves either the old binary or the new one, never half of one. Shortcut commands such as `~/.local/bin/ccwork` are symlinks to the ccam binary, so they run the new version without any change.
 
-On Windows a running program's file cannot be replaced or deleted, only renamed. `Updater.Install` writes the new binary to `ccam.exe.new`, renames the running `ccam.exe` to `ccam.exe.old`, and renames the new file to `ccam.exe`. If the last step fails, the old binary is renamed back. The next update deletes `ccam.exe.old`. Shortcuts that are hard links instead of symbolic links ([Shortcut commands](/features/shortcuts)) are renewed right after, so they also run the new version.
+On Windows a running program's file cannot be replaced or deleted, only renamed. `Updater.Install` writes the new binary to `ccam.exe.new`, renames the running `ccam.exe` to `ccam.exe.old`, and renames the new file to `ccam.exe`. If the last step fails, the old binary is renamed back. The next update deletes the `ccam.exe.old` files it can; while a session still runs from an earlier `ccam.exe.old`, the running binary becomes `ccam.exe.old-<time>` instead. Shortcuts that are hard links instead of symbolic links ([Shortcut commands](/features/shortcuts)) are renewed right after, so they also run the new version; that covers hard links of any older ccam that ccam made, not only of the binary just replaced.
 
 ### Package-managed installs
 
@@ -90,7 +90,7 @@ On systems other than Linux, only the install script line is printed: `irm https
 
 ## Safety and edge cases
 
-- A development build reports its version as `dev` and has no release to compare with, so `ccam update` and `ccam update --check` refuse it. `ccam update --version vX.Y.Z` installs a release over it.
+- A development build reports its version as `dev` and has no release to compare with, so `ccam update` and `ccam update --check` refuse it. `ccam update --version vX.Y.Z` installs a release over it. A build made with `go install github.com/jhyunwoo/ccam/cmd/ccam@vX.Y.Z` (or `@latest`) reports that release, so `ccam update` and the dashboard's offer work for it; `@main` or a local build past a tag stays `dev`.
 - A failed download, a missing asset for your platform, or a checksum mismatch leaves the installed binary as it was.
 - A release that does not exist fails with `there is no release <tag>`. When GitHub refuses with HTTP 403 or 429, ccam says it is probably a rate limit and asks you to try again later.
 - `--check` only reads. It does not check whether the binary is package-managed or writable.

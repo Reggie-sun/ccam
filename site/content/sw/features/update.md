@@ -1,10 +1,10 @@
 ---
 title: Kusasisha ccam
 description: ccam update hubadilisha ccam kwa toleo jipya zaidi la GitHub baada ya ukaguzi wa SHA-256; --check huripoti tu na --version husakinisha tagi mahususi ya toleo.
-updated: 2026-10-21
+updated: 2026-10-23
 order: 10
 translation: machine
-sourceHash: a92dbf37399f
+sourceHash: "000d37de5f29"
 ---
 
 `ccam update` hupakua toleo la ccam kutoka GitHub, hulikagua dhidi ya `checksums.txt` ya toleo hilo na hubadilisha binary inayoendeshwa kwa kubadilisha jina mara moja. Itumie ikiwa ulisakinisha ccam kwa script ya kusakinisha au kutoka kwenye archive. [Dashibodi](/features/dashboard) pia huuliza GitHub kuhusu toleo jipya zaidi kila inapofunguliwa na hulitoa kwa `U`, ambayo hufanya hatua hizo hizo baada ya kuuliza. Hakuna amri nyingine inayowasiliana na GitHub, kwa hiyo hufanya kazi vivyo hivyo bila mtandao.
@@ -64,7 +64,7 @@ Mchakato wote, kuanzia kutafuta tagi hadi kubadilisha jina:
 
 Archive na `checksums.txt` hupakuliwa sambamba, na hakuna kinachoandikwa hadi checksum ilingane. Kubadilisha jina ni atomiki, kwa hiyo hitilafu ya ghafla au diski iliyojaa huacha binary ya zamani au mpya, kamwe si nusu ya moja. Amri za njia fupi kama `~/.local/bin/ccwork` ni symlinks kuelekea binary ya ccam, kwa hiyo huendesha toleo jipya bila badiliko lolote.
 
-Kwenye Windows faili la programu inayoendeshwa haliwezi kubadilishwa wala kufutwa, ila kupewa jina jipya tu. `Updater.Install` huandika binary mpya kwenye `ccam.exe.new`, hubadilisha jina la `ccam.exe` inayoendeshwa kuwa `ccam.exe.old`, na hubadilisha jina la faili jipya kuwa `ccam.exe`. Hatua ya mwisho ikishindwa, binary ya zamani hurudishiwa jina lake. Sasisho linalofuata hufuta `ccam.exe.old`. Njia fupi ambazo ni hard links badala ya viungo vya ishara ([Amri za njia fupi](/features/shortcuts)) hufanywa upya mara moja baadaye, kwa hiyo nazo huendesha toleo jipya.
+Kwenye Windows faili la programu inayoendeshwa haliwezi kubadilishwa wala kufutwa, ila kupewa jina jipya tu. `Updater.Install` huandika binary mpya kwenye `ccam.exe.new`, hubadilisha jina la `ccam.exe` inayoendeshwa kuwa `ccam.exe.old`, na hubadilisha jina la faili jipya kuwa `ccam.exe`. Hatua ya mwisho ikishindwa, binary ya zamani hurudishiwa jina lake. Sasisho linalofuata hufuta faili za `ccam.exe.old` linazoweza kufuta; wakati kipindi bado kinaendeshwa kutoka `ccam.exe.old` ya awali, binary inayoendeshwa huwa `ccam.exe.old-<time>` badala yake. Njia fupi ambazo ni hard links badala ya viungo vya ishara ([Amri za njia fupi](/features/shortcuts)) hufanywa upya mara moja baadaye, kwa hiyo nazo huendesha toleo jipya; hilo hujumuisha hard links za ccam yoyote ya zamani ambazo ccam iliunda, si za binary iliyobadilishwa sasa hivi pekee.
 
 ### Usakinishaji unaosimamiwa na kifurushi
 
@@ -91,7 +91,7 @@ Kwenye mifumo isiyo Linux, mstari wa script ya kusakinisha pekee ndio huchapishw
 
 ## Usalama na hali maalum
 
-- Build ya maendeleo huripoti toleo lake kama `dev` na haina toleo la kulinganisha nalo, kwa hiyo `ccam update` na `ccam update --check` huikataa. `ccam update --version vX.Y.Z` husakinisha toleo juu yake.
+- Build ya maendeleo huripoti toleo lake kama `dev` na haina toleo la kulinganisha nalo, kwa hiyo `ccam update` na `ccam update --check` huikataa. `ccam update --version vX.Y.Z` husakinisha toleo juu yake. Build iliyotengenezwa kwa `go install github.com/jhyunwoo/ccam/cmd/ccam@vX.Y.Z` (au `@latest`) huripoti toleo hilo, kwa hiyo `ccam update` na pendekezo la dashibodi hufanya kazi kwake; `@main` au build ya ndani iliyo mbele ya tagi hubaki `dev`.
 - Upakuaji ulioshindwa, faili ya toleo inayokosekana kwa jukwaa lako, au checksum isiyolingana huacha binary iliyosakinishwa kama ilivyokuwa.
 - Toleo lisilokuwepo hushindwa na `there is no release <tag>`. GitHub inapokataa kwa HTTP 403 au 429, ccam husema huenda ni kikomo cha maombi na hukuomba ujaribu tena baadaye.
 - `--check` husoma tu. Haikagui kama binary inasimamiwa na kifurushi au inaweza kuandikwa.

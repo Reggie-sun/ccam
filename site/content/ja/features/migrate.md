@@ -1,13 +1,13 @@
 ---
 title: 既存の環境のコピー
-description: ccam migrateで、既存の~/.claudeの設定、CLAUDE.md、拡張機能、MCPサーバー、MCPのサインイン情報をccamのグループにコピーします。
-updated: 2026-10-19
+description: ccam migrateで、既存の~/.claudeの設定、CLAUDE.md、拡張機能、MCPサーバーをccamのグループにコピーします。
+updated: 2026-10-23
 order: 6
 translation: machine
-sourceHash: "7cee52e75749"
+sourceHash: "7bca9efb6eb0"
 ---
 
-ccamを使う前からClaude Codeを使っていた場合、環境は`~/.claude`と`~/.claude.json`にあります。`ccam migrate`はそれを共有グループにコピーするので、グループを通じてそれらの項目を共有するすべてのアカウントが、これまでと同じ環境で使い始められます。コピー元のフォルダーは読み取るだけで、通常の`claude`もこれまでどおり動作します。最初の`ccam add`の後に一度実行し、アカウントがMCPサーバーの共有を始めるたびにもう一度実行してください。
+ccamを使う前からClaude Codeを使っていた場合、環境は`~/.claude`と`~/.claude.json`にあります。`ccam migrate`はそれを共有グループにコピーするので、グループを通じてそれらの項目を共有するすべてのアカウントが、これまでと同じ環境で使い始められます。コピー元のフォルダーは読み取るだけで、通常の`claude`もこれまでどおり動作します。最初の`ccam add`の後に一度実行してください。`~/.claude.json`にMCPサーバーがある場合は、最初の`ccam add`がヒントの中でそれらの名前を示します。
 
 ## 使い方
 
@@ -43,20 +43,17 @@ Spaceキー（または`x`）でカーソル位置の項目を切り替え、矢
 $ ccam migrate --yes
 Copy from /home/me/.claude into group default (/home/me/.local/share/ccam/groups/default):
   mcp         ~/.claude.json  new: fs, linear
-              sign-ins        linear → personal; skipped: work (not logged in yet)
+              sign-ins        not copied (a sign-in works for one account only); sign in with /mcp: linear in personal, work
   settings    settings.json   new: 61 B
+              not found, skipped: keybindings.json
   memory      CLAUDE.md       new: 11 B
   extensions  agents/         add 1 file the group lacks (6 B)
               skills/         add 1 file the group lacks (13 B)
               not found, skipped: commands/, plugins/, output-styles/, rules/
   Conversation history (projects/, history.jsonl) is not included; add --history to copy it.
-✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, skills/, MCP sign-ins for personal
-MCP sign-ins were not copied to: work (not logged in yet). Sign in to those servers there with /mcp.
-Accounts that share these through group default:
-  mcp         personal, work
-  settings    personal, work
-  memory      personal, work
-  extensions  personal, work
+✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, skills/
+MCP sign-ins are not copied (a sign-in works for one account only). Sign in with /mcp to linear in personal, work.
+Group default: personal, work
 ```
 
 グループの内容が届くのはそのグループのアカウントだけで、しかもグループが共有する項目だけなので、概要ではグループのアカウントを一覧表示します。コピーした項目のうちグループが共有していないものがある場合や、グループに入っていないアカウントがある場合は、それを変更する`ccam group set <group> --add <items>`と`ccam group join <group> <accounts>`のコマンドを表示します。
@@ -83,9 +80,9 @@ Accounts that share these through group default:
 
 `internal/cli/migrate.go`が項目を選び、`migrate.Build`がコピー元とグループを読み取って計画を返します。確認した後の`Plan.Apply`まで、何も書き込まれません。
 
-1. **コピー元を見つける。** `checkSource`は、存在しないパス、フォルダーではないパス、Claude Codeの既知の項目が1つもないパスを拒否します。`migrate.ClaudeJSON`は、そのフォルダーに対応する`.claude.json`を見つけます。フォルダー内にあればそれを使い、`~/.claude`の中にない場合は、その隣の`~/.claude.json`を使います。`CLAUDE_CONFIG_DIR`が設定されていない場合、Claude Codeはそこにこのファイルを置きます。
+1. **コピー元を見つける。** `checkSource`は、存在しないパス、フォルダーではないパス、Claude Codeの既知の項目が1つもないパスを拒否します。MCPサーバーだけをコピーする場合は、`~/.claude.json`にサーバーがあれば、`~/.claude`が空でも存在しなくてもかまいません。`migrate.ClaudeJSON`は、そのフォルダーに対応する`.claude.json`を見つけます。フォルダー内にあればそれを使い、`~/.claude`の中にない場合は、その隣の`~/.claude.json`を使います。`CLAUDE_CONFIG_DIR`が設定されていない場合、Claude Codeはそこにこのファイルを置きます。
 2. **項目をパスに対応付ける。** すべてのパスは、グループが使うのと同じ許可リストである`share.Layout`から取得します。MCPサーバーは`mcp.LocalServers`で`.claude.json`から読み取ります。これはファイル全体を解析せず、`profile.TopLevelValue`スキャナーを使います。
-3. **移動せず、コピーする。** ファイルは`fsutil.AtomicWrite`か`fsutil.CopyFile`で`~/.local/share/ccam/groups/<group>/`にコピーし、MCPサーバーはグループの`mcp.json`に入れます。
+3. **移動せず、コピーする。** ファイルは`fsutil.AtomicWrite`か`fsutil.CopyFile`で`~/.local/share/ccam/groups/<group>/`にコピーします。これらはコピー先の隣に一時ファイルを書いてから名前を変えるので、コピーが途中で止まっても、途中で切れたファイルが残ることはありません。MCPサーバーは、グループのロックを取ったうえでグループの`mcp.json`に入れます。その間にほかのccamが追加したサーバーは残り、[Remote Control](/guides/remote-control)用に作ったコピーはその後で更新されます。
 
 各項目は、1つのコピー元のパスを1つのグループのパスに対応付けます。
 
@@ -108,18 +105,7 @@ Accounts that share these through group default:
 
 ### MCPのサインイン情報
 
-OAuthでサインインするMCPサーバーは、トークンをサーバーの一覧ではなく、ログインファイルである`.credentials.json`の`mcpOAuth`に保存します。Claude Codeは各項目のキーを、`<name>|`に、サーバーの`type`、`url`、`headers`の`sha256`ハッシュの先頭16文字を続けたものにしています。キーはフォルダーに依存しないので、サーバーの定義が同じであれば、コピーした項目は別のアカウントでも機能します。そのため、`internal/migrate/logins.go`の`buildLogins`は、最終的にグループがコピー元の定義で持つことになるサーバー、つまり新規のもの、すでに同じもの、競合して`use mine`を選んだものの項目だけをコピーします。プラグインのサーバーのサインイン情報（キーが`plugin:`で始まるもの）は、拡張機能をコピーし、コピー元に`plugins/`がある場合に一緒にコピーされます。
-
-<!-- motion:migrate-signins -->
-
-項目は、受け取る各アカウント自身の`.credentials.json`に、`fsutil.AtomicWrite`を使ってモード`0600`で書き込まれます。グループに入ることはありません。アカウントが受け取るのは、対象のグループを通じて`mcp`（プラグインのサーバーの場合は`extensions`）を共有している場合だけで、追加されるのはそのアカウントにないキーだけです。すでにある項目は、より新しいものかもしれないので残します。計画の`sign-ins`の行には、サーバー、受け取るアカウント、スキップしたアカウントが表示されます。ccamは、次のアカウントをスキップし、その名前と理由を表示します。
-
-- `ccam import`でその場所のまま登録したアカウント。通常の`claude`がそのログインファイルを使っている可能性があるためです。
-- 実行中のアカウント。Claude Codeがログインファイルを書き換えるためです（書き込む直前にもう一度確認し、`started meanwhile`として報告します）。
-- まだログインしていないアカウント。
-- ログインをmacOSのキーチェーンに保存しているアカウント。ccamはキーチェーンに書き込みません。
-
-スキップしたアカウントでは、`/mcp`でサーバーにサインインしてください。あとからMCPサーバーの共有を始めたアカウントには、`ccam migrate`をもう一度実行するとサインイン情報がコピーされます。概要には``Then run `ccam migrate` again to give them the MCP sign-ins too.``と表示されます。
+OAuthでサインインするMCPサーバーは、トークンをサーバーの一覧ではなく、ログインファイルである`.credentials.json`の`mcpOAuth`に保存します。ccamはそれをコピーしません。コピーしたサインインは元のものと同じリフレッシュトークンを持ち、サーバーは最初の更新でそのトークンを入れ替えます。すると、コピー元の`~/.claude`を含むほかのすべての持ち主が、そのサーバーからログアウトされます。そのため計画の`sign-ins`の行には、コピー元がサインインしている、コピーされる各サーバーについて、`/mcp`で自分でサインインするグループのアカウントが示され、概要でも繰り返し示されます。トークンのない項目はサインインではないので一覧に含まれず、すでに独自のサインインを持つアカウントや、グループが自分の定義を残すサーバーも含まれません。ログインファイルには何も書き込みません。
 
 ## 安全性と特殊なケース
 
@@ -127,7 +113,8 @@ OAuthでサインインするMCPサーバーは、トークンをサーバーの
 - `use mine`、マージ、既存の`mcp.json`への新しいMCPサーバーの追加でグループのファイルを置き換える前に、グループのコピーを`<group>/.ccam-backup/<time>/`に保存します。フォルダー名は実行ごとに一意なので、同じ秒に2回実行してもバックアップが上書きされることはありません。概要にそのパスが表示されます。
 - `--yes`ではすべての競合でグループのコピーを残し、代わりに選ぶ方法として、同じコマンドを`--yes`なしで実行するよう案内します。
 - 何も変わらない場合は`Nothing to copy.`と表示し、すべての競合でグループのコピーを残す場合は`Nothing to copy: the group keeps its own copies.`と表示します。
-- コピーが途中で失敗した場合、ccamは`The source folder was not changed. Group files replaced so far are saved in`に続けてバックアップフォルダーを表示し、終了します。
+- コピーが途中で失敗した場合、ccamは`The source folder was not changed. Group files replaced so far are saved in`に続けてバックアップフォルダーを表示し、終了します。もう一度実行すると、完全に届かなかったファイルをコピーします。
+- 複数のグループがMCPを共有している場合、`ccam doctor`、`ccam ext`、`ccam mcp list`が提案するコマンドは`ccam migrate --mcp --group <a|b>`になります。
 - コピー元がない場合は`no Claude Code folder at <path>. Give the folder to copy from: ccam migrate <folder>`で終了します。
 
 ## 関連項目

@@ -1,10 +1,10 @@
 ---
 title: Atualizar o ccam
 description: ccam update troca o ccam pela versão mais recente do GitHub após verificar o SHA-256; --check só informa e --version instala uma tag de versão específica.
-updated: 2026-10-21
+updated: 2026-10-23
 order: 10
 translation: machine
-sourceHash: a92dbf37399f
+sourceHash: "000d37de5f29"
 ---
 
 `ccam update` baixa uma versão do ccam do GitHub, confere-a com o `checksums.txt` da versão e substitui o binário em execução com um único rename. Use-o quando você instalou o ccam com o script de instalação ou a partir de um arquivo compactado. O [painel](/features/dashboard) também pergunta ao GitHub pela versão mais recente toda vez que abre e a oferece com `U`, que executa os mesmos passos depois de perguntar. Nenhum outro comando contata o GitHub, então eles funcionam do mesmo jeito sem conexão.
@@ -64,7 +64,7 @@ O processo inteiro, da consulta da tag até o rename:
 
 O arquivo compactado e o `checksums.txt` são baixados lado a lado, e nada é gravado até que o checksum corresponda. O rename é atômico, então uma falha ou um disco cheio deixa o binário antigo ou o novo, nunca a metade de um. Atalhos como `~/.local/bin/ccwork` são links simbólicos para o binário do ccam, então executam a nova versão sem nenhuma alteração.
 
-No Windows, o arquivo de um programa em execução não pode ser substituído nem excluído, só renomeado. `Updater.Install` grava o novo binário em `ccam.exe.new`, renomeia o `ccam.exe` em execução para `ccam.exe.old` e renomeia o arquivo novo para `ccam.exe`. Se o último passo falhar, o binário antigo volta ao nome original. A próxima atualização exclui `ccam.exe.old`. Atalhos que são hard links em vez de links simbólicos ([Atalhos](/features/shortcuts)) são renovados logo em seguida, então também executam a nova versão.
+No Windows, o arquivo de um programa em execução não pode ser substituído nem excluído, só renomeado. `Updater.Install` grava o novo binário em `ccam.exe.new`, renomeia o `ccam.exe` em execução para `ccam.exe.old` e renomeia o arquivo novo para `ccam.exe`. Se o último passo falhar, o binário antigo volta ao nome original. A próxima atualização exclui os arquivos `ccam.exe.old` que conseguir; enquanto uma sessão ainda roda a partir de um `ccam.exe.old` anterior, o binário em execução passa a ser `ccam.exe.old-<time>`. Atalhos que são hard links em vez de links simbólicos ([Atalhos](/features/shortcuts)) são renovados logo em seguida, então também executam a nova versão; isso cobre hard links de qualquer ccam mais antigo que o ccam criou, não só do binário que acabou de ser substituído.
 
 ### Instalações gerenciadas por pacote
 
@@ -91,7 +91,7 @@ Em sistemas que não são Linux, só a linha do script de instalação é impres
 
 ## Segurança e casos especiais
 
-- Um build de desenvolvimento informa a versão como `dev` e não tem uma versão publicada para comparar, então `ccam update` e `ccam update --check` o recusam. `ccam update --version vX.Y.Z` instala uma versão por cima dele.
+- Um build de desenvolvimento informa a versão como `dev` e não tem uma versão publicada para comparar, então `ccam update` e `ccam update --check` o recusam. `ccam update --version vX.Y.Z` instala uma versão por cima dele. Um build feito com `go install github.com/jhyunwoo/ccam/cmd/ccam@vX.Y.Z` (ou `@latest`) informa essa versão, então `ccam update` e a oferta do painel funcionam com ele; `@main` ou um build local além de uma tag continua `dev`.
 - Um download que falha, um arquivo ausente para a sua plataforma ou um checksum que não corresponde deixa o binário instalado como estava.
 - Uma versão que não existe falha com `there is no release <tag>`. Quando o GitHub recusa com HTTP 403 ou 429, o ccam diz que provavelmente é um limite de taxa e pede que você tente de novo mais tarde.
 - `--check` só lê. Ele não verifica se o binário é gerenciado por pacote nem se permite gravação.

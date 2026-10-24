@@ -2,10 +2,10 @@
 title: 安裝 ccam
 metaTitle: "在 Linux、macOS 和 Windows 上安裝 ccam"
 description: 在 Linux、macOS 或 Windows 上用一個指令、.deb 套件或從原始碼安裝 ccam，並用 ccam update 保持最新版本。需要先安裝 Claude Code。
-updated: 2026-10-21
+updated: 2026-10-23
 order: 1
 translation: machine
-sourceHash: "1e3a53623de0"
+sourceHash: "af21dcc24169"
 ---
 
 在 Linux 或 macOS 的終端機中執行：
@@ -22,7 +22,7 @@ curl -fsSL https://ccam.dev/install.sh | sh
 irm https://ccam.dev/install.ps1 | iex
 ```
 
-它會下載 `ccam_windows_<arch>.zip`，檢查其 SHA-256 總和檢查碼，把 `ccam.exe` 放入 `%USERPROFILE%\.local\bin`（也就是 Claude Code 安裝程式放置 `claude.exe` 的資料夾），並在該資料夾尚未加入時，把它加到你的使用者 `PATH`。完成後請開啟新的終端機。
+它會下載 `ccam_windows_<arch>.zip`，檢查其 SHA-256 總和檢查碼，把 `ccam.exe` 放入 `%USERPROFILE%\.local\bin`（也就是 Claude Code 安裝程式放置 `claude.exe` 的資料夾），並在該資料夾尚未加入時，把它加到你的使用者 `PATH`，並保留 `%USERPROFILE%\bin` 這類項目原樣。完成後請開啟新的終端機。再次執行它會取代 ccam，即使仍有 Claude Code 工作階段從舊的執行檔執行也一樣（舊檔會被重新命名為 `ccam.exe.old`，若更舊的那個仍在使用中，則為 `ccam.exe.old-<number>`），並更新屬於硬連結的快捷指令：`OK 2 shortcuts now run the new ccam`。
 
 ccam 會替你啟動 Claude Code，所以請先安裝 [Claude Code](https://docs.claude.com/en/docs/claude-code/overview)，並確認 `claude --version` 可以正常執行。
 
@@ -30,7 +30,7 @@ ccam 會替你啟動 Claude Code，所以請先安裝 [Claude Code](https://docs
 
 - x86-64 和 ARM64 上的 Linux：Ubuntu、Debian、Fedora、Arch、Alpine 及其他發行版。執行檔為靜態連結，沒有任何相依套件。
 - Apple 晶片和 Intel 上的 macOS。
-- x86-64 和 ARM64 上的 Windows 10 和 11，可在 PowerShell、Windows 終端機或 Git Bash 中使用。共用資料夾對每位使用者都可用。共用檔案（`settings.json`、`CLAUDE.md`、`history.jsonl`）需要開發人員模式（設定 > 系統 > 開發人員專用），因為 Windows 只允許這個模式或系統管理員建立指向檔案的連結；請參閱[Windows 上的共用](/features/share#on-windows)。
+- x86-64 和 ARM64 上的 Windows 10 和 11，可在 PowerShell、Windows 終端機或 Git Bash 中使用。共用資料夾對每位使用者都可用。共用檔案（`settings.json`、`CLAUDE.md`、`history.jsonl`）需要開發人員模式（設定 > 系統 > 開發人員專用），因為 Windows 只允許這個模式或系統管理員建立指向檔案的連結；請參閱[Windows 上的共用](/features/share#on-windows)。沒有開發人員模式時，第一次 `ccam add` 建立的群組 `default` 只包含 MCP 伺服器和擴充功能，並會說明開啟開發人員模式後如何加入其餘項目。
 - 在 WSL 中，ccam 的運作方式與在任何 Linux 系統上相同。
 
 ## 其他安裝方式
@@ -48,6 +48,8 @@ sudo apt install ./ccam_*_linux_amd64.deb
 ```sh
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
 ```
+
+從發行標籤（`@latest` 或 `@vX.Y.Z`）建置的版本會回報該版本號，所以 `ccam update` 可以用在它上面；從 `@main` 或超過標籤的本機簽出建置的版本則會回報 `dev`。
 
 **指定版本。** 設定 `CCAM_VERSION`：
 
@@ -117,9 +119,9 @@ ccam update --version v0.2.0
 ccam --dry-run update
 ```
 
-重新執行安裝腳本也會更新 `~/.local/bin` 中的 ccam。如果你是用 `go install` 建置 ccam，再執行一次同樣的指令即可。
+重新執行安裝腳本也會更新 `~/.local/bin` 中的 ccam。如果你是從發行標籤用 `go install` 建置 ccam，也可以使用 `ccam update`，或再執行一次同樣的指令。
 
-**Windows。** `ccam update` 會下載 Windows 版的 `.zip`。在 Windows 上無法取代執行中的程式，所以舊的執行檔會被重新命名為 `ccam.exe.old`，並在下次更新時刪除。
+**Windows。** `ccam update` 會下載 Windows 版的 `.zip`。在 Windows 上無法取代執行中的程式，所以舊的執行檔會被重新命名為 `ccam.exe.old`，並在下次更新時刪除；若仍有工作階段從先前的 `ccam.exe.old` 執行，名稱則為 `ccam.exe.old-<time>`。屬於硬連結的快捷指令會在之後立即更新。
 
 **Debian 和 Ubuntu 套件。** `ccam update` 不會取代由 apt 安裝的 `/usr/bin/ccam`，而是改為印出以下步驟。從[發行版本頁面](https://github.com/jhyunwoo/ccam/releases)下載新的 `ccam_<version>_linux_amd64.deb`，覆蓋安裝舊版：
 
@@ -146,4 +148,4 @@ Remove-Item ~\.local\bin\ccam.exe
 Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
 ```
 
-刪除 `~/.local/share/ccam` 也會一併刪除存放在其中的登入資訊和對話記錄。你[匯入](/docs/commands)的 `~/.claude` 資料夾則會留在原處。
+刪除 `~/.local/share/ccam` 也會一併刪除存放在其中的登入資訊和對話記錄。你[匯入](/docs/commands)的 `~/.claude` 資料夾則會留在原處，但只要它還在某個群組中，它所共用的檔案就位於 `~/.local/share/ccam/groups/`。請先對它執行 `ccam remove <name>`（或 `ccam group leave`）：它會帶著所共用的一切內容的副本離開群組。

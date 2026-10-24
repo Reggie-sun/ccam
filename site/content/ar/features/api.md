@@ -1,10 +1,10 @@
 ---
 title: حسابات مفاتيح API
 description: يضيف ccam add --api حساب مفتاح API لواجهة Anthropic أو لبوابة؛ ويُقرأ المفتاح عند التشغيل من متغير أو أمر، ولا يُخزَّن أبدًا.
-updated: 2026-10-20
+updated: 2026-10-23
 order: 13
 translation: machine
-sourceHash: "a903c92f2c50"
+sourceHash: 232a71525e42
 ---
 
 يشغّل حساب مفتاح API برنامج Claude Code بمفتاح API بدلًا من تسجيل الدخول باشتراك Claude: واجهة Anthropic البرمجية، أو نقطة نهاية تتحدث صيغة Messages نفسها، مثل بوابة LiteLLM أو OpenRouter. لا يخزّن ccam المفتاح. بل يقرؤه في كل مرة يبدأ فيها الحساب، من متغير بيئة أو من أمر مثل مدير كلمات المرور، ولا يعطيه إلا لعملية Claude Code تلك.
@@ -35,7 +35,7 @@ $ ccam list
 | --- | --- | --- |
 | `--api` | يضيف حساب مفتاح API بدلًا من تسجيل الدخول | معطّل |
 | `--key-from env:NAME` | يقرأ المفتاح من متغير البيئة `NAME` | |
-| `--key-from command:COMMAND` | يشغّل `COMMAND` (عبر `sh -c`، أو `cmd /C` على Windows) ويستخدم أول سطر يطبعه | |
+| `--key-from command:COMMAND` | يشغّل `COMMAND` (عبر `sh -c`، أو على Windows كما لو كُتب في `cmd /d /s /c "…"`، مع الإبقاء على علامات الاقتباس) ويستخدم أول سطر يطبعه | |
 | `--base-url <url>` | نقطة النهاية (`ANTHROPIC_BASE_URL`) | واجهة Anthropic البرمجية |
 | `--auth api-key\|bearer` | يرسل المفتاح بوصفه `ANTHROPIC_API_KEY` (`x-api-key`) أو `ANTHROPIC_AUTH_TOKEN` (`Authorization: Bearer`، وهو ما تريده البوابات عادةً) | `api-key` |
 | `--model <model>` | النموذج (`ANTHROPIC_MODEL`) | النموذج الافتراضي في Claude Code |
@@ -66,10 +66,17 @@ model = 'claude-sonnet-5-5'
 
 ## الأمان والحالات الخاصة
 
-- لا يُكتب المفتاح أبدًا في `config.toml` ولا في ذاكرة مؤقتة ولا في سجل، ولا يقرؤه `ccam --dry-run gw`: فالتشغيل التجريبي لا يشغّل مصدر `command:`.
+- لا يُكتب المفتاح أبدًا في `config.toml` ولا في ذاكرة مؤقتة ولا في سجل، ولا يقرؤه `ccam --dry-run gw`: فالتشغيل التجريبي لا يشغّل مصدر `command:`. وبدلًا من ذلك يعرض التشغيل التجريبي نقطة النهاية والنموذج ومصدر المفتاح:
+
+  ```console
+  $ ccam --dry-run gw -p hi
+  CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/gw CCAM_PROFILE=gw ANTHROPIC_BASE_URL=https://llm.example.com ANTHROPIC_MODEL=claude-sonnet-5-5 ANTHROPIC_AUTH_TOKEN="$(pass show llm/gateway-key | head -n 1)" /home/me/.local/bin/claude -p hi
+  ```
+
+  والمتغير الموروث الذي يزيله التشغيل يظهر بصيغة `env -u <name>` في البداية. ومع مصدر `env:` متغيره فارغ، يفشل التشغيل التجريبي كما سيفشل التشغيل الفعلي.
 - يتحقق `ccam add --api` من مصدر `env:` فورًا ويحذّر إذا كان المتغير فارغًا؛ أما مصدر `command:` فيُشغَّل أول مرة عند التشغيل.
 - يرفض `ccam login` و`ccam logout` حساب مفتاح API، لأنه لا تسجيل دخول له. ويعرض `ccam doctor` نقطة نهايته ومصدر مفتاحه، ويحذّر عندما يكون متغير `env:` فارغًا.
-- يعرض `ccam usage` القيمة `API` له. ويختار `ccam next --auto` و`--fallback` و`ccam pick` من بين حسابات الاشتراك فقط، لأن مفتاح API ليس له حد للخمس ساعات أو للأسبوع يمكن المقارنة به.
+- يعرض `ccam usage` القيمة `no limits (API)` له. ويختار `ccam next --auto` و`--fallback` و`ccam pick` من بين حسابات الاشتراك فقط، لأن مفتاح API ليس له حد للخمس ساعات أو للأسبوع يمكن المقارنة به.
 - ملف `settings.json` المشترك الذي فيه كتلة `env` أو `apiKeyHelper` ينطبق على كل حساب في المجموعة، بما في ذلك حسابات مفاتيح API. أبقِ إعدادات المزوّد خارج الإعدادات المشتركة، أو ضع حساب مفتاح API في مجموعة دون `settings`.
 
 ## صفحات ذات صلة

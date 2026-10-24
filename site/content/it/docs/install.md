@@ -2,10 +2,10 @@
 title: Installare ccam
 metaTitle: Installare ccam su Linux, macOS e Windows
 description: Installa ccam su Linux, macOS o Windows con un solo comando, un pacchetto .deb o dai sorgenti, e aggiornalo con ccam update. Serve Claude Code già installato.
-updated: 2026-10-21
+updated: 2026-10-23
 order: 1
 translation: machine
-sourceHash: "1e3a53623de0"
+sourceHash: "af21dcc24169"
 ---
 
 Esegui questo comando in un terminale su Linux o macOS:
@@ -22,7 +22,7 @@ Su Windows, esegui questo in PowerShell:
 irm https://ccam.dev/install.ps1 | iex
 ```
 
-Scarica `ccam_windows_<arch>.zip`, ne verifica il checksum SHA-256, mette `ccam.exe` in `%USERPROFILE%\.local\bin`, la cartella in cui l'installer di Claude Code mette `claude.exe`, e aggiunge quella cartella al `PATH` del tuo utente se non c'è ancora. Dopo, apri un nuovo terminale.
+Scarica `ccam_windows_<arch>.zip`, ne verifica il checksum SHA-256, mette `ccam.exe` in `%USERPROFILE%\.local\bin`, la cartella in cui l'installer di Claude Code mette `claude.exe`, e aggiunge quella cartella al `PATH` del tuo utente se non c'è ancora, lasciando invariate voci come `%USERPROFILE%\bin`. Dopo, apri un nuovo terminale. Eseguirlo di nuovo sostituisce ccam, anche mentre una sessione di Claude Code gira ancora dal vecchio binario (che viene rinominato in `ccam.exe.old`, o `ccam.exe.old-<number>` quando uno più vecchio è ancora in uso), e rinnova le scorciatoie che sono hard link: `OK 2 shortcuts now run the new ccam`.
 
 ccam avvia Claude Code per te, quindi installa prima [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) e verifica che `claude --version` funzioni.
 
@@ -30,7 +30,7 @@ ccam avvia Claude Code per te, quindi installa prima [Claude Code](https://docs.
 
 - Linux su x86-64 e ARM64: Ubuntu, Debian, Fedora, Arch, Alpine e altre distribuzioni. Il binario è statico e non ha dipendenze.
 - macOS su Apple silicon e Intel.
-- Windows 10 e 11 su x86-64 e ARM64, in PowerShell, Windows Terminal o Git Bash. Le cartelle condivise funzionano per ogni utente. I file condivisi (`settings.json`, `CLAUDE.md`, `history.jsonl`) richiedono la Modalità sviluppatore (Impostazioni > Sistema > Per sviluppatori), perché Windows consente di creare link a file solo in quella modalità o a un amministratore; vedi [condivisione su Windows](/features/share#on-windows).
+- Windows 10 e 11 su x86-64 e ARM64, in PowerShell, Windows Terminal o Git Bash. Le cartelle condivise funzionano per ogni utente. I file condivisi (`settings.json`, `CLAUDE.md`, `history.jsonl`) richiedono la Modalità sviluppatore (Impostazioni > Sistema > Per sviluppatori), perché Windows consente di creare link a file solo in quella modalità o a un amministratore; vedi [condivisione su Windows](/features/share#on-windows). Senza di essa, il primo `ccam add` crea il gruppo `default` con i soli server MCP ed estensioni, e spiega come aggiungere il resto una volta attivata la Modalità sviluppatore.
 - All'interno di WSL, ccam funziona come su qualsiasi sistema Linux.
 
 ## Altri modi per installare
@@ -48,6 +48,8 @@ Il pacchetto installa `/usr/bin/ccam`.
 ```sh
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
 ```
+
+Una build di un tag di release (`@latest` o `@vX.Y.Z`) riporta quella versione, quindi `ccam update` funziona; una build di `@main` o di un checkout locale successivo a un tag riporta `dev`.
 
 **Una versione specifica.** Imposta `CCAM_VERSION`:
 
@@ -117,9 +119,9 @@ ccam update --version v0.2.0
 ccam --dry-run update
 ```
 
-Anche eseguire di nuovo lo script di installazione aggiorna la copia in `~/.local/bin`. Se hai compilato ccam con `go install`, esegui di nuovo lo stesso comando.
+Anche eseguire di nuovo lo script di installazione aggiorna la copia in `~/.local/bin`. Se hai compilato ccam con `go install` da un tag di release, funziona anche `ccam update`, oppure esegui di nuovo lo stesso comando.
 
-**Windows.** `ccam update` scarica il `.zip` per Windows. Su Windows un programma in esecuzione non può essere sostituito, quindi il vecchio binario viene rinominato in `ccam.exe.old`, che l'aggiornamento successivo elimina.
+**Windows.** `ccam update` scarica il `.zip` per Windows. Su Windows un programma in esecuzione non può essere sostituito, quindi il vecchio binario viene rinominato in `ccam.exe.old`, che l'aggiornamento successivo elimina; mentre una sessione gira ancora da un `ccam.exe.old` precedente, il nome è `ccam.exe.old-<time>`. Subito dopo vengono rinnovate le scorciatoie che sono hard link.
 
 **Pacchetto per Debian e Ubuntu.** `ccam update` non sostituisce un `/usr/bin/ccam` installato con apt e al suo posto stampa questi passaggi. Scarica il nuovo `ccam_<version>_linux_amd64.deb` dalla [pagina delle release](https://github.com/jhyunwoo/ccam/releases) e installalo sopra quello vecchio:
 
@@ -146,4 +148,4 @@ Remove-Item ~\.local\bin\ccam.exe
 Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
 ```
 
-Eliminare `~/.local/share/ccam` elimina anche i login e la cronologia delle conversazioni salvati lì. Una cartella `~/.claude` che hai [importato](/docs/commands) resta dove si trova.
+Eliminare `~/.local/share/ccam` elimina anche i login e la cronologia delle conversazioni salvati lì. Una cartella `~/.claude` che hai [importato](/docs/commands) resta dove si trova, ma finché fa parte di un gruppo, i file che condivide stanno in `~/.local/share/ccam/groups/`. Esegui prima `ccam remove <name>` per quell'account (o `ccam group leave`): lascia i suoi gruppi con una copia di tutto ciò che condivideva.

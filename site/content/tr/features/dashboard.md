@@ -1,10 +1,10 @@
 ---
 title: Kontrol paneli
 description: Terminalde ccam; hesapların, grupların, klasör kurallarının, uzantıların ve denetimlerin tam ekran kontrol panelini açar; her değişiklik önce planını gösterir.
-updated: 2026-10-21
+updated: 2026-10-24
 order: 15
 translation: machine
-sourceHash: "19a99adef661"
+sourceHash: "e48ca2c5a643"
 ---
 
 Argümansız `ccam`, standart girdi ve çıktı bir terminal olduğunda tam ekran bir kontrol paneli açar; aksi halde `ccam list` çıktısını yazdırır. Kontrol paneli her hesabı kullanımı ve gruplarıyla birlikte gösterir ve komutların yaptığını yapar: başlatma, ekleme, giriş yapma, grupları değiştirme, klasör kuralları belirleme, denetleme ve onarma. Başlatma paneli kapatır; bir hesap eklemek veya giriş yapmak paneli terminale bırakır ve sonra geri döner.
@@ -33,16 +33,16 @@ Kontrol paneli her açıldığında arka planda GitHub'a daha yeni bir ccam sür
 
 `U` önce sorar, sonra [`ccam update`](/features/update) gibi günceller: sürüm SHA-256 sağlama toplamlarıyla doğrulanır ve tek adımda ccam'in yerini alır. İçinde bulunduğunuz kontrol paneli hâlâ eski sürümdür; bu yüzden çıkın ve `ccam` komutunu yeniden başlatın. Güncelleme burada yapılamadığında, örneğin `.deb` paketinden kurulmuş bir ccam için, kontrol paneli `ccam update` ile aynı öneriyi gösterir ve teklifi korur.
 
-İlk kare yalnızca `config.toml` dosyasından, 100 ms'nin çok altında çizilir; kullanım her hesap yanıt verdikçe dolar. Her limitin kendi çubuğu vardır: 5 saatlik pencere, tüm modeller için haftalık pencere ve Fable'ın kendi haftalık penceresi; `-` hesabın böyle bir penceresi olmadığı anlamına gelir. Bir yüzde %80'den itibaren sarıya, %100'de kırmızıya döner; başarısız bir sorgudan sonra önbellekten gelen değerler soluk çizilir.
+İlk kare yalnızca `config.toml` dosyasından, 100 ms'nin çok altında çizilir; kullanım her hesap yanıt verdikçe dolar. Her limitin kendi çubuğu vardır: 5 saatlik pencere, tüm modeller için haftalık pencere ve Fable'ın kendi haftalık penceresi; `-` hesabın böyle bir penceresi olmadığı anlamına gelir. Bir yüzde %80'den itibaren sarıya, %100'de kırmızıya döner; başarısız bir sorgudan sonra önbellekten gelen değerler soluk çizilir. Claude Code'un dolu bildirdiği bir pencere sıfırlanana kadar %100 gösterir. Süresi dolmuş bir erişim token'ı soluk bir `⚠ token expired` gösterir (Claude Code onu bir sonraki başlatmada yeniler); `⚠ login expired` ise hesabın `ccam login` gerektirdiği anlamına gelir.
 
 ## Sekmeler
 
 | Sekme | Gösterdiği | Tuşlar |
 | --- | --- | --- |
-| Accounts | numara, ad, e-posta, 5 saatlik, haftalık ve Fable çubukları, son kullanım, gruplar; `✔` varsayılan, `▸` bu klasörün hesabı, `•` çalışıyor | aşağıda |
+| Accounts | numara, ad, e-posta, 5 saatlik, haftalık ve Fable çubukları, son kullanım, gruplar; `✔` varsayılan, `▸` bu klasörün hesabı, `•` çalışıyor (ccam olmadan başlatılan Claude Code da: düz `claude`, bir IDE, arka plan oturumları ve onların daemon'ı) | aşağıda |
 | Groups | her grup, neyi paylaştığı ve hesapları, ayrıca hiçbir grupta olmayan hesaplar | `enter` düzenle, `n` yeni, `e` yeniden adlandır, `x` kaldır |
-| Folders | [`ccam folder`](/features/folder) kuralları ve burada geçerli olan kural | `n` burada bir hesap kullan, `enter` değiştir, `x` kaldır |
-| Extensions | [`ccam ext`](/features/ext) komutunun gösterdikleri, her uzantı bir kez ve geldiği gruplarla | `r` yeniden yükle |
+| Folders | [`ccam folder`](/features/folder) kuralları ve burada geçerli olan kural; klasöre sembolik bir bağlantı üzerinden ulaştığınızda da (yeni kurallar bağlantılar çözülmüş olarak saklanır) | `n` burada bir hesap kullan, `enter` değiştir, `x` kaldır |
+| Extensions | [`ccam ext`](/features/ext) komutunun gösterdikleri, her uzantı bir kez ve geldiği gruplarla; `off:` bir eklentinin açık olmadığı hesaplar, bir hesabın kendi sunucuları arasında yalnızca bu klasör için tuttukları, `This folder's project` ve hiçbir hesaba ait olmayan sorunlar | `r` yeniden yükle |
 | Health | [`ccam doctor`](/features/doctor) komutunun bildirdikleri, hesap başına bir kutu olarak (aşağıda) | `f` seçili kutuyu onarır, `F` hepsini onarır (`doctor --fix`), `↑`/`↓` kutular arasında geçer |
 
 `←`/`→` veya `Tab` sekmeler arasında geçer, `?` geçerli sekmenin tuşlarını listeler, `r` kısa önbelleği kullanmadan kullanımı yeniden sorgular, `q` veya `Esc` ise çıkar.
@@ -66,6 +66,8 @@ Kontrol paneli her açıldığında arka planda GitHub'a daha yeni bir ccam sür
 | `c` | Hesabın kısayol komutunu ayarlar veya kaldırır |
 | `x` | Hesabı kaldırır (önce, Hayır seçili olarak sorar) |
 
+**Team ve Enterprise koltukları.** Otomatik seçim (`ccam next`, `--fallback`, `ccam pick`, kontrol panelindeki `n` tuşu), aynı Claude Team veya Enterprise kuruluşunun koltukları arasında da geçiş yapar. Anthropic'in yardım merkezinde şöyle belirtilir: "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team planındaki her koltuk, adı belirli tek bir kişiye atanır ve onu yalnızca o kişi kullanabilir) ve "Users can't route their work through another user's account to use that user's remaining usage" (kullanıcılar, başka bir kullanıcının kalan kullanım hakkından yararlanmak için işlerini o kullanıcının hesabı üzerinden yürütemez) ([Team planları](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise planları](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) için de durum aynıdır). Bu nedenle otomatik seçimi koltuklar arasında kullanmak Anthropic'in koşullarını ihlal edebilir. Buna güvenmeden önce kuruluşunuza ve Anthropic'e danışın. Kişisel planlar (Pro, Max), [SSS'deki koşullar notunda](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) ele alınır.
+
 ## Health sekmesi
 
 Health sekmesi, açtığınızda [`ccam doctor`](/features/doctor) kontrollerini çalıştırır ve aynı görünümü çizer: her hesap için bir işaret içeren ilk satır, ardından hesap başına bir kutu. Bir kutudaki her satır kontrol edilen bir alandır; önce `Folder`, `Login` ve `Share links` gelir ve `✔` sorun yok, `ℹ` bilgi, `⚠` uyarı veya `✘` hata ile işaretlenir; böylece hangi hesabın nerede sorunu olduğunu hemen görürsünüz. Hiçbir hesaba ait olmayan bulgular bir `General` kutusuna girer.
@@ -73,25 +75,26 @@ Health sekmesi, açtığınızda [`ccam doctor`](/features/doctor) kontrollerini
 ```console
  ✘ personal   ⚠ work
 
- ╭─ ✘ personal · 3 problems ──────────────────────────────────────────────────╮
- │ ⚠ Folder       folder permissions are 755 (should be 0700)                 │
- │ ℹ              unknown entries (Claude Code layout may have changed):      │
- │                newthing                                                    │
- │ ⚠ Login        .credentials.json permissions are 644 (should be 0600)      │
- │ ✔              login valid (me@example.com)                                │
- │ ✘ Share links  /home/me/.local/share/ccam/profiles/personal/settings.json: │
- │                set to shared but is a real file, not a link                │
- ╰────────────────────────────────────────────────────────────────────────────╯
- ╭─ ⚠ work · 1 problem ───────────────────────────────────────────────────────╮
- │ ✔ Folder       OK                                                          │
- │ ⚠ Login        not logged in → `ccam login work`                           │
- │ ✔ Share links  share links OK                                              │
- ╰────────────────────────────────────────────────────────────────────────────╯
+ ╭─ ✘ personal · 3 problems ─────────────────────────────────────────────────╮
+ │ ⚠ Folder       folder permissions are 755 (should be 0700)                │
+ │ ℹ              unknown entries (ccam knows the folder layout of Claude    │
+ │                Code 2.1.309; it may have changed): newthing               │
+ │ ⚠ Login        .credentials.json permissions are 644 (should be 0600)     │
+ │ ✔              login valid (me@example.com, Claude Team · Acme)           │
+ │ ✘ Share links  /home/me/.local/share/ccam/profiles/personal/settings.json │
+ │                : set to shared but is a real file, not a link             │
+ │ ✔ Usage        usage lookup OK                                            │
+ ╰───────────────────────────────────────────────────────────────────────────╯
+ ╭─ ⚠ work · 1 problem ──────────────────────────────────────────────────────╮
+ │ ✔ Folder       OK                                                         │
+ │ ⚠ Login        not logged in → `ccam login work`                          │
+ │ ✔ Share links  share links OK                                             │
+ ╰───────────────────────────────────────────────────────────────────────────╯
 
  4 problems; f repairs the selected box, F all of them (ccam doctor --fix).
 ```
 
-`↑`/`↓` kutudan kutuya geçer ve seçili kutunun kenarlığı vurgu rengindedir. `f` yalnızca seçili kutuyu, `ccam doctor --fix` komutunun yapacağı şekilde onarır: bir hesabın kutusunda yalnızca o hesabı, `General` kutusunda ise hiçbir hesaba ait olmayan bulguları (eklenti yolları ve kısayollar) onarır; diğer tüm hesaplar yalnızca yeniden kontrol edilir. Önce sorar ve onarılacak bir şey olmayan bir kutu için yalnızca `nothing to repair in <name>` der. `F` her şeyi bir kerede, `ccam doctor --fix` gibi onarır; `r` yeniden kontrol eder.
+`↑`/`↓` kutudan kutuya geçer ve seçili kutunun kenarlığı vurgu rengindedir. `f` yalnızca seçili kutuyu, `ccam doctor --fix` komutunun yapacağı şekilde onarır: bir hesabın kutusunda yalnızca o hesabı, `General` kutusunda ise hiçbir hesaba ait olmayan bulguları (eklenti yolları ve kısayollar) onarır; diğer tüm hesaplar yalnızca yeniden kontrol edilir. Önce sorar (``Like `ccam doctor --fix`: missing links and group folders are made, and a real file where a link belongs is backed up first; where the group has its own copy, the account then sees the group's. Nothing is lost.``) ve onarılacak bir şey olmayan bir kutu için yalnızca `nothing to repair in <name>` der. `F` her şeyi bir kerede, `ccam doctor --fix` gibi onarır; `r` yeniden kontrol eder.
 
 ## Grupları değiştirme
 
@@ -109,7 +112,7 @@ Groups sekmesinde `Enter` düzenleyiciyi açar: solda öğeler, sağda hesaplar;
     2. No
 ```
 
-Grubun kopyasından farklı olan bir dosya için önce sorulur (grubunkini koru, benimkini kullan ya da birleştir). Ardından değişiklik, [`ccam group`](/features/share) ile aynı kodla arka planda çalışır: önce yapılandırma kaydedilir, her hesabın verisi sırayla taşınır ve orijinaller `.ccam-backup/` klasörüne gider. Çalışan bir hesabın verisini taşıyacak bir değişiklik, hesabın adıyla birlikte reddedilir.
+Grubun kopyasından farklı olan bir dosya için önce sorulur (grubunkini koru, benimkini kullan ya da birleştir). Ardından değişiklik, [`ccam group`](/features/share) ile aynı kodla arka planda çalışır: önce yapılandırma kaydedilir, her hesabın verisi sırayla taşınır ve orijinaller `.ccam-backup/` klasörüne gider; MCP paylaşımından ayrılan bir hesap grubun sunucularını kendi `.claude.json` dosyasında tutar. Çalışan bir hesabın verisini taşıyacak bir değişiklik, hesap plan açıkken başlatılmış olsa bile, hesabın adıyla birlikte reddedilir; başka bir ccam'in grup değişikliği yüzünden eskimiş bir plan ise `the groups changed while this plan waited; nothing was moved, make the change again` ile reddedilir. Başka bir ccam grupları değiştirirken yeni bir değişiklik, yeniden adlandırma veya kaldırma `another ccam is changing the groups right now` der; yarıda kalmış bir değişiklikten sonra ise Health sekmesindeki `F` (veya `ccam doctor --fix`) onu tamamlayana kadar beklerler.
 
 ## Hesap ekleme
 
@@ -124,9 +127,13 @@ Grubun kopyasından farklı olan bir dosya için önce sorulur (grubunkini koru,
 
 `Esc` bir adım geri gider; ilk adımda ise sihirbazı kapatır.
 
+## Hesap kaldırma
+
+`x` herhangi bir şey olmadan önce, Hayır seçili olarak sorar ve kaldırmanın ne yapacağını söyler: `It is logged out first (its login is revoked), then its folder goes to ccam's trash; the groups' shared files stay.` API anahtarlı bir hesap için iptal edilecek bir giriş yoktur; aynı girişi başka bir hesap tutuyorsa da oturum kapatılmaz. İçe aktarılmış bir hesap klasörünü korur: `It was imported, so its folder /home/me/.claude stays where it is: it leaves its groups first and keeps a copy of what they share, then ccam forgets it.`
+
 ## Renkler
 
-Renkler Claude Code'un terminal arayüzündeki rolleri izler; böylece ccam onun yanında yabancı durmaz. Grup adları, adlarından türetilen bir renk alır. ccam terminale arka planını sorar ve açık ya da koyu bir tema seçer. Temayı `config.toml` içinde kendiniz ayarlayın:
+Renkler Claude Code'un terminal arayüzündeki rolleri izler; böylece ccam onun yanında yabancı durmaz. Grup adları, adlarından türetilen bir renk alır. ccam terminale arka planını sorar ve açık ya da koyu bir tema seçer. Temayı `config.toml` dosyasının en üstünde, ilk `[[group]]`, `[[profile]]` veya `[[folder]]` satırının üstünde kendiniz ayarlayın:
 
 ```toml
 theme = 'dark'   # auto (default), dark, light, dark-daltonized, light-daltonized, dark-ansi, light-ansi
@@ -139,7 +146,9 @@ theme = 'dark'   # auto (default), dark, light, dark-daltonized, light-daltonize
 - Kontrol paneli komutlarla aynı işlevleri çağırır; bu yüzden her kural geçerlidir: veri taşınmadan önce planlar, çalışan hesaplar için reddetme, yedekler ve bir hesaptan hiçbir zaman çıkmayan giriş token'ları.
 - Kontrol panelinin kuru çalıştırması yoktur: ad verilmeden `ccam --dry-run`, bu klasörün hesabının nasıl başlayacağını yazdırır; bir hesapta `o` ise yalnızca o tek başlatma için bir kuru çalıştırma sunar.
 - Terminal, Claude Code başlamadan veya giriş açılmadan önce eski haline getirilir.
-- Bir iletişim kutusu için fazla küçük bir ekran önce sekmenin satırlarını gizler; satırlar kaydırılmak yerine `…` ile kesilir.
+- Bir iletişim kutusu için fazla küçük bir ekran önce sekmenin satırlarını gizler; satırlar kaydırılmak yerine `…` ile kesilir. Kısa bir ekranda ardından boş satırlar ve sekme açıklaması gider, böylece tuş satırı kalır. 40 sütunun veya 8 satırın altında kontrol paneli yalnızca `Too small: ccam needs 40x8 (now 36x7)` gösterir.
+- Bir değişiklik, kaldırma, güncelleme veya onarım uygulanırken `Ctrl+C` onu bekler: durum satırı `ccam quits when it is done.` der.
+- `U` ccam'i güncelledikten sonra, kontrol paneli bir hesap eklemekten veya girişten döndüğünde teklif yeniden gelmez.
 
 ## İlgili
 

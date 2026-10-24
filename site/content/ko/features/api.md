@@ -1,10 +1,10 @@
 ---
 title: API 키 계정
 description: ccam add --api는 Anthropic API나 게이트웨이용 API 키 계정을 추가합니다. 키는 실행할 때 변수나 명령에서 읽으며 저장하지 않습니다.
-updated: 2026-10-20
+updated: 2026-10-23
 order: 13
 translation: machine
-sourceHash: "a903c92f2c50"
+sourceHash: "232a71525e42"
 ---
 
 API 키 계정은 Claude 구독 로그인 대신 API 키로 Claude Code를 시작합니다. Anthropic API를 쓰거나, LiteLLM이나 OpenRouter 게이트웨이처럼 같은 Messages 형식을 쓰는 엔드포인트를 쓸 수 있습니다. ccam은 키를 저장하지 않습니다. 계정을 시작할 때마다 환경 변수나 비밀번호 관리자 같은 명령에서 키를 읽고, 그 Claude Code 프로세스에만 넘깁니다.
@@ -35,7 +35,7 @@ API 키 계정도 다른 계정처럼 그룹에 들어가며(기본은 `default`
 | --- | --- | --- |
 | `--api` | 로그인하는 대신 API 키 계정을 추가합니다 | 꺼짐 |
 | `--key-from env:NAME` | 환경 변수 `NAME`에서 키를 읽습니다 | |
-| `--key-from command:COMMAND` | `COMMAND`를 실행하고(`sh -c`, Windows에서는 `cmd /C`) 출력한 첫 줄을 씁니다 | |
+| `--key-from command:COMMAND` | `COMMAND`를 실행하고(`sh -c`로, Windows에서는 따옴표를 그대로 둔 채 `cmd /d /s /c "…"` 안에 입력한 것처럼) 출력한 첫 줄을 씁니다 | |
 | `--base-url <url>` | 엔드포인트(`ANTHROPIC_BASE_URL`) | Anthropic API |
 | `--auth api-key\|bearer` | 키를 `ANTHROPIC_API_KEY`(`x-api-key`)로 보내거나, `ANTHROPIC_AUTH_TOKEN`(`Authorization: Bearer`, 게이트웨이는 보통 이쪽을 요구)으로 보냅니다 | `api-key` |
 | `--model <model>` | 모델(`ANTHROPIC_MODEL`) | Claude Code의 기본값 |
@@ -66,10 +66,17 @@ model = 'claude-sonnet-5-5'
 
 ## 안전장치와 예외 상황
 
-- 키는 `config.toml`, 캐시, 로그 어디에도 기록되지 않으며, `ccam --dry-run gw`는 키를 읽지 않습니다. 드라이 런에서는 `command:` 소스를 실행하지 않습니다.
+- 키는 `config.toml`, 캐시, 로그 어디에도 기록되지 않으며, `ccam --dry-run gw`는 키를 읽지 않습니다. 드라이 런에서는 `command:` 소스를 실행하지 않습니다. 대신 엔드포인트, 모델, 키를 어디서 가져오는지 보여 줍니다.
+
+  ```console
+  $ ccam --dry-run gw -p hi
+  CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/gw CCAM_PROFILE=gw ANTHROPIC_BASE_URL=https://llm.example.com ANTHROPIC_MODEL=claude-sonnet-5-5 ANTHROPIC_AUTH_TOKEN="$(pass show llm/gateway-key | head -n 1)" /home/me/.local/bin/claude -p hi
+  ```
+
+  시작할 때 지우는 물려받은 변수는 맨 앞에 `env -u <name>`으로 표시됩니다. `env:` 소스의 변수가 비어 있으면 드라이 런도 실제 시작과 마찬가지로 실패합니다.
 - `ccam add --api`는 `env:` 소스를 바로 확인하고 변수가 비어 있으면 경고합니다. `command:` 소스는 시작할 때 처음 실행됩니다.
 - API 키 계정에는 로그인이 없으므로 `ccam login`과 `ccam logout`은 거부합니다. `ccam doctor`는 엔드포인트와 키 소스를 보여 주고, `env:` 변수가 비어 있으면 경고합니다.
-- `ccam usage`는 이 계정을 `API`로 표시합니다. API 키에는 비교할 5시간·주간 한도가 없으므로, `ccam next --auto`, `--fallback`, `ccam pick`은 구독 계정 중에서만 고릅니다.
+- `ccam usage`는 이 계정을 `no limits (API)`로 표시합니다. API 키에는 비교할 5시간·주간 한도가 없으므로, `ccam next --auto`, `--fallback`, `ccam pick`은 구독 계정 중에서만 고릅니다.
 - `env` 블록이나 `apiKeyHelper`가 들어 있는 공유 `settings.json`은 API 키 계정을 포함해 그룹의 모든 계정에 적용됩니다. 제공자 설정은 공유 설정에 넣지 말거나, API 키 계정을 `settings`를 공유하지 않는 그룹에 두세요.
 
 ## 관련 문서

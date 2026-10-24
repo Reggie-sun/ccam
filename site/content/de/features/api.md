@@ -1,10 +1,10 @@
 ---
 title: API-Schlüssel-Konten
 description: "ccam add --api legt ein Konto mit API-Schlüssel für die API von Anthropic oder ein Gateway an; der Schlüssel kommt beim Start aus Variable oder Befehl."
-updated: 2026-10-20
+updated: 2026-10-23
 order: 13
 translation: machine
-sourceHash: "a903c92f2c50"
+sourceHash: "232a71525e42"
 ---
 
 Ein API-Schlüssel-Konto startet Claude Code mit einem API-Schlüssel statt mit der Anmeldung eines Claude-Abos: die API von Anthropic oder ein Endpunkt, der dasselbe Messages-Format spricht, etwa ein LiteLLM- oder OpenRouter-Gateway. ccam speichert den Schlüssel nicht. Es liest ihn bei jedem Start des Kontos aus einer Umgebungsvariable oder über einen Befehl, etwa einen Passwortmanager, und gibt ihn nur an diesen Claude Code-Prozess weiter.
@@ -35,7 +35,7 @@ Ein API-Schlüssel-Konto tritt Gruppen bei wie jedes andere Konto (standardmäß
 | --- | --- | --- |
 | `--api` | Ein API-Schlüssel-Konto hinzufügen, statt sich anzumelden | aus |
 | `--key-from env:NAME` | Den Schlüssel aus der Umgebungsvariable `NAME` lesen | |
-| `--key-from command:COMMAND` | `COMMAND` ausführen (mit `sh -c` oder unter Windows `cmd /C`) und die erste ausgegebene Zeile verwenden | |
+| `--key-from command:COMMAND` | `COMMAND` ausführen (mit `sh -c` oder unter Windows wie eingegeben in `cmd /d /s /c "…"`, Anführungszeichen bleiben erhalten) und die erste ausgegebene Zeile verwenden | |
 | `--base-url <url>` | Der Endpunkt (`ANTHROPIC_BASE_URL`) | Die API von Anthropic |
 | `--auth api-key\|bearer` | Den Schlüssel als `ANTHROPIC_API_KEY` (`x-api-key`) oder als `ANTHROPIC_AUTH_TOKEN` (`Authorization: Bearer`, was Gateways meist erwarten) senden | `api-key` |
 | `--model <model>` | Das Modell (`ANTHROPIC_MODEL`) | Standard von Claude Code |
@@ -66,10 +66,17 @@ Konten mit Abo-Anmeldung behalten wie bisher die Umgebung, die sie erben. In ein
 
 ## Sicherheit und Sonderfälle
 
-- Der Schlüssel wird nie in `config.toml`, einen Cache oder ein Protokoll geschrieben, und `ccam --dry-run gw` liest ihn nicht: Eine `command:`-Quelle wird bei einem Probelauf nicht ausgeführt.
+- Der Schlüssel wird nie in `config.toml`, einen Cache oder ein Protokoll geschrieben, und `ccam --dry-run gw` liest ihn nicht: Eine `command:`-Quelle wird bei einem Probelauf nicht ausgeführt. Der Probelauf zeigt stattdessen den Endpunkt, das Modell und die Herkunft des Schlüssels:
+
+  ```console
+  $ ccam --dry-run gw -p hi
+  CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/gw CCAM_PROFILE=gw ANTHROPIC_BASE_URL=https://llm.example.com ANTHROPIC_MODEL=claude-sonnet-5-5 ANTHROPIC_AUTH_TOKEN="$(pass show llm/gateway-key | head -n 1)" /home/me/.local/bin/claude -p hi
+  ```
+
+  Eine geerbte Variable, die der Start entfernt, erscheint am Anfang als `env -u <name>`. Bei einer `env:`-Quelle, deren Variable leer ist, schlägt der Probelauf fehl, wie es der Start täte.
 - `ccam add --api` prüft eine `env:`-Quelle sofort und warnt, wenn die Variable leer ist; eine `command:`-Quelle wird erst beim Start ausgeführt.
 - `ccam login` und `ccam logout` lehnen ein API-Schlüssel-Konto ab, da es keine Anmeldung hat. `ccam doctor` zeigt seinen Endpunkt und seine Schlüsselquelle und warnt, wenn eine `env:`-Variable leer ist.
-- `ccam usage` zeigt dafür `API`. `ccam next --auto`, `--fallback` und `ccam pick` wählen nur unter Abo-Konten, weil ein API-Schlüssel kein 5-Stunden- oder Wochenlimit zum Vergleichen hat.
+- `ccam usage` zeigt dafür `no limits (API)`. `ccam next --auto`, `--fallback` und `ccam pick` wählen nur unter Abo-Konten, weil ein API-Schlüssel kein 5-Stunden- oder Wochenlimit zum Vergleichen hat.
 - Ein geteiltes `settings.json` mit einem `env`-Block oder `apiKeyHelper` gilt für jedes Konto der Gruppe, API-Schlüssel-Konten eingeschlossen. Halte Anbietereinstellungen aus geteilten Einstellungen heraus, oder nimm das API-Schlüssel-Konto in eine Gruppe ohne `settings` auf.
 
 ## Verwandte Themen

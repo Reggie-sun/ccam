@@ -1,10 +1,10 @@
 ---
 title: Berbagi dengan grup
 description: Grup ccam membagikan item pilihan di antara akun-akunnya melalui satu folder; ccam group memindahkan data dengan rencana, cadangan, dan pilihan konflik.
-updated: 2026-10-20
+updated: 2026-10-23
 order: 4
 translation: machine
-sourceHash: "0c0338362ba2"
+sourceHash: "e4f05b0fd572"
 ---
 
 Setiap akun memiliki foldernya sendiri, tetapi sebagian besar isinya tidak perlu terpisah. Sebuah **grup** menentukan apa yang dibagikan dan oleh siapa: setiap akun dalam grup menautkan item-item itu ke satu folder, `~/.local/share/ccam/groups/<group>/`, sehingga semuanya membaca dan menulis salinan yang sama. Token login tidak pernah dibagikan.
@@ -66,12 +66,13 @@ $ ccam group set default --add history
 Plan (paths in /home/me/.local/share/ccam):
 personal: +history (group default)
   move     projects, history.jsonl: profiles/personal → groups/default (first content of the group)
-  link     projects, history.jsonl: profiles/personal → groups/default
+  link     projects, history.jsonl, file-history, tasks, paste-cache: profiles/personal → groups/default
 work: +history (group default)
   merge    new files in projects: profiles/work → groups/default
   conflict profiles/work/history.jsonl ↔ groups/default/history.jsonl: merge by line
-  back up  projects, history.jsonl: profiles/work → profiles/work/.ccam-backup/20261020-153012
-  link     projects, history.jsonl: profiles/work → groups/default
+  back up  projects, history.jsonl: profiles/work → profiles/work/.ccam-backup/20261023-213057
+  link     projects, history.jsonl, file-history, tasks, paste-cache: profiles/work → groups/default
+  Note: projects: 1 file differs from the group's copy (-home-me-code-app/s1.jsonl); the group's is kept, the account's stays in profiles/work/.ccam-backup/20261023-213057/projects
 Proceed? [y/N]
 ```
 
@@ -98,7 +99,7 @@ Item yang tidak dibagikan oleh grup mana pun dari akun tersebut tetap berada di 
 | `ccam group add <group> --items <items> [--members <accounts>]` | membuat grup; item milik akun-akunnya dipindahkan ke dalamnya |
 | `ccam group set <group> --add <items> \| --remove <items> \| --items <items>` | mengubah apa yang dibagikan grup, untuk setiap akun di dalamnya |
 | `ccam group join <group> <account>...` | memasukkan akun ke grup |
-| `ccam group leave <group> <account>...` | mengeluarkan akun; masing-masing menyimpan salinan |
+| `ccam group leave <group> <account>...` | mengeluarkan akun; masing-masing menyimpan salinan, termasuk server MCP |
 | `ccam group rename <group> <new-name>` | mengganti nama hanya di konfigurasi |
 | `ccam group remove <group> [--leave]` | menghapus grup |
 
@@ -106,7 +107,7 @@ Item yang tidak dibagikan oleh grup mana pun dari akun tersebut tetap berada di 
 | --- | --- | --- |
 | `--from <account>` | `add`, `set`: akun yang salinannya masuk ke grup lebih dulu | akun default, lalu menurut nomor |
 | `--replace` | `join`: keluar lebih dulu dari grup yang membagikan item yang sama | nonaktif |
-| `--fresh` | akun yang berhenti membagikan sebuah item dimulai tanpa item itu, bukan dengan salinannya | nonaktif |
+| `--fresh` | akun yang berhenti membagikan sebuah item dimulai tanpa item itu, bukan dengan salinannya (folder yang diimpor tetap menyimpan salinan) | nonaktif |
 | `--leave` | `remove`: mengeluarkan akun-akun grup terlebih dahulu | diperlukan jika grup memiliki akun |
 | `--prefer <group\|mine\|merge>` | cara memutuskan konflik | bertanya; dengan `--yes`, default setiap file |
 | `-y`, `--yes` | berjalan tanpa bertanya; konflik mengikuti `--prefer` | nonaktif |
@@ -128,10 +129,10 @@ Perubahan dikerjakan pada salinan konfigurasi:
 
 1. Perintah mengubah salinan itu (`AddGroup`, `SetGroupItems`, `JoinGroup` …), yang memeriksa aturan-aturannya.
 2. `internal/group` membandingkan yang lama dan yang baru dan, untuk setiap akun yang itemnya berubah, menyusun rencana dengan `share.Build`. Rencana disusun satu per satu, dan masing-masing melihat apa yang akan dimasukkan rencana sebelumnya ke folder grup, sehingga hanya akun pertama yang memindahkan salinannya ke dalam. Salinan pertama berasal dari folder grup jika folder itu sudah memilikinya, lalu dari `--from`, lalu dari akun default, lalu dari akun lain menurut nomor.
-3. ccam menolak jika salah satu akun itu sedang berjalan, dan di Windows tanpa Mode Pengembang jika sebuah file memerlukan tautan.
+3. ccam menolak jika salah satu akun itu sedang berjalan, bagaimanapun Claude Code dijalankan (``work is running; quit Claude Code there first, then change the groups (`ccam agents` lists the sessions)``), dan di Windows tanpa Mode Pengembang jika sebuah file memerlukan tautan.
 4. Konflik diputuskan, lewat pertanyaan atau lewat `--prefer`, rencana ditampilkan, dan ccam bertanya.
-5. Konfigurasi baru disimpan sebelum apa pun dipindahkan. Jika sebuah langkah berhenti di tengah jalan, `ccam doctor --fix` dan menjalankan ulang perintah akan menyusun rencananya menuju grup yang tersimpan dan menyelesaikan perubahan.
-6. Rencana dijalankan secara berurutan. Setiap langkah memindahkan data ke grup atau ke folder cadangan; tidak ada yang dihapus.
+5. Tepat sebelum menyimpan, ccam memeriksa lagi: akun yang dimulai selagi pertanyaan menunggu menghentikan perubahan, begitu pula perubahan grup yang sama oleh ccam lain (`the groups changed while this plan waited; nothing was moved, make the change again`). Konfigurasi baru disimpan sebelum apa pun dipindahkan, dan perubahan itu dicatat di `~/.local/state/ccam/group-change.json`. Jika sebuah langkah berhenti di tengah jalan, catatan itu tetap ada: `ccam doctor --fix` menyelesaikan perubahan sesuai urutannya, dengan jawaban yang sudah Anda berikan, termasuk langkah-langkah MCP, dan sampai saat itu tidak ada perubahan grup lain yang dimulai (``the last change of groups stopped halfway; finish it with `ccam doctor --fix` first``).
+6. Langkah-langkah MCP dijalankan lebih dulu. Saat akun mengeluarkan ekstensi dari sebuah grup, daftar plugin grup diarahkan ke folder grup di mana pun path-nya melewati folder sebuah akun (`group plugin lists:` di rencana). Lalu rencana dijalankan secara berurutan. Setiap langkah memindahkan data ke grup atau ke folder cadangan; hanya file yang sudah dimiliki grup persis sama byte demi byte yang dibuang alih-alih dicadangkan.
 
 `share.Layout` adalah daftar izin berisi path yang dicakup setiap item. Apa pun yang tidak ada di dalamnya tidak akan pernah sampai ke grup. `share.Never` menyebut `.credentials.json` dan `.claude.json`, dan `Build` berhenti dengan galat internal jika salah satunya muncul di tata letak. Item `mcp` tidak memiliki path: daftar server berada di dalam `.claude.json`, sehingga [pembagian MCP](/features/mcp) bekerja melalui `mcp.json` milik grup.
 
@@ -139,19 +140,19 @@ Inilah yang terjadi pada satu folder, `projects/`, saat `side` mulai membagikan 
 
 <!-- motion:share-on -->
 
-Jika grup belum memiliki apa pun di path itu, akun tersebut adalah yang pertama membagikannya dan foldernya dipindahkan ke sana apa adanya. Jika tidak, setiap file yang belum dimiliki grup dipindahkan ke grup, dan file yang ada di kedua sisi tetap di folder akun, sehingga versi milik grup dipertahankan. Folder akun kemudian masuk ke `.ccam-backup/<time>/` di dalam folder akun, dan sebuah tautan menggantikan posisinya. File percakapan diberi nama sesuai ID sesinya, sehingga riwayat dari beberapa akun dapat digabungkan tanpa bentrok. Registri `plugins/` menyimpan path absolut melalui folder akun; ccam mengarahkannya ke folder grup dan menggabungkan entri akun ke dalam registri yang sudah dimiliki grup.
+Jika grup belum memiliki apa pun di path itu, akun tersebut adalah yang pertama membagikannya dan foldernya dipindahkan ke sana apa adanya. Jika tidak, setiap file yang belum dimiliki grup dipindahkan ke grup, dan file yang ada di kedua sisi tetap di folder akun, sehingga versi milik grup dipertahankan. File yang identik dengan milik grup dibuang, dan rencana menyebutkan file yang berbeda (`Note: projects: 1 file differs from the group's copy (…); the group's is kept, the account's stays in …`). Folder akun kemudian masuk ke `.ccam-backup/<time>/` di dalam folder akun, dan sebuah tautan menggantikan posisinya. Jika entri milik grup itu sendiri berupa tautan ke entri milik akun yang bergabung, isi akun masuk ke grup menggantikannya. File percakapan diberi nama sesuai ID sesinya, sehingga riwayat dari beberapa akun dapat digabungkan tanpa bentrok. Registri `plugins/` menyimpan path absolut melalui folder akun; ccam mengarahkannya ke folder grup dan menggabungkan entri akun ke dalam registri yang sudah dimiliki grup.
 
 Keluar dari grup membalik tautannya:
 
 <!-- motion:share-off -->
 
-ccam hanya menghapus tautan jika tautan itu mengarah ke dalam folder grup, lalu menyalin isi grup saat ini ke akun. Dengan `--fresh`, penyalinan dilewati. Grup tetap menyimpan isinya untuk akun-akun lain. Akun yang memindahkan sebuah item ke grup yang foldernya masih kosong membawa salinan dari apa yang dilihatnya, sehingga file-filenya tetap ada; server MCP ikut terbawa dengan cara yang sama. Akun yang berhenti membagikan MCP kehilangan server yang sebelumnya disalin ccam ke `.claude.json` miliknya (cadangannya disimpan), karena server itu berasal dari grup.
+ccam lebih dulu menyalin isi grup saat ini ke `.ccam-backup/incomplete-<name>` di folder akun, dan baru mengganti tautan setelah salinannya lengkap, sehingga salinan yang terhenti membiarkan tautan tetap di tempatnya dan `ccam doctor --fix` menyalin lagi (rencana penyelesaian semacam itu menampilkan `restore <entry>: … (copied back from the group before a stop)`). ccam hanya menghapus tautan jika tautan itu masih mengarah ke dalam folder grup seperti saat rencana dibuat; path yang berubah sejak itu, seperti file asli di tempat tautan tadinya berada, dibiarkan apa adanya dan perubahan berhenti. Dengan `--fresh`, penyalinan dilewati. Grup tetap menyimpan isinya untuk akun-akun lain. Akun yang memindahkan sebuah item ke grup yang foldernya masih kosong membawa salinan dari apa yang dilihatnya, sehingga file-filenya tetap ada; salinan itu disiapkan di `<group>/.ccam-incomplete-<name>` sampai lengkap. Akun yang berhenti membagikan MCP mempertahankan server grup: server itu masuk ke `.claude.json` miliknya sendiri (cadangannya disimpan), di samping server miliknya sendiri dengan nama yang sama, yang tetap ada. Dengan `--fresh`, rencana justru mencantumkan server yang berhenti dimuat. Bergabung lagi menghapus salinan yang belum diubah siapa pun. Keluar dari `extensions` juga mengarahkan daftar plugin grup ke folder grup di tempat path-nya melewati folder akun yang keluar; bagi akun lain artinya tetap sama.
 
 Satu file yang ada di kedua sisi dengan isi berbeda adalah konflik:
 
 <!-- motion:share-conflict -->
 
-`history.jsonl` menawarkan `merge by line`, `keep group`, dan `use mine`, dengan penggabungan di urutan pertama. File `.json` lain menawarkan `keep group`, `use mine`, dan `merge JSON`. Selain itu menawarkan `keep group` dan `use mine`. `merge JSON` menggabungkan objek secara rekursif, menyatukan array tanpa duplikat, dan mempertahankan nilai milik grup jika kedua sisi mengatur kunci yang sama secara berbeda, sehingga akun lain tidak melihat perubahan. Setiap pilihan kecuali `keep group` terlebih dahulu menyimpan salinan milik grup ke `.ccam-backup/<time>/group/` milik akun. File milik Anda sendiri selalu masuk ke cadangan.
+Anda memilih untuk file tunggal seperti `settings.json`; di dalam folder, salinan milik grup dipertahankan, dan rencana menyebutkan file yang berbeda. `history.jsonl` menawarkan `merge by line`, `keep group`, dan `use mine`, dengan penggabungan di urutan pertama. File `.json` lain menawarkan `keep group`, `use mine`, dan `merge JSON`. Selain itu menawarkan `keep group` dan `use mine`. `merge JSON` menggabungkan objek secara rekursif, menyatukan array tanpa duplikat, dan mempertahankan nilai milik grup jika kedua sisi mengatur kunci yang sama secara berbeda, sehingga akun lain tidak melihat perubahan. Setiap pilihan kecuali `keep group` terlebih dahulu menyimpan salinan milik grup ke `.ccam-backup/<time>/group/` milik akun. File milik Anda sendiri selalu masuk ke cadangan.
 
 Pada setiap peluncuran, `share.Check` membandingkan setiap path di tata letak dengan grup-grup akun hanya menggunakan `lstat` dan `readlink`. Tautan yang hilang langsung dibuat. File asli di tempat yang seharusnya berisi tautan, tautan ke tempat yang salah, atau tautan yang sudah usang akan menghentikan peluncuran dan mengarahkan ke `ccam doctor --fix`.
 
@@ -163,14 +164,14 @@ Pada setiap peluncuran, `share.Check` membandingkan setiap path di tata letak de
 
 ### Di Windows
 
-Windows hanya membuat tautan simbolik dalam Mode Pengembang (Settings > System > For developers) atau untuk administrator. Tanpa hak itu, folder bersama menjadi directory junction, yang berfungsi sama bagi Claude Code. File bersama (`settings.json`, `CLAUDE.md`, `history.jsonl`) hanya bisa berupa tautan simbolik, jadi perubahan grup yang memerlukannya ditolak sebelum apa pun dipindahkan.
+Windows hanya membuat tautan simbolik dalam Mode Pengembang (Settings > System > For developers) atau untuk administrator. Tanpa hak itu, folder bersama menjadi directory junction, yang berfungsi sama bagi Claude Code. File bersama (`settings.json`, `CLAUDE.md`, `history.jsonl`) hanya bisa berupa tautan simbolik, jadi perubahan grup yang memerlukannya ditolak sebelum apa pun dipindahkan. Karena alasan yang sama, `ccam add` pertama di sana membuat grup `default` hanya dengan `mcp` dan `extensions` serta memberitahukannya, dan `ccam add --group` ke grup yang membagikan pengaturan, memori, atau riwayat ditolak.
 
 ## Keamanan dan kasus khusus
 
-- **Akun yang sedang berjalan.** Perubahan ditolak selama Claude Code berjalan sebagai salah satu akun yang dipindahkannya, karena sesi terus menulis ke file-file itu. Keluar dan bergabung hanya menyangkut akun yang disebutkan. `--dry-run` tetap menampilkan rencana.
+- **Akun yang sedang berjalan.** Perubahan ditolak selama Claude Code berjalan sebagai salah satu akun yang dipindahkannya, karena sesi terus menulis ke file-file itu, entah ccam yang menjalankannya atau bukan (`claude` biasa, IDE, sesi latar belakang). Pemeriksaan diulang tepat sebelum menyimpan. Keluar dan bergabung hanya menyangkut akun yang disebutkan; keluar dari `extensions` juga menulis ulang path di daftar plugin grup, tanpa mengubah artinya bagi akun lain. `--dry-run` tetap menampilkan rencana.
 - **Cadangan.** Setiap rencana mendapatkan folder `.ccam-backup/<time>/` sendiri di folder akun. ccam tidak pernah menghapusnya.
 - **Tautan buatan Anda sendiri.** Jika sebuah path sudah berupa tautan yang Anda buat, misalnya ke repositori dotfiles, dan grup masih kosong, ccam menyalin target tautan itu ke grup dan memindahkan tautannya sendiri ke cadangan. Targetnya tidak disentuh.
-- **Folder yang diimpor.** Akun yang didaftarkan di tempatnya dengan `ccam import` (seperti `~/.claude`) berubah di tempatnya, sehingga `claude` biasa juga melihat perubahan itu; rencana menyebutkannya.
+- **Folder yang diimpor.** Akun yang didaftarkan di tempatnya dengan `ccam import` (seperti `~/.claude`) berubah di tempatnya, sehingga `claude` biasa juga melihat perubahan itu; rencana menyebutkannya. Saat keluar dari grup, akun itu selalu menyimpan salinan, juga dengan `--fresh`, dan `ccam remove` mengeluarkannya dari grup-grupnya dengan cara itu sebelum melupakan akun tersebut. File yang dibagikannya berada di folder grup selama akun itu ada di grup, jadi hapus akun itu (atau keluar dari grup-grupnya) sebelum Anda menghapus `~/.local/share/ccam`.
 - **Dua akun di satu folder.** Akun yang berbagi riwayat menulis ke file yang sama. Saat akun kedua dimulai di folder tempat satu akun sudah berjalan, ccam memperingatkan dan bertanya.
 - **Suntingan manual.** Anggota yang bukan akun diabaikan dan dilaporkan oleh `ccam doctor`. Nama `local`, `on`, `off`, dan `none` tidak bisa dipakai sebagai nama grup.
 

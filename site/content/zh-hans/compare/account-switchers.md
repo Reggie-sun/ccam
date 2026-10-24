@@ -1,10 +1,10 @@
 ---
 title: ccam 与其他 Claude Code 账号切换工具对比
 description: ccam 与 claude-swap、CCS、clausona、clauth、CAAM、cux 等 Claude Code 账号切换工具的对比，以及哪种方式适合哪种用途。
-updated: 2026-10-21
+updated: 2026-10-24
 order: 2
 translation: machine
-sourceHash: "c74be64d2978"
+sourceHash: "6d08203f1ea6"
 ---
 
 切换 Claude Code 账号的工具采用两种方式之一。大多数工具在同一个 `~/.claude` 文件夹中替换登录信息，所以同一时间只有一个账号处于活动状态。另一些工具（包括 ccam）用 `CLAUDE_CONFIG_DIR` 为每个账号提供单独的文件夹，所以每个账号都保持登录状态，并且可以同时运行多个账号。ccam 还提供共享的设置和 MCP 服务器，并能在另一个账号的文件夹中继续对话。
@@ -54,7 +54,7 @@ ccswap 是 claude-swap 的一个分支，还能管理 Codex 的登录。[claude-
 
 ccam 从不把 Claude 的登录信息从一个地方复制到另一个地方。每个账号的登录信息都留在自己的文件夹中，在 macOS 上则留在该文件夹专属的钥匙串项目中，由 Claude Code 负责续期。不存在会失去同步的保存副本。用 `ccam import` 注册的现有 `~/.claude` 继续使用普通 `claude` 所用的钥匙串项目，所以无论用哪种方式启动，都保持登录。
 
-只有在你运行 `ccam usage --refresh` 时，ccam 才会自己续期过期的令牌。它会先加锁，并在该账号正在运行时拒绝续期，所以绝不会在活动会话底下轮换令牌。
+只有在你运行 `ccam usage --refresh` 时，ccam 才会自己续期过期的令牌。它会先加锁；只要该账号正在运行，无论 Claude Code 是怎样启动的（包括后台会话及其守护进程），或者 Claude Code 自己正在续期该登录，它都会拒绝续期，所以绝不会在活动会话底下轮换令牌。
 
 ### 你和 Claude Code 之间没有任何东西在运行
 
@@ -66,19 +66,21 @@ ccam 读取一个文件，检查它的链接，然后用 `claude` 替换自身�
 
 MCP 服务器、`settings.json`、`CLAUDE.md`、扩展（agents、commands、skills、插件）和对话历史是五个独立的项目。组指定它共享的项以及其中的账号，所以两个工作账号可以在 `work` 组中共享历史记录，个人账号保留自己的历史记录，而三个账号都通过 `default` 使用同样的 MCP 服务器。`ccam group set work --add memory` 会在一个计划中移动该组的所有账号；[仪表盘](/features/dashboard)用复选框完成同样的操作，并把账号已经从另一个组获得的项显示为灰色。
 
-- MCP 服务器在启动时通过 `--mcp-config` 传入，所以默认情况下 ccam 从不编辑 `.claude.json`，也就是 Claude Code 运行时会改写的那个文件。`ccam mcp add` 一次就能为整个组添加一个服务器。
+- MCP 服务器在启动时通过 `--mcp-config` 传入，所以默认情况下，启动时不会改动 `.claude.json`，也就是 Claude Code 运行时会改写的那个文件。ccam 只在明确说明的步骤中写入该文件，并且会在 Claude Code 的锁下进行、先做备份：在询问后为 Remote Control 写入、在账号退出或重新加入 MCP 共享时写入，以及执行 `ccam mcp import` 时写入。`ccam mcp add` 一次就能为整个组添加一个服务器。
 - 其他项目是指向组文件夹的链接，所以在一个账号中做的修改会立即出现在其他账号中。启动时不复制任何东西。
 - 登录信息、`.claude.json` 和运行状态从不共享。
 
 ### 每项更改都先展示并备份
 
-`ccam group` 和 `ccam migrate` 会先打印计划，并在移动任何东西之前征求确认。当某个文件在账号和组之间不同时，由你选择：保留组的版本、使用你的版本，或者合并 JSON。原始文件放到 `.ccam-backup/<time>/`，被移除账号的文件夹放进回收文件夹，文件通过一次重命名完成替换，所以写入中断时旧文件仍然保留。`--dry-run` 会显示启动、共享、迁移、快捷命令、更新和修复将做什么。`ccam doctor --fix` 会修复损坏的链接和权限。
+`ccam group` 和 `ccam migrate` 会先打印计划，并在移动任何东西之前征求确认。当某个文件在账号和组之间不同时，由你选择：保留组的版本、使用你的版本，或者合并 JSON；对于文件夹内部，保留组的副本，计划会列出内容不同的文件。原始文件放到 `.ccam-backup/<time>/`，被移除的账号会先退出登录，其文件夹放进回收文件夹，文件通过一次重命名完成替换，所以写入中断时旧文件仍然保留。`--dry-run` 会显示启动、共享、迁移、快捷命令、更新和修复将做什么。`ccam doctor --fix` 会修复损坏的链接和权限。
 
 ### 在下一个账号中继续同一个对话
 
 `ccam next --auto --continue` 会同时查询所有账号的用量，打开余量最多的账号并继续对话。共享历史时，这就是同一个对话；不共享时，Claude Code 会把它复制到新账号中（`--resume <file> --fork-session`），ccam 会告诉你第一次回复要重新读取多少 token。当用量限制使会话停止时，ccam 插件的钩子会显示一条通知，`/ccam:switch` 会把对话交接过去。何时切换由你决定；没有任何东西在后台监视你的用量，自动选择也只在同一个组织内进行，所以公司的对话绝不会意外落到私人账号上。账号用量达到 90% 时，状态栏会提示这个命令。
 
 脚本无法等你操作，所以 `ccam --fallback work -p "…"` 会替它们切换：当账号达到限制时，同一个命令会以余量最多的账号重新运行，并且只打印最终完成的那次运行的输出。不是用量限制造成的失败会原样传递。对于并行任务，`ccam pick` 会给每个任务分配一个还有余量的不同账号；当没有账号还有余量时，两者都以退出码 75 退出。
+
+**Team 和 Enterprise 席位。** 自动选择（`ccam next`、`--fallback`、`ccam pick`、仪表盘中的 `n`）也会在同一个 Claude Team 或 Enterprise 组织的席位之间切换。Anthropic 帮助中心关于 [Team 套餐](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)的说明写道："Each seat on a Team plan is assigned to one named individual, and only that person may use it"（Team 套餐的每个席位都分配给一位指定的个人，只有此人可以使用），以及 "Users can't route their work through another user's account to use that user's remaining usage"（用户不能通过另一位用户的账号完成自己的工作，以使用该用户剩余的用量）；关于 [Enterprise 套餐](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)的说明也是如此。因此，在席位之间使用自动选择可能违反 Anthropic 的条款。在依赖这项功能之前，请先向你所在的组织和 Anthropic 确认。个人套餐（Pro、Max）的情况请参见[常见问题中关于条款的说明](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)。
 
 ### 每个文件夹使用合适的账号
 
@@ -91,7 +93,7 @@ ccam 是一个约 10 MB 的静态二进制文件，无需安装任何运行时�
 ## 其他工具做得更多的地方
 
 - claude-swap、clauth、cux、CAAM 和 CCSwitcher 可以在账号超过用量阈值时自行切换正在运行的交互式会话。ccam 用 `--fallback` 切换 `-p` 运行，交互式会话则留给你，并在达到限制时发出通知、提供 `/ccam:switch`。
-- 在未开启开发人员模式的 Windows 上，ccam 可以共享文件夹，但无法共享 `settings.json` 这样的单个文件；claude-swap 和 CCS 在这种情况下会改为复制它们。
+- 在未开启开发人员模式的 Windows 上，ccam 可以共享文件夹，但无法共享 `settings.json` 这样的单个文件（此时第一次 `ccam add` 只共享 MCP 服务器和扩展）；claude-swap 和 CCS 在这种情况下会改为复制它们。
 - CCSwitcher、Claude Switcher 和 claude-swap 会在 macOS 菜单栏中显示用量。
 - CCS、clausona、CAAM、clauth、ccswap 和 Claude Switcher 还能管理 Codex 和其他编程代理。
 - clausona 还能按账号开启或关闭扩展（ccam 的 `ccam ext` 只是显示它们），记录本地的令牌费用，并提供在 tmux 等终端中运行一批并行任务的 Claude Code 插件。

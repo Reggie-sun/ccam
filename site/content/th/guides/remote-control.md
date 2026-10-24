@@ -1,10 +1,10 @@
 ---
 title: การใช้ Remote Control กับ ccam
 description: เริ่ม Remote Control ของ Claude Code ในชื่อบัญชีใดก็ได้ด้วย ccam <name> rc ดูตัวเลือกที่มีผล เหตุที่ ccam เสนอคัดลอกเซิร์ฟเวอร์ MCP ที่ใช้ร่วมกัน และการแก้ปัญหา
-updated: 2026-10-20
+updated: 2026-10-23
 order: 4
 translation: machine
-sourceHash: "5f0b90ea53d6"
+sourceHash: "3e17d89f98c8"
 ---
 
 `ccam work rc` เริ่ม Remote Control ของ Claude Code ในชื่อบัญชี `work` คุณจึงควบคุมเซสชันบนคอมพิวเตอร์เครื่องนี้ได้จาก claude.ai/code หรือแอป Claude บนมือถือ คำสั่งนี้ทำงานเหมือน `claude rc` โดยต่างกันเพียงข้อเดียว: หากบัญชีใช้เซิร์ฟเวอร์ MCP ร่วมกัน ccam จะถามหนึ่งครั้งว่าจะคัดลอกเซิร์ฟเวอร์เหล่านั้นลงใน `.claude.json` ของบัญชีหรือไม่ เพราะเซสชันของ Remote Control อ่านเซิร์ฟเวอร์จากที่นั่นเท่านั้น
@@ -31,9 +31,9 @@ ccam --dry-run work rc                # print the command instead of running it
 | ตัวเลือกหรือการตั้งค่า | สิ่งที่ทำ | ค่าเริ่มต้น |
 | --- | --- | --- |
 | `--dry-run` (ก่อนชื่อบัญชี) | พิมพ์ตัวแปรสภาพแวดล้อมและคำสั่ง รวมถึงข้อความแจ้งเรื่อง MCP หากมี ไม่ถามและไม่คัดลอก | ปิด |
-| `Copy them into .claude.json (a backup is kept)? [y/N]` | ถามเมื่อบัญชีใช้เซิร์ฟเวอร์ MCP ร่วมกันและ `.claude.json` ของบัญชียังไม่มีรายการปัจจุบันของกลุ่ม `y` คัดลอกเซิร์ฟเวอร์ ส่วน `N` หรือ Enter จะเริ่มโดยไม่มีเซิร์ฟเวอร์เหล่านั้น | `N` |
-| `mcp_strategy = "sync"` ใน `~/.config/ccam/config.toml` | คัดลอกเซิร์ฟเวอร์ของกลุ่มลงใน `.claude.json` ก่อนการเริ่มทุกครั้ง ไม่ว่าจะเป็น Remote Control หรือไม่ จึงไม่มีการถามเลย | `"flag"` |
-| `ccam group leave <group> work` | นำบัญชีออกจากกลุ่มที่ใช้ MCP ร่วมกับบัญชีนั้น จากนั้น Remote Control จะเริ่มด้วยเซิร์ฟเวอร์ของบัญชีเองเท่านั้นและไม่มีการถาม | อยู่ใน `default` |
+| `Copy them into .claude.json (a backup is kept; servers of the account's own stay)? [y/N]` | ถามเมื่อบัญชีใช้เซิร์ฟเวอร์ MCP ร่วมกันและ `.claude.json` ของบัญชียังไม่มีรายการปัจจุบันของกลุ่ม หรือเซิร์ฟเวอร์ที่คัดลอกไว้หายไปจากไฟล์นั้น `y` คัดลอกเซิร์ฟเวอร์ ส่วน `N` หรือ Enter จะเริ่มโดยไม่มีเซิร์ฟเวอร์เหล่านั้น | `N` |
+| `mcp_strategy = "sync"` ที่ด้านบนสุดของ `~/.config/ccam/config.toml` | คัดลอกเซิร์ฟเวอร์ของกลุ่มลงใน `.claude.json` ก่อนการเริ่มทุกครั้ง ไม่ว่าจะเป็น Remote Control หรือไม่ จึงไม่มีการถามเลย | `"flag"` |
+| `ccam group leave <group> work` | นำบัญชีออกจากกลุ่มที่ใช้ MCP ร่วมกับบัญชีนั้น เซิร์ฟเวอร์ของกลุ่มจะถูกคัดลอกลงใน `.claude.json` ของบัญชีเป็นของบัญชีเอง Remote Control จึงมีเซิร์ฟเวอร์เหล่านั้นและไม่มีการถาม เมื่อใช้ `--fresh` จะเริ่มด้วยเซิร์ฟเวอร์ของบัญชีเองเท่านั้น | อยู่ใน `default` |
 
 ### ตัวเลือกของ Remote Control
 
@@ -52,7 +52,7 @@ ccam --dry-run work rc                # print the command instead of running it
 | `--[no-]chrome` | Claude in Chrome สำหรับเซสชันใหม่ (ค่าเริ่มต้น: ปิด) |
 | `-d`, `--debug`, `--debug-file <path>`, `-v`, `--verbose` | เอาต์พุตสำหรับดีบักและแบบละเอียด |
 
-ให้วาง `rc` ต่อจากชื่อบัญชีทันที ccam ถือว่าอาร์กิวเมนต์แรกที่ไม่ขึ้นต้นด้วย `-` คือคำสั่งของ Claude Code ดังนั้นใน `ccam work rc --name laptop` ccam จะเห็น `rc` แต่ใน `ccam work --model opus rc` จะเห็น `opus`
+ccam อ่านคำสั่งของ Claude Code แบบเดียวกับที่ Claude Code ทำ คือข้ามตัวเลือกพร้อมค่าของตัวเลือก ดังนั้นทั้ง `ccam work rc --name laptop` และ `ccam work --model opus rc` จะเริ่ม Remote Control ตัวเลือกที่ ccam ไม่รู้จักจะถูกนับเป็นตัวเลือกที่ไม่มีค่า เพื่อความแน่นอน ให้วาง `rc` ต่อจากชื่อบัญชีทันที
 
 ## สิ่งที่ ccam ทำ
 
@@ -60,16 +60,16 @@ ccam --dry-run work rc                # print the command instead of running it
 
 1. ccam หาบัญชี ตรวจลิงก์ที่ใช้ร่วมกันของบัญชี และหา `claude` เหมือนการเริ่มทุกครั้ง
 2. ccam เห็นว่าคำสั่งคือ `rc` หรือ `remote-control` จึงไม่ใส่ `--mcp-config`
-3. หากบัญชีใช้เซิร์ฟเวอร์ MCP ร่วมกัน ccam จะเปรียบเทียบ `mcp.json` ของกลุ่มกับ `sync-stamp` ใน `~/.local/state/ccam/mcp/work/` หาก `.claude.json` มีเซิร์ฟเวอร์ปัจจุบันอยู่แล้ว หรือกลุ่มไม่มีเซิร์ฟเวอร์เลย ccam จะข้ามไปขั้นตอนที่ 6 ทันที
+3. หากบัญชีใช้เซิร์ฟเวอร์ MCP ร่วมกัน ccam จะเปรียบเทียบ `mcp.json` ของกลุ่มกับ `sync-stamp` ใน `~/.local/state/ccam/mcp/work/` และตรวจว่าเซิร์ฟเวอร์ของกลุ่มทุกตัวยังอยู่ใน `.claude.json` หาก `.claude.json` มีเซิร์ฟเวอร์ปัจจุบันอยู่แล้ว หรือกลุ่มไม่มีเซิร์ฟเวอร์เลย ccam จะข้ามไปขั้นตอนที่ 6 ทันที
 4. มิฉะนั้น ccam จะระบุชื่อเซิร์ฟเวอร์ที่เซสชันจะไม่ได้รับ:
 
    ```console
    $ ccam work rc
    ccam: Remote Control sessions only get MCP servers stored in account work's .claude.json, not the shared MCP servers (ctx, fs).
-   Copy them into .claude.json (a backup is kept)? [y/N]
+   Copy them into .claude.json (a backup is kept; servers of the account's own stay)? [y/N]
    ```
 
-5. เมื่อตอบ `y` ccam จะบันทึกสำเนาสำรองของ `.claude.json` ใช้ล็อกของ Claude Code เอง เพิ่มเซิร์ฟเวอร์ของกลุ่มลงใน `mcpServers` และคงเซิร์ฟเวอร์อื่นของบัญชีไว้ เมื่อตอบ `N` เมื่อไม่มีเทอร์มินัล หรือขณะที่บัญชีกำลังทำงาน ccam จะไม่เปลี่ยนแปลงอะไรและแจ้งให้ทราบ:
+5. เมื่อตอบ `y` ccam จะบันทึกสำเนาสำรองของ `.claude.json` ใช้ล็อกของ Claude Code เอง เพิ่มเซิร์ฟเวอร์ของกลุ่มลงใน `mcpServers` และคงเซิร์ฟเวอร์อื่นของบัญชีไว้ เซิร์ฟเวอร์ของบัญชีเองที่มีชื่อเดียวกับเซิร์ฟเวอร์ของกลุ่มจะยังเป็นของบัญชี และ ccam จะแจ้งให้ทราบ เมื่อตอบ `N` เมื่อไม่มีเทอร์มินัล หรือขณะที่บัญชีกำลังทำงาน ccam จะไม่เปลี่ยนแปลงอะไรและแจ้งให้ทราบ:
 
    ```console
          Starting without them. To copy them before every launch instead, set mcp_strategy = "sync" in ~/.config/ccam/config.toml
@@ -77,17 +77,17 @@ ccam --dry-run work rc                # print the command instead of running it
 
 6. ccam บันทึกเซสชัน ตั้ง `CLAUDE_CONFIG_DIR` เป็นโฟลเดอร์ของบัญชี แล้วแทนที่ตัวเองด้วย `claude rc` ผ่าน `exec`
 
-จากนั้น Remote Control จะทำงานต่อไปในฐานะเซิร์ฟเวอร์ ทุกเซสชันที่มันเริ่มให้คุณเป็นโปรเซสลูกของโปรเซสนั้น จึงทำงานในฐานะ `work`: ใช้การเข้าสู่ระบบ การตั้งค่า และประวัติการสนทนาของ `work` และนับรวมในขีดจำกัดการใช้งานของ `work` ตราบใดที่เซิร์ฟเวอร์ยังทำงาน ccam จะถือว่าบัญชีนั้นกำลังทำงานอยู่
+จากนั้น Remote Control จะทำงานต่อไปในฐานะเซิร์ฟเวอร์ ทุกเซสชันที่มันเริ่มให้คุณเป็นโปรเซสลูกของโปรเซสนั้น จึงทำงานในฐานะ `work`: ใช้การเข้าสู่ระบบ การตั้งค่า และประวัติการสนทนาของ `work` และนับรวมในขีดจำกัดการใช้งานของ `work` ตราบใดที่เซิร์ฟเวอร์ที่ ccam เริ่มยังทำงาน ccam จะถือว่าบัญชีนั้นกำลังทำงานอยู่ เซิร์ฟเวอร์ที่เริ่มด้วย `claude remote-control` แบบปกติก็เช่นกันเมื่อมีเซสชันอยู่ ส่วนเซิร์ฟเวอร์แบบนั้นที่ยังไม่มีเซสชันจะตรวจไม่พบ
 
 การทดลองรัน (dry run) แสดงให้เห็นความแตกต่าง การเริ่มปกติส่งเซิร์ฟเวอร์ของกลุ่มเป็นอาร์กิวเมนต์ แต่ Remote Control ไม่ส่ง:
 
 ```console
 $ ccam --dry-run work
-CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/claude --mcp-config=/home/me/.local/share/ccam/groups/default/mcp.json
+CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work CCAM_PROFILE=work /home/me/.local/bin/claude --mcp-config=/home/me/.local/share/ccam/groups/default/mcp.json
 $ ccam --dry-run work rc
 ccam: Remote Control sessions only get MCP servers stored in account work's .claude.json, not the shared MCP servers (ctx, fs).
       Starting without them. To copy them before every launch instead, set mcp_strategy = "sync" in ~/.config/ccam/config.toml
-CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/claude rc
+CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work CCAM_PROFILE=work /home/me/.local/bin/claude rc
 ```
 
 ## ทำไมจึงทำงานแบบนี้
@@ -96,13 +96,13 @@ CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/c
 
 **เซสชันของ Remote Control อ่านเซิร์ฟเวอร์จาก `.claude.json` เท่านั้น** เซสชันที่ Remote Control เริ่มไม่ได้สืบทอดตัวเลือกจากบรรทัดคำสั่ง ที่เดียวที่เซสชันเหล่านั้นพบเซิร์ฟเวอร์ MCP ของผู้ใช้คือ `.claude.json` ของบัญชี ไฟล์นี้ยังเก็บรายละเอียดการเข้าสู่ระบบของบัญชีและสถานะแยกตามโฟลเดอร์ด้วย ccam จึงลิงก์ไฟล์นี้ไปยังสำเนาที่ใช้ร่วมกันแบบที่ทำกับ `settings.json` ไม่ได้ การคัดลอกเซิร์ฟเวอร์ลงในไฟล์นี้จึงเป็นวิธีเดียวที่จะให้เซสชันได้รับรายการที่ใช้ร่วมกัน
 
-**ccam ถามก่อนเขียน** ด้วยกลยุทธ์ flag ซึ่งเป็นค่าเริ่มต้น ccam สัญญาว่าจะไม่แตะ `.claude.json` Remote Control เป็นกรณีเดียวที่ ccam ต้องเขียนลงไฟล์นี้ จึงถามก่อน เก็บสำเนาสำรองไว้ และไม่แตะสิ่งใดนอกจาก `mcpServers`
+**ccam ถามก่อนเขียน** ด้วยกลยุทธ์ flag ซึ่งเป็นค่าเริ่มต้น ccam จะไม่แตะ `.claude.json` ตอนเริ่ม Remote Control เป็นการเริ่มแบบเดียวที่ ccam ต้องเขียนลงไฟล์นี้ จึงถามก่อน เก็บสำเนาสำรองไว้ และไม่แตะสิ่งใดนอกจาก `mcpServers` (นอกเหนือจากการเริ่ม การออกจากหรือกลับเข้าร่วมการใช้ MCP ร่วมกัน และ `ccam mcp import` ก็เขียนลงไฟล์นี้ด้วย ตามที่แผนของคำสั่งเหล่านั้นระบุไว้)
 
-**ccam ไม่เขียนขณะที่บัญชีกำลังทำงาน** Claude Code เขียน `.claude.json` ใหม่ระหว่างเซสชัน การเปลี่ยนแปลงจากภายนอกจึงอาจสูญหายหรือถูกเขียนทับ ccam จึงข้ามการคัดลอกเมื่อมีเซสชันใดของบัญชีกำลังทำงาน รวมถึงเซิร์ฟเวอร์ Remote Control อีกตัวด้วย
+**ccam ไม่เขียนขณะที่บัญชีกำลังทำงาน** Claude Code เขียน `.claude.json` ใหม่ระหว่างเซสชัน การเปลี่ยนแปลงจากภายนอกจึงอาจสูญหายหรือถูกเขียนทับ ccam จึงข้ามการคัดลอกเมื่อมีเซสชันใดของบัญชีกำลังทำงาน รวมถึงเซิร์ฟเวอร์ Remote Control อีกตัว และ Claude Code ที่เริ่มโดยไม่ผ่าน ccam ด้วย
 
-**ccam ถามหนึ่งครั้งต่อการเปลี่ยนแปลง** หลังจากคัดลอกแล้ว `sync-stamp` จะเก็บเวลาแก้ไขของ `mcp.json` ของกลุ่มไว้ ccam จะถามอีกครั้งเฉพาะเมื่อไฟล์นั้นเปลี่ยน เช่น หลังจาก `ccam mcp add` หากคุณตอบ `N` ก็ยังไม่มีสำเนา ccam จึงจะถามทุกครั้งที่เริ่ม Remote Control
+**ccam ถามหนึ่งครั้งต่อการเปลี่ยนแปลง** หลังจากคัดลอกแล้ว `sync-stamp` จะเก็บเวลาแก้ไขของ `mcp.json` ของกลุ่มไว้ ccam จะถามอีกครั้งเฉพาะเมื่อไฟล์นั้นเปลี่ยน เช่น หลังจาก `ccam mcp add` หรือเมื่อเซิร์ฟเวอร์ที่คัดลอกไว้หายไปจาก `.claude.json` หากคุณตอบ `N` ก็ยังไม่มีสำเนา ccam จึงจะถามทุกครั้งที่เริ่ม Remote Control
 
-**`ccam mcp` ทำให้สำเนาเป็นปัจจุบันอยู่เสมอ** เมื่อชื่อซ้ำกัน รายการใน `.claude.json` จะมีผลเหนือกว่า `--mcp-config` สำเนาเก่าจึงอาจบังนิยามที่ใหม่กว่าในการเริ่มปกติด้วย ด้วยเหตุนี้ `ccam mcp add`, `add-json`, `remove` และ `import` จึงอัปเดตสำเนาของทุกบัญชีที่ไม่ได้กำลังทำงาน:
+**`ccam mcp` ทำให้สำเนาเป็นปัจจุบันอยู่เสมอ** เมื่อชื่อซ้ำกัน รายการใน `.claude.json` จะมีผลเหนือกว่า `--mcp-config` สำเนาเก่าจึงอาจบังนิยามที่ใหม่กว่าในการเริ่มปกติด้วย ด้วยเหตุนี้ `ccam mcp add`, `add-json`, `remove` และ `import` รวมถึง `ccam migrate` จึงอัปเดตสำเนาของทุกบัญชีที่ไม่ได้กำลังทำงาน และแจ้งให้ทราบเมื่อสำเนามีการเปลี่ยนแปลง:
 
 ```console
 $ ccam mcp add ctx --url https://mcp.context7.com/mcp
@@ -124,19 +124,19 @@ $ ccam mcp add ctx --url https://mcp.context7.com/mcp
 
 ### ccam ถามทุกครั้ง
 
-คุณยังไม่ได้คัดลอกเซิร์ฟเวอร์ ให้ตอบ `y` หนึ่งครั้ง หรือตั้ง `mcp_strategy = "sync"` หากไม่ต้องการเซิร์ฟเวอร์เหล่านี้ใน Remote Control เลย ให้เลิกใช้ MCP ร่วมกับบัญชีนี้: นำบัญชีออกจากกลุ่มนั้น (`ccam group leave default work`) หรือเก็บ MCP ไว้ในกลุ่มของมันเองที่บัญชีนี้ไม่ได้อยู่
+คุณยังไม่ได้คัดลอกเซิร์ฟเวอร์ ให้ตอบ `y` หนึ่งครั้ง หรือตั้ง `mcp_strategy = "sync"` หากไม่ต้องการเซิร์ฟเวอร์เหล่านี้ใน Remote Control เลย ให้เลิกใช้ MCP ร่วมกับบัญชีนี้โดยไม่เก็บเซิร์ฟเวอร์ไว้: `ccam group leave default work --fresh` หรือเก็บ MCP ไว้ในกลุ่มของมันเองที่บัญชีนี้ไม่ได้อยู่ ส่วน `ccam group leave` แบบธรรมดาจะคัดลอกเซิร์ฟเวอร์ของกลุ่มลงใน `.claude.json` ของบัญชี Remote Control จึงมีเซิร์ฟเวอร์เหล่านั้น
 
 ### `ccam work rc` ล้มเหลวทันทีพร้อมข้อผิดพลาดเกี่ยวกับ `--mcp-config`
 
-ccam ของคุณเก่ากว่า 0.6.0 และส่ง `--mcp-config` ให้ Remote Control ให้รัน `ccam update` หากพบข้อผิดพลาดเดียวกันกับ ccam เวอร์ชันปัจจุบัน แปลว่ามีตัวเลือกที่มีค่าอยู่ก่อน `rc` เช่นใน `ccam work --model opus rc` ccam จึงถือว่า `opus` เป็นคำสั่ง ให้วาง `rc` ต่อจากชื่อบัญชีทันที
+ccam ของคุณเก่ากว่า 0.6.0 และส่ง `--mcp-config` ให้ Remote Control ให้รัน `ccam update` หากพบข้อผิดพลาดเดียวกันกับ ccam เวอร์ชันปัจจุบัน แปลว่ามีตัวเลือกที่ ccam ไม่รู้จักและมีค่าอยู่ก่อน `rc` ccam จึงถือว่าค่านั้นเป็นคำสั่ง ให้วาง `rc` ต่อจากชื่อบัญชีทันที
 
 ### การเปลี่ยนแปลงที่ทำด้วย `ccam mcp` ไม่ไปถึง Remote Control
 
 `ccam mcp add` และ `remove` อัปเดตสำเนาเฉพาะในบัญชีที่ไม่ได้กำลังทำงาน และแจ้งให้ทราบ: `Note: account work is running, so the copy in its .claude.json stays as it was until its next Remote Control launch.` ให้หยุด Remote Control แล้วเริ่มใหม่ ccam จะเห็นว่า `mcp.json` เปลี่ยนไปและถามอีกครั้ง
 
-### สำเนาแทนที่เซิร์ฟเวอร์ของฉันเอง
+### เซิร์ฟเวอร์ของฉันเองถูกใช้แทนของกลุ่ม
 
-หากบัญชีมีเซิร์ฟเวอร์ของตัวเองที่ชื่อเดียวกับเซิร์ฟเวอร์ของกลุ่ม การคัดลอกจะแทนที่เซิร์ฟเวอร์นั้น `.claude.json` ก่อนหน้าอยู่ใน `~/.local/state/ccam/mcp/work/backups/` ซึ่งเก็บไว้ 5 ชุดล่าสุด หากต้องการใช้เวอร์ชันของคุณกับทุกบัญชี ให้ย้ายเข้าไปในกลุ่มด้วย `ccam mcp import work <server> --force` ก่อนเริ่ม Remote Control ครั้งถัดไป
+หากบัญชีมีเซิร์ฟเวอร์ของตัวเองที่ชื่อเดียวกับเซิร์ฟเวอร์ของกลุ่ม การคัดลอกจะคงเซิร์ฟเวอร์นั้นไว้และแจ้งให้ทราบ: `account work has its own MCP servers fs, so group default's of those names are not copied there` หากต้องการใช้ของกลุ่ม ให้ลบของบัญชีออก (`claude mcp remove -s user <name>`) หากต้องการให้ทุกบัญชีใช้เวอร์ชันของคุณ ให้ย้ายเข้าไปในกลุ่มด้วย `ccam mcp import work <server> --force` สำเนาสำรองของ `.claude.json` อยู่ใน `~/.local/state/ccam/mcp/work/backups/` ซึ่งเก็บไว้ 5 ชุดล่าสุด
 
 ### ฉันต้องการลบเซิร์ฟเวอร์ที่คัดลอกมา
 

@@ -1,13 +1,15 @@
 ---
 title: Memilih akun untuk skrip
 description: ccam pick mencetak akun dengan ruang terbanyak untuk skrip, memberi akun berbeda ke worker yang dimulai bersamaan, dan keluar 75 jika tak ada ruang.
-updated: 2026-10-20
+updated: 2026-10-24
 order: 12
 translation: machine
-sourceHash: "2e8285b7c193"
+sourceHash: "a8baeb64de99"
 ---
 
 `ccam pick` mencetak nama akun yang sudah login dengan ruang terbanyak, agar skrip bisa menjalankan Claude Code dengannya. Worker yang dimulai pada waktu yang sama masing-masing mendapat akun berbeda selama masih cukup akun yang punya ruang, sehingga sekumpulan tugas `claude -p` tersebar ke akun-akun Anda alih-alih menghabiskan satu akun.
+
+**Kursi Team dan Enterprise.** Pilihan otomatis (`ccam next`, `--fallback`, `ccam pick`, tombol `n` di dasbor) juga berganti di antara kursi dalam organisasi Claude Team atau Enterprise yang sama. Pusat bantuan Anthropic menyatakan "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (setiap kursi pada paket Team diberikan kepada satu orang tertentu, dan hanya orang itu yang boleh menggunakannya) dan "Users can't route their work through another user's account to use that user's remaining usage" (pengguna tidak boleh menyalurkan pekerjaannya melalui akun pengguna lain untuk memakai sisa kuota pengguna tersebut) ([paket Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); begitu pula untuk [paket Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Karena itu, memakai pilihan otomatis di antara kursi dapat melanggar ketentuan Anthropic. Tanyakan kepada organisasi Anda dan Anthropic sebelum Anda mengandalkannya. Paket pribadi (Pro, Max) dibahas dalam [catatan tentang ketentuan di FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 ## Penggunaan
 
@@ -49,15 +51,15 @@ Kode keluar: `0` dengan nama di output standar, `75` (`EX_TEMPFAIL`) jika tidak 
 | `--max-usage <1-100>` | Utamakan akun di bawah penggunaan ini | `auto_max_usage`, jika tidak ada 100 |
 | `--strategy headroom\|expiring\|balance` | Penggunaan 5 jam terendah, reset 5 jam yang paling cepat, atau kuota mingguan yang paling dulu akan terbuang | `auto_strategy`, jika tidak ada `headroom` |
 | `--cross-org` | Juga memilih akun dari organisasi lain | `cross_org`, jika tidak ada nonaktif |
-| `--wait[=<duration>]` | Jika tidak ada akun yang punya ruang, tunggu akun pertama di-reset, paling lama selama ini | nonaktif; `5h` jika diberikan tanpa nilai |
+| `--wait[=<duration>]` | Jika tidak ada akun yang punya ruang, tunggu akun pertama di-reset, paling lama selama ini. Nilainya ditaruh setelah `=`: `--wait 30m` ditolak dengan petunjuk `--wait takes its value after '=': --wait=30m` | nonaktif; `5h` jika diberikan tanpa nilai |
 | `--dry-run` | Memilih tanpa mencatat pilihan itu | nonaktif |
 
 ## Cara kerjanya
 
-1. ccam membuat daftar akun yang sudah login (akun kunci API tidak punya batas dan tidak diikutkan) di organisasi akun yang akan dijalankan folder ini (lihat [organisasi](/features/next#auto)); folder yang login ke akun Claude yang sama dengan akun itu juga tidak diikutkan.
+1. ccam membuat daftar akun yang sudah login (akun kunci API dan login Console tidak punya batas dan tidak diikutkan) di organisasi akun yang akan dijalankan folder ini (lihat [organisasi](/features/next#auto)); folder yang login ke akun Claude yang sama dengan akun itu juga tidak diikutkan.
 2. ccam mengambil kunci (`~/.local/state/ccam/picks.lock`), sehingga pemilihan yang berjalan bersamaan dilakukan satu per satu.
-3. ccam menanyakan penggunaan semua akun sekaligus, dengan cara yang sama seperti `ccam usage`, memakai cache 60 detik.
-4. Akun yang dipilih dalam 2 menit terakhir (`~/.local/state/ccam/picks/<name>`) dikeluarkan lebih dulu, lalu [aturan pemilihan](/features/next#auto) `ccam next --auto` memilih di antara sisanya: akun di bawah `auto_max_usage` lebih dulu, menurut strategi, dan tidak pernah akun yang sudah 100%.
+3. ccam menanyakan penggunaan semua akun sekaligus, dengan cara yang sama seperti `ccam usage`, memakai cache 60 detik. Jendela yang dilaporkan penuh oleh Claude Code dihitung 100% sampai di-reset ([catatan batas](/features/usage#the-limit-record)), sehingga akun yang baru saja mencapai batasnya tetap tidak diikutkan meskipun angka tersimpannya menunjukkan masih ada ruang.
+4. Akun yang dipilih dalam 2 menit terakhir (`~/.local/state/ccam/picks/<name>`; pilihan yang bertanggal setelah waktu jam saat ini tidak dihitung) dikeluarkan lebih dulu, lalu [aturan pemilihan](/features/next#auto) `ccam next --auto` memilih di antara sisanya: akun di bawah `auto_max_usage` lebih dulu, menurut strategi, dan tidak pernah akun yang sudah 100%.
 5. Jika setiap akun yang punya ruang baru saja dipilih, aturan itu memilih lagi di antara semuanya, sehingga worker keempat pada tiga akun berbagi satu akun.
 6. Pilihan dicatat dan kunci dilepas, lalu nama akun dicetak.
 

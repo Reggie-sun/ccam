@@ -1,10 +1,10 @@
 ---
 title: Maraming Claude Code account sa iisang computer
 description: Magpatakbo ng maraming Claude Code account nang magkatabi sa CLAUDE_CONFIG_DIR, mano-mano sa shell alias o awtomatiko sa ccam, at lumipat sa pagitan nila.
-updated: 2026-10-20
+updated: 2026-10-24
 order: 1
 translation: machine
-sourceHash: ee92078b81c3
+sourceHash: 5463dec2f6eb
 ---
 
 Bigyan ang bawat account ng sariling configuration folder. Binabasa ng Claude Code ang folder mula sa environment variable na `CLAUDE_CONFIG_DIR`, at may sariling login, settings at kasaysayan ang bawat folder, kaya nananatiling naka-log in ang bawat account at puwede mo silang patakbuhin nang sabay. Puwede mo itong i-set up nang mano-mano gamit ang shell alias, o hayaang gawin ito ng ccam.
@@ -51,7 +51,7 @@ ccam add work --shortcut ccwork
 
 Ngayon, sinisimulan ng `ccam personal` at `ccam work` ang dalawang account, at ganoon din ang `ccwork`, ang shortcut na ibinigay mo sa work account. Dahil totoong mga program sila at hindi mga alias, gumagana rin sila sa mga script. Patakbuhin ang `ccam` nang mag-isa para pumili ng account mula sa listahan, at ang `ccam use work` para gawing default ang isang account.
 
-Shared na mula sa simula ang settings, `CLAUDE.md`, mga MCP server at extension, at puwede mong i-on ang shared na kasaysayan ng usapan para maituloy ang isang usapan sa kabilang account gamit ang `ccam next --continue`. Ipinapakita ng `ccam usage` ang 5-oras at lingguhang usage ng bawat account nang sabay-sabay.
+Shared na mula sa simula ang settings, `CLAUDE.md`, mga MCP server at extension. Dinadala ng `ccam next --continue` ang isang usapan sa kabilang account, at pinapanatili itong iisang usapan ng shared na kasaysayan ng usapan, na puwede mong i-on. Ipinapakita ng `ccam usage` ang 5-oras at lingguhang usage ng bawat account nang sabay-sabay.
 
 Kung gumagamit ka na ng `~/.claude`, patakbuhin ang `ccam import` sa halip na idagdag ulit ang account na iyon, o ang `ccam migrate` para kopyahin ang settings, mga MCP server at extension nito sa shared na settings.
 
@@ -67,7 +67,7 @@ Tumatakbo ang Claude Code [nang native sa Windows at sa loob ng WSL](https://cod
 
 **Palaging hinihiling ng Claude Code na mag-log in ako.** Laging humihingi ito ng login sa unang pagbukas sa bagong folder. Kung paulit-ulit itong humihingi, nag-expire o naalis ang login: patakbuhin ang `ccam login work` (o patakbuhin nang isang beses ang alias at mag-log in).
 
-**Sa iisang account lang lumalabas ang isang MCP server.** Pag-aari ng account na iyon ang mga server na idinagdag sa loob ng session gamit ang `claude mcp add`. Ilipat ang isa sa lahat ng account gamit ang `ccam mcp import work <server>`.
+**Sa iisang account lang lumalabas ang isang MCP server.** Pag-aari ng account na iyon ang mga server na idinagdag sa loob ng session gamit ang `claude mcp add`, at kung walang `-s user`, ng folder na iyon lang. Ilipat ang isa sa lahat ng account gamit ang `ccam mcp import work <server>`.
 
 **Magkaiba ang settings ng mga account.** Ipinapakita ng `ccam share work` kung ano ang shine-share ng account at sa pamamagitan ng aling group; sa `ccam group join default work` naman, ishe-share nito ang shine-share ng `default`, matapos ipakita kung ano ang magbabago. Inaayos ng `ccam doctor --fix` ang mga sirang link at nagtatabi ito ng backup ng bawat file na binabago nito.
 
@@ -78,3 +78,5 @@ Tumatakbo ang Claude Code [nang native sa Windows at sa loob ng WSL](https://cod
 Para sa dalawang account na walang shine-share, sapat na ang alias. Kapag gusto mo ng shared na settings at MCP server, mas maraming account, mabilisang tingin sa usage o pagtutuloy ng mga usapan, inaalis ng ccam ang abala ng pag-aasikaso. Inililista ng [paghahambing sa mga alias](/compare/aliases) ang mga pagkakaiba nang magkatabi, at tinatalakay ng [ccam at iba pang account switcher](/compare/account-switchers) ang mga tool na nagpapalit ng iisang login.
 
 Nakadepende sa terms ng bawat account kung puwede kang gumamit ng maraming account. Tingnan muna ang mga ito bago mo gawin.
+
+**Mga seat ng Team at Enterprise.** Lumilipat din ang awtomatikong pagpili (`ccam next`, `--fallback`, `ccam pick`, ang `n` ng dashboard) sa pagitan ng mga seat ng iisang Claude Team o Enterprise na organisasyon. Sinasabi ng help center ng Anthropic na "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (nakatalaga ang bawat seat ng Team plan sa iisang partikular na tao, at siya lang ang puwedeng gumamit nito) at "Users can't route their work through another user's account to use that user's remaining usage" (hindi puwedeng idaan ng mga user ang trabaho nila sa account ng ibang user para magamit ang natitirang usage ng user na iyon) ([mga Team plan](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); ganoon din sa [mga Enterprise plan](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Kaya maaaring lumabag sa terms ng Anthropic ang paggamit ng awtomatikong pagpili sa pagitan ng mga seat. Magtanong muna sa iyong organisasyon at sa Anthropic bago ka umasa rito. Saklaw ng paalala sa itaas ang mga personal na plan (Pro, Max).

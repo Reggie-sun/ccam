@@ -2,10 +2,10 @@
 title: Opis poleceń
 metaTitle: "Opis poleceń ccam"
 description: Wszystkie polecenia i opcje ccam, od ccam add i ccam <name> po ccam usage, ccam next i ccam doctor.
-updated: 2026-10-21
+updated: 2026-10-24
 order: 3
 translation: machine
-sourceHash: "338ac11a0b5a"
+sourceHash: "36af7e209cd9"
 ---
 
 Wpisz `--dry-run` przed poleceniem, żeby zobaczyć, co by zrobiło, bez wykonywania go, na przykład `ccam --dry-run work`. Działa to przy uruchamianiu Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`) oraz z `group`, `migrate`, `shortcut`, `update` i `doctor --fix`. Inne polecenia, które coś zmieniają, odrzucają tę opcję zamiast się wykonać.
@@ -27,6 +27,8 @@ ccam --fallback work -p "fix the tests"   # run again as another account at the 
 
 `--fallback` przed nazwą konta jest przeznaczone dla przebiegów `-p`/`--print`. Gdy konto osiągnie limit użycia, ccam uruchamia to samo polecenie ponownie na zalogowanym koncie z największym zapasem i wypisuje tylko wyjście przebiegu, który się zakończył. Zobacz [Konta według folderu](/features/folder) i [Ponowienie po osiągnięciu limitu](/features/next#run-again-at-the-limit).
 
+**Miejsca w planach Team i Enterprise.** Automatyczny wybór konta (`ccam next`, `--fallback`, `ccam pick`, klawisz `n` w panelu) przełącza też między miejscami w tej samej organizacji Claude Team lub Enterprise. Centrum pomocy Anthropic podaje: „Each seat on a Team plan is assigned to one named individual, and only that person may use it” (każde miejsce w planie Team jest przypisane do jednej imiennie wskazanej osoby i tylko ta osoba może z niego korzystać) oraz „Users can't route their work through another user's account to use that user's remaining usage” (użytkownicy nie mogą kierować swojej pracy przez konto innego użytkownika, aby wykorzystać pozostały limit użycia tego użytkownika) ([plany Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); podobnie w przypadku [planów Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Dlatego korzystanie z automatycznego wyboru między miejscami może naruszać warunki Anthropic. Zanim zaczniesz na nim polegać, skonsultuj to ze swoją organizacją i z Anthropic. Planów prywatnych (Pro, Max) dotyczy [uwaga o warunkach w FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+
 Skrót taki jak `ccwork` uruchamia swoje konto w ten sam sposób: `ccwork --resume` robi to samo co `ccam work --resume`. Zobacz [skróty](/docs/commands#shortcuts).
 
 ## Dodawanie i usuwanie kont
@@ -37,17 +39,20 @@ ccam add work --group default --group team
 ccam add side --shortcut ccside
 ccam add ci --no-login        # log in later with: ccam login ci
 ccam login --expired          # log in every account whose login no longer works
+ccam logout side              # asks first when MCP sign-ins go with the login
 ccam rename work job
-ccam remove side              # folder moves to ~/.local/share/ccam/trash
+ccam remove side              # logs out, then the folder moves to ~/.local/share/ccam/trash
 ccam import ~/.claude-old --name old
 ccam add gw --api --base-url https://llm.example.com --auth bearer --key-from env:GW_KEY
 ```
 
-`ccam import` bez podanego folderu szuka `~/.claude` i `~/.claude-*` i pyta o każdy z nich. Zaimportowane foldery są rejestrowane tam, gdzie są; ccam nigdy nie przenosi ani nie kopiuje loginu.
+`ccam import` bez podanego folderu szuka `~/.claude` i `~/.claude-*` i pyta o każdy z nich; folder, którego nie udało się zarejestrować, jest zgłaszany jako `Skipped <path>: <reason>`, a pozostałe są rejestrowane, zaś folder, którego nazwa należy już do konta, wymaga `--name`, podawanego razem z folderem. Zaimportowane foldery są rejestrowane tam, gdzie są; ccam nigdy nie przenosi ani nie kopiuje loginu.
+
+`ccam login --expired` loguje też konta, których login wyczyścił Claude Code. `ccam remove` wylogowuje zarządzane konto, zanim jego folder trafi do kosza (nie wtedy, gdy inne konto ma ten sam login), a `ccam remove` zaimportowanego konta zostawia jego grupom kopię tego, co współdzielą. Na macOS `ccam rename` zachowuje nazwę folderu, bo pęk kluczy przechowuje login pod ścieżką folderu.
 
 `ccam add --api` dodaje konto, które zamiast loginu Claude używa klucza API; ccam odczytuje klucz przy każdym uruchomieniu i nigdy go nie zapisuje. Zobacz [Konta z kluczem API](/features/api).
 
-`ccam rename`, `ccam remove` i polecenia `ccam group` odmawiają zmiany konta, gdy Claude Code działa jako to konto. Najpierw zakończ sesję.
+`ccam rename`, `ccam remove` i polecenia `ccam group` odmawiają zmiany konta, gdy Claude Code działa jako to konto, niezależnie od tego, jak go uruchomiono (także sesje w tle). Najpierw zakończ sesję. Odmawiają też, gdy zmiana grup nie została dokończona: ``the last change of groups stopped halfway; finish it with `ccam doctor --fix` first``.
 
 `ccam list --json` wypisuje każde konto z jego numerem (slotem), skrótem, adresem e-mail i folderem. Jego tablica `groups` wymienia grupy konta, a obiekt `share` przypisuje każdy element (`mcp`, `settings`, `memory`, `extensions`, `history`) do grupy, z której pochodzi, albo `local`.
 
@@ -63,9 +68,9 @@ Skrót to polecenie o nazwie wybranej przez ciebie, które uruchamia Claude Code
 
 Skróty są opcjonalne. Kreator `ccam add` pyta, czy utworzyć skrót, `ccam add <name> --shortcut <command>` tworzy go bez pytania, a `ccam list` pokazuje skrót każdego konta albo `-`, gdy konto go nie ma.
 
-Nazwy mogą zawierać znaki a-z, 0-9, `.`, `-` i `_`. Nazwa nie może być poleceniem ccam, skrótem innego konta ani nazwą innego programu w twoim `PATH`.
+Nazwy mogą zawierać znaki a-z, 0-9, `.`, `-` i `_`. Nazwa nie może być poleceniem ccam, skrótem innego konta ani nazwą innego programu w twoim `PATH`, ani plikiem w `~/.local/bin`, którego nie utworzył ccam, na przykład twoją własną kopią lub linkiem do ccam. Skrót zmieniony ręcznie w `config.toml`, który łamie te zasady, jest `claude` lub `ccam` albo jest przypisany dwóm kontom, sprawia, że `config.toml` nie daje się wczytać, a komunikat wskazuje konto.
 
-`ccam rename` zachowuje nazwę skrótu, a `ccam remove` usuwa skrót razem z kontem. `ccam shims install` odtwarza linki wszystkich kont, na przykład po przeniesieniu ccam.
+`ccam rename` zachowuje nazwę skrótu, a `ccam remove` usuwa skrót razem z kontem. `ccam shims install` odtwarza linki wszystkich kont, na przykład po przeniesieniu ccam; plik blokujący jeden skrót nie zatrzymuje pozostałych.
 
 ## Współdzielenie
 
@@ -89,7 +94,7 @@ ccam migrate ~/.claude-work --group work --settings --mcp
 ccam migrate --history --yes    # conversation history only
 ```
 
-`ccam migrate` kopiuje `settings.json`, `CLAUDE.md`, rozszerzenia i serwery MCP użytkownika z folderu Claude Code do grupy, żeby dostało je każde konto współdzielące te elementy. Folder jest tylko odczytywany. Opcje `--settings`, `--memory`, `--extensions`, `--mcp` i `--history` kopiują tylko wskazane elementy. Bez nich w terminalu pojawia się lista wyboru, na której zaznaczone jest wszystko oprócz historii rozmów; poza terminalem kopiowane jest wszystko oprócz historii rozmów. `-g` lub `--group` wybiera grupę, a `-y` lub `--yes` kopiuje bez pytania i zachowuje kopię grupy, gdy plik się różni. Kopiuje też zapisane logowania serwerów do własnego pliku logowania każdego konta. Zobacz [kopiowanie istniejącej konfiguracji](/docs/sharing#copy-an-existing-setup).
+`ccam migrate` kopiuje `settings.json`, `CLAUDE.md`, rozszerzenia i serwery MCP użytkownika z folderu Claude Code do grupy, żeby dostało je każde konto współdzielące te elementy. Folder jest tylko odczytywany. Opcje `--settings`, `--memory`, `--extensions`, `--mcp` i `--history` kopiują tylko wskazane elementy. Bez nich w terminalu pojawia się lista wyboru, na której zaznaczone jest wszystko oprócz historii rozmów; poza terminalem kopiowane jest wszystko oprócz historii rozmów. `-g` lub `--group` wybiera grupę, a `-y` lub `--yes` kopiuje bez pytania i zachowuje kopię grupy, gdy plik się różni. Logowania MCP nie są kopiowane, bo skopiowane logowanie wylogowuje pozostałych posiadaczy; plan wymienia konta, które logują się przez `/mcp`. `--mcp` działa też wtedy, gdy `~/.claude` jest pusty lub go nie ma, ale `~/.claude.json` zawiera serwery. Zobacz [kopiowanie istniejącej konfiguracji](/docs/sharing#copy-an-existing-setup).
 
 ## Serwery MCP
 
@@ -102,7 +107,7 @@ ccam mcp import work gh
 ccam mcp remove fs
 ```
 
-`ccam mcp import <account>` przenosi do grupy konta serwery, które ma tylko to konto. Serwer, którego nazwy grupa używa już dla innej definicji, jest pomijany; dodaj `--force`, aby zastąpić kopię w grupie, a ccam najpierw zrobi jej kopię zapasową.
+`ccam mcp import <account>` przenosi do grupy konta serwery, które ma tylko to konto, także te, które ma tylko dla jednego folderu (zwykłe `claude mcp add`); ładują się one potem w każdym folderze. Serwer, którego nazwy grupa używa już dla innej definicji, jest pomijany; dodaj `--force`, aby zastąpić kopię w grupie, a ccam najpierw zrobi jej kopię zapasową.
 
 ## Użycie i przełączanie
 
@@ -118,10 +123,10 @@ ccam next -c --auto -- --dangerously-skip-permissions   # claude's own options a
 ccam pick                       # the account with the most room, for a script
 ccam "$(ccam pick)" -p "…"      # start a worker on it
 ccam agents                     # background sessions of every account
-ccam attach 49ec0028            # open one, as the account that started it
+ccam attach 49ec0028            # open one, as the account that started it (or by its name)
 ```
 
-`next --auto`, `--fallback` i `ccam pick` wybierają w ten sam sposób: najpierw konta poniżej `auto_max_usage` (`config.toml`, domyślnie 100), według `auto_strategy` (`headroom`, `expiring` lub `balance`), z uwzględnieniem tygodniowego okna `--model`, nigdy konto na poziomie 100%, i w obrębie organizacji konta, od którego zaczynają (`--cross-org` lub `cross_org = true`, żeby szukać dalej). Gdy nie da się wybrać żadnego, kończą działanie z kodem 75, a z `--wait` czekają na reset pierwszego konta. `ccam next --continue` przenosi rozmowę nawet między kontami, które nie współdzielą historii: Claude Code kopiuje ją wtedy na nowe konto. W przeciwieństwie do `ccam <name>`, `ccam next` odczytuje własne opcje, więc opcje Claude Code podaje się po `--`; bez tego ccam zatrzymuje się z `unknown flag`. W Claude Code polecenie pluginu `/ccam:switch [account]` przekazuje rozmowę dalej, a jego hooki uruchamiają `ccam hook`. Zobacz [Przełączanie na następne konto](/features/next), [Wybór konta dla skryptów](/features/pick) i [Sesje w tle wszystkich kont](/features/agents).
+`next --auto`, `--fallback` i `ccam pick` wybierają w ten sam sposób: najpierw konta poniżej `auto_max_usage` (`config.toml`, domyślnie 100), według `auto_strategy` (`headroom`, `expiring` lub `balance`), z uwzględnieniem tygodniowego okna `--model`, nigdy konto na poziomie 100% (okno, które Claude Code zgłosił jako pełne, liczy się jako 100% aż do resetu), nigdy login kluczem API, i w obrębie organizacji konta, od którego zaczynają (`--cross-org` lub `cross_org = true`, żeby szukać dalej). `--wait` przyjmuje wartość po `=` (`--wait=2h`); zapisane ze spacją jest odrzucane z podpowiedzią. Gdy nie da się wybrać żadnego, kończą działanie z kodem 75, a z `--wait` czekają na reset pierwszego konta. `ccam next --continue` przenosi rozmowę nawet między kontami, które nie współdzielą historii: Claude Code kopiuje ją wtedy na nowe konto. W przeciwieństwie do `ccam <name>`, `ccam next` odczytuje własne opcje, więc opcje Claude Code podaje się po `--`; bez tego ccam zatrzymuje się z `unknown flag`. W Claude Code polecenie pluginu `/ccam:switch [account]` przekazuje rozmowę dalej, a jego hooki uruchamiają `ccam hook`. Zobacz [Przełączanie na następne konto](/features/next), [Wybór konta dla skryptów](/features/pick) i [Sesje w tle wszystkich kont](/features/agents).
 
 ## Konserwacja
 
@@ -143,10 +148,10 @@ ccam completion bash # or zsh, powershell
 
 | Ścieżka | Zawartość |
 | --- | --- |
-| `~/.config/ccam/config.toml` | Konta, grupy i ustawienia (`theme`, `usage_source`, `relay`, `cross_org` …) |
+| `~/.config/ccam/config.toml` | Konta, grupy i ustawienia (`theme`, `usage_source`, `relay`, `cross_org` …). Ustawienia umieszcza się na górze, nad pierwszym `[[group]]`, `[[profile]]` lub `[[folder]]`: ustawienie pod tabelą należy do tej tabeli, więc ccam wskazuje je przy każdym uruchomieniu i w `ccam doctor`, a polecenia zapisujące konfigurację odmawiają, dopóki nie zostanie przeniesione. Komentarze nie są zachowywane, gdy ccam zapisuje plik |
 | `~/.local/share/ccam/profiles/<name>/` | `CLAUDE_CONFIG_DIR` każdego konta |
 | `~/.local/share/ccam/groups/<group>/` | Współdzielone ustawienia, serwery MCP, rozszerzenia i historia |
-| `~/.local/state/ccam/` | Pamięć podręczna użycia, czasy ostatniego użycia i notatki zostawiane przez `/ccam:switch` i hook limitu (`handoff/`) |
+| `~/.local/state/ccam/` | Pamięć podręczna użycia i zapisy limitów (`usage/<name>.json`, `usage/<name>.limit.json`), czasy ostatniego użycia, znaczniki sesji i blokady (`locks/`), skróty utworzone przez ccam (`shortcuts.json`), niedokończona zmiana grup (`group-change.json`) oraz notatki zostawiane przez `/ccam:switch` i hook limitu (`handoff/<account>/<session>.json`) |
 | `~/.local/bin/<shortcut>` | Skróty takie jak `ccwork`, czyli linki do ccam |
 
 Zmienne `XDG_CONFIG_HOME`, `XDG_DATA_HOME` i `XDG_STATE_HOME` zmieniają położenie tych folderów. W Windows `~` to `%USERPROFILE%`, a skróty to pliki `<shortcut>.exe`.

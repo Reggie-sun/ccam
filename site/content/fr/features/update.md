@@ -1,10 +1,10 @@
 ---
 title: "Mettre à jour ccam"
 description: "ccam update remplace ccam par la dernière version de GitHub après vérification SHA-256 ; --check informe seulement et --version installe une version précise."
-updated: 2026-10-21
+updated: 2026-10-23
 order: 10
 translation: machine
-sourceHash: a92dbf37399f
+sourceHash: 000d37de5f29
 ---
 
 `ccam update` télécharge une version de ccam depuis GitHub, la vérifie à l'aide du `checksums.txt` de la version et remplace le binaire en cours d'exécution en un seul renommage. Utilisez-le si vous avez installé ccam avec le script d'installation ou depuis une archive. Le [tableau de bord](/features/dashboard) demande aussi la dernière version à GitHub à chaque ouverture et la propose avec `U`, qui exécute les mêmes étapes après confirmation. Aucune autre commande ne contacte GitHub, si bien qu'elles fonctionnent de la même façon hors ligne.
@@ -64,7 +64,7 @@ L'ensemble du processus, de la recherche de l'étiquette jusqu'au renommage :
 
 L'archive et `checksums.txt` sont téléchargés côte à côte, et rien n'est écrit tant que la somme de contrôle ne correspond pas. Le renommage est atomique : un plantage ou un disque plein laisse soit l'ancien binaire, soit le nouveau, jamais un binaire à moitié écrit. Les commandes raccourcis comme `~/.local/bin/ccwork` sont des liens symboliques vers le binaire ccam ; elles exécutent donc la nouvelle version sans aucune modification.
 
-Sous Windows, le fichier d'un programme en cours d'exécution ne peut être ni remplacé ni supprimé, seulement renommé. `Updater.Install` écrit le nouveau binaire dans `ccam.exe.new`, renomme le `ccam.exe` en cours d'exécution en `ccam.exe.old`, puis renomme le nouveau fichier en `ccam.exe`. Si la dernière étape échoue, l'ancien binaire reprend son nom. La mise à jour suivante supprime `ccam.exe.old`. Les raccourcis qui sont des liens physiques plutôt que des liens symboliques ([Commandes raccourcis](/features/shortcuts)) sont renouvelés juste après, pour qu'ils exécutent eux aussi la nouvelle version.
+Sous Windows, le fichier d'un programme en cours d'exécution ne peut être ni remplacé ni supprimé, seulement renommé. `Updater.Install` écrit le nouveau binaire dans `ccam.exe.new`, renomme le `ccam.exe` en cours d'exécution en `ccam.exe.old`, puis renomme le nouveau fichier en `ccam.exe`. Si la dernière étape échoue, l'ancien binaire reprend son nom. La mise à jour suivante supprime les fichiers `ccam.exe.old` qu'elle peut ; tant qu'une session tourne encore depuis un `ccam.exe.old` antérieur, le binaire en cours d'exécution devient plutôt `ccam.exe.old-<time>`. Les raccourcis qui sont des liens physiques plutôt que des liens symboliques ([Commandes raccourcis](/features/shortcuts)) sont renouvelés juste après, pour qu'ils exécutent eux aussi la nouvelle version ; cela couvre les liens physiques de tout ancien ccam que ccam a créés, pas seulement ceux du binaire qui vient d'être remplacé.
 
 ### Installations gérées par un paquet
 
@@ -91,7 +91,7 @@ Sur les systèmes autres que Linux, seule la ligne du script d'installation est 
 
 ## Sécurité et cas particuliers
 
-- Une version de développement indique `dev` comme version et n'a pas de version publiée à laquelle se comparer ; `ccam update` et `ccam update --check` la refusent donc. `ccam update --version vX.Y.Z` installe une version publiée par-dessus.
+- Une version de développement indique `dev` comme version et n'a pas de version publiée à laquelle se comparer ; `ccam update` et `ccam update --check` la refusent donc. `ccam update --version vX.Y.Z` installe une version publiée par-dessus. Une compilation faite avec `go install github.com/jhyunwoo/ccam/cmd/ccam@vX.Y.Z` (ou `@latest`) indique cette version publiée, si bien que `ccam update` et la proposition du tableau de bord fonctionnent pour elle ; `@main` ou une compilation locale postérieure à une étiquette reste `dev`.
 - Un téléchargement échoué, un fichier absent pour votre plateforme ou une somme de contrôle qui ne correspond pas laissent le binaire installé tel quel.
 - Une version qui n'existe pas échoue avec `there is no release <tag>`. Quand GitHub refuse avec un HTTP 403 ou 429, ccam indique qu'il s'agit probablement d'une limite de débit et vous demande de réessayer plus tard.
 - `--check` ne fait que lire. Il ne vérifie pas si le binaire est géré par un paquet ou accessible en écriture.

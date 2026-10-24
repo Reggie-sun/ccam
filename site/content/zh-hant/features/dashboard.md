@@ -1,10 +1,10 @@
 ---
 title: 儀表板
 description: 在終端機中執行 ccam 會開啟全螢幕儀表板，顯示帳號、群組、資料夾規則、擴充功能和檢查結果；每項變更都會先顯示計畫。
-updated: 2026-10-21
+updated: 2026-10-24
 order: 15
 translation: machine
-sourceHash: "19a99adef661"
+sourceHash: "e48ca2c5a643"
 ---
 
 不帶參數的 `ccam` 在標準輸入和輸出都是終端機時會開啟全螢幕儀表板，否則會印出 `ccam list`。儀表板會顯示每個帳號及其用量和群組，並能完成各個指令的工作：啟動、新增、登入、變更群組、設定資料夾規則、檢查和修復。啟動帳號時儀表板會關閉；新增帳號或登入時則會暫時離開儀表板、交給終端機，完成後再回來。
@@ -33,16 +33,16 @@ sourceHash: "19a99adef661"
 
 `U` 會先詢問，再以 [`ccam update`](/features/update) 的方式更新：以 SHA-256 校驗碼檢查該發行版本，並一次取代 ccam。你目前所在的儀表板仍是舊版本，所以請退出並重新啟動 `ccam`。若無法在這裡更新，例如透過 `.deb` 套件安裝的 ccam，儀表板會顯示與 `ccam update` 相同的建議，並保留這個更新提示。
 
-第一個畫面只根據 `config.toml` 繪製，遠低於 100 ms；用量會在每個帳號回應時陸續填入。每項限制都有自己的長條：5 小時區間、所有模型共用的每週區間，以及 Fable 自己的每週區間；`-` 表示該帳號沒有這個區間。百分比從 80% 起變成黃色，達到 100% 時變成紅色；查詢失敗後改用快取的數值會以淡色顯示。
+第一個畫面只根據 `config.toml` 繪製，遠低於 100 ms；用量會在每個帳號回應時陸續填入。每項限制都有自己的長條：5 小時區間、所有模型共用的每週區間，以及 Fable 自己的每週區間；`-` 表示該帳號沒有這個區間。百分比從 80% 起變成黃色，達到 100% 時變成紅色；查詢失敗後改用快取的數值會以淡色顯示。Claude Code 回報已滿的區間在重設前都會顯示 100%。存取權杖過期時會以淡色顯示 `⚠ token expired`（Claude Code 會在下次啟動時更新它），而 `⚠ login expired` 表示該帳號需要執行 `ccam login`。
 
 ## 分頁
 
 | 分頁 | 顯示的內容 | 按鍵 |
 | --- | --- | --- |
-| Accounts | 編號、名稱、電子郵件、5 小時、每週和 Fable 用量長條、上次使用時間、群組；`✔` 為預設帳號，`▸` 為這個資料夾的帳號，`•` 為執行中 | 見下文 |
+| Accounts | 編號、名稱、電子郵件、5 小時、每週和 Fable 用量長條、上次使用時間、群組；`✔` 為預設帳號，`▸` 為這個資料夾的帳號，`•` 為執行中（也包括不透過 ccam 啟動的 Claude Code：直接執行 `claude`、IDE、背景工作階段及其常駐程式） | 見下文 |
 | Groups | 每個群組、它共用的項目和它的帳號，以及不屬於任何群組的帳號 | `enter` 編輯，`n` 新增，`e` 重新命名，`x` 移除 |
-| Folders | [`ccam folder`](/features/folder) 規則，以及適用於這裡的規則 | `n` 在這裡使用某個帳號，`enter` 變更，`x` 移除 |
-| Extensions | [`ccam ext`](/features/ext) 顯示的內容，每個擴充功能只列一次，並附上它來自的群組 | `r` 重新載入 |
+| Folders | [`ccam folder`](/features/folder) 規則，以及適用於這裡的規則，即使你是透過符號連結來到這個資料夾也一樣（新規則會以解析連結後的路徑儲存） | `n` 在這裡使用某個帳號，`enter` 變更，`x` 移除 |
+| Extensions | [`ccam ext`](/features/ext) 顯示的內容，每個擴充功能只列一次，並附上它來自的群組；`off:` 列出外掛未開啟的帳號，帳號自己的伺服器中只適用於這個資料夾的伺服器，`This folder's project`，以及不屬於任何帳號的問題 | `r` 重新載入 |
 | Health | [`ccam doctor`](/features/doctor) 回報的內容，每個帳號一個方框（見下文） | `f` 修復選取的方框，`F` 修復全部（`doctor --fix`），`↑`/`↓` 在方框之間移動 |
 
 `←`/`→` 或 `Tab` 切換分頁，`?` 列出目前分頁的按鍵，`r` 會略過短期快取重新查詢用量，`q` 或 `Esc` 則結束。
@@ -66,6 +66,8 @@ sourceHash: "19a99adef661"
 | `c` | 設定或移除它的快捷指令 |
 | `x` | 移除它（會先詢問，游標預設停在 No） |
 
+**Team 和 Enterprise 席位。** 自動選擇（`ccam next`、`--fallback`、`ccam pick`、儀表板的 `n`）也會在同一個 Claude Team 或 Enterprise 組織的席位之間切換。Anthropic 說明中心關於 [Team 方案](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)的文章寫道：「Each seat on a Team plan is assigned to one named individual, and only that person may use it」（Team 方案的每個席位都指派給一位具名的個人，而且只有這個人可以使用），以及「Users can't route their work through another user's account to use that user's remaining usage」（使用者不能經由其他使用者的帳號處理自己的工作，藉此使用對方剩餘的用量）；關於 [Enterprise 方案](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)的文章也是如此。因此，在席位之間使用自動選擇可能會違反 Anthropic 的條款。在依賴這項功能之前，請先向你所屬的組織和 Anthropic 確認。個人方案（Pro、Max）的情況請參閱[常見問題中關於條款的說明](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)。
+
 ## Health 分頁
 
 開啟 Health 分頁時，它會執行 [`ccam doctor`](/features/doctor) 的檢查並繪製相同的畫面：第一行為每個帳號顯示一個標記，下方每個帳號各有一個方框。方框內每一列是一個檢查過的項目，`Folder`、`Login` 和 `Share links` 排在最前面，標記為 `✔` 正常、`ℹ` 資訊、`⚠` 警告或 `✘` 錯誤，讓你一眼看出哪個帳號在哪裡有問題。不屬於任何帳號的檢查結果放在 `General` 方框中。
@@ -73,25 +75,26 @@ sourceHash: "19a99adef661"
 ```console
  ✘ personal   ⚠ work
 
- ╭─ ✘ personal · 3 problems ──────────────────────────────────────────────────╮
- │ ⚠ Folder       folder permissions are 755 (should be 0700)                 │
- │ ℹ              unknown entries (Claude Code layout may have changed):      │
- │                newthing                                                    │
- │ ⚠ Login        .credentials.json permissions are 644 (should be 0600)      │
- │ ✔              login valid (me@example.com)                                │
- │ ✘ Share links  /home/me/.local/share/ccam/profiles/personal/settings.json: │
- │                set to shared but is a real file, not a link                │
- ╰────────────────────────────────────────────────────────────────────────────╯
- ╭─ ⚠ work · 1 problem ───────────────────────────────────────────────────────╮
- │ ✔ Folder       OK                                                          │
- │ ⚠ Login        not logged in → `ccam login work`                           │
- │ ✔ Share links  share links OK                                              │
- ╰────────────────────────────────────────────────────────────────────────────╯
+ ╭─ ✘ personal · 3 problems ─────────────────────────────────────────────────╮
+ │ ⚠ Folder       folder permissions are 755 (should be 0700)                │
+ │ ℹ              unknown entries (ccam knows the folder layout of Claude    │
+ │                Code 2.1.309; it may have changed): newthing               │
+ │ ⚠ Login        .credentials.json permissions are 644 (should be 0600)     │
+ │ ✔              login valid (me@example.com, Claude Team · Acme)           │
+ │ ✘ Share links  /home/me/.local/share/ccam/profiles/personal/settings.json │
+ │                : set to shared but is a real file, not a link             │
+ │ ✔ Usage        usage lookup OK                                            │
+ ╰───────────────────────────────────────────────────────────────────────────╯
+ ╭─ ⚠ work · 1 problem ──────────────────────────────────────────────────────╮
+ │ ✔ Folder       OK                                                         │
+ │ ⚠ Login        not logged in → `ccam login work`                          │
+ │ ✔ Share links  share links OK                                             │
+ ╰───────────────────────────────────────────────────────────────────────────╯
 
  4 problems; f repairs the selected box, F all of them (ccam doctor --fix).
 ```
 
-`↑`/`↓` 在方框之間移動，選取的方框會以強調色邊框顯示。`f` 只修復選取的方框，方式與 `ccam doctor --fix` 相同：在帳號的方框上只修復該帳號，在 `General` 方框上修復不屬於任何帳號的檢查結果（外掛路徑和快捷指令）；其他帳號只會重新檢查。它會先詢問，沒有可修復項目的方框只會顯示 `nothing to repair in <name>`。`F` 會像 `ccam doctor --fix` 一樣一次修復全部；`r` 會重新檢查。
+`↑`/`↓` 在方框之間移動，選取的方框會以強調色邊框顯示。`f` 只修復選取的方框，方式與 `ccam doctor --fix` 相同：在帳號的方框上只修復該帳號，在 `General` 方框上修復不屬於任何帳號的檢查結果（外掛路徑和快捷指令）；其他帳號只會重新檢查。它會先詢問（``Like `ccam doctor --fix`: missing links and group folders are made, and a real file where a link belongs is backed up first; where the group has its own copy, the account then sees the group's. Nothing is lost.``），沒有可修復項目的方框只會顯示 `nothing to repair in <name>`。`F` 會像 `ccam doctor --fix` 一樣一次修復全部；`r` 會重新檢查。
 
 ## 變更群組
 
@@ -109,7 +112,7 @@ sourceHash: "19a99adef661"
     2. No
 ```
 
-和群組副本內容不同的檔案會先詢問你（保留群組的版本、使用我的版本，或合併）。接著變更會在背景以和 [`ccam group`](/features/share) 相同的程式碼執行：先儲存設定，再依序移動每個帳號的資料，原始檔案則放到 `.ccam-backup/`。會移動執行中帳號資料的變更會被拒絕，並列出該帳號的名稱。
+和群組副本內容不同的檔案會先詢問你（保留群組的版本、使用我的版本，或合併）。接著變更會在背景以和 [`ccam group`](/features/share) 相同的程式碼執行：先儲存設定，再依序移動每個帳號的資料，原始檔案則放到 `.ccam-backup/`；退出 MCP 共用的帳號會在它的 `.claude.json` 中保留群組的伺服器。會移動執行中帳號資料的變更會被拒絕，並列出該帳號的名稱，即使該帳號是在計畫開啟期間才啟動的也一樣；因另一個 ccam 變更群組而過時的計畫，會以 `the groups changed while this plan waited; nothing was moved, make the change again` 拒絕。當另一個 ccam 正在變更群組時，新的變更、重新命名或移除會顯示 `another ccam is changing the groups right now`；若上一次變更中途停止，它們會等到你在 Health 分頁按下 `F`（或執行 `ccam doctor --fix`）完成它之後。
 
 ## 新增帳號
 
@@ -124,9 +127,13 @@ sourceHash: "19a99adef661"
 
 `Esc` 會回到上一步，在第一步時則會關閉設定精靈。
 
+## 移除帳號
+
+`x` 會在任何動作之前先詢問，預設選項為 No，並說明移除會做什麼：`It is logged out first (its login is revoked), then its folder goes to ccam's trash; the groups' shared files stay.` API 金鑰帳號沒有可撤銷的登入；另一個帳號持有同一組登入時，也不會登出。匯入的帳號會保留它的資料夾：`It was imported, so its folder /home/me/.claude stays where it is: it leaves its groups first and keeps a copy of what they share, then ccam forgets it.`
+
 ## 色彩
 
-色彩依循 Claude Code 終端機介面的角色配色，所以 ccam 放在它旁邊看起來很協調；群組名稱會根據名稱取得一種顏色。ccam 會向終端機查詢背景色，並選擇淺色或深色主題。你也可以在 `config.toml` 中自行設定：
+色彩依循 Claude Code 終端機介面的角色配色，所以 ccam 放在它旁邊看起來很協調；群組名稱會根據名稱取得一種顏色。ccam 會向終端機查詢背景色，並選擇淺色或深色主題。你也可以在 `config.toml` 的最上方、第一個 `[[group]]`、`[[profile]]` 或 `[[folder]]` 之前自行設定：
 
 ```toml
 theme = 'dark'   # auto (default), dark, light, dark-daltonized, light-daltonized, dark-ansi, light-ansi
@@ -139,7 +146,9 @@ theme = 'dark'   # auto (default), dark, light, dark-daltonized, light-daltonize
 - 儀表板呼叫的函式和指令相同，所以每條規則都成立：移動資料之前先顯示計畫、拒絕變更執行中的帳號、保留備份，而且登入權杖絕不會離開帳號。
 - 儀表板沒有試執行：不帶名稱的 `ccam --dry-run` 會印出這個資料夾的帳號會如何啟動，在某個帳號上按 `o` 則可以只對這一次啟動進行試執行。
 - 在 Claude Code 啟動或登入開啟之前，終端機會先還原。
-- 畫面太小放不下對話框時，會先省略分頁的列；過長的行會以 `…` 截斷，而不是換行。
+- 畫面太小放不下對話框時，會先省略分頁的列；過長的行會以 `…` 截斷，而不是換行。畫面較矮時，接著會省略空白行和分頁說明，讓按鍵那一行保留下來。小於 40 欄或 8 列時，儀表板只會顯示 `Too small: ccam needs 40x8 (now 36x7)`。
+- 在套用變更、移除、更新或修復期間按 `Ctrl+C`，會等它完成：狀態列會顯示 `ccam quits when it is done.`
+- `U` 更新 ccam 之後，儀表板從新增帳號或登入返回時，更新提示不會再出現。
 
 ## 相關內容
 

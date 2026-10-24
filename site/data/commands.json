@@ -21,7 +21,7 @@
   },
   {
     "key": "attach",
-    "usage": "ccam attach <id> [claude args]"
+    "usage": "ccam attach <id|name> [claude args]"
   },
   {
     "key": "completion",

@@ -1,10 +1,10 @@
 ---
 title: "CLAUDE_CONFIG_DIR expliqué"
 description: "Rôle de CLAUDE_CONFIG_DIR dans Claude Code, contenu du dossier, emplacement de la connexion sous macOS et fichiers partageables entre comptes."
-updated: 2026-10-19
+updated: 2026-10-23
 order: 2
 translation: machine
-sourceHash: ef9317030e42
+sourceHash: 2cf08478085f
 ---
 
 `CLAUDE_CONFIG_DIR` indique à Claude Code quel dossier utiliser à la place de `~/.claude`. Tout ce qui est propre au compte s'y trouve : la connexion, les paramètres, les serveurs MCP, les plugins et l'historique des conversations. Le faire pointer vers des dossiers différents vous donne des comptes séparés.
@@ -19,7 +19,7 @@ Oui. Claude Code le cite parmi ses [variables d'environnement](https://code.clau
 
 ## Que contient le dossier ?
 
-Vérifié avec Claude Code 2.1.302 :
+Vérifié avec Claude Code 2.1.309 :
 
 | Chemin | Contenu | Partageable |
 | --- | --- | --- |
@@ -34,15 +34,15 @@ Vérifié avec Claude Code 2.1.302 :
 
 ## Quels sont les pièges ?
 
-**Sans `CLAUDE_CONFIG_DIR`, `.claude.json` ne se trouve pas dans `~/.claude`.** Claude Code le conserve alors dans `~/.claude.json`, à côté du dossier. Si vous commencez à utiliser `CLAUDE_CONFIG_DIR=~/.claude`, Claude Code cherche `~/.claude/.claude.json` à la place et ne trouve pas votre compte. `ccam import` gère ce cas en reliant les deux.
+**Sans `CLAUDE_CONFIG_DIR`, `.claude.json` ne se trouve pas dans `~/.claude`.** Claude Code le conserve alors dans `~/.claude.json`, à côté du dossier. Si vous commencez à utiliser `CLAUDE_CONFIG_DIR=~/.claude`, Claude Code cherche `~/.claude/.claude.json` à la place et ne trouve pas votre compte. `ccam import` gère ce cas en reliant les deux. Si `~/.claude` a déjà son propre `.claude.json`, issu d'une exécution antérieure avec `CLAUDE_CONFIG_DIR=~/.claude`, ccam laisse les deux fichiers et le signale, car vous seul savez lequel est le bon.
 
-**Sous macOS, la connexion se trouve dans le trousseau, pas dans le dossier.** Claude Code la stocke sous le nom `Claude Code-credentials`, suivi d'un court hachage du chemin du dossier quand `CLAUDE_CONFIG_DIR` est défini. Des dossiers distincts ont donc des entrées distinctes dans le trousseau. Si le trousseau refuse l'écriture, Claude Code se rabat sur `.credentials.json` dans le dossier, comme le décrit [sa documentation](https://code.claude.com/docs/en/authentication#credential-management).
+**Sous macOS, la connexion se trouve dans le trousseau, pas dans le dossier.** Claude Code la stocke sous le nom `Claude Code-credentials`, suivi de `-` et des 8 premiers chiffres hexadécimaux du SHA-256 du chemin du dossier quand `CLAUDE_CONFIG_DIR` est défini, pour le compte nommé par `$USER`. Des dossiers distincts ont donc des entrées distinctes dans le trousseau, et un dossier déplacé ou renommé perd sa connexion ; c'est pourquoi `ccam rename` conserve le nom du dossier sous macOS. Si le trousseau refuse l'écriture, Claude Code se rabat sur `.credentials.json` dans le dossier, comme le décrit [sa documentation](https://code.claude.com/docs/en/authentication#credential-management).
 
 **Toutes les connexions ne sont pas stockées dans le dossier.** Une connexion Claude Console sans clé API est stockée en dehors : des dossiers séparés ne permettent donc pas d'en garder deux distinctes. Les connexions claude.ai et les clés API sont conservées par dossier.
 
 ## Où se trouve le dossier sous Windows ?
 
-Par défaut dans `%USERPROFILE%\.claude`, avec la connexion dans le fichier `.credentials.json` qu'il contient. Définissez `CLAUDE_CONFIG_DIR` sur un autre dossier pour chaque compte supplémentaire, comme sous Linux et macOS.
+Par défaut dans `%USERPROFILE%\.claude`, avec la connexion dans le fichier `.credentials.json` qu'il contient, ou dans le Gestionnaire d'identification de Windows quand Claude Code est configuré pour l'utiliser, sous un nom construit à partir du chemin du dossier comme sous macOS. Définissez `CLAUDE_CONFIG_DIR` sur un autre dossier pour chaque compte supplémentaire, comme sous Linux et macOS.
 
 ## Les dossiers peuvent-ils partager des fichiers ?
 

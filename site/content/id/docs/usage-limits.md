@@ -1,10 +1,10 @@
 ---
 title: Batas penggunaan dan perpindahan akun
 description: Lihat penggunaan 5 jam dan mingguan setiap akun Claude Code dengan ccam usage, lalu buka akun dengan sisa kuota terbanyak lewat ccam next --auto.
-updated: 2026-10-21
+updated: 2026-10-24
 order: 5
 translation: machine
-sourceHash: "fadb998482da"
+sourceHash: ccaed084207a
 ---
 
 `ccam usage` menampilkan seberapa banyak batas 5 jam, batas mingguan, dan batas mingguan khusus setiap model (seperti Fable) yang sudah digunakan setiap akun. `ccam next --auto` membuka akun dengan sisa kuota terbanyak, dan `--continue` membawa percakapan saat ini ke akun tersebut.
@@ -26,7 +26,9 @@ $ ccam usage
 → Most headroom: work   (open it with ccam next --auto)
 ```
 
-Setiap akun mendapat satu baris yang menunjukkan umur angka-angkanya, lalu satu bilah per batas beserta waktu hingga direset: jendela 5 jam, jendela mingguan untuk semua model, dan jendela mingguan khusus setiap model, seperti Fable. Mulai 80% bilah berubah kuning, dan pada 100% merah. Baris terakhir menyebut akun yang akan dibuka `ccam next --auto`.
+Setiap akun mendapat satu baris yang menunjukkan umur angka-angkanya, lalu satu bilah per batas beserta waktu hingga direset: jendela 5 jam, jendela mingguan untuk semua model, dan jendela mingguan khusus setiap model, seperti Fable. Mulai 80% bilah berubah kuning, dan pada 100% merah. Baris terakhir menyebut akun yang akan dibuka `ccam next --auto`; dengan `auto_strategy = "expiring"` atau `"balance"`, baris itu menjadi `→ next --auto picks <name>: <reason>`.
+
+**Kursi Team dan Enterprise.** Pilihan otomatis (`ccam next`, `--fallback`, `ccam pick`, tombol `n` di dasbor) juga berganti di antara kursi dalam organisasi Claude Team atau Enterprise yang sama. Pusat bantuan Anthropic menyatakan "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (setiap kursi pada paket Team diberikan kepada satu orang tertentu, dan hanya orang itu yang boleh menggunakannya) dan "Users can't route their work through another user's account to use that user's remaining usage" (pengguna tidak boleh menyalurkan pekerjaannya melalui akun pengguna lain untuk memakai sisa kuota pengguna tersebut) ([paket Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); begitu pula untuk [paket Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Karena itu, memakai pilihan otomatis di antara kursi dapat melanggar ketentuan Anthropic. Tanyakan kepada organisasi Anda dan Anthropic sebelum Anda mengandalkannya. Paket pribadi (Pro, Max) dibahas dalam [catatan tentang ketentuan di FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 ## Dari mana angkanya berasal
 
@@ -34,11 +36,13 @@ ccam menanyakan endpoint penggunaan Anthropic untuk semua akun secara bersamaan,
 
 Endpoint ini tidak didokumentasikan secara publik dan dapat berubah. Jika permintaan gagal, ccam menampilkan angka terakhir yang diketahui dan menandainya sebagai cache. Jendela yang sudah direset sejak angka-angka itu disimpan menampilkan 0%. `ccam doctor` memberi tahu Anda jika format responsnya berubah.
 
+Saat Claude Code menghentikan sebuah sesi karena batas penggunaan, [plugin ccam](/docs/install#claude-code-plugin) mencatat jendela mana yang penuh dan kapan jendela itu direset. Sampai saat itu, jendela tersebut menampilkan 100% apa pun kata angka lainnya, sehingga `ccam next --auto` dan `--fallback` tidak memilih akun itu lagi terlalu cepat.
+
 Angka yang diambil kurang dari 60 detik yang lalu akan dipakai ulang. Opsi:
 
 | Opsi | Efek |
 | --- | --- |
-| `--watch [seconds]` | Memperbarui terus-menerus, setiap 60 detik secara default |
+| `--watch[=seconds]` | Memperbarui terus-menerus, setiap 60 detik secara default |
 | `--json` | Keluaran yang dapat dibaca mesin |
 | `-v` | Juga menampilkan asal angka setiap akun |
 | `--no-cache` | Selalu bertanya ulang |
@@ -46,9 +50,9 @@ Angka yang diambil kurang dari 60 detik yang lalu akan dipakai ulang. Opsi:
 
 ## Login yang kedaluwarsa
 
-Saat token akses sebuah akun sudah kedaluwarsa, ccam tidak memperbaruinya, karena memperbaruinya saat sesi Claude Code sedang memakai login yang sama dapat membuat sesi itu keluar. Jalankan akun tersebut sekali dengan `ccam <name>` dan Claude Code akan memperbaruinya.
+Saat token akses sebuah akun sudah kedaluwarsa, ccam tidak memperbaruinya, karena memperbaruinya saat sesi Claude Code sedang memakai login yang sama dapat membuat sesi itu keluar. Akun itu menampilkan ``access token expired; `ccam <name>` renews it when it starts``: jalankan sekali dengan `ccam <name>` dan Claude Code akan memperbaruinya. Login yang kedaluwarsa seluruhnya, atau yang dihapus oleh Claude Code, menampilkan `` login expired → `ccam login <name>` `` dan memerlukan login baru.
 
-`ccam usage --refresh` memperbarui token yang kedaluwarsa sendiri, tetapi hanya untuk akun yang tidak sedang berjalan. Perintah ini tidak pernah memperbarui login yang tersimpan di Rantai Kunci (Keychain) macOS atau di `~/.claude` yang diimpor.
+`ccam usage --refresh` memperbarui token yang kedaluwarsa sendiri, tetapi hanya untuk akun yang tidak sedang berjalan, bagaimanapun Claude Code dijalankan. Perintah ini tidak pernah memperbarui login yang tersimpan di Rantai Kunci (Keychain) macOS atau di `~/.claude` yang diimpor, dan satu pembaruan bisa memakan waktu hingga 30 detik.
 
 ## Penggunaan di status line
 
@@ -66,7 +70,7 @@ ccam next --auto      # the account with the lowest 5-hour usage
 ccam next --continue  # carry this folder's conversation on as the next account
 ```
 
-`ccam next` melewati akun yang belum login, dan `--auto` melewati akun yang sudah mencapai 100% serta akun dari organisasi lain. Jika kedua akun berbagi riwayat percakapan, `--continue` membuka percakapan yang sama; jika tidak, Claude Code menyalinnya ke akun baru. Lihat [pembagian](/docs/sharing) dan [beralih ke akun berikutnya](/features/next#continue).
+`ccam next` melewati akun yang belum login, dan `--auto` melewati akun yang sudah mencapai 100% (juga jendela yang dilaporkan penuh oleh Claude Code, sampai di-reset) serta akun dari organisasi lain. Jika kedua akun berbagi riwayat percakapan, `--continue` membuka percakapan yang sama; jika tidak, Claude Code menyalinnya ke akun baru. Lihat [pembagian](/docs/sharing) dan [beralih ke akun berikutnya](/features/next#continue).
 
 Untuk skrip dan tugas terjadwal yang menjalankan `claude -p`, letakkan `--fallback` sebelum nama akun. Saat akun itu mencapai batasnya, ccam menjalankan lagi perintah yang sama sebagai akun dengan sisa kuota terbanyak, dan hanya output dari proses yang selesai yang dicetak:
 

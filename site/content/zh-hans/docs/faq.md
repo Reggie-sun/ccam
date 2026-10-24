@@ -2,10 +2,10 @@
 title: 常见问题
 metaTitle: "ccam 常见问题：Claude Code 多账号"
 description: 关于 ccam、Claude Code 多账号、用量限制、共享、隐私和支持的操作系统的常见问题解答。
-updated: 2026-10-21
+updated: 2026-10-24
 order: 6
 translation: machine
-sourceHash: "bc944d7dcab9"
+sourceHash: "c4e3b89bb4ea"
 ---
 
 ## ccam 是 Anthropic 的官方工具吗？
@@ -15,6 +15,8 @@ sourceHash: "bc944d7dcab9"
 ## 使用多个 Claude Code 账号是否被允许？
 
 这取决于每个账号适用的条款；如果是工作账号，还取决于你所在组织的政策。在使用多个账号之前，请先确认这些规定。ccam 只是让你在已有的账号之间切换起来更方便。
+
+**Team 和 Enterprise 席位。** 自动选择（`ccam next`、`--fallback`、`ccam pick`、仪表盘中的 `n`）也会在同一个 Claude Team 或 Enterprise 组织的席位之间切换。Anthropic 帮助中心关于 [Team 套餐](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)的说明写道："Each seat on a Team plan is assigned to one named individual, and only that person may use it"（Team 套餐的每个席位都分配给一位指定的个人，只有此人可以使用），以及 "Users can't route their work through another user's account to use that user's remaining usage"（用户不能通过另一位用户的账号完成自己的工作，以使用该用户剩余的用量）；关于 [Enterprise 套餐](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)的说明也是如此。因此，在席位之间使用自动选择可能违反 Anthropic 的条款。在依赖这项功能之前，请先向你所在的组织和 Anthropic 确认。个人套餐（Pro、Max）的情况请参见上一段。
 
 ## ccam 能绕过用量限制吗？
 
@@ -26,11 +28,11 @@ sourceHash: "bc944d7dcab9"
 
 ## 如何在另一个账号上继续对话？
 
-用 `ccam group set default --add history`（或者为它们单独建一个组：`ccam group add pair --items history --members work,side`）在这些账号之间共享对话历史，然后运行 `ccam next --continue`。Claude Code 会在下一个账号中打开当前文件夹最近的一次对话。
+在该文件夹中运行 `ccam next --continue`：它会把该文件夹最近的一次对话带到下一个账号（加上 `--auto` 则选择剩余额度最多的账号）。在 Claude Code 中，[ccam 插件](/docs/install#claude-code-plugin)的 `/ccam:switch` 会对你当前所在的会话做同样的事。如果这两个账号共享对话历史（`ccam group set default --add history`，或者为它们单独建一个组：`ccam group add pair --items history --members work,side`），新账号会打开的正是那一次对话；否则 Claude Code 会把它复制到新账号的历史记录中。
 
 ## ccam 会查看或发送我的登录信息吗？
 
-ccam 从不在账号之间共享你的 Claude 登录信息。它读取账号的访问令牌，只是为了在你运行 `ccam usage`、`ccam next --auto` 或 `ccam doctor` 时，向 Anthropic 的用量接口查询该账号的用量。`ccam migrate` 会把 MCP 服务器已保存的登录从 `~/.claude` 复制到同一台电脑上你各个账号自己的登录文件中。ccam 没有遥测。除了这些查询，它唯一会自行发出的请求是仪表盘向 GitHub 询问最新的 ccam 版本，其中不包含任何关于你或你的账号的信息。
+ccam 从不在账号之间共享或复制你的 Claude 登录信息，也从不复制 MCP 服务器的登录。它读取账号的访问令牌，只是为了在你运行 `ccam usage`、`ccam next --auto` 或 `ccam doctor` 时，向 Anthropic 的用量接口查询该账号的用量；只有在运行 `ccam usage --refresh` 时才会续期过期的令牌；设置 `usage_source = "claude"` 时则完全不读取令牌。`ccam ext` 和 `ccam doctor` 会读取账号的 MCP 登录的名称，但从不读取其令牌。ccam 没有遥测。除了这些查询，它唯一会自行发出的请求是仪表盘向 GitHub 询问最新的 ccam 版本，其中不包含任何关于你或你的账号的信息。
 
 ## 如何在远程服务器上登录？
 
@@ -38,7 +40,7 @@ ccam 从不在账号之间共享你的 Claude 登录信息。它读取账号的�
 
 ## 我的账号存储在哪里？
 
-在 `~/.local/share/ccam/profiles/<name>/` 中，每个账号一个文件夹。在 macOS 上，Claude Code 把登录信息本身保存在钥匙串中，条目名称由该文件夹推导而来。
+在 `~/.local/share/ccam/profiles/<name>/` 中，每个账号一个文件夹。在 macOS 上，Claude Code 把登录信息本身保存在钥匙串中，条目名称由该文件夹推导而来，所以 `ccam rename` 会在那里保留文件夹的旧名称。
 
 ## 我现有的 ~/.claude 会怎样？
 
@@ -46,11 +48,11 @@ ccam 从不在账号之间共享你的 Claude 登录信息。它读取账号的�
 
 ## ccam 支持哪些系统？
 
-Linux（Ubuntu、Debian、Fedora、Arch、Alpine 等）、macOS 以及 Windows 10 和 11（原生运行或在 WSL 中运行）。在 Windows 上，共享 `settings.json` 这样的文件需要开启开发人员模式；共享文件夹则无需开启（[在 Windows 上共享](/features/share#on-windows)）。
+Linux（Ubuntu、Debian、Fedora、Arch、Alpine 等）、macOS 以及 Windows 10 和 11（原生运行或在 WSL 中运行）。在 Windows 上，共享 `settings.json` 这样的文件需要开启开发人员模式；共享文件夹则无需开启；未开启时，第一次 `ccam add` 创建的 `default` 组只包含 MCP 服务器和扩展（[在 Windows 上共享](/features/share#on-windows)）。
 
 ## 为什么某个 MCP 服务器只出现在一个账号中？
 
-在会话中用 `claude mcp add` 添加的服务器只为该账号保存。下次启动该账号时，ccam 会提醒你；用 `ccam mcp import <account> <server>` 把服务器移到共享组。
+在会话中用 `claude mcp add` 添加的服务器只为该账号保存，不加 `-s user` 时还只对当前文件夹有效。下次启动该账号时，ccam 会提醒你，`ccam mcp list` 和 `ccam ext` 也会显示它们；用 `ccam mcp import <account> <server>` 把服务器移到共享组。
 
 ## ccam 会拖慢 Claude Code 吗？
 
@@ -62,4 +64,4 @@ Linux（Ubuntu、Debian、Fedora、Arch、Alpine 等）、macOS 以及 Windows 1
 
 ## 如何卸载 ccam？
 
-用 `ccam shortcut <account> --remove` 删除每个账号的快捷命令，再从 `~/.local/bin` 中删除 `ccam`；如果不再需要这些账号，再删除 `~/.config/ccam`、`~/.local/share/ccam` 和 `~/.local/state/ccam`。参见[安装](/docs/install#uninstall)。
+用 `ccam shortcut <account> --remove` 删除每个账号的快捷命令。如果你导入了 `~/.claude` 并且它在某个组中，请先对它运行 `ccam remove <name>`，让它拿回一份所共享内容的副本。然后从 `~/.local/bin` 中删除 `ccam`；如果不再需要这些账号，再删除 `~/.config/ccam`、`~/.local/share/ccam` 和 `~/.local/state/ccam`。参见[安装](/docs/install#uninstall)。

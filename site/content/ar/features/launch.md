@@ -1,10 +1,10 @@
 ---
 title: تشغيل Claude Code
 description: شغّل Claude Code بأي حساب باستخدام ccam <name|number> أو ccam run أو لوحة التحكم؛ تُمرَّر الوسائط إلى claude دون تغيير، ويعرض --dry-run الأمر.
-updated: 2026-10-20
+updated: 2026-10-24
 order: 1
 translation: machine
-sourceHash: 4812b197f143
+sourceHash: e279341eb59b
 ---
 
 يشغّل `ccam work` برنامج Claude Code بالحساب `work`، وكل ما يأتي بعد الاسم يُمرَّر إلى `claude` كما هو. استخدمه في أي مكان كنت ستكتب فيه `claude`: في الطرفية، أو في سكربت، أو مع إدخال يصل عبر أنبوب.
@@ -34,9 +34,11 @@ ccam --fallback work -p "fix the tests"   # run again as another account at the 
 
 يفتح `ccam` دون وسائط [لوحة التحكم](/features/dashboard) عندما يكون الإدخال والإخراج القياسيان طرفية، ويطبع `ccam list` في غير ذلك. انتقل إلى حساب (بالأسهم، أو بكتابة رقمه) واضغط `Enter` لتشغيله؛ ويشغّل `n` الحساب الذي لديه أكبر هامش، ويعرض `o` الخيارات `--continue` أو `--resume` أو وسائط أخرى. وتُغلق لوحة التحكم قبل أن يبدأ Claude Code، فتُستعاد الطرفية أولًا.
 
+**مقاعد Team وEnterprise.** يبدّل الاختيار التلقائي (`ccam next` و`--fallback` و`ccam pick` والمفتاح `n` في لوحة التحكم) أيضًا بين مقاعد المؤسسة نفسها في Claude Team أو Enterprise. يقول مركز المساعدة لدى Anthropic: "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (يُخصَّص كل مقعد في خطة Team لشخص واحد محدد بالاسم، ولا يجوز أن يستخدمه إلا ذلك الشخص) و"Users can't route their work through another user's account to use that user's remaining usage" (لا يجوز للمستخدمين تمرير عملهم عبر حساب مستخدم آخر للاستفادة من الاستخدام المتبقي لذلك المستخدم) ([خطط Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)؛ وبالمثل في [خطط Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). لذا فإن استخدام الاختيار التلقائي بين المقاعد قد يخالف شروط Anthropic. تحقّق من ذلك مع مؤسستك ومع Anthropic قبل أن تعتمد عليه. أما الخطط الشخصية (Pro وMax) فتتناولها [ملاحظة الشروط في الأسئلة الشائعة](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+
 عندما يكون `CLAUDE_CODE_OAUTH_TOKEN` أو `ANTHROPIC_API_KEY` أو `ANTHROPIC_AUTH_TOKEN` معيّنًا في الصدفة، سيستخدم Claude Code ذلك المفتاح أو الرمز بدلًا من تسجيل دخول الحساب نفسه، لذلك ينبّه ccam إلى ذلك في الخطأ القياسي قبل أن يبدأ (`ccam: $ANTHROPIC_API_KEY is set, so Claude Code may use that key instead of work's login…`). وهو يقرأ المتغيرات فقط؛ أما [حساب مفتاح API](/features/api) فيمسحها بدلًا من ذلك.
 
-مع `relay = true` في `config.toml`، يشغّل ccam الجلسات التفاعلية بوصفها عمليات فرعية ويبقى بجانبها، كي يستطيع `/ccam:switch` نقل المحادثة بنفسه ([التفاصيل](/features/next#inside-claude-code))؛ وإلا يستبدل ccam نفسه بـ Claude Code، ولا يعمل شيء بجانبه.
+مع `relay = true` في أعلى `config.toml` (فوق أول `[[group]]` أو `[[profile]]` أو `[[folder]]`)، يشغّل ccam الجلسات التفاعلية بوصفها عمليات فرعية ويبقى بجانبها، كي يستطيع `/ccam:switch` نقل المحادثة بنفسه، مع خيارات الجلسة ووضع الأذونات ومستوى الجهد ([التفاصيل](/features/next#relay))؛ وإلا يستبدل ccam نفسه بـ Claude Code، ولا يعمل شيء بجانبه.
 
 ## الخيارات
 
@@ -54,17 +56,19 @@ ccam --fallback work -p "fix the tests"   # run again as another account at the 
 - `ccam run <name|number> [claude args]` هو الشكل الطويل لـ `ccam <name>`. ويستخدم `ccam run` دون اسم حساب المجلد أو الحساب الافتراضي.
 - لا يجوز أن تكون أسماء الحسابات أسماء أوامر ccam مثل `add` أو `list` أو `run` أو `usage`، فلا يكون `ccam <word>` ملتبسًا أبدًا.
 
-يطبع التشغيل التجريبي سطرًا واحدًا يمكنك لصقه في الصدفة، أو في PowerShell على Windows:
+يطبع التشغيل التجريبي سطرًا واحدًا يمكنك لصقه في الصدفة، أو في PowerShell على Windows. ويبدأ بما يغيّره التشغيل في البيئة: `CLAUDE_CONFIG_DIR` و`CCAM_PROFILE` دائمًا، و`env -u <name>` للمتغير الذي يُسقطه (مثل `CCAM_RELAY` موروث)، ولـ [حساب مفتاح API](/features/api) نقطة النهاية والنموذج والمفتاح بوصفه مصدره (`ANTHROPIC_API_KEY="$WORK_KEY"`)، لا المفتاح نفسه أبدًا:
 
 ```console
 $ ccam --dry-run work -p "fix the tests"
-CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/claude --mcp-config=/home/me/.local/share/ccam/groups/default/mcp.json -p 'fix the tests'
+CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work CCAM_PROFILE=work /home/me/.local/bin/claude --mcp-config=/home/me/.local/share/ccam/groups/default/mcp.json -p 'fix the tests'
 ```
 
 ```console
 PS> ccam --dry-run work -p "fix the tests"
-$env:CLAUDE_CONFIG_DIR='C:\Users\me\.local\share\ccam\profiles\work'; & C:\Users\me\.local\bin\claude.exe --mcp-config=C:\Users\me\.local\share\ccam\groups\default\mcp.json -p 'fix the tests'
+& { $saved = @{}; foreach ($k in 'CLAUDE_CONFIG_DIR','CCAM_PROFILE') { $saved[$k] = [Environment]::GetEnvironmentVariable($k) }; $env:CLAUDE_CONFIG_DIR='C:\Users\me\.local\share\ccam\profiles\work'; $env:CCAM_PROFILE='work'; try { $p = Start-Process -FilePath 'C:\Users\me\.local\bin\claude.exe' -ArgumentList '--mcp-config=C:\Users\me\.local\share\ccam\groups\default\mcp.json -p "fix the tests"' -NoNewWindow -Wait -PassThru; $global:LASTEXITCODE = $p.ExitCode } finally { foreach ($k in $saved.Keys) { [Environment]::SetEnvironmentVariable($k, $saved[$k]) } } }
 ```
+
+يعيد سطر PowerShell المتغيرات إلى ما كانت عليه بعد ذلك، كما يفعل `VAR=x cmd` في الصدفة، ويسلّم Claude Code سطر أوامره عبر `Start-Process`، فيشغّله Windows PowerShell 5.1 وPowerShell 7 بالطريقة نفسها. وعندما يعيّن التشغيل متغيرًا إلى قيمة فارغة، يذكر سطر `#` تحته أن PowerShell قبل 7.5 يزيل مثل هذا المتغير بدلًا من ذلك. ولـ `claude.cmd` المثبّت عبر npm، يشغّل السطر أمر `cmd.exe` الذي سيستخدمه التشغيل (انظر أدناه)، والوسيط الذي سيرفضه التشغيل هناك يُفشل التشغيل التجريبي أيضًا.
 
 ## كيف يعمل
 
@@ -77,19 +81,19 @@ $env:CLAUDE_CONFIG_DIR='C:\Users\me\.local\share\ccam\profiles\work'; & C:\Users
 1. يستدعي `cmd/ccam/main.go` الدالة `app.Main`. وإذا شُغّل ccam باسم آخر، فهو [أمر مختصر](/features/shortcuts) ويذهب مباشرة إلى المشغّل.
 2. ينظر `app.parse` في `os.Args` قبل أن يتدخل cobra. لا يذهب إلى `cli.Execute` إلا `ccam` وحده (لوحة التحكم)، واسم أمر من أوامر ccam (`config.Reserved`)، و`-h`/`--help` و`-v`/`--version`. وكل ما عدا ذلك تشغيل.
 3. يقرأ `launcher.Launch` الملف `~/.config/ccam/config.toml`، وهو الملف الوحيد الذي يحلّله.
-4. يجد `launcher.Prepare` الحساب بالاسم أو الرقم (ودون اسم، يأخذ `HereProfile` حساب المجلد، بمقارنة مجلد العمل مع إدخالات `[[folder]]` في `config.toml` كسلاسل نصية)، ويحذف `--` واحدًا في البداية، ويحدد الملف التنفيذي `claude` باستخدام `ResolveClaude`. تُخزَّن نتيجة البحث في PATH مؤقتًا في `~/.local/state/ccam/claude-path` مع وقت تعديل الملف، فلا يبحث ccam في `PATH` عند كل تشغيل. والملف المتغيّر أو المفقود يؤدي إلى بحث جديد. ويُستخدم مسار `claude_bin` في `config.toml` كما هو. ويرفض ccam أي `claude` يكون هو ccam نفسه، بالمقارنة حسب inode، لأن ذلك سيؤدي إلى حلقة.
+4. يجد `launcher.Prepare` الحساب بالاسم أو الرقم (ودون اسم، يأخذ `HereProfile` حساب المجلد، بمقارنة مجلد العمل مع إدخالات `[[folder]]` في `config.toml` كسلاسل نصية، دون تمييز حالة الأحرف على macOS وWindows)، ويحذف `--` واحدًا في البداية، ويحدد الملف التنفيذي `claude` باستخدام `ResolveClaude`. تُخزَّن نتيجة البحث في PATH مؤقتًا في `~/.local/state/ccam/claude-path` مع وقت تعديل الملف وتجزئة لـ `PATH`، فلا يبحث ccam في `PATH` عند كل تشغيل. والملف المتغيّر أو المفقود، أو `PATH` المتغيّر، يؤدي إلى بحث جديد. ويجب أن يكون مسار `claude_bin` في `config.toml` (يُوسَّع `~/`) ملفًا تنفيذيًا؛ وإلا يتوقف التشغيل مع `claude_bin X is not an executable file. Check claude_bin in config.toml` قبل كتابة أي شيء. ويرفض ccam أي `claude` يكون هو ccam نفسه، بالمقارنة حسب inode، لأن ذلك سيؤدي إلى حلقة.
 5. يقارن `checkLinks` مجلد الحساب `~/.local/share/ccam/profiles/<name>/` بإعدادات المشاركة الخاصة به باستخدام `share.Check`، الذي لا يستدعي إلا `lstat` و`readlink`، أي استدعاء نظام واحد أو اثنين لكل عنصر. ويُنشأ الرابط المفقود في الحال. وأي شيء قد يؤدي إلى فقدان بيانات يوقف التشغيل.
 6. يضيف `applyMCP` خوادم MCP المشتركة (انظر أدناه).
-7. يسجّل `session.Register` الجلسة. يكتب ccam علامة باسم معرّف العملية (PID) الخاص به، تحتوي على وقت بدء العملية، في `$XDG_RUNTIME_DIR/ccam/profile-<name>/<pid>` (أو `~/.local/state/ccam/locks/` دون `XDG_RUNTIME_DIR`). وللحساب الذي يشارك سجل المحادثات، يبحث `historyCheck` أولًا عن جلسة تعمل في `history-<group>-<hash>`، حيث التجزئة هي تجزئة المجلد الحالي، ويسجّل هناك أيضًا. يحتفظ `exec` بمعرّف العملية، فتشير العلامة بعد ذلك إلى عملية Claude Code نفسها. وهي علامة لا قفل محتجز، لأن العمليات التي يشغّلها Claude Code سترث القفل وتحتفظ به بعد انتهاء الجلسة.
+7. يسجّل `session.Register` الجلسة. يكتب ccam علامة باسم معرّف العملية (PID) الخاص به، تحتوي على وقت بدء العملية، في `~/.local/state/ccam/locks/profile-<name>/<pid>`، أيًّا كانت قيمة `XDG_RUNTIME_DIR`، فترى كل صدفة العلامات نفسها. وللحساب الذي يشارك سجل المحادثات، يبحث `historyCheck` أولًا عن جلسة تعمل في `history-<group>-<hash>`، حيث التجزئة هي تجزئة المجلد الحالي بعد حل الروابط الرمزية، ويسجّل هناك أيضًا. يحتفظ `exec` بمعرّف العملية، فتشير العلامة بعد ذلك إلى عملية Claude Code نفسها. وهي علامة لا قفل محتجز، لأن العمليات التي يشغّلها Claude Code سترث القفل وتحتفظ به بعد انتهاء الجلسة. والعلامة التي يتعذر كتابتها لا توقف التشغيل: يقول ccam `ccam: could not mark the session as running (…); starting Claude Code anyway`. وفحوص ccam الأخرى لمعرفة هل يعمل حساب (إعادة التسمية، والإزالة، وتغييرات المجموعات، و`doctor --fix`، ومزامنة MCP) تقرأ أيضًا سجلات Claude Code نفسه في مجلد الحساب (`sessions/<pid>.json` و`daemon.lock`)، فترى كذلك Claude Code الذي بدأ دون ccam: `claude` العادي، أو بيئة تطوير، أو الجلسات الخلفية وخدمتها الخلفية.
 8. يعيّن `Plan.Exec` عنوان الطرفية إلى `claude · <name>` (عندما يكون الخطأ القياسي طرفية)، ويكتب وقت التشغيل في `~/.local/state/ccam/last-used/<name>` دون `fsync`، ويستدعي `syscall.Exec`.
 
-يعمل Claude Code مع تعيين `CLAUDE_CONFIG_DIR` إلى مجلد الحساب و`CCAM_PROFILE` إلى اسم الحساب. ويزيل ccam أي قيم لهذين المتغيرين ورثها. وبالنسبة إلى مجلد `~/.claude` المسجل باستخدام `ccam import` على macOS، يعيّن أيضًا `CLAUDE_SECURESTORAGE_CONFIG_DIR` إلى قيمة فارغة، كي يستخدم الحساب و`claude` العادي تسجيل الدخول نفسه في سلسلة المفاتيح.
+يعمل Claude Code مع تعيين `CLAUDE_CONFIG_DIR` إلى مجلد الحساب و`CCAM_PROFILE` إلى اسم الحساب. ويزيل ccam أي قيم لهذين المتغيرين ورثها، و`CCAM_RELAY` الموروث. وبالنسبة إلى مجلد `~/.claude` المسجل باستخدام `ccam import` على macOS، يعيّن أيضًا `CLAUDE_SECURESTORAGE_CONFIG_DIR` إلى قيمة فارغة، كي يستخدم الحساب و`claude` العادي تسجيل الدخول نفسه في سلسلة المفاتيح؛ وعلى Windows يفعل الشيء نفسه عندما يحفظ Claude Code تسجيل الدخول في Credential Manager.
 
 ### لماذا exec
 
 يستبدل `syscall.Exec` عملية ccam بـ `claude`، فلا يبقى ccam في الذاكرة، وتكون ضغطات المفاتيح والإشارات ورمز الخروج خاصة بـ Claude Code نفسه، وتبقى الوسائط مصفوفة، لا نصًا للصدفة أبدًا.
 
-لا يوجد `exec` في Windows. هناك يشغّل `Plan.Exec` الملف `claude.exe` عمليةً فرعية بالبيئة والوسائط ووحدة التحكم نفسها، وينتظرها ثم يخرج برمز خروجها. يصل Ctrl+C إلى Claude Code من وحدة التحكم مباشرة، لذا يتجاهله ccam. وتحمل علامة الجلسة PID الخاص بـ ccam، الذي يعيش تمامًا ما دام Claude Code يعيش، وتُزال عند خروج Claude Code. وأثناء الانتظار لا يفعل ccam أي شيء آخر. والعمل الذي يأتي بعد الجلسة، مثل ملاحظة الخوادم المضافة باستخدام `claude mcp add`، يحدث عند التشغيل التالي: يقارن ccam وقت تعديل `.claude.json` مع `~/.local/state/ccam/mcp/<name>/seen` ولا يحلّل الملف إلا إذا تغيّر.
+لا يوجد `exec` في Windows. هناك يشغّل `Plan.Exec` الملف `claude.exe` عمليةً فرعية بالبيئة والوسائط ووحدة التحكم نفسها، وينتظرها ثم يخرج برمز خروجها. والملف `claude.cmd` الذي ثبّته npm يعمل في `cmd.exe` بمساره الكامل مع وضع كل وسيط بين علامات اقتباس، فلا يقرأ `cmd.exe` أيًّا منها على أنه من صياغته (`&` و`%PATH%`)؛ والوسيط الذي فيه فاصل أسطر لا يمكن تمريره بهذه الطريقة ويُرفض، مع نصيحة بتثبيت Claude Code الأصلي. يصل Ctrl+C إلى Claude Code من وحدة التحكم مباشرة، لذا يتجاهله ccam. وتحمل علامة الجلسة PID الخاص بـ ccam، الذي يعيش تمامًا ما دام Claude Code يعيش، وتُزال عند خروج Claude Code. وأثناء الانتظار لا يفعل ccam أي شيء آخر. والعمل الذي يأتي بعد الجلسة، مثل ملاحظة الخوادم المضافة باستخدام `claude mcp add`، يحدث عند التشغيل التالي: يقارن ccam وقت تعديل `.claude.json` مع `~/.local/state/ccam/mcp/<name>/seen` ولا يحلّل الملف إلا إذا تغيّر.
 
 ### كيف يُوجَّه سطر الأوامر
 
@@ -107,7 +111,16 @@ $env:CLAUDE_CONFIG_DIR='C:\Users\me\.local\share\ccam\profiles\work'; & C:\Users
 
 لا يُرجع `mcp.FlagArgs` وسيطًا إلا إذا كان ملف `mcp.json` الخاص بالمجموعة موجودًا، ويضعه `Plan.InsertArgs` مباشرة بعد `claude`. ثم يظل `--mcp-config` أو `--strict-mcp-config` الخاص بك ساريًا فوق ذلك. وهو وسيط واحد، `--mcp-config=<path>`، لأن `--mcp-config` في Claude Code يأخذ عدة قيم: فلو كُتب وسيطين، لقرأ أيضًا الطلب الذي يليه على أنه ملف إعداد.
 
-مع `mcp_strategy = "sync"` في `config.toml`، يكتب ccam الخوادم في ملف `.claude.json` الخاص بالحساب بدلًا من ذلك، ويتخطى ذلك إذا كان الحساب يعمل بالفعل.
+يقرر `claudeVerb` أين لا يمكن وضع الخيار. فهو يقرأ الأمر الفرعي لـ Claude Code من الوسائط كما يفعل Claude Code، متخطيًا الخيارات مع قيمها. لا يحصل `remote-control` أو `rc` على الخيار (أدناه)، ولا فعل الجلسات الخلفية الذي يأتي أولًا (`attach` و`logs` و`stop` و`kill` و`respawn` و`rm`). ولا يحصل عليه `ccam work mcp list` و`get` و`remove` أيضًا، لأن Claude Code يرفضه هناك؛ وبدلًا من ذلك يقول ccam في الخطأ القياسي إن خوادم المجموعة تُحمَّل في جلسات الحساب أيضًا:
+
+```console
+ccam: `claude mcp list` sees only account work's own MCP servers; its sessions also load group default's: ctx, fs
+      See all of them with `ccam mcp list`; change the group's with `ccam mcp add|remove`.
+```
+
+وكل أمر فرعي آخر وكل جلسة يحتفظان بالخيار.
+
+مع `mcp_strategy = "sync"` في `config.toml`، يكتب ccam الخوادم في ملف `.claude.json` الخاص بالحساب بدلًا من ذلك، ويتخطى ذلك إذا كان الحساب يعمل بالفعل. ويتخطى التشغيل هذا العمل أيضًا عندما لا يكون ملف `mcp.json` الخاص بالمجموعة ولا `.claude.json` قد تغيّر منذ آخر فحص. ولا تستبدل المزامنة أبدًا خادمًا يملكه الحساب بنفسه باسم خادم من المجموعة (وتقول ذلك مرة واحدة)، وتعيد النسخة التي اختفت من `.claude.json` (`put back group default's MCP servers …`)، ولا تغيّر أو تزيل إلا النسخ التي كتبتها ولم يغيّرها أحد منذ ذلك الحين.
 
 ### Remote Control
 
@@ -115,18 +128,18 @@ $env:CLAUDE_CONFIG_DIR='C:\Users\me\.local\share\ccam\profiles\work'; & C:\Users
 
 <!-- motion:launch-rc -->
 
-1. يعدّ `remoteControl` أول وسيط بعد الحساب لا يبدأ بـ `-` فعلًا لـ Claude Code. وعندما يكون `remote-control` أو `rc`، لا يضيف `mcp.FlagArgs` شيئًا.
-2. يقارن `mcp.Synced` وقت تعديل ملف `mcp.json` الخاص بالمجموعة مع `sync-stamp` الخاص بالحساب. وإذا كان `.claude.json` يحتوي بالفعل على خوادم المجموعة الحالية، أو لم تكن لدى المجموعة أي خوادم، تبدأ Remote Control دون سؤال.
+1. يجد `claudeVerb` الفعل `remote-control` أو `rc` بوصفه فعلًا لـ Claude Code، حتى بعد الخيارات وقيمها (`ccam work --model opus rc`). وعندها لا يضيف `mcp.FlagArgs` شيئًا.
+2. يقارن `mcp.Synced` وقت تعديل ملف `mcp.json` الخاص بالمجموعة مع `sync-stamp` الخاص بالحساب، ويتحقق من أن كل خادم من المجموعة لا يزال في `.claude.json`. وإذا كان `.claude.json` يحتوي بالفعل على خوادم المجموعة الحالية، أو لم تكن لدى المجموعة أي خوادم، تبدأ Remote Control دون سؤال.
 3. وإلا يسمّي ccam الخوادم التي ستفتقدها الجلسات ويسأل:
 
    ```console
    ccam: Remote Control sessions only get MCP servers stored in account work's .claude.json, not the shared MCP servers (ctx, fs).
-   Copy them into .claude.json (a backup is kept)? [y/N]
+   Copy them into .claude.json (a backup is kept; servers of the account's own stay)? [y/N]
    ```
 
 4. عند `y`، ينسخها `mcp.Sync` كما تفعل استراتيجية `sync`: تحت قفل Claude Code، وبعد نسخة احتياطية، مع الإبقاء على خوادم الحساب نفسه. وعند `N`، أو بدون طرفية، تبدأ Remote Control بدونها، ويشير ccam إلى `mcp_strategy = "sync"`، التي تنسخها قبل كل تشغيل.
 
-يسأل ccam عند كل تشغيل لـ Remote Control إلى أن تُنسخ الخوادم، وبعد النسخ لا يسأل إلا عندما يتغير ملف `mcp.json` الخاص بالمجموعة مرة أخرى. وتتقدم النسخة الموجودة في `.claude.json` على `--mcp-config` في عمليات التشغيل العادية اللاحقة، لذلك تحدّث الأوامر `ccam mcp add` و`remove` و`import` النسخ التي تحتفظ بها الحسابات الأخرى ([خوادم MCP المشتركة](/features/mcp)).
+يسأل ccam عند كل تشغيل لـ Remote Control إلى أن تُنسخ الخوادم، وبعد النسخ لا يسأل إلا عندما يتغير ملف `mcp.json` الخاص بالمجموعة مرة أخرى أو يختفي خادم منسوخ من `.claude.json`. وتتقدم النسخة الموجودة في `.claude.json` على `--mcp-config` في عمليات التشغيل العادية اللاحقة، لذلك تحدّث الأوامر `ccam mcp add` و`remove` و`import` النسخ التي تحتفظ بها الحسابات الأخرى ([خوادم MCP المشتركة](/features/mcp)).
 
 ### ميزانية 10 ms
 
@@ -145,8 +158,8 @@ ccam trace: prelaunch             0.083ms (total 3.661ms)
 
 - الاسم أو الرقم غير المعروف يتوقف مع `no account "<name>"` ويوجّهك إلى `ccam list`. وإن لم تكن هناك حسابات على الإطلاق، يطلب منك ccam إضافة واحد باستخدام `ccam add <name>`.
 - إذا أصبح مسار مشترك ملفًا عاديًا أو صار يشير إلى المكان الخطأ، يتوقف ccam مع `stopped because of share link problems:`، ويسرد المشكلات، ويطلب منك تشغيل `ccam doctor --fix`. ولا ينقل بيانات في مسار التشغيل.
-- إذا كانت نسخة أخرى من Claude Code تشارك سجل المحادثات مع هذا الحساب (المجموعة نفسها) تعمل في المجلد نفسه، يحذّرك ccam من أن السجل قد يختلط ويسأل `Run anyway? [y/N]`. ودون طرفية يعرض التحذير ويتابع.
-- يتخطى `--dry-run` مزامنة MCP، وإشعار الخادم الجديد، وفحص السجل، وعلامة الجلسة، والعنوان، ووقت آخر استخدام، ولا يستدعي exec. لكنه يظل يفحص روابط المشاركة، وينشئ الرابط المفقود كما يفعل التشغيل العادي.
+- إذا كانت نسخة أخرى من Claude Code تشارك سجل المحادثات مع هذا الحساب (المجموعة نفسها) تعمل في المجلد نفسه، يحذّرك ccam من أن السجل قد يختلط ويسأل `Run anyway? [y/N]`. ويُطابَق المجلد بعد حل الروابط الرمزية. ودون طرفية (والإدخال القياسي من `/dev/null` يُعد بلا طرفية)، أو من مهمة في الخلفية، يعرض التحذير ويتابع. وتشغيل `-p` جديد يبدأ محادثة خاصة به فلا يحصل على تحذير؛ أما `--version` و`--help` والأوامر الفرعية التي لا تفتح محادثة، مثل `mcp` أو `auth` أو `plugin`، فلا تُفحص إطلاقًا.
+- يتخطى `--dry-run` مزامنة MCP، وإشعار الخادم الجديد، وملاحظة `mcp list`، وفحص السجل، وعلامة الجلسة، والعنوان، ووقت آخر استخدام، ولا يستدعي exec. لكنه يظل يفحص روابط المشاركة، وينشئ الرابط المفقود كما يفعل التشغيل العادي.
 - عند تشغيل `ccam work rc` بينما `work` يعمل بالفعل، يترك ccam ملف `.claude.json` دون تغيير، ويخبرك بذلك، ويبدأ Remote Control بدون خوادم المجموعة؛ شغّله مرة أخرى بعد انتهاء الجلسة لنسخها. ومع `--dry-run` يطبع الرسالة لكنه لا يسأل ولا ينسخ.
 - مع `mcp_strategy = "sync"`، تطبع المزامنة الفاشلة `ccam: MCP sync failed (launching anyway): …` ويبدأ Claude Code بالخوادم التي كانت لديه بالفعل.
 

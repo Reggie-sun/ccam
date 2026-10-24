@@ -17,7 +17,7 @@ export default function usageStatusline(): string {
     box(x, y.sl, w, h, "ccam statusline", { sub: "CCAM_PROFILE=work" }),
     box(x, y.parse, w, h, "ParseStatusLine()", { sub: "model · rate_limits" }),
     box(lx, y.mid, cw, h, "work.statusline.json", { kind: "file", sub: "SaveStatusLine()" }),
-    box(rx, y.mid, cw, h, "--wrap <cmd>", { kind: "group", sub: "sh -c · 2 s" }),
+    box(rx, y.mid, cw, h, "--wrap <cmd>", { kind: "group", sub: "runShell() · sh -c" }),
     box(lx, y.end, cw, h, "ccam usage", { sub: "fallback()" }),
     box(rx, y.end, cw, h, "[work] · Opus", { kind: "file", sub: "5h 24% · 7d 41%" }),
   ];

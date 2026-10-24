@@ -2,10 +2,10 @@
 title: क्विक स्टार्ट
 metaTitle: "क्विक स्टार्ट: Claude Code खाती जोडा आणि बदला"
 description: "ccam add ने दोन Claude Code खाती जोडा, त्यांना ccwork सारखे शॉर्टकट द्या, खाती बदला, आणि ती काय शेअर करतील ते निवडा."
-updated: 2026-10-20
+updated: 2026-10-24
 order: 2
 translation: machine
-sourceHash: "d5b0e295f3f0"
+sourceHash: "e98d0637356a"
 ---
 
 प्रत्येक खाते `ccam add` ने जोडा, नंतर `ccam <name>` ने किंवा तुम्ही स्वतः नाव दिलेल्या शॉर्टकटने, जसे `ccwork`, Claude Code सुरू करा. बहुतेक लोकांना एवढेच लागते.
@@ -107,6 +107,8 @@ ccam next --continue
 ```
 
 `ccam usage` सर्व खात्यांचा 5 तासांचा आणि साप्ताहिक वापर दाखवते. `ccam next --continue` तेच संभाषण पुढच्या खात्यात उघडते. Scripts मध्ये `ccam --fallback work -p "…"` आपोआप खाते बदलते. [वापर मर्यादा](/docs/usage-limits) पाहा.
+
+**Team आणि Enterprise सीट्स.** आपोआप होणारी निवड (`ccam next`, `--fallback`, `ccam pick`, डॅशबोर्डमधील `n`) एकाच Claude Team किंवा Enterprise organization मधील एका सीटवरून दुसऱ्या सीटवरही जाते. Anthropic च्या मदत केंद्रात म्हटले आहे की "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team प्लॅनमधील प्रत्येक सीट नावानिशी एका व्यक्तीला नेमून दिलेली असते, आणि फक्त तीच व्यक्ती ती वापरू शकते) आणि "Users can't route their work through another user's account to use that user's remaining usage" (दुसऱ्या वापरकर्त्याच्या उरलेल्या वापराचा लाभ घेण्यासाठी वापरकर्ते आपले काम त्याच्या खात्यामार्फत चालवू शकत नाहीत) ([Team प्लॅन](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise प्लॅन](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) साठीही असेच). त्यामुळे सीट्सदरम्यान आपोआप होणारी निवड वापरल्यास Anthropic च्या अटींचे उल्लंघन होऊ शकते. त्यावर अवलंबून राहण्यापूर्वी तुमच्या संस्थेकडे आणि Anthropic कडे चौकशी करा. वैयक्तिक प्लॅनबद्दल (Pro, Max) [FAQ मधील अटींविषयीची टीप](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) सांगते.
 
 ## आधीच ~/.claude वापरत आहात?
 

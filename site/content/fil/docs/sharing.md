@@ -1,10 +1,10 @@
 ---
 title: I-share ang mga MCP server, settings at kasaysayan
 description: Paano shine-share ng mga ccam group ang MCP server, settings.json, CLAUDE.md, skill at kasaysayan ng usapan ng mga Claude Code account; hiwalay ang bawat login.
-updated: 2026-10-20
+updated: 2026-10-23
 order: 4
 translation: machine
-sourceHash: 2606e4ec682e
+sourceHash: 27e0a0e5abbd
 ---
 
 May sariling login ang bawat account. Lahat ng iba pa ay puwedeng i-share sa pamamagitan ng mga **group**: pinapangalanan ng isang group ang mga item na shine-share nito at ang mga account na kasapi nito, at nili-link ng ccam ang mga file ng bawat isa sa mga account na iyon sa folder ng group, kaya ang pagbabagong ginawa sa isang account ay lumalabas sa lahat ng iyon.
@@ -47,7 +47,7 @@ Kapag nagsimulang mag-share ng item ang isang account (sumali ito sa isang group
 
 Ipinapangalan ang mga file ng usapan ayon sa kanilang session ID, kaya nagsasama ang mga kasaysayan mula sa iba't ibang account nang walang conflict.
 
-Hindi binabago ng ccam ang isang account habang tumatakbo ang Claude Code bilang ito, dahil patuloy na nagsusulat ang session sa mga file na inililipat. Isara muna ito.
+Hindi binabago ng ccam ang isang account habang tumatakbo ang Claude Code bilang ito, paano man sinimulan ang Claude Code (pati ang mga background session), dahil patuloy na nagsusulat ang session sa mga file na inililipat. Isara muna ito. Sinusuri itong muli ng ccam bago mismo mag-save, kaya nahuhuli rin ang session na sinimulan habang naghihintay ang plano.
 
 ## Kapag tumigil mag-share ang isang account
 
@@ -56,7 +56,7 @@ ccam group leave team work                   # work leaves the group
 ccam group set default --remove history      # nobody in default shares history any more
 ```
 
-Inaalis ang link at nakakakuha ang account ng sarili nitong kopya ng kasalukuyang nilalaman ng group. Idagdag ang `--fresh` para magsimulang walang laman sa halip. Pinapanatili ng group ang nilalaman nito para sa ibang account.
+Inaalis ang link at nakakakuha ang account ng sarili nitong kopya ng kasalukuyang nilalaman ng group; napupunta ang mga MCP server ng group sa sarili nitong `.claude.json`, katabi ng sarili nitong mga server. Idagdag ang `--fresh` para magsimulang walang laman sa halip; inililista na ng plano ang mga MCP server na hindi na maglo-load. Laging nagtatago ng kopya ang in-import na folder gaya ng `~/.claude`. Pinapanatili ng group ang nilalaman nito para sa ibang account.
 
 ## Kopyahin ang dati nang setup
 
@@ -73,12 +73,11 @@ Ang kinokopya nito:
 - ang `settings.json` at ang global na `CLAUDE.md`;
 - ang mga extension na `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/` at `rules/`;
 - ang iyong mga user MCP server, ang entry na `mcpServers` ng `~/.claude.json`, papunta sa `mcp.json` ng group;
-- ang mga naka-save na sign-in (OAuth) ng mga MCP server na kinokopya nito, papunta sa sariling login file ng bawat account;
 - ang kasaysayan ng usapan (`projects/` at `history.jsonl`), pero kapag idinagdag mo lang ang `--history`.
 
 Binabasa lang ang source folder: walang inililipat, nili-link o binabago rito, at gumagana pa rin ang karaniwang `claude` gaya ng dati. Hindi kailanman kinokopya sa group ang mga login file na `.credentials.json` at `.claude.json`.
 
-Iniimbak ng mga MCP server na nagsa-sign in gamit ang OAuth ang kanilang mga token sa login, hindi sa listahan ng server. Para hindi ka na mag-sign in ulit sa mga ito, kinokopya ng ccam ang mga sign-in na iyon sa login file ng bawat account na nakakakuha ng mga server sa pamamagitan ng group, maliban kung may sarili na ang account. Nilalaktawan nito ang mga account na tumatakbo, hindi pa naka-log in, nirehistro sa kinalalagyan nito gamit ang `ccam import`, o nag-iimbak ng login sa macOS Keychain, at pinapangalanan ang mga ito; doon, mag-sign in sa mga server gamit ang `/mcp`. Ang account na magsisimulang mag-share ng mga MCP server sa ibang pagkakataon ay makakakuha ng mga sign-in kapag pinatakbo mo ulit ang `ccam migrate`.
+Iniimbak ng mga MCP server na nagsa-sign in gamit ang OAuth ang kanilang mga token sa login, hindi sa listahan ng server. Hindi kinokopya ng ccam ang mga sign-in na iyon: hawak ng kinopyang sign-in ang parehong refresh token, at ang unang pag-renew ay nagla-log out sa bawat ibang may hawak nito mula sa server na iyon, kasama ang `~/.claude`. Pinapangalanan ng plano at ng buod ang mga account na magsa-sign in mismo sa mga server gamit ang `/mcp`.
 
 Bago kumopya ng anuman, ipi-print ng ccam ang plano at magtatanong:
 
@@ -121,7 +120,7 @@ ccam mcp add fs -- npx -y @modelcontextprotocol/server-filesystem ~/code
 ccam mcp list
 ```
 
-Ang server na idinagdag mo sa loob ng session gamit ang `claude mcp add` ay naka-save para sa account na iyon lang. Sa susunod na simulan mo ang account na iyon, babanggitin ng ccam ang server at ang command na maglilipat nito sa group:
+Ang server na idinagdag mo sa loob ng session gamit ang `claude mcp add` ay naka-save para sa account na iyon lang, at para sa folder na kinaroroonan mo noon (ang local scope ng Claude Code; ginagawa ito ng `-s user` na pag-aari ng account sa bawat folder). Sa susunod na simulan mo ang account na iyon, babanggitin ng ccam ang server, kasama ang folder nito, at ang command na maglilipat nito sa group:
 
 ```sh
 ccam mcp import work gh
@@ -129,9 +128,9 @@ ccam mcp import work gh
 
 Kung may ibang server na ang group na may ganoong pangalan, nilalaktawan ito ng ccam at sinasabi ito. Pinapalitan ng `--force` ang server ng group at itinatago ang lumang `mcp.json` sa `.ccam-backup/` folder ng group.
 
-Iniimbak ng mga MCP server na nagsa-sign in gamit ang OAuth ang kanilang mga token kasama ng login ng account, kaya i-authorize sila nang isang beses sa bawat account, o kopyahin ang mga sign-in mula sa `~/.claude` gamit ang `ccam migrate`.
+Iniimbak ng mga MCP server na nagsa-sign in gamit ang OAuth ang kanilang mga token kasama ng login ng account, kaya i-authorize sila nang isang beses sa bawat account gamit ang `/mcp`. Pinapangalanan ng `ccam ext` at `ccam doctor` ang mga server na hindi pa naka-sign in ang isang account habang naka-sign in naman ang ibang account.
 
-Kung gusto mong lumabas ang mga server sa `claude mcp list` at `/mcp` bilang karaniwang user server, itakda ang `mcp_strategy = "sync"` sa `~/.config/ccam/config.toml`. Isusulat na ng ccam ang mga ito sa `.claude.json` ng bawat account bago magsimula, sa ilalim ng sariling file lock ng Claude Code at may backup.
+Kung gusto mong lumabas ang mga server sa `claude mcp list` at `/mcp` bilang karaniwang user server, itakda ang `mcp_strategy = "sync"` sa itaas ng `~/.config/ccam/config.toml`, bago ang unang `[[group]]`, `[[profile]]` o `[[folder]]`. Isusulat na ng ccam ang mga ito sa `.claude.json` ng bawat account bago magsimula, sa ilalim ng sariling file lock ng Claude Code at may backup. Nananatiling pag-aari ng account ang sarili nitong server na may parehong pangalan, at sinasabi ito ng ccam.
 
 ## Dalawang account sa iisang folder
 
@@ -144,4 +143,4 @@ ccam doctor
 ccam doctor --fix
 ```
 
-Kung naging karaniwang file ang isang shared na path, halimbawa pagkatapos mong i-restore nang mano-mano ang isang backup, hihinto ang ccam bago simulan ang Claude Code at ituturo ang `ccam doctor --fix`, na pinagsasama ang file sa group at nag-iimbak ng backup.
+Kung naging karaniwang file ang isang shared na path, halimbawa pagkatapos mong i-restore nang mano-mano ang isang backup, hihinto ang ccam bago simulan ang Claude Code at ituturo ang `ccam doctor --fix`, na nili-link itong muli sa group: nagiging kopya ng group ang file kapag wala pang kopya ang group, at kung hindi, pinapanatili ng group ang sarili nito at napupunta ang sa iyo sa isang backup, na pinapangalanan ng `--fix`. Tinatapos din ng `ccam doctor --fix` ang pagpapalit ng group na huminto sa kalagitnaan.

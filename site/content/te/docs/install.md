@@ -2,10 +2,10 @@
 title: ccam ను ఇన్‌స్టాల్ చేయండి
 metaTitle: Linux, macOS, Windows లో ccam ఇన్‌స్టాల్ చేయండి
 description: Linux, macOS లేదా Windows లో ccam ను ఒకే కమాండ్, .deb ప్యాకేజీ లేదా సోర్స్ నుంచి ఇన్‌స్టాల్ చేసి, ccam update తో అప్‌డేట్ చేయండి. ముందుగా Claude Code ఉండాలి.
-updated: 2026-10-21
+updated: 2026-10-23
 order: 1
 translation: machine
-sourceHash: "1e3a53623de0"
+sourceHash: "af21dcc24169"
 ---
 
 Linux లేదా macOS లో టెర్మినల్‌లో ఇది రన్ చేయండి:
@@ -22,7 +22,7 @@ Windows లో, PowerShell లో ఇది రన్ చేయండి:
 irm https://ccam.dev/install.ps1 | iex
 ```
 
-ఇది `ccam_windows_<arch>.zip` ను డౌన్‌లోడ్ చేసి, దాని SHA-256 చెక్‌సమ్‌ను తనిఖీ చేసి, Claude Code ఇన్‌స్టాలర్ `claude.exe` ను ఉంచే అదే ఫోల్డర్ అయిన `%USERPROFILE%\.local\bin` లో `ccam.exe` ను ఉంచుతుంది, ఆ ఫోల్డర్ మీ యూజర్ `PATH` లో ఇంకా లేకపోతే దాన్ని జోడిస్తుంది. తర్వాత కొత్త టెర్మినల్ తెరవండి.
+ఇది `ccam_windows_<arch>.zip` ను డౌన్‌లోడ్ చేసి, దాని SHA-256 చెక్‌సమ్‌ను తనిఖీ చేసి, Claude Code ఇన్‌స్టాలర్ `claude.exe` ను ఉంచే అదే ఫోల్డర్ అయిన `%USERPROFILE%\.local\bin` లో `ccam.exe` ను ఉంచుతుంది, ఆ ఫోల్డర్ మీ యూజర్ `PATH` లో ఇంకా లేకపోతే దాన్ని జోడిస్తుంది, `%USERPROFILE%\bin` వంటి ఎంట్రీలను ఉన్నవి ఉన్నట్టే ఉంచుతుంది. తర్వాత కొత్త టెర్మినల్ తెరవండి. దీన్ని మళ్లీ రన్ చేస్తే ccam మారుతుంది, పాత బైనరీ నుంచి ఒక Claude Code సెషన్ ఇంకా రన్ అవుతున్నప్పుడు కూడా (ఆ బైనరీ పేరు `ccam.exe.old` గా, లేదా అంతకంటే పాతది ఇంకా వాడుకలో ఉంటే `ccam.exe.old-<number>` గా మారుతుంది), హార్డ్ లింక్‌లు అయిన షార్ట్‌కట్‌లను కూడా పునరుద్ధరిస్తుంది: `OK 2 shortcuts now run the new ccam`.
 
 ccam మీ కోసం Claude Code ను ప్రారంభిస్తుంది, కాబట్టి ముందుగా [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) ను ఇన్‌స్టాల్ చేసి, `claude --version` పనిచేస్తోందని నిర్ధారించుకోండి.
 
@@ -30,7 +30,7 @@ ccam మీ కోసం Claude Code ను ప్రారంభిస్తు
 
 - x86-64, ARM64 పై Linux: Ubuntu, Debian, Fedora, Arch, Alpine, ఇతర డిస్ట్రిబ్యూషన్లు. బైనరీ స్టాటిక్, దానికి ఎలాంటి డిపెండెన్సీలు లేవు.
 - Apple silicon, Intel పై macOS.
-- x86-64, ARM64 పై Windows 10, 11, PowerShell, Windows Terminal లేదా Git Bash లో. షేర్డ్ ఫోల్డర్‌లు ప్రతి యూజర్‌కూ పనిచేస్తాయి. షేర్డ్ ఫైల్‌లకు (`settings.json`, `CLAUDE.md`, `history.jsonl`) Developer Mode (Settings > System > For developers) అవసరం, ఎందుకంటే Windows ఆ మోడ్‌లో లేదా అడ్మినిస్ట్రేటర్‌కు మాత్రమే ఫైల్‌లకు లింక్‌లు సృష్టించనిస్తుంది; చూడండి [Windows లో షేరింగ్](/features/share#on-windows).
+- x86-64, ARM64 పై Windows 10, 11, PowerShell, Windows Terminal లేదా Git Bash లో. షేర్డ్ ఫోల్డర్‌లు ప్రతి యూజర్‌కూ పనిచేస్తాయి. షేర్డ్ ఫైల్‌లకు (`settings.json`, `CLAUDE.md`, `history.jsonl`) Developer Mode (Settings > System > For developers) అవసరం, ఎందుకంటే Windows ఆ మోడ్‌లో లేదా అడ్మినిస్ట్రేటర్‌కు మాత్రమే ఫైల్‌లకు లింక్‌లు సృష్టించనిస్తుంది; చూడండి [Windows లో షేరింగ్](/features/share#on-windows). అది లేకుండా, మొదటి `ccam add` MCP సర్వర్లు, ఎక్స్‌టెన్షన్లతో మాత్రమే `default` గ్రూప్‌ను సృష్టిస్తుంది, Developer Mode ఆన్ అయిన తర్వాత మిగతావాటిని ఎలా జోడించాలో చెబుతుంది.
 - WSL లోపల, ccam ఏ Linux సిస్టమ్‌లోనైనా పనిచేసినట్లే పనిచేస్తుంది.
 
 ## ఇన్‌స్టాల్ చేయడానికి ఇతర మార్గాలు
@@ -48,6 +48,8 @@ sudo apt install ./ccam_*_linux_amd64.deb
 ```sh
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
 ```
+
+రిలీజ్ ట్యాగ్ (`@latest` లేదా `@vX.Y.Z`) నుంచి చేసిన బిల్డ్ ఆ వెర్షన్‌ను చూపిస్తుంది, కాబట్టి దానికి `ccam update` పనిచేస్తుంది; `@main` నుంచి, లేదా ఒక ట్యాగ్ తర్వాతి లోకల్ checkout నుంచి చేసిన బిల్డ్ `dev` అని చూపిస్తుంది.
 
 **ఒక నిర్దిష్ట వెర్షన్.** `CCAM_VERSION` ను సెట్ చేయండి:
 
@@ -117,9 +119,9 @@ ccam update --version v0.2.0
 ccam --dry-run update
 ```
 
-ఇన్‌స్టాల్ స్క్రిప్ట్‌ను మళ్లీ రన్ చేసినా `~/.local/bin` లోని కాపీ అప్‌డేట్ అవుతుంది. మీరు ccam ను `go install` తో బిల్డ్ చేసి ఉంటే, అదే కమాండ్‌ను మళ్లీ రన్ చేయండి.
+ఇన్‌స్టాల్ స్క్రిప్ట్‌ను మళ్లీ రన్ చేసినా `~/.local/bin` లోని కాపీ అప్‌డేట్ అవుతుంది. మీరు ccam ను రిలీజ్ ట్యాగ్ నుంచి `go install` తో బిల్డ్ చేసి ఉంటే, `ccam update` కూడా పనిచేస్తుంది, లేదా అదే కమాండ్‌ను మళ్లీ రన్ చేయండి.
 
-**Windows.** `ccam update` Windows కోసం `.zip` ను డౌన్‌లోడ్ చేస్తుంది. Windows లో రన్ అవుతున్న ప్రోగ్రామ్‌ను మార్చలేము, కాబట్టి పాత బైనరీ పేరు `ccam.exe.old` గా మార్చబడుతుంది, తదుపరి అప్‌డేట్ దాన్ని తొలగిస్తుంది.
+**Windows.** `ccam update` Windows కోసం `.zip` ను డౌన్‌లోడ్ చేస్తుంది. Windows లో రన్ అవుతున్న ప్రోగ్రామ్‌ను మార్చలేము, కాబట్టి పాత బైనరీ పేరు `ccam.exe.old` గా మార్చబడుతుంది, తదుపరి అప్‌డేట్ దాన్ని తొలగిస్తుంది; అంతకుముందరి `ccam.exe.old` నుంచి ఒక సెషన్ ఇంకా రన్ అవుతుంటే, పేరు `ccam.exe.old-<time>` అవుతుంది. హార్డ్ లింక్‌లు అయిన షార్ట్‌కట్‌లు ఆ వెంటనే పునరుద్ధరించబడతాయి.
 
 **Debian, Ubuntu ప్యాకేజీ.** apt ఇన్‌స్టాల్ చేసిన `/usr/bin/ccam` ను `ccam update` మార్చదు, దానికి బదులుగా ఈ దశలను ప్రింట్ చేస్తుంది. [రిలీజ్‌ల పేజీ](https://github.com/jhyunwoo/ccam/releases) నుంచి కొత్త `ccam_<version>_linux_amd64.deb` ను డౌన్‌లోడ్ చేసి, పాత దాని మీదే ఇన్‌స్టాల్ చేయండి:
 
@@ -146,4 +148,4 @@ Remove-Item ~\.local\bin\ccam.exe
 Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
 ```
 
-`~/.local/share/ccam` ను తొలగిస్తే, అక్కడ నిల్వ ఉన్న లాగిన్‌లు, సంభాషణ చరిత్ర కూడా తొలగిపోతాయి. మీరు [ఇంపోర్ట్ చేసిన](/docs/commands) `~/.claude` ఫోల్డర్ ఉన్న చోటే ఉంటుంది.
+`~/.local/share/ccam` ను తొలగిస్తే, అక్కడ నిల్వ ఉన్న లాగిన్‌లు, సంభాషణ చరిత్ర కూడా తొలగిపోతాయి. మీరు [ఇంపోర్ట్ చేసిన](/docs/commands) `~/.claude` ఫోల్డర్ ఉన్న చోటే ఉంటుంది, కానీ అది ఒక గ్రూప్‌లో ఉన్నంతవరకు, అది షేర్ చేసే ఫైల్‌లు `~/.local/share/ccam/groups/` లో ఉంటాయి. ముందుగా దాని కోసం `ccam remove <name>` (లేదా `ccam group leave`) రన్ చేయండి: అది తాను షేర్ చేసిన ప్రతిదాని కాపీతో తన గ్రూప్‌ల నుంచి బయటకు వెళ్తుంది.

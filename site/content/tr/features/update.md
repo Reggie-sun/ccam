@@ -1,10 +1,10 @@
 ---
 title: ccam'i güncelleme
 description: ccam update, bir SHA-256 kontrolünden sonra ccam'i en son GitHub sürümüyle değiştirir; --check yalnızca bildirir, --version belirli bir sürüm etiketini kurar.
-updated: 2026-10-21
+updated: 2026-10-23
 order: 10
 translation: machine
-sourceHash: a92dbf37399f
+sourceHash: "000d37de5f29"
 ---
 
 `ccam update`, GitHub'dan bir ccam sürümü indirir, onu sürümün `checksums.txt` dosyasıyla doğrular ve çalışan ikili dosyayı tek bir yeniden adlandırmayla değiştirir. ccam'i kurulum betiğiyle veya bir arşivden kurduysanız kullanın. [Kontrol paneli](/features/dashboard) de her açıldığında GitHub'a en son sürümü sorar ve onu `U` ile önerir; bu tuş sorduktan sonra aynı adımları çalıştırır. Başka hiçbir komut GitHub ile bağlantı kurmaz; bu yüzden onlar çevrimdışı da aynı şekilde çalışır.
@@ -64,7 +64,7 @@ Etiket aramasından yeniden adlandırmaya kadar tüm akış:
 
 Arşiv ve `checksums.txt` yan yana indirilir ve sağlama toplamı eşleşene kadar hiçbir şey yazılmaz. Yeniden adlandırma atomiktir; bu yüzden bir çökme veya dolu bir disk ya eski ikili dosyayı ya da yenisini bırakır, hiçbir zaman yarım bir dosya bırakmaz. `~/.local/bin/ccwork` gibi kısayol komutları ccam ikili dosyasına giden sembolik bağlantılardır; bu yüzden hiçbir değişiklik olmadan yeni sürümü çalıştırırlar.
 
-Windows'ta çalışan bir programın dosyası değiştirilemez veya silinemez, yalnızca yeniden adlandırılabilir. `Updater.Install` yeni ikili dosyayı `ccam.exe.new` olarak yazar, çalışan `ccam.exe` dosyasını `ccam.exe.old` olarak, yeni dosyayı da `ccam.exe` olarak yeniden adlandırır. Son adım başarısız olursa eski ikili dosya geri adlandırılır. Bir sonraki güncelleme `ccam.exe.old` dosyasını siler. Sembolik bağlantı yerine sabit bağlantı olan kısayollar ([Kısayol komutları](/features/shortcuts)) hemen ardından yenilenir, böylece onlar da yeni sürümü çalıştırır.
+Windows'ta çalışan bir programın dosyası değiştirilemez veya silinemez, yalnızca yeniden adlandırılabilir. `Updater.Install` yeni ikili dosyayı `ccam.exe.new` olarak yazar, çalışan `ccam.exe` dosyasını `ccam.exe.old` olarak, yeni dosyayı da `ccam.exe` olarak yeniden adlandırır. Son adım başarısız olursa eski ikili dosya geri adlandırılır. Bir sonraki güncelleme silebildiği `ccam.exe.old` dosyalarını siler; daha önceki bir `ccam.exe.old` dosyasından hâlâ bir oturum çalışıyorsa çalışan ikili dosya bunun yerine `ccam.exe.old-<time>` olur. Sembolik bağlantı yerine sabit bağlantı olan kısayollar ([Kısayol komutları](/features/shortcuts)) hemen ardından yenilenir, böylece onlar da yeni sürümü çalıştırır; bu, yalnızca az önce değiştirilen ikili dosyanın değil, ccam'in oluşturduğu daha eski herhangi bir ccam'in sabit bağlantılarını da kapsar.
 
 ### Paket yöneticisiyle yapılan kurulumlar
 
@@ -91,7 +91,7 @@ Linux dışındaki sistemlerde yalnızca kurulum betiği satırı yazdırılır:
 
 ## Güvenlik ve uç durumlar
 
-- Bir geliştirme derlemesi sürümünü `dev` olarak bildirir ve karşılaştırılacak bir sürümü yoktur; bu yüzden `ccam update` ve `ccam update --check` onu reddeder. `ccam update --version vX.Y.Z` onun üzerine bir sürüm kurar.
+- Bir geliştirme derlemesi sürümünü `dev` olarak bildirir ve karşılaştırılacak bir sürümü yoktur; bu yüzden `ccam update` ve `ccam update --check` onu reddeder. `ccam update --version vX.Y.Z` onun üzerine bir sürüm kurar. `go install github.com/jhyunwoo/ccam/cmd/ccam@vX.Y.Z` (veya `@latest`) ile yapılmış bir derleme o sürümü bildirir; böylece `ccam update` ve kontrol panelinin teklifi onunla çalışır; `@main` ya da bir etiketin ötesindeki yerel bir derleme `dev` olarak kalır.
 - Başarısız bir indirme, platformunuz için eksik bir dosya veya sağlama toplamı uyuşmazlığı kurulu ikili dosyayı olduğu gibi bırakır.
 - Var olmayan bir sürüm `there is no release <tag>` ile başarısız olur. GitHub HTTP 403 veya 429 ile reddettiğinde ccam bunun muhtemelen bir istek sınırı olduğunu söyler ve daha sonra yeniden denemenizi ister.
 - `--check` yalnızca okur. İkili dosyanın paket yöneticisine ait veya yazılabilir olup olmadığını kontrol etmez.

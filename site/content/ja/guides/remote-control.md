@@ -1,10 +1,10 @@
 ---
 title: ccamでRemote Controlを使う
 description: ccam <name> rcで任意のアカウントのClaude Code Remote Controlを起動する方法、使えるオプション、共有MCPサーバーのコピーを勧める理由、問題の解決法です。
-updated: 2026-10-20
+updated: 2026-10-23
 order: 4
 translation: machine
-sourceHash: "5f0b90ea53d6"
+sourceHash: "3e17d89f98c8"
 ---
 
 `ccam work rc`は、アカウント`work`としてClaude CodeのRemote Controlを起動します。これで、このコンピューター上のセッションをclaude.ai/codeやClaudeモバイルアプリから操作できます。動作は`claude rc`と同じですが、違いが1つあります。アカウントがMCPサーバーを共有している場合、ccamはそれらをアカウントの`.claude.json`にコピーするかどうかを一度だけ確認します。Remote Controlのセッションは、それ以外の場所からサーバーを読まないためです。
@@ -31,9 +31,9 @@ ccam --dry-run work rc                # print the command instead of running it
 | オプションまたは設定 | 動作 | デフォルト |
 | --- | --- | --- |
 | `--dry-run`（アカウントの前） | 環境変数とコマンド、MCPの通知があればそれも表示します。確認もコピーもしません | オフ |
-| `Copy them into .claude.json (a backup is kept)? [y/N]` | アカウントがMCPサーバーを共有していて、その`.claude.json`にグループの現在のリストがないときに表示されます。`y`でコピーし、`N`またはEnterでコピーせずに起動します | `N` |
-| `~/.config/ccam/config.toml`の`mcp_strategy = "sync"` | Remote Controlかどうかにかかわらず、起動のたびにグループのサーバーを`.claude.json`にコピーするので、確認は一切ありません | `"flag"` |
-| `ccam group leave <group> work` | このアカウントとMCPを共有しているグループから、アカウントを外します。Remote Controlはアカウント自身のサーバーだけで起動し、確認もありません | `default`に所属 |
+| `Copy them into .claude.json (a backup is kept; servers of the account's own stay)? [y/N]` | アカウントがMCPサーバーを共有していて、その`.claude.json`にグループの現在のリストがないとき、またはコピーしたサーバーがそこからなくなったときに表示されます。`y`でコピーし、`N`またはEnterでコピーせずに起動します | `N` |
+| `~/.config/ccam/config.toml`の先頭の`mcp_strategy = "sync"` | Remote Controlかどうかにかかわらず、起動のたびにグループのサーバーを`.claude.json`にコピーするので、確認は一切ありません | `"flag"` |
+| `ccam group leave <group> work` | このアカウントとMCPを共有しているグループから、アカウントを外します。グループのサーバーがアカウント自身のものとしてその`.claude.json`にコピーされるので、Remote Controlはそれらを使え、確認もありません。`--fresh`を付けると、アカウント自身のサーバーだけで起動します | `default`に所属 |
 
 ### Remote Controlのオプション
 
@@ -52,7 +52,7 @@ ccam --dry-run work rc                # print the command instead of running it
 | `--[no-]chrome` | 新しいセッションでClaude in Chromeを使う（デフォルトはオフ） |
 | `-d`, `--debug`, `--debug-file <path>`, `-v`, `--verbose` | デバッグ出力と詳細出力 |
 
-`rc`はアカウント名のすぐ後に書いてください。ccamは`-`で始まらない最初の引数をClaude Codeのコマンドとみなすので、`ccam work rc --name laptop`では`rc`を見ますが、`ccam work --model opus rc`では`opus`を見ます。
+ccamは、Claude Codeと同じように、オプションはその値とともに飛ばしてClaude Codeのコマンドを読み取るので、`ccam work rc --name laptop`でも`ccam work --model opus rc`でもRemote Controlが起動します。ccamが知らないオプションは値のないものとして数えるので、念のため`rc`はアカウント名のすぐ後に書いてください。
 
 ## ccamが行うこと
 
@@ -60,16 +60,16 @@ ccam --dry-run work rc                # print the command instead of running it
 
 1. ccamは、通常の起動と同じようにアカウントを見つけ、共有リンクを確認し、`claude`の場所を解決します。
 2. コマンドが`rc`か`remote-control`であることを確認し、`--mcp-config`を付けません。
-3. アカウントがMCPサーバーを共有している場合、グループの`mcp.json`を`~/.local/state/ccam/mcp/work/`の`sync-stamp`と比較します。`.claude.json`に現在のサーバーがすでに入っている場合や、グループにサーバーがない場合は、そのまま手順6に進みます。
+3. アカウントがMCPサーバーを共有している場合、グループの`mcp.json`を`~/.local/state/ccam/mcp/work/`の`sync-stamp`と比較し、グループのすべてのサーバーがまだ`.claude.json`にあるかを確認します。`.claude.json`に現在のサーバーがすでに入っている場合や、グループにサーバーがない場合は、そのまま手順6に進みます。
 4. それ以外の場合は、セッションで使えなくなるサーバーの名前を示します。
 
    ```console
    $ ccam work rc
    ccam: Remote Control sessions only get MCP servers stored in account work's .claude.json, not the shared MCP servers (ctx, fs).
-   Copy them into .claude.json (a backup is kept)? [y/N]
+   Copy them into .claude.json (a backup is kept; servers of the account's own stay)? [y/N]
    ```
 
-5. `y`と答えると、`.claude.json`のバックアップを保存し、Claude Code自身のロックを取得して、グループのサーバーを`mcpServers`に追加します。アカウントのほかのサーバーは残します。`N`と答えた場合、ターミナルがない場合、アカウントが実行中の場合は、何も変更せずにその旨を表示します。
+5. `y`と答えると、`.claude.json`のバックアップを保存し、Claude Code自身のロックを取得して、グループのサーバーを`mcpServers`に追加します。アカウントのほかのサーバーは残します。グループのサーバーと同じ名前のアカウント自身のサーバーはアカウントのものとして残り、ccamがその旨を知らせます。`N`と答えた場合、ターミナルがない場合、アカウントが実行中の場合は、何も変更せずにその旨を表示します。
 
    ```console
          Starting without them. To copy them before every launch instead, set mcp_strategy = "sync" in ~/.config/ccam/config.toml
@@ -77,17 +77,17 @@ ccam --dry-run work rc                # print the command instead of running it
 
 6. セッションを記録し、`CLAUDE_CONFIG_DIR`をアカウントのフォルダーに設定してから、`exec`で自分自身を`claude rc`に置き換えます。
 
-その後、Remote Controlはサーバーとして動き続けます。あなたのために起動するセッションはすべてこのプロセスの子なので、`work`として動きます。つまり`work`のログイン、設定、会話履歴を使い、`work`の使用量上限に加算されます。サーバーが動いている間、ccamはこのアカウントを実行中として扱います。
+その後、Remote Controlはサーバーとして動き続けます。あなたのために起動するセッションはすべてこのプロセスの子なので、`work`として動きます。つまり`work`のログイン、設定、会話履歴を使い、`work`の使用量上限に加算されます。ccamが起動したサーバーが動いている間、ccamはこのアカウントを実行中として扱います。通常の`claude remote-control`で起動したサーバーも、セッションがある間は同じように扱いますが、まだセッションのないそのようなサーバーは検出されません。
 
 違いはドライランで確認できます。通常の起動はグループのサーバーを引数として渡しますが、Remote Controlは渡しません。
 
 ```console
 $ ccam --dry-run work
-CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/claude --mcp-config=/home/me/.local/share/ccam/groups/default/mcp.json
+CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work CCAM_PROFILE=work /home/me/.local/bin/claude --mcp-config=/home/me/.local/share/ccam/groups/default/mcp.json
 $ ccam --dry-run work rc
 ccam: Remote Control sessions only get MCP servers stored in account work's .claude.json, not the shared MCP servers (ctx, fs).
       Starting without them. To copy them before every launch instead, set mcp_strategy = "sync" in ~/.config/ccam/config.toml
-CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/claude rc
+CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work CCAM_PROFILE=work /home/me/.local/bin/claude rc
 ```
 
 ## このように動く理由
@@ -96,13 +96,13 @@ CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/c
 
 **そのセッションは`.claude.json`からしかサーバーを読みません。** Remote Controlが起動するセッションは、コマンドラインのオプションを引き継ぎません。ユーザーMCPサーバーを見つける場所は、アカウントの`.claude.json`だけです。このファイルにはアカウントのログイン情報やフォルダーごとの状態も入っているため、ccamは`settings.json`のように共有コピーへリンクすることができません。セッションに共有リストを渡すには、サーバーをこのファイルにコピーするしかありません。
 
-**ccamは書き込む前に確認します。** デフォルトのフラグ戦略では、ccamは`.claude.json`に手を触れないと約束しています。Remote Controlはそこに書き込む必要がある唯一のケースなので、まず確認し、バックアップを残し、`mcpServers`以外には何も触れません。
+**ccamは書き込む前に確認します。** デフォルトのフラグ戦略では、ccamは起動時に`.claude.json`に手を触れません。Remote Controlはそこに書き込む必要がある唯一の起動なので、まず確認し、バックアップを残し、`mcpServers`以外には何も触れません（起動以外では、MCPの共有から抜けるときや加わるとき、そして`ccam mcp import`も、それぞれの計画が示すとおりにそこに書き込みます）。
 
-**アカウントの実行中は書き込みません。** Claude Codeはセッション中に`.claude.json`を書き直すため、外部から加えた変更は失われるか上書きされます。そのため、ccamはアカウントのセッションが1つでも実行中ならコピーを見送ります。別のRemote Controlサーバーもこれに含まれます。
+**アカウントの実行中は書き込みません。** Claude Codeはセッション中に`.claude.json`を書き直すため、外部から加えた変更は失われるか上書きされます。そのため、ccamはアカウントのセッションが1つでも実行中ならコピーを見送ります。別のRemote Controlサーバーと、ccamを使わずに起動したClaude Codeもこれに含まれます。
 
-**確認は変更ごとに一度だけです。** コピーの後、`sync-stamp`にはグループの`mcp.json`の更新日時が記録されます。ccamが再び確認するのは、たとえば`ccam mcp add`の後など、そのファイルが変わったときだけです。`N`と答えた場合はまだコピーがないので、Remote Controlを起動するたびに確認します。
+**確認は変更ごとに一度だけです。** コピーの後、`sync-stamp`にはグループの`mcp.json`の更新日時が記録されます。ccamが再び確認するのは、たとえば`ccam mcp add`の後など、そのファイルが変わったときか、コピーしたサーバーが`.claude.json`からなくなったときだけです。`N`と答えた場合はまだコピーがないので、Remote Controlを起動するたびに確認します。
 
-**`ccam mcp`がコピーを最新に保ちます。** 名前が重なった場合は`.claude.json`の項目が`--mcp-config`より優先されるため、古いコピーは通常の起動でも新しい定義を隠してしまいます。そこで、`ccam mcp add`、`add-json`、`remove`、`import`は、実行中でないすべてのアカウントのコピーを更新します。
+**`ccam mcp`がコピーを最新に保ちます。** 名前が重なった場合は`.claude.json`の項目が`--mcp-config`より優先されるため、古いコピーは通常の起動でも新しい定義を隠してしまいます。そこで、`ccam mcp add`、`add-json`、`remove`、`import`、そして`ccam migrate`は、実行中でないすべてのアカウントのコピーを更新し、コピーが変わったときはその旨を表示します。
 
 ```console
 $ ccam mcp add ctx --url https://mcp.context7.com/mcp
@@ -124,19 +124,19 @@ $ ccam mcp add ctx --url https://mcp.context7.com/mcp
 
 ### ccamが毎回確認してくる
 
-まだサーバーをコピーしていないためです。一度`y`と答えるか、`mcp_strategy = "sync"`を設定してください。Remote Controlでこれらのサーバーを使うつもりがないなら、このアカウントとのMCP共有をやめます。アカウントをそのグループから外す（`ccam group leave default work`）か、MCPを、そのアカウントが入っていない専用のグループで共有します。
+まだサーバーをコピーしていないためです。一度`y`と答えるか、`mcp_strategy = "sync"`を設定してください。Remote Controlでこれらのサーバーを使うつもりがないなら、サーバーを残さずに、このアカウントとのMCP共有をやめます。`ccam group leave default work --fresh`を実行するか、MCPを、そのアカウントが入っていない専用のグループで共有します。オプションなしの`ccam group leave`は、グループのサーバーをアカウントの`.claude.json`にコピーするので、Remote Controlはそれらを使えます。
 
 ### `ccam work rc`が`--mcp-config`についてのエラーですぐに失敗する
 
-お使いのccamが0.6.0より古く、Remote Controlに`--mcp-config`を渡しています。`ccam update`を実行してください。最新のccamで同じエラーが出る場合は、`ccam work --model opus rc`のように値を取るオプションが`rc`より前にあり、ccamが`opus`をコマンドとみなしています。`rc`をアカウント名のすぐ後に置いてください。
+お使いのccamが0.6.0より古く、Remote Controlに`--mcp-config`を渡しています。`ccam update`を実行してください。最新のccamで同じエラーが出る場合は、ccamが知らない、値を取るオプションが`rc`より前にあり、ccamがその値をコマンドとみなしています。`rc`をアカウント名のすぐ後に置いてください。
 
 ### `ccam mcp`での変更がRemote Controlに反映されない
 
 `ccam mcp add`と`remove`は実行中でないアカウントのコピーだけを更新し、その場合は次のように表示します: `Note: account work is running, so the copy in its .claude.json stays as it was until its next Remote Control launch.` Remote Controlを止めてから起動し直してください。ccamが変更された`mcp.json`に気づき、再び確認します。
 
-### コピーで自分のサーバーが置き換えられた
+### グループのものではなく自分のサーバーが使われる
 
-アカウントにグループのサーバーと同じ名前の独自サーバーがあった場合、コピーがそれを置き換えます。以前の`.claude.json`は`~/.local/state/ccam/mcp/work/backups/`にあり、最新の5つが保管されます。自分の定義をすべてのアカウントで使うには、次にRemote Controlを起動する前に`ccam mcp import work <server> --force`でグループに移してください。
+アカウントにグループのサーバーと同じ名前の独自サーバーがある場合、コピーはそれをそのまま残し、その旨を表示します: `account work has its own MCP servers fs, so group default's of those names are not copied there`。グループのものを使うには、アカウントのものを削除します（`claude mcp remove -s user <name>`）。自分の定義をすべてのアカウントで使うには、`ccam mcp import work <server> --force`でグループに移してください。`.claude.json`のバックアップは`~/.local/state/ccam/mcp/work/backups/`にあり、最新の5つが保管されます。
 
 ### コピーしたサーバーを削除したい
 

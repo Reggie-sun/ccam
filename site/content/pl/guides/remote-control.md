@@ -1,10 +1,10 @@
 ---
 title: Remote Control z ccam
 description: "Remote Control na dowolnym koncie przez ccam <name> rc: które opcje działają, czemu ccam proponuje kopię współdzielonych serwerów MCP i jak naprawić problemy."
-updated: 2026-10-20
+updated: 2026-10-23
 order: 4
 translation: machine
-sourceHash: "5f0b90ea53d6"
+sourceHash: "3e17d89f98c8"
 ---
 
 `ccam work rc` uruchamia Remote Control z Claude Code jako konto `work`, dzięki czemu możesz sterować sesjami na tym komputerze z claude.ai/code albo z mobilnej aplikacji Claude. Działa tak jak `claude rc`, z jedną różnicą: jeśli konto współdzieli serwery MCP, ccam raz pyta, czy skopiować je do `.claude.json` konta, bo sesje Remote Control nie odczytują serwerów z żadnego innego miejsca.
@@ -31,9 +31,9 @@ Spotykają się tu dwa rodzaje opcji: opcje ccam, które podaje się przed nazw�
 | Opcja lub ustawienie | Działanie | Domyślnie |
 | --- | --- | --- |
 | `--dry-run` (przed kontem) | Wypisuje środowisko i polecenie oraz komunikat o MCP, jeśli występuje. Niczego nie pyta ani nie kopiuje | wyłączone |
-| `Copy them into .claude.json (a backup is kept)? [y/N]` | Pytanie pojawia się, gdy konto współdzieli serwery MCP, a w jego `.claude.json` brakuje bieżącej listy grupy. `y` je kopiuje, `N` lub Enter uruchamia bez nich | `N` |
-| `mcp_strategy = "sync"` w `~/.config/ccam/config.toml` | Kopiuje serwery grupy do `.claude.json` przed każdym uruchomieniem, niezależnie od tego, czy to Remote Control, więc nic nie jest pytane | `"flag"` |
-| `ccam group leave <group> work` | Wyjmuje konto z grupy, która współdzieli z nim MCP; Remote Control startuje wtedy tylko z własnymi serwerami konta i o nic nie pyta | w `default` |
+| `Copy them into .claude.json (a backup is kept; servers of the account's own stay)? [y/N]` | Pytanie pojawia się, gdy konto współdzieli serwery MCP, a w jego `.claude.json` brakuje bieżącej listy grupy albo zniknął z niego skopiowany serwer. `y` je kopiuje, `N` lub Enter uruchamia bez nich | `N` |
+| `mcp_strategy = "sync"` na górze `~/.config/ccam/config.toml` | Kopiuje serwery grupy do `.claude.json` przed każdym uruchomieniem, niezależnie od tego, czy to Remote Control, więc nic nie jest pytane | `"flag"` |
+| `ccam group leave <group> work` | Wyjmuje konto z grupy, która współdzieli z nim MCP. Serwery grupy są kopiowane do jego `.claude.json` jako jego własne, więc Remote Control je ma i o nic nie pyta; z `--fresh` startuje tylko z własnymi serwerami konta | w `default` |
 
 ### Opcje Remote Control
 
@@ -52,7 +52,7 @@ Wszystko po `rc` należy do Claude Code. Oto opcje `claude remote-control` w Cla
 | `--[no-]chrome` | Claude in Chrome w nowych sesjach (domyślnie wyłączone) |
 | `-d`, `--debug`, `--debug-file <path>`, `-v`, `--verbose` | Wyjście diagnostyczne i szczegółowe |
 
-Podawaj `rc` zaraz po nazwie konta. ccam traktuje pierwszy argument, który nie zaczyna się od `-`, jako polecenie Claude Code, więc w `ccam work rc --name laptop` widzi `rc`, ale w `ccam work --model opus rc` widzi `opus`.
+ccam odczytuje polecenie Claude Code tak jak Claude Code, pomijając opcje razem z ich wartościami, więc zarówno `ccam work rc --name laptop`, jak i `ccam work --model opus rc` uruchamiają Remote Control. Opcja, której ccam nie zna, liczy się jako opcja bez wartości; dla pewności podawaj `rc` zaraz po nazwie konta.
 
 ## Co robi ccam
 
@@ -60,16 +60,16 @@ Uruchomienie przebiega zwykłą ścieżką ([Uruchamianie Claude Code](/features
 
 1. ccam znajduje konto, sprawdza jego linki współdzielenia i odnajduje `claude`, jak przy każdym uruchomieniu.
 2. Widzi, że polecenie to `rc` lub `remote-control`, i pomija `--mcp-config`.
-3. Jeśli konto współdzieli serwery MCP, porównuje `mcp.json` grupy z `sync-stamp` w `~/.local/state/ccam/mcp/work/`. Gdy `.claude.json` zawiera już bieżące serwery albo grupa nie ma żadnych, przechodzi od razu do kroku 6.
+3. Jeśli konto współdzieli serwery MCP, porównuje `mcp.json` grupy z `sync-stamp` w `~/.local/state/ccam/mcp/work/` i sprawdza, czy każdy serwer grupy nadal jest w `.claude.json`. Gdy `.claude.json` zawiera już bieżące serwery albo grupa nie ma żadnych, przechodzi od razu do kroku 6.
 4. W przeciwnym razie wymienia serwery, których zabrakłoby w sesjach:
 
    ```console
    $ ccam work rc
    ccam: Remote Control sessions only get MCP servers stored in account work's .claude.json, not the shared MCP servers (ctx, fs).
-   Copy them into .claude.json (a backup is kept)? [y/N]
+   Copy them into .claude.json (a backup is kept; servers of the account's own stay)? [y/N]
    ```
 
-5. Po odpowiedzi `y` zapisuje kopię zapasową `.claude.json`, bierze własną blokadę Claude Code, dodaje serwery grupy do `mcpServers` i zachowuje pozostałe serwery konta. Po odpowiedzi `N`, bez terminala albo gdy konto działa, niczego nie zmienia i informuje o tym:
+5. Po odpowiedzi `y` zapisuje kopię zapasową `.claude.json`, bierze własną blokadę Claude Code, dodaje serwery grupy do `mcpServers` i zachowuje pozostałe serwery konta; własny serwer konta o nazwie serwera grupy pozostaje serwerem konta, a ccam o tym informuje. Po odpowiedzi `N`, bez terminala albo gdy konto działa, niczego nie zmienia i informuje o tym:
 
    ```console
          Starting without them. To copy them before every launch instead, set mcp_strategy = "sync" in ~/.config/ccam/config.toml
@@ -77,17 +77,17 @@ Uruchomienie przebiega zwykłą ścieżką ([Uruchamianie Claude Code](/features
 
 6. Rejestruje sesję, ustawia `CLAUDE_CONFIG_DIR` na folder konta i zastępuje się procesem `claude rc` przez `exec`.
 
-Od tej chwili Remote Control działa jako serwer. Każda sesja, którą dla Ciebie uruchamia, jest procesem potomnym tego procesu, więc działa jako `work`: z loginem, ustawieniami i historią rozmów `work` oraz w ramach limitu użycia `work`. Dopóki serwer działa, ccam traktuje konto jako działające.
+Od tej chwili Remote Control działa jako serwer. Każda sesja, którą dla Ciebie uruchamia, jest procesem potomnym tego procesu, więc działa jako `work`: z loginem, ustawieniami i historią rozmów `work` oraz w ramach limitu użycia `work`. Dopóki działa serwer uruchomiony przez ccam, ccam traktuje konto jako działające, podobnie jak przy serwerze uruchomionym zwykłym `claude remote-control`, dopóki ma on sesje; taki serwer bez żadnej sesji nie jest widoczny.
 
 Próbne uruchomienie pokazuje różnicę. Zwykłe uruchomienie przekazuje serwery grupy jako argument, a Remote Control nie:
 
 ```console
 $ ccam --dry-run work
-CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/claude --mcp-config=/home/me/.local/share/ccam/groups/default/mcp.json
+CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work CCAM_PROFILE=work /home/me/.local/bin/claude --mcp-config=/home/me/.local/share/ccam/groups/default/mcp.json
 $ ccam --dry-run work rc
 ccam: Remote Control sessions only get MCP servers stored in account work's .claude.json, not the shared MCP servers (ctx, fs).
       Starting without them. To copy them before every launch instead, set mcp_strategy = "sync" in ~/.config/ccam/config.toml
-CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/claude rc
+CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work CCAM_PROFILE=work /home/me/.local/bin/claude rc
 ```
 
 ## Dlaczego to tak działa
@@ -96,13 +96,13 @@ CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/c
 
 **Jego sesje odczytują serwery tylko z `.claude.json`.** Sesje uruchamiane przez Remote Control nie dziedziczą opcji z wiersza poleceń. Jedynym miejscem, w którym znajdują serwery MCP użytkownika, jest `.claude.json` konta. Ten plik przechowuje też dane logowania konta i stan poszczególnych folderów, więc ccam nie może podlinkować go do współdzielonej kopii, tak jak robi to z `settings.json`. Skopiowanie do niego serwerów to jedyny sposób, by przekazać sesjom współdzieloną listę.
 
-**ccam pyta przed zapisem.** Przy domyślnej strategii flagi ccam obiecuje nie ruszać `.claude.json`. Remote Control to jedyny przypadek, w którym musi tam coś zapisać, więc najpierw pyta, robi kopię zapasową i nie zmienia niczego poza `mcpServers`.
+**ccam pyta przed zapisem.** Przy domyślnej strategii flagi ccam nie rusza `.claude.json` przy uruchomieniu. Remote Control to jedyne uruchomienie, przy którym musi tam coś zapisać, więc najpierw pyta, robi kopię zapasową i nie zmienia niczego poza `mcpServers`. (Poza uruchomieniami zapisują tam też opuszczenie lub dołączenie do współdzielenia MCP oraz `ccam mcp import`, jak mówią ich plany.)
 
-**Nie zapisuje, gdy konto działa.** Claude Code przepisuje `.claude.json` w trakcie sesji, a zmiana wprowadzona z zewnątrz zostałaby utracona albo nadpisana. Dlatego ccam pomija kopiowanie, gdy działa jakakolwiek sesja konta, w tym inny serwer Remote Control.
+**Nie zapisuje, gdy konto działa.** Claude Code przepisuje `.claude.json` w trakcie sesji, a zmiana wprowadzona z zewnątrz zostałaby utracona albo nadpisana. Dlatego ccam pomija kopiowanie, gdy działa jakakolwiek sesja konta, w tym inny serwer Remote Control i Claude Code uruchomiony bez ccam.
 
-**Pyta raz przy każdej zmianie.** Po skopiowaniu `sync-stamp` przechowuje czas modyfikacji `mcp.json` grupy. ccam pyta ponownie dopiero wtedy, gdy ten plik się zmieni, na przykład po `ccam mcp add`. Jeśli odpowiesz `N`, kopii jeszcze nie ma, więc pytanie pojawia się przy każdym uruchomieniu Remote Control.
+**Pyta raz przy każdej zmianie.** Po skopiowaniu `sync-stamp` przechowuje czas modyfikacji `mcp.json` grupy. ccam pyta ponownie dopiero wtedy, gdy ten plik się zmieni, na przykład po `ccam mcp add`, albo gdy skopiowany serwer zniknie z `.claude.json`. Jeśli odpowiesz `N`, kopii jeszcze nie ma, więc pytanie pojawia się przy każdym uruchomieniu Remote Control.
 
-**`ccam mcp` utrzymuje kopie w aktualnym stanie.** Przy kolizji nazw wpis w `.claude.json` wygrywa z `--mcp-config`, więc stara kopia przesłoniłaby nowszą definicję także przy zwykłych uruchomieniach. Dlatego `ccam mcp add`, `add-json`, `remove` i `import` aktualizują kopie na każdym koncie, które nie działa:
+**`ccam mcp` utrzymuje kopie w aktualnym stanie.** Przy kolizji nazw wpis w `.claude.json` wygrywa z `--mcp-config`, więc stara kopia przesłoniłaby nowszą definicję także przy zwykłych uruchomieniach. Dlatego `ccam mcp add`, `add-json`, `remove` i `import` oraz `ccam migrate` aktualizują kopie na każdym koncie, które nie działa, i informują, gdy kopia się zmieniła:
 
 ```console
 $ ccam mcp add ctx --url https://mcp.context7.com/mcp
@@ -124,19 +124,19 @@ Sesja `work` jest wciąż otwarta: zwykłe `ccam work`, skrót albo inny serwer 
 
 ### ccam pyta za każdym razem
 
-Serwery nie zostały jeszcze skopiowane. Odpowiedz raz `y` albo ustaw `mcp_strategy = "sync"`. Jeśli nigdy nie chcesz mieć tych serwerów w Remote Control, przestań współdzielić MCP z kontem: wyjmij je z tej grupy (`ccam group leave default work`) albo trzymaj MCP w osobnej grupie, do której to konto nie należy.
+Serwery nie zostały jeszcze skopiowane. Odpowiedz raz `y` albo ustaw `mcp_strategy = "sync"`. Jeśli nigdy nie chcesz mieć tych serwerów w Remote Control, przestań współdzielić MCP z kontem bez zachowywania ich: `ccam group leave default work --fresh` albo trzymaj MCP w osobnej grupie, do której to konto nie należy. Zwykłe `ccam group leave` kopiuje serwery grupy do `.claude.json` konta, więc Remote Control je ma.
 
 ### `ccam work rc` od razu kończy się błędem dotyczącym `--mcp-config`
 
-Twój ccam jest starszy niż 0.6.0 i przekazuje `--mcp-config` do Remote Control. Uruchom `ccam update`. Ten sam błąd w aktualnym ccam oznacza, że przed `rc` znalazła się opcja z wartością, jak w `ccam work --model opus rc`, więc ccam uznał `opus` za polecenie; podaj `rc` zaraz po nazwie konta.
+Twój ccam jest starszy niż 0.6.0 i przekazuje `--mcp-config` do Remote Control. Uruchom `ccam update`. Ten sam błąd w aktualnym ccam oznacza, że przed `rc` znalazła się opcja z wartością, której ccam nie zna, więc ccam uznał wartość za polecenie; podaj `rc` zaraz po nazwie konta.
 
 ### Zmiana wprowadzona przez `ccam mcp` nie dociera do Remote Control
 
 `ccam mcp add` i `remove` aktualizują kopie tylko na kontach, które nie działają, i informują o tym: `Note: account work is running, so the copy in its .claude.json stays as it was until its next Remote Control launch.` Zatrzymaj Remote Control i uruchom go ponownie; ccam zauważy zmieniony `mcp.json` i znów zapyta.
 
-### Kopia zastąpiła mój własny serwer
+### Używany jest mój własny serwer zamiast serwera grupy
 
-Jeśli konto miało własny serwer o tej samej nazwie co serwer grupy, kopia go zastąpiła. Poprzedni `.claude.json` jest w `~/.local/state/ccam/mcp/work/backups/`, gdzie przechowywanych jest pięć najnowszych kopii. Aby zachować swoją wersję dla wszystkich kont, przenieś ją do grupy przez `ccam mcp import work <server> --force` przed następnym uruchomieniem Remote Control.
+Jeśli konto ma własny serwer o tej samej nazwie co serwer grupy, kopia zostawia go na miejscu i o tym informuje: `account work has its own MCP servers fs, so group default's of those names are not copied there`. Aby używać serwera grupy, usuń serwer konta (`claude mcp remove -s user <name>`); aby dać swoją wersję wszystkim kontom, przenieś ją do grupy przez `ccam mcp import work <server> --force`. Kopie zapasowe `.claude.json` są w `~/.local/state/ccam/mcp/work/backups/`, gdzie przechowywanych jest pięć najnowszych.
 
 ### Chcę usunąć skopiowane serwery
 

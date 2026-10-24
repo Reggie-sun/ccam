@@ -2,10 +2,10 @@
 title: "Référence des commandes"
 metaTitle: "Référence des commandes ccam"
 description: "Toutes les commandes et options de ccam, de ccam add et ccam <name> à ccam usage, ccam next et ccam doctor."
-updated: 2026-10-21
+updated: 2026-10-24
 order: 3
 translation: machine
-sourceHash: 338ac11a0b5a
+sourceHash: 36af7e209cd9
 ---
 
 Placez `--dry-run` avant une commande pour voir ce qu'elle ferait sans l'exécuter, par exemple `ccam --dry-run work`. Cela fonctionne au démarrage de Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`) et avec `group`, `migrate`, `shortcut`, `update` et `doctor --fix`. Les autres commandes qui modifient quelque chose la refusent au lieu de s'exécuter.
@@ -27,6 +27,8 @@ ccam --fallback work -p "fix the tests"   # run again as another account at the 
 
 `--fallback` avant le nom du compte s'applique aux exécutions `-p`/`--print`. Quand le compte atteint sa limite d'utilisation, ccam relance la même commande avec le compte connecté qui a le plus de marge et n'affiche que la sortie de l'exécution qui a abouti. Voir [Comptes par dossier](/features/folder) et [Relancer à la limite](/features/next#run-again-at-the-limit).
 
+**Sièges Team et Enterprise.** Le choix automatique (`ccam next`, `--fallback`, `ccam pick`, la touche `n` du tableau de bord) passe aussi d'un siège à l'autre au sein d'une même organisation Claude Team ou Enterprise. Le centre d'aide d'Anthropic indique : « Each seat on a Team plan is assigned to one named individual, and only that person may use it » (chaque siège d'une offre Team est attribué à une personne nommément désignée, et seule cette personne peut l'utiliser) et « Users can't route their work through another user's account to use that user's remaining usage » (les utilisateurs ne peuvent pas faire passer leur travail par le compte d'un autre utilisateur pour profiter de l'utilisation restante de celui-ci) ([offres Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129) ; de même pour les [offres Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Utiliser le choix automatique entre plusieurs sièges peut donc enfreindre les conditions d'Anthropic. Renseignez-vous auprès de votre organisation et d'Anthropic avant de vous y fier. Les offres personnelles (Pro, Max) sont traitées dans la [note de la FAQ sur les conditions](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+
 Un raccourci comme `ccwork` lance son compte de la même façon : `ccwork --resume` fait la même chose que `ccam work --resume`. Voir [Raccourcis](/docs/commands#shortcuts).
 
 ## Ajouter et supprimer des comptes
@@ -37,17 +39,20 @@ ccam add work --group default --group team
 ccam add side --shortcut ccside
 ccam add ci --no-login        # log in later with: ccam login ci
 ccam login --expired          # log in every account whose login no longer works
+ccam logout side              # asks first when MCP sign-ins go with the login
 ccam rename work job
-ccam remove side              # folder moves to ~/.local/share/ccam/trash
+ccam remove side              # logs out, then the folder moves to ~/.local/share/ccam/trash
 ccam import ~/.claude-old --name old
 ccam add gw --api --base-url https://llm.example.com --auth bearer --key-from env:GW_KEY
 ```
 
-Sans dossier, `ccam import` cherche `~/.claude` et `~/.claude-*` et pose la question pour chacun. Les dossiers importés sont enregistrés là où ils se trouvent ; ccam ne déplace ni ne copie jamais une connexion.
+Sans dossier, `ccam import` cherche `~/.claude` et `~/.claude-*` et pose la question pour chacun ; un dossier qui échoue est signalé par `Skipped <path>: <reason>` et les autres sont enregistrés, et celui dont le nom est déjà celui d'un compte demande `--name`, qui se donne avec le dossier. Les dossiers importés sont enregistrés là où ils se trouvent ; ccam ne déplace ni ne copie jamais une connexion.
+
+`ccam login --expired` connecte aussi les comptes dont Claude Code a effacé la connexion. `ccam remove` déconnecte un compte géré avant que son dossier parte à la corbeille (pas quand un autre compte détient la même connexion), et `ccam remove` d'un compte importé laisse à ses groupes une copie de ce qu'ils partagent. Sous macOS, `ccam rename` conserve le nom du dossier, car le trousseau garde la connexion sous le chemin du dossier.
 
 `ccam add --api` ajoute un compte qui utilise une clé d'API au lieu d'une connexion Claude ; ccam lit la clé à chaque lancement et ne la stocke jamais. Voir [Comptes à clé d'API](/features/api).
 
-`ccam rename`, `ccam remove` et les commandes `ccam group` refusent de modifier un compte tant que Claude Code s'exécute avec ce compte. Quittez d'abord la session.
+`ccam rename`, `ccam remove` et les commandes `ccam group` refusent de modifier un compte tant que Claude Code s'exécute avec ce compte, quelle que soit la façon dont il a été lancé (sessions en arrière-plan comprises). Quittez d'abord la session. Elles refusent aussi tant qu'un changement de groupes est inachevé : ``the last change of groups stopped halfway; finish it with `ccam doctor --fix` first``.
 
 `ccam list --json` affiche chaque compte avec son numéro d'emplacement, son raccourci, son adresse e-mail et son dossier. Son tableau `groups` liste les groupes du compte, et son objet `share` associe chaque élément (`mcp`, `settings`, `memory`, `extensions`, `history`) au groupe dont il provient, ou à `local`.
 
@@ -63,9 +68,9 @@ Un raccourci est une commande que vous nommez vous-même et qui lance Claude Cod
 
 Les raccourcis sont facultatifs. L'assistant de `ccam add` demande s'il faut en créer un, `ccam add <name> --shortcut <command>` en crée un sans rien demander, et `ccam list` affiche le raccourci de chaque compte, ou `-` s'il n'en a pas.
 
-Les noms utilisent les caractères a-z, 0-9, `.`, `-` et `_`. Un nom ne peut pas être une commande ccam, le raccourci d'un autre compte, ni le nom d'un autre programme présent dans votre `PATH`.
+Les noms utilisent les caractères a-z, 0-9, `.`, `-` et `_`. Un nom ne peut pas être une commande ccam, le raccourci d'un autre compte, ni le nom d'un autre programme présent dans votre `PATH`, ni un fichier de `~/.local/bin` que ccam n'a pas créé, comme votre propre copie ou lien de ccam. Un raccourci modifié à la main dans `config.toml` qui enfreint ces règles, qui vaut `claude` ou `ccam`, ou qui est attribué à deux comptes empêche `config.toml` de se charger, en nommant le compte.
 
-`ccam rename` conserve le nom du raccourci, et `ccam remove` supprime le raccourci avec le compte. `ccam shims install` recrée les liens de tous les comptes, par exemple après avoir déplacé ccam.
+`ccam rename` conserve le nom du raccourci, et `ccam remove` supprime le raccourci avec le compte. `ccam shims install` recrée les liens de tous les comptes, par exemple après avoir déplacé ccam ; un fichier qui gêne un raccourci n'empêche pas les autres.
 
 ## Partage
 
@@ -89,7 +94,7 @@ ccam migrate ~/.claude-work --group work --settings --mcp
 ccam migrate --history --yes    # conversation history only
 ```
 
-`ccam migrate` copie `settings.json`, `CLAUDE.md`, les extensions et les serveurs MCP utilisateur d'un dossier Claude Code dans un groupe, pour que chaque compte qui partage ces éléments en dispose. Le dossier est seulement lu. Les options `--settings`, `--memory`, `--extensions`, `--mcp` et `--history` ne copient que les éléments indiqués. Sans elles, une liste à cocher vous permet de choisir dans un terminal, avec tout coché sauf l'historique des conversations ; ailleurs, tout est copié sauf l'historique des conversations. `-g` ou `--group` choisit le groupe, et `-y` ou `--yes` copie sans rien demander et garde la copie du groupe quand un fichier diffère. Il copie aussi les connexions enregistrées des serveurs dans le fichier de connexion propre à chaque compte. Voir [Copier une configuration existante](/docs/sharing#copy-an-existing-setup).
+`ccam migrate` copie `settings.json`, `CLAUDE.md`, les extensions et les serveurs MCP utilisateur d'un dossier Claude Code dans un groupe, pour que chaque compte qui partage ces éléments en dispose. Le dossier est seulement lu. Les options `--settings`, `--memory`, `--extensions`, `--mcp` et `--history` ne copient que les éléments indiqués. Sans elles, une liste à cocher vous permet de choisir dans un terminal, avec tout coché sauf l'historique des conversations ; ailleurs, tout est copié sauf l'historique des conversations. `-g` ou `--group` choisit le groupe, et `-y` ou `--yes` copie sans rien demander et garde la copie du groupe quand un fichier diffère. Les connexions MCP ne sont pas copiées, car une connexion copiée déconnecte ses autres détenteurs ; le plan nomme les comptes qui se connectent avec `/mcp`. `--mcp` fonctionne aussi quand `~/.claude` est vide ou absent mais que `~/.claude.json` contient des serveurs. Voir [Copier une configuration existante](/docs/sharing#copy-an-existing-setup).
 
 ## Serveurs MCP
 
@@ -102,7 +107,7 @@ ccam mcp import work gh
 ccam mcp remove fs
 ```
 
-`ccam mcp import <account>` déplace dans son groupe les serveurs que seul ce compte possède. Un serveur dont le groupe utilise déjà le nom pour une autre définition est ignoré ; ajoutez `--force` pour remplacer la copie du groupe, que ccam sauvegarde d'abord.
+`ccam mcp import <account>` déplace dans son groupe les serveurs que seul ce compte possède, y compris ceux qu'il n'a que pour un seul dossier (`claude mcp add` seul), qui se chargent alors dans tous les dossiers. Un serveur dont le groupe utilise déjà le nom pour une autre définition est ignoré ; ajoutez `--force` pour remplacer la copie du groupe, que ccam sauvegarde d'abord.
 
 ## Utilisation et changement de compte
 
@@ -118,10 +123,10 @@ ccam next -c --auto -- --dangerously-skip-permissions   # claude's own options a
 ccam pick                       # the account with the most room, for a script
 ccam "$(ccam pick)" -p "…"      # start a worker on it
 ccam agents                     # background sessions of every account
-ccam attach 49ec0028            # open one, as the account that started it
+ccam attach 49ec0028            # open one, as the account that started it (or by its name)
 ```
 
-`next --auto`, `--fallback` et `ccam pick` choisissent de la même façon : d'abord sous `auto_max_usage` (`config.toml`, 100 par défaut), selon `auto_strategy` (`headroom`, `expiring` ou `balance`), en comptant la fenêtre hebdomadaire de `--model`, jamais un compte à 100 %, et au sein de l'organisation du compte de départ (`--cross-org` ou `cross_org = true` pour chercher plus loin). Quand aucun ne peut être choisi, ils quittent avec le code 75 ou, avec `--wait`, attendent la réinitialisation du premier compte. `ccam next --continue` transporte une conversation même entre des comptes qui ne partagent pas l'historique : Claude Code la copie alors dans le nouveau compte. Contrairement à `ccam <name>`, `ccam next` lit ses propres options, donc les options de Claude Code se placent après `--` ; sans lui, ccam s'arrête avec `unknown flag`. Dans Claude Code, la commande `/ccam:switch [account]` du plugin passe une conversation à un autre compte, et `ccam hook` est ce que lancent ses hooks. Voir [Passer au compte suivant](/features/next), [Choisir un compte pour les scripts](/features/pick) et [Les sessions en arrière-plan de tous les comptes](/features/agents).
+`next --auto`, `--fallback` et `ccam pick` choisissent de la même façon : d'abord sous `auto_max_usage` (`config.toml`, 100 par défaut), selon `auto_strategy` (`headroom`, `expiring` ou `balance`), en comptant la fenêtre hebdomadaire de `--model`, jamais un compte à 100 % (une fenêtre que Claude Code a signalée pleine compte pour 100 % jusqu'à sa réinitialisation), jamais une connexion par clé d'API, et au sein de l'organisation du compte de départ (`--cross-org` ou `cross_org = true` pour chercher plus loin). `--wait` prend sa valeur après `=` (`--wait=2h`) ; écrit avec une espace, il est refusé avec une indication. Quand aucun ne peut être choisi, ils quittent avec le code 75 ou, avec `--wait`, attendent la réinitialisation du premier compte. `ccam next --continue` transporte une conversation même entre des comptes qui ne partagent pas l'historique : Claude Code la copie alors dans le nouveau compte. Contrairement à `ccam <name>`, `ccam next` lit ses propres options, donc les options de Claude Code se placent après `--` ; sans lui, ccam s'arrête avec `unknown flag`. Dans Claude Code, la commande `/ccam:switch [account]` du plugin passe une conversation à un autre compte, et `ccam hook` est ce que lancent ses hooks. Voir [Passer au compte suivant](/features/next), [Choisir un compte pour les scripts](/features/pick) et [Les sessions en arrière-plan de tous les comptes](/features/agents).
 
 ## Maintenance
 
@@ -143,10 +148,10 @@ ccam completion bash # or zsh, powershell
 
 | Chemin | Contenu |
 | --- | --- |
-| `~/.config/ccam/config.toml` | Les comptes, les groupes et les réglages (`theme`, `usage_source`, `relay`, `cross_org` …) |
+| `~/.config/ccam/config.toml` | Les comptes, les groupes et les réglages (`theme`, `usage_source`, `relay`, `cross_org` …). Les réglages se placent en haut, au-dessus du premier `[[group]]`, `[[profile]]` ou `[[folder]]` : un réglage placé sous une table appartient à cette table, ccam le signale donc à chaque lancement et dans `ccam doctor`, et les commandes qui enregistrent la configuration refusent tant qu'il n'a pas été déplacé. Les commentaires ne sont pas conservés quand ccam enregistre le fichier |
 | `~/.local/share/ccam/profiles/<name>/` | Le `CLAUDE_CONFIG_DIR` de chaque compte |
 | `~/.local/share/ccam/groups/<group>/` | Paramètres, serveurs MCP, extensions et historique partagés |
-| `~/.local/state/ccam/` | Cache d'utilisation, heures de dernière utilisation et les notes que laissent `/ccam:switch` et le hook de limite (`handoff/`) |
+| `~/.local/state/ccam/` | Cache d'utilisation et relevés de limite (`usage/<name>.json`, `usage/<name>.limit.json`), heures de dernière utilisation, marqueurs de session et verrous (`locks/`), les raccourcis créés par ccam (`shortcuts.json`), un changement de groupes inachevé (`group-change.json`), et les notes que laissent `/ccam:switch` et le hook de limite (`handoff/<account>/<session>.json`) |
 | `~/.local/bin/<shortcut>` | Raccourcis comme `ccwork`, des liens vers ccam |
 
 Les variables `XDG_CONFIG_HOME`, `XDG_DATA_HOME` et `XDG_STATE_HOME` changent l'emplacement de ces dossiers. Sous Windows, `~` correspond à `%USERPROFILE%` et les raccourcis sont des `<shortcut>.exe`.

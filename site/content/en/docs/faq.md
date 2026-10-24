@@ -2,7 +2,7 @@
 title: Frequently asked questions
 metaTitle: "ccam FAQ: multiple Claude Code accounts"
 description: Answers about ccam, Claude Code accounts, usage limits, sharing, privacy and supported systems.
-updated: 2026-10-21
+updated: 2026-10-24
 published: 2026-10-19
 order: 6
 translation: source
@@ -16,6 +16,8 @@ No. ccam is an unofficial open-source project and is not affiliated with or endo
 
 That depends on the terms of each account and, for work accounts, your organisation's policy. Check them before you use several accounts. ccam only makes switching between accounts you already have easier.
 
+**Team and Enterprise seats.** Automatic choice (`ccam next`, `--fallback`, `ccam pick`, the dashboard's `n`) also switches between seats of the same Claude Team or Enterprise organization. Anthropic's help center says "Each seat on a Team plan is assigned to one named individual, and only that person may use it" and "Users can't route their work through another user's account to use that user's remaining usage" ([Team plans](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); likewise for [Enterprise plans](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Using automatic choice between seats may therefore violate Anthropic's terms. Check with your organization and Anthropic before you rely on it. Personal plans (Pro, Max) are covered by the paragraph above.
+
 ## Does ccam get around usage limits?
 
 No. Each account keeps its own limits. ccam shows them and lets you continue on another account you own when one runs out.
@@ -26,11 +28,11 @@ Give each account its own configuration folder with `CLAUDE_CONFIG_DIR`. ccam do
 
 ## How do I continue a conversation on another account?
 
-Share conversation history between the accounts with `ccam group set default --add history` (or a group of their own: `ccam group add pair --items history --members work,side`), then run `ccam next --continue`. Claude Code opens the most recent conversation of the current folder in the next account.
+Run `ccam next --continue` in the folder: it carries the folder's last conversation over to the next account (`--auto` for the one with the most room). Inside Claude Code, `/ccam:switch` from the [ccam plugin](/docs/install#claude-code-plugin) does the same for the session you are in. When the two accounts share conversation history (`ccam group set default --add history`, or a group of their own: `ccam group add pair --items history --members work,side`), the new account opens that very conversation; otherwise Claude Code copies it into the new account's history.
 
 ## Does ccam see or send my login?
 
-ccam never shares your Claude login between accounts. It reads an account's access token only to ask Anthropic's usage endpoint for that account's usage, when you run `ccam usage`, `ccam next --auto` or `ccam doctor`. `ccam migrate` copies the saved sign-ins of MCP servers from `~/.claude` into your accounts' own login files on the same computer. ccam has no telemetry. Apart from those lookups, the only request it makes on its own is the dashboard's question to GitHub about the latest ccam release, which carries nothing about you or your accounts.
+ccam never shares or copies your Claude login between accounts, and never copies the sign-ins of MCP servers. It reads an account's access token only to ask Anthropic's usage endpoint for that account's usage, when you run `ccam usage`, `ccam next --auto` or `ccam doctor`, and renews an expired one only with `ccam usage --refresh`; with `usage_source = "claude"` it does not read the token at all. `ccam ext` and `ccam doctor` read the names of an account's MCP sign-ins, never their tokens. ccam has no telemetry. Apart from those lookups, the only request it makes on its own is the dashboard's question to GitHub about the latest ccam release, which carries nothing about you or your accounts.
 
 ## How do I sign in on a remote server?
 
@@ -38,7 +40,7 @@ Run `ccam add` or `ccam login <name>` in the SSH session as usual. Claude Code w
 
 ## Where are my accounts stored?
 
-In `~/.local/share/ccam/profiles/<name>/`, one folder per account. On macOS, Claude Code keeps the login itself in the Keychain, under a name derived from that folder.
+In `~/.local/share/ccam/profiles/<name>/`, one folder per account. On macOS, Claude Code keeps the login itself in the Keychain, under a name derived from that folder, so `ccam rename` keeps the folder's old name there.
 
 ## What happens to my existing ~/.claude?
 
@@ -46,11 +48,11 @@ Nothing, unless you run `ccam import` or `ccam migrate`. Import registers the fo
 
 ## Which systems does ccam support?
 
-Linux (Ubuntu, Debian, Fedora, Arch, Alpine and others), macOS and Windows 10 and 11, natively or inside WSL. On Windows, sharing files such as `settings.json` needs Developer Mode; shared folders work without it ([sharing on Windows](/features/share#on-windows)).
+Linux (Ubuntu, Debian, Fedora, Arch, Alpine and others), macOS and Windows 10 and 11, natively or inside WSL. On Windows, sharing files such as `settings.json` needs Developer Mode; shared folders work without it, and without it the first `ccam add` creates group `default` with MCP servers and extensions only ([sharing on Windows](/features/share#on-windows)).
 
 ## Why does an MCP server show up in only one account?
 
-Servers added inside a session with `claude mcp add` are stored for that account only. ccam tells you the next time you start the account; move the server to the shared group with `ccam mcp import <account> <server>`.
+Servers added inside a session with `claude mcp add` are stored for that account only, and without `-s user` for the current folder only. ccam tells you the next time you start the account, and `ccam mcp list` and `ccam ext` show them; move the server to the shared group with `ccam mcp import <account> <server>`.
 
 ## Does ccam slow Claude Code down?
 
@@ -62,4 +64,4 @@ Run `ccam update`. It downloads the latest release, checks its checksum and repl
 
 ## How do I uninstall ccam?
 
-Remove each account's shortcut with `ccam shortcut <account> --remove`, delete `ccam` from `~/.local/bin`, then remove `~/.config/ccam`, `~/.local/share/ccam` and `~/.local/state/ccam` if you no longer need the accounts. See [install](/docs/install#uninstall).
+Remove each account's shortcut with `ccam shortcut <account> --remove`. If you imported `~/.claude` and it is in a group, run `ccam remove <name>` for it first, so it gets back a copy of what it shares. Then delete `ccam` from `~/.local/bin`, and remove `~/.config/ccam`, `~/.local/share/ccam` and `~/.local/state/ccam` if you no longer need the accounts. See [install](/docs/install#uninstall).

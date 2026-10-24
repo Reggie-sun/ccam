@@ -1,10 +1,10 @@
 ---
 title: Sarrafa asusai
 description: Ƙara, shiga, lissafa, sake suna, cire da shigo da asusun Claude Code da ccam add, ccam login, ccam list, ccam rename, ccam remove da ccam import.
-updated: 2026-10-20
+updated: 2026-10-23
 order: 2
 translation: machine
-sourceHash: "8564517d0d71"
+sourceHash: f4c09f92ce7d
 ---
 
 Kowane asusun ccam foldar saitin Claude Code ce ta daban mai nata shiga. Waɗannan umarnai suna ƙirƙira, shiga, lissafa, sake suna da cire asusai, kuma suna yin rajistar foldojin da kake da su tuni.
@@ -17,12 +17,12 @@ ccam add work --shortcut ccwork            # no wizard: log in, then create the 
 ccam add side --no-login --group default --group team
 ccam login side                            # run claude auth login inside the account
 ccam login --expired                       # every account never logged in, or whose login expired
-ccam logout side                           # remove the login token
+ccam logout side                           # log out: the login and its MCP sign-ins
 ccam list                                  # table of accounts; ccam ls is the same
 ccam list --json                           # machine-readable
 ccam use 2                                 # make slot 2 the default account
 ccam rename side personal
-ccam remove personal                       # asks, then moves the folder to the trash
+ccam remove personal                       # asks, logs out, then moves the folder to the trash
 ccam import                                # find ~/.claude and ~/.claude-* and ask about each
 ccam import ~/.claude-ops --name ops
 ccam completion zsh > "${fpath[1]}/_ccam"
@@ -32,9 +32,9 @@ Duk inda umarni ke karɓar `<name|number>`, za ka iya ba da sunan asusun ko lamb
 
 `ccam add` a terminal ba tare da zaɓuɓɓuka ba yana buɗe mataimaki (wizard). Yana tambayar suna da yadda asusun zai shiga (shigar Claude yanzu, API key, ko shigar Claude daga baya), sannan yana nuna rukunonin da za a shiga tare da alama a kan `default` (kafin a sami rukunoni, abubuwan da rukunin `default` zai raba), sannan yana tambaya `Create a shortcut command for work? [y/N]`, kuma yana ƙarewa da taƙaitawa don ka tabbatar. `Esc` yana komawa mataki ɗaya baya. Duk wani daga `--group`, `--no-group`, `--shortcut` ko `--no-login`, ko bututu (pipe) maimakon terminal, yana tsallake mataimakin; to sai dole a ba da suna, kuma ba a ƙirƙirar gajeren umarni sai idan `--shortcut` ya ambaci ɗaya.
 
-Ba tare da `--group` ba, sabon asusu yana shiga rukunin `default`. Asusun farko ne yake ƙirƙirar sa, yana raba sabobin MCP, saituna, `CLAUDE.md` da extensions; duba [rabawa da rukunoni](/features/share).
+Ba tare da `--group` ba, sabon asusu yana shiga rukunin `default`. Asusun farko ne yake ƙirƙirar sa, yana raba sabobin MCP, saituna, `CLAUDE.md` da extensions; duba [rabawa da rukunoni](/features/share). A Windows ba tare da Developer Mode ba, wanda ba za a iya haɗa fayiloli ba tare da shi ba, asusun farko yana ƙirƙirar `default` da `mcp` da `extensions` kawai kuma yana faɗin haka (`Note: files can be linked on Windows only in Developer Mode (Settings > System > For developers), so group default shares only mcp, extensions. …`), kuma ana ƙin `--group` zuwa rukunin da ke raba saituna, memory ko tarihi.
 
-`ccam list` yana nuna ramin, suna, gajeren umarni, imel, rukunoni da amfani na ƙarshe, tare da `*` a gaban asusun tsoho:
+`ccam list` yana nuna ramin, suna, gajeren umarni, imel, rukunoni da amfani na ƙarshe, tare da `*` a gaban asusun tsoho. Imel ɗin shi ne wanda foldar ke shiga da shi yanzu (daga `.claude.json` nata); idan ya bambanta da wanda ccam ya rubuta, wanda aka rubuta yana biyo baya a matsayin `(was …)`:
 
 ```console
 $ ccam list
@@ -43,7 +43,13 @@ $ ccam list
    2  personal  -         me@side.dev       default       -
 ```
 
-Da `--json`, kowane asusu abu ne mai `slot`, `shortcut`, `name`, `email`, `default`, `dir`, `last_used` (ba ya nan idan ba a taɓa fara asusun ba), `groups` da `share`. `share` yana danganta kowane abu (`mcp`, `settings`, `memory`, `extensions`, `history`) da rukunin da yake fitowa daga gare shi, ko da `"local"`.
+```console
+$ ccam list
+   #  Name      Shortcut  Email                                     Groups   Last used
+*  1  work      ccwork    other@company.com (was work@example.com)  default  2m ago
+```
+
+Da `--json`, kowane asusu abu ne mai `slot`, `shortcut`, `name`, `email` (na shigar yanzu, kamar a tebur), `default`, `dir`, `last_used` (ba ya nan idan ba a taɓa fara asusun ba), `groups` da `share`. `share` yana danganta kowane abu (`mcp`, `settings`, `memory`, `extensions`, `history`) da rukunin da yake fitowa daga gare shi, ko da `"local"`.
 
 ## Zaɓuɓɓuka
 
@@ -56,11 +62,12 @@ Da `--json`, kowane asusu abu ne mai `slot`, `shortcut`, `name`, `email`, `defau
 | `ccam add --api --key-from <source>` | Asusun da ke amfani da API key maimakon shiga; duba [Asusan API key](/features/api) | a kashe |
 | `ccam list --json` | Buga asusan a matsayin JSON | a kashe |
 | `ccam remove -y`, `--yes` | Cire ba tare da tambaya ba | a kashe |
-| `ccam import --name <name>` | Sunan asusu na foldar da ka bayar | daga sunan foldar |
+| `ccam logout -y`, `--yes` | Fita daga shiga ba tare da tambaya ba | a kashe |
+| `ccam import --name <name>` | Sunan asusu na foldar da ka bayar; ana ƙin shi ba tare da folda ba (`--name needs a folder: ccam import <folder> --name ops`) | daga sunan foldar |
 | `ccam import -y`, `--yes` | Shigo da kowace foldar da aka samo ba tare da tambaya ba | a kashe |
 | `--dry-run` | `ccam list` da `ccam completion` suna karɓar shi, domin ba sa canza komai. `add`, `login`, `logout`, `use`, `rename`, `remove` da `import` suna ƙin shi, da `` --dry-run is not supported by `ccam add`; nothing was changed `` (tare da sunan umarnin) | a kashe |
 
-`ccam login`, `ccam logout`, `ccam use` da `ccam rename` ba su da zaɓuɓɓukan kansu. `ccam completion` yana karɓar `bash`, `zsh` ko `powershell`; duk wani abu dabam yana gazawa da `only bash, zsh and powershell are supported`.
+`ccam login` (banda `--expired`), `ccam use` da `ccam rename` ba su da zaɓuɓɓukan kansu. `ccam completion` yana karɓar `bash`, `zsh` ko `powershell`; duk wani abu dabam yana gazawa da `only bash, zsh and powershell are supported`.
 
 Sunayen asusai haruffa 1 zuwa 32 ne na `a-z`, `0-9`, `-` da `_`, suna farawa da harafi ko lamba. Suna ba zai iya zama lambobi kawai ba, domin `ccam 2` yana nufin ramin 2. Haka kuma suna ba zai iya zama umarnin ccam ba (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`, `folder`, `pick`, `ext`, `group`, `groups`), don haka `ccam <name>` ba ya taɓa yin shubuha. Jerin shi ne `config.Reserved` a `internal/config`.
 
@@ -76,13 +83,21 @@ Sunayen asusai haruffa 1 zuwa 32 ne na `a-z`, `0-9`, `-` da `_`, suna farawa da 
 4. Ana ajiye asusun a `~/.config/ccam/config.toml` ta `fsutil.AtomicWrite`: fayil na wucin gadi, `fsync`, sannan `rename`, don haka faɗuwar shiri ba ta taɓa barin rabin saiti ba.
 5. `runLogin` yana fara `claude auth login` tare da `CLAUDE_CONFIG_DIR` da aka saita zuwa foldar asusun, da `--email` tare da imel na ƙarshe na asusun don a cike shafin shiga. Idan shigar ta gaza, asusun yana nan, kuma ccam yana buga kuskuren kuma yana gaya maka ka gudanar da `ccam login work` daga baya.
 6. `profile.ReadIdentity` yana fitar da `oauthAccount` daga `profiles/work/.claude.json`: imel, id na asusu da na ƙungiya (organization), sunan ƙungiyar da tsarin biyan kuɗi (`claude_max`, `claude_team` …). Wannan fayil zai iya kai megabytes da dama, don haka `TopLevelValue` yana neman maɓalli ɗaya kawai maimakon ya karanta dukkan fayil ɗin. ccam yana ajiye su a `[profile.login]` a cikin `config.toml`.
-7. `shim.Install` yana haɗa `~/.local/bin/ccwork` da binary na ccam, wanda ke neman `argv[0]` a `config.toml` lokacin da ya fara.
+7. `shim.Install` yana haɗa `~/.local/bin/ccwork` da binary na ccam, wanda ke neman `argv[0]` a `config.toml` lokacin da ya fara, kuma yana rubuta mahaɗin a `~/.local/state/ccam/shortcuts.json`. Idan ba za a iya yin mahaɗin ba, ana ƙara asusun duk da haka, ccam yana faɗin dalili (`Could not create shortcuts: …`) kuma taƙaitawar tana nuna `shortcut: ccwork (not created; see above)`.
 
 Shiga na iya ɗaukar mintuna, kuma wani ccam na iya ajiye saitin a wannan lokacin. Don haka umarnin da ke jira suna ajiyewa ta `env.update`, wanda ke sake loda `config.toml`, yana amfani da canji ɗaya (a nan, imel ɗin) kuma yana ajiyewa. `ccam remove` yana sake lodawa bayan tambayarsa saboda dalili ɗaya.
 
-`ccam login` yana gudanar da mataki na 5 da na 6 ga asusun da ke akwai. Claude Code yana ɗaukar imel ɗin ne kawai a matsayin alama ga shafin shiga, don haka shiga zai iya ƙarewa a wani asusun Claude dabam da wanda asusun ccam yake a da; ccam yana kwatanta sabuwar shigar da `[profile.login]` kuma yana faɗin haka (`ccam: this login is other@company.com, but work was dev@company.com before.`). Yana riƙe sabuwar shigar kuma yana gaya maka yadda za ka soke ta: `ccam logout work`, sannan `ccam login work`, kuma ka shiga da imel ɗin da ya dace. Idan wani asusun ccam ya shiga asusun Claude iri ɗaya, ccam yana gargaɗi cewa su biyun suna raba iyakokin amfaninsu. `ccam login --expired` yana shiga, ɗaya bayan ɗaya, kowane asusu da ba a taɓa shiga da shi ba ko wanda shigarsa (refresh token ɗinsa) ta ƙare.
+`ccam login` yana gudanar da mataki na 5 da na 6 ga asusun da ke akwai. Claude Code yana ɗaukar imel ɗin ne kawai a matsayin alama ga shafin shiga, don haka shiga zai iya ƙarewa a wani asusun Claude dabam da wanda asusun ccam yake a da; ccam yana kwatanta sabuwar shigar da `[profile.login]` kuma yana faɗin haka (`ccam: this login is other@company.com, but work was dev@company.com before.`). Yana riƙe sabuwar shigar kuma yana gaya maka yadda za ka soke ta: ``To undo it, run `ccam login work` again and sign in as dev@company.com.`` Shiga cikin wani asusun Claude dabam yana kuma cire [rikodin iyaka](/features/usage#the-limit-record) na asusun, tunda waɗannan iyakokin na ɗayan asusun ne. Idan wani asusun ccam ya shiga asusun Claude iri ɗaya, ccam yana gargaɗi cewa su biyun suna raba iyakokin amfaninsu. `ccam login --expired` yana shiga, ɗaya bayan ɗaya, kowane asusu da ba a taɓa shiga da shi ba ko wanda shigarsa ta ƙare: refresh token ɗinsa ya ƙare, ko Claude Code ya share shigar bayan sabar ta ƙi ta. Kafin burauza ta farko ta buɗe, yana duba cewa za a iya ajiye `config.toml`.
 
-`ccam logout` yana gudanar da `claude auth logout` a cikin asusun kuma yana share imel ɗin da aka ajiye; bayanin shigar yana nan, don haka ana duba shiga ta gaba da shi. `ccam use` yana sake rubuta `default` a `config.toml` kawai.
+`ccam logout` yana gudanar da `claude auth logout` a cikin asusun kuma yana share imel ɗin da aka ajiye; bayanin shigar yana nan, don haka ana duba shiga ta gaba da shi. Claude Code yana soke shigar kuma yana goge abin da yake ajiyewa don asusun, har da shigar sabobin MCP. Don haka ccam yana fara faɗin abin da zai tafi tare da ita kuma yana tambaya (`--yes` yana tsallake tambayar): idan shigar tana riƙe da shigar MCP, idan asusun yana aiki (ana fitar da zamansa ma), da kuma idan foldar wani asusu tana riƙe da shiga iri ɗaya (foldar da aka kwafa), wadda fitar ke soke ita ma:
+
+```console
+$ ccam logout side
+Logging out also removes side's MCP server sign-ins (linear); sign in to them again with /mcp.
+Log out side? [y/N]
+```
+
+Don shiga a matsayin wani asusun Claude dabam, `ccam login <name>` kaɗai ya isa, kuma yana riƙe shigar MCP. `ccam use` yana sake rubuta `default` a `config.toml` kawai.
 
 `ccam list` yana ƙara ginshiƙin `Organization` idan asusan na ƙungiyoyi fiye da ɗaya ne (tsare-tsaren kai suna nuna `personal`), kuma `ccam list --json` yana da `plan` da `org` ga kowane asusu.
 
@@ -106,25 +121,28 @@ Yayin da shigar ke jiran shigarwa a terminal, ccam yana kashe echo da yanayin la
 
 ### Sake suna, cirewa da shigowa
 
-`ccam rename` da `ccam remove` suna aiki a kan foldar asusun da kuma abin da ccam ke ajiyewa da sunan asusun a wasu wurare. `nameState` yana lissafa waɗannan hanyoyi: `~/.local/state/ccam/last-used/<name>`, `~/.local/state/ccam/mcp/<name>` da cache na amfani `~/.local/state/ccam/usage/<name>.json` da `<name>.statusline.json`. `ccam remove work` yana sarrafa su a wannan tsari:
+`ccam rename` da `ccam remove` suna aiki a kan foldar asusun da kuma abin da ccam ke ajiyewa da sunan asusun a wasu wurare. `nameState` yana lissafa waɗannan hanyoyi: `~/.local/state/ccam/last-used/<name>`, `~/.local/state/ccam/mcp/<name>`, cache na amfani `~/.local/state/ccam/usage/<name>.json` da `<name>.statusline.json`, rikodin iyaka `<name>.limit.json` da bayanan zama a `~/.local/state/ccam/handoff/<name>/`. `ccam remove work` yana sarrafa su a wannan tsari:
 
 <!-- motion:accounts-remove -->
 
-`ccam remove` da farko yana ƙi idan asusun yana aiki, sannan yana tambaya. Idan asusun yana raba extensions, `RewritePluginPaths` yana sake rubuta `installed_plugins.json` da `known_marketplaces.json` na rukunin, domin Claude Code yana ajiye cikakkun hanyoyin plugin waɗanda za su iya ratsa foldar wannan asusun. `profile.Trash` yana matsar da foldar zuwa `~/.local/share/ccam/trash/<name>-<time>/`, asusun yana fita daga `config.toml`, ana goge hanyoyin `nameState` don kada asusun da za a yi daga baya mai suna iri ɗaya ya gaje su, kuma ana cire mahaɗin gajeren umarnin. Don maidowa, mayar da foldar daga shara.
+`ccam remove` da farko yana ƙi idan asusun yana aiki, sannan yana tambaya, kuma yana sake dubawa bayan amsar (ana kama zaman da aka fara yayin da tambayar ke jira). Yana duba cewa za a iya ajiye `config.toml` kafin ya canza komai. Idan asusun yana raba extensions, `RewritePluginPaths` yana sake rubuta `installed_plugins.json` da `known_marketplaces.json` na rukunin, domin Claude Code yana ajiye cikakkun hanyoyin plugin waɗanda za su iya ratsa foldar wannan asusun. Sannan ana fitar da asusun da ccam ke sarrafawa daga shiga: `claude auth logout` yana gudana a cikin foldarsa, don kada wata shiga mai aiki ta jira a shara (ko, a macOS, a cikin abin Keychain mai sunan foldar, wanda asusun da za a yi daga baya mai wannan suna zai gada). Ana tsallake hakan ga asusun API key da kuma idan foldar wani asusu tana riƙe da shiga iri ɗaya, wadda fitar za ta soke ita ma; ana ba da rahoton fitar da ta gaza, kuma cirewar tana ci gaba. `profile.Trash` yana matsar da foldar zuwa `~/.local/share/ccam/trash/<name>-<time>/`, asusun yana fita daga `config.toml`, ana goge hanyoyin `nameState` don kada asusun da za a yi daga baya mai suna iri ɗaya ya gaje su, kuma ana cire mahaɗin gajeren umarnin: `✓ side removed (folder moved to /home/you/.local/share/ccam/trash/side-20261023-212306; logged out first)`. Idan daga ƙarshe ba za a iya ajiye `config.toml` ba, foldar tana dawowa daga shara. Don maido da asusun da aka cire, mayar da foldar daga shara kuma ka sake shiga.
 
-`ccam rename` yana sake sunan foldar, yana sake rubuta hanyoyin plugin a cikin `plugins/` ɗinta daga tsohuwar foldar zuwa sabuwa, yana ɗauke da matsayin tsoho tare, kuma yana matsar da hanyoyin `nameState` zuwa sabon sunan. Gajeren umarnin yana riƙe sunansa. Idan sake rubuta plugin ɗin ya gaza, ana mayar da sunan foldar, tunda ba a ajiye saitin ba.
+`ccam rename` yana sake sunan foldar, yana sake rubuta hanyoyin plugin a cikin `plugins/` ɗinta daga tsohuwar foldar zuwa sabuwa, yana ɗauke da matsayin tsoho tare, kuma yana matsar da hanyoyin `nameState` zuwa sabon sunan; ana sabunta bayanan zama don `ccam next --continue` ya ci gaba da samun su. Gajeren umarnin yana riƙe sunansa. Idan sake rubuta plugin ɗin ya gaza, ko ba za a iya ajiye `config.toml` ba, ana mayar da sunan foldar. A macOS foldar tana riƙe tsohon sunanta, domin Keychain yana ajiye shigar da shigar MCP ƙarƙashin hanyar foldar, kuma foldar da aka matsar za a fitar da ita daga shiga; haka abin yake a Windows idan Claude Code yana ajiye bayanan shiga a Credential Manager. Sannan config yana rubuta foldar a matsayin `folder` kusa da sabon sunan, kuma ccam yana cewa `its folder stays …: the macOS Keychain keeps the login under the folder's path`.
 
-`ccam import` yana yin rajistar folda a inda take, a matsayin `dir` a `config.toml`. Ba ya taɓa matsar ko kwafar ta: refresh token da aka kwafa zai sa kwafin su fitar da juna. Ba tare da argument na folda ba yana neman foldojin `~/.claude` da `~/.claude-*` da ba a yi wa rajista ba kuma yana tambaya game da kowace; sunaye suna fitowa daga foldar (`~/.claude` shi ne `main`, `~/.claude-work` shi ne `work`, `~/.claude-2` shi ne `acct2`), kuma ana lissafa foldar da ba za a iya samun suna daga gare ta ba tare da umarnin `--name` da za a yi amfani da shi. Ba tare da `CLAUDE_CONFIG_DIR` ba, Claude Code yana ajiye `.claude.json` a foldar gidanka kusa da `~/.claude`, don haka idan ka shigo da `~/.claude` kuma ba shi da `.claude.json` nasa, ccam yana ƙirƙirar mahaɗin `~/.claude/.claude.json` zuwa `~/.claude.json`. Sannan `claude` na yau da kullum da `ccam main` suna ganin asusu ɗaya. Asusan da aka shigo da su ba sa cikin kowane rukuni har sai ka ƙara su a ɗaya (`ccam group join <group> <name>`), kuma ba a ƙirƙirar gajeren umarni.
+`ccam import` yana yin rajistar folda a inda take, a matsayin `dir` a `config.toml`. Ba ya taɓa matsar ko kwafar ta: refresh token da aka kwafa zai sa kwafin su fitar da juna. Ba tare da argument na folda ba yana neman foldojin `~/.claude` da `~/.claude-*` da ba a yi wa rajista ba kuma yana tambaya game da kowace; sunaye suna fitowa daga foldar (`~/.claude` shi ne `main`, `~/.claude-work` shi ne `work`, `~/.claude-2` shi ne `acct2`), kuma ana lissafa foldar da ba za a iya samun suna daga gare ta ba, ko wadda sunanta ya riga ya zama na wani asusu, tare da umarnin `--name` da za a yi amfani da shi. Ana ba da rahoton foldar da aka samo wadda ta gaza a matsayin `Skipped <path>: <reason>` kuma ana shigo da sauran. Ana fara tattara amsoshin, sannan a yi rajistar foldojin cikin `config.toml` kamar yadda yake a lokacin, don haka abin da wasu umarnan ccam suka ajiye a wannan lokacin yana nan; layukan `✓` suna zuwa bayan ajiyewa. Ba tare da `CLAUDE_CONFIG_DIR` ba, Claude Code yana ajiye `.claude.json` a foldar gidanka kusa da `~/.claude`, don haka idan ka shigo da `~/.claude` kuma ba shi da `.claude.json` nasa, ccam yana ƙirƙirar mahaɗin `~/.claude/.claude.json` zuwa `~/.claude.json`. Sannan `claude` na yau da kullum da `ccam main` suna ganin asusu ɗaya. Idan `~/.claude` yana da `.claude.json` nasa kusa da `~/.claude.json`, ccam yana barin dukansu kuma yana faɗin haka: `ccam main` zai yi amfani da na ciki, `claude` na yau da kullum kuma na waje, kowanne da bayanan shigarsa da sabobin MCP nasa daban, don haka maye gurbin fayil na ciki da mahaɗi don riƙe ɗaya ([doctor](/features/doctor) shi ma yana ba da rahoton sa). Idan foldar tana riƙe da shiga iri ɗaya da asusun da aka yi wa rajista (foldar da aka kwafa), ccam yana faɗin haka: duk wanda ya fara sabunta ta yana fitar da ɗayan, don haka gudanar da `ccam login <name>` kafin ka yi amfani da ita. Asusan da aka shigo da su ba sa cikin kowane rukuni har sai ka ƙara su a ɗaya (`ccam group join <group> <name>`), kuma ba a ƙirƙirar gajeren umarni.
 
 `ccam completion bash|zsh` yana buga rubutun kammalawa (completion) wanda kuma ke kammala sunayen asusai.
 
 ## Tsaro da yanayi na musamman
 
-- `ccam rename` da `ccam remove` suna ƙi yayin da asusun ke aiki (`refuseRunning`), da `work is running; quit its Claude Code session first`, domin zaman yana ci gaba da rubutu a cikin foldar.
-- `ccam remove` a kan asusun da aka shigo da shi yana soke rajistarsa kawai: `✓ main unregistered (folder ... left in place)`. Ba a matsar da `~/.claude` naka zuwa shara ba.
-- `ccam add` yana ƙin sunan da foldarsa ta riga ta kasance a `profiles/`, kuma yana nuna `ccam import`.
-- `ccam import` yana ƙin foldar da aka riga aka yi wa rajista, hanyar da ba folda ba ce, da sunan da aka riga aka ɗauka.
-- `ccam logout` da `ccam login` ba sa duba ko asusun yana aiki.
+- `ccam rename` da `ccam remove` suna ƙi yayin da asusun ke aiki (`refuseRunning`), da ``work is running; quit its Claude Code sessions first (`ccam agents` lists them, `ccam work stop <id>` ends a background one)``, domin zaman yana ci gaba da rubutu a cikin foldar. Binciken yana rufe Claude Code ko ta yaya aka fara shi: ta ccam, `claude` na yau da kullum, IDE, zaman bayan fage da daemon ɗinsu.
+- `ccam rename`, `ccam remove` da `ccam logout` suna ƙi yayin da wani ccam ke sabunta ko canza wannan shigar: ``another ccam is using the login of work right now (a refresh, rename, remove or logout); try again in a moment``.
+- Yayin da canjin rukunoni ke gudana a wani ccam, `ccam rename` da `ccam remove` suna ƙi da `another ccam is changing the groups right now; try again when it is done`; bayan wanda ya tsaya rabi, da ``the last change of groups stopped halfway; finish it with `ccam doctor --fix` first``.
+- `ccam remove` a kan asusun da aka shigo da shi yana riƙe foldar da shigarta, don `claude` na yau da kullum. Idan asusun yana cikin rukunoni, da farko yana fita daga cikinsu kamar yadda `ccam group leave` ke yi: kowane abu da aka raba yana zama kwafin na rukunin a cikin foldar, kuma sabobin MCP na rukunin suna shiga `.claude.json` nasa. Sannan ana soke rajistarsa: `✓ main unregistered (folder ... left in place; it left its groups with a copy of what they share)`. Kwafin ajiyar `.claude.json` nasa da ccam ya yi suna matsawa zuwa `<folder>/.ccam-backup/mcp-<time>`; idan ba za a iya matsar da su ba, suna zama a `~/.local/state/ccam/mcp/<name>/backups` kuma saƙon yana faɗin haka. Ba a matsar da `~/.claude` naka zuwa shara ba.
+- Asusai biyu ba za su iya samun folda ɗaya ba: `config.toml` da ya ambaci folda ɗaya sau biyu yana kasa lodawa.
+- `ccam add` yana ƙin sunan da foldarsa ta riga ta kasance a `profiles/`, kuma yana nuna `ccam import`. A macOS yana kuma tsayawa idan Keychain har yanzu yana riƙe da shiga ko shigar MCP don hanyar sabuwar foldar, wanda tsohon ccam ya bari, kuma yana ambaton umarnin `security delete-generic-password` da ke cire su. Idan ba za a iya ajiye `config.toml` ba, ana sake cire sabuwar foldar.
+- `ccam import` yana ƙin foldar da aka riga aka yi wa rajista, hanyar da ba folda ba ce, da sunan da aka riga aka ɗauka. Ana kuma lura da kwafin `~/.claude` na `claude` na yau da kullum idan ba a yi wa `~/.claude` rajista ba.
+- `ccam logout` yana fara tambaya idan asusun yana aiki; `ccam login` ba ya dubawa.
 - Idan relay ɗin ba zai iya kai wa Claude Code ba, misali bayan shigar ta ƙare, yana buga `ccam: could not pass the sign-in to Claude Code:` tare da dalilin. Kuskuren HTTP yawanci yana nufin lambar ta ƙare; sake fara shigar.
 
 ## Masu alaƙa

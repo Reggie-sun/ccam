@@ -1,10 +1,10 @@
 ---
 title: 1台のPCで複数のClaude Codeアカウントを使う
 description: CLAUDE_CONFIG_DIRで複数のClaude Codeアカウントを並行して使い、切り替える方法。シェルエイリアスによる手動設定とccamによる自動設定を説明します。
-updated: 2026-10-20
+updated: 2026-10-24
 order: 1
 translation: machine
-sourceHash: "ee92078b81c3"
+sourceHash: "5463dec2f6eb"
 ---
 
 アカウントごとに専用の設定フォルダーを割り当てます。Claude Codeは`CLAUDE_CONFIG_DIR`環境変数からフォルダーを読み取り、各フォルダーにはそれぞれのログイン、設定、履歴が保存されます。そのため、どのアカウントもログインしたままになり、同時に実行することもできます。シェルエイリアスを使って手動で設定することも、ccamに任せることもできます。
@@ -51,7 +51,7 @@ ccam add work --shortcut ccwork
 
 これで、`ccam personal`と`ccam work`で2つのアカウントを起動できます。仕事用のアカウントに付けたショートカット`ccwork`でも起動できます。これらはエイリアスではなく実際のプログラムなので、スクリプトの中でも動作します。`ccam`だけを実行すると一覧からアカウントを選べ、`ccam use work`でそのアカウントをデフォルトにできます。
 
-設定、`CLAUDE.md`、MCPサーバー、拡張機能は最初から共有されます。会話履歴の共有を有効にすれば、`ccam next --continue`でもう一方のアカウントに切り替えて会話を続けられます。`ccam usage`は、すべてのアカウントの5時間と週間の使用量を一度に表示します。
+設定、`CLAUDE.md`、MCPサーバー、拡張機能は最初から共有されます。`ccam next --continue`は会話をもう一方のアカウントに引き継ぎ、有効にできる会話履歴の共有を使えば、それが1つの会話のまま続きます。`ccam usage`は、すべてのアカウントの5時間と週間の使用量を一度に表示します。
 
 すでに`~/.claude`を使っている場合は、そのアカウントを改めて追加する代わりに`ccam import`を実行してください。または`ccam migrate`で、その設定、MCPサーバー、拡張機能を共有設定にコピーできます。
 
@@ -67,7 +67,7 @@ Claude Codeは[Windowsでネイティブに、またはWSLの中で動作しま�
 
 **毎回ログインを求められる。** 新しいフォルダーで初めて起動したときは、必ずログインを求められます。それ以降も求められ続ける場合は、ログインの有効期限が切れたか、削除されています。`ccam login work`を実行してください（またはエイリアスで一度起動してログインします）。
 
-**MCPサーバーが1つのアカウントにしか表示されない。** セッション内で`claude mcp add`を使って追加したサーバーは、そのアカウントに属します。`ccam mcp import work <server>`で、すべてのアカウントに移せます。
+**MCPサーバーが1つのアカウントにしか表示されない。** セッション内で`claude mcp add`を使って追加したサーバーは、そのアカウントに属し、`-s user`を付けなければそのフォルダーだけに属します。`ccam mcp import work <server>`で、すべてのアカウントに移せます。
 
 **アカウントごとに設定が異なる。** `ccam share work`で、そのアカウントが何を、どのグループを通じて共有しているかを表示できます。`ccam group join default work`は、変更内容を表示したうえで、そのアカウントが`default`の共有する項目を共有するようにします。`ccam doctor --fix`は壊れたリンクを修復し、変更するすべてのファイルのバックアップを残します。
 
@@ -78,3 +78,5 @@ Claude Codeは[Windowsでネイティブに、またはWSLの中で動作しま�
 アカウントが2つで何も共有しないなら、エイリアスで十分です。設定やMCPサーバーを共有したい場合、アカウントがもっと多い場合、使用量をひと目で確認したい場合、会話を続けたい場合は、ccamを使えば管理の手間が省けます。[エイリアスとの比較](/compare/aliases)で違いを並べて紹介しています。1つのログインを入れ替える方式のツールについては、[ccamとほかのアカウント切り替えツール](/compare/account-switchers)を参照してください。
 
 複数のアカウントを使ってよいかどうかは、各アカウントの規約によります。使う前に確認してください。
+
+**TeamとEnterpriseのシート。** 自動的な選択（`ccam next`、`--fallback`、`ccam pick`、ダッシュボードの`n`）は、同じClaude TeamまたはEnterpriseの組織に属するシート間でも切り替えます。Anthropicのヘルプセンターには、「Each seat on a Team plan is assigned to one named individual, and only that person may use it」（Teamプランの各シートは1人の指定ユーザーに割り当てられ、そのユーザーのみが使用できます）、「Users can't route their work through another user's account to use that user's remaining usage」（ユーザーは別のユーザーのアカウントを通じて作業をルーティングして、そのユーザーの残りの使用量を使用することはできません）と書かれています（[Teamプラン](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)。[Enterpriseプラン](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)も同様です）。そのため、シート間で自動的な選択を使うと、Anthropicの規約に違反するおそれがあります。自動的な選択に頼る前に、所属する組織とAnthropicに確認してください。個人プラン（Pro、Max）については、上の説明を参照してください。

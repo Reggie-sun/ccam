@@ -1,10 +1,10 @@
 ---
 title: ccam과 다른 Claude Code 계정 전환 도구 비교
 description: claude-swap, CCS, clausona, clauth, CAAM, cux 등 Claude Code 계정 전환 도구와 ccam을 비교하고, 어떤 방식이 어떤 용도에 맞는지 설명합니다.
-updated: 2026-10-21
+updated: 2026-10-24
 order: 2
 translation: machine
-sourceHash: "c74be64d2978"
+sourceHash: "6d08203f1ea6"
 ---
 
 Claude Code 계정을 전환하는 도구는 두 가지 방식 중 하나를 씁니다. 대부분은 하나뿐인 `~/.claude` 폴더 안에서 로그인을 바꿔 끼우므로, 한 번에 한 계정만 활성화됩니다. ccam을 비롯한 나머지는 `CLAUDE_CONFIG_DIR`로 계정마다 폴더를 따로 두므로, 모든 계정이 로그인 상태를 유지하고 여러 계정을 동시에 실행할 수 있습니다. ccam은 여기에 설정과 MCP 서버 공유를 더하고, 다른 계정의 폴더에서 대화를 이어 갈 수 있게 합니다.
@@ -54,7 +54,7 @@ ccswap은 Codex 로그인도 관리하는 claude-swap의 포크입니다. [claud
 
 ccam은 Claude 로그인을 한 곳에서 다른 곳으로 복사하지 않습니다. 각 계정의 로그인은 자기 폴더에, macOS에서는 그 폴더 전용 키체인 항목에 그대로 있으며, 갱신은 Claude Code가 합니다. 어긋날 수 있는 저장 사본이 없습니다. `ccam import`로 등록한 기존 `~/.claude`는 일반 `claude`가 쓰는 키체인 항목을 그대로 쓰므로, 어느 쪽으로 실행해도 로그인 상태가 유지됩니다.
 
-ccam이 만료된 토큰을 직접 갱신하는 것은 `ccam usage --refresh`를 실행했을 때뿐입니다. 먼저 잠금을 걸고, 그 계정이 실행 중이면 갱신을 거부하므로, 실행 중인 세션 아래에서 토큰을 바꾸는 일은 없습니다.
+ccam이 만료된 토큰을 직접 갱신하는 것은 `ccam usage --refresh`를 실행했을 때뿐입니다. 먼저 잠금을 걸고, 그 계정이 실행 중이면 Claude Code를 어떻게 시작했든(백그라운드 세션과 그 데몬도 포함) 갱신을 거부하며, Claude Code가 그 로그인을 갱신하는 중에도 거부하므로, 실행 중인 세션 아래에서 토큰을 바꾸는 일은 없습니다.
 
 ### 사용자와 Claude Code 사이에서 아무것도 실행되지 않습니다
 
@@ -66,19 +66,21 @@ ccam은 파일 하나를 읽고, 링크를 확인한 뒤, 자신을 `claude`로 
 
 MCP 서버, `settings.json`, `CLAUDE.md`, 확장(에이전트, 명령, 스킬, 플러그인), 대화 내역은 서로 별개인 다섯 항목입니다. 그룹에는 공유할 항목과 속한 계정이 정해져 있으므로, 업무 계정 두 개는 `work` 그룹에서 대화 내역을 공유하고 개인 계정은 자기 내역을 따로 두면서도, 세 계정 모두 `default`를 통해 같은 MCP 서버를 쓸 수 있습니다. `ccam group set work --add memory`는 그룹의 모든 계정을 계획 하나로 옮깁니다. [대시보드](/features/dashboard)에서는 같은 일을 체크박스로 하며, 계정이 이미 다른 그룹에서 받는 항목은 흐리게 표시합니다.
 
-- MCP 서버는 실행할 때 `--mcp-config`로 넘기므로, 기본적으로 ccam은 Claude Code가 실행 중에 다시 쓰는 파일인 `.claude.json`을 수정하지 않습니다. `ccam mcp add`는 서버를 그룹 전체에 한 번에 추가합니다.
+- MCP 서버는 실행할 때 `--mcp-config`로 넘기므로, 기본적으로 실행할 때는 Claude Code가 실행 중에 다시 쓰는 파일인 `.claude.json`을 건드리지 않습니다. ccam이 이 파일에 쓰는 것은 그렇다고 밝힌 단계뿐이며, Claude Code의 잠금을 건 채 백업을 남기고 씁니다. Remote Control을 위해 확인을 받은 뒤, 계정이 MCP 공유에서 빠지거나 다시 들어올 때, 그리고 `ccam mcp import`를 실행할 때입니다. `ccam mcp add`는 서버를 그룹 전체에 한 번에 추가합니다.
 - 나머지 항목은 그룹 폴더를 가리키는 링크이므로, 한 계정에서 바꾼 내용이 다른 계정에도 바로 나타납니다. 실행할 때 복사하는 것은 없습니다.
 - 로그인, `.claude.json`, 실행 상태는 절대 공유하지 않습니다.
 
 ### 모든 변경은 먼저 보여 주고 백업합니다
 
-`ccam group`과 `ccam migrate`는 무언가를 옮기기 전에 계획을 출력하고 확인을 받습니다. 계정과 그룹의 파일 내용이 다르면 그룹 것을 유지할지, 내 것을 쓸지, JSON을 병합할지 직접 고릅니다. 원본은 `.ccam-backup/<time>/`에, 제거한 계정의 폴더는 휴지통 폴더에 들어가고, 파일은 이름 바꾸기 한 번으로 교체되므로 쓰기가 중간에 끊겨도 이전 파일이 남습니다. `--dry-run`은 실행, 공유, 이전, 단축 명령, 업데이트, 복구가 무엇을 할지 보여 줍니다. `ccam doctor --fix`는 깨진 링크와 권한을 고칩니다.
+`ccam group`과 `ccam migrate`는 무언가를 옮기기 전에 계획을 출력하고 확인을 받습니다. 계정과 그룹의 파일 내용이 다르면 그룹 것을 유지할지, 내 것을 쓸지, JSON을 병합할지 직접 고릅니다. 폴더 안에서는 그룹 쪽 파일이 남고, 계획에 내용이 다른 파일이 표시됩니다. 원본은 `.ccam-backup/<time>/`에 들어가고, 제거한 계정은 로그아웃된 뒤 그 폴더가 휴지통 폴더로 가며, 파일은 이름 바꾸기 한 번으로 교체되므로 쓰기가 중간에 끊겨도 이전 파일이 남습니다. `--dry-run`은 실행, 공유, 이전, 단축 명령, 업데이트, 복구가 무엇을 할지 보여 줍니다. `ccam doctor --fix`는 깨진 링크와 권한을 고칩니다.
 
 ### 다음 계정에서 같은 대화를
 
 `ccam next --auto --continue`는 모든 계정의 사용량을 한꺼번에 조회하고, 여유가 가장 많은 계정을 열어 대화를 이어 갑니다. 대화 내역을 공유하면 같은 대화를 그대로 열고, 공유하지 않으면 Claude Code가 대화를 새 계정으로 복사하며(`--resume <file> --fork-session`), ccam은 첫 응답이 토큰을 얼마나 다시 읽는지 알려 줍니다. 한도 때문에 세션이 멈추면 ccam 플러그인의 훅이 알림을 띄우고, `/ccam:switch`로 대화를 넘길 수 있습니다. 언제 전환할지는 사용자가 정합니다. 백그라운드에서 사용량을 지켜보는 것은 없으며, 자동으로 고를 때는 한 조직 안에서만 고르므로 회사 대화가 실수로 개인 계정에 넘어가는 일은 없습니다. 계정이 90%에 도달하면 상태 표시줄이 이 명령을 제안합니다.
 
 스크립트는 사용자를 기다릴 수 없으므로, `ccam --fallback work -p "…"`가 대신 전환합니다. 계정이 한도에 도달하면 여유가 가장 많은 계정으로 같은 명령을 다시 실행하고, 끝까지 실행된 쪽의 출력만 표시합니다. 사용량 한도가 아닌 실패는 그대로 전달합니다. 병렬 워커에는 `ccam pick`이 여유가 있는 서로 다른 계정을 하나씩 나눠 주며, 여유가 남은 계정이 없으면 둘 다 종료 코드 75로 끝납니다.
+
+**Team·Enterprise 시트.** 자동 선택(`ccam next`, `--fallback`, `ccam pick`, 대시보드의 `n`)은 같은 Claude Team이나 Enterprise 조직의 시트 사이에서도 계정을 바꿉니다. Anthropic 고객센터는 "Each seat on a Team plan is assigned to one named individual, and only that person may use it"(팀 플랜의 각 시트는 한 명의 지정된 개인에게 할당되며, 그 사람만 사용할 수 있습니다), "Users can't route their work through another user's account to use that user's remaining usage"(사용자는 다른 사용자의 계정을 통해 작업을 라우팅하여 해당 사용자의 남은 사용량을 사용할 수 없습니다)라고 안내합니다([Team 요금제](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129), [Enterprise 요금제](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)도 마찬가지). 따라서 시트 사이에서 자동 선택을 쓰면 Anthropic의 약관을 위반할 수 있습니다. 이 기능에 의존하기 전에 소속 조직과 Anthropic에 확인하세요. 개인 요금제(Pro, Max)에 대해서는 [FAQ의 약관 안내](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)를 참고하세요.
 
 ### 폴더마다 맞는 계정
 
@@ -91,7 +93,7 @@ ccam은 약 10 MB의 정적 바이너리이며, 따로 설치할 런타임이 �
 ## 다른 도구가 더 잘하는 점
 
 - claude-swap, clauth, cux, CAAM, CCSwitcher는 계정이 사용량 임계값을 넘으면 실행 중인 대화형 세션을 스스로 전환할 수 있습니다. ccam은 `-p` 실행만 `--fallback`으로 전환하고, 대화형 세션은 한도에 도달했을 때의 알림과 `/ccam:switch`를 제공하되 전환은 사용자에게 맡깁니다.
-- 개발자 모드가 꺼진 Windows에서 ccam은 폴더는 공유하지만 `settings.json` 같은 단일 파일은 공유하지 못합니다. claude-swap과 CCS는 이런 경우 파일을 복사합니다.
+- 개발자 모드가 꺼진 Windows에서 ccam은 폴더는 공유하지만 `settings.json` 같은 단일 파일은 공유하지 못합니다(이 경우 처음 `ccam add`를 실행할 때 MCP 서버와 확장 기능만 공유합니다). claude-swap과 CCS는 이런 경우 파일을 복사합니다.
 - CCSwitcher, Claude Switcher, claude-swap은 macOS 메뉴 막대에 사용량을 표시합니다.
 - CCS, clausona, CAAM, clauth, ccswap, Claude Switcher는 Codex 등 다른 코딩 에이전트도 관리합니다.
 - clausona는 계정마다 확장을 켜고 끌 수도 있고(ccam의 `ccam ext`는 보여 주기만 합니다), 로컬 토큰 비용을 기록하며, tmux 등의 터미널에서 여러 워커를 돌리는 Claude Code 플러그인도 제공합니다.

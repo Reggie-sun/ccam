@@ -1,10 +1,10 @@
 ---
 title: Memperbarui ccam
 description: ccam update mengganti ccam dengan rilis GitHub terbaru setelah pemeriksaan SHA-256; --check hanya melaporkan dan --version menginstal tag rilis tertentu.
-updated: 2026-10-21
+updated: 2026-10-23
 order: 10
 translation: machine
-sourceHash: a92dbf37399f
+sourceHash: 000d37de5f29
 ---
 
 `ccam update` mengunduh rilis ccam dari GitHub, memeriksanya terhadap `checksums.txt` milik rilis tersebut, dan mengganti biner yang sedang berjalan dengan satu rename. Gunakan jika Anda menginstal ccam dengan skrip instalasi atau dari arsip. [Dasbor](/features/dashboard) juga menanyakan rilis terbaru ke GitHub setiap kali dibuka dan menawarkannya lewat `U`, yang menjalankan langkah yang sama setelah bertanya. Tidak ada perintah lain yang menghubungi GitHub, sehingga perintah-perintah itu bekerja sama saja secara offline.
@@ -64,7 +64,7 @@ Seluruh alurnya, dari pencarian tag sampai rename:
 
 Arsip dan `checksums.txt` diunduh berdampingan, dan tidak ada yang ditulis sampai checksum cocok. Rename bersifat atomik, sehingga crash atau disk penuh hanya meninggalkan biner lama atau biner baru, tidak pernah setengahnya. Perintah pintasan seperti `~/.local/bin/ccwork` adalah symlink ke biner ccam, sehingga langsung menjalankan versi baru tanpa perubahan apa pun.
 
-Di Windows, file program yang sedang berjalan tidak bisa diganti atau dihapus, hanya diganti namanya. `Updater.Install` menulis biner baru ke `ccam.exe.new`, mengganti nama `ccam.exe` yang sedang berjalan menjadi `ccam.exe.old`, lalu mengganti nama file baru menjadi `ccam.exe`. Jika langkah terakhir gagal, nama biner lama dikembalikan. Pembaruan berikutnya menghapus `ccam.exe.old`. Pintasan yang berupa hard link alih-alih tautan simbolik ([Perintah pintasan](/features/shortcuts)) langsung diperbarui setelahnya, sehingga juga menjalankan versi baru.
+Di Windows, file program yang sedang berjalan tidak bisa diganti atau dihapus, hanya diganti namanya. `Updater.Install` menulis biner baru ke `ccam.exe.new`, mengganti nama `ccam.exe` yang sedang berjalan menjadi `ccam.exe.old`, lalu mengganti nama file baru menjadi `ccam.exe`. Jika langkah terakhir gagal, nama biner lama dikembalikan. Pembaruan berikutnya menghapus file `ccam.exe.old` yang bisa dihapusnya; selama sebuah sesi masih berjalan dari `ccam.exe.old` sebelumnya, biner yang sedang berjalan menjadi `ccam.exe.old-<time>` sebagai gantinya. Pintasan yang berupa hard link alih-alih tautan simbolik ([Perintah pintasan](/features/shortcuts)) langsung diperbarui setelahnya, sehingga juga menjalankan versi baru; itu mencakup hard link dari ccam lama mana pun yang dibuat ccam, bukan hanya dari biner yang baru saja diganti.
 
 ### Instalasi yang dikelola paket
 
@@ -91,7 +91,7 @@ Di sistem selain Linux, hanya baris skrip instalasi yang ditampilkan: `irm https
 
 ## Keamanan dan kasus khusus
 
-- Build pengembangan melaporkan versinya sebagai `dev` dan tidak memiliki rilis untuk dibandingkan, sehingga `ccam update` dan `ccam update --check` menolaknya. `ccam update --version vX.Y.Z` menginstal rilis di atasnya.
+- Build pengembangan melaporkan versinya sebagai `dev` dan tidak memiliki rilis untuk dibandingkan, sehingga `ccam update` dan `ccam update --check` menolaknya. `ccam update --version vX.Y.Z` menginstal rilis di atasnya. Build yang dibuat dengan `go install github.com/jhyunwoo/ccam/cmd/ccam@vX.Y.Z` (atau `@latest`) melaporkan rilis itu, sehingga `ccam update` dan tawaran dasbor berfungsi untuknya; `@main` atau build lokal yang sudah melewati sebuah tag tetap `dev`.
 - Unduhan yang gagal, aset yang tidak tersedia untuk platform Anda, atau checksum yang tidak cocok membiarkan biner terinstal seperti semula.
 - Rilis yang tidak ada gagal dengan `there is no release <tag>`. Jika GitHub menolak dengan HTTP 403 atau 429, ccam menyebutkan bahwa itu kemungkinan pembatasan laju dan meminta Anda mencoba lagi nanti.
 - `--check` hanya membaca. Opsi ini tidak memeriksa apakah biner dikelola paket atau dapat ditulisi.

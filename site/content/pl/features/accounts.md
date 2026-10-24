@@ -1,10 +1,10 @@
 ---
 title: Zarządzanie kontami
 description: Dodawaj, loguj, wyświetlaj, zmieniaj nazwy, usuwaj i importuj konta Claude Code poleceniami ccam add, login, list, rename, remove i import.
-updated: 2026-10-20
+updated: 2026-10-23
 order: 2
 translation: machine
-sourceHash: "8564517d0d71"
+sourceHash: "f4c09f92ce7d"
 ---
 
 Każde konto ccam to osobny folder konfiguracji Claude Code z własnym loginem. Te polecenia tworzą konta, logują do nich, wyświetlają je, zmieniają ich nazwy i je usuwają, a także rejestrują foldery, które już masz.
@@ -17,12 +17,12 @@ ccam add work --shortcut ccwork            # no wizard: log in, then create the 
 ccam add side --no-login --group default --group team
 ccam login side                            # run claude auth login inside the account
 ccam login --expired                       # every account never logged in, or whose login expired
-ccam logout side                           # remove the login token
+ccam logout side                           # log out: the login and its MCP sign-ins
 ccam list                                  # table of accounts; ccam ls is the same
 ccam list --json                           # machine-readable
 ccam use 2                                 # make slot 2 the default account
 ccam rename side personal
-ccam remove personal                       # asks, then moves the folder to the trash
+ccam remove personal                       # asks, logs out, then moves the folder to the trash
 ccam import                                # find ~/.claude and ~/.claude-* and ask about each
 ccam import ~/.claude-ops --name ops
 ccam completion zsh > "${fpath[1]}/_ccam"
@@ -32,9 +32,9 @@ Gdy polecenie przyjmuje `<name|number>`, możesz podać nazwę konta albo jego n
 
 `ccam add` uruchomione w terminalu bez opcji otwiera kreator. Pyta o nazwę i sposób logowania konta (login Claude teraz, klucz API albo login Claude później), potem pokazuje grupy do dołączenia z zaznaczonym `default` (zanim powstaną jakiekolwiek grupy: elementy, które będzie współdzielić grupa `default`), następnie pyta `Create a shortcut command for work? [y/N]` i kończy podsumowaniem do potwierdzenia. `Esc` cofa o krok. Każda z opcji `--group`, `--no-group`, `--shortcut` lub `--no-login`, albo potok zamiast terminala, pomija kreator; wtedy nazwa jest wymagana, a skrót powstaje tylko wtedy, gdy podasz go w `--shortcut`.
 
-Bez `--group` nowe konto dołącza do grupy `default`. Pierwsze konto ją tworzy, a grupa współdzieli serwery MCP, ustawienia, `CLAUDE.md` i rozszerzenia; zobacz [współdzielenie przez grupy](/features/share).
+Bez `--group` nowe konto dołącza do grupy `default`. Pierwsze konto ją tworzy, a grupa współdzieli serwery MCP, ustawienia, `CLAUDE.md` i rozszerzenia; zobacz [współdzielenie przez grupy](/features/share). W Windows bez Trybu dewelopera, bez którego nie da się linkować plików, pierwsze konto tworzy `default` tylko z `mcp` i `extensions` i o tym informuje (`Note: files can be linked on Windows only in Developer Mode (Settings > System > For developers), so group default shares only mcp, extensions. …`), a `--group` do grupy, która współdzieli ustawienia, pamięć lub historię, jest odrzucane.
 
-`ccam list` pokazuje slot, nazwę, skrót, adres e-mail, grupy i ostatnie użycie, z `*` przed domyślnym kontem:
+`ccam list` pokazuje slot, nazwę, skrót, adres e-mail, grupy i ostatnie użycie, z `*` przed domyślnym kontem. Adres e-mail to ten, na który folder jest teraz zalogowany (z jego `.claude.json`); gdy różni się od zapisanego przez ccam, zapisany pojawia się za nim jako `(was …)`:
 
 ```console
 $ ccam list
@@ -43,7 +43,13 @@ $ ccam list
    2  personal  -         me@side.dev       default       -
 ```
 
-Z `--json` każde konto jest obiektem z polami `slot`, `shortcut`, `name`, `email`, `default`, `dir`, `last_used` (pomijanym, gdy konto nigdy nie było uruchomione), `groups` i `share`. `share` przypisuje każdy element (`mcp`, `settings`, `memory`, `extensions`, `history`) do grupy, z której pochodzi, albo do `"local"`.
+```console
+$ ccam list
+   #  Name      Shortcut  Email                                     Groups   Last used
+*  1  work      ccwork    other@company.com (was work@example.com)  default  2m ago
+```
+
+Z `--json` każde konto jest obiektem z polami `slot`, `shortcut`, `name`, `email` (bieżącego loginu, jak w tabeli), `default`, `dir`, `last_used` (pomijanym, gdy konto nigdy nie było uruchomione), `groups` i `share`. `share` przypisuje każdy element (`mcp`, `settings`, `memory`, `extensions`, `history`) do grupy, z której pochodzi, albo do `"local"`.
 
 ## Opcje
 
@@ -56,11 +62,12 @@ Z `--json` każde konto jest obiektem z polami `slot`, `shortcut`, `name`, `emai
 | `ccam add --api --key-from <source>` | Konto, które zamiast loginu używa klucza API; zobacz [Konta z kluczem API](/features/api) | wyłączone |
 | `ccam list --json` | Wypisuje konta jako JSON | wyłączone |
 | `ccam remove -y`, `--yes` | Usuwa bez pytania | wyłączone |
-| `ccam import --name <name>` | Nazwa konta dla podanego folderu | wyprowadzona z nazwy folderu |
+| `ccam logout -y`, `--yes` | Wylogowuje bez pytania | wyłączone |
+| `ccam import --name <name>` | Nazwa konta dla podanego folderu; odrzucana bez folderu (`--name needs a folder: ccam import <folder> --name ops`) | wyprowadzona z nazwy folderu |
 | `ccam import -y`, `--yes` | Importuje każdy znaleziony folder bez pytania | wyłączone |
 | `--dry-run` | Respektowana przez `ccam list` i `ccam completion`, które niczego nie zmieniają. Odrzucana przez `add`, `login`, `logout`, `use`, `rename`, `remove` i `import` komunikatem `` --dry-run is not supported by `ccam add`; nothing was changed `` (z nazwą polecenia) | wyłączone |
 
-`ccam login`, `ccam logout`, `ccam use` i `ccam rename` nie mają własnych opcji. `ccam completion` przyjmuje `bash`, `zsh` lub `powershell`; wszystko inne kończy się błędem `only bash, zsh and powershell are supported`.
+`ccam login` (poza `--expired`), `ccam use` i `ccam rename` nie mają własnych opcji. `ccam completion` przyjmuje `bash`, `zsh` lub `powershell`; wszystko inne kończy się błędem `only bash, zsh and powershell are supported`.
 
 Nazwy kont mają od 1 do 32 znaków spośród `a-z`, `0-9`, `-` i `_` i zaczynają się literą lub cyfrą. Nazwa nie może składać się z samych cyfr, bo `ccam 2` oznacza slot 2. Nie może też być poleceniem ccam (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`, `folder`, `pick`, `ext`, `group`, `groups`), więc `ccam <name>` nigdy nie jest niejednoznaczne. Ta lista to `config.Reserved` w `internal/config`.
 
@@ -76,13 +83,21 @@ Nazwy kont mają od 1 do 32 znaków spośród `a-z`, `0-9`, `-` i `_` i zaczynaj
 4. Konto jest zapisywane w `~/.config/ccam/config.toml` przez `fsutil.AtomicWrite`: plik tymczasowy, `fsync`, potem `rename`, więc awaria nigdy nie zostawia połowy konfiguracji.
 5. `runLogin` uruchamia `claude auth login` z `CLAUDE_CONFIG_DIR` ustawionym na folder konta oraz z `--email` z ostatnim adresem e-mail konta, żeby strona logowania była już wypełniona. Jeśli logowanie się nie powiedzie, konto zostaje, a ccam wypisuje błąd i każe później uruchomić `ccam login work`.
 6. `profile.ReadIdentity` odczytuje `oauthAccount` z `profiles/work/.claude.json`: adres e-mail, identyfikatory konta i organizacji, nazwę organizacji i plan (`claude_max`, `claude_team` …). Ten plik może mieć kilka megabajtów, więc `TopLevelValue` wyszukuje jeden klucz zamiast parsować cały plik. ccam przechowuje te dane w `[profile.login]` w `config.toml`.
-7. `shim.Install` linkuje `~/.local/bin/ccwork` do pliku binarnego ccam, który przy starcie szuka `argv[0]` w `config.toml`.
+7. `shim.Install` linkuje `~/.local/bin/ccwork` do pliku binarnego ccam, który przy starcie szuka `argv[0]` w `config.toml`, i zapisuje link w `~/.local/state/ccam/shortcuts.json`. Jeśli nie da się utworzyć linku, konto i tak zostaje dodane, ccam podaje przyczynę (`Could not create shortcuts: …`), a podsumowanie pokazuje `shortcut: ccwork (not created; see above)`.
 
 Logowanie może trwać minuty, a w tym czasie inny ccam może zapisać konfigurację. Dlatego polecenia, które czekają, zapisują przez `env.update`, które ponownie wczytuje `config.toml`, stosuje jedną zmianę (tutaj adres e-mail) i zapisuje. Z tego samego powodu `ccam remove` wczytuje konfigurację ponownie po pytaniu.
 
-`ccam login` wykonuje kroki 5 i 6 dla istniejącego konta. Claude Code traktuje adres e-mail tylko jako podpowiedź dla strony logowania, więc login może trafić na inne konto Claude niż to, którym było konto ccam; ccam porównuje nowy login z `[profile.login]` i o tym mówi (`ccam: this login is other@company.com, but work was dev@company.com before.`). Zachowuje nowy login i podpowiada, jak to cofnąć: `ccam logout work`, potem `ccam login work` i zalogowanie się właściwym adresem e-mail. Gdy inne konto ccam jest zalogowane na to samo konto Claude, ccam ostrzega, że oba dzielą limity użycia. `ccam login --expired` loguje, jedno po drugim, każde konto, które nigdy nie było zalogowane albo którego login (jego token odświeżania) wygasł.
+`ccam login` wykonuje kroki 5 i 6 dla istniejącego konta. Claude Code traktuje adres e-mail tylko jako podpowiedź dla strony logowania, więc login może trafić na inne konto Claude niż to, którym było konto ccam; ccam porównuje nowy login z `[profile.login]` i o tym mówi (`ccam: this login is other@company.com, but work was dev@company.com before.`). Zachowuje nowy login i podpowiada, jak to cofnąć: ``To undo it, run `ccam login work` again and sign in as dev@company.com.`` Login na inne konto Claude usuwa też [zapis limitu](/features/usage#the-limit-record) konta, bo te limity należały do tamtego konta. Gdy inne konto ccam jest zalogowane na to samo konto Claude, ccam ostrzega, że oba dzielą limity użycia. `ccam login --expired` loguje, jedno po drugim, każde konto, które nigdy nie było zalogowane albo którego login wygasł: wygasł jego token odświeżania albo Claude Code wyczyścił login po tym, jak serwer go odrzucił. Zanim otworzy się pierwsza przeglądarka, sprawdza, czy `config.toml` da się zapisać.
 
-`ccam logout` uruchamia `claude auth logout` na koncie i czyści zapisany adres e-mail; zapis logowania zostaje, więc następny login jest z nim porównywany. `ccam use` zmienia tylko `default` w `config.toml`.
+`ccam logout` uruchamia `claude auth logout` na koncie i czyści zapisany adres e-mail; zapis logowania zostaje, więc następny login jest z nim porównywany. Claude Code unieważnia login i usuwa to, co przechowuje dla konta, także logowania do serwerów MCP. Dlatego ccam najpierw mówi, co zostanie usunięte razem z nim, i pyta (`--yes` pomija pytanie): gdy login zawiera logowania MCP, gdy konto jest uruchomione (jego sesje też zostają wylogowane) i gdy folder innego konta ma ten sam login (skopiowany folder), który wylogowanie również unieważnia:
+
+```console
+$ ccam logout side
+Logging out also removes side's MCP server sign-ins (linear); sign in to them again with /mcp.
+Log out side? [y/N]
+```
+
+Aby zalogować się na inne konto Claude, wystarczy samo `ccam login <name>`, a logowania MCP zostają. `ccam use` zmienia tylko `default` w `config.toml`.
 
 `ccam list` dodaje kolumnę `Organization`, gdy konta należą do więcej niż jednej organizacji (plany prywatne pokazują `personal`), a `ccam list --json` ma `plan` i `org` dla każdego konta.
 
@@ -106,25 +121,28 @@ Gdy logowanie czeka na dane w terminalu, ccam wyłącza echo i tryb liniowy term
 
 ### Zmiana nazwy, usuwanie i import
 
-`ccam rename` i `ccam remove` działają na folderze konta i na tym, co ccam przechowuje pod nazwą konta w innych miejscach. `nameState` wymienia te ścieżki: `~/.local/state/ccam/last-used/<name>`, `~/.local/state/ccam/mcp/<name>` oraz pamięci podręczne użycia `~/.local/state/ccam/usage/<name>.json` i `<name>.statusline.json`. `ccam remove work` obsługuje je w tej kolejności:
+`ccam rename` i `ccam remove` działają na folderze konta i na tym, co ccam przechowuje pod nazwą konta w innych miejscach. `nameState` wymienia te ścieżki: `~/.local/state/ccam/last-used/<name>`, `~/.local/state/ccam/mcp/<name>` pamięci podręczne użycia `~/.local/state/ccam/usage/<name>.json` i `<name>.statusline.json`, zapis limitu `<name>.limit.json` oraz notatki sesji w `~/.local/state/ccam/handoff/<name>/`. `ccam remove work` obsługuje je w tej kolejności:
 
 <!-- motion:accounts-remove -->
 
-`ccam remove` najpierw odmawia, jeśli konto jest uruchomione, a potem pyta. Jeśli konto współdzieli rozszerzenia, `RewritePluginPaths` przepisuje `installed_plugins.json` i `known_marketplaces.json` grupy, bo Claude Code przechowuje bezwzględne ścieżki wtyczek, które mogą prowadzić przez folder tego konta. `profile.Trash` przenosi folder do `~/.local/share/ccam/trash/<name>-<time>/`, konto znika z `config.toml`, ścieżki `nameState` są usuwane, żeby późniejsze konto o tej samej nazwie ich nie odziedziczyło, a link skrótu jest usuwany. Aby odzyskać konto, przenieś folder z kosza z powrotem.
+`ccam remove` najpierw odmawia, jeśli konto jest uruchomione, potem pyta i po odpowiedzi sprawdza ponownie (wychwytuje sesję uruchomioną w czasie, gdy pytanie czekało). Zanim cokolwiek zmieni, sprawdza, czy `config.toml` da się zapisać. Jeśli konto współdzieli rozszerzenia, `RewritePluginPaths` przepisuje `installed_plugins.json` i `known_marketplaces.json` grupy, bo Claude Code przechowuje bezwzględne ścieżki wtyczek, które mogą prowadzić przez folder tego konta. Następnie zarządzane konto jest wylogowywane: `claude auth logout` działa w jego folderze, więc w koszu nie czeka działający login (ani, na macOS, element pęku kluczy nazwany od folderu, który odziedziczyłoby późniejsze konto o tej nazwie). Ten krok jest pomijany dla konta z kluczem API i wtedy, gdy folder innego konta ma ten sam login, który wylogowanie również by unieważniło; nieudane wylogowanie jest zgłaszane, a usuwanie trwa dalej. `profile.Trash` przenosi folder do `~/.local/share/ccam/trash/<name>-<time>/`, konto znika z `config.toml`, ścieżki `nameState` są usuwane, żeby późniejsze konto o tej samej nazwie ich nie odziedziczyło, a link skrótu jest usuwany: `✓ side removed (folder moved to /home/you/.local/share/ccam/trash/side-20261023-212306; logged out first)`. Jeśli mimo to `config.toml` nie da się zapisać, folder wraca z kosza. Aby odzyskać usunięte konto, przenieś folder z kosza z powrotem i zaloguj się ponownie.
 
-`ccam rename` zmienia nazwę folderu, przepisuje ścieżki wtyczek w jego `plugins/` ze starego folderu na nowy, przenosi status domyślnego konta i przenosi ścieżki `nameState` pod nową nazwę. Polecenie skrótu zachowuje swoją nazwę. Jeśli przepisanie ścieżek wtyczek się nie powiedzie, folder wraca do starej nazwy, bo konfiguracja nie zostaje zapisana.
+`ccam rename` zmienia nazwę folderu, przepisuje ścieżki wtyczek w jego `plugins/` ze starego folderu na nowy, przenosi status domyślnego konta i przenosi ścieżki `nameState` pod nową nazwę; notatki sesji są aktualizowane, więc `ccam next --continue` nadal je znajduje. Polecenie skrótu zachowuje swoją nazwę. Jeśli przepisanie ścieżek wtyczek się nie powiedzie albo nie da się zapisać `config.toml`, folder wraca do starej nazwy. Na macOS folder zachowuje starą nazwę, bo pęk kluczy przechowuje login i logowania MCP pod ścieżką folderu, a przeniesiony folder zostałby wylogowany; to samo dotyczy Windows, gdy Claude Code przechowuje loginy w Menedżerze poświadczeń. Konfiguracja zapisuje wtedy folder jako `folder` obok nowej nazwy, a ccam informuje `its folder stays …: the macOS Keychain keeps the login under the folder's path`.
 
-`ccam import` rejestruje folder tam, gdzie jest, jako `dir` w `config.toml`. Nigdy go nie przenosi ani nie kopiuje: skopiowany token odświeżania sprawiłby, że kopie nawzajem by się wylogowywały. Bez argumentu z folderem szuka niezarejestrowanych folderów `~/.claude` i `~/.claude-*` i pyta o każdy; nazwy pochodzą od folderu (`~/.claude` to `main`, `~/.claude-work` to `work`, `~/.claude-2` to `acct2`), a folder, z którego nie da się wyprowadzić nazwy, jest wypisywany razem z poleceniem `--name` do użycia. Bez `CLAUDE_CONFIG_DIR` Claude Code trzyma `.claude.json` w folderze domowym obok `~/.claude`, więc gdy importujesz `~/.claude`, a nie ma on własnego `.claude.json`, ccam tworzy link `~/.claude/.claude.json` do `~/.claude.json`. Zwykłe `claude` i `ccam main` widzą wtedy to samo konto. Zaimportowane konta nie należą do żadnej grupy, dopóki ich do niej nie dodasz (`ccam group join <group> <name>`), i nie powstaje dla nich skrót.
+`ccam import` rejestruje folder tam, gdzie jest, jako `dir` w `config.toml`. Nigdy go nie przenosi ani nie kopiuje: skopiowany token odświeżania sprawiłby, że kopie nawzajem by się wylogowywały. Bez argumentu z folderem szuka niezarejestrowanych folderów `~/.claude` i `~/.claude-*` i pyta o każdy; nazwy pochodzą od folderu (`~/.claude` to `main`, `~/.claude-work` to `work`, `~/.claude-2` to `acct2`), a folder, z którego nie da się wyprowadzić nazwy albo którego nazwa należy już do konta, jest wypisywany razem z poleceniem `--name` do użycia. Znaleziony folder, którego nie udało się zaimportować, jest zgłaszany jako `Skipped <path>: <reason>`, a pozostałe są importowane. Odpowiedzi są zbierane najpierw, a foldery rejestrowane w `config.toml` w jego ówczesnej postaci, więc to, co w międzyczasie zapisały inne polecenia ccam, zostaje; wiersze `✓` pojawiają się po zapisie. Bez `CLAUDE_CONFIG_DIR` Claude Code trzyma `.claude.json` w folderze domowym obok `~/.claude`, więc gdy importujesz `~/.claude`, a nie ma on własnego `.claude.json`, ccam tworzy link `~/.claude/.claude.json` do `~/.claude.json`. Zwykłe `claude` i `ccam main` widzą wtedy to samo konto. Jeśli `~/.claude` ma własny `.claude.json` obok `~/.claude.json`, ccam zostawia oba i o tym informuje: `ccam main` używałby wewnętrznego, a zwykłe `claude` zewnętrznego, co rozdziela ich dane logowania i serwery MCP, więc zastąp wewnętrzny plik linkiem, żeby został jeden ([doctor](/features/doctor) też to zgłasza). Gdy folder ma ten sam login co zarejestrowane konto (skopiowany folder), ccam o tym mówi: to, które pierwsze go odnowi, wyloguje drugie, więc przed użyciem uruchom `ccam login <name>`. Zaimportowane konta nie należą do żadnej grupy, dopóki ich do niej nie dodasz (`ccam group join <group> <name>`), i nie powstaje dla nich skrót.
 
 `ccam completion bash|zsh` wypisuje skrypt uzupełniania, który uzupełnia też nazwy kont.
 
 ## Bezpieczeństwo i przypadki brzegowe
 
-- `ccam rename` i `ccam remove` odmawiają działania, gdy konto jest uruchomione (`refuseRunning`), z komunikatem `work is running; quit its Claude Code session first`, bo sesja dalej zapisuje do folderu.
-- `ccam remove` na zaimportowanym koncie tylko je wyrejestrowuje: `✓ main unregistered (folder ... left in place)`. Twój `~/.claude` nie trafia do kosza.
-- `ccam add` odrzuca nazwę, której folder już istnieje w `profiles/`, i wskazuje `ccam import`.
-- `ccam import` odrzuca folder, który jest już zarejestrowany, ścieżkę, która nie jest folderem, i zajętą nazwę.
-- `ccam logout` i `ccam login` nie sprawdzają, czy konto jest uruchomione.
+- `ccam rename` i `ccam remove` odmawiają działania, gdy konto jest uruchomione (`refuseRunning`), z komunikatem ``work is running; quit its Claude Code sessions first (`ccam agents` lists them, `ccam work stop <id>` ends a background one)``, bo sesja dalej zapisuje do folderu. Sprawdzenie obejmuje Claude Code niezależnie od sposobu uruchomienia: przez ccam, zwykłe `claude`, IDE, sesje w tle i ich demona.
+- `ccam rename`, `ccam remove` i `ccam logout` odmawiają, gdy inny ccam odnawia lub zmienia ten login: ``another ccam is using the login of work right now (a refresh, rename, remove or logout); try again in a moment``.
+- Gdy w innym ccam trwa zmiana grup, `ccam rename` i `ccam remove` odmawiają z komunikatem `another ccam is changing the groups right now; try again when it is done`; po zmianie, która zatrzymała się w połowie, z komunikatem ``the last change of groups stopped halfway; finish it with `ccam doctor --fix` first``.
+- `ccam remove` na zaimportowanym koncie zachowuje folder i jego login dla zwykłego `claude`. Jeśli konto jest w grupach, najpierw je opuszcza tak jak `ccam group leave`: każdy współdzielony element staje się w folderze kopią wersji grupy, a serwery MCP grupy trafiają do jego `.claude.json`. Potem jest wyrejestrowywane: `✓ main unregistered (folder ... left in place; it left its groups with a copy of what they share)`. Kopie zapasowe jego `.claude.json` zrobione przez ccam są przenoszone do `<folder>/.ccam-backup/mcp-<time>`; jeśli nie da się ich przenieść, zostają w `~/.local/state/ccam/mcp/<name>/backups`, a komunikat o tym mówi. Twój `~/.claude` nie trafia do kosza.
+- Dwa konta nie mogą mieć tego samego folderu: `config.toml`, który podaje jeden folder dwa razy, nie daje się wczytać.
+- `ccam add` odrzuca nazwę, której folder już istnieje w `profiles/`, i wskazuje `ccam import`. Na macOS zatrzymuje się też, gdy pęk kluczy nadal przechowuje login lub logowania MCP dla ścieżki nowego folderu, pozostawione przez starszy ccam, i podaje polecenie `security delete-generic-password`, które je usuwa. Jeśli nie da się zapisać `config.toml`, nowy folder jest ponownie usuwany.
+- `ccam import` odrzuca folder, który jest już zarejestrowany, ścieżkę, która nie jest folderem, i zajętą nazwę. Kopia `~/.claude` zwykłego `claude` jest też wykrywana, gdy `~/.claude` nie jest zarejestrowany.
+- `ccam logout` najpierw pyta, gdy konto jest uruchomione; `ccam login` tego nie sprawdza.
 - Jeśli przekazanie nie może dotrzeć do Claude Code, na przykład po zakończeniu logowania, ccam wypisuje `ccam: could not pass the sign-in to Claude Code:` z przyczyną. Błąd HTTP zwykle oznacza, że kod wygasł; zacznij logowanie od nowa.
 
 ## Powiązane

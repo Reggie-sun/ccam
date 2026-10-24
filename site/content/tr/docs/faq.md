@@ -2,10 +2,10 @@
 title: Sık sorulan sorular
 metaTitle: "ccam SSS: birden fazla Claude Code hesabı"
 description: ccam, Claude Code hesapları, kullanım limitleri, paylaşım, gizlilik ve desteklenen sistemler hakkında yanıtlar.
-updated: 2026-10-21
+updated: 2026-10-24
 order: 6
 translation: machine
-sourceHash: "bc944d7dcab9"
+sourceHash: "c4e3b89bb4ea"
 ---
 
 ## ccam resmi bir Anthropic aracı mı?
@@ -15,6 +15,8 @@ Hayır. ccam resmi olmayan, açık kaynaklı bir projedir; Anthropic ile bağlan
 ## Birden fazla Claude Code hesabı kullanmama izin var mı?
 
 Bu, her hesabın koşullarına ve iş hesapları için kurumunuzun politikasına bağlıdır. Birden fazla hesap kullanmadan önce bunları kontrol edin. ccam yalnızca zaten sahip olduğunuz hesaplar arasında geçiş yapmayı kolaylaştırır.
+
+**Team ve Enterprise koltukları.** Otomatik seçim (`ccam next`, `--fallback`, `ccam pick`, kontrol panelindeki `n` tuşu), aynı Claude Team veya Enterprise kuruluşunun koltukları arasında da geçiş yapar. Anthropic'in yardım merkezinde şöyle belirtilir: "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team planındaki her koltuk, adı belirli tek bir kişiye atanır ve onu yalnızca o kişi kullanabilir) ve "Users can't route their work through another user's account to use that user's remaining usage" (kullanıcılar, başka bir kullanıcının kalan kullanım hakkından yararlanmak için işlerini o kullanıcının hesabı üzerinden yürütemez) ([Team planları](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise planları](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) için de durum aynıdır). Bu nedenle otomatik seçimi koltuklar arasında kullanmak Anthropic'in koşullarını ihlal edebilir. Buna güvenmeden önce kuruluşunuza ve Anthropic'e danışın. Kişisel planlar (Pro, Max) yukarıdaki paragrafta ele alınır.
 
 ## ccam kullanım limitlerini atlatmanızı sağlar mı?
 
@@ -26,11 +28,11 @@ Her hesaba `CLAUDE_CONFIG_DIR` ile kendi yapılandırma klasörünü verin. ccam
 
 ## Bir konuşmaya başka bir hesapta nasıl devam ederim?
 
-Hesaplar arasında konuşma geçmişini `ccam group set default --add history` ile (ya da onlara özel bir grupla: `ccam group add pair --items history --members work,side`) paylaşın, ardından `ccam next --continue` komutunu çalıştırın. Claude Code, geçerli klasörün en son konuşmasını bir sonraki hesapta açar.
+Klasörde `ccam next --continue` komutunu çalıştırın: klasörün son konuşmasını bir sonraki hesaba taşır (en çok payı kalan hesap için `--auto`). Claude Code'un içinde [ccam eklentisinin](/docs/install#claude-code-plugin) `/ccam:switch` komutu, içinde bulunduğunuz oturum için aynısını yapar. İki hesap konuşma geçmişini paylaşıyorsa (`ccam group set default --add history` ya da onlara özel bir grupla: `ccam group add pair --items history --members work,side`), yeni hesap tam olarak o konuşmayı açar; paylaşmıyorsa Claude Code konuşmayı yeni hesabın geçmişine kopyalar.
 
 ## ccam giriş bilgilerimi görüyor veya gönderiyor mu?
 
-ccam, Claude girişinizi hesaplar arasında asla paylaşmaz. Bir hesabın erişim tokenını yalnızca `ccam usage`, `ccam next --auto` veya `ccam doctor` çalıştırdığınızda, o hesabın kullanımını Anthropic'in kullanım uç noktasına sormak için okur. `ccam migrate`, MCP sunucularının kaydedilmiş girişlerini `~/.claude` içinden aynı bilgisayardaki hesaplarınızın kendi giriş dosyalarına kopyalar. ccam'da telemetri yoktur. Bu sorguların dışında kendiliğinden yaptığı tek istek, kontrol panelinin GitHub'a en son ccam sürümünü sormasıdır ve bu istek sizin ya da hesaplarınız hakkında hiçbir şey taşımaz.
+ccam, Claude girişinizi hesaplar arasında asla paylaşmaz veya kopyalamaz; MCP sunucularının girişlerini de asla kopyalamaz. Bir hesabın erişim tokenını yalnızca `ccam usage`, `ccam next --auto` veya `ccam doctor` çalıştırdığınızda, o hesabın kullanımını Anthropic'in kullanım uç noktasına sormak için okur ve süresi dolmuş bir tokenı yalnızca `ccam usage --refresh` ile yeniler; `usage_source = "claude"` ile tokenı hiç okumaz. `ccam ext` ve `ccam doctor`, bir hesabın MCP girişlerinin yalnızca adlarını okur, tokenlarını asla okumaz. ccam'da telemetri yoktur. Bu sorguların dışında kendiliğinden yaptığı tek istek, kontrol panelinin GitHub'a en son ccam sürümünü sormasıdır ve bu istek sizin ya da hesaplarınız hakkında hiçbir şey taşımaz.
 
 ## Uzak bir sunucuda nasıl giriş yaparım?
 
@@ -38,7 +40,7 @@ SSH oturumunda her zamanki gibi `ccam add` veya `ccam login <name>` çalıştır
 
 ## Hesaplarım nerede saklanıyor?
 
-Her hesap için bir klasör olmak üzere `~/.local/share/ccam/profiles/<name>/` içinde. macOS üzerinde Claude Code, girişin kendisini Anahtar Zinciri'nde, o klasörden türetilen bir ad altında saklar.
+Her hesap için bir klasör olmak üzere `~/.local/share/ccam/profiles/<name>/` içinde. macOS üzerinde Claude Code, girişin kendisini Anahtar Zinciri'nde, o klasörden türetilen bir ad altında saklar; bu yüzden `ccam rename` orada klasörün eski adını korur.
 
 ## Mevcut ~/.claude klasörüme ne olur?
 
@@ -46,11 +48,11 @@ Her hesap için bir klasör olmak üzere `~/.local/share/ccam/profiles/<name>/` 
 
 ## ccam hangi sistemleri destekliyor?
 
-Linux (Ubuntu, Debian, Fedora, Arch, Alpine ve diğerleri), macOS ve Windows 10 ile 11, yerel olarak veya WSL içinde. Windows'ta `settings.json` gibi dosyaları paylaşmak Geliştirici Modu gerektirir; paylaşılan klasörler onsuz da çalışır ([Windows'ta paylaşım](/features/share#on-windows)).
+Linux (Ubuntu, Debian, Fedora, Arch, Alpine ve diğerleri), macOS ve Windows 10 ile 11, yerel olarak veya WSL içinde. Windows'ta `settings.json` gibi dosyaları paylaşmak Geliştirici Modu gerektirir; paylaşılan klasörler onsuz da çalışır ve Geliştirici Modu olmadan ilk `ccam add`, yalnızca MCP sunucuları ve uzantılarla `default` grubunu oluşturur ([Windows'ta paylaşım](/features/share#on-windows)).
 
 ## Bir MCP sunucusu neden yalnızca bir hesapta görünüyor?
 
-Bir oturum içinde `claude mcp add` ile eklenen sunucular yalnızca o hesap için saklanır. ccam, hesabı bir sonraki başlatışınızda bunu size bildirir; sunucuyu `ccam mcp import <account> <server>` ile paylaşılan gruba taşıyın.
+Bir oturum içinde `claude mcp add` ile eklenen sunucular yalnızca o hesap için, `-s user` olmadan da yalnızca geçerli klasör için saklanır. ccam, hesabı bir sonraki başlatışınızda bunu size bildirir; `ccam mcp list` ve `ccam ext` de bunları gösterir; sunucuyu `ccam mcp import <account> <server>` ile paylaşılan gruba taşıyın.
 
 ## ccam, Claude Code'u yavaşlatır mı?
 
@@ -62,4 +64,4 @@ Claude Code'u ccam üzerinden başlatmak yaklaşık 4 milisaniye ekler; bu süre
 
 ## ccam'ı nasıl kaldırırım?
 
-Her hesabın kısayolunu `ccam shortcut <account> --remove` ile kaldırın, `ccam` komutunu `~/.local/bin` içinden silin; hesaplara artık ihtiyacınız yoksa ardından `~/.config/ccam`, `~/.local/share/ccam` ve `~/.local/state/ccam` klasörlerini de silin. [Kurulum](/docs/install#uninstall) sayfasına bakın.
+Her hesabın kısayolunu `ccam shortcut <account> --remove` ile kaldırın. `~/.claude` klasörünü içe aktardıysanız ve bir gruptaysa, paylaştığı şeylerin bir kopyasını geri alması için önce onun için `ccam remove <name>` çalıştırın. Ardından `ccam` komutunu `~/.local/bin` içinden silin ve hesaplara artık ihtiyacınız yoksa `~/.config/ccam`, `~/.local/share/ccam` ve `~/.local/state/ccam` klasörlerini de silin. [Kurulum](/docs/install#uninstall) sayfasına bakın.

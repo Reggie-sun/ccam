@@ -1,10 +1,10 @@
 ---
 title: Asusan API key
 description: ccam add --api yana ƙara asusun API key don API na Anthropic ko gateway; ana karanta key a lokacin farawa daga variable ko umarni, ba a taɓa ajiye shi.
-updated: 2026-10-20
+updated: 2026-10-23
 order: 13
 translation: machine
-sourceHash: "a903c92f2c50"
+sourceHash: 232a71525e42
 ---
 
 Asusun API key yana fara Claude Code da API key maimakon shigar biyan kuɗin Claude: API na Anthropic, ko endpoint da ke magana da tsarin Messages iri ɗaya, kamar gateway na LiteLLM ko OpenRouter. ccam ba ya ajiye key ɗin. Yana karanta shi a duk lokacin da asusun ya fara, daga environment variable ko daga umarni kamar password manager, kuma yana miƙa shi ga wannan process na Claude Code kawai.
@@ -35,7 +35,7 @@ Asusun API key yana shiga rukunoni kamar kowane asusu (ta tsohuwa `default`: sai
 | --- | --- | --- |
 | `--api` | Ƙara asusun API key maimakon shiga | a kashe |
 | `--key-from env:NAME` | Karanta key ɗin daga environment variable `NAME` | |
-| `--key-from command:COMMAND` | Gudanar da `COMMAND` (da `sh -c`, ko `cmd /C` a Windows) kuma a yi amfani da layin farko da ya buga | |
+| `--key-from command:COMMAND` | Gudanar da `COMMAND` (da `sh -c`, ko a Windows kamar yadda aka rubuta shi a cikin `cmd /d /s /c "…"`, ana riƙe alamomin zance) kuma a yi amfani da layin farko da ya buga | |
 | `--base-url <url>` | Endpoint ɗin (`ANTHROPIC_BASE_URL`) | API na Anthropic |
 | `--auth api-key\|bearer` | Aika key ɗin a matsayin `ANTHROPIC_API_KEY` (`x-api-key`) ko a matsayin `ANTHROPIC_AUTH_TOKEN` (`Authorization: Bearer`, wanda gateways suka fi so) | `api-key` |
 | `--model <model>` | Model ɗin (`ANTHROPIC_MODEL`) | Tsohon model na Claude Code |
@@ -66,10 +66,17 @@ Asusan da ke da shigar biyan kuɗi suna riƙe environment ɗin da suka gada, kam
 
 ## Tsaro da yanayi na musamman
 
-- Ba a taɓa rubuta key ɗin a `config.toml`, cache ko log ba, kuma `ccam --dry-run gw` ba ya karanta shi: dry run ba ya gudanar da tushen `command:`.
+- Ba a taɓa rubuta key ɗin a `config.toml`, cache ko log ba, kuma `ccam --dry-run gw` ba ya karanta shi: dry run ba ya gudanar da tushen `command:`. Maimakon haka dry run yana nuna endpoint ɗin, model ɗin da inda key ɗin yake fitowa:
+
+  ```console
+  $ ccam --dry-run gw -p hi
+  CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/gw CCAM_PROFILE=gw ANTHROPIC_BASE_URL=https://llm.example.com ANTHROPIC_MODEL=claude-sonnet-5-5 ANTHROPIC_AUTH_TOKEN="$(pass show llm/gateway-key | head -n 1)" /home/me/.local/bin/claude -p hi
+  ```
+
+  Variable da aka gada wanda ƙaddamarwar ke cirewa yana bayyana a matsayin `env -u <name>` a farko. Da tushen `env:` wanda variable ɗinsa babu komai a ciki, dry run yana gazawa kamar yadda ƙaddamarwar za ta gaza.
 - `ccam add --api` yana duba tushen `env:` nan take kuma yana gargaɗi idan variable ɗin babu komai a ciki; ana fara gudanar da tushen `command:` ne a lokacin ƙaddamarwa.
 - `ccam login` da `ccam logout` suna ƙin asusun API key, domin ba shi da shiga. `ccam doctor` yana nuna endpoint ɗinsa da tushen key ɗinsa, kuma yana gargaɗi idan variable na `env:` babu komai a ciki.
-- `ccam usage` yana nuna `API` gare shi. `ccam next --auto`, `--fallback` da `ccam pick` suna zaɓa a cikin asusan biyan kuɗi kawai, domin API key ba shi da iyakar awa 5 ko ta mako da za a kwatanta.
+- `ccam usage` yana nuna `no limits (API)` gare shi. `ccam next --auto`, `--fallback` da `ccam pick` suna zaɓa a cikin asusan biyan kuɗi kawai, domin API key ba shi da iyakar awa 5 ko ta mako da za a kwatanta.
 - `settings.json` da aka raba mai sashen `env` ko `apiKeyHelper` yana aiki ga kowane asusu a rukunin, har da asusan API key. Ka cire saitunan mai bayarwa daga saitunan da aka raba, ko ka saka asusun API key a rukunin da ba ya raba `settings`.
 
 ## Masu alaƙa

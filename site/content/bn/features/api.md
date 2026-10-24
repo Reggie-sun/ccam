@@ -1,10 +1,10 @@
 ---
 title: "API key অ্যাকাউন্ট"
 description: "ccam add --api Anthropic-এর API বা কোনো গেটওয়ের জন্য API key অ্যাকাউন্ট যোগ করে; key চালুর সময় একটি ভেরিয়েবল বা কমান্ড থেকে পড়া হয়, কখনও সংরক্ষিত হয় না।"
-updated: 2026-10-20
+updated: 2026-10-23
 order: 13
 translation: machine
-sourceHash: "a903c92f2c50"
+sourceHash: 232a71525e42
 ---
 
 একটি API key অ্যাকাউন্ট Claude সাবস্ক্রিপশন লগইনের বদলে একটি API key দিয়ে Claude Code চালু করে: Anthropic-এর API, অথবা একই Messages ফরম্যাট বোঝে এমন কোনো এন্ডপয়েন্ট, যেমন LiteLLM বা OpenRouter গেটওয়ে। ccam key সংরক্ষণ করে না। প্রতিবার অ্যাকাউন্ট চালু হলে এটি একটি এনভায়রনমেন্ট ভেরিয়েবল থেকে বা পাসওয়ার্ড ম্যানেজারের মতো কোনো কমান্ড থেকে key পড়ে, এবং শুধু ওই Claude Code প্রসেসকেই দেয়।
@@ -35,7 +35,7 @@ $ ccam list
 | --- | --- | --- |
 | `--api` | লগইনের বদলে একটি API key অ্যাকাউন্ট যোগ করে | বন্ধ |
 | `--key-from env:NAME` | এনভায়রনমেন্ট ভেরিয়েবল `NAME` থেকে key পড়ে | |
-| `--key-from command:COMMAND` | `COMMAND` চালায় (`sh -c` দিয়ে, বা Windows-এ `cmd /C` দিয়ে) এবং এটি যে প্রথম লাইন প্রিন্ট করে সেটি ব্যবহার করে | |
+| `--key-from command:COMMAND` | `COMMAND` চালায় (`sh -c` দিয়ে, বা Windows-এ `cmd /d /s /c "…"`-এ লেখার মতো করে, উদ্ধৃতিচিহ্নসহ) এবং এটি যে প্রথম লাইন প্রিন্ট করে সেটি ব্যবহার করে | |
 | `--base-url <url>` | এন্ডপয়েন্ট (`ANTHROPIC_BASE_URL`) | Anthropic-এর API |
 | `--auth api-key\|bearer` | key-টি `ANTHROPIC_API_KEY` (`x-api-key`) হিসেবে, অথবা `ANTHROPIC_AUTH_TOKEN` (`Authorization: Bearer`, যা গেটওয়ে সাধারণত চায়) হিসেবে পাঠায় | `api-key` |
 | `--model <model>` | মডেল (`ANTHROPIC_MODEL`) | Claude Code-এর ডিফল্ট |
@@ -66,10 +66,17 @@ model = 'claude-sonnet-5-5'
 
 ## নিরাপত্তা ও বিশেষ ক্ষেত্র
 
-- key কখনও `config.toml`, কোনো ক্যাশ বা লগে লেখা হয় না, এবং `ccam --dry-run gw` এটি পড়ে না: ড্রাই রানে `command:` সোর্স চালানো হয় না।
+- key কখনও `config.toml`, কোনো ক্যাশ বা লগে লেখা হয় না, এবং `ccam --dry-run gw` এটি পড়ে না: ড্রাই রানে `command:` সোর্স চালানো হয় না। ড্রাই রান এর বদলে এন্ডপয়েন্ট, মডেল এবং key কোথা থেকে আসে তা দেখায়:
+
+  ```console
+  $ ccam --dry-run gw -p hi
+  CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/gw CCAM_PROFILE=gw ANTHROPIC_BASE_URL=https://llm.example.com ANTHROPIC_MODEL=claude-sonnet-5-5 ANTHROPIC_AUTH_TOKEN="$(pass show llm/gateway-key | head -n 1)" /home/me/.local/bin/claude -p hi
+  ```
+
+  চালু করার সময় সরিয়ে দেওয়া উত্তরাধিকারসূত্রে পাওয়া ভেরিয়েবল শুরুতে `env -u <name>` হিসেবে দেখায়। কোনো `env:` সোর্সের ভেরিয়েবল খালি হলে ড্রাই রান ঠিক সেভাবেই ব্যর্থ হয়, যেভাবে চালু করা হতো।
 - `ccam add --api` একটি `env:` সোর্স সঙ্গে সঙ্গে যাচাই করে এবং ভেরিয়েবলটি খালি হলে সতর্ক করে; `command:` সোর্স প্রথমবার চালুর সময় চলে।
 - `ccam login` ও `ccam logout` API key অ্যাকাউন্ট প্রত্যাখ্যান করে, কারণ এর কোনো লগইন নেই। `ccam doctor` এর এন্ডপয়েন্ট ও key সোর্স দেখায়, এবং একটি `env:` ভেরিয়েবল খালি হলে সতর্ক করে।
-- `ccam usage` এর জন্য `API` দেখায়। `ccam next --auto`, `--fallback` ও `ccam pick` শুধু সাবস্ক্রিপশন অ্যাকাউন্টগুলোর মধ্যে থেকে বেছে নেয়, কারণ API key-এর তুলনা করার মতো কোনো ৫ ঘণ্টা বা সাপ্তাহিক সীমা নেই।
+- `ccam usage` এর জন্য `no limits (API)` দেখায়। `ccam next --auto`, `--fallback` ও `ccam pick` শুধু সাবস্ক্রিপশন অ্যাকাউন্টগুলোর মধ্যে থেকে বেছে নেয়, কারণ API key-এর তুলনা করার মতো কোনো ৫ ঘণ্টা বা সাপ্তাহিক সীমা নেই।
 - `env` ব্লক বা `apiKeyHelper` থাকা একটি শেয়ার করা `settings.json` গ্রুপের প্রতিটি অ্যাকাউন্টে প্রযোজ্য, API key অ্যাকাউন্টসহ। প্রোভাইডারের সেটিংস শেয়ার করা সেটিংসের বাইরে রাখুন, অথবা API key অ্যাকাউন্টটিকে এমন একটি গ্রুপে রাখুন যাতে `settings` নেই।
 
 ## সম্পর্কিত

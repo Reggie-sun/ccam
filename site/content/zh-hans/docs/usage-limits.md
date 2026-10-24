@@ -1,10 +1,10 @@
 ---
 title: 用量限制与切换账号
 description: 用 ccam usage 查看每个 Claude Code 账号的 5 小时用量和每周用量，并用 ccam next --auto 打开余量最多的账号。
-updated: 2026-10-21
+updated: 2026-10-24
 order: 5
 translation: machine
-sourceHash: "fadb998482da"
+sourceHash: "ccaed084207a"
 ---
 
 `ccam usage` 显示每个账号已用掉多少 5 小时限额、每周限额以及各模型自己的每周限额（例如 Fable）。`ccam next --auto` 打开余量最多的账号，`--continue` 会把当前对话带过去。
@@ -26,7 +26,9 @@ $ ccam usage
 → Most headroom: work   (open it with ccam next --auto)
 ```
 
-每个账号先占一行，显示这些数字是多久之前获取的，然后每项限额各有一个用量条，并附上距离重置的时间：5 小时窗口、所有模型共用的每周窗口，以及各模型自己的每周窗口，例如 Fable。用量条从 80% 起变为黄色，达到 100% 时变为红色。最后一行列出 `ccam next --auto` 会打开的账号。
+每个账号先占一行，显示这些数字是多久之前获取的，然后每项限额各有一个用量条，并附上距离重置的时间：5 小时窗口、所有模型共用的每周窗口，以及各模型自己的每周窗口，例如 Fable。用量条从 80% 起变为黄色，达到 100% 时变为红色。最后一行列出 `ccam next --auto` 会打开的账号；设置 `auto_strategy = "expiring"` 或 `"balance"` 时，这一行改为 `→ next --auto picks <name>: <reason>`。
+
+**Team 和 Enterprise 席位。** 自动选择（`ccam next`、`--fallback`、`ccam pick`、仪表盘中的 `n`）也会在同一个 Claude Team 或 Enterprise 组织的席位之间切换。Anthropic 帮助中心关于 [Team 套餐](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)的说明写道："Each seat on a Team plan is assigned to one named individual, and only that person may use it"（Team 套餐的每个席位都分配给一位指定的个人，只有此人可以使用），以及 "Users can't route their work through another user's account to use that user's remaining usage"（用户不能通过另一位用户的账号完成自己的工作，以使用该用户剩余的用量）；关于 [Enterprise 套餐](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)的说明也是如此。因此，在席位之间使用自动选择可能违反 Anthropic 的条款。在依赖这项功能之前，请先向你所在的组织和 Anthropic 确认。个人套餐（Pro、Max）的情况请参见[常见问题中关于条款的说明](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)。
 
 ## 数字从哪里来
 
@@ -34,11 +36,13 @@ ccam 使用每个账号自己的登录，同时向 Anthropic 的用量接口查�
 
 这个接口没有公开文档，可能会发生变化。请求失败时，ccam 会显示最后一次获得的数字，并将其标记为缓存。在这些数字保存之后已经重置的时间窗口会显示 0%。如果响应格式发生了变化，`ccam doctor` 会告诉你。
 
+当 Claude Code 因用量限制停止某个会话时，[ccam 插件](/docs/install#claude-code-plugin)会记录哪个时间窗口已满以及它何时重置。在那之前，无论其他数字是多少，该时间窗口都显示 100%，所以 `ccam next --auto` 和 `--fallback` 不会过早地再次选中这个账号。
+
 60 秒内获取的数字会被复用。选项：
 
 | 选项 | 作用 |
 | --- | --- |
-| `--watch [seconds]` | 持续刷新，默认每 60 秒一次 |
+| `--watch[=seconds]` | 持续刷新，默认每 60 秒一次 |
 | `--json` | 机器可读的输出 |
 | `-v` | 同时显示每个账号的数字来自哪里 |
 | `--no-cache` | 总是重新查询 |
@@ -46,9 +50,9 @@ ccam 使用每个账号自己的登录，同时向 Anthropic 的用量接口查�
 
 ## 过期的登录
 
-当某个账号的访问令牌已过期时，ccam 不会为它续期，因为如果某个 Claude Code 会话正在使用同一登录，续期可能会让该会话退出登录。用 `ccam <name>` 启动一次该账号，Claude Code 就会为它续期。
+当某个账号的访问令牌已过期时，ccam 不会为它续期，因为如果某个 Claude Code 会话正在使用同一登录，续期可能会让该会话退出登录。该账号会显示 ``access token expired; `ccam <name>` renews it when it starts``：用 `ccam <name>` 启动一次该账号，Claude Code 就会为它续期。整个登录已过期，或者已被 Claude Code 清除时，会显示 `` login expired → `ccam login <name>` ``，需要重新登录。
 
-`ccam usage --refresh` 会自行为过期的令牌续期，但仅限于未在运行的账号。它从不为存储在 macOS 钥匙串中的登录或已导入的 `~/.claude` 中的登录续期。
+`ccam usage --refresh` 会自行为过期的令牌续期，但仅限于未在运行的账号，无论 Claude Code 是怎样启动的。它从不为存储在 macOS 钥匙串中的登录或已导入的 `~/.claude` 中的登录续期，并且一次续期最多可能需要 30 秒。
 
 ## 在状态栏中显示用量
 
@@ -66,7 +70,7 @@ ccam next --auto      # the account with the lowest 5-hour usage
 ccam next --continue  # carry this folder's conversation on as the next account
 ```
 
-`ccam next` 会跳过未登录的账号，`--auto` 会跳过用量已达 100% 的账号以及属于其他组织的账号。如果两个账号共享对话历史，`--continue` 会打开同一个对话；否则 Claude Code 会把它复制到新账号中。参见[共享](/docs/sharing)和[切换到下一个账号](/features/next#continue)。
+`ccam next` 会跳过未登录的账号，`--auto` 会跳过用量已达 100% 的账号（也包括 Claude Code 报告已满的时间窗口，直到其重置）以及属于其他组织的账号。如果两个账号共享对话历史，`--continue` 会打开同一个对话；否则 Claude Code 会把它复制到新账号中。参见[共享](/docs/sharing)和[切换到下一个账号](/features/next#continue)。
 
 对于运行 `claude -p` 的脚本和定时任务，请把 `--fallback` 放在账号名之前。当该账号达到限制时，ccam 会以余量最多的账号重新运行同一个命令，并且只打印最终完成的那次运行的输出：
 

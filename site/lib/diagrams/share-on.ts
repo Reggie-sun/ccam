@@ -1,8 +1,9 @@
 import { box, figure, glow, label, line, packet, reveal } from "../motion.ts";
 
-// `ccam share side --history on` when the group already has content: the
-// account's projects/ is merged into the group, moved to the backup, and
-// replaced by a link (internal/share: Build, then Plan.Apply).
+// `ccam group join team side` when team, which shares history, already has
+// content: the account's projects/ is merged into the group, moved to the
+// backup, and replaced by a link (group.Build plans it with share.Build,
+// Change.Apply runs the plan with Plan.Apply).
 export default function shareOn(): string {
   const h = 44;
   const L = { x: 10, w: 170 }, R = { x: 220, w: 170 };
@@ -14,9 +15,9 @@ export default function shareOn(): string {
     line([[rc, cmd.y + h], [rc, yA]]),
     line([[L.x + L.w, yA + 22], [R.x, yA + 22]]),
     line([[lc, yA + h], [lc, yB]]),
-    box(cmd.x, cmd.y, cmd.w, h, "ccam share side --history on", { sub: "share.Build() · Plan.Apply()" }),
+    box(cmd.x, cmd.y, cmd.w, h, "ccam group join team side", { sub: "group.Build() · Change.Apply()" }),
     box(L.x, yA, L.w, h, "profiles/side/", { kind: "dir", sub: "projects/" }),
-    box(R.x, yA, R.w, h, "groups/default/", { kind: "dir", sub: "projects/" }),
+    box(R.x, yA, R.w, h, "groups/team/", { kind: "dir", sub: "projects/" }),
     box(L.x, yB, L.w, h, ".ccam-backup/<time>/", { kind: "dir", sub: "projects/" }),
     glow(cmd.x, cmd.y, cmd.w, h, 0),
     packet([lc, cmd.y + h], [lc, yA], 0.6),

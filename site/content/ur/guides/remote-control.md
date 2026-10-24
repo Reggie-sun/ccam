@@ -1,10 +1,10 @@
 ---
 title: "ccam کے ساتھ Remote Control استعمال کرنا"
 description: "ccam <name> rc سے Claude Code کا Remote Control کسی بھی اکاؤنٹ سے چلائیں: لاگو آپشنز، ccam شیئر شدہ MCP سرورز کاپی کرنے کی پیشکش کیوں کرتا ہے اور مسائل کا حل۔"
-updated: 2026-10-20
+updated: 2026-10-23
 order: 4
 translation: machine
-sourceHash: "5f0b90ea53d6"
+sourceHash: "3e17d89f98c8"
 ---
 
 `ccam work rc`، Claude Code کا Remote Control اکاؤنٹ `work` کے طور پر شروع کرتا ہے، تاکہ آپ اس کمپیوٹر پر چلنے والے سیشنز کو claude.ai/code یا Claude کی موبائل ایپ سے چلا سکیں۔ یہ `claude rc` کی طرح کام کرتا ہے، بس ایک فرق کے ساتھ: اگر اکاؤنٹ MCP سرورز شیئر کرتا ہے تو ccam ایک بار پوچھتا ہے کہ کیا انہیں اکاؤنٹ کی `.claude.json` میں کاپی کیا جائے، کیونکہ Remote Control کے سیشنز سرورز کہیں اور سے نہیں پڑھتے۔
@@ -31,9 +31,9 @@ ccam --dry-run work rc                # print the command instead of running it
 | آپشن یا سیٹنگ | یہ کیا کرتا ہے | ڈیفالٹ |
 | --- | --- | --- |
 | `--dry-run` (اکاؤنٹ سے پہلے) | انوائرنمنٹ اور کمانڈ پرنٹ کرتا ہے، اور اگر MCP کا نوٹس ہو تو وہ بھی۔ نہ پوچھتا ہے نہ کاپی کرتا ہے | بند |
-| `Copy them into .claude.json (a backup is kept)? [y/N]` | تب پوچھا جاتا ہے جب اکاؤنٹ MCP سرورز شیئر کرتا ہو اور اس کی `.claude.json` میں گروپ کی موجودہ فہرست نہ ہو۔ `y` انہیں کاپی کرتا ہے، `N` یا Enter ان کے بغیر شروع کرتا ہے | `N` |
-| `~/.config/ccam/config.toml` میں `mcp_strategy = "sync"` | ہر لانچ سے پہلے، چاہے Remote Control ہو یا نہیں، گروپ کے سرورز `.claude.json` میں کاپی کرتا ہے، اس لیے کبھی کچھ نہیں پوچھا جاتا | `"flag"` |
-| `ccam group leave <group> work` | اکاؤنٹ کو اس گروپ سے نکالتا ہے جو اس کے ساتھ MCP شیئر کرتا ہے؛ پھر Remote Control صرف اکاؤنٹ کے اپنے سرورز کے ساتھ شروع ہوتا ہے اور کچھ نہیں پوچھا جاتا | `default` میں |
+| `Copy them into .claude.json (a backup is kept; servers of the account's own stay)? [y/N]` | تب پوچھا جاتا ہے جب اکاؤنٹ MCP سرورز شیئر کرتا ہو اور اس کی `.claude.json` میں گروپ کی موجودہ فہرست نہ ہو، یا کاپی کیا گیا کوئی سرور اس سے غائب ہو گیا ہو۔ `y` انہیں کاپی کرتا ہے، `N` یا Enter ان کے بغیر شروع کرتا ہے | `N` |
+| `~/.config/ccam/config.toml` میں سب سے اوپر `mcp_strategy = "sync"` | ہر لانچ سے پہلے، چاہے Remote Control ہو یا نہیں، گروپ کے سرورز `.claude.json` میں کاپی کرتا ہے، اس لیے کبھی کچھ نہیں پوچھا جاتا | `"flag"` |
+| `ccam group leave <group> work` | اکاؤنٹ کو اس گروپ سے نکالتا ہے جو اس کے ساتھ MCP شیئر کرتا ہے۔ گروپ کے سرورز اس کی `.claude.json` میں اس کے اپنے سرورز کے طور پر کاپی ہو جاتے ہیں، اس لیے Remote Control کو وہ مل جاتے ہیں اور کچھ نہیں پوچھا جاتا؛ `--fresh` کے ساتھ یہ صرف اکاؤنٹ کے اپنے سرورز کے ساتھ شروع ہوتا ہے | `default` میں |
 
 ### Remote Control کے آپشنز
 
@@ -52,7 +52,7 @@ ccam --dry-run work rc                # print the command instead of running it
 | `--[no-]chrome` | نئے سیشنز کے لیے Claude in Chrome (ڈیفالٹ بند) |
 | `-d`، `--debug`، `--debug-file <path>`، `-v`، `--verbose` | ڈیبگ اور تفصیلی آؤٹ پٹ |
 
-`rc` کو اکاؤنٹ کے نام کے فوراً بعد رکھیں۔ ccam پہلے ایسے آرگیومنٹ کو جو `-` سے شروع نہ ہو، Claude Code کی کمانڈ مانتا ہے، اس لیے `ccam work rc --name laptop` میں اسے `rc` نظر آتا ہے، لیکن `ccam work --model opus rc` میں اسے `opus` نظر آتا ہے۔
+ccam، Claude Code کی کمانڈ اسی طرح پڑھتا ہے جیسے Claude Code پڑھتا ہے، آپشنز کو ان کی قدروں سمیت چھوڑتے ہوئے، اس لیے `ccam work rc --name laptop` اور `ccam work --model opus rc` دونوں Remote Control شروع کرتے ہیں۔ جس آپشن کو ccam نہیں جانتا اسے بغیر قدر والا آپشن مانا جاتا ہے؛ احتیاطاً `rc` کو اکاؤنٹ کے نام کے فوراً بعد رکھیں۔
 
 ## ccam کیا کرتا ہے
 
@@ -60,16 +60,16 @@ ccam --dry-run work rc                # print the command instead of running it
 
 1. ccam اکاؤنٹ ڈھونڈتا ہے، اس کے شیئر لنکس جانچتا ہے اور `claude` کا راستہ طے کرتا ہے، جیسے کسی بھی لانچ میں۔
 2. وہ دیکھتا ہے کہ کمانڈ `rc` یا `remote-control` ہے اور `--mcp-config` شامل نہیں کرتا۔
-3. اگر اکاؤنٹ MCP سرورز شیئر کرتا ہے تو وہ گروپ کی `mcp.json` کا موازنہ `~/.local/state/ccam/mcp/work/` میں موجود `sync-stamp` سے کرتا ہے۔ جب `.claude.json` میں پہلے سے موجودہ سرورز ہوں، یا گروپ کے پاس کوئی سرور نہ ہو، تو وہ سیدھا مرحلہ 6 پر چلا جاتا ہے۔
+3. اگر اکاؤنٹ MCP سرورز شیئر کرتا ہے تو وہ گروپ کی `mcp.json` کا موازنہ `~/.local/state/ccam/mcp/work/` میں موجود `sync-stamp` سے کرتا ہے، اور جانچتا ہے کہ گروپ کا ہر سرور اب بھی `.claude.json` میں ہے۔ جب `.claude.json` میں پہلے سے موجودہ سرورز ہوں، یا گروپ کے پاس کوئی سرور نہ ہو، تو وہ سیدھا مرحلہ 6 پر چلا جاتا ہے۔
 4. ورنہ وہ ان سرورز کے نام بتاتا ہے جو سیشنز کو نہیں ملیں گے:
 
    ```console
    $ ccam work rc
    ccam: Remote Control sessions only get MCP servers stored in account work's .claude.json, not the shared MCP servers (ctx, fs).
-   Copy them into .claude.json (a backup is kept)? [y/N]
+   Copy them into .claude.json (a backup is kept; servers of the account's own stay)? [y/N]
    ```
 
-5. `y` پر وہ `.claude.json` کا بیک اپ محفوظ کرتا ہے، Claude Code کا اپنا لاک لیتا ہے، گروپ کے سرورز `mcpServers` میں شامل کرتا ہے اور اکاؤنٹ کے دوسرے سرورز برقرار رکھتا ہے۔ `N` پر، ٹرمینل کے بغیر، یا جب اکاؤنٹ چل رہا ہو، وہ کچھ تبدیل نہیں کرتا اور یہی بتاتا ہے:
+5. `y` پر وہ `.claude.json` کا بیک اپ محفوظ کرتا ہے، Claude Code کا اپنا لاک لیتا ہے، گروپ کے سرورز `mcpServers` میں شامل کرتا ہے اور اکاؤنٹ کے دوسرے سرورز برقرار رکھتا ہے؛ اکاؤنٹ کا اپنا ایسا سرور جس کا نام گروپ کے کسی سرور جیسا ہو اکاؤنٹ کا ہی رہتا ہے، اور ccam یہ بتا دیتا ہے۔ `N` پر، ٹرمینل کے بغیر، یا جب اکاؤنٹ چل رہا ہو، وہ کچھ تبدیل نہیں کرتا اور یہی بتاتا ہے:
 
    ```console
          Starting without them. To copy them before every launch instead, set mcp_strategy = "sync" in ~/.config/ccam/config.toml
@@ -77,17 +77,17 @@ ccam --dry-run work rc                # print the command instead of running it
 
 6. وہ سیشن ریکارڈ کرتا ہے، `CLAUDE_CONFIG_DIR` کو اکاؤنٹ کے فولڈر پر سیٹ کرتا ہے اور `exec` کے ذریعے خود کو `claude rc` سے بدل دیتا ہے۔
 
-اس کے بعد Remote Control ایک سرور کے طور پر چلتا رہتا ہے۔ آپ کے لیے شروع کیا گیا ہر سیشن اسی پروسیس کا چائلڈ ہوتا ہے، اس لیے وہ `work` کے طور پر چلتا ہے: `work` کے لاگ اِن، سیٹنگز اور گفتگو کی ہسٹری کے ساتھ، اور `work` کی استعمال کی حد میں شمار ہوتا ہے۔ جب تک سرور چل رہا ہے، ccam اکاؤنٹ کو چلتا ہوا مانتا ہے۔
+اس کے بعد Remote Control ایک سرور کے طور پر چلتا رہتا ہے۔ آپ کے لیے شروع کیا گیا ہر سیشن اسی پروسیس کا چائلڈ ہوتا ہے، اس لیے وہ `work` کے طور پر چلتا ہے: `work` کے لاگ اِن، سیٹنگز اور گفتگو کی ہسٹری کے ساتھ، اور `work` کی استعمال کی حد میں شمار ہوتا ہے۔ جب تک ccam کا شروع کیا ہوا سرور چل رہا ہے، ccam اکاؤنٹ کو چلتا ہوا مانتا ہے، اور سادہ `claude remote-control` سے شروع کیے گئے سرور کو بھی، جب تک اس کے سیشنز ہوں؛ ایسا سرور جس کا ابھی کوئی سیشن نہ ہو نظر نہیں آتا۔
 
 ڈرائی رن فرق دکھاتا ہے۔ عام لانچ گروپ کے سرورز کو ایک آرگیومنٹ کے طور پر ساتھ لے جاتا ہے، Remote Control نہیں:
 
 ```console
 $ ccam --dry-run work
-CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/claude --mcp-config=/home/me/.local/share/ccam/groups/default/mcp.json
+CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work CCAM_PROFILE=work /home/me/.local/bin/claude --mcp-config=/home/me/.local/share/ccam/groups/default/mcp.json
 $ ccam --dry-run work rc
 ccam: Remote Control sessions only get MCP servers stored in account work's .claude.json, not the shared MCP servers (ctx, fs).
       Starting without them. To copy them before every launch instead, set mcp_strategy = "sync" in ~/.config/ccam/config.toml
-CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/claude rc
+CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work CCAM_PROFILE=work /home/me/.local/bin/claude rc
 ```
 
 ## یہ اس طرح کیوں کام کرتا ہے
@@ -96,13 +96,13 @@ CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/c
 
 **اس کے سیشنز سرورز صرف `.claude.json` سے پڑھتے ہیں۔** Remote Control جو سیشنز شروع کرتا ہے وہ کمانڈ لائن سے آپشنز وراثت میں نہیں لیتے۔ یوزر MCP سرورز انہیں صرف ایک جگہ ملتے ہیں: اکاؤنٹ کی `.claude.json`۔ اسی فائل میں اکاؤنٹ کی لاگ اِن تفصیلات اور ہر فولڈر کی حالت بھی ہوتی ہے، اس لیے ccam اسے `settings.json` کی طرح کسی شیئر کی گئی کاپی سے لنک نہیں کر سکتا۔ سیشنز تک شیئر کی گئی فہرست پہنچانے کا واحد طریقہ سرورز کو اس میں کاپی کرنا ہے۔
 
-**ccam لکھنے سے پہلے پوچھتا ہے۔** ڈیفالٹ فلیگ والی حکمتِ عملی میں ccam وعدہ کرتا ہے کہ `.claude.json` کو نہیں چھیڑے گا۔ Remote Control واحد صورت ہے جس میں اسے وہاں لکھنا پڑتا ہے، اس لیے وہ پہلے پوچھتا ہے، بیک اپ رکھتا ہے، اور `mcpServers` کے سوا کچھ نہیں چھیڑتا۔
+**ccam لکھنے سے پہلے پوچھتا ہے۔** ڈیفالٹ فلیگ والی حکمتِ عملی میں ccam لانچ کے وقت `.claude.json` کو نہیں چھیڑتا۔ Remote Control واحد لانچ ہے جس میں اسے وہاں لکھنا پڑتا ہے، اس لیے وہ پہلے پوچھتا ہے، بیک اپ رکھتا ہے، اور `mcpServers` کے سوا کچھ نہیں چھیڑتا۔ (لانچز سے باہر، MCP شیئرنگ چھوڑنا یا اس میں دوبارہ شامل ہونا اور `ccam mcp import` بھی وہاں لکھتے ہیں، جیسا کہ ان کے منصوبے بتاتے ہیں۔)
 
-**اکاؤنٹ چلنے کے دوران یہ نہیں لکھتا۔** Claude Code سیشن کے دوران `.claude.json` دوبارہ لکھتا ہے، اور باہر سے کی گئی تبدیلی ضائع ہو جائے گی یا اس پر لکھ دیا جائے گا۔ اسی لیے جب اکاؤنٹ کا کوئی بھی سیشن چل رہا ہو، بشمول کوئی دوسرا Remote Control سرور، تو ccam کاپی چھوڑ دیتا ہے۔
+**اکاؤنٹ چلنے کے دوران یہ نہیں لکھتا۔** Claude Code سیشن کے دوران `.claude.json` دوبارہ لکھتا ہے، اور باہر سے کی گئی تبدیلی ضائع ہو جائے گی یا اس پر لکھ دیا جائے گا۔ اسی لیے جب اکاؤنٹ کا کوئی بھی سیشن چل رہا ہو، بشمول کوئی دوسرا Remote Control سرور اور ccam کے بغیر شروع کیا گیا Claude Code، تو ccam کاپی چھوڑ دیتا ہے۔
 
-**یہ ہر تبدیلی پر ایک بار پوچھتا ہے۔** کاپی کے بعد `sync-stamp` گروپ کی `mcp.json` کا ترمیم کا وقت رکھتا ہے۔ ccam دوبارہ صرف تب پوچھتا ہے جب وہ فائل بدلے، مثلاً `ccam mcp add` کے بعد۔ اگر آپ `N` جواب دیں تو ابھی کوئی کاپی نہیں ہوتی، اس لیے یہ ہر Remote Control لانچ پر پوچھتا ہے۔
+**یہ ہر تبدیلی پر ایک بار پوچھتا ہے۔** کاپی کے بعد `sync-stamp` گروپ کی `mcp.json` کا ترمیم کا وقت رکھتا ہے۔ ccam دوبارہ صرف تب پوچھتا ہے جب وہ فائل بدلے، مثلاً `ccam mcp add` کے بعد، یا جب کاپی کیا گیا کوئی سرور `.claude.json` سے غائب ہو جائے۔ اگر آپ `N` جواب دیں تو ابھی کوئی کاپی نہیں ہوتی، اس لیے یہ ہر Remote Control لانچ پر پوچھتا ہے۔
 
-**`ccam mcp` کاپیاں تازہ رکھتا ہے۔** نام ٹکرانے پر `.claude.json` کی اینٹری کو `--mcp-config` پر ترجیح ملتی ہے، اس لیے پرانی کاپی عام لانچز میں بھی نئی تعریف کو چھپا دے گی۔ اسی وجہ سے `ccam mcp add`، `add-json`، `remove` اور `import` ہر اس اکاؤنٹ کی کاپیاں اپ ڈیٹ کرتے ہیں جو نہیں چل رہا:
+**`ccam mcp` کاپیاں تازہ رکھتا ہے۔** نام ٹکرانے پر `.claude.json` کی اینٹری کو `--mcp-config` پر ترجیح ملتی ہے، اس لیے پرانی کاپی عام لانچز میں بھی نئی تعریف کو چھپا دے گی۔ اسی وجہ سے `ccam mcp add`، `add-json`، `remove` اور `import`، اور `ccam migrate`، ہر اس اکاؤنٹ کی کاپیاں اپ ڈیٹ کرتے ہیں جو نہیں چل رہا، اور جب کوئی کاپی بدلے تو یہ بتاتے ہیں:
 
 ```console
 $ ccam mcp add ctx --url https://mcp.context7.com/mcp
@@ -124,19 +124,19 @@ $ ccam mcp add ctx --url https://mcp.context7.com/mcp
 
 ### ccam ہر بار پوچھتا ہے
 
-آپ نے ابھی تک سرورز کاپی نہیں کیے۔ ایک بار `y` جواب دیں، یا `mcp_strategy = "sync"` سیٹ کریں۔ اگر آپ Remote Control میں سرورز کبھی نہیں چاہتے تو اکاؤنٹ کے ساتھ MCP کی شیئرنگ بند کریں: اسے اس گروپ سے نکالیں (`ccam group leave default work`)، یا MCP کو اس کے اپنے ایک ایسے گروپ میں رکھیں جس میں یہ اکاؤنٹ نہ ہو۔
+آپ نے ابھی تک سرورز کاپی نہیں کیے۔ ایک بار `y` جواب دیں، یا `mcp_strategy = "sync"` سیٹ کریں۔ اگر آپ Remote Control میں سرورز کبھی نہیں چاہتے تو اکاؤنٹ کے ساتھ MCP کی شیئرنگ انہیں رکھے بغیر بند کریں: `ccam group leave default work --fresh`، یا MCP کو اس کے اپنے ایک ایسے گروپ میں رکھیں جس میں یہ اکاؤنٹ نہ ہو۔ سادہ `ccam group leave` گروپ کے سرورز اکاؤنٹ کی `.claude.json` میں کاپی کر دیتا ہے، اس لیے Remote Control کو وہ مل جاتے ہیں۔
 
 ### `ccam work rc` فوراً `--mcp-config` سے متعلق ایرر کے ساتھ ناکام ہو جاتا ہے
 
-آپ کا ccam، 0.6.0 سے پرانا ہے اور Remote Control کو `--mcp-config` دیتا ہے۔ `ccam update` چلائیں۔ موجودہ ccam کے ساتھ یہی ایرر آنے کا مطلب ہے کہ کوئی قدر والا آپشن `rc` سے پہلے آیا، جیسے `ccam work --model opus rc` میں، اس لیے ccam نے `opus` کو کمانڈ سمجھ لیا؛ `rc` کو اکاؤنٹ کے نام کے فوراً بعد رکھیں۔
+آپ کا ccam، 0.6.0 سے پرانا ہے اور Remote Control کو `--mcp-config` دیتا ہے۔ `ccam update` چلائیں۔ موجودہ ccam کے ساتھ یہی ایرر آنے کا مطلب ہے کہ کوئی ایسا قدر والا آپشن جسے ccam نہیں جانتا `rc` سے پہلے آیا، اس لیے ccam نے اس قدر کو کمانڈ سمجھ لیا؛ `rc` کو اکاؤنٹ کے نام کے فوراً بعد رکھیں۔
 
 ### `ccam mcp` سے کی گئی تبدیلی Remote Control تک نہیں پہنچتی
 
 `ccam mcp add` اور `remove` صرف ان اکاؤنٹس میں کاپیاں اپ ڈیٹ کرتے ہیں جو نہیں چل رہے، اور یہ بتاتے بھی ہیں: `Note: account work is running, so the copy in its .claude.json stays as it was until its next Remote Control launch.` Remote Control بند کر کے دوبارہ شروع کریں؛ ccam بدلی ہوئی `mcp.json` دیکھ کر دوبارہ پوچھے گا۔
 
-### کاپی نے میرا اپنا ایک سرور بدل دیا
+### گروپ والے سرور کی جگہ میرا اپنا سرور استعمال ہوتا ہے
 
-اگر اکاؤنٹ کا اپنا کوئی سرور گروپ کے کسی سرور کے ہم نام تھا تو کاپی نے اسے بدل دیا۔ پچھلی `.claude.json`، `~/.local/state/ccam/mcp/work/backups/` میں ہے، جو تازہ ترین پانچ بیک اپ رکھتا ہے۔ اپنا ورژن ہر اکاؤنٹ کے لیے رکھنے کے لیے، اگلے Remote Control لانچ سے پہلے اسے `ccam mcp import work <server> --force` سے گروپ میں منتقل کریں۔
+اگر اکاؤنٹ کا اپنا کوئی سرور گروپ کے کسی سرور کے ہم نام ہو تو کاپی اسے اپنی جگہ رہنے دیتی ہے اور یہ بتا دیتی ہے: `account work has its own MCP servers fs, so group default's of those names are not copied there`۔ گروپ والا سرور استعمال کرنے کے لیے اکاؤنٹ والا ہٹا دیں (`claude mcp remove -s user <name>`)؛ اپنا ورژن ہر اکاؤنٹ کو دینے کے لیے اسے `ccam mcp import work <server> --force` سے گروپ میں منتقل کریں۔ `.claude.json` کے بیک اپ `~/.local/state/ccam/mcp/work/backups/` میں ہیں، جو تازہ ترین پانچ بیک اپ رکھتا ہے۔
 
 ### میں کاپی کیے گئے سرورز ہٹانا چاہتا ہوں
 

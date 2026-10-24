@@ -1,10 +1,10 @@
 ---
 title: ccam 업데이트
 description: ccam update는 SHA-256을 확인한 뒤 ccam을 GitHub의 최신 릴리스로 교체합니다. --check는 확인만 하고, --version은 지정한 릴리스 태그를 설치합니다.
-updated: 2026-10-21
+updated: 2026-10-23
 order: 10
 translation: machine
-sourceHash: a92dbf37399f
+sourceHash: "000d37de5f29"
 ---
 
 `ccam update`는 GitHub에서 ccam 릴리스를 내려받아 릴리스의 `checksums.txt`로 확인한 뒤, 실행 중인 바이너리를 이름 바꾸기 한 번으로 교체합니다. 설치 스크립트나 압축 파일로 ccam을 설치했을 때 쓰면 됩니다. [대시보드](/features/dashboard)도 열릴 때마다 GitHub에 최신 릴리스를 묻고 `U`로 업데이트를 제안하며, 이 키는 확인을 받은 뒤 같은 단계를 실행합니다. 그 밖의 명령은 GitHub에 접속하지 않으므로 오프라인에서도 똑같이 동작합니다.
@@ -64,7 +64,7 @@ $ ccam update
 
 압축 파일과 `checksums.txt`를 나란히 내려받고, 체크섬이 일치하기 전에는 아무것도 기록하지 않습니다. 이름 바꾸기는 원자적이므로, 도중에 비정상 종료되거나 디스크가 가득 차도 이전 바이너리나 새 바이너리 중 하나가 온전히 남습니다. 절반만 바뀐 파일은 생기지 않습니다. `~/.local/bin/ccwork` 같은 단축 명령은 ccam 바이너리를 가리키는 심볼릭 링크이므로, 아무것도 바꾸지 않아도 새 버전을 실행합니다.
 
-Windows에서는 실행 중인 프로그램의 파일을 교체하거나 지울 수 없고, 이름만 바꿀 수 있습니다. `Updater.Install`은 새 바이너리를 `ccam.exe.new`에 쓰고, 실행 중인 `ccam.exe`의 이름을 `ccam.exe.old`로 바꾼 뒤, 새 파일의 이름을 `ccam.exe`로 바꿉니다. 마지막 단계가 실패하면 이전 바이너리의 이름을 원래대로 되돌립니다. `ccam.exe.old`는 다음 업데이트 때 지웁니다. 심볼릭 링크가 아닌 하드 링크로 된 단축 명령([단축 명령](/features/shortcuts))은 바로 이어서 새로 만들어지므로, 이들도 새 버전을 실행합니다.
+Windows에서는 실행 중인 프로그램의 파일을 교체하거나 지울 수 없고, 이름만 바꿀 수 있습니다. `Updater.Install`은 새 바이너리를 `ccam.exe.new`에 쓰고, 실행 중인 `ccam.exe`의 이름을 `ccam.exe.old`로 바꾼 뒤, 새 파일의 이름을 `ccam.exe`로 바꿉니다. 마지막 단계가 실패하면 이전 바이너리의 이름을 원래대로 되돌립니다. 다음 업데이트는 지울 수 있는 `ccam.exe.old` 파일을 지웁니다. 이전의 `ccam.exe.old`로 실행 중인 세션이 아직 있으면, 실행 중인 바이너리는 대신 `ccam.exe.old-<time>`이 됩니다. 심볼릭 링크가 아닌 하드 링크로 된 단축 명령([단축 명령](/features/shortcuts))은 바로 이어서 새로 만들어지므로, 이들도 새 버전을 실행합니다. 방금 교체한 바이너리의 하드 링크뿐 아니라, ccam이 만든 이전 ccam의 하드 링크도 모두 새로 만듭니다.
 
 ### 패키지로 설치한 경우
 
@@ -91,7 +91,7 @@ Linux가 아닌 시스템에서는 설치 스크립트 줄만 출력합니다. W
 
 ## 안전장치와 예외 상황
 
-- 개발 빌드는 버전을 `dev`로 표시하며 비교할 릴리스가 없으므로, `ccam update`와 `ccam update --check`가 거부합니다. `ccam update --version vX.Y.Z`로는 그 위에 릴리스를 설치할 수 있습니다.
+- 개발 빌드는 버전을 `dev`로 표시하며 비교할 릴리스가 없으므로, `ccam update`와 `ccam update --check`가 거부합니다. `ccam update --version vX.Y.Z`로는 그 위에 릴리스를 설치할 수 있습니다. `go install github.com/jhyunwoo/ccam/cmd/ccam@vX.Y.Z`(또는 `@latest`)로 만든 빌드는 그 릴리스 버전을 표시하므로 `ccam update`와 대시보드의 업데이트 제안이 동작합니다. `@main`이나 태그 이후의 로컬 빌드는 계속 `dev`로 표시됩니다.
 - 다운로드가 실패하거나, 사용 중인 플랫폼용 파일이 없거나, 체크섬이 일치하지 않으면 설치된 바이너리는 그대로 남습니다.
 - 없는 릴리스를 지정하면 `there is no release <tag>`로 실패합니다. GitHub가 HTTP 403이나 429로 거부하면, ccam은 요청 한도 때문일 가능성이 높다고 알리고 나중에 다시 시도하라고 안내합니다.
 - `--check`는 읽기만 합니다. 바이너리가 패키지로 관리되는지, 쓸 수 있는지는 확인하지 않습니다.

@@ -1,10 +1,10 @@
 ---
 title: فرمان‌های میان‌بر
 description: با ccam shortcut به یک حساب فرمانی مخصوص خودش مانند ccwork بدهید و پیوندهای ~/.local/bin را با ccam shims install دوباره بسازید.
-updated: 2026-10-20
+updated: 2026-10-23
 order: 3
 translation: machine
-sourceHash: 939256e7a67e
+sourceHash: 38e2d1aba397
 ---
 
 میان‌بر فرمانی است که نامش را خودتان انتخاب می‌کنید و Claude Code را با یک حساب اجرا می‌کند: `ccwork --resume` همان کاری را می‌کند که `ccam work --resume` انجام می‌دهد. میان‌بر یک پیوند به ccam در `~/.local/bin` است، بنابراین در bash، zsh، اسکریپت‌ها و هر چیز دیگری که برنامه‌ها را از `PATH` اجرا می‌کند کار می‌کند. میان‌برها اختیاری‌اند؛ برای حساب‌هایی که زیاد اجرا می‌کنید یکی بسازید.
@@ -18,7 +18,7 @@ ccam shortcut work            # show it
 ccam shortcut work ccw        # rename it; the old link is removed
 ccam shortcut work --remove   # delete it
 ccam add side --shortcut ccside
-ccam shims install            # recreate missing links of all accounts
+ccam shims install            # recreate missing or outdated links of all accounts
 ccwork -p "summarise" --output-format json
 ```
 
@@ -54,8 +54,10 @@ work: none (add one with `ccam shortcut work ccwork`)
 - ۱ تا ۶۴ نویسه از `a-z`، `0-9`، `.`، `-` و `_`، که با یک حرف یا رقم شروع شود؛
 - نه `ccam`، `claude` یا یکی از فرمان‌های ccam مانند `run` یا `usage`؛
 - نه میان‌بر حساب دیگری؛
-- نه فایلی در `~/.local/bin` که از قبل پیوندی به ccam نباشد؛
+- نه فایلی در `~/.local/bin` که از قبل پیوند ccam نباشد (یا میان‌بر خود همین حساب که ccam ساخته است)؛
 - نه نام برنامه اجرایی دیگری در `PATH` شما.
+
+`config.toml` هنگام بارگذاری با همین قواعد بررسی می‌شود: میان‌بری که دستی ویرایش شده و با الگو جور نیست، `claude` یا `ccam` است، یا به دو حساب داده شده است، باعث می‌شود هر فرمانی با پیامی که نام حساب را می‌برد ناموفق شود، تا وقتی رفع شود.
 
 دادن یک فرمان همراه با `--remove` با پیام `give a command or --remove, not both` متوقف می‌شود. تنظیم نامی که حساب از قبل دارد، `work: ccwork (unchanged)` را چاپ می‌کند و اگر پیوند آن وجود نداشته باشد، دوباره آن را می‌سازد.
 
@@ -70,9 +72,9 @@ work: none (add one with `ccam shortcut work ccwork`)
 1. `shim.Check` نام را با `^[a-z0-9][a-z0-9._-]{0,63}$`، سپس با `config.Reserved` و بعد با `cfg.FindShortcut` مقایسه می‌کند. `os.Lstat` را روی `~/.local/bin/<name>` فرا می‌خواند و برای هر پوشه دیگر در `PATH`، `os.Stat` را فرا می‌خواند و فایل اجرایی‌ای را که پیوندی به ccam نباشد رد می‌کند.
 2. ccam فایل `config.toml` را با `fsutil.AtomicWrite` ذخیره می‌کند (فایل موقت، `fsync`، تغییر نام).
 3. `shim.Remove` پیوند میان‌بر قدیمی را حذف می‌کند، اما فقط اگر پیوندی به ccam باشد.
-4. `shim.Install` پیوند هر میان‌بر پیکربندی‌شده‌ای را که وجود ندارد با `os.Symlink` به فایل اجرایی ccam می‌سازد، که با `os.Executable` و `filepath.EvalSymlinks` پیدا می‌شود. هرگز چیزی را حذف نمی‌کند.
+4. `shim.Install` همه میان‌برهای پیکربندی‌شده را به ترتیب نام مرور می‌کند و پیوند هر کدام را که وجود ندارد با `os.Symlink` به فایل اجرایی ccam می‌سازد، که با `os.Executable` و `filepath.EvalSymlinks` پیدا می‌شود. فایلی که سر راه یک میان‌بر باشد مانع بقیه نمی‌شود؛ خطا نام هر کدام را می‌برد.
 
-یک پیوند وقتی متعلق به خود ccam شمرده می‌شود که `os.Readlink` مسیر ccam را برگرداند، یا پیوند و مسیر ccam به یک فایل واحد برسند. هر حذف و هر بررسی بازنویسی از این آزمون می‌گذرد، بنابراین ccam به فایل‌هایی که خودش نساخته دست نمی‌زند.
+ccam هر پیوندی را که می‌سازد، همراه با فایل اجرایی‌ای که پیوند برای اجرای آن ساخته شده، در `~/.local/state/ccam/shortcuts.json` ثبت می‌کند. یک پیوند وقتی متعلق به خود ccam شمرده می‌شود که `os.Readlink` مسیر ccam را برگرداند، یا پیوند و مسیر ccam به یک فایل واحد برسند. پیوند ثبت‌شده‌ای که فایل اجرایی‌اش از آن پس جابه‌جا یا جایگزین شده است (ccamی که به پوشه دیگری منتقل شده، یک نصب دوباره) کهنه است و `shim.Install` آن را به این ccam هدایت می‌کند. پیوند ثبت‌شده‌ای به ccam دیگری که هنوز نصب است همان‌طور که هست می‌ماند. هر حذف و هر بررسی بازنویسی از این آزمون‌ها می‌گذرد، بنابراین ccam به فایل‌هایی که خودش نساخته دست نمی‌زند، مانند کپی خود شما از ccam یا پیوندی که خودتان ساخته‌اید.
 
 وقتی یک میان‌بر را اجرا می‌کنید، نامی که تایپ کرده‌اید تنها چیزی است که ccam لازم دارد:
 
@@ -84,16 +86,18 @@ work: none (add one with `ccam shortcut work ccwork`)
 
 ### در Windows
 
-یک میان‌بر فایل `ccwork.exe` در `%USERPROFILE%\.local\bin` است و `shim.Name` پیش از جست‌وجو پسوند `.exe` را (با هر حالت حروف) حذف می‌کند، پس `ccwork`، `ccwork.exe` و `CCWORK.EXE` همه `work` را اجرا می‌کنند. ccam ابتدا یک پیوند نمادین می‌سازد که Windows آن را در Developer Mode یا برای مدیر سیستم مجاز می‌داند. بدون این حق، یک hard link می‌سازد: نام دومی برای همان فایل `ccam.exe` که به هیچ دسترسی ویژه‌ای نیاز ندارد. یک hard link وقتی متعلق به ccam شمرده می‌شود که همان فایل `ccam.exe` باشد. چون `ccam update` فایل جدیدی را جای `ccam.exe` می‌گذارد، پس از آن هر میان‌بری را که hard link است با `shim.Relink` تازه می‌کند و `✓ shortcut ccwork renewed` را چاپ می‌کند. بررسی نام، `<name>` را با هر پسوند موجود در `PATHEXT` (`.exe`، `.cmd` و غیره) در دیگر پوشه‌های `PATH` جست‌وجو می‌کند.
+یک میان‌بر فایل `ccwork.exe` در `%USERPROFILE%\.local\bin` است و `shim.Name` پیش از جست‌وجو پسوند `.exe` را (با هر حالت حروف) حذف می‌کند، پس `ccwork`، `ccwork.exe` و `CCWORK.EXE` همه `work` را اجرا می‌کنند. ccam ابتدا یک پیوند نمادین می‌سازد که Windows آن را در Developer Mode یا برای مدیر سیستم مجاز می‌داند. بدون این حق، یک hard link می‌سازد: نام دومی برای همان فایل `ccam.exe` که به هیچ دسترسی ویژه‌ای نیاز ندارد. یک hard link وقتی متعلق به ccam شمرده می‌شود که همان فایل `ccam.exe` باشد. یک hard link همچنان فایلی را اجرا می‌کند که از آن ساخته شده است، پس وقتی `ccam update` فایل جدیدی را جای `ccam.exe` می‌گذارد، هر میان‌بری را که hard link است با `shim.Relink` تازه می‌کند و `✓ shortcut ccwork renewed` را چاپ می‌کند. اجرای دوباره `install.ps1` همین کار را از طریق `ccam shims install` انجام می‌دهد (`OK 2 shortcuts now run the new ccam`)، و `ccam shims install` و `ccam doctor --fix` هم برای هر میان‌بری که کپی یک ccam قدیمی‌تر است همین کار را می‌کنند. بررسی نام، `<name>` را با هر پسوند موجود در `PATHEXT` (`.exe`، `.cmd` و غیره) در دیگر پوشه‌های `PATH` جست‌وجو می‌کند.
+
+میان‌بر را در یک پوسته تایپ کنید (PowerShell، cmd.exe، Git Bash). پیوند نمادینی که از Explorer، پنجره Run یا `Start-Process` باز شود به‌صورت `ccam` ساده اجرا می‌شود که به جای حساب، داشبورد را باز می‌کند.
 
 ## ایمنی و موارد خاص
 
 - **پیوندی که هیچ حسابی ادعایش را ندارد.** اگر پیوندی به ccam در `~/.local/bin` نامی داشته باشد که هیچ حسابی از آن استفاده نمی‌کند، برای مثال پس از آنکه `shortcut` را در `config.toml` دستی ویرایش کرده‌اید، ccam به حساب پیش‌فرض برنمی‌گردد. با پیام `` ccam: ccold is not the shortcut of any account (see `ccam list`, `ccam shortcut`) `` متوقف می‌شود. نام را دوباره با `ccam shortcut` تنظیم کنید، یا پیوند را حذف کنید.
-- **فایل‌های موجود.** ccam هرگز فایلی را که خودش نساخته جایگزین نمی‌کند. `ccam shims install` با پیام `<path> already exists and is not a ccam link, so it was left alone` متوقف می‌شود.
-- **فایل اجرایی ccam جابه‌جاشده.** در این حالت پیوندهای قدیمی به مسیری اشاره می‌کنند که دیگر وجود ندارد و ccam آن‌ها را متعلق به خود نمی‌شمارد. آن‌ها را حذف کنید، سپس `ccam shims install` را اجرا کنید.
+- **فایل‌های موجود.** ccam هرگز فایلی را که خودش نساخته جایگزین نمی‌کند. `ccam shims install` پیام `<path> already exists and is not a ccam link, so it was left alone` را گزارش می‌کند و با این حال پیوندهای دیگر را می‌سازد. در این حالت `ccam add` و `ccam import` پیام `shortcut: ccwork (not created; see above)` را چاپ می‌کنند.
+- **فایل اجرایی ccam جابه‌جاشده.** در این حالت پیوندهایی که ccam ساخته به مسیری اشاره می‌کنند که دیگر وجود ندارد. `ccam shims install` (یا `ccam doctor --fix`) آن‌ها را به ccamی هدایت می‌کند که با آن اجرایش می‌کنید.
 - **تغییر نام و حذف.** `ccam rename` نام میان‌بر را نگه می‌دارد و پیوند همچنان کار می‌کند، چون به ccam اشاره می‌کند و ccam نام را در `config.toml` جست‌وجو می‌کند. `ccam remove` پیوند حساب را حذف می‌کند. `ccam shortcut <account> <new>` پیش از ساختن پیوند جدید، پیوند قدیمی را حذف می‌کند.
 - **PATH.** وقتی ccam یک پیوند می‌سازد و `~/.local/bin` در `PATH` شما نیست، `Note: /home/me/.local/bin is not in PATH. Add it to ~/.bashrc or ~/.zshrc:` را چاپ می‌کند و پس از آن خط `export PATH=...` را که باید اضافه کنید. در Windows به جای آن خط PowerShell را چاپ می‌کند که پوشه را به `PATH` کاربری شما اضافه می‌کند.
-- **بررسی در زمان بعد.** `ccam doctor` پیام `missing shortcuts in /home/me/.local/bin: ccwork` را گزارش می‌کند و وقتی پوشه در `PATH` نباشد هشدار می‌دهد. `ccam doctor --fix` پیوندهای ناموجود را می‌سازد.
+- **بررسی در زمان بعد.** `ccam doctor` پیام `missing shortcuts in /home/me/.local/bin: ccwork` و میان‌برهایی را که یک ccam قدیمی‌تر را اجرا می‌کنند گزارش می‌کند و وقتی پوشه در `PATH` نباشد هشدار می‌دهد. `ccam doctor --fix` پیوندهای ناموجود را می‌سازد و پیوندهای کهنه را تازه می‌کند، و فقط برای آن‌هایی که ساخته است `→ fixed` می‌گوید. میان‌بری که ccam دیگری را اجرا می‌کند که هنوز نصب است کار می‌کند و فقط اطلاعات است؛ `ccam doctor --fix` آن را به ccamی هدایت می‌کند که با آن اجرایش می‌کنید، و `ccam add` و `ccam import` آن را به‌صورت ``shortcut: ccwork (runs another ccam, <path>; `ccam doctor --fix` points it at this one)`` نشان می‌دهند.
 
 ## مرتبط
 

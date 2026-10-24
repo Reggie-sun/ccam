@@ -1,10 +1,10 @@
 ---
 title: Dùng chung máy chủ MCP, cài đặt và lịch sử
 description: "Cách các nhóm của ccam dùng chung máy chủ MCP, settings.json, CLAUDE.md, skill và lịch sử hội thoại giữa các tài khoản Claude Code, giữ riêng mọi đăng nhập."
-updated: 2026-10-20
+updated: 2026-10-23
 order: 4
 translation: machine
-sourceHash: "2606e4ec682e"
+sourceHash: "27e0a0e5abbd"
 ---
 
 Mỗi tài khoản giữ thông tin đăng nhập riêng. Mọi thứ khác đều có thể dùng chung qua **nhóm**: một nhóm nêu các mục nó dùng chung và các tài khoản thuộc nó, và ccam liên kết tệp của từng tài khoản đó đến thư mục của nhóm, nên thay đổi thực hiện ở một tài khoản sẽ xuất hiện ở mọi tài khoản.
@@ -47,7 +47,7 @@ Khi một tài khoản bắt đầu dùng chung một mục (nó tham gia một 
 
 Các tệp hội thoại được đặt tên theo ID phiên, nên lịch sử từ nhiều tài khoản được gộp lại mà không xung đột.
 
-ccam không thay đổi một tài khoản khi Claude Code đang chạy bằng tài khoản đó, vì phiên vẫn tiếp tục ghi vào các tệp đang được di chuyển. Hãy thoát phiên trước.
+ccam không thay đổi một tài khoản khi Claude Code đang chạy bằng tài khoản đó, bất kể Claude Code được khởi động theo cách nào (kể cả phiên nền), vì phiên vẫn tiếp tục ghi vào các tệp đang được di chuyển. Hãy thoát phiên trước. ccam kiểm tra lại ngay trước khi lưu, nên một phiên được khởi động trong lúc kế hoạch đang chờ cũng bị phát hiện.
 
 ## Khi một tài khoản ngừng dùng chung
 
@@ -56,7 +56,7 @@ ccam group leave team work                   # work leaves the group
 ccam group set default --remove history      # nobody in default shares history any more
 ```
 
-Liên kết bị gỡ bỏ và tài khoản nhận một bản sao riêng của nội dung hiện tại trong nhóm. Thêm `--fresh` để bắt đầu từ trạng thái trống thay vào đó. Nhóm vẫn giữ nội dung của nó cho các tài khoản khác.
+Liên kết bị gỡ bỏ và tài khoản nhận một bản sao riêng của nội dung hiện tại trong nhóm; các máy chủ MCP của nhóm được đưa vào `.claude.json` của chính tài khoản, bên cạnh các máy chủ riêng của nó. Thêm `--fresh` để bắt đầu từ trạng thái trống thay vào đó; khi đó kế hoạch liệt kê các máy chủ MCP sẽ ngừng được tải. Một thư mục được nhập như `~/.claude` luôn giữ một bản sao. Nhóm vẫn giữ nội dung của nó cho các tài khoản khác.
 
 ## Sao chép thiết lập hiện có
 
@@ -73,12 +73,11 @@ Những gì được sao chép:
 - `settings.json` và `CLAUDE.md` toàn cục;
 - các tiện ích mở rộng `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/` và `rules/`;
 - máy chủ MCP người dùng của bạn, tức mục `mcpServers` trong `~/.claude.json`, vào `mcp.json` của nhóm;
-- thông tin đăng nhập đã lưu (OAuth) của các máy chủ MCP được sao chép, vào tệp đăng nhập riêng của từng tài khoản;
 - lịch sử hội thoại (`projects/` và `history.jsonl`), nhưng chỉ khi bạn thêm `--history`.
 
 Thư mục nguồn chỉ được đọc: không có gì bên trong bị di chuyển, liên kết hay thay đổi, và lệnh `claude` thông thường vẫn hoạt động như trước. Các tệp đăng nhập `.credentials.json` và `.claude.json` không bao giờ được sao chép vào nhóm.
 
-Các máy chủ MCP đăng nhập bằng OAuth giữ token trong thông tin đăng nhập, không phải trong danh sách máy chủ. Để bạn không phải đăng nhập lại vào chúng, ccam sao chép các thông tin đăng nhập đó vào tệp đăng nhập của mọi tài khoản nhận máy chủ qua nhóm, trừ khi tài khoản đã có thông tin riêng. Nó bỏ qua các tài khoản đang chạy, chưa đăng nhập, được đăng ký tại chỗ bằng `ccam import`, hoặc lưu thông tin đăng nhập trong Chuỗi khóa (Keychain) của macOS, và nêu tên các tài khoản đó; hãy đăng nhập vào các máy chủ ở đó bằng `/mcp`. Tài khoản bắt đầu dùng chung máy chủ MCP về sau sẽ nhận được thông tin đăng nhập khi bạn chạy lại `ccam migrate`.
+Các máy chủ MCP đăng nhập bằng OAuth giữ token trong thông tin đăng nhập, không phải trong danh sách máy chủ. ccam không sao chép các lần đăng nhập đó: một lần đăng nhập bị sao chép giữ cùng refresh token, và lần gia hạn đầu tiên sẽ đăng xuất mọi nơi khác đang giữ nó khỏi máy chủ đó, kể cả `~/.claude`. Kế hoạch và phần tóm tắt nêu tên các tài khoản cần tự đăng nhập vào các máy chủ bằng `/mcp`.
 
 ccam in ra kế hoạch và hỏi trước khi sao chép bất cứ thứ gì:
 
@@ -121,7 +120,7 @@ ccam mcp add fs -- npx -y @modelcontextprotocol/server-filesystem ~/code
 ccam mcp list
 ```
 
-Máy chủ bạn thêm trong một phiên bằng `claude mcp add` chỉ được lưu cho tài khoản đó. Lần tới khi bạn khởi động tài khoản đó, ccam sẽ nêu tên máy chủ và lệnh để chuyển nó sang nhóm:
+Máy chủ bạn thêm trong một phiên bằng `claude mcp add` chỉ được lưu cho tài khoản đó, và cho thư mục bạn đang ở (phạm vi local của Claude Code; `-s user` làm nó thành của tài khoản trong mọi thư mục). Lần tới khi bạn khởi động tài khoản đó, ccam sẽ nêu tên máy chủ, cùng thư mục của nó, và lệnh để chuyển nó sang nhóm:
 
 ```sh
 ccam mcp import work gh
@@ -129,9 +128,9 @@ ccam mcp import work gh
 
 Nếu nhóm đã có một máy chủ khác cùng tên, ccam sẽ bỏ qua và thông báo cho bạn. `--force` thay máy chủ của nhóm và giữ `mcp.json` cũ trong thư mục `.ccam-backup/` của nhóm.
 
-Các máy chủ MCP đăng nhập bằng OAuth lưu token cùng với thông tin đăng nhập của tài khoản, vì vậy hãy cấp quyền cho chúng một lần trong mỗi tài khoản, hoặc sao chép thông tin đăng nhập từ `~/.claude` bằng `ccam migrate`.
+Các máy chủ MCP đăng nhập bằng OAuth lưu token cùng với thông tin đăng nhập của tài khoản, vì vậy hãy cấp quyền cho chúng một lần trong mỗi tài khoản bằng `/mcp`. `ccam ext` và `ccam doctor` nêu tên các máy chủ mà một tài khoản chưa đăng nhập trong khi một tài khoản khác đã đăng nhập.
 
-Nếu bạn muốn các máy chủ xuất hiện trong `claude mcp list` và `/mcp` như máy chủ người dùng thông thường, hãy đặt `mcp_strategy = "sync"` trong `~/.config/ccam/config.toml`. Khi đó ccam ghi chúng vào `.claude.json` của từng tài khoản trước khi khởi động, dưới khóa tệp của chính Claude Code và có bản sao lưu.
+Nếu bạn muốn các máy chủ xuất hiện trong `claude mcp list` và `/mcp` như máy chủ người dùng thông thường, hãy đặt `mcp_strategy = "sync"` ở đầu `~/.config/ccam/config.toml`, phía trên `[[group]]`, `[[profile]]` hoặc `[[folder]]` đầu tiên. Khi đó ccam ghi chúng vào `.claude.json` của từng tài khoản trước khi khởi động, dưới khóa tệp của chính Claude Code và có bản sao lưu. Một máy chủ riêng của tài khoản có cùng tên vẫn là của tài khoản, và ccam sẽ thông báo điều đó.
 
 ## Hai tài khoản trong cùng một thư mục
 
@@ -144,4 +143,4 @@ ccam doctor
 ccam doctor --fix
 ```
 
-Nếu một đường dẫn dùng chung đã trở thành tệp thông thường, ví dụ sau khi bạn tự khôi phục một bản sao lưu, ccam sẽ dừng trước khi khởi động Claude Code và chỉ bạn đến `ccam doctor --fix`, lệnh này gộp tệp vào nhóm và giữ một bản sao lưu.
+Nếu một đường dẫn dùng chung đã trở thành tệp thông thường, ví dụ sau khi bạn tự khôi phục một bản sao lưu, ccam sẽ dừng trước khi khởi động Claude Code và chỉ bạn đến `ccam doctor --fix`, lệnh này liên kết nó với nhóm trở lại: tệp trở thành bản của nhóm khi nhóm chưa có, còn nếu không thì nhóm giữ bản của mình và bản của bạn được đưa vào một bản sao lưu, mà `--fix` sẽ nêu tên. Một lần thay đổi nhóm bị dừng giữa chừng cũng được `ccam doctor --fix` hoàn tất.

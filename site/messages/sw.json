@@ -70,8 +70,8 @@
         "body": "Huanzisha Claude Code kama akaunti hiyo. Kila kitu baada ya jina hupelekwa kwa Claude Code bila kubadilishwa, na ccam huongeza takriban milisekunde 4 kabla ya kuanza."
       },
       {
-        "command": "ccam share work --history on",
-        "body": "Huchagua kile ambacho akaunti inashiriki na akaunti zako nyingine. Seva za MCP, mipangilio, CLAUDE.md na viendelezi hushirikiwa tangu mwanzo; taarifa za kuingia hazishirikiwi kamwe."
+        "command": "ccam group set default --add history",
+        "body": "Huchagua kile ambacho akaunti za kikundi kimoja zinashiriki kati yao. Seva za MCP, mipangilio, CLAUDE.md na viendelezi hushirikiwa tangu mwanzo; taarifa za kuingia hazishirikiwi kamwe."
       },
       {
         "command": "ccam usage",
@@ -145,9 +145,9 @@
     "mcp": "Simamia seva za MCP zinazoshirikiwa",
     "migrate": "Nakili usanidi uliopo wa Claude Code (~/.claude) kwenye kikundi kinachoshirikiwa",
     "login": "Ingiza akaunti tena; --expired huingiza kila akaunti inayohitaji",
-    "logout": "Ondoa taarifa za kuingia za akaunti",
+    "logout": "Toka kwenye akaunti: huondoa taarifa zake za kuingia na kuingia kwake kwenye seva za MCP",
     "rename": "Badilisha jina la akaunti; njia yake fupi huhifadhi jina lake",
-    "remove": "Ondoa akaunti; folda yake huhamishiwa kwenye folda ya taka",
+    "remove": "Ondoa akaunti: ccam hutoka kwenye akaunti hiyo, na folda yake huhamishiwa kwenye folda ya taka",
     "import": "Sajili folda iliyopo ya ~/.claude pale ilipo",
     "doctor": "Kagua viungo, ruhusa, taarifa za kuingia na matoleo, na urekebishe",
     "statusline": "Onyesha akaunti na matumizi kwenye mstari wa hali (status line) wa Claude Code",

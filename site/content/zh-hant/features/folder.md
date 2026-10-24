@@ -1,10 +1,10 @@
 ---
 title: 依資料夾使用帳號
 description: ccam folder 讓你在未指定帳號名稱就啟動 Claude Code 時，某個資料夾及其下所有資料夾都使用同一個帳號，例如公司程式碼使用 work。
-updated: 2026-10-20
+updated: 2026-10-23
 order: 11
 translation: machine
-sourceHash: "46d1410a3d81"
+sourceHash: "48de98d42b99"
 ---
 
 `ccam folder work ~/code/company` 會讓在 `~/code/company` 及其下任何資料夾中未指定帳號名稱的每次啟動，都以 `work` 啟動 Claude Code。在該資料夾之外，則和以前一樣啟動預設帳號。指定帳號名稱時，例如 `ccam personal` 或 `ccpersonal` 這類快捷指令，一律會啟動該帳號。
@@ -34,7 +34,7 @@ Here (/home/me/code/company/api): work, set for /home/me/code/company
 - `ccam -p "…"`，以及其他第一個參數是 Claude Code 選項的啟動
 - 不帶名稱的 `ccam run`，以及 `ccam --dry-run`
 - `ccam --fallback -p "…"` 的第一次嘗試
-- 儀表板，也就是單獨的 `ccam`，開啟時游標會停在該資料夾的帳號上
+- 儀表板，也就是單獨的 `ccam`，開啟時游標會停在該資料夾的帳號上，即使你是透過符號連結來到這個資料夾也一樣
 
 ## 選項
 
@@ -59,7 +59,7 @@ account = 'work'
 2. 未指定名稱的啟動會呼叫 `launcher.HereProfile`。沒有任何項目時，它會立即採用預設帳號。
 3. 否則，它會以字串比對工作目錄和每個 `path`：只比對資料夾本身或其下的資料夾，絕不會比對到只是開頭字母相同的資料夾（`/code/company` 不涵蓋 `/code/companyx`）。最深的項目優先，所以 `~/code` 可以是 `personal`，而 `~/code/company` 是 `work`。
 4. 只有在工作目錄原樣比對不到任何項目時，ccam 才會解開它的符號連結，再比對一次。
-5. 在 Windows 上，比對時不分大小寫，和 Windows 本身一樣。
+5. 在 Windows 和 macOS 上，比對時不分大小寫，和它們的檔案系統通常的做法一樣。
 
 除了 `config.toml` 之外不讀取任何檔案，所以在資料夾中啟動不會多花可測量的時間（不論有沒有項目都是 4.0 ms，`hyperfine`，300 次）。
 

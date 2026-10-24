@@ -1,10 +1,10 @@
 ---
 title: APIキーのアカウント
 description: ccam add --apiは、AnthropicのAPIやゲートウェイ用のAPIキーのアカウントを追加します。キーは起動時に変数かコマンドから読み、保存しません。
-updated: 2026-10-20
+updated: 2026-10-23
 order: 13
 translation: machine
-sourceHash: "a903c92f2c50"
+sourceHash: "232a71525e42"
 ---
 
 APIキーのアカウントは、Claudeのサブスクリプションのログインの代わりに、APIキーでClaude Codeを起動します。接続先はAnthropicのAPIか、LiteLLMやOpenRouterのゲートウェイのように同じMessages形式を話すエンドポイントです。ccamはキーを保存しません。アカウントを起動するたびに、環境変数か、パスワードマネージャーなどのコマンドからキーを読み、そのClaude Codeのプロセスだけに渡します。
@@ -35,7 +35,7 @@ APIキーのアカウントも、ほかのアカウントと同じようにグ�
 | --- | --- | --- |
 | `--api` | ログインする代わりにAPIキーのアカウントを追加します | オフ |
 | `--key-from env:NAME` | 環境変数`NAME`からキーを読みます | |
-| `--key-from command:COMMAND` | `COMMAND`を実行し（`sh -c`、Windowsでは`cmd /C`）、出力の最初の行を使います | |
+| `--key-from command:COMMAND` | `COMMAND`を実行し（`sh -c`、Windowsでは`cmd /d /s /c "…"`に入力したとおりに、引用符も残して）、出力の最初の行を使います | |
 | `--base-url <url>` | エンドポイント（`ANTHROPIC_BASE_URL`） | AnthropicのAPI |
 | `--auth api-key\|bearer` | キーを`ANTHROPIC_API_KEY`（`x-api-key`）として送るか、`ANTHROPIC_AUTH_TOKEN`（`Authorization: Bearer`。ゲートウェイは通常こちらを求めます）として送ります | `api-key` |
 | `--model <model>` | モデル（`ANTHROPIC_MODEL`） | Claude Codeのデフォルト |
@@ -66,10 +66,17 @@ model = 'claude-sonnet-5-5'
 
 ## 安全性と特殊なケース
 
-- キーが`config.toml`、キャッシュ、ログに書き込まれることはなく、`ccam --dry-run gw`もキーを読みません。ドライランでは`command:`のソースは実行されません。
+- キーが`config.toml`、キャッシュ、ログに書き込まれることはなく、`ccam --dry-run gw`もキーを読みません。ドライランでは`command:`のソースは実行されません。代わりにドライランは、エンドポイント、モデル、キーの取得元を表示します。
+
+  ```console
+  $ ccam --dry-run gw -p hi
+  CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/gw CCAM_PROFILE=gw ANTHROPIC_BASE_URL=https://llm.example.com ANTHROPIC_MODEL=claude-sonnet-5-5 ANTHROPIC_AUTH_TOKEN="$(pass show llm/gateway-key | head -n 1)" /home/me/.local/bin/claude -p hi
+  ```
+
+  起動時に取り除かれる、引き継いだ変数は、先頭に`env -u <name>`として表示されます。`env:`のソースの変数が空の場合、ドライランは起動と同じように失敗します。
 - `ccam add --api`は`env:`のソースをその場で確認し、変数が空なら警告します。`command:`のソースは起動時に初めて実行されます。
 - APIキーのアカウントにはログインがないので、`ccam login`と`ccam logout`は拒否します。`ccam doctor`はエンドポイントとキーのソースを表示し、`env:`の変数が空なら警告します。
-- `ccam usage`では`API`と表示されます。APIキーには比べるべき5時間や週間の上限がないので、`ccam next --auto`、`--fallback`、`ccam pick`はサブスクリプションのアカウントの中からだけ選びます。
+- `ccam usage`では`no limits (API)`と表示されます。APIキーには比べるべき5時間や週間の上限がないので、`ccam next --auto`、`--fallback`、`ccam pick`はサブスクリプションのアカウントの中からだけ選びます。
 - `env`ブロックや`apiKeyHelper`を含む共有の`settings.json`は、APIキーのアカウントも含め、グループのすべてのアカウントに適用されます。プロバイダーの設定は共有の設定に入れないか、APIキーのアカウントを`settings`を共有しないグループに入れてください。
 
 ## 関連項目

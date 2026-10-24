@@ -1,10 +1,10 @@
 ---
 title: Tài khoản API key
 description: ccam add --api thêm tài khoản API key cho API của Anthropic hoặc một gateway; khóa được đọc khi khởi động từ một biến hoặc một lệnh, không bao giờ được lưu.
-updated: 2026-10-20
+updated: 2026-10-23
 order: 13
 translation: machine
-sourceHash: "a903c92f2c50"
+sourceHash: "232a71525e42"
 ---
 
 Tài khoản API key khởi động Claude Code bằng một API key thay cho đăng nhập gói đăng ký Claude: API của Anthropic, hoặc một endpoint dùng cùng định dạng Messages, chẳng hạn một gateway LiteLLM hay OpenRouter. ccam không lưu khóa. Nó đọc khóa mỗi lần tài khoản khởi động, từ một biến môi trường hoặc từ một lệnh như trình quản lý mật khẩu, và chỉ trao khóa cho tiến trình Claude Code đó.
@@ -35,7 +35,7 @@ Tài khoản API key tham gia các nhóm như mọi tài khoản khác (theo m�
 | --- | --- | --- |
 | `--api` | Thêm một tài khoản API key thay vì đăng nhập | tắt |
 | `--key-from env:NAME` | Đọc khóa từ biến môi trường `NAME` | |
-| `--key-from command:COMMAND` | Chạy `COMMAND` (bằng `sh -c`, hoặc `cmd /C` trên Windows) và dùng dòng đầu tiên nó in ra | |
+| `--key-from command:COMMAND` | Chạy `COMMAND` (bằng `sh -c`, hoặc trên Windows như được gõ trong `cmd /d /s /c "…"`, giữ nguyên dấu ngoặc kép) và dùng dòng đầu tiên nó in ra | |
 | `--base-url <url>` | Endpoint (`ANTHROPIC_BASE_URL`) | API của Anthropic |
 | `--auth api-key\|bearer` | Gửi khóa dưới dạng `ANTHROPIC_API_KEY` (`x-api-key`) hoặc `ANTHROPIC_AUTH_TOKEN` (`Authorization: Bearer`, thứ mà gateway thường cần) | `api-key` |
 | `--model <model>` | Mô hình (`ANTHROPIC_MODEL`) | Mặc định của Claude Code |
@@ -66,10 +66,17 @@ Các tài khoản đăng nhập bằng gói đăng ký vẫn giữ môi trườn
 
 ## An toàn và các trường hợp đặc biệt
 
-- Khóa không bao giờ được ghi vào `config.toml`, bộ nhớ đệm hay nhật ký, và `ccam --dry-run gw` không đọc nó: chạy thử không chạy nguồn `command:`.
+- Khóa không bao giờ được ghi vào `config.toml`, bộ nhớ đệm hay nhật ký, và `ccam --dry-run gw` không đọc nó: chạy thử không chạy nguồn `command:`. Thay vào đó, lần chạy thử hiển thị endpoint, mô hình và nơi khóa được lấy:
+
+  ```console
+  $ ccam --dry-run gw -p hi
+  CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/gw CCAM_PROFILE=gw ANTHROPIC_BASE_URL=https://llm.example.com ANTHROPIC_MODEL=claude-sonnet-5-5 ANTHROPIC_AUTH_TOKEN="$(pass show llm/gateway-key | head -n 1)" /home/me/.local/bin/claude -p hi
+  ```
+
+  Một biến được kế thừa mà lần khởi chạy gỡ bỏ sẽ hiển thị là `env -u <name>` ở đầu. Với nguồn `env:` có biến trống, lần chạy thử thất bại giống như lần khởi chạy.
 - `ccam add --api` kiểm tra nguồn `env:` ngay lập tức và cảnh báo nếu biến rỗng; nguồn `command:` được chạy lần đầu khi khởi động.
 - `ccam login` và `ccam logout` từ chối tài khoản API key, vì nó không có đăng nhập. `ccam doctor` hiển thị endpoint và nguồn khóa của nó, và cảnh báo khi một biến `env:` rỗng.
-- `ccam usage` hiển thị `API` cho nó. `ccam next --auto`, `--fallback` và `ccam pick` chỉ chọn trong các tài khoản gói đăng ký, vì API key không có giới hạn 5 giờ hay hàng tuần để so sánh.
+- `ccam usage` hiển thị `no limits (API)` cho nó. `ccam next --auto`, `--fallback` và `ccam pick` chỉ chọn trong các tài khoản gói đăng ký, vì API key không có giới hạn 5 giờ hay hàng tuần để so sánh.
 - Một `settings.json` dùng chung có khối `env` hoặc `apiKeyHelper` sẽ áp dụng cho mọi tài khoản trong nhóm, kể cả tài khoản API key. Đừng đặt thiết lập nhà cung cấp trong cài đặt dùng chung, hoặc đưa tài khoản API key vào một nhóm không có `settings`.
 
 ## Liên quan

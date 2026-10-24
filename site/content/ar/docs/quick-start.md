@@ -2,10 +2,10 @@
 title: البدء السريع
 metaTitle: "البدء السريع: أضف حسابات Claude Code وبدّل بينها"
 description: أضف حسابَي Claude Code باستخدام ccam add، وامنحهما أوامر مختصرة مثل ccwork، وبدّل بينهما، واختر ما يشاركانه.
-updated: 2026-10-20
+updated: 2026-10-24
 order: 2
 translation: machine
-sourceHash: d5b0e295f3f0
+sourceHash: e98d0637356a
 ---
 
 أضف كل حساب باستخدام `ccam add`، ثم شغّل Claude Code باستخدام `ccam <name>` أو بأمر مختصر تختار اسمه بنفسك، مثل `ccwork`. هذا كل ما يحتاجه معظم الناس.
@@ -107,6 +107,8 @@ ccam next --continue
 ```
 
 يعرض `ccam usage` استخدام كل حساب خلال 5 ساعات وخلال الأسبوع. ويفتح `ccam next --continue` المحادثة نفسها في الحساب التالي. وفي السكربتات، يبدّل `ccam --fallback work -p "…"` الحساب بنفسه. راجع [حدود الاستخدام](/docs/usage-limits).
+
+**مقاعد Team وEnterprise.** يبدّل الاختيار التلقائي (`ccam next` و`--fallback` و`ccam pick` والمفتاح `n` في لوحة التحكم) أيضًا بين مقاعد المؤسسة نفسها في Claude Team أو Enterprise. يقول مركز المساعدة لدى Anthropic: "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (يُخصَّص كل مقعد في خطة Team لشخص واحد محدد بالاسم، ولا يجوز أن يستخدمه إلا ذلك الشخص) و"Users can't route their work through another user's account to use that user's remaining usage" (لا يجوز للمستخدمين تمرير عملهم عبر حساب مستخدم آخر للاستفادة من الاستخدام المتبقي لذلك المستخدم) ([خطط Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)؛ وبالمثل في [خطط Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). لذا فإن استخدام الاختيار التلقائي بين المقاعد قد يخالف شروط Anthropic. تحقّق من ذلك مع مؤسستك ومع Anthropic قبل أن تعتمد عليه. أما الخطط الشخصية (Pro وMax) فتتناولها [ملاحظة الشروط في الأسئلة الشائعة](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 ## هل تستخدم ~/.claude بالفعل؟
 

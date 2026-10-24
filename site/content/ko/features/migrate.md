@@ -1,13 +1,13 @@
 ---
 title: 기존 설정 복사하기
-description: ccam migrate로 기존 ~/.claude의 설정, CLAUDE.md, 확장 기능, MCP 서버, MCP 로그인 정보를 ccam 그룹으로 복사합니다.
-updated: 2026-10-19
+description: ccam migrate로 기존 ~/.claude의 설정, CLAUDE.md, 확장 기능, MCP 서버를 ccam 그룹으로 복사합니다.
+updated: 2026-10-23
 order: 6
 translation: machine
-sourceHash: "7cee52e75749"
+sourceHash: "7bca9efb6eb0"
 ---
 
-ccam을 쓰기 전에 Claude Code를 써 왔다면 설정이 `~/.claude`와 `~/.claude.json`에 있습니다. `ccam migrate`는 이 설정을 공유 그룹으로 복사하므로, 그룹을 통해 해당 항목을 공유하는 모든 계정이 기존 설정 그대로 시작합니다. 원본 폴더는 읽기만 하므로, `claude`를 그냥 실행해도 이전과 똑같이 동작합니다. 처음 `ccam add`를 실행한 뒤 한 번 실행하고, 어떤 계정이 MCP 서버 공유를 시작할 때마다 다시 실행하세요.
+ccam을 쓰기 전에 Claude Code를 써 왔다면 설정이 `~/.claude`와 `~/.claude.json`에 있습니다. `ccam migrate`는 이 설정을 공유 그룹으로 복사하므로, 그룹을 통해 해당 항목을 공유하는 모든 계정이 기존 설정 그대로 시작합니다. 원본 폴더는 읽기만 하므로, `claude`를 그냥 실행해도 이전과 똑같이 동작합니다. 처음 `ccam add`를 실행한 뒤 한 번 실행하세요. `~/.claude.json`에 MCP 서버가 있으면 처음 `ccam add`가 팁에서 그 서버를 알려 줍니다.
 
 ## 사용법
 
@@ -43,20 +43,17 @@ Space(또는 `x`)로 커서 위치의 항목 선택을 바꾸고, 화살표 키�
 $ ccam migrate --yes
 Copy from /home/me/.claude into group default (/home/me/.local/share/ccam/groups/default):
   mcp         ~/.claude.json  new: fs, linear
-              sign-ins        linear → personal; skipped: work (not logged in yet)
+              sign-ins        not copied (a sign-in works for one account only); sign in with /mcp: linear in personal, work
   settings    settings.json   new: 61 B
+              not found, skipped: keybindings.json
   memory      CLAUDE.md       new: 11 B
   extensions  agents/         add 1 file the group lacks (6 B)
               skills/         add 1 file the group lacks (13 B)
               not found, skipped: commands/, plugins/, output-styles/, rules/
   Conversation history (projects/, history.jsonl) is not included; add --history to copy it.
-✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, skills/, MCP sign-ins for personal
-MCP sign-ins were not copied to: work (not logged in yet). Sign in to those servers there with /mcp.
-Accounts that share these through group default:
-  mcp         personal, work
-  settings    personal, work
-  memory      personal, work
-  extensions  personal, work
+✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, skills/
+MCP sign-ins are not copied (a sign-in works for one account only). Sign in with /mcp to linear in personal, work.
+Group default: personal, work
 ```
 
 그룹의 내용은 그 그룹의 계정에게, 그것도 그룹이 공유하는 항목만 전달되므로, 요약에는 그룹의 계정이 나열됩니다. 복사한 항목 중 그룹이 공유하지 않는 항목이 있거나 그룹에 들어 있지 않은 계정이 있으면, ccam은 이를 바꾸는 `ccam group set <group> --add <items>`와 `ccam group join <group> <accounts>` 명령을 출력합니다.
@@ -83,9 +80,9 @@ Accounts that share these through group default:
 
 `internal/cli/migrate.go`가 항목을 고르면 `migrate.Build`가 원본과 그룹을 읽어 계획을 반환합니다. 확인을 받은 뒤 `Plan.Apply`가 실행되기 전에는 아무것도 기록하지 않습니다.
 
-1. **원본 찾기.** `checkSource`는 없는 경로, 폴더가 아닌 경로, 알려진 Claude Code 항목이 하나도 없는 경로를 거부합니다. `migrate.ClaudeJSON`은 폴더에 해당하는 `.claude.json`을 찾습니다. 폴더 안에 있으면 그것을 쓰고, 안에 없는 `~/.claude`라면 그 옆의 `~/.claude.json`을 씁니다. `CLAUDE_CONFIG_DIR`가 설정되지 않았을 때 Claude Code가 이 파일을 두는 곳입니다.
+1. **원본 찾기.** `checkSource`는 없는 경로, 폴더가 아닌 경로, 알려진 Claude Code 항목이 하나도 없는 경로를 거부합니다. MCP 서버만 복사할 때는 `~/.claude.json`에 서버가 있으면 `~/.claude`가 비어 있거나 없어도 됩니다. `migrate.ClaudeJSON`은 폴더에 해당하는 `.claude.json`을 찾습니다. 폴더 안에 있으면 그것을 쓰고, 안에 없는 `~/.claude`라면 그 옆의 `~/.claude.json`을 씁니다. `CLAUDE_CONFIG_DIR`가 설정되지 않았을 때 Claude Code가 이 파일을 두는 곳입니다.
 2. **항목을 경로에 대응시키기.** 모든 경로는 그룹이 쓰는 것과 같은 허용 목록인 `share.Layout`에서 나옵니다. MCP 서버는 `mcp.LocalServers`로 `.claude.json`에서 읽으며, 이 함수는 파일 전체를 해석하지 않고 `profile.TopLevelValue` 스캐너를 씁니다.
-3. **옮기지 않고 복사만 하기.** 파일은 `fsutil.AtomicWrite`나 `fsutil.CopyFile`로 `~/.local/share/ccam/groups/<group>/`에 복사하고, MCP 서버는 그룹의 `mcp.json`에 넣습니다.
+3. **옮기지 않고 복사만 하기.** 파일은 `fsutil.AtomicWrite`나 `fsutil.CopyFile`로 `~/.local/share/ccam/groups/<group>/`에 복사합니다. 이 함수들은 대상 옆에 임시 파일을 쓰고 이름을 바꾸므로, 복사가 멈춰도 잘린 파일이 남지 않습니다. MCP 서버는 잠금을 잡은 채 그룹의 `mcp.json`에 넣으므로, 그동안 다른 ccam이 추가한 서버도 남고, [Remote Control](/guides/remote-control)용으로 만든 복사본은 그 뒤에 갱신됩니다.
 
 각 항목은 원본 경로 하나를 그룹 경로 하나에 대응시킵니다.
 
@@ -108,18 +105,7 @@ Accounts that share these through group default:
 
 ### MCP 로그인 정보
 
-OAuth로 로그인하는 MCP 서버는 토큰을 서버 목록이 아니라 로그인 파일인 `.credentials.json`의 `mcpOAuth` 아래에 보관합니다. Claude Code는 각 항목의 키를 `<name>|`에 서버의 `type`, `url`, `headers`로 만든 `sha256` 해시의 앞 16자를 붙여 만듭니다. 키가 폴더와 무관하므로, 서버 정의만 같다면 복사한 항목이 다른 계정에서도 동작합니다. 그래서 `internal/migrate/logins.go`의 `buildLogins`는 최종적으로 그룹이 원본의 정의를 갖게 되는 서버의 항목만 복사합니다. 새 항목이거나, 이미 같거나, 충돌에서 `use mine`을 고른 서버입니다. 플러그인 서버의 로그인 정보(`plugin:`으로 시작하는 키)는 확장 기능을 복사하고 원본에 `plugins/`가 있을 때 함께 복사됩니다.
-
-<!-- motion:migrate-signins -->
-
-이 항목들은 받는 계정 자체의 `.credentials.json`에 `fsutil.AtomicWrite`로 `0600` 권한을 주어 기록합니다. 그룹에는 절대 들어가지 않습니다. 계정이 대상 그룹을 통해 `mcp`(플러그인 서버라면 `extensions`)를 공유할 때만 받으며, 계정에 없는 키만 추가합니다. 이미 있는 항목은 더 최신일 수 있으므로 그대로 둡니다. 계획의 `sign-ins` 줄에는 서버, 받는 계정, 건너뛴 계정이 나열됩니다. ccam은 다음과 같은 계정을 건너뛰고, 그 이름과 이유를 알려 줍니다.
-
-- `ccam import`로 제자리에 등록한 계정. 일반 `claude`가 그 로그인 파일을 쓰고 있을 수 있기 때문입니다.
-- 실행 중인 계정. Claude Code가 로그인 파일을 다시 쓰기 때문입니다(기록 직전에 다시 확인하며, `started meanwhile`로 보고합니다).
-- 아직 로그인하지 않은 계정.
-- 로그인 정보를 macOS 키체인에 보관하는 계정. ccam은 키체인에 쓰지 않습니다.
-
-건너뛴 계정에서는 `/mcp`로 서버에 로그인하세요. 나중에 MCP 서버를 공유하기 시작한 계정은 `ccam migrate`를 다시 실행하면 로그인 정보를 받습니다. 요약에도 ``Then run `ccam migrate` again to give them the MCP sign-ins too.``로 안내합니다.
+OAuth로 로그인하는 MCP 서버는 토큰을 서버 목록이 아니라 로그인 파일인 `.credentials.json`의 `mcpOAuth` 아래에 보관합니다. ccam은 이를 복사하지 않습니다. 복사한 로그인은 원본과 같은 리프레시 토큰을 갖고 있고, 서버는 처음 갱신할 때 그 토큰을 교체합니다. 그러면 원본 `~/.claude`를 포함해 그 토큰을 가진 다른 모든 쪽이 그 서버에서 로그아웃됩니다. 그래서 계획의 `sign-ins` 줄은 원본이 로그인되어 있는 복사 대상 서버마다 `/mcp`로 직접 로그인해야 하는 그룹의 계정을 알려 주고, 요약에서도 이를 다시 보여 줍니다. 토큰이 없는 항목은 로그인이 아니므로 나열하지 않으며, 이미 자체 로그인이 있는 계정이나 그룹이 자기 정의를 유지하는 서버도 나열하지 않습니다. 로그인 파일은 기록하지 않습니다.
 
 ## 안전장치와 예외 상황
 
@@ -127,7 +113,8 @@ OAuth로 로그인하는 MCP 서버는 토큰을 서버 목록이 아니라 로�
 - `use mine`, 병합, 기존 `mcp.json`에 새 MCP 서버를 추가하는 경우처럼 그룹의 파일을 바꾸기 전에는 그룹의 사본을 `<group>/.ccam-backup/<time>/`에 저장합니다. 폴더 이름은 실행할 때마다 고유하므로, 같은 초에 두 번 실행해도 서로의 백업을 덮어쓰지 않습니다. 요약에 그 경로가 출력됩니다.
 - `--yes`를 주면 모든 충돌에서 그룹의 사본을 유지하며, ccam은 직접 고르려면 같은 명령을 `--yes` 없이 실행하라고 안내합니다.
 - 바뀔 것이 없으면 `Nothing to copy.`를, 모든 충돌에서 그룹의 사본을 유지하면 `Nothing to copy: the group keeps its own copies.`를 출력합니다.
-- 복사가 중간에 실패하면 `The source folder was not changed. Group files replaced so far are saved in`과 백업 폴더를 출력하고 멈춥니다.
+- 복사가 중간에 실패하면 `The source folder was not changed. Group files replaced so far are saved in`과 백업 폴더를 출력하고 멈춥니다. 다시 실행하면 온전히 도착하지 않은 파일을 복사합니다.
+- 여러 그룹이 MCP를 공유하면 `ccam doctor`, `ccam ext`, `ccam mcp list`가 제안하는 명령은 `ccam migrate --mcp --group <a|b>` 형태가 됩니다.
 - 원본이 없으면 `no Claude Code folder at <path>. Give the folder to copy from: ccam migrate <folder>`로 끝납니다.
 
 ## 관련 문서

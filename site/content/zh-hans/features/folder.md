@@ -1,10 +1,10 @@
 ---
 title: 按文件夹使用账号
 description: ccam folder 让一个文件夹及其下所有文件夹在不指定账号名启动 Claude Code 时使用同一个账号，例如公司代码使用 work。
-updated: 2026-10-20
+updated: 2026-10-23
 order: 11
 translation: machine
-sourceHash: "46d1410a3d81"
+sourceHash: "48de98d42b99"
 ---
 
 `ccam folder work ~/code/company` 让 `~/code/company` 及其下任何文件夹中所有不指定账号名的启动都以 `work` 启动 Claude Code。在这个文件夹之外，照旧启动默认账号。指定账号名时，无论是用 `ccam personal` 还是 `ccpersonal` 这样的快捷命令，总是启动该账号。
@@ -34,7 +34,7 @@ Here (/home/me/code/company/api): work, set for /home/me/code/company
 - `ccam -p "…"`，以及其他第一个参数是 Claude Code 选项的启动
 - 不带账号名的 `ccam run`，以及 `ccam --dry-run`
 - `ccam --fallback -p "…"` 的第一次尝试
-- 仪表盘，即单独的 `ccam`，打开时光标位于文件夹的账号上
+- 仪表盘，即单独的 `ccam`，打开时光标位于文件夹的账号上，通过符号链接进入该文件夹时也一样
 
 ## 选项
 
@@ -59,7 +59,7 @@ account = 'work'
 2. 不指定账号名的启动会调用 `launcher.HereProfile`。没有任何条目时，它会立即取默认账号。
 3. 否则，它把工作目录与每个 `path` 按字符串比较：匹配文件夹本身或其下的文件夹，绝不匹配只是开头字母相同的文件夹（`/code/company` 不包括 `/code/companyx`）。最深的条目优先，所以 `~/code` 可以是 `personal`，而 `~/code/company` 是 `work`。
 4. 只有当原样的工作目录什么都没有匹配上时，ccam 才会解析它的符号链接并再比较一次。
-5. 在 Windows 上，比较时不区分大小写，与 Windows 本身一致。
+5. 在 Windows 和 macOS 上，比较时不区分大小写，与它们的文件系统通常的行为一致。
 
 除了 `config.toml` 之外不读取任何文件，所以在文件夹中启动不会增加可测量的时间（无论有无条目都是 4.0 ms，`hyperfine`，300 次运行）。
 

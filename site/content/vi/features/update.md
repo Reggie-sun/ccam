@@ -1,10 +1,10 @@
 ---
 title: Cập nhật ccam
 description: "ccam update thay ccam bằng bản phát hành mới nhất trên GitHub sau khi kiểm tra SHA-256; --check chỉ báo cáo và --version cài một thẻ phát hành cụ thể."
-updated: 2026-10-21
+updated: 2026-10-23
 order: 10
 translation: machine
-sourceHash: a92dbf37399f
+sourceHash: "000d37de5f29"
 ---
 
 `ccam update` tải một bản phát hành ccam từ GitHub, kiểm tra nó với `checksums.txt` của bản phát hành và thay tệp thực thi đang chạy bằng một lần đổi tên. Hãy dùng lệnh này khi bạn cài ccam bằng script cài đặt hoặc từ một tệp nén. [Bảng điều khiển](/features/dashboard) cũng hỏi GitHub về bản phát hành mới nhất mỗi lần mở và đề nghị cập nhật bằng `U`, phím này chạy cùng các bước sau khi hỏi. Không lệnh nào khác liên lạc với GitHub, nên chúng vẫn hoạt động như nhau khi không có mạng.
@@ -64,7 +64,7 @@ Toàn bộ quy trình, từ tra thẻ đến đổi tên:
 
 Tệp nén và `checksums.txt` được tải song song, và không có gì được ghi cho đến khi mã kiểm tra khớp. Việc đổi tên là nguyên tử, nên một sự cố hay đĩa đầy chỉ để lại tệp thực thi cũ hoặc mới, không bao giờ là một nửa. Các lệnh tắt như `~/.local/bin/ccwork` là liên kết tượng trưng tới tệp thực thi ccam, nên chúng chạy phiên bản mới mà không cần thay đổi gì.
 
-Trên Windows, tệp của một chương trình đang chạy không thể bị thay thế hay xóa, chỉ có thể đổi tên. `Updater.Install` ghi tệp thực thi mới vào `ccam.exe.new`, đổi tên `ccam.exe` đang chạy thành `ccam.exe.old`, rồi đổi tên tệp mới thành `ccam.exe`. Nếu bước cuối thất bại, tệp thực thi cũ được đổi tên trở lại. Lần cập nhật tiếp theo xóa `ccam.exe.old`. Các lệnh tắt là liên kết cứng thay vì liên kết tượng trưng ([Lệnh tắt](/features/shortcuts)) được làm mới ngay sau đó, nên chúng cũng chạy phiên bản mới.
+Trên Windows, tệp của một chương trình đang chạy không thể bị thay thế hay xóa, chỉ có thể đổi tên. `Updater.Install` ghi tệp thực thi mới vào `ccam.exe.new`, đổi tên `ccam.exe` đang chạy thành `ccam.exe.old`, rồi đổi tên tệp mới thành `ccam.exe`. Nếu bước cuối thất bại, tệp thực thi cũ được đổi tên trở lại. Lần cập nhật tiếp theo xóa các tệp `ccam.exe.old` mà nó có thể xóa; khi một phiên vẫn đang chạy từ một `ccam.exe.old` trước đó, tệp thực thi đang chạy sẽ thành `ccam.exe.old-<time>` thay vào đó. Các lệnh tắt là liên kết cứng thay vì liên kết tượng trưng ([Lệnh tắt](/features/shortcuts)) được làm mới ngay sau đó, nên chúng cũng chạy phiên bản mới; việc này bao gồm các liên kết cứng do ccam tạo tới bất kỳ ccam cũ hơn nào, không chỉ tới tệp thực thi vừa bị thay thế.
 
 ### Bản cài qua trình quản lý gói
 
@@ -91,7 +91,7 @@ Trên các hệ thống không phải Linux, chỉ dòng script cài đặt đư
 
 ## An toàn và các trường hợp đặc biệt
 
-- Bản dựng phát triển báo phiên bản là `dev` và không có bản phát hành nào để so sánh, nên `ccam update` và `ccam update --check` từ chối nó. `ccam update --version vX.Y.Z` cài một bản phát hành đè lên nó.
+- Bản dựng phát triển báo phiên bản là `dev` và không có bản phát hành nào để so sánh, nên `ccam update` và `ccam update --check` từ chối nó. `ccam update --version vX.Y.Z` cài một bản phát hành đè lên nó. Một bản build tạo bằng `go install github.com/jhyunwoo/ccam/cmd/ccam@vX.Y.Z` (hoặc `@latest`) báo đúng bản phát hành đó, nên `ccam update` và lời đề nghị của bảng điều khiển hoạt động với nó; `@main` hoặc một bản build cục bộ đã đi quá một thẻ vẫn là `dev`.
 - Tải về thất bại, thiếu tệp cho nền tảng của bạn, hoặc mã kiểm tra không khớp đều giữ nguyên tệp thực thi đã cài.
 - Bản phát hành không tồn tại sẽ thất bại với `there is no release <tag>`. Khi GitHub từ chối với HTTP 403 hoặc 429, ccam cho biết có lẽ đó là giới hạn tần suất và đề nghị bạn thử lại sau.
 - `--check` chỉ đọc. Nó không kiểm tra tệp thực thi có do trình quản lý gói quản lý hay có ghi được hay không.

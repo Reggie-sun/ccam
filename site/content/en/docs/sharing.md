@@ -1,7 +1,7 @@
 ---
 title: Share MCP servers, settings and history
 description: How ccam groups share MCP servers, settings.json, CLAUDE.md, skills and conversation history between Claude Code accounts, with every login kept separate.
-updated: 2026-10-20
+updated: 2026-10-23
 published: 2026-10-19
 order: 4
 translation: source
@@ -47,7 +47,7 @@ When an account starts sharing an item (it joins a group, or its group adds the 
 
 Conversation files are named after their session ID, so histories from several accounts combine without conflicts.
 
-ccam does not change an account while Claude Code is running as it, because the session keeps writing into the files being moved. Quit it first.
+ccam does not change an account while Claude Code is running as it, however Claude Code was started (also background sessions), because the session keeps writing into the files being moved. Quit it first. ccam checks again right before it saves, so a session started while the plan waited is caught too.
 
 ## When an account stops sharing
 
@@ -56,7 +56,7 @@ ccam group leave team work                   # work leaves the group
 ccam group set default --remove history      # nobody in default shares history any more
 ```
 
-The link is removed and the account gets its own copy of the group's current content. Add `--fresh` to start empty instead. The group keeps its content for the other accounts.
+The link is removed and the account gets its own copy of the group's current content; the group's MCP servers go into its own `.claude.json`, next to servers of its own. Add `--fresh` to start empty instead; the plan then lists the MCP servers that stop loading. An imported folder such as `~/.claude` always keeps a copy. The group keeps its content for the other accounts.
 
 ## Copy an existing setup
 
@@ -73,12 +73,11 @@ What it copies:
 - `settings.json` and the global `CLAUDE.md`;
 - the extensions `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/` and `rules/`;
 - your user MCP servers, the `mcpServers` entry of `~/.claude.json`, into the group's `mcp.json`;
-- the saved sign-ins (OAuth) of the MCP servers it copies, into each account's own login file;
 - conversation history (`projects/` and `history.jsonl`), but only when you add `--history`.
 
 The source folder is only read: nothing in it is moved, linked or changed, and plain `claude` keeps working as before. The login files `.credentials.json` and `.claude.json` are never copied into the group.
 
-MCP servers that sign in with OAuth keep their tokens in the login, not in the server list. So that you do not have to sign in to them again, ccam copies those sign-ins into the login file of every account that gets the servers through the group, unless the account already has its own. It skips accounts that are running, not logged in yet, registered in place with `ccam import`, or keep their login in the macOS Keychain, and names them; sign in to the servers there with `/mcp`. An account that starts sharing MCP servers later gets the sign-ins when you run `ccam migrate` again.
+MCP servers that sign in with OAuth keep their tokens in the login, not in the server list. ccam does not copy those sign-ins: a copied sign-in holds the same refresh token, and the first renewal logs every other holder out of that server, `~/.claude` included. The plan and the summary name the accounts that sign in to the servers themselves with `/mcp`.
 
 ccam prints the plan and asks before it copies anything:
 
@@ -121,7 +120,7 @@ ccam mcp add fs -- npx -y @modelcontextprotocol/server-filesystem ~/code
 ccam mcp list
 ```
 
-A server you add inside a session with `claude mcp add` is saved for that account only. The next time you start that account, ccam names the server and the command that moves it to the group:
+A server you add inside a session with `claude mcp add` is saved for that account only, and for the folder you were in (Claude Code's local scope; `-s user` makes it the account's in every folder). The next time you start that account, ccam names the server, with its folder, and the command that moves it to the group:
 
 ```sh
 ccam mcp import work gh
@@ -129,9 +128,9 @@ ccam mcp import work gh
 
 If the group already has a different server with that name, ccam skips it and says so. `--force` replaces the group's server and keeps the old `mcp.json` in the group's `.ccam-backup/` folder.
 
-MCP servers that sign in with OAuth store their tokens with the account's login, so authorise them once in each account, or copy the sign-ins from `~/.claude` with `ccam migrate`.
+MCP servers that sign in with OAuth store their tokens with the account's login, so authorise them once in each account with `/mcp`. `ccam ext` and `ccam doctor` name the servers an account is not signed in to while another account is.
 
-If you prefer the servers to appear in `claude mcp list` and `/mcp` as ordinary user servers, set `mcp_strategy = "sync"` in `~/.config/ccam/config.toml`. ccam then writes them into each account's `.claude.json` before starting, under Claude Code's own file lock and with a backup.
+If you prefer the servers to appear in `claude mcp list` and `/mcp` as ordinary user servers, set `mcp_strategy = "sync"` at the top of `~/.config/ccam/config.toml`, above the first `[[group]]`, `[[profile]]` or `[[folder]]`. ccam then writes them into each account's `.claude.json` before starting, under Claude Code's own file lock and with a backup. A server the account has of its own under the same name stays the account's, and ccam says so.
 
 ## Two accounts in the same folder
 
@@ -144,4 +143,4 @@ ccam doctor
 ccam doctor --fix
 ```
 
-If a shared path became an ordinary file, for example after you restored a backup by hand, ccam stops before starting Claude Code and points to `ccam doctor --fix`, which merges the file into the group and keeps a backup.
+If a shared path became an ordinary file, for example after you restored a backup by hand, ccam stops before starting Claude Code and points to `ccam doctor --fix`, which links it to the group again: the file becomes the group's copy when the group has none, and otherwise the group keeps its own and yours goes to a backup, which `--fix` names. A change of groups that stopped halfway is finished by `ccam doctor --fix` too.

@@ -1,10 +1,10 @@
 ---
 title: El panel
 description: ccam en una terminal abre un panel a pantalla completa con cuentas, grupos, reglas de carpeta, extensiones y comprobaciones; cada cambio muestra antes su plan.
-updated: 2026-10-21
+updated: 2026-10-24
 order: 15
 translation: machine
-sourceHash: "19a99adef661"
+sourceHash: "e48ca2c5a643"
 ---
 
 `ccam` sin argumentos abre un panel a pantalla completa cuando la entrada y la salida estándar son una terminal; si no, imprime `ccam list`. El panel muestra cada cuenta con su uso y sus grupos, y hace lo mismo que los comandos: iniciar, agregar, iniciar sesión, cambiar grupos, definir reglas de carpeta, comprobar y reparar. Al iniciar una cuenta se cierra; al agregar una cuenta o iniciar sesión, deja la terminal libre y luego vuelve.
@@ -33,16 +33,16 @@ Cada vez que se abre, el panel pregunta a GitHub en segundo plano si existe una 
 
 `U` pregunta primero y luego actualiza como lo hace [`ccam update`](/features/update): la versión se comprueba con sus sumas de comprobación SHA-256 y reemplaza ccam en un solo paso. El panel en el que estás sigue siendo la versión anterior, así que sal y vuelve a iniciar `ccam`. Cuando la actualización no se puede hacer aquí, por ejemplo con un ccam instalado desde el paquete `.deb`, el panel muestra el mismo consejo que `ccam update` y mantiene la oferta.
 
-El primer fotograma se dibuja solo a partir de `config.toml`, en mucho menos de 100 ms; el uso se completa a medida que responde cada cuenta. Cada límite tiene su propia barra: la ventana de 5 horas, la ventana semanal de todos los modelos y la ventana semanal propia de Fable; `-` significa que la cuenta no tiene esa ventana. Un porcentaje se vuelve amarillo a partir del 80 % y rojo al 100 %, y los valores tomados de una caché tras una consulta fallida se dibujan atenuados.
+El primer fotograma se dibuja solo a partir de `config.toml`, en mucho menos de 100 ms; el uso se completa a medida que responde cada cuenta. Cada límite tiene su propia barra: la ventana de 5 horas, la ventana semanal de todos los modelos y la ventana semanal propia de Fable; `-` significa que la cuenta no tiene esa ventana. Un porcentaje se vuelve amarillo a partir del 80 % y rojo al 100 %, y los valores tomados de una caché tras una consulta fallida se dibujan atenuados. Una ventana que Claude Code informó llena muestra 100 % hasta su restablecimiento. Un token de acceso caducado muestra un `⚠ token expired` atenuado (Claude Code lo renueva en el siguiente inicio), mientras que `⚠ login expired` significa que la cuenta necesita `ccam login`.
 
 ## Pestañas
 
 | Pestaña | Qué muestra | Teclas |
 | --- | --- | --- |
-| Accounts | número, nombre, correo electrónico, barras de 5 horas, semanal y de Fable, último uso, grupos; `✔` la predeterminada, `▸` la cuenta de esta carpeta, `•` en ejecución | más abajo |
+| Accounts | número, nombre, correo electrónico, barras de 5 horas, semanal y de Fable, último uso, grupos; `✔` la predeterminada, `▸` la cuenta de esta carpeta, `•` en ejecución (también Claude Code iniciado sin ccam: `claude` a secas, un IDE, sesiones en segundo plano y su daemon) | más abajo |
 | Groups | cada grupo, lo que comparte y sus cuentas, y las cuentas que no están en ningún grupo | `enter` editar, `n` nuevo, `e` renombrar, `x` quitar |
-| Folders | las reglas de [`ccam folder`](/features/folder) y la que se aplica aquí | `n` usar una cuenta aquí, `enter` cambiar, `x` quitar |
-| Extensions | lo que muestra [`ccam ext`](/features/ext), cada extensión una vez con los grupos de los que proviene | `r` volver a cargar |
+| Folders | las reglas de [`ccam folder`](/features/folder) y la que se aplica aquí, también cuando llegaste a la carpeta mediante un enlace simbólico (las reglas nuevas se guardan con los enlaces resueltos) | `n` usar una cuenta aquí, `enter` cambiar, `x` quitar |
+| Extensions | lo que muestra [`ccam ext`](/features/ext), cada extensión una vez con los grupos de los que proviene, `off:` las cuentas en las que un plugin no está activado, los servidores que una cuenta tiene solo para esta carpeta entre los suyos, `This folder's project` y los problemas que no pertenecen a ninguna cuenta | `r` volver a cargar |
 | Health | lo que informa [`ccam doctor`](/features/doctor), con un recuadro por cuenta (más abajo) | `f` reparar el recuadro seleccionado, `F` reparar todo (`doctor --fix`), `↑`/`↓` pasar de un recuadro a otro |
 
 `←`/`→` o `Tab` cambian de pestaña, `?` lista las teclas de la pestaña actual, `r` vuelve a consultar el uso sin la caché corta, y `q` o `Esc` salen.
@@ -66,6 +66,8 @@ El primer fotograma se dibuja solo a partir de `config.toml`, en mucho menos de 
 | `c` | Define o quita su atajo |
 | `x` | La quita (pregunta antes, con No seleccionado) |
 
+**Asientos de Team y Enterprise.** La elección automática (`ccam next`, `--fallback`, `ccam pick`, la tecla `n` del panel) también pasa de un asiento a otro dentro de una misma organización de Claude Team o Enterprise. El centro de ayuda de Anthropic indica: "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (cada asiento de un plan Team se asigna a una persona específica, y solo esa persona puede usarlo) y "Users can't route their work through another user's account to use that user's remaining usage" (los usuarios no pueden hacer pasar su trabajo por la cuenta de otro usuario para consumir el uso restante de ese usuario) ([planes Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); lo mismo para los [planes Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Por lo tanto, usar la elección automática entre asientos puede infringir los términos de Anthropic. Consulta con tu organización y con Anthropic antes de depender de ella. Los planes personales (Pro, Max) se tratan en la [nota de las preguntas frecuentes sobre los términos](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+
 ## La pestaña Health
 
 La pestaña Health ejecuta las comprobaciones de [`ccam doctor`](/features/doctor) al abrirla y dibuja la misma vista: una primera línea con una marca por cuenta y luego un recuadro por cuenta. Cada fila de un recuadro es un área comprobada, primero `Folder`, `Login` y `Share links`, marcada con `✔` correcto, `ℹ` información, `⚠` una advertencia o `✘` un error, así que ves de un vistazo qué cuenta tiene un problema y dónde. Los resultados que no pertenecen a ninguna cuenta van en un recuadro `General`.
@@ -73,25 +75,26 @@ La pestaña Health ejecuta las comprobaciones de [`ccam doctor`](/features/docto
 ```console
  ✘ personal   ⚠ work
 
- ╭─ ✘ personal · 3 problems ──────────────────────────────────────────────────╮
- │ ⚠ Folder       folder permissions are 755 (should be 0700)                 │
- │ ℹ              unknown entries (Claude Code layout may have changed):      │
- │                newthing                                                    │
- │ ⚠ Login        .credentials.json permissions are 644 (should be 0600)      │
- │ ✔              login valid (me@example.com)                                │
- │ ✘ Share links  /home/me/.local/share/ccam/profiles/personal/settings.json: │
- │                set to shared but is a real file, not a link                │
- ╰────────────────────────────────────────────────────────────────────────────╯
- ╭─ ⚠ work · 1 problem ───────────────────────────────────────────────────────╮
- │ ✔ Folder       OK                                                          │
- │ ⚠ Login        not logged in → `ccam login work`                           │
- │ ✔ Share links  share links OK                                              │
- ╰────────────────────────────────────────────────────────────────────────────╯
+ ╭─ ✘ personal · 3 problems ─────────────────────────────────────────────────╮
+ │ ⚠ Folder       folder permissions are 755 (should be 0700)                │
+ │ ℹ              unknown entries (ccam knows the folder layout of Claude    │
+ │                Code 2.1.309; it may have changed): newthing               │
+ │ ⚠ Login        .credentials.json permissions are 644 (should be 0600)     │
+ │ ✔              login valid (me@example.com, Claude Team · Acme)           │
+ │ ✘ Share links  /home/me/.local/share/ccam/profiles/personal/settings.json │
+ │                : set to shared but is a real file, not a link             │
+ │ ✔ Usage        usage lookup OK                                            │
+ ╰───────────────────────────────────────────────────────────────────────────╯
+ ╭─ ⚠ work · 1 problem ──────────────────────────────────────────────────────╮
+ │ ✔ Folder       OK                                                         │
+ │ ⚠ Login        not logged in → `ccam login work`                          │
+ │ ✔ Share links  share links OK                                             │
+ ╰───────────────────────────────────────────────────────────────────────────╯
 
  4 problems; f repairs the selected box, F all of them (ccam doctor --fix).
 ```
 
-`↑`/`↓` pasan de un recuadro a otro, y el recuadro seleccionado tiene el borde del color de acento. `f` repara solo el recuadro seleccionado, como lo haría `ccam doctor --fix`: en el recuadro de una cuenta repara solo esa cuenta, y en el recuadro `General`, los resultados que no pertenecen a ninguna cuenta (rutas de plugins y atajos); las demás cuentas solo se vuelven a comprobar. Pregunta primero, y un recuadro sin nada que reparar solo dice `nothing to repair in <name>`. `F` repara todo a la vez, como `ccam doctor --fix`, y `r` vuelve a comprobar.
+`↑`/`↓` pasan de un recuadro a otro, y el recuadro seleccionado tiene el borde del color de acento. `f` repara solo el recuadro seleccionado, como lo haría `ccam doctor --fix`: en el recuadro de una cuenta repara solo esa cuenta, y en el recuadro `General`, los resultados que no pertenecen a ninguna cuenta (rutas de plugins y atajos); las demás cuentas solo se vuelven a comprobar. Pregunta primero (``Like `ccam doctor --fix`: missing links and group folders are made, and a real file where a link belongs is backed up first; where the group has its own copy, the account then sees the group's. Nothing is lost.``), y un recuadro sin nada que reparar solo dice `nothing to repair in <name>`. `F` repara todo a la vez, como `ccam doctor --fix`, y `r` vuelve a comprobar.
 
 ## Cambiar grupos
 
@@ -109,7 +112,7 @@ En la pestaña Groups, `Enter` abre el editor: los elementos a la izquierda, las
     2. No
 ```
 
-Primero se pregunta por cada archivo que difiere de la copia del grupo (conservar el del grupo, usar el mío o combinar). Después el cambio se ejecuta en segundo plano con el mismo código que [`ccam group`](/features/share): primero se guarda la configuración, los datos de cada cuenta se mueven en orden y los originales van a `.ccam-backup/`. Un cambio que movería los datos de una cuenta en ejecución se rechaza con el nombre de la cuenta.
+Primero se pregunta por cada archivo que difiere de la copia del grupo (conservar el del grupo, usar el mío o combinar). Después el cambio se ejecuta en segundo plano con el mismo código que [`ccam group`](/features/share): primero se guarda la configuración, los datos de cada cuenta se mueven en orden y los originales van a `.ccam-backup/`; una cuenta que deja de compartir servidores MCP conserva los servidores del grupo en su `.claude.json`. Un cambio que movería los datos de una cuenta en ejecución se rechaza con el nombre de la cuenta, también cuando la cuenta se inició mientras el plan estaba abierto, y un plan que quedó desactualizado por el cambio de grupos de otro ccam se rechaza con `the groups changed while this plan waited; nothing was moved, make the change again`. Mientras otro ccam cambia los grupos, un nuevo cambio, cambio de nombre o eliminación dice `another ccam is changing the groups right now`; después de un cambio que se quedó a medias, esperan hasta que `F` en la pestaña Health (o `ccam doctor --fix`) lo haya terminado.
 
 ## Agregar una cuenta
 
@@ -124,9 +127,13 @@ Primero se pregunta por cada archivo que difiere de la copia del grupo (conserva
 
 `Esc` vuelve un paso atrás y, en el primer paso, cierra el asistente.
 
+## Quitar una cuenta
+
+`x` pregunta antes de que ocurra nada, con No seleccionado, y dice lo que hace la eliminación: `It is logged out first (its login is revoked), then its folder goes to ccam's trash; the groups' shared files stay.` Para una cuenta con clave de API no hay inicio de sesión que revocar, y cuando otra cuenta tiene el mismo inicio de sesión no se cierra su sesión. Una cuenta importada conserva su carpeta: `It was imported, so its folder /home/me/.claude stays where it is: it leaves its groups first and keeps a copy of what they share, then ccam forgets it.`
+
 ## Colores
 
-Los colores siguen los roles de la interfaz de terminal de Claude Code, así que ccam encaja a su lado; los nombres de grupo reciben un color según su nombre. ccam le pregunta a la terminal por su fondo y elige un tema claro u oscuro. Puedes fijar uno tú mismo en `config.toml`:
+Los colores siguen los roles de la interfaz de terminal de Claude Code, así que ccam encaja a su lado; los nombres de grupo reciben un color según su nombre. ccam le pregunta a la terminal por su fondo y elige un tema claro u oscuro. Puedes fijar uno tú mismo al principio de `config.toml`, antes del primer `[[group]]`, `[[profile]]` o `[[folder]]`:
 
 ```toml
 theme = 'dark'   # auto (default), dark, light, dark-daltonized, light-daltonized, dark-ansi, light-ansi
@@ -139,7 +146,9 @@ Los temas `-daltonized` son para el daltonismo rojo-verde y los temas `-ansi` us
 - El panel llama a las mismas funciones que los comandos, así que se cumplen todas las reglas: planes antes de mover datos, rechazos para las cuentas en ejecución, copias de seguridad y tokens de inicio de sesión que nunca salen de una cuenta.
 - El panel no tiene ejecución de prueba: `ccam --dry-run` sin un nombre imprime cómo se iniciaría la cuenta de esta carpeta, y `o` sobre una cuenta ofrece una ejecución de prueba de ese único inicio.
 - La terminal se restaura antes de que se inicie Claude Code o se abra el inicio de sesión.
-- En una pantalla demasiado pequeña para un diálogo, primero se ocultan las filas de la pestaña; las líneas se recortan con `…` en lugar de partirse.
+- En una pantalla demasiado pequeña para un diálogo, primero se ocultan las filas de la pestaña; las líneas se recortan con `…` en lugar de partirse. En una pantalla baja se quitan después las líneas en blanco y la descripción de la pestaña, para que se mantenga la línea de teclas. Por debajo de 40 columnas u 8 filas el panel solo muestra `Too small: ccam needs 40x8 (now 36x7)`.
+- `Ctrl+C` mientras se aplica un cambio, una eliminación, una actualización o una reparación espera a que termine: la línea de estado dice `ccam quits when it is done.`
+- Después de que `U` haya actualizado ccam, la oferta no vuelve cuando el panel regresa de agregar una cuenta o de un inicio de sesión.
 
 ## Relacionado
 

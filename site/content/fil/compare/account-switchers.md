@@ -1,10 +1,10 @@
 ---
 title: Ang ccam at iba pang Claude Code account switcher
 description: Ang ccam kumpara sa claude-swap, CCS, clausona, clauth, CAAM, cux at iba pang tool sa pag-switch ng Claude Code account, at aling paraan ang bagay saan.
-updated: 2026-10-21
+updated: 2026-10-24
 order: 2
 translation: machine
-sourceHash: c74be64d2978
+sourceHash: 6d08203f1ea6
 ---
 
 May dalawang paraan ang mga tool sa pag-switch ng Claude Code account. Karamihan ay nagpapalit ng login sa loob ng iisang `~/.claude` folder, kaya isang account lang ang aktibo sa bawat pagkakataon. Ang iba, kasama ang ccam, ay nagbibigay sa bawat account ng sariling folder gamit ang `CLAUDE_CONFIG_DIR`, kaya nananatiling naka-log in ang bawat account at puwedeng tumakbo nang sabay ang ilan. Nagdadagdag ang ccam ng shared na settings at MCP server, at itinutuloy nito ang isang usapan sa folder ng ibang account.
@@ -54,7 +54,7 @@ Ang ccswap ay fork ng claude-swap na namamahala rin ng mga Codex login. Nagbibig
 
 Hindi kailanman kinokopya ng ccam ang isang Claude login mula sa isang lugar papunta sa iba. Nananatili ang login ng bawat account sa sarili nitong folder, o sa macOS, sa sariling Keychain item ng folder na iyon, at ang Claude Code ang nagre-renew nito. Walang naka-save na kopya na puwedeng mawala sa pagkakatugma. Ang dati nang `~/.claude` na inirehistro gamit ang `ccam import` ay nananatili sa Keychain item na ginagamit ng karaniwang `claude`, kaya naka-sign in pa rin ito alinmang paraan.
 
-Nire-renew lang mismo ng ccam ang expired na token kapag pinatakbo mo ang `ccam usage --refresh`. Kumukuha muna ito ng lock at tumatanggi habang tumatakbo ang account na iyon, kaya hindi nito kailanman pinapalitan ang token habang may live na session.
+Nire-renew lang mismo ng ccam ang expired na token kapag pinatakbo mo ang `ccam usage --refresh`. Kumukuha muna ito ng lock at tumatanggi habang tumatakbo ang account na iyon, paano man sinimulan ang Claude Code (pati ang mga background session at ang daemon nila), at habang nire-renew mismo ng Claude Code ang login na iyon, kaya hindi nito kailanman pinapalitan ang token habang may live na session.
 
 ### Walang tumatakbo sa pagitan mo at ng Claude Code
 
@@ -66,19 +66,21 @@ Nagdadagdag lang ng mga 4 ms ang pagsisimula ng account sa ganitong paraan, mas 
 
 Limang magkakahiwalay na item ang mga MCP server, `settings.json`, `CLAUDE.md`, mga extension (agent, command, skill, plugin) at ang kasaysayan ng usapan. Pinapangalanan ng isang grupo ang mga item na shine-share nito at ang mga account na kasapi nito, kaya puwedeng mag-share ng kasaysayan ang dalawang account sa trabaho sa isang `work` na grupo habang may sariling kasaysayan ang personal na account, at iisang MCP server ang shine-share ng tatlo sa pamamagitan ng `default`. Inililipat ng `ccam group set work --add memory` ang bawat account ng grupo sa iisang plano; ganoon din ang ginagawa ng [dashboard](/features/dashboard) gamit ang mga checkbox, at ginagawa nitong kulay-abo ang item na nakukuha na ng isang account mula sa ibang grupo.
 
-- Ipinapasa ang mga MCP server gamit ang `--mcp-config` sa launch, kaya bilang default ay hindi kailanman ine-edit ng ccam ang `.claude.json`, ang file na isinusulat muli ng Claude Code habang tumatakbo ito. Nagdadagdag ang `ccam mcp add` ng server nang isang beses para sa buong grupo.
+- Ipinapasa ang mga MCP server gamit ang `--mcp-config` sa launch, kaya bilang default ay hindi ginagalaw ng launch ang `.claude.json`, ang file na isinusulat muli ng Claude Code habang tumatakbo ito. Sumusulat lang doon ang ccam sa mga hakbang na nagsasabi nito, sa ilalim ng lock ng Claude Code at may backup: para sa Remote Control pagkatapos magtanong, kapag umalis o bumalik ang isang account sa pag-share ng MCP, at para sa `ccam mcp import`. Nagdadagdag ang `ccam mcp add` ng server nang isang beses para sa buong grupo.
 - Ang ibang item ay mga link papunta sa folder ng grupo, kaya lumalabas agad sa iba ang pagbabagong ginawa sa isang account. Walang kinokopya sa launch.
 - Hindi kailanman shine-share ang mga login, ang `.claude.json` at ang tumatakbong state.
 
 ### Ipinapakita muna at bina-backup ang bawat pagbabago
 
-Nagpi-print ng plano ang `ccam group` at `ccam migrate` at nagtatanong muna bago maglipat ng anuman. Kapag magkaiba ang isang file sa account at sa grupo nito, ikaw ang pipili: panatilihin ang sa grupo, gamitin ang sa iyo, o i-merge ang JSON. Napupunta ang mga orihinal sa `.ccam-backup/<time>/`, napupunta sa isang trash folder ang folder ng inalis na account, at pinapalitan ang mga file sa isang rename, kaya naiiwan ang lumang file kapag naantala ang pagsusulat. Ipinapakita ng `--dry-run` kung ano ang gagawin ng launch, pag-share, migration, shortcut, update at pag-aayos. Inaayos ng `ccam doctor --fix` ang mga sirang link at permission.
+Nagpi-print ng plano ang `ccam group` at `ccam migrate` at nagtatanong muna bago maglipat ng anuman. Kapag magkaiba ang isang file sa account at sa grupo nito, ikaw ang pipili: panatilihin ang sa grupo, gamitin ang sa iyo, o i-merge ang JSON; sa loob ng mga folder, nananatili ang kopya ng grupo at pinapangalanan ng plano ang mga file na magkaiba. Napupunta ang mga orihinal sa `.ccam-backup/<time>/`, ina-log out ang inalis na account at napupunta sa isang trash folder ang folder nito, at pinapalitan ang mga file sa isang rename, kaya naiiwan ang lumang file kapag naantala ang pagsusulat. Ipinapakita ng `--dry-run` kung ano ang gagawin ng launch, pag-share, migration, shortcut, update at pag-aayos. Inaayos ng `ccam doctor --fix` ang mga sirang link at permission.
 
 ### Ang parehong usapan sa susunod na account
 
 Sabay-sabay na tinatanong ng `ccam next --auto --continue` ang bawat account tungkol sa usage nito, binubuksan ang may pinakamaraming natitira at itinutuloy ang usapan. Kapag shared ang kasaysayan, iyon din ang parehong usapan; kung hindi, kinokopya ito ng Claude Code sa bagong account (`--resume <file> --fork-session`), at sinasabi ng ccam kung ilang token ang babasahin ulit ng unang sagot. Kapag pinahinto ng limit ang isang session, nagpapakita ng notification ang hook ng ccam plugin, at ipinapasa ng `/ccam:switch` ang usapan. Ikaw ang nagpapasya kung kailan lilipat; walang nagbabantay sa usage mo sa background, at nananatili sa iisang organisasyon ang mga awtomatikong pagpili, kaya hindi kailanman aksidenteng mapupunta sa pribadong account ang usapan ng kompanya. Iminumungkahi ng status line ang command kapag umabot na sa 90% ang isang account.
 
 Hindi ka kayang hintayin ng mga script, kaya ang `ccam --fallback work -p "…"` ang lumilipat para sa kanila: kapag naabot ng account ang limit nito, pinapatakbo ulit ang parehong command bilang account na may pinakamaraming natitira, at ang output lang ng run na natapos ang ipi-print. Ang pagkabigong hindi dahil sa usage limit ay ipinapasa nang gaya ng dati. Para sa mga parallel worker, binibigyan ng `ccam pick` ang bawat isa ng ibang account na may natitira pa, at pareho silang lumalabas na may code 75 kapag wala nang account na may natitira.
+
+**Mga seat ng Team at Enterprise.** Lumilipat din ang awtomatikong pagpili (`ccam next`, `--fallback`, `ccam pick`, ang `n` ng dashboard) sa pagitan ng mga seat ng iisang Claude Team o Enterprise na organisasyon. Sinasabi ng help center ng Anthropic na "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (nakatalaga ang bawat seat ng Team plan sa iisang partikular na tao, at siya lang ang puwedeng gumamit nito) at "Users can't route their work through another user's account to use that user's remaining usage" (hindi puwedeng idaan ng mga user ang trabaho nila sa account ng ibang user para magamit ang natitirang usage ng user na iyon) ([mga Team plan](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); ganoon din sa [mga Enterprise plan](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Kaya maaaring lumabag sa terms ng Anthropic ang paggamit ng awtomatikong pagpili sa pagitan ng mga seat. Magtanong muna sa iyong organisasyon at sa Anthropic bago ka umasa rito. Saklaw ng [paalala tungkol sa terms sa FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) ang mga personal na plan (Pro, Max).
 
 ### Ang tamang account sa bawat folder
 
@@ -91,7 +93,7 @@ Ang ccam ay static binary na mga 10 MB at walang runtime na kailangang i-install
 ## Kung saan mas marami ang nagagawa ng ibang tool
 
 - Kayang kusang ilipat ng claude-swap, clauth, cux, CAAM at CCSwitcher ang isang tumatakbong interactive session kapag lumampas ang isang account sa usage threshold. Inililipat ng ccam ang mga `-p` run gamit ang `--fallback` at iniiwan sa iyo ang mga interactive session, na may notification sa limit at `/ccam:switch`.
-- Sa Windows nang walang Developer Mode, nagshe-share ang ccam ng mga folder pero hindi ng mga iisang file gaya ng `settings.json`; kinokopya naman ang mga ito roon ng claude-swap at CCS.
+- Sa Windows nang walang Developer Mode, nagshe-share ang ccam ng mga folder pero hindi ng mga iisang file gaya ng `settings.json` (kaya ang mga MCP server at extension lang ang shine-share ng unang `ccam add`); kinokopya naman ang mga ito roon ng claude-swap at CCS.
 - Ipinapakita ng CCSwitcher, Claude Switcher at claude-swap ang usage sa macOS menu bar.
 - Namamahala rin ang CCS, clausona, CAAM, clauth, ccswap at Claude Switcher ng Codex at iba pang coding agent.
 - Kaya rin ng clausona na i-on at i-off ang mga extension bawat account (ipinapakita lang ang mga ito ng `ccam ext` ng ccam), sinusubaybayan nito ang lokal na gastos sa token, at may kasama itong mga Claude Code plugin na nagpapatakbo ng grupo ng mga worker sa tmux at iba pang terminal.

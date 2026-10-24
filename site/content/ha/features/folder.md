@@ -1,10 +1,10 @@
 ---
 title: Asusai bisa folda
 description: ccam folder yana sa folda da duk abin da ke ƙarƙashinta su yi amfani da asusu ɗaya idan ka fara Claude Code babu sunan asusu, kamar work don lambar kamfani.
-updated: 2026-10-20
+updated: 2026-10-23
 order: 11
 translation: machine
-sourceHash: 46d1410a3d81
+sourceHash: 48de98d42b99
 ---
 
 `ccam folder work ~/code/company` yana sa kowane farawa ba tare da sunan asusu ba a cikin `~/code/company`, da kowace folda da ke ƙarƙashinta, ya fara Claude Code a matsayin `work`. A wajenta, asusun tsoho yana farawa kamar da. Ambaton asusu, da `ccam personal` ko gajeren umarni kamar `ccpersonal`, koyaushe yana fara wannan asusun.
@@ -34,7 +34,7 @@ Waɗannan farawa suna amfani da asusun foldar:
 - `ccam -p "…"` da duk wani farawa wanda argument ɗinsa na farko zaɓi ne na Claude Code
 - `ccam run` ba tare da suna ba, da `ccam --dry-run`
 - `ccam --fallback -p "…"` don yunƙurinsa na farko
-- dashboard, `ccam` shi kaɗai, wanda ke farawa da alamar zaɓinsa a kan asusun foldar
+- dashboard, `ccam` shi kaɗai, wanda ke farawa da alamar zaɓinsa a kan asusun foldar, har ma idan ka isa foldar ta mahaɗi na alama (symbolic link)
 
 ## Zaɓuɓɓuka
 
@@ -59,7 +59,7 @@ account = 'work'
 2. Farawa ba tare da suna ba yana kiran `launcher.HereProfile`. Idan babu shigarwa, yana ɗaukar asusun tsoho nan take.
 3. In ba haka ba yana kwatanta foldar aiki da kowane `path` a matsayin strings: foldar kanta ko wadda ke ƙarƙashinta, ba taɓa foldar da kawai take farawa da haruffa iri ɗaya ba (`/code/company` ba ya rufe `/code/companyx`). Shigarwa mafi zurfi ce ke cin nasara, don haka `~/code` zai iya zama `personal` yayin da `~/code/company` yake `work`.
 4. Sai idan foldar aiki kamar yadda take ba ta dace da komai ba, ccam yana warware symbolic links ɗinta kuma yana sake kwatantawa sau ɗaya.
-5. A Windows kwatantawar ba ta kula da manyan haruffa da ƙanana, kamar yadda Windows ke yi.
+5. A Windows da macOS kwatantawar ba ta kula da manyan haruffa da ƙanana, kamar yadda tsarukan fayilolinsu suka saba yi.
 
 Ba a karanta wani fayil banda `config.toml`, don haka farawa a cikin folda ba ya ɗaukar lokacin da za a iya auna (4.0 ms da shigarwa ko babu, `hyperfine`, gudu 300).
 

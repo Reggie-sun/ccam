@@ -1,10 +1,10 @@
 ---
 title: Аккаунты с ключом API
 description: ccam add --api добавляет аккаунт с ключом API для API Anthropic или шлюза; ключ читается при запуске из переменной или команды и не сохраняется.
-updated: 2026-10-20
+updated: 2026-10-23
 order: 13
 translation: machine
-sourceHash: "a903c92f2c50"
+sourceHash: "232a71525e42"
 ---
 
 Аккаунт с ключом API запускает Claude Code с ключом API вместо входа по подписке Claude: для API Anthropic или для эндпоинта, который понимает тот же формат Messages, например шлюза LiteLLM или OpenRouter. ccam не хранит ключ. Он читает его при каждом запуске аккаунта из переменной окружения или из команды, например менеджера паролей, и передаёт его только этому процессу Claude Code.
@@ -35,7 +35,7 @@ $ ccam list
 | --- | --- | --- |
 | `--api` | Добавить аккаунт с ключом API вместо входа | выкл. |
 | `--key-from env:NAME` | Читать ключ из переменной окружения `NAME` | |
-| `--key-from command:COMMAND` | Выполнить `COMMAND` (через `sh -c` или `cmd /C` в Windows) и использовать первую выведенную строку | |
+| `--key-from command:COMMAND` | Выполнить `COMMAND` (через `sh -c` или в Windows так, как если бы он был набран в `cmd /d /s /c "…"`, с сохранением кавычек) и использовать первую выведенную строку | |
 | `--base-url <url>` | Эндпоинт (`ANTHROPIC_BASE_URL`) | API Anthropic |
 | `--auth api-key\|bearer` | Передавать ключ как `ANTHROPIC_API_KEY` (`x-api-key`) или как `ANTHROPIC_AUTH_TOKEN` (`Authorization: Bearer`, что обычно нужно шлюзам) | `api-key` |
 | `--model <model>` | Модель (`ANTHROPIC_MODEL`) | модель Claude Code по умолчанию |
@@ -66,10 +66,17 @@ model = 'claude-sonnet-5-5'
 
 ## Безопасность и особые случаи
 
-- Ключ никогда не записывается в `config.toml`, кэш или журнал, а `ccam --dry-run gw` его не читает: источник `command:` при пробном запуске не выполняется.
+- Ключ никогда не записывается в `config.toml`, кэш или журнал, а `ccam --dry-run gw` его не читает: источник `command:` при пробном запуске не выполняется. Вместо этого пробный запуск показывает эндпоинт, модель и источник ключа:
+
+  ```console
+  $ ccam --dry-run gw -p hi
+  CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/gw CCAM_PROFILE=gw ANTHROPIC_BASE_URL=https://llm.example.com ANTHROPIC_MODEL=claude-sonnet-5-5 ANTHROPIC_AUTH_TOKEN="$(pass show llm/gateway-key | head -n 1)" /home/me/.local/bin/claude -p hi
+  ```
+
+  Унаследованная переменная, которую запуск удаляет, показывается в начале как `env -u <name>`. Если у источника `env:` переменная пуста, пробный запуск завершается ошибкой, как и сам запуск.
 - `ccam add --api` сразу проверяет источник `env:` и предупреждает, если переменная пуста; источник `command:` впервые выполняется при запуске.
 - `ccam login` и `ccam logout` отказываются работать с аккаунтом с ключом API, поскольку у него нет входа. `ccam doctor` показывает его эндпоинт и источник ключа и предупреждает, если переменная `env:` пуста.
-- `ccam usage` показывает для него `API`. `ccam next --auto`, `--fallback` и `ccam pick` выбирают только среди аккаунтов с подпиской, потому что у ключа API нет 5-часового или недельного лимита для сравнения.
+- `ccam usage` показывает для него `no limits (API)`. `ccam next --auto`, `--fallback` и `ccam pick` выбирают только среди аккаунтов с подпиской, потому что у ключа API нет 5-часового или недельного лимита для сравнения.
 - Общий `settings.json` с блоком `env` или `apiKeyHelper` применяется к каждому аккаунту группы, включая аккаунты с ключом API. Не храните настройки провайдера в общих настройках или поместите аккаунт с ключом API в группу без `settings`.
 
 ## См. также

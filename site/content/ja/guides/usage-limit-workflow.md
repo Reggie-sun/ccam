@@ -1,13 +1,13 @@
 ---
 title: Claude Codeが使用量の上限に達したときの対処法
 description: リセットを待つか、別のClaude Codeアカウントですぐに同じ会話を続けます。5時間の上限と週間の上限のしくみと対処の手順を説明します。
-updated: 2026-10-19
+updated: 2026-10-24
 order: 3
 translation: machine
-sourceHash: "38b80d780bba"
+sourceHash: "049a46684c7b"
 ---
 
-アカウントが使用量の上限（レート制限とも呼ばれます）に達したときの選択肢は2つです。上限がリセットされるまで待つか、自分が所有する別のアカウントで同じ会話をすぐに続けるかです。ccamを使う場合、アカウント間で会話履歴を共有しておけば、後者は`ccam next --auto --continue`という1つのコマンドで済みます。
+アカウントが使用量の上限（レート制限とも呼ばれます）に達したときの選択肢は2つです。上限がリセットされるまで待つか、自分が所有する別のアカウントで同じ会話をすぐに続けるかです。ccamを使う場合、後者は`ccam next --auto --continue`という1つのコマンドで済みます。
 
 ## Claude Codeにはどんな上限がありますか？
 
@@ -38,8 +38,13 @@ ccam usage
 ```
 
 ```console
- 1 personal  ████████ 100% 22m       █████░░░  68% 1d 9h     just now
- 2 work      █░░░░░░░   8% 4h 12m    ██░░░░░░  19% 5d 2h     just now
+ 1 personal  just now
+   5-hour   ████████████████████ 100%  resets in 22m
+   Weekly   ██████████████░░░░░░  68%  resets in 1d 9h
+ 2 work      just now
+   5-hour   ██░░░░░░░░░░░░░░░░░░   8%  resets in 4h 12m
+   Weekly   ████░░░░░░░░░░░░░░░░  19%  resets in 5d 2h
+→ Most headroom: work   (open it with ccam next --auto)
 ```
 
 最も余裕があるアカウントで会話を開きます。
@@ -50,11 +55,13 @@ ccam next --auto --continue
 
 Claude Codeが`work`として起動し、現在のフォルダーで最も新しい会話を、それまでのやり取りをすべて含めて開きます。履歴を共有していれば（上の`ccam group set default --add history`）、会話は1つのままです。共有していなければ、Claude Codeが会話を`work`にコピーし、ccamはその最初の応答で読み直すトークン数を表示します。
 
-Claude Codeに[ccamプラグイン](/docs/install#claude-code-plugin)を入れておくと、上限で止まったセッションが通知を表示します。`/ccam:switch`（または`/ccam:switch work`）は、`ccam next --continue`のために会話をメモに残すので、どの会話を続けるかを推測する必要がありません。
+Claude Codeに[ccamプラグイン](/docs/install#claude-code-plugin)を入れておくと、上限で止まったセッションが通知を表示し、満杯の時間枠を記録するので、`ccam next --auto`がリセット前にそのアカウントを再び選ぶことはありません。また、`/ccam:switch`（または`/ccam:switch work`）は、`ccam next --continue`のために会話をメモに残すので、どの会話を続けるかを推測する必要がありません。
+
+**TeamとEnterpriseのシート。** 自動的な選択（`ccam next`、`--fallback`、`ccam pick`、ダッシュボードの`n`）は、同じClaude TeamまたはEnterpriseの組織に属するシート間でも切り替えます。Anthropicのヘルプセンターには、「Each seat on a Team plan is assigned to one named individual, and only that person may use it」（Teamプランの各シートは1人の指定ユーザーに割り当てられ、そのユーザーのみが使用できます）、「Users can't route their work through another user's account to use that user's remaining usage」（ユーザーは別のユーザーのアカウントを通じて作業をルーティングして、そのユーザーの残りの使用量を使用することはできません）と書かれています（[Teamプラン](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)。[Enterpriseプラン](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)も同様です）。そのため、シート間で自動的な選択を使うと、Anthropicの規約に違反するおそれがあります。自動的な選択に頼る前に、所属する組織とAnthropicに確認してください。個人プラン（Pro、Max）については、[FAQの規約に関する説明](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)を参照してください。
 
 ## ccamは自動でアカウントを切り替えますか？
 
-いいえ。作業中にccamは動いていません。ccamはClaude Codeを起動し、自身をClaude Codeに置き換えます。切り替えるタイミングはあなたが決めます。`ccam next --auto`は、5時間の使用量が最も少ないアカウントを選び、100%に達したアカウント、ログインしていないアカウント、別の組織のアカウントは飛ばします。`config.toml`で`relay = true`を設定すると、ccamは代わりにセッションのそばで待機するので、`/ccam:switch`だけで会話が自動で引き継がれます。実行中のセッションのログインを入れ替えるツールもあります。違いは[ccamとほかのアカウント切り替えツール](/compare/account-switchers)で説明しています。
+いいえ。作業中にccamは動いていません。ccamはClaude Codeを起動し、自身をClaude Codeに置き換えます。切り替えるタイミングはあなたが決めます。`ccam next --auto`は、5時間の使用量が最も少ないアカウントを選び、100%に達したアカウント、ログインしていないアカウント、別の組織のアカウントは飛ばします。`config.toml`で`relay = true`を設定すると、ccamは代わりにセッションのそばで待機するので、`/ccam:switch`だけで、セッションのオプション、権限モード、effortレベルを保ったまま、会話が自動で引き継がれます。実行中のセッションのログインを入れ替えるツールもあります。違いは[ccamとほかのアカウント切り替えツール](/compare/account-switchers)で説明しています。
 
 ## 注意点
 

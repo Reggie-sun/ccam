@@ -2,10 +2,10 @@
 title: پرسش‌های متداول
 metaTitle: "پرسش‌های متداول ccam: چند حساب Claude Code"
 description: پاسخ به پرسش‌هایی درباره ccam، حساب‌های Claude Code، سقف مصرف، اشتراک‌گذاری، حریم خصوصی و سیستم‌های پشتیبانی‌شده.
-updated: 2026-10-21
+updated: 2026-10-24
 order: 6
 translation: machine
-sourceHash: bc944d7dcab9
+sourceHash: c4e3b89bb4ea
 ---
 
 ## آیا ccam ابزار رسمی Anthropic است؟
@@ -15,6 +15,8 @@ sourceHash: bc944d7dcab9
 ## آیا اجازه دارم از چند حساب Claude Code استفاده کنم؟
 
 این به شرایط هر حساب و، در مورد حساب‌های کاری، به سیاست سازمان شما بستگی دارد. پیش از استفاده از چند حساب، آن‌ها را بررسی کنید. ccam فقط جابه‌جایی بین حساب‌هایی را که از قبل دارید آسان‌تر می‌کند.
+
+**صندلی‌های Team و Enterprise.** انتخاب خودکار (`ccam next`، `--fallback`، `ccam pick`، کلید `n` در داشبورد) میان صندلی‌های همان سازمان Claude Team یا Enterprise هم جابه‌جا می‌شود. مرکز راهنمای Anthropic می‌گوید: «Each seat on a Team plan is assigned to one named individual, and only that person may use it» (هر صندلی در طرح Team به نام یک فرد مشخص اختصاص داده می‌شود و فقط همان شخص اجازه دارد از آن استفاده کند) و «Users can't route their work through another user's account to use that user's remaining usage» (کاربران نمی‌توانند کار خود را از طریق حساب کاربر دیگری انجام دهند تا از سهمیه مصرف باقی‌مانده آن کاربر استفاده کنند) ([طرح‌های Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)؛ و همین‌طور برای [طرح‌های Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). بنابراین استفاده از انتخاب خودکار میان صندلی‌ها ممکن است شرایط Anthropic را نقض کند. پیش از آنکه به آن تکیه کنید، از سازمان خود و Anthropic بپرسید. برای طرح‌های شخصی (Pro، Max)، پاراگراف بالا را ببینید.
 
 ## آیا ccam سقف مصرف را دور می‌زند؟
 
@@ -26,11 +28,11 @@ sourceHash: bc944d7dcab9
 
 ## چگونه یک گفتگو را در حساب دیگری ادامه دهم؟
 
-تاریخچه گفتگو را با `ccam group set default --add history` بین حساب‌ها به اشتراک بگذارید (یا در گروهی مخصوص خودشان: `ccam group add pair --items history --members work,side`)، سپس `ccam next --continue` را اجرا کنید. Claude Code آخرین گفتگوی پوشه فعلی را در حساب بعدی باز می‌کند.
+در همان پوشه `ccam next --continue` را اجرا کنید: آخرین گفتگوی پوشه را به حساب بعدی منتقل می‌کند (`--auto` برای حسابی که بیشترین ظرفیت را دارد). درون Claude Code، `/ccam:switch` از [پلاگین ccam](/docs/install#claude-code-plugin) همین کار را برای نشستی که در آن هستید انجام می‌دهد. وقتی دو حساب تاریخچه گفتگو را به اشتراک بگذارند (`ccam group set default --add history`، یا در گروهی مخصوص خودشان: `ccam group add pair --items history --members work,side`)، حساب جدید همان گفتگو را باز می‌کند؛ در غیر این صورت Claude Code آن را در تاریخچه حساب جدید کپی می‌کند.
 
 ## آیا ccam اطلاعات ورود مرا می‌بیند یا جایی می‌فرستد؟
 
-ccam هرگز اطلاعات ورود Claude شما را بین حساب‌ها به اشتراک نمی‌گذارد. توکن دسترسی یک حساب را فقط وقتی می‌خواند که `ccam usage`، `ccam next --auto` یا `ccam doctor` را اجرا کنید، و فقط برای اینکه مصرف همان حساب را از نقطه پایانی مصرف Anthropic بپرسد. `ccam migrate` ورودهای ذخیره‌شده سرورهای MCP را از `~/.claude` در فایل‌های ورود خود حساب‌هایتان روی همان رایانه کپی می‌کند. ccam هیچ تله‌متری ندارد. جز این پرس‌وجوها، تنها درخواستی که خودش می‌فرستد پرسش داشبورد از GitHub درباره آخرین نسخه ccam است که هیچ چیزی درباره شما یا حساب‌هایتان در بر ندارد.
+ccam هرگز اطلاعات ورود Claude شما را بین حساب‌ها به اشتراک نمی‌گذارد یا کپی نمی‌کند، و هرگز ورودهای سرورهای MCP را کپی نمی‌کند. توکن دسترسی یک حساب را فقط وقتی می‌خواند که `ccam usage`، `ccam next --auto` یا `ccam doctor` را اجرا کنید، و فقط برای اینکه مصرف همان حساب را از نقطه پایانی مصرف Anthropic بپرسد، و توکن منقضی‌شده را فقط با `ccam usage --refresh` تمدید می‌کند؛ با `usage_source = "claude"` اصلاً توکن را نمی‌خواند. `ccam ext` و `ccam doctor` نام ورودهای MCP یک حساب را می‌خوانند، هرگز توکن‌هایشان را. ccam هیچ تله‌متری ندارد. جز این پرس‌وجوها، تنها درخواستی که خودش می‌فرستد پرسش داشبورد از GitHub درباره آخرین نسخه ccam است که هیچ چیزی درباره شما یا حساب‌هایتان در بر ندارد.
 
 ## چگونه روی یک سرور راه دور وارد شوم؟
 
@@ -38,7 +40,7 @@ ccam هرگز اطلاعات ورود Claude شما را بین حساب‌ها 
 
 ## حساب‌های من کجا ذخیره می‌شوند؟
 
-در `~/.local/share/ccam/profiles/<name>/`، یک پوشه برای هر حساب. در macOS، خود اطلاعات ورود را Claude Code در Keychain نگه می‌دارد، با نامی که از آن پوشه ساخته می‌شود.
+در `~/.local/share/ccam/profiles/<name>/`، یک پوشه برای هر حساب. در macOS، خود اطلاعات ورود را Claude Code در Keychain نگه می‌دارد، با نامی که از آن پوشه ساخته می‌شود، پس `ccam rename` نام قدیمی پوشه را در آنجا نگه می‌دارد.
 
 ## چه بر سر پوشه ~/.claude فعلی من می‌آید؟
 
@@ -46,11 +48,11 @@ ccam هرگز اطلاعات ورود Claude شما را بین حساب‌ها 
 
 ## ccam از کدام سیستم‌ها پشتیبانی می‌کند؟
 
-Linux (Ubuntu، Debian، Fedora، Arch، Alpine و توزیع‌های دیگر)، macOS و Windows 10 و 11، به‌صورت بومی یا داخل WSL. در Windows، مشترک کردن فایل‌هایی مانند `settings.json` به Developer Mode نیاز دارد؛ پوشه‌های مشترک بدون آن هم کار می‌کنند ([اشتراک در Windows](/features/share#on-windows)).
+Linux (Ubuntu، Debian، Fedora، Arch، Alpine و توزیع‌های دیگر)، macOS و Windows 10 و 11، به‌صورت بومی یا داخل WSL. در Windows، مشترک کردن فایل‌هایی مانند `settings.json` به Developer Mode نیاز دارد؛ پوشه‌های مشترک بدون آن هم کار می‌کنند، و بدون آن نخستین `ccam add` گروه `default` را فقط با سرورهای MCP و افزونه‌ها می‌سازد ([اشتراک در Windows](/features/share#on-windows)).
 
 ## چرا یک سرور MCP فقط در یک حساب دیده می‌شود؟
 
-سرورهایی که داخل یک نشست با `claude mcp add` اضافه می‌شوند فقط برای همان حساب ذخیره می‌شوند. ccam دفعه بعد که آن حساب را اجرا کنید به شما اطلاع می‌دهد؛ سرور را با `ccam mcp import <account> <server>` به گروه مشترک منتقل کنید.
+سرورهایی که داخل یک نشست با `claude mcp add` اضافه می‌شوند فقط برای همان حساب ذخیره می‌شوند، و بدون `-s user` فقط برای پوشه فعلی. ccam دفعه بعد که آن حساب را اجرا کنید به شما اطلاع می‌دهد، و `ccam mcp list` و `ccam ext` آن‌ها را نشان می‌دهند؛ سرور را با `ccam mcp import <account> <server>` به گروه مشترک منتقل کنید.
 
 ## آیا ccam سرعت Claude Code را کم می‌کند؟
 
@@ -62,4 +64,4 @@ Linux (Ubuntu، Debian، Fedora، Arch، Alpine و توزیع‌های دیگر)
 
 ## چگونه ccam را حذف کنم؟
 
-میان‌بر هر حساب را با `ccam shortcut <account> --remove` حذف کنید، `ccam` را از `~/.local/bin` پاک کنید، سپس اگر دیگر به حساب‌ها نیاز ندارید، `~/.config/ccam`، `~/.local/share/ccam` و `~/.local/state/ccam` را حذف کنید. [نصب](/docs/install#uninstall) را ببینید.
+میان‌بر هر حساب را با `ccam shortcut <account> --remove` حذف کنید. اگر `~/.claude` را وارد کرده‌اید و در یک گروه است، اول `ccam remove <name>` را برای آن اجرا کنید تا یک کپی از آنچه به اشتراک می‌گذارد پس بگیرد. سپس `ccam` را از `~/.local/bin` پاک کنید، و اگر دیگر به حساب‌ها نیاز ندارید، `~/.config/ccam`، `~/.local/share/ccam` و `~/.local/state/ccam` را حذف کنید. [نصب](/docs/install#uninstall) را ببینید.

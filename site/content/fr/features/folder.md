@@ -1,10 +1,10 @@
 ---
 title: "Comptes par dossier"
 description: "ccam folder fait utiliser un compte à un dossier et à son contenu quand vous lancez Claude Code sans nom de compte, comme work pour le code de l'entreprise."
-updated: 2026-10-20
+updated: 2026-10-23
 order: 11
 translation: machine
-sourceHash: 46d1410a3d81
+sourceHash: 48de98d42b99
 ---
 
 `ccam folder work ~/code/company` fait que tout lancement sans nom de compte dans `~/code/company`, et dans n'importe quel dossier en dessous, démarre Claude Code avec `work`. En dehors, le compte par défaut démarre comme avant. Nommer un compte, avec `ccam personal` ou un raccourci comme `ccpersonal`, lance toujours ce compte.
@@ -34,7 +34,7 @@ Ces lancements utilisent le compte du dossier :
 - `ccam -p "…"` et tout autre lancement dont le premier argument est une option destinée à Claude Code
 - `ccam run` sans nom, et `ccam --dry-run`
 - `ccam --fallback -p "…"` pour sa première tentative
-- le tableau de bord, `ccam` seul, qui place d'abord son curseur sur le compte du dossier
+- le tableau de bord, `ccam` seul, qui place d'abord son curseur sur le compte du dossier, y compris quand vous êtes arrivé dans le dossier par un lien symbolique
 
 ## Options
 
@@ -59,7 +59,7 @@ account = 'work'
 2. Un lancement sans nom appelle `launcher.HereProfile`. Sans aucune entrée, il prend immédiatement le compte par défaut.
 3. Sinon, il compare le répertoire de travail à chaque `path` sous forme de chaînes : le dossier lui-même ou un dossier en dessous, jamais un dossier qui commence seulement par les mêmes lettres (`/code/company` ne couvre pas `/code/companyx`). L'entrée la plus profonde l'emporte : `~/code` peut ainsi être `personal` pendant que `~/code/company` est `work`.
 4. Seulement si le répertoire de travail tel quel ne correspond à rien, ccam résout ses liens symboliques et compare une seconde fois.
-5. Sous Windows, la comparaison ignore les majuscules et les minuscules, comme le fait Windows.
+5. Sous Windows et macOS, la comparaison ignore les majuscules et les minuscules, comme le font généralement leurs systèmes de fichiers.
 
 Aucun fichier autre que `config.toml` n'est lu : un lancement dans un dossier ne coûte donc aucun temps mesurable (4,0 ms avec ou sans entrées, `hyperfine`, 300 exécutions).
 

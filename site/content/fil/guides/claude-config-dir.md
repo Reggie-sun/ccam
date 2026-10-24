@@ -1,10 +1,10 @@
 ---
 title: Ipinaliwanag ang CLAUDE_CONFIG_DIR
 description: Ano ang ginagawa ng CLAUDE_CONFIG_DIR sa Claude Code, ano ang naka-store sa folder, saan itinatago ng macOS ang login, at aling file ang puwedeng i-share.
-updated: 2026-10-19
+updated: 2026-10-23
 order: 2
 translation: machine
-sourceHash: ef9317030e42
+sourceHash: 2cf08478085f
 ---
 
 Sinasabi ng `CLAUDE_CONFIG_DIR` sa Claude Code kung aling folder ang gagamitin sa halip na `~/.claude`. Naroon ang lahat ng partikular sa account: ang login, settings, mga MCP server, plugin at kasaysayan ng usapan. Kapag itinuro mo ito sa magkakaibang folder, magkakaroon ka ng magkakahiwalay na account.
@@ -19,7 +19,7 @@ Oo. Nakalista ito sa mga [environment variable](https://code.claude.com/docs/en/
 
 ## Ano ang nasa loob ng folder?
 
-Sinuri gamit ang Claude Code 2.1.302:
+Sinuri gamit ang Claude Code 2.1.309:
 
 | Path | Nilalaman | Puwedeng i-share |
 | --- | --- | --- |
@@ -34,15 +34,15 @@ Sinuri gamit ang Claude Code 2.1.302:
 
 ## Ano ang madalas ikalito?
 
-**Kapag walang `CLAUDE_CONFIG_DIR`, wala sa loob ng `~/.claude` ang `.claude.json`.** Sa ganoong kaso, iniimbak ito ng Claude Code sa `~/.claude.json`, katabi ng folder. Kung sisimulan mong gamitin ang `CLAUDE_CONFIG_DIR=~/.claude`, hahanapin ng Claude Code ang `~/.claude/.claude.json` sa halip at hindi nito mahahanap ang account mo. Inaayos ito ng `ccam import` sa pamamagitan ng pag-link sa dalawa.
+**Kapag walang `CLAUDE_CONFIG_DIR`, wala sa loob ng `~/.claude` ang `.claude.json`.** Sa ganoong kaso, iniimbak ito ng Claude Code sa `~/.claude.json`, katabi ng folder. Kung sisimulan mong gamitin ang `CLAUDE_CONFIG_DIR=~/.claude`, hahanapin ng Claude Code ang `~/.claude/.claude.json` sa halip at hindi nito mahahanap ang account mo. Inaayos ito ng `ccam import` sa pamamagitan ng pag-link sa dalawa. Kung may sarili nang `.claude.json` ang `~/.claude`, mula sa naunang pagpapatakbo gamit ang `CLAUDE_CONFIG_DIR=~/.claude`, hinahayaan ng ccam ang parehong file at sinasabi ito, dahil ikaw lang ang nakakaalam kung alin ang tama.
 
-**Sa macOS, nasa Keychain ang login, wala sa folder.** Iniimbak ito ng Claude Code sa ilalim ng pangalang `Claude Code-credentials`, na sinusundan ng maikling hash ng path ng folder kapag nakatakda ang `CLAUDE_CONFIG_DIR`. Kaya magkakahiwalay na Keychain entry ang nakukuha ng magkakahiwalay na folder. Kung tinanggihan ng Keychain ang pagsulat, babalik ang Claude Code sa `.credentials.json` sa folder, gaya ng inilalarawan sa [dokumentasyon nito](https://code.claude.com/docs/en/authentication#credential-management).
+**Sa macOS, nasa Keychain ang login, wala sa folder.** Iniimbak ito ng Claude Code sa ilalim ng pangalang `Claude Code-credentials`, na sinusundan ng `-` at ng unang 8 hex digit ng SHA-256 ng path ng folder kapag nakatakda ang `CLAUDE_CONFIG_DIR`, para sa account na pinangalanan ng `$USER`. Kaya magkakahiwalay na Keychain entry ang nakukuha ng magkakahiwalay na folder, at nawawala ang login ng folder na inilipat o pinalitan ng pangalan; iyan ang dahilan kung bakit pinapanatili ng `ccam rename` ang pangalan ng folder sa macOS. Kung tinanggihan ng Keychain ang pagsulat, babalik ang Claude Code sa `.credentials.json` sa folder, gaya ng inilalarawan sa [dokumentasyon nito](https://code.claude.com/docs/en/authentication#credential-management).
 
 **Hindi lahat ng sign-in ay nasa folder.** Ang Claude Console sign-in na walang API key ay naka-store sa labas nito, kaya hindi kayang paghiwalayin ng magkakahiwalay na folder ang dalawang ganoong sign-in. Ang mga claude.ai login at API key ay naka-store bawat folder.
 
 ## Nasaan ang folder sa Windows?
 
-Bilang default, nasa `%USERPROFILE%\.claude`, at nasa `.credentials.json` sa loob nito ang login. Itakda ang `CLAUDE_CONFIG_DIR` sa ibang folder para sa bawat karagdagang account, gaya ng sa Linux at macOS.
+Bilang default, nasa `%USERPROFILE%\.claude`, at nasa `.credentials.json` sa loob nito ang login, o nasa Windows Credential Manager kapag nakatakdang gamitin ito ng Claude Code, sa ilalim ng pangalang ginawa mula sa path ng folder gaya ng sa macOS. Itakda ang `CLAUDE_CONFIG_DIR` sa ibang folder para sa bawat karagdagang account, gaya ng sa Linux at macOS.
 
 ## Puwede bang mag-share ng file ang mga folder?
 

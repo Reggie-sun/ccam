@@ -1,13 +1,13 @@
 ---
 title: Her hesabın arka plan oturumları
 description: ccam agents, tüm hesaplarınızın Claude Code arka plan ajanlarını ve açık oturumlarını tek bir tabloda listeler; ccam attach birini kimliğiyle açar.
-updated: 2026-10-20
+updated: 2026-10-23
 order: 16
 translation: machine
-sourceHash: "1f459764d66d"
+sourceHash: "092368f63363"
 ---
 
-Claude Code arka plan oturumlarını (`claude --bg`, ajan görünümü) hesap başına tutar: `claude agents` yalnızca kendisini çalıştıran hesabın oturumlarını gösterir. `ccam agents` tüm hesaplara aynı anda sorar ve oturumları birlikte listeler; `ccam attach <id>` ise bir arka plan oturumunu, onu hangi hesap başlattıysa o hesapla açar.
+Claude Code arka plan oturumlarını (`claude --bg`, ajan görünümü) hesap başına tutar: `claude agents` yalnızca kendisini çalıştıran hesabın oturumlarını gösterir. `ccam agents` tüm hesaplara aynı anda sorar ve oturumları birlikte listeler; `ccam attach <id|name>` ise bir arka plan oturumunu, onu hangi hesap başlattıysa o hesapla açar.
 
 ## Kullanım
 
@@ -18,6 +18,7 @@ ccam agents --all                     # also finished background sessions
 ccam agents --json                    # for scripts
 ccam attach 49ec0028                  # open it, as the account that started it
 ccam attach 49ec                      # a unique start of the id is enough
+ccam attach probe                     # or part of the session's name
 ```
 
 ```console
@@ -37,18 +38,18 @@ Open a background session with `ccam attach <id>`.
 | `--all` | Bitmiş, başarısız olmuş veya durdurulmuş arka plan oturumlarını da listeler | kapalı |
 | `--json` | Oturumları, her biri ait olduğu `account` ile birlikte JSON olarak yazdırır | kapalı |
 
-`ccam attach <id> [claude args]`, kimlikten sonraki argümanları `claude attach` komutuna iletir. `--dry-run` ile komutu yazdırır.
+`ccam attach <id|name> [claude args]`, kimlikten sonraki her şeyi, seçenekler dahil, değiştirmeden `claude attach` komutuna iletir: `ccam attach 49ec --dry-run`, `--dry-run` seçeneğini Claude Code'a verir. Bunun yerine komutu yazdırmak için `--dry-run` seçeneğini kimlikten önce yazın (`ccam --dry-run attach 49ec` veya `ccam attach --dry-run 49ec`).
 
 ## Nasıl çalışır
 
 1. ccam her hesap için, hesabın `CLAUDE_CONFIG_DIR` değeriyle `claude agents --json` komutunu (verildiyse `--all` ile) çalıştırır; hepsini aynı anda, her birini 15 saniye içinde. Bu, hesabın kendi oturum listesini okur ve Claude Code'un arka plan hizmetini başlatmaz.
 2. Her girdi hesabın adını alır ve liste başlangıç zamanına göre, en yeni önce olacak şekilde sıralanır. Yanıt vermeyen bir hesap standart hataya adıyla yazılır ve listeye alınmaz; ardından ccam 1 çıkış koduyla çıkar, böylece bir betik bir hatayı boş liste sanmaz.
-3. `ccam attach`, Claude Code'un bir arka plan oturumunu tuttuğu `jobs/<id>` yolunu her hesabın klasöründe arar ve `claude attach <id>` komutunu, `ccam <name>` komutunun Claude Code'u başlattığı şekilde, o hesapla çalıştırır.
+3. `ccam attach`, Claude Code'un bir arka plan oturumunu tuttuğu `jobs/<id>` yolunu her hesabın klasöründe arar ve `claude attach <id>` komutunu, `ccam <name>` komutunun Claude Code'u başlattığı şekilde, o hesapla çalıştırır. Bir kimliğin başlangıcı olmayan bir sözcük, büyük/küçük harf fark etmeksizin oturumların adlarında aranır; kimliğe benzeyen bir sözcük asla ad olarak alınmaz.
 
 ## Güvenlik ve uç durumlar
 
 - Arka plan oturumu kimlikleri tek bir hesaba aittir: başka bir hesapla çalıştırılan `claude attach` onları bulamaz; `ccam attach` tam olarak bu sorunu çözer.
-- İki hesap, kimlikleri aynı şekilde başlayan oturumlara sahip olabilir; bu durumda `ccam attach` ikisini de adlandırır ve kimliğin daha fazlasını ister.
+- İki hesap, kimlikleri aynı şekilde başlayan ya da adları aynı sözcüğü içeren oturumlara sahip olabilir; bu durumda `ccam attach` onları adlandırır ve kimliğin ya da adın daha fazlasını ister.
 - ccam paylaşılan MCP sunucularını Claude Code'a tek bir argümanda `--mcp-config=<file>` ile verir; `claude agents` ve `claude attach` bunu kabul eder ve arka plan oturumları yeniden başladıklarında o dosyayı kullanmaya devam eder.
 - API anahtarlı bir hesabın arka plan hizmeti anahtarını kendisini başlatan kabuktan alır. Böyle bir hesabın ilk arka plan oturumunu ccam üzerinden (`ccam gw --bg …`) başlatın; böylece hizmet anahtara sahip olur.
 

@@ -1,7 +1,7 @@
 ---
 title: API key accounts
 description: ccam add --api adds an API key account for Anthropic's API or a gateway; the key is read at launch from a variable or a command, never stored.
-updated: 2026-10-20
+updated: 2026-10-23
 order: 13
 translation: source
 ---
@@ -34,7 +34,7 @@ An API key account joins groups like any other account (by default `default`: se
 | --- | --- | --- |
 | `--api` | Add an API key account instead of logging in | off |
 | `--key-from env:NAME` | Read the key from the environment variable `NAME` | |
-| `--key-from command:COMMAND` | Run `COMMAND` (with `sh -c`, or `cmd /C` on Windows) and use the first line it prints | |
+| `--key-from command:COMMAND` | Run `COMMAND` (with `sh -c`, or on Windows as typed in `cmd /d /s /c "…"`, quotes kept) and use the first line it prints | |
 | `--base-url <url>` | The endpoint (`ANTHROPIC_BASE_URL`) | Anthropic's API |
 | `--auth api-key\|bearer` | Send the key as `ANTHROPIC_API_KEY` (`x-api-key`) or as `ANTHROPIC_AUTH_TOKEN` (`Authorization: Bearer`, which gateways usually want) | `api-key` |
 | `--model <model>` | The model (`ANTHROPIC_MODEL`) | Claude Code's default |
@@ -65,10 +65,17 @@ Accounts with a subscription login keep the environment they inherit, as before.
 
 ## Safety and edge cases
 
-- The key is never written to `config.toml`, a cache or a log, and `ccam --dry-run gw` does not read it: a `command:` source is not run by a dry run.
+- The key is never written to `config.toml`, a cache or a log, and `ccam --dry-run gw` does not read it: a `command:` source is not run by a dry run. The dry run shows the endpoint, the model and where the key comes from instead:
+
+  ```console
+  $ ccam --dry-run gw -p hi
+  CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/gw CCAM_PROFILE=gw ANTHROPIC_BASE_URL=https://llm.example.com ANTHROPIC_MODEL=claude-sonnet-5-5 ANTHROPIC_AUTH_TOKEN="$(pass show llm/gateway-key | head -n 1)" /home/me/.local/bin/claude -p hi
+  ```
+
+  An inherited variable the launch removes shows as `env -u <name>` at the start. With an `env:` source whose variable is empty, the dry run fails as the launch would.
 - `ccam add --api` checks an `env:` source right away and warns if the variable is empty; a `command:` source is first run at launch.
 - `ccam login` and `ccam logout` refuse an API key account, since it has no login. `ccam doctor` shows its endpoint and key source, and warns when an `env:` variable is empty.
-- `ccam usage` shows `API` for it. `ccam next --auto`, `--fallback` and `ccam pick` choose among subscription accounts only, because an API key has no 5-hour or weekly limit to compare.
+- `ccam usage` shows `no limits (API)` for it. `ccam next --auto`, `--fallback` and `ccam pick` choose among subscription accounts only, because an API key has no 5-hour or weekly limit to compare.
 - A shared `settings.json` with an `env` block or `apiKeyHelper` applies to every account in the group, API key accounts included. Keep provider settings out of shared settings, or put the API key account in a group without `settings`.
 
 ## Related

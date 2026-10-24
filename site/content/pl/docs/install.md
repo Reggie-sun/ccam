@@ -2,10 +2,10 @@
 title: Instalacja ccam
 metaTitle: "Instalacja ccam w systemach Linux, macOS i Windows"
 description: "Zainstaluj ccam na Linuksie, macOS lub Windows jednym poleceniem, z pakietu .deb lub ze źródeł; aktualizuj przez ccam update. Najpierw zainstaluj Claude Code."
-updated: 2026-10-21
+updated: 2026-10-23
 order: 1
 translation: machine
-sourceHash: "1e3a53623de0"
+sourceHash: "af21dcc24169"
 ---
 
 Uruchom to w terminalu na Linux lub macOS:
@@ -22,7 +22,7 @@ W Windows uruchom to w PowerShell:
 irm https://ccam.dev/install.ps1 | iex
 ```
 
-Skrypt pobiera `ccam_windows_<arch>.zip`, sprawdza jego sumę kontrolną SHA-256, umieszcza `ccam.exe` w `%USERPROFILE%\.local\bin`, czyli w folderze, do którego instalator Claude Code wstawia `claude.exe`, i dodaje ten folder do `PATH` twojego użytkownika, jeśli jeszcze go tam nie ma. Potem otwórz nowy terminal.
+Skrypt pobiera `ccam_windows_<arch>.zip`, sprawdza jego sumę kontrolną SHA-256, umieszcza `ccam.exe` w `%USERPROFILE%\.local\bin`, czyli w folderze, do którego instalator Claude Code wstawia `claude.exe`, i dodaje ten folder do `PATH` twojego użytkownika, jeśli jeszcze go tam nie ma, zachowując bez zmian wpisy takie jak `%USERPROFILE%\bin`. Potem otwórz nowy terminal. Ponowne uruchomienie podmienia ccam, także wtedy, gdy sesja Claude Code wciąż działa ze starego pliku binarnego (ten dostaje nazwę `ccam.exe.old` albo `ccam.exe.old-<number>`, gdy starszy jest jeszcze w użyciu), i odnawia skróty będące twardymi linkami: `OK 2 shortcuts now run the new ccam`.
 
 ccam uruchamia za ciebie Claude Code, więc najpierw zainstaluj [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) i upewnij się, że `claude --version` działa.
 
@@ -30,7 +30,7 @@ ccam uruchamia za ciebie Claude Code, więc najpierw zainstaluj [Claude Code](ht
 
 - Linux na x86-64 i ARM64: Ubuntu, Debian, Fedora, Arch, Alpine i inne dystrybucje. Plik binarny jest statyczny i nie ma zależności.
 - macOS na Apple silicon i Intel.
-- Windows 10 i 11 na x86-64 i ARM64, w PowerShell, Windows Terminal lub Git Bash. Współdzielone foldery działają dla każdego użytkownika. Współdzielone pliki (`settings.json`, `CLAUDE.md`, `history.jsonl`) wymagają Trybu dewelopera (Ustawienia > System > Dla deweloperów), bo Windows pozwala tworzyć linki do plików tylko w tym trybie albo administratorowi; zobacz [współdzielenie w Windows](/features/share#on-windows).
+- Windows 10 i 11 na x86-64 i ARM64, w PowerShell, Windows Terminal lub Git Bash. Współdzielone foldery działają dla każdego użytkownika. Współdzielone pliki (`settings.json`, `CLAUDE.md`, `history.jsonl`) wymagają Trybu dewelopera (Ustawienia > System > Dla deweloperów), bo Windows pozwala tworzyć linki do plików tylko w tym trybie albo administratorowi; zobacz [współdzielenie w Windows](/features/share#on-windows). Bez niego pierwsze `ccam add` tworzy grupę `default` tylko z serwerami MCP i rozszerzeniami i podaje, jak dodać resztę po włączeniu Trybu dewelopera.
 - W WSL ccam działa jak w każdym systemie Linux.
 
 ## Inne sposoby instalacji
@@ -48,6 +48,8 @@ Pakiet instaluje `/usr/bin/ccam`.
 ```sh
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
 ```
+
+Kompilacja z tagu wydania (`@latest` lub `@vX.Y.Z`) podaje tę wersję, więc działa dla niej `ccam update`; kompilacja z `@main` albo z lokalnej kopii za tagiem podaje `dev`.
 
 **Konkretna wersja.** Ustaw `CCAM_VERSION`:
 
@@ -117,9 +119,9 @@ ccam update --version v0.2.0
 ccam --dry-run update
 ```
 
-Ponowne uruchomienie skryptu instalacyjnego też aktualizuje kopię w `~/.local/bin`. Jeśli zbudowano ccam przez `go install`, uruchom to samo polecenie jeszcze raz.
+Ponowne uruchomienie skryptu instalacyjnego też aktualizuje kopię w `~/.local/bin`. Jeśli zbudowano ccam przez `go install` z tagu wydania, działa też `ccam update`; możesz też uruchomić to samo polecenie jeszcze raz.
 
-**Windows.** `ccam update` pobiera plik `.zip` dla Windows. W Windows nie da się podmienić działającego programu, więc stary plik binarny dostaje nazwę `ccam.exe.old`, a następna aktualizacja go usuwa.
+**Windows.** `ccam update` pobiera plik `.zip` dla Windows. W Windows nie da się podmienić działającego programu, więc stary plik binarny dostaje nazwę `ccam.exe.old`, a następna aktualizacja go usuwa; gdy sesja wciąż działa z wcześniejszego `ccam.exe.old`, nazwą jest `ccam.exe.old-<time>`. Skróty będące twardymi linkami są odnawiane zaraz potem.
 
 **Pakiet dla Debiana i Ubuntu.** `ccam update` nie podmienia `/usr/bin/ccam` zainstalowanego przez apt, tylko wypisuje poniższe kroki. Pobierz nowy `ccam_<version>_linux_amd64.deb` ze [strony wydań](https://github.com/jhyunwoo/ccam/releases) i zainstaluj go na miejsce starego:
 
@@ -146,4 +148,4 @@ Remove-Item ~\.local\bin\ccam.exe
 Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
 ```
 
-Usunięcie `~/.local/share/ccam` usuwa też zapisane tam loginy i historię rozmów. Folder `~/.claude`, który został [zaimportowany](/docs/commands), zostaje tam, gdzie jest.
+Usunięcie `~/.local/share/ccam` usuwa też zapisane tam loginy i historię rozmów. Folder `~/.claude`, który został [zaimportowany](/docs/commands), zostaje tam, gdzie jest, ale dopóki jest w grupie, pliki, które współdzieli, leżą w `~/.local/share/ccam/groups/`. Najpierw uruchom dla niego `ccam remove <name>` (albo `ccam group leave`): opuszcza wtedy swoje grupy z kopią wszystkiego, co współdzielił.

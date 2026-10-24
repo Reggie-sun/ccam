@@ -1,13 +1,13 @@
 ---
 title: "موجودہ سیٹ اپ کاپی کرنا"
-description: "ccam migrate سے موجودہ ~/.claude کی سیٹنگز، CLAUDE.md، ایکسٹینشنز، MCP سرورز اور MCP سائن اِن، ccam کے ایک گروپ میں کاپی کریں۔"
-updated: 2026-10-19
+description: "ccam migrate سے موجودہ ~/.claude کی سیٹنگز، CLAUDE.md، ایکسٹینشنز اور MCP سرورز، ccam کے ایک گروپ میں کاپی کریں۔"
+updated: 2026-10-23
 order: 6
 translation: machine
-sourceHash: "7cee52e75749"
+sourceHash: "7bca9efb6eb0"
 ---
 
-اگر آپ ccam سے پہلے Claude Code استعمال کرتے تھے تو آپ کا سیٹ اپ `~/.claude` اور `~/.claude.json` میں ہے۔ `ccam migrate` اسے ایک شیئر گروپ میں کاپی کرتا ہے، تاکہ جو بھی اکاؤنٹ گروپ کے ذریعے وہ آئٹمز شیئر کرے وہ آپ کے موجودہ سیٹ اپ کے ساتھ شروع ہو۔ سورس فولڈر کو صرف پڑھا جاتا ہے، اور سادہ `claude` پہلے کی طرح کام کرتا رہتا ہے۔ اسے اپنے پہلے `ccam add` کے بعد ایک بار چلائیں، اور پھر جب بھی کوئی اکاؤنٹ MCP سرورز شیئر کرنا شروع کرے۔
+اگر آپ ccam سے پہلے Claude Code استعمال کرتے تھے تو آپ کا سیٹ اپ `~/.claude` اور `~/.claude.json` میں ہے۔ `ccam migrate` اسے ایک شیئر گروپ میں کاپی کرتا ہے، تاکہ جو بھی اکاؤنٹ گروپ کے ذریعے وہ آئٹمز شیئر کرے وہ آپ کے موجودہ سیٹ اپ کے ساتھ شروع ہو۔ سورس فولڈر کو صرف پڑھا جاتا ہے، اور سادہ `claude` پہلے کی طرح کام کرتا رہتا ہے۔ اسے اپنے پہلے `ccam add` کے بعد ایک بار چلائیں؛ جب `~/.claude.json` میں MCP سرورز ہوں تو پہلا `ccam add` اپنے مشورے میں ان کے نام بتاتا ہے۔
 
 ## استعمال
 
@@ -43,20 +43,17 @@ Space (یا `x`) کرسر کے نیچے والا آئٹم بدلتا ہے، تی
 $ ccam migrate --yes
 Copy from /home/me/.claude into group default (/home/me/.local/share/ccam/groups/default):
   mcp         ~/.claude.json  new: fs, linear
-              sign-ins        linear → personal; skipped: work (not logged in yet)
+              sign-ins        not copied (a sign-in works for one account only); sign in with /mcp: linear in personal, work
   settings    settings.json   new: 61 B
+              not found, skipped: keybindings.json
   memory      CLAUDE.md       new: 11 B
   extensions  agents/         add 1 file the group lacks (6 B)
               skills/         add 1 file the group lacks (13 B)
               not found, skipped: commands/, plugins/, output-styles/, rules/
   Conversation history (projects/, history.jsonl) is not included; add --history to copy it.
-✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, skills/, MCP sign-ins for personal
-MCP sign-ins were not copied to: work (not logged in yet). Sign in to those servers there with /mcp.
-Accounts that share these through group default:
-  mcp         personal, work
-  settings    personal, work
-  memory      personal, work
-  extensions  personal, work
+✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, skills/
+MCP sign-ins are not copied (a sign-in works for one account only). Sign in with /mcp to linear in personal, work.
+Group default: personal, work
 ```
 
 گروپ صرف اپنے اکاؤنٹس تک پہنچتا ہے، اور صرف ان آئٹمز کے لیے جو وہ شیئر کرتا ہے، اس لیے خلاصہ گروپ کے اکاؤنٹس کی فہرست دیتا ہے۔ جب گروپ کاپی کیے گئے آئٹمز میں سے کوئی شیئر نہ کرتا ہو، یا کچھ اکاؤنٹس اس میں نہ ہوں، تو ccam وہ `ccam group set <group> --add <items>` اور `ccam group join <group> <accounts>` کمانڈز پرنٹ کرتا ہے جو اسے بدلتی ہیں۔
@@ -83,9 +80,9 @@ Accounts that share these through group default:
 
 `internal/cli/migrate.go` آئٹمز چنتا ہے، پھر `migrate.Build` سورس اور گروپ کو پڑھ کر ایک منصوبہ لوٹاتا ہے۔ آپ کی تصدیق کے بعد `Plan.Apply` تک کچھ نہیں لکھا جاتا۔
 
-1. **سورس تلاش کرنا۔** `checkSource` ایسا راستہ مسترد کرتا ہے جو موجود نہ ہو، فولڈر نہ ہو، یا جس میں Claude Code کی کوئی معلوم اینٹری نہ ہو۔ `migrate.ClaudeJSON` وہ `.claude.json` تلاش کرتا ہے جو فولڈر سے تعلق رکھتی ہے: اس کے اندر، یا `~/.claude` کے لیے جس کے اندر کوئی نہ ہو، اس کے ساتھ والی `~/.claude.json`۔ جب `CLAUDE_CONFIG_DIR` مقرر نہ ہو تو Claude Code اسے وہیں رکھتا ہے۔
+1. **سورس تلاش کرنا۔** `checkSource` ایسا راستہ مسترد کرتا ہے جو موجود نہ ہو، فولڈر نہ ہو، یا جس میں Claude Code کی کوئی معلوم اینٹری نہ ہو۔ صرف MCP سرورز کے لیے، خالی یا غائب `~/.claude` بھی ٹھیک ہے، بشرطیکہ `~/.claude.json` میں سرورز ہوں۔ `migrate.ClaudeJSON` وہ `.claude.json` تلاش کرتا ہے جو فولڈر سے تعلق رکھتی ہے: اس کے اندر، یا `~/.claude` کے لیے جس کے اندر کوئی نہ ہو، اس کے ساتھ والی `~/.claude.json`۔ جب `CLAUDE_CONFIG_DIR` مقرر نہ ہو تو Claude Code اسے وہیں رکھتا ہے۔
 2. **آئٹمز کو راستوں سے جوڑنا۔** ہر راستہ `share.Layout` سے آتا ہے، وہی اجازت شدہ فہرست جو گروپس استعمال کرتے ہیں۔ MCP سرورز `.claude.json` میں سے `mcp.LocalServers` سے پڑھے جاتے ہیں، جو پوری فائل پارس کرنے کے بجائے `profile.TopLevelValue` اسکینر استعمال کرتا ہے۔
-3. **کاپی کرنا، کبھی منتقل نہیں۔** فائلیں `fsutil.AtomicWrite` یا `fsutil.CopyFile` سے `~/.local/share/ccam/groups/<group>/` میں جاتی ہیں؛ MCP سرورز گروپ کی `mcp.json` میں جاتے ہیں۔
+3. **کاپی کرنا، کبھی منتقل نہیں۔** فائلیں `fsutil.AtomicWrite` یا `fsutil.CopyFile` سے `~/.local/share/ccam/groups/<group>/` میں جاتی ہیں، جو ہدف کے ساتھ ایک عارضی فائل لکھتا ہے اور پھر اس کا نام بدلتا ہے، اس لیے رک جانے والی کاپی کبھی ادھوری کٹی ہوئی فائل نہیں چھوڑتی۔ MCP سرورز گروپ کی `mcp.json` میں اس کے لاک کے تحت جاتے ہیں: جو سرور اس دوران کوئی دوسرا ccam شامل کرے وہ برقرار رہتا ہے، اور [Remote Control](/guides/remote-control) کے لیے بنائی گئی کاپیاں بعد میں اپ ڈیٹ کی جاتی ہیں۔
 
 ہر آئٹم ایک سورس راستے کو ایک گروپ راستے سے جوڑتا ہے:
 
@@ -108,18 +105,7 @@ Accounts that share these through group default:
 
 ### MCP سائن اِن
 
-جو MCP سرورز OAuth سے سائن اِن کرتے ہیں وہ اپنے ٹوکنز سرورز کی فہرست میں نہیں بلکہ لاگ اِن فائل میں رکھتے ہیں، یعنی `.credentials.json` میں `mcpOAuth` کے تحت۔ Claude Code ہر اینٹری کی key، `<name>|` اور سرور کے `type`، `url` اور `headers` کے `sha256` hash کے پہلے 16 حروف سے بناتا ہے۔ key فولڈر پر منحصر نہیں، اس لیے کاپی کی گئی اینٹری دوسرے اکاؤنٹ میں تب تک کام کرتی ہے جب تک سرور کی تعریف بالکل وہی ہو۔ اسی لیے `internal/migrate/logins.go` میں `buildLogins` صرف ان سرورز کی اینٹریز کاپی کرتا ہے جو آخرکار گروپ میں سورس والی تعریف کے ساتھ ہوں: نئے، پہلے سے یکساں، یا ایسا ٹکراؤ جس میں آپ نے `use mine` چنا ہو۔ پلگ اِن سرورز کے سائن اِن (جن کی keys `plugin:` سے شروع ہوتی ہیں) تب ساتھ جاتے ہیں جب آپ ایکسٹینشنز کاپی کریں اور سورس میں `plugins/` ہو۔
-
-<!-- motion:migrate-signins -->
-
-اینٹریز ہر وصول کرنے والے اکاؤنٹ کی اپنی `.credentials.json` میں جاتی ہیں، جو `fsutil.AtomicWrite` سے موڈ `0600` پر لکھی جاتی ہے۔ یہ کبھی گروپ میں نہیں جاتیں۔ کسی اکاؤنٹ کو یہ صرف تب ملتی ہیں جب وہ ہدف گروپ کے ذریعے `mcp` (یا پلگ اِن سرورز کے لیے `extensions`) شیئر کرتا ہو، اور صرف وہ keys شامل ہوتی ہیں جو اس کے پاس نہیں: جو اینٹریز اس کے پاس پہلے سے ہیں، شاید زیادہ نئی، وہ برقرار رہتی ہیں۔ منصوبے کی `sign-ins` لائن سرورز، وصول کرنے والے اکاؤنٹس اور چھوڑے گئے اکاؤنٹس دکھاتی ہے۔ ccam کسی اکاؤنٹ کو چھوڑ دیتا ہے، اور وجہ کے ساتھ اس کا نام بتاتا ہے، جب وہ:
-
-- `ccam import` سے اپنی جگہ پر رجسٹر کیا گیا ہو، کیونکہ سادہ `claude` اس کی لاگ اِن فائل استعمال کر رہا ہو سکتا ہے؛
-- چل رہا ہو، کیونکہ Claude Code اس کی لاگ اِن فائل دوبارہ لکھتا ہے (لکھنے سے فوراً پہلے دوبارہ جانچا جاتا ہے، اور `started meanwhile` کے طور پر بتایا جاتا ہے)؛
-- ابھی لاگ اِن نہ ہوا ہو؛
-- اپنا لاگ اِن macOS Keychain میں رکھتا ہو، جس میں ccam نہیں لکھتا۔
-
-چھوڑے گئے اکاؤنٹ میں سرورز میں `/mcp` سے سائن اِن کریں۔ جو اکاؤنٹ بعد میں MCP سرورز شیئر کرنا شروع کرے اسے سائن اِن تب ملتے ہیں جب آپ `ccam migrate` دوبارہ چلائیں؛ خلاصہ یہ ``Then run `ccam migrate` again to give them the MCP sign-ins too.`` کے ساتھ بتاتا ہے۔
+جو MCP سرورز OAuth سے سائن اِن کرتے ہیں وہ اپنے ٹوکنز سرورز کی فہرست میں نہیں بلکہ لاگ اِن فائل میں رکھتے ہیں، یعنی `.credentials.json` میں `mcpOAuth` کے تحت۔ ccam انہیں کاپی نہیں کرتا۔ کاپی کیے گئے سائن اِن میں وہی ریفریش ٹوکن ہوتا ہے جو اصل میں ہے، اور سرور پہلی تجدید پر وہ ٹوکن بدل دیتا ہے: تب باقی ہر رکھنے والا، سورس `~/.claude` سمیت، اس سرور سے لاگ آؤٹ ہو جاتا ہے۔ اس لیے منصوبے کی `sign-ins` لائن ہر اس کاپی کیے گئے سرور کے لیے جس میں سورس سائن اِن ہے، گروپ کے ان اکاؤنٹس کے نام بتاتی ہے جو `/mcp` سے خود سائن اِن کریں، اور خلاصہ یہی دہراتا ہے۔ ٹوکن کے بغیر اینٹری سائن اِن نہیں ہے اور اس کی فہرست نہیں دی جاتی، اور نہ ہی اس اکاؤنٹ کی جس کے پاس پہلے سے اپنا سائن اِن ہو، یا اس سرور کی جس کی تعریف گروپ اپنی رکھتا ہے۔ کوئی لاگ اِن فائل نہیں لکھی جاتی۔
 
 ## حفاظت اور خاص صورتیں
 
@@ -127,7 +113,8 @@ Accounts that share these through group default:
 - گروپ کی کوئی فائل بدلنے سے پہلے، چاہے `use mine` سے، انضمام سے، یا موجودہ `mcp.json` میں نئے MCP سرورز سے، گروپ کی کاپی `<group>/.ccam-backup/<time>/` میں محفوظ ہوتی ہے۔ فولڈر کا نام ہر رن کے لیے منفرد ہوتا ہے، اس لیے ایک ہی سیکنڈ میں دو رن ایک دوسرے کے بیک اپ اوور رائٹ نہیں کرتے۔ خلاصہ راستہ پرنٹ کرتا ہے۔
 - `--yes` کے ساتھ ہر ٹکراؤ میں گروپ کی کاپی رکھی جاتی ہے، اور ccam بتاتا ہے کہ اس کے بجائے خود کیسے چنیں: وہی کمانڈ `--yes` کے بغیر چلائیں۔
 - اگر کچھ نہ بدلے تو ccam، `Nothing to copy.` پرنٹ کرتا ہے؛ اگر ہر ٹکراؤ میں گروپ کی کاپی رکھی جائے تو `Nothing to copy: the group keeps its own copies.`
-- اگر کاپی آدھے راستے میں ناکام ہو تو ccam، `The source folder was not changed. Group files replaced so far are saved in` اور اس کے بعد بیک اپ فولڈر کے ساتھ رک جاتا ہے۔
+- اگر کاپی آدھے راستے میں ناکام ہو تو ccam، `The source folder was not changed. Group files replaced so far are saved in` اور اس کے بعد بیک اپ فولڈر کے ساتھ رک جاتا ہے۔ دوبارہ چلانے پر وہ فائلیں کاپی ہو جاتی ہیں جو پوری نہیں پہنچیں۔
+- جب کئی گروپس MCP شیئر کرتے ہوں تو `ccam doctor`، `ccam ext` اور `ccam mcp list` جو کمانڈز تجویز کرتے ہیں وہ `ccam migrate --mcp --group <a|b>` ہوتی ہیں۔
 - سورس نہ ہو تو عمل `no Claude Code folder at <path>. Give the folder to copy from: ccam migrate <folder>` پر ختم ہوتا ہے۔
 
 ## متعلقہ

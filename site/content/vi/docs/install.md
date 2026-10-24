@@ -2,10 +2,10 @@
 title: Cài đặt ccam
 metaTitle: "Cài đặt ccam trên Linux, macOS và Windows"
 description: "Cài đặt ccam trên Linux, macOS hoặc Windows bằng một lệnh, từ gói .deb hoặc từ mã nguồn, và cập nhật bằng ccam update. Cần cài Claude Code trước."
-updated: 2026-10-21
+updated: 2026-10-23
 order: 1
 translation: machine
-sourceHash: "1e3a53623de0"
+sourceHash: "af21dcc24169"
 ---
 
 Chạy lệnh này trong terminal trên Linux hoặc macOS:
@@ -22,7 +22,7 @@ Trên Windows, hãy chạy lệnh này trong PowerShell:
 irm https://ccam.dev/install.ps1 | iex
 ```
 
-Script tải về `ccam_windows_<arch>.zip`, kiểm tra mã băm SHA-256, đặt `ccam.exe` vào `%USERPROFILE%\.local\bin`, thư mục mà trình cài đặt của Claude Code đặt `claude.exe`, và thêm thư mục đó vào `PATH` của người dùng nếu chưa có. Sau đó hãy mở một terminal mới.
+Script tải về `ccam_windows_<arch>.zip`, kiểm tra mã băm SHA-256, đặt `ccam.exe` vào `%USERPROFILE%\.local\bin`, thư mục mà trình cài đặt của Claude Code đặt `claude.exe`, và thêm thư mục đó vào `PATH` của người dùng nếu chưa có, giữ nguyên các mục như `%USERPROFILE%\bin`. Sau đó hãy mở một terminal mới. Chạy lại script sẽ thay thế ccam, kể cả khi một phiên Claude Code vẫn đang chạy từ tệp thực thi cũ (tệp đó được đổi tên thành `ccam.exe.old`, hoặc `ccam.exe.old-<number>` khi một bản cũ hơn vẫn đang được dùng), và làm mới các lệnh tắt là liên kết cứng (hard link): `OK 2 shortcuts now run the new ccam`.
 
 ccam khởi động Claude Code cho bạn, vì vậy hãy cài [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) trước và đảm bảo `claude --version` chạy được.
 
@@ -30,7 +30,7 @@ ccam khởi động Claude Code cho bạn, vì vậy hãy cài [Claude Code](htt
 
 - Linux trên x86-64 và ARM64: Ubuntu, Debian, Fedora, Arch, Alpine và các bản phân phối khác. Tệp thực thi là tệp tĩnh và không có phụ thuộc.
 - macOS trên Apple silicon và Intel.
-- Windows 10 và 11 trên x86-64 và ARM64, trong PowerShell, Windows Terminal hoặc Git Bash. Thư mục dùng chung hoạt động với mọi người dùng. Tệp dùng chung (`settings.json`, `CLAUDE.md`, `history.jsonl`) cần bật Developer Mode (Settings > System > For developers), vì Windows chỉ cho phép chế độ này, hoặc quản trị viên, tạo liên kết tới tệp; xem [dùng chung trên Windows](/features/share#on-windows).
+- Windows 10 và 11 trên x86-64 và ARM64, trong PowerShell, Windows Terminal hoặc Git Bash. Thư mục dùng chung hoạt động với mọi người dùng. Tệp dùng chung (`settings.json`, `CLAUDE.md`, `history.jsonl`) cần bật Developer Mode (Settings > System > For developers), vì Windows chỉ cho phép chế độ này, hoặc quản trị viên, tạo liên kết tới tệp; xem [dùng chung trên Windows](/features/share#on-windows). Khi không có chế độ này, lần `ccam add` đầu tiên tạo nhóm `default` chỉ với máy chủ MCP và tiện ích mở rộng, và cho biết cách thêm phần còn lại sau khi bật Developer Mode.
 - Bên trong WSL, ccam hoạt động như trên bất kỳ hệ thống Linux nào.
 
 ## Các cách cài đặt khác
@@ -48,6 +48,8 @@ Gói này cài `/usr/bin/ccam`.
 ```sh
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
 ```
+
+Bản build từ một thẻ phát hành (`@latest` hoặc `@vX.Y.Z`) báo đúng phiên bản đó, nên `ccam update` hoạt động với nó; bản build từ `@main` hoặc từ một bản checkout cục bộ đã đi quá một thẻ thì báo `dev`.
 
 **Một phiên bản cụ thể.** Đặt `CCAM_VERSION`:
 
@@ -117,9 +119,9 @@ ccam update --version v0.2.0
 ccam --dry-run update
 ```
 
-Chạy lại script cài đặt cũng sẽ cập nhật bản sao trong `~/.local/bin`. Nếu bạn đã build ccam bằng `go install`, hãy chạy lại chính lệnh đó.
+Chạy lại script cài đặt cũng sẽ cập nhật bản sao trong `~/.local/bin`. Nếu bạn đã build ccam bằng `go install` từ một thẻ phát hành, `ccam update` cũng hoạt động, hoặc hãy chạy lại chính lệnh đó.
 
-**Windows.** `ccam update` tải về tệp `.zip` cho Windows. Trên Windows không thể thay thế một chương trình đang chạy, nên tệp thực thi cũ được đổi tên thành `ccam.exe.old`, và lần cập nhật tiếp theo sẽ xóa nó.
+**Windows.** `ccam update` tải về tệp `.zip` cho Windows. Trên Windows không thể thay thế một chương trình đang chạy, nên tệp thực thi cũ được đổi tên thành `ccam.exe.old`, và lần cập nhật tiếp theo sẽ xóa nó; khi một phiên vẫn đang chạy từ một `ccam.exe.old` trước đó, tên sẽ là `ccam.exe.old-<time>`. Các lệnh tắt là liên kết cứng được làm mới ngay sau đó.
 
 **Gói cho Debian và Ubuntu.** `ccam update` không thay thế `/usr/bin/ccam` do apt cài đặt mà in ra các bước sau. Tải `ccam_<version>_linux_amd64.deb` mới từ [trang phát hành](https://github.com/jhyunwoo/ccam/releases) rồi cài đè lên bản cũ:
 
@@ -146,4 +148,4 @@ Remove-Item ~\.local\bin\ccam.exe
 Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
 ```
 
-Xóa `~/.local/share/ccam` cũng xóa luôn thông tin đăng nhập và lịch sử hội thoại được lưu ở đó. Thư mục `~/.claude` mà bạn đã [nhập](/docs/commands) vẫn nằm nguyên tại chỗ.
+Xóa `~/.local/share/ccam` cũng xóa luôn thông tin đăng nhập và lịch sử hội thoại được lưu ở đó. Thư mục `~/.claude` mà bạn đã [nhập](/docs/commands) vẫn nằm nguyên tại chỗ, nhưng khi nó còn nằm trong một nhóm, các tệp nó dùng chung nằm trong `~/.local/share/ccam/groups/`. Hãy chạy `ccam remove <name>` cho nó trước (hoặc `ccam group leave`): nó rời các nhóm của mình với một bản sao của mọi thứ nó đã dùng chung.

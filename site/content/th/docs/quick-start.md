@@ -2,10 +2,10 @@
 title: เริ่มต้นใช้งาน
 metaTitle: "เริ่มต้นใช้งาน: เพิ่มและสลับบัญชี Claude Code"
 description: เพิ่มบัญชี Claude Code สองบัญชีด้วย ccam add ตั้งคำสั่งลัดอย่าง ccwork สลับไปมาระหว่างบัญชี และเลือกสิ่งที่จะใช้ร่วมกัน
-updated: 2026-10-20
+updated: 2026-10-24
 order: 2
 translation: machine
-sourceHash: "d5b0e295f3f0"
+sourceHash: "e98d0637356a"
 ---
 
 เพิ่มแต่ละบัญชีด้วย `ccam add` จากนั้นเริ่ม Claude Code ด้วย `ccam <name>` หรือด้วยคำสั่งลัดที่คุณตั้งชื่อเอง เช่น `ccwork` เท่านี้ก็เพียงพอสำหรับผู้ใช้ส่วนใหญ่
@@ -107,6 +107,8 @@ ccam next --continue
 ```
 
 `ccam usage` แสดงการใช้งานแบบ 5 ชั่วโมงและรายสัปดาห์ของทุกบัญชี `ccam next --continue` เปิดการสนทนาเดิมในบัญชีถัดไป ในสคริปต์ `ccam --fallback work -p "…"` จะสลับบัญชีให้เอง ดูที่ [ขีดจำกัดการใช้งาน](/docs/usage-limits)
+
+**ที่นั่ง (seat) ของ Team และ Enterprise** การเลือกอัตโนมัติ (`ccam next`, `--fallback`, `ccam pick` และปุ่ม `n` ในแดชบอร์ด) จะสลับระหว่างที่นั่งต่าง ๆ ในองค์กร Claude Team หรือ Enterprise เดียวกันด้วย ศูนย์ช่วยเหลือของ Anthropic ระบุว่า "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (แต่ละที่นั่งในแพ็กเกจ Team จะกำหนดให้กับบุคคลที่ระบุชื่อเพียงคนเดียว และมีเพียงบุคคลนั้นที่ใช้ได้) และ "Users can't route their work through another user's account to use that user's remaining usage" (ผู้ใช้ไม่สามารถส่งงานของตนผ่านบัญชีของผู้ใช้คนอื่นเพื่อใช้ปริมาณการใช้งานที่เหลืออยู่ของผู้ใช้คนนั้นได้) ([แพ็กเกจ Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129) ส่วน [แพ็กเกจ Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) ก็เช่นเดียวกัน) ดังนั้น การใช้การเลือกอัตโนมัติระหว่างที่นั่งต่าง ๆ จึงอาจละเมิดข้อกำหนดของ Anthropic โปรดสอบถามองค์กรของคุณและ Anthropic ก่อนที่จะพึ่งพาการเลือกอัตโนมัติ สำหรับแพ็กเกจส่วนตัว (Pro, Max) ดูที่ [หมายเหตุเรื่องข้อกำหนดในคำถามที่พบบ่อย](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)
 
 ## ใช้ ~/.claude อยู่แล้วใช่ไหม?
 

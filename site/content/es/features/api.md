@@ -1,10 +1,10 @@
 ---
 title: Cuentas con clave de API
 description: "ccam add --api agrega una cuenta con clave de API (API de Anthropic o un gateway); la clave se lee al iniciar de una variable o un comando y nunca se guarda."
-updated: 2026-10-20
+updated: 2026-10-23
 order: 13
 translation: machine
-sourceHash: "a903c92f2c50"
+sourceHash: "232a71525e42"
 ---
 
 Una cuenta con clave de API inicia Claude Code con una clave de API en lugar de un inicio de sesión de una suscripción de Claude: la API de Anthropic, o un endpoint que hable el mismo formato Messages, como un gateway de LiteLLM u OpenRouter. ccam no guarda la clave. La lee cada vez que se inicia la cuenta, desde una variable de entorno o desde un comando como un gestor de contraseñas, y solo se la entrega a ese proceso de Claude Code.
@@ -35,7 +35,7 @@ Una cuenta con clave de API se une a grupos como cualquier otra cuenta (por defe
 | --- | --- | --- |
 | `--api` | Agrega una cuenta con clave de API en lugar de iniciar sesión | desactivada |
 | `--key-from env:NAME` | Lee la clave de la variable de entorno `NAME` | |
-| `--key-from command:COMMAND` | Ejecuta `COMMAND` (con `sh -c`, o `cmd /C` en Windows) y usa la primera línea que imprime | |
+| `--key-from command:COMMAND` | Ejecuta `COMMAND` (con `sh -c`, o en Windows tal como se escribe en `cmd /d /s /c "…"`, con las comillas conservadas) y usa la primera línea que imprime | |
 | `--base-url <url>` | El endpoint (`ANTHROPIC_BASE_URL`) | La API de Anthropic |
 | `--auth api-key\|bearer` | Envía la clave como `ANTHROPIC_API_KEY` (`x-api-key`) o como `ANTHROPIC_AUTH_TOKEN` (`Authorization: Bearer`, que suelen pedir los gateways) | `api-key` |
 | `--model <model>` | El modelo (`ANTHROPIC_MODEL`) | El predeterminado de Claude Code |
@@ -66,10 +66,17 @@ Las cuentas con inicio de sesión de suscripción conservan el entorno que hered
 
 ## Seguridad y casos límite
 
-- La clave nunca se escribe en `config.toml`, en una caché ni en un registro, y `ccam --dry-run gw` no la lee: una ejecución de prueba no ejecuta una fuente `command:`.
+- La clave nunca se escribe en `config.toml`, en una caché ni en un registro, y `ccam --dry-run gw` no la lee: una ejecución de prueba no ejecuta una fuente `command:`. En su lugar, la ejecución de prueba muestra el endpoint, el modelo y de dónde sale la clave:
+
+  ```console
+  $ ccam --dry-run gw -p hi
+  CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/gw CCAM_PROFILE=gw ANTHROPIC_BASE_URL=https://llm.example.com ANTHROPIC_MODEL=claude-sonnet-5-5 ANTHROPIC_AUTH_TOKEN="$(pass show llm/gateway-key | head -n 1)" /home/me/.local/bin/claude -p hi
+  ```
+
+  Una variable heredada que el inicio quita aparece como `env -u <name>` al principio. Con una fuente `env:` cuya variable está vacía, la ejecución de prueba falla igual que fallaría el inicio.
 - `ccam add --api` comprueba una fuente `env:` enseguida y avisa si la variable está vacía; una fuente `command:` se ejecuta por primera vez al iniciar.
 - `ccam login` y `ccam logout` rechazan una cuenta con clave de API, ya que no tiene inicio de sesión. `ccam doctor` muestra su endpoint y la fuente de su clave, y avisa cuando una variable `env:` está vacía.
-- `ccam usage` muestra `API` para ella. `ccam next --auto`, `--fallback` y `ccam pick` solo eligen entre cuentas de suscripción, porque una clave de API no tiene un límite de 5 horas ni semanal que comparar.
+- `ccam usage` muestra `no limits (API)` para ella. `ccam next --auto`, `--fallback` y `ccam pick` solo eligen entre cuentas de suscripción, porque una clave de API no tiene un límite de 5 horas ni semanal que comparar.
 - Un `settings.json` compartido con un bloque `env` o `apiKeyHelper` se aplica a todas las cuentas del grupo, incluidas las cuentas con clave de API. Deja la configuración del proveedor fuera de la configuración compartida, o pon la cuenta con clave de API en un grupo sin `settings`.
 
 ## Relacionado

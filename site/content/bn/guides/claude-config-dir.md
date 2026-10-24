@@ -1,10 +1,10 @@
 ---
 title: "CLAUDE_CONFIG_DIR-এর ব্যাখ্যা"
 description: "Claude Code-এ CLAUDE_CONFIG_DIR কী করে, ফোল্ডারে কী থাকে, macOS লগইন কোথায় রাখে, এবং কোন ফাইল অ্যাকাউন্টগুলোর মধ্যে শেয়ার করা যায়।"
-updated: 2026-10-19
+updated: 2026-10-23
 order: 2
 translation: machine
-sourceHash: ef9317030e42
+sourceHash: 2cf08478085f
 ---
 
 `CLAUDE_CONFIG_DIR` Claude Code-কে বলে দেয় `~/.claude`-এর বদলে কোন ফোল্ডার ব্যবহার করতে হবে। অ্যাকাউন্টভিত্তিক সবকিছু সেখানে থাকে: লগইন, সেটিংস, MCP সার্ভার, প্লাগইন ও কথোপকথনের ইতিহাস। এটিকে আলাদা আলাদা ফোল্ডারে নির্দেশ করলে আপনি আলাদা অ্যাকাউন্ট পান।
@@ -19,7 +19,7 @@ CLAUDE_CONFIG_DIR=~/.claude-work claude
 
 ## ফোল্ডারের ভেতরে কী থাকে?
 
-Claude Code 2.1.302 দিয়ে যাচাই করা:
+Claude Code 2.1.309 দিয়ে যাচাই করা:
 
 | পাথ | বিষয়বস্তু | শেয়ারযোগ্য |
 | --- | --- | --- |
@@ -34,15 +34,15 @@ Claude Code 2.1.302 দিয়ে যাচাই করা:
 
 ## কোথায় অনেকে আটকে যান?
 
-**`CLAUDE_CONFIG_DIR` ছাড়া `.claude.json` `~/.claude`-এর ভেতরে থাকে না।** তখন Claude Code এটি ফোল্ডারের পাশে `~/.claude.json`-এ রাখে। আপনি যদি `CLAUDE_CONFIG_DIR=~/.claude` ব্যবহার করা শুরু করেন, Claude Code এর বদলে `~/.claude/.claude.json` খোঁজে এবং আপনার অ্যাকাউন্ট খুঁজে পায় না। `ccam import` দুটিকে লিংক করে এটি সামলায়।
+**`CLAUDE_CONFIG_DIR` ছাড়া `.claude.json` `~/.claude`-এর ভেতরে থাকে না।** তখন Claude Code এটি ফোল্ডারের পাশে `~/.claude.json`-এ রাখে। আপনি যদি `CLAUDE_CONFIG_DIR=~/.claude` ব্যবহার করা শুরু করেন, Claude Code এর বদলে `~/.claude/.claude.json` খোঁজে এবং আপনার অ্যাকাউন্ট খুঁজে পায় না। `ccam import` দুটিকে লিংক করে এটি সামলায়। `~/.claude`-এ যদি আগে থেকেই নিজস্ব একটি `.claude.json` থাকে, `CLAUDE_CONFIG_DIR=~/.claude` দিয়ে আগের কোনো চালানো থেকে, তাহলে ccam দুটি ফাইলই রেখে দেয় এবং তা জানায়, কারণ কোনটি ঠিক তা শুধু আপনিই জানেন।
 
-**macOS-এ লগইন ফোল্ডারে নয়, Keychain-এ থাকে।** Claude Code এটি `Claude Code-credentials` নামে রাখে, আর `CLAUDE_CONFIG_DIR` নির্ধারণ করা থাকলে নামের পরে ফোল্ডার পাথের একটি ছোট হ্যাশ যোগ হয়। তাই আলাদা ফোল্ডার আলাদা Keychain এন্ট্রি পায়। Keychain লিখতে না দিলে Claude Code ফোল্ডারের `.credentials.json` ব্যবহার করে, যেমনটা [এর ডকুমেন্টেশনে](https://code.claude.com/docs/en/authentication#credential-management) বলা আছে।
+**macOS-এ লগইন ফোল্ডারে নয়, Keychain-এ থাকে।** Claude Code এটি `Claude Code-credentials` নামে রাখে, আর `CLAUDE_CONFIG_DIR` নির্ধারণ করা থাকলে নামের পরে `-` এবং ফোল্ডার পাথের SHA-256-এর প্রথম ৮টি হেক্স অঙ্ক যোগ হয়, `$USER`-এর নামের অ্যাকাউন্টের জন্য। তাই আলাদা ফোল্ডার আলাদা Keychain এন্ট্রি পায়, আর কোনো ফোল্ডার সরালে বা নাম বদলালে তার লগইন হারিয়ে যায়; এ কারণেই macOS-এ `ccam rename` ফোল্ডারের নাম অপরিবর্তিত রাখে। Keychain লিখতে না দিলে Claude Code ফোল্ডারের `.credentials.json` ব্যবহার করে, যেমনটা [এর ডকুমেন্টেশনে](https://code.claude.com/docs/en/authentication#credential-management) বলা আছে।
 
 **সব সাইন-ইন ফোল্ডারে থাকে না।** API key ছাড়া Claude Console সাইন-ইন ফোল্ডারের বাইরে সংরক্ষিত হয়, তাই আলাদা ফোল্ডার দিয়ে এমন দুটি সাইন-ইন আলাদা রাখা যায় না। claude.ai লগইন ও API key ফোল্ডার অনুযায়ী আলাদা থাকে।
 
 ## Windows-এ ফোল্ডারটি কোথায়?
 
-ডিফল্টভাবে `%USERPROFILE%\.claude`, আর লগইন এর ভেতরে `.credentials.json`-এ থাকে। প্রতিটি বাড়তি অ্যাকাউন্টের জন্য `CLAUDE_CONFIG_DIR`-কে অন্য একটি ফোল্ডারে নির্ধারণ করুন, ঠিক Linux ও macOS-এর মতো।
+ডিফল্টভাবে `%USERPROFILE%\.claude`, আর লগইন এর ভেতরে `.credentials.json`-এ থাকে, অথবা Claude Code-কে Windows Credential Manager ব্যবহার করতে বলা থাকলে সেখানে, macOS-এর মতোই ফোল্ডার পাথ থেকে তৈরি একটি নামে। প্রতিটি বাড়তি অ্যাকাউন্টের জন্য `CLAUDE_CONFIG_DIR`-কে অন্য একটি ফোল্ডারে নির্ধারণ করুন, ঠিক Linux ও macOS-এর মতো।
 
 ## ফোল্ডারগুলো কি ফাইল শেয়ার করতে পারে?
 

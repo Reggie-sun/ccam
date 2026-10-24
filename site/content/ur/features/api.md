@@ -1,10 +1,10 @@
 ---
 title: "API key اکاؤنٹس"
 description: "ccam add --api، Anthropic کے API یا کسی گیٹ وے کے لیے API key اکاؤنٹ شامل کرتا ہے؛ key لانچ پر کسی ویری ایبل یا کمانڈ سے پڑھی جاتی ہے، کبھی محفوظ نہیں ہوتی۔"
-updated: 2026-10-20
+updated: 2026-10-23
 order: 13
 translation: machine
-sourceHash: "a903c92f2c50"
+sourceHash: "232a71525e42"
 ---
 
 API key اکاؤنٹ، Claude سبسکرپشن لاگ اِن کے بجائے API key سے Claude Code شروع کرتا ہے: Anthropic کا API، یا کوئی ایسا اینڈ پوائنٹ جو وہی Messages فارمیٹ سمجھتا ہو، جیسے LiteLLM یا OpenRouter گیٹ وے۔ ccam، key محفوظ نہیں کرتا۔ یہ ہر بار اکاؤنٹ شروع ہونے پر اسے کسی انوائرنمنٹ ویری ایبل سے، یا پاس ورڈ مینیجر جیسی کسی کمانڈ سے پڑھتا ہے، اور صرف اسی Claude Code پروسیس کو دیتا ہے۔
@@ -35,7 +35,7 @@ API key اکاؤنٹ کسی بھی دوسرے اکاؤنٹ کی طرح گروپ�
 | --- | --- | --- |
 | `--api` | لاگ اِن کے بجائے API key اکاؤنٹ شامل کرتا ہے | بند |
 | `--key-from env:NAME` | key انوائرنمنٹ ویری ایبل `NAME` سے پڑھتا ہے | |
-| `--key-from command:COMMAND` | `COMMAND` چلاتا ہے (`sh -c` سے، یا Windows پر `cmd /C` سے) اور اس کی پرنٹ کی ہوئی پہلی لائن استعمال کرتا ہے | |
+| `--key-from command:COMMAND` | `COMMAND` چلاتا ہے (`sh -c` سے، یا Windows پر `cmd /d /s /c "…"` میں بالکل ویسے ہی جیسے لکھی گئی ہو، کوٹیشن مارکس برقرار رکھتے ہوئے) اور اس کی پرنٹ کی ہوئی پہلی لائن استعمال کرتا ہے | |
 | `--base-url <url>` | اینڈ پوائنٹ (`ANTHROPIC_BASE_URL`) | Anthropic کا API |
 | `--auth api-key\|bearer` | key کو `ANTHROPIC_API_KEY` (`x-api-key`) یا `ANTHROPIC_AUTH_TOKEN` (`Authorization: Bearer`، جو گیٹ ویز عموماً چاہتے ہیں) کے طور پر بھیجتا ہے | `api-key` |
 | `--model <model>` | ماڈل (`ANTHROPIC_MODEL`) | Claude Code کا ڈیفالٹ |
@@ -66,10 +66,17 @@ model = 'claude-sonnet-5-5'
 
 ## حفاظت اور خاص صورتیں
 
-- key کبھی `config.toml`، کسی کیش یا لاگ میں نہیں لکھی جاتی، اور `ccam --dry-run gw` اسے نہیں پڑھتا: ڈرائی رن `command:` ماخذ نہیں چلاتا۔
+- key کبھی `config.toml`، کسی کیش یا لاگ میں نہیں لکھی جاتی، اور `ccam --dry-run gw` اسے نہیں پڑھتا: ڈرائی رن `command:` ماخذ نہیں چلاتا۔ اس کے بجائے ڈرائی رن اینڈ پوائنٹ، ماڈل اور یہ دکھاتا ہے کہ key کہاں سے آتی ہے:
+
+  ```console
+  $ ccam --dry-run gw -p hi
+  CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/gw CCAM_PROFILE=gw ANTHROPIC_BASE_URL=https://llm.example.com ANTHROPIC_MODEL=claude-sonnet-5-5 ANTHROPIC_AUTH_TOKEN="$(pass show llm/gateway-key | head -n 1)" /home/me/.local/bin/claude -p hi
+  ```
+
+  لانچ جو وراثتی ویری ایبل ہٹاتا ہے وہ شروع میں `env -u <name>` کے طور پر دکھایا جاتا ہے۔ اگر `env:` ماخذ کا ویری ایبل خالی ہو تو ڈرائی رن اسی طرح ناکام ہوتا ہے جیسے لانچ ہوتا۔
 - `ccam add --api`، `env:` ماخذ کو فوراً جانچتا ہے اور ویری ایبل خالی ہو تو انتباہ دیتا ہے؛ `command:` ماخذ پہلی بار لانچ پر چلتا ہے۔
 - `ccam login` اور `ccam logout`، API key اکاؤنٹ کو رد کر دیتے ہیں، کیونکہ اس کا کوئی لاگ اِن نہیں۔ `ccam doctor` اس کا اینڈ پوائنٹ اور key کا ماخذ دکھاتا ہے، اور جب کوئی `env:` ویری ایبل خالی ہو تو انتباہ دیتا ہے۔
-- `ccam usage` اس کے لیے `API` دکھاتا ہے۔ `ccam next --auto`، `--fallback` اور `ccam pick` صرف سبسکرپشن اکاؤنٹس میں سے چنتے ہیں، کیونکہ API key کی کوئی 5 گھنٹے یا ہفتہ وار حد نہیں جس کا موازنہ کیا جا سکے۔
+- `ccam usage` اس کے لیے `no limits (API)` دکھاتا ہے۔ `ccam next --auto`، `--fallback` اور `ccam pick` صرف سبسکرپشن اکاؤنٹس میں سے چنتے ہیں، کیونکہ API key کی کوئی 5 گھنٹے یا ہفتہ وار حد نہیں جس کا موازنہ کیا جا سکے۔
 - `env` بلاک یا `apiKeyHelper` والی شیئر شدہ `settings.json` گروپ کے ہر اکاؤنٹ پر لاگو ہوتی ہے، API key اکاؤنٹس سمیت۔ پرووائیڈر کی سیٹنگز کو شیئر شدہ سیٹنگز سے باہر رکھیں، یا API key اکاؤنٹ کو ایسے گروپ میں رکھیں جس میں `settings` نہ ہو۔
 
 ## متعلقہ

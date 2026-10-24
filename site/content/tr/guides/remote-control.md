@@ -1,10 +1,10 @@
 ---
 title: ccam ile Remote Control kullanma
 description: "Remote Control'ü ccam <name> rc ile her hesapla başlatın: geçerli seçenekler, ccam'in paylaşılan MCP sunucularını neden kopyalamayı önerdiği ve sorun giderme."
-updated: 2026-10-20
+updated: 2026-10-23
 order: 4
 translation: machine
-sourceHash: "5f0b90ea53d6"
+sourceHash: "3e17d89f98c8"
 ---
 
 `ccam work rc`, Claude Code'un Remote Control özelliğini `work` hesabıyla başlatır; böylece bu bilgisayardaki oturumları claude.ai/code üzerinden veya Claude mobil uygulamasından yönetebilirsiniz. `claude rc` gibi çalışır, tek bir farkla: hesap MCP sunucularını paylaşıyorsa ccam, bunları hesabın `.claude.json` dosyasına kopyalayıp kopyalamayacağını bir kez sorar, çünkü Remote Control oturumları sunucuları başka hiçbir yerden okumaz.
@@ -31,9 +31,9 @@ Burada iki tür seçenek bir araya gelir: hesap adından önce yazılan veya cca
 | Seçenek veya ayar | Ne yapar | Varsayılan |
 | --- | --- | --- |
 | `--dry-run` (hesaptan önce) | Ortamı ve komutu, varsa MCP bildirimini de yazdırır. Ne soru sorar ne de kopyalar | kapalı |
-| `Copy them into .claude.json (a backup is kept)? [y/N]` | Hesap MCP sunucularını paylaştığında ve `.claude.json` dosyasında grubun güncel listesi olmadığında sorulur. `y` bunları kopyalar, `N` veya Enter onlar olmadan başlatır | `N` |
-| `~/.config/ccam/config.toml` içinde `mcp_strategy = "sync"` | Remote Control olsun olmasın, her başlatmadan önce grubun sunucularını `.claude.json` dosyasına kopyalar; böylece hiçbir zaman soru sorulmaz | `"flag"` |
-| `ccam group leave <group> work` | Hesabı, onunla MCP paylaşan gruptan çıkarır; Remote Control bu durumda yalnızca hesabın kendi sunucularıyla başlar ve soru sorulmaz | `default` içinde |
+| `Copy them into .claude.json (a backup is kept; servers of the account's own stay)? [y/N]` | Hesap MCP sunucularını paylaştığında ve `.claude.json` dosyasında grubun güncel listesi olmadığında ya da kopyalanmış bir sunucu ondan kaybolduğunda sorulur. `y` bunları kopyalar, `N` veya Enter onlar olmadan başlatır | `N` |
+| `~/.config/ccam/config.toml` dosyasının en üstünde `mcp_strategy = "sync"` | Remote Control olsun olmasın, her başlatmadan önce grubun sunucularını `.claude.json` dosyasına kopyalar; böylece hiçbir zaman soru sorulmaz | `"flag"` |
+| `ccam group leave <group> work` | Hesabı, onunla MCP paylaşan gruptan çıkarır. Grubun sunucuları hesabın kendi sunucuları olarak `.claude.json` dosyasına kopyalanır; böylece Remote Control onlara sahip olur ve soru sorulmaz; `--fresh` ile yalnızca hesabın kendi sunucularıyla başlar | `default` içinde |
 
 ### Remote Control seçenekleri
 
@@ -52,7 +52,7 @@ Burada iki tür seçenek bir araya gelir: hesap adından önce yazılan veya cca
 | `--[no-]chrome` | Yeni oturumlar için Claude in Chrome (varsayılan kapalı) |
 | `-d`, `--debug`, `--debug-file <path>`, `-v`, `--verbose` | Hata ayıklama ve ayrıntılı çıktı |
 
-`rc` komutunu hesap adının hemen arkasına yazın. ccam, `-` ile başlamayan ilk argümanı Claude Code'un alt komutu olarak alır; bu yüzden `ccam work rc --name laptop` içinde `rc` görür, ama `ccam work --model opus rc` içinde `opus` görür.
+ccam, Claude Code'un alt komutunu Claude Code'un yaptığı gibi, seçenekleri değerleriyle birlikte atlayarak okur; bu yüzden `ccam work rc --name laptop` ve `ccam work --model opus rc` ikisi de Remote Control'ü başlatır. ccam'in bilmediği bir seçenek değersiz bir seçenek sayılır; emin olmak için `rc` komutunu hesap adının hemen arkasına yazın.
 
 ## ccam ne yapar
 
@@ -60,16 +60,16 @@ Başlatma her zamanki yolu izler ([Claude Code'u başlatma](/features/launch)), 
 
 1. ccam, her başlatmada olduğu gibi hesabı bulur, paylaşım bağlantılarını denetler ve `claude` yolunu çözer.
 2. Alt komutun `rc` veya `remote-control` olduğunu görür ve `--mcp-config` eklemez.
-3. Hesap MCP sunucularını paylaşıyorsa grubun `mcp.json` dosyasını `~/.local/state/ccam/mcp/work/` içindeki `sync-stamp` ile karşılaştırır. `.claude.json` güncel sunucuları zaten içeriyorsa veya grubun hiç sunucusu yoksa doğrudan 6. adıma geçer.
+3. Hesap MCP sunucularını paylaşıyorsa grubun `mcp.json` dosyasını `~/.local/state/ccam/mcp/work/` içindeki `sync-stamp` ile karşılaştırır ve her grup sunucusunun hâlâ `.claude.json` içinde olduğunu denetler. `.claude.json` güncel sunucuları zaten içeriyorsa veya grubun hiç sunucusu yoksa doğrudan 6. adıma geçer.
 4. Aksi halde oturumlarda eksik kalacak sunucuları adlarıyla belirtir:
 
    ```console
    $ ccam work rc
    ccam: Remote Control sessions only get MCP servers stored in account work's .claude.json, not the shared MCP servers (ctx, fs).
-   Copy them into .claude.json (a backup is kept)? [y/N]
+   Copy them into .claude.json (a backup is kept; servers of the account's own stay)? [y/N]
    ```
 
-5. `y` yanıtında `.claude.json` dosyasının bir yedeğini alır, Claude Code'un kendi kilidini alır, grubun sunucularını `mcpServers` içine ekler ve hesabın diğer sunucularını korur. `N` yanıtında, terminal yokken veya hesap çalışırken hiçbir şeyi değiştirmez ve bunu belirtir:
+5. `y` yanıtında `.claude.json` dosyasının bir yedeğini alır, Claude Code'un kendi kilidini alır, grubun sunucularını `mcpServers` içine ekler ve hesabın diğer sunucularını korur; hesabın bir grup sunucusunun adını taşıyan kendi sunucusu hesabın olarak kalır ve ccam bunu söyler. `N` yanıtında, terminal yokken veya hesap çalışırken hiçbir şeyi değiştirmez ve bunu belirtir:
 
    ```console
          Starting without them. To copy them before every launch instead, set mcp_strategy = "sync" in ~/.config/ccam/config.toml
@@ -77,17 +77,17 @@ Başlatma her zamanki yolu izler ([Claude Code'u başlatma](/features/launch)), 
 
 6. Oturumu kaydeder, `CLAUDE_CONFIG_DIR` değişkenini hesap klasörüne ayarlar ve `exec` ile kendini `claude rc` ile değiştirir.
 
-Remote Control bundan sonra bir sunucu olarak çalışmaya devam eder. Sizin için başlattığı her oturum bu sürecin bir alt sürecidir, dolayısıyla `work` olarak çalışır: `work` hesabının girişi, ayarları ve konuşma geçmişiyle çalışır ve `work` hesabının kullanım sınırından düşülür. Sunucu çalıştığı sürece ccam hesabı çalışıyor sayar.
+Remote Control bundan sonra bir sunucu olarak çalışmaya devam eder. Sizin için başlattığı her oturum bu sürecin bir alt sürecidir, dolayısıyla `work` olarak çalışır: `work` hesabının girişi, ayarları ve konuşma geçmişiyle çalışır ve `work` hesabının kullanım sınırından düşülür. ccam'in başlattığı bir sunucu çalıştığı sürece ccam hesabı çalışıyor sayar; düz `claude remote-control` ile başlatılmış bir sunucu da oturumları olduğu sürece öyle sayılır; henüz oturumu olmayan böyle bir sunucu görülmez.
 
 Deneme çalıştırması farkı gösterir. Normal bir başlatma grubun sunucularını bir argüman olarak taşır, Remote Control taşımaz:
 
 ```console
 $ ccam --dry-run work
-CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/claude --mcp-config=/home/me/.local/share/ccam/groups/default/mcp.json
+CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work CCAM_PROFILE=work /home/me/.local/bin/claude --mcp-config=/home/me/.local/share/ccam/groups/default/mcp.json
 $ ccam --dry-run work rc
 ccam: Remote Control sessions only get MCP servers stored in account work's .claude.json, not the shared MCP servers (ctx, fs).
       Starting without them. To copy them before every launch instead, set mcp_strategy = "sync" in ~/.config/ccam/config.toml
-CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/claude rc
+CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work CCAM_PROFILE=work /home/me/.local/bin/claude rc
 ```
 
 ## Neden böyle çalışır
@@ -96,13 +96,13 @@ CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/c
 
 **Oturumları sunucuları yalnızca `.claude.json` dosyasından okur.** Remote Control'ün başlattığı oturumlar komut satırındaki seçenekleri devralmaz. Kullanıcı MCP sunucularını buldukları tek yer hesabın `.claude.json` dosyasıdır. Bu dosya hesabın giriş bilgilerini ve klasör başına durumu da tuttuğu için ccam onu `settings.json` ile yaptığı gibi paylaşılan bir kopyaya bağlayamaz. Sunucuları bu dosyaya kopyalamak, oturumlara paylaşılan listeyi vermenin tek yoludur.
 
-**ccam yazmadan önce sorar.** Varsayılan bayrak stratejisinde ccam `.claude.json` dosyasına dokunmamayı taahhüt eder. Remote Control oraya yazmak zorunda olduğu tek durumdur; bu yüzden önce sorar, bir yedek tutar ve `mcpServers` dışında hiçbir şeye dokunmaz.
+**ccam yazmadan önce sorar.** Varsayılan bayrak stratejisinde ccam başlatmada `.claude.json` dosyasına dokunmaz. Remote Control oraya yazmak zorunda olduğu tek başlatmadır; bu yüzden önce sorar, bir yedek tutar ve `mcpServers` dışında hiçbir şeye dokunmaz. (Başlatmaların dışında, MCP paylaşımından ayrılma veya ona katılma ve `ccam mcp import` da, planlarının söylediği gibi, oraya yazar.)
 
-**Hesap çalışırken yazmaz.** Claude Code oturum sırasında `.claude.json` dosyasını yeniden yazar ve dışarıdan yapılan bir değişiklik kaybolur ya da üzerine yazılır. Bu yüzden ccam, hesabın herhangi bir oturumu (başka bir Remote Control sunucusu dahil) çalışırken kopyalamayı atlar.
+**Hesap çalışırken yazmaz.** Claude Code oturum sırasında `.claude.json` dosyasını yeniden yazar ve dışarıdan yapılan bir değişiklik kaybolur ya da üzerine yazılır. Bu yüzden ccam, hesabın herhangi bir oturumu (başka bir Remote Control sunucusu ve ccam olmadan başlatılmış Claude Code dahil) çalışırken kopyalamayı atlar.
 
-**Her değişiklikte bir kez sorar.** Kopyalamadan sonra `sync-stamp`, grubun `mcp.json` dosyasının değiştirilme zamanını tutar. ccam yalnızca bu dosya değiştiğinde, örneğin `ccam mcp add` sonrasında yeniden sorar. `N` yanıtını verirseniz henüz bir kopya olmadığından her Remote Control başlatmasında sorar.
+**Her değişiklikte bir kez sorar.** Kopyalamadan sonra `sync-stamp`, grubun `mcp.json` dosyasının değiştirilme zamanını tutar. ccam yalnızca bu dosya değiştiğinde, örneğin `ccam mcp add` sonrasında ya da kopyalanmış bir sunucu `.claude.json` dosyasından kaybolduğunda yeniden sorar. `N` yanıtını verirseniz henüz bir kopya olmadığından her Remote Control başlatmasında sorar.
 
-**`ccam mcp` kopyaları güncel tutar.** Adlar çakıştığında `.claude.json` içindeki bir girdi `--mcp-config` seçeneğine üstün gelir; bu yüzden eski bir kopya normal başlatmalarda da daha yeni bir tanımı gizler. Bu nedenle `ccam mcp add`, `add-json`, `remove` ve `import`, çalışmayan her hesaptaki kopyaları günceller:
+**`ccam mcp` kopyaları güncel tutar.** Adlar çakıştığında `.claude.json` içindeki bir girdi `--mcp-config` seçeneğine üstün gelir; bu yüzden eski bir kopya normal başlatmalarda da daha yeni bir tanımı gizler. Bu nedenle `ccam mcp add`, `add-json`, `remove` ve `import` ile `ccam migrate`, çalışmayan her hesaptaki kopyaları günceller ve bir kopya değiştiğinde bunu söyler:
 
 ```console
 $ ccam mcp add ctx --url https://mcp.context7.com/mcp
@@ -124,19 +124,19 @@ Soruya `N` yanıtı verildi, terminal yoktu veya hesap çalışıyordu. Remote C
 
 ### ccam her seferinde soruyor
 
-Sunucuları henüz kopyalamadınız. Bir kez `y` yanıtını verin veya `mcp_strategy = "sync"` ayarlayın. Remote Control'de sunucuları hiç istemiyorsanız hesapla MCP paylaşımını bırakın: hesabı o gruptan çıkarın (`ccam group leave default work`) ya da MCP'yi hesabın içinde olmadığı ayrı bir grupta tutun.
+Sunucuları henüz kopyalamadınız. Bir kez `y` yanıtını verin veya `mcp_strategy = "sync"` ayarlayın. Remote Control'de sunucuları hiç istemiyorsanız hesapla MCP paylaşımını, onları tutmadan bırakın: `ccam group leave default work --fresh` ya da MCP'yi hesabın içinde olmadığı ayrı bir grupta tutun. Düz bir `ccam group leave`, grubun sunucularını hesabın `.claude.json` dosyasına kopyalar; böylece Remote Control onlara sahip olur.
 
 ### `ccam work rc` hemen `--mcp-config` ile ilgili bir hatayla başarısız oluyor
 
-ccam sürümünüz 0.6.0'dan eski ve Remote Control'e `--mcp-config` iletiyor. `ccam update` komutunu çalıştırın. Güncel bir ccam ile aynı hata, `ccam work --model opus rc` örneğindeki gibi `rc` öncesinde değer alan bir seçenek olduğu ve ccam'in `opus` değerini alt komut sandığı anlamına gelir; `rc` komutunu hesap adının hemen arkasına yazın.
+ccam sürümünüz 0.6.0'dan eski ve Remote Control'e `--mcp-config` iletiyor. `ccam update` komutunu çalıştırın. Güncel bir ccam ile aynı hata, `rc` öncesinde ccam'in bilmediği, değer alan bir seçenek olduğu ve ccam'in değeri alt komut sandığı anlamına gelir; `rc` komutunu hesap adının hemen arkasına yazın.
 
 ### `ccam mcp` ile yapılan bir değişiklik Remote Control'e ulaşmıyor
 
 `ccam mcp add` ve `remove` kopyaları yalnızca çalışmayan hesaplarda günceller ve bunu belirtir: `Note: account work is running, so the copy in its .claude.json stays as it was until its next Remote Control launch.` Remote Control'ü durdurup yeniden başlatın; ccam değişen `mcp.json` dosyasını görür ve yeniden sorar.
 
-### Kopya benim kendi sunucumun yerini aldı
+### Grubunki yerine benim kendi sunucum kullanılıyor
 
-Hesabın bir grup sunucusuyla aynı adı taşıyan kendi sunucusu varsa kopya onun yerini almıştır. Önceki `.claude.json`, en yeni beş yedeği tutan `~/.local/state/ccam/mcp/work/backups/` içindedir. Kendi sürümünüzü tüm hesaplar için korumak istiyorsanız bir sonraki Remote Control başlatmasından önce onu `ccam mcp import work <server> --force` ile gruba taşıyın.
+Hesabın bir grup sunucusuyla aynı adı taşıyan kendi sunucusu varsa kopya onu yerinde bırakır ve bunu söyler: `account work has its own MCP servers fs, so group default's of those names are not copied there`. Grubunkini kullanmak için hesabınkini kaldırın (`claude mcp remove -s user <name>`); kendi sürümünüzü tüm hesaplara vermek için onu `ccam mcp import work <server> --force` ile gruba taşıyın. `.claude.json` yedekleri, en yeni beş yedeği tutan `~/.local/state/ccam/mcp/work/backups/` içindedir.
 
 ### Kopyalanan sunucuları kaldırmak istiyorum
 

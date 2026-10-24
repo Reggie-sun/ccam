@@ -1,10 +1,10 @@
 ---
 title: Aggiornare ccam
 description: ccam update sostituisce ccam con l'ultima release su GitHub dopo un controllo SHA-256; --check segnala soltanto e --version installa un tag specifico.
-updated: 2026-10-21
+updated: 2026-10-23
 order: 10
 translation: machine
-sourceHash: a92dbf37399f
+sourceHash: "000d37de5f29"
 ---
 
 `ccam update` scarica una release di ccam da GitHub, la verifica con il file `checksums.txt` della release e sostituisce il binario in esecuzione con un'unica rinomina. Usalo se hai installato ccam con lo script di installazione o da un archivio. Anche la [dashboard](/features/dashboard) chiede a GitHub l'ultima release ogni volta che si apre e la propone con `U`, che esegue gli stessi passaggi dopo aver chiesto conferma. Nessun altro comando contatta GitHub, quindi funzionano allo stesso modo anche offline.
@@ -64,7 +64,7 @@ L'intera sequenza, dalla ricerca del tag alla rinomina:
 
 L'archivio e `checksums.txt` vengono scaricati in parallelo, e non viene scritto nulla finché il checksum non corrisponde. La rinomina è atomica, quindi un crash o un disco pieno lasciano il vecchio binario o quello nuovo, mai metà di uno dei due. I comandi scorciatoia come `~/.local/bin/ccwork` sono link simbolici al binario di ccam, quindi eseguono la nuova versione senza alcuna modifica.
 
-Su Windows il file di un programma in esecuzione non può essere sostituito né eliminato, solo rinominato. `Updater.Install` scrive il nuovo binario in `ccam.exe.new`, rinomina il `ccam.exe` in esecuzione in `ccam.exe.old` e rinomina il nuovo file in `ccam.exe`. Se l'ultimo passaggio fallisce, il vecchio binario riprende il suo nome. L'aggiornamento successivo elimina `ccam.exe.old`. Le scorciatoie che sono hard link invece di link simbolici ([Comandi scorciatoia](/features/shortcuts)) vengono rinnovate subito dopo, così eseguono anch'esse la nuova versione.
+Su Windows il file di un programma in esecuzione non può essere sostituito né eliminato, solo rinominato. `Updater.Install` scrive il nuovo binario in `ccam.exe.new`, rinomina il `ccam.exe` in esecuzione in `ccam.exe.old` e rinomina il nuovo file in `ccam.exe`. Se l'ultimo passaggio fallisce, il vecchio binario riprende il suo nome. L'aggiornamento successivo elimina i file `ccam.exe.old` che può eliminare; mentre una sessione gira ancora da un `ccam.exe.old` precedente, il binario in esecuzione diventa invece `ccam.exe.old-<time>`. Le scorciatoie che sono hard link invece di link simbolici ([Comandi scorciatoia](/features/shortcuts)) vengono rinnovate subito dopo, così eseguono anch'esse la nuova versione; questo riguarda gli hard link creati da ccam verso qualsiasi ccam più vecchio, non solo verso il binario appena sostituito.
 
 ### Installazioni gestite da un pacchetto
 
@@ -91,7 +91,7 @@ Sui sistemi diversi da Linux viene stampata solo la riga dello script di install
 
 ## Sicurezza e casi limite
 
-- Una build di sviluppo indica come versione `dev` e non ha una release con cui confrontarsi, quindi `ccam update` e `ccam update --check` la rifiutano. `ccam update --version vX.Y.Z` installa una release al suo posto.
+- Una build di sviluppo indica come versione `dev` e non ha una release con cui confrontarsi, quindi `ccam update` e `ccam update --check` la rifiutano. `ccam update --version vX.Y.Z` installa una release al suo posto. Una build fatta con `go install github.com/jhyunwoo/ccam/cmd/ccam@vX.Y.Z` (o `@latest`) riporta quella release, quindi `ccam update` e la proposta della dashboard funzionano; `@main` o una build locale successiva a un tag resta `dev`.
 - Un download fallito, un file mancante per la tua piattaforma o un checksum che non corrisponde lasciano il binario installato com'era.
 - Una release che non esiste fallisce con `there is no release <tag>`. Quando GitHub rifiuta con HTTP 403 o 429, ccam indica che probabilmente si tratta di un limite di richieste e ti chiede di riprovare più tardi.
 - `--check` si limita a leggere. Non controlla se il binario è gestito da un pacchetto o scrivibile.

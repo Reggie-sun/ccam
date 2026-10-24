@@ -1,10 +1,10 @@
 ---
 title: Dashboard
 description: ccam a terminal yana buɗe dashboard mai cike allo na asusai, rukunoni, ƙa'idodin folda, extensions da dubawa; kowane canji yana fara nuna shirinsa.
-updated: 2026-10-21
+updated: 2026-10-24
 order: 15
 translation: machine
-sourceHash: "19a99adef661"
+sourceHash: e48ca2c5a643
 ---
 
 `ccam` ba tare da arguments ba yana buɗe dashboard mai cike allo idan standard input da output terminal ne; in ba haka ba yana buga `ccam list`. Dashboard yana nuna kowane asusu tare da amfaninsa da rukunoninsa, kuma yana yin abin da umarnan ke yi: farawa, ƙarawa, shiga, canza rukunoni, saita ƙa'idodin folda, dubawa da gyarawa. Farawa yana rufe shi; ƙara asusu ko shiga yana barin sa zuwa terminal sannan ya dawo.
@@ -33,16 +33,16 @@ Duk lokacin da ya buɗe, dashboard yana tambayar GitHub a bayan fage ko akwai sa
 
 `U` yana tambaya da farko, sannan yana sabuntawa yadda [`ccam update`](/features/update) ke yi: ana duba sakin da SHA-256 checksums nasa kuma yana maye gurbin ccam a mataki ɗaya. Dashboard ɗin da kake ciki har yanzu tsohon sigar ne, don haka ka fita ka sake fara `ccam`. Idan ba za a iya yin sabuntawar a nan ba, misali ga ccam da aka girka daga kunshin `.deb`, dashboard yana nuna shawara ɗaya da ta `ccam update` kuma yana riƙe tayin.
 
-Firam na farko yana zana daga `config.toml` kaɗai, cikin ƙasa da 100 ms sosai; amfani yana cika yayin da kowane asusu ya amsa. Kowace iyaka tana da nata sandar: taga ta awa 5, taga ta mako ga dukkan model, da taga ta mako ta Fable kanta; `-` yana nufin asusun ba shi da irin wannan taga. Kashi yana zama rawaya daga 80% kuma ja a 100%, kuma ƙimomin da suka fito daga cache bayan neman da ya gaza ana zana su a dusashe.
+Firam na farko yana zana daga `config.toml` kaɗai, cikin ƙasa da 100 ms sosai; amfani yana cika yayin da kowane asusu ya amsa. Kowace iyaka tana da nata sandar: taga ta awa 5, taga ta mako ga dukkan model, da taga ta mako ta Fable kanta; `-` yana nufin asusun ba shi da irin wannan taga. Kashi yana zama rawaya daga 80% kuma ja a 100%, kuma ƙimomin da suka fito daga cache bayan neman da ya gaza ana zana su a dusashe. Tagar da Claude Code ya ba da rahoton ta cika tana nuna 100% har zuwa sake saitinta. Access token da ya ƙare yana nuna `⚠ token expired` a dusashe (Claude Code yana sabunta shi a farawa ta gaba), yayin da `⚠ login expired` yana nufin asusun yana buƙatar `ccam login`.
 
 ## Shafuka
 
 | Shafi | Abin da yake nunawa | Maɓallai |
 | --- | --- | --- |
-| Accounts | lamba, suna, imel, sandunan awa 5, na mako da na Fable, amfani na ƙarshe, rukunoni; `✔` tsoho, `▸` asusun wannan foldar, `•` mai aiki | a ƙasa |
+| Accounts | lamba, suna, imel, sandunan awa 5, na mako da na Fable, amfani na ƙarshe, rukunoni; `✔` tsoho, `▸` asusun wannan foldar, `•` mai aiki (har da Claude Code da aka fara ba ta ccam ba: `claude` na yau da kullum, IDE, zaman bayan fage da daemon ɗinsu) | a ƙasa |
 | Groups | kowane rukuni, abin da yake rabawa da asusansa, da asusan da ba sa cikin kowane rukuni | `enter` gyara, `n` sabo, `e` sake suna, `x` cire |
-| Folders | ƙa'idodin [`ccam folder`](/features/folder) da wanda ke aiki a nan | `n` yi amfani da asusu a nan, `enter` canza, `x` cire |
-| Extensions | abin da [`ccam ext`](/features/ext) ke nunawa, kowane extension sau ɗaya tare da rukunonin da yake fitowa daga gare su | `r` sake lodawa |
+| Folders | ƙa'idodin [`ccam folder`](/features/folder) da wanda ke aiki a nan, har ma idan ka isa foldar ta mahaɗi na alama (symbolic link) (ana ajiye sababbin ƙa'idodi tare da warware mahaɗai) | `n` yi amfani da asusu a nan, `enter` canza, `x` cire |
+| Extensions | abin da [`ccam ext`](/features/ext) ke nunawa, kowane extension sau ɗaya tare da rukunonin da yake fitowa daga gare su, `off:` asusan da ba a kunna plugin a cikinsu ba, sabobin da asusu ke da su don wannan foldar kawai a cikin nasa, `This folder's project`, da matsalolin da ba na wani asusu ba | `r` sake lodawa |
 | Health | abin da [`ccam doctor`](/features/doctor) ke bayar da rahoto, a matsayin akwati ɗaya ga kowane asusu (a ƙasa) | `f` gyara akwatin da aka zaɓa, `F` gyara duka (`doctor --fix`), `↑`/`↓` matsawa tsakanin akwatuna |
 
 `←`/`→` ko `Tab` suna sauya shafuka, `?` yana lissafa maɓallan shafin yanzu, `r` yana sake neman amfani ba tare da gajeren cache ba, kuma `q` ko `Esc` yana fita.
@@ -66,6 +66,8 @@ Firam na farko yana zana daga `config.toml` kaɗai, cikin ƙasa da 100 ms sosai;
 | `c` | Saita ko cire gajeren umarninsa |
 | `x` | Cire shi (yana fara tambaya, yana farawa a kan No) |
 
+**Kujeru (seats) na Team da Enterprise.** Zaɓin atomatik (`ccam next`, `--fallback`, `ccam pick`, maɓallin `n` na dashboard) yana kuma sauyawa tsakanin kujerun ƙungiyar Claude Team ko Enterprise iri ɗaya. Cibiyar taimako ta Anthropic ta ce "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (ana ba da kowace kujera a tsarin Team da sunan takamaiman mutum ɗaya, kuma wannan mutumin kaɗai ne aka yarda ya yi amfani da ita) da "Users can't route their work through another user's account to use that user's remaining usage" (masu amfani ba za su iya tura aikinsu ta asusun wani mai amfani ba domin su ci gajiyar ragowar amfanin wannan mai amfanin) ([Tsare-tsaren Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); haka ma ga [tsare-tsaren Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Don haka yin amfani da zaɓin atomatik tsakanin kujeru na iya saɓa wa sharuɗɗan Anthropic. Ka tuntuɓi ƙungiyarka da Anthropic kafin ka dogara da shi. Don tsare-tsaren kai (Pro, Max), duba [bayanin sharuɗɗa a cikin Tambayoyin da ake yawan yi](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+
 ## Shafin Health
 
 Shafin Health yana gudanar da dubawar [`ccam doctor`](/features/doctor) idan ka buɗe shi kuma yana zana kallo iri ɗaya: layin farko mai alama ga kowane asusu, sannan akwati ɗaya ga kowane asusu. Kowane layi a akwati fanni ɗaya ne da aka duba, `Folder`, `Login` da `Share links` da farko, tare da alamar `✔` lafiya, `ℹ` bayani, `⚠` gargaɗi ko `✘` kuskure, don haka kana gani nan take wane asusu ke da matsala da kuma inda. Sakamakon da ba na wani asusu ba yana shiga akwatin `General`.
@@ -73,25 +75,26 @@ Shafin Health yana gudanar da dubawar [`ccam doctor`](/features/doctor) idan ka 
 ```console
  ✘ personal   ⚠ work
 
- ╭─ ✘ personal · 3 problems ──────────────────────────────────────────────────╮
- │ ⚠ Folder       folder permissions are 755 (should be 0700)                 │
- │ ℹ              unknown entries (Claude Code layout may have changed):      │
- │                newthing                                                    │
- │ ⚠ Login        .credentials.json permissions are 644 (should be 0600)      │
- │ ✔              login valid (me@example.com)                                │
- │ ✘ Share links  /home/me/.local/share/ccam/profiles/personal/settings.json: │
- │                set to shared but is a real file, not a link                │
- ╰────────────────────────────────────────────────────────────────────────────╯
- ╭─ ⚠ work · 1 problem ───────────────────────────────────────────────────────╮
- │ ✔ Folder       OK                                                          │
- │ ⚠ Login        not logged in → `ccam login work`                           │
- │ ✔ Share links  share links OK                                              │
- ╰────────────────────────────────────────────────────────────────────────────╯
+ ╭─ ✘ personal · 3 problems ─────────────────────────────────────────────────╮
+ │ ⚠ Folder       folder permissions are 755 (should be 0700)                │
+ │ ℹ              unknown entries (ccam knows the folder layout of Claude    │
+ │                Code 2.1.309; it may have changed): newthing               │
+ │ ⚠ Login        .credentials.json permissions are 644 (should be 0600)     │
+ │ ✔              login valid (me@example.com, Claude Team · Acme)           │
+ │ ✘ Share links  /home/me/.local/share/ccam/profiles/personal/settings.json │
+ │                : set to shared but is a real file, not a link             │
+ │ ✔ Usage        usage lookup OK                                            │
+ ╰───────────────────────────────────────────────────────────────────────────╯
+ ╭─ ⚠ work · 1 problem ──────────────────────────────────────────────────────╮
+ │ ✔ Folder       OK                                                         │
+ │ ⚠ Login        not logged in → `ccam login work`                          │
+ │ ✔ Share links  share links OK                                             │
+ ╰───────────────────────────────────────────────────────────────────────────╯
 
  4 problems; f repairs the selected box, F all of them (ccam doctor --fix).
 ```
 
-`↑`/`↓` suna matsawa daga akwati zuwa akwati, kuma akwatin da aka zaɓa yana da iyaka mai launin accent. `f` yana gyara akwatin da aka zaɓa kawai, kamar yadda `ccam doctor --fix` ke yi: a akwatin asusu yana gyara asusun nan kaɗai, a akwatin `General` kuma sakamakon da ba na wani asusu ba (hanyoyin plugins da gajerun umarni); kowane sauran asusu ana sake duba shi ne kawai. Yana fara tambaya, kuma akwatin da babu abin gyarawa a cikinsa yana cewa `nothing to repair in <name>` kawai. `F` yana gyara komai a lokaci ɗaya, kamar `ccam doctor --fix`, kuma `r` yana sake dubawa.
+`↑`/`↓` suna matsawa daga akwati zuwa akwati, kuma akwatin da aka zaɓa yana da iyaka mai launin accent. `f` yana gyara akwatin da aka zaɓa kawai, kamar yadda `ccam doctor --fix` ke yi: a akwatin asusu yana gyara asusun nan kaɗai, a akwatin `General` kuma sakamakon da ba na wani asusu ba (hanyoyin plugins da gajerun umarni); kowane sauran asusu ana sake duba shi ne kawai. Yana fara tambaya (``Like `ccam doctor --fix`: missing links and group folders are made, and a real file where a link belongs is backed up first; where the group has its own copy, the account then sees the group's. Nothing is lost.``), kuma akwatin da babu abin gyarawa a cikinsa yana cewa `nothing to repair in <name>` kawai. `F` yana gyara komai a lokaci ɗaya, kamar `ccam doctor --fix`, kuma `r` yana sake dubawa.
 
 ## Canza rukunoni
 
@@ -109,7 +112,7 @@ A shafin Groups, `Enter` yana buɗe mai gyarawa: abubuwan a hagu, asusan a dama,
     2. No
 ```
 
-Ana fara tambaya game da fayil da ya bambanta da kwafin rukunin (riƙe na rukunin, yi amfani da nawa, ko haɗa su). Sannan canjin yana gudana a bayan fage da lamba iri ɗaya da ta [`ccam group`](/features/share): ana fara ajiye saitin, bayanan kowane asusu suna motsawa a tsari, kuma fayilolin asali suna zuwa `.ccam-backup/`. Ana ƙin canjin da zai matsar da bayanan asusun da ke aiki, tare da sunan asusun.
+Ana fara tambaya game da fayil da ya bambanta da kwafin rukunin (riƙe na rukunin, yi amfani da nawa, ko haɗa su). Sannan canjin yana gudana a bayan fage da lamba iri ɗaya da ta [`ccam group`](/features/share): ana fara ajiye saitin, bayanan kowane asusu suna motsawa a tsari, kuma fayilolin asali suna zuwa `.ccam-backup/`; asusun da ya bar rabon MCP yana riƙe sabobin rukunin a `.claude.json` nasa. Ana ƙin canjin da zai matsar da bayanan asusun da ke aiki, tare da sunan asusun, har ma idan asusun ya fara yayin da shirin ke buɗe, kuma ana ƙin shirin da canjin rukunoni na wani ccam ya sa ya daina dacewa da `the groups changed while this plan waited; nothing was moved, make the change again`. Yayin da wani ccam ke canza rukunoni, sabon canji, sake suna ko cirewa yana cewa `another ccam is changing the groups right now`; bayan canjin da ya tsaya rabi, suna jira har sai `F` a shafin Health (ko `ccam doctor --fix`) ya kammala shi.
 
 ## Ƙara asusu
 
@@ -124,9 +127,13 @@ Ana fara tambaya game da fayil da ya bambanta da kwafin rukunin (riƙe na rukuni
 
 `Esc` yana komawa mataki ɗaya baya, kuma a mataki na farko yana rufe mataimakin.
 
+## Cire asusu
+
+`x` yana tambaya kafin wani abu ya faru, yana farawa a kan No, kuma yana faɗin abin da cirewar ke yi: `It is logged out first (its login is revoked), then its folder goes to ccam's trash; the groups' shared files stay.` Ga asusun API key babu shigar da za a soke, kuma idan wani asusu yana riƙe da shiga iri ɗaya ba a fitar da shi. Asusun da aka shigo da shi yana riƙe foldarsa: `It was imported, so its folder /home/me/.claude stays where it is: it leaves its groups first and keeps a copy of what they share, then ccam forgets it.`
+
 ## Launuka
 
-Launukan suna bin matsayin launuka na UI na terminal na Claude Code, don haka ccam yana dacewa a gefensa; sunayen rukunoni suna samun launi daga sunansu. ccam yana tambayar terminal bangonsa kuma yana zaɓar jigo mai haske ko mai duhu. Saita ɗaya da kanka a `config.toml`:
+Launukan suna bin matsayin launuka na UI na terminal na Claude Code, don haka ccam yana dacewa a gefensa; sunayen rukunoni suna samun launi daga sunansu. ccam yana tambayar terminal bangonsa kuma yana zaɓar jigo mai haske ko mai duhu. Saita ɗaya da kanka a saman `config.toml`, kafin `[[group]]`, `[[profile]]` ko `[[folder]]` na farko:
 
 ```toml
 theme = 'dark'   # auto (default), dark, light, dark-daltonized, light-daltonized, dark-ansi, light-ansi
@@ -139,7 +146,9 @@ Jigogin `-daltonized` na makantar launin ja da kore ne, kuma jigogin `-ansi` sun
 - Dashboard yana kiran ayyuka (functions) iri ɗaya da umarnan, don haka kowace ƙa'ida tana aiki: shiri kafin bayanai su motsa, ƙin canza asusan da ke aiki, kwafin ajiya, da tokens na shiga da ba sa taɓa barin asusu.
 - Dashboard ba shi da dry run: `ccam --dry-run` ba tare da suna ba yana buga yadda asusun wannan foldar zai fara, kuma `o` a kan asusu yana ba da dry run na wannan farawa ɗaya kawai.
 - Ana maido da terminal kafin Claude Code ya fara ko shiga ta buɗe.
-- Allon da ya yi ƙanƙanta ga akwatin tattaunawa (dialog) yana fara cire layukan shafin; ana yanke layuka da `…` maimakon naɗa su.
+- Allon da ya yi ƙanƙanta ga akwatin tattaunawa (dialog) yana fara cire layukan shafin; ana yanke layuka da `…` maimakon naɗa su. A gajeren allo layukan da babu komai da bayanin shafin ne ke tafiya na gaba, don layin maɓallai ya zauna. Ƙasa da ginshiƙai 40 ko layuka 8, dashboard yana nuna `Too small: ccam needs 40x8 (now 36x7)` kawai.
+- `Ctrl+C` yayin da ake aiwatar da canji, cirewa, sabuntawa ko gyara yana jiran sa: layin matsayi yana cewa `ccam quits when it is done.`
+- Bayan `U` ya sabunta ccam, tayin ba ya dawowa idan dashboard ya dawo daga ƙara asusu ko shiga.
 
 ## Masu alaƙa
 

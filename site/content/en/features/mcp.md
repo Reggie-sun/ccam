@@ -1,7 +1,7 @@
 ---
 title: Shared MCP servers
 description: Keep one list of MCP servers per group with ccam mcp add, add-json, list, remove and import, passed with --mcp-config or synced into each account.
-updated: 2026-10-20
+updated: 2026-10-23
 order: 5
 translation: source
 ---
@@ -17,7 +17,7 @@ ccam mcp add docs --url https://example.com/sse --transport sse
 ccam mcp add db -e PGHOST=localhost -- pg-mcp                    # with an environment variable
 ccam mcp add-json gh '{"type":"http","url":"https://api.githubcopilot.com/mcp/"}'
 ccam mcp add tools -g team -- tools-mcp                           # into the group team
-ccam mcp list                                                     # every group, and servers only one account has
+ccam mcp list                                                     # every group, and servers only one account or folder has
 ccam mcp remove ctx
 ccam mcp import work                                              # move work's own servers into its group
 ccam mcp import work gh --force                                   # replace the group's different gh
@@ -33,7 +33,10 @@ group default (work, side)
   ctx                  http https://mcp.context7.com/mcp
   fs                   stdio npx -y @modelcontextprotocol/server-filesystem /home/me/code
 only in account work: pg
+only in account side, for /home/me/code/app only: notes
 ```
+
+Below the groups, `ccam mcp list` names every server that does not reach the other accounts: `only in account work: pg` for one an account added for itself, `only in account side, for /home/me/code/app only: notes` for one added for one folder (plain `claude mcp add`, see below), `account work has its own …, used in its sessions in place of the group's` when an account's own server has a group server's name, this folder's `.mcp.json` with the accounts whose approval it is `waiting for approval in`, and servers that are `in no account, only in ~/.claude.json (plain claude's)`, with the [`ccam migrate --mcp`](/features/migrate) command that copies them.
 
 Adding a name the group already has replaces its definition and prints `updated` instead of `added`. Servers reach an account only if it is in that group and the group shares MCP (`ccam group set <group> --add mcp`); when the group does not, `add` says so.
 
@@ -58,9 +61,9 @@ Adding a name the group already has replaces its definition and prints `updated`
 
 The files involved:
 
-- `~/.local/share/ccam/groups/<group>/mcp.json`: the shared servers, `{"mcpServers": {…}}`, the format `--mcp-config` reads. It is written with `fsutil.AtomicWrite` and mode `0600`, because server entries often carry API keys.
+- `~/.local/share/ccam/groups/<group>/mcp.json`: the shared servers, `{"mcpServers": {…}}`, the format `--mcp-config` reads. It is written with `fsutil.AtomicWrite` and mode `0600`, because server entries often carry API keys, and only under the lock `<group>/.mcp.json.lock`, so two `ccam mcp add` at once both keep their server.
 - `~/.local/share/ccam/profiles/<name>/.claude.json`: Claude Code's own file with the account's servers. ccam reads only its `mcpServers` value with the `profile.TopLevelValue` scanner and never parses the whole file on the launch path.
-- `~/.local/state/ccam/mcp/<name>/`: the `seen` file, the `sync-stamp` and `.claude.json` backups.
+- `~/.local/state/ccam/mcp/<name>/`: the `seen` file, the `sync-stamp` (with a hash of each copy ccam wrote, so it can tell a copy nobody changed from one you edited), `sync-checked` (what the sync strategy saw last), `kept` (the servers the account kept when it left MCP sharing) and `.claude.json` backups.
 
 There are two strategies, set by `mcp_strategy` in `~/.config/ccam/config.toml`. The default is the flag strategy:
 
@@ -71,9 +74,9 @@ There are two strategies, set by `mcp_strategy` in `~/.config/ccam/config.toml`.
 3. `mcp.NewLocal` checks whether the account's `.claude.json` changed since the last launch, and only then parses its servers.
 4. `syscall.Exec` replaces ccam with Claude Code.
 
-The path is passed as one argument, `--mcp-config=<path>`, not as two. Claude Code's `--mcp-config` takes several values, so `claude --mcp-config a.json "prompt"` would read the prompt as a second config file and fail with `MCP config file not found`. The one-argument form stops there, and a prompt or a subcommand such as `mcp list` that follows works. Claude Code loads `--mcp-config` servers in addition to the account's own; on a name clash the entry in `.claude.json` wins. The flag strategy writes `.claude.json` only for Remote Control.
+The path is passed as one argument, `--mcp-config=<path>`, not as two. Claude Code's `--mcp-config` takes several values, so `claude --mcp-config a.json "prompt"` would read the prompt as a second config file and fail with `MCP config file not found`. The one-argument form stops there, and a prompt or a subcommand that follows works. `ccam work mcp list`, `get` and `remove` get no flag, since Claude Code refuses it there; ccam names the group's servers on standard error instead ([details](/features/launch#shared-mcp-servers)). Claude Code loads `--mcp-config` servers in addition to the account's own; on a name clash the entry in `.claude.json` wins. The flag strategy writes `.claude.json` only for Remote Control, when an account leaves MCP sharing or joins it again ([below](#leaving-and-joining)), and for `ccam mcp import`.
 
-`claude remote-control` (`rc`) takes no `--mcp-config`, and its sessions read servers only from `.claude.json`. For `ccam work rc`, ccam leaves the flag out and, on a terminal, asks whether to copy the group's servers into `.claude.json`, with a backup, as the `sync` strategy does. It asks until a copy exists, then again only after the group's `mcp.json` changes ([Remote Control](/features/launch#remote-control)). Because such a copy wins over `--mcp-config` on a name clash, `ccam mcp add`, `add-json`, `remove` and `import` update the copies that other accounts of the group hold:
+`claude remote-control` (`rc`) takes no `--mcp-config`, and its sessions read servers only from `.claude.json`. For `ccam work rc`, ccam leaves the flag out and, on a terminal, asks whether to copy the group's servers into `.claude.json`, with a backup, as the `sync` strategy does. It asks until a copy exists, then again only after the group's `mcp.json` changes or a copied server is gone ([Remote Control](/features/launch#remote-control)). Because such a copy wins over `--mcp-config` on a name clash, `ccam mcp add`, `add-json`, `remove` and `import` update the copies that other accounts of the group hold:
 
 ```console
 $ ccam mcp add ctx --url https://mcp.context7.com/mcp
@@ -81,30 +84,40 @@ $ ccam mcp add ctx --url https://mcp.context7.com/mcp
 ✓ Updated the copy in account side's .claude.json (made for Remote Control)
 ```
 
-A server added inside a session with `claude mcp add` lands in that account's `.claude.json` only. ccam cannot see it at the time, because Claude Code has replaced it, so it checks at the next launch. The `seen` file holds the modification time of `.claude.json` and the server names already reported. When the time differs, ccam compares the names with the group and prints a hint for each new server once, without waiting for input:
+The `✓ Updated` line appears only when a copy changed. A copy that an older ccam made is brought up to date the same way, and so is one after `ccam migrate`.
+
+A server added inside a session with `claude mcp add` lands in that account's `.claude.json` only. Plain `claude mcp add` uses the local scope: the server loads for that one account in that one folder (`-s user` makes it the account's in every folder). ccam cannot see it at the time, because Claude Code has replaced it, so it checks at the next launch. The `seen` file holds the modification time of `.claude.json` and the server names already reported. When the time differs, ccam compares the names with the group and prints a hint for each new server once, without waiting for input, with both strategies:
 
 ```console
 ccam: MCP servers only account work has: pg
       To share them with other accounts: ccam mcp import work pg
+ccam: MCP servers account work has for one folder only (claude mcp add without -s user): notes (/home/me/code/app)
+      To share them with other accounts, in every folder: ccam mcp import work notes
 ```
+
+The hint also names an account's own server that has a group server's name, since the account's wins in its sessions.
 
 With `mcp_strategy = "sync"`, the servers appear in `claude mcp list` and `/mcp` as ordinary user servers, and ccam writes them into each account's `.claude.json` before launch:
 
 <!-- motion:mcp-sync -->
 
-1. `mcp.Sync` compares the modification time of the group's `mcp.json` with `sync-stamp`. If it has not changed, the account's `.claude.json` is not opened.
+1. `mcp.Sync` compares the modification time of the group's `mcp.json` with `sync-stamp`, and the account's `.claude.json` with what it saw last. If neither changed, nothing else happens. Otherwise it also checks that every group server is still in `.claude.json`, and puts back a copy that is gone (`put back group default's MCP servers that were gone from account work's .claude.json: ctx`).
 2. It takes Claude Code's own lock, the folder `.claude.json.lock` next to the file, created with `mkdir`. It waits up to 2 seconds and treats a lock older than 10 seconds as stale, as Claude Code's lock library does.
 3. It saves the current `.claude.json` to `backups/` in the state folder and keeps the newest 5.
-4. It sets every group server in `mcpServers`, removes servers it wrote before that the group no longer has, keeps the account's own servers, and writes the file atomically with its original mode.
-5. It records the new stamp and the names it manages, and Claude Code starts without `--mcp-config`.
+4. It sets every group server in `mcpServers`, removes servers it wrote before that the group no longer has, and writes the file atomically with its original mode, only when something changed. It changes or removes only the copies it wrote that nobody changed since. A server the account has of its own under a group server's name stays the account's, and ccam says so once: `account work has its own MCP servers fs, so group default's of those names are not copied there`.
+5. It records the new stamp with a hash of each copy, and Claude Code starts without `--mcp-config`.
 
-Sync is skipped, with `ccam: account work is already running, skipping MCP sync`, when a session of the account is running, because Claude Code rewrites `.claude.json` while it runs. A failed sync prints `ccam: MCP sync failed (launching anyway): …` and launches anyway. The hint for servers added inside a session belongs to the flag strategy only.
+Sync is skipped, with `ccam: account work is already running, skipping MCP sync`, when a session of the account is running, however Claude Code was started, because Claude Code rewrites `.claude.json` while it runs. A failed sync prints `ccam: MCP sync failed (launching anyway): …` and launches anyway.
+
+### Leaving and joining
+
+An account that stops sharing MCP (`ccam group leave`, `ccam group set --remove mcp`, `ccam group remove --leave`) keeps the group's servers: the plan copies them into its `.claude.json`, with a backup, and its own servers of the same names stay. With `--fresh` it gets none, and the plan lists the servers that stop loading. When it joins a group that has those servers again, the kept copies that nobody changed are removed, so the group's later edits reach it.
 
 `ccam mcp import` moves an account's own servers into its group:
 
 <!-- motion:mcp-import -->
 
-ccam reads the account's servers with `mcp.LocalServers` and compares each one with the group's server of the same name using `mcp.SameDef`, which ignores key order and spacing. A server the group lacks or has with the same definition is copied. A different one is skipped, because the group's definition is what every other account uses:
+ccam reads the account's servers, its own and those it has for one folder only, and compares each one with the group's server of the same name using `mcp.SameDef`, which ignores key order and spacing. A folder server becomes a group server for every folder (`notes loaded for one folder of account work only; from the group, every account in it gets them in every folder`); one name with two different folder definitions is refused. Plugin servers are not offered, since the plugin brings them. A server the group lacks or has with the same definition is copied. A different one is skipped, because the group's definition is what every other account uses:
 
 ```console
 Skipped gh: group default already has a different gh (`ccam mcp import work gh --force` replaces it)
@@ -112,12 +125,12 @@ Skipped gh: group default already has a different gh (`ccam mcp import work gh -
 ✓ Removed account work's own entries (.claude.json backed up)
 ```
 
-With `--force` the group's server is replaced, and the previous `mcp.json` is first saved to `.ccam-backup/<time>/mcp.json` inside the group folder. Then `mcp.RemoveLocal` removes the copied entries from the account's `.claude.json`, under the same lock and after a backup in the state folder. This is needed because the account's entry would win over the group's on a name clash. `--keep-local` leaves them.
+With `--force` the group's server is replaced, and the previous `mcp.json` is first saved to `.ccam-backup/<time>/mcp.json` inside the group folder. Then `mcp.Remove` removes the copied entries from the account's `.claude.json`, its own and the folder's in one write, under the same lock and after a backup in the state folder. The group's `mcp.json` stays locked from loading it until those entries are gone, so nobody removes the server from the group in between. This is needed because the account's entry would win over the group's on a name clash. `--keep-local` leaves them.
 
 ## Safety and edge cases
 
-- **Sign-ins.** Servers that sign in with OAuth keep their tokens in each account's `.credentials.json` (`mcpOAuth`), not in the server list, so sharing a server does not share its sign-in. Sign in once per account with `/mcp`, or copy the sign-ins from `~/.claude` with [`ccam migrate`](/features/migrate). The group never receives a login file.
-- **Running accounts.** `import` copies to the group but leaves a running account's own entries and says so; run it again after the session ends. Sync skips running accounts.
+- **Sign-ins.** Servers that sign in with OAuth keep their tokens in each account's `.credentials.json` (`mcpOAuth`), not in the server list, so sharing a server does not share its sign-in. Sign in once per account with `/mcp`. ccam never copies sign-ins, not even [`ccam migrate`](/features/migrate): a copied refresh token logs out every other holder. [`ccam ext`](/features/ext) and `ccam doctor` name the servers an account is not signed in to while another account is, and `ccam next --continue` says which ones the new account lacks. The group never receives a login file.
+- **Running accounts.** `import` copies to the group but leaves a running account's own entries and says so; run it again after the session ends. Sync skips running accounts. Both count Claude Code started without ccam too.
 - **Copies for Remote Control.** A running account's copy is not touched: `Note: account side is running, so the copy in its .claude.json stays as it was until its next Remote Control launch.` With `mcp_strategy = "sync"` nothing needs updating, because every launch syncs.
 - **Broken files.** If `.claude.json` is not valid JSON, sync leaves it untouched and reports the error. If the lock cannot be taken in 2 seconds, ccam reports `could not lock … (Claude Code is writing the file)`.
 - **Accounts that do not share MCP.** `import` refuses and tells you to put the account in a group that shares MCP first (`ccam group join <group> side`).

@@ -1,13 +1,13 @@
 ---
 title: Pagkopya ng dati nang setup
-description: Kopyahin ang settings, CLAUDE.md, mga extension, MCP server at MCP sign-in ng dati nang ~/.claude papunta sa isang ccam group gamit ang ccam migrate.
-updated: 2026-10-19
+description: Kopyahin ang settings, CLAUDE.md, mga extension at MCP server ng dati nang ~/.claude papunta sa isang ccam group gamit ang ccam migrate.
+updated: 2026-10-23
 order: 6
 translation: machine
-sourceHash: 7cee52e75749
+sourceHash: 7bca9efb6eb0
 ---
 
-Kung gumamit ka ng Claude Code bago ang ccam, nasa `~/.claude` at `~/.claude.json` ang iyong setup. Kinokopya ito ng `ccam migrate` sa isang share group, kaya nagsisimula ang bawat account na nagshe-share ng mga item na iyon sa pamamagitan ng group na dala ang setup na mayroon ka na. Binabasa lang ang source folder, at gumagana pa rin ang karaniwang `claude` gaya ng dati. Patakbuhin ito nang isang beses pagkatapos ng una mong `ccam add`, at ulit tuwing magsisimulang mag-share ng mga MCP server ang isang account.
+Kung gumamit ka ng Claude Code bago ang ccam, nasa `~/.claude` at `~/.claude.json` ang iyong setup. Kinokopya ito ng `ccam migrate` sa isang share group, kaya nagsisimula ang bawat account na nagshe-share ng mga item na iyon sa pamamagitan ng group na dala ang setup na mayroon ka na. Binabasa lang ang source folder, at gumagana pa rin ang karaniwang `claude` gaya ng dati. Patakbuhin ito nang isang beses pagkatapos ng una mong `ccam add`; kapag may mga MCP server ang `~/.claude.json`, pinapangalanan ang mga ito ng unang `ccam add` sa tip nito.
 
 ## Paggamit
 
@@ -43,20 +43,17 @@ Pagkatapos ay ipi-print ng ccam ang plano at magtatanong bago ito kumopya:
 $ ccam migrate --yes
 Copy from /home/me/.claude into group default (/home/me/.local/share/ccam/groups/default):
   mcp         ~/.claude.json  new: fs, linear
-              sign-ins        linear → personal; skipped: work (not logged in yet)
+              sign-ins        not copied (a sign-in works for one account only); sign in with /mcp: linear in personal, work
   settings    settings.json   new: 61 B
+              not found, skipped: keybindings.json
   memory      CLAUDE.md       new: 11 B
   extensions  agents/         add 1 file the group lacks (6 B)
               skills/         add 1 file the group lacks (13 B)
               not found, skipped: commands/, plugins/, output-styles/, rules/
   Conversation history (projects/, history.jsonl) is not included; add --history to copy it.
-✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, skills/, MCP sign-ins for personal
-MCP sign-ins were not copied to: work (not logged in yet). Sign in to those servers there with /mcp.
-Accounts that share these through group default:
-  mcp         personal, work
-  settings    personal, work
-  memory      personal, work
-  extensions  personal, work
+✓ Copied into group default: 2 MCP servers, settings.json, CLAUDE.md, agents/, skills/
+MCP sign-ins are not copied (a sign-in works for one account only). Sign in with /mcp to linear in personal, work.
+Group default: personal, work
 ```
 
 Umaabot lang ang isang group sa sarili nitong mga account, at para lang sa mga item na shine-share nito, kaya inililista ng buod ang mga account ng group. Kapag hindi shine-share ng group ang isa sa mga kinopyang item, o kapag wala rito ang ilang account, ipi-print ng ccam ang mga command na `ccam group set <group> --add <items>` at `ccam group join <group> <accounts>` na nagbabago niyon.
@@ -83,9 +80,9 @@ Ang ibig sabihin ng `--group on` ay `default`. Tinatanggihan ang `--group off` a
 
 Pinipili ng `internal/cli/migrate.go` ang mga item, saka binabasa ng `migrate.Build` ang source at ang group at nagbabalik ng plano. Walang isinusulat hanggang `Plan.Apply`, pagkatapos mong kumpirmahin.
 
-1. **Hanapin ang source.** Tinatanggihan ng `checkSource` ang path na wala, hindi folder, o walang kilalang entry ng Claude Code. Hinahanap ng `migrate.ClaudeJSON` ang `.claude.json` na kabilang sa folder: sa loob nito, o para sa `~/.claude` na walang ganito sa loob, ang `~/.claude.json` na katabi nito. Doon ito iniimbak ng Claude Code kapag hindi nakatakda ang `CLAUDE_CONFIG_DIR`.
+1. **Hanapin ang source.** Tinatanggihan ng `checkSource` ang path na wala, hindi folder, o walang kilalang entry ng Claude Code. Para sa mga MCP server lang, ayos lang ang walang laman o nawawalang `~/.claude` basta may mga server ang `~/.claude.json`. Hinahanap ng `migrate.ClaudeJSON` ang `.claude.json` na kabilang sa folder: sa loob nito, o para sa `~/.claude` na walang ganito sa loob, ang `~/.claude.json` na katabi nito. Doon ito iniimbak ng Claude Code kapag hindi nakatakda ang `CLAUDE_CONFIG_DIR`.
 2. **Itugma ang mga item sa mga path.** Galing ang bawat path sa `share.Layout`, ang parehong listahan ng pinapayagan na ginagamit ng mga group. Binabasa ang mga MCP server mula sa `.claude.json` gamit ang `mcp.LocalServers`, na gumagamit ng scanner na `profile.TopLevelValue` sa halip na i-parse ang buong file.
-3. **Kopyahin, huwag kailanman ilipat.** Napupunta ang mga file sa `~/.local/share/ccam/groups/<group>/` gamit ang `fsutil.AtomicWrite` o `fsutil.CopyFile`; napupunta ang mga MCP server sa `mcp.json` ng group.
+3. **Kopyahin, huwag kailanman ilipat.** Napupunta ang mga file sa `~/.local/share/ccam/groups/<group>/` gamit ang `fsutil.AtomicWrite` o `fsutil.CopyFile`, na sumusulat ng pansamantalang file katabi ng target at saka pinapalitan ang pangalan nito, kaya hindi kailanman nag-iiwan ng putol na file ang pagkopyang huminto. Napupunta ang mga MCP server sa `mcp.json` ng group sa ilalim ng lock nito: nananatili ang server na idinagdag ng ibang ccam habang nangyayari ito, at ina-update pagkatapos ang mga kopyang ginawa para sa [Remote Control](/guides/remote-control).
 
 Itinutugma ng bawat item ang isang source path sa isang group path:
 
@@ -108,18 +105,7 @@ Ang checklist mismo ay ang `tui.MigratePicker` na binuo sa component na `checkli
 
 ### Mga MCP sign-in
 
-Iniimbak ng mga MCP server na nagsa-sign in gamit ang OAuth ang kanilang mga token sa login file, ang `.credentials.json` sa ilalim ng `mcpOAuth`, hindi sa listahan ng server. Ginagawa ng Claude Code ang key ng bawat entry bilang `<name>|` kasama ang unang 16 na character ng `sha256` hash ng `type`, `url` at `headers` ng server. Hindi nakadepende sa folder ang key, kaya gumagana ang kinopyang entry sa ibang account basta magkapareho ang definition ng server. Kaya kinokopya lang ng `buildLogins` sa `internal/migrate/logins.go` ang mga entry ng mga server na mapupunta sa group sa definition ng source: bago, pareho na, o conflict kung saan pinili mo ang `use mine`. Kasamang kinokopya ang mga sign-in ng mga plugin server (mga key na nagsisimula sa `plugin:`) kapag kinopya mo ang mga extension at may `plugins/` ang source.
-
-<!-- motion:migrate-signins -->
-
-Napupunta ang mga entry sa sariling `.credentials.json` ng bawat tumatanggap na account, na isinusulat gamit ang `fsutil.AtomicWrite` sa mode na `0600`. Hindi kailanman napupunta ang mga ito sa group. Natatanggap lang ng isang account ang mga ito kung nagshe-share ito ng `mcp` (o, para sa mga plugin server, `extensions`) sa pamamagitan ng target na group, at ang mga key lang na wala pa rito ang idinadagdag: pinapanatili ang mga entry na mayroon na ito, na baka mas bago. Inililista ng linya ng plano na `sign-ins` ang mga server, ang mga tumatanggap na account at ang mga nilaktawan. Nilalaktawan ng ccam ang isang account, at pinapangalanan ito kasama ang dahilan, kapag ito ay:
-
-- nirehistro sa kinalalagyan nito gamit ang `ccam import`, dahil baka ginagamit ng karaniwang `claude` ang login file nito;
-- tumatakbo, dahil isinusulat ulit ng Claude Code ang login file nito (sinusuri ulit bago mismo magsulat, iniuulat bilang `started meanwhile`);
-- hindi pa naka-log in;
-- nag-iimbak ng login sa macOS Keychain, na hindi sinusulatan ng ccam.
-
-Mag-sign in sa mga server sa nilaktawang account gamit ang `/mcp`. Ang account na magsisimulang mag-share ng mga MCP server sa ibang pagkakataon ay makakakuha ng mga sign-in kapag pinatakbo mo ulit ang `ccam migrate`; sinasabi iyon ng buod gamit ang ``Then run `ccam migrate` again to give them the MCP sign-ins too.``
+Iniimbak ng mga MCP server na nagsa-sign in gamit ang OAuth ang kanilang mga token sa login file, ang `.credentials.json` sa ilalim ng `mcpOAuth`, hindi sa listahan ng server. Hindi kinokopya ng ccam ang mga ito. Hawak ng kinopyang sign-in ang parehong refresh token ng orihinal, at pinapalitan ng server ang token na iyon sa unang pag-renew: nala-log out na sa server na iyon ang bawat ibang may hawak, kasama ang source na `~/.claude`. Kaya pinapangalanan ng linya ng plano na `sign-ins`, para sa bawat kinopyang server na naka-sign in ang source, ang mga account ng group na magsa-sign in nang mag-isa gamit ang `/mcp`, at inuulit ito ng buod. Hindi sign-in ang entry na walang token at hindi ito inililista, gayundin ang account na may sarili nang sign-in, o ang server na ang definition ng group ang pinapanatili. Walang login file na isinusulat.
 
 ## Kaligtasan at mga espesyal na kaso
 
@@ -127,7 +113,8 @@ Mag-sign in sa mga server sa nilaktawang account gamit ang `/mcp`. Ang account n
 - Bago palitan ang isang group file, dahil sa `use mine`, sa isang merge, o sa mga bagong MCP server sa umiiral na `mcp.json`, sine-save ang kopya ng group sa `<group>/.ccam-backup/<time>/`. Natatangi bawat run ang pangalan ng folder, kaya hindi nagpapatungan ang mga backup ng dalawang run sa parehong segundo. Ipi-print ng buod ang path.
 - Sa `--yes`, pinapanatili ng bawat conflict ang kopya ng group, at sinasabi ng ccam kung paano pumili sa halip: patakbuhin ang parehong command nang walang `--yes`.
 - Kapag walang magbabago, ipi-print ng ccam ang `Nothing to copy.`; kapag pinapanatili ng bawat conflict ang kopya ng group, `Nothing to copy: the group keeps its own copies.`
-- Kapag pumalya ang pagkopya sa kalagitnaan, humihinto ang ccam na may `The source folder was not changed. Group files replaced so far are saved in` kasunod ang backup folder.
+- Kapag pumalya ang pagkopya sa kalagitnaan, humihinto ang ccam na may `The source folder was not changed. Group files replaced so far are saved in` kasunod ang backup folder. Kinokopya ng muling pagpapatakbo ang mga file na hindi dumating nang buo.
+- Kapag ilang group ang nagshe-share ng MCP, `ccam migrate --mcp --group <a|b>` ang nakasulat sa mga command na iminumungkahi ng `ccam doctor`, `ccam ext` at `ccam mcp list`.
 - Nagtatapos ang nawawalang source na may `no Claude Code folder at <path>. Give the folder to copy from: ccam migrate <folder>`.
 
 ## Kaugnay

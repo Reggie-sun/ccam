@@ -2,10 +2,10 @@
 title: Schnellstart
 metaTitle: "Schnellstart: Claude Code-Konten anlegen und wechseln"
 description: Zwei Claude Code-Konten mit ccam add hinzufügen, ihnen Kurzbefehle wie ccwork geben, zwischen ihnen wechseln und festlegen, was sie teilen.
-updated: 2026-10-20
+updated: 2026-10-24
 order: 2
 translation: machine
-sourceHash: d5b0e295f3f0
+sourceHash: e98d0637356a
 ---
 
 Füge jedes Konto mit `ccam add` hinzu und starte Claude Code dann mit `ccam <name>` oder mit einem Kurzbefehl, den du selbst benennst, etwa `ccwork`. Mehr brauchen die meisten nicht.
@@ -107,6 +107,8 @@ ccam next --continue
 ```
 
 `ccam usage` zeigt die 5-Stunden- und die Wochennutzung aller Konten. `ccam next --continue` öffnet dasselbe Gespräch im nächsten Konto. In Skripten wechselt `ccam --fallback work -p "…"` von selbst. Siehe [Nutzungslimits](/docs/usage-limits).
+
+**Team- und Enterprise-Plätze.** Die automatische Wahl (`ccam next`, `--fallback`, `ccam pick`, `n` im Dashboard) wechselt auch zwischen Plätzen derselben Claude Team- oder Enterprise-Organisation. Im Hilfe-Center von Anthropic ([Team-Tarife](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); ebenso für [Enterprise-Tarife](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)) heißt es: „Each seat on a Team plan is assigned to one named individual, and only that person may use it“ (jeder Platz in einem Team-Tarif ist einer namentlich benannten Person zugewiesen, und nur diese Person darf ihn nutzen) und „Users can't route their work through another user's account to use that user's remaining usage“ (Benutzer dürfen ihre Arbeit nicht über das Konto eines anderen Benutzers leiten, um dessen verbleibendes Nutzungskontingent zu verwenden). Wenn du die automatische Wahl zwischen Plätzen nutzt, kann das daher gegen die Bedingungen von Anthropic verstoßen. Kläre das mit deiner Organisation und mit Anthropic ab, bevor du dich darauf verlässt. Für private Tarife (Pro, Max) gilt der [Hinweis zu den Bedingungen in den FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 ## Du nutzt bereits ~/.claude?
 

@@ -2,7 +2,7 @@
 title: Install ccam
 metaTitle: Install ccam on Linux, macOS and Windows
 description: Install ccam on Linux, macOS or Windows with one command, a .deb package or from source, and update it with ccam update. Claude Code must be installed first.
-updated: 2026-10-21
+updated: 2026-10-23
 published: 2026-10-19
 order: 1
 translation: source
@@ -22,7 +22,7 @@ On Windows, run this in PowerShell:
 irm https://ccam.dev/install.ps1 | iex
 ```
 
-It downloads `ccam_windows_<arch>.zip`, checks its SHA-256 checksum, puts `ccam.exe` in `%USERPROFILE%\.local\bin`, the folder where Claude Code's installer puts `claude.exe`, and adds that folder to your user `PATH` if it is not there yet. Open a new terminal afterwards.
+It downloads `ccam_windows_<arch>.zip`, checks its SHA-256 checksum, puts `ccam.exe` in `%USERPROFILE%\.local\bin`, the folder where Claude Code's installer puts `claude.exe`, and adds that folder to your user `PATH` if it is not there yet, keeping entries such as `%USERPROFILE%\bin` as they are. Open a new terminal afterwards. Running it again replaces ccam, also while a Claude Code session still runs from the old binary (that one is renamed to `ccam.exe.old`, or `ccam.exe.old-<number>` when an older one is still in use), and renews shortcuts that are hard links: `OK 2 shortcuts now run the new ccam`.
 
 ccam starts Claude Code for you, so install [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) first and make sure `claude --version` works.
 
@@ -30,7 +30,7 @@ ccam starts Claude Code for you, so install [Claude Code](https://docs.claude.co
 
 - Linux on x86-64 and ARM64: Ubuntu, Debian, Fedora, Arch, Alpine and other distributions. The binary is static and has no dependencies.
 - macOS on Apple silicon and Intel.
-- Windows 10 and 11 on x86-64 and ARM64, in PowerShell, Windows Terminal or Git Bash. Shared folders work for every user. Shared files (`settings.json`, `CLAUDE.md`, `history.jsonl`) need Developer Mode (Settings > System > For developers), because Windows lets only that mode, or an administrator, create links to files; see [sharing on Windows](/features/share#on-windows).
+- Windows 10 and 11 on x86-64 and ARM64, in PowerShell, Windows Terminal or Git Bash. Shared folders work for every user. Shared files (`settings.json`, `CLAUDE.md`, `history.jsonl`) need Developer Mode (Settings > System > For developers), because Windows lets only that mode, or an administrator, create links to files; see [sharing on Windows](/features/share#on-windows). Without it, the first `ccam add` creates group `default` with MCP servers and extensions only, and says how to add the rest once Developer Mode is on.
 - Inside WSL, ccam works like on any Linux system.
 
 ## Other ways to install
@@ -48,6 +48,8 @@ The package installs `/usr/bin/ccam`.
 ```sh
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
 ```
+
+A build of a release tag (`@latest` or `@vX.Y.Z`) reports that version, so `ccam update` works for it; a build of `@main` or of a local checkout past a tag reports `dev`.
 
 **A specific version.** Set `CCAM_VERSION`:
 
@@ -117,9 +119,9 @@ ccam update --version v0.2.0
 ccam --dry-run update
 ```
 
-Running the install script again also updates the copy in `~/.local/bin`. If you built ccam with `go install`, run the same command again.
+Running the install script again also updates the copy in `~/.local/bin`. If you built ccam with `go install` from a release tag, `ccam update` works too, or run the same command again.
 
-**Windows.** `ccam update` downloads the `.zip` for Windows. A running program cannot be replaced on Windows, so the old binary is renamed to `ccam.exe.old`, which the next update deletes.
+**Windows.** `ccam update` downloads the `.zip` for Windows. A running program cannot be replaced on Windows, so the old binary is renamed to `ccam.exe.old`, which the next update deletes; while a session still runs from an earlier `ccam.exe.old`, the name is `ccam.exe.old-<time>`. Shortcuts that are hard links are renewed right after.
 
 **Debian and Ubuntu package.** `ccam update` does not replace a `/usr/bin/ccam` that apt installed, and prints these steps instead. Download the new `ccam_<version>_linux_amd64.deb` from the [releases page](https://github.com/jhyunwoo/ccam/releases) and install it over the old one:
 
@@ -146,4 +148,4 @@ Remove-Item ~\.local\bin\ccam.exe
 Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
 ```
 
-Deleting `~/.local/share/ccam` also deletes the logins and conversation history stored there. A `~/.claude` folder that you [imported](/docs/commands) stays where it is.
+Deleting `~/.local/share/ccam` also deletes the logins and conversation history stored there. A `~/.claude` folder that you [imported](/docs/commands) stays where it is, but while it is in a group, the files it shares live in `~/.local/share/ccam/groups/`. Run `ccam remove <name>` for it first (or `ccam group leave`): it leaves its groups with a copy of everything it shared.

@@ -1,10 +1,10 @@
 ---
 title: "Claude Code চালু করা"
 description: "ccam <name|number>, ccam run বা ড্যাশবোর্ড দিয়ে যেকোনো অ্যাকাউন্টে Claude Code চালু করুন; আর্গুমেন্ট অপরিবর্তিত claude-এ যায়, --dry-run কমান্ডটি দেখায়।"
-updated: 2026-10-20
+updated: 2026-10-24
 order: 1
 translation: machine
-sourceHash: 4812b197f143
+sourceHash: e279341eb59b
 ---
 
 `ccam work` অ্যাকাউন্ট `work` হিসেবে Claude Code চালু করে, আর নামের পরের সবকিছু যেমন আছে তেমনই `claude`-এ যায়। যেখানে আপনি `claude` টাইপ করতেন সেখানেই এটি ব্যবহার করুন: টার্মিনালে, স্ক্রিপ্টে, বা পাইপ করা ইনপুটসহ।
@@ -34,9 +34,11 @@ ccam --fallback work -p "fix the tests"   # run again as another account at the 
 
 স্ট্যান্ডার্ড ইনপুট ও আউটপুট টার্মিনাল হলে আর্গুমেন্ট ছাড়া `ccam` [ড্যাশবোর্ড](/features/dashboard) খোলে, অন্যথায় `ccam list` প্রিন্ট করে। একটি অ্যাকাউন্টে যান (অ্যারো কি দিয়ে, বা তার নম্বর টাইপ করে) এবং সেটি চালু করতে `Enter` চাপুন; `n` সবচেয়ে বেশি জায়গা থাকা অ্যাকাউন্টটি চালু করে, আর `o` `--continue`, `--resume` বা অন্য আর্গুমেন্ট দেওয়ার সুযোগ দেয়। Claude Code চালু হওয়ার আগে ড্যাশবোর্ড বন্ধ হয়, তাই টার্মিনাল আগে আগের অবস্থায় ফেরে।
 
+**Team ও Enterprise সিট।** স্বয়ংক্রিয় বাছাই (`ccam next`, `--fallback`, `ccam pick`, ড্যাশবোর্ডের `n`) একই Claude Team বা Enterprise প্রতিষ্ঠানের সিটগুলোর মধ্যেও বদল করে। Anthropic-এর সহায়তা কেন্দ্রে বলা হয়েছে, "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team প্ল্যানের প্রতিটি সিট একজন নির্দিষ্ট ব্যক্তির নামে বরাদ্দ করা হয়, এবং কেবল সেই ব্যক্তিই সেটি ব্যবহার করতে পারেন) এবং "Users can't route their work through another user's account to use that user's remaining usage" (ব্যবহারকারীরা অন্য কোনো ব্যবহারকারীর অ্যাকাউন্টের মধ্য দিয়ে নিজেদের কাজ চালিয়ে তাঁর ব্যবহারের সীমার বাকি অংশ কাজে লাগাতে পারেন না) ([Team প্ল্যান](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise প্ল্যানের](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) ক্ষেত্রেও একই কথা)। তাই সিটগুলোর মধ্যে স্বয়ংক্রিয় বাছাই ব্যবহার করলে Anthropic-এর শর্তাবলি লঙ্ঘন হতে পারে। এর ওপর নির্ভর করার আগে আপনার প্রতিষ্ঠান ও Anthropic-এর কাছ থেকে জেনে নিন। ব্যক্তিগত প্ল্যানের (Pro, Max) কথা [প্রশ্নোত্তরের শর্তাবলি-বিষয়ক নোটে](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) বলা আছে।
+
 শেলে `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY` বা `ANTHROPIC_AUTH_TOKEN` সেট থাকলে Claude Code অ্যাকাউন্টের নিজস্ব লগইনের বদলে সেই key বা টোকেন ব্যবহার করত, তাই চালু করার আগে ccam স্ট্যান্ডার্ড এররে সেটি জানিয়ে দেয় (`ccam: $ANTHROPIC_API_KEY is set, so Claude Code may use that key instead of work's login…`)। এটি শুধু ভেরিয়েবলগুলো পড়ে; একটি [API key অ্যাকাউন্ট](/features/api) এর বদলে সেগুলো মুছে দেয়।
 
-`config.toml`-এ `relay = true` থাকলে ccam ইন্টারঅ্যাকটিভ সেশনগুলো চাইল্ড প্রসেস হিসেবে চালু করে এবং তাদের পাশে থেকে যায়, যাতে `/ccam:switch` নিজে থেকেই একটি কথোপকথন চালিয়ে নিতে পারে ([বিস্তারিত](/features/next#inside-claude-code)); অন্যথায় ccam নিজের জায়গায় Claude Code বসিয়ে দেয়, এবং এর পাশে কিছুই চলে না।
+`config.toml`-এর একেবারে ওপরে (প্রথম `[[group]]`, `[[profile]]` বা `[[folder]]`-এর আগে) `relay = true` থাকলে ccam ইন্টারঅ্যাকটিভ সেশনগুলো চাইল্ড প্রসেস হিসেবে চালু করে এবং তাদের পাশে থেকে যায়, যাতে `/ccam:switch` নিজে থেকেই একটি কথোপকথন চালিয়ে নিতে পারে, সেশনের অপশন, permission mode ও effort level-সহ ([বিস্তারিত](/features/next#relay)); অন্যথায় ccam নিজের জায়গায় Claude Code বসিয়ে দেয়, এবং এর পাশে কিছুই চলে না।
 
 ## অপশন
 
@@ -54,17 +56,19 @@ ccam --fallback work -p "fix the tests"   # run again as another account at the 
 - `ccam run <name|number> [claude args]` হলো `ccam <name>`-এর দীর্ঘ রূপ। নাম ছাড়া `ccam run` ফোল্ডারের অ্যাকাউন্ট বা ডিফল্ট অ্যাকাউন্ট ব্যবহার করে।
 - অ্যাকাউন্টের নাম `add`, `list`, `run` বা `usage`-এর মতো ccam কমান্ডের নাম হতে পারে না, তাই `ccam <word>` কখনও দ্ব্যর্থক হয় না।
 
-ড্রাই রান এমন একটি লাইন প্রিন্ট করে যা আপনি শেলে, বা Windows-এ PowerShell-এ, পেস্ট করতে পারেন:
+ড্রাই রান এমন একটি লাইন প্রিন্ট করে যা আপনি শেলে, বা Windows-এ PowerShell-এ, পেস্ট করতে পারেন। লাইনটি শুরু হয় চালু করাটি এনভায়রনমেন্টে কী বদলায় তা দিয়ে: সবসময় `CLAUDE_CONFIG_DIR` ও `CCAM_PROFILE`, যে ভেরিয়েবল এটি বাদ দেয় তার জন্য `env -u <name>` (যেমন উত্তরাধিকারে পাওয়া `CCAM_RELAY`), এবং একটি [API key অ্যাকাউন্টের](/features/api) জন্য তার এন্ডপয়েন্ট ও মডেল, আর key-টি তার সোর্স হিসেবে (`ANTHROPIC_API_KEY="$WORK_KEY"`), key নিজে কখনও নয়:
 
 ```console
 $ ccam --dry-run work -p "fix the tests"
-CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/claude --mcp-config=/home/me/.local/share/ccam/groups/default/mcp.json -p 'fix the tests'
+CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work CCAM_PROFILE=work /home/me/.local/bin/claude --mcp-config=/home/me/.local/share/ccam/groups/default/mcp.json -p 'fix the tests'
 ```
 
 ```console
 PS> ccam --dry-run work -p "fix the tests"
-$env:CLAUDE_CONFIG_DIR='C:\Users\me\.local\share\ccam\profiles\work'; & C:\Users\me\.local\bin\claude.exe --mcp-config=C:\Users\me\.local\share\ccam\groups\default\mcp.json -p 'fix the tests'
+& { $saved = @{}; foreach ($k in 'CLAUDE_CONFIG_DIR','CCAM_PROFILE') { $saved[$k] = [Environment]::GetEnvironmentVariable($k) }; $env:CLAUDE_CONFIG_DIR='C:\Users\me\.local\share\ccam\profiles\work'; $env:CCAM_PROFILE='work'; try { $p = Start-Process -FilePath 'C:\Users\me\.local\bin\claude.exe' -ArgumentList '--mcp-config=C:\Users\me\.local\share\ccam\groups\default\mcp.json -p "fix the tests"' -NoNewWindow -Wait -PassThru; $global:LASTEXITCODE = $p.ExitCode } finally { foreach ($k in $saved.Keys) { [Environment]::SetEnvironmentVariable($k, $saved[$k]) } } }
 ```
+
+PowerShell লাইনটি পরে ভেরিয়েবলগুলো আগের অবস্থায় ফিরিয়ে দেয়, শেলে `VAR=x cmd` যেমন করে, এবং `Start-Process`-এর মাধ্যমে Claude Code-কে তার কমান্ড লাইন দেয়, তাই Windows PowerShell 5.1 ও PowerShell 7 এটি একইভাবে চালায়। চালু করাটি কোনো ভেরিয়েবলকে খালি মানে নির্ধারণ করলে, তার নিচের একটি `#` লাইন জানায় যে 7.5-এর আগের PowerShell এমন ভেরিয়েবল এর বদলে মুছে দেয়। npm দিয়ে ইনস্টল করা `claude.cmd`-এর ক্ষেত্রে লাইনটি সেই `cmd.exe` কমান্ড চালায় যা চালু করাটি ব্যবহার করত (নিচে দেখুন), এবং চালু করাটি সেখানে যে আর্গুমেন্ট প্রত্যাখ্যান করত, তাতে ড্রাই রানও ব্যর্থ হয়।
 
 ## এটি কীভাবে কাজ করে
 
@@ -77,19 +81,19 @@ $env:CLAUDE_CONFIG_DIR='C:\Users\me\.local\share\ccam\profiles\work'; & C:\Users
 1. `cmd/ccam/main.go` `app.Main` ডাকে। ccam অন্য কোনো নামে চালু হলে সেটি একটি [শর্টকাট](/features/shortcuts) এবং সরাসরি লঞ্চারে যায়।
 2. cobra যুক্ত হওয়ার আগেই `app.parse` `os.Args` দেখে। শুধু একা `ccam` (ড্যাশবোর্ড), কোনো ccam কমান্ডের নাম (`config.Reserved`), `-h`/`--help` ও `-v`/`--version` `cli.Execute`-এ যায়। বাকি সবকিছু চালু করা।
 3. `launcher.Launch` `~/.config/ccam/config.toml` পড়ে, এটিই একমাত্র ফাইল যা এটি পার্স করে।
-4. `launcher.Prepare` নাম বা নম্বর দিয়ে অ্যাকাউন্ট খুঁজে বের করে (নাম না থাকলে `HereProfile` ফোল্ডারের অ্যাকাউন্ট নেয়, ওয়ার্কিং ডিরেক্টরিকে `config.toml`-এর `[[folder]]` এন্ট্রিগুলোর সঙ্গে স্ট্রিং হিসেবে তুলনা করে), সামনের একটি `--` বাদ দেয়, এবং `ResolveClaude` দিয়ে `claude` এক্সিকিউটেবল খুঁজে বের করে। PATH খোঁজার ফলাফল ফাইলের পরিবর্তনের সময়সহ `~/.local/state/ccam/claude-path`-এ ক্যাশ করা থাকে, তাই ccam প্রতিবার চালু করার সময় `PATH` খোঁজে না। ফাইল বদলালে বা না থাকলে আবার খোঁজা হয়। `config.toml`-এ `claude_bin` পাথ থাকলে সেটি যেমন আছে তেমনই ব্যবহার হয়। যে `claude` আসলে ccam নিজেই, ccam সেটি প্রত্যাখ্যান করে, inode দিয়ে তুলনা করে, কারণ তাতে লুপ তৈরি হতো।
+4. `launcher.Prepare` নাম বা নম্বর দিয়ে অ্যাকাউন্ট খুঁজে বের করে (নাম না থাকলে `HereProfile` ফোল্ডারের অ্যাকাউন্ট নেয়, ওয়ার্কিং ডিরেক্টরিকে `config.toml`-এর `[[folder]]` এন্ট্রিগুলোর সঙ্গে স্ট্রিং হিসেবে তুলনা করে, macOS ও Windows-এ বড় ও ছোট হাতের অক্ষরের পার্থক্য উপেক্ষা করে), সামনের একটি `--` বাদ দেয়, এবং `ResolveClaude` দিয়ে `claude` এক্সিকিউটেবল খুঁজে বের করে। PATH খোঁজার ফলাফল ফাইলের পরিবর্তনের সময় ও `PATH`-এর একটি হ্যাশসহ `~/.local/state/ccam/claude-path`-এ ক্যাশ করা থাকে, তাই ccam প্রতিবার চালু করার সময় `PATH` খোঁজে না। ফাইল বদলালে বা না থাকলে, অথবা `PATH` বদলালে, আবার খোঁজা হয়। `config.toml`-এ থাকা `claude_bin` পাথ (`~/` প্রসারিত করা হয়) একটি এক্সিকিউটেবল ফাইল হতে হবে; না হলে কিছু লেখার আগেই চালু করা `claude_bin X is not an executable file. Check claude_bin in config.toml` দিয়ে থেমে যায়। যে `claude` আসলে ccam নিজেই, ccam সেটি প্রত্যাখ্যান করে, inode দিয়ে তুলনা করে, কারণ তাতে লুপ তৈরি হতো।
 5. `checkLinks` অ্যাকাউন্ট ফোল্ডার `~/.local/share/ccam/profiles/<name>/`-কে তার শেয়ার সেটিংসের সঙ্গে `share.Check` দিয়ে তুলনা করে, যা শুধু `lstat` ও `readlink` ডাকে, প্রতি আইটেমে একটি বা দুটি সিস্টেম কল। অনুপস্থিত লিংক সঙ্গে সঙ্গে তৈরি হয়। ডেটা হারাতে পারে এমন যেকোনো কিছু চালু করা থামিয়ে দেয়।
 6. `applyMCP` শেয়ার করা MCP সার্ভার যোগ করে (নিচে দেখুন)।
-7. `session.Register` সেশনটি নথিভুক্ত করে। ccam তার PID অনুযায়ী নামের একটি মার্কার, যাতে প্রসেস শুরুর সময় থাকে, `$XDG_RUNTIME_DIR/ccam/profile-<name>/<pid>`-এ লেখে (অথবা `XDG_RUNTIME_DIR` না থাকলে `~/.local/state/ccam/locks/`-এ)। যে অ্যাকাউন্ট কথোপকথনের ইতিহাস শেয়ার করে, তার জন্য `historyCheck` প্রথমে `history-<group>-<hash>`-এ চলমান সেশন খোঁজে, যেখানে হ্যাশটি বর্তমান ফোল্ডারের, এবং সেখানেও নিবন্ধন করে। `exec` PID একই রাখে, তাই মার্কারটি তখন Claude Code প্রসেসকেই নির্দেশ করে। ধরে রাখা লক নয়, মার্কার, কারণ Claude Code যে প্রসেসগুলো চালু করে সেগুলো লক উত্তরাধিকারে পেত এবং সেশন শেষ হওয়ার পরেও ধরে রাখত।
+7. `session.Register` সেশনটি নথিভুক্ত করে। ccam তার PID অনুযায়ী নামের একটি মার্কার, যাতে প্রসেস শুরুর সময় থাকে, `~/.local/state/ccam/locks/profile-<name>/<pid>`-এ লেখে, `XDG_RUNTIME_DIR` যা-ই বলুক, তাই প্রতিটি শেল একই মার্কারগুলো দেখে। যে অ্যাকাউন্ট কথোপকথনের ইতিহাস শেয়ার করে, তার জন্য `historyCheck` প্রথমে `history-<group>-<hash>`-এ চলমান সেশন খোঁজে, যেখানে হ্যাশটি সিম্বলিক লিংক মিলিয়ে নেওয়া বর্তমান ফোল্ডারের, এবং সেখানেও নিবন্ধন করে। `exec` PID একই রাখে, তাই মার্কারটি তখন Claude Code প্রসেসকেই নির্দেশ করে। ধরে রাখা লক নয়, মার্কার, কারণ Claude Code যে প্রসেসগুলো চালু করে সেগুলো লক উত্তরাধিকারে পেত এবং সেশন শেষ হওয়ার পরেও ধরে রাখত। মার্কার লেখা না গেলে চালু করা থামে না: ccam বলে `ccam: could not mark the session as running (…); starting Claude Code anyway`। কোনো অ্যাকাউন্ট চলছে কি না, তা নিয়ে ccam-এর অন্য যাচাইগুলো (নাম বদল, সরানো, গ্রুপ পরিবর্তন, `doctor --fix`, MCP সিঙ্ক) অ্যাকাউন্ট ফোল্ডারে Claude Code-এর নিজস্ব রেকর্ডও পড়ে (`sessions/<pid>.json`, `daemon.lock`), তাই এগুলো ccam ছাড়া চালু হওয়া Claude Code-ও দেখে: সাধারণ `claude`, কোনো IDE, ব্যাকগ্রাউন্ড সেশন ও তাদের daemon।
 8. `Plan.Exec` টার্মিনালের শিরোনাম `claude · <name>` করে (যখন স্ট্যান্ডার্ড এরর টার্মিনাল), `fsync` ছাড়া চালুর সময় `~/.local/state/ccam/last-used/<name>`-এ লেখে, এবং `syscall.Exec` ডাকে।
 
-Claude Code চলে অ্যাকাউন্ট ফোল্ডারে নির্ধারিত `CLAUDE_CONFIG_DIR` ও অ্যাকাউন্টের নামে নির্ধারিত `CCAM_PROFILE` দিয়ে। এগুলোর যে মান ccam উত্তরাধিকারে পেয়েছে, তা সরিয়ে দেয়। macOS-এ `ccam import` দিয়ে নিবন্ধিত `~/.claude` ফোল্ডারের জন্য এটি `CLAUDE_SECURESTORAGE_CONFIG_DIR`-ও একটি খালি মানে নির্ধারণ করে, যাতে অ্যাকাউন্টটি ও সাধারণ `claude` একই Keychain লগইন ব্যবহার করে।
+Claude Code চলে অ্যাকাউন্ট ফোল্ডারে নির্ধারিত `CLAUDE_CONFIG_DIR` ও অ্যাকাউন্টের নামে নির্ধারিত `CCAM_PROFILE` দিয়ে। এগুলোর যে মান ccam উত্তরাধিকারে পেয়েছে, তা সরিয়ে দেয়, উত্তরাধিকারে পাওয়া `CCAM_RELAY`-ও। macOS-এ `ccam import` দিয়ে নিবন্ধিত `~/.claude` ফোল্ডারের জন্য এটি `CLAUDE_SECURESTORAGE_CONFIG_DIR`-ও একটি খালি মানে নির্ধারণ করে, যাতে অ্যাকাউন্টটি ও সাধারণ `claude` একই Keychain লগইন ব্যবহার করে; Windows-এ Claude Code লগইন Credential Manager-এ রাখলে এটি একই কাজ করে।
 
 ### কেন exec
 
 `syscall.Exec` ccam প্রসেসকে `claude` দিয়ে প্রতিস্থাপন করে, তাই ccam মেমরিতে থাকে না, কীস্ট্রোক, সিগন্যাল ও এক্সিট কোড Claude Code-এর নিজের, এবং আর্গুমেন্ট একটি অ্যারে থাকে, কখনও শেল স্ট্রিং নয়।
 
-Windows-এ কোনো `exec` নেই। সেখানে `Plan.Exec` একই এনভায়রনমেন্ট, আর্গুমেন্ট ও কনসোলসহ `claude.exe`-কে একটি চাইল্ড প্রসেস হিসেবে চালু করে, তার জন্য অপেক্ষা করে এবং তার এক্সিট কোড দিয়ে বেরিয়ে যায়। Ctrl+C কনসোল থেকে সরাসরি Claude Code-এ পৌঁছায়, তাই ccam সেটি উপেক্ষা করে। সেশন মার্কারে ccam-এর PID থাকে, যা ঠিক Claude Code-এর সমান সময় বেঁচে থাকে, এবং Claude Code বেরিয়ে গেলে মার্কারটি সরানো হয়। অপেক্ষার সময় ccam আর কিছুই করে না। সেশনের পরের কাজ, যেমন `claude mcp add` দিয়ে যোগ করা সার্ভার লক্ষ করা, পরের বার চালু করার সময় হয়: ccam `.claude.json`-এর পরিবর্তনের সময় `~/.local/state/ccam/mcp/<name>/seen`-এর সঙ্গে তুলনা করে এবং ফাইলটি বদলালেই শুধু পার্স করে।
+Windows-এ কোনো `exec` নেই। সেখানে `Plan.Exec` একই এনভায়রনমেন্ট, আর্গুমেন্ট ও কনসোলসহ `claude.exe`-কে একটি চাইল্ড প্রসেস হিসেবে চালু করে, তার জন্য অপেক্ষা করে এবং তার এক্সিট কোড দিয়ে বেরিয়ে যায়। npm-এর ইনস্টল করা `claude.cmd` চলে `cmd.exe`-এ, এর পূর্ণ পাথ ও প্রতিটি আর্গুমেন্ট উদ্ধৃতিচিহ্নের মধ্যে রেখে, যাতে `cmd.exe` সেগুলোর কোনোটিকেই নিজের সিনট্যাক্স হিসেবে না পড়ে (`&`, `%PATH%`); লাইন ব্রেকসহ কোনো আর্গুমেন্ট এভাবে পাঠানো যায় না, তাই তা প্রত্যাখ্যান করা হয়, নেটিভ Claude Code ইনস্টল করার পরামর্শসহ। Ctrl+C কনসোল থেকে সরাসরি Claude Code-এ পৌঁছায়, তাই ccam সেটি উপেক্ষা করে। সেশন মার্কারে ccam-এর PID থাকে, যা ঠিক Claude Code-এর সমান সময় বেঁচে থাকে, এবং Claude Code বেরিয়ে গেলে মার্কারটি সরানো হয়। অপেক্ষার সময় ccam আর কিছুই করে না। সেশনের পরের কাজ, যেমন `claude mcp add` দিয়ে যোগ করা সার্ভার লক্ষ করা, পরের বার চালু করার সময় হয়: ccam `.claude.json`-এর পরিবর্তনের সময় `~/.local/state/ccam/mcp/<name>/seen`-এর সঙ্গে তুলনা করে এবং ফাইলটি বদলালেই শুধু পার্স করে।
 
 ### কমান্ড লাইন কোন পথে যায়
 
@@ -107,7 +111,16 @@ Windows-এ কোনো `exec` নেই। সেখানে `Plan.Exec` এ�
 
 `mcp.FlagArgs` শুধু গ্রুপের `mcp.json` থাকলে একটি আর্গুমেন্ট ফেরত দেয়, এবং `Plan.InsertArgs` সেটি `claude`-এর ঠিক পরে বসায়। আপনার নিজের `--mcp-config` বা `--strict-mcp-config` তখনও এর ওপরে প্রযোজ্য থাকে। এটি একটি আর্গুমেন্ট, `--mcp-config=<path>`, কারণ Claude Code-এর `--mcp-config` একাধিক মান নেয়: দুটি আর্গুমেন্ট হিসেবে লিখলে এটি পরের প্রম্পটটিকেও একটি কনফিগ ফাইল হিসেবে পড়ত।
 
-`config.toml`-এ `mcp_strategy = "sync"` থাকলে ccam এর বদলে সার্ভারগুলো অ্যাকাউন্টের `.claude.json`-এ লেখে, এবং অ্যাকাউন্টটি আগে থেকেই চললে সেটি বাদ দেয়।
+ফ্ল্যাগটি কোথায় যেতে পারে না, তা ঠিক করে `claudeVerb`। এটি আর্গুমেন্টগুলো থেকে Claude Code-এর সাবকমান্ড পড়ে, Claude Code যেভাবে পড়ে সেভাবেই, অপশনগুলোকে তাদের মানসহ বাদ দিয়ে। `remote-control` বা `rc` কোনো ফ্ল্যাগ পায় না (নিচে দেখুন), প্রথমে দেওয়া ব্যাকগ্রাউন্ড সেশনের কোনো সাবকমান্ডও নয় (`attach`, `logs`, `stop`, `kill`, `respawn`, `rm`)। `ccam work mcp list`, `get` ও `remove`-ও কোনো ফ্ল্যাগ পায় না, কারণ Claude Code সেখানে এটি প্রত্যাখ্যান করে; বদলে ccam স্ট্যান্ডার্ড এররে জানায় যে গ্রুপের সার্ভারগুলোও অ্যাকাউন্টের সেশনগুলোতে লোড হয়:
+
+```console
+ccam: `claude mcp list` sees only account work's own MCP servers; its sessions also load group default's: ctx, fs
+      See all of them with `ccam mcp list`; change the group's with `ccam mcp add|remove`.
+```
+
+বাকি প্রতিটি সাবকমান্ড ও প্রতিটি সেশন ফ্ল্যাগটি পায়।
+
+`config.toml`-এ `mcp_strategy = "sync"` থাকলে ccam এর বদলে সার্ভারগুলো অ্যাকাউন্টের `.claude.json`-এ লেখে, এবং অ্যাকাউন্টটি আগে থেকেই চললে সেটি বাদ দেয়। শেষ যাচাইয়ের পর থেকে গ্রুপের `mcp.json` বা `.claude.json` কোনোটিই না বদলালেও চালু করার সময় কাজটি বাদ যায়। সিঙ্ক কখনও কোনো গ্রুপ সার্ভারের নামে থাকা অ্যাকাউন্টের নিজস্ব সার্ভার প্রতিস্থাপন করে না (একবার তা জানায়), `.claude.json` থেকে হারিয়ে যাওয়া কপি আবার বসিয়ে দেয় (`put back group default's MCP servers …`), এবং শুধু নিজের লেখা সেই কপিগুলো বদলায় বা সরায়, যেগুলো এরপর কেউ বদলায়নি।
 
 ### Remote Control
 
@@ -115,18 +128,18 @@ Windows-এ কোনো `exec` নেই। সেখানে `Plan.Exec` এ�
 
 <!-- motion:launch-rc -->
 
-1. `remoteControl` অ্যাকাউন্টের পরে প্রথম যে আর্গুমেন্ট `-` দিয়ে শুরু হয় না, সেটিকে Claude Code-এর সাবকমান্ড হিসেবে ধরে। সেটি `remote-control` বা `rc` হলে `mcp.FlagArgs` কিছুই যোগ করে না।
-2. `mcp.Synced` গ্রুপের `mcp.json`-এর পরিবর্তনের সময় অ্যাকাউন্টের `sync-stamp`-এর সঙ্গে তুলনা করে। `.claude.json`-এ যদি আগে থেকেই গ্রুপের বর্তমান সার্ভারগুলো থাকে, বা গ্রুপে কোনো সার্ভার না থাকে, তাহলে Remote Control কোনো প্রশ্ন ছাড়াই চালু হয়।
+1. `claudeVerb` Claude Code-এর সাবকমান্ড হিসেবে `remote-control` বা `rc` খুঁজে পায়, অপশন ও তাদের মানের পরে এলেও (`ccam work --model opus rc`)। তখন `mcp.FlagArgs` কিছুই যোগ করে না।
+2. `mcp.Synced` গ্রুপের `mcp.json`-এর পরিবর্তনের সময় অ্যাকাউন্টের `sync-stamp`-এর সঙ্গে তুলনা করে, এবং যাচাই করে যে প্রতিটি গ্রুপ সার্ভার এখনও `.claude.json`-এ আছে। `.claude.json`-এ যদি আগে থেকেই গ্রুপের বর্তমান সার্ভারগুলো থাকে, বা গ্রুপে কোনো সার্ভার না থাকে, তাহলে Remote Control কোনো প্রশ্ন ছাড়াই চালু হয়।
 3. না হলে ccam সেই সার্ভারগুলোর নাম জানায় যেগুলো সেশনগুলো পাবে না, এবং জিজ্ঞেস করে:
 
    ```console
    ccam: Remote Control sessions only get MCP servers stored in account work's .claude.json, not the shared MCP servers (ctx, fs).
-   Copy them into .claude.json (a backup is kept)? [y/N]
+   Copy them into .claude.json (a backup is kept; servers of the account's own stay)? [y/N]
    ```
 
 4. `y` দিলে `mcp.Sync` সেগুলো `sync` কৌশলের মতো করেই কপি করে: Claude Code-এর লকের অধীনে, ব্যাকআপ নেওয়ার পরে, অ্যাকাউন্টের নিজস্ব সার্ভারগুলো রেখে। `N` দিলে, বা টার্মিনাল ছাড়া, Remote Control সেগুলো ছাড়াই চালু হয়, এবং ccam `mcp_strategy = "sync"` দেখিয়ে দেয়, যা প্রতিবার চালু করার আগে সেগুলো কপি করে।
 
-সার্ভারগুলো কপি না হওয়া পর্যন্ত ccam প্রতিবার Remote Control চালু করার সময় জিজ্ঞেস করে, এবং কপির পরে শুধু তখনই, যখন গ্রুপের `mcp.json` আবার বদলায়। পরের স্বাভাবিক চালু করায় `.claude.json`-এর কপি `--mcp-config`-এর ওপর জেতে, তাই `ccam mcp add`, `remove` ও `import` অন্য অ্যাকাউন্টগুলোর কাছে থাকা কপিগুলো আপডেট করে ([শেয়ার করা MCP সার্ভার](/features/mcp))।
+সার্ভারগুলো কপি না হওয়া পর্যন্ত ccam প্রতিবার Remote Control চালু করার সময় জিজ্ঞেস করে, এবং কপির পরে শুধু তখনই, যখন গ্রুপের `mcp.json` আবার বদলায় বা কপি করা কোনো সার্ভার `.claude.json` থেকে হারিয়ে যায়। পরের স্বাভাবিক চালু করায় `.claude.json`-এর কপি `--mcp-config`-এর ওপর জেতে, তাই `ccam mcp add`, `remove` ও `import` অন্য অ্যাকাউন্টগুলোর কাছে থাকা কপিগুলো আপডেট করে ([শেয়ার করা MCP সার্ভার](/features/mcp))।
 
 ### ১০ ms বাজেট
 
@@ -145,8 +158,8 @@ ccam trace: prelaunch             0.083ms (total 3.661ms)
 
 - অজানা নাম বা নম্বর `no account "<name>"` দিয়ে থেমে যায় এবং `ccam list` দেখিয়ে দেয়। কোনো অ্যাকাউন্টই না থাকলে ccam আপনাকে `ccam add <name>` দিয়ে একটি যোগ করতে বলে।
 - কোনো শেয়ার করা পাথ সাধারণ ফাইলে পরিণত হলে বা ভুল জায়গা নির্দেশ করলে ccam `stopped because of share link problems:` দিয়ে থেমে যায়, সেগুলোর তালিকা দেয়, এবং আপনাকে `ccam doctor --fix` চালাতে বলে। চালু করার পথে এটি ডেটা সরায় না।
-- এই অ্যাকাউন্টের সঙ্গে কথোপকথনের ইতিহাস শেয়ার করে (একই গ্রুপ) এমন অন্য একটি Claude Code একই ফোল্ডারে চললে ccam সতর্ক করে যে ইতিহাস মিশে যেতে পারে এবং জিজ্ঞেস করে `Run anyway? [y/N]`। টার্মিনাল না থাকলে এটি সতর্কতা দেখিয়ে চালিয়ে যায়।
-- `--dry-run` MCP সিঙ্ক, নতুন সার্ভারের বার্তা, ইতিহাসের যাচাই, সেশন মার্কার, শিরোনাম ও সর্বশেষ ব্যবহারের সময় বাদ দেয়, এবং exec করে না। এটি তবুও শেয়ার লিংক যাচাই করে, এবং স্বাভাবিক চালু করার মতোই অনুপস্থিত লিংক তৈরি করে।
+- এই অ্যাকাউন্টের সঙ্গে কথোপকথনের ইতিহাস শেয়ার করে (একই গ্রুপ) এমন অন্য একটি Claude Code একই ফোল্ডারে চললে ccam সতর্ক করে যে ইতিহাস মিশে যেতে পারে এবং জিজ্ঞেস করে `Run anyway? [y/N]`। ফোল্ডারটি সিম্বলিক লিংক মিলিয়ে তুলনা করা হয়। টার্মিনাল না থাকলে (`/dev/null` থেকে আসা স্ট্যান্ডার্ড ইনপুটও টার্মিনাল না থাকা হিসেবে গণ্য), বা ব্যাকগ্রাউন্ডের কোনো job থেকে চালালে, এটি সতর্কতা দেখিয়ে চালিয়ে যায়। নতুন `-p` রান নিজস্ব একটি কথোপকথন শুরু করে এবং কোনো সতর্কতা পায় না; `--version`, `--help` এবং যে সাবকমান্ডগুলো কোনো কথোপকথন খোলে না, যেমন `mcp`, `auth` বা `plugin`, সেগুলো একেবারেই যাচাই করা হয় না।
+- `--dry-run` MCP সিঙ্ক, নতুন সার্ভারের বার্তা, `mcp list`-এর নোট, ইতিহাসের যাচাই, সেশন মার্কার, শিরোনাম ও সর্বশেষ ব্যবহারের সময় বাদ দেয়, এবং exec করে না। এটি তবুও শেয়ার লিংক যাচাই করে, এবং স্বাভাবিক চালু করার মতোই অনুপস্থিত লিংক তৈরি করে।
 - `ccam work rc` চালালে, `work` যদি আগে থেকেই চলে, ccam `.claude.json`-এ হাত দেয় না, তা জানায়, এবং গ্রুপের সার্ভার ছাড়াই Remote Control চালু করে; সেগুলো কপি করতে সেশন শেষ হলে আবার চালান। `--dry-run` থাকলে এটি বার্তাটি প্রিন্ট করে, কিন্তু জিজ্ঞেসও করে না, কপিও করে না।
 - `mcp_strategy = "sync"` থাকলে ব্যর্থ সিঙ্ক `ccam: MCP sync failed (launching anyway): …` প্রিন্ট করে এবং Claude Code আগে থেকে থাকা সার্ভারগুলো নিয়েই চালু হয়।
 

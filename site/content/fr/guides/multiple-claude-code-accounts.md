@@ -1,10 +1,10 @@
 ---
 title: "Plusieurs comptes Claude Code sur un même ordinateur"
 description: "Utilisez plusieurs comptes Claude Code côte à côte avec CLAUDE_CONFIG_DIR, à la main avec des alias shell ou avec ccam, et changez de compte facilement."
-updated: 2026-10-20
+updated: 2026-10-24
 order: 1
 translation: machine
-sourceHash: ee92078b81c3
+sourceHash: 5463dec2f6eb
 ---
 
 Donnez à chaque compte son propre dossier de configuration. Claude Code lit ce dossier dans la variable d'environnement `CLAUDE_CONFIG_DIR`, et chaque dossier contient sa propre connexion, ses paramètres et son historique : chaque compte reste connecté et vous pouvez les utiliser en même temps. Vous pouvez configurer cela à la main avec un alias shell, ou laisser ccam s'en charger.
@@ -51,7 +51,7 @@ ccam add work --shortcut ccwork
 
 Désormais, `ccam personal` et `ccam work` lancent les deux comptes, tout comme `ccwork`, le raccourci que vous avez donné au compte work. Comme ce sont de vrais programmes et non des alias, ils fonctionnent aussi dans les scripts. Exécutez `ccam` seul pour choisir un compte dans une liste, et `ccam use work` pour en faire le compte par défaut.
 
-Les paramètres, `CLAUDE.md`, les serveurs MCP et les extensions sont partagés dès le départ, et vous pouvez activer le partage de l'historique des conversations pour poursuivre une conversation sur l'autre compte avec `ccam next --continue`. `ccam usage` affiche l'utilisation sur 5 heures et sur la semaine de tous les comptes à la fois.
+Les paramètres, `CLAUDE.md`, les serveurs MCP et les extensions sont partagés dès le départ. `ccam next --continue` transporte une conversation vers l'autre compte, et l'historique des conversations partagé, que vous pouvez activer, en fait une seule et même conversation. `ccam usage` affiche l'utilisation sur 5 heures et sur la semaine de tous les comptes à la fois.
 
 Si vous utilisez déjà `~/.claude`, exécutez `ccam import` au lieu d'ajouter de nouveau ce compte, ou `ccam migrate` pour copier ses paramètres, ses serveurs MCP et ses extensions dans les paramètres partagés.
 
@@ -67,7 +67,7 @@ Claude Code fonctionne [nativement sous Windows et dans WSL](https://code.claude
 
 **Claude Code me demande de me connecter à chaque fois.** Le premier démarrage dans un nouveau dossier le demande toujours. S'il continue à le demander, la connexion a expiré ou a été supprimée : exécutez `ccam login work` (ou lancez l'alias une fois et connectez-vous).
 
-**Un serveur MCP n'apparaît que dans un seul compte.** Les serveurs ajoutés pendant une session avec `claude mcp add` appartiennent à ce compte. Pour en rendre un disponible dans tous les comptes, utilisez `ccam mcp import work <server>`.
+**Un serveur MCP n'apparaît que dans un seul compte.** Les serveurs ajoutés pendant une session avec `claude mcp add` appartiennent à ce compte, et sans `-s user` à ce seul dossier. Pour en rendre un disponible dans tous les comptes, utilisez `ccam mcp import work <server>`.
 
 **Les paramètres diffèrent d'un compte à l'autre.** `ccam share work` affiche ce que le compte partage et par quel groupe ; `ccam group join default work` lui fait partager ce que partage `default`, après avoir montré ce qui va changer. `ccam doctor --fix` répare les liens cassés et garde une sauvegarde de chaque fichier qu'il modifie.
 
@@ -78,3 +78,5 @@ Claude Code fonctionne [nativement sous Windows et dans WSL](https://code.claude
 Pour deux comptes sans rien de partagé, un alias suffit. Si vous voulez partager paramètres et serveurs MCP, avoir plus de comptes, voir l'utilisation d'un coup d'œil ou poursuivre des conversations, ccam vous épargne cette gestion. La [comparaison avec les alias](/compare/aliases) présente les différences côte à côte, et [ccam et les autres sélecteurs de compte](/compare/account-switchers) couvre les outils qui échangent plutôt une seule connexion.
 
 Le droit d'utiliser plusieurs comptes dépend des conditions de chaque compte. Vérifiez-les avant de vous lancer.
+
+**Sièges Team et Enterprise.** Le choix automatique (`ccam next`, `--fallback`, `ccam pick`, la touche `n` du tableau de bord) passe aussi d'un siège à l'autre au sein d'une même organisation Claude Team ou Enterprise. Le centre d'aide d'Anthropic indique : « Each seat on a Team plan is assigned to one named individual, and only that person may use it » (chaque siège d'une offre Team est attribué à une personne nommément désignée, et seule cette personne peut l'utiliser) et « Users can't route their work through another user's account to use that user's remaining usage » (les utilisateurs ne peuvent pas faire passer leur travail par le compte d'un autre utilisateur pour profiter de l'utilisation restante de celui-ci) ([offres Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129) ; de même pour les [offres Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Utiliser le choix automatique entre plusieurs sièges peut donc enfreindre les conditions d'Anthropic. Renseignez-vous auprès de votre organisation et d'Anthropic avant de vous y fier. Les offres personnelles (Pro, Max) sont traitées dans la note ci-dessus.

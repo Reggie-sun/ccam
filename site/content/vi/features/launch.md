@@ -1,10 +1,10 @@
 ---
 title: Khởi động Claude Code
 description: "Chạy Claude Code bằng tài khoản bất kỳ với ccam <name|number>, ccam run hoặc bảng điều khiển; đối số được chuyển nguyên vẹn cho claude, --dry-run in ra lệnh."
-updated: 2026-10-20
+updated: 2026-10-24
 order: 1
 translation: machine
-sourceHash: "4812b197f143"
+sourceHash: "e279341eb59b"
 ---
 
 `ccam work` khởi động Claude Code bằng tài khoản `work`, và mọi thứ sau tên được chuyển nguyên vẹn cho `claude`. Hãy dùng nó ở bất cứ đâu bạn vẫn gõ `claude`: trong terminal, trong script, hoặc khi có đầu vào được pipe vào.
@@ -34,9 +34,11 @@ Khi đối số đầu tiên bắt đầu bằng `-` và không phải một c�
 
 `ccam` không kèm đối số sẽ mở [bảng điều khiển](/features/dashboard) khi đầu vào và đầu ra chuẩn là terminal, và in ra `ccam list` trong các trường hợp khác. Di chuyển tới một tài khoản (bằng các phím mũi tên, hoặc gõ số của nó) và nhấn `Enter` để khởi động nó; `n` khởi động tài khoản còn nhiều hạn mức nhất và `o` đề xuất `--continue`, `--resume` hoặc các đối số khác. Bảng điều khiển đóng lại trước khi Claude Code khởi động, nên terminal được khôi phục trước.
 
+**Seat của gói Team và Enterprise.** Lựa chọn tự động (`ccam next`, `--fallback`, `ccam pick`, phím `n` trên bảng điều khiển) cũng chuyển đổi giữa các seat của cùng một tổ chức Claude Team hoặc Enterprise. Trung tâm trợ giúp của Anthropic ghi rằng "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (mỗi seat của gói Team được gán cho đích danh một cá nhân, và chỉ người đó được phép sử dụng) và "Users can't route their work through another user's account to use that user's remaining usage" (người dùng không được chuyển công việc của mình qua tài khoản của một người dùng khác để dùng phần hạn mức còn lại của người đó) ([gói Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); tương tự đối với [gói Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Vì vậy, dùng lựa chọn tự động giữa các seat có thể vi phạm điều khoản của Anthropic. Hãy xác nhận với tổ chức của bạn và Anthropic trước khi dựa vào nó. Các gói cá nhân (Pro, Max) được đề cập trong [ghi chú về điều khoản ở phần Câu hỏi thường gặp](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+
 Khi shell có đặt `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY` hoặc `ANTHROPIC_AUTH_TOKEN`, Claude Code sẽ dùng khóa hoặc token đó thay cho thông tin đăng nhập riêng của tài khoản, nên ccam báo điều này trên đầu ra lỗi chuẩn trước khi khởi động (`ccam: $ANTHROPIC_API_KEY is set, so Claude Code may use that key instead of work's login…`). Nó chỉ đọc các biến này; một [tài khoản API key](/features/api) thì xóa chúng đi.
 
-Với `relay = true` trong `config.toml`, ccam khởi động các phiên tương tác như một tiến trình con và ở lại bên cạnh chúng, để `/ccam:switch` có thể tự chuyển một cuộc hội thoại đi tiếp ([chi tiết](/features/next#inside-claude-code)); nếu không, ccam tự thay thế mình bằng Claude Code, và không có gì chạy bên cạnh.
+Với `relay = true` ở đầu `config.toml` (phía trên `[[group]]`, `[[profile]]` hoặc `[[folder]]` đầu tiên), ccam khởi động các phiên tương tác như một tiến trình con và ở lại bên cạnh chúng, để `/ccam:switch` có thể tự chuyển một cuộc hội thoại đi tiếp, với các tùy chọn, chế độ quyền và mức effort của phiên ([chi tiết](/features/next#relay)); nếu không, ccam tự thay thế mình bằng Claude Code, và không có gì chạy bên cạnh.
 
 ## Tùy chọn
 
@@ -54,17 +56,19 @@ Quy tắc về đối số:
 - `ccam run <name|number> [claude args]` là dạng đầy đủ của `ccam <name>`. `ccam run` không kèm tên sẽ dùng tài khoản của thư mục hoặc tài khoản mặc định.
 - Tên tài khoản không được trùng với tên lệnh của ccam như `add`, `list`, `run` hoặc `usage`, nên `ccam <word>` không bao giờ mơ hồ.
 
-Lần chạy thử in ra một dòng mà bạn có thể dán vào shell, hoặc vào PowerShell trên Windows:
+Lần chạy thử in ra một dòng mà bạn có thể dán vào shell, hoặc vào PowerShell trên Windows. Dòng này bắt đầu bằng những gì lần khởi động thay đổi trong biến môi trường: luôn có `CLAUDE_CONFIG_DIR` và `CCAM_PROFILE`, `env -u <name>` cho một biến bị bỏ đi (chẳng hạn `CCAM_RELAY` được thừa hưởng), và với một [tài khoản API key](/features/api) là endpoint, mô hình của nó và nguồn của khóa (`ANTHROPIC_API_KEY="$WORK_KEY"`), không bao giờ là chính khóa:
 
 ```console
 $ ccam --dry-run work -p "fix the tests"
-CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work /home/me/.local/bin/claude --mcp-config=/home/me/.local/share/ccam/groups/default/mcp.json -p 'fix the tests'
+CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/work CCAM_PROFILE=work /home/me/.local/bin/claude --mcp-config=/home/me/.local/share/ccam/groups/default/mcp.json -p 'fix the tests'
 ```
 
 ```console
 PS> ccam --dry-run work -p "fix the tests"
-$env:CLAUDE_CONFIG_DIR='C:\Users\me\.local\share\ccam\profiles\work'; & C:\Users\me\.local\bin\claude.exe --mcp-config=C:\Users\me\.local\share\ccam\groups\default\mcp.json -p 'fix the tests'
+& { $saved = @{}; foreach ($k in 'CLAUDE_CONFIG_DIR','CCAM_PROFILE') { $saved[$k] = [Environment]::GetEnvironmentVariable($k) }; $env:CLAUDE_CONFIG_DIR='C:\Users\me\.local\share\ccam\profiles\work'; $env:CCAM_PROFILE='work'; try { $p = Start-Process -FilePath 'C:\Users\me\.local\bin\claude.exe' -ArgumentList '--mcp-config=C:\Users\me\.local\share\ccam\groups\default\mcp.json -p "fix the tests"' -NoNewWindow -Wait -PassThru; $global:LASTEXITCODE = $p.ExitCode } finally { foreach ($k in $saved.Keys) { [Environment]::SetEnvironmentVariable($k, $saved[$k]) } } }
 ```
+
+Dòng PowerShell đặt lại các biến sau đó, như `VAR=x cmd` làm trong shell, và giao dòng lệnh cho Claude Code qua `Start-Process`, nên Windows PowerShell 5.1 và PowerShell 7 chạy nó theo cùng một cách. Khi một lần khởi động đặt một biến thành giá trị rỗng, một dòng `#` bên dưới cho biết PowerShell trước 7.5 sẽ xóa biến đó thay vào đó. Với `claude.cmd` được npm cài, dòng này chạy lệnh `cmd.exe` mà lần khởi động sẽ dùng (xem bên dưới), và một đối số mà lần khởi động sẽ từ chối ở đó cũng làm lần chạy thử thất bại.
 
 ## Cách hoạt động
 
@@ -77,19 +81,19 @@ Mỗi ô sáng lên khi bước của nó chạy, và các dòng bên dưới l�
 1. `cmd/ccam/main.go` gọi `app.Main`. Nếu ccam được khởi động dưới một tên khác, đó là một [lệnh tắt](/features/shortcuts) và đi thẳng tới trình khởi chạy.
 2. `app.parse` xem `os.Args` trước khi cobra tham gia. Chỉ `ccam` đứng một mình (bảng điều khiển), một tên lệnh của ccam (`config.Reserved`), `-h`/`--help` và `-v`/`--version` mới đi tới `cli.Execute`. Mọi thứ khác là một lần khởi động.
 3. `launcher.Launch` đọc `~/.config/ccam/config.toml`, tệp duy nhất nó phân tích.
-4. `launcher.Prepare` tìm tài khoản theo tên hoặc số (khi không có, `HereProfile` lấy tài khoản của thư mục, so sánh thư mục làm việc với các mục `[[folder]]` của `config.toml` dưới dạng chuỗi), bỏ một dấu `--` đứng đầu, và tìm tệp thực thi `claude` bằng `ResolveClaude`. Kết quả tra cứu PATH được lưu đệm trong `~/.local/state/ccam/claude-path` cùng với thời điểm sửa đổi của tệp, nên ccam không phải tìm trong `PATH` ở mỗi lần khởi động. Tệp bị thay đổi hoặc không còn sẽ kích hoạt một lần tra cứu mới. Đường dẫn `claude_bin` trong `config.toml` được dùng nguyên như vậy. ccam từ chối một `claude` chính là ccam, so sánh theo inode, vì điều đó sẽ tạo vòng lặp.
+4. `launcher.Prepare` tìm tài khoản theo tên hoặc số (khi không có, `HereProfile` lấy tài khoản của thư mục, so sánh thư mục làm việc với các mục `[[folder]]` của `config.toml` dưới dạng chuỗi, không phân biệt hoa thường trên macOS và Windows), bỏ một dấu `--` đứng đầu, và tìm tệp thực thi `claude` bằng `ResolveClaude`. Kết quả tra cứu PATH được lưu đệm trong `~/.local/state/ccam/claude-path` cùng với thời điểm sửa đổi của tệp và một hash của `PATH`, nên ccam không phải tìm trong `PATH` ở mỗi lần khởi động. Tệp bị thay đổi hoặc không còn, hoặc `PATH` thay đổi, sẽ kích hoạt một lần tra cứu mới. Đường dẫn `claude_bin` trong `config.toml` (`~/` được mở rộng) phải là một tệp thực thi được; nếu không, việc khởi động dừng với `claude_bin X is not an executable file. Check claude_bin in config.toml` trước khi bất cứ thứ gì được ghi. ccam từ chối một `claude` chính là ccam, so sánh theo inode, vì điều đó sẽ tạo vòng lặp.
 5. `checkLinks` so sánh thư mục tài khoản `~/.local/share/ccam/profiles/<name>/` với thiết lập dùng chung của nó bằng `share.Check`, hàm này chỉ gọi `lstat` và `readlink`, một hoặc hai lời gọi hệ thống cho mỗi mục. Liên kết còn thiếu được tạo ngay lập tức. Bất cứ thứ gì có thể làm mất dữ liệu đều dừng việc khởi động.
 6. `applyMCP` thêm các máy chủ MCP dùng chung (xem bên dưới).
-7. `session.Register` ghi lại phiên. ccam ghi một tệp đánh dấu đặt tên theo PID của nó, chứa thời điểm bắt đầu tiến trình, vào `$XDG_RUNTIME_DIR/ccam/profile-<name>/<pid>` (hoặc `~/.local/state/ccam/locks/` khi không có `XDG_RUNTIME_DIR`). Với tài khoản dùng chung lịch sử hội thoại, `historyCheck` trước tiên tìm một phiên đang chạy trong `history-<group>-<hash>`, trong đó hash là của thư mục hiện tại, và cũng đăng ký ở đó. `exec` giữ nguyên PID, nên khi đó tệp đánh dấu chỉ đúng tiến trình Claude Code. Dùng tệp đánh dấu chứ không giữ khóa, vì các tiến trình do Claude Code khởi động sẽ thừa hưởng khóa và giữ nó sau khi phiên kết thúc.
+7. `session.Register` ghi lại phiên. ccam ghi một tệp đánh dấu đặt tên theo PID của nó, chứa thời điểm bắt đầu tiến trình, vào `~/.local/state/ccam/locks/profile-<name>/<pid>`, bất kể `XDG_RUNTIME_DIR` là gì, để mọi shell thấy cùng các tệp đánh dấu. Với tài khoản dùng chung lịch sử hội thoại, `historyCheck` trước tiên tìm một phiên đang chạy trong `history-<group>-<hash>`, trong đó hash là của thư mục hiện tại với các liên kết tượng trưng đã được phân giải, và cũng đăng ký ở đó. `exec` giữ nguyên PID, nên khi đó tệp đánh dấu chỉ đúng tiến trình Claude Code. Dùng tệp đánh dấu chứ không giữ khóa, vì các tiến trình do Claude Code khởi động sẽ thừa hưởng khóa và giữ nó sau khi phiên kết thúc. Một tệp đánh dấu không ghi được không làm dừng việc khởi động: ccam báo `ccam: could not mark the session as running (…); starting Claude Code anyway`. Các kiểm tra khác của ccam xem một tài khoản có đang chạy không (đổi tên, xóa, thay đổi nhóm, `doctor --fix`, đồng bộ MCP) cũng đọc các bản ghi riêng của Claude Code trong thư mục tài khoản (`sessions/<pid>.json`, `daemon.lock`), nên chúng cũng thấy Claude Code được khởi động không qua ccam: `claude` thông thường, một IDE, các phiên nền và daemon của chúng.
 8. `Plan.Exec` đặt tiêu đề terminal thành `claude · <name>` (khi đầu ra lỗi chuẩn là terminal), ghi thời điểm khởi động vào `~/.local/state/ccam/last-used/<name>` mà không `fsync`, và gọi `syscall.Exec`.
 
-Claude Code chạy với `CLAUDE_CONFIG_DIR` trỏ tới thư mục tài khoản và `CCAM_PROFILE` là tên tài khoản. ccam xóa mọi giá trị của các biến này mà nó thừa hưởng. Với một thư mục `~/.claude` được đăng ký bằng `ccam import` trên macOS, nó còn đặt `CLAUDE_SECURESTORAGE_CONFIG_DIR` thành giá trị rỗng, để tài khoản và `claude` thông thường dùng cùng một thông tin đăng nhập trong Chuỗi khóa (Keychain).
+Claude Code chạy với `CLAUDE_CONFIG_DIR` trỏ tới thư mục tài khoản và `CCAM_PROFILE` là tên tài khoản. ccam xóa mọi giá trị của các biến này mà nó thừa hưởng, và cả `CCAM_RELAY` được thừa hưởng. Với một thư mục `~/.claude` được đăng ký bằng `ccam import` trên macOS, nó còn đặt `CLAUDE_SECURESTORAGE_CONFIG_DIR` thành giá trị rỗng, để tài khoản và `claude` thông thường dùng cùng một thông tin đăng nhập trong Chuỗi khóa (Keychain); trên Windows, nó làm điều tương tự khi Claude Code giữ thông tin đăng nhập trong Credential Manager.
 
 ### Vì sao dùng exec
 
 `syscall.Exec` thay tiến trình ccam bằng `claude`, nên ccam không ở lại trong bộ nhớ, phím bấm, tín hiệu và mã thoát là của chính Claude Code, và đối số luôn là một mảng, không bao giờ là chuỗi shell.
 
-Windows không có `exec`. Ở đó, `Plan.Exec` khởi động `claude.exe` như một tiến trình con với cùng biến môi trường, đối số và console, chờ nó và thoát với mã thoát của nó. Ctrl+C đến thẳng Claude Code từ console, nên ccam bỏ qua nó. Tệp đánh dấu phiên mang PID của ccam, tiến trình sống đúng bằng thời gian của Claude Code, và bị xóa khi Claude Code thoát. Trong lúc chờ, ccam không làm gì khác. Công việc sau một phiên, như phát hiện các máy chủ được thêm bằng `claude mcp add`, diễn ra ở lần khởi động tiếp theo: ccam so sánh thời điểm sửa đổi của `.claude.json` với `~/.local/state/ccam/mcp/<name>/seen` và chỉ phân tích tệp khi nó đã thay đổi.
+Windows không có `exec`. Ở đó, `Plan.Exec` khởi động `claude.exe` như một tiến trình con với cùng biến môi trường, đối số và console, chờ nó và thoát với mã thoát của nó. Một `claude.cmd` do npm cài chạy trong `cmd.exe` với đường dẫn đầy đủ của nó và mọi đối số được đặt trong ngoặc kép, để `cmd.exe` không đọc đối số nào như cú pháp của riêng nó (`&`, `%PATH%`); một đối số có ngắt dòng không thể truyền theo cách đó và bị từ chối, kèm lời khuyên cài Claude Code bản gốc. Ctrl+C đến thẳng Claude Code từ console, nên ccam bỏ qua nó. Tệp đánh dấu phiên mang PID của ccam, tiến trình sống đúng bằng thời gian của Claude Code, và bị xóa khi Claude Code thoát. Trong lúc chờ, ccam không làm gì khác. Công việc sau một phiên, như phát hiện các máy chủ được thêm bằng `claude mcp add`, diễn ra ở lần khởi động tiếp theo: ccam so sánh thời điểm sửa đổi của `.claude.json` với `~/.local/state/ccam/mcp/<name>/seen` và chỉ phân tích tệp khi nó đã thay đổi.
 
 ### Cách một dòng lệnh được định tuyến
 
@@ -107,7 +111,16 @@ Với chiến lược mặc định `flag`, ccam truyền các máy chủ MCP c�
 
 `mcp.FlagArgs` chỉ trả về một đối số nếu `mcp.json` của nhóm tồn tại, và `Plan.InsertArgs` đặt nó ngay sau `claude`. Khi đó `--mcp-config` hoặc `--strict-mcp-config` của riêng bạn vẫn được áp dụng chồng lên. Đó là một đối số duy nhất, `--mcp-config=<path>`, vì `--mcp-config` của Claude Code nhận nhiều giá trị: nếu viết thành hai đối số, nó sẽ đọc cả lời nhắc theo sau như một tệp cấu hình.
 
-Với `mcp_strategy = "sync"` trong `config.toml`, ccam ghi các máy chủ vào `.claude.json` của tài khoản thay vào đó, và bỏ qua việc này nếu tài khoản đang chạy.
+`claudeVerb` quyết định nơi cờ này không được đặt. Nó đọc lệnh con của Claude Code từ các đối số theo cách Claude Code làm, bỏ qua các tùy chọn cùng giá trị của chúng. `remote-control` hoặc `rc` không nhận cờ (bên dưới), một động từ phiên nền đứng đầu (`attach`, `logs`, `stop`, `kill`, `respawn`, `rm`) cũng vậy. `ccam work mcp list`, `get` và `remove` cũng không nhận, vì Claude Code từ chối nó ở đó; thay vào đó ccam báo trên đầu ra lỗi chuẩn rằng các máy chủ của nhóm cũng được tải trong các phiên của tài khoản:
+
+```console
+ccam: `claude mcp list` sees only account work's own MCP servers; its sessions also load group default's: ctx, fs
+      See all of them with `ccam mcp list`; change the group's with `ccam mcp add|remove`.
+```
+
+Mọi lệnh con khác và mọi phiên đều giữ cờ.
+
+Với `mcp_strategy = "sync"` trong `config.toml`, ccam ghi các máy chủ vào `.claude.json` của tài khoản thay vào đó, và bỏ qua việc này nếu tài khoản đang chạy. Một lần khởi động cũng bỏ qua việc này khi cả `mcp.json` của nhóm lẫn `.claude.json` đều không thay đổi kể từ lần kiểm tra trước. Đồng bộ không bao giờ thay một máy chủ riêng của tài khoản có cùng tên với một máy chủ của nhóm (nó báo điều đó một lần), đặt lại một bản sao đã mất khỏi `.claude.json` (`put back group default's MCP servers …`), và chỉ thay đổi hoặc xóa những bản sao nó đã ghi mà chưa ai thay đổi kể từ đó.
 
 ### Remote Control
 
@@ -115,18 +128,18 @@ Với `mcp_strategy = "sync"` trong `config.toml`, ccam ghi các máy chủ vào
 
 <!-- motion:launch-rc -->
 
-1. `remoteControl` coi đối số đầu tiên sau tên tài khoản không bắt đầu bằng `-` là động từ của Claude Code. Khi đó là `remote-control` hoặc `rc`, `mcp.FlagArgs` không thêm gì.
-2. `mcp.Synced` so sánh thời điểm sửa đổi của `mcp.json` của nhóm với `sync-stamp` của tài khoản. Nếu `.claude.json` đã chứa các máy chủ hiện tại của nhóm, hoặc nhóm không có máy chủ nào, Remote Control khởi động mà không hỏi.
+1. `claudeVerb` tìm thấy `remote-control` hoặc `rc` là động từ của Claude Code, kể cả sau các tùy chọn và giá trị của chúng (`ccam work --model opus rc`). Khi đó `mcp.FlagArgs` không thêm gì.
+2. `mcp.Synced` so sánh thời điểm sửa đổi của `mcp.json` của nhóm với `sync-stamp` của tài khoản, và kiểm tra rằng mọi máy chủ của nhóm vẫn còn trong `.claude.json`. Nếu `.claude.json` đã chứa các máy chủ hiện tại của nhóm, hoặc nhóm không có máy chủ nào, Remote Control khởi động mà không hỏi.
 3. Nếu không, ccam nêu tên các máy chủ mà các phiên sẽ thiếu và hỏi:
 
    ```console
    ccam: Remote Control sessions only get MCP servers stored in account work's .claude.json, not the shared MCP servers (ctx, fs).
-   Copy them into .claude.json (a backup is kept)? [y/N]
+   Copy them into .claude.json (a backup is kept; servers of the account's own stay)? [y/N]
    ```
 
 4. Khi chọn `y`, `mcp.Sync` sao chép chúng theo cách của chiến lược `sync`: dưới khóa của Claude Code, sau khi sao lưu, và giữ lại các máy chủ riêng của tài khoản. Khi chọn `N`, hoặc khi không có terminal, Remote Control khởi động mà không có chúng, và ccam gợi ý `mcp_strategy = "sync"`, cách này sao chép chúng trước mỗi lần khởi động.
 
-ccam hỏi ở mỗi lần khởi động Remote Control cho đến khi các máy chủ được sao chép, và sau khi sao chép thì chỉ hỏi một lần khi `mcp.json` của nhóm lại thay đổi. Bản sao trong `.claude.json` được ưu tiên hơn `--mcp-config` ở các lần khởi động bình thường sau đó, nên `ccam mcp add`, `remove` và `import` cập nhật các bản sao mà tài khoản khác đang giữ ([Máy chủ MCP dùng chung](/features/mcp)).
+ccam hỏi ở mỗi lần khởi động Remote Control cho đến khi các máy chủ được sao chép, và sau khi sao chép thì chỉ hỏi một lần khi `mcp.json` của nhóm lại thay đổi hoặc một máy chủ đã sao chép bị mất khỏi `.claude.json`. Bản sao trong `.claude.json` được ưu tiên hơn `--mcp-config` ở các lần khởi động bình thường sau đó, nên `ccam mcp add`, `remove` và `import` cập nhật các bản sao mà tài khoản khác đang giữ ([Máy chủ MCP dùng chung](/features/mcp)).
 
 ### Ngân sách 10 ms
 
@@ -145,8 +158,8 @@ ccam trace: prelaunch             0.083ms (total 3.661ms)
 
 - Một tên hoặc số không xác định sẽ dừng với `no account "<name>"` và chỉ tới `ccam list`. Khi chưa có tài khoản nào, ccam yêu cầu bạn thêm một tài khoản bằng `ccam add <name>`.
 - Nếu một đường dẫn dùng chung đã trở thành tệp thông thường hoặc trỏ sai chỗ, ccam dừng với `stopped because of share link problems:`, liệt kê chúng, và yêu cầu bạn chạy `ccam doctor --fix`. Nó không di chuyển dữ liệu trên đường khởi động.
-- Nếu một Claude Code khác dùng chung lịch sử hội thoại với tài khoản này (cùng nhóm) đang chạy trong cùng thư mục, ccam cảnh báo rằng lịch sử có thể bị trộn lẫn và hỏi `Run anyway? [y/N]`. Khi không có terminal, nó hiển thị cảnh báo và tiếp tục.
-- `--dry-run` bỏ qua việc đồng bộ MCP, thông báo máy chủ mới, kiểm tra lịch sử, tệp đánh dấu phiên, tiêu đề và thời điểm dùng gần nhất, và không exec. Nó vẫn kiểm tra liên kết dùng chung, và tạo liên kết còn thiếu như một lần khởi động bình thường.
+- Nếu một Claude Code khác dùng chung lịch sử hội thoại với tài khoản này (cùng nhóm) đang chạy trong cùng thư mục, ccam cảnh báo rằng lịch sử có thể bị trộn lẫn và hỏi `Run anyway? [y/N]`. Thư mục được so khớp với các liên kết tượng trưng đã được phân giải. Khi không có terminal (đầu vào chuẩn từ `/dev/null` được tính là không có), hoặc từ một tác vụ chạy nền, nó hiển thị cảnh báo và tiếp tục. Một lần chạy `-p` mới bắt đầu một cuộc hội thoại riêng và không nhận cảnh báo; `--version`, `--help` và các lệnh con không mở cuộc hội thoại nào, như `mcp`, `auth` hoặc `plugin`, hoàn toàn không được kiểm tra.
+- `--dry-run` bỏ qua việc đồng bộ MCP, thông báo máy chủ mới, ghi chú `mcp list`, kiểm tra lịch sử, tệp đánh dấu phiên, tiêu đề và thời điểm dùng gần nhất, và không exec. Nó vẫn kiểm tra liên kết dùng chung, và tạo liên kết còn thiếu như một lần khởi động bình thường.
 - `ccam work rc` khi `work` đang chạy sẽ không động đến `.claude.json`, báo điều đó, và khởi động Remote Control mà không có các máy chủ của nhóm; hãy chạy lại sau khi phiên kết thúc để sao chép chúng. Với `--dry-run`, nó in thông báo nhưng không hỏi và không sao chép.
 - Với `mcp_strategy = "sync"`, việc đồng bộ thất bại sẽ in ra `ccam: MCP sync failed (launching anyway): …` và Claude Code khởi động với các máy chủ nó đã có.
 

@@ -1,13 +1,13 @@
 ---
 title: Claude Code की usage limit पूरी होने पर क्या करें
 description: रीसेट का इंतज़ार करें या वही बातचीत तुरंत दूसरे Claude Code अकाउंट पर जारी रखें। 5 घंटे और साप्ताहिक सीमा कैसे काम करती है, क़दम-दर-क़दम।
-updated: 2026-10-19
+updated: 2026-10-24
 order: 3
 translation: machine
-sourceHash: 38b80d780bba
+sourceHash: 049a46684c7b
 ---
 
-जब किसी अकाउंट की उपयोग सीमा (जिसे अक्सर rate limit भी कहते हैं) पूरी हो जाती है, तो आपके पास दो रास्ते हैं: सीमा रीसेट होने तक इंतज़ार करें, या वही बातचीत अभी अपने किसी दूसरे अकाउंट पर जारी रखें। अकाउंट्स के बीच बातचीत का इतिहास एक बार साझा कर दिया जाए, तो ccam के साथ दूसरा रास्ता बस एक कमांड है: `ccam next --auto --continue`।
+जब किसी अकाउंट की उपयोग सीमा (जिसे अक्सर rate limit भी कहते हैं) पूरी हो जाती है, तो आपके पास दो रास्ते हैं: सीमा रीसेट होने तक इंतज़ार करें, या वही बातचीत अभी अपने किसी दूसरे अकाउंट पर जारी रखें। ccam के साथ दूसरा रास्ता बस एक कमांड है: `ccam next --auto --continue`।
 
 ## Claude Code की कौन-सी सीमाएँ हैं?
 
@@ -38,8 +38,13 @@ ccam usage
 ```
 
 ```console
- 1 personal  ████████ 100% 22m       █████░░░  68% 1d 9h     just now
- 2 work      █░░░░░░░   8% 4h 12m    ██░░░░░░  19% 5d 2h     just now
+ 1 personal  just now
+   5-hour   ████████████████████ 100%  resets in 22m
+   Weekly   ██████████████░░░░░░  68%  resets in 1d 9h
+ 2 work      just now
+   5-hour   ██░░░░░░░░░░░░░░░░░░   8%  resets in 4h 12m
+   Weekly   ████░░░░░░░░░░░░░░░░  19%  resets in 5d 2h
+→ Most headroom: work   (open it with ccam next --auto)
 ```
 
 सबसे ज़्यादा गुंजाइश वाले अकाउंट में बातचीत खोलें:
@@ -50,11 +55,13 @@ ccam next --auto --continue
 
 Claude Code `work` के रूप में शुरू होता है, मौजूदा फ़ोल्डर की सबसे हाल की बातचीत के साथ, जिसमें अब तक कही गई हर बात शामिल है। इतिहास साझा करने से (ऊपर `ccam group set default --add history`) यह एक ही बातचीत रहती है; इसके बिना Claude Code बातचीत को `work` में कॉपी कर देता है, और ccam बताता है कि वह पहला जवाब कितने tokens फिर से पढ़ता है।
 
-Claude Code में [ccam plugin](/docs/install#claude-code-plugin) होने पर, सीमा पर रुकने वाला session एक नोटिफ़िकेशन दिखाता है, और `/ccam:switch` (या `/ccam:switch work`) बातचीत को `ccam next --continue` के लिए दर्ज कर देता है, ताकि कुछ भी अनुमान पर न छोड़ा जाए।
+Claude Code में [ccam plugin](/docs/install#claude-code-plugin) होने पर, सीमा पर रुकने वाला session एक नोटिफ़िकेशन दिखाता है और भरी हुई विंडो दर्ज करता है, ताकि `ccam next --auto` उस अकाउंट को उसके reset से पहले फिर से न चुने, और `/ccam:switch` (या `/ccam:switch work`) बातचीत को `ccam next --continue` के लिए दर्ज कर देता है, ताकि कुछ भी अनुमान पर न छोड़ा जाए।
+
+**Team और Enterprise सीटें।** अपने-आप होने वाला चुनाव (`ccam next`, `--fallback`, `ccam pick`, डैशबोर्ड का `n`) एक ही Claude Team या Enterprise संगठन की सीटों के बीच भी स्विच करता है। Anthropic का सहायता केंद्र कहता है कि "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team प्लान की हर सीट एक नामित व्यक्ति को सौंपी जाती है, और केवल वही व्यक्ति उसका इस्तेमाल कर सकता है) और "Users can't route their work through another user's account to use that user's remaining usage" (उपयोगकर्ता किसी दूसरे उपयोगकर्ता के बचे हुए उपयोग का इस्तेमाल करने के लिए अपना काम उसके अकाउंट के ज़रिए नहीं चला सकते) ([Team प्लान](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise प्लान](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) के लिए भी इसी तरह)। इसलिए सीटों के बीच अपने-आप होने वाला चुनाव इस्तेमाल करना Anthropic की शर्तों का उल्लंघन हो सकता है। इस पर भरोसा करने से पहले अपने संगठन और Anthropic से पता कर लें। Personal प्लान (Pro, Max) के बारे में [FAQ का शर्तों वाला नोट](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) बताता है।
 
 ## क्या ccam अपने-आप अकाउंट बदलता है?
 
-नहीं। आपके काम करते समय ccam चल नहीं रहा होता: यह Claude Code को शुरू करता है और ख़ुद को उससे बदल देता है। स्विच कब करना है, यह आप तय करते हैं, और `ccam next --auto` सबसे कम 5 घंटे के उपयोग वाला अकाउंट चुनता है और उन अकाउंट्स को छोड़ देता है जो 100% पर हैं, लॉग इन नहीं हैं, या किसी दूसरे संगठन के हैं। `config.toml` में `relay = true` होने पर ccam इसके बजाय session के साथ-साथ इंतज़ार करता है, इसलिए `/ccam:switch` अपने-आप आगे बढ़ जाता है। कुछ दूसरे टूल इसकी बजाय चल रहे session का लॉगिन बदलते हैं; [ccam और दूसरे account switchers](/compare/account-switchers) इसका अंतर समझाता है।
+नहीं। आपके काम करते समय ccam चल नहीं रहा होता: यह Claude Code को शुरू करता है और ख़ुद को उससे बदल देता है। स्विच कब करना है, यह आप तय करते हैं, और `ccam next --auto` सबसे कम 5 घंटे के उपयोग वाला अकाउंट चुनता है और उन अकाउंट्स को छोड़ देता है जो 100% पर हैं, लॉग इन नहीं हैं, या किसी दूसरे संगठन के हैं। `config.toml` में `relay = true` होने पर ccam इसके बजाय session के साथ-साथ इंतज़ार करता है, इसलिए `/ccam:switch` अपने-आप आगे बढ़ जाता है, session के विकल्पों, permission mode और effort level को बनाए रखते हुए। कुछ दूसरे टूल इसकी बजाय चल रहे session का लॉगिन बदलते हैं; [ccam और दूसरे account switchers](/compare/account-switchers) इसका अंतर समझाता है।
 
 ## ध्यान रखने वाली बातें
 

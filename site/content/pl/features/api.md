@@ -1,10 +1,10 @@
 ---
 title: Konta z kluczem API
 description: ccam add --api dodaje konto z kluczem API do API Anthropic lub bramy; klucz jest czytany przy starcie ze zmiennej lub polecenia i nigdy nie jest zapisywany.
-updated: 2026-10-20
+updated: 2026-10-23
 order: 13
 translation: machine
-sourceHash: "a903c92f2c50"
+sourceHash: "232a71525e42"
 ---
 
 Konto z kluczem API uruchamia Claude Code z kluczem API zamiast loginu subskrypcji Claude: z API Anthropic albo z endpointem obsługującym ten sam format Messages, takim jak brama LiteLLM lub OpenRouter. ccam nie przechowuje klucza. Odczytuje go przy każdym uruchomieniu konta, ze zmiennej środowiskowej albo z polecenia, np. menedżera haseł, i przekazuje go tylko temu procesowi Claude Code.
@@ -35,7 +35,7 @@ Konto z kluczem API dołącza do grup jak każde inne konto (domyślnie do `defa
 | --- | --- | --- |
 | `--api` | Dodaje konto z kluczem API zamiast logowania | wyłączone |
 | `--key-from env:NAME` | Odczytuje klucz ze zmiennej środowiskowej `NAME` | |
-| `--key-from command:COMMAND` | Uruchamia `COMMAND` (przez `sh -c`, a w Windows przez `cmd /C`) i używa pierwszego wypisanego wiersza | |
+| `--key-from command:COMMAND` | Uruchamia `COMMAND` (przez `sh -c`, a w Windows tak, jak wpisano w `cmd /d /s /c "…"`, z zachowaniem cudzysłowów) i używa pierwszego wypisanego wiersza | |
 | `--base-url <url>` | Endpoint (`ANTHROPIC_BASE_URL`) | API Anthropic |
 | `--auth api-key\|bearer` | Wysyła klucz jako `ANTHROPIC_API_KEY` (`x-api-key`) albo jako `ANTHROPIC_AUTH_TOKEN` (`Authorization: Bearer`, czego zwykle wymagają bramy) | `api-key` |
 | `--model <model>` | Model (`ANTHROPIC_MODEL`) | domyślny model Claude Code |
@@ -66,10 +66,17 @@ Konta z loginem subskrypcji zachowują odziedziczone środowisko, jak wcześniej
 
 ## Bezpieczeństwo i przypadki brzegowe
 
-- Klucz nigdy nie jest zapisywany w `config.toml`, w pamięci podręcznej ani w logu, a `ccam --dry-run gw` go nie odczytuje: próbne uruchomienie nie wykonuje źródła `command:`.
+- Klucz nigdy nie jest zapisywany w `config.toml`, w pamięci podręcznej ani w logu, a `ccam --dry-run gw` go nie odczytuje: próbne uruchomienie nie wykonuje źródła `command:`. Zamiast tego pokazuje endpoint, model i to, skąd pochodzi klucz:
+
+  ```console
+  $ ccam --dry-run gw -p hi
+  CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/gw CCAM_PROFILE=gw ANTHROPIC_BASE_URL=https://llm.example.com ANTHROPIC_MODEL=claude-sonnet-5-5 ANTHROPIC_AUTH_TOKEN="$(pass show llm/gateway-key | head -n 1)" /home/me/.local/bin/claude -p hi
+  ```
+
+  Odziedziczona zmienna, którą uruchomienie usuwa, pojawia się na początku jako `env -u <name>`. Przy źródle `env:` z pustą zmienną próbne uruchomienie kończy się błędem tak jak prawdziwe.
 - `ccam add --api` od razu sprawdza źródło `env:` i ostrzega, jeśli zmienna jest pusta; źródło `command:` jest uruchamiane po raz pierwszy przy starcie konta.
 - `ccam login` i `ccam logout` odrzucają konto z kluczem API, bo nie ma ono loginu. `ccam doctor` pokazuje jego endpoint i źródło klucza oraz ostrzega, gdy zmienna `env:` jest pusta.
-- `ccam usage` pokazuje dla niego `API`. `ccam next --auto`, `--fallback` i `ccam pick` wybierają tylko spośród kont z subskrypcją, bo klucz API nie ma 5-godzinnego ani tygodniowego limitu do porównania.
+- `ccam usage` pokazuje dla niego `no limits (API)`. `ccam next --auto`, `--fallback` i `ccam pick` wybierają tylko spośród kont z subskrypcją, bo klucz API nie ma 5-godzinnego ani tygodniowego limitu do porównania.
 - Współdzielony `settings.json` z blokiem `env` lub `apiKeyHelper` dotyczy każdego konta w grupie, także kont z kluczem API. Trzymaj ustawienia dostawcy poza współdzielonymi ustawieniami albo umieść konto z kluczem API w grupie bez `settings`.
 
 ## Powiązane

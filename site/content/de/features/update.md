@@ -1,10 +1,10 @@
 ---
 title: ccam aktualisieren
 description: ccam update ersetzt ccam nach einer SHA-256-Prüfung durch das neueste GitHub-Release; --check meldet nur, und --version installiert ein bestimmtes Release-Tag.
-updated: 2026-10-21
+updated: 2026-10-23
 order: 10
 translation: machine
-sourceHash: a92dbf37399f
+sourceHash: 000d37de5f29
 ---
 
 `ccam update` lädt ein ccam-Release von GitHub herunter, prüft es gegen die `checksums.txt` des Releases und ersetzt die laufende Binärdatei mit einem einzigen Umbenennen. Verwende es, wenn du ccam mit dem Installationsskript oder aus einem Archiv installiert hast. Auch das [Dashboard](/features/dashboard) fragt bei jedem Öffnen GitHub nach dem neuesten Release und bietet es mit `U` an, das nach einer Rückfrage dieselben Schritte ausführt. Kein anderer Befehl kontaktiert GitHub, daher funktionieren sie offline genauso.
@@ -64,7 +64,7 @@ Die gesamte Abfolge, von der Tag-Abfrage bis zum Umbenennen:
 
 Das Archiv und `checksums.txt` werden nebeneinander heruntergeladen, und nichts wird geschrieben, bis die Prüfsumme stimmt. Das Umbenennen ist atomar, daher hinterlässt ein Absturz oder eine volle Festplatte entweder die alte oder die neue Binärdatei, nie eine halbe. Kurzbefehle wie `~/.local/bin/ccwork` sind symbolische Links auf die ccam-Binärdatei, daher führen sie ohne jede Änderung die neue Version aus.
 
-Unter Windows lässt sich die Datei eines laufenden Programms nicht ersetzen oder löschen, nur umbenennen. `Updater.Install` schreibt die neue Binärdatei nach `ccam.exe.new`, benennt das laufende `ccam.exe` in `ccam.exe.old` um und die neue Datei in `ccam.exe`. Schlägt der letzte Schritt fehl, wird die alte Binärdatei zurückbenannt. Das nächste Update löscht `ccam.exe.old`. Kurzbefehle, die Hardlinks statt symbolischer Links sind ([Kurzbefehle](/features/shortcuts)), werden direkt danach erneuert, sodass auch sie die neue Version ausführen.
+Unter Windows lässt sich die Datei eines laufenden Programms nicht ersetzen oder löschen, nur umbenennen. `Updater.Install` schreibt die neue Binärdatei nach `ccam.exe.new`, benennt das laufende `ccam.exe` in `ccam.exe.old` um und die neue Datei in `ccam.exe`. Schlägt der letzte Schritt fehl, wird die alte Binärdatei zurückbenannt. Das nächste Update löscht die `ccam.exe.old`-Dateien, die es löschen kann; läuft noch eine Sitzung aus einem früheren `ccam.exe.old`, wird die laufende Binärdatei stattdessen zu `ccam.exe.old-<time>`. Kurzbefehle, die Hardlinks statt symbolischer Links sind ([Kurzbefehle](/features/shortcuts)), werden direkt danach erneuert, sodass auch sie die neue Version ausführen; das betrifft Hardlinks jedes älteren ccam, die ccam angelegt hat, nicht nur die der gerade ersetzten Binärdatei.
 
 ### Über Paketverwaltung installiert
 
@@ -91,7 +91,7 @@ Auf anderen Systemen als Linux wird nur die Zeile mit dem Installationsskript au
 
 ## Sicherheit und Sonderfälle
 
-- Ein Entwicklungs-Build meldet seine Version als `dev` und hat kein Release, mit dem er sich vergleichen ließe, daher lehnen `ccam update` und `ccam update --check` ihn ab. `ccam update --version vX.Y.Z` installiert ein Release darüber.
+- Ein Entwicklungs-Build meldet seine Version als `dev` und hat kein Release, mit dem er sich vergleichen ließe, daher lehnen `ccam update` und `ccam update --check` ihn ab. `ccam update --version vX.Y.Z` installiert ein Release darüber. Ein mit `go install github.com/jhyunwoo/ccam/cmd/ccam@vX.Y.Z` (oder `@latest`) gebautes ccam meldet dieses Release, sodass `ccam update` und das Angebot im Dashboard dafür funktionieren; `@main` oder ein lokaler Build nach einem Tag bleibt `dev`.
 - Ein fehlgeschlagener Download, eine fehlende Datei für deine Plattform oder eine abweichende Prüfsumme lassen die installierte Binärdatei unverändert.
 - Ein Release, das es nicht gibt, schlägt mit `there is no release <tag>` fehl. Lehnt GitHub mit HTTP 403 oder 429 ab, sagt ccam, dass es sich wahrscheinlich um ein Rate-Limit handelt, und bittet dich, es später erneut zu versuchen.
 - `--check` liest nur. Es prüft nicht, ob die Binärdatei paketverwaltet oder beschreibbar ist.

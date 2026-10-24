@@ -1,10 +1,10 @@
 ---
 title: حساب‌های کلید API
 description: ccam add --api یک حساب کلید API برای API شرکت Anthropic یا یک درگاه اضافه می‌کند؛ کلید هنگام اجرا از یک متغیر یا فرمان خوانده و هرگز ذخیره نمی‌شود.
-updated: 2026-10-20
+updated: 2026-10-23
 order: 13
 translation: machine
-sourceHash: "a903c92f2c50"
+sourceHash: "232a71525e42"
 ---
 
 حساب کلید API، Claude Code را به جای ورود با اشتراک Claude با یک کلید API آغاز می‌کند: API شرکت Anthropic، یا نقطه پایانی‌ای که همان قالب Messages را می‌فهمد، مانند یک درگاه LiteLLM یا OpenRouter. ccam کلید را ذخیره نمی‌کند. هر بار که حساب آغاز می‌شود آن را از یک متغیر محیطی یا از فرمانی مانند یک مدیر گذرواژه می‌خواند و فقط به همان فرایند Claude Code می‌دهد.
@@ -35,7 +35,7 @@ $ ccam list
 | --- | --- | --- |
 | `--api` | به جای ورود، یک حساب کلید API اضافه می‌کند | خاموش |
 | `--key-from env:NAME` | کلید را از متغیر محیطی `NAME` می‌خواند | |
-| `--key-from command:COMMAND` | `COMMAND` را اجرا می‌کند (با `sh -c`، یا در Windows با `cmd /C`) و نخستین خطی را که چاپ می‌کند به کار می‌برد | |
+| `--key-from command:COMMAND` | `COMMAND` را اجرا می‌کند (با `sh -c`، یا در Windows همان‌طور که در `cmd /d /s /c "…"` تایپ می‌شود، با حفظ نقل‌قول‌ها) و نخستین خطی را که چاپ می‌کند به کار می‌برد | |
 | `--base-url <url>` | نقطه پایانی (`ANTHROPIC_BASE_URL`) | API شرکت Anthropic |
 | `--auth api-key\|bearer` | کلید را به‌عنوان `ANTHROPIC_API_KEY` (`x-api-key`) یا `ANTHROPIC_AUTH_TOKEN` (`Authorization: Bearer`، که درگاه‌ها معمولاً می‌خواهند) می‌فرستد | `api-key` |
 | `--model <model>` | مدل (`ANTHROPIC_MODEL`) | پیش‌فرض Claude Code |
@@ -66,10 +66,17 @@ model = 'claude-sonnet-5-5'
 
 ## ایمنی و موارد خاص
 
-- کلید هرگز در `config.toml`، حافظه نهان یا گزارش نوشته نمی‌شود، و `ccam --dry-run gw` آن را نمی‌خواند: اجرای آزمایشی منبع `command:` را اجرا نمی‌کند.
+- کلید هرگز در `config.toml`، حافظه نهان یا گزارش نوشته نمی‌شود، و `ccam --dry-run gw` آن را نمی‌خواند: اجرای آزمایشی منبع `command:` را اجرا نمی‌کند. به جای آن، اجرای آزمایشی نقطه پایانی، مدل و جایی را که کلید از آن می‌آید نشان می‌دهد:
+
+  ```console
+  $ ccam --dry-run gw -p hi
+  CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/gw CCAM_PROFILE=gw ANTHROPIC_BASE_URL=https://llm.example.com ANTHROPIC_MODEL=claude-sonnet-5-5 ANTHROPIC_AUTH_TOKEN="$(pass show llm/gateway-key | head -n 1)" /home/me/.local/bin/claude -p hi
+  ```
+
+  متغیر به ارث رسیده‌ای که اجرا حذفش می‌کند در ابتدا به‌صورت `env -u <name>` نشان داده می‌شود. با منبع `env:` که متغیرش خالی است، اجرای آزمایشی همان‌طور که اجرا ناموفق می‌شد ناموفق می‌شود.
 - `ccam add --api` منبع `env:` را بی‌درنگ بررسی می‌کند و اگر متغیر خالی باشد هشدار می‌دهد؛ منبع `command:` نخستین بار هنگام اجرا اجرا می‌شود.
 - `ccam login` و `ccam logout` حساب کلید API را رد می‌کنند، چون ورودی ندارد. `ccam doctor` نقطه پایانی و منبع کلید آن را نشان می‌دهد و وقتی یک متغیر `env:` خالی باشد هشدار می‌دهد.
-- `ccam usage` برای آن `API` نشان می‌دهد. `ccam next --auto`، `--fallback` و `ccam pick` فقط از میان حساب‌های اشتراکی انتخاب می‌کنند، چون کلید API سقف ۵ ساعته یا هفتگی‌ای برای مقایسه ندارد.
+- `ccam usage` برای آن `no limits (API)` نشان می‌دهد. `ccam next --auto`، `--fallback` و `ccam pick` فقط از میان حساب‌های اشتراکی انتخاب می‌کنند، چون کلید API سقف ۵ ساعته یا هفتگی‌ای برای مقایسه ندارد.
 - یک `settings.json` مشترک که بلوک `env` یا `apiKeyHelper` دارد، روی همه حساب‌های گروه اعمال می‌شود، از جمله حساب‌های کلید API. تنظیمات ارائه‌دهنده را بیرون از تنظیمات مشترک نگه دارید، یا حساب کلید API را در گروهی بدون `settings` بگذارید.
 
 ## مطالب مرتبط

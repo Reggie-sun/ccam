@@ -1,10 +1,10 @@
 ---
 title: Akun kunci API
 description: ccam add --api menambahkan akun kunci API untuk API Anthropic atau gateway; kunci dibaca saat dijalankan dari variabel atau perintah, tak pernah disimpan.
-updated: 2026-10-20
+updated: 2026-10-23
 order: 13
 translation: machine
-sourceHash: "a903c92f2c50"
+sourceHash: 232a71525e42
 ---
 
 Akun kunci API menjalankan Claude Code dengan kunci API alih-alih login langganan Claude: API Anthropic, atau endpoint yang memakai format Messages yang sama, seperti gateway LiteLLM atau OpenRouter. ccam tidak menyimpan kunci itu. ccam membacanya setiap kali akun dijalankan, dari variabel lingkungan atau dari perintah seperti pengelola kata sandi, dan hanya memberikannya ke proses Claude Code tersebut.
@@ -35,7 +35,7 @@ Akun kunci API bergabung ke grup seperti akun lainnya (secara bawaan `default`: 
 | --- | --- | --- |
 | `--api` | Menambahkan akun kunci API alih-alih login | nonaktif |
 | `--key-from env:NAME` | Membaca kunci dari variabel lingkungan `NAME` | |
-| `--key-from command:COMMAND` | Menjalankan `COMMAND` (dengan `sh -c`, atau `cmd /C` di Windows) dan memakai baris pertama yang dicetaknya | |
+| `--key-from command:COMMAND` | Menjalankan `COMMAND` (dengan `sh -c`, atau di Windows seperti yang diketik di `cmd /d /s /c "…"`, dengan tanda kutip dipertahankan) dan memakai baris pertama yang dicetaknya | |
 | `--base-url <url>` | Endpoint (`ANTHROPIC_BASE_URL`) | API Anthropic |
 | `--auth api-key\|bearer` | Mengirim kunci sebagai `ANTHROPIC_API_KEY` (`x-api-key`) atau sebagai `ANTHROPIC_AUTH_TOKEN` (`Authorization: Bearer`, yang biasanya diminta gateway) | `api-key` |
 | `--model <model>` | Model (`ANTHROPIC_MODEL`) | Bawaan Claude Code |
@@ -66,10 +66,17 @@ Akun dengan login langganan tetap memakai lingkungan yang diwarisinya, seperti s
 
 ## Keamanan dan kasus khusus
 
-- Kunci tidak pernah ditulis ke `config.toml`, cache, atau log, dan `ccam --dry-run gw` tidak membacanya: sumber `command:` tidak dijalankan oleh dry run.
+- Kunci tidak pernah ditulis ke `config.toml`, cache, atau log, dan `ccam --dry-run gw` tidak membacanya: sumber `command:` tidak dijalankan oleh dry run. Sebagai gantinya, dry run menampilkan endpoint, model, dan asal kuncinya:
+
+  ```console
+  $ ccam --dry-run gw -p hi
+  CLAUDE_CONFIG_DIR=/home/me/.local/share/ccam/profiles/gw CCAM_PROFILE=gw ANTHROPIC_BASE_URL=https://llm.example.com ANTHROPIC_MODEL=claude-sonnet-5-5 ANTHROPIC_AUTH_TOKEN="$(pass show llm/gateway-key | head -n 1)" /home/me/.local/bin/claude -p hi
+  ```
+
+  Variabel warisan yang dihapus oleh peluncuran ditampilkan sebagai `env -u <name>` di awal. Dengan sumber `env:` yang variabelnya kosong, dry run gagal seperti halnya peluncuran.
 - `ccam add --api` langsung memeriksa sumber `env:` dan memperingatkan jika variabelnya kosong; sumber `command:` pertama kali dijalankan saat peluncuran.
 - `ccam login` dan `ccam logout` menolak akun kunci API, karena akun itu tidak punya login. `ccam doctor` menampilkan endpoint dan sumber kuncinya, dan memperingatkan jika variabel `env:` kosong.
-- `ccam usage` menampilkan `API` untuknya. `ccam next --auto`, `--fallback`, dan `ccam pick` hanya memilih di antara akun langganan, karena kunci API tidak punya batas 5 jam atau mingguan untuk dibandingkan.
+- `ccam usage` menampilkan `no limits (API)` untuknya. `ccam next --auto`, `--fallback`, dan `ccam pick` hanya memilih di antara akun langganan, karena kunci API tidak punya batas 5 jam atau mingguan untuk dibandingkan.
 - `settings.json` bersama dengan blok `env` atau `apiKeyHelper` berlaku untuk setiap akun dalam grup, termasuk akun kunci API. Jauhkan pengaturan penyedia dari pengaturan bersama, atau masukkan akun kunci API ke grup tanpa `settings`.
 
 ## Terkait

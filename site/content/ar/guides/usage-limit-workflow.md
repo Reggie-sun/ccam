@@ -1,13 +1,13 @@
 ---
 title: ماذا تفعل عندما يبلغ Claude Code حد الاستخدام
 description: انتظر إعادة التعيين أو تابع المحادثة نفسها فورًا على حساب Claude Code آخر. كيف يعمل حد الخمس ساعات والحد الأسبوعي، خطوة بخطوة.
-updated: 2026-10-19
+updated: 2026-10-24
 order: 3
 translation: machine
-sourceHash: 38b80d780bba
+sourceHash: 049a46684c7b
 ---
 
-عندما يبلغ حساب حد الاستخدام (ويُسمّى غالبًا rate limit)، أمامك خياران: أن تنتظر حتى يُعاد تعيين الحد، أو أن تتابع المحادثة نفسها الآن على حساب آخر تملكه. مع ccam يتطلب الخيار الثاني أمرًا واحدًا، `ccam next --auto --continue`، بعد مشاركة سجل المحادثات بين الحسابات.
+عندما يبلغ حساب حد الاستخدام (ويُسمّى غالبًا rate limit)، أمامك خياران: أن تنتظر حتى يُعاد تعيين الحد، أو أن تتابع المحادثة نفسها الآن على حساب آخر تملكه. مع ccam يتطلب الخيار الثاني أمرًا واحدًا، `ccam next --auto --continue`.
 
 ## ما الحدود التي يفرضها Claude Code؟
 
@@ -38,8 +38,13 @@ ccam usage
 ```
 
 ```console
- 1 personal  ████████ 100% 22m       █████░░░  68% 1d 9h     just now
- 2 work      █░░░░░░░   8% 4h 12m    ██░░░░░░  19% 5d 2h     just now
+ 1 personal  just now
+   5-hour   ████████████████████ 100%  resets in 22m
+   Weekly   ██████████████░░░░░░  68%  resets in 1d 9h
+ 2 work      just now
+   5-hour   ██░░░░░░░░░░░░░░░░░░   8%  resets in 4h 12m
+   Weekly   ████░░░░░░░░░░░░░░░░  19%  resets in 5d 2h
+→ Most headroom: work   (open it with ccam next --auto)
 ```
 
 افتح المحادثة في الحساب الذي لديه أكبر هامش متبقٍّ:
@@ -50,11 +55,13 @@ ccam next --auto --continue
 
 يبدأ Claude Code بالحساب `work` مع أحدث محادثة في المجلد الحالي، بما فيها كل ما قيل حتى الآن. ومشاركة السجل (`ccam group set default --add history` أعلاه) تُبقيها محادثة واحدة؛ ودونها ينسخ Claude Code المحادثة إلى `work`، ويخبرك ccam بعدد الرموز (tokens) التي سيقرؤها ذلك الرد الأول من جديد.
 
-ومع [المكوّن الإضافي لـ ccam](/docs/install#claude-code-plugin) في Claude Code، تعرض الجلسة التي تتوقف عند حدها إشعارًا، ويدوّن `/ccam:switch` (أو `/ccam:switch work`) المحادثة لـ `ccam next --continue` دون أن يترك شيئًا للتخمين.
+ومع [المكوّن الإضافي لـ ccam](/docs/install#claude-code-plugin) في Claude Code، تعرض الجلسة التي تتوقف عند حدها إشعارًا وتسجّل النافذة الممتلئة، فلا يختار `ccam next --auto` ذلك الحساب مجددًا قبل إعادة تعيينها، ويدوّن `/ccam:switch` (أو `/ccam:switch work`) المحادثة لـ `ccam next --continue` دون أن يترك شيئًا للتخمين.
+
+**مقاعد Team وEnterprise.** يبدّل الاختيار التلقائي (`ccam next` و`--fallback` و`ccam pick` والمفتاح `n` في لوحة التحكم) أيضًا بين مقاعد المؤسسة نفسها في Claude Team أو Enterprise. يقول مركز المساعدة لدى Anthropic: "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (يُخصَّص كل مقعد في خطة Team لشخص واحد محدد بالاسم، ولا يجوز أن يستخدمه إلا ذلك الشخص) و"Users can't route their work through another user's account to use that user's remaining usage" (لا يجوز للمستخدمين تمرير عملهم عبر حساب مستخدم آخر للاستفادة من الاستخدام المتبقي لذلك المستخدم) ([خطط Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)؛ وبالمثل في [خطط Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). لذا فإن استخدام الاختيار التلقائي بين المقاعد قد يخالف شروط Anthropic. تحقّق من ذلك مع مؤسستك ومع Anthropic قبل أن تعتمد عليه. أما الخطط الشخصية (Pro وMax) فتتناولها [ملاحظة الشروط في الأسئلة الشائعة](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 ## هل يبدّل ccam الحسابات تلقائيًا؟
 
-لا. لا يعمل ccam أثناء عملك: فهو يشغّل Claude Code ويستبدل نفسه به. أنت من يقرر متى تبدّل، ويختار `ccam next --auto` الحساب الأقل استخدامًا خلال 5 ساعات ويتخطى الحسابات التي بلغت 100% أو غير المسجّلة الدخول أو التابعة لمؤسسة أخرى. ومع `relay = true` في `config.toml`، ينتظر ccam بجانب الجلسة بدلًا من ذلك، فيتابع `/ccam:switch` بنفسه. بعض الأدوات الأخرى تبدّل تسجيل الدخول في جلسة قيد التشغيل بدلًا من ذلك؛ ويشرح [ccam وأدوات تبديل الحسابات الأخرى](/compare/account-switchers) الفرق.
+لا. لا يعمل ccam أثناء عملك: فهو يشغّل Claude Code ويستبدل نفسه به. أنت من يقرر متى تبدّل، ويختار `ccam next --auto` الحساب الأقل استخدامًا خلال 5 ساعات ويتخطى الحسابات التي بلغت 100% أو غير المسجّلة الدخول أو التابعة لمؤسسة أخرى. ومع `relay = true` في `config.toml`، ينتظر ccam بجانب الجلسة بدلًا من ذلك، فيتابع `/ccam:switch` بنفسه، مع الإبقاء على خيارات الجلسة ووضع الأذونات ومستوى الجهد. بعض الأدوات الأخرى تبدّل تسجيل الدخول في جلسة قيد التشغيل بدلًا من ذلك؛ ويشرح [ccam وأدوات تبديل الحسابات الأخرى](/compare/account-switchers) الفرق.
 
 ## أمور يجب مراعاتها
 

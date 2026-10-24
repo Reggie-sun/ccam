@@ -2,10 +2,10 @@
 title: Tambayoyin da ake yawan yi
 metaTitle: "Tambayoyi game da ccam: asusun Claude Code da dama"
 description: Amsoshi game da ccam, asusun Claude Code, iyakokin amfani, rabawa, sirri da tsarukan da ake tallafawa.
-updated: 2026-10-21
+updated: 2026-10-24
 order: 6
 translation: machine
-sourceHash: bc944d7dcab9
+sourceHash: c4e3b89bb4ea
 ---
 
 ## Shin ccam kayan aikin Anthropic ne na hukuma?
@@ -15,6 +15,8 @@ A'a. ccam aikin open-source ne da ba na hukuma ba, ba shi da alaƙa da Anthropic
 ## Shin an yarda in yi amfani da asusun Claude Code da dama?
 
 Wannan ya dogara da sharuɗɗan kowane asusu kuma, ga asusan aiki, da manufofin ƙungiyarka. Ka duba su kafin ka yi amfani da asusai da dama. ccam yana sauƙaƙa sauyawa ne kawai tsakanin asusan da kake da su tuni.
+
+**Kujeru (seats) na Team da Enterprise.** Zaɓin atomatik (`ccam next`, `--fallback`, `ccam pick`, maɓallin `n` na dashboard) yana kuma sauyawa tsakanin kujerun ƙungiyar Claude Team ko Enterprise iri ɗaya. Cibiyar taimako ta Anthropic ta ce "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (ana ba da kowace kujera a tsarin Team da sunan takamaiman mutum ɗaya, kuma wannan mutumin kaɗai ne aka yarda ya yi amfani da ita) da "Users can't route their work through another user's account to use that user's remaining usage" (masu amfani ba za su iya tura aikinsu ta asusun wani mai amfani ba domin su ci gajiyar ragowar amfanin wannan mai amfanin) ([Tsare-tsaren Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); haka ma ga [tsare-tsaren Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Don haka yin amfani da zaɓin atomatik tsakanin kujeru na iya saɓa wa sharuɗɗan Anthropic. Ka tuntuɓi ƙungiyarka da Anthropic kafin ka dogara da shi. Don tsare-tsaren kai (Pro, Max), duba sakin layin da ke sama.
 
 ## Shin ccam yana kauce wa iyakokin amfani?
 
@@ -26,11 +28,11 @@ Ba kowane asusu foldar saitunsa ta kansa da `CLAUDE_CONFIG_DIR`. ccam yana yi ma
 
 ## Ta yaya zan ci gaba da tattaunawa a wani asusu?
 
-Raba tarihin tattaunawa tsakanin asusan da `ccam group set default --add history` (ko rukuni nasu na kansu: `ccam group add pair --items history --members work,side`), sannan ka gudanar da `ccam next --continue`. Claude Code yana buɗe tattaunawa ta baya-bayan nan ta foldar yanzu a asusu na gaba.
+Gudanar da `ccam next --continue` a cikin foldar: yana kai tattaunawar ƙarshe ta foldar zuwa asusu na gaba (`--auto` don wanda ya fi sarari). A cikin Claude Code, `/ccam:switch` daga [plugin ɗin ccam](/docs/install#claude-code-plugin) yana yin haka ga zaman da kake ciki. Idan asusan biyu suna raba tarihin tattaunawa (`ccam group set default --add history`, ko rukuni nasu na kansu: `ccam group add pair --items history --members work,side`), sabon asusun yana buɗe ainihin wannan tattaunawar; in ba haka ba Claude Code yana kwafar ta cikin tarihin sabon asusun.
 
 ## Shin ccam yana ganin bayanan shigata ko yana aika su?
 
-ccam ba ya taɓa raba bayanan shigar Claude naka tsakanin asusu. Yana karanta access token na asusu ne kawai don tambayar endpoint na amfani na Anthropic game da amfanin wannan asusun, lokacin da ka gudanar da `ccam usage`, `ccam next --auto` ko `ccam doctor`. `ccam migrate` yana kwafar bayanan shigar sabobin MCP da aka ajiye daga `~/.claude` zuwa fayilolin shiga na asusunka a kwamfuta ɗaya. ccam ba shi da telemetry. Ban da waɗannan tambayoyin, buƙata ɗaya tak da yake yi da kansa ita ce tambayar dashboard ga GitHub game da sabon sakin ccam, wadda ba ta ɗauke da komai game da kai ko asusunka.
+ccam ba ya taɓa raba ko kwafar bayanan shigar Claude naka tsakanin asusu, kuma ba ya taɓa kwafar shigar sabobin MCP. Yana karanta access token na asusu ne kawai don tambayar endpoint na amfani na Anthropic game da amfanin wannan asusun, lokacin da ka gudanar da `ccam usage`, `ccam next --auto` ko `ccam doctor`, kuma yana sabunta wanda ya ƙare ne kawai da `ccam usage --refresh`; da `usage_source = "claude"` ba ya karanta token ɗin kwata-kwata. `ccam ext` da `ccam doctor` suna karanta sunayen shigar MCP na asusu, ba token ɗinsu ba. ccam ba shi da telemetry. Ban da waɗannan tambayoyin, buƙata ɗaya tak da yake yi da kansa ita ce tambayar dashboard ga GitHub game da sabon sakin ccam, wadda ba ta ɗauke da komai game da kai ko asusunka.
 
 ## Ta yaya zan shiga a sabar nesa?
 
@@ -38,7 +40,7 @@ Gudanar da `ccam add` ko `ccam login <name>` a cikin zaman SSH kamar yadda aka s
 
 ## A ina ake ajiye asusuna?
 
-A `~/.local/share/ccam/profiles/<name>/`, folda ɗaya ga kowane asusu. A macOS, Claude Code yana ajiye bayanan shigar kansu a Keychain, ƙarƙashin sunan da aka samo daga wannan foldar.
+A `~/.local/share/ccam/profiles/<name>/`, folda ɗaya ga kowane asusu. A macOS, Claude Code yana ajiye bayanan shigar kansu a Keychain, ƙarƙashin sunan da aka samo daga wannan foldar, don haka a can `ccam rename` yana riƙe tsohon sunan foldar.
 
 ## Me zai faru da ~/.claude da nake da shi?
 
@@ -46,11 +48,11 @@ Babu komai, sai idan ka gudanar da `ccam import` ko `ccam migrate`. Import yana 
 
 ## Waɗanne tsaruka ne ccam yake tallafawa?
 
-Linux (Ubuntu, Debian, Fedora, Arch, Alpine da sauransu), macOS da Windows 10 da 11, kai tsaye ko a cikin WSL. A Windows, raba fayiloli kamar `settings.json` yana buƙatar Developer Mode; foldojin da aka raba suna aiki ba tare da shi ba ([rabawa a Windows](/features/share#on-windows)).
+Linux (Ubuntu, Debian, Fedora, Arch, Alpine da sauransu), macOS da Windows 10 da 11, kai tsaye ko a cikin WSL. A Windows, raba fayiloli kamar `settings.json` yana buƙatar Developer Mode; foldojin da aka raba suna aiki ba tare da shi ba, kuma ba tare da shi ba `ccam add` na farko yana ƙirƙirar rukunin `default` da sabobin MCP da extensions kawai ([rabawa a Windows](/features/share#on-windows)).
 
 ## Me yasa sabar MCP take bayyana a asusu ɗaya kawai?
 
-Sabobin da aka ƙara a cikin zama (session) da `claude mcp add` ana ajiye su ga wannan asusun kawai. ccam yana gaya maka a gaba da ka fara asusun; motsa sabar zuwa rukunin da aka raba da `ccam mcp import <account> <server>`.
+Sabobin da aka ƙara a cikin zama (session) da `claude mcp add` ana ajiye su ga wannan asusun kawai, kuma ba tare da `-s user` ba ga foldar yanzu kawai. ccam yana gaya maka a gaba da ka fara asusun, kuma `ccam mcp list` da `ccam ext` suna nuna su; motsa sabar zuwa rukunin da aka raba da `ccam mcp import <account> <server>`.
 
 ## Shin ccam yana rage saurin Claude Code?
 
@@ -62,4 +64,4 @@ Gudanar da `ccam update`. Yana sauke sakin baya-bayan nan, yana duba checksum na
 
 ## Ta yaya zan cire ccam?
 
-Cire gajeren umarnin kowane asusu da `ccam shortcut <account> --remove`, goge `ccam` daga `~/.local/bin`, sannan ka cire `~/.config/ccam`, `~/.local/share/ccam` da `~/.local/state/ccam` idan ba ka buƙatar asusan kuma. Duba [shigarwa](/docs/install#uninstall).
+Cire gajeren umarnin kowane asusu da `ccam shortcut <account> --remove`. Idan ka shigo da `~/.claude` kuma yana cikin rukuni, fara gudanar da `ccam remove <name>` a kansa, don ya dawo da kwafin abin da yake rabawa. Sannan ka goge `ccam` daga `~/.local/bin`, kuma ka cire `~/.config/ccam`, `~/.local/share/ccam` da `~/.local/state/ccam` idan ba ka buƙatar asusan kuma. Duba [shigarwa](/docs/install#uninstall).

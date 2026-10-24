@@ -1,10 +1,10 @@
 ---
 title: フォルダーごとのアカウント
 description: ccam folderを使うと、アカウント名なしでClaude Codeを起動したとき、フォルダーとその下すべてで1つのアカウントが使われます。たとえば会社のコードではworkです。
-updated: 2026-10-20
+updated: 2026-10-23
 order: 11
 translation: machine
-sourceHash: "46d1410a3d81"
+sourceHash: "48de98d42b99"
 ---
 
 `ccam folder work ~/code/company`を実行すると、`~/code/company`とその下のどのフォルダーでも、アカウント名を指定しない起動はすべて`work`としてClaude Codeを起動します。その外では、これまでどおりデフォルトのアカウントが起動します。`ccam personal`や`ccpersonal`のようなショートカットでアカウントを指定した場合は、常にそのアカウントが起動します。
@@ -34,7 +34,7 @@ Here (/home/me/code/company/api): work, set for /home/me/code/company
 - `ccam -p "…"`、および最初の引数がClaude Codeのオプションであるそのほかの起動
 - 名前なしの`ccam run`と、`ccam --dry-run`
 - `ccam --fallback -p "…"`の最初の試行
-- ダッシュボード（`ccam`単体）。フォルダーのアカウントにカーソルを置いた状態で開きます
+- ダッシュボード（`ccam`単体）。フォルダーのアカウントにカーソルを置いた状態で開きます。シンボリックリンクを通ってそのフォルダーに来た場合も同じです
 
 ## オプション
 
@@ -59,7 +59,7 @@ account = 'work'
 2. 名前なしの起動は`launcher.HereProfile`を呼び出します。エントリーがなければ、すぐにデフォルトのアカウントを使います。
 3. エントリーがある場合は、作業ディレクトリを各`path`と文字列として比較します。一致するのはそのフォルダー自体かその下のフォルダーだけで、同じ文字で始まるだけのフォルダーは一致しません（`/code/company`は`/code/companyx`を含みません）。最も深いエントリーが優先されるので、`~/code`を`personal`にしつつ、`~/code/company`を`work`にできます。
 4. 作業ディレクトリがそのままではどれにも一致しない場合に限り、ccamはそのシンボリックリンクを解決して、もう一度比較します。
-5. Windowsでは、Windowsと同じように、比較で大文字と小文字を区別しません。
+5. WindowsとmacOSでは、それぞれのファイルシステムが通常そうであるように、比較で大文字と小文字を区別しません。
 
 `config.toml`以外のファイルは読まないので、フォルダー内での起動にかかる時間は測定できるほど増えません（エントリーの有無にかかわらず4.0 ms、`hyperfine`、300回）。
 
