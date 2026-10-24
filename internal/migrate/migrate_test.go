@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 	"reflect"
 	"runtime"
+	"slices"
 	"strings"
 	"testing"
 
@@ -629,4 +630,60 @@ func TestFoundReportsItemsTheSourceHas(t *testing.T) {
 func jsonText(s string) string {
 	b, _ := json.Marshal(s)
 	return strings.Trim(string(b), `"`)
+}
+
+// Plain Claude Code may have MCP servers in ~/.claude.json with nothing in
+// ~/.claude yet: migrate still copies them.
+func TestMigrateMCPWithAnEmptyClaudeFolder(t *testing.T) {
+	f := newFixture(t, map[string]string{".claude.json": `{"mcpServers":{"ctx":{"type":"http","url":"https://c"}}}`})
+	os.Remove(f.src)
+	pl, err := Build(Options{Source: f.src, Home: f.home, GroupsRoot: f.groups, Group: "default", Items: DefaultItems})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := pl.Apply(); err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(read(t, filepath.Join(f.group, "mcp.json")), `"ctx"`) {
+		t.Fatal("not copied")
+	}
+	// Without servers there, a missing folder is still refused.
+	g := newFixture(t, nil)
+	os.Remove(g.src)
+	if _, err := Build(Options{Source: g.src, Home: g.home, GroupsRoot: g.groups, Group: "default", Items: DefaultItems}); err == nil {
+		t.Fatal("a missing ~/.claude without MCP servers was taken")
+	}
+}
+
+// HomeOnly lists what plain Claude Code's ~/.claude.json has that no
+// account or group gives; an account registered in place links to it.
+func TestHomeOnly(t *testing.T) {
+	f := newFixture(t, map[string]string{".claude.json": `{"mcpServers":{"gone":{},"shared":{},"own":{}}}`})
+	acct := filepath.Join(f.home, "acct")
+	write(t, acct, map[string]string{".claude.json": `{"mcpServers":{"own":{}}}`})
+	write(t, f.group, map[string]string{"mcp.json": `{"mcpServers":{"shared":{}}}`})
+	from, names := HomeOnly(f.src, f.home, []string{acct}, []string{f.group})
+	if from != filepath.Join(f.home, ".claude.json") || !slices.Equal(names, []string{"gone"}) {
+		t.Fatalf("%s %v", from, names)
+	}
+	if _, names := HomeOnly(f.src, f.home, []string{f.home}, nil); len(names) != 0 {
+		t.Fatalf("an account on ~/.claude.json loads them: %v", names)
+	}
+}
+
+// A server of the same name that another ccam adds to the group between
+// the plan and Apply stays: the plan had it as new.
+func TestMigrateKeepsAServerAddedMeanwhile(t *testing.T) {
+	f := newFixture(t, map[string]string{".claude.json": `{"mcpServers":{"ctx":{"type":"http","url":"https://mine"}}}`})
+	pl, err := Build(Options{Source: f.src, Home: f.home, GroupsRoot: f.groups, Group: "default", Items: []string{"mcp"}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	write(t, f.group, map[string]string{"mcp.json": `{"mcpServers":{"ctx":{"type":"http","url":"https://theirs"}}}`})
+	if err := pl.Apply(); err != nil {
+		t.Fatal(err)
+	}
+	if got := read(t, filepath.Join(f.group, "mcp.json")); !strings.Contains(got, "https://theirs") {
+		t.Fatalf("the group's server was replaced:\n%s", got)
+	}
 }

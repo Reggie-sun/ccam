@@ -85,7 +85,7 @@ func (d *Dashboard) accountsView(w int) ([]string, int) {
 	head += "Groups"
 	out := []string{t.dim().Render(head)}
 	def, _ := d.cfg.DefaultProfile()
-	here, _ := d.cfg.FolderFor(d.cwd)
+	here, _ := d.here()
 	now := d.now()
 	for i := range d.cfg.Profiles {
 		p := &d.cfg.Profiles[i]
@@ -139,7 +139,14 @@ func (d *Dashboard) usageCell(p *config.Profile) string {
 	case r.Status == usage.StatusLoggedOut:
 		return padRight(t.warning().Render(symFail+" not logged in"), usageW)
 	case r.Status == usage.StatusExpired && r.Limits == nil:
-		return padRight(t.warning().Render(symWarn+" login expired"), usageW)
+		// Only these need `ccam login`; an expired access token is renewed
+		// when the account starts.
+		for _, why := range []string{"login expired", "login may be lost"} {
+			if strings.HasPrefix(r.Err, why) {
+				return padRight(t.warning().Render(symWarn+" "+why), usageW)
+			}
+		}
+		return padRight(t.dim().Render(symWarn+" token expired"), usageW)
 	case r.Limits == nil:
 		return padRight(t.dim().Render(symWarn+" no data"), usageW)
 	}
@@ -259,8 +266,19 @@ func (d *Dashboard) accountsKey(k tea.KeyPressMsg) tea.Cmd {
 		})
 	case "x":
 		name := p.Name
-		body := "Its folder goes to ccam's trash and its login token with it; the groups' shared files stay. Nothing is deleted."
-		if p.Dir != "" {
+		body := "It is logged out first (its login is revoked), then its folder goes to ccam's trash; the groups' shared files stay."
+		switch {
+		case p.API != nil:
+			body = "Its folder goes to ccam's trash; the groups' shared files stay."
+		case p.Dir == "":
+			if q := d.be.SameLogin(name); q != "" {
+				body = "It is not logged out, since " + q + " holds the same login; its folder goes to ccam's trash and the groups' shared files stay."
+			}
+		}
+		switch {
+		case p.Dir != "" && !p.Share.Equal(config.Share{}):
+			body = "It was imported, so its folder " + p.Dir + " stays where it is: it leaves its groups first and keeps a copy of what they share, then ccam forgets it."
+		case p.Dir != "":
 			body = "It was imported, so its folder " + p.Dir + " stays where it is; ccam only forgets it."
 		}
 		d.dlg = newDestructive("Remove account "+name+"?", body, "Yes, remove "+name, func(d *Dashboard) tea.Cmd {
@@ -416,7 +434,8 @@ func (d *Dashboard) usageDetail(p *config.Profile) dialog {
 	for _, s := range r.Limits.Scoped {
 		lines = append(lines, row(s.Name+" weekly", s.Window))
 	}
-	src := map[string]string{"live": "live, from the usage endpoint", "claude": "live, from Claude Code", "cache": "saved from the usage endpoint", "statusline": "saved by the status line"}[r.Source]
+	src := map[string]string{"live": "live, from the usage endpoint", "claude": "live, from Claude Code", "cache": "saved from the usage endpoint", "statusline": "saved by the status line",
+		"limit": "the usage limit Claude Code reported"}[r.Source]
 	info := "source: " + cmp.Or(src, r.Source)
 	if !r.At.IsZero() {
 		info += symDot + shortAgo(r.At, now) + " ago"
@@ -438,13 +457,13 @@ func (d *Dashboard) usageDetail(p *config.Profile) dialog {
 // current folder.
 func (d *Dashboard) useHere(name string) tea.Cmd {
 	set := func(d *Dashboard) tea.Cmd {
-		cfg, err := d.be.SetFolder(d.cwd, name)
-		d.after(cfg, err, name+" is used in "+d.cwd)
+		cfg, err := d.be.SetFolder(d.dir, name)
+		d.after(cfg, err, name+" is used in "+d.dir)
 		return nil
 	}
 	for _, f := range d.cfg.Folders {
-		if config.SamePath(f.Path, d.cwd) && f.Account != name {
-			d.dlg = newConfirm("Use "+name+" in "+d.cwd+"?", "This folder uses "+f.Account+" now.", "Yes, use "+name, set)
+		if config.SamePath(f.Path, d.dir) && f.Account != name {
+			d.dlg = newConfirm("Use "+name+" in "+d.dir+"?", "This folder uses "+f.Account+" now.", "Yes, use "+name, set)
 			return nil
 		}
 	}

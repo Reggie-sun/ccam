@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 	"testing"
+	"time"
 	"unicode"
 )
 
@@ -139,12 +140,19 @@ func TestOutputHasNoHangul(t *testing.T) {
 		t.Fatalf("help walk found too few commands (%d outputs)", len(outputs))
 	}
 
-	// Seed the status line cache so usage has numbers to show.
-	input, err := os.ReadFile(filepath.Join(repoRoot(), "internal", "usage", "testdata", "statusline-input.json"))
+	// Seed the status line cache so usage has numbers to show, with the
+	// fixture's fixed reset times moved ahead of the clock (a window past
+	// its reset shows as 0%).
+	raw, err := os.ReadFile(filepath.Join(repoRoot(), "internal", "usage", "testdata", "statusline-input.json"))
 	if err != nil {
 		t.Fatal(err)
 	}
-	r = h.run(string(input), []string{"CCAM_PROFILE=work"}, "ccam", "statusline")
+	input := strings.NewReplacer("1792346400", strconv.FormatInt(time.Now().Add(2*time.Hour).Unix(), 10),
+		"1792634400", strconv.FormatInt(time.Now().Add(72*time.Hour).Unix(), 10)).Replace(string(raw))
+	if input == string(raw) {
+		t.Fatal("the fixture's resets_at changed; update this test")
+	}
+	r = h.run(input, []string{"CCAM_PROFILE=work"}, "ccam", "statusline")
 	outputs = append(outputs, r.stdout+r.stderr)
 
 	for _, argv := range [][]string{

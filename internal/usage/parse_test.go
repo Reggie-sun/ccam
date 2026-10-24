@@ -78,3 +78,29 @@ func TestParseStatusLine(t *testing.T) {
 		t.Fatalf("missing resets_at: %+v", l.FiveHour)
 	}
 }
+
+// A limit without a percentage is not known to be 0%: the old fields fill
+// it in, or it stays unknown.
+func TestParseNullPercentFallsBack(t *testing.T) {
+	l, err := ParseLive([]byte(`{"limits":[{"kind":"session","percent":null},{"kind":"weekly_all"}],"five_hour":{"utilization":95,"resets_at":"2026-10-18T18:10:00Z"},"seven_day":null}`))
+	if err != nil || !l.FiveHour.Known || l.FiveHour.Percent != 95 || l.Weekly.Known {
+		t.Fatalf("%+v %v", l, err)
+	}
+	if _, err := ParseLive([]byte(`{"limits":[{"kind":"session","percent":null}]}`)); err == nil {
+		t.Fatal("no known limit at all")
+	}
+}
+
+// extra_usage.is_enabled says whether usage credits are on.
+func TestParseUsageCredits(t *testing.T) {
+	if l, _ := ParseLive(fixture(t, "new-format.json")); l.Credits {
+		t.Fatal("off in the fixture")
+	}
+	l, err := ParseLive([]byte(`{"limits":[{"kind":"session","percent":5}],"extra_usage":{"is_enabled":true,"monthly_limit":null}}`))
+	if err != nil || !l.Credits {
+		t.Fatalf("%+v %v", l, err)
+	}
+	if l := (&l).as(time.Now()); !l.Credits {
+		t.Fatal("as must keep it")
+	}
+}

@@ -1,11 +1,9 @@
 package migrate
 
 import (
-	"encoding/json"
 	"io/fs"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 	"testing"
 
@@ -13,16 +11,18 @@ import (
 )
 
 // signInSource is ~/.claude with one user server (gh), its sign-in, a plugin
-// server's sign-in, and a sign-in of a server the source no longer has.
+// server's sign-in, a sign-in of a server the source no longer has, and an
+// entry without a token (a server that still needs a sign-in there).
 func signInSource(t *testing.T) fixture {
 	f := newFixture(t, map[string]string{
 		".claude/CLAUDE.md":                      "x",
 		".claude/plugins/installed_plugins.json": `{"plugins":{}}`,
-		".claude.json":                           `{"mcpServers":{"gh":{"type":"http","url":"https://gh.example/mcp"}}}`,
+		".claude.json":                           `{"mcpServers":{"gh":{"type":"http","url":"https://gh.example/mcp"},"lin":{"type":"http","url":"https://lin.example/mcp"}}}`,
 		".claude/.credentials.json": `{"claudeAiOauth":{"accessToken":"main-login"},"mcpOAuth":{` +
-			`"gh|aaaa":{"serverName":"gh","accessToken":"gh-token"},` +
+			`"gh|aaaa":{"serverName":"gh","accessToken":"gh-token","refreshToken":"gh-refresh"},` +
 			`"plugin:p:srv|bbbb":{"serverName":"plugin:p:srv","accessToken":"plugin-token"},` +
-			`"gone|cccc":{"serverName":"gone","accessToken":"gone-token"}}}`,
+			`"gone|cccc":{"serverName":"gone","accessToken":"gone-token"},` +
+			`"lin|dddd":{"serverName":"lin","accessToken":"","discoveryState":{"authorizationServerUrl":"https://lin.example"}}}}`,
 	})
 	return f
 }
@@ -33,69 +33,51 @@ func account(t *testing.T, root, name, mcp, ext, creds string) Account {
 	if creds != "" {
 		write(t, dir, map[string]string{".credentials.json": creds})
 	}
-	return Account{Name: name, Dir: dir, MCP: mcp, Extensions: ext, SessionDir: filepath.Join(root, "run", name)}
+	return Account{Name: name, Dir: dir, MCP: mcp, Extensions: ext}
 }
 
-func signInsOf(t *testing.T, dir string) map[string]map[string]string {
-	t.Helper()
-	var doc struct {
-		ClaudeAiOauth map[string]string            `json:"claudeAiOauth"`
-		MCPOAuth      map[string]map[string]string `json:"mcpOAuth"`
-	}
-	if err := json.Unmarshal([]byte(read(t, filepath.Join(dir, ".credentials.json"))), &doc); err != nil {
-		t.Fatal(err)
-	}
-	if doc.ClaudeAiOauth["accessToken"] == "" {
-		t.Fatalf("%s lost its own login", dir)
-	}
-	return doc.MCPOAuth
-}
-
-func TestMCPSignInsGoToEachAccountNotTheGroup(t *testing.T) {
+// A refresh token works for one holder: copying a sign-in into every
+// account would let the first renewal log out all the other copies (the
+// source's too). migrate writes no login file; it says which accounts must
+// sign in to which servers.
+func TestMCPSignInsAreNeverCopied(t *testing.T) {
 	f := signInSource(t)
 	root := t.TempDir()
 	login := `{"claudeAiOauth":{"accessToken":"own"}}`
 	servers := account(t, root, "servers", "default", "local", login)
 	plugins := account(t, root, "plugins", "local", "default", login)
-	newer := account(t, root, "newer", "default", "local", `{"claudeAiOauth":{"accessToken":"own"},"mcpOAuth":{"gh|aaaa":{"accessToken":"newer-token"}}}`)
-	loggedOut := account(t, root, "out", "default", "default", "")
-	imported := account(t, root, "imported", "default", "default", login)
-	imported.Imported = true
+	signedIn := account(t, root, "signedin", "default", "local", `{"claudeAiOauth":{"accessToken":"own"},"mcpOAuth":{"gh|aaaa":{"accessToken":"own-token"}}}`)
+	stub := account(t, root, "stub", "default", "local", `{"claudeAiOauth":{"accessToken":"own"},"mcpOAuth":{"gh|aaaa":{"accessToken":"","discoveryState":{}}}}`)
+	loggedOut := account(t, root, "out", "default", "local", "")
 	other := account(t, root, "other", "team", "team", login)
+	accts := []Account{servers, plugins, signedIn, stub, loggedOut, other}
+	before := map[string]string{}
+	for _, a := range accts {
+		before[a.Name] = readIfThere(filepath.Join(a.Dir, ".credentials.json"))
+	}
 
-	pl, err := Build(Options{Source: f.src, Home: f.home, GroupsRoot: f.groups, Group: "default",
-		Items: DefaultItems, Accounts: []Account{servers, plugins, newer, loggedOut, imported, other}})
+	pl, err := Build(Options{Source: f.src, Home: f.home, GroupsRoot: f.groups, Group: "default", Items: DefaultItems, Accounts: accts})
 	if err != nil {
 		t.Fatal(err)
 	}
 	var plan strings.Builder
 	pl.Describe(&plan, false)
-	if !strings.Contains(plan.String(), "sign-ins") || !strings.Contains(plan.String(), "→ servers, plugins") ||
-		!strings.Contains(plan.String(), "out (not logged in yet)") || !strings.Contains(plan.String(), "imported (registered in place") {
+	want := "sign in with /mcp: gh in servers, stub, out; plugin:p:srv in plugins"
+	if !strings.Contains(plan.String(), want) || strings.Contains(plan.String(), "lin,") {
 		t.Fatalf("plan:\n%s", plan.String())
 	}
 	if err := pl.Apply(); err != nil {
 		t.Fatal(err)
 	}
-
-	if got := signInsOf(t, servers.Dir); len(got) != 1 || got["gh|aaaa"]["accessToken"] != "gh-token" {
-		t.Fatalf("servers got %v (only the copied server's sign-in)", got)
-	}
-	if got := signInsOf(t, plugins.Dir); len(got) != 1 || got["plugin:p:srv|bbbb"]["accessToken"] != "plugin-token" {
-		t.Fatalf("plugins got %v", got)
-	}
-	if got := signInsOf(t, newer.Dir); got["gh|aaaa"]["accessToken"] != "newer-token" {
-		t.Fatalf("an account's own sign-in was replaced: %v", got)
-	}
-	for _, a := range []Account{imported, other} {
-		if strings.Contains(read(t, filepath.Join(a.Dir, ".credentials.json")), "mcpOAuth") {
-			t.Fatalf("%s got sign-ins", a.Name)
+	for _, a := range accts {
+		if got := readIfThere(filepath.Join(a.Dir, ".credentials.json")); got != before[a.Name] {
+			t.Fatalf("%s's login file changed:\n%s\n→\n%s", a.Name, before[a.Name], got)
 		}
 	}
-	if info, _ := os.Stat(filepath.Join(servers.Dir, ".credentials.json")); runtime.GOOS != "windows" && info.Mode().Perm() != 0o600 {
-		t.Fatalf("login file mode %v", info.Mode())
+	if s := pl.SignIns(); s != "gh in servers, stub, out; plugin:p:srv in plugins" {
+		t.Fatalf("summary %q", s)
 	}
-	if strings.Join(pl.Copied(), " ") == "" || !strings.Contains(strings.Join(pl.Copied(), ","), "MCP sign-ins for servers, plugins") {
+	if strings.Contains(strings.Join(pl.Copied(), ","), "sign-in") {
 		t.Fatalf("copied: %v", pl.Copied())
 	}
 	// No token may reach the shared group.
@@ -107,6 +89,31 @@ func TestMCPSignInsGoToEachAccountNotTheGroup(t *testing.T) {
 	})
 }
 
+func readIfThere(path string) string {
+	data, _ := os.ReadFile(path)
+	return string(data)
+}
+
+// An entry without a token is no sign-in: there is nothing to sign in to
+// again for it, and nothing to say.
+func TestPlaceholderSignInsAreNoSignIns(t *testing.T) {
+	f := newFixture(t, map[string]string{
+		".claude/CLAUDE.md":         "x",
+		".claude.json":              `{"mcpServers":{"lin":{"type":"http","url":"https://lin.example/mcp"}}}`,
+		".claude/.credentials.json": `{"mcpOAuth":{"lin|dddd":{"accessToken":"","discoveryState":{}}}}`,
+	})
+	acct := account(t, t.TempDir(), "a", "default", "local", `{"claudeAiOauth":{"accessToken":"own"}}`)
+	pl, err := Build(Options{Source: f.src, Home: f.home, GroupsRoot: f.groups, Group: "default", Items: DefaultItems, Accounts: []Account{acct}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	var plan strings.Builder
+	pl.Describe(&plan, false)
+	if pl.Logins != nil || strings.Contains(plan.String(), "sign-ins") {
+		t.Fatalf("plan:\n%s", plan.String())
+	}
+}
+
 func TestPluginSignInsNeedThePlugins(t *testing.T) {
 	f := signInSource(t)
 	os.RemoveAll(filepath.Join(f.src, "plugins"))
@@ -115,15 +122,12 @@ func TestPluginSignInsNeedThePlugins(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if err := pl.Apply(); err != nil {
-		t.Fatal(err)
-	}
-	if got := signInsOf(t, acct.Dir); len(got) != 0 {
-		t.Fatalf("plugin sign-ins copied without plugins: %v", got)
+	if s := pl.SignIns(); s != "" {
+		t.Fatalf("plugin sign-ins without plugins: %q", s)
 	}
 }
 
-func TestMCPSignInSkippedWhenTheGroupKeepsItsDefinition(t *testing.T) {
+func TestMCPSignInNotNeededWhenTheGroupKeepsItsDefinition(t *testing.T) {
 	f := signInSource(t)
 	write(t, f.group, map[string]string{"mcp.json": `{"mcpServers":{"gh":{"type":"http","url":"https://other.example/mcp"}}}`})
 	acct := account(t, t.TempDir(), "a", "default", "local", `{"claudeAiOauth":{"accessToken":"own"}}`)
@@ -131,37 +135,41 @@ func TestMCPSignInSkippedWhenTheGroupKeepsItsDefinition(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	var plan strings.Builder
+	pl.Describe(&plan, true)
+	if !strings.Contains(plan.String(), "sign in with /mcp: gh in a") {
+		t.Fatalf("before the choice, the plan says what \"use mine\" would need:\n%s", plan.String())
+	}
+	for _, c := range pl.Conflicts {
+		c.Choice = share.UseMine
+	}
+	if s := pl.SignIns(); s != "gh in a" {
+		t.Fatalf("use mine: %q", s)
+	}
 	for _, c := range pl.Conflicts {
 		c.Choice = share.KeepGroup
 	}
-	if err := pl.Apply(); err != nil {
-		t.Fatal(err)
-	}
-	// Claude Code keys the sign-in by the definition, so the source's would
-	// not match the group's server.
-	if got := signInsOf(t, acct.Dir); len(got) != 0 {
-		t.Fatalf("got %v", got)
+	// Claude Code keys the sign-in by the definition: the group's server is
+	// another one, which the source never signed in to. With the choice
+	// made (--yes keeps the group's), the plan does not list it either.
+	plan.Reset()
+	pl.Describe(&plan, false)
+	if s := pl.SignIns(); s != "" || strings.Contains(plan.String(), "sign-ins") {
+		t.Fatalf("got %q:\n%s", s, plan.String())
 	}
 }
 
-func TestMCPSignInsAloneAreSomethingToCopy(t *testing.T) {
+// Sign-ins alone are nothing to copy; the plan still says which account
+// must sign in.
+func TestMCPSignInsAloneAreNothingToCopy(t *testing.T) {
 	f := signInSource(t)
-	write(t, f.group, map[string]string{"mcp.json": `{"mcpServers":{"gh":{"type":"http","url":"https://gh.example/mcp"}}}`})
+	write(t, f.group, map[string]string{"mcp.json": `{"mcpServers":{"gh":{"type":"http","url":"https://gh.example/mcp"},"lin":{"type":"http","url":"https://lin.example/mcp"}}}`})
 	acct := account(t, t.TempDir(), "a", "default", "local", `{"claudeAiOauth":{"accessToken":"own"}}`)
 	pl, err := Build(Options{Source: f.src, Home: f.home, GroupsRoot: f.groups, Group: "default", Items: []string{"mcp"}, Accounts: []Account{acct}})
 	if err != nil {
 		t.Fatal(err)
 	}
-	if pl.Empty() {
-		t.Fatal("the server is already in the group, but the account still lacks its sign-in")
-	}
-	if err := pl.Apply(); err != nil {
-		t.Fatal(err)
-	}
-	if got := signInsOf(t, acct.Dir); len(got) != 1 {
-		t.Fatalf("got %v", got)
-	}
-	if pl, _ := Build(Options{Source: f.src, Home: f.home, GroupsRoot: f.groups, Group: "default", Items: []string{"mcp"}, Accounts: []Account{acct}}); !pl.Empty() {
-		t.Fatal("second run should have nothing to copy")
+	if !pl.Empty() || pl.SignIns() != "gh in a" {
+		t.Fatalf("empty %v, sign-ins %q", pl.Empty(), pl.SignIns())
 	}
 }

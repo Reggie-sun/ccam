@@ -15,7 +15,7 @@ type Paths struct {
 	Data    string // ~/.local/share/ccam
 	State   string // ~/.local/state/ccam
 	Bin     string // ~/.local/bin
-	Runtime string // $XDG_RUNTIME_DIR/ccam, for lock files
+	Runtime string // ~/.local/state/ccam/locks: session markers and locks
 	Home    string // user home, used by import
 }
 
@@ -45,11 +45,11 @@ func FromEnv() Paths {
 		Bin:    filepath.Join(home, ".local", "bin"),
 		Home:   home,
 	}
-	if rt := os.Getenv("XDG_RUNTIME_DIR"); filepath.IsAbs(rt) {
-		p.Runtime = filepath.Join(rt, "ccam")
-	} else {
-		p.Runtime = filepath.Join(p.State, "locks")
-	}
+	// Not $XDG_RUNTIME_DIR: shells outside the login session (cron, ssh,
+	// su, a service's terminal, tmux started elsewhere) have another one or
+	// none, and would not see each other's sessions. Markers check their
+	// own process and start time, so they need no memory file system.
+	p.Runtime = filepath.Join(p.State, "locks")
 	return p
 }
 

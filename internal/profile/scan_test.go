@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"reflect"
 	"strings"
 	"testing"
 )
@@ -35,6 +36,60 @@ func TestTopLevelValue(t *testing.T) {
 			t.Errorf("bad %q: ok=%v err=%v", bad, ok, err)
 		}
 	}
+}
+
+// EachValue gives every member with its key unescaped, as encoding/json
+// reads it (C:\\x is how JSON writes a Windows path), and stops when told.
+func TestEachValue(t *testing.T) {
+	doc := `{"/a":{"mcpServers":{"x":1}},"C:\\Users\\me":[1,"}"],"e":""}`
+	var keys, values []string
+	err := EachValue([]byte(doc), func(k string, v []byte) error {
+		keys = append(keys, k)
+		values = append(values, string(v))
+		return nil
+	})
+	if err != nil || strings.Join(keys, "|") != `/a|C:\Users\me|e` || strings.Join(values, "|") != `{"mcpServers":{"x":1}}|[1,"}"]|""` {
+		t.Fatalf("%q %q %v", keys, values, err)
+	}
+	stop := fmt.Errorf("stop")
+	n := 0
+	if err := EachValue([]byte(doc), func(string, []byte) error { n++; return stop }); err != stop || n != 1 {
+		t.Fatalf("did not stop: %v %d", err, n)
+	}
+	if err := EachValue([]byte(`{"a":`), func(string, []byte) error { return nil }); err == nil {
+		t.Fatal("bad JSON accepted")
+	}
+}
+
+// FuzzEachValue checks EachValue against encoding/json on valid input.
+func FuzzEachValue(f *testing.F) {
+	f.Add(`{"a":1,"b\\c":{"x":[1,"]"]}}`)
+	f.Add(` { "k" : "v" } `)
+	f.Fuzz(func(t *testing.T, doc string) {
+		var want map[string]json.RawMessage
+		if json.Unmarshal([]byte(doc), &want) != nil {
+			return
+		}
+		got := map[string]string{}
+		if err := EachValue([]byte(doc), func(k string, v []byte) error { got[k] = string(v); return nil }); err != nil {
+			t.Fatalf("valid JSON rejected: %v", err)
+		}
+		if len(got) != len(want) && !strings.Contains(doc, `\`) {
+			// Duplicate keys collapse in both; escapes may spell one key twice.
+			t.Fatalf("got %d keys, want %d", len(got), len(want))
+		}
+		for k, v := range got {
+			w, ok := want[k]
+			if !ok {
+				t.Fatalf("key %q not in encoding/json's", k)
+			}
+			// The last of duplicate keys wins in both.
+			var x, y any
+			if json.Unmarshal([]byte(v), &x) != nil || json.Unmarshal(w, &y) != nil || !reflect.DeepEqual(x, y) {
+				t.Fatalf("value of %q: %q, encoding/json's %q", k, v, w)
+			}
+		}
+	})
 }
 
 // FuzzTopLevelValue checks the scanner against encoding/json on valid input.

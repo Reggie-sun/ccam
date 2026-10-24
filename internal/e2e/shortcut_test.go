@@ -2,8 +2,10 @@ package e2e
 
 import (
 	"os"
+	"os/exec"
 	"path/filepath"
 	"reflect"
+	"runtime"
 	"strings"
 	"testing"
 )
@@ -146,5 +148,82 @@ func TestUnclaimedShortcutLinkFails(t *testing.T) {
 	}
 	if _, err := os.Stat(h.log); err == nil {
 		t.Fatal("claude was called")
+	}
+}
+
+// Shortcuts made by a ccam that has moved since (another install, a
+// package) run it no more: `ccam shims install` points them at this one,
+// and a file in the way of one shortcut does not stop another.
+func TestShortcutsOfAMovedCcam(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("shortcuts there may be hard links, which Relink renews")
+	}
+	h := newHarness(t)
+	old := filepath.Join(h.home, "old", "ccam")
+	data, err := os.ReadFile(ccamBin)
+	if err != nil {
+		t.Fatal(err)
+	}
+	os.MkdirAll(filepath.Dir(old), 0o755)
+	if err := os.WriteFile(old, data, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	cmd := exec.Command(old, "add", "work", "--no-login", "--shortcut", "ccwork")
+	cmd.Env = h.env
+	if out, err := cmd.CombinedOutput(); err != nil {
+		t.Fatalf("%v %s", err, out)
+	}
+	os.Remove(old) // ccam moved
+
+	r := h.run("", nil, "ccam", "shims", "install")
+	if r.code != 0 || !strings.Contains(r.stdout, "✓ 1 new shortcuts created") || h.link("ccwork") != ccamBin {
+		t.Fatalf("%+v, link %q", r, h.link("ccwork"))
+	}
+	h.ok("ccwork")
+	if dir, _ := h.called(); dir != h.profileDir("work") {
+		t.Fatalf("ccwork runs %s", dir)
+	}
+
+	os.Remove(filepath.Join(h.home, "bin", "ccwork"))
+	os.WriteFile(filepath.Join(h.home, "bin", "ccwork"), []byte("#!/bin/sh\n"), 0o755)
+	r = h.run("", nil, "ccam", "add", "side", "--no-login", "--shortcut", "ccside")
+	if r.code != 0 || !strings.Contains(r.stdout, "  shortcut: ccside\n") || !strings.Contains(r.stderr, "ccwork already exists") || h.link("ccside") != ccamBin {
+		t.Fatalf("%+v", r)
+	}
+	r = h.run("", nil, "ccam", "doctor", "--fix")
+	if !strings.Contains(r.stdout, "missing shortcuts") || !strings.Contains(r.stdout, "ccwork already exists and is not a ccam link") {
+		t.Fatalf("doctor --fix does not say why:\n%s", r.stdout)
+	}
+}
+
+// A shortcut that is a copy of another ccam binary (on Windows the hard
+// link of one that a reinstall or an update replaced) runs that older
+// ccam: doctor says so, and doctor --fix links it to this one.
+func TestShortcutThatRunsAnotherCcam(t *testing.T) {
+	h := newHarness(t)
+	h.addAccounts()
+	h.ok("ccam", "shortcut", "work", "ccwork")
+	link := filepath.Join(h.home, "bin", "ccwork"+exe)
+	data, err := os.ReadFile(ccamBin)
+	if err != nil {
+		t.Fatal(err)
+	}
+	os.Remove(link)
+	if err := os.WriteFile(link, data, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	r := h.run("", nil, "ccam", "doctor")
+	if !strings.Contains(r.stdout, "that run another ccam (one replaced or moved): ccwork") {
+		t.Fatalf("doctor:\n%s", r.stdout)
+	}
+	h.run("", nil, "ccam", "doctor", "--fix")
+	a, err1 := os.Stat(link)
+	b, err2 := os.Stat(ccamBin)
+	if err1 != nil || err2 != nil || !os.SameFile(a, b) {
+		t.Fatal("ccwork does not run this ccam after doctor --fix")
+	}
+	h.ok("ccwork")
+	if dir, _ := h.called(); dir != h.profileDir("work") {
+		t.Fatalf("ccwork runs %s", dir)
 	}
 }

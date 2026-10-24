@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"slices"
 	"strings"
@@ -118,7 +117,10 @@ func accountAgents(e *env, bin string, p *config.Profile, all bool) ([]agentEntr
 	if all {
 		args = append(args, "--all")
 	}
-	c := exec.CommandContext(ctx, bin, args...)
+	c, err := launcher.ClaudeCommand(ctx, bin, args...)
+	if err != nil {
+		return nil, err
+	}
 	c.Env = launcher.ProfileEnv(e.paths, os.Environ(), profile.Dir(e.paths, p), p.Name)
 	var stderr bytes.Buffer
 	c.Stderr = &stderr
@@ -169,37 +171,82 @@ func printAgents(e *env, list []agentEntry) {
 }
 
 func attachCmd(e *env) *cobra.Command {
-	return &cobra.Command{
-		Use:   "attach <id> [claude args]",
+	cmd := &cobra.Command{
+		Use:   "attach <id|name> [claude args]",
 		Short: "Open a background session of whichever account started it",
 		Long: "Finds the account whose folder has the background session (jobs/<id>) and runs\n" +
-			"`claude attach <id>` as that account. A unique start of the id is enough.",
+			"`claude attach <id>` as that account. A unique start of the id is enough, and so\n" +
+			"is part of the session name. Everything after the id goes to claude unchanged.",
 		Args: cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg, err := e.load()
 			if err != nil {
 				return err
 			}
-			var hits []string // account/id
-			for i := range cfg.Profiles {
-				p := &cfg.Profiles[i]
-				entries, _ := os.ReadDir(filepath.Join(profile.Dir(e.paths, p), "jobs"))
-				for _, en := range entries {
-					if en.IsDir() && strings.HasPrefix(en.Name(), args[0]) {
-						hits = append(hits, p.Name+"/"+en.Name())
-					}
-				}
-			}
+			hits := findJobs(e, cfg, args[0])
 			switch len(hits) {
 			case 0:
 				return fmt.Errorf("no account has a background session %q (see `ccam agents --all`)", args[0])
 			case 1:
 			default:
-				return fmt.Errorf("%q fits more than one session: %s; give more of the id", args[0], strings.Join(hits, ", "))
+				return fmt.Errorf("%q fits more than one session: %s; give more of the id or the name", args[0], strings.Join(hits, ", "))
 			}
 			account, id, _ := strings.Cut(hits[0], "/")
 			fmt.Fprintf(e.stderr, "→ %s (%s)\n", id, account)
 			return launcher.LaunchWith(e.paths, cfg, account, append([]string{"attach", id}, args[1:]...), e.dryRun, e.stdout)
 		},
 	}
+	// Flags after the id are claude's, as for `ccam <name>`.
+	cmd.Flags().SetInterspersed(false)
+	return cmd
+}
+
+// findJobs lists account/id of the background sessions sel names: by the
+// start of the id, else, as `claude attach` does, by part of the session
+// name (any case). Like Claude Code it never reads what may start an id
+// (up to 8 of 0-9 and a-f) as a name.
+func findJobs(e *env, cfg *config.Config, sel string) []string {
+	var byID, byName []string
+	name := strings.ToLower(strings.TrimSpace(sel))
+	for i := range cfg.Profiles {
+		p := &cfg.Profiles[i]
+		jobs := filepath.Join(profile.Dir(e.paths, p), "jobs")
+		entries, _ := os.ReadDir(jobs)
+		for _, en := range entries {
+			if !en.IsDir() || sel == "" {
+				continue
+			}
+			if strings.HasPrefix(en.Name(), sel) {
+				byID = append(byID, p.Name+"/"+en.Name())
+				continue
+			}
+			if name == "" || idStart(name) {
+				continue
+			}
+			var st struct {
+				Name string `json:"name"`
+			}
+			if b, err := os.ReadFile(filepath.Join(jobs, en.Name(), "state.json")); err == nil &&
+				json.Unmarshal(b, &st) == nil && strings.Contains(strings.ToLower(st.Name), name) {
+				byName = append(byName, p.Name+"/"+en.Name())
+			}
+		}
+	}
+	if len(byID) > 0 {
+		return byID
+	}
+	return byName
+}
+
+// idStart reports whether s may be the start of a background session id.
+func idStart(s string) bool {
+	if len(s) == 0 || len(s) > 8 {
+		return false
+	}
+	for i := 0; i < len(s); i++ {
+		if c := s[i]; !(c >= '0' && c <= '9' || c >= 'a' && c <= 'f') {
+			return false
+		}
+	}
+	return true
 }

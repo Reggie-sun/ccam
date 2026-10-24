@@ -58,7 +58,7 @@ func TestRelayLoginDeliversCallbackAndForwardsTheRest(t *testing.T) {
 	in := bufio.NewReader(strings.NewReader("pasted-code\n" + srv.URL + "/callback?code=c1&state=s1\nlast"))
 	var toClaude pipe
 	var msg bytes.Buffer
-	relayLogin(in, nil, &toClaude, &msg, deliverCallback)
+	relayLogin(&lineSource{in: in}, nil, &toClaude, &msg, deliverCallback, nil)
 
 	if got.Get("code") != "c1" || got.Get("state") != "s1" {
 		t.Fatalf("callback got %v", got)
@@ -79,7 +79,7 @@ func TestRelayLoginReportsAFailedDelivery(t *testing.T) {
 	in := bufio.NewReader(strings.NewReader(srv.URL + "/callback?code=c&state=s\n"))
 	var toClaude pipe
 	var msg bytes.Buffer
-	relayLogin(in, nil, &toClaude, &msg, deliverCallback)
+	relayLogin(&lineSource{in: in}, nil, &toClaude, &msg, deliverCallback, nil)
 	if !strings.Contains(msg.String(), "HTTP 400") || toClaude.Len() != 0 {
 		t.Fatalf("message %q, claude got %q", msg.String(), toClaude.String())
 	}

@@ -6,8 +6,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"maps"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"runtime"
 	"slices"
@@ -17,9 +17,12 @@ import (
 
 	"github.com/jhyunwoo/ccam/internal/config"
 	"github.com/jhyunwoo/ccam/internal/creds"
+	"github.com/jhyunwoo/ccam/internal/ext"
 	"github.com/jhyunwoo/ccam/internal/fsutil"
+	"github.com/jhyunwoo/ccam/internal/group"
 	"github.com/jhyunwoo/ccam/internal/launcher"
 	"github.com/jhyunwoo/ccam/internal/mcp"
+	"github.com/jhyunwoo/ccam/internal/migrate"
 	"github.com/jhyunwoo/ccam/internal/paths"
 	"github.com/jhyunwoo/ccam/internal/profile"
 	"github.com/jhyunwoo/ccam/internal/share"
@@ -51,6 +54,13 @@ type Options struct {
 	FixOnly  string
 	CcamPath string         // the real ccam binary, for shim checks
 	Usage    *usage.Fetcher // nil skips the live usage-format check
+	// DryRun, for `--dry-run doctor --fix`: say what repairing the share
+	// links would set aside, without changing anything.
+	DryRun bool
+	// Reload loads the config again once Fix holds the lock of the changes
+	// of groups: one loaded before may miss a change another ccam finished
+	// meanwhile. nil keeps the config Run was given.
+	Reload func() (*config.Config, error)
 }
 
 // General is FixOnly for the findings of no account; no account can be
@@ -70,7 +80,7 @@ func (o Options) fixes(prof string) bool {
 }
 
 // LayoutVersion is the Claude Code version docs/claude-layout.md was checked with.
-const LayoutVersion = "2.1.302"
+const LayoutVersion = "2.1.309"
 
 type report struct {
 	out  []Finding
@@ -82,15 +92,73 @@ func (r *report) add(level Level, prof, format string, a ...any) *Finding {
 	return &r.out[len(r.out)-1]
 }
 
+// links says how checkProfile may repair an account's share links.
+type links int
+
+const (
+	linksRepair links = iota // toward the config
+	// A change of groups that stopped halfway repairs them in its order:
+	// only what is missing is made now, and a dry run shows the change's
+	// plan.
+	linksWait
+	// Another ccam changes the groups right now: nothing is repaired.
+	linksLeave
+)
+
 // Run checks everything and, with opt.Fix, repairs safe problems.
 func Run(p paths.Paths, cfg *config.Config, opt Options) []Finding {
 	r := &report{}
 	checkClaude(r, p, cfg)
 	checkAuthEnv(r)
-	for i := range cfg.Profiles {
-		checkProfile(r, p, &cfg.Profiles[i], opt.fixes(cfg.Profiles[i].Name))
+	// Share links are repaired, and a stopped change of groups finished,
+	// under the lock a change of groups holds, toward the config saved by
+	// then.
+	var held *group.Lock
+	busy := false
+	if opt.Fix {
+		l, err := group.TryLock(p)
+		switch {
+		case err == nil:
+			defer l.Unlock()
+			held = l
+			if opt.Reload != nil {
+				if cfg, err = opt.Reload(); err != nil {
+					r.area = "Config"
+					r.add(Error, "", "could not load the config again: %v", err)
+					return r.out
+				}
+			}
+		case errors.Is(err, group.ErrChanging):
+			busy = true
+		default:
+			busy = true
+			r.area = "Groups"
+			r.add(Error, "", "share links are not repaired: %v", err)
+		}
 	}
-	checkPlugins(r, p, cfg, opt.fixes(""))
+	// Before the accounts' links, which it makes in the change's order.
+	noted, mode, previews := checkPendingChange(r, p, cfg, held, opt.fixes(""), opt.DryRun)
+	// For a dry run: what the repairs of the accounts before would have put
+	// into the groups, as share.Options.Pending; the stopped change comes
+	// first.
+	pending := map[string]string{}
+	for _, name := range noted {
+		if pl := previews[name]; pl != nil {
+			addCreated(pending, pl)
+		}
+	}
+	for i := range cfg.Profiles {
+		prof := &cfg.Profiles[i]
+		m := linksRepair
+		switch {
+		case busy:
+			m = linksLeave
+		case slices.Contains(noted, prof.Name):
+			m = mode
+		}
+		checkProfile(r, p, prof, opt.fixes(prof.Name), opt.DryRun, m, previews[prof.Name], pending)
+	}
+	checkPlugins(r, p, cfg, opt.fixes("") && !busy)
 	checkMCP(r, p, cfg)
 	checkUsageFormat(r, p, cfg, opt.Usage)
 	checkShims(r, p, cfg, opt)
@@ -100,23 +168,112 @@ func Run(p paths.Paths, cfg *config.Config, opt Options) []Finding {
 	return r.out
 }
 
+// checkPendingChange reports a change of groups that stopped halfway, and
+// with fix (held is the lock) finishes it: what the plans toward the saved
+// config cannot show, the MCP servers it copies, the answers given to its
+// conflicts, and the order of its accounts, which decides the first
+// content of a group (--from). A dry run previews it instead. It returns
+// the accounts of a change it did not finish, how checkProfile may repair
+// their links, and for a dry run the plans the change would carry out.
+func checkPendingChange(r *report, p paths.Paths, cfg *config.Config, held *group.Lock, fix, dry bool) ([]string, links, map[string]*share.Plan) {
+	if !group.Pending(p) {
+		return nil, linksRepair, nil
+	}
+	r.area = "Groups"
+	if held == nil && group.Changing(p) {
+		// The note stays until that ccam is done.
+		r.add(Info, "", "a change of groups is being carried out right now; its accounts' share links are left to it")
+		return group.Noted(p), linksLeave, nil
+	}
+	f := r.add(Error, "", "the last change of groups stopped halfway (ccam doctor --fix finishes it; noted in %s)", group.NotePath(p))
+	if dry {
+		ch, err := group.Preview(p, cfg)
+		if err != nil {
+			r.add(Error, "", "could not plan the rest of the last change of groups: %v", err)
+			return group.Noted(p), linksWait, nil
+		}
+		previews := map[string]*share.Plan{}
+		if ch != nil && len(ch.Accounts) > 0 {
+			r.add(Info, "", "--fix finishes it in its order (%s), with the answers given to its conflicts", strings.Join(ch.Names(), ", "))
+			for _, a := range ch.Accounts {
+				previews[a.Name] = a.Plan
+			}
+		}
+		return group.Noted(p), linksWait, previews
+	}
+	if !fix || held == nil {
+		return group.Noted(p), linksWait, nil
+	}
+	noted := group.Noted(p)
+	ch, err := group.Resume(held, cfg, group.Running(p))
+	if err != nil {
+		r.add(Error, "", "could not finish the last change of groups: %v\n"+
+			"If the cause cannot be fixed, removing %s gives up the rest of that change; ccam doctor --fix then repairs the links", err, group.NotePath(p))
+		return noted, linksWait, nil
+	}
+	f.Fixed = true
+	if ch == nil || len(ch.Accounts) == 0 {
+		r.add(OK, "", "finished the last change of groups (none of its accounts is in the config any more)")
+		return nil, linksRepair, nil
+	}
+	r.add(OK, "", "finished the last change of groups (%s)", strings.Join(ch.Names(), ", "))
+	for _, a := range ch.Accounts {
+		setAside(r, a.Name, a.Plan, true)
+	}
+	return nil, linksRepair, nil
+}
+
+// addCreated adds what plan pl puts into the groups to pending, for the
+// dry-run plans of the accounts after it (share.Options.Pending).
+func addCreated(pending map[string]string, pl *share.Plan) {
+	for k, v := range pl.Created() {
+		if old, ok := pending[k]; !ok || old == "" {
+			pending[k] = v
+		}
+	}
+}
+
 // checkIdentities reports a folder now logged in to another account than
-// ccam recorded (a /login inside a session), and folders logged in to one
-// Claude account, which share its limits.
+// ccam recorded (a /login inside a session), folders logged in to one
+// Claude account, which share its limits, and folders holding one login
+// (copies, also of plain claude's ~/.claude), which log each other out.
 func checkIdentities(r *report, p paths.Paths, cfg *config.Config) {
 	r.area = "Login"
-	seen := map[string]string{} // account and organization → first profile
+	seen := map[string]string{}   // account and organization → first profile
+	logins := map[string]string{} // login token (creds.LoginKey) → first profile
+	if dir := profile.PlainClaude(p, cfg); dir != "" {
+		if k := creds.LoginKey(dir); k != "" {
+			logins[k] = profile.PlainClaudeName
+		}
+	}
 	for i := range cfg.Profiles {
 		prof := &cfg.Profiles[i]
 		if prof.API != nil {
 			continue
 		}
-		id, err := profile.ReadIdentity(profile.Dir(p, prof))
+		dir := profile.Dir(p, prof)
+		if k := creds.LoginKey(dir); k != "" {
+			if first, ok := logins[k]; ok {
+				r.add(Error, prof.Name, "holds the same login token as %s (a copied folder): whichever renews it first logs the other out. Run `ccam login %s` to give it its own (not `ccam logout %s`, which would log %s out too)", first, prof.Name, prof.Name, first)
+				continue
+			}
+			logins[k] = prof.Name
+		}
+		id, err := profile.ReadIdentity(dir)
 		if err != nil || id == nil {
 			continue
 		}
-		if was := prof.Login; was != nil && was.AccountUUID != "" && was.AccountUUID != id.AccountUUID {
-			r.add(Warn, prof.Name, "now logged in as %s, but ccam recorded %s; log in again with `ccam login %s` if that is not what you meant", orDash(id.Email), orDash(was.Email), prof.Name)
+		recorded := ""
+		switch was := prof.Login; {
+		case was != nil && was.AccountUUID != "" && was.AccountUUID != id.AccountUUID:
+			recorded = orDash(was.Email)
+		case was == nil && prof.Email != "" && id.Email != "" && !strings.EqualFold(prof.Email, id.Email):
+			// No login record (an older ccam's account, an imported one):
+			// the email it recorded tells.
+			recorded = prof.Email
+		}
+		if recorded != "" {
+			r.add(Warn, prof.Name, "now logged in as %s, but ccam recorded %s; log in again with `ccam login %s` if that is not what you meant", orDash(id.Email), recorded, prof.Name)
 		}
 		k := id.AccountUUID + "/" + id.OrgUUID
 		if first, ok := seen[k]; ok {
@@ -139,6 +296,9 @@ func checkGroups(r *report, cfg *config.Config) {
 		}
 	}
 	r.area = "Config"
+	for _, u := range cfg.Unknown() {
+		r.add(Warn, "", "config.toml %s; commands that change the config refuse until it is fixed", u)
+	}
 	if s := cfg.UsageSource; s != "" && s != "live" && s != "claude" {
 		r.add(Warn, "", "usage_source %q is neither live nor claude; ccam asks the usage endpoint (live)", s)
 	}
@@ -198,16 +358,18 @@ func checkClaude(r *report, p paths.Paths, cfg *config.Config) {
 		r.add(Error, "", "%v", err)
 		return
 	}
-	out, err := exec.Command(bin, "--version").Output()
+	c, err := launcher.ClaudeCommand(context.Background(), bin, "--version")
+	if err != nil {
+		r.add(Error, "", "%v", err)
+		return
+	}
+	out, err := c.Output()
 	if err != nil {
 		r.add(Error, "", "%s --version failed: %v", bin, err)
 		return
 	}
 	version := strings.TrimSpace(string(out))
 	r.add(OK, "", "Claude Code %s (%s)", version, bin)
-	if !strings.HasPrefix(version, LayoutVersion) {
-		r.add(Info, "", "ccam was verified against the folder layout of Claude Code %s. Any 'unknown entries' below may mean the layout changed", LayoutVersion)
-	}
 }
 
 // checkAuthEnv warns about credentials in the environment: every account
@@ -228,10 +390,21 @@ func checkUsageFormat(r *report, p paths.Paths, cfg *config.Config, f *usage.Fet
 		return
 	}
 	r.area = "Usage"
+	// One time limit for all accounts: on a network that does not answer,
+	// each lookup would wait out its own in turn. Claude Code's lookup
+	// (usage_source = "claude") is not cut short, as it may be renewing
+	// the login; it is asked of one account only.
+	ctx := context.Background()
+	if f.Source != "claude" {
+		var cancel context.CancelFunc
+		ctx, cancel = context.WithTimeout(ctx, usage.LookupTimeout+time.Second)
+		defer cancel()
+	}
+	var failed *usage.Report
 	for i := range cfg.Profiles {
 		prof := &cfg.Profiles[i]
 		a := usage.Account{Name: prof.Name, Slot: prof.Slot, Dir: profile.Dir(p, prof), SessionDir: launcher.SessionDir(p, prof.Name)}
-		rep := f.Fetch(context.Background(), a, usage.Options{NoCache: true})
+		rep := f.Fetch(ctx, a, usage.Options{NoCache: true})
 		switch {
 		case rep.FormatChanged:
 			r.add(Warn, prof.Name, "the usage response format changed. `ccam usage` falls back to the status line cache (%s)", rep.Err)
@@ -240,10 +413,21 @@ func checkUsageFormat(r *report, p paths.Paths, cfg *config.Config, f *usage.Fet
 			r.add(OK, prof.Name, "usage lookup OK")
 			return
 		}
+		if rep.Status == usage.StatusError {
+			if failed == nil {
+				failed = &rep
+			}
+			if f.Source == "claude" || ctx.Err() != nil {
+				break
+			}
+		}
+	}
+	if failed != nil {
+		r.add(Info, failed.Name, "could not check the usage response format: %s", failed.Err)
 	}
 }
 
-func checkProfile(r *report, p paths.Paths, prof *config.Profile, fix bool) {
+func checkProfile(r *report, p paths.Paths, prof *config.Profile, fix, dry bool, mode links, preview *share.Plan, pending map[string]string) {
 	dir := profile.Dir(p, prof)
 	r.area = "Folder"
 	info, err := os.Stat(dir)
@@ -257,43 +441,91 @@ func checkProfile(r *report, p paths.Paths, prof *config.Profile, fix bool) {
 			f.Fixed = true
 		}
 	}
+	if prof.Dir != "" && profile.OwnClaudeJSON(p, dir) {
+		r.add(Info, prof.Name, "%s has a .claude.json of its own, so `ccam %s` and plain `claude` (which uses %s) keep separate login details and MCP servers; to keep one, replace it with a link to %s",
+			dir, prof.Name, filepath.Join(p.Home, ".claude.json"), filepath.Join(p.Home, ".claude.json"))
+	}
 	checkCredentials(r, prof, dir, p.Home, fix)
 
 	r.area = "Share links"
-	problems := share.Check(dir, prof.Share, p.GroupsRoot())
+	problems := share.CheckTargets(dir, prof.Share, p.GroupsRoot())
 	if len(problems) == 0 {
 		r.add(OK, prof.Name, "share links OK")
 	}
 	for _, pr := range problems {
 		switch {
 		case pr.Waits(p.GroupsRoot()):
-			r.add(Warn, prof.Name, "%s is not shared with the group yet (ccam doctor --fix moves it in)", pr.Path)
-		case pr.Kind == share.MissingLink && fix:
+			r.add(Warn, prof.Name, "%s is not shared with the group yet (ccam doctor --fix shares it; if the group has its own copy, that one is kept and this one backed up)", pr.Path)
+		case pr.Safe() && fix:
 			r.add(Warn, prof.Name, "%s", pr)
-		case pr.Kind == share.MissingLink:
+		case pr.Kind == share.MissingTarget:
+			r.add(Warn, prof.Name, "%s (ccam doctor --fix makes it)", pr)
+		case pr.Kind == share.Staged:
+			r.add(Warn, prof.Name, "%s (ccam doctor --fix puts it in place)", pr)
+		case pr.Kind == share.StagedAside:
+			// Only the user can tell which copy to keep; --fix leaves it.
+			r.add(Warn, prof.Name, "%s", pr)
+		case pr.Safe():
 			// Usual right after an upgrade that shares more paths.
 			r.add(Warn, prof.Name, "%s (the next launch or ccam doctor --fix makes it)", pr)
 		default:
 			r.add(Error, prof.Name, "%s", pr)
 		}
 	}
-	if fix && len(problems) > 0 && launcher.Running(p, prof.Name) {
+	base := len(r.out) - len(problems) // the findings of problems
+	switch {
+	case len(problems) == 0 || !fix && !dry:
+	case mode == linksLeave:
+		// Another ccam's change of groups is between its steps: a repair
+		// now would make one of them fail.
+		r.add(Info, prof.Name, "its share links are not repaired while another ccam changes the groups; run `ccam doctor --fix` again when it is done")
+	case mode == linksWait && dry:
+		// What finishing the stopped change does for this account.
+		if preview != nil {
+			setAside(r, prof.Name, preview, false)
+		}
+	case launcher.Running(p, prof.Name, dir):
+		if !fix {
+			break
+		}
 		// A running session keeps writing into what a repair would move;
-		// only make the links that are missing, as a launch does.
-		base := len(r.out) - len(problems)
-		if _, err := share.QuickFix(problems); err != nil {
+		// only make the links and group folders that are missing, which
+		// loses nothing.
+		rest, err := share.QuickFix(problems)
+		if err != nil {
 			r.add(Error, prof.Name, "could not repair share links: %v", err)
 			return
 		}
 		for i, pr := range problems {
-			r.out[base+i].Fixed = pr.Kind == share.MissingLink
+			r.out[base+i].Fixed = pr.Safe()
 		}
-		r.add(Warn, prof.Name, "is running; quit Claude Code there, then run `ccam doctor --fix` again to repair the rest")
-	} else if fix && len(problems) > 0 {
+		if len(rest) > 0 {
+			r.add(Warn, prof.Name, "is running; quit Claude Code there, then run `ccam doctor --fix` again to repair the rest")
+		}
+	case mode == linksWait && fix:
+		// The stopped change of groups repairs these in its own order;
+		// only what is missing is made now.
+		rest, err := share.QuickFix(problems)
+		if err != nil {
+			r.add(Error, prof.Name, "could not repair share links: %v", err)
+			return
+		}
+		for i, pr := range problems {
+			r.out[base+i].Fixed = pr.Safe()
+		}
+		if len(rest) > 0 {
+			r.add(Warn, prof.Name, "the rest of its share links are repaired when the last change of groups is finished (ccam doctor --fix)")
+		}
+	case fix:
 		// Build with the target as both sides: it re-derives every step from
 		// what is actually on disk, keeps group content on conflicts and
-		// backs up anything it replaces.
-		pl, err := share.Build(dir, p.GroupsRoot(), prof.Share, prof.Share, share.Options{})
+		// backs up anything it replaces. It leaves a link that is right as
+		// it is, so a group folder that is gone is made first.
+		_, err := share.QuickFix(problems)
+		var pl *share.Plan
+		if err == nil {
+			pl, err = share.Build(dir, p.GroupsRoot(), prof.Share, prof.Share, share.Options{})
+		}
 		if err == nil {
 			err = pl.Apply()
 		}
@@ -301,11 +533,57 @@ func checkProfile(r *report, p paths.Paths, prof *config.Profile, fix bool) {
 			r.add(Error, prof.Name, "could not repair share links: %v", err)
 			return
 		}
-		for i := len(r.out) - len(problems); i < len(r.out); i++ {
-			r.out[i].Fixed = true
+		for i, pr := range problems {
+			r.out[base+i].Fixed = pr.Kind != share.StagedAside
 		}
+		setAside(r, prof.Name, pl, true)
+	default:
+		// A dry run: the plan --fix would make, after the accounts before.
+		pl, err := share.Build(dir, p.GroupsRoot(), prof.Share, prof.Share, share.Options{Pending: pending})
+		if err != nil {
+			r.add(Error, prof.Name, "could not plan the repair of share links: %v", err)
+			break
+		}
+		addCreated(pending, pl)
+		setAside(r, prof.Name, pl, false)
 	}
 	checkUnknownEntries(r, prof, dir)
+}
+
+// setAside says what a share link repair of account name, plan pl, does
+// (done: has done) with the account's own copies of paths the group has
+// its own copy of: the account sees the group's, and its own goes to the
+// backup folder.
+func setAside(r *report, name string, pl *share.Plan, done bool) {
+	for _, c := range pl.Conflicts {
+		saved := ""
+		for _, s := range pl.Steps {
+			if s.Op == share.OpBackup && s.Entry.Name == c.Entry.Name {
+				saved = s.To
+			}
+		}
+		switch {
+		case done && c.Choice == share.UseMine:
+			r.add(Info, name, "%s differed from the group's copy; the group now uses this account's, as chosen for the change of groups (the group's copy is in %s, this account's file in %s)", c.Entry.Name, c.GroupSave, saved)
+		case done && c.Choice == share.MergeJSON:
+			r.add(Info, name, "%s differed from the group's copy; this account's settings were merged into it, as chosen for the change of groups (the group's copy is in %s, this account's file in %s)", c.Entry.Name, c.GroupSave, saved)
+		case done && c.Choice == share.MergeLines:
+			r.add(Info, name, "%s differed from the group's copy; this account's lines were added to it, and its file is in %s", c.Entry.Name, saved)
+		case done:
+			r.add(Info, name, "%s differed from the group's copy, which it now uses; this account's copy is in %s", c.Entry.Name, saved)
+		case c.Choice == share.UseMine:
+			r.add(Info, name, "%s differs from the group's copy: --fix would give the group this account's, as chosen for the change of groups (the group's copy goes to %s, this account's file to %s)", c.Entry.Name, c.GroupSave, saved)
+		case c.Choice == share.MergeJSON:
+			r.add(Info, name, "%s differs from the group's copy: --fix would merge this account's settings into it, as chosen for the change of groups (the group's copy goes to %s, this account's file to %s)", c.Entry.Name, c.GroupSave, saved)
+		case c.Choice == share.MergeLines:
+			r.add(Info, name, "%s differs from the group's copy: --fix would add this account's lines to it, and move its file to %s", c.Entry.Name, saved)
+		default:
+			r.add(Info, name, "%s differs from the group's copy: --fix would use the group's, and move this account's copy to %s", c.Entry.Name, saved)
+		}
+	}
+	for _, n := range pl.Notes {
+		r.add(Info, name, "%s", n)
+	}
 }
 
 func checkCredentials(r *report, prof *config.Profile, dir, home string, fix bool) {
@@ -333,29 +611,48 @@ func checkCredentials(r *report, prof *config.Profile, dir, home string, fix boo
 		r.add(Warn, prof.Name, "not logged in → `ccam login %s`", prof.Name)
 		return
 	}
+	if errors.Is(err, creds.ErrCredentialManager) {
+		r.add(Info, prof.Name, "the login is kept in Windows Credential Manager, which ccam cannot check")
+		return
+	}
 	if err != nil {
 		r.add(Error, prof.Name, "could not read login: %v", err)
 		return
 	}
 	var c struct {
 		OAuth *struct {
-			ExpiresAt             int64 `json:"expiresAt"`
-			RefreshTokenExpiresAt int64 `json:"refreshTokenExpiresAt"`
+			ExpiresAt int64 `json:"expiresAt"`
 		} `json:"claudeAiOauth"`
 	}
-	if err := json.Unmarshal(data, &c); err != nil || c.OAuth == nil {
+	if err := json.Unmarshal(data, &c); err != nil {
 		r.add(Info, prof.Name, "no subscription login token (may be an API key account)")
 		return
 	}
-	now := time.Now().UnixMilli()
+	if c.OAuth == nil {
+		// What a logout leaves, or MCP sign-ins only; an API key login keeps
+		// its key in .claude.json.
+		var key string
+		if ok, _ := profile.DecodeFileKey(filepath.Join(dir, ".claude.json"), "primaryApiKey", &key); ok {
+			r.add(Info, prof.Name, "no subscription login token (an API key login)")
+		} else {
+			r.add(Warn, prof.Name, "not logged in → `ccam login %s`", prof.Name)
+		}
+		return
+	}
+	now := time.Now()
 	switch {
-	case c.OAuth.RefreshTokenExpiresAt > 0 && c.OAuth.RefreshTokenExpiresAt < now:
+	case creds.Judge(data, now) != "":
+		// The refresh token expired, or Claude Code emptied it when the
+		// server refused it: Claude Code cannot renew this login.
 		r.add(Error, prof.Name, "login expired → `ccam login %s`", prof.Name)
-	case c.OAuth.ExpiresAt < now:
+	case c.OAuth.ExpiresAt < now.UnixMilli():
 		r.add(Info, prof.Name, "access token expired. Claude Code refreshes it on the next launch")
 	default:
 		who := orDash(prof.Email)
 		if id, err := profile.ReadIdentity(dir); err == nil && id != nil {
+			if id.Email != "" {
+				who = id.Email // whom the folder is logged in as now
+			}
 			if plan := id.PlanName(); plan != "" {
 				who += ", " + plan
 				if id.Pool() != config.Personal && id.OrgName != "" {
@@ -390,7 +687,7 @@ func checkUnknownEntries(r *report, prof *config.Profile, dir string) {
 	}
 	if len(unknown) > 0 {
 		sort.Strings(unknown)
-		r.add(Info, prof.Name, "unknown entries (Claude Code layout may have changed): %s", strings.Join(unknown, ", "))
+		r.add(Info, prof.Name, "unknown entries (ccam knows the folder layout of Claude Code %s; it may have changed): %s", LayoutVersion, strings.Join(unknown, ", "))
 	}
 }
 
@@ -406,7 +703,7 @@ func checkPlugins(r *report, p paths.Paths, cfg *config.Config, fix bool) {
 		n := 0
 		for i := range cfg.Profiles {
 			pre := filepath.Join(profile.Dir(p, &cfg.Profiles[i]), "plugins") + sep
-			n += countPrefix(pluginsDir, pre)
+			n += profile.PluginPathsUnder(pluginsDir, pre)
 		}
 		if n == 0 {
 			continue
@@ -423,27 +720,6 @@ func checkPlugins(r *report, p paths.Paths, cfg *config.Config, fix bool) {
 			}
 		}
 	}
-}
-
-func countPrefix(pluginsDir, prefix string) int {
-	n := 0
-	for _, name := range profile.PluginFiles {
-		data, err := os.ReadFile(filepath.Join(pluginsDir, name))
-		if err != nil {
-			continue
-		}
-		var doc any
-		if json.Unmarshal(data, &doc) != nil {
-			continue
-		}
-		profile.RewriteStrings(doc, func(s string) string {
-			if strings.HasPrefix(s, prefix) {
-				n++
-			}
-			return s
-		})
-	}
-	return n
 }
 
 func checkMCP(r *report, p paths.Paths, cfg *config.Config) {
@@ -463,6 +739,99 @@ func checkMCP(r *report, p paths.Paths, cfg *config.Config) {
 			}
 		}
 	}
+	checkHomeMCP(r, p, cfg)
+	checkAccountMCP(r, p, cfg)
+}
+
+// checkHomeMCP reports the user-scope servers of plain Claude Code's
+// ~/.claude.json that no account loads: once Claude Code runs as a ccam
+// account it reads that account's .claude.json, so they seem gone.
+func checkHomeMCP(r *report, p paths.Paths, cfg *config.Config) {
+	var accts, groups []string
+	for i := range cfg.Profiles {
+		prof := &cfg.Profiles[i]
+		accts = append(accts, profile.Dir(p, prof))
+		if f := prof.Share.Get("mcp"); f != config.Local {
+			groups = append(groups, p.GroupDir(f))
+		}
+	}
+	from, names := migrate.HomeOnly(filepath.Join(p.Home, ".claude"), p.Home, accts, groups)
+	if len(names) == 0 {
+		return
+	}
+	r.add(Warn, "", "%s (plain claude's) has MCP servers no account loads: %s → `%s` copies them into the shared group", from, strings.Join(names, ", "), migrate.MCPCommand(cfg))
+}
+
+// checkAccountMCP reports, per account, the servers no other account of
+// its group loads (in its .claude.json, or for one folder only), and the
+// servers other accounts are signed in to and it is not: a sign-in holds
+// for one account only, and ccam never copies one.
+func checkAccountMCP(r *report, p paths.Paths, cfg *config.Config) {
+	var sets []ext.Set
+	dirs := map[string]string{}
+	for i := range cfg.Profiles {
+		prof := &cfg.Profiles[i]
+		dir := profile.Dir(p, prof)
+		s := ext.ScanAccount(prof.Name, dir, p.GroupsRoot(), prof.Share, groupNames(cfg), "")
+		sets = append(sets, s)
+		dirs[prof.Name] = dir
+		g := cfg.GroupFor(prof.Name, "mcp")
+		if g == nil || len(slices.DeleteFunc(slices.Clone(g.Members), func(m string) bool { return !cfg.IsAccount(m) })) < 2 {
+			continue
+		}
+		var own, names []string
+		for _, it := range s.MCP {
+			if it.Source == ext.Account && !ext.PluginServer(it.Name) {
+				own = append(own, it.Name)
+				names = append(names, it.Name)
+			}
+		}
+		var local []string
+		folders, _ := mcp.FolderServers(dir)
+		for _, folder := range slices.Sorted(maps.Keys(folders)) {
+			for _, n := range slices.Sorted(maps.Keys(folders[folder])) {
+				local = append(local, n+" ("+folder+")")
+				if !slices.Contains(names, n) {
+					names = append(names, n)
+				}
+			}
+		}
+		if len(names) == 0 {
+			continue
+		}
+		var parts []string
+		if len(own) > 0 {
+			parts = append(parts, strings.Join(own, ", "))
+		}
+		if len(local) > 0 {
+			parts = append(parts, "for one folder only: "+strings.Join(local, ", "))
+		}
+		r.add(Info, prof.Name, "MCP servers the other accounts of group %s do not load: %s → `ccam mcp import %s %s` shares them", g.Name, strings.Join(parts, "; "), prof.Name, strings.Join(names, " "))
+	}
+	signedIn := map[string]map[string]bool{}
+	for _, a := range ext.SignInAccounts(sets) {
+		signedIn[a] = mcp.SignedIn(dirs[a], p.Home)
+	}
+	missing := map[string][]string{}
+	for _, g := range ext.SignInGaps(sets, signedIn) {
+		for _, a := range g.Missing {
+			missing[a] = append(missing[a], g.Server+" ("+strings.Join(g.SignedIn, ", ")+")")
+		}
+	}
+	for _, a := range slices.Sorted(maps.Keys(missing)) {
+		r.add(Warn, a, "not signed in to MCP servers other accounts are signed in to: %s → sign in with /mcp in a session of %s (a sign-in holds for one account; ccam does not copy them)", strings.Join(missing[a], ", "), a)
+	}
+}
+
+// groupNames maps group folders to group names where they differ.
+func groupNames(cfg *config.Config) map[string]string {
+	out := map[string]string{}
+	for _, g := range cfg.Groups {
+		if g.Dir != "" {
+			out[g.Dir] = g.Name
+		}
+	}
+	return out
 }
 
 func checkShims(r *report, p paths.Paths, cfg *config.Config, opt Options) {
@@ -470,26 +839,59 @@ func checkShims(r *report, p paths.Paths, cfg *config.Config, opt Options) {
 		return
 	}
 	r.area = "Shortcuts"
-	var names, missing []string
+	var names, missing, older, others []string
+	var runs []string // what each of others runs
 	for _, prof := range cfg.Profiles {
 		if prof.Shortcut == "" {
 			continue
 		}
 		names = append(names, prof.Shortcut)
-		if !shim.Linked(p.Bin, opt.CcamPath, prof.Shortcut) {
+		switch bin, other := shim.Other(p, opt.CcamPath, prof.Shortcut); {
+		case shim.Linked(p.Bin, opt.CcamPath, prof.Shortcut):
+		case shim.Stale(p, prof.Shortcut):
+			older = append(older, prof.Shortcut)
+		case other:
+			others = append(others, prof.Shortcut)
+			runs = append(runs, fmt.Sprintf("%s → %s", prof.Shortcut, bin))
+		default:
 			missing = append(missing, prof.Shortcut)
 		}
 	}
 	if len(names) == 0 {
 		return // shortcuts are opt-in
 	}
-	if len(missing) == 0 {
+	if len(missing)+len(older)+len(others) == 0 {
 		r.add(OK, "", "shortcuts OK (%s)", strings.Join(names, ", "))
-	} else {
-		f := r.add(Warn, "", "missing shortcuts in %s: %s", p.Bin, strings.Join(missing, ", "))
+	}
+	if len(missing)+len(older) > 0 {
+		var parts []string
+		if len(missing) > 0 {
+			parts = append(parts, fmt.Sprintf("missing shortcuts in %s: %s", p.Bin, strings.Join(missing, ", ")))
+		}
+		if len(older) > 0 {
+			parts = append(parts, fmt.Sprintf("shortcuts in %s that run another ccam (one replaced or moved): %s", p.Bin, strings.Join(older, ", ")))
+		}
+		f := r.add(Warn, "", "%s", strings.Join(parts, "; "))
 		if opt.fixes("") {
-			_, err := shim.Install(p.Bin, opt.CcamPath, cfg)
-			f.Fixed = err == nil
+			// Also renews hard links (Windows) of the binary an update or a
+			// new install replaced.
+			created, err := shim.Install(p, opt.CcamPath, cfg)
+			f.Fixed = err == nil && !slices.ContainsFunc(slices.Concat(missing, older), func(n string) bool { return !slices.Contains(created, n) })
+			if err != nil {
+				f.Msg += " (" + strings.ReplaceAll(err.Error(), "\n", "; ") + ")"
+			}
+		}
+	}
+	if len(others) > 0 {
+		// They work; another ccam made them, and add or import leave them
+		// to it. An explicit --fix moves them to this one.
+		f := r.add(Info, "", "shortcuts in %s that run another ccam, which is still installed: %s; `ccam doctor --fix` points them at this one (%s)", p.Bin, strings.Join(runs, ", "), opt.CcamPath)
+		if opt.fixes("") {
+			done, err := shim.Repoint(p, opt.CcamPath, others)
+			f.Fixed = err == nil && len(done) == len(others)
+			if err != nil {
+				f.Msg += " (" + strings.ReplaceAll(err.Error(), "\n", "; ") + ")"
+			}
 		}
 	}
 	if !shim.InPath(p.Bin) {

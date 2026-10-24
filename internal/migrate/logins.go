@@ -2,70 +2,58 @@ package migrate
 
 import (
 	"encoding/json"
-	"errors"
-	"fmt"
 	"maps"
-	"os"
 	"path/filepath"
 	"slices"
 	"strings"
 
 	"github.com/jhyunwoo/ccam/internal/creds"
 	"github.com/jhyunwoo/ccam/internal/fsutil"
-	"github.com/jhyunwoo/ccam/internal/profile"
-	"github.com/jhyunwoo/ccam/internal/session"
 	"github.com/jhyunwoo/ccam/internal/share"
 )
 
-// Account is an account that may receive the source's MCP sign-ins.
+// Account is an account that may get the source's MCP servers through the
+// group.
 type Account struct {
 	Name       string
 	Dir        string // its CLAUDE_CONFIG_DIR
 	MCP        string // its share group for mcp
 	Extensions string // its share group for extensions
-	SessionDir string // markers of its running sessions
-	Imported   bool   // registered in place: plain claude may write its login file too
 }
 
-// Logins copies the sign-ins of MCP servers (mcpOAuth in the source's login)
-// into the own login file of each account that gets those servers through
-// the group. They never go into the group: login files stay per account.
+// Logins lists the MCP servers the source is signed in to that accounts get
+// through the group but have to sign in to themselves, with /mcp: the
+// sign-ins (mcpOAuth in the source's login) are not copied. A sign-in
+// renews itself with a refresh token only one holder can use; once one copy
+// renews it, every other copy (the source's too) is refused and Claude Code
+// clears it, and a server that notices the reuse revokes them all.
 //
 // Claude Code keys a sign-in by the server name and a hash of its type, url
-// and headers, so a copy only applies where the definition is the same as
-// the source's; servers whose group definition is kept get none.
+// and headers, so an account signed in to the same definition already needs
+// nothing; servers whose group definition is kept do not count. Nothing is
+// written: the accounts' login files are only read.
 type Logins struct {
-	entries map[string]json.RawMessage // mcpOAuth key → entry, from the source
+	entries map[string]json.RawMessage // mcpOAuth key → a sign-in of the source that holds a token
 	targets []*loginTarget
-	Skipped []string // "name (reason)"
-	written []string // accounts Apply gave sign-ins to
 }
 
 type loginTarget struct {
 	acct    Account
-	servers bool     // gets the user servers' sign-ins (shares mcp through the group)
-	plugins bool     // gets plugin servers' sign-ins (shares extensions through the group)
-	missing []string // keys its login file lacks, as planned (before conflicts are decided)
+	servers bool     // gets the user servers (shares mcp through the group)
+	plugins bool     // gets plugin servers (shares extensions through the group)
+	missing []string // keys it has no sign-in for, as planned (before conflicts are decided)
 }
 
-func buildLogins(pl *Plan, opt Options) (*Logins, error) {
-	data, src, err := creds.Read(pl.Source, opt.Home)
-	if errors.Is(err, creds.ErrNone) {
-		return nil, nil
-	}
+func buildLogins(pl *Plan, opt Options) *Logins {
+	data, _, err := creds.Read(pl.Source, opt.Home)
 	if err != nil {
-		return nil, fmt.Errorf("could not read the login of %s: %w", pl.Source, err)
+		return nil // no login, or one ccam cannot read: nothing to tell
 	}
-	_ = src // read only; the Keychain is never written
-	raw, ok, err := profile.TopLevelValue(data, "mcpOAuth")
-	if err != nil || !ok {
-		return nil, err
+	l := &Logins{entries: creds.MCPSignIns(data)}
+	if len(l.entries) == 0 {
+		return nil
 	}
-	l := &Logins{}
-	if err := json.Unmarshal(raw, &l.entries); err != nil || len(l.entries) == 0 {
-		return nil, nil // nothing usable to copy
-	}
-	// Plugin servers' sign-ins go along with the plugins they belong to.
+	// Plugin servers come along with the plugins they belong to.
 	servers := slices.Contains(opt.Items, "mcp")
 	plugins := slices.Contains(opt.Items, "extensions") && fsutil.Exists(filepath.Join(pl.Source, "plugins"))
 	for _, a := range opt.Accounts {
@@ -73,14 +61,9 @@ func buildLogins(pl *Plan, opt Options) (*Logins, error) {
 		if !t.servers && !t.plugins || filepath.Clean(a.Dir) == filepath.Clean(pl.Source) {
 			continue
 		}
-		if reason := t.skip(opt.Home); reason != "" {
-			l.Skipped = append(l.Skipped, a.Name+" ("+reason+")")
-			continue
-		}
-		have, err := signIns(creds.FilePath(a.Dir))
-		if err != nil {
-			l.Skipped = append(l.Skipped, a.Name+" (could not read its login)")
-			continue
+		var have map[string]json.RawMessage
+		if own, _, err := creds.Read(a.Dir, opt.Home); err == nil {
+			have = creds.MCPSignIns(own)
 		}
 		for _, k := range l.keys(t, pl.MCP.planned()) {
 			if _, ok := have[k]; !ok {
@@ -91,7 +74,10 @@ func buildLogins(pl *Plan, opt Options) (*Logins, error) {
 			l.targets = append(l.targets, t)
 		}
 	}
-	return l, nil
+	if len(l.targets) == 0 {
+		return nil
+	}
+	return l
 }
 
 // planned lists the servers the group may end up with in the source's
@@ -110,41 +96,8 @@ func (m *MCP) planned() map[string]bool {
 	return out
 }
 
-func signIns(path string) (map[string]json.RawMessage, error) {
-	data, err := os.ReadFile(path)
-	if err != nil {
-		return nil, err
-	}
-	have := map[string]json.RawMessage{}
-	raw, ok, err := profile.TopLevelValue(data, "mcpOAuth")
-	if err == nil && ok {
-		err = json.Unmarshal(raw, &have)
-	}
-	return have, err
-}
-
-// skip says why an account cannot get sign-ins now, or "".
-func (t *loginTarget) skip(home string) string {
-	switch {
-	case t.acct.Imported:
-		return "registered in place; plain claude may be using its login file"
-	case session.Active(t.acct.SessionDir):
-		return "running; Claude Code rewrites its login file"
-	}
-	_, src, err := creds.Read(t.acct.Dir, home)
-	switch {
-	case errors.Is(err, creds.ErrNone):
-		return "not logged in yet"
-	case err != nil:
-		return "could not read its login"
-	case src == creds.Keychain:
-		return "its login is in the macOS Keychain, which ccam does not write"
-	}
-	return ""
-}
-
-// keys lists the sign-ins t gets, given the servers the group ends up with
-// in the source's definition (copied, already the same, or "use mine").
+// keys lists the sign-ins t would need, given the servers the group ends up
+// with in the source's definition (copied, already the same, or "use mine").
 func (l *Logins) keys(t *loginTarget, sameDef map[string]bool) []string {
 	var out []string
 	for k := range l.entries {
@@ -157,90 +110,47 @@ func (l *Logins) keys(t *loginTarget, sameDef map[string]bool) []string {
 	return out
 }
 
-func (l *Logins) apply(pl *Plan) error {
+// needs says which accounts must sign in to which servers, "gh in work,
+// side; linear in work", given the servers the group ends up with in the
+// source's definition; "" when none.
+func (l *Logins) needs(sameDef map[string]bool) string {
+	who := map[string][]string{} // server → accounts
+	for _, t := range l.targets {
+		for _, k := range l.keys(t, sameDef) {
+			name, _, _ := strings.Cut(k, "|")
+			if slices.Contains(t.missing, k) && !slices.Contains(who[name], t.acct.Name) {
+				who[name] = append(who[name], t.acct.Name)
+			}
+		}
+	}
+	var parts []string
+	for _, name := range slices.Sorted(maps.Keys(who)) {
+		parts = append(parts, name+" in "+strings.Join(who[name], ", "))
+	}
+	return strings.Join(parts, "; ")
+}
+
+// signInDefs lists the servers the group ends up with in the source's
+// definition: those it may, while the conflicts are still to be decided
+// ("use mine" may be chosen), else as they are decided now.
+func (pl *Plan) signInDefs(asking bool) map[string]bool {
 	same := pl.MCP.planned()
-	if m := pl.MCP; m != nil {
+	if m := pl.MCP; m != nil && !asking {
 		for _, c := range m.Conflicts {
 			if c.Choice != share.UseMine {
 				delete(same, serverName(c)) // the group keeps its own definition
 			}
 		}
 	}
-	for _, t := range l.targets {
-		// The account may have started since the plan was made.
-		if session.Active(t.acct.SessionDir) {
-			l.Skipped = append(l.Skipped, t.acct.Name+" (started meanwhile)")
-			continue
-		}
-		n, err := addSignIns(creds.FilePath(t.acct.Dir), l.entries, l.keys(t, same))
-		if err != nil {
-			return fmt.Errorf("MCP sign-ins for %s: %w", t.acct.Name, err)
-		}
-		if n > 0 {
-			l.written = append(l.written, t.acct.Name)
-		}
-	}
-	return nil
+	return same
 }
 
-// addSignIns adds the entries the login file lacks; ones it has (perhaps
-// newer) are kept. Every other key of the file is written back unchanged.
-func addSignIns(path string, entries map[string]json.RawMessage, keys []string) (int, error) {
-	data, err := os.ReadFile(path)
-	if err != nil {
-		return 0, err
+// SignIns says which accounts must sign in to which copied servers with
+// /mcp, "gh in work, side", with the conflict choices as they are now; ""
+// when none.
+func (pl *Plan) SignIns() string {
+	if pl.Logins == nil {
+		return ""
 	}
-	doc := map[string]json.RawMessage{}
-	if err := json.Unmarshal(data, &doc); err != nil {
-		return 0, err
-	}
-	have := map[string]json.RawMessage{}
-	if raw, ok := doc["mcpOAuth"]; ok {
-		if err := json.Unmarshal(raw, &have); err != nil {
-			return 0, err
-		}
-	}
-	added := 0
-	for _, k := range keys {
-		if _, ok := have[k]; !ok {
-			have[k] = entries[k]
-			added++
-		}
-	}
-	if added == 0 {
-		return 0, nil
-	}
-	raw, err := json.Marshal(have)
-	if err != nil {
-		return 0, err
-	}
-	doc["mcpOAuth"] = raw
-	out, err := json.Marshal(doc)
-	if err != nil {
-		return 0, err
-	}
-	return added, fsutil.AtomicWrite(path, out, 0o600)
-}
-
-func (l *Logins) changes() bool { return len(l.targets) > 0 }
-
-// describe is the plan line: which servers' sign-ins go to which accounts.
-func (l *Logins) describe() string {
-	names := map[string]bool{}
-	var to []string
-	for _, t := range l.targets {
-		to = append(to, t.acct.Name)
-		for _, k := range t.missing {
-			name, _, _ := strings.Cut(k, "|")
-			names[name] = true
-		}
-	}
-	s := "none needed"
-	if len(to) > 0 {
-		s = strings.Join(slices.Sorted(maps.Keys(names)), ", ") + " → " + strings.Join(to, ", ")
-	}
-	if len(l.Skipped) > 0 {
-		s += "; skipped: " + strings.Join(l.Skipped, ", ")
-	}
-	return s
+	return pl.Logins.needs(pl.signInDefs(false))
 }

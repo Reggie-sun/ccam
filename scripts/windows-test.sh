@@ -12,10 +12,20 @@
 set -u
 command -v cmd.exe >/dev/null 2>&1 || { echo "needs WSL with Windows interop" >&2; exit 1; }
 repo=$(cd "$(dirname "$0")/.." && pwd)
+# WSL interop sometimes answers with nothing; wslpath -u "" would then give
+# ".", and the copy would land inside the repository.
 wtemp=$(cmd.exe /c "echo %TEMP%" 2>/dev/null | tr -d '\r')
+[ -n "$wtemp" ] || wtemp=$(cmd.exe /c "echo %TEMP%" 2>/dev/null | tr -d '\r')
+case "$wtemp" in
+[A-Za-z]:\\*) ;;
+*) echo "could not read %TEMP% from Windows (got '$wtemp')" >&2; exit 1 ;;
+esac
 out=$(wslpath -u "$wtemp")/ccam-wt
 src=$(wslpath -u "$wtemp")/ccam-src
 wout="$wtemp\\ccam-wt"
+case "$out/" in
+"$repo"/*) echo "refusing to copy the repository into itself ($out)" >&2; exit 1 ;;
+esac
 
 pkgs=""
 while [ $# -gt 0 ] && [ "$1" != "--" ]; do pkgs="$pkgs $1"; shift; done

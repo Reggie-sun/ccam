@@ -18,13 +18,14 @@ In the JSON, `limits.five_hour.percent` and `limits.weekly.percent` are 0-100, a
 
 ## When the current account reaches its limit
 
-This session cannot move itself to another account. Tell the user to quit and run:
+You cannot move this session to another account yourself; the user can. Tell them to type `/ccam:switch` (or `/ccam:switch <account>`): it notes this conversation and ends the turn. With `relay = true` in ccam's `config.toml`, ccam then ends this session and carries the conversation on as the other account by itself, with the permission mode, effort level and options such as `--add-dir` it had. Otherwise they type `/exit` and run, in this folder:
 
 ```sh
-ccam next --auto --continue
+ccam next --continue          # as the account /ccam:switch named, else the next one
+ccam next --auto --continue   # or the account with the most room
 ```
 
-It opens the account with the most room and continues this conversation there (both accounts must share conversation history through a group; `ccam group set default --add history`).
+When a session stops at a usage limit, the ccam plugin notes it the same way, and `--auto` leaves that account out. If the accounts share conversation history, this very conversation continues; if not, Claude Code copies it into the new account and the original stays as it is.
 
 ## Run work on other accounts
 
@@ -53,7 +54,12 @@ ccam ext work --json
 ccam doctor         # broken share links, logins, permissions
 ```
 
-`ccam ext` shows each skill, command, agent, plugin, MCP server and hook per account, with its source (a share group name, `account`, or `project`), and lists problems such as broken links, skill folders without `SKILL.md`, and MCP servers defined differently in two places. Suggest `ccam doctor --fix` for broken share links and `ccam mcp import <account> <server>` to share a server the account added on its own.
+`ccam ext` shows each skill, command, agent, plugin, MCP server and hook per account, with its source (a share group name, `account`, `local` for one folder only, or `project`), and lists problems such as broken links, skill folders without `SKILL.md`, MCP servers defined differently in two places or only in one account, and servers another account is signed in to. Suggest `ccam doctor --fix` for broken share links and `ccam mcp import <account> <server>` to share a server the account added on its own.
+
+- Plain `claude mcp add` gives one account a server for one folder only; `ccam mcp add` (or `claude mcp add -s user`, then `ccam mcp import`) shares it.
+- A server that needs a sign-in (OAuth) is signed in once per account, with `/mcp` in a session of that account; ccam never copies sign-ins. claude.ai connectors belong to each claude.ai account.
+- With the default `mcp_strategy` (flag), `claude mcp list` does not show the group's servers (sessions get them with `--mcp-config`): use `ccam ext` or `ccam mcp list` to check. Under `mcp_strategy = "sync"` ccam copies them into the account's `.claude.json`, so `claude mcp list` shows them.
+- Servers left in plain claude's `~/.claude.json` load in no account until `ccam migrate --mcp` copies them; suggest it, do not run it.
 
 ## Do not
 

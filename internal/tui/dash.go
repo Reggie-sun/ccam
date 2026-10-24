@@ -5,6 +5,7 @@ package tui
 import (
 	"context"
 	"fmt"
+	"path/filepath"
 	"slices"
 	"strings"
 	"time"
@@ -38,6 +39,9 @@ type Backend interface {
 	SuggestShortcut(account string) string
 	CheckShortcut(account, shortcut string) error
 	Remove(name string) (*config.Config, string, error)
+	// SameLogin names another account (or plain claude) whose folder holds
+	// the account's login, which Remove therefore does not log out; or "".
+	SameLogin(name string) string
 	// RemoveGroup applies ch (the group's accounts leave it), drops the
 	// group and moves its folder to the trash.
 	RemoveGroup(name string, ch *group.Change) (*config.Config, string, error)
@@ -69,11 +73,13 @@ type ExtKind struct {
 }
 
 // ExtRow is one extension and where it is loaded: Groups are group names,
-// Own the accounts that have it in their own folder.
+// Own the accounts that have it in their own folder, Off the accounts that
+// have the plugin installed but not turned on.
 type ExtRow struct {
 	Name    string
 	Groups  []string
 	Own     []string
+	Off     []string
 	Problem bool
 }
 
@@ -157,7 +163,8 @@ type accInfo struct {
 type Dashboard struct {
 	be        Backend
 	cfg       *config.Config
-	cwd       string
+	cwd       string // the current folder as given
+	dir       string // cwd with symbolic links resolved, the form folder rules are stored in
 	version   string
 	themeName string
 	theme     Theme
@@ -184,6 +191,9 @@ type Dashboard struct {
 	// updated is set once U installed newer; this process still runs the
 	// old binary until it is started again.
 	updated bool
+	// quitAfter is Ctrl+C pressed while busy: ccam quits once the change
+	// is done, not halfway through it.
+	quitAfter bool
 
 	dlg    dialog
 	help   bool
@@ -195,8 +205,11 @@ type Dashboard struct {
 
 // NewDashboard shows cfg; cwd is the current folder (for ccam folder).
 func NewDashboard(be Backend, cfg *config.Config, cwd, version string) *Dashboard {
-	d := &Dashboard{be: be, cwd: cwd, version: version, themeName: cfg.Theme, width: 80, height: 24,
+	d := &Dashboard{be: be, cwd: cwd, dir: cwd, version: version, themeName: cfg.Theme, width: 80, height: 24,
 		usage: map[string]*usage.Report{}, now: time.Now, tickEvery: 120 * time.Millisecond}
+	if real, err := filepath.EvalSymlinks(cwd); err == nil {
+		d.dir = real
+	}
 	d.theme = ThemeFor(cfg.Theme, true)
 	d.setConfig(cfg)
 	def, _ := cfg.DefaultProfile()
@@ -205,7 +218,7 @@ func NewDashboard(be Backend, cfg *config.Config, cwd, version string) *Dashboar
 			d.cursor[tabAccounts] = i
 		}
 	}
-	if f, ok := cfg.FolderFor(cwd); ok {
+	if f, ok := d.here(); ok {
 		for i, p := range cfg.Profiles {
 			if p.Name == f.Account {
 				d.cursor[tabAccounts] = i
@@ -215,8 +228,36 @@ func NewDashboard(be Backend, cfg *config.Config, cwd, version string) *Dashboar
 	return d
 }
 
+// Installed is the release U installed, or "".
+func (d *Dashboard) Installed() string {
+	if d.updated {
+		return d.newer
+	}
+	return ""
+}
+
+// KeepInstalled carries an update an earlier dashboard of this process
+// made: the release is not offered again, and the notice says to restart.
+func (d *Dashboard) KeepInstalled(tag string) {
+	if tag == "" {
+		return
+	}
+	d.newer, d.updated = tag, true
+	d.notice = notice{text: "ccam " + tag + " is installed; quit and start ccam again to use it"}
+}
+
 // Result is valid after the program has finished.
 func (d *Dashboard) Result() Result { return d.result }
+
+// here is the folder rule for the current folder, found as a launch finds
+// it (launcher.FolderHere): for the folder as given, else with links
+// resolved.
+func (d *Dashboard) here() (*config.Folder, bool) {
+	if f, ok := d.cfg.FolderFor(d.cwd); ok {
+		return f, true
+	}
+	return d.cfg.FolderFor(d.dir)
+}
 
 func (d *Dashboard) setConfig(cfg *config.Config) {
 	d.cfg = cfg
@@ -252,7 +293,10 @@ func (d *Dashboard) rowCount(tab int) int {
 }
 
 func (d *Dashboard) Init() tea.Cmd {
-	newer := func() tea.Msg { return newerMsg{d.be.NewerRelease(context.Background())} }
+	var newer tea.Cmd
+	if !d.updated {
+		newer = func() tea.Msg { return newerMsg{d.be.NewerRelease(context.Background())} }
+	}
 	return tea.Batch(tea.RequestBackgroundColor, d.fetchAll(false), newer, d.tick())
 }
 
@@ -321,12 +365,17 @@ func (d *Dashboard) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		} else if msg.notice != "" {
 			d.notice = notice{text: msg.notice}
 		}
+		if d.quitAfter {
+			return d, tea.Quit
+		}
 		return d, d.openTab()
 	case extMsg:
 		d.ext, d.extErr = &msg.view, msg.err
 		return d, nil
 	case newerMsg:
-		d.newer = strings.TrimPrefix(msg.tag, "v") // shown like d.version, which has no v
+		if !d.updated { // once installed, the release stays the one installed
+			d.newer = strings.TrimPrefix(msg.tag, "v") // shown like d.version, which has no v
+		}
 		return d, nil
 	case updatedMsg:
 		d.busy = ""
@@ -336,16 +385,25 @@ func (d *Dashboard) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			d.updated = true
 			d.notice = notice{text: "ccam " + d.newer + " is installed; quit and start ccam again to use it"}
 		}
+		if d.quitAfter {
+			return d, tea.Quit
+		}
 		return d, nil
 	case healthMsg:
 		d.health, d.hErr = msg.findings, msg.err
 		if d.health == nil && d.hErr == nil {
 			d.health = []doctor.Finding{}
 		}
+		// The boxes may be fewer than when the cursor last moved (or none,
+		// while the check ran).
+		d.cursor[tabHealth] = max(0, min(d.cursor[tabHealth], d.rowCount(tabHealth)-1))
 		if msg.fixed {
 			d.busy, d.loaded[tabHealth] = "", true
 			if msg.err == nil {
 				d.notice = notice{text: "repaired what could be repaired" + msg.scope}
+			}
+			if d.quitAfter {
+				return d, tea.Quit
 			}
 		}
 		return d, nil
@@ -367,11 +425,15 @@ func (d *Dashboard) quit(r Result) tea.Cmd {
 }
 
 func (d *Dashboard) key(k tea.KeyPressMsg) tea.Cmd {
+	if d.busy != "" {
+		// A change is being applied; wait for it.
+		if k.String() == "ctrl+c" {
+			d.quitAfter = true
+		}
+		return nil
+	}
 	if k.String() == "ctrl+c" {
 		return tea.Quit
-	}
-	if d.busy != "" {
-		return nil // a change is being applied; wait for it
 	}
 	if d.dlg != nil {
 		return d.updateDialog(k)
@@ -438,7 +500,7 @@ func (d *Dashboard) moveCursor(k tea.KeyPressMsg) tea.Cmd {
 	case "up", "k":
 		d.cursor[d.tab] = max(0, d.cursor[d.tab]-1)
 	case "down", "j":
-		d.cursor[d.tab] = min(n-1, d.cursor[d.tab]+1)
+		d.cursor[d.tab] = max(0, min(n-1, d.cursor[d.tab]+1))
 	case "home", "g":
 		d.cursor[d.tab] = 0
 	case "end", "G":
@@ -477,10 +539,19 @@ func (d *Dashboard) View() tea.View {
 	return v
 }
 
+// The dashboard needs minWidth x minHeight: the header, the tabs and the
+// key line. In a smaller terminal it says so instead of being cut off.
+const minWidth, minHeight = 40, 8
+
 func (d *Dashboard) render() string {
+	if d.width < minWidth || d.height < minHeight {
+		msg := fmt.Sprintf(" Too small: ccam needs %dx%d (now %dx%d)", minWidth, minHeight, d.width, d.height)
+		return ansi.Truncate(msg, max(1, d.width), "")
+	}
 	t := d.theme
-	w := max(40, d.width)
+	w := d.width
 	var top []string
+	var spare []int // lines of top a short screen leaves out
 	head := " " + t.bold().Render("ccam") + t.dim().Render(" "+d.version+symDot+plural(len(d.cfg.Profiles), "account")+symDot+plural(len(d.cfg.Groups), "group"))
 	if d.tab == tabAccounts {
 		legend := t.dim().Render(t.success().Render(symOK)+" default"+symDot+symHere+" this folder"+symDot+symRunning+" running") + " "
@@ -492,6 +563,7 @@ func (d *Dashboard) render() string {
 	if d.newer != "" && !d.updated {
 		top = append(top, " "+t.accent().Render(symItem+" ccam "+d.newer+" is available (you have "+d.version+")")+t.dim().Render(symDot+"press U to update"))
 	}
+	spare = append(spare, len(top))
 	top = append(top, "")
 	var tabs []string
 	for i, n := range tabNames {
@@ -502,6 +574,7 @@ func (d *Dashboard) render() string {
 		}
 	}
 	top = append(top, " "+strings.Join(tabs, " "), " "+t.dim().Render(tabAbout[d.tab]), "")
+	spare = append(spare, len(top)-2, len(top)-1)
 
 	var dialog []string
 	if d.dlg != nil {
@@ -510,7 +583,11 @@ func (d *Dashboard) render() string {
 	tail := []string{""}
 	switch {
 	case d.busy != "":
-		tail = append(tail, " "+t.accent().Render(spinner[d.frame%len(spinner)])+" "+d.busy)
+		busy := d.busy
+		if d.quitAfter {
+			busy += " ccam quits when it is done."
+		}
+		tail = append(tail, " "+t.accent().Render(spinner[d.frame%len(spinner)])+" "+busy)
 	case d.notice.err:
 		// An error says what to do next; keep it whole (up to 4 lines).
 		lines := wrap(symFail+" "+d.notice.text, w-2)
@@ -521,6 +598,14 @@ func (d *Dashboard) render() string {
 		tail = append(tail, " "+t.success().Render(symOK)+" "+d.notice.text)
 	}
 	tail = append(tail, " "+t.dim().Render(d.keysLine()))
+	// On a short screen the blank lines and the tab's description go
+	// first, then the end of a long error, so that the key line stays.
+	for i := len(spare) - 1; i >= 0 && len(top)+len(tail) > d.height; i-- {
+		top = slices.Delete(top, spare[i], spare[i]+1)
+	}
+	for len(top)+len(tail) > d.height && len(tail) > 1 {
+		tail = slices.Delete(tail, len(tail)-2, len(tail)-1)
+	}
 
 	// A dialog taller than the screen leaves no room for the tab, and
 	// loses its first lines rather than its choices.

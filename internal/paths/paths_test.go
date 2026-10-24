@@ -1,6 +1,7 @@
 package paths
 
 import (
+	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -30,9 +31,32 @@ func TestXDG(t *testing.T) {
 	t.Setenv("XDG_STATE_HOME", "")
 	t.Setenv("XDG_RUNTIME_DIR", "/run/user/1")
 	p := FromEnv()
-	want := Paths{Config: "/cfg/ccam", Data: "/h/.local/share/ccam", State: "/h/.local/state/ccam", Bin: "/h/.local/bin", Runtime: "/run/user/1/ccam", Home: "/h"}
+	want := Paths{Config: "/cfg/ccam", Data: "/h/.local/share/ccam", State: "/h/.local/state/ccam", Bin: "/h/.local/bin", Runtime: "/h/.local/state/ccam/locks", Home: "/h"}
 	if p != want {
 		t.Fatalf("got %+v want %+v", p, want)
+	}
+}
+
+// Session markers are where every shell of the user finds them, whatever
+// its XDG_RUNTIME_DIR (cron and ssh have none, su and WSLg another one).
+func TestRuntimeIgnoresXDGRuntimeDir(t *testing.T) {
+	t.Setenv("CCAM_HOME", "")
+	t.Setenv("HOME", t.TempDir())
+	t.Setenv("USERPROFILE", os.Getenv("HOME"))
+	t.Setenv("XDG_STATE_HOME", "")
+	var seen []string
+	for _, rt := range []string{"", "/run/user/1", "/mnt/wslg/runtime-dir", "rel"} {
+		t.Setenv("XDG_RUNTIME_DIR", rt)
+		p := FromEnv()
+		if p.Runtime != filepath.Join(p.State, "locks") {
+			t.Fatalf("XDG_RUNTIME_DIR=%q: Runtime %s", rt, p.Runtime)
+		}
+		seen = append(seen, p.Runtime)
+	}
+	for _, r := range seen {
+		if r != seen[0] {
+			t.Fatalf("Runtime differs between shells: %v", seen)
+		}
 	}
 }
 

@@ -56,14 +56,17 @@ func block(r *Report, nameW int, o RenderOptions) []string {
 	case r.Status == StatusLoggedOut:
 		return []string{head + fmt.Sprintf("not logged in → ccam login %s", r.Name)}
 	case r.Limits == nil && r.Status == StatusExpired:
-		return []string{head + fmt.Sprintf("login expired, run `ccam %s` once to refresh", r.Name)}
+		return []string{head + r.Err} // the access token or the login expired, or why it was not renewed
 	case r.Limits == nil:
 		return []string{head + "lookup failed: " + r.Err}
 	}
 	l := r.Limits
-	out := []string{head + basis(r, o.Now),
-		limitLine("5-hour", l.FiveHour, o),
-		limitLine("Weekly", l.Weekly, o)}
+	out := []string{head + basis(r, o.Now)}
+	if r.Status == StatusExpired && r.Err != "" {
+		// The same, above the saved numbers.
+		out = append(out, "   "+r.Err)
+	}
+	out = append(out, limitLine("5-hour", l.FiveHour, o), limitLine("Weekly", l.Weekly, o))
 	for _, s := range l.Scoped {
 		out = append(out, limitLine(s.Name, s.Window, o))
 	}
@@ -79,6 +82,12 @@ func block(r *Report, nameW int, o RenderOptions) []string {
 			out = append(out, "   source: saved by the status line")
 		case "cache":
 			out = append(out, "   source: saved from the usage endpoint")
+		case "limit":
+			out = append(out, "   source: the usage limit Claude Code reported")
+		}
+		if r.Source != "limit" && !r.Limited.IsZero() {
+			out = append(out, fmt.Sprintf("   %s full: Claude Code reported the usage limit %s, so 100%% until the reset",
+				strings.Join(r.LimitedWindows, ", "), ago(r.Limited, o.Now)))
 		}
 	}
 	return out
@@ -97,7 +106,7 @@ func gauge(w Window, o RenderOptions) string {
 	if !w.Known {
 		return "-"
 	}
-	filled := int(math.Round(math.Min(w.Percent, 100) / 100 * barWidth))
+	filled := int(math.Round(max(0, min(w.Percent, 100)) / 100 * barWidth))
 	bar := strings.Repeat("█", filled) + strings.Repeat("░", barWidth-filled)
 	s := fmt.Sprintf("%s %3.0f%%", bar, w.Percent)
 	if o.Color {
@@ -135,14 +144,18 @@ func Duration(d time.Duration) string {
 	}
 }
 
-func basis(r *Report, now time.Time) string {
-	ago := now.Sub(r.At)
-	s := "just now"
-	if ago >= time.Minute {
-		s = Duration(ago) + " ago"
+// ago renders how long before now t was: "just now", "5m ago".
+func ago(t, now time.Time) string {
+	if d := now.Sub(t); d >= time.Minute {
+		return Duration(d) + " ago"
 	}
+	return "just now"
+}
+
+func basis(r *Report, now time.Time) string {
+	s := ago(r.At, now)
 	switch {
-	case r.Source == "cache" || r.Source == "statusline":
+	case r.Source == "cache" || r.Source == "statusline" || r.Source == "limit":
 		s += " (cached)"
 	case r.Status == StatusExpired:
 		s += " (expired)"

@@ -122,7 +122,7 @@ func askConflict(e *env, c *share.Conflict, who string) share.Resolution {
 	}
 	for {
 		e.printf("Choice [1]: ")
-		line, err := e.in.ReadString('\n')
+		line, err := e.lines().readLine()
 		line = strings.TrimSpace(line)
 		if line == "" || err != nil {
 			return c.Candidates[0]

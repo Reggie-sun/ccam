@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/jhyunwoo/ccam/internal/config"
+	"github.com/jhyunwoo/ccam/internal/fsutil"
 	"github.com/jhyunwoo/ccam/internal/paths"
 )
 
@@ -74,7 +75,7 @@ func TestRename(t *testing.T) {
 	if err := cfg.AddGroup("default", config.DefaultItems, []string{"work"}); err != nil {
 		t.Fatal(err)
 	}
-	if err := Rename(p, cfg, "work", "job"); err != nil {
+	if err := Rename(p, cfg, "work", "job", false); err != nil {
 		t.Fatal(err)
 	}
 	if _, ok := cfg.Find("job"); !ok || cfg.Default != "job" || cfg.Folders[0].Account != "job" || cfg.Groups[0].Members[0] != "job" {
@@ -82,6 +83,66 @@ func TestRename(t *testing.T) {
 	}
 	if _, err := os.Stat(p.ProfileDir("job")); err != nil {
 		t.Fatal("folder not renamed")
+	}
+}
+
+// The macOS Keychain names a login after its folder's path, so a rename
+// there keeps the folder (Profile.Folder): the login, and the MCP sign-ins
+// stored with it, stay the account's. No new account takes the folder over.
+func TestRenameKeepsTheFolder(t *testing.T) {
+	p := testPaths(t)
+	cfg := &config.Config{}
+	Add(p, cfg, "work")
+	dir := p.ProfileDir("work")
+	if err := Rename(p, cfg, "work", "job", true); err != nil {
+		t.Fatal(err)
+	}
+	job, _ := cfg.Find("job")
+	if Dir(p, job) != dir || job.Folder != "work" || fsutil.Exists(p.ProfileDir("job")) {
+		t.Fatalf("%+v", job)
+	}
+	if _, err := Add(p, cfg, "work"); err == nil || !strings.Contains(err.Error(), "account job's") {
+		t.Fatalf("a new work would take job's folder: %v", err)
+	}
+	cfgFile := filepath.Join(t.TempDir(), "config.toml")
+	if err := cfg.Save(cfgFile); err != nil {
+		t.Fatal(err)
+	}
+	if loaded, err := config.Load(cfgFile); err != nil || Dir(p, &loaded.Profiles[0]) != dir {
+		t.Fatalf("saved and loaded: %v %+v", err, loaded)
+	}
+	// Renamed on, and back to the folder's name.
+	if err := Rename(p, cfg, "job", "side", true); err != nil || cfg.Profiles[0].Folder != "work" {
+		t.Fatalf("%v %+v", err, cfg.Profiles[0])
+	}
+	if err := Rename(p, cfg, "side", "work", true); err != nil || cfg.Profiles[0].Folder != "" || Dir(p, &cfg.Profiles[0]) != dir {
+		t.Fatalf("%v %+v", err, cfg.Profiles[0])
+	}
+	// A rename that may move the folder moves the kept one, and Trash takes
+	// the kept one too.
+	Rename(p, cfg, "work", "a", true)
+	if err := Rename(p, cfg, "a", "b", false); err != nil || cfg.Profiles[0].Folder != "" || !fsutil.Exists(p.ProfileDir("b")) || fsutil.Exists(dir) {
+		t.Fatalf("%v %+v", err, cfg.Profiles[0])
+	}
+	Rename(p, cfg, "b", "c", true)
+	if dst, err := Trash(p, &cfg.Profiles[0]); err != nil || dst == "" || fsutil.Exists(p.ProfileDir("b")) {
+		t.Fatalf("trash %q %v", dst, err)
+	}
+}
+
+// A rename that moves the folder must not move it onto the one another
+// account kept.
+func TestRenameDoesNotTakeAKeptFolder(t *testing.T) {
+	p := testPaths(t)
+	cfg := &config.Config{}
+	Add(p, cfg, "work")
+	Rename(p, cfg, "work", "job", true) // job keeps profiles/work
+	Add(p, cfg, "side")
+	if err := Rename(p, cfg, "side", "work", false); err == nil || !strings.Contains(err.Error(), "account job's") {
+		t.Fatalf("%v", err)
+	}
+	if !fsutil.Exists(p.ProfileDir("side")) {
+		t.Fatal("side's folder moved")
 	}
 }
 
@@ -109,7 +170,7 @@ func TestRenameRewritesPluginPaths(t *testing.T) {
 	install, _ := json.Marshal(filepath.Join(old, "plugins", "cache", "m", "x", "1"))
 	os.WriteFile(filepath.Join(old, "plugins", "installed_plugins.json"),
 		[]byte(`{"plugins":{"x@m":[{"installPath":`+string(install)+`}]}}`), 0o600)
-	if err := Rename(p, cfg, "work", "job"); err != nil {
+	if err := Rename(p, cfg, "work", "job", false); err != nil {
 		t.Fatal(err)
 	}
 	data, _ := os.ReadFile(filepath.Join(p.ProfileDir("job"), "plugins", "installed_plugins.json"))
@@ -125,7 +186,7 @@ func TestRenameRollsBackWhenPluginRewriteFails(t *testing.T) {
 	Add(p, cfg, "work")
 	os.MkdirAll(filepath.Join(p.ProfileDir("work"), "plugins"), 0o700)
 	os.WriteFile(filepath.Join(p.ProfileDir("work"), "plugins", "installed_plugins.json"), []byte("{broken"), 0o600)
-	if err := Rename(p, cfg, "work", "job"); err == nil {
+	if err := Rename(p, cfg, "work", "job", false); err == nil {
 		t.Fatal("want error")
 	}
 	if _, err := os.Stat(p.ProfileDir("work")); err != nil {
@@ -166,7 +227,7 @@ func TestRenameOverAStaleMember(t *testing.T) {
 	cfg := &config.Config{}
 	Add(p, cfg, "work")
 	cfg.Groups = []config.Group{{Name: "team", Items: []string{"history"}, Members: []string{"job"}}}
-	if err := Rename(p, cfg, "work", "job"); err != nil {
+	if err := Rename(p, cfg, "work", "job", false); err != nil {
 		t.Fatal(err)
 	}
 	if err := cfg.Save(filepath.Join(t.TempDir(), "c.toml")); err != nil {

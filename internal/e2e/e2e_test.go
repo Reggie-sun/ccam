@@ -30,6 +30,13 @@ func TestMain(m *testing.M) {
 	}
 	ccamBin = filepath.Join(dir, "ccam"+exe)
 	fakeBin = filepath.Join(dir, "fakeclaude"+exe)
+	if raceBuild {
+		// A -race binary waits a second before it exits 0 (GORACE
+		// atexit_sleep_ms), which over the hundreds of ccam and fake claude
+		// runs took the package past go test's 10-minute limit. The
+		// developer's own GORACE options come after and win.
+		os.Setenv("GORACE", strings.TrimSpace("atexit_sleep_ms=0 "+os.Getenv("GORACE")))
+	}
 	code := m.Run()
 	os.RemoveAll(dir)
 	os.Exit(code)
@@ -48,7 +55,11 @@ func buildCcam(t *testing.T) {
 		touchSources()
 		for bin, pkg := range map[string]string{ccamBin: "./cmd/ccam", fakeBin: "./testdata/fakeclaude"} {
 			// -buildvcs=false: CI containers may refuse git on the checkout (ownership check).
-			build := exec.Command("go", "build", "-buildvcs=false", "-o", bin, pkg)
+			args := []string{"build", "-buildvcs=false", "-o", bin}
+			if raceBuild {
+				args = append(args, "-race")
+			}
+			build := exec.Command("go", append(args, pkg)...)
 			build.Dir = repoRoot()
 			if out, err := build.CombinedOutput(); err != nil {
 				buildErr = fmt.Errorf("build of %s failed: %v\n%s", pkg, err, out)
@@ -255,11 +266,11 @@ func TestDryRunAndErrors(t *testing.T) {
 	h.addAccounts()
 	os.Remove(h.log) // left behind by `auth login`
 	out := h.ok("ccam", "--dry-run", "work", "-c")
-	want := "CLAUDE_CONFIG_DIR=" + h.profileDir("work")
+	want, args := "CLAUDE_CONFIG_DIR="+h.profileDir("work"), " -c\n"
 	if runtime.GOOS == "windows" {
-		want = "$env:CLAUDE_CONFIG_DIR='" + h.profileDir("work") + "';"
+		want, args = "$env:CLAUDE_CONFIG_DIR='"+h.profileDir("work")+"';", " -ArgumentList '-c' "
 	}
-	if !strings.Contains(out, want) || !strings.HasSuffix(strings.TrimSpace(out), " -c") {
+	if !strings.Contains(out, want) || !strings.Contains(out, args) {
 		t.Fatalf("dry run: %s", out)
 	}
 	if _, err := os.Stat(h.log); err == nil {
@@ -272,6 +283,25 @@ func TestDryRunAndErrors(t *testing.T) {
 	r = h.run("", nil, "ccam", "add", "list")
 	if r.code == 0 {
 		t.Fatal("reserved name accepted")
+	}
+}
+
+// A claude_bin that points nowhere is named, and the account is not marked
+// as just used: claude never ran.
+func TestMissingClaudeBinIsNamed(t *testing.T) {
+	h := newHarness(t)
+	h.addAccounts()
+	cfgFile := filepath.Join(h.home, "config", "config.toml")
+	data, _ := os.ReadFile(cfgFile)
+	missing := filepath.Join(h.home, "gone", "claude"+exe)
+	os.WriteFile(cfgFile, bytes.Replace(data, []byte(fakeBin), []byte(missing), 1), 0o600)
+	os.RemoveAll(filepath.Join(h.home, "state", "last-used"))
+	r := h.run("", nil, "ccam", "work", "-p", "x")
+	if r.code == 0 || !strings.Contains(r.stderr, missing) || !strings.Contains(r.stderr, "claude_bin") {
+		t.Fatalf("%+v", r)
+	}
+	if _, err := os.Stat(filepath.Join(h.home, "state", "last-used", "work")); err == nil {
+		t.Fatal("marked as used although claude did not start")
 	}
 }
 
@@ -309,7 +339,8 @@ func TestDryRunNeverChangesState(t *testing.T) {
 	if _, err := os.Stat(h.profileDir("work")); err != nil {
 		t.Fatal("profile folder gone")
 	}
-	// Read-only commands still accept the flag; doctor --fix only reports.
+	// Read-only commands still accept the flag; doctor --fix only reports,
+	// with what --fix would set aside.
 	h.ok("ccam", "--dry-run", "list")
 	h.ok("ccam", "--dry-run", "doctor", "--fix")
 }
@@ -319,20 +350,26 @@ func TestRemoveAndRename(t *testing.T) {
 	h.addAccounts()
 	h.ok("ccam", "shortcut", "work", "ccwork")
 	h.ok("ccam", "rename", "work", "job")
+	// On macOS the folder keeps its name: the Keychain names the login
+	// after its path.
+	dir := h.profileDir("job")
+	if runtime.GOOS == "darwin" {
+		dir = h.profileDir("work")
+	}
 	h.ok("ccwork")
-	if dir, _ := h.called(); dir != h.profileDir("job") {
-		t.Fatalf("shortcut after rename: %s", dir)
+	if got, _ := h.called(); got != dir {
+		t.Fatalf("shortcut after rename: %s", got)
 	}
 	h.ok("ccam", "job")
-	if dir, _ := h.called(); dir != h.profileDir("job") {
-		t.Fatalf("rename dir %s", dir)
+	if got, _ := h.called(); got != dir {
+		t.Fatalf("rename dir %s", got)
 	}
 	r := h.run("n\n", nil, "ccam", "remove", "job")
 	if r.code != 0 || !strings.Contains(r.stdout, "Cancelled") {
 		t.Fatalf("declined remove: %+v", r)
 	}
 	h.run("y\n", nil, "ccam", "remove", "job")
-	if _, err := os.Stat(h.profileDir("job")); err == nil {
+	if _, err := os.Stat(dir); err == nil {
 		t.Fatal("profile dir still there")
 	}
 	if _, err := os.Lstat(filepath.Join(h.home, "bin", "ccwork"+exe)); err == nil {
@@ -369,15 +406,25 @@ func TestLoginExpiredLogsInOnlyThoseThatNeedIt(t *testing.T) {
 func TestLoginIntoAnotherAccountIsCaught(t *testing.T) {
 	h := newHarness(t)
 	h.addAccounts()
+	// A usage limit Claude Code reported for work's account.
+	limit := filepath.Join(h.home, "state", "usage", "work.limit.json")
+	os.MkdirAll(filepath.Dir(limit), 0o700)
+	os.WriteFile(limit, []byte(`{"at":"2026-10-22T10:00:00Z","windows":{"seven_day":"2100-01-01T00:00:00Z"}}`), 0o600)
 	args := filepath.Join(h.home, "login-args")
 	r := h.run("", []string{"FAKE_EMAIL=dev@company.com", "FAKE_LOGIN_ARGS=" + args}, "ccam", "login", "work")
 	if b, _ := os.ReadFile(args); r.code != 0 || !strings.Contains(string(b), "--email dev@company.com") {
 		t.Fatalf("%+v %s", r, b)
 	}
+	if _, err := os.Stat(limit); err != nil {
+		t.Fatal("logging in to the same account again dropped its limit")
+	}
 	r = h.run("", []string{"FAKE_EMAIL=other@company.com"}, "ccam", "login", "work")
 	if !strings.Contains(r.stderr, "this login is other@company.com, but work was dev@company.com before") ||
-		!strings.Contains(r.stderr, "`ccam logout work`, then `ccam login work` and sign in as dev@company.com") {
+		!strings.Contains(r.stderr, "run `ccam login work` again and sign in as dev@company.com") || strings.Contains(r.stderr, "logout") {
 		t.Fatalf("%+v", r)
+	}
+	if _, err := os.Stat(limit); err == nil {
+		t.Fatal("the other account's limit stayed with work")
 	}
 	// Two folders logged in to one account share their limits.
 	r = h.run("", []string{"FAKE_EMAIL=me@example.com"}, "ccam", "login", "work")
@@ -387,6 +434,55 @@ func TestLoginIntoAnotherAccountIsCaught(t *testing.T) {
 	cfg, _ := os.ReadFile(filepath.Join(h.home, "config", "config.toml"))
 	if !strings.Contains(string(cfg), "[profile.login]") || !strings.Contains(string(cfg), "org_type = 'claude_team'") {
 		t.Fatalf("%s", cfg)
+	}
+}
+
+// An account an older ccam added has no login record, only the email it
+// recorded: a login into another Claude account is caught all the same.
+func TestLoginOfAnAccountWithoutARecordIsChecked(t *testing.T) {
+	h := newHarness(t)
+	os.MkdirAll(h.profileDir("work"), 0o700)
+	cfg := fmt.Sprintf("claude_bin = %q\n\n[[profile]]\nname = 'work'\nslot = 1\nemail = 'dev@company.com'\n", fakeBin)
+	os.WriteFile(filepath.Join(h.home, "config", "config.toml"), []byte(cfg), 0o600)
+	r := h.run("", []string{"FAKE_EMAIL=other@company.com"}, "ccam", "login", "work")
+	if r.code != 0 || !strings.Contains(r.stderr, "this login is other@company.com, but work was dev@company.com before") {
+		t.Fatalf("%+v", r)
+	}
+	r = h.run("", []string{"FAKE_EMAIL=other@company.com"}, "ccam", "login", "work")
+	if strings.Contains(r.stderr, "but work was") {
+		t.Fatalf("the same login again: %+v", r)
+	}
+}
+
+// A setting added at the end of config.toml belongs to the last table in
+// TOML, so ccam does not read it: a launch says so, and a command that
+// saves the config refuses instead of deleting the line.
+func TestSettingBelowATableIsNamedAndKept(t *testing.T) {
+	h := newHarness(t)
+	h.addAccounts()
+	path := filepath.Join(h.home, "config", "config.toml")
+	data, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	data = append(data, "\nrelay = true\n"...)
+	os.WriteFile(path, data, 0o600)
+	r := h.run("", nil, "ccam", "work", "--version")
+	if r.code != 0 || !strings.Contains(r.stderr, "ccam: config.toml line ") || !strings.Contains(r.stderr, "relay is read as part of the [profile.login] table above it") {
+		t.Fatalf("launch: %+v", r)
+	}
+	if dir, _ := h.called(); dir != h.profileDir("work") {
+		t.Fatal("claude did not run")
+	}
+	r = h.run("", nil, "ccam", "use", "work")
+	if r.code == 0 || !strings.Contains(r.stderr, "so it was not saved") {
+		t.Fatalf("use: %+v", r)
+	}
+	if after, _ := os.ReadFile(path); string(after) != string(data) {
+		t.Fatalf("config.toml changed:\n%s", after)
+	}
+	if out := h.run("", nil, "ccam", "doctor").stdout; !strings.Contains(out, "relay is read as part of") {
+		t.Fatalf("doctor:\n%s", out)
 	}
 }
 
@@ -426,6 +522,27 @@ func TestAgentsAcrossAccounts(t *testing.T) {
 	}
 	if r := h.run("", nil, "ccam", "attach", "nope"); r.code == 0 || !strings.Contains(r.stderr, "no account has a background session") {
 		t.Fatalf("%+v", r)
+	}
+	// Flags after the id are claude's, and part of the session name works.
+	r = h.run("", nil, "ccam", "--dry-run", "attach", "49ec", "--debug")
+	if r.code != 0 || !strings.Contains(r.stdout, "attach 49ec0028 --debug") {
+		t.Fatalf("%+v", r)
+	}
+	os.WriteFile(filepath.Join(h.profileDir("personal"), "jobs", "49ec0028", "state.json"), []byte(`{"name":"Fix Login"}`), 0o600)
+	os.MkdirAll(filepath.Join(h.profileDir("work"), "jobs", "77ab0011"), 0o700)
+	os.WriteFile(filepath.Join(h.profileDir("work"), "jobs", "77ab0011", "state.json"), []byte(`{"name":"fix docs"}`), 0o600)
+	r = h.run("", nil, "ccam", "--dry-run", "attach", "LOGIN")
+	if r.code != 0 || !strings.Contains(r.stdout, filepath.Join("profiles", "personal")) || !strings.Contains(r.stdout, "attach 49ec0028") {
+		t.Fatalf("%+v", r)
+	}
+	if r := h.run("", nil, "ccam", "attach", "fix"); r.code == 0 || !strings.Contains(r.stderr, "fits more than one session") {
+		t.Fatalf("%+v", r)
+	}
+	// What may start an id is not read as a name; an empty one fits nothing.
+	for _, sel := range []string{"dead", ""} {
+		if r := h.run("", nil, "ccam", "attach", sel); r.code == 0 || !strings.Contains(r.stderr, "no account has a background session") {
+			t.Fatalf("%q: %+v", sel, r)
+		}
 	}
 }
 

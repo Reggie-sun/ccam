@@ -183,3 +183,50 @@ func TestCopyFileSetsPermOnExistingFile(t *testing.T) {
 		t.Fatalf("perm %v", info.Mode().Perm())
 	}
 }
+
+// A copy that fails partway (here the source is a folder, so the first
+// read fails) leaves dst as it was: absent, or with its old content.
+func TestCopyFileLeavesDstAloneWhenItFails(t *testing.T) {
+	dir := t.TempDir()
+	bad := filepath.Join(dir, "srcdir")
+	os.Mkdir(bad, 0o700)
+	fresh := filepath.Join(dir, "fresh")
+	if err := CopyFile(bad, fresh); err == nil {
+		t.Fatal("copying a folder worked")
+	}
+	if Exists(fresh) {
+		t.Error("a failed copy left a file behind")
+	}
+	old := filepath.Join(dir, "old")
+	os.WriteFile(old, []byte("old content"), 0o600)
+	if err := CopyFile(bad, old); err == nil {
+		t.Fatal("copying a folder worked")
+	}
+	if b, _ := os.ReadFile(old); string(b) != "old content" {
+		t.Errorf("a failed copy over a file left %q", b)
+	}
+	if entries, _ := os.ReadDir(dir); len(entries) != 2 { // srcdir and old
+		t.Errorf("temp files left behind: %v", entries)
+	}
+}
+
+// MoveAside deletes only the names it gives: path.old and path.old-<digits>.
+// Other files beside them stay.
+func TestMoveAsideDeletesOnlyItsOwnNames(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "ccam.exe")
+	for _, name := range []string{"ccam.exe", "ccam.exe.old", "ccam.exe.old-123", "ccam.exe.old.bak", "ccam.exe.older", "ccam.exe.old-", "ccam.exe.old-1x"} {
+		os.WriteFile(filepath.Join(dir, name), []byte(name), 0o600)
+	}
+	if _, err := MoveAside(path); err != nil {
+		t.Fatal(err)
+	}
+	for name, want := range map[string]bool{"ccam.exe.old-123": false, "ccam.exe.old.bak": true, "ccam.exe.older": true, "ccam.exe.old-": true, "ccam.exe.old-1x": true, "ccam.exe.old": true} {
+		if Exists(filepath.Join(dir, name)) != want {
+			t.Errorf("%s there: %v, want %v", name, !want, want)
+		}
+	}
+	if data, _ := os.ReadFile(filepath.Join(dir, "ccam.exe.old")); string(data) != "ccam.exe" {
+		t.Errorf("ccam.exe.old holds %q", data)
+	}
+}

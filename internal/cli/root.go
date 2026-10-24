@@ -9,26 +9,83 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"runtime/debug"
 	"strings"
 
 	"github.com/spf13/cobra"
 
 	"github.com/jhyunwoo/ccam/internal/config"
+	"github.com/jhyunwoo/ccam/internal/fsutil"
 	"github.com/jhyunwoo/ccam/internal/launcher"
+	"github.com/jhyunwoo/ccam/internal/lock"
 	"github.com/jhyunwoo/ccam/internal/paths"
+	"github.com/jhyunwoo/ccam/internal/profile"
+	"github.com/jhyunwoo/ccam/internal/usage"
 )
 
 // Version is set at build time with -ldflags "-X .../cli.Version=...".
 var Version = "dev"
+
+// version is Version or, for a binary built without the ldflags (`go
+// install github.com/jhyunwoo/ccam/cmd/ccam@v0.10.3`), the release its build
+// info names. It reads the build info, so it never runs from init().
+func version() string {
+	if Version != "dev" {
+		return Version
+	}
+	if bi, ok := debug.ReadBuildInfo(); ok {
+		return releaseOf(bi.Main.Version)
+	}
+	return Version
+}
+
+// releaseOf is a module version without its v when it names a release, and
+// "dev" for (devel), a pseudo-version (go install ...@main, or a build a
+// commit past a tag) or a +dirty build: a pseudo-version reads as a
+// prerelease of the next release, which update would then offer to replace.
+func releaseOf(v string) string {
+	if !strings.HasPrefix(v, "v") || strings.Contains(v, "+") || pseudo(v) {
+		return "dev"
+	}
+	return strings.TrimPrefix(v, "v")
+}
+
+// pseudo reports whether v ends like a Go pseudo-version: 14 digits of
+// time, "-", 12 hex digits of the commit.
+func pseudo(v string) bool {
+	if len(v) < 27 || v[len(v)-13] != '-' {
+		return false
+	}
+	for i, c := range []byte(v[len(v)-27:]) {
+		switch {
+		case i == 14:
+		case i < 14 && c >= '0' && c <= '9':
+		case i > 14 && (c >= '0' && c <= '9' || c >= 'a' && c <= 'f'):
+		default:
+			return false
+		}
+	}
+	return true
+}
 
 // env is what every command works on.
 type env struct {
 	paths  paths.Paths
 	stdin  io.Reader
 	in     *bufio.Reader // the one buffered reader over stdin, shared by all prompts
+	src    *lineSource   // the lines of in; read them through lines()
 	stdout io.Writer
 	stderr io.Writer
 	dryRun bool
+}
+
+// lines is where prompts and a login's relay read stdin's lines, so that a
+// read the relay leaves under way reaches the next of them.
+func (e *env) lines() *lineSource {
+	if e.src == nil {
+		e.src = &lineSource{in: e.in}
+	}
+	return e.src
 }
 
 func (e *env) load() (*config.Config, error) { return config.Load(e.paths.ConfigFile()) }
@@ -63,12 +120,45 @@ func (e *env) update(change func(*config.Config) error) (*config.Config, error) 
 }
 
 // refuseRunning stops commands that move or remove an account's folder
-// while Claude Code still writes to it.
-func refuseRunning(e *env, name string) error {
-	if launcher.Running(e.paths, name) {
-		return fmt.Errorf("%s is running; quit its Claude Code session first", name)
+// while Claude Code still writes to it, however it was started. Ask it
+// right before the change, after any question.
+func refuseRunning(e *env, prof *config.Profile) error {
+	if launcher.Running(e.paths, prof.Name, profile.Dir(e.paths, prof)) {
+		return fmt.Errorf("%s is running; quit its Claude Code sessions first (`ccam agents` lists them, `ccam %s stop <id>` ends a background one)", prof.Name, prof.Name)
 	}
 	return nil
+}
+
+// canSave reports why cfg could not be saved: lines ccam does not read, or
+// a config folder that takes no new file. Ask it before a step a failed
+// save cannot undo, such as a logout.
+func canSave(e *env, cfg *config.Config) error {
+	path := e.paths.ConfigFile()
+	if err := cfg.Writable(path); err != nil {
+		return err
+	}
+	data, err := os.ReadFile(path)
+	if err == nil {
+		err = fsutil.AtomicWrite(path, data, 0o600)
+	}
+	if err != nil {
+		return fmt.Errorf("%s cannot be saved, so nothing was changed: %w", path, err)
+	}
+	return nil
+}
+
+// holdRefresh takes the lock `ccam usage --refresh` renews prof's login
+// under, so that its folder is not moved or logged out while a renewed
+// login is on its way; the func lets it go.
+func holdRefresh(e *env, prof *config.Profile) (func(), error) {
+	l, err := lock.TryFlock(usage.RefreshLock(launcher.SessionDir(e.paths, prof.Name)))
+	if errors.Is(err, lock.ErrBusy) {
+		return nil, fmt.Errorf("another ccam is using the login of %s right now (a refresh, rename, remove or logout); try again in a moment", prof.Name)
+	}
+	if err != nil {
+		return nil, err
+	}
+	return l.Unlock, nil
 }
 
 func (e *env) printf(format string, a ...any) { fmt.Fprintf(e.stdout, format, a...) }
@@ -76,7 +166,7 @@ func (e *env) printf(format string, a ...any) { fmt.Fprintf(e.stdout, format, a.
 // confirm asks a yes/no question; anything but y/yes is no.
 func (e *env) confirm(question string) bool {
 	fmt.Fprintf(e.stdout, "%s [y/N] ", question)
-	line, _ := e.in.ReadString('\n')
+	line, _ := e.lines().readLine()
 	ans := strings.ToLower(strings.TrimSpace(line))
 	return ans == "y" || ans == "yes"
 }
@@ -98,7 +188,7 @@ func newRoot(e *env) *cobra.Command {
 			"  ccam <name|number> [claude args]  run Claude Code as that account\n" +
 			"  <shortcut> [claude args]          run by a shortcut command (ccam shortcut)\n" +
 			"  ccam --fallback <name> -p \"…\"     run again as another account at a usage limit (ccam help run)",
-		Version:       Version,
+		Version:       version(),
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -145,7 +235,7 @@ func versionCmd(e *env) *cobra.Command {
 		Use:   "version",
 		Short: "Print the version",
 		Args:  cobra.NoArgs,
-		Run:   func(cmd *cobra.Command, args []string) { e.printf("ccam %s\n", Version) },
+		Run:   func(cmd *cobra.Command, args []string) { e.printf("ccam %s\n", version()) },
 	}
 }
 

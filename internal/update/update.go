@@ -258,7 +258,8 @@ func (u *Updater) Fetch(ctx context.Context, tag string) ([]byte, error) {
 // Shortcut commands link to this path, so they run the new version.
 //
 // Windows does not let a running program's file be replaced or deleted,
-// only renamed: the old binary becomes <exe>.old, removed by the next
+// only renamed: the old binary becomes <exe>.old (or <exe>.old-<time>
+// while a session still runs from an earlier one), removed by a later
 // update, and the new one takes its name.
 func (u *Updater) Install(bin []byte) error {
 	info, err := os.Stat(u.Exe)
@@ -268,14 +269,13 @@ func (u *Updater) Install(bin []byte) error {
 	if u.GOOS != "windows" {
 		return fsutil.AtomicWrite(u.Exe, bin, info.Mode().Perm())
 	}
-	old := OldExe(u.Exe)
-	os.Remove(old) // from the update before; still running if this fails
 	tmp := u.Exe + ".new"
 	if err := os.WriteFile(tmp, bin, 0o755); err != nil {
 		os.Remove(tmp)
 		return err
 	}
-	if err := os.Rename(u.Exe, old); err != nil {
+	old, err := fsutil.MoveAside(u.Exe)
+	if err != nil {
 		os.Remove(tmp)
 		return err
 	}
@@ -286,9 +286,6 @@ func (u *Updater) Install(bin []byte) error {
 	}
 	return nil
 }
-
-// OldExe is where Install moves the replaced binary on Windows.
-func OldExe(exe string) string { return exe + ".old" }
 
 func (u *Updater) get(ctx context.Context, rawURL string) ([]byte, error) {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, rawURL, nil)
@@ -453,12 +450,15 @@ func writable(dir string) error {
 
 // versionRe is MAJOR.MINOR.PATCH with an optional v, -prerelease and +build.
 // A tag ends up in download URLs and in a printed shell command, so nothing
-// else (no '/', '%', spaces or shell characters) gets through.
-var versionRe = regexp.MustCompile(`^v?(\d+)\.(\d+)\.(\d+)(?:-([0-9A-Za-z.-]+))?(?:\+[0-9A-Za-z.-]+)?$`)
+// else (no '/', '%', spaces or shell characters) gets through. It is
+// compiled on first use, not at init of every ccam process.
+var versionRe = sync.OnceValue(func() *regexp.Regexp {
+	return regexp.MustCompile(`^v?(\d+)\.(\d+)\.(\d+)(?:-([0-9A-Za-z.-]+))?(?:\+[0-9A-Za-z.-]+)?$`)
+})
 
 // parseVersion reads a version; ok is false for anything else, such as "dev".
 func parseVersion(v string) (version, bool) {
-	m := versionRe.FindStringSubmatch(v)
+	m := versionRe().FindStringSubmatch(v)
 	if m == nil {
 		return version{}, false
 	}

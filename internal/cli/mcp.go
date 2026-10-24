@@ -3,17 +3,23 @@ package cli
 import (
 	"encoding/json"
 	"fmt"
+	"maps"
+	"os"
 	"path/filepath"
+	"slices"
 	"sort"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/spf13/cobra"
 
 	"github.com/jhyunwoo/ccam/internal/config"
+	"github.com/jhyunwoo/ccam/internal/ext"
 	"github.com/jhyunwoo/ccam/internal/fsutil"
 	"github.com/jhyunwoo/ccam/internal/launcher"
 	"github.com/jhyunwoo/ccam/internal/mcp"
+	"github.com/jhyunwoo/ccam/internal/migrate"
 	"github.com/jhyunwoo/ccam/internal/profile"
 	"github.com/jhyunwoo/ccam/internal/share"
 )
@@ -72,7 +78,12 @@ func mcpListCmd(e *env) *cobra.Command {
 	return &cobra.Command{
 		Use:   "list",
 		Short: "Shared MCP servers per group, and servers only one account has",
-		Args:  cobra.NoArgs,
+		Long: "Lists the servers each group shares, then the servers only one account has:\n" +
+			"in its .claude.json for every folder (user scope), or for one folder only (the\n" +
+			"local scope `claude mcp add` uses unless given -s user). `ccam mcp import` shares\n" +
+			"them. `claude mcp list` does not show a group's servers: Claude Code reads them\n" +
+			"only when a session starts.",
+		Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg, err := e.load()
 			if err != nil {
@@ -99,24 +110,63 @@ func mcpListCmd(e *env) *cobra.Command {
 			}
 			for i := range cfg.Profiles {
 				p := &cfg.Profiles[i]
-				local, err := mcp.LocalServers(profile.Dir(e.paths, p))
-				if err != nil || len(local) == 0 {
-					continue
-				}
-				var only []string
-				for n := range local {
-					if _, ok := shared[p.Share.Get("mcp")][n]; !ok {
+				dir := profile.Dir(e.paths, p)
+				group, sharing := shared[p.Share.Get("mcp")]
+				local, _ := mcp.LocalServers(dir)
+				var only, own []string
+				for n, def := range local {
+					switch have, ok := group[n]; {
+					case !ok:
 						only = append(only, n)
+					case !mcp.SameDef(have, def):
+						own = append(own, n)
 					}
 				}
 				if len(only) > 0 {
 					sort.Strings(only)
 					e.printf("only in account %s: %s\n", p.Name, strings.Join(only, ", "))
 				}
+				if len(own) > 0 && sharing {
+					sort.Strings(own)
+					e.printf("account %s has its own %s, used in its sessions in place of the group's\n", p.Name, strings.Join(own, ", "))
+				}
+				folders, _ := mcp.FolderServers(dir)
+				for _, folder := range slices.Sorted(maps.Keys(folders)) {
+					e.printf("only in account %s, for %s only: %s\n", p.Name, folder, strings.Join(slices.Sorted(maps.Keys(folders[folder])), ", "))
+				}
+			}
+			// The project's servers load in every account that trusts the folder.
+			if cwd, err := os.Getwd(); err == nil {
+				if store, err := mcp.Load(filepath.Join(cwd, ".mcp.json")); err == nil && len(store.Servers) > 0 {
+					e.printf("this folder's .mcp.json: %s\n", strings.Join(store.Names(), ", "))
+					for i := range cfg.Profiles {
+						p := &cfg.Profiles[i]
+						if w := ext.Waiting(profile.Dir(e.paths, p), cwd, store.Names()); len(w) > 0 {
+							e.printf("  waiting for approval in account %s, which has not trusted the folder: %s\n", p.Name, strings.Join(w, ", "))
+						}
+					}
+				}
+			}
+			if from, names := homeOnlyMCP(e, cfg); len(names) > 0 {
+				e.printf("in no account, only in %s (plain claude's): %s. `%s` copies them into the shared group\n", from, strings.Join(names, ", "), migrate.MCPCommand(cfg))
 			}
 			return nil
 		},
 	}
+}
+
+// homeOnlyMCP lists the user-scope servers of plain Claude Code's
+// .claude.json (~/.claude.json) that no account loads.
+func homeOnlyMCP(e *env, cfg *config.Config) (from string, names []string) {
+	var accts, groups []string
+	for i := range cfg.Profiles {
+		p := &cfg.Profiles[i]
+		accts = append(accts, profile.Dir(e.paths, p))
+		if f := p.Share.Get("mcp"); f != config.Local {
+			groups = append(groups, e.paths.GroupDir(f))
+		}
+	}
+	return migrate.HomeOnly(filepath.Join(e.paths.Home, ".claude"), e.paths.Home, accts, groups)
 }
 
 func describeServer(raw json.RawMessage) string {
@@ -215,14 +265,13 @@ func addServer(e *env, groupFlag, name string, def json.RawMessage) error {
 	if err != nil {
 		return err
 	}
-	path := mcp.Path(e.paths.GroupDir(folder))
-	store, err := mcp.Load(path)
-	if err != nil {
-		return err
-	}
-	_, existed := store.Servers[name]
-	store.Servers[name] = def
-	if err := store.Save(path); err != nil {
+	existed := false
+	noteCopies(e, cfg, folder)
+	if err := mcp.Update(mcp.Path(e.paths.GroupDir(folder)), func(store *mcp.Store) error {
+		_, existed = store.Servers[name]
+		store.Servers[name] = def
+		return nil
+	}); err != nil {
 		return err
 	}
 	verb := "added"
@@ -239,6 +288,19 @@ func addServer(e *env, groupFlag, name string, def json.RawMessage) error {
 	return nil
 }
 
+// noteCopies has the copies an older ccam made of the servers of the group
+// in folder g noted with their hashes (mcp.NoteCopies), right before g's
+// mcp.json changes: refreshCopies and Sync then update them, where they
+// would take them for the accounts' own.
+func noteCopies(e *env, cfg *config.Config, g string) {
+	for i := range cfg.Profiles {
+		prof := &cfg.Profiles[i]
+		if prof.Share.Get("mcp") == g {
+			_ = mcp.NoteCopies(profile.Dir(e.paths, prof), e.paths.GroupDir(g), launcher.MCPStateDir(e.paths, prof.Name))
+		}
+	}
+}
+
 // refreshCopies updates the accounts whose .claude.json holds a copy of the
 // servers of the group in folder g, made when they started Remote Control.
 // Under the flag strategy an entry in .claude.json wins over --mcp-config,
@@ -253,15 +315,21 @@ func refreshCopies(e *env, cfg *config.Config, g, except string) {
 		if prof.Name == except || prof.Share.Get("mcp") != g || !mcp.HasCopy(state) {
 			continue
 		}
-		if launcher.Running(e.paths, prof.Name) {
+		if launcher.Running(e.paths, prof.Name, profile.Dir(e.paths, prof)) {
 			e.printf("Note: account %s is running, so the copy in its .claude.json stays as it was until its next Remote Control launch.\n", prof.Name)
 			continue
 		}
-		if err := mcp.Sync(profile.Dir(e.paths, prof), e.paths.GroupDir(g), state); err != nil {
+		res, err := mcp.Sync(profile.Dir(e.paths, prof), e.paths.GroupDir(g), state)
+		if err != nil {
 			e.printf("Note: could not update the copy in account %s's .claude.json: %v\n", prof.Name, err)
 			continue
 		}
-		e.printf("✓ Updated the copy in account %s's .claude.json (made for Remote Control)\n", prof.Name)
+		if res.Wrote {
+			e.printf("✓ Updated the copy in account %s's .claude.json (made for Remote Control)\n", prof.Name)
+		}
+		if len(res.Own) > 0 {
+			e.printf("Note: account %s has its own %s, so the group's of those names are not copied there\n", prof.Name, strings.Join(res.Own, ", "))
+		}
 	}
 }
 
@@ -279,16 +347,14 @@ func mcpRemoveCmd(e *env, group *string) *cobra.Command {
 			if err != nil {
 				return err
 			}
-			path := mcp.Path(e.paths.GroupDir(folder))
-			store, err := mcp.Load(path)
-			if err != nil {
-				return err
-			}
-			if _, ok := store.Servers[args[0]]; !ok {
-				return fmt.Errorf("group %s has no server %q", g, args[0])
-			}
-			delete(store.Servers, args[0])
-			if err := store.Save(path); err != nil {
+			noteCopies(e, cfg, folder)
+			if err := mcp.Update(mcp.Path(e.paths.GroupDir(folder)), func(store *mcp.Store) error {
+				if _, ok := store.Servers[args[0]]; !ok {
+					return fmt.Errorf("group %s has no server %q", g, args[0])
+				}
+				delete(store.Servers, args[0])
+				return nil
+			}); err != nil {
 				return err
 			}
 			e.printf("✓ %s removed from group %s\n", args[0], g)
@@ -303,7 +369,13 @@ func mcpImportCmd(e *env) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "import <account> [server…]",
 		Short: "Move MCP servers only one account has into that account's shared group",
-		Args:  cobra.MinimumNArgs(1),
+		Long: "Copies the account's own servers into the mcp.json of the group it shares MCP\n" +
+			"through, then takes them out of its .claude.json, where they would win over the\n" +
+			"group's (--keep-local leaves them). Without server names, all of its own.\n" +
+			"A server `claude mcp add` gave one folder (local scope) then loads from the group\n" +
+			"for every account in it, in every folder. A group server of the same name that\n" +
+			"differs is left (--force replaces it, after a backup of mcp.json).",
+		Args: cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg, err := e.load()
 			if err != nil {
@@ -319,14 +391,23 @@ func mcpImportCmd(e *env) *cobra.Command {
 			}
 			g, folder := gr.Name, gr.Folder()
 			dir := profile.Dir(e.paths, prof)
-			local, err := mcp.LocalServers(dir)
+			user, err := mcp.LocalServers(dir)
+			if err != nil {
+				return err
+			}
+			folders, err := mcp.FolderServers(dir)
 			if err != nil {
 				return err
 			}
 			names := args[1:]
 			if len(names) == 0 {
-				for n := range local {
-					names = append(names, n)
+				names = slices.Collect(maps.Keys(user))
+				for _, s := range folders {
+					for n := range s {
+						if !slices.Contains(names, n) {
+							names = append(names, n)
+						}
+					}
 				}
 				sort.Strings(names)
 			}
@@ -335,16 +416,29 @@ func mcpImportCmd(e *env) *cobra.Command {
 				return nil
 			}
 			path := mcp.Path(e.paths.GroupDir(folder))
+			noteCopies(e, cfg, folder)
+			// Held until the account's entries are gone: no other ccam can
+			// drop a server from the group in between.
+			unlock, err := mcp.Lock(path)
+			if err != nil {
+				return err
+			}
+			release := sync.OnceFunc(unlock)
+			defer release()
 			store, err := mcp.Load(path)
 			if err != nil {
 				return err
 			}
-			var copied, skipped []string
+			var copied, skipped, widened, fromUser []string
+			fromFolders := map[string][]string{}
 			replaced := false
 			for _, n := range names {
-				def, ok := local[n]
+				def, ok := user[n]
+				var where []string
 				if !ok {
-					return fmt.Errorf("account %s has no server %q", prof.Name, n)
+					if def, where, err = folderServer(prof.Name, folders, n); err != nil {
+						return err
+					}
 				}
 				// The group's definition is what every other account uses.
 				if have, ok := store.Servers[n]; ok && !mcp.SameDef(have, def) {
@@ -356,6 +450,14 @@ func mcpImportCmd(e *env) *cobra.Command {
 				}
 				store.Servers[n] = def
 				copied = append(copied, n)
+				if len(where) == 0 {
+					fromUser = append(fromUser, n)
+					continue
+				}
+				widened = append(widened, n)
+				for _, f := range where {
+					fromFolders[f] = append(fromFolders[f], n)
+				}
 			}
 			for _, n := range skipped {
 				e.printf("Skipped %s: group %s already has a different %s (`ccam mcp import %s %s --force` replaces it)\n", n, g, n, prof.Name, n)
@@ -373,26 +475,59 @@ func mcpImportCmd(e *env) *cobra.Command {
 			if err := store.Save(path); err != nil {
 				return err
 			}
-			names = copied
-			e.printf("✓ Copied to group %s: %s\n", g, strings.Join(names, ", "))
-			// The account's own entries are dealt with below.
+			e.printf("✓ Copied to group %s: %s\n", g, strings.Join(copied, ", "))
+			if len(widened) > 0 {
+				e.printf("  %s loaded for one folder of account %s only; from the group, every account in it gets them in every folder\n", strings.Join(widened, ", "), prof.Name)
+			}
+			err = dropOwn(e, prof, dir, keepLocal, fromUser, fromFolders)
+			release()
+			// The account's own entries are dealt with above.
 			refreshCopies(e, cfg, folder, prof.Name)
-			if keepLocal {
-				return nil
-			}
-			// Local entries win over --mcp-config on name clashes, so drop them.
-			if launcher.Running(e.paths, prof.Name) {
-				e.printf("Note: account %s is running, so its own entries stay. Run this again after it exits to remove them.\n", prof.Name)
-				return nil
-			}
-			if err := mcp.RemoveLocal(dir, filepath.Join(e.paths.State, "mcp", prof.Name), names); err != nil {
-				return fmt.Errorf("could not remove the account's entries: %w", err)
-			}
-			e.printf("✓ Removed account %s's own entries (.claude.json backed up)\n", prof.Name)
-			return nil
+			return err
 		},
 	}
 	cmd.Flags().BoolVar(&keepLocal, "keep-local", false, "keep the entries in the account's .claude.json")
 	cmd.Flags().BoolVar(&force, "force", false, "replace a group server of the same name that differs (the old mcp.json is backed up)")
 	return cmd
+}
+
+// dropOwn takes servers just copied into the group out of the account's
+// .claude.json, where they would win over the group's: user from its user
+// scope, folders from those folders' local scope.
+func dropOwn(e *env, prof *config.Profile, dir string, keep bool, user []string, folders map[string][]string) error {
+	if keep {
+		return nil
+	}
+	if launcher.Running(e.paths, prof.Name, dir) {
+		e.printf("Note: account %s is running, so its own entries stay. Run this again after it exits to remove them.\n", prof.Name)
+		return nil
+	}
+	if err := mcp.Remove(dir, filepath.Join(e.paths.State, "mcp", prof.Name), user, folders); err != nil {
+		return fmt.Errorf("could not remove the account's entries: %w", err)
+	}
+	e.printf("✓ Removed account %s's own entries (.claude.json backed up)\n", prof.Name)
+	return nil
+}
+
+// folderServer finds server n in the local scope of account's folders: its
+// definition and the folders that have it. One name with different
+// definitions in two folders is refused: which one is meant is not clear.
+func folderServer(account string, folders map[string]map[string]json.RawMessage, n string) (json.RawMessage, []string, error) {
+	var def json.RawMessage
+	var where []string
+	for _, f := range slices.Sorted(maps.Keys(folders)) {
+		d, ok := folders[f][n]
+		if !ok {
+			continue
+		}
+		if def != nil && !mcp.SameDef(def, d) {
+			return nil, nil, fmt.Errorf("account %s has different servers named %s for %s and %s; remove one of them (claude mcp remove %s, in that folder), then import the other", account, n, where[0], f, n)
+		}
+		def = d
+		where = append(where, f)
+	}
+	if def == nil {
+		return nil, nil, fmt.Errorf("account %s has no server %q", account, n)
+	}
+	return def, where, nil
 }

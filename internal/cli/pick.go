@@ -48,7 +48,12 @@ func pickCmd(e *env) *cobra.Command {
 		Example: "  ccam \"$(ccam pick)\" -p \"fix the failing tests\"\n" +
 			"  for t in a b c; do ccam \"$(ccam pick)\" -p \"task $t\" & done; wait\n" +
 			"  ccam pick --json --model opus --max-usage 80",
-		Args: cobra.NoArgs,
+		Args: func(cmd *cobra.Command, args []string) error {
+			if err := spacedValue(cmd, args, "wait", DefaultWait); err != nil {
+				return err
+			}
+			return cobra.NoArgs(cmd, args)
+		},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg, err := e.load()
 			if err != nil {
@@ -120,7 +125,8 @@ func pickOnce(e *env, cfg *config.Config, profs []*config.Profile, p usage.Polic
 	now := clock()
 	var fresh []*usage.Report
 	for _, r := range reports {
-		if info, err := os.Stat(pickPath(e, r.Name)); err != nil || now.Sub(info.ModTime()) >= recentPick {
+		// A mark dated after now (the clock was set back) is not recent.
+		if info, err := os.Stat(pickPath(e, r.Name)); err != nil || info.ModTime().After(now) || now.Sub(info.ModTime()) >= recentPick {
 			fresh = append(fresh, r)
 		}
 	}

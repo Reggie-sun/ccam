@@ -30,7 +30,7 @@ type changeFlags struct {
 func (f *changeFlags) add(cmd *cobra.Command, seed bool) {
 	cmd.Flags().BoolVarP(&f.yes, "yes", "y", false, "run without asking (conflicts follow --prefer)")
 	cmd.Flags().StringVar(&f.prefer, "prefer", "", "conflict handling: group|mine|merge (default: ask; with --yes, each item's default)")
-	cmd.Flags().BoolVar(&f.fresh, "fresh", false, "accounts that stop sharing an item start without it instead of with a copy")
+	cmd.Flags().BoolVar(&f.fresh, "fresh", false, "accounts that stop sharing an item start without it instead of with a copy (an imported folder still keeps one)")
 	if seed {
 		cmd.Flags().StringVar(&f.from, "from", "", "the account whose copy goes into the group first")
 	}
@@ -45,6 +45,9 @@ func changeGroups(e *env, edit func(*config.Config) error, f changeFlags) (*grou
 	}
 	old, err := e.load()
 	if err != nil {
+		return nil, false, err
+	}
+	if err := group.Unfinished(e.paths); err != nil {
 		return nil, false, err
 	}
 	next := old.Clone()
@@ -90,16 +93,26 @@ func changeGroups(e *env, edit func(*config.Config) error, f changeFlags) (*grou
 		e.printf("Cancelled.\n")
 		return ch, false, nil
 	}
-	// Save first: if a move stops halfway, doctor --fix and a rerun build
-	// their plan toward the saved groups and finish it. The prompts may
-	// have waited, so the edit is made again on the current config.
-	if _, err := e.update(edit); err != nil {
+	// Save first, with a note of the change: if a move stops halfway,
+	// doctor --fix finishes it. The prompts may have waited, so the edit
+	// is made again on the current config, after checking again that
+	// nothing started or changed the groups meanwhile.
+	if _, err := e.update(func(c *config.Config) error { return recheck(ch, c, edit, group.Running(e.paths)) }); err != nil {
+		ch.Abort()
 		return nil, false, err
 	}
 	if err := ch.Apply(); err != nil {
 		return nil, false, fmt.Errorf("failed while applying: %w", err)
 	}
 	return ch, true, nil
+}
+
+// recheck is Change.Recheck, then Begin, inside the config update.
+func recheck(ch *group.Change, cur *config.Config, edit func(*config.Config) error, running func(name, dir string) bool) error {
+	if err := ch.Recheck(cur, edit, running); err != nil {
+		return err
+	}
+	return ch.Begin()
 }
 
 func groupCmd(e *env) *cobra.Command {
@@ -252,7 +265,9 @@ func groupAddCmd(e *env) *cobra.Command {
 		Long: "Creates a group that shares the items given with --items between the accounts\n" +
 			"given with --members. The first account to bring an item fills the group's\n" +
 			"folder; the others' copies are merged in or, for a file that differs, saved\n" +
-			"in their " + share.BackupDir + " folder (you choose which copy wins).\n" +
+			"in their " + share.BackupDir + " folder. You choose which copy of a file such as\n" +
+			"settings.json wins; inside folders the group's copy stays, and the plan names\n" +
+			"the files that differ.\n" +
 			"Items: " + strings.Join(config.Items, ", "),
 		Example: "  ccam group add team --items history --members work,side\n" +
 			"  ccam group add docs --items memory,settings --members 1,3 --from work",
@@ -290,7 +305,8 @@ func groupSetCmd(e *env) *cobra.Command {
 		Short: "Change what a group shares (moves the data of every account in it)",
 		Long: "--add shares more items, --remove stops sharing items, --items sets the whole\n" +
 			"list. Every account in the group changes together. An account that stops\n" +
-			"sharing an item keeps a copy of the group's (start empty with --fresh).\n" +
+			"sharing an item keeps a copy of the group's (start empty with --fresh); for mcp,\n" +
+			"the group's servers go into its own .claude.json.\n" +
 			"Items: " + strings.Join(config.Items, ", "),
 		Example: "  ccam group set default --remove history\n" +
 			"  ccam group set team --add memory --from work\n" +
@@ -354,8 +370,10 @@ func groupJoinCmd(e *env) *cobra.Command {
 		Short: "Put accounts in a group (their items move into it)",
 		Long: "Each account starts sharing the group's items. Its own copy of an item is\n" +
 			"merged into the group or, for a file that differs, saved in its " + share.BackupDir + "\n" +
-			"folder (you choose which copy wins). An account that already gets one of the\n" +
-			"items from another group is refused; --replace takes it out of that group first.",
+			"folder. You choose which copy of a file such as settings.json wins; inside\n" +
+			"folders the group's copy stays, and the plan names the files that differ.\n" +
+			"An account that already gets one of the items from another group is refused;\n" +
+			"--replace takes it out of that group first.",
 		Example:           "  ccam group join team work side\n  ccam group join team personal --replace",
 		Args:              cobra.MinimumNArgs(2),
 		ValidArgsFunction: groupNames(e),
@@ -395,7 +413,8 @@ func groupLeaveCmd(e *env) *cobra.Command {
 		Use:   "leave <group> <account>...",
 		Short: "Take accounts out of a group (each keeps a copy)",
 		Long: "Each account stops sharing the group's items and keeps its own copy of them\n" +
-			"(--fresh: starts without them). The group and the other accounts are not changed.",
+			"(--fresh: starts without them); the group's MCP servers go into its own\n" +
+			".claude.json. The group and the other accounts are not changed.",
 		Example:           "  ccam group leave team side\n  ccam group leave default work --fresh",
 		Args:              cobra.MinimumNArgs(2),
 		ValidArgsFunction: groupNames(e),

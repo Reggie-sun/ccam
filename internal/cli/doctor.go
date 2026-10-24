@@ -21,9 +21,12 @@ func doctorCmd(e *env) *cobra.Command {
 			if err != nil {
 				return err
 			}
-			fix := fix && !e.dryRun // a dry run reports what --fix would repair
+			// A dry run reports what --fix would repair, and what it would
+			// set aside.
+			dry := fix && e.dryRun
+			fix := fix && !e.dryRun
 			self, _ := ccamPath()
-			findings := doctor.Run(e.paths, cfg, doctor.Options{Fix: fix, CcamPath: self, Usage: e.fetcher()})
+			findings := doctor.Run(e.paths, cfg, doctor.Options{Fix: fix, DryRun: dry, CcamPath: self, Usage: e.fetcher(), Reload: e.load})
 			// On a terminal the boxes fit its width; otherwise each box is as
 			// wide as its longest line, so no message is cut or wrapped.
 			width, tty := 0, isTerminal(e.stdout)

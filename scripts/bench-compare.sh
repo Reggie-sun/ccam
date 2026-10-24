@@ -4,7 +4,7 @@
 # Usage: scripts/bench-compare.sh origin/main
 set -eu
 base=${1:?usage: bench-compare.sh <base-ref>}
-pkgs="./internal/launcher/ ./internal/profile/ ./internal/config/"
+pkgs="./internal/launcher/ ./internal/profile/ ./internal/config/ ./internal/usage/"
 
 tmp=$(mktemp -d)
 trap 'git worktree remove --force "$tmp/base" 2>/dev/null; rm -rf "$tmp"' EXIT

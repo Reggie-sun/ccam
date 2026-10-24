@@ -78,7 +78,7 @@ func TestGroupChangeRefusesWhileRunning(t *testing.T) {
 	if err := session.Register(launcher.SessionDir(c.p, "work")); err != nil {
 		t.Fatal(err)
 	}
-	if !launcher.Running(c.p, "work") {
+	if !launcher.Running(c.p, "work", c.p.ProfileDir("work")) {
 		t.Skip("session tracking is not supported on this platform")
 	}
 	_, errOut, code := c.run("", "group", "set", "team", "--add", "memory", "--yes")
@@ -288,7 +288,7 @@ func TestDoctorFixWaitsForARunningAccount(t *testing.T) {
 	if err := session.Register(launcher.SessionDir(c.p, "work")); err != nil {
 		t.Fatal(err)
 	}
-	if !launcher.Running(c.p, "work") {
+	if !launcher.Running(c.p, "work", c.p.ProfileDir("work")) {
 		t.Skip("session tracking is not supported on this platform")
 	}
 	os.MkdirAll(filepath.Join(c.p.ProfileDir("work"), "projects"), 0o700) // a real folder where team's link belongs

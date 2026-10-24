@@ -29,6 +29,9 @@ const (
 	accountTimeout = 3 * time.Second
 )
 
+// LookupTimeout bounds one account's live lookup.
+const LookupTimeout = accountTimeout
+
 type Status string
 
 const (
@@ -56,9 +59,14 @@ type Report struct {
 	Slot   int       `json:"slot"`
 	Status Status    `json:"status"`
 	Limits *Limits   `json:"limits,omitempty"`
-	Source string    `json:"source,omitempty"` // live | cache | statusline
+	Source string    `json:"source,omitempty"` // live | cache | statusline | limit
 	At     time.Time `json:"at,omitzero"`      // when the values were measured
 	Err    string    `json:"error,omitempty"`
+	// Limited is when Claude Code reported the usage limit that set the
+	// windows LimitedWindows names ("5-hour", "Weekly", a model) to 100%
+	// until their reset, over what the source said; zero when none.
+	Limited        time.Time `json:"limited,omitzero"`
+	LimitedWindows []string  `json:"limited_windows,omitempty"`
 	// FormatChanged means the endpoint answered but the parser did not
 	// understand it; doctor reports this.
 	FormatChanged bool `json:"format_changed,omitempty"`
@@ -78,12 +86,15 @@ type Options struct {
 
 // Fetcher queries accounts in parallel over one shared HTTP client.
 type Fetcher struct {
-	Client   *http.Client
-	URL      string
-	TokenURL string
-	StateDir string // ~/.local/state/ccam/usage
-	Home     string // names the macOS Keychain item of an imported ~/.claude
-	Now      func() time.Time
+	Client *http.Client
+	// TokenClient sends token renewals: Client without its 3 s wait for an
+	// answer, which refreshTimeout bounds instead (nil: Client).
+	TokenClient *http.Client
+	URL         string
+	TokenURL    string
+	StateDir    string // ~/.local/state/ccam/usage
+	Home        string // names the macOS Keychain item of an imported ~/.claude
+	Now         func() time.Time
 	// Source is what Options.Source "" means (config usage_source).
 	Source string
 	// Probe runs Claude Code in the account's folder with ProbeRequest on
@@ -100,17 +111,18 @@ func NewFetcher(stateDir string) *Fetcher {
 		ForceAttemptHTTP2:     true,
 		MaxIdleConnsPerHost:   8,
 	}
+	// Neither endpoint redirects; following one would resend the token (or
+	// the refresh token in a POST body) elsewhere.
+	noRedirect := func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }
+	token := tr.Clone()
+	token.ResponseHeaderTimeout = 0
 	return &Fetcher{
-		Client: &http.Client{
-			Transport: tr,
-			// Neither endpoint redirects; following one would resend the
-			// token (or the refresh token in a POST body) elsewhere.
-			CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse },
-		},
-		URL:      Endpoint,
-		TokenURL: TokenURL,
-		StateDir: stateDir,
-		Now:      time.Now,
+		Client:      &http.Client{Transport: tr, CheckRedirect: noRedirect},
+		TokenClient: &http.Client{Transport: token, CheckRedirect: noRedirect},
+		URL:         Endpoint,
+		TokenURL:    TokenURL,
+		StateDir:    stateDir,
+		Now:         time.Now,
 	}
 }
 
@@ -136,8 +148,14 @@ func (f *Fetcher) FetchAll(ctx context.Context, accts []Account, opt Options, on
 	return out
 }
 
-// Fetch queries one account, falling back to cached values on failure.
+// Fetch queries one account, falling back to cached values on failure. A
+// window Claude Code has reported full (SaveLimit) counts as full until its
+// reset, whatever the values say.
 func (f *Fetcher) Fetch(ctx context.Context, a Account, opt Options) Report {
+	return f.withLimit(a, f.fetch(ctx, a, opt))
+}
+
+func (f *Fetcher) fetch(ctx context.Context, a Account, opt Options) Report {
 	r := Report{Name: a.Name, Slot: a.Slot}
 	if a.API {
 		r.Status = StatusAPI
@@ -152,11 +170,14 @@ func (f *Fetcher) Fetch(ctx context.Context, a Account, opt Options) Report {
 	if opt.Source == "cache" {
 		r = f.fallback(a, r, StatusOK, "")
 		if r.Limits == nil {
-			// Nothing saved: say why when the account has no login at all.
-			if _, _, err := readCredentials(a.Dir, f.Home); errors.Is(err, errNoOAuth) {
+			// Nothing saved: say why when the account has no working login.
+			switch _, _, err := readCredentials(a.Dir, f.Home, f.Now()); {
+			case errors.Is(err, errLoginExpired):
+				r.Status, r.Err = StatusExpired, loginExpired(a.Name)
+			case errors.Is(err, errNoOAuth):
 				r.Err = ""
 				r.Status = StatusLoggedOut
-				if hasAPIKey(a.Dir) {
+				if creds.APIKey(a.Dir) {
 					r.Status = StatusAPI
 				}
 			}
@@ -164,35 +185,44 @@ func (f *Fetcher) Fetch(ctx context.Context, a Account, opt Options) Report {
 		return r
 	}
 	if !opt.NoCache {
-		if c, ok := f.readCache(a.Name, "live"); ok && f.Now().Sub(c.At) < CacheTTL {
+		if c, ok := f.readCache(a.Name, "live"); ok && fresh(c.At, f.Now()) {
 			r.Status, r.Limits, r.Source, r.At = StatusOK, c.Limits, "live", c.At
 			return r
 		}
 	}
-	cred, src, err := readCredentials(a.Dir, f.Home)
+	cred, src, err := readCredentials(a.Dir, f.Home, f.Now())
 	switch {
+	case errors.Is(err, errLoginExpired):
+		return f.fallback(a, r, StatusExpired, loginExpired(a.Name))
 	case errors.Is(err, errNoOAuth):
-		if hasAPIKey(a.Dir) {
+		if creds.APIKey(a.Dir) {
 			r.Status = StatusAPI
 			return r
 		}
 		r.Status = StatusLoggedOut
 		return r
+	case errors.Is(err, creds.ErrCredentialManager):
+		return f.fallback(a, r, StatusError, err.Error()+`; usage_source = "claude" asks Claude Code instead`)
 	case err != nil:
 		return f.fallback(a, r, StatusError, err.Error())
 	}
 	if cred.expired(f.Now()) {
 		if !opt.Refresh {
-			return f.fallback(a, r, StatusExpired, "")
+			return f.fallback(a, r, StatusExpired, fmt.Sprintf("access token expired; `ccam %s` renews it when it starts", a.Name))
 		}
 		if src == creds.Keychain {
-			return f.fallback(a, r, StatusExpired, "macOS keychain logins are not refreshed")
+			return f.fallback(a, r, StatusExpired, fmt.Sprintf("token not renewed: ccam does not renew macOS Keychain logins; `ccam %s` renews it when it starts", a.Name))
 		}
-		rctx, cancel := context.WithTimeout(ctx, accountTimeout)
-		cred, err = f.refresh(rctx, a)
-		cancel()
-		if err != nil {
-			return f.fallback(a, r, StatusExpired, err.Error())
+		// Not bounded by the lookup's 3 s: a renewal may take as long as
+		// Claude Code lets its own (refreshTimeout).
+		if cred, err = f.refresh(ctx, a); err != nil {
+			// Most refusals leave a working login (Claude Code renews it);
+			// a renewal ccam lost says so itself.
+			why := err.Error()
+			if !errors.Is(err, errLoginLost) {
+				why = "token not renewed: " + why
+			}
+			return f.fallback(a, r, StatusExpired, why)
 		}
 	}
 	if until, ok := f.paused(a.Name); ok {
@@ -226,7 +256,10 @@ func (f *Fetcher) live(ctx context.Context, token string) (Limits, Status, error
 	req.Header.Set("User-Agent", "ccam")
 	resp, err := f.Client.Do(req)
 	if err != nil {
-		if ctx.Err() != nil {
+		switch {
+		case errors.Is(ctx.Err(), context.Canceled):
+			return Limits{}, StatusError, errors.New("cancelled")
+		case ctx.Err() != nil:
 			return Limits{}, StatusError, fmt.Errorf("no response (over %s)", accountTimeout)
 		}
 		return Limits{}, StatusError, err
@@ -240,7 +273,7 @@ func (f *Fetcher) live(ctx context.Context, token string) (Limits, Status, error
 	case resp.StatusCode == http.StatusTooManyRequests:
 		return Limits{}, StatusError, rateLimited{retryAfter: resp.Header.Get("Retry-After")}
 	case resp.StatusCode == http.StatusUnauthorized || resp.StatusCode == http.StatusForbidden:
-		return Limits{}, StatusExpired, fmt.Errorf("authentication failed (%d)", resp.StatusCode)
+		return Limits{}, StatusExpired, fmt.Errorf("login expired: authentication failed (%d)", resp.StatusCode)
 	case resp.StatusCode != http.StatusOK:
 		return Limits{}, StatusError, fmt.Errorf("HTTP %d", resp.StatusCode)
 	}
@@ -251,27 +284,39 @@ func (f *Fetcher) live(ctx context.Context, token string) (Limits, Status, error
 	return l, StatusOK, nil
 }
 
-// fallback fills r with the newest cached values (live cache or status line).
+// fallback fills r with the saved values: the newest lookup (live or
+// claude), with the windows a newer status line knows on top. The status
+// line has no model windows and leaves out a window that is not running,
+// so it never replaces a lookup's values wholesale.
 func (f *Fetcher) fallback(a Account, r Report, status Status, errMsg string) Report {
 	r.Status, r.Err = status, errMsg
-	var best cached
+	var base cached
 	found := false
-	for _, src := range []string{"live", "claude", "statusline"} {
-		if c, ok := f.readCache(a.Name, src); ok && (!found || c.At.After(best.At)) {
-			best, found = c, true
-			best.source = src
+	for _, src := range []string{"live", "claude"} {
+		if c, ok := f.readCache(a.Name, src); ok && (!found || c.At.After(base.At)) {
+			base, found = c, true
 		}
 	}
-	if !found {
+	line, haveLine := f.readCache(a.Name, "statusline")
+	switch {
+	case !found && !haveLine:
 		if status == StatusOK {
 			r.Status, r.Err = StatusError, "no saved usage"
 		}
 		return r
+	case !found:
+		r.Limits, r.At, r.Source = line.Limits, line.At, "statusline"
+		return r
 	}
-	r.Limits, r.At = best.Limits.as(f.Now()), best.At
-	r.Source = "cache"
-	if best.source == "statusline" {
-		r.Source = "statusline"
+	r.Limits, r.At, r.Source = base.Limits, base.At, "cache"
+	if haveLine && line.At.After(base.At) {
+		if line.Limits.FiveHour.Known {
+			r.Limits.FiveHour = line.Limits.FiveHour
+		}
+		if line.Limits.Weekly.Known {
+			r.Limits.Weekly = line.Limits.Weekly
+		}
+		r.At, r.Source = line.At, "statusline"
 	}
 	return r
 }
@@ -279,7 +324,13 @@ func (f *Fetcher) fallback(a Account, r Report, status Status, errMsg string) Re
 type cached struct {
 	At     time.Time `json:"at"`
 	Limits *Limits   `json:"limits"`
-	source string
+}
+
+// fresh reports whether values saved at at stand in for a lookup at now. A
+// time after now (the clock was set back) is not fresh.
+func fresh(at, now time.Time) bool {
+	age := now.Sub(at)
+	return age >= 0 && age < CacheTTL
 }
 
 func (f *Fetcher) cachePath(name, src string) string {
@@ -289,10 +340,11 @@ func (f *Fetcher) cachePath(name, src string) string {
 	return filepath.Join(f.StateDir, name+"."+src+".json")
 }
 
-// CachePaths lists the cache files of account name in stateDir.
+// CachePaths lists the cache files of account name in stateDir, its limit
+// record among them.
 func CachePaths(stateDir, name string) []string {
 	f := Fetcher{StateDir: stateDir}
-	return []string{f.cachePath(name, "live"), f.cachePath(name, "claude"), f.cachePath(name, "statusline"), f.pausePath(name)}
+	return []string{f.cachePath(name, "live"), f.cachePath(name, "claude"), f.cachePath(name, "statusline"), f.pausePath(name), f.limitPath(name)}
 }
 
 // The endpoint answers HTTP 429 when asked too often. ccam then leaves the
@@ -345,6 +397,8 @@ func (f *Fetcher) readCache(name, src string) (cached, bool) {
 	if json.Unmarshal(data, &c) != nil || c.Limits == nil {
 		return cached{}, false
 	}
+	// A window that has reset since the values were saved has started over.
+	c.Limits = c.Limits.as(f.Now())
 	return c, true
 }
 
@@ -364,13 +418,24 @@ func SaveStatusLine(stateDir, name string, l Limits, at time.Time) error {
 
 var (
 	errNoOAuth = errors.New("no subscription login")
-	errFormat  = errors.New("the usage response format changed")
+	// errLoginExpired is a login Claude Code cannot renew (creds.Judge).
+	errLoginExpired = errors.New("login expired")
+	errFormat       = errors.New("the usage response format changed")
 )
 
 type oauthCred struct {
 	AccessToken  string `json:"accessToken"`
 	RefreshToken string `json:"refreshToken"`
 	ExpiresAt    int64  `json:"expiresAt"` // Unix ms
+	ClientID     string `json:"clientId"`  // the OAuth client the login was made with ("" = Claude Code's)
+	// refreshExpiresAt is when a renewed refresh token expires (Unix ms),
+	// when the token endpoint said so; only a renewal sets it.
+	refreshExpiresAt int64
+}
+
+// loginExpired is the error of a login Claude Code cannot renew.
+func loginExpired(name string) string {
+	return fmt.Sprintf("login expired → `ccam login %s`", name)
 }
 
 func (c oauthCred) expired(now time.Time) bool {
@@ -379,7 +444,7 @@ func (c oauthCred) expired(now time.Time) bool {
 
 // readCredentials reads only; ccam never rewrites the token file except
 // for an explicit --refresh.
-func readCredentials(dir, home string) (oauthCred, creds.Source, error) {
+func readCredentials(dir, home string, now time.Time) (oauthCred, creds.Source, error) {
 	var c oauthCred
 	data, src, err := creds.Read(dir, home)
 	if errors.Is(err, creds.ErrNone) {
@@ -387,6 +452,9 @@ func readCredentials(dir, home string) (oauthCred, creds.Source, error) {
 	}
 	if err != nil {
 		return c, src, err
+	}
+	if creds.Judge(data, now) == "login expired" {
+		return c, src, errLoginExpired
 	}
 	raw, ok, err := profile.TopLevelValue(data, "claudeAiOauth")
 	if err == nil && ok {
@@ -396,13 +464,4 @@ func readCredentials(dir, home string) (oauthCred, creds.Source, error) {
 		err = errNoOAuth
 	}
 	return c, src, err
-}
-
-func hasAPIKey(dir string) bool {
-	data, err := os.ReadFile(filepath.Join(dir, ".claude.json"))
-	if err != nil {
-		return false
-	}
-	_, ok, _ := profile.TopLevelValue(data, "primaryApiKey")
-	return ok
 }

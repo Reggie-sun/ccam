@@ -9,19 +9,30 @@ import (
 	"github.com/jhyunwoo/ccam/internal/shim"
 )
 
-// saveShortcut saves cfg, in which an account's shortcut changed from old,
-// and updates the commands in the bin folder.
-func saveShortcut(e *env, cfg *config.Config, old string) error {
+// saveShortcut saves cfg, in which an account's shortcut changed from old
+// to name, and updates the commands in the bin folder.
+func saveShortcut(e *env, cfg *config.Config, old, name string) error {
 	if err := e.save(cfg); err != nil {
 		return err
 	}
 	if self, err := ccamPath(); err == nil && old != "" {
-		shim.Remove(e.paths.Bin, self, old)
+		shim.Remove(e.paths, self, old)
 	}
-	if _, err := installShims(e, cfg); err != nil {
-		return fmt.Errorf("could not create the shortcut: %w", err)
+	return makeShortcuts(e, cfg, name)
+}
+
+// makeShortcuts creates the shortcut links cfg names. It fails only when
+// name's cannot be made; a file in the way of another account's is said.
+func makeShortcuts(e *env, cfg *config.Config, name string) error {
+	_, err := installShims(e, cfg)
+	if err == nil {
+		return nil
 	}
-	return nil
+	if self, _ := ccamPath(); name == "" || shim.Linked(e.paths.Bin, self, name) {
+		fmt.Fprintln(e.stderr, "Note: some shortcuts could not be created:", err)
+		return nil
+	}
+	return fmt.Errorf("could not create the shortcut: %w", err)
 }
 
 func shortcutCmd(e *env) *cobra.Command {
@@ -71,8 +82,7 @@ func shortcutCmd(e *env) *cobra.Command {
 					if e.dryRun {
 						return nil
 					}
-					_, err := installShims(e, cfg)
-					return err
+					return makeShortcuts(e, cfg, old)
 				}
 				if err := checkShortcut(e, cfg, prof.Name, args[1]); err != nil {
 					return err
@@ -87,7 +97,7 @@ func shortcutCmd(e *env) *cobra.Command {
 				}
 				return nil
 			}
-			if err := saveShortcut(e, cfg, old); err != nil {
+			if err := saveShortcut(e, cfg, old, prof.Shortcut); err != nil {
 				return err
 			}
 			switch {

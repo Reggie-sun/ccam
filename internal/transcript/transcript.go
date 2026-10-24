@@ -12,6 +12,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -60,52 +61,137 @@ func ProjectDir(configDir, cwd string) string {
 	return filepath.Join(configDir, "projects", Slug(cwd))
 }
 
-// Newest is the most recently written conversation in projectDir.
-func Newest(projectDir string) (path string, mod time.Time, ok bool) {
+// Latest is the conversation in projectDir that went on last, and when:
+// the one with the newest prompt or reply. Claude Code also writes rows
+// that are neither, such as cost-state and last-prompt when a session
+// ends, so the file's time says less. A session that only ran local
+// commands (/mcp, /usage, /status), or an empty file, has no conversation
+// and is skipped.
+func Latest(projectDir string) (path string, at time.Time, ok bool) {
 	entries, err := os.ReadDir(projectDir)
 	if err != nil {
 		return "", time.Time{}, false
 	}
+	type file struct {
+		path string
+		mod  time.Time
+	}
+	var files []file
 	for _, e := range entries {
 		if e.IsDir() || !strings.HasSuffix(e.Name(), ".jsonl") {
 			continue
 		}
-		info, err := e.Info()
-		if err != nil {
-			continue
-		}
-		if info.ModTime().After(mod) {
-			path, mod, ok = filepath.Join(projectDir, e.Name()), info.ModTime(), true
+		if info, err := e.Info(); err == nil && info.Size() > 0 {
+			files = append(files, file{filepath.Join(projectDir, e.Name()), info.ModTime()})
 		}
 	}
-	return path, mod, ok
+	// A row is written after it is made, so no message is newer than its
+	// file: newest files first, until one is older than the best message
+	// (with room for file times kept to the second or two).
+	slices.SortFunc(files, func(a, b file) int { return b.mod.Compare(a.mod) })
+	for _, f := range files {
+		if ok && f.mod.Add(2*time.Second).Before(at) {
+			break
+		}
+		if t, found := lastMessage(f.path, f.mod); found && (!ok || t.After(at)) {
+			path, at, ok = f.path, t, true
+		}
+	}
+	return path, at, ok
+}
+
+// lastMessage is when the conversation at path last had a prompt or reply:
+// that row's timestamp, or mod (the file's time) when it has none. A file
+// whose end has neither but that is longer than the part read counts as a
+// conversation at mod: its end may be one long row.
+func lastMessage(path string, mod time.Time) (time.Time, bool) {
+	lines := tail(path)
+	for i := len(lines) - 1; i >= 0; i-- {
+		if at, ok := message(lines[i]); ok {
+			if at.IsZero() {
+				return mod, true
+			}
+			return at, true
+		}
+	}
+	if info, err := os.Stat(path); err == nil && info.Size() > tailSize {
+		return mod, true
+	}
+	return time.Time{}, false
+}
+
+// message reports whether l is a prompt or reply of the main conversation,
+// and when it was made (zero when the row does not say). A local command
+// (/mcp, /usage) leaves user rows that never reach the model; they do not
+// count, and neither do rows Claude Code adds itself (isMeta).
+func message(l []byte) (time.Time, bool) {
+	if !bytes.Contains(l, []byte(`"user"`)) && !bytes.Contains(l, []byte(`"assistant"`)) {
+		return time.Time{}, false
+	}
+	var e struct {
+		Type      string    `json:"type"`
+		Sidechain bool      `json:"isSidechain"`
+		Meta      bool      `json:"isMeta"`
+		At        time.Time `json:"timestamp"`
+		Message   struct {
+			Content json.RawMessage `json:"content"`
+		} `json:"message"`
+	}
+	if json.Unmarshal(l, &e) != nil || e.Sidechain || e.Meta {
+		return time.Time{}, false
+	}
+	switch e.Type {
+	case "assistant":
+		return e.At, true
+	case "user":
+		var text string
+		if json.Unmarshal(e.Message.Content, &text) == nil {
+			text = strings.TrimSpace(text)
+			return e.At, text != "" && !strings.HasPrefix(text, "<command-name>") && !strings.HasPrefix(text, "<local-command-")
+		}
+		var blocks []json.RawMessage
+		return e.At, json.Unmarshal(e.Message.Content, &blocks) == nil && len(blocks) > 0
+	}
+	return time.Time{}, false
 }
 
 // ID is the session id of a conversation file.
 func ID(path string) string { return strings.TrimSuffix(filepath.Base(path), ".jsonl") }
 
-// tailSize is how much of the end of a conversation Size reads.
+// tailSize is how much of the end of a conversation is read for its last
+// reply, limit and permission mode, which are all near the end.
 const tailSize = 1 << 20
+
+// synthetic is the model Claude Code names on messages it makes itself,
+// such as the one for a request refused at a usage limit.
+const synthetic = "<synthetic>"
+
+// tail returns the lines of the last tailSize bytes of the conversation at
+// path, oldest first; nil when it cannot be read. The first line may be cut
+// and the last one half written: neither parses, so both are skipped.
+func tail(path string) [][]byte {
+	f, err := os.Open(path)
+	if err != nil {
+		return nil
+	}
+	defer f.Close()
+	if info, err := f.Stat(); err == nil && info.Size() > tailSize {
+		if _, err := f.Seek(info.Size()-tailSize, io.SeekStart); err != nil {
+			return nil
+		}
+	}
+	data, err := io.ReadAll(f)
+	if err != nil {
+		return nil
+	}
+	return bytes.Split(data, []byte("\n"))
+}
 
 // Size is about how many tokens the next reply in the conversation reads:
 // the prompt of its last reply (input, cache read and cache creation) plus
 // that reply. 0 when unknown.
 func Size(path string) int {
-	f, err := os.Open(path)
-	if err != nil {
-		return 0
-	}
-	defer f.Close()
-	if info, err := f.Stat(); err == nil && info.Size() > tailSize {
-		if _, err := f.Seek(info.Size()-tailSize, io.SeekStart); err != nil {
-			return 0
-		}
-	}
-	data, err := io.ReadAll(f)
-	if err != nil {
-		return 0
-	}
-	lines := bytes.Split(data, []byte("\n"))
+	lines := tail(path)
 	for i := len(lines) - 1; i >= 0; i-- {
 		l := lines[i]
 		if !bytes.Contains(l, []byte(`"usage"`)) || !bytes.Contains(l, []byte(`"assistant"`)) {
@@ -115,6 +201,7 @@ func Size(path string) int {
 			Type      string `json:"type"`
 			Sidechain bool   `json:"isSidechain"`
 			Message   struct {
+				Model string `json:"model"`
 				Usage *struct {
 					Input       int `json:"input_tokens"`
 					CacheRead   int `json:"cache_read_input_tokens"`
@@ -123,13 +210,183 @@ func Size(path string) int {
 				} `json:"usage"`
 			} `json:"message"`
 		}
-		if json.Unmarshal(l, &e) != nil || e.Type != "assistant" || e.Sidechain || e.Message.Usage == nil {
+		if json.Unmarshal(l, &e) != nil || e.Type != "assistant" || e.Sidechain || e.Message.Model == synthetic || e.Message.Usage == nil {
 			continue
 		}
 		u := e.Message.Usage
 		return u.Input + u.CacheRead + u.CacheCreate + u.Output
 	}
 	return 0
+}
+
+// Model is the model of the conversation's last reply; "" when unknown.
+func Model(path string) string {
+	lines := tail(path)
+	for i := len(lines) - 1; i >= 0; i-- {
+		if m, ok := replyModel(lines[i]); ok {
+			return m
+		}
+	}
+	return ""
+}
+
+// replyModel reads the model of a main-thread reply row; messages Claude
+// Code made itself do not count.
+func replyModel(l []byte) (string, bool) {
+	if !bytes.Contains(l, []byte(`"model"`)) || !bytes.Contains(l, []byte(`"assistant"`)) {
+		return "", false
+	}
+	var e struct {
+		Type      string `json:"type"`
+		Sidechain bool   `json:"isSidechain"`
+		Message   struct {
+			Model string `json:"model"`
+		} `json:"message"`
+	}
+	if json.Unmarshal(l, &e) != nil || e.Type != "assistant" || e.Sidechain || e.Message.Model == "" || e.Message.Model == synthetic {
+		return "", false
+	}
+	return e.Message.Model, true
+}
+
+// Limit is a usage limit at which Claude Code refused a request.
+type Limit struct {
+	// Window is the server's name for the window that is full:
+	// five_hour, seven_day, seven_day_opus, seven_day_sonnet,
+	// seven_day_overage_included (the Fable allowance) or overage
+	// (usage credits).
+	Window   string
+	ResetsAt time.Time // when the window starts over; zero when not given
+	At       time.Time // when the request was refused
+	Model    string    // the model of the reply before it; "" when unknown
+	Text     string    // the message Claude Code showed for it (its text blocks, a line each)
+}
+
+// LastLimit finds the usage limit that ended the last turn of the
+// conversation at path, if it was hit at since or later: the row Claude
+// Code (2.1.304-2.1.306) writes for a request it refused, an assistant
+// message with isApiErrorMessage, apiError "usage_limit_reached" and the
+// server's rate_limit_info at status "rejected". A subagent's row
+// (isSidechain) and other API errors, such as a model that requires usage
+// credits, do not count, and neither does a limit a person's prompt came
+// after: that prompt began a turn of its own.
+func LastLimit(path string, since time.Time) (Limit, bool) {
+	lines := tail(path)
+	for i := len(lines) - 1; i >= 0; i-- {
+		l := lines[i]
+		if !bytes.Contains(l, []byte(`"usage_limit_reached"`)) {
+			if prompt(l) {
+				return Limit{}, false
+			}
+			continue
+		}
+		var row struct {
+			Type      string    `json:"type"`
+			Sidechain bool      `json:"isSidechain"`
+			APIError  bool      `json:"isApiErrorMessage"`
+			Kind      string    `json:"apiError"`
+			At        time.Time `json:"timestamp"`
+			Params    struct {
+				Info *struct {
+					Status   string  `json:"status"`
+					ResetsAt float64 `json:"resetsAt"` // Unix seconds
+					Window   string  `json:"rateLimitType"`
+				} `json:"rate_limit_info"`
+			} `json:"apiErrorParams"`
+			Message struct {
+				Content []struct {
+					Type string `json:"type"`
+					Text string `json:"text"`
+				} `json:"content"`
+			} `json:"message"`
+		}
+		if json.Unmarshal(l, &row) != nil || row.Type != "assistant" || row.Sidechain || !row.APIError ||
+			row.Kind != "usage_limit_reached" || row.Params.Info == nil || row.Params.Info.Status != "rejected" {
+			continue
+		}
+		if row.At.Before(since) {
+			return Limit{}, false // the ones before it are older still
+		}
+		lim := Limit{Window: row.Params.Info.Window, At: row.At}
+		var texts []string
+		for _, c := range row.Message.Content {
+			if c.Type == "text" {
+				texts = append(texts, c.Text)
+			}
+		}
+		lim.Text = strings.Join(texts, "\n") // as Claude Code passes it to hooks
+		if s := row.Params.Info.ResetsAt; s > 0 {
+			lim.ResetsAt = time.Unix(int64(s), 0)
+		}
+		for j := i - 1; j >= 0; j-- {
+			if m, ok := replyModel(lines[j]); ok {
+				lim.Model = m
+				break
+			}
+		}
+		return lim, true
+	}
+	return Limit{}, false
+}
+
+// PermissionMode is the permission mode the conversation was last in: the
+// newer of the permission-mode rows Claude Code writes when the mode
+// changes (and again at exit) and the mode a person's prompt was sent in;
+// "" when the end of the conversation has neither.
+func PermissionMode(path string) string {
+	lines := tail(path)
+	for i := len(lines) - 1; i >= 0; i-- {
+		l := lines[i]
+		if !bytes.Contains(l, []byte(`"permissionMode"`)) {
+			continue
+		}
+		var e struct {
+			Type string `json:"type"`
+			Mode string `json:"permissionMode"`
+		}
+		if json.Unmarshal(l, &e) != nil || e.Mode == "" {
+			continue
+		}
+		if e.Type == "permission-mode" || prompt(l) {
+			return e.Mode
+		}
+	}
+	return ""
+}
+
+// prompt reports whether l is a prompt a person sent: a main-thread user
+// row that is not a tool's result. Prompts Claude Code sends itself (a
+// finished task, a peer's message, a local command's caveat) do not count.
+func prompt(l []byte) bool {
+	if !bytes.Contains(l, []byte(`"user"`)) {
+		return false
+	}
+	var e struct {
+		Type      string `json:"type"`
+		Meta      bool   `json:"isMeta"`
+		Sidechain bool   `json:"isSidechain"`
+		Origin    *struct {
+			Kind string `json:"kind"`
+		} `json:"origin"`
+		Message struct {
+			Content json.RawMessage `json:"content"`
+		} `json:"message"`
+	}
+	if json.Unmarshal(l, &e) != nil || e.Type != "user" || e.Meta || e.Sidechain || e.Origin != nil && e.Origin.Kind != "human" {
+		return false
+	}
+	var blocks []struct {
+		Type string `json:"type"`
+	}
+	if json.Unmarshal(e.Message.Content, &blocks) == nil {
+		for _, b := range blocks {
+			if b.Type != "tool_result" {
+				return true
+			}
+		}
+		return false
+	}
+	return bytes.HasPrefix(e.Message.Content, []byte(`"`))
 }
 
 // Title is the conversation's name: the one given with /rename, else the

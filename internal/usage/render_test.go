@@ -17,7 +17,7 @@ func TestTableShowsABarPerLimit(t *testing.T) {
 		{Name: "fable", Slot: 4, Status: StatusOK, Source: "live", At: now, Limits: &Limits{FiveHour: w(2, time.Hour),
 			Scoped: []Scoped{{Name: "Fable", Window: w(0, 50*time.Hour)}}}},
 		{Name: "api", Slot: 5, Status: StatusAPI},
-		{Name: "old", Slot: 6, Status: StatusExpired},
+		{Name: "old", Slot: 6, Status: StatusExpired, Err: "access token expired; `ccam old` renews it when it starts"},
 	}
 	lines := Table(reports, RenderOptions{Now: now})
 	want := []string{
@@ -36,7 +36,7 @@ func TestTableShowsABarPerLimit(t *testing.T) {
 		"   Weekly   -",
 		"   Fable    ░░░░░░░░░░░░░░░░░░░░   0%  resets in 2d 2h",
 		" 5 api       no limits (API)",
-		" 6 old       login expired, run `ccam old` once to refresh",
+		" 6 old       access token expired; `ccam old` renews it when it starts",
 	}
 	if got, exp := strings.Join(lines, "\n"), strings.Join(want, "\n"); got != exp {
 		t.Fatalf("got\n%s\nwant\n%s", got, exp)
@@ -88,6 +88,16 @@ func TestDuration(t *testing.T) {
 	for d, want := range cases {
 		if got := Duration(d); got != want {
 			t.Errorf("%v: %q want %q", d, got, want)
+		}
+	}
+}
+
+// A percentage out of 0-100 still draws a bar of the usual width.
+func TestGaugeClampsOutOfRange(t *testing.T) {
+	for _, p := range []float64{-100, -5, -2.5, 0, 100, 150} {
+		g := gauge(Window{Percent: p, Known: true}, RenderOptions{})
+		if n := strings.Count(g, "█") + strings.Count(g, "░"); n != barWidth {
+			t.Errorf("%v%%: %q", p, g)
 		}
 	}
 }

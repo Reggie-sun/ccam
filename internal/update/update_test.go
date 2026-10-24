@@ -429,7 +429,7 @@ func TestWindowsInstallRenamesTheRunningBinary(t *testing.T) {
 	dir := t.TempDir()
 	exe := filepath.Join(dir, "ccam.exe")
 	os.WriteFile(exe, []byte("v1"), 0o755)
-	os.WriteFile(OldExe(exe), []byte("v0"), 0o755) // left by the update before
+	os.WriteFile(exe+".old", []byte("v0"), 0o755) // left by the update before
 	u := &Updater{Exe: exe, GOOS: "windows"}
 	if err := u.Install([]byte("v2")); err != nil {
 		t.Fatal(err)
@@ -437,11 +437,47 @@ func TestWindowsInstallRenamesTheRunningBinary(t *testing.T) {
 	if b, _ := os.ReadFile(exe); string(b) != "v2" {
 		t.Fatalf("exe %q", b)
 	}
-	if b, _ := os.ReadFile(OldExe(exe)); string(b) != "v1" {
+	if b, _ := os.ReadFile(exe + ".old"); string(b) != "v1" {
 		t.Fatalf("old %q", b)
 	}
 	if _, err := os.Stat(exe + ".new"); err == nil {
 		t.Fatal("temp file left")
+	}
+}
+
+// A session still runs from the binary the update before put aside, whose
+// file Windows will not delete (here a folder that cannot be removed): the
+// binary goes aside under another name, and earlier ones that can go are
+// deleted.
+func TestWindowsInstallWhileAnOldBinaryRuns(t *testing.T) {
+	dir := t.TempDir()
+	exe := filepath.Join(dir, "ccam.exe")
+	os.WriteFile(exe, []byte("v1"), 0o755)
+	os.MkdirAll(filepath.Join(exe+".old", "in use"), 0o755)
+	os.WriteFile(exe+".old-1", []byte("v-1"), 0o755)
+	os.WriteFile(exe+".older", []byte("not ours"), 0o755)
+	u := &Updater{Exe: exe, GOOS: "windows"}
+	if err := u.Install([]byte("v2")); err != nil {
+		t.Fatal(err)
+	}
+	if b, _ := os.ReadFile(exe); string(b) != "v2" {
+		t.Fatalf("exe %q", b)
+	}
+	var aside []string
+	entries, _ := os.ReadDir(dir)
+	for _, e := range entries {
+		if b, _ := os.ReadFile(filepath.Join(dir, e.Name())); string(b) == "v1" {
+			aside = append(aside, e.Name())
+		}
+	}
+	if len(aside) != 1 || !strings.HasPrefix(aside[0], "ccam.exe.old-") {
+		t.Fatalf("v1 is at %v", aside)
+	}
+	if _, err := os.Stat(exe + ".old-1"); err == nil {
+		t.Fatal("an earlier binary was left")
+	}
+	if _, err := os.Stat(exe + ".older"); err != nil {
+		t.Fatal("a file of another name was deleted")
 	}
 }
 

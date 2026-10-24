@@ -4,8 +4,6 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"os/exec"
-	"runtime"
 	"strings"
 	"time"
 
@@ -42,8 +40,17 @@ const keyTimeout = 30 * time.Second
 
 // useAPI points the plan of an API account at its endpoint, with the key
 // read now from its source. Only the child's environment ever holds it.
-func (pl *Plan) useAPI(api *config.API) error {
-	key, err := ReadAPIKey(api.KeyFrom)
+//
+// A dry run does not read the key: it only checks that an env: source is
+// set, and DryRun shows where the key comes from instead of its value.
+func (pl *Plan) useAPI(api *config.API, dry bool) error {
+	var key string
+	var err error
+	if !dry {
+		key, err = ReadAPIKey(api.KeyFrom)
+	} else if name, ok := strings.CutPrefix(api.KeyFrom, "env:"); ok && strings.TrimSpace(os.Getenv(name)) == "" {
+		err = fmt.Errorf("the API key comes from $%s, which is empty", name)
+	}
 	if err != nil {
 		return fmt.Errorf("account %s: %w", pl.Profile.Name, err)
 	}
@@ -60,10 +67,14 @@ func (pl *Plan) useAPI(api *config.API) error {
 	if api.Model != "" {
 		env = append(env, "ANTHROPIC_MODEL="+api.Model)
 	}
+	keyVar := "ANTHROPIC_API_KEY"
 	if api.Auth == config.Bearer {
-		env = append(env, "ANTHROPIC_AUTH_TOKEN="+key)
+		keyVar = "ANTHROPIC_AUTH_TOKEN"
+	}
+	if dry {
+		pl.keyVar, pl.keyFrom = keyVar, api.KeyFrom
 	} else {
-		env = append(env, "ANTHROPIC_API_KEY="+key)
+		env = append(env, keyVar+"="+key)
 	}
 	pl.Env = env
 	return nil
@@ -93,10 +104,7 @@ func ReadAPIKey(from string) (string, error) {
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), keyTimeout)
 	defer cancel()
-	c := exec.CommandContext(ctx, "sh", "-c", command)
-	if runtime.GOOS == "windows" {
-		c = exec.CommandContext(ctx, "cmd", "/C", command)
-	}
+	c := shellCommand(ctx, command)
 	c.Stdin, c.Stderr = os.Stdin, os.Stderr // a password manager may ask
 	out, err := c.Output()
 	if err != nil {

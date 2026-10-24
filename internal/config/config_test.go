@@ -4,6 +4,8 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"runtime"
+	"strconv"
 	"strings"
 	"testing"
 )
@@ -129,11 +131,30 @@ func TestLoadRejectsNamesThatLeaveTheFolders(t *testing.T) {
 	for _, body := range []string{
 		"[[profile]]\nname = \"../x\"\nslot = 1\n",
 		"[[profile]]\nname = \"work\"\nslot = 1\n[profile.share]\nhistory = \"../../y\"\n",
+		// A shortcut is a file name in the bin folder.
+		"[[profile]]\nname = \"work\"\nslot = 1\nshortcut = \"../escaped\"\n",
+		"[[profile]]\nname = \"work\"\nslot = 1\nshortcut = \"a/b\"\n",
+		"[[profile]]\nname = \"work\"\nslot = 1\nshortcut = \"Upper\"\n",
+		// One that would stand for Claude Code or ccam itself.
+		"[[profile]]\nname = \"work\"\nslot = 1\nshortcut = \"claude\"\n",
+		"[[profile]]\nname = \"work\"\nslot = 1\nshortcut = \"ccam\"\n",
+		// Two accounts cannot share one.
+		"[[profile]]\nname = \"work\"\nslot = 1\nshortcut = \"cc\"\n[[profile]]\nname = \"side\"\nslot = 2\nshortcut = \"cc\"\n",
 	} {
 		path := filepath.Join(t.TempDir(), "config.toml")
 		os.WriteFile(path, []byte(body), 0o600)
 		if _, err := Load(path); err == nil {
 			t.Errorf("accepted:\n%s", body)
+		}
+	}
+}
+
+func TestIsShortcutMatchesRule(t *testing.T) {
+	rule := regexp.MustCompile(`^[a-z0-9][a-z0-9._-]{0,63}$`)
+	for _, s := range []string{"", "a", "0", ".a", "_a", "-a", "a.b", "a_", "a-", "cc.work", "A", "aé", "a/b", "..", "a b",
+		strings.Repeat("a", 64), strings.Repeat("a", 65), "work\n", "x\x00"} {
+		if got, want := IsShortcut(s), rule.MatchString(s); got != want {
+			t.Errorf("IsShortcut(%q) = %v, want %v", s, got, want)
 		}
 	}
 }
@@ -171,6 +192,32 @@ func TestFolderForPicksTheLongestContainingPath(t *testing.T) {
 		if got != want {
 			t.Errorf("FolderFor(%s) = %q, want %q", dir, got, want)
 		}
+	}
+}
+
+// On macOS, as on Windows, a folder reached with other letter case is the
+// same folder (the file system ignores case by default), and its rule
+// applies there too.
+func TestFolderForIgnoresCaseWhereTheFileSystemDoes(t *testing.T) {
+	if want := runtime.GOOS == "windows" || runtime.GOOS == "darwin"; foldCase != want {
+		t.Fatalf("foldCase = %v on %s", foldCase, runtime.GOOS)
+	}
+	defer func(v bool) { foldCase = v }(foldCase)
+	foldCase = true
+	root := filepath.Join(t.TempDir(), "Code", "App")
+	c := &Config{}
+	c.SetFolder(root, "work")
+	lower := strings.ToLower(root)
+	if f, ok := c.FolderFor(filepath.Join(lower, "src")); !ok || f.Account != "work" {
+		t.Fatalf("FolderFor(%s) misses the rule for %s", lower, root)
+	}
+	c.SetFolder(lower, "side")
+	if len(c.Folders) != 1 || c.Folders[0].Account != "side" {
+		t.Fatalf("%+v", c.Folders)
+	}
+	foldCase = false
+	if _, ok := c.FolderFor(strings.ToUpper(root)); ok {
+		t.Fatal("case counts where the file system tells it apart")
 	}
 }
 
@@ -232,6 +279,91 @@ func TestAPICheckNeedsAKeySource(t *testing.T) {
 		ok := from == "env:KEY" || from == "command:pass show k"
 		if (err == nil) != ok {
 			t.Errorf("%q: %v", from, err)
+		}
+	}
+}
+
+// Settings added at the end of config.toml, as the docs' snippets invite,
+// belong to the last table in TOML. Load reads the rest and names them;
+// Save refuses to write the file, which would delete them.
+func TestUnreadLinesAreNamedAndKept(t *testing.T) {
+	for _, tc := range []struct{ name, body string }{
+		{"group format", "default = \"work\"\n\n[[group]]\nname = \"default\"\nitems = [\"mcp\"]\nmembers = [\"work\"]\n\n[[profile]]\nname = \"work\"\nslot = 1\n"},
+		{"old format", "[[profile]]\nname = \"work\"\nslot = 1\n[profile.share]\nmcp = \"default\"\n"},
+	} {
+		path := filepath.Join(t.TempDir(), "config.toml")
+		body := tc.body + "\nrelay = true\nauto_max_useage = 80\n"
+		os.WriteFile(path, []byte(body), 0o600)
+		c, err := Load(path)
+		if err != nil {
+			t.Fatalf("%s: %v", tc.name, err)
+		}
+		if p, ok := c.Find("work"); !ok || p.Share.Get("mcp") != "default" || c.Relay {
+			t.Fatalf("%s: read %+v", tc.name, c)
+		}
+		lines := strings.Count(body, "\n")
+		got := strings.Join(c.Unknown(), "\n")
+		for _, want := range []string{
+			"line " + strconv.Itoa(lines-1) + ": relay is read as part of the",
+			"go above the first [[group]], [[profile]] or [[folder]]",
+			"line " + strconv.Itoa(lines) + ": auto_max_useage is not a setting of",
+		} {
+			if !strings.Contains(got, want) {
+				t.Errorf("%s: missing %q in\n%s", tc.name, want, got)
+			}
+		}
+		c.Default = "work"
+		if err := c.Save(path); err == nil || !strings.Contains(err.Error(), "not saved") || !strings.Contains(err.Error(), "relay") {
+			t.Errorf("%s: Save: %v", tc.name, err)
+		}
+		if after, _ := os.ReadFile(path); string(after) != body {
+			t.Errorf("%s: the file changed:\n%s", tc.name, after)
+		}
+		if _, err := os.Stat(path + ".bak"); err == nil {
+			t.Errorf("%s: a backup was written", tc.name)
+		}
+	}
+	// At the top, a name ccam does not know (a typo, or a newer ccam's).
+	path := filepath.Join(t.TempDir(), "config.toml")
+	os.WriteFile(path, []byte("relay_mode = true\n\n[[profile]]\nname = \"work\"\nslot = 1\n"), 0o600)
+	c, err := Load(path)
+	if err != nil || len(c.Unknown()) != 1 || !strings.Contains(c.Unknown()[0], "line 1: relay_mode is not a ccam setting") {
+		t.Fatalf("%v %q", err, c.Unknown())
+	}
+}
+
+// ccam v0.1 and v0.2 wrote keys later releases dropped (`version`, and
+// v0.1's `name_shims`): such a config is read and saved again without them,
+// as promised when they were dropped.
+func TestKeysOfEarlierReleasesAreDropped(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "config.toml")
+	os.WriteFile(path, []byte("version = 2\nname_shims = true\n\n[[profile]]\nname = \"work\"\nslot = 1\n"), 0o600)
+	c, err := Load(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(c.Unknown()) != 0 {
+		t.Fatalf("unknown: %v", c.Unknown())
+	}
+	if err := c.Save(path); err != nil {
+		t.Fatal(err)
+	}
+	if data, _ := os.ReadFile(path); strings.Contains(string(data), "version") || strings.Contains(string(data), "name_shims") {
+		t.Fatalf("saved: %s", data)
+	}
+}
+
+// Two accounts that resolve to one folder would share a login, and
+// removing one would trash the other's folder.
+func TestTwoAccountsCannotHaveOneFolder(t *testing.T) {
+	for _, body := range []string{
+		"[[profile]]\nname = \"a\"\nslot = 1\n\n[[profile]]\nname = \"b\"\nslot = 2\nfolder = \"a\"\n",
+		"[[profile]]\nname = \"a\"\nslot = 1\nfolder = \"x\"\n\n[[profile]]\nname = \"b\"\nslot = 2\nfolder = \"x\"\n",
+	} {
+		path := filepath.Join(t.TempDir(), "config.toml")
+		os.WriteFile(path, []byte(body), 0o600)
+		if _, err := Load(path); err == nil || !strings.Contains(err.Error(), "accounts a and b use the same folder") {
+			t.Errorf("%s: %v", body, err)
 		}
 	}
 }

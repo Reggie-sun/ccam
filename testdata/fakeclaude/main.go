@@ -1,28 +1,46 @@
 // Command fakeclaude stands in for claude in the end-to-end tests. It
 // records its environment and arguments (NUL separated) in FAKE_CLAUDE_LOG
-// and fakes `auth login` by writing an oauthAccount into .claude.json.
-// The other FAKE_* variables make it misbehave on purpose.
+// and fakes `auth login` by writing an oauthAccount into .claude.json and a
+// login into .credentials.json (`auth logout` deletes that file).
+// The other FAKE_* variables make it misbehave on purpose. Like Claude
+// Code, it ends with 143 on SIGTERM, and with FAKE_RECORD it lists itself
+// in its config folder while it runs (sessions/<pid>.json).
 package main
 
 import (
 	"cmp"
+	"encoding/json"
 	"fmt"
 	"io"
 	"os"
 	"os/exec"
+	"os/signal"
 	"path/filepath"
+	"runtime"
 	"slices"
 	"strconv"
 	"strings"
+	"syscall"
 	"time"
 )
 
 func main() {
+	unlist := func() {}
+	if kind := os.Getenv("FAKE_RECORD"); kind != "" {
+		unlist = listSelf(os.Getenv("CLAUDE_CONFIG_DIR"), kind)
+	}
 	if s := os.Getenv("FAKE_ONLY_SLEEP"); s != "" {
 		sleep(s)
+		unlist()
 		return
 	}
-	args := os.Args[1:]
+	term := make(chan os.Signal, 1)
+	signal.Notify(term, syscall.SIGTERM)
+	go func() {
+		<-term
+		os.Exit(143)
+	}()
+	args := ucrtArgs()
 	dir := os.Getenv("CLAUDE_CONFIG_DIR")
 	profile := os.Getenv("CCAM_PROFILE")
 	var log strings.Builder
@@ -36,6 +54,26 @@ func main() {
 		os.Exit(2)
 	}
 	must(os.WriteFile(path, []byte(log.String()), 0o600))
+	if s := os.Getenv("FAKE_DETACH"); s != "" && slices.Contains(args, "--bg") {
+		// Like `claude --bg`: the session goes on in a process that outlives
+		// this one, listed in the folder as Claude Code's daemon and the
+		// session it runs, and this one returns once that runs (daemon.lock
+		// names it; listSelf writes it last).
+		self, err := os.Executable()
+		must(err)
+		bg := exec.Command(self)
+		bg.Env = append(os.Environ(), "FAKE_ONLY_SLEEP="+s, "FAKE_RECORD=bg", "FAKE_DAEMON=1")
+		must(bg.Start())
+		named := fmt.Sprintf(`"pid":%d,`, bg.Process.Pid)
+		for i := 0; i < 500; i++ {
+			if data, _ := os.ReadFile(filepath.Join(dir, "daemon.lock")); strings.Contains(string(data), named) {
+				break
+			}
+			time.Sleep(10 * time.Millisecond)
+		}
+		fmt.Println("Started background session 49ec0028")
+		os.Exit(0)
+	}
 	if path := os.Getenv("FAKE_ENV_FILE"); path != "" {
 		// NAME=value lines for the variables named in FAKE_ENV_NAMES.
 		var b strings.Builder
@@ -52,15 +90,49 @@ func main() {
 		fmt.Fprintln(f, profile)
 		f.Close()
 	}
+	stopped := false
 	if from := os.Getenv("FAKE_SWITCH_FROM"); from != "" && from == profile {
-		// What `ccam hook switch` leaves for /ccam:switch.
+		// What `ccam hook switch` leaves for /ccam:switch: the note of
+		// session FAKE_SWITCH_SESSION (the conversation's name by default).
+		// With FAKE_SWITCH_STOPPED it says the hook ends this claude, and
+		// it ends with SIGTERM as the hook makes it, unless FAKE_EXIT says
+		// how it ends instead (the person's /exit was first).
+		conv := os.Getenv("FAKE_SWITCH_TRANSCRIPT")
+		session := cmp.Or(os.Getenv("FAKE_SWITCH_SESSION"), strings.TrimSuffix(filepath.Base(conv), ".jsonl"))
+		stopped = os.Getenv("FAKE_SWITCH_STOPPED") != ""
+		child := 0
+		if stopped {
+			child = os.Getpid()
+		}
+		if mode := os.Getenv("FAKE_MODE"); mode != "" {
+			// The permission mode the conversation was left in.
+			f, err := os.OpenFile(conv, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0o600)
+			must(err)
+			fmt.Fprintf(f, `{"type":"permission-mode","permissionMode":%q,"sessionId":%q}`+"\n", mode, session)
+			f.Close()
+		}
 		cwd, _ := os.Getwd()
-		ticket := fmt.Sprintf(`{"account":%q,"session_id":"s1","transcript_path":%q,"cwd":%q,"at":%q,"reason":"switch","target":%q,"relay":%q}`,
-			from, os.Getenv("FAKE_SWITCH_TRANSCRIPT"), cwd, time.Now().Format(time.RFC3339Nano), os.Getenv("FAKE_SWITCH_TO"),
-			cmp.Or(os.Getenv("FAKE_SWITCH_RELAY"), os.Getenv("CCAM_RELAY")))
-		dir := filepath.Join(os.Getenv("FAKE_SWITCH_STATE"), "handoff")
+		ticket := fmt.Sprintf(`{"account":%q,"session_id":%q,"transcript_path":%q,"cwd":%q,"at":%q,"reason":"switch","target":%q,"relay":%q,"child":%d,"stopped":%v}`,
+			from, session, conv, cwd, time.Now().Format(time.RFC3339Nano), os.Getenv("FAKE_SWITCH_TO"),
+			cmp.Or(os.Getenv("FAKE_SWITCH_RELAY"), os.Getenv("CCAM_RELAY")), child, stopped)
+		dir := filepath.Join(os.Getenv("FAKE_SWITCH_STATE"), "handoff", from)
 		must(os.MkdirAll(dir, 0o700))
-		must(os.WriteFile(filepath.Join(dir, from+".json"), []byte(ticket), 0o600))
+		must(os.WriteFile(filepath.Join(dir, session+".json"), []byte(ticket), 0o600))
+		if name := os.Getenv("FAKE_KILL_PARENT"); name != "" {
+			// A signal to the relaying ccam: HUP, INT or TERM.
+			sig := map[string]os.Signal{"HUP": syscall.SIGHUP, "INT": os.Interrupt, "TERM": syscall.SIGTERM}[name]
+			if p, err := os.FindProcess(os.Getppid()); err == nil && sig != nil {
+				must(p.Signal(sig))
+			}
+		}
+	}
+	if path := os.Getenv("FAKE_TTY_INPUT"); path != "" && profile != os.Getenv("FAKE_SWITCH_FROM") {
+		// What waits on the terminal of the session that does not switch,
+		// read for 0.2 s out of line mode.
+		c := exec.Command("sh", "-c", "stty -icanon min 0 time 2; cat; stty icanon")
+		c.Stdin = os.Stdin
+		out, _ := c.Output()
+		must(os.WriteFile(path, out, 0o600))
 	}
 	if slices.Contains(args, "--input-format") && slices.Contains(args, "stream-json") {
 		// The get_usage control request: answer from FAKE_USAGE_DIR/<account>.json.
@@ -101,10 +173,24 @@ func main() {
 		must(os.WriteFile(filepath.Join(dir, ".claude.json"), fmt.Appendf(nil,
 			`{"numStartups":1,"oauthAccount":{"emailAddress":%q,"accountUuid":%q,"organizationUuid":"org-1","organizationName":"Acme","organizationType":"claude_team"}}`,
 			email, account), 0o600))
-		must(os.WriteFile(filepath.Join(dir, ".credentials.json"), []byte(`{"claudeAiOauth":{"accessToken":"fake","expiresAt":4102444800000}}`), 0o600))
+		// Like Claude Code, a login replaces only the login in the login
+		// file; the MCP sign-ins there stay.
+		cred := filepath.Join(dir, ".credentials.json")
+		doc := map[string]json.RawMessage{}
+		if data, err := os.ReadFile(cred); err == nil {
+			json.Unmarshal(data, &doc)
+		}
+		doc["claudeAiOauth"] = json.RawMessage(`{"accessToken":"fake","expiresAt":4102444800000}`)
+		data, _ := json.Marshal(doc)
+		must(os.WriteFile(cred, data, 0o600))
 	}
 	if len(args) >= 2 && args[0] == "auth" && args[1] == "logout" {
+		// Like Claude Code, a logout deletes the login file, MCP sign-ins
+		// and all.
 		must(os.WriteFile(filepath.Join(dir, ".claude.json"), []byte(`{}`), 0o600))
+		if err := os.Remove(filepath.Join(dir, ".credentials.json")); err != nil && !os.IsNotExist(err) {
+			must(err)
+		}
 	}
 	if probe := os.Getenv("FAKE_SESSION_PROBE"); probe != "" {
 		// With exec the marker carries this process's PID; where ccam waits
@@ -134,14 +220,49 @@ func main() {
 		must(bg.Start())
 	}
 	if slices.Contains(strings.Split(os.Getenv("FAKE_LIMITED"), ","), profile) && profile != "" {
-		fmt.Println("You've hit your limit · resets 3pm")
+		fmt.Println(cmp.Or(os.Getenv("FAKE_LIMIT_TEXT"), "You've hit your limit · resets 3pm"))
 		os.Exit(1)
 	}
 	if out := os.Getenv("FAKE_STDOUT"); out != "" {
 		fmt.Println(out + " (" + profile + ")")
 	}
+	if s := os.Getenv("FAKE_EXIT_DELAY"); s != "" {
+		sleep(s) // a SIGTERM meanwhile ends it with 143
+	}
+	if stopped && os.Getenv("FAKE_EXIT") == "" {
+		if p, err := os.FindProcess(os.Getpid()); err == nil && p.Signal(syscall.SIGTERM) == nil {
+			time.Sleep(10 * time.Second) // the handler exits
+		}
+	}
 	code, _ := strconv.Atoi(os.Getenv("FAKE_EXIT"))
+	unlist()
 	os.Exit(code)
+}
+
+// listSelf lists this process where Claude Code lists its own while they
+// run: sessions/<pid>.json in its config folder dir, and daemon.lock for the
+// daemon (FAKE_DAEMON), with the start time as Claude Code records it. It
+// returns what removes them again, as Claude Code does when it exits.
+func listSelf(dir, kind string) func() {
+	pid, start := os.Getpid(), procStart()
+	session := filepath.Join(dir, "sessions", strconv.Itoa(pid)+".json")
+	must(os.MkdirAll(filepath.Dir(session), 0o700))
+	must(os.WriteFile(session, fmt.Appendf(nil, `{"pid":%d,"sessionId":"fake-%d","kind":%q,"procStart":%q}`, pid, pid, kind, start), 0o644))
+	files := []string{session}
+	if os.Getenv("FAKE_DAEMON") != "" {
+		key := "procStart"
+		if runtime.GOOS == "windows" {
+			key = "procStartFt"
+		}
+		lock := filepath.Join(dir, "daemon.lock")
+		must(os.WriteFile(lock, fmt.Appendf(nil, `{"pid":%d,"version":"2.1.308","origin":"transient",%q:%q}`, pid, key, start), 0o644))
+		files = append(files, lock)
+	}
+	return func() {
+		for _, f := range files {
+			os.Remove(f)
+		}
+	}
 }
 
 func sleep(s string) {

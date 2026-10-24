@@ -2,6 +2,7 @@
 package profile
 
 import (
+	"cmp"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -20,7 +21,17 @@ func Dir(p paths.Paths, prof *config.Profile) string {
 	if prof.Dir != "" {
 		return prof.Dir
 	}
-	return p.ProfileDir(prof.Name)
+	return p.ProfileDir(cmp.Or(prof.Folder, prof.Name))
+}
+
+// folderOwner is the account whose managed folder is dir, or nil.
+func folderOwner(p paths.Paths, cfg *config.Config, dir string) *config.Profile {
+	for i := range cfg.Profiles {
+		if q := &cfg.Profiles[i]; q.Dir == "" && Dir(p, q) == dir {
+			return q
+		}
+	}
+	return nil
 }
 
 // Add registers a new profile in cfg and creates its folder (0700).
@@ -33,6 +44,9 @@ func Add(p paths.Paths, cfg *config.Config, name string) (*config.Profile, error
 		return nil, fmt.Errorf("an account named %q already exists", name)
 	}
 	dir := p.ProfileDir(name)
+	if q := folderOwner(p, cfg, dir); q != nil {
+		return nil, fmt.Errorf("folder %s is account %s's (it kept the folder when it was renamed); choose another name", dir, q.Name)
+	}
 	if fsutil.Exists(dir) {
 		return nil, fmt.Errorf("folder already exists: %s (use `ccam import`, or clean up the folder)", dir)
 	}
@@ -53,7 +67,7 @@ func Trash(p paths.Paths, prof *config.Profile) (string, error) {
 	if prof.Dir != "" {
 		return "", nil
 	}
-	src := p.ProfileDir(prof.Name)
+	src := Dir(p, prof)
 	if !fsutil.Exists(src) {
 		return "", nil
 	}
@@ -62,8 +76,10 @@ func Trash(p paths.Paths, prof *config.Profile) (string, error) {
 	return dst, fsutil.Move(src, dst)
 }
 
-// Rename renames a profile and its managed folder.
-func Rename(p paths.Paths, cfg *config.Config, oldName, newName string) error {
+// Rename renames a profile and its managed folder. With keepFolder the
+// folder keeps its name (Profile.Folder): a login store named after the
+// folder's path would not follow it.
+func Rename(p paths.Paths, cfg *config.Config, oldName, newName string, keepFolder bool) error {
 	prof, err := cfg.MustFind(oldName)
 	if err != nil {
 		return err
@@ -75,20 +91,23 @@ func Rename(p paths.Paths, cfg *config.Config, oldName, newName string) error {
 		return fmt.Errorf("an account named %q already exists", newName)
 	}
 	cfg.DropMember(newName)
-	if prof.Dir == "" {
-		oldDir, newDir := p.ProfileDir(oldName), p.ProfileDir(newName)
-		if err := os.Rename(oldDir, newDir); err != nil && !errors.Is(err, fs.ErrNotExist) {
+	switch oldDir, newDir := Dir(p, prof), p.ProfileDir(newName); {
+	case prof.Dir != "":
+	case keepFolder:
+		prof.Folder = filepath.Base(oldDir)
+		if prof.Folder == newName {
+			prof.Folder = ""
+		}
+	default:
+		if q := folderOwner(p, cfg, newDir); q != nil && q != prof {
+			return fmt.Errorf("folder %s is account %s's (it kept the folder when it was renamed); choose another name", newDir, q.Name)
+		}
+		// The caller does not save cfg on error, so the folder must keep
+		// the name cfg still has.
+		if err := MoveFolder(oldDir, newDir); err != nil {
 			return err
 		}
-		sep := string(filepath.Separator)
-		if _, err := RewritePluginPaths(filepath.Join(newDir, "plugins"), oldDir+sep, newDir+sep); err != nil {
-			// The caller does not save cfg on error, so the folder must keep
-			// the name cfg still has.
-			if rerr := os.Rename(newDir, oldDir); rerr != nil && !errors.Is(rerr, fs.ErrNotExist) {
-				return errors.Join(err, rerr)
-			}
-			return err
-		}
+		prof.Folder = ""
 	}
 	prof.Name = newName
 	if cfg.Default == oldName {
@@ -105,6 +124,23 @@ func Rename(p paths.Paths, cfg *config.Config, oldName, newName string) error {
 				cfg.Groups[i].Members[j] = newName
 			}
 		}
+	}
+	return nil
+}
+
+// MoveFolder moves a managed account folder from oldDir to newDir and points
+// the plugin paths recorded through it at newDir. A missing folder is no
+// error; when the paths cannot be rewritten, the folder goes back.
+func MoveFolder(oldDir, newDir string) error {
+	if err := os.Rename(oldDir, newDir); err != nil && !errors.Is(err, fs.ErrNotExist) {
+		return err
+	}
+	sep := string(filepath.Separator)
+	if _, err := RewritePluginPaths(filepath.Join(newDir, "plugins"), oldDir+sep, newDir+sep); err != nil {
+		if rerr := os.Rename(newDir, oldDir); rerr != nil && !errors.Is(rerr, fs.ErrNotExist) {
+			return errors.Join(err, rerr)
+		}
+		return err
 	}
 	return nil
 }

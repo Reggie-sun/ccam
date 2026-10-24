@@ -5,6 +5,7 @@
 package launcher
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -16,6 +17,7 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+	"sync/atomic"
 	"syscall"
 	"time"
 
@@ -33,8 +35,24 @@ type Plan struct {
 	Bin     string   // absolute path of claude
 	Argv    []string // argv including argv[0]
 	Env     []string
+	// UserArgs are the claude args as the user gave them (one leading "--"
+	// dropped), without the ones ccam adds such as --mcp-config.
+	UserArgs []string
 
 	sessions []string // session folders this process is registered in
+	keyVar   string   // dry run of an API account: the key variable, not set,
+	keyFrom  string   // and where a launch reads its value
+	unmarked bool     // a marker could not be written (said once)
+	run      runState // what Run saw
+}
+
+// runState is what Run saw of claude and of the signals ccam itself got, by
+// which the relay judges whether to carry the conversation on. The signal
+// goroutine may still run after Run returns, hence the atomics.
+type runState struct {
+	child     int          // claude's process
+	signaled  atomic.Bool  // ccam got SIGHUP, SIGTERM or SIGQUIT (passed on to claude)
+	interrupt atomic.Int64 // when ccam last got Ctrl+C (SIGINT, not passed on), UnixNano; 0 for never
 }
 
 // Prepare resolves the profile (sel == "" means the one set for the
@@ -52,9 +70,7 @@ func Prepare(p paths.Paths, cfg *config.Config, sel string, args []string) (*Pla
 	if err != nil {
 		return nil, err
 	}
-	if len(args) > 0 && args[0] == "--" {
-		args = args[1:]
-	}
+	args = ClaudeArgs(args)
 	bin, err := ResolveClaude(p, cfg.ClaudeBin)
 	if err != nil {
 		return nil, err
@@ -66,7 +82,16 @@ func Prepare(p paths.Paths, cfg *config.Config, sel string, args []string) (*Pla
 	argv := make([]string, 0, len(args)+1)
 	argv = append(argv, "claude")
 	argv = append(argv, args...)
-	return &Plan{Profile: prof, Dir: dir, Bin: bin, Argv: argv, Env: ProfileEnv(p, os.Environ(), dir, prof.Name)}, nil
+	return &Plan{Profile: prof, Dir: dir, Bin: bin, Argv: argv, Env: ProfileEnv(p, os.Environ(), dir, prof.Name), UserArgs: args}, nil
+}
+
+// ClaudeArgs is what claude gets of the args after the account name: all
+// of them, less one leading "--" separator.
+func ClaudeArgs(args []string) []string {
+	if len(args) > 0 && args[0] == "--" {
+		return args[1:]
+	}
+	return args
 }
 
 // HereProfile is the account a launch without a name uses: the one set for
@@ -111,11 +136,17 @@ func (pl *Plan) InsertArgs(extra ...string) {
 
 // ProfileEnv is the environment claude runs with for a profile.
 func ProfileEnv(p paths.Paths, environ []string, dir, name string) []string {
-	return buildEnv(environ, dir, name, runtime.GOOS == "darwin" && creds.DefaultStore(dir, p.Home))
+	return buildEnv(environ, dir, name, secureStore && creds.DefaultStore(dir, p.Home))
 }
 
+// secureStore says the platform has a login store Claude Code names after
+// the config folder: the macOS Keychain, Windows Credential Manager.
+const secureStore = runtime.GOOS == "darwin" || runtime.GOOS == "windows"
+
 // buildEnv sets CLAUDE_CONFIG_DIR. defaultStore keeps an imported ~/.claude
-// on the unsuffixed macOS Keychain item that plain `claude` uses.
+// on the unsuffixed secure-storage entry that plain `claude` uses (macOS
+// Keychain, Windows Credential Manager); with the file store the variable
+// names the same folder.
 func buildEnv(environ []string, dir, name string, defaultStore bool) []string {
 	env := make([]string, 0, len(environ)+3)
 	for _, kv := range environ {
@@ -133,33 +164,116 @@ func buildEnv(environ []string, dir, name string, defaultStore bool) []string {
 }
 
 // DryRun prints what would be executed, as a line for sh, or for
-// PowerShell on Windows.
-func (pl *Plan) DryRun(w io.Writer) {
+// PowerShell on Windows: the variables a launch sets or clears, then the
+// command. The key of an API account is shown by its source, never read.
+// It fails, as the launch would, where claude could not be started so.
+func (pl *Plan) DryRun(w io.Writer) error { return pl.dryRun(w, os.Environ()) }
+
+func (pl *Plan) dryRun(w io.Writer, environ []string) error {
+	set, unset := pl.envChanges(environ)
 	if runtime.GOOS == "windows" {
-		// The value of an assignment must be a string, so it is always quoted.
-		parts := []string{"$env:CLAUDE_CONFIG_DIR='" + strings.ReplaceAll(pl.Dir, "'", "''") + "';", "&", PSQuote(pl.Bin)}
-		for _, a := range pl.Argv[1:] {
-			parts = append(parts, PSQuote(a))
+		// PowerShell: the variables are put back afterwards, as sh's
+		// VAR=x cmd would, and claude gets its command line through
+		// Start-Process unchanged: `& claude args` would be quoted
+		// differently by Windows PowerShell 5.1 and PowerShell 7.
+		file, line, err := commandLine(pl.Bin, pl.Argv[1:])
+		if err != nil {
+			return err
 		}
-		fmt.Fprintln(w, strings.Join(parts, " "))
-		return
+		var names, parts, empty []string
+		for _, k := range unset {
+			names = append(names, "'"+k+"'")
+			parts = append(parts, "Remove-Item Env:"+k+" -ErrorAction SilentlyContinue;")
+		}
+		for _, kv := range set {
+			k, v, _ := strings.Cut(kv, "=")
+			names = append(names, "'"+k+"'")
+			// The value of an assignment must be a string, so it is always quoted.
+			parts = append(parts, "$env:"+k+"="+PSString(v)+";")
+			if v == "" {
+				empty = append(empty, k)
+			}
+		}
+		if pl.keyVar != "" {
+			v := PSString("<the first line of: " + strings.TrimPrefix(pl.keyFrom, "command:") + ">")
+			if name, ok := strings.CutPrefix(pl.keyFrom, "env:"); ok {
+				v = "$env:" + name
+			}
+			names = append(names, "'"+pl.keyVar+"'")
+			parts = append(parts, "$env:"+pl.keyVar+"="+v+";")
+		}
+		start := "Start-Process -FilePath " + PSString(file)
+		if line != "" {
+			start += " -ArgumentList " + PSString(line)
+		}
+		fmt.Fprintln(w, "& { $saved = @{}; foreach ($k in "+strings.Join(names, ",")+") { $saved[$k] = [Environment]::GetEnvironmentVariable($k) }; "+
+			strings.Join(parts, " ")+" try { $p = "+start+" -NoNewWindow -Wait -PassThru; $global:LASTEXITCODE = $p.ExitCode } "+
+			"finally { foreach ($k in $saved.Keys) { [Environment]::SetEnvironmentVariable($k, $saved[$k]) } } }")
+		if len(empty) > 0 {
+			fmt.Fprintf(w, "# The launch sets %s to an empty value; Windows PowerShell 5.1 (and PowerShell before 7.5) removes a variable set to '' instead, so there this line differs from the launch.\n", strings.Join(empty, ", "))
+		}
+		return nil
 	}
-	parts := []string{"CLAUDE_CONFIG_DIR=" + ShellQuote(pl.Dir), ShellQuote(pl.Bin)}
+	var parts []string
+	if len(unset) > 0 {
+		parts = append(parts, "env")
+		for _, k := range unset {
+			parts = append(parts, "-u", k)
+		}
+	}
+	for _, kv := range set {
+		k, v, _ := strings.Cut(kv, "=")
+		parts = append(parts, k+"="+ShellQuote(v))
+	}
+	if pl.keyVar != "" {
+		v := `"$(` + strings.TrimPrefix(pl.keyFrom, "command:") + ` | head -n 1)"`
+		if name, ok := strings.CutPrefix(pl.keyFrom, "env:"); ok {
+			v = `"$` + name + `"`
+		}
+		parts = append(parts, pl.keyVar+"="+v)
+	}
+	parts = append(parts, ShellQuote(pl.Bin))
 	for _, a := range pl.Argv[1:] {
 		parts = append(parts, ShellQuote(a))
 	}
 	fmt.Fprintln(w, strings.Join(parts, " "))
+	return nil
 }
 
-// PSQuote quotes s for PowerShell when needed.
-func PSQuote(s string) string {
-	if s != "" && strings.IndexFunc(s, func(r rune) bool {
-		return !(r >= 'a' && r <= 'z' || r >= 'A' && r <= 'Z' || r >= '0' && r <= '9' || strings.ContainsRune("-_./:\\", r))
-	}) < 0 {
-		return s
+// envChanges compares the plan's environment with the one ccam inherited:
+// set holds what a launch adds or changes (CLAUDE_CONFIG_DIR and
+// CCAM_PROFILE always, so the line stands on its own), unset the names it
+// drops. Inherited values a launch keeps are not printed, so a key in the
+// shell is never echoed.
+func (pl *Plan) envChanges(environ []string) (set, unset []string) {
+	before := make(map[string]string, len(environ))
+	for _, kv := range environ {
+		k, v, _ := strings.Cut(kv, "=")
+		before[k] = v
 	}
-	return "'" + strings.ReplaceAll(s, "'", "''") + "'"
+	kept := make(map[string]bool, len(pl.Env))
+	for _, kv := range pl.Env {
+		k, v, _ := strings.Cut(kv, "=")
+		kept[k] = true
+		if old, ok := before[k]; !ok || old != v || k == "CLAUDE_CONFIG_DIR" || k == "CCAM_PROFILE" {
+			set = append(set, kv)
+		}
+	}
+	for k := range before {
+		if !kept[k] && k != pl.keyVar {
+			unset = append(unset, k)
+		}
+	}
+	slices.Sort(unset)
+	return set, unset
 }
+
+// PSString is s as a PowerShell string literal: in single quotes, each
+// quote inside doubled. PowerShell takes the typographic single quotes
+// (U+2018 to U+201B) for ' as well, so they are doubled too.
+func PSString(s string) string { return "'" + psQuotes.Replace(s) + "'" }
+
+var psQuotes = strings.NewReplacer("'", "''", "\u2018", "\u2018\u2018", "\u2019", "\u2019\u2019", "\u201a", "\u201a\u201a", "\u201b", "\u201b\u201b")
 
 // BeforeExec runs right before exec, e.g. to flush a CPU profile.
 var BeforeExec func()
@@ -172,25 +286,38 @@ func (e ExitCode) Error() string { return fmt.Sprintf("claude exited with code %
 
 // Run starts claude as a child process with the given standard streams,
 // waits for it and returns its exit code (128+n when signal n ended it).
-// Ctrl+C is not passed on: the terminal sends it to claude as well.
+// Ctrl+C is not passed on: the terminal sends it to claude as well. Run
+// records claude's process and the signals ccam got (pl.run).
 func (pl *Plan) Run(p paths.Paths, stdin io.Reader, stdout, stderr io.Writer) (int, error) {
 	setTitle(pl.Profile.Name)
-	MarkUsed(p, pl.Profile.Name)
-	cmd := &exec.Cmd{Path: pl.Bin, Args: pl.Argv, Env: pl.Env, Stdin: stdin, Stdout: stdout, Stderr: stderr}
+	cmd := &exec.Cmd{Path: pl.Bin, Args: pl.Argv}
+	if isBatch(pl.Bin) {
+		c, err := batchCommand(context.Background(), pl.Bin, pl.Argv[1:])
+		if err != nil {
+			return 0, err
+		}
+		cmd = c
+	}
+	cmd.Env, cmd.Stdin, cmd.Stdout, cmd.Stderr = pl.Env, stdin, stdout, stderr
 	sig := make(chan os.Signal, 4)
 	signal.Notify(sig, passOn...)
 	defer signal.Stop(sig)
 	if err := cmd.Start(); err != nil {
 		return 0, err
 	}
+	MarkUsed(p, pl.Profile.Name)
+	pl.run.child = cmd.Process.Pid
 	done := make(chan struct{})
 	go func() {
 		for {
 			select {
 			case s := <-sig:
-				if s != os.Interrupt {
-					_ = cmd.Process.Signal(s)
+				if s == os.Interrupt {
+					pl.run.interrupt.Store(time.Now().UnixNano())
+					continue
 				}
+				pl.run.signaled.Store(true)
+				_ = cmd.Process.Signal(s)
 			case <-done:
 				return
 			}
@@ -210,6 +337,10 @@ func (pl *Plan) Run(p paths.Paths, stdin io.Reader, stdout, stderr io.Writer) (i
 	}
 	return 0, err
 }
+
+// Signaled reports whether ccam got SIGHUP, SIGTERM or SIGQUIT while Run
+// ran claude (and passed it on).
+func (pl *Plan) Signaled() bool { return pl.run.signaled.Load() }
 
 func setTitle(name string) {
 	if runtime.GOOS == "windows" {
@@ -254,25 +385,37 @@ func LastUsed(p paths.Paths, name string) time.Time {
 }
 
 // ResolveClaude finds the claude executable, which must not be ccam itself
-// (that would add ccam's flags on every pass). Lookups through PATH are
-// cached in the state dir with the file's mtime and the claude_bin they
-// resolved; a changed or missing file, or another claude_bin, triggers a
-// fresh lookup.
+// (that would add ccam's flags on every pass). A claude_bin with a path
+// ("~/" is the home folder) must be an executable file: checked here, before
+// a launch marks the account as used or takes a handoff note, since a failed
+// exec says only "no such file or directory". Lookups through PATH are
+// cached in the state dir with the file's mtime, the claude_bin they
+// resolved and a hash of PATH; a changed or missing file, another
+// claude_bin or another PATH (nvm use, a new install placed earlier)
+// triggers a fresh lookup.
 func ResolveClaude(p paths.Paths, bin string) (string, error) {
 	if bin == "" {
 		bin = "claude"
 	}
 	if strings.ContainsRune(bin, '/') || strings.ContainsRune(bin, filepath.Separator) {
-		if isSelf(bin) {
+		if rest, ok := strings.CutPrefix(bin, "~/"); ok {
+			bin = filepath.Join(p.Home, rest)
+		}
+		fi, err := os.Stat(bin)
+		if err != nil || !fi.Mode().IsRegular() || runtime.GOOS != "windows" && fi.Mode().Perm()&0o111 == 0 {
+			return "", fmt.Errorf("claude_bin %s is not an executable file. Check claude_bin in config.toml", bin)
+		}
+		if isSelfInfo(fi) {
 			return "", fmt.Errorf("%s points to ccam itself. Check claude_bin in config.toml", bin)
 		}
 		return bin, nil
 	}
 	cache := filepath.Join(p.State, "claude-path")
+	key := bin + "\t" + pathHash(os.Getenv("PATH"))
 	if data, err := os.ReadFile(cache); err == nil {
 		path, rest, _ := strings.Cut(string(data), "\t")
-		mtime, cachedBin, _ := strings.Cut(rest, "\t")
-		if cachedBin == bin {
+		mtime, cachedKey, _ := strings.Cut(rest, "\t")
+		if cachedKey == key {
 			if fi, err := os.Stat(path); err == nil && strconv.FormatInt(fi.ModTime().UnixNano(), 10) == mtime {
 				return path, nil
 			}
@@ -283,26 +426,49 @@ func ResolveClaude(p paths.Paths, bin string) (string, error) {
 		return "", fmt.Errorf("cannot find the claude executable (%s). Is Claude Code installed?", bin)
 	}
 	path, _ = filepath.Abs(path)
-	if isSelf(path) {
+	fi, err := os.Stat(path)
+	if err != nil {
+		return "", err
+	}
+	if isSelfInfo(fi) {
 		return "", fmt.Errorf("%s points to ccam itself. Check claude_bin in config.toml", path)
 	}
-	if fi, err := os.Stat(path); err == nil {
-		_ = fsutil.WriteFast(cache, []byte(path+"\t"+strconv.FormatInt(fi.ModTime().UnixNano(), 10)+"\t"+bin))
-	}
+	_ = fsutil.WriteFast(cache, []byte(path+"\t"+strconv.FormatInt(fi.ModTime().UnixNano(), 10)+"\t"+key))
 	return path, nil
 }
 
-// isSelf reports whether path is the running ccam binary, through any
+// pathHash is FNV-1a of s, without allocating: PATH can be kilobytes long
+// on WSL, which appends the Windows PATH.
+func pathHash(s string) string {
+	h := uint64(14695981039346656037)
+	for i := 0; i < len(s); i++ {
+		h ^= uint64(s[i])
+		h *= 1099511628211
+	}
+	return strconv.FormatUint(h, 16)
+}
+
+// ClaudeCommand is exec.CommandContext for the claude at bin. On Windows a
+// batch file (an npm install's claude.cmd) gets a command line built for
+// cmd.exe, which would otherwise run what it finds and read the arguments
+// as commands (batchCommand).
+func ClaudeCommand(ctx context.Context, bin string, args ...string) (*exec.Cmd, error) {
+	if isBatch(bin) {
+		return batchCommand(ctx, bin, args)
+	}
+	return exec.CommandContext(ctx, bin, args...), nil
+}
+
+// isSelfInfo reports whether fi is the running ccam binary, through any
 // symlink or hard link. Comparing inodes costs two stats, which matters on
 // the launch path; resolving both paths component by component does not.
-func isSelf(path string) bool {
+func isSelfInfo(fi os.FileInfo) bool {
 	self, err := os.Executable()
 	if err != nil {
 		return false
 	}
-	a, err1 := os.Stat(self)
-	b, err2 := os.Stat(path)
-	return err1 == nil && err2 == nil && os.SameFile(a, b)
+	a, err := os.Stat(self)
+	return err == nil && os.SameFile(a, fi)
 }
 
 // ShellQuote quotes s for sh when needed.

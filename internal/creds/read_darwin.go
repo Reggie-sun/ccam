@@ -4,11 +4,20 @@ import (
 	"context"
 	"os/exec"
 	"time"
+
+	"golang.org/x/text/unicode/norm"
 )
+
+// nfc is s in Unicode NFC, as Claude Code hashes a config dir's path.
+func nfc(s string) string { return norm.NFC.String(s) }
+
+// keychainTimeout bounds one call of the security command, which can hang
+// on a locked or busy Keychain.
+const keychainTimeout = 3 * time.Second
 
 // Read returns the stored login JSON, Keychain first, then the fallback file.
 func Read(dir, home string) ([]byte, Source, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), keychainTimeout)
 	defer cancel()
 	out, err := exec.CommandContext(ctx, "security", "find-generic-password",
 		"-a", KeychainAccount(), "-w", "-s", KeychainService(dir, home)).Output()
@@ -16,15 +25,4 @@ func Read(dir, home string) ([]byte, Source, error) {
 		return out, Keychain, nil
 	}
 	return readFile(dir)
-}
-
-// Has reports whether a login is stored, without reading the secret.
-func Has(dir, home string) bool {
-	err := exec.Command("security", "find-generic-password",
-		"-a", KeychainAccount(), "-s", KeychainService(dir, home)).Run()
-	if err == nil {
-		return true
-	}
-	_, _, err = readFile(dir)
-	return err == nil
 }

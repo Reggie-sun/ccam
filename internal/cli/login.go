@@ -3,12 +3,12 @@ package cli
 import (
 	"bufio"
 	"cmp"
+	"context"
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
 	"os"
-	"os/exec"
 	"os/signal"
 	"strings"
 	"sync"
@@ -41,7 +41,10 @@ func runLogin(e *env, cfg *config.Config, prof *config.Profile) error {
 		// Only fills in the login page; the identity is checked afterwards.
 		args = append(args, "--email", email)
 	}
-	c := exec.Command(bin, args...)
+	c, err := launcher.ClaudeCommand(context.Background(), bin, args...)
+	if err != nil {
+		return err
+	}
 	c.Env = launcher.ProfileEnv(e.paths, os.Environ(), profile.Dir(e.paths, prof), prof.Name)
 	c.Stdout, c.Stderr = e.stdout, e.stderr
 	toClaude, err := c.StdinPipe()
@@ -54,11 +57,57 @@ func runLogin(e *env, cfg *config.Config, prof *config.Profile) error {
 	}
 	stars, restore := maskTyping(e)
 	defer restore()
-	// The relay may stay blocked on a read after claude exits; nothing reads
-	// the terminal after a login, and the line it may still take is not lost
-	// to anyone.
-	go relayLogin(e.in, stars, toClaude, e.stderr, deliverCallback)
-	return c.Wait()
+	// The relay stops when claude exits: what is typed next is for what
+	// follows the login (the next login of `ccam login --expired`, the
+	// dashboard's "Press Enter"), which gets the line the relay was waiting
+	// for. That read keeps showing stars, so such a prompt may print one
+	// line more.
+	src := e.lines()
+	done, stopped := make(chan struct{}), make(chan struct{})
+	go func() {
+		defer close(stopped)
+		relayLogin(src, stars, toClaude, e.stderr, deliverCallback, done)
+	}()
+	err = c.Wait()
+	close(done)
+	<-stopped
+	return err
+}
+
+// lineSource hands out the lines typed on stdin. It reads only when asked,
+// one read at a time: a reader that stops waiting (a login's relay once its
+// claude exits) leaves its read under way, and the line goes to the next
+// reader instead of being lost. So nothing reads the terminal while the
+// dashboard does, which reads it directly.
+type lineSource struct {
+	in      *bufio.Reader
+	pending chan lineRead // the read under way, if any
+}
+
+type lineRead struct {
+	line string
+	err  error
+}
+
+// next returns the read under way, starting one with readLine(in, stars)
+// if there is none.
+func (s *lineSource) next(stars io.Writer) chan lineRead {
+	if s.pending == nil {
+		read := make(chan lineRead, 1)
+		go func() {
+			line, err := readLine(s.in, stars)
+			read <- lineRead{line, err}
+		}()
+		s.pending = read
+	}
+	return s.pending
+}
+
+// readLine waits for the next line, newline included.
+func (s *lineSource) readLine() (string, error) {
+	r := <-s.next(nil)
+	s.pending = nil
+	return r.line, r.err
 }
 
 // loginEmail is the email of the account's last recorded login.
@@ -105,13 +154,28 @@ func maskTyping(e *env) (io.Writer, func()) {
 	return e.stderr, restore
 }
 
-// relayLogin copies lines from in to claude until in ends, delivering pasted
-// callback addresses instead of copying them. With stars set, the terminal
-// does not echo and each character typed is shown there as a '*'.
-func relayLogin(in *bufio.Reader, stars io.Writer, toClaude io.WriteCloser, msg io.Writer, deliver func(*url.URL) error) {
+// relayLogin copies lines from src to claude until src ends or done is
+// closed (claude has exited), delivering pasted callback addresses instead
+// of copying them. With stars set, the terminal does not echo and each
+// character typed is shown there as a '*'.
+func relayLogin(src *lineSource, stars io.Writer, toClaude io.WriteCloser, msg io.Writer, deliver func(*url.URL) error, done <-chan struct{}) {
 	defer toClaude.Close()
 	for {
-		line, err := readLine(in, stars)
+		read := src.next(stars)
+		var r lineRead
+		select {
+		case <-done:
+			return
+		case r = <-read:
+		}
+		select {
+		case <-done:
+			read <- r // claude exited meanwhile: the line is the next reader's
+			return
+		default:
+			src.pending = nil
+		}
+		line, err := r.line, r.err
 		if u, ok := callbackURL(line); ok {
 			if derr := deliver(u); derr != nil {
 				fmt.Fprintf(msg, "ccam: could not pass the sign-in to Claude Code: %v\n", derr)

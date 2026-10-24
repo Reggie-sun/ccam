@@ -2,6 +2,7 @@ package share
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"io/fs"
@@ -23,9 +24,9 @@ const (
 	OpMergeDir                 // move my files the group lacks into the group dir
 	OpWriteGroup               // write the resolved conflict content into the group
 	OpBackup                   // move mine into .ccam-backup/<stamp>/
-	OpUnlink                   // remove the link
+	OpUnlink                   // remove the link From, which pointed to To when planned
 	OpLink                     // create the link (and the group dir for dir entries)
-	OpCopyBack                 // copy the group content into the profile (sharing off)
+	OpCopyBack                 // replace the link To with a copy of the group content From (sharing off)
 	OpCopyToGroup              // copy a foreign link's target into an empty group slot
 	OpMergeRegistry            // merge my plugin registry JSON into the group's (group backed up)
 	OpRewritePlugins           // point plugin registry paths in To from prefix From to To
@@ -91,12 +92,15 @@ func (o Options) exists(path string) bool {
 	if fsutil.Exists(path) {
 		return true
 	}
+	if _, ok := o.Pending[path]; ok {
+		return true
+	}
+	// A folder an earlier plan moves in holds path if its source does. A
+	// miss goes on looking: another plan may bring the file itself (above),
+	// and the map is read in random order.
 	for k, src := range o.Pending {
-		if path == k {
+		if rest, ok := strings.CutPrefix(path, k+string(filepath.Separator)); ok && src != "" && fsutil.Exists(filepath.Join(src, rest)) {
 			return true
-		}
-		if rest, ok := strings.CutPrefix(path, k+string(filepath.Separator)); ok && src != "" {
-			return fsutil.Exists(filepath.Join(src, rest))
 		}
 	}
 	return false
@@ -115,10 +119,21 @@ func (o Options) empty(path string) bool {
 	return err == nil && len(entries) == 0
 }
 
-// content is where the content of group path can be read now.
+// content is where the content of group path, or of a file inside a group
+// folder, can be read now: an earlier plan may still have to move it in.
 func (o Options) content(path string) string {
-	if src := o.Pending[path]; src != "" && !fsutil.Exists(path) {
+	if fsutil.Exists(path) {
+		return path
+	}
+	if src := o.Pending[path]; src != "" {
 		return src
+	}
+	for k, src := range o.Pending {
+		if rest, ok := strings.CutPrefix(path, k+string(filepath.Separator)); ok && src != "" {
+			if in := filepath.Join(src, rest); fsutil.Exists(in) {
+				return in
+			}
+		}
 	}
 	return path
 }
@@ -175,14 +190,22 @@ func Build(dir, groupsRoot string, current, target config.Share, opt Options) (*
 			}
 
 			if to == config.Local {
+				if stage := stagePath(dir, e); !exists && fsutil.Exists(stage) {
+					// A copy back stopped after removing the link: the
+					// copy is complete.
+					pl.Steps = append(pl.Steps, Step{Op: OpAdopt, Item: item, Entry: e, From: stage, To: mine})
+					continue
+				}
 				if isLink && strings.HasPrefix(linkTarget, groupsRoot+string(filepath.Separator)) {
-					pl.Steps = append(pl.Steps, Step{Op: OpUnlink, Item: item, Entry: e, From: mine})
-					if !opt.Fresh && fsutil.Exists(linkTarget) {
-						pl.Steps = append(pl.Steps, Step{Op: OpCopyBack, Item: item, Entry: e, From: linkTarget, To: mine})
-						if e.Name == "plugins" {
-							// The copy's registries still point into the group.
-							pl.Steps = append(pl.Steps, Step{Op: OpRewritePlugins, Item: item, Entry: e, From: linkTarget + string(filepath.Separator), To: mine})
-						}
+					if opt.Fresh || !fsutil.Exists(linkTarget) {
+						pl.Steps = append(pl.Steps, Step{Op: OpUnlink, Item: item, Entry: e, From: mine, To: linkTarget})
+						continue
+					}
+					// The copy takes the link's place once it is complete.
+					pl.Steps = append(pl.Steps, Step{Op: OpCopyBack, Item: item, Entry: e, From: linkTarget, To: mine})
+					if e.Name == "plugins" {
+						// The copy's registries still point into the group.
+						pl.Steps = append(pl.Steps, Step{Op: OpRewritePlugins, Item: item, Entry: e, From: linkTarget + string(filepath.Separator), To: mine})
 					}
 				}
 				continue
@@ -215,7 +238,19 @@ func Build(dir, groupsRoot string, current, target config.Share, opt Options) (*
 				} else if from != config.Local && from != to {
 					pl.Notes = append(pl.Notes, fmt.Sprintf("%s: leaving group %s as it is and linking to group %s", e.Name, from, to))
 				}
-				pl.Steps = append(pl.Steps, Step{Op: OpUnlink, Item: item, Entry: e, From: mine})
+				pl.Steps = append(pl.Steps, Step{Op: OpUnlink, Item: item, Entry: e, From: mine, To: linkTarget})
+			case exists && groupLinksTo(grp, mine):
+				// The group's entry is a link to this very entry (made by
+				// hand): it holds nothing of its own, so the account's
+				// content takes its place.
+				target, _ := fsutil.LinkTarget(grp)
+				pl.Steps = append(pl.Steps,
+					Step{Op: OpUnlink, Item: item, Entry: e, From: grp, To: target},
+					Step{Op: OpAdopt, Item: item, Entry: e, From: mine, To: grp})
+				if e.Name == "plugins" {
+					pl.Steps = append(pl.Steps, Step{Op: OpRewritePlugins, Item: item, Entry: e, From: mine + string(filepath.Separator), To: grp})
+				}
+				pl.Notes = append(pl.Notes, fmt.Sprintf("%s: group %s held only a link to this account's own; its content becomes the group's", e.Name, to))
 			case exists:
 				if err := planAdopt(pl, item, e, mine, grp, opt); err != nil {
 					return nil, err
@@ -239,6 +274,20 @@ func planAdopt(pl *Plan, item string, e Entry, mine, grp string, opt Options) er
 		return nil
 	}
 	if e.Dir {
+		// Inside a folder the group's copy of a file stays; say which of
+		// the account's differ, since they then live only in the backup.
+		differ := differing(e, mine, grp, opt)
+		if n := len(differ); n > 0 {
+			files, verb := "1 file", "differs"
+			if n > 1 {
+				files, verb = fmt.Sprintf("%d files", n), "differ"
+			}
+			if n > 3 {
+				differ = append(differ[:3:3], "…")
+			}
+			pl.Notes = append(pl.Notes, fmt.Sprintf("%s: %s %s from the group's copy (%s); the group's is kept, the account's stays in %s",
+				e.Name, files, verb, strings.Join(differ, ", "), pl.backupPath(e)))
+		}
 		pl.Steps = append(pl.Steps, Step{Op: OpMergeDir, Item: item, Entry: e, From: mine, To: grp})
 		if e.Name == "plugins" {
 			for _, name := range profile.PluginFiles {
@@ -269,6 +318,38 @@ func planAdopt(pl *Plan, item string, e Entry, mine, grp string, opt Options) er
 	}
 	pl.Steps = append(pl.Steps, Step{Op: OpBackup, Item: item, Entry: e, From: mine, To: pl.backupPath(e)})
 	return nil
+}
+
+// differing lists the files in the folder mine (relative to it) that the
+// group folder grp, as it will be when the plan runs, has with other
+// content. Plugin registries are merged instead and left out, and so is
+// what cannot be read: moving does not need to read it.
+func differing(e Entry, mine, grp string, opt Options) []string {
+	var out []string
+	_ = filepath.WalkDir(mine, func(path string, d fs.DirEntry, err error) error {
+		if err != nil || !d.Type().IsRegular() {
+			return nil
+		}
+		rel, _ := filepath.Rel(mine, path)
+		if registry(e, rel) {
+			return nil
+		}
+		theirs := opt.content(filepath.Join(grp, rel))
+		if info, err := os.Lstat(theirs); err != nil || !info.Mode().IsRegular() {
+			return nil
+		}
+		if same, err := fsutil.SameContent(path, theirs); err == nil && !same {
+			out = append(out, rel)
+		}
+		return nil
+	})
+	return out
+}
+
+// registry reports whether rel, in the folder of entry e, is a plugin
+// registry, which an OpMergeRegistry step merges.
+func registry(e Entry, rel string) bool {
+	return e.Name == "plugins" && slices.Contains(profile.PluginFiles, rel)
 }
 
 // NewConflict lists the resolutions that fit the file and picks the first
@@ -346,6 +427,18 @@ func (pl *Plan) DescribeUnder(w io.Writer, base string) {
 			lines = append(lines, line{op: s.Op, text: fmt.Sprintf("paths    plugin paths under %s → %s", strings.TrimSuffix(from, string(filepath.Separator)), to)})
 			continue
 		}
+		if s.Op == OpAdopt && s.From == stagePath(pl.Dir, s.Entry) {
+			lines = append(lines, line{op: s.Op, text: fmt.Sprintf("restore  %s: %s → %s (copied back from the group before a stop)", s.Entry.Name, from, to)})
+			continue
+		}
+		if s.Op == OpCopyBack {
+			// The copy takes the place of the link.
+			u := key{OpUnlink, filepath.Dir(to), ""}
+			if _, ok := names[u]; !ok {
+				lines = append(lines, line{op: OpUnlink, key: &u})
+			}
+			names[u] = append(names[u], s.Entry.Name)
+		}
 		if _, ok := names[k]; !ok {
 			lines = append(lines, line{op: s.Op, key: &k})
 		}
@@ -373,12 +466,16 @@ func (pl *Plan) DescribeUnder(w io.Writer, base string) {
 		fmt.Fprintln(w, "  "+l.text)
 	}
 	for _, n := range pl.Notes {
+		if base != "" {
+			n = strings.ReplaceAll(n, base+string(filepath.Separator), "")
+		}
 		fmt.Fprintln(w, "  Note: "+n)
 	}
 }
 
 // Apply executes the plan in order. Every step either moves data into the
-// group or into the backup folder; nothing is deleted.
+// group or into the backup folder; nothing is deleted but an account's
+// copies of files the group holds byte for byte.
 func (pl *Plan) Apply() error {
 	for _, s := range pl.Steps {
 		if err := apply(s); err != nil {
@@ -393,17 +490,23 @@ func apply(s Step) error {
 	case OpAdopt:
 		return fsutil.Move(s.From, s.To)
 	case OpMergeDir:
-		return mergeDir(s.From, s.To)
+		return mergeDir(s.Entry, s.From, s.To)
 	case OpWriteGroup:
 		return resolve(s.Conflict)
 	case OpBackup:
 		return fsutil.Move(s.From, s.To)
 	case OpUnlink:
-		return os.Remove(s.From)
+		return unlink(s.From, s.To)
 	case OpLink:
 		return linkEntry(s.Entry, s.From, s.To)
-	case OpCopyBack, OpCopyToGroup:
-		return fsutil.CopyTree(s.From, s.To)
+	case OpCopyBack:
+		// Staged in the backup folder (same disk, a name doctor knows).
+		stage := stagePath(filepath.Dir(s.To), s.Entry)
+		err := copyInto(s.Entry, s.From, s.To, stage, s.From)
+		os.Remove(filepath.Dir(stage)) // when it was made only for the copy
+		return err
+	case OpCopyToGroup:
+		return copyInto(s.Entry, s.From, s.To, filepath.Join(filepath.Dir(s.To), ".ccam-incomplete-"+s.Entry.Name), "")
 	case OpMergeRegistry:
 		return MergeRegistry(s.From, s.To, s.Conflict.GroupSave, filepath.Dir(s.From))
 	case OpRewritePlugins:
@@ -413,17 +516,97 @@ func apply(s Step) error {
 	return nil
 }
 
-// mergeDir moves every file of src that dst lacks into dst. Files present
-// in both with different content stay in src (which then goes to backup).
-func mergeDir(src, dst string) error {
-	return filepath.WalkDir(src, func(path string, d fs.DirEntry, err error) error {
+// unlink removes the link at path if it still points to target. What took
+// its place since the plan was made (a file an editor saved there) stays,
+// and the step fails; a link already gone is fine.
+func unlink(path, target string) error {
+	info, err := os.Lstat(path)
+	if errors.Is(err, fs.ErrNotExist) {
+		return nil
+	}
+	if err != nil {
+		return err
+	}
+	if got, ok := fsutil.LinkTargetOf(path, info); !ok || got != target {
+		return fmt.Errorf("%s changed since the plan was made, so it was left as it is", path)
+	}
+	return os.Remove(path)
+}
+
+// rename is os.Rename; tests replace it.
+var rename = os.Rename
+
+// copyInto copies src, entry e's content, to dst through stage, a path
+// beside dst that never holds anything but this copy: dst changes only
+// once the copy is complete, so a copy that stops halfway is never taken
+// for a finished one. It replaces the link to src at dst (link, for a copy
+// back) or an empty group folder (link ""); anything else there since the
+// plan was made stays, and the step fails.
+func copyInto(e Entry, src, dst, stage, link string) error {
+	if err := os.RemoveAll(stage); err != nil { // left by a run that stopped
+		return err
+	}
+	err := fsutil.CopyTree(src, stage)
+	if err == nil {
+		if link != "" {
+			err = unlink(dst, link)
+		} else if info, lerr := os.Lstat(dst); lerr == nil && !info.IsDir() {
+			err = fmt.Errorf("%s is there since the plan was made, so it was left as it is", dst)
+		} else if lerr == nil {
+			err = os.Remove(dst) // fails unless the folder is still empty
+		}
+	}
+	if err != nil {
+		os.RemoveAll(stage)
+		return err
+	}
+	if err := rename(stage, dst); err != nil {
+		// With the link back the copy is made again by the next run;
+		// without, the account would find nothing there.
+		if link != "" && fsutil.Link(link, dst, e.Dir) != nil {
+			return fmt.Errorf("%w (the copy is in %s)", err, stage)
+		}
+		os.RemoveAll(stage)
+		return err
+	}
+	return nil
+}
+
+// mergeDir moves every file of src that dst lacks into dst and drops the
+// ones dst has byte for byte, which a backup would only pile up. Files
+// present in both with different content stay in src (which then goes to
+// backup), and so do plugin registries, which a later step merges. The
+// folders this leaves empty go too; src itself stays for the backup step.
+func mergeDir(e Entry, src, dst string) error {
+	var emptied []string
+	err := filepath.WalkDir(src, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
 		rel, _ := filepath.Rel(src, path)
 		target := filepath.Join(dst, rel)
+		if path != src && sameFile(path, target) {
+			// The group holds a link the user made into this account:
+			// it is the only copy, which takes the link's place. Reached
+			// through a linked folder above, it stays for the backup.
+			if _, ok := fsutil.LinkTarget(target); ok {
+				if err := os.Remove(target); err != nil {
+					return err
+				}
+				if err := fsutil.MoveWithin(path, target, src); err != nil {
+					return err
+				}
+			}
+			if d.IsDir() {
+				return filepath.SkipDir
+			}
+			return nil
+		}
 		if d.IsDir() {
 			if fsutil.Exists(target) {
+				if path != src {
+					emptied = append(emptied, path)
+				}
 				return nil
 			}
 			if err := fsutil.MoveWithin(path, target, src); err != nil {
@@ -431,11 +614,50 @@ func mergeDir(src, dst string) error {
 			}
 			return filepath.SkipDir
 		}
-		if fsutil.Exists(target) {
+		if !fsutil.Exists(target) {
+			return fsutil.MoveWithin(path, target, src)
+		}
+		if !d.Type().IsRegular() || registry(e, rel) {
 			return nil
 		}
-		return fsutil.MoveWithin(path, target, src)
+		if info, err := os.Lstat(target); err != nil || !info.Mode().IsRegular() {
+			return nil
+		}
+		if same, err := fsutil.SameContent(path, target); err != nil || !same {
+			return nil
+		}
+		return os.Remove(path)
 	})
+	if err != nil {
+		return err
+	}
+	// Deepest first; a folder that still holds something stays.
+	for _, dir := range slices.Backward(emptied) {
+		os.Remove(dir)
+	}
+	return nil
+}
+
+// stagePath is where a copy back of entry e into the account folder dir
+// is made before it takes the link's place.
+func stagePath(dir string, e Entry) string {
+	return filepath.Join(dir, BackupDir, "incomplete-"+e.Name)
+}
+
+// groupLinksTo reports whether grp is a link that resolves to mine.
+func groupLinksTo(grp, mine string) bool {
+	_, link := fsutil.LinkTarget(grp)
+	return link && sameFile(grp, mine)
+}
+
+// sameFile reports whether a and b, links followed, are one file.
+func sameFile(a, b string) bool {
+	ia, err := os.Stat(a)
+	if err != nil {
+		return false
+	}
+	ib, err := os.Stat(b)
+	return err == nil && os.SameFile(ia, ib)
 }
 
 // Resolve writes c.Choice into the group file, saving the group copy to

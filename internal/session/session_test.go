@@ -4,6 +4,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strconv"
 	"testing"
 )
@@ -43,10 +44,34 @@ func TestStaleMarkersAreRemoved(t *testing.T) {
 }
 
 func TestStartTimeHandlesSpacesInName(t *testing.T) {
-	if _, ok := startTime(os.Getpid()); !ok {
+	if _, ok := StartTime(os.Getpid()); !ok {
 		t.Fatal("own start time")
 	}
-	if _, ok := startTime(-1); ok {
+	if _, ok := StartTime(-1); ok {
 		t.Fatal("bogus pid")
+	}
+}
+
+func TestParentAndExe(t *testing.T) {
+	if runtime.GOOS != "linux" && runtime.GOOS != "darwin" {
+		t.Skip("no process tree here")
+	}
+	if p, ok := Parent(os.Getpid()); !ok || p != os.Getppid() {
+		t.Fatalf("parent %d %v, want %d", p, ok, os.Getppid())
+	}
+	self, _ := os.Executable()
+	self, _ = filepath.EvalSymlinks(self)
+	if exe, ok := Exe(os.Getpid()); !ok || exe != self {
+		t.Fatalf("exe %q %v, want %q", exe, ok, self)
+	}
+	c := exec.Command(self, "-test.run=^$")
+	if err := c.Run(); err != nil {
+		t.Fatal(err)
+	}
+	if _, ok := Parent(c.Process.Pid); ok {
+		t.Fatal("the parent of a finished process")
+	}
+	if _, ok := Exe(c.Process.Pid); ok {
+		t.Fatal("the program of a finished process")
 	}
 }

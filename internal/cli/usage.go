@@ -2,14 +2,17 @@ package cli
 
 import (
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"os"
-	"os/exec"
 	"os/signal"
 	"path/filepath"
+	"runtime"
 	"strings"
+	"syscall"
 	"time"
 
 	"github.com/charmbracelet/x/ansi"
@@ -28,11 +31,17 @@ func usageCmd(e *env) *cobra.Command {
 	var opt usage.Options
 	var asJSON, verbose bool
 	var watch int
+	ended := make(chan os.Signal, 1) // the signal that cancelled the lookups
 	cmd := &cobra.Command{
 		Use:     "usage",
 		Aliases: []string{"u"},
 		Short:   "5-hour, weekly and per-model usage of every account, with reset times",
-		Args:    cobra.NoArgs,
+		Args: func(cmd *cobra.Command, args []string) error {
+			if err := spacedValue(cmd, args, "watch", "60"); err != nil {
+				return err
+			}
+			return cobra.NoArgs(cmd, args)
+		},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if opt.Source != "" && opt.Source != "live" && opt.Source != "cache" && opt.Source != "claude" {
 				return fmt.Errorf("--source must be live, claude or cache")
@@ -45,18 +54,54 @@ func usageCmd(e *env) *cobra.Command {
 				return err
 			}
 			if len(cfg.Profiles) == 0 {
+				if asJSON {
+					e.printf("[]\n") // a script still gets JSON
+					return nil
+				}
 				e.printf("No accounts yet. Add one with `ccam add <name>`.\n")
 				return nil
 			}
 			f := e.fetcher()
-			if !cmd.Flags().Changed("watch") {
-				return showUsage(context.Background(), e, f, cfg, opt, asJSON, verbose, false)
+			watching := cmd.Flags().Changed("watch")
+			ctx := context.Background()
+			if watching || opt.Refresh {
+				// A token renewal in flight must not be cut off (the server may
+				// have rotated the refresh token already): with --refresh the
+				// signals that end ccam end the lookups instead, and ccam exits
+				// once the renewal is saved.
+				sigs := []os.Signal{os.Interrupt}
+				if opt.Refresh {
+					sigs = endSignals
+				}
+				sig := make(chan os.Signal, 1)
+				signal.Notify(sig, sigs...)
+				defer signal.Stop(sig)
+				var cancel context.CancelFunc
+				ctx, cancel = context.WithCancel(ctx)
+				defer cancel()
+				go func() {
+					select {
+					case s := <-sig:
+						ended <- s
+						cancel()
+					case <-ctx.Done():
+					}
+				}()
+			}
+			if !watching {
+				err := showUsage(ctx, e, f, cfg, opt, asJSON, verbose, false)
+				select {
+				case s := <-ended:
+					if err == nil {
+						err = exitError(128 + int(s.(syscall.Signal))) // as if the signal had ended ccam
+					}
+				default:
+				}
+				return err
 			}
 			if watch <= 0 {
 				watch = 60
 			}
-			ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
-			defer stop()
 			for {
 				if err := showUsage(ctx, e, f, cfg, opt, asJSON, verbose, true); err != nil {
 					return err
@@ -75,7 +120,7 @@ func usageCmd(e *env) *cobra.Command {
 	cmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "show where the numbers came from")
 	cmd.Flags().StringVar(&opt.Source, "source", "", "live (ccam asks the usage endpoint), claude (Claude Code does, slower) or cache (saved values) (config: usage_source)")
 	cmd.Flags().BoolVar(&opt.NoCache, "no-cache", false, "ignore the 60-second cache")
-	cmd.Flags().BoolVar(&opt.Refresh, "refresh", false, "refresh expired tokens (only for accounts not running)")
+	cmd.Flags().BoolVar(&opt.Refresh, "refresh", false, "refresh expired tokens (only for accounts not running; a refresh may take up to 30 s)")
 	return cmd
 }
 
@@ -99,6 +144,12 @@ func (e *env) fetcher() *usage.Fetcher {
 	return f
 }
 
+// probeExitWait is how long a probe asked to end may take before it is
+// killed, and how long one that has exited may keep its output open:
+// Claude Code's shutdown waits 2 s for a renewal in flight and has a 5 s
+// failsafe (2.1.308).
+var probeExitWait = 10 * time.Second
+
 // claudeProbe runs Claude Code in an account's folder and asks it for the
 // usage (usage.ProbeRequest): with --safe-mode, so the account's hooks, MCP
 // servers and plugins do not start, and without saving a session.
@@ -108,13 +159,23 @@ func claudeProbe(e *env, cfg *config.Config) func(context.Context, usage.Account
 		if err != nil {
 			return nil, err
 		}
-		c := exec.CommandContext(ctx, bin, "-p", "--input-format", "stream-json", "--output-format", "stream-json",
+		c, err := launcher.ClaudeCommand(ctx, bin, "-p", "--input-format", "stream-json", "--output-format", "stream-json",
 			"--verbose", "--safe-mode", "--no-session-persistence")
+		if err != nil {
+			return nil, err
+		}
 		// Its own login only, from a folder that is not a project.
 		c.Env = launcher.ProfileEnv(e.paths, launcher.WithoutAuth(os.Environ()), a.Dir, a.Name)
 		c.Dir = os.TempDir()
 		c.Stdin = strings.NewReader(usage.ProbeRequest)
-		c.WaitDelay = 2 * time.Second // a child that keeps the pipe open must not hold the lookup
+		// A probe given up (its time is over, Ctrl+C in --watch) asks Claude
+		// Code to end rather than kills it: on SIGTERM it finishes a token
+		// renewal it has started, and one cut off may lose the login.
+		// Windows has no such signal.
+		if runtime.GOOS != "windows" {
+			c.Cancel = func() error { return c.Process.Signal(syscall.SIGTERM) }
+		}
+		c.WaitDelay = probeExitWait
 		return c.Output()
 	}
 }
@@ -153,43 +214,30 @@ func showUsage(ctx context.Context, e *env, f *usage.Fetcher, cfg *config.Config
 		fmt.Fprint(e.stdout, "\x1b[H\x1b[2J")
 	}
 	// On a terminal, draw placeholders and redraw as each account answers.
-	// Lines are cut to the terminal width: a wrapped line would take two
-	// rows, and moving up by the number of lines would then land too low.
-	cols := 0
+	live := &liveTable{w: e.stdout, tty: tty}
 	if f, ok := e.stdout.(*os.File); ok && tty {
-		if w, _, err := term.GetSize(f.Fd()); err == nil && w > 1 {
-			cols = w - 1
+		if w, h, err := term.GetSize(f.Fd()); err == nil {
+			if w > 1 {
+				live.cols = w - 1
+			}
+			live.rows = h
 		}
 	}
-	drawn := 0
-	draw := func() {
+	draw := func(final bool) {
 		ro.Now = time.Now()
-		lines := usage.Table(view, ro)
-		if drawn > 0 {
-			fmt.Fprintf(e.stdout, "\x1b[%dA", drawn)
-		}
-		for _, l := range lines {
-			if tty {
-				fmt.Fprint(e.stdout, "\x1b[2K")
-				if cols > 0 {
-					l = ansi.Truncate(l, cols, "…")
-				}
-			}
-			fmt.Fprintln(e.stdout, l)
-		}
-		drawn = len(lines)
+		live.draw(usage.Table(view, ro), final)
 	}
 	if tty {
-		draw()
+		draw(false)
 	}
 	f.FetchAll(ctx, accts, opt, func(i int, r usage.Report) {
 		view[i] = &r
 		if tty {
-			draw()
+			draw(false)
 		}
 	})
-	if !tty {
-		draw()
+	if !tty || live.held {
+		draw(true)
 	}
 	// The same rule next --auto and pick use, so the advice matches them.
 	p, err := choiceFlags{}.policy(cfg, nil)
@@ -198,7 +246,7 @@ func showUsage(ctx context.Context, e *env, f *usage.Fetcher, cfg *config.Config
 	}
 	// next --auto stays in the organization of the last used account and
 	// counts running sessions.
-	from, _, _ := next.Rotate(candidates(e, cfg), "", nil)
+	from, _, _ := next.Rotate(candidates(e, cfg, true), "", nil)
 	org := newOrgs(e, cfg, false)
 	var pool []*usage.Report
 	for _, r := range view {
@@ -208,9 +256,48 @@ func showUsage(ctx context.Context, e *env, f *usage.Fetcher, cfg *config.Config
 		}
 	}
 	if best := p.Choose(pool, time.Now()); best != nil && len(view) > 1 {
-		e.printf("→ Most headroom: %s   (open it with ccam next --auto)\n", best.Name)
+		if p.Strategy == "" || p.Strategy == usage.Headroom {
+			e.printf("→ Most headroom: %s   (open it with ccam next --auto)\n", best.Name)
+		} else {
+			e.printf("→ next --auto picks %s: %s\n", best.Name, p.Why(best, time.Now()))
+		}
 	}
 	return nil
+}
+
+// liveTable draws the usage table and, on a terminal, draws it again in
+// place as accounts answer, moving the cursor up over the last draw. Lines
+// are cut to the terminal width: a wrapped line would take two rows, and
+// moving up by the number of lines would then land too low. A draw as tall
+// as the screen scrolls its top out of reach of the next move up, which
+// would leave copies of the table in the scrollback; such a draw waits
+// (held), and the table is drawn once more at the end.
+type liveTable struct {
+	w          io.Writer
+	tty        bool
+	cols, rows int // the width less one and the height; 0 when unknown
+	drawn      int // lines of the last draw, which the next one moves over
+	held       bool
+}
+
+func (t *liveTable) draw(lines []string, final bool) {
+	if t.tty && !final && t.rows > 0 && len(lines) >= t.rows {
+		t.held = true
+		return
+	}
+	if t.drawn > 0 {
+		fmt.Fprintf(t.w, "\x1b[%dA", t.drawn)
+	}
+	for _, l := range lines {
+		if t.tty {
+			fmt.Fprint(t.w, "\x1b[2K")
+			if t.cols > 0 {
+				l = ansi.Truncate(l, t.cols, "…")
+			}
+		}
+		fmt.Fprintln(t.w, l)
+	}
+	t.drawn = len(lines)
 }
 
 // isTerminal reports whether w is a terminal. A character-device check is
@@ -222,17 +309,28 @@ func isTerminal(w any) bool {
 }
 
 func statuslineCmd(e *env) *cobra.Command {
-	var wrap string
+	var wrap, wrap64 string
 	cmd := &cobra.Command{
 		Use:   "statusline",
 		Short: "Claude Code status line: shows the account name and collects usage",
 		Long:  "Claude Code runs this as its status line command. Install with `ccam statusline install`.",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			if wrap64 != "" {
+				b, err := base64.StdEncoding.DecodeString(wrap64)
+				if err != nil {
+					return fmt.Errorf("--wrap-base64: %w", err)
+				}
+				wrap = string(b)
+			}
 			return runStatusline(e, wrap)
 		},
 	}
 	cmd.Flags().StringVar(&wrap, "wrap", "", "existing status line command (its output gets the account name in front)")
+	// What install writes on Windows, where the command goes through Git
+	// Bash or PowerShell, which quote differently: base64 needs no quotes.
+	cmd.Flags().StringVar(&wrap64, "wrap-base64", "", "--wrap, base64 encoded")
+	_ = cmd.Flags().MarkHidden("wrap-base64")
 	cmd.AddCommand(statuslineInstallCmd(e))
 	return cmd
 }
@@ -255,9 +353,23 @@ func runStatusline(e *env, wrap string) error {
 		label = "claude"
 	}
 	if wrap != "" {
-		out, _ := runShell(wrap, input)
-		first, _, _ := strings.Cut(strings.TrimRight(out, "\n"), "\n")
-		e.printf("[%s] %s\n", label, first)
+		// As Claude Code shows a status line: every line that is not
+		// blank, trimmed, and nothing when the command failed. The label
+		// goes before the first.
+		out, err := runShell(wrap, input)
+		var rows []string
+		if err == nil {
+			for _, line := range strings.Split(out, "\n") {
+				if line = strings.TrimSpace(line); line != "" {
+					rows = append(rows, line)
+				}
+			}
+		}
+		if len(rows) == 0 {
+			rows = []string{""}
+		}
+		rows[0] = strings.TrimSpace("[" + label + "] " + rows[0])
+		e.printf("%s\n", strings.Join(rows, "\n"))
 		return nil
 	}
 	parts := []string{"[" + label + "]"}

@@ -2,12 +2,14 @@ package cli
 
 import (
 	"cmp"
+	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"runtime"
+	"slices"
 	"strings"
 	"text/tabwriter"
 	"time"
@@ -16,10 +18,13 @@ import (
 
 	"github.com/jhyunwoo/ccam/internal/config"
 	"github.com/jhyunwoo/ccam/internal/creds"
+	"github.com/jhyunwoo/ccam/internal/fsutil"
+	"github.com/jhyunwoo/ccam/internal/group"
 	"github.com/jhyunwoo/ccam/internal/handoff"
 	"github.com/jhyunwoo/ccam/internal/launcher"
 	"github.com/jhyunwoo/ccam/internal/migrate"
 	"github.com/jhyunwoo/ccam/internal/profile"
+	"github.com/jhyunwoo/ccam/internal/share"
 	"github.com/jhyunwoo/ccam/internal/shim"
 	"github.com/jhyunwoo/ccam/internal/tui"
 	"github.com/jhyunwoo/ccam/internal/usage"
@@ -117,7 +122,7 @@ func addCmd(e *env) *cobra.Command {
 // checkShortcut validates a shortcut name for account prof.
 func checkShortcut(e *env, cfg *config.Config, prof, name string) error {
 	self, _ := ccamPath()
-	return shim.Check(name, e.paths.Bin, self, cfg, prof)
+	return shim.Check(name, e.paths, self, cfg, prof)
 }
 
 // ReadKeyForCheck reads an env: key to tell early that it is missing;
@@ -158,6 +163,63 @@ func joinNew(cfg *config.Config, name string, groups, items []string) error {
 	return nil
 }
 
+// canLinkFiles is fsutil.CanLinkFiles; tests replace it.
+var canLinkFiles = fsutil.CanLinkFiles
+
+// fileItems lists the items of items that link files (settings, memory,
+// history), which Windows does only in Developer Mode.
+func fileItems(items []string) []string {
+	return slices.DeleteFunc(slices.Clone(items), func(item string) bool {
+		return !slices.ContainsFunc(share.Layout[item], func(e share.Entry) bool { return !e.Dir })
+	})
+}
+
+// checkFileLinks runs before a new account's folder exists, as the group
+// engine's Check does for a change of groups. Where files cannot be linked,
+// the group default that `ccam add` creates leaves out the items that need
+// file links, and a group that already shares one is refused.
+func checkFileLinks(e *env, cfg *config.Config, a *newAccount) error {
+	items := a.items
+	if items == nil {
+		items = config.DefaultItems
+	}
+	var need []string
+	for _, g := range a.groups {
+		have := items
+		if grp, ok := cfg.FindGroup(g); ok {
+			have = grp.Items
+		}
+		if len(fileItems(have)) > 0 {
+			need = append(need, g)
+		}
+	}
+	if len(need) == 0 {
+		return nil
+	}
+	root := e.paths.GroupsRoot()
+	if err := os.MkdirAll(root, 0o700); err != nil {
+		return err
+	}
+	err := canLinkFiles(root)
+	if err == nil {
+		return nil
+	}
+	for _, g := range need {
+		if grp, ok := cfg.FindGroup(g); ok {
+			return fmt.Errorf("%v, and group %s shares %s. Turn it on, or add the account to a group that shares only mcp and extensions", err, g, strings.Join(fileItems(grp.Items), ", "))
+		}
+	}
+	dropped := fileItems(items)
+	a.items = slices.DeleteFunc(slices.Clone(items), func(item string) bool { return slices.Contains(dropped, item) })
+	shares, rest := "only "+strings.Join(a.items, ", "), "the rest"
+	if len(a.items) == 0 {
+		shares, rest = "nothing yet", "them"
+	}
+	e.printf("Note: %v, so group default shares %s. Once it is on, `ccam group set default --add %s` shares %s.\n",
+		err, shares, strings.Join(dropped, ","), rest)
+	return nil
+}
+
 func addProfile(e *env, a newAccount) error {
 	name, shortcut := a.name, a.shortcut
 	cfg, err := e.load()
@@ -181,6 +243,14 @@ func addProfile(e *env, a newAccount) error {
 			return fmt.Errorf("no group %q; create it with `ccam group add %s --items …`, or see `ccam group`", g, g)
 		}
 	}
+	if err := checkFileLinks(e, cfg, &a); err != nil {
+		return err
+	}
+	if dir := e.paths.ProfileDir(name); !fsutil.Exists(dir) && keychainLeftover(dir, e.paths.Home) {
+		svc := creds.KeychainService(dir, e.paths.Home)
+		return fmt.Errorf("the macOS Keychain still holds the login of an earlier account named %s, which the new account would be logged in as. "+
+			"Remove it with `security delete-generic-password -a %s -s '%s'`, or choose another name", name, creds.KeychainAccount(), svc)
+	}
 	prof, err := profile.Add(e.paths, cfg, name)
 	if err != nil {
 		return err
@@ -201,6 +271,7 @@ func addProfile(e *env, a newAccount) error {
 		return err
 	}
 	if err := e.save(cfg); err != nil {
+		os.RemoveAll(e.paths.ProfileDir(name)) // as above
 		return err
 	}
 	if a.login {
@@ -212,7 +283,7 @@ func addProfile(e *env, a newAccount) error {
 		}
 	}
 	if _, err := installShims(e, cfg); err != nil {
-		fmt.Fprintln(e.stderr, "Could not create the shortcut:", err)
+		fmt.Fprintln(e.stderr, "Could not create shortcuts:", err)
 	}
 	prof, err = cfg.MustFind(name)
 	if err != nil {
@@ -220,8 +291,18 @@ func addProfile(e *env, a newAccount) error {
 	}
 	e.printf("✓ %s (%s) added\n", name, accountLabel(prof))
 	printShortcut(e, prof)
-	if claudeDir := filepath.Join(e.paths.Home, ".claude"); len(cfg.Profiles) == 1 && migrate.HasContent(claudeDir) {
-		e.printf("Tip: run `ccam migrate` to copy your existing Claude Code settings (%s) into the shared settings.\n", claudeDir)
+	if claudeDir := filepath.Join(e.paths.Home, ".claude"); len(cfg.Profiles) == 1 {
+		// Claude Code reads an account's own .claude.json, so the MCP
+		// servers plain claude has in ~/.claude.json are not there.
+		from, servers := migrate.HomeOnly(claudeDir, e.paths.Home, nil, nil)
+		switch {
+		case migrate.HasContent(claudeDir) && len(servers) > 0:
+			e.printf("Tip: run `ccam migrate` to copy your existing Claude Code settings (%s) and MCP servers (%s) into the shared group.\n", claudeDir, strings.Join(servers, ", "))
+		case migrate.HasContent(claudeDir):
+			e.printf("Tip: run `ccam migrate` to copy your existing Claude Code settings (%s) into the shared settings.\n", claudeDir)
+		case len(servers) > 0:
+			e.printf("Tip: the MCP servers in %s (%s) are not in ccam's accounts; `ccam migrate --mcp` copies them into the shared group.\n", from, strings.Join(servers, ", "))
+		}
 	}
 	return nil
 }
@@ -236,7 +317,15 @@ func loginProfile(e *env, sel string) (*config.Profile, error) {
 	if prof.API != nil {
 		return nil, fmt.Errorf("%s is an API key account (%s): it has no login; its key comes from %s", prof.Name, prof.API.Label(), prof.API.KeyFrom)
 	}
+	// Before the browser: the login's record would not be saved.
+	if err := cfg.Writable(e.paths.ConfigFile()); err != nil {
+		return nil, err
+	}
 	name, dir := prof.Name, profile.Dir(e.paths, prof)
+	before := prof.Login
+	if before == nil {
+		before, _ = profile.ReadIdentity(dir)
+	}
 	if err := runLogin(e, cfg, prof); err != nil {
 		return nil, err
 	}
@@ -247,10 +336,23 @@ func loginProfile(e *env, sel string) (*config.Profile, error) {
 	id, _ := profile.ReadIdentity(dir)
 	// Claude Code takes the email only as a hint for the login page, so a
 	// login can end up in another account than the one this was.
-	if was := prof.Login; was != nil && id != nil && was.AccountUUID != id.AccountUUID {
-		before := cmp.Or(was.Email, "another account")
-		fmt.Fprintf(e.stderr, "ccam: this login is %s, but %s was %s before.\n", cmp.Or(email, "another account"), name, before)
-		fmt.Fprintf(e.stderr, "To undo it, run `ccam logout %s`, then `ccam login %s` and sign in as %s.\n", name, name, before)
+	was := ""
+	switch {
+	case prof.Login != nil && id != nil && prof.Login.AccountUUID != id.AccountUUID:
+		was = cmp.Or(prof.Login.Email, "another account")
+	case prof.Login == nil && prof.Email != "" && email != "" && !strings.EqualFold(prof.Email, email):
+		was = prof.Email // an older ccam, or an import, recorded no login: only the email
+	}
+	if was != "" {
+		fmt.Fprintf(e.stderr, "ccam: this login is %s, but %s was %s before.\n", cmp.Or(email, "another account"), name, was)
+		// A login replaces the old one and keeps the MCP sign-ins; a logout
+		// would delete those.
+		fmt.Fprintf(e.stderr, "To undo it, run `ccam login %s` again and sign in as %s.\n", name, was)
+	}
+	// A usage limit Claude Code reported was the account's logged in
+	// before; it holds only when the login is that account again.
+	if before == nil || id == nil || before.AccountUUID != id.AccountUUID {
+		usage.DropLimit(usageStateDir(e), name)
 	}
 	if id != nil {
 		for _, q := range cfg.Profiles {
@@ -275,7 +377,10 @@ func runClaude(e *env, cfg *config.Config, prof *config.Profile, args ...string)
 	if err != nil {
 		return err
 	}
-	c := exec.Command(bin, args...)
+	c, err := launcher.ClaudeCommand(context.Background(), bin, args...)
+	if err != nil {
+		return err
+	}
 	c.Env = launcher.ProfileEnv(e.paths, os.Environ(), profile.Dir(e.paths, prof), prof.Name)
 	c.Stdin, c.Stdout, c.Stderr = e.stdin, e.stdout, e.stderr
 	return c.Run()
@@ -283,10 +388,18 @@ func runClaude(e *env, cfg *config.Config, prof *config.Profile, args ...string)
 
 // printShortcut prints the account's shortcut line under a ✓ line.
 func printShortcut(e *env, prof *config.Profile) {
-	if prof.Shortcut != "" {
-		e.printf("  shortcut: %s\n", prof.Shortcut)
-	} else {
+	self, _ := ccamPath()
+	switch {
+	case prof.Shortcut == "":
 		e.printf("  no shortcut (add one with `ccam shortcut %s %s`)\n", prof.Name, shim.Suggest(prof.Name))
+	case shim.Linked(e.paths.Bin, self, prof.Shortcut):
+		e.printf("  shortcut: %s\n", prof.Shortcut)
+	default:
+		if bin, ok := shim.Other(e.paths, self, prof.Shortcut); ok {
+			e.printf("  shortcut: %s (runs another ccam, %s; `ccam doctor --fix` points it at this one)\n", prof.Shortcut, bin)
+			return
+		}
+		e.printf("  shortcut: %s (not created; see above)\n", prof.Shortcut)
 	}
 }
 
@@ -301,8 +414,10 @@ func installShims(e *env, cfg *config.Config) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	created, err := shim.Install(e.paths.Bin, self, cfg)
-	if err == nil && len(created) > 0 && !shim.InPath(e.paths.Bin) {
+	// This also renews hard-linked shortcuts (Windows) that still run the
+	// binary a new install or an update replaced.
+	created, err := shim.Install(e.paths, self, cfg)
+	if len(created) > 0 && !shim.InPath(e.paths.Bin) {
 		fmt.Fprint(e.stderr, pathHint(e.paths.Bin))
 	}
 	return created, err
@@ -311,8 +426,11 @@ func installShims(e *env, cfg *config.Config) ([]string, error) {
 // pathHint tells how to put dir on PATH for good.
 func pathHint(dir string) string {
 	if runtime.GOOS == "windows" {
+		// The user Path is REG_EXPAND_SZ: read and written as one, its
+		// %VARIABLE% entries stay; the last call tells Explorer it changed.
 		return fmt.Sprintf("Note: %s is not in PATH. Add it for your user in PowerShell, then open a new terminal:\n"+
-			"  [Environment]::SetEnvironmentVariable(\"Path\", \"%s;\" + [Environment]::GetEnvironmentVariable(\"Path\", \"User\"), \"User\")\n", dir, dir)
+			"  $k = 'HKCU:\\Environment'; Set-ItemProperty $k Path (%s + (Get-Item $k).GetValue('Path', '', 'DoNotExpandEnvironmentNames')) -Type ExpandString; "+
+			"[Environment]::SetEnvironmentVariable('CCAM_PATH_CHANGED', $null, 'User')\n", dir, launcher.PSString(dir+";"))
 	}
 	return fmt.Sprintf("Note: %s is not in PATH. Add it to ~/.bashrc or ~/.zshrc:\n  export PATH=\"%s:$PATH\"\n", dir, dir)
 }
@@ -331,6 +449,7 @@ type listRow struct {
 	Plan     string            `json:"plan,omitempty"` // e.g. Claude Team
 	Org      string            `json:"org,omitempty"`  // the organization's name
 	pool     string
+	was      string // the email ccam recorded, when the folder is logged in as another now
 }
 
 func listCmd(e *env) *cobra.Command {
@@ -373,6 +492,14 @@ func listProfiles(e *env, asJSON bool) error {
 		}
 		if id := org.of(p); id != nil && p.API == nil {
 			r.Plan, r.Org, r.pool = id.PlanName(), id.OrgName, id.Pool()
+			// Whom the folder is logged in as now: a /login inside a
+			// session, or Claude Code's own first login, changes it.
+			if org.live[p.Name] && id.Email != "" {
+				if p.Email != "" && !strings.EqualFold(p.Email, id.Email) {
+					r.was = p.Email
+				}
+				r.Email = id.Email
+			}
 		}
 		if t := launcher.LastUsed(e.paths, p.Name); !t.IsZero() {
 			r.LastUsed = &t
@@ -408,10 +535,13 @@ func listProfiles(e *env, asJSON bool) error {
 			mark = "*"
 		}
 		email := r.Email
-		if r.API != "" {
+		switch {
+		case r.API != "":
 			email = "(" + r.API + ")"
-		} else if email == "" {
+		case email == "":
 			email = "(not logged in)"
+		case r.was != "":
+			email += " (was " + r.was + ")"
 		}
 		last := "-"
 		if r.LastUsed != nil {
@@ -468,13 +598,45 @@ func useCmd(e *env) *cobra.Command {
 }
 
 // removeAccount moves an account's folder to the trash (an imported one
-// stays in place) and forgets the account. The caller has checked that it
-// is not running.
+// stays in place) and forgets the account, unless it is running.
 func removeAccount(e *env, name string) (string, error) {
-	// Reload: a prompt may have waited while another ccam saved.
+	// Reload and check again: a prompt may have waited while another ccam
+	// saved, or while the account started.
 	cfg, p, err := e.loadProfile(name)
 	if err != nil {
 		return "", err
+	}
+	if err := group.Unfinished(e.paths); err != nil {
+		// The note names the accounts: one of a new account of this name
+		// would be finished on it.
+		return "", err
+	}
+	if err := refuseRunning(e, p); err != nil {
+		return "", err
+	}
+	// A logout cannot be undone: the removal must be able to finish.
+	if err := canSave(e, cfg); err != nil {
+		return "", err
+	}
+	unlock, err := holdRefresh(e, p)
+	if err != nil {
+		return "", err
+	}
+	defer unlock()
+	left := ""
+	if p.Dir != "" && !p.Share.Equal(config.Share{}) {
+		// A folder registered in place stays, and plain claude goes on
+		// using it: it must not stay linked into the groups, whose folders
+		// a later `ccam group remove` moves to the trash. It leaves them
+		// as `ccam group leave` does, with a copy of what they share. If
+		// that stops halfway, it stays registered for doctor --fix.
+		if err := leaveGroups(e, p.Name); err != nil {
+			return "", fmt.Errorf("%s could not leave its groups, so it is still registered: %w", p.Name, err)
+		}
+		if cfg, p, err = e.loadProfile(p.Name); err != nil {
+			return "", err
+		}
+		left = "; it left its groups with a copy of what they share"
 	}
 	prof := *p
 	if g := prof.Share.Get("extensions"); g != config.Local {
@@ -486,24 +648,91 @@ func removeAccount(e *env, name string) (string, error) {
 			return "", err
 		}
 	}
+	// A managed folder goes to the trash: its login is revoked first, so no
+	// working token waits there (or, on macOS, in a Keychain item named
+	// after the folder, which a later account of this name would inherit).
+	// A copy of the login in another account's folder would be revoked as
+	// well, so then the login stays.
+	loggedOut, revoked := "", false
+	if prof.Dir == "" && prof.API == nil && storedLogin(e, &prof) {
+		if q := sameLogin(e, cfg, &prof); q != "" {
+			loggedOut = fmt.Sprintf("; it was not logged out, since %s holds the same login", q)
+		} else if err := logOut(e, cfg, &prof); err != nil {
+			loggedOut = fmt.Sprintf("; it could not be logged out first (%v), so its login was not revoked", err)
+		} else {
+			loggedOut, revoked = "; logged out first", true
+		}
+	}
 	trashed, err := profile.Trash(e.paths, &prof)
 	if err != nil {
+		if revoked {
+			err = fmt.Errorf("%w\n%s is still registered, but logged out now; `ccam login %s` logs it in again", err, prof.Name, prof.Name)
+		}
 		return "", err
 	}
 	cfg.Remove(prof.Name)
 	if err := e.save(cfg); err != nil {
+		// config.toml still lists the account: its folder comes back.
+		if trashed != "" {
+			if uerr := fsutil.Move(trashed, profile.Dir(e.paths, &prof)); uerr != nil {
+				err = errors.Join(err, uerr)
+			}
+		}
+		if revoked {
+			err = fmt.Errorf("%w\n%s is logged out now; `ccam login %s` logs it in again", err, prof.Name, prof.Name)
+		}
 		return "", err
 	}
+	stuck := "" // backups that could not be moved, and stay
+	if prof.Dir != "" {
+		// The folder stays in use: so do the backups of its .claude.json,
+		// which leaving the groups may just have made.
+		backups := filepath.Join(launcher.MCPStateDir(e.paths, prof.Name), "backups")
+		if fsutil.Exists(backups) {
+			kept := fsutil.UniqueDir(filepath.Join(profile.Dir(e.paths, &prof), share.BackupDir, "mcp-"+fsutil.Stamp(time.Now())))
+			if err := fsutil.Move(backups, kept); err != nil {
+				stuck = backups
+				left += fmt.Sprintf("; the backups of its .claude.json could not be moved into its folder (%v), so they stay in %s (a later account named %s would find them there)", err, backups, prof.Name)
+			} else {
+				left += "; the backups of its .claude.json are in " + kept
+			}
+		}
+	}
 	for _, path := range nameState(e, prof.Name) {
+		if stuck != "" && path == filepath.Dir(stuck) {
+			removeAllBut(path, filepath.Base(stuck))
+			continue
+		}
 		os.RemoveAll(path) // a later account of this name must not inherit it
 	}
 	if self, err := ccamPath(); err == nil {
-		shim.Remove(e.paths.Bin, self, prof.Shortcut)
+		shim.Remove(e.paths, self, prof.Shortcut)
 	}
 	if trashed != "" {
-		return fmt.Sprintf("%s removed (folder moved to %s)", prof.Name, trashed), nil
+		return fmt.Sprintf("%s removed (folder moved to %s%s)", prof.Name, trashed, loggedOut), nil
 	}
-	return fmt.Sprintf("%s unregistered (folder %s left in place)", prof.Name, profile.Dir(e.paths, &prof)), nil
+	return fmt.Sprintf("%s unregistered (folder %s left in place%s)", prof.Name, profile.Dir(e.paths, &prof), left), nil
+}
+
+// removeAllBut removes what is in dir except the entry named keep.
+func removeAllBut(dir, keep string) {
+	entries, _ := os.ReadDir(dir)
+	for _, en := range entries {
+		if en.Name() != keep {
+			os.RemoveAll(filepath.Join(dir, en.Name()))
+		}
+	}
+}
+
+// leaveGroups takes an account out of every group, as `ccam group leave`
+// does without --fresh: what it shared becomes a copy of the group's in its
+// folder, and the group's MCP servers go into its .claude.json.
+func leaveGroups(e *env, name string) error {
+	_, _, err := changeGroups(e, func(c *config.Config) error {
+		c.DropMember(name)
+		return c.Resolve()
+	}, changeFlags{yes: true})
+	return err
 }
 
 func removeCmd(e *env) *cobra.Command {
@@ -511,17 +740,33 @@ func removeCmd(e *env) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "remove <name|number>",
 		Aliases: []string{"rm"},
-		Short:   "Remove an account (its folder goes to the trash)",
-		Args:    cobra.ExactArgs(1),
+		Short:   "Remove an account (it is logged out; its folder goes to the trash)",
+		Long: "The account is logged out first (not when another account's folder holds the\n" +
+			"same login), then its folder goes to ccam's trash.\n\n" +
+			"An account registered in place (ccam import) keeps its folder and its login, for\n" +
+			"plain claude: it leaves its groups first and keeps a copy of what they share, as\n" +
+			"`ccam group leave` does, then ccam forgets it.",
+		Args: cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			_, p, err := e.loadProfile(args[0])
+			cfg, p, err := e.loadProfile(args[0])
 			if err != nil {
 				return err
 			}
-			if err := refuseRunning(e, p.Name); err != nil {
+			if err := refuseRunning(e, p); err != nil {
 				return err
 			}
-			if !yes && !e.confirm(fmt.Sprintf("Remove account %s (%s)?", p.Name, profile.Dir(e.paths, p))) {
+			q := fmt.Sprintf("Remove account %s (%s)?", p.Name, profile.Dir(e.paths, p))
+			switch copied := sameLogin(e, cfg, p); {
+			case p.Dir == "" && p.API == nil && copied == "":
+				q += " It is logged out first; its folder goes to ccam's trash."
+			case p.Dir == "":
+				q += " Its folder goes to ccam's trash."
+			case !p.Share.Equal(config.Share{}):
+				q += " It leaves its groups first, keeping a copy of what they share; its folder stays where it is."
+			default:
+				q += " Its folder stays where it is."
+			}
+			if !yes && !e.confirm(q) {
 				e.printf("Cancelled.\n")
 				return nil
 			}
@@ -538,43 +783,76 @@ func removeCmd(e *env) *cobra.Command {
 }
 
 // renameAccount renames an account, its folder and what ccam keeps under
-// its name, and returns the old name.
-func renameAccount(e *env, sel, newName string) (string, error) {
+// its name, and returns the old name and a note when the folder kept its
+// name: where Claude Code names the login after the folder's path (the
+// macOS Keychain), a moved folder would leave the login behind. Refused
+// while a change of groups is unfinished: its note names the accounts.
+func renameAccount(e *env, sel, newName string) (string, string, error) {
 	cfg, old, err := e.loadProfile(sel)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
-	oldName := old.Name
-	if err := refuseRunning(e, oldName); err != nil {
-		return "", err
+	if err := group.Unfinished(e.paths); err != nil {
+		return "", "", err
 	}
-	if err := profile.Rename(e.paths, cfg, oldName, newName); err != nil {
-		return "", err
+	oldName, oldDir := old.Name, profile.Dir(e.paths, old)
+	if err := refuseRunning(e, old); err != nil {
+		return "", "", err
+	}
+	unlock, err := holdRefresh(e, old)
+	if err != nil {
+		return "", "", err
+	}
+	defer unlock()
+	note := ""
+	if store := namedByFolder(oldDir); old.Dir == "" && store != "" {
+		note = fmt.Sprintf("its folder stays %s: %s keeps the login under the folder's path", oldDir, store)
+	}
+	moved := old.Dir == "" && note == "" && fsutil.Exists(oldDir)
+	if err := profile.Rename(e.paths, cfg, oldName, newName, note != ""); err != nil {
+		return "", "", err
 	}
 	if err := e.save(cfg); err != nil {
-		return "", err
+		// config.toml still names the old account: its folder goes back.
+		if moved {
+			if uerr := profile.MoveFolder(e.paths.ProfileDir(newName), oldDir); uerr != nil {
+				return "", "", errors.Join(err, uerr)
+			}
+		}
+		return "", "", err
 	}
 	newState := nameState(e, newName)
 	for i, path := range nameState(e, oldName) {
 		_ = os.Rename(path, newState[i]) // best effort: last use and cached usage
 	}
+	// Notes name the account and run through its folder.
+	if p, ok := cfg.Find(newName); ok {
+		handoff.Rename(e.paths.State, oldName, newName, oldDir, profile.Dir(e.paths, p))
+	}
 	if _, err := installShims(e, cfg); err != nil {
 		fmt.Fprintln(e.stderr, "Could not update shortcuts:", err)
 	}
-	return oldName, nil
+	return oldName, note, nil
 }
 
 func renameCmd(e *env) *cobra.Command {
 	return &cobra.Command{
 		Use:   "rename <name> <new-name>",
 		Short: "Rename an account (its shortcut command stays the same)",
-		Args:  cobra.ExactArgs(2),
+		Long: "Renames the account, its folder and what ccam keeps under its name. On macOS the folder\n" +
+			"keeps its name: the Keychain keeps the login (and the MCP sign-ins) under the folder's path,\n" +
+			"so a moved folder would be logged out. The same holds on Windows where Claude Code keeps\n" +
+			"logins in Credential Manager.",
+		Args: cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			oldName, err := renameAccount(e, args[0], args[1])
+			oldName, note, err := renameAccount(e, args[0], args[1])
 			if err != nil {
 				return err
 			}
 			e.printf("✓ %s → %s\n", oldName, args[1])
+			if note != "" {
+				e.printf("  %s\n", note)
+			}
 			return nil
 		},
 	}
@@ -631,6 +909,9 @@ func loginStale(e *env) error {
 		e.printf("Every account's login works.\n")
 		return nil
 	}
+	if err := cfg.Writable(e.paths.ConfigFile()); err != nil {
+		return err
+	}
 	failed := 0
 	for i, t := range list {
 		e.printf("[%d/%d] %s (%s): log in in your browser.\n", i+1, len(list), t.name, t.why)
@@ -649,10 +930,17 @@ func loginStale(e *env) error {
 }
 
 func logoutCmd(e *env) *cobra.Command {
-	return &cobra.Command{
+	var yes bool
+	cmd := &cobra.Command{
 		Use:   "logout <name|number>",
-		Short: "Remove the login token",
-		Args:  cobra.ExactArgs(1),
+		Short: "Log out: remove the account's login and its MCP server sign-ins",
+		Long: "Runs `claude auth logout` in the account: Claude Code revokes the login and deletes what it\n" +
+			"stores for the account, its MCP server sign-ins too (sign in to those servers again with\n" +
+			"/mcp after the next login). ccam asks first when that loses sign-ins, or when the account\n" +
+			"is running, since its sessions are signed out as well.\n\n" +
+			"To log in as another Claude account, `ccam login <name>` alone is enough; it keeps the\n" +
+			"MCP sign-ins.",
+		Args: cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg, p, err := e.loadProfile(args[0])
 			if err != nil {
@@ -661,6 +949,15 @@ func logoutCmd(e *env) *cobra.Command {
 			if p.API != nil {
 				return fmt.Errorf("%s is an API key account: it has no login to remove (its key comes from %s)", p.Name, p.API.KeyFrom)
 			}
+			if !yes && !confirmLogout(e, cfg, p) {
+				e.printf("Cancelled.\n")
+				return nil
+			}
+			unlock, err := holdRefresh(e, p)
+			if err != nil {
+				return err
+			}
+			defer unlock()
 			if err := runClaude(e, cfg, p, "auth", "logout"); err != nil {
 				return err
 			}
@@ -675,6 +972,124 @@ func logoutCmd(e *env) *cobra.Command {
 			return err
 		},
 	}
+	cmd.Flags().BoolVarP(&yes, "yes", "y", false, "log out without asking")
+	return cmd
+}
+
+// confirmLogout says what a logout of p loses besides the login (its MCP
+// sign-ins, its running sessions' login, a copy of the login in another
+// account) and asks; true when there is nothing to lose or the answer is
+// yes.
+func confirmLogout(e *env, cfg *config.Config, p *config.Profile) bool {
+	dir := profile.Dir(e.paths, p)
+	var lose []string
+	if launcher.Running(e.paths, p.Name, dir) {
+		lose = append(lose, fmt.Sprintf("%s is running: its Claude Code sessions are signed out too.", p.Name))
+	}
+	if q := sameLogin(e, cfg, p); q != "" {
+		lose = append(lose, fmt.Sprintf("%s holds the same login (a copied folder), which the logout revokes too; `ccam login %s` gives %s a login of its own instead.", q, p.Name, p.Name))
+	}
+	if s := mcpSignIns(dir, e.paths.Home); len(s) > 0 {
+		lose = append(lose, fmt.Sprintf("Logging out also removes %s's MCP server sign-ins (%s); sign in to them again with /mcp.", p.Name, strings.Join(s, ", ")))
+	}
+	if len(lose) == 0 {
+		return true
+	}
+	for _, l := range lose {
+		e.printf("%s\n", l)
+	}
+	return e.confirm(fmt.Sprintf("Log out %s?", p.Name))
+}
+
+// mcpSignIns names the MCP servers dir's login holds a sign-in for.
+func mcpSignIns(dir, home string) []string {
+	data, _, err := creds.Read(dir, home)
+	if err != nil {
+		return nil
+	}
+	var names []string
+	for k := range creds.MCPSignIns(data) {
+		name, _, _ := strings.Cut(k, "|")
+		if !slices.Contains(names, name) {
+			names = append(names, name)
+		}
+	}
+	slices.Sort(names)
+	return names
+}
+
+// storedLogin reports whether anything of a login is stored for prof (a
+// dead one too, or one kept where ccam cannot read it).
+func storedLogin(e *env, prof *config.Profile) bool {
+	_, _, err := creds.Read(profile.Dir(e.paths, prof), e.paths.Home)
+	return !errors.Is(err, creds.ErrNone)
+}
+
+// sameLogin names another account whose folder holds prof's login (a
+// copied folder: the same refresh token), or plain claude when ~/.claude,
+// registered as no account, holds it; or "".
+func sameLogin(e *env, cfg *config.Config, prof *config.Profile) string {
+	key := creds.LoginKey(profile.Dir(e.paths, prof))
+	if key == "" {
+		return ""
+	}
+	for i := range cfg.Profiles {
+		if q := &cfg.Profiles[i]; q.Name != prof.Name && q.API == nil && creds.LoginKey(profile.Dir(e.paths, q)) == key {
+			return q.Name
+		}
+	}
+	if dir := profile.PlainClaude(e.paths, cfg); dir != "" && creds.LoginKey(dir) == key {
+		return profile.PlainClaudeName
+	}
+	return ""
+}
+
+// logOut runs `claude auth logout` in prof's folder, its output kept back
+// unless it fails: Claude Code revokes the login and deletes what it stores
+// for that folder (the login file, or its macOS Keychain or Windows
+// Credential Manager entry), the MCP sign-ins with it.
+func logOut(e *env, cfg *config.Config, prof *config.Profile) error {
+	bin, err := launcher.ResolveClaude(e.paths, cfg.ClaudeBin)
+	if err != nil {
+		return err
+	}
+	c, err := launcher.ClaudeCommand(context.Background(), bin, "auth", "logout")
+	if err != nil {
+		return err
+	}
+	c.Env = launcher.ProfileEnv(e.paths, os.Environ(), profile.Dir(e.paths, prof), prof.Name)
+	if out, err := c.CombinedOutput(); err != nil {
+		if msg := strings.TrimSpace(string(out)); msg != "" {
+			return fmt.Errorf("%v: %s", err, msg)
+		}
+		return err
+	}
+	return nil
+}
+
+// namedByFolder and keychainLeftover are replaced in tests, which cannot
+// reach a Keychain.
+var (
+	namedByFolder = creds.NamedByFolder
+	// keychainLeftover reports whether the macOS Keychain holds a login (or
+	// MCP sign-ins) for a folder that does not exist yet: one an earlier
+	// account of that name left behind, as older ccam versions did on
+	// remove and rename. An item Claude Code's logout leaves with its device
+	// key only is no login.
+	keychainLeftover = func(dir, home string) bool {
+		if runtime.GOOS != "darwin" {
+			return false
+		}
+		data, src, err := creds.Read(dir, home)
+		return err == nil && src == creds.Keychain && holdsLogin(data)
+	}
+)
+
+// holdsLogin reports whether stored login data holds what a new account of
+// the folder would inherit: a login, dead or not, or MCP sign-ins. The
+// device key Claude Code's logout writes back is neither.
+func holdsLogin(data []byte) bool {
+	return creds.Judge(data, time.Now()) != "not logged in" || len(creds.MCPSignIns(data)) > 0
 }
 
 func shimsCmd(e *env) *cobra.Command {
@@ -689,11 +1104,10 @@ func shimsCmd(e *env) *cobra.Command {
 				return err
 			}
 			created, err := installShims(e, cfg)
-			if err != nil {
-				return err
+			if err == nil || len(created) > 0 {
+				e.printf("✓ %d new shortcuts created (%s)\n", len(created), e.paths.Bin)
 			}
-			e.printf("✓ %d new shortcuts created (%s)\n", len(created), e.paths.Bin)
-			return nil
+			return err
 		},
 	}
 	cmd.AddCommand(install)

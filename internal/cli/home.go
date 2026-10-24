@@ -19,6 +19,7 @@ import (
 	"github.com/jhyunwoo/ccam/internal/fsutil"
 	"github.com/jhyunwoo/ccam/internal/group"
 	"github.com/jhyunwoo/ccam/internal/launcher"
+	"github.com/jhyunwoo/ccam/internal/profile"
 	"github.com/jhyunwoo/ccam/internal/session"
 	"github.com/jhyunwoo/ccam/internal/shim"
 	"github.com/jhyunwoo/ccam/internal/tui"
@@ -36,6 +37,7 @@ func runHome(e *env) error {
 	if !interactive(e) {
 		return listProfiles(e, false)
 	}
+	installed := "" // a release U installed: this process still runs the old one
 	for {
 		cfg, err := e.load()
 		if err != nil {
@@ -45,11 +47,13 @@ func runHome(e *env) error {
 		// Nothing may print over the dashboard: the backend's notes go nowhere.
 		quiet := *e
 		quiet.stdout, quiet.stderr = io.Discard, io.Discard
-		dash := tui.NewDashboard(backend{&quiet}, cfg, cwd, Version)
+		dash := tui.NewDashboard(backend{&quiet}, cfg, cwd, version())
+		dash.KeepInstalled(installed)
 		final, err := tea.NewProgram(dash, tea.WithInput(os.Stdin), tea.WithOutput(os.Stdout)).Run()
 		if err != nil {
 			return err
 		}
+		installed = final.(*tui.Dashboard).Installed()
 		res := final.(*tui.Dashboard).Result()
 		// The dashboard may have been open for a while; act on the current config.
 		if cfg, err = e.load(); err != nil {
@@ -78,7 +82,7 @@ func runHome(e *env) error {
 			return nil
 		}
 		e.printf("Press Enter to return to ccam.")
-		_, _ = e.in.ReadString('\n')
+		_, _ = e.lines().readLine()
 	}
 }
 
@@ -130,7 +134,14 @@ func (b backend) Usage(ctx context.Context, name string, fresh bool) usage.Repor
 	return usage.Report{Name: name, Status: usage.StatusError, Err: err.Error()}
 }
 
-func (b backend) Running(name string) bool { return launcher.Running(b.e.paths, name) }
+func (b backend) Running(name string) bool {
+	cfg, err := b.e.load()
+	if err != nil {
+		return false
+	}
+	p, ok := cfg.Find(name)
+	return ok && launcher.Running(b.e.paths, p.Name, profile.Dir(b.e.paths, p))
+}
 func (b backend) Sessions(name string) int {
 	return session.Count(launcher.SessionDir(b.e.paths, name))
 }
@@ -199,7 +210,7 @@ func (b backend) Rename(oldName, newName string) (*config.Config, error) {
 	if err := b.changing(); err != nil {
 		return nil, err
 	}
-	if _, err := renameAccount(b.e, oldName, newName); err != nil {
+	if _, _, err := renameAccount(b.e, oldName, newName); err != nil {
 		return nil, err
 	}
 	return b.e.load()
@@ -220,20 +231,25 @@ func (b backend) SetShortcut(account, shortcut string) (*config.Config, error) {
 	}
 	old := prof.Shortcut
 	prof.Shortcut = shortcut
-	if err := saveShortcut(b.e, cfg, old); err != nil {
+	if err := saveShortcut(b.e, cfg, old, shortcut); err != nil {
 		return nil, err
 	}
 	return b.e.load()
+}
+
+func (b backend) SameLogin(name string) string {
+	cfg, p, err := b.e.loadProfile(name)
+	if err != nil {
+		return ""
+	}
+	return sameLogin(b.e, cfg, p)
 }
 
 func (b backend) Remove(name string) (*config.Config, string, error) {
 	if err := b.changing(); err != nil {
 		return nil, "", err
 	}
-	if err := refuseRunning(b.e, name); err != nil {
-		return nil, "", err
-	}
-	msg, err := removeAccount(b.e, name)
+	msg, err := removeAccount(b.e, name) // refuses a running account
 	if err != nil {
 		return nil, "", err
 	}
@@ -244,6 +260,9 @@ func (b backend) Remove(name string) (*config.Config, string, error) {
 func (b backend) PlanGroups(edit func(*config.Config) error) (*group.Change, error) {
 	old, err := b.e.load()
 	if err != nil {
+		return nil, err
+	}
+	if err := group.Unfinished(b.e.paths); err != nil {
 		return nil, err
 	}
 	next := old.Clone()
@@ -261,8 +280,11 @@ func (b backend) PlanGroups(edit func(*config.Config) error) (*group.Change, err
 }
 
 func (b backend) ApplyGroups(edit func(*config.Config) error, ch *group.Change) (*config.Config, error) {
-	cfg, err := b.update(edit)
+	// The plan dialog may have stayed open while an account started or
+	// another ccam changed the groups.
+	cfg, err := b.update(func(c *config.Config) error { return recheck(ch, c, edit, group.Running(b.e.paths)) })
 	if err != nil {
+		ch.Abort()
 		return nil, err
 	}
 	if err := ch.Apply(); err != nil {
@@ -318,7 +340,7 @@ func (b backend) Doctor(fix bool, only string) ([]doctor.Finding, error) {
 	}
 	self, _ := ccamPath()
 	// No live usage check: the dashboard looks usage up itself.
-	return doctor.Run(b.e.paths, cfg, doctor.Options{Fix: fix, FixOnly: only, CcamPath: self}), nil
+	return doctor.Run(b.e.paths, cfg, doctor.Options{Fix: fix, FixOnly: only, CcamPath: self, Reload: b.e.load}), nil
 }
 
 func (b backend) Extensions() (tui.ExtView, error) {
@@ -339,9 +361,10 @@ func (b backend) Extensions() (tui.ExtView, error) {
 func extView(rep extReport) tui.ExtView {
 	var v tui.ExtView
 	where := func(row *tui.ExtRow, account, source string) {
-		if source == ext.Account {
+		switch {
+		case source == ext.Account || source == ext.Local:
 			row.Own = append(row.Own, account)
-		} else if !slices.Contains(row.Groups, source) {
+		case !slices.Contains(row.Groups, source):
 			row.Groups = append(row.Groups, source)
 		}
 	}
@@ -361,7 +384,12 @@ func extView(rep extReport) tui.ExtView {
 			row := tui.ExtRow{Name: n}
 			for _, s := range rep.Accounts {
 				for _, it := range k.pick(s) {
-					if it.Name == n {
+					switch {
+					case it.Name != n:
+					case it.Off:
+						row.Problem = row.Problem || it.Problem != ""
+						row.Off = append(row.Off, s.Name)
+					default:
 						row.Problem = row.Problem || it.Problem != ""
 						where(&row, s.Name, it.Source)
 					}
@@ -397,10 +425,13 @@ func extView(rep extReport) tui.ExtView {
 		v.Project = append(v.Project, fmt.Sprintf("hook %s: %d", h.Event, h.Count))
 	}
 	for _, pr := range rep.Problems {
-		if pr.Group != "" {
+		switch {
+		case pr.Group != "":
 			v.Problems = append(v.Problems, "group "+pr.Group+": "+pr.Problem)
-		} else {
+		case pr.Account != "":
 			v.Problems = append(v.Problems, pr.Account+": "+pr.Problem)
+		default:
+			v.Problems = append(v.Problems, pr.Problem)
 		}
 	}
 	return v

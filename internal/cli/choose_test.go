@@ -92,7 +92,7 @@ func TestModelArgAndWaitFor(t *testing.T) {
 func TestNextAutoHonoursMaxUsageAndExits75(t *testing.T) {
 	c := newTestCLI(t, map[string]int{"personal": 70, "work": 85, "side": 100})
 	cfg, _ := config.Load(c.p.ConfigFile())
-	cfg.ClaudeBin = "/bin/true"
+	cfg.ClaudeBin = stubClaude
 	cfg.Save(c.p.ConfigFile())
 	out, errOut, code := c.run("", "--dry-run", "next", "--auto", "--max-usage", "60")
 	// 70 and 85 are both over 60, so the lower one overflows; 100 never.
@@ -101,7 +101,7 @@ func TestNextAutoHonoursMaxUsageAndExits75(t *testing.T) {
 	}
 	c2 := newTestCLI(t, map[string]int{"personal": 100, "work": 100})
 	cfg2, _ := config.Load(c2.p.ConfigFile())
-	cfg2.ClaudeBin = "/bin/true"
+	cfg2.ClaudeBin = stubClaude
 	cfg2.Save(c2.p.ConfigFile())
 	_, errOut, code = c2.run("", "--dry-run", "next", "--auto")
 	if code != exitNoRoom || !strings.Contains(errOut, "headroom") {
@@ -112,5 +112,58 @@ func TestNextAutoHonoursMaxUsageAndExits75(t *testing.T) {
 	}
 	if _, errOut, code := c.run("", "--dry-run", "next", "--auto", "--strategy", "random"); code == 0 || !strings.Contains(errOut, "auto_strategy") {
 		t.Fatalf("bad strategy: %d %q", code, errOut)
+	}
+}
+
+// A value after a space for --wait or --watch, whose values are optional,
+// is caught: with next it used to become claude's first prompt (and --wait
+// stayed 5 h), with pick and usage an "unknown command".
+func TestSpacedOptionalValueIsCaught(t *testing.T) {
+	c := newTestCLI(t, map[string]int{"personal": 10, "work": 50})
+	for _, args := range [][]string{
+		{"next", "--auto", "--wait", "2h"},
+		{"next", "--auto", "--continue", "--wait", "90m"},
+		{"pick", "--wait", "2h"},
+		{"usage", "--watch", "10"},
+		{"u", "--watch", "5"},
+	} {
+		out, errOut, code := c.run("", append([]string{"--dry-run"}, args...)...)
+		if code == 0 || out != "" || !strings.Contains(errOut, "takes its value after '=': --"+strings.TrimPrefix(args[len(args)-2], "--")+"="+args[len(args)-1]) {
+			t.Errorf("%q: %d %q %q", args, code, out, errOut)
+		}
+	}
+	// --wait needs a unit, and more than zero: the hint gives examples that
+	// --wait then takes, and no unit of its own (30 is not 30 hours) or
+	// advice that pflag would not follow (flags go anywhere among the words).
+	for _, args := range [][]string{{"next", "--auto", "--wait", "30"}, {"pick", "--wait", "2"}, {"pick", "--wait", "0"}, {"pick", "--wait", "0s"}} {
+		_, errOut, code := c.run("", append([]string{"--dry-run"}, args...)...)
+		if code == 0 || !strings.Contains(errOut, "takes a duration after '=', such as --wait=30m or --wait=2h") || strings.Contains(errOut, "before") {
+			t.Errorf("%q: %d %q", args, code, errOut)
+		}
+		for _, hint := range []string{"--wait=30m", "--wait=2h"} {
+			if _, errOut, code := c.run("", append(append([]string{"--dry-run"}, args[:len(args)-2]...), hint)...); code != 0 && strings.Contains(errOut, "--wait") {
+				t.Errorf("the hint %s is refused: %s", hint, errOut)
+			}
+		}
+	}
+	if _, errOut, _ := c.run("", "pick", "extra"); !strings.Contains(errOut, "unknown command") {
+		t.Errorf("pick extra: %s", errOut)
+	}
+	scriptClaude(t, c, "exit 0")
+	for _, tc := range []struct {
+		args []string
+		want string // in the dry run's line
+	}{
+		{[]string{"next", "--auto", "--wait=2h"}, "profiles/personal"},
+		{[]string{"next", "--auto", "--wait"}, "profiles/personal"},
+		{[]string{"next", "--auto", "--wait", "--", "2h"}, " 2h"},
+		{[]string{"next", "--auto", "--wait", "fix the tests"}, "'fix the tests'"},
+		{[]string{"pick", "--wait"}, "personal"},
+		{[]string{"pick", "--wait=1h"}, "personal"},
+	} {
+		out, errOut, code := c.run("", append([]string{"--dry-run"}, tc.args...)...)
+		if code != 0 || !strings.Contains(out, tc.want) {
+			t.Errorf("%q: %d %q %q", tc.args, code, out, errOut)
+		}
 	}
 }

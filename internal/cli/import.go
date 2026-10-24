@@ -19,6 +19,9 @@ func importCmd(e *env) *cobra.Command {
 			"Without a folder, finds unregistered ~/.claude and ~/.claude-* folders and asks about each.",
 		Args: cobra.MaximumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
+			if name != "" && len(args) == 0 {
+				return fmt.Errorf("--name needs a folder: ccam import <folder> --name %s", name)
+			}
 			cfg, err := e.load()
 			if err != nil {
 				return err
@@ -47,22 +50,48 @@ func importCmd(e *env) *cobra.Command {
 					}
 				}
 			}
-			for _, path := range paths {
-				prof, notes, err := profile.Import(e.paths, cfg, path, names[path])
-				if err != nil {
-					return err
-				}
-				for _, n := range notes {
-					e.printf("· %s\n", n)
-				}
-				e.printf("✓ %s (%s) registered\n", prof.Name, orNone(prof.Email))
-				printShortcut(e, prof)
-			}
 			if len(paths) == 0 {
 				return nil
 			}
-			if err := e.save(cfg); err != nil {
+			// The questions may have waited for minutes: register into the
+			// config as it is now, not the copy loaded before them.
+			var imported []string
+			notes := map[string][]string{}
+			cfg, err = e.update(func(cfg *config.Config) error {
+				for _, path := range paths {
+					prof, n, err := profile.Import(e.paths, cfg, path, names[path])
+					if err != nil && len(args) == 1 {
+						return err
+					}
+					if err != nil {
+						fmt.Fprintf(e.stderr, "Skipped %s: %v\n", path, err)
+						continue
+					}
+					// A folder copied from another (cp -r ~/.claude ~/.claude-2)
+					// holds the same refresh token: whichever renews it first
+					// logs the other out.
+					if q := sameLogin(e, cfg, prof); q != "" {
+						n = append(n, fmt.Sprintf("%s holds the same login as %s (a copied folder): whichever renews it first logs the other out. "+
+							"Run `ccam login %s` before using it (not `ccam logout`, which would log %s out too)", prof.Dir, q, prof.Name, q))
+					}
+					imported = append(imported, prof.Name)
+					notes[prof.Name] = n
+				}
+				if len(imported) == 0 {
+					return exitError(1) // each folder was skipped, and said why
+				}
+				return nil
+			})
+			if err != nil {
 				return err
+			}
+			for _, n := range imported {
+				prof, _ := cfg.Find(n)
+				for _, note := range notes[n] {
+					e.printf("· %s\n", note)
+				}
+				e.printf("✓ %s (%s) registered\n", prof.Name, orNone(prof.Email))
+				printShortcut(e, prof)
 			}
 			if _, err := installShims(e, cfg); err != nil {
 				fmt.Fprintln(e.stderr, "Could not create shortcuts:", err)
@@ -71,7 +100,7 @@ func importCmd(e *env) *cobra.Command {
 			return nil
 		},
 	}
-	cmd.Flags().StringVar(&name, "name", "", "account name (default: derived from the folder name)")
+	cmd.Flags().StringVar(&name, "name", "", "account name for the folder given (default: derived from the folder name)")
 	cmd.Flags().BoolVarP(&yes, "yes", "y", false, "import every folder found without asking")
 	return cmd
 }

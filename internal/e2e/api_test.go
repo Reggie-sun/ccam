@@ -38,6 +38,20 @@ func TestAPIKeyAccount(t *testing.T) {
 	if got := seen(); got != want {
 		t.Fatalf("env:\n%s\nwant:\n%s", got, want)
 	}
+	// The dry run shows the endpoint and where the key comes from, not the key.
+	out := h.run("", inherited, "ccam", "--dry-run", "gw", "-p", "hi").stdout
+	keyRef := `ANTHROPIC_AUTH_TOKEN="$GW_KEY"`
+	if runtime.GOOS == "windows" {
+		keyRef = "$env:ANTHROPIC_AUTH_TOKEN=$env:GW_KEY;"
+	}
+	for _, s := range []string{"ANTHROPIC_BASE_URL", "llm.example.com/v1", "ANTHROPIC_MODEL", "CCAM_PROFILE", keyRef, "ANTHROPIC_API_KEY"} {
+		if !strings.Contains(out, s) {
+			t.Errorf("dry run lacks %q: %s", s, out)
+		}
+	}
+	if strings.Contains(out, "sk-gw-123") || strings.Contains(out, "sk-from-shell") {
+		t.Fatalf("dry run shows a key: %s", out)
+	}
 	// A plain account keeps whatever the shell has.
 	h.run("", inherited, "ccam", "work", "-p", "hi")
 	if got := seen(); !strings.Contains(got, "ANTHROPIC_API_KEY=sk-from-shell") {

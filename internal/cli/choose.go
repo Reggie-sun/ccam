@@ -3,6 +3,7 @@ package cli
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
@@ -48,6 +49,44 @@ func (c *choiceFlags) add(cmd *cobra.Command) {
 	cmd.Flags().BoolVar(&c.crossOrg, "cross-org", false, "also choose accounts of other organizations (config: cross_org)")
 }
 
+// spacedValue catches a value written after a space for a flag whose value
+// is optional (--wait 30m, --watch 10): pflag takes such a value only after
+// "=", so the flag keeps its default and the value would become an
+// argument (with next, claude's first prompt). Words after "--" are left
+// alone.
+func spacedValue(cmd *cobra.Command, args []string, name, def string) error {
+	if n := cmd.ArgsLenAtDash(); n >= 0 {
+		args = args[:n]
+	}
+	f := cmd.Flags().Lookup(name)
+	if f == nil || !f.Changed || f.Value.String() != def || len(args) == 0 {
+		return nil
+	}
+	if name != "watch" {
+		return waitHint(args[0])
+	}
+	if _, err := strconv.Atoi(args[0]); err == nil {
+		return fmt.Errorf("--%s takes its value after '=': --%s=%s", name, name, args[0])
+	}
+	return nil
+}
+
+// waitHint says how to write v, a word after a bare --wait that looks like
+// its value, so that waitFor takes it; nil when v does not look like one.
+func waitHint(v string) error {
+	d, err := time.ParseDuration(v)
+	_, isNumber := strconv.Atoi(v)
+	switch {
+	case err == nil && d > 0:
+		return fmt.Errorf("--wait takes its value after '=': --wait=%s", v)
+	case err == nil, isNumber == nil:
+		// A number without a unit, or a zero that waitFor refuses: which
+		// unit was meant is not known.
+		return fmt.Errorf("--wait takes a duration after '=', such as --wait=30m or --wait=2h")
+	}
+	return nil
+}
+
 // orgs keeps automatic choices within one organization: accounts of one
 // team or enterprise organization, or all personal plans, stand in for
 // each other. A folder logged in to the same Claude account as another
@@ -56,10 +95,11 @@ type orgs struct {
 	e     *env
 	cross bool
 	ids   map[string]*config.Identity
+	live  map[string]bool // the identity is what .claude.json says now
 }
 
 func newOrgs(e *env, cfg *config.Config, cross bool) *orgs {
-	return &orgs{e: e, cross: cross || cfg.CrossOrg, ids: map[string]*config.Identity{}}
+	return &orgs{e: e, cross: cross || cfg.CrossOrg, ids: map[string]*config.Identity{}, live: map[string]bool{}}
 }
 
 // of is who p is logged in as: what its .claude.json says now (a /login
@@ -76,6 +116,7 @@ func (o *orgs) of(p *config.Profile) *config.Identity {
 			read.OrgType, read.OrgName = id.OrgType, id.OrgName
 		}
 		id = read
+		o.live[p.Name] = true
 	}
 	o.ids[p.Name] = id
 	return id

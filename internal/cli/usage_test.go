@@ -7,8 +7,10 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
-	"os/exec"
 	"path/filepath"
+	"regexp"
+	"runtime"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -153,9 +155,18 @@ func TestStatuslineSuggestsTheNextAccountNearTheLimit(t *testing.T) {
 
 func TestStatuslineCollectsAndPrints(t *testing.T) {
 	c := newTestCLI(t, nil)
-	input, _ := os.ReadFile("../usage/testdata/statusline-input.json")
+	raw, _ := os.ReadFile("../usage/testdata/statusline-input.json")
+	// The fixture's resets_at are fixed dates; move them ahead of the clock,
+	// or usage --source cache counts the saved windows as reset.
+	input := strings.NewReplacer(
+		"1792346400", fmt.Sprint(time.Now().Add(2*time.Hour).Unix()),
+		"1792634400", fmt.Sprint(time.Now().Add(72*time.Hour).Unix()),
+	).Replace(string(raw))
+	if input == string(raw) {
+		t.Fatal("the fixture's resets_at changed; update this test")
+	}
 	t.Setenv("CCAM_PROFILE", "work")
-	out, _, code := c.run(string(input), "statusline")
+	out, _, code := c.run(input, "statusline")
 	if code != 0 || strings.TrimSpace(out) != "[work] · Opus · 5h 24% · 7d 41%" && strings.TrimSpace(out) != "[work] · Opus · 5h 23% · 7d 41%" {
 		t.Fatalf("%q", out)
 	}
@@ -163,7 +174,7 @@ func TestStatuslineCollectsAndPrints(t *testing.T) {
 	if !strings.Contains(out, "41%") || !strings.Contains(out, "(cached)") {
 		t.Fatalf("cached usage:\n%s", out)
 	}
-	out, _, _ = c.run(string(input), "statusline", "--wrap", "echo mine")
+	out, _, _ = c.run(input, "statusline", "--wrap", "echo mine")
 	if strings.TrimSpace(out) != "[work] mine" {
 		t.Fatalf("wrap: %q", out)
 	}
@@ -191,7 +202,11 @@ func TestStatuslineInstallKeepsSymlinkAndWraps(t *testing.T) {
 	data, _ := os.ReadFile(group)
 	json.Unmarshal(data, &doc)
 	cmd := doc["statusLine"].(map[string]any)["command"].(string)
-	if !strings.Contains(cmd, "statusline --wrap my-line") || doc["model"] != "opus" {
+	wrapped := "statusline --wrap my-line"
+	if runtime.GOOS == "windows" {
+		wrapped = "statusline --wrap-base64 bXktbGluZQ=="
+	}
+	if !strings.Contains(cmd, wrapped) || doc["model"] != "opus" {
 		t.Fatalf("settings: %s", data)
 	}
 	out, _, _ = c.run("", "statusline", "install")
@@ -203,7 +218,7 @@ func TestStatuslineInstallKeepsSymlinkAndWraps(t *testing.T) {
 func TestNextAutoPicksLowest(t *testing.T) {
 	c := newTestCLI(t, map[string]int{"personal": 72, "work": 100, "side": 30})
 	cfg, _ := config.Load(c.p.ConfigFile())
-	cfg.ClaudeBin, _ = exec.LookPath("true") // /bin/true does not exist on macOS
+	cfg.ClaudeBin = stubClaude
 	cfg.Save(c.p.ConfigFile())
 	out, errOut, code := c.run("", "--dry-run", "next", "--auto")
 	if code != 0 || !strings.Contains(out, c.p.ProfileDir("side")) || !strings.Contains(errOut, "(30% of its 5 hours used, the least)") {
@@ -217,5 +232,87 @@ func TestNextAutoPicksLowest(t *testing.T) {
 	}
 	if _, errOut, code := c.run("", "next", "--auto", "--strategy", "random"); code == 0 || !strings.Contains(errOut, `"balance"`) {
 		t.Fatalf("%d %s", code, errOut)
+	}
+}
+
+// Scripts get JSON even before the first account is added.
+func TestJSONWithNoAccounts(t *testing.T) {
+	c := newTestCLI(t, nil)
+	cfg, _ := config.Load(c.p.ConfigFile())
+	cfg.Profiles = nil
+	cfg.Groups = nil
+	cfg.Save(c.p.ConfigFile())
+	for _, args := range [][]string{{"usage", "--json"}, {"u", "--json"}, {"ext", "--json"}, {"list", "--json"}} {
+		out, errOut, code := c.run("", args...)
+		var v any
+		if code != 0 || json.Unmarshal([]byte(out), &v) != nil {
+			t.Errorf("%v: %d %q %q", args, code, out, errOut)
+		}
+	}
+	out, _, _ := c.run("", "ext", "--json")
+	var rep struct{ Accounts []any }
+	if json.Unmarshal([]byte(out), &rep) != nil || rep.Accounts == nil {
+		t.Errorf("ext: accounts must be [], not null: %s", out)
+	}
+	if out, _, _ := c.run("", "usage"); !strings.Contains(out, "No accounts yet") {
+		t.Errorf("table: %q", out)
+	}
+}
+
+// The live view redraws in place by moving the cursor up over the last
+// draw. A draw that does not fit the screen cannot be moved over, so it
+// waits, and the table is drawn once more at the end.
+func TestLiveTableStaysOnScreen(t *testing.T) {
+	var out bytes.Buffer
+	live := &liveTable{w: &out, tty: true, rows: 8}
+	table := func(n int) []string {
+		var lines []string
+		for i := range n {
+			lines = append(lines, fmt.Sprintf("line %d", i))
+		}
+		return lines
+	}
+	for _, n := range []int{5, 7, 8, 11, 14, 17, 20} {
+		live.draw(table(n), false)
+	}
+	if !live.held {
+		t.Fatal("not held")
+	}
+	live.draw(table(20), true)
+	ups := regexp.MustCompile(`\x1b\[(\d+)A`).FindAllStringSubmatch(out.String(), -1)
+	for _, m := range ups {
+		if n, _ := strconv.Atoi(m[1]); n >= live.rows {
+			t.Errorf("moved up %d rows on a %d-row screen", n, live.rows)
+		}
+	}
+	last := out.String()[strings.LastIndex(out.String(), "\x1b["):]
+	if len(ups) != 2 || !strings.Contains(last, "line 19") || strings.Count(out.String(), "line 19") != 1 {
+		t.Fatalf("%d moves:\n%q", len(ups), out.String())
+	}
+	// Without a terminal, the table is printed once, as it is.
+	out.Reset()
+	plain := &liveTable{w: &out}
+	plain.draw(table(3), true)
+	if out.String() != "line 0\nline 1\nline 2\n" {
+		t.Fatalf("%q", out.String())
+	}
+}
+
+// The advice line names what next --auto would pick and, unless that is the
+// one with most headroom, why.
+func TestUsageAdviceFollowsTheStrategy(t *testing.T) {
+	c := newTestCLI(t, map[string]int{"personal": 5, "work": 40})
+	cfg, _ := config.Load(c.p.ConfigFile())
+	cfg.AutoStrategy = usage.Expiring
+	cfg.Save(c.p.ConfigFile())
+	// work's 5-hour window resets first.
+	cache := filepath.Join(c.p.State, "usage", "work.json")
+	os.MkdirAll(filepath.Dir(cache), 0o700)
+	now := time.Now().UTC()
+	os.WriteFile(cache, fmt.Appendf(nil, `{"at":%q,"limits":{"five_hour":{"percent":40,"known":true,"resets_at":%q}}}`,
+		now.Format(time.RFC3339), now.Add(20*time.Minute).Format(time.RFC3339)), 0o600)
+	out, _, _ := c.run("", "usage")
+	if strings.Contains(out, "Most headroom") || !strings.Contains(out, "→ next --auto picks work: its 5-hour window resets first") {
+		t.Fatalf("%s", out)
 	}
 }

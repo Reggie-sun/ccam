@@ -37,11 +37,14 @@ type Limits struct {
 	FiveHour Window   `json:"five_hour"`
 	Weekly   Window   `json:"weekly"`
 	Scoped   []Scoped `json:"scoped,omitempty"`
+	// Credits means usage credits (extra_usage) are on: past its limits
+	// the account goes on at API rates.
+	Credits bool `json:"credits,omitempty"`
 }
 
 // as returns a copy of l with every lapsed window reset (see Window.as).
 func (l *Limits) as(now time.Time) *Limits {
-	out := &Limits{FiveHour: l.FiveHour.as(now), Weekly: l.Weekly.as(now)}
+	out := &Limits{FiveHour: l.FiveHour.as(now), Weekly: l.Weekly.as(now), Credits: l.Credits}
 	for _, s := range l.Scoped {
 		out.Scoped = append(out.Scoped, Scoped{Name: s.Name, Window: s.Window.as(now)})
 	}
@@ -54,9 +57,9 @@ type apiWindow struct {
 }
 
 type apiLimit struct {
-	Kind     string  `json:"kind"`
-	Percent  float64 `json:"percent"`
-	ResetsAt string  `json:"resets_at"`
+	Kind     string   `json:"kind"`
+	Percent  *float64 `json:"percent"` // null or missing: unknown, not 0%
+	ResetsAt string   `json:"resets_at"`
 	Scope    *struct {
 		Model *struct {
 			ID          *string `json:"id"`
@@ -71,6 +74,9 @@ type apiResponse struct {
 	SevenDayOpus *apiWindow `json:"seven_day_opus"`
 	SevenDaySon  *apiWindow `json:"seven_day_sonnet"`
 	Limits       []apiLimit `json:"limits"`
+	ExtraUsage   *struct {
+		IsEnabled bool `json:"is_enabled"`
+	} `json:"extra_usage"`
 }
 
 // ParseLive reads the /api/oauth/usage body. The new `limits` array wins;
@@ -80,9 +86,12 @@ func ParseLive(body []byte) (Limits, error) {
 	if err := json.Unmarshal(body, &r); err != nil {
 		return Limits{}, fmt.Errorf("could not read the usage response: %w", err)
 	}
-	var l Limits
+	l := Limits{Credits: r.ExtraUsage != nil && r.ExtraUsage.IsEnabled}
 	for _, lim := range r.Limits {
-		w := Window{Percent: lim.Percent, ResetsAt: parseTime(lim.ResetsAt), Known: true}
+		if lim.Percent == nil {
+			continue
+		}
+		w := Window{Percent: *lim.Percent, ResetsAt: parseTime(lim.ResetsAt), Known: true}
 		switch lim.Kind {
 		case "session":
 			l.FiveHour = w

@@ -58,22 +58,37 @@
     if (-not (Test-Path $new)) { Fail 'the archive has no ccam.exe' }
     New-Item -ItemType Directory -Force -Path $dir | Out-Null
     $exe = Join-Path $dir 'ccam.exe'
-    if (Test-Path $exe) {
-      # A running ccam.exe cannot be replaced, only renamed.
-      Remove-Item "$exe.old" -Force -ErrorAction SilentlyContinue
-      Move-Item $exe "$exe.old" -Force
+    $upgrade = Test-Path $exe
+    if ($upgrade) {
+      # A running ccam.exe cannot be replaced or deleted, only renamed, and
+      # a session may still run from the ccam.exe.old of the install before.
+      Get-ChildItem -Path $dir -Filter 'ccam.exe.old*' | Where-Object { $_.Name -match '^ccam\.exe\.old(-\d+)?$' } | Remove-Item -Force -ErrorAction SilentlyContinue
+      $old = "$exe.old"
+      if (Test-Path $old) { $old = "$exe.old-$([DateTime]::UtcNow.Ticks)" }
+      Move-Item $exe $old
     }
     Copy-Item $new $exe
     Write-Host "OK $(& $exe version) -> $exe"
+    if ($upgrade) {
+      # Shortcuts made as hard links (without Developer Mode) still run the
+      # old binary; ccam links them to the new one.
+      $made = & $exe shims install | Out-String
+      if ($made -match '(\d+) new shortcuts' -and $Matches[1] -ne '0') { Write-Host "OK $($Matches[1]) shortcuts now run the new ccam" }
+    }
   } finally {
     Remove-Item -Recurse -Force $tmp -ErrorAction SilentlyContinue
   }
 
-  $userPath = [Environment]::GetEnvironmentVariable('Path', 'User')
-  $onPath = ($env:Path -split ';') + ($userPath -split ';') | Where-Object { $_ -and ($_.TrimEnd('\') -ieq $dir.TrimEnd('\')) }
+  # The user Path is a REG_EXPAND_SZ value: it is read and written as one,
+  # so entries such as %USERPROFILE%\bin keep their variables.
+  $envKey = 'HKCU:\Environment'
+  $userPath = (Get-Item $envKey).GetValue('Path', '', 'DoNotExpandEnvironmentNames')
+  $onPath = ($env:Path -split ';') + ([Environment]::ExpandEnvironmentVariables($userPath) -split ';') | Where-Object { $_ -and ($_.TrimEnd('\') -ieq $dir.TrimEnd('\')) }
   if (-not $onPath) {
     $newPath = if ($userPath) { "$dir;$userPath" } else { $dir }
-    [Environment]::SetEnvironmentVariable('Path', $newPath, 'User')
+    Set-ItemProperty -Path $envKey -Name Path -Value $newPath -Type ExpandString
+    # Tells Explorer, and so new terminals, that the environment changed.
+    [Environment]::SetEnvironmentVariable('CCAM_PATH_CHANGED', $null, 'User')
     $env:Path = "$dir;$env:Path"
     Write-Host ''
     Write-Host "Added $dir to your user PATH. Open a new terminal to use it everywhere."

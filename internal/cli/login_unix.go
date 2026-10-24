@@ -4,6 +4,7 @@ package cli
 
 import (
 	"os"
+	"os/exec"
 	"syscall"
 
 	"github.com/charmbracelet/x/term"
@@ -19,6 +20,13 @@ func noEcho(saved *term.State) *term.State {
 	masked.Lflag &^= unix.ECHO | unix.ICANON
 	masked.Cc[unix.VMIN], masked.Cc[unix.VTIME] = 1, 0
 	return &masked
+}
+
+// ownGroup puts c in a process group of its own, which ending c (its
+// Cancel) ends whole: the command a shell runs, and what that starts.
+func ownGroup(c *exec.Cmd) {
+	c.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
+	c.Cancel = func() error { return syscall.Kill(-c.Process.Pid, syscall.SIGKILL) }
 }
 
 // resignal ends ccam with the signal it caught, as if it had not.

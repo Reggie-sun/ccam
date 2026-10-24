@@ -14,6 +14,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/jhyunwoo/ccam/internal/lock"
 	"github.com/jhyunwoo/ccam/internal/session"
 )
 
@@ -193,6 +194,52 @@ func TestFetchExpiredLoggedOutAndAPI(t *testing.T) {
 	}
 }
 
+// An expired access token is renewed when the account starts: nothing to
+// do. A login whose refresh token expired, or that Claude Code cleared,
+// needs `ccam login`. The two read apart in the table and the JSON error.
+func TestExpiredTokenIsNotAnExpiredLogin(t *testing.T) {
+	e := newEnv(t)
+	past := time.Now().Add(-time.Hour).UnixMilli()
+	r := e.f.Fetch(context.Background(), e.account("x", "ok-new-format.json", past), Options{})
+	out := strings.Join(Table([]*Report{&r}, RenderOptions{Now: time.Now()}), "\n")
+	if r.Status != StatusExpired || !strings.Contains(r.Err, "access token expired; `ccam x` renews it when it starts") || strings.Contains(out, "login expired") || !strings.Contains(out, "access token expired") {
+		t.Fatalf("token: %+v\n%s", r, out)
+	}
+	for _, login := range []string{
+		fmt.Sprintf(`{"claudeAiOauth":{"accessToken":"ok-new-format.json","refreshToken":"rt-old","expiresAt":%d,"refreshTokenExpiresAt":%d}}`, past, past),
+		`{"claudeAiOauth":{"accessToken":"","refreshToken":"","expiresAt":0}}`,
+	} {
+		a := e.account("y", "", 0)
+		os.WriteFile(filepath.Join(a.Dir, ".credentials.json"), []byte(login), 0o600)
+		for _, opt := range []Options{{}, {Refresh: true}, {Source: "cache"}} {
+			r := e.f.Fetch(context.Background(), a, opt)
+			if r.Status != StatusExpired || r.Err != "login expired → `ccam login y`" || e.refresh.Load() != 0 {
+				t.Fatalf("%s %+v: %+v", login, opt, r)
+			}
+		}
+	}
+	if e.hits.Load() != 0 {
+		t.Fatalf("%d lookups", e.hits.Load())
+	}
+}
+
+// The refresh lock is also held by a rename, remove or logout of the
+// account: a refresh that finds it busy says so without naming a refresh.
+func TestRefreshLockHeldSaysWhatItMayBe(t *testing.T) {
+	e := newEnv(t)
+	a := e.account("x", "stale", time.Now().Add(-time.Hour).UnixMilli())
+	os.MkdirAll(filepath.Dir(a.SessionDir), 0o700)
+	l, err := lock.TryFlock(RefreshLock(a.SessionDir))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer l.Unlock()
+	r := e.f.Fetch(context.Background(), a, Options{Refresh: true})
+	if r.Status != StatusExpired || e.refresh.Load() != 0 || r.Err != "token not renewed: another ccam is using this login right now (a refresh, rename, remove or logout)" {
+		t.Fatalf("%+v", r)
+	}
+}
+
 func TestRefreshOnlyWhenNotRunning(t *testing.T) {
 	e := newEnv(t)
 	past := time.Now().Add(-time.Hour).UnixMilli()
@@ -205,6 +252,10 @@ func TestRefreshOnlyWhenNotRunning(t *testing.T) {
 	r := e.f.Fetch(context.Background(), a, Options{Refresh: true})
 	if r.Status != StatusExpired || e.refresh.Load() != 0 || !strings.Contains(r.Err, "running") {
 		t.Fatalf("refresh while running: %+v", r)
+	}
+	// The login works: Claude Code renews the token itself.
+	if out := strings.Join(Table([]*Report{&r}, RenderOptions{Now: time.Now()}), "\n"); strings.Contains(out, "login expired") || !strings.Contains(out, "token not renewed: a session is running") {
+		t.Fatalf("table: %s", out)
 	}
 	os.RemoveAll(a.SessionDir)
 
@@ -226,6 +277,27 @@ func TestRefreshOnlyWhenNotRunning(t *testing.T) {
 	}
 	if info, _ := os.Stat(filepath.Join(a.Dir, ".credentials.json")); runtime.GOOS != "windows" && info.Mode().Perm() != 0o600 {
 		t.Fatal("perm")
+	}
+}
+
+// Claude Code running on the folder without ccam (plain claude, or the
+// daemon behind background sessions, which renews the login itself) holds
+// the same refresh token: ccam does not rotate it under it.
+func TestRefreshNotUnderClaudeCodeStartedElsewhere(t *testing.T) {
+	if _, ok := session.StartTime(os.Getpid()); !ok {
+		t.Skip("no process start times on this platform")
+	}
+	e := newEnv(t)
+	a := e.account("x", "stale", time.Now().Add(-time.Hour).UnixMilli())
+	daemon := filepath.Join(a.Dir, "daemon.lock") // as Claude Code's daemon writes it; this process stands in
+	os.WriteFile(daemon, fmt.Appendf(nil, `{"pid":%d,"version":"2.1.308","origin":"transient","startedAt":%d}`, os.Getpid(), time.Now().UnixMilli()), 0o600)
+	r := e.f.Fetch(context.Background(), a, Options{Refresh: true})
+	if r.Status != StatusExpired || e.refresh.Load() != 0 || !strings.Contains(r.Err, "running") {
+		t.Fatalf("refresh under the daemon: %+v", r)
+	}
+	os.Remove(daemon)
+	if r := e.f.Fetch(context.Background(), a, Options{Refresh: true}); r.Status != StatusOK || e.refresh.Load() != 1 {
+		t.Fatalf("refresh once it ended: %+v", r)
 	}
 }
 
@@ -336,5 +408,88 @@ func TestProbeFailureIsNotAFormatChange(t *testing.T) {
 	answer = []byte("Error: something else\n")
 	if r := e.f.Fetch(context.Background(), e.account("b", "ok-new-format.json", future), Options{}); !r.FormatChanged {
 		t.Fatalf("no answer at all: %+v", r)
+	}
+}
+
+// Numbers saved within the last 60 seconds stand in for a lookup, judged as
+// of now: a window that has reset since is at 0%. A cache dated after now
+// (the clock was set back) is not fresh.
+func TestFreshCacheIsJudgedNow(t *testing.T) {
+	ctx := context.Background()
+	at := time.Date(2026, 10, 22, 9, 0, 0, 0, time.UTC)
+	saved := &Limits{FiveHour: window(100, at.Add(10*time.Second)), Weekly: window(41, at.Add(48*time.Hour))}
+	lapsed := func(t *testing.T, r Report, source string) {
+		t.Helper()
+		if l := r.Limits; r.Source != source || l == nil || !l.FiveHour.Known || l.FiveHour.Percent != 0 || !l.FiveHour.ResetsAt.IsZero() || l.Weekly.Percent != 41 {
+			t.Fatalf("%+v", r)
+		}
+	}
+	e := newEnv(t)
+	e.f.Now = func() time.Time { return at.Add(40 * time.Second) }
+	e.f.writeCache("a", "live", cached{At: at, Limits: saved})
+	lapsed(t, e.f.Fetch(ctx, e.account("a", "ok-new-format.json", future), Options{}), "live")
+	if e.hits.Load() != 0 {
+		t.Fatal("the cache was not used")
+	}
+	probes := 0
+	e.f.Probe = func(context.Context, Account) ([]byte, error) { probes++; return nil, nil }
+	e.f.writeCache("c", "claude", cached{At: at, Limits: saved})
+	lapsed(t, e.f.Fetch(ctx, e.account("c", "ok-new-format.json", future), Options{Source: "claude"}), "claude")
+	if probes != 0 {
+		t.Fatal("the claude cache was not used")
+	}
+
+	now := time.Now()
+	e.f.Now = func() time.Time { return now }
+	for src, opt := range map[string]Options{"live": {}, "claude": {Source: "claude"}} {
+		e.f.writeCache("ahead-"+src, src, cached{At: now.Add(2 * time.Hour), Limits: &Limits{FiveHour: window(5, now.Add(3*time.Hour))}})
+		hits, before := e.hits.Load(), probes
+		e.f.Fetch(ctx, e.account("ahead-"+src, "ok-new-format.json", future), opt)
+		if e.hits.Load() == hits && probes == before {
+			t.Errorf("%s: a cache dated ahead of the clock counted as fresh", src)
+		}
+	}
+}
+
+// The status line has no model windows and leaves out a window that is
+// not running, so a newer status line only updates the 5-hour and weekly
+// windows it knows over the saved lookup.
+func TestStatusLineAddsToTheSavedLookup(t *testing.T) {
+	ctx := context.Background()
+	now := time.Now().Truncate(time.Second)
+	fable := Scoped{Name: "Fable", Window: window(100, now.Add(48*time.Hour))}
+	lookup := &Limits{FiveHour: window(5, now.Add(time.Hour)), Weekly: window(40, now.Add(72*time.Hour)), Scoped: []Scoped{fable}}
+	for name, tc := range map[string]struct {
+		token string
+		exp   int64
+		opt   Options
+	}{
+		"rate limited":  {"limited", future, Options{}},
+		"expired token": {"ok-new-format.json", now.Add(-time.Hour).UnixMilli(), Options{}},
+		"saved only":    {"boom", future, Options{Source: "cache"}},
+	} {
+		e := newEnv(t)
+		e.f.Now = func() time.Time { return now }
+		a := e.account("a", tc.token, tc.exp)
+		e.f.writeCache("a", "live", cached{At: now.Add(-5 * time.Minute), Limits: lookup})
+		SaveStatusLine(e.f.StateDir, "a", Limits{FiveHour: window(22, now.Add(time.Hour)), Weekly: window(41, now.Add(72*time.Hour))}, now.Add(-time.Minute))
+		r := e.f.Fetch(ctx, a, tc.opt)
+		if l := r.Limits; r.Source != "statusline" || l.FiveHour.Percent != 22 || l.Weekly.Percent != 41 || len(l.Scoped) != 1 || l.Scoped[0].Window.Percent != 100 {
+			t.Fatalf("%s: %+v %+v", name, r, r.Limits)
+		}
+		if (Policy{Model: "fable"}).Choose([]*Report{&r}, now) != nil || (Policy{}).Choose([]*Report{&r}, now) == nil {
+			t.Fatalf("%s: the Fable week is full, the rest is not", name)
+		}
+		// Without its 5-hour window, the lookup's stands.
+		SaveStatusLine(e.f.StateDir, "a", Limits{Weekly: window(41, now.Add(72*time.Hour))}, now)
+		r = e.f.Fetch(ctx, a, tc.opt)
+		if l := r.Limits; !l.FiveHour.Known || l.FiveHour.Percent != 5 || (Policy{}).Choose([]*Report{&r}, now) == nil {
+			t.Fatalf("%s: %+v", name, r.Limits)
+		}
+		// An older status line changes nothing.
+		SaveStatusLine(e.f.StateDir, "a", Limits{FiveHour: window(90, now.Add(time.Hour))}, now.Add(-time.Hour))
+		if r = e.f.Fetch(ctx, a, tc.opt); r.Source != "cache" || r.Limits.FiveHour.Percent != 5 {
+			t.Fatalf("%s: older status line: %+v %+v", name, r, r.Limits)
+		}
 	}
 }

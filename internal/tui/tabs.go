@@ -14,7 +14,7 @@ import (
 
 func (d *Dashboard) foldersView(w int) ([]string, int) {
 	t := d.theme
-	here, _ := d.cfg.FolderFor(d.cwd)
+	here, _ := d.here()
 	var out []string
 	if len(d.cfg.Folders) == 0 {
 		out = append(out, " No folder rules. In a folder with a rule, `ccam` without a name starts that",
@@ -63,7 +63,7 @@ func (d *Dashboard) foldersKey(k tea.KeyPressMsg) tea.Cmd {
 	}
 	switch k.String() {
 	case "n":
-		d.dlg = d.chooseAccount("Use which account in "+d.cwd+"?", d.cwd)
+		d.dlg = d.chooseAccount("Use which account in "+d.dir+"?", d.dir)
 	case "enter":
 		if f != nil {
 			d.dlg = d.chooseAccount("Use which account in "+f.Path+"?", f.Path)
@@ -127,6 +127,9 @@ func (d *Dashboard) extView(w int) []string {
 			if len(r.Own) > 0 {
 				where = append(where, t.dim().Render("own: ")+strings.Join(r.Own, ", "))
 			}
+			if len(r.Off) > 0 {
+				where = append(where, t.dim().Render("off: ")+strings.Join(r.Off, ", "))
+			}
 			mark := "  "
 			if r.Problem {
 				mark = t.warning().Render(symWarn) + " "
@@ -139,7 +142,7 @@ func (d *Dashboard) extView(w int) []string {
 		out = append(out, " No skills, commands, agents, plugins, MCP servers or hooks in the accounts.", "")
 	}
 	if len(d.ext.Project) > 0 {
-		out = append(out, " "+t.bold().Render("This folder's project, for every account"))
+		out = append(out, " "+t.bold().Render("This folder's project"))
 		for _, l := range d.ext.Project {
 			out = append(out, "   "+l)
 		}
@@ -219,6 +222,12 @@ func (t Theme) levelIcon(l doctor.Level) string {
 // healthAreaW fits the longest area name, "Share links" and "Folder rules".
 const healthAreaW = 12
 
+// healthMinBoxW is the narrowest box whose text column holds the 10
+// columns wrap() never goes below: borders and padding (4), the icon (2),
+// the area (healthAreaW) and its gap (1). A narrower box would cut text;
+// a terminal narrower than this wraps the lines instead.
+const healthMinBoxW = 4 + 2 + healthAreaW + 1 + 10
+
 // healthView draws a summary line, then one box per account with a row per
 // checked area, so a problem shows where it is at a glance.
 func (d *Dashboard) healthView(w int) ([]string, int) {
@@ -263,7 +272,7 @@ func healthLines(t Theme, fs []doctor.Finding, w, sel int) (out []string, cur, f
 		summary = append(summary, t.levelIcon(b.worst())+" "+cmp.Or(b.profile, "General"))
 	}
 	out = []string{" " + strings.Join(summary, "   "), ""}
-	boxW := w - 2
+	boxW := max(w-2, healthMinBoxW)
 	if w <= 0 {
 		// Every box as wide as the widest line, so they line up.
 		boxW = 0
@@ -366,7 +375,7 @@ func (d *Dashboard) healthKey(k tea.KeyPressMsg) tea.Cmd {
 		if len(boxes) == 0 {
 			return nil
 		}
-		b := boxes[min(d.cursor[tabHealth], len(boxes)-1)]
+		b := boxes[max(0, min(d.cursor[tabHealth], len(boxes)-1))]
 		only, scope = cmp.Or(b.profile, doctor.General), " in "+cmp.Or(b.profile, "General")
 		if b.problems() == 0 {
 			d.notice = notice{text: "nothing to repair" + scope}
@@ -376,7 +385,7 @@ func (d *Dashboard) healthKey(k tea.KeyPressMsg) tea.Cmd {
 	default:
 		return d.moveCursor(k) // ↑/↓ go from box to box
 	}
-	d.dlg = newConfirm(title, "Like `ccam doctor --fix`: missing links are made, and a real file where a link belongs is backed up first. Nothing is deleted.", "Yes, repair", func(d *Dashboard) tea.Cmd {
+	d.dlg = newConfirm(title, "Like `ccam doctor --fix`: missing links and group folders are made, and a real file where a link belongs is backed up first; where the group has its own copy, the account then sees the group's. Nothing is lost.", "Yes, repair", func(d *Dashboard) tea.Cmd {
 		d.busy = "Repairing…"
 		return tea.Batch(func() tea.Msg {
 			f, err := d.be.Doctor(true, only)

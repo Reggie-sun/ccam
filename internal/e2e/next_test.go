@@ -6,13 +6,10 @@ import (
 	"os/exec"
 	"path/filepath"
 	"reflect"
-	"regexp"
-	"runtime"
 	"strings"
 	"testing"
 	"time"
 
-	"github.com/jhyunwoo/ccam/internal/config"
 	"github.com/jhyunwoo/ccam/internal/transcript"
 )
 
@@ -63,14 +60,15 @@ func TestNextRotatesAndContinues(t *testing.T) {
 	}
 }
 
-// writeNote leaves what `ccam hook switch` writes for /ccam:switch.
+// writeNote leaves what `ccam hook switch` writes for /ccam:switch of
+// account's session s1.
 func writeNote(t *testing.T, h *harness, account, conv, cwd, target string) {
 	t.Helper()
-	dir := filepath.Join(h.home, "state", "handoff")
+	dir := filepath.Join(h.home, "state", "handoff", account)
 	os.MkdirAll(dir, 0o700)
 	note := fmt.Sprintf(`{"account":%q,"session_id":"s1","transcript_path":%q,"cwd":%q,"at":%q,"reason":"switch","target":%q}`,
 		account, conv, cwd, time.Now().Format(time.RFC3339Nano), target)
-	if err := os.WriteFile(filepath.Join(dir, account+".json"), []byte(note), 0o600); err != nil {
+	if err := os.WriteFile(filepath.Join(dir, "s1.json"), []byte(note), 0o600); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -84,7 +82,7 @@ func TestNoteWithAGoneTargetOrAFailedLaunch(t *testing.T) {
 	conv := filepath.Join(h.profileDir("personal"), "projects", transcript.Slug(real), "s1.jsonl")
 	os.MkdirAll(filepath.Dir(conv), 0o700)
 	os.WriteFile(conv, []byte("{}\n"), 0o600)
-	note := filepath.Join(h.home, "state", "handoff", "personal.json")
+	note := filepath.Join(h.home, "state", "handoff", "personal", "s1.json")
 
 	// The account /ccam:switch named was renamed since: choose as usual.
 	writeNote(t, h, "personal", conv, real, "side")
@@ -153,63 +151,5 @@ func TestLeftoverChildDoesNotHoldSession(t *testing.T) {
 	r = h.run("", nil, "ccam", "work")
 	if strings.Contains(r.stderr, "another Claude Code") {
 		t.Fatalf("finished session still counted as running: %s", r.stderr)
-	}
-}
-
-// With relay on, ccam stays beside Claude Code, and after /ccam:switch it
-// carries the conversation on as the other account by itself.
-func TestRelayCarriesASwitchOn(t *testing.T) {
-	script, err := exec.LookPath("script")
-	if err != nil || runtime.GOOS != "linux" {
-		t.Skip("needs util-linux script for a terminal")
-	}
-	h := newHarness(t)
-	h.addAccounts()
-	cfgPath := filepath.Join(h.home, "config", "config.toml")
-	cfg, err := config.Load(cfgPath)
-	if err != nil {
-		t.Fatal(err)
-	}
-	cfg.Relay = true
-	if err := cfg.Save(cfgPath); err != nil {
-		t.Fatal(err)
-	}
-	project := filepath.Join(h.home, "app")
-	real, _ := filepath.EvalSymlinks(h.home)
-	conv := filepath.Join(h.profileDir("personal"), "projects", transcript.Slug(filepath.Join(real, "app")), "s1.jsonl")
-	os.MkdirAll(filepath.Dir(conv), 0o700)
-	os.MkdirAll(project, 0o700)
-	os.WriteFile(conv, []byte("{}\n"), 0o600)
-	envFile := filepath.Join(h.home, "env")
-
-	cmd := exec.Command(script, "-qec", ccamBin+" personal", "/dev/null")
-	cmd.Dir = project
-	cmd.Env = append(append([]string{}, h.env...), "FAKE_SWITCH_FROM=personal", "FAKE_SWITCH_TO=work",
-		"FAKE_SWITCH_TRANSCRIPT="+conv, "FAKE_SWITCH_STATE="+filepath.Join(h.home, "state"),
-		"FAKE_ENV_FILE="+envFile, "FAKE_ENV_NAMES=CCAM_RELAY")
-	out, err := cmd.CombinedOutput()
-	if err != nil {
-		t.Fatalf("%v\n%s", err, out)
-	}
-	dir, args := h.called()
-	resolved, _ := filepath.EvalSymlinks(conv)
-	if dir != h.profileDir("work") || !reflect.DeepEqual(args, []string{"--resume", resolved, "--fork-session"}) {
-		t.Fatalf("the relay started %s %q\n%s", dir, args, out)
-	}
-	if b, _ := os.ReadFile(envFile); !regexp.MustCompile(`CCAM_RELAY=\d+`).Match(b) {
-		t.Fatalf("the session does not know it is relayed: %q", b)
-	}
-
-	// A note another session wrote (another relay, or none) is not this
-	// session's /ccam:switch: the relay ends with claude.
-	cmd = exec.Command(script, "-qec", ccamBin+" personal", "/dev/null")
-	cmd.Dir = project
-	cmd.Env = append(append([]string{}, h.env...), "FAKE_SWITCH_FROM=personal", "FAKE_SWITCH_TO=work", "FAKE_SWITCH_RELAY=1",
-		"FAKE_SWITCH_TRANSCRIPT="+conv, "FAKE_SWITCH_STATE="+filepath.Join(h.home, "state"))
-	if out, err := cmd.CombinedOutput(); err != nil {
-		t.Fatalf("%v\n%s", err, out)
-	}
-	if dir, _ := h.called(); dir != h.profileDir("personal") {
-		t.Fatalf("the relay carried on another session's note as %s", dir)
 	}
 }

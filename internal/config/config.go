@@ -2,11 +2,14 @@
 package config
 
 import (
+	"bytes"
+	"cmp"
 	"errors"
 	"fmt"
 	"io/fs"
 	"os"
 	"path/filepath"
+	"reflect"
 	"runtime"
 	"slices"
 	"strconv"
@@ -54,6 +57,8 @@ type Config struct {
 	// legacy is set when Load converted the old per-account format; the
 	// first Save keeps the old file as config.toml.bak.
 	legacy bool
+	// unknown describes the lines of the file Load did not read (Unknown).
+	unknown []string
 }
 
 // Themes lists the values of the theme setting besides "auto".
@@ -71,6 +76,10 @@ type Profile struct {
 	Slot  int    `toml:"slot"`
 	Email string `toml:"email,omitempty"`
 	Dir   string `toml:"dir,omitempty"` // set for imported folders registered in place
+	// Folder is the name of its folder under profiles/ when that is not
+	// the account's name: on macOS `ccam rename` leaves the folder where it
+	// is, since the Keychain names the login after the folder's path.
+	Folder string `toml:"folder,omitempty"`
 	// Shortcut is the command in the bin folder that runs this account
 	// ("" = none). It links to the ccam binary, which looks argv[0] up here.
 	Shortcut string `toml:"shortcut,omitempty"`
@@ -244,6 +253,22 @@ func isName(s string) bool {
 	return true
 }
 
+// IsShortcut reports whether s matches ^[a-z0-9][a-z0-9._-]{0,63}$, the
+// rule for shortcut commands, which are file names in the bin folder. A
+// loop, as isName.
+func IsShortcut(s string) bool {
+	if len(s) == 0 || len(s) > 64 {
+		return false
+	}
+	for i := 0; i < len(s); i++ {
+		c := s[i]
+		if !(c >= 'a' && c <= 'z' || c >= '0' && c <= '9' || i > 0 && (c == '_' || c == '-' || c == '.')) {
+			return false
+		}
+	}
+	return true
+}
+
 // ValidateGroup checks a share group name; groups are folder names.
 func ValidateGroup(group string) error {
 	if !isName(group) {
@@ -275,8 +300,22 @@ func Load(path string) (*Config, error) {
 		return nil, err
 	}
 	var c Config
-	if err := toml.Unmarshal(data, &c); err != nil {
-		return nil, fmt.Errorf("could not read %s: %w", path, err)
+	// Keys ccam does not read (a setting added below a table, which TOML
+	// then counts as the table's) are reported, not dropped: the rest is
+	// read, and Save refuses to write a file without them.
+	dec := toml.NewDecoder(bytes.NewReader(data))
+	dec.DisallowUnknownFields()
+	if err := dec.Decode(&c); err != nil {
+		var missing *toml.StrictMissingError
+		if !errors.As(err, &missing) {
+			return nil, fmt.Errorf("could not read %s: %w", path, err)
+		}
+		for _, e := range missing.Errors {
+			if k := e.Key(); len(k) == 1 && obsolete[k[0]] {
+				continue // dropped by the next save
+			}
+			c.unknown = append(c.unknown, unknownKey(e))
+		}
 	}
 	// Names and groups become folder names; a hand edit such as "../x"
 	// must not point ccam outside its own folders.
@@ -289,6 +328,26 @@ func Load(path string) (*Config, error) {
 		p := &c.Profiles[i]
 		if !isName(p.Name) {
 			return nil, fmt.Errorf("%s: invalid account name %q", path, p.Name)
+		}
+		if p.Folder != "" && !isName(p.Folder) {
+			return nil, fmt.Errorf("%s: account %s has an invalid folder %q", path, p.Name, p.Folder)
+		}
+		for _, q := range c.Profiles[:i] {
+			if p.Dir == "" && q.Dir == "" && cmp.Or(p.Folder, p.Name) == cmp.Or(q.Folder, q.Name) {
+				return nil, fmt.Errorf("%s: accounts %s and %s use the same folder %q; give one of them a folder of its own", path, q.Name, p.Name, cmp.Or(p.Folder, p.Name))
+			}
+		}
+		if s := p.Shortcut; s != "" {
+			// A file in the bin folder: "claude" or "ccam" there would stand
+			// for those.
+			if !IsShortcut(s) || s == "claude" || s == "ccam" {
+				return nil, fmt.Errorf("%s: account %s has an invalid shortcut %q", path, p.Name, s)
+			}
+			for _, q := range c.Profiles[:i] {
+				if q.Shortcut == s {
+					return nil, fmt.Errorf("%s: accounts %s and %s have the same shortcut %q", path, q.Name, p.Name, s)
+				}
+			}
 		}
 		if p.API != nil {
 			if err := p.API.Check(); err != nil {
@@ -318,7 +377,63 @@ func Load(path string) (*Config, error) {
 	return &c, nil
 }
 
+// obsolete are the top-level keys earlier releases wrote (v0.1 and v0.2)
+// and later ones dropped: Load ignores them, and a save leaves them out.
+var obsolete = map[string]bool{"version": true, "name_shims": true}
+
+// unknownKey says why the line of e is not read and what to do about it.
+func unknownKey(e toml.DecodeError) string {
+	line, _ := e.Position()
+	key := e.Key()
+	if len(key) == 0 {
+		return fmt.Sprintf("line %d is not read", line)
+	}
+	name := key[len(key)-1]
+	if len(key) == 1 {
+		return fmt.Sprintf("line %d: %s is not a ccam setting (a typo, or one of a newer ccam)", line, name)
+	}
+	table := "[" + strings.Join(key[:len(key)-1], ".") + "]"
+	top := topLevel()
+	if list, ok := top[key[0]]; ok && list && len(key) == 2 {
+		table = "[" + table + "]"
+	}
+	if _, ok := top[name]; ok {
+		return fmt.Sprintf("line %d: %s is read as part of the %s table above it; settings for all accounts go above the first [[group]], [[profile]] or [[folder]]", line, name, table)
+	}
+	return fmt.Sprintf("line %d: %s is not a setting of %s", line, name, table)
+}
+
+// topLevel maps the keys a config file has outside any table to whether
+// they are arrays of tables ([[profile]] …) rather than settings.
+func topLevel() map[string]bool {
+	out := map[string]bool{}
+	t := reflect.TypeFor[Config]()
+	for i := range t.NumField() {
+		if name, _, _ := strings.Cut(t.Field(i).Tag.Get("toml"), ","); name != "" && name != "-" {
+			out[name] = t.Field(i).Type.Kind() == reflect.Slice
+		}
+	}
+	return out
+}
+
+// Unknown describes the lines of config.toml that Load did not read, for
+// doctor; while there are some, Save refuses to write the file.
+func (c *Config) Unknown() []string { return c.unknown }
+
+// Writable reports why Save would not write c to path: lines of the file
+// that ccam does not read, which writing the file would delete.
+func (c *Config) Writable(path string) error {
+	if len(c.unknown) == 0 {
+		return nil
+	}
+	return fmt.Errorf("%s has lines ccam does not read, so it was not saved (that would delete them):\n  %s\nMove or fix them, then run the command again",
+		path, strings.Join(c.unknown, "\n  "))
+}
+
 func (c *Config) Save(path string) error {
+	if err := c.Writable(path); err != nil {
+		return err
+	}
 	want, err := c.resolved()
 	if err != nil {
 		return err
@@ -476,9 +591,15 @@ func within(base, dir string) bool {
 	return len(dir) == len(base) || os.IsPathSeparator(dir[len(base)]) || os.IsPathSeparator(base[len(base)-1])
 }
 
-// SamePath compares two folder paths; Windows paths compare without case.
+// foldCase is set where file systems ignore letter case by default:
+// Windows, and macOS (APFS, HFS+), where `cd ~/code/app` reaches ~/Code/App
+// and the working directory keeps the case typed.
+var foldCase = runtime.GOOS == "windows" || runtime.GOOS == "darwin"
+
+// SamePath compares two folder paths; Windows and macOS paths compare
+// without case.
 func SamePath(a, b string) bool {
-	if runtime.GOOS == "windows" {
+	if foldCase {
 		return strings.EqualFold(filepath.Clean(a), filepath.Clean(b))
 	}
 	return filepath.Clean(a) == filepath.Clean(b)

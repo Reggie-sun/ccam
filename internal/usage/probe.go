@@ -20,8 +20,16 @@ import (
 const ProbeRequest = `{"type":"control_request","request_id":"ccam","request":{"subtype":"get_usage","skip_behaviors":true}}` + "\n"
 
 // probeTimeout bounds one account's probe: a whole Claude Code start, then
-// its own request to the usage endpoint.
-const probeTimeout = 20 * time.Second
+// its own request to the usage endpoint. A login whose access token has
+// expired, or expires within renewMargin, Claude Code renews as it starts,
+// and its token request may take 30 s and the profile lookup after it 10 s
+// (2.1.308): renewProbeTimeout leaves it that time, since a renewal cut off
+// may lose the login.
+const (
+	probeTimeout      = 20 * time.Second
+	renewProbeTimeout = 50 * time.Second
+	renewMargin       = 5 * time.Minute
+)
 
 // ParseProbe reads Claude Code's answer to ProbeRequest. ok is false, with
 // no error, when the login has no plan limits.
@@ -52,7 +60,15 @@ func ParseProbe(out []byte) (l Limits, ok bool, err error) {
 			return Limits{}, false, fmt.Errorf("the usage request failed in Claude Code: %s", cmp.Or(m.Response.Error, m.Response.Subtype))
 		}
 		resp := m.Response.Response
-		if resp == nil || resp.RateLimits == nil || resp.Available != nil && !*resp.Available {
+		if resp == nil || resp.Available != nil && !*resp.Available {
+			return Limits{}, false, nil
+		}
+		if resp.RateLimits == nil && resp.Available != nil {
+			// The login has plan limits, but Claude Code's own lookup of them
+			// failed (2.1.306 answers null unless it got them).
+			return Limits{}, false, errors.New("the usage endpoint gave Claude Code no usage (it may be refusing lookups for now)")
+		}
+		if resp.RateLimits == nil {
 			return Limits{}, false, nil
 		}
 		rl := resp.RateLimits
@@ -91,14 +107,26 @@ func ParseProbe(out []byte) (l Limits, ok bool, err error) {
 func (f *Fetcher) fetchClaude(ctx context.Context, a Account, opt Options) Report {
 	r := Report{Name: a.Name, Slot: a.Slot}
 	if !opt.NoCache {
-		if c, ok := f.readCache(a.Name, "claude"); ok && f.Now().Sub(c.At) < CacheTTL {
+		if c, ok := f.readCache(a.Name, "claude"); ok && fresh(c.At, f.Now()) {
 			r.Status, r.Limits, r.Source, r.At = StatusOK, c.Limits, "claude", c.At
 			return r
 		}
 	}
-	if !creds.Has(a.Dir, f.Home) {
+	// One read (a Keychain call on macOS) tells both whether there is a
+	// login and whether Claude Code will renew it first. A login ccam cannot
+	// read (Windows Credential Manager) Claude Code reads itself.
+	data, _, err := creds.Read(a.Dir, f.Home)
+	why := ""
+	if err == nil {
+		why = creds.Judge(data, f.Now())
+	}
+	switch {
+	case why == "login expired":
+		r.Status, r.Err = StatusExpired, loginExpired(a.Name)
+		return r
+	case errors.Is(err, creds.ErrNone) || why != "":
 		r.Status = StatusLoggedOut
-		if hasAPIKey(a.Dir) {
+		if creds.APIKey(a.Dir) {
 			r.Status = StatusAPI
 		}
 		return r
@@ -106,7 +134,12 @@ func (f *Fetcher) fetchClaude(ctx context.Context, a Account, opt Options) Repor
 	if f.Probe == nil {
 		return f.fallback(a, r, StatusError, "no way to run Claude Code for the usage")
 	}
-	ctx, cancel := context.WithTimeout(ctx, probeTimeout)
+	// A login ccam cannot read may be renewed as well.
+	timeout := probeTimeout
+	if c, ok := storedOAuth(data); err != nil || ok && c.ExpiresAt > 0 && f.Now().Add(renewMargin).UnixMilli() >= c.ExpiresAt {
+		timeout = renewProbeTimeout
+	}
+	ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 	out, err := f.Probe(ctx, a)
 	l, ok, perr := ParseProbe(out)

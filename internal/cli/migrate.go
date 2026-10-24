@@ -10,7 +10,6 @@ import (
 
 	"github.com/jhyunwoo/ccam/internal/config"
 	"github.com/jhyunwoo/ccam/internal/fsutil"
-	"github.com/jhyunwoo/ccam/internal/launcher"
 	"github.com/jhyunwoo/ccam/internal/migrate"
 	"github.com/jhyunwoo/ccam/internal/profile"
 	"github.com/jhyunwoo/ccam/internal/share"
@@ -33,10 +32,10 @@ func migrateCmd(e *env) *cobra.Command {
 			"The folder (default ~/.claude, with MCP servers from ~/.claude.json) is only read:\n" +
 			"nothing in it is moved, linked or changed. Logins (.credentials.json, .claude.json)\n" +
 			"are never copied into the group. Conversation history is copied only with --history.\n\n" +
-			"MCP servers' saved sign-ins (OAuth) go along: each account that gets a copied server\n" +
-			"through the group gets its sign-in in its own login file, unless it already has one.\n" +
-			"Accounts that are running, not logged in, imported or using the macOS Keychain are\n" +
-			"skipped; sign in to the servers there with /mcp.\n\n" +
+			"MCP servers' saved sign-ins (OAuth) are not copied: a sign-in renews itself with a token\n" +
+			"only one account can use, so a copy would log the others out (the original too). Each\n" +
+			"account that gets a copied server through the group signs in to it once with /mcp;\n" +
+			"the plan lists which.\n\n" +
 			"Prints the plan and asks first. When the group already has a different copy of a\n" +
 			"file, you choose: keep group, use mine, or merge; with --yes the group's copy is kept.\n" +
 			"Replaced group files are saved in <group>/" + share.BackupDir + "/<time>/.",
@@ -122,10 +121,16 @@ func migrateCmd(e *env) *cobra.Command {
 					return nil
 				}
 			}
+			if pl.MCP != nil {
+				noteCopies(e, cfg, folder)
+			}
 			if err := pl.Apply(); err != nil {
 				return fmt.Errorf("failed while copying: %w\nThe source folder was not changed. Group files replaced so far are saved in %s", err, pl.BackupDir)
 			}
 			migrateSummary(e, cfg, pl, yes, rerunArgs(args, cmd.Flags().Changed("group"), g))
+			if pl.MCP != nil {
+				refreshCopies(e, cfg, folder, "")
+			}
 			return nil
 		},
 	}
@@ -147,7 +152,7 @@ func migrateCmd(e *env) *cobra.Command {
 	return cmd
 }
 
-// migrateAccounts are the accounts that may receive the source's MCP sign-ins.
+// migrateAccounts are the accounts that may get the source's MCP servers.
 func migrateAccounts(e *env, cfg *config.Config) []migrate.Account {
 	out := make([]migrate.Account, 0, len(cfg.Profiles))
 	for i := range cfg.Profiles {
@@ -155,7 +160,6 @@ func migrateAccounts(e *env, cfg *config.Config) []migrate.Account {
 		out = append(out, migrate.Account{
 			Name: p.Name, Dir: profile.Dir(e.paths, p),
 			MCP: p.Share.Get("mcp"), Extensions: p.Share.Get("extensions"),
-			SessionDir: launcher.SessionDir(e.paths, p.Name), Imported: p.Dir != "",
 		})
 	}
 	return out
@@ -196,8 +200,8 @@ func migrateSummary(e *env, cfg *config.Config, pl *migrate.Plan, yes bool, reru
 	if fsutil.Exists(pl.BackupDir) {
 		e.printf("The group's previous copies are saved in %s\n", pl.BackupDir)
 	}
-	if l := pl.Logins; l != nil && len(l.Skipped) > 0 {
-		e.printf("MCP sign-ins were not copied to: %s. Sign in to those servers there with /mcp.\n", strings.Join(l.Skipped, ", "))
+	if s := pl.SignIns(); s != "" {
+		e.printf("MCP sign-ins are not copied (a sign-in works for one account only). Sign in with /mcp to %s.\n", s)
 	}
 	items := pl.Items()
 	if len(items) == 0 {
@@ -235,8 +239,5 @@ func migrateSummary(e *env, cfg *config.Config, pl *migrate.Plan, yes bool, reru
 	}
 	if len(others) > 0 {
 		e.printf("  ccam group join %s %s\n", g.Name, strings.Join(others, " "))
-	}
-	if pl.Logins != nil {
-		e.printf("Then run `%s` again to give them the MCP sign-ins too.\n", rerun)
 	}
 }

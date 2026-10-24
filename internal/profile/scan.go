@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"unicode/utf8"
 )
 
 // TopLevelValue returns the raw JSON value of one top-level key of an object
@@ -12,38 +13,73 @@ import (
 // json.Decoder on multi-MB .claude.json files, which matters on the launch
 // path. Keys are compared after unescaping only when they contain escapes.
 func TopLevelValue(data []byte, key string) ([]byte, bool, error) {
+	var found []byte
+	err := members(data, func(k, v []byte) bool {
+		if keyEquals(k, key) {
+			found = v
+			return false
+		}
+		return true
+	})
+	return found, found != nil, err
+}
+
+// EachValue calls fn with each key (unescaped) and raw value of a JSON
+// object, in order, with the scanner of TopLevelValue: no value is
+// decoded. It stops at the first error fn returns.
+func EachValue(data []byte, fn func(key string, value []byte) error) error {
+	var ferr error
+	err := members(data, func(k, v []byte) bool {
+		key := string(k)
+		if bytes.IndexByte(k, '\\') >= 0 || !utf8.Valid(k) { // as encoding/json reads it
+			if ferr = json.Unmarshal(append(append([]byte{'"'}, k...), '"'), &key); ferr != nil {
+				return false
+			}
+		}
+		ferr = fn(key, v)
+		return ferr == nil
+	})
+	if ferr != nil {
+		return ferr
+	}
+	return err
+}
+
+// members scans the members of the object in data: key bytes as written
+// (escapes kept) and raw value, while fn says to go on.
+func members(data []byte, fn func(key, value []byte) bool) error {
 	i := skipWS(data, 0)
 	if i >= len(data) || data[i] != '{' {
-		return nil, false, fmt.Errorf("not a JSON object")
+		return fmt.Errorf("not a JSON object")
 	}
 	i++
 	for {
 		i = skipWS(data, i)
 		if i >= len(data) {
-			return nil, false, io.ErrUnexpectedEOF
+			return io.ErrUnexpectedEOF
 		}
 		if data[i] == '}' {
-			return nil, false, nil
+			return nil
 		}
 		if data[i] != '"' {
-			return nil, false, fmt.Errorf("invalid JSON (offset %d)", i)
+			return fmt.Errorf("invalid JSON (offset %d)", i)
 		}
 		end, err := skipString(data, i)
 		if err != nil {
-			return nil, false, err
+			return err
 		}
 		k := data[i+1 : end-1]
 		i = skipWS(data, end)
 		if i >= len(data) || data[i] != ':' {
-			return nil, false, fmt.Errorf("invalid JSON (offset %d)", i)
+			return fmt.Errorf("invalid JSON (offset %d)", i)
 		}
 		i = skipWS(data, i+1)
 		vend, err := skipValue(data, i)
 		if err != nil {
-			return nil, false, err
+			return err
 		}
-		if keyEquals(k, key) {
-			return data[i:vend], true, nil
+		if !fn(k, data[i:vend]) {
+			return nil
 		}
 		i = skipWS(data, vend)
 		if i < len(data) && data[i] == ',' {
@@ -53,7 +89,7 @@ func TopLevelValue(data []byte, key string) ([]byte, bool, error) {
 }
 
 func keyEquals(raw []byte, key string) bool {
-	if bytes.IndexByte(raw, '\\') < 0 {
+	if bytes.IndexByte(raw, '\\') < 0 && utf8.Valid(raw) {
 		return string(raw) == key
 	}
 	var s string
@@ -75,22 +111,26 @@ func skipWS(data []byte, i int) int {
 	return i
 }
 
-// skipString returns the index just past the closing quote of the string at i.
+// skipString returns the index just past the closing quote of the string at
+// i: the first quote after it that an odd run of backslashes does not
+// escape. bytes.IndexByte, unlike a search for either of two bytes, scans
+// many bytes at a time.
 func skipString(data []byte, i int) (int, error) {
 	i++
 	for {
-		j := bytes.IndexAny(data[i:], `"\`)
-		if j < 0 {
+		q := bytes.IndexByte(data[i:], '"')
+		if q < 0 {
 			return 0, io.ErrUnexpectedEOF
 		}
-		i += j
-		if data[i] == '"' {
-			return i + 1, nil
+		end := i + q
+		n := 0
+		for j := end - 1; j >= i && data[j] == '\\'; j-- {
+			n++
 		}
-		i += 2 // skip the escaped byte
-		if i > len(data) {
-			return 0, io.ErrUnexpectedEOF
+		if n%2 == 0 {
+			return end + 1, nil
 		}
+		i = end + 1
 	}
 }
 

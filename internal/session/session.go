@@ -1,9 +1,12 @@
-// Package session tracks Claude Code sessions started by ccam.
+// Package session tells whether Claude Code runs on an account's folder.
 //
-// Before exec, ccam writes a marker named after its PID holding the
-// process start time. exec keeps both, so the marker identifies the claude
-// process itself: children it spawns do not inherit it (unlike a lock fd),
-// and a reused PID has a different start time.
+// Sessions ccam starts: before exec, ccam writes a marker named after its
+// PID holding the process start time. exec keeps both, so the marker
+// identifies the claude process itself: children it spawns do not inherit
+// it (unlike a lock fd), and a reused PID has a different start time.
+//
+// Claude Code started any other way is found through the records Claude
+// Code keeps in the folder itself (claude.go); InUse asks both.
 package session
 
 import (
@@ -15,7 +18,7 @@ import (
 // Register marks the current process as a session in dir.
 func Register(dir string) error {
 	pid := os.Getpid()
-	start, ok := startTime(pid)
+	start, ok := StartTime(pid)
 	if !ok {
 		return nil // unsupported platform: skip tracking rather than fail the launch
 	}
@@ -50,7 +53,7 @@ func Count(dir string) int {
 		}
 		path := filepath.Join(dir, e.Name())
 		want, _ := os.ReadFile(path)
-		if got, ok := startTime(pid); ok && got == string(want) {
+		if got, ok := StartTime(pid); ok && got == string(want) {
 			n++
 			continue
 		}

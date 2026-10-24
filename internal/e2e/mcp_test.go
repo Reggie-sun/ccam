@@ -38,17 +38,30 @@ func TestMCPFlagStrategy(t *testing.T) {
 		t.Fatalf("prompt after flag: %q", args)
 	}
 	// claude remote-control refuses a --mcp-config before it and takes none
-	// after it, so ccam leaves the flag out and says the sessions lack the servers.
+	// after it, so ccam leaves the flag out and says the sessions lack the
+	// servers; also after an option with its value.
 	for _, verb := range []string{"remote-control", "rc"} {
-		r := h.run("", nil, "ccam", "work", "-d", verb, "--name", "x")
+		r := h.run("", nil, "ccam", "work", "--model", "opus", verb, "--name", "x")
 		if r.code != 0 {
 			t.Fatalf("%s exited %d: %s", verb, r.code, r.stderr)
 		}
-		if _, args := h.called(); !reflect.DeepEqual(args, []string{"-d", verb, "--name", "x"}) {
+		if _, args := h.called(); !reflect.DeepEqual(args, []string{"--model", "opus", verb, "--name", "x"}) {
 			t.Fatalf("%s args %q", verb, args)
 		}
 		if !strings.Contains(r.stderr, "Remote Control") || !strings.Contains(r.stderr, `mcp_strategy = "sync"`) {
 			t.Fatalf("%s stderr: %s", verb, r.stderr)
+		}
+		// -d takes the verb as its filter: a session, with the servers.
+		h.ok("ccam", "work", "-d", verb)
+		if _, args := h.called(); !reflect.DeepEqual(args, []string{"--mcp-config=" + groupMCP, "-d", verb}) {
+			t.Fatalf("-d %s args %q", verb, args)
+		}
+	}
+	// Claude Code finds a background session by its name only first.
+	for _, verb := range []string{"logs", "attach", "stop", "kill", "respawn", "rm"} {
+		h.ok("ccam", "work", verb, "myjob")
+		if _, args := h.called(); !reflect.DeepEqual(args, []string{verb, "myjob"}) {
+			t.Fatalf("%s args %q", verb, args)
 		}
 	}
 	// Without a terminal nobody can answer the question, so .claude.json stays as it was.
@@ -72,11 +85,18 @@ func TestMCPFlagStrategy(t *testing.T) {
 		t.Fatal("remove failed")
 	}
 
-	// Local MCP off: no flag even though the group has servers.
-	h.ok("ccam", "group", "leave", "default", "work", "--yes")
+	// Local MCP off: no flag even though the group has servers; the
+	// account keeps them in its own .claude.json.
+	out = h.ok("ccam", "group", "leave", "default", "work", "--yes")
+	if !strings.Contains(out, "copy     MCP servers ctx: "+filepath.FromSlash("groups/default/mcp.json")+" → "+filepath.FromSlash("profiles/work/.claude.json")) {
+		t.Fatalf("leave plan:\n%s", out)
+	}
 	h.ok("ccam", "work")
 	if _, args := h.called(); len(args) != 0 {
 		t.Fatalf("mcp off still passes %q", args)
+	}
+	if local, _ := os.ReadFile(filepath.Join(h.profileDir("work"), ".claude.json")); !strings.Contains(string(local), "mcp.example") || !strings.Contains(string(local), "dev@company.com") {
+		t.Fatalf("work kept no copy: %s", local)
 	}
 }
 

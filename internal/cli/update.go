@@ -49,13 +49,13 @@ func (e *env) runUpdate(ctx context.Context, o update.Options, out io.Writer) er
 	if err != nil {
 		return err
 	}
-	u := update.New(Version, exe, runtime.GOOS, runtime.GOARCH)
+	u := update.New(version(), exe, runtime.GOOS, runtime.GOARCH)
 	if err := update.Run(ctx, u, o, out); err != nil {
 		return err
 	}
 	// Hard-linked shortcuts (Windows) still run the replaced binary.
 	if cfg, err := e.load(); err == nil && runtime.GOOS == "windows" && !o.DryRun {
-		for _, name := range shim.Relink(e.paths.Bin, exe, update.OldExe(exe), cfg) {
+		for _, name := range shim.Relink(e.paths, exe, cfg) {
 			fmt.Fprintf(out, "✓ shortcut %s renewed\n", name)
 		}
 	}
@@ -69,6 +69,6 @@ func newerRelease(ctx context.Context) string {
 	if err != nil {
 		return ""
 	}
-	tag, _ := update.New(Version, exe, runtime.GOOS, runtime.GOARCH).Newer(ctx)
+	tag, _ := update.New(version(), exe, runtime.GOOS, runtime.GOARCH).Newer(ctx)
 	return tag
 }

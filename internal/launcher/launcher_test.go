@@ -2,17 +2,21 @@ package launcher
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
 	"reflect"
 	"runtime"
+	"slices"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
 
 	"github.com/jhyunwoo/ccam/internal/config"
 	"github.com/jhyunwoo/ccam/internal/paths"
+	"github.com/jhyunwoo/ccam/internal/session"
 )
 
 // exeSuffix makes a file found by PATH lookups: Windows looks for .exe.
@@ -90,7 +94,9 @@ func TestPrepareUnknownProfile(t *testing.T) {
 }
 
 func TestEnvReplacesConfigDir(t *testing.T) {
-	env := buildEnv([]string{"A=1", "CLAUDE_CONFIG_DIR=/old", "CCAM_PROFILE=x", "CLAUDE_SECURESTORAGE_CONFIG_DIR=/y"}, "/new", "work", false)
+	// An inherited CCAM_RELAY would make a nested session's switch name
+	// the outer relay and stop its own claude.
+	env := buildEnv([]string{"A=1", "CLAUDE_CONFIG_DIR=/old", "CCAM_PROFILE=x", "CCAM_RELAY=2:1", "CLAUDE_SECURESTORAGE_CONFIG_DIR=/y"}, "/new", "work", false)
 	want := []string{"A=1", "CLAUDE_CONFIG_DIR=/new", "CCAM_PROFILE=work"}
 	if !reflect.DeepEqual(env, want) {
 		t.Fatalf("%q", env)
@@ -99,6 +105,20 @@ func TestEnvReplacesConfigDir(t *testing.T) {
 	want = []string{"CLAUDE_CONFIG_DIR=/h/.claude", "CCAM_PROFILE=main", "CLAUDE_SECURESTORAGE_CONFIG_DIR="}
 	if !reflect.DeepEqual(env, want) {
 		t.Fatalf("default store: %q", env)
+	}
+}
+
+// An imported ~/.claude uses the secure-storage entry plain `claude` uses,
+// on Windows too: Claude Code's Credential Manager backend names its entry
+// after the folder like the macOS Keychain does.
+func TestDefaultStoreWhereLoginsHaveOne(t *testing.T) {
+	p := paths.Paths{Home: "/h"}
+	env := ProfileEnv(p, nil, filepath.Join("/h", ".claude"), "main")
+	if got := slices.Contains(env, "CLAUDE_SECURESTORAGE_CONFIG_DIR="); got != (runtime.GOOS == "darwin" || runtime.GOOS == "windows") {
+		t.Fatalf("%s: %q", runtime.GOOS, env)
+	}
+	if slices.Contains(ProfileEnv(p, nil, filepath.Join("/h", ".claude-work"), "work"), "CLAUDE_SECURESTORAGE_CONFIG_DIR=") {
+		t.Fatal("only for ~/.claude")
 	}
 }
 
@@ -112,27 +132,35 @@ func TestInsertArgsGoesBeforeUserArgs(t *testing.T) {
 }
 
 func TestDryRunQuotes(t *testing.T) {
-	pl := &Plan{Dir: "/d", Bin: "/bin/claude", Argv: []string{"claude", "-p", "it's ünïcode", "--x"}}
+	environ := []string{"PATH=/bin", "CCAM_RELAY=1"}
+	pl := &Plan{Dir: "/d", Bin: "/bin/claude", Argv: []string{"claude", "-p", "it's ünïcode", "--x"},
+		Env: buildEnv(environ, "/d", "w", false)}
 	var buf bytes.Buffer
-	pl.DryRun(&buf)
-	want := `CLAUDE_CONFIG_DIR=/d /bin/claude -p 'it'\''s ünïcode' --x` + "\n"
+	pl.dryRun(&buf, environ)
+	want := `env -u CCAM_RELAY CLAUDE_CONFIG_DIR=/d CCAM_PROFILE=w /bin/claude -p 'it'\''s ünïcode' --x` + "\n"
 	if runtime.GOOS == "windows" {
-		want = `$env:CLAUDE_CONFIG_DIR='/d'; & /bin/claude -p 'it''s ünïcode' --x` + "\n"
+		want = `& { $saved = @{}; foreach ($k in 'CCAM_RELAY','CLAUDE_CONFIG_DIR','CCAM_PROFILE') { $saved[$k] = [Environment]::GetEnvironmentVariable($k) }; ` +
+			`Remove-Item Env:CCAM_RELAY -ErrorAction SilentlyContinue; $env:CLAUDE_CONFIG_DIR='/d'; $env:CCAM_PROFILE='w'; ` +
+			`try { $p = Start-Process -FilePath '/bin/claude' -ArgumentList '-p "it''s ünïcode" --x' -NoNewWindow -Wait -PassThru; $global:LASTEXITCODE = $p.ExitCode } ` +
+			`finally { foreach ($k in $saved.Keys) { [Environment]::SetEnvironmentVariable($k, $saved[$k]) } } }` + "\n"
 	}
 	if buf.String() != want {
 		t.Fatalf("got %s", buf.String())
 	}
 }
 
-func TestPSQuote(t *testing.T) {
+// PowerShell ends a '...' string at any of its single quotes, the
+// typographic ones too: each is doubled.
+func TestPSString(t *testing.T) {
 	for in, want := range map[string]string{
-		`C:\Users\me\claude.exe`: `C:\Users\me\claude.exe`,
-		`C:\Program Files\x`:     `'C:\Program Files\x'`,
-		"it's":                   `'it''s'`,
-		"":                       `''`,
-		"$env:X":                 `'$env:X'`,
+		`C:\Program Files\x`:       `'C:\Program Files\x'`,
+		"it's":                     `'it''s'`,
+		"":                         `''`,
+		"$env:X":                   `'$env:X'`,
+		"don\u2019t \u2018x\u2019": "'don\u2019\u2019t \u2018\u2018x\u2019\u2019'",
+		"\u201a\u201b":             "'\u201a\u201a\u201b\u201b'",
 	} {
-		if got := PSQuote(in); got != want {
+		if got := PSString(in); got != want {
 			t.Errorf("%q: %s", in, got)
 		}
 	}
@@ -140,10 +168,10 @@ func TestPSQuote(t *testing.T) {
 
 func TestResolveClaudeCachesLookup(t *testing.T) {
 	p, _ := setup(t)
-	binDir := t.TempDir()
+	early, binDir := t.TempDir(), t.TempDir()
 	fake := filepath.Join(binDir, "claude-x"+exeSuffix)
 	os.WriteFile(fake, []byte("#!/bin/sh\n"), 0o755)
-	t.Setenv("PATH", binDir)
+	t.Setenv("PATH", early+string(os.PathListSeparator)+binDir)
 	got, err := ResolveClaude(p, "claude-x")
 	if err != nil || got != fake {
 		t.Fatalf("%q %v", got, err)
@@ -151,8 +179,10 @@ func TestResolveClaudeCachesLookup(t *testing.T) {
 	if data, _ := os.ReadFile(filepath.Join(p.State, "claude-path")); !strings.HasPrefix(string(data), fake+"\t") {
 		t.Fatalf("cache %q", data)
 	}
-	// Cache hit works even with an empty PATH.
-	t.Setenv("PATH", "")
+	// With PATH unchanged the cache answers without scanning PATH, so a
+	// file added to an earlier folder is not seen yet.
+	newer := filepath.Join(early, "claude-x"+exeSuffix)
+	os.WriteFile(newer, []byte("#!/bin/sh\n"), 0o755)
 	if got, err := ResolveClaude(p, "claude-x"); err != nil || got != fake {
 		t.Fatalf("cache miss: %q %v", got, err)
 	}
@@ -162,8 +192,66 @@ func TestResolveClaudeCachesLookup(t *testing.T) {
 	}
 	// A changed file invalidates the cache.
 	os.Chtimes(fake, time.Now().Add(time.Hour), time.Now().Add(time.Hour))
-	if _, err := ResolveClaude(p, "claude-x"); err == nil {
-		t.Fatal("stale cache should trigger a lookup, which fails with empty PATH")
+	if got, err := ResolveClaude(p, "claude-x"); err != nil || got != newer {
+		t.Fatalf("stale cache should trigger a lookup: %q %v", got, err)
+	}
+}
+
+// A changed PATH (nvm use, a new install placed earlier) is not answered
+// from the cache, even though the old file is still there unchanged.
+func TestResolveClaudeFollowsPATH(t *testing.T) {
+	p, _ := setup(t)
+	a, b := t.TempDir(), t.TempDir()
+	for _, d := range []string{a, b} {
+		os.WriteFile(filepath.Join(d, "claude-x"+exeSuffix), []byte("#!/bin/sh\n"), 0o755)
+	}
+	t.Setenv("PATH", a+string(os.PathListSeparator)+b)
+	if got, _ := ResolveClaude(p, "claude-x"); got != filepath.Join(a, "claude-x"+exeSuffix) {
+		t.Fatalf("first lookup %q", got)
+	}
+	t.Setenv("PATH", b+string(os.PathListSeparator)+a)
+	if got, _ := ResolveClaude(p, "claude-x"); got != filepath.Join(b, "claude-x"+exeSuffix) {
+		t.Fatalf("PATH now starts with %s, got the cached %q", b, got)
+	}
+	t.Setenv("PATH", b)
+	if got, _ := ResolveClaude(p, "claude-x"); got != filepath.Join(b, "claude-x"+exeSuffix) {
+		t.Fatalf("%q", got)
+	}
+}
+
+// A claude_bin that cannot run is named before anything of the launch
+// happens; exec itself would only say "no such file or directory".
+func TestPrepareRejectsAClaudeBinThatCannotRun(t *testing.T) {
+	p, cfg := setup(t)
+	noexec := filepath.Join(t.TempDir(), "claude")
+	os.WriteFile(noexec, []byte("#!/bin/sh\n"), 0o644)
+	bad := []string{filepath.Join(t.TempDir(), "missing", "claude"), t.TempDir(), "~/no/claude"}
+	if runtime.GOOS != "windows" {
+		bad = append(bad, noexec)
+	}
+	for _, bin := range bad {
+		cfg.ClaudeBin = bin
+		if _, err := Prepare(p, cfg, "work", nil); err == nil || !strings.Contains(err.Error(), "claude_bin") {
+			t.Errorf("%s: got %v", bin, err)
+		}
+	}
+	if !LastUsed(p, "work").IsZero() {
+		t.Error("a launch that could not start marked the account as used")
+	}
+}
+
+func TestClaudeBinExpandsTilde(t *testing.T) {
+	p, cfg := setup(t)
+	bin := filepath.Join(p.Home, "bin", "claude")
+	os.MkdirAll(filepath.Dir(bin), 0o700)
+	os.WriteFile(bin, []byte("#!/bin/sh\n"), 0o755)
+	cfg.ClaudeBin = "~/bin/claude"
+	pl, err := Prepare(p, cfg, "work", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if pl.Bin != bin {
+		t.Fatalf("got %s", pl.Bin)
 	}
 }
 
@@ -202,6 +290,24 @@ func BenchmarkLaunchPath(b *testing.B) {
 	}
 }
 
+// BenchmarkResolveClaudeCached is the lookup of a claude_bin without a
+// path (the default) when the cache answers, with a WSL-sized PATH.
+func BenchmarkResolveClaudeCached(b *testing.B) {
+	p, _ := setup(b)
+	dir := b.TempDir()
+	os.WriteFile(filepath.Join(dir, "claude-x"+exeSuffix), []byte("#!/bin/sh\n"), 0o755)
+	b.Setenv("PATH", strings.Repeat("/mnt/c/Program Files/Some Tool/bin"+string(os.PathListSeparator), 30)+dir)
+	if _, err := ResolveClaude(p, "claude-x"); err != nil {
+		b.Fatal(err)
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		if _, err := ResolveClaude(p, "claude-x"); err != nil {
+			b.Fatal(err)
+		}
+	}
+}
+
 func TestRemoteControlCopiesMCPOnYes(t *testing.T) {
 	root := t.TempDir()
 	gdir, state, dir := filepath.Join(root, "group"), filepath.Join(root, "state"), filepath.Join(root, "profile")
@@ -213,23 +319,24 @@ func TestRemoteControlCopiesMCPOnYes(t *testing.T) {
 	confirm = func(string) bool { asked++; return true }
 	t.Cleanup(func() { confirm = old })
 	pl := &Plan{Profile: &config.Profile{Name: "work"}, Dir: dir}
+	idle := func() bool { return false }
 
-	remoteControlMCP(pl, gdir, state, false, false)
+	remoteControlMCP(pl, "default", gdir, state, false, idle)
 	if local, _ := os.ReadFile(filepath.Join(dir, ".claude.json")); asked != 1 || !strings.Contains(string(local), "fs-mcp") {
 		t.Fatalf("asked %d, .claude.json %s", asked, local)
 	}
-	remoteControlMCP(pl, gdir, state, false, false)
+	remoteControlMCP(pl, "default", gdir, state, false, idle)
 	if asked != 1 {
 		t.Fatal("asked again although the copy is current")
 	}
 	later := time.Now().Add(time.Second)
 	os.WriteFile(filepath.Join(gdir, "mcp.json"), []byte(`{"mcpServers":{"fs":{"command":"fs-mcp-2"}}}`), 0o600)
 	os.Chtimes(filepath.Join(gdir, "mcp.json"), later, later)
-	remoteControlMCP(pl, gdir, state, false, true) // running: no question, no write
+	remoteControlMCP(pl, "default", gdir, state, false, func() bool { return true }) // running: no question, no write
 	if asked != 1 {
 		t.Fatal("asked while the account runs")
 	}
-	remoteControlMCP(pl, gdir, state, false, false)
+	remoteControlMCP(pl, "default", gdir, state, false, idle)
 	if local, _ := os.ReadFile(filepath.Join(dir, ".claude.json")); asked != 2 || !strings.Contains(string(local), "fs-mcp-2") {
 		t.Fatalf("after the group changed: asked %d, .claude.json %s", asked, local)
 	}
@@ -248,5 +355,124 @@ func TestFolderHereFollowsSymlinks(t *testing.T) {
 	t.Chdir(filepath.Join(root, "link", "sub"))
 	if f, ok := FolderHere(cfg); !ok || f.Account != "work" {
 		t.Fatalf("through the link: %v %v", f, ok)
+	}
+}
+
+// The relay's hop is ccam's own: beside another session sharing the
+// history it warns and goes on, asking nothing and leaving the terminal's
+// input alone; a launch by hand asks there.
+func TestHistoryCheckAsksNothingInAHop(t *testing.T) {
+	p, _ := setup(t)
+	t.Chdir(t.TempDir())
+	cwd, _ := os.Getwd()
+	cwd, _ = filepath.EvalSymlinks(cwd)
+	if err := session.Register(HistoryDir(p, "default", cwd)); err != nil { // the other session (this process)
+		t.Fatal(err)
+	}
+	oldIn, oldAttended := os.Stdin, attended
+	attended = func() bool { return true } // as on a terminal
+	t.Cleanup(func() { os.Stdin, attended, Unattended = oldIn, oldAttended, false })
+	pl := &Plan{Profile: &config.Profile{Name: "work", Share: config.Share{History: "default"}}, UserArgs: []string{"--resume", "s1"}}
+	for _, hop := range []bool{true, false} {
+		r, w, _ := os.Pipe()
+		w.Write([]byte("y\n"))
+		os.Stdin, Unattended = r, hop
+		if err := historyCheck(p, pl); err != nil {
+			t.Fatal(err)
+		}
+		w.Close()
+		if rest, _ := io.ReadAll(r); hop != (string(rest) == "y\n") {
+			t.Fatalf("hop %v: %q left of the answer", hop, rest)
+		}
+	}
+}
+
+// listedRunning writes what Claude Code lists for a session of its own in
+// the config folder dir: this test process stands in for a claude that ccam
+// did not start.
+func listedRunning(t *testing.T, dir string) string {
+	t.Helper()
+	path := filepath.Join(dir, "sessions", strconv.Itoa(os.Getpid())+".json")
+	os.MkdirAll(filepath.Dir(path), 0o700)
+	if err := os.WriteFile(path, fmt.Appendf(nil, `{"pid":%d,"kind":"interactive","startedAt":%d}`, os.Getpid(), time.Now().UnixMilli()), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	return path
+}
+
+// With mcp_strategy = "sync" a launch rewrites .claude.json, which a running
+// Claude Code writes too: an account that Claude Code runs on, started
+// without ccam, is left alone like one ccam started.
+func TestSyncLeavesAnAccountClaudeCodeRunsOn(t *testing.T) {
+	p, cfg := setup(t)
+	if _, ok := session.StartTime(os.Getpid()); !ok {
+		t.Skip("no process start times on this platform")
+	}
+	cfg.MCPStrategy = config.MCPSync
+	cfg.Profiles[1].Share = config.Share{MCP: "default"}
+	os.MkdirAll(p.GroupDir("default"), 0o700)
+	os.WriteFile(filepath.Join(p.GroupDir("default"), "mcp.json"), []byte(`{"mcpServers":{"fs":{"command":"fs-mcp"}}}`), 0o600)
+	dir := p.ProfileDir("work")
+	listed := listedRunning(t, dir)
+	if _, err := Ready(p, cfg, "work", nil, false); err != nil {
+		t.Fatal(err)
+	}
+	if data, _ := os.ReadFile(filepath.Join(dir, ".claude.json")); strings.Contains(string(data), "fs-mcp") {
+		t.Fatal(".claude.json rewritten under a running Claude Code")
+	}
+	os.Remove(listed)
+	session.Unregister(SessionDir(p, "work")) // the marker of the first launch (this process)
+	if _, err := Ready(p, cfg, "work", nil, false); err != nil {
+		t.Fatal(err)
+	}
+	if data, _ := os.ReadFile(filepath.Join(dir, ".claude.json")); !strings.Contains(string(data), "fs-mcp") {
+		t.Fatalf("not synced once nothing runs: %s", data)
+	}
+}
+
+// A marker that cannot be written (the state folder is broken) does not
+// stop the launch.
+func TestLaunchGoesOnWithoutAMarker(t *testing.T) {
+	p, cfg := setup(t)
+	if _, ok := session.StartTime(os.Getpid()); !ok {
+		t.Skip("no session markers on this platform")
+	}
+	if err := os.WriteFile(p.Runtime, []byte("not a folder"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	pl, err := Ready(p, cfg, "work", nil, false)
+	if err != nil {
+		t.Fatalf("launch stopped: %v", err)
+	}
+	if len(pl.sessions) != 0 {
+		t.Fatalf("registered in %v", pl.sessions)
+	}
+}
+
+// BenchmarkSyncLaunchUnchanged is a launch's MCP step under the sync
+// strategy when nothing changed since the last one: a 1 MB .claude.json
+// and a group with one server.
+func BenchmarkSyncLaunchUnchanged(b *testing.B) {
+	p, cfg := setup(b)
+	cfg.MCPStrategy = config.MCPSync
+	if err := cfg.AddGroup("g", []string{"mcp"}, []string{"work"}); err != nil {
+		b.Fatal(err)
+	}
+	os.MkdirAll(p.GroupDir("g"), 0o700)
+	os.WriteFile(filepath.Join(p.GroupDir("g"), "mcp.json"), []byte(`{"mcpServers":{"g":{"command":"g"}}}`), 0o600)
+	big := `{"projects":{"/p":{"history":["` + strings.Repeat("x", 1<<20) + `"]}},"mcpServers":{}}`
+	os.WriteFile(filepath.Join(p.ProfileDir("work"), ".claude.json"), []byte(big), 0o600)
+	pl, err := Prepare(p, cfg, "work", nil)
+	if err != nil {
+		b.Fatal(err)
+	}
+	if err := applyMCP(p, cfg, pl, false); err != nil { // the first sync
+		b.Fatal(err)
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		if err := applyMCP(p, cfg, pl, false); err != nil {
+			b.Fatal(err)
+		}
 	}
 }

@@ -89,6 +89,11 @@ func (p Policy) peak(r *Report) float64 {
 	return top
 }
 
+// Full reports whether r is at 100% in a window it is judged by.
+func (p Policy) Full(r *Report) bool {
+	return r != nil && r.Limits != nil && p.peak(r) >= 100
+}
+
 // Choose returns the account to use, or nil when every account is full or
 // its usage is unknown. Below MaxUsage the strategy decides; when every
 // account is at or over it, the one with the lowest usage is taken.

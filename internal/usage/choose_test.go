@@ -123,3 +123,27 @@ func TestPolicyCheck(t *testing.T) {
 		t.Fatal("valid policy refused")
 	}
 }
+
+// Full is the limit Choose sees: the 5-hour, weekly and --model windows.
+func TestPolicyFull(t *testing.T) {
+	opus := Scoped{Name: "Opus", Window: Window{Percent: 100, Known: true}}
+	cases := []struct {
+		policy Policy
+		in     *Report
+		want   bool
+	}{
+		{Policy{}, nil, false},
+		{Policy{}, &Report{Name: "x"}, false},
+		{Policy{}, rep("a", 100, time.Hour, 10), true},
+		{Policy{}, rep("a", 20, time.Hour, 100), true},
+		{Policy{}, rep("a", 20, time.Hour, 10, opus), false},
+		{Policy{Model: "opus"}, rep("a", 20, time.Hour, 10, opus), true},
+		{Policy{Model: "sonnet"}, rep("a", 20, time.Hour, 10, opus), false},
+		{Policy{Model: "opus"}, rep("a", 20, time.Hour, 10, Scoped{Name: "Opus", Window: Window{Percent: 100}}), false}, // unknown
+	}
+	for i, tc := range cases {
+		if got := tc.policy.Full(tc.in); got != tc.want {
+			t.Errorf("%d: %v", i, got)
+		}
+	}
+}

@@ -142,3 +142,58 @@ func TestLatePathsWaitForDoctorFix(t *testing.T) {
 		t.Fatalf("%+v", r)
 	}
 }
+
+// A group folder that is gone (removed by hand, or by a cleanup tool)
+// leaves the accounts' links to it with nowhere to save: doctor says so,
+// and ccam ext's advice holds: doctor --fix makes it again.
+func TestMissingGroupFolderIsMadeAgain(t *testing.T) {
+	h := newHarness(t)
+	h.addAccounts()
+	skills := filepath.Join(h.home, "data", "groups", "default", "skills")
+	if err := os.Rename(skills, filepath.Join(h.home, "elsewhere")); err != nil {
+		t.Fatal(err)
+	}
+	if r := h.run("", nil, "ccam", "ext"); !strings.Contains(r.stdout, "broken link") || !strings.Contains(r.stdout, "doctor --fix") {
+		t.Fatalf("ext: %+v", r)
+	}
+	if r := h.run("", nil, "ccam", "doctor"); !strings.Contains(r.stdout, "the group folder it links to is missing") {
+		t.Fatalf("doctor: %+v", r)
+	}
+	h.ok("ccam", "doctor", "--fix")
+	if info, err := os.Stat(skills); err != nil || !info.IsDir() {
+		t.Fatalf("not made again: %v", err)
+	}
+	if r := h.run("", nil, "ccam", "ext"); strings.Contains(r.stdout, "broken link") {
+		t.Fatalf("ext after doctor --fix: %+v", r)
+	}
+}
+
+// doctor --fix links a real settings.json to the group's: it says that the
+// account now uses the group's copy and where its own went; a dry run
+// says so beforehand and changes nothing.
+func TestDoctorFixSaysWhatItSetsAside(t *testing.T) {
+	h := newHarness(t)
+	h.addAccounts()
+	os.WriteFile(filepath.Join(h.home, "data", "groups", "default", "settings.json"), []byte(`{"group":true}`), 0o600)
+	settings := filepath.Join(h.profileDir("work"), "settings.json")
+	os.Remove(settings)
+	os.WriteFile(settings, []byte(`{"mine":true}`), 0o600)
+	r := h.run("", nil, "ccam", "--dry-run", "doctor", "--fix")
+	if !strings.Contains(r.stdout, "settings.json differs from the group's copy: --fix would use the group's, and move this account's copy to") {
+		t.Fatalf("dry run: %+v", r)
+	}
+	if b, _ := os.ReadFile(settings); string(b) != `{"mine":true}` {
+		t.Fatalf("the dry run changed settings.json: %s", b)
+	}
+	r = h.run("", nil, "ccam", "doctor", "--fix")
+	if !strings.Contains(r.stdout, "settings.json differed from the group's copy, which it now uses; this account's copy is in") {
+		t.Fatalf("--fix: %+v", r)
+	}
+	saved, _ := filepath.Glob(filepath.Join(h.profileDir("work"), ".ccam-backup", "*", "settings.json"))
+	if len(saved) != 1 {
+		t.Fatalf("backups: %v", saved)
+	}
+	if b, _ := os.ReadFile(saved[0]); string(b) != `{"mine":true}` {
+		t.Fatalf("backup: %s", b)
+	}
+}

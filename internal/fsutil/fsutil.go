@@ -11,7 +11,6 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
-	"syscall"
 	"time"
 )
 
@@ -98,17 +97,20 @@ func Exists(path string) bool {
 // are made absolute so they still resolve from the new place.
 func Move(src, dst string) error { return MoveWithin(src, dst, src) }
 
+// rename is os.Rename; tests replace it to see the copy fallback.
+var rename = os.Rename
+
 // MoveWithin is Move for one piece of the folder root whose other pieces end
 // up next to dst as well: relative links that stay inside root are kept.
 func MoveWithin(src, dst, root string) error {
 	if err := os.MkdirAll(filepath.Dir(dst), 0o700); err != nil {
 		return err
 	}
-	err := os.Rename(src, dst)
+	err := rename(src, dst)
 	if err == nil {
 		return fixMovedLinks(src, dst, root)
 	}
-	if !errors.Is(err, syscall.EXDEV) {
+	if !crossDevice(err) {
 		return err
 	}
 	if err := copyTree(src, dst, root); err != nil {
@@ -196,8 +198,12 @@ func copyTree(src, dst, root string) error {
 	})
 }
 
-// CopyFile copies one regular file keeping its permission bits.
-// io.Copy between *os.File uses copy_file_range on Linux.
+// CopyFile copies one regular file keeping its permission bits. Like
+// AtomicWrite it writes a temp file beside dst and renames it over dst, so
+// a copy that fails or is killed halfway leaves dst as it was (migrate
+// keeps a dst that exists); it does not fsync, which would make copying a
+// large plugins folder take minutes. A dst that is a symlink is written
+// through. io.Copy between *os.File uses copy_file_range on Linux.
 func CopyFile(src, dst string) error {
 	in, err := os.Open(src)
 	if err != nil {
@@ -208,23 +214,28 @@ func CopyFile(src, dst string) error {
 	if err != nil {
 		return err
 	}
+	dst = resolveLink(dst)
 	if err := os.MkdirAll(filepath.Dir(dst), 0o700); err != nil {
 		return err
 	}
-	out, err := os.OpenFile(dst, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, info.Mode().Perm())
+	out, err := os.CreateTemp(filepath.Dir(dst), "."+filepath.Base(dst)+".tmp*")
 	if err != nil {
 		return err
 	}
-	// OpenFile only applies perm to a new file; an overwritten one keeps its own.
-	if err := out.Chmod(info.Mode().Perm()); err != nil {
-		out.Close()
-		return err
-	}
+	tmp := out.Name()
+	defer os.Remove(tmp) // no-op after a successful rename
 	if _, err := io.Copy(out, in); err != nil {
 		out.Close()
 		return err
 	}
-	return out.Close()
+	if err := out.Chmod(info.Mode().Perm()); err != nil {
+		out.Close()
+		return err
+	}
+	if err := out.Close(); err != nil {
+		return err
+	}
+	return os.Rename(tmp, dst)
 }
 
 // SameContent reports whether b is a file with exactly a's content. A
@@ -251,3 +262,26 @@ func SameContent(a, b string) (bool, error) {
 
 // Stamp returns a filesystem-safe timestamp for backup and trash folder names.
 func Stamp(t time.Time) string { return t.Format("20060102-150405") }
+
+// MoveAside renames path, a program that may be running, out of the way of
+// a new file of that name. Windows lets a running program's file be renamed
+// but not deleted or replaced, so it becomes path.old, or path.old-<time>
+// while a program still runs from an earlier path.old. Earlier ones that
+// can be deleted are.
+func MoveAside(path string) (string, error) {
+	dir, base := filepath.Split(path)
+	if entries, err := os.ReadDir(filepath.Clean(dir)); err == nil {
+		for _, e := range entries {
+			rest, ok := strings.CutPrefix(e.Name(), base+".old")
+			n, dash := strings.CutPrefix(rest, "-")
+			if ok && (rest == "" || dash && n != "" && strings.Trim(n, "0123456789") == "") {
+				os.Remove(filepath.Join(dir, e.Name()))
+			}
+		}
+	}
+	old := path + ".old"
+	if Exists(old) {
+		old += "-" + strconv.FormatInt(time.Now().UnixNano(), 10)
+	}
+	return old, os.Rename(path, old)
+}

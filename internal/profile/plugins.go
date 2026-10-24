@@ -50,6 +50,29 @@ func RewritePluginPaths(pluginsDir, oldPrefix, newPrefix string) (int, error) {
 	return total, nil
 }
 
+// PluginPathsUnder counts the paths under prefix in the plugin registry
+// files of pluginsDir; a file that cannot be read counts none.
+func PluginPathsUnder(pluginsDir, prefix string) int {
+	n := 0
+	for _, name := range PluginFiles {
+		data, err := os.ReadFile(filepath.Join(pluginsDir, name))
+		if err != nil {
+			continue
+		}
+		var doc any
+		if json.Unmarshal(data, &doc) != nil {
+			continue
+		}
+		RewriteStrings(doc, func(s string) string {
+			if strings.HasPrefix(s, prefix) {
+				n++
+			}
+			return s
+		})
+	}
+	return n
+}
+
 // RewriteStrings applies fn to every string value in a decoded JSON document.
 func RewriteStrings(v any, fn func(string) string) any {
 	switch x := v.(type) {

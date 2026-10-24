@@ -17,6 +17,7 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"slices"
 	"sort"
 	"strings"
 	"time"
@@ -39,7 +40,7 @@ type Options struct {
 	Group      string    // target group folder (under GroupsRoot)
 	Name       string    // the group's name for messages; Group when ""
 	Items      []string  // items to copy (keys of share.Layout)
-	Accounts   []Account // accounts that may receive the source's MCP sign-ins
+	Accounts   []Account // accounts that may get the source's MCP servers (for the sign-in notice)
 }
 
 // State says what happens to one path.
@@ -87,7 +88,7 @@ type Plan struct {
 	BackupDir string // where replaced group files are saved
 	Entries   []*Entry
 	MCP       *MCP    // nil when mcp is not selected
-	Logins    *Logins // nil when there are no MCP sign-ins to copy
+	Logins    *Logins // nil when no account has to sign in to a copied server
 	Conflicts []*share.Conflict
 }
 
@@ -137,6 +138,63 @@ func Found(source, home string) map[string]bool {
 	return found
 }
 
+// HomeOnly lists the user-scope MCP servers of the .claude.json that
+// belongs to source (ClaudeJSON: for plain Claude Code's ~/.claude, the
+// ~/.claude.json) that no account loads: none in accountDirs has one of
+// that name in its own .claude.json, and no group in groupDirs (those the
+// accounts get MCP from) has one in its mcp.json. Once ccam runs an
+// account, Claude Code reads that account's .claude.json, not the home
+// one, so these "disappear" until `ccam migrate --mcp` copies them. An
+// account registered in place (`ccam import ~/.claude`) links its
+// .claude.json to the home one, so it loads them. from is the file read.
+func HomeOnly(source, home string, accountDirs, groupDirs []string) (from string, names []string) {
+	from = ClaudeJSON(source, home)
+	if from == "" {
+		return "", nil
+	}
+	left, err := mcp.LocalServers(filepath.Dir(from))
+	if err != nil || len(left) == 0 {
+		return from, nil
+	}
+	for _, d := range accountDirs {
+		own, _ := mcp.LocalServers(d)
+		for n := range own {
+			delete(left, n)
+		}
+	}
+	for _, d := range groupDirs {
+		if store, err := mcp.Load(mcp.Path(d)); err == nil {
+			for n := range store.Servers {
+				delete(left, n)
+			}
+		}
+	}
+	for n := range left {
+		names = append(names, n)
+	}
+	sort.Strings(names)
+	return from, names
+}
+
+// MCPCommand is the ccam migrate command that copies MCP servers into the
+// group the accounts share MCP through: default, else the only such group,
+// else one of them to pick.
+func MCPCommand(cfg *config.Config) string {
+	var shares []string
+	for _, g := range cfg.Groups {
+		if g.Has("mcp") {
+			shares = append(shares, g.Name)
+		}
+	}
+	switch {
+	case len(shares) == 0 || slices.Contains(shares, "default"):
+		return "ccam migrate --mcp"
+	case len(shares) == 1:
+		return "ccam migrate --mcp --group " + shares[0]
+	}
+	return "ccam migrate --mcp --group <" + strings.Join(shares, "|") + ">"
+}
+
 // Build looks at the source and the group and lists what Apply will do.
 // It only reads the disk.
 func Build(opt Options) (*Plan, error) {
@@ -144,7 +202,9 @@ func Build(opt Options) (*Plan, error) {
 	if err != nil {
 		return nil, err
 	}
-	if err := checkSource(src); err != nil {
+	// Plain Claude Code keeps its MCP servers in ~/.claude.json, beside a
+	// ~/.claude that may hold nothing else yet.
+	if err := checkSource(src); err != nil && (src != filepath.Join(opt.Home, ".claude") || !Found(src, opt.Home)["mcp"]) {
 		return nil, err
 	}
 	groupDir := filepath.Join(opt.GroupsRoot, opt.Group)
@@ -183,9 +243,7 @@ func Build(opt Options) (*Plan, error) {
 		}
 	}
 	if want["mcp"] || want["extensions"] {
-		if pl.Logins, err = buildLogins(pl, opt); err != nil {
-			return nil, err
-		}
+		pl.Logins = buildLogins(pl, opt)
 	}
 	return pl, nil
 }
@@ -381,7 +439,7 @@ func (pl *Plan) Changes() bool {
 			return true
 		}
 	}
-	return pl.MCP != nil && pl.MCP.changes() || pl.Logins != nil && pl.Logins.changes()
+	return pl.MCP != nil && pl.MCP.changes()
 }
 
 // Empty reports whether there is nothing to copy and nothing to decide.
@@ -434,7 +492,9 @@ func (pl *Plan) Describe(w io.Writer, asking bool) {
 		}
 	}
 	if l := pl.Logins; l != nil {
-		fmt.Fprintf(w, "  %-11s %-15s %s\n", label("mcp"), "sign-ins", l.describe())
+		if s := l.needs(pl.signInDefs(asking)); s != "" {
+			fmt.Fprintf(w, "  %-11s %-15s not copied (a sign-in works for one account only); sign in with /mcp: %s\n", label("mcp"), "sign-ins", s)
+		}
 	}
 	// Paths missing from the source go on one line per item, after the rest.
 	var missing []string
@@ -539,9 +599,6 @@ func (pl *Plan) Apply() error {
 			return fmt.Errorf("MCP servers: %w", err)
 		}
 	}
-	if pl.Logins != nil && pl.Logins.changes() {
-		return pl.Logins.apply(pl)
-	}
 	return nil
 }
 
@@ -624,24 +681,25 @@ func copyMissing(src, dst string) error {
 }
 
 func (m *MCP) apply(pl *Plan) error {
-	store, err := mcp.Load(m.store)
-	if err != nil {
-		return err
-	}
-	if fsutil.Exists(m.store) {
-		if err := fsutil.CopyFile(m.store, filepath.Join(pl.BackupDir, "mcp.json")); err != nil {
-			return err
+	// Under the lock ccam's mcp commands take: a server one adds meanwhile stays.
+	return mcp.Update(m.store, func(store *mcp.Store) error {
+		if fsutil.Exists(m.store) {
+			if err := fsutil.CopyFile(m.store, filepath.Join(pl.BackupDir, "mcp.json")); err != nil {
+				return err
+			}
 		}
-	}
-	for _, n := range m.New {
-		store.Servers[n] = m.servers[n]
-	}
-	for _, c := range m.Conflicts {
-		if c.Choice == share.UseMine {
-			store.Servers[serverName(c)] = m.servers[serverName(c)]
+		for _, n := range m.New {
+			if _, added := store.Servers[n]; !added {
+				store.Servers[n] = m.servers[n]
+			}
 		}
-	}
-	return store.Save(m.store)
+		for _, c := range m.Conflicts {
+			if c.Choice == share.UseMine {
+				store.Servers[serverName(c)] = m.servers[serverName(c)]
+			}
+		}
+		return nil
+	})
 }
 
 // Copied lists what Apply wrote, for the summary ("settings.json",
@@ -665,9 +723,6 @@ func (pl *Plan) Copied() []string {
 			}
 			out = append(out, name)
 		}
-	}
-	if l := pl.Logins; l != nil && len(l.written) > 0 {
-		out = append(out, "MCP sign-ins for "+strings.Join(l.written, ", "))
 	}
 	return out
 }

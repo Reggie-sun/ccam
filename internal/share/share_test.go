@@ -3,13 +3,17 @@ package share
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"os"
 	"path/filepath"
 	"reflect"
+	"runtime"
+	"slices"
 	"strings"
 	"testing"
 
 	"github.com/jhyunwoo/ccam/internal/config"
+	"github.com/jhyunwoo/ccam/internal/fsutil"
 )
 
 type fixture struct {
@@ -473,4 +477,461 @@ func TestBackupsWithinOneSecondStayApart(t *testing.T) {
 func jp(base, rel string) string {
 	b, _ := json.Marshal(filepath.Join(base, filepath.FromSlash(rel)))
 	return strings.Trim(string(b), `"`)
+}
+
+// A file one earlier plan of a change brings into a folder another earlier
+// plan moves in is there, whatever order the Pending map is read in.
+func TestPendingFileInsidePendingFolder(t *testing.T) {
+	f := newFixture(t)
+	a := f.profile(t, "a", nil)
+	os.MkdirAll(filepath.Join(a, "plugins"), 0o700) // no plugin list yet
+	b := f.profile(t, "b", map[string]string{"plugins/installed_plugins.json": `{}`})
+	grp := filepath.Join(f.groups, "g", "plugins")
+	opt := Options{Pending: map[string]string{
+		grp: filepath.Join(a, "plugins"),
+		filepath.Join(grp, "installed_plugins.json"): filepath.Join(b, "plugins", "installed_plugins.json"),
+	}}
+	for i := range 100 {
+		if !opt.exists(filepath.Join(grp, "installed_plugins.json")) {
+			t.Fatalf("call %d: the list b brings is not seen", i)
+		}
+	}
+	if opt.exists(filepath.Join(grp, "known_marketplaces.json")) {
+		t.Fatal("a file no plan brings is seen")
+	}
+}
+
+// Files inside a shared folder that the group also has with other content
+// stay the group's: the plan says which, and where the account's copies go.
+// Here b's plan sees the group's copy only through a's plan (Pending).
+func TestMergeNamesTheFilesThatDiffer(t *testing.T) {
+	f := newFixture(t)
+	hist := config.Share{History: "hist"}
+	a := f.profile(t, "a", map[string]string{"projects/-w/memory/MEMORY.md": "memory of a", "projects/-w/s.jsonl": "same"})
+	b := f.profile(t, "b", map[string]string{"projects/-w/memory/MEMORY.md": "memory of b", "projects/-w/s.jsonl": "same"})
+	pa, err := Build(a, f.groups, config.Share{}, hist, Options{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	pb, err := Build(b, f.groups, config.Share{}, hist, Options{Pending: pa.Created()})
+	if err != nil {
+		t.Fatal(err)
+	}
+	var buf bytes.Buffer
+	pb.Describe(&buf)
+	want := "projects: 1 file differs from the group's copy (" + filepath.Join("-w", "memory", "MEMORY.md") + "); the group's is kept, the account's stays in " + filepath.Join(b, BackupDir, pb.stamp, "projects")
+	if !strings.Contains(buf.String(), want) || strings.Contains(buf.String(), "s.jsonl") {
+		t.Fatalf("b's plan:\n%s", buf.String())
+	}
+	if err := pa.Apply(); err != nil {
+		t.Fatal(err)
+	}
+	if err := pb.Apply(); err != nil {
+		t.Fatal(err)
+	}
+	if got := read(t, filepath.Join(b, BackupDir, pb.stamp, "projects", "-w", "memory", "MEMORY.md")); got != "memory of b" {
+		t.Fatalf("b's memory in the backup: %q", got)
+	}
+
+	// A conversation carried on while not sharing is named too.
+	share(t, f, b, hist, config.Share{}, Options{})
+	os.WriteFile(filepath.Join(b, "projects", "-w", "s.jsonl"), []byte("same\nmore"), 0o600)
+	pl, err := Build(b, f.groups, config.Share{}, hist, Options{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !slices.ContainsFunc(pl.Notes, func(n string) bool { return strings.Contains(n, filepath.Join("-w", "s.jsonl")) }) {
+		t.Fatalf("notes: %v", pl.Notes)
+	}
+}
+
+// Leaving and joining again copies the group's files back and forth; the
+// copies that are still the group's byte for byte are not piled up in the
+// backup folder.
+func TestRoundTripLeavesNoIdenticalBackup(t *testing.T) {
+	f := newFixture(t)
+	hist := config.Share{History: "hist"}
+	b := f.profile(t, "b", map[string]string{"projects/-w/big.jsonl": "same", "projects/-w/memory/MEMORY.md": "m"})
+	share(t, f, b, config.Share{}, hist, Options{})
+	share(t, f, b, hist, config.Share{}, Options{})
+	pl := share(t, f, b, config.Share{}, hist, Options{})
+	if len(pl.Notes) != 0 {
+		t.Fatalf("notes: %v", pl.Notes)
+	}
+	var left []string
+	filepath.WalkDir(filepath.Join(b, BackupDir), func(path string, d os.DirEntry, err error) error {
+		if err == nil && !d.IsDir() {
+			left = append(left, path)
+		}
+		return nil
+	})
+	if len(left) != 0 {
+		t.Errorf("identical copies backed up: %v", left)
+	}
+	if read(t, filepath.Join(b, "projects", "-w", "big.jsonl")) != "same" {
+		t.Fatal("b lost its conversation")
+	}
+}
+
+// perms is whether file permissions can make a copy fail (not as root, not
+// on Windows).
+var perms = runtime.GOOS != "windows" && os.Geteuid() != 0
+
+// skillsFixture shares five skills of account a with group default and
+// makes the third unreadable, so a copy of the group's skills stops there.
+func skillsFixture(t *testing.T) (f fixture, a, locked string) {
+	t.Helper()
+	if !perms {
+		t.Skip("needs file permissions")
+	}
+	f = newFixture(t)
+	files := map[string]string{}
+	for i := 1; i <= 5; i++ {
+		files[fmt.Sprintf("skills/s%d/SKILL.md", i)] = fmt.Sprint(i)
+	}
+	a = f.profile(t, "a", files)
+	share(t, f, a, config.Share{}, config.Share{Extensions: "default"}, Options{})
+	locked = filepath.Join(f.groups, "default", "skills", "s3", "SKILL.md")
+	os.Chmod(locked, 0)
+	t.Cleanup(func() { os.Chmod(locked, 0o600) })
+	return f, a, locked
+}
+
+func allSkills(t *testing.T, dir string) {
+	t.Helper()
+	for i := 1; i <= 5; i++ {
+		if got := read(t, filepath.Join(dir, fmt.Sprintf("s%d", i), "SKILL.md")); got != fmt.Sprint(i) {
+			t.Fatalf("s%d: %q", i, got)
+		}
+	}
+}
+
+// A leave that stops while copying the group's content back keeps the
+// link, so the plan doctor --fix builds again copies everything; a copy
+// that stopped halfway is never taken for the account's own.
+func TestStoppedCopyBackKeepsTheLink(t *testing.T) {
+	f, a, locked := skillsFixture(t)
+	ext := config.Share{Extensions: "default"}
+	pl, err := Build(a, f.groups, ext, config.Share{}, Options{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := pl.Apply(); err == nil {
+		t.Fatal("the copy did not stop")
+	}
+	os.Chmod(locked, 0o600)
+	if target, ok := fsutil.LinkTarget(filepath.Join(a, "skills")); !ok || target != filepath.Join(f.groups, "default", "skills") {
+		t.Fatalf("skills is no longer the link: %q", target)
+	}
+	if left, _ := os.ReadDir(filepath.Join(a, BackupDir)); len(left) != 0 {
+		t.Fatalf("left in the backup folder: %v", left)
+	}
+	share(t, f, a, config.Share{}, config.Share{}, Options{})
+	allSkills(t, filepath.Join(a, "skills"))
+	if fsutil.Exists(filepath.Join(a, BackupDir)) {
+		t.Fatal("the copy left a backup folder")
+	}
+}
+
+// The same for an account moving to a new group, whose folder starts as a
+// copy of the old one's.
+func TestStoppedCopyIntoAGroupIsCopiedAgain(t *testing.T) {
+	f, a, locked := skillsFixture(t)
+	team := config.Share{Extensions: "team"}
+	pl, err := Build(a, f.groups, config.Share{Extensions: "default"}, team, Options{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := pl.Apply(); err == nil {
+		t.Fatal("the copy did not stop")
+	}
+	os.Chmod(locked, 0o600)
+	if fsutil.Exists(filepath.Join(f.groups, "team", "skills")) {
+		t.Fatal("a copy that stopped halfway is in the group")
+	}
+	share(t, f, a, team, team, Options{})
+	allSkills(t, filepath.Join(f.groups, "team", "skills"))
+	allSkills(t, filepath.Join(a, "skills"))
+}
+
+// A plan removes the link at a path as it found it when it was made: what
+// took its place since (an editor saving settings.json there) stays.
+func TestUnlinkLeavesWhatReplacedTheLink(t *testing.T) {
+	f := newFixture(t)
+	on := config.Share{Settings: "default"}
+	a := f.profile(t, "a", map[string]string{"settings.json": `{"group":1}`})
+	share(t, f, a, config.Share{}, on, Options{})
+	settings := filepath.Join(a, "settings.json")
+	for _, fresh := range []bool{true, false} {
+		pl, err := Build(a, f.groups, on, config.Share{}, Options{Fresh: fresh})
+		if err != nil {
+			t.Fatal(err)
+		}
+		os.Remove(settings)
+		os.WriteFile(settings, []byte(`{"mine":1}`), 0o600)
+		if err := pl.Apply(); err == nil {
+			t.Errorf("fresh %v: no error", fresh)
+		}
+		if got := read(t, settings); got != `{"mine":1}` {
+			t.Fatalf("fresh %v: the file written meanwhile reads %q", fresh, got)
+		}
+		os.Remove(settings)
+		if err := os.Symlink(filepath.Join(f.groups, "default", "settings.json"), settings); err != nil {
+			t.Fatal(err)
+		}
+	}
+}
+
+// A link to the right group folder that is gone (removed by hand or by a
+// cleanup tool) leaves Claude Code nowhere to save into: CheckTargets
+// reports it and QuickFix makes the folder again. A file link to a file
+// not written yet is normal; only a group folder that is gone counts for
+// files. Check, which a launch runs, spends no lstat on it.
+func TestCheckFindsAMissingGroupFolder(t *testing.T) {
+	f := newFixture(t)
+	dir := f.profile(t, "a", nil)
+	share(t, f, dir, config.Share{}, allOn, Options{}) // CLAUDE.md is not written yet
+	for _, name := range []string{"skills", "projects"} {
+		if err := os.Remove(filepath.Join(f.groups, "default", name)); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if probs := Check(dir, allOn, f.groups); len(probs) != 0 {
+		t.Fatalf("Check: %v", probs)
+	}
+	probs := CheckTargets(dir, allOn, f.groups)
+	if len(probs) != 2 || probs[0].Kind != MissingTarget || probs[1].Kind != MissingTarget || !strings.Contains(probs[0].String(), "missing") {
+		t.Fatalf("problems %v", probs)
+	}
+	if rest, err := QuickFix(probs); err != nil || len(rest) != 0 {
+		t.Fatalf("quickfix left %v %v", rest, err)
+	}
+	if probs := CheckTargets(dir, allOn, f.groups); len(probs) != 0 {
+		t.Fatalf("after quickfix: %v", probs)
+	}
+
+	// The whole group folder gone: the file links lead nowhere either.
+	os.RemoveAll(filepath.Join(f.groups, "default"))
+	probs = CheckTargets(dir, allOn, f.groups)
+	if len(probs) != 14 {
+		t.Fatalf("problems %v", probs)
+	}
+	if _, err := QuickFix(probs); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(dir, "CLAUDE.md"), []byte("x"), 0o600); err != nil {
+		t.Fatalf("writing through the link: %v", err)
+	}
+	if probs := CheckTargets(dir, allOn, f.groups); len(probs) != 0 {
+		t.Fatalf("after quickfix: %v", probs)
+	}
+}
+
+// When the finished copy cannot take the link's place (on Windows a virus
+// scanner may hold a file just copied), the link is put back: the account
+// keeps seeing the group's content, and the next run copies again.
+func TestCopyBackPutsTheLinkBack(t *testing.T) {
+	f := newFixture(t)
+	ext := config.Share{Extensions: "default"}
+	a := f.profile(t, "a", map[string]string{"skills/s/SKILL.md": "s"})
+	share(t, f, a, config.Share{}, ext, Options{})
+	orig := rename
+	rename = func(string, string) error { return os.ErrPermission }
+	pl, err := Build(a, f.groups, ext, config.Share{}, Options{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = pl.Apply()
+	rename = orig
+	if err == nil {
+		t.Fatal("no error")
+	}
+	if target, ok := fsutil.LinkTarget(filepath.Join(a, "skills")); !ok || target != filepath.Join(f.groups, "default", "skills") {
+		t.Fatalf("skills is not the link again: %q", target)
+	}
+	if fsutil.Exists(filepath.Join(a, BackupDir)) {
+		t.Fatal("the copy was left behind")
+	}
+	share(t, f, a, config.Share{}, config.Share{}, Options{})
+	if read(t, filepath.Join(a, "skills", "s", "SKILL.md")) != "s" {
+		t.Fatal("not copied the second time")
+	}
+}
+
+// A plan that fills an empty group slot with an account's own link target
+// (dotfiles) leaves a file the group got there since the plan was made
+// (another account's session writing through its link).
+func TestCopyIntoAGroupLeavesWhatAppeared(t *testing.T) {
+	f := newFixture(t)
+	dotfiles := filepath.Join(f.root, "dotfiles", "CLAUDE.md")
+	os.MkdirAll(filepath.Dir(dotfiles), 0o700)
+	os.WriteFile(dotfiles, []byte("from dotfiles"), 0o600)
+	a := f.profile(t, "a", nil)
+	os.Symlink(dotfiles, filepath.Join(a, "CLAUDE.md"))
+	pl, err := Build(a, f.groups, config.Share{}, config.Share{Memory: "default"}, Options{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	group := filepath.Join(f.groups, "default", "CLAUDE.md")
+	os.MkdirAll(filepath.Dir(group), 0o700)
+	os.WriteFile(group, []byte("written meanwhile"), 0o600)
+	if err := pl.Apply(); err == nil {
+		t.Error("no error")
+	}
+	if got := read(t, group); got != "written meanwhile" {
+		t.Fatalf("the group's file reads %q", got)
+	}
+}
+
+// A group folder can hold a link the user made into the joining account
+// (a skill shared by hand before ccam). That link is the account's own
+// file, not a copy of it: merging must keep the content, now in the group.
+func TestMergeKeepsAFileTheGroupLinksBackTo(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("needs a symlink")
+	}
+	f := newFixture(t)
+	b := f.profile(t, "b", map[string]string{"skills/foo/SKILL.md": "the only copy", "skills/bar.md": "bar"})
+	grp := filepath.Join(f.groups, "g", "skills")
+	if err := os.MkdirAll(grp, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Symlink(filepath.Join(b, "skills", "foo"), filepath.Join(grp, "foo")); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Symlink(filepath.Join(b, "skills", "bar.md"), filepath.Join(grp, "bar.md")); err != nil {
+		t.Fatal(err)
+	}
+	pl, err := Build(b, f.groups, config.Share{}, config.Share{Extensions: "g"}, Options{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := pl.Apply(); err != nil {
+		t.Fatal(err)
+	}
+	for rel, want := range map[string]string{"skills/foo/SKILL.md": "the only copy", "skills/bar.md": "bar"} {
+		data, err := os.ReadFile(filepath.Join(b, rel))
+		if err != nil || string(data) != want {
+			t.Errorf("%s through the account = %q, %v; want %q", rel, data, err, want)
+		}
+	}
+	if _, ok := fsutil.LinkTarget(filepath.Join(grp, "foo")); ok {
+		t.Error("the group still holds the link instead of the content")
+	}
+}
+
+// A copy back that stopped after the link was removed, before the copy was
+// renamed into place, leaves the complete copy in the stage: doctor finds
+// it, and both its repair and the plan of a resumed change put it back.
+func TestCopyBackStoppedAfterTheUnlinkIsFinished(t *testing.T) {
+	for _, viaBuild := range []bool{false, true} {
+		f := newFixture(t)
+		a := f.profile(t, "a", map[string]string{"skills/s/SKILL.md": "mine"})
+		share(t, f, a, config.Share{}, config.Share{Extensions: "g"}, Options{})
+		stage := filepath.Join(a, BackupDir, "incomplete-skills")
+		if err := fsutil.CopyTree(filepath.Join(f.groups, "g", "skills"), stage); err != nil {
+			t.Fatal(err)
+		}
+		os.Remove(filepath.Join(a, "skills")) // the link; stopped here
+		var probs []Problem
+		for _, pr := range CheckTargets(a, config.Share{}, f.groups) {
+			if pr.Entry.Name == "skills" {
+				probs = append(probs, pr)
+			}
+		}
+		if len(probs) != 1 || !strings.Contains(probs[0].String(), stage) || !probs[0].Safe() {
+			t.Fatalf("problems: %v", probs)
+		}
+		if viaBuild {
+			share(t, f, a, config.Share{}, config.Share{}, Options{})
+		} else if rest, err := QuickFix(probs); err != nil || len(rest) != 0 {
+			t.Fatalf("quick fix: %v %v", rest, err)
+		}
+		if got := read(t, filepath.Join(a, "skills", "s", "SKILL.md")); got != "mine" {
+			t.Fatalf("skills/s/SKILL.md = %q", got)
+		}
+		if fsutil.Exists(stage) {
+			t.Fatal("the stage is still there")
+		}
+	}
+}
+
+// A launch between the stop and doctor makes the entry anew: the stage is
+// still reported, as a warning naming it, and nothing moves it over what
+// Claude Code wrote since. A plan that puts a stage in place says so.
+func TestStageFoundAfterALaunch(t *testing.T) {
+	f := newFixture(t)
+	a := f.profile(t, "a", map[string]string{"projects/p/s.jsonl": "history"})
+	share(t, f, a, config.Share{}, config.Share{History: "g"}, Options{})
+	stage := filepath.Join(a, BackupDir, "incomplete-projects")
+	if err := fsutil.CopyTree(filepath.Join(f.groups, "g", "projects"), stage); err != nil {
+		t.Fatal(err)
+	}
+	os.Remove(filepath.Join(a, "projects")) // the link; stopped here
+	pl, err := Build(a, f.groups, config.Share{}, config.Share{}, Options{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	var buf bytes.Buffer
+	pl.Describe(&buf)
+	if strings.Contains(buf.String(), "first content of the group") || !strings.Contains(buf.String(), "incomplete-projects") {
+		t.Errorf("plan:\n%s", buf.String())
+	}
+	os.MkdirAll(filepath.Join(a, "projects", "-new"), 0o700) // the next launch
+	var probs []Problem
+	for _, pr := range CheckTargets(a, config.Share{}, f.groups) {
+		if pr.Entry.Name == "projects" {
+			probs = append(probs, pr)
+		}
+	}
+	if len(probs) != 1 || probs[0].Kind != StagedAside || probs[0].Safe() || !strings.Contains(probs[0].String(), stage) {
+		t.Fatalf("problems: %v", probs)
+	}
+	pl, err = Build(a, f.groups, config.Share{}, config.Share{}, Options{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, st := range pl.Steps {
+		if st.Entry.Name == "projects" {
+			t.Fatalf("plan step for projects: %+v", st)
+		}
+	}
+	if !fsutil.Exists(stage) || !fsutil.Exists(filepath.Join(a, "projects", "-new")) {
+		t.Fatal("something moved")
+	}
+}
+
+// A group entry that is itself a link to the joining account's entry (one
+// a user made in ccam's groups folder) holds nothing of its own: the
+// account's content becomes the group's, and the account links to it.
+func TestGroupEntryLinkingToTheAccount(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("needs a symlink")
+	}
+	for _, tc := range []struct {
+		entry string
+		files map[string]string
+		s     config.Share
+		read  string
+	}{
+		{"CLAUDE.md", map[string]string{"CLAUDE.md": "the only copy"}, config.Share{Memory: "g"}, "CLAUDE.md"},
+		{"skills", map[string]string{"skills/foo/SKILL.md": "the only copy"}, config.Share{Extensions: "g"}, "skills/foo/SKILL.md"},
+	} {
+		f := newFixture(t)
+		b := f.profile(t, "b", tc.files)
+		os.MkdirAll(filepath.Join(f.groups, "g"), 0o700)
+		if err := os.Symlink(filepath.Join(b, tc.entry), filepath.Join(f.groups, "g", tc.entry)); err != nil {
+			t.Fatal(err)
+		}
+		share(t, f, b, config.Share{}, tc.s, Options{})
+		if got := read(t, filepath.Join(b, filepath.FromSlash(tc.read))); got != "the only copy" {
+			t.Fatalf("%s: %q", tc.entry, got)
+		}
+		if _, link := fsutil.LinkTarget(filepath.Join(f.groups, "g", tc.entry)); link {
+			t.Fatalf("%s: the group entry is still a link", tc.entry)
+		}
+		if _, link := fsutil.LinkTarget(filepath.Join(b, tc.entry)); !link {
+			t.Fatalf("%s: the account does not link to the group", tc.entry)
+		}
+	}
 }

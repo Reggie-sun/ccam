@@ -1,0 +1,84 @@
+{
+  "firstStartTime": "2026-10-22T22:00:00.000Z",
+  "machineID": "machine-id",
+  "mcpServers": {
+    "usersrv": {
+      "type": "stdio",
+      "command": "/bin/true",
+      "args": [],
+      "env": {}
+    }
+  },
+  "migrationVersion": 1,
+  "projects": {
+    "/w/plain": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "mcpServers": {
+        "plainsrv": {
+          "type": "stdio",
+          "command": "/bin/true",
+          "args": [],
+          "env": {}
+        },
+        "linksrv": {
+          "type": "stdio",
+          "command": "/bin/true",
+          "args": [],
+          "env": {}
+        }
+      },
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": false,
+      "hasClaudeMdExternalIncludesApproved": false,
+      "hasClaudeMdExternalIncludesWarningShown": false
+    },
+    "/w/plain/sub": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "mcpServers": {
+        "plainsubsrv": {
+          "type": "stdio",
+          "command": "/bin/true",
+          "args": [],
+          "env": {}
+        }
+      },
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": false,
+      "hasClaudeMdExternalIncludesApproved": false,
+      "hasClaudeMdExternalIncludesWarningShown": false
+    },
+    "/w/repo": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "mcpServers": {
+        "reposubsrv": {
+          "type": "stdio",
+          "command": "/bin/true",
+          "args": [],
+          "env": {}
+        },
+        "wtsrv": {
+          "type": "stdio",
+          "command": "/bin/true",
+          "args": [],
+          "env": {}
+        }
+      },
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": false,
+      "hasClaudeMdExternalIncludesApproved": false,
+      "hasClaudeMdExternalIncludesWarningShown": false
+    },
+    "/w/empty": {
+      "allowedTools": [],
+      "mcpServers": {},
+      "hasTrustDialogAccepted": true
+    }
+  },
+  "userID": "user-id"
+}

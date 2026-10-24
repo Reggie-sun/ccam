@@ -26,7 +26,7 @@ func Link(target, path string, dir bool) error {
 	if dir {
 		return junction(target, path)
 	}
-	return fmt.Errorf("cannot link %s: Windows links files only in Developer Mode (Settings > System > For developers). Turn it on, or keep this item local", path)
+	return fmt.Errorf("cannot link %s: Windows links files only in Developer Mode (Settings > System > For developers)", path)
 }
 
 // CanLinkFiles reports why files cannot be linked in dir, or nil.

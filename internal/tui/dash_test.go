@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"os"
+	"path/filepath"
 	"slices"
 	"strings"
 	"testing"
@@ -31,6 +33,7 @@ type fake struct {
 	calls   []string
 	newer   string // what NewerRelease answers
 	updErr  error
+	same    map[string]string // what SameLogin answers
 }
 
 func newFake(t *testing.T) *fake {
@@ -115,6 +118,7 @@ func (f *fake) Rename(o, n string) (*config.Config, error) {
 func (f *fake) SetShortcut(a, s string) (*config.Config, error) {
 	return f.change("shortcut "+a+" "+s, func(c *config.Config) error { p, _ := c.Find(a); p.Shortcut = s; return nil })
 }
+func (f *fake) SameLogin(name string) string { return f.same[name] }
 func (f *fake) Remove(name string) (*config.Config, string, error) {
 	cfg, err := f.change("remove "+name, func(c *config.Config) error { c.Remove(name); return nil })
 	return cfg, name + " removed", err
@@ -362,6 +366,11 @@ func TestRemoveStartsOnNo(t *testing.T) {
 	if _, ok := f.cfg.Find("side"); ok || !strings.Contains(screen(m), "side removed") {
 		t.Fatalf("%v", f.calls)
 	}
+	// An account whose folder holds another's login is not logged out.
+	f.same = map[string]string{"work": "personal"}
+	if s := screen(press(t, dash(f), "down", "x")); !strings.Contains(s, "not logged out") || strings.Contains(s, "logged out first") {
+		t.Fatal(s)
+	}
 	// A group with accounts: they leave it first.
 	m = press(t, dash(f), "right", "down", "x")
 	if s := screen(m); !strings.Contains(s, "Remove group team?") || !strings.Contains(s, "work leave") {
@@ -584,6 +593,29 @@ func TestAccountsShowFiveHourWeeklyAndFable(t *testing.T) {
 	}
 }
 
+// An expired access token renews itself; only a login that needs
+// `ccam login` reads "login expired".
+func TestExpiredTokenIsNotAnExpiredLogin(t *testing.T) {
+	f := newFake(t)
+	f.usage["personal"] = usage.Report{Name: "personal", Status: usage.StatusExpired, Err: "access token expired; `ccam personal` renews it when it starts"}
+	f.usage["work"] = usage.Report{Name: "work", Status: usage.StatusExpired, Err: "login expired → `ccam login work`"}
+	f.usage["side"] = usage.Report{Name: "side", Status: usage.StatusExpired, Err: "login may be lost: the renewed login could not be saved"}
+	d := dash(f)
+	d.width, d.height = 100, 30
+	s := screen(drain(d, d.fetchAll(false)))
+	for name, want := range map[string]string{"personal": "token expired", "work": "login expired", "side": "login may be lost"} {
+		line := ""
+		for _, l := range strings.Split(s, "\n") {
+			if strings.Contains(l, " "+name+" ") {
+				line = l
+			}
+		}
+		if !strings.Contains(line, want) || want != "login expired" && strings.Contains(line, "login expired") {
+			t.Errorf("%s: want %q in %q", name, want, line)
+		}
+	}
+}
+
 // `ccam doctor` into a pipe: plain text, nothing wrapped or cut, and every
 // box as wide as the widest.
 func TestHealthReportForAPipe(t *testing.T) {
@@ -639,5 +671,172 @@ func TestOffersANewerRelease(t *testing.T) {
 	m = press(t, drain(d, d.Init()), "U", "enter")
 	if s := screen(m); !strings.Contains(s, "installed by a package") || !strings.Contains(s, "is available") {
 		t.Fatal(s)
+	}
+}
+
+// In a folder reached through a symbolic link the dashboard finds the rule
+// `ccam folder` stored (with links resolved) as a launch does, and a rule
+// set here is stored the same way, so the CLI can match and remove it.
+func TestFolderRulesThroughASymlink(t *testing.T) {
+	base := t.TempDir()
+	real := filepath.Join(base, "real")
+	link := filepath.Join(base, "link")
+	os.Mkdir(real, 0o700)
+	if err := os.Symlink(real, link); err != nil {
+		t.Skip("no symbolic links here:", err)
+	}
+	resolved, err := filepath.EvalSymlinks(real) // macOS: /var is /private/var
+	if err != nil {
+		t.Fatal(err)
+	}
+	at := func(f *fake) *Dashboard {
+		d := NewDashboard(f, f.cfg, link, "v0.9.0")
+		d.tickEvery = 0
+		return d
+	}
+	f := newFake(t)
+	f.cfg.SetFolder(resolved, "side")
+	if r := press(t, at(f), "enter").(*Dashboard).Result(); r.Profile != "side" {
+		t.Fatalf("Enter in the linked folder starts %q, want side", r.Profile)
+	}
+	if s := screen(press(t, at(f), "right", "right")); !strings.Contains(s, "uses side") {
+		t.Fatalf("the Folders tab does not see the rule:\n%s", s)
+	}
+
+	// A rule set here is the resolved folder's.
+	f = newFake(t)
+	press(t, at(f), "right", "right", "n", "down", "enter")
+	if len(f.cfg.Folders) != 1 || f.cfg.Folders[0].Path != resolved || f.cfg.Folders[0].Account != "work" {
+		t.Fatalf("stored %+v, want work for %s", f.cfg.Folders, resolved)
+	}
+
+	// A rule an older dashboard stored for the link itself still counts.
+	f = newFake(t)
+	f.cfg.SetFolder(link, "side")
+	if r := press(t, at(f), "enter").(*Dashboard).Result(); r.Profile != "side" {
+		t.Fatalf("a rule for the link: Enter starts %q", r.Profile)
+	}
+}
+
+// Down on the Health tab while it still checks left the cursor at -1, and
+// f then crashed the dashboard.
+func TestHealthDownWhileChecking(t *testing.T) {
+	f := newFake(t)
+	d := dash(f)
+	d.width, d.height = 80, 40
+	d.tab, d.loaded[tabHealth] = tabHealth, true
+	m := press(t, d, "down")
+	m, _ = m.Update(healthMsg{findings: []doctor.Finding{
+		{Level: doctor.Error, Profile: "work", Area: "Share links", Msg: "settings.json is a real file"},
+		{Level: doctor.OK, Profile: "personal", Area: "Login", Msg: "login valid"},
+	}})
+	if c := m.(*Dashboard).cursor[tabHealth]; c != 0 {
+		t.Fatalf("cursor %d", c)
+	}
+	if s := screen(press(t, m, "f")); !strings.Contains(s, "Repair what can be repaired in work?") {
+		t.Fatal(s)
+	}
+}
+
+// Ctrl+C while a change is applied waits for it: quitting halfway would
+// leave the moves half done.
+func TestCtrlCWaitsForAChange(t *testing.T) {
+	f := newFake(t)
+	d := dash(f)
+	d.busy = "Applying…"
+	ctrlC := tea.KeyPressMsg{Code: 'c', Mod: tea.ModCtrl}
+	if _, cmd := d.Update(ctrlC); cmd != nil {
+		if _, quit := cmd().(tea.QuitMsg); quit {
+			t.Fatal("quit in the middle of a change")
+		}
+	}
+	if s := screen(d); !strings.Contains(s, "ccam quits when it is done") {
+		t.Fatal(s)
+	}
+	_, cmd := d.Update(doneMsg{})
+	if cmd == nil {
+		t.Fatal("did not quit once the change was done")
+	}
+	if _, quit := cmd().(tea.QuitMsg); !quit {
+		t.Fatal("did not quit once the change was done")
+	}
+}
+
+// A release U installed is not offered again by the dashboard that comes
+// back after an add or a login: this process still runs the old one.
+func TestKeepsAnInstalledUpdate(t *testing.T) {
+	f := newFake(t)
+	f.newer = "v0.11.0"
+	d := dash(f)
+	m := press(t, drain(d, d.Init()), "U", "enter")
+	tag := m.(*Dashboard).Installed()
+	if tag != "0.11.0" {
+		t.Fatalf("installed %q", tag)
+	}
+	f.calls = nil
+	d = dash(f)
+	d.KeepInstalled(tag)
+	m = drain(d, d.Init())
+	s := screen(m)
+	if strings.Contains(s, "is available") || !strings.Contains(s, "ccam 0.11.0 is installed; quit and start ccam again") {
+		t.Fatal(s)
+	}
+	m = press(t, m, "U")
+	if m.(*Dashboard).dlg != nil || slices.Contains(f.calls, "update") {
+		t.Fatalf("offered again: %v", f.calls)
+	}
+	if s := screen(press(t, m, "?")); strings.Contains(s, "update ccam") {
+		t.Fatal(s)
+	}
+}
+
+// Below 40x8 the dashboard says it needs more room; from there up every
+// line fits, the key line included, even with a long error.
+func TestSmallTerminals(t *testing.T) {
+	f := newFake(t)
+	for _, size := range [][2]int{{39, 24}, {30, 24}, {10, 24}, {80, 7}, {80, 3}, {20, 2}, {40, 8}, {60, 9}, {80, 10}} {
+		for _, keys := range [][]string{{}, {"?"}, {"x"}, {"right"}} {
+			d := dash(f)
+			d.Update(tea.WindowSizeMsg{Width: size[0], Height: size[1]})
+			m := press(t, drain(d, d.Init()), keys...)
+			if size == [2]int{60, 9} {
+				m.(*Dashboard).notice = notice{text: strings.Repeat("an error that says at length what to do next ", 6), err: true}
+			}
+			out := m.(*Dashboard).render()
+			lines := strings.Split(out, "\n")
+			if len(lines) > size[1] {
+				t.Errorf("%v %v: %d lines", size, keys, len(lines))
+			}
+			for _, l := range lines {
+				if w := ansi.StringWidth(l); w > size[0] {
+					t.Errorf("%v %v: line of %d: %q", size, keys, w, ansi.Strip(l))
+				}
+			}
+			small := size[0] < 40 || size[1] < 8
+			if small != strings.Contains(out, "Too small") {
+				t.Errorf("%v: %q", size, ansi.Strip(out))
+			}
+			if !small && len(keys) == 0 && !strings.Contains(ansi.Strip(lines[len(lines)-1]), "enter to launch") {
+				t.Errorf("%v: no key line: %q", size, ansi.Strip(out))
+			}
+		}
+	}
+}
+
+// ccam doctor in a narrow terminal keeps every word: the boxes stay wide
+// enough for their text, and the terminal wraps the lines.
+func TestHealthReportKeepsTextWhenNarrow(t *testing.T) {
+	fs := []doctor.Finding{
+		{Level: doctor.OK, Area: "Claude Code", Msg: "Claude Code 2.1.306 (/home/me/.local/bin/claude)"},
+		{Level: doctor.Warn, Profile: "work", Area: "Share links", Msg: "settings.json is a real file, not a link to the group's copy"},
+	}
+	strip := strings.NewReplacer(" ", "", "│", "", "╭", "", "╮", "", "╰", "", "╯", "", "─", "", "\n", "")
+	for _, w := range []int{19, 20, 25, 30, 31, 40, 79, 120} {
+		out := strip.Replace(ansi.Strip(strings.Join(HealthReport(fs, w, false), "\n")))
+		for _, f := range fs {
+			if !strings.Contains(out, strings.ReplaceAll(f.Msg, " ", "")) {
+				t.Errorf("width %d lost text of %q:\n%s", w, f.Msg, strings.Join(HealthReport(fs, w, false), "\n"))
+			}
+		}
 	}
 }

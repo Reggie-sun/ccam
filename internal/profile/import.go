@@ -32,9 +32,26 @@ func FindCandidates(p paths.Paths, cfg *config.Config) []Candidate {
 		if email == "" && path == filepath.Join(p.Home, ".claude") {
 			email, _ = ReadEmail(p.Home) // default layout keeps .claude.json in $HOME
 		}
-		out = append(out, Candidate{Path: path, Name: SuggestName(path), Email: email})
+		name := SuggestName(path)
+		if _, taken := cfg.Find(name); taken {
+			name = "" // ~/.claude-work next to an account work: the folder needs a name of its own
+		}
+		out = append(out, Candidate{Path: path, Name: name, Email: email})
 	}
 	return out
+}
+
+// PlainClaudeName names plain claude's folder where an account name would go.
+const PlainClaudeName = "plain claude (~/.claude)"
+
+// PlainClaude returns ~/.claude, the folder plain claude uses, when no
+// account is registered there, or "".
+func PlainClaude(p paths.Paths, cfg *config.Config) string {
+	dir := filepath.Join(p.Home, ".claude")
+	if registered(p, cfg, dir) {
+		return ""
+	}
+	return dir
 }
 
 func registered(p paths.Paths, cfg *config.Config, path string) bool {
@@ -96,18 +113,46 @@ func Import(p paths.Paths, cfg *config.Config, path, name string) (*config.Profi
 	// the same account and settings (Claude Code writes through the link).
 	inner := filepath.Join(path, ".claude.json")
 	outer := filepath.Join(p.Home, ".claude.json")
-	if path == filepath.Join(p.Home, ".claude") && !fsutil.Exists(inner) && fsutil.Exists(outer) {
+	switch {
+	case path == filepath.Join(p.Home, ".claude") && fsutil.Exists(outer) && !fsutil.Exists(inner):
 		if err := fsutil.Link(outer, inner, false); err != nil {
 			return nil, nil, err
 		}
 		notes = append(notes, fmt.Sprintf("created link %s → %s", inner, outer))
+	case OwnClaudeJSON(p, path):
+		// Left from a run with CLAUDE_CONFIG_DIR=~/.claude, say; which of
+		// the two is the right one only the user knows.
+		notes = append(notes, fmt.Sprintf("%s has a .claude.json of its own, which `ccam %s` uses, while plain `claude` uses %s: "+
+			"their login details, MCP servers and project settings are kept apart. To keep one, replace %s with a link to %s",
+			path, name, outer, inner, outer))
 	}
 
 	email, _ := ReadEmail(path)
+	// Recorded as `ccam login` records it, so that a later login into
+	// another account inside a session is noticed.
+	id, _ := ReadIdentity(path)
 	cfg.DropMember(name)
-	cfg.Profiles = append(cfg.Profiles, config.Profile{Name: name, Slot: cfg.NextSlot(), Email: email, Dir: path})
+	cfg.Profiles = append(cfg.Profiles, config.Profile{Name: name, Slot: cfg.NextSlot(), Email: email, Dir: path, Login: id})
 	if len(cfg.Profiles) == 1 {
 		cfg.Default = name
 	}
 	return &cfg.Profiles[len(cfg.Profiles)-1], notes, nil
+}
+
+// OwnClaudeJSON reports whether dir, when it is ~/.claude, has a
+// .claude.json of its own beside ~/.claude.json, which plain claude uses,
+// instead of the link import makes to it.
+func OwnClaudeJSON(p paths.Paths, dir string) bool {
+	inner, outer := filepath.Join(dir, ".claude.json"), filepath.Join(p.Home, ".claude.json")
+	return dir == filepath.Join(p.Home, ".claude") && fsutil.Exists(inner) && fsutil.Exists(outer) && !sameFile(inner, outer)
+}
+
+// sameFile reports whether a and b are one file (a link to the other).
+func sameFile(a, b string) bool {
+	ia, err := os.Stat(a)
+	if err != nil {
+		return false
+	}
+	ib, err := os.Stat(b)
+	return err == nil && os.SameFile(ia, ib)
 }
