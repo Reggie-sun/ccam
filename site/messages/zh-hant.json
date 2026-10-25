@@ -158,6 +158,7 @@
     "ext": "顯示每個帳號載入的技能、指令、外掛、MCP 伺服器與 hook",
     "agents": "列出所有帳號的背景代理程式與開啟中的工作階段",
     "attach": "以啟動該背景工作階段的帳號開啟它",
+    "ccusage": "顯示 ccusage 根據所有帳號的對話產生的 token 與費用報告",
     "hook": "由 Claude Code 中 ccam 外掛的 hook 執行（用量上限、/ccam:switch）",
     "update": "檢查總和檢查碼後，將 ccam 更新到最新的發行版本",
     "completion": "輸出 bash、zsh 或 PowerShell 的自動補齊腳本"

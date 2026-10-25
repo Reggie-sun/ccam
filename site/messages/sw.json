@@ -158,6 +158,7 @@
     "ext": "Onyesha skills, commands, plugins, seva za MCP na hooks ambazo kila akaunti hupakia",
     "agents": "Orodhesha agents wa chinichini na vipindi vilivyo wazi vya kila akaunti",
     "attach": "Fungua kipindi cha chinichini kama akaunti iliyokianzisha",
+    "ccusage": "Onyesha ripoti za ccusage za tokeni na gharama za mazungumzo ya kila akaunti",
     "hook": "Huendeshwa na hooks za plugin ya ccam ndani ya Claude Code (vikomo vya matumizi, /ccam:switch)",
     "update": "Sasisha ccam hadi toleo jipya zaidi baada ya kukagua checksum yake",
     "completion": "Chapisha ukamilishaji wa bash, zsh au PowerShell"

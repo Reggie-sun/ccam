@@ -1,10 +1,10 @@
 ---
 title: "اکاؤنٹس کا انتظام"
 description: "ccam add، ccam login، ccam list، ccam rename، ccam remove اور ccam import: Claude Code اکاؤنٹ شامل کریں، لاگ اِن کریں، دیکھیں، نام بدلیں، ہٹائیں، امپورٹ کریں۔"
-updated: 2026-10-23
+updated: 2026-10-25
 order: 2
 translation: machine
-sourceHash: "f4c09f92ce7d"
+sourceHash: "1d40ce0280e0"
 ---
 
 ccam کا ہر اکاؤنٹ Claude Code کا ایک الگ کنفیگ فولڈر ہے جس کا اپنا لاگ اِن ہوتا ہے۔ یہ کمانڈز اکاؤنٹس بناتی ہیں، ان میں سائن اِن کرتی ہیں، ان کی فہرست دکھاتی ہیں، ان کے نام بدلتی ہیں اور انہیں ہٹاتی ہیں، اور ان فولڈرز کو رجسٹر کرتی ہیں جو آپ کے پاس پہلے سے ہیں۔
@@ -69,7 +69,7 @@ $ ccam list
 
 `ccam login` (`--expired` کے علاوہ)، `ccam use` اور `ccam rename` کے اپنے کوئی آپشنز نہیں۔ `ccam completion`، `bash`، `zsh` یا `powershell` لیتا ہے؛ اس کے علاوہ کچھ بھی `only bash, zsh and powershell are supported` کے ساتھ ناکام ہوتا ہے۔
 
-اکاؤنٹ کے نام `a-z`، `0-9`، `-` اور `_` کے 1 سے 32 حروف ہوتے ہیں، جو کسی حرف یا ہندسے سے شروع ہوں۔ نام صرف ہندسوں پر مشتمل نہیں ہو سکتا، کیونکہ `ccam 2` کا مطلب سلاٹ 2 ہے۔ نام کوئی ccam کمانڈ بھی نہیں ہو سکتا (`add`، `list`، `ls`، `run`، `use`، `next`، `usage`، `u`، `share`، `mcp`، `login`، `logout`، `rename`، `remove`، `rm`، `import`، `migrate`، `doctor`، `shims`، `shortcut`، `completion`، `help`، `version`، `statusline`، `update`، `folder`، `pick`، `ext`، `group`، `groups`)، اس لیے `ccam <name>` کبھی مبہم نہیں ہوتا۔ یہ فہرست `internal/config` میں `config.Reserved` ہے۔
+اکاؤنٹ کے نام `a-z`، `0-9`، `-` اور `_` کے 1 سے 32 حروف ہوتے ہیں، جو کسی حرف یا ہندسے سے شروع ہوں۔ نام صرف ہندسوں پر مشتمل نہیں ہو سکتا، کیونکہ `ccam 2` کا مطلب سلاٹ 2 ہے۔ نام کوئی ccam کمانڈ بھی نہیں ہو سکتا (`add`، `list`، `ls`، `run`، `use`، `next`، `usage`، `u`، `share`، `mcp`، `login`، `logout`، `rename`، `remove`، `rm`، `import`، `migrate`، `doctor`، `shims`، `shortcut`، `completion`، `help`، `version`، `statusline`، `update`، `folder`، `pick`، `ext`، `group`، `groups`، `hook`، `agents`، `attach`، `ccusage`)، اس لیے `ccam <name>` کبھی مبہم نہیں ہوتا۔ یہ فہرست `internal/config` میں `config.Reserved` ہے۔
 
 ## یہ کیسے کام کرتا ہے
 

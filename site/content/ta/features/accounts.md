@@ -1,10 +1,10 @@
 ---
 title: கணக்குகளை நிர்வகித்தல்
 description: ccam add, ccam login, ccam list, ccam rename, ccam remove, ccam import மூலம் Claude Code கணக்குகளைச் சேர்க்க, உள்நுழைய, பட்டியலிட, மறுபெயரிட, நீக்க.
-updated: 2026-10-23
+updated: 2026-10-25
 order: 2
 translation: machine
-sourceHash: "f4c09f92ce7d"
+sourceHash: "1d40ce0280e0"
 ---
 
 ஒவ்வொரு ccam கணக்கும் தனக்கென உள்நுழைவு கொண்ட ஒரு தனி Claude Code config கோப்புறை. இந்தக் கட்டளைகள் கணக்குகளை உருவாக்குகின்றன, உள்நுழைகின்றன, பட்டியலிடுகின்றன, பெயர் மாற்றுகின்றன, நீக்குகின்றன, உங்களிடம் ஏற்கெனவே உள்ள கோப்புறைகளைப் பதிவு செய்கின்றன.
@@ -69,7 +69,7 @@ $ ccam list
 
 `ccam login` (`--expired` தவிர), `ccam use`, `ccam rename` ஆகியவற்றுக்குச் சொந்த options இல்லை. `ccam completion` `bash`, `zsh` அல்லது `powershell`-ஐ ஏற்கும்; வேறு எதுவும் `only bash, zsh and powershell are supported` என்று தோல்வியடையும்.
 
-கணக்குப் பெயர்கள் `a-z`, `0-9`, `-`, `_` ஆகியவற்றால் ஆன 1 முதல் 32 எழுத்துகள், ஓர் எழுத்து அல்லது இலக்கத்தில் தொடங்க வேண்டும். `ccam 2` என்றால் slot 2 என்பதால், பெயர் முழுவதும் இலக்கங்களாக இருக்க முடியாது. பெயர் ஒரு ccam கட்டளையாகவும் இருக்க முடியாது (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`, `folder`, `pick`, `ext`, `group`, `groups`), அதனால் `ccam <name>` ஒருபோதும் குழப்பமாக இருக்காது. இந்தப் பட்டியல் `internal/config`-இல் உள்ள `config.Reserved`.
+கணக்குப் பெயர்கள் `a-z`, `0-9`, `-`, `_` ஆகியவற்றால் ஆன 1 முதல் 32 எழுத்துகள், ஓர் எழுத்து அல்லது இலக்கத்தில் தொடங்க வேண்டும். `ccam 2` என்றால் slot 2 என்பதால், பெயர் முழுவதும் இலக்கங்களாக இருக்க முடியாது. பெயர் ஒரு ccam கட்டளையாகவும் இருக்க முடியாது (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`, `folder`, `pick`, `ext`, `group`, `groups`, `hook`, `agents`, `attach`, `ccusage`), அதனால் `ccam <name>` ஒருபோதும் குழப்பமாக இருக்காது. இந்தப் பட்டியல் `internal/config`-இல் உள்ள `config.Reserved`.
 
 ## இது எப்படி வேலை செய்கிறது
 

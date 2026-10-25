@@ -158,6 +158,7 @@
     "ext": "Afficher les skills, commandes, plugins, serveurs MCP et hooks que charge chaque compte",
     "agents": "Lister les agents en arrière-plan et les sessions ouvertes de tous les comptes",
     "attach": "Ouvrir une session en arrière-plan avec le compte qui l'a lancée",
+    "ccusage": "Afficher les rapports de jetons et de coûts de ccusage pour les conversations de tous les comptes",
     "hook": "Exécuté par les hooks du plugin ccam dans Claude Code (limites d'utilisation, /ccam:switch)",
     "update": "Mettre à jour ccam vers la dernière version après avoir vérifié sa somme de contrôle",
     "completion": "Afficher la complétion bash, zsh ou PowerShell"

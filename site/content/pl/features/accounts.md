@@ -1,10 +1,10 @@
 ---
 title: Zarządzanie kontami
 description: Dodawaj, loguj, wyświetlaj, zmieniaj nazwy, usuwaj i importuj konta Claude Code poleceniami ccam add, login, list, rename, remove i import.
-updated: 2026-10-23
+updated: 2026-10-25
 order: 2
 translation: machine
-sourceHash: "f4c09f92ce7d"
+sourceHash: "1d40ce0280e0"
 ---
 
 Każde konto ccam to osobny folder konfiguracji Claude Code z własnym loginem. Te polecenia tworzą konta, logują do nich, wyświetlają je, zmieniają ich nazwy i je usuwają, a także rejestrują foldery, które już masz.
@@ -69,7 +69,7 @@ Z `--json` każde konto jest obiektem z polami `slot`, `shortcut`, `name`, `emai
 
 `ccam login` (poza `--expired`), `ccam use` i `ccam rename` nie mają własnych opcji. `ccam completion` przyjmuje `bash`, `zsh` lub `powershell`; wszystko inne kończy się błędem `only bash, zsh and powershell are supported`.
 
-Nazwy kont mają od 1 do 32 znaków spośród `a-z`, `0-9`, `-` i `_` i zaczynają się literą lub cyfrą. Nazwa nie może składać się z samych cyfr, bo `ccam 2` oznacza slot 2. Nie może też być poleceniem ccam (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`, `folder`, `pick`, `ext`, `group`, `groups`), więc `ccam <name>` nigdy nie jest niejednoznaczne. Ta lista to `config.Reserved` w `internal/config`.
+Nazwy kont mają od 1 do 32 znaków spośród `a-z`, `0-9`, `-` i `_` i zaczynają się literą lub cyfrą. Nazwa nie może składać się z samych cyfr, bo `ccam 2` oznacza slot 2. Nie może też być poleceniem ccam (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`, `folder`, `pick`, `ext`, `group`, `groups`, `hook`, `agents`, `attach`, `ccusage`), więc `ccam <name>` nigdy nie jest niejednoznaczne. Ta lista to `config.Reserved` w `internal/config`.
 
 ## Jak to działa
 

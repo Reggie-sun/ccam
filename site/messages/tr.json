@@ -158,6 +158,7 @@
     "ext": "Her hesabın yüklediği beceri, komut, eklenti, MCP sunucusu ve hook'ları gösterir",
     "agents": "Her hesabın arka plan ajanlarını ve açık oturumlarını listeler",
     "attach": "Arka plandaki bir oturumu, onu başlatan hesapla açar",
+    "ccusage": "Tüm hesapların konuşmaları için ccusage'ın token ve maliyet raporlarını gösterir",
     "hook": "Claude Code'da ccam eklentisinin hook'ları tarafından çalıştırılır (kullanım limitleri, /ccam:switch)",
     "update": "Sağlama toplamını kontrol ettikten sonra ccam'ı en son sürüme günceller",
     "completion": "bash, zsh veya PowerShell tamamlama betiğini yazdırır"

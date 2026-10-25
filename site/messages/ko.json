@@ -158,6 +158,7 @@
     "ext": "계정마다 불러오는 스킬, 명령, 플러그인, MCP 서버, 훅 보기",
     "agents": "모든 계정의 백그라운드 에이전트와 열린 세션 목록 보기",
     "attach": "백그라운드 세션을 그 세션을 시작한 계정으로 열기",
+    "ccusage": "모든 계정의 대화로 ccusage의 토큰·비용 보고서 보기",
     "hook": "Claude Code에서 ccam 플러그인의 훅이 실행하는 명령(사용량 한도, /ccam:switch)",
     "update": "체크섬을 확인한 뒤 ccam을 최신 릴리스로 업데이트",
     "completion": "bash, zsh 또는 PowerShell 자동완성 스크립트 출력"

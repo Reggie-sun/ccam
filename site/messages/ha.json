@@ -158,6 +158,7 @@
     "ext": "Nuna skills, commands, plugins, sabobin MCP da hooks da kowane asusu ke lodawa",
     "agents": "Lissafa background agents da zaman da ke buɗe na kowane asusu",
     "attach": "Buɗe zaman bayan fage a matsayin asusun da ya fara shi",
+    "ccusage": "Nuna rahotannin ccusage na token da kuɗi na tattaunawar kowane asusu",
     "hook": "Hooks na plugin ɗin ccam a Claude Code ne ke gudanar da shi (iyakokin amfani, /ccam:switch)",
     "update": "Sabunta ccam zuwa sakin baya-bayan nan bayan duba checksum nasa",
     "completion": "Buga completion na bash, zsh ko PowerShell"

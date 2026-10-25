@@ -158,6 +158,7 @@
     "ext": "દરેક એકાઉન્ટ લોડ કરે છે તે skills, commands, plugins, MCP સર્વર અને hooks બતાવો",
     "agents": "દરેક એકાઉન્ટના બૅકગ્રાઉન્ડ agents અને ખુલ્લાં સેશનની યાદી બતાવો",
     "attach": "બૅકગ્રાઉન્ડ સેશનને તે શરૂ કરનાર એકાઉન્ટ તરીકે ખોલો",
+    "ccusage": "બધાં એકાઉન્ટની વાતચીત માટે ccusage ના token અને ખર્ચના રિપોર્ટ બતાવો",
     "hook": "Claude Code માં ccam plugin ના hooks દ્વારા ચાલે છે (વપરાશ મર્યાદા, /ccam:switch)",
     "update": "checksum તપાસ્યા પછી ccam ને નવીનતમ રિલીઝ પર અપડેટ કરો",
     "completion": "bash, zsh કે PowerShell completion છાપો"

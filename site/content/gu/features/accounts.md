@@ -1,10 +1,10 @@
 ---
 title: એકાઉન્ટનું સંચાલન
 description: ccam add, ccam login, ccam list, ccam rename, ccam remove અને ccam import વડે Claude Code એકાઉન્ટ ઉમેરો, લૉગિન કરો, જુઓ, નામ બદલો, દૂર કરો કે ઇમ્પોર્ટ કરો.
-updated: 2026-10-23
+updated: 2026-10-25
 order: 2
 translation: machine
-sourceHash: f4c09f92ce7d
+sourceHash: 1d40ce0280e0
 ---
 
 દરેક ccam એકાઉન્ટ પોતાના લૉગિન સાથેનું અલગ Claude Code config ફોલ્ડર છે. આ કમાન્ડ એકાઉન્ટ બનાવે છે, તેમાં સાઇન ઇન કરે છે, તેમની યાદી બતાવે છે, નામ બદલે છે અને તેમને દૂર કરે છે, તથા તમારી પાસે પહેલેથી હોય તેવાં ફોલ્ડર રજિસ્ટર કરે છે.
@@ -69,7 +69,7 @@ $ ccam list
 
 `ccam login` (`--expired` સિવાય), `ccam use` અને `ccam rename` ના પોતાના કોઈ ઓપ્શન નથી. `ccam completion` `bash`, `zsh` કે `powershell` લે છે; બીજું કંઈ પણ `only bash, zsh and powershell are supported` સાથે નિષ્ફળ જાય છે.
 
-એકાઉન્ટનાં નામ `a-z`, `0-9`, `-` અને `_` ના 1 થી 32 અક્ષરનાં હોય છે, અને અક્ષર કે અંકથી શરૂ થાય છે. નામ ફક્ત અંકોનું ન હોઈ શકે, કારણ કે `ccam 2` નો અર્થ સ્લૉટ 2 છે. નામ કોઈ ccam કમાન્ડ પણ ન હોઈ શકે (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`, `folder`, `pick`, `ext`, `group`, `groups`), તેથી `ccam <name>` ક્યારેય અસ્પષ્ટ નથી. આ યાદી `internal/config` માં `config.Reserved` છે.
+એકાઉન્ટનાં નામ `a-z`, `0-9`, `-` અને `_` ના 1 થી 32 અક્ષરનાં હોય છે, અને અક્ષર કે અંકથી શરૂ થાય છે. નામ ફક્ત અંકોનું ન હોઈ શકે, કારણ કે `ccam 2` નો અર્થ સ્લૉટ 2 છે. નામ કોઈ ccam કમાન્ડ પણ ન હોઈ શકે (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`, `folder`, `pick`, `ext`, `group`, `groups`, `hook`, `agents`, `attach`, `ccusage`), તેથી `ccam <name>` ક્યારેય અસ્પષ્ટ નથી. આ યાદી `internal/config` માં `config.Reserved` છે.
 
 ## તે કેવી રીતે કામ કરે છે
 

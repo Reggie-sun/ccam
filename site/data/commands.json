@@ -24,6 +24,10 @@
     "usage": "ccam attach <id|name> [claude args]"
   },
   {
+    "key": "ccusage",
+    "usage": "ccam ccusage [-a name[,name…]] [ccusage args]"
+  },
+  {
     "key": "completion",
     "usage": "ccam completion bash|zsh|powershell"
   },

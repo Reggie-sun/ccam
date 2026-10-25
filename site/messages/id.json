@@ -158,6 +158,7 @@
     "ext": "Menampilkan skill, perintah, plugin, server MCP, dan hook yang dimuat setiap akun",
     "agents": "Menampilkan daftar agen latar belakang dan sesi terbuka semua akun",
     "attach": "Membuka sesi latar belakang sebagai akun yang memulainya",
+    "ccusage": "Menampilkan laporan token dan biaya dari ccusage untuk percakapan semua akun",
     "hook": "Dijalankan oleh hook plugin ccam di Claude Code (batas penggunaan, /ccam:switch)",
     "update": "Memperbarui ccam ke rilis terbaru setelah memeriksa checksum-nya",
     "completion": "Mencetak pelengkapan otomatis untuk bash, zsh, atau PowerShell"

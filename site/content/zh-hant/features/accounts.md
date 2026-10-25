@@ -1,10 +1,10 @@
 ---
 title: 管理帳號
 description: 用 ccam add、ccam login、ccam list、ccam rename、ccam remove 和 ccam import 新增、登入、列出、重新命名、移除和匯入 Claude Code 帳號。
-updated: 2026-10-23
+updated: 2026-10-25
 order: 2
 translation: machine
-sourceHash: "f4c09f92ce7d"
+sourceHash: "1d40ce0280e0"
 ---
 
 每個 ccam 帳號都是一個獨立的 Claude Code 設定資料夾，有自己的登入資訊。這些指令用來建立、登入、列出、重新命名和移除帳號，也能登錄你已經有的資料夾。
@@ -69,7 +69,7 @@ $ ccam list
 
 `ccam login`（除了 `--expired`）、`ccam use` 和 `ccam rename` 沒有自己的選項。`ccam completion` 接受 `bash`、`zsh` 或 `powershell`；其他值會失敗並顯示 `only bash, zsh and powershell are supported`。
 
-帳號名稱為 1 到 32 個字元，可使用 `a-z`、`0-9`、`-` 和 `_`，並以字母或數字開頭。名稱不能全是數字，因為 `ccam 2` 代表槽位 2。名稱也不能是 ccam 的指令（`add`、`list`、`ls`、`run`、`use`、`next`、`usage`、`u`、`share`、`mcp`、`login`、`logout`、`rename`、`remove`、`rm`、`import`、`migrate`、`doctor`、`shims`、`shortcut`、`completion`、`help`、`version`、`statusline`、`update`、`folder`、`pick`、`ext`、`group`、`groups`），所以 `ccam <name>` 永遠不會有歧義。這份清單是 `internal/config` 中的 `config.Reserved`。
+帳號名稱為 1 到 32 個字元，可使用 `a-z`、`0-9`、`-` 和 `_`，並以字母或數字開頭。名稱不能全是數字，因為 `ccam 2` 代表槽位 2。名稱也不能是 ccam 的指令（`add`、`list`、`ls`、`run`、`use`、`next`、`usage`、`u`、`share`、`mcp`、`login`、`logout`、`rename`、`remove`、`rm`、`import`、`migrate`、`doctor`、`shims`、`shortcut`、`completion`、`help`、`version`、`statusline`、`update`、`folder`、`pick`、`ext`、`group`、`groups`、`hook`、`agents`、`attach`、`ccusage`），所以 `ccam <name>` 永遠不會有歧義。這份清單是 `internal/config` 中的 `config.Reserved`。
 
 ## 運作方式
 

@@ -1,10 +1,10 @@
 ---
 title: ఖాతాలను నిర్వహించడం
 description: ccam add, ccam login, ccam list, ccam rename, ccam remove, ccam import తో Claude Code ఖాతాలను జోడించండి, లాగిన్, జాబితా, పేరు మార్పు, తొలగింపు, ఇంపోర్ట్.
-updated: 2026-10-23
+updated: 2026-10-25
 order: 2
 translation: machine
-sourceHash: "f4c09f92ce7d"
+sourceHash: "1d40ce0280e0"
 ---
 
 ప్రతి ccam ఖాతా తన సొంత లాగిన్‌తో ఉన్న వేరే Claude Code కాన్ఫిగ్ ఫోల్డర్. ఈ కమాండ్‌లు ఖాతాలను సృష్టిస్తాయి, సైన్ ఇన్ చేస్తాయి, జాబితాగా చూపిస్తాయి, పేరు మారుస్తాయి, తీసివేస్తాయి, మీకు ఇప్పటికే ఉన్న ఫోల్డర్‌లను నమోదు చేస్తాయి.
@@ -69,7 +69,7 @@ $ ccam list
 
 `ccam login` (`--expired` తప్ప), `ccam use`, `ccam rename` లకు సొంత ఆప్షన్లు లేవు. `ccam completion` `bash`, `zsh` లేదా `powershell` తీసుకుంటుంది; మరేదైనా `only bash, zsh and powershell are supported` తో విఫలమవుతుంది.
 
-ఖాతా పేర్లు `a-z`, `0-9`, `-`, `_` అక్షరాలతో 1 నుంచి 32 అక్షరాల వరకు ఉంటాయి, ఒక అక్షరం లేదా అంకెతో మొదలవుతాయి. పేరు మొత్తం అంకెలు కాకూడదు, ఎందుకంటే `ccam 2` అంటే స్లాట్ 2. పేరు ccam కమాండ్ కూడా కాకూడదు (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`, `folder`, `pick`, `ext`, `group`, `groups`), కాబట్టి `ccam <name>` ఎప్పుడూ అస్పష్టంగా ఉండదు. ఈ జాబితా `internal/config` లోని `config.Reserved`.
+ఖాతా పేర్లు `a-z`, `0-9`, `-`, `_` అక్షరాలతో 1 నుంచి 32 అక్షరాల వరకు ఉంటాయి, ఒక అక్షరం లేదా అంకెతో మొదలవుతాయి. పేరు మొత్తం అంకెలు కాకూడదు, ఎందుకంటే `ccam 2` అంటే స్లాట్ 2. పేరు ccam కమాండ్ కూడా కాకూడదు (`add`, `list`, `ls`, `run`, `use`, `next`, `usage`, `u`, `share`, `mcp`, `login`, `logout`, `rename`, `remove`, `rm`, `import`, `migrate`, `doctor`, `shims`, `shortcut`, `completion`, `help`, `version`, `statusline`, `update`, `folder`, `pick`, `ext`, `group`, `groups`, `hook`, `agents`, `attach`, `ccusage`), కాబట్టి `ccam <name>` ఎప్పుడూ అస్పష్టంగా ఉండదు. ఈ జాబితా `internal/config` లోని `config.Reserved`.
 
 ## ఇది ఎలా పనిచేస్తుంది
 
