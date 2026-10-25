@@ -56,6 +56,33 @@ func execSelf(self string, args []string) error {
 	return err
 }
 
+// ExecProgram runs another program, such as ccusage, and ends with its exit
+// code, as Windows has no exec: bin is its path, argv starts with its name.
+// A batch file (npx.cmd) goes through cmd.exe as claude.cmd does. Ctrl+C is
+// the program's, as in execSelf.
+func ExecProgram(bin string, argv, env []string) error {
+	if BeforeExec != nil {
+		BeforeExec()
+	}
+	c := &exec.Cmd{Path: bin, Args: argv}
+	if isBatch(bin) {
+		var err error
+		if c, err = batchCommand(context.Background(), bin, argv[1:]); err != nil {
+			return fmt.Errorf("%s is a batch file, and cmd.exe cannot be given an argument with a line break", bin)
+		}
+	}
+	c.Env, c.Stdin, c.Stdout, c.Stderr = env, os.Stdin, os.Stdout, os.Stderr
+	sig := make(chan os.Signal, 1)
+	signal.Notify(sig, os.Interrupt)
+	defer signal.Stop(sig)
+	err := c.Run()
+	var ee *exec.ExitError
+	if errors.As(err, &ee) {
+		return ExitCode(ee.ExitCode())
+	}
+	return err
+}
+
 // foreground is always true: a Windows console has no background jobs.
 func foreground(uintptr) bool { return true }
 

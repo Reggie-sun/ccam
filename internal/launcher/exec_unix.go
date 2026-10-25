@@ -31,6 +31,17 @@ func (pl *Plan) Exec(p paths.Paths) error {
 // execSelf replaces the current process with ccam run with args.
 func execSelf(self string, args []string) error { return syscall.Exec(self, args, os.Environ()) }
 
+// ExecProgram replaces the current process with another program, such as
+// ccusage: bin is its path, argv starts with its name. It only returns on
+// error.
+func ExecProgram(bin string, argv, env []string) error {
+	if BeforeExec != nil {
+		BeforeExec()
+	}
+	err := syscall.Exec(bin, argv, env)
+	return &os.PathError{Op: "exec", Path: bin, Err: err}
+}
+
 // foreground reports whether this process's group is the foreground one of
 // the terminal fd: only that group may read it.
 func foreground(fd uintptr) bool {
