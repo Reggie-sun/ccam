@@ -1,5 +1,11 @@
 [
   {
+    "tag": "v0.12.2",
+    "date": "2026-10-25",
+    "url": "https://github.com/jhyunwoo/ccam/releases/tag/v0.12.2",
+    "notes": "<p>Changes to know about: the dashboard (<code>ccam</code> in a terminal) now says at the end of its tab line whether <code>auto_switch</code> is on, on every tab. Windows, which ignores <code>auto_switch</code>, shows nothing there.</p>\n<h3>New</h3>\n<ul>\n<li>The dashboard&#39;s tab line says whether <code>auto_switch</code> is on</li>\n</ul>\n"
+  },
+  {
     "tag": "v0.12.1",
     "date": "2026-10-25",
     "url": "https://github.com/jhyunwoo/ccam/releases/tag/v0.12.1",
