@@ -82,6 +82,7 @@ The owner found the sidebar hard to scan: one "Documentation" list mixed setup, 
 - **Design, not bug counts**: the page says that tools which copy logins have to keep refresh tokens in step and that lost logins are a common fix in those projects. It does not list other projects' issues by number.
 - **Speed is measured, not compared by name**: ccam's numbers come from `scripts/perf-check.sh`; the Python and Node.js start-up times are `python3 -c pass` and `node -e 0` under hyperfine on the same laptop. No other tool was installed or timed.
 - **"Where other tools do more" stays**, and grows with each thing ccam lacks (Windows, automatic switching, folder-based accounts, menu bar, other agents, Homebrew, signed checksums).
+- **2026-10-24, `auto_switch`**: ccam can now move an interactive session at a usage limit by itself (`auto_switch`, Linux and macOS, off by default). "Where other tools do more" keeps the tools that switch a running session at a threshold, before it stops, or by swapping its login; ccam's line says that it moves a session only after Claude Code has stopped it, and only with `auto_switch` on.
 
 ## Reading by LLMs, 2026-10-21
 

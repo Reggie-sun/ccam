@@ -38,6 +38,52 @@
 - [ ] Windows 11 호스트: 바로가기(`ccwork`, 심볼릭 링크와 `mklink /H` 하드 링크 둘 다)로 연 세션에서 `/ccam:switch` → `/exit` → 다른 계정으로 같은 대화가 이어 감
 - [ ] Windows: npm으로 설치한 Claude Code(`claude.cmd`)로 `ccam p1 -p "a & echo X> x.txt"` → claude가 그 문장을 그대로 받고 `x.txt`가 생기지 않음. 작업 폴더의 `claude.bat`은 실행되지 않음
 
+## 한도에서 자동 전환(`auto_switch = true`)
+
+출시 관문으로 정한 확인입니다(계획 6장 Phase 4, D1). 소유자는 2026-10-25에 이 확인이 모두 열린 채로 v0.12.0을 내기로 정했습니다(auto_switch는 기본 끔, experimental). 아래 항목은 출시 뒤의 확인으로 남습니다. 실제 계정으로 하되 지금 쓰는 세션과 실제 프로필 폴더는 쓰지 않고 `HOME`·`CCAM_HOME`을 scratch 폴더로 둡니다. 시작 전후로 실제 파일의 sha256을 비교하고, 검증하려고 계정을 새로 만들지 않습니다.
+
+출시 관문:
+
+- [ ] Q1·Q3·Q4가 모두 "예"(아래 1·3·4. 결과는 날짜와 Claude Code 버전과 함께 docs/claude-layout.md에). 하나라도 "아니오"면 auto_switch를 내지 않고 계획 8장의 대체 동작을 검토
+- [ ] 계정 사이 hop QA(아래 3 후반·6·9·11·13): 같은 pool의 실제 계정 둘 이상(개인 요금제 둘, 또는 한 Team·Enterprise 조직의 좌석 둘)으로, 검증하는 사람이 함. 좌석으로 할지는 소유자가 Anthropic 좌석 규칙(계획 9.2)을 보고 정함
+- [ ] 실제 파일 sha256 전후 같음: `~/.config/ccam/config.toml`, `~/.local/state/ccam/handoff/` 목록, `~/.local/state/ccam/usage/*.limit.json`, 각 프로필의 `.credentials.json`·`settings.json`
+- [ ] 2026-11-12 이후 재확인: https://www.anthropic.com/legal/aup(11-12 시행본에 문서가 인용한 "Intentionally bypass or interfere with capabilities, restrictions, or guardrails established within our products"가 그대로인지), https://www.anthropic.com/legal/consumer-terms(§3에서 문서가 인용한 "through automated or non-human means, whether through a bot, script, or otherwise"가 그대로인지), 좌석 도움말 셋(12004354, 9266767, 13393991), Pro·Max 도움말(8325606, 11049741)에 새 문장이 생겼는지. 결과와 날짜는 docs/PLAN.md에, 문구가 바뀌었으면 features/next.md의 약관 문단, docs/faq.md의 자동 전환 답과 30개 언어를 고침
+- [ ] (선택, 계획 D2) Anthropic 지원 창구의 서면 답: "May one person's own Pro/Max accounts be switched automatically at a usage limit by a local tool that runs the unmodified Claude Code with each account's own login?"
+- [x] 소유자의 출시 결정: 2026-10-25, 위 확인 전에 v0.12.0으로 내고 사이트 문서를 그 릴리스와 함께 올림. "experimental"을 뺄지는 위가 끝난 뒤 정함
+
+점검 항목:
+
+- [ ] 1 (Q1) 한 계정의 실제 5시간 한도, subagent 셋이 도는 중: StopFailure 호출 수와 `agent_id`, `effort`, `last_assistant_message` 끝의 ` (Asia/Seoul)`, 훅 시작 뒤 0/200/500/1000 ms에 대화 기록의 한도 행 유무. Claude Code를 업데이트할 때마다 다시
+- [ ] 2 (Q2) 화면 녹화: StopFailure와 Claude Code 자체 대기·메뉴의 순서. 훅이 판단하는 동안 Esc로 대기를 취소하면 대화 기록 행이나 Notification `quota_auto_resume_disabled`가 남는지
+- [ ] 3 (Q3) 같은 계정의 세션에 TERM: 종료 코드 143, `stty -a` 전후 같음, "Resume this session with" 뒤의 ccam 줄, SessionEnd reason other, `ps`에 앞 세션 프로세스 없음, TERM 뒤 훅의 terminalSequence가 보이는지(참고). hop 검증: 한도부터 새 프롬프트까지 걸린 시간(목표 10초 이하)
+- [ ] 4 (Q4) 같은 계정으로 `--resume <id> "Reply with OK only."`와 fork 형식(`--resume <파일> --fork-session "…"`)이 Enter 없이 바로 시작하는지, 이어 가기 프롬프트 뒤 끝낸 단계를 되풀이하지 않는지. "아니오"면 D3에 따라 프롬프트 상수(`handoff.ContinuePrompt`)와 문서(features/next.md의 `text` 블록, SKILL.md)에서 뺌
+- [ ] 5 (Q5) acceptEdits, plan, auto, bypassPermissions 세션의 resume 뒤 권한 모드(공유·fork 둘 다), effort 유지, 한도 행의 `perTurnEffort`가 훅 입력의 `effort`와 같은지, 게이트 없는 계정의 `--permission-mode auto`, `--effort max`
+- [ ] 6 (Q6) 그 폴더를 연 적 없는 대상(신뢰 대화상자)과 상위 폴더 신뢰, 공유 settings 없는 bypass 수락, 주간 한도(메뉴가 열린 상태)에서 hop, 긴 대기 뒤 "Resume this conversation?" 대화상자, Fable 허용량에서는 옮기지 않음
+- [ ] 7 (Q7) `run_in_background`로 띄운 `sleep 600`과 `python3 -m http.server`가 TERM 뒤 남는지(문서는 멈춘다고 씀)
+- [ ] 8 Claude Code가 끝나는 동안 Ctrl+C → `ccam: switch cancelled. …`, 그때 창 닫기 → 남는 ccam·claude 프로세스 없음, hop 뒤 Ctrl+Z와 fg, 한 계정의 두 터미널이 같은 폴더에서 동시에 한도
+- [ ] 9 (Q9) 대상의 첫 assistant 행의 `cache_read_input_tokens`·`cache_creation_input_tokens`와 ccam이 알린 크기: 개인 요금제 사이 hop, 한 조직의 좌석 사이 hop(좌석끼리 캐시가 남는지), 비교로 같은 계정 `--resume`. 모두 파일을 고친 뒤
+- [ ] 10 macOS(Terminal.app, iTerm2, 계정 셋 이상): 훅 시간, Keychain 질문, Ctrl+Z
+- [ ] 11 사슬 qa1 → qa2 → qa3: 마지막 계정은 세션을 그대로 두고, 알림이 가장 먼저 풀리는 계정과 시각을 알리며, reset 전에 앞 계정으로 돌아가지 않음
+- [ ] 12 (Q10) 같은 organizationUuid·결제 수단의 개인 계정이 첫 계정의 한도 뒤 100%인지(가능할 때). (Q11) Remote Control에 연결된 세션은 옮기지 않고 알림이 그렇게 말함(실제 세션의 `CLAUDE_CODE_BRIDGE_SESSION_ID`로도, 대화 기록의 bridge-session 행으로도). 손으로 다른 계정에서 resume한 뒤 휴대폰 앱 표시와 `bridge-session.ownerAccountUuid`. (Q8, Windows 단계 전) Windows 11 호스트에서 가짜 자식으로 `CTRL_C_EVENT` 방송
+- [ ] 13 D7 (b): 한 조직의 좌석 사이에는 hop, 다른 조직의 좌석이나 좌석과 개인 요금제 사이에는 hop 없음(가짜 claude로는 e2e가 지킴). auto_switch가 켜져 있고 좌석일 때 `ccam doctor`가 Anthropic 좌석 규칙 문장과 링크를 보임
+- [ ] 14 Windows 11 호스트: `auto_switch = true`여도 세션을 끝내지 않고 `ccam doctor`가 무시된다고 알림. `relay = true`면 `/ccam:switch` 뒤 `/exit`로 이어 감
+- [ ] 15 `auto_switch = true`에서 `ccam doctor`: ccam 플러그인이 없거나 꺼진 계정의 경고 줄(그 계정 상자), 좌석이면 Health 탭 80열에서 좌석 인용 줄이 잘리지 않음, 2.1.214보다 낮은 Claude Code가 있으면 그 경고. 다른 계정이 없는 계정(조직에 혼자인 좌석, 좌석들 사이의 개인 요금제 하나)의 실제 한도에서 알림이 `You have no other … to carry it on as.`로 끝남
+- [ ] 16 2.1.310에서 한도 뒤 `!` 명령을 치면(기본 `respondToBashCommands`로 모델이 답함) ccam이 세션을 옮기지 않음. Remote Control에 연결된 Claude Code의 셸에서 시작한 ccam(물려받은 `CLAUDE_CODE_BRIDGE_SESSION_ID`)의 세션은 연결되지 않았으면 옮김
+
+## 요약으로 이어 가기(`ccam next --continue --brief`)
+
+- [ ] 실제 계정으로 `ccam next --continue --brief` → 첫 메시지에 요약 파일이 첨부되어 보이고(`Read @"…"`), Claude가 어디까지 왔는지 한두 문장으로 말한 뒤 기다림. `-- "<요청>"`을 주면 그 요청을 따름
+- [ ] 새 대화를 `claude --resume`으로 다시 열어도 요약을 앎(첨부 행이 대화 기록에 남음)
+- [ ] 공백이 든 state 경로(`@"…"`로 첨부), Windows에서 npm으로 설치한 `claude.cmd`
+- [ ] 경로의 `#`: 작업 폴더와 공유하는 폴더에 `#`가 있으면(Windows 사용자 `C#dev`, 또는 `XDG_STATE_HOME=/tmp/c#dev/state`와 `/tmp/c#dev/proj`의 대화) 첫 메시지에 요약이 첨부되어 보임(`@"../state/ccam/brief/…"`). 공유하지 않는 `#`(`XDG_STATE_HOME=/tmp/c#dev`, 대화는 다른 곳)면 메시지가 파일 이름만 대고 Claude Code가 읽기 전에 물음(Manual 모드는 매번, auto 모드는 계정마다 한 번: "Allow this read outside the working directories?"). Manual 모드에서 `-- -p "<요청>"`이면 읽기가 거부되고 Claude는 요약 없이 진행
+- [ ] `--restricted`나 `permissions.blockReadsOutsideWorkingDirectories`에서는 Claude가 파일을 읽을 수 없다고 말함(첫 프롬프트의 언급 첨부는 코드로 읽었을 뿐 실행해 보지 않음)
+
+## 대시보드 Agents 탭
+
+- [ ] 실제 계정으로 `ccam work --bg "…"` → Agents 탭에 보임. Enter로 붙고, Ctrl+Z로 셸로 돌아감(대시보드로 돌아오지 않음)
+- [ ] `x` → No면 그대로, Yes면 실제 `claude stop`으로 멈추고 행이 사라짐(탭은 `--all` 없이 보여 줌). `ccam attach <id>`로 다시 열림
+- [ ] agent view가 꺼진 계정은 `✘ <계정>: could not list its sessions: …` 줄로 보임. job id 없는 `bg` 기록이 얼마나 자주 보이는지
+
 ## 공유
 
 - [ ] settings 공유: 한 계정에서 `/config` 변경 → 다른 계정에 반영, 링크 유지

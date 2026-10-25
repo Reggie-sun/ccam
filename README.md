@@ -9,19 +9,19 @@
 
 `ccam` is a single Go binary for adding and switching between several Claude Code accounts in a terminal on Linux, macOS or Windows. Each account gets its own `CLAUDE_CONFIG_DIR`, so logins stay separate, and you choose per item whether MCP servers, settings, the global CLAUDE.md, extensions and conversation history are shared.
 
-> **Check the terms first.** Whether using several accounts is allowed depends on each account's Anthropic terms and your organization's policy. ccam makes switching convenient; it does not work around usage limits.
+> **Check the terms first.** Whether using several accounts is allowed depends on each account's Anthropic terms (the [Consumer Terms](https://www.anthropic.com/legal/consumer-terms) for Pro and Max, the [Commercial Terms](https://www.anthropic.com/legal/commercial-terms) for Team and Enterprise, the [Usage Policy](https://www.anthropic.com/legal/aup) for all) and your organization's policy. ccam does not raise, merge or hide an account's limits: every account still stops at its own. ccam carries your work on as another of your accounts when you ask, or by itself at a limit when you turn on `auto_switch` (Linux and macOS). Whether that is allowed for your accounts is your call.
 
-> **Team and Enterprise seats.** Automatic choice (`ccam next`, `--fallback`, `ccam pick`, the dashboard's `n`) also switches between seats of the same Claude Team or Enterprise organization. Anthropic's help center says "Each seat on a Team plan is assigned to one named individual, and only that person may use it" and "Users can't route their work through another user's account to use that user's remaining usage" ([Team plans](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); likewise for [Enterprise plans](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Using automatic choice between seats may therefore violate Anthropic's terms. Check with your organization and Anthropic before you rely on it. Personal plans (Pro, Max) are covered by the note above.
+> **Team and Enterprise seats.** Automatic choice (`ccam next`, `--fallback`, `ccam pick`, the dashboard's `n`, and [`auto_switch`](https://ccam.dev/en/features/next/#auto-switch) when you turn it on) also switches between seats of the same Claude Team or Enterprise organization. Anthropic's help center says "Each seat on a Team plan is assigned to one named individual, and only that person may use it" and "Users can't route their work through another user's account to use that user's remaining usage" ([Team plans](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); likewise for [Enterprise plans](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Using automatic choice between seats may therefore violate Anthropic's terms. Whether you use it there is your call: check with your organization and Anthropic before you rely on it. Personal plans (Pro, Max) are covered by the note above.
 
 All program output (messages, prompts, help) is in English.
 
 ## Why ccam
 
 - **Logins are never copied.** Each account signs in once in its own folder, and Claude Code renews its own token there. Switching never logs an account out, and several accounts can run at once.
-- **Nothing runs beside Claude Code.** ccam `exec`s into `claude`: no wrapper, proxy or daemon, and about 4 ms added at launch. (Windows has no `exec`; there ccam waits for Claude Code and passes its exit code on.)
+- **Nothing runs beside Claude Code by default.** ccam `exec`s into `claude`: no wrapper, proxy or daemon, and about 4 ms added at launch. (Windows has no `exec`; there ccam waits for Claude Code and passes its exit code on.) With `relay = true` (or `auto_switch = true`, on Linux and macOS) in `config.toml`, ccam waits beside each interactive session instead, so it can carry the conversation on as another account.
 - **Groups decide what is shared.** A group names the items it shares (MCP servers, settings, CLAUDE.md, extensions, history) and its accounts; an account can be in several. MCP servers go through `--mcp-config`, so a launch leaves `.claude.json` alone (ccam writes it, with a backup, only when an account leaves or rejoins MCP sharing, on `ccam mcp import`, and for Remote Control).
 - **Changes are planned and backed up.** A plan before any files move (naming the files inside folders that differ), backups, `--dry-run`, atomic writes, and `ccam doctor --fix`, which also finishes a change that stopped halfway.
-- **Limits handled for scripts too.** `ccam --fallback work -p "…"` runs the same command again as the account with the most room when `work` reaches its limit, and `ccam pick` gives each parallel worker its own account; both exit with 75 (or `--wait`) when nobody has room. Interactive sessions get a `ccam next --auto --continue` hint in the status line. Within one Team or Enterprise organization these choices also move work between seats, which may violate Anthropic's terms (see "Team and Enterprise seats" above).
+- **Limits handled for scripts too.** `ccam --fallback work -p "…"` runs the same command again as the account with the most room when `work` reaches its limit, and `ccam pick` gives each parallel worker its own account; both exit with 75 (or `--wait`) when nobody has room. Interactive sessions get a `ccam next --auto --continue` hint in the status line, and with `auto_switch = true` (Linux, macOS; off by default, experimental) ccam moves a session that Claude Code stops at its limit to another account with room by itself. Within one Team or Enterprise organization these choices, `auto_switch` included, also move work between seats, which may violate Anthropic's terms (see "Team and Enterprise seats" above).
 - **The right account per project.** `ccam folder work ~/code/company` makes name-less launches there use `work`.
 - **One static binary.** Linux, macOS and Windows, no runtime to install, checksum-verified install and update, no telemetry.
 
@@ -62,7 +62,7 @@ ccam add work --shortcut ccwork    # second account with the shortcut command cc
 
 ccwork               # Claude Code as account work (via its shortcut)
 ccam work --resume   # by name; everything after the name goes to claude unchanged
-ccam                 # dashboard: accounts, groups, folders, extensions, health
+ccam                 # dashboard: accounts, agents, groups, folders, extensions, health
 ccam folder work ~/code/company   # name-less launches in that folder use work
 ccam usage           # 5-hour, weekly and per-model (Fable) usage of every account
 ccam next --continue # out of quota? continue the same conversation on the next account
@@ -88,7 +88,7 @@ Signing in on a remote machine over SSH: the browser on your computer ends on a 
 | `ccam use <name>` | Default account for name-less runs such as `ccam -p "…"` |
 | `ccam folder [name] [folder] [--remove]` | Account for name-less runs in a folder and below; without arguments, list them |
 | `ccam --fallback [name] -p …` | Run again as the account with the most room when the account reaches its usage limit (`-p` runs only) |
-| `ccam next [--auto] [--continue] [-- claude args]` | Next account; `--auto` picks by usage (`--max-usage`, `--strategy headroom\|expiring\|balance`, `--wait`) and says why. Claude's own options go after `--`: `ccam next -c --auto -- --dangerously-skip-permissions` |
+| `ccam next [--auto] [--continue [--brief]] [-- claude args]` | Next account; `--auto` picks by usage (`--max-usage`, `--strategy headroom\|expiring\|balance`, `--wait`) and says why; `--continue --brief` starts a new conversation from a summary of the last one. Claude's own options go after `--`: `ccam next -c --auto -- --dangerously-skip-permissions` |
 | `ccam pick [--json] [--model m] [--wait]` | Print the account with the most room for a script; workers started together get different accounts; exit 75 when none |
 | `ccam ext [name] [--json]` | Skills, commands, plugins, MCP servers and hooks each account loads, with their source and problems |
 | `ccam usage [--watch] [--json] [-v]` | Usage (`ccam u`) |
@@ -116,7 +116,7 @@ Queries every account's usage in parallel with its own token (3 s per account, 6
 
 ## Performance
 
-`ccam <name>` reads one file, checks links with `lstat`, and `exec`s into `claude`: about 4 ms p95 added on a typical laptop, 8 MB peak memory. On Windows, which has no `exec`, ccam starts `claude.exe` with the same console and waits for it. `CCAM_TRACE=1` prints per-step timings; `CCAM_PPROF=<file>` writes a CPU profile.
+`ccam <name>` reads one file, checks links with `lstat`, and `exec`s into `claude`: about 4 ms p95 added on a typical laptop, 8 MB peak memory. On Windows, which has no `exec`, ccam starts `claude.exe` with the same console and waits for it; with `relay = true` or `auto_switch = true`, ccam starts interactive sessions as a child and waits beside them on Linux and macOS too. `CCAM_TRACE=1` prints per-step timings; `CCAM_PPROF=<file>` writes a CPU profile.
 
 ## Development
 

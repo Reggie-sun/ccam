@@ -9,19 +9,19 @@
 
 `ccam`은 Linux, macOS, Windows 터미널에서 Claude Code 계정 여러 개를 추가하고 바꿔 쓰게 해 주는 단일 바이너리 도구입니다. 계정마다 `CLAUDE_CONFIG_DIR`을 따로 두어 로그인을 분리하고, MCP 서버·설정·전역 CLAUDE.md·확장 기능·대화 내역은 항목별로 공유할지 고릅니다.
 
-> **이용약관을 먼저 확인하세요.** 계정을 여러 개 쓰는 것이 허용되는지는 각 계정의 Anthropic 이용약관과 소속 조직의 정책에 따릅니다. ccam은 계정 전환을 편하게 할 뿐, 사용량 한도를 우회하지 않습니다.
+> **이용약관을 먼저 확인하세요.** 계정을 여러 개 쓰는 것이 허용되는지는 각 계정의 Anthropic 이용약관(Pro·Max는 [Consumer Terms](https://www.anthropic.com/legal/consumer-terms), Team·Enterprise는 [Commercial Terms](https://www.anthropic.com/legal/commercial-terms), 모두에게 [Usage Policy](https://www.anthropic.com/legal/aup))과 소속 조직의 정책에 따릅니다. ccam은 계정의 한도를 늘리거나 합치거나 숨기지 않으며, 모든 계정은 자기 한도에서 멈춥니다. ccam은 요청할 때, 또는 `auto_switch`를 켜 두면(Linux, macOS) 한도에서 스스로, 작업을 다른 계정으로 이어 갈 뿐입니다. 그것이 내 계정들에 허용되는지는 사용자가 판단할 일입니다.
 
-> **Team·Enterprise 시트.** 자동 선택(`ccam next`, `--fallback`, `ccam pick`, 대시보드의 `n`)은 같은 Claude Team이나 Enterprise 조직의 시트 사이에서도 계정을 바꿉니다. Anthropic 고객센터는 "팀 플랜의 각 시트는 한 명의 지정된 개인에게 할당되며, 그 사람만 사용할 수 있습니다", "사용자는 다른 사용자의 계정을 통해 작업을 라우팅하여 해당 사용자의 남은 사용량을 사용할 수 없습니다"라고 안내합니다([Team 플랜](https://support.claude.com/ko/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129), [Enterprise 플랜](https://support.claude.com/ko/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)도 마찬가지). 따라서 시트 사이에서 자동 선택을 쓰면 Anthropic 이용약관을 위반할 수 있습니다. 이 기능에 기대기 전에 소속 조직과 Anthropic에 확인하세요. 개인 요금제(Pro, Max)는 위의 안내를 따릅니다.
+> **Team·Enterprise 시트.** 자동 선택(`ccam next`, `--fallback`, `ccam pick`, 대시보드의 `n`, 그리고 켜 두었다면 [`auto_switch`](https://ccam.dev/ko/features/next/#auto-switch))은 같은 Claude Team이나 Enterprise 조직의 시트 사이에서도 계정을 바꿉니다. Anthropic 고객센터는 "팀 플랜의 각 시트는 한 명의 지정된 개인에게 할당되며, 그 사람만 사용할 수 있습니다", "사용자는 다른 사용자의 계정을 통해 작업을 라우팅하여 해당 사용자의 남은 사용량을 사용할 수 없습니다"라고 안내합니다([Team 플랜](https://support.claude.com/ko/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129), [Enterprise 플랜](https://support.claude.com/ko/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)도 마찬가지). 따라서 시트 사이에서 자동 선택을 쓰면 Anthropic 이용약관을 위반할 수 있습니다. 시트 사이에서 쓸지는 사용자가 판단할 일이니, 이 기능에 기대기 전에 소속 조직과 Anthropic에 확인하세요. 개인 요금제(Pro, Max)는 위의 안내를 따릅니다.
 
 프로그램 출력(메시지, 질문, 도움말)은 모두 영어입니다.
 
 ## ccam을 쓰는 이유
 
 - **로그인을 복사하지 않습니다.** 계정마다 자기 폴더에서 한 번 로그인하고, 토큰 갱신은 Claude Code가 그 폴더에서 직접 합니다. 계정을 바꿔도 다른 계정이 로그아웃되지 않고, 여러 계정을 동시에 실행할 수 있습니다.
-- **Claude Code 옆에서 돌아가는 프로세스가 없습니다.** ccam은 `exec`로 `claude`가 됩니다. 래퍼·프록시·데몬이 없고, 실행할 때 더해지는 시간은 약 4 ms입니다. (`exec`이 없는 Windows에서는 Claude Code가 끝날 때까지 기다렸다가 종료 코드를 그대로 돌려줍니다.)
+- **기본으로는 Claude Code 옆에서 돌아가는 프로세스가 없습니다.** ccam은 `exec`로 `claude`가 됩니다. 래퍼·프록시·데몬이 없고, 실행할 때 더해지는 시간은 약 4 ms입니다. (`exec`이 없는 Windows에서는 Claude Code가 끝날 때까지 기다렸다가 종료 코드를 그대로 돌려줍니다.) `config.toml`에 `relay = true`(Linux·macOS에서는 `auto_switch = true`도)를 두면, 대화를 다른 계정으로 이어 갈 수 있도록 ccam이 대화형 세션마다 옆에서 기다립니다.
 - **그룹이 공유할 것을 정합니다.** 그룹은 공유할 항목(MCP 서버·설정·CLAUDE.md·확장 기능·대화 내역)과 계정을 정하고, 계정은 여러 그룹에 들 수 있습니다. MCP 서버는 `--mcp-config`로 넘기므로 실행할 때 `.claude.json`을 고치지 않습니다. (계정이 MCP 공유를 그만두거나 다시 시작할 때, `ccam mcp import`, Remote Control에서만 백업을 남기고 고칩니다.)
 - **바꾸기 전에 계획을 보여 주고 백업합니다.** 파일을 옮기기 전의 계획 출력(폴더 안에서 서로 다른 파일도 알려 줌), 백업, `--dry-run`, 원자적 쓰기, 그리고 중간에 멈춘 변경까지 마무리하는 `ccam doctor --fix`.
-- **스크립트도 한도에 대응합니다.** `ccam --fallback work -p "…"`는 `work`가 한도에 걸리면 여유가 가장 많은 계정으로 같은 명령을 다시 실행하고, `ccam pick`은 병렬 작업자마다 다른 계정을 줍니다. 여유 있는 계정이 없으면 둘 다 종료 코드 75로 끝내거나 `--wait`로 기다립니다. 대화형 세션은 상태줄이 `ccam next --auto --continue`를 알려 줍니다. 같은 Team이나 Enterprise 조직 안에서는 이 선택이 작업을 다른 시트로 옮기므로 Anthropic 이용약관 위반이 될 수 있습니다(위의 "Team·Enterprise 시트" 참고).
+- **스크립트도 한도에 대응합니다.** `ccam --fallback work -p "…"`는 `work`가 한도에 걸리면 여유가 가장 많은 계정으로 같은 명령을 다시 실행하고, `ccam pick`은 병렬 작업자마다 다른 계정을 줍니다. 여유 있는 계정이 없으면 둘 다 종료 코드 75로 끝내거나 `--wait`로 기다립니다. 대화형 세션은 상태줄이 `ccam next --auto --continue`를 알려 주고, `auto_switch = true`(Linux, macOS. 기본은 꺼짐, 실험적 기능)면 Claude Code가 한도에서 멈춘 세션을 ccam이 여유 있는 다른 계정으로 스스로 옮깁니다. 같은 Team이나 Enterprise 조직 안에서는 `auto_switch`를 포함한 이 선택이 작업을 다른 시트로 옮기므로 Anthropic 이용약관 위반이 될 수 있습니다(위의 "Team·Enterprise 시트" 참고).
 - **프로젝트마다 맞는 계정.** `ccam folder work ~/code/company`로 그 폴더에서 이름 없이 실행하면 `work`가 열립니다.
 - **정적 바이너리 하나입니다.** Linux, macOS, Windows를 지원하고, 설치할 런타임이 없고, 설치와 업데이트는 체크섬을 확인하며, 텔레메트리가 없습니다.
 
@@ -60,7 +60,7 @@ ccam add work --shortcut ccwork    # 두 번째 계정, 단축 명령 ccwork
 
 ccwork               # 단축 명령으로 work 계정의 Claude Code
 ccam work --resume   # 이름으로 열기, 뒤의 인자는 그대로 claude에 전달
-ccam                 # 대시보드: 계정·그룹·폴더·확장 기능·점검
+ccam                 # 대시보드: 계정·에이전트·그룹·폴더·확장 기능·점검
 ccam folder work ~/code/company   # 그 폴더에서 이름 없이 실행하면 work
 ccam usage           # 모든 계정의 5시간·주간·모델별(Fable) 사용률
 ccam next --continue # 한도에 걸리면 다음 계정에서 같은 대화 이어가기
@@ -86,7 +86,7 @@ SSH로 접속한 원격 서버에서 로그인할 때는 내 컴퓨터의 브라
 | `ccam use <이름>` | 기본 계정 (`ccam -p "…"`처럼 이름 없이 실행할 때) |
 | `ccam folder [이름] [폴더] [--remove]` | 그 폴더와 하위 폴더에서 이름 없이 실행할 때 쓸 계정. 인자가 없으면 목록 |
 | `ccam --fallback [이름] -p …` | 계정이 사용량 한도에 걸리면 여유가 가장 많은 계정으로 다시 실행 (`-p` 실행만) |
-| `ccam next [--auto] [--continue] [-- claude 인자]` | 다음 계정으로. `--auto`는 사용량으로 고르고 이유를 알려 줌 (`--max-usage`, `--strategy headroom\|expiring\|balance`, `--wait`). claude 옵션은 `--` 뒤에: `ccam next -c --auto -- --dangerously-skip-permissions` |
+| `ccam next [--auto] [--continue [--brief]] [-- claude 인자]` | 다음 계정으로. `--auto`는 사용량으로 고르고 이유를 알려 줌 (`--max-usage`, `--strategy headroom\|expiring\|balance`, `--wait`). `--continue --brief`는 마지막 대화의 요약으로 새 대화를 시작함. claude 옵션은 `--` 뒤에: `ccam next -c --auto -- --dangerously-skip-permissions` |
 | `ccam pick [--json] [--model m] [--wait]` | 스크립트용으로 여유가 가장 많은 계정 이름 출력. 함께 시작한 작업자는 서로 다른 계정, 없으면 종료 코드 75 |
 | `ccam ext [이름] [--json]` | 계정마다 로드되는 스킬·명령·플러그인·MCP 서버·훅과 그 출처, 문제 |
 | `ccam usage [--watch] [--json] [-v]` | 사용량 (줄임 `ccam u`) |
@@ -155,7 +155,7 @@ $ ccam usage
 
 ## 성능
 
-`ccam <이름>`은 `config.toml` 하나만 읽고 `lstat`으로 링크를 확인한 뒤 `exec`로 `claude`가 됩니다. 일반 노트북에서 ccam이 더하는 시간은 p95 약 4 ms, 메모리는 8 MB입니다. `exec`이 없는 Windows에서는 같은 콘솔로 `claude.exe`를 띄우고 끝날 때까지 기다립니다. `CCAM_TRACE=1`이면 단계별 시간을, `CCAM_PPROF=<파일>`이면 CPU 프로파일을 남깁니다.
+`ccam <이름>`은 `config.toml` 하나만 읽고 `lstat`으로 링크를 확인한 뒤 `exec`로 `claude`가 됩니다. 일반 노트북에서 ccam이 더하는 시간은 p95 약 4 ms, 메모리는 8 MB입니다. `exec`이 없는 Windows에서는 같은 콘솔로 `claude.exe`를 띄우고 끝날 때까지 기다리고, `relay = true`나 `auto_switch = true`면 Linux·macOS에서도 대화형 세션을 자식 프로세스로 띄우고 옆에서 기다립니다. `CCAM_TRACE=1`이면 단계별 시간을, `CCAM_PPROF=<파일>`이면 CPU 프로파일을 남깁니다.
 
 ## 문제 해결
 

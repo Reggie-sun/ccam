@@ -82,6 +82,7 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 - 토큰 파일(.credentials.json)은 어떤 경우에도 공유 그룹에 링크하지 않는다 (share.Layout 허용 목록)
 - 메모(state/handoff)는 세션마다 한 파일(`<계정>/<세션 id>.json`)이다. relay는 자기 `CCAM_RELAY`(`2:<pid>`)와 자식이 맞는 메모로만 hop하고, 훅은 이 형식의 relay 자식에게만 TERM을 보낸다
 - 한도 표시(state/usage/<이름>.limit.json)는 Claude Code가 기록한 한도 행에서만 쓰고, 모든 사용량 출처 위에 reset까지 100%로 덮는다
+- auto_switch(기본 끔, Windows는 무시)는 Claude Code가 한도 행을 기록한 뒤에만, 한 pool 안에서만(같은 Team·Enterprise 조직의 좌석끼리, 또는 개인 요금제끼리) 세션을 옮긴다. 다른 조직으로는 옮기지 않고(cross_org는 적용하지 않음), 같은 Claude 계정의 다른 폴더로도 옮기지 않는다
 - 프로그램 출력(도움말, 메시지, 오류, 질문, TUI, install.sh·install.ps1)은 모두 영어다. 한글은 절대 출력하지 않는다. 코드·주석·커밋도 영어. internal/e2e/english_test.go의 TestSourceHasNoHangul(cmd/·internal/의 테스트 외 Go 소스와 install.sh·install.ps1·scripts/*.sh에 한글 금지, 이스케이프 포함)과 TestOutputHasNoHangul(빌드한 바이너리의 모든 도움말과 주요 명령 출력 검사)이 강제한다
 
 ## 명령
@@ -96,7 +97,7 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 - ccam <이름> 실행 경로는 10 ms 이하. 이 경로에서는 cobra·bubbletea·lipgloss·net/http를 쓰지 않는다
 - 패키지 init()에서 파일·터미널·네트워크에 접근하지 않는다. 의존성 추가 후 TestPackageInitIsCheap 확인 (huh는 이 이유로 뺐다)
 - 실행 경로에서 읽는 파일은 config.toml 하나, 링크 확인은 lstat만
-- claude 실행은 항상 syscall.Exec, 후처리는 다음 실행 때. 예외는 exec이 없는 Windows, --fallback(-p 재시도), 그리고 relay = true인 대화형 세션뿐이다. 셋 다 launcher.Plan.Run으로 자식 프로세스를 띄우고 종료 코드를 그대로 돌려주며, relay의 hop(`ccam next --continue --note <메모>`)은 Linux·macOS에서는 같은 PID의 exec 사슬, Windows에서는 기다리는 자식 프로세스다
+- claude 실행은 항상 syscall.Exec, 후처리는 다음 실행 때. 예외는 exec이 없는 Windows, --fallback(-p 재시도), 그리고 relay = true이거나 auto_switch = true(Linux·macOS, relay를 함께 켬)인 대화형 세션뿐이다. 셋 다 launcher.Plan.Run으로 자식 프로세스를 띄우고 종료 코드를 그대로 돌려주며, relay의 hop(`ccam next --continue --note <메모>`)은 Linux·macOS에서는 같은 PID의 exec 사슬, Windows에서는 기다리는 자식 프로세스다
 - .claude.json은 통째로 파싱하지 않는다 (profile.TopLevelValue 스캐너)
 - 네트워크 호출은 병렬 + 제한 시간 + 캐시
 - 실행 경로나 사용량 조회를 바꾸면 benchstat 결과를 커밋 메시지에 남긴다

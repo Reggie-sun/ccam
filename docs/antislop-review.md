@@ -82,3 +82,15 @@ Scope: the English text added on 2026-10-20 (`compare/aliases` setup sections, t
 | 38 | LOW | antislop-code | `components/DocPage.tsx`, `components/Landing.tsx` | The two maps (command to feature page, landing step to feature page) each carry a one-line comment saying what they map. | Kept: one line each, no restating of the code. |
 
 Checked and passing: no em or en dashes in the new English text or strings; no buzzwords; translations keep code blocks, inline code and link targets (i18n-check `--strict` passes for all 29 languages).
+
+## Audit 006, 2026-10-25 (auto_switch, --brief, the Agents tab)
+
+Scope: the English text changed on 2026-10-25 (`features/next`, `launch`, `doctor`, `dashboard`, `usage`, `pick`; `docs/faq`, `commands`, `usage-limits`, `install`, `quick-start`; `guides/usage-limit-workflow`, `multiple-claude-code-accounts`; `compare/account-switchers`) and `commands.ccam` in `messages/en.json`. The rules were applied by reading, as in audit 005.
+
+| # | Priority | Rule | File | Finding | Action |
+|---|---|---|---|---|---|
+| 39 | HIGH | R-38 | the 14 pages above, `lib/jsonld.ts` | The pages describe `auto_switch`, `ccam next --continue --brief` and the Agents tab, which no release has yet, while every page says "Checked with ccam 0.11.0" and the site deploys on each push to main. | Open: publish these pages with the release that contains the features (the release flow sets the version). Until then `auto_switch` is called experimental and off by default wherever it is named. |
+| 40 | HIGH | R-36 | `features/next.md`, `docs/faq.md` | Quotes from Anthropic must be checkable. | Checked: the seat sentences are the help center's, as already on the site (2026-10-24); the Usage Policy sentence is in the English text of the version effective November 12, 2026 at https://www.anthropic.com/legal/aup (2026-10-25). |
+| 41 | MEDIUM | R-36 | `features/next.md`, `features/dashboard.md`, `features/doctor.md` | Example output must be real. | The `auto_switch` and `--brief` lines and the Agents tab screen come from the built binary run with a fake `claude` and synthetic accounts in a scratch folder (the tab on an 80-column tmux terminal), the doctor lines from `ccam doctor` run the same way, and the notifications from the Go source. |
+
+Checked and passing: no em or en dashes in the new English text; no buzzwords; the new FAQ question is about ccam; `auto_switch` is always written as code, so translations keep it.
