@@ -1,5 +1,11 @@
 [
   {
+    "tag": "v0.12.0",
+    "date": "2026-10-25",
+    "url": "https://github.com/jhyunwoo/ccam/releases/tag/v0.12.0",
+    "notes": "<p>Changes to know about: <code>auto_switch = true</code> in config.toml (Linux and macOS; off by default and experimental) lets ccam move an interactive session that Claude Code stops at a usage limit to another of your accounts with room, and sends one fixed message in your place so the conversation goes on. It needs the ccam plugin and Claude Code 2.1.214 or later, and it moves work only between seats of one Team or Enterprise organization or between personal plans. Moving between seats may violate Anthropic&#39;s terms, and for personal plans the terms do not settle it: read <a href=\"https://ccam.dev/en/features/next/#auto-switch\">the conditions and Anthropic&#39;s terms</a> before you turn it on.</p>\n<h3>New</h3>\n<ul>\n<li>With <code>auto_switch = true</code> (Linux and macOS), a session that Claude Code stops at its 5-hour, weekly, Opus or Sonnet limit continues as another account with room, among seats of the same Team or Enterprise organization or among personal plans</li>\n<li><code>ccam next --continue --brief</code> starts a new conversation from ccam&#39;s summary of the old one instead of resuming all of it</li>\n<li>The dashboard&#39;s Agents tab lists every account&#39;s background and open sessions; Enter attaches to one and x stops it</li>\n<li>ccam doctor checks what auto_switch needs: the ccam plugin and Claude Code 2.1.214 or later</li>\n<li>At a usage limit, the notification says so when you have no other account that may carry the conversation on</li>\n</ul>\n<h3>Fixed</h3>\n<ul>\n<li><code>ccam pick --json</code> no longer calls the account it picked the least used when it passed over one picked a moment ago</li>\n<li>The dashboard&#39;s Folders tab no longer runs past its column on folder names with double-width characters</li>\n</ul>\n"
+  },
+  {
     "tag": "v0.11.0",
     "date": "2026-10-24",
     "url": "https://github.com/jhyunwoo/ccam/releases/tag/v0.11.0",
