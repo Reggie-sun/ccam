@@ -1,5 +1,11 @@
 [
   {
+    "tag": "v0.12.1",
+    "date": "2026-10-25",
+    "url": "https://github.com/jhyunwoo/ccam/releases/tag/v0.12.1",
+    "notes": "<p>Changes to know about: <code>ccusage</code> is now a ccam command, so an account named ccusage starts with <code>ccam run ccusage</code> (ccam doctor says so). When ccusage is not installed, <code>ccam ccusage</code> runs it with <code>bun x ccusage</code> or <code>npx ccusage@latest</code>, which fetch it from npm.</p>\n<h3>New</h3>\n<ul>\n<li><code>ccam ccusage</code> runs <a href=\"https://ccusage.com\">ccusage</a>&#39;s token and cost reports over the conversations of every account, or of the accounts <code>-a</code> names</li>\n</ul>\n"
+  },
+  {
     "tag": "v0.12.0",
     "date": "2026-10-25",
     "url": "https://github.com/jhyunwoo/ccam/releases/tag/v0.12.0",
