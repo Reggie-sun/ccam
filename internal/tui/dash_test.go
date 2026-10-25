@@ -887,3 +887,62 @@ func TestHealthReportKeepsTextWhenNarrow(t *testing.T) {
 		}
 	}
 }
+
+// The end of the tab line says whether auto_switch is on, on every tab,
+// right-aligned with the last column free. Windows ignores the setting, so
+// there it says nothing (the Health tab does).
+func TestTabLineSaysWhetherAutoSwitchIsOn(t *testing.T) {
+	f := newFake(t)
+	tabLine := func(d *Dashboard) (plain, raw string) {
+		lines := strings.Split(d.render(), "\n")
+		i := slices.IndexFunc(lines, func(l string) bool { return strings.Contains(ansi.Strip(l), "Extensions") })
+		return ansi.Strip(lines[i]), lines[i]
+	}
+	for _, tc := range []struct {
+		goos, label string // label "": none
+		on          bool
+		styled      func(Theme) string
+	}{
+		{"linux", "auto_switch off", false, func(t Theme) string { return t.dim().Render("auto_switch off") }},
+		{"darwin", "auto_switch on", true, func(t Theme) string { return t.accent().Render("auto_switch on") }},
+		{"windows", "", true, nil},
+	} {
+		f.cfg.AutoSwitch = tc.on
+		d := dash(f)
+		d.goos = tc.goos
+		for tab := range tabNames {
+			d.tab = tab
+			plain, raw := tabLine(d)
+			n := strings.Count(screen(d), "auto_switch")
+			before, labelled := strings.CutSuffix(plain, tc.label)
+			if tc.label == "" && n != 0 || tc.label != "" && (n != 1 || !labelled || ansi.StringWidth(plain) != d.width-1 ||
+				!strings.HasSuffix(strings.TrimRight(before, " "), "Health") || !strings.HasSuffix(raw, tc.styled(d.theme))) {
+				t.Fatalf("%s, auto_switch %v, tab %d: %q", tc.goos, tc.on, tab, plain)
+			}
+		}
+		// The Accounts tab keeps its legend in 80 columns.
+		d.tab = tabAccounts
+		if s := screen(d); !strings.Contains(strings.Split(s, "\n")[0], "default · ▸ this folder · • running") {
+			t.Fatalf("%s: the legend is gone:\n%s", tc.goos, s)
+		}
+	}
+	// Narrower than the label needs, it is left out, not cut: "on" needs
+	// 78 columns and "off" 79.
+	for _, tc := range []struct {
+		on    bool
+		label string
+		least int
+	}{{true, "auto_switch on", 78}, {false, "auto_switch off", 79}} {
+		f.cfg.AutoSwitch = tc.on
+		d := dash(f)
+		d.goos = "linux"
+		d.width = tc.least - 1
+		if plain, _ := tabLine(d); !strings.HasSuffix(strings.TrimRight(plain, " "), "Health") || strings.Contains(screen(d), "auto_s") {
+			t.Fatalf("%d columns: %q", d.width, plain)
+		}
+		d.width = tc.least
+		if plain, _ := tabLine(d); !strings.HasSuffix(plain, tc.label) || ansi.StringWidth(plain) != d.width-1 {
+			t.Fatalf("%d columns: %q", d.width, plain)
+		}
+	}
+}

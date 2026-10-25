@@ -6,6 +6,7 @@ import (
 	"context"
 	"fmt"
 	"path/filepath"
+	"runtime"
 	"slices"
 	"strings"
 	"time"
@@ -196,6 +197,7 @@ type Dashboard struct {
 	cwd       string // the current folder as given
 	dir       string // cwd with symbolic links resolved, the form folder rules are stored in
 	version   string
+	goos      string // runtime.GOOS; tests set another
 	themeName string
 	theme     Theme
 	width     int
@@ -239,7 +241,7 @@ type Dashboard struct {
 
 // NewDashboard shows cfg; cwd is the current folder (for ccam folder).
 func NewDashboard(be Backend, cfg *config.Config, cwd, version string) *Dashboard {
-	d := &Dashboard{be: be, cwd: cwd, dir: cwd, version: version, themeName: cfg.Theme, width: 80, height: 24,
+	d := &Dashboard{be: be, cwd: cwd, dir: cwd, version: version, goos: runtime.GOOS, themeName: cfg.Theme, width: 80, height: 24,
 		usage: map[string]*usage.Report{}, now: time.Now, tickEvery: 120 * time.Millisecond}
 	if real, err := filepath.EvalSymlinks(cwd); err == nil {
 		d.dir = real
@@ -627,7 +629,13 @@ func (d *Dashboard) render() string {
 			tabs = append(tabs, t.dim().Render(" "+n+" "))
 		}
 	}
-	top = append(top, " "+strings.Join(tabs, " "), " "+t.dim().Render(tabAbout[d.tab]), "")
+	tabLine := " " + strings.Join(tabs, " ")
+	if label := d.autoSwitchLabel(); label != "" {
+		if gap := w - ansi.StringWidth(tabLine) - ansi.StringWidth(label) - 1; gap > 1 {
+			tabLine += strings.Repeat(" ", gap) + label
+		}
+	}
+	top = append(top, tabLine, " "+t.dim().Render(tabAbout[d.tab]), "")
 	spare = append(spare, len(top)-2, len(top)-1)
 
 	var dialog []string
@@ -683,6 +691,19 @@ func (d *Dashboard) render() string {
 		}
 	}
 	return strings.Join(all, "\n")
+}
+
+// autoSwitchLabel is what the end of the tab line says of auto_switch:
+// on or off, and nothing on Windows, which ignores it (the Health tab
+// says so).
+func (d *Dashboard) autoSwitchLabel() string {
+	switch {
+	case d.goos == "windows":
+		return ""
+	case d.cfg.AutoSwitch:
+		return d.theme.accent().Render("auto_switch on")
+	}
+	return d.theme.dim().Render("auto_switch off")
 }
 
 // body is the current tab's lines and the line the cursor is on (-1: none).
