@@ -5,7 +5,7 @@ description: Semua perintah dan opsi ccam, dari ccam add dan ccam <name> hingga 
 updated: 2026-10-25
 order: 3
 translation: machine
-sourceHash: "abba525cae48"
+sourceHash: "41fb781fd146"
 ---
 
 Letakkan `--dry-run` sebelum perintah untuk melihat apa yang akan dilakukannya tanpa benar-benar menjalankannya, misalnya `ccam --dry-run work`. Opsi ini berfungsi saat menjalankan Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`) dan dengan `group`, `migrate`, `shortcut`, `update`, serta `doctor --fix`. Perintah lain yang mengubah sesuatu akan menolaknya alih-alih berjalan.
@@ -125,6 +125,8 @@ ccam pick                       # the account with the most room, for a script
 ccam "$(ccam pick)" -p "…"      # start a worker on it
 ccam agents                     # background sessions of every account
 ccam attach 49ec0028            # open one, as the account that started it (or by its name)
+ccam ccusage claude daily       # Claude Code's tokens and costs, every account (ccusage)
+ccam ccusage -a work blocks --active   # one account's current 5-hour block
 ```
 
 `next --auto`, `--fallback`, dan `ccam pick` memilih dengan cara yang sama: akun di bawah `auto_max_usage` (`config.toml`, bawaan 100) lebih dulu, menurut `auto_strategy` (`headroom`, `expiring`, atau `balance`), dengan menghitung jendela mingguan `--model`, tidak pernah akun yang sudah 100% (jendela yang dilaporkan penuh oleh Claude Code dihitung 100% sampai di-reset), tidak pernah login kunci API, dan di dalam organisasi akun tempat mereka mulai (`--cross-org` atau `cross_org = true` untuk mencari lebih jauh). `--wait` menerima nilainya setelah `=` (`--wait=2h`); jika ditulis dengan spasi, opsi itu ditolak dengan petunjuk. Jika tidak ada yang bisa dipilih, semuanya keluar dengan kode 75, atau dengan `--wait` menunggu akun pertama di-reset. `ccam next --continue` membawa percakapan bahkan di antara akun yang tidak berbagi riwayat: Claude Code lalu menyalinnya ke akun baru. Dengan `--brief`, akun baru justru memulai percakapan baru, dari ringkasan percakapan terakhir yang ditulis ccam tanpa model ([`--brief`](/features/next#brief)). Tidak seperti `ccam <name>`, `ccam next` membaca opsinya sendiri, jadi opsi Claude Code ditaruh setelah `--`; tanpanya ccam berhenti dengan `unknown flag`. Di dalam Claude Code, `/ccam:switch [account]` dari plugin meneruskan percakapan, dan `ccam hook` adalah yang dijalankan oleh hook-nya. Dengan `auto_switch = true` di `config.toml` (Linux dan macOS; nonaktif secara default), hook batas penggunaan juga mengakhiri sesi interaktif yang dimulai ccam dan melanjutkannya sebagai akun lain yang punya ruang, hanya akun yang serupa: kursi lain dari organisasi yang sama, atau paket pribadi lain ([`auto_switch`](/features/next#auto-switch)). Lihat [Beralih ke akun berikutnya](/features/next), [Memilih akun untuk skrip](/features/pick), dan [Sesi latar belakang semua akun](/features/agents).

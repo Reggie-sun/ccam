@@ -4,7 +4,7 @@ description: "ccam dans un terminal ouvre un tableau de bord plein écran : comp
 updated: 2026-10-25
 order: 15
 translation: machine
-sourceHash: "98ccf6cd81e9"
+sourceHash: "28f216a4a04f"
 ---
 
 `ccam` sans argument ouvre un tableau de bord plein écran quand l'entrée et la sortie standard sont un terminal ; sinon, il affiche `ccam list`. Le tableau de bord montre chaque compte avec son utilisation et ses groupes, et fait ce que font les commandes : lancer, ajouter, connecter, changer de groupes, définir des règles de dossier, lister les sessions en arrière-plan, vérifier et réparer. Un lancement, ou le rattachement à une session en arrière-plan, le ferme ; ajouter un compte ou se connecter le quitte le temps de passer au terminal, puis y revient.
@@ -12,7 +12,7 @@ sourceHash: "98ccf6cd81e9"
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -23,7 +23,7 @@ sourceHash: "98ccf6cd81e9"
  enter to launch · n for most room · a to add · s for groups · ? for shortcuts
 ```
 
-La ligne sous les noms des onglets indique en une phrase à quoi sert l'onglet courant. Dans un terminal plus large, l'onglet Accounts affiche aussi l'adresse e-mail de chaque compte.
+La ligne sous les noms des onglets indique en une phrase à quoi sert l'onglet courant. Dans un terminal plus large, l'onglet Accounts affiche aussi l'adresse e-mail de chaque compte. La fin de la ligne des onglets indique, sur chaque onglet, si [`auto_switch`](/features/next#auto-switch) est activé (Linux et macOS ; Windows l'ignore) ; quand il l'est, l'onglet Health indique ce dont il a encore besoin : le plugin ccam, activé, dans chaque compte qui se connecte avec un abonnement Claude, et Claude Code 2.1.214 ou plus récent.
 
 À chaque ouverture, le tableau de bord demande en arrière-plan à GitHub si une version plus récente de ccam existe ; la première image ne l'attend jamais, et hors ligne rien n'est affiché. S'il y en a une, une ligne sous le titre la recommande :
 
@@ -102,7 +102,7 @@ L'onglet Health lance les vérifications de [`ccam doctor`](/features/doctor) à
 L'onglet Agents montre ce qu'affiche [`ccam agents`](/features/agents) : les sessions en arrière-plan et les sessions ouvertes de tous les comptes, avec le compte auquel chacune appartient. Il interroge le Claude Code de chaque compte en même temps (`claude agents --json`, jusqu'à 15 secondes chacun) à la première ouverture de l'onglet, sur `r`, après un arrêt et après une modification de la configuration, et affiche `Asking every account's Claude Code for its sessions…` jusqu'à ce que tous aient répondu.
 
 ```console
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Background agents and open sessions of every account; enter attaches to one.
 
     Account   ID        Name   State          Folder      Started

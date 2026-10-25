@@ -4,7 +4,7 @@ description: ccam di terminal membuka dasbor layar penuh berisi akun, grup, atur
 updated: 2026-10-25
 order: 15
 translation: machine
-sourceHash: "98ccf6cd81e9"
+sourceHash: "28f216a4a04f"
 ---
 
 `ccam` tanpa argumen membuka dasbor layar penuh jika input dan output standar adalah terminal; jika bukan, ccam mencetak `ccam list`. Dasbor menampilkan setiap akun beserta penggunaan dan grupnya, dan melakukan apa yang dilakukan perintah-perintahnya: menjalankan, menambahkan, login, mengubah grup, menetapkan aturan folder, menampilkan sesi latar belakang, memeriksa, dan memperbaiki. Menjalankan akun, atau menyambung (attach) ke sesi latar belakang, akan menutupnya; menambahkan akun atau login meninggalkannya sebentar untuk terminal lalu kembali lagi.
@@ -12,7 +12,7 @@ sourceHash: "98ccf6cd81e9"
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -23,7 +23,7 @@ sourceHash: "98ccf6cd81e9"
  enter to launch · n for most room · a to add · s for groups · ? for shortcuts
 ```
 
-Baris di bawah nama-nama tab menjelaskan dalam satu kalimat kegunaan tab yang sedang dibuka. Di terminal yang lebih lebar, tab Accounts juga menampilkan email setiap akun.
+Baris di bawah nama-nama tab menjelaskan dalam satu kalimat kegunaan tab yang sedang dibuka. Di terminal yang lebih lebar, tab Accounts juga menampilkan email setiap akun. Ujung baris nama-nama tab menunjukkan, di setiap tab, apakah [`auto_switch`](/features/next#auto-switch) aktif (Linux dan macOS; di Windows fitur ini diabaikan); saat fitur ini aktif, tab Health menyebutkan apa yang masih dibutuhkannya: plugin ccam yang diaktifkan di setiap akun yang login dengan langganan Claude, dan Claude Code 2.1.214 atau yang lebih baru.
 
 Setiap kali dibuka, dasbor bertanya ke GitHub di latar belakang apakah ada rilis ccam yang lebih baru; bingkai pertama tidak pernah menunggunya, dan saat offline tidak ada yang ditampilkan. Jika ada, sebuah baris di bawah judul merekomendasikannya:
 
@@ -102,7 +102,7 @@ Tab Health menjalankan pemeriksaan [`ccam doctor`](/features/doctor) saat Anda m
 Tab Agents menampilkan apa yang dicetak [`ccam agents`](/features/agents): sesi latar belakang dan sesi terbuka dari setiap akun, beserta akun pemilik masing-masing. Tab ini bertanya ke Claude Code setiap akun sekaligus (`claude agents --json`, hingga 15 detik per akun) saat Anda pertama kali membuka tab, saat `r`, setelah penghentian, dan setelah konfigurasi berubah, dan menampilkan `Asking every account's Claude Code for its sessions…` sampai semua akun menjawab.
 
 ```console
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Background agents and open sessions of every account; enter attaches to one.
 
     Account   ID        Name   State          Folder      Started

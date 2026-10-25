@@ -4,10 +4,10 @@ description: ccam usage는 모든 계정의 5시간 한도와 주간 한도를 �
 updated: 2026-10-25
 order: 7
 translation: machine
-sourceHash: "91ad20327289"
+sourceHash: "c98993fcdc7d"
 ---
 
-`ccam usage`는 각 계정이 5시간 한도, 주간 한도, 모델별 주간 한도(Fable 등)를 얼마나 썼는지 한도마다 막대 하나로 보여 주고, 초기화까지 남은 시간도 함께 표시합니다. 긴 작업을 시작하기 전이나 Claude Code가 한도가 가까워졌다고 알릴 때 실행해, 어느 계정에 여유가 남았는지 확인하세요. `ccam statusline`은 Claude Code의 상태 표시줄 명령입니다. Claude Code 안에 계정 이름과 사용량을 표시하고, `ccam usage`가 쓸 수 있도록 수치를 저장합니다.
+`ccam usage`는 각 계정이 5시간 한도, 주간 한도, 모델별 주간 한도(Fable 등)를 얼마나 썼는지 한도마다 막대 하나로 보여 주고, 초기화까지 남은 시간도 함께 표시합니다. 긴 작업을 시작하기 전이나 Claude Code가 한도가 가까워졌다고 알릴 때 실행해, 어느 계정에 여유가 남았는지 확인하세요. `ccam statusline`은 Claude Code의 상태 표시줄 명령입니다. Claude Code 안에 계정 이름과 사용량을 표시하고, `ccam usage`가 쓸 수 있도록 수치를 저장합니다. 사용량 뒤에 있는 토큰과 추정 비용은 `ccam ccusage`가 모든 계정의 대화에 [ccusage](https://ccusage.com)를 실행해 보여 줍니다([아래](#tokens-and-costs-ccam-ccusage)).
 
 ## 사용법
 
@@ -66,9 +66,31 @@ $ ccam usage
 
 `ccam statusline`은 표준 입력으로 Claude Code의 상태 표시줄 JSON을 읽습니다. 옵션은 `--wrap <command>` 하나뿐이며, 기존 상태 표시줄 명령을 지정하면 그 출력의 첫 줄 앞에 계정 이름을 붙입니다. `ccam statusline install`은 옵션을 받지 않습니다. 두 명령 모두 `--dry-run`을 주면 `` --dry-run is not supported by `ccam statusline`; nothing was changed ``를 출력하고 거부합니다.
 
+## 토큰과 비용: `ccam ccusage`
+
+`ccam usage`는 계정이 각 한도를 얼마나 썼는지 보여 줍니다. 반면 [ccusage](https://ccusage.com)는 Claude Code의 대화 로그에 있는 토큰과 추정 비용을 셉니다. ccusage는 그냥 실행하면 Claude Code의 로그를 `~/.claude`와 `~/.config/claude`(또는 `CLAUDE_CONFIG_DIR`에 지정한 폴더)에서만 찾으므로, ccam의 계정 중에서 볼 수 있는 것은 많아야 하나, 곧 `~/.claude`를 제자리에 가져온 계정입니다. `ccam ccusage`는 대화가 있는 모든 계정의 폴더를 `CLAUDE_CONFIG_DIR`에 지정해 ccusage를 실행하므로, 보고서 하나로 모든 계정을 다룹니다.
+
+```sh
+ccam ccusage                           # every account, ccusage's daily report
+ccam ccusage daily --breakdown         # cost per model
+ccam ccusage claude monthly --json     # Claude Code alone, as JSON
+ccam ccusage -a work blocks --active   # one account's current 5-hour block
+ccam ccusage -a work,side weekly       # these accounts, and any that share their history
+```
+
+ccam은 먼저 자신의 옵션을 읽습니다. `-a`(`--account`)는 계정 이름이나 번호를 받으며, 쉼표로 구분하거나 옵션을 여러 번 지정할 수 있습니다. `--dry-run`은 명령을 실행하지 않고 출력합니다. ccam 옵션이 아닌 첫 인자부터는 모두 그대로 ccusage에 넘깁니다. `ccam ccusage -- --help`는 ccusage 자체의 도움말을 보여 줍니다. ccam은 설치된 `ccusage`를, 없으면 `bun x ccusage`를, 그것도 없으면 `npx ccusage@latest`를 실행합니다. 뒤의 둘은 ccusage를 npm에서 내려받습니다. 셋 다 없으면 Node.js, Bun, ccusage 중 하나를 설치하라고 알려 줍니다. Linux와 macOS에서는 ccusage가 ccam을 대체하고, Windows에서는 ccam이 ccusage가 끝나기를 기다렸다가 그 종료 코드로 종료합니다. WSL에서는 Windows 드라이브에 있는 `ccusage`, `bun`, `npx`를 건너뜁니다. 이들은 계정 폴더 없이 Windows 프로그램으로 실행되기 때문입니다.
+
+- 보고서는 폴더에 대화가 있는(`projects` 폴더가 있는) 계정을 다룹니다. 계정들이 그룹을 통해 공유하는 대화는 한 번만 셉니다.
+- `-a`를 쓰면, 그룹을 통해 대화 내역을 공유하는 계정은 그룹 전체의 대화를 함께 가져오며, ccam은 누구의 대화인지 알려 줍니다: `ccam: work shares its conversation history with personal, so the report counts their conversations too`.
+- `blocks`는 5시간 구간을 보여 주는데, 이 구간은 계정마다 따로 있으므로 위 예처럼 계정을 하나만 지정하세요.
+- ccusage는 도구를 하나 지정하지 않으면 찾아낸 다른 코딩 도구(Codex 등)도 보고합니다. `ccam ccusage claude daily`는 Claude Code만 보여 줍니다.
+- ccam이 실행할 때 ccusage는 설정(`ccusage.json`)을 `./.ccusage`와 계정 폴더에서만 읽습니다. 다른 파일은 `--config`로 지정합니다: `ccam ccusage daily --config ~/.config/claude/ccusage.json`.
+- ccusage는 경로에 쉼표가 있는 폴더를 폴더 두 개로 읽어 버리므로, ccam은 그런 폴더를 거부하고 해당 계정 이름을 알려 줍니다. 그 계정은 `-a`로 빼세요.
+- `ccusage`는 ccam 명령이므로 ccusage라는 이름의 계정은 `ccam run ccusage`로 시작합니다. `ccam doctor`도 이를 알려 줍니다.
+
 ## 동작 방식
 
-수치의 출처는 두 곳입니다. 하나는 각 계정 자체의 로그인 정보로 호출하는 Anthropic의 비공개 사용량 엔드포인트 `GET https://api.anthropic.com/api/oauth/usage`이고, 다른 하나는 Claude Code가 상태 표시줄 명령에 넘기는 값입니다. 관련 코드는 모두 `internal/usage`에 있습니다.
+`ccam usage`가 보여 주는 수치의 출처는 두 곳입니다. 하나는 각 계정 자체의 로그인 정보로 호출하는 Anthropic의 비공개 사용량 엔드포인트 `GET https://api.anthropic.com/api/oauth/usage`이고, 다른 하나는 Claude Code가 상태 표시줄 명령에 넘기는 값입니다. 관련 코드는 모두 `internal/usage`에 있습니다.
 
 1. `cli.usageCmd`가 `config.toml`을 읽고 계정마다 `usage.Account`를 하나씩 만듭니다. 여기에는 계정 폴더 `~/.local/share/ccam/profiles/<name>/`, 세션 표시 파일(계정 폴더에 있는 Claude Code 자체의 기록과 함께 실행 중인지 알려 줍니다), 제자리에 가져온 계정인지 여부가 들어갑니다.
 2. `Fetcher.FetchAll`이 계정마다 고루틴을 하나씩 시작합니다. 모든 고루틴이 `http.Client` 하나를 공유하므로 엔드포인트 연결이 재사용됩니다. 연결에는 최대 2초, 계정마다 전체 3초가 주어집니다. 리디렉션을 따라가면 토큰이 다른 곳으로 다시 전송되므로 클라이언트는 리디렉션을 따르지 않으며, 응답은 최대 1 MB까지만 읽습니다.

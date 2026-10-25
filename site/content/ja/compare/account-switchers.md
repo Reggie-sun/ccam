@@ -4,7 +4,7 @@ description: ccamとclaude-swap、CCS、clausona、clauth、CAAM、cuxなど、C
 updated: 2026-10-25
 order: 2
 translation: machine
-sourceHash: "3d87ba7c975a"
+sourceHash: "a6aa0409a8df"
 ---
 
 Claude Codeのアカウントを切り替えるツールの方式は2つに分かれます。多くは1つの`~/.claude`フォルダーの中でログインを入れ替えるので、使えるアカウントは一度に1つです。ccamを含むほかのツールは、`CLAUDE_CONFIG_DIR`でアカウントごとに専用のフォルダーを割り当てるので、どのアカウントもログインしたままで、複数を同時に実行できます。ccamはさらに設定とMCPサーバーを共有し、別のアカウントのフォルダーで会話を続けられます。
@@ -96,7 +96,7 @@ ccamは約10 MBの静的バイナリで、インストールが必要なラン�
 - 開発者モードがオフのWindowsでは、ccamはフォルダーを共有できますが、`settings.json`のような単一のファイルは共有できません（その場合、最初の`ccam add`はMCPサーバーと拡張機能だけを共有します）。claude-swapとCCSはその場合ファイルをコピーします。
 - CCSwitcher、Claude Switcher、claude-swapは、macOSのメニューバーに使用量を表示します。
 - CCS、clausona、CAAM、clauth、ccswap、Claude Switcherは、Codexやほかのコーディングエージェントも管理します。
-- clausonaは、アカウントごとに拡張機能をオン・オフでき（ccamの`ccam ext`は表示するだけです）、ローカルのトークンコストを記録し、tmuxなどのターミナルで多数のワーカーを動かすClaude Codeプラグインも提供しています。
+- clausonaは、アカウントごとに拡張機能をオン・オフでき（ccamの`ccam ext`は表示するだけです）、ローカルのトークンコストを自分で記録し（ccamはこれを[ccusage](https://ccusage.com)に任せます: `ccam ccusage`）、tmuxなどのターミナルで多数のワーカーを動かすClaude Codeプラグインも提供しています。
 - CAAM、CCSwitcher、Claude SwitcherはHomebrewでインストールでき、clauthとCAAMはリリースのチェックサムに署名しています。ccamはスクリプト、`.deb`、`go install`でインストールし、署名なしでチェックサムを確認します。
 
 ## どれが合うか

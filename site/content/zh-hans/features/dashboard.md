@@ -4,7 +4,7 @@ description: 在终端中运行 ccam 会打开全屏仪表盘，显示账号、�
 updated: 2026-10-25
 order: 15
 translation: machine
-sourceHash: "98ccf6cd81e9"
+sourceHash: "28f216a4a04f"
 ---
 
 `ccam` 不带参数运行时，如果标准输入和标准输出都是终端，就会打开全屏仪表盘；否则打印 `ccam list` 的输出。仪表盘显示每个账号及其用量和组，并能完成各个命令所做的事：启动、添加、登录、更改组、设置文件夹规则、列出后台会话、检查和修复。启动 Claude Code 或连接到后台会话时仪表盘会关闭；添加账号或登录时会暂时离开仪表盘回到终端，完成后再返回。
@@ -12,7 +12,7 @@ sourceHash: "98ccf6cd81e9"
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -23,7 +23,7 @@ sourceHash: "98ccf6cd81e9"
  enter to launch · n for most room · a to add · s for groups · ? for shortcuts
 ```
 
-选项卡名称下面的一行用一句话说明当前选项卡的用途。终端较宽时，Accounts 选项卡还会显示每个账号的邮箱。
+选项卡名称下面的一行用一句话说明当前选项卡的用途。终端较宽时，Accounts 选项卡还会显示每个账号的邮箱。在每个选项卡上，选项卡所在行的末尾都会显示 [`auto_switch`](/features/next#auto-switch) 是否开启（Linux 和 macOS；在 Windows 上会被忽略）；开启时，Health 选项卡会说明这项设置还需要什么：在每个使用 Claude 订阅登录的账号中开启 ccam 插件，以及 Claude Code 2.1.214 或更高版本。
 
 仪表盘每次打开时都会在后台向 GitHub 询问是否有更新的 ccam 版本；第一帧从不等待它，离线时什么也不显示。有新版本时，标题下面的一行会推荐它：
 
@@ -102,7 +102,7 @@ sourceHash: "98ccf6cd81e9"
 Agents 选项卡显示 [`ccam agents`](/features/agents) 打印的内容：每个账号的后台会话和打开的会话，以及各自所属的账号。在你第一次打开该选项卡时、按 `r` 时、停止一个会话后以及配置更改后，它会同时询问每个账号的 Claude Code（`claude agents --json`，每个最多 15 秒），在所有账号都回答之前显示 `Asking every account's Claude Code for its sessions…`。
 
 ```console
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Background agents and open sessions of every account; enter attaches to one.
 
     Account   ID        Name   State          Folder      Started

@@ -4,7 +4,7 @@ description: Terminalde ccam; hesapların, grupların, klasör kurallarının, u
 updated: 2026-10-25
 order: 15
 translation: machine
-sourceHash: "98ccf6cd81e9"
+sourceHash: "28f216a4a04f"
 ---
 
 Argümansız `ccam`, standart girdi ve çıktı bir terminal olduğunda tam ekran bir kontrol paneli açar; aksi halde `ccam list` çıktısını yazdırır. Kontrol paneli her hesabı kullanımı ve gruplarıyla birlikte gösterir ve komutların yaptığını yapar: başlatma, ekleme, giriş yapma, grupları değiştirme, klasör kuralları belirleme, arka plan oturumlarını listeleme, denetleme ve onarma. Başlatma ya da bir arka plan oturumuna bağlanma paneli kapatır; bir hesap eklemek veya giriş yapmak paneli terminale bırakır ve sonra geri döner.
@@ -12,7 +12,7 @@ Argümansız `ccam`, standart girdi ve çıktı bir terminal olduğunda tam ekra
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -23,7 +23,7 @@ Argümansız `ccam`, standart girdi ve çıktı bir terminal olduğunda tam ekra
  enter to launch · n for most room · a to add · s for groups · ? for shortcuts
 ```
 
-Sekme adlarının altındaki satır, geçerli sekmenin ne işe yaradığını tek bir cümleyle söyler. Daha geniş bir terminalde Accounts sekmesi her hesabın e-postasını da gösterir.
+Sekme adlarının altındaki satır, geçerli sekmenin ne işe yaradığını tek bir cümleyle söyler. Daha geniş bir terminalde Accounts sekmesi her hesabın e-postasını da gösterir. Sekme satırının sonu, her sekmede [`auto_switch`](/features/next#auto-switch) ayarının açık olup olmadığını söyler (Linux ve macOS; Windows'ta yok sayılır); açıkken Health sekmesi, bu ayarın hâlâ neye ihtiyaç duyduğunu söyler: Claude aboneliğiyle giriş yapan her hesapta açık bir ccam eklentisi ve Claude Code 2.1.214 veya sonrası.
 
 Kontrol paneli her açıldığında arka planda GitHub'a daha yeni bir ccam sürümü olup olmadığını sorar; ilk kare bunu asla beklemez ve çevrimdışıyken hiçbir şey gösterilmez. Yeni bir sürüm varsa başlığın altındaki bir satır onu önerir:
 
@@ -102,7 +102,7 @@ Health sekmesi, açtığınızda [`ccam doctor`](/features/doctor) kontrollerini
 Agents sekmesi, [`ccam agents`](/features/agents) komutunun yazdırdıklarını gösterir: her hesabın arka plan oturumlarını ve açık oturumlarını, her birinin ait olduğu hesapla birlikte. Sekmeyi ilk açtığınızda, `r` tuşunda, bir durdurmadan sonra ve yapılandırmada bir değişiklikten sonra her hesabın Claude Code'una aynı anda sorar (`claude agents --json`, her biri için en fazla 15 saniye) ve hepsi yanıt verene kadar `Asking every account's Claude Code for its sessions…` yazar.
 
 ```console
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Background agents and open sessions of every account; enter attaches to one.
 
     Account   ID        Name   State          Folder      Started

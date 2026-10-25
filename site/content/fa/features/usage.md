@@ -4,10 +4,10 @@ description: ccam usage سقف ۵ ساعته و هفتگی همه حساب‌ه�
 updated: 2026-10-25
 order: 7
 translation: machine
-sourceHash: "91ad20327289"
+sourceHash: "c98993fcdc7d"
 ---
 
-`ccam usage` نشان می‌دهد هر حساب چه مقدار از سقف ۵ ساعته، سقف هفتگی و سقف هفتگی ویژه هر مدل (مانند Fable) را مصرف کرده است، با یک نوار برای هر سقف همراه با زمان باقی‌مانده تا بازنشانی آن. پیش از شروع یک کار طولانی، یا وقتی Claude Code به شما می‌گوید به سقف نزدیک شده‌اید، از آن استفاده کنید تا ببینید کدام حساب هنوز ظرفیت دارد. `ccam statusline` فرمان خط وضعیت برای Claude Code است: نام حساب و مصرف آن را داخل Claude Code نشان می‌دهد و عددها را برای `ccam usage` ذخیره می‌کند.
+`ccam usage` نشان می‌دهد هر حساب چه مقدار از سقف ۵ ساعته، سقف هفتگی و سقف هفتگی ویژه هر مدل (مانند Fable) را مصرف کرده است، با یک نوار برای هر سقف همراه با زمان باقی‌مانده تا بازنشانی آن. پیش از شروع یک کار طولانی، یا وقتی Claude Code به شما می‌گوید به سقف نزدیک شده‌اید، از آن استفاده کنید تا ببینید کدام حساب هنوز ظرفیت دارد. `ccam statusline` فرمان خط وضعیت برای Claude Code است: نام حساب و مصرف آن را داخل Claude Code نشان می‌دهد و عددها را برای `ccam usage` ذخیره می‌کند. برای دیدن توکن‌ها و هزینه‌های تخمینی پشت این مصرف، `ccam ccusage` ابزار [ccusage](https://ccusage.com) را روی گفتگوهای همه حساب‌ها اجرا می‌کند ([پایین‌تر](#tokens-and-costs-ccam-ccusage)).
 
 ## استفاده
 
@@ -66,9 +66,31 @@ $ ccam usage
 
 `ccam statusline` JSON خط وضعیت Claude Code را از ورودی استاندارد می‌خواند. تنها گزینه آن `--wrap <command>` است: یک فرمان خط وضعیت موجود که نام حساب پیش از نخستین خط خروجی آن قرار می‌گیرد. `ccam statusline install` هیچ گزینه‌ای نمی‌گیرد. هر دو `--dry-run` را با `` --dry-run is not supported by `ccam statusline`; nothing was changed `` رد می‌کنند.
 
+## توکن‌ها و هزینه‌ها: `ccam ccusage`
+
+`ccam usage` نشان می‌دهد یک حساب چه مقدار از هر سقف را مصرف کرده است. اما [ccusage](https://ccusage.com) توکن‌ها و هزینه‌های تخمینی را در فایل‌های گفتگوی Claude Code می‌شمارد. ccusage به‌تنهایی فقط در `~/.claude` و `~/.config/claude` (یا در پوشه‌هایی که `CLAUDE_CONFIG_DIR` مشخص می‌کند) دنبال فایل‌های گفتگوی Claude Code می‌گردد، پس از میان حساب‌های ccam حداکثر یکی را می‌بیند: حساب واردشده‌ای که در همان جای خود در `~/.claude` ثبت شده است. `ccam ccusage` آن را اجرا می‌کند و `CLAUDE_CONFIG_DIR` را روی پوشه‌های همه حساب‌هایی که گفتگو دارند تنظیم می‌کند، تا یک گزارش همه آن‌ها را پوشش دهد:
+
+```sh
+ccam ccusage                           # every account, ccusage's daily report
+ccam ccusage daily --breakdown         # cost per model
+ccam ccusage claude monthly --json     # Claude Code alone, as JSON
+ccam ccusage -a work blocks --active   # one account's current 5-hour block
+ccam ccusage -a work,side weekly       # these accounts, and any that share their history
+```
+
+ccam ابتدا گزینه‌های خودش را می‌خواند: `-a` (`--account`) نام یا شماره حساب‌ها را می‌گیرد، جداشده با ویرگول یا با تکرار گزینه، و `--dry-run` فرمان را به‌جای اجرا چاپ می‌کند. از نخستین آرگومانی که جزو گزینه‌های ccam نیست به بعد، همه چیز بدون تغییر به ccusage می‌رسد؛ `ccam ccusage -- --help` راهنمای خود ccusage را نشان می‌دهد. ccam اگر `ccusage` نصب شده باشد همان را اجرا می‌کند، وگرنه `bun x ccusage` و وگرنه `npx ccusage@latest` را، که این دو آخری آن را از npm دریافت می‌کنند؛ اگر هیچ‌کدام در دسترس نباشد، ccam از شما می‌خواهد Node.js، Bun یا ccusage را نصب کنید. در Linux و macOS، ccusage جای ccam را می‌گیرد؛ در Windows، ccam منتظر آن می‌ماند و با کد خروج ccusage پایان می‌یابد. در WSL، ccam از هر `ccusage`، `bun` یا `npx` که روی یک درایو Windows باشد صرف‌نظر می‌کند، چون چنین برنامه‌ای به‌صورت برنامه Windows و بدون پوشه‌های حساب‌ها اجرا می‌شد.
+
+- گزارش، حساب‌هایی را پوشش می‌دهد که در پوشه‌شان گفتگو هست (یک پوشه `projects`). گفتگویی که چند حساب از طریق یک گروه به اشتراک می‌گذارند فقط یک بار شمرده می‌شود.
+- با `-a`، حسابی که تاریخچه‌اش را از طریق یک گروه به اشتراک می‌گذارد، گفتگوهای کل گروه را هم با خود می‌آورد و ccam می‌گوید این گفتگوها متعلق به کیست: `ccam: work shares its conversation history with personal, so the report counts their conversations too`.
+- `blocks` پنجره‌های ۵ ساعته را نشان می‌دهد و هر حساب پنجره‌های خودش را دارد، پس برای آن فقط یک حساب را نام ببرید، مانند نمونه بالا.
+- ccusage ابزارهای کدنویسی دیگری را هم که پیدا کند، مانند Codex، گزارش می‌کند، مگر اینکه یکی را نام ببرید: `ccam ccusage claude daily` فقط Claude Code را نشان می‌دهد.
+- وقتی ccam آن را اجرا می‌کند، ccusage تنظیماتش (`ccusage.json`) را فقط از `./.ccusage` و پوشه‌های حساب‌ها می‌خواند. `--config` فایل دیگری را مشخص می‌کند: `ccam ccusage daily --config ~/.config/claude/ccusage.json`.
+- ccusage پوشه‌ای را که مسیرش ویرگول دارد دو پوشه می‌خواند، پس ccam آن را نمی‌پذیرد و نام حساب را می‌گوید؛ آن حساب را با `-a` کنار بگذارید.
+- `ccusage` یکی از فرمان‌های ccam است، پس حسابی با نام ccusage با `ccam run ccusage` اجرا می‌شود؛ `ccam doctor` هم این را می‌گوید.
+
 ## چگونه کار می‌کند
 
-عددها از دو جا می‌آیند: نقطه پایانی مصرف Anthropic که مستند نشده است، یعنی `GET https://api.anthropic.com/api/oauth/usage`، که با ورود خود هر حساب فراخوانی می‌شود، و مقدارهایی که Claude Code به فرمان خط وضعیت خود می‌دهد. همه این‌ها در `internal/usage` قرار دارد.
+عددهای `ccam usage` از دو جا می‌آیند: نقطه پایانی مصرف Anthropic که مستند نشده است، یعنی `GET https://api.anthropic.com/api/oauth/usage`، که با ورود خود هر حساب فراخوانی می‌شود، و مقدارهایی که Claude Code به فرمان خط وضعیت خود می‌دهد. همه این‌ها در `internal/usage` قرار دارد.
 
 1. `cli.usageCmd` فایل `config.toml` را بارگذاری می‌کند و برای هر حساب یک `usage.Account` می‌سازد: پوشه آن `~/.local/share/ccam/profiles/<name>/`، نشانگرهای نشست آن (که همراه با سوابق خود Claude Code در پوشه حساب نشان می‌دهند در حال اجراست یا نه) و اینکه آیا در همان محل وارد شده است.
 2. `Fetcher.FetchAll` برای هر حساب یک goroutine آغاز می‌کند. همه آن‌ها یک `http.Client` مشترک دارند، بنابراین اتصال‌ها به نقطه پایانی دوباره استفاده می‌شوند. برقراری اتصال می‌تواند ۲ ثانیه طول بکشد و هر حساب روی هم ۳ ثانیه فرصت دارد. کلاینت هدایت‌ها را دنبال نمی‌کند، چون یک هدایت توکن را به جای دیگری می‌فرستد، و حداکثر ۱ MB از پاسخ را می‌خواند.

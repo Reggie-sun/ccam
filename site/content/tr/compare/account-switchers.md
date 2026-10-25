@@ -4,7 +4,7 @@ description: ccam'ın claude-swap, CCS, clausona, clauth, CAAM, cux ve diğer Cl
 updated: 2026-10-25
 order: 2
 translation: machine
-sourceHash: "3d87ba7c975a"
+sourceHash: "a6aa0409a8df"
 ---
 
 Claude Code hesap değiştirme araçları iki yaklaşımdan birini izler. Çoğu, tek `~/.claude` klasörünün içindeki girişi değiştirir; bu yüzden aynı anda yalnızca bir hesap etkindir. ccam'ın da aralarında olduğu diğerleri, `CLAUDE_CONFIG_DIR` ile her hesaba kendi klasörünü verir; böylece her hesap oturum açık kalır ve birkaçı aynı anda çalışabilir. ccam buna paylaşılan ayarları ve MCP sunucularını ekler ve bir konuşmaya başka bir hesabın klasöründe devam eder.
@@ -96,7 +96,7 @@ ccam, Linux, macOS ve Windows için, ayrıca bir çalışma zamanı kurmayı ger
 - Geliştirici Modu olmayan Windows'ta ccam klasörleri paylaşır ama `settings.json` gibi tek dosyaları paylaşamaz (ilk `ccam add` o zaman yalnızca MCP sunucularını ve uzantıları paylaşır); claude-swap ve CCS orada bunları kopyalar.
 - CCSwitcher, Claude Switcher ve claude-swap kullanımı macOS menü çubuğunda gösterir.
 - CCS, clausona, CAAM, clauth, ccswap ve Claude Switcher Codex'i ve diğer kodlama ajanlarını da yönetir.
-- clausona ayrıca uzantıları hesap başına açıp kapatır (ccam'in `ccam ext` komutu bunları yalnızca gösterir), yerel token maliyetini izler ve tmux ile diğer terminallerde çalışan süreç filoları yürüten Claude Code eklentileriyle gelir.
+- clausona ayrıca uzantıları hesap başına açıp kapatır (ccam'in `ccam ext` komutu bunları yalnızca gösterir), yerel token maliyetini kendisi izler (ccam bu işi [ccusage](https://ccusage.com) aracına bırakır: `ccam ccusage`) ve tmux ile diğer terminallerde çalışan süreç filoları yürüten Claude Code eklentileriyle gelir.
 - CAAM, CCSwitcher ve Claude Switcher Homebrew ile kurulur; clauth ve CAAM sürüm sağlama toplamlarını imzalar. ccam kendi betiğiyle, bir `.deb` paketiyle veya `go install` ile kurulur ve sağlama toplamlarını imza olmadan denetler.
 
 ## Hangisi size uyar?

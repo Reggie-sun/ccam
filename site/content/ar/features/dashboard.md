@@ -4,7 +4,7 @@ description: يفتح ccam في الطرفية لوحة تحكم بملء الش
 updated: 2026-10-25
 order: 15
 translation: machine
-sourceHash: "98ccf6cd81e9"
+sourceHash: "28f216a4a04f"
 ---
 
 يفتح `ccam` دون وسائط لوحة تحكم بملء الشاشة عندما يكون الإدخال والإخراج القياسيان طرفية، ويطبع `ccam list` في غير ذلك. تعرض لوحة التحكم كل حساب مع استخدامه ومجموعاته، وتفعل ما تفعله الأوامر: التشغيل والإضافة وتسجيل الدخول وتغيير المجموعات وضبط قواعد المجلدات وسرد الجلسات الخلفية والفحص والإصلاح. ويغلقها تشغيل حساب، أو الاتصال بجلسة خلفية؛ أما إضافة حساب أو تسجيل الدخول فيتركها إلى الطرفية ثم يعود إليها.
@@ -12,7 +12,7 @@ sourceHash: "98ccf6cd81e9"
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -23,7 +23,7 @@ sourceHash: "98ccf6cd81e9"
  enter to launch · n for most room · a to add · s for groups · ? for shortcuts
 ```
 
-يقول السطر الموجود تحت أسماء التبويبات في جملة واحدة ما الغرض من التبويب الحالي. وفي الطرفية الأعرض يعرض تبويب Accounts أيضًا البريد الإلكتروني لكل حساب.
+يقول السطر الموجود تحت أسماء التبويبات في جملة واحدة ما الغرض من التبويب الحالي. وفي الطرفية الأعرض يعرض تبويب Accounts أيضًا البريد الإلكتروني لكل حساب. وتبيّن نهاية سطر التبويبات، في كل تبويب، ما إذا كان [`auto_switch`](/features/next#auto-switch) مشغّلًا (على Linux وmacOS؛ أما Windows فيتجاهل هذا الإعداد)؛ وعندما يكون مشغّلًا، يذكر تبويب Health ما لا يزال يحتاج إليه: المكوّن الإضافي لـ ccam مفعّلًا في كل حساب يسجّل الدخول باشتراك Claude، وClaude Code 2.1.214 أو أحدث.
 
 في كل مرة تُفتح فيها لوحة التحكم، تسأل GitHub في الخلفية عن وجود إصدار أحدث من ccam؛ ولا ينتظر الإطار الأول ذلك أبدًا، ودون اتصال لا يظهر شيء. وإذا وُجد إصدار أحدث، أوصى به سطر تحت العنوان:
 
@@ -102,7 +102,7 @@ sourceHash: "98ccf6cd81e9"
 يعرض تبويب Agents ما يطبعه [`ccam agents`](/features/agents): الجلسات الخلفية والجلسات المفتوحة لكل الحسابات، مع الحساب الذي تنتمي إليه كل منها. ويسأل Claude Code في كل الحسابات في آن واحد (`claude agents --json`، حتى 15 ثانية لكل منها) عند أول فتح للتبويب، وعند `r`، وبعد إيقاف جلسة، وبعد أي تغيير في الإعدادات، ويقول `Asking every account's Claude Code for its sessions…` حتى تجيب كلها.
 
 ```console
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Background agents and open sessions of every account; enter attaches to one.
 
     Account   ID        Name   State          Folder      Started

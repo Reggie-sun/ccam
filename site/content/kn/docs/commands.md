@@ -5,7 +5,7 @@ description: ccam add ಮತ್ತು ccam <name> ನಿಂದ ccam usage, ccam 
 updated: 2026-10-25
 order: 3
 translation: machine
-sourceHash: "abba525cae48"
+sourceHash: "41fb781fd146"
 ---
 
 ಕಮಾಂಡ್ ಏನು ಮಾಡುತ್ತದೆ ಎಂಬುದನ್ನು ನಿಜವಾಗಿ ಮಾಡದೆಯೇ ನೋಡಲು, ಅದರ ಮುಂದೆ `--dry-run` ಹಾಕಿ. ಉದಾಹರಣೆಗೆ `ccam --dry-run work`. ಇದು Claude Code ಆರಂಭಿಸುವಾಗ (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`) ಮತ್ತು `group`, `migrate`, `shortcut`, `update` ಹಾಗೂ `doctor --fix` ಜೊತೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ. ಏನನ್ನಾದರೂ ಬದಲಾಯಿಸುವ ಇತರ ಕಮಾಂಡ್‌ಗಳು ಚಾಲನೆಯಾಗುವ ಬದಲು ಇದನ್ನು ನಿರಾಕರಿಸುತ್ತವೆ.
@@ -125,6 +125,8 @@ ccam pick                       # the account with the most room, for a script
 ccam "$(ccam pick)" -p "…"      # start a worker on it
 ccam agents                     # background sessions of every account
 ccam attach 49ec0028            # open one, as the account that started it (or by its name)
+ccam ccusage claude daily       # Claude Code's tokens and costs, every account (ccusage)
+ccam ccusage -a work blocks --active   # one account's current 5-hour block
 ```
 
 `next --auto`, `--fallback` ಮತ್ತು `ccam pick` ಒಂದೇ ರೀತಿಯಲ್ಲಿ ಆಯ್ಕೆಮಾಡುತ್ತವೆ: ಮೊದಲು `auto_max_usage` (`config.toml`, ಡೀಫಾಲ್ಟ್ 100) ಗಿಂತ ಕೆಳಗಿರುವ ಖಾತೆಗಳು, `auto_strategy` (`headroom`, `expiring` ಅಥವಾ `balance`) ಪ್ರಕಾರ, `--model` ನ ವಾರದ ಅವಧಿಯನ್ನೂ ಎಣಿಸಿ; 100% ತಲುಪಿದ ಖಾತೆಯನ್ನು ಎಂದಿಗೂ ಆಯ್ಕೆಮಾಡುವುದಿಲ್ಲ (Claude Code ತುಂಬಿದೆ ಎಂದು ವರದಿ ಮಾಡಿದ ಅವಧಿಯನ್ನು ಅದರ ರೀಸೆಟ್‌ವರೆಗೆ 100% ಎಂದು ಎಣಿಸಲಾಗುತ್ತದೆ), API ಕೀ ಲಾಗಿನ್ ಅನ್ನು ಎಂದಿಗೂ ಆಯ್ಕೆಮಾಡುವುದಿಲ್ಲ, ಮತ್ತು ಅವು ಆರಂಭವಾಗುವ ಖಾತೆಯ ಸಂಸ್ಥೆಯೊಳಗೇ ಆಯ್ಕೆಮಾಡುತ್ತವೆ (ಅದರಾಚೆ ನೋಡಲು `--cross-org` ಅಥವಾ `cross_org = true`). `--wait` ತನ್ನ ಮೌಲ್ಯವನ್ನು `=` ನಂತರ ಪಡೆಯುತ್ತದೆ (`--wait=2h`); ಸ್ಪೇಸ್‌ನೊಂದಿಗೆ ಬರೆದರೆ, ಒಂದು ಸುಳಿವಿನೊಂದಿಗೆ ಅದನ್ನು ನಿರಾಕರಿಸಲಾಗುತ್ತದೆ. ಯಾವುದನ್ನೂ ಆಯ್ಕೆಮಾಡಲಾಗದಿದ್ದಾಗ ಅವು ಕೋಡ್ 75 ನೊಂದಿಗೆ ನಿರ್ಗಮಿಸುತ್ತವೆ, ಅಥವಾ `--wait` ಇದ್ದರೆ ಮೊದಲ ಖಾತೆ ರೀಸೆಟ್ ಆಗುವವರೆಗೆ ಕಾಯುತ್ತವೆ. ಇತಿಹಾಸ ಹಂಚಿಕೊಳ್ಳದ ಖಾತೆಗಳ ನಡುವೆಯೂ `ccam next --continue` ಸಂಭಾಷಣೆಯನ್ನು ಕೊಂಡೊಯ್ಯುತ್ತದೆ: ಆಗ Claude Code ಅದನ್ನು ಹೊಸ ಖಾತೆಗೆ ನಕಲಿಸುತ್ತದೆ. `--brief` ಜೊತೆ, ಹೊಸ ಖಾತೆ ಬದಲಿಗೆ ಹೊಸ ಸಂಭಾಷಣೆಯನ್ನು ಆರಂಭಿಸುತ್ತದೆ, ಹಿಂದಿನದರ ಬಗ್ಗೆ ccam ಮಾಡೆಲ್ ಇಲ್ಲದೆ ಬರೆಯುವ ಸಾರಾಂಶದಿಂದ ([`--brief`](/features/next#brief)). `ccam <name>` ನಂತಲ್ಲದೆ, `ccam next` ತನ್ನ ಆಯ್ಕೆಗಳನ್ನು ತಾನೇ ಓದುತ್ತದೆ, ಆದ್ದರಿಂದ Claude Code ನ ಆಯ್ಕೆಗಳು `--` ನಂತರ ಬರುತ್ತವೆ; ಅದಿಲ್ಲದೆ ccam `unknown flag` ನೊಂದಿಗೆ ನಿಲ್ಲುತ್ತದೆ. Claude Code ಒಳಗೆ, ಪ್ಲಗಿನ್‌ನ `/ccam:switch [account]` ಸಂಭಾಷಣೆಯನ್ನು ಮುಂದಕ್ಕೆ ಒಪ್ಪಿಸುತ್ತದೆ, ಮತ್ತು ಅದರ ಹುಕ್‌ಗಳು ರನ್ ಮಾಡುವುದು `ccam hook`. `config.toml` ನಲ್ಲಿ `auto_switch = true` ಇದ್ದರೆ (Linux ಮತ್ತು macOS; ಡೀಫಾಲ್ಟ್ ಆಗಿ ಆಫ್), ಮಿತಿಯ ಹುಕ್ ccam ಆರಂಭಿಸಿದ ಇಂಟರ್‌ಆಕ್ಟಿವ್ ಸೆಷನ್ ಅನ್ನು ಕೊನೆಗೊಳಿಸಿ, ಅವಕಾಶ ಇರುವ ಇನ್ನೊಂದು ಖಾತೆಯಾಗಿ ಅದನ್ನು ಮುಂದುವರಿಸುತ್ತದೆ, ಅದರಂತಹ ಖಾತೆಯಾಗಿ ಮಾತ್ರ: ಅದೇ ಸಂಸ್ಥೆಯ ಇನ್ನೊಂದು ಸೀಟು, ಅಥವಾ ಇನ್ನೊಂದು ವೈಯಕ್ತಿಕ ಪ್ಲಾನ್ ([`auto_switch`](/features/next#auto-switch)). [ಮುಂದಿನ ಖಾತೆಗೆ ಬದಲಾಯಿಸುವುದು](/features/next), [ಸ್ಕ್ರಿಪ್ಟ್‌ಗಳಿಗಾಗಿ ಖಾತೆ ಆಯ್ಕೆ](/features/pick) ಮತ್ತು [ಪ್ರತಿ ಖಾತೆಯ ಹಿನ್ನೆಲೆ ಸೆಷನ್‌ಗಳು](/features/agents) ನೋಡಿ.

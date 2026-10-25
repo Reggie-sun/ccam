@@ -4,7 +4,7 @@ description: ccam у терміналі відкриває повноекран�
 updated: 2026-10-25
 order: 15
 translation: machine
-sourceHash: "98ccf6cd81e9"
+sourceHash: "28f216a4a04f"
 ---
 
 `ccam` без аргументів відкриває повноекранну панель керування, коли стандартне введення й виведення є терміналом; інакше він виводить `ccam list`. Панель показує кожен обліковий запис із його використанням і групами та робить те саме, що й команди: запускає, додає, виконує вхід, змінює групи, задає правила тек, показує фонові сеанси, перевіряє й виправляє. Запуск або під'єднання до фонового сеансу закриває панель; додавання облікового запису або вхід ненадовго віддають термінал і потім повертаються до неї.
@@ -12,7 +12,7 @@ sourceHash: "98ccf6cd81e9"
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -23,7 +23,7 @@ sourceHash: "98ccf6cd81e9"
  enter to launch · n for most room · a to add · s for groups · ? for shortcuts
 ```
 
-Рядок під назвами вкладок одним реченням пояснює, для чого поточна вкладка. У ширшому терміналі вкладка Accounts також показує адресу електронної пошти кожного облікового запису.
+Рядок під назвами вкладок одним реченням пояснює, для чого поточна вкладка. У ширшому терміналі вкладка Accounts також показує адресу електронної пошти кожного облікового запису. Кінець рядка вкладок на кожній вкладці показує, чи ввімкнено [`auto_switch`](/features/next#auto-switch) (Linux і macOS; у Windows його ігноровано); коли його ввімкнено, вкладка Health каже, що йому ще потрібно: увімкнений плагін ccam у кожному обліковому записі, який входить за підпискою Claude, і Claude Code 2.1.214 або новіший.
 
 Щоразу, коли панель керування відкривається, вона у фоні запитує в GitHub, чи є новіший випуск ccam; перший кадр ніколи на це не чекає, а без мережі нічого не показано. Якщо такий випуск є, рядок під заголовком рекомендує його:
 
@@ -102,7 +102,7 @@ sourceHash: "98ccf6cd81e9"
 Вкладка Agents показує те, що виводить [`ccam agents`](/features/agents): фонові сеанси й відкриті сеанси всіх облікових записів разом з обліковим записом, якому належить кожен із них. Вона опитує Claude Code усіх облікових записів одночасно (`claude agents --json`, до 15 секунд на кожен), коли ви вперше відкриваєте вкладку, за `r`, після зупинки сеансу та після зміни конфігурації, і показує `Asking every account's Claude Code for its sessions…`, доки не відповідять усі.
 
 ```console
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Background agents and open sessions of every account; enter attaches to one.
 
     Account   ID        Name   State          Folder      Started

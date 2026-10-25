@@ -4,7 +4,7 @@ description: ccam 與 claude-swap、CCS、clausona、clauth、CAAM、cux 等 Cla
 updated: 2026-10-25
 order: 2
 translation: machine
-sourceHash: "3d87ba7c975a"
+sourceHash: "a6aa0409a8df"
 ---
 
 切換 Claude Code 帳號的工具採用兩種做法之一。大多數工具在同一個 `~/.claude` 資料夾中替換登入資訊，所以同一時間只有一個帳號處於使用中。另一些工具（包括 ccam）則用 `CLAUDE_CONFIG_DIR` 為每個帳號提供獨立的資料夾，因此每個帳號都會保持登入，也能同時執行多個帳號。ccam 還提供共用的設定和 MCP 伺服器，並能在另一個帳號的資料夾中接續對話。
@@ -96,7 +96,7 @@ ccam 是一個約 10 MB 的靜態執行檔，不需要安裝任何執行環境�
 - 在未開啟開發人員模式的 Windows 上，ccam 可以共用資料夾，但無法共用 `settings.json` 這類單一檔案（此時第一次 `ccam add` 只會共用 MCP 伺服器和擴充功能）；claude-swap 和 CCS 則會改為複製這些檔案。
 - CCSwitcher、Claude Switcher 和 claude-swap 會在 macOS 選單列中顯示用量。
 - CCS、clausona、CAAM、clauth、ccswap 和 Claude Switcher 也能管理 Codex 和其他程式設計代理。
-- clausona 還能依帳號開啟或關閉擴充功能（ccam 的 `ccam ext` 只會顯示它們）、追蹤本機的權杖費用，並提供在 tmux 和其他終端機中執行大量工作程序的 Claude Code 外掛。
+- clausona 還能依帳號開啟或關閉擴充功能（ccam 的 `ccam ext` 只會顯示它們）、自行追蹤本機的權杖費用（ccam 把這件事交給 [ccusage](https://ccusage.com)：`ccam ccusage`），並提供在 tmux 和其他終端機中執行大量工作程序的 Claude Code 外掛。
 - CAAM、CCSwitcher 和 Claude Switcher 可以用 Homebrew 安裝，clauth 和 CAAM 會為發行的校驗碼簽章。ccam 以安裝指令碼、`.deb` 或 `go install` 安裝，會檢查校驗碼但沒有簽章。
 
 ## 哪一種適合你？

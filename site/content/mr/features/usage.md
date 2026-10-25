@@ -4,10 +4,10 @@ description: ccam usage प्रत्येक खात्याच्या 
 updated: 2026-10-25
 order: 7
 translation: machine
-sourceHash: "91ad20327289"
+sourceHash: "c98993fcdc7d"
 ---
 
-प्रत्येक खात्याने 5 तासांची मर्यादा, साप्ताहिक मर्यादा आणि प्रत्येक मॉडेलची स्वतःची साप्ताहिक मर्यादा (उदा. Fable) यांपैकी किती वापरले ते `ccam usage` दाखवते, प्रत्येक मर्यादेसाठी एक bar आणि ती रीसेट होईपर्यंतचा वेळ यासह. कोणत्या खात्यात जागा उरली आहे ते पाहण्यासाठी, एखादे मोठे काम सुरू करण्यापूर्वी किंवा Claude Code मर्यादा जवळ आल्याचे सांगेल तेव्हा ते वापरा. `ccam statusline` ही Claude Code साठी स्टेटस लाइन कमांड आहे: ती Claude Code मध्ये खात्याचे नाव आणि वापर दाखवते आणि `ccam usage` साठी आकडे साठवते.
+प्रत्येक खात्याने 5 तासांची मर्यादा, साप्ताहिक मर्यादा आणि प्रत्येक मॉडेलची स्वतःची साप्ताहिक मर्यादा (उदा. Fable) यांपैकी किती वापरले ते `ccam usage` दाखवते, प्रत्येक मर्यादेसाठी एक bar आणि ती रीसेट होईपर्यंतचा वेळ यासह. कोणत्या खात्यात जागा उरली आहे ते पाहण्यासाठी, एखादे मोठे काम सुरू करण्यापूर्वी किंवा Claude Code मर्यादा जवळ आल्याचे सांगेल तेव्हा ते वापरा. `ccam statusline` ही Claude Code साठी स्टेटस लाइन कमांड आहे: ती Claude Code मध्ये खात्याचे नाव आणि वापर दाखवते आणि `ccam usage` साठी आकडे साठवते. वापरामागचे token आणि अंदाजे खर्च पाहण्यासाठी, `ccam ccusage` प्रत्येक खात्याच्या संभाषणांवर [ccusage](https://ccusage.com) चालवते ([खाली](#tokens-and-costs-ccam-ccusage)).
 
 ## वापर
 
@@ -66,9 +66,31 @@ $ ccam usage
 
 `ccam statusline` standard input वरून Claude Code चा स्टेटस लाइन JSON वाचते. त्याचा एकच पर्याय `--wrap <command>` आहे: आधीपासून असलेली स्टेटस लाइन कमांड, जिच्या आउटपुटच्या पहिल्या ओळीसमोर खात्याचे नाव लावले जाते. `ccam statusline install` कोणतेही पर्याय घेत नाही. दोन्ही `--dry-run` `` --dry-run is not supported by `ccam statusline`; nothing was changed `` देऊन नाकारतात.
 
+## Tokens आणि खर्च: `ccam ccusage`
+
+`ccam usage` एखाद्या खात्याने प्रत्येक मर्यादेपैकी किती वापरले ते दाखवते. [ccusage](https://ccusage.com) त्याऐवजी Claude Code च्या संभाषण logs मधील token आणि अंदाजे खर्च मोजते. स्वतःहून ते Claude Code चे logs फक्त `~/.claude` आणि `~/.config/claude` मध्ये (किंवा `CLAUDE_CONFIG_DIR` मध्ये दिलेल्या फोल्डरमध्ये) शोधते, त्यामुळे ccam च्या खात्यांपैकी त्याला जास्तीत जास्त एकच खाते दिसते: `~/.claude` येथे जागेवरच इम्पोर्ट केलेले खाते. `ccam ccusage` संभाषणे असलेल्या प्रत्येक खात्याच्या फोल्डरवर `CLAUDE_CONFIG_DIR` सेट करून ते चालवते, त्यामुळे एकाच अहवालात सर्व खाती येतात:
+
+```sh
+ccam ccusage                           # every account, ccusage's daily report
+ccam ccusage daily --breakdown         # cost per model
+ccam ccusage claude monthly --json     # Claude Code alone, as JSON
+ccam ccusage -a work blocks --active   # one account's current 5-hour block
+ccam ccusage -a work,side weekly       # these accounts, and any that share their history
+```
+
+ccam आधी स्वतःचे पर्याय वाचते: `-a` (`--account`) खात्यांची नावे किंवा क्रमांक घेतो, स्वल्पविरामाने वेगळे करून किंवा पर्याय अनेकदा देऊन, आणि `--dry-run` कमांड चालवण्याऐवजी ती छापतो. ccam चा पर्याय नसलेल्या पहिल्या आर्ग्युमेंटपासून पुढे सर्व काही ccusage ला जसेच्या तसे जाते; `ccam ccusage -- --help` ccusage ची स्वतःची मदत दाखवते. ccam इन्स्टॉल केलेले `ccusage` चालवते, ते नसेल तर `bun x ccusage`, तेही नसेल तर `npx ccusage@latest`; हे शेवटचे दोन ccusage npm वरून आणतात. यांपैकी काहीच नसेल तेव्हा ते Node.js, Bun किंवा ccusage इन्स्टॉल करायला सांगते. Linux आणि macOS वर ccusage, ccam ची जागा घेते; Windows वर ccam त्याची वाट पाहते आणि त्याच्याच exit code ने संपते. WSL मध्ये, Windows drive वरील `ccusage`, `bun` किंवा `npx` ccam वगळते, कारण ते खात्यांच्या फोल्डरशिवाय Windows प्रोग्राम म्हणून चालेल.
+
+- ज्या खात्यांच्या फोल्डरमध्ये संभाषणे आहेत (एक `projects` फोल्डर) ती खाती अहवालात येतात. खाती गटामार्फत शेअर करतात ते संभाषण एकदाच मोजले जाते.
+- `-a` सह, गटामार्फत आपला इतिहास शेअर करणारे खाते संपूर्ण गटाची संभाषणे घेऊन येते, आणि ती कोणाची आहेत ते ccam सांगते: `ccam: work shares its conversation history with personal, so the report counts their conversations too`.
+- `blocks` 5 तासांच्या windows दाखवते, आणि प्रत्येक खात्याच्या windows वेगळ्या असतात, त्यामुळे वरीलप्रमाणे त्यासाठी एकच खाते द्या.
+- तुम्ही एखादे tool नमूद केले नाही तर, ccusage त्याला सापडणाऱ्या इतर coding tools चाही (उदा. Codex) अहवाल देते: `ccam ccusage claude daily` म्हणजे फक्त Claude Code.
+- ccam ते चालवत असताना, ccusage आपल्या सेटिंग्ज (`ccusage.json`) फक्त `./.ccusage` आणि खात्यांच्या फोल्डरमधून वाचते. `--config` दुसरी फाइल देतो: `ccam ccusage daily --config ~/.config/claude/ccusage.json`.
+- ज्या फोल्डरच्या पाथमध्ये स्वल्पविराम आहे तो ccusage दोन फोल्डर म्हणून वाचेल, त्यामुळे ccam तो नाकारते आणि त्या खात्याचे नाव सांगते; ते खाते `-a` ने वगळा.
+- `ccusage` ही ccam ची कमांड आहे, त्यामुळे ccusage नावाचे खाते `ccam run ccusage` ने सुरू होते; `ccam doctor` तसे सांगते.
+
 ## हे कसे काम करते
 
-आकडे दोन ठिकाणांहून येतात: प्रत्येक खात्याच्या स्वतःच्या लॉगिनने बोलावलेला Anthropic चा दस्तऐवजीकृत नसलेला usage endpoint, `GET https://api.anthropic.com/api/oauth/usage`, आणि Claude Code आपल्या स्टेटस लाइन कमांडला देत असलेली मूल्ये. हे सर्व `internal/usage` मध्ये आहे.
+`ccam usage` चे आकडे दोन ठिकाणांहून येतात: प्रत्येक खात्याच्या स्वतःच्या लॉगिनने बोलावलेला Anthropic चा दस्तऐवजीकृत नसलेला usage endpoint, `GET https://api.anthropic.com/api/oauth/usage`, आणि Claude Code आपल्या स्टेटस लाइन कमांडला देत असलेली मूल्ये. हे सर्व `internal/usage` मध्ये आहे.
 
 1. `cli.usageCmd` `config.toml` लोड करते आणि प्रत्येक खात्यासाठी एक `usage.Account` तयार करते: त्याचा फोल्डर `~/.local/share/ccam/profiles/<name>/`, त्याचे session markers (खात्याच्या फोल्डरमधील Claude Code च्या स्वतःच्या नोंदींसह, ते खाते चालू आहे का ते सांगतात) आणि ते जागेवरच इम्पोर्ट केले आहे का.
 2. `Fetcher.FetchAll` प्रत्येक खात्यासाठी एक goroutine सुरू करते. ते सर्व एकच `http.Client` वापरतात, त्यामुळे endpoint ची connections पुन्हा वापरली जातात. connect होण्यास 2 s लागू शकतात, आणि प्रत्येक खात्याला एकूण 3 s मिळतात. client redirects पाळत नाही, कारण redirect token दुसरीकडे पुन्हा पाठवेल, आणि उत्तराचा जास्तीत जास्त 1 MB वाचतो.

@@ -4,7 +4,7 @@ description: ccam öffnet im Terminal ein Vollbild-Dashboard mit Konten, Gruppen
 updated: 2026-10-25
 order: 15
 translation: machine
-sourceHash: "98ccf6cd81e9"
+sourceHash: "28f216a4a04f"
 ---
 
 `ccam` ohne Argumente öffnet ein Vollbild-Dashboard, wenn Standardeingabe und -ausgabe ein Terminal sind; andernfalls gibt es `ccam list` aus. Das Dashboard zeigt jedes Konto mit seiner Nutzung und seinen Gruppen und erledigt, was die Befehle tun: starten, hinzufügen, anmelden, Gruppen ändern, Ordnerregeln setzen, Hintergrundsitzungen auflisten, prüfen und reparieren. Ein Start oder das Verbinden mit einer Hintergrundsitzung schließt es; beim Hinzufügen eines Kontos oder bei der Anmeldung überlässt es das Terminal kurz der Aufgabe und kehrt dann zurück.
@@ -12,7 +12,7 @@ sourceHash: "98ccf6cd81e9"
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -23,7 +23,7 @@ sourceHash: "98ccf6cd81e9"
  enter to launch · n for most room · a to add · s for groups · ? for shortcuts
 ```
 
-Die Zeile unter den Tab-Namen sagt in einem Satz, wofür der aktuelle Tab da ist. In einem breiteren Terminal zeigt der Tab Accounts außerdem die E-Mail-Adresse jedes Kontos.
+Die Zeile unter den Tab-Namen sagt in einem Satz, wofür der aktuelle Tab da ist. In einem breiteren Terminal zeigt der Tab Accounts außerdem die E-Mail-Adresse jedes Kontos. Am Ende der Zeile mit den Tab-Namen steht auf jedem Tab, ob [`auto_switch`](/features/next#auto-switch) eingeschaltet ist (Linux und macOS; Windows ignoriert die Einstellung); ist es eingeschaltet, sagt der Tab Health, was dafür noch fehlt: das eingeschaltete ccam-Plugin in jedem Konto, das sich mit einem Claude-Abo anmeldet, und Claude Code 2.1.214 oder neuer.
 
 Bei jedem Öffnen fragt das Dashboard im Hintergrund bei GitHub nach, ob es ein neueres ccam-Release gibt; das erste Bild wartet nie darauf, und offline wird nichts angezeigt. Gibt es eines, empfiehlt eine Zeile unter dem Titel das Update:
 
@@ -102,7 +102,7 @@ Der Tab Health führt beim Öffnen die Prüfungen von [`ccam doctor`](/features/
 Der Tab Agents zeigt, was [`ccam agents`](/features/agents) ausgibt: die Hintergrundsitzungen und offenen Sitzungen jedes Kontos, jeweils mit dem Konto, zu dem sie gehören. Er fragt das Claude Code jedes Kontos gleichzeitig ab (`claude agents --json`, jeweils bis zu 15 Sekunden), wenn du den Tab zum ersten Mal öffnest, bei `r`, nach einem Stopp und nach einer Änderung der Konfiguration, und zeigt `Asking every account's Claude Code for its sessions…`, bis alle geantwortet haben.
 
 ```console
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Background agents and open sessions of every account; enter attaches to one.
 
     Account   ID        Name   State          Folder      Started

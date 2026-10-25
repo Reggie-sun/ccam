@@ -4,10 +4,10 @@ description: ccam usage huonyesha vikomo vya saa 5 na vya wiki vya kila akaunti 
 updated: 2026-10-25
 order: 7
 translation: machine
-sourceHash: "91ad20327289"
+sourceHash: "c98993fcdc7d"
 ---
 
-`ccam usage` huonyesha kiasi cha kikomo cha saa 5, kikomo cha wiki na kikomo cha wiki cha kila model (kama Fable) ambacho kila akaunti imetumia, kama upau mmoja kwa kila kikomo pamoja na muda hadi kianze upya. Itumie kabla ya kuanza kazi ndefu, au Claude Code inapokuambia kikomo kiko karibu, ili kuona ni akaunti ipi bado ina nafasi. `ccam statusline` ni amri ya mstari wa hali (status line) kwa Claude Code: huonyesha jina la akaunti na matumizi ndani ya Claude Code na huhifadhi namba kwa ajili ya `ccam usage`.
+`ccam usage` huonyesha kiasi cha kikomo cha saa 5, kikomo cha wiki na kikomo cha wiki cha kila model (kama Fable) ambacho kila akaunti imetumia, kama upau mmoja kwa kila kikomo pamoja na muda hadi kianze upya. Itumie kabla ya kuanza kazi ndefu, au Claude Code inapokuambia kikomo kiko karibu, ili kuona ni akaunti ipi bado ina nafasi. `ccam statusline` ni amri ya mstari wa hali (status line) kwa Claude Code: huonyesha jina la akaunti na matumizi ndani ya Claude Code na huhifadhi namba kwa ajili ya `ccam usage`. Kwa tokeni na gharama zinazokadiriwa zilizo nyuma ya matumizi hayo, `ccam ccusage` huendesha [ccusage](https://ccusage.com) kwenye mazungumzo ya kila akaunti ([tazama hapa chini](#tokens-and-costs-ccam-ccusage)).
 
 ## Matumizi
 
@@ -66,9 +66,31 @@ Kwa `usage_source = "claude"` juu kabisa ya `config.toml` (kabla ya `[[group]]`,
 
 `ccam statusline` husoma JSON ya mstari wa hali ya Claude Code kutoka standard input. Chaguo lake moja ni `--wrap <command>`: amri ya mstari wa hali iliyopo ambayo mstari wake wa kwanza wa matokeo huwekewa jina la akaunti mbele. `ccam statusline install` haipokei chaguo. Zote mbili hukataa `--dry-run` kwa `` --dry-run is not supported by `ccam statusline`; nothing was changed ``.
 
+## Tokeni na gharama: `ccam ccusage`
+
+`ccam usage` huonyesha kiasi cha kila kikomo ambacho akaunti imetumia. [ccusage](https://ccusage.com), kwa upande mwingine, huhesabu tokeni na gharama zinazokadiriwa katika kumbukumbu za mazungumzo za Claude Code. Peke yake hutafuta kumbukumbu za Claude Code katika `~/.claude` na `~/.config/claude` tu (au katika folda zinazotajwa na `CLAUDE_CONFIG_DIR`), kwa hiyo kati ya akaunti za ccam haioni zaidi ya moja: ile iliyoingizwa mahali ilipo katika `~/.claude`. `ccam ccusage` huiendesha kwa `CLAUDE_CONFIG_DIR` iliyowekwa kuwa folda za kila akaunti yenye mazungumzo, ili ripoti moja ijumuishe akaunti zote:
+
+```sh
+ccam ccusage                           # every account, ccusage's daily report
+ccam ccusage daily --breakdown         # cost per model
+ccam ccusage claude monthly --json     # Claude Code alone, as JSON
+ccam ccusage -a work blocks --active   # one account's current 5-hour block
+ccam ccusage -a work,side weekly       # these accounts, and any that share their history
+```
+
+ccam husoma chaguo zake yenyewe kwanza: `-a` (`--account`) hupokea majina au namba za akaunti, zikitenganishwa kwa koma au kwa kurudia chaguo hilo, na `--dry-run` huchapisha amri badala ya kuiendesha. Kuanzia hoja ya kwanza isiyo chaguo la ccam, kila kitu huenda kwa ccusage bila kubadilishwa; `ccam ccusage -- --help` huonyesha msaada wa ccusage yenyewe. ccam huendesha `ccusage` iliyosakinishwa, la sivyo `bun x ccusage`, la sivyo `npx ccusage@latest`, na hizo mbili za mwisho huipakua ccusage kutoka npm; isipopata yoyote kati ya hizo, husema usakinishe Node.js, Bun au ccusage. Kwenye Linux na macOS ccusage huchukua nafasi ya ccam; kwenye Windows ccam huisubiri na hutoka kwa exit code yake. Ndani ya WSL, ccam huruka `ccusage`, `bun` au `npx` iliyo kwenye diski ya Windows, kwa sababu ingeendeshwa kama programu ya Windows bila folda za akaunti.
+
+- Ripoti hujumuisha akaunti ambazo folda zake zina mazungumzo (folda ya `projects`). Mazungumzo ambayo akaunti kadhaa hushiriki kupitia kikundi huhesabiwa mara moja tu.
+- Kwa `-a`, akaunti inayoshiriki historia yake kupitia kikundi huleta mazungumzo ya kikundi kizima, na ccam husema ni ya nani: `ccam: work shares its conversation history with personal, so the report counts their conversations too`.
+- `blocks` huonyesha vipindi vya saa 5, na kila akaunti ina vyake, kwa hiyo taja akaunti moja tu kwa ajili yake, kama hapo juu.
+- ccusage pia huripoti zana nyingine za kuandika msimbo inazozipata, kama Codex, isipokuwa utaje moja: `ccam ccusage claude daily` ni Claude Code peke yake.
+- Wakati ccam inaiendesha, ccusage husoma mipangilio yake (`ccusage.json`) kutoka `./.ccusage` na folda za akaunti tu. `--config` hutaja faili nyingine: `ccam ccusage daily --config ~/.config/claude/ccusage.json`.
+- ccusage ingesoma folda ambayo njia yake ina koma kana kwamba ni folda mbili, kwa hiyo ccam huikataa na hutaja akaunti husika; iache akaunti hiyo nje kwa `-a`.
+- `ccusage` ni amri ya ccam, kwa hiyo akaunti iitwayo ccusage huanzishwa kwa `ccam run ccusage`; `ccam doctor` husema hivyo.
+
 ## Jinsi inavyofanya kazi
 
-Namba zinatoka sehemu mbili: endpoint ya matumizi ya Anthropic isiyo na nyaraka, `GET https://api.anthropic.com/api/oauth/usage`, inayoitwa kwa taarifa za kuingia za kila akaunti yenyewe, na thamani ambazo Claude Code hukabidhi amri yake ya mstari wa hali. Yote haya yako katika `internal/usage`.
+Namba za `ccam usage` zinatoka sehemu mbili: endpoint ya matumizi ya Anthropic isiyo na nyaraka, `GET https://api.anthropic.com/api/oauth/usage`, inayoitwa kwa taarifa za kuingia za kila akaunti yenyewe, na thamani ambazo Claude Code hukabidhi amri yake ya mstari wa hali. Yote haya yako katika `internal/usage`.
 
 1. `cli.usageCmd` hupakia `config.toml` na huunda `usage.Account` moja kwa kila akaunti: folda yake `~/.local/share/ccam/profiles/<name>/`, alama zake za vipindi (pamoja na rekodi za Claude Code yenyewe katika folda ya akaunti, huonyesha kama inaendeshwa) na kama iliingizwa mahali ilipo.
 2. `Fetcher.FetchAll` huanzisha goroutine moja kwa kila akaunti. Zote hushiriki `http.Client` moja, kwa hiyo miunganisho kwenye endpoint hutumiwa tena. Kuunganisha kunaweza kuchukua sekunde 2, na kila akaunti hupata sekunde 3 kwa jumla. Client haifuati uelekezaji, kwa kuwa uelekezaji ungetuma tokeni mahali pengine, na husoma kwa kiwango cha juu MB 1 ya jibu.

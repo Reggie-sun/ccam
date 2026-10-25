@@ -4,7 +4,7 @@ description: ccam в терминале открывает полноэкран�
 updated: 2026-10-25
 order: 15
 translation: machine
-sourceHash: "98ccf6cd81e9"
+sourceHash: "28f216a4a04f"
 ---
 
 `ccam` без аргументов открывает полноэкранную панель, если стандартный ввод и вывод подключены к терминалу; в остальных случаях он выводит `ccam list`. Панель показывает каждый аккаунт с его использованием и группами и делает то же, что и команды: запускает, добавляет, выполняет вход, меняет группы, задаёт правила папок, показывает фоновые сессии, проверяет и исправляет. При запуске или подключении к фоновой сессии она закрывается; при добавлении аккаунта или входе она уступает терминал и затем возвращается.
@@ -12,7 +12,7 @@ sourceHash: "98ccf6cd81e9"
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -23,7 +23,7 @@ sourceHash: "98ccf6cd81e9"
  enter to launch · n for most room · a to add · s for groups · ? for shortcuts
 ```
 
-Строка под названиями вкладок одним предложением говорит, для чего нужна текущая вкладка. В более широком терминале вкладка Accounts также показывает email каждого аккаунта.
+Строка под названиями вкладок одним предложением говорит, для чего нужна текущая вкладка. В более широком терминале вкладка Accounts также показывает email каждого аккаунта. Конец строки вкладок на любой вкладке показывает, включён ли [`auto_switch`](/features/next#auto-switch) (Linux и macOS; в Windows он игнорируется); когда он включён, вкладка Health сообщает, что ему ещё нужно: включённый плагин ccam в каждом аккаунте, который входит по подписке Claude, и Claude Code 2.1.214 или новее.
 
 При каждом открытии панель в фоне спрашивает у GitHub, есть ли более новый выпуск ccam; первый кадр никогда его не ждёт, а без сети ничего не показывается. Если выпуск есть, строка под заголовком рекомендует его:
 
@@ -102,7 +102,7 @@ sourceHash: "98ccf6cd81e9"
 Вкладка Agents показывает то, что выводит [`ccam agents`](/features/agents): фоновые сессии и открытые сессии каждого аккаунта вместе с аккаунтом, которому принадлежит каждая из них. Она опрашивает Claude Code всех аккаунтов одновременно (`claude agents --json`, до 15 секунд на каждый) при первом открытии вкладки, по `r`, после остановки сессии и после изменения конфигурации и показывает `Asking every account's Claude Code for its sessions…`, пока не ответят все.
 
 ```console
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Background agents and open sessions of every account; enter attaches to one.
 
     Account   ID        Name   State          Folder      Started

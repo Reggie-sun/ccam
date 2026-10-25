@@ -11,7 +11,7 @@ translation: source
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -22,7 +22,7 @@ translation: source
  enter to launch · n for most room · a to add · s for groups · ? for shortcuts
 ```
 
-The line under the tab names says in one sentence what the current tab is for. On a wider terminal the Accounts tab also shows each account's email.
+The line under the tab names says in one sentence what the current tab is for. On a wider terminal the Accounts tab also shows each account's email. The end of the tab line says whether [`auto_switch`](/features/next#auto-switch) is on, on every tab (Linux and macOS; Windows ignores it); when it is on, the Health tab says what it still needs: the ccam plugin, turned on, in every account that signs in with a Claude subscription, and Claude Code 2.1.214 or later.
 
 Each time it opens, the dashboard asks GitHub in the background whether a newer ccam release exists; the first frame never waits for it, and offline nothing is shown. When there is one, a line under the title recommends it:
 
@@ -101,7 +101,7 @@ The Health tab runs the checks of [`ccam doctor`](/features/doctor) when you ope
 The Agents tab shows what [`ccam agents`](/features/agents) prints: the background sessions and open sessions of every account, with the account each belongs to. It asks every account's Claude Code at once (`claude agents --json`, up to 15 seconds each) when you first open the tab, on `r`, after a stop, and after a change to the config, and says `Asking every account's Claude Code for its sessions…` until all have answered.
 
 ```console
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Background agents and open sessions of every account; enter attaches to one.
 
     Account   ID        Name   State          Folder      Started

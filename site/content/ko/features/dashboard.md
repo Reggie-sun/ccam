@@ -4,7 +4,7 @@ description: 터미널에서 ccam을 실행하면 계정, 그룹, 폴더 규칙,
 updated: 2026-10-25
 order: 15
 translation: machine
-sourceHash: "98ccf6cd81e9"
+sourceHash: "28f216a4a04f"
 ---
 
 표준 입력과 출력이 터미널이면 인자 없는 `ccam`은 전체 화면 대시보드를 엽니다. 터미널이 아니면 `ccam list`를 출력합니다. 대시보드는 모든 계정을 사용량, 그룹과 함께 보여 주며, 명령으로 하는 일을 그대로 할 수 있습니다. 실행, 추가, 로그인, 그룹 변경, 폴더 규칙 지정, 백그라운드 세션 목록 보기, 점검과 복구가 모두 됩니다. 실행하거나 백그라운드 세션에 연결하면 대시보드가 닫히고, 계정을 추가하거나 로그인할 때는 잠시 터미널로 나갔다가 돌아옵니다.
@@ -12,7 +12,7 @@ sourceHash: "98ccf6cd81e9"
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -23,7 +23,7 @@ sourceHash: "98ccf6cd81e9"
  enter to launch · n for most room · a to add · s for groups · ? for shortcuts
 ```
 
-탭 이름 아래 줄은 현재 탭이 무엇을 하는지 한 문장으로 알려 줍니다. 터미널이 넓으면 Accounts 탭에 각 계정의 이메일도 표시됩니다.
+탭 이름 아래 줄은 현재 탭이 무엇을 하는지 한 문장으로 알려 줍니다. 터미널이 넓으면 Accounts 탭에 각 계정의 이메일도 표시됩니다. 탭 이름 줄 끝에는 어느 탭에서든 [`auto_switch`](/features/next#auto-switch)가 켜져 있는지 표시됩니다(Linux와 macOS 전용, Windows에서는 무시됨). 켜져 있으면 Health 탭이 이 기능에 아직 필요한 것(Claude 구독으로 로그인하는 모든 계정에서 켜져 있는 ccam 플러그인, Claude Code 2.1.214 이상)을 알려 줍니다.
 
 대시보드는 열릴 때마다 더 새로운 ccam 릴리스가 있는지 백그라운드에서 GitHub에 묻습니다. 첫 화면은 이 응답을 기다리지 않으며, 오프라인이면 아무것도 표시하지 않습니다. 새 릴리스가 있으면 제목 아래 줄에서 업데이트를 권합니다.
 
@@ -102,7 +102,7 @@ Health 탭은 열 때 [`ccam doctor`](/features/doctor)의 점검을 실행하�
 Agents 탭은 [`ccam agents`](/features/agents)가 출력하는 내용, 곧 모든 계정의 백그라운드 세션과 열려 있는 세션을 각각 속한 계정과 함께 보여 줍니다. 탭을 처음 열 때, `r`을 누를 때, 세션을 멈춘 뒤, 설정이 바뀐 뒤에 모든 계정의 Claude Code에 한꺼번에 묻고(`claude agents --json`, 계정마다 최대 15초), 모두 답할 때까지 `Asking every account's Claude Code for its sessions…`를 표시합니다.
 
 ```console
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Background agents and open sessions of every account; enter attaches to one.
 
     Account   ID        Name   State          Folder      Started

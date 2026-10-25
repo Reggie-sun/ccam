@@ -4,7 +4,7 @@ description: ccam a terminal yana buɗe dashboard mai cike allo na asusai, rukun
 updated: 2026-10-25
 order: 15
 translation: machine
-sourceHash: 98ccf6cd81e9
+sourceHash: 28f216a4a04f
 ---
 
 `ccam` ba tare da arguments ba yana buɗe dashboard mai cike allo idan standard input da output terminal ne; in ba haka ba yana buga `ccam list`. Dashboard yana nuna kowane asusu tare da amfaninsa da rukunoninsa, kuma yana yin abin da umarnan ke yi: farawa, ƙarawa, shiga, canza rukunoni, saita ƙa'idodin folda, lissafa zaman bayan fage, dubawa da gyarawa. Farawa, ko haɗawa da zaman bayan fage, yana rufe shi; ƙara asusu ko shiga yana barin sa zuwa terminal sannan ya dawo.
@@ -12,7 +12,7 @@ sourceHash: 98ccf6cd81e9
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -23,7 +23,7 @@ sourceHash: 98ccf6cd81e9
  enter to launch · n for most room · a to add · s for groups · ? for shortcuts
 ```
 
-Layin da ke ƙarƙashin sunayen shafuka yana faɗin a jimla ɗaya abin da shafin yanzu yake yi. A terminal mai faɗi, shafin Accounts yana kuma nuna imel ɗin kowane asusu.
+Layin da ke ƙarƙashin sunayen shafuka yana faɗin a jimla ɗaya abin da shafin yanzu yake yi. A terminal mai faɗi, shafin Accounts yana kuma nuna imel ɗin kowane asusu. Ƙarshen layin shafuka yana faɗin ko [`auto_switch`](/features/next#auto-switch) yana a kunne, a kowane shafi (Linux da macOS; a Windows ana watsi da shi); idan yana a kunne, shafin Health yana faɗin abin da har yanzu yake buƙata: plugin ɗin ccam, a kunne, a kowane asusu da ke shiga da biyan kuɗin Claude, da kuma Claude Code 2.1.214 ko sabo.
 
 Duk lokacin da ya buɗe, dashboard yana tambayar GitHub a bayan fage ko akwai sabon sakin ccam; firam na farko ba ya taɓa jiran sa, kuma ba tare da intanet ba ba a nuna komai. Idan akwai, layi a ƙarƙashin take yana ba da shawarar sa:
 
@@ -102,7 +102,7 @@ Shafin Health yana gudanar da dubawar [`ccam doctor`](/features/doctor) idan ka 
 Shafin Agents yana nuna abin da [`ccam agents`](/features/agents) ke bugawa: zaman bayan fage da zaman da ke buɗe na kowane asusu, tare da asusun da kowanne ke ciki. Yana tambayar Claude Code na kowane asusu a lokaci ɗaya (`claude agents --json`, har zuwa daƙiƙa 15 kowanne) idan ka fara buɗe shafin, a `r`, bayan dakatarwa, da bayan canji a config, kuma yana cewa `Asking every account's Claude Code for its sessions…` har sai duka sun amsa.
 
 ```console
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Background agents and open sessions of every account; enter attaches to one.
 
     Account   ID        Name   State          Folder      Started

@@ -4,7 +4,7 @@ description: "ٹرمینل پر ccam اکاؤنٹس، گروپس، فولڈر ک
 updated: 2026-10-25
 order: 15
 translation: machine
-sourceHash: "98ccf6cd81e9"
+sourceHash: "28f216a4a04f"
 ---
 
 آرگیومنٹس کے بغیر `ccam` ایک فل اسکرین ڈیش بورڈ کھولتا ہے جب اسٹینڈرڈ اِن پٹ اور آؤٹ پٹ ٹرمینل ہوں؛ ورنہ یہ `ccam list` پرنٹ کرتا ہے۔ ڈیش بورڈ ہر اکاؤنٹ کو اس کے استعمال اور گروپس کے ساتھ دکھاتا ہے، اور وہی کام کرتا ہے جو کمانڈز کرتی ہیں: لانچ کرنا، اکاؤنٹ شامل کرنا، لاگ اِن کرنا، گروپس بدلنا، فولڈر کے اصول سیٹ کرنا، بیک گراؤنڈ سیشنز کی فہرست دکھانا، جانچ اور مرمت۔ لانچ کرنے سے، یا کسی بیک گراؤنڈ سیشن سے جڑنے سے، یہ بند ہو جاتا ہے؛ اکاؤنٹ شامل کرنا یا لاگ اِن کرنا اسے چھوڑ کر ٹرمینل پر جاتا ہے اور پھر واپس آ جاتا ہے۔
@@ -12,7 +12,7 @@ sourceHash: "98ccf6cd81e9"
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -23,7 +23,7 @@ sourceHash: "98ccf6cd81e9"
  enter to launch · n for most room · a to add · s for groups · ? for shortcuts
 ```
 
-ٹیبز کے ناموں کے نیچے والی لائن ایک جملے میں بتاتی ہے کہ موجودہ ٹیب کس لیے ہے۔ زیادہ چوڑے ٹرمینل پر Accounts ٹیب ہر اکاؤنٹ کی ای میل بھی دکھاتا ہے۔
+ٹیبز کے ناموں کے نیچے والی لائن ایک جملے میں بتاتی ہے کہ موجودہ ٹیب کس لیے ہے۔ زیادہ چوڑے ٹرمینل پر Accounts ٹیب ہر اکاؤنٹ کی ای میل بھی دکھاتا ہے۔ ٹیبز والی لائن کا آخری حصہ ہر ٹیب پر بتاتا ہے کہ [`auto_switch`](/features/next#auto-switch) آن ہے یا نہیں (Linux اور macOS؛ Windows پر اسے نظر انداز کیا جاتا ہے)؛ جب یہ آن ہو تو Health ٹیب بتاتا ہے کہ اس سیٹنگ کو اب بھی کس چیز کی ضرورت ہے: Claude سبسکرپشن سے سائن اِن کرنے والے ہر اکاؤنٹ میں آن کیا ہوا ccam پلگ اِن، اور Claude Code 2.1.214 یا بعد کا ورژن۔
 
 ہر بار کھلنے پر ڈیش بورڈ پس منظر میں GitHub سے پوچھتا ہے کہ کیا ccam کی کوئی نئی ریلیز موجود ہے؛ پہلا فریم کبھی اس کا انتظار نہیں کرتا، اور آف لائن ہونے پر کچھ نہیں دکھایا جاتا۔ اگر کوئی ہو تو عنوان کے نیچے ایک لائن اس کی سفارش کرتی ہے:
 
@@ -102,7 +102,7 @@ Health ٹیب کھولنے پر [`ccam doctor`](/features/doctor) کی جانچ�
 Agents ٹیب وہ دکھاتا ہے جو [`ccam agents`](/features/agents) پرنٹ کرتا ہے: ہر اکاؤنٹ کے بیک گراؤنڈ سیشنز اور کھلے سیشنز، اس اکاؤنٹ کے ساتھ جس کا ہر سیشن ہے۔ جب آپ پہلی بار ٹیب کھولتے ہیں، `r` پر، کسی سیشن کو روکنے کے بعد، اور کنفیگ میں تبدیلی کے بعد، یہ ہر اکاؤنٹ کے Claude Code سے ایک ساتھ پوچھتا ہے (`claude agents --json`، ہر ایک کے لیے زیادہ سے زیادہ 15 سیکنڈ)، اور جب تک سب جواب نہ دے دیں `Asking every account's Claude Code for its sessions…` کہتا ہے۔
 
 ```console
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Background agents and open sessions of every account; enter attaches to one.
 
     Account   ID        Name   State          Folder      Started

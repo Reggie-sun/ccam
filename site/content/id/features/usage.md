@@ -4,10 +4,10 @@ description: ccam usage menampilkan batas 5 jam dan mingguan semua akun sekaligu
 updated: 2026-10-25
 order: 7
 translation: machine
-sourceHash: "91ad20327289"
+sourceHash: "c98993fcdc7d"
 ---
 
-`ccam usage` menampilkan seberapa banyak batas 5 jam, batas mingguan, dan batas mingguan khusus setiap model (seperti Fable) yang sudah digunakan setiap akun, sebagai satu bilah per batas beserta waktu hingga direset. Gunakan sebelum memulai tugas panjang, atau saat Claude Code memberi tahu bahwa batas sudah dekat, untuk melihat akun mana yang masih punya ruang. `ccam statusline` adalah perintah status line untuk Claude Code: perintah ini menampilkan nama akun dan penggunaan di dalam Claude Code serta menyimpan angkanya untuk `ccam usage`.
+`ccam usage` menampilkan seberapa banyak batas 5 jam, batas mingguan, dan batas mingguan khusus setiap model (seperti Fable) yang sudah digunakan setiap akun, sebagai satu bilah per batas beserta waktu hingga direset. Gunakan sebelum memulai tugas panjang, atau saat Claude Code memberi tahu bahwa batas sudah dekat, untuk melihat akun mana yang masih punya ruang. `ccam statusline` adalah perintah status line untuk Claude Code: perintah ini menampilkan nama akun dan penggunaan di dalam Claude Code serta menyimpan angkanya untuk `ccam usage`. Untuk token dan perkiraan biaya di balik penggunaan itu, `ccam ccusage` menjalankan [ccusage](https://ccusage.com) atas percakapan semua akun ([lihat di bawah](#tokens-and-costs-ccam-ccusage)).
 
 ## Penggunaan
 
@@ -66,9 +66,31 @@ Dengan `usage_source = "claude"` di bagian atas `config.toml` (di atas `[[group]
 
 `ccam statusline` membaca JSON status line milik Claude Code dari input standar. Satu-satunya opsinya adalah `--wrap <command>`: perintah status line yang sudah ada, yang baris keluaran pertamanya diberi nama akun di depannya. `ccam statusline install` tidak menerima opsi. Keduanya menolak `--dry-run` dengan `` --dry-run is not supported by `ccam statusline`; nothing was changed ``.
 
+## Token dan biaya: `ccam ccusage`
+
+`ccam usage` menampilkan seberapa banyak setiap batas yang sudah digunakan sebuah akun. Sebaliknya, [ccusage](https://ccusage.com) menghitung token dan perkiraan biaya dalam log percakapan Claude Code. Jika dijalankan sendiri, ccusage hanya mencari log Claude Code di `~/.claude` dan `~/.config/claude` (atau di folder yang ditunjuk `CLAUDE_CONFIG_DIR`), sehingga dari akun-akun ccam, ccusage paling banyak melihat satu: akun `~/.claude` yang diimpor di tempatnya. `ccam ccusage` menjalankannya dengan `CLAUDE_CONFIG_DIR` diatur ke folder setiap akun yang memiliki percakapan, sehingga satu laporan mencakup semuanya:
+
+```sh
+ccam ccusage                           # every account, ccusage's daily report
+ccam ccusage daily --breakdown         # cost per model
+ccam ccusage claude monthly --json     # Claude Code alone, as JSON
+ccam ccusage -a work blocks --active   # one account's current 5-hour block
+ccam ccusage -a work,side weekly       # these accounts, and any that share their history
+```
+
+ccam membaca opsinya sendiri terlebih dahulu: `-a` (`--account`) menerima nama atau nomor akun, dipisahkan koma atau dengan mengulang opsinya, dan `--dry-run` menampilkan perintahnya alih-alih menjalankannya. Mulai dari argumen pertama yang bukan opsi ccam, semuanya diteruskan ke ccusage tanpa diubah; `ccam ccusage -- --help` menampilkan bantuan ccusage sendiri. ccam menjalankan `ccusage` yang sudah terinstal, jika tidak ada `bun x ccusage`, jika itu pun tidak ada `npx ccusage@latest`; dua yang terakhir mengunduhnya dari npm. Jika tidak ada satu pun, ccam meminta Anda menginstal Node.js, Bun, atau ccusage. Di Linux dan macOS, ccusage menggantikan ccam; di Windows, ccam menunggunya dan keluar dengan kode keluar ccusage. Di WSL, ccam melewati `ccusage`, `bun`, atau `npx` yang berada di drive Windows, karena program itu akan berjalan sebagai program Windows tanpa folder akun.
+
+- Laporan mencakup akun-akun yang foldernya berisi percakapan (folder `projects`). Percakapan yang dibagikan antarakun melalui sebuah grup hanya dihitung sekali.
+- Dengan `-a`, akun yang berbagi riwayatnya melalui grup membawa serta percakapan seluruh grup, dan ccam menyebutkan milik akun mana saja percakapan itu: `ccam: work shares its conversation history with personal, so the report counts their conversations too`.
+- `blocks` menampilkan jendela 5 jam, dan setiap akun punya jendelanya sendiri, jadi sebutkan satu akun saja untuk laporan itu, seperti contoh di atas.
+- ccusage juga melaporkan alat coding lain yang ditemukannya, seperti Codex, kecuali Anda menyebut salah satunya: `ccam ccusage claude daily` hanya mencakup Claude Code.
+- Saat dijalankan oleh ccam, ccusage hanya membaca pengaturannya (`ccusage.json`) dari `./.ccusage` dan folder akun. `--config` menunjuk file lain: `ccam ccusage daily --config ~/.config/claude/ccusage.json`.
+- ccusage akan membaca folder yang path-nya mengandung koma sebagai dua folder, jadi ccam menolaknya dan menyebutkan akunnya; pakai `-a` agar akun itu tidak disertakan.
+- `ccusage` adalah perintah ccam, jadi akun bernama ccusage dijalankan dengan `ccam run ccusage`; `ccam doctor` memberitahukan hal ini.
+
 ## Cara kerjanya
 
-Angkanya berasal dari dua tempat: endpoint penggunaan Anthropic yang tidak didokumentasikan, `GET https://api.anthropic.com/api/oauth/usage`, yang dipanggil dengan login masing-masing akun, dan nilai yang diberikan Claude Code ke perintah status line-nya. Semuanya ada di `internal/usage`.
+Angka yang ditampilkan `ccam usage` berasal dari dua tempat: endpoint penggunaan Anthropic yang tidak didokumentasikan, `GET https://api.anthropic.com/api/oauth/usage`, yang dipanggil dengan login masing-masing akun, dan nilai yang diberikan Claude Code ke perintah status line-nya. Semuanya ada di `internal/usage`.
 
 1. `cli.usageCmd` memuat `config.toml` dan membuat satu `usage.Account` per akun: foldernya `~/.local/share/ccam/profiles/<name>/`, penanda sesinya (bersama catatan milik Claude Code sendiri di folder akun, penanda itu menunjukkan apakah akun sedang berjalan), dan apakah akun itu diimpor di tempatnya.
 2. `Fetcher.FetchAll` menjalankan satu goroutine per akun. Semuanya berbagi satu `http.Client`, sehingga koneksi ke endpoint dipakai ulang. Menyambung boleh memakan waktu 2 detik, dan setiap akun mendapat total 3 detik. Klien tidak mengikuti pengalihan, karena pengalihan akan mengirim ulang token ke tempat lain, dan hanya membaca paling banyak 1 MB jawaban.

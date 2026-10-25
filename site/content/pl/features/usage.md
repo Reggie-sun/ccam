@@ -4,10 +4,10 @@ description: ccam usage pokazuje naraz 5-godzinne i tygodniowe limity każdego k
 updated: 2026-10-25
 order: 7
 translation: machine
-sourceHash: "91ad20327289"
+sourceHash: "c98993fcdc7d"
 ---
 
-`ccam usage` pokazuje, jaką część 5-godzinnego limitu, tygodniowego limitu i własnego tygodniowego limitu każdego modelu (takiego jak Fable) wykorzystało każde konto, jako pasek dla każdego limitu wraz z czasem do jego resetu. Używaj go przed rozpoczęciem długiego zadania albo gdy Claude Code informuje, że limit jest blisko, żeby zobaczyć, które konto ma jeszcze zapas. `ccam statusline` to polecenie paska stanu dla Claude Code: pokazuje nazwę konta i użycie w Claude Code i zapisuje liczby dla `ccam usage`.
+`ccam usage` pokazuje, jaką część 5-godzinnego limitu, tygodniowego limitu i własnego tygodniowego limitu każdego modelu (takiego jak Fable) wykorzystało każde konto, jako pasek dla każdego limitu wraz z czasem do jego resetu. Używaj go przed rozpoczęciem długiego zadania albo gdy Claude Code informuje, że limit jest blisko, żeby zobaczyć, które konto ma jeszcze zapas. `ccam statusline` to polecenie paska stanu dla Claude Code: pokazuje nazwę konta i użycie w Claude Code i zapisuje liczby dla `ccam usage`. Tokeny i szacowane koszty stojące za tym użyciem pokazuje `ccam ccusage`, które uruchamia [ccusage](https://ccusage.com) na rozmowach każdego konta ([niżej](#tokens-and-costs-ccam-ccusage)).
 
 ## Użycie
 
@@ -66,9 +66,31 @@ Z `usage_source = "claude"` na górze `config.toml` (nad pierwszym `[[group]]`, 
 
 `ccam statusline` odczytuje JSON paska stanu Claude Code ze standardowego wejścia. Jego jedyna opcja to `--wrap <command>`: istniejące polecenie paska stanu, przed którego pierwszym wierszem wyniku pojawia się nazwa konta. `ccam statusline install` nie przyjmuje opcji. Oba odrzucają `--dry-run` komunikatem `` --dry-run is not supported by `ccam statusline`; nothing was changed ``.
 
+## Tokeny i koszty: `ccam ccusage`
+
+`ccam usage` pokazuje, jaką część każdego limitu wykorzystało konto. [ccusage](https://ccusage.com) liczy natomiast tokeny i szacowane koszty w logach rozmów Claude Code. Uruchomione samodzielnie szuka logów Claude Code tylko w `~/.claude` i `~/.config/claude` (albo w folderach wskazanych przez `CLAUDE_CONFIG_DIR`), więc z kont ccam widzi najwyżej jedno: to w `~/.claude`, zaimportowane w miejscu. `ccam ccusage` uruchamia je z `CLAUDE_CONFIG_DIR` ustawionym na foldery wszystkich kont, które mają rozmowy, więc jeden raport obejmuje je wszystkie:
+
+```sh
+ccam ccusage                           # every account, ccusage's daily report
+ccam ccusage daily --breakdown         # cost per model
+ccam ccusage claude monthly --json     # Claude Code alone, as JSON
+ccam ccusage -a work blocks --active   # one account's current 5-hour block
+ccam ccusage -a work,side weekly       # these accounts, and any that share their history
+```
+
+ccam najpierw odczytuje własne opcje: `-a` (`--account`) przyjmuje nazwy lub numery kont rozdzielone przecinkami, a samą opcję można powtarzać; `--dry-run` wypisuje polecenie zamiast je uruchamiać. Od pierwszego argumentu, który nie jest opcją ccam, wszystko trafia do ccusage bez zmian; `ccam ccusage -- --help` pokazuje pomoc samego ccusage. ccam uruchamia zainstalowane `ccusage`, a gdy go nie ma, `bun x ccusage`, a w ostateczności `npx ccusage@latest`; te dwa ostatnie pobierają ccusage z npm. Gdy nie ma żadnego z nich, ccam podpowiada, żeby zainstalować Node.js, Bun albo ccusage. W systemach Linux i macOS ccusage zajmuje miejsce ccam; w systemie Windows ccam czeka, aż ccusage się zakończy, i kończy działanie z jego kodem wyjścia. W WSL ccam pomija `ccusage`, `bun` lub `npx` leżące na dysku Windows, bo taki program uruchomiłby się jako program Windows bez folderów kont.
+
+- Raport obejmuje konta, których foldery zawierają rozmowy (folder `projects`). Rozmowa, którą konta współdzielą przez grupę, jest liczona tylko raz.
+- Z `-a` konto, które współdzieli swoją historię przez grupę, wnosi rozmowy całej grupy, a ccam podaje, czyje to rozmowy: `ccam: work shares its conversation history with personal, so the report counts their conversations too`.
+- `blocks` pokazuje 5-godzinne okna, a każde konto ma własne, więc podaj przy nim jedno konto, jak wyżej.
+- ccusage raportuje też inne znalezione narzędzia do kodowania, takie jak Codex, chyba że wskażesz jedno: `ccam ccusage claude daily` to sam Claude Code.
+- Gdy uruchamia je ccam, ccusage czyta swoje ustawienia (`ccusage.json`) tylko z `./.ccusage` i z folderów kont. `--config` wskazuje inny plik: `ccam ccusage daily --config ~/.config/claude/ccusage.json`.
+- ccusage odczytałoby folder, którego ścieżka zawiera przecinek, jako dwa foldery, więc ccam go odrzuca i podaje nazwę konta; pomiń to konto za pomocą `-a`.
+- `ccusage` to polecenie ccam, więc konto o nazwie ccusage uruchamia się przez `ccam run ccusage`; `ccam doctor` o tym informuje.
+
 ## Jak to działa
 
-Liczby pochodzą z dwóch miejsc: z nieudokumentowanego endpointu użycia Anthropic, `GET https://api.anthropic.com/api/oauth/usage`, wywoływanego z własnym loginem każdego konta, oraz z wartości, które Claude Code przekazuje poleceniu paska stanu. Cały ten kod jest w `internal/usage`.
+Liczby, które pokazuje `ccam usage`, pochodzą z dwóch miejsc: z nieudokumentowanego endpointu użycia Anthropic, `GET https://api.anthropic.com/api/oauth/usage`, wywoływanego z własnym loginem każdego konta, oraz z wartości, które Claude Code przekazuje poleceniu paska stanu. Cały ten kod jest w `internal/usage`.
 
 1. `cli.usageCmd` wczytuje `config.toml` i tworzy jeden `usage.Account` na konto: jego folder `~/.local/share/ccam/profiles/<name>/`, znaczniki sesji (razem z własnymi zapisami Claude Code w folderze konta mówią, czy konto działa) i informację, czy zostało zaimportowane w miejscu.
 2. `Fetcher.FetchAll` uruchamia jedną gorutynę na konto. Wszystkie współdzielą jeden `http.Client`, więc połączenia z endpointem są używane ponownie. Nawiązanie połączenia może trwać 2 s, a każde konto ma łącznie 3 s. Klient nie podąża za przekierowaniami, bo przekierowanie wysłałoby token gdzie indziej, i odczytuje najwyżej 1 MB odpowiedzi.

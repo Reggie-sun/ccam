@@ -4,7 +4,7 @@ description: 在終端機中執行 ccam 會開啟全螢幕儀表板，顯示帳�
 updated: 2026-10-25
 order: 15
 translation: machine
-sourceHash: "98ccf6cd81e9"
+sourceHash: "28f216a4a04f"
 ---
 
 不帶參數的 `ccam` 在標準輸入和輸出都是終端機時會開啟全螢幕儀表板，否則會印出 `ccam list`。儀表板會顯示每個帳號及其用量和群組，並能完成各個指令的工作：啟動、新增、登入、變更群組、設定資料夾規則、列出背景工作階段、檢查和修復。啟動帳號或連接到背景工作階段時，儀表板會關閉；新增帳號或登入時則會暫時離開儀表板、交給終端機，完成後再回來。
@@ -12,7 +12,7 @@ sourceHash: "98ccf6cd81e9"
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -23,7 +23,7 @@ sourceHash: "98ccf6cd81e9"
  enter to launch · n for most room · a to add · s for groups · ? for shortcuts
 ```
 
-分頁名稱下方的一行用一句話說明目前分頁的用途。在較寬的終端機上，Accounts 分頁還會顯示每個帳號的電子郵件。
+分頁名稱下方的一行用一句話說明目前分頁的用途。在較寬的終端機上，Accounts 分頁還會顯示每個帳號的電子郵件。在每個分頁上，分頁所在那一行的結尾都會顯示 [`auto_switch`](/features/next#auto-switch) 是否開啟（Linux 和 macOS；在 Windows 上會被忽略）；開啟時，Health 分頁會說明這項設定還需要什麼：在每個以 Claude 訂閱登入的帳號中開啟 ccam 外掛，以及 Claude Code 2.1.214 或更新版本。
 
 儀表板每次開啟時都會在背景向 GitHub 詢問是否有更新的 ccam 發行版本；第一個畫面從不等待它，離線時則不顯示任何內容。有新版本時，標題下方的一行會推薦它：
 
@@ -102,7 +102,7 @@ sourceHash: "98ccf6cd81e9"
 Agents 分頁會顯示 [`ccam agents`](/features/agents) 印出的內容：所有帳號的背景工作階段和開啟中的工作階段，以及每個工作階段所屬的帳號。第一次開啟這個分頁時、按下 `r` 時、停止工作階段後，以及設定變更後，它會同時詢問每個帳號的 Claude Code（`claude agents --json`，每個最多 15 秒），在所有帳號回應之前會顯示 `Asking every account's Claude Code for its sessions…`。
 
 ```console
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Background agents and open sessions of every account; enter attaches to one.
 
     Account   ID        Name   State          Folder      Started

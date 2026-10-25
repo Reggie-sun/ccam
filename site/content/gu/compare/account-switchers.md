@@ -4,7 +4,7 @@ description: claude-swap, CCS, clausona, clauth, CAAM, cux અને Claude Code
 updated: 2026-10-25
 order: 2
 translation: machine
-sourceHash: 3d87ba7c975a
+sourceHash: a6aa0409a8df
 ---
 
 Claude Code એકાઉન્ટ સ્વિચ કરવાનાં ટૂલ બેમાંથી એક રીત અપનાવે છે. મોટા ભાગનાં ટૂલ એક જ `~/.claude` ફોલ્ડરની અંદર લૉગિન બદલે છે, તેથી એક સમયે એક જ એકાઉન્ટ સક્રિય રહે છે. બીજાં ટૂલ, જેમાં ccam પણ છે, `CLAUDE_CONFIG_DIR` વડે દરેક એકાઉન્ટને પોતાનું ફોલ્ડર આપે છે, તેથી દરેક એકાઉન્ટ લૉગિન રહે છે અને ઘણાં એકાઉન્ટ એકસાથે ચાલી શકે છે. ccam તેમાં શેર કરેલાં સેટિંગ્સ અને MCP સર્વર ઉમેરે છે, અને વાતચીતને બીજા એકાઉન્ટના ફોલ્ડરમાં ચાલુ રાખે છે.
@@ -96,7 +96,7 @@ ccam Linux, macOS અને Windows માટે લગભગ 10 MB ની stati
 - Developer Mode વગરના Windows પર ccam ફોલ્ડર શેર કરે છે પણ `settings.json` જેવી એકલી ફાઇલો શેર કરી શકતું નથી (ત્યારે પહેલું `ccam add` ફક્ત MCP સર્વર અને extensions શેર કરે છે); claude-swap અને CCS ત્યાં તેની નકલ કરે છે.
 - CCSwitcher, Claude Switcher અને claude-swap macOS મેનુ બારમાં વપરાશ બતાવે છે.
 - CCS, clausona, CAAM, clauth, ccswap અને Claude Switcher, Codex અને બીજા coding agents પણ સંભાળે છે.
-- clausona એકાઉન્ટ પ્રમાણે extensions ચાલુ-બંધ પણ કરે છે (ccam નું `ccam ext` તેમને ફક્ત બતાવે છે), સ્થાનિક token ખર્ચ નોંધે છે, અને tmux તથા બીજાં ટર્મિનલમાં workers નો કાફલો ચલાવતાં Claude Code plugins આપે છે.
+- clausona એકાઉન્ટ પ્રમાણે extensions ચાલુ-બંધ પણ કરે છે (ccam નું `ccam ext` તેમને ફક્ત બતાવે છે), સ્થાનિક token ખર્ચ જાતે નોંધે છે (ccam એ કામ [ccusage](https://ccusage.com) ને સોંપે છે: `ccam ccusage`), અને tmux તથા બીજાં ટર્મિનલમાં workers નો કાફલો ચલાવતાં Claude Code plugins આપે છે.
 - CAAM, CCSwitcher અને Claude Switcher Homebrew વડે ઇન્સ્ટોલ થાય છે, અને clauth અને CAAM તેમનાં release checksums પર સહી કરે છે. ccam તેની script, `.deb` કે `go install` વડે ઇન્સ્ટોલ થાય છે, અને સહી વગર checksums ચકાસે છે.
 
 ## કયું યોગ્ય છે?

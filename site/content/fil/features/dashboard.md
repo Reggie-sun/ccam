@@ -4,7 +4,7 @@ description: Sa terminal, nagbubukas ang ccam ng full-screen dashboard ng mga ac
 updated: 2026-10-25
 order: 15
 translation: machine
-sourceHash: "98ccf6cd81e9"
+sourceHash: "28f216a4a04f"
 ---
 
 Binubuksan ng `ccam` na walang argument ang isang full-screen dashboard kapag terminal ang standard input at output; kung hindi, ipi-print nito ang `ccam list`. Ipinapakita ng dashboard ang bawat account kasama ang usage at mga group nito, at ginagawa nito ang ginagawa ng mga command: magsimula, magdagdag, mag-log in, magbago ng mga group, magtakda ng mga folder rule, maglista ng mga background session, magsuri at mag-ayos. Nagsasara ito kapag nagsimula ang isang account o kapag kumabit ka sa isang background session; kapag nagdagdag ng account o nag-log in, iniiwan nito ang screen para sa terminal at bumabalik pagkatapos.
@@ -12,7 +12,7 @@ Binubuksan ng `ccam` na walang argument ang isang full-screen dashboard kapag te
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -23,7 +23,7 @@ Binubuksan ng `ccam` na walang argument ang isang full-screen dashboard kapag te
  enter to launch · n for most room · a to add · s for groups · ? for shortcuts
 ```
 
-Sinasabi ng linya sa ilalim ng mga pangalan ng tab, sa isang pangungusap, kung para saan ang kasalukuyang tab. Sa mas malapad na terminal, ipinapakita rin ng tab na Accounts ang email ng bawat account.
+Sinasabi ng linya sa ilalim ng mga pangalan ng tab, sa isang pangungusap, kung para saan ang kasalukuyang tab. Sa mas malapad na terminal, ipinapakita rin ng tab na Accounts ang email ng bawat account. Sinasabi ng dulo ng linya ng mga tab kung naka-on ang [`auto_switch`](/features/next#auto-switch), sa bawat tab (Linux at macOS; hindi ito pinapansin ng Windows); kapag naka-on ito, sinasabi ng tab na Health kung ano pa ang kailangan nito: ang ccam plugin na naka-on sa bawat account na nagsa-sign in gamit ang Claude subscription, at Claude Code 2.1.214 o mas bago.
 
 Tuwing nagbubukas ito, tinatanong ng dashboard sa GitHub sa background kung may mas bagong ccam release; hindi kailanman naghihintay rito ang unang frame, at walang ipinapakita kapag offline. Kapag mayroon, inirerekomenda ito ng isang linya sa ilalim ng pamagat:
 
@@ -102,7 +102,7 @@ Lumilipat ang `↑`/`↓` mula kahon papunta sa kahon, at may border na kulay ac
 Ipinapakita ng tab na Agents ang ipi-print ng [`ccam agents`](/features/agents): ang mga background session at bukas na session ng bawat account, kasama ang account na kinabibilangan ng bawat isa. Sabay-sabay nitong tinatanong ang Claude Code ng bawat account (`claude agents --json`, hanggang 15 segundo bawat isa) kapag una mong binuksan ang tab, sa `r`, pagkatapos ng pagpapahinto, at pagkatapos ng pagbabago sa config, at sinasabi nito ang `Asking every account's Claude Code for its sessions…` hanggang makasagot ang lahat.
 
 ```console
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Background agents and open sessions of every account; enter attaches to one.
 
     Account   ID        Name   State          Folder      Started

@@ -4,7 +4,7 @@ description: Ang ccam kumpara sa claude-swap, CCS, clausona, clauth, CAAM, cux a
 updated: 2026-10-25
 order: 2
 translation: machine
-sourceHash: 3d87ba7c975a
+sourceHash: a6aa0409a8df
 ---
 
 May dalawang paraan ang mga tool sa pag-switch ng Claude Code account. Karamihan ay nagpapalit ng login sa loob ng iisang `~/.claude` folder, kaya isang account lang ang aktibo sa bawat pagkakataon. Ang iba, kasama ang ccam, ay nagbibigay sa bawat account ng sariling folder gamit ang `CLAUDE_CONFIG_DIR`, kaya nananatiling naka-log in ang bawat account at puwedeng tumakbo nang sabay ang ilan. Nagdadagdag ang ccam ng shared na settings at MCP server, at itinutuloy nito ang isang usapan sa folder ng ibang account.
@@ -96,7 +96,7 @@ Ang ccam ay static binary na mga 10 MB at walang runtime na kailangang i-install
 - Sa Windows nang walang Developer Mode, nagshe-share ang ccam ng mga folder pero hindi ng mga iisang file gaya ng `settings.json` (kaya ang mga MCP server at extension lang ang shine-share ng unang `ccam add`); kinokopya naman ang mga ito roon ng claude-swap at CCS.
 - Ipinapakita ng CCSwitcher, Claude Switcher at claude-swap ang usage sa macOS menu bar.
 - Namamahala rin ang CCS, clausona, CAAM, clauth, ccswap at Claude Switcher ng Codex at iba pang coding agent.
-- Kaya rin ng clausona na i-on at i-off ang mga extension bawat account (ipinapakita lang ang mga ito ng `ccam ext` ng ccam), sinusubaybayan nito ang lokal na gastos sa token, at may kasama itong mga Claude Code plugin na nagpapatakbo ng grupo ng mga worker sa tmux at iba pang terminal.
+- Kaya rin ng clausona na i-on at i-off ang mga extension bawat account (ipinapakita lang ang mga ito ng `ccam ext` ng ccam), sinusubaybayan nito mismo ang lokal na gastos sa token (ipinapasa iyon ng ccam sa [ccusage](https://ccusage.com): `ccam ccusage`), at may kasama itong mga Claude Code plugin na nagpapatakbo ng grupo ng mga worker sa tmux at iba pang terminal.
 - Nai-install ang CAAM, CCSwitcher at Claude Switcher gamit ang Homebrew, at pinipirmahan ng clauth at CAAM ang mga release checksum nila. Nai-install ang ccam gamit ang script nito, isang `.deb` o `go install`, at sinusuri nito ang mga checksum nang walang pirma.
 
 ## Alin ang bagay sa iyo?

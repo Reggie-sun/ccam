@@ -4,10 +4,10 @@ description: ccam usage yana nuna iyakokin awa 5 da na mako na kowane asusu a lo
 updated: 2026-10-25
 order: 7
 translation: machine
-sourceHash: 91ad20327289
+sourceHash: c98993fcdc7d
 ---
 
-`ccam usage` yana nuna nawa kowane asusu ya yi amfani da shi daga iyakar awa 5, iyakar mako da iyakar mako ta kowane model (kamar Fable), a matsayin sanda ɗaya ga kowace iyaka tare da lokacin da ya rage kafin ta sake saitawa. Yi amfani da shi kafin ka fara dogon aiki, ko idan Claude Code ya gaya maka iyaka ta kusa, don ganin asusun da ke da sauran sarari. `ccam statusline` shi ne umarnin layin matsayi (status line) na Claude Code: yana nuna sunan asusun da amfaninsa a cikin Claude Code kuma yana ajiye lambobin don `ccam usage`.
+`ccam usage` yana nuna nawa kowane asusu ya yi amfani da shi daga iyakar awa 5, iyakar mako da iyakar mako ta kowane model (kamar Fable), a matsayin sanda ɗaya ga kowace iyaka tare da lokacin da ya rage kafin ta sake saitawa. Yi amfani da shi kafin ka fara dogon aiki, ko idan Claude Code ya gaya maka iyaka ta kusa, don ganin asusun da ke da sauran sarari. `ccam statusline` shi ne umarnin layin matsayi (status line) na Claude Code: yana nuna sunan asusun da amfaninsa a cikin Claude Code kuma yana ajiye lambobin don `ccam usage`. Don token da ƙiyasin kuɗin da ke bayan amfanin, `ccam ccusage` yana gudanar da [ccusage](https://ccusage.com) a kan tattaunawar kowane asusu ([a ƙasa](#tokens-and-costs-ccam-ccusage)).
 
 ## Amfani
 
@@ -66,9 +66,31 @@ Da `usage_source = "claude"` a saman `config.toml` (kafin `[[group]]`, `[[profil
 
 `ccam statusline` yana karanta JSON na layin matsayi na Claude Code daga standard input. Zaɓinsa ɗaya shi ne `--wrap <command>`: umarnin layin matsayi da ke akwai wanda layin fitarwa na farko ke samun sunan asusun a gabansa. `ccam statusline install` ba ya karɓar zaɓuɓɓuka. Duka biyun suna ƙin `--dry-run` da `` --dry-run is not supported by `ccam statusline`; nothing was changed ``.
 
+## Token da kuɗi: `ccam ccusage`
+
+`ccam usage` yana nuna nawa asusu ya yi amfani da shi daga kowace iyaka. [ccusage](https://ccusage.com) kuwa yana ƙirga token da ƙiyasin kuɗi a cikin bayanan tattaunawar da Claude Code ke ajiyewa. Shi kaɗai, yana neman bayanan da Claude Code ke ajiyewa a `~/.claude` da `~/.config/claude` kawai (ko a foldojin da `CLAUDE_CONFIG_DIR` ke ambato), don haka a cikin asusan ccam, ba ya ganin fiye da ɗaya: wanda aka shigo da shi a wurinsa a `~/.claude`. `ccam ccusage` yana gudanar da shi da `CLAUDE_CONFIG_DIR` da aka saita zuwa foldojin kowane asusu da ke da tattaunawa, don rahoto ɗaya ya ƙunshi su duka:
+
+```sh
+ccam ccusage                           # every account, ccusage's daily report
+ccam ccusage daily --breakdown         # cost per model
+ccam ccusage claude monthly --json     # Claude Code alone, as JSON
+ccam ccusage -a work blocks --active   # one account's current 5-hour block
+ccam ccusage -a work,side weekly       # these accounts, and any that share their history
+```
+
+ccam yana fara karanta zaɓuɓɓukansa: `-a` (`--account`) yana karɓar sunaye ko lambobin asusu, a raba su da waƙafi ko a maimaita zaɓin, kuma `--dry-run` yana buga umarnin maimakon gudanar da shi. Daga argument na farko da ba zaɓin ccam ba, komai yana zuwa ga ccusage ba tare da canji ba; `ccam ccusage -- --help` yana nuna taimakon ccusage kansa. ccam yana gudanar da `ccusage` da aka girka, in babu shi `bun x ccusage`, in babu shi ma `npx ccusage@latest`; waɗannan biyun na ƙarshe suna sauke shi daga npm. Idan babu ko ɗaya daga cikinsu, ccam yana cewa a girka Node.js, Bun ko ccusage. A Linux da macOS ccusage yana maye gurbin ccam; a Windows ccam yana jiran sa kuma yana fita da exit code na ccusage. A cikin WSL, ccam yana tsallake `ccusage`, `bun` ko `npx` da ke kan faifan Windows, domin zai gudana a matsayin shirin Windows ba tare da foldojin asusan ba.
+
+- Rahoton yana ƙunshe da asusan da foldojinsu ke da tattaunawa (foldar `projects`). Tattaunawar da asusai ke raba ta wani rukuni ana ƙirga ta sau ɗaya kawai.
+- Da `-a`, asusun da ke raba tarihinsa ta wani rukuni yana kawo tattaunawar rukunin gaba ɗaya, kuma ccam yana faɗin na waɗanne asusai ne: `ccam: work shares its conversation history with personal, so the report counts their conversations too`.
+- `blocks` yana nuna tagogin awa 5, kuma kowane asusu yana da nasa, don haka ka ambaci asusu ɗaya kawai a gare shi, kamar yadda yake a sama.
+- ccusage yana kuma ba da rahoton sauran kayan aikin coding da ya samu, kamar Codex, sai dai idan ka ambaci ɗaya: `ccam ccusage claude daily` na Claude Code ne kawai.
+- Yayin da ccam ke gudanar da shi, ccusage yana karanta saitunansa (`ccusage.json`) daga `./.ccusage` da foldojin asusan kawai. `--config` yana ambaton wani fayil dabam: `ccam ccusage daily --config ~/.config/claude/ccusage.json`.
+- ccusage zai karanta foldar da hanyarta ke da waƙafi a matsayin foldoji biyu, don haka ccam yana ƙin ta kuma yana ambaton asusun; yi amfani da `-a` don barin wannan asusun a waje.
+- `ccusage` umarnin ccam ne, don haka asusun da sunansa ccusage yana farawa da `ccam run ccusage`; `ccam doctor` yana faɗin haka.
+
 ## Yadda yake aiki
 
-Lambobin suna fitowa daga wurare biyu: endpoint na amfani na Anthropic da ba a rubuta bayaninsa ba, `GET https://api.anthropic.com/api/oauth/usage`, wanda ake kira da shigar kowane asusu, da ƙimomin da Claude Code ke miƙa wa umarnin layin matsayinsa. Duk wannan yana cikin `internal/usage`.
+Lambobin `ccam usage` suna fitowa daga wurare biyu: endpoint na amfani na Anthropic da ba a rubuta bayaninsa ba, `GET https://api.anthropic.com/api/oauth/usage`, wanda ake kira da shigar kowane asusu, da ƙimomin da Claude Code ke miƙa wa umarnin layin matsayinsa. Duk wannan yana cikin `internal/usage`.
 
 1. `cli.usageCmd` yana loda `config.toml` kuma yana gina `usage.Account` ɗaya ga kowane asusu: foldarsa `~/.local/share/ccam/profiles/<name>/`, alamomin zamansa (tare da bayanan Claude Code kansa a foldar asusun, suna faɗin ko yana aiki) da ko an shigo da shi a wurinsa.
 2. `Fetcher.FetchAll` yana fara goroutine ɗaya ga kowane asusu. Dukkansu suna raba `http.Client` ɗaya, don haka ana sake amfani da haɗi zuwa endpoint ɗin. Haɗawa na iya ɗaukar 2 s, kuma kowane asusu yana samun 3 s gaba ɗaya. Client ɗin ba ya bin turawa (redirects), tunda turawa za ta sake aika token zuwa wani wuri, kuma yana karanta 1 MB na amsar a mafi yawa.

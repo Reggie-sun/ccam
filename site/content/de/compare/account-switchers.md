@@ -4,7 +4,7 @@ description: Wie sich ccam von claude-swap, CCS, clausona, clauth, CAAM, cux und
 updated: 2026-10-25
 order: 2
 translation: machine
-sourceHash: "3d87ba7c975a"
+sourceHash: "a6aa0409a8df"
 ---
 
 Tools zum Wechseln von Claude Code-Konten verfolgen einen von zwei Ansätzen. Die meisten tauschen die Anmeldung im einen `~/.claude`-Ordner aus, sodass immer nur ein Konto aktiv ist. Andere, darunter ccam, geben jedem Konto mit `CLAUDE_CONFIG_DIR` einen eigenen Ordner, sodass jedes Konto angemeldet bleibt und mehrere gleichzeitig laufen können. ccam ergänzt geteilte Einstellungen und MCP-Server und setzt ein Gespräch im Ordner eines anderen Kontos fort.
@@ -96,7 +96,7 @@ ccam ist eine statische Binärdatei von etwa 10 MB, ohne Laufzeitumgebung, die i
 - Unter Windows ohne Entwicklermodus teilt ccam Ordner, kann aber keine einzelnen Dateien wie `settings.json` teilen (das erste `ccam add` teilt dann nur MCP-Server und Erweiterungen); claude-swap und CCS kopieren sie dort stattdessen.
 - CCSwitcher, Claude Switcher und claude-swap zeigen die Nutzung in der macOS-Menüleiste.
 - CCS, clausona, CAAM, clauth, ccswap und Claude Switcher verwalten auch Codex und andere Coding-Agents.
-- clausona schaltet außerdem Erweiterungen pro Konto ein und aus (ccams `ccam ext` zeigt sie nur an), erfasst lokale Token-Kosten und liefert Claude Code-Plugins mit, die Flotten von Workern in tmux und anderen Terminals ausführen.
+- clausona schaltet außerdem Erweiterungen pro Konto ein und aus (ccams `ccam ext` zeigt sie nur an), erfasst lokale Token-Kosten selbst (ccam überlässt das [ccusage](https://ccusage.com): `ccam ccusage`) und liefert Claude Code-Plugins mit, die Flotten von Workern in tmux und anderen Terminals ausführen.
 - CAAM, CCSwitcher und Claude Switcher lassen sich mit Homebrew installieren, und clauth und CAAM signieren ihre Release-Prüfsummen. ccam installierst du mit seinem Skript, einem `.deb` oder `go install`, und es prüft Prüfsummen ohne Signatur.
 
 ## Was passt zu dir?

@@ -4,10 +4,10 @@ description: "ccam usage แสดงขีดจำกัด 5 ชั่วโ�
 updated: 2026-10-25
 order: 7
 translation: machine
-sourceHash: "91ad20327289"
+sourceHash: "c98993fcdc7d"
 ---
 
-`ccam usage` แสดงว่าทุกบัญชีใช้ขีดจำกัดแบบ 5 ชั่วโมง ขีดจำกัดรายสัปดาห์ และขีดจำกัดรายสัปดาห์เฉพาะของแต่ละโมเดล (เช่น Fable) ไปแล้วเท่าไร เป็นแถบหนึ่งแถบต่อขีดจำกัดพร้อมเวลาที่เหลือจนกว่าจะรีเซ็ต ใช้ก่อนเริ่มงานที่ใช้เวลานาน หรือเมื่อ Claude Code แจ้งว่าใกล้ถึงขีดจำกัด เพื่อดูว่าบัญชีใดยังเหลือโควตา `ccam statusline` คือคำสั่งแถบสถานะสำหรับ Claude Code: แสดงชื่อบัญชีและการใช้งานภายใน Claude Code และบันทึกตัวเลขไว้ให้ `ccam usage`
+`ccam usage` แสดงว่าทุกบัญชีใช้ขีดจำกัดแบบ 5 ชั่วโมง ขีดจำกัดรายสัปดาห์ และขีดจำกัดรายสัปดาห์เฉพาะของแต่ละโมเดล (เช่น Fable) ไปแล้วเท่าไร เป็นแถบหนึ่งแถบต่อขีดจำกัดพร้อมเวลาที่เหลือจนกว่าจะรีเซ็ต ใช้ก่อนเริ่มงานที่ใช้เวลานาน หรือเมื่อ Claude Code แจ้งว่าใกล้ถึงขีดจำกัด เพื่อดูว่าบัญชีใดยังเหลือโควตา `ccam statusline` คือคำสั่งแถบสถานะสำหรับ Claude Code: แสดงชื่อบัญชีและการใช้งานภายใน Claude Code และบันทึกตัวเลขไว้ให้ `ccam usage` ส่วนโทเค็นและค่าใช้จ่ายโดยประมาณที่อยู่เบื้องหลังการใช้งานนั้น `ccam ccusage` จะรัน [ccusage](https://ccusage.com) กับการสนทนาของทุกบัญชี ([ดูด้านล่าง](#tokens-and-costs-ccam-ccusage))
 
 ## การใช้งาน
 
@@ -66,9 +66,31 @@ $ ccam usage
 
 `ccam statusline` อ่าน JSON ของแถบสถานะจาก Claude Code ทางอินพุตมาตรฐาน มีตัวเลือกเดียวคือ `--wrap <command>`: คำสั่งแถบสถานะที่มีอยู่ ซึ่งบรรทัดแรกของผลลัพธ์จะมีชื่อบัญชีนำหน้า `ccam statusline install` ไม่รับตัวเลือก ทั้งสองคำสั่งปฏิเสธ `--dry-run` ด้วย `` --dry-run is not supported by `ccam statusline`; nothing was changed ``
 
+## โทเค็นและค่าใช้จ่าย: `ccam ccusage`
+
+`ccam usage` แสดงว่าบัญชีใช้แต่ละขีดจำกัดไปแล้วเท่าไร ส่วน [ccusage](https://ccusage.com) นับโทเค็นและค่าใช้จ่ายโดยประมาณจากบันทึกการสนทนาของ Claude Code แทน เมื่อรันตามลำพัง ccusage จะหาบันทึกของ Claude Code เฉพาะใน `~/.claude` และ `~/.config/claude` (หรือในโฟลเดอร์ที่ `CLAUDE_CONFIG_DIR` ระบุ) จึงมองเห็นบัญชีของ ccam ได้ไม่เกินหนึ่งบัญชี คือบัญชีที่นำเข้าในตำแหน่งเดิมที่ `~/.claude` `ccam ccusage` จะรัน ccusage โดยตั้ง `CLAUDE_CONFIG_DIR` เป็นโฟลเดอร์ของทุกบัญชีที่มีการสนทนา รายงานเดียวจึงครอบคลุมทุกบัญชี:
+
+```sh
+ccam ccusage                           # every account, ccusage's daily report
+ccam ccusage daily --breakdown         # cost per model
+ccam ccusage claude monthly --json     # Claude Code alone, as JSON
+ccam ccusage -a work blocks --active   # one account's current 5-hour block
+ccam ccusage -a work,side weekly       # these accounts, and any that share their history
+```
+
+ccam อ่านตัวเลือกของตัวเองก่อน: `-a` (`--account`) รับชื่อหรือหมายเลขบัญชี โดยคั่นด้วยเครื่องหมายจุลภาคหรือใส่ตัวเลือกนี้ซ้ำ และ `--dry-run` จะพิมพ์คำสั่งออกมาแทนการรัน ตั้งแต่อาร์กิวเมนต์แรกที่ไม่ใช่ตัวเลือกของ ccam เป็นต้นไป ทุกอย่างจะส่งต่อให้ ccusage โดยไม่เปลี่ยนแปลง และ `ccam ccusage -- --help` จะแสดงวิธีใช้ของ ccusage เอง ccam จะรัน `ccusage` ที่ติดตั้งไว้ หากไม่มีจะใช้ `bun x ccusage` และหากไม่มีอีกจะใช้ `npx ccusage@latest` ซึ่งสองตัวหลังนี้จะดาวน์โหลด ccusage มาจาก npm เมื่อไม่พบตัวใดเลย ccam จะบอกให้ติดตั้ง Node.js, Bun หรือ ccusage บน Linux และ macOS ccusage จะเข้ามาแทนที่ ccam ส่วนบน Windows ccam จะรอ ccusage และจบด้วยรหัสออกของ ccusage ภายใน WSL ccam จะข้าม `ccusage`, `bun` หรือ `npx` ที่อยู่บนไดรฟ์ของ Windows เพราะตัวนั้นจะทำงานเป็นโปรแกรม Windows โดยไม่มีโฟลเดอร์ของบัญชี
+
+- รายงานครอบคลุมบัญชีที่โฟลเดอร์มีการสนทนา (มีโฟลเดอร์ `projects`) การสนทนาที่หลายบัญชีใช้ร่วมกันผ่านกลุ่มจะนับเพียงครั้งเดียว
+- เมื่อใช้ `-a` บัญชีที่ใช้ประวัติการสนทนาร่วมกันผ่านกลุ่มจะพาการสนทนาของทั้งกลุ่มมาด้วย และ ccam จะบอกว่าเป็นของใคร: `ccam: work shares its conversation history with personal, so the report counts their conversations too`
+- `blocks` แสดงช่วงเวลา 5 ชั่วโมง และแต่ละบัญชีมีช่วงเวลาของตัวเอง จึงให้ระบุบัญชีเพียงบัญชีเดียวสำหรับรายงานนี้ ดังตัวอย่างด้านบน
+- ccusage จะรายงานเครื่องมือเขียนโค้ดอื่นที่พบด้วย เช่น Codex เว้นแต่คุณจะระบุเครื่องมือเดียว: `ccam ccusage claude daily` คือ Claude Code อย่างเดียว
+- ขณะที่ ccam รัน ccusage อยู่ ccusage จะอ่านการตั้งค่าของตัวเอง (`ccusage.json`) จาก `./.ccusage` และโฟลเดอร์ของบัญชีเท่านั้น `--config` ใช้ระบุไฟล์อื่น: `ccam ccusage daily --config ~/.config/claude/ccusage.json`
+- ccusage จะอ่านโฟลเดอร์ที่พาธมีเครื่องหมายจุลภาคเป็นสองโฟลเดอร์ ccam จึงปฏิเสธโฟลเดอร์นั้นและบอกชื่อบัญชี ให้ใช้ `-a` เพื่อไม่รวมบัญชีนั้น
+- `ccusage` เป็นคำสั่งของ ccam บัญชีที่ชื่อ ccusage จึงเริ่มได้ด้วย `ccam run ccusage` และ `ccam doctor` จะแจ้งเรื่องนี้
+
 ## วิธีการทำงาน
 
-ตัวเลขมาจากสองแหล่ง: endpoint การใช้งานที่ไม่มีเอกสารของ Anthropic `GET https://api.anthropic.com/api/oauth/usage` ซึ่งเรียกด้วยการเข้าสู่ระบบของแต่ละบัญชีเอง และค่าที่ Claude Code ส่งให้คำสั่งแถบสถานะ ทั้งหมดอยู่ใน `internal/usage`
+ตัวเลขของ `ccam usage` มาจากสองแหล่ง: endpoint การใช้งานที่ไม่มีเอกสารของ Anthropic `GET https://api.anthropic.com/api/oauth/usage` ซึ่งเรียกด้วยการเข้าสู่ระบบของแต่ละบัญชีเอง และค่าที่ Claude Code ส่งให้คำสั่งแถบสถานะ ทั้งหมดอยู่ใน `internal/usage`
 
 1. `cli.usageCmd` โหลด `config.toml` และสร้าง `usage.Account` หนึ่งรายการต่อบัญชี ได้แก่ โฟลเดอร์ `~/.local/share/ccam/profiles/<name>/` เครื่องหมายเซสชัน (เมื่อใช้ร่วมกับบันทึกของ Claude Code เองในโฟลเดอร์บัญชี จะบอกได้ว่าบัญชีกำลังทำงานอยู่หรือไม่) และบัญชีนั้นถูกนำเข้าในตำแหน่งเดิมหรือไม่
 2. `Fetcher.FetchAll` เริ่ม goroutine หนึ่งตัวต่อบัญชี ทุกตัวใช้ `http.Client` ตัวเดียวกัน การเชื่อมต่อไปยัง endpoint จึงถูกนำกลับมาใช้ การเชื่อมต่อใช้เวลาได้ 2 วินาที และแต่ละบัญชีมีเวลารวม 3 วินาที ไคลเอนต์ไม่ตาม redirect เพราะ redirect จะส่งโทเค็นซ้ำไปยังที่อื่น และอ่านคำตอบไม่เกิน 1 MB

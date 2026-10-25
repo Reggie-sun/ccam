@@ -4,7 +4,7 @@ description: "ccam comparé à claude-swap, CCS, clausona, clauth, CAAM, cux et 
 updated: 2026-10-25
 order: 2
 translation: machine
-sourceHash: 3d87ba7c975a
+sourceHash: a6aa0409a8df
 ---
 
 Les outils pour changer de compte Claude Code suivent l'une de deux approches. La plupart échangent la connexion à l'intérieur de l'unique dossier `~/.claude` : un seul compte est donc actif à la fois. D'autres, dont ccam, donnent à chaque compte son propre dossier avec `CLAUDE_CONFIG_DIR` : chaque compte reste connecté et plusieurs peuvent tourner en même temps. ccam y ajoute le partage des paramètres et des serveurs MCP, et poursuit une conversation dans le dossier d'un autre compte.
@@ -96,7 +96,7 @@ ccam est un binaire statique d'environ 10 Mo, sans environnement d'exécution à
 - Sous Windows sans le Mode développeur, ccam partage les dossiers mais ne peut pas partager de fichiers isolés comme `settings.json` (le premier `ccam add` ne partage alors que les serveurs MCP et les extensions) ; claude-swap et CCS les y copient à la place.
 - CCSwitcher, Claude Switcher et claude-swap affichent l'utilisation dans la barre des menus de macOS.
 - CCS, clausona, CAAM, clauth, ccswap et Claude Switcher gèrent aussi Codex et d'autres agents de code.
-- clausona active et désactive aussi les extensions compte par compte (`ccam ext` de ccam se contente de les afficher), suit le coût local en jetons et fournit des plugins Claude Code qui font tourner des flottes de workers dans tmux et d'autres terminaux.
+- clausona active et désactive aussi les extensions compte par compte (`ccam ext` de ccam se contente de les afficher), suit lui-même le coût local en jetons (ccam confie cela à [ccusage](https://ccusage.com) : `ccam ccusage`) et fournit des plugins Claude Code qui font tourner des flottes de workers dans tmux et d'autres terminaux.
 - CAAM, CCSwitcher et Claude Switcher s'installent avec Homebrew, et clauth et CAAM signent les sommes de contrôle de leurs versions. ccam s'installe avec son script, un `.deb` ou `go install`, et vérifie les sommes de contrôle sans signature.
 
 ## Lequel choisir ?

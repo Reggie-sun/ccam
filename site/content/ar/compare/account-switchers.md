@@ -4,7 +4,7 @@ description: كيف يقارَن ccam بأدوات claude-swap وCCS وclausona 
 updated: 2026-10-25
 order: 2
 translation: machine
-sourceHash: "3d87ba7c975a"
+sourceHash: "a6aa0409a8df"
 ---
 
 تتبع أدوات تبديل حسابات Claude Code إحدى طريقتين. معظمها يبدّل تسجيل الدخول داخل مجلد `~/.claude` الوحيد، فيكون حساب واحد نشطًا في كل مرة. وأخرى، ومنها ccam، تمنح كل حساب مجلده الخاص باستخدام `CLAUDE_CONFIG_DIR`، فيبقى كل حساب مسجّل الدخول ويمكن تشغيل عدة حسابات في آن واحد. ويضيف ccam مشاركة الإعدادات وخوادم MCP، ويتابع المحادثة في مجلد حساب آخر.
@@ -96,7 +96,7 @@ ccam ملف تنفيذي ثابت بحجم 10 MB تقريبًا، دون بيئ�
 - على Windows دون وضع المطور (Developer Mode)، يشارك ccam المجلدات لكنه لا يستطيع مشاركة الملفات المفردة مثل `settings.json` (فيشارك أول `ccam add` حينها خوادم MCP والإضافات فقط)؛ أما claude-swap وCCS فتنسخانها هناك بدلًا من ذلك.
 - تعرض CCSwitcher وClaude Switcher وclaude-swap الاستخدام في شريط القوائم على macOS.
 - تدير CCS وclausona وCAAM وclauth وccswap وClaude Switcher أيضًا Codex ووكلاء برمجة آخرين.
-- يشغّل clausona أيضًا الإضافات ويوقفها لكل حساب على حدة (أما `ccam ext` في ccam فيعرضها فقط)، ويتتبّع تكلفة الرموز (tokens) محليًا، ويأتي مع مكوّنات إضافية لـ Claude Code تشغّل أساطيل من العمّال في tmux وطرفيات أخرى.
+- يشغّل clausona أيضًا الإضافات ويوقفها لكل حساب على حدة (أما `ccam ext` في ccam فيعرضها فقط)، ويتتبّع بنفسه تكلفة الرموز (tokens) محليًا (أما ccam فيُسند ذلك إلى [ccusage](https://ccusage.com): `ccam ccusage`)، ويأتي مع مكوّنات إضافية لـ Claude Code تشغّل أساطيل من العمّال في tmux وطرفيات أخرى.
 - تُثبَّت CAAM وCCSwitcher وClaude Switcher عبر Homebrew، وتوقّع clauth وCAAM مجاميع التحقق لإصداراتهما. أما ccam فيُثبَّت عبر سكربته أو حزمة `.deb` أو `go install`، ويتحقق من المجاميع دون توقيع.
 
 ## أيها يناسبك؟

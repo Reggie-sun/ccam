@@ -5,7 +5,7 @@ description: ccam addやccam <name>から、ccam usage、ccam next、ccam doctor
 updated: 2026-10-25
 order: 3
 translation: machine
-sourceHash: "abba525cae48"
+sourceHash: "41fb781fd146"
 ---
 
 コマンドの前に`--dry-run`を付けると、実際には実行せずに何をするかを確認できます。たとえば`ccam --dry-run work`のように使います。これが使えるのは、Claude Codeを起動するとき（`ccam <name>`、`ccam run`、`ccam next`、`ccam attach`）と、`group`、`migrate`、`shortcut`、`update`、`doctor --fix`です。何かを変更するそれ以外のコマンドは、実行せずにこのオプションを拒否します。
@@ -125,6 +125,8 @@ ccam pick                       # the account with the most room, for a script
 ccam "$(ccam pick)" -p "…"      # start a worker on it
 ccam agents                     # background sessions of every account
 ccam attach 49ec0028            # open one, as the account that started it (or by its name)
+ccam ccusage claude daily       # Claude Code's tokens and costs, every account (ccusage)
+ccam ccusage -a work blocks --active   # one account's current 5-hour block
 ```
 
 `next --auto`、`--fallback`、`ccam pick`は同じ方法で選びます。まず`auto_max_usage`（`config.toml`、デフォルトは100）未満のアカウントを優先し、`auto_strategy`（`headroom`、`expiring`、`balance`）に従って選びます。`--model`の週間の枠も数え、100%のアカウント（Claude Codeが上限に達したと報告した時間枠は、そのリセットまで100%と数えます）とAPIキーのログインは決して選ばず、起点となるアカウントと同じ組織の中から選びます（範囲を広げるには`--cross-org`か`cross_org = true`）。`--wait`の値は`=`の後に書きます（`--wait=2h`）。スペースで区切って書くと、ヒントとともに拒否されます。選べるアカウントがない場合は終了コード75で終了するか、`--wait`を付けていれば最初のアカウントがリセットされるまで待ちます。`ccam next --continue`は、履歴を共有していないアカウントの間でも会話を持ち越します。その場合はClaude Codeが会話を新しいアカウントにコピーします。`--brief`を付けると、新しいアカウントは代わりに新しい会話を始めます。その元になるのは、ccamがモデルを使わずに書く、前の会話の要約です（[`--brief`](/features/next#brief)）。`ccam <name>`と違い、`ccam next`は自分のオプションを読むので、Claude Codeのオプションは`--`の後に置きます。付けないとccamは`unknown flag`で止まります。Claude Codeの中では、プラグインの`/ccam:switch [account]`が会話を引き渡し、そのフックが実行するのが`ccam hook`です。`config.toml`で`auto_switch = true`を設定すると（LinuxとmacOS。デフォルトではオフ）、上限のフックは、ccamが起動した対話型のセッションを終了させ、余裕のある別のアカウントで続けます。移す先は同じ種類のアカウントだけで、同じ組織の別のシートか、別の個人プランです（[`auto_switch`](/features/next#auto-switch)）。[次のアカウントへの切り替え](/features/next)、[スクリプト用のアカウント選び](/features/pick)、[すべてのアカウントのバックグラウンドセッション](/features/agents)を参照してください。

@@ -6,7 +6,7 @@ order: 7
 translation: source
 ---
 
-`ccam usage` shows how much of the 5-hour limit, the weekly limit and each model's own weekly limit (such as Fable) every account has used, as a bar per limit with the time until it resets. Use it before you start a long task, or when Claude Code tells you a limit is near, to see which account has room left. `ccam statusline` is the status line command for Claude Code: it shows the account name and usage inside Claude Code and saves the numbers for `ccam usage`.
+`ccam usage` shows how much of the 5-hour limit, the weekly limit and each model's own weekly limit (such as Fable) every account has used, as a bar per limit with the time until it resets. Use it before you start a long task, or when Claude Code tells you a limit is near, to see which account has room left. `ccam statusline` is the status line command for Claude Code: it shows the account name and usage inside Claude Code and saves the numbers for `ccam usage`. For the tokens and estimated costs behind the usage, `ccam ccusage` runs [ccusage](https://ccusage.com) over every account's conversations ([below](#tokens-and-costs-ccam-ccusage)).
 
 ## Usage
 
@@ -65,9 +65,31 @@ With `usage_source = "claude"` at the top of `config.toml` (above the first `[[g
 
 `ccam statusline` reads Claude Code's status line JSON from standard input. Its one option is `--wrap <command>`: an existing status line command whose first output line gets the account name in front. `ccam statusline install` takes no options. Both refuse `--dry-run` with `` --dry-run is not supported by `ccam statusline`; nothing was changed ``.
 
+## Tokens and costs: `ccam ccusage`
+
+`ccam usage` shows how much of each limit an account has used. [ccusage](https://ccusage.com) counts the tokens and estimated costs in Claude Code's conversation logs instead. On its own it looks for Claude Code's logs only in `~/.claude` and `~/.config/claude` (or the folders `CLAUDE_CONFIG_DIR` names), so of ccam's accounts it sees at most one imported in place at `~/.claude`. `ccam ccusage` runs it with `CLAUDE_CONFIG_DIR` set to the folders of every account that has conversations, so one report covers them all:
+
+```sh
+ccam ccusage                           # every account, ccusage's daily report
+ccam ccusage daily --breakdown         # cost per model
+ccam ccusage claude monthly --json     # Claude Code alone, as JSON
+ccam ccusage -a work blocks --active   # one account's current 5-hour block
+ccam ccusage -a work,side weekly       # these accounts, and any that share their history
+```
+
+ccam reads its own options first: `-a` (`--account`) takes account names or numbers, comma-separated or repeated, and `--dry-run` prints the command instead of running it. From the first other argument on, everything goes to ccusage unchanged; `ccam ccusage -- --help` shows ccusage's own help. ccam runs an installed `ccusage`, else `bun x ccusage`, else `npx ccusage@latest`, which fetch it from npm; when none of them is there, it says to install Node.js, Bun or ccusage. On Linux and macOS ccusage takes ccam's place; on Windows ccam waits for it and ends with its exit code. Under WSL, ccam passes over a `ccusage`, `bun` or `npx` on a Windows drive, which would run as a Windows program without the account folders.
+
+- The report covers the accounts whose folders have conversations (a `projects` folder). A conversation that accounts share through a group counts once.
+- With `-a`, an account that shares its history through a group brings the whole group's conversations, and ccam says whose: `ccam: work shares its conversation history with personal, so the report counts their conversations too`.
+- `blocks` shows 5-hour windows, and each account has its own, so name one account for it, as above.
+- ccusage also reports the other coding tools it finds, such as Codex, unless you name one: `ccam ccusage claude daily` is Claude Code alone.
+- While ccam runs it, ccusage reads its settings (`ccusage.json`) only from `./.ccusage` and the account folders. `--config` names another file: `ccam ccusage daily --config ~/.config/claude/ccusage.json`.
+- ccusage would read a folder whose path has a comma as two folders, so ccam refuses it and names the account; leave that account out with `-a`.
+- `ccusage` is a ccam command, so an account named ccusage starts with `ccam run ccusage`; `ccam doctor` says so.
+
 ## How it works
 
-The numbers come from two places: Anthropic's undocumented usage endpoint, `GET https://api.anthropic.com/api/oauth/usage`, called with each account's own login, and the values Claude Code hands to its status line command. All of it lives in `internal/usage`.
+The numbers of `ccam usage` come from two places: Anthropic's undocumented usage endpoint, `GET https://api.anthropic.com/api/oauth/usage`, called with each account's own login, and the values Claude Code hands to its status line command. All of it lives in `internal/usage`.
 
 1. `cli.usageCmd` loads `config.toml` and builds one `usage.Account` per account: its folder `~/.local/share/ccam/profiles/<name>/`, its session markers (with Claude Code's own records in the account folder, they tell whether it is running) and whether it was imported in place.
 2. `Fetcher.FetchAll` starts one goroutine per account. All of them share one `http.Client`, so connections to the endpoint are reused. Connecting may take 2 s, and each account gets 3 s in total. The client does not follow redirects, since a redirect would resend the token somewhere else, and reads at most 1 MB of the answer.

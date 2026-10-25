@@ -4,7 +4,7 @@ description: ターミナルでccamを実行すると、アカウント、グル
 updated: 2026-10-25
 order: 15
 translation: machine
-sourceHash: "98ccf6cd81e9"
+sourceHash: "28f216a4a04f"
 ---
 
 引数なしの`ccam`は、標準入力と標準出力がターミナルであれば全画面のダッシュボードを開き、そうでなければ`ccam list`を出力します。ダッシュボードはすべてのアカウントを使用量とグループとともに表示し、起動、追加、ログイン、グループの変更、フォルダーのルールの設定、バックグラウンドセッションの一覧、点検と修復といった、コマンドと同じことを行えます。起動するか、バックグラウンドセッションにアタッチすると、ダッシュボードは閉じます。アカウントの追加やログインでは、いったんターミナルに切り替わり、終わるとダッシュボードに戻ります。
@@ -12,7 +12,7 @@ sourceHash: "98ccf6cd81e9"
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -23,7 +23,7 @@ sourceHash: "98ccf6cd81e9"
  enter to launch · n for most room · a to add · s for groups · ? for shortcuts
 ```
 
-タブ名の下の行は、現在のタブが何のためのものかを1文で説明します。幅の広いターミナルでは、Accountsタブに各アカウントのメールアドレスも表示されます。
+タブ名の下の行は、現在のタブが何のためのものかを1文で説明します。幅の広いターミナルでは、Accountsタブに各アカウントのメールアドレスも表示されます。タブ名の行の末尾には、どのタブでも、[`auto_switch`](/features/next#auto-switch)が有効かどうかが表示されます（LinuxとmacOS。Windowsでは無視されます）。有効なときは、それにまだ必要なもの（Claudeのサブスクリプションでサインインするすべてのアカウントでオンになっているccamプラグインと、Claude Code 2.1.214以降）をHealthタブが示します。
 
 ダッシュボードは開くたびに、新しいccamのリリースがあるかどうかをバックグラウンドでGitHubに問い合わせます。最初の画面がこれを待つことはなく、オフラインのときは何も表示しません。新しいリリースがあれば、タイトルの下の行でそれを勧めます。
 
@@ -102,7 +102,7 @@ Healthタブは、開いたときに[`ccam doctor`](/features/doctor)の点検�
 Agentsタブは、[`ccam agents`](/features/agents)が出力する内容、つまりすべてのアカウントのバックグラウンドセッションと開いているセッションを、それぞれが属するアカウントとともに表示します。初めてタブを開いたとき、`r`を押したとき、停止の後、設定の変更の後に、すべてのアカウントのClaude Codeに同時に問い合わせ（`claude agents --json`、それぞれ最大15秒）、すべてが応答するまで`Asking every account's Claude Code for its sessions…`と表示します。
 
 ```console
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Background agents and open sessions of every account; enter attaches to one.
 
     Account   ID        Name   State          Folder      Started

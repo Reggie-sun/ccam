@@ -4,7 +4,7 @@ description: టెర్మినల్‌లో ccam ఖాతాలు, గ�
 updated: 2026-10-25
 order: 15
 translation: machine
-sourceHash: "98ccf6cd81e9"
+sourceHash: "28f216a4a04f"
 ---
 
 స్టాండర్డ్ ఇన్‌పుట్, అవుట్‌పుట్ టెర్మినల్ అయినప్పుడు ఆర్గ్యుమెంట్‌లు లేని `ccam` పూర్తి స్క్రీన్ డాష్‌బోర్డ్‌ను తెరుస్తుంది; లేకపోతే `ccam list` ను ప్రింట్ చేస్తుంది. డాష్‌బోర్డ్ ప్రతి ఖాతాను దాని వినియోగం, గ్రూప్‌లతో చూపిస్తుంది, కమాండ్‌లు చేసే పనులనే చేస్తుంది: ప్రారంభించడం, జోడించడం, లాగిన్ చేయడం, గ్రూప్‌లను మార్చడం, ఫోల్డర్ నియమాలను సెట్ చేయడం, బ్యాక్‌గ్రౌండ్ సెషన్‌లను జాబితా చేయడం, తనిఖీ చేయడం, సరిచేయడం. ప్రారంభించడం, లేదా బ్యాక్‌గ్రౌండ్ సెషన్‌కు అటాచ్ అవ్వడం, దాన్ని మూసివేస్తుంది; ఖాతాను జోడించడం లేదా లాగిన్ చేయడం టెర్మినల్ కోసం దాన్ని వదిలి, తర్వాత తిరిగి వస్తుంది.
@@ -12,7 +12,7 @@ sourceHash: "98ccf6cd81e9"
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -23,7 +23,7 @@ sourceHash: "98ccf6cd81e9"
  enter to launch · n for most room · a to add · s for groups · ? for shortcuts
 ```
 
-ట్యాబ్ పేర్ల కింది లైన్ ప్రస్తుత ట్యాబ్ దేనికోసమో ఒక వాక్యంలో చెబుతుంది. వెడల్పైన టెర్మినల్‌లో Accounts ట్యాబ్ ప్రతి ఖాతా ఇమెయిల్‌ను కూడా చూపిస్తుంది.
+ట్యాబ్ పేర్ల కింది లైన్ ప్రస్తుత ట్యాబ్ దేనికోసమో ఒక వాక్యంలో చెబుతుంది. వెడల్పైన టెర్మినల్‌లో Accounts ట్యాబ్ ప్రతి ఖాతా ఇమెయిల్‌ను కూడా చూపిస్తుంది. [`auto_switch`](/features/next#auto-switch) ఆన్‌లో ఉందో లేదో ట్యాబ్ లైన్ చివర ప్రతి ట్యాబ్‌లోనూ చెబుతుంది (Linux, macOS; Windows లో అది విస్మరించబడుతుంది); అది ఆన్‌లో ఉన్నప్పుడు, దానికి ఇంకా ఏమి కావాలో Health ట్యాబ్ చెబుతుంది: Claude సబ్‌స్క్రిప్షన్‌తో లాగిన్ అయ్యే ప్రతి ఖాతాలో ఆన్‌లో ఉన్న ccam ప్లగిన్, అలాగే Claude Code 2.1.214 లేదా తర్వాతి వెర్షన్.
 
 తెరుచుకున్న ప్రతిసారీ, కొత్త ccam రిలీజ్ ఉందో లేదో డాష్‌బోర్డ్ బ్యాక్‌గ్రౌండ్‌లో GitHub ను అడుగుతుంది; మొదటి ఫ్రేమ్ దాని కోసం ఎప్పుడూ ఆగదు, ఆఫ్‌లైన్‌లో ఏమీ చూపించదు. కొత్త రిలీజ్ ఉంటే, శీర్షిక కింద ఒక లైన్ దాన్ని సిఫార్సు చేస్తుంది:
 
@@ -102,7 +102,7 @@ Health ట్యాబ్ మీరు దాన్ని తెరిచిన�
 Agents ట్యాబ్ [`ccam agents`](/features/agents) ప్రింట్ చేసేదాన్ని చూపిస్తుంది: ప్రతి ఖాతా బ్యాక్‌గ్రౌండ్ సెషన్‌లు, తెరిచి ఉన్న సెషన్‌లు, ఒక్కొక్కటి ఏ ఖాతాకు చెందినదో దానితో సహా. మీరు ట్యాబ్‌ను మొదటిసారి తెరిచినప్పుడు, `r` నొక్కినప్పుడు, ఒక సెషన్‌ను ఆపిన తర్వాత, config మారిన తర్వాత అది ప్రతి ఖాతా Claude Code ను ఒకేసారి అడుగుతుంది (`claude agents --json`, ఒక్కోదానికి గరిష్ఠంగా 15 సెకన్లు), అన్నీ సమాధానం ఇచ్చే వరకు `Asking every account's Claude Code for its sessions…` అని చూపిస్తుంది.
 
 ```console
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Background agents and open sessions of every account; enter attaches to one.
 
     Account   ID        Name   State          Folder      Started

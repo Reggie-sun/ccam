@@ -4,7 +4,7 @@ description: "เปรียบเทียบ ccam กับ claude-swap, CCS,
 updated: 2026-10-25
 order: 2
 translation: machine
-sourceHash: "3d87ba7c975a"
+sourceHash: "a6aa0409a8df"
 ---
 
 เครื่องมือสลับบัญชี Claude Code ใช้แนวทางใดแนวทางหนึ่งจากสองแบบ ส่วนใหญ่สลับการเข้าสู่ระบบภายในโฟลเดอร์ `~/.claude` เพียงโฟลเดอร์เดียว จึงใช้งานได้ทีละบัญชี ส่วนเครื่องมืออื่นรวมถึง ccam ให้แต่ละบัญชีมีโฟลเดอร์ของตัวเองด้วย `CLAUDE_CONFIG_DIR` ทุกบัญชีจึงยังเข้าสู่ระบบอยู่และรันหลายบัญชีพร้อมกันได้ ccam ยังเพิ่มการใช้การตั้งค่าและเซิร์ฟเวอร์ MCP ร่วมกัน และสนทนาต่อในโฟลเดอร์ของอีกบัญชีหนึ่งได้
@@ -96,7 +96,7 @@ ccam เป็นไบนารีแบบ static ขนาดประมา�
 - บน Windows ที่ไม่ได้เปิด Developer Mode ccam ใช้โฟลเดอร์ร่วมกันได้ แต่ใช้ไฟล์เดี่ยวอย่าง `settings.json` ร่วมกันไม่ได้ (`ccam add` ครั้งแรกจึงใช้ร่วมกันเฉพาะเซิร์ฟเวอร์ MCP และส่วนขยาย) ส่วน claude-swap และ CCS คัดลอกไฟล์เหล่านั้นแทน
 - CCSwitcher, Claude Switcher และ claude-swap แสดงการใช้งานในแถบเมนูของ macOS
 - CCS, clausona, CAAM, clauth, ccswap และ Claude Switcher จัดการ Codex และ coding agent อื่นด้วย
-- clausona ยังเปิดและปิดส่วนขยายแยกตามบัญชีได้ (`ccam ext` ของ ccam แค่แสดงเท่านั้น) ติดตามค่าใช้จ่ายโทเค็นในเครื่อง และมีปลั๊กอิน Claude Code ที่รัน worker จำนวนมากใน tmux และเทอร์มินัลอื่น
+- clausona ยังเปิดและปิดส่วนขยายแยกตามบัญชีได้ (`ccam ext` ของ ccam แค่แสดงเท่านั้น) ติดตามค่าใช้จ่ายโทเค็นในเครื่องได้เอง (ccam มอบงานนี้ให้ [ccusage](https://ccusage.com): `ccam ccusage`) และมีปลั๊กอิน Claude Code ที่รัน worker จำนวนมากใน tmux และเทอร์มินัลอื่น
 - CAAM, CCSwitcher และ Claude Switcher ติดตั้งด้วย Homebrew ได้ และ clauth กับ CAAM ลงลายเซ็นให้ checksum ของรีลีส ส่วน ccam ติดตั้งด้วยสคริปต์ของตัวเอง `.deb` หรือ `go install` และตรวจ checksum โดยไม่มีลายเซ็น
 
 ## แบบไหนเหมาะกับคุณ?

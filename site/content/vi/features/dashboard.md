@@ -4,7 +4,7 @@ description: "ccam trên terminal mở bảng điều khiển toàn màn hình g
 updated: 2026-10-25
 order: 15
 translation: machine
-sourceHash: "98ccf6cd81e9"
+sourceHash: "28f216a4a04f"
 ---
 
 `ccam` không kèm đối số sẽ mở một bảng điều khiển toàn màn hình khi đầu vào và đầu ra chuẩn là terminal; nếu không, nó in ra `ccam list`. Bảng điều khiển hiển thị mọi tài khoản cùng mức sử dụng và các nhóm của chúng, và làm được những gì các lệnh làm: khởi động, thêm, đăng nhập, thay đổi nhóm, đặt quy tắc thư mục, liệt kê các phiên nền, kiểm tra và sửa chữa. Khởi động một tài khoản, hoặc gắn vào một phiên nền, sẽ đóng bảng điều khiển; thêm tài khoản hoặc đăng nhập thì tạm rời nó để dùng terminal rồi quay lại.
@@ -12,7 +12,7 @@ sourceHash: "98ccf6cd81e9"
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -23,7 +23,7 @@ sourceHash: "98ccf6cd81e9"
  enter to launch · n for most room · a to add · s for groups · ? for shortcuts
 ```
 
-Dòng dưới tên các thẻ cho biết trong một câu thẻ hiện tại dùng để làm gì. Trên terminal rộng hơn, thẻ Accounts còn hiển thị email của từng tài khoản.
+Dòng dưới tên các thẻ cho biết trong một câu thẻ hiện tại dùng để làm gì. Trên terminal rộng hơn, thẻ Accounts còn hiển thị email của từng tài khoản. Cuối dòng chứa các thẻ cho biết [`auto_switch`](/features/next#auto-switch) có đang bật hay không, trên mọi thẻ (Linux và macOS; trên Windows nó bị bỏ qua); khi nó bật, thẻ Health cho biết tính năng này còn cần gì: plugin ccam được bật trong mọi tài khoản đăng nhập bằng gói đăng ký Claude, và Claude Code 2.1.214 trở lên.
 
 Mỗi lần mở, bảng điều khiển hỏi GitHub ở chế độ nền xem có bản phát hành ccam mới hơn không; khung hình đầu tiên không bao giờ chờ việc này, và khi không có mạng thì không hiển thị gì. Khi có bản mới, một dòng dưới tiêu đề sẽ đề xuất nó:
 
@@ -102,7 +102,7 @@ Thẻ Health chạy các kiểm tra của [`ccam doctor`](/features/doctor) khi 
 Thẻ Agents hiển thị những gì [`ccam agents`](/features/agents) in ra: các phiên nền và các phiên đang mở của mọi tài khoản, cùng tài khoản mà mỗi phiên thuộc về. Nó hỏi Claude Code của mọi tài khoản cùng lúc (`claude agents --json`, tối đa 15 giây cho mỗi tài khoản) khi bạn mở thẻ lần đầu, khi nhấn `r`, sau khi dừng một phiên và sau khi cấu hình thay đổi, và hiển thị `Asking every account's Claude Code for its sessions…` cho đến khi tất cả đã trả lời.
 
 ```console
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Background agents and open sessions of every account; enter attaches to one.
 
     Account   ID        Name   State          Folder      Started

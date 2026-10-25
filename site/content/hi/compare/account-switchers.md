@@ -4,7 +4,7 @@ description: Claude Code अकाउंट स्विच करने के 
 updated: 2026-10-25
 order: 2
 translation: machine
-sourceHash: "3d87ba7c975a"
+sourceHash: "a6aa0409a8df"
 ---
 
 Claude Code अकाउंट स्विच करने वाले टूल दो में से एक तरीका अपनाते हैं। ज़्यादातर टूल एक ही `~/.claude` फ़ोल्डर के अंदर लॉगिन बदलते हैं, इसलिए एक समय में एक ही अकाउंट सक्रिय रहता है। दूसरे टूल, जिनमें ccam भी है, `CLAUDE_CONFIG_DIR` से हर अकाउंट को उसका अपना फ़ोल्डर देते हैं, इसलिए हर अकाउंट लॉग इन रहता है और कई अकाउंट एक साथ चल सकते हैं। ccam इसमें साझा सेटिंग्स और MCP सर्वर जोड़ता है, और किसी बातचीत को दूसरे अकाउंट के फ़ोल्डर में जारी रखता है।
@@ -96,7 +96,7 @@ ccam लगभग 10 MB की एक static binary है, जिसके ल�
 - Developer Mode के बिना Windows पर ccam फ़ोल्डर साझा करता है, लेकिन `settings.json` जैसी अकेली फ़ाइलें साझा नहीं कर सकता (तब पहला `ccam add` केवल MCP सर्वर और एक्सटेंशन साझा करता है); claude-swap और CCS वहाँ उन्हें कॉपी कर देते हैं।
 - CCSwitcher, Claude Switcher और claude-swap उपयोग को macOS menu bar में दिखाते हैं।
 - CCS, clausona, CAAM, clauth, ccswap और Claude Switcher, Codex और दूसरे coding agents भी संभालते हैं।
-- clausona हर अकाउंट के लिए extensions को चालू और बंद भी करता है (ccam का `ccam ext` उन्हें सिर्फ़ दिखाता है), local token लागत का हिसाब रखता है, और ऐसे Claude Code plugins देता है जो tmux और दूसरे terminals में workers के पूरे समूह चलाते हैं।
+- clausona हर अकाउंट के लिए extensions को चालू और बंद भी करता है (ccam का `ccam ext` उन्हें सिर्फ़ दिखाता है), local token लागत का हिसाब ख़ुद रखता है (ccam यह काम [ccusage](https://ccusage.com) को सौंपता है: `ccam ccusage`), और ऐसे Claude Code plugins देता है जो tmux और दूसरे terminals में workers के पूरे समूह चलाते हैं।
 - CAAM, CCSwitcher और Claude Switcher, Homebrew से इंस्टॉल होते हैं, और clauth और CAAM अपने release checksums पर signature करते हैं। ccam अपनी script, एक `.deb` या `go install` से इंस्टॉल होता है, और checksums को बिना signature के जाँचता है।
 
 ## कौन-सा ठीक रहेगा?

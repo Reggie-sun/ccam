@@ -5,7 +5,7 @@ description: Kila amri na chaguo la ccam, kuanzia ccam add na ccam <name> hadi c
 updated: 2026-10-25
 order: 3
 translation: machine
-sourceHash: "abba525cae48"
+sourceHash: "41fb781fd146"
 ---
 
 Weka `--dry-run` kabla ya amri ili kuona itakachofanya bila kukifanya, kwa mfano `ccam --dry-run work`. Inafanya kazi unapoanzisha Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`) na pamoja na `group`, `migrate`, `shortcut`, `update` na `doctor --fix`. Amri nyingine zinazobadilisha kitu huikataa badala ya kufanya kazi.
@@ -125,6 +125,8 @@ ccam pick                       # the account with the most room, for a script
 ccam "$(ccam pick)" -p "…"      # start a worker on it
 ccam agents                     # background sessions of every account
 ccam attach 49ec0028            # open one, as the account that started it (or by its name)
+ccam ccusage claude daily       # Claude Code's tokens and costs, every account (ccusage)
+ccam ccusage -a work blocks --active   # one account's current 5-hour block
 ```
 
 `next --auto`, `--fallback` na `ccam pick` huchagua kwa njia ile ile: kwanza zilizo chini ya `auto_max_usage` (`config.toml`, chaguo-msingi 100), kwa `auto_strategy` (`headroom`, `expiring` au `balance`), zikihesabu kipindi cha wiki cha `--model`, kamwe si akaunti iliyo kwenye 100% (kipindi ambacho Claude Code iliripoti kuwa kimejaa huhesabiwa kama 100% hadi kianze upya), kamwe si kuingia kwa API key, na ndani ya shirika la akaunti wanayoanzia (`--cross-org` au `cross_org = true` ili kutafuta zaidi). `--wait` huchukua thamani yake baada ya `=` (`--wait=2h`); ikiandikwa kwa nafasi hukataliwa pamoja na kidokezo. Isipowezekana kuchagua yoyote, hutoka na msimbo 75, au kwa `--wait` husubiri kipindi cha akaunti ya kwanza kianze upya. `ccam next --continue` huhamisha mazungumzo hata kati ya akaunti zisizoshiriki historia: hapo Claude Code huyanakili kwenye akaunti mpya. Kwa `--brief`, akaunti mpya badala yake huanza mazungumzo mapya, kutoka kwa muhtasari ambao ccam huandika wa mazungumzo ya mwisho bila model ([`--brief`](/features/next#brief)). Tofauti na `ccam <name>`, `ccam next` husoma chaguo zake yenyewe, kwa hiyo chaguo za Claude Code huwekwa baada ya `--`; bila hiyo ccam husimama na `unknown flag`. Ndani ya Claude Code, `/ccam:switch [account]` ya plugin hukabidhi mazungumzo, na `ccam hook` ndicho ambacho hooks zake huendesha. Kwa `auto_switch = true` katika `config.toml` (Linux na macOS; imezimwa kwa chaguo-msingi), hook ya kikomo pia humaliza kipindi shirikishi ambacho ccam ilianzisha na hukiendeleza kama akaunti nyingine yenye nafasi, iliyo ya aina yake tu: kiti kingine cha shirika lile lile, au mpango mwingine wa binafsi ([`auto_switch`](/features/next#auto-switch)). Tazama [Kubadili kwenda akaunti inayofuata](/features/next), [Kuchagua akaunti kwa ajili ya script](/features/pick) na [Vipindi vya chinichini vya kila akaunti](/features/agents).

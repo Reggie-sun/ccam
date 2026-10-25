@@ -4,7 +4,7 @@ description: ccam frente a claude-swap, CCS, clausona, clauth, CAAM, cux y otras
 updated: 2026-10-25
 order: 2
 translation: machine
-sourceHash: "3d87ba7c975a"
+sourceHash: "a6aa0409a8df"
 ---
 
 Las herramientas para cambiar de cuenta en Claude Code siguen uno de dos enfoques. La mayoría intercambia el inicio de sesión dentro de la única carpeta `~/.claude`, así que solo hay una cuenta activa a la vez. Otras, entre ellas ccam, le dan a cada cuenta su propia carpeta con `CLAUDE_CONFIG_DIR`, así que todas las cuentas siguen con la sesión iniciada y varias pueden ejecutarse a la vez. ccam agrega configuración y servidores MCP compartidos, y continúa una conversación en la carpeta de otra cuenta.
@@ -96,7 +96,7 @@ ccam es un binario estático de unos 10 MB, sin entorno de ejecución que instal
 - En Windows sin el modo de desarrollador, ccam comparte carpetas pero no puede compartir archivos sueltos como `settings.json` (el primer `ccam add` comparte entonces solo los servidores MCP y las extensiones); claude-swap y CCS los copian allí en su lugar.
 - CCSwitcher, Claude Switcher y claude-swap muestran el uso en la barra de menús de macOS.
 - CCS, clausona, CAAM, clauth, ccswap y Claude Switcher también gestionan Codex y otros agentes de programación.
-- clausona también activa y desactiva extensiones por cuenta (`ccam ext` de ccam solo las muestra), registra el coste local en tokens e incluye plugins de Claude Code que ejecutan flotas de workers en tmux y otras terminales.
+- clausona también activa y desactiva extensiones por cuenta (`ccam ext` de ccam solo las muestra), registra por sí mismo el coste local en tokens (ccam lo delega en [ccusage](https://ccusage.com): `ccam ccusage`) e incluye plugins de Claude Code que ejecutan flotas de workers en tmux y otras terminales.
 - CAAM, CCSwitcher y Claude Switcher se instalan con Homebrew, y clauth y CAAM firman las sumas de comprobación de sus versiones. ccam se instala con su script, un `.deb` o `go install`, y verifica las sumas de comprobación sin firma.
 
 ## ¿Cuál te conviene?

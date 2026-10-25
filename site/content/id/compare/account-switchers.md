@@ -4,7 +4,7 @@ description: Perbandingan ccam dengan claude-swap, CCS, clausona, clauth, CAAM, 
 updated: 2026-10-25
 order: 2
 translation: machine
-sourceHash: "3d87ba7c975a"
+sourceHash: "a6aa0409a8df"
 ---
 
 Alat untuk berganti akun Claude Code memakai salah satu dari dua pendekatan. Sebagian besar menukar login di dalam satu folder `~/.claude`, sehingga hanya satu akun yang aktif pada satu waktu. Yang lain, termasuk ccam, memberi setiap akun foldernya sendiri dengan `CLAUDE_CONFIG_DIR`, sehingga setiap akun tetap login dan beberapa akun bisa berjalan bersamaan. ccam menambahkan pengaturan dan server MCP bersama, serta bisa melanjutkan percakapan di folder akun lain.
@@ -96,7 +96,7 @@ ccam adalah biner statis sekitar 10 MB tanpa runtime yang perlu dipasang, untuk 
 - Di Windows tanpa Mode Pengembang (Developer Mode), ccam bisa membagikan folder tetapi tidak bisa membagikan file tunggal seperti `settings.json` (maka `ccam add` pertama hanya membagikan server MCP dan ekstensi); claude-swap dan CCS menyalinnya ke sana sebagai gantinya.
 - CCSwitcher, Claude Switcher, dan claude-swap menampilkan penggunaan di bilah menu macOS.
 - CCS, clausona, CAAM, clauth, ccswap, dan Claude Switcher juga mengelola Codex dan agen coding lainnya.
-- clausona juga menyalakan dan mematikan ekstensi per akun (`ccam ext` milik ccam hanya menampilkannya), mencatat biaya token secara lokal, dan menyertakan plugin Claude Code yang menjalankan sekumpulan worker di tmux dan terminal lain.
+- clausona juga menyalakan dan mematikan ekstensi per akun (`ccam ext` milik ccam hanya menampilkannya), mencatat sendiri biaya token secara lokal (ccam menyerahkan hal itu kepada [ccusage](https://ccusage.com): `ccam ccusage`), dan menyertakan plugin Claude Code yang menjalankan sekumpulan worker di tmux dan terminal lain.
 - CAAM, CCSwitcher, dan Claude Switcher bisa dipasang dengan Homebrew, dan clauth serta CAAM menandatangani checksum rilisnya. ccam dipasang dengan skripnya, `.deb`, atau `go install`, dan memeriksa checksum tanpa tanda tangan.
 
 ## Mana yang cocok?

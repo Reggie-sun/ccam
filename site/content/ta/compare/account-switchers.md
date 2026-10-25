@@ -4,7 +4,7 @@ description: claude-swap, CCS, clausona, clauth, CAAM, cux போன்ற Claud
 updated: 2026-10-25
 order: 2
 translation: machine
-sourceHash: "3d87ba7c975a"
+sourceHash: "a6aa0409a8df"
 ---
 
 Claude Code கணக்குகளை மாற்றும் கருவிகள் இரண்டு அணுகுமுறைகளில் ஒன்றைப் பின்பற்றுகின்றன. பெரும்பாலானவை ஒரே `~/.claude` கோப்புறைக்குள் உள்நுழைவை மாற்றுகின்றன, அதனால் ஒரு நேரத்தில் ஒரு கணக்கு மட்டுமே செயலில் இருக்கும். ccam உட்படச் சில கருவிகள் `CLAUDE_CONFIG_DIR` மூலம் ஒவ்வொரு கணக்குக்கும் தனிக் கோப்புறையைக் கொடுக்கின்றன, அதனால் ஒவ்வொரு கணக்கும் உள்நுழைந்த நிலையிலேயே இருக்கும், பல கணக்குகள் ஒரே நேரத்தில் இயங்கலாம். ccam பகிரப்பட்ட அமைப்புகளையும் MCP சர்வர்களையும் சேர்க்கிறது, ஓர் உரையாடலை வேறொரு கணக்கின் கோப்புறையில் தொடரவும் உதவுகிறது.
@@ -96,7 +96,7 @@ ccam என்பது Linux, macOS, Windows-க்கான சுமார்
 - Developer Mode இல்லாத Windows-இல் ccam கோப்புறைகளைப் பகிர்கிறது, ஆனால் `settings.json` போன்ற தனிக் கோப்புகளைப் பகிர முடியாது (அப்போது முதல் `ccam add` MCP சர்வர்களையும் extensions-ஐயும் மட்டுமே பகிர்கிறது); claude-swap-உம் CCS-உம் அங்கே அவற்றை நகலெடுக்கின்றன.
 - CCSwitcher, Claude Switcher, claude-swap ஆகியவை macOS menu bar-இல் பயன்பாட்டைக் காட்டுகின்றன.
 - CCS, clausona, CAAM, clauth, ccswap, Claude Switcher ஆகியவை Codex-ஐயும் பிற coding agents-ஐயும் நிர்வகிக்கின்றன.
-- clausona கணக்கு வாரியாக extensions-ஐ இயக்கவும் அணைக்கவும் செய்கிறது (ccam-இன் `ccam ext` அவற்றைக் காட்ட மட்டுமே செய்கிறது), local token செலவைக் கண்காணிக்கிறது, tmux-இலும் பிற terminals-இலும் workers கூட்டத்தை இயக்கும் Claude Code plugins-ஐயும் வழங்குகிறது.
+- clausona கணக்கு வாரியாக extensions-ஐ இயக்கவும் அணைக்கவும் செய்கிறது (ccam-இன் `ccam ext` அவற்றைக் காட்ட மட்டுமே செய்கிறது), local token செலவைத் தானே கண்காணிக்கிறது (ccam அதை [ccusage](https://ccusage.com)-இடம் ஒப்படைக்கிறது: `ccam ccusage`), tmux-இலும் பிற terminals-இலும் workers கூட்டத்தை இயக்கும் Claude Code plugins-ஐயும் வழங்குகிறது.
 - CAAM, CCSwitcher, Claude Switcher ஆகியவை Homebrew மூலம் நிறுவப்படுகின்றன, clauth-உம் CAAM-உம் தங்கள் release checksums-இல் கையொப்பமிடுகின்றன. ccam அதன் script, ஒரு `.deb`, அல்லது `go install` மூலம் நிறுவப்படுகிறது, checksums-ஐக் கையொப்பம் இல்லாமல் சரிபார்க்கிறது.
 
 ## எது பொருந்தும்?

@@ -96,7 +96,7 @@ ccam is a static binary of about 10 MB with no runtime to install, for Linux, ma
 - On Windows without Developer Mode, ccam shares folders but cannot share single files such as `settings.json` (the first `ccam add` then shares only MCP servers and extensions); claude-swap and CCS copy them there instead.
 - CCSwitcher, Claude Switcher and claude-swap show usage in the macOS menu bar.
 - CCS, clausona, CAAM, clauth, ccswap and Claude Switcher also manage Codex and other coding agents.
-- clausona also turns extensions on and off per account (ccam's `ccam ext` only shows them), tracks local token cost, and ships Claude Code plugins that run fleets of workers in tmux and other terminals.
+- clausona also turns extensions on and off per account (ccam's `ccam ext` only shows them), tracks local token cost itself (ccam hands that to [ccusage](https://ccusage.com): `ccam ccusage`), and ships Claude Code plugins that run fleets of workers in tmux and other terminals.
 - CAAM, CCSwitcher and Claude Switcher install with Homebrew, and clauth and CAAM sign their release checksums. ccam installs with its script, a `.deb` or `go install`, and checks checksums without a signature.
 
 ## Which one fits?

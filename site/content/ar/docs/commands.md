@@ -5,7 +5,7 @@ description: كل أوامر ccam وخياراتها، من ccam add وccam <nam
 updated: 2026-10-25
 order: 3
 translation: machine
-sourceHash: "abba525cae48"
+sourceHash: "41fb781fd146"
 ---
 
 ضع `--dry-run` قبل أمر لترى ما سيفعله دون أن يفعله، مثلًا `ccam --dry-run work`. يعمل ذلك عند تشغيل Claude Code (`ccam <name>` و`ccam run` و`ccam next` و`ccam attach`) ومع `group` و`migrate` و`shortcut` و`update` و`doctor --fix`. أما الأوامر الأخرى التي تغيّر شيئًا فترفضه بدلًا من أن تعمل.
@@ -125,6 +125,8 @@ ccam pick                       # the account with the most room, for a script
 ccam "$(ccam pick)" -p "…"      # start a worker on it
 ccam agents                     # background sessions of every account
 ccam attach 49ec0028            # open one, as the account that started it (or by its name)
+ccam ccusage claude daily       # Claude Code's tokens and costs, every account (ccusage)
+ccam ccusage -a work blocks --active   # one account's current 5-hour block
 ```
 
 تختار `next --auto` و`--fallback` و`ccam pick` بالطريقة نفسها: الحسابات التي يقل استخدامها عن `auto_max_usage` (`config.toml`، والقيمة الافتراضية 100) أولًا، وفق `auto_strategy` (`headroom` أو `expiring` أو `balance`)، مع احتساب النافذة الأسبوعية لـ `--model`، ولا تختار أبدًا حسابًا بلغ 100% (والنافذة التي أبلغ Claude Code بامتلائها تُحتسب 100% حتى إعادة ضبطها)، ولا تسجيل دخول بمفتاح API أبدًا، وتبقى داخل مؤسسة الحساب الذي تبدأ منه (`--cross-org` أو `cross_org = true` للبحث أبعد من ذلك). ويأخذ `--wait` قيمته بعد `=` (`--wait=2h`)؛ وإذا كُتبت بمسافة يُرفض مع تلميح. وعندما يتعذر اختيار أي حساب تخرج بالرمز 75، أو تنتظر مع `--wait` حتى يُعاد ضبط أول حساب. وينقل `ccam next --continue` المحادثة حتى بين حسابات لا تتشارك السجل: فينسخها Claude Code حينئذٍ إلى الحساب الجديد. ومع `--brief`، يبدأ الحساب الجديد بدلًا من ذلك محادثة جديدة، من ملخص يكتبه ccam للمحادثة الأخيرة دون نموذج ([`--brief`](/features/next#brief)). وعلى خلاف `ccam <name>`، يقرأ `ccam next` خياراته بنفسه، لذا توضع خيارات Claude Code بعد `--`؛ ومن دونه يتوقف ccam برسالة `unknown flag`. وداخل Claude Code، يسلّم الأمر `/ccam:switch [account]` من المكوّن الإضافي المحادثة إلى حساب آخر، و`ccam hook` هو ما تشغّله خطافاته. ومع `auto_switch = true` في `config.toml` (على Linux وmacOS؛ وهو متوقف افتراضيًا)، يُنهي خطاف الحد أيضًا الجلسة التفاعلية التي شغّلها ccam ويتابعها بحساب آخر لديه متسع، على أن يكون مثل حسابها فقط: مقعدًا آخر في المؤسسة نفسها، أو خطة شخصية أخرى ([`auto_switch`](/features/next#auto-switch)). راجع [التبديل إلى الحساب التالي](/features/next) و[اختيار حساب للسكربتات](/features/pick) و[الجلسات الخلفية لكل الحسابات](/features/agents).

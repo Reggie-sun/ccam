@@ -4,7 +4,7 @@ description: claude-swap, CCS, clausona, clauth, CAAM, cux 등 Claude Code 계�
 updated: 2026-10-25
 order: 2
 translation: machine
-sourceHash: "3d87ba7c975a"
+sourceHash: "a6aa0409a8df"
 ---
 
 Claude Code 계정을 전환하는 도구는 두 가지 방식 중 하나를 씁니다. 대부분은 하나뿐인 `~/.claude` 폴더 안에서 로그인을 바꿔 끼우므로, 한 번에 한 계정만 활성화됩니다. ccam을 비롯한 나머지는 `CLAUDE_CONFIG_DIR`로 계정마다 폴더를 따로 두므로, 모든 계정이 로그인 상태를 유지하고 여러 계정을 동시에 실행할 수 있습니다. ccam은 여기에 설정과 MCP 서버 공유를 더하고, 다른 계정의 폴더에서 대화를 이어 갈 수 있게 합니다.
@@ -96,7 +96,7 @@ ccam은 약 10 MB의 정적 바이너리이며, 따로 설치할 런타임이 �
 - 개발자 모드가 꺼진 Windows에서 ccam은 폴더는 공유하지만 `settings.json` 같은 단일 파일은 공유하지 못합니다(이 경우 처음 `ccam add`를 실행할 때 MCP 서버와 확장 기능만 공유합니다). claude-swap과 CCS는 이런 경우 파일을 복사합니다.
 - CCSwitcher, Claude Switcher, claude-swap은 macOS 메뉴 막대에 사용량을 표시합니다.
 - CCS, clausona, CAAM, clauth, ccswap, Claude Switcher는 Codex 등 다른 코딩 에이전트도 관리합니다.
-- clausona는 계정마다 확장을 켜고 끌 수도 있고(ccam의 `ccam ext`는 보여 주기만 합니다), 로컬 토큰 비용을 기록하며, tmux 등의 터미널에서 여러 워커를 돌리는 Claude Code 플러그인도 제공합니다.
+- clausona는 계정마다 확장을 켜고 끌 수도 있고(ccam의 `ccam ext`는 보여 주기만 합니다), 로컬 토큰 비용을 직접 기록하며(ccam은 이를 [ccusage](https://ccusage.com)에 맡깁니다: `ccam ccusage`), tmux 등의 터미널에서 여러 워커를 돌리는 Claude Code 플러그인도 제공합니다.
 - CAAM, CCSwitcher, Claude Switcher는 Homebrew로 설치할 수 있고, clauth와 CAAM은 릴리스 체크섬에 서명합니다. ccam은 설치 스크립트, `.deb`, `go install`로 설치하며, 서명 없이 체크섬만 확인합니다.
 
 ## 어떤 도구가 맞을까요?

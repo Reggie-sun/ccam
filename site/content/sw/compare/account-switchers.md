@@ -4,7 +4,7 @@ description: Jinsi ccam inavyolinganishwa na claude-swap, CCS, clausona, clauth,
 updated: 2026-10-25
 order: 2
 translation: machine
-sourceHash: "3d87ba7c975a"
+sourceHash: "a6aa0409a8df"
 ---
 
 Zana za kubadili akaunti za Claude Code hufuata mojawapo ya njia mbili. Nyingi hubadilisha taarifa za kuingia ndani ya folda moja ya `~/.claude`, kwa hiyo akaunti moja tu hutumika kwa wakati mmoja. Nyingine, ikiwemo ccam, huipa kila akaunti folda yake kwa `CLAUDE_CONFIG_DIR`, kwa hiyo kila akaunti hubaki imeingia na kadhaa zinaweza kuendeshwa kwa pamoja. ccam huongeza mipangilio na seva za MCP zinazoshirikiwa, na huendeleza mazungumzo katika folda ya akaunti nyingine.
@@ -96,7 +96,7 @@ ccam ni binary tuli ya takriban 10 MB bila runtime ya kusakinisha, kwa Linux, ma
 - Kwenye Windows bila Developer Mode, ccam hushiriki folda lakini haiwezi kushiriki faili moja moja kama `settings.json` (hapo `ccam add` ya kwanza hushiriki seva za MCP na viendelezi pekee); claude-swap na CCS huyanakili huko badala yake.
 - CCSwitcher, Claude Switcher na claude-swap huonyesha matumizi kwenye menu bar ya macOS.
 - CCS, clausona, CAAM, clauth, ccswap na Claude Switcher pia husimamia Codex na mawakala wengine wa kuandika msimbo.
-- clausona pia huwasha na kuzima viendelezi kwa kila akaunti (`ccam ext` ya ccam huvionyesha tu), hufuatilia gharama ya tokeni ya ndani, na huja na plugins za Claude Code zinazoendesha makundi ya workers katika tmux na terminal nyingine.
+- clausona pia huwasha na kuzima viendelezi kwa kila akaunti (`ccam ext` ya ccam huvionyesha tu), hufuatilia yenyewe gharama ya tokeni ya ndani (ccam huiachia [ccusage](https://ccusage.com) kazi hiyo: `ccam ccusage`), na huja na plugins za Claude Code zinazoendesha makundi ya workers katika tmux na terminal nyingine.
 - CAAM, CCSwitcher na Claude Switcher husakinishwa kwa Homebrew, na clauth na CAAM hutia sahihi checksum za matoleo yao. ccam husakinishwa kwa hati yake, `.deb` au `go install`, na hukagua checksum bila sahihi.
 
 ## Ipi inafaa?

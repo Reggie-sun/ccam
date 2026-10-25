@@ -5,7 +5,7 @@ description: "ทุกคำสั่งและตัวเลือกขอ
 updated: 2026-10-25
 order: 3
 translation: machine
-sourceHash: "abba525cae48"
+sourceHash: "41fb781fd146"
 ---
 
 ใส่ `--dry-run` ไว้หน้าคำสั่งเพื่อดูว่าคำสั่งนั้นจะทำอะไรโดยไม่ลงมือทำจริง เช่น `ccam --dry-run work` ตัวเลือกนี้ใช้ได้เมื่อเริ่ม Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`) และกับ `group`, `migrate`, `shortcut`, `update` และ `doctor --fix` ส่วนคำสั่งอื่นที่เปลี่ยนแปลงบางอย่างจะปฏิเสธตัวเลือกนี้แทนที่จะทำงาน
@@ -125,6 +125,8 @@ ccam pick                       # the account with the most room, for a script
 ccam "$(ccam pick)" -p "…"      # start a worker on it
 ccam agents                     # background sessions of every account
 ccam attach 49ec0028            # open one, as the account that started it (or by its name)
+ccam ccusage claude daily       # Claude Code's tokens and costs, every account (ccusage)
+ccam ccusage -a work blocks --active   # one account's current 5-hour block
 ```
 
 `next --auto`, `--fallback` และ `ccam pick` เลือกด้วยวิธีเดียวกัน: บัญชีที่ต่ำกว่า `auto_max_usage` (`config.toml` ค่าเริ่มต้น 100) มาก่อน ตาม `auto_strategy` (`headroom`, `expiring` หรือ `balance`) โดยนับช่วงรายสัปดาห์ของ `--model` ด้วย ไม่เลือกบัญชีที่อยู่ที่ 100% เด็ดขาด (ช่วงที่ Claude Code รายงานว่าเต็มจะนับเป็น 100% จนกว่าจะรีเซ็ต) ไม่เลือกบัญชีที่เข้าสู่ระบบด้วย API key และเลือกเฉพาะภายในองค์กรของบัญชีที่ใช้เป็นจุดเริ่มต้น (ใช้ `--cross-org` หรือ `cross_org = true` เพื่อมองไกลกว่านั้น) `--wait` รับค่าหลัง `=` (`--wait=2h`) หากเขียนโดยเว้นวรรคจะถูกปฏิเสธพร้อมคำแนะนำ เมื่อเลือกบัญชีใดไม่ได้ จะออกด้วยรหัส 75 หรือเมื่อใช้ `--wait` จะรอให้บัญชีแรกรีเซ็ต `ccam next --continue` พาการสนทนาไปต่อได้แม้ระหว่างบัญชีที่ไม่ได้ใช้ประวัติร่วมกัน โดย Claude Code จะคัดลอกการสนทนาไปยังบัญชีใหม่ เมื่อใช้ `--brief` บัญชีใหม่จะเริ่มการสนทนาใหม่แทน จากสรุปของการสนทนาครั้งล่าสุดที่ ccam เขียนขึ้นเองโดยไม่ใช้โมเดล ([`--brief`](/features/next#brief)) ต่างจาก `ccam <name>` ตรงที่ `ccam next` อ่านตัวเลือกของตัวเอง ดังนั้นตัวเลือกของ Claude Code ต้องวางไว้หลัง `--` หากไม่มี ccam จะหยุดพร้อม `unknown flag` ภายใน Claude Code `/ccam:switch [account]` ของปลั๊กอินจะส่งต่อการสนทนา และ `ccam hook` คือสิ่งที่ hook ของปลั๊กอินรัน เมื่อตั้ง `auto_switch = true` ใน `config.toml` (Linux และ macOS ปิดไว้โดยค่าเริ่มต้น) hook ขีดจำกัดจะจบเซสชันแบบโต้ตอบที่ ccam เริ่มไว้ด้วย แล้วพาการสนทนาไปต่อในอีกบัญชีหนึ่งที่ยังมีโควตาเหลือ เฉพาะบัญชีแบบเดียวกันเท่านั้น: อีกที่นั่งหนึ่งขององค์กรเดียวกัน หรืออีกแพ็กเกจส่วนตัวหนึ่ง ([`auto_switch`](/features/next#auto-switch)) ดู[การสลับไปยังบัญชีถัดไป](/features/next) [การเลือกบัญชีสำหรับสคริปต์](/features/pick) และ[เซสชันเบื้องหลังของทุกบัญชี](/features/agents)

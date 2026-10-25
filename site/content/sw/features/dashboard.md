@@ -4,7 +4,7 @@ description: ccam kwenye terminal hufungua dashibodi ya skrini nzima ya akaunti,
 updated: 2026-10-25
 order: 15
 translation: machine
-sourceHash: "98ccf6cd81e9"
+sourceHash: "28f216a4a04f"
 ---
 
 `ccam` bila hoja hufungua dashibodi ya skrini nzima wakati ingizo na matokeo ya kawaida ni terminal; vinginevyo huchapisha `ccam list`. Dashibodi huonyesha kila akaunti pamoja na matumizi yake na vikundi vyake, na hufanya kile ambacho amri hufanya: kuanzisha, kuongeza, kuingia, kubadilisha vikundi, kuweka kanuni za folda, kuorodhesha vipindi vya chinichini, kukagua na kurekebisha. Kuanzisha, au kuunganishwa na kipindi cha chinichini, huifunga; kuongeza akaunti au kuingia huiacha kwa ajili ya terminal kisha hurudi.
@@ -12,7 +12,7 @@ sourceHash: "98ccf6cd81e9"
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -23,7 +23,7 @@ sourceHash: "98ccf6cd81e9"
  enter to launch · n for most room · a to add · s for groups · ? for shortcuts
 ```
 
-Mstari ulio chini ya majina ya vichupo husema kwa sentensi moja kichupo cha sasa ni cha nini. Kwenye terminal pana zaidi, kichupo cha Accounts pia huonyesha barua pepe ya kila akaunti.
+Mstari ulio chini ya majina ya vichupo husema kwa sentensi moja kichupo cha sasa ni cha nini. Kwenye terminal pana zaidi, kichupo cha Accounts pia huonyesha barua pepe ya kila akaunti. Mwisho wa mstari wa vichupo husema kama [`auto_switch`](/features/next#auto-switch) imewashwa, kwenye kila kichupo (Linux na macOS; kwenye Windows hupuuzwa); ikiwa imewashwa, kichupo cha Health husema bado inahitaji nini: plugin ya ccam, ikiwa imewashwa, katika kila akaunti inayoingia kwa usajili wa Claude, na Claude Code 2.1.214 au baadaye.
 
 Kila inapofunguliwa, dashibodi huuliza GitHub chinichini kama kuna toleo jipya zaidi la ccam; fremu ya kwanza kamwe haisubiri jibu hilo, na bila mtandao hakuna kinachoonyeshwa. Likiwepo, mstari ulio chini ya kichwa hulipendekeza:
 
@@ -102,7 +102,7 @@ Kichupo cha Health huendesha ukaguzi wa [`ccam doctor`](/features/doctor) unapok
 Kichupo cha Agents huonyesha kile ambacho [`ccam agents`](/features/agents) huchapisha: vipindi vya chinichini na vipindi vilivyo wazi vya kila akaunti, pamoja na akaunti ambayo kila kimoja ni chake. Huuliza Claude Code ya kila akaunti kwa wakati mmoja (`claude agents --json`, hadi sekunde 15 kila moja) unapofungua kichupo kwa mara ya kwanza, kwa `r`, baada ya kusimamisha, na baada ya badiliko la config, na husema `Asking every account's Claude Code for its sessions…` hadi zote zijibu.
 
 ```console
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Background agents and open sessions of every account; enter attaches to one.
 
     Account   ID        Name   State          Folder      Started

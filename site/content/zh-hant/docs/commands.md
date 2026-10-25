@@ -5,7 +5,7 @@ description: 所有 ccam 指令和選項，從 ccam add、ccam <name> 到 ccam u
 updated: 2026-10-25
 order: 3
 translation: machine
-sourceHash: "abba525cae48"
+sourceHash: "41fb781fd146"
 ---
 
 在指令前加上 `--dry-run`，就能查看它會做什麼而不實際執行，例如 `ccam --dry-run work`。它適用於啟動 Claude Code（`ccam <name>`、`ccam run`、`ccam next`、`ccam attach`）以及 `group`、`migrate`、`shortcut`、`update` 和 `doctor --fix`。其他會做出變更的指令則會拒絕它，而不會執行。
@@ -125,6 +125,8 @@ ccam pick                       # the account with the most room, for a script
 ccam "$(ccam pick)" -p "…"      # start a worker on it
 ccam agents                     # background sessions of every account
 ccam attach 49ec0028            # open one, as the account that started it (or by its name)
+ccam ccusage claude daily       # Claude Code's tokens and costs, every account (ccusage)
+ccam ccusage -a work blocks --active   # one account's current 5-hour block
 ```
 
 `next --auto`、`--fallback` 和 `ccam pick` 的選擇方式相同：優先選低於 `auto_max_usage`（`config.toml`，預設 100）的帳號，依 `auto_strategy`（`headroom`、`expiring` 或 `balance`）選擇，會計入 `--model` 的每週區間，絕不選擇用量 100% 的帳號（Claude Code 回報已滿的區間在重設前都算作 100%），絕不選擇 API 金鑰登入的帳號，而且只在起始帳號所屬的組織內選擇（加上 `--cross-org` 或設定 `cross_org = true` 可擴大範圍）。`--wait` 的值要寫在 `=` 之後（`--wait=2h`）；用空格分開時會被拒絕並附上提示。無法選出帳號時，它們會以代碼 75 結束，加上 `--wait` 時則等待第一個帳號重設。即使帳號之間沒有共用對話記錄，`ccam next --continue` 也能把對話帶過去：此時 Claude Code 會把對話複製到新的帳號。加上 `--brief` 時，新帳號則會改為開始一段新的對話，內容來自 ccam 不靠模型為上一段對話寫的摘要（[`--brief`](/features/next#brief)）。和 `ccam <name>` 不同，`ccam next` 會讀取自己的選項，所以 Claude Code 的選項要放在 `--` 後面；少了它時 ccam 會以 `unknown flag` 停止。在 Claude Code 中，外掛的 `/ccam:switch [account]` 會把對話交接出去，而 `ccam hook` 就是它的 hook 所執行的指令。在 `config.toml` 中設定 `auto_switch = true`（Linux 和 macOS；預設關閉）時，上限 hook 還會結束由 ccam 啟動的互動式工作階段，並以另一個還有餘裕的帳號把它接續下去，而且只會是同類的帳號：同一個組織的另一個席位，或另一個個人方案（[`auto_switch`](/features/next#auto-switch)）。請參閱[切換到下一個帳號](/features/next)、[為指令碼選擇帳號](/features/pick)和[所有帳號的背景工作階段](/features/agents)。

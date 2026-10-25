@@ -4,7 +4,7 @@ description: ccam در ترمینال یک داشبورد تمام‌صفحه ا
 updated: 2026-10-25
 order: 15
 translation: machine
-sourceHash: "98ccf6cd81e9"
+sourceHash: "28f216a4a04f"
 ---
 
 `ccam` بدون آرگومان، وقتی ورودی و خروجی استاندارد ترمینال باشند، یک داشبورد تمام‌صفحه باز می‌کند؛ در غیر این صورت `ccam list` را چاپ می‌کند. داشبورد هر حساب را همراه با مصرف و گروه‌هایش نشان می‌دهد و همان کارهایی را انجام می‌دهد که فرمان‌ها انجام می‌دهند: اجرا، افزودن، ورود، تغییر گروه‌ها، تعیین قواعد پوشه، فهرست کردن نشست‌های پس‌زمینه، بررسی و تعمیر. اجرای یک حساب، یا وصل شدن به یک نشست پس‌زمینه، داشبورد را می‌بندد؛ افزودن حساب یا ورود، داشبورد را برای ترمینال ترک می‌کند و سپس به آن برمی‌گردد.
@@ -12,7 +12,7 @@ sourceHash: "98ccf6cd81e9"
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -23,7 +23,7 @@ sourceHash: "98ccf6cd81e9"
  enter to launch · n for most room · a to add · s for groups · ? for shortcuts
 ```
 
-خط زیر نام زبانه‌ها در یک جمله می‌گوید زبانه فعلی برای چیست. در ترمینال عریض‌تر، زبانه Accounts ایمیل هر حساب را هم نشان می‌دهد.
+خط زیر نام زبانه‌ها در یک جمله می‌گوید زبانه فعلی برای چیست. در ترمینال عریض‌تر، زبانه Accounts ایمیل هر حساب را هم نشان می‌دهد. انتهای خط نام زبانه‌ها، در همه زبانه‌ها، نشان می‌دهد که [`auto_switch`](/features/next#auto-switch) روشن است یا نه (Linux و macOS؛ Windows این تنظیم را نادیده می‌گیرد)؛ وقتی روشن باشد، زبانه Health می‌گوید هنوز چه چیزی برایش لازم است: روشن بودن پلاگین ccam در هر حسابی که با اشتراک Claude وارد می‌شود، و Claude Code 2.1.214 یا جدیدتر.
 
 داشبورد هر بار که باز می‌شود، در پس‌زمینه از GitHub می‌پرسد که آیا نسخه جدیدتری از ccam وجود دارد؛ نخستین قاب هرگز منتظر آن نمی‌ماند و در حالت آفلاین چیزی نشان داده نمی‌شود. اگر نسخه جدیدتری باشد، خطی زیر عنوان آن را پیشنهاد می‌کند:
 
@@ -102,7 +102,7 @@ sourceHash: "98ccf6cd81e9"
 زبانه Agents همان چیزی را نشان می‌دهد که [`ccam agents`](/features/agents) چاپ می‌کند: نشست‌های پس‌زمینه و نشست‌های باز همه حساب‌ها، همراه با حسابی که هر کدام به آن تعلق دارد. وقتی زبانه را برای نخستین بار باز می‌کنید، با `r`، پس از یک توقف و پس از تغییری در پیکربندی، از Claude Code همه حساب‌ها هم‌زمان می‌پرسد (`claude agents --json`، هر کدام حداکثر ۱۵ ثانیه) و تا وقتی همه پاسخ دهند `Asking every account's Claude Code for its sessions…` را نشان می‌دهد.
 
 ```console
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Background agents and open sessions of every account; enter attaches to one.
 
     Account   ID        Name   State          Folder      Started

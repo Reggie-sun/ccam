@@ -5,7 +5,7 @@ description: ccam add ve ccam <name> komutlarından ccam usage, ccam next ve cca
 updated: 2026-10-25
 order: 3
 translation: machine
-sourceHash: "abba525cae48"
+sourceHash: "41fb781fd146"
 ---
 
 Bir komutun ne yapacağını, yapmadan görmek için komuttan önce `--dry-run` yazın, örneğin `ccam --dry-run work`. Bu, Claude Code başlatılırken (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`) ve `group`, `migrate`, `shortcut`, `update` ile `doctor --fix` komutlarında çalışır. Bir şeyi değiştiren diğer komutlar çalışmak yerine bunu reddeder.
@@ -125,6 +125,8 @@ ccam pick                       # the account with the most room, for a script
 ccam "$(ccam pick)" -p "…"      # start a worker on it
 ccam agents                     # background sessions of every account
 ccam attach 49ec0028            # open one, as the account that started it (or by its name)
+ccam ccusage claude daily       # Claude Code's tokens and costs, every account (ccusage)
+ccam ccusage -a work blocks --active   # one account's current 5-hour block
 ```
 
 `next --auto`, `--fallback` ve `ccam pick` aynı şekilde seçer: önce `auto_max_usage` (`config.toml`, varsayılan 100) altındaki hesaplar, `auto_strategy` (`headroom`, `expiring` veya `balance`) stratejisine göre, `--model` haftalık penceresi de sayılarak, %100'deki bir hesap (Claude Code'un dolu bildirdiği bir pencere sıfırlanana kadar %100 sayılır) ve API anahtarıyla giriş yapan bir hesap asla seçilmeden ve başladıkları hesabın kuruluşu içinde kalarak (daha ötesine bakmak için `--cross-org` veya `cross_org = true`). `--wait` değerini `=` işaretinden sonra alır (`--wait=2h`); boşlukla yazıldığında bir ipucuyla reddedilir. Hiçbiri seçilemediğinde 75 koduyla çıkarlar ya da `--wait` ile ilk hesabın sıfırlanmasını beklerler. `ccam next --continue` bir konuşmayı geçmişi paylaşmayan hesaplar arasında bile taşır: Claude Code o zaman konuşmayı yeni hesaba kopyalar. `--brief` ile yeni hesap bunun yerine, ccam'in bir model kullanmadan sonuncusundan yazdığı bir özetle yeni bir konuşma başlatır ([`--brief`](/features/next#brief)). `ccam <name>` komutunun aksine `ccam next` kendi seçeneklerini okur, bu yüzden Claude Code'un seçenekleri `--` sonrasına yazılır; o olmadan ccam `unknown flag` hatasıyla durur. Claude Code'un içinde eklentinin `/ccam:switch [account]` komutu bir konuşmayı devreder; `ccam hook` ise eklentinin hook'larının çalıştırdığı komuttur. `config.toml` içinde `auto_switch = true` olduğunda (Linux ve macOS; varsayılan olarak kapalı), limit hook'u ayrıca ccam'in başlattığı etkileşimli bir oturumu sonlandırır ve onu payı kalan başka bir hesapla sürdürür; yalnızca ona benzer bir hesapla: aynı kuruluşun başka bir koltuğu ya da başka bir kişisel plan ([`auto_switch`](/features/next#auto-switch)). Bkz. [Sonraki hesaba geçme](/features/next), [Betikler için hesap seçme](/features/pick) ve [Her hesabın arka plan oturumları](/features/agents).

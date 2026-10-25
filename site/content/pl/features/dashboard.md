@@ -4,7 +4,7 @@ description: ccam w terminalu otwiera pełnoekranowy panel kont, grup, reguł fo
 updated: 2026-10-25
 order: 15
 translation: machine
-sourceHash: "98ccf6cd81e9"
+sourceHash: "28f216a4a04f"
 ---
 
 `ccam` bez argumentów otwiera pełnoekranowy panel, gdy standardowe wejście i wyjście są terminalem; w przeciwnym razie wypisuje `ccam list`. Panel pokazuje każde konto z jego użyciem i grupami i robi to samo co polecenia: uruchamia, dodaje, loguje, zmienia grupy, ustawia reguły folderów, wyświetla sesje w tle, sprawdza i naprawia. Uruchomienie konta albo podłączenie się do sesji w tle go zamyka; dodawanie konta lub logowanie oddaje na chwilę terminal i potem do niego wraca.
@@ -12,7 +12,7 @@ sourceHash: "98ccf6cd81e9"
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -23,7 +23,7 @@ sourceHash: "98ccf6cd81e9"
  enter to launch · n for most room · a to add · s for groups · ? for shortcuts
 ```
 
-Wiersz pod nazwami kart mówi jednym zdaniem, do czego służy bieżąca karta. W szerszym terminalu karta Accounts pokazuje też adres e-mail każdego konta.
+Wiersz pod nazwami kart mówi jednym zdaniem, do czego służy bieżąca karta. W szerszym terminalu karta Accounts pokazuje też adres e-mail każdego konta. Na końcu wiersza z nazwami kart, na każdej karcie, widać, czy [`auto_switch`](/features/next#auto-switch) jest włączone (Linux i macOS; w systemie Windows jest ignorowane); gdy jest włączone, karta Health mówi, czego mu jeszcze brakuje: włączonego pluginu ccam na każdym koncie, które loguje się subskrypcją Claude, oraz Claude Code 2.1.214 lub nowszego.
 
 Przy każdym otwarciu panel pyta w tle GitHub, czy istnieje nowsze wydanie ccam; pierwsza klatka nigdy na to nie czeka, a bez sieci nic się nie pojawia. Gdy takie wydanie jest, wiersz pod tytułem je poleca:
 
@@ -102,7 +102,7 @@ Karta Health po otwarciu wykonuje sprawdzenia [`ccam doctor`](/features/doctor) 
 Karta Agents pokazuje to, co wypisuje [`ccam agents`](/features/agents): sesje w tle i otwarte sesje każdego konta, razem z kontem, do którego każda należy. Pyta Claude Code wszystkich kont naraz (`claude agents --json`, każde do 15 sekund), gdy pierwszy raz otworzysz kartę, po `r`, po zatrzymaniu sesji i po zmianie konfiguracji, a do czasu, aż wszystkie odpowiedzą, wyświetla `Asking every account's Claude Code for its sessions…`.
 
 ```console
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Background agents and open sessions of every account; enter attaches to one.
 
     Account   ID        Name   State          Folder      Started

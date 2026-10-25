@@ -4,7 +4,7 @@ description: ccam in un terminale apre una dashboard a schermo intero con accoun
 updated: 2026-10-25
 order: 15
 translation: machine
-sourceHash: "98ccf6cd81e9"
+sourceHash: "28f216a4a04f"
 ---
 
 `ccam` senza argomenti apre una dashboard a schermo intero quando standard input e standard output sono un terminale; altrimenti stampa `ccam list`. La dashboard mostra ogni account con il suo utilizzo e i suoi gruppi, e fa ciò che fanno i comandi: avviare, aggiungere, effettuare il login, cambiare i gruppi, impostare le regole delle cartelle, elencare le sessioni in background, controllare e riparare. Avviare un account, o collegarsi a una sessione in background, la chiude; aggiungere un account o effettuare il login la lascia per il terminale e poi vi ritorna.
@@ -12,7 +12,7 @@ sourceHash: "98ccf6cd81e9"
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -23,7 +23,7 @@ sourceHash: "98ccf6cd81e9"
  enter to launch · n for most room · a to add · s for groups · ? for shortcuts
 ```
 
-La riga sotto i nomi delle schede dice in una frase a cosa serve la scheda corrente. In un terminale più largo la scheda Accounts mostra anche l'email di ogni account.
+La riga sotto i nomi delle schede dice in una frase a cosa serve la scheda corrente. In un terminale più largo la scheda Accounts mostra anche l'email di ogni account. Alla fine della riga delle schede, in ogni scheda, si vede se [`auto_switch`](/features/next#auto-switch) è attivo (Linux e macOS; su Windows viene ignorato); quando è attivo, la scheda Health dice cosa gli serve ancora: il plugin di ccam, attivato, in ogni account che accede con un abbonamento Claude, e Claude Code 2.1.214 o successivo.
 
 Ogni volta che si apre, la dashboard chiede a GitHub in background se esiste una release più recente di ccam; il primo fotogramma non la aspetta mai e, offline, non viene mostrato nulla. Se ce n'è una, una riga sotto il titolo la consiglia:
 
@@ -102,7 +102,7 @@ La scheda Health esegue i controlli di [`ccam doctor`](/features/doctor) quando 
 La scheda Agents mostra ciò che stampa [`ccam agents`](/features/agents): le sessioni in background e le sessioni aperte di ogni account, con l'account a cui appartiene ciascuna. Interroga contemporaneamente il Claude Code di ogni account (`claude agents --json`, fino a 15 secondi ciascuno) quando apri la scheda per la prima volta, con `r`, dopo un arresto e dopo una modifica alla configurazione, e mostra `Asking every account's Claude Code for its sessions…` finché tutti non hanno risposto.
 
 ```console
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Background agents and open sessions of every account; enter attaches to one.
 
     Account   ID        Name   State          Folder      Started

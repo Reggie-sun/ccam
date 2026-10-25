@@ -4,10 +4,10 @@ description: Ipinapakita ng ccam usage ang 5-oras at lingguhang limit ng bawat a
 updated: 2026-10-25
 order: 7
 translation: machine
-sourceHash: "91ad20327289"
+sourceHash: "c98993fcdc7d"
 ---
 
-Ipinapakita ng `ccam usage` kung gaano kalaki na ang nagamit ng bawat account sa 5-oras na limit, sa lingguhang limit at sa sariling lingguhang limit ng bawat model (gaya ng Fable), bilang isang bar bawat limit kasama ang oras bago ito mag-reset. Gamitin ito bago ka magsimula ng mahabang gawain, o kapag sinabi ng Claude Code na malapit na ang isang limit, para makita kung aling account ang may natitira pa. Ang `ccam statusline` ay ang status line command para sa Claude Code: ipinapakita nito ang pangalan ng account at usage sa loob ng Claude Code at sine-save ang mga numero para sa `ccam usage`.
+Ipinapakita ng `ccam usage` kung gaano kalaki na ang nagamit ng bawat account sa 5-oras na limit, sa lingguhang limit at sa sariling lingguhang limit ng bawat model (gaya ng Fable), bilang isang bar bawat limit kasama ang oras bago ito mag-reset. Gamitin ito bago ka magsimula ng mahabang gawain, o kapag sinabi ng Claude Code na malapit na ang isang limit, para makita kung aling account ang may natitira pa. Ang `ccam statusline` ay ang status line command para sa Claude Code: ipinapakita nito ang pangalan ng account at usage sa loob ng Claude Code at sine-save ang mga numero para sa `ccam usage`. Para sa mga token at tinatayang gastos sa likod ng usage, pinapatakbo ng `ccam ccusage` ang [ccusage](https://ccusage.com) sa mga usapan ng bawat account ([sa ibaba](#tokens-and-costs-ccam-ccusage)).
 
 ## Paggamit
 
@@ -66,9 +66,31 @@ Kapag may `usage_source = "claude"` sa itaas ng `config.toml` (bago ang unang `[
 
 Binabasa ng `ccam statusline` ang status line JSON ng Claude Code mula sa standard input. Iisa ang option nito, ang `--wrap <command>`: isang umiiral na status line command na ang unang linya ng output ay lalagyan ng pangalan ng account sa unahan. Walang option ang `ccam statusline install`. Parehong tinatanggihan ng dalawa ang `--dry-run` na may `` --dry-run is not supported by `ccam statusline`; nothing was changed ``.
 
+## Mga token at gastos: `ccam ccusage`
+
+Ipinapakita ng `ccam usage` kung gaano kalaki na ang nagamit ng isang account sa bawat limit. Ang [ccusage](https://ccusage.com) naman ay nagbibilang ng mga token at tinatayang gastos sa mga log ng usapan ng Claude Code. Kapag mag-isa, sa `~/.claude` at `~/.config/claude` lang nito hinahanap ang mga log ng Claude Code (o sa mga folder na pinapangalanan ng `CLAUDE_CONFIG_DIR`), kaya sa mga account ng ccam, hindi hihigit sa isa ang nakikita nito: ang in-import sa kinalalagyan nito sa `~/.claude`. Pinapatakbo ito ng `ccam ccusage` nang nakatakda ang `CLAUDE_CONFIG_DIR` sa mga folder ng bawat account na may mga usapan, kaya iisang ulat ang sumasaklaw sa kanilang lahat:
+
+```sh
+ccam ccusage                           # every account, ccusage's daily report
+ccam ccusage daily --breakdown         # cost per model
+ccam ccusage claude monthly --json     # Claude Code alone, as JSON
+ccam ccusage -a work blocks --active   # one account's current 5-hour block
+ccam ccusage -a work,side weekly       # these accounts, and any that share their history
+```
+
+Binabasa muna ng ccam ang sarili nitong mga option: tumatanggap ang `-a` (`--account`) ng mga pangalan o numero ng account, pinaghihiwalay ng kuwit o inuulit, at ipi-print ng `--dry-run` ang command sa halip na patakbuhin ito. Mula sa unang argument na hindi option ng ccam, ipinapasa ang lahat sa ccusage nang walang pagbabago; ipinapakita ng `ccam ccusage -- --help` ang sariling help ng ccusage. Pinapatakbo ng ccam ang naka-install na `ccusage`, kung wala ay ang `bun x ccusage`, kung wala pa rin ay ang `npx ccusage@latest`; kinukuha ito ng huling dalawa mula sa npm. Kapag wala ni isa sa mga ito, sinasabi ng ccam na i-install ang Node.js, Bun o ccusage. Sa Linux at macOS, pumapalit ang ccusage sa ccam; sa Windows, hinihintay ito ng ccam at lumalabas ang ccam gamit ang exit code ng ccusage. Sa WSL, nilalaktawan ng ccam ang `ccusage`, `bun` o `npx` na nasa isang Windows drive, dahil tatakbo ito bilang Windows program nang wala ang mga folder ng account.
+
+- Sakop ng ulat ang mga account na may mga usapan ang folder (isang `projects` folder). Isang beses lang binibilang ang usapang shine-share ng mga account sa pamamagitan ng isang group.
+- Sa `-a`, dinadala ng account na nagshe-share ng kasaysayan nito sa pamamagitan ng isang group ang mga usapan ng buong group, at sinasabi ng ccam kung kanino ang mga ito: `ccam: work shares its conversation history with personal, so the report counts their conversations too`.
+- Ipinapakita ng `blocks` ang mga 5-oras na window, at may sariling window ang bawat account, kaya pangalanan ang iisang account para rito, gaya ng nasa itaas.
+- Iniuulat din ng ccusage ang iba pang coding tool na nakikita nito, gaya ng Codex, maliban kung pangalanan mo ang isa: Claude Code lang ang sakop ng `ccam ccusage claude daily`.
+- Habang pinapatakbo ito ng ccam, binabasa lang ng ccusage ang mga setting nito (`ccusage.json`) mula sa `./.ccusage` at sa mga folder ng account. Pinapangalanan ng `--config` ang ibang file: `ccam ccusage daily --config ~/.config/claude/ccusage.json`.
+- Babasahin ng ccusage bilang dalawang folder ang folder na may kuwit sa path nito, kaya tinatanggihan ito ng ccam at pinapangalanan ang account; gamitin ang `-a` para hindi isama ang account na iyon.
+- Command ng ccam ang `ccusage`, kaya sinisimulan ang account na pinangalanang ccusage gamit ang `ccam run ccusage`; sinasabi iyon ng `ccam doctor`.
+
 ## Paano ito gumagana
 
-Galing sa dalawang lugar ang mga numero: ang hindi dokumentadong usage endpoint ng Anthropic, `GET https://api.anthropic.com/api/oauth/usage`, na tinatawag gamit ang sariling login ng bawat account, at ang mga value na ibinibigay ng Claude Code sa status line command nito. Nasa `internal/usage` ang lahat ng ito.
+Galing sa dalawang lugar ang mga numero ng `ccam usage`: ang hindi dokumentadong usage endpoint ng Anthropic, `GET https://api.anthropic.com/api/oauth/usage`, na tinatawag gamit ang sariling login ng bawat account, at ang mga value na ibinibigay ng Claude Code sa status line command nito. Nasa `internal/usage` ang lahat ng ito.
 
 1. Nilo-load ng `cli.usageCmd` ang `config.toml` at bumubuo ng isang `usage.Account` bawat account: ang folder nito na `~/.local/share/ccam/profiles/<name>/`, ang mga session marker nito (kasama ang sariling mga tala ng Claude Code sa folder ng account, sinasabi ng mga ito kung tumatakbo ito) at kung in-import ito sa kinalalagyan nito.
 2. Nagsisimula ang `Fetcher.FetchAll` ng isang goroutine bawat account. Iisang `http.Client` ang gamit nilang lahat, kaya muling ginagamit ang mga koneksyon sa endpoint. Puwedeng umabot nang 2 s ang pagkonekta, at may kabuuang 3 s ang bawat account. Hindi sumusunod sa mga redirect ang client, dahil ipapadala ulit ng redirect ang token sa ibang lugar, at hanggang 1 MB lang ng sagot ang binabasa nito.

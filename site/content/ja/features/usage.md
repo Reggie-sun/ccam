@@ -4,10 +4,10 @@ description: ccam usageはすべてのアカウントの5時間と週間の上�
 updated: 2026-10-25
 order: 7
 translation: machine
-sourceHash: "91ad20327289"
+sourceHash: "c98993fcdc7d"
 ---
 
-`ccam usage`は、各アカウントが5時間の上限、週間の上限、モデルごとの週間上限（Fableなど）をどれだけ使ったかを、上限ごとのバーとリセットまでの時間で表示します。長い作業を始める前や、Claude Codeが上限に近いことを知らせたときに使い、どのアカウントに余裕が残っているかを確認します。`ccam statusline`はClaude Code用のステータスラインのコマンドです。Claude Codeの中にアカウント名と使用量を表示し、その数値を`ccam usage`のために保存します。
+`ccam usage`は、各アカウントが5時間の上限、週間の上限、モデルごとの週間上限（Fableなど）をどれだけ使ったかを、上限ごとのバーとリセットまでの時間で表示します。長い作業を始める前や、Claude Codeが上限に近いことを知らせたときに使い、どのアカウントに余裕が残っているかを確認します。`ccam statusline`はClaude Code用のステータスラインのコマンドです。Claude Codeの中にアカウント名と使用量を表示し、その数値を`ccam usage`のために保存します。使用量のもとになるトークンと推定コストについては、`ccam ccusage`がすべてのアカウントの会話に対して[ccusage](https://ccusage.com)を実行します（[後述](#tokens-and-costs-ccam-ccusage)）。
 
 ## 使い方
 
@@ -66,9 +66,31 @@ $ ccam usage
 
 `ccam statusline`は、Claude Codeのステータスライン用のJSONを標準入力から読みます。オプションは`--wrap <command>`の1つだけで、既存のステータスラインのコマンドを指定すると、その出力の1行目の前にアカウント名が付きます。`ccam statusline install`はオプションを取りません。どちらも`--dry-run`を`` --dry-run is not supported by `ccam statusline`; nothing was changed ``で拒否します。
 
+## トークンとコスト：`ccam ccusage`
+
+`ccam usage`は、アカウントが各上限をどれだけ使ったかを表示します。これに対して[ccusage](https://ccusage.com)は、Claude Codeの会話ログにあるトークンと推定コストを集計します。ccusageは単独では、Claude Codeのログを`~/.claude`と`~/.config/claude`（または`CLAUDE_CONFIG_DIR`で指定したフォルダー）でしか探さないため、見えるccamのアカウントは多くても1つ、`~/.claude`にその場所のままインポートしたものだけです。`ccam ccusage`は、会話があるすべてのアカウントのフォルダーを`CLAUDE_CONFIG_DIR`に設定してccusageを実行するので、1つのレポートですべてのアカウントを扱えます。
+
+```sh
+ccam ccusage                           # every account, ccusage's daily report
+ccam ccusage daily --breakdown         # cost per model
+ccam ccusage claude monthly --json     # Claude Code alone, as JSON
+ccam ccusage -a work blocks --active   # one account's current 5-hour block
+ccam ccusage -a work,side weekly       # these accounts, and any that share their history
+```
+
+ccamはまず自身のオプションを読みます。`-a`（`--account`）はアカウント名または番号を受け取り、カンマ区切りでも、オプションを繰り返しても指定できます。`--dry-run`はコマンドを実行せずに表示します。ccamのオプションでない最初の引数から後は、すべてそのままccusageに渡ります。`ccam ccusage -- --help`ならccusage自身のヘルプを表示します。ccamは、インストール済みの`ccusage`を、なければ`bun x ccusage`を、それもなければ`npx ccusage@latest`を実行します。後の2つはccusageをnpmから取得します。どれもない場合は、Node.js、Bun、ccusageのいずれかをインストールするよう伝えます。LinuxとmacOSではccamが自身をccusageに置き換え、Windowsではccamがccusageの終了を待ってその終了コードで終了します。WSLでは、Windowsのドライブ上にある`ccusage`、`bun`、`npx`は使わずに飛ばします。それらはアカウントのフォルダーのないWindowsのプログラムとして動いてしまうためです。
+
+- レポートの対象は、フォルダーに会話がある（`projects`フォルダーがある）アカウントです。複数のアカウントがグループを通じて共有している会話は、1回だけ数えます。
+- `-a`を使うと、グループを通じて履歴を共有しているアカウントからはグループ全体の会話が入り、ccamはそれが誰の会話かを伝えます: `ccam: work shares its conversation history with personal, so the report counts their conversations too`
+- `blocks`は5時間の枠を表示します。この枠はアカウントごとに別々なので、上の例のようにアカウントを1つだけ指定します。
+- ccusageは、ツールを1つ指定しない限り、見つけたほかのコーディングツール（Codexなど）も報告します。`ccam ccusage claude daily`ならClaude Codeだけです。
+- ccamから実行したとき、ccusageは設定（`ccusage.json`）を`./.ccusage`とアカウントのフォルダーからだけ読みます。別のファイルは`--config`で指定します: `ccam ccusage daily --config ~/.config/claude/ccusage.json`
+- ccusageはパスにカンマを含むフォルダーを2つのフォルダーとして読んでしまうため、ccamはそのフォルダーを拒否し、アカウント名を示します。そのアカウントは`-a`で外してください。
+- `ccusage`はccamのコマンドなので、ccusageという名前のアカウントは`ccam run ccusage`で起動します。`ccam doctor`もそのことを伝えます。
+
 ## しくみ
 
-数値の取得元は2つあります。各アカウント自身のログインで呼び出す、Anthropicの公開ドキュメントに記載されていない使用量エンドポイント`GET https://api.anthropic.com/api/oauth/usage`と、Claude Codeがステータスラインのコマンドに渡す値です。これらはすべて`internal/usage`にあります。
+`ccam usage`の数値の取得元は2つあります。各アカウント自身のログインで呼び出す、Anthropicの公開ドキュメントに記載されていない使用量エンドポイント`GET https://api.anthropic.com/api/oauth/usage`と、Claude Codeがステータスラインのコマンドに渡す値です。これらはすべて`internal/usage`にあります。
 
 1. `cli.usageCmd`が`config.toml`を読み込み、アカウントごとに1つの`usage.Account`を作ります。内容は、フォルダー`~/.local/share/ccam/profiles/<name>/`、セッションのマーカー（アカウントのフォルダーにあるClaude Code自身の記録と合わせて、実行中かどうかがわかります）、その場所のままインポートしたかどうかです。
 2. `Fetcher.FetchAll`がアカウントごとに1つのgoroutineを起動します。すべてが1つの`http.Client`を共有するので、エンドポイントへの接続は再利用されます。接続には最大2秒、各アカウントには合計3秒かかってもかまいません。リダイレクトするとトークンが別の場所に再送されてしまうため、クライアントはリダイレクトをたどらず、応答は最大1 MBまでしか読みません。

@@ -4,10 +4,10 @@ description: "ccam usage affiche d'un coup les limites sur 5 heures et hebdomada
 updated: 2026-10-25
 order: 7
 translation: machine
-sourceHash: "91ad20327289"
+sourceHash: "c98993fcdc7d"
 ---
 
-`ccam usage` indique quelle part de la limite sur 5 heures, de la limite hebdomadaire et de la limite hebdomadaire propre à chaque modèle (comme Fable) chaque compte a utilisée, avec une barre par limite et le temps restant avant sa réinitialisation. Utilisez-le avant de commencer une longue tâche, ou quand Claude Code vous signale qu'une limite approche, pour voir quel compte a encore de la marge. `ccam statusline` est la commande de ligne d'état pour Claude Code : elle affiche le nom du compte et l'utilisation dans Claude Code et enregistre les chiffres pour `ccam usage`.
+`ccam usage` indique quelle part de la limite sur 5 heures, de la limite hebdomadaire et de la limite hebdomadaire propre à chaque modèle (comme Fable) chaque compte a utilisée, avec une barre par limite et le temps restant avant sa réinitialisation. Utilisez-le avant de commencer une longue tâche, ou quand Claude Code vous signale qu'une limite approche, pour voir quel compte a encore de la marge. `ccam statusline` est la commande de ligne d'état pour Claude Code : elle affiche le nom du compte et l'utilisation dans Claude Code et enregistre les chiffres pour `ccam usage`. Pour les jetons et les coûts estimés derrière cette utilisation, `ccam ccusage` exécute [ccusage](https://ccusage.com) sur les conversations de tous les comptes ([voir plus bas](#tokens-and-costs-ccam-ccusage)).
 
 ## Utilisation
 
@@ -66,9 +66,31 @@ Avec `usage_source = "claude"` en haut de `config.toml` (au-dessus du premier `[
 
 `ccam statusline` lit sur l'entrée standard le JSON de ligne d'état de Claude Code. Sa seule option est `--wrap <command>` : une commande de ligne d'état existante dont la première ligne de sortie reçoit le nom du compte en tête. `ccam statusline install` n'accepte aucune option. Les deux refusent `--dry-run` avec `` --dry-run is not supported by `ccam statusline`; nothing was changed ``.
 
+## Jetons et coûts : `ccam ccusage`
+
+`ccam usage` indique quelle part de chaque limite un compte a utilisée. [ccusage](https://ccusage.com), lui, compte les jetons et les coûts estimés dans les journaux de conversation de Claude Code. Seul, il ne cherche les journaux de Claude Code que dans `~/.claude` et `~/.config/claude` (ou dans les dossiers que désigne `CLAUDE_CONFIG_DIR`) : parmi les comptes de ccam, il en voit donc au plus un, importé sur place dans `~/.claude`. `ccam ccusage` l'exécute avec `CLAUDE_CONFIG_DIR` pointant vers les dossiers de tous les comptes qui ont des conversations, de sorte qu'un seul rapport les couvre tous :
+
+```sh
+ccam ccusage                           # every account, ccusage's daily report
+ccam ccusage daily --breakdown         # cost per model
+ccam ccusage claude monthly --json     # Claude Code alone, as JSON
+ccam ccusage -a work blocks --active   # one account's current 5-hour block
+ccam ccusage -a work,side weekly       # these accounts, and any that share their history
+```
+
+ccam lit d'abord ses propres options : `-a` (`--account`) prend des noms ou des numéros de compte, séparés par des virgules ou répétés, et `--dry-run` affiche la commande au lieu de l'exécuter. À partir du premier argument qui n'est pas une option de ccam, tout est transmis tel quel à ccusage ; `ccam ccusage -- --help` affiche l'aide de ccusage lui-même. ccam exécute un `ccusage` installé, sinon `bun x ccusage`, sinon `npx ccusage@latest` (ces deux derniers le récupèrent depuis npm) ; si aucun n'est présent, il indique d'installer Node.js, Bun ou ccusage. Sous Linux et macOS, ccusage prend la place de ccam ; sous Windows, ccam l'attend et se termine avec le code de sortie de ccusage. Sous WSL, ccam ignore un `ccusage`, `bun` ou `npx` situé sur un lecteur Windows, qui s'exécuterait comme un programme Windows sans les dossiers des comptes.
+
+- Le rapport couvre les comptes dont le dossier contient des conversations (un dossier `projects`). Une conversation que des comptes partagent via un groupe n'est comptée qu'une fois.
+- Avec `-a`, un compte qui partage son historique via un groupe apporte les conversations de tout le groupe, et ccam indique à quels comptes elles appartiennent : `ccam: work shares its conversation history with personal, so the report counts their conversations too`.
+- `blocks` affiche des fenêtres de 5 heures, et chaque compte a les siennes : nommez donc un seul compte pour ce rapport, comme ci-dessus.
+- ccusage inclut aussi les autres outils de code qu'il trouve, comme Codex, sauf si vous en nommez un : `ccam ccusage claude daily` ne porte que sur Claude Code.
+- Quand ccam le lance, ccusage ne lit ses paramètres (`ccusage.json`) que dans `./.ccusage` et dans les dossiers des comptes. `--config` désigne un autre fichier : `ccam ccusage daily --config ~/.config/claude/ccusage.json`.
+- ccusage lirait un dossier dont le chemin contient une virgule comme deux dossiers : ccam le refuse donc et nomme le compte ; laissez ce compte de côté avec `-a`.
+- `ccusage` est une commande de ccam : un compte nommé ccusage se lance donc avec `ccam run ccusage` ; `ccam doctor` le signale.
+
 ## Fonctionnement
 
-Les chiffres viennent de deux sources : le point de terminaison d'utilisation non documenté d'Anthropic, `GET https://api.anthropic.com/api/oauth/usage`, appelé avec la propre connexion de chaque compte, et les valeurs que Claude Code transmet à sa commande de ligne d'état. Tout se trouve dans `internal/usage`.
+Les chiffres de `ccam usage` viennent de deux sources : le point de terminaison d'utilisation non documenté d'Anthropic, `GET https://api.anthropic.com/api/oauth/usage`, appelé avec la propre connexion de chaque compte, et les valeurs que Claude Code transmet à sa commande de ligne d'état. Tout se trouve dans `internal/usage`.
 
 1. `cli.usageCmd` charge `config.toml` et construit un `usage.Account` par compte : son dossier `~/.local/share/ccam/profiles/<name>/`, ses marqueurs de session (avec les propres enregistrements de Claude Code dans le dossier du compte, ils indiquent s'il est en cours d'exécution) et s'il a été importé sur place.
 2. `Fetcher.FetchAll` lance une goroutine par compte. Toutes partagent un même `http.Client`, si bien que les connexions au point de terminaison sont réutilisées. La connexion peut prendre 2 s, et chaque compte dispose de 3 s au total. Le client ne suit pas les redirections, puisqu'une redirection renverrait le jeton ailleurs, et lit au plus 1 Mo de la réponse.

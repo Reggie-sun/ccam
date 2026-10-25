@@ -4,7 +4,7 @@ description: टर्मिनलवर ccam खाती, गट, फोल्
 updated: 2026-10-25
 order: 15
 translation: machine
-sourceHash: "98ccf6cd81e9"
+sourceHash: "28f216a4a04f"
 ---
 
 standard input आणि output टर्मिनल असताना आर्ग्युमेंट्सशिवाय `ccam` पूर्ण स्क्रीन डॅशबोर्ड उघडते; इतर वेळी ते `ccam list` छापते. डॅशबोर्ड प्रत्येक खाते त्याच्या वापर आणि गटांसह दाखवतो, आणि कमांड्स जे करतात ते करतो: सुरू करणे, जोडणे, लॉग इन करणे, गट बदलणे, फोल्डर नियम सेट करणे, background सत्रांची यादी करणे, तपासणे आणि दुरुस्त करणे. खाते सुरू केल्यावर, किंवा background सत्राशी attach केल्यावर, तो बंद होतो; खाते जोडताना किंवा लॉग इन करताना तो टर्मिनल सोडून देतो आणि नंतर परत येतो.
@@ -12,7 +12,7 @@ standard input आणि output टर्मिनल असताना आर�
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -23,7 +23,7 @@ standard input आणि output टर्मिनल असताना आर�
  enter to launch · n for most room · a to add · s for groups · ? for shortcuts
 ```
 
-tab नावांखालची ओळ सध्याचा tab कशासाठी आहे ते एका वाक्यात सांगते. जास्त रुंद टर्मिनलवर Accounts tab प्रत्येक खात्याचा ईमेलही दाखवतो.
+tab नावांखालची ओळ सध्याचा tab कशासाठी आहे ते एका वाक्यात सांगते. जास्त रुंद टर्मिनलवर Accounts tab प्रत्येक खात्याचा ईमेलही दाखवतो. tab नावांच्या ओळीच्या शेवटी, प्रत्येक tab वर, [`auto_switch`](/features/next#auto-switch) चालू आहे की नाही ते दिसते (Linux आणि macOS; Windows वर त्याकडे दुर्लक्ष केले जाते); ते चालू असताना, त्याला अजून काय हवे आहे ते Health tab सांगतो: Claude subscription ने साइन इन करणाऱ्या प्रत्येक खात्यात चालू असलेले ccam plugin, आणि Claude Code 2.1.214 किंवा नंतरचे.
 
 प्रत्येक वेळी उघडताना डॅशबोर्ड पार्श्वभूमीत GitHub ला विचारतो की नवीन ccam रिलीज आहे का; पहिली frame त्यासाठी कधीही थांबत नाही, आणि offline असताना काहीही दाखवले जात नाही. नवीन रिलीज असल्यास, शीर्षकाखालची एक ओळ तो सुचवते:
 
@@ -102,7 +102,7 @@ tab नावांखालची ओळ सध्याचा tab कशास
 Agents tab [`ccam agents`](/features/agents) जे छापते ते दाखवतो: प्रत्येक खात्याची background सत्रे आणि उघडी सत्रे, प्रत्येक सत्र कोणत्या खात्याचे आहे त्यासह. तुम्ही tab पहिल्यांदा उघडता तेव्हा, `r` वर, एखादे सत्र थांबवल्यानंतर, आणि config बदलल्यानंतर तो प्रत्येक खात्याच्या Claude Code ला एकाच वेळी विचारतो (`claude agents --json`, प्रत्येकाला 15 सेकंदांपर्यंत), आणि सर्वांनी उत्तर देईपर्यंत `Asking every account's Claude Code for its sessions…` असे सांगतो.
 
 ```console
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Background agents and open sessions of every account; enter attaches to one.
 
     Account   ID        Name   State          Folder      Started

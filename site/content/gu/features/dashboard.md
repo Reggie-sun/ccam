@@ -4,7 +4,7 @@ description: ટર્મિનલ પર ccam એકાઉન્ટ, ગ્ર�
 updated: 2026-10-25
 order: 15
 translation: machine
-sourceHash: 98ccf6cd81e9
+sourceHash: 28f216a4a04f
 ---
 
 standard input અને output ટર્મિનલ હોય ત્યારે આર્ગ્યુમેન્ટ વગરનું `ccam` ફુલ-સ્ક્રીન ડેશબોર્ડ ખોલે છે; નહીં તો તે `ccam list` છાપે છે. ડેશબોર્ડ દરેક એકાઉન્ટને તેના વપરાશ અને ગ્રુપ સાથે બતાવે છે, અને કમાન્ડ જે કરે છે તે જ કરે છે: શરૂ કરવું, ઉમેરવું, લૉગિન કરવું, ગ્રુપ બદલવાં, ફોલ્ડર નિયમો સેટ કરવા, બૅકગ્રાઉન્ડ સેશનની યાદી બતાવવી, તપાસવું અને સુધારવું. શરૂ કરવાથી, કે બૅકગ્રાઉન્ડ સેશન સાથે જોડાવાથી, તે બંધ થાય છે; એકાઉન્ટ ઉમેરવા કે લૉગિન કરવા માટે તે ટર્મિનલ છોડે છે અને પાછું આવે છે.
@@ -12,7 +12,7 @@ standard input અને output ટર્મિનલ હોય ત્યાર�
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -23,7 +23,7 @@ standard input અને output ટર્મિનલ હોય ત્યાર�
  enter to launch · n for most room · a to add · s for groups · ? for shortcuts
 ```
 
-ટૅબનાં નામ નીચેની લાઇન એક વાક્યમાં કહે છે કે હાલનું ટૅબ શેના માટે છે. વધુ પહોળા ટર્મિનલ પર Accounts ટૅબ દરેક એકાઉન્ટનો ઇમેઇલ પણ બતાવે છે.
+ટૅબનાં નામ નીચેની લાઇન એક વાક્યમાં કહે છે કે હાલનું ટૅબ શેના માટે છે. વધુ પહોળા ટર્મિનલ પર Accounts ટૅબ દરેક એકાઉન્ટનો ઇમેઇલ પણ બતાવે છે. દરેક ટૅબ પર, ટૅબનાં નામવાળી લાઇનનો છેડો જણાવે છે કે [`auto_switch`](/features/next#auto-switch) ચાલુ છે કે નહીં (Linux અને macOS; Windows પર તેને અવગણવામાં આવે છે); તે ચાલુ હોય ત્યારે, Health ટૅબ જણાવે છે કે તેને હજી શું જોઈએ છે: Claude subscription વડે સાઇન ઇન કરતા દરેક એકાઉન્ટમાં ચાલુ કરેલું ccam plugin, અને Claude Code 2.1.214 કે પછીનું.
 
 દરેક વખતે ખૂલે ત્યારે ડેશબોર્ડ બૅકગ્રાઉન્ડમાં GitHub ને પૂછે છે કે ccam ની નવી રિલીઝ છે કે નહીં; પહેલી frame ક્યારેય તેની રાહ જોતી નથી, અને offline હોય ત્યારે કંઈ બતાવાતું નથી. નવી રિલીઝ હોય ત્યારે, શીર્ષક નીચેની એક લાઇન તેની ભલામણ કરે છે:
 
@@ -102,7 +102,7 @@ Health ટૅબ ખોલતાં જ તે [`ccam doctor`](/features/doctor)
 Agents ટૅબ [`ccam agents`](/features/agents) જે છાપે છે તે બતાવે છે: દરેક એકાઉન્ટનાં બૅકગ્રાઉન્ડ સેશન અને ખુલ્લાં સેશન, દરેક જે એકાઉન્ટનું છે તેની સાથે. તમે ટૅબ પહેલી વાર ખોલો ત્યારે, `r` પર, સેશન બંધ કર્યા પછી, અને config માં ફેરફાર પછી, તે દરેક એકાઉન્ટના Claude Code ને એકસાથે પૂછે છે (`claude agents --json`, દરેકને 15 સેકન્ડ સુધી), અને બધાં જવાબ આપે ત્યાં સુધી `Asking every account's Claude Code for its sessions…` કહે છે.
 
 ```console
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Background agents and open sessions of every account; enter attaches to one.
 
     Account   ID        Name   State          Folder      Started

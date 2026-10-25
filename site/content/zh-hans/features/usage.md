@@ -4,10 +4,10 @@ description: ccam usage 一次显示每个账号的 5 小时限额和每周限�
 updated: 2026-10-25
 order: 7
 translation: machine
-sourceHash: "91ad20327289"
+sourceHash: "c98993fcdc7d"
 ---
 
-`ccam usage` 显示每个账号已用掉多少 5 小时限额、每周限额以及各模型自己的每周限额（例如 Fable），每项限额一个用量条，并附上距离重置的时间。在开始一项长任务之前，或者当 Claude Code 提示你快到限额时，用它查看哪个账号还有余量。`ccam statusline` 是供 Claude Code 使用的状态栏命令：它在 Claude Code 中显示账号名和用量，并为 `ccam usage` 保存这些数字。
+`ccam usage` 显示每个账号已用掉多少 5 小时限额、每周限额以及各模型自己的每周限额（例如 Fable），每项限额一个用量条，并附上距离重置的时间。在开始一项长任务之前，或者当 Claude Code 提示你快到限额时，用它查看哪个账号还有余量。`ccam statusline` 是供 Claude Code 使用的状态栏命令：它在 Claude Code 中显示账号名和用量，并为 `ccam usage` 保存这些数字。如果想看用量背后的 token 数和估算费用，`ccam ccusage` 会对所有账号的对话运行 [ccusage](https://ccusage.com)（[见下文](#tokens-and-costs-ccam-ccusage)）。
 
 ## 用法
 
@@ -66,9 +66,31 @@ $ ccam usage
 
 `ccam statusline` 从标准输入读取 Claude Code 的状态栏 JSON。它唯一的选项是 `--wrap <command>`：一条现有的状态栏命令，其输出的第一行前面会加上账号名。`ccam statusline install` 没有选项。两者都会拒绝 `--dry-run`，并显示 `` --dry-run is not supported by `ccam statusline`; nothing was changed ``。
 
+## Token 和费用：`ccam ccusage`
+
+`ccam usage` 显示一个账号已用掉每项限额的多少。[ccusage](https://ccusage.com) 则统计 Claude Code 对话日志中的 token 数和估算费用。它单独运行时只在 `~/.claude` 和 `~/.config/claude`（或 `CLAUDE_CONFIG_DIR` 指定的文件夹）中查找 Claude Code 的日志，因此 ccam 的账号中它最多只能看到一个，即在 `~/.claude` 原地导入的那个。`ccam ccusage` 运行它时，会把 `CLAUDE_CONFIG_DIR` 设为所有有对话的账号的文件夹，这样一份报告就能涵盖全部账号：
+
+```sh
+ccam ccusage                           # every account, ccusage's daily report
+ccam ccusage daily --breakdown         # cost per model
+ccam ccusage claude monthly --json     # Claude Code alone, as JSON
+ccam ccusage -a work blocks --active   # one account's current 5-hour block
+ccam ccusage -a work,side weekly       # these accounts, and any that share their history
+```
+
+ccam 先读取自己的选项：`-a`（`--account`）接受账号名称或编号，可以用逗号分隔，也可以重复该选项；`--dry-run` 只打印命令而不运行它。从第一个不属于这些选项的参数开始，所有内容都原样传给 ccusage；`ccam ccusage -- --help` 显示 ccusage 自己的帮助。ccam 会运行已安装的 `ccusage`，没有时运行 `bun x ccusage`，再没有时运行 `npx ccusage@latest`；后两者会从 npm 获取 ccusage。三者都没有时，ccam 会提示你安装 Node.js、Bun 或 ccusage。在 Linux 和 macOS 上，ccusage 会取代 ccam；在 Windows 上，ccam 会等待它结束，并以它的退出码退出。在 WSL 中，ccam 会跳过 Windows 驱动器上的 `ccusage`、`bun` 或 `npx`，因为它们会作为 Windows 程序运行，拿不到账号文件夹。
+
+- 报告涵盖文件夹中有对话（即有 `projects` 文件夹）的账号。多个账号通过组共享的对话只计算一次。
+- 使用 `-a` 时，通过组共享历史的账号会带上整个组的对话，ccam 会说明是哪些账号的对话：`ccam: work shares its conversation history with personal, so the report counts their conversations too`。
+- `blocks` 显示 5 小时窗口，而每个账号都有自己的窗口，所以查看这个报告时请像上面那样只指定一个账号。
+- ccusage 还会报告它找到的其他编程工具（例如 Codex），除非你指定其中一个：`ccam ccusage claude daily` 只统计 Claude Code。
+- 由 ccam 运行时，ccusage 只从 `./.ccusage` 和各账号文件夹读取它的设置（`ccusage.json`）。`--config` 可以指定另一个文件：`ccam ccusage daily --config ~/.config/claude/ccusage.json`。
+- ccusage 会把路径中含逗号的文件夹当成两个文件夹来读取，所以 ccam 会拒绝它并指出是哪个账号；请用 `-a` 把这个账号排除在外。
+- `ccusage` 是 ccam 的一个命令，所以名为 ccusage 的账号要用 `ccam run ccusage` 启动；`ccam doctor` 会提示这一点。
+
 ## 工作原理
 
-这些数字来自两个地方：Anthropic 没有公开文档的用量接口 `GET https://api.anthropic.com/api/oauth/usage`（用每个账号自己的登录调用），以及 Claude Code 传给其状态栏命令的值。所有相关代码都在 `internal/usage` 中。
+`ccam usage` 显示的数字来自两个地方：Anthropic 没有公开文档的用量接口 `GET https://api.anthropic.com/api/oauth/usage`（用每个账号自己的登录调用），以及 Claude Code 传给其状态栏命令的值。所有相关代码都在 `internal/usage` 中。
 
 1. `cli.usageCmd` 加载 `config.toml`，并为每个账号构建一个 `usage.Account`：它的文件夹 `~/.local/share/ccam/profiles/<name>/`、它的会话标记（结合 Claude Code 自己在账号文件夹中的记录，用来判断它是否正在运行），以及它是否是原地导入的。
 2. `Fetcher.FetchAll` 为每个账号启动一个 goroutine。它们共用一个 `http.Client`，因此到接口的连接会被复用。建立连接最多 2 s，每个账号总共 3 s。客户端不跟随重定向，因为重定向会把令牌再次发送到别处；它最多读取 1 MB 的响应。

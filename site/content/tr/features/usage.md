@@ -4,10 +4,10 @@ description: ccam usage tüm hesapların 5 saatlik ve haftalık limitlerini ayn�
 updated: 2026-10-25
 order: 7
 translation: machine
-sourceHash: "91ad20327289"
+sourceHash: "c98993fcdc7d"
 ---
 
-`ccam usage`, her hesabın 5 saatlik limitin, haftalık limitin ve her modelin kendi haftalık limitinin (Fable gibi) ne kadarını kullandığını, her limit için bir çubuk ve sıfırlanmasına kalan süreyle gösterir. Uzun bir işe başlamadan önce veya Claude Code bir limitin yaklaştığını söylediğinde, hangi hesapta pay kaldığını görmek için kullanın. `ccam statusline`, Claude Code için durum satırı komutudur: hesap adını ve kullanımı Claude Code içinde gösterir ve sayıları `ccam usage` için kaydeder.
+`ccam usage`, her hesabın 5 saatlik limitin, haftalık limitin ve her modelin kendi haftalık limitinin (Fable gibi) ne kadarını kullandığını, her limit için bir çubuk ve sıfırlanmasına kalan süreyle gösterir. Uzun bir işe başlamadan önce veya Claude Code bir limitin yaklaştığını söylediğinde, hangi hesapta pay kaldığını görmek için kullanın. `ccam statusline`, Claude Code için durum satırı komutudur: hesap adını ve kullanımı Claude Code içinde gösterir ve sayıları `ccam usage` için kaydeder. Kullanımın ardındaki tokenlar ve tahmini maliyetler için `ccam ccusage`, [ccusage](https://ccusage.com) aracını her hesabın konuşmaları üzerinde çalıştırır ([aşağıda](#tokens-and-costs-ccam-ccusage)).
 
 ## Kullanım
 
@@ -66,9 +66,31 @@ Başka herhangi bir `--source` değeri `--source must be live, claude or cache` 
 
 `ccam statusline`, Claude Code'un durum satırı JSON'unu standart girdiden okur. Tek seçeneği `--wrap <command>` seçeneğidir: ilk çıktı satırının başına hesap adı eklenen mevcut bir durum satırı komutu. `ccam statusline install` seçenek almaz. İkisi de `--dry-run` seçeneğini `` --dry-run is not supported by `ccam statusline`; nothing was changed `` ile reddeder.
 
+## Tokenlar ve maliyetler: `ccam ccusage`
+
+`ccam usage`, bir hesabın her limitin ne kadarını kullandığını gösterir. [ccusage](https://ccusage.com) ise Claude Code'un konuşma günlüklerindeki tokenları ve tahmini maliyetleri sayar. Tek başına Claude Code'un günlüklerini yalnızca `~/.claude` ve `~/.config/claude` klasörlerinde (ya da `CLAUDE_CONFIG_DIR` değişkeninin belirttiği klasörlerde) arar; bu yüzden ccam'in hesaplarından en fazla birini, `~/.claude` konumunda yerinde içe aktarılmış olanı görür. `ccam ccusage` onu, `CLAUDE_CONFIG_DIR` değişkenini konuşması olan her hesabın klasörüne ayarlayarak çalıştırır; böylece tek bir rapor hepsini kapsar:
+
+```sh
+ccam ccusage                           # every account, ccusage's daily report
+ccam ccusage daily --breakdown         # cost per model
+ccam ccusage claude monthly --json     # Claude Code alone, as JSON
+ccam ccusage -a work blocks --active   # one account's current 5-hour block
+ccam ccusage -a work,side weekly       # these accounts, and any that share their history
+```
+
+ccam önce kendi seçeneklerini okur: `-a` (`--account`) hesap adlarını veya numaralarını alır; bunları virgülle ayırarak ya da seçeneği tekrarlayarak verebilirsiniz. `--dry-run` ise komutu çalıştırmak yerine yazdırır. Bunlar dışındaki ilk argümandan itibaren her şey ccusage'a olduğu gibi gider; `ccam ccusage -- --help` ccusage'ın kendi yardımını gösterir. ccam kurulu bir `ccusage` varsa onu, yoksa `bun x ccusage` komutunu, o da yoksa `npx ccusage@latest` komutunu çalıştırır; son ikisi ccusage'ı npm'den indirir. Hiçbiri yoksa Node.js, Bun veya ccusage kurmanızı söyler. Linux ve macOS'ta ccusage, ccam'in yerini alır; Windows'ta ccam onu bekler ve onun çıkış koduyla çıkar. WSL'de ccam, bir Windows sürücüsündeki `ccusage`, `bun` veya `npx` programını atlar, çünkü o program hesap klasörleri olmadan bir Windows programı olarak çalışırdı.
+
+- Rapor, klasörlerinde konuşma (bir `projects` klasörü) bulunan hesapları kapsar. Hesapların bir grup üzerinden paylaştığı bir konuşma bir kez sayılır.
+- `-a` ile, geçmişini bir grup üzerinden paylaşan bir hesap tüm grubun konuşmalarını beraberinde getirir ve ccam bunların kimlere ait olduğunu söyler: `ccam: work shares its conversation history with personal, so the report counts their conversations too`.
+- `blocks` 5 saatlik pencereleri gösterir ve her hesabın kendi pencereleri vardır; bu yüzden bu rapor için yukarıdaki gibi tek bir hesap belirtin.
+- ccusage, siz birini belirtmedikçe bulduğu diğer kodlama araçlarını da (Codex gibi) raporlar: `ccam ccusage claude daily` yalnızca Claude Code'u kapsar.
+- ccam onu çalıştırırken ccusage, ayarlarını (`ccusage.json`) yalnızca `./.ccusage` konumundan ve hesap klasörlerinden okur. `--config` başka bir dosya belirtir: `ccam ccusage daily --config ~/.config/claude/ccusage.json`.
+- ccusage, yolunda virgül olan bir klasörü iki klasör olarak okurdu; bu yüzden ccam böyle bir klasörü reddeder ve hesabın adını verir. O hesabı `-a` ile dışarıda bırakın.
+- `ccusage` bir ccam komutu olduğundan ccusage adlı bir hesap `ccam run ccusage` ile başlatılır; `ccam doctor` da bunu söyler.
+
 ## Nasıl çalışır
 
-Sayılar iki yerden gelir: her hesabın kendi girişiyle çağrılan, Anthropic'in belgelenmemiş kullanım uç noktası `GET https://api.anthropic.com/api/oauth/usage` ve Claude Code'un durum satırı komutuna verdiği değerler. Bunların hepsi `internal/usage` içindedir.
+`ccam usage` komutunun gösterdiği sayılar iki yerden gelir: her hesabın kendi girişiyle çağrılan, Anthropic'in belgelenmemiş kullanım uç noktası `GET https://api.anthropic.com/api/oauth/usage` ve Claude Code'un durum satırı komutuna verdiği değerler. Bunların hepsi `internal/usage` içindedir.
 
 1. `cli.usageCmd`, `config.toml` dosyasını yükler ve her hesap için bir `usage.Account` oluşturur: klasörü `~/.local/share/ccam/profiles/<name>/`, oturum işaretleri (hesap klasöründeki Claude Code'un kendi kayıtlarıyla birlikte, çalışıp çalışmadığını söylerler) ve yerinde içe aktarılıp aktarılmadığı.
 2. `Fetcher.FetchAll` her hesap için bir goroutine başlatır. Hepsi tek bir `http.Client` paylaşır; böylece uç noktaya yapılan bağlantılar yeniden kullanılır. Bağlanma 2 sn sürebilir ve her hesaba toplam 3 sn verilir. İstemci yönlendirmeleri izlemez, çünkü bir yönlendirme tokenı başka bir yere yeniden gönderir; yanıtın da en fazla 1 MB'ını okur.

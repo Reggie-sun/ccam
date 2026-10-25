@@ -4,10 +4,10 @@ description: "ccam usage ایک ہی بار میں ہر اکاؤنٹ کی 5 گھ
 updated: 2026-10-25
 order: 7
 translation: machine
-sourceHash: "91ad20327289"
+sourceHash: "c98993fcdc7d"
 ---
 
-`ccam usage` دکھاتا ہے کہ ہر اکاؤنٹ نے 5 گھنٹے کی حد، ہفتہ وار حد اور ہر ماڈل کی اپنی ہفتہ وار حد (جیسے Fable) کا کتنا حصہ استعمال کر لیا ہے، ہر حد کے لیے ایک بار کے ساتھ اور یہ کہ اس کے ری سیٹ ہونے میں کتنا وقت باقی ہے۔ کوئی لمبا کام شروع کرنے سے پہلے، یا جب Claude Code بتائے کہ حد قریب ہے، اسے چلا کر دیکھیں کہ کس اکاؤنٹ میں گنجائش باقی ہے۔ `ccam statusline`، Claude Code کے لیے اسٹیٹس لائن کمانڈ ہے: یہ Claude Code کے اندر اکاؤنٹ کا نام اور استعمال دکھاتی ہے اور اعداد `ccam usage` کے لیے محفوظ کرتی ہے۔
+`ccam usage` دکھاتا ہے کہ ہر اکاؤنٹ نے 5 گھنٹے کی حد، ہفتہ وار حد اور ہر ماڈل کی اپنی ہفتہ وار حد (جیسے Fable) کا کتنا حصہ استعمال کر لیا ہے، ہر حد کے لیے ایک بار کے ساتھ اور یہ کہ اس کے ری سیٹ ہونے میں کتنا وقت باقی ہے۔ کوئی لمبا کام شروع کرنے سے پہلے، یا جب Claude Code بتائے کہ حد قریب ہے، اسے چلا کر دیکھیں کہ کس اکاؤنٹ میں گنجائش باقی ہے۔ `ccam statusline`، Claude Code کے لیے اسٹیٹس لائن کمانڈ ہے: یہ Claude Code کے اندر اکاؤنٹ کا نام اور استعمال دکھاتی ہے اور اعداد `ccam usage` کے لیے محفوظ کرتی ہے۔ استعمال کے پیچھے موجود ٹوکنز اور تخمینی لاگت دیکھنے کے لیے `ccam ccusage` ہر اکاؤنٹ کی گفتگو پر [ccusage](https://ccusage.com) چلاتا ہے ([نیچے](#tokens-and-costs-ccam-ccusage))۔
 
 ## استعمال
 
@@ -66,9 +66,31 @@ $ ccam usage
 
 `ccam statusline`، Claude Code کی اسٹیٹس لائن JSON اسٹینڈرڈ اِن پٹ سے پڑھتا ہے۔ اس کا واحد آپشن `--wrap <command>` ہے: اسٹیٹس لائن کی ایک موجودہ کمانڈ، جس کے آؤٹ پٹ کی پہلی لائن کے شروع میں اکاؤنٹ کا نام لگ جاتا ہے۔ `ccam statusline install` کوئی آپشن نہیں لیتا۔ دونوں `--dry-run` کو `` --dry-run is not supported by `ccam statusline`; nothing was changed `` کے ساتھ مسترد کرتے ہیں۔
 
+## ٹوکنز اور لاگت: `ccam ccusage`
+
+`ccam usage` دکھاتا ہے کہ کسی اکاؤنٹ نے ہر حد کا کتنا حصہ استعمال کر لیا ہے۔ اس کے بجائے [ccusage](https://ccusage.com) Claude Code کی گفتگو کے لاگز میں ٹوکنز اور تخمینی لاگت گنتا ہے۔ اکیلا یہ Claude Code کے لاگز صرف `~/.claude` اور `~/.config/claude` میں (یا ان فولڈرز میں جو `CLAUDE_CONFIG_DIR` بتاتا ہے) تلاش کرتا ہے، اس لیے ccam کے اکاؤنٹس میں سے اسے زیادہ سے زیادہ ایک نظر آتا ہے: وہ جو `~/.claude` میں اپنی جگہ پر امپورٹ کیا گیا ہو۔ `ccam ccusage` اسے `CLAUDE_CONFIG_DIR` کو ان تمام اکاؤنٹس کے فولڈرز پر سیٹ کر کے چلاتا ہے جن میں گفتگو موجود ہے، اس لیے ایک ہی رپورٹ ان سب کا احاطہ کرتی ہے:
+
+```sh
+ccam ccusage                           # every account, ccusage's daily report
+ccam ccusage daily --breakdown         # cost per model
+ccam ccusage claude monthly --json     # Claude Code alone, as JSON
+ccam ccusage -a work blocks --active   # one account's current 5-hour block
+ccam ccusage -a work,side weekly       # these accounts, and any that share their history
+```
+
+ccam پہلے اپنے آپشنز پڑھتا ہے: `-a` (`--account`) اکاؤنٹس کے نام یا نمبر لیتا ہے، کاما سے الگ کر کے یا آپشن کو دہرا کر، اور `--dry-run` کمانڈ چلانے کے بجائے اسے پرنٹ کرتا ہے۔ ان آپشنز کے علاوہ پہلے آرگیومنٹ سے شروع کر کے سب کچھ بغیر تبدیلی کے ccusage کو جاتا ہے؛ `ccam ccusage -- --help` ccusage کی اپنی مدد دکھاتا ہے۔ ccam انسٹال شدہ `ccusage` چلاتا ہے، وہ نہ ہو تو `bun x ccusage`، وہ بھی نہ ہو تو `npx ccusage@latest`؛ یہ آخری دونوں اسے npm سے ڈاؤن لوڈ کرتے ہیں۔ جب ان میں سے کوئی بھی موجود نہ ہو تو ccam کہتا ہے کہ Node.js، Bun یا ccusage انسٹال کریں۔ Linux اور macOS پر ccusage، ccam کی جگہ لے لیتا ہے؛ Windows پر ccam اس کا انتظار کرتا ہے اور اسی کے ایگزٹ کوڈ کے ساتھ باہر نکلتا ہے۔ WSL کے اندر ccam کسی Windows ڈرائیو پر موجود `ccusage`، `bun` یا `npx` کو چھوڑ دیتا ہے، کیونکہ وہ اکاؤنٹ فولڈرز کے بغیر Windows پروگرام کے طور پر چلتا۔
+
+- رپورٹ ان اکاؤنٹس کا احاطہ کرتی ہے جن کے فولڈرز میں گفتگو موجود ہو (ایک `projects` فولڈر)۔ جو گفتگو اکاؤنٹس کسی گروپ کے ذریعے شیئر کرتے ہیں وہ ایک ہی بار گنی جاتی ہے۔
+- `-a` کے ساتھ، جو اکاؤنٹ اپنی ہسٹری کسی گروپ کے ذریعے شیئر کرتا ہے وہ پورے گروپ کی گفتگو ساتھ لے آتا ہے، اور ccam بتاتا ہے کہ کس کس کی: `ccam: work shares its conversation history with personal, so the report counts their conversations too`۔
+- `blocks` 5 گھنٹے کی ونڈوز دکھاتا ہے، اور ہر اکاؤنٹ کی اپنی ونڈو ہوتی ہے، اس لیے اس رپورٹ کے لیے ایک ہی اکاؤنٹ کا نام دیں، جیسا کہ اوپر ہے۔
+- ccusage کو جو دوسرے کوڈنگ ٹولز ملتے ہیں، جیسے Codex، وہ ان کی رپورٹ بھی دیتا ہے، جب تک آپ کسی ایک کا نام نہ دیں: `ccam ccusage claude daily` صرف Claude Code دکھاتا ہے۔
+- جب ccam اسے چلاتا ہے تو ccusage اپنی سیٹنگز (`ccusage.json`) صرف `./.ccusage` اور اکاؤنٹ فولڈرز سے پڑھتا ہے۔ `--config` کوئی دوسری فائل بتاتا ہے: `ccam ccusage daily --config ~/.config/claude/ccusage.json`۔
+- ccusage ایسے فولڈر کو، جس کے راستے میں کاما ہو، دو فولڈر سمجھ کر پڑھتا، اس لیے ccam اسے مسترد کرتا ہے اور اکاؤنٹ کا نام بتاتا ہے؛ اس اکاؤنٹ کو `-a` کے ذریعے باہر رکھیں۔
+- `ccusage` ایک ccam کمانڈ ہے، اس لیے ccusage نام کا اکاؤنٹ `ccam run ccusage` سے شروع ہوتا ہے؛ `ccam doctor` یہ بتاتا ہے۔
+
 ## یہ کیسے کام کرتا ہے
 
-اعداد دو جگہوں سے آتے ہیں: Anthropic کا غیر دستاویزی usage اینڈ پوائنٹ، `GET https://api.anthropic.com/api/oauth/usage`، جسے ہر اکاؤنٹ کے اپنے لاگ اِن سے کال کیا جاتا ہے، اور وہ قدریں جو Claude Code اپنی اسٹیٹس لائن کمانڈ کو دیتا ہے۔ یہ سب `internal/usage` میں ہے۔
+`ccam usage` جو اعداد دکھاتا ہے وہ دو جگہوں سے آتے ہیں: Anthropic کا غیر دستاویزی usage اینڈ پوائنٹ، `GET https://api.anthropic.com/api/oauth/usage`، جسے ہر اکاؤنٹ کے اپنے لاگ اِن سے کال کیا جاتا ہے، اور وہ قدریں جو Claude Code اپنی اسٹیٹس لائن کمانڈ کو دیتا ہے۔ یہ سب `internal/usage` میں ہے۔
 
 1. `cli.usageCmd`، `config.toml` لوڈ کرتا ہے اور ہر اکاؤنٹ کے لیے ایک `usage.Account` بناتا ہے: اس کا فولڈر `~/.local/share/ccam/profiles/<name>/`، اس کے سیشن مارکرز (اکاؤنٹ فولڈر میں Claude Code کے اپنے ریکارڈز کے ساتھ مل کر یہ بتاتے ہیں کہ وہ چل رہا ہے یا نہیں) اور یہ کہ وہ اپنی جگہ پر امپورٹ کیا گیا تھا یا نہیں۔
 2. `Fetcher.FetchAll` ہر اکاؤنٹ کے لیے ایک goroutine شروع کرتا ہے۔ یہ سب ایک ہی `http.Client` شیئر کرتے ہیں، اس لیے اینڈ پوائنٹ سے کنکشنز دوبارہ استعمال ہوتے ہیں۔ کنکشن بنانے میں 2 s لگ سکتے ہیں، اور ہر اکاؤنٹ کو کل 3 s ملتے ہیں۔ کلائنٹ ری ڈائریکٹس پر عمل نہیں کرتا، کیونکہ ری ڈائریکٹ ٹوکن کو کسی اور جگہ دوبارہ بھیج دے گا، اور جواب کا زیادہ سے زیادہ 1 MB پڑھتا ہے۔

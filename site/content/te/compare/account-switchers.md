@@ -4,7 +4,7 @@ description: Claude Code ఖాతా మార్చడానికి claude-s
 updated: 2026-10-25
 order: 2
 translation: machine
-sourceHash: "3d87ba7c975a"
+sourceHash: "a6aa0409a8df"
 ---
 
 Claude Code ఖాతాలను మార్చే టూల్స్ రెండు పద్ధతుల్లో ఒకదాన్ని అనుసరిస్తాయి. చాలావరకు ఒకే `~/.claude` ఫోల్డర్ లోపల లాగిన్‌ను మారుస్తాయి, కాబట్టి ఒకేసారి ఒక ఖాతా మాత్రమే యాక్టివ్‌గా ఉంటుంది. ccam తో సహా మరికొన్ని, `CLAUDE_CONFIG_DIR` తో ప్రతి ఖాతాకు దాని సొంత ఫోల్డర్ ఇస్తాయి, కాబట్టి ప్రతి ఖాతా సైన్ ఇన్ అయ్యే ఉంటుంది, అనేక ఖాతాలు ఒకేసారి రన్ కాగలవు. ccam షేర్డ్ సెట్టింగ్‌లు, MCP సర్వర్లను జోడిస్తుంది, ఒక సంభాషణను మరో ఖాతా ఫోల్డర్‌లో కొనసాగిస్తుంది.
@@ -96,7 +96,7 @@ ccam అనేది Linux, macOS, Windows కోసం సుమారు 10 MB
 - Developer Mode లేని Windows లో ccam ఫోల్డర్‌లను షేర్ చేస్తుంది కానీ `settings.json` వంటి ఒంటరి ఫైల్‌లను షేర్ చేయలేదు (అప్పుడు మొదటి `ccam add` MCP సర్వర్లను, ఎక్స్‌టెన్షన్‌లను మాత్రమే షేర్ చేస్తుంది); claude-swap, CCS అక్కడ వాటిని కాపీ చేస్తాయి.
 - CCSwitcher, Claude Switcher, claude-swap macOS మెనూ బార్‌లో వినియోగాన్ని చూపిస్తాయి.
 - CCS, clausona, CAAM, clauth, ccswap, Claude Switcher Codex ను, ఇతర కోడింగ్ ఏజెంట్లను కూడా నిర్వహిస్తాయి.
-- clausona ఖాతా వారీగా extensions ను ఆన్, ఆఫ్ కూడా చేస్తుంది (ccam యొక్క `ccam ext` వాటిని చూపిస్తుంది మాత్రమే), లోకల్ టోకెన్ ఖర్చును లెక్కిస్తుంది, tmux లోనూ ఇతర టెర్మినల్స్‌లోనూ workers గుంపును నడిపే Claude Code plugins ను అందిస్తుంది.
+- clausona ఖాతా వారీగా extensions ను ఆన్, ఆఫ్ కూడా చేస్తుంది (ccam యొక్క `ccam ext` వాటిని చూపిస్తుంది మాత్రమే), లోకల్ టోకెన్ ఖర్చును తానే లెక్కిస్తుంది (ccam ఆ పనిని [ccusage](https://ccusage.com) కు అప్పగిస్తుంది: `ccam ccusage`), tmux లోనూ ఇతర టెర్మినల్స్‌లోనూ workers గుంపును నడిపే Claude Code plugins ను అందిస్తుంది.
 - CAAM, CCSwitcher, Claude Switcher Homebrew తో ఇన్‌స్టాల్ అవుతాయి, clauth, CAAM తమ release checksums పై సంతకం చేస్తాయి. ccam తన స్క్రిప్ట్, ఒక `.deb`, లేదా `go install` తో ఇన్‌స్టాల్ అవుతుంది, checksums ను సంతకం లేకుండా తనిఖీ చేస్తుంది.
 
 ## ఏది సరిపోతుంది?

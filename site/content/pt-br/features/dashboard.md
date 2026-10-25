@@ -4,7 +4,7 @@ description: O ccam em um terminal abre um painel em tela cheia com contas, grup
 updated: 2026-10-25
 order: 15
 translation: machine
-sourceHash: "98ccf6cd81e9"
+sourceHash: "28f216a4a04f"
 ---
 
 `ccam` sem argumentos abre um painel em tela cheia quando a entrada e a saída padrão são um terminal; caso contrário, imprime `ccam list`. O painel mostra todas as contas com o uso e os grupos de cada uma e faz o que os comandos fazem: iniciar, adicionar, fazer login, alterar grupos, definir regras de pasta, listar sessões em segundo plano, verificar e reparar. Iniciar uma conta, ou se conectar a uma sessão em segundo plano, fecha o painel; adicionar uma conta ou fazer login sai dele para o terminal e depois volta.
@@ -12,7 +12,7 @@ sourceHash: "98ccf6cd81e9"
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -23,7 +23,7 @@ sourceHash: "98ccf6cd81e9"
  enter to launch · n for most room · a to add · s for groups · ? for shortcuts
 ```
 
-A linha abaixo dos nomes das abas diz em uma frase para que serve a aba atual. Em um terminal mais largo, a aba Accounts também mostra o e-mail de cada conta.
+A linha abaixo dos nomes das abas diz em uma frase para que serve a aba atual. Em um terminal mais largo, a aba Accounts também mostra o e-mail de cada conta. O fim da linha das abas diz se o [`auto_switch`](/features/next#auto-switch) está ativado, em todas as abas (Linux e macOS; no Windows, ele é ignorado); quando ele está ativado, a aba Health diz do que ele ainda precisa: o plugin do ccam, ativado, em todas as contas que fazem login com uma assinatura do Claude, e o Claude Code 2.1.214 ou posterior.
 
 Toda vez que abre, o painel pergunta ao GitHub em segundo plano se existe uma versão mais recente do ccam; o primeiro quadro nunca espera por isso e, sem conexão, nada é mostrado. Quando há uma, uma linha abaixo do título a recomenda:
 
@@ -102,7 +102,7 @@ A aba Health executa as verificações do [`ccam doctor`](/features/doctor) quan
 A aba Agents mostra o que o [`ccam agents`](/features/agents) imprime: as sessões em segundo plano e as sessões abertas de todas as contas, com a conta a que cada uma pertence. Ela consulta o Claude Code de todas as contas ao mesmo tempo (`claude agents --json`, até 15 segundos cada) quando você abre a aba pela primeira vez, ao pressionar `r`, depois de parar uma sessão e depois de uma mudança na configuração, e mostra `Asking every account's Claude Code for its sessions…` até que todas tenham respondido.
 
 ```console
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Background agents and open sessions of every account; enter attaches to one.
 
     Account   ID        Name   State          Folder      Started

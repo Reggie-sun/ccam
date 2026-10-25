@@ -4,10 +4,10 @@ description: "ccam usage hiển thị giới hạn 5 giờ và hàng tuần củ
 updated: 2026-10-25
 order: 7
 translation: machine
-sourceHash: "91ad20327289"
+sourceHash: "c98993fcdc7d"
 ---
 
-`ccam usage` cho biết mỗi tài khoản đã dùng bao nhiêu trong giới hạn 5 giờ, giới hạn hàng tuần và giới hạn hàng tuần riêng của từng mô hình (như Fable), với một thanh cho mỗi giới hạn cùng thời gian đến lần đặt lại. Hãy dùng nó trước khi bắt đầu một tác vụ dài, hoặc khi Claude Code báo rằng sắp chạm giới hạn, để xem tài khoản nào còn hạn mức. `ccam statusline` là lệnh dòng trạng thái cho Claude Code: nó hiển thị tên tài khoản và mức sử dụng bên trong Claude Code và lưu các con số cho `ccam usage`.
+`ccam usage` cho biết mỗi tài khoản đã dùng bao nhiêu trong giới hạn 5 giờ, giới hạn hàng tuần và giới hạn hàng tuần riêng của từng mô hình (như Fable), với một thanh cho mỗi giới hạn cùng thời gian đến lần đặt lại. Hãy dùng nó trước khi bắt đầu một tác vụ dài, hoặc khi Claude Code báo rằng sắp chạm giới hạn, để xem tài khoản nào còn hạn mức. `ccam statusline` là lệnh dòng trạng thái cho Claude Code: nó hiển thị tên tài khoản và mức sử dụng bên trong Claude Code và lưu các con số cho `ccam usage`. Để xem số token và chi phí ước tính đằng sau mức sử dụng đó, `ccam ccusage` chạy [ccusage](https://ccusage.com) trên các cuộc hội thoại của mọi tài khoản ([bên dưới](#tokens-and-costs-ccam-ccusage)).
 
 ## Cách dùng
 
@@ -66,9 +66,31 @@ Với `usage_source = "claude"` ở đầu `config.toml` (phía trên `[[group]]
 
 `ccam statusline` đọc JSON dòng trạng thái của Claude Code từ đầu vào chuẩn. Tùy chọn duy nhất của nó là `--wrap <command>`: một lệnh dòng trạng thái có sẵn, dòng đầu ra đầu tiên của lệnh đó sẽ được thêm tên tài khoản vào phía trước. `ccam statusline install` không nhận tùy chọn. Cả hai đều từ chối `--dry-run` với `` --dry-run is not supported by `ccam statusline`; nothing was changed ``.
 
+## Token và chi phí: `ccam ccusage`
+
+`ccam usage` cho biết một tài khoản đã dùng bao nhiêu trong mỗi giới hạn. Còn [ccusage](https://ccusage.com) thì đếm token và chi phí ước tính trong nhật ký hội thoại của Claude Code. Khi chạy riêng, nó chỉ tìm nhật ký của Claude Code trong `~/.claude` và `~/.config/claude` (hoặc trong các thư mục mà `CLAUDE_CONFIG_DIR` chỉ định), nên trong số các tài khoản của ccam, nó thấy nhiều nhất một tài khoản: tài khoản được nhập tại chỗ ở `~/.claude`. `ccam ccusage` chạy nó với `CLAUDE_CONFIG_DIR` được đặt thành thư mục của mọi tài khoản có hội thoại, để một báo cáo bao quát tất cả:
+
+```sh
+ccam ccusage                           # every account, ccusage's daily report
+ccam ccusage daily --breakdown         # cost per model
+ccam ccusage claude monthly --json     # Claude Code alone, as JSON
+ccam ccusage -a work blocks --active   # one account's current 5-hour block
+ccam ccusage -a work,side weekly       # these accounts, and any that share their history
+```
+
+ccam đọc các tùy chọn của chính nó trước: `-a` (`--account`) nhận tên hoặc số của tài khoản, phân tách bằng dấu phẩy hoặc lặp lại tùy chọn, và `--dry-run` in ra lệnh thay vì chạy nó. Kể từ đối số đầu tiên không thuộc các tùy chọn này, mọi thứ được chuyển nguyên vẹn cho ccusage; `ccam ccusage -- --help` hiển thị trợ giúp riêng của ccusage. ccam chạy `ccusage` đã cài đặt, nếu không có thì `bun x ccusage`, nếu vẫn không có thì `npx ccusage@latest`; hai cách sau tải ccusage từ npm. Khi không có cách nào, ccam bảo bạn cài Node.js, Bun hoặc ccusage. Trên Linux và macOS, ccusage thế chỗ ccam; trên Windows, ccam chờ nó và thoát với mã thoát của nó. Bên trong WSL, ccam bỏ qua `ccusage`, `bun` hoặc `npx` nằm trên ổ đĩa Windows, vì chúng sẽ chạy như một chương trình Windows mà không có các thư mục tài khoản.
+
+- Báo cáo bao gồm các tài khoản có hội thoại trong thư mục của mình (một thư mục `projects`). Một cuộc hội thoại mà các tài khoản dùng chung qua nhóm chỉ được tính một lần.
+- Với `-a`, một tài khoản dùng chung lịch sử qua nhóm sẽ kéo theo hội thoại của cả nhóm, và ccam cho biết đó là hội thoại của những ai: `ccam: work shares its conversation history with personal, so the report counts their conversations too`.
+- `blocks` hiển thị các khoảng 5 giờ, và mỗi tài khoản có khoảng riêng, nên hãy chỉ định một tài khoản cho báo cáo này, như ở trên.
+- ccusage còn báo cáo các công cụ lập trình khác mà nó tìm thấy, như Codex, trừ khi bạn chỉ định một công cụ: `ccam ccusage claude daily` chỉ gồm Claude Code.
+- Khi được ccam chạy, ccusage chỉ đọc cài đặt của nó (`ccusage.json`) từ `./.ccusage` và các thư mục tài khoản. `--config` chỉ định một tệp khác: `ccam ccusage daily --config ~/.config/claude/ccusage.json`.
+- ccusage sẽ đọc một thư mục có dấu phẩy trong đường dẫn thành hai thư mục, nên ccam từ chối thư mục đó và nêu tên tài khoản; hãy loại tài khoản đó ra bằng `-a`.
+- `ccusage` là một lệnh của ccam, nên tài khoản tên ccusage được khởi động bằng `ccam run ccusage`; `ccam doctor` có nhắc điều này.
+
 ## Cách hoạt động
 
-Các con số đến từ hai nơi: endpoint mức sử dụng không được công bố tài liệu của Anthropic, `GET https://api.anthropic.com/api/oauth/usage`, được gọi bằng thông tin đăng nhập riêng của từng tài khoản, và các giá trị mà Claude Code trao cho lệnh dòng trạng thái của nó. Toàn bộ nằm trong `internal/usage`.
+Các con số mà `ccam usage` hiển thị đến từ hai nơi: endpoint mức sử dụng không được công bố tài liệu của Anthropic, `GET https://api.anthropic.com/api/oauth/usage`, được gọi bằng thông tin đăng nhập riêng của từng tài khoản, và các giá trị mà Claude Code trao cho lệnh dòng trạng thái của nó. Toàn bộ nằm trong `internal/usage`.
 
 1. `cli.usageCmd` tải `config.toml` và tạo một `usage.Account` cho mỗi tài khoản: thư mục `~/.local/share/ccam/profiles/<name>/` của nó, các tệp đánh dấu phiên của nó (cùng với các bản ghi riêng của Claude Code trong thư mục tài khoản, chúng cho biết nó có đang chạy không) và việc nó có được nhập tại chỗ hay không.
 2. `Fetcher.FetchAll` khởi động một goroutine cho mỗi tài khoản. Tất cả dùng chung một `http.Client`, nên các kết nối tới endpoint được dùng lại. Việc kết nối có thể mất 2 giây, và mỗi tài khoản có tổng cộng 3 giây. Client không đi theo chuyển hướng, vì một lần chuyển hướng sẽ gửi token tới nơi khác, và chỉ đọc tối đa 1 MB của phản hồi.

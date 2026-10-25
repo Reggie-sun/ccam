@@ -4,7 +4,7 @@ description: Claude Code खाती बदलण्यासाठी ccam च
 updated: 2026-10-25
 order: 2
 translation: machine
-sourceHash: "3d87ba7c975a"
+sourceHash: "a6aa0409a8df"
 ---
 
 Claude Code खाती बदलणारी टूल्स दोनपैकी एक पद्धत वापरतात. बहुतेक टूल्स एकाच `~/.claude` फोल्डरमध्ये लॉगिन बदलतात, त्यामुळे एका वेळी एकच खाते सक्रिय असते. इतर टूल्स, ज्यात ccam सुद्धा आहे, `CLAUDE_CONFIG_DIR` ने प्रत्येक खात्याला स्वतःचा फोल्डर देतात, त्यामुळे प्रत्येक खाते लॉगिन राहते आणि अनेक खाती एकाच वेळी चालू शकतात. ccam यात शेअर केलेल्या सेटिंग्ज आणि MCP सर्व्हर जोडते, आणि संभाषण दुसऱ्या खात्याच्या फोल्डरमध्ये पुढे चालू ठेवते.
@@ -96,7 +96,7 @@ ccam सुमारे 10 MB ची static binary आहे, ज्यासा
 - Developer Mode शिवाय Windows वर ccam फोल्डर शेअर करते, पण `settings.json` सारख्या एकट्या फाइल्स शेअर करू शकत नाही (तेव्हा पहिले `ccam add` फक्त MCP सर्व्हर आणि extensions शेअर करते); claude-swap आणि CCS तिथे त्या कॉपी करतात.
 - CCSwitcher, Claude Switcher आणि claude-swap वापर macOS menu bar मध्ये दाखवतात.
 - CCS, clausona, CAAM, clauth, ccswap आणि Claude Switcher, Codex आणि इतर coding agents सुद्धा सांभाळतात.
-- clausona प्रत्येक खात्यासाठी extensions चालू आणि बंदही करते (ccam चे `ccam ext` ते फक्त दाखवते), local token खर्चाचा हिशेब ठेवते, आणि tmux व इतर terminals मध्ये workers चे संपूर्ण ताफे चालवणारे Claude Code plugins देते.
+- clausona प्रत्येक खात्यासाठी extensions चालू आणि बंदही करते (ccam चे `ccam ext` ते फक्त दाखवते), local token खर्चाचा हिशेब स्वतः ठेवते (ccam हे काम [ccusage](https://ccusage.com) कडे सोपवते: `ccam ccusage`), आणि tmux व इतर terminals मध्ये workers चे संपूर्ण ताफे चालवणारे Claude Code plugins देते.
 - CAAM, CCSwitcher आणि Claude Switcher, Homebrew ने इन्स्टॉल होतात, आणि clauth आणि CAAM त्यांच्या release checksums वर स्वाक्षरी करतात. ccam त्याच्या script ने, `.deb` ने किंवा `go install` ने इन्स्टॉल होते, आणि स्वाक्षरीशिवाय checksums तपासते.
 
 ## कोणते योग्य ठरेल?

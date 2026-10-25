@@ -5,7 +5,7 @@ description: ccam add, ccam <name> నుంచి ccam usage, ccam next, ccam d
 updated: 2026-10-25
 order: 3
 translation: machine
-sourceHash: "abba525cae48"
+sourceHash: "41fb781fd146"
 ---
 
 ఒక కమాండ్ అసలు చేయకుండా అది ఏమి చేస్తుందో చూడటానికి, దాని ముందు `--dry-run` పెట్టండి, ఉదాహరణకు `ccam --dry-run work`. ఇది Claude Code ను ప్రారంభించేటప్పుడు (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`), అలాగే `group`, `migrate`, `shortcut`, `update`, `doctor --fix` తో పనిచేస్తుంది. ఏదైనా మార్చే ఇతర కమాండ్‌లు రన్ అవ్వకుండా దాన్ని తిరస్కరిస్తాయి.
@@ -125,6 +125,8 @@ ccam pick                       # the account with the most room, for a script
 ccam "$(ccam pick)" -p "…"      # start a worker on it
 ccam agents                     # background sessions of every account
 ccam attach 49ec0028            # open one, as the account that started it (or by its name)
+ccam ccusage claude daily       # Claude Code's tokens and costs, every account (ccusage)
+ccam ccusage -a work blocks --active   # one account's current 5-hour block
 ```
 
 `next --auto`, `--fallback`, `ccam pick` ఒకే విధంగా ఎంచుకుంటాయి: ముందుగా `auto_max_usage` (`config.toml`, డిఫాల్ట్ 100) కంటే తక్కువ ఉన్నవి, `auto_strategy` (`headroom`, `expiring` లేదా `balance`) ప్రకారం, `--model` వారపు విండోను కూడా లెక్కించి, 100% వద్ద ఉన్న ఖాతాను ఎప్పుడూ కాదు (Claude Code నిండిందని నివేదించిన విండో దాని రీసెట్ వరకు 100% గా లెక్కించబడుతుంది), API కీ లాగిన్‌ను ఎప్పుడూ కాదు, అవి ప్రారంభించే ఖాతా సంస్థలోనే (ఇంకా దూరం చూడటానికి `--cross-org` లేదా `cross_org = true`). `--wait` తన విలువను `=` తర్వాత తీసుకుంటుంది (`--wait=2h`); ఖాళీతో రాస్తే ఒక సూచనతో తిరస్కరించబడుతుంది. ఏదీ ఎంచుకోలేనప్పుడు అవి కోడ్ 75 తో నిష్క్రమిస్తాయి, లేదా `--wait` తో మొదటి ఖాతా రీసెట్ అయ్యే వరకు వేచి ఉంటాయి. చరిత్రను షేర్ చేయని ఖాతాల మధ్య కూడా `ccam next --continue` సంభాషణను తీసుకువెళ్తుంది: అప్పుడు Claude Code దాన్ని కొత్త ఖాతాలోకి కాపీ చేస్తుంది. `--brief` తో, కొత్త ఖాతా బదులుగా కొత్త సంభాషణను ప్రారంభిస్తుంది, ccam మోడల్ లేకుండా రాసే చివరి సంభాషణ సారాంశం నుంచి ([`--brief`](/features/next#brief)). `ccam <name>` లా కాకుండా, `ccam next` తన సొంత ఆప్షన్‌లను చదువుతుంది, కాబట్టి Claude Code ఆప్షన్‌లు `--` తర్వాత వస్తాయి; అది లేకుండా ccam `unknown flag` తో ఆగిపోతుంది. Claude Code లోపల, ప్లగిన్ యొక్క `/ccam:switch [account]` సంభాషణను ముందుకు అప్పగిస్తుంది, దాని hooks రన్ చేసేది `ccam hook`. `config.toml` లో `auto_switch = true` తో (Linux, macOS; డిఫాల్ట్‌గా ఆఫ్), పరిమితి hook ccam ప్రారంభించిన ఇంటరాక్టివ్ సెషన్‌ను కూడా ముగించి, అవకాశం ఉన్న మరో ఖాతాగా దాన్ని కొనసాగిస్తుంది, దాని లాంటి ఖాతాగా మాత్రమే: అదే సంస్థలోని మరో సీటు, లేదా మరో వ్యక్తిగత ప్లాన్ ([`auto_switch`](/features/next#auto-switch)). [తదుపరి ఖాతాకు మారడం](/features/next), [స్క్రిప్ట్‌ల కోసం ఖాతాను ఎంచుకోవడం](/features/pick), [ప్రతి ఖాతా బ్యాక్‌గ్రౌండ్ సెషన్‌లు](/features/agents) చూడండి.

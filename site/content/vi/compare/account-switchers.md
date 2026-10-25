@@ -4,7 +4,7 @@ description: "So sánh ccam với claude-swap, CCS, clausona, clauth, CAAM, cux 
 updated: 2026-10-25
 order: 2
 translation: machine
-sourceHash: "3d87ba7c975a"
+sourceHash: "a6aa0409a8df"
 ---
 
 Các công cụ đổi tài khoản Claude Code đi theo một trong hai cách. Phần lớn hoán đổi thông tin đăng nhập bên trong một thư mục `~/.claude` duy nhất, nên mỗi lúc chỉ có một tài khoản hoạt động. Một số khác, trong đó có ccam, cho mỗi tài khoản một thư mục riêng bằng `CLAUDE_CONFIG_DIR`, nên mọi tài khoản đều giữ trạng thái đăng nhập và có thể chạy nhiều tài khoản cùng lúc. ccam còn bổ sung việc dùng chung cài đặt và máy chủ MCP, và tiếp tục một cuộc hội thoại trong thư mục của tài khoản khác.
@@ -96,7 +96,7 @@ ccam là một tệp nhị phân tĩnh khoảng 10 MB, không cần cài thêm m
 - Trên Windows không bật Developer Mode, ccam dùng chung được thư mục nhưng không dùng chung được tệp đơn lẻ như `settings.json` (khi đó lần `ccam add` đầu tiên chỉ dùng chung máy chủ MCP và tiện ích mở rộng); claude-swap và CCS thì sao chép chúng thay vào đó.
 - CCSwitcher, Claude Switcher và claude-swap hiển thị mức sử dụng trên thanh menu macOS.
 - CCS, clausona, CAAM, clauth, ccswap và Claude Switcher cũng quản lý Codex và các coding agent khác.
-- clausona còn bật và tắt tiện ích mở rộng theo từng tài khoản (`ccam ext` của ccam chỉ hiển thị chúng), theo dõi chi phí token cục bộ, và cung cấp các plugin Claude Code chạy hàng loạt worker trong tmux và các terminal khác.
+- clausona còn bật và tắt tiện ích mở rộng theo từng tài khoản (`ccam ext` của ccam chỉ hiển thị chúng), tự theo dõi chi phí token cục bộ (ccam giao việc đó cho [ccusage](https://ccusage.com): `ccam ccusage`), và cung cấp các plugin Claude Code chạy hàng loạt worker trong tmux và các terminal khác.
 - CAAM, CCSwitcher và Claude Switcher cài được bằng Homebrew, còn clauth và CAAM ký checksum của bản phát hành. ccam cài bằng script riêng, gói `.deb` hoặc `go install`, và kiểm tra checksum mà không có chữ ký.
 
 ## Công cụ nào phù hợp?

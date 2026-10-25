@@ -4,7 +4,7 @@ description: Yadda ccam ya kwatanta da claude-swap, CCS, clausona, clauth, CAAM,
 updated: 2026-10-25
 order: 2
 translation: machine
-sourceHash: 3d87ba7c975a
+sourceHash: a6aa0409a8df
 ---
 
 Kayan aikin sauya asusun Claude Code suna bin ɗaya daga cikin hanyoyi biyu. Yawancinsu suna musanya bayanan shiga a cikin foldar `~/.claude` guda ɗaya, don haka asusu ɗaya ne kawai yake aiki a lokaci guda. Wasu, ciki har da ccam, suna ba kowane asusu foldarsa da `CLAUDE_CONFIG_DIR`, don haka kowane asusu yana nan a shiga kuma da dama za su iya aiki tare. ccam yana ƙara saituna da sabobin MCP da aka raba, kuma yana ci gaba da tattaunawa a foldar wani asusun.
@@ -96,7 +96,7 @@ ccam static binary ne mai kusan 10 MB ba tare da runtime da za a shigar ba, don 
 - A Windows ba tare da Developer Mode ba, ccam yana raba foldoji amma ba zai iya raba fayiloli guda ɗaya kamar `settings.json` ba (a lokacin `ccam add` na farko yana raba sabobin MCP da extensions kawai); claude-swap da CCS suna kwafa su a can maimakon haka.
 - CCSwitcher, Claude Switcher da claude-swap suna nuna amfani a menu bar na macOS.
 - CCS, clausona, CAAM, clauth, ccswap da Claude Switcher suna kuma sarrafa Codex da wasu coding agents.
-- clausona yana kuma kunnawa da kashe extensions ga kowane asusu (`ccam ext` na ccam yana nuna su ne kawai), yana bin diddigin kuɗin token na cikin gida, kuma yana zuwa da plugins na Claude Code masu gudanar da rukunin workers a tmux da wasu terminals.
+- clausona yana kuma kunnawa da kashe extensions ga kowane asusu (`ccam ext` na ccam yana nuna su ne kawai), yana bin diddigin kuɗin token na cikin gida da kansa (ccam yana miƙa wannan aikin ga [ccusage](https://ccusage.com): `ccam ccusage`), kuma yana zuwa da plugins na Claude Code masu gudanar da rukunin workers a tmux da wasu terminals.
 - Ana shigar da CAAM, CCSwitcher da Claude Switcher da Homebrew, kuma clauth da CAAM suna sa hannu kan checksums na release ɗinsu. Ana shigar da ccam da rubutunsa, `.deb` ko `go install`, kuma yana tantance checksums ba tare da sa hannu ba.
 
 ## Wanne ya dace?

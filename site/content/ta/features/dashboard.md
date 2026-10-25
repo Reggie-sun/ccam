@@ -4,7 +4,7 @@ description: டெர்மினலில் ccam கணக்குகள்,
 updated: 2026-10-25
 order: 15
 translation: machine
-sourceHash: "98ccf6cd81e9"
+sourceHash: "28f216a4a04f"
 ---
 
 standard input-உம் output-உம் டெர்மினலாக இருக்கும்போது, arguments இல்லாத `ccam` ஒரு முழுத்திரை டாஷ்போர்டைத் திறக்கிறது; இல்லையெனில் அது `ccam list`-ஐ அச்சிடுகிறது. டாஷ்போர்டு ஒவ்வொரு கணக்கையும் அதன் பயன்பாடு, குழுக்களுடன் காட்டுகிறது, கட்டளைகள் செய்வதையே செய்கிறது: தொடங்குதல், சேர்த்தல், உள்நுழைதல், குழுக்களை மாற்றுதல், கோப்புறை விதிகளை அமைத்தல், பின்னணி அமர்வுகளைப் பட்டியலிடுதல், சரிபார்த்தல், பழுதுநீக்குதல். ஒரு கணக்கைத் தொடங்கினாலோ, ஒரு பின்னணி அமர்வுடன் இணைந்தாலோ டாஷ்போர்டு மூடப்படும்; கணக்கைச் சேர்க்கும்போதும் உள்நுழையும்போதும் அது டெர்மினலுக்கு வழிவிட்டு, பிறகு திரும்பி வரும்.
@@ -12,7 +12,7 @@ standard input-உம் output-உம் டெர்மினலாக இர�
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -23,7 +23,7 @@ standard input-உம் output-உம் டெர்மினலாக இர�
  enter to launch · n for most room · a to add · s for groups · ? for shortcuts
 ```
 
-தாவல் பெயர்களுக்குக் கீழே உள்ள வரி, தற்போதைய தாவல் எதற்கானது என்று ஒரே வாக்கியத்தில் சொல்கிறது. அகலமான டெர்மினலில் Accounts தாவல் ஒவ்வொரு கணக்கின் மின்னஞ்சலையும் காட்டுகிறது.
+தாவல் பெயர்களுக்குக் கீழே உள்ள வரி, தற்போதைய தாவல் எதற்கானது என்று ஒரே வாக்கியத்தில் சொல்கிறது. அகலமான டெர்மினலில் Accounts தாவல் ஒவ்வொரு கணக்கின் மின்னஞ்சலையும் காட்டுகிறது. [`auto_switch`](/features/next#auto-switch) இயக்கத்தில் உள்ளதா என்பதைத் தாவல் வரியின் முடிவு ஒவ்வொரு தாவலிலும் சொல்கிறது (Linux, macOS; Windows-இல் அது புறக்கணிக்கப்படுகிறது); அது இயக்கத்தில் இருக்கும்போது, அதற்கு இன்னும் என்ன தேவை என்பதை Health தாவல் சொல்கிறது: Claude subscription மூலம் உள்நுழையும் ஒவ்வொரு கணக்கிலும் இயக்கத்தில் உள்ள ccam plugin, மற்றும் Claude Code 2.1.214 அல்லது பிந்தையது.
 
 ஒவ்வொரு முறை திறக்கும்போதும், புதிய ccam வெளியீடு உள்ளதா என்று டாஷ்போர்டு பின்னணியில் GitHub-இடம் கேட்கிறது; முதல் frame அதற்காக ஒருபோதும் காத்திருக்காது, இணையம் இல்லாதபோது எதுவும் காட்டப்படாது. புதிய வெளியீடு இருந்தால், தலைப்புக்குக் கீழே ஒரு வரி அதைப் பரிந்துரைக்கும்:
 
@@ -102,7 +102,7 @@ Health தாவலைத் திறக்கும்போது அது [
 Agents தாவல் [`ccam agents`](/features/agents) அச்சிடுவதைக் காட்டுகிறது: எல்லாக் கணக்குகளின் பின்னணி அமர்வுகளும் திறந்த அமர்வுகளும், ஒவ்வொன்றும் எந்தக் கணக்குக்கு உரியது என்பதுடன். நீங்கள் முதன்முதலில் தாவலைத் திறக்கும்போதும், `r`-இலும், ஒரு நிறுத்தத்துக்குப் பிறகும், config மாற்றத்துக்குப் பிறகும், அது எல்லாக் கணக்குகளின் Claude Code-இடமும் ஒரே நேரத்தில் கேட்கிறது (`claude agents --json`, ஒவ்வொன்றுக்கும் 15 வினாடிகள் வரை); எல்லாம் பதில் அளிக்கும் வரை `Asking every account's Claude Code for its sessions…` என்று சொல்கிறது.
 
 ```console
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Background agents and open sessions of every account; enter attaches to one.
 
     Account   ID        Name   State          Folder      Started

@@ -4,7 +4,7 @@ description: "ccam บนเทอร์มินัลเปิดแดชบ�
 updated: 2026-10-25
 order: 15
 translation: machine
-sourceHash: "98ccf6cd81e9"
+sourceHash: "28f216a4a04f"
 ---
 
 `ccam` ที่ไม่มีอาร์กิวเมนต์จะเปิดแดชบอร์ดเต็มหน้าจอเมื่ออินพุตและเอาต์พุตมาตรฐานเป็นเทอร์มินัล ในกรณีอื่นจะพิมพ์ `ccam list` แดชบอร์ดแสดงทุกบัญชีพร้อมการใช้งานและกลุ่ม และทำสิ่งเดียวกับที่คำสั่งต่าง ๆ ทำได้: เริ่ม เพิ่ม เข้าสู่ระบบ เปลี่ยนกลุ่ม ตั้งกฎของโฟลเดอร์ แสดงรายการเซสชันเบื้องหลัง ตรวจสอบ และซ่อมแซม การเริ่มบัญชีหรือการเชื่อมต่อเข้าเซสชันเบื้องหลังจะปิดแดชบอร์ด ส่วนการเพิ่มบัญชีหรือการเข้าสู่ระบบจะออกจากแดชบอร์ดไปใช้เทอร์มินัลชั่วคราวแล้วกลับมา
@@ -12,7 +12,7 @@ sourceHash: "98ccf6cd81e9"
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -23,7 +23,7 @@ sourceHash: "98ccf6cd81e9"
  enter to launch · n for most room · a to add · s for groups · ? for shortcuts
 ```
 
-บรรทัดใต้ชื่อแท็บบอกในหนึ่งประโยคว่าแท็บปัจจุบันมีไว้ทำอะไร บนเทอร์มินัลที่กว้างขึ้น แท็บ Accounts จะแสดงอีเมลของแต่ละบัญชีด้วย
+บรรทัดใต้ชื่อแท็บบอกในหนึ่งประโยคว่าแท็บปัจจุบันมีไว้ทำอะไร บนเทอร์มินัลที่กว้างขึ้น แท็บ Accounts จะแสดงอีเมลของแต่ละบัญชีด้วย ท้ายบรรทัดแท็บจะบอกในทุกแท็บว่า [`auto_switch`](/features/next#auto-switch) เปิดอยู่หรือไม่ (Linux และ macOS ส่วนบน Windows ค่านี้จะถูกละเว้น) เมื่อเปิดอยู่ แท็บ Health จะบอกว่ายังต้องมีอะไรอีก ได้แก่ ปลั๊กอิน ccam ที่เปิดใช้อยู่ในทุกบัญชีที่เข้าสู่ระบบแบบสมัครสมาชิก Claude และ Claude Code 2.1.214 ขึ้นไป
 
 ทุกครั้งที่เปิดขึ้น แดชบอร์ดจะถาม GitHub อยู่เบื้องหลังว่ามี ccam รุ่นใหม่กว่าหรือไม่ เฟรมแรกไม่เคยรอผลนี้ และเมื่อออฟไลน์จะไม่แสดงอะไรเลย เมื่อมีรุ่นใหม่ บรรทัดใต้ชื่อเรื่องจะแนะนำรุ่นนั้น:
 
@@ -102,7 +102,7 @@ sourceHash: "98ccf6cd81e9"
 แท็บ Agents แสดงสิ่งที่ [`ccam agents`](/features/agents) พิมพ์: เซสชันเบื้องหลังและเซสชันที่เปิดอยู่ของทุกบัญชี พร้อมบัญชีที่แต่ละเซสชันเป็นของ แท็บนี้จะถาม Claude Code ของทุกบัญชีพร้อมกัน (`claude agents --json` บัญชีละไม่เกิน 15 วินาที) เมื่อคุณเปิดแท็บครั้งแรก เมื่อกด `r` หลังการหยุดเซสชัน และหลังการเปลี่ยนแปลง config และจะแสดง `Asking every account's Claude Code for its sessions…` จนกว่าทุกบัญชีจะตอบ
 
 ```console
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Background agents and open sessions of every account; enter attaches to one.
 
     Account   ID        Name   State          Folder      Started

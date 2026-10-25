@@ -4,7 +4,7 @@ description: ಟರ್ಮಿನಲ್‌ನಲ್ಲಿ ccam ಖಾತೆಗಳ�
 updated: 2026-10-25
 order: 15
 translation: machine
-sourceHash: "98ccf6cd81e9"
+sourceHash: "28f216a4a04f"
 ---
 
 ಆರ್ಗ್ಯುಮೆಂಟ್‌ಗಳಿಲ್ಲದ `ccam`, ಸ್ಟ್ಯಾಂಡರ್ಡ್ ಇನ್‌ಪುಟ್ ಮತ್ತು ಔಟ್‌ಪುಟ್ ಟರ್ಮಿನಲ್ ಆಗಿದ್ದಾಗ ಪೂರ್ಣ ಪರದೆಯ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್ ಅನ್ನು ತೆರೆಯುತ್ತದೆ; ಇಲ್ಲದಿದ್ದರೆ ಅದು `ccam list` ಅನ್ನು ಮುದ್ರಿಸುತ್ತದೆ. ಡ್ಯಾಶ್‌ಬೋರ್ಡ್ ಪ್ರತಿ ಖಾತೆಯನ್ನು ಅದರ ಬಳಕೆ ಮತ್ತು ಗುಂಪುಗಳೊಂದಿಗೆ ತೋರಿಸುತ್ತದೆ, ಮತ್ತು ಕಮಾಂಡ್‌ಗಳು ಮಾಡುವುದನ್ನೇ ಮಾಡುತ್ತದೆ: ಆರಂಭಿಸುವುದು, ಸೇರಿಸುವುದು, ಲಾಗಿನ್ ಮಾಡುವುದು, ಗುಂಪುಗಳನ್ನು ಬದಲಾಯಿಸುವುದು, ಫೋಲ್ಡರ್ ನಿಯಮಗಳನ್ನು ಹೊಂದಿಸುವುದು, ಹಿನ್ನೆಲೆ ಸೆಷನ್‌ಗಳನ್ನು ಪಟ್ಟಿ ಮಾಡುವುದು, ಪರಿಶೀಲಿಸುವುದು ಮತ್ತು ದುರಸ್ತಿ ಮಾಡುವುದು. ಆರಂಭಿಸಿದಾಗ, ಅಥವಾ ಹಿನ್ನೆಲೆ ಸೆಷನ್‌ಗೆ ಅಟ್ಯಾಚ್ ಆದಾಗ, ಅದು ಮುಚ್ಚುತ್ತದೆ; ಖಾತೆ ಸೇರಿಸುವಾಗ ಅಥವಾ ಲಾಗಿನ್ ಮಾಡುವಾಗ ಅದು ಟರ್ಮಿನಲ್‌ಗೆ ಜಾಗ ಬಿಟ್ಟು ನಂತರ ಮರಳುತ್ತದೆ.
@@ -12,7 +12,7 @@ sourceHash: "98ccf6cd81e9"
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -23,7 +23,7 @@ sourceHash: "98ccf6cd81e9"
  enter to launch · n for most room · a to add · s for groups · ? for shortcuts
 ```
 
-ಟ್ಯಾಬ್ ಹೆಸರುಗಳ ಕೆಳಗಿನ ಸಾಲು ಈಗಿನ ಟ್ಯಾಬ್ ಯಾವುದಕ್ಕಾಗಿ ಎಂದು ಒಂದು ವಾಕ್ಯದಲ್ಲಿ ಹೇಳುತ್ತದೆ. ಅಗಲವಾದ ಟರ್ಮಿನಲ್‌ನಲ್ಲಿ Accounts ಟ್ಯಾಬ್ ಪ್ರತಿ ಖಾತೆಯ ಇಮೇಲ್ ಅನ್ನೂ ತೋರಿಸುತ್ತದೆ.
+ಟ್ಯಾಬ್ ಹೆಸರುಗಳ ಕೆಳಗಿನ ಸಾಲು ಈಗಿನ ಟ್ಯಾಬ್ ಯಾವುದಕ್ಕಾಗಿ ಎಂದು ಒಂದು ವಾಕ್ಯದಲ್ಲಿ ಹೇಳುತ್ತದೆ. ಅಗಲವಾದ ಟರ್ಮಿನಲ್‌ನಲ್ಲಿ Accounts ಟ್ಯಾಬ್ ಪ್ರತಿ ಖಾತೆಯ ಇಮೇಲ್ ಅನ್ನೂ ತೋರಿಸುತ್ತದೆ. ಟ್ಯಾಬ್ ಹೆಸರುಗಳ ಸಾಲಿನ ಕೊನೆ, ಪ್ರತಿ ಟ್ಯಾಬ್‌ನಲ್ಲೂ, [`auto_switch`](/features/next#auto-switch) ಆನ್ ಆಗಿದೆಯೇ ಎಂದು ಹೇಳುತ್ತದೆ (Linux ಮತ್ತು macOS; Windows ನಲ್ಲಿ ಅದನ್ನು ನಿರ್ಲಕ್ಷಿಸಲಾಗುತ್ತದೆ); ಅದು ಆನ್ ಆಗಿರುವಾಗ, ಅದಕ್ಕೆ ಇನ್ನೂ ಏನು ಬೇಕು ಎಂದು Health ಟ್ಯಾಬ್ ಹೇಳುತ್ತದೆ: Claude ಚಂದಾದಾರಿಕೆಯೊಂದಿಗೆ ಸೈನ್ ಇನ್ ಆಗುವ ಪ್ರತಿ ಖಾತೆಯಲ್ಲಿ ಆನ್ ಆಗಿರುವ ccam ಪ್ಲಗಿನ್, ಮತ್ತು Claude Code 2.1.214 ಅಥವಾ ನಂತರದ ಆವೃತ್ತಿ.
 
 ತೆರೆದ ಪ್ರತಿ ಬಾರಿ, ಹೊಸ ccam ಬಿಡುಗಡೆ ಇದೆಯೇ ಎಂದು ಡ್ಯಾಶ್‌ಬೋರ್ಡ್ ಹಿನ್ನೆಲೆಯಲ್ಲಿ GitHub ಗೆ ಕೇಳುತ್ತದೆ; ಮೊದಲ ಚೌಕಟ್ಟು ಅದಕ್ಕಾಗಿ ಎಂದಿಗೂ ಕಾಯುವುದಿಲ್ಲ, ಮತ್ತು ಆಫ್‌ಲೈನ್‌ನಲ್ಲಿ ಏನನ್ನೂ ತೋರಿಸುವುದಿಲ್ಲ. ಹೊಸ ಬಿಡುಗಡೆ ಇದ್ದಾಗ, ಶೀರ್ಷಿಕೆಯ ಕೆಳಗಿನ ಒಂದು ಸಾಲು ಅದನ್ನು ಶಿಫಾರಸು ಮಾಡುತ್ತದೆ:
 
@@ -102,7 +102,7 @@ sourceHash: "98ccf6cd81e9"
 Agents ಟ್ಯಾಬ್ [`ccam agents`](/features/agents) ಮುದ್ರಿಸುವುದನ್ನು ತೋರಿಸುತ್ತದೆ: ಪ್ರತಿ ಖಾತೆಯ ಹಿನ್ನೆಲೆ ಸೆಷನ್‌ಗಳು ಮತ್ತು ತೆರೆದ ಸೆಷನ್‌ಗಳು, ಪ್ರತಿಯೊಂದೂ ಸೇರಿರುವ ಖಾತೆಯೊಂದಿಗೆ. ನೀವು ಟ್ಯಾಬ್ ಅನ್ನು ಮೊದಲ ಬಾರಿ ತೆರೆದಾಗ, `r` ಒತ್ತಿದಾಗ, ಒಂದು ಸೆಷನ್ ನಿಲ್ಲಿಸಿದ ನಂತರ, ಮತ್ತು ಕಾನ್ಫಿಗ್ ಬದಲಾದ ನಂತರ ಅದು ಪ್ರತಿ ಖಾತೆಯ Claude Code ಅನ್ನು ಒಮ್ಮೆಗೇ ಕೇಳುತ್ತದೆ (`claude agents --json`, ಪ್ರತಿಯೊಂದಕ್ಕೂ 15 ಸೆಕೆಂಡ್‌ಗಳವರೆಗೆ), ಮತ್ತು ಎಲ್ಲವೂ ಉತ್ತರಿಸುವವರೆಗೆ `Asking every account's Claude Code for its sessions…` ಎಂದು ಹೇಳುತ್ತದೆ.
 
 ```console
-  Accounts   Agents   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
  Background agents and open sessions of every account; enter attaches to one.
 
     Account   ID        Name   State          Folder      Started
