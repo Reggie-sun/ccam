@@ -2,10 +2,10 @@
 title: Câu hỏi thường gặp
 metaTitle: "ccam FAQ: dùng nhiều tài khoản Claude Code"
 description: "Giải đáp về ccam, tài khoản Claude Code, giới hạn sử dụng, việc dùng chung, quyền riêng tư và các hệ điều hành được hỗ trợ."
-updated: 2026-10-24
+updated: 2026-10-25
 order: 6
 translation: machine
-sourceHash: "c4e3b89bb4ea"
+sourceHash: "8e9deca652d1"
 ---
 
 ## ccam có phải là công cụ chính thức của Anthropic không?
@@ -14,13 +14,17 @@ Không. ccam là dự án mã nguồn mở không chính thức, không liên k�
 
 ## Tôi có được phép dùng nhiều tài khoản Claude Code không?
 
-Điều đó phụ thuộc vào điều khoản của từng tài khoản và, với tài khoản công việc, vào chính sách của tổ chức bạn. Hãy kiểm tra trước khi dùng nhiều tài khoản. ccam chỉ giúp việc chuyển đổi giữa các tài khoản bạn đã có trở nên dễ dàng hơn.
+Điều đó phụ thuộc vào điều khoản của từng tài khoản và, với tài khoản công việc, vào chính sách của tổ chức bạn: [Consumer Terms](https://www.anthropic.com/legal/consumer-terms) của Anthropic cho Pro và Max, [Commercial Terms](https://www.anthropic.com/legal/commercial-terms) cho Team và Enterprise, và [Usage Policy](https://www.anthropic.com/legal/aup) cho tất cả. Hãy kiểm tra trước khi dùng nhiều tài khoản. ccam không nâng, gộp hay che giấu giới hạn của một tài khoản, và mỗi tài khoản vẫn dừng ở giới hạn của riêng nó. Nó tiếp tục công việc của bạn dưới một tài khoản khác của bạn khi bạn yêu cầu, hoặc tự làm việc đó khi chạm giới hạn nếu bạn bật [`auto_switch`](/features/next#auto-switch) (Linux và macOS). Việc đó có được phép với các tài khoản của bạn hay không là quyết định của bạn.
 
-**Seat của gói Team và Enterprise.** Lựa chọn tự động (`ccam next`, `--fallback`, `ccam pick`, phím `n` trên bảng điều khiển) cũng chuyển đổi giữa các seat của cùng một tổ chức Claude Team hoặc Enterprise. Trung tâm trợ giúp của Anthropic ghi rằng "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (mỗi seat của gói Team được gán cho đích danh một cá nhân, và chỉ người đó được phép sử dụng) và "Users can't route their work through another user's account to use that user's remaining usage" (người dùng không được chuyển công việc của mình qua tài khoản của một người dùng khác để dùng phần hạn mức còn lại của người đó) ([gói Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); tương tự đối với [gói Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Vì vậy, dùng lựa chọn tự động giữa các seat có thể vi phạm điều khoản của Anthropic. Hãy xác nhận với tổ chức của bạn và Anthropic trước khi dựa vào nó. Các gói cá nhân (Pro, Max) được đề cập trong đoạn ở trên.
+**Seat của gói Team và Enterprise.** Lựa chọn tự động (`ccam next`, `--fallback`, `ccam pick`, phím `n` trên bảng điều khiển, và [`auto_switch`](/features/next#auto-switch) khi bạn bật nó) cũng chuyển đổi giữa các seat của cùng một tổ chức Claude Team hoặc Enterprise. Trung tâm trợ giúp của Anthropic ghi rằng "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (mỗi seat của gói Team được gán cho đích danh một cá nhân, và chỉ người đó được phép sử dụng) và "Users can't route their work through another user's account to use that user's remaining usage" (người dùng không được chuyển công việc của mình qua tài khoản của một người dùng khác để dùng phần hạn mức còn lại của người đó) ([gói Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); tương tự đối với [gói Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Vì vậy, dùng lựa chọn tự động giữa các seat có thể vi phạm điều khoản của Anthropic. Có dùng nó ở đó hay không là quyết định của bạn: hãy xác nhận với tổ chức của bạn và Anthropic trước khi dựa vào nó. Các gói cá nhân (Pro, Max) được đề cập trong đoạn ở trên.
 
 ## ccam có giúp vượt qua giới hạn sử dụng không?
 
-Không. Mỗi tài khoản giữ giới hạn riêng của nó. ccam hiển thị các giới hạn đó và cho phép bạn tiếp tục trên một tài khoản khác của bạn khi một tài khoản hết hạn mức.
+Không vượt qua giới hạn riêng của bất kỳ tài khoản nào: mỗi tài khoản giữ các giới hạn của nó và dừng lại ở đó, và ccam không nâng, gộp hay che giấu chúng. ccam hiển thị các giới hạn đó và cho phép bạn tiếp tục trên một tài khoản khác của bạn khi một tài khoản hết hạn mức; khi bật `auto_switch`, nó tự làm việc đó (xem câu hỏi tiếp theo). Giữa các seat của cùng một tổ chức Team hoặc Enterprise, tiếp tục trên một seat khác sẽ dùng phần hạn mức còn lại của seat đó, điều mà trung tâm trợ giúp của Anthropic không cho phép đối với seat của một người dùng khác (xem phần Seat của gói Team và Enterprise ở trên).
+
+## ccam có thể tự đổi tài khoản khi một phiên chạm giới hạn không?
+
+Chỉ khi bạn bật tính năng đó. Với `auto_switch = true` ở đầu `~/.config/ccam/config.toml` (Linux và macOS; mặc định tắt và đang thử nghiệm), khi Claude Code dừng một phiên tương tác do ccam khởi động ở giới hạn 5 giờ, hàng tuần, Opus hoặc Sonnet, ccam kết thúc phiên và tiếp tục cuộc hội thoại dưới một tài khoản khác của bạn còn hạn mức: một seat khác của cùng tổ chức Team hoặc Enterprise, hoặc một gói cá nhân khác (Pro, Max). Nó không bao giờ đổi trước khi chạm giới hạn, không bao giờ theo dõi mức sử dụng của bạn ở chế độ nền, và không bao giờ chuyển công việc ra khỏi hay vào trong một tổ chức Team hoặc Enterprise. Với các seat, nó chuyển công việc của bạn từ seat này sang seat khác, điều này có thể vi phạm điều khoản của Anthropic (xem phần Seat của gói Team và Enterprise ở trên), còn với các gói cá nhân, điều khoản của Anthropic không phân định rõ: Consumer Terms cấm truy cập Dịch vụ "through automated or non-human means" (bằng phương tiện tự động hoặc phi con người) trừ khi Anthropic cho phép rõ ràng, và một lần chuyển sẽ gửi một tin nhắn thay cho bạn; bật nó hay không là quyết định của bạn. [`auto_switch`](/features/next#auto-switch) liệt kê mọi điều kiện và chi phí của một lần chuyển.
 
 ## Làm sao để dùng hai tài khoản Claude Code trên một máy tính?
 
@@ -28,11 +32,11 @@ Hãy cho mỗi tài khoản một thư mục cấu hình riêng bằng `CLAUDE_C
 
 ## Làm sao để tiếp tục một cuộc hội thoại trên tài khoản khác?
 
-Chạy `ccam next --continue` trong thư mục: lệnh này chuyển cuộc hội thoại gần nhất của thư mục sang tài khoản kế tiếp (`--auto` để chọn tài khoản còn nhiều hạn mức nhất). Bên trong Claude Code, `/ccam:switch` từ [plugin ccam](/docs/install#claude-code-plugin) làm điều tương tự cho phiên bạn đang ở. Khi hai tài khoản dùng chung lịch sử hội thoại (`ccam group set default --add history`, hoặc một nhóm riêng của chúng: `ccam group add pair --items history --members work,side`), tài khoản mới mở chính cuộc hội thoại đó; nếu không, Claude Code sao chép nó vào lịch sử của tài khoản mới.
+Chạy `ccam next --continue` trong thư mục: lệnh này chuyển cuộc hội thoại gần nhất của thư mục sang tài khoản kế tiếp (`--auto` để chọn tài khoản còn nhiều hạn mức nhất). Bên trong Claude Code, `/ccam:switch` từ [plugin ccam](/docs/install#claude-code-plugin) làm điều tương tự cho phiên bạn đang ở. Khi hai tài khoản dùng chung lịch sử hội thoại (`ccam group set default --add history`, hoặc một nhóm riêng của chúng: `ccam group add pair --items history --members work,side`), tài khoản mới mở chính cuộc hội thoại đó; nếu không, Claude Code sao chép nó vào lịch sử của tài khoản mới. Thêm `--brief` để tài khoản mới bắt đầu từ một bản tóm tắt ngắn thay vì toàn bộ cuộc hội thoại.
 
 ## ccam có xem hoặc gửi thông tin đăng nhập của tôi đi không?
 
-ccam không bao giờ dùng chung hay sao chép thông tin đăng nhập Claude của bạn giữa các tài khoản, và không bao giờ sao chép các lần đăng nhập của máy chủ MCP. Nó chỉ đọc access token của một tài khoản để hỏi endpoint mức sử dụng của Anthropic về mức sử dụng của tài khoản đó, khi bạn chạy `ccam usage`, `ccam next --auto` hoặc `ccam doctor`, và chỉ gia hạn token đã hết hạn bằng `ccam usage --refresh`; với `usage_source = "claude"` nó hoàn toàn không đọc token. `ccam ext` và `ccam doctor` đọc tên các lần đăng nhập MCP của một tài khoản, không bao giờ đọc token của chúng. ccam không có telemetry. Ngoài các lượt tra cứu đó, yêu cầu duy nhất nó tự gửi là câu hỏi của bảng điều khiển tới GitHub về bản phát hành ccam mới nhất, và yêu cầu này không mang thông tin gì về bạn hay các tài khoản của bạn.
+ccam không bao giờ dùng chung hay sao chép thông tin đăng nhập Claude của bạn giữa các tài khoản, và không bao giờ sao chép các lần đăng nhập của máy chủ MCP. Nó chỉ đọc access token của một tài khoản để hỏi endpoint mức sử dụng của Anthropic về mức sử dụng của tài khoản đó: cho `ccam usage`, bảng điều khiển, `ccam doctor` và lựa chọn tự động (`ccam next --auto`, `ccam pick`, `--fallback`, và `auto_switch` khi một phiên chạm giới hạn). Nó chỉ gia hạn token đã hết hạn bằng `ccam usage --refresh`; với `usage_source = "claude"` nó không gửi token đi đâu cả và chỉ đọc thông tin đăng nhập đã lưu (tệp, hoặc mục trong Chuỗi khóa của macOS) để biết nó còn dùng được hay không. `ccam ext` và `ccam doctor` đọc tên các lần đăng nhập MCP của một tài khoản, không bao giờ đọc token của chúng. ccam không có telemetry. Ngoài các lượt tra cứu đó, yêu cầu duy nhất nó tự gửi là câu hỏi của bảng điều khiển tới GitHub về bản phát hành ccam mới nhất, và yêu cầu này không mang thông tin gì về bạn hay các tài khoản của bạn.
 
 ## Làm sao để đăng nhập trên máy chủ từ xa?
 
@@ -56,7 +60,7 @@ Máy chủ được thêm trong một phiên bằng `claude mcp add` chỉ đư�
 
 ## ccam có làm Claude Code chậm đi không?
 
-Khởi động Claude Code thông qua ccam tốn thêm khoảng 4 mili giây, đo bằng `scripts/perf-check.sh` trên một máy tính xách tay. ccam đọc một tệp nhỏ, kiểm tra các liên kết dùng chung rồi tự thay thế mình bằng `claude`, nên nó không chạy trong lúc bạn làm việc. Windows không thể thay thế một tiến trình, nên ở đó ccam khởi động Claude Code và chờ nó, ngoài ra không làm gì khác.
+Khởi động Claude Code thông qua ccam tốn thêm khoảng 4 mili giây, đo bằng `scripts/perf-check.sh` trên một máy tính xách tay. ccam đọc một tệp nhỏ, kiểm tra các liên kết dùng chung rồi tự thay thế mình bằng `claude`, nên theo mặc định nó không chạy trong lúc bạn làm việc. Windows không thể thay thế một tiến trình, nên ở đó ccam khởi động Claude Code và chờ nó, ngoài ra không làm gì khác. Khi bật `relay` hoặc `auto_switch`, ccam cũng chờ theo cách đó bên cạnh mỗi phiên tương tác, để có thể tiếp tục cuộc hội thoại.
 
 ## Làm sao để cập nhật ccam?
 

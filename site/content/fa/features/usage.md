@@ -1,10 +1,10 @@
 ---
 title: سقف مصرف
 description: ccam usage سقف ۵ ساعته و هفتگی همه حساب‌ها را یک‌جا نشان می‌دهد و ccam statusline نام حساب و مصرف آن را در Claude Code نمایش می‌دهد.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 7
 translation: machine
-sourceHash: "a14b1da71a1a"
+sourceHash: "91ad20327289"
 ---
 
 `ccam usage` نشان می‌دهد هر حساب چه مقدار از سقف ۵ ساعته، سقف هفتگی و سقف هفتگی ویژه هر مدل (مانند Fable) را مصرف کرده است، با یک نوار برای هر سقف همراه با زمان باقی‌مانده تا بازنشانی آن. پیش از شروع یک کار طولانی، یا وقتی Claude Code به شما می‌گوید به سقف نزدیک شده‌اید، از آن استفاده کنید تا ببینید کدام حساب هنوز ظرفیت دارد. `ccam statusline` فرمان خط وضعیت برای Claude Code است: نام حساب و مصرف آن را داخل Claude Code نشان می‌دهد و عددها را برای `ccam usage` ذخیره می‌کند.
@@ -20,7 +20,7 @@ ccam usage -v               # add where the numbers came from
 ccam usage --json           # machine-readable, one object per account
 ccam usage --source cache   # saved numbers only, no network
 ccam usage --refresh        # also renew expired logins of accounts not running
-ccam usage --source claude  # let Claude Code look it up: ccam never touches a token
+ccam usage --source claude  # let Claude Code look it up: ccam sends no token
 ccam statusline install     # set the status line in every account's settings.json
 ```
 
@@ -40,7 +40,7 @@ $ ccam usage
 
 هر حساب یک خط با شماره، نام و میزان قدیمی بودن عددهایش دارد؛ `(cached)` یعنی عددها از یک فایل ذخیره‌شده آمده‌اند، نه از نقطه پایانی. زیر آن، برای هر سقف یک خط یک نوار ۲۰ خانه‌ای، درصد و زمان باقی‌مانده تا بازنشانی پنجره را نشان می‌دهد: `5-hour`، `Weekly` (همه مدل‌ها)، و سپس پنجره هفتگی ویژه هر مدل، مانند `Fable`. پنجره‌ای که حساب ندارد `-` را نشان می‌دهد. یک درصد از ۸۰٪ زرد و در ۱۰۰٪ قرمز می‌شود. پنجره‌ای که Claude Code پر گزارش کرده، وقتی درخواستی را در سقف مصرف رد کرده است، تا بازنشانی‌اش ۱۰۰٪ نشان می‌دهد، هر چه عددهای ذخیره‌شده بگویند ([ثبت سقف مصرف](#the-limit-record) را ببینید). در ترمینال همه حساب‌ها بلافاصله با `fetching…` نمایش داده می‌شوند و خط‌های هر حساب به محض پاسخ دادن آن رسم می‌شوند. خط آخر حسابی را نام می‌برد که [`ccam next --auto`](/features/next) با همان قواعد انتخاب می‌کرد (`auto_max_usage`، `auto_strategy`، نشست‌های در حال اجرا، فقط حساب‌های سازمان آخرین حساب استفاده‌شده مگر آنکه `cross_org` تنظیم شده باشد، و کنار گذاشتن هر پنجره‌ای که به ۱۰۰٪ رسیده، پس حسابی که سهمیه هفته‌اش پر شده هرگز نام برده نمی‌شود) و فقط وقتی نمایش داده می‌شود که بیش از یک حساب داشته باشید. با راهبرد پیش‌فرض `headroom` این خط `→ Most headroom: <name>` است؛ با `expiring` یا `balance` دلیل را می‌گوید، مانند `→ next --auto picks personal: its 5-hour window resets first, in 1h 12m (40% of its 5 hours used)`.
 
-**صندلی‌های Team و Enterprise.** انتخاب خودکار (`ccam next`، `--fallback`، `ccam pick`، کلید `n` در داشبورد) میان صندلی‌های همان سازمان Claude Team یا Enterprise هم جابه‌جا می‌شود. مرکز راهنمای Anthropic می‌گوید: «Each seat on a Team plan is assigned to one named individual, and only that person may use it» (هر صندلی در طرح Team به نام یک فرد مشخص اختصاص داده می‌شود و فقط همان شخص اجازه دارد از آن استفاده کند) و «Users can't route their work through another user's account to use that user's remaining usage» (کاربران نمی‌توانند کار خود را از طریق حساب کاربر دیگری انجام دهند تا از سهمیه مصرف باقی‌مانده آن کاربر استفاده کنند) ([طرح‌های Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)؛ و همین‌طور برای [طرح‌های Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). بنابراین استفاده از انتخاب خودکار میان صندلی‌ها ممکن است شرایط Anthropic را نقض کند. پیش از آنکه به آن تکیه کنید، از سازمان خود و Anthropic بپرسید. برای طرح‌های شخصی (Pro، Max)، [توضیح شرایط در پرسش‌های متداول](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) را ببینید.
+**صندلی‌های Team و Enterprise.** انتخاب خودکار (`ccam next`، `--fallback`، `ccam pick`، کلید `n` در داشبورد، و [`auto_switch`](/features/next#auto-switch) وقتی آن را روشن کنید) میان صندلی‌های همان سازمان Claude Team یا Enterprise هم جابه‌جا می‌شود. مرکز راهنمای Anthropic می‌گوید: «Each seat on a Team plan is assigned to one named individual, and only that person may use it» (هر صندلی در طرح Team به نام یک فرد مشخص اختصاص داده می‌شود و فقط همان شخص اجازه دارد از آن استفاده کند) و «Users can't route their work through another user's account to use that user's remaining usage» (کاربران نمی‌توانند کار خود را از طریق حساب کاربر دیگری انجام دهند تا از سهمیه مصرف باقی‌مانده آن کاربر استفاده کنند) ([طرح‌های Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)؛ و همین‌طور برای [طرح‌های Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). بنابراین استفاده از انتخاب خودکار میان صندلی‌ها ممکن است شرایط Anthropic را نقض کند. اینکه در آنجا از آن استفاده کنید یا نه، تصمیم خودتان است: پیش از آنکه به آن تکیه کنید، از سازمان خود و Anthropic بپرسید. برای طرح‌های شخصی (Pro، Max)، [توضیح شرایط در پرسش‌های متداول](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) را ببینید.
 
 حسابی که وارد نشده است `not logged in → ccam login <name>` را نشان می‌دهد و حساب کلید API پیام `no limits (API)` را. توکن دسترسی منقضی‌شده ``access token expired; `ccam <name>` renews it when it starts`` را نشان می‌دهد، اگر عدد ذخیره‌شده‌ای باشد بالای آن‌ها: Claude Code آن را در اجرای بعدی تمدید می‌کند. ورودی که به‌طور کامل منقضی شده است، چون توکن تمدیدش منقضی شده یا Claude Code پس از آنکه سرور آن را رد کرد پاکش کرده است، `` login expired → `ccam login <name>` `` را نشان می‌دهد.
 
@@ -97,7 +97,7 @@ $ ccam usage
 
 ### ثبت سقف مصرف
 
-وقتی Claude Code یک نوبت را در سقف مصرف متوقف کند، هوک [پلاگین ccam](/docs/install#claude-code-plugin) درخواست ردشده را از گفتگو می‌خواند: کدام پنجره پر بوده است (۵ ساعته، هفتگی، Opus یا Sonnet) و کی بازنشانی می‌شود. این را در `~/.local/state/ccam/usage/<name>.limit.json` می‌نویسد. `Fetch` این ثبت را روی هر چیز دیگری که از هر منبعی می‌داند قرار می‌دهد: هر پنجره‌ای که در آن است تا بازنشانی‌اش ۱۰۰٪ حساب می‌شود، هر قدر هم عددهای ذخیره‌شده قدیمی یا پایین باشند، پس `ccam next --auto`، `ccam pick` و `--fallback` آن حساب را پیش از آن زمان دوباره انتخاب نمی‌کنند. وقتی چیز دیگری معلوم نباشد، حساب فقط همین ثبت را نشان می‌دهد (`source: the usage limit Claude Code reported` با `-v`). نشست‌هایی که کسی پشتشان ننشسته است (`-p`، نشست‌های پس‌زمینه) هیچ ثبتی نمی‌نویسند، و توقف از سوی سازمان (تمام شدن مصرف، گروهی که روی $0 تنظیم شده) هم ثبتی نمی‌نویسد، چون مدیرانش هر زمان می‌توانند آن را بردارند. `ccam login` به حساب Claude دیگر این ثبت را کنار می‌گذارد؛ پاک کردن فایل هم آن را پاک می‌کند.
+وقتی Claude Code یک نوبت را در سقف مصرف متوقف کند، هوک [پلاگین ccam](/docs/install#claude-code-plugin) درخواست ردشده را از گفتگو می‌خواند: کدام پنجره پر بوده است (۵ ساعته، هفتگی، Opus یا Sonnet) و کی بازنشانی می‌شود. این را در `~/.local/state/ccam/usage/<name>.limit.json` می‌نویسد. `Fetch` این ثبت را روی هر چیز دیگری که از هر منبعی می‌داند قرار می‌دهد: هر پنجره‌ای که در آن است تا بازنشانی‌اش ۱۰۰٪ حساب می‌شود، هر قدر هم عددهای ذخیره‌شده قدیمی یا پایین باشند، پس `ccam next --auto`، `ccam pick`، `--fallback` و [`auto_switch`](/features/next#auto-switch) آن حساب را پیش از آن زمان دوباره انتخاب نمی‌کنند. وقتی چیز دیگری معلوم نباشد، حساب فقط همین ثبت را نشان می‌دهد (`source: the usage limit Claude Code reported` با `-v`). نشست‌هایی که کسی پشتشان ننشسته است (`-p`، نشست‌های پس‌زمینه) هیچ ثبتی نمی‌نویسند، و توقف از سوی سازمان (تمام شدن مصرف، گروهی که روی $0 تنظیم شده) هم ثبتی نمی‌نویسد، چون مدیرانش هر زمان می‌توانند آن را بردارند. `ccam login` به حساب Claude دیگر این ثبت را کنار می‌گذارد؛ پاک کردن فایل هم آن را پاک می‌کند.
 
 ### تمدید توکن‌ها
 

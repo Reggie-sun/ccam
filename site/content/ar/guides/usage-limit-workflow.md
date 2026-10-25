@@ -1,10 +1,10 @@
 ---
 title: ماذا تفعل عندما يبلغ Claude Code حد الاستخدام
 description: انتظر إعادة التعيين أو تابع المحادثة نفسها فورًا على حساب Claude Code آخر. كيف يعمل حد الخمس ساعات والحد الأسبوعي، خطوة بخطوة.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 3
 translation: machine
-sourceHash: 049a46684c7b
+sourceHash: "18ef61a68c55"
 ---
 
 عندما يبلغ حساب حد الاستخدام (ويُسمّى غالبًا rate limit)، أمامك خياران: أن تنتظر حتى يُعاد تعيين الحد، أو أن تتابع المحادثة نفسها الآن على حساب آخر تملكه. مع ccam يتطلب الخيار الثاني أمرًا واحدًا، `ccam next --auto --continue`.
@@ -57,18 +57,18 @@ ccam next --auto --continue
 
 ومع [المكوّن الإضافي لـ ccam](/docs/install#claude-code-plugin) في Claude Code، تعرض الجلسة التي تتوقف عند حدها إشعارًا وتسجّل النافذة الممتلئة، فلا يختار `ccam next --auto` ذلك الحساب مجددًا قبل إعادة تعيينها، ويدوّن `/ccam:switch` (أو `/ccam:switch work`) المحادثة لـ `ccam next --continue` دون أن يترك شيئًا للتخمين.
 
-**مقاعد Team وEnterprise.** يبدّل الاختيار التلقائي (`ccam next` و`--fallback` و`ccam pick` والمفتاح `n` في لوحة التحكم) أيضًا بين مقاعد المؤسسة نفسها في Claude Team أو Enterprise. يقول مركز المساعدة لدى Anthropic: "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (يُخصَّص كل مقعد في خطة Team لشخص واحد محدد بالاسم، ولا يجوز أن يستخدمه إلا ذلك الشخص) و"Users can't route their work through another user's account to use that user's remaining usage" (لا يجوز للمستخدمين تمرير عملهم عبر حساب مستخدم آخر للاستفادة من الاستخدام المتبقي لذلك المستخدم) ([خطط Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)؛ وبالمثل في [خطط Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). لذا فإن استخدام الاختيار التلقائي بين المقاعد قد يخالف شروط Anthropic. تحقّق من ذلك مع مؤسستك ومع Anthropic قبل أن تعتمد عليه. أما الخطط الشخصية (Pro وMax) فتتناولها [ملاحظة الشروط في الأسئلة الشائعة](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**مقاعد Team وEnterprise.** يبدّل الاختيار التلقائي (`ccam next` و`--fallback` و`ccam pick` والمفتاح `n` في لوحة التحكم، و[`auto_switch`](/features/next#auto-switch) عند تشغيله) أيضًا بين مقاعد المؤسسة نفسها في Claude Team أو Enterprise. يقول مركز المساعدة لدى Anthropic: "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (يُخصَّص كل مقعد في خطة Team لشخص واحد محدد بالاسم، ولا يجوز أن يستخدمه إلا ذلك الشخص) و"Users can't route their work through another user's account to use that user's remaining usage" (لا يجوز للمستخدمين تمرير عملهم عبر حساب مستخدم آخر للاستفادة من الاستخدام المتبقي لذلك المستخدم) ([خطط Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)؛ وبالمثل في [خطط Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). لذا فإن استخدام الاختيار التلقائي بين المقاعد قد يخالف شروط Anthropic. وقرار استخدامه هناك يعود إليك: تحقّق من ذلك مع مؤسستك ومع Anthropic قبل أن تعتمد عليه. أما الخطط الشخصية (Pro وMax) فتتناولها [ملاحظة الشروط في الأسئلة الشائعة](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 ## هل يبدّل ccam الحسابات تلقائيًا؟
 
-لا. لا يعمل ccam أثناء عملك: فهو يشغّل Claude Code ويستبدل نفسه به. أنت من يقرر متى تبدّل، ويختار `ccam next --auto` الحساب الأقل استخدامًا خلال 5 ساعات ويتخطى الحسابات التي بلغت 100% أو غير المسجّلة الدخول أو التابعة لمؤسسة أخرى. ومع `relay = true` في `config.toml`، ينتظر ccam بجانب الجلسة بدلًا من ذلك، فيتابع `/ccam:switch` بنفسه، مع الإبقاء على خيارات الجلسة ووضع الأذونات ومستوى الجهد. بعض الأدوات الأخرى تبدّل تسجيل الدخول في جلسة قيد التشغيل بدلًا من ذلك؛ ويشرح [ccam وأدوات تبديل الحسابات الأخرى](/compare/account-switchers) الفرق.
+فقط إذا شغّلت ذلك. افتراضيًا لا يعمل ccam أثناء عملك: فهو يشغّل Claude Code ويستبدل نفسه به، فأنت من يقرر متى تبدّل، ويختار `ccam next --auto` الحساب الأقل استخدامًا خلال 5 ساعات، ويتخطى الحسابات التي بلغت 100% أو غير المسجّلة الدخول، ويبقى ضمن مؤسسة Team أو Enterprise واحدة، أو بين الخطط الشخصية. ومع `relay = true` في `config.toml`، ينتظر ccam بجانب الجلسة بدلًا من ذلك، فيتابع `/ccam:switch` بنفسه، مع الإبقاء على خيارات الجلسة ووضع الأذونات ومستوى الجهد. ومع `auto_switch = true` (على Linux وmacOS؛ ميزة تجريبية)، يجري ccam التبديل بنفسه أيضًا: عندما يوقف Claude Code الجلسة عند حدها ويكون لدى حساب آخر مثل حسابها متسع، يُنهي ccam الجلسة ويتابع المحادثة هناك ([الشروط والتكاليف](/features/next#auto-switch)). بعض الأدوات الأخرى تبدّل تسجيل الدخول في جلسة قيد التشغيل بدلًا من ذلك؛ ويشرح [ccam وأدوات تبديل الحسابات الأخرى](/compare/account-switchers) الفرق.
 
 ## أمور يجب مراعاتها
 
 - شغّل `ccam next --continue` في المجلد نفسه الذي عملت فيه؛ فالمحادثات تُخزَّن لكل مجلد مشروع.
 - تجنّب تشغيل حسابين على المحادثة نفسها في الوقت نفسه. ينبّهك ccam إذا حاولت ذلك.
 - دون سجل مشترك، تُنسخ المحادثة إلى الحساب الآخر وتمضي كل نسخة في طريقها؛ وتبقى نقاط الحفظ التي يستعيد منها `/rewind` الشيفرة مع الحساب الأول.
-- قد تستهلك الرسالة الأولى على الحساب الجديد من حدّه أكثر من المعتاد، لأن ذلك الحساب لم يخزّن المحادثة مؤقتًا بعد.
+- قد تستهلك الرسالة الأولى على الحساب الجديد من حدّه أكثر من المعتاد، لأن ذلك الحساب لم يخزّن المحادثة مؤقتًا بعد. ويبدؤها `ccam next --continue --brief` بدلًا من ذلك على ملخص قصير.
 - يعتمد السماح بالتبديل بين الحسابات بهذه الطريقة على شروط كل حساب.
 
 راجع [حدود الاستخدام](/docs/usage-limits) لمعرفة كل خيارات `ccam usage` و`ccam next`.

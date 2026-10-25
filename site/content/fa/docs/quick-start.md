@@ -2,10 +2,10 @@
 title: شروع سریع
 metaTitle: "شروع سریع: افزودن و تعویض حساب‌های Claude Code"
 description: دو حساب Claude Code را با ccam add اضافه کنید، به آن‌ها میان‌برهایی مانند ccwork بدهید، بین آن‌ها جابه‌جا شوید و تعیین کنید چه چیزهایی مشترک باشد.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 2
 translation: machine
-sourceHash: e98d0637356a
+sourceHash: "0570ef27e4ce"
 ---
 
 هر حساب را با `ccam add` اضافه کنید، سپس Claude Code را با `ccam <name>` یا با میان‌بری که نامش را خودتان انتخاب می‌کنید، مانند `ccwork`، اجرا کنید. بیشتر کاربران به چیزی بیش از این نیاز ندارند.
@@ -108,7 +108,7 @@ ccam next --continue
 
 `ccam usage` مصرف ۵ ساعته و هفتگی همه حساب‌ها را نشان می‌دهد. `ccam next --continue` همان گفتگو را در حساب بعدی باز می‌کند. در اسکریپت‌ها، `ccam --fallback work -p "…"` خودش حساب را عوض می‌کند. [سقف مصرف](/docs/usage-limits) را ببینید.
 
-**صندلی‌های Team و Enterprise.** انتخاب خودکار (`ccam next`، `--fallback`، `ccam pick`، کلید `n` در داشبورد) میان صندلی‌های همان سازمان Claude Team یا Enterprise هم جابه‌جا می‌شود. مرکز راهنمای Anthropic می‌گوید: «Each seat on a Team plan is assigned to one named individual, and only that person may use it» (هر صندلی در طرح Team به نام یک فرد مشخص اختصاص داده می‌شود و فقط همان شخص اجازه دارد از آن استفاده کند) و «Users can't route their work through another user's account to use that user's remaining usage» (کاربران نمی‌توانند کار خود را از طریق حساب کاربر دیگری انجام دهند تا از سهمیه مصرف باقی‌مانده آن کاربر استفاده کنند) ([طرح‌های Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)؛ و همین‌طور برای [طرح‌های Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). بنابراین استفاده از انتخاب خودکار میان صندلی‌ها ممکن است شرایط Anthropic را نقض کند. پیش از آنکه به آن تکیه کنید، از سازمان خود و Anthropic بپرسید. برای طرح‌های شخصی (Pro، Max)، [توضیح شرایط در پرسش‌های متداول](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) را ببینید.
+**صندلی‌های Team و Enterprise.** انتخاب خودکار (`ccam next`، `--fallback`، `ccam pick`، کلید `n` در داشبورد، و [`auto_switch`](/features/next#auto-switch) وقتی آن را روشن کنید) میان صندلی‌های همان سازمان Claude Team یا Enterprise هم جابه‌جا می‌شود. مرکز راهنمای Anthropic می‌گوید: «Each seat on a Team plan is assigned to one named individual, and only that person may use it» (هر صندلی در طرح Team به نام یک فرد مشخص اختصاص داده می‌شود و فقط همان شخص اجازه دارد از آن استفاده کند) و «Users can't route their work through another user's account to use that user's remaining usage» (کاربران نمی‌توانند کار خود را از طریق حساب کاربر دیگری انجام دهند تا از سهمیه مصرف باقی‌مانده آن کاربر استفاده کنند) ([طرح‌های Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)؛ و همین‌طور برای [طرح‌های Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). بنابراین استفاده از انتخاب خودکار میان صندلی‌ها ممکن است شرایط Anthropic را نقض کند. اینکه در آنجا از آن استفاده کنید یا نه، تصمیم خودتان است: پیش از آنکه به آن تکیه کنید، از سازمان خود و Anthropic بپرسید. برای طرح‌های شخصی (Pro، Max)، [توضیح شرایط در پرسش‌های متداول](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) را ببینید.
 
 ## از ~/.claude استفاده می‌کنید؟
 

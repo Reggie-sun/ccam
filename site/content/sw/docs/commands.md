@@ -2,10 +2,10 @@
 title: Marejeo ya amri
 metaTitle: Marejeo ya amri za ccam
 description: Kila amri na chaguo la ccam, kuanzia ccam add na ccam <name> hadi ccam usage, ccam next na ccam doctor.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 3
 translation: machine
-sourceHash: "36af7e209cd9"
+sourceHash: "abba525cae48"
 ---
 
 Weka `--dry-run` kabla ya amri ili kuona itakachofanya bila kukifanya, kwa mfano `ccam --dry-run work`. Inafanya kazi unapoanzisha Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`) na pamoja na `group`, `migrate`, `shortcut`, `update` na `doctor --fix`. Amri nyingine zinazobadilisha kitu huikataa badala ya kufanya kazi.
@@ -27,7 +27,7 @@ ccam --fallback work -p "fix the tests"   # run again as another account at the 
 
 `--fallback` kabla ya jina la akaunti ni kwa uendeshaji wa `-p`/`--print`. Akaunti inapofikia kikomo chake cha matumizi, ccam huendesha amri ile ile tena kama akaunti iliyoingia yenye nafasi kubwa zaidi na huchapisha matokeo ya uendeshaji uliokamilika pekee. Tazama [Akaunti kwa folda](/features/folder) na [Endesha tena kwenye kikomo](/features/next#run-again-at-the-limit).
 
-**Viti (seats) vya Team na Enterprise.** Chaguo za kiotomatiki (`ccam next`, `--fallback`, `ccam pick`, kitufe `n` cha dashibodi) pia hubadili kati ya viti vya shirika lile lile la Claude Team au Enterprise. Kituo cha usaidizi cha Anthropic kinasema "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (kila kiti katika mpango wa Team hutolewa kwa mtu mmoja aliyetajwa kwa jina, na ni mtu huyo pekee anayeruhusiwa kukitumia) na "Users can't route their work through another user's account to use that user's remaining usage" (watumiaji hawaruhusiwi kuelekeza kazi yao kupitia akaunti ya mtumiaji mwingine ili kutumia kiasi cha matumizi kilichobaki cha mtumiaji huyo) ([mipango ya Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); vivyo hivyo kwa [mipango ya Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Kwa hiyo, kutumia chaguo za kiotomatiki kati ya viti kunaweza kukiuka masharti ya Anthropic. Wasiliana na shirika lako na Anthropic kabla ya kuzitegemea. Mipango ya binafsi (Pro, Max) inaelezwa katika [dokezo la masharti kwenye Maswali yanayoulizwa mara kwa mara](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Viti (seats) vya Team na Enterprise.** Chaguo za kiotomatiki (`ccam next`, `--fallback`, `ccam pick`, kitufe `n` cha dashibodi, na [`auto_switch`](/features/next#auto-switch) unapokiwasha) pia hubadili kati ya viti vya shirika lile lile la Claude Team au Enterprise. Kituo cha usaidizi cha Anthropic kinasema "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (kila kiti katika mpango wa Team hutolewa kwa mtu mmoja aliyetajwa kwa jina, na ni mtu huyo pekee anayeruhusiwa kukitumia) na "Users can't route their work through another user's account to use that user's remaining usage" (watumiaji hawaruhusiwi kuelekeza kazi yao kupitia akaunti ya mtumiaji mwingine ili kutumia kiasi cha matumizi kilichobaki cha mtumiaji huyo) ([mipango ya Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); vivyo hivyo kwa [mipango ya Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Kwa hiyo, kutumia chaguo za kiotomatiki kati ya viti kunaweza kukiuka masharti ya Anthropic. Kama utazitumia huko ni uamuzi wako: wasiliana na shirika lako na Anthropic kabla ya kuzitegemea. Mipango ya binafsi (Pro, Max) inaelezwa katika [dokezo la masharti kwenye Maswali yanayoulizwa mara kwa mara](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 Njia fupi kama `ccwork` huanzisha akaunti yake kwa njia ile ile: `ccwork --resume` hufanya kile ambacho `ccam work --resume` hufanya. Tazama [njia fupi](/docs/commands#shortcuts).
 
@@ -115,8 +115,9 @@ ccam mcp remove fs
 ccam usage           # also: ccam u
 ccam usage --watch   # refresh every 60 seconds
 ccam usage --json
-ccam usage --source claude      # Claude Code looks it up; ccam never touches a token
+ccam usage --source claude      # Claude Code looks it up; ccam sends no token
 ccam next --continue            # this folder's last conversation, as the next account
+ccam next --continue --brief    # a new conversation from a summary of the last one
 ccam next --auto
 ccam next --auto --max-usage 80 --wait
 ccam next -c --auto -- --dangerously-skip-permissions   # claude's own options after --
@@ -126,7 +127,7 @@ ccam agents                     # background sessions of every account
 ccam attach 49ec0028            # open one, as the account that started it (or by its name)
 ```
 
-`next --auto`, `--fallback` na `ccam pick` huchagua kwa njia ile ile: kwanza zilizo chini ya `auto_max_usage` (`config.toml`, chaguo-msingi 100), kwa `auto_strategy` (`headroom`, `expiring` au `balance`), zikihesabu kipindi cha wiki cha `--model`, kamwe si akaunti iliyo kwenye 100% (kipindi ambacho Claude Code iliripoti kuwa kimejaa huhesabiwa kama 100% hadi kianze upya), kamwe si kuingia kwa API key, na ndani ya shirika la akaunti wanayoanzia (`--cross-org` au `cross_org = true` ili kutafuta zaidi). `--wait` huchukua thamani yake baada ya `=` (`--wait=2h`); ikiandikwa kwa nafasi hukataliwa pamoja na kidokezo. Isipowezekana kuchagua yoyote, hutoka na msimbo 75, au kwa `--wait` husubiri kipindi cha akaunti ya kwanza kianze upya. `ccam next --continue` huhamisha mazungumzo hata kati ya akaunti zisizoshiriki historia: hapo Claude Code huyanakili kwenye akaunti mpya. Tofauti na `ccam <name>`, `ccam next` husoma chaguo zake yenyewe, kwa hiyo chaguo za Claude Code huwekwa baada ya `--`; bila hiyo ccam husimama na `unknown flag`. Ndani ya Claude Code, `/ccam:switch [account]` ya plugin hukabidhi mazungumzo, na `ccam hook` ndicho ambacho hooks zake huendesha. Tazama [Kubadili kwenda akaunti inayofuata](/features/next), [Kuchagua akaunti kwa ajili ya script](/features/pick) na [Vipindi vya chinichini vya kila akaunti](/features/agents).
+`next --auto`, `--fallback` na `ccam pick` huchagua kwa njia ile ile: kwanza zilizo chini ya `auto_max_usage` (`config.toml`, chaguo-msingi 100), kwa `auto_strategy` (`headroom`, `expiring` au `balance`), zikihesabu kipindi cha wiki cha `--model`, kamwe si akaunti iliyo kwenye 100% (kipindi ambacho Claude Code iliripoti kuwa kimejaa huhesabiwa kama 100% hadi kianze upya), kamwe si kuingia kwa API key, na ndani ya shirika la akaunti wanayoanzia (`--cross-org` au `cross_org = true` ili kutafuta zaidi). `--wait` huchukua thamani yake baada ya `=` (`--wait=2h`); ikiandikwa kwa nafasi hukataliwa pamoja na kidokezo. Isipowezekana kuchagua yoyote, hutoka na msimbo 75, au kwa `--wait` husubiri kipindi cha akaunti ya kwanza kianze upya. `ccam next --continue` huhamisha mazungumzo hata kati ya akaunti zisizoshiriki historia: hapo Claude Code huyanakili kwenye akaunti mpya. Kwa `--brief`, akaunti mpya badala yake huanza mazungumzo mapya, kutoka kwa muhtasari ambao ccam huandika wa mazungumzo ya mwisho bila model ([`--brief`](/features/next#brief)). Tofauti na `ccam <name>`, `ccam next` husoma chaguo zake yenyewe, kwa hiyo chaguo za Claude Code huwekwa baada ya `--`; bila hiyo ccam husimama na `unknown flag`. Ndani ya Claude Code, `/ccam:switch [account]` ya plugin hukabidhi mazungumzo, na `ccam hook` ndicho ambacho hooks zake huendesha. Kwa `auto_switch = true` katika `config.toml` (Linux na macOS; imezimwa kwa chaguo-msingi), hook ya kikomo pia humaliza kipindi shirikishi ambacho ccam ilianzisha na hukiendeleza kama akaunti nyingine yenye nafasi, iliyo ya aina yake tu: kiti kingine cha shirika lile lile, au mpango mwingine wa binafsi ([`auto_switch`](/features/next#auto-switch)). Tazama [Kubadili kwenda akaunti inayofuata](/features/next), [Kuchagua akaunti kwa ajili ya script](/features/pick) na [Vipindi vya chinichini vya kila akaunti](/features/agents).
 
 ## Matengenezo
 
@@ -148,10 +149,10 @@ ccam completion bash # or zsh, powershell
 
 | Njia | Yaliyomo |
 | --- | --- |
-| `~/.config/ccam/config.toml` | Akaunti, vikundi na mipangilio (`theme`, `usage_source`, `relay`, `cross_org` …). Mipangilio huwekwa juu, kabla ya `[[group]]`, `[[profile]]` au `[[folder]]` ya kwanza: mpangilio ulio chini ya jedwali ni wa jedwali hilo, kwa hiyo ccam huutaja kila inapoanzishwa na katika `ccam doctor`, na amri zinazohifadhi usanidi hukataa hadi uhamishwe. Maoni (comments) hayabaki ccam inapohifadhi faili |
+| `~/.config/ccam/config.toml` | Akaunti, vikundi na mipangilio (`theme`, `usage_source`, `relay`, `auto_switch`, `cross_org` …). Mipangilio huwekwa juu, kabla ya `[[group]]`, `[[profile]]` au `[[folder]]` ya kwanza: mpangilio ulio chini ya jedwali ni wa jedwali hilo, kwa hiyo ccam huutaja kila inapoanzishwa na katika `ccam doctor`, na amri zinazohifadhi usanidi hukataa hadi uhamishwe. Maoni (comments) hayabaki ccam inapohifadhi faili |
 | `~/.local/share/ccam/profiles/<name>/` | `CLAUDE_CONFIG_DIR` ya kila akaunti |
 | `~/.local/share/ccam/groups/<group>/` | Mipangilio, seva za MCP, viendelezi na historia vinavyoshirikiwa |
-| `~/.local/state/ccam/` | Cache ya matumizi na rekodi za vikomo (`usage/<name>.json`, `usage/<name>.limit.json`), nyakati za matumizi ya mwisho, alama za vipindi na kufuli (`locks/`), njia fupi ambazo ccam iliunda (`shortcuts.json`), badiliko la vikundi ambalo halijakamilika (`group-change.json`), na maelezo ambayo `/ccam:switch` na hook ya kikomo huacha (`handoff/<account>/<session>.json`) |
+| `~/.local/state/ccam/` | Cache ya matumizi na rekodi za vikomo (`usage/<name>.json`, `usage/<name>.limit.json`), nyakati za matumizi ya mwisho, alama za vipindi na kufuli (`locks/`), njia fupi ambazo ccam iliunda (`shortcuts.json`), badiliko la vikundi ambalo halijakamilika (`group-change.json`), maelezo ambayo `/ccam:switch` na hook ya kikomo huacha (`handoff/<account>/<session>.json`), lini `ccam pick` au `auto_switch` ilichagua kila akaunti mara ya mwisho (`picks/<name>`; uchaguzi huhesabiwa kwa dakika 2), na muhtasari wa `--brief`, unaohifadhiwa siku 7 (`brief/<session>.md`) |
 | `~/.local/bin/<shortcut>` | Amri za njia fupi kama `ccwork`, ambazo ni viungo vya ccam |
 
 Vigezo `XDG_CONFIG_HOME`, `XDG_DATA_HOME` na `XDG_STATE_HOME` huhamisha folda hizi. Kwenye Windows, `~` ni `%USERPROFILE%` na njia fupi ni `<shortcut>.exe`.

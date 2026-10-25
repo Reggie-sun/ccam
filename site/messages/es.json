@@ -132,7 +132,7 @@
     "close": "Cerrar"
   },
   "commands": {
-    "ccam": "Abrir el panel: cuentas, grupos, carpetas, extensiones y comprobaciones",
+    "ccam": "Abrir el panel: cuentas, agentes, grupos, carpetas, extensiones y comprobaciones",
     "name": "Iniciar Claude Code con esa cuenta; los argumentos se pasan sin cambios",
     "fallback": "Para ejecuciones -p: al llegar a un límite de uso, volver a ejecutar el mismo comando con la cuenta con más margen",
     "add": "Agregar una cuenta: carpeta de configuración, inicio de sesión y un atajo opcional",

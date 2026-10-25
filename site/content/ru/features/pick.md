@@ -1,15 +1,15 @@
 ---
 title: Выбор аккаунта для скриптов
 description: ccam pick выводит для скрипта аккаунт с наибольшим запасом, даёт одновременно запущенным процессам разные аккаунты и выходит с кодом 75, если запаса нет.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 12
 translation: machine
-sourceHash: "a8baeb64de99"
+sourceHash: "5c4f74db9714"
 ---
 
 `ccam pick` выводит имя аккаунта с входом и наибольшим запасом, чтобы скрипт запустил с ним Claude Code. Рабочие процессы, запущенные одновременно, получают разные аккаунты, пока аккаунтов с запасом хватает, поэтому пакет заданий `claude -p` распределяется по вашим аккаунтам, а не исчерпывает один.
 
-**Места в тарифах Team и Enterprise.** При автоматическом выборе (`ccam next`, `--fallback`, `ccam pick`, клавиша `n` на панели) ccam переключается и между местами одной и той же организации Claude Team или Enterprise. В справочном центре Anthropic ([тарифы Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); аналогично для [тарифов Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)) сказано: «Each seat on a Team plan is assigned to one named individual, and only that person may use it» (каждое место в тарифе Team закреплено за одним конкретным человеком, и пользоваться им может только этот человек) и «Users can't route their work through another user's account to use that user's remaining usage» (пользователи не могут направлять свою работу через аккаунт другого пользователя, чтобы расходовать оставшийся лимит этого пользователя). Поэтому использование автоматического выбора между местами может нарушать условия Anthropic. Прежде чем на него полагаться, уточните это у своей организации и у Anthropic. О личных тарифах (Pro, Max) см. [примечание об условиях в FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Места в тарифах Team и Enterprise.** При автоматическом выборе (`ccam next`, `--fallback`, `ccam pick`, клавиша `n` на панели, а также [`auto_switch`](/features/next#auto-switch), если вы его включите) ccam переключается и между местами одной и той же организации Claude Team или Enterprise. В справочном центре Anthropic ([тарифы Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); аналогично для [тарифов Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)) сказано: «Each seat on a Team plan is assigned to one named individual, and only that person may use it» (каждое место в тарифе Team закреплено за одним конкретным человеком, и пользоваться им может только этот человек) и «Users can't route their work through another user's account to use that user's remaining usage» (пользователи не могут направлять свою работу через аккаунт другого пользователя, чтобы расходовать оставшийся лимит этого пользователя). Поэтому использование автоматического выбора между местами может нарушать условия Anthropic. Пользоваться ли им в этом случае, решать вам: прежде чем на него полагаться, уточните это у своей организации и у Anthropic. О личных тарифах (Pro, Max) см. [примечание об условиях в FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 ## Использование
 
@@ -59,7 +59,7 @@ $ ccam pick --json
 1. ccam перечисляет аккаунты с входом (у аккаунтов с ключом API и входов через Console нет лимитов, и они не учитываются) в организации аккаунта, который запустила бы эта папка (см. [организации](/features/next#auto)); папка, вошедшая в тот же аккаунт Claude, что и он, тоже не учитывается.
 2. Он берёт блокировку (`~/.local/state/ccam/picks.lock`), поэтому одновременные выборы выполняются по очереди.
 3. Он одновременно запрашивает использование всех аккаунтов так же, как `ccam usage`, с кэшем на 60 секунд. Окно, которое Claude Code сообщил заполненным, считается заполненным на 100% до своего сброса ([запись о лимите](/features/usage#the-limit-record)), поэтому аккаунт, только что достигший лимита, остаётся исключённым, даже пока его сохранённые данные показывают запас.
-4. Аккаунты, выбранные за последние 2 минуты (`~/.local/state/ccam/picks/<name>`; выбор, датированный позже текущего времени часов, не учитывается), сначала исключаются, а среди остальных выбирают [правила выбора](/features/next#auto) `ccam next --auto`: сначала аккаунты ниже `auto_max_usage`, по стратегии, и никогда не аккаунт на 100%.
+4. Аккаунты, выбранные за последние 2 минуты командой `ccam pick` или [`auto_switch`](/features/next#auto-switch), перенёсшим туда сессию (`~/.local/state/ccam/picks/<name>`; выбор, датированный позже текущего времени часов, не учитывается), сначала исключаются, а среди остальных выбирают [правила выбора](/features/next#auto) `ccam next --auto`: сначала аккаунты ниже `auto_max_usage`, по стратегии, и никогда не аккаунт на 100%. Если из-за этого пропущен аккаунт, который правила взяли бы первым, `reason` в `--json` говорит об этом: `30% of its 5 hours used; work was picked a moment ago`.
 5. Если все аккаунты с запасом недавно уже выбирались, правила снова выбирают среди всех них, поэтому четвёртый рабочий процесс на трёх аккаунтах делит один из них.
 6. Выбор записывается, блокировка снимается, и выводится имя.
 

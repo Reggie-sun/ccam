@@ -2,10 +2,10 @@
 title: अक्सर पूछे जाने वाले प्रश्न
 metaTitle: "ccam FAQ: कई Claude Code अकाउंट"
 description: ccam, Claude Code अकाउंट, उपयोग सीमाएँ, साझा करना, निजता और समर्थित सिस्टम के बारे में जवाब।
-updated: 2026-10-24
+updated: 2026-10-25
 order: 6
 translation: machine
-sourceHash: c4e3b89bb4ea
+sourceHash: "8e9deca652d1"
 ---
 
 ## क्या ccam, Anthropic का आधिकारिक टूल है?
@@ -14,13 +14,17 @@ sourceHash: c4e3b89bb4ea
 
 ## क्या मुझे कई Claude Code अकाउंट इस्तेमाल करने की अनुमति है?
 
-यह हर अकाउंट की शर्तों पर निर्भर करता है, और work अकाउंट के लिए आपके संगठन की नीति पर भी। कई अकाउंट इस्तेमाल करने से पहले उन्हें जाँच लें। ccam केवल उन अकाउंट्स के बीच स्विच करना आसान बनाता है जो आपके पास पहले से हैं।
+यह हर अकाउंट की शर्तों पर निर्भर करता है, और work अकाउंट के लिए आपके संगठन की नीति पर भी: Pro और Max के लिए Anthropic की [Consumer Terms](https://www.anthropic.com/legal/consumer-terms), Team और Enterprise के लिए उसकी [Commercial Terms](https://www.anthropic.com/legal/commercial-terms), और सबके लिए उसकी [Usage Policy](https://www.anthropic.com/legal/aup)। कई अकाउंट इस्तेमाल करने से पहले उन्हें जाँच लें। ccam किसी अकाउंट की सीमाएँ न बढ़ाता है, न जोड़ता है, न छिपाता है, और हर अकाउंट अब भी अपनी ही सीमा पर रुकता है। यह आपके कहने पर, या [`auto_switch`](/features/next#auto-switch) (Linux और macOS) चालू करने पर सीमा पर अपने-आप, आपका काम आपके किसी दूसरे अकाउंट के रूप में आगे ले जाता है। आपके अकाउंट्स के लिए इसकी अनुमति है या नहीं, यह आपका फ़ैसला है।
 
-**Team और Enterprise सीटें।** अपने-आप होने वाला चुनाव (`ccam next`, `--fallback`, `ccam pick`, डैशबोर्ड का `n`) एक ही Claude Team या Enterprise संगठन की सीटों के बीच भी स्विच करता है। Anthropic का सहायता केंद्र कहता है कि "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team प्लान की हर सीट एक नामित व्यक्ति को सौंपी जाती है, और केवल वही व्यक्ति उसका इस्तेमाल कर सकता है) और "Users can't route their work through another user's account to use that user's remaining usage" (उपयोगकर्ता किसी दूसरे उपयोगकर्ता के बचे हुए उपयोग का इस्तेमाल करने के लिए अपना काम उसके अकाउंट के ज़रिए नहीं चला सकते) ([Team प्लान](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise प्लान](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) के लिए भी इसी तरह)। इसलिए सीटों के बीच अपने-आप होने वाला चुनाव इस्तेमाल करना Anthropic की शर्तों का उल्लंघन हो सकता है। इस पर भरोसा करने से पहले अपने संगठन और Anthropic से पता कर लें। Personal प्लान (Pro, Max) के बारे में ऊपर वाला पैराग्राफ़ बताता है।
+**Team और Enterprise सीटें।** अपने-आप होने वाला चुनाव (`ccam next`, `--fallback`, `ccam pick`, डैशबोर्ड का `n`, और चालू करने पर [`auto_switch`](/features/next#auto-switch)) एक ही Claude Team या Enterprise संगठन की सीटों के बीच भी स्विच करता है। Anthropic का सहायता केंद्र कहता है कि "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team प्लान की हर सीट एक नामित व्यक्ति को सौंपी जाती है, और केवल वही व्यक्ति उसका इस्तेमाल कर सकता है) और "Users can't route their work through another user's account to use that user's remaining usage" (उपयोगकर्ता किसी दूसरे उपयोगकर्ता के बचे हुए उपयोग का इस्तेमाल करने के लिए अपना काम उसके अकाउंट के ज़रिए नहीं चला सकते) ([Team प्लान](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise प्लान](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) के लिए भी इसी तरह)। इसलिए सीटों के बीच अपने-आप होने वाला चुनाव इस्तेमाल करना Anthropic की शर्तों का उल्लंघन हो सकता है। वहाँ इसका इस्तेमाल करना है या नहीं, यह आपका फ़ैसला है: इस पर भरोसा करने से पहले अपने संगठन और Anthropic से पता कर लें। Personal प्लान (Pro, Max) के बारे में ऊपर वाला पैराग्राफ़ बताता है।
 
 ## क्या ccam उपयोग सीमाओं से बचने का तरीका है?
 
-नहीं। हर अकाउंट की अपनी सीमाएँ बनी रहती हैं। ccam उन्हें दिखाता है, और जब एक अकाउंट की सीमा ख़त्म हो जाए, तो आपको अपने ही किसी दूसरे अकाउंट पर जारी रखने देता है।
+किसी भी अकाउंट की अपनी सीमा से आगे नहीं: हर अकाउंट की अपनी सीमाएँ बनी रहती हैं और वह उन पर रुकता है, और ccam उन्हें न बढ़ाता है, न जोड़ता है, न छिपाता है। ccam उन्हें दिखाता है, और जब एक अकाउंट की सीमा ख़त्म हो जाए, तो आपको अपने किसी दूसरे अकाउंट पर जारी रखने देता है; `auto_switch` चालू होने पर, यह ऐसा अपने-आप करता है (अगला सवाल देखें)। एक Team या Enterprise संगठन की सीटों के बीच, किसी दूसरी सीट पर जारी रखने से उस सीट का बचा हुआ उपयोग इस्तेमाल होता है, जिसे Anthropic का सहायता केंद्र किसी दूसरे उपयोगकर्ता की सीट के लिए मना करता है (ऊपर Team और Enterprise सीटें देखें)।
+
+## क्या सेशन के सीमा पर पहुँचने पर ccam अपने-आप अकाउंट बदल सकता है?
+
+केवल तभी जब आप इसे चालू करें। `~/.config/ccam/config.toml` में सबसे ऊपर `auto_switch = true` होने पर (Linux और macOS; डिफ़ॉल्ट रूप से बंद और प्रायोगिक), जब Claude Code ccam से शुरू हुए किसी interactive सेशन को 5 घंटे, साप्ताहिक, Opus या Sonnet सीमा पर रोकता है, तो ccam सेशन बंद करता है और बातचीत को आपके किसी ऐसे दूसरे अकाउंट के रूप में जारी रखता है जिसमें गुंजाइश हो: उसी Team या Enterprise संगठन की कोई दूसरी सीट, या कोई दूसरा personal प्लान (Pro, Max)। यह सीमा से पहले कभी स्विच नहीं करता, background में कभी आपका उपयोग नहीं देखता, और कभी काम को किसी Team या Enterprise संगठन से बाहर या उसके अंदर नहीं ले जाता। सीटों पर यह आपका काम एक सीट से दूसरी सीट पर ले जाता है, जो Anthropic की शर्तों का उल्लंघन हो सकता है (ऊपर Team और Enterprise सीटें देखें), और personal प्लान के लिए Anthropic की शर्तें इसे तय नहीं करतीं: Consumer Terms Services को "through automated or non-human means" (स्वचालित या ग़ैर-मानवीय तरीक़ों से) इस्तेमाल करने से मना करती हैं, जब तक Anthropic साफ़ तौर पर इसकी अनुमति न दे, और स्विच आपकी जगह एक संदेश भेजता है; इसे चालू करना आपका फ़ैसला है। [`auto_switch`](/features/next#auto-switch) हर शर्त और स्विच की क़ीमत बताता है।
 
 ## एक कंप्यूटर पर दो Claude Code अकाउंट कैसे इस्तेमाल करें?
 
@@ -28,11 +32,11 @@ sourceHash: c4e3b89bb4ea
 
 ## किसी बातचीत को दूसरे अकाउंट में कैसे जारी रखें?
 
-फ़ोल्डर में `ccam next --continue` चलाएँ: यह फ़ोल्डर की आख़िरी बातचीत को अगले अकाउंट पर ले जाता है (सबसे ज़्यादा जगह वाले अकाउंट के लिए `--auto`)। Claude Code के अंदर, [ccam plugin](/docs/install#claude-code-plugin) का `/ccam:switch` आपके मौजूदा सेशन के लिए यही करता है। जब दोनों अकाउंट बातचीत का इतिहास साझा करते हैं (`ccam group set default --add history`, या उनका अपना ग्रुप: `ccam group add pair --items history --members work,side`), तो नया अकाउंट वही बातचीत खोलता है; वरना Claude Code उसे नए अकाउंट के इतिहास में कॉपी कर देता है।
+फ़ोल्डर में `ccam next --continue` चलाएँ: यह फ़ोल्डर की आख़िरी बातचीत को अगले अकाउंट पर ले जाता है (सबसे ज़्यादा जगह वाले अकाउंट के लिए `--auto`)। Claude Code के अंदर, [ccam plugin](/docs/install#claude-code-plugin) का `/ccam:switch` आपके मौजूदा सेशन के लिए यही करता है। जब दोनों अकाउंट बातचीत का इतिहास साझा करते हैं (`ccam group set default --add history`, या उनका अपना ग्रुप: `ccam group add pair --items history --members work,side`), तो नया अकाउंट वही बातचीत खोलता है; वरना Claude Code उसे नए अकाउंट के इतिहास में कॉपी कर देता है। पूरी बातचीत के बजाय एक छोटे सारांश से नया अकाउंट शुरू करने के लिए `--brief` जोड़ें।
 
 ## क्या ccam मेरा लॉगिन देखता या भेजता है?
 
-ccam आपका Claude लॉगिन कभी अकाउंट्स के बीच साझा या कॉपी नहीं करता, और MCP सर्वरों के साइन-इन कभी कॉपी नहीं करता। यह किसी अकाउंट का access token केवल तब पढ़ता है जब उस अकाउंट का उपयोग Anthropic के usage endpoint से पूछना हो, यानी जब आप `ccam usage`, `ccam next --auto` या `ccam doctor` चलाते हैं, और expired token को केवल `ccam usage --refresh` से renew करता है; `usage_source = "claude"` के साथ यह token को बिल्कुल नहीं पढ़ता। `ccam ext` और `ccam doctor` किसी अकाउंट के MCP साइन-इन के नाम पढ़ते हैं, उनके tokens कभी नहीं। ccam में कोई telemetry नहीं है। इनके अलावा, यह अपने आप केवल एक request भेजता है: डैशबोर्ड GitHub से नवीनतम ccam रिलीज़ के बारे में पूछता है, और उसमें आपके या आपके अकाउंट्स के बारे में कुछ नहीं होता।
+ccam आपका Claude लॉगिन कभी अकाउंट्स के बीच साझा या कॉपी नहीं करता, और MCP सर्वरों के साइन-इन कभी कॉपी नहीं करता। यह किसी अकाउंट का access token केवल तब पढ़ता है जब उस अकाउंट का उपयोग Anthropic के usage endpoint से पूछना हो, यानी `ccam usage`, डैशबोर्ड, `ccam doctor` और अपने-आप होने वाले चुनाव (`ccam next --auto`, `ccam pick`, `--fallback`, और सेशन के सीमा पर पहुँचने पर `auto_switch`) के लिए। यह expired token को केवल `ccam usage --refresh` से renew करता है; `usage_source = "claude"` के साथ यह कहीं कोई token नहीं भेजता, और सहेजे गए लॉगिन (फ़ाइल, या macOS कीचेन की entry) को केवल यह जानने के लिए पढ़ता है कि वह अब भी काम करता है या नहीं। `ccam ext` और `ccam doctor` किसी अकाउंट के MCP साइन-इन के नाम पढ़ते हैं, उनके tokens कभी नहीं। ccam में कोई telemetry नहीं है। इनके अलावा, यह अपने आप केवल एक request भेजता है: डैशबोर्ड GitHub से नवीनतम ccam रिलीज़ के बारे में पूछता है, और उसमें आपके या आपके अकाउंट्स के बारे में कुछ नहीं होता।
 
 ## रिमोट सर्वर पर साइन इन कैसे करें?
 
@@ -56,7 +60,7 @@ Session के अंदर `claude mcp add` से जोड़े गए स�
 
 ## क्या ccam से Claude Code धीमा होता है?
 
-ccam के ज़रिए Claude Code शुरू करने में लगभग 4 मिलीसेकंड जुड़ते हैं, जिसे एक लैपटॉप पर `scripts/perf-check.sh` से मापा गया है। ccam एक छोटी फ़ाइल पढ़ता है, साझा लिंक जाँचता है और फिर ख़ुद की जगह `claude` चला देता है, इसलिए आपके काम करते समय यह चल नहीं रहा होता। Windows किसी process को बदल नहीं सकता, इसलिए वहाँ ccam Claude Code को शुरू करता है और उसका इंतज़ार करता है, इसके अलावा कुछ नहीं करता।
+ccam के ज़रिए Claude Code शुरू करने में लगभग 4 मिलीसेकंड जुड़ते हैं, जिसे एक लैपटॉप पर `scripts/perf-check.sh` से मापा गया है। ccam एक छोटी फ़ाइल पढ़ता है, साझा लिंक जाँचता है और फिर ख़ुद की जगह `claude` चला देता है, इसलिए डिफ़ॉल्ट रूप से आपके काम करते समय यह चल नहीं रहा होता। Windows किसी process को बदल नहीं सकता, इसलिए वहाँ ccam Claude Code को शुरू करता है और उसका इंतज़ार करता है, इसके अलावा कुछ नहीं करता। `relay` या `auto_switch` चालू होने पर, ccam हर interactive सेशन के साथ इसी तरह इंतज़ार करता है, ताकि वह बातचीत आगे ले जा सके।
 
 ## ccam को अपडेट कैसे करें?
 

@@ -1,7 +1,7 @@
 ---
 title: Launching Claude Code
 description: Start Claude Code as any account with ccam <name|number>, ccam run or the dashboard; arguments go to claude unchanged, and --dry-run shows the command.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 1
 translation: source
 ---
@@ -33,11 +33,11 @@ When the first argument starts with `-` and is not one of ccam's own flags, ccam
 
 `ccam` without arguments opens the [dashboard](/features/dashboard) when standard input and output are a terminal, and prints `ccam list` otherwise. Move to an account (with the arrows, or by typing its number) and press `Enter` to start it; `n` starts the account with the most room and `o` offers `--continue`, `--resume` or other arguments. The dashboard closes before Claude Code starts, so the terminal is restored first.
 
-**Team and Enterprise seats.** Automatic choice (`ccam next`, `--fallback`, `ccam pick`, the dashboard's `n`) also switches between seats of the same Claude Team or Enterprise organization. Anthropic's help center says "Each seat on a Team plan is assigned to one named individual, and only that person may use it" and "Users can't route their work through another user's account to use that user's remaining usage" ([Team plans](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); likewise for [Enterprise plans](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Using automatic choice between seats may therefore violate Anthropic's terms. Check with your organization and Anthropic before you rely on it. Personal plans (Pro, Max) are covered by the [terms note in the FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Team and Enterprise seats.** Automatic choice (`ccam next`, `--fallback`, `ccam pick`, the dashboard's `n`, and [`auto_switch`](/features/next#auto-switch) when you turn it on) also switches between seats of the same Claude Team or Enterprise organization. Anthropic's help center says "Each seat on a Team plan is assigned to one named individual, and only that person may use it" and "Users can't route their work through another user's account to use that user's remaining usage" ([Team plans](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); likewise for [Enterprise plans](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Using automatic choice between seats may therefore violate Anthropic's terms. Whether you use it there is your call: check with your organization and Anthropic before you rely on it. Personal plans (Pro, Max) are covered by the [terms note in the FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 When the shell has `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY` or `ANTHROPIC_AUTH_TOKEN` set, Claude Code would use that key or token instead of the account's own login, so ccam says so on standard error before it starts (`ccam: $ANTHROPIC_API_KEY is set, so Claude Code may use that key instead of work's login…`). It only reads the variables; an [API key account](/features/api) clears them instead.
 
-With `relay = true` at the top of `config.toml` (above the first `[[group]]`, `[[profile]]` or `[[folder]]`), ccam starts interactive sessions as a child and stays beside them, so that `/ccam:switch` can carry a conversation on by itself, with the session's options, permission mode and effort level ([details](/features/next#relay)); otherwise ccam replaces itself with Claude Code, and nothing runs beside it.
+With `relay = true`, or [`auto_switch = true`](/features/next#auto-switch) on Linux and macOS, at the top of `config.toml` (above the first `[[group]]`, `[[profile]]` or `[[folder]]`), ccam starts interactive sessions as a child and stays beside them, so that `/ccam:switch`, or `auto_switch` at a usage limit, can carry a conversation on by itself, with the session's options, permission mode and effort level ([details](/features/next#relay)); otherwise ccam replaces itself with Claude Code, and nothing runs beside it.
 
 ## Options
 

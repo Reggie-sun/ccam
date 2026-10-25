@@ -1,10 +1,10 @@
 ---
 title: Khởi động Claude Code
 description: "Chạy Claude Code bằng tài khoản bất kỳ với ccam <name|number>, ccam run hoặc bảng điều khiển; đối số được chuyển nguyên vẹn cho claude, --dry-run in ra lệnh."
-updated: 2026-10-24
+updated: 2026-10-25
 order: 1
 translation: machine
-sourceHash: "e279341eb59b"
+sourceHash: "afa4942cfed5"
 ---
 
 `ccam work` khởi động Claude Code bằng tài khoản `work`, và mọi thứ sau tên được chuyển nguyên vẹn cho `claude`. Hãy dùng nó ở bất cứ đâu bạn vẫn gõ `claude`: trong terminal, trong script, hoặc khi có đầu vào được pipe vào.
@@ -34,11 +34,11 @@ Khi đối số đầu tiên bắt đầu bằng `-` và không phải một c�
 
 `ccam` không kèm đối số sẽ mở [bảng điều khiển](/features/dashboard) khi đầu vào và đầu ra chuẩn là terminal, và in ra `ccam list` trong các trường hợp khác. Di chuyển tới một tài khoản (bằng các phím mũi tên, hoặc gõ số của nó) và nhấn `Enter` để khởi động nó; `n` khởi động tài khoản còn nhiều hạn mức nhất và `o` đề xuất `--continue`, `--resume` hoặc các đối số khác. Bảng điều khiển đóng lại trước khi Claude Code khởi động, nên terminal được khôi phục trước.
 
-**Seat của gói Team và Enterprise.** Lựa chọn tự động (`ccam next`, `--fallback`, `ccam pick`, phím `n` trên bảng điều khiển) cũng chuyển đổi giữa các seat của cùng một tổ chức Claude Team hoặc Enterprise. Trung tâm trợ giúp của Anthropic ghi rằng "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (mỗi seat của gói Team được gán cho đích danh một cá nhân, và chỉ người đó được phép sử dụng) và "Users can't route their work through another user's account to use that user's remaining usage" (người dùng không được chuyển công việc của mình qua tài khoản của một người dùng khác để dùng phần hạn mức còn lại của người đó) ([gói Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); tương tự đối với [gói Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Vì vậy, dùng lựa chọn tự động giữa các seat có thể vi phạm điều khoản của Anthropic. Hãy xác nhận với tổ chức của bạn và Anthropic trước khi dựa vào nó. Các gói cá nhân (Pro, Max) được đề cập trong [ghi chú về điều khoản ở phần Câu hỏi thường gặp](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Seat của gói Team và Enterprise.** Lựa chọn tự động (`ccam next`, `--fallback`, `ccam pick`, phím `n` trên bảng điều khiển, và [`auto_switch`](/features/next#auto-switch) khi bạn bật nó) cũng chuyển đổi giữa các seat của cùng một tổ chức Claude Team hoặc Enterprise. Trung tâm trợ giúp của Anthropic ghi rằng "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (mỗi seat của gói Team được gán cho đích danh một cá nhân, và chỉ người đó được phép sử dụng) và "Users can't route their work through another user's account to use that user's remaining usage" (người dùng không được chuyển công việc của mình qua tài khoản của một người dùng khác để dùng phần hạn mức còn lại của người đó) ([gói Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); tương tự đối với [gói Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Vì vậy, dùng lựa chọn tự động giữa các seat có thể vi phạm điều khoản của Anthropic. Có dùng nó ở đó hay không là quyết định của bạn: hãy xác nhận với tổ chức của bạn và Anthropic trước khi dựa vào nó. Các gói cá nhân (Pro, Max) được đề cập trong [ghi chú về điều khoản ở phần Câu hỏi thường gặp](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 Khi shell có đặt `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY` hoặc `ANTHROPIC_AUTH_TOKEN`, Claude Code sẽ dùng khóa hoặc token đó thay cho thông tin đăng nhập riêng của tài khoản, nên ccam báo điều này trên đầu ra lỗi chuẩn trước khi khởi động (`ccam: $ANTHROPIC_API_KEY is set, so Claude Code may use that key instead of work's login…`). Nó chỉ đọc các biến này; một [tài khoản API key](/features/api) thì xóa chúng đi.
 
-Với `relay = true` ở đầu `config.toml` (phía trên `[[group]]`, `[[profile]]` hoặc `[[folder]]` đầu tiên), ccam khởi động các phiên tương tác như một tiến trình con và ở lại bên cạnh chúng, để `/ccam:switch` có thể tự chuyển một cuộc hội thoại đi tiếp, với các tùy chọn, chế độ quyền và mức effort của phiên ([chi tiết](/features/next#relay)); nếu không, ccam tự thay thế mình bằng Claude Code, và không có gì chạy bên cạnh.
+Với `relay = true`, hoặc [`auto_switch = true`](/features/next#auto-switch) trên Linux và macOS, ở đầu `config.toml` (phía trên `[[group]]`, `[[profile]]` hoặc `[[folder]]` đầu tiên), ccam khởi động các phiên tương tác như một tiến trình con và ở lại bên cạnh chúng, để `/ccam:switch`, hoặc `auto_switch` khi chạm giới hạn sử dụng, có thể tự chuyển một cuộc hội thoại đi tiếp, với các tùy chọn, chế độ quyền và mức effort của phiên ([chi tiết](/features/next#relay)); nếu không, ccam tự thay thế mình bằng Claude Code, và không có gì chạy bên cạnh.
 
 ## Tùy chọn
 

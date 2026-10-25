@@ -1,10 +1,10 @@
 ---
 title: Usare più account Claude Code su un solo computer
 description: Esegui più account Claude Code in parallelo con CLAUDE_CONFIG_DIR, a mano con gli alias della shell o in automatico con ccam, e passa dall'uno all'altro.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 1
 translation: machine
-sourceHash: "5463dec2f6eb"
+sourceHash: "5c5dbd9fcd23"
 ---
 
 Dai a ogni account la sua cartella di configurazione. Claude Code legge la cartella dalla variabile d'ambiente `CLAUDE_CONFIG_DIR`, e ogni cartella contiene il proprio login, le impostazioni e la cronologia, quindi ogni account resta connesso e puoi eseguirli contemporaneamente. Puoi configurarlo a mano con un alias della shell oppure lasciare che se ne occupi ccam.
@@ -79,4 +79,4 @@ Per due account senza nulla di condiviso basta un alias. Se vuoi impostazioni e 
 
 Se puoi usare più account dipende dai termini di ciascun account. Controllali prima di farlo.
 
-**Posti nei piani Team ed Enterprise.** La scelta automatica (`ccam next`, `--fallback`, `ccam pick`, il tasto `n` della dashboard) passa anche da un posto all'altro della stessa organizzazione Claude Team o Enterprise. Il centro assistenza di Anthropic dice: "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (ogni posto di un piano Team è assegnato nominativamente a una sola persona, e solo quella persona può usarlo) e "Users can't route their work through another user's account to use that user's remaining usage" (gli utenti non possono far passare il proprio lavoro attraverso l'account di un altro utente per sfruttare l'utilizzo residuo di quell'utente) ([piani Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); lo stesso vale per i [piani Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Usare la scelta automatica tra posti diversi può quindi violare i termini di Anthropic. Verifica con la tua organizzazione e con Anthropic prima di farci affidamento. I piani personali (Pro, Max) sono trattati nella nota qui sopra.
+**Posti nei piani Team ed Enterprise.** La scelta automatica (`ccam next`, `--fallback`, `ccam pick`, il tasto `n` della dashboard e, se lo attivi, [`auto_switch`](/features/next#auto-switch)) passa anche da un posto all'altro della stessa organizzazione Claude Team o Enterprise. Il centro assistenza di Anthropic dice: "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (ogni posto di un piano Team è assegnato nominativamente a una sola persona, e solo quella persona può usarlo) e "Users can't route their work through another user's account to use that user's remaining usage" (gli utenti non possono far passare il proprio lavoro attraverso l'account di un altro utente per sfruttare l'utilizzo residuo di quell'utente) ([piani Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); lo stesso vale per i [piani Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Usare la scelta automatica tra posti diversi può quindi violare i termini di Anthropic. Decidi tu se usarla lì: verifica con la tua organizzazione e con Anthropic prima di farci affidamento. I piani personali (Pro, Max) sono trattati nella nota qui sopra.

@@ -1,10 +1,10 @@
 ---
 title: వినియోగ పరిమితులు, ఖాతాలు మార్చడం
 description: ccam usage తో ప్రతి Claude Code ఖాతా యొక్క 5 గంటల, వారపు వినియోగాన్ని చూడండి, ccam next --auto తో ఎక్కువ అవకాశం ఉన్న ఖాతాను తెరవండి.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 5
 translation: machine
-sourceHash: "ccaed084207a"
+sourceHash: "7c15419446c3"
 ---
 
 ప్రతి ఖాతా 5 గంటల పరిమితి, వారపు పరిమితి, ప్రతి మోడల్ సొంత వారపు పరిమితి (Fable వంటిది) లో ఎంత ఉపయోగించిందో `ccam usage` చూపిస్తుంది. `ccam next --auto` ఎక్కువ అవకాశం మిగిలి ఉన్న ఖాతాను తెరుస్తుంది, `--continue` ప్రస్తుత సంభాషణను దానికి తీసుకువెళ్తుంది.
@@ -28,7 +28,7 @@ $ ccam usage
 
 ప్రతి ఖాతాకు దాని సంఖ్యలు ఎంత పాతవో చెప్పే ఒక లైన్ ఉంటుంది, తర్వాత ప్రతి పరిమితికి రీసెట్ అయ్యే వరకు సమయంతో ఒక బార్: 5 గంటల విండో, అన్ని మోడళ్ల వారపు విండో, Fable వంటి ప్రతి మోడల్ సొంత వారపు విండో. 80% నుంచి బార్ పసుపు రంగులోకి, 100% వద్ద ఎరుపు రంగులోకి మారుతుంది. చివరి లైన్ `ccam next --auto` తెరిచే ఖాతా పేరును చెబుతుంది; `auto_strategy = "expiring"` లేదా `"balance"` తో అది బదులుగా `→ next --auto picks <name>: <reason>` అని చూపిస్తుంది.
 
-**Team, Enterprise సీట్లు.** ఆటోమేటిక్ ఎంపిక (`ccam next`, `--fallback`, `ccam pick`, డాష్‌బోర్డ్‌లోని `n`) ఒకే Claude Team లేదా Enterprise సంస్థలోని సీట్ల మధ్య కూడా మారుస్తుంది. Anthropic సహాయ కేంద్రం "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team ప్లాన్‌లోని ప్రతి సీటు పేరుతో నిర్దేశించిన ఒక వ్యక్తికి కేటాయించబడుతుంది, ఆ వ్యక్తి మాత్రమే దాన్ని ఉపయోగించవచ్చు) అని, "Users can't route their work through another user's account to use that user's remaining usage" (యూజర్లు మరో యూజర్‌కు మిగిలి ఉన్న వినియోగాన్ని వాడుకోవడానికి తమ పనిని ఆ యూజర్ ఖాతా ద్వారా మళ్లించకూడదు) అని చెబుతుంది ([Team ప్లాన్‌లు](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise ప్లాన్‌లకు](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) కూడా ఇదే వర్తిస్తుంది). కాబట్టి సీట్ల మధ్య ఆటోమేటిక్ ఎంపికను ఉపయోగించడం Anthropic నిబంధనల ఉల్లంఘన కావచ్చు. దానిపై ఆధారపడే ముందు మీ సంస్థను, Anthropic ను సంప్రదించి నిర్ధారించుకోండి. వ్యక్తిగత ప్లాన్‌ల (Pro, Max) గురించి [తరచుగా అడిగే ప్రశ్నలలోని నిబంధనల గమనిక](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) చెబుతుంది.
+**Team, Enterprise సీట్లు.** ఆటోమేటిక్ ఎంపిక (`ccam next`, `--fallback`, `ccam pick`, డాష్‌బోర్డ్‌లోని `n`, మీరు ఆన్ చేసినప్పుడు [`auto_switch`](/features/next#auto-switch)) ఒకే Claude Team లేదా Enterprise సంస్థలోని సీట్ల మధ్య కూడా మారుస్తుంది. Anthropic సహాయ కేంద్రం "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team ప్లాన్‌లోని ప్రతి సీటు పేరుతో నిర్దేశించిన ఒక వ్యక్తికి కేటాయించబడుతుంది, ఆ వ్యక్తి మాత్రమే దాన్ని ఉపయోగించవచ్చు) అని, "Users can't route their work through another user's account to use that user's remaining usage" (యూజర్లు మరో యూజర్‌కు మిగిలి ఉన్న వినియోగాన్ని వాడుకోవడానికి తమ పనిని ఆ యూజర్ ఖాతా ద్వారా మళ్లించకూడదు) అని చెబుతుంది ([Team ప్లాన్‌లు](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise ప్లాన్‌లకు](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) కూడా ఇదే వర్తిస్తుంది). కాబట్టి సీట్ల మధ్య ఆటోమేటిక్ ఎంపికను ఉపయోగించడం Anthropic నిబంధనల ఉల్లంఘన కావచ్చు. అక్కడ దాన్ని ఉపయోగించాలా వద్దా అనేది మీ నిర్ణయం: దానిపై ఆధారపడే ముందు మీ సంస్థను, Anthropic ను సంప్రదించి నిర్ధారించుకోండి. వ్యక్తిగత ప్లాన్‌ల (Pro, Max) గురించి [తరచుగా అడిగే ప్రశ్నలలోని నిబంధనల గమనిక](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) చెబుతుంది.
 
 ## సంఖ్యలు ఎక్కడి నుంచి వస్తాయి
 
@@ -71,6 +71,8 @@ ccam next --continue  # carry this folder's conversation on as the next account
 ```
 
 `ccam next` లాగిన్ కాని ఖాతాలను వదిలేస్తుంది, `--auto` 100% వద్ద ఉన్న ఖాతాలను (Claude Code నిండిందని నివేదించిన విండో ఉన్నవాటిని కూడా, అది రీసెట్ అయ్యే వరకు), మరో సంస్థకు చెందిన ఖాతాలను వదిలేస్తుంది. రెండు ఖాతాలూ సంభాషణ చరిత్రను షేర్ చేస్తే, `--continue` అదే సంభాషణను తెరుస్తుంది; లేకపోతే Claude Code దాన్ని కొత్త ఖాతాలోకి కాపీ చేస్తుంది. [షేరింగ్](/docs/sharing), [తర్వాతి ఖాతాకు మారడం](/features/next#continue) చూడండి.
+
+`config.toml` పైభాగంలో `auto_switch = true` తో (Linux, macOS; డిఫాల్ట్‌గా ఆఫ్), Claude Code ఒక ఇంటరాక్టివ్ సెషన్‌ను దాని పరిమితి వద్ద ఆపినప్పుడు, దాని లాంటి మరో ఖాతాలో అవకాశం ఉంటే, ccam ఈ మార్పును తానే చేస్తుంది. అది ఎప్పుడు పని చేస్తుందో, ఏం ఎప్పుడూ చేయదో తెలుసుకోవడానికి [`auto_switch`](/features/next#auto-switch) చూడండి.
 
 `claude -p` రన్ చేసే స్క్రిప్ట్‌లు, షెడ్యూల్ చేసిన jobs కోసం, ఖాతా పేరుకు ముందు `--fallback` పెట్టండి. ఆ ఖాతా తన పరిమితిని చేరినప్పుడు, ccam అదే కమాండ్‌ను ఎక్కువ అవకాశం ఉన్న ఖాతాగా మళ్లీ రన్ చేస్తుంది, పూర్తయిన రన్ output మాత్రమే ప్రింట్ అవుతుంది:
 

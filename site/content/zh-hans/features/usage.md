@@ -1,10 +1,10 @@
 ---
 title: 用量限制
 description: ccam usage 一次显示每个账号的 5 小时限额和每周限额，ccam statusline 在 Claude Code 中显示账号名和用量。
-updated: 2026-10-24
+updated: 2026-10-25
 order: 7
 translation: machine
-sourceHash: "a14b1da71a1a"
+sourceHash: "91ad20327289"
 ---
 
 `ccam usage` 显示每个账号已用掉多少 5 小时限额、每周限额以及各模型自己的每周限额（例如 Fable），每项限额一个用量条，并附上距离重置的时间。在开始一项长任务之前，或者当 Claude Code 提示你快到限额时，用它查看哪个账号还有余量。`ccam statusline` 是供 Claude Code 使用的状态栏命令：它在 Claude Code 中显示账号名和用量，并为 `ccam usage` 保存这些数字。
@@ -20,7 +20,7 @@ ccam usage -v               # add where the numbers came from
 ccam usage --json           # machine-readable, one object per account
 ccam usage --source cache   # saved numbers only, no network
 ccam usage --refresh        # also renew expired logins of accounts not running
-ccam usage --source claude  # let Claude Code look it up: ccam never touches a token
+ccam usage --source claude  # let Claude Code look it up: ccam sends no token
 ccam statusline install     # set the status line in every account's settings.json
 ```
 
@@ -40,7 +40,7 @@ $ ccam usage
 
 每个账号先有一行，显示编号、名称以及这些数字是多久之前的；`(cached)` 表示它们来自保存的文件，而不是来自接口。下面每项限额占一行，显示 20 格的用量条、百分比和距离窗口重置的时间：`5-hour`、`Weekly`（所有模型），然后是各模型自己的每周窗口，例如 `Fable`。账号没有的窗口显示 `-`。百分比从 80% 起变为黄色，达到 100% 时变为红色。当 Claude Code 因用量限制拒绝请求时，它报告已满的时间窗口在重置前显示 100%，无论保存的数字是多少（参见[用量限制记录](#the-limit-record)）。在终端中，所有账号会先一起显示为 `fetching…`，每个账号返回结果时再绘制它的各行。最后一行列出 [`ccam next --auto`](/features/next) 按相同规则会选择的账号（`auto_max_usage`、`auto_strategy`、正在运行的会话；除非设置了 `cross_org`，否则只考虑上次使用的账号所属组织中的账号；跳过任何时间窗口已达 100% 的账号，因此每周额度已用满的账号永远不会被列出），只有在你有多个账号时才会出现。使用默认的 `headroom` 策略时，这一行为 `→ Most headroom: <name>`；使用 `expiring` 或 `balance` 时，它会给出理由，例如 `→ next --auto picks personal: its 5-hour window resets first, in 1h 12m (40% of its 5 hours used)`。
 
-**Team 和 Enterprise 席位。** 自动选择（`ccam next`、`--fallback`、`ccam pick`、仪表盘中的 `n`）也会在同一个 Claude Team 或 Enterprise 组织的席位之间切换。Anthropic 帮助中心关于 [Team 套餐](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)的说明写道："Each seat on a Team plan is assigned to one named individual, and only that person may use it"（Team 套餐的每个席位都分配给一位指定的个人，只有此人可以使用），以及 "Users can't route their work through another user's account to use that user's remaining usage"（用户不能通过另一位用户的账号完成自己的工作，以使用该用户剩余的用量）；关于 [Enterprise 套餐](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)的说明也是如此。因此，在席位之间使用自动选择可能违反 Anthropic 的条款。在依赖这项功能之前，请先向你所在的组织和 Anthropic 确认。个人套餐（Pro、Max）的情况请参见[常见问题中关于条款的说明](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)。
+**Team 和 Enterprise 席位。** 自动选择（`ccam next`、`--fallback`、`ccam pick`、仪表盘中的 `n`，以及你开启后的 [`auto_switch`](/features/next#auto-switch)）也会在同一个 Claude Team 或 Enterprise 组织的席位之间切换。Anthropic 帮助中心关于 [Team 套餐](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)的说明写道："Each seat on a Team plan is assigned to one named individual, and only that person may use it"（Team 套餐的每个席位都分配给一位指定的个人，只有此人可以使用），以及 "Users can't route their work through another user's account to use that user's remaining usage"（用户不能通过另一位用户的账号完成自己的工作，以使用该用户剩余的用量）；关于 [Enterprise 套餐](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)的说明也是如此。因此，在席位之间使用自动选择可能违反 Anthropic 的条款。在这些席位之间是否使用，由你自己决定：在依赖这项功能之前，请先向你所在的组织和 Anthropic 确认。个人套餐（Pro、Max）的情况请参见[常见问题中关于条款的说明](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)。
 
 未登录的账号显示 `not logged in → ccam login <name>`，使用 API 密钥的账号显示 `no limits (API)`。访问令牌过期时显示 ``access token expired; `ccam <name>` renews it when it starts``，如果有保存的数字，就显示在这些数字上方：Claude Code 会在下次启动时为它续期。整个登录已过期时（因为其刷新令牌已过期，或者服务器拒绝后 Claude Code 清除了它），显示 `` login expired → `ccam login <name>` ``。
 
@@ -97,7 +97,7 @@ $ ccam usage
 
 ### 用量限制记录
 
-当 Claude Code 因用量限制停止某一轮时，[ccam 插件](/docs/install#claude-code-plugin)的钩子会从对话中读取被拒绝的请求：哪个时间窗口已满（5 小时、每周、Opus 或 Sonnet）以及它何时重置。它把这些写入 `~/.local/state/ccam/usage/<name>.limit.json`。`Fetch` 会把这条记录覆盖在它从所有来源得知的其他内容之上：记录中的每个时间窗口在重置前都按 100% 计算，无论保存的数字多旧或多低，因此 `ccam next --auto`、`ccam pick` 和 `--fallback` 在那之前不会再次选择该账号。如果没有其他已知信息，账号显示的就只有这条记录（使用 `-v` 时为 `source: the usage limit Claude Code reported`）。无人值守的会话（`-p`、后台会话）不写入记录，组织的停用（用量耗尽、组的额度设为 $0）也不写入，因为组织管理员随时可以解除它。`ccam login` 登录到另一个 Claude 账号时会丢弃这条记录；删除该文件也可以清除它。
+当 Claude Code 因用量限制停止某一轮时，[ccam 插件](/docs/install#claude-code-plugin)的钩子会从对话中读取被拒绝的请求：哪个时间窗口已满（5 小时、每周、Opus 或 Sonnet）以及它何时重置。它把这些写入 `~/.local/state/ccam/usage/<name>.limit.json`。`Fetch` 会把这条记录覆盖在它从所有来源得知的其他内容之上：记录中的每个时间窗口在重置前都按 100% 计算，无论保存的数字多旧或多低，因此 `ccam next --auto`、`ccam pick`、`--fallback` 和 [`auto_switch`](/features/next#auto-switch) 在那之前不会再次选择该账号。如果没有其他已知信息，账号显示的就只有这条记录（使用 `-v` 时为 `source: the usage limit Claude Code reported`）。无人值守的会话（`-p`、后台会话）不写入记录，组织的停用（用量耗尽、组的额度设为 $0）也不写入，因为组织管理员随时可以解除它。`ccam login` 登录到另一个 Claude 账号时会丢弃这条记录；删除该文件也可以清除它。
 
 ### 为令牌续期
 

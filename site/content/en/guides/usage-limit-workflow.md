@@ -1,7 +1,7 @@
 ---
 title: What to do when Claude Code hits its usage limit
 description: Wait for the reset or continue the same conversation on another Claude Code account right away. How the 5-hour and weekly limits work, step by step.
-updated: 2026-10-24
+updated: 2026-10-25
 published: 2026-10-19
 order: 3
 translation: source
@@ -57,18 +57,18 @@ Claude Code starts as `work` with the most recent conversation of the current fo
 
 With the [ccam plugin](/docs/install#claude-code-plugin) in Claude Code, a session that stops at its limit shows a notification and records the full window, so `ccam next --auto` does not pick that account again before its reset, and `/ccam:switch` (or `/ccam:switch work`) notes the conversation for `ccam next --continue` without leaving anything to guess.
 
-**Team and Enterprise seats.** Automatic choice (`ccam next`, `--fallback`, `ccam pick`, the dashboard's `n`) also switches between seats of the same Claude Team or Enterprise organization. Anthropic's help center says "Each seat on a Team plan is assigned to one named individual, and only that person may use it" and "Users can't route their work through another user's account to use that user's remaining usage" ([Team plans](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); likewise for [Enterprise plans](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Using automatic choice between seats may therefore violate Anthropic's terms. Check with your organization and Anthropic before you rely on it. Personal plans (Pro, Max) are covered by the [terms note in the FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Team and Enterprise seats.** Automatic choice (`ccam next`, `--fallback`, `ccam pick`, the dashboard's `n`, and [`auto_switch`](/features/next#auto-switch) when you turn it on) also switches between seats of the same Claude Team or Enterprise organization. Anthropic's help center says "Each seat on a Team plan is assigned to one named individual, and only that person may use it" and "Users can't route their work through another user's account to use that user's remaining usage" ([Team plans](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); likewise for [Enterprise plans](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Using automatic choice between seats may therefore violate Anthropic's terms. Whether you use it there is your call: check with your organization and Anthropic before you rely on it. Personal plans (Pro, Max) are covered by the [terms note in the FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 ## Does ccam switch accounts automatically?
 
-No. ccam is not running while you work: it starts Claude Code and replaces itself with it. You decide when to switch, and `ccam next --auto` picks the account with the lowest 5-hour usage and skips accounts that are at 100%, not logged in, or of another organization. With `relay = true` in `config.toml`, ccam waits beside the session instead, so `/ccam:switch` carries on by itself, keeping the session's options, permission mode and effort level. Some other tools swap the login of a running session instead; [ccam and other account switchers](/compare/account-switchers) explains the difference.
+Only if you turn it on. By default ccam is not running while you work: it starts Claude Code and replaces itself with it, so you decide when to switch, and `ccam next --auto` picks the account with the lowest 5-hour usage, skips accounts that are at 100% or not logged in, and stays within one Team or Enterprise organization, or among personal plans. With `relay = true` in `config.toml`, ccam waits beside the session instead, so `/ccam:switch` carries on by itself, keeping the session's options, permission mode and effort level. With `auto_switch = true` (Linux and macOS; experimental), ccam also makes the switch itself: when Claude Code stops the session at its limit and another account like it has room, ccam ends the session and continues the conversation there ([conditions and costs](/features/next#auto-switch)). Some other tools swap the login of a running session instead; [ccam and other account switchers](/compare/account-switchers) explains the difference.
 
 ## Things to keep in mind
 
 - Run `ccam next --continue` in the same folder you worked in; conversations are stored per project folder.
 - Avoid running two accounts on the same conversation at the same time. ccam warns you if you try.
 - Without shared history, the conversation is copied to the other account and the two copies go their own ways; the checkpoints `/rewind` restores code from stay with the first account.
-- The first message on the new account may use more of its limit than usual, because that account has not cached the conversation yet.
+- The first message on the new account may use more of its limit than usual, because that account has not cached the conversation yet. `ccam next --continue --brief` starts it on a short summary instead.
 - Whether you may switch between accounts like this depends on each account's terms.
 
 See [usage limits](/docs/usage-limits) for every option of `ccam usage` and `ccam next`.

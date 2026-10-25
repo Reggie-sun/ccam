@@ -1,10 +1,10 @@
 ---
 title: એક કમ્પ્યુટર પર ઘણાં Claude Code એકાઉન્ટ વાપરો
 description: CLAUDE_CONFIG_DIR વડે ઘણાં Claude Code એકાઉન્ટ સાથે-સાથે ચલાવો, શેલ alias થી હાથે કે ccam થી આપમેળે, અને તેમની વચ્ચે સ્વિચ કરો.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 1
 translation: machine
-sourceHash: 5463dec2f6eb
+sourceHash: 5c5dbd9fcd23
 ---
 
 દરેક એકાઉન્ટને પોતાનું કૉન્ફિગરેશન ફોલ્ડર આપો. Claude Code આ ફોલ્ડર `CLAUDE_CONFIG_DIR` environment variable પરથી વાંચે છે, અને દરેક ફોલ્ડરમાં પોતાનું લૉગિન, સેટિંગ્સ અને ઇતિહાસ હોય છે, તેથી દરેક એકાઉન્ટ લૉગિન રહે છે અને તમે તેમને એકસાથે ચલાવી શકો છો. તમે આ હાથથી શેલ alias વડે સેટ કરી શકો છો, અથવા ccam ને તે કરવા દઈ શકો છો.
@@ -79,4 +79,4 @@ Claude Code [Windows પર સીધું અને WSL ની અંદર �
 
 તમે ઘણાં એકાઉન્ટ વાપરી શકો કે નહીં, તે દરેક એકાઉન્ટની શરતો પર આધાર રાખે છે. તેમ કરતાં પહેલાં શરતો તપાસો.
 
-**Team અને Enterprise સીટ.** આપમેળે થતી પસંદગી (`ccam next`, `--fallback`, `ccam pick`, ડેશબોર્ડની `n` કી) એક જ Claude Team કે Enterprise સંસ્થાની સીટો વચ્ચે પણ સ્વિચ કરે છે. Anthropic નું સહાય કેન્દ્ર કહે છે કે "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team પ્લાનની દરેક સીટ નામથી નક્કી કરેલી એક વ્યક્તિને ફાળવવામાં આવે છે, અને ફક્ત એ વ્યક્તિ જ તેનો ઉપયોગ કરી શકે છે) અને "Users can't route their work through another user's account to use that user's remaining usage" (વપરાશકર્તાઓ બીજા વપરાશકર્તાના એકાઉન્ટ મારફતે પોતાનું કામ ચલાવીને એ વપરાશકર્તાનો બાકી રહેલો વપરાશ વાપરી શકતા નથી) ([Team પ્લાન](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise પ્લાન](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) માટે પણ એવું જ). તેથી સીટો વચ્ચે આપમેળે થતી પસંદગી વાપરવાથી Anthropic ની શરતોનું ઉલ્લંઘન થઈ શકે છે. તેના પર આધાર રાખતાં પહેલાં તમારી સંસ્થા અને Anthropic પાસેથી ખાતરી કરી લો. અંગત પ્લાન (Pro, Max) ઉપરની નોંધમાં આવરી લેવાયા છે.
+**Team અને Enterprise સીટ.** આપમેળે થતી પસંદગી (`ccam next`, `--fallback`, `ccam pick`, ડેશબોર્ડની `n` કી, અને તમે ચાલુ કરો ત્યારે [`auto_switch`](/features/next#auto-switch)) એક જ Claude Team કે Enterprise સંસ્થાની સીટો વચ્ચે પણ સ્વિચ કરે છે. Anthropic નું સહાય કેન્દ્ર કહે છે કે "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team પ્લાનની દરેક સીટ નામથી નક્કી કરેલી એક વ્યક્તિને ફાળવવામાં આવે છે, અને ફક્ત એ વ્યક્તિ જ તેનો ઉપયોગ કરી શકે છે) અને "Users can't route their work through another user's account to use that user's remaining usage" (વપરાશકર્તાઓ બીજા વપરાશકર્તાના એકાઉન્ટ મારફતે પોતાનું કામ ચલાવીને એ વપરાશકર્તાનો બાકી રહેલો વપરાશ વાપરી શકતા નથી) ([Team પ્લાન](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise પ્લાન](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) માટે પણ એવું જ). તેથી સીટો વચ્ચે આપમેળે થતી પસંદગી વાપરવાથી Anthropic ની શરતોનું ઉલ્લંઘન થઈ શકે છે. સીટો વચ્ચે તેને વાપરવું કે નહીં એ તમારો નિર્ણય છે: તેના પર આધાર રાખતાં પહેલાં તમારી સંસ્થા અને Anthropic પાસેથી ખાતરી કરી લો. અંગત પ્લાન (Pro, Max) ઉપરની નોંધમાં આવરી લેવાયા છે.

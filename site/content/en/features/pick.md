@@ -1,14 +1,14 @@
 ---
 title: Picking an account for scripts
 description: ccam pick prints the account with the most room for a script, gives workers started together different accounts, and exits 75 when none has room.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 12
 translation: source
 ---
 
 `ccam pick` prints the name of the logged-in account with the most room, for a script to start Claude Code with. Workers started at the same time each get a different account while there are enough accounts with room, so a batch of `claude -p` jobs spreads over your accounts instead of draining one.
 
-**Team and Enterprise seats.** Automatic choice (`ccam next`, `--fallback`, `ccam pick`, the dashboard's `n`) also switches between seats of the same Claude Team or Enterprise organization. Anthropic's help center says "Each seat on a Team plan is assigned to one named individual, and only that person may use it" and "Users can't route their work through another user's account to use that user's remaining usage" ([Team plans](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); likewise for [Enterprise plans](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Using automatic choice between seats may therefore violate Anthropic's terms. Check with your organization and Anthropic before you rely on it. Personal plans (Pro, Max) are covered by the [terms note in the FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Team and Enterprise seats.** Automatic choice (`ccam next`, `--fallback`, `ccam pick`, the dashboard's `n`, and [`auto_switch`](/features/next#auto-switch) when you turn it on) also switches between seats of the same Claude Team or Enterprise organization. Anthropic's help center says "Each seat on a Team plan is assigned to one named individual, and only that person may use it" and "Users can't route their work through another user's account to use that user's remaining usage" ([Team plans](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); likewise for [Enterprise plans](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Using automatic choice between seats may therefore violate Anthropic's terms. Whether you use it there is your call: check with your organization and Anthropic before you rely on it. Personal plans (Pro, Max) are covered by the [terms note in the FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 ## Usage
 
@@ -58,7 +58,7 @@ Exit codes: `0` with a name on standard output, `75` (`EX_TEMPFAIL`) when no acc
 1. ccam lists the logged-in accounts (API key accounts and Console logins have no limits and are left out) in the organization of the account this folder would start (see [organizations](/features/next#auto)); a folder logged in to the same Claude account as that one is left out too.
 2. It takes a lock (`~/.local/state/ccam/picks.lock`), so picks running at the same time happen one after another.
 3. It looks up every account's usage at once, the same way `ccam usage` does, with the 60-second cache. A window Claude Code reported full counts as 100% until its reset ([the limit record](/features/usage#the-limit-record)), so an account that has just hit its limit stays out even while its saved numbers show room.
-4. Accounts picked within the last 2 minutes (`~/.local/state/ccam/picks/<name>`; a pick dated after the clock's time does not count) are left out first, and the [choice rules](/features/next#auto) of `ccam next --auto` pick among the rest: below `auto_max_usage` first, by the strategy, never an account at 100%.
+4. Accounts picked within the last 2 minutes, by `ccam pick` or by [`auto_switch`](/features/next#auto-switch) moving a session there (`~/.local/state/ccam/picks/<name>`; a pick dated after the clock's time does not count), are left out first, and the [choice rules](/features/next#auto) of `ccam next --auto` pick among the rest: below `auto_max_usage` first, by the strategy, never an account at 100%. When that passes over the account the rules would take first, the `reason` of `--json` says so: `30% of its 5 hours used; work was picked a moment ago`.
 5. If every account with room was picked recently, the rules choose among all of them again, so a fourth worker on three accounts shares one.
 6. The pick is recorded and the lock released, then the name is printed.
 

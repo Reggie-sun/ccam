@@ -1,10 +1,10 @@
 ---
 title: 컴퓨터 한 대에서 Claude Code 여러 계정 사용하기
 description: CLAUDE_CONFIG_DIR로 여러 Claude Code 계정을 나란히 실행하고 전환하는 방법입니다. 셸 별칭으로 직접 설정하거나 ccam으로 자동화할 수 있습니다.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 1
 translation: machine
-sourceHash: "5463dec2f6eb"
+sourceHash: "5c5dbd9fcd23"
 ---
 
 계정마다 설정 폴더를 따로 두면 됩니다. Claude Code는 `CLAUDE_CONFIG_DIR` 환경 변수로 사용할 폴더를 정하고, 폴더마다 로그인 정보, 설정, 대화 내역이 따로 저장됩니다. 그래서 모든 계정이 로그인 상태를 유지하고, 여러 계정을 동시에 실행할 수 있습니다. 셸 별칭으로 직접 설정할 수도 있고, ccam에 맡길 수도 있습니다.
@@ -79,4 +79,4 @@ Claude Code는 [Windows에서 네이티브로, 그리고 WSL 안에서](https://
 
 여러 계정을 써도 되는지는 각 계정의 약관에 따라 다릅니다. 사용하기 전에 확인하세요.
 
-**Team·Enterprise 시트.** 자동 선택(`ccam next`, `--fallback`, `ccam pick`, 대시보드의 `n`)은 같은 Claude Team이나 Enterprise 조직의 시트 사이에서도 계정을 바꿉니다. Anthropic 고객센터는 "Each seat on a Team plan is assigned to one named individual, and only that person may use it"(팀 플랜의 각 시트는 한 명의 지정된 개인에게 할당되며, 그 사람만 사용할 수 있습니다), "Users can't route their work through another user's account to use that user's remaining usage"(사용자는 다른 사용자의 계정을 통해 작업을 라우팅하여 해당 사용자의 남은 사용량을 사용할 수 없습니다)라고 안내합니다([Team 요금제](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129), [Enterprise 요금제](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)도 마찬가지). 따라서 시트 사이에서 자동 선택을 쓰면 Anthropic의 약관을 위반할 수 있습니다. 이 기능에 의존하기 전에 소속 조직과 Anthropic에 확인하세요. 개인 요금제(Pro, Max)에 대해서는 위의 안내를 참고하세요.
+**Team·Enterprise 시트.** 자동 선택(`ccam next`, `--fallback`, `ccam pick`, 대시보드의 `n`, 그리고 켜 두었을 때의 [`auto_switch`](/features/next#auto-switch))은 같은 Claude Team이나 Enterprise 조직의 시트 사이에서도 계정을 바꿉니다. Anthropic 고객센터는 "Each seat on a Team plan is assigned to one named individual, and only that person may use it"(팀 플랜의 각 시트는 한 명의 지정된 개인에게 할당되며, 그 사람만 사용할 수 있습니다), "Users can't route their work through another user's account to use that user's remaining usage"(사용자는 다른 사용자의 계정을 통해 작업을 라우팅하여 해당 사용자의 남은 사용량을 사용할 수 없습니다)라고 안내합니다([Team 요금제](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129), [Enterprise 요금제](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)도 마찬가지). 따라서 시트 사이에서 자동 선택을 쓰면 Anthropic의 약관을 위반할 수 있습니다. 시트 사이에서 이 기능을 쓸지는 사용자가 판단할 일입니다. 의존하기 전에 소속 조직과 Anthropic에 확인하세요. 개인 요금제(Pro, Max)에 대해서는 위의 안내를 참고하세요.

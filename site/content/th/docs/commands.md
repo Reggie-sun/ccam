@@ -2,10 +2,10 @@
 title: ข้อมูลอ้างอิงคำสั่ง
 metaTitle: "ข้อมูลอ้างอิงคำสั่ง ccam"
 description: "ทุกคำสั่งและตัวเลือกของ ccam ตั้งแต่ ccam add และ ccam <name> ไปจนถึง ccam usage, ccam next และ ccam doctor"
-updated: 2026-10-24
+updated: 2026-10-25
 order: 3
 translation: machine
-sourceHash: "36af7e209cd9"
+sourceHash: "abba525cae48"
 ---
 
 ใส่ `--dry-run` ไว้หน้าคำสั่งเพื่อดูว่าคำสั่งนั้นจะทำอะไรโดยไม่ลงมือทำจริง เช่น `ccam --dry-run work` ตัวเลือกนี้ใช้ได้เมื่อเริ่ม Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`) และกับ `group`, `migrate`, `shortcut`, `update` และ `doctor --fix` ส่วนคำสั่งอื่นที่เปลี่ยนแปลงบางอย่างจะปฏิเสธตัวเลือกนี้แทนที่จะทำงาน
@@ -27,7 +27,7 @@ ccam --fallback work -p "fix the tests"   # run again as another account at the 
 
 `--fallback` ที่วางไว้หน้าชื่อบัญชีใช้กับการรันแบบ `-p`/`--print` เมื่อบัญชีถึงขีดจำกัดการใช้งาน ccam จะรันคำสั่งเดิมอีกครั้งด้วยบัญชีที่เข้าสู่ระบบอยู่และเหลือโควตามากที่สุด แล้วพิมพ์เฉพาะผลลัพธ์ของการรันที่ทำงานจนจบ ดู [บัญชีตามโฟลเดอร์](/features/folder) และ [รันอีกครั้งเมื่อถึงขีดจำกัด](/features/next#run-again-at-the-limit)
 
-**ที่นั่ง (seat) ของ Team และ Enterprise** การเลือกอัตโนมัติ (`ccam next`, `--fallback`, `ccam pick` และปุ่ม `n` ในแดชบอร์ด) จะสลับระหว่างที่นั่งต่าง ๆ ในองค์กร Claude Team หรือ Enterprise เดียวกันด้วย ศูนย์ช่วยเหลือของ Anthropic ระบุว่า "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (แต่ละที่นั่งในแพ็กเกจ Team จะกำหนดให้กับบุคคลที่ระบุชื่อเพียงคนเดียว และมีเพียงบุคคลนั้นที่ใช้ได้) และ "Users can't route their work through another user's account to use that user's remaining usage" (ผู้ใช้ไม่สามารถส่งงานของตนผ่านบัญชีของผู้ใช้คนอื่นเพื่อใช้ปริมาณการใช้งานที่เหลืออยู่ของผู้ใช้คนนั้นได้) ([แพ็กเกจ Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129) ส่วน [แพ็กเกจ Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) ก็เช่นเดียวกัน) ดังนั้น การใช้การเลือกอัตโนมัติระหว่างที่นั่งต่าง ๆ จึงอาจละเมิดข้อกำหนดของ Anthropic โปรดสอบถามองค์กรของคุณและ Anthropic ก่อนที่จะพึ่งพาการเลือกอัตโนมัติ สำหรับแพ็กเกจส่วนตัว (Pro, Max) ดูที่ [หมายเหตุเรื่องข้อกำหนดในคำถามที่พบบ่อย](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)
+**ที่นั่ง (seat) ของ Team และ Enterprise** การเลือกอัตโนมัติ (`ccam next`, `--fallback`, `ccam pick`, ปุ่ม `n` ในแดชบอร์ด และ [`auto_switch`](/features/next#auto-switch) เมื่อคุณเปิดใช้) จะสลับระหว่างที่นั่งต่าง ๆ ในองค์กร Claude Team หรือ Enterprise เดียวกันด้วย ศูนย์ช่วยเหลือของ Anthropic ระบุว่า "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (แต่ละที่นั่งในแพ็กเกจ Team จะกำหนดให้กับบุคคลที่ระบุชื่อเพียงคนเดียว และมีเพียงบุคคลนั้นที่ใช้ได้) และ "Users can't route their work through another user's account to use that user's remaining usage" (ผู้ใช้ไม่สามารถส่งงานของตนผ่านบัญชีของผู้ใช้คนอื่นเพื่อใช้ปริมาณการใช้งานที่เหลืออยู่ของผู้ใช้คนนั้นได้) ([แพ็กเกจ Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129) ส่วน [แพ็กเกจ Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) ก็เช่นเดียวกัน) ดังนั้น การใช้การเลือกอัตโนมัติระหว่างที่นั่งต่าง ๆ จึงอาจละเมิดข้อกำหนดของ Anthropic จะใช้การเลือกอัตโนมัติในกรณีนี้หรือไม่เป็นการตัดสินใจของคุณ: โปรดสอบถามองค์กรของคุณและ Anthropic ก่อนที่จะพึ่งพาการเลือกอัตโนมัติ สำหรับแพ็กเกจส่วนตัว (Pro, Max) ดูที่ [หมายเหตุเรื่องข้อกำหนดในคำถามที่พบบ่อย](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)
 
 คำสั่งลัดอย่าง `ccwork` เริ่มบัญชีของตัวเองในลักษณะเดียวกัน: `ccwork --resume` ทำงานเหมือนกับ `ccam work --resume` ดูที่ [คำสั่งลัด](/docs/commands#shortcuts)
 
@@ -115,8 +115,9 @@ ccam mcp remove fs
 ccam usage           # also: ccam u
 ccam usage --watch   # refresh every 60 seconds
 ccam usage --json
-ccam usage --source claude      # Claude Code looks it up; ccam never touches a token
+ccam usage --source claude      # Claude Code looks it up; ccam sends no token
 ccam next --continue            # this folder's last conversation, as the next account
+ccam next --continue --brief    # a new conversation from a summary of the last one
 ccam next --auto
 ccam next --auto --max-usage 80 --wait
 ccam next -c --auto -- --dangerously-skip-permissions   # claude's own options after --
@@ -126,7 +127,7 @@ ccam agents                     # background sessions of every account
 ccam attach 49ec0028            # open one, as the account that started it (or by its name)
 ```
 
-`next --auto`, `--fallback` และ `ccam pick` เลือกด้วยวิธีเดียวกัน: บัญชีที่ต่ำกว่า `auto_max_usage` (`config.toml` ค่าเริ่มต้น 100) มาก่อน ตาม `auto_strategy` (`headroom`, `expiring` หรือ `balance`) โดยนับช่วงรายสัปดาห์ของ `--model` ด้วย ไม่เลือกบัญชีที่อยู่ที่ 100% เด็ดขาด (ช่วงที่ Claude Code รายงานว่าเต็มจะนับเป็น 100% จนกว่าจะรีเซ็ต) ไม่เลือกบัญชีที่เข้าสู่ระบบด้วย API key และเลือกเฉพาะภายในองค์กรของบัญชีที่ใช้เป็นจุดเริ่มต้น (ใช้ `--cross-org` หรือ `cross_org = true` เพื่อมองไกลกว่านั้น) `--wait` รับค่าหลัง `=` (`--wait=2h`) หากเขียนโดยเว้นวรรคจะถูกปฏิเสธพร้อมคำแนะนำ เมื่อเลือกบัญชีใดไม่ได้ จะออกด้วยรหัส 75 หรือเมื่อใช้ `--wait` จะรอให้บัญชีแรกรีเซ็ต `ccam next --continue` พาการสนทนาไปต่อได้แม้ระหว่างบัญชีที่ไม่ได้ใช้ประวัติร่วมกัน โดย Claude Code จะคัดลอกการสนทนาไปยังบัญชีใหม่ ต่างจาก `ccam <name>` ตรงที่ `ccam next` อ่านตัวเลือกของตัวเอง ดังนั้นตัวเลือกของ Claude Code ต้องวางไว้หลัง `--` หากไม่มี ccam จะหยุดพร้อม `unknown flag` ภายใน Claude Code `/ccam:switch [account]` ของปลั๊กอินจะส่งต่อการสนทนา และ `ccam hook` คือสิ่งที่ hook ของปลั๊กอินรัน ดู[การสลับไปยังบัญชีถัดไป](/features/next) [การเลือกบัญชีสำหรับสคริปต์](/features/pick) และ[เซสชันเบื้องหลังของทุกบัญชี](/features/agents)
+`next --auto`, `--fallback` และ `ccam pick` เลือกด้วยวิธีเดียวกัน: บัญชีที่ต่ำกว่า `auto_max_usage` (`config.toml` ค่าเริ่มต้น 100) มาก่อน ตาม `auto_strategy` (`headroom`, `expiring` หรือ `balance`) โดยนับช่วงรายสัปดาห์ของ `--model` ด้วย ไม่เลือกบัญชีที่อยู่ที่ 100% เด็ดขาด (ช่วงที่ Claude Code รายงานว่าเต็มจะนับเป็น 100% จนกว่าจะรีเซ็ต) ไม่เลือกบัญชีที่เข้าสู่ระบบด้วย API key และเลือกเฉพาะภายในองค์กรของบัญชีที่ใช้เป็นจุดเริ่มต้น (ใช้ `--cross-org` หรือ `cross_org = true` เพื่อมองไกลกว่านั้น) `--wait` รับค่าหลัง `=` (`--wait=2h`) หากเขียนโดยเว้นวรรคจะถูกปฏิเสธพร้อมคำแนะนำ เมื่อเลือกบัญชีใดไม่ได้ จะออกด้วยรหัส 75 หรือเมื่อใช้ `--wait` จะรอให้บัญชีแรกรีเซ็ต `ccam next --continue` พาการสนทนาไปต่อได้แม้ระหว่างบัญชีที่ไม่ได้ใช้ประวัติร่วมกัน โดย Claude Code จะคัดลอกการสนทนาไปยังบัญชีใหม่ เมื่อใช้ `--brief` บัญชีใหม่จะเริ่มการสนทนาใหม่แทน จากสรุปของการสนทนาครั้งล่าสุดที่ ccam เขียนขึ้นเองโดยไม่ใช้โมเดล ([`--brief`](/features/next#brief)) ต่างจาก `ccam <name>` ตรงที่ `ccam next` อ่านตัวเลือกของตัวเอง ดังนั้นตัวเลือกของ Claude Code ต้องวางไว้หลัง `--` หากไม่มี ccam จะหยุดพร้อม `unknown flag` ภายใน Claude Code `/ccam:switch [account]` ของปลั๊กอินจะส่งต่อการสนทนา และ `ccam hook` คือสิ่งที่ hook ของปลั๊กอินรัน เมื่อตั้ง `auto_switch = true` ใน `config.toml` (Linux และ macOS ปิดไว้โดยค่าเริ่มต้น) hook ขีดจำกัดจะจบเซสชันแบบโต้ตอบที่ ccam เริ่มไว้ด้วย แล้วพาการสนทนาไปต่อในอีกบัญชีหนึ่งที่ยังมีโควตาเหลือ เฉพาะบัญชีแบบเดียวกันเท่านั้น: อีกที่นั่งหนึ่งขององค์กรเดียวกัน หรืออีกแพ็กเกจส่วนตัวหนึ่ง ([`auto_switch`](/features/next#auto-switch)) ดู[การสลับไปยังบัญชีถัดไป](/features/next) [การเลือกบัญชีสำหรับสคริปต์](/features/pick) และ[เซสชันเบื้องหลังของทุกบัญชี](/features/agents)
 
 ## การบำรุงรักษา
 
@@ -148,10 +149,10 @@ ccam completion bash # or zsh, powershell
 
 | พาธ | เนื้อหา |
 | --- | --- |
-| `~/.config/ccam/config.toml` | บัญชี กลุ่ม และการตั้งค่า (`theme`, `usage_source`, `relay`, `cross_org` …) การตั้งค่าต้องอยู่ด้านบนสุด เหนือ `[[group]]`, `[[profile]]` หรือ `[[folder]]` ตัวแรก: การตั้งค่าที่อยู่ใต้ตารางจะเป็นของตารางนั้น ccam จึงระบุถึงการตั้งค่านั้นทุกครั้งที่เปิดและใน `ccam doctor` และคำสั่งที่บันทึกการตั้งค่าจะปฏิเสธจนกว่าจะย้ายมันขึ้นไป ความคิดเห็น (comment) จะไม่ถูกเก็บไว้เมื่อ ccam บันทึกไฟล์ |
+| `~/.config/ccam/config.toml` | บัญชี กลุ่ม และการตั้งค่า (`theme`, `usage_source`, `relay`, `auto_switch`, `cross_org` …) การตั้งค่าต้องอยู่ด้านบนสุด เหนือ `[[group]]`, `[[profile]]` หรือ `[[folder]]` ตัวแรก: การตั้งค่าที่อยู่ใต้ตารางจะเป็นของตารางนั้น ccam จึงระบุถึงการตั้งค่านั้นทุกครั้งที่เปิดและใน `ccam doctor` และคำสั่งที่บันทึกการตั้งค่าจะปฏิเสธจนกว่าจะย้ายมันขึ้นไป ความคิดเห็น (comment) จะไม่ถูกเก็บไว้เมื่อ ccam บันทึกไฟล์ |
 | `~/.local/share/ccam/profiles/<name>/` | `CLAUDE_CONFIG_DIR` ของแต่ละบัญชี |
 | `~/.local/share/ccam/groups/<group>/` | การตั้งค่า เซิร์ฟเวอร์ MCP ส่วนขยาย และประวัติที่ใช้ร่วมกัน |
-| `~/.local/state/ccam/` | แคชการใช้งานและบันทึกขีดจำกัด (`usage/<name>.json`, `usage/<name>.limit.json`) เวลาที่ใช้ล่าสุด ตัวบ่งชี้เซสชันและล็อก (`locks/`) คำสั่งลัดที่ ccam สร้าง (`shortcuts.json`) การเปลี่ยนกลุ่มที่ยังไม่เสร็จ (`group-change.json`) และบันทึกที่ `/ccam:switch` และ hook ขีดจำกัดทิ้งไว้ (`handoff/<account>/<session>.json`) |
+| `~/.local/state/ccam/` | แคชการใช้งานและบันทึกขีดจำกัด (`usage/<name>.json`, `usage/<name>.limit.json`) เวลาที่ใช้ล่าสุด ตัวบ่งชี้เซสชันและล็อก (`locks/`) คำสั่งลัดที่ ccam สร้าง (`shortcuts.json`) การเปลี่ยนกลุ่มที่ยังไม่เสร็จ (`group-change.json`) บันทึกที่ `/ccam:switch` และ hook ขีดจำกัดทิ้งไว้ (`handoff/<account>/<session>.json`) เวลาที่ `ccam pick` หรือ `auto_switch` เลือกแต่ละบัญชีครั้งล่าสุด (`picks/<name>` การเลือกหนึ่งครั้งนับอยู่ 2 นาที) และสรุปของ `--brief` ซึ่งเก็บไว้ 7 วัน (`brief/<session>.md`) |
 | `~/.local/bin/<shortcut>` | คำสั่งลัดอย่าง `ccwork` ซึ่งเป็นลิงก์ไปยัง ccam |
 
 ตัวแปร `XDG_CONFIG_HOME`, `XDG_DATA_HOME` และ `XDG_STATE_HOME` ใช้เปลี่ยนตำแหน่งของโฟลเดอร์เหล่านี้ บน Windows `~` คือ `%USERPROFILE%` และคำสั่งลัดเป็น `<shortcut>.exe`

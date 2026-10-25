@@ -1,10 +1,10 @@
 ---
 title: "استعمال کی حدیں"
 description: "ccam usage ایک ہی بار میں ہر اکاؤنٹ کی 5 گھنٹے اور ہفتہ وار حدیں دکھاتا ہے، اور ccam statusline اکاؤنٹ کا نام اور استعمال Claude Code میں دکھاتا ہے۔"
-updated: 2026-10-24
+updated: 2026-10-25
 order: 7
 translation: machine
-sourceHash: "a14b1da71a1a"
+sourceHash: "91ad20327289"
 ---
 
 `ccam usage` دکھاتا ہے کہ ہر اکاؤنٹ نے 5 گھنٹے کی حد، ہفتہ وار حد اور ہر ماڈل کی اپنی ہفتہ وار حد (جیسے Fable) کا کتنا حصہ استعمال کر لیا ہے، ہر حد کے لیے ایک بار کے ساتھ اور یہ کہ اس کے ری سیٹ ہونے میں کتنا وقت باقی ہے۔ کوئی لمبا کام شروع کرنے سے پہلے، یا جب Claude Code بتائے کہ حد قریب ہے، اسے چلا کر دیکھیں کہ کس اکاؤنٹ میں گنجائش باقی ہے۔ `ccam statusline`، Claude Code کے لیے اسٹیٹس لائن کمانڈ ہے: یہ Claude Code کے اندر اکاؤنٹ کا نام اور استعمال دکھاتی ہے اور اعداد `ccam usage` کے لیے محفوظ کرتی ہے۔
@@ -20,7 +20,7 @@ ccam usage -v               # add where the numbers came from
 ccam usage --json           # machine-readable, one object per account
 ccam usage --source cache   # saved numbers only, no network
 ccam usage --refresh        # also renew expired logins of accounts not running
-ccam usage --source claude  # let Claude Code look it up: ccam never touches a token
+ccam usage --source claude  # let Claude Code look it up: ccam sends no token
 ccam statusline install     # set the status line in every account's settings.json
 ```
 
@@ -40,7 +40,7 @@ $ ccam usage
 
 ہر اکاؤنٹ کو ایک لائن ملتی ہے جس میں اس کا نمبر، نام اور یہ ہوتا ہے کہ اس کے اعداد کتنے پرانے ہیں؛ `(cached)` کا مطلب ہے کہ وہ اینڈ پوائنٹ سے نہیں بلکہ ایک محفوظ فائل سے آئے ہیں۔ اس کے نیچے ہر حد کی ایک لائن 20 خانوں کی بار، فیصد اور ونڈو کے ری سیٹ ہونے تک کا وقت دکھاتی ہے: `5-hour`، `Weekly` (تمام ماڈلز)، پھر ہر ماڈل کی اپنی ہفتہ وار ونڈو، جیسے `Fable`۔ جو ونڈو اکاؤنٹ کے پاس نہ ہو وہ `-` دکھاتی ہے۔ فیصد 80% سے پیلا اور 100% پر سرخ ہو جاتا ہے۔ جس ونڈو کو Claude Code نے، استعمال کی حد پر کوئی درخواست رد کرتے ہوئے، بھری ہوئی بتایا ہو وہ اپنے ری سیٹ تک 100% دکھاتی ہے، چاہے محفوظ اعداد کچھ بھی کہیں ([حد کا ریکارڈ](#the-limit-record) دیکھیں)۔ ٹرمینل پر ہر اکاؤنٹ فوراً `fetching…` کے ساتھ ظاہر ہوتا ہے، اور جیسے ہی وہ جواب دیتا ہے اس کی لائنیں بن جاتی ہیں۔ آخری لائن اس اکاؤنٹ کا نام بتاتی ہے جسے [`ccam next --auto`](/features/next) انہی اصولوں سے چنتا (`auto_max_usage`، `auto_strategy`، چلتے سیشنز، صرف آخری بار استعمال کیے گئے اکاؤنٹ کی تنظیم کے اکاؤنٹس جب تک `cross_org` مقرر نہ ہو، اور 100% پر ہر ونڈو چھوڑ دی جاتی ہے، اس لیے جس اکاؤنٹ کا ہفتہ بھر چکا ہو اس کا نام کبھی نہیں آتا)، اور یہ صرف تب نظر آتی ہے جب آپ کے ایک سے زیادہ اکاؤنٹس ہوں۔ ڈیفالٹ `headroom` حکمتِ عملی کے ساتھ اس میں `→ Most headroom: <name>` لکھا ہوتا ہے؛ `expiring` یا `balance` کے ساتھ یہ وجہ بتاتی ہے، جیسے `→ next --auto picks personal: its 5-hour window resets first, in 1h 12m (40% of its 5 hours used)`۔
 
-**Team اور Enterprise سیٹیں۔** خودکار انتخاب (`ccam next`، `--fallback`، `ccam pick`، ڈیش بورڈ کی `n` کلید) ایک ہی Claude Team یا Enterprise تنظیم کی سیٹوں کے درمیان بھی اکاؤنٹ بدلتا ہے۔ Anthropic کا ہیلپ سینٹر کہتا ہے کہ "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (کسی Team پلان کی ہر سیٹ ایک نامزد فرد کو تفویض کی جاتی ہے، اور صرف اسی شخص کو اسے استعمال کرنے کی اجازت ہے) اور "Users can't route their work through another user's account to use that user's remaining usage" (صارفین کسی دوسرے صارف کا باقی ماندہ استعمال کام میں لانے کے لیے اپنا کام اس کے اکاؤنٹ کے ذریعے نہیں چلا سکتے) ([Team پلانز](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)؛ اسی طرح [Enterprise پلانز](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) کے لیے بھی)۔ اس لیے سیٹوں کے درمیان خودکار انتخاب استعمال کرنے سے Anthropic کی شرائط کی خلاف ورزی ہو سکتی ہے۔ اس پر انحصار کرنے سے پہلے اپنی تنظیم اور Anthropic سے تصدیق کر لیں۔ ذاتی پلانز (Pro، Max) کی بات [عام سوالات میں شرائط والے نوٹ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) میں کی گئی ہے۔
+**Team اور Enterprise سیٹیں۔** خودکار انتخاب (`ccam next`، `--fallback`، `ccam pick`، ڈیش بورڈ کی `n` کلید، اور جب آپ اسے آن کریں تو [`auto_switch`](/features/next#auto-switch)) ایک ہی Claude Team یا Enterprise تنظیم کی سیٹوں کے درمیان بھی اکاؤنٹ بدلتا ہے۔ Anthropic کا ہیلپ سینٹر کہتا ہے کہ "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (کسی Team پلان کی ہر سیٹ ایک نامزد فرد کو تفویض کی جاتی ہے، اور صرف اسی شخص کو اسے استعمال کرنے کی اجازت ہے) اور "Users can't route their work through another user's account to use that user's remaining usage" (صارفین کسی دوسرے صارف کا باقی ماندہ استعمال کام میں لانے کے لیے اپنا کام اس کے اکاؤنٹ کے ذریعے نہیں چلا سکتے) ([Team پلانز](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)؛ اسی طرح [Enterprise پلانز](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) کے لیے بھی)۔ اس لیے سیٹوں کے درمیان خودکار انتخاب استعمال کرنے سے Anthropic کی شرائط کی خلاف ورزی ہو سکتی ہے۔ وہاں اسے استعمال کرنا ہے یا نہیں، یہ آپ کا فیصلہ ہے: اس پر انحصار کرنے سے پہلے اپنی تنظیم اور Anthropic سے تصدیق کر لیں۔ ذاتی پلانز (Pro، Max) کی بات [عام سوالات میں شرائط والے نوٹ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) میں کی گئی ہے۔
 
 جو اکاؤنٹ لاگ اِن نہ ہو وہ `not logged in → ccam login <name>` دکھاتا ہے، اور API key والا اکاؤنٹ `no limits (API)` دکھاتا ہے۔ میعاد ختم ایکسیس ٹوکن ``access token expired; `ccam <name>` renews it when it starts`` دکھاتا ہے، اگر محفوظ اعداد ہوں تو ان کے اوپر: Claude Code اگلی بار شروع ہونے پر اس کی تجدید کر دیتا ہے۔ جس لاگ اِن کی پوری میعاد ختم ہو چکی ہو، کیونکہ اس کے ریفریش ٹوکن کی میعاد ختم ہو گئی یا سرور کے انکار کے بعد Claude Code نے اسے مٹا دیا، وہ `` login expired → `ccam login <name>` `` دکھاتا ہے۔
 
@@ -97,7 +97,7 @@ $ ccam usage
 
 ### حد کا ریکارڈ
 
-جب Claude Code کسی باری کو استعمال کی حد پر روکتا ہے تو [ccam پلگ اِن](/docs/install#claude-code-plugin) کا ہُک گفتگو سے رد کی گئی درخواست پڑھتا ہے: کون سی ونڈو بھری ہوئی تھی (5 گھنٹے، ہفتہ وار، Opus یا Sonnet) اور وہ کب ری سیٹ ہوگی۔ یہ اسے `~/.local/state/ccam/usage/<name>.limit.json` میں لکھتا ہے۔ `Fetch` یہ ریکارڈ ہر ذریعے سے حاصل باقی تمام معلومات کے اوپر رکھتا ہے: اس میں درج ہر ونڈو اپنے ری سیٹ تک 100% شمار ہوتی ہے، محفوظ اعداد کتنے ہی پرانے یا کم ہوں، اس لیے `ccam next --auto`، `ccam pick` اور `--fallback` اس سے پہلے اس اکاؤنٹ کو دوبارہ نہیں چنتے۔ اگر کچھ اور معلوم نہ ہو تو اکاؤنٹ صرف یہی ریکارڈ دکھاتا ہے (`-v` کے ساتھ `source: the usage limit Claude Code reported`)۔ جن سیشنز کے سامنے کوئی نہیں بیٹھا (`-p`، بیک گراؤنڈ سیشنز) وہ کوئی ریکارڈ نہیں لکھتے، اور نہ ہی تنظیم کی طرف سے روکا جانا (استعمال ختم، $0 پر مقرر گروپ)، جسے اس کے ایڈمن کسی بھی وقت ہٹا سکتے ہیں۔ کسی دوسرے Claude اکاؤنٹ میں `ccam login` ریکارڈ ہٹا دیتا ہے؛ فائل حذف کرنے سے بھی یہ صاف ہو جاتا ہے۔
+جب Claude Code کسی باری کو استعمال کی حد پر روکتا ہے تو [ccam پلگ اِن](/docs/install#claude-code-plugin) کا ہُک گفتگو سے رد کی گئی درخواست پڑھتا ہے: کون سی ونڈو بھری ہوئی تھی (5 گھنٹے، ہفتہ وار، Opus یا Sonnet) اور وہ کب ری سیٹ ہوگی۔ یہ اسے `~/.local/state/ccam/usage/<name>.limit.json` میں لکھتا ہے۔ `Fetch` یہ ریکارڈ ہر ذریعے سے حاصل باقی تمام معلومات کے اوپر رکھتا ہے: اس میں درج ہر ونڈو اپنے ری سیٹ تک 100% شمار ہوتی ہے، محفوظ اعداد کتنے ہی پرانے یا کم ہوں، اس لیے `ccam next --auto`، `ccam pick`، `--fallback` اور [`auto_switch`](/features/next#auto-switch) اس سے پہلے اس اکاؤنٹ کو دوبارہ نہیں چنتے۔ اگر کچھ اور معلوم نہ ہو تو اکاؤنٹ صرف یہی ریکارڈ دکھاتا ہے (`-v` کے ساتھ `source: the usage limit Claude Code reported`)۔ جن سیشنز کے سامنے کوئی نہیں بیٹھا (`-p`، بیک گراؤنڈ سیشنز) وہ کوئی ریکارڈ نہیں لکھتے، اور نہ ہی تنظیم کی طرف سے روکا جانا (استعمال ختم، $0 پر مقرر گروپ)، جسے اس کے ایڈمن کسی بھی وقت ہٹا سکتے ہیں۔ کسی دوسرے Claude اکاؤنٹ میں `ccam login` ریکارڈ ہٹا دیتا ہے؛ فائل حذف کرنے سے بھی یہ صاف ہو جاتا ہے۔
 
 ### ٹوکنز کی تجدید
 

@@ -1,10 +1,10 @@
 ---
 title: Claude Code kullanım limitine ulaştığında ne yapmalı
 description: Sıfırlanmayı bekleyin ya da aynı konuşmaya hemen başka bir Claude Code hesabında devam edin. 5 saatlik ve haftalık limitlerin işleyişi, adım adım.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 3
 translation: machine
-sourceHash: "049a46684c7b"
+sourceHash: "18ef61a68c55"
 ---
 
 Bir hesap kullanım limitine (çoğu zaman rate limit olarak da anılır) ulaştığında iki seçeneğiniz vardır: limitin sıfırlanmasını beklemek ya da aynı konuşmaya şimdi sahip olduğunuz başka bir hesapta devam etmek. ccam ile ikincisi tek bir komut sürer: `ccam next --auto --continue`.
@@ -57,18 +57,18 @@ Claude Code, `work` olarak, geçerli klasörün en son konuşmasıyla ve o ana k
 
 Claude Code'da [ccam eklentisi](/docs/install#claude-code-plugin) varken limitinde duran bir oturum bir bildirim gösterir ve dolu pencereyi kaydeder; böylece `ccam next --auto` o hesabı sıfırlanmadan önce yeniden seçmez; `/ccam:switch` (ya da `/ccam:switch work`) konuşmayı, tahmine hiçbir şey bırakmadan `ccam next --continue` için not eder.
 
-**Team ve Enterprise koltukları.** Otomatik seçim (`ccam next`, `--fallback`, `ccam pick`, kontrol panelindeki `n` tuşu), aynı Claude Team veya Enterprise kuruluşunun koltukları arasında da geçiş yapar. Anthropic'in yardım merkezinde şöyle belirtilir: "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team planındaki her koltuk, adı belirli tek bir kişiye atanır ve onu yalnızca o kişi kullanabilir) ve "Users can't route their work through another user's account to use that user's remaining usage" (kullanıcılar, başka bir kullanıcının kalan kullanım hakkından yararlanmak için işlerini o kullanıcının hesabı üzerinden yürütemez) ([Team planları](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise planları](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) için de durum aynıdır). Bu nedenle otomatik seçimi koltuklar arasında kullanmak Anthropic'in koşullarını ihlal edebilir. Buna güvenmeden önce kuruluşunuza ve Anthropic'e danışın. Kişisel planlar (Pro, Max), [SSS'deki koşullar notunda](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) ele alınır.
+**Team ve Enterprise koltukları.** Otomatik seçim (`ccam next`, `--fallback`, `ccam pick`, kontrol panelindeki `n` tuşu ve açtığınızda [`auto_switch`](/features/next#auto-switch)), aynı Claude Team veya Enterprise kuruluşunun koltukları arasında da geçiş yapar. Anthropic'in yardım merkezinde şöyle belirtilir: "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team planındaki her koltuk, adı belirli tek bir kişiye atanır ve onu yalnızca o kişi kullanabilir) ve "Users can't route their work through another user's account to use that user's remaining usage" (kullanıcılar, başka bir kullanıcının kalan kullanım hakkından yararlanmak için işlerini o kullanıcının hesabı üzerinden yürütemez) ([Team planları](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise planları](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) için de durum aynıdır). Bu nedenle otomatik seçimi koltuklar arasında kullanmak Anthropic'in koşullarını ihlal edebilir. Orada kullanıp kullanmamak sizin kararınızdır: buna güvenmeden önce kuruluşunuza ve Anthropic'e danışın. Kişisel planlar (Pro, Max), [SSS'deki koşullar notunda](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) ele alınır.
 
 ## ccam hesapları otomatik olarak değiştirir mi?
 
-Hayır. Siz çalışırken ccam çalışmaz: Claude Code'u başlatır ve kendi yerini ona bırakır. Ne zaman geçiş yapacağınıza siz karar verirsiniz; `ccam next --auto`, 5 saatlik kullanımı en düşük olan hesabı seçer ve %100'de olan, oturum açılmamış ya da başka bir kuruluşa ait hesapları atlar. `config.toml` içinde `relay = true` olduğunda ccam bunun yerine oturumun yanında bekler; böylece `/ccam:switch`, oturumun seçeneklerini, izin modunu ve efor düzeyini koruyarak kendiliğinden devam eder. Bazı diğer araçlar bunun yerine çalışan bir oturumun girişini değiştirir; farkı [ccam ve diğer hesap değiştirme araçları](/compare/account-switchers) sayfası açıklar.
+Yalnızca siz açarsanız. Varsayılan olarak siz çalışırken ccam çalışmaz: Claude Code'u başlatır ve kendi yerini ona bırakır; böylece ne zaman geçiş yapacağınıza siz karar verirsiniz ve `ccam next --auto`, 5 saatlik kullanımı en düşük olan hesabı seçer, %100'de olan ya da oturum açılmamış hesapları atlar ve tek bir Team veya Enterprise kuruluşunun içinde ya da kişisel planlar arasında kalır. `config.toml` içinde `relay = true` olduğunda ccam bunun yerine oturumun yanında bekler; böylece `/ccam:switch`, oturumun seçeneklerini, izin modunu ve efor düzeyini koruyarak kendiliğinden devam eder. `auto_switch = true` olduğunda (Linux ve macOS; deneysel) geçişi ccam de kendisi yapar: Claude Code oturumu limitinde durdurduğunda ve ona benzer başka bir hesabın payı kaldığında ccam oturumu sonlandırır ve konuşmayı orada sürdürür ([koşullar ve maliyetler](/features/next#auto-switch)). Bazı diğer araçlar bunun yerine çalışan bir oturumun girişini değiştirir; farkı [ccam ve diğer hesap değiştirme araçları](/compare/account-switchers) sayfası açıklar.
 
 ## Akılda tutulması gerekenler
 
 - `ccam next --continue` komutunu çalıştığınız klasörde çalıştırın; konuşmalar proje klasörü bazında saklanır.
 - Aynı konuşma üzerinde iki hesabı aynı anda çalıştırmaktan kaçının. Bunu denerseniz ccam sizi uyarır.
 - Paylaşılan geçmiş olmadan konuşma diğer hesaba kopyalanır ve iki kopya kendi yollarına gider; `/rewind` komutunun kodu geri yüklediği kontrol noktaları ilk hesapta kalır.
-- Yeni hesaptaki ilk mesaj limitin normalden fazlasını kullanabilir, çünkü o hesap konuşmayı henüz önbelleğe almamıştır.
+- Yeni hesaptaki ilk mesaj limitin normalden fazlasını kullanabilir, çünkü o hesap konuşmayı henüz önbelleğe almamıştır. `ccam next --continue --brief` bunun yerine onu kısa bir özetle başlatır.
 - Hesaplar arasında bu şekilde geçiş yapıp yapamayacağınız her hesabın koşullarına bağlıdır.
 
 `ccam usage` ve `ccam next` komutlarının tüm seçenekleri için [kullanım limitleri](/docs/usage-limits) sayfasına bakın.

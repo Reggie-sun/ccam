@@ -2,10 +2,10 @@
 title: Tambayoyin da ake yawan yi
 metaTitle: "Tambayoyi game da ccam: asusun Claude Code da dama"
 description: Amsoshi game da ccam, asusun Claude Code, iyakokin amfani, rabawa, sirri da tsarukan da ake tallafawa.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 6
 translation: machine
-sourceHash: c4e3b89bb4ea
+sourceHash: 8e9deca652d1
 ---
 
 ## Shin ccam kayan aikin Anthropic ne na hukuma?
@@ -14,13 +14,17 @@ A'a. ccam aikin open-source ne da ba na hukuma ba, ba shi da alaƙa da Anthropic
 
 ## Shin an yarda in yi amfani da asusun Claude Code da dama?
 
-Wannan ya dogara da sharuɗɗan kowane asusu kuma, ga asusan aiki, da manufofin ƙungiyarka. Ka duba su kafin ka yi amfani da asusai da dama. ccam yana sauƙaƙa sauyawa ne kawai tsakanin asusan da kake da su tuni.
+Wannan ya dogara da sharuɗɗan kowane asusu kuma, ga asusan aiki, da manufofin ƙungiyarka: [Consumer Terms](https://www.anthropic.com/legal/consumer-terms) na Anthropic don Pro da Max, [Commercial Terms](https://www.anthropic.com/legal/commercial-terms) ɗinta don Team da Enterprise, da [Usage Policy](https://www.anthropic.com/legal/aup) ɗinta ga kowa. Ka duba su kafin ka yi amfani da asusai da dama. ccam ba ya ɗaga, haɗawa ko ɓoye iyakokin asusu, kuma har yanzu kowane asusu yana tsayawa a nasa iyakar. Yana kai aikinka gaba a matsayin wani daga cikin asusanka idan ka nema, ko da kansa a iyaka idan ka kunna [`auto_switch`](/features/next#auto-switch) (Linux da macOS). Kai ne za ka yanke hukunci ko an yarda da hakan ga asusanka.
 
-**Kujeru (seats) na Team da Enterprise.** Zaɓin atomatik (`ccam next`, `--fallback`, `ccam pick`, maɓallin `n` na dashboard) yana kuma sauyawa tsakanin kujerun ƙungiyar Claude Team ko Enterprise iri ɗaya. Cibiyar taimako ta Anthropic ta ce "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (ana ba da kowace kujera a tsarin Team da sunan takamaiman mutum ɗaya, kuma wannan mutumin kaɗai ne aka yarda ya yi amfani da ita) da "Users can't route their work through another user's account to use that user's remaining usage" (masu amfani ba za su iya tura aikinsu ta asusun wani mai amfani ba domin su ci gajiyar ragowar amfanin wannan mai amfanin) ([Tsare-tsaren Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); haka ma ga [tsare-tsaren Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Don haka yin amfani da zaɓin atomatik tsakanin kujeru na iya saɓa wa sharuɗɗan Anthropic. Ka tuntuɓi ƙungiyarka da Anthropic kafin ka dogara da shi. Don tsare-tsaren kai (Pro, Max), duba sakin layin da ke sama.
+**Kujeru (seats) na Team da Enterprise.** Zaɓin atomatik (`ccam next`, `--fallback`, `ccam pick`, maɓallin `n` na dashboard, da [`auto_switch`](/features/next#auto-switch) idan ka kunna shi) yana kuma sauyawa tsakanin kujerun ƙungiyar Claude Team ko Enterprise iri ɗaya. Cibiyar taimako ta Anthropic ta ce "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (ana ba da kowace kujera a tsarin Team da sunan takamaiman mutum ɗaya, kuma wannan mutumin kaɗai ne aka yarda ya yi amfani da ita) da "Users can't route their work through another user's account to use that user's remaining usage" (masu amfani ba za su iya tura aikinsu ta asusun wani mai amfani ba domin su ci gajiyar ragowar amfanin wannan mai amfanin) ([Tsare-tsaren Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); haka ma ga [tsare-tsaren Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Don haka yin amfani da zaɓin atomatik tsakanin kujeru na iya saɓa wa sharuɗɗan Anthropic. Ko za ka yi amfani da shi a can ya rage naka: ka tuntuɓi ƙungiyarka da Anthropic kafin ka dogara da shi. Don tsare-tsaren kai (Pro, Max), duba sakin layin da ke sama.
 
 ## Shin ccam yana kauce wa iyakokin amfani?
 
-A'a. Kowane asusu yana riƙe iyakokinsa. ccam yana nuna su kuma yana ba ka damar ci gaba a wani asusun da ka mallaka idan iyakar ɗaya ta ƙare.
+Ba ya wuce iyakar kowane asusu: kowane asusu yana riƙe iyakokinsa kuma yana tsayawa a kansu, kuma ccam ba ya ɗaga su, haɗa su ko ɓoye su. ccam yana nuna su kuma yana ba ka damar ci gaba a wani daga cikin asusanka idan iyakar ɗaya ta ƙare; idan `auto_switch` yana kunne, yana yin haka da kansa (duba tambaya ta gaba). Tsakanin kujerun ƙungiyar Team ko Enterprise ɗaya, ci gaba a wata kujera yana amfani da ragowar amfanin wannan kujerar, abin da cibiyar taimako ta Anthropic ta hana ga kujerar wani mai amfani (duba Kujeru na Team da Enterprise a sama).
+
+## Shin ccam zai iya sauya asusu da kansa idan zama ya kai iyakarsa?
+
+Sai idan ka kunna shi. Da `auto_switch = true` a saman `~/.config/ccam/config.toml` (Linux da macOS; a kashe ta tsohuwa kuma na gwaji ne), idan Claude Code ya dakatar da zaman mu'amala da ccam ya fara a iyakar awa 5, ta mako, ta Opus ko ta Sonnet, ccam yana kawo ƙarshen zaman kuma yana ci gaba da tattaunawar a matsayin wani daga cikin asusanka mai sarari: wata kujerar ƙungiyar Team ko Enterprise iri ɗaya, ko wani tsarin kai (Pro, Max). Ba ya taɓa sauyawa kafin iyakar, ba ya taɓa sa ido kan amfaninka a bayan fage, kuma ba ya taɓa fitar da aiki daga ƙungiyar Team ko Enterprise ko shigar da shi cikinta. A kan kujeru yana motsa aikinka daga wata kujera zuwa wata, abin da na iya saɓa wa sharuɗɗan Anthropic (duba Kujeru na Team da Enterprise a sama), kuma ga tsare-tsaren kai sharuɗɗan Anthropic ba su warware batun ba: Consumer Terms sun hana samun damar Services "through automated or non-human means" (ta hanyoyin atomatik ko waɗanda ba na ɗan Adam ba) sai dai idan Anthropic ta ba da izini a fili, kuma motsi yana aika saƙo ɗaya a madadinka; kunna shi ya rage naka. [`auto_switch`](/features/next#auto-switch) yana lissafa kowane sharaɗi da abin da motsi ke ci.
 
 ## Ta yaya zan yi amfani da asusun Claude Code biyu a kwamfuta ɗaya?
 
@@ -28,11 +32,11 @@ Ba kowane asusu foldar saitunsa ta kansa da `CLAUDE_CONFIG_DIR`. ccam yana yi ma
 
 ## Ta yaya zan ci gaba da tattaunawa a wani asusu?
 
-Gudanar da `ccam next --continue` a cikin foldar: yana kai tattaunawar ƙarshe ta foldar zuwa asusu na gaba (`--auto` don wanda ya fi sarari). A cikin Claude Code, `/ccam:switch` daga [plugin ɗin ccam](/docs/install#claude-code-plugin) yana yin haka ga zaman da kake ciki. Idan asusan biyu suna raba tarihin tattaunawa (`ccam group set default --add history`, ko rukuni nasu na kansu: `ccam group add pair --items history --members work,side`), sabon asusun yana buɗe ainihin wannan tattaunawar; in ba haka ba Claude Code yana kwafar ta cikin tarihin sabon asusun.
+Gudanar da `ccam next --continue` a cikin foldar: yana kai tattaunawar ƙarshe ta foldar zuwa asusu na gaba (`--auto` don wanda ya fi sarari). A cikin Claude Code, `/ccam:switch` daga [plugin ɗin ccam](/docs/install#claude-code-plugin) yana yin haka ga zaman da kake ciki. Idan asusan biyu suna raba tarihin tattaunawa (`ccam group set default --add history`, ko rukuni nasu na kansu: `ccam group add pair --items history --members work,side`), sabon asusun yana buɗe ainihin wannan tattaunawar; in ba haka ba Claude Code yana kwafar ta cikin tarihin sabon asusun. Ƙara `--brief` don fara sabon asusun a kan taƙaitaccen bayani maimakon dukan tattaunawar.
 
 ## Shin ccam yana ganin bayanan shigata ko yana aika su?
 
-ccam ba ya taɓa raba ko kwafar bayanan shigar Claude naka tsakanin asusu, kuma ba ya taɓa kwafar shigar sabobin MCP. Yana karanta access token na asusu ne kawai don tambayar endpoint na amfani na Anthropic game da amfanin wannan asusun, lokacin da ka gudanar da `ccam usage`, `ccam next --auto` ko `ccam doctor`, kuma yana sabunta wanda ya ƙare ne kawai da `ccam usage --refresh`; da `usage_source = "claude"` ba ya karanta token ɗin kwata-kwata. `ccam ext` da `ccam doctor` suna karanta sunayen shigar MCP na asusu, ba token ɗinsu ba. ccam ba shi da telemetry. Ban da waɗannan tambayoyin, buƙata ɗaya tak da yake yi da kansa ita ce tambayar dashboard ga GitHub game da sabon sakin ccam, wadda ba ta ɗauke da komai game da kai ko asusunka.
+ccam ba ya taɓa raba ko kwafar bayanan shigar Claude naka tsakanin asusu, kuma ba ya taɓa kwafar shigar sabobin MCP. Yana karanta access token na asusu ne kawai don tambayar endpoint na amfani na Anthropic game da amfanin wannan asusun: don `ccam usage`, dashboard, `ccam doctor` da zaɓin atomatik (`ccam next --auto`, `ccam pick`, `--fallback`, da `auto_switch` idan zama ya kai iyakarsa). Yana sabunta wanda ya ƙare ne kawai da `ccam usage --refresh`; da `usage_source = "claude"` ba ya aika token zuwa ko'ina, kuma yana karanta shigar da aka ajiye (fayil ɗin, ko shigarwar Keychain ta macOS) ne kawai don sanin ko har yanzu tana aiki. `ccam ext` da `ccam doctor` suna karanta sunayen shigar MCP na asusu, ba token ɗinsu ba. ccam ba shi da telemetry. Ban da waɗannan tambayoyin, buƙata ɗaya tak da yake yi da kansa ita ce tambayar dashboard ga GitHub game da sabon sakin ccam, wadda ba ta ɗauke da komai game da kai ko asusunka.
 
 ## Ta yaya zan shiga a sabar nesa?
 
@@ -56,7 +60,7 @@ Sabobin da aka ƙara a cikin zama (session) da `claude mcp add` ana ajiye su ga 
 
 ## Shin ccam yana rage saurin Claude Code?
 
-Fara Claude Code ta ccam yana ƙara kusan millisecond 4, wanda aka auna da `scripts/perf-check.sh` a kwamfutar tafi-da-gidanka. ccam yana karanta ƙaramin fayil ɗaya, yana duba mahaɗan da aka raba, sannan yana maye gurbin kansa da `claude`, don haka ba ya aiki yayin da kake aiki. Windows ba zai iya maye gurbin process ba, don haka a can ccam yana fara Claude Code kuma yana jiran sa, ba tare da yin wani abu ba.
+Fara Claude Code ta ccam yana ƙara kusan millisecond 4, wanda aka auna da `scripts/perf-check.sh` a kwamfutar tafi-da-gidanka. ccam yana karanta ƙaramin fayil ɗaya, yana duba mahaɗan da aka raba, sannan yana maye gurbin kansa da `claude`, don haka ta tsohuwa ba ya aiki yayin da kake aiki. Windows ba zai iya maye gurbin process ba, don haka a can ccam yana fara Claude Code kuma yana jiran sa, ba tare da yin wani abu ba. Idan an kunna `relay` ko `auto_switch`, ccam yana jira ta wannan hanya a gefen kowane zaman mu'amala, don ya iya kai tattaunawar gaba.
 
 ## Ta yaya zan sabunta ccam?
 

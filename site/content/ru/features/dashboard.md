@@ -1,18 +1,18 @@
 ---
 title: Панель управления
 description: ccam в терминале открывает полноэкранную панель аккаунтов, групп, правил папок, расширений и проверок; любое изменение сначала показывает план.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 15
 translation: machine
-sourceHash: "e48ca2c5a643"
+sourceHash: "98ccf6cd81e9"
 ---
 
-`ccam` без аргументов открывает полноэкранную панель, если стандартный ввод и вывод подключены к терминалу; в остальных случаях он выводит `ccam list`. Панель показывает каждый аккаунт с его использованием и группами и делает то же, что и команды: запускает, добавляет, выполняет вход, меняет группы, задаёт правила папок, проверяет и исправляет. При запуске она закрывается; при добавлении аккаунта или входе она уступает терминал и затем возвращается.
+`ccam` без аргументов открывает полноэкранную панель, если стандартный ввод и вывод подключены к терминалу; в остальных случаях он выводит `ccam list`. Панель показывает каждый аккаунт с его использованием и группами и делает то же, что и команды: запускает, добавляет, выполняет вход, меняет группы, задаёт правила папок, показывает фоновые сессии, проверяет и исправляет. При запуске или подключении к фоновой сессии она закрывается; при добавлении аккаунта или входе она уступает терминал и затем возвращается.
 
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -40,12 +40,13 @@ sourceHash: "e48ca2c5a643"
 | Вкладка | Что она показывает | Клавиши |
 | --- | --- | --- |
 | Accounts | номер, имя, email, полосы 5-часового, недельного окна и Fable, последнее использование, группы; `✔` аккаунт по умолчанию, `▸` аккаунт этой папки, `•` запущен (в том числе Claude Code, запущенный без ccam: обычный `claude`, IDE, фоновые сессии и их демон) | ниже |
+| Agents | то, что показывает [`ccam agents`](/features/agents): фоновые сессии и открытые сессии каждого аккаунта с их состоянием, папкой и временем запуска (ниже) | `enter` подключиться (как `ccam attach`), `x` остановить, `r` перезагрузить |
 | Groups | каждую группу, что она делит и её аккаунты, а также аккаунты без группы | `enter` изменить, `n` новая, `e` переименовать, `x` удалить |
 | Folders | правила [`ccam folder`](/features/folder) и правило, которое действует здесь, в том числе когда вы попали в папку через символическую ссылку (новые правила сохраняются с раскрытыми ссылками) | `n` использовать аккаунт здесь, `enter` изменить, `x` удалить |
 | Extensions | то, что показывает [`ccam ext`](/features/ext), каждое расширение один раз вместе с группами, из которых оно берётся, `off:` — аккаунты, в которых плагин не включён, серверы, которые есть у аккаунта только для этой папки, среди его собственных, `This folder's project` и проблемы, не относящиеся ни к одному аккаунту | `r` перезагрузить |
 | Health | то, о чём сообщает [`ccam doctor`](/features/doctor), в виде рамки для каждого аккаунта (ниже) | `f` исправить выбранную рамку, `F` исправить всё (`doctor --fix`), `↑`/`↓` перейти между рамками |
 
-`←`/`→` или `Tab` переключают вкладки, `?` показывает клавиши текущей вкладки, `r` заново запрашивает использование, минуя короткий кэш, а `q` или `Esc` закрывают панель.
+`←`/`→` или `Tab` переключают вкладки, `?` показывает клавиши текущей вкладки, `r` заново запрашивает использование, минуя короткий кэш, и заново загружает вкладки Agents, Extensions и Health, а `q` или `Esc` закрывают панель.
 
 ## Клавиши на вкладке Accounts
 
@@ -66,7 +67,7 @@ sourceHash: "e48ca2c5a643"
 | `c` | Задать или удалить его короткую команду |
 | `x` | Удалить его (сначала спрашивает, курсор стоит на No) |
 
-**Места в тарифах Team и Enterprise.** При автоматическом выборе (`ccam next`, `--fallback`, `ccam pick`, клавиша `n` на панели) ccam переключается и между местами одной и той же организации Claude Team или Enterprise. В справочном центре Anthropic ([тарифы Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); аналогично для [тарифов Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)) сказано: «Each seat on a Team plan is assigned to one named individual, and only that person may use it» (каждое место в тарифе Team закреплено за одним конкретным человеком, и пользоваться им может только этот человек) и «Users can't route their work through another user's account to use that user's remaining usage» (пользователи не могут направлять свою работу через аккаунт другого пользователя, чтобы расходовать оставшийся лимит этого пользователя). Поэтому использование автоматического выбора между местами может нарушать условия Anthropic. Прежде чем на него полагаться, уточните это у своей организации и у Anthropic. О личных тарифах (Pro, Max) см. [примечание об условиях в FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Места в тарифах Team и Enterprise.** При автоматическом выборе (`ccam next`, `--fallback`, `ccam pick`, клавиша `n` на панели, а также [`auto_switch`](/features/next#auto-switch), если вы его включите) ccam переключается и между местами одной и той же организации Claude Team или Enterprise. В справочном центре Anthropic ([тарифы Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); аналогично для [тарифов Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)) сказано: «Each seat on a Team plan is assigned to one named individual, and only that person may use it» (каждое место в тарифе Team закреплено за одним конкретным человеком, и пользоваться им может только этот человек) и «Users can't route their work through another user's account to use that user's remaining usage» (пользователи не могут направлять свою работу через аккаунт другого пользователя, чтобы расходовать оставшийся лимит этого пользователя). Поэтому использование автоматического выбора между местами может нарушать условия Anthropic. Пользоваться ли им в этом случае, решать вам: прежде чем на него полагаться, уточните это у своей организации и у Anthropic. О личных тарифах (Pro, Max) см. [примечание об условиях в FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 ## Вкладка Health
 
@@ -95,6 +96,28 @@ sourceHash: "e48ca2c5a643"
 ```
 
 `↑`/`↓` переходят от рамки к рамке, а выбранная рамка выделяется акцентным цветом. `f` исправляет только выбранную рамку так же, как это сделал бы `ccam doctor --fix`: в рамке аккаунта исправляется только этот аккаунт, а в рамке `General` — результаты, не относящиеся ни к одному аккаунту (пути плагинов и короткие команды); все остальные аккаунты только проверяются заново. Сначала он спрашивает (``Like `ccam doctor --fix`: missing links and group folders are made, and a real file where a link belongs is backed up first; where the group has its own copy, the account then sees the group's. Nothing is lost.``), а для рамки, в которой нечего исправлять, просто сообщает `nothing to repair in <name>`. `F` исправляет всё сразу, как `ccam doctor --fix`, а `r` проверяет заново.
+
+## Вкладка Agents
+
+Вкладка Agents показывает то, что выводит [`ccam agents`](/features/agents): фоновые сессии и открытые сессии каждого аккаунта вместе с аккаунтом, которому принадлежит каждая из них. Она опрашивает Claude Code всех аккаунтов одновременно (`claude agents --json`, до 15 секунд на каждый) при первом открытии вкладки, по `r`, после остановки сессии и после изменения конфигурации и показывает `Asking every account's Claude Code for its sessions…`, пока не ответят все.
+
+```console
+  Accounts   Agents   Groups   Folders   Extensions   Health
+ Background agents and open sessions of every account; enter attaches to one.
+
+    Account   ID        Name   State          Folder      Started
+ ❯  work      -         -      open (busy)    ~/code/web  now
+    personal  49ec0028  probe  blocked, idle  ~/code/app  12m
+
+ ✘ lab: could not list its sessions: exit status 1 'claude agents --json' is
+   not available in this environment.
+
+ enter to attach · x to stop · r to reload · ? for shortcuts
+```
+
+`State` показывает состояние фоновой сессии и то, чем занят её процесс, или `open` для интерактивной сессии, как в `ccam agents`. Аккаунт, который не удалось опросить, получает под списком строку `✘` с тем, что ответил Claude Code, как `lab` выше, у которого выключен просмотр агентов. Завершённые фоновые сессии не показываются (их выводит `ccam agents --all`), а если ответили все аккаунты и ни у одного нет сессий, вкладка сообщает ``No sessions. Start one in the background with `ccam <account> --bg "…"`.`` В узком терминале вкладка сначала убирает `Started`, затем `Name`, затем `Folder`, а длинный путь папки обрезает слева.
+
+`Enter` на фоновой сессии закрывает панель и открывает сессию в этом терминале от имени её аккаунта, как это делает `ccam attach <id>`; панель не возвращается (в Claude Code `←` ведёт в просмотр агентов, а `Ctrl+Z` в оболочку). У открытой сессии нет идентификатора, поэтому `Enter` и `x` лишь сообщают, что нужна фоновая сессия. `x` сначала спрашивает, с курсором на `No, keep it`: ``It runs as personal. Like `ccam personal stop 49ec0028`, Claude Code stops it and keeps its conversation, which `ccam attach 49ec0028` opens again.`` При ответе «да» ccam выполняет `claude stop <id>` от имени этого аккаунта, сообщает ``49ec0028 (personal) stopped; `ccam attach 49ec0028` opens it again`` или почему остановить не удалось и заново читает список.
 
 ## Изменение групп
 

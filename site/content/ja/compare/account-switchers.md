@@ -1,10 +1,10 @@
 ---
 title: ccamとほかのClaude Codeアカウント切り替えツール
 description: ccamとclaude-swap、CCS、clausona、clauth、CAAM、cuxなど、Claude Codeのアカウントを切り替えるツールを比較し、用途に合う方式を説明します。
-updated: 2026-10-24
+updated: 2026-10-25
 order: 2
 translation: machine
-sourceHash: "6d08203f1ea6"
+sourceHash: "3d87ba7c975a"
 ---
 
 Claude Codeのアカウントを切り替えるツールの方式は2つに分かれます。多くは1つの`~/.claude`フォルダーの中でログインを入れ替えるので、使えるアカウントは一度に1つです。ccamを含むほかのツールは、`CLAUDE_CONFIG_DIR`でアカウントごとに専用のフォルダーを割り当てるので、どのアカウントもログインしたままで、複数を同時に実行できます。ccamはさらに設定とMCPサーバーを共有し、別のアカウントのフォルダーで会話を続けられます。
@@ -23,7 +23,7 @@ Claude Codeのアカウントを切り替えるツールの方式は2つに分�
 
 | ツール | 方式 | 複数アカウントの同時使用 | 5時間と週間の使用量 | 上限に達したとき | プラットフォーム |
 | --- | --- | --- | --- | --- | --- |
-| ccam | フォルダーを分ける | 可 | 可、`ccam usage` | セッション内で通知する。`ccam next --auto --continue`か`/ccam:switch`が、履歴の共有の有無にかかわらず、最も余裕があるアカウントに会話を持ち越す。`-p`のジョブは`ccam --fallback`がそのアカウントで自動的に再実行し、`ccam pick`はワーカーを分散する | Linux、macOS、Windows |
+| ccam | フォルダーを分ける | 可 | 可、`ccam usage` | セッション内で通知する。`ccam next --auto --continue`か`/ccam:switch`が、履歴の共有の有無にかかわらず、最も余裕があるアカウントに会話を持ち越し、`auto_switch`を有効にすると（Linux、macOS）セッションが自動でそのアカウントに移る。`-p`のジョブは`ccam --fallback`がそのアカウントで自動的に再実行し、`ccam pick`はワーカーを分散する | Linux、macOS、Windows |
 | [claude-swap](https://github.com/realiti4/claude-swap) | ログインを入れ替える。`cswap run`ではフォルダーを分ける | 可（`cswap run`） | 可 | `cswap auto`がしきい値でログインを切り替え、実行中のセッションはそのまま続く | Linux、macOS、Windows |
 | [CCS](https://github.com/kaitranntt/ccs) | フォルダーを分ける | 可 | 一部 | アカウントプールがローカルプロキシ経由でリクエストを次のアカウントに回す | Linux、macOS、Windows |
 | [clausona](https://github.com/larcane97/clausona) | フォルダーを分ける | 可 | 可 | 各実行の前にルートがクォータの残っているアカウントを選び、リセットを待つこともでき、ワーカーには別々のアカウントを割り当てる | Linux、macOS、Windows |
@@ -39,7 +39,7 @@ ccswapはclaude-swapのフォークで、Codexのログインも管理します�
 
 | ツール | 実装言語 | Claude Codeの実行中 | ログインを別の場所にコピーするか | アカウント間で共有できるもの |
 | --- | --- | --- | --- | --- |
-| ccam | Go、静的バイナリ1つ | 何もない。ccamは自身を`claude`に置き換える（置き換えられないWindowsでは終了を待つ。オプションのリレーはそばに留まる） | しない | グループ。各グループが共有する項目とアカウントを決め、1つのアカウントは複数のグループに入れる |
+| ccam | Go、静的バイナリ1つ | デフォルトでは何もない。ccamは自身を`claude`に置き換える（置き換えられないWindowsでは終了を待つ）。`relay`か`auto_switch`を有効にすると、ccamは対話型セッションのそばで待機する | しない | グループ。各グループが共有する項目とアカウントを決め、1つのアカウントは複数のグループに入れる |
 | claude-swap | Python 3.12以上、uvまたはpipxでインストール | `cswap run`では何もない。`cswap auto`とメニューバーアプリは動き続ける | する（ログインを入れ替えるとき） | `cswap run`の場合、設定、`CLAUDE.md`、拡張機能をまとめて、履歴は任意。MCPサーバーは起動のたびにコピー |
 | CCS | Node.js 18以上またはBun | CCSが親プロセスとして残る。プールはローカルプロキシを追加 | アカウントフォルダーではしない。プールは独自のログインを持つ | アカウントごとに共有かローカル、履歴はコンテキストグループで。MCPサーバーはコピー |
 | clausona | TypeScript、Node.js 20以上 | 素の`claude`はシェル関数を通して実行。`clausona run`ではNodeが親プロセスとして残る。終了のたびにバックグラウンドのNodeプロセス | しない。ただし使用量を読むため、使っていないアカウントのトークンを自分で更新する | アカウントごとのファイル以外すべてを1つのプライマリから。履歴は任意。`claude mcp add`で追加したサーバーは共有されない |
@@ -56,9 +56,9 @@ ccamは、Claudeのログインをある場所から別の場所へコピーす�
 
 ccamが期限切れのトークンを自分で更新するのは、`ccam usage --refresh`を実行したときだけです。先にロックを取り、そのアカウントが実行中であれば、Claude Codeがどう起動されたかにかかわらず（バックグラウンドセッションとそのデーモンも含みます）、またClaude Code自身がそのログインを更新している最中も、更新を拒否します。そのため、動いているセッションの下でトークンを入れ替えることはありません。
 
-### あなたとClaude Codeの間では何も動かない
+### デフォルトでは、あなたとClaude Codeの間では何も動かない
 
-ccamはファイルを1つ読み、リンクを確認し、自身を`claude`に置き換えます（`exec`）。作業中はccamのプロセスも、ラッパーも、プロキシも、デーモンもありません。標準入力、シグナル、終了コードはClaude Codeのもので、リクエストはAnthropicへ直接送られます。Windowsではプロセスを置き換えられないため、ccamは同じコンソールでClaude Codeを起動して終了コードを待つだけで、ほかには何もしません。
+ccamはファイルを1つ読み、リンクを確認し、自身を`claude`に置き換えます（`exec`）。デフォルトでは、作業中はccamのプロセスも、ラッパーも、プロキシも、デーモンもありません。標準入力、シグナル、終了コードはClaude Codeのもので、リクエストはAnthropicへ直接送られます。Windowsではプロセスを置き換えられないため、ccamは同じコンソールでClaude Codeを起動して終了コードを待つだけで、ほかには何もしません。`relay = true`か`auto_switch = true`を設定すると、ccamは対話型セッションのそばで同じように待機し、別のアカウントで会話を引き継げるようにします。その場合も、Claude Codeのリクエストはそのまま直接Anthropicへ送られます。
 
 この方法でアカウントを起動するときの追加時間は約4 ms、95パーセンタイルでも6 ms未満で、ピークメモリーは8 MBです（hyperfineで[`scripts/perf-check.sh`](https://github.com/jhyunwoo/ccam/blob/main/scripts/perf-check.sh)を300回実行）。同じノートパソコンで、Pythonインタープリターは起動するだけで13 ms、Node.jsは31 msかかります。プログラムが何かをする前の時点でです。
 
@@ -76,11 +76,11 @@ MCPサーバー、`settings.json`、`CLAUDE.md`、拡張機能（エージェン
 
 ### 次のアカウントで同じ会話を
 
-`ccam next --auto --continue`がすべてのアカウントの使用量を一度に問い合わせ、最も余裕があるアカウントを開いて会話を続けます。履歴を共有していれば同じ会話のままです。共有していなければ、Claude Codeが会話を新しいアカウントにコピーし（`--resume <file> --fork-session`）、ccamは最初の応答で読み直すトークン数を表示します。上限でセッションが止まると、ccamプラグインのフックが通知を表示し、`/ccam:switch`が会話を引き渡します。切り替えるタイミングはあなたが決めます。バックグラウンドで使用量を監視するものはなく、自動的な選択は1つの組織の中で行われるので、会社の会話がうっかり個人のアカウントに移ることはありません。アカウントが90%に達すると、ステータスラインがこのコマンドを提案します。
+`ccam next --auto --continue`がすべてのアカウントの使用量を一度に問い合わせ、最も余裕があるアカウントを開いて会話を続けます。履歴を共有していれば同じ会話のままです。共有していなければ、Claude Codeが会話を新しいアカウントにコピーし（`--resume <file> --fork-session`）、ccamは最初の応答で読み直すトークン数を表示します。上限でセッションが止まると、ccamプラグインのフックが通知を表示し、`/ccam:switch`が会話を引き渡します。デフォルトでは、切り替えるタイミングはあなたが決めます。`auto_switch`を有効にすると（Linux、macOS）、ccamがセッションを自動で移しますが、それはClaude Codeがセッションを上限で止めた後だけで、移す先も元のアカウントと同じ種類のアカウント、つまり同じ組織の別のシートか、別の個人プランだけです（[詳細](/features/next#auto-switch)）。バックグラウンドで使用量を監視するものはなく、デフォルトでは自動的な選択がTeamまたはEnterpriseの組織の外へ、あるいは組織の中へ作業を移すことは決してないので、会社の会話がうっかり個人のアカウントに移ることはありません。アカウントが90%に達すると、ステータスラインがこのコマンドを提案します。
 
 スクリプトはあなたを待てないので、`ccam --fallback work -p "…"`がスクリプトのために切り替えます。アカウントが上限に達すると、同じコマンドを最も余裕があるアカウントで再実行し、最後まで完了した実行の出力だけを表示します。使用量の上限以外の失敗は、そのまま返します。並列のワーカーには、`ccam pick`が余裕のある別々のアカウントを1つずつ渡します。どのアカウントにも余裕がなければ、どちらも終了コード75で終了します。
 
-**TeamとEnterpriseのシート。** 自動的な選択（`ccam next`、`--fallback`、`ccam pick`、ダッシュボードの`n`）は、同じClaude TeamまたはEnterpriseの組織に属するシート間でも切り替えます。Anthropicのヘルプセンターには、「Each seat on a Team plan is assigned to one named individual, and only that person may use it」（Teamプランの各シートは1人の指定ユーザーに割り当てられ、そのユーザーのみが使用できます）、「Users can't route their work through another user's account to use that user's remaining usage」（ユーザーは別のユーザーのアカウントを通じて作業をルーティングして、そのユーザーの残りの使用量を使用することはできません）と書かれています（[Teamプラン](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)。[Enterpriseプラン](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)も同様です）。そのため、シート間で自動的な選択を使うと、Anthropicの規約に違反するおそれがあります。自動的な選択に頼る前に、所属する組織とAnthropicに確認してください。個人プラン（Pro、Max）については、[FAQの規約に関する説明](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)を参照してください。
+**TeamとEnterpriseのシート。** 自動的な選択（`ccam next`、`--fallback`、`ccam pick`、ダッシュボードの`n`、有効にした場合の[`auto_switch`](/features/next#auto-switch)）は、同じClaude TeamまたはEnterpriseの組織に属するシート間でも切り替えます。Anthropicのヘルプセンターには、「Each seat on a Team plan is assigned to one named individual, and only that person may use it」（Teamプランの各シートは1人の指定ユーザーに割り当てられ、そのユーザーのみが使用できます）、「Users can't route their work through another user's account to use that user's remaining usage」（ユーザーは別のユーザーのアカウントを通じて作業をルーティングして、そのユーザーの残りの使用量を使用することはできません）と書かれています（[Teamプラン](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)。[Enterpriseプラン](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)も同様です）。そのため、シート間で自動的な選択を使うと、Anthropicの規約に違反するおそれがあります。そこで使うかどうかはご自身の判断です。自動的な選択に頼る前に、所属する組織とAnthropicに確認してください。個人プラン（Pro、Max）については、[FAQの規約に関する説明](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)を参照してください。
 
 ### フォルダーごとに適切なアカウント
 
@@ -88,11 +88,11 @@ MCPサーバー、`settings.json`、`CLAUDE.md`、拡張機能（エージェン
 
 ### バイナリ1つ、検証済みのダウンロード
 
-ccamは約10 MBの静的バイナリで、インストールが必要なランタイムはなく、Linux、macOS、Windowsに対応しています。インストールスクリプト（`install.sh`、`install.ps1`）と`ccam update`は、すべてのダウンロードをリリースのSHA-256チェックサムと照合します。ccamが確認なしにアップデートすることはありません。テレメトリーもありません。ccamが送るリクエストは、あなたのアカウントの使用量をAnthropicに問い合わせるもの（並列、3秒の制限時間、60秒のキャッシュ）、ダッシュボードを開いたときに最新のリリースをGitHubに問い合わせるもの、あなたが指示したダウンロードだけです。`usage_source = "claude"`を設定すると、その問い合わせもClaude Codeを通じて行われ、ccamがトークンを扱うことは一切ありません。
+ccamは約10 MBの静的バイナリで、インストールが必要なランタイムはなく、Linux、macOS、Windowsに対応しています。インストールスクリプト（`install.sh`、`install.ps1`）と`ccam update`は、すべてのダウンロードをリリースのSHA-256チェックサムと照合します。ccamが確認なしにアップデートすることはありません。テレメトリーもありません。ccamが送るリクエストは、あなたのアカウントの使用量をAnthropicに問い合わせるもの（並列、3秒の制限時間、60秒のキャッシュ）、ダッシュボードを開いたときに最新のリリースをGitHubに問い合わせるもの、あなたが指示したダウンロードだけです。`usage_source = "claude"`を設定すると、その問い合わせもClaude Codeを通じて行われ、ccamがトークンを送ることはありません。
 
 ## ほかのツールのほうが得意なこと
 
-- claude-swap、clauth、cux、CAAM、CCSwitcherは、アカウントが使用量のしきい値を超えると、実行中の対話型セッションを自動で切り替えられます。ccamは`-p`の実行を`--fallback`で切り替え、対話型セッションは、上限での通知と`/ccam:switch`を用意したうえで、あなたに任せます。
+- claude-swap、clauth、cux、CAAM、CCSwitcherは、アカウントが使用量のしきい値を超えると、実行中の対話型セッションを自動で切り替えられます。ccamは`-p`の実行を`--fallback`で切り替えます。対話型セッションを自動で移すのは、`auto_switch`を有効にしている場合（Linux、macOS）だけで、しかもClaude Codeがセッションを上限で止めた後だけです。それ以外の場合は、上限での通知と`/ccam:switch`を使って、あなたが移します。
 - 開発者モードがオフのWindowsでは、ccamはフォルダーを共有できますが、`settings.json`のような単一のファイルは共有できません（その場合、最初の`ccam add`はMCPサーバーと拡張機能だけを共有します）。claude-swapとCCSはその場合ファイルをコピーします。
 - CCSwitcher、Claude Switcher、claude-swapは、macOSのメニューバーに使用量を表示します。
 - CCS、clausona、CAAM、clauth、ccswap、Claude Switcherは、Codexやほかのコーディングエージェントも管理します。
@@ -101,6 +101,6 @@ ccamは約10 MBの静的バイナリで、インストールが必要なラン�
 
 ## どれが合うか
 
-一度に1つのアカウントしか使わない場合や、実行中のセッションを自動で切り替えたい場合は、ログインを入れ替えるツールを選んでください。Linux、macOS、Windowsで、複数のアカウントを並行して使い、1つの共通の環境を保ち、次のアカウントで同じ会話を続け、Claude Codeの横で何も動かしたくない場合は、ccamを選んでください。何も共有する必要がなければ、[普通のシェルエイリアス](/compare/aliases)で十分です。
+一度に1つのアカウントしか使わない場合や、実行中のセッションを上限の前に、またはログインの入れ替えによって切り替えたい場合は、ログインを入れ替えるツールを選んでください。Linux、macOS、Windowsで、複数のアカウントを並行して使い、1つの共通の環境を保ち、次のアカウントで同じ会話を続け、デフォルトではClaude Codeの横で何も動かさずに使いたい場合は、ccamを選んでください。何も共有する必要がなければ、[普通のシェルエイリアス](/compare/aliases)で十分です。
 
 複数のアカウントを使ってよいかどうかは、各アカウントの規約によります。使う前に確認してください。

@@ -2,10 +2,10 @@
 title: Bắt đầu nhanh
 metaTitle: "Bắt đầu nhanh: thêm và đổi tài khoản Claude Code"
 description: Thêm hai tài khoản Claude Code bằng ccam add, đặt cho chúng lệnh tắt như ccwork, chuyển đổi giữa chúng và chọn những gì dùng chung.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 2
 translation: machine
-sourceHash: "e98d0637356a"
+sourceHash: "0570ef27e4ce"
 ---
 
 Thêm từng tài khoản bằng `ccam add`, rồi khởi động Claude Code bằng `ccam <name>` hoặc bằng một lệnh tắt do bạn tự đặt tên, chẳng hạn `ccwork`. Hầu hết mọi người chỉ cần như vậy.
@@ -108,7 +108,7 @@ ccam next --continue
 
 `ccam usage` hiển thị mức sử dụng 5 giờ và hàng tuần của mọi tài khoản. `ccam next --continue` mở cùng cuộc hội thoại ở tài khoản kế tiếp. Trong script, `ccam --fallback work -p "…"` tự đổi tài khoản. Xem [giới hạn sử dụng](/docs/usage-limits).
 
-**Seat của gói Team và Enterprise.** Lựa chọn tự động (`ccam next`, `--fallback`, `ccam pick`, phím `n` trên bảng điều khiển) cũng chuyển đổi giữa các seat của cùng một tổ chức Claude Team hoặc Enterprise. Trung tâm trợ giúp của Anthropic ghi rằng "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (mỗi seat của gói Team được gán cho đích danh một cá nhân, và chỉ người đó được phép sử dụng) và "Users can't route their work through another user's account to use that user's remaining usage" (người dùng không được chuyển công việc của mình qua tài khoản của một người dùng khác để dùng phần hạn mức còn lại của người đó) ([gói Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); tương tự đối với [gói Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Vì vậy, dùng lựa chọn tự động giữa các seat có thể vi phạm điều khoản của Anthropic. Hãy xác nhận với tổ chức của bạn và Anthropic trước khi dựa vào nó. Các gói cá nhân (Pro, Max) được đề cập trong [ghi chú về điều khoản ở phần Câu hỏi thường gặp](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Seat của gói Team và Enterprise.** Lựa chọn tự động (`ccam next`, `--fallback`, `ccam pick`, phím `n` trên bảng điều khiển, và [`auto_switch`](/features/next#auto-switch) khi bạn bật nó) cũng chuyển đổi giữa các seat của cùng một tổ chức Claude Team hoặc Enterprise. Trung tâm trợ giúp của Anthropic ghi rằng "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (mỗi seat của gói Team được gán cho đích danh một cá nhân, và chỉ người đó được phép sử dụng) và "Users can't route their work through another user's account to use that user's remaining usage" (người dùng không được chuyển công việc của mình qua tài khoản của một người dùng khác để dùng phần hạn mức còn lại của người đó) ([gói Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); tương tự đối với [gói Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Vì vậy, dùng lựa chọn tự động giữa các seat có thể vi phạm điều khoản của Anthropic. Có dùng nó ở đó hay không là quyết định của bạn: hãy xác nhận với tổ chức của bạn và Anthropic trước khi dựa vào nó. Các gói cá nhân (Pro, Max) được đề cập trong [ghi chú về điều khoản ở phần Câu hỏi thường gặp](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 ## Bạn đã dùng ~/.claude?
 

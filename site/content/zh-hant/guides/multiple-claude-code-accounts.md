@@ -1,10 +1,10 @@
 ---
 title: 在一台電腦上使用多個 Claude Code 帳號
 description: 透過 CLAUDE_CONFIG_DIR 同時執行多個 Claude Code 帳號並在帳號之間切換，可以用 Shell 別名手動設定，或交給 ccam 自動處理。
-updated: 2026-10-24
+updated: 2026-10-25
 order: 1
 translation: machine
-sourceHash: "5463dec2f6eb"
+sourceHash: "5c5dbd9fcd23"
 ---
 
 為每個帳號指定獨立的設定資料夾。Claude Code 會從 `CLAUDE_CONFIG_DIR` 環境變數讀取資料夾位置，每個資料夾各自保存登入資訊、設定和對話記錄，所以每個帳號都會保持登入，你也可以同時執行它們。你可以用 Shell 別名手動設定，或交給 ccam 處理。
@@ -79,4 +79,4 @@ Claude Code [可以在 Windows 上原生執行，也可以在 WSL 中執行](htt
 
 是否可以使用多個帳號取決於各帳號的條款。使用前請先確認。
 
-**Team 和 Enterprise 席位。** 自動選擇（`ccam next`、`--fallback`、`ccam pick`、儀表板的 `n`）也會在同一個 Claude Team 或 Enterprise 組織的席位之間切換。Anthropic 說明中心關於 [Team 方案](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)的文章寫道：「Each seat on a Team plan is assigned to one named individual, and only that person may use it」（Team 方案的每個席位都指派給一位具名的個人，而且只有這個人可以使用），以及「Users can't route their work through another user's account to use that user's remaining usage」（使用者不能經由其他使用者的帳號處理自己的工作，藉此使用對方剩餘的用量）；關於 [Enterprise 方案](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)的文章也是如此。因此，在席位之間使用自動選擇可能會違反 Anthropic 的條款。在依賴這項功能之前，請先向你所屬的組織和 Anthropic 確認。個人方案（Pro、Max）的情況請參閱上方的說明。
+**Team 和 Enterprise 席位。** 自動選擇（`ccam next`、`--fallback`、`ccam pick`、儀表板的 `n`，以及你開啟後的 [`auto_switch`](/features/next#auto-switch)）也會在同一個 Claude Team 或 Enterprise 組織的席位之間切換。Anthropic 說明中心關於 [Team 方案](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)的文章寫道：「Each seat on a Team plan is assigned to one named individual, and only that person may use it」（Team 方案的每個席位都指派給一位具名的個人，而且只有這個人可以使用），以及「Users can't route their work through another user's account to use that user's remaining usage」（使用者不能經由其他使用者的帳號處理自己的工作，藉此使用對方剩餘的用量）；關於 [Enterprise 方案](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)的文章也是如此。因此，在席位之間使用自動選擇可能會違反 Anthropic 的條款。要不要在這種情況下使用它由你決定：在依賴這項功能之前，請先向你所屬的組織和 Anthropic 確認。個人方案（Pro、Max）的情況請參閱上方的說明。

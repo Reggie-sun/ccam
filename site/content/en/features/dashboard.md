@@ -1,17 +1,17 @@
 ---
 title: The dashboard
 description: ccam on a terminal opens a full-screen dashboard of accounts, groups, folder rules, extensions and checks; every change shows its plan first.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 15
 translation: source
 ---
 
-`ccam` without arguments opens a full-screen dashboard when standard input and output are a terminal; otherwise it prints `ccam list`. The dashboard shows every account with its usage and groups, and does what the commands do: launch, add, log in, change groups, set folder rules, check and repair. Launching closes it; adding an account or logging in leaves it for the terminal and comes back.
+`ccam` without arguments opens a full-screen dashboard when standard input and output are a terminal; otherwise it prints `ccam list`. The dashboard shows every account with its usage and groups, and does what the commands do: launch, add, log in, change groups, set folder rules, list background sessions, check and repair. Launching, or attaching to a background session, closes it; adding an account or logging in leaves it for the terminal and comes back.
 
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -39,12 +39,13 @@ The first frame draws from `config.toml` alone, in well under 100 ms; usage fill
 | Tab | What it shows | Keys |
 | --- | --- | --- |
 | Accounts | number, name, email, 5-hour, weekly and Fable bars, last use, groups; `✔` the default, `▸` this folder's account, `•` running (also Claude Code started without ccam: plain `claude`, an IDE, background sessions and their daemon) | below |
+| Agents | what [`ccam agents`](/features/agents) lists: the background sessions and open sessions of every account, with their state, folder and start time (below) | `enter` attach (as `ccam attach`), `x` stop, `r` reload |
 | Groups | each group, what it shares and its accounts, and the accounts in no group | `enter` edit, `n` new, `e` rename, `x` remove |
 | Folders | the [`ccam folder`](/features/folder) rules and the one that applies here, also when you reached the folder through a symbolic link (new rules are stored with links resolved) | `n` use an account here, `enter` change, `x` remove |
 | Extensions | what [`ccam ext`](/features/ext) shows, each extension once with the groups it comes from, `off:` the accounts where a plugin is not turned on, servers an account has for this folder only among its own, `This folder's project`, and problems that belong to no account | `r` reload |
 | Health | what [`ccam doctor`](/features/doctor) reports, as a box per account (below) | `f` repair the selected box, `F` repair all (`doctor --fix`), `↑`/`↓` move between boxes |
 
-`←`/`→` or `Tab` switch tabs, `?` lists the keys of the current tab, `r` looks usage up again without the short cache, and `q` or `Esc` quits.
+`←`/`→` or `Tab` switch tabs, `?` lists the keys of the current tab, `r` looks usage up again without the short cache and loads the Agents, Extensions and Health tabs again, and `q` or `Esc` quits.
 
 ## Keys on the Accounts tab
 
@@ -65,7 +66,7 @@ The first frame draws from `config.toml` alone, in well under 100 ms; usage fill
 | `c` | Set or remove its shortcut command |
 | `x` | Remove it (asks first, starting on No) |
 
-**Team and Enterprise seats.** Automatic choice (`ccam next`, `--fallback`, `ccam pick`, the dashboard's `n`) also switches between seats of the same Claude Team or Enterprise organization. Anthropic's help center says "Each seat on a Team plan is assigned to one named individual, and only that person may use it" and "Users can't route their work through another user's account to use that user's remaining usage" ([Team plans](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); likewise for [Enterprise plans](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Using automatic choice between seats may therefore violate Anthropic's terms. Check with your organization and Anthropic before you rely on it. Personal plans (Pro, Max) are covered by the [terms note in the FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Team and Enterprise seats.** Automatic choice (`ccam next`, `--fallback`, `ccam pick`, the dashboard's `n`, and [`auto_switch`](/features/next#auto-switch) when you turn it on) also switches between seats of the same Claude Team or Enterprise organization. Anthropic's help center says "Each seat on a Team plan is assigned to one named individual, and only that person may use it" and "Users can't route their work through another user's account to use that user's remaining usage" ([Team plans](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); likewise for [Enterprise plans](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Using automatic choice between seats may therefore violate Anthropic's terms. Whether you use it there is your call: check with your organization and Anthropic before you rely on it. Personal plans (Pro, Max) are covered by the [terms note in the FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 ## The Health tab
 
@@ -94,6 +95,28 @@ The Health tab runs the checks of [`ccam doctor`](/features/doctor) when you ope
 ```
 
 `↑`/`↓` move from box to box, and the selected box has an accent-colored border. `f` repairs only the selected box, the way `ccam doctor --fix` would: on an account's box it repairs that account alone, and on the `General` box the findings of no account (plugin paths and shortcuts); every other account is only checked again. It asks first (``Like `ccam doctor --fix`: missing links and group folders are made, and a real file where a link belongs is backed up first; where the group has its own copy, the account then sees the group's. Nothing is lost.``), and a box with nothing to repair just says `nothing to repair in <name>`. `F` repairs everything at once, like `ccam doctor --fix`, and `r` checks again.
+
+## The Agents tab
+
+The Agents tab shows what [`ccam agents`](/features/agents) prints: the background sessions and open sessions of every account, with the account each belongs to. It asks every account's Claude Code at once (`claude agents --json`, up to 15 seconds each) when you first open the tab, on `r`, after a stop, and after a change to the config, and says `Asking every account's Claude Code for its sessions…` until all have answered.
+
+```console
+  Accounts   Agents   Groups   Folders   Extensions   Health
+ Background agents and open sessions of every account; enter attaches to one.
+
+    Account   ID        Name   State          Folder      Started
+ ❯  work      -         -      open (busy)    ~/code/web  now
+    personal  49ec0028  probe  blocked, idle  ~/code/app  12m
+
+ ✘ lab: could not list its sessions: exit status 1 'claude agents --json' is
+   not available in this environment.
+
+ enter to attach · x to stop · r to reload · ? for shortcuts
+```
+
+`State` is a background session's state and what its process is doing, or `open` for an interactive session, as in `ccam agents`. An account that could not be asked gets a `✘` line under the list with what Claude Code said, as `lab` above, whose agent view is off. Finished background sessions are left out (`ccam agents --all` lists them), and when every account answered and none has a session, the tab says ``No sessions. Start one in the background with `ccam <account> --bg "…"`.`` On a narrow terminal the tab drops `Started`, then `Name`, then `Folder`, and cuts a long folder from the left.
+
+`Enter` on a background session closes the dashboard and opens the session in this terminal as its account, the way `ccam attach <id>` does; the dashboard does not come back (in Claude Code, `←` goes to its agent view and `Ctrl+Z` to the shell). An open session has no id, so `Enter` and `x` only say that a background session is needed. `x` asks first, starting on `No, keep it`: ``It runs as personal. Like `ccam personal stop 49ec0028`, Claude Code stops it and keeps its conversation, which `ccam attach 49ec0028` opens again.`` On yes, ccam runs `claude stop <id>` as that account, says ``49ec0028 (personal) stopped; `ccam attach 49ec0028` opens it again`` or why it could not, and reads the list again.
 
 ## Changing groups
 

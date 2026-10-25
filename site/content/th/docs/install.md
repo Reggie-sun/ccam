@@ -2,10 +2,10 @@
 title: ติดตั้ง ccam
 metaTitle: "ติดตั้ง ccam บน Linux, macOS และ Windows"
 description: "ติดตั้ง ccam บน Linux, macOS หรือ Windows ด้วยคำสั่งเดียว แพ็กเกจ .deb หรือจากซอร์สโค้ด และอัปเดตด้วย ccam update โดยต้องติดตั้ง Claude Code ก่อน"
-updated: 2026-10-23
+updated: 2026-10-25
 order: 1
 translation: machine
-sourceHash: "af21dcc24169"
+sourceHash: "a7f9dac24f79"
 ---
 
 รันคำสั่งนี้ในเทอร์มินัลบน Linux หรือ macOS:
@@ -82,7 +82,7 @@ ccam completion powershell >> $PROFILE
 /plugin install ccam --marketplace jhyunwoo/ccam
 ```
 
-ปลั๊กอินนี้เพิ่ม skill หนึ่งตัว คำสั่ง `/ccam:usage`, `/ccam:ext` และ `/ccam:switch` และ hook สองตัว: เมื่อเซสชันหยุดเพราะถึงขีดจำกัดการใช้งาน คุณจะได้รับการแจ้งเตือนในเทอร์มินัล และ `/ccam:switch [account]` จะส่งต่อการสนทนาไปยังอีกบัญชีหนึ่ง ([รายละเอียด](/features/next#inside-claude-code)) hook เหล่านี้รัน `ccam` ดังนั้น ccam ต้องอยู่ใน `PATH` ที่ Claude Code มองเห็น skill นี้ไม่เคยรันคำสั่งที่เข้าสู่ระบบหรือย้ายไฟล์ แต่จะแนะนำคำสั่งเหล่านั้นให้คุณแทน
+ปลั๊กอินนี้เพิ่ม skill หนึ่งตัว คำสั่ง `/ccam:usage`, `/ccam:ext` และ `/ccam:switch` และ hook สองตัว: เมื่อเซสชันหยุดเพราะถึงขีดจำกัดการใช้งาน คุณจะได้รับการแจ้งเตือนในเทอร์มินัล (และบน Linux และ macOS เมื่อเปิด [`auto_switch`](/features/next#auto-switch) ไว้ ccam จะย้ายเซสชันไปยังอีกบัญชีหนึ่งที่ยังมีโควตาเหลือ) และ `/ccam:switch [account]` จะส่งต่อการสนทนาไปยังอีกบัญชีหนึ่ง ([รายละเอียด](/features/next#inside-claude-code)) hook เหล่านี้รัน `ccam` ดังนั้น ccam ต้องอยู่ใน `PATH` ที่ Claude Code มองเห็น skill นี้ไม่เคยรันคำสั่งที่เข้าสู่ระบบหรือย้ายไฟล์ แต่จะแนะนำคำสั่งเหล่านั้นให้คุณแทน
 
 ## ตรวจสอบการติดตั้ง
 

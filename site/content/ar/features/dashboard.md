@@ -1,18 +1,18 @@
 ---
 title: لوحة التحكم
 description: يفتح ccam في الطرفية لوحة تحكم بملء الشاشة للحسابات والمجموعات وقواعد المجلدات والإضافات والفحوص؛ ويعرض كل تغيير خطته أولًا.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 15
 translation: machine
-sourceHash: e48ca2c5a643
+sourceHash: "98ccf6cd81e9"
 ---
 
-يفتح `ccam` دون وسائط لوحة تحكم بملء الشاشة عندما يكون الإدخال والإخراج القياسيان طرفية، ويطبع `ccam list` في غير ذلك. تعرض لوحة التحكم كل حساب مع استخدامه ومجموعاته، وتفعل ما تفعله الأوامر: التشغيل والإضافة وتسجيل الدخول وتغيير المجموعات وضبط قواعد المجلدات والفحص والإصلاح. ويغلقها تشغيل حساب؛ أما إضافة حساب أو تسجيل الدخول فيتركها إلى الطرفية ثم يعود إليها.
+يفتح `ccam` دون وسائط لوحة تحكم بملء الشاشة عندما يكون الإدخال والإخراج القياسيان طرفية، ويطبع `ccam list` في غير ذلك. تعرض لوحة التحكم كل حساب مع استخدامه ومجموعاته، وتفعل ما تفعله الأوامر: التشغيل والإضافة وتسجيل الدخول وتغيير المجموعات وضبط قواعد المجلدات وسرد الجلسات الخلفية والفحص والإصلاح. ويغلقها تشغيل حساب، أو الاتصال بجلسة خلفية؛ أما إضافة حساب أو تسجيل الدخول فيتركها إلى الطرفية ثم يعود إليها.
 
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -40,12 +40,13 @@ sourceHash: e48ca2c5a643
 | التبويب | ما يعرضه | المفاتيح |
 | --- | --- | --- |
 | Accounts | الرقم والاسم والبريد الإلكتروني وأشرطة الخمس ساعات والأسبوع وFable وآخر استخدام والمجموعات؛ `✔` الحساب الافتراضي، و`▸` حساب هذا المجلد، و`•` يعمل (بما في ذلك Claude Code الذي بدأ دون ccam: `claude` العادي، أو بيئة تطوير، أو الجلسات الخلفية وخدمتها الخلفية) | أدناه |
+| Agents | ما يسرده [`ccam agents`](/features/agents): الجلسات الخلفية والجلسات المفتوحة لكل الحسابات، مع حالتها ومجلدها ووقت بدئها (أدناه) | `enter` اتصال (مثل `ccam attach`)، و`x` إيقاف، و`r` إعادة تحميل |
 | Groups | كل مجموعة وما تشاركه وحساباتها، والحسابات التي لا تنتمي إلى أي مجموعة | `enter` تحرير، `n` جديدة، `e` إعادة تسمية، `x` إزالة |
 | Folders | قواعد [`ccam folder`](/features/folder) والقاعدة التي تنطبق هنا، حتى عندما تصل إلى المجلد عبر رابط رمزي (وتُحفظ القواعد الجديدة بعد حل الروابط) | `n` استخدام حساب هنا، `enter` تغيير، `x` إزالة |
 | Extensions | ما يعرضه [`ccam ext`](/features/ext)، كل إضافة مرة واحدة مع المجموعات التي تأتي منها، و`off:` الحسابات التي لم يُشغَّل فيها مكوّن إضافي، والخوادم التي يملكها حساب لهذا المجلد فقط ضمن خوادمه الخاصة، و`This folder's project`، والمشكلات التي لا تخص أي حساب | `r` إعادة التحميل |
 | Health | ما يبلّغ عنه [`ccam doctor`](/features/doctor)، على شكل صندوق لكل حساب (أدناه) | `f` إصلاح الصندوق المحدد، و`F` إصلاح الكل (`doctor --fix`)، و`↑`/`↓` للتنقل بين الصناديق |
 
-يبدّل `←`/`→` أو `Tab` بين التبويبات، ويسرد `?` مفاتيح التبويب الحالي، ويعيد `r` الاستعلام عن الاستخدام دون ذاكرة التخزين المؤقت القصيرة، ويُنهي `q` أو `Esc` لوحة التحكم.
+يبدّل `←`/`→` أو `Tab` بين التبويبات، ويسرد `?` مفاتيح التبويب الحالي، ويعيد `r` الاستعلام عن الاستخدام دون ذاكرة التخزين المؤقت القصيرة ويعيد تحميل تبويبات Agents وExtensions وHealth، ويُنهي `q` أو `Esc` لوحة التحكم.
 
 ## المفاتيح في تبويب Accounts
 
@@ -66,7 +67,7 @@ sourceHash: e48ca2c5a643
 | `c` | يعيّن أمره المختصر أو يزيله |
 | `x` | يزيله (يسأل أولًا، ويبدأ التحديد عند No) |
 
-**مقاعد Team وEnterprise.** يبدّل الاختيار التلقائي (`ccam next` و`--fallback` و`ccam pick` والمفتاح `n` في لوحة التحكم) أيضًا بين مقاعد المؤسسة نفسها في Claude Team أو Enterprise. يقول مركز المساعدة لدى Anthropic: "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (يُخصَّص كل مقعد في خطة Team لشخص واحد محدد بالاسم، ولا يجوز أن يستخدمه إلا ذلك الشخص) و"Users can't route their work through another user's account to use that user's remaining usage" (لا يجوز للمستخدمين تمرير عملهم عبر حساب مستخدم آخر للاستفادة من الاستخدام المتبقي لذلك المستخدم) ([خطط Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)؛ وبالمثل في [خطط Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). لذا فإن استخدام الاختيار التلقائي بين المقاعد قد يخالف شروط Anthropic. تحقّق من ذلك مع مؤسستك ومع Anthropic قبل أن تعتمد عليه. أما الخطط الشخصية (Pro وMax) فتتناولها [ملاحظة الشروط في الأسئلة الشائعة](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**مقاعد Team وEnterprise.** يبدّل الاختيار التلقائي (`ccam next` و`--fallback` و`ccam pick` والمفتاح `n` في لوحة التحكم، و[`auto_switch`](/features/next#auto-switch) عند تشغيله) أيضًا بين مقاعد المؤسسة نفسها في Claude Team أو Enterprise. يقول مركز المساعدة لدى Anthropic: "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (يُخصَّص كل مقعد في خطة Team لشخص واحد محدد بالاسم، ولا يجوز أن يستخدمه إلا ذلك الشخص) و"Users can't route their work through another user's account to use that user's remaining usage" (لا يجوز للمستخدمين تمرير عملهم عبر حساب مستخدم آخر للاستفادة من الاستخدام المتبقي لذلك المستخدم) ([خطط Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)؛ وبالمثل في [خطط Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). لذا فإن استخدام الاختيار التلقائي بين المقاعد قد يخالف شروط Anthropic. وقرار استخدامه هناك يعود إليك: تحقّق من ذلك مع مؤسستك ومع Anthropic قبل أن تعتمد عليه. أما الخطط الشخصية (Pro وMax) فتتناولها [ملاحظة الشروط في الأسئلة الشائعة](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 ## تبويب Health
 
@@ -95,6 +96,28 @@ sourceHash: e48ca2c5a643
 ```
 
 ينتقل `↑`/`↓` من صندوق إلى آخر، ويكون للصندوق المحدد إطار بلون مميز. ويصلح `f` الصندوق المحدد وحده، كما يفعل `ccam doctor --fix`: ففي صندوق حساب يصلح ذلك الحساب وحده، وفي صندوق `General` يصلح النتائج التي لا تخص أي حساب (مسارات الإضافات والأوامر المختصرة)؛ أما بقية الحسابات فيُعاد فحصها فقط. ويسأل أولًا (``Like `ccam doctor --fix`: missing links and group folders are made, and a real file where a link belongs is backed up first; where the group has its own copy, the account then sees the group's. Nothing is lost.``)، والصندوق الذي لا شيء فيه للإصلاح يقول فقط `nothing to repair in <name>`. ويصلح `F` كل شيء دفعة واحدة، كما يفعل `ccam doctor --fix`، ويعيد `r` الفحص.
+
+## تبويب Agents
+
+يعرض تبويب Agents ما يطبعه [`ccam agents`](/features/agents): الجلسات الخلفية والجلسات المفتوحة لكل الحسابات، مع الحساب الذي تنتمي إليه كل منها. ويسأل Claude Code في كل الحسابات في آن واحد (`claude agents --json`، حتى 15 ثانية لكل منها) عند أول فتح للتبويب، وعند `r`، وبعد إيقاف جلسة، وبعد أي تغيير في الإعدادات، ويقول `Asking every account's Claude Code for its sessions…` حتى تجيب كلها.
+
+```console
+  Accounts   Agents   Groups   Folders   Extensions   Health
+ Background agents and open sessions of every account; enter attaches to one.
+
+    Account   ID        Name   State          Folder      Started
+ ❯  work      -         -      open (busy)    ~/code/web  now
+    personal  49ec0028  probe  blocked, idle  ~/code/app  12m
+
+ ✘ lab: could not list its sessions: exit status 1 'claude agents --json' is
+   not available in this environment.
+
+ enter to attach · x to stop · r to reload · ? for shortcuts
+```
+
+`State` هي حالة الجلسة الخلفية وما تفعله عمليتها، أو `open` للجلسة التفاعلية، كما في `ccam agents`. والحساب الذي تعذّر سؤاله يحصل على سطر `✘` تحت القائمة مع ما قاله Claude Code، مثل `lab` أعلاه، الذي عرض الوكلاء فيه متوقف. وتُستبعد الجلسات الخلفية المنتهية (يسردها `ccam agents --all`)، وعندما تجيب كل الحسابات ولا تكون لأي منها جلسة، يقول التبويب ``No sessions. Start one in the background with `ccam <account> --bg "…"`.`` وفي الطرفية الضيقة يُسقط التبويب `Started`، ثم `Name`، ثم `Folder`، ويقصّ المجلد الطويل من اليسار.
+
+يُغلق `Enter` على جلسة خلفية لوحة التحكم ويفتح الجلسة في هذه الطرفية بحسابها، كما يفعل `ccam attach <id>`؛ ولا تعود لوحة التحكم (في Claude Code، ينتقل `←` إلى عرض الوكلاء فيه و`Ctrl+Z` إلى الصدفة). والجلسة المفتوحة ليس لها معرّف، لذا يكتفي `Enter` و`x` بالقول إن المطلوب جلسة خلفية. ويسأل `x` أولًا، بدءًا من `No, keep it`: ``It runs as personal. Like `ccam personal stop 49ec0028`, Claude Code stops it and keeps its conversation, which `ccam attach 49ec0028` opens again.`` وعند الموافقة، يشغّل ccam الأمر `claude stop <id>` بذلك الحساب، ويقول ``49ec0028 (personal) stopped; `ccam attach 49ec0028` opens it again`` أو سبب تعذّر ذلك، ثم يقرأ القائمة من جديد.
 
 ## تغيير المجموعات
 

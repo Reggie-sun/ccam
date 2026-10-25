@@ -1,15 +1,15 @@
 ---
 title: スクリプト用のアカウント選び
 description: ccam pickは、スクリプトに最も余裕があるアカウントを表示し、同時に起動したワーカーには別々のアカウントを渡し、余裕がなければ75で終了します。
-updated: 2026-10-24
+updated: 2026-10-25
 order: 12
 translation: machine
-sourceHash: "a8baeb64de99"
+sourceHash: "5c4f74db9714"
 ---
 
 `ccam pick`は、ログイン済みのアカウントのうち最も余裕があるアカウントの名前を表示します。スクリプトはその名前でClaude Codeを起動できます。余裕のあるアカウントが十分にある間は、同時に起動したワーカーがそれぞれ別のアカウントを受け取るので、`claude -p`のジョブの一群が1つのアカウントを使い切ることなく、複数のアカウントに分散されます。
 
-**TeamとEnterpriseのシート。** 自動的な選択（`ccam next`、`--fallback`、`ccam pick`、ダッシュボードの`n`）は、同じClaude TeamまたはEnterpriseの組織に属するシート間でも切り替えます。Anthropicのヘルプセンターには、「Each seat on a Team plan is assigned to one named individual, and only that person may use it」（Teamプランの各シートは1人の指定ユーザーに割り当てられ、そのユーザーのみが使用できます）、「Users can't route their work through another user's account to use that user's remaining usage」（ユーザーは別のユーザーのアカウントを通じて作業をルーティングして、そのユーザーの残りの使用量を使用することはできません）と書かれています（[Teamプラン](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)。[Enterpriseプラン](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)も同様です）。そのため、シート間で自動的な選択を使うと、Anthropicの規約に違反するおそれがあります。自動的な選択に頼る前に、所属する組織とAnthropicに確認してください。個人プラン（Pro、Max）については、[FAQの規約に関する説明](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)を参照してください。
+**TeamとEnterpriseのシート。** 自動的な選択（`ccam next`、`--fallback`、`ccam pick`、ダッシュボードの`n`、有効にした場合の[`auto_switch`](/features/next#auto-switch)）は、同じClaude TeamまたはEnterpriseの組織に属するシート間でも切り替えます。Anthropicのヘルプセンターには、「Each seat on a Team plan is assigned to one named individual, and only that person may use it」（Teamプランの各シートは1人の指定ユーザーに割り当てられ、そのユーザーのみが使用できます）、「Users can't route their work through another user's account to use that user's remaining usage」（ユーザーは別のユーザーのアカウントを通じて作業をルーティングして、そのユーザーの残りの使用量を使用することはできません）と書かれています（[Teamプラン](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)。[Enterpriseプラン](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)も同様です）。そのため、シート間で自動的な選択を使うと、Anthropicの規約に違反するおそれがあります。そこで使うかどうかはご自身の判断です。自動的な選択に頼る前に、所属する組織とAnthropicに確認してください。個人プラン（Pro、Max）については、[FAQの規約に関する説明](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)を参照してください。
 
 ## 使い方
 
@@ -59,7 +59,7 @@ $ ccam pick --json
 1. ccamは、このフォルダーで起動されるアカウントと同じ組織（[組織](/features/next#auto)を参照）の、ログイン済みのアカウントを一覧にします（APIキーのアカウントとConsoleのログインには上限がないので除外します）。そのアカウントと同じClaudeアカウントにログインしているフォルダーも除外します。
 2. ロック（`~/.local/state/ccam/picks.lock`）を取るので、同時に実行された選択は1つずつ順番に行われます。
 3. `ccam usage`と同じ方法で、60秒のキャッシュを使い、すべてのアカウントの使用量を一度に問い合わせます。Claude Codeが上限に達したと報告した時間枠は、そのリセットまで100%と数えます（[上限の記録](/features/usage#the-limit-record)）。そのため、上限に達したばかりのアカウントは、保存済みの数値に余裕があっても除外されたままです。
-4. 直近2分以内に選ばれたアカウント（`~/.local/state/ccam/picks/<name>`。時計の時刻より後の日付の選択は数えません）をまず除き、残りの中から`ccam next --auto`の[選択の規則](/features/next#auto)で選びます。`auto_max_usage`未満を優先し、戦略に従い、100%のアカウントは決して選びません。
+4. 直近2分以内に、`ccam pick`によって、または[`auto_switch`](/features/next#auto-switch)がセッションを移したことによって選ばれたアカウント（`~/.local/state/ccam/picks/<name>`。時計の時刻より後の日付の選択は数えません）をまず除き、残りの中から`ccam next --auto`の[選択の規則](/features/next#auto)で選びます。`auto_max_usage`未満を優先し、戦略に従い、100%のアカウントは決して選びません。これにより、規則が最初に選ぶはずのアカウントが見送られた場合は、`--json`の`reason`がそのことを示します: `30% of its 5 hours used; work was picked a moment ago`。
 5. 余裕のあるアカウントがすべて最近選ばれていた場合は、規則がそれらすべての中からもう一度選びます。そのため、3つのアカウントに対する4つ目のワーカーは、どれか1つを共有します。
 6. 選択を記録してロックを解放し、名前を表示します。
 

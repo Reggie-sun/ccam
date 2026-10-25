@@ -132,7 +132,7 @@
     "close": "Isara"
   },
   "commands": {
-    "ccam": "Buksan ang dashboard: mga account, group, folder, extension at kalusugan",
+    "ccam": "Buksan ang dashboard: mga account, agent, group, folder, extension at kalusugan",
     "name": "Simulan ang Claude Code bilang account na iyon; ipinapasa nang walang pagbabago ang mga argument",
     "fallback": "Para sa mga -p run: kapag naabot ang usage limit, patakbuhin ulit ang parehong command bilang account na may pinakamaraming natitira",
     "add": "Magdagdag ng account: config folder, login at opsyonal na shortcut",

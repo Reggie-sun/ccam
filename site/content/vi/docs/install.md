@@ -2,10 +2,10 @@
 title: Cài đặt ccam
 metaTitle: "Cài đặt ccam trên Linux, macOS và Windows"
 description: "Cài đặt ccam trên Linux, macOS hoặc Windows bằng một lệnh, từ gói .deb hoặc từ mã nguồn, và cập nhật bằng ccam update. Cần cài Claude Code trước."
-updated: 2026-10-23
+updated: 2026-10-25
 order: 1
 translation: machine
-sourceHash: "af21dcc24169"
+sourceHash: "a7f9dac24f79"
 ---
 
 Chạy lệnh này trong terminal trên Linux hoặc macOS:
@@ -82,7 +82,7 @@ Plugin ccam dạy chính Claude Code cách dùng ccam: kiểm tra tài khoản n
 /plugin install ccam --marketplace jhyunwoo/ccam
 ```
 
-Plugin thêm một skill, các lệnh `/ccam:usage`, `/ccam:ext` và `/ccam:switch`, cùng hai hook: khi một phiên dừng lại vì giới hạn sử dụng, bạn nhận được một thông báo trên terminal, và `/ccam:switch [account]` chuyển cuộc hội thoại sang một tài khoản khác ([chi tiết](/features/next#inside-claude-code)). Các hook chạy `ccam`, nên ccam phải nằm trong `PATH` mà Claude Code thấy. Skill này không bao giờ chạy các lệnh đăng nhập hay di chuyển tệp; thay vào đó nó gợi ý các lệnh đó cho bạn.
+Plugin thêm một skill, các lệnh `/ccam:usage`, `/ccam:ext` và `/ccam:switch`, cùng hai hook: khi một phiên dừng lại vì giới hạn sử dụng, bạn nhận được một thông báo trên terminal (và trên Linux và macOS, khi bật [`auto_switch`](/features/next#auto-switch), ccam chuyển phiên sang một tài khoản khác còn hạn mức), và `/ccam:switch [account]` chuyển cuộc hội thoại sang một tài khoản khác ([chi tiết](/features/next#inside-claude-code)). Các hook chạy `ccam`, nên ccam phải nằm trong `PATH` mà Claude Code thấy. Skill này không bao giờ chạy các lệnh đăng nhập hay di chuyển tệp; thay vào đó nó gợi ý các lệnh đó cho bạn.
 
 ## Kiểm tra cài đặt
 

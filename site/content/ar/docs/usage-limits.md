@@ -1,10 +1,10 @@
 ---
 title: حدود الاستخدام والتبديل بين الحسابات
 description: اعرض استخدام كل حساب Claude Code خلال 5 ساعات وخلال الأسبوع باستخدام ccam usage، وافتح الحساب الأكثر سعة باستخدام ccam next --auto.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 5
 translation: machine
-sourceHash: ccaed084207a
+sourceHash: "7c15419446c3"
 ---
 
 يعرض `ccam usage` مقدار ما استخدمه كل حساب من حد الخمس ساعات والحد الأسبوعي والحد الأسبوعي الخاص بكل نموذج (مثل Fable). ويفتح `ccam next --auto` الحساب الأكثر سعة متبقية، وينقل `--continue` المحادثة الحالية معه.
@@ -28,7 +28,7 @@ $ ccam usage
 
 يحصل كل حساب على سطر يبيّن عمر أرقامه، ثم شريط لكل حد مع الوقت المتبقي حتى إعادة ضبطه: نافذة الخمس ساعات، والنافذة الأسبوعية لكل النماذج، والنافذة الأسبوعية الخاصة بكل نموذج مثل Fable. يتحول الشريط إلى الأصفر بدءًا من 80%، وإلى الأحمر عند 100%. ويذكر السطر الأخير الحساب الذي سيفتحه `ccam next --auto`؛ ومع `auto_strategy = "expiring"` أو `"balance"` يصبح بدلًا من ذلك `→ next --auto picks <name>: <reason>`.
 
-**مقاعد Team وEnterprise.** يبدّل الاختيار التلقائي (`ccam next` و`--fallback` و`ccam pick` والمفتاح `n` في لوحة التحكم) أيضًا بين مقاعد المؤسسة نفسها في Claude Team أو Enterprise. يقول مركز المساعدة لدى Anthropic: "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (يُخصَّص كل مقعد في خطة Team لشخص واحد محدد بالاسم، ولا يجوز أن يستخدمه إلا ذلك الشخص) و"Users can't route their work through another user's account to use that user's remaining usage" (لا يجوز للمستخدمين تمرير عملهم عبر حساب مستخدم آخر للاستفادة من الاستخدام المتبقي لذلك المستخدم) ([خطط Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)؛ وبالمثل في [خطط Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). لذا فإن استخدام الاختيار التلقائي بين المقاعد قد يخالف شروط Anthropic. تحقّق من ذلك مع مؤسستك ومع Anthropic قبل أن تعتمد عليه. أما الخطط الشخصية (Pro وMax) فتتناولها [ملاحظة الشروط في الأسئلة الشائعة](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**مقاعد Team وEnterprise.** يبدّل الاختيار التلقائي (`ccam next` و`--fallback` و`ccam pick` والمفتاح `n` في لوحة التحكم، و[`auto_switch`](/features/next#auto-switch) عند تشغيله) أيضًا بين مقاعد المؤسسة نفسها في Claude Team أو Enterprise. يقول مركز المساعدة لدى Anthropic: "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (يُخصَّص كل مقعد في خطة Team لشخص واحد محدد بالاسم، ولا يجوز أن يستخدمه إلا ذلك الشخص) و"Users can't route their work through another user's account to use that user's remaining usage" (لا يجوز للمستخدمين تمرير عملهم عبر حساب مستخدم آخر للاستفادة من الاستخدام المتبقي لذلك المستخدم) ([خطط Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)؛ وبالمثل في [خطط Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). لذا فإن استخدام الاختيار التلقائي بين المقاعد قد يخالف شروط Anthropic. وقرار استخدامه هناك يعود إليك: تحقّق من ذلك مع مؤسستك ومع Anthropic قبل أن تعتمد عليه. أما الخطط الشخصية (Pro وMax) فتتناولها [ملاحظة الشروط في الأسئلة الشائعة](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 ## من أين تأتي الأرقام
 
@@ -71,6 +71,8 @@ ccam next --continue  # carry this folder's conversation on as the next account
 ```
 
 يتخطى `ccam next` الحسابات غير المسجّل دخولها، ويتخطى `--auto` الحسابات التي بلغت 100% (وكذلك النافذة التي أبلغ Claude Code بامتلائها، حتى إعادة ضبطها) وحسابات المؤسسات الأخرى. وعندما يتشارك الحسابان سجل المحادثات، يفتح `--continue` المحادثة نفسها؛ وإلا ينسخها Claude Code إلى الحساب الجديد. راجع [المشاركة](/docs/sharing) و[التبديل إلى الحساب التالي](/features/next#continue).
+
+مع `auto_switch = true` في أعلى `config.toml` (على Linux وmacOS؛ وهو متوقف افتراضيًا)، يجري ccam هذا التبديل بنفسه عندما يوقف Claude Code جلسة تفاعلية عند حدها ويكون لدى حساب آخر مثل حسابها متسع. راجع [`auto_switch`](/features/next#auto-switch) لمعرفة متى يتصرف وما لا يفعله أبدًا.
 
 في السكربتات والمهام المجدولة التي تشغّل `claude -p`، ضع `--fallback` قبل اسم الحساب. عندما يبلغ ذلك الحساب حده، يشغّل ccam الأمر نفسه مجددًا بالحساب الذي لديه أكبر هامش، ولا يُطبع إلا مخرج التشغيل الذي اكتمل:
 

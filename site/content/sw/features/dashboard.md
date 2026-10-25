@@ -1,18 +1,18 @@
 ---
 title: Dashibodi
 description: ccam kwenye terminal hufungua dashibodi ya skrini nzima ya akaunti, vikundi, kanuni za folda, viendelezi na ukaguzi; kila badiliko huonyesha mpango wake kwanza.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 15
 translation: machine
-sourceHash: "e48ca2c5a643"
+sourceHash: "98ccf6cd81e9"
 ---
 
-`ccam` bila hoja hufungua dashibodi ya skrini nzima wakati ingizo na matokeo ya kawaida ni terminal; vinginevyo huchapisha `ccam list`. Dashibodi huonyesha kila akaunti pamoja na matumizi yake na vikundi vyake, na hufanya kile ambacho amri hufanya: kuanzisha, kuongeza, kuingia, kubadilisha vikundi, kuweka kanuni za folda, kukagua na kurekebisha. Kuanzisha huifunga; kuongeza akaunti au kuingia huiacha kwa ajili ya terminal kisha hurudi.
+`ccam` bila hoja hufungua dashibodi ya skrini nzima wakati ingizo na matokeo ya kawaida ni terminal; vinginevyo huchapisha `ccam list`. Dashibodi huonyesha kila akaunti pamoja na matumizi yake na vikundi vyake, na hufanya kile ambacho amri hufanya: kuanzisha, kuongeza, kuingia, kubadilisha vikundi, kuweka kanuni za folda, kuorodhesha vipindi vya chinichini, kukagua na kurekebisha. Kuanzisha, au kuunganishwa na kipindi cha chinichini, huifunga; kuongeza akaunti au kuingia huiacha kwa ajili ya terminal kisha hurudi.
 
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -40,12 +40,13 @@ Fremu ya kwanza huchorwa kutoka `config.toml` pekee, kwa muda mfupi sana chini y
 | Kichupo | Kinachoonyesha | Vitufe |
 | --- | --- | --- |
 | Accounts | namba, jina, barua pepe, pau za saa 5, za wiki na za Fable, matumizi ya mwisho, vikundi; `✔` akaunti chaguo-msingi, `▸` akaunti ya folda hii, `•` inaendeshwa (pia Claude Code iliyoanzishwa bila ccam: `claude` ya kawaida, IDE, vipindi vya chinichini na daemon yao) | hapa chini |
+| Agents | kile ambacho [`ccam agents`](/features/agents) huorodhesha: vipindi vya chinichini na vipindi vilivyo wazi vya kila akaunti, pamoja na hali yake, folda na muda wa kuanza (hapa chini) | `enter` unganisha (kama `ccam attach`), `x` simamisha, `r` pakia upya |
 | Groups | kila kikundi, kile kinachoshiriki na akaunti zake, pamoja na akaunti zisizo katika kikundi chochote | `enter` hariri, `n` kipya, `e` badilisha jina, `x` ondoa |
 | Folders | kanuni za [`ccam folder`](/features/folder) na ile inayotumika hapa, hata ulipofika kwenye folda kupitia symbolic link (kanuni mpya huhifadhiwa kwa njia halisi, viungo vikiwa vimefuatwa) | `n` tumia akaunti hapa, `enter` badilisha, `x` ondoa |
 | Extensions | kile ambacho [`ccam ext`](/features/ext) huonyesha, kila kiendelezi mara moja pamoja na vikundi kinakotoka, `off:` akaunti ambazo plugin haijawashwa, seva ambazo akaunti inazo kwa folda hii pekee miongoni mwa seva zake yenyewe, `This folder's project`, na matatizo yasiyo ya akaunti yoyote | `r` pakia upya |
 | Health | kile ambacho [`ccam doctor`](/features/doctor) huripoti, kama kisanduku kimoja kwa kila akaunti (hapa chini) | `f` rekebisha kisanduku kilichochaguliwa, `F` rekebisha vyote (`doctor --fix`), `↑`/`↓` sogea kati ya visanduku |
 
-`←`/`→` au `Tab` hubadilisha vichupo, `?` huorodhesha vitufe vya kichupo cha sasa, `r` hutafuta matumizi tena bila akiba fupi, na `q` au `Esc` hufunga.
+`←`/`→` au `Tab` hubadilisha vichupo, `?` huorodhesha vitufe vya kichupo cha sasa, `r` hutafuta matumizi tena bila akiba fupi na hupakia upya vichupo vya Agents, Extensions na Health, na `q` au `Esc` hufunga.
 
 ## Vitufe kwenye kichupo cha Accounts
 
@@ -66,7 +67,7 @@ Fremu ya kwanza huchorwa kutoka `config.toml` pekee, kwa muda mfupi sana chini y
 | `c` | Weka au ondoa amri yake ya njia fupi |
 | `x` | Iondoe (huuliza kwanza, ikianzia kwenye No) |
 
-**Viti (seats) vya Team na Enterprise.** Chaguo za kiotomatiki (`ccam next`, `--fallback`, `ccam pick`, kitufe `n` cha dashibodi) pia hubadili kati ya viti vya shirika lile lile la Claude Team au Enterprise. Kituo cha usaidizi cha Anthropic kinasema "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (kila kiti katika mpango wa Team hutolewa kwa mtu mmoja aliyetajwa kwa jina, na ni mtu huyo pekee anayeruhusiwa kukitumia) na "Users can't route their work through another user's account to use that user's remaining usage" (watumiaji hawaruhusiwi kuelekeza kazi yao kupitia akaunti ya mtumiaji mwingine ili kutumia kiasi cha matumizi kilichobaki cha mtumiaji huyo) ([mipango ya Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); vivyo hivyo kwa [mipango ya Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Kwa hiyo, kutumia chaguo za kiotomatiki kati ya viti kunaweza kukiuka masharti ya Anthropic. Wasiliana na shirika lako na Anthropic kabla ya kuzitegemea. Mipango ya binafsi (Pro, Max) inaelezwa katika [dokezo la masharti kwenye Maswali yanayoulizwa mara kwa mara](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Viti (seats) vya Team na Enterprise.** Chaguo za kiotomatiki (`ccam next`, `--fallback`, `ccam pick`, kitufe `n` cha dashibodi, na [`auto_switch`](/features/next#auto-switch) unapokiwasha) pia hubadili kati ya viti vya shirika lile lile la Claude Team au Enterprise. Kituo cha usaidizi cha Anthropic kinasema "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (kila kiti katika mpango wa Team hutolewa kwa mtu mmoja aliyetajwa kwa jina, na ni mtu huyo pekee anayeruhusiwa kukitumia) na "Users can't route their work through another user's account to use that user's remaining usage" (watumiaji hawaruhusiwi kuelekeza kazi yao kupitia akaunti ya mtumiaji mwingine ili kutumia kiasi cha matumizi kilichobaki cha mtumiaji huyo) ([mipango ya Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); vivyo hivyo kwa [mipango ya Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Kwa hiyo, kutumia chaguo za kiotomatiki kati ya viti kunaweza kukiuka masharti ya Anthropic. Kama utazitumia huko ni uamuzi wako: wasiliana na shirika lako na Anthropic kabla ya kuzitegemea. Mipango ya binafsi (Pro, Max) inaelezwa katika [dokezo la masharti kwenye Maswali yanayoulizwa mara kwa mara](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 ## Kichupo cha Health
 
@@ -95,6 +96,28 @@ Kichupo cha Health huendesha ukaguzi wa [`ccam doctor`](/features/doctor) unapok
 ```
 
 `↑`/`↓` husogea kutoka kisanduku kimoja hadi kingine, na kisanduku kilichochaguliwa kina mpaka wa rangi ya msisitizo. `f` hurekebisha kisanduku kilichochaguliwa pekee, kwa namna ile ile ambayo `ccam doctor --fix` hurekebisha: kwenye kisanduku cha akaunti hurekebisha akaunti hiyo pekee, na kwenye kisanduku cha `General` matokeo yasiyo ya akaunti yoyote (njia za plugins na njia fupi); kila akaunti nyingine hukaguliwa tena tu. Huuliza kwanza (``Like `ccam doctor --fix`: missing links and group folders are made, and a real file where a link belongs is backed up first; where the group has its own copy, the account then sees the group's. Nothing is lost.``), na kisanduku kisicho na chochote cha kurekebisha husema tu `nothing to repair in <name>`. `F` hurekebisha kila kitu kwa mara moja, kama `ccam doctor --fix`, na `r` hukagua tena.
+
+## Kichupo cha Agents
+
+Kichupo cha Agents huonyesha kile ambacho [`ccam agents`](/features/agents) huchapisha: vipindi vya chinichini na vipindi vilivyo wazi vya kila akaunti, pamoja na akaunti ambayo kila kimoja ni chake. Huuliza Claude Code ya kila akaunti kwa wakati mmoja (`claude agents --json`, hadi sekunde 15 kila moja) unapofungua kichupo kwa mara ya kwanza, kwa `r`, baada ya kusimamisha, na baada ya badiliko la config, na husema `Asking every account's Claude Code for its sessions…` hadi zote zijibu.
+
+```console
+  Accounts   Agents   Groups   Folders   Extensions   Health
+ Background agents and open sessions of every account; enter attaches to one.
+
+    Account   ID        Name   State          Folder      Started
+ ❯  work      -         -      open (busy)    ~/code/web  now
+    personal  49ec0028  probe  blocked, idle  ~/code/app  12m
+
+ ✘ lab: could not list its sessions: exit status 1 'claude agents --json' is
+   not available in this environment.
+
+ enter to attach · x to stop · r to reload · ? for shortcuts
+```
+
+`State` ni hali ya kipindi cha chinichini na kile ambacho mchakato wake unafanya, au `open` kwa kipindi shirikishi, kama ilivyo katika `ccam agents`. Akaunti ambayo haikuweza kuulizwa hupata mstari wa `✘` chini ya orodha pamoja na kile ambacho Claude Code ilisema, kama `lab` hapo juu, ambayo mwonekano wake wa agents (agent view) umezimwa. Vipindi vya chinichini vilivyokwisha huachwa nje (`ccam agents --all` huviorodhesha), na kila akaunti ikiwa imejibu na hakuna yenye kipindi, kichupo husema ``No sessions. Start one in the background with `ccam <account> --bg "…"`.`` Kwenye terminal nyembamba kichupo huondoa `Started`, kisha `Name`, kisha `Folder`, na hukata folda ndefu kuanzia kushoto.
+
+`Enter` kwenye kipindi cha chinichini hufunga dashibodi na hufungua kipindi hicho katika terminal hii kama akaunti yake, kama `ccam attach <id>` inavyofanya; dashibodi hairudi (ndani ya Claude Code, `←` huenda kwenye mwonekano wake wa agents na `Ctrl+Z` kwenye shell). Kipindi kilicho wazi hakina id, kwa hiyo `Enter` na `x` husema tu kwamba kipindi cha chinichini kinahitajika. `x` huuliza kwanza, ikianzia kwenye `No, keep it`: ``It runs as personal. Like `ccam personal stop 49ec0028`, Claude Code stops it and keeps its conversation, which `ccam attach 49ec0028` opens again.`` Ukijibu ndiyo, ccam huendesha `claude stop <id>` kama akaunti hiyo, husema ``49ec0028 (personal) stopped; `ccam attach 49ec0028` opens it again`` au kwa nini haikuweza, na husoma orodha tena.
 
 ## Kubadilisha vikundi
 

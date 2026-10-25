@@ -1,10 +1,10 @@
 ---
 title: Лимиты использования и переключение аккаунтов
 description: Смотрите использование за 5 часов и за неделю для всех аккаунтов Claude Code через ccam usage и открывайте самый свободный через ccam next --auto.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 5
 translation: machine
-sourceHash: "ccaed084207a"
+sourceHash: "7c15419446c3"
 ---
 
 `ccam usage` показывает, какую часть 5-часового лимита, недельного лимита и собственного недельного лимита каждой модели (например, Fable) уже использовал каждый аккаунт. `ccam next --auto` открывает аккаунт с наибольшим запасом, а `--continue` переносит текущий разговор.
@@ -28,7 +28,7 @@ $ ccam usage
 
 Для каждого аккаунта выводится строка с давностью его данных, затем по полосе на каждый лимит со временем до сброса: 5-часовое окно, недельное окно для всех моделей и собственное недельное окно каждой модели, например Fable. От 80% полоса становится жёлтой, а на 100% красной. Последняя строка называет аккаунт, который открыл бы `ccam next --auto`; с `auto_strategy = "expiring"` или `"balance"` вместо этого выводится `→ next --auto picks <name>: <reason>`.
 
-**Места в тарифах Team и Enterprise.** При автоматическом выборе (`ccam next`, `--fallback`, `ccam pick`, клавиша `n` на панели) ccam переключается и между местами одной и той же организации Claude Team или Enterprise. В справочном центре Anthropic ([тарифы Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); аналогично для [тарифов Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)) сказано: «Each seat on a Team plan is assigned to one named individual, and only that person may use it» (каждое место в тарифе Team закреплено за одним конкретным человеком, и пользоваться им может только этот человек) и «Users can't route their work through another user's account to use that user's remaining usage» (пользователи не могут направлять свою работу через аккаунт другого пользователя, чтобы расходовать оставшийся лимит этого пользователя). Поэтому использование автоматического выбора между местами может нарушать условия Anthropic. Прежде чем на него полагаться, уточните это у своей организации и у Anthropic. О личных тарифах (Pro, Max) см. [примечание об условиях в FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Места в тарифах Team и Enterprise.** При автоматическом выборе (`ccam next`, `--fallback`, `ccam pick`, клавиша `n` на панели, а также [`auto_switch`](/features/next#auto-switch), если вы его включите) ccam переключается и между местами одной и той же организации Claude Team или Enterprise. В справочном центре Anthropic ([тарифы Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); аналогично для [тарифов Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)) сказано: «Each seat on a Team plan is assigned to one named individual, and only that person may use it» (каждое место в тарифе Team закреплено за одним конкретным человеком, и пользоваться им может только этот человек) и «Users can't route their work through another user's account to use that user's remaining usage» (пользователи не могут направлять свою работу через аккаунт другого пользователя, чтобы расходовать оставшийся лимит этого пользователя). Поэтому использование автоматического выбора между местами может нарушать условия Anthropic. Пользоваться ли им в этом случае, решать вам: прежде чем на него полагаться, уточните это у своей организации и у Anthropic. О личных тарифах (Pro, Max) см. [примечание об условиях в FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 ## Откуда берутся данные
 
@@ -71,6 +71,8 @@ ccam next --continue  # carry this folder's conversation on as the next account
 ```
 
 `ccam next` пропускает аккаунты, в которые не выполнен вход, а `--auto` пропускает аккаунты на 100% (в том числе окно, которое Claude Code сообщил заполненным, до его сброса) и аккаунты другой организации. Если у двух аккаунтов общая история разговоров, `--continue` открывает тот же разговор; иначе Claude Code копирует его в новый аккаунт. См. разделы [общий доступ](/docs/sharing) и [переход к следующему аккаунту](/features/next#continue).
+
+С `auto_switch = true` в начале `config.toml` (Linux и macOS; по умолчанию выключено) ccam сам делает это переключение, когда Claude Code останавливает интерактивную сессию на её лимите, а у другого такого же аккаунта есть запас. Когда он срабатывает и чего никогда не делает, см. в разделе [`auto_switch`](/features/next#auto-switch).
 
 Для скриптов и заданий по расписанию, которые запускают `claude -p`, поставьте `--fallback` перед именем аккаунта. Когда этот аккаунт достигает лимита, ccam снова выполняет ту же команду от имени аккаунта с наибольшим запасом, и выводится только результат завершившегося запуска:
 

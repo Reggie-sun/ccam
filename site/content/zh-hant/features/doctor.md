@@ -1,10 +1,10 @@
 ---
 title: 檢查和修復
 description: 用 ccam doctor 檢查共用連結、檔案權限、登入和 Claude Code 版本，並用 ccam doctor --fix 修復可以安全修復的問題。
-updated: 2026-10-23
+updated: 2026-10-25
 order: 9
 translation: machine
-sourceHash: "11ad34630dcf"
+sourceHash: "0f5ae4ab9a54"
 ---
 
 `ccam doctor` 會檢查你的 ccam 安裝：Claude Code 執行檔、每個帳號的資料夾、登入和共用連結、共用的 MCP 伺服器、用量端點，以及你的快捷指令。`ccam doctor --fix` 會修復不會遺失資料的問題，並先把要取代的檔案移到備份資料夾。當 `ccam <name>` 因共用連結問題而停止、你手動還原檔案之後，或 Claude Code 更新之後，請執行它。
@@ -17,7 +17,7 @@ ccam doctor --fix            # check, then repair what is safe to repair
 ccam --dry-run doctor --fix  # report only: what --fix would repair and set aside
 ```
 
-第一行一次標出所有帳號，讓你在閱讀其他內容之前就知道問題在哪裡。下方每個帳號各有一個方框，不屬於任何帳號的檢查結果（Claude Code、環境變數、外掛、MCP 伺服器、快捷指令、資料夾規則、群組和設定）則放在 `General` 方框中。方框標題會顯示該帳號最嚴重的標記和問題數量。方框內每一列是一個檢查過的項目，一律依序為 `Folder`、`Login` 和 `Share links`，然後是其他項目，前面有一個標記：`✔` 正常、`ℹ` 資訊、`⚠` 警告、`✘` 錯誤。沒有任何問題的資料夾會顯示 `✔ Folder  OK`。
+第一行一次標出所有帳號，讓你在閱讀其他內容之前就知道問題在哪裡。下方每個帳號各有一個方框，不屬於任何帳號的檢查結果（Claude Code、環境變數、外掛、MCP 伺服器、快捷指令、資料夾規則、群組和設定、`auto_switch`）則放在 `General` 方框中。方框標題會顯示該帳號最嚴重的標記和問題數量。方框內每一列是一個檢查過的項目，一律依序為 `Folder`、`Login` 和 `Share links`，然後是其他項目，前面有一個標記：`✔` 正常、`ℹ` 資訊、`⚠` 警告、`✘` 錯誤。沒有任何問題的資料夾會顯示 `✔ Folder  OK`。
 
 ```console
 $ ccam doctor
@@ -118,6 +118,7 @@ $ ccam doctor --fix
 11. **資料夾設定**（`checkFolders`）。只在有 [`ccam folder`](/features/folder) 項目時執行。項目的帳號不存在時為錯誤，項目的資料夾已不存在時為警告。兩者都不會修復，因為移除項目會改變在那裡啟動的帳號。
 12. **群組和設定**（`checkGroups`）。不是帳號的群組成員、名稱後來變成 ccam 指令的帳號（用 `ccam run <name>` 啟動它，或重新命名），未知的 `theme` 或 `usage_source`，以及 `config.toml` 中 ccam 不會讀取的行，都是警告。最後這種情況通常是寫在 `[[group]]`、`[[profile]]` 或 `[[folder]]` 表格下方的設定，此時它屬於該表格（`config.toml line 43: relay is read as part of the [profile.login] table above it; settings for all accounts go above the first [[group]], [[profile]] or [[folder]]`）；在修正之前，會變更設定的指令都會拒絕執行。不會修復。
 13. **登入身分**（`checkIdentities`）。從每個資料夾的 `.claude.json` 讀取它登入的身分。資料夾現在登入的帳號和 `ccam login` 記錄的不同時（例如在工作階段中執行 `/login` 之後）是警告；沒有登入記錄的帳號（例如匯入的帳號，或由較舊 ccam 建立的帳號）會以記錄的電子郵件比對。資料夾和另一個資料夾登入同一個 Claude 帳號時也是警告，因為兩者會共用用量上限。持有和另一個資料夾相同登入權杖的資料夾（複製的資料夾，包括直接執行 `claude` 所用的 `~/.claude`）是錯誤，因為先更新它的一方會讓另一方登出；請執行 `ccam login <name>` 讓它擁有自己的登入。不會修復。
+14. **`auto_switch`**（`checkAutoSwitch`）。只在 `auto_switch = true` 時檢查。`General` 方框中的資訊會說明 `auto_switch` 的作用，並連到[它的說明](/features/next#auto-switch)。帳號中每有一種含席位的方案（Claude Team、Claude Enterprise），就會有一行列出這些帳號，說明 `auto_switch` 會在同一個組織的席位之間移動工作階段，引用 Anthropic 的席位規則並附上說明中心的連結，並把選擇留給你。Claude Code 早於 2.1.214 時不會把自己的行程（`CLAUDE_PID`）告訴 hook，所以在這裡是警告，因為沒有任何工作階段能被移動。沒有 ccam 外掛或外掛已停用的帳號，會在自己的方框中收到警告，並附上在 Claude Code 中修正它的指令：`auto_switch is on, but work does not have the ccam plugin, so its sessions are not moved. In Claude Code as work: /plugin install ccam --marketplace jhyunwoo/ccam`（或 `/plugin enable ccam@ccam`）。API 金鑰帳號不包含在內。在 Windows 上只有一行：`auto_switch is ignored on Windows; with relay = true, /ccam:switch and then /exit carry a conversation on.` 不會修復。
 
 在帳號之前，中途停止的**群組變更**會是 `General` 方框中的錯誤：``the last change of groups stopped halfway (ccam doctor --fix finishes it; noted in ~/.local/state/ccam/group-change.json)``。`--fix` 會依原本規劃的順序、以當時對衝突所做的回答完成它；在那之前，其他群組變更、重新命名或移除都不會開始。在它完成之前，其中的帳號只會補建缺少的連結。如果無法完成，錯誤訊息會說明刪除該檔案就等於放棄其餘的變更。`ccam --dry-run doctor --fix` 會顯示順序（`--fix finishes it in its order (b, a, c), with the answers given to its conflicts`），以及每個帳號的部分會移到一旁保存的內容。另一個 ccam 正在進行的變更是資訊，在它執行期間，`--fix` 不會修復任何共用連結（`its share links are not repaired while another ccam changes the groups; …`）。`--fix` 修復期間會持有 `~/.local/state/ccam/group-change.lock`，並在完成變更後重新讀取 `config.toml`。
 

@@ -2,10 +2,10 @@
 title: Швидкий старт
 metaTitle: Додати й перемкнути обліковий запис Claude Code
 description: Додайте два облікові записи Claude Code командою ccam add, дайте їм короткі команди на зразок ccwork, перемикайтеся між ними й виберіть, що в них спільне.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 2
 translation: machine
-sourceHash: "e98d0637356a"
+sourceHash: "0570ef27e4ce"
 ---
 
 Додайте кожен обліковий запис командою `ccam add`, а потім запускайте Claude Code командою `ccam <name>` або короткою командою з назвою, яку ви вибираєте самі, наприклад `ccwork`. Більшості цього достатньо.
@@ -108,7 +108,7 @@ ccam next --continue
 
 `ccam usage` показує 5-годинне та тижневе використання всіх облікових записів. `ccam next --continue` відкриває ту саму розмову в наступному обліковому записі. У скриптах `ccam --fallback work -p "…"` перемикається сам. Див. [ліміти використання](/docs/usage-limits).
 
-**Місця в планах Team і Enterprise.** Автоматичний вибір (`ccam next`, `--fallback`, `ccam pick`, `n` на панелі керування) також перемикає між місцями однієї організації Claude Team або Enterprise. У довідковому центрі Anthropic сказано: «Each seat on a Team plan is assigned to one named individual, and only that person may use it» (кожне місце в плані Team закріплене за однією конкретною особою, і користуватися ним може лише ця особа) та «Users can't route their work through another user's account to use that user's remaining usage» (користувачі не можуть спрямовувати свою роботу через обліковий запис іншого користувача, щоб використати залишок ліміту цього користувача) ([плани Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); так само для [планів Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Тому використання автоматичного вибору між місцями може порушувати умови Anthropic. Перш ніж на нього покладатися, уточніть це у своїй організації та в Anthropic. Про особисті плани (Pro, Max) ідеться в [примітці про умови в FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Місця в планах Team і Enterprise.** Автоматичний вибір (`ccam next`, `--fallback`, `ccam pick`, `n` на панелі керування, а також [`auto_switch`](/features/next#auto-switch), якщо ви його ввімкнете) також перемикає між місцями однієї організації Claude Team або Enterprise. У довідковому центрі Anthropic сказано: «Each seat on a Team plan is assigned to one named individual, and only that person may use it» (кожне місце в плані Team закріплене за однією конкретною особою, і користуватися ним може лише ця особа) та «Users can't route their work through another user's account to use that user's remaining usage» (користувачі не можуть спрямовувати свою роботу через обліковий запис іншого користувача, щоб використати залишок ліміту цього користувача) ([плани Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); так само для [планів Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Тому використання автоматичного вибору між місцями може порушувати умови Anthropic. Користуватися ним там чи ні, вирішувати вам: перш ніж на нього покладатися, уточніть це у своїй організації та в Anthropic. Про особисті плани (Pro, Max) ідеться в [примітці про умови в FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 ## Уже користуєтеся ~/.claude?
 

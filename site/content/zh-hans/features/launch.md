@@ -1,10 +1,10 @@
 ---
 title: 启动 Claude Code
 description: 用 ccam <name|number>、ccam run 或仪表盘以任意账号启动 Claude Code；参数原样传给 claude，--dry-run 会显示将执行的命令。
-updated: 2026-10-24
+updated: 2026-10-25
 order: 1
 translation: machine
-sourceHash: "e279341eb59b"
+sourceHash: "afa4942cfed5"
 ---
 
 `ccam work` 以账号 `work` 启动 Claude Code，账号名之后的所有内容都原样传给 `claude`。凡是你会输入 `claude` 的地方都可以用它：在终端中、在脚本中，或者通过管道输入。
@@ -34,11 +34,11 @@ ccam --fallback work -p "fix the tests"   # run again as another account at the 
 
 不带参数的 `ccam` 在标准输入和输出都是终端时打开[仪表盘](/features/dashboard)，否则打印 `ccam list`。移动到某个账号（用方向键，或输入它的编号），按 `Enter` 启动它；`n` 启动余量最多的账号，`o` 提供 `--continue`、`--resume` 或其他参数。仪表盘会在 Claude Code 启动之前关闭，因此终端会先恢复原状。
 
-**Team 和 Enterprise 席位。** 自动选择（`ccam next`、`--fallback`、`ccam pick`、仪表盘中的 `n`）也会在同一个 Claude Team 或 Enterprise 组织的席位之间切换。Anthropic 帮助中心关于 [Team 套餐](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)的说明写道："Each seat on a Team plan is assigned to one named individual, and only that person may use it"（Team 套餐的每个席位都分配给一位指定的个人，只有此人可以使用），以及 "Users can't route their work through another user's account to use that user's remaining usage"（用户不能通过另一位用户的账号完成自己的工作，以使用该用户剩余的用量）；关于 [Enterprise 套餐](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)的说明也是如此。因此，在席位之间使用自动选择可能违反 Anthropic 的条款。在依赖这项功能之前，请先向你所在的组织和 Anthropic 确认。个人套餐（Pro、Max）的情况请参见[常见问题中关于条款的说明](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)。
+**Team 和 Enterprise 席位。** 自动选择（`ccam next`、`--fallback`、`ccam pick`、仪表盘中的 `n`，以及你开启后的 [`auto_switch`](/features/next#auto-switch)）也会在同一个 Claude Team 或 Enterprise 组织的席位之间切换。Anthropic 帮助中心关于 [Team 套餐](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)的说明写道："Each seat on a Team plan is assigned to one named individual, and only that person may use it"（Team 套餐的每个席位都分配给一位指定的个人，只有此人可以使用），以及 "Users can't route their work through another user's account to use that user's remaining usage"（用户不能通过另一位用户的账号完成自己的工作，以使用该用户剩余的用量）；关于 [Enterprise 套餐](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)的说明也是如此。因此，在席位之间使用自动选择可能违反 Anthropic 的条款。在这些席位之间是否使用，由你自己决定：在依赖这项功能之前，请先向你所在的组织和 Anthropic 确认。个人套餐（Pro、Max）的情况请参见[常见问题中关于条款的说明](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)。
 
 当 shell 设置了 `CLAUDE_CODE_OAUTH_TOKEN`、`ANTHROPIC_API_KEY` 或 `ANTHROPIC_AUTH_TOKEN` 时，Claude Code 会使用这个密钥或令牌，而不是账号自己的登录，所以 ccam 会在启动之前在标准错误上提示这一点（`ccam: $ANTHROPIC_API_KEY is set, so Claude Code may use that key instead of work's login…`）。它只读取这些变量；[API 密钥账号](/features/api)则会清除它们。
 
-在 `config.toml` 的顶部（第一个 `[[group]]`、`[[profile]]` 或 `[[folder]]` 之上）设置 `relay = true` 时，ccam 以子进程方式启动交互式会话并留在它们旁边，这样 `/ccam:switch` 就能自己继续一次对话，并沿用会话的选项、权限模式和推理强度（[详情](/features/next#relay)）；否则 ccam 会用 Claude Code 替换自身，旁边不会运行任何东西。
+在 `config.toml` 的顶部（第一个 `[[group]]`、`[[profile]]` 或 `[[folder]]` 之上）设置 `relay = true`，或在 Linux 和 macOS 上设置 [`auto_switch = true`](/features/next#auto-switch) 时，ccam 以子进程方式启动交互式会话并留在它们旁边，这样 `/ccam:switch`，或在用量限制时的 `auto_switch`，就能自己继续一次对话，并沿用会话的选项、权限模式和推理强度（[详情](/features/next#relay)）；否则 ccam 会用 Claude Code 替换自身，旁边不会运行任何东西。
 
 ## 选项
 

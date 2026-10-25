@@ -132,7 +132,7 @@
     "close": "Rufe"
   },
   "commands": {
-    "ccam": "Buɗe dashboard: asusai, rukunoni, foldoji, extensions da lafiya",
+    "ccam": "Buɗe dashboard: asusai, agents, rukunoni, foldoji, extensions da lafiya",
     "name": "Fara Claude Code a matsayin wannan asusun; ana miƙa arguments ba tare da canji ba",
     "fallback": "Don gudun -p: a iyakar amfani, sake gudanar da umarnin iri ɗaya a matsayin asusun da ya fi sarari",
     "add": "Ƙara asusu: folda ta saituna, shiga da gajeren umarni na zaɓi",

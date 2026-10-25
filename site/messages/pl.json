@@ -132,7 +132,7 @@
     "close": "Zamknij"
   },
   "commands": {
-    "ccam": "Otwórz panel: konta, grupy, foldery, rozszerzenia i stan",
+    "ccam": "Otwórz panel: konta, agenty, grupy, foldery, rozszerzenia i stan",
     "name": "Uruchom Claude Code jako to konto; argumenty są przekazywane bez zmian",
     "fallback": "Dla przebiegów -p: po osiągnięciu limitu użycia uruchamia to samo polecenie ponownie na koncie z największym zapasem",
     "add": "Dodaj konto: folder konfiguracji, logowanie i opcjonalny skrót",

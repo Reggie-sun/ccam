@@ -132,7 +132,7 @@
     "close": "Đóng"
   },
   "commands": {
-    "ccam": "Mở bảng điều khiển: tài khoản, nhóm, thư mục, tiện ích mở rộng và tình trạng",
+    "ccam": "Mở bảng điều khiển: tài khoản, agent, nhóm, thư mục, tiện ích mở rộng và tình trạng",
     "name": "Khởi động Claude Code bằng tài khoản đó; các đối số được chuyển nguyên vẹn",
     "fallback": "Cho các lần chạy -p: khi chạm giới hạn sử dụng, chạy lại cùng lệnh đó bằng tài khoản còn nhiều hạn mức nhất",
     "add": "Thêm tài khoản: thư mục cấu hình, đăng nhập và lệnh tắt tùy chọn",

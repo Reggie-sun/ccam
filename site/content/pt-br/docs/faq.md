@@ -2,10 +2,10 @@
 title: Perguntas frequentes
 metaTitle: "Perguntas frequentes: várias contas do Claude Code"
 description: Respostas sobre o ccam, contas do Claude Code, limites de uso, compartilhamento, privacidade e sistemas suportados.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 6
 translation: machine
-sourceHash: "c4e3b89bb4ea"
+sourceHash: "8e9deca652d1"
 ---
 
 ## O ccam é uma ferramenta oficial da Anthropic?
@@ -14,13 +14,17 @@ Não. O ccam é um projeto de código aberto não oficial e não é afiliado à 
 
 ## Posso usar várias contas do Claude Code?
 
-Isso depende dos termos de cada conta e, no caso de contas de trabalho, da política da sua organização. Verifique-os antes de usar várias contas. O ccam apenas facilita a troca entre contas que você já tem.
+Isso depende dos termos de cada conta e, no caso de contas de trabalho, da política da sua organização: os [Termos do Consumidor](https://www.anthropic.com/legal/consumer-terms) da Anthropic para Pro e Max, os [Termos Comerciais](https://www.anthropic.com/legal/commercial-terms) dela para Team e Enterprise, e a [Política de Uso](https://www.anthropic.com/legal/aup) dela para todos. Verifique-os antes de usar várias contas. O ccam não aumenta, não junta nem esconde os limites de uma conta, e cada conta continua parando nos próprios limites. Ele leva o seu trabalho adiante como outra das suas contas quando você pede, ou sozinho em um limite quando você ativa o [`auto_switch`](/features/next#auto-switch) (Linux e macOS). Se isso é permitido para as suas contas é uma decisão sua.
 
-**Assentos dos planos Team e Enterprise.** A escolha automática (`ccam next`, `--fallback`, `ccam pick`, a tecla `n` do painel) também alterna entre assentos da mesma organização Claude Team ou Enterprise. A central de ajuda da Anthropic diz "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (cada assento de um plano Team é atribuído a uma pessoa específica, e só essa pessoa pode usá-lo) e "Users can't route their work through another user's account to use that user's remaining usage" (os usuários não podem encaminhar o próprio trabalho pela conta de outro usuário para aproveitar o uso restante desse usuário) ([planos Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); o mesmo vale para os [planos Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Por isso, usar a escolha automática entre assentos pode violar os termos da Anthropic. Consulte a sua organização e a Anthropic antes de contar com ela. Os planos pessoais (Pro, Max) são tratados no parágrafo acima.
+**Assentos dos planos Team e Enterprise.** A escolha automática (`ccam next`, `--fallback`, `ccam pick`, a tecla `n` do painel e o [`auto_switch`](/features/next#auto-switch), quando você o ativa) também alterna entre assentos da mesma organização Claude Team ou Enterprise. A central de ajuda da Anthropic diz "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (cada assento de um plano Team é atribuído a uma pessoa específica, e só essa pessoa pode usá-lo) e "Users can't route their work through another user's account to use that user's remaining usage" (os usuários não podem encaminhar o próprio trabalho pela conta de outro usuário para aproveitar o uso restante desse usuário) ([planos Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); o mesmo vale para os [planos Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Por isso, usar a escolha automática entre assentos pode violar os termos da Anthropic. Usá-la nesse caso é uma decisão sua: consulte a sua organização e a Anthropic antes de contar com ela. Os planos pessoais (Pro, Max) são tratados no parágrafo acima.
 
 ## O ccam contorna os limites de uso?
 
-Não. Cada conta mantém os próprios limites. O ccam mostra esses limites e permite que você continue em outra conta sua quando uma delas se esgota.
+Não além do limite de nenhuma conta: cada conta mantém os próprios limites e para neles, e o ccam não os aumenta, não os junta nem os esconde. O ccam mostra esses limites e permite que você continue em outra das suas contas quando uma delas se esgota; com o `auto_switch` ativado, ele faz isso sozinho (veja a próxima pergunta). Entre assentos de uma mesma organização Team ou Enterprise, continuar em outro assento usa o uso restante desse assento, o que a central de ajuda da Anthropic não permite para o assento de outro usuário (veja Assentos dos planos Team e Enterprise acima).
+
+## O ccam pode trocar de conta sozinho quando uma sessão atinge o limite?
+
+Só se você ativar isso. Com `auto_switch = true` no início do `~/.config/ccam/config.toml` (Linux e macOS; desativado por padrão e experimental), quando o Claude Code interrompe uma sessão interativa iniciada pelo ccam em um limite de 5 horas, semanal, do Opus ou do Sonnet, o ccam encerra a sessão e continua a conversa como outra das suas contas com espaço: outro assento da mesma organização Team ou Enterprise, ou outro plano pessoal (Pro, Max). Ele nunca troca antes do limite, nunca acompanha o seu uso em segundo plano e nunca move trabalho para fora de uma organização Team ou Enterprise nem para dentro de uma. Em assentos, ele move o seu trabalho de um assento para outro, o que pode violar os termos da Anthropic (veja Assentos dos planos Team e Enterprise acima), e, para planos pessoais, os termos da Anthropic não resolvem a questão: os Termos do Consumidor proíbem acessar os Serviços "through automated or non-human means" (por meios automatizados ou não humanos), a menos que a Anthropic permita isso explicitamente, e uma troca envia uma mensagem em seu lugar; ativá-lo é uma decisão sua. [`auto_switch`](/features/next#auto-switch) lista todas as condições e o que uma troca custa.
 
 ## Como usar duas contas do Claude Code no mesmo computador?
 
@@ -28,11 +32,11 @@ Dê a cada conta a própria pasta de configuração com `CLAUDE_CONFIG_DIR`. O c
 
 ## Como continuar uma conversa em outra conta?
 
-Execute `ccam next --continue` na pasta: ele leva a última conversa da pasta para a próxima conta (`--auto` para a que tem mais espaço). Dentro do Claude Code, o `/ccam:switch` do [plugin do ccam](/docs/install#claude-code-plugin) faz o mesmo com a sessão em que você está. Quando as duas contas compartilham o histórico de conversas (`ccam group set default --add history`, ou um grupo só delas: `ccam group add pair --items history --members work,side`), a nova conta abre essa mesma conversa; caso contrário, o Claude Code a copia para o histórico da nova conta.
+Execute `ccam next --continue` na pasta: ele leva a última conversa da pasta para a próxima conta (`--auto` para a que tem mais espaço). Dentro do Claude Code, o `/ccam:switch` do [plugin do ccam](/docs/install#claude-code-plugin) faz o mesmo com a sessão em que você está. Quando as duas contas compartilham o histórico de conversas (`ccam group set default --add history`, ou um grupo só delas: `ccam group add pair --items history --members work,side`), a nova conta abre essa mesma conversa; caso contrário, o Claude Code a copia para o histórico da nova conta. Adicione `--brief` para começar a nova conta com um resumo curto em vez da conversa inteira.
 
 ## O ccam vê ou envia meu login?
 
-O ccam nunca compartilha nem copia seu login do Claude entre contas, e nunca copia os logins de servidores MCP. Ele lê o token de acesso de uma conta apenas para consultar o uso dessa conta no endpoint de uso da Anthropic, quando você executa `ccam usage`, `ccam next --auto` ou `ccam doctor`, e só renova um token expirado com `ccam usage --refresh`; com `usage_source = "claude"`, ele nem lê o token. `ccam ext` e `ccam doctor` leem os nomes dos logins de MCP de uma conta, nunca os tokens deles. O ccam não tem telemetria. Além dessas consultas, a única requisição que ele faz por conta própria é a pergunta do painel ao GitHub sobre a versão mais recente do ccam, que não leva nada sobre você ou suas contas.
+O ccam nunca compartilha nem copia seu login do Claude entre contas, e nunca copia os logins de servidores MCP. Ele lê o token de acesso de uma conta apenas para consultar o uso dessa conta no endpoint de uso da Anthropic: para `ccam usage`, o painel, `ccam doctor` e a escolha automática (`ccam next --auto`, `ccam pick`, `--fallback` e o `auto_switch` quando uma sessão atinge o limite). Ele só renova um token expirado com `ccam usage --refresh`; com `usage_source = "claude"`, ele não envia nenhum token para lugar nenhum e lê o login guardado (o arquivo ou o item do Acesso às Chaves do macOS) apenas para saber se ele ainda funciona. `ccam ext` e `ccam doctor` leem os nomes dos logins de MCP de uma conta, nunca os tokens deles. O ccam não tem telemetria. Além dessas consultas, a única requisição que ele faz por conta própria é a pergunta do painel ao GitHub sobre a versão mais recente do ccam, que não leva nada sobre você ou suas contas.
 
 ## Como fazer login em um servidor remoto?
 
@@ -56,7 +60,7 @@ Servidores adicionados dentro de uma sessão com `claude mcp add` ficam armazena
 
 ## O ccam deixa o Claude Code mais lento?
 
-Iniciar o Claude Code pelo ccam acrescenta cerca de 4 milissegundos, medidos com `scripts/perf-check.sh` em um notebook. O ccam lê um arquivo pequeno, verifica os links compartilhados e depois se substitui pelo `claude`, então ele não fica em execução enquanto você trabalha. O Windows não consegue substituir um processo, então lá o ccam inicia o Claude Code e espera por ele, sem fazer mais nada.
+Iniciar o Claude Code pelo ccam acrescenta cerca de 4 milissegundos, medidos com `scripts/perf-check.sh` em um notebook. O ccam lê um arquivo pequeno, verifica os links compartilhados e depois se substitui pelo `claude`, então, por padrão, ele não fica em execução enquanto você trabalha. O Windows não consegue substituir um processo, então lá o ccam inicia o Claude Code e espera por ele, sem fazer mais nada. Com `relay` ou `auto_switch` ativado, o ccam espera do mesmo jeito ao lado de cada sessão interativa, para poder levar a conversa adiante.
 
 ## Como atualizar o ccam?
 

@@ -2,10 +2,10 @@
 title: Справочник команд
 metaTitle: Справочник команд ccam
 description: Все команды и параметры ccam, от ccam add и ccam <name> до ccam usage, ccam next и ccam doctor.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 3
 translation: machine
-sourceHash: "36af7e209cd9"
+sourceHash: "abba525cae48"
 ---
 
 Поставьте `--dry-run` перед командой, чтобы увидеть, что она сделает, ничего не выполняя, например `ccam --dry-run work`. Это работает при запуске Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`) и с `group`, `migrate`, `shortcut`, `update` и `doctor --fix`. Другие команды, которые что-то меняют, отклоняют этот флаг и не выполняются.
@@ -27,7 +27,7 @@ ccam --fallback work -p "fix the tests"   # run again as another account at the 
 
 `--fallback` перед именем аккаунта предназначен для запусков с `-p`/`--print`. Когда аккаунт достигает лимита использования, ccam снова выполняет ту же команду от имени аккаунта с входом и наибольшим запасом и выводит только результат завершившегося запуска. См. [Аккаунты по папкам](/features/folder) и [Повторный запуск при лимите](/features/next#run-again-at-the-limit).
 
-**Места в тарифах Team и Enterprise.** При автоматическом выборе (`ccam next`, `--fallback`, `ccam pick`, клавиша `n` на панели) ccam переключается и между местами одной и той же организации Claude Team или Enterprise. В справочном центре Anthropic ([тарифы Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); аналогично для [тарифов Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)) сказано: «Each seat on a Team plan is assigned to one named individual, and only that person may use it» (каждое место в тарифе Team закреплено за одним конкретным человеком, и пользоваться им может только этот человек) и «Users can't route their work through another user's account to use that user's remaining usage» (пользователи не могут направлять свою работу через аккаунт другого пользователя, чтобы расходовать оставшийся лимит этого пользователя). Поэтому использование автоматического выбора между местами может нарушать условия Anthropic. Прежде чем на него полагаться, уточните это у своей организации и у Anthropic. О личных тарифах (Pro, Max) см. [примечание об условиях в FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Места в тарифах Team и Enterprise.** При автоматическом выборе (`ccam next`, `--fallback`, `ccam pick`, клавиша `n` на панели, а также [`auto_switch`](/features/next#auto-switch), если вы его включите) ccam переключается и между местами одной и той же организации Claude Team или Enterprise. В справочном центре Anthropic ([тарифы Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); аналогично для [тарифов Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)) сказано: «Each seat on a Team plan is assigned to one named individual, and only that person may use it» (каждое место в тарифе Team закреплено за одним конкретным человеком, и пользоваться им может только этот человек) и «Users can't route their work through another user's account to use that user's remaining usage» (пользователи не могут направлять свою работу через аккаунт другого пользователя, чтобы расходовать оставшийся лимит этого пользователя). Поэтому использование автоматического выбора между местами может нарушать условия Anthropic. Пользоваться ли им в этом случае, решать вам: прежде чем на него полагаться, уточните это у своей организации и у Anthropic. О личных тарифах (Pro, Max) см. [примечание об условиях в FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 Короткая команда, например `ccwork`, запускает свой аккаунт так же: `ccwork --resume` делает то же, что и `ccam work --resume`. См. раздел [короткие команды](/docs/commands#shortcuts).
 
@@ -115,8 +115,9 @@ ccam mcp remove fs
 ccam usage           # also: ccam u
 ccam usage --watch   # refresh every 60 seconds
 ccam usage --json
-ccam usage --source claude      # Claude Code looks it up; ccam never touches a token
+ccam usage --source claude      # Claude Code looks it up; ccam sends no token
 ccam next --continue            # this folder's last conversation, as the next account
+ccam next --continue --brief    # a new conversation from a summary of the last one
 ccam next --auto
 ccam next --auto --max-usage 80 --wait
 ccam next -c --auto -- --dangerously-skip-permissions   # claude's own options after --
@@ -126,7 +127,7 @@ ccam agents                     # background sessions of every account
 ccam attach 49ec0028            # open one, as the account that started it (or by its name)
 ```
 
-`next --auto`, `--fallback` и `ccam pick` выбирают одинаково: сначала аккаунты ниже `auto_max_usage` (`config.toml`, по умолчанию 100), по стратегии `auto_strategy` (`headroom`, `expiring` или `balance`), с учётом недельного окна `--model`, никогда не аккаунт на 100% (окно, которое Claude Code сообщил заполненным, считается заполненным на 100% до своего сброса), никогда не аккаунт со входом по ключу API и в пределах организации аккаунта, с которого они начинают (`--cross-org` или `cross_org = true`, чтобы искать дальше). `--wait` принимает значение после `=` (`--wait=2h`); если записать его через пробел, он отклоняется с подсказкой. Когда выбрать некого, они завершаются с кодом 75 или, с `--wait`, ждут сброса первого аккаунта. `ccam next --continue` переносит разговор даже между аккаунтами без общей истории: тогда Claude Code копирует его в новый аккаунт. В отличие от `ccam <name>`, `ccam next` сам разбирает свои опции, поэтому опции Claude Code указываются после `--`; без него ccam останавливается с `unknown flag`. Внутри Claude Code команда плагина `/ccam:switch [account]` передаёт разговор дальше, а `ccam hook` — то, что запускают его хуки. См. [Переключение на следующий аккаунт](/features/next), [Выбор аккаунта для скриптов](/features/pick) и [Фоновые сессии всех аккаунтов](/features/agents).
+`next --auto`, `--fallback` и `ccam pick` выбирают одинаково: сначала аккаунты ниже `auto_max_usage` (`config.toml`, по умолчанию 100), по стратегии `auto_strategy` (`headroom`, `expiring` или `balance`), с учётом недельного окна `--model`, никогда не аккаунт на 100% (окно, которое Claude Code сообщил заполненным, считается заполненным на 100% до своего сброса), никогда не аккаунт со входом по ключу API и в пределах организации аккаунта, с которого они начинают (`--cross-org` или `cross_org = true`, чтобы искать дальше). `--wait` принимает значение после `=` (`--wait=2h`); если записать его через пробел, он отклоняется с подсказкой. Когда выбрать некого, они завершаются с кодом 75 или, с `--wait`, ждут сброса первого аккаунта. `ccam next --continue` переносит разговор даже между аккаунтами без общей истории: тогда Claude Code копирует его в новый аккаунт. С `--brief` новый аккаунт вместо этого начинает новый разговор со сводки последнего, которую ccam пишет без модели ([`--brief`](/features/next#brief)). В отличие от `ccam <name>`, `ccam next` сам разбирает свои опции, поэтому опции Claude Code указываются после `--`; без него ccam останавливается с `unknown flag`. Внутри Claude Code команда плагина `/ccam:switch [account]` передаёт разговор дальше, а `ccam hook` — то, что запускают его хуки. С `auto_switch = true` в `config.toml` (Linux и macOS; по умолчанию выключено) хук лимита также завершает интерактивную сессию, запущенную ccam, и продолжает её от имени другого аккаунта с запасом, но только такого же: другого места той же организации или другого личного тарифа ([`auto_switch`](/features/next#auto-switch)). См. [Переключение на следующий аккаунт](/features/next), [Выбор аккаунта для скриптов](/features/pick) и [Фоновые сессии всех аккаунтов](/features/agents).
 
 ## Обслуживание
 
@@ -148,10 +149,10 @@ ccam completion bash # or zsh, powershell
 
 | Путь | Содержимое |
 | --- | --- |
-| `~/.config/ccam/config.toml` | Аккаунты, группы и настройки (`theme`, `usage_source`, `relay`, `cross_org` …). Настройки пишутся в начале, над первым `[[group]]`, `[[profile]]` или `[[folder]]`: настройка под таблицей относится к этой таблице, поэтому ccam называет её при каждом запуске и в `ccam doctor`, а команды, которые сохраняют конфигурацию, отказываются работать, пока её не перенесут. Комментарии не сохраняются, когда ccam записывает файл |
+| `~/.config/ccam/config.toml` | Аккаунты, группы и настройки (`theme`, `usage_source`, `relay`, `auto_switch`, `cross_org` …). Настройки пишутся в начале, над первым `[[group]]`, `[[profile]]` или `[[folder]]`: настройка под таблицей относится к этой таблице, поэтому ccam называет её при каждом запуске и в `ccam doctor`, а команды, которые сохраняют конфигурацию, отказываются работать, пока её не перенесут. Комментарии не сохраняются, когда ccam записывает файл |
 | `~/.local/share/ccam/profiles/<name>/` | `CLAUDE_CONFIG_DIR` каждого аккаунта |
 | `~/.local/share/ccam/groups/<group>/` | Общие настройки, MCP-серверы, расширения и история |
-| `~/.local/state/ccam/` | Кэш использования и записи о лимите (`usage/<name>.json`, `usage/<name>.limit.json`), время последнего использования, метки сессий и блокировки (`locks/`), короткие команды, созданные ccam (`shortcuts.json`), незавершённое изменение групп (`group-change.json`) и заметки, которые оставляют `/ccam:switch` и хук лимита (`handoff/<account>/<session>.json`) |
+| `~/.local/state/ccam/` | Кэш использования и записи о лимите (`usage/<name>.json`, `usage/<name>.limit.json`), время последнего использования, метки сессий и блокировки (`locks/`), короткие команды, созданные ccam (`shortcuts.json`), незавершённое изменение групп (`group-change.json`), заметки, которые оставляют `/ccam:switch` и хук лимита (`handoff/<account>/<session>.json`), время, когда `ccam pick` или `auto_switch` в последний раз выбрали каждый аккаунт (`picks/<name>`; выбор учитывается 2 минуты), и сводки `--brief`, которые хранятся 7 дней (`brief/<session>.md`) |
 | `~/.local/bin/<shortcut>` | Короткие команды, например `ccwork`; ссылки на ccam |
 
 Переменные `XDG_CONFIG_HOME`, `XDG_DATA_HOME` и `XDG_STATE_HOME` позволяют перенести эти папки. В Windows `~` — это `%USERPROFILE%`, а короткие команды — это `<shortcut>.exe`.

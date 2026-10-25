@@ -132,7 +132,7 @@
     "close": "Funga"
   },
   "commands": {
-    "ccam": "Fungua dashibodi: akaunti, vikundi, folda, viendelezi na afya",
+    "ccam": "Fungua dashibodi: akaunti, agents, vikundi, folda, viendelezi na afya",
     "name": "Anzisha Claude Code kama akaunti hiyo; hoja hupitishwa bila kubadilishwa",
     "fallback": "Kwa uendeshaji wa -p: kwenye kikomo cha matumizi, endesha amri ile ile tena kama akaunti yenye nafasi kubwa zaidi",
     "add": "Ongeza akaunti: folda ya usanidi, kuingia na njia fupi ya hiari",

@@ -1,18 +1,18 @@
 ---
 title: แดชบอร์ด
 description: "ccam บนเทอร์มินัลเปิดแดชบอร์ดเต็มหน้าจอที่แสดงบัญชี กลุ่ม กฎของโฟลเดอร์ ส่วนขยาย และผลการตรวจสอบ ทุกการเปลี่ยนแปลงจะแสดงแผนให้ดูก่อน"
-updated: 2026-10-24
+updated: 2026-10-25
 order: 15
 translation: machine
-sourceHash: "e48ca2c5a643"
+sourceHash: "98ccf6cd81e9"
 ---
 
-`ccam` ที่ไม่มีอาร์กิวเมนต์จะเปิดแดชบอร์ดเต็มหน้าจอเมื่ออินพุตและเอาต์พุตมาตรฐานเป็นเทอร์มินัล ในกรณีอื่นจะพิมพ์ `ccam list` แดชบอร์ดแสดงทุกบัญชีพร้อมการใช้งานและกลุ่ม และทำสิ่งเดียวกับที่คำสั่งต่าง ๆ ทำได้: เริ่ม เพิ่ม เข้าสู่ระบบ เปลี่ยนกลุ่ม ตั้งกฎของโฟลเดอร์ ตรวจสอบ และซ่อมแซม การเริ่มบัญชีจะปิดแดชบอร์ด ส่วนการเพิ่มบัญชีหรือการเข้าสู่ระบบจะออกจากแดชบอร์ดไปใช้เทอร์มินัลชั่วคราวแล้วกลับมา
+`ccam` ที่ไม่มีอาร์กิวเมนต์จะเปิดแดชบอร์ดเต็มหน้าจอเมื่ออินพุตและเอาต์พุตมาตรฐานเป็นเทอร์มินัล ในกรณีอื่นจะพิมพ์ `ccam list` แดชบอร์ดแสดงทุกบัญชีพร้อมการใช้งานและกลุ่ม และทำสิ่งเดียวกับที่คำสั่งต่าง ๆ ทำได้: เริ่ม เพิ่ม เข้าสู่ระบบ เปลี่ยนกลุ่ม ตั้งกฎของโฟลเดอร์ แสดงรายการเซสชันเบื้องหลัง ตรวจสอบ และซ่อมแซม การเริ่มบัญชีหรือการเชื่อมต่อเข้าเซสชันเบื้องหลังจะปิดแดชบอร์ด ส่วนการเพิ่มบัญชีหรือการเข้าสู่ระบบจะออกจากแดชบอร์ดไปใช้เทอร์มินัลชั่วคราวแล้วกลับมา
 
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -40,12 +40,13 @@ sourceHash: "e48ca2c5a643"
 | แท็บ | สิ่งที่แสดง | ปุ่ม |
 | --- | --- | --- |
 | Accounts | หมายเลข ชื่อ อีเมล แถบ 5 ชั่วโมง รายสัปดาห์ และ Fable เวลาที่ใช้ล่าสุด กลุ่ม โดย `✔` คือบัญชีเริ่มต้น `▸` คือบัญชีของโฟลเดอร์นี้ และ `•` คือกำลังทำงาน (รวมถึง Claude Code ที่เริ่มโดยไม่ผ่าน ccam: `claude` แบบปกติ, IDE, เซสชันเบื้องหลังและ daemon ของเซสชันเหล่านั้น) | ดูด้านล่าง |
+| Agents | สิ่งที่ [`ccam agents`](/features/agents) แสดง: เซสชันเบื้องหลังและเซสชันที่เปิดอยู่ของทุกบัญชี พร้อมสถานะ โฟลเดอร์ และเวลาเริ่ม (ดูด้านล่าง) | `enter` เชื่อมต่อ (แบบ `ccam attach`), `x` หยุด, `r` โหลดใหม่ |
 | Groups | แต่ละกลุ่ม สิ่งที่กลุ่มใช้ร่วมกัน และบัญชีในกลุ่ม รวมถึงบัญชีที่ไม่อยู่ในกลุ่มใด | `enter` แก้ไข, `n` สร้างใหม่, `e` เปลี่ยนชื่อ, `x` ลบ |
 | Folders | กฎของ [`ccam folder`](/features/folder) และกฎที่มีผลในโฟลเดอร์นี้ รวมถึงเมื่อคุณเข้าถึงโฟลเดอร์ผ่าน symbolic link (กฎใหม่จะถูกเก็บโดยแปลงลิงก์เป็นพาธจริงแล้ว) | `n` ใช้บัญชีหนึ่งที่นี่, `enter` เปลี่ยน, `x` ลบ |
 | Extensions | สิ่งที่ [`ccam ext`](/features/ext) แสดง โดยแสดงแต่ละส่วนขยายครั้งเดียวพร้อมกลุ่มที่ส่วนขยายนั้นมาจาก `off:` คือบัญชีที่ปลั๊กอินไม่ได้เปิดใช้ เซิร์ฟเวอร์ที่บัญชีมีไว้สำหรับโฟลเดอร์นี้เท่านั้นจะอยู่ในรายการของบัญชีเอง `This folder's project` และปัญหาที่ไม่ได้เป็นของบัญชีใด | `r` โหลดใหม่ |
 | Health | สิ่งที่ [`ccam doctor`](/features/doctor) รายงาน เป็นกล่องหนึ่งกล่องต่อบัญชี (ดูด้านล่าง) | `f` ซ่อมแซมกล่องที่เลือก, `F` ซ่อมแซมทั้งหมด (`doctor --fix`), `↑`/`↓` เลื่อนระหว่างกล่อง |
 
-`←`/`→` หรือ `Tab` ใช้สลับแท็บ `?` แสดงปุ่มของแท็บปัจจุบัน `r` สอบถามการใช้งานใหม่โดยไม่ใช้แคชระยะสั้น และ `q` หรือ `Esc` ใช้ออก
+`←`/`→` หรือ `Tab` ใช้สลับแท็บ `?` แสดงปุ่มของแท็บปัจจุบัน `r` สอบถามการใช้งานใหม่โดยไม่ใช้แคชระยะสั้น และโหลดแท็บ Agents, Extensions และ Health ใหม่ และ `q` หรือ `Esc` ใช้ออก
 
 ## ปุ่มในแท็บ Accounts
 
@@ -66,7 +67,7 @@ sourceHash: "e48ca2c5a643"
 | `c` | ตั้งหรือลบคำสั่งลัดของบัญชี |
 | `x` | ลบบัญชี (ถามก่อน โดยเริ่มที่ No) |
 
-**ที่นั่ง (seat) ของ Team และ Enterprise** การเลือกอัตโนมัติ (`ccam next`, `--fallback`, `ccam pick` และปุ่ม `n` ในแดชบอร์ด) จะสลับระหว่างที่นั่งต่าง ๆ ในองค์กร Claude Team หรือ Enterprise เดียวกันด้วย ศูนย์ช่วยเหลือของ Anthropic ระบุว่า "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (แต่ละที่นั่งในแพ็กเกจ Team จะกำหนดให้กับบุคคลที่ระบุชื่อเพียงคนเดียว และมีเพียงบุคคลนั้นที่ใช้ได้) และ "Users can't route their work through another user's account to use that user's remaining usage" (ผู้ใช้ไม่สามารถส่งงานของตนผ่านบัญชีของผู้ใช้คนอื่นเพื่อใช้ปริมาณการใช้งานที่เหลืออยู่ของผู้ใช้คนนั้นได้) ([แพ็กเกจ Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129) ส่วน [แพ็กเกจ Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) ก็เช่นเดียวกัน) ดังนั้น การใช้การเลือกอัตโนมัติระหว่างที่นั่งต่าง ๆ จึงอาจละเมิดข้อกำหนดของ Anthropic โปรดสอบถามองค์กรของคุณและ Anthropic ก่อนที่จะพึ่งพาการเลือกอัตโนมัติ สำหรับแพ็กเกจส่วนตัว (Pro, Max) ดูที่ [หมายเหตุเรื่องข้อกำหนดในคำถามที่พบบ่อย](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)
+**ที่นั่ง (seat) ของ Team และ Enterprise** การเลือกอัตโนมัติ (`ccam next`, `--fallback`, `ccam pick`, ปุ่ม `n` ในแดชบอร์ด และ [`auto_switch`](/features/next#auto-switch) เมื่อคุณเปิดใช้) จะสลับระหว่างที่นั่งต่าง ๆ ในองค์กร Claude Team หรือ Enterprise เดียวกันด้วย ศูนย์ช่วยเหลือของ Anthropic ระบุว่า "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (แต่ละที่นั่งในแพ็กเกจ Team จะกำหนดให้กับบุคคลที่ระบุชื่อเพียงคนเดียว และมีเพียงบุคคลนั้นที่ใช้ได้) และ "Users can't route their work through another user's account to use that user's remaining usage" (ผู้ใช้ไม่สามารถส่งงานของตนผ่านบัญชีของผู้ใช้คนอื่นเพื่อใช้ปริมาณการใช้งานที่เหลืออยู่ของผู้ใช้คนนั้นได้) ([แพ็กเกจ Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129) ส่วน [แพ็กเกจ Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) ก็เช่นเดียวกัน) ดังนั้น การใช้การเลือกอัตโนมัติระหว่างที่นั่งต่าง ๆ จึงอาจละเมิดข้อกำหนดของ Anthropic จะใช้การเลือกอัตโนมัติในกรณีนี้หรือไม่เป็นการตัดสินใจของคุณ: โปรดสอบถามองค์กรของคุณและ Anthropic ก่อนที่จะพึ่งพาการเลือกอัตโนมัติ สำหรับแพ็กเกจส่วนตัว (Pro, Max) ดูที่ [หมายเหตุเรื่องข้อกำหนดในคำถามที่พบบ่อย](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)
 
 ## แท็บ Health
 
@@ -95,6 +96,28 @@ sourceHash: "e48ca2c5a643"
 ```
 
 `↑`/`↓` เลื่อนจากกล่องหนึ่งไปอีกกล่องหนึ่ง และกล่องที่เลือกจะมีขอบเป็นสีเน้น `f` ซ่อมแซมเฉพาะกล่องที่เลือก ในแบบเดียวกับที่ `ccam doctor --fix` ทำ: บนกล่องของบัญชีจะซ่อมแซมเฉพาะบัญชีนั้น และบนกล่อง `General` จะซ่อมแซมผลการตรวจที่ไม่ได้เป็นของบัญชีใด (พาธของปลั๊กอินและคำสั่งลัด) ส่วนบัญชีอื่นทั้งหมดจะถูกตรวจอีกครั้งเท่านั้น ปุ่มนี้จะถามก่อน (``Like `ccam doctor --fix`: missing links and group folders are made, and a real file where a link belongs is backed up first; where the group has its own copy, the account then sees the group's. Nothing is lost.``) และกล่องที่ไม่มีอะไรให้ซ่อมจะแสดงเพียง `nothing to repair in <name>` ส่วน `F` จะซ่อมแซมทุกอย่างพร้อมกันแบบเดียวกับ `ccam doctor --fix` และ `r` จะตรวจอีกครั้ง
+
+## แท็บ Agents
+
+แท็บ Agents แสดงสิ่งที่ [`ccam agents`](/features/agents) พิมพ์: เซสชันเบื้องหลังและเซสชันที่เปิดอยู่ของทุกบัญชี พร้อมบัญชีที่แต่ละเซสชันเป็นของ แท็บนี้จะถาม Claude Code ของทุกบัญชีพร้อมกัน (`claude agents --json` บัญชีละไม่เกิน 15 วินาที) เมื่อคุณเปิดแท็บครั้งแรก เมื่อกด `r` หลังการหยุดเซสชัน และหลังการเปลี่ยนแปลง config และจะแสดง `Asking every account's Claude Code for its sessions…` จนกว่าทุกบัญชีจะตอบ
+
+```console
+  Accounts   Agents   Groups   Folders   Extensions   Health
+ Background agents and open sessions of every account; enter attaches to one.
+
+    Account   ID        Name   State          Folder      Started
+ ❯  work      -         -      open (busy)    ~/code/web  now
+    personal  49ec0028  probe  blocked, idle  ~/code/app  12m
+
+ ✘ lab: could not list its sessions: exit status 1 'claude agents --json' is
+   not available in this environment.
+
+ enter to attach · x to stop · r to reload · ? for shortcuts
+```
+
+`State` คือสถานะของเซสชันเบื้องหลังและสิ่งที่โปรเซสของเซสชันกำลังทำ หรือ `open` สำหรับเซสชันแบบโต้ตอบ เหมือนใน `ccam agents` บัญชีที่ถามไม่ได้จะมีบรรทัด `✘` ใต้รายการพร้อมสิ่งที่ Claude Code ตอบ เช่น `lab` ด้านบน ซึ่งปิดมุมมองเอเจนต์ไว้ เซสชันเบื้องหลังที่จบแล้วจะไม่แสดง (`ccam agents --all` แสดงรายการเหล่านั้น) และเมื่อทุกบัญชีตอบแล้วแต่ไม่มีบัญชีใดมีเซสชัน แท็บจะแสดง ``No sessions. Start one in the background with `ccam <account> --bg "…"`.`` บนเทอร์มินัลที่แคบ แท็บจะตัด `Started` ออกก่อน แล้วจึง `Name` แล้วจึง `Folder` และตัดโฟลเดอร์ที่ยาวจากทางซ้าย
+
+`Enter` บนเซสชันเบื้องหลังจะปิดแดชบอร์ดและเปิดเซสชันนั้นในเทอร์มินัลนี้ในชื่อบัญชีของเซสชัน แบบเดียวกับที่ `ccam attach <id>` ทำ แดชบอร์ดจะไม่กลับมา (ใน Claude Code `←` จะไปที่มุมมองเอเจนต์ และ `Ctrl+Z` จะไปที่เชลล์) เซสชันที่เปิดอยู่ไม่มี id ดังนั้น `Enter` และ `x` จะบอกเพียงว่าต้องเป็นเซสชันเบื้องหลัง `x` จะถามก่อน โดยเริ่มที่ `No, keep it`: ``It runs as personal. Like `ccam personal stop 49ec0028`, Claude Code stops it and keeps its conversation, which `ccam attach 49ec0028` opens again.`` เมื่อตอบตกลง ccam จะรัน `claude stop <id>` ในชื่อบัญชีนั้น แล้วแสดง ``49ec0028 (personal) stopped; `ccam attach 49ec0028` opens it again`` หรือเหตุผลที่หยุดไม่ได้ และอ่านรายการอีกครั้ง
 
 ## การเปลี่ยนกลุ่ม
 

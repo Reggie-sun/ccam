@@ -2,10 +2,10 @@
 title: ccamのインストール
 metaTitle: "Linux、macOS、Windowsにccamをインストール"
 description: Linux、macOS、Windowsにccamを1つのコマンド、.debパッケージ、ソースでインストールし、ccam updateで更新します。Claude Codeを先に入れてください。
-updated: 2026-10-23
+updated: 2026-10-25
 order: 1
 translation: machine
-sourceHash: "af21dcc24169"
+sourceHash: "a7f9dac24f79"
 ---
 
 LinuxまたはmacOSのターミナルで、次のコマンドを実行します。
@@ -82,7 +82,7 @@ ccamプラグインを使うと、Claude Code自身がccamを使えるように�
 /plugin install ccam --marketplace jhyunwoo/ccam
 ```
 
-スキル1つ、コマンド`/ccam:usage`、`/ccam:ext`、`/ccam:switch`、そして2つのフックが追加されます。セッションが使用量の上限で止まるとターミナルに通知が表示され、`/ccam:switch [account]`は会話を別のアカウントに引き渡します（[詳細](/features/next#inside-claude-code)）。フックは`ccam`を実行するので、ccamはClaude Codeから見える`PATH`上にある必要があります。スキルがログインやファイルの移動を行うコマンドを実行することはなく、代わりにそれを提案します。
+スキル1つ、コマンド`/ccam:usage`、`/ccam:ext`、`/ccam:switch`、そして2つのフックが追加されます。セッションが使用量の上限で止まるとターミナルに通知が表示され（LinuxとmacOSでは、[`auto_switch`](/features/next#auto-switch)を有効にしていれば、ccamが余裕のある別のアカウントにセッションを移します）、`/ccam:switch [account]`は会話を別のアカウントに引き渡します（[詳細](/features/next#inside-claude-code)）。フックは`ccam`を実行するので、ccamはClaude Codeから見える`PATH`上にある必要があります。スキルがログインやファイルの移動を行うコマンドを実行することはなく、代わりにそれを提案します。
 
 ## インストールの確認
 

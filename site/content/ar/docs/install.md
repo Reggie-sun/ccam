@@ -2,10 +2,10 @@
 title: تثبيت ccam
 metaTitle: تثبيت ccam على Linux وmacOS وWindows
 description: ثبّت ccam على Linux أو macOS أو Windows بأمر واحد أو من حزمة .deb أو من الشيفرة المصدرية، وحدّثه باستخدام ccam update. يجب تثبيت Claude Code أولًا.
-updated: 2026-10-23
+updated: 2026-10-25
 order: 1
 translation: machine
-sourceHash: af21dcc24169
+sourceHash: "a7f9dac24f79"
 ---
 
 شغّل هذا الأمر في طرفية على Linux أو macOS:
@@ -82,7 +82,7 @@ ccam completion powershell >> $PROFILE
 /plugin install ccam --marketplace jhyunwoo/ccam
 ```
 
-يضيف مهارة، والأوامر `/ccam:usage` و`/ccam:ext` و`/ccam:switch`، وخطافين: عندما تتوقف جلسة عند حد الاستخدام يصلك إشعار في الطرفية، ويسلّم `/ccam:switch [account]` المحادثة إلى حساب آخر ([التفاصيل](/features/next#inside-claude-code)). تشغّل الخطافات `ccam`، لذا يجب أن يكون ضمن `PATH` الذي يراه Claude Code. ولا تشغّل المهارة أبدًا أوامر تسجّل الدخول أو تنقل الملفات؛ بل تقترحها بدلًا من ذلك.
+يضيف مهارة، والأوامر `/ccam:usage` و`/ccam:ext` و`/ccam:switch`، وخطافين: عندما تتوقف جلسة عند حد الاستخدام يصلك إشعار في الطرفية (وعلى Linux وmacOS، مع تشغيل [`auto_switch`](/features/next#auto-switch)، ينقل ccam الجلسة إلى حساب آخر لديه متسع)، ويسلّم `/ccam:switch [account]` المحادثة إلى حساب آخر ([التفاصيل](/features/next#inside-claude-code)). تشغّل الخطافات `ccam`، لذا يجب أن يكون ضمن `PATH` الذي يراه Claude Code. ولا تشغّل المهارة أبدًا أوامر تسجّل الدخول أو تنقل الملفات؛ بل تقترحها بدلًا من ذلك.
 
 ## التحقق من التثبيت
 

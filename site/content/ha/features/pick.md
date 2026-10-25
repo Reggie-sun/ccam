@@ -1,15 +1,15 @@
 ---
 title: Zaɓar asusu don rubutun umarni
 description: ccam pick yana buga asusun da ya fi sarari don rubutun umarni, yana ba workers da aka fara tare asusai daban-daban, kuma yana fita da 75 idan babu sarari.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 12
 translation: machine
-sourceHash: a8baeb64de99
+sourceHash: 5c4f74db9714
 ---
 
 `ccam pick` yana buga sunan asusun da aka shiga da shi wanda ya fi sarari, don rubutun umarni (script) ya fara Claude Code da shi. Workers da aka fara a lokaci ɗaya kowannensu yana samun asusu daban muddin akwai isassun asusai masu sarari, don haka rukunin ayyukan `claude -p` yana rarrabuwa a kan asusanka maimakon ya shanye ɗaya.
 
-**Kujeru (seats) na Team da Enterprise.** Zaɓin atomatik (`ccam next`, `--fallback`, `ccam pick`, maɓallin `n` na dashboard) yana kuma sauyawa tsakanin kujerun ƙungiyar Claude Team ko Enterprise iri ɗaya. Cibiyar taimako ta Anthropic ta ce "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (ana ba da kowace kujera a tsarin Team da sunan takamaiman mutum ɗaya, kuma wannan mutumin kaɗai ne aka yarda ya yi amfani da ita) da "Users can't route their work through another user's account to use that user's remaining usage" (masu amfani ba za su iya tura aikinsu ta asusun wani mai amfani ba domin su ci gajiyar ragowar amfanin wannan mai amfanin) ([Tsare-tsaren Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); haka ma ga [tsare-tsaren Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Don haka yin amfani da zaɓin atomatik tsakanin kujeru na iya saɓa wa sharuɗɗan Anthropic. Ka tuntuɓi ƙungiyarka da Anthropic kafin ka dogara da shi. Don tsare-tsaren kai (Pro, Max), duba [bayanin sharuɗɗa a cikin Tambayoyin da ake yawan yi](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Kujeru (seats) na Team da Enterprise.** Zaɓin atomatik (`ccam next`, `--fallback`, `ccam pick`, maɓallin `n` na dashboard, da [`auto_switch`](/features/next#auto-switch) idan ka kunna shi) yana kuma sauyawa tsakanin kujerun ƙungiyar Claude Team ko Enterprise iri ɗaya. Cibiyar taimako ta Anthropic ta ce "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (ana ba da kowace kujera a tsarin Team da sunan takamaiman mutum ɗaya, kuma wannan mutumin kaɗai ne aka yarda ya yi amfani da ita) da "Users can't route their work through another user's account to use that user's remaining usage" (masu amfani ba za su iya tura aikinsu ta asusun wani mai amfani ba domin su ci gajiyar ragowar amfanin wannan mai amfanin) ([Tsare-tsaren Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); haka ma ga [tsare-tsaren Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Don haka yin amfani da zaɓin atomatik tsakanin kujeru na iya saɓa wa sharuɗɗan Anthropic. Ko za ka yi amfani da shi a can ya rage naka: ka tuntuɓi ƙungiyarka da Anthropic kafin ka dogara da shi. Don tsare-tsaren kai (Pro, Max), duba [bayanin sharuɗɗa a cikin Tambayoyin da ake yawan yi](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 ## Amfani
 
@@ -59,7 +59,7 @@ Exit codes: `0` tare da suna a standard output, `75` (`EX_TEMPFAIL`) idan babu a
 1. ccam yana lissafa asusan da aka shiga da su (asusan API key da shigar Console ba su da iyaka kuma ana barin su a waje) a cikin ƙungiyar asusun da wannan foldar za ta fara (duba [ƙungiyoyi](/features/next#auto)); ana barin foldar da ta shiga asusun Claude iri ɗaya da wannan a waje ita ma.
 2. Yana ɗaukar kulle (`~/.local/state/ccam/picks.lock`), don zaɓuɓɓukan da ke gudana a lokaci ɗaya su faru ɗaya bayan ɗaya.
 3. Yana neman amfanin kowane asusu a lokaci ɗaya, kamar yadda `ccam usage` ke yi, tare da cache na daƙiƙa 60. Tagar da Claude Code ya ba da rahoton ta cika ana ƙirga ta a matsayin 100% har zuwa sake saitinta ([rikodin iyaka](/features/usage#the-limit-record)), don haka asusun da ya kai iyakarsa yanzu yana zama a waje ko da lambobinsa da aka ajiye suna nuna sarari.
-4. Ana fara barin asusan da aka zaɓa a cikin minti 2 da suka gabata (`~/.local/state/ccam/picks/<name>`; zaɓin da kwanan watansa ya wuce lokacin agogo ba ya ƙirguwa) a waje, kuma [ƙa'idodin zaɓi](/features/next#auto) na `ccam next --auto` suna zaɓa a cikin sauran: waɗanda ke ƙasa da `auto_max_usage` da farko, bisa dabarar, kuma ba a taɓa zaɓar asusun da ya kai 100% ba.
+4. Ana fara barin asusan da aka zaɓa a cikin minti 2 da suka gabata, ta `ccam pick` ko ta [`auto_switch`](/features/next#auto-switch) lokacin da ya motsa zama zuwa can (`~/.local/state/ccam/picks/<name>`; zaɓin da kwanan watansa ya wuce lokacin agogo ba ya ƙirguwa) a waje, kuma [ƙa'idodin zaɓi](/features/next#auto) na `ccam next --auto` suna zaɓa a cikin sauran: waɗanda ke ƙasa da `auto_max_usage` da farko, bisa dabarar, kuma ba a taɓa zaɓar asusun da ya kai 100% ba. Idan hakan ya tsallake asusun da ƙa'idodin za su fara ɗauka, `reason` na `--json` yana faɗin haka: `30% of its 5 hours used; work was picked a moment ago`.
 5. Idan an zaɓi kowane asusu mai sarari kwanan nan, ƙa'idodin suna sake zaɓa a cikin dukansu, don haka worker na huɗu a kan asusai uku yana raba ɗaya.
 6. Ana rubuta zaɓin kuma a saki kullen, sannan a buga sunan.
 

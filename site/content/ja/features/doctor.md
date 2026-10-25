@@ -1,10 +1,10 @@
 ---
 title: 点検と修復
 description: ccam doctorで共有リンク、ファイルの権限、ログイン、Claude Codeのバージョンを点検し、ccam doctor --fixで安全に修復できるものを修復します。
-updated: 2026-10-23
+updated: 2026-10-25
 order: 9
 translation: machine
-sourceHash: "11ad34630dcf"
+sourceHash: "0f5ae4ab9a54"
 ---
 
 `ccam doctor`はccamの環境を点検します。対象は、Claude Codeのバイナリ、各アカウントのフォルダー、ログイン、共有リンク、共有MCPサーバー、使用量エンドポイント、ショートカットコマンドです。`ccam doctor --fix`は、データを失わずに修復できるものを修復し、置き換えるファイルは先にバックアップフォルダーに移動します。`ccam <name>`が共有リンクの問題で停止したとき、ファイルを手動で復元した後、Claude Codeを更新した後に実行してください。
@@ -17,7 +17,7 @@ ccam doctor --fix            # check, then repair what is safe to repair
 ccam --dry-run doctor --fix  # report only: what --fix would repair and set aside
 ```
 
-最初の行ですべてのアカウントに一度に記号が付くので、ほかを読む前にどこに問題があるかがわかります。その下にはアカウントごとのボックスがあり、どのアカウントにも属さない結果（Claude Code、環境変数、プラグイン、MCPサーバー、ショートカットコマンド、フォルダーのルール、グループ、設定）は`General`ボックスに入ります。ボックスのタイトルには、そのアカウントの最も重い記号と問題の数が表示されます。ボックス内の各行は点検した領域1つで、常に`Folder`、`Login`、`Share links`の順に並び、そのあとにほかの領域が続きます。記号は`✔`が正常、`ℹ`が情報、`⚠`が警告、`✘`がエラーです。問題のないフォルダーは`✔ Folder  OK`と表示されます。
+最初の行ですべてのアカウントに一度に記号が付くので、ほかを読む前にどこに問題があるかがわかります。その下にはアカウントごとのボックスがあり、どのアカウントにも属さない結果（Claude Code、環境変数、プラグイン、MCPサーバー、ショートカットコマンド、フォルダーのルール、グループ、設定、`auto_switch`）は`General`ボックスに入ります。ボックスのタイトルには、そのアカウントの最も重い記号と問題の数が表示されます。ボックス内の各行は点検した領域1つで、常に`Folder`、`Login`、`Share links`の順に並び、そのあとにほかの領域が続きます。記号は`✔`が正常、`ℹ`が情報、`⚠`が警告、`✘`がエラーです。問題のないフォルダーは`✔ Folder  OK`と表示されます。
 
 ```console
 $ ccam doctor
@@ -118,6 +118,7 @@ $ ccam doctor --fix
 11. **フォルダー**（`checkFolders`）。[`ccam folder`](/features/folder)のエントリーがある場合だけ実行します。アカウントが存在しないエントリーはエラーで、フォルダーがなくなったエントリーは警告です。どちらも修復されません。エントリーを削除すると、そこで起動するアカウントが変わってしまうためです。
 12. **グループと設定**（`checkGroups`）。アカウントではないグループのメンバー、名前がその後ccamのコマンド名になったアカウント（`ccam run <name>`で起動するか、名前を変更してください）、不明な`theme`や`usage_source`、そしてccamが読まない`config.toml`の行は警告です。最後のものはたいてい、`[[group]]`、`[[profile]]`、`[[folder]]`のテーブルの下に書かれ、そのテーブルに属してしまった設定です（`config.toml line 43: relay is read as part of the [profile.login] table above it; settings for all accounts go above the first [[group]], [[profile]] or [[folder]]`）。設定を変更するコマンドは、それが直るまで拒否します。修復はありません。
 13. **ログイン**（`checkIdentities`）。各フォルダーがどのアカウントでログインしているかを`.claude.json`から読み取ります。`ccam login`が記録したものとは別のアカウントでログインしているフォルダー（たとえばセッション内で`/login`を実行した後）は警告です。インポートしたアカウントや古いccamが作ったアカウントのように、ログインの記録がないアカウントは、記録されたメールアドレスで比較します。別のフォルダーと同じClaudeアカウントにログインしているフォルダーも警告です。その2つは使用量の上限を共有するためです。別のフォルダーと同じログイントークンを持つフォルダー、つまりコピーしたフォルダー（通常の`claude`の`~/.claude`も含みます）はエラーです。先に更新した方がもう一方をログアウトさせるためで、`ccam login <name>`を実行して独自のログインを持たせてください。修復はありません。
+14. **`auto_switch`**（`checkAutoSwitch`）。`auto_switch = true`のときだけ行います。`General`ボックスの情報が`auto_switch`の働きを説明し、[その説明](/features/next#auto-switch)にリンクします。アカウントの中にシートのあるプラン（Claude Team、Claude Enterprise）があれば、プランごとに1行で、該当するアカウントを挙げ、`auto_switch`が1つの組織のシート間でセッションを移すことを伝え、Anthropicのシートに関する規則をヘルプセンターのリンクとともに引用し、選択をあなたに委ねます。2.1.214より古いClaude Codeは、フックに自身のプロセス（`CLAUDE_PID`）を伝えないため、どのセッションも移せないので、そこで警告になります。ccamプラグインがない、またはプラグインがオフになっているアカウントには、そのアカウント自身のボックスに警告が出て、Claude Codeでそれを直すコマンドが示されます: `auto_switch is on, but work does not have the ccam plugin, so its sessions are not moved. In Claude Code as work: /plugin install ccam --marketplace jhyunwoo/ccam`（または`/plugin enable ccam@ccam`）。APIキーのアカウントは対象外です。Windowsでは、`auto_switch is ignored on Windows; with relay = true, /ccam:switch and then /exit carry a conversation on.`という1行だけが出ます。修復はありません。
 
 アカウントの点検の前に、途中で止まった**グループの変更**が`General`ボックスのエラーとして示されます: ``the last change of groups stopped halfway (ccam doctor --fix finishes it; noted in ~/.local/state/ccam/group-change.json)``。`--fix`は、計画された順序で、競合に対して与えられた回答のとおりにそれを完了させます。それまでは、ほかのグループの変更、名前の変更、削除は始まりません。その変更に含まれるアカウントは、完了するまで足りないリンクが作られるだけです。完了できない場合、エラーには、そのファイルを削除すると変更の残りをあきらめることになると示されます。`ccam --dry-run doctor --fix`は、その順序（`--fix finishes it in its order (b, a, c), with the answers given to its conflicts`）と、各アカウントの部分で何が退避されるかを示します。ほかのccamがいま実行している変更は情報で、その実行中は`--fix`は共有リンクを修復しません（`its share links are not repaired while another ccam changes the groups; …`）。`--fix`は修復の間`~/.local/state/ccam/group-change.lock`を保持し、変更を完了した後に`config.toml`を読み込み直します。
 

@@ -1,15 +1,15 @@
 ---
 title: Chọn tài khoản cho script
 description: ccam pick in tài khoản còn nhiều hạn mức nhất cho script, giao tài khoản khác nhau cho các worker khởi động cùng lúc, và thoát 75 khi hết hạn mức.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 12
 translation: machine
-sourceHash: "a8baeb64de99"
+sourceHash: "5c4f74db9714"
 ---
 
 `ccam pick` in tên của tài khoản đã đăng nhập còn nhiều hạn mức nhất, để một script dùng nó khởi động Claude Code. Các worker khởi động cùng lúc sẽ mỗi worker nhận một tài khoản khác nhau, miễn là có đủ tài khoản còn hạn mức, nên một loạt tác vụ `claude -p` được trải ra trên các tài khoản của bạn thay vì dùng cạn một tài khoản.
 
-**Seat của gói Team và Enterprise.** Lựa chọn tự động (`ccam next`, `--fallback`, `ccam pick`, phím `n` trên bảng điều khiển) cũng chuyển đổi giữa các seat của cùng một tổ chức Claude Team hoặc Enterprise. Trung tâm trợ giúp của Anthropic ghi rằng "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (mỗi seat của gói Team được gán cho đích danh một cá nhân, và chỉ người đó được phép sử dụng) và "Users can't route their work through another user's account to use that user's remaining usage" (người dùng không được chuyển công việc của mình qua tài khoản của một người dùng khác để dùng phần hạn mức còn lại của người đó) ([gói Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); tương tự đối với [gói Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Vì vậy, dùng lựa chọn tự động giữa các seat có thể vi phạm điều khoản của Anthropic. Hãy xác nhận với tổ chức của bạn và Anthropic trước khi dựa vào nó. Các gói cá nhân (Pro, Max) được đề cập trong [ghi chú về điều khoản ở phần Câu hỏi thường gặp](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Seat của gói Team và Enterprise.** Lựa chọn tự động (`ccam next`, `--fallback`, `ccam pick`, phím `n` trên bảng điều khiển, và [`auto_switch`](/features/next#auto-switch) khi bạn bật nó) cũng chuyển đổi giữa các seat của cùng một tổ chức Claude Team hoặc Enterprise. Trung tâm trợ giúp của Anthropic ghi rằng "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (mỗi seat của gói Team được gán cho đích danh một cá nhân, và chỉ người đó được phép sử dụng) và "Users can't route their work through another user's account to use that user's remaining usage" (người dùng không được chuyển công việc của mình qua tài khoản của một người dùng khác để dùng phần hạn mức còn lại của người đó) ([gói Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); tương tự đối với [gói Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Vì vậy, dùng lựa chọn tự động giữa các seat có thể vi phạm điều khoản của Anthropic. Có dùng nó ở đó hay không là quyết định của bạn: hãy xác nhận với tổ chức của bạn và Anthropic trước khi dựa vào nó. Các gói cá nhân (Pro, Max) được đề cập trong [ghi chú về điều khoản ở phần Câu hỏi thường gặp](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 ## Cách dùng
 
@@ -59,7 +59,7 @@ Mã thoát: `0` kèm một tên trên đầu ra chuẩn, `75` (`EX_TEMPFAIL`) kh
 1. ccam liệt kê các tài khoản đã đăng nhập (tài khoản API key và đăng nhập Console không có giới hạn nên bị loại ra) trong tổ chức của tài khoản mà thư mục này sẽ khởi động (xem [tổ chức](/features/next#auto)); một thư mục đăng nhập vào cùng tài khoản Claude với tài khoản đó cũng bị loại ra.
 2. Nó lấy một khóa (`~/.local/state/ccam/picks.lock`), nên các lần chọn chạy cùng lúc sẽ diễn ra lần lượt.
 3. Nó tra cứu mức sử dụng của mọi tài khoản cùng lúc, theo cùng cách với `ccam usage`, với bộ nhớ đệm 60 giây. Một khoảng mà Claude Code báo là đã đầy được tính là 100% cho đến khi được đặt lại ([bản ghi giới hạn](/features/usage#the-limit-record)), nên một tài khoản vừa chạm giới hạn vẫn bị loại ra kể cả khi các con số đã lưu của nó cho thấy còn hạn mức.
-4. Các tài khoản được chọn trong 2 phút gần nhất (`~/.local/state/ccam/picks/<name>`; một lượt chọn có thời điểm sau giờ hiện tại của đồng hồ không được tính) bị loại ra trước, và [quy tắc chọn](/features/next#auto) của `ccam next --auto` chọn trong số còn lại: ưu tiên dưới `auto_max_usage`, theo chiến lược, không bao giờ chọn tài khoản ở mức 100%.
+4. Các tài khoản được chọn trong 2 phút gần nhất, bởi `ccam pick` hoặc bởi [`auto_switch`](/features/next#auto-switch) khi nó chuyển một phiên sang đó (`~/.local/state/ccam/picks/<name>`; một lượt chọn có thời điểm sau giờ hiện tại của đồng hồ không được tính) bị loại ra trước, và [quy tắc chọn](/features/next#auto) của `ccam next --auto` chọn trong số còn lại: ưu tiên dưới `auto_max_usage`, theo chiến lược, không bao giờ chọn tài khoản ở mức 100%. Khi việc đó bỏ qua tài khoản mà quy tắc lẽ ra chọn đầu tiên, `reason` của `--json` sẽ nói rõ: `30% of its 5 hours used; work was picked a moment ago`.
 5. Nếu mọi tài khoản còn hạn mức đều vừa được chọn gần đây, các quy tắc sẽ chọn lại trong tất cả, nên worker thứ tư trên ba tài khoản sẽ dùng chung một tài khoản.
 6. Lần chọn được ghi lại và khóa được nhả ra, rồi tên được in ra.
 

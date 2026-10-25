@@ -1,18 +1,18 @@
 ---
 title: Bảng điều khiển
 description: "ccam trên terminal mở bảng điều khiển toàn màn hình gồm tài khoản, nhóm, quy tắc thư mục, tiện ích mở rộng và kiểm tra; mọi thay đổi đều hiện kế hoạch trước."
-updated: 2026-10-24
+updated: 2026-10-25
 order: 15
 translation: machine
-sourceHash: "e48ca2c5a643"
+sourceHash: "98ccf6cd81e9"
 ---
 
-`ccam` không kèm đối số sẽ mở một bảng điều khiển toàn màn hình khi đầu vào và đầu ra chuẩn là terminal; nếu không, nó in ra `ccam list`. Bảng điều khiển hiển thị mọi tài khoản cùng mức sử dụng và các nhóm của chúng, và làm được những gì các lệnh làm: khởi động, thêm, đăng nhập, thay đổi nhóm, đặt quy tắc thư mục, kiểm tra và sửa chữa. Khởi động một tài khoản sẽ đóng bảng điều khiển; thêm tài khoản hoặc đăng nhập thì tạm rời nó để dùng terminal rồi quay lại.
+`ccam` không kèm đối số sẽ mở một bảng điều khiển toàn màn hình khi đầu vào và đầu ra chuẩn là terminal; nếu không, nó in ra `ccam list`. Bảng điều khiển hiển thị mọi tài khoản cùng mức sử dụng và các nhóm của chúng, và làm được những gì các lệnh làm: khởi động, thêm, đăng nhập, thay đổi nhóm, đặt quy tắc thư mục, liệt kê các phiên nền, kiểm tra và sửa chữa. Khởi động một tài khoản, hoặc gắn vào một phiên nền, sẽ đóng bảng điều khiển; thêm tài khoản hoặc đăng nhập thì tạm rời nó để dùng terminal rồi quay lại.
 
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -40,12 +40,13 @@ Khung hình đầu tiên được vẽ chỉ từ `config.toml`, trong chưa đ�
 | Thẻ | Nội dung hiển thị | Phím |
 | --- | --- | --- |
 | Accounts | số, tên, email, thanh 5 giờ, hàng tuần và Fable, lần dùng gần nhất, nhóm; `✔` tài khoản mặc định, `▸` tài khoản của thư mục này, `•` đang chạy (kể cả Claude Code được khởi động không qua ccam: `claude` thông thường, một IDE, các phiên nền và daemon của chúng) | bên dưới |
+| Agents | những gì [`ccam agents`](/features/agents) liệt kê: các phiên nền và các phiên đang mở của mọi tài khoản, cùng trạng thái, thư mục và thời điểm bắt đầu của chúng (bên dưới) | `enter` gắn vào (như `ccam attach`), `x` dừng, `r` tải lại |
 | Groups | từng nhóm, những gì nhóm dùng chung và các tài khoản của nhóm, cùng các tài khoản không thuộc nhóm nào | `enter` sửa, `n` tạo mới, `e` đổi tên, `x` xóa |
 | Folders | các quy tắc [`ccam folder`](/features/folder) và quy tắc áp dụng ở đây, kể cả khi bạn đến thư mục qua một liên kết tượng trưng (quy tắc mới được lưu với các liên kết đã được phân giải) | `n` dùng một tài khoản ở đây, `enter` thay đổi, `x` xóa |
 | Extensions | những gì [`ccam ext`](/features/ext) hiển thị, mỗi tiện ích mở rộng một lần cùng các nhóm mà nó đến từ, `off:` các tài khoản mà một plugin chưa được bật, các máy chủ mà một tài khoản chỉ có cho thư mục này trong số máy chủ riêng của nó, `This folder's project`, và các vấn đề không thuộc tài khoản nào | `r` tải lại |
 | Health | những gì [`ccam doctor`](/features/doctor) báo cáo, dưới dạng một hộp cho mỗi tài khoản (bên dưới) | `f` sửa chữa hộp đang chọn, `F` sửa chữa tất cả (`doctor --fix`), `↑`/`↓` di chuyển giữa các hộp |
 
-`←`/`→` hoặc `Tab` chuyển thẻ, `?` liệt kê các phím của thẻ hiện tại, `r` tra cứu lại mức sử dụng mà không dùng bộ nhớ đệm ngắn hạn, và `q` hoặc `Esc` để thoát.
+`←`/`→` hoặc `Tab` chuyển thẻ, `?` liệt kê các phím của thẻ hiện tại, `r` tra cứu lại mức sử dụng mà không dùng bộ nhớ đệm ngắn hạn và tải lại các thẻ Agents, Extensions và Health, và `q` hoặc `Esc` để thoát.
 
 ## Phím trên thẻ Accounts
 
@@ -66,7 +67,7 @@ Khung hình đầu tiên được vẽ chỉ từ `config.toml`, trong chưa đ�
 | `c` | Đặt hoặc xóa lệnh tắt của nó |
 | `x` | Xóa nó (hỏi trước, con trỏ bắt đầu ở No) |
 
-**Seat của gói Team và Enterprise.** Lựa chọn tự động (`ccam next`, `--fallback`, `ccam pick`, phím `n` trên bảng điều khiển) cũng chuyển đổi giữa các seat của cùng một tổ chức Claude Team hoặc Enterprise. Trung tâm trợ giúp của Anthropic ghi rằng "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (mỗi seat của gói Team được gán cho đích danh một cá nhân, và chỉ người đó được phép sử dụng) và "Users can't route their work through another user's account to use that user's remaining usage" (người dùng không được chuyển công việc của mình qua tài khoản của một người dùng khác để dùng phần hạn mức còn lại của người đó) ([gói Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); tương tự đối với [gói Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Vì vậy, dùng lựa chọn tự động giữa các seat có thể vi phạm điều khoản của Anthropic. Hãy xác nhận với tổ chức của bạn và Anthropic trước khi dựa vào nó. Các gói cá nhân (Pro, Max) được đề cập trong [ghi chú về điều khoản ở phần Câu hỏi thường gặp](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Seat của gói Team và Enterprise.** Lựa chọn tự động (`ccam next`, `--fallback`, `ccam pick`, phím `n` trên bảng điều khiển, và [`auto_switch`](/features/next#auto-switch) khi bạn bật nó) cũng chuyển đổi giữa các seat của cùng một tổ chức Claude Team hoặc Enterprise. Trung tâm trợ giúp của Anthropic ghi rằng "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (mỗi seat của gói Team được gán cho đích danh một cá nhân, và chỉ người đó được phép sử dụng) và "Users can't route their work through another user's account to use that user's remaining usage" (người dùng không được chuyển công việc của mình qua tài khoản của một người dùng khác để dùng phần hạn mức còn lại của người đó) ([gói Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); tương tự đối với [gói Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Vì vậy, dùng lựa chọn tự động giữa các seat có thể vi phạm điều khoản của Anthropic. Có dùng nó ở đó hay không là quyết định của bạn: hãy xác nhận với tổ chức của bạn và Anthropic trước khi dựa vào nó. Các gói cá nhân (Pro, Max) được đề cập trong [ghi chú về điều khoản ở phần Câu hỏi thường gặp](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 ## Thẻ Health
 
@@ -95,6 +96,28 @@ Thẻ Health chạy các kiểm tra của [`ccam doctor`](/features/doctor) khi 
 ```
 
 `↑`/`↓` di chuyển từ hộp này sang hộp khác, và hộp đang chọn có viền màu nhấn. `f` chỉ sửa chữa hộp đang chọn, theo cách `ccam doctor --fix` sẽ làm: trên hộp của một tài khoản, nó chỉ sửa chữa tài khoản đó, còn trên hộp `General` là các kết quả không thuộc tài khoản nào (đường dẫn plugin và lệnh tắt); mọi tài khoản khác chỉ được kiểm tra lại. Nó hỏi trước (``Like `ccam doctor --fix`: missing links and group folders are made, and a real file where a link belongs is backed up first; where the group has its own copy, the account then sees the group's. Nothing is lost.``), và một hộp không có gì để sửa chữa chỉ hiển thị `nothing to repair in <name>`. `F` sửa chữa mọi thứ cùng lúc, như `ccam doctor --fix`, và `r` kiểm tra lại.
+
+## Thẻ Agents
+
+Thẻ Agents hiển thị những gì [`ccam agents`](/features/agents) in ra: các phiên nền và các phiên đang mở của mọi tài khoản, cùng tài khoản mà mỗi phiên thuộc về. Nó hỏi Claude Code của mọi tài khoản cùng lúc (`claude agents --json`, tối đa 15 giây cho mỗi tài khoản) khi bạn mở thẻ lần đầu, khi nhấn `r`, sau khi dừng một phiên và sau khi cấu hình thay đổi, và hiển thị `Asking every account's Claude Code for its sessions…` cho đến khi tất cả đã trả lời.
+
+```console
+  Accounts   Agents   Groups   Folders   Extensions   Health
+ Background agents and open sessions of every account; enter attaches to one.
+
+    Account   ID        Name   State          Folder      Started
+ ❯  work      -         -      open (busy)    ~/code/web  now
+    personal  49ec0028  probe  blocked, idle  ~/code/app  12m
+
+ ✘ lab: could not list its sessions: exit status 1 'claude agents --json' is
+   not available in this environment.
+
+ enter to attach · x to stop · r to reload · ? for shortcuts
+```
+
+`State` là trạng thái của một phiên nền và việc tiến trình của nó đang làm, hoặc `open` đối với một phiên tương tác, như trong `ccam agents`. Một tài khoản không hỏi được sẽ có một dòng `✘` dưới danh sách kèm những gì Claude Code đã nói, như `lab` ở trên, tài khoản đã tắt chế độ xem agent. Các phiên nền đã kết thúc bị bỏ ra (`ccam agents --all` liệt kê chúng), và khi mọi tài khoản đã trả lời mà không có phiên nào, thẻ hiển thị ``No sessions. Start one in the background with `ccam <account> --bg "…"`.`` Trên terminal hẹp, thẻ bỏ `Started`, rồi `Name`, rồi `Folder`, và cắt bớt một thư mục dài từ bên trái.
+
+`Enter` trên một phiên nền sẽ đóng bảng điều khiển và mở phiên đó trong terminal này dưới tài khoản của nó, như `ccam attach <id>`; bảng điều khiển không quay lại (trong Claude Code, `←` đi tới chế độ xem agent của nó và `Ctrl+Z` về shell). Một phiên đang mở không có id, nên `Enter` và `x` chỉ báo rằng cần một phiên nền. `x` hỏi trước, con trỏ bắt đầu ở `No, keep it`: ``It runs as personal. Like `ccam personal stop 49ec0028`, Claude Code stops it and keeps its conversation, which `ccam attach 49ec0028` opens again.`` Nếu chọn có, ccam chạy `claude stop <id>` dưới tài khoản đó, hiển thị ``49ec0028 (personal) stopped; `ccam attach 49ec0028` opens it again`` hoặc lý do không dừng được, rồi đọc lại danh sách.
 
 ## Thay đổi nhóm
 

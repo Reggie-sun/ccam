@@ -1,18 +1,18 @@
 ---
 title: La dashboard
 description: ccam in un terminale apre una dashboard a schermo intero con account, gruppi, regole per cartella, estensioni e controlli; ogni modifica mostra prima il piano.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 15
 translation: machine
-sourceHash: "e48ca2c5a643"
+sourceHash: "98ccf6cd81e9"
 ---
 
-`ccam` senza argomenti apre una dashboard a schermo intero quando standard input e standard output sono un terminale; altrimenti stampa `ccam list`. La dashboard mostra ogni account con il suo utilizzo e i suoi gruppi, e fa ciò che fanno i comandi: avviare, aggiungere, effettuare il login, cambiare i gruppi, impostare le regole delle cartelle, controllare e riparare. Avviare un account la chiude; aggiungere un account o effettuare il login la lascia per il terminale e poi vi ritorna.
+`ccam` senza argomenti apre una dashboard a schermo intero quando standard input e standard output sono un terminale; altrimenti stampa `ccam list`. La dashboard mostra ogni account con il suo utilizzo e i suoi gruppi, e fa ciò che fanno i comandi: avviare, aggiungere, effettuare il login, cambiare i gruppi, impostare le regole delle cartelle, elencare le sessioni in background, controllare e riparare. Avviare un account, o collegarsi a una sessione in background, la chiude; aggiungere un account o effettuare il login la lascia per il terminale e poi vi ritorna.
 
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -40,12 +40,13 @@ Il primo fotogramma viene disegnato a partire dal solo `config.toml`, in molto m
 | Scheda | Cosa mostra | Tasti |
 | --- | --- | --- |
 | Accounts | numero, nome, email, barre delle 5 ore, settimanale e di Fable, ultimo uso, gruppi; `✔` l'account predefinito, `▸` l'account di questa cartella, `•` in esecuzione (anche Claude Code avviato senza ccam: `claude` da solo, un IDE, le sessioni in background e il loro daemon) | vedi sotto |
+| Agents | ciò che elenca [`ccam agents`](/features/agents): le sessioni in background e le sessioni aperte di ogni account, con il loro stato, la cartella e l'ora di avvio (vedi sotto) | `enter` collegati (come `ccam attach`), `x` ferma, `r` ricarica |
 | Groups | ogni gruppo, cosa condivide e i suoi account, e gli account che non fanno parte di alcun gruppo | `enter` modifica, `n` nuovo, `e` rinomina, `x` rimuovi |
 | Folders | le regole di [`ccam folder`](/features/folder) e quella che vale qui, anche quando sei arrivato nella cartella tramite un link simbolico (le nuove regole vengono salvate con i link risolti) | `n` usa un account qui, `enter` cambia, `x` rimuovi |
 | Extensions | ciò che mostra [`ccam ext`](/features/ext), ogni estensione una sola volta con i gruppi da cui proviene, `off:` gli account in cui un plugin non è attivato, tra i server propri di un account quelli che ha solo per questa cartella, `This folder's project`, e i problemi che non appartengono a nessun account | `r` ricarica |
 | Health | ciò che segnala [`ccam doctor`](/features/doctor), con un riquadro per account (vedi sotto) | `f` ripara il riquadro selezionato, `F` ripara tutto (`doctor --fix`), `↑`/`↓` passa da un riquadro all'altro |
 
-`←`/`→` o `Tab` cambiano scheda, `?` elenca i tasti della scheda corrente, `r` consulta di nuovo l'utilizzo senza la cache breve, e `q` o `Esc` escono.
+`←`/`→` o `Tab` cambiano scheda, `?` elenca i tasti della scheda corrente, `r` consulta di nuovo l'utilizzo senza la cache breve e ricarica le schede Agents, Extensions e Health, e `q` o `Esc` escono.
 
 ## Tasti della scheda Accounts
 
@@ -66,7 +67,7 @@ Il primo fotogramma viene disegnato a partire dal solo `config.toml`, in molto m
 | `c` | Imposta o rimuove il suo comando scorciatoia |
 | `x` | Lo rimuove (chiede prima, partendo da No) |
 
-**Posti nei piani Team ed Enterprise.** La scelta automatica (`ccam next`, `--fallback`, `ccam pick`, il tasto `n` della dashboard) passa anche da un posto all'altro della stessa organizzazione Claude Team o Enterprise. Il centro assistenza di Anthropic dice: "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (ogni posto di un piano Team è assegnato nominativamente a una sola persona, e solo quella persona può usarlo) e "Users can't route their work through another user's account to use that user's remaining usage" (gli utenti non possono far passare il proprio lavoro attraverso l'account di un altro utente per sfruttare l'utilizzo residuo di quell'utente) ([piani Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); lo stesso vale per i [piani Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Usare la scelta automatica tra posti diversi può quindi violare i termini di Anthropic. Verifica con la tua organizzazione e con Anthropic prima di farci affidamento. I piani personali (Pro, Max) sono trattati nella [nota sui termini nelle domande frequenti](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Posti nei piani Team ed Enterprise.** La scelta automatica (`ccam next`, `--fallback`, `ccam pick`, il tasto `n` della dashboard e, se lo attivi, [`auto_switch`](/features/next#auto-switch)) passa anche da un posto all'altro della stessa organizzazione Claude Team o Enterprise. Il centro assistenza di Anthropic dice: "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (ogni posto di un piano Team è assegnato nominativamente a una sola persona, e solo quella persona può usarlo) e "Users can't route their work through another user's account to use that user's remaining usage" (gli utenti non possono far passare il proprio lavoro attraverso l'account di un altro utente per sfruttare l'utilizzo residuo di quell'utente) ([piani Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); lo stesso vale per i [piani Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Usare la scelta automatica tra posti diversi può quindi violare i termini di Anthropic. Decidi tu se usarla lì: verifica con la tua organizzazione e con Anthropic prima di farci affidamento. I piani personali (Pro, Max) sono trattati nella [nota sui termini nelle domande frequenti](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 ## La scheda Health
 
@@ -95,6 +96,28 @@ La scheda Health esegue i controlli di [`ccam doctor`](/features/doctor) quando 
 ```
 
 `↑`/`↓` passano da un riquadro all'altro, e il riquadro selezionato ha il bordo nel colore di accento. `f` ripara solo il riquadro selezionato, come farebbe `ccam doctor --fix`: sul riquadro di un account ripara solo quell'account, e sul riquadro `General` i risultati che non appartengono a nessun account (percorsi dei plugin e scorciatoie); tutti gli altri account vengono solo controllati di nuovo. Chiede prima (``Like `ccam doctor --fix`: missing links and group folders are made, and a real file where a link belongs is backed up first; where the group has its own copy, the account then sees the group's. Nothing is lost.``), e un riquadro senza nulla da riparare dice solo `nothing to repair in <name>`. `F` ripara tutto in una volta, come `ccam doctor --fix`, e `r` controlla di nuovo.
+
+## La scheda Agents
+
+La scheda Agents mostra ciò che stampa [`ccam agents`](/features/agents): le sessioni in background e le sessioni aperte di ogni account, con l'account a cui appartiene ciascuna. Interroga contemporaneamente il Claude Code di ogni account (`claude agents --json`, fino a 15 secondi ciascuno) quando apri la scheda per la prima volta, con `r`, dopo un arresto e dopo una modifica alla configurazione, e mostra `Asking every account's Claude Code for its sessions…` finché tutti non hanno risposto.
+
+```console
+  Accounts   Agents   Groups   Folders   Extensions   Health
+ Background agents and open sessions of every account; enter attaches to one.
+
+    Account   ID        Name   State          Folder      Started
+ ❯  work      -         -      open (busy)    ~/code/web  now
+    personal  49ec0028  probe  blocked, idle  ~/code/app  12m
+
+ ✘ lab: could not list its sessions: exit status 1 'claude agents --json' is
+   not available in this environment.
+
+ enter to attach · x to stop · r to reload · ? for shortcuts
+```
+
+`State` è lo stato di una sessione in background e ciò che sta facendo il suo processo, oppure `open` per una sessione interattiva, come in `ccam agents`. Un account che non è stato possibile interrogare riceve una riga `✘` sotto l'elenco con ciò che ha detto Claude Code, come `lab` qui sopra, che ha la vista degli agenti disattivata. Le sessioni in background terminate vengono escluse (`ccam agents --all` le elenca), e quando tutti gli account hanno risposto e nessuno ha una sessione, la scheda dice ``No sessions. Start one in the background with `ccam <account> --bg "…"`.`` In un terminale stretto la scheda toglie `Started`, poi `Name`, poi `Folder`, e accorcia da sinistra una cartella lunga.
+
+`Enter` su una sessione in background chiude la dashboard e apre la sessione in questo terminale come il suo account, come fa `ccam attach <id>`; la dashboard non ritorna (in Claude Code, `←` porta alla sua vista degli agenti e `Ctrl+Z` alla shell). Una sessione aperta non ha un id, quindi `Enter` e `x` dicono solo che serve una sessione in background. `x` chiede prima conferma, partendo da `No, keep it`: ``It runs as personal. Like `ccam personal stop 49ec0028`, Claude Code stops it and keeps its conversation, which `ccam attach 49ec0028` opens again.`` Se rispondi sì, ccam esegue `claude stop <id>` come quell'account, dice ``49ec0028 (personal) stopped; `ccam attach 49ec0028` opens it again`` oppure perché non ha potuto, e rilegge l'elenco.
 
 ## Cambiare i gruppi
 

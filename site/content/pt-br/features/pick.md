@@ -1,15 +1,15 @@
 ---
 title: Escolher uma conta para scripts
 description: ccam pick imprime a conta com mais espaço para um script, dá contas diferentes a workers iniciados juntos e sai com 75 quando nenhuma tem espaço.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 12
 translation: machine
-sourceHash: "a8baeb64de99"
+sourceHash: "5c4f74db9714"
 ---
 
 `ccam pick` imprime o nome da conta com login feito que tem mais espaço, para um script iniciar o Claude Code com ela. Workers iniciados ao mesmo tempo recebem cada um uma conta diferente enquanto houver contas com espaço suficientes, então um lote de jobs `claude -p` se espalha pelas suas contas em vez de esgotar uma só.
 
-**Assentos dos planos Team e Enterprise.** A escolha automática (`ccam next`, `--fallback`, `ccam pick`, a tecla `n` do painel) também alterna entre assentos da mesma organização Claude Team ou Enterprise. A central de ajuda da Anthropic diz "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (cada assento de um plano Team é atribuído a uma pessoa específica, e só essa pessoa pode usá-lo) e "Users can't route their work through another user's account to use that user's remaining usage" (os usuários não podem encaminhar o próprio trabalho pela conta de outro usuário para aproveitar o uso restante desse usuário) ([planos Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); o mesmo vale para os [planos Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Por isso, usar a escolha automática entre assentos pode violar os termos da Anthropic. Consulte a sua organização e a Anthropic antes de contar com ela. Os planos pessoais (Pro, Max) são tratados na [nota sobre os termos nas perguntas frequentes](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Assentos dos planos Team e Enterprise.** A escolha automática (`ccam next`, `--fallback`, `ccam pick`, a tecla `n` do painel e o [`auto_switch`](/features/next#auto-switch), quando você o ativa) também alterna entre assentos da mesma organização Claude Team ou Enterprise. A central de ajuda da Anthropic diz "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (cada assento de um plano Team é atribuído a uma pessoa específica, e só essa pessoa pode usá-lo) e "Users can't route their work through another user's account to use that user's remaining usage" (os usuários não podem encaminhar o próprio trabalho pela conta de outro usuário para aproveitar o uso restante desse usuário) ([planos Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); o mesmo vale para os [planos Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Por isso, usar a escolha automática entre assentos pode violar os termos da Anthropic. Usá-la nesse caso é uma decisão sua: consulte a sua organização e a Anthropic antes de contar com ela. Os planos pessoais (Pro, Max) são tratados na [nota sobre os termos nas perguntas frequentes](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 ## Uso
 
@@ -59,7 +59,7 @@ Códigos de saída: `0` com um nome na saída padrão, `75` (`EX_TEMPFAIL`) quan
 1. O ccam lista as contas com login feito (contas com chave de API e logins do Console não têm limites e ficam de fora) na organização da conta que esta pasta iniciaria (consulte [organizações](/features/next#auto)); uma pasta logada na mesma conta Claude que essa também fica de fora.
 2. Ele pega um lock (`~/.local/state/ccam/picks.lock`), para que escolhas feitas ao mesmo tempo aconteçam uma depois da outra.
 3. Consulta o uso de todas as contas ao mesmo tempo, do mesmo jeito que o `ccam usage`, com o cache de 60 segundos. Uma janela que o Claude Code informou como cheia conta como 100% até reiniciar ([o registro de limite](/features/usage#the-limit-record)), então uma conta que acabou de atingir o limite fica de fora mesmo enquanto os números salvos dela mostram espaço.
-4. Contas escolhidas nos últimos 2 minutos (`~/.local/state/ccam/picks/<name>`; uma escolha datada depois da hora do relógio não conta) ficam de fora primeiro, e as [regras de escolha](/features/next#auto) do `ccam next --auto` escolhem entre as restantes: primeiro as abaixo de `auto_max_usage`, pela estratégia, nunca uma conta em 100%.
+4. Contas escolhidas nos últimos 2 minutos, pelo `ccam pick` ou pelo [`auto_switch`](/features/next#auto-switch) ao mover uma sessão para elas (`~/.local/state/ccam/picks/<name>`; uma escolha datada depois da hora do relógio não conta), ficam de fora primeiro, e as [regras de escolha](/features/next#auto) do `ccam next --auto` escolhem entre as restantes: primeiro as abaixo de `auto_max_usage`, pela estratégia, nunca uma conta em 100%. Quando isso deixa de lado a conta que as regras escolheriam primeiro, o `reason` do `--json` informa isso: `30% of its 5 hours used; work was picked a moment ago`.
 5. Se todas as contas com espaço foram escolhidas há pouco, as regras escolhem de novo entre todas elas, então um quarto worker em três contas divide uma delas.
 6. A escolha é registrada e o lock liberado, e então o nome é impresso.
 

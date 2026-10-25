@@ -2,10 +2,10 @@
 title: "ccam انسٹال کریں"
 metaTitle: "ccam کو Linux، macOS اور Windows پر انسٹال کریں"
 description: "ccam کو Linux، macOS یا Windows پر ایک کمانڈ، .deb پیکیج یا سورس سے انسٹال کریں اور ccam update سے اپ ڈیٹ کریں۔ اس سے پہلے Claude Code انسٹال ہونا ضروری ہے۔"
-updated: 2026-10-23
+updated: 2026-10-25
 order: 1
 translation: machine
-sourceHash: "af21dcc24169"
+sourceHash: "a7f9dac24f79"
 ---
 
 Linux یا macOS پر ٹرمینل میں یہ کمانڈ چلائیں:
@@ -82,7 +82,7 @@ ccam پلگ اِن خود Claude Code کو ccam استعمال کرنا سکھا
 /plugin install ccam --marketplace jhyunwoo/ccam
 ```
 
-یہ ایک اسکل، کمانڈز `/ccam:usage`، `/ccam:ext` اور `/ccam:switch`، اور دو ہُکس شامل کرتا ہے: جب کوئی سیشن استعمال کی حد پر رک جائے تو آپ کو ٹرمینل میں اطلاع ملتی ہے، اور `/ccam:switch [account]` گفتگو کسی دوسرے اکاؤنٹ کو سونپ دیتا ہے ([تفصیلات](/features/next#inside-claude-code))۔ ہُکس `ccam` چلاتے ہیں، اس لیے اسے اس `PATH` پر ہونا چاہیے جو Claude Code دیکھتا ہے۔ اسکل کبھی ایسی کمانڈز نہیں چلاتی جو لاگ اِن کریں یا فائلیں منتقل کریں؛ اس کے بجائے انہیں تجویز کرتی ہے۔
+یہ ایک اسکل، کمانڈز `/ccam:usage`، `/ccam:ext` اور `/ccam:switch`، اور دو ہُکس شامل کرتا ہے: جب کوئی سیشن استعمال کی حد پر رک جائے تو آپ کو ٹرمینل میں اطلاع ملتی ہے (اور Linux اور macOS پر، [`auto_switch`](/features/next#auto-switch) آن ہو تو، ccam سیشن کو کسی ایسے دوسرے اکاؤنٹ میں منتقل کر دیتا ہے جس میں گنجائش ہو)، اور `/ccam:switch [account]` گفتگو کسی دوسرے اکاؤنٹ کو سونپ دیتا ہے ([تفصیلات](/features/next#inside-claude-code))۔ ہُکس `ccam` چلاتے ہیں، اس لیے اسے اس `PATH` پر ہونا چاہیے جو Claude Code دیکھتا ہے۔ اسکل کبھی ایسی کمانڈز نہیں چلاتی جو لاگ اِن کریں یا فائلیں منتقل کریں؛ اس کے بجائے انہیں تجویز کرتی ہے۔
 
 ## انسٹالیشن چیک کریں
 

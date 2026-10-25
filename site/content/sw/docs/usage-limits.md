@@ -1,10 +1,10 @@
 ---
 title: Vikomo vya matumizi na kubadili akaunti
 description: Ona matumizi ya saa 5 na ya wiki ya kila akaunti ya Claude Code kwa ccam usage, na ufungue akaunti yenye nafasi kubwa zaidi kwa ccam next --auto.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 5
 translation: machine
-sourceHash: "ccaed084207a"
+sourceHash: "7c15419446c3"
 ---
 
 `ccam usage` huonyesha kiasi cha kikomo cha saa 5, kikomo cha wiki na kikomo cha wiki cha kila model (kama Fable) ambacho kila akaunti imetumia. `ccam next --auto` hufungua akaunti yenye nafasi kubwa zaidi, na `--continue` huhamisha mazungumzo ya sasa.
@@ -28,7 +28,7 @@ $ ccam usage
 
 Kila akaunti hupata mstari unaoonyesha umri wa namba zake, kisha upau mmoja kwa kila kikomo pamoja na muda hadi kianze upya: kipindi cha saa 5, kipindi cha wiki kwa model zote, na kipindi cha wiki cha kila model yenyewe, kama Fable. Kuanzia 80% upau hugeuka manjano, na kwa 100% nyekundu. Mstari wa mwisho hutaja akaunti ambayo `ccam next --auto` ingefungua; kwa `auto_strategy = "expiring"` au `"balance"` badala yake husomeka `→ next --auto picks <name>: <reason>`.
 
-**Viti (seats) vya Team na Enterprise.** Chaguo za kiotomatiki (`ccam next`, `--fallback`, `ccam pick`, kitufe `n` cha dashibodi) pia hubadili kati ya viti vya shirika lile lile la Claude Team au Enterprise. Kituo cha usaidizi cha Anthropic kinasema "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (kila kiti katika mpango wa Team hutolewa kwa mtu mmoja aliyetajwa kwa jina, na ni mtu huyo pekee anayeruhusiwa kukitumia) na "Users can't route their work through another user's account to use that user's remaining usage" (watumiaji hawaruhusiwi kuelekeza kazi yao kupitia akaunti ya mtumiaji mwingine ili kutumia kiasi cha matumizi kilichobaki cha mtumiaji huyo) ([mipango ya Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); vivyo hivyo kwa [mipango ya Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Kwa hiyo, kutumia chaguo za kiotomatiki kati ya viti kunaweza kukiuka masharti ya Anthropic. Wasiliana na shirika lako na Anthropic kabla ya kuzitegemea. Mipango ya binafsi (Pro, Max) inaelezwa katika [dokezo la masharti kwenye Maswali yanayoulizwa mara kwa mara](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Viti (seats) vya Team na Enterprise.** Chaguo za kiotomatiki (`ccam next`, `--fallback`, `ccam pick`, kitufe `n` cha dashibodi, na [`auto_switch`](/features/next#auto-switch) unapokiwasha) pia hubadili kati ya viti vya shirika lile lile la Claude Team au Enterprise. Kituo cha usaidizi cha Anthropic kinasema "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (kila kiti katika mpango wa Team hutolewa kwa mtu mmoja aliyetajwa kwa jina, na ni mtu huyo pekee anayeruhusiwa kukitumia) na "Users can't route their work through another user's account to use that user's remaining usage" (watumiaji hawaruhusiwi kuelekeza kazi yao kupitia akaunti ya mtumiaji mwingine ili kutumia kiasi cha matumizi kilichobaki cha mtumiaji huyo) ([mipango ya Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); vivyo hivyo kwa [mipango ya Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Kwa hiyo, kutumia chaguo za kiotomatiki kati ya viti kunaweza kukiuka masharti ya Anthropic. Kama utazitumia huko ni uamuzi wako: wasiliana na shirika lako na Anthropic kabla ya kuzitegemea. Mipango ya binafsi (Pro, Max) inaelezwa katika [dokezo la masharti kwenye Maswali yanayoulizwa mara kwa mara](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 ## Namba zinatoka wapi
 
@@ -71,6 +71,8 @@ ccam next --continue  # carry this folder's conversation on as the next account
 ```
 
 `ccam next` huruka akaunti ambazo hazijaingia, na `--auto` huruka akaunti zilizofikia 100% (pia kipindi ambacho Claude Code iliripoti kuwa kimejaa, hadi kianze upya) na akaunti za shirika jingine. Akaunti hizo mbili zikishiriki historia ya mazungumzo, `--continue` hufungua mazungumzo yale yale; vinginevyo Claude Code huyanakili kwenye akaunti mpya. Tazama [kushiriki](/docs/sharing) na [kubadili kwenda akaunti inayofuata](/features/next#continue).
+
+Kwa `auto_switch = true` juu kabisa ya `config.toml` (Linux na macOS; imezimwa kwa chaguo-msingi), ccam hufanya ubadilishaji huu yenyewe Claude Code inaposimamisha kipindi shirikishi kwenye kikomo chake na akaunti nyingine ya aina hiyo hiyo ina nafasi. Tazama [`auto_switch`](/features/next#auto-switch) ili kujua lini hutenda na kile ambacho kamwe haifanyi.
 
 Kwa script na kazi zilizopangwa zinazoendesha `claude -p`, weka `--fallback` kabla ya jina la akaunti. Akaunti hiyo inapofikia kikomo chake, ccam huendesha amri ile ile tena kama akaunti yenye nafasi kubwa zaidi, na matokeo ya uendeshaji uliokamilika pekee ndiyo huchapishwa:
 

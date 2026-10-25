@@ -1,10 +1,10 @@
 ---
 title: Fara Claude Code
 description: Fara Claude Code a matsayin kowane asusu da ccam <name|number>, ccam run ko dashboard; arguments suna zuwa claude ba canji, --dry-run yana nuna umarnin.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 1
 translation: machine
-sourceHash: e279341eb59b
+sourceHash: afa4942cfed5
 ---
 
 `ccam work` yana fara Claude Code a matsayin asusun `work`, kuma duk abin da ke bayan sunan yana zuwa `claude` kamar yadda yake. Yi amfani da shi duk inda za ka rubuta `claude`: a terminal, a rubutun (script), ko tare da shigarwa ta bututu (pipe).
@@ -34,11 +34,11 @@ Idan argument na farko ya fara da `-` kuma ba ɗaya daga cikin flags na ccam kan
 
 `ccam` ba tare da arguments ba yana buɗe [dashboard](/features/dashboard) idan standard input da output terminal ne, kuma yana buga `ccam list` in ba haka ba. Je kan asusu (da kibiyoyi, ko ta rubuta lambarsa) kuma danna `Enter` don fara shi; `n` yana fara asusun da ya fi sarari, kuma `o` yana ba da `--continue`, `--resume` ko wasu arguments. Dashboard yana rufewa kafin Claude Code ya fara, don haka ana fara maido da terminal.
 
-**Kujeru (seats) na Team da Enterprise.** Zaɓin atomatik (`ccam next`, `--fallback`, `ccam pick`, maɓallin `n` na dashboard) yana kuma sauyawa tsakanin kujerun ƙungiyar Claude Team ko Enterprise iri ɗaya. Cibiyar taimako ta Anthropic ta ce "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (ana ba da kowace kujera a tsarin Team da sunan takamaiman mutum ɗaya, kuma wannan mutumin kaɗai ne aka yarda ya yi amfani da ita) da "Users can't route their work through another user's account to use that user's remaining usage" (masu amfani ba za su iya tura aikinsu ta asusun wani mai amfani ba domin su ci gajiyar ragowar amfanin wannan mai amfanin) ([Tsare-tsaren Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); haka ma ga [tsare-tsaren Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Don haka yin amfani da zaɓin atomatik tsakanin kujeru na iya saɓa wa sharuɗɗan Anthropic. Ka tuntuɓi ƙungiyarka da Anthropic kafin ka dogara da shi. Don tsare-tsaren kai (Pro, Max), duba [bayanin sharuɗɗa a cikin Tambayoyin da ake yawan yi](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Kujeru (seats) na Team da Enterprise.** Zaɓin atomatik (`ccam next`, `--fallback`, `ccam pick`, maɓallin `n` na dashboard, da [`auto_switch`](/features/next#auto-switch) idan ka kunna shi) yana kuma sauyawa tsakanin kujerun ƙungiyar Claude Team ko Enterprise iri ɗaya. Cibiyar taimako ta Anthropic ta ce "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (ana ba da kowace kujera a tsarin Team da sunan takamaiman mutum ɗaya, kuma wannan mutumin kaɗai ne aka yarda ya yi amfani da ita) da "Users can't route their work through another user's account to use that user's remaining usage" (masu amfani ba za su iya tura aikinsu ta asusun wani mai amfani ba domin su ci gajiyar ragowar amfanin wannan mai amfanin) ([Tsare-tsaren Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); haka ma ga [tsare-tsaren Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Don haka yin amfani da zaɓin atomatik tsakanin kujeru na iya saɓa wa sharuɗɗan Anthropic. Ko za ka yi amfani da shi a can ya rage naka: ka tuntuɓi ƙungiyarka da Anthropic kafin ka dogara da shi. Don tsare-tsaren kai (Pro, Max), duba [bayanin sharuɗɗa a cikin Tambayoyin da ake yawan yi](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 Idan harsashin (shell) yana da `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY` ko `ANTHROPIC_AUTH_TOKEN` a saita, Claude Code zai yi amfani da wannan key ko token maimakon shigar asusun kansa, don haka ccam yana faɗin haka a standard error kafin ya fara (`ccam: $ANTHROPIC_API_KEY is set, so Claude Code may use that key instead of work's login…`). Yana karanta variables ɗin ne kawai; [asusun API key](/features/api) yana share su maimakon haka.
 
-Da `relay = true` a saman `config.toml` (kafin `[[group]]`, `[[profile]]` ko `[[folder]]` na farko), ccam yana fara zaman mu'amala a matsayin process na ƙasa (child) kuma yana zama a gefensu, don `/ccam:switch` ya iya kai tattaunawa gaba da kansa, tare da zaɓuɓɓukan zaman, yanayin izini (permission mode) da matakin ƙoƙari (effort level) ([cikakken bayani](/features/next#relay)); in ba haka ba ccam yana maye gurbin kansa da Claude Code, kuma babu abin da ke gudana a gefensa.
+Da `relay = true`, ko [`auto_switch = true`](/features/next#auto-switch) a Linux da macOS, a saman `config.toml` (kafin `[[group]]`, `[[profile]]` ko `[[folder]]` na farko), ccam yana fara zaman mu'amala a matsayin process na ƙasa (child) kuma yana zama a gefensu, don `/ccam:switch`, ko `auto_switch` a iyakar amfani, ya iya kai tattaunawa gaba da kansa, tare da zaɓuɓɓukan zaman, yanayin izini (permission mode) da matakin ƙoƙari (effort level) ([cikakken bayani](/features/next#relay)); in ba haka ba ccam yana maye gurbin kansa da Claude Code, kuma babu abin da ke gudana a gefensa.
 
 ## Zaɓuɓɓuka
 

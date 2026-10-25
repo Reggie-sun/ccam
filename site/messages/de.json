@@ -132,7 +132,7 @@
     "close": "Schließen"
   },
   "commands": {
-    "ccam": "Das Dashboard öffnen: Konten, Gruppen, Ordner, Erweiterungen und Zustand",
+    "ccam": "Das Dashboard öffnen: Konten, Agenten, Gruppen, Ordner, Erweiterungen und Zustand",
     "name": "Claude Code mit diesem Konto starten; Argumente werden unverändert weitergegeben",
     "fallback": "Für -p-Durchläufe: Am Nutzungslimit denselben Befehl erneut mit dem Konto mit dem meisten Spielraum ausführen",
     "add": "Konto hinzufügen: Konfigurationsordner, Anmeldung und optionaler Kurzbefehl",

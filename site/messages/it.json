@@ -132,7 +132,7 @@
     "close": "Chiudi"
   },
   "commands": {
-    "ccam": "Apre la dashboard: account, gruppi, cartelle, estensioni e stato",
+    "ccam": "Apre la dashboard: account, agenti, gruppi, cartelle, estensioni e stato",
     "name": "Avvia Claude Code con quell'account; gli argomenti vengono passati invariati",
     "fallback": "Per le esecuzioni -p: al limite di utilizzo, riesegue lo stesso comando con l'account con più margine",
     "add": "Aggiunge un account: cartella di configurazione, login e una scorciatoia facoltativa",

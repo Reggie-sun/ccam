@@ -1,18 +1,18 @@
 ---
 title: டாஷ்போர்டு
 description: டெர்மினலில் ccam கணக்குகள், குழுக்கள், கோப்புறை விதிகள், extensions, சரிபார்ப்புகளின் டாஷ்போர்டைத் திறக்கும்; ஒவ்வொரு மாற்றமும் முதலில் திட்டத்தைக் காட்டும்.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 15
 translation: machine
-sourceHash: "e48ca2c5a643"
+sourceHash: "98ccf6cd81e9"
 ---
 
-standard input-உம் output-உம் டெர்மினலாக இருக்கும்போது, arguments இல்லாத `ccam` ஒரு முழுத்திரை டாஷ்போர்டைத் திறக்கிறது; இல்லையெனில் அது `ccam list`-ஐ அச்சிடுகிறது. டாஷ்போர்டு ஒவ்வொரு கணக்கையும் அதன் பயன்பாடு, குழுக்களுடன் காட்டுகிறது, கட்டளைகள் செய்வதையே செய்கிறது: தொடங்குதல், சேர்த்தல், உள்நுழைதல், குழுக்களை மாற்றுதல், கோப்புறை விதிகளை அமைத்தல், சரிபார்த்தல், பழுதுநீக்குதல். ஒரு கணக்கைத் தொடங்கினால் டாஷ்போர்டு மூடப்படும்; கணக்கைச் சேர்க்கும்போதும் உள்நுழையும்போதும் அது டெர்மினலுக்கு வழிவிட்டு, பிறகு திரும்பி வரும்.
+standard input-உம் output-உம் டெர்மினலாக இருக்கும்போது, arguments இல்லாத `ccam` ஒரு முழுத்திரை டாஷ்போர்டைத் திறக்கிறது; இல்லையெனில் அது `ccam list`-ஐ அச்சிடுகிறது. டாஷ்போர்டு ஒவ்வொரு கணக்கையும் அதன் பயன்பாடு, குழுக்களுடன் காட்டுகிறது, கட்டளைகள் செய்வதையே செய்கிறது: தொடங்குதல், சேர்த்தல், உள்நுழைதல், குழுக்களை மாற்றுதல், கோப்புறை விதிகளை அமைத்தல், பின்னணி அமர்வுகளைப் பட்டியலிடுதல், சரிபார்த்தல், பழுதுநீக்குதல். ஒரு கணக்கைத் தொடங்கினாலோ, ஒரு பின்னணி அமர்வுடன் இணைந்தாலோ டாஷ்போர்டு மூடப்படும்; கணக்கைச் சேர்க்கும்போதும் உள்நுழையும்போதும் அது டெர்மினலுக்கு வழிவிட்டு, பிறகு திரும்பி வரும்.
 
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -40,12 +40,13 @@ standard input-உம் output-உம் டெர்மினலாக இர�
 | தாவல் | என்ன காட்டும் | விசைகள் |
 | --- | --- | --- |
 | Accounts | எண், பெயர், மின்னஞ்சல், 5 மணி நேர, வாராந்திர, Fable பட்டைகள், கடைசிப் பயன்பாடு, குழுக்கள்; `✔` இயல்புநிலைக் கணக்கு, `▸` இந்தக் கோப்புறையின் கணக்கு, `•` இயங்குகிறது (ccam இல்லாமல் தொடங்கிய Claude Code-உம்: வெறும் `claude`, ஒரு IDE, பின்னணி அமர்வுகள், அவற்றின் daemon) | கீழே |
+| Agents | [`ccam agents`](/features/agents) பட்டியலிடுவது: எல்லாக் கணக்குகளின் பின்னணி அமர்வுகளும் திறந்த அமர்வுகளும், அவற்றின் நிலை, கோப்புறை, தொடங்கிய நேரத்துடன் (கீழே) | `enter` இணை (`ccam attach` போல), `x` நிறுத்து, `r` மீண்டும் ஏற்று |
 | Groups | ஒவ்வொரு குழுவும், அது பகிர்வதும் அதன் கணக்குகளும், எந்தக் குழுவிலும் இல்லாத கணக்குகளும் | `enter` திருத்து, `n` புதியது, `e` மறுபெயரிடு, `x` நீக்கு |
 | Folders | [`ccam folder`](/features/folder) விதிகளும், இங்கே பொருந்தும் விதியும், symbolic link வழியாக அந்தக் கோப்புறையை அடைந்திருந்தாலும் கூட (புதிய விதிகள் links தீர்க்கப்பட்ட நிலையில் சேமிக்கப்படும்) | `n` இங்கே ஒரு கணக்கைப் பயன்படுத்து, `enter` மாற்று, `x` நீக்கு |
 | Extensions | [`ccam ext`](/features/ext) காட்டுவது; ஒவ்வொரு extension-உம் ஒருமுறை, அது வரும் குழுக்களுடன், ஒரு plugin இயக்கப்படாத கணக்குகள் `off:` ஆக, ஒரு கணக்கு இந்தக் கோப்புறைக்கு மட்டும் வைத்திருக்கும் சர்வர்கள் அதன் சொந்த சர்வர்களுக்கு இடையே, `This folder's project`, எந்தக் கணக்கையும் சாராத சிக்கல்கள் | `r` மீண்டும் ஏற்று |
 | Health | [`ccam doctor`](/features/doctor) தெரிவிப்பது, ஒவ்வொரு கணக்குக்கும் ஒரு பெட்டியாக (கீழே) | `f` தேர்ந்தெடுத்த பெட்டியைப் பழுதுநீக்கு, `F` எல்லாவற்றையும் பழுதுநீக்கு (`doctor --fix`), `↑`/`↓` பெட்டிகளுக்கு இடையே நகரும் |
 
-`←`/`→` அல்லது `Tab` தாவல்களை மாற்றும், `?` தற்போதைய தாவலின் விசைகளைப் பட்டியலிடும், `r` குறுகிய cache இல்லாமல் பயன்பாட்டை மீண்டும் பார்க்கும், `q` அல்லது `Esc` வெளியேறும்.
+`←`/`→` அல்லது `Tab` தாவல்களை மாற்றும், `?` தற்போதைய தாவலின் விசைகளைப் பட்டியலிடும், `r` குறுகிய cache இல்லாமல் பயன்பாட்டை மீண்டும் பார்த்து, Agents, Extensions, Health தாவல்களை மீண்டும் ஏற்றும், `q` அல்லது `Esc` வெளியேறும்.
 
 ## Accounts தாவலின் விசைகள்
 
@@ -66,7 +67,7 @@ standard input-உம் output-உம் டெர்மினலாக இர�
 | `c` | அதன் குறுக்குவழிக் கட்டளையை அமைக்கும் அல்லது நீக்கும் |
 | `x` | அதை நீக்கும் (முதலில் கேட்கும், No-இல் தொடங்கி) |
 
-**Team மற்றும் Enterprise இருக்கைகள்.** தானியங்கித் தேர்வு (`ccam next`, `--fallback`, `ccam pick`, டாஷ்போர்டின் `n`) ஒரே Claude Team அல்லது Enterprise நிறுவனத்தின் இருக்கைகளுக்கு இடையேயும் மாறுகிறது. Anthropic-இன் உதவி மையம் "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team திட்டத்தின் ஒவ்வொரு இருக்கையும் பெயர் குறிப்பிடப்பட்ட ஒரு நபருக்கு ஒதுக்கப்படுகிறது, அந்த நபர் மட்டுமே அதைப் பயன்படுத்தலாம்) என்றும், "Users can't route their work through another user's account to use that user's remaining usage" (மற்றொரு பயனரின் மீதமுள்ள பயன்பாட்டைப் பயன்படுத்திக்கொள்ள, பயனர்கள் தங்கள் வேலையை அந்தப் பயனரின் கணக்கு வழியாக அனுப்ப முடியாது) என்றும் கூறுகிறது ([Team திட்டங்கள்](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); இதேபோல் [Enterprise திட்டங்களுக்கும்](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). எனவே, இருக்கைகளுக்கு இடையே தானியங்கித் தேர்வைப் பயன்படுத்துவது Anthropic-இன் விதிமுறைகளை மீறக்கூடும். அதை நம்பியிருக்கும் முன், உங்கள் நிறுவனத்திடமும் Anthropic-இடமும் கேட்டு உறுதிசெய்துகொள்ளுங்கள். தனிப்பட்ட திட்டங்கள் (Pro, Max) பற்றி [அடிக்கடி கேட்கப்படும் கேள்விகளில் உள்ள விதிமுறைக் குறிப்பு](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) விளக்குகிறது.
+**Team மற்றும் Enterprise இருக்கைகள்.** தானியங்கித் தேர்வு (`ccam next`, `--fallback`, `ccam pick`, டாஷ்போர்டின் `n`, நீங்கள் இயக்கும்போது [`auto_switch`](/features/next#auto-switch)) ஒரே Claude Team அல்லது Enterprise நிறுவனத்தின் இருக்கைகளுக்கு இடையேயும் மாறுகிறது. Anthropic-இன் உதவி மையம் "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team திட்டத்தின் ஒவ்வொரு இருக்கையும் பெயர் குறிப்பிடப்பட்ட ஒரு நபருக்கு ஒதுக்கப்படுகிறது, அந்த நபர் மட்டுமே அதைப் பயன்படுத்தலாம்) என்றும், "Users can't route their work through another user's account to use that user's remaining usage" (மற்றொரு பயனரின் மீதமுள்ள பயன்பாட்டைப் பயன்படுத்திக்கொள்ள, பயனர்கள் தங்கள் வேலையை அந்தப் பயனரின் கணக்கு வழியாக அனுப்ப முடியாது) என்றும் கூறுகிறது ([Team திட்டங்கள்](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); இதேபோல் [Enterprise திட்டங்களுக்கும்](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). எனவே, இருக்கைகளுக்கு இடையே தானியங்கித் தேர்வைப் பயன்படுத்துவது Anthropic-இன் விதிமுறைகளை மீறக்கூடும். அங்கே அதைப் பயன்படுத்துவதா என்பது உங்கள் முடிவு: அதை நம்பியிருக்கும் முன், உங்கள் நிறுவனத்திடமும் Anthropic-இடமும் கேட்டு உறுதிசெய்துகொள்ளுங்கள். தனிப்பட்ட திட்டங்கள் (Pro, Max) பற்றி [அடிக்கடி கேட்கப்படும் கேள்விகளில் உள்ள விதிமுறைக் குறிப்பு](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) விளக்குகிறது.
 
 ## Health தாவல்
 
@@ -95,6 +96,28 @@ Health தாவலைத் திறக்கும்போது அது [
 ```
 
 `↑`/`↓` பெட்டியிலிருந்து பெட்டிக்கு நகரும், தேர்ந்தெடுத்த பெட்டிக்கு accent நிற எல்லை இருக்கும். `f` தேர்ந்தெடுத்த பெட்டியை மட்டும் பழுதுநீக்கும், `ccam doctor --fix` செய்வது போலவே: ஒரு கணக்கின் பெட்டியில் அந்தக் கணக்கை மட்டும் பழுதுநீக்கும், `General` பெட்டியில் எந்தக் கணக்கையும் சாராத கண்டுபிடிப்புகளை (plugin பாதைகள், shortcuts); மற்ற ஒவ்வொரு கணக்கும் மீண்டும் சரிபார்க்கப்படும், அவ்வளவுதான். அது முதலில் கேட்கும் (``Like `ccam doctor --fix`: missing links and group folders are made, and a real file where a link belongs is backed up first; where the group has its own copy, the account then sees the group's. Nothing is lost.``), பழுதுநீக்க எதுவும் இல்லாத பெட்டி `nothing to repair in <name>` என்று மட்டும் சொல்லும். `F` எல்லாவற்றையும் ஒரே நேரத்தில் பழுதுநீக்கும், `ccam doctor --fix` போல; `r` மீண்டும் சரிபார்க்கும்.
+
+## Agents தாவல்
+
+Agents தாவல் [`ccam agents`](/features/agents) அச்சிடுவதைக் காட்டுகிறது: எல்லாக் கணக்குகளின் பின்னணி அமர்வுகளும் திறந்த அமர்வுகளும், ஒவ்வொன்றும் எந்தக் கணக்குக்கு உரியது என்பதுடன். நீங்கள் முதன்முதலில் தாவலைத் திறக்கும்போதும், `r`-இலும், ஒரு நிறுத்தத்துக்குப் பிறகும், config மாற்றத்துக்குப் பிறகும், அது எல்லாக் கணக்குகளின் Claude Code-இடமும் ஒரே நேரத்தில் கேட்கிறது (`claude agents --json`, ஒவ்வொன்றுக்கும் 15 வினாடிகள் வரை); எல்லாம் பதில் அளிக்கும் வரை `Asking every account's Claude Code for its sessions…` என்று சொல்கிறது.
+
+```console
+  Accounts   Agents   Groups   Folders   Extensions   Health
+ Background agents and open sessions of every account; enter attaches to one.
+
+    Account   ID        Name   State          Folder      Started
+ ❯  work      -         -      open (busy)    ~/code/web  now
+    personal  49ec0028  probe  blocked, idle  ~/code/app  12m
+
+ ✘ lab: could not list its sessions: exit status 1 'claude agents --json' is
+   not available in this environment.
+
+ enter to attach · x to stop · r to reload · ? for shortcuts
+```
+
+`State` என்பது பின்னணி அமர்வின் நிலையும் அதன் process என்ன செய்கிறது என்பதும், அல்லது interactive அமர்வுக்கு `open`, `ccam agents`-இல் உள்ளது போலவே. கேட்க முடியாத கணக்குக்கு, Claude Code சொன்னதுடன் பட்டியலுக்குக் கீழே ஒரு `✘` வரி கிடைக்கிறது, மேலே உள்ள `lab` போல; அதன் agent view அணைக்கப்பட்டுள்ளது. முடிந்த பின்னணி அமர்வுகள் விலக்கப்படுகின்றன (`ccam agents --all` அவற்றைப் பட்டியலிடுகிறது); எல்லாக் கணக்குகளும் பதில் அளித்து, எதற்கும் அமர்வு இல்லாதபோது, தாவல் ``No sessions. Start one in the background with `ccam <account> --bg "…"`.`` என்று சொல்கிறது. குறுகிய டெர்மினலில் தாவல் முதலில் `Started`, பிறகு `Name`, பிறகு `Folder`-ஐ விடுகிறது, நீண்ட கோப்புறையை இடப்பக்கத்திலிருந்து வெட்டுகிறது.
+
+பின்னணி அமர்வின் மீது `Enter` டாஷ்போர்டை மூடி, `ccam attach <id>` செய்வது போலவே, அந்த அமர்வை அதன் கணக்காக இந்த டெர்மினலில் திறக்கிறது; டாஷ்போர்டு திரும்பி வராது (Claude Code-இல், `←` அதன் agent view-க்கும் `Ctrl+Z` shell-க்கும் செல்லும்). திறந்த அமர்வுக்கு id இல்லை, அதனால் `Enter`-உம் `x`-உம் பின்னணி அமர்வு தேவை என்று மட்டும் சொல்கின்றன. `x` முதலில் கேட்கிறது, `No, keep it`-இல் தொடங்கி: ``It runs as personal. Like `ccam personal stop 49ec0028`, Claude Code stops it and keeps its conversation, which `ccam attach 49ec0028` opens again.`` ஆம் என்றால், ccam அந்தக் கணக்காக `claude stop <id>`-ஐ இயக்கி, ``49ec0028 (personal) stopped; `ccam attach 49ec0028` opens it again`` அல்லது ஏன் முடியவில்லை என்று சொல்லி, பட்டியலை மீண்டும் படிக்கிறது.
 
 ## குழுக்களை மாற்றுதல்
 

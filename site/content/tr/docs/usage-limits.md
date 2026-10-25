@@ -1,10 +1,10 @@
 ---
 title: Kullanım limitleri ve hesap değiştirme
 description: Tüm Claude Code hesaplarının 5 saatlik ve haftalık kullanımını ccam usage ile görün, en çok pay kalan hesabı ccam next --auto ile açın.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 5
 translation: machine
-sourceHash: "ccaed084207a"
+sourceHash: "7c15419446c3"
 ---
 
 `ccam usage`, her hesabın 5 saatlik limitin, haftalık limitin ve her modelin kendi haftalık limitinin (Fable gibi) ne kadarını kullandığını gösterir. `ccam next --auto` en çok pay kalan hesabı açar, `--continue` ise mevcut konuşmayı o hesaba taşır.
@@ -28,7 +28,7 @@ $ ccam usage
 
 Her hesap, sayılarının ne kadar eski olduğunu gösteren bir satır alır; ardından her limit için sıfırlanmaya kalan süreyle birlikte bir çubuk gelir: 5 saatlik pencere, tüm modeller için haftalık pencere ve her modelin kendi haftalık penceresi, örneğin Fable. Çubuk %80'den itibaren sarıya, %100'de kırmızıya döner. Son satır, `ccam next --auto` komutunun açacağı hesabı adlandırır; `auto_strategy = "expiring"` veya `"balance"` ile bunun yerine `→ next --auto picks <name>: <reason>` yazar.
 
-**Team ve Enterprise koltukları.** Otomatik seçim (`ccam next`, `--fallback`, `ccam pick`, kontrol panelindeki `n` tuşu), aynı Claude Team veya Enterprise kuruluşunun koltukları arasında da geçiş yapar. Anthropic'in yardım merkezinde şöyle belirtilir: "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team planındaki her koltuk, adı belirli tek bir kişiye atanır ve onu yalnızca o kişi kullanabilir) ve "Users can't route their work through another user's account to use that user's remaining usage" (kullanıcılar, başka bir kullanıcının kalan kullanım hakkından yararlanmak için işlerini o kullanıcının hesabı üzerinden yürütemez) ([Team planları](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise planları](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) için de durum aynıdır). Bu nedenle otomatik seçimi koltuklar arasında kullanmak Anthropic'in koşullarını ihlal edebilir. Buna güvenmeden önce kuruluşunuza ve Anthropic'e danışın. Kişisel planlar (Pro, Max), [SSS'deki koşullar notunda](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) ele alınır.
+**Team ve Enterprise koltukları.** Otomatik seçim (`ccam next`, `--fallback`, `ccam pick`, kontrol panelindeki `n` tuşu ve açtığınızda [`auto_switch`](/features/next#auto-switch)), aynı Claude Team veya Enterprise kuruluşunun koltukları arasında da geçiş yapar. Anthropic'in yardım merkezinde şöyle belirtilir: "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team planındaki her koltuk, adı belirli tek bir kişiye atanır ve onu yalnızca o kişi kullanabilir) ve "Users can't route their work through another user's account to use that user's remaining usage" (kullanıcılar, başka bir kullanıcının kalan kullanım hakkından yararlanmak için işlerini o kullanıcının hesabı üzerinden yürütemez) ([Team planları](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise planları](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) için de durum aynıdır). Bu nedenle otomatik seçimi koltuklar arasında kullanmak Anthropic'in koşullarını ihlal edebilir. Orada kullanıp kullanmamak sizin kararınızdır: buna güvenmeden önce kuruluşunuza ve Anthropic'e danışın. Kişisel planlar (Pro, Max), [SSS'deki koşullar notunda](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) ele alınır.
 
 ## Sayılar nereden geliyor
 
@@ -71,6 +71,8 @@ ccam next --continue  # carry this folder's conversation on as the next account
 ```
 
 `ccam next` giriş yapılmamış hesapları atlar, `--auto` ise %100'deki hesapları (sıfırlanana kadar Claude Code'un dolu bildirdiği bir pencereyi de) ve başka bir kuruluşun hesaplarını atlar. İki hesap konuşma geçmişini paylaşıyorsa `--continue` aynı konuşmayı açar; paylaşmıyorsa Claude Code konuşmayı yeni hesaba kopyalar. Bkz. [paylaşım](/docs/sharing) ve [sonraki hesaba geçme](/features/next#continue).
+
+`config.toml` dosyasının en üstünde `auto_switch = true` olduğunda (Linux ve macOS; varsayılan olarak kapalı), Claude Code etkileşimli bir oturumu limitinde durdurduğunda ve ona benzer başka bir hesabın payı kaldığında ccam bu geçişi kendisi yapar. Ne zaman devreye girdiği ve asla ne yapmadığı için bkz. [`auto_switch`](/features/next#auto-switch).
 
 `claude -p` çalıştıran betikler ve zamanlanmış işler için hesap adından önce `--fallback` koyun. O hesap limitine ulaştığında ccam aynı komutu en çok payı kalan hesapla yeniden çalıştırır ve yalnızca tamamlanan çalıştırmanın çıktısı yazdırılır:
 

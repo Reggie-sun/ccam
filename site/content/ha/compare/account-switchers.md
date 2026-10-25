@@ -1,10 +1,10 @@
 ---
 title: ccam da sauran masu sauya asusun Claude Code
 description: Yadda ccam ya kwatanta da claude-swap, CCS, clausona, clauth, CAAM, cux da sauran kayan aikin sauya asusun Claude Code, da wace hanya ta dace da wane amfani.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 2
 translation: machine
-sourceHash: 6d08203f1ea6
+sourceHash: 3d87ba7c975a
 ---
 
 Kayan aikin sauya asusun Claude Code suna bin ɗaya daga cikin hanyoyi biyu. Yawancinsu suna musanya bayanan shiga a cikin foldar `~/.claude` guda ɗaya, don haka asusu ɗaya ne kawai yake aiki a lokaci guda. Wasu, ciki har da ccam, suna ba kowane asusu foldarsa da `CLAUDE_CONFIG_DIR`, don haka kowane asusu yana nan a shiga kuma da dama za su iya aiki tare. ccam yana ƙara saituna da sabobin MCP da aka raba, kuma yana ci gaba da tattaunawa a foldar wani asusun.
@@ -23,7 +23,7 @@ An ɗauko daga takardun kowane project da source code ɗinsa a ranar 2026-10-20 
 
 | Kayan aiki | Hanya | Asusai a lokaci ɗaya | Amfanin awa 5 da na mako | Idan an kai iyaka | Tsaruka |
 | --- | --- | --- | --- | --- | --- |
-| ccam | Foldoji daban-daban | Ee | Ee, `ccam usage` | Sanarwa a cikin zaman; `ccam next --auto --continue` ko `/ccam:switch` yana kai tattaunawar zuwa asusun da ya fi sarari, ko an raba tarihi ko ba a raba ba; `ccam --fallback` yana sake gudanar da ayyukan `-p` a can da kansa, kuma `ccam pick` yana rarraba workers | Linux, macOS, Windows |
+| ccam | Foldoji daban-daban | Ee | Ee, `ccam usage` | Sanarwa a cikin zaman; `ccam next --auto --continue` ko `/ccam:switch` yana kai tattaunawar zuwa asusun da ya fi sarari, ko an raba tarihi ko ba a raba ba, kuma idan `auto_switch` yana kunne (Linux, macOS) zaman yana motsawa zuwa can da kansa; `ccam --fallback` yana sake gudanar da ayyukan `-p` a can da kansa, kuma `ccam pick` yana rarraba workers | Linux, macOS, Windows |
 | [claude-swap](https://github.com/realiti4/claude-swap) | Yana musanya shiga; foldoji daban-daban da `cswap run` | Ee, da `cswap run` | Ee | `cswap auto` yana musanya shiga a wani mataki; zaman da ke gudana yana ci gaba | Linux, macOS, Windows |
 | [CCS](https://github.com/kaitranntt/ccs) | Foldoji daban-daban | Ee | Wani ɓangare | Rukunin asusai suna miƙa buƙatu ga asusu na gaba ta proxy na cikin gida | Linux, macOS, Windows |
 | [clausona](https://github.com/larcane97/clausona) | Foldoji daban-daban | Ee | Ee | Routes suna zaɓar asusun da ke da sauran quota kafin kowane gudu, za su iya jiran sake saiti, kuma suna ba workers asusai daban-daban | Linux, macOS, Windows |
@@ -39,7 +39,7 @@ ccswap fork ne na claude-swap wanda kuma yake sarrafa shigar Codex. [claude-acco
 
 | Kayan aiki | Harshen da aka rubuta da shi | Yayin da Claude Code ke aiki | Yana kwafa shiga tsakanin wurare | Abin da asusai za su iya raba |
 | --- | --- | --- | --- | --- |
-| ccam | Go, static binary ɗaya | Babu komai: ccam yana maye gurbin kansa da `claude` (a Windows, wanda ba zai iya ba, yana jiran sa; relay na zaɓi yana zama a gefensa) | A'a | Rukunoni: kowanne yana ambaton abubuwan da yake rabawa da asusansa; asusu zai iya kasancewa a rukunoni da dama |
+| ccam | Go, static binary ɗaya | Babu komai ta tsohuwa: ccam yana maye gurbin kansa da `claude` (a Windows, wanda ba zai iya ba, yana jiran sa); idan `relay` ko `auto_switch` yana kunne, ccam yana jira a gefen zaman mu'amala | A'a | Rukunoni: kowanne yana ambaton abubuwan da yake rabawa da asusansa; asusu zai iya kasancewa a rukunoni da dama |
 | claude-swap | Python 3.12 ko sama, ana shigar da shi da uv ko pipx | Babu komai da `cswap run`; `cswap auto` da manhajar menu bar suna ci gaba da aiki | Ee, idan yana musanya shiga | Da `cswap run`: saituna, `CLAUDE.md` da extensions tare, tarihi na zaɓi; ana kwafa sabobin MCP a kowane ƙaddamarwa |
 | CCS | Node.js 18 ko sama, ko Bun | CCS yana zama parent process; rukunin asusai suna ƙara proxy na cikin gida | A'a ga foldojin asusansa; rukunin asusai suna riƙe shigarsu | Raba ko na gida ga kowane asusu, tarihi a cikin context groups; ana kwafa sabobin MCP |
 | clausona | TypeScript, Node.js 20 ko sama | `claude` na yau da kullum yana gudana ta shell function; `clausona run` yana riƙe Node a matsayin parent process; Node process a bayan fage bayan kowace fita | A'a, amma yana sabunta token na asusan da ba sa aiki da kansa don karanta amfaninsu | Komai banda fayilolin kowane asusu, daga asusu na farko ɗaya; tarihi na zaɓi; ba a raba sabobin da aka ƙara da `claude mcp add` ba |
@@ -56,9 +56,9 @@ ccam ba ya taɓa kwafa shigar Claude daga wani wuri zuwa wani. Shigar kowane asu
 
 ccam yana sabunta token da ya ƙare da kansa ne kawai idan ka gudanar da `ccam usage --refresh`. Yana fara ɗaukar kulle, kuma yana ƙi idan wannan asusun yana aiki, ko ta yaya aka fara Claude Code (har da zaman bayan fage da daemon ɗinsu), da kuma lokacin da Claude Code da kansa ke sabunta wannan shigar, don haka ba ya taɓa canza token a ƙarƙashin zaman da ke gudana.
 
-### Babu abin da ke gudana tsakaninka da Claude Code
+### Ta tsohuwa, babu abin da ke gudana tsakaninka da Claude Code
 
-ccam yana karanta fayil ɗaya, yana duba mahaɗansa, sannan yana maye gurbin kansa da `claude` (`exec`). Yayin da kake aiki babu process na ccam, wrapper, proxy ko daemon: standard input, signals da exit code na Claude Code ne, kuma buƙatunsa suna zuwa kai tsaye ga Anthropic. Windows ba zai iya maye gurbin process ba, don haka a can ccam yana fara Claude Code da console ɗaya kuma yana jiran exit code ɗinsa, ba tare da yin wani abu ba.
+ccam yana karanta fayil ɗaya, yana duba mahaɗansa, sannan yana maye gurbin kansa da `claude` (`exec`). Ta tsohuwa, yayin da kake aiki babu process na ccam, wrapper, proxy ko daemon: standard input, signals da exit code na Claude Code ne, kuma buƙatunsa suna zuwa kai tsaye ga Anthropic. Windows ba zai iya maye gurbin process ba, don haka a can ccam yana fara Claude Code da console ɗaya kuma yana jiran exit code ɗinsa, ba tare da yin wani abu ba. Da `relay = true` ko `auto_switch = true`, ccam yana jira ta wannan hanya a gefen zaman mu'amala, don ya iya kai tattaunawa gaba a matsayin wani asusu; buƙatun Claude Code har yanzu suna zuwa kai tsaye ga Anthropic.
 
 Fara asusu ta wannan hanya yana ƙara kusan 4 ms, ƙasa da 6 ms a 95th percentile, da ƙwaƙwalwar ƙoli ta 8 MB ([`scripts/perf-check.sh`](https://github.com/jhyunwoo/ccam/blob/main/scripts/perf-check.sh) da hyperfine, gudu 300). A wannan kwamfutar tafi-da-gidanka, fara Python interpreter kaɗai yana ɗaukar 13 ms, Node.js kuma 31 ms, kafin shiri ya yi komai.
 
@@ -76,11 +76,11 @@ Sabobin MCP, `settings.json`, `CLAUDE.md`, extensions (agents, commands, skills,
 
 ### Wannan tattaunawar a asusu na gaba
 
-`ccam next --auto --continue` yana tambayar kowane asusu amfaninsa a lokaci ɗaya, yana buɗe wanda ya fi sarari kuma yana ci gaba da tattaunawar. Idan an raba tarihi, tattaunawa ɗaya ce; idan ba a raba ba, Claude Code yana kwafar ta cikin sabon asusun (`--resume <file> --fork-session`), kuma ccam yana faɗin tokens nawa amsar farko za ta sake karantawa. Idan iyaka ta dakatar da zama, hook na plugin ɗin ccam yana nuna sanarwa, kuma `/ccam:switch` yana miƙa tattaunawar gaba. Kai ne kake yanke shawarar lokacin sauyawa; babu abin da ke sa ido kan amfaninka a bayan fage, kuma zaɓuɓɓukan atomatik suna zama a cikin ƙungiya (organization) ɗaya, don haka tattaunawar kamfani ba za ta taɓa faɗawa a asusun kai bisa kuskure ba. Layin matsayi yana ba da shawarar umarnin da zarar wani asusu ya kai 90%.
+`ccam next --auto --continue` yana tambayar kowane asusu amfaninsa a lokaci ɗaya, yana buɗe wanda ya fi sarari kuma yana ci gaba da tattaunawar. Idan an raba tarihi, tattaunawa ɗaya ce; idan ba a raba ba, Claude Code yana kwafar ta cikin sabon asusun (`--resume <file> --fork-session`), kuma ccam yana faɗin tokens nawa amsar farko za ta sake karantawa. Idan iyaka ta dakatar da zama, hook na plugin ɗin ccam yana nuna sanarwa, kuma `/ccam:switch` yana miƙa tattaunawar gaba. Ta tsohuwa kai ne kake yanke shawarar lokacin sauyawa. Idan `auto_switch` yana kunne (Linux, macOS), ccam yana motsa zaman da kansa, amma sai bayan Claude Code ya dakatar da shi a iyaka, kuma zuwa asusu irin wanda yake barin kaɗai: wata kujerar ƙungiya iri ɗaya, ko wani tsarin kai ([cikakken bayani](/features/next#auto-switch)). Babu abin da ke sa ido kan amfaninka a bayan fage, kuma ta tsohuwa zaɓuɓɓukan atomatik ba sa taɓa fitar da aiki daga ƙungiyar (organization) Team ko Enterprise ko shigar da shi cikinta, don haka tattaunawar kamfani ba za ta taɓa faɗawa a asusun kai bisa kuskure ba. Layin matsayi yana ba da shawarar umarnin da zarar wani asusu ya kai 90%.
 
 Rubutun umarni (scripts) ba za su iya jiranka ba, don haka `ccam --fallback work -p "…"` yana sauyawa a madadinsu: idan asusun ya kai iyakarsa, umarnin iri ɗaya yana sake gudana a matsayin asusun da ya fi sarari, kuma sakamakon gudun da ya kammala kaɗai ake bugawa. Gazawar da ba ta iyakar amfani ba ana miƙa ta yadda take. Don workers masu aiki a lokaci guda, `ccam pick` yana ba kowanne asusu daban da ke da sarari, kuma dukansu biyu suna fita da code 75 idan babu asusun da ke da sauran sarari.
 
-**Kujeru (seats) na Team da Enterprise.** Zaɓin atomatik (`ccam next`, `--fallback`, `ccam pick`, maɓallin `n` na dashboard) yana kuma sauyawa tsakanin kujerun ƙungiyar Claude Team ko Enterprise iri ɗaya. Cibiyar taimako ta Anthropic ta ce "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (ana ba da kowace kujera a tsarin Team da sunan takamaiman mutum ɗaya, kuma wannan mutumin kaɗai ne aka yarda ya yi amfani da ita) da "Users can't route their work through another user's account to use that user's remaining usage" (masu amfani ba za su iya tura aikinsu ta asusun wani mai amfani ba domin su ci gajiyar ragowar amfanin wannan mai amfanin) ([Tsare-tsaren Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); haka ma ga [tsare-tsaren Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Don haka yin amfani da zaɓin atomatik tsakanin kujeru na iya saɓa wa sharuɗɗan Anthropic. Ka tuntuɓi ƙungiyarka da Anthropic kafin ka dogara da shi. Don tsare-tsaren kai (Pro, Max), duba [bayanin sharuɗɗa a cikin Tambayoyin da ake yawan yi](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Kujeru (seats) na Team da Enterprise.** Zaɓin atomatik (`ccam next`, `--fallback`, `ccam pick`, maɓallin `n` na dashboard, da [`auto_switch`](/features/next#auto-switch) idan ka kunna shi) yana kuma sauyawa tsakanin kujerun ƙungiyar Claude Team ko Enterprise iri ɗaya. Cibiyar taimako ta Anthropic ta ce "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (ana ba da kowace kujera a tsarin Team da sunan takamaiman mutum ɗaya, kuma wannan mutumin kaɗai ne aka yarda ya yi amfani da ita) da "Users can't route their work through another user's account to use that user's remaining usage" (masu amfani ba za su iya tura aikinsu ta asusun wani mai amfani ba domin su ci gajiyar ragowar amfanin wannan mai amfanin) ([Tsare-tsaren Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); haka ma ga [tsare-tsaren Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Don haka yin amfani da zaɓin atomatik tsakanin kujeru na iya saɓa wa sharuɗɗan Anthropic. Ko za ka yi amfani da shi a can ya rage naka: ka tuntuɓi ƙungiyarka da Anthropic kafin ka dogara da shi. Don tsare-tsaren kai (Pro, Max), duba [bayanin sharuɗɗa a cikin Tambayoyin da ake yawan yi](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 ### Asusun da ya dace a kowace folda
 
@@ -88,11 +88,11 @@ Rubutun umarni (scripts) ba za su iya jiranka ba, don haka `ccam --fallback work
 
 ### Binary ɗaya, saukarwa da aka tantance
 
-ccam static binary ne mai kusan 10 MB ba tare da runtime da za a shigar ba, don Linux, macOS da Windows. Rubutun shigarwa (`install.sh`, `install.ps1`) da `ccam update` suna tantance kowace saukarwa da SHA-256 checksums na release, kuma ccam ba ya taɓa sabunta kansa ba tare da tambaya ba. Ba shi da telemetry: buƙatun da yake yi kawai su ne tambayoyin amfani ga Anthropic don asusanka, a lokaci ɗaya tare da iyakar daƙiƙa 3 da cache na daƙiƙa 60, tambayar dashboard ga GitHub game da sabon release lokacin da ya buɗe, da saukarwar da ka nema. Da `usage_source = "claude"`, har waɗannan ma suna bi ta Claude Code, kuma ccam ba ya taɓa riƙe token.
+ccam static binary ne mai kusan 10 MB ba tare da runtime da za a shigar ba, don Linux, macOS da Windows. Rubutun shigarwa (`install.sh`, `install.ps1`) da `ccam update` suna tantance kowace saukarwa da SHA-256 checksums na release, kuma ccam ba ya taɓa sabunta kansa ba tare da tambaya ba. Ba shi da telemetry: buƙatun da yake yi kawai su ne tambayoyin amfani ga Anthropic don asusanka, a lokaci ɗaya tare da iyakar daƙiƙa 3 da cache na daƙiƙa 60, tambayar dashboard ga GitHub game da sabon release lokacin da ya buɗe, da saukarwar da ka nema. Da `usage_source = "claude"`, har waɗannan ma suna bi ta Claude Code, kuma ccam ba ya aika token.
 
 ## Inda sauran kayan aikin suka fi
 
-- claude-swap, clauth, cux, CAAM da CCSwitcher za su iya sauya zaman mu'amala da ke gudana da kansu idan wani asusu ya wuce wani matakin amfani. ccam yana sauya gudun `-p` da `--fallback` kuma yana barin zaman mu'amala a hannunka, tare da sanarwa a iyakar da `/ccam:switch`.
+- claude-swap, clauth, cux, CAAM da CCSwitcher za su iya sauya zaman mu'amala da ke gudana da kansu idan wani asusu ya wuce wani matakin amfani. ccam yana sauya gudun `-p` da `--fallback`, kuma yana motsa zaman mu'amala da kansa ne kawai idan `auto_switch` yana kunne (Linux, macOS) kuma sai bayan Claude Code ya dakatar da shi a iyaka; in ba haka ba kai ne kake motsa shi, tare da sanarwa a iyakar da `/ccam:switch`.
 - A Windows ba tare da Developer Mode ba, ccam yana raba foldoji amma ba zai iya raba fayiloli guda ɗaya kamar `settings.json` ba (a lokacin `ccam add` na farko yana raba sabobin MCP da extensions kawai); claude-swap da CCS suna kwafa su a can maimakon haka.
 - CCSwitcher, Claude Switcher da claude-swap suna nuna amfani a menu bar na macOS.
 - CCS, clausona, CAAM, clauth, ccswap da Claude Switcher suna kuma sarrafa Codex da wasu coding agents.
@@ -101,6 +101,6 @@ ccam static binary ne mai kusan 10 MB ba tare da runtime da za a shigar ba, don 
 
 ## Wanne ya dace?
 
-Zaɓi kayan aikin da ke musanya shiga idan kana amfani da asusu ɗaya a lokaci guda ko kana son zaman da ke gudana su sauya ta atomatik. Zaɓi ccam idan kana son asusai gefe da gefe, saiti ɗaya da aka raba, wannan tattaunawar a asusu na gaba, kuma babu abin da ke gudana kusa da Claude Code, a Linux, macOS ko Windows. Idan ba ka buƙatar raba komai, [shell alias kawai](/compare/aliases) ya isa.
+Zaɓi kayan aikin da ke musanya shiga idan kana amfani da asusu ɗaya a lokaci guda ko kana son zaman da ke gudana su sauya kafin iyakar ko ta hanyar musanya shiga. Zaɓi ccam idan kana son asusai gefe da gefe, saiti ɗaya da aka raba, wannan tattaunawar a asusu na gaba kuma, ta tsohuwa, babu abin da ke gudana kusa da Claude Code, a Linux, macOS ko Windows. Idan ba ka buƙatar raba komai, [shell alias kawai](/compare/aliases) ya isa.
 
 Ko an yarda ka yi amfani da asusai da dama ya dogara da sharuɗɗan kowane asusu. Duba su kafin ka yi haka.

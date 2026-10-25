@@ -1,10 +1,10 @@
 ---
 title: 用量限制
 description: ccam usage 一次顯示每個帳號的 5 小時和每週限制，ccam statusline 則在 Claude Code 中顯示帳號名稱和用量。
-updated: 2026-10-24
+updated: 2026-10-25
 order: 7
 translation: machine
-sourceHash: "a14b1da71a1a"
+sourceHash: "91ad20327289"
 ---
 
 `ccam usage` 會顯示每個帳號已使用了多少 5 小時限制、每週限制，以及各模型自己的每週限制（例如 Fable），每項限制一個長條，並附上距離重設的時間。在開始一項長時間的工作之前，或 Claude Code 告訴你快要達到限制時，可以用它查看哪個帳號還有剩餘額度。`ccam statusline` 是 Claude Code 的狀態列指令：它會在 Claude Code 中顯示帳號名稱和用量，並為 `ccam usage` 儲存這些數字。
@@ -20,7 +20,7 @@ ccam usage -v               # add where the numbers came from
 ccam usage --json           # machine-readable, one object per account
 ccam usage --source cache   # saved numbers only, no network
 ccam usage --refresh        # also renew expired logins of accounts not running
-ccam usage --source claude  # let Claude Code look it up: ccam never touches a token
+ccam usage --source claude  # let Claude Code look it up: ccam sends no token
 ccam statusline install     # set the status line in every account's settings.json
 ```
 
@@ -40,7 +40,7 @@ $ ccam usage
 
 每個帳號先有一行，顯示編號、名稱和數字的新舊程度；`(cached)` 代表數字來自已儲存的檔案，而不是端點。下面每項限制佔一行，顯示 20 格的長條、百分比和距離區間重設的時間：`5-hour`、`Weekly`（所有模型），接著是各模型自己的每週區間，例如 `Fable`。帳號沒有的區間會顯示 `-`。百分比從 80% 起變成黃色，達到 100% 時變成紅色。當 Claude Code 因用量上限拒絕請求而回報某個區間已滿時，該區間在重設前都會顯示 100%，不論已儲存的數字是多少（請參閱[上限記錄](#the-limit-record)）。在終端機中，所有帳號會先一起顯示為 `fetching…`，並在各帳號回應時繪製它的各行。最後一行會列出 [`ccam next --auto`](/features/next) 依相同規則會選擇的帳號（`auto_max_usage`、`auto_strategy`、執行中的工作階段；除非設定了 `cross_org`，否則只考慮上次使用的帳號所屬組織的帳號；任何區間達到 100% 的帳號都會略過，所以每週額度已用完的帳號絕不會被列出），只在你有多個帳號時才會出現。使用預設的 `headroom` 策略時，這一行為 `→ Most headroom: <name>`；使用 `expiring` 或 `balance` 時則會說明原因，例如 `→ next --auto picks personal: its 5-hour window resets first, in 1h 12m (40% of its 5 hours used)`。
 
-**Team 和 Enterprise 席位。** 自動選擇（`ccam next`、`--fallback`、`ccam pick`、儀表板的 `n`）也會在同一個 Claude Team 或 Enterprise 組織的席位之間切換。Anthropic 說明中心關於 [Team 方案](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)的文章寫道：「Each seat on a Team plan is assigned to one named individual, and only that person may use it」（Team 方案的每個席位都指派給一位具名的個人，而且只有這個人可以使用），以及「Users can't route their work through another user's account to use that user's remaining usage」（使用者不能經由其他使用者的帳號處理自己的工作，藉此使用對方剩餘的用量）；關於 [Enterprise 方案](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)的文章也是如此。因此，在席位之間使用自動選擇可能會違反 Anthropic 的條款。在依賴這項功能之前，請先向你所屬的組織和 Anthropic 確認。個人方案（Pro、Max）的情況請參閱[常見問題中關於條款的說明](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)。
+**Team 和 Enterprise 席位。** 自動選擇（`ccam next`、`--fallback`、`ccam pick`、儀表板的 `n`，以及你開啟後的 [`auto_switch`](/features/next#auto-switch)）也會在同一個 Claude Team 或 Enterprise 組織的席位之間切換。Anthropic 說明中心關於 [Team 方案](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)的文章寫道：「Each seat on a Team plan is assigned to one named individual, and only that person may use it」（Team 方案的每個席位都指派給一位具名的個人，而且只有這個人可以使用），以及「Users can't route their work through another user's account to use that user's remaining usage」（使用者不能經由其他使用者的帳號處理自己的工作，藉此使用對方剩餘的用量）；關於 [Enterprise 方案](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)的文章也是如此。因此，在席位之間使用自動選擇可能會違反 Anthropic 的條款。要不要在這種情況下使用它由你決定：在依賴這項功能之前，請先向你所屬的組織和 Anthropic 確認。個人方案（Pro、Max）的情況請參閱[常見問題中關於條款的說明](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)。
 
 未登入的帳號會顯示 `not logged in → ccam login <name>`，API 金鑰帳號則顯示 `no limits (API)`。存取權杖過期時會顯示 ``access token expired; `ccam <name>` renews it when it starts``，有已儲存的數字時則顯示在它們上方：Claude Code 會在下次啟動時更新它。整個登入已過期（因為更新權杖過期，或伺服器拒絕後 Claude Code 已清除它）時，會顯示 `` login expired → `ccam login <name>` ``。
 
@@ -97,7 +97,7 @@ $ ccam usage
 
 ### 上限記錄
 
-當 Claude Code 因用量上限而停止某一輪時，[ccam 外掛](/docs/install#claude-code-plugin)的 hook 會從對話中讀取被拒絕的請求：哪個區間已滿（5 小時、每週、Opus 或 Sonnet），以及它何時重設。它會把這些寫入 `~/.local/state/ccam/usage/<name>.limit.json`。`Fetch` 會把這份記錄覆蓋在它從每個來源得知的其他所有內容之上：記錄中的每個區間在重設前都算作 100%，不論已儲存的數字多舊或多低，所以 `ccam next --auto`、`ccam pick` 和 `--fallback` 在那之前都不會再次選擇該帳號。沒有其他已知資訊時，帳號顯示的就只有這份記錄（加上 `-v` 時為 `source: the usage limit Claude Code reported`）。沒有人在操作的工作階段（`-p`、背景工作階段）不會寫入記錄，組織的停用（用量用完、群組設為 $0）也不會，因為管理員隨時可以解除它。`ccam login` 登入另一個 Claude 帳號時會捨棄這份記錄；刪除該檔案也能清除它。
+當 Claude Code 因用量上限而停止某一輪時，[ccam 外掛](/docs/install#claude-code-plugin)的 hook 會從對話中讀取被拒絕的請求：哪個區間已滿（5 小時、每週、Opus 或 Sonnet），以及它何時重設。它會把這些寫入 `~/.local/state/ccam/usage/<name>.limit.json`。`Fetch` 會把這份記錄覆蓋在它從每個來源得知的其他所有內容之上：記錄中的每個區間在重設前都算作 100%，不論已儲存的數字多舊或多低，所以 `ccam next --auto`、`ccam pick`、`--fallback` 和 [`auto_switch`](/features/next#auto-switch) 在那之前都不會再次選擇該帳號。沒有其他已知資訊時，帳號顯示的就只有這份記錄（加上 `-v` 時為 `source: the usage limit Claude Code reported`）。沒有人在操作的工作階段（`-p`、背景工作階段）不會寫入記錄，組織的停用（用量用完、群組設為 $0）也不會，因為管理員隨時可以解除它。`ccam login` 登入另一個 Claude 帳號時會捨棄這份記錄；刪除該檔案也能清除它。
 
 ### 更新權杖
 

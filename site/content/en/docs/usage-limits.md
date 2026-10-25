@@ -1,7 +1,7 @@
 ---
 title: Usage limits and switching accounts
 description: See the 5-hour and weekly usage of every Claude Code account with ccam usage, and open the account with the most room with ccam next --auto.
-updated: 2026-10-24
+updated: 2026-10-25
 published: 2026-10-19
 order: 5
 translation: source
@@ -28,7 +28,7 @@ $ ccam usage
 
 Each account gets a line with how old its numbers are, then one bar per limit with the time until it resets: the 5-hour window, the weekly window for all models, and each model's own weekly window, such as Fable. From 80% a bar turns yellow, and at 100% red. The last line names the account `ccam next --auto` would open; with `auto_strategy = "expiring"` or `"balance"` it reads `→ next --auto picks <name>: <reason>` instead.
 
-**Team and Enterprise seats.** Automatic choice (`ccam next`, `--fallback`, `ccam pick`, the dashboard's `n`) also switches between seats of the same Claude Team or Enterprise organization. Anthropic's help center says "Each seat on a Team plan is assigned to one named individual, and only that person may use it" and "Users can't route their work through another user's account to use that user's remaining usage" ([Team plans](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); likewise for [Enterprise plans](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Using automatic choice between seats may therefore violate Anthropic's terms. Check with your organization and Anthropic before you rely on it. Personal plans (Pro, Max) are covered by the [terms note in the FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Team and Enterprise seats.** Automatic choice (`ccam next`, `--fallback`, `ccam pick`, the dashboard's `n`, and [`auto_switch`](/features/next#auto-switch) when you turn it on) also switches between seats of the same Claude Team or Enterprise organization. Anthropic's help center says "Each seat on a Team plan is assigned to one named individual, and only that person may use it" and "Users can't route their work through another user's account to use that user's remaining usage" ([Team plans](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); likewise for [Enterprise plans](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Using automatic choice between seats may therefore violate Anthropic's terms. Whether you use it there is your call: check with your organization and Anthropic before you rely on it. Personal plans (Pro, Max) are covered by the [terms note in the FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 ## Where the numbers come from
 
@@ -71,6 +71,8 @@ ccam next --continue  # carry this folder's conversation on as the next account
 ```
 
 `ccam next` skips accounts that are not logged in, and `--auto` skips accounts at 100% (also a window Claude Code reported full, until its reset) and accounts of another organization. When the two accounts share conversation history, `--continue` opens the same conversation; otherwise Claude Code copies it into the new account. See [sharing](/docs/sharing) and [switching to the next account](/features/next#continue).
+
+With `auto_switch = true` at the top of `config.toml` (Linux and macOS; off by default), ccam makes this switch itself when Claude Code stops an interactive session at its limit and another account like it has room. See [`auto_switch`](/features/next#auto-switch) for when it acts and what it never does.
 
 For scripts and scheduled jobs that run `claude -p`, put `--fallback` before the account name. When that account reaches its limit, ccam runs the same command again as the account with the most room, and only the output of the run that finished is printed:
 

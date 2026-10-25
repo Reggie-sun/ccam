@@ -1,15 +1,15 @@
 ---
 title: 為指令碼選擇帳號
 description: ccam pick 為指令碼印出剩餘額度最多的帳號，讓同時啟動的工作程序使用不同帳號，沒有帳號有額度時以 75 結束。
-updated: 2026-10-24
+updated: 2026-10-25
 order: 12
 translation: machine
-sourceHash: "a8baeb64de99"
+sourceHash: "5c4f74db9714"
 ---
 
 `ccam pick` 會印出剩餘額度最多的已登入帳號名稱，讓指令碼用它啟動 Claude Code。只要有足夠多還有額度的帳號，同時啟動的工作程序就會各自拿到不同的帳號，所以一批 `claude -p` 工作會分散到你的各個帳號，而不是把一個帳號用光。
 
-**Team 和 Enterprise 席位。** 自動選擇（`ccam next`、`--fallback`、`ccam pick`、儀表板的 `n`）也會在同一個 Claude Team 或 Enterprise 組織的席位之間切換。Anthropic 說明中心關於 [Team 方案](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)的文章寫道：「Each seat on a Team plan is assigned to one named individual, and only that person may use it」（Team 方案的每個席位都指派給一位具名的個人，而且只有這個人可以使用），以及「Users can't route their work through another user's account to use that user's remaining usage」（使用者不能經由其他使用者的帳號處理自己的工作，藉此使用對方剩餘的用量）；關於 [Enterprise 方案](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)的文章也是如此。因此，在席位之間使用自動選擇可能會違反 Anthropic 的條款。在依賴這項功能之前，請先向你所屬的組織和 Anthropic 確認。個人方案（Pro、Max）的情況請參閱[常見問題中關於條款的說明](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)。
+**Team 和 Enterprise 席位。** 自動選擇（`ccam next`、`--fallback`、`ccam pick`、儀表板的 `n`，以及你開啟後的 [`auto_switch`](/features/next#auto-switch)）也會在同一個 Claude Team 或 Enterprise 組織的席位之間切換。Anthropic 說明中心關於 [Team 方案](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)的文章寫道：「Each seat on a Team plan is assigned to one named individual, and only that person may use it」（Team 方案的每個席位都指派給一位具名的個人，而且只有這個人可以使用），以及「Users can't route their work through another user's account to use that user's remaining usage」（使用者不能經由其他使用者的帳號處理自己的工作，藉此使用對方剩餘的用量）；關於 [Enterprise 方案](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)的文章也是如此。因此，在席位之間使用自動選擇可能會違反 Anthropic 的條款。要不要在這種情況下使用它由你決定：在依賴這項功能之前，請先向你所屬的組織和 Anthropic 確認。個人方案（Pro、Max）的情況請參閱[常見問題中關於條款的說明](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)。
 
 ## 用法
 
@@ -59,7 +59,7 @@ $ ccam pick --json
 1. ccam 列出這個資料夾會啟動的帳號所屬組織（請參閱[組織](/features/next#auto)）中已登入的帳號（API 金鑰帳號和 Console 登入沒有限制，因此不列入）；和該帳號登入同一個 Claude 帳號的資料夾也不列入。
 2. 它取得一個鎖定（`~/.local/state/ccam/picks.lock`），所以同時執行的選擇會依序進行。
 3. 它以和 `ccam usage` 相同的方式一次查詢所有帳號的用量，並使用 60 秒的快取。Claude Code 回報已滿的區間在重設前都算作 100%（[上限記錄](/features/usage#the-limit-record)），所以剛達到上限的帳號即使已儲存的數字顯示還有餘裕，也不會被列入。
-4. 先排除過去 2 分鐘內被選過的帳號（`~/.local/state/ccam/picks/<name>`；日期晚於時鐘目前時間的選取紀錄不算數），再由 `ccam next --auto` 的[選擇規則](/features/next#auto)在其餘帳號中選擇：優先選低於 `auto_max_usage` 的帳號，依策略選擇，絕不選擇用量 100% 的帳號。
+4. 先排除過去 2 分鐘內被選過的帳號，不論是由 `ccam pick` 選中，還是 [`auto_switch`](/features/next#auto-switch) 把工作階段移到那裡（`~/.local/state/ccam/picks/<name>`；日期晚於時鐘目前時間的選取紀錄不算數），再由 `ccam next --auto` 的[選擇規則](/features/next#auto)在其餘帳號中選擇：優先選低於 `auto_max_usage` 的帳號，依策略選擇，絕不選擇用量 100% 的帳號。如果因此略過了規則原本會最先選的帳號，`--json` 的 `reason` 會說明這一點：`30% of its 5 hours used; work was picked a moment ago`。
 5. 如果每個還有額度的帳號最近都被選過，規則會再次在所有帳號中選擇，所以三個帳號上的第四個工作程序會和其他工作程序共用一個帳號。
 6. 記錄這次選擇並釋放鎖定，然後印出名稱。
 

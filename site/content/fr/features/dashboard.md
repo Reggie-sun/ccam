@@ -1,18 +1,18 @@
 ---
 title: "Le tableau de bord"
 description: "ccam dans un terminal ouvre un tableau de bord plein écran : comptes, groupes, dossiers, extensions et vérifications ; chaque modification montre son plan."
-updated: 2026-10-24
+updated: 2026-10-25
 order: 15
 translation: machine
-sourceHash: "e48ca2c5a643"
+sourceHash: "98ccf6cd81e9"
 ---
 
-`ccam` sans argument ouvre un tableau de bord plein écran quand l'entrée et la sortie standard sont un terminal ; sinon, il affiche `ccam list`. Le tableau de bord montre chaque compte avec son utilisation et ses groupes, et fait ce que font les commandes : lancer, ajouter, connecter, changer de groupes, définir des règles de dossier, vérifier et réparer. Un lancement le ferme ; ajouter un compte ou se connecter le quitte le temps de passer au terminal, puis y revient.
+`ccam` sans argument ouvre un tableau de bord plein écran quand l'entrée et la sortie standard sont un terminal ; sinon, il affiche `ccam list`. Le tableau de bord montre chaque compte avec son utilisation et ses groupes, et fait ce que font les commandes : lancer, ajouter, connecter, changer de groupes, définir des règles de dossier, lister les sessions en arrière-plan, vérifier et réparer. Un lancement, ou le rattachement à une session en arrière-plan, le ferme ; ajouter un compte ou se connecter le quitte le temps de passer au terminal, puis y revient.
 
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -40,12 +40,13 @@ La première image n'est dessinée qu'à partir de `config.toml`, en bien moins 
 | Onglet | Ce qu'il montre | Touches |
 | --- | --- | --- |
 | Accounts | numéro, nom, adresse e-mail, barres sur 5 heures, hebdomadaire et Fable, dernière utilisation, groupes ; `✔` le compte par défaut, `▸` le compte de ce dossier, `•` en cours d'exécution (y compris Claude Code lancé sans ccam : `claude` seul, un IDE, les sessions en arrière-plan et leur démon) | ci-dessous |
+| Agents | ce que liste [`ccam agents`](/features/agents) : les sessions en arrière-plan et les sessions ouvertes de tous les comptes, avec leur état, leur dossier et leur heure de démarrage (ci-dessous) | `enter` se rattacher (comme `ccam attach`), `x` arrêter, `r` recharger |
 | Groups | chaque groupe, ce qu'il partage et ses comptes, ainsi que les comptes sans groupe | `enter` modifier, `n` nouveau, `e` renommer, `x` supprimer |
 | Folders | les règles [`ccam folder`](/features/folder) et celle qui s'applique ici, y compris quand vous êtes arrivé dans le dossier par un lien symbolique (les nouvelles règles sont enregistrées avec les liens résolus) | `n` utiliser un compte ici, `enter` changer, `x` supprimer |
 | Extensions | ce que montre [`ccam ext`](/features/ext), chaque extension une seule fois avec les groupes dont elle provient, `off:` les comptes où un plugin n'est pas activé, les serveurs qu'un compte a pour ce seul dossier parmi les siens, `This folder's project`, et les problèmes qui n'appartiennent à aucun compte | `r` recharger |
 | Health | ce que signale [`ccam doctor`](/features/doctor), sous forme d'un encadré par compte (ci-dessous) | `f` réparer l'encadré sélectionné, `F` tout réparer (`doctor --fix`), `↑`/`↓` passer d'un encadré à l'autre |
 
-`←`/`→` ou `Tab` changent d'onglet, `?` liste les touches de l'onglet courant, `r` consulte à nouveau l'utilisation sans le cache court, et `q` ou `Esc` quitte.
+`←`/`→` ou `Tab` changent d'onglet, `?` liste les touches de l'onglet courant, `r` consulte à nouveau l'utilisation sans le cache court et recharge les onglets Agents, Extensions et Health, et `q` ou `Esc` quitte.
 
 ## Touches de l'onglet Accounts
 
@@ -66,7 +67,7 @@ La première image n'est dessinée qu'à partir de `config.toml`, en bien moins 
 | `c` | Définir ou supprimer sa commande raccourci |
 | `x` | Le supprimer (demande d'abord confirmation, sur Non par défaut) |
 
-**Sièges Team et Enterprise.** Le choix automatique (`ccam next`, `--fallback`, `ccam pick`, la touche `n` du tableau de bord) passe aussi d'un siège à l'autre au sein d'une même organisation Claude Team ou Enterprise. Le centre d'aide d'Anthropic indique : « Each seat on a Team plan is assigned to one named individual, and only that person may use it » (chaque siège d'une offre Team est attribué à une personne nommément désignée, et seule cette personne peut l'utiliser) et « Users can't route their work through another user's account to use that user's remaining usage » (les utilisateurs ne peuvent pas faire passer leur travail par le compte d'un autre utilisateur pour profiter de l'utilisation restante de celui-ci) ([offres Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129) ; de même pour les [offres Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Utiliser le choix automatique entre plusieurs sièges peut donc enfreindre les conditions d'Anthropic. Renseignez-vous auprès de votre organisation et d'Anthropic avant de vous y fier. Les offres personnelles (Pro, Max) sont traitées dans la [note de la FAQ sur les conditions](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Sièges Team et Enterprise.** Le choix automatique (`ccam next`, `--fallback`, `ccam pick`, la touche `n` du tableau de bord, et [`auto_switch`](/features/next#auto-switch) lorsque vous l'activez) passe aussi d'un siège à l'autre au sein d'une même organisation Claude Team ou Enterprise. Le centre d'aide d'Anthropic indique : « Each seat on a Team plan is assigned to one named individual, and only that person may use it » (chaque siège d'une offre Team est attribué à une personne nommément désignée, et seule cette personne peut l'utiliser) et « Users can't route their work through another user's account to use that user's remaining usage » (les utilisateurs ne peuvent pas faire passer leur travail par le compte d'un autre utilisateur pour profiter de l'utilisation restante de celui-ci) ([offres Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129) ; de même pour les [offres Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Utiliser le choix automatique entre plusieurs sièges peut donc enfreindre les conditions d'Anthropic. C'est à vous de décider si vous l'utilisez dans ce cas : renseignez-vous auprès de votre organisation et d'Anthropic avant de vous y fier. Les offres personnelles (Pro, Max) sont traitées dans la [note de la FAQ sur les conditions](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 ## L'onglet Health
 
@@ -95,6 +96,28 @@ L'onglet Health lance les vérifications de [`ccam doctor`](/features/doctor) à
 ```
 
 `↑`/`↓` passent d'un encadré à l'autre, et l'encadré sélectionné a une bordure de la couleur d'accentuation. `f` ne répare que l'encadré sélectionné, comme le ferait `ccam doctor --fix` : sur l'encadré d'un compte, il ne répare que ce compte, et sur l'encadré `General`, les constats qui n'appartiennent à aucun compte (chemins des plugins et raccourcis) ; tous les autres comptes sont seulement vérifiés à nouveau. Il demande d'abord (``Like `ccam doctor --fix`: missing links and group folders are made, and a real file where a link belongs is backed up first; where the group has its own copy, the account then sees the group's. Nothing is lost.``), et un encadré sans rien à réparer affiche simplement `nothing to repair in <name>`. `F` répare tout d'un coup, comme `ccam doctor --fix`, et `r` vérifie à nouveau.
+
+## L'onglet Agents
+
+L'onglet Agents montre ce qu'affiche [`ccam agents`](/features/agents) : les sessions en arrière-plan et les sessions ouvertes de tous les comptes, avec le compte auquel chacune appartient. Il interroge le Claude Code de chaque compte en même temps (`claude agents --json`, jusqu'à 15 secondes chacun) à la première ouverture de l'onglet, sur `r`, après un arrêt et après une modification de la configuration, et affiche `Asking every account's Claude Code for its sessions…` jusqu'à ce que tous aient répondu.
+
+```console
+  Accounts   Agents   Groups   Folders   Extensions   Health
+ Background agents and open sessions of every account; enter attaches to one.
+
+    Account   ID        Name   State          Folder      Started
+ ❯  work      -         -      open (busy)    ~/code/web  now
+    personal  49ec0028  probe  blocked, idle  ~/code/app  12m
+
+ ✘ lab: could not list its sessions: exit status 1 'claude agents --json' is
+   not available in this environment.
+
+ enter to attach · x to stop · r to reload · ? for shortcuts
+```
+
+`State` est l'état d'une session en arrière-plan et ce que fait son processus, ou `open` pour une session interactive, comme dans `ccam agents`. Un compte qui n'a pas pu être interrogé reçoit une ligne `✘` sous la liste avec ce qu'a répondu Claude Code, comme `lab` ci-dessus, dont la vue des agents est désactivée. Les sessions en arrière-plan terminées sont laissées de côté (`ccam agents --all` les liste), et quand tous les comptes ont répondu sans aucune session, l'onglet affiche ``No sessions. Start one in the background with `ccam <account> --bg "…"`.`` Sur un terminal étroit, l'onglet retire `Started`, puis `Name`, puis `Folder`, et coupe un dossier trop long par la gauche.
+
+`Enter` sur une session en arrière-plan ferme le tableau de bord et ouvre la session dans ce terminal sous son compte, comme le fait `ccam attach <id>` ; le tableau de bord ne revient pas (dans Claude Code, `←` mène à sa vue des agents et `Ctrl+Z` au shell). Une session ouverte n'a pas d'identifiant, donc `Enter` et `x` indiquent seulement qu'il faut une session en arrière-plan. `x` demande d'abord, en commençant sur `No, keep it` : ``It runs as personal. Like `ccam personal stop 49ec0028`, Claude Code stops it and keeps its conversation, which `ccam attach 49ec0028` opens again.`` Sur oui, ccam exécute `claude stop <id>` sous ce compte, affiche ``49ec0028 (personal) stopped; `ccam attach 49ec0028` opens it again`` ou la raison de l'échec, puis relit la liste.
 
 ## Changer les groupes
 

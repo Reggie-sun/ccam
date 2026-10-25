@@ -1,15 +1,15 @@
 ---
 title: انتخاب حساب برای اسکریپت‌ها
 description: ccam pick حسابی را که بیشترین ظرفیت را دارد برای اسکریپت چاپ می‌کند، به کارگرهای هم‌زمان حساب‌های متفاوت می‌دهد و وقتی ظرفیتی نماند با کد 75 خارج می‌شود.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 12
 translation: machine
-sourceHash: a8baeb64de99
+sourceHash: "5c4f74db9714"
 ---
 
 `ccam pick` نام حساب واردشده‌ای را که بیشترین ظرفیت را دارد چاپ می‌کند تا اسکریپت Claude Code را با آن آغاز کند. کارگرهایی که هم‌زمان آغاز می‌شوند، تا وقتی حساب‌های کافی با ظرفیت باشد، هر کدام حساب متفاوتی می‌گیرند؛ پس دسته‌ای از کارهای `claude -p` به جای خالی کردن یک حساب، میان حساب‌های شما پخش می‌شود.
 
-**صندلی‌های Team و Enterprise.** انتخاب خودکار (`ccam next`، `--fallback`، `ccam pick`، کلید `n` در داشبورد) میان صندلی‌های همان سازمان Claude Team یا Enterprise هم جابه‌جا می‌شود. مرکز راهنمای Anthropic می‌گوید: «Each seat on a Team plan is assigned to one named individual, and only that person may use it» (هر صندلی در طرح Team به نام یک فرد مشخص اختصاص داده می‌شود و فقط همان شخص اجازه دارد از آن استفاده کند) و «Users can't route their work through another user's account to use that user's remaining usage» (کاربران نمی‌توانند کار خود را از طریق حساب کاربر دیگری انجام دهند تا از سهمیه مصرف باقی‌مانده آن کاربر استفاده کنند) ([طرح‌های Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)؛ و همین‌طور برای [طرح‌های Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). بنابراین استفاده از انتخاب خودکار میان صندلی‌ها ممکن است شرایط Anthropic را نقض کند. پیش از آنکه به آن تکیه کنید، از سازمان خود و Anthropic بپرسید. برای طرح‌های شخصی (Pro، Max)، [توضیح شرایط در پرسش‌های متداول](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) را ببینید.
+**صندلی‌های Team و Enterprise.** انتخاب خودکار (`ccam next`، `--fallback`، `ccam pick`، کلید `n` در داشبورد، و [`auto_switch`](/features/next#auto-switch) وقتی آن را روشن کنید) میان صندلی‌های همان سازمان Claude Team یا Enterprise هم جابه‌جا می‌شود. مرکز راهنمای Anthropic می‌گوید: «Each seat on a Team plan is assigned to one named individual, and only that person may use it» (هر صندلی در طرح Team به نام یک فرد مشخص اختصاص داده می‌شود و فقط همان شخص اجازه دارد از آن استفاده کند) و «Users can't route their work through another user's account to use that user's remaining usage» (کاربران نمی‌توانند کار خود را از طریق حساب کاربر دیگری انجام دهند تا از سهمیه مصرف باقی‌مانده آن کاربر استفاده کنند) ([طرح‌های Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)؛ و همین‌طور برای [طرح‌های Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). بنابراین استفاده از انتخاب خودکار میان صندلی‌ها ممکن است شرایط Anthropic را نقض کند. اینکه در آنجا از آن استفاده کنید یا نه، تصمیم خودتان است: پیش از آنکه به آن تکیه کنید، از سازمان خود و Anthropic بپرسید. برای طرح‌های شخصی (Pro، Max)، [توضیح شرایط در پرسش‌های متداول](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) را ببینید.
 
 ## نحوه استفاده
 
@@ -59,7 +59,7 @@ $ ccam pick --json
 1. ccam حساب‌های واردشده را در سازمان حسابی که این پوشه اجرا می‌کرد فهرست می‌کند (حساب‌های کلید API و ورودهای Console سقفی ندارند و کنار گذاشته می‌شوند؛ [سازمان‌ها](/features/next#auto) را ببینید)؛ پوشه‌ای که به همان حساب Claude آن حساب وارد شده باشد هم کنار گذاشته می‌شود.
 2. یک قفل می‌گیرد (`~/.local/state/ccam/picks.lock`)، تا انتخاب‌هایی که هم‌زمان اجرا می‌شوند یکی پس از دیگری انجام شوند.
 3. مصرف همه حساب‌ها را هم‌زمان می‌پرسد، به همان شکلی که `ccam usage` می‌پرسد، با حافظه نهان ۶۰ ثانیه‌ای. پنجره‌ای که Claude Code پر گزارش کرده تا بازنشانی‌اش ۱۰۰٪ حساب می‌شود ([ثبت سقف مصرف](/features/usage#the-limit-record))، پس حسابی که همین حالا به سقفش رسیده بیرون می‌ماند، حتی وقتی عددهای ذخیره‌شده‌اش ظرفیت نشان می‌دهند.
-4. ابتدا حساب‌هایی که در ۲ دقیقه گذشته انتخاب شده‌اند (`~/.local/state/ccam/picks/<name>`؛ انتخابی که تاریخش پس از زمان ساعت باشد حساب نمی‌شود) کنار گذاشته می‌شوند و [قواعد انتخاب](/features/next#auto) `ccam next --auto` از میان بقیه انتخاب می‌کنند: ابتدا حساب‌های زیر `auto_max_usage`، بر اساس راهبرد، و هرگز حسابی که به ۱۰۰٪ رسیده است.
+4. ابتدا حساب‌هایی که در ۲ دقیقه گذشته انتخاب شده‌اند، با `ccam pick` یا با [`auto_switch`](/features/next#auto-switch) که نشستی را به آنجا جابه‌جا کرده (`~/.local/state/ccam/picks/<name>`؛ انتخابی که تاریخش پس از زمان ساعت باشد حساب نمی‌شود) کنار گذاشته می‌شوند و [قواعد انتخاب](/features/next#auto) `ccam next --auto` از میان بقیه انتخاب می‌کنند: ابتدا حساب‌های زیر `auto_max_usage`، بر اساس راهبرد، و هرگز حسابی که به ۱۰۰٪ رسیده است. وقتی این کار از حسابی بگذرد که قواعد اول از همه برمی‌داشتند، `reason` در `--json` این را می‌گوید: `30% of its 5 hours used; work was picked a moment ago`.
 5. اگر همه حساب‌هایی که ظرفیت دارند به‌تازگی انتخاب شده باشند، قواعد دوباره از میان همه آن‌ها انتخاب می‌کنند، پس کارگر چهارم روی سه حساب، یکی از آن‌ها را با دیگری شریک می‌شود.
 6. انتخاب ثبت و قفل آزاد می‌شود و سپس نام چاپ می‌شود.
 

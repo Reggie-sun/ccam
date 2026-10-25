@@ -1,15 +1,15 @@
 ---
 title: اختيار حساب للسكربتات
 description: يطبع ccam pick للسكربت الحساب الذي لديه أكبر هامش، ويعطي العمّال الذين يبدؤون معًا حسابات مختلفة، ويخرج بالرمز 75 عندما لا يتبقى هامش.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 12
 translation: machine
-sourceHash: a8baeb64de99
+sourceHash: "5c4f74db9714"
 ---
 
 يطبع `ccam pick` اسم الحساب المسجَّل دخوله الذي لديه أكبر هامش، ليشغّل به السكربت برنامج Claude Code. ويحصل كل عامل من العمّال الذين يبدؤون في الوقت نفسه على حساب مختلف ما دامت هناك حسابات كافية لديها هامش، فتتوزع دفعة من مهام `claude -p` على حساباتك بدلًا من أن تستنزف حسابًا واحدًا.
 
-**مقاعد Team وEnterprise.** يبدّل الاختيار التلقائي (`ccam next` و`--fallback` و`ccam pick` والمفتاح `n` في لوحة التحكم) أيضًا بين مقاعد المؤسسة نفسها في Claude Team أو Enterprise. يقول مركز المساعدة لدى Anthropic: "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (يُخصَّص كل مقعد في خطة Team لشخص واحد محدد بالاسم، ولا يجوز أن يستخدمه إلا ذلك الشخص) و"Users can't route their work through another user's account to use that user's remaining usage" (لا يجوز للمستخدمين تمرير عملهم عبر حساب مستخدم آخر للاستفادة من الاستخدام المتبقي لذلك المستخدم) ([خطط Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)؛ وبالمثل في [خطط Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). لذا فإن استخدام الاختيار التلقائي بين المقاعد قد يخالف شروط Anthropic. تحقّق من ذلك مع مؤسستك ومع Anthropic قبل أن تعتمد عليه. أما الخطط الشخصية (Pro وMax) فتتناولها [ملاحظة الشروط في الأسئلة الشائعة](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**مقاعد Team وEnterprise.** يبدّل الاختيار التلقائي (`ccam next` و`--fallback` و`ccam pick` والمفتاح `n` في لوحة التحكم، و[`auto_switch`](/features/next#auto-switch) عند تشغيله) أيضًا بين مقاعد المؤسسة نفسها في Claude Team أو Enterprise. يقول مركز المساعدة لدى Anthropic: "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (يُخصَّص كل مقعد في خطة Team لشخص واحد محدد بالاسم، ولا يجوز أن يستخدمه إلا ذلك الشخص) و"Users can't route their work through another user's account to use that user's remaining usage" (لا يجوز للمستخدمين تمرير عملهم عبر حساب مستخدم آخر للاستفادة من الاستخدام المتبقي لذلك المستخدم) ([خطط Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)؛ وبالمثل في [خطط Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). لذا فإن استخدام الاختيار التلقائي بين المقاعد قد يخالف شروط Anthropic. وقرار استخدامه هناك يعود إليك: تحقّق من ذلك مع مؤسستك ومع Anthropic قبل أن تعتمد عليه. أما الخطط الشخصية (Pro وMax) فتتناولها [ملاحظة الشروط في الأسئلة الشائعة](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 ## الاستخدام
 
@@ -59,7 +59,7 @@ $ ccam pick --json
 1. يسرد ccam الحسابات المسجَّل دخولها (حسابات مفاتيح API وتسجيلات دخول Console ليس لها حدود فتُستبعد) في مؤسسة الحساب الذي سيشغّله هذا المجلد (راجع [المؤسسات](/features/next#auto))؛ ويُستبعد أيضًا المجلد المسجَّل دخوله بحساب Claude نفسه الذي يستخدمه ذلك الحساب.
 2. يأخذ قفلًا (`~/.local/state/ccam/picks.lock`)، فتجري عمليات الاختيار المتزامنة واحدة بعد أخرى.
 3. يستعلم عن استخدام كل الحسابات في آن واحد، بالطريقة نفسها التي يتبعها `ccam usage`، مع الذاكرة المؤقتة لمدة 60 ثانية. والنافذة التي أبلغ Claude Code بامتلائها تُحتسب 100% حتى إعادة ضبطها ([سجل الحد](/features/usage#the-limit-record))، فيبقى الحساب الذي بلغ حده للتو مستبعدًا حتى عندما تُظهر أرقامه المحفوظة هامشًا.
-4. تُستبعد أولًا الحسابات التي اختيرت خلال آخر دقيقتين (`~/.local/state/ccam/picks/<name>`؛ ولا يُحتسب الاختيار المؤرخ بعد الوقت الحالي للساعة)، وتختار [قواعد الاختيار](/features/next#auto) الخاصة بـ `ccam next --auto` من بين البقية: ما يقل عن `auto_max_usage` أولًا، وفق الاستراتيجية، ولا تختار أبدًا حسابًا بلغ 100%.
+4. تُستبعد أولًا الحسابات التي اختيرت خلال آخر دقيقتين، سواء اختارها `ccam pick` أو نقل إليها [`auto_switch`](/features/next#auto-switch) جلسة (`~/.local/state/ccam/picks/<name>`؛ ولا يُحتسب الاختيار المؤرخ بعد الوقت الحالي للساعة)، وتختار [قواعد الاختيار](/features/next#auto) الخاصة بـ `ccam next --auto` من بين البقية: ما يقل عن `auto_max_usage` أولًا، وفق الاستراتيجية، ولا تختار أبدًا حسابًا بلغ 100%. وعندما يتجاوز ذلك الحساب الذي كانت القواعد ستأخذه أولًا، يذكر `reason` في `--json` ذلك: `30% of its 5 hours used; work was picked a moment ago`.
 5. إذا كانت كل الحسابات التي لديها هامش قد اختيرت مؤخرًا، تختار القواعد من بينها كلها من جديد، فيتشارك العامل الرابع على ثلاثة حسابات حسابًا مع غيره.
 6. يُسجَّل الاختيار ويُحرَّر القفل، ثم يُطبع الاسم.
 

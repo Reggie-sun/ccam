@@ -2,10 +2,10 @@
 title: I-install ang ccam
 metaTitle: I-install ang ccam sa Linux, macOS at Windows
 description: I-install ang ccam sa Linux, macOS o Windows gamit ang isang command, .deb package o source, at i-update sa ccam update. Kailangan munang may Claude Code.
-updated: 2026-10-23
+updated: 2026-10-25
 order: 1
 translation: machine
-sourceHash: af21dcc24169
+sourceHash: a7f9dac24f79
 ---
 
 Patakbuhin ito sa terminal sa Linux o macOS:
@@ -82,7 +82,7 @@ Tinuturuan ng ccam plugin ang Claude Code mismo na gumamit ng ccam: alamin kung 
 /plugin install ccam --marketplace jhyunwoo/ccam
 ```
 
-Nagdadagdag ito ng isang skill, ng mga command na `/ccam:usage`, `/ccam:ext` at `/ccam:switch`, at ng dalawang hook: kapag huminto ang isang session sa usage limit, makakatanggap ka ng notification sa terminal, at ipinapasa ng `/ccam:switch [account]` ang usapan sa ibang account ([mga detalye](/features/next#inside-claude-code)). Pinapatakbo ng mga hook ang `ccam`, kaya dapat nasa `PATH` na nakikita ng Claude Code ito. Hindi kailanman nagpapatakbo ang skill ng mga command na nagla-login o naglilipat ng file; iminumungkahi lang nito ang mga iyon.
+Nagdadagdag ito ng isang skill, ng mga command na `/ccam:usage`, `/ccam:ext` at `/ccam:switch`, at ng dalawang hook: kapag huminto ang isang session sa usage limit, makakatanggap ka ng notification sa terminal (at sa Linux at macOS, kapag naka-on ang [`auto_switch`](/features/next#auto-switch), inililipat ng ccam ang session sa ibang account na may natitira), at ipinapasa ng `/ccam:switch [account]` ang usapan sa ibang account ([mga detalye](/features/next#inside-claude-code)). Pinapatakbo ng mga hook ang `ccam`, kaya dapat nasa `PATH` na nakikita ng Claude Code ito. Hindi kailanman nagpapatakbo ang skill ng mga command na nagla-login o naglilipat ng file; iminumungkahi lang nito ang mga iyon.
 
 ## Suriin ang installation
 

@@ -1,18 +1,18 @@
 ---
 title: Kontrol paneli
 description: Terminalde ccam; hesapların, grupların, klasör kurallarının, uzantıların ve denetimlerin tam ekran kontrol panelini açar; her değişiklik önce planını gösterir.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 15
 translation: machine
-sourceHash: "e48ca2c5a643"
+sourceHash: "98ccf6cd81e9"
 ---
 
-Argümansız `ccam`, standart girdi ve çıktı bir terminal olduğunda tam ekran bir kontrol paneli açar; aksi halde `ccam list` çıktısını yazdırır. Kontrol paneli her hesabı kullanımı ve gruplarıyla birlikte gösterir ve komutların yaptığını yapar: başlatma, ekleme, giriş yapma, grupları değiştirme, klasör kuralları belirleme, denetleme ve onarma. Başlatma paneli kapatır; bir hesap eklemek veya giriş yapmak paneli terminale bırakır ve sonra geri döner.
+Argümansız `ccam`, standart girdi ve çıktı bir terminal olduğunda tam ekran bir kontrol paneli açar; aksi halde `ccam list` çıktısını yazdırır. Kontrol paneli her hesabı kullanımı ve gruplarıyla birlikte gösterir ve komutların yaptığını yapar: başlatma, ekleme, giriş yapma, grupları değiştirme, klasör kuralları belirleme, arka plan oturumlarını listeleme, denetleme ve onarma. Başlatma ya da bir arka plan oturumuna bağlanma paneli kapatır; bir hesap eklemek veya giriş yapmak paneli terminale bırakır ve sonra geri döner.
 
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -40,12 +40,13 @@ Kontrol paneli her açıldığında arka planda GitHub'a daha yeni bir ccam sür
 | Sekme | Gösterdiği | Tuşlar |
 | --- | --- | --- |
 | Accounts | numara, ad, e-posta, 5 saatlik, haftalık ve Fable çubukları, son kullanım, gruplar; `✔` varsayılan, `▸` bu klasörün hesabı, `•` çalışıyor (ccam olmadan başlatılan Claude Code da: düz `claude`, bir IDE, arka plan oturumları ve onların daemon'ı) | aşağıda |
+| Agents | [`ccam agents`](/features/agents) komutunun listeledikleri: her hesabın arka plan oturumları ve açık oturumları, durumları, klasörleri ve başlama zamanlarıyla (aşağıda) | `enter` bağlan (`ccam attach` gibi), `x` durdur, `r` yeniden yükle |
 | Groups | her grup, neyi paylaştığı ve hesapları, ayrıca hiçbir grupta olmayan hesaplar | `enter` düzenle, `n` yeni, `e` yeniden adlandır, `x` kaldır |
 | Folders | [`ccam folder`](/features/folder) kuralları ve burada geçerli olan kural; klasöre sembolik bir bağlantı üzerinden ulaştığınızda da (yeni kurallar bağlantılar çözülmüş olarak saklanır) | `n` burada bir hesap kullan, `enter` değiştir, `x` kaldır |
 | Extensions | [`ccam ext`](/features/ext) komutunun gösterdikleri, her uzantı bir kez ve geldiği gruplarla; `off:` bir eklentinin açık olmadığı hesaplar, bir hesabın kendi sunucuları arasında yalnızca bu klasör için tuttukları, `This folder's project` ve hiçbir hesaba ait olmayan sorunlar | `r` yeniden yükle |
 | Health | [`ccam doctor`](/features/doctor) komutunun bildirdikleri, hesap başına bir kutu olarak (aşağıda) | `f` seçili kutuyu onarır, `F` hepsini onarır (`doctor --fix`), `↑`/`↓` kutular arasında geçer |
 
-`←`/`→` veya `Tab` sekmeler arasında geçer, `?` geçerli sekmenin tuşlarını listeler, `r` kısa önbelleği kullanmadan kullanımı yeniden sorgular, `q` veya `Esc` ise çıkar.
+`←`/`→` veya `Tab` sekmeler arasında geçer, `?` geçerli sekmenin tuşlarını listeler, `r` kısa önbelleği kullanmadan kullanımı yeniden sorgular ve Agents, Extensions ve Health sekmelerini yeniden yükler, `q` veya `Esc` ise çıkar.
 
 ## Accounts sekmesindeki tuşlar
 
@@ -66,7 +67,7 @@ Kontrol paneli her açıldığında arka planda GitHub'a daha yeni bir ccam sür
 | `c` | Hesabın kısayol komutunu ayarlar veya kaldırır |
 | `x` | Hesabı kaldırır (önce, Hayır seçili olarak sorar) |
 
-**Team ve Enterprise koltukları.** Otomatik seçim (`ccam next`, `--fallback`, `ccam pick`, kontrol panelindeki `n` tuşu), aynı Claude Team veya Enterprise kuruluşunun koltukları arasında da geçiş yapar. Anthropic'in yardım merkezinde şöyle belirtilir: "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team planındaki her koltuk, adı belirli tek bir kişiye atanır ve onu yalnızca o kişi kullanabilir) ve "Users can't route their work through another user's account to use that user's remaining usage" (kullanıcılar, başka bir kullanıcının kalan kullanım hakkından yararlanmak için işlerini o kullanıcının hesabı üzerinden yürütemez) ([Team planları](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise planları](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) için de durum aynıdır). Bu nedenle otomatik seçimi koltuklar arasında kullanmak Anthropic'in koşullarını ihlal edebilir. Buna güvenmeden önce kuruluşunuza ve Anthropic'e danışın. Kişisel planlar (Pro, Max), [SSS'deki koşullar notunda](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) ele alınır.
+**Team ve Enterprise koltukları.** Otomatik seçim (`ccam next`, `--fallback`, `ccam pick`, kontrol panelindeki `n` tuşu ve açtığınızda [`auto_switch`](/features/next#auto-switch)), aynı Claude Team veya Enterprise kuruluşunun koltukları arasında da geçiş yapar. Anthropic'in yardım merkezinde şöyle belirtilir: "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team planındaki her koltuk, adı belirli tek bir kişiye atanır ve onu yalnızca o kişi kullanabilir) ve "Users can't route their work through another user's account to use that user's remaining usage" (kullanıcılar, başka bir kullanıcının kalan kullanım hakkından yararlanmak için işlerini o kullanıcının hesabı üzerinden yürütemez) ([Team planları](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise planları](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) için de durum aynıdır). Bu nedenle otomatik seçimi koltuklar arasında kullanmak Anthropic'in koşullarını ihlal edebilir. Orada kullanıp kullanmamak sizin kararınızdır: buna güvenmeden önce kuruluşunuza ve Anthropic'e danışın. Kişisel planlar (Pro, Max), [SSS'deki koşullar notunda](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) ele alınır.
 
 ## Health sekmesi
 
@@ -95,6 +96,28 @@ Health sekmesi, açtığınızda [`ccam doctor`](/features/doctor) kontrollerini
 ```
 
 `↑`/`↓` kutudan kutuya geçer ve seçili kutunun kenarlığı vurgu rengindedir. `f` yalnızca seçili kutuyu, `ccam doctor --fix` komutunun yapacağı şekilde onarır: bir hesabın kutusunda yalnızca o hesabı, `General` kutusunda ise hiçbir hesaba ait olmayan bulguları (eklenti yolları ve kısayollar) onarır; diğer tüm hesaplar yalnızca yeniden kontrol edilir. Önce sorar (``Like `ccam doctor --fix`: missing links and group folders are made, and a real file where a link belongs is backed up first; where the group has its own copy, the account then sees the group's. Nothing is lost.``) ve onarılacak bir şey olmayan bir kutu için yalnızca `nothing to repair in <name>` der. `F` her şeyi bir kerede, `ccam doctor --fix` gibi onarır; `r` yeniden kontrol eder.
+
+## Agents sekmesi
+
+Agents sekmesi, [`ccam agents`](/features/agents) komutunun yazdırdıklarını gösterir: her hesabın arka plan oturumlarını ve açık oturumlarını, her birinin ait olduğu hesapla birlikte. Sekmeyi ilk açtığınızda, `r` tuşunda, bir durdurmadan sonra ve yapılandırmada bir değişiklikten sonra her hesabın Claude Code'una aynı anda sorar (`claude agents --json`, her biri için en fazla 15 saniye) ve hepsi yanıt verene kadar `Asking every account's Claude Code for its sessions…` yazar.
+
+```console
+  Accounts   Agents   Groups   Folders   Extensions   Health
+ Background agents and open sessions of every account; enter attaches to one.
+
+    Account   ID        Name   State          Folder      Started
+ ❯  work      -         -      open (busy)    ~/code/web  now
+    personal  49ec0028  probe  blocked, idle  ~/code/app  12m
+
+ ✘ lab: could not list its sessions: exit status 1 'claude agents --json' is
+   not available in this environment.
+
+ enter to attach · x to stop · r to reload · ? for shortcuts
+```
+
+`State`, `ccam agents` komutunda olduğu gibi bir arka plan oturumunun durumu ve sürecinin ne yaptığıdır; etkileşimli bir oturum için ise `open` yazar. Sorulamayan bir hesap, listenin altında Claude Code'un söylediğini içeren bir `✘` satırı alır; yukarıdaki, ajan görünümü kapalı olan `lab` gibi. Biten arka plan oturumları dışarıda bırakılır (`ccam agents --all` onları listeler) ve her hesap yanıt verip hiçbirinin oturumu yoksa sekme ``No sessions. Start one in the background with `ccam <account> --bg "…"`.`` yazar. Dar bir terminalde sekme önce `Started`, sonra `Name`, sonra `Folder` sütununu kaldırır ve uzun bir klasörü soldan kısaltır.
+
+Bir arka plan oturumunda `Enter`, kontrol panelini kapatır ve oturumu bu terminalde, `ccam attach <id>` komutunun yaptığı gibi kendi hesabıyla açar; kontrol paneli geri dönmez (Claude Code içinde `←` ajan görünümüne, `Ctrl+Z` kabuğa götürür). Açık bir oturumun kimliği yoktur; bu yüzden `Enter` ve `x` yalnızca bir arka plan oturumu gerektiğini söyler. `x` önce `No, keep it` seçeneğinden başlayarak sorar: ``It runs as personal. Like `ccam personal stop 49ec0028`, Claude Code stops it and keeps its conversation, which `ccam attach 49ec0028` opens again.`` Evet derseniz ccam o hesapla `claude stop <id>` komutunu çalıştırır, ``49ec0028 (personal) stopped; `ccam attach 49ec0028` opens it again`` ya da neden durduramadığını yazar ve listeyi yeniden okur.
 
 ## Grupları değiştirme
 

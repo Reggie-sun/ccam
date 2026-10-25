@@ -2,10 +2,10 @@
 title: ccam-ஐ நிறுவுதல்
 metaTitle: Linux, macOS, Windows-இல் ccam-ஐ நிறுவுதல்
 description: Linux, macOS அல்லது Windows-இல் ccam-ஐ ஒரே கட்டளை, .deb தொகுப்பு அல்லது மூலக் குறியீட்டால் நிறுவி, ccam update-ஆல் புதுப்பியுங்கள். முதலில் Claude Code தேவை.
-updated: 2026-10-23
+updated: 2026-10-25
 order: 1
 translation: machine
-sourceHash: "af21dcc24169"
+sourceHash: "a7f9dac24f79"
 ---
 
 Linux அல்லது macOS-இல் ஒரு டெர்மினலில் இதை இயக்குங்கள்:
@@ -82,7 +82,7 @@ ccam plugin, Claude Code-க்கே ccam-ஐப் பயன்படுத்
 /plugin install ccam --marketplace jhyunwoo/ccam
 ```
 
-அது ஒரு skill-ஐயும், `/ccam:usage`, `/ccam:ext`, `/ccam:switch` ஆகிய commands-ஐயும், இரண்டு hooks-ஐயும் சேர்க்கிறது: ஓர் அமர்வு பயன்பாட்டு வரம்பில் நிற்கும்போது உங்களுக்கு ஒரு டெர்மினல் அறிவிப்பு கிடைக்கும், `/ccam:switch [account]` உரையாடலை வேறொரு கணக்கிடம் ஒப்படைக்கும் ([விவரங்கள்](/features/next#inside-claude-code)). hooks `ccam`-ஐ இயக்குகின்றன, அதனால் Claude Code பார்க்கும் `PATH`-இல் அது இருக்க வேண்டும். அந்த skill உள்நுழையும் அல்லது கோப்புகளை நகர்த்தும் கட்டளைகளை ஒருபோதும் இயக்காது; அதற்குப் பதிலாக அவற்றைப் பரிந்துரைக்கும்.
+அது ஒரு skill-ஐயும், `/ccam:usage`, `/ccam:ext`, `/ccam:switch` ஆகிய commands-ஐயும், இரண்டு hooks-ஐயும் சேர்க்கிறது: ஓர் அமர்வு பயன்பாட்டு வரம்பில் நிற்கும்போது உங்களுக்கு ஒரு டெர்மினல் அறிவிப்பு கிடைக்கும் (Linux, macOS-இல் [`auto_switch`](/features/next#auto-switch) இயக்கத்தில் இருந்தால், ccam அந்த அமர்வை இடம் உள்ள வேறொரு கணக்குக்கு நகர்த்தும்), `/ccam:switch [account]` உரையாடலை வேறொரு கணக்கிடம் ஒப்படைக்கும் ([விவரங்கள்](/features/next#inside-claude-code)). hooks `ccam`-ஐ இயக்குகின்றன, அதனால் Claude Code பார்க்கும் `PATH`-இல் அது இருக்க வேண்டும். அந்த skill உள்நுழையும் அல்லது கோப்புகளை நகர்த்தும் கட்டளைகளை ஒருபோதும் இயக்காது; அதற்குப் பதிலாக அவற்றைப் பரிந்துரைக்கும்.
 
 ## நிறுவலைச் சரிபார்த்தல்
 

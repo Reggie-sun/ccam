@@ -1,10 +1,10 @@
 ---
 title: تشغيل Claude Code
 description: شغّل Claude Code بأي حساب باستخدام ccam <name|number> أو ccam run أو لوحة التحكم؛ تُمرَّر الوسائط إلى claude دون تغيير، ويعرض --dry-run الأمر.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 1
 translation: machine
-sourceHash: e279341eb59b
+sourceHash: "afa4942cfed5"
 ---
 
 يشغّل `ccam work` برنامج Claude Code بالحساب `work`، وكل ما يأتي بعد الاسم يُمرَّر إلى `claude` كما هو. استخدمه في أي مكان كنت ستكتب فيه `claude`: في الطرفية، أو في سكربت، أو مع إدخال يصل عبر أنبوب.
@@ -34,11 +34,11 @@ ccam --fallback work -p "fix the tests"   # run again as another account at the 
 
 يفتح `ccam` دون وسائط [لوحة التحكم](/features/dashboard) عندما يكون الإدخال والإخراج القياسيان طرفية، ويطبع `ccam list` في غير ذلك. انتقل إلى حساب (بالأسهم، أو بكتابة رقمه) واضغط `Enter` لتشغيله؛ ويشغّل `n` الحساب الذي لديه أكبر هامش، ويعرض `o` الخيارات `--continue` أو `--resume` أو وسائط أخرى. وتُغلق لوحة التحكم قبل أن يبدأ Claude Code، فتُستعاد الطرفية أولًا.
 
-**مقاعد Team وEnterprise.** يبدّل الاختيار التلقائي (`ccam next` و`--fallback` و`ccam pick` والمفتاح `n` في لوحة التحكم) أيضًا بين مقاعد المؤسسة نفسها في Claude Team أو Enterprise. يقول مركز المساعدة لدى Anthropic: "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (يُخصَّص كل مقعد في خطة Team لشخص واحد محدد بالاسم، ولا يجوز أن يستخدمه إلا ذلك الشخص) و"Users can't route their work through another user's account to use that user's remaining usage" (لا يجوز للمستخدمين تمرير عملهم عبر حساب مستخدم آخر للاستفادة من الاستخدام المتبقي لذلك المستخدم) ([خطط Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)؛ وبالمثل في [خطط Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). لذا فإن استخدام الاختيار التلقائي بين المقاعد قد يخالف شروط Anthropic. تحقّق من ذلك مع مؤسستك ومع Anthropic قبل أن تعتمد عليه. أما الخطط الشخصية (Pro وMax) فتتناولها [ملاحظة الشروط في الأسئلة الشائعة](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**مقاعد Team وEnterprise.** يبدّل الاختيار التلقائي (`ccam next` و`--fallback` و`ccam pick` والمفتاح `n` في لوحة التحكم، و[`auto_switch`](/features/next#auto-switch) عند تشغيله) أيضًا بين مقاعد المؤسسة نفسها في Claude Team أو Enterprise. يقول مركز المساعدة لدى Anthropic: "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (يُخصَّص كل مقعد في خطة Team لشخص واحد محدد بالاسم، ولا يجوز أن يستخدمه إلا ذلك الشخص) و"Users can't route their work through another user's account to use that user's remaining usage" (لا يجوز للمستخدمين تمرير عملهم عبر حساب مستخدم آخر للاستفادة من الاستخدام المتبقي لذلك المستخدم) ([خطط Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)؛ وبالمثل في [خطط Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). لذا فإن استخدام الاختيار التلقائي بين المقاعد قد يخالف شروط Anthropic. وقرار استخدامه هناك يعود إليك: تحقّق من ذلك مع مؤسستك ومع Anthropic قبل أن تعتمد عليه. أما الخطط الشخصية (Pro وMax) فتتناولها [ملاحظة الشروط في الأسئلة الشائعة](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 عندما يكون `CLAUDE_CODE_OAUTH_TOKEN` أو `ANTHROPIC_API_KEY` أو `ANTHROPIC_AUTH_TOKEN` معيّنًا في الصدفة، سيستخدم Claude Code ذلك المفتاح أو الرمز بدلًا من تسجيل دخول الحساب نفسه، لذلك ينبّه ccam إلى ذلك في الخطأ القياسي قبل أن يبدأ (`ccam: $ANTHROPIC_API_KEY is set, so Claude Code may use that key instead of work's login…`). وهو يقرأ المتغيرات فقط؛ أما [حساب مفتاح API](/features/api) فيمسحها بدلًا من ذلك.
 
-مع `relay = true` في أعلى `config.toml` (فوق أول `[[group]]` أو `[[profile]]` أو `[[folder]]`)، يشغّل ccam الجلسات التفاعلية بوصفها عمليات فرعية ويبقى بجانبها، كي يستطيع `/ccam:switch` نقل المحادثة بنفسه، مع خيارات الجلسة ووضع الأذونات ومستوى الجهد ([التفاصيل](/features/next#relay))؛ وإلا يستبدل ccam نفسه بـ Claude Code، ولا يعمل شيء بجانبه.
+مع `relay = true`، أو [`auto_switch = true`](/features/next#auto-switch) على Linux وmacOS، في أعلى `config.toml` (فوق أول `[[group]]` أو `[[profile]]` أو `[[folder]]`)، يشغّل ccam الجلسات التفاعلية بوصفها عمليات فرعية ويبقى بجانبها، كي يستطيع `/ccam:switch`، أو `auto_switch` عند حد الاستخدام، نقل المحادثة بنفسه، مع خيارات الجلسة ووضع الأذونات ومستوى الجهد ([التفاصيل](/features/next#relay))؛ وإلا يستبدل ccam نفسه بـ Claude Code، ولا يعمل شيء بجانبه.
 
 ## الخيارات
 

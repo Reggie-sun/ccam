@@ -2,10 +2,10 @@
 title: Установка ccam
 metaTitle: Установка ccam на Linux, macOS и Windows
 description: Установите ccam на Linux, macOS или Windows одной командой, из пакета .deb или из исходного кода и обновляйте через ccam update. Сначала нужен Claude Code.
-updated: 2026-10-23
+updated: 2026-10-25
 order: 1
 translation: machine
-sourceHash: "af21dcc24169"
+sourceHash: "a7f9dac24f79"
 ---
 
 Выполните это в терминале на Linux или macOS:
@@ -82,7 +82,7 @@ ccam completion powershell >> $PROFILE
 /plugin install ccam --marketplace jhyunwoo/ccam
 ```
 
-Он добавляет навык, команды `/ccam:usage`, `/ccam:ext` и `/ccam:switch` и два хука: когда сессия останавливается на лимите использования, вы получаете уведомление в терминале, а `/ccam:switch [account]` передаёт разговор другому аккаунту ([подробнее](/features/next#inside-claude-code)). Хуки запускают `ccam`, поэтому он должен быть в `PATH`, который видит Claude Code. Навык никогда не выполняет команды, которые выполняют вход или перемещают файлы; вместо этого он их предлагает.
+Он добавляет навык, команды `/ccam:usage`, `/ccam:ext` и `/ccam:switch` и два хука: когда сессия останавливается на лимите использования, вы получаете уведомление в терминале (а в Linux и macOS при включённом [`auto_switch`](/features/next#auto-switch) ccam переносит сессию в другой аккаунт, где есть запас), а `/ccam:switch [account]` передаёт разговор другому аккаунту ([подробнее](/features/next#inside-claude-code)). Хуки запускают `ccam`, поэтому он должен быть в `PATH`, который видит Claude Code. Навык никогда не выполняет команды, которые выполняют вход или перемещают файлы; вместо этого он их предлагает.
 
 ## Проверка установки
 

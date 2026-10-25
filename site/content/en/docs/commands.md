@@ -2,7 +2,7 @@
 title: Command reference
 metaTitle: ccam command reference
 description: Every ccam command and option, from ccam add and ccam <name> to ccam usage, ccam next and ccam doctor.
-updated: 2026-10-24
+updated: 2026-10-25
 published: 2026-10-19
 order: 3
 translation: source
@@ -27,7 +27,7 @@ ccam --fallback work -p "fix the tests"   # run again as another account at the 
 
 `--fallback` before the account name is for `-p`/`--print` runs. When the account reaches its usage limit, ccam runs the same command again as the logged-in account with the most room and prints only the output of the run that finished. See [Accounts by folder](/features/folder) and [Run again at the limit](/features/next#run-again-at-the-limit).
 
-**Team and Enterprise seats.** Automatic choice (`ccam next`, `--fallback`, `ccam pick`, the dashboard's `n`) also switches between seats of the same Claude Team or Enterprise organization. Anthropic's help center says "Each seat on a Team plan is assigned to one named individual, and only that person may use it" and "Users can't route their work through another user's account to use that user's remaining usage" ([Team plans](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); likewise for [Enterprise plans](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Using automatic choice between seats may therefore violate Anthropic's terms. Check with your organization and Anthropic before you rely on it. Personal plans (Pro, Max) are covered by the [terms note in the FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Team and Enterprise seats.** Automatic choice (`ccam next`, `--fallback`, `ccam pick`, the dashboard's `n`, and [`auto_switch`](/features/next#auto-switch) when you turn it on) also switches between seats of the same Claude Team or Enterprise organization. Anthropic's help center says "Each seat on a Team plan is assigned to one named individual, and only that person may use it" and "Users can't route their work through another user's account to use that user's remaining usage" ([Team plans](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); likewise for [Enterprise plans](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Using automatic choice between seats may therefore violate Anthropic's terms. Whether you use it there is your call: check with your organization and Anthropic before you rely on it. Personal plans (Pro, Max) are covered by the [terms note in the FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 A shortcut such as `ccwork` starts its account the same way: `ccwork --resume` does what `ccam work --resume` does. See [shortcuts](/docs/commands#shortcuts).
 
@@ -115,8 +115,9 @@ ccam mcp remove fs
 ccam usage           # also: ccam u
 ccam usage --watch   # refresh every 60 seconds
 ccam usage --json
-ccam usage --source claude      # Claude Code looks it up; ccam never touches a token
+ccam usage --source claude      # Claude Code looks it up; ccam sends no token
 ccam next --continue            # this folder's last conversation, as the next account
+ccam next --continue --brief    # a new conversation from a summary of the last one
 ccam next --auto
 ccam next --auto --max-usage 80 --wait
 ccam next -c --auto -- --dangerously-skip-permissions   # claude's own options after --
@@ -126,7 +127,7 @@ ccam agents                     # background sessions of every account
 ccam attach 49ec0028            # open one, as the account that started it (or by its name)
 ```
 
-`next --auto`, `--fallback` and `ccam pick` choose the same way: below `auto_max_usage` (`config.toml`, default 100) first, by `auto_strategy` (`headroom`, `expiring` or `balance`), counting the `--model` weekly window, never an account at 100% (a window Claude Code reported full counts as 100% until its reset), never an API key login, and within the organization of the account they start from (`--cross-org` or `cross_org = true` to look further). `--wait` takes its value after `=` (`--wait=2h`); written with a space it is refused with a hint. When none can be chosen they exit with code 75, or with `--wait` wait for the first account to reset. `ccam next --continue` carries a conversation over even between accounts that do not share history: Claude Code then copies it into the new account. Unlike `ccam <name>`, `ccam next` reads its own options, so Claude Code's options go after `--`; without it ccam stops with `unknown flag`. Inside Claude Code, the plugin's `/ccam:switch [account]` hands a conversation on, and `ccam hook` is what its hooks run. See [Switching to the next account](/features/next), [Picking an account for scripts](/features/pick) and [Background sessions of every account](/features/agents).
+`next --auto`, `--fallback` and `ccam pick` choose the same way: below `auto_max_usage` (`config.toml`, default 100) first, by `auto_strategy` (`headroom`, `expiring` or `balance`), counting the `--model` weekly window, never an account at 100% (a window Claude Code reported full counts as 100% until its reset), never an API key login, and within the organization of the account they start from (`--cross-org` or `cross_org = true` to look further). `--wait` takes its value after `=` (`--wait=2h`); written with a space it is refused with a hint. When none can be chosen they exit with code 75, or with `--wait` wait for the first account to reset. `ccam next --continue` carries a conversation over even between accounts that do not share history: Claude Code then copies it into the new account. With `--brief`, the new account starts a new conversation instead, from a summary ccam writes of the last one without a model ([`--brief`](/features/next#brief)). Unlike `ccam <name>`, `ccam next` reads its own options, so Claude Code's options go after `--`; without it ccam stops with `unknown flag`. Inside Claude Code, the plugin's `/ccam:switch [account]` hands a conversation on, and `ccam hook` is what its hooks run. With `auto_switch = true` in `config.toml` (Linux and macOS; off by default), the limit hook also ends an interactive session that ccam started and carries it on as another account with room, only one like it: another seat of the same organization, or another personal plan ([`auto_switch`](/features/next#auto-switch)). See [Switching to the next account](/features/next), [Picking an account for scripts](/features/pick) and [Background sessions of every account](/features/agents).
 
 ## Maintenance
 
@@ -148,10 +149,10 @@ ccam completion bash # or zsh, powershell
 
 | Path | Contents |
 | --- | --- |
-| `~/.config/ccam/config.toml` | Accounts, groups and settings (`theme`, `usage_source`, `relay`, `cross_org` …). Settings go at the top, above the first `[[group]]`, `[[profile]]` or `[[folder]]`: one below a table belongs to that table, so ccam names it at every launch and in `ccam doctor`, and commands that save the config refuse until it is moved. Comments are not kept when ccam saves the file |
+| `~/.config/ccam/config.toml` | Accounts, groups and settings (`theme`, `usage_source`, `relay`, `auto_switch`, `cross_org` …). Settings go at the top, above the first `[[group]]`, `[[profile]]` or `[[folder]]`: one below a table belongs to that table, so ccam names it at every launch and in `ccam doctor`, and commands that save the config refuse until it is moved. Comments are not kept when ccam saves the file |
 | `~/.local/share/ccam/profiles/<name>/` | Each account's `CLAUDE_CONFIG_DIR` |
 | `~/.local/share/ccam/groups/<group>/` | Shared settings, MCP servers, extensions and history |
-| `~/.local/state/ccam/` | Usage cache and limit records (`usage/<name>.json`, `usage/<name>.limit.json`), last-used times, session markers and locks (`locks/`), the shortcuts ccam made (`shortcuts.json`), a change of groups that has not finished (`group-change.json`), and the notes `/ccam:switch` and the limit hook leave (`handoff/<account>/<session>.json`) |
+| `~/.local/state/ccam/` | Usage cache and limit records (`usage/<name>.json`, `usage/<name>.limit.json`), last-used times, session markers and locks (`locks/`), the shortcuts ccam made (`shortcuts.json`), a change of groups that has not finished (`group-change.json`), the notes `/ccam:switch` and the limit hook leave (`handoff/<account>/<session>.json`), when `ccam pick` or `auto_switch` last chose each account (`picks/<name>`; a choice counts for 2 minutes), and the summaries of `--brief`, kept 7 days (`brief/<session>.md`) |
 | `~/.local/bin/<shortcut>` | Shortcut commands such as `ccwork`, links to ccam |
 
 The `XDG_CONFIG_HOME`, `XDG_DATA_HOME` and `XDG_STATE_HOME` variables move these folders. On Windows, `~` is `%USERPROFILE%` and shortcuts are `<shortcut>.exe`.

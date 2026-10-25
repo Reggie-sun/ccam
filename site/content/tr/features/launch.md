@@ -1,10 +1,10 @@
 ---
 title: Claude Code'u başlatma
 description: Claude Code'u herhangi bir hesapla ccam <name|number>, ccam run veya kontrol paneliyle başlatın; argümanlar claude'a aynen gider, --dry-run komutu gösterir.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 1
 translation: machine
-sourceHash: "e279341eb59b"
+sourceHash: "afa4942cfed5"
 ---
 
 `ccam work`, Claude Code'u `work` hesabıyla başlatır ve addan sonraki her şey `claude` komutuna olduğu gibi iletilir. `claude` yazacağınız her yerde kullanın: terminalde, bir betikte veya girdiyi boruyla aktararak.
@@ -34,11 +34,11 @@ Bir hesabın adını veya `ccam list` çıktısındaki numarasını verin. ccam 
 
 Argümansız `ccam`, standart girdi ve çıktı bir terminal olduğunda [kontrol panelini](/features/dashboard) açar, aksi halde `ccam list` çıktısını yazdırır. Bir hesaba gidin (ok tuşlarıyla ya da numarasını yazarak) ve başlatmak için `Enter` tuşuna basın; `n` en çok payı kalan hesabı başlatır, `o` ise `--continue`, `--resume` veya başka argümanlar sunar. Kontrol paneli Claude Code başlamadan önce kapanır; böylece terminal önce eski haline gelir.
 
-**Team ve Enterprise koltukları.** Otomatik seçim (`ccam next`, `--fallback`, `ccam pick`, kontrol panelindeki `n` tuşu), aynı Claude Team veya Enterprise kuruluşunun koltukları arasında da geçiş yapar. Anthropic'in yardım merkezinde şöyle belirtilir: "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team planındaki her koltuk, adı belirli tek bir kişiye atanır ve onu yalnızca o kişi kullanabilir) ve "Users can't route their work through another user's account to use that user's remaining usage" (kullanıcılar, başka bir kullanıcının kalan kullanım hakkından yararlanmak için işlerini o kullanıcının hesabı üzerinden yürütemez) ([Team planları](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise planları](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) için de durum aynıdır). Bu nedenle otomatik seçimi koltuklar arasında kullanmak Anthropic'in koşullarını ihlal edebilir. Buna güvenmeden önce kuruluşunuza ve Anthropic'e danışın. Kişisel planlar (Pro, Max), [SSS'deki koşullar notunda](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) ele alınır.
+**Team ve Enterprise koltukları.** Otomatik seçim (`ccam next`, `--fallback`, `ccam pick`, kontrol panelindeki `n` tuşu ve açtığınızda [`auto_switch`](/features/next#auto-switch)), aynı Claude Team veya Enterprise kuruluşunun koltukları arasında da geçiş yapar. Anthropic'in yardım merkezinde şöyle belirtilir: "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team planındaki her koltuk, adı belirli tek bir kişiye atanır ve onu yalnızca o kişi kullanabilir) ve "Users can't route their work through another user's account to use that user's remaining usage" (kullanıcılar, başka bir kullanıcının kalan kullanım hakkından yararlanmak için işlerini o kullanıcının hesabı üzerinden yürütemez) ([Team planları](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise planları](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) için de durum aynıdır). Bu nedenle otomatik seçimi koltuklar arasında kullanmak Anthropic'in koşullarını ihlal edebilir. Orada kullanıp kullanmamak sizin kararınızdır: buna güvenmeden önce kuruluşunuza ve Anthropic'e danışın. Kişisel planlar (Pro, Max), [SSS'deki koşullar notunda](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) ele alınır.
 
 Kabukta `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY` veya `ANTHROPIC_AUTH_TOKEN` ayarlıysa Claude Code, hesabın kendi girişi yerine o anahtarı ya da token'ı kullanabilir; bu yüzden ccam başlamadan önce bunu standart hataya yazar (`ccam: $ANTHROPIC_API_KEY is set, so Claude Code may use that key instead of work's login…`). Değişkenleri yalnızca okur; bir [API anahtarlı hesap](/features/api) ise onları temizler.
 
-`config.toml` dosyasının en üstünde (ilk `[[group]]`, `[[profile]]` veya `[[folder]]` satırının üstünde) `relay = true` olduğunda ccam etkileşimli oturumları bir alt süreç olarak başlatır ve yanlarında kalır; böylece `/ccam:switch` bir konuşmayı oturumun seçenekleri, izin modu ve efor düzeyiyle kendiliğinden sürdürebilir ([ayrıntılar](/features/next#relay)). Aksi halde ccam kendini Claude Code ile değiştirir ve yanında hiçbir şey çalışmaz.
+`config.toml` dosyasının en üstünde (ilk `[[group]]`, `[[profile]]` veya `[[folder]]` satırının üstünde) `relay = true` ya da Linux ve macOS'ta [`auto_switch = true`](/features/next#auto-switch) olduğunda ccam etkileşimli oturumları bir alt süreç olarak başlatır ve yanlarında kalır; böylece `/ccam:switch` ya da kullanım limitinde `auto_switch` bir konuşmayı oturumun seçenekleri, izin modu ve efor düzeyiyle kendiliğinden sürdürebilir ([ayrıntılar](/features/next#relay)). Aksi halde ccam kendini Claude Code ile değiştirir ve yanında hiçbir şey çalışmaz.
 
 ## Seçenekler
 

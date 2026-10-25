@@ -1,18 +1,18 @@
 ---
 title: ડેશબોર્ડ
 description: ટર્મિનલ પર ccam એકાઉન્ટ, ગ્રુપ, ફોલ્ડર નિયમો, એક્સટેન્શન્સ અને તપાસનું ફુલ-સ્ક્રીન ડેશબોર્ડ ખોલે છે; દરેક ફેરફાર પહેલાં પોતાની યોજના બતાવે છે.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 15
 translation: machine
-sourceHash: e48ca2c5a643
+sourceHash: 98ccf6cd81e9
 ---
 
-standard input અને output ટર્મિનલ હોય ત્યારે આર્ગ્યુમેન્ટ વગરનું `ccam` ફુલ-સ્ક્રીન ડેશબોર્ડ ખોલે છે; નહીં તો તે `ccam list` છાપે છે. ડેશબોર્ડ દરેક એકાઉન્ટને તેના વપરાશ અને ગ્રુપ સાથે બતાવે છે, અને કમાન્ડ જે કરે છે તે જ કરે છે: શરૂ કરવું, ઉમેરવું, લૉગિન કરવું, ગ્રુપ બદલવાં, ફોલ્ડર નિયમો સેટ કરવા, તપાસવું અને સુધારવું. શરૂ કરવાથી તે બંધ થાય છે; એકાઉન્ટ ઉમેરવા કે લૉગિન કરવા માટે તે ટર્મિનલ છોડે છે અને પાછું આવે છે.
+standard input અને output ટર્મિનલ હોય ત્યારે આર્ગ્યુમેન્ટ વગરનું `ccam` ફુલ-સ્ક્રીન ડેશબોર્ડ ખોલે છે; નહીં તો તે `ccam list` છાપે છે. ડેશબોર્ડ દરેક એકાઉન્ટને તેના વપરાશ અને ગ્રુપ સાથે બતાવે છે, અને કમાન્ડ જે કરે છે તે જ કરે છે: શરૂ કરવું, ઉમેરવું, લૉગિન કરવું, ગ્રુપ બદલવાં, ફોલ્ડર નિયમો સેટ કરવા, બૅકગ્રાઉન્ડ સેશનની યાદી બતાવવી, તપાસવું અને સુધારવું. શરૂ કરવાથી, કે બૅકગ્રાઉન્ડ સેશન સાથે જોડાવાથી, તે બંધ થાય છે; એકાઉન્ટ ઉમેરવા કે લૉગિન કરવા માટે તે ટર્મિનલ છોડે છે અને પાછું આવે છે.
 
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -40,12 +40,13 @@ standard input અને output ટર્મિનલ હોય ત્યાર�
 | ટૅબ | શું બતાવે છે | કી |
 | --- | --- | --- |
 | Accounts | નંબર, નામ, ઇમેઇલ, 5 કલાકની, સાપ્તાહિક અને Fable bar, છેલ્લો ઉપયોગ, ગ્રુપ; `✔` ડિફૉલ્ટ, `▸` આ ફોલ્ડરનું એકાઉન્ટ, `•` ચાલુ (ccam વગર શરૂ થયેલું Claude Code પણ: સાદું `claude`, IDE, બૅકગ્રાઉન્ડ સેશન અને તેમનો daemon) | નીચે |
+| Agents | [`ccam agents`](/features/agents) જે બતાવે છે તે: દરેક એકાઉન્ટનાં બૅકગ્રાઉન્ડ સેશન અને ખુલ્લાં સેશન, તેમની સ્થિતિ, ફોલ્ડર અને શરૂઆતના સમય સાથે (નીચે) | `enter` જોડાઓ (`ccam attach` ની જેમ), `x` બંધ કરો, `r` ફરી લોડ કરો |
 | Groups | દરેક ગ્રુપ, તે શું શેર કરે છે અને તેનાં એકાઉન્ટ, અને કોઈ ગ્રુપમાં ન હોય તેવાં એકાઉન્ટ | `enter` ફેરફાર, `n` નવું, `e` નામ બદલો, `x` દૂર કરો |
 | Folders | [`ccam folder`](/features/folder) ના નિયમો અને અહીં લાગુ પડતો નિયમ, તમે ફોલ્ડર સુધી symbolic link દ્વારા પહોંચ્યા હો ત્યારે પણ (નવા નિયમો લિંક ઉકેલીને સેવ થાય છે) | `n` અહીં એકાઉન્ટ વાપરો, `enter` બદલો, `x` દૂર કરો |
 | Extensions | [`ccam ext`](/features/ext) જે બતાવે છે તે, દરેક એક્સટેન્શન એક વાર, તે જે ગ્રુપમાંથી આવે છે તેની સાથે, `off:` જે એકાઉન્ટમાં plugin ચાલુ નથી તે, એકાઉન્ટના પોતાના સર્વરમાં ફક્ત આ ફોલ્ડર માટેના સર્વર, `This folder's project`, અને કોઈ એકાઉન્ટની ન હોય તેવી સમસ્યાઓ | `r` ફરી લોડ કરો |
 | Health | [`ccam doctor`](/features/doctor) જે જણાવે છે તે, દરેક એકાઉન્ટ માટે એક બૉક્સ તરીકે (નીચે) | `f` પસંદ કરેલું બૉક્સ સુધારો, `F` બધું સુધારો (`doctor --fix`), `↑`/`↓` બૉક્સ વચ્ચે ખસો |
 
-`←`/`→` કે `Tab` ટૅબ બદલે છે, `?` હાલના ટૅબની કી બતાવે છે, `r` ટૂંકા cache વગર વપરાશ ફરી મેળવે છે, અને `q` કે `Esc` બહાર નીકળે છે.
+`←`/`→` કે `Tab` ટૅબ બદલે છે, `?` હાલના ટૅબની કી બતાવે છે, `r` ટૂંકા cache વગર વપરાશ ફરી મેળવે છે અને Agents, Extensions અને Health ટૅબ ફરી લોડ કરે છે, અને `q` કે `Esc` બહાર નીકળે છે.
 
 ## Accounts ટૅબ પરની કી
 
@@ -66,7 +67,7 @@ standard input અને output ટર્મિનલ હોય ત્યાર�
 | `c` | તેનો શૉર્ટકટ કમાન્ડ સેટ કરે છે કે દૂર કરે છે |
 | `x` | તેને દૂર કરે છે (પહેલાં પૂછે છે, No થી શરૂ કરીને) |
 
-**Team અને Enterprise સીટ.** આપમેળે થતી પસંદગી (`ccam next`, `--fallback`, `ccam pick`, ડેશબોર્ડની `n` કી) એક જ Claude Team કે Enterprise સંસ્થાની સીટો વચ્ચે પણ સ્વિચ કરે છે. Anthropic નું સહાય કેન્દ્ર કહે છે કે "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team પ્લાનની દરેક સીટ નામથી નક્કી કરેલી એક વ્યક્તિને ફાળવવામાં આવે છે, અને ફક્ત એ વ્યક્તિ જ તેનો ઉપયોગ કરી શકે છે) અને "Users can't route their work through another user's account to use that user's remaining usage" (વપરાશકર્તાઓ બીજા વપરાશકર્તાના એકાઉન્ટ મારફતે પોતાનું કામ ચલાવીને એ વપરાશકર્તાનો બાકી રહેલો વપરાશ વાપરી શકતા નથી) ([Team પ્લાન](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise પ્લાન](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) માટે પણ એવું જ). તેથી સીટો વચ્ચે આપમેળે થતી પસંદગી વાપરવાથી Anthropic ની શરતોનું ઉલ્લંઘન થઈ શકે છે. તેના પર આધાર રાખતાં પહેલાં તમારી સંસ્થા અને Anthropic પાસેથી ખાતરી કરી લો. અંગત પ્લાન (Pro, Max) [વારંવાર પૂછાતા પ્રશ્નોમાંની શરતો અંગેની નોંધ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) માં આવરી લેવાયા છે.
+**Team અને Enterprise સીટ.** આપમેળે થતી પસંદગી (`ccam next`, `--fallback`, `ccam pick`, ડેશબોર્ડની `n` કી, અને તમે ચાલુ કરો ત્યારે [`auto_switch`](/features/next#auto-switch)) એક જ Claude Team કે Enterprise સંસ્થાની સીટો વચ્ચે પણ સ્વિચ કરે છે. Anthropic નું સહાય કેન્દ્ર કહે છે કે "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team પ્લાનની દરેક સીટ નામથી નક્કી કરેલી એક વ્યક્તિને ફાળવવામાં આવે છે, અને ફક્ત એ વ્યક્તિ જ તેનો ઉપયોગ કરી શકે છે) અને "Users can't route their work through another user's account to use that user's remaining usage" (વપરાશકર્તાઓ બીજા વપરાશકર્તાના એકાઉન્ટ મારફતે પોતાનું કામ ચલાવીને એ વપરાશકર્તાનો બાકી રહેલો વપરાશ વાપરી શકતા નથી) ([Team પ્લાન](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise પ્લાન](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) માટે પણ એવું જ). તેથી સીટો વચ્ચે આપમેળે થતી પસંદગી વાપરવાથી Anthropic ની શરતોનું ઉલ્લંઘન થઈ શકે છે. સીટો વચ્ચે તેને વાપરવું કે નહીં એ તમારો નિર્ણય છે: તેના પર આધાર રાખતાં પહેલાં તમારી સંસ્થા અને Anthropic પાસેથી ખાતરી કરી લો. અંગત પ્લાન (Pro, Max) [વારંવાર પૂછાતા પ્રશ્નોમાંની શરતો અંગેની નોંધ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) માં આવરી લેવાયા છે.
 
 ## Health ટૅબ
 
@@ -95,6 +96,28 @@ Health ટૅબ ખોલતાં જ તે [`ccam doctor`](/features/doctor)
 ```
 
 `↑`/`↓` એક બૉક્સથી બીજા બૉક્સ પર ખસે છે, અને પસંદ કરેલા બૉક્સની કિનારી accent રંગની હોય છે. `f` ફક્ત પસંદ કરેલું બૉક્સ સુધારે છે, જે રીતે `ccam doctor --fix` સુધારે છે: કોઈ એકાઉન્ટના બૉક્સ પર તે ફક્ત એ એકાઉન્ટ સુધારે છે, અને `General` બૉક્સ પર કોઈ એકાઉન્ટનાં ન હોય તેવાં તારણ (plugin પાથ અને શૉર્ટકટ); બાકીનું દરેક એકાઉન્ટ ફક્ત ફરીથી તપાસાય છે. તે પહેલાં પૂછે છે (``Like `ccam doctor --fix`: missing links and group folders are made, and a real file where a link belongs is backed up first; where the group has its own copy, the account then sees the group's. Nothing is lost.``), અને જેમાં સુધારવા જેવું કંઈ ન હોય તે બૉક્સ ફક્ત `nothing to repair in <name>` કહે છે. `F` બધું એકસાથે સુધારે છે, `ccam doctor --fix` ની જેમ, અને `r` ફરીથી તપાસે છે.
+
+## Agents ટૅબ
+
+Agents ટૅબ [`ccam agents`](/features/agents) જે છાપે છે તે બતાવે છે: દરેક એકાઉન્ટનાં બૅકગ્રાઉન્ડ સેશન અને ખુલ્લાં સેશન, દરેક જે એકાઉન્ટનું છે તેની સાથે. તમે ટૅબ પહેલી વાર ખોલો ત્યારે, `r` પર, સેશન બંધ કર્યા પછી, અને config માં ફેરફાર પછી, તે દરેક એકાઉન્ટના Claude Code ને એકસાથે પૂછે છે (`claude agents --json`, દરેકને 15 સેકન્ડ સુધી), અને બધાં જવાબ આપે ત્યાં સુધી `Asking every account's Claude Code for its sessions…` કહે છે.
+
+```console
+  Accounts   Agents   Groups   Folders   Extensions   Health
+ Background agents and open sessions of every account; enter attaches to one.
+
+    Account   ID        Name   State          Folder      Started
+ ❯  work      -         -      open (busy)    ~/code/web  now
+    personal  49ec0028  probe  blocked, idle  ~/code/app  12m
+
+ ✘ lab: could not list its sessions: exit status 1 'claude agents --json' is
+   not available in this environment.
+
+ enter to attach · x to stop · r to reload · ? for shortcuts
+```
+
+`State` બૅકગ્રાઉન્ડ સેશનની સ્થિતિ અને તેની process શું કરી રહી છે તે બતાવે છે, અથવા interactive સેશન માટે `open`, `ccam agents` ની જેમ. જે એકાઉન્ટને પૂછી ન શકાયું તેને યાદીની નીચે Claude Code એ જે કહ્યું તેની સાથે એક `✘` લાઇન મળે છે, ઉપરના `lab` ની જેમ, જેનું agent view બંધ છે. પૂરાં થયેલાં બૅકગ્રાઉન્ડ સેશન બાકાત રખાય છે (`ccam agents --all` તેમને બતાવે છે), અને જ્યારે દરેક એકાઉન્ટે જવાબ આપ્યો હોય અને કોઈ પાસે સેશન ન હોય, ત્યારે ટૅબ ``No sessions. Start one in the background with `ccam <account> --bg "…"`.`` કહે છે. સાંકડા ટર્મિનલ પર ટૅબ પહેલાં `Started`, પછી `Name`, પછી `Folder` કાઢી નાખે છે, અને લાંબા ફોલ્ડરને ડાબી બાજુથી કાપે છે.
+
+બૅકગ્રાઉન્ડ સેશન પર `Enter` ડેશબોર્ડ બંધ કરે છે અને સેશનને આ ટર્મિનલમાં તેના એકાઉન્ટ તરીકે ખોલે છે, જે રીતે `ccam attach <id>` કરે છે; ડેશબોર્ડ પાછું આવતું નથી (Claude Code માં, `←` તેના agent view પર અને `Ctrl+Z` shell પર લઈ જાય છે). ખુલ્લા સેશનનો કોઈ id હોતો નથી, તેથી `Enter` અને `x` ફક્ત એટલું કહે છે કે બૅકગ્રાઉન્ડ સેશન જોઈએ. `x` પહેલાં પૂછે છે, `No, keep it` થી શરૂ કરીને: ``It runs as personal. Like `ccam personal stop 49ec0028`, Claude Code stops it and keeps its conversation, which `ccam attach 49ec0028` opens again.`` હા કહો તો, ccam એ એકાઉન્ટ તરીકે `claude stop <id>` ચલાવે છે, ``49ec0028 (personal) stopped; `ccam attach 49ec0028` opens it again`` કે તે કેમ ન થઈ શક્યું તે કહે છે, અને યાદી ફરી વાંચે છે.
 
 ## ગ્રુપ બદલવાં
 

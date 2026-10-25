@@ -2,7 +2,7 @@
 title: Frequently asked questions
 metaTitle: "ccam FAQ: multiple Claude Code accounts"
 description: Answers about ccam, Claude Code accounts, usage limits, sharing, privacy and supported systems.
-updated: 2026-10-24
+updated: 2026-10-25
 published: 2026-10-19
 order: 6
 translation: source
@@ -14,13 +14,17 @@ No. ccam is an unofficial open-source project and is not affiliated with or endo
 
 ## Am I allowed to use several Claude Code accounts?
 
-That depends on the terms of each account and, for work accounts, your organisation's policy. Check them before you use several accounts. ccam only makes switching between accounts you already have easier.
+That depends on the terms of each account and, for work accounts, your organisation's policy: Anthropic's [Consumer Terms](https://www.anthropic.com/legal/consumer-terms) for Pro and Max, its [Commercial Terms](https://www.anthropic.com/legal/commercial-terms) for Team and Enterprise, and its [Usage Policy](https://www.anthropic.com/legal/aup) for all. Check them before you use several accounts. ccam does not raise, merge or hide an account's limits, and every account still stops at its own. It carries your work on as another of your accounts when you ask, or by itself at a limit when you turn on [`auto_switch`](/features/next#auto-switch) (Linux and macOS). Whether that is allowed for your accounts is your call.
 
-**Team and Enterprise seats.** Automatic choice (`ccam next`, `--fallback`, `ccam pick`, the dashboard's `n`) also switches between seats of the same Claude Team or Enterprise organization. Anthropic's help center says "Each seat on a Team plan is assigned to one named individual, and only that person may use it" and "Users can't route their work through another user's account to use that user's remaining usage" ([Team plans](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); likewise for [Enterprise plans](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Using automatic choice between seats may therefore violate Anthropic's terms. Check with your organization and Anthropic before you rely on it. Personal plans (Pro, Max) are covered by the paragraph above.
+**Team and Enterprise seats.** Automatic choice (`ccam next`, `--fallback`, `ccam pick`, the dashboard's `n`, and [`auto_switch`](/features/next#auto-switch) when you turn it on) also switches between seats of the same Claude Team or Enterprise organization. Anthropic's help center says "Each seat on a Team plan is assigned to one named individual, and only that person may use it" and "Users can't route their work through another user's account to use that user's remaining usage" ([Team plans](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); likewise for [Enterprise plans](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Using automatic choice between seats may therefore violate Anthropic's terms. Whether you use it there is your call: check with your organization and Anthropic before you rely on it. Personal plans (Pro, Max) are covered by the paragraph above.
 
 ## Does ccam get around usage limits?
 
-No. Each account keeps its own limits. ccam shows them and lets you continue on another account you own when one runs out.
+Not past any account's own limit: each account keeps its limits and stops at them, and ccam does not raise, merge or hide them. ccam shows them and lets you continue on another of your accounts when one runs out; with `auto_switch` on, it does that by itself (see the next question). Between seats of one Team or Enterprise organization, continuing on another seat uses that seat's remaining usage, which Anthropic's help center rules out for another user's seat (see Team and Enterprise seats above).
+
+## Can ccam switch accounts by itself when a session hits its limit?
+
+Only if you turn it on. With `auto_switch = true` at the top of `~/.config/ccam/config.toml` (Linux and macOS; off by default and experimental), when Claude Code stops an interactive session that ccam started at a 5-hour, weekly, Opus or Sonnet limit, ccam ends the session and continues the conversation as another of your accounts with room: another seat of the same Team or Enterprise organization, or another personal plan (Pro, Max). It never switches before the limit, never watches your usage in the background, and never moves work out of a Team or Enterprise organization or into one. On seats it moves your work from one seat to another, which may violate Anthropic's terms (see Team and Enterprise seats above), and for personal plans Anthropic's terms do not settle it: the Consumer Terms forbid accessing the Services "through automated or non-human means" unless Anthropic explicitly permits it, and a move sends one message in your place; turning it on is your call. [`auto_switch`](/features/next#auto-switch) lists every condition and what a move costs.
 
 ## How do I use two Claude Code accounts on one computer?
 
@@ -28,11 +32,11 @@ Give each account its own configuration folder with `CLAUDE_CONFIG_DIR`. ccam do
 
 ## How do I continue a conversation on another account?
 
-Run `ccam next --continue` in the folder: it carries the folder's last conversation over to the next account (`--auto` for the one with the most room). Inside Claude Code, `/ccam:switch` from the [ccam plugin](/docs/install#claude-code-plugin) does the same for the session you are in. When the two accounts share conversation history (`ccam group set default --add history`, or a group of their own: `ccam group add pair --items history --members work,side`), the new account opens that very conversation; otherwise Claude Code copies it into the new account's history.
+Run `ccam next --continue` in the folder: it carries the folder's last conversation over to the next account (`--auto` for the one with the most room). Inside Claude Code, `/ccam:switch` from the [ccam plugin](/docs/install#claude-code-plugin) does the same for the session you are in. When the two accounts share conversation history (`ccam group set default --add history`, or a group of their own: `ccam group add pair --items history --members work,side`), the new account opens that very conversation; otherwise Claude Code copies it into the new account's history. Add `--brief` to start the new account on a short summary instead of the whole conversation.
 
 ## Does ccam see or send my login?
 
-ccam never shares or copies your Claude login between accounts, and never copies the sign-ins of MCP servers. It reads an account's access token only to ask Anthropic's usage endpoint for that account's usage, when you run `ccam usage`, `ccam next --auto` or `ccam doctor`, and renews an expired one only with `ccam usage --refresh`; with `usage_source = "claude"` it does not read the token at all. `ccam ext` and `ccam doctor` read the names of an account's MCP sign-ins, never their tokens. ccam has no telemetry. Apart from those lookups, the only request it makes on its own is the dashboard's question to GitHub about the latest ccam release, which carries nothing about you or your accounts.
+ccam never shares or copies your Claude login between accounts, and never copies the sign-ins of MCP servers. It reads an account's access token only to ask Anthropic's usage endpoint for that account's usage: for `ccam usage`, the dashboard, `ccam doctor` and automatic choice (`ccam next --auto`, `ccam pick`, `--fallback`, and `auto_switch` when a session hits its limit). It renews an expired one only with `ccam usage --refresh`; with `usage_source = "claude"` it sends no token anywhere and reads the stored login (the file, or the macOS Keychain entry) only to tell whether it still works. `ccam ext` and `ccam doctor` read the names of an account's MCP sign-ins, never their tokens. ccam has no telemetry. Apart from those lookups, the only request it makes on its own is the dashboard's question to GitHub about the latest ccam release, which carries nothing about you or your accounts.
 
 ## How do I sign in on a remote server?
 
@@ -56,7 +60,7 @@ Servers added inside a session with `claude mcp add` are stored for that account
 
 ## Does ccam slow Claude Code down?
 
-Starting Claude Code through ccam adds about 4 milliseconds, measured with `scripts/perf-check.sh` on a laptop. ccam reads one small file, checks the shared links and then replaces itself with `claude`, so it is not running while you work. Windows cannot replace a process, so there ccam starts Claude Code and waits for it, doing nothing else.
+Starting Claude Code through ccam adds about 4 milliseconds, measured with `scripts/perf-check.sh` on a laptop. ccam reads one small file, checks the shared links and then replaces itself with `claude`, so by default it is not running while you work. Windows cannot replace a process, so there ccam starts Claude Code and waits for it, doing nothing else. With `relay` or `auto_switch` turned on, ccam waits the same way beside each interactive session, so it can carry the conversation on.
 
 ## How do I update ccam?
 

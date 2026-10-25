@@ -2,10 +2,10 @@
 title: الأسئلة الشائعة
 metaTitle: "أسئلة شائعة عن ccam: عدة حسابات Claude Code"
 description: إجابات عن ccam وحسابات Claude Code وحدود الاستخدام والمشاركة والخصوصية والأنظمة المدعومة.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 6
 translation: machine
-sourceHash: c4e3b89bb4ea
+sourceHash: "8e9deca652d1"
 ---
 
 ## هل ccam أداة رسمية من Anthropic؟
@@ -14,13 +14,17 @@ sourceHash: c4e3b89bb4ea
 
 ## هل يُسمح لي باستخدام عدة حسابات Claude Code؟
 
-يعتمد ذلك على شروط كل حساب، وعلى سياسة مؤسستك بالنسبة إلى حسابات العمل. راجعها قبل أن تستخدم عدة حسابات. كل ما يفعله ccam هو تسهيل التبديل بين حسابات لديك بالفعل.
+يعتمد ذلك على شروط كل حساب، وعلى سياسة مؤسستك بالنسبة إلى حسابات العمل: [شروط المستهلك](https://www.anthropic.com/legal/consumer-terms) لدى Anthropic لخطتي Pro وMax، و[شروطها التجارية](https://www.anthropic.com/legal/commercial-terms) لخطتي Team وEnterprise، و[سياسة الاستخدام](https://www.anthropic.com/legal/aup) لديها للجميع. راجعها قبل أن تستخدم عدة حسابات. لا يرفع ccam حدود الحساب ولا يدمجها ولا يخفيها، ويظل كل حساب يتوقف عند حدوده. وهو يتابع عملك بحساب آخر من حساباتك عندما تطلب ذلك، أو من تلقاء نفسه عند بلوغ حد عندما تشغّل [`auto_switch`](/features/next#auto-switch) (على Linux وmacOS). أما هل يُسمح بذلك لحساباتك، فالقرار لك.
 
-**مقاعد Team وEnterprise.** يبدّل الاختيار التلقائي (`ccam next` و`--fallback` و`ccam pick` والمفتاح `n` في لوحة التحكم) أيضًا بين مقاعد المؤسسة نفسها في Claude Team أو Enterprise. يقول مركز المساعدة لدى Anthropic: "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (يُخصَّص كل مقعد في خطة Team لشخص واحد محدد بالاسم، ولا يجوز أن يستخدمه إلا ذلك الشخص) و"Users can't route their work through another user's account to use that user's remaining usage" (لا يجوز للمستخدمين تمرير عملهم عبر حساب مستخدم آخر للاستفادة من الاستخدام المتبقي لذلك المستخدم) ([خطط Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)؛ وبالمثل في [خطط Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). لذا فإن استخدام الاختيار التلقائي بين المقاعد قد يخالف شروط Anthropic. تحقّق من ذلك مع مؤسستك ومع Anthropic قبل أن تعتمد عليه. أما الخطط الشخصية (Pro وMax) فتتناولها الفقرة أعلاه.
+**مقاعد Team وEnterprise.** يبدّل الاختيار التلقائي (`ccam next` و`--fallback` و`ccam pick` والمفتاح `n` في لوحة التحكم، و[`auto_switch`](/features/next#auto-switch) عند تشغيله) أيضًا بين مقاعد المؤسسة نفسها في Claude Team أو Enterprise. يقول مركز المساعدة لدى Anthropic: "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (يُخصَّص كل مقعد في خطة Team لشخص واحد محدد بالاسم، ولا يجوز أن يستخدمه إلا ذلك الشخص) و"Users can't route their work through another user's account to use that user's remaining usage" (لا يجوز للمستخدمين تمرير عملهم عبر حساب مستخدم آخر للاستفادة من الاستخدام المتبقي لذلك المستخدم) ([خطط Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)؛ وبالمثل في [خطط Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). لذا فإن استخدام الاختيار التلقائي بين المقاعد قد يخالف شروط Anthropic. وقرار استخدامه هناك يعود إليك: تحقّق من ذلك مع مؤسستك ومع Anthropic قبل أن تعتمد عليه. أما الخطط الشخصية (Pro وMax) فتتناولها الفقرة أعلاه.
 
 ## هل يتجاوز ccam حدود الاستخدام؟
 
-لا. يحتفظ كل حساب بحدوده الخاصة. يعرضها ccam ويتيح لك المتابعة على حساب آخر تملكه عندما ينفد أحدها.
+لا يتجاوز الحد الخاص بأي حساب: يحتفظ كل حساب بحدوده ويتوقف عندها، ولا يرفعها ccam ولا يدمجها ولا يخفيها. يعرضها ccam ويتيح لك المتابعة على حساب آخر من حساباتك عندما ينفد أحدها؛ ومع تشغيل `auto_switch` يفعل ذلك بنفسه (راجع السؤال التالي). وبين مقاعد مؤسسة Team أو Enterprise واحدة، تستهلك المتابعة على مقعد آخر الاستخدامَ المتبقي لذلك المقعد، وهو ما يمنعه مركز المساعدة لدى Anthropic بالنسبة إلى مقعد مستخدم آخر (راجع مقاعد Team وEnterprise أعلاه).
+
+## هل يستطيع ccam تبديل الحسابات بنفسه عندما تبلغ جلسة حدها؟
+
+فقط إذا شغّلت ذلك. مع `auto_switch = true` في أعلى `~/.config/ccam/config.toml` (على Linux وmacOS؛ وهو متوقف افتراضيًا وتجريبي)، عندما يوقف Claude Code جلسة تفاعلية شغّلها ccam عند حد الخمس ساعات أو الحد الأسبوعي أو حد Opus أو Sonnet، يُنهي ccam الجلسة ويتابع المحادثة بحساب آخر من حساباتك لديه متسع: مقعد آخر في مؤسسة Team أو Enterprise نفسها، أو خطة شخصية أخرى (Pro، Max). ولا يبدّل أبدًا قبل بلوغ الحد، ولا يراقب استخدامك في الخلفية أبدًا، ولا ينقل العمل أبدًا إلى خارج مؤسسة Team أو Enterprise ولا إلى داخلها. وفي المقاعد ينقل عملك من مقعد إلى آخر، وهو ما قد يخالف شروط Anthropic (راجع مقاعد Team وEnterprise أعلاه)، أما في الخطط الشخصية فلا تحسم شروط Anthropic الأمر: إذ تمنع شروط المستهلك الوصول إلى الخدمات "through automated or non-human means" (عبر وسائل آلية أو غير بشرية) ما لم تسمح Anthropic بذلك صراحةً، والنقل يرسل رسالة واحدة نيابةً عنك؛ وتشغيله قرارك أنت. ويسرد [`auto_switch`](/features/next#auto-switch) كل الشروط وما يكلّفه النقل.
 
 ## كيف أستخدم حسابَي Claude Code على حاسوب واحد؟
 
@@ -28,11 +32,11 @@ sourceHash: c4e3b89bb4ea
 
 ## كيف أتابع محادثة على حساب آخر؟
 
-شغّل `ccam next --continue` في المجلد: فهو ينقل آخر محادثة في المجلد إلى الحساب التالي (`--auto` للحساب الذي لديه أكبر هامش). وداخل Claude Code، يفعل `/ccam:switch` من [المكوّن الإضافي لـ ccam](/docs/install#claude-code-plugin) الشيء نفسه للجلسة التي أنت فيها. وعندما يتشارك الحسابان سجل المحادثات (`ccam group set default --add history`، أو بمجموعة خاصة بهما: `ccam group add pair --items history --members work,side`)، يفتح الحساب الجديد المحادثة نفسها؛ وإلا ينسخها Claude Code إلى سجل الحساب الجديد.
+شغّل `ccam next --continue` في المجلد: فهو ينقل آخر محادثة في المجلد إلى الحساب التالي (`--auto` للحساب الذي لديه أكبر هامش). وداخل Claude Code، يفعل `/ccam:switch` من [المكوّن الإضافي لـ ccam](/docs/install#claude-code-plugin) الشيء نفسه للجلسة التي أنت فيها. وعندما يتشارك الحسابان سجل المحادثات (`ccam group set default --add history`، أو بمجموعة خاصة بهما: `ccam group add pair --items history --members work,side`)، يفتح الحساب الجديد المحادثة نفسها؛ وإلا ينسخها Claude Code إلى سجل الحساب الجديد. أضف `--brief` ليبدأ الحساب الجديد على ملخص قصير بدلًا من المحادثة كاملة.
 
 ## هل يرى ccam تسجيل دخولي أو يرسله؟
 
-لا يشارك ccam تسجيل دخولك إلى Claude بين الحسابات ولا ينسخه أبدًا، ولا ينسخ تسجيلات دخول خوادم MCP أبدًا. يقرأ رمز الوصول الخاص بالحساب فقط ليطلب من نقطة نهاية الاستخدام لدى Anthropic بيانات استخدام ذلك الحساب، وذلك عندما تشغّل `ccam usage` أو `ccam next --auto` أو `ccam doctor`، ولا يجدّد الرمز المنتهي إلا باستخدام `ccam usage --refresh`؛ ومع `usage_source = "claude"` لا يقرأ الرمز إطلاقًا. ويقرأ `ccam ext` و`ccam doctor` أسماء تسجيلات دخول MCP الخاصة بالحساب، لا رموزها أبدًا. لا يحتوي ccam على أي قياس عن بُعد (telemetry). وبخلاف هذه الاستعلامات، فالطلب الوحيد الذي يرسله من تلقاء نفسه هو سؤال لوحة التحكم لـ GitHub عن أحدث إصدار من ccam، وهو لا يحمل أي شيء عنك أو عن حساباتك.
+لا يشارك ccam تسجيل دخولك إلى Claude بين الحسابات ولا ينسخه أبدًا، ولا ينسخ تسجيلات دخول خوادم MCP أبدًا. يقرأ رمز الوصول الخاص بالحساب فقط ليطلب من نقطة نهاية الاستخدام لدى Anthropic بيانات استخدام ذلك الحساب: من أجل `ccam usage` ولوحة التحكم و`ccam doctor` والاختيار التلقائي (`ccam next --auto` و`ccam pick` و`--fallback`، و`auto_switch` عندما تبلغ جلسة حدها). ولا يجدّد الرمز المنتهي إلا باستخدام `ccam usage --refresh`؛ ومع `usage_source = "claude"` لا يرسل أي رمز إلى أي مكان، ولا يقرأ تسجيل الدخول المحفوظ (الملف، أو عنصر سلسلة المفاتيح على macOS) إلا ليعرف هل ما زال صالحًا. ويقرأ `ccam ext` و`ccam doctor` أسماء تسجيلات دخول MCP الخاصة بالحساب، لا رموزها أبدًا. لا يحتوي ccam على أي قياس عن بُعد (telemetry). وبخلاف هذه الاستعلامات، فالطلب الوحيد الذي يرسله من تلقاء نفسه هو سؤال لوحة التحكم لـ GitHub عن أحدث إصدار من ccam، وهو لا يحمل أي شيء عنك أو عن حساباتك.
 
 ## كيف أسجّل الدخول على خادم بعيد؟
 
@@ -56,7 +60,7 @@ Linux (Ubuntu وDebian وFedora وArch وAlpine وغيرها) وmacOS وWindows 
 
 ## هل يبطئ ccam برنامج Claude Code؟
 
-تشغيل Claude Code عبر ccam يضيف نحو 4 أجزاء من الألف من الثانية، وقد قيس ذلك باستخدام `scripts/perf-check.sh` على حاسوب محمول. يقرأ ccam ملفًا صغيرًا واحدًا، ويفحص الروابط المشتركة، ثم يستبدل نفسه بـ `claude`، لذلك لا يكون قيد التشغيل أثناء عملك. لا يستطيع Windows استبدال عملية، لذا يشغّل ccam هناك Claude Code وينتظره، دون أن يفعل أي شيء آخر.
+تشغيل Claude Code عبر ccam يضيف نحو 4 أجزاء من الألف من الثانية، وقد قيس ذلك باستخدام `scripts/perf-check.sh` على حاسوب محمول. يقرأ ccam ملفًا صغيرًا واحدًا، ويفحص الروابط المشتركة، ثم يستبدل نفسه بـ `claude`، لذلك لا يكون افتراضيًا قيد التشغيل أثناء عملك. لا يستطيع Windows استبدال عملية، لذا يشغّل ccam هناك Claude Code وينتظره، دون أن يفعل أي شيء آخر. ومع تشغيل `relay` أو `auto_switch`، ينتظر ccam بالطريقة نفسها بجانب كل جلسة تفاعلية، كي يستطيع متابعة المحادثة.
 
 ## كيف أحدّث ccam؟
 

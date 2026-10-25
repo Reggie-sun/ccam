@@ -1,18 +1,18 @@
 ---
 title: El panel
 description: ccam en una terminal abre un panel a pantalla completa con cuentas, grupos, reglas de carpeta, extensiones y comprobaciones; cada cambio muestra antes su plan.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 15
 translation: machine
-sourceHash: "e48ca2c5a643"
+sourceHash: "98ccf6cd81e9"
 ---
 
-`ccam` sin argumentos abre un panel a pantalla completa cuando la entrada y la salida estándar son una terminal; si no, imprime `ccam list`. El panel muestra cada cuenta con su uso y sus grupos, y hace lo mismo que los comandos: iniciar, agregar, iniciar sesión, cambiar grupos, definir reglas de carpeta, comprobar y reparar. Al iniciar una cuenta se cierra; al agregar una cuenta o iniciar sesión, deja la terminal libre y luego vuelve.
+`ccam` sin argumentos abre un panel a pantalla completa cuando la entrada y la salida estándar son una terminal; si no, imprime `ccam list`. El panel muestra cada cuenta con su uso y sus grupos, y hace lo mismo que los comandos: iniciar, agregar, iniciar sesión, cambiar grupos, definir reglas de carpeta, listar sesiones en segundo plano, comprobar y reparar. Al iniciar una cuenta, o al conectarse a una sesión en segundo plano, se cierra; al agregar una cuenta o iniciar sesión, deja la terminal libre y luego vuelve.
 
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -40,12 +40,13 @@ El primer fotograma se dibuja solo a partir de `config.toml`, en mucho menos de 
 | Pestaña | Qué muestra | Teclas |
 | --- | --- | --- |
 | Accounts | número, nombre, correo electrónico, barras de 5 horas, semanal y de Fable, último uso, grupos; `✔` la predeterminada, `▸` la cuenta de esta carpeta, `•` en ejecución (también Claude Code iniciado sin ccam: `claude` a secas, un IDE, sesiones en segundo plano y su daemon) | más abajo |
+| Agents | lo que lista [`ccam agents`](/features/agents): las sesiones en segundo plano y las sesiones abiertas de todas las cuentas, con su estado, carpeta y hora de inicio (más abajo) | `enter` conectarse (como `ccam attach`), `x` detener, `r` volver a cargar |
 | Groups | cada grupo, lo que comparte y sus cuentas, y las cuentas que no están en ningún grupo | `enter` editar, `n` nuevo, `e` renombrar, `x` quitar |
 | Folders | las reglas de [`ccam folder`](/features/folder) y la que se aplica aquí, también cuando llegaste a la carpeta mediante un enlace simbólico (las reglas nuevas se guardan con los enlaces resueltos) | `n` usar una cuenta aquí, `enter` cambiar, `x` quitar |
 | Extensions | lo que muestra [`ccam ext`](/features/ext), cada extensión una vez con los grupos de los que proviene, `off:` las cuentas en las que un plugin no está activado, los servidores que una cuenta tiene solo para esta carpeta entre los suyos, `This folder's project` y los problemas que no pertenecen a ninguna cuenta | `r` volver a cargar |
 | Health | lo que informa [`ccam doctor`](/features/doctor), con un recuadro por cuenta (más abajo) | `f` reparar el recuadro seleccionado, `F` reparar todo (`doctor --fix`), `↑`/`↓` pasar de un recuadro a otro |
 
-`←`/`→` o `Tab` cambian de pestaña, `?` lista las teclas de la pestaña actual, `r` vuelve a consultar el uso sin la caché corta, y `q` o `Esc` salen.
+`←`/`→` o `Tab` cambian de pestaña, `?` lista las teclas de la pestaña actual, `r` vuelve a consultar el uso sin la caché corta y vuelve a cargar las pestañas Agents, Extensions y Health, y `q` o `Esc` salen.
 
 ## Teclas en la pestaña Accounts
 
@@ -66,7 +67,7 @@ El primer fotograma se dibuja solo a partir de `config.toml`, en mucho menos de 
 | `c` | Define o quita su atajo |
 | `x` | La quita (pregunta antes, con No seleccionado) |
 
-**Asientos de Team y Enterprise.** La elección automática (`ccam next`, `--fallback`, `ccam pick`, la tecla `n` del panel) también pasa de un asiento a otro dentro de una misma organización de Claude Team o Enterprise. El centro de ayuda de Anthropic indica: "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (cada asiento de un plan Team se asigna a una persona específica, y solo esa persona puede usarlo) y "Users can't route their work through another user's account to use that user's remaining usage" (los usuarios no pueden hacer pasar su trabajo por la cuenta de otro usuario para consumir el uso restante de ese usuario) ([planes Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); lo mismo para los [planes Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Por lo tanto, usar la elección automática entre asientos puede infringir los términos de Anthropic. Consulta con tu organización y con Anthropic antes de depender de ella. Los planes personales (Pro, Max) se tratan en la [nota de las preguntas frecuentes sobre los términos](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Asientos de Team y Enterprise.** La elección automática (`ccam next`, `--fallback`, `ccam pick`, la tecla `n` del panel y [`auto_switch`](/features/next#auto-switch) cuando lo activas) también pasa de un asiento a otro dentro de una misma organización de Claude Team o Enterprise. El centro de ayuda de Anthropic indica: "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (cada asiento de un plan Team se asigna a una persona específica, y solo esa persona puede usarlo) y "Users can't route their work through another user's account to use that user's remaining usage" (los usuarios no pueden hacer pasar su trabajo por la cuenta de otro usuario para consumir el uso restante de ese usuario) ([planes Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); lo mismo para los [planes Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Por lo tanto, usar la elección automática entre asientos puede infringir los términos de Anthropic. Si la usas ahí es decisión tuya: consulta con tu organización y con Anthropic antes de depender de ella. Los planes personales (Pro, Max) se tratan en la [nota de las preguntas frecuentes sobre los términos](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 ## La pestaña Health
 
@@ -95,6 +96,28 @@ La pestaña Health ejecuta las comprobaciones de [`ccam doctor`](/features/docto
 ```
 
 `↑`/`↓` pasan de un recuadro a otro, y el recuadro seleccionado tiene el borde del color de acento. `f` repara solo el recuadro seleccionado, como lo haría `ccam doctor --fix`: en el recuadro de una cuenta repara solo esa cuenta, y en el recuadro `General`, los resultados que no pertenecen a ninguna cuenta (rutas de plugins y atajos); las demás cuentas solo se vuelven a comprobar. Pregunta primero (``Like `ccam doctor --fix`: missing links and group folders are made, and a real file where a link belongs is backed up first; where the group has its own copy, the account then sees the group's. Nothing is lost.``), y un recuadro sin nada que reparar solo dice `nothing to repair in <name>`. `F` repara todo a la vez, como `ccam doctor --fix`, y `r` vuelve a comprobar.
+
+## La pestaña Agents
+
+La pestaña Agents muestra lo que imprime [`ccam agents`](/features/agents): las sesiones en segundo plano y las sesiones abiertas de todas las cuentas, con la cuenta a la que pertenece cada una. Consulta al Claude Code de cada cuenta a la vez (`claude agents --json`, hasta 15 segundos cada uno) cuando abres la pestaña por primera vez, al pulsar `r`, después de detener una sesión y después de un cambio en la configuración, y muestra `Asking every account's Claude Code for its sessions…` hasta que todas hayan respondido.
+
+```console
+  Accounts   Agents   Groups   Folders   Extensions   Health
+ Background agents and open sessions of every account; enter attaches to one.
+
+    Account   ID        Name   State          Folder      Started
+ ❯  work      -         -      open (busy)    ~/code/web  now
+    personal  49ec0028  probe  blocked, idle  ~/code/app  12m
+
+ ✘ lab: could not list its sessions: exit status 1 'claude agents --json' is
+   not available in this environment.
+
+ enter to attach · x to stop · r to reload · ? for shortcuts
+```
+
+`State` es el estado de una sesión en segundo plano y lo que está haciendo su proceso, o `open` para una sesión interactiva, como en `ccam agents`. Una cuenta a la que no se pudo consultar recibe una línea `✘` debajo de la lista con lo que dijo Claude Code, como `lab` arriba, que tiene la vista de agentes desactivada. Las sesiones en segundo plano terminadas se omiten (`ccam agents --all` las lista), y cuando todas las cuentas respondieron y ninguna tiene sesiones, la pestaña dice ``No sessions. Start one in the background with `ccam <account> --bg "…"`.`` En una terminal estrecha, la pestaña quita `Started`, luego `Name` y luego `Folder`, y recorta por la izquierda una carpeta larga.
+
+`Enter` sobre una sesión en segundo plano cierra el panel y abre la sesión en esta terminal con su cuenta, como hace `ccam attach <id>`; el panel no vuelve (en Claude Code, `←` va a su vista de agentes y `Ctrl+Z` al shell). Una sesión abierta no tiene id, así que `Enter` y `x` solo indican que hace falta una sesión en segundo plano. `x` pregunta primero, empezando en `No, keep it`: ``It runs as personal. Like `ccam personal stop 49ec0028`, Claude Code stops it and keeps its conversation, which `ccam attach 49ec0028` opens again.`` Si respondes que sí, ccam ejecuta `claude stop <id>` con esa cuenta, dice ``49ec0028 (personal) stopped; `ccam attach 49ec0028` opens it again`` o por qué no pudo, y vuelve a leer la lista.
 
 ## Cambiar grupos
 

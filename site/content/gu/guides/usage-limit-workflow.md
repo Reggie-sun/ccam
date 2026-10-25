@@ -1,10 +1,10 @@
 ---
 title: Claude Code વપરાશ મર્યાદા આવે ત્યારે શું કરવું
 description: રીસેટની રાહ જુઓ અથવા એ જ વાતચીત તરત બીજા Claude Code એકાઉન્ટ પર ચાલુ રાખો. 5 કલાકની અને સાપ્તાહિક મર્યાદા કેવી રીતે કામ કરે છે, પગલું દર પગલું.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 3
 translation: machine
-sourceHash: 049a46684c7b
+sourceHash: 18ef61a68c55
 ---
 
 જ્યારે કોઈ એકાઉન્ટ તેની વપરાશ મર્યાદા (જેને ઘણી વાર rate limit કહેવાય છે) સુધી પહોંચે, ત્યારે તમારી પાસે બે વિકલ્પ હોય છે: મર્યાદા રીસેટ થાય ત્યાં સુધી રાહ જુઓ, અથવા એ જ વાતચીત અત્યારે જ તમારા બીજા એકાઉન્ટ પર ચાલુ રાખો. ccam સાથે બીજો વિકલ્પ ફક્ત એક કમાન્ડ છે: `ccam next --auto --continue`.
@@ -57,18 +57,18 @@ Claude Code હાલના ફોલ્ડરની સૌથી તાજે�
 
 Claude Code માં [ccam plugin](/docs/install#claude-code-plugin) સાથે, મર્યાદાએ અટકેલું સેશન એક સૂચના બતાવે છે અને ભરાયેલી વિન્ડો નોંધે છે, જેથી `ccam next --auto` તેના રીસેટ પહેલાં એ એકાઉન્ટ ફરી પસંદ ન કરે, અને `/ccam:switch` (અથવા `/ccam:switch work`) `ccam next --continue` માટે વાતચીતની નોંધ કરે છે, જેથી અનુમાન કરવા માટે કંઈ બાકી ન રહે.
 
-**Team અને Enterprise સીટ.** આપમેળે થતી પસંદગી (`ccam next`, `--fallback`, `ccam pick`, ડેશબોર્ડની `n` કી) એક જ Claude Team કે Enterprise સંસ્થાની સીટો વચ્ચે પણ સ્વિચ કરે છે. Anthropic નું સહાય કેન્દ્ર કહે છે કે "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team પ્લાનની દરેક સીટ નામથી નક્કી કરેલી એક વ્યક્તિને ફાળવવામાં આવે છે, અને ફક્ત એ વ્યક્તિ જ તેનો ઉપયોગ કરી શકે છે) અને "Users can't route their work through another user's account to use that user's remaining usage" (વપરાશકર્તાઓ બીજા વપરાશકર્તાના એકાઉન્ટ મારફતે પોતાનું કામ ચલાવીને એ વપરાશકર્તાનો બાકી રહેલો વપરાશ વાપરી શકતા નથી) ([Team પ્લાન](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise પ્લાન](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) માટે પણ એવું જ). તેથી સીટો વચ્ચે આપમેળે થતી પસંદગી વાપરવાથી Anthropic ની શરતોનું ઉલ્લંઘન થઈ શકે છે. તેના પર આધાર રાખતાં પહેલાં તમારી સંસ્થા અને Anthropic પાસેથી ખાતરી કરી લો. અંગત પ્લાન (Pro, Max) [વારંવાર પૂછાતા પ્રશ્નોમાંની શરતો અંગેની નોંધ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) માં આવરી લેવાયા છે.
+**Team અને Enterprise સીટ.** આપમેળે થતી પસંદગી (`ccam next`, `--fallback`, `ccam pick`, ડેશબોર્ડની `n` કી, અને તમે ચાલુ કરો ત્યારે [`auto_switch`](/features/next#auto-switch)) એક જ Claude Team કે Enterprise સંસ્થાની સીટો વચ્ચે પણ સ્વિચ કરે છે. Anthropic નું સહાય કેન્દ્ર કહે છે કે "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team પ્લાનની દરેક સીટ નામથી નક્કી કરેલી એક વ્યક્તિને ફાળવવામાં આવે છે, અને ફક્ત એ વ્યક્તિ જ તેનો ઉપયોગ કરી શકે છે) અને "Users can't route their work through another user's account to use that user's remaining usage" (વપરાશકર્તાઓ બીજા વપરાશકર્તાના એકાઉન્ટ મારફતે પોતાનું કામ ચલાવીને એ વપરાશકર્તાનો બાકી રહેલો વપરાશ વાપરી શકતા નથી) ([Team પ્લાન](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise પ્લાન](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) માટે પણ એવું જ). તેથી સીટો વચ્ચે આપમેળે થતી પસંદગી વાપરવાથી Anthropic ની શરતોનું ઉલ્લંઘન થઈ શકે છે. સીટો વચ્ચે તેને વાપરવું કે નહીં એ તમારો નિર્ણય છે: તેના પર આધાર રાખતાં પહેલાં તમારી સંસ્થા અને Anthropic પાસેથી ખાતરી કરી લો. અંગત પ્લાન (Pro, Max) [વારંવાર પૂછાતા પ્રશ્નોમાંની શરતો અંગેની નોંધ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) માં આવરી લેવાયા છે.
 
 ## શું ccam આપમેળે એકાઉન્ટ સ્વિચ કરે છે?
 
-ના. તમે કામ કરતા હો ત્યારે ccam ચાલુ હોતું નથી: તે Claude Code શરૂ કરે છે અને પોતાની જગ્યા તેને આપી દે છે. ક્યારે સ્વિચ કરવું તે તમે નક્કી કરો છો, અને `ccam next --auto` સૌથી ઓછા 5 કલાકના વપરાશવાળું એકાઉન્ટ પસંદ કરે છે અને 100% પર પહોંચેલાં, લૉગિન ન હોય તેવાં કે બીજી સંસ્થાનાં એકાઉન્ટ છોડી દે છે. `config.toml` માં `relay = true` સાથે, ccam તેના બદલે સેશનની બાજુમાં રાહ જુએ છે, તેથી `/ccam:switch` જાતે આગળ વધે છે, સેશનના ઓપ્શન, permission mode અને effort level જાળવીને. કેટલાંક બીજાં ટૂલ તેના બદલે ચાલુ સેશનનું લૉગિન બદલે છે; [ccam અને બીજાં એકાઉન્ટ સ્વિચર](/compare/account-switchers) આ તફાવત સમજાવે છે.
+ફક્ત તમે તે ચાલુ કરો તો. મૂળભૂત રીતે તમે કામ કરતા હો ત્યારે ccam ચાલુ હોતું નથી: તે Claude Code શરૂ કરે છે અને પોતાની જગ્યા તેને આપી દે છે, તેથી ક્યારે સ્વિચ કરવું તે તમે નક્કી કરો છો, અને `ccam next --auto` સૌથી ઓછા 5 કલાકના વપરાશવાળું એકાઉન્ટ પસંદ કરે છે, 100% પર પહોંચેલાં કે લૉગિન ન હોય તેવાં એકાઉન્ટ છોડી દે છે, અને એક જ Team કે Enterprise સંસ્થાની અંદર, અથવા અંગત પ્લાનની વચ્ચે જ રહે છે. `config.toml` માં `relay = true` સાથે, ccam તેના બદલે સેશનની બાજુમાં રાહ જુએ છે, તેથી `/ccam:switch` જાતે આગળ વધે છે, સેશનના ઓપ્શન, permission mode અને effort level જાળવીને. `auto_switch = true` સાથે (Linux અને macOS; પ્રાયોગિક), ccam સ્વિચ પણ જાતે કરે છે: જ્યારે Claude Code સેશનને તેની મર્યાદાએ અટકાવે અને તેના જેવા બીજા એકાઉન્ટમાં જગ્યા હોય, ત્યારે ccam સેશન બંધ કરે છે અને વાતચીત ત્યાં ચાલુ રાખે છે ([શરતો અને ખર્ચ](/features/next#auto-switch)). કેટલાંક બીજાં ટૂલ તેના બદલે ચાલુ સેશનનું લૉગિન બદલે છે; [ccam અને બીજાં એકાઉન્ટ સ્વિચર](/compare/account-switchers) આ તફાવત સમજાવે છે.
 
 ## ધ્યાનમાં રાખવાની બાબતો
 
 - `ccam next --continue` એ જ ફોલ્ડરમાં ચલાવો જ્યાં તમે કામ કરતા હતા; વાતચીત દરેક પ્રોજેક્ટ ફોલ્ડર પ્રમાણે સંગ્રહાય છે.
 - એક જ વાતચીત પર એક જ સમયે બે એકાઉન્ટ ચલાવવાનું ટાળો. જો તમે પ્રયત્ન કરો તો ccam તમને ચેતવે છે.
 - શેર કરેલા ઇતિહાસ વગર, વાતચીતની નકલ બીજા એકાઉન્ટમાં થાય છે અને બંને નકલ પોતપોતાના માર્ગે આગળ વધે છે; `/rewind` જેમાંથી કોડ પાછો લાવે છે તે checkpoints પહેલા એકાઉન્ટ પાસે જ રહે છે.
-- નવા એકાઉન્ટ પરનો પહેલો સંદેશ સામાન્ય કરતાં તેની મર્યાદામાંથી વધુ વાપરી શકે છે, કારણ કે એ એકાઉન્ટે હજી વાતચીત કૅશ કરી નથી.
+- નવા એકાઉન્ટ પરનો પહેલો સંદેશ સામાન્ય કરતાં તેની મર્યાદામાંથી વધુ વાપરી શકે છે, કારણ કે એ એકાઉન્ટે હજી વાતચીત કૅશ કરી નથી. `ccam next --continue --brief` તેના બદલે તેને ટૂંકા સારાંશથી શરૂ કરે છે.
 - તમે આ રીતે એકાઉન્ટ વચ્ચે સ્વિચ કરી શકો કે નહીં, તે દરેક એકાઉન્ટની શરતો પર આધાર રાખે છે.
 
 `ccam usage` અને `ccam next` ના દરેક ઓપ્શન માટે [વપરાશ મર્યાદા](/docs/usage-limits) જુઓ.

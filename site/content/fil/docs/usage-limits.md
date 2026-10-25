@@ -1,10 +1,10 @@
 ---
 title: Mga usage limit at paglipat ng account
 description: Tingnan ang 5-oras at lingguhang usage ng bawat Claude Code account gamit ang ccam usage, at buksan ang may pinakamaraming natitira gamit ang ccam next --auto.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 5
 translation: machine
-sourceHash: "ccaed084207a"
+sourceHash: "7c15419446c3"
 ---
 
 Ipinapakita ng `ccam usage` kung gaano kalaki na ang nagamit ng bawat account sa 5-oras na limit, sa lingguhang limit at sa sariling lingguhang limit ng bawat model (gaya ng Fable). Binubuksan ng `ccam next --auto` ang account na may pinakamaraming natitira, at dinadala ng `--continue` ang kasalukuyang usapan.
@@ -28,7 +28,7 @@ $ ccam usage
 
 Bawat account ay may linyang nagsasabi kung gaano na katagal ang mga numero nito, at pagkatapos ay isang bar bawat limit kasama ang oras bago ito mag-reset: ang 5-oras na window, ang lingguhang window para sa lahat ng model, at ang sariling lingguhang window ng bawat model, gaya ng Fable. Mula 80% nagiging dilaw ang bar, at pula sa 100%. Pinapangalanan ng huling linya ang account na bubuksan ng `ccam next --auto`; kapag `auto_strategy = "expiring"` o `"balance"`, `→ next --auto picks <name>: <reason>` na lang ang nakasulat dito.
 
-**Mga seat ng Team at Enterprise.** Lumilipat din ang awtomatikong pagpili (`ccam next`, `--fallback`, `ccam pick`, ang `n` ng dashboard) sa pagitan ng mga seat ng iisang Claude Team o Enterprise na organisasyon. Sinasabi ng help center ng Anthropic na "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (nakatalaga ang bawat seat ng Team plan sa iisang partikular na tao, at siya lang ang puwedeng gumamit nito) at "Users can't route their work through another user's account to use that user's remaining usage" (hindi puwedeng idaan ng mga user ang trabaho nila sa account ng ibang user para magamit ang natitirang usage ng user na iyon) ([mga Team plan](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); ganoon din sa [mga Enterprise plan](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Kaya maaaring lumabag sa terms ng Anthropic ang paggamit ng awtomatikong pagpili sa pagitan ng mga seat. Magtanong muna sa iyong organisasyon at sa Anthropic bago ka umasa rito. Saklaw ng [paalala tungkol sa terms sa FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) ang mga personal na plan (Pro, Max).
+**Mga seat ng Team at Enterprise.** Lumilipat din ang awtomatikong pagpili (`ccam next`, `--fallback`, `ccam pick`, ang `n` ng dashboard, at ang [`auto_switch`](/features/next#auto-switch) kapag binuksan mo ito) sa pagitan ng mga seat ng iisang Claude Team o Enterprise na organisasyon. Sinasabi ng help center ng Anthropic na "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (nakatalaga ang bawat seat ng Team plan sa iisang partikular na tao, at siya lang ang puwedeng gumamit nito) at "Users can't route their work through another user's account to use that user's remaining usage" (hindi puwedeng idaan ng mga user ang trabaho nila sa account ng ibang user para magamit ang natitirang usage ng user na iyon) ([mga Team plan](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); ganoon din sa [mga Enterprise plan](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Kaya maaaring lumabag sa terms ng Anthropic ang paggamit ng awtomatikong pagpili sa pagitan ng mga seat. Ikaw ang magpapasya kung gagamitin mo ito roon: magtanong muna sa iyong organisasyon at sa Anthropic bago ka umasa rito. Saklaw ng [paalala tungkol sa terms sa FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) ang mga personal na plan (Pro, Max).
 
 ## Saan galing ang mga numero
 
@@ -71,6 +71,8 @@ ccam next --continue  # carry this folder's conversation on as the next account
 ```
 
 Nilalaktawan ng `ccam next` ang mga account na hindi naka-log in, at nilalaktawan ng `--auto` ang mga account na nasa 100% (pati ang window na iniulat ng Claude Code na puno na, hanggang sa reset nito) at ang mga account ng ibang organisasyon. Kapag nagshe-share ng kasaysayan ng usapan ang dalawang account, binubuksan ng `--continue` ang parehong usapan; kung hindi, kinokopya ito ng Claude Code sa bagong account. Tingnan ang [sharing](/docs/sharing) at ang [paglipat sa susunod na account](/features/next#continue).
+
+Kapag may `auto_switch = true` sa itaas ng `config.toml` (Linux at macOS; naka-off bilang default), ang ccam mismo ang gumagawa ng paglipat na ito kapag pinahinto ng Claude Code ang isang interactive session sa limit nito at may natitira ang ibang account na kauri nito. Tingnan ang [`auto_switch`](/features/next#auto-switch) para malaman kung kailan ito kumikilos at kung ano ang hindi nito kailanman ginagawa.
 
 Para sa mga script at naka-iskedyul na job na nagpapatakbo ng `claude -p`, ilagay ang `--fallback` bago ang pangalan ng account. Kapag naabot ng account na iyon ang limit nito, pinapatakbo ulit ng ccam ang parehong command bilang account na may pinakamaraming natitira, at ang output lang ng run na natapos ang ipi-print:
 

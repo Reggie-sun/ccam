@@ -2,10 +2,10 @@
 title: "কমান্ড রেফারেন্স"
 metaTitle: "ccam কমান্ড রেফারেন্স"
 description: "ccam add ও ccam <name> থেকে ccam usage, ccam next ও ccam doctor পর্যন্ত ccam-এর প্রতিটি কমান্ড ও অপশন।"
-updated: 2026-10-24
+updated: 2026-10-25
 order: 3
 translation: machine
-sourceHash: 36af7e209cd9
+sourceHash: abba525cae48
 ---
 
 কোনো কমান্ড আসলে না চালিয়ে সেটি কী করবে তা দেখতে কমান্ডের আগে `--dry-run` দিন, যেমন `ccam --dry-run work`। এটি Claude Code চালু করার সময় (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`) এবং `group`, `migrate`, `shortcut`, `update` ও `doctor --fix`-এর সঙ্গে কাজ করে। কিছু বদলায় এমন অন্য কমান্ডগুলো চলার বদলে এটি প্রত্যাখ্যান করে।
@@ -27,7 +27,7 @@ ccam --fallback work -p "fix the tests"   # run again as another account at the 
 
 অ্যাকাউন্টের নামের আগে `--fallback` হলো `-p`/`--print` রানের জন্য। অ্যাকাউন্টটি ব্যবহারের সীমায় পৌঁছালে ccam একই কমান্ড সবচেয়ে বেশি জায়গা থাকা লগইন করা অ্যাকাউন্ট হিসেবে আবার চালায় এবং শুধু যে রানটি শেষ হয়েছে তার আউটপুট প্রিন্ট করে। [ফোল্ডার অনুযায়ী অ্যাকাউন্ট](/features/folder) ও [সীমায় আবার চালানো](/features/next#run-again-at-the-limit) দেখুন।
 
-**Team ও Enterprise সিট।** স্বয়ংক্রিয় বাছাই (`ccam next`, `--fallback`, `ccam pick`, ড্যাশবোর্ডের `n`) একই Claude Team বা Enterprise প্রতিষ্ঠানের সিটগুলোর মধ্যেও বদল করে। Anthropic-এর সহায়তা কেন্দ্রে বলা হয়েছে, "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team প্ল্যানের প্রতিটি সিট একজন নির্দিষ্ট ব্যক্তির নামে বরাদ্দ করা হয়, এবং কেবল সেই ব্যক্তিই সেটি ব্যবহার করতে পারেন) এবং "Users can't route their work through another user's account to use that user's remaining usage" (ব্যবহারকারীরা অন্য কোনো ব্যবহারকারীর অ্যাকাউন্টের মধ্য দিয়ে নিজেদের কাজ চালিয়ে তাঁর ব্যবহারের সীমার বাকি অংশ কাজে লাগাতে পারেন না) ([Team প্ল্যান](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise প্ল্যানের](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) ক্ষেত্রেও একই কথা)। তাই সিটগুলোর মধ্যে স্বয়ংক্রিয় বাছাই ব্যবহার করলে Anthropic-এর শর্তাবলি লঙ্ঘন হতে পারে। এর ওপর নির্ভর করার আগে আপনার প্রতিষ্ঠান ও Anthropic-এর কাছ থেকে জেনে নিন। ব্যক্তিগত প্ল্যানের (Pro, Max) কথা [প্রশ্নোত্তরের শর্তাবলি-বিষয়ক নোটে](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) বলা আছে।
+**Team ও Enterprise সিট।** স্বয়ংক্রিয় বাছাই (`ccam next`, `--fallback`, `ccam pick`, ড্যাশবোর্ডের `n`, এবং আপনি চালু করলে [`auto_switch`](/features/next#auto-switch)) একই Claude Team বা Enterprise প্রতিষ্ঠানের সিটগুলোর মধ্যেও বদল করে। Anthropic-এর সহায়তা কেন্দ্রে বলা হয়েছে, "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team প্ল্যানের প্রতিটি সিট একজন নির্দিষ্ট ব্যক্তির নামে বরাদ্দ করা হয়, এবং কেবল সেই ব্যক্তিই সেটি ব্যবহার করতে পারেন) এবং "Users can't route their work through another user's account to use that user's remaining usage" (ব্যবহারকারীরা অন্য কোনো ব্যবহারকারীর অ্যাকাউন্টের মধ্য দিয়ে নিজেদের কাজ চালিয়ে তাঁর ব্যবহারের সীমার বাকি অংশ কাজে লাগাতে পারেন না) ([Team প্ল্যান](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise প্ল্যানের](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) ক্ষেত্রেও একই কথা)। তাই সিটগুলোর মধ্যে স্বয়ংক্রিয় বাছাই ব্যবহার করলে Anthropic-এর শর্তাবলি লঙ্ঘন হতে পারে। সেখানে এটি ব্যবহার করবেন কি না, সে সিদ্ধান্ত আপনার: এর ওপর নির্ভর করার আগে আপনার প্রতিষ্ঠান ও Anthropic-এর কাছ থেকে জেনে নিন। ব্যক্তিগত প্ল্যানের (Pro, Max) কথা [প্রশ্নোত্তরের শর্তাবলি-বিষয়ক নোটে](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) বলা আছে।
 
 `ccwork`-এর মতো একটি শর্টকাট তার অ্যাকাউন্টকে একইভাবে চালু করে: `ccwork --resume` ঠিক তাই করে যা `ccam work --resume` করে। [শর্টকাট](/docs/commands#shortcuts) দেখুন।
 
@@ -115,8 +115,9 @@ ccam mcp remove fs
 ccam usage           # also: ccam u
 ccam usage --watch   # refresh every 60 seconds
 ccam usage --json
-ccam usage --source claude      # Claude Code looks it up; ccam never touches a token
+ccam usage --source claude      # Claude Code looks it up; ccam sends no token
 ccam next --continue            # this folder's last conversation, as the next account
+ccam next --continue --brief    # a new conversation from a summary of the last one
 ccam next --auto
 ccam next --auto --max-usage 80 --wait
 ccam next -c --auto -- --dangerously-skip-permissions   # claude's own options after --
@@ -126,7 +127,7 @@ ccam agents                     # background sessions of every account
 ccam attach 49ec0028            # open one, as the account that started it (or by its name)
 ```
 
-`next --auto`, `--fallback` ও `ccam pick` একইভাবে বেছে নেয়: প্রথমে `auto_max_usage`-এর (`config.toml`, ডিফল্ট 100) নিচে থাকা অ্যাকাউন্ট, `auto_strategy` (`headroom`, `expiring` বা `balance`) অনুযায়ী, `--model`-এর সাপ্তাহিক উইন্ডো ধরে, ১০০%-এ থাকা অ্যাকাউন্ট কখনও নয় (Claude Code যে উইন্ডোকে পূর্ণ বলে জানিয়েছে, তা রিসেট পর্যন্ত ১০০% ধরা হয়), API key লগইন কখনও নয়, এবং যে অ্যাকাউন্ট থেকে শুরু হয় তার প্রতিষ্ঠানের ভেতরে (আরও দূরে খুঁজতে `--cross-org` বা `cross_org = true`)। `--wait` তার মান `=`-এর পরে নেয় (`--wait=2h`); ফাঁকা জায়গা দিয়ে লিখলে একটি ইঙ্গিতসহ তা প্রত্যাখ্যাত হয়। কিছুই বেছে নেওয়া না গেলে এগুলো কোড 75 দিয়ে বেরিয়ে যায়, অথবা `--wait` দিলে প্রথম অ্যাকাউন্টটি রিসেট হওয়া পর্যন্ত অপেক্ষা করে। `ccam next --continue` ইতিহাস শেয়ার করে না এমন অ্যাকাউন্টগুলোর মধ্যেও কথোপকথন নিয়ে যায়: তখন Claude Code সেটি নতুন অ্যাকাউন্টে কপি করে। `ccam <name>`-এর মতো নয়, `ccam next` নিজের অপশন নিজেই পড়ে, তাই Claude Code-এর অপশন `--`-এর পরে বসে; তা না দিলে ccam `unknown flag` দেখিয়ে থেমে যায়। Claude Code-এর ভেতরে প্লাগইনের `/ccam:switch [account]` কথোপকথন অন্য অ্যাকাউন্টের হাতে তুলে দেয়, আর এর হুকগুলো যা চালায় তা হলো `ccam hook`। দেখুন [পরের অ্যাকাউন্টে যাওয়া](/features/next), [স্ক্রিপ্টের জন্য অ্যাকাউন্ট বেছে নেওয়া](/features/pick) ও [প্রতিটি অ্যাকাউন্টের ব্যাকগ্রাউন্ড সেশন](/features/agents)।
+`next --auto`, `--fallback` ও `ccam pick` একইভাবে বেছে নেয়: প্রথমে `auto_max_usage`-এর (`config.toml`, ডিফল্ট 100) নিচে থাকা অ্যাকাউন্ট, `auto_strategy` (`headroom`, `expiring` বা `balance`) অনুযায়ী, `--model`-এর সাপ্তাহিক উইন্ডো ধরে, ১০০%-এ থাকা অ্যাকাউন্ট কখনও নয় (Claude Code যে উইন্ডোকে পূর্ণ বলে জানিয়েছে, তা রিসেট পর্যন্ত ১০০% ধরা হয়), API key লগইন কখনও নয়, এবং যে অ্যাকাউন্ট থেকে শুরু হয় তার প্রতিষ্ঠানের ভেতরে (আরও দূরে খুঁজতে `--cross-org` বা `cross_org = true`)। `--wait` তার মান `=`-এর পরে নেয় (`--wait=2h`); ফাঁকা জায়গা দিয়ে লিখলে একটি ইঙ্গিতসহ তা প্রত্যাখ্যাত হয়। কিছুই বেছে নেওয়া না গেলে এগুলো কোড 75 দিয়ে বেরিয়ে যায়, অথবা `--wait` দিলে প্রথম অ্যাকাউন্টটি রিসেট হওয়া পর্যন্ত অপেক্ষা করে। `ccam next --continue` ইতিহাস শেয়ার করে না এমন অ্যাকাউন্টগুলোর মধ্যেও কথোপকথন নিয়ে যায়: তখন Claude Code সেটি নতুন অ্যাকাউন্টে কপি করে। `--brief` দিলে নতুন অ্যাকাউন্ট এর বদলে একটি নতুন কথোপকথন শুরু করে, আগেরটির যে সারাংশ ccam কোনো মডেল ছাড়াই লেখে তা থেকে ([`--brief`](/features/next#brief))। `ccam <name>`-এর মতো নয়, `ccam next` নিজের অপশন নিজেই পড়ে, তাই Claude Code-এর অপশন `--`-এর পরে বসে; তা না দিলে ccam `unknown flag` দেখিয়ে থেমে যায়। Claude Code-এর ভেতরে প্লাগইনের `/ccam:switch [account]` কথোপকথন অন্য অ্যাকাউন্টের হাতে তুলে দেয়, আর এর হুকগুলো যা চালায় তা হলো `ccam hook`। `config.toml`-এ `auto_switch = true` থাকলে (Linux ও macOS; ডিফল্টভাবে বন্ধ) সীমার হুক ccam-এর চালু করা কোনো ইন্টারঅ্যাকটিভ সেশনও শেষ করে এবং সেটি জায়গা থাকা অন্য একটি অ্যাকাউন্ট হিসেবে চালিয়ে নেয়, শুধু একই ধরনের অ্যাকাউন্টে: একই প্রতিষ্ঠানের অন্য একটি সিট, বা অন্য একটি ব্যক্তিগত প্ল্যান ([`auto_switch`](/features/next#auto-switch))। দেখুন [পরের অ্যাকাউন্টে যাওয়া](/features/next), [স্ক্রিপ্টের জন্য অ্যাকাউন্ট বেছে নেওয়া](/features/pick) ও [প্রতিটি অ্যাকাউন্টের ব্যাকগ্রাউন্ড সেশন](/features/agents)।
 
 ## রক্ষণাবেক্ষণ
 
@@ -148,10 +149,10 @@ ccam বদলানোর আগে `ccam update` রিলিজের SHA-256
 
 | পাথ | বিষয়বস্তু |
 | --- | --- |
-| `~/.config/ccam/config.toml` | অ্যাকাউন্ট, গ্রুপ ও সেটিংস (`theme`, `usage_source`, `relay`, `cross_org` …)। সেটিংস একেবারে ওপরে বসে, প্রথম `[[group]]`, `[[profile]]` বা `[[folder]]`-এর ওপরে: কোনো টেবিলের নিচে থাকা সেটিং সেই টেবিলেরই অংশ, তাই ccam প্রতিবার চালু করার সময় ও `ccam doctor`-এ তার নাম জানায়, এবং কনফিগ সংরক্ষণ করা কমান্ডগুলো সেটি সরানো না পর্যন্ত রাজি হয় না। ccam ফাইলটি সংরক্ষণ করলে মন্তব্যগুলো থাকে না |
+| `~/.config/ccam/config.toml` | অ্যাকাউন্ট, গ্রুপ ও সেটিংস (`theme`, `usage_source`, `relay`, `auto_switch`, `cross_org` …)। সেটিংস একেবারে ওপরে বসে, প্রথম `[[group]]`, `[[profile]]` বা `[[folder]]`-এর ওপরে: কোনো টেবিলের নিচে থাকা সেটিং সেই টেবিলেরই অংশ, তাই ccam প্রতিবার চালু করার সময় ও `ccam doctor`-এ তার নাম জানায়, এবং কনফিগ সংরক্ষণ করা কমান্ডগুলো সেটি সরানো না পর্যন্ত রাজি হয় না। ccam ফাইলটি সংরক্ষণ করলে মন্তব্যগুলো থাকে না |
 | `~/.local/share/ccam/profiles/<name>/` | প্রতিটি অ্যাকাউন্টের `CLAUDE_CONFIG_DIR` |
 | `~/.local/share/ccam/groups/<group>/` | শেয়ার করা সেটিংস, MCP সার্ভার, এক্সটেনশন ও ইতিহাস |
-| `~/.local/state/ccam/` | ব্যবহারের ক্যাশ ও সীমার রেকর্ড (`usage/<name>.json`, `usage/<name>.limit.json`), সর্বশেষ ব্যবহারের সময়, সেশন মার্কার ও লক (`locks/`), ccam-এর তৈরি শর্টকাট (`shortcuts.json`), গ্রুপের অসমাপ্ত পরিবর্তন (`group-change.json`), এবং `/ccam:switch` ও সীমার হুক যে নোট রেখে যায় (`handoff/<account>/<session>.json`) |
+| `~/.local/state/ccam/` | ব্যবহারের ক্যাশ ও সীমার রেকর্ড (`usage/<name>.json`, `usage/<name>.limit.json`), সর্বশেষ ব্যবহারের সময়, সেশন মার্কার ও লক (`locks/`), ccam-এর তৈরি শর্টকাট (`shortcuts.json`), গ্রুপের অসমাপ্ত পরিবর্তন (`group-change.json`), `/ccam:switch` ও সীমার হুক যে নোট রেখে যায় (`handoff/<account>/<session>.json`), `ccam pick` বা `auto_switch` প্রতিটি অ্যাকাউন্ট শেষবার কখন বেছে নিয়েছে (`picks/<name>`; একটি বাছাই ২ মিনিট গণ্য হয়), এবং `--brief`-এর সারাংশ, ৭ দিন রাখা হয় (`brief/<session>.md`) |
 | `~/.local/bin/<shortcut>` | `ccwork`-এর মতো শর্টকাট কমান্ড, ccam-এর লিংক |
 
 `XDG_CONFIG_HOME`, `XDG_DATA_HOME` ও `XDG_STATE_HOME` ভেরিয়েবল এই ফোল্ডারগুলোর অবস্থান বদলায়। Windows-এ `~` হলো `%USERPROFILE%` এবং শর্টকাটগুলো `<shortcut>.exe`।

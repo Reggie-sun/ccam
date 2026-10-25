@@ -2,10 +2,10 @@
 title: ccam kurulumu
 metaTitle: ccam'ı Linux, macOS ve Windows üzerine kurun
 description: ccam'ı Linux, macOS veya Windows'a tek komutla, bir .deb paketiyle ya da kaynak koddan kurun, ccam update ile güncelleyin. Önce Claude Code kurulu olmalıdır.
-updated: 2026-10-23
+updated: 2026-10-25
 order: 1
 translation: machine
-sourceHash: "af21dcc24169"
+sourceHash: "a7f9dac24f79"
 ---
 
 Linux veya macOS üzerinde bir terminalde şunu çalıştırın:
@@ -82,7 +82,7 @@ ccam eklentisi Claude Code'un kendisine ccam'i kullanmayı öğretir: hangi hesa
 /plugin install ccam --marketplace jhyunwoo/ccam
 ```
 
-Bir beceri, `/ccam:usage`, `/ccam:ext` ve `/ccam:switch` komutlarını ve iki hook ekler: bir oturum kullanım limitinde durduğunda bir terminal bildirimi alırsınız ve `/ccam:switch [account]` konuşmayı başka bir hesaba devreder ([ayrıntılar](/features/next#inside-claude-code)). Hook'lar `ccam` komutunu çalıştırır; bu yüzden ccam, Claude Code'un gördüğü `PATH` üzerinde olmalıdır. Beceri, giriş yapan veya dosya taşıyan komutları hiçbir zaman çalıştırmaz; bunun yerine onları önerir.
+Bir beceri, `/ccam:usage`, `/ccam:ext` ve `/ccam:switch` komutlarını ve iki hook ekler: bir oturum kullanım limitinde durduğunda bir terminal bildirimi alırsınız (Linux ve macOS'ta [`auto_switch`](/features/next#auto-switch) açıksa ccam oturumu payı kalan başka bir hesaba taşır) ve `/ccam:switch [account]` konuşmayı başka bir hesaba devreder ([ayrıntılar](/features/next#inside-claude-code)). Hook'lar `ccam` komutunu çalıştırır; bu yüzden ccam, Claude Code'un gördüğü `PATH` üzerinde olmalıdır. Beceri, giriş yapan veya dosya taşıyan komutları hiçbir zaman çalıştırmaz; bunun yerine onları önerir.
 
 ## Kurulumu kontrol edin
 

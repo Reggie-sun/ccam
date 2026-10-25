@@ -2,10 +2,10 @@
 title: ccam ઇન્સ્ટૉલ કરો
 metaTitle: Linux, macOS અને Windows પર ccam ઇન્સ્ટૉલ કરો
 description: Linux, macOS કે Windows પર ccam એક કમાન્ડથી, .deb પેકેજથી કે સોર્સમાંથી ઇન્સ્ટૉલ કરો, અને ccam update વડે અપડેટ કરો. પહેલાં Claude Code ઇન્સ્ટૉલ હોવું જોઈએ.
-updated: 2026-10-23
+updated: 2026-10-25
 order: 1
 translation: machine
-sourceHash: af21dcc24169
+sourceHash: a7f9dac24f79
 ---
 
 Linux કે macOS પર ટર્મિનલમાં આ ચલાવો:
@@ -82,7 +82,7 @@ ccam plugin Claude Code ને પોતાને ccam વાપરતાં શ
 /plugin install ccam --marketplace jhyunwoo/ccam
 ```
 
-તે એક skill, `/ccam:usage`, `/ccam:ext` અને `/ccam:switch` commands, અને બે hooks ઉમેરે છે: કોઈ સેશન વપરાશ મર્યાદાએ અટકે ત્યારે તમને ટર્મિનલમાં સૂચના મળે છે, અને `/ccam:switch [account]` વાતચીત બીજા એકાઉન્ટને સોંપે છે ([વિગતો](/features/next#inside-claude-code)). hooks `ccam` ચલાવે છે, તેથી Claude Code જે `PATH` જુએ છે તેમાં તે હોવું જોઈએ. skill ક્યારેય લૉગિન કરતા કે ફાઇલો ખસેડતા commands ચલાવતી નથી; તેના બદલે તે તેમને સૂચવે છે.
+તે એક skill, `/ccam:usage`, `/ccam:ext` અને `/ccam:switch` commands, અને બે hooks ઉમેરે છે: કોઈ સેશન વપરાશ મર્યાદાએ અટકે ત્યારે તમને ટર્મિનલમાં સૂચના મળે છે (અને Linux અને macOS પર, [`auto_switch`](/features/next#auto-switch) ચાલુ હોય ત્યારે, ccam સેશનને જગ્યા ધરાવતા બીજા એકાઉન્ટમાં ખસેડે છે), અને `/ccam:switch [account]` વાતચીત બીજા એકાઉન્ટને સોંપે છે ([વિગતો](/features/next#inside-claude-code)). hooks `ccam` ચલાવે છે, તેથી Claude Code જે `PATH` જુએ છે તેમાં તે હોવું જોઈએ. skill ક્યારેય લૉગિન કરતા કે ફાઇલો ખસેડતા commands ચલાવતી નથી; તેના બદલે તે તેમને સૂચવે છે.
 
 ## ઇન્સ્ટૉલેશન તપાસો
 

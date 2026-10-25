@@ -1,10 +1,10 @@
 ---
 title: 使用量の上限とアカウントの切り替え
 description: ccam usageですべてのClaude Codeアカウントの5時間と週間の使用量を確認し、ccam next --autoで最も余裕があるアカウントを開きます。
-updated: 2026-10-24
+updated: 2026-10-25
 order: 5
 translation: machine
-sourceHash: "ccaed084207a"
+sourceHash: "7c15419446c3"
 ---
 
 `ccam usage`は、各アカウントが5時間の上限、週間の上限、モデルごとの週間上限（Fableなど）をどれだけ使ったかを表示します。`ccam next --auto`は最も余裕があるアカウントを開き、`--continue`を付けると現在の会話を引き継ぎます。
@@ -28,7 +28,7 @@ $ ccam usage
 
 アカウントごとに、数値がどれだけ前のものかを示す行があり、その下に上限ごとのバーとリセットまでの時間が並びます。5時間の枠、全モデル共通の週間の枠、そしてFableのようなモデルごとの週間の枠です。バーは80%から黄色、100%で赤になります。最後の行は、`ccam next --auto`が開くアカウントを示します。`auto_strategy = "expiring"`または`"balance"`の場合は、代わりに`→ next --auto picks <name>: <reason>`と表示されます。
 
-**TeamとEnterpriseのシート。** 自動的な選択（`ccam next`、`--fallback`、`ccam pick`、ダッシュボードの`n`）は、同じClaude TeamまたはEnterpriseの組織に属するシート間でも切り替えます。Anthropicのヘルプセンターには、「Each seat on a Team plan is assigned to one named individual, and only that person may use it」（Teamプランの各シートは1人の指定ユーザーに割り当てられ、そのユーザーのみが使用できます）、「Users can't route their work through another user's account to use that user's remaining usage」（ユーザーは別のユーザーのアカウントを通じて作業をルーティングして、そのユーザーの残りの使用量を使用することはできません）と書かれています（[Teamプラン](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)。[Enterpriseプラン](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)も同様です）。そのため、シート間で自動的な選択を使うと、Anthropicの規約に違反するおそれがあります。自動的な選択に頼る前に、所属する組織とAnthropicに確認してください。個人プラン（Pro、Max）については、[FAQの規約に関する説明](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)を参照してください。
+**TeamとEnterpriseのシート。** 自動的な選択（`ccam next`、`--fallback`、`ccam pick`、ダッシュボードの`n`、有効にした場合の[`auto_switch`](/features/next#auto-switch)）は、同じClaude TeamまたはEnterpriseの組織に属するシート間でも切り替えます。Anthropicのヘルプセンターには、「Each seat on a Team plan is assigned to one named individual, and only that person may use it」（Teamプランの各シートは1人の指定ユーザーに割り当てられ、そのユーザーのみが使用できます）、「Users can't route their work through another user's account to use that user's remaining usage」（ユーザーは別のユーザーのアカウントを通じて作業をルーティングして、そのユーザーの残りの使用量を使用することはできません）と書かれています（[Teamプラン](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)。[Enterpriseプラン](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)も同様です）。そのため、シート間で自動的な選択を使うと、Anthropicの規約に違反するおそれがあります。そこで使うかどうかはご自身の判断です。自動的な選択に頼る前に、所属する組織とAnthropicに確認してください。個人プラン（Pro、Max）については、[FAQの規約に関する説明](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)を参照してください。
 
 ## 数値の取得元
 
@@ -71,6 +71,8 @@ ccam next --continue  # carry this folder's conversation on as the next account
 ```
 
 `ccam next`はログインしていないアカウントを飛ばし、`--auto`は使用量が100%のアカウント（Claude Codeが上限に達したと報告した時間枠も、そのリセットまで含みます）と、別の組織のアカウントを飛ばします。2つのアカウントが会話履歴を共有していれば、`--continue`は同じ会話を開きます。共有していなければ、Claude Codeが会話を新しいアカウントにコピーします。詳しくは[共有](/docs/sharing)と[次のアカウントへの切り替え](/features/next#continue)を参照してください。
+
+`config.toml`の先頭で`auto_switch = true`を設定すると（LinuxとmacOS。デフォルトではオフ）、Claude Codeが対話型のセッションを上限で止め、同じ種類の別のアカウントに余裕があるときに、ccamがこの切り替えを自動で行います。いつ動作するか、そして決して行わないことは、[`auto_switch`](/features/next#auto-switch)を参照してください。
 
 `claude -p`を実行するスクリプトや定期実行ジョブでは、アカウント名の前に`--fallback`を付けます。そのアカウントが上限に達すると、ccamは同じコマンドを最も余裕があるアカウントで再実行し、最後まで完了した実行の出力だけを表示します。
 

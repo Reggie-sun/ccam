@@ -2,10 +2,10 @@
 title: Komut başvurusu
 metaTitle: ccam komut başvurusu
 description: ccam add ve ccam <name> komutlarından ccam usage, ccam next ve ccam doctor komutlarına kadar tüm ccam komutları ve seçenekleri.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 3
 translation: machine
-sourceHash: "36af7e209cd9"
+sourceHash: "abba525cae48"
 ---
 
 Bir komutun ne yapacağını, yapmadan görmek için komuttan önce `--dry-run` yazın, örneğin `ccam --dry-run work`. Bu, Claude Code başlatılırken (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`) ve `group`, `migrate`, `shortcut`, `update` ile `doctor --fix` komutlarında çalışır. Bir şeyi değiştiren diğer komutlar çalışmak yerine bunu reddeder.
@@ -27,7 +27,7 @@ ccam --fallback work -p "fix the tests"   # run again as another account at the 
 
 Hesap adından önce gelen `--fallback`, `-p`/`--print` çalıştırmaları içindir. Hesap kullanım limitine ulaştığında ccam aynı komutu en çok payı kalan girişli hesapla yeniden çalıştırır ve yalnızca tamamlanan çalıştırmanın çıktısını yazdırır. [Klasöre göre hesaplar](/features/folder) ve [Limitte yeniden çalıştırma](/features/next#run-again-at-the-limit) sayfalarına bakın.
 
-**Team ve Enterprise koltukları.** Otomatik seçim (`ccam next`, `--fallback`, `ccam pick`, kontrol panelindeki `n` tuşu), aynı Claude Team veya Enterprise kuruluşunun koltukları arasında da geçiş yapar. Anthropic'in yardım merkezinde şöyle belirtilir: "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team planındaki her koltuk, adı belirli tek bir kişiye atanır ve onu yalnızca o kişi kullanabilir) ve "Users can't route their work through another user's account to use that user's remaining usage" (kullanıcılar, başka bir kullanıcının kalan kullanım hakkından yararlanmak için işlerini o kullanıcının hesabı üzerinden yürütemez) ([Team planları](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise planları](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) için de durum aynıdır). Bu nedenle otomatik seçimi koltuklar arasında kullanmak Anthropic'in koşullarını ihlal edebilir. Buna güvenmeden önce kuruluşunuza ve Anthropic'e danışın. Kişisel planlar (Pro, Max), [SSS'deki koşullar notunda](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) ele alınır.
+**Team ve Enterprise koltukları.** Otomatik seçim (`ccam next`, `--fallback`, `ccam pick`, kontrol panelindeki `n` tuşu ve açtığınızda [`auto_switch`](/features/next#auto-switch)), aynı Claude Team veya Enterprise kuruluşunun koltukları arasında da geçiş yapar. Anthropic'in yardım merkezinde şöyle belirtilir: "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team planındaki her koltuk, adı belirli tek bir kişiye atanır ve onu yalnızca o kişi kullanabilir) ve "Users can't route their work through another user's account to use that user's remaining usage" (kullanıcılar, başka bir kullanıcının kalan kullanım hakkından yararlanmak için işlerini o kullanıcının hesabı üzerinden yürütemez) ([Team planları](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise planları](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) için de durum aynıdır). Bu nedenle otomatik seçimi koltuklar arasında kullanmak Anthropic'in koşullarını ihlal edebilir. Orada kullanıp kullanmamak sizin kararınızdır: buna güvenmeden önce kuruluşunuza ve Anthropic'e danışın. Kişisel planlar (Pro, Max), [SSS'deki koşullar notunda](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) ele alınır.
 
 `ccwork` gibi bir kısayol, kendi hesabını aynı şekilde başlatır: `ccwork --resume`, `ccam work --resume` ile aynı işi yapar. [Kısayollar](/docs/commands#shortcuts) bölümüne bakın.
 
@@ -115,8 +115,9 @@ ccam mcp remove fs
 ccam usage           # also: ccam u
 ccam usage --watch   # refresh every 60 seconds
 ccam usage --json
-ccam usage --source claude      # Claude Code looks it up; ccam never touches a token
+ccam usage --source claude      # Claude Code looks it up; ccam sends no token
 ccam next --continue            # this folder's last conversation, as the next account
+ccam next --continue --brief    # a new conversation from a summary of the last one
 ccam next --auto
 ccam next --auto --max-usage 80 --wait
 ccam next -c --auto -- --dangerously-skip-permissions   # claude's own options after --
@@ -126,7 +127,7 @@ ccam agents                     # background sessions of every account
 ccam attach 49ec0028            # open one, as the account that started it (or by its name)
 ```
 
-`next --auto`, `--fallback` ve `ccam pick` aynı şekilde seçer: önce `auto_max_usage` (`config.toml`, varsayılan 100) altındaki hesaplar, `auto_strategy` (`headroom`, `expiring` veya `balance`) stratejisine göre, `--model` haftalık penceresi de sayılarak, %100'deki bir hesap (Claude Code'un dolu bildirdiği bir pencere sıfırlanana kadar %100 sayılır) ve API anahtarıyla giriş yapan bir hesap asla seçilmeden ve başladıkları hesabın kuruluşu içinde kalarak (daha ötesine bakmak için `--cross-org` veya `cross_org = true`). `--wait` değerini `=` işaretinden sonra alır (`--wait=2h`); boşlukla yazıldığında bir ipucuyla reddedilir. Hiçbiri seçilemediğinde 75 koduyla çıkarlar ya da `--wait` ile ilk hesabın sıfırlanmasını beklerler. `ccam next --continue` bir konuşmayı geçmişi paylaşmayan hesaplar arasında bile taşır: Claude Code o zaman konuşmayı yeni hesaba kopyalar. `ccam <name>` komutunun aksine `ccam next` kendi seçeneklerini okur, bu yüzden Claude Code'un seçenekleri `--` sonrasına yazılır; o olmadan ccam `unknown flag` hatasıyla durur. Claude Code'un içinde eklentinin `/ccam:switch [account]` komutu bir konuşmayı devreder; `ccam hook` ise eklentinin hook'larının çalıştırdığı komuttur. Bkz. [Sonraki hesaba geçme](/features/next), [Betikler için hesap seçme](/features/pick) ve [Her hesabın arka plan oturumları](/features/agents).
+`next --auto`, `--fallback` ve `ccam pick` aynı şekilde seçer: önce `auto_max_usage` (`config.toml`, varsayılan 100) altındaki hesaplar, `auto_strategy` (`headroom`, `expiring` veya `balance`) stratejisine göre, `--model` haftalık penceresi de sayılarak, %100'deki bir hesap (Claude Code'un dolu bildirdiği bir pencere sıfırlanana kadar %100 sayılır) ve API anahtarıyla giriş yapan bir hesap asla seçilmeden ve başladıkları hesabın kuruluşu içinde kalarak (daha ötesine bakmak için `--cross-org` veya `cross_org = true`). `--wait` değerini `=` işaretinden sonra alır (`--wait=2h`); boşlukla yazıldığında bir ipucuyla reddedilir. Hiçbiri seçilemediğinde 75 koduyla çıkarlar ya da `--wait` ile ilk hesabın sıfırlanmasını beklerler. `ccam next --continue` bir konuşmayı geçmişi paylaşmayan hesaplar arasında bile taşır: Claude Code o zaman konuşmayı yeni hesaba kopyalar. `--brief` ile yeni hesap bunun yerine, ccam'in bir model kullanmadan sonuncusundan yazdığı bir özetle yeni bir konuşma başlatır ([`--brief`](/features/next#brief)). `ccam <name>` komutunun aksine `ccam next` kendi seçeneklerini okur, bu yüzden Claude Code'un seçenekleri `--` sonrasına yazılır; o olmadan ccam `unknown flag` hatasıyla durur. Claude Code'un içinde eklentinin `/ccam:switch [account]` komutu bir konuşmayı devreder; `ccam hook` ise eklentinin hook'larının çalıştırdığı komuttur. `config.toml` içinde `auto_switch = true` olduğunda (Linux ve macOS; varsayılan olarak kapalı), limit hook'u ayrıca ccam'in başlattığı etkileşimli bir oturumu sonlandırır ve onu payı kalan başka bir hesapla sürdürür; yalnızca ona benzer bir hesapla: aynı kuruluşun başka bir koltuğu ya da başka bir kişisel plan ([`auto_switch`](/features/next#auto-switch)). Bkz. [Sonraki hesaba geçme](/features/next), [Betikler için hesap seçme](/features/pick) ve [Her hesabın arka plan oturumları](/features/agents).
 
 ## Bakım
 
@@ -148,10 +149,10 @@ ccam completion bash # or zsh, powershell
 
 | Yol | İçerik |
 | --- | --- |
-| `~/.config/ccam/config.toml` | Hesaplar, gruplar ve ayarlar (`theme`, `usage_source`, `relay`, `cross_org` …). Ayarlar en üste, ilk `[[group]]`, `[[profile]]` veya `[[folder]]` satırının üstüne yazılır: bir tablonun altındaki ayar o tabloya aittir; bu yüzden ccam onu her başlatmada ve `ccam doctor` içinde adıyla belirtir, yapılandırmayı kaydeden komutlar da ayar taşınana kadar çalışmayı reddeder. ccam dosyayı kaydederken yorumlar korunmaz |
+| `~/.config/ccam/config.toml` | Hesaplar, gruplar ve ayarlar (`theme`, `usage_source`, `relay`, `auto_switch`, `cross_org` …). Ayarlar en üste, ilk `[[group]]`, `[[profile]]` veya `[[folder]]` satırının üstüne yazılır: bir tablonun altındaki ayar o tabloya aittir; bu yüzden ccam onu her başlatmada ve `ccam doctor` içinde adıyla belirtir, yapılandırmayı kaydeden komutlar da ayar taşınana kadar çalışmayı reddeder. ccam dosyayı kaydederken yorumlar korunmaz |
 | `~/.local/share/ccam/profiles/<name>/` | Her hesabın `CLAUDE_CONFIG_DIR` klasörü |
 | `~/.local/share/ccam/groups/<group>/` | Paylaşılan ayarlar, MCP sunucuları, uzantılar ve geçmiş |
-| `~/.local/state/ccam/` | Kullanım önbelleği ve limit kayıtları (`usage/<name>.json`, `usage/<name>.limit.json`), son kullanım zamanları, oturum işaretleri ve kilitler (`locks/`), ccam'in oluşturduğu kısayollar (`shortcuts.json`), tamamlanmamış bir grup değişikliği (`group-change.json`) ve `/ccam:switch` ile limit hook'unun bıraktığı notlar (`handoff/<account>/<session>.json`) |
+| `~/.local/state/ccam/` | Kullanım önbelleği ve limit kayıtları (`usage/<name>.json`, `usage/<name>.limit.json`), son kullanım zamanları, oturum işaretleri ve kilitler (`locks/`), ccam'in oluşturduğu kısayollar (`shortcuts.json`), tamamlanmamış bir grup değişikliği (`group-change.json`), `/ccam:switch` ile limit hook'unun bıraktığı notlar (`handoff/<account>/<session>.json`), `ccam pick` veya `auto_switch` özelliğinin her hesabı en son ne zaman seçtiği (`picks/<name>`; bir seçim 2 dakika boyunca sayılır) ve 7 gün saklanan `--brief` özetleri (`brief/<session>.md`) |
 | `~/.local/bin/<shortcut>` | `ccwork` gibi kısayol komutları, ccam'e giden bağlantılar |
 
 `XDG_CONFIG_HOME`, `XDG_DATA_HOME` ve `XDG_STATE_HOME` değişkenleri bu klasörlerin yerini değiştirir. Windows'ta `~`, `%USERPROFILE%` anlamına gelir ve kısayollar `<shortcut>.exe` olur.

@@ -2,10 +2,10 @@
 title: ccam 설치
 metaTitle: "Linux, macOS, Windows에 ccam 설치하기"
 description: "Linux, macOS, Windows에서 명령 하나, .deb 패키지 또는 소스로 ccam을 설치하고 ccam update로 업데이트합니다. Claude Code를 먼저 설치해야 합니다."
-updated: 2026-10-23
+updated: 2026-10-25
 order: 1
 translation: machine
-sourceHash: "af21dcc24169"
+sourceHash: "a7f9dac24f79"
 ---
 
 Linux나 macOS 터미널에서 다음 명령을 실행하세요.
@@ -82,7 +82,7 @@ ccam 플러그인은 Claude Code가 직접 ccam을 쓰도록 가르칩니다. �
 /plugin install ccam --marketplace jhyunwoo/ccam
 ```
 
-스킬 하나, 명령 `/ccam:usage`, `/ccam:ext`, `/ccam:switch`, 그리고 훅 두 개가 추가됩니다. 세션이 사용량 한도에 걸려 멈추면 터미널 알림이 오고, `/ccam:switch [account]`는 대화를 다른 계정으로 넘깁니다([자세히](/features/next#inside-claude-code)). 훅은 `ccam`을 실행하므로, Claude Code가 보는 `PATH`에 ccam이 있어야 합니다. 스킬은 로그인하거나 파일을 옮기는 명령을 직접 실행하지 않고, 대신 제안만 합니다.
+스킬 하나, 명령 `/ccam:usage`, `/ccam:ext`, `/ccam:switch`, 그리고 훅 두 개가 추가됩니다. 세션이 사용량 한도에 걸려 멈추면 터미널 알림이 오고(Linux와 macOS에서 [`auto_switch`](/features/next#auto-switch)를 켜 두었다면 ccam이 여유 있는 다른 계정으로 세션을 옮깁니다), `/ccam:switch [account]`는 대화를 다른 계정으로 넘깁니다([자세히](/features/next#inside-claude-code)). 훅은 `ccam`을 실행하므로, Claude Code가 보는 `PATH`에 ccam이 있어야 합니다. 스킬은 로그인하거나 파일을 옮기는 명령을 직접 실행하지 않고, 대신 제안만 합니다.
 
 ## 설치 확인
 

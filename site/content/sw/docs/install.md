@@ -2,10 +2,10 @@
 title: Sakinisha ccam
 metaTitle: Sakinisha ccam kwenye Linux, macOS na Windows
 description: Sakinisha ccam kwenye Linux, macOS au Windows kwa amri moja, kifurushi cha .deb au msimbo chanzo, na uisasishe kwa ccam update. Sakinisha Claude Code kwanza.
-updated: 2026-10-23
+updated: 2026-10-25
 order: 1
 translation: machine
-sourceHash: "af21dcc24169"
+sourceHash: "a7f9dac24f79"
 ---
 
 Endesha hii kwenye terminal ya Linux au macOS:
@@ -82,7 +82,7 @@ Plugin ya ccam humfundisha Claude Code yenyewe kutumia ccam: kuangalia akaunti i
 /plugin install ccam --marketplace jhyunwoo/ccam
 ```
 
-Huongeza skill moja, amri `/ccam:usage`, `/ccam:ext` na `/ccam:switch`, na hooks mbili: kipindi kinaposimama kwenye kikomo cha matumizi unapata arifa kwenye terminal, na `/ccam:switch [account]` hukabidhi mazungumzo kwa akaunti nyingine ([maelezo](/features/next#inside-claude-code)). Hooks huendesha `ccam`, kwa hiyo lazima iwe kwenye `PATH` ambayo Claude Code huiona. Skill hiyo kamwe haiendeshi amri zinazoingia kwenye akaunti au kuhamisha faili; badala yake huzipendekeza.
+Huongeza skill moja, amri `/ccam:usage`, `/ccam:ext` na `/ccam:switch`, na hooks mbili: kipindi kinaposimama kwenye kikomo cha matumizi unapata arifa kwenye terminal (na kwenye Linux na macOS, [`auto_switch`](/features/next#auto-switch) ikiwa imewashwa, ccam huhamisha kipindi kwenda akaunti nyingine yenye nafasi), na `/ccam:switch [account]` hukabidhi mazungumzo kwa akaunti nyingine ([maelezo](/features/next#inside-claude-code)). Hooks huendesha `ccam`, kwa hiyo lazima iwe kwenye `PATH` ambayo Claude Code huiona. Skill hiyo kamwe haiendeshi amri zinazoingia kwenye akaunti au kuhamisha faili; badala yake huzipendekeza.
 
 ## Kagua usakinishaji
 

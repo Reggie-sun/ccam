@@ -1,10 +1,10 @@
 ---
 title: Limites de uso e troca de contas
 description: Veja o uso de 5 horas e o uso semanal de cada conta do Claude Code com ccam usage e abra a conta com mais espaço com ccam next --auto.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 5
 translation: machine
-sourceHash: "ccaed084207a"
+sourceHash: "7c15419446c3"
 ---
 
 `ccam usage` mostra quanto cada conta já usou do limite de 5 horas, do limite semanal e do limite semanal próprio de cada modelo (como o Fable). `ccam next --auto` abre a conta com mais espaço, e `--continue` leva junto a conversa atual.
@@ -28,7 +28,7 @@ $ ccam usage
 
 Cada conta ganha uma linha com a idade dos seus números e, abaixo, uma barra por limite com o tempo até reiniciar: a janela de 5 horas, a janela semanal de todos os modelos e a janela semanal própria de cada modelo, como o Fable. A partir de 80% a barra fica amarela, e em 100%, vermelha. A última linha mostra a conta que `ccam next --auto` abriria; com `auto_strategy = "expiring"` ou `"balance"`, ela diz `→ next --auto picks <name>: <reason>`.
 
-**Assentos dos planos Team e Enterprise.** A escolha automática (`ccam next`, `--fallback`, `ccam pick`, a tecla `n` do painel) também alterna entre assentos da mesma organização Claude Team ou Enterprise. A central de ajuda da Anthropic diz "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (cada assento de um plano Team é atribuído a uma pessoa específica, e só essa pessoa pode usá-lo) e "Users can't route their work through another user's account to use that user's remaining usage" (os usuários não podem encaminhar o próprio trabalho pela conta de outro usuário para aproveitar o uso restante desse usuário) ([planos Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); o mesmo vale para os [planos Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Por isso, usar a escolha automática entre assentos pode violar os termos da Anthropic. Consulte a sua organização e a Anthropic antes de contar com ela. Os planos pessoais (Pro, Max) são tratados na [nota sobre os termos nas perguntas frequentes](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Assentos dos planos Team e Enterprise.** A escolha automática (`ccam next`, `--fallback`, `ccam pick`, a tecla `n` do painel e o [`auto_switch`](/features/next#auto-switch), quando você o ativa) também alterna entre assentos da mesma organização Claude Team ou Enterprise. A central de ajuda da Anthropic diz "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (cada assento de um plano Team é atribuído a uma pessoa específica, e só essa pessoa pode usá-lo) e "Users can't route their work through another user's account to use that user's remaining usage" (os usuários não podem encaminhar o próprio trabalho pela conta de outro usuário para aproveitar o uso restante desse usuário) ([planos Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); o mesmo vale para os [planos Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Por isso, usar a escolha automática entre assentos pode violar os termos da Anthropic. Usá-la nesse caso é uma decisão sua: consulte a sua organização e a Anthropic antes de contar com ela. Os planos pessoais (Pro, Max) são tratados na [nota sobre os termos nas perguntas frequentes](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 ## De onde vêm os números
 
@@ -71,6 +71,8 @@ ccam next --continue  # carry this folder's conversation on as the next account
 ```
 
 `ccam next` pula as contas que não estão com login feito, e `--auto` pula as contas em 100% (inclusive uma janela que o Claude Code informou como cheia, até ela reiniciar) e as contas de outra organização. Quando as duas contas compartilham o histórico de conversas, `--continue` abre a mesma conversa; caso contrário, o Claude Code a copia para a nova conta. Consulte [compartilhamento](/docs/sharing) e [trocar para a próxima conta](/features/next#continue).
+
+Com `auto_switch = true` no início do `config.toml` (Linux e macOS; desativado por padrão), o ccam faz essa troca sozinho quando o Claude Code interrompe uma sessão interativa no limite dela e outra conta do mesmo tipo tem espaço. Consulte [`auto_switch`](/features/next#auto-switch) para saber quando ele age e o que ele nunca faz.
 
 Para scripts e jobs agendados que executam `claude -p`, coloque `--fallback` antes do nome da conta. Quando essa conta atinge o limite, o ccam executa o mesmo comando de novo com a conta que tem mais espaço, e só a saída da execução que terminou é impressa:
 

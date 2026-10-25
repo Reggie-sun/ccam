@@ -1,18 +1,18 @@
 ---
 title: داشبورد
 description: ccam در ترمینال یک داشبورد تمام‌صفحه از حساب‌ها، گروه‌ها، قواعد پوشه، افزونه‌ها و بررسی‌ها باز می‌کند؛ هر تغییر ابتدا برنامه خود را نشان می‌دهد.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 15
 translation: machine
-sourceHash: "e48ca2c5a643"
+sourceHash: "98ccf6cd81e9"
 ---
 
-`ccam` بدون آرگومان، وقتی ورودی و خروجی استاندارد ترمینال باشند، یک داشبورد تمام‌صفحه باز می‌کند؛ در غیر این صورت `ccam list` را چاپ می‌کند. داشبورد هر حساب را همراه با مصرف و گروه‌هایش نشان می‌دهد و همان کارهایی را انجام می‌دهد که فرمان‌ها انجام می‌دهند: اجرا، افزودن، ورود، تغییر گروه‌ها، تعیین قواعد پوشه، بررسی و تعمیر. اجرای یک حساب داشبورد را می‌بندد؛ افزودن حساب یا ورود، داشبورد را برای ترمینال ترک می‌کند و سپس به آن برمی‌گردد.
+`ccam` بدون آرگومان، وقتی ورودی و خروجی استاندارد ترمینال باشند، یک داشبورد تمام‌صفحه باز می‌کند؛ در غیر این صورت `ccam list` را چاپ می‌کند. داشبورد هر حساب را همراه با مصرف و گروه‌هایش نشان می‌دهد و همان کارهایی را انجام می‌دهد که فرمان‌ها انجام می‌دهند: اجرا، افزودن، ورود، تغییر گروه‌ها، تعیین قواعد پوشه، فهرست کردن نشست‌های پس‌زمینه، بررسی و تعمیر. اجرای یک حساب، یا وصل شدن به یک نشست پس‌زمینه، داشبورد را می‌بندد؛ افزودن حساب یا ورود، داشبورد را برای ترمینال ترک می‌کند و سپس به آن برمی‌گردد.
 
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -40,12 +40,13 @@ sourceHash: "e48ca2c5a643"
 | زبانه | آنچه نشان می‌دهد | کلیدها |
 | --- | --- | --- |
 | Accounts | شماره، نام، ایمیل، نوارهای ۵ ساعته، هفتگی و Fable، آخرین استفاده، گروه‌ها؛ `✔` حساب پیش‌فرض، `▸` حساب این پوشه، `•` در حال اجرا (از جمله Claude Code که بدون ccam شروع شده است: `claude` معمولی، یک IDE، نشست‌های پس‌زمینه و daemon آن‌ها) | پایین‌تر |
+| Agents | آنچه [`ccam agents`](/features/agents) فهرست می‌کند: نشست‌های پس‌زمینه و نشست‌های باز همه حساب‌ها، با وضعیت، پوشه و زمان شروعشان (پایین‌تر) | `enter` وصل شدن (مانند `ccam attach`)، `x` توقف، `r` بارگذاری دوباره |
 | Groups | هر گروه، آنچه به اشتراک می‌گذارد و حساب‌هایش، و حساب‌هایی که در هیچ گروهی نیستند | `enter` ویرایش، `n` جدید، `e` تغییر نام، `x` حذف |
 | Folders | قواعد [`ccam folder`](/features/folder) و قاعده‌ای که اینجا اعمال می‌شود، حتی وقتی از طریق یک پیوند نمادین به پوشه رسیده‌اید (قواعد جدید با پیوندهای حل‌شده ذخیره می‌شوند) | `n` استفاده از یک حساب در اینجا، `enter` تغییر، `x` حذف |
 | Extensions | آنچه [`ccam ext`](/features/ext) نشان می‌دهد، هر افزونه یک بار همراه با گروه‌هایی که از آن‌ها می‌آید، `off:` حساب‌هایی که یک پلاگین در آن‌ها روشن نیست، سرورهایی که یک حساب فقط برای این پوشه در میان سرورهای خودش دارد، `This folder's project`، و مشکلاتی که به هیچ حسابی تعلق ندارند | `r` بارگذاری دوباره |
 | Health | آنچه [`ccam doctor`](/features/doctor) گزارش می‌دهد، به‌صورت یک کادر برای هر حساب (پایین‌تر) | `f` تعمیر کادر انتخاب‌شده، `F` تعمیر همه (`doctor --fix`)، `↑`/`↓` جابه‌جایی بین کادرها |
 
-`←`/`→` یا `Tab` زبانه‌ها را عوض می‌کنند، `?` کلیدهای زبانه فعلی را فهرست می‌کند، `r` مصرف را بدون حافظه نهان کوتاه‌مدت دوباره می‌پرسد و `q` یا `Esc` خارج می‌شود.
+`←`/`→` یا `Tab` زبانه‌ها را عوض می‌کنند، `?` کلیدهای زبانه فعلی را فهرست می‌کند، `r` مصرف را بدون حافظه نهان کوتاه‌مدت دوباره می‌پرسد و زبانه‌های Agents، Extensions و Health را دوباره بارگذاری می‌کند، و `q` یا `Esc` خارج می‌شود.
 
 ## کلیدهای زبانه Accounts
 
@@ -66,7 +67,7 @@ sourceHash: "e48ca2c5a643"
 | `c` | تعیین یا حذف فرمان میان‌بر حساب |
 | `x` | حذف حساب (ابتدا می‌پرسد و روی No شروع می‌کند) |
 
-**صندلی‌های Team و Enterprise.** انتخاب خودکار (`ccam next`، `--fallback`، `ccam pick`، کلید `n` در داشبورد) میان صندلی‌های همان سازمان Claude Team یا Enterprise هم جابه‌جا می‌شود. مرکز راهنمای Anthropic می‌گوید: «Each seat on a Team plan is assigned to one named individual, and only that person may use it» (هر صندلی در طرح Team به نام یک فرد مشخص اختصاص داده می‌شود و فقط همان شخص اجازه دارد از آن استفاده کند) و «Users can't route their work through another user's account to use that user's remaining usage» (کاربران نمی‌توانند کار خود را از طریق حساب کاربر دیگری انجام دهند تا از سهمیه مصرف باقی‌مانده آن کاربر استفاده کنند) ([طرح‌های Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)؛ و همین‌طور برای [طرح‌های Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). بنابراین استفاده از انتخاب خودکار میان صندلی‌ها ممکن است شرایط Anthropic را نقض کند. پیش از آنکه به آن تکیه کنید، از سازمان خود و Anthropic بپرسید. برای طرح‌های شخصی (Pro، Max)، [توضیح شرایط در پرسش‌های متداول](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) را ببینید.
+**صندلی‌های Team و Enterprise.** انتخاب خودکار (`ccam next`، `--fallback`، `ccam pick`، کلید `n` در داشبورد، و [`auto_switch`](/features/next#auto-switch) وقتی آن را روشن کنید) میان صندلی‌های همان سازمان Claude Team یا Enterprise هم جابه‌جا می‌شود. مرکز راهنمای Anthropic می‌گوید: «Each seat on a Team plan is assigned to one named individual, and only that person may use it» (هر صندلی در طرح Team به نام یک فرد مشخص اختصاص داده می‌شود و فقط همان شخص اجازه دارد از آن استفاده کند) و «Users can't route their work through another user's account to use that user's remaining usage» (کاربران نمی‌توانند کار خود را از طریق حساب کاربر دیگری انجام دهند تا از سهمیه مصرف باقی‌مانده آن کاربر استفاده کنند) ([طرح‌های Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)؛ و همین‌طور برای [طرح‌های Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). بنابراین استفاده از انتخاب خودکار میان صندلی‌ها ممکن است شرایط Anthropic را نقض کند. اینکه در آنجا از آن استفاده کنید یا نه، تصمیم خودتان است: پیش از آنکه به آن تکیه کنید، از سازمان خود و Anthropic بپرسید. برای طرح‌های شخصی (Pro، Max)، [توضیح شرایط در پرسش‌های متداول](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) را ببینید.
 
 ## زبانه Health
 
@@ -95,6 +96,28 @@ sourceHash: "e48ca2c5a643"
 ```
 
 `↑`/`↓` از کادری به کادر دیگر می‌روند و کادر انتخاب‌شده حاشیه‌ای به رنگ تأکیدی دارد. `f` فقط کادر انتخاب‌شده را تعمیر می‌کند، همان‌طور که `ccam doctor --fix` تعمیر می‌کند: در کادر یک حساب فقط همان حساب را تعمیر می‌کند و در کادر `General` یافته‌هایی را که به هیچ حسابی تعلق ندارند (مسیرهای افزونه‌ها و میان‌برها)؛ بقیه حساب‌ها فقط دوباره بررسی می‌شوند. ابتدا می‌پرسد (``Like `ccam doctor --fix`: missing links and group folders are made, and a real file where a link belongs is backed up first; where the group has its own copy, the account then sees the group's. Nothing is lost.``)، و کادری که چیزی برای تعمیر ندارد فقط می‌گوید `nothing to repair in <name>`. `F` همه چیز را یک‌جا تعمیر می‌کند، مانند `ccam doctor --fix`، و `r` دوباره بررسی می‌کند.
+
+## زبانه Agents
+
+زبانه Agents همان چیزی را نشان می‌دهد که [`ccam agents`](/features/agents) چاپ می‌کند: نشست‌های پس‌زمینه و نشست‌های باز همه حساب‌ها، همراه با حسابی که هر کدام به آن تعلق دارد. وقتی زبانه را برای نخستین بار باز می‌کنید، با `r`، پس از یک توقف و پس از تغییری در پیکربندی، از Claude Code همه حساب‌ها هم‌زمان می‌پرسد (`claude agents --json`، هر کدام حداکثر ۱۵ ثانیه) و تا وقتی همه پاسخ دهند `Asking every account's Claude Code for its sessions…` را نشان می‌دهد.
+
+```console
+  Accounts   Agents   Groups   Folders   Extensions   Health
+ Background agents and open sessions of every account; enter attaches to one.
+
+    Account   ID        Name   State          Folder      Started
+ ❯  work      -         -      open (busy)    ~/code/web  now
+    personal  49ec0028  probe  blocked, idle  ~/code/app  12m
+
+ ✘ lab: could not list its sessions: exit status 1 'claude agents --json' is
+   not available in this environment.
+
+ enter to attach · x to stop · r to reload · ? for shortcuts
+```
+
+`State` وضعیت یک نشست پس‌زمینه و کاری است که فرایندش انجام می‌دهد، یا برای یک نشست تعاملی `open`، مانند `ccam agents`. حسابی که نتوان از آن پرسید، زیر فهرست یک خط `✘` می‌گیرد با آنچه Claude Code گفته است، مانند `lab` در بالا که نمای عامل آن خاموش است. نشست‌های پس‌زمینه پایان‌یافته کنار گذاشته می‌شوند (`ccam agents --all` آن‌ها را فهرست می‌کند)، و وقتی همه حساب‌ها پاسخ داده باشند و هیچ‌کدام نشستی نداشته باشد، زبانه می‌گوید ``No sessions. Start one in the background with `ccam <account> --bg "…"`.`` در ترمینال باریک، زبانه ابتدا `Started`، سپس `Name` و سپس `Folder` را کنار می‌گذارد و پوشه طولانی را از سمت چپ کوتاه می‌کند.
+
+`Enter` روی یک نشست پس‌زمینه داشبورد را می‌بندد و نشست را در همین ترمینال با حساب خودش باز می‌کند، همان‌طور که `ccam attach <id>` انجام می‌دهد؛ داشبورد برنمی‌گردد (در Claude Code، `←` به نمای عامل آن و `Ctrl+Z` به شل می‌رود). نشست باز شناسه‌ای ندارد، پس `Enter` و `x` فقط می‌گویند که یک نشست پس‌زمینه لازم است. `x` اول می‌پرسد و روی `No, keep it` آغاز می‌کند: ``It runs as personal. Like `ccam personal stop 49ec0028`, Claude Code stops it and keeps its conversation, which `ccam attach 49ec0028` opens again.`` با پاسخ بله، ccam فرمان `claude stop <id>` را با همان حساب اجرا می‌کند، ``49ec0028 (personal) stopped; `ccam attach 49ec0028` opens it again`` یا دلیل ناتوانی‌اش را می‌گوید، و فهرست را دوباره می‌خواند.
 
 ## تغییر گروه‌ها
 

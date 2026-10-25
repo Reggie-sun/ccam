@@ -1,18 +1,18 @@
 ---
 title: Ang dashboard
 description: Sa terminal, nagbubukas ang ccam ng full-screen dashboard ng mga account, group, folder rule, extension at pagsusuri; may plano muna ang bawat pagbabago.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 15
 translation: machine
-sourceHash: "e48ca2c5a643"
+sourceHash: "98ccf6cd81e9"
 ---
 
-Binubuksan ng `ccam` na walang argument ang isang full-screen dashboard kapag terminal ang standard input at output; kung hindi, ipi-print nito ang `ccam list`. Ipinapakita ng dashboard ang bawat account kasama ang usage at mga group nito, at ginagawa nito ang ginagawa ng mga command: magsimula, magdagdag, mag-log in, magbago ng mga group, magtakda ng mga folder rule, magsuri at mag-ayos. Nagsasara ito kapag nagsimula ang isang account; kapag nagdagdag ng account o nag-log in, iniiwan nito ang screen para sa terminal at bumabalik pagkatapos.
+Binubuksan ng `ccam` na walang argument ang isang full-screen dashboard kapag terminal ang standard input at output; kung hindi, ipi-print nito ang `ccam list`. Ipinapakita ng dashboard ang bawat account kasama ang usage at mga group nito, at ginagawa nito ang ginagawa ng mga command: magsimula, magdagdag, mag-log in, magbago ng mga group, magtakda ng mga folder rule, maglista ng mga background session, magsuri at mag-ayos. Nagsasara ito kapag nagsimula ang isang account o kapag kumabit ka sa isang background session; kapag nagdagdag ng account o nag-log in, iniiwan nito ang screen para sa terminal at bumabalik pagkatapos.
 
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -40,12 +40,13 @@ Iginuguhit ang unang frame mula sa `config.toml` lang, sa mas mababa pa nang hus
 | Tab | Ano ang ipinapakita | Mga key |
 | --- | --- | --- |
 | Accounts | numero, pangalan, email, mga bar ng 5-oras, lingguhan at Fable, huling paggamit, mga group; `✔` ang default, `▸` ang account ng folder na ito, `•` tumatakbo (pati ang Claude Code na sinimulan nang walang ccam: karaniwang `claude`, isang IDE, mga background session at ang daemon nila) | sa ibaba |
+| Agents | ang inililista ng [`ccam agents`](/features/agents): ang mga background session at bukas na session ng bawat account, kasama ang state, folder at oras ng pagsisimula nila (sa ibaba) | `enter` kumabit (gaya ng `ccam attach`), `x` ihinto, `r` i-reload |
 | Groups | bawat group, kung ano ang shine-share nito at ang mga account nito, at ang mga account na walang group | `enter` baguhin, `n` bago, `e` palitan ang pangalan, `x` alisin |
 | Folders | ang mga patakaran ng [`ccam folder`](/features/folder) at ang nalalapat dito, pati kapag narating mo ang folder sa pamamagitan ng symbolic link (sine-save ang mga bagong patakaran na naresolba ang mga link) | `n` gumamit ng account dito, `enter` baguhin, `x` alisin |
 | Extensions | ang ipinapakita ng [`ccam ext`](/features/ext), bawat extension nang isang beses kasama ang mga group na pinanggagalingan nito, `off:` ang mga account kung saan hindi naka-on ang isang plugin, ang mga server na mayroon ang isang account para sa folder na ito lang kasama ng sarili nitong mga server, `This folder's project`, at ang mga problemang hindi pag-aari ng anumang account | `r` i-reload |
 | Health | ang iniuulat ng [`ccam doctor`](/features/doctor), bilang isang kahon bawat account (sa ibaba) | `f` ayusin ang napiling kahon, `F` ayusin lahat (`doctor --fix`), `↑`/`↓` lumipat sa pagitan ng mga kahon |
 
-Nagpapalit ng tab ang `←`/`→` o `Tab`, inililista ng `?` ang mga key ng kasalukuyang tab, hinahanap ulit ng `r` ang usage nang hindi ginagamit ang maikling cache, at lumalabas ang `q` o `Esc`.
+Nagpapalit ng tab ang `←`/`→` o `Tab`, inililista ng `?` ang mga key ng kasalukuyang tab, hinahanap ulit ng `r` ang usage nang hindi ginagamit ang maikling cache at nilo-load ulit ang mga tab na Agents, Extensions at Health, at lumalabas ang `q` o `Esc`.
 
 ## Mga key sa tab na Accounts
 
@@ -66,7 +67,7 @@ Nagpapalit ng tab ang `←`/`→` o `Tab`, inililista ng `?` ang mga key ng kasa
 | `c` | Itakda o alisin ang shortcut command nito |
 | `x` | Alisin ito (nagtatanong muna, nakatapat sa No) |
 
-**Mga seat ng Team at Enterprise.** Lumilipat din ang awtomatikong pagpili (`ccam next`, `--fallback`, `ccam pick`, ang `n` ng dashboard) sa pagitan ng mga seat ng iisang Claude Team o Enterprise na organisasyon. Sinasabi ng help center ng Anthropic na "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (nakatalaga ang bawat seat ng Team plan sa iisang partikular na tao, at siya lang ang puwedeng gumamit nito) at "Users can't route their work through another user's account to use that user's remaining usage" (hindi puwedeng idaan ng mga user ang trabaho nila sa account ng ibang user para magamit ang natitirang usage ng user na iyon) ([mga Team plan](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); ganoon din sa [mga Enterprise plan](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Kaya maaaring lumabag sa terms ng Anthropic ang paggamit ng awtomatikong pagpili sa pagitan ng mga seat. Magtanong muna sa iyong organisasyon at sa Anthropic bago ka umasa rito. Saklaw ng [paalala tungkol sa terms sa FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) ang mga personal na plan (Pro, Max).
+**Mga seat ng Team at Enterprise.** Lumilipat din ang awtomatikong pagpili (`ccam next`, `--fallback`, `ccam pick`, ang `n` ng dashboard, at ang [`auto_switch`](/features/next#auto-switch) kapag binuksan mo ito) sa pagitan ng mga seat ng iisang Claude Team o Enterprise na organisasyon. Sinasabi ng help center ng Anthropic na "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (nakatalaga ang bawat seat ng Team plan sa iisang partikular na tao, at siya lang ang puwedeng gumamit nito) at "Users can't route their work through another user's account to use that user's remaining usage" (hindi puwedeng idaan ng mga user ang trabaho nila sa account ng ibang user para magamit ang natitirang usage ng user na iyon) ([mga Team plan](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); ganoon din sa [mga Enterprise plan](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Kaya maaaring lumabag sa terms ng Anthropic ang paggamit ng awtomatikong pagpili sa pagitan ng mga seat. Ikaw ang magpapasya kung gagamitin mo ito roon: magtanong muna sa iyong organisasyon at sa Anthropic bago ka umasa rito. Saklaw ng [paalala tungkol sa terms sa FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) ang mga personal na plan (Pro, Max).
 
 ## Ang tab na Health
 
@@ -95,6 +96,28 @@ Pinapatakbo ng tab na Health ang mga pagsusuri ng [`ccam doctor`](/features/doct
 ```
 
 Lumilipat ang `↑`/`↓` mula kahon papunta sa kahon, at may border na kulay accent ang napiling kahon. Kinukumpuni lang ng `f` ang napiling kahon, sa paraang gagawin ng `ccam doctor --fix`: sa kahon ng isang account, ang account na iyon lang ang kinukumpuni nito, at sa kahong `General`, ang mga natuklasang hindi kabilang sa anumang account (mga path ng plugin at mga shortcut); sinusuri lang ulit ang bawat iba pang account. Nagtatanong muna ito (``Like `ccam doctor --fix`: missing links and group folders are made, and a real file where a link belongs is backed up first; where the group has its own copy, the account then sees the group's. Nothing is lost.``), at ang kahong walang kailangang kumpunihin ay nagsasabi lang ng `nothing to repair in <name>`. Kinukumpuni ng `F` ang lahat nang sabay-sabay, gaya ng `ccam doctor --fix`, at sinusuri ulit ng `r`.
+
+## Ang tab na Agents
+
+Ipinapakita ng tab na Agents ang ipi-print ng [`ccam agents`](/features/agents): ang mga background session at bukas na session ng bawat account, kasama ang account na kinabibilangan ng bawat isa. Sabay-sabay nitong tinatanong ang Claude Code ng bawat account (`claude agents --json`, hanggang 15 segundo bawat isa) kapag una mong binuksan ang tab, sa `r`, pagkatapos ng pagpapahinto, at pagkatapos ng pagbabago sa config, at sinasabi nito ang `Asking every account's Claude Code for its sessions…` hanggang makasagot ang lahat.
+
+```console
+  Accounts   Agents   Groups   Folders   Extensions   Health
+ Background agents and open sessions of every account; enter attaches to one.
+
+    Account   ID        Name   State          Folder      Started
+ ❯  work      -         -      open (busy)    ~/code/web  now
+    personal  49ec0028  probe  blocked, idle  ~/code/app  12m
+
+ ✘ lab: could not list its sessions: exit status 1 'claude agents --json' is
+   not available in this environment.
+
+ enter to attach · x to stop · r to reload · ? for shortcuts
+```
+
+Ang `State` ay ang state ng isang background session at kung ano ang ginagawa ng process nito, o `open` para sa interactive session, gaya sa `ccam agents`. Ang account na hindi matanong ay nakakakuha ng linyang `✘` sa ilalim ng listahan kasama ang sinabi ng Claude Code, gaya ng `lab` sa itaas, na naka-off ang agent view. Hindi isinasama ang mga tapos nang background session (inililista ang mga ito ng `ccam agents --all`), at kapag sumagot ang bawat account at walang may session, sinasabi ng tab ang ``No sessions. Start one in the background with `ccam <account> --bg "…"`.`` Sa makitid na terminal, tinatanggal ng tab ang `Started`, saka ang `Name`, saka ang `Folder`, at pinuputol mula sa kaliwa ang mahabang folder.
+
+Isinasara ng `Enter` sa isang background session ang dashboard at binubuksan ang session sa terminal na ito bilang ang account nito, gaya ng ginagawa ng `ccam attach <id>`; hindi na bumabalik ang dashboard (sa Claude Code, pumupunta ang `←` sa agent view nito at ang `Ctrl+Z` sa shell). Walang id ang bukas na session, kaya sinasabi lang ng `Enter` at `x` na kailangan ng background session. Nagtatanong muna ang `x`, nakatapat sa `No, keep it`: ``It runs as personal. Like `ccam personal stop 49ec0028`, Claude Code stops it and keeps its conversation, which `ccam attach 49ec0028` opens again.`` Kapag oo, pinapatakbo ng ccam ang `claude stop <id>` bilang account na iyon, sinasabi ang ``49ec0028 (personal) stopped; `ccam attach 49ec0028` opens it again`` o kung bakit hindi nito nagawa, at binabasa ulit ang listahan.
 
 ## Pagbabago ng mga group
 

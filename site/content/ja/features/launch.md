@@ -1,10 +1,10 @@
 ---
 title: Claude Codeの起動
 description: ccam <name|number>、ccam run、ダッシュボードで任意のアカウントのClaude Codeを起動します。引数はそのままclaudeに渡り、--dry-runで実行内容を確認できます。
-updated: 2026-10-24
+updated: 2026-10-25
 order: 1
 translation: machine
-sourceHash: "e279341eb59b"
+sourceHash: "afa4942cfed5"
 ---
 
 `ccam work`は、アカウント`work`としてClaude Codeを起動し、名前より後のものはすべてそのまま`claude`に渡します。ターミナル、スクリプト、パイプで入力を渡す場合など、`claude`と入力するあらゆる場所で使えます。
@@ -34,11 +34,11 @@ ccam --fallback work -p "fix the tests"   # run again as another account at the 
 
 引数なしの`ccam`は、標準入力と標準出力がターミナルであれば[ダッシュボード](/features/dashboard)を開き、そうでなければ`ccam list`を出力します。アカウントに移動し（矢印キーか、番号の入力で）、`Enter`を押すと起動します。`n`は最も余裕があるアカウントを起動し、`o`では`--continue`、`--resume`、そのほかの引数を選べます。ダッシュボードはClaude Codeが起動する前に閉じるので、先にターミナルが元の状態に戻ります。
 
-**TeamとEnterpriseのシート。** 自動的な選択（`ccam next`、`--fallback`、`ccam pick`、ダッシュボードの`n`）は、同じClaude TeamまたはEnterpriseの組織に属するシート間でも切り替えます。Anthropicのヘルプセンターには、「Each seat on a Team plan is assigned to one named individual, and only that person may use it」（Teamプランの各シートは1人の指定ユーザーに割り当てられ、そのユーザーのみが使用できます）、「Users can't route their work through another user's account to use that user's remaining usage」（ユーザーは別のユーザーのアカウントを通じて作業をルーティングして、そのユーザーの残りの使用量を使用することはできません）と書かれています（[Teamプラン](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)。[Enterpriseプラン](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)も同様です）。そのため、シート間で自動的な選択を使うと、Anthropicの規約に違反するおそれがあります。自動的な選択に頼る前に、所属する組織とAnthropicに確認してください。個人プラン（Pro、Max）については、[FAQの規約に関する説明](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)を参照してください。
+**TeamとEnterpriseのシート。** 自動的な選択（`ccam next`、`--fallback`、`ccam pick`、ダッシュボードの`n`、有効にした場合の[`auto_switch`](/features/next#auto-switch)）は、同じClaude TeamまたはEnterpriseの組織に属するシート間でも切り替えます。Anthropicのヘルプセンターには、「Each seat on a Team plan is assigned to one named individual, and only that person may use it」（Teamプランの各シートは1人の指定ユーザーに割り当てられ、そのユーザーのみが使用できます）、「Users can't route their work through another user's account to use that user's remaining usage」（ユーザーは別のユーザーのアカウントを通じて作業をルーティングして、そのユーザーの残りの使用量を使用することはできません）と書かれています（[Teamプラン](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)。[Enterpriseプラン](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)も同様です）。そのため、シート間で自動的な選択を使うと、Anthropicの規約に違反するおそれがあります。そこで使うかどうかはご自身の判断です。自動的な選択に頼る前に、所属する組織とAnthropicに確認してください。個人プラン（Pro、Max）については、[FAQの規約に関する説明](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)を参照してください。
 
 シェルに`CLAUDE_CODE_OAUTH_TOKEN`、`ANTHROPIC_API_KEY`、`ANTHROPIC_AUTH_TOKEN`が設定されていると、Claude Codeはアカウント自身のログインではなくそのキーやトークンを使うことがあるため、ccamは起動前にその旨を標準エラー出力に表示します（`ccam: $ANTHROPIC_API_KEY is set, so Claude Code may use that key instead of work's login…`）。ccamは変数を読むだけです。[APIキーのアカウント](/features/api)では、代わりにこれらの変数を消去します。
 
-`config.toml`の先頭（最初の`[[group]]`、`[[profile]]`、`[[folder]]`より上）で`relay = true`を設定すると、ccamは対話型のセッションを子プロセスとして起動してそのそばに留まり、`/ccam:switch`が、セッションのオプション、権限モード、effortレベルとともに、会話を自動で引き継げるようにします（[詳細](/features/next#relay)）。設定しない場合、ccamは自身をClaude Codeに置き換え、そばでは何も動作しません。
+`config.toml`の先頭（最初の`[[group]]`、`[[profile]]`、`[[folder]]`より上）で`relay = true`を、またはLinuxとmacOSでは[`auto_switch = true`](/features/next#auto-switch)を設定すると、ccamは対話型のセッションを子プロセスとして起動してそのそばに留まり、`/ccam:switch`や、使用量の上限での`auto_switch`が、セッションのオプション、権限モード、effortレベルとともに、会話を自動で引き継げるようにします（[詳細](/features/next#relay)）。設定しない場合、ccamは自身をClaude Codeに置き換え、そばでは何も動作しません。
 
 ## オプション
 

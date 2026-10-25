@@ -1,15 +1,15 @@
 ---
 title: స్క్రిప్ట్‌ల కోసం ఖాతాను ఎంచుకోవడం
 description: ccam pick స్క్రిప్ట్ కోసం ఎక్కువ అవకాశం ఉన్న ఖాతాను ప్రింట్ చేస్తుంది, కలిసి ప్రారంభమయ్యే workers కు వేర్వేరు ఖాతాలు ఇస్తుంది, అవకాశం లేకపోతే 75 ఇస్తుంది.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 12
 translation: machine
-sourceHash: "a8baeb64de99"
+sourceHash: "5c4f74db9714"
 ---
 
 `ccam pick` ఎక్కువ అవకాశం ఉన్న లాగిన్ అయిన ఖాతా పేరును ప్రింట్ చేస్తుంది, దానితో ఒక స్క్రిప్ట్ Claude Code ను ప్రారంభించవచ్చు. అవకాశం ఉన్న ఖాతాలు సరిపడా ఉన్నంత వరకు, ఒకే సమయంలో ప్రారంభమయ్యే ప్రతి worker కు వేరే ఖాతా వస్తుంది, కాబట్టి `claude -p` jobs సమూహం ఒకే ఖాతాను ఖాళీ చేయకుండా మీ ఖాతాలన్నింటిపై పంచబడుతుంది.
 
-**Team, Enterprise సీట్లు.** ఆటోమేటిక్ ఎంపిక (`ccam next`, `--fallback`, `ccam pick`, డాష్‌బోర్డ్‌లోని `n`) ఒకే Claude Team లేదా Enterprise సంస్థలోని సీట్ల మధ్య కూడా మారుస్తుంది. Anthropic సహాయ కేంద్రం "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team ప్లాన్‌లోని ప్రతి సీటు పేరుతో నిర్దేశించిన ఒక వ్యక్తికి కేటాయించబడుతుంది, ఆ వ్యక్తి మాత్రమే దాన్ని ఉపయోగించవచ్చు) అని, "Users can't route their work through another user's account to use that user's remaining usage" (యూజర్లు మరో యూజర్‌కు మిగిలి ఉన్న వినియోగాన్ని వాడుకోవడానికి తమ పనిని ఆ యూజర్ ఖాతా ద్వారా మళ్లించకూడదు) అని చెబుతుంది ([Team ప్లాన్‌లు](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise ప్లాన్‌లకు](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) కూడా ఇదే వర్తిస్తుంది). కాబట్టి సీట్ల మధ్య ఆటోమేటిక్ ఎంపికను ఉపయోగించడం Anthropic నిబంధనల ఉల్లంఘన కావచ్చు. దానిపై ఆధారపడే ముందు మీ సంస్థను, Anthropic ను సంప్రదించి నిర్ధారించుకోండి. వ్యక్తిగత ప్లాన్‌ల (Pro, Max) గురించి [తరచుగా అడిగే ప్రశ్నలలోని నిబంధనల గమనిక](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) చెబుతుంది.
+**Team, Enterprise సీట్లు.** ఆటోమేటిక్ ఎంపిక (`ccam next`, `--fallback`, `ccam pick`, డాష్‌బోర్డ్‌లోని `n`, మీరు ఆన్ చేసినప్పుడు [`auto_switch`](/features/next#auto-switch)) ఒకే Claude Team లేదా Enterprise సంస్థలోని సీట్ల మధ్య కూడా మారుస్తుంది. Anthropic సహాయ కేంద్రం "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team ప్లాన్‌లోని ప్రతి సీటు పేరుతో నిర్దేశించిన ఒక వ్యక్తికి కేటాయించబడుతుంది, ఆ వ్యక్తి మాత్రమే దాన్ని ఉపయోగించవచ్చు) అని, "Users can't route their work through another user's account to use that user's remaining usage" (యూజర్లు మరో యూజర్‌కు మిగిలి ఉన్న వినియోగాన్ని వాడుకోవడానికి తమ పనిని ఆ యూజర్ ఖాతా ద్వారా మళ్లించకూడదు) అని చెబుతుంది ([Team ప్లాన్‌లు](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise ప్లాన్‌లకు](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) కూడా ఇదే వర్తిస్తుంది). కాబట్టి సీట్ల మధ్య ఆటోమేటిక్ ఎంపికను ఉపయోగించడం Anthropic నిబంధనల ఉల్లంఘన కావచ్చు. అక్కడ దాన్ని ఉపయోగించాలా వద్దా అనేది మీ నిర్ణయం: దానిపై ఆధారపడే ముందు మీ సంస్థను, Anthropic ను సంప్రదించి నిర్ధారించుకోండి. వ్యక్తిగత ప్లాన్‌ల (Pro, Max) గురించి [తరచుగా అడిగే ప్రశ్నలలోని నిబంధనల గమనిక](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) చెబుతుంది.
 
 ## వినియోగం
 
@@ -59,7 +59,7 @@ $ ccam pick --json
 1. ఈ ఫోల్డర్ ప్రారంభించే ఖాతా యొక్క సంస్థలో లాగిన్ అయిన ఖాతాల జాబితాను ccam తీస్తుంది (API కీ ఖాతాలకు, Console లాగిన్‌లకు పరిమితులు లేవు, అవి వదిలేయబడతాయి; [సంస్థలు](/features/next#auto) చూడండి); ఆ ఖాతా లాగే అదే Claude ఖాతాలోకి లాగిన్ అయిన ఫోల్డర్ కూడా వదిలేయబడుతుంది.
 2. అది ఒక lock (`~/.local/state/ccam/picks.lock`) తీసుకుంటుంది, కాబట్టి ఒకేసారి నడిచే ఎంపికలు ఒకదాని తర్వాత ఒకటి జరుగుతాయి.
 3. `ccam usage` లాగే, 60 సెకన్ల క్యాష్‌తో, అన్ని ఖాతాల వినియోగాన్ని ఒకేసారి చూస్తుంది. Claude Code నిండిందని నివేదించిన విండో దాని రీసెట్ వరకు 100% గా లెక్కించబడుతుంది ([పరిమితి రికార్డ్](/features/usage#the-limit-record)), కాబట్టి ఇప్పుడే పరిమితిని చేరిన ఖాతా, దాని సేవ్ చేసిన సంఖ్యలు అవకాశం చూపిస్తున్నా, బయటే ఉంటుంది.
-4. గత 2 నిమిషాల్లో ఎంచుకున్న ఖాతాలు (`~/.local/state/ccam/picks/<name>`; గడియారం సమయం కంటే తర్వాతి తేదీ ఉన్న ఎంపిక లెక్కలోకి రాదు) ముందుగా వదిలేయబడతాయి, మిగిలిన వాటిలో `ccam next --auto` యొక్క [ఎంపిక నియమాలు](/features/next#auto) ఎంచుకుంటాయి: ముందుగా `auto_max_usage` కంటే తక్కువ ఉన్నవి, strategy ప్రకారం, 100% వద్ద ఉన్న ఖాతాను ఎప్పుడూ కాదు.
+4. గత 2 నిమిషాల్లో `ccam pick` ఎంచుకున్న, లేదా [`auto_switch`](/features/next#auto-switch) సెషన్‌ను తరలించిన ఖాతాలు (`~/.local/state/ccam/picks/<name>`; గడియారం సమయం కంటే తర్వాతి తేదీ ఉన్న ఎంపిక లెక్కలోకి రాదు) ముందుగా వదిలేయబడతాయి, మిగిలిన వాటిలో `ccam next --auto` యొక్క [ఎంపిక నియమాలు](/features/next#auto) ఎంచుకుంటాయి: ముందుగా `auto_max_usage` కంటే తక్కువ ఉన్నవి, strategy ప్రకారం, 100% వద్ద ఉన్న ఖాతాను ఎప్పుడూ కాదు. దీని వల్ల నియమాలు ముందుగా తీసుకునే ఖాతాను దాటవేసినప్పుడు, `--json` యొక్క `reason` ఆ విషయం చెబుతుంది: `30% of its 5 hours used; work was picked a moment ago`.
 5. అవకాశం ఉన్న ప్రతి ఖాతా ఇటీవల ఎంచుకోబడి ఉంటే, నియమాలు మళ్లీ వాటన్నింటి నుంచి ఎంచుకుంటాయి, కాబట్టి మూడు ఖాతాలపై నాలుగో worker ఒక ఖాతాను పంచుకుంటుంది.
 6. ఎంపిక నమోదై lock విడుదల అవుతుంది, ఆ తర్వాత పేరు ప్రింట్ అవుతుంది.
 

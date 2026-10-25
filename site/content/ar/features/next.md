@@ -1,15 +1,15 @@
 ---
 title: التبديل إلى الحساب التالي
 description: يفتح ccam next برنامج Claude Code بحساب آخر؛ ويختار --auto الأوسع هامشًا، وينقل --continue المحادثة إليه، ويعيد --fallback تشغيل مهام -p.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 8
 translation: machine
-sourceHash: a38daed5dd97
+sourceHash: "c8e539eff23c"
 ---
 
-يفتح `ccam next` برنامج Claude Code بحساب آخر دون أن تحدد اسمه. استخدمه عندما يبلغ حساب ما حد الاستخدام: يأخذ `ccam next` وحده الحساب الذي يلي آخر حساب استخدمته، ويأخذ `--auto` الحساب الأكثر سعة، وينقل `--continue` آخر محادثة في هذا المجلد إلى الحساب الجديد، سواء تشارك الحسابان السجل أم لا. وداخل Claude Code، يخبرك [المكوّن الإضافي لـ ccam](#inside-claude-code) عندما يوقف الحد جلسةً، ويسلّم `/ccam:switch` المحادثة إلى حساب آخر. وفي السكربتات التي تشغّل `claude -p`، يجري `ccam --fallback` التبديل بنفسه (راجع [إعادة التشغيل عند بلوغ الحد](#run-again-at-the-limit)).
+يفتح `ccam next` برنامج Claude Code بحساب آخر دون أن تحدد اسمه. استخدمه عندما يبلغ حساب ما حد الاستخدام: يأخذ `ccam next` وحده الحساب الذي يلي آخر حساب استخدمته، ويأخذ `--auto` الحساب الأكثر سعة، وينقل `--continue` آخر محادثة في هذا المجلد إلى الحساب الجديد، سواء تشارك الحسابان السجل أم لا. وداخل Claude Code، يخبرك [المكوّن الإضافي لـ ccam](#inside-claude-code) عندما يوقف الحد جلسةً، ويسلّم `/ccam:switch` المحادثة إلى حساب آخر. وفي السكربتات التي تشغّل `claude -p`، يجري `ccam --fallback` التبديل بنفسه (راجع [إعادة التشغيل عند بلوغ الحد](#run-again-at-the-limit))، ومع تشغيل [`auto_switch`](#auto-switch) (على Linux وmacOS)، ينقل ccam أيضًا الجلسة التفاعلية التي يوقفها Claude Code عند حدها.
 
-**مقاعد Team وEnterprise.** يبدّل الاختيار التلقائي (`ccam next` و`--fallback` و`ccam pick` والمفتاح `n` في لوحة التحكم) أيضًا بين مقاعد المؤسسة نفسها في Claude Team أو Enterprise. يقول مركز المساعدة لدى Anthropic: "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (يُخصَّص كل مقعد في خطة Team لشخص واحد محدد بالاسم، ولا يجوز أن يستخدمه إلا ذلك الشخص) و"Users can't route their work through another user's account to use that user's remaining usage" (لا يجوز للمستخدمين تمرير عملهم عبر حساب مستخدم آخر للاستفادة من الاستخدام المتبقي لذلك المستخدم) ([خطط Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)؛ وبالمثل في [خطط Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). لذا فإن استخدام الاختيار التلقائي بين المقاعد قد يخالف شروط Anthropic. تحقّق من ذلك مع مؤسستك ومع Anthropic قبل أن تعتمد عليه. أما الخطط الشخصية (Pro وMax) فتتناولها [ملاحظة الشروط في الأسئلة الشائعة](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**مقاعد Team وEnterprise.** يبدّل الاختيار التلقائي (`ccam next` و`--fallback` و`ccam pick` والمفتاح `n` في لوحة التحكم، و[`auto_switch`](/features/next#auto-switch) عند تشغيله) أيضًا بين مقاعد المؤسسة نفسها في Claude Team أو Enterprise. يقول مركز المساعدة لدى Anthropic: "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (يُخصَّص كل مقعد في خطة Team لشخص واحد محدد بالاسم، ولا يجوز أن يستخدمه إلا ذلك الشخص) و"Users can't route their work through another user's account to use that user's remaining usage" (لا يجوز للمستخدمين تمرير عملهم عبر حساب مستخدم آخر للاستفادة من الاستخدام المتبقي لذلك المستخدم) ([خطط Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)؛ وبالمثل في [خطط Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). لذا فإن استخدام الاختيار التلقائي بين المقاعد قد يخالف شروط Anthropic. وقرار استخدامه هناك يعود إليك: تحقّق من ذلك مع مؤسستك ومع Anthropic قبل أن تعتمد عليه. أما الخطط الشخصية (Pro وMax) فتتناولها [ملاحظة الشروط في الأسئلة الشائعة](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 ## الاستخدام
 
@@ -18,6 +18,7 @@ ccam next                       # the account after the one you used last
 ccam next --auto                # the account with the most room
 ccam next --continue            # carry this folder's last conversation on as the next account
 ccam next -c --auto             # both: the conversation, on the account with the most room
+ccam next -c --brief            # a new conversation that starts from a summary of the last one
 ccam next --auto --max-usage 80 # prefer accounts below 80%
 ccam next --auto --strategy balance   # the weekly quota that would go unused first
 ccam next --auto --cross-org    # also accounts of other organizations
@@ -45,6 +46,7 @@ CLAUDE_CONFIG_DIR=/home/you/.local/share/ccam/profiles/work CCAM_PROFILE=work /u
 | `--cross-org` | مع `--auto`: يختار أيضًا حسابات مؤسسة أخرى (راجع أدناه) | `cross_org`، وإلا معطّل |
 | `--wait[=<duration>]` | مع `--auto`: عندما لا يكون لأي حساب هامش، ينتظر حتى يُعاد ضبط أولها، بحد أقصى هذه المدة. وتأتي القيمة بعد `=`: فيُرفض `--wait 2h` مع التلميح `--wait takes its value after '=': --wait=2h` | معطّل؛ و`5h` عند تحديده وحده |
 | `-c`، `--continue` | ينقل آخر محادثة في هذا المجلد إلى الحساب الجديد (راجع أدناه) | معطّل |
+| `--brief` | مع `--continue`: يبدأ محادثة جديدة بالحساب الجديد من ملخص ccam للمحادثة الأخيرة، بدلًا من متابعتها كلها ([راجع أدناه](#brief)) | معطّل |
 | `-- <claude args>` | وسائط تُمرَّر إلى `claude` بعد وسائط ccam نفسه | لا شيء |
 | `--dry-run` | مدعوم: يطبع `→ <from> → <to>` وسطر الأمر الذي كان سيشغّله، دون تشغيل Claude Code أو تسجيل عملية تشغيل | معطّل |
 
@@ -102,11 +104,28 @@ auto_strategy = "expiring"
 
 يخبرك ccam بحجم المحادثة: فالحساب الجديد يقرؤها كلها من جديد مع رده الأول. ولا تُشارَك ذاكرات التخزين المؤقت للمطالبات (prompt caches) بين المؤسسات أبدًا، وكل خطة شخصية مؤسسة قائمة بذاتها، لذلك عندما ينتمي الحسابان إلى مؤسستين مختلفتين يضيف ccam `prompt caches are not shared between organizations, so the first reply reads it all again`. وعندما يكون الحساب القديم مسجّل الدخول إلى خوادم MCP لم يسجّل الحساب الجديد الدخول إليها، يذكرها ccam: `work is not signed in to MCP servers personal is: linear (sign in with /mcp there; sign-ins are not shared)`. ومشاركة `history` في مجموعة تتجنب النسخ، وتُبقي محادثة واحدة، وتشارك أيضًا نقاط الحفظ التي يستعيد منها `/rewind` الشيفرة (`file-history/`).
 
+### --brief
+
+يتابع `--continue` المحادثة كلها، ويقرؤها الحساب الجديد كلها من جديد مع رده الأول. أما `ccam next --continue --brief` فيبدأ بدلًا من ذلك محادثة جديدة، من ملخص يكتبه ccam للمحادثة القديمة دون أن يسأل نموذجًا:
+
+```console
+$ ccam next --auto --continue --brief
+→ personal → work (12% of its 5 hours used, the least)
+  starting a new conversation with ccam's summary of "Fix the flaky tests" instead of resuming it (about 182k tokens)
+  summary (6k characters): /home/you/.local/state/ccam/brief/4f1c….md
+```
+
+يحوي الملخص، بهذا الترتيب وفقط حيث يوجد ما يُقال: عنوان المحادثة؛ ومسار سجلها (transcript)، ليبحث فيه Claude عندما يحتاج إلى تفصيل؛ وطلبك الأول، إذا كانت الطلبات أكثر من أربعة؛ والملخص الذي كتبه Claude Code عندما ضغط المحادثة آخر مرة؛ وطلباتك الأربعة الأخيرة، مع أوامر `!` وأوامر الشرطة المائلة كما كتبتها؛ وآخر رد لـ Claude؛ وقائمة المهام؛ وآخر 10 ملفات غيّرها Claude؛ و`git status --short --branch` للمجلد، حتى 800 حرف. وتحتفظ قائمة المهام بعشرة عناصر على الأكثر: تُحذف العناصر المنتهية أولًا، ثم الخطوات الأبعد، فتبقى الخطوة الحالية والخطوات التالية لها. وتُقصّ الأجزاء الطويلة من وسطها، ويبقى الملخص كله دون 16,000 حرف.
+
+يحفظه ccam في `~/.local/state/ccam/brief/<session>.md`، ولا يقرؤه أحد غيرك، ويزيل `--brief` التالي الملخصات الأقدم من 7 أيام. ويبدأ Claude Code بمطالبة واحدة، ويرفق الملف الذي تذكره: `Read @"<the summary>", the summary ccam wrote of my earlier Claude Code conversation, which is not loaded here. Then reply with one or two sentences on where the work stands, and wait for my next message.` والمطالبة التي تعطيها بعد `--` تحل محل الجملة الأخيرة (`Then: <your prompt>`)، وتتبعها خياراتك الأخرى بعد `--`. ويُنهي Claude Code الإشارة (mention) عند `"` ويقصّها عند `#`، لذا عندما يحوي مسار الملخص أيًّا منهما، يشير إليه ccam بمساره من مجلد العمل؛ وعندما يحوي ذلك المسار أحدهما أيضًا، تسمّي المطالبة الملف، فيقرؤه Claude بأداة Read، التي تسأل أولًا لأن الملف خارج مجلدات العمل (وفي تشغيل `-p` بالوضع اليدوي (Manual)، يرفض Claude Code القراءة ويتابع Claude دون الملخص).
+
+يطبع `ccam --dry-run next --continue --brief` الملخص ولا يحفظ شيئًا. وتبقى المحادثة القديمة كما هي، ولا تعرف الجديدة إلا ما يقوله الملخص، لذا استخدم `--brief` عندما تهمّك المهمة أكثر من كل تفصيل في الطريق إليها. ودون `--continue` يتوقف ccam برسالة `--brief works with --continue`؛ وعندما يتعذر عليه قراءة المحادثة أو لا يجد فيها ما يلخصه، يتوقف ويقول إن `ccam next --continue` دون `--brief` يتابعها كاملة. ويتابع [الترحيل](#relay) و[`auto_switch`](#auto-switch) المحادثة كاملة دائمًا. أما خيار `--brief` الخاص بـ Claude Code فيوضع بعد `--`، مثل خياراته الأخرى.
+
 ## داخل Claude Code
 
 يضيف [المكوّن الإضافي لـ ccam](/docs/install#claude-code-plugin) خطافين (Claude Code 2.1.78 أو أحدث):
 
-- عندما يتوقف دورٌ عند حد استخدام، يدوّن المحادثة ويعرض إشعارًا على سطح المكتب في الطرفيات التي تدعمه (iTerm2 وWezTerm وWindows Terminal وkitty وGhostty): ``ccam: work hit its 5-hour limit (resets 3:45pm). `ccam next --continue` carries on as another account.`` وهو يعرف كل رسالة يعدّها Claude Code حد استخدام: حدود الخمس ساعات والأسبوع والحد العادي وحدود النماذج (`You've hit your session limit` و`You've hit your limit` و`You've reached your …` لحصة نموذج)، وأرصدة الاستخدام وحدود الإنفاق، ومؤسسة أوقفت الحساب. وعندما يكون Claude Code قد كتب الطلب المرفوض في المحادثة، يسجّل الخطاف أيضًا النافذة الممتلئة حتى إعادة ضبطها ([سجل الحد](/features/usage#the-limit-record))، إلا في حالة إيقاف المؤسسة، الذي يستطيع مسؤولوها رفعه في أي وقت. أما التقييد القصير من الخادم أو حد المعدّل لمفتاح API فليس حد استخدام، ويُترك كما هو، وكذلك توقف وكيل فرعي والجلسات التي لا يجلس إليها أحد (`-p` والجلسات الخلفية). وينتظر Claude Code 2.1.234 وما بعده أيضًا في الجلسة ويتابع بنفسه بعد إعادة ضبط نافذة الخمس ساعات؛ ويمنحك الإشعار خيار التبديل بدلًا من ذلك.
+- عندما يتوقف دورٌ عند حد استخدام، يدوّن المحادثة ويعرض إشعارًا على سطح المكتب في الطرفيات التي تدعمه (iTerm2 وWezTerm وWindows Terminal وkitty وGhostty): ``ccam: work hit its 5-hour limit (resets 3:45pm). `ccam next --continue` carries on as another account.`` وهو يعرف كل رسالة يعدّها Claude Code حد استخدام: حدود الخمس ساعات والأسبوع والحد العادي وحدود النماذج (`You've hit your session limit` و`You've hit your limit` و`You've reached your …` لحصة نموذج)، وأرصدة الاستخدام وحدود الإنفاق، ومؤسسة أوقفت الحساب. وعندما يكون Claude Code قد كتب الطلب المرفوض في المحادثة، يسجّل الخطاف أيضًا النافذة الممتلئة حتى إعادة ضبطها ([سجل الحد](/features/usage#the-limit-record))، إلا في حالة إيقاف المؤسسة، الذي يستطيع مسؤولوها رفعه في أي وقت. أما التقييد القصير من الخادم أو حد المعدّل لمفتاح API فليس حد استخدام، ويُترك كما هو، وكذلك توقف وكيل فرعي والجلسات التي لا يجلس إليها أحد (`-p` والجلسات الخلفية). وينتظر Claude Code 2.1.234 وما بعده أيضًا في الجلسة ويتابع بنفسه بعد إعادة ضبط نافذة الخمس ساعات؛ ويمنحك الإشعار خيار التبديل بدلًا من ذلك، ومع تشغيل [`auto_switch`](#auto-switch) (على Linux وmacOS) يبدّل ccam نيابةً عنك عندما يكون لدى حساب آخر متسع. وعندما لا يجوز لأي حساب آخر أن يتولى المحادثة، لأنه لا حساب آخر ينتمي إلى مؤسسة Team أو Enterprise نفسها، أو لا يوجد حساب آخر بخطة شخصية (ومع تشغيل `cross_org` يجوز ذلك لأي حساب Claude آخر)، ينتهي الإشعار بدلًا من ذلك بـ `You have no other personal plans to carry it on as.` أو `You have no other accounts in Acme to carry it on as.`
 - يدوّن `/ccam:switch [account]` المحادثة وينهي الدور قبل إرسال أي طلب: اكتب `/exit`، ثم يتابعها `ccam next --continue` بالحساب الذي حددته أو بالحساب التالي. وفي جلسة لا محادثة فيها بعد، يقول إنه لا يوجد ما يُتابَع.
 
 تُحفظ الملاحظة في `~/.local/state/ccam/handoff/<account>/<session>.json`، ملف واحد لكل جلسة، فلا تكتب جلستان لحساب واحد فوق ملاحظات بعضهما أبدًا. ويُحتفظ بها لمدة 12 ساعة وتُستخدم مرة واحدة، حين توشك الجلسة التالية على البدء؛ وإذا فشل التشغيل بقيت للمحاولة التالية. وهي تخص المجلد الذي بدأت فيه الجلسة، حتى بعد تنفيذ `cd` في صدفة Claude Code. ويحدّث `ccam rename` الأسماء فيها؛ وإذا كان الحساب الذي تذكره قد أُزيل منذ ذلك الحين، يذكر ccam ذلك ويختار كالمعتاد.
@@ -118,6 +137,50 @@ auto_strategy = "expiring"
 تحتفظ الجلسة المنقولة بما لا تستعيده متابعة المحادثة: خيارات مثل `--add-dir` و`--mcp-config` وقوائم الأدوات و`--settings` و`--plugin-dir` وخيارات موجّه النظام، ووضع الأذونات في المحادثة، ومستوى الجهد في الجلسة. أما `--model` و`--name` و`--agent` فيستعيدها Claude Code نفسه من المحادثة. وأي شيء آخر (`--worktree` و`--debug` و`--remote-control`، والخيارات التي لا يعرفها ccam) يُذكر في `ccam: not carried over: …`. ولا يطرح التبديل أبدًا سؤال السجل المشترك، ويُهمَل ما كتبته أثناء تنفيذه.
 
 لا يتابع الترحيل إلا عندما ينتهي Claude Code بالطريقة التي طلبها `/ccam:switch`: لا عندما تكتب `/exit` أولًا، أو تضغط Ctrl+C أثناء انتهائه، أو يتلقى ccam إشارة قطع الاتصال (hangup) أو إشارة أخرى، ولا عندما تختفي الطرفية. فتبقى الملاحظة عندها، وينقل `ccam next --continue` المحادثة لاحقًا. والجلسة التي بدأت تحت ترحيل ccam أقدم، أو التي لا يجلس إليها أحد (`-p` والجلسات الخلفية)، لا يُنهيها الخطاف؛ بل تتلقى رسالة `/exit` بدلًا من ذلك. ويعمل `claude remote-control` دون ترحيل.
+
+### `auto_switch`
+
+مع `auto_switch = true` في أعلى `config.toml` (على Linux وmacOS)، يتابع ccam الجلسة بنفسه عندما يوقفها Claude Code عند حد استخدام: يختار خطاف المكوّن الإضافي حسابًا آخر لديه متسع ويُنهي Claude Code، ثم يتابع ccam، المنتظر بجانب الجلسة، المحادثة هناك، كما يفعل [الترحيل](#relay) بعد `/ccam:switch`. وهو متوقف افتراضيًا، وميزة تجريبية.
+
+```toml
+# ~/.config/ccam/config.toml
+auto_switch = true   # Linux and macOS; turns the relay on too
+```
+
+```console
+ccam: personal hit its 5-hour limit; continuing this conversation as side
+→ personal → side
+  continuing "Fix the flaky tests" (about 182k tokens); prompt caches are not shared between organizations, so the first reply reads it all again; side does not share personal's history, so Claude Code copies it into side
+```
+
+لا ينقل ccam الجلسة إلا إذا تحققت كل هذه الشروط:
+
+1. شغّلها ccam في طرفية وينتظر بجانبها. يشغّل `auto_switch` [الترحيل](#relay)، لذا يتحقق هذا في الجلسات التفاعلية التي تبدؤها بعد ضبطه. والجلسة التي بدأت قبل ذلك، أو تحت ccam أقدم، تتلقى إشعارًا ينتهي بـ ``This session started before auto_switch was on or under an older ccam, so ccam cannot move it: type /exit, then run `ccam next --continue`.`` ولا تُنقل أبدًا الجلسات التي لا يجلس إليها أحد (`-p` والجلسات الخلفية)، ولا `claude remote-control`، ولا Claude Code الذي بدأ دون ccam.
+2. الحساب مفعَّل فيه [المكوّن الإضافي لـ ccam](/docs/install#claude-code-plugin) ويشغّل Claude Code 2.1.214 أو أحدث، الذي يُخبر الخطاف بعمليته.
+3. كتب Claude Code الطلب المرفوض في المحادثة، مع وقت إعادة الضبط، لحد الخمس ساعات أو الحد الأسبوعي أو حد Opus أو Sonnet لذلك الحساب. أما حد الإنفاق، ونفاد أرصدة الاستخدام، وإيقاف المؤسسة، وحصة Fable (`You've reached your Fable limit.`)، وتقييد الخادم، وحد المعدّل لمفتاح API، وتوقف وكيل فرعي، فلا تنقل الجلسة أبدًا.
+4. يعرف ccam خطة الحساب، من `.claude.json` الخاص به أو مما سجّله `ccam login`. وإلا ينتهي الإشعار بـ `ccam does not know personal's plan, so auto_switch leaves this session.`
+5. الجلسة غير متصلة بـ Remote Control. فبحساب آخر لن تعيد الاتصال بالتطبيق الذي تقودها منه، لذا تبقى، ويقول الإشعار ذلك.
+6. يُعاد ضبط الحد بعد أكثر من 15 دقيقة من الآن. وفي الانتظار الأقصر يترك ccam الجلسة لـ Claude Code: `ccam: personal hit its 5-hour limit, which resets in 9m; ccam leaves this session to wait for it.`
+7. لم تكتب أي مطالبة منذ بلوغ الحد.
+8. لدى حساب آخر متسع. يختار ccam كما يفعل [`--auto`](#auto) (`auto_max_usage` و`auto_strategy` ونموذج المحادثة)، من بين حسابات مثل الحساب الذي تغادره: مقعد آخر في مؤسسة Team أو Enterprise نفسها، أو خطة شخصية أخرى (Pro، Max). ولا يُطبَّق هنا `cross_org` ولا `--cross-org`. ويجب أن يكون الحساب مسجّل الدخول بتسجيل دخول يستطيع Claude Code تجديده، وألا يكون مسجّل الدخول إلى حساب Claude نفسه، وألا يستخدم مفتاح API، وأن تكون له خطة يعرفها ccam، وألا تكون أرصدة الاستخدام فيه مفعّلة بحسب ما يُظهره استعلام الاستخدام الخاص بـ ccam، وأن يكون قد وثق بهذا المجلد في Claude Code. وعندما يستبعد هذان الشرطان الأخيران كل حساب لديه متسع، يسمّيهما الإشعار: `side has not trusted this folder yet, so the conversation was not moved there. Open the folder once as side to allow it.` أو `side has room but its usage credits are on, so auto_switch did not move the conversation there; /ccam:switch side moves it.` والنافذة التي لها [سجل حد](/features/usage#the-limit-record) تُحتسب ممتلئة، والحساب الذي نُقلت إليه جلسة أخرى خلال آخر دقيقتين يأتي بعد الحسابات الأخرى. ويجب أن يتم الاختيار خلال 6 ثوانٍ تقريبًا؛ وعندما تستغرق استعلامات الاستخدام وقتًا أطول، تبقى الجلسة. ومع `usage_source = "claude"`، يقرر `auto_switch` من الأرقام المحفوظة وحدها، ولا يقرأ ccam هل أرصدة الاستخدام مفعّلة من استعلام Claude Code أو من سطر الحالة، لذا يعدّها متوقفة.
+
+عندها يُنهي الخطاف Claude Code، ويعرض ccam، الذي بجانبه، إشعارًا على سطح المكتب في الطرفيات التي تدعمه، مثل `ccam: personal hit its 5-hour limit (resets 3:29am). Moving this conversation to side (12% of its 5 hours used, the least).` ثم يطبع السطر الأول أعلاه ويشغّل `ccam next --continue` لتلك الجلسة بالحساب المختار، الذي يطبع السطرين الآخرين ويشغّل Claude Code مع خيارات الجلسة ووضع الأذونات ومستوى الجهد، كما يفعل [الترحيل](#relay). والرسالة الأولى في الجلسة الجديدة هي هذا النص الثابت، وهو الشيء الوحيد الذي يرسله ccam نيابةً عنك (والنقل بعد `/ccam:switch` لا يرسل شيئًا):
+
+```text
+Your usage limit was reached and ccam moved this conversation to another account. Continue the task you were working on when the limit was reached; do not repeat work that is already complete.
+```
+
+وإذا بلغ ذلك الحساب حده أيضًا، يحدث الشيء نفسه هناك. وتمنع سجلات الحد السلسلة من العودة إلى حساب قبل إعادة ضبطه، لذا عندما تمتلئ كل الحسابات تبقى الجلسة على آخرها.
+
+وعندما لا يكون لدى أي حساب آخر متسع، لا ينتقل شيء: يتعامل Claude Code مع الحد كالمعتاد، فينتظر في الجلسة أو يعرض خياراته، ويذكر الإشعار أي حساب يتحرر أولًا، مثل `ccam: personal hit its 5-hour limit (resets 3:29am). None of your other personal plans has room now; side frees first, at 12:30am. Claude Code waits for personal here; /ccam:switch side after 12:30am moves it sooner.` وللمقاعد يقول `None of your other accounts in Acme has room now`. ولإيقاف نقل بدأ، اضغط Ctrl+C أثناء إغلاق Claude Code: ``ccam: switch cancelled. `ccam next --continue` carries the conversation on later.``
+
+للنقل تكاليف. يُعاد تشغيل Claude Code، وهو ما يستغرق بضع ثوانٍ، وتتوقف مع الجلسة القديمة الصدفات الخلفية وخوادم التطوير والوكلاء التي شغّلها Claude. ويقرأ الحساب الجديد المحادثة كلها من جديد مع رده الأول، كما مع [`--continue`](#continue)، ويخبرك ccam بحجمها؛ ولا يستخدم النقل [`--brief`](#brief) أبدًا.
+
+لا يبدّل `auto_switch` أبدًا قبل أن يُبلغ Claude Code عن حد، ولا يراقب استخدامك في الخلفية أبدًا، ولا ينسخ تسجيل دخول أو يجدّده أو يمرّره أبدًا. وعلى Windows يُتجاهل، ويقول `ccam doctor` ذلك؛ وهناك يظل `/ccam:switch` و`/exit` يتابعان المحادثة مع `relay = true`.
+
+**شروط Anthropic.** في مقاعد Team وEnterprise، ينقل `auto_switch` عملك إلى مقعد آخر في المؤسسة نفسها. يقول مركز المساعدة لدى Anthropic: "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (يُخصَّص كل مقعد في خطة Team لشخص واحد محدد بالاسم، ولا يجوز أن يستخدمه إلا ذلك الشخص) و"Users can't route their work through another user's account to use that user's remaining usage" (لا يجوز للمستخدمين تمرير عملهم عبر حساب مستخدم آخر للاستفادة من الاستخدام المتبقي لذلك المستخدم) ([خطط Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)؛ وبالمثل في [خطط Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). أما في الخطط الشخصية (Pro وMax)، فلا تقول شروط Anthropic هل يجوز لحساباتك أن يتولى بعضها عن بعض تلقائيًا عند بلوغ الحد. وتمنع [شروط المستهلك](https://www.anthropic.com/legal/consumer-terms) الوصول إلى الخدمات "through automated or non-human means, whether through a bot, script, or otherwise" (عبر وسائل آلية أو غير بشرية، سواء عبر روبوت أو سكربت أو غير ذلك) ما لم تسمح Anthropic بذلك صراحةً، والنقل يرسل الرسالة الثابتة أعلاه نيابةً عنك. وتُدرج [سياسة الاستخدام](https://www.anthropic.com/legal/aup) التي تدخل حيز التنفيذ في 12 نوفمبر 2026 عبارة "Intentionally bypass or interfere with capabilities, restrictions, or guardrails established within our products" (تجاوز القدرات أو القيود أو الضوابط المضمّنة في منتجاتنا أو التدخل فيها عمدًا) ضمن الأمور التي تحظرها. ولا يدّعي ccam أن `auto_switch` يتوافق مع هذه الشروط. وتشغيله قرارك أنت، وكذلك المخاطرة: فقد تعلّق Anthropic حسابًا، أو وصول مؤسسة Team أو Enterprise، عندما ترى أن الشروط انتُهكت.
+
+وما دام `auto_switch` مفعّلًا، يحذّر `ccam doctor` من الحساب الذي لا يملك المكوّن الإضافي لـ ccam ومن Claude Code أقدم من 2.1.214، ويكرر للمقاعد قاعدة المقاعد لدى Anthropic ([الفحوص](/features/doctor)).
 
 ## إعادة التشغيل عند بلوغ الحد
 
@@ -146,7 +209,7 @@ Summary: …
 
 يُختار الحساب التالي بقواعد `--auto` نفسها (`auto_max_usage` و`auto_strategy` ونافذة `--model`). وعندما لا يتبقى أي حساب، يطبع ccam مخرج المحاولة الأخيرة، ويذكر أنه لم يعد لدى أي حساب مسجّل الدخول هامش متبقٍ، ويخرج بالرمز 75. ومع `--wait` قبل اسم الحساب (`ccam --fallback --wait=2h work -p …`)، ينتظر بدلًا من ذلك حتى يُعاد ضبط أول حساب، ثم قد يجرّب كل الحسابات من جديد؛ وهو ينام دائمًا مرة واحدة على الأقل أولًا، فلا يُشغَّل فورًا من جديد حساب بلغ حده للتو. وتحدّ المدة كل انتظار التشغيل مجتمعًا، لا كل انتظار على حدة. وإذا كُتبت بمسافة (`--wait 30m`)، تُرفض مع التلميح نفسه الذي يعطيه `ccam next`. ويعمل `--` في البداية قبل وسائط Claude Code كما في أي تشغيل (`ccam --fallback work -- -p …`). ويطبع `ccam --dry-run --fallback work -p …` أمر المحاولة الأولى.
 
-لا تُبدَّل الجلسات التفاعلية من تلقاء نفسها. بدلًا من ذلك، ومع `ccam statusline install`، يضيف سطر الحالة `→ ccam next --auto --continue` بمجرد أن يبلغ الاستخدام في نافذة الخمس ساعات أو النافذة الأسبوعية 90% ([حدود الاستخدام](/features/usage)).
+لا تُبدَّل الجلسات التفاعلية من تلقاء نفسها إلا إذا شغّلت [`auto_switch`](#auto-switch). ومع `ccam statusline install`، يضيف سطر الحالة `→ ccam next --auto --continue` بمجرد أن يبلغ الاستخدام في نافذة الخمس ساعات أو النافذة الأسبوعية 90% ([حدود الاستخدام](/features/usage)).
 
 ## الأمان والحالات الخاصة
 

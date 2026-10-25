@@ -1,18 +1,18 @@
 ---
 title: 儀表板
 description: 在終端機中執行 ccam 會開啟全螢幕儀表板，顯示帳號、群組、資料夾規則、擴充功能和檢查結果；每項變更都會先顯示計畫。
-updated: 2026-10-24
+updated: 2026-10-25
 order: 15
 translation: machine
-sourceHash: "e48ca2c5a643"
+sourceHash: "98ccf6cd81e9"
 ---
 
-不帶參數的 `ccam` 在標準輸入和輸出都是終端機時會開啟全螢幕儀表板，否則會印出 `ccam list`。儀表板會顯示每個帳號及其用量和群組，並能完成各個指令的工作：啟動、新增、登入、變更群組、設定資料夾規則、檢查和修復。啟動帳號時儀表板會關閉；新增帳號或登入時則會暫時離開儀表板、交給終端機，完成後再回來。
+不帶參數的 `ccam` 在標準輸入和輸出都是終端機時會開啟全螢幕儀表板，否則會印出 `ccam list`。儀表板會顯示每個帳號及其用量和群組，並能完成各個指令的工作：啟動、新增、登入、變更群組、設定資料夾規則、列出背景工作階段、檢查和修復。啟動帳號或連接到背景工作階段時，儀表板會關閉；新增帳號或登入時則會暫時離開儀表板、交給終端機，完成後再回來。
 
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -40,12 +40,13 @@ sourceHash: "e48ca2c5a643"
 | 分頁 | 顯示的內容 | 按鍵 |
 | --- | --- | --- |
 | Accounts | 編號、名稱、電子郵件、5 小時、每週和 Fable 用量長條、上次使用時間、群組；`✔` 為預設帳號，`▸` 為這個資料夾的帳號，`•` 為執行中（也包括不透過 ccam 啟動的 Claude Code：直接執行 `claude`、IDE、背景工作階段及其常駐程式） | 見下文 |
+| Agents | [`ccam agents`](/features/agents) 列出的內容：所有帳號的背景工作階段和開啟中的工作階段，以及它們的狀態、資料夾和啟動時間（見下文） | `enter` 連接（如同 `ccam attach`），`x` 停止，`r` 重新載入 |
 | Groups | 每個群組、它共用的項目和它的帳號，以及不屬於任何群組的帳號 | `enter` 編輯，`n` 新增，`e` 重新命名，`x` 移除 |
 | Folders | [`ccam folder`](/features/folder) 規則，以及適用於這裡的規則，即使你是透過符號連結來到這個資料夾也一樣（新規則會以解析連結後的路徑儲存） | `n` 在這裡使用某個帳號，`enter` 變更，`x` 移除 |
 | Extensions | [`ccam ext`](/features/ext) 顯示的內容，每個擴充功能只列一次，並附上它來自的群組；`off:` 列出外掛未開啟的帳號，帳號自己的伺服器中只適用於這個資料夾的伺服器，`This folder's project`，以及不屬於任何帳號的問題 | `r` 重新載入 |
 | Health | [`ccam doctor`](/features/doctor) 回報的內容，每個帳號一個方框（見下文） | `f` 修復選取的方框，`F` 修復全部（`doctor --fix`），`↑`/`↓` 在方框之間移動 |
 
-`←`/`→` 或 `Tab` 切換分頁，`?` 列出目前分頁的按鍵，`r` 會略過短期快取重新查詢用量，`q` 或 `Esc` 則結束。
+`←`/`→` 或 `Tab` 切換分頁，`?` 列出目前分頁的按鍵，`r` 會略過短期快取重新查詢用量，並重新載入 Agents、Extensions 和 Health 分頁，`q` 或 `Esc` 則結束。
 
 ## Accounts 分頁的按鍵
 
@@ -66,7 +67,7 @@ sourceHash: "e48ca2c5a643"
 | `c` | 設定或移除它的快捷指令 |
 | `x` | 移除它（會先詢問，游標預設停在 No） |
 
-**Team 和 Enterprise 席位。** 自動選擇（`ccam next`、`--fallback`、`ccam pick`、儀表板的 `n`）也會在同一個 Claude Team 或 Enterprise 組織的席位之間切換。Anthropic 說明中心關於 [Team 方案](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)的文章寫道：「Each seat on a Team plan is assigned to one named individual, and only that person may use it」（Team 方案的每個席位都指派給一位具名的個人，而且只有這個人可以使用），以及「Users can't route their work through another user's account to use that user's remaining usage」（使用者不能經由其他使用者的帳號處理自己的工作，藉此使用對方剩餘的用量）；關於 [Enterprise 方案](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)的文章也是如此。因此，在席位之間使用自動選擇可能會違反 Anthropic 的條款。在依賴這項功能之前，請先向你所屬的組織和 Anthropic 確認。個人方案（Pro、Max）的情況請參閱[常見問題中關於條款的說明](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)。
+**Team 和 Enterprise 席位。** 自動選擇（`ccam next`、`--fallback`、`ccam pick`、儀表板的 `n`，以及你開啟後的 [`auto_switch`](/features/next#auto-switch)）也會在同一個 Claude Team 或 Enterprise 組織的席位之間切換。Anthropic 說明中心關於 [Team 方案](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)的文章寫道：「Each seat on a Team plan is assigned to one named individual, and only that person may use it」（Team 方案的每個席位都指派給一位具名的個人，而且只有這個人可以使用），以及「Users can't route their work through another user's account to use that user's remaining usage」（使用者不能經由其他使用者的帳號處理自己的工作，藉此使用對方剩餘的用量）；關於 [Enterprise 方案](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)的文章也是如此。因此，在席位之間使用自動選擇可能會違反 Anthropic 的條款。要不要在這種情況下使用它由你決定：在依賴這項功能之前，請先向你所屬的組織和 Anthropic 確認。個人方案（Pro、Max）的情況請參閱[常見問題中關於條款的說明](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)。
 
 ## Health 分頁
 
@@ -95,6 +96,28 @@ sourceHash: "e48ca2c5a643"
 ```
 
 `↑`/`↓` 在方框之間移動，選取的方框會以強調色邊框顯示。`f` 只修復選取的方框，方式與 `ccam doctor --fix` 相同：在帳號的方框上只修復該帳號，在 `General` 方框上修復不屬於任何帳號的檢查結果（外掛路徑和快捷指令）；其他帳號只會重新檢查。它會先詢問（``Like `ccam doctor --fix`: missing links and group folders are made, and a real file where a link belongs is backed up first; where the group has its own copy, the account then sees the group's. Nothing is lost.``），沒有可修復項目的方框只會顯示 `nothing to repair in <name>`。`F` 會像 `ccam doctor --fix` 一樣一次修復全部；`r` 會重新檢查。
+
+## Agents 分頁
+
+Agents 分頁會顯示 [`ccam agents`](/features/agents) 印出的內容：所有帳號的背景工作階段和開啟中的工作階段，以及每個工作階段所屬的帳號。第一次開啟這個分頁時、按下 `r` 時、停止工作階段後，以及設定變更後，它會同時詢問每個帳號的 Claude Code（`claude agents --json`，每個最多 15 秒），在所有帳號回應之前會顯示 `Asking every account's Claude Code for its sessions…`。
+
+```console
+  Accounts   Agents   Groups   Folders   Extensions   Health
+ Background agents and open sessions of every account; enter attaches to one.
+
+    Account   ID        Name   State          Folder      Started
+ ❯  work      -         -      open (busy)    ~/code/web  now
+    personal  49ec0028  probe  blocked, idle  ~/code/app  12m
+
+ ✘ lab: could not list its sessions: exit status 1 'claude agents --json' is
+   not available in this environment.
+
+ enter to attach · x to stop · r to reload · ? for shortcuts
+```
+
+`State` 是背景工作階段的狀態以及它的行程正在做什麼；互動式工作階段則顯示 `open`，和 `ccam agents` 相同。無法詢問的帳號會在清單下方得到一行 `✘`，附上 Claude Code 的回應，例如上面的 `lab`，它的 agent view 已關閉。已完成的背景工作階段不會列出（`ccam agents --all` 會列出它們）；當所有帳號都已回應而且沒有任何工作階段時，分頁會顯示 ``No sessions. Start one in the background with `ccam <account> --bg "…"`.``。終端機較窄時，分頁會依序省略 `Started`、`Name`、`Folder`，並從左側截斷過長的資料夾路徑。
+
+在背景工作階段上按 `Enter` 會關閉儀表板，並在這個終端機中以它的帳號開啟該工作階段，方式和 `ccam attach <id>` 相同；儀表板不會再回來（在 Claude Code 中，`←` 會前往它的 agent view，`Ctrl+Z` 會回到 Shell）。開啟中的工作階段沒有 ID，所以 `Enter` 和 `x` 只會提示需要選擇背景工作階段。`x` 會先詢問，預設選在 `No, keep it`：``It runs as personal. Like `ccam personal stop 49ec0028`, Claude Code stops it and keeps its conversation, which `ccam attach 49ec0028` opens again.``。選擇是時，ccam 會以該帳號執行 `claude stop <id>`，顯示 ``49ec0028 (personal) stopped; `ccam attach 49ec0028` opens it again`` 或無法停止的原因，然後重新讀取清單。
 
 ## 變更群組
 

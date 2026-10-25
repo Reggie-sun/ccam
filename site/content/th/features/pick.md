@@ -1,15 +1,15 @@
 ---
 title: การเลือกบัญชีสำหรับสคริปต์
 description: ccam pick พิมพ์บัญชีที่เหลือโควตามากที่สุดให้สคริปต์ ให้ worker ที่เริ่มพร้อมกันได้บัญชีต่างกัน และออกด้วย 75 เมื่อไม่มีบัญชีใดเหลือโควตา
-updated: 2026-10-24
+updated: 2026-10-25
 order: 12
 translation: machine
-sourceHash: "a8baeb64de99"
+sourceHash: "5c4f74db9714"
 ---
 
 `ccam pick` พิมพ์ชื่อของบัญชีที่เข้าสู่ระบบแล้วซึ่งเหลือโควตามากที่สุด เพื่อให้สคริปต์ใช้เริ่ม Claude Code worker ที่เริ่มพร้อมกันจะได้บัญชีคนละบัญชีตราบใดที่มีบัญชีที่เหลือโควตามากพอ งาน `claude -p` ชุดหนึ่งจึงกระจายไปทั่วบัญชีของคุณแทนที่จะใช้บัญชีเดียวจนหมด
 
-**ที่นั่ง (seat) ของ Team และ Enterprise** การเลือกอัตโนมัติ (`ccam next`, `--fallback`, `ccam pick` และปุ่ม `n` ในแดชบอร์ด) จะสลับระหว่างที่นั่งต่าง ๆ ในองค์กร Claude Team หรือ Enterprise เดียวกันด้วย ศูนย์ช่วยเหลือของ Anthropic ระบุว่า "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (แต่ละที่นั่งในแพ็กเกจ Team จะกำหนดให้กับบุคคลที่ระบุชื่อเพียงคนเดียว และมีเพียงบุคคลนั้นที่ใช้ได้) และ "Users can't route their work through another user's account to use that user's remaining usage" (ผู้ใช้ไม่สามารถส่งงานของตนผ่านบัญชีของผู้ใช้คนอื่นเพื่อใช้ปริมาณการใช้งานที่เหลืออยู่ของผู้ใช้คนนั้นได้) ([แพ็กเกจ Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129) ส่วน [แพ็กเกจ Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) ก็เช่นเดียวกัน) ดังนั้น การใช้การเลือกอัตโนมัติระหว่างที่นั่งต่าง ๆ จึงอาจละเมิดข้อกำหนดของ Anthropic โปรดสอบถามองค์กรของคุณและ Anthropic ก่อนที่จะพึ่งพาการเลือกอัตโนมัติ สำหรับแพ็กเกจส่วนตัว (Pro, Max) ดูที่ [หมายเหตุเรื่องข้อกำหนดในคำถามที่พบบ่อย](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)
+**ที่นั่ง (seat) ของ Team และ Enterprise** การเลือกอัตโนมัติ (`ccam next`, `--fallback`, `ccam pick`, ปุ่ม `n` ในแดชบอร์ด และ [`auto_switch`](/features/next#auto-switch) เมื่อคุณเปิดใช้) จะสลับระหว่างที่นั่งต่าง ๆ ในองค์กร Claude Team หรือ Enterprise เดียวกันด้วย ศูนย์ช่วยเหลือของ Anthropic ระบุว่า "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (แต่ละที่นั่งในแพ็กเกจ Team จะกำหนดให้กับบุคคลที่ระบุชื่อเพียงคนเดียว และมีเพียงบุคคลนั้นที่ใช้ได้) และ "Users can't route their work through another user's account to use that user's remaining usage" (ผู้ใช้ไม่สามารถส่งงานของตนผ่านบัญชีของผู้ใช้คนอื่นเพื่อใช้ปริมาณการใช้งานที่เหลืออยู่ของผู้ใช้คนนั้นได้) ([แพ็กเกจ Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129) ส่วน [แพ็กเกจ Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) ก็เช่นเดียวกัน) ดังนั้น การใช้การเลือกอัตโนมัติระหว่างที่นั่งต่าง ๆ จึงอาจละเมิดข้อกำหนดของ Anthropic จะใช้การเลือกอัตโนมัติในกรณีนี้หรือไม่เป็นการตัดสินใจของคุณ: โปรดสอบถามองค์กรของคุณและ Anthropic ก่อนที่จะพึ่งพาการเลือกอัตโนมัติ สำหรับแพ็กเกจส่วนตัว (Pro, Max) ดูที่ [หมายเหตุเรื่องข้อกำหนดในคำถามที่พบบ่อย](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)
 
 ## การใช้งาน
 
@@ -59,7 +59,7 @@ $ ccam pick --json
 1. ccam แสดงรายการบัญชีที่เข้าสู่ระบบแล้ว (บัญชี API key และการเข้าสู่ระบบ Console ไม่มีขีดจำกัดจึงไม่ถูกนับรวม) ซึ่งอยู่ในองค์กรเดียวกับบัญชีที่โฟลเดอร์นี้จะเริ่มใช้ (ดู[องค์กร](/features/next#auto)) โฟลเดอร์ที่เข้าสู่ระบบด้วยบัญชี Claude เดียวกันกับบัญชีนั้นก็จะไม่ถูกนับรวมด้วย
 2. ccam ล็อก (`~/.local/state/ccam/picks.lock`) เพื่อให้การเลือกที่รันพร้อมกันเกิดขึ้นทีละรายการ
 3. ccam สอบถามการใช้งานของทุกบัญชีพร้อมกันแบบเดียวกับ `ccam usage` โดยใช้แคช 60 วินาที ช่วงที่ Claude Code รายงานว่าเต็มจะนับเป็น 100% จนกว่าจะรีเซ็ต ([บันทึกขีดจำกัด](/features/usage#the-limit-record)) บัญชีที่เพิ่งถึงขีดจำกัดจึงยังถูกตัดออก แม้ตัวเลขที่บันทึกไว้จะแสดงว่ายังเหลือโควตา
-4. บัญชีที่ถูกเลือกภายใน 2 นาทีที่ผ่านมา (`~/.local/state/ccam/picks/<name>` โดยการเลือกที่ลงเวลาไว้หลังเวลาปัจจุบันของนาฬิกาจะไม่นับ) จะถูกตัดออกก่อน แล้ว[กฎการเลือก](/features/next#auto)ของ `ccam next --auto` จะเลือกจากบัญชีที่เหลือ: บัญชีที่ต่ำกว่า `auto_max_usage` มาก่อน ตามกลยุทธ์ และไม่เลือกบัญชีที่อยู่ที่ 100% เด็ดขาด
+4. บัญชีที่ถูกเลือกภายใน 2 นาทีที่ผ่านมา ไม่ว่าจะโดย `ccam pick` หรือโดย [`auto_switch`](/features/next#auto-switch) ที่ย้ายเซสชันไปที่นั่น (`~/.local/state/ccam/picks/<name>` โดยการเลือกที่ลงเวลาไว้หลังเวลาปัจจุบันของนาฬิกาจะไม่นับ) จะถูกตัดออกก่อน แล้ว[กฎการเลือก](/features/next#auto)ของ `ccam next --auto` จะเลือกจากบัญชีที่เหลือ: บัญชีที่ต่ำกว่า `auto_max_usage` มาก่อน ตามกลยุทธ์ และไม่เลือกบัญชีที่อยู่ที่ 100% เด็ดขาด เมื่อการตัดออกนี้ข้ามบัญชีที่กฎจะเลือกเป็นอันดับแรก `reason` ของ `--json` จะบอกไว้: `30% of its 5 hours used; work was picked a moment ago`
 5. หากทุกบัญชีที่เหลือโควตาเพิ่งถูกเลือกไป กฎจะเลือกจากบัญชีทั้งหมดอีกครั้ง worker ตัวที่สี่บนสามบัญชีจึงใช้บัญชีร่วมกับตัวอื่นหนึ่งบัญชี
 6. ccam บันทึกการเลือกและปลดล็อก จากนั้นจึงพิมพ์ชื่อ
 

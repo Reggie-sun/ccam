@@ -1,10 +1,10 @@
 ---
 title: 用量限制与切换账号
 description: 用 ccam usage 查看每个 Claude Code 账号的 5 小时用量和每周用量，并用 ccam next --auto 打开余量最多的账号。
-updated: 2026-10-24
+updated: 2026-10-25
 order: 5
 translation: machine
-sourceHash: "ccaed084207a"
+sourceHash: "7c15419446c3"
 ---
 
 `ccam usage` 显示每个账号已用掉多少 5 小时限额、每周限额以及各模型自己的每周限额（例如 Fable）。`ccam next --auto` 打开余量最多的账号，`--continue` 会把当前对话带过去。
@@ -28,7 +28,7 @@ $ ccam usage
 
 每个账号先占一行，显示这些数字是多久之前获取的，然后每项限额各有一个用量条，并附上距离重置的时间：5 小时窗口、所有模型共用的每周窗口，以及各模型自己的每周窗口，例如 Fable。用量条从 80% 起变为黄色，达到 100% 时变为红色。最后一行列出 `ccam next --auto` 会打开的账号；设置 `auto_strategy = "expiring"` 或 `"balance"` 时，这一行改为 `→ next --auto picks <name>: <reason>`。
 
-**Team 和 Enterprise 席位。** 自动选择（`ccam next`、`--fallback`、`ccam pick`、仪表盘中的 `n`）也会在同一个 Claude Team 或 Enterprise 组织的席位之间切换。Anthropic 帮助中心关于 [Team 套餐](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)的说明写道："Each seat on a Team plan is assigned to one named individual, and only that person may use it"（Team 套餐的每个席位都分配给一位指定的个人，只有此人可以使用），以及 "Users can't route their work through another user's account to use that user's remaining usage"（用户不能通过另一位用户的账号完成自己的工作，以使用该用户剩余的用量）；关于 [Enterprise 套餐](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)的说明也是如此。因此，在席位之间使用自动选择可能违反 Anthropic 的条款。在依赖这项功能之前，请先向你所在的组织和 Anthropic 确认。个人套餐（Pro、Max）的情况请参见[常见问题中关于条款的说明](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)。
+**Team 和 Enterprise 席位。** 自动选择（`ccam next`、`--fallback`、`ccam pick`、仪表盘中的 `n`，以及你开启后的 [`auto_switch`](/features/next#auto-switch)）也会在同一个 Claude Team 或 Enterprise 组织的席位之间切换。Anthropic 帮助中心关于 [Team 套餐](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)的说明写道："Each seat on a Team plan is assigned to one named individual, and only that person may use it"（Team 套餐的每个席位都分配给一位指定的个人，只有此人可以使用），以及 "Users can't route their work through another user's account to use that user's remaining usage"（用户不能通过另一位用户的账号完成自己的工作，以使用该用户剩余的用量）；关于 [Enterprise 套餐](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)的说明也是如此。因此，在席位之间使用自动选择可能违反 Anthropic 的条款。在这些席位之间是否使用，由你自己决定：在依赖这项功能之前，请先向你所在的组织和 Anthropic 确认。个人套餐（Pro、Max）的情况请参见[常见问题中关于条款的说明](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)。
 
 ## 数字从哪里来
 
@@ -71,6 +71,8 @@ ccam next --continue  # carry this folder's conversation on as the next account
 ```
 
 `ccam next` 会跳过未登录的账号，`--auto` 会跳过用量已达 100% 的账号（也包括 Claude Code 报告已满的时间窗口，直到其重置）以及属于其他组织的账号。如果两个账号共享对话历史，`--continue` 会打开同一个对话；否则 Claude Code 会把它复制到新账号中。参见[共享](/docs/sharing)和[切换到下一个账号](/features/next#continue)。
+
+在 `config.toml` 的顶部设置 `auto_switch = true`（仅限 Linux 和 macOS；默认关闭）时，如果 Claude Code 因用量限制停止了一个交互式会话，并且另一个同类账号还有余量，ccam 会自己完成这次切换。它何时动作、哪些事绝不会做，请参见 [`auto_switch`](/features/next#auto-switch)。
 
 对于运行 `claude -p` 的脚本和定时任务，请把 `--fallback` 放在账号名之前。当该账号达到限制时，ccam 会以余量最多的账号重新运行同一个命令，并且只打印最终完成的那次运行的输出：
 

@@ -1,10 +1,10 @@
 ---
 title: 점검과 복구
 description: ccam doctor로 공유 링크, 파일 권한, 로그인, Claude Code 버전을 점검하고, ccam doctor --fix로 안전하게 고칠 수 있는 문제를 복구합니다.
-updated: 2026-10-23
+updated: 2026-10-25
 order: 9
 translation: machine
-sourceHash: "11ad34630dcf"
+sourceHash: "0f5ae4ab9a54"
 ---
 
 `ccam doctor`는 ccam 설치 상태를 점검합니다. Claude Code 실행 파일, 모든 계정의 폴더, 로그인, 공유 링크, 공유 MCP 서버, 사용량 엔드포인트, 단축 명령을 확인합니다. `ccam doctor --fix`는 데이터를 잃지 않고 고칠 수 있는 문제를 복구하며, 교체하는 파일은 먼저 백업 폴더로 옮깁니다. `ccam <name>`이 공유 링크 문제로 멈췄을 때, 파일을 직접 복원한 뒤, 또는 Claude Code를 업데이트한 뒤에 실행하세요.
@@ -17,7 +17,7 @@ ccam doctor --fix            # check, then repair what is safe to repair
 ccam --dry-run doctor --fix  # report only: what --fix would repair and set aside
 ```
 
-첫 줄은 모든 계정을 한꺼번에 표시로 보여 주므로, 다른 내용을 읽기 전에 어디에 문제가 있는지 알 수 있습니다. 그 아래에는 계정마다 상자가 하나씩 있고, 어느 계정에도 속하지 않는 결과(Claude Code, 환경 변수, 플러그인, MCP 서버, 단축 명령, 폴더 규칙, 그룹, 설정)는 `General` 상자에 들어갑니다. 상자 제목에는 그 계정의 가장 심각한 표시와 문제 개수가 나옵니다. 상자 안의 각 행은 점검한 영역 하나이며, 항상 `Folder`, `Login`, `Share links` 순서로 나오고 그다음에 나머지가 나옵니다. 앞에 붙는 표시는 `✔` 정상, `ℹ` 정보, `⚠` 경고, `✘` 오류입니다. 아무 문제가 없는 폴더는 `✔ Folder  OK`로 표시됩니다.
+첫 줄은 모든 계정을 한꺼번에 표시로 보여 주므로, 다른 내용을 읽기 전에 어디에 문제가 있는지 알 수 있습니다. 그 아래에는 계정마다 상자가 하나씩 있고, 어느 계정에도 속하지 않는 결과(Claude Code, 환경 변수, 플러그인, MCP 서버, 단축 명령, 폴더 규칙, 그룹, 설정, `auto_switch`)는 `General` 상자에 들어갑니다. 상자 제목에는 그 계정의 가장 심각한 표시와 문제 개수가 나옵니다. 상자 안의 각 행은 점검한 영역 하나이며, 항상 `Folder`, `Login`, `Share links` 순서로 나오고 그다음에 나머지가 나옵니다. 앞에 붙는 표시는 `✔` 정상, `ℹ` 정보, `⚠` 경고, `✘` 오류입니다. 아무 문제가 없는 폴더는 `✔ Folder  OK`로 표시됩니다.
 
 ```console
 $ ccam doctor
@@ -118,6 +118,7 @@ $ ccam doctor --fix
 11. **폴더별 계정**(`checkFolders`). [`ccam folder`](/features/folder) 항목이 있을 때만 실행합니다. 항목의 계정이 존재하지 않으면 오류이고, 항목의 폴더가 사라졌으면 경고입니다. 항목을 지우면 그 폴더에서 시작되는 계정이 바뀌므로, 둘 다 복구하지 않습니다.
 12. **그룹과 설정**(`checkGroups`). 계정이 아닌 그룹 멤버, 이름이 그 뒤에 ccam 명령 이름이 되어 버린 계정(`ccam run <name>`으로 시작하거나 이름을 바꾸세요), 알 수 없는 `theme`이나 `usage_source` 값, ccam이 읽지 않는 `config.toml`의 줄은 경고입니다. 마지막 경우는 대개 `[[group]]`, `[[profile]]`, `[[folder]]` 테이블 아래에 적어 그 테이블에 속하게 된 설정입니다(`config.toml line 43: relay is read as part of the [profile.login] table above it; settings for all accounts go above the first [[group]], [[profile]] or [[folder]]`). 이를 고칠 때까지 설정을 바꾸는 명령은 거부합니다. 복구하지 않습니다.
 13. **로그인**(`checkIdentities`). 각 폴더의 `.claude.json`에서 어느 계정으로 로그인되어 있는지 읽습니다. 폴더가 `ccam login`이 기록한 것과 다른 계정으로 로그인되어 있으면(예: 세션 안에서 `/login`을 실행한 뒤) 경고입니다. 가져온 계정이나 이전 ccam이 만든 계정처럼 로그인 기록이 없는 계정은 기록된 이메일로 비교합니다. 다른 폴더와 같은 Claude 계정으로 로그인되어 있어도 경고입니다. 두 폴더가 사용량 한도를 함께 쓰기 때문입니다. 다른 폴더와 같은 로그인 토큰을 가진 폴더, 즉 복사한 폴더(일반 `claude`의 `~/.claude` 포함)는 오류입니다. 먼저 갱신하는 쪽이 다른 쪽을 로그아웃시키기 때문이며, `ccam login <name>`을 실행해 자체 로그인을 주세요. 복구하지 않습니다.
+14. **`auto_switch`**(`checkAutoSwitch`). `auto_switch = true`일 때만 점검합니다. `General` 상자의 정보 줄이 `auto_switch`가 하는 일을 설명하고 [그 설명](/features/next#auto-switch)으로 연결합니다. 계정 가운데 시트가 있는 요금제(Claude Team, Claude Enterprise)마다 한 줄이 그 계정들의 이름을 대고, `auto_switch`가 한 조직의 시트 사이에서 세션을 옮긴다는 것을 알리며, 고객센터 링크와 함께 Anthropic의 시트 규칙을 인용하고, 선택은 사용자에게 맡깁니다. 훅에 자기 프로세스(`CLAUDE_PID`)를 알려 주지 않는 2.1.214보다 오래된 Claude Code는 세션을 옮길 수 없으므로 그 상자에서 경고입니다. ccam 플러그인이 없거나 플러그인이 꺼진 계정은 자기 상자에 경고가 붙고, Claude Code에서 이를 고치는 명령이 함께 나옵니다: `auto_switch is on, but work does not have the ccam plugin, so its sessions are not moved. In Claude Code as work: /plugin install ccam --marketplace jhyunwoo/ccam`(또는 `/plugin enable ccam@ccam`). API 키 계정은 제외합니다. Windows에서는 `auto_switch is ignored on Windows; with relay = true, /ccam:switch and then /exit carry a conversation on.` 한 줄만 나옵니다. 복구하지 않습니다.
 
 계정을 점검하기 전에, 중간에 멈춘 **그룹 변경**은 `General` 상자의 오류로 표시됩니다: ``the last change of groups stopped halfway (ccam doctor --fix finishes it; noted in ~/.local/state/ccam/group-change.json)``. `--fix`는 계획한 순서대로, 충돌에 대해 받은 답을 써서 이를 마무리하며, 그때까지 다른 그룹 변경, 이름 바꾸기, 삭제는 시작하지 않습니다. 그 변경에 포함된 계정은 변경이 끝날 때까지 없는 링크만 만들어집니다. 마무리할 수 없으면, 그 파일을 지우면 나머지 변경을 포기하게 된다고 오류에서 알려 줍니다. `ccam --dry-run doctor --fix`는 순서(`--fix finishes it in its order (b, a, c), with the answers given to its conflicts`)와 계정마다 따로 치워 둘 것을 보여 줍니다. 다른 ccam이 지금 진행 중인 변경은 정보로 표시하며, 그동안 `--fix`는 공유 링크를 복구하지 않습니다(`its share links are not repaired while another ccam changes the groups; …`). `--fix`는 복구하는 동안 `~/.local/state/ccam/group-change.lock`을 잡고 있으며, 변경을 마무리한 뒤 `config.toml`을 다시 읽습니다.
 

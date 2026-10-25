@@ -1,18 +1,18 @@
 ---
 title: Dasbor
 description: ccam di terminal membuka dasbor layar penuh berisi akun, grup, aturan folder, ekstensi, dan pemeriksaan; setiap perubahan menampilkan rencananya dulu.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 15
 translation: machine
-sourceHash: e48ca2c5a643
+sourceHash: "98ccf6cd81e9"
 ---
 
-`ccam` tanpa argumen membuka dasbor layar penuh jika input dan output standar adalah terminal; jika bukan, ccam mencetak `ccam list`. Dasbor menampilkan setiap akun beserta penggunaan dan grupnya, dan melakukan apa yang dilakukan perintah-perintahnya: menjalankan, menambahkan, login, mengubah grup, menetapkan aturan folder, memeriksa, dan memperbaiki. Menjalankan akun akan menutupnya; menambahkan akun atau login meninggalkannya sebentar untuk terminal lalu kembali lagi.
+`ccam` tanpa argumen membuka dasbor layar penuh jika input dan output standar adalah terminal; jika bukan, ccam mencetak `ccam list`. Dasbor menampilkan setiap akun beserta penggunaan dan grupnya, dan melakukan apa yang dilakukan perintah-perintahnya: menjalankan, menambahkan, login, mengubah grup, menetapkan aturan folder, menampilkan sesi latar belakang, memeriksa, dan memperbaiki. Menjalankan akun, atau menyambung (attach) ke sesi latar belakang, akan menutupnya; menambahkan akun atau login meninggalkannya sebentar untuk terminal lalu kembali lagi.
 
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -40,12 +40,13 @@ Bingkai pertama digambar hanya dari `config.toml`, jauh di bawah 100 ms; penggun
 | Tab | Yang ditampilkan | Tombol |
 | --- | --- | --- |
 | Accounts | nomor, nama, email, bilah 5 jam, mingguan, dan Fable, pemakaian terakhir, grup; `✔` akun default, `▸` akun folder ini, `•` sedang berjalan (juga Claude Code yang dijalankan tanpa ccam: `claude` biasa, IDE, sesi latar belakang, dan daemon-nya) | lihat di bawah |
+| Agents | apa yang dicantumkan [`ccam agents`](/features/agents): sesi latar belakang dan sesi terbuka dari setiap akun, beserta status, folder, dan waktu mulainya (lihat di bawah) | `enter` menyambung (seperti `ccam attach`), `x` menghentikan, `r` memuat ulang |
 | Groups | setiap grup, apa yang dibagikannya dan akun-akunnya, serta akun yang tidak ada di grup mana pun | `enter` sunting, `n` baru, `e` ganti nama, `x` hapus |
 | Folders | aturan [`ccam folder`](/features/folder) dan aturan yang berlaku di sini, juga saat Anda mencapai folder itu melalui tautan simbolik (aturan baru disimpan dengan tautan yang sudah di-resolve) | `n` pakai sebuah akun di sini, `enter` ubah, `x` hapus |
 | Extensions | apa yang ditampilkan [`ccam ext`](/features/ext), setiap ekstensi satu kali beserta grup asalnya, `off:` akun-akun tempat sebuah plugin tidak diaktifkan, server yang dimiliki sebuah akun hanya untuk folder ini di antara server miliknya sendiri, `This folder's project`, dan masalah yang bukan milik akun mana pun | `r` muat ulang |
 | Health | apa yang dilaporkan [`ccam doctor`](/features/doctor), sebagai satu kotak per akun (lihat di bawah) | `f` perbaiki kotak yang dipilih, `F` perbaiki semua (`doctor --fix`), `↑`/`↓` berpindah antarkotak |
 
-`←`/`→` atau `Tab` berpindah tab, `?` menampilkan tombol-tombol tab yang sedang dibuka, `r` mencari penggunaan lagi tanpa cache singkat, dan `q` atau `Esc` keluar.
+`←`/`→` atau `Tab` berpindah tab, `?` menampilkan tombol-tombol tab yang sedang dibuka, `r` mencari penggunaan lagi tanpa cache singkat dan memuat ulang tab Agents, Extensions, dan Health, dan `q` atau `Esc` keluar.
 
 ## Tombol di tab Accounts
 
@@ -66,7 +67,7 @@ Bingkai pertama digambar hanya dari `config.toml`, jauh di bawah 100 ms; penggun
 | `c` | Menetapkan atau menghapus perintah pintasannya |
 | `x` | Menghapusnya (bertanya dulu, dimulai dari No) |
 
-**Kursi Team dan Enterprise.** Pilihan otomatis (`ccam next`, `--fallback`, `ccam pick`, tombol `n` di dasbor) juga berganti di antara kursi dalam organisasi Claude Team atau Enterprise yang sama. Pusat bantuan Anthropic menyatakan "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (setiap kursi pada paket Team diberikan kepada satu orang tertentu, dan hanya orang itu yang boleh menggunakannya) dan "Users can't route their work through another user's account to use that user's remaining usage" (pengguna tidak boleh menyalurkan pekerjaannya melalui akun pengguna lain untuk memakai sisa kuota pengguna tersebut) ([paket Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); begitu pula untuk [paket Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Karena itu, memakai pilihan otomatis di antara kursi dapat melanggar ketentuan Anthropic. Tanyakan kepada organisasi Anda dan Anthropic sebelum Anda mengandalkannya. Paket pribadi (Pro, Max) dibahas dalam [catatan tentang ketentuan di FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Kursi Team dan Enterprise.** Pilihan otomatis (`ccam next`, `--fallback`, `ccam pick`, tombol `n` di dasbor, dan [`auto_switch`](/features/next#auto-switch) bila Anda mengaktifkannya) juga berganti di antara kursi dalam organisasi Claude Team atau Enterprise yang sama. Pusat bantuan Anthropic menyatakan "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (setiap kursi pada paket Team diberikan kepada satu orang tertentu, dan hanya orang itu yang boleh menggunakannya) dan "Users can't route their work through another user's account to use that user's remaining usage" (pengguna tidak boleh menyalurkan pekerjaannya melalui akun pengguna lain untuk memakai sisa kuota pengguna tersebut) ([paket Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); begitu pula untuk [paket Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Karena itu, memakai pilihan otomatis di antara kursi dapat melanggar ketentuan Anthropic. Apakah Anda memakainya di sana adalah keputusan Anda: tanyakan kepada organisasi Anda dan Anthropic sebelum Anda mengandalkannya. Paket pribadi (Pro, Max) dibahas dalam [catatan tentang ketentuan di FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 ## Tab Health
 
@@ -95,6 +96,28 @@ Tab Health menjalankan pemeriksaan [`ccam doctor`](/features/doctor) saat Anda m
 ```
 
 `↑`/`↓` berpindah dari kotak ke kotak, dan kotak yang dipilih memiliki bingkai berwarna aksen. `f` hanya memperbaiki kotak yang dipilih, dengan cara yang sama seperti `ccam doctor --fix`: pada kotak sebuah akun, ia hanya memperbaiki akun itu, dan pada kotak `General`, temuan yang bukan milik akun mana pun (path plugin dan pintasan); akun lainnya hanya diperiksa lagi. Ia bertanya dulu (``Like `ccam doctor --fix`: missing links and group folders are made, and a real file where a link belongs is backed up first; where the group has its own copy, the account then sees the group's. Nothing is lost.``), dan kotak yang tidak punya apa pun untuk diperbaiki hanya menampilkan `nothing to repair in <name>`. `F` memperbaiki semuanya sekaligus, seperti `ccam doctor --fix`, dan `r` memeriksa lagi.
+
+## Tab Agents
+
+Tab Agents menampilkan apa yang dicetak [`ccam agents`](/features/agents): sesi latar belakang dan sesi terbuka dari setiap akun, beserta akun pemilik masing-masing. Tab ini bertanya ke Claude Code setiap akun sekaligus (`claude agents --json`, hingga 15 detik per akun) saat Anda pertama kali membuka tab, saat `r`, setelah penghentian, dan setelah konfigurasi berubah, dan menampilkan `Asking every account's Claude Code for its sessions…` sampai semua akun menjawab.
+
+```console
+  Accounts   Agents   Groups   Folders   Extensions   Health
+ Background agents and open sessions of every account; enter attaches to one.
+
+    Account   ID        Name   State          Folder      Started
+ ❯  work      -         -      open (busy)    ~/code/web  now
+    personal  49ec0028  probe  blocked, idle  ~/code/app  12m
+
+ ✘ lab: could not list its sessions: exit status 1 'claude agents --json' is
+   not available in this environment.
+
+ enter to attach · x to stop · r to reload · ? for shortcuts
+```
+
+`State` adalah status sesi latar belakang dan apa yang sedang dilakukan prosesnya, atau `open` untuk sesi interaktif, seperti di `ccam agents`. Akun yang tidak bisa ditanyai mendapat baris `✘` di bawah daftar berisi apa yang dikatakan Claude Code, seperti `lab` di atas, yang tampilan agennya (agent view) nonaktif. Sesi latar belakang yang sudah selesai tidak ditampilkan (`ccam agents --all` mencantumkannya), dan jika setiap akun sudah menjawab dan tidak ada yang memiliki sesi, tab ini menampilkan ``No sessions. Start one in the background with `ccam <account> --bg "…"`.`` Di terminal yang sempit, tab ini menghilangkan `Started`, lalu `Name`, lalu `Folder`, dan memotong folder yang panjang dari kiri.
+
+`Enter` pada sesi latar belakang menutup dasbor dan membuka sesi itu di terminal ini sebagai akunnya, seperti yang dilakukan `ccam attach <id>`; dasbor tidak kembali (di Claude Code, `←` membuka tampilan agennya dan `Ctrl+Z` kembali ke shell). Sesi terbuka tidak memiliki id, jadi `Enter` dan `x` hanya memberi tahu bahwa diperlukan sesi latar belakang. `x` bertanya lebih dulu, dimulai dari `No, keep it`: ``It runs as personal. Like `ccam personal stop 49ec0028`, Claude Code stops it and keeps its conversation, which `ccam attach 49ec0028` opens again.`` Jika ya, ccam menjalankan `claude stop <id>` sebagai akun itu, menampilkan ``49ec0028 (personal) stopped; `ccam attach 49ec0028` opens it again`` atau alasan mengapa tidak bisa, lalu membaca daftar itu lagi.
 
 ## Mengubah grup
 

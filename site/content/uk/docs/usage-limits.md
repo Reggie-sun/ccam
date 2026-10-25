@@ -1,10 +1,10 @@
 ---
 title: Ліміти використання та перемикання облікових записів
 description: Перегляньте 5-годинне й тижневе використання всіх облікових записів Claude Code через ccam usage і відкрийте найвільніший через ccam next --auto.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 5
 translation: machine
-sourceHash: "ccaed084207a"
+sourceHash: "7c15419446c3"
 ---
 
 `ccam usage` показує, яку частку 5-годинного ліміту, тижневого ліміту й власного тижневого ліміту кожної моделі (наприклад, Fable) використав кожен обліковий запис. `ccam next --auto` відкриває обліковий запис із найбільшим запасом, а `--continue` переносить поточну розмову.
@@ -28,7 +28,7 @@ $ ccam usage
 
 Кожен обліковий запис отримує рядок із давністю його чисел, а під ним по смужці на кожен ліміт із часом до скидання: 5-годинне вікно, тижневе вікно для всіх моделей і власне тижневе вікно кожної моделі, наприклад Fable. Від 80% смужка стає жовтою, а на 100% — червоною. Останній рядок називає обліковий запис, який відкрив би `ccam next --auto`; з `auto_strategy = "expiring"` або `"balance"` натомість там написано `→ next --auto picks <name>: <reason>`.
 
-**Місця в планах Team і Enterprise.** Автоматичний вибір (`ccam next`, `--fallback`, `ccam pick`, `n` на панелі керування) також перемикає між місцями однієї організації Claude Team або Enterprise. У довідковому центрі Anthropic сказано: «Each seat on a Team plan is assigned to one named individual, and only that person may use it» (кожне місце в плані Team закріплене за однією конкретною особою, і користуватися ним може лише ця особа) та «Users can't route their work through another user's account to use that user's remaining usage» (користувачі не можуть спрямовувати свою роботу через обліковий запис іншого користувача, щоб використати залишок ліміту цього користувача) ([плани Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); так само для [планів Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Тому використання автоматичного вибору між місцями може порушувати умови Anthropic. Перш ніж на нього покладатися, уточніть це у своїй організації та в Anthropic. Про особисті плани (Pro, Max) ідеться в [примітці про умови в FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Місця в планах Team і Enterprise.** Автоматичний вибір (`ccam next`, `--fallback`, `ccam pick`, `n` на панелі керування, а також [`auto_switch`](/features/next#auto-switch), якщо ви його ввімкнете) також перемикає між місцями однієї організації Claude Team або Enterprise. У довідковому центрі Anthropic сказано: «Each seat on a Team plan is assigned to one named individual, and only that person may use it» (кожне місце в плані Team закріплене за однією конкретною особою, і користуватися ним може лише ця особа) та «Users can't route their work through another user's account to use that user's remaining usage» (користувачі не можуть спрямовувати свою роботу через обліковий запис іншого користувача, щоб використати залишок ліміту цього користувача) ([плани Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); так само для [планів Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Тому використання автоматичного вибору між місцями може порушувати умови Anthropic. Користуватися ним там чи ні, вирішувати вам: перш ніж на нього покладатися, уточніть це у своїй організації та в Anthropic. Про особисті плани (Pro, Max) ідеться в [примітці про умови в FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 ## Звідки беруться ці числа
 
@@ -71,6 +71,8 @@ ccam next --continue  # carry this folder's conversation on as the next account
 ```
 
 `ccam next` пропускає облікові записи, у які не виконано вхід, а `--auto` пропускає облікові записи зі 100% (зокрема вікно, про заповнення якого повідомив Claude Code, до його скидання) і облікові записи іншої організації. Коли два облікові записи мають спільну історію розмов, `--continue` відкриває ту саму розмову; інакше Claude Code копіює її в новий обліковий запис. Див. [спільне використання](/docs/sharing) і [перемикання на наступний обліковий запис](/features/next#continue).
+
+З `auto_switch = true` угорі `config.toml` (Linux і macOS; типово вимкнено) ccam сам робить це перемикання, коли Claude Code зупиняє інтерактивний сеанс на його ліміті, а інший такий самий обліковий запис має запас. Коли він діє і чого ніколи не робить, див. у розділі [`auto_switch`](/features/next#auto-switch).
 
 Для скриптів і запланованих завдань, які запускають `claude -p`, поставте `--fallback` перед назвою облікового запису. Коли цей обліковий запис досягає ліміту, ccam знову виконує ту саму команду від імені облікового запису, де найбільше запасу, і виводиться лише результат запуску, який завершився:
 

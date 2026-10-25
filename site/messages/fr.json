@@ -132,7 +132,7 @@
     "close": "Fermer"
   },
   "commands": {
-    "ccam": "Ouvrir le tableau de bord : comptes, groupes, dossiers, extensions et état",
+    "ccam": "Ouvrir le tableau de bord : comptes, agents, groupes, dossiers, extensions et état",
     "name": "Lancer Claude Code avec ce compte ; les arguments sont transmis tels quels",
     "fallback": "Pour les exécutions -p : à une limite d'utilisation, relancer la même commande avec le compte qui a le plus de marge",
     "add": "Ajouter un compte : dossier de configuration, connexion et raccourci facultatif",

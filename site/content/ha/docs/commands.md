@@ -2,10 +2,10 @@
 title: Bayanin umarnai
 metaTitle: Bayanin umarnan ccam
 description: Kowane umarni da zaɓi na ccam, daga ccam add da ccam <name> zuwa ccam usage, ccam next da ccam doctor.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 3
 translation: machine
-sourceHash: 36af7e209cd9
+sourceHash: abba525cae48
 ---
 
 Saka `--dry-run` kafin umarni don ganin abin da zai yi ba tare da ya yi shi ba, misali `ccam --dry-run work`. Yana aiki lokacin fara Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`) da kuma tare da `group`, `migrate`, `shortcut`, `update` da `doctor --fix`. Sauran umarnin da ke canza wani abu suna ƙin shi maimakon su gudana.
@@ -27,7 +27,7 @@ ccam --fallback work -p "fix the tests"   # run again as another account at the 
 
 `--fallback` kafin sunan asusun na gudun `-p`/`--print` ne. Idan asusun ya kai iyakar amfaninsa, ccam yana sake gudanar da umarnin iri ɗaya a matsayin asusun da aka shiga da shi mafi sarari, kuma yana buga sakamakon gudun da ya kammala kaɗai. Duba [Asusai bisa folda](/features/folder) da [Sake gudanarwa a iyaka](/features/next#run-again-at-the-limit).
 
-**Kujeru (seats) na Team da Enterprise.** Zaɓin atomatik (`ccam next`, `--fallback`, `ccam pick`, maɓallin `n` na dashboard) yana kuma sauyawa tsakanin kujerun ƙungiyar Claude Team ko Enterprise iri ɗaya. Cibiyar taimako ta Anthropic ta ce "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (ana ba da kowace kujera a tsarin Team da sunan takamaiman mutum ɗaya, kuma wannan mutumin kaɗai ne aka yarda ya yi amfani da ita) da "Users can't route their work through another user's account to use that user's remaining usage" (masu amfani ba za su iya tura aikinsu ta asusun wani mai amfani ba domin su ci gajiyar ragowar amfanin wannan mai amfanin) ([Tsare-tsaren Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); haka ma ga [tsare-tsaren Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Don haka yin amfani da zaɓin atomatik tsakanin kujeru na iya saɓa wa sharuɗɗan Anthropic. Ka tuntuɓi ƙungiyarka da Anthropic kafin ka dogara da shi. Don tsare-tsaren kai (Pro, Max), duba [bayanin sharuɗɗa a cikin Tambayoyin da ake yawan yi](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Kujeru (seats) na Team da Enterprise.** Zaɓin atomatik (`ccam next`, `--fallback`, `ccam pick`, maɓallin `n` na dashboard, da [`auto_switch`](/features/next#auto-switch) idan ka kunna shi) yana kuma sauyawa tsakanin kujerun ƙungiyar Claude Team ko Enterprise iri ɗaya. Cibiyar taimako ta Anthropic ta ce "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (ana ba da kowace kujera a tsarin Team da sunan takamaiman mutum ɗaya, kuma wannan mutumin kaɗai ne aka yarda ya yi amfani da ita) da "Users can't route their work through another user's account to use that user's remaining usage" (masu amfani ba za su iya tura aikinsu ta asusun wani mai amfani ba domin su ci gajiyar ragowar amfanin wannan mai amfanin) ([Tsare-tsaren Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); haka ma ga [tsare-tsaren Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Don haka yin amfani da zaɓin atomatik tsakanin kujeru na iya saɓa wa sharuɗɗan Anthropic. Ko za ka yi amfani da shi a can ya rage naka: ka tuntuɓi ƙungiyarka da Anthropic kafin ka dogara da shi. Don tsare-tsaren kai (Pro, Max), duba [bayanin sharuɗɗa a cikin Tambayoyin da ake yawan yi](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 Gajeren umarni kamar `ccwork` yana fara asusunsa ta hanya ɗaya: `ccwork --resume` yana yin abin da `ccam work --resume` ke yi. Duba [gajerun umarni](/docs/commands#shortcuts).
 
@@ -115,8 +115,9 @@ ccam mcp remove fs
 ccam usage           # also: ccam u
 ccam usage --watch   # refresh every 60 seconds
 ccam usage --json
-ccam usage --source claude      # Claude Code looks it up; ccam never touches a token
+ccam usage --source claude      # Claude Code looks it up; ccam sends no token
 ccam next --continue            # this folder's last conversation, as the next account
+ccam next --continue --brief    # a new conversation from a summary of the last one
 ccam next --auto
 ccam next --auto --max-usage 80 --wait
 ccam next -c --auto -- --dangerously-skip-permissions   # claude's own options after --
@@ -126,7 +127,7 @@ ccam agents                     # background sessions of every account
 ccam attach 49ec0028            # open one, as the account that started it (or by its name)
 ```
 
-`next --auto`, `--fallback` da `ccam pick` suna zaɓa ta hanya ɗaya: na farko waɗanda ke ƙasa da `auto_max_usage` (`config.toml`, tsoho 100), bisa `auto_strategy` (`headroom`, `expiring` ko `balance`), suna ƙirga tagar mako ta `--model`, ba sa taɓa zaɓar asusun da ya kai 100% (tagar da Claude Code ya ba da rahoton ta cika ana ƙirga ta a matsayin 100% har zuwa sake saitinta), ba sa taɓa zaɓar shigar API key, kuma suna zama a cikin ƙungiya (organization) ta asusun da suka fara daga gare shi (`--cross-org` ko `cross_org = true` don duba gaba da haka). `--wait` yana ɗaukar ƙimarsa bayan `=` (`--wait=2h`); idan an rubuta shi da sarari ana ƙin shi tare da shawara. Idan ba za a iya zaɓar kowanne ba, suna fita da code 75, ko da `--wait` suna jiran asusun farko ya sake saitawa. `ccam next --continue` yana kai tattaunawa gaba har ma tsakanin asusan da ba sa raba tarihi: a lokacin Claude Code yana kwafar ta cikin sabon asusun. Ba kamar `ccam <name>` ba, `ccam next` yana karanta zaɓuɓɓukansa da kansa, don haka zaɓuɓɓukan Claude Code suna zuwa bayan `--`; ba tare da shi ba ccam yana tsayawa da `unknown flag`. A cikin Claude Code, `/ccam:switch [account]` na plugin ɗin yana miƙa tattaunawa gaba, kuma `ccam hook` shi ne abin da hooks ɗinsa ke gudanarwa. Duba [Sauyawa zuwa asusu na gaba](/features/next), [Zaɓar asusu don rubutun umarni](/features/pick) da [Zaman bayan fage na kowane asusu](/features/agents).
+`next --auto`, `--fallback` da `ccam pick` suna zaɓa ta hanya ɗaya: na farko waɗanda ke ƙasa da `auto_max_usage` (`config.toml`, tsoho 100), bisa `auto_strategy` (`headroom`, `expiring` ko `balance`), suna ƙirga tagar mako ta `--model`, ba sa taɓa zaɓar asusun da ya kai 100% (tagar da Claude Code ya ba da rahoton ta cika ana ƙirga ta a matsayin 100% har zuwa sake saitinta), ba sa taɓa zaɓar shigar API key, kuma suna zama a cikin ƙungiya (organization) ta asusun da suka fara daga gare shi (`--cross-org` ko `cross_org = true` don duba gaba da haka). `--wait` yana ɗaukar ƙimarsa bayan `=` (`--wait=2h`); idan an rubuta shi da sarari ana ƙin shi tare da shawara. Idan ba za a iya zaɓar kowanne ba, suna fita da code 75, ko da `--wait` suna jiran asusun farko ya sake saitawa. `ccam next --continue` yana kai tattaunawa gaba har ma tsakanin asusan da ba sa raba tarihi: a lokacin Claude Code yana kwafar ta cikin sabon asusun. Da `--brief`, sabon asusun yana fara sabuwar tattaunawa maimakon haka, daga taƙaitaccen bayanin da ccam ya rubuta na ta ƙarshe ba tare da model ba ([`--brief`](/features/next#brief)). Ba kamar `ccam <name>` ba, `ccam next` yana karanta zaɓuɓɓukansa da kansa, don haka zaɓuɓɓukan Claude Code suna zuwa bayan `--`; ba tare da shi ba ccam yana tsayawa da `unknown flag`. A cikin Claude Code, `/ccam:switch [account]` na plugin ɗin yana miƙa tattaunawa gaba, kuma `ccam hook` shi ne abin da hooks ɗinsa ke gudanarwa. Da `auto_switch = true` a `config.toml` (Linux da macOS; a kashe ta tsohuwa), hook na iyaka yana kuma kawo ƙarshen zaman mu'amala da ccam ya fara kuma yana kai shi gaba a matsayin wani asusu mai sarari, irinsa kaɗai: wata kujerar ƙungiya iri ɗaya, ko wani tsarin kai ([`auto_switch`](/features/next#auto-switch)). Duba [Sauyawa zuwa asusu na gaba](/features/next), [Zaɓar asusu don rubutun umarni](/features/pick) da [Zaman bayan fage na kowane asusu](/features/agents).
 
 ## Kulawa
 
@@ -148,10 +149,10 @@ ccam completion bash # or zsh, powershell
 
 | Hanya | Abin da ke ciki |
 | --- | --- |
-| `~/.config/ccam/config.toml` | Asusai, rukunoni da saituna (`theme`, `usage_source`, `relay`, `cross_org` …). Saituna suna zuwa a sama, kafin `[[group]]`, `[[profile]]` ko `[[folder]]` na farko: saitin da ke ƙarƙashin tebur (table) na wannan tebur ne, don haka ccam yana ambatar sa a kowane ƙaddamarwa da a `ccam doctor`, kuma umarnan da ke ajiye config suna ƙi har sai an matsar da shi. Ba a riƙe sharhi (comments) idan ccam ya ajiye fayil ɗin |
+| `~/.config/ccam/config.toml` | Asusai, rukunoni da saituna (`theme`, `usage_source`, `relay`, `auto_switch`, `cross_org` …). Saituna suna zuwa a sama, kafin `[[group]]`, `[[profile]]` ko `[[folder]]` na farko: saitin da ke ƙarƙashin tebur (table) na wannan tebur ne, don haka ccam yana ambatar sa a kowane ƙaddamarwa da a `ccam doctor`, kuma umarnan da ke ajiye config suna ƙi har sai an matsar da shi. Ba a riƙe sharhi (comments) idan ccam ya ajiye fayil ɗin |
 | `~/.local/share/ccam/profiles/<name>/` | `CLAUDE_CONFIG_DIR` na kowane asusu |
 | `~/.local/share/ccam/groups/<group>/` | Saituna, sabobin MCP, extensions da tarihi da aka raba |
-| `~/.local/state/ccam/` | Cache na amfani da rikodin iyaka (`usage/<name>.json`, `usage/<name>.limit.json`), lokutan amfani na ƙarshe, alamomin zama da kulle-kulle (`locks/`), gajerun umarnin da ccam ya yi (`shortcuts.json`), canjin rukunoni da bai kammala ba (`group-change.json`), da bayanan da `/ccam:switch` da hook na iyaka ke barwa (`handoff/<account>/<session>.json`) |
+| `~/.local/state/ccam/` | Cache na amfani da rikodin iyaka (`usage/<name>.json`, `usage/<name>.limit.json`), lokutan amfani na ƙarshe, alamomin zama da kulle-kulle (`locks/`), gajerun umarnin da ccam ya yi (`shortcuts.json`), canjin rukunoni da bai kammala ba (`group-change.json`), bayanan da `/ccam:switch` da hook na iyaka ke barwa (`handoff/<account>/<session>.json`), lokacin da `ccam pick` ko `auto_switch` suka zaɓi kowane asusu na ƙarshe (`picks/<name>`; zaɓi yana ƙirguwa na minti 2), da taƙaitattun bayanan `--brief`, da ake ajiyewa na kwana 7 (`brief/<session>.md`) |
 | `~/.local/bin/<shortcut>` | Gajerun umarni kamar `ccwork`, mahaɗai zuwa ccam |
 
 Masu canji (variables) `XDG_CONFIG_HOME`, `XDG_DATA_HOME` da `XDG_STATE_HOME` suna canza wurin waɗannan foldojin. A Windows, `~` shi ne `%USERPROFILE%`, kuma gajerun umarni su ne `<shortcut>.exe`.

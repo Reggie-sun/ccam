@@ -1,10 +1,10 @@
 ---
 title: 사용량 한도
 description: ccam usage는 모든 계정의 5시간 한도와 주간 한도를 한 번에 보여 주고, ccam statusline은 Claude Code 안에 계정 이름과 사용량을 표시합니다.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 7
 translation: machine
-sourceHash: "a14b1da71a1a"
+sourceHash: "91ad20327289"
 ---
 
 `ccam usage`는 각 계정이 5시간 한도, 주간 한도, 모델별 주간 한도(Fable 등)를 얼마나 썼는지 한도마다 막대 하나로 보여 주고, 초기화까지 남은 시간도 함께 표시합니다. 긴 작업을 시작하기 전이나 Claude Code가 한도가 가까워졌다고 알릴 때 실행해, 어느 계정에 여유가 남았는지 확인하세요. `ccam statusline`은 Claude Code의 상태 표시줄 명령입니다. Claude Code 안에 계정 이름과 사용량을 표시하고, `ccam usage`가 쓸 수 있도록 수치를 저장합니다.
@@ -20,7 +20,7 @@ ccam usage -v               # add where the numbers came from
 ccam usage --json           # machine-readable, one object per account
 ccam usage --source cache   # saved numbers only, no network
 ccam usage --refresh        # also renew expired logins of accounts not running
-ccam usage --source claude  # let Claude Code look it up: ccam never touches a token
+ccam usage --source claude  # let Claude Code look it up: ccam sends no token
 ccam statusline install     # set the status line in every account's settings.json
 ```
 
@@ -40,7 +40,7 @@ $ ccam usage
 
 각 계정은 번호, 이름, 수치를 가져온 시점을 적은 줄로 시작합니다. `(cached)`는 엔드포인트가 아니라 저장된 파일에서 가져온 수치라는 뜻입니다. 그 아래에는 한도마다 한 줄씩 20칸 막대, 비율, 구간이 초기화되기까지 남은 시간이 표시됩니다. 순서는 `5-hour`, `Weekly`(모든 모델), 그다음 `Fable`처럼 모델마다 따로 있는 주간 구간입니다. 계정에 없는 구간은 `-`로 표시됩니다. 비율은 80%부터 노란색, 100%에서 빨간색으로 바뀝니다. Claude Code가 사용량 한도에서 요청을 거부하며 가득 찼다고 알린 구간은 저장된 수치와 상관없이 초기화될 때까지 100%로 표시됩니다([한도 기록](#the-limit-record) 참고). 터미널에서는 모든 계정이 먼저 `fetching…`으로 한꺼번에 나타나고, 계정이 응답하는 대로 그 줄들을 그립니다. 마지막 줄은 [`ccam next --auto`](/features/next)가 같은 규칙으로 고를 계정을 알려 줍니다(`auto_max_usage`, `auto_strategy`, 실행 중인 세션을 따지고, `cross_org`를 설정하지 않으면 마지막으로 사용한 계정과 같은 조직의 계정만 보며, 100%인 구간이 있는 계정은 건너뛰므로 주간 한도가 찬 계정은 절대 나오지 않습니다). 이 줄은 계정이 둘 이상일 때만 나타납니다. 기본값인 `headroom` 전략에서는 `→ Most headroom: <name>`으로, `expiring`이나 `balance`에서는 `→ next --auto picks personal: its 5-hour window resets first, in 1h 12m (40% of its 5 hours used)`처럼 이유와 함께 표시됩니다.
 
-**Team·Enterprise 시트.** 자동 선택(`ccam next`, `--fallback`, `ccam pick`, 대시보드의 `n`)은 같은 Claude Team이나 Enterprise 조직의 시트 사이에서도 계정을 바꿉니다. Anthropic 고객센터는 "Each seat on a Team plan is assigned to one named individual, and only that person may use it"(팀 플랜의 각 시트는 한 명의 지정된 개인에게 할당되며, 그 사람만 사용할 수 있습니다), "Users can't route their work through another user's account to use that user's remaining usage"(사용자는 다른 사용자의 계정을 통해 작업을 라우팅하여 해당 사용자의 남은 사용량을 사용할 수 없습니다)라고 안내합니다([Team 요금제](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129), [Enterprise 요금제](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)도 마찬가지). 따라서 시트 사이에서 자동 선택을 쓰면 Anthropic의 약관을 위반할 수 있습니다. 이 기능에 의존하기 전에 소속 조직과 Anthropic에 확인하세요. 개인 요금제(Pro, Max)에 대해서는 [FAQ의 약관 안내](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)를 참고하세요.
+**Team·Enterprise 시트.** 자동 선택(`ccam next`, `--fallback`, `ccam pick`, 대시보드의 `n`, 그리고 켜 두었을 때의 [`auto_switch`](/features/next#auto-switch))은 같은 Claude Team이나 Enterprise 조직의 시트 사이에서도 계정을 바꿉니다. Anthropic 고객센터는 "Each seat on a Team plan is assigned to one named individual, and only that person may use it"(팀 플랜의 각 시트는 한 명의 지정된 개인에게 할당되며, 그 사람만 사용할 수 있습니다), "Users can't route their work through another user's account to use that user's remaining usage"(사용자는 다른 사용자의 계정을 통해 작업을 라우팅하여 해당 사용자의 남은 사용량을 사용할 수 없습니다)라고 안내합니다([Team 요금제](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129), [Enterprise 요금제](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)도 마찬가지). 따라서 시트 사이에서 자동 선택을 쓰면 Anthropic의 약관을 위반할 수 있습니다. 시트 사이에서 이 기능을 쓸지는 사용자가 판단할 일입니다. 의존하기 전에 소속 조직과 Anthropic에 확인하세요. 개인 요금제(Pro, Max)에 대해서는 [FAQ의 약관 안내](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)를 참고하세요.
 
 로그인되지 않은 계정은 `not logged in → ccam login <name>`, API 키 계정은 `no limits (API)`로 표시됩니다. 액세스 토큰이 만료되면 저장된 수치가 있을 때 그 위에 ``access token expired; `ccam <name>` renews it when it starts``가 표시됩니다. 다음에 시작할 때 Claude Code가 갱신합니다. 리프레시 토큰이 만료되었거나, 서버가 거부한 뒤 Claude Code가 지워서 로그인 전체가 만료되었으면 `` login expired → `ccam login <name>` ``이 표시됩니다.
 
@@ -97,7 +97,7 @@ $ ccam usage
 
 ### 한도 기록
 
-Claude Code가 사용량 한도에서 턴을 멈추면 [ccam 플러그인](/docs/install#claude-code-plugin)의 훅이 대화에서 거부된 요청을 읽어, 어느 구간(5시간, 주간, Opus, Sonnet)이 가득 찼고 언제 초기화되는지 알아냅니다. 이를 `~/.local/state/ccam/usage/<name>.limit.json`에 기록합니다. `Fetch`는 모든 출처에서 알아낸 내용 위에 이 기록을 덮습니다. 기록에 있는 구간은 저장된 수치가 아무리 오래되었거나 낮아도 초기화될 때까지 100%로 치므로, `ccam next --auto`, `ccam pick`, `--fallback`은 그 전에 그 계정을 다시 고르지 않습니다. 다른 정보가 없으면 계정은 기록만으로 표시됩니다(`-v`를 주면 `source: the usage limit Claude Code reported`). 아무도 앞에 앉아 있지 않은 세션(`-p`, 백그라운드 세션)은 기록을 남기지 않으며, 관리자가 언제든 풀 수 있는 조직의 차단(사용량 소진, $0로 설정된 그룹)도 기록하지 않습니다. 다른 Claude 계정으로 `ccam login`하면 기록이 지워지며, 파일을 지워도 기록이 사라집니다.
+Claude Code가 사용량 한도에서 턴을 멈추면 [ccam 플러그인](/docs/install#claude-code-plugin)의 훅이 대화에서 거부된 요청을 읽어, 어느 구간(5시간, 주간, Opus, Sonnet)이 가득 찼고 언제 초기화되는지 알아냅니다. 이를 `~/.local/state/ccam/usage/<name>.limit.json`에 기록합니다. `Fetch`는 모든 출처에서 알아낸 내용 위에 이 기록을 덮습니다. 기록에 있는 구간은 저장된 수치가 아무리 오래되었거나 낮아도 초기화될 때까지 100%로 치므로, `ccam next --auto`, `ccam pick`, `--fallback`, [`auto_switch`](/features/next#auto-switch)는 그 전에 그 계정을 다시 고르지 않습니다. 다른 정보가 없으면 계정은 기록만으로 표시됩니다(`-v`를 주면 `source: the usage limit Claude Code reported`). 아무도 앞에 앉아 있지 않은 세션(`-p`, 백그라운드 세션)은 기록을 남기지 않으며, 관리자가 언제든 풀 수 있는 조직의 차단(사용량 소진, $0로 설정된 그룹)도 기록하지 않습니다. 다른 Claude 계정으로 `ccam login`하면 기록이 지워지며, 파일을 지워도 기록이 사라집니다.
 
 ### 토큰 갱신
 

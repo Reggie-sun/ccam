@@ -132,7 +132,7 @@
     "close": "Tutup"
   },
   "commands": {
-    "ccam": "Membuka dasbor: akun, grup, folder, ekstensi, dan kesehatan",
+    "ccam": "Membuka dasbor: akun, agen, grup, folder, ekstensi, dan kesehatan",
     "name": "Menjalankan Claude Code sebagai akun tersebut; argumen diteruskan tanpa diubah",
     "fallback": "Untuk proses -p: saat batas penggunaan tercapai, menjalankan lagi perintah yang sama sebagai akun dengan sisa kuota terbanyak",
     "add": "Menambahkan akun: folder konfigurasi, login, dan pintasan opsional",

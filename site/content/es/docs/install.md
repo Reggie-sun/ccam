@@ -2,10 +2,10 @@
 title: Instalar ccam
 metaTitle: Instalar ccam en Linux, macOS y Windows
 description: Instala ccam en Linux, macOS o Windows con un comando, un paquete .deb o desde el código fuente, y actualízalo con ccam update. Antes necesitas Claude Code.
-updated: 2026-10-23
+updated: 2026-10-25
 order: 1
 translation: machine
-sourceHash: af21dcc24169
+sourceHash: "a7f9dac24f79"
 ---
 
 Ejecuta esto en una terminal de Linux o macOS:
@@ -82,7 +82,7 @@ El plugin de ccam le enseña al propio Claude Code a usar ccam: a comprobar qué
 /plugin install ccam --marketplace jhyunwoo/ccam
 ```
 
-Añade un skill, los comandos `/ccam:usage`, `/ccam:ext` y `/ccam:switch`, y dos hooks: cuando una sesión se detiene en un límite de uso recibes una notificación en la terminal, y `/ccam:switch [account]` pasa la conversación a otra cuenta ([detalles](/features/next#inside-claude-code)). Los hooks ejecutan `ccam`, así que debe estar en el `PATH` que ve Claude Code. El skill nunca ejecuta comandos que inician sesión o mueven archivos; en su lugar, los sugiere.
+Añade un skill, los comandos `/ccam:usage`, `/ccam:ext` y `/ccam:switch`, y dos hooks: cuando una sesión se detiene en un límite de uso recibes una notificación en la terminal (y en Linux y macOS, con [`auto_switch`](/features/next#auto-switch) activado, ccam mueve la sesión a otra cuenta con margen), y `/ccam:switch [account]` pasa la conversación a otra cuenta ([detalles](/features/next#inside-claude-code)). Los hooks ejecutan `ccam`, así que debe estar en el `PATH` que ve Claude Code. El skill nunca ejecuta comandos que inician sesión o mueven archivos; en su lugar, los sugiere.
 
 ## Comprobar la instalación
 

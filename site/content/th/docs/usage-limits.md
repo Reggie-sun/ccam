@@ -1,10 +1,10 @@
 ---
 title: ขีดจำกัดการใช้งานและการสลับบัญชี
 description: "ดูการใช้งาน 5 ชั่วโมงและรายสัปดาห์ของทุกบัญชี Claude Code ด้วย ccam usage และเปิดบัญชีที่เหลือโควตามากสุดด้วย ccam next --auto"
-updated: 2026-10-24
+updated: 2026-10-25
 order: 5
 translation: machine
-sourceHash: "ccaed084207a"
+sourceHash: "7c15419446c3"
 ---
 
 `ccam usage` แสดงว่าทุกบัญชีใช้ขีดจำกัดแบบ 5 ชั่วโมง ขีดจำกัดรายสัปดาห์ และขีดจำกัดรายสัปดาห์เฉพาะของแต่ละโมเดล (เช่น Fable) ไปแล้วเท่าไร `ccam next --auto` เปิดบัญชีที่เหลือโควตามากที่สุด และ `--continue` จะนำการสนทนาปัจจุบันไปต่อด้วย
@@ -28,7 +28,7 @@ $ ccam usage
 
 แต่ละบัญชีจะมีหนึ่งบรรทัดที่บอกอายุของตัวเลข ตามด้วยแถบหนึ่งแถบต่อขีดจำกัดพร้อมเวลาที่เหลือจนถึงการรีเซ็ต ได้แก่ ช่วง 5 ชั่วโมง ช่วงรายสัปดาห์สำหรับทุกโมเดล และช่วงรายสัปดาห์เฉพาะของแต่ละโมเดล เช่น Fable ตั้งแต่ 80% แถบจะเปลี่ยนเป็นสีเหลือง และที่ 100% จะเป็นสีแดง บรรทัดสุดท้ายระบุบัญชีที่ `ccam next --auto` จะเปิด เมื่อตั้ง `auto_strategy = "expiring"` หรือ `"balance"` บรรทัดนั้นจะเป็น `→ next --auto picks <name>: <reason>` แทน
 
-**ที่นั่ง (seat) ของ Team และ Enterprise** การเลือกอัตโนมัติ (`ccam next`, `--fallback`, `ccam pick` และปุ่ม `n` ในแดชบอร์ด) จะสลับระหว่างที่นั่งต่าง ๆ ในองค์กร Claude Team หรือ Enterprise เดียวกันด้วย ศูนย์ช่วยเหลือของ Anthropic ระบุว่า "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (แต่ละที่นั่งในแพ็กเกจ Team จะกำหนดให้กับบุคคลที่ระบุชื่อเพียงคนเดียว และมีเพียงบุคคลนั้นที่ใช้ได้) และ "Users can't route their work through another user's account to use that user's remaining usage" (ผู้ใช้ไม่สามารถส่งงานของตนผ่านบัญชีของผู้ใช้คนอื่นเพื่อใช้ปริมาณการใช้งานที่เหลืออยู่ของผู้ใช้คนนั้นได้) ([แพ็กเกจ Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129) ส่วน [แพ็กเกจ Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) ก็เช่นเดียวกัน) ดังนั้น การใช้การเลือกอัตโนมัติระหว่างที่นั่งต่าง ๆ จึงอาจละเมิดข้อกำหนดของ Anthropic โปรดสอบถามองค์กรของคุณและ Anthropic ก่อนที่จะพึ่งพาการเลือกอัตโนมัติ สำหรับแพ็กเกจส่วนตัว (Pro, Max) ดูที่ [หมายเหตุเรื่องข้อกำหนดในคำถามที่พบบ่อย](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)
+**ที่นั่ง (seat) ของ Team และ Enterprise** การเลือกอัตโนมัติ (`ccam next`, `--fallback`, `ccam pick`, ปุ่ม `n` ในแดชบอร์ด และ [`auto_switch`](/features/next#auto-switch) เมื่อคุณเปิดใช้) จะสลับระหว่างที่นั่งต่าง ๆ ในองค์กร Claude Team หรือ Enterprise เดียวกันด้วย ศูนย์ช่วยเหลือของ Anthropic ระบุว่า "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (แต่ละที่นั่งในแพ็กเกจ Team จะกำหนดให้กับบุคคลที่ระบุชื่อเพียงคนเดียว และมีเพียงบุคคลนั้นที่ใช้ได้) และ "Users can't route their work through another user's account to use that user's remaining usage" (ผู้ใช้ไม่สามารถส่งงานของตนผ่านบัญชีของผู้ใช้คนอื่นเพื่อใช้ปริมาณการใช้งานที่เหลืออยู่ของผู้ใช้คนนั้นได้) ([แพ็กเกจ Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129) ส่วน [แพ็กเกจ Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) ก็เช่นเดียวกัน) ดังนั้น การใช้การเลือกอัตโนมัติระหว่างที่นั่งต่าง ๆ จึงอาจละเมิดข้อกำหนดของ Anthropic จะใช้การเลือกอัตโนมัติในกรณีนี้หรือไม่เป็นการตัดสินใจของคุณ: โปรดสอบถามองค์กรของคุณและ Anthropic ก่อนที่จะพึ่งพาการเลือกอัตโนมัติ สำหรับแพ็กเกจส่วนตัว (Pro, Max) ดูที่ [หมายเหตุเรื่องข้อกำหนดในคำถามที่พบบ่อย](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)
 
 ## ตัวเลขมาจากไหน
 
@@ -71,6 +71,8 @@ ccam next --continue  # carry this folder's conversation on as the next account
 ```
 
 `ccam next` จะข้ามบัญชีที่ยังไม่ได้เข้าสู่ระบบ และ `--auto` จะข้ามบัญชีที่ใช้ไปถึง 100% แล้ว (รวมถึงช่วงที่ Claude Code รายงานว่าเต็ม จนกว่าจะรีเซ็ต) และบัญชีขององค์กรอื่น เมื่อสองบัญชีใช้ประวัติการสนทนาร่วมกัน `--continue` จะเปิดการสนทนาเดียวกัน หากไม่ได้ใช้ร่วมกัน Claude Code จะคัดลอกการสนทนานั้นไปยังบัญชีใหม่ ดูที่ [การใช้ร่วมกัน](/docs/sharing) และ [การสลับไปยังบัญชีถัดไป](/features/next#continue)
+
+เมื่อตั้ง `auto_switch = true` ที่ด้านบนสุดของ `config.toml` (Linux และ macOS ปิดไว้โดยค่าเริ่มต้น) ccam จะสลับให้เองเมื่อ Claude Code หยุดเซสชันแบบโต้ตอบเพราะถึงขีดจำกัด และมีอีกบัญชีหนึ่งที่เป็นแบบเดียวกันซึ่งยังมีโควตาเหลือ ดู [`auto_switch`](/features/next#auto-switch) ว่าจะทำงานเมื่อใด และสิ่งใดที่จะไม่ทำเด็ดขาด
 
 สำหรับสคริปต์และงานตามกำหนดเวลาที่รัน `claude -p` ให้ใส่ `--fallback` ไว้หน้าชื่อบัญชี เมื่อบัญชีนั้นถึงขีดจำกัด ccam จะรันคำสั่งเดิมอีกครั้งด้วยบัญชีที่เหลือโควตามากที่สุด และพิมพ์เฉพาะผลลัพธ์ของการรันที่ทำงานจนจบ:
 

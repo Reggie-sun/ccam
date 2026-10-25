@@ -2,10 +2,10 @@
 title: விரைவுத் தொடக்கம்
 metaTitle: "தொடக்கம்: Claude Code கணக்குகளைச் சேர்த்து மாற்றுதல்"
 description: ccam add மூலம் இரண்டு Claude Code கணக்குகளைச் சேர்த்து, ccwork போன்ற குறுக்குவழிகளைக் கொடுத்து, அவற்றுக்கு இடையே மாறி, அவை பகிர்வதைத் தேர்ந்தெடுங்கள்.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 2
 translation: machine
-sourceHash: "e98d0637356a"
+sourceHash: "0570ef27e4ce"
 ---
 
 ஒவ்வொரு கணக்கையும் `ccam add` மூலம் சேருங்கள், பிறகு `ccam <name>` மூலமோ, `ccwork` போல நீங்களே பெயரிடும் குறுக்குவழி மூலமோ Claude Code-ஐத் தொடங்குங்கள். பெரும்பாலானவர்களுக்கு இவ்வளவுதான் தேவை.
@@ -108,7 +108,7 @@ ccam next --continue
 
 `ccam usage` எல்லாக் கணக்குகளின் 5 மணி நேர மற்றும் வாராந்திரப் பயன்பாட்டைக் காட்டுகிறது. `ccam next --continue` அதே உரையாடலை அடுத்த கணக்கில் திறக்கிறது. scripts-இல் `ccam --fallback work -p "…"` தானாகவே மாற்றுகிறது. [பயன்பாட்டு வரம்புகள்](/docs/usage-limits) பக்கத்தைப் பாருங்கள்.
 
-**Team மற்றும் Enterprise இருக்கைகள்.** தானியங்கித் தேர்வு (`ccam next`, `--fallback`, `ccam pick`, டாஷ்போர்டின் `n`) ஒரே Claude Team அல்லது Enterprise நிறுவனத்தின் இருக்கைகளுக்கு இடையேயும் மாறுகிறது. Anthropic-இன் உதவி மையம் "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team திட்டத்தின் ஒவ்வொரு இருக்கையும் பெயர் குறிப்பிடப்பட்ட ஒரு நபருக்கு ஒதுக்கப்படுகிறது, அந்த நபர் மட்டுமே அதைப் பயன்படுத்தலாம்) என்றும், "Users can't route their work through another user's account to use that user's remaining usage" (மற்றொரு பயனரின் மீதமுள்ள பயன்பாட்டைப் பயன்படுத்திக்கொள்ள, பயனர்கள் தங்கள் வேலையை அந்தப் பயனரின் கணக்கு வழியாக அனுப்ப முடியாது) என்றும் கூறுகிறது ([Team திட்டங்கள்](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); இதேபோல் [Enterprise திட்டங்களுக்கும்](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). எனவே, இருக்கைகளுக்கு இடையே தானியங்கித் தேர்வைப் பயன்படுத்துவது Anthropic-இன் விதிமுறைகளை மீறக்கூடும். அதை நம்பியிருக்கும் முன், உங்கள் நிறுவனத்திடமும் Anthropic-இடமும் கேட்டு உறுதிசெய்துகொள்ளுங்கள். தனிப்பட்ட திட்டங்கள் (Pro, Max) பற்றி [அடிக்கடி கேட்கப்படும் கேள்விகளில் உள்ள விதிமுறைக் குறிப்பு](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) விளக்குகிறது.
+**Team மற்றும் Enterprise இருக்கைகள்.** தானியங்கித் தேர்வு (`ccam next`, `--fallback`, `ccam pick`, டாஷ்போர்டின் `n`, நீங்கள் இயக்கும்போது [`auto_switch`](/features/next#auto-switch)) ஒரே Claude Team அல்லது Enterprise நிறுவனத்தின் இருக்கைகளுக்கு இடையேயும் மாறுகிறது. Anthropic-இன் உதவி மையம் "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team திட்டத்தின் ஒவ்வொரு இருக்கையும் பெயர் குறிப்பிடப்பட்ட ஒரு நபருக்கு ஒதுக்கப்படுகிறது, அந்த நபர் மட்டுமே அதைப் பயன்படுத்தலாம்) என்றும், "Users can't route their work through another user's account to use that user's remaining usage" (மற்றொரு பயனரின் மீதமுள்ள பயன்பாட்டைப் பயன்படுத்திக்கொள்ள, பயனர்கள் தங்கள் வேலையை அந்தப் பயனரின் கணக்கு வழியாக அனுப்ப முடியாது) என்றும் கூறுகிறது ([Team திட்டங்கள்](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); இதேபோல் [Enterprise திட்டங்களுக்கும்](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). எனவே, இருக்கைகளுக்கு இடையே தானியங்கித் தேர்வைப் பயன்படுத்துவது Anthropic-இன் விதிமுறைகளை மீறக்கூடும். அங்கே அதைப் பயன்படுத்துவதா என்பது உங்கள் முடிவு: அதை நம்பியிருக்கும் முன், உங்கள் நிறுவனத்திடமும் Anthropic-இடமும் கேட்டு உறுதிசெய்துகொள்ளுங்கள். தனிப்பட்ட திட்டங்கள் (Pro, Max) பற்றி [அடிக்கடி கேட்கப்படும் கேள்விகளில் உள்ள விதிமுறைக் குறிப்பு](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) விளக்குகிறது.
 
 ## ஏற்கெனவே ~/.claude பயன்படுத்துகிறீர்களா?
 

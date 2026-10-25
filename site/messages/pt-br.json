@@ -132,7 +132,7 @@
     "close": "Fechar"
   },
   "commands": {
-    "ccam": "Abrir o painel: contas, grupos, pastas, extensões e saúde",
+    "ccam": "Abrir o painel: contas, agentes, grupos, pastas, extensões e saúde",
     "name": "Iniciar o Claude Code como essa conta; os argumentos são repassados sem alterações",
     "fallback": "Para execuções -p: no limite de uso, executa o mesmo comando de novo com a conta que tem mais espaço",
     "add": "Adicionar uma conta: pasta de configuração, login e um atalho opcional",

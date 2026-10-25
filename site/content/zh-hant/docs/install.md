@@ -2,10 +2,10 @@
 title: 安裝 ccam
 metaTitle: "在 Linux、macOS 和 Windows 上安裝 ccam"
 description: 在 Linux、macOS 或 Windows 上用一個指令、.deb 套件或從原始碼安裝 ccam，並用 ccam update 保持最新版本。需要先安裝 Claude Code。
-updated: 2026-10-23
+updated: 2026-10-25
 order: 1
 translation: machine
-sourceHash: "af21dcc24169"
+sourceHash: "a7f9dac24f79"
 ---
 
 在 Linux 或 macOS 的終端機中執行：
@@ -82,7 +82,7 @@ ccam 外掛會教 Claude Code 本身使用 ccam：檢查哪個帳號還有額度
 /plugin install ccam --marketplace jhyunwoo/ccam
 ```
 
-它會新增一個技能、`/ccam:usage`、`/ccam:ext` 和 `/ccam:switch` 這幾個指令，以及兩個 hook：工作階段因用量上限而停止時，你會收到終端機通知；`/ccam:switch [account]` 則會把對話交給另一個帳號（[詳細說明](/features/next#inside-claude-code)）。這些 hook 會執行 `ccam`，所以它必須在 Claude Code 看得到的 `PATH` 上。這個技能絕不會執行登入或移動檔案的指令，而是建議你執行。
+它會新增一個技能、`/ccam:usage`、`/ccam:ext` 和 `/ccam:switch` 這幾個指令，以及兩個 hook：工作階段因用量上限而停止時，你會收到終端機通知（在 Linux 和 macOS 上，若開啟了 [`auto_switch`](/features/next#auto-switch)，ccam 會把工作階段移到另一個還有餘裕的帳號）；`/ccam:switch [account]` 則會把對話交給另一個帳號（[詳細說明](/features/next#inside-claude-code)）。這些 hook 會執行 `ccam`，所以它必須在 Claude Code 看得到的 `PATH` 上。這個技能絕不會執行登入或移動檔案的指令，而是建議你執行。
 
 ## 檢查安裝
 

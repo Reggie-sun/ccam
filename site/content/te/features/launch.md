@@ -1,10 +1,10 @@
 ---
 title: Claude Code ను ప్రారంభించడం
 description: ccam <name|number>, ccam run లేదా డాష్‌బోర్డ్‌తో ఏ ఖాతాగానైనా Claude Code ప్రారంభించండి; ఆర్గ్యుమెంట్‌లు అలాగే claude కు వెళ్తాయి, --dry-run కమాండ్ చూపుతుంది.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 1
 translation: machine
-sourceHash: "e279341eb59b"
+sourceHash: "afa4942cfed5"
 ---
 
 `ccam work` Claude Code ను `work` ఖాతాగా ప్రారంభిస్తుంది, పేరు తర్వాత ఉన్నదంతా ఉన్నది ఉన్నట్లుగా `claude` కు వెళ్తుంది. మీరు `claude` అని టైప్ చేసే ప్రతి చోటా దీన్ని ఉపయోగించండి: టెర్మినల్‌లో, స్క్రిప్ట్‌లో, లేదా పైప్ ద్వారా ఇన్‌పుట్ ఇచ్చి.
@@ -34,11 +34,11 @@ ccam --fallback work -p "fix the tests"   # run again as another account at the 
 
 స్టాండర్డ్ ఇన్‌పుట్, అవుట్‌పుట్ టెర్మినల్ అయినప్పుడు ఆర్గ్యుమెంట్‌లు లేని `ccam` [డాష్‌బోర్డ్](/features/dashboard) ను తెరుస్తుంది, లేకపోతే `ccam list` ను ప్రింట్ చేస్తుంది. ఒక ఖాతాకు వెళ్లి (బాణం కీలతో, లేదా దాని నంబర్ టైప్ చేసి) దాన్ని ప్రారంభించడానికి `Enter` నొక్కండి; `n` ఎక్కువ అవకాశం ఉన్న ఖాతాను ప్రారంభిస్తుంది, `o` `--continue`, `--resume` లేదా ఇతర ఆర్గ్యుమెంట్‌లను అందిస్తుంది. Claude Code ప్రారంభమయ్యే ముందు డాష్‌బోర్డ్ మూసుకుంటుంది, కాబట్టి టెర్మినల్ ముందుగా పునరుద్ధరించబడుతుంది.
 
-**Team, Enterprise సీట్లు.** ఆటోమేటిక్ ఎంపిక (`ccam next`, `--fallback`, `ccam pick`, డాష్‌బోర్డ్‌లోని `n`) ఒకే Claude Team లేదా Enterprise సంస్థలోని సీట్ల మధ్య కూడా మారుస్తుంది. Anthropic సహాయ కేంద్రం "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team ప్లాన్‌లోని ప్రతి సీటు పేరుతో నిర్దేశించిన ఒక వ్యక్తికి కేటాయించబడుతుంది, ఆ వ్యక్తి మాత్రమే దాన్ని ఉపయోగించవచ్చు) అని, "Users can't route their work through another user's account to use that user's remaining usage" (యూజర్లు మరో యూజర్‌కు మిగిలి ఉన్న వినియోగాన్ని వాడుకోవడానికి తమ పనిని ఆ యూజర్ ఖాతా ద్వారా మళ్లించకూడదు) అని చెబుతుంది ([Team ప్లాన్‌లు](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise ప్లాన్‌లకు](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) కూడా ఇదే వర్తిస్తుంది). కాబట్టి సీట్ల మధ్య ఆటోమేటిక్ ఎంపికను ఉపయోగించడం Anthropic నిబంధనల ఉల్లంఘన కావచ్చు. దానిపై ఆధారపడే ముందు మీ సంస్థను, Anthropic ను సంప్రదించి నిర్ధారించుకోండి. వ్యక్తిగత ప్లాన్‌ల (Pro, Max) గురించి [తరచుగా అడిగే ప్రశ్నలలోని నిబంధనల గమనిక](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) చెబుతుంది.
+**Team, Enterprise సీట్లు.** ఆటోమేటిక్ ఎంపిక (`ccam next`, `--fallback`, `ccam pick`, డాష్‌బోర్డ్‌లోని `n`, మీరు ఆన్ చేసినప్పుడు [`auto_switch`](/features/next#auto-switch)) ఒకే Claude Team లేదా Enterprise సంస్థలోని సీట్ల మధ్య కూడా మారుస్తుంది. Anthropic సహాయ కేంద్రం "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team ప్లాన్‌లోని ప్రతి సీటు పేరుతో నిర్దేశించిన ఒక వ్యక్తికి కేటాయించబడుతుంది, ఆ వ్యక్తి మాత్రమే దాన్ని ఉపయోగించవచ్చు) అని, "Users can't route their work through another user's account to use that user's remaining usage" (యూజర్లు మరో యూజర్‌కు మిగిలి ఉన్న వినియోగాన్ని వాడుకోవడానికి తమ పనిని ఆ యూజర్ ఖాతా ద్వారా మళ్లించకూడదు) అని చెబుతుంది ([Team ప్లాన్‌లు](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise ప్లాన్‌లకు](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) కూడా ఇదే వర్తిస్తుంది). కాబట్టి సీట్ల మధ్య ఆటోమేటిక్ ఎంపికను ఉపయోగించడం Anthropic నిబంధనల ఉల్లంఘన కావచ్చు. అక్కడ దాన్ని ఉపయోగించాలా వద్దా అనేది మీ నిర్ణయం: దానిపై ఆధారపడే ముందు మీ సంస్థను, Anthropic ను సంప్రదించి నిర్ధారించుకోండి. వ్యక్తిగత ప్లాన్‌ల (Pro, Max) గురించి [తరచుగా అడిగే ప్రశ్నలలోని నిబంధనల గమనిక](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) చెబుతుంది.
 
 షెల్‌లో `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY` లేదా `ANTHROPIC_AUTH_TOKEN` సెట్ అయి ఉంటే, Claude Code ఖాతా సొంత లాగిన్ బదులు ఆ కీని లేదా టోకెన్‌ను ఉపయోగిస్తుంది, కాబట్టి ప్రారంభించే ముందు ccam స్టాండర్డ్ ఎర్రర్‌పై ఆ విషయం చెబుతుంది (`ccam: $ANTHROPIC_API_KEY is set, so Claude Code may use that key instead of work's login…`). అది వేరియబుల్స్‌ను చదువుతుంది మాత్రమే; [API కీ ఖాతా](/features/api) బదులుగా వాటిని తొలగిస్తుంది.
 
-`config.toml` పైభాగంలో (మొదటి `[[group]]`, `[[profile]]` లేదా `[[folder]]` కంటే పైన) `relay = true` తో, ccam ఇంటరాక్టివ్ సెషన్‌లను చైల్డ్‌గా ప్రారంభించి వాటి పక్కనే ఉంటుంది, తద్వారా `/ccam:switch` సెషన్ ఆప్షన్లు, permission mode, effort level తో సహా సంభాషణను తనంతట తానే కొనసాగించగలదు ([వివరాలు](/features/next#relay)); లేకపోతే ccam తన స్థానాన్ని Claude Code కు ఇస్తుంది, దాని పక్కన ఏదీ రన్ అవ్వదు.
+`config.toml` పైభాగంలో (మొదటి `[[group]]`, `[[profile]]` లేదా `[[folder]]` కంటే పైన) `relay = true` తో, లేదా Linux, macOS లలో [`auto_switch = true`](/features/next#auto-switch) తో, ccam ఇంటరాక్టివ్ సెషన్‌లను చైల్డ్‌గా ప్రారంభించి వాటి పక్కనే ఉంటుంది, తద్వారా `/ccam:switch`, లేదా వినియోగ పరిమితి వద్ద `auto_switch`, సెషన్ ఆప్షన్లు, permission mode, effort level తో సహా సంభాషణను తనంతట తానే కొనసాగించగలదు ([వివరాలు](/features/next#relay)); లేకపోతే ccam తన స్థానాన్ని Claude Code కు ఇస్తుంది, దాని పక్కన ఏదీ రన్ అవ్వదు.
 
 ## ఆప్షన్లు
 

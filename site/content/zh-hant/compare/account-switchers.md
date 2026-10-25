@@ -1,10 +1,10 @@
 ---
 title: ccam 與其他 Claude Code 帳號切換工具比較
 description: ccam 與 claude-swap、CCS、clausona、clauth、CAAM、cux 等 Claude Code 帳號切換工具的比較，以及哪種做法適合哪種用途。
-updated: 2026-10-24
+updated: 2026-10-25
 order: 2
 translation: machine
-sourceHash: "6d08203f1ea6"
+sourceHash: "3d87ba7c975a"
 ---
 
 切換 Claude Code 帳號的工具採用兩種做法之一。大多數工具在同一個 `~/.claude` 資料夾中替換登入資訊，所以同一時間只有一個帳號處於使用中。另一些工具（包括 ccam）則用 `CLAUDE_CONFIG_DIR` 為每個帳號提供獨立的資料夾，因此每個帳號都會保持登入，也能同時執行多個帳號。ccam 還提供共用的設定和 MCP 伺服器，並能在另一個帳號的資料夾中接續對話。
@@ -23,7 +23,7 @@ sourceHash: "6d08203f1ea6"
 
 | 工具 | 做法 | 同時使用多個帳號 | 5 小時和每週用量 | 達到限制時 | 平台 |
 | --- | --- | --- | --- | --- | --- |
-| ccam | 獨立的資料夾 | 是 | 是，`ccam usage` | 在工作階段中顯示通知；`ccam next --auto --continue` 或 `/ccam:switch` 會把對話帶到剩餘額度最多的帳號，無論是否共用對話記錄；`ccam --fallback` 會自動在那裡重新執行 `-p` 工作，`ccam pick` 則把工作程序分散到各帳號 | Linux、macOS、Windows |
+| ccam | 獨立的資料夾 | 是 | 是，`ccam usage` | 在工作階段中顯示通知；`ccam next --auto --continue` 或 `/ccam:switch` 會把對話帶到剩餘額度最多的帳號，無論是否共用對話記錄，而開啟 `auto_switch` 時（Linux、macOS），工作階段會自行移到那裡；`ccam --fallback` 會自動在那裡重新執行 `-p` 工作，`ccam pick` 則把工作程序分散到各帳號 | Linux、macOS、Windows |
 | [claude-swap](https://github.com/realiti4/claude-swap) | 替換登入資訊；`cswap run` 時使用獨立的資料夾 | 是，使用 `cswap run` | 是 | `cswap auto` 在達到門檻時切換登入資訊；執行中的工作階段會繼續 | Linux、macOS、Windows |
 | [CCS](https://github.com/kaitranntt/ccs) | 獨立的資料夾 | 是 | 部分支援 | 帳號池透過本機 Proxy 把請求轉給下一個帳號 | Linux、macOS、Windows |
 | [clausona](https://github.com/larcane97/clausona) | 獨立的資料夾 | 是 | 是 | 路由會在每次執行前選擇還有配額的帳號，可以等待重設，並為工作程序分配不同的帳號 | Linux、macOS、Windows |
@@ -39,7 +39,7 @@ ccswap 是 claude-swap 的分支，也能管理 Codex 的登入。[claude-accoun
 
 | 工具 | 撰寫語言 | Claude Code 執行時 | 是否在不同位置之間複製登入資訊 | 帳號之間可以共用什麼 |
 | --- | --- | --- | --- | --- |
-| ccam | Go，單一靜態執行檔 | 什麼都沒有：ccam 會以 `claude` 取代自己（在無法這樣做的 Windows 上，則等待它結束；選用的中繼程式會留在它旁邊） | 否 | 群組：每個群組指定它共用的項目和它的帳號；一個帳號可以屬於多個群組 |
+| ccam | Go，單一靜態執行檔 | 預設什麼都沒有：ccam 會以 `claude` 取代自己（在無法這樣做的 Windows 上，則等待它結束）；開啟 `relay` 或 `auto_switch` 時，ccam 會在互動式工作階段旁等待 | 否 | 群組：每個群組指定它共用的項目和它的帳號；一個帳號可以屬於多個群組 |
 | claude-swap | Python 3.12+，以 uv 或 pipx 安裝 | 用 `cswap run` 時什麼都沒有；`cswap auto` 和選單列 App 會持續執行 | 是，在替換登入資訊時 | 用 `cswap run` 時：設定、`CLAUDE.md` 和擴充功能一起共用，對話記錄可選；MCP 伺服器在每次啟動時複製 |
 | CCS | Node.js 18+ 或 Bun | CCS 以父行程留著；帳號池會加上本機 Proxy | 帳號資料夾不複製；帳號池保存自己的登入資訊 | 每個帳號選擇共用或本機，對話記錄以情境群組共用；MCP 伺服器會被複製 |
 | clausona | TypeScript，Node.js 20+ | 一般的 `claude` 透過 Shell 函式執行；`clausona run` 讓 Node 以父行程留著；每次結束後會有一個背景 Node 行程 | 否，但它會自行更新閒置帳號的權杖，以讀取它們的用量 | 除了各帳號專屬的檔案以外的所有內容，來自一個主要帳號；對話記錄可選；以 `claude mcp add` 新增的伺服器不會共用 |
@@ -56,9 +56,9 @@ ccam 絕不會把 Claude 的登入資訊從一個地方複製到另一個地方�
 
 只有在你執行 `ccam usage --refresh` 時，ccam 才會自己更新過期的權杖。它會先取得鎖定，並在該帳號執行中時拒絕更新（不論 Claude Code 是如何啟動的，背景工作階段及其常駐程式也算在內），在 Claude Code 自己正在更新該登入資訊時也會拒絕，所以絕不會在執行中的工作階段底下輪替權杖。
 
-### 你和 Claude Code 之間沒有任何東西在執行
+### 預設情況下，你和 Claude Code 之間沒有任何東西在執行
 
-ccam 讀取一個檔案，檢查它的連結，然後以 `claude` 取代自己（`exec`）。你工作時沒有 ccam 行程、包裝程式、Proxy 或常駐程式：標準輸入、訊號和結束代碼都屬於 Claude Code，它的請求直接送往 Anthropic。Windows 無法取代行程，所以在那裡 ccam 會以同一個主控台啟動 Claude Code，並等待它的結束代碼，除此之外什麼都不做。
+ccam 讀取一個檔案，檢查它的連結，然後以 `claude` 取代自己（`exec`）。預設情況下，你工作時沒有 ccam 行程、包裝程式、Proxy 或常駐程式：標準輸入、訊號和結束代碼都屬於 Claude Code，它的請求直接送往 Anthropic。Windows 無法取代行程，所以在那裡 ccam 會以同一個主控台啟動 Claude Code，並等待它的結束代碼，除此之外什麼都不做。設定 `relay = true` 或 `auto_switch = true` 時，ccam 會以同樣的方式在互動式工作階段旁等待，以便用另一個帳號接續對話；Claude Code 的請求仍然直接送往 Anthropic。
 
 以這種方式啟動帳號大約只多花 4 ms，第 95 百分位低於 6 ms，峰值記憶體 8 MB（用 hyperfine 執行 [`scripts/perf-check.sh`](https://github.com/jhyunwoo/ccam/blob/main/scripts/perf-check.sh) 300 次）。在同一台筆電上，光是啟動 Python 直譯器就要 13 ms，Node.js 要 31 ms，這還是在程式做任何事之前。
 
@@ -76,11 +76,11 @@ MCP 伺服器、`settings.json`、`CLAUDE.md`、擴充功能（agents、commands
 
 ### 在下一個帳號中接續同一個對話
 
-`ccam next --auto --continue` 會同時查詢所有帳號的用量，開啟剩餘額度最多的帳號並接續對話。共用對話記錄時，接續的是同一個對話；沒有共用時，Claude Code 會把對話複製到新的帳號（`--resume <file> --fork-session`），ccam 也會告訴你第一次回覆會重新讀取多少 token。當用量上限讓工作階段停止時，ccam 外掛的 hook 會顯示通知，`/ccam:switch` 則會把對話交接出去。何時切換由你決定；沒有任何東西在背景監看你的用量，而且自動選擇只會在同一個組織內進行，所以公司的對話絕不會意外落到私人帳號上。帳號達到 90% 時，狀態列會建議這個指令。
+`ccam next --auto --continue` 會同時查詢所有帳號的用量，開啟剩餘額度最多的帳號並接續對話。共用對話記錄時，接續的是同一個對話；沒有共用時，Claude Code 會把對話複製到新的帳號（`--resume <file> --fork-session`），ccam 也會告訴你第一次回覆會重新讀取多少 token。當用量上限讓工作階段停止時，ccam 外掛的 hook 會顯示通知，`/ccam:switch` 則會把對話交接出去。預設情況下，何時切換由你決定。開啟 `auto_switch` 時（Linux、macOS），ccam 會自行移動工作階段，但只會在 Claude Code 因上限而停止它之後，而且只會移到和原帳號同類的帳號：同一個組織的另一個席位，或另一個個人方案（[詳細說明](/features/next#auto-switch)）。沒有任何東西在背景監看你的用量，而且預設情況下，自動選擇絕不會把工作移出 Team 或 Enterprise 組織，也不會移入其中，所以公司的對話絕不會意外落到私人帳號上。帳號達到 90% 時，狀態列會建議這個指令。
 
 指令碼無法等你，所以 `ccam --fallback work -p "…"` 會替它們切換：帳號達到上限時，同一個指令會以剩餘額度最多的帳號再次執行，而且只會輸出完成的那次執行的結果。不是用量上限造成的失敗則原樣傳回。對於平行的工作程序，`ccam pick` 會給每個工作程序一個不同且還有額度的帳號；沒有任何帳號還有額度時，兩者都會以代碼 75 結束。
 
-**Team 和 Enterprise 席位。** 自動選擇（`ccam next`、`--fallback`、`ccam pick`、儀表板的 `n`）也會在同一個 Claude Team 或 Enterprise 組織的席位之間切換。Anthropic 說明中心關於 [Team 方案](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)的文章寫道：「Each seat on a Team plan is assigned to one named individual, and only that person may use it」（Team 方案的每個席位都指派給一位具名的個人，而且只有這個人可以使用），以及「Users can't route their work through another user's account to use that user's remaining usage」（使用者不能經由其他使用者的帳號處理自己的工作，藉此使用對方剩餘的用量）；關於 [Enterprise 方案](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)的文章也是如此。因此，在席位之間使用自動選擇可能會違反 Anthropic 的條款。在依賴這項功能之前，請先向你所屬的組織和 Anthropic 確認。個人方案（Pro、Max）的情況請參閱[常見問題中關於條款的說明](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)。
+**Team 和 Enterprise 席位。** 自動選擇（`ccam next`、`--fallback`、`ccam pick`、儀表板的 `n`，以及你開啟後的 [`auto_switch`](/features/next#auto-switch)）也會在同一個 Claude Team 或 Enterprise 組織的席位之間切換。Anthropic 說明中心關於 [Team 方案](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)的文章寫道：「Each seat on a Team plan is assigned to one named individual, and only that person may use it」（Team 方案的每個席位都指派給一位具名的個人，而且只有這個人可以使用），以及「Users can't route their work through another user's account to use that user's remaining usage」（使用者不能經由其他使用者的帳號處理自己的工作，藉此使用對方剩餘的用量）；關於 [Enterprise 方案](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)的文章也是如此。因此，在席位之間使用自動選擇可能會違反 Anthropic 的條款。要不要在這種情況下使用它由你決定：在依賴這項功能之前，請先向你所屬的組織和 Anthropic 確認。個人方案（Pro、Max）的情況請參閱[常見問題中關於條款的說明](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)。
 
 ### 每個資料夾使用正確的帳號
 
@@ -88,11 +88,11 @@ MCP 伺服器、`settings.json`、`CLAUDE.md`、擴充功能（agents、commands
 
 ### 單一執行檔，經過驗證的下載
 
-ccam 是一個約 10 MB 的靜態執行檔，不需要安裝任何執行環境，支援 Linux、macOS 和 Windows。安裝指令碼（`install.sh`、`install.ps1`）和 `ccam update` 會用發行版本的 SHA-256 校驗碼檢查每個下載，ccam 也絕不會未經詢問就更新。它沒有遙測：它發出的請求只有向 Anthropic 查詢你帳號的用量（平行處理，3 秒逾時，60 秒快取）、儀表板開啟時向 GitHub 詢問最新的發行版本，以及你要求的下載。設定 `usage_source = "claude"` 時，連這些查詢也會透過 Claude Code 進行，ccam 絕不會經手任何 token。
+ccam 是一個約 10 MB 的靜態執行檔，不需要安裝任何執行環境，支援 Linux、macOS 和 Windows。安裝指令碼（`install.sh`、`install.ps1`）和 `ccam update` 會用發行版本的 SHA-256 校驗碼檢查每個下載，ccam 也絕不會未經詢問就更新。它沒有遙測：它發出的請求只有向 Anthropic 查詢你帳號的用量（平行處理，3 秒逾時，60 秒快取）、儀表板開啟時向 GitHub 詢問最新的發行版本，以及你要求的下載。設定 `usage_source = "claude"` 時，連這些查詢也會透過 Claude Code 進行，ccam 不會傳送任何 token。
 
 ## 其他工具做得更多的地方
 
-- claude-swap、clauth、cux、CAAM 和 CCSwitcher 可以在帳號超過用量門檻時，自行切換執行中的互動式工作階段。ccam 以 `--fallback` 切換 `-p` 執行，互動式工作階段則交給你，並在達到上限時顯示通知，也提供 `/ccam:switch`。
+- claude-swap、clauth、cux、CAAM 和 CCSwitcher 可以在帳號超過用量門檻時，自行切換執行中的互動式工作階段。ccam 以 `--fallback` 切換 `-p` 執行；只有開啟 `auto_switch`（Linux、macOS）時，ccam 才會自行移動互動式工作階段，而且只在 Claude Code 因上限而停止它之後；否則由你自己移動，ccam 會在達到上限時顯示通知，並提供 `/ccam:switch`。
 - 在未開啟開發人員模式的 Windows 上，ccam 可以共用資料夾，但無法共用 `settings.json` 這類單一檔案（此時第一次 `ccam add` 只會共用 MCP 伺服器和擴充功能）；claude-swap 和 CCS 則會改為複製這些檔案。
 - CCSwitcher、Claude Switcher 和 claude-swap 會在 macOS 選單列中顯示用量。
 - CCS、clausona、CAAM、clauth、ccswap 和 Claude Switcher 也能管理 Codex 和其他程式設計代理。
@@ -101,6 +101,6 @@ ccam 是一個約 10 MB 的靜態執行檔，不需要安裝任何執行環境�
 
 ## 哪一種適合你？
 
-如果你一次只用一個帳號，或希望執行中的工作階段自動切換，請選擇替換登入資訊的工具。如果你想讓多個帳號同時執行、共用一套設定、在下一個帳號接續同一個對話，而且不希望有任何東西在 Claude Code 旁邊執行，請選擇 ccam，在 Linux、macOS 或 Windows 上都可以。如果什麼都不需要共用，[一般的 Shell 別名](/compare/aliases)就夠了。
+如果你一次只用一個帳號，或希望執行中的工作階段在達到上限之前切換、或透過替換登入資訊來切換，請選擇替換登入資訊的工具。如果你想讓多個帳號同時執行、共用一套設定、在下一個帳號接續同一個對話，而且預設不希望有任何東西在 Claude Code 旁邊執行，請選擇 ccam，在 Linux、macOS 或 Windows 上都可以。如果什麼都不需要共用，[一般的 Shell 別名](/compare/aliases)就夠了。
 
 是否可以使用多個帳號取決於各帳號的條款。使用前請先確認。

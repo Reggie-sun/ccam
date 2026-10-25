@@ -73,7 +73,7 @@
   },
   {
     "key": "next",
-    "usage": "ccam next [--auto] [--continue] [-- claude args]"
+    "usage": "ccam next [--auto] [--continue [--brief]] [-- claude args]"
   },
   {
     "key": "pick",

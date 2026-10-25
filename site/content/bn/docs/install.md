@@ -2,10 +2,10 @@
 title: "ccam ইনস্টল করুন"
 metaTitle: "Linux, macOS ও Windows-এ ccam ইনস্টল করুন"
 description: "Linux, macOS বা Windows-এ একটি কমান্ডে, .deb প্যাকেজ বা সোর্স থেকে ccam ইনস্টল করুন, আর ccam update দিয়ে আপডেট করুন। আগে Claude Code ইনস্টল থাকতে হবে।"
-updated: 2026-10-23
+updated: 2026-10-25
 order: 1
 translation: machine
-sourceHash: af21dcc24169
+sourceHash: a7f9dac24f79
 ---
 
 Linux বা macOS-এ একটি টার্মিনালে এটি চালান:
@@ -82,7 +82,7 @@ ccam প্লাগইন Claude Code-কে নিজেই ccam ব্যব�
 /plugin install ccam --marketplace jhyunwoo/ccam
 ```
 
-এটি একটি skill, `/ccam:usage`, `/ccam:ext` ও `/ccam:switch` কমান্ড, এবং দুটি হুক যোগ করে: কোনো সেশন ব্যবহারের সীমায় থেমে গেলে আপনি টার্মিনালে একটি নোটিফিকেশন পান, আর `/ccam:switch [account]` কথোপকথনটি অন্য একটি অ্যাকাউন্টের হাতে তুলে দেয় ([বিস্তারিত](/features/next#inside-claude-code))। হুকগুলো `ccam` চালায়, তাই Claude Code যে `PATH` দেখে, তাতে এটি থাকতে হবে। skill-টি কখনও লগইন করা বা ফাইল সরানোর কমান্ড চালায় না; বরং সেগুলো প্রস্তাব করে।
+এটি একটি skill, `/ccam:usage`, `/ccam:ext` ও `/ccam:switch` কমান্ড, এবং দুটি হুক যোগ করে: কোনো সেশন ব্যবহারের সীমায় থেমে গেলে আপনি টার্মিনালে একটি নোটিফিকেশন পান (আর Linux ও macOS-এ [`auto_switch`](/features/next#auto-switch) চালু থাকলে ccam সেশনটি জায়গা থাকা অন্য একটি অ্যাকাউন্টে সরিয়ে নেয়), আর `/ccam:switch [account]` কথোপকথনটি অন্য একটি অ্যাকাউন্টের হাতে তুলে দেয় ([বিস্তারিত](/features/next#inside-claude-code))। হুকগুলো `ccam` চালায়, তাই Claude Code যে `PATH` দেখে, তাতে এটি থাকতে হবে। skill-টি কখনও লগইন করা বা ফাইল সরানোর কমান্ড চালায় না; বরং সেগুলো প্রস্তাব করে।
 
 ## ইনস্টলেশন পরীক্ষা করুন
 

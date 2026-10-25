@@ -132,7 +132,7 @@
     "close": "Kapat"
   },
   "commands": {
-    "ccam": "Kontrol panelini açar: hesaplar, gruplar, klasörler, uzantılar ve sağlık durumu",
+    "ccam": "Kontrol panelini açar: hesaplar, ajanlar, gruplar, klasörler, uzantılar ve sağlık durumu",
     "name": "Claude Code'u o hesapla başlatır; argümanlar değiştirilmeden iletilir",
     "fallback": "-p çalıştırmaları için: kullanım limitinde aynı komutu en çok payı kalan hesapla yeniden çalıştırır",
     "add": "Hesap ekler: yapılandırma klasörü, giriş ve isteğe bağlı kısayol",

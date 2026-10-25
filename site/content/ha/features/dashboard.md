@@ -1,18 +1,18 @@
 ---
 title: Dashboard
 description: ccam a terminal yana buɗe dashboard mai cike allo na asusai, rukunoni, ƙa'idodin folda, extensions da dubawa; kowane canji yana fara nuna shirinsa.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 15
 translation: machine
-sourceHash: e48ca2c5a643
+sourceHash: 98ccf6cd81e9
 ---
 
-`ccam` ba tare da arguments ba yana buɗe dashboard mai cike allo idan standard input da output terminal ne; in ba haka ba yana buga `ccam list`. Dashboard yana nuna kowane asusu tare da amfaninsa da rukunoninsa, kuma yana yin abin da umarnan ke yi: farawa, ƙarawa, shiga, canza rukunoni, saita ƙa'idodin folda, dubawa da gyarawa. Farawa yana rufe shi; ƙara asusu ko shiga yana barin sa zuwa terminal sannan ya dawo.
+`ccam` ba tare da arguments ba yana buɗe dashboard mai cike allo idan standard input da output terminal ne; in ba haka ba yana buga `ccam list`. Dashboard yana nuna kowane asusu tare da amfaninsa da rukunoninsa, kuma yana yin abin da umarnan ke yi: farawa, ƙarawa, shiga, canza rukunoni, saita ƙa'idodin folda, lissafa zaman bayan fage, dubawa da gyarawa. Farawa, ko haɗawa da zaman bayan fage, yana rufe shi; ƙara asusu ko shiga yana barin sa zuwa terminal sannan ya dawo.
 
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -40,12 +40,13 @@ Firam na farko yana zana daga `config.toml` kaɗai, cikin ƙasa da 100 ms sosai;
 | Shafi | Abin da yake nunawa | Maɓallai |
 | --- | --- | --- |
 | Accounts | lamba, suna, imel, sandunan awa 5, na mako da na Fable, amfani na ƙarshe, rukunoni; `✔` tsoho, `▸` asusun wannan foldar, `•` mai aiki (har da Claude Code da aka fara ba ta ccam ba: `claude` na yau da kullum, IDE, zaman bayan fage da daemon ɗinsu) | a ƙasa |
+| Agents | abin da [`ccam agents`](/features/agents) ke lissafawa: zaman bayan fage da zaman da ke buɗe na kowane asusu, tare da yanayinsu, foldarsu da lokacin farawarsu (a ƙasa) | `enter` haɗawa (kamar `ccam attach`), `x` dakatarwa, `r` sake lodawa |
 | Groups | kowane rukuni, abin da yake rabawa da asusansa, da asusan da ba sa cikin kowane rukuni | `enter` gyara, `n` sabo, `e` sake suna, `x` cire |
 | Folders | ƙa'idodin [`ccam folder`](/features/folder) da wanda ke aiki a nan, har ma idan ka isa foldar ta mahaɗi na alama (symbolic link) (ana ajiye sababbin ƙa'idodi tare da warware mahaɗai) | `n` yi amfani da asusu a nan, `enter` canza, `x` cire |
 | Extensions | abin da [`ccam ext`](/features/ext) ke nunawa, kowane extension sau ɗaya tare da rukunonin da yake fitowa daga gare su, `off:` asusan da ba a kunna plugin a cikinsu ba, sabobin da asusu ke da su don wannan foldar kawai a cikin nasa, `This folder's project`, da matsalolin da ba na wani asusu ba | `r` sake lodawa |
 | Health | abin da [`ccam doctor`](/features/doctor) ke bayar da rahoto, a matsayin akwati ɗaya ga kowane asusu (a ƙasa) | `f` gyara akwatin da aka zaɓa, `F` gyara duka (`doctor --fix`), `↑`/`↓` matsawa tsakanin akwatuna |
 
-`←`/`→` ko `Tab` suna sauya shafuka, `?` yana lissafa maɓallan shafin yanzu, `r` yana sake neman amfani ba tare da gajeren cache ba, kuma `q` ko `Esc` yana fita.
+`←`/`→` ko `Tab` suna sauya shafuka, `?` yana lissafa maɓallan shafin yanzu, `r` yana sake neman amfani ba tare da gajeren cache ba kuma yana sake lodawa shafukan Agents, Extensions da Health, kuma `q` ko `Esc` yana fita.
 
 ## Maɓallai a shafin Accounts
 
@@ -66,7 +67,7 @@ Firam na farko yana zana daga `config.toml` kaɗai, cikin ƙasa da 100 ms sosai;
 | `c` | Saita ko cire gajeren umarninsa |
 | `x` | Cire shi (yana fara tambaya, yana farawa a kan No) |
 
-**Kujeru (seats) na Team da Enterprise.** Zaɓin atomatik (`ccam next`, `--fallback`, `ccam pick`, maɓallin `n` na dashboard) yana kuma sauyawa tsakanin kujerun ƙungiyar Claude Team ko Enterprise iri ɗaya. Cibiyar taimako ta Anthropic ta ce "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (ana ba da kowace kujera a tsarin Team da sunan takamaiman mutum ɗaya, kuma wannan mutumin kaɗai ne aka yarda ya yi amfani da ita) da "Users can't route their work through another user's account to use that user's remaining usage" (masu amfani ba za su iya tura aikinsu ta asusun wani mai amfani ba domin su ci gajiyar ragowar amfanin wannan mai amfanin) ([Tsare-tsaren Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); haka ma ga [tsare-tsaren Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Don haka yin amfani da zaɓin atomatik tsakanin kujeru na iya saɓa wa sharuɗɗan Anthropic. Ka tuntuɓi ƙungiyarka da Anthropic kafin ka dogara da shi. Don tsare-tsaren kai (Pro, Max), duba [bayanin sharuɗɗa a cikin Tambayoyin da ake yawan yi](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Kujeru (seats) na Team da Enterprise.** Zaɓin atomatik (`ccam next`, `--fallback`, `ccam pick`, maɓallin `n` na dashboard, da [`auto_switch`](/features/next#auto-switch) idan ka kunna shi) yana kuma sauyawa tsakanin kujerun ƙungiyar Claude Team ko Enterprise iri ɗaya. Cibiyar taimako ta Anthropic ta ce "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (ana ba da kowace kujera a tsarin Team da sunan takamaiman mutum ɗaya, kuma wannan mutumin kaɗai ne aka yarda ya yi amfani da ita) da "Users can't route their work through another user's account to use that user's remaining usage" (masu amfani ba za su iya tura aikinsu ta asusun wani mai amfani ba domin su ci gajiyar ragowar amfanin wannan mai amfanin) ([Tsare-tsaren Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); haka ma ga [tsare-tsaren Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Don haka yin amfani da zaɓin atomatik tsakanin kujeru na iya saɓa wa sharuɗɗan Anthropic. Ko za ka yi amfani da shi a can ya rage naka: ka tuntuɓi ƙungiyarka da Anthropic kafin ka dogara da shi. Don tsare-tsaren kai (Pro, Max), duba [bayanin sharuɗɗa a cikin Tambayoyin da ake yawan yi](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 ## Shafin Health
 
@@ -95,6 +96,28 @@ Shafin Health yana gudanar da dubawar [`ccam doctor`](/features/doctor) idan ka 
 ```
 
 `↑`/`↓` suna matsawa daga akwati zuwa akwati, kuma akwatin da aka zaɓa yana da iyaka mai launin accent. `f` yana gyara akwatin da aka zaɓa kawai, kamar yadda `ccam doctor --fix` ke yi: a akwatin asusu yana gyara asusun nan kaɗai, a akwatin `General` kuma sakamakon da ba na wani asusu ba (hanyoyin plugins da gajerun umarni); kowane sauran asusu ana sake duba shi ne kawai. Yana fara tambaya (``Like `ccam doctor --fix`: missing links and group folders are made, and a real file where a link belongs is backed up first; where the group has its own copy, the account then sees the group's. Nothing is lost.``), kuma akwatin da babu abin gyarawa a cikinsa yana cewa `nothing to repair in <name>` kawai. `F` yana gyara komai a lokaci ɗaya, kamar `ccam doctor --fix`, kuma `r` yana sake dubawa.
+
+## Shafin Agents
+
+Shafin Agents yana nuna abin da [`ccam agents`](/features/agents) ke bugawa: zaman bayan fage da zaman da ke buɗe na kowane asusu, tare da asusun da kowanne ke ciki. Yana tambayar Claude Code na kowane asusu a lokaci ɗaya (`claude agents --json`, har zuwa daƙiƙa 15 kowanne) idan ka fara buɗe shafin, a `r`, bayan dakatarwa, da bayan canji a config, kuma yana cewa `Asking every account's Claude Code for its sessions…` har sai duka sun amsa.
+
+```console
+  Accounts   Agents   Groups   Folders   Extensions   Health
+ Background agents and open sessions of every account; enter attaches to one.
+
+    Account   ID        Name   State          Folder      Started
+ ❯  work      -         -      open (busy)    ~/code/web  now
+    personal  49ec0028  probe  blocked, idle  ~/code/app  12m
+
+ ✘ lab: could not list its sessions: exit status 1 'claude agents --json' is
+   not available in this environment.
+
+ enter to attach · x to stop · r to reload · ? for shortcuts
+```
+
+`State` shi ne yanayin zaman bayan fage da abin da process ɗinsa ke yi, ko `open` ga zaman mu'amala, kamar a `ccam agents`. Asusun da ba a iya tambaya ba yana samun layin `✘` a ƙarƙashin jerin tare da abin da Claude Code ya faɗa, kamar `lab` a sama, wanda agent view ɗinsa a kashe yake. Ba a haɗa zaman bayan fage da suka ƙare ba (`ccam agents --all` yana lissafa su), kuma idan kowane asusu ya amsa kuma babu wanda ke da zama, shafin yana cewa ``No sessions. Start one in the background with `ccam <account> --bg "…"`.`` A ƙunƙuntaccen terminal shafin yana cire `Started`, sannan `Name`, sannan `Folder`, kuma yana yanke dogon folda daga hagu.
+
+`Enter` a kan zaman bayan fage yana rufe dashboard kuma yana buɗe zaman a wannan terminal a matsayin asusunsa, kamar yadda `ccam attach <id>` ke yi; dashboard ba ya dawowa (a cikin Claude Code, `←` yana zuwa agent view ɗinsa, `Ctrl+Z` kuma zuwa shell). Zaman da ke buɗe ba shi da id, don haka `Enter` da `x` suna faɗin cewa ana buƙatar zaman bayan fage ne kawai. `x` yana fara tambaya, yana farawa a kan `No, keep it`: ``It runs as personal. Like `ccam personal stop 49ec0028`, Claude Code stops it and keeps its conversation, which `ccam attach 49ec0028` opens again.`` Idan ka ce eh, ccam yana gudanar da `claude stop <id>` a matsayin wannan asusun, yana cewa ``49ec0028 (personal) stopped; `ccam attach 49ec0028` opens it again`` ko dalilin da ya sa bai iya ba, kuma yana sake karanta jerin.
 
 ## Canza rukunoni
 

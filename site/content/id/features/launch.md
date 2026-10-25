@@ -1,10 +1,10 @@
 ---
 title: Menjalankan Claude Code
 description: Jalankan Claude Code sebagai akun apa pun via ccam <name|number>, ccam run, atau dasbor; argumen diteruskan utuh ke claude, --dry-run menampilkan perintah.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 1
 translation: machine
-sourceHash: "e279341eb59b"
+sourceHash: "afa4942cfed5"
 ---
 
 `ccam work` menjalankan Claude Code sebagai akun `work`, dan semua yang ada setelah nama diteruskan ke `claude` apa adanya. Gunakan di mana pun Anda biasa mengetik `claude`: di terminal, di skrip, atau dengan input dari pipe.
@@ -34,11 +34,11 @@ Jika argumen pertama diawali `-` dan bukan salah satu flag milik ccam, ccam menj
 
 `ccam` tanpa argumen membuka [dasbor](/features/dashboard) jika input dan output standar adalah terminal, dan menampilkan `ccam list` jika tidak. Pindah ke sebuah akun (dengan tombol panah, atau dengan mengetik nomornya) lalu tekan `Enter` untuk menjalankannya; `n` menjalankan akun dengan ruang terbanyak dan `o` menawarkan `--continue`, `--resume`, atau argumen lain. Dasbor ditutup sebelum Claude Code dimulai, sehingga terminal dipulihkan terlebih dahulu.
 
-**Kursi Team dan Enterprise.** Pilihan otomatis (`ccam next`, `--fallback`, `ccam pick`, tombol `n` di dasbor) juga berganti di antara kursi dalam organisasi Claude Team atau Enterprise yang sama. Pusat bantuan Anthropic menyatakan "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (setiap kursi pada paket Team diberikan kepada satu orang tertentu, dan hanya orang itu yang boleh menggunakannya) dan "Users can't route their work through another user's account to use that user's remaining usage" (pengguna tidak boleh menyalurkan pekerjaannya melalui akun pengguna lain untuk memakai sisa kuota pengguna tersebut) ([paket Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); begitu pula untuk [paket Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Karena itu, memakai pilihan otomatis di antara kursi dapat melanggar ketentuan Anthropic. Tanyakan kepada organisasi Anda dan Anthropic sebelum Anda mengandalkannya. Paket pribadi (Pro, Max) dibahas dalam [catatan tentang ketentuan di FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Kursi Team dan Enterprise.** Pilihan otomatis (`ccam next`, `--fallback`, `ccam pick`, tombol `n` di dasbor, dan [`auto_switch`](/features/next#auto-switch) bila Anda mengaktifkannya) juga berganti di antara kursi dalam organisasi Claude Team atau Enterprise yang sama. Pusat bantuan Anthropic menyatakan "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (setiap kursi pada paket Team diberikan kepada satu orang tertentu, dan hanya orang itu yang boleh menggunakannya) dan "Users can't route their work through another user's account to use that user's remaining usage" (pengguna tidak boleh menyalurkan pekerjaannya melalui akun pengguna lain untuk memakai sisa kuota pengguna tersebut) ([paket Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); begitu pula untuk [paket Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Karena itu, memakai pilihan otomatis di antara kursi dapat melanggar ketentuan Anthropic. Apakah Anda memakainya di sana adalah keputusan Anda: tanyakan kepada organisasi Anda dan Anthropic sebelum Anda mengandalkannya. Paket pribadi (Pro, Max) dibahas dalam [catatan tentang ketentuan di FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 Jika shell memiliki `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY`, atau `ANTHROPIC_AUTH_TOKEN` yang ditetapkan, Claude Code akan memakai kunci atau token itu alih-alih login milik akun, sehingga ccam memberitahukannya di error standar sebelum menjalankannya (`ccam: $ANTHROPIC_API_KEY is set, so Claude Code may use that key instead of work's login…`). ccam hanya membaca variabel-variabel itu; [akun kunci API](/features/api) justru mengosongkannya.
 
-Dengan `relay = true` di bagian atas `config.toml` (di atas `[[group]]`, `[[profile]]`, atau `[[folder]]` pertama), ccam menjalankan sesi interaktif sebagai proses anak dan tetap berjalan di sampingnya, agar `/ccam:switch` bisa melanjutkan percakapan dengan sendirinya, dengan opsi, mode izin, dan tingkat effort sesi tersebut ([detail](/features/next#relay)); jika tidak, ccam menggantikan dirinya dengan Claude Code, dan tidak ada yang berjalan di sampingnya.
+Dengan `relay = true`, atau [`auto_switch = true`](/features/next#auto-switch) di Linux dan macOS, di bagian atas `config.toml` (di atas `[[group]]`, `[[profile]]`, atau `[[folder]]` pertama), ccam menjalankan sesi interaktif sebagai proses anak dan tetap berjalan di sampingnya, agar `/ccam:switch`, atau `auto_switch` saat batas penggunaan tercapai, bisa melanjutkan percakapan dengan sendirinya, dengan opsi, mode izin, dan tingkat effort sesi tersebut ([detail](/features/next#relay)); jika tidak, ccam menggantikan dirinya dengan Claude Code, dan tidak ada yang berjalan di sampingnya.
 
 ## Opsi
 

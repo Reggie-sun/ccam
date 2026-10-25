@@ -1,10 +1,10 @@
 ---
 title: ขีดจำกัดการใช้งาน
 description: "ccam usage แสดงขีดจำกัด 5 ชั่วโมงและรายสัปดาห์ของทุกบัญชีพร้อมกัน และ ccam statusline แสดงชื่อบัญชีและการใช้งานใน Claude Code"
-updated: 2026-10-24
+updated: 2026-10-25
 order: 7
 translation: machine
-sourceHash: "a14b1da71a1a"
+sourceHash: "91ad20327289"
 ---
 
 `ccam usage` แสดงว่าทุกบัญชีใช้ขีดจำกัดแบบ 5 ชั่วโมง ขีดจำกัดรายสัปดาห์ และขีดจำกัดรายสัปดาห์เฉพาะของแต่ละโมเดล (เช่น Fable) ไปแล้วเท่าไร เป็นแถบหนึ่งแถบต่อขีดจำกัดพร้อมเวลาที่เหลือจนกว่าจะรีเซ็ต ใช้ก่อนเริ่มงานที่ใช้เวลานาน หรือเมื่อ Claude Code แจ้งว่าใกล้ถึงขีดจำกัด เพื่อดูว่าบัญชีใดยังเหลือโควตา `ccam statusline` คือคำสั่งแถบสถานะสำหรับ Claude Code: แสดงชื่อบัญชีและการใช้งานภายใน Claude Code และบันทึกตัวเลขไว้ให้ `ccam usage`
@@ -20,7 +20,7 @@ ccam usage -v               # add where the numbers came from
 ccam usage --json           # machine-readable, one object per account
 ccam usage --source cache   # saved numbers only, no network
 ccam usage --refresh        # also renew expired logins of accounts not running
-ccam usage --source claude  # let Claude Code look it up: ccam never touches a token
+ccam usage --source claude  # let Claude Code look it up: ccam sends no token
 ccam statusline install     # set the status line in every account's settings.json
 ```
 
@@ -40,7 +40,7 @@ $ ccam usage
 
 แต่ละบัญชีจะมีหนึ่งบรรทัดที่แสดงหมายเลข ชื่อ และอายุของตัวเลข ส่วน `(cached)` หมายความว่าตัวเลขมาจากไฟล์ที่บันทึกไว้ ไม่ใช่จาก endpoint ใต้บรรทัดนั้น แต่ละขีดจำกัดมีหนึ่งบรรทัดที่แสดงแถบขนาด 20 ช่อง เปอร์เซ็นต์ และเวลาที่เหลือจนกว่าช่วงนั้นจะรีเซ็ต: `5-hour`, `Weekly` (ทุกโมเดล) แล้วตามด้วยช่วงรายสัปดาห์เฉพาะของแต่ละโมเดล เช่น `Fable` ช่วงที่บัญชีไม่มีจะแสดง `-` เปอร์เซ็นต์จะเปลี่ยนเป็นสีเหลืองตั้งแต่ 80% และเป็นสีแดงที่ 100% ช่วงที่ Claude Code รายงานว่าเต็มเมื่อปฏิเสธคำขอเพราะถึงขีดจำกัดการใช้งาน จะแสดง 100% จนกว่าจะรีเซ็ต ไม่ว่าตัวเลขที่บันทึกไว้จะเป็นเท่าใด (ดู[บันทึกขีดจำกัด](#the-limit-record)) บนเทอร์มินัล ทุกบัญชีจะปรากฏทันทีเป็น `fetching…` และบรรทัดของบัญชีจะถูกวาดเมื่อบัญชีนั้นได้รับคำตอบ บรรทัดสุดท้ายระบุบัญชีที่ [`ccam next --auto`](/features/next) จะเลือกตามกฎชุดเดียวกัน (`auto_max_usage`, `auto_strategy`, เซสชันที่กำลังทำงาน, เฉพาะบัญชีในองค์กรของบัญชีที่ใช้ล่าสุดเว้นแต่จะตั้ง `cross_org` ไว้, ข้ามทุกช่วงเวลาที่ถึง 100% บัญชีที่ใช้โควตารายสัปดาห์เต็มแล้วจึงไม่ถูกระบุเลย) และจะแสดงเฉพาะเมื่อคุณมีมากกว่าหนึ่งบัญชี เมื่อใช้กลยุทธ์ `headroom` ซึ่งเป็นค่าเริ่มต้น บรรทัดนั้นจะเป็น `→ Most headroom: <name>` ส่วนเมื่อใช้ `expiring` หรือ `balance` จะบอกเหตุผล เช่น `→ next --auto picks personal: its 5-hour window resets first, in 1h 12m (40% of its 5 hours used)`
 
-**ที่นั่ง (seat) ของ Team และ Enterprise** การเลือกอัตโนมัติ (`ccam next`, `--fallback`, `ccam pick` และปุ่ม `n` ในแดชบอร์ด) จะสลับระหว่างที่นั่งต่าง ๆ ในองค์กร Claude Team หรือ Enterprise เดียวกันด้วย ศูนย์ช่วยเหลือของ Anthropic ระบุว่า "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (แต่ละที่นั่งในแพ็กเกจ Team จะกำหนดให้กับบุคคลที่ระบุชื่อเพียงคนเดียว และมีเพียงบุคคลนั้นที่ใช้ได้) และ "Users can't route their work through another user's account to use that user's remaining usage" (ผู้ใช้ไม่สามารถส่งงานของตนผ่านบัญชีของผู้ใช้คนอื่นเพื่อใช้ปริมาณการใช้งานที่เหลืออยู่ของผู้ใช้คนนั้นได้) ([แพ็กเกจ Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129) ส่วน [แพ็กเกจ Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) ก็เช่นเดียวกัน) ดังนั้น การใช้การเลือกอัตโนมัติระหว่างที่นั่งต่าง ๆ จึงอาจละเมิดข้อกำหนดของ Anthropic โปรดสอบถามองค์กรของคุณและ Anthropic ก่อนที่จะพึ่งพาการเลือกอัตโนมัติ สำหรับแพ็กเกจส่วนตัว (Pro, Max) ดูที่ [หมายเหตุเรื่องข้อกำหนดในคำถามที่พบบ่อย](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)
+**ที่นั่ง (seat) ของ Team และ Enterprise** การเลือกอัตโนมัติ (`ccam next`, `--fallback`, `ccam pick`, ปุ่ม `n` ในแดชบอร์ด และ [`auto_switch`](/features/next#auto-switch) เมื่อคุณเปิดใช้) จะสลับระหว่างที่นั่งต่าง ๆ ในองค์กร Claude Team หรือ Enterprise เดียวกันด้วย ศูนย์ช่วยเหลือของ Anthropic ระบุว่า "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (แต่ละที่นั่งในแพ็กเกจ Team จะกำหนดให้กับบุคคลที่ระบุชื่อเพียงคนเดียว และมีเพียงบุคคลนั้นที่ใช้ได้) และ "Users can't route their work through another user's account to use that user's remaining usage" (ผู้ใช้ไม่สามารถส่งงานของตนผ่านบัญชีของผู้ใช้คนอื่นเพื่อใช้ปริมาณการใช้งานที่เหลืออยู่ของผู้ใช้คนนั้นได้) ([แพ็กเกจ Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129) ส่วน [แพ็กเกจ Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) ก็เช่นเดียวกัน) ดังนั้น การใช้การเลือกอัตโนมัติระหว่างที่นั่งต่าง ๆ จึงอาจละเมิดข้อกำหนดของ Anthropic จะใช้การเลือกอัตโนมัติในกรณีนี้หรือไม่เป็นการตัดสินใจของคุณ: โปรดสอบถามองค์กรของคุณและ Anthropic ก่อนที่จะพึ่งพาการเลือกอัตโนมัติ สำหรับแพ็กเกจส่วนตัว (Pro, Max) ดูที่ [หมายเหตุเรื่องข้อกำหนดในคำถามที่พบบ่อย](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)
 
 บัญชีที่ยังไม่ได้เข้าสู่ระบบจะแสดง `not logged in → ccam login <name>` และบัญชีที่ใช้ API key จะแสดง `no limits (API)` โทเค็นการเข้าถึงที่หมดอายุจะแสดง ``access token expired; `ccam <name>` renews it when it starts`` ไว้เหนือตัวเลขที่บันทึกไว้หากมี: Claude Code จะต่ออายุให้เมื่อเริ่มครั้งถัดไป การเข้าสู่ระบบที่หมดอายุทั้งหมด เพราะ refresh token หมดอายุ หรือ Claude Code ล้างการเข้าสู่ระบบหลังจากเซิร์ฟเวอร์ปฏิเสธ จะแสดง `` login expired → `ccam login <name>` ``
 
@@ -97,7 +97,7 @@ endpoint มีรูปแบบคำตอบสองแบบ แบบใ�
 
 ### บันทึกขีดจำกัด
 
-เมื่อ Claude Code หยุดเทิร์นหนึ่งเพราะถึงขีดจำกัดการใช้งาน hook ของ[ปลั๊กอิน ccam](/docs/install#claude-code-plugin)จะอ่านคำขอที่ถูกปฏิเสธจากการสนทนา: ช่วงใดเต็ม (5 ชั่วโมง รายสัปดาห์ Opus หรือ Sonnet) และจะรีเซ็ตเมื่อใด แล้วเขียนข้อมูลนั้นลงใน `~/.local/state/ccam/usage/<name>.limit.json` จากนั้น `Fetch` จะนำบันทึกนี้มาทับข้อมูลอื่นทั้งหมดที่รู้จากทุกแหล่ง: ทุกช่วงในบันทึกจะนับเป็น 100% จนกว่าจะรีเซ็ต ไม่ว่าตัวเลขที่บันทึกไว้จะเก่าหรือต่ำเพียงใด ดังนั้น `ccam next --auto`, `ccam pick` และ `--fallback` จะไม่เลือกบัญชีนั้นอีกก่อนถึงเวลานั้น เมื่อไม่รู้ข้อมูลอื่นเลย บัญชีจะแสดงเพียงบันทึกนี้ (`source: the usage limit Claude Code reported` เมื่อใช้ `-v`) เซสชันที่ไม่มีใครนั่งอยู่ (`-p`, เซสชันเบื้องหลัง) จะไม่เขียนบันทึก และการหยุดโดยองค์กร (ใช้งานหมด หรือกลุ่มที่ถูกตั้งไว้เป็น $0) ก็ไม่เขียนเช่นกัน เพราะผู้ดูแลยกเลิกได้ทุกเมื่อ `ccam login` ไปยังบัญชี Claude อื่นจะทิ้งบันทึกนี้ และการลบไฟล์ก็ล้างบันทึกได้เช่นกัน
+เมื่อ Claude Code หยุดเทิร์นหนึ่งเพราะถึงขีดจำกัดการใช้งาน hook ของ[ปลั๊กอิน ccam](/docs/install#claude-code-plugin)จะอ่านคำขอที่ถูกปฏิเสธจากการสนทนา: ช่วงใดเต็ม (5 ชั่วโมง รายสัปดาห์ Opus หรือ Sonnet) และจะรีเซ็ตเมื่อใด แล้วเขียนข้อมูลนั้นลงใน `~/.local/state/ccam/usage/<name>.limit.json` จากนั้น `Fetch` จะนำบันทึกนี้มาทับข้อมูลอื่นทั้งหมดที่รู้จากทุกแหล่ง: ทุกช่วงในบันทึกจะนับเป็น 100% จนกว่าจะรีเซ็ต ไม่ว่าตัวเลขที่บันทึกไว้จะเก่าหรือต่ำเพียงใด ดังนั้น `ccam next --auto`, `ccam pick`, `--fallback` และ [`auto_switch`](/features/next#auto-switch) จะไม่เลือกบัญชีนั้นอีกก่อนถึงเวลานั้น เมื่อไม่รู้ข้อมูลอื่นเลย บัญชีจะแสดงเพียงบันทึกนี้ (`source: the usage limit Claude Code reported` เมื่อใช้ `-v`) เซสชันที่ไม่มีใครนั่งอยู่ (`-p`, เซสชันเบื้องหลัง) จะไม่เขียนบันทึก และการหยุดโดยองค์กร (ใช้งานหมด หรือกลุ่มที่ถูกตั้งไว้เป็น $0) ก็ไม่เขียนเช่นกัน เพราะผู้ดูแลยกเลิกได้ทุกเมื่อ `ccam login` ไปยังบัญชี Claude อื่นจะทิ้งบันทึกนี้ และการลบไฟล์ก็ล้างบันทึกได้เช่นกัน
 
 ### การต่ออายุโทเค็น
 

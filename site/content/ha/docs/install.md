@@ -2,10 +2,10 @@
 title: Girka ccam
 metaTitle: Girka ccam a Linux, macOS da Windows
 description: Girka ccam a Linux, macOS ko Windows da umarni ɗaya, kunshin .deb ko lambar tushe, ka kuma sabunta shi da ccam update. Fara girka Claude Code tukuna.
-updated: 2026-10-23
+updated: 2026-10-25
 order: 1
 translation: machine
-sourceHash: af21dcc24169
+sourceHash: a7f9dac24f79
 ---
 
 Gudanar da wannan a terminal a Linux ko macOS:
@@ -82,7 +82,7 @@ Plugin na ccam yana koya wa Claude Code kansa yin amfani da ccam: don duba wane 
 /plugin install ccam --marketplace jhyunwoo/ccam
 ```
 
-Yana ƙara skill, umarnan `/ccam:usage`, `/ccam:ext` da `/ccam:switch`, da hooks biyu: idan zama ya tsaya a iyakar amfani kana samun sanarwa a terminal, kuma `/ccam:switch [account]` yana miƙa tattaunawar ga wani asusu ([cikakken bayani](/features/next#inside-claude-code)). Hooks ɗin suna gudanar da `ccam`, don haka dole ne ya kasance a `PATH` da Claude Code ke gani. Skill ɗin ba ya taɓa gudanar da umarnan da ke shiga ko motsa fayiloli; yana ba da shawarar su maimakon haka.
+Yana ƙara skill, umarnan `/ccam:usage`, `/ccam:ext` da `/ccam:switch`, da hooks biyu: idan zama ya tsaya a iyakar amfani kana samun sanarwa a terminal (kuma a Linux da macOS, idan [`auto_switch`](/features/next#auto-switch) yana kunne, ccam yana motsa zaman zuwa wani asusu mai sarari), kuma `/ccam:switch [account]` yana miƙa tattaunawar ga wani asusu ([cikakken bayani](/features/next#inside-claude-code)). Hooks ɗin suna gudanar da `ccam`, don haka dole ne ya kasance a `PATH` da Claude Code ke gani. Skill ɗin ba ya taɓa gudanar da umarnan da ke shiga ko motsa fayiloli; yana ba da shawarar su maimakon haka.
 
 ## Duba girkawar
 

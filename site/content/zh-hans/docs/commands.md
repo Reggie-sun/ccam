@@ -2,10 +2,10 @@
 title: 命令参考
 metaTitle: "ccam 命令参考"
 description: ccam 的所有命令和选项，从 ccam add、ccam <name> 到 ccam usage、ccam next 和 ccam doctor。
-updated: 2026-10-24
+updated: 2026-10-25
 order: 3
 translation: machine
-sourceHash: "36af7e209cd9"
+sourceHash: "abba525cae48"
 ---
 
 在命令前加上 `--dry-run`，可以查看它会做什么而不实际执行，例如 `ccam --dry-run work`。它适用于启动 Claude Code（`ccam <name>`、`ccam run`、`ccam next`、`ccam attach`）以及 `group`、`migrate`、`shortcut`、`update` 和 `doctor --fix`。其他会做出更改的命令会拒绝它，而不会执行。
@@ -27,7 +27,7 @@ ccam --fallback work -p "fix the tests"   # run again as another account at the 
 
 账号名之前的 `--fallback` 用于 `-p`/`--print` 运行。当账号达到用量限制时，ccam 会以余量最多的已登录账号重新运行同一个命令，并只打印最终完成的那次运行的输出。参见[按文件夹使用账号](/features/folder)和[达到限制时重新运行](/features/next#run-again-at-the-limit)。
 
-**Team 和 Enterprise 席位。** 自动选择（`ccam next`、`--fallback`、`ccam pick`、仪表盘中的 `n`）也会在同一个 Claude Team 或 Enterprise 组织的席位之间切换。Anthropic 帮助中心关于 [Team 套餐](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)的说明写道："Each seat on a Team plan is assigned to one named individual, and only that person may use it"（Team 套餐的每个席位都分配给一位指定的个人，只有此人可以使用），以及 "Users can't route their work through another user's account to use that user's remaining usage"（用户不能通过另一位用户的账号完成自己的工作，以使用该用户剩余的用量）；关于 [Enterprise 套餐](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)的说明也是如此。因此，在席位之间使用自动选择可能违反 Anthropic 的条款。在依赖这项功能之前，请先向你所在的组织和 Anthropic 确认。个人套餐（Pro、Max）的情况请参见[常见问题中关于条款的说明](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)。
+**Team 和 Enterprise 席位。** 自动选择（`ccam next`、`--fallback`、`ccam pick`、仪表盘中的 `n`，以及你开启后的 [`auto_switch`](/features/next#auto-switch)）也会在同一个 Claude Team 或 Enterprise 组织的席位之间切换。Anthropic 帮助中心关于 [Team 套餐](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)的说明写道："Each seat on a Team plan is assigned to one named individual, and only that person may use it"（Team 套餐的每个席位都分配给一位指定的个人，只有此人可以使用），以及 "Users can't route their work through another user's account to use that user's remaining usage"（用户不能通过另一位用户的账号完成自己的工作，以使用该用户剩余的用量）；关于 [Enterprise 套餐](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)的说明也是如此。因此，在席位之间使用自动选择可能违反 Anthropic 的条款。在这些席位之间是否使用，由你自己决定：在依赖这项功能之前，请先向你所在的组织和 Anthropic 确认。个人套餐（Pro、Max）的情况请参见[常见问题中关于条款的说明](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)。
 
 `ccwork` 这样的快捷命令也以同样的方式启动对应账号：`ccwork --resume` 的效果与 `ccam work --resume` 相同。参见[快捷命令](/docs/commands#shortcuts)。
 
@@ -115,8 +115,9 @@ ccam mcp remove fs
 ccam usage           # also: ccam u
 ccam usage --watch   # refresh every 60 seconds
 ccam usage --json
-ccam usage --source claude      # Claude Code looks it up; ccam never touches a token
+ccam usage --source claude      # Claude Code looks it up; ccam sends no token
 ccam next --continue            # this folder's last conversation, as the next account
+ccam next --continue --brief    # a new conversation from a summary of the last one
 ccam next --auto
 ccam next --auto --max-usage 80 --wait
 ccam next -c --auto -- --dangerously-skip-permissions   # claude's own options after --
@@ -126,7 +127,7 @@ ccam agents                     # background sessions of every account
 ccam attach 49ec0028            # open one, as the account that started it (or by its name)
 ```
 
-`next --auto`、`--fallback` 和 `ccam pick` 的选择方式相同：优先选择低于 `auto_max_usage`（`config.toml`，默认 100）的账号，按 `auto_strategy`（`headroom`、`expiring` 或 `balance`）选择，并计入 `--model` 的每周时间窗口，从不选择已达 100% 的账号（Claude Code 报告已满的时间窗口在重置前按 100% 计算），从不选择 API 密钥登录，并且只在出发账号所属的组织内选择（用 `--cross-org` 或 `cross_org = true` 扩大范围）。`--wait` 的值写在 `=` 之后（`--wait=2h`）；用空格分隔时会被拒绝，并给出提示。当没有可选的账号时，它们以退出码 75 退出，或者在使用 `--wait` 时等待第一个账号重置。即使两个账号不共享历史记录，`ccam next --continue` 也能把对话带过去：此时由 Claude Code 把对话复制到新账号中。与 `ccam <name>` 不同，`ccam next` 会读取自己的选项，所以 Claude Code 的选项要放在 `--` 之后；没有它时 ccam 会以 `unknown flag` 停止。在 Claude Code 中，插件的 `/ccam:switch [account]` 用于交接对话，`ccam hook` 则是插件的钩子所运行的命令。参见[切换到下一个账号](/features/next)、[为脚本选择账号](/features/pick)和[所有账号的后台会话](/features/agents)。
+`next --auto`、`--fallback` 和 `ccam pick` 的选择方式相同：优先选择低于 `auto_max_usage`（`config.toml`，默认 100）的账号，按 `auto_strategy`（`headroom`、`expiring` 或 `balance`）选择，并计入 `--model` 的每周时间窗口，从不选择已达 100% 的账号（Claude Code 报告已满的时间窗口在重置前按 100% 计算），从不选择 API 密钥登录，并且只在出发账号所属的组织内选择（用 `--cross-org` 或 `cross_org = true` 扩大范围）。`--wait` 的值写在 `=` 之后（`--wait=2h`）；用空格分隔时会被拒绝，并给出提示。当没有可选的账号时，它们以退出码 75 退出，或者在使用 `--wait` 时等待第一个账号重置。即使两个账号不共享历史记录，`ccam next --continue` 也能把对话带过去：此时由 Claude Code 把对话复制到新账号中。使用 `--brief` 时，新账号会改为开始一个新对话，其起点是 ccam 不借助模型为上一个对话写的摘要（[`--brief`](/features/next#brief)）。与 `ccam <name>` 不同，`ccam next` 会读取自己的选项，所以 Claude Code 的选项要放在 `--` 之后；没有它时 ccam 会以 `unknown flag` 停止。在 Claude Code 中，插件的 `/ccam:switch [account]` 用于交接对话，`ccam hook` 则是插件的钩子所运行的命令。在 `config.toml` 中设置 `auto_switch = true`（仅限 Linux 和 macOS；默认关闭）时，用量限制钩子还会结束由 ccam 启动的交互式会话，并以另一个还有余量的账号继续它，而且只限同类账号：同一组织的另一个席位，或另一个个人套餐（[`auto_switch`](/features/next#auto-switch)）。参见[切换到下一个账号](/features/next)、[为脚本选择账号](/features/pick)和[所有账号的后台会话](/features/agents)。
 
 ## 维护
 
@@ -148,10 +149,10 @@ ccam completion bash # or zsh, powershell
 
 | 路径 | 内容 |
 | --- | --- |
-| `~/.config/ccam/config.toml` | 账号、组和设置（`theme`、`usage_source`、`relay`、`cross_org` …）。设置写在文件顶部，位于第一个 `[[group]]`、`[[profile]]` 或 `[[folder]]` 之上：写在某个表下面的设置属于该表，所以 ccam 会在每次启动时以及在 `ccam doctor` 中指出它，而保存配置的命令在它被移走之前会拒绝执行。ccam 保存该文件时不会保留注释 |
+| `~/.config/ccam/config.toml` | 账号、组和设置（`theme`、`usage_source`、`relay`、`auto_switch`、`cross_org` …）。设置写在文件顶部，位于第一个 `[[group]]`、`[[profile]]` 或 `[[folder]]` 之上：写在某个表下面的设置属于该表，所以 ccam 会在每次启动时以及在 `ccam doctor` 中指出它，而保存配置的命令在它被移走之前会拒绝执行。ccam 保存该文件时不会保留注释 |
 | `~/.local/share/ccam/profiles/<name>/` | 每个账号的 `CLAUDE_CONFIG_DIR` |
 | `~/.local/share/ccam/groups/<group>/` | 共享的设置、MCP 服务器、扩展和历史记录 |
-| `~/.local/state/ccam/` | 用量缓存和用量限制记录（`usage/<name>.json`、`usage/<name>.limit.json`）、最近使用时间、会话标记和锁（`locks/`）、ccam 创建的快捷命令（`shortcuts.json`）、尚未完成的组更改（`group-change.json`），以及 `/ccam:switch` 和用量限制钩子留下的记录（`handoff/<account>/<session>.json`） |
+| `~/.local/state/ccam/` | 用量缓存和用量限制记录（`usage/<name>.json`、`usage/<name>.limit.json`）、最近使用时间、会话标记和锁（`locks/`）、ccam 创建的快捷命令（`shortcuts.json`）、尚未完成的组更改（`group-change.json`）、`/ccam:switch` 和用量限制钩子留下的记录（`handoff/<account>/<session>.json`）、`ccam pick` 或 `auto_switch` 最近一次选择各个账号的时间（`picks/<name>`；一次选择在 2 分钟内有效），以及 `--brief` 的摘要，保留 7 天（`brief/<session>.md`） |
 | `~/.local/bin/<shortcut>` | `ccwork` 这样的快捷命令，即指向 ccam 的链接 |
 
 `XDG_CONFIG_HOME`、`XDG_DATA_HOME` 和 `XDG_STATE_HOME` 变量可以改变这些文件夹的位置。在 Windows 上，`~` 是 `%USERPROFILE%`，快捷命令是 `<shortcut>.exe`。

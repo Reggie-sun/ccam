@@ -1,10 +1,10 @@
 ---
 title: O que fazer no limite de uso do Claude Code
 description: Espere o limite reiniciar ou continue na hora a mesma conversa em outra conta do Claude Code. Como funcionam os limites de 5 horas e semanal, passo a passo.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 3
 translation: machine
-sourceHash: "049a46684c7b"
+sourceHash: "18ef61a68c55"
 ---
 
 Quando uma conta atinge o limite de uso (muitas vezes chamado de rate limit), você tem duas opções: esperar até o limite reiniciar ou continuar agora a mesma conversa em outra conta sua. Com o ccam, a segunda opção é um único comando, `ccam next --auto --continue`.
@@ -57,18 +57,18 @@ O Claude Code inicia como `work` com a conversa mais recente da pasta atual, inc
 
 Com o [plugin do ccam](/docs/install#claude-code-plugin) no Claude Code, uma sessão que para no limite mostra uma notificação e registra a janela cheia, para que o `ccam next --auto` não escolha essa conta de novo antes do reinício, e `/ccam:switch` (ou `/ccam:switch work`) registra a conversa para o `ccam next --continue`, sem deixar nada para adivinhar.
 
-**Assentos dos planos Team e Enterprise.** A escolha automática (`ccam next`, `--fallback`, `ccam pick`, a tecla `n` do painel) também alterna entre assentos da mesma organização Claude Team ou Enterprise. A central de ajuda da Anthropic diz "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (cada assento de um plano Team é atribuído a uma pessoa específica, e só essa pessoa pode usá-lo) e "Users can't route their work through another user's account to use that user's remaining usage" (os usuários não podem encaminhar o próprio trabalho pela conta de outro usuário para aproveitar o uso restante desse usuário) ([planos Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); o mesmo vale para os [planos Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Por isso, usar a escolha automática entre assentos pode violar os termos da Anthropic. Consulte a sua organização e a Anthropic antes de contar com ela. Os planos pessoais (Pro, Max) são tratados na [nota sobre os termos nas perguntas frequentes](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Assentos dos planos Team e Enterprise.** A escolha automática (`ccam next`, `--fallback`, `ccam pick`, a tecla `n` do painel e o [`auto_switch`](/features/next#auto-switch), quando você o ativa) também alterna entre assentos da mesma organização Claude Team ou Enterprise. A central de ajuda da Anthropic diz "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (cada assento de um plano Team é atribuído a uma pessoa específica, e só essa pessoa pode usá-lo) e "Users can't route their work through another user's account to use that user's remaining usage" (os usuários não podem encaminhar o próprio trabalho pela conta de outro usuário para aproveitar o uso restante desse usuário) ([planos Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); o mesmo vale para os [planos Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Por isso, usar a escolha automática entre assentos pode violar os termos da Anthropic. Usá-la nesse caso é uma decisão sua: consulte a sua organização e a Anthropic antes de contar com ela. Os planos pessoais (Pro, Max) são tratados na [nota sobre os termos nas perguntas frequentes](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 ## O ccam troca de conta automaticamente?
 
-Não. O ccam não fica em execução enquanto você trabalha: ele inicia o Claude Code e se substitui por ele. Você decide quando trocar, e `ccam next --auto` escolhe a conta com o menor uso de 5 horas e pula as contas que estão em 100%, sem login ou de outra organização. Com `relay = true` no `config.toml`, o ccam fica, em vez disso, esperando ao lado da sessão, então `/ccam:switch` continua sozinho, mantendo as opções, o modo de permissão e o nível de esforço da sessão. Algumas outras ferramentas trocam o login de uma sessão em andamento; [o ccam e outras ferramentas para trocar de conta](/compare/account-switchers) explica a diferença.
+Só se você ativar isso. Por padrão, o ccam não fica em execução enquanto você trabalha: ele inicia o Claude Code e se substitui por ele, então você decide quando trocar, e `ccam next --auto` escolhe a conta com o menor uso de 5 horas, pula as contas que estão em 100% ou sem login e fica dentro de uma mesma organização Team ou Enterprise, ou entre planos pessoais. Com `relay = true` no `config.toml`, o ccam fica, em vez disso, esperando ao lado da sessão, então `/ccam:switch` continua sozinho, mantendo as opções, o modo de permissão e o nível de esforço da sessão. Com `auto_switch = true` (Linux e macOS; experimental), o ccam também faz a troca sozinho: quando o Claude Code interrompe a sessão no limite dela e outra conta do mesmo tipo tem espaço, o ccam encerra a sessão e continua a conversa nessa conta ([condições e custos](/features/next#auto-switch)). Algumas outras ferramentas trocam o login de uma sessão em andamento; [o ccam e outras ferramentas para trocar de conta](/compare/account-switchers) explica a diferença.
 
 ## O que ter em mente
 
 - Execute `ccam next --continue` na mesma pasta em que você estava trabalhando; as conversas são guardadas por pasta de projeto.
 - Evite executar duas contas na mesma conversa ao mesmo tempo. O ccam avisa se você tentar.
 - Sem histórico compartilhado, a conversa é copiada para a outra conta e as duas cópias seguem caminhos separados; os checkpoints a partir dos quais o `/rewind` restaura o código ficam com a primeira conta.
-- A primeira mensagem na nova conta pode consumir mais do limite dela do que o normal, porque essa conta ainda não tem a conversa em cache.
+- A primeira mensagem na nova conta pode consumir mais do limite dela do que o normal, porque essa conta ainda não tem a conversa em cache. `ccam next --continue --brief` a começa a partir de um resumo curto.
 - Se você pode trocar de conta desse jeito depende dos termos de cada conta.
 
 Veja [limites de uso](/docs/usage-limits) para todas as opções de `ccam usage` e `ccam next`.

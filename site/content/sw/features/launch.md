@@ -1,10 +1,10 @@
 ---
 title: Kuanzisha Claude Code
 description: Anzisha Claude Code kama akaunti yoyote kwa ccam <name|number>, ccam run au dashibodi; hoja hupita kwa claude bila kubadilishwa, na --dry-run huonyesha amri.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 1
 translation: machine
-sourceHash: "e279341eb59b"
+sourceHash: "afa4942cfed5"
 ---
 
 `ccam work` huanzisha Claude Code kama akaunti `work`, na kila kitu kinachokuja baada ya jina huenda kwa `claude` kama kilivyo. Itumie popote ambapo ungecharaza `claude`: kwenye terminal, katika script, au ingizo likipitishwa kwa pipe.
@@ -34,11 +34,11 @@ Hoja ya kwanza inapoanza na `-` na si mojawapo ya chaguo za ccam yenyewe, ccam h
 
 `ccam` bila hoja hufungua [dashibodi](/features/dashboard) wakati standard input na output ni terminal, na vinginevyo huchapisha `ccam list`. Nenda kwenye akaunti (kwa mishale, au kwa kuandika namba yake) na ubonyeze `Enter` ili kuianzisha; `n` huanzisha akaunti yenye nafasi kubwa zaidi na `o` hutoa `--continue`, `--resume` au hoja nyingine. Dashibodi hujifunga kabla Claude Code haijaanza, kwa hiyo terminal hurejeshwa kwanza.
 
-**Viti (seats) vya Team na Enterprise.** Chaguo za kiotomatiki (`ccam next`, `--fallback`, `ccam pick`, kitufe `n` cha dashibodi) pia hubadili kati ya viti vya shirika lile lile la Claude Team au Enterprise. Kituo cha usaidizi cha Anthropic kinasema "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (kila kiti katika mpango wa Team hutolewa kwa mtu mmoja aliyetajwa kwa jina, na ni mtu huyo pekee anayeruhusiwa kukitumia) na "Users can't route their work through another user's account to use that user's remaining usage" (watumiaji hawaruhusiwi kuelekeza kazi yao kupitia akaunti ya mtumiaji mwingine ili kutumia kiasi cha matumizi kilichobaki cha mtumiaji huyo) ([mipango ya Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); vivyo hivyo kwa [mipango ya Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Kwa hiyo, kutumia chaguo za kiotomatiki kati ya viti kunaweza kukiuka masharti ya Anthropic. Wasiliana na shirika lako na Anthropic kabla ya kuzitegemea. Mipango ya binafsi (Pro, Max) inaelezwa katika [dokezo la masharti kwenye Maswali yanayoulizwa mara kwa mara](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Viti (seats) vya Team na Enterprise.** Chaguo za kiotomatiki (`ccam next`, `--fallback`, `ccam pick`, kitufe `n` cha dashibodi, na [`auto_switch`](/features/next#auto-switch) unapokiwasha) pia hubadili kati ya viti vya shirika lile lile la Claude Team au Enterprise. Kituo cha usaidizi cha Anthropic kinasema "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (kila kiti katika mpango wa Team hutolewa kwa mtu mmoja aliyetajwa kwa jina, na ni mtu huyo pekee anayeruhusiwa kukitumia) na "Users can't route their work through another user's account to use that user's remaining usage" (watumiaji hawaruhusiwi kuelekeza kazi yao kupitia akaunti ya mtumiaji mwingine ili kutumia kiasi cha matumizi kilichobaki cha mtumiaji huyo) ([mipango ya Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); vivyo hivyo kwa [mipango ya Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Kwa hiyo, kutumia chaguo za kiotomatiki kati ya viti kunaweza kukiuka masharti ya Anthropic. Kama utazitumia huko ni uamuzi wako: wasiliana na shirika lako na Anthropic kabla ya kuzitegemea. Mipango ya binafsi (Pro, Max) inaelezwa katika [dokezo la masharti kwenye Maswali yanayoulizwa mara kwa mara](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 Shell ikiwa na `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY` au `ANTHROPIC_AUTH_TOKEN` iliyowekwa, Claude Code ingetumia key au tokeni hiyo badala ya taarifa za kuingia za akaunti yenyewe, kwa hiyo ccam husema hivyo kwenye standard error kabla ya kuanza (`ccam: $ANTHROPIC_API_KEY is set, so Claude Code may use that key instead of work's login…`). Husoma vigezo hivyo tu; [akaunti ya API key](/features/api) huvifuta badala yake.
 
-Kwa `relay = true` juu kabisa ya `config.toml` (kabla ya `[[group]]`, `[[profile]]` au `[[folder]]` ya kwanza), ccam huanzisha vipindi shirikishi kama mchakato mtoto na hubaki kando yake, ili `/ccam:switch` iweze kuhamisha mazungumzo yenyewe, pamoja na chaguo za kipindi, hali ya ruhusa na kiwango cha juhudi (effort) ([maelezo](/features/next#relay)); vinginevyo ccam hujibadilisha na Claude Code, na hakuna kinachoendeshwa kando yake.
+Kwa `relay = true`, au [`auto_switch = true`](/features/next#auto-switch) kwenye Linux na macOS, juu kabisa ya `config.toml` (kabla ya `[[group]]`, `[[profile]]` au `[[folder]]` ya kwanza), ccam huanzisha vipindi shirikishi kama mchakato mtoto na hubaki kando yake, ili `/ccam:switch`, au `auto_switch` kwenye kikomo cha matumizi, iweze kuhamisha mazungumzo yenyewe, pamoja na chaguo za kipindi, hali ya ruhusa na kiwango cha juhudi (effort) ([maelezo](/features/next#relay)); vinginevyo ccam hujibadilisha na Claude Code, na hakuna kinachoendeshwa kando yake.
 
 ## Chaguo
 

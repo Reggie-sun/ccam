@@ -1,10 +1,10 @@
 ---
 title: Iyakokin amfani da sauya asusai
 description: Ga amfanin awa 5 da na mako na kowane asusun Claude Code da ccam usage, sannan ka buɗe asusun da ya fi sarari da ccam next --auto.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 5
 translation: machine
-sourceHash: ccaed084207a
+sourceHash: 7c15419446c3
 ---
 
 `ccam usage` yana nuna nawa kowane asusu ya yi amfani da shi daga iyakar awa 5, iyakar mako da iyakar mako ta kowane model (kamar Fable). `ccam next --auto` yana buɗe asusun da ya fi sauran sarari, kuma `--continue` yana ɗauko tattaunawar yanzu zuwa can.
@@ -28,7 +28,7 @@ $ ccam usage
 
 Kowane asusu yana samun layi mai nuna tsawon lokacin da lambobinsa suka yi, sannan sanda ɗaya ga kowace iyaka tare da lokacin da ya rage kafin a sake saita ta: taga ta awa 5, taga ta mako ga dukkan model, da taga ta mako ta kowane model, kamar Fable. Daga 80% sanda tana zama rawaya, a 100% kuma ja. Layin ƙarshe yana faɗin asusun da `ccam next --auto` zai buɗe; da `auto_strategy = "expiring"` ko `"balance"` maimakon haka yana cewa `→ next --auto picks <name>: <reason>`.
 
-**Kujeru (seats) na Team da Enterprise.** Zaɓin atomatik (`ccam next`, `--fallback`, `ccam pick`, maɓallin `n` na dashboard) yana kuma sauyawa tsakanin kujerun ƙungiyar Claude Team ko Enterprise iri ɗaya. Cibiyar taimako ta Anthropic ta ce "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (ana ba da kowace kujera a tsarin Team da sunan takamaiman mutum ɗaya, kuma wannan mutumin kaɗai ne aka yarda ya yi amfani da ita) da "Users can't route their work through another user's account to use that user's remaining usage" (masu amfani ba za su iya tura aikinsu ta asusun wani mai amfani ba domin su ci gajiyar ragowar amfanin wannan mai amfanin) ([Tsare-tsaren Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); haka ma ga [tsare-tsaren Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Don haka yin amfani da zaɓin atomatik tsakanin kujeru na iya saɓa wa sharuɗɗan Anthropic. Ka tuntuɓi ƙungiyarka da Anthropic kafin ka dogara da shi. Don tsare-tsaren kai (Pro, Max), duba [bayanin sharuɗɗa a cikin Tambayoyin da ake yawan yi](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Kujeru (seats) na Team da Enterprise.** Zaɓin atomatik (`ccam next`, `--fallback`, `ccam pick`, maɓallin `n` na dashboard, da [`auto_switch`](/features/next#auto-switch) idan ka kunna shi) yana kuma sauyawa tsakanin kujerun ƙungiyar Claude Team ko Enterprise iri ɗaya. Cibiyar taimako ta Anthropic ta ce "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (ana ba da kowace kujera a tsarin Team da sunan takamaiman mutum ɗaya, kuma wannan mutumin kaɗai ne aka yarda ya yi amfani da ita) da "Users can't route their work through another user's account to use that user's remaining usage" (masu amfani ba za su iya tura aikinsu ta asusun wani mai amfani ba domin su ci gajiyar ragowar amfanin wannan mai amfanin) ([Tsare-tsaren Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); haka ma ga [tsare-tsaren Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Don haka yin amfani da zaɓin atomatik tsakanin kujeru na iya saɓa wa sharuɗɗan Anthropic. Ko za ka yi amfani da shi a can ya rage naka: ka tuntuɓi ƙungiyarka da Anthropic kafin ka dogara da shi. Don tsare-tsaren kai (Pro, Max), duba [bayanin sharuɗɗa a cikin Tambayoyin da ake yawan yi](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 ## Daga ina lambobin suke fitowa
 
@@ -71,6 +71,8 @@ ccam next --continue  # carry this folder's conversation on as the next account
 ```
 
 `ccam next` yana tsallake asusan da ba a shiga da su ba, kuma `--auto` yana tsallake asusan da suka kai 100% (har da tagar da Claude Code ya ba da rahoton ta cika, har zuwa sake saitinta) da asusan wata ƙungiya (organization) dabam. Idan asusun biyu suna raba tarihin tattaunawa, `--continue` yana buɗe tattaunawa ɗaya; in ba haka ba Claude Code yana kwafar ta cikin sabon asusun. Duba [rabawa](/docs/sharing) da [sauyawa zuwa asusu na gaba](/features/next#continue).
+
+Da `auto_switch = true` a saman `config.toml` (Linux da macOS; a kashe ta tsohuwa), ccam yana yin wannan sauyawa da kansa idan Claude Code ya dakatar da zaman mu'amala a iyakarsa kuma wani asusu irinsa yana da sarari. Duba [`auto_switch`](/features/next#auto-switch) don sanin lokacin da yake aiki da abin da ba ya taɓa yi.
 
 Don rubutun umarni (scripts) da ayyukan da aka tsara lokacinsu masu gudanar da `claude -p`, saka `--fallback` kafin sunan asusun. Idan wannan asusun ya kai iyakarsa, ccam yana sake gudanar da umarnin iri ɗaya a matsayin asusun da ya fi sarari, kuma sakamakon gudun da ya kammala kaɗai ake bugawa:
 

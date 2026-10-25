@@ -1,10 +1,10 @@
 ---
 title: Claude Code 시작하기
 description: ccam <name|number>, ccam run, 대시보드로 원하는 계정의 Claude Code를 시작합니다. 인자는 그대로 claude에 전달되며, --dry-run은 실행할 명령을 보여 줍니다.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 1
 translation: machine
-sourceHash: "e279341eb59b"
+sourceHash: "afa4942cfed5"
 ---
 
 `ccam work`는 `work` 계정으로 Claude Code를 시작하며, 이름 뒤의 모든 것은 그대로 `claude`에 전달됩니다. 터미널, 스크립트, 파이프로 입력을 넘길 때 등 `claude`를 입력하던 곳이면 어디서나 쓸 수 있습니다.
@@ -34,11 +34,11 @@ ccam --fallback work -p "fix the tests"   # run again as another account at the 
 
 표준 입력과 출력이 터미널이면 인자 없이 `ccam`을 실행할 때 [대시보드](/features/dashboard)가 열리고, 터미널이 아니면 `ccam list`를 출력합니다. 계정으로 이동한 뒤(화살표 키로, 또는 번호를 입력해서) `Enter`를 누르면 그 계정이 시작됩니다. `n`은 여유가 가장 많은 계정을 시작하고, `o`는 `--continue`, `--resume`, 그 밖의 인자를 고를 수 있게 합니다. 대시보드는 Claude Code가 시작되기 전에 닫히므로, 터미널이 먼저 원래대로 돌아옵니다.
 
-**Team·Enterprise 시트.** 자동 선택(`ccam next`, `--fallback`, `ccam pick`, 대시보드의 `n`)은 같은 Claude Team이나 Enterprise 조직의 시트 사이에서도 계정을 바꿉니다. Anthropic 고객센터는 "Each seat on a Team plan is assigned to one named individual, and only that person may use it"(팀 플랜의 각 시트는 한 명의 지정된 개인에게 할당되며, 그 사람만 사용할 수 있습니다), "Users can't route their work through another user's account to use that user's remaining usage"(사용자는 다른 사용자의 계정을 통해 작업을 라우팅하여 해당 사용자의 남은 사용량을 사용할 수 없습니다)라고 안내합니다([Team 요금제](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129), [Enterprise 요금제](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)도 마찬가지). 따라서 시트 사이에서 자동 선택을 쓰면 Anthropic의 약관을 위반할 수 있습니다. 이 기능에 의존하기 전에 소속 조직과 Anthropic에 확인하세요. 개인 요금제(Pro, Max)에 대해서는 [FAQ의 약관 안내](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)를 참고하세요.
+**Team·Enterprise 시트.** 자동 선택(`ccam next`, `--fallback`, `ccam pick`, 대시보드의 `n`, 그리고 켜 두었을 때의 [`auto_switch`](/features/next#auto-switch))은 같은 Claude Team이나 Enterprise 조직의 시트 사이에서도 계정을 바꿉니다. Anthropic 고객센터는 "Each seat on a Team plan is assigned to one named individual, and only that person may use it"(팀 플랜의 각 시트는 한 명의 지정된 개인에게 할당되며, 그 사람만 사용할 수 있습니다), "Users can't route their work through another user's account to use that user's remaining usage"(사용자는 다른 사용자의 계정을 통해 작업을 라우팅하여 해당 사용자의 남은 사용량을 사용할 수 없습니다)라고 안내합니다([Team 요금제](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129), [Enterprise 요금제](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)도 마찬가지). 따라서 시트 사이에서 자동 선택을 쓰면 Anthropic의 약관을 위반할 수 있습니다. 시트 사이에서 이 기능을 쓸지는 사용자가 판단할 일입니다. 의존하기 전에 소속 조직과 Anthropic에 확인하세요. 개인 요금제(Pro, Max)에 대해서는 [FAQ의 약관 안내](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)를 참고하세요.
 
 셸에 `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN` 중 하나가 설정되어 있으면 Claude Code는 계정 자체의 로그인 대신 그 키나 토큰을 쓰게 되므로, ccam은 시작하기 전에 표준 오류로 그 사실을 알립니다(`ccam: $ANTHROPIC_API_KEY is set, so Claude Code may use that key instead of work's login…`). ccam은 변수를 읽기만 하며, [API 키 계정](/features/api)은 대신 이 변수들을 지웁니다.
 
-`config.toml`의 맨 위(첫 `[[group]]`, `[[profile]]`, `[[folder]]`보다 위)에 `relay = true`를 설정하면 ccam은 대화형 세션을 자식 프로세스로 시작하고 그 옆에 남아 있으므로, `/ccam:switch`가 세션의 옵션, 권한 모드, 추론 수준을 유지한 채 스스로 대화를 넘길 수 있습니다([자세히](/features/next#relay)). 설정하지 않으면 ccam은 자신을 Claude Code로 대체하며, 옆에서 실행되는 것은 아무것도 없습니다.
+`config.toml`의 맨 위(첫 `[[group]]`, `[[profile]]`, `[[folder]]`보다 위)에 `relay = true`를 설정하거나, Linux와 macOS에서 [`auto_switch = true`](/features/next#auto-switch)를 설정하면 ccam은 대화형 세션을 자식 프로세스로 시작하고 그 옆에 남아 있으므로, `/ccam:switch`나 사용량 한도에서의 `auto_switch`가 세션의 옵션, 권한 모드, 추론 수준을 유지한 채 스스로 대화를 넘길 수 있습니다([자세히](/features/next#relay)). 설정하지 않으면 ccam은 자신을 Claude Code로 대체하며, 옆에서 실행되는 것은 아무것도 없습니다.
 
 ## 옵션
 

@@ -1,10 +1,10 @@
 ---
 title: Batas penggunaan dan perpindahan akun
 description: Lihat penggunaan 5 jam dan mingguan setiap akun Claude Code dengan ccam usage, lalu buka akun dengan sisa kuota terbanyak lewat ccam next --auto.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 5
 translation: machine
-sourceHash: ccaed084207a
+sourceHash: "7c15419446c3"
 ---
 
 `ccam usage` menampilkan seberapa banyak batas 5 jam, batas mingguan, dan batas mingguan khusus setiap model (seperti Fable) yang sudah digunakan setiap akun. `ccam next --auto` membuka akun dengan sisa kuota terbanyak, dan `--continue` membawa percakapan saat ini ke akun tersebut.
@@ -28,7 +28,7 @@ $ ccam usage
 
 Setiap akun mendapat satu baris yang menunjukkan umur angka-angkanya, lalu satu bilah per batas beserta waktu hingga direset: jendela 5 jam, jendela mingguan untuk semua model, dan jendela mingguan khusus setiap model, seperti Fable. Mulai 80% bilah berubah kuning, dan pada 100% merah. Baris terakhir menyebut akun yang akan dibuka `ccam next --auto`; dengan `auto_strategy = "expiring"` atau `"balance"`, baris itu menjadi `→ next --auto picks <name>: <reason>`.
 
-**Kursi Team dan Enterprise.** Pilihan otomatis (`ccam next`, `--fallback`, `ccam pick`, tombol `n` di dasbor) juga berganti di antara kursi dalam organisasi Claude Team atau Enterprise yang sama. Pusat bantuan Anthropic menyatakan "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (setiap kursi pada paket Team diberikan kepada satu orang tertentu, dan hanya orang itu yang boleh menggunakannya) dan "Users can't route their work through another user's account to use that user's remaining usage" (pengguna tidak boleh menyalurkan pekerjaannya melalui akun pengguna lain untuk memakai sisa kuota pengguna tersebut) ([paket Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); begitu pula untuk [paket Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Karena itu, memakai pilihan otomatis di antara kursi dapat melanggar ketentuan Anthropic. Tanyakan kepada organisasi Anda dan Anthropic sebelum Anda mengandalkannya. Paket pribadi (Pro, Max) dibahas dalam [catatan tentang ketentuan di FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Kursi Team dan Enterprise.** Pilihan otomatis (`ccam next`, `--fallback`, `ccam pick`, tombol `n` di dasbor, dan [`auto_switch`](/features/next#auto-switch) bila Anda mengaktifkannya) juga berganti di antara kursi dalam organisasi Claude Team atau Enterprise yang sama. Pusat bantuan Anthropic menyatakan "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (setiap kursi pada paket Team diberikan kepada satu orang tertentu, dan hanya orang itu yang boleh menggunakannya) dan "Users can't route their work through another user's account to use that user's remaining usage" (pengguna tidak boleh menyalurkan pekerjaannya melalui akun pengguna lain untuk memakai sisa kuota pengguna tersebut) ([paket Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); begitu pula untuk [paket Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Karena itu, memakai pilihan otomatis di antara kursi dapat melanggar ketentuan Anthropic. Apakah Anda memakainya di sana adalah keputusan Anda: tanyakan kepada organisasi Anda dan Anthropic sebelum Anda mengandalkannya. Paket pribadi (Pro, Max) dibahas dalam [catatan tentang ketentuan di FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 ## Dari mana angkanya berasal
 
@@ -71,6 +71,8 @@ ccam next --continue  # carry this folder's conversation on as the next account
 ```
 
 `ccam next` melewati akun yang belum login, dan `--auto` melewati akun yang sudah mencapai 100% (juga jendela yang dilaporkan penuh oleh Claude Code, sampai di-reset) serta akun dari organisasi lain. Jika kedua akun berbagi riwayat percakapan, `--continue` membuka percakapan yang sama; jika tidak, Claude Code menyalinnya ke akun baru. Lihat [pembagian](/docs/sharing) dan [beralih ke akun berikutnya](/features/next#continue).
+
+Dengan `auto_switch = true` di bagian atas `config.toml` (Linux dan macOS; nonaktif secara default), ccam melakukan perpindahan ini sendiri saat Claude Code menghentikan sesi interaktif di batasnya dan akun lain yang serupa punya ruang. Lihat [`auto_switch`](/features/next#auto-switch) untuk kapan fitur ini bertindak dan apa yang tidak pernah dilakukannya.
 
 Untuk skrip dan tugas terjadwal yang menjalankan `claude -p`, letakkan `--fallback` sebelum nama akun. Saat akun itu mencapai batasnya, ccam menjalankan lagi perintah yang sama sebagai akun dengan sisa kuota terbanyak, dan hanya output dari proses yang selesai yang dicetak:
 

@@ -1,15 +1,15 @@
 ---
 title: Kuchagua akaunti kwa ajili ya script
 description: ccam pick huchapisha akaunti yenye nafasi kubwa zaidi kwa script, huwapa workers walioanzishwa pamoja akaunti tofauti, na hutoka na 75 isipokuwa na nafasi.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 12
 translation: machine
-sourceHash: "a8baeb64de99"
+sourceHash: "5c4f74db9714"
 ---
 
 `ccam pick` huchapisha jina la akaunti iliyoingia yenye nafasi kubwa zaidi, ili script ianzishe Claude Code nayo. Workers walioanzishwa kwa wakati mmoja kila mmoja hupata akaunti tofauti maadamu kuna akaunti za kutosha zenye nafasi, kwa hiyo kundi la kazi za `claude -p` husambaa kwenye akaunti zako badala ya kumaliza moja.
 
-**Viti (seats) vya Team na Enterprise.** Chaguo za kiotomatiki (`ccam next`, `--fallback`, `ccam pick`, kitufe `n` cha dashibodi) pia hubadili kati ya viti vya shirika lile lile la Claude Team au Enterprise. Kituo cha usaidizi cha Anthropic kinasema "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (kila kiti katika mpango wa Team hutolewa kwa mtu mmoja aliyetajwa kwa jina, na ni mtu huyo pekee anayeruhusiwa kukitumia) na "Users can't route their work through another user's account to use that user's remaining usage" (watumiaji hawaruhusiwi kuelekeza kazi yao kupitia akaunti ya mtumiaji mwingine ili kutumia kiasi cha matumizi kilichobaki cha mtumiaji huyo) ([mipango ya Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); vivyo hivyo kwa [mipango ya Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Kwa hiyo, kutumia chaguo za kiotomatiki kati ya viti kunaweza kukiuka masharti ya Anthropic. Wasiliana na shirika lako na Anthropic kabla ya kuzitegemea. Mipango ya binafsi (Pro, Max) inaelezwa katika [dokezo la masharti kwenye Maswali yanayoulizwa mara kwa mara](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Viti (seats) vya Team na Enterprise.** Chaguo za kiotomatiki (`ccam next`, `--fallback`, `ccam pick`, kitufe `n` cha dashibodi, na [`auto_switch`](/features/next#auto-switch) unapokiwasha) pia hubadili kati ya viti vya shirika lile lile la Claude Team au Enterprise. Kituo cha usaidizi cha Anthropic kinasema "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (kila kiti katika mpango wa Team hutolewa kwa mtu mmoja aliyetajwa kwa jina, na ni mtu huyo pekee anayeruhusiwa kukitumia) na "Users can't route their work through another user's account to use that user's remaining usage" (watumiaji hawaruhusiwi kuelekeza kazi yao kupitia akaunti ya mtumiaji mwingine ili kutumia kiasi cha matumizi kilichobaki cha mtumiaji huyo) ([mipango ya Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); vivyo hivyo kwa [mipango ya Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Kwa hiyo, kutumia chaguo za kiotomatiki kati ya viti kunaweza kukiuka masharti ya Anthropic. Kama utazitumia huko ni uamuzi wako: wasiliana na shirika lako na Anthropic kabla ya kuzitegemea. Mipango ya binafsi (Pro, Max) inaelezwa katika [dokezo la masharti kwenye Maswali yanayoulizwa mara kwa mara](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 ## Matumizi
 
@@ -59,7 +59,7 @@ Exit codes: `0` pamoja na jina kwenye standard output, `75` (`EX_TEMPFAIL`) waka
 1. ccam huorodhesha akaunti zilizoingia (akaunti za API key na kuingia kwa Console hazina vikomo na huachwa nje) katika shirika la akaunti ambayo folda hii ingeanzisha (tazama [mashirika](/features/next#auto)); folda iliyoingia kwenye akaunti ile ile ya Claude kama hiyo huachwa nje pia.
 2. Huchukua kufuli (`~/.local/state/ccam/picks.lock`), ili uchaguzi unaoendeshwa kwa wakati mmoja ufanyike mmoja baada ya mwingine.
 3. Huomba matumizi ya kila akaunti kwa wakati mmoja, kwa njia ile ile kama `ccam usage`, pamoja na akiba ya sekunde 60. Kipindi ambacho Claude Code iliripoti kuwa kimejaa huhesabiwa kama 100% hadi kianze upya ([rekodi ya kikomo](/features/usage#the-limit-record)), kwa hiyo akaunti iliyofikia kikomo chake sasa hivi hubaki nje hata wakati namba zake zilizohifadhiwa zinaonyesha nafasi.
-4. Akaunti zilizochaguliwa ndani ya dakika 2 zilizopita (`~/.local/state/ccam/picks/<name>`; uchaguzi wenye tarehe iliyo baada ya muda wa saa ya kompyuta hauhesabiwi) huachwa nje kwanza, na [kanuni za uchaguzi](/features/next#auto) za `ccam next --auto` huchagua kati ya zilizobaki: zilizo chini ya `auto_max_usage` kwanza, kwa mkakati, na kamwe si akaunti iliyo kwenye 100%.
+4. Akaunti zilizochaguliwa ndani ya dakika 2 zilizopita, na `ccam pick` au na [`auto_switch`](/features/next#auto-switch) kwa kuhamishia kipindi huko (`~/.local/state/ccam/picks/<name>`; uchaguzi wenye tarehe iliyo baada ya muda wa saa ya kompyuta hauhesabiwi) huachwa nje kwanza, na [kanuni za uchaguzi](/features/next#auto) za `ccam next --auto` huchagua kati ya zilizobaki: zilizo chini ya `auto_max_usage` kwanza, kwa mkakati, na kamwe si akaunti iliyo kwenye 100%. Hatua hii inaporuka akaunti ambayo kanuni zingeichukua kwanza, `reason` ya `--json` husema hivyo: `30% of its 5 hours used; work was picked a moment ago`.
 5. Ikiwa kila akaunti yenye nafasi ilichaguliwa hivi karibuni, kanuni huchagua tena kati ya zote, kwa hiyo worker wa nne kwenye akaunti tatu hushiriki moja.
 6. Uchaguzi hurekodiwa na kufuli huachiliwa, kisha jina huchapishwa.
 

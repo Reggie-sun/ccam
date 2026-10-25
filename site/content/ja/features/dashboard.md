@@ -1,18 +1,18 @@
 ---
 title: ダッシュボード
 description: ターミナルでccamを実行すると、アカウント、グループ、フォルダーのルール、拡張機能、点検結果の全画面ダッシュボードが開きます。どの変更も先に計画を示します。
-updated: 2026-10-24
+updated: 2026-10-25
 order: 15
 translation: machine
-sourceHash: "e48ca2c5a643"
+sourceHash: "98ccf6cd81e9"
 ---
 
-引数なしの`ccam`は、標準入力と標準出力がターミナルであれば全画面のダッシュボードを開き、そうでなければ`ccam list`を出力します。ダッシュボードはすべてのアカウントを使用量とグループとともに表示し、起動、追加、ログイン、グループの変更、フォルダーのルールの設定、点検と修復といった、コマンドと同じことを行えます。起動するとダッシュボードは閉じます。アカウントの追加やログインでは、いったんターミナルに切り替わり、終わるとダッシュボードに戻ります。
+引数なしの`ccam`は、標準入力と標準出力がターミナルであれば全画面のダッシュボードを開き、そうでなければ`ccam list`を出力します。ダッシュボードはすべてのアカウントを使用量とグループとともに表示し、起動、追加、ログイン、グループの変更、フォルダーのルールの設定、バックグラウンドセッションの一覧、点検と修復といった、コマンドと同じことを行えます。起動するか、バックグラウンドセッションにアタッチすると、ダッシュボードは閉じます。アカウントの追加やログインでは、いったんターミナルに切り替わり、終わるとダッシュボードに戻ります。
 
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -40,12 +40,13 @@ sourceHash: "e48ca2c5a643"
 | タブ | 表示内容 | キー |
 | --- | --- | --- |
 | Accounts | 番号、名前、メールアドレス、5時間・週間・Fableのバー、最終使用、グループ。`✔`はデフォルト、`▸`はこのフォルダーのアカウント、`•`は実行中（ccamを使わずに起動したClaude Code、つまり通常の`claude`、IDE、バックグラウンドセッションとそのデーモンも含みます） | 下記を参照 |
+| Agents | [`ccam agents`](/features/agents)の一覧と同じ内容。すべてのアカウントのバックグラウンドセッションと開いているセッションを、状態、フォルダー、開始時刻とともに表示（下記） | `enter`でアタッチ（`ccam attach`と同じ）、`x`で停止、`r`で再読み込み |
 | Groups | 各グループと、その共有項目とアカウント、どのグループにも入っていないアカウント | `enter`で編集、`n`で新規作成、`e`で名前変更、`x`で削除 |
 | Folders | [`ccam folder`](/features/folder)のルールと、ここで適用されるルール。シンボリックリンクを通ってそのフォルダーに来た場合も同じです（新しいルールはリンクを解決して保存されます） | `n`でここでアカウントを使う、`enter`で変更、`x`で削除 |
 | Extensions | [`ccam ext`](/features/ext)の表示内容。各拡張機能を、出どころのグループとともに一度だけ表示。`off:`はプラグインがオンになっていないアカウント、アカウント自身のサーバーの中のこのフォルダーだけのサーバー、`This folder's project`、どのアカウントにも属さない問題も表示 | `r`で再読み込み |
 | Health | [`ccam doctor`](/features/doctor)の報告内容をアカウントごとのボックスで表示（下記） | `f`で選択中のボックスを修復、`F`ですべて修復（`doctor --fix`）、`↑`/`↓`でボックス間を移動 |
 
-`←`/`→`か`Tab`でタブを切り替え、`?`で現在のタブのキーを一覧表示し、`r`で短期キャッシュを使わずに使用量を取得し直し、`q`か`Esc`で終了します。
+`←`/`→`か`Tab`でタブを切り替え、`?`で現在のタブのキーを一覧表示し、`r`で短期キャッシュを使わずに使用量を取得し直してAgents・Extensions・Healthタブを読み込み直し、`q`か`Esc`で終了します。
 
 ## Accountsタブのキー
 
@@ -66,7 +67,7 @@ sourceHash: "e48ca2c5a643"
 | `c` | ショートカットコマンドを設定または削除します |
 | `x` | 削除します（先に確認し、最初はNoが選ばれています） |
 
-**TeamとEnterpriseのシート。** 自動的な選択（`ccam next`、`--fallback`、`ccam pick`、ダッシュボードの`n`）は、同じClaude TeamまたはEnterpriseの組織に属するシート間でも切り替えます。Anthropicのヘルプセンターには、「Each seat on a Team plan is assigned to one named individual, and only that person may use it」（Teamプランの各シートは1人の指定ユーザーに割り当てられ、そのユーザーのみが使用できます）、「Users can't route their work through another user's account to use that user's remaining usage」（ユーザーは別のユーザーのアカウントを通じて作業をルーティングして、そのユーザーの残りの使用量を使用することはできません）と書かれています（[Teamプラン](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)。[Enterpriseプラン](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)も同様です）。そのため、シート間で自動的な選択を使うと、Anthropicの規約に違反するおそれがあります。自動的な選択に頼る前に、所属する組織とAnthropicに確認してください。個人プラン（Pro、Max）については、[FAQの規約に関する説明](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)を参照してください。
+**TeamとEnterpriseのシート。** 自動的な選択（`ccam next`、`--fallback`、`ccam pick`、ダッシュボードの`n`、有効にした場合の[`auto_switch`](/features/next#auto-switch)）は、同じClaude TeamまたはEnterpriseの組織に属するシート間でも切り替えます。Anthropicのヘルプセンターには、「Each seat on a Team plan is assigned to one named individual, and only that person may use it」（Teamプランの各シートは1人の指定ユーザーに割り当てられ、そのユーザーのみが使用できます）、「Users can't route their work through another user's account to use that user's remaining usage」（ユーザーは別のユーザーのアカウントを通じて作業をルーティングして、そのユーザーの残りの使用量を使用することはできません）と書かれています（[Teamプラン](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)。[Enterpriseプラン](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)も同様です）。そのため、シート間で自動的な選択を使うと、Anthropicの規約に違反するおそれがあります。そこで使うかどうかはご自身の判断です。自動的な選択に頼る前に、所属する組織とAnthropicに確認してください。個人プラン（Pro、Max）については、[FAQの規約に関する説明](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)を参照してください。
 
 ## Healthタブ
 
@@ -95,6 +96,28 @@ Healthタブは、開いたときに[`ccam doctor`](/features/doctor)の点検�
 ```
 
 `↑`/`↓`でボックス間を移動でき、選択中のボックスはアクセントカラーの枠線で表示されます。`f`は選択中のボックスだけを`ccam doctor --fix`と同じやり方で修復します。アカウントのボックスではそのアカウントだけを、`General`ボックスではどのアカウントにも属さない結果（プラグインのパスとショートカットコマンド）を修復し、ほかのアカウントはもう一度点検するだけです。修復の前に確認し（``Like `ccam doctor --fix`: missing links and group folders are made, and a real file where a link belongs is backed up first; where the group has its own copy, the account then sees the group's. Nothing is lost.``）、修復するものがないボックスでは`nothing to repair in <name>`と表示するだけです。`F`は`ccam doctor --fix`と同じようにすべてを一度に修復し、`r`はもう一度点検します。
+
+## Agentsタブ
+
+Agentsタブは、[`ccam agents`](/features/agents)が出力する内容、つまりすべてのアカウントのバックグラウンドセッションと開いているセッションを、それぞれが属するアカウントとともに表示します。初めてタブを開いたとき、`r`を押したとき、停止の後、設定の変更の後に、すべてのアカウントのClaude Codeに同時に問い合わせ（`claude agents --json`、それぞれ最大15秒）、すべてが応答するまで`Asking every account's Claude Code for its sessions…`と表示します。
+
+```console
+  Accounts   Agents   Groups   Folders   Extensions   Health
+ Background agents and open sessions of every account; enter attaches to one.
+
+    Account   ID        Name   State          Folder      Started
+ ❯  work      -         -      open (busy)    ~/code/web  now
+    personal  49ec0028  probe  blocked, idle  ~/code/app  12m
+
+ ✘ lab: could not list its sessions: exit status 1 'claude agents --json' is
+   not available in this environment.
+
+ enter to attach · x to stop · r to reload · ? for shortcuts
+```
+
+`State`は、`ccam agents`と同じく、バックグラウンドセッションの状態とそのプロセスが行っていること、または対話型のセッションなら`open`です。問い合わせられなかったアカウントには、一覧の下に`✘`の行が付き、Claude Codeの返した内容が示されます。上の`lab`がその例で、エージェントビューがオフになっています。終了したバックグラウンドセッションは表示されず（`ccam agents --all`で一覧できます）、すべてのアカウントが応答してどれにもセッションがない場合、タブには``No sessions. Start one in the background with `ccam <account> --bg "…"`.``と表示されます。幅の狭いターミナルでは、`Started`、`Name`、`Folder`の順に列を省き、長いフォルダーは左側から切り詰めます。
+
+バックグラウンドセッションで`Enter`を押すと、ダッシュボードを閉じ、`ccam attach <id>`と同じように、そのセッションをそのアカウントとしてこのターミナルで開きます。ダッシュボードには戻りません（Claude Codeでは、`←`でエージェントビューに、`Ctrl+Z`でシェルに移ります）。開いているセッションにはIDがないので、`Enter`と`x`はバックグラウンドセッションが必要だと伝えるだけです。`x`は先に確認し、`No, keep it`が選ばれた状態で始まります: ``It runs as personal. Like `ccam personal stop 49ec0028`, Claude Code stops it and keeps its conversation, which `ccam attach 49ec0028` opens again.``。「はい」を選ぶと、ccamはそのアカウントとして`claude stop <id>`を実行し、``49ec0028 (personal) stopped; `ccam attach 49ec0028` opens it again``と、または停止できなかった理由を示して、一覧を読み込み直します。
 
 ## グループの変更
 

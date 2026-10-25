@@ -2,10 +2,10 @@
 title: Sık sorulan sorular
 metaTitle: "ccam SSS: birden fazla Claude Code hesabı"
 description: ccam, Claude Code hesapları, kullanım limitleri, paylaşım, gizlilik ve desteklenen sistemler hakkında yanıtlar.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 6
 translation: machine
-sourceHash: "c4e3b89bb4ea"
+sourceHash: "8e9deca652d1"
 ---
 
 ## ccam resmi bir Anthropic aracı mı?
@@ -14,13 +14,17 @@ Hayır. ccam resmi olmayan, açık kaynaklı bir projedir; Anthropic ile bağlan
 
 ## Birden fazla Claude Code hesabı kullanmama izin var mı?
 
-Bu, her hesabın koşullarına ve iş hesapları için kurumunuzun politikasına bağlıdır. Birden fazla hesap kullanmadan önce bunları kontrol edin. ccam yalnızca zaten sahip olduğunuz hesaplar arasında geçiş yapmayı kolaylaştırır.
+Bu, her hesabın koşullarına ve iş hesapları için kurumunuzun politikasına bağlıdır: Pro ve Max için Anthropic'in [Tüketici Koşulları](https://www.anthropic.com/legal/consumer-terms), Team ve Enterprise için [Ticari Koşulları](https://www.anthropic.com/legal/commercial-terms) ve hepsi için [Kullanım Politikası](https://www.anthropic.com/legal/aup). Birden fazla hesap kullanmadan önce bunları kontrol edin. ccam bir hesabın limitlerini yükseltmez, birleştirmez veya gizlemez; her hesap yine kendi limitinde durur. İşinizi, siz istediğinizde ya da [`auto_switch`](/features/next#auto-switch) özelliğini (Linux ve macOS) açtığınızda bir limitte kendiliğinden, başka bir hesabınızla sürdürür. Bunun hesaplarınız için izinli olup olmadığına siz karar verirsiniz.
 
-**Team ve Enterprise koltukları.** Otomatik seçim (`ccam next`, `--fallback`, `ccam pick`, kontrol panelindeki `n` tuşu), aynı Claude Team veya Enterprise kuruluşunun koltukları arasında da geçiş yapar. Anthropic'in yardım merkezinde şöyle belirtilir: "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team planındaki her koltuk, adı belirli tek bir kişiye atanır ve onu yalnızca o kişi kullanabilir) ve "Users can't route their work through another user's account to use that user's remaining usage" (kullanıcılar, başka bir kullanıcının kalan kullanım hakkından yararlanmak için işlerini o kullanıcının hesabı üzerinden yürütemez) ([Team planları](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise planları](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) için de durum aynıdır). Bu nedenle otomatik seçimi koltuklar arasında kullanmak Anthropic'in koşullarını ihlal edebilir. Buna güvenmeden önce kuruluşunuza ve Anthropic'e danışın. Kişisel planlar (Pro, Max) yukarıdaki paragrafta ele alınır.
+**Team ve Enterprise koltukları.** Otomatik seçim (`ccam next`, `--fallback`, `ccam pick`, kontrol panelindeki `n` tuşu ve açtığınızda [`auto_switch`](/features/next#auto-switch)), aynı Claude Team veya Enterprise kuruluşunun koltukları arasında da geçiş yapar. Anthropic'in yardım merkezinde şöyle belirtilir: "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team planındaki her koltuk, adı belirli tek bir kişiye atanır ve onu yalnızca o kişi kullanabilir) ve "Users can't route their work through another user's account to use that user's remaining usage" (kullanıcılar, başka bir kullanıcının kalan kullanım hakkından yararlanmak için işlerini o kullanıcının hesabı üzerinden yürütemez) ([Team planları](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise planları](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) için de durum aynıdır). Bu nedenle otomatik seçimi koltuklar arasında kullanmak Anthropic'in koşullarını ihlal edebilir. Orada kullanıp kullanmamak sizin kararınızdır: buna güvenmeden önce kuruluşunuza ve Anthropic'e danışın. Kişisel planlar (Pro, Max) yukarıdaki paragrafta ele alınır.
 
 ## ccam kullanım limitlerini atlatmanızı sağlar mı?
 
-Hayır. Her hesabın kendi limitleri geçerli olmaya devam eder. ccam bu limitleri gösterir ve bir hesabın limiti dolduğunda sahip olduğunuz başka bir hesapta devam etmenizi sağlar.
+Hiçbir hesabın kendi limitinin ötesine geçirmez: her hesap kendi limitlerini korur ve onlarda durur; ccam bu limitleri yükseltmez, birleştirmez veya gizlemez. ccam bu limitleri gösterir ve bir hesabın limiti dolduğunda başka bir hesabınızda devam etmenizi sağlar; `auto_switch` açıksa bunu kendiliğinden yapar (bkz. sonraki soru). Aynı Team veya Enterprise kuruluşunun koltukları arasında başka bir koltukta devam etmek o koltuğun kalan kullanımını harcar; Anthropic'in yardım merkezi bunu başka bir kullanıcının koltuğu için yasaklar (bkz. yukarıdaki Team ve Enterprise koltukları).
+
+## ccam, bir oturum limitine ulaştığında hesapları kendiliğinden değiştirebilir mi?
+
+Yalnızca siz açarsanız. `~/.config/ccam/config.toml` dosyasının en üstünde `auto_switch = true` olduğunda (Linux ve macOS; varsayılan olarak kapalı ve deneysel), Claude Code ccam'in başlattığı etkileşimli bir oturumu 5 saatlik, haftalık, Opus veya Sonnet limitinde durdurduğunda ccam oturumu sonlandırır ve konuşmayı payı kalan başka bir hesabınızla sürdürür: aynı Team veya Enterprise kuruluşunun başka bir koltuğu ya da başka bir kişisel plan (Pro, Max). Limitten önce asla geçiş yapmaz, kullanımınızı arka planda asla izlemez ve işi asla bir Team veya Enterprise kuruluşunun dışına ya da içine taşımaz. Koltuklarda işinizi bir koltuktan diğerine taşır; bu Anthropic'in koşullarını ihlal edebilir (bkz. yukarıdaki Team ve Enterprise koltukları). Kişisel planlar için ise Anthropic'in koşulları konuyu kesin olarak çözmez: Tüketici Koşulları, Anthropic açıkça izin vermedikçe Hizmetlere "through automated or non-human means" (otomatik veya insan dışı yollarla) erişmeyi yasaklar ve bir taşıma sizin yerinize bir mesaj gönderir; açıp açmamak sizin kararınızdır. [`auto_switch`](/features/next#auto-switch) her koşulu ve bir taşımanın neye mal olduğunu listeler.
 
 ## Tek bilgisayarda iki Claude Code hesabını nasıl kullanırım?
 
@@ -28,11 +32,11 @@ Her hesaba `CLAUDE_CONFIG_DIR` ile kendi yapılandırma klasörünü verin. ccam
 
 ## Bir konuşmaya başka bir hesapta nasıl devam ederim?
 
-Klasörde `ccam next --continue` komutunu çalıştırın: klasörün son konuşmasını bir sonraki hesaba taşır (en çok payı kalan hesap için `--auto`). Claude Code'un içinde [ccam eklentisinin](/docs/install#claude-code-plugin) `/ccam:switch` komutu, içinde bulunduğunuz oturum için aynısını yapar. İki hesap konuşma geçmişini paylaşıyorsa (`ccam group set default --add history` ya da onlara özel bir grupla: `ccam group add pair --items history --members work,side`), yeni hesap tam olarak o konuşmayı açar; paylaşmıyorsa Claude Code konuşmayı yeni hesabın geçmişine kopyalar.
+Klasörde `ccam next --continue` komutunu çalıştırın: klasörün son konuşmasını bir sonraki hesaba taşır (en çok payı kalan hesap için `--auto`). Claude Code'un içinde [ccam eklentisinin](/docs/install#claude-code-plugin) `/ccam:switch` komutu, içinde bulunduğunuz oturum için aynısını yapar. İki hesap konuşma geçmişini paylaşıyorsa (`ccam group set default --add history` ya da onlara özel bir grupla: `ccam group add pair --items history --members work,side`), yeni hesap tam olarak o konuşmayı açar; paylaşmıyorsa Claude Code konuşmayı yeni hesabın geçmişine kopyalar. Yeni hesabı konuşmanın tamamı yerine kısa bir özetle başlatmak için `--brief` ekleyin.
 
 ## ccam giriş bilgilerimi görüyor veya gönderiyor mu?
 
-ccam, Claude girişinizi hesaplar arasında asla paylaşmaz veya kopyalamaz; MCP sunucularının girişlerini de asla kopyalamaz. Bir hesabın erişim tokenını yalnızca `ccam usage`, `ccam next --auto` veya `ccam doctor` çalıştırdığınızda, o hesabın kullanımını Anthropic'in kullanım uç noktasına sormak için okur ve süresi dolmuş bir tokenı yalnızca `ccam usage --refresh` ile yeniler; `usage_source = "claude"` ile tokenı hiç okumaz. `ccam ext` ve `ccam doctor`, bir hesabın MCP girişlerinin yalnızca adlarını okur, tokenlarını asla okumaz. ccam'da telemetri yoktur. Bu sorguların dışında kendiliğinden yaptığı tek istek, kontrol panelinin GitHub'a en son ccam sürümünü sormasıdır ve bu istek sizin ya da hesaplarınız hakkında hiçbir şey taşımaz.
+ccam, Claude girişinizi hesaplar arasında asla paylaşmaz veya kopyalamaz; MCP sunucularının girişlerini de asla kopyalamaz. Bir hesabın erişim tokenını yalnızca o hesabın kullanımını Anthropic'in kullanım uç noktasına sormak için okur: `ccam usage`, kontrol paneli, `ccam doctor` ve otomatik seçim için (`ccam next --auto`, `ccam pick`, `--fallback` ve bir oturum limitine ulaştığında `auto_switch`). Süresi dolmuş bir tokenı yalnızca `ccam usage --refresh` ile yeniler; `usage_source = "claude"` ile hiçbir yere token göndermez ve kayıtlı girişi (dosyayı ya da macOS Anahtar Zinciri kaydını) yalnızca hâlâ çalışıp çalışmadığını anlamak için okur. `ccam ext` ve `ccam doctor`, bir hesabın MCP girişlerinin yalnızca adlarını okur, tokenlarını asla okumaz. ccam'da telemetri yoktur. Bu sorguların dışında kendiliğinden yaptığı tek istek, kontrol panelinin GitHub'a en son ccam sürümünü sormasıdır ve bu istek sizin ya da hesaplarınız hakkında hiçbir şey taşımaz.
 
 ## Uzak bir sunucuda nasıl giriş yaparım?
 
@@ -56,7 +60,7 @@ Bir oturum içinde `claude mcp add` ile eklenen sunucular yalnızca o hesap içi
 
 ## ccam, Claude Code'u yavaşlatır mı?
 
-Claude Code'u ccam üzerinden başlatmak yaklaşık 4 milisaniye ekler; bu süre bir dizüstü bilgisayarda `scripts/perf-check.sh` ile ölçülmüştür. ccam küçük bir dosya okur, paylaşılan bağlantıları kontrol eder ve ardından kendini `claude` ile değiştirir; dolayısıyla siz çalışırken çalışır durumda değildir. Windows bir süreci değiştiremez; bu yüzden orada ccam, Claude Code'u başlatır ve başka hiçbir şey yapmadan onu bekler.
+Claude Code'u ccam üzerinden başlatmak yaklaşık 4 milisaniye ekler; bu süre bir dizüstü bilgisayarda `scripts/perf-check.sh` ile ölçülmüştür. ccam küçük bir dosya okur, paylaşılan bağlantıları kontrol eder ve ardından kendini `claude` ile değiştirir; dolayısıyla varsayılan olarak siz çalışırken çalışır durumda değildir. Windows bir süreci değiştiremez; bu yüzden orada ccam, Claude Code'u başlatır ve başka hiçbir şey yapmadan onu bekler. `relay` veya `auto_switch` açık olduğunda ccam, konuşmayı sürdürebilmek için her etkileşimli oturumun yanında aynı şekilde bekler.
 
 ## ccam'ı nasıl güncellerim?
 

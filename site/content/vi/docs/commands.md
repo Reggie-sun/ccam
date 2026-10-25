@@ -2,10 +2,10 @@
 title: Tham chiếu lệnh
 metaTitle: "Tham chiếu lệnh ccam"
 description: "Mọi lệnh và tùy chọn của ccam, từ ccam add và ccam <name> đến ccam usage, ccam next và ccam doctor."
-updated: 2026-10-24
+updated: 2026-10-25
 order: 3
 translation: machine
-sourceHash: "36af7e209cd9"
+sourceHash: "abba525cae48"
 ---
 
 Đặt `--dry-run` trước một lệnh để xem lệnh đó sẽ làm gì mà không thực sự thực hiện, ví dụ `ccam --dry-run work`. Tùy chọn này dùng được khi khởi động Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`) và với `group`, `migrate`, `shortcut`, `update` và `doctor --fix`. Các lệnh khác có thay đổi một thứ gì đó sẽ từ chối tùy chọn này thay vì chạy.
@@ -27,7 +27,7 @@ ccam --fallback work -p "fix the tests"   # run again as another account at the 
 
 `--fallback` đặt trước tên tài khoản dùng cho các lần chạy `-p`/`--print`. Khi tài khoản chạm giới hạn sử dụng, ccam chạy lại cùng lệnh đó bằng tài khoản đã đăng nhập còn nhiều hạn mức nhất và chỉ in đầu ra của lần chạy đã hoàn tất. Xem [Tài khoản theo thư mục](/features/folder) và [Chạy lại khi chạm giới hạn](/features/next#run-again-at-the-limit).
 
-**Seat của gói Team và Enterprise.** Lựa chọn tự động (`ccam next`, `--fallback`, `ccam pick`, phím `n` trên bảng điều khiển) cũng chuyển đổi giữa các seat của cùng một tổ chức Claude Team hoặc Enterprise. Trung tâm trợ giúp của Anthropic ghi rằng "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (mỗi seat của gói Team được gán cho đích danh một cá nhân, và chỉ người đó được phép sử dụng) và "Users can't route their work through another user's account to use that user's remaining usage" (người dùng không được chuyển công việc của mình qua tài khoản của một người dùng khác để dùng phần hạn mức còn lại của người đó) ([gói Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); tương tự đối với [gói Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Vì vậy, dùng lựa chọn tự động giữa các seat có thể vi phạm điều khoản của Anthropic. Hãy xác nhận với tổ chức của bạn và Anthropic trước khi dựa vào nó. Các gói cá nhân (Pro, Max) được đề cập trong [ghi chú về điều khoản ở phần Câu hỏi thường gặp](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Seat của gói Team và Enterprise.** Lựa chọn tự động (`ccam next`, `--fallback`, `ccam pick`, phím `n` trên bảng điều khiển, và [`auto_switch`](/features/next#auto-switch) khi bạn bật nó) cũng chuyển đổi giữa các seat của cùng một tổ chức Claude Team hoặc Enterprise. Trung tâm trợ giúp của Anthropic ghi rằng "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (mỗi seat của gói Team được gán cho đích danh một cá nhân, và chỉ người đó được phép sử dụng) và "Users can't route their work through another user's account to use that user's remaining usage" (người dùng không được chuyển công việc của mình qua tài khoản của một người dùng khác để dùng phần hạn mức còn lại của người đó) ([gói Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); tương tự đối với [gói Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Vì vậy, dùng lựa chọn tự động giữa các seat có thể vi phạm điều khoản của Anthropic. Có dùng nó ở đó hay không là quyết định của bạn: hãy xác nhận với tổ chức của bạn và Anthropic trước khi dựa vào nó. Các gói cá nhân (Pro, Max) được đề cập trong [ghi chú về điều khoản ở phần Câu hỏi thường gặp](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 Một lệnh tắt như `ccwork` khởi động tài khoản của nó theo cùng cách: `ccwork --resume` làm đúng những gì `ccam work --resume` làm. Xem [lệnh tắt](/docs/commands#shortcuts).
 
@@ -115,8 +115,9 @@ ccam mcp remove fs
 ccam usage           # also: ccam u
 ccam usage --watch   # refresh every 60 seconds
 ccam usage --json
-ccam usage --source claude      # Claude Code looks it up; ccam never touches a token
+ccam usage --source claude      # Claude Code looks it up; ccam sends no token
 ccam next --continue            # this folder's last conversation, as the next account
+ccam next --continue --brief    # a new conversation from a summary of the last one
 ccam next --auto
 ccam next --auto --max-usage 80 --wait
 ccam next -c --auto -- --dangerously-skip-permissions   # claude's own options after --
@@ -126,7 +127,7 @@ ccam agents                     # background sessions of every account
 ccam attach 49ec0028            # open one, as the account that started it (or by its name)
 ```
 
-`next --auto`, `--fallback` và `ccam pick` chọn theo cùng một cách: ưu tiên các tài khoản dưới `auto_max_usage` (`config.toml`, mặc định 100), theo `auto_strategy` (`headroom`, `expiring` hoặc `balance`), có tính khoảng hàng tuần của `--model`, không bao giờ chọn tài khoản ở mức 100% (một khoảng mà Claude Code báo là đã đầy được tính là 100% cho đến khi đặt lại), không bao giờ chọn đăng nhập bằng API key, và chỉ trong tổ chức của tài khoản xuất phát (`--cross-org` hoặc `cross_org = true` để tìm rộng hơn). `--wait` nhận giá trị sau dấu `=` (`--wait=2h`); viết với dấu cách thì bị từ chối kèm gợi ý. Khi không chọn được tài khoản nào, chúng thoát với mã 75, hoặc với `--wait` thì chờ tài khoản đầu tiên được đặt lại. `ccam next --continue` chuyển một cuộc hội thoại sang ngay cả giữa các tài khoản không dùng chung lịch sử: khi đó Claude Code sao chép nó vào tài khoản mới. Khác với `ccam <name>`, `ccam next` tự đọc các tùy chọn của nó, nên các tùy chọn của Claude Code đặt sau `--`; thiếu nó, ccam sẽ dừng với `unknown flag`. Bên trong Claude Code, `/ccam:switch [account]` của plugin chuyển một cuộc hội thoại đi tiếp, và `ccam hook` là lệnh mà các hook của plugin chạy. Xem [Chuyển sang tài khoản tiếp theo](/features/next), [Chọn tài khoản cho script](/features/pick) và [Phiên chạy nền của mọi tài khoản](/features/agents).
+`next --auto`, `--fallback` và `ccam pick` chọn theo cùng một cách: ưu tiên các tài khoản dưới `auto_max_usage` (`config.toml`, mặc định 100), theo `auto_strategy` (`headroom`, `expiring` hoặc `balance`), có tính khoảng hàng tuần của `--model`, không bao giờ chọn tài khoản ở mức 100% (một khoảng mà Claude Code báo là đã đầy được tính là 100% cho đến khi đặt lại), không bao giờ chọn đăng nhập bằng API key, và chỉ trong tổ chức của tài khoản xuất phát (`--cross-org` hoặc `cross_org = true` để tìm rộng hơn). `--wait` nhận giá trị sau dấu `=` (`--wait=2h`); viết với dấu cách thì bị từ chối kèm gợi ý. Khi không chọn được tài khoản nào, chúng thoát với mã 75, hoặc với `--wait` thì chờ tài khoản đầu tiên được đặt lại. `ccam next --continue` chuyển một cuộc hội thoại sang ngay cả giữa các tài khoản không dùng chung lịch sử: khi đó Claude Code sao chép nó vào tài khoản mới. Với `--brief`, tài khoản mới thay vào đó bắt đầu một cuộc hội thoại mới, từ bản tóm tắt mà ccam viết về cuộc hội thoại trước mà không dùng mô hình ([`--brief`](/features/next#brief)). Khác với `ccam <name>`, `ccam next` tự đọc các tùy chọn của nó, nên các tùy chọn của Claude Code đặt sau `--`; thiếu nó, ccam sẽ dừng với `unknown flag`. Bên trong Claude Code, `/ccam:switch [account]` của plugin chuyển một cuộc hội thoại đi tiếp, và `ccam hook` là lệnh mà các hook của plugin chạy. Với `auto_switch = true` trong `config.toml` (Linux và macOS; mặc định tắt), hook giới hạn còn kết thúc một phiên tương tác do ccam khởi động và tiếp tục nó dưới một tài khoản khác còn hạn mức, chỉ một tài khoản cùng loại: một seat khác của cùng tổ chức, hoặc một gói cá nhân khác ([`auto_switch`](/features/next#auto-switch)). Xem [Chuyển sang tài khoản tiếp theo](/features/next), [Chọn tài khoản cho script](/features/pick) và [Phiên chạy nền của mọi tài khoản](/features/agents).
 
 ## Bảo trì
 
@@ -148,10 +149,10 @@ ccam completion bash # or zsh, powershell
 
 | Đường dẫn | Nội dung |
 | --- | --- |
-| `~/.config/ccam/config.toml` | Các tài khoản, nhóm và cài đặt (`theme`, `usage_source`, `relay`, `cross_org` …). Cài đặt đặt ở đầu tệp, phía trên `[[group]]`, `[[profile]]` hoặc `[[folder]]` đầu tiên: cài đặt nằm dưới một bảng thuộc về bảng đó, nên ccam nêu tên nó mỗi lần khởi động và trong `ccam doctor`, và các lệnh lưu cấu hình sẽ từ chối cho đến khi nó được dời lên. Chú thích không được giữ lại khi ccam lưu tệp |
+| `~/.config/ccam/config.toml` | Các tài khoản, nhóm và cài đặt (`theme`, `usage_source`, `relay`, `auto_switch`, `cross_org` …). Cài đặt đặt ở đầu tệp, phía trên `[[group]]`, `[[profile]]` hoặc `[[folder]]` đầu tiên: cài đặt nằm dưới một bảng thuộc về bảng đó, nên ccam nêu tên nó mỗi lần khởi động và trong `ccam doctor`, và các lệnh lưu cấu hình sẽ từ chối cho đến khi nó được dời lên. Chú thích không được giữ lại khi ccam lưu tệp |
 | `~/.local/share/ccam/profiles/<name>/` | `CLAUDE_CONFIG_DIR` của từng tài khoản |
 | `~/.local/share/ccam/groups/<group>/` | Cài đặt, máy chủ MCP, tiện ích mở rộng và lịch sử dùng chung |
-| `~/.local/state/ccam/` | Bộ nhớ đệm mức sử dụng và bản ghi giới hạn (`usage/<name>.json`, `usage/<name>.limit.json`), thời điểm dùng gần nhất, dấu phiên và khóa (`locks/`), các lệnh tắt mà ccam đã tạo (`shortcuts.json`), một lần thay đổi nhóm chưa xong (`group-change.json`), và các ghi chú mà `/ccam:switch` và hook giới hạn để lại (`handoff/<account>/<session>.json`) |
+| `~/.local/state/ccam/` | Bộ nhớ đệm mức sử dụng và bản ghi giới hạn (`usage/<name>.json`, `usage/<name>.limit.json`), thời điểm dùng gần nhất, dấu phiên và khóa (`locks/`), các lệnh tắt mà ccam đã tạo (`shortcuts.json`), một lần thay đổi nhóm chưa xong (`group-change.json`), các ghi chú mà `/ccam:switch` và hook giới hạn để lại (`handoff/<account>/<session>.json`), thời điểm `ccam pick` hoặc `auto_switch` chọn mỗi tài khoản lần gần nhất (`picks/<name>`; một lượt chọn được tính trong 2 phút), và các bản tóm tắt của `--brief`, giữ 7 ngày (`brief/<session>.md`) |
 | `~/.local/bin/<shortcut>` | Các lệnh tắt như `ccwork`, là liên kết đến ccam |
 
 Các biến `XDG_CONFIG_HOME`, `XDG_DATA_HOME` và `XDG_STATE_HOME` dùng để đổi vị trí của các thư mục này. Trên Windows, `~` là `%USERPROFILE%` và các lệnh tắt là `<shortcut>.exe`.

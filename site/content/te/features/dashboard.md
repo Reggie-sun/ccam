@@ -1,18 +1,18 @@
 ---
 title: డాష్‌బోర్డ్
 description: టెర్మినల్‌లో ccam ఖాతాలు, గ్రూప్‌లు, ఫోల్డర్ నియమాలు, ఎక్స్‌టెన్షన్లు, తనిఖీలతో పూర్తి స్క్రీన్ డాష్‌బోర్డ్ తెరుస్తుంది; ప్రతి మార్పు ముందు ప్లాన్ చూపుతుంది.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 15
 translation: machine
-sourceHash: "e48ca2c5a643"
+sourceHash: "98ccf6cd81e9"
 ---
 
-స్టాండర్డ్ ఇన్‌పుట్, అవుట్‌పుట్ టెర్మినల్ అయినప్పుడు ఆర్గ్యుమెంట్‌లు లేని `ccam` పూర్తి స్క్రీన్ డాష్‌బోర్డ్‌ను తెరుస్తుంది; లేకపోతే `ccam list` ను ప్రింట్ చేస్తుంది. డాష్‌బోర్డ్ ప్రతి ఖాతాను దాని వినియోగం, గ్రూప్‌లతో చూపిస్తుంది, కమాండ్‌లు చేసే పనులనే చేస్తుంది: ప్రారంభించడం, జోడించడం, లాగిన్ చేయడం, గ్రూప్‌లను మార్చడం, ఫోల్డర్ నియమాలను సెట్ చేయడం, తనిఖీ చేయడం, సరిచేయడం. ప్రారంభించడం దాన్ని మూసివేస్తుంది; ఖాతాను జోడించడం లేదా లాగిన్ చేయడం టెర్మినల్ కోసం దాన్ని వదిలి, తర్వాత తిరిగి వస్తుంది.
+స్టాండర్డ్ ఇన్‌పుట్, అవుట్‌పుట్ టెర్మినల్ అయినప్పుడు ఆర్గ్యుమెంట్‌లు లేని `ccam` పూర్తి స్క్రీన్ డాష్‌బోర్డ్‌ను తెరుస్తుంది; లేకపోతే `ccam list` ను ప్రింట్ చేస్తుంది. డాష్‌బోర్డ్ ప్రతి ఖాతాను దాని వినియోగం, గ్రూప్‌లతో చూపిస్తుంది, కమాండ్‌లు చేసే పనులనే చేస్తుంది: ప్రారంభించడం, జోడించడం, లాగిన్ చేయడం, గ్రూప్‌లను మార్చడం, ఫోల్డర్ నియమాలను సెట్ చేయడం, బ్యాక్‌గ్రౌండ్ సెషన్‌లను జాబితా చేయడం, తనిఖీ చేయడం, సరిచేయడం. ప్రారంభించడం, లేదా బ్యాక్‌గ్రౌండ్ సెషన్‌కు అటాచ్ అవ్వడం, దాన్ని మూసివేస్తుంది; ఖాతాను జోడించడం లేదా లాగిన్ చేయడం టెర్మినల్ కోసం దాన్ని వదిలి, తర్వాత తిరిగి వస్తుంది.
 
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -40,12 +40,13 @@ sourceHash: "e48ca2c5a643"
 | ట్యాబ్ | ఏమి చూపిస్తుంది | కీలు |
 | --- | --- | --- |
 | Accounts | నంబర్, పేరు, ఇమెయిల్, 5 గంటల, వారపు, Fable బార్‌లు, చివరి వినియోగం, గ్రూప్‌లు; `✔` డిఫాల్ట్, `▸` ఈ ఫోల్డర్ ఖాతా, `•` రన్ అవుతున్నది (ccam లేకుండా ప్రారంభించిన Claude Code కూడా: సాధారణ `claude`, ఒక IDE, బ్యాక్‌గ్రౌండ్ సెషన్‌లు, వాటి daemon) | కింద చూడండి |
+| Agents | [`ccam agents`](/features/agents) జాబితా చేసేది: ప్రతి ఖాతా బ్యాక్‌గ్రౌండ్ సెషన్‌లు, తెరిచి ఉన్న సెషన్‌లు, వాటి స్థితి, ఫోల్డర్, ప్రారంభ సమయంతో (కింద చూడండి) | `enter` అటాచ్ (`ccam attach` లాగా), `x` ఆపడం, `r` మళ్లీ లోడ్ |
 | Groups | ప్రతి గ్రూప్, అది ఏమి షేర్ చేస్తుంది, దాని ఖాతాలు, ఏ గ్రూప్‌లోనూ లేని ఖాతాలు | `enter` ఎడిట్, `n` కొత్తది, `e` పేరు మార్పు, `x` తీసివేత |
 | Folders | [`ccam folder`](/features/folder) నియమాలు, ఇక్కడ వర్తించే నియమం, మీరు సింబాలిక్ లింక్ ద్వారా ఫోల్డర్‌కు చేరుకున్నప్పుడు కూడా (కొత్త నియమాలు లింక్‌లను పరిష్కరించి నిల్వ అవుతాయి) | `n` ఇక్కడ ఒక ఖాతాను ఉపయోగించు, `enter` మార్పు, `x` తీసివేత |
 | Extensions | [`ccam ext`](/features/ext) చూపించేది, ప్రతి ఎక్స్‌టెన్షన్ ఒక్కసారి, అది వచ్చే గ్రూప్‌లతో, `off:` ఒక ప్లగిన్ ఆన్ చేయని ఖాతాలు, ఒక ఖాతా సొంత సర్వర్లలో ఈ ఫోల్డర్ కోసం మాత్రమే ఉన్నవి, `This folder's project`, ఏ ఖాతాకూ చెందని సమస్యలు | `r` మళ్లీ లోడ్ |
 | Health | [`ccam doctor`](/features/doctor) నివేదించేది, ప్రతి ఖాతాకు ఒక బాక్స్‌గా (కింద చూడండి) | `f` ఎంచుకున్న బాక్స్‌ను సరిచేయడం, `F` అన్నింటినీ సరిచేయడం (`doctor --fix`), `↑`/`↓` బాక్స్‌ల మధ్య కదలిక |
 
-`←`/`→` లేదా `Tab` ట్యాబ్‌లను మారుస్తాయి, `?` ప్రస్తుత ట్యాబ్ కీలను జాబితా చేస్తుంది, `r` చిన్న కాష్ లేకుండా వినియోగాన్ని మళ్లీ చూస్తుంది, `q` లేదా `Esc` నిష్క్రమిస్తుంది.
+`←`/`→` లేదా `Tab` ట్యాబ్‌లను మారుస్తాయి, `?` ప్రస్తుత ట్యాబ్ కీలను జాబితా చేస్తుంది, `r` చిన్న కాష్ లేకుండా వినియోగాన్ని మళ్లీ చూస్తుంది, Agents, Extensions, Health ట్యాబ్‌లను మళ్లీ లోడ్ చేస్తుంది, `q` లేదా `Esc` నిష్క్రమిస్తుంది.
 
 ## Accounts ట్యాబ్‌లోని కీలు
 
@@ -66,7 +67,7 @@ sourceHash: "e48ca2c5a643"
 | `c` | దాని షార్ట్‌కట్ కమాండ్‌ను సెట్ చేస్తుంది లేదా తీసివేస్తుంది |
 | `x` | దాన్ని తీసివేస్తుంది (ముందుగా అడుగుతుంది, No పై మొదలవుతుంది) |
 
-**Team, Enterprise సీట్లు.** ఆటోమేటిక్ ఎంపిక (`ccam next`, `--fallback`, `ccam pick`, డాష్‌బోర్డ్‌లోని `n`) ఒకే Claude Team లేదా Enterprise సంస్థలోని సీట్ల మధ్య కూడా మారుస్తుంది. Anthropic సహాయ కేంద్రం "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team ప్లాన్‌లోని ప్రతి సీటు పేరుతో నిర్దేశించిన ఒక వ్యక్తికి కేటాయించబడుతుంది, ఆ వ్యక్తి మాత్రమే దాన్ని ఉపయోగించవచ్చు) అని, "Users can't route their work through another user's account to use that user's remaining usage" (యూజర్లు మరో యూజర్‌కు మిగిలి ఉన్న వినియోగాన్ని వాడుకోవడానికి తమ పనిని ఆ యూజర్ ఖాతా ద్వారా మళ్లించకూడదు) అని చెబుతుంది ([Team ప్లాన్‌లు](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise ప్లాన్‌లకు](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) కూడా ఇదే వర్తిస్తుంది). కాబట్టి సీట్ల మధ్య ఆటోమేటిక్ ఎంపికను ఉపయోగించడం Anthropic నిబంధనల ఉల్లంఘన కావచ్చు. దానిపై ఆధారపడే ముందు మీ సంస్థను, Anthropic ను సంప్రదించి నిర్ధారించుకోండి. వ్యక్తిగత ప్లాన్‌ల (Pro, Max) గురించి [తరచుగా అడిగే ప్రశ్నలలోని నిబంధనల గమనిక](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) చెబుతుంది.
+**Team, Enterprise సీట్లు.** ఆటోమేటిక్ ఎంపిక (`ccam next`, `--fallback`, `ccam pick`, డాష్‌బోర్డ్‌లోని `n`, మీరు ఆన్ చేసినప్పుడు [`auto_switch`](/features/next#auto-switch)) ఒకే Claude Team లేదా Enterprise సంస్థలోని సీట్ల మధ్య కూడా మారుస్తుంది. Anthropic సహాయ కేంద్రం "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team ప్లాన్‌లోని ప్రతి సీటు పేరుతో నిర్దేశించిన ఒక వ్యక్తికి కేటాయించబడుతుంది, ఆ వ్యక్తి మాత్రమే దాన్ని ఉపయోగించవచ్చు) అని, "Users can't route their work through another user's account to use that user's remaining usage" (యూజర్లు మరో యూజర్‌కు మిగిలి ఉన్న వినియోగాన్ని వాడుకోవడానికి తమ పనిని ఆ యూజర్ ఖాతా ద్వారా మళ్లించకూడదు) అని చెబుతుంది ([Team ప్లాన్‌లు](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise ప్లాన్‌లకు](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) కూడా ఇదే వర్తిస్తుంది). కాబట్టి సీట్ల మధ్య ఆటోమేటిక్ ఎంపికను ఉపయోగించడం Anthropic నిబంధనల ఉల్లంఘన కావచ్చు. అక్కడ దాన్ని ఉపయోగించాలా వద్దా అనేది మీ నిర్ణయం: దానిపై ఆధారపడే ముందు మీ సంస్థను, Anthropic ను సంప్రదించి నిర్ధారించుకోండి. వ్యక్తిగత ప్లాన్‌ల (Pro, Max) గురించి [తరచుగా అడిగే ప్రశ్నలలోని నిబంధనల గమనిక](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) చెబుతుంది.
 
 ## Health ట్యాబ్
 
@@ -95,6 +96,28 @@ Health ట్యాబ్ మీరు దాన్ని తెరిచిన�
 ```
 
 `↑`/`↓` ఒక బాక్స్ నుంచి మరో బాక్స్‌కు కదిలిస్తాయి, ఎంచుకున్న బాక్స్‌కు యాక్సెంట్ రంగు అంచు ఉంటుంది. `f` ఎంచుకున్న బాక్స్‌ను మాత్రమే సరిచేస్తుంది, `ccam doctor --fix` చేసే విధంగానే: ఒక ఖాతా బాక్స్‌పై ఆ ఖాతాను మాత్రమే సరిచేస్తుంది, `General` బాక్స్‌పై ఏ ఖాతాకూ చెందని ఫలితాలను (ప్లగిన్ పాత్‌లు, షార్ట్‌కట్‌లు); మిగతా ప్రతి ఖాతా మళ్లీ తనిఖీ మాత్రమే అవుతుంది. ఇది ముందుగా అడుగుతుంది (``Like `ccam doctor --fix`: missing links and group folders are made, and a real file where a link belongs is backed up first; where the group has its own copy, the account then sees the group's. Nothing is lost.``), సరిచేయాల్సింది ఏమీ లేని బాక్స్ కేవలం `nothing to repair in <name>` అని చెబుతుంది. `F` అన్నింటినీ ఒకేసారి సరిచేస్తుంది, `ccam doctor --fix` లాగా; `r` మళ్లీ తనిఖీ చేస్తుంది.
+
+## Agents ట్యాబ్
+
+Agents ట్యాబ్ [`ccam agents`](/features/agents) ప్రింట్ చేసేదాన్ని చూపిస్తుంది: ప్రతి ఖాతా బ్యాక్‌గ్రౌండ్ సెషన్‌లు, తెరిచి ఉన్న సెషన్‌లు, ఒక్కొక్కటి ఏ ఖాతాకు చెందినదో దానితో సహా. మీరు ట్యాబ్‌ను మొదటిసారి తెరిచినప్పుడు, `r` నొక్కినప్పుడు, ఒక సెషన్‌ను ఆపిన తర్వాత, config మారిన తర్వాత అది ప్రతి ఖాతా Claude Code ను ఒకేసారి అడుగుతుంది (`claude agents --json`, ఒక్కోదానికి గరిష్ఠంగా 15 సెకన్లు), అన్నీ సమాధానం ఇచ్చే వరకు `Asking every account's Claude Code for its sessions…` అని చూపిస్తుంది.
+
+```console
+  Accounts   Agents   Groups   Folders   Extensions   Health
+ Background agents and open sessions of every account; enter attaches to one.
+
+    Account   ID        Name   State          Folder      Started
+ ❯  work      -         -      open (busy)    ~/code/web  now
+    personal  49ec0028  probe  blocked, idle  ~/code/app  12m
+
+ ✘ lab: could not list its sessions: exit status 1 'claude agents --json' is
+   not available in this environment.
+
+ enter to attach · x to stop · r to reload · ? for shortcuts
+```
+
+`ccam agents` లో లాగే, `State` అనేది బ్యాక్‌గ్రౌండ్ సెషన్ స్థితి, దాని ప్రాసెస్ ఏమి చేస్తోందో, లేదా ఇంటరాక్టివ్ సెషన్‌కు `open`. అడగలేకపోయిన ఖాతాకు జాబితా కింద Claude Code చెప్పినదానితో ఒక `✘` లైన్ వస్తుంది, పైన ఉన్న `lab` లాగా, దాని agent view ఆఫ్‌లో ఉంది. పూర్తయిన బ్యాక్‌గ్రౌండ్ సెషన్‌లు వదిలేయబడతాయి (`ccam agents --all` వాటిని జాబితా చేస్తుంది), ప్రతి ఖాతా సమాధానం ఇచ్చి, దేనికీ సెషన్ లేనప్పుడు ట్యాబ్ ``No sessions. Start one in the background with `ccam <account> --bg "…"`.`` అని చెబుతుంది. ఇరుకైన టెర్మినల్‌లో ట్యాబ్ ముందుగా `Started` ను, తర్వాత `Name` ను, తర్వాత `Folder` ను తీసేస్తుంది, పొడవైన ఫోల్డర్‌ను ఎడమ వైపు నుంచి కత్తిరిస్తుంది.
+
+బ్యాక్‌గ్రౌండ్ సెషన్‌పై `Enter` డాష్‌బోర్డ్‌ను మూసివేసి, `ccam attach <id>` లాగే, ఆ సెషన్‌ను దాని ఖాతాగా ఈ టెర్మినల్‌లో తెరుస్తుంది; డాష్‌బోర్డ్ తిరిగి రాదు (Claude Code లో, `←` దాని agent view కు, `Ctrl+Z` షెల్‌కు వెళ్తాయి). తెరిచి ఉన్న సెషన్‌కు id ఉండదు, కాబట్టి `Enter`, `x` బ్యాక్‌గ్రౌండ్ సెషన్ అవసరమని మాత్రమే చెబుతాయి. `x` ముందుగా అడుగుతుంది, `No, keep it` పై మొదలవుతుంది: ``It runs as personal. Like `ccam personal stop 49ec0028`, Claude Code stops it and keeps its conversation, which `ccam attach 49ec0028` opens again.`` అవును అంటే, ccam ఆ ఖాతాగా `claude stop <id>` ను రన్ చేసి, ``49ec0028 (personal) stopped; `ccam attach 49ec0028` opens it again`` అని లేదా ఎందుకు ఆపలేకపోయిందో చెప్పి, జాబితాను మళ్లీ చదువుతుంది.
 
 ## గ్రూప్‌లను మార్చడం
 

@@ -1,10 +1,10 @@
 ---
 title: 사용량 한도와 계정 전환
 description: ccam usage로 모든 Claude Code 계정의 5시간·주간 사용량을 확인하고, ccam next --auto로 여유가 가장 많은 계정을 엽니다.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 5
 translation: machine
-sourceHash: "ccaed084207a"
+sourceHash: "7c15419446c3"
 ---
 
 `ccam usage`는 각 계정이 5시간 한도, 주간 한도, 모델별 주간 한도(Fable 등)를 얼마나 썼는지 보여 줍니다. `ccam next --auto`는 여유가 가장 많은 계정을 열고, `--continue`는 지금 대화를 그 계정에서 이어 갑니다.
@@ -28,7 +28,7 @@ $ ccam usage
 
 계정마다 수치를 가져온 시점을 적은 줄이 먼저 나오고, 그 아래에 한도마다 막대 하나와 초기화까지 남은 시간이 표시됩니다. 5시간 구간, 모든 모델에 대한 주간 구간, 그리고 Fable처럼 모델마다 따로 있는 주간 구간입니다. 막대는 80%부터 노란색, 100%에서 빨간색으로 바뀝니다. 마지막 줄은 `ccam next --auto`가 열 계정을 알려 줍니다. `auto_strategy = "expiring"`이나 `"balance"`이면 대신 `→ next --auto picks <name>: <reason>`으로 표시됩니다.
 
-**Team·Enterprise 시트.** 자동 선택(`ccam next`, `--fallback`, `ccam pick`, 대시보드의 `n`)은 같은 Claude Team이나 Enterprise 조직의 시트 사이에서도 계정을 바꿉니다. Anthropic 고객센터는 "Each seat on a Team plan is assigned to one named individual, and only that person may use it"(팀 플랜의 각 시트는 한 명의 지정된 개인에게 할당되며, 그 사람만 사용할 수 있습니다), "Users can't route their work through another user's account to use that user's remaining usage"(사용자는 다른 사용자의 계정을 통해 작업을 라우팅하여 해당 사용자의 남은 사용량을 사용할 수 없습니다)라고 안내합니다([Team 요금제](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129), [Enterprise 요금제](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)도 마찬가지). 따라서 시트 사이에서 자동 선택을 쓰면 Anthropic의 약관을 위반할 수 있습니다. 이 기능에 의존하기 전에 소속 조직과 Anthropic에 확인하세요. 개인 요금제(Pro, Max)에 대해서는 [FAQ의 약관 안내](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)를 참고하세요.
+**Team·Enterprise 시트.** 자동 선택(`ccam next`, `--fallback`, `ccam pick`, 대시보드의 `n`, 그리고 켜 두었을 때의 [`auto_switch`](/features/next#auto-switch))은 같은 Claude Team이나 Enterprise 조직의 시트 사이에서도 계정을 바꿉니다. Anthropic 고객센터는 "Each seat on a Team plan is assigned to one named individual, and only that person may use it"(팀 플랜의 각 시트는 한 명의 지정된 개인에게 할당되며, 그 사람만 사용할 수 있습니다), "Users can't route their work through another user's account to use that user's remaining usage"(사용자는 다른 사용자의 계정을 통해 작업을 라우팅하여 해당 사용자의 남은 사용량을 사용할 수 없습니다)라고 안내합니다([Team 요금제](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129), [Enterprise 요금제](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)도 마찬가지). 따라서 시트 사이에서 자동 선택을 쓰면 Anthropic의 약관을 위반할 수 있습니다. 시트 사이에서 이 기능을 쓸지는 사용자가 판단할 일입니다. 의존하기 전에 소속 조직과 Anthropic에 확인하세요. 개인 요금제(Pro, Max)에 대해서는 [FAQ의 약관 안내](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)를 참고하세요.
 
 ## 수치의 출처
 
@@ -71,6 +71,8 @@ ccam next --continue  # carry this folder's conversation on as the next account
 ```
 
 `ccam next`는 로그인되지 않은 계정을 건너뛰고, `--auto`는 사용량이 100%인 계정(Claude Code가 가득 찼다고 알린 구간도 초기화될 때까지 포함)과 다른 조직의 계정을 건너뜁니다. 두 계정이 대화 내역을 공유하면 `--continue`는 같은 대화를 열고, 그렇지 않으면 Claude Code가 대화를 새 계정으로 복사합니다. [공유](/docs/sharing)와 [다음 계정으로 전환](/features/next#continue)을 참고하세요.
+
+`config.toml` 맨 위에 `auto_switch = true`를 두면(Linux와 macOS 전용, 기본값은 꺼짐) Claude Code가 대화형 세션을 한도에서 멈추고 같은 종류의 다른 계정에 여유가 있을 때 ccam이 이 전환을 직접 합니다. 언제 동작하는지, 무엇을 절대 하지 않는지는 [`auto_switch`](/features/next#auto-switch)를 참고하세요.
 
 `claude -p`를 실행하는 스크립트나 예약 작업에서는 계정 이름 앞에 `--fallback`을 붙이세요. 그 계정이 한도에 도달하면 ccam이 여유가 가장 많은 계정으로 같은 명령을 다시 실행하고, 끝까지 실행된 쪽의 출력만 표시합니다.
 

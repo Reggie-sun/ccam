@@ -1,10 +1,10 @@
 ---
 title: "Claude Code شروع کرنا"
 description: "ccam <name|number>، ccam run یا ڈیش بورڈ سے Claude Code کسی بھی اکاؤنٹ سے شروع کریں؛ آرگیومنٹس جوں کے توں claude کو جاتے ہیں اور --dry-run کمانڈ دکھاتا ہے۔"
-updated: 2026-10-24
+updated: 2026-10-25
 order: 1
 translation: machine
-sourceHash: "e279341eb59b"
+sourceHash: "afa4942cfed5"
 ---
 
 `ccam work`، Claude Code کو اکاؤنٹ `work` کے طور پر شروع کرتا ہے، اور نام کے بعد سب کچھ جوں کا توں `claude` کو جاتا ہے۔ اسے ہر اس جگہ استعمال کریں جہاں آپ `claude` ٹائپ کرتے: ٹرمینل میں، اسکرپٹ میں، یا pipe سے آنے والے اِن پٹ کے ساتھ۔
@@ -34,11 +34,11 @@ ccam --fallback work -p "fix the tests"   # run again as another account at the 
 
 بغیر آرگیومنٹس کے `ccam` [ڈیش بورڈ](/features/dashboard) کھولتا ہے جب اسٹینڈرڈ اِن پٹ اور آؤٹ پٹ ٹرمینل ہوں، ورنہ `ccam list` پرنٹ کرتا ہے۔ کسی اکاؤنٹ پر جائیں (ایرو کیز سے، یا اس کا نمبر ٹائپ کر کے) اور اسے شروع کرنے کے لیے `Enter` دبائیں؛ `n` سب سے زیادہ گنجائش والا اکاؤنٹ شروع کرتا ہے اور `o`، `--continue`، `--resume` یا دوسرے آرگیومنٹس پیش کرتا ہے۔ ڈیش بورڈ Claude Code شروع ہونے سے پہلے بند ہو جاتا ہے، اس لیے ٹرمینل پہلے بحال ہو جاتا ہے۔
 
-**Team اور Enterprise سیٹیں۔** خودکار انتخاب (`ccam next`، `--fallback`، `ccam pick`، ڈیش بورڈ کی `n` کلید) ایک ہی Claude Team یا Enterprise تنظیم کی سیٹوں کے درمیان بھی اکاؤنٹ بدلتا ہے۔ Anthropic کا ہیلپ سینٹر کہتا ہے کہ "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (کسی Team پلان کی ہر سیٹ ایک نامزد فرد کو تفویض کی جاتی ہے، اور صرف اسی شخص کو اسے استعمال کرنے کی اجازت ہے) اور "Users can't route their work through another user's account to use that user's remaining usage" (صارفین کسی دوسرے صارف کا باقی ماندہ استعمال کام میں لانے کے لیے اپنا کام اس کے اکاؤنٹ کے ذریعے نہیں چلا سکتے) ([Team پلانز](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)؛ اسی طرح [Enterprise پلانز](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) کے لیے بھی)۔ اس لیے سیٹوں کے درمیان خودکار انتخاب استعمال کرنے سے Anthropic کی شرائط کی خلاف ورزی ہو سکتی ہے۔ اس پر انحصار کرنے سے پہلے اپنی تنظیم اور Anthropic سے تصدیق کر لیں۔ ذاتی پلانز (Pro، Max) کی بات [عام سوالات میں شرائط والے نوٹ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) میں کی گئی ہے۔
+**Team اور Enterprise سیٹیں۔** خودکار انتخاب (`ccam next`، `--fallback`، `ccam pick`، ڈیش بورڈ کی `n` کلید، اور جب آپ اسے آن کریں تو [`auto_switch`](/features/next#auto-switch)) ایک ہی Claude Team یا Enterprise تنظیم کی سیٹوں کے درمیان بھی اکاؤنٹ بدلتا ہے۔ Anthropic کا ہیلپ سینٹر کہتا ہے کہ "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (کسی Team پلان کی ہر سیٹ ایک نامزد فرد کو تفویض کی جاتی ہے، اور صرف اسی شخص کو اسے استعمال کرنے کی اجازت ہے) اور "Users can't route their work through another user's account to use that user's remaining usage" (صارفین کسی دوسرے صارف کا باقی ماندہ استعمال کام میں لانے کے لیے اپنا کام اس کے اکاؤنٹ کے ذریعے نہیں چلا سکتے) ([Team پلانز](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)؛ اسی طرح [Enterprise پلانز](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) کے لیے بھی)۔ اس لیے سیٹوں کے درمیان خودکار انتخاب استعمال کرنے سے Anthropic کی شرائط کی خلاف ورزی ہو سکتی ہے۔ وہاں اسے استعمال کرنا ہے یا نہیں، یہ آپ کا فیصلہ ہے: اس پر انحصار کرنے سے پہلے اپنی تنظیم اور Anthropic سے تصدیق کر لیں۔ ذاتی پلانز (Pro، Max) کی بات [عام سوالات میں شرائط والے نوٹ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) میں کی گئی ہے۔
 
 جب شیل میں `CLAUDE_CODE_OAUTH_TOKEN`، `ANTHROPIC_API_KEY` یا `ANTHROPIC_AUTH_TOKEN` سیٹ ہو تو Claude Code اکاؤنٹ کے اپنے لاگ اِن کے بجائے وہ key یا ٹوکن استعمال کرے گا، اس لیے ccam شروع کرنے سے پہلے اسٹینڈرڈ ایرر پر یہ بتا دیتا ہے (`ccam: $ANTHROPIC_API_KEY is set, so Claude Code may use that key instead of work's login…`)۔ یہ صرف ویری ایبلز پڑھتا ہے؛ [API key اکاؤنٹ](/features/api) اس کے بجائے انہیں صاف کر دیتا ہے۔
 
-`config.toml` میں سب سے اوپر (پہلے `[[group]]`، `[[profile]]` یا `[[folder]]` سے اوپر) `relay = true` کے ساتھ ccam انٹرایکٹو سیشنز کو چائلڈ پروسیس کے طور پر شروع کرتا ہے اور ان کے ساتھ رہتا ہے، تاکہ `/ccam:switch` گفتگو کو خود آگے لے جا سکے، سیشن کے آپشنز، اجازتوں کے موڈ اور effort لیول کے ساتھ ([تفصیلات](/features/next#relay))؛ ورنہ ccam خود کو Claude Code سے بدل دیتا ہے، اور اس کے ساتھ کچھ نہیں چلتا۔
+`config.toml` میں سب سے اوپر (پہلے `[[group]]`، `[[profile]]` یا `[[folder]]` سے اوپر) `relay = true`، یا Linux اور macOS پر [`auto_switch = true`](/features/next#auto-switch)، کے ساتھ ccam انٹرایکٹو سیشنز کو چائلڈ پروسیس کے طور پر شروع کرتا ہے اور ان کے ساتھ رہتا ہے، تاکہ `/ccam:switch`، یا استعمال کی حد پر `auto_switch`، گفتگو کو خود آگے لے جا سکے، سیشن کے آپشنز، اجازتوں کے موڈ اور effort لیول کے ساتھ ([تفصیلات](/features/next#relay))؛ ورنہ ccam خود کو Claude Code سے بدل دیتا ہے، اور اس کے ساتھ کچھ نہیں چلتا۔
 
 ## آپشنز
 

@@ -1,7 +1,7 @@
 ---
 title: Usage limits
 description: ccam usage shows the 5-hour and weekly limits of every account at once, and ccam statusline puts the account name and usage in Claude Code.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 7
 translation: source
 ---
@@ -19,7 +19,7 @@ ccam usage -v               # add where the numbers came from
 ccam usage --json           # machine-readable, one object per account
 ccam usage --source cache   # saved numbers only, no network
 ccam usage --refresh        # also renew expired logins of accounts not running
-ccam usage --source claude  # let Claude Code look it up: ccam never touches a token
+ccam usage --source claude  # let Claude Code look it up: ccam sends no token
 ccam statusline install     # set the status line in every account's settings.json
 ```
 
@@ -39,7 +39,7 @@ $ ccam usage
 
 Each account gets a line with its number, its name and how old its numbers are; `(cached)` means they come from a saved file, not from the endpoint. Under it, one line per limit shows a 20-cell bar, the percentage and the time until the window resets: `5-hour`, `Weekly` (all models), then each model's own weekly window, such as `Fable`. A window the account does not have shows `-`. A percentage turns yellow from 80% and red at 100%. A window Claude Code reported full, when it refused a request at a usage limit, shows 100% until its reset, whatever the saved numbers say (see [the limit record](#the-limit-record)). On a terminal every account appears at once as `fetching…`, and its lines are drawn as it answers. The last line names the account [`ccam next --auto`](/features/next) would choose by the same rules (`auto_max_usage`, `auto_strategy`, the running sessions, accounts of the last used account's organization only unless `cross_org` is set, every window at 100% skipped, so an account whose week is full is never named), and only appears when you have more than one account. With the default `headroom` strategy it reads `→ Most headroom: <name>`; with `expiring` or `balance` it gives the reason, such as `→ next --auto picks personal: its 5-hour window resets first, in 1h 12m (40% of its 5 hours used)`.
 
-**Team and Enterprise seats.** Automatic choice (`ccam next`, `--fallback`, `ccam pick`, the dashboard's `n`) also switches between seats of the same Claude Team or Enterprise organization. Anthropic's help center says "Each seat on a Team plan is assigned to one named individual, and only that person may use it" and "Users can't route their work through another user's account to use that user's remaining usage" ([Team plans](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); likewise for [Enterprise plans](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Using automatic choice between seats may therefore violate Anthropic's terms. Check with your organization and Anthropic before you rely on it. Personal plans (Pro, Max) are covered by the [terms note in the FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Team and Enterprise seats.** Automatic choice (`ccam next`, `--fallback`, `ccam pick`, the dashboard's `n`, and [`auto_switch`](/features/next#auto-switch) when you turn it on) also switches between seats of the same Claude Team or Enterprise organization. Anthropic's help center says "Each seat on a Team plan is assigned to one named individual, and only that person may use it" and "Users can't route their work through another user's account to use that user's remaining usage" ([Team plans](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); likewise for [Enterprise plans](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Using automatic choice between seats may therefore violate Anthropic's terms. Whether you use it there is your call: check with your organization and Anthropic before you rely on it. Personal plans (Pro, Max) are covered by the [terms note in the FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 An account that is not logged in shows `not logged in → ccam login <name>`, and an API key account shows `no limits (API)`. An expired access token shows ``access token expired; `ccam <name>` renews it when it starts``, above the saved numbers when there are some: Claude Code renews it at the next start. A login that has expired as a whole, because its refresh token expired or Claude Code cleared it after the server refused it, shows `` login expired → `ccam login <name>` ``.
 
@@ -96,7 +96,7 @@ The endpoint has two response formats. The newer one has a `limits` array with `
 
 ### The limit record
 
-When Claude Code stops a turn at a usage limit, the [ccam plugin](/docs/install#claude-code-plugin)'s hook reads the refused request from the conversation: which window was full (5-hour, weekly, Opus or Sonnet) and when it resets. It writes that to `~/.local/state/ccam/usage/<name>.limit.json`. `Fetch` lays the record over whatever else it knows, from every source: each window in it counts as 100% until its reset, however old or low the saved numbers are, so `ccam next --auto`, `ccam pick` and `--fallback` do not choose the account again before then. With nothing else known, the record alone is what the account shows (`source: the usage limit Claude Code reported` with `-v`). Sessions nobody sits at (`-p`, background sessions) write no record, nor does an organization's stop (out of usage, a group set to $0), which its admins can lift at any time. `ccam login` into another Claude account drops the record; deleting the file clears it too.
+When Claude Code stops a turn at a usage limit, the [ccam plugin](/docs/install#claude-code-plugin)'s hook reads the refused request from the conversation: which window was full (5-hour, weekly, Opus or Sonnet) and when it resets. It writes that to `~/.local/state/ccam/usage/<name>.limit.json`. `Fetch` lays the record over whatever else it knows, from every source: each window in it counts as 100% until its reset, however old or low the saved numbers are, so `ccam next --auto`, `ccam pick`, `--fallback` and [`auto_switch`](/features/next#auto-switch) do not choose the account again before then. With nothing else known, the record alone is what the account shows (`source: the usage limit Claude Code reported` with `-v`). Sessions nobody sits at (`-p`, background sessions) write no record, nor does an organization's stop (out of usage, a group set to $0), which its admins can lift at any time. `ccam login` into another Claude account drops the record; deleting the file clears it too.
 
 ### Renewing tokens
 

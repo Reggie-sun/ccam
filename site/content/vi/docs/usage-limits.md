@@ -1,10 +1,10 @@
 ---
 title: Giới hạn sử dụng và chuyển đổi tài khoản
 description: "Xem mức sử dụng 5 giờ và hàng tuần của mọi tài khoản Claude Code bằng ccam usage, và mở tài khoản còn nhiều hạn mức nhất bằng ccam next --auto."
-updated: 2026-10-24
+updated: 2026-10-25
 order: 5
 translation: machine
-sourceHash: "ccaed084207a"
+sourceHash: "7c15419446c3"
 ---
 
 `ccam usage` cho biết mỗi tài khoản đã dùng bao nhiêu trong giới hạn 5 giờ, giới hạn hàng tuần và giới hạn hàng tuần riêng của từng mô hình (như Fable). `ccam next --auto` mở tài khoản còn nhiều hạn mức nhất, và `--continue` mang cuộc hội thoại hiện tại sang tài khoản đó.
@@ -28,7 +28,7 @@ $ ccam usage
 
 Mỗi tài khoản có một dòng cho biết độ cũ của các con số, tiếp theo là một thanh cho mỗi giới hạn cùng thời gian đến lần đặt lại: khoảng 5 giờ, khoảng hàng tuần cho mọi mô hình, và khoảng hàng tuần riêng của từng mô hình, như Fable. Từ 80% thanh chuyển sang màu vàng, và ở 100% thì màu đỏ. Dòng cuối nêu tên tài khoản mà `ccam next --auto` sẽ mở; với `auto_strategy = "expiring"` hoặc `"balance"` thì dòng này là `→ next --auto picks <name>: <reason>`.
 
-**Seat của gói Team và Enterprise.** Lựa chọn tự động (`ccam next`, `--fallback`, `ccam pick`, phím `n` trên bảng điều khiển) cũng chuyển đổi giữa các seat của cùng một tổ chức Claude Team hoặc Enterprise. Trung tâm trợ giúp của Anthropic ghi rằng "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (mỗi seat của gói Team được gán cho đích danh một cá nhân, và chỉ người đó được phép sử dụng) và "Users can't route their work through another user's account to use that user's remaining usage" (người dùng không được chuyển công việc của mình qua tài khoản của một người dùng khác để dùng phần hạn mức còn lại của người đó) ([gói Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); tương tự đối với [gói Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Vì vậy, dùng lựa chọn tự động giữa các seat có thể vi phạm điều khoản của Anthropic. Hãy xác nhận với tổ chức của bạn và Anthropic trước khi dựa vào nó. Các gói cá nhân (Pro, Max) được đề cập trong [ghi chú về điều khoản ở phần Câu hỏi thường gặp](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Seat của gói Team và Enterprise.** Lựa chọn tự động (`ccam next`, `--fallback`, `ccam pick`, phím `n` trên bảng điều khiển, và [`auto_switch`](/features/next#auto-switch) khi bạn bật nó) cũng chuyển đổi giữa các seat của cùng một tổ chức Claude Team hoặc Enterprise. Trung tâm trợ giúp của Anthropic ghi rằng "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (mỗi seat của gói Team được gán cho đích danh một cá nhân, và chỉ người đó được phép sử dụng) và "Users can't route their work through another user's account to use that user's remaining usage" (người dùng không được chuyển công việc của mình qua tài khoản của một người dùng khác để dùng phần hạn mức còn lại của người đó) ([gói Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); tương tự đối với [gói Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Vì vậy, dùng lựa chọn tự động giữa các seat có thể vi phạm điều khoản của Anthropic. Có dùng nó ở đó hay không là quyết định của bạn: hãy xác nhận với tổ chức của bạn và Anthropic trước khi dựa vào nó. Các gói cá nhân (Pro, Max) được đề cập trong [ghi chú về điều khoản ở phần Câu hỏi thường gặp](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 ## Các con số lấy từ đâu
 
@@ -71,6 +71,8 @@ ccam next --continue  # carry this folder's conversation on as the next account
 ```
 
 `ccam next` bỏ qua các tài khoản chưa đăng nhập, và `--auto` bỏ qua các tài khoản đã ở mức 100% (kể cả một khoảng mà Claude Code báo là đã đầy, cho đến khi nó được đặt lại) và các tài khoản thuộc tổ chức khác. Khi hai tài khoản dùng chung lịch sử hội thoại, `--continue` mở cùng cuộc hội thoại đó; nếu không, Claude Code sao chép nó vào tài khoản mới. Xem [dùng chung](/docs/sharing) và [chuyển sang tài khoản tiếp theo](/features/next#continue).
+
+Với `auto_switch = true` ở đầu `config.toml` (Linux và macOS; mặc định tắt), ccam tự thực hiện việc chuyển này khi Claude Code dừng một phiên tương tác ở giới hạn của nó và một tài khoản khác cùng loại còn hạn mức. Xem [`auto_switch`](/features/next#auto-switch) để biết khi nào nó hành động và những gì nó không bao giờ làm.
 
 Với các script và tác vụ định kỳ chạy `claude -p`, hãy đặt `--fallback` trước tên tài khoản. Khi tài khoản đó chạm giới hạn, ccam chạy lại cùng lệnh đó bằng tài khoản còn nhiều hạn mức nhất, và chỉ đầu ra của lần chạy đã hoàn tất được in ra:
 

@@ -1,18 +1,18 @@
 ---
 title: 대시보드
 description: 터미널에서 ccam을 실행하면 계정, 그룹, 폴더 규칙, 확장, 점검을 보여 주는 전체 화면 대시보드가 열리며, 모든 변경은 계획을 먼저 보여 줍니다.
-updated: 2026-10-24
+updated: 2026-10-25
 order: 15
 translation: machine
-sourceHash: "e48ca2c5a643"
+sourceHash: "98ccf6cd81e9"
 ---
 
-표준 입력과 출력이 터미널이면 인자 없는 `ccam`은 전체 화면 대시보드를 엽니다. 터미널이 아니면 `ccam list`를 출력합니다. 대시보드는 모든 계정을 사용량, 그룹과 함께 보여 주며, 명령으로 하는 일을 그대로 할 수 있습니다. 실행, 추가, 로그인, 그룹 변경, 폴더 규칙 지정, 점검과 복구가 모두 됩니다. 실행하면 대시보드가 닫히고, 계정을 추가하거나 로그인할 때는 잠시 터미널로 나갔다가 돌아옵니다.
+표준 입력과 출력이 터미널이면 인자 없는 `ccam`은 전체 화면 대시보드를 엽니다. 터미널이 아니면 `ccam list`를 출력합니다. 대시보드는 모든 계정을 사용량, 그룹과 함께 보여 주며, 명령으로 하는 일을 그대로 할 수 있습니다. 실행, 추가, 로그인, 그룹 변경, 폴더 규칙 지정, 백그라운드 세션 목록 보기, 점검과 복구가 모두 됩니다. 실행하거나 백그라운드 세션에 연결하면 대시보드가 닫히고, 계정을 추가하거나 로그인할 때는 잠시 터미널로 나갔다가 돌아옵니다.
 
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
 
-  Accounts   Groups   Folders   Extensions   Health
+  Accounts   Agents   Groups   Folders   Extensions   Health
  Your Claude accounts and their usage limits; enter launches the selected one.
 
     # Account      5-hour       Weekly       Fable        Last  Groups
@@ -40,12 +40,13 @@ sourceHash: "e48ca2c5a643"
 | 탭 | 보여 주는 내용 | 키 |
 | --- | --- | --- |
 | Accounts | 번호, 이름, 이메일, 5시간·주간·Fable 막대, 마지막 사용, 그룹. `✔`는 기본 계정, `▸`는 이 폴더의 계정, `•`는 실행 중(ccam 없이 시작한 Claude Code도 포함: 일반 `claude`, IDE, 백그라운드 세션과 그 데몬) | 아래 참고 |
+| Agents | [`ccam agents`](/features/agents)가 보여 주는 내용: 모든 계정의 백그라운드 세션과 열려 있는 세션, 그리고 각각의 상태, 폴더, 시작 시각(아래 참고) | `enter` 연결(`ccam attach`처럼), `x` 멈추기, `r` 다시 불러오기 |
 | Groups | 각 그룹, 그룹이 공유하는 항목과 계정, 어느 그룹에도 속하지 않은 계정 | `enter` 편집, `n` 새로 만들기, `e` 이름 바꾸기, `x` 삭제 |
 | Folders | [`ccam folder`](/features/folder) 규칙과 여기에 적용되는 규칙. 심볼릭 링크를 거쳐 폴더에 들어온 경우도 포함(새 규칙은 링크를 푼 경로로 저장) | `n` 여기서 쓸 계정 지정, `enter` 변경, `x` 삭제 |
 | Extensions | [`ccam ext`](/features/ext)가 보여 주는 내용. 확장마다 한 번씩, 출처 그룹과 함께 표시. 플러그인이 켜져 있지 않은 계정을 나타내는 `off:`, 계정 자체 서버 중 이 폴더에만 있는 서버, `This folder's project`, 어느 계정에도 속하지 않는 문제도 표시 | `r` 다시 불러오기 |
 | Health | [`ccam doctor`](/features/doctor)가 보고하는 내용을 계정마다 상자로 표시(아래 참고) | `f` 선택한 상자 복구, `F` 전체 복구(`doctor --fix`), `↑`/`↓` 상자 사이 이동 |
 
-`←`/`→`나 `Tab`으로 탭을 바꾸고, `?`는 현재 탭의 키를 보여 주며, `r`은 짧은 캐시를 쓰지 않고 사용량을 다시 조회하고, `q`나 `Esc`는 종료합니다.
+`←`/`→`나 `Tab`으로 탭을 바꾸고, `?`는 현재 탭의 키를 보여 주며, `r`은 짧은 캐시를 쓰지 않고 사용량을 다시 조회하며 Agents, Extensions, Health 탭도 다시 불러오고, `q`나 `Esc`는 종료합니다.
 
 ## Accounts 탭의 키
 
@@ -66,7 +67,7 @@ sourceHash: "e48ca2c5a643"
 | `c` | 단축 명령 지정 또는 삭제 |
 | `x` | 삭제(먼저 묻고, 선택은 No에서 시작) |
 
-**Team·Enterprise 시트.** 자동 선택(`ccam next`, `--fallback`, `ccam pick`, 대시보드의 `n`)은 같은 Claude Team이나 Enterprise 조직의 시트 사이에서도 계정을 바꿉니다. Anthropic 고객센터는 "Each seat on a Team plan is assigned to one named individual, and only that person may use it"(팀 플랜의 각 시트는 한 명의 지정된 개인에게 할당되며, 그 사람만 사용할 수 있습니다), "Users can't route their work through another user's account to use that user's remaining usage"(사용자는 다른 사용자의 계정을 통해 작업을 라우팅하여 해당 사용자의 남은 사용량을 사용할 수 없습니다)라고 안내합니다([Team 요금제](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129), [Enterprise 요금제](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)도 마찬가지). 따라서 시트 사이에서 자동 선택을 쓰면 Anthropic의 약관을 위반할 수 있습니다. 이 기능에 의존하기 전에 소속 조직과 Anthropic에 확인하세요. 개인 요금제(Pro, Max)에 대해서는 [FAQ의 약관 안내](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)를 참고하세요.
+**Team·Enterprise 시트.** 자동 선택(`ccam next`, `--fallback`, `ccam pick`, 대시보드의 `n`, 그리고 켜 두었을 때의 [`auto_switch`](/features/next#auto-switch))은 같은 Claude Team이나 Enterprise 조직의 시트 사이에서도 계정을 바꿉니다. Anthropic 고객센터는 "Each seat on a Team plan is assigned to one named individual, and only that person may use it"(팀 플랜의 각 시트는 한 명의 지정된 개인에게 할당되며, 그 사람만 사용할 수 있습니다), "Users can't route their work through another user's account to use that user's remaining usage"(사용자는 다른 사용자의 계정을 통해 작업을 라우팅하여 해당 사용자의 남은 사용량을 사용할 수 없습니다)라고 안내합니다([Team 요금제](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129), [Enterprise 요금제](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)도 마찬가지). 따라서 시트 사이에서 자동 선택을 쓰면 Anthropic의 약관을 위반할 수 있습니다. 시트 사이에서 이 기능을 쓸지는 사용자가 판단할 일입니다. 의존하기 전에 소속 조직과 Anthropic에 확인하세요. 개인 요금제(Pro, Max)에 대해서는 [FAQ의 약관 안내](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)를 참고하세요.
 
 ## Health 탭
 
@@ -95,6 +96,28 @@ Health 탭은 열 때 [`ccam doctor`](/features/doctor)의 점검을 실행하�
 ```
 
 `↑`/`↓`로 상자 사이를 이동하며, 선택한 상자는 강조색 테두리로 표시됩니다. `f`는 선택한 상자만 `ccam doctor --fix`와 같은 방식으로 복구합니다. 계정 상자에서는 그 계정만 복구하고, `General` 상자에서는 어느 계정에도 속하지 않는 결과(플러그인 경로와 단축 명령)를 복구하며, 나머지 계정은 다시 점검만 합니다. 먼저 물어보며(``Like `ccam doctor --fix`: missing links and group folders are made, and a real file where a link belongs is backed up first; where the group has its own copy, the account then sees the group's. Nothing is lost.``), 복구할 것이 없는 상자에서는 `nothing to repair in <name>`이라고만 표시합니다. `F`는 `ccam doctor --fix`처럼 모든 것을 한 번에 복구하고, `r`은 다시 점검합니다.
+
+## Agents 탭
+
+Agents 탭은 [`ccam agents`](/features/agents)가 출력하는 내용, 곧 모든 계정의 백그라운드 세션과 열려 있는 세션을 각각 속한 계정과 함께 보여 줍니다. 탭을 처음 열 때, `r`을 누를 때, 세션을 멈춘 뒤, 설정이 바뀐 뒤에 모든 계정의 Claude Code에 한꺼번에 묻고(`claude agents --json`, 계정마다 최대 15초), 모두 답할 때까지 `Asking every account's Claude Code for its sessions…`를 표시합니다.
+
+```console
+  Accounts   Agents   Groups   Folders   Extensions   Health
+ Background agents and open sessions of every account; enter attaches to one.
+
+    Account   ID        Name   State          Folder      Started
+ ❯  work      -         -      open (busy)    ~/code/web  now
+    personal  49ec0028  probe  blocked, idle  ~/code/app  12m
+
+ ✘ lab: could not list its sessions: exit status 1 'claude agents --json' is
+   not available in this environment.
+
+ enter to attach · x to stop · r to reload · ? for shortcuts
+```
+
+`State`는 `ccam agents`에서처럼 백그라운드 세션의 상태와 그 프로세스가 하고 있는 일이며, 대화형 세션이면 `open`입니다. 물어볼 수 없었던 계정은 목록 아래에 Claude Code가 한 말과 함께 `✘` 줄로 나옵니다. 위의 `lab`이 그런 경우로, 에이전트 보기가 꺼져 있습니다. 끝난 백그라운드 세션은 빠지며(`ccam agents --all`이 보여 줍니다), 모든 계정이 답했는데 세션이 하나도 없으면 탭에 ``No sessions. Start one in the background with `ccam <account> --bg "…"`.``가 나옵니다. 터미널이 좁으면 `Started`, `Name`, `Folder` 순서로 열을 빼고, 긴 폴더 경로는 왼쪽을 잘라 냅니다.
+
+백그라운드 세션에서 `Enter`를 누르면 대시보드가 닫히고, `ccam attach <id>`처럼 그 세션을 해당 계정으로 이 터미널에서 엽니다. 대시보드는 다시 돌아오지 않습니다(Claude Code에서 `←`는 에이전트 보기로, `Ctrl+Z`는 셸로 갑니다). 열려 있는 세션에는 id가 없으므로 `Enter`와 `x`는 백그라운드 세션이어야 한다고만 알려 줍니다. `x`는 먼저 `No, keep it`이 선택된 상태로 물어봅니다: ``It runs as personal. Like `ccam personal stop 49ec0028`, Claude Code stops it and keeps its conversation, which `ccam attach 49ec0028` opens again.`` 예를 고르면 ccam은 그 계정으로 `claude stop <id>`를 실행하고, ``49ec0028 (personal) stopped; `ccam attach 49ec0028` opens it again`` 또는 멈추지 못한 이유를 알린 뒤 목록을 다시 읽습니다.
 
 ## 그룹 바꾸기
 

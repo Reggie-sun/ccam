@@ -1,10 +1,10 @@
 ---
 title: 检查与修复
 description: 用 ccam doctor 检查共享链接、文件权限、登录和 Claude Code 版本，并用 ccam doctor --fix 修复可以安全修复的问题。
-updated: 2026-10-23
+updated: 2026-10-25
 order: 9
 translation: machine
-sourceHash: "11ad34630dcf"
+sourceHash: "0f5ae4ab9a54"
 ---
 
 `ccam doctor` 检查你的 ccam 安装：Claude Code 可执行文件、每个账号的文件夹、登录和共享链接、共享的 MCP 服务器、用量接口以及你的快捷命令。`ccam doctor --fix` 修复它能在不丢失数据的前提下修复的问题，并先把它要替换的文件移到备份文件夹中。当 `ccam <name>` 因共享链接问题而停止、你手动恢复了文件之后，或者 Claude Code 更新之后，都可以运行它。
@@ -17,7 +17,7 @@ ccam doctor --fix            # check, then repair what is safe to repair
 ccam --dry-run doctor --fix  # report only: what --fix would repair and set aside
 ```
 
-第一行一次性标出所有账号，让你在阅读其他内容之前就知道问题在哪里。下面每个账号有一个框，不属于任何账号的结果（Claude Code、环境变量、插件、MCP 服务器、快捷命令、文件夹规则、组和设置）放在 `General` 框中。框的标题显示该账号最严重的标记和问题数量。框内每一行是一个检查过的方面，总是依次为 `Folder`、`Login` 和 `Share links`，然后是其他方面，并带有一个标记：`✔` 正常，`ℹ` 信息，`⚠` 警告，`✘` 错误。没有任何问题的文件夹显示 `✔ Folder  OK`。
+第一行一次性标出所有账号，让你在阅读其他内容之前就知道问题在哪里。下面每个账号有一个框，不属于任何账号的结果（Claude Code、环境变量、插件、MCP 服务器、快捷命令、文件夹规则、组和设置、`auto_switch`）放在 `General` 框中。框的标题显示该账号最严重的标记和问题数量。框内每一行是一个检查过的方面，总是依次为 `Folder`、`Login` 和 `Share links`，然后是其他方面，并带有一个标记：`✔` 正常，`ℹ` 信息，`⚠` 警告，`✘` 错误。没有任何问题的文件夹显示 `✔ Folder  OK`。
 
 ```console
 $ ccam doctor
@@ -118,6 +118,7 @@ $ ccam doctor --fix
 11. **文件夹设置**（`checkFolders`）。仅在存在 [`ccam folder`](/features/folder) 条目时执行。条目对应的账号不存在属于错误，条目对应的文件夹已不存在属于警告。两者都不会被修复，因为删除条目会改变在那里启动的账号。
 12. **组和设置**（`checkGroups`）。不是账号的组成员、名称后来变成了 ccam 命令的账号（用 `ccam run <name>` 启动它或给它改名）、未知的 `theme` 或 `usage_source`，以及 ccam 不读取的 `config.toml` 行，都属于警告。最后这种情况通常是写在 `[[group]]`、`[[profile]]` 或 `[[folder]]` 表下面的设置，它会被当作该表的一部分（`config.toml line 43: relay is read as part of the [profile.login] table above it; settings for all accounts go above the first [[group]], [[profile]] or [[folder]]`）；在修正之前，更改配置的命令会拒绝执行。不做修复。
 13. **登录**（`checkIdentities`）。从每个文件夹的 `.claude.json` 读取它以谁的身份登录。如果文件夹现在登录的账号与 `ccam login` 记录的不同（例如在会话中执行了 `/login` 之后），属于警告；没有登录记录的账号（例如导入的账号或旧版 ccam 创建的账号）会按记录的邮箱进行比较。如果文件夹与另一个文件夹登录的是同一个 Claude 账号，也属于警告：两者会共用用量限制。如果文件夹与另一个文件夹持有同一个登录令牌，即复制的文件夹（包括直接运行的 `claude` 所用的 `~/.claude`），属于错误，因为先续期的一方会让另一方退出登录；运行 `ccam login <name>` 让它拥有自己的登录。不做修复。
+14. **`auto_switch`**（`checkAutoSwitch`）。仅在 `auto_switch = true` 时执行。`General` 框中的信息说明 `auto_switch` 做什么，并链接到[它的说明](/features/next#auto-switch)。对于账号中每一个带席位的套餐（Claude Team、Claude Enterprise），会有一行列出这些账号，说明 `auto_switch` 会在同一组织的席位之间移动会话，引用 Anthropic 关于席位的规定并附上帮助中心的链接，然后把选择留给你。早于 2.1.214 的 Claude Code 不会把自己的进程（`CLAUDE_PID`）告诉钩子，这在那里属于警告，因为此时没有会话能被移动。没有 ccam 插件或插件已被关闭的账号，会在自己的框中收到一条警告，并附上在 Claude Code 中修复它的命令：`auto_switch is on, but work does not have the ccam plugin, so its sessions are not moved. In Claude Code as work: /plugin install ccam --marketplace jhyunwoo/ccam`（或 `/plugin enable ccam@ccam`）。API 密钥账号不在检查之列。在 Windows 上只有一行：`auto_switch is ignored on Windows; with relay = true, /ccam:switch and then /exit carry a conversation on.` 不做修复。
 
 在检查各个账号之前，中途停止的**组更改**会在 `General` 框中作为错误报告：``the last change of groups stopped halfway (ccam doctor --fix finishes it; noted in ~/.local/state/ccam/group-change.json)``。`--fix` 会按原计划的顺序、使用对其冲突给出的回答完成它；在此之前，不会开始其他组更改、重命名或删除。在它完成之前，其中的账号只会补上缺少的链接。如果无法完成，错误信息会说明删除那个文件就会放弃更改的剩余部分。`ccam --dry-run doctor --fix` 会显示顺序（`--fix finishes it in its order (b, a, c), with the answers given to its conflicts`）以及每个账号的那部分会放到一边的内容。另一个 ccam 正在执行的更改属于信息，在它运行期间，`--fix` 不修复任何共享链接（`its share links are not repaired while another ccam changes the groups; …`）。`--fix` 在修复期间持有 `~/.local/state/ccam/group-change.lock`，并在完成一次更改后重新读取 `config.toml`。
 
