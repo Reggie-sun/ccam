@@ -8,6 +8,8 @@ import (
 	"strconv"
 	"strings"
 	"testing"
+
+	"github.com/jhyunwoo/ccam/internal/session"
 )
 
 // innerPid starts c, which runs TestHelperReexec's inner copy somewhere
@@ -73,5 +75,21 @@ func TestRelayChildOnWindows(t *testing.T) {
 	inner = innerPid(t, helper(other, "outer", "CCAM_TEST_INNER="+self))
 	if _, ok := RelayChild(inner, os.Getpid()); ok {
 		t.Fatal("another program's child")
+	}
+}
+
+// Windows has no way to end Claude Code from the hook: Terminate says so
+// and leaves even the relay's own claude running.
+func TestTerminateEndsNothingOnWindows(t *testing.T) {
+	self, _ := os.Executable()
+	c := exec.Command(self, "-test.run=^TestHelperReexec$")
+	c.Env = append(os.Environ(), "CCAM_TEST_REEXEC=inner")
+	child := innerPid(t, c)
+	start, _ := session.StartTime(child)
+	if err := Terminate(child, os.Getpid(), child, start); err == nil {
+		t.Fatal("no error")
+	}
+	if _, ok := session.StartTime(child); !ok {
+		t.Fatal("the child ended")
 	}
 }

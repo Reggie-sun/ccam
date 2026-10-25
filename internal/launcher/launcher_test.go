@@ -95,8 +95,11 @@ func TestPrepareUnknownProfile(t *testing.T) {
 
 func TestEnvReplacesConfigDir(t *testing.T) {
 	// An inherited CCAM_RELAY would make a nested session's switch name
-	// the outer relay and stop its own claude.
-	env := buildEnv([]string{"A=1", "CLAUDE_CONFIG_DIR=/old", "CCAM_PROFILE=x", "CCAM_RELAY=2:1", "CLAUDE_SECURESTORAGE_CONFIG_DIR=/y"}, "/new", "work", false)
+	// the outer relay and stop its own claude. An inherited Remote Control
+	// session id (a shell of a Claude Code that is connected) would make the
+	// hook take this session for a connected one: Claude Code sets it itself.
+	env := buildEnv([]string{"A=1", "CLAUDE_CONFIG_DIR=/old", "CCAM_PROFILE=x", "CCAM_RELAY=2:1", "CLAUDE_SECURESTORAGE_CONFIG_DIR=/y",
+		"CLAUDE_CODE_BRIDGE_SESSION_ID=cse_parent"}, "/new", "work", false)
 	want := []string{"A=1", "CLAUDE_CONFIG_DIR=/new", "CCAM_PROFILE=work"}
 	if !reflect.DeepEqual(env, want) {
 		t.Fatalf("%q", env)

@@ -343,6 +343,32 @@ func (b backend) Doctor(fix bool, only string) ([]doctor.Finding, error) {
 	return doctor.Run(b.e.paths, cfg, doctor.Options{Fix: fix, FixOnly: only, CcamPath: self, Reload: b.e.load}), nil
 }
 
+func (b backend) Agents() tui.AgentList {
+	cfg, err := b.e.load()
+	if err != nil {
+		return tui.AgentList{Failed: []string{err.Error()}}
+	}
+	list, failed := listAgents(b.e, cfg, false)
+	home, _ := os.UserHomeDir()
+	out := tui.AgentList{Failed: failed}
+	for _, a := range list {
+		var started time.Time
+		if a.StartedAt > 0 {
+			started = time.UnixMilli(a.StartedAt)
+		}
+		out.Sessions = append(out.Sessions, tui.Agent{Account: a.Account, ID: a.ID, Name: a.Name,
+			State: a.stateText(), Folder: tildeDir(a.Cwd, home), StartedAt: started})
+	}
+	return out
+}
+
+func (b backend) StopSession(account, id string) error {
+	if err := b.changing(); err != nil {
+		return err
+	}
+	return stopSession(b.e, account, id)
+}
+
 func (b backend) Extensions() (tui.ExtView, error) {
 	cfg, err := b.e.load()
 	if err != nil {

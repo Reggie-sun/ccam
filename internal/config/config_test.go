@@ -19,7 +19,7 @@ func TestLoadMissingIsEmpty(t *testing.T) {
 
 func TestRoundTrip(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "config.toml")
-	c := &Config{Default: "personal", MCPStrategy: MCPFlag}
+	c := &Config{Default: "personal", MCPStrategy: MCPFlag, AutoSwitch: true}
 	c.Profiles = append(c.Profiles,
 		Profile{Name: "personal", Slot: 1, Email: "me@example.com"},
 		Profile{Name: "work", Slot: 2, Dir: "/x/.claude"},
@@ -31,15 +31,32 @@ func TestRoundTrip(t *testing.T) {
 		t.Fatal(err)
 	}
 	raw, _ := os.ReadFile(path)
-	if !strings.Contains(string(raw), "[[profile]]") || !strings.Contains(string(raw), "[[group]]") || strings.Contains(string(raw), "[profile.share]") {
+	if !strings.Contains(string(raw), "[[profile]]") || !strings.Contains(string(raw), "[[group]]") || strings.Contains(string(raw), "[profile.share]") ||
+		!strings.Contains(string(raw), "auto_switch = true") {
 		t.Fatalf("unexpected toml layout:\n%s", raw)
 	}
 	got, err := Load(path)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if got.Default != "personal" || len(got.Profiles) != 2 || got.Profiles[0].Share.MCP != "default" || got.Profiles[1].Dir != "/x/.claude" {
+	if got.Default != "personal" || len(got.Profiles) != 2 || got.Profiles[0].Share.MCP != "default" || got.Profiles[1].Dir != "/x/.claude" || !got.AutoSwitch {
 		t.Fatalf("round trip lost data: %+v", got)
+	}
+}
+
+// auto_switch is a setting for all accounts: at the top it is read, below
+// a table it is named as the table's, like relay.
+func TestAutoSwitchIsASetting(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "config.toml")
+	os.WriteFile(path, []byte("auto_switch = true\n\n[[profile]]\nname = \"work\"\nslot = 1\n"), 0o600)
+	c, err := Load(path)
+	if err != nil || len(c.Unknown()) != 0 || !c.AutoSwitch {
+		t.Fatalf("%v %q %+v", err, c.Unknown(), c)
+	}
+	os.WriteFile(path, []byte("[[profile]]\nname = \"work\"\nslot = 1\nauto_switch = true\n"), 0o600)
+	c, err = Load(path)
+	if err != nil || c.AutoSwitch || len(c.Unknown()) != 1 || !strings.Contains(c.Unknown()[0], "line 4: auto_switch is read as part of the [[profile]] table above it") {
+		t.Fatalf("%v %q", err, c.Unknown())
 	}
 }
 

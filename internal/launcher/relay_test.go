@@ -11,6 +11,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/jhyunwoo/ccam/internal/config"
 	"github.com/jhyunwoo/ccam/internal/handoff"
 	"github.com/jhyunwoo/ccam/internal/session"
 )
@@ -63,6 +64,47 @@ func TestHopOK(t *testing.T) {
 		ok, why := hopOK(h)
 		if ok != c.ok || c.why == "" && why != "" || !strings.Contains(why, c.why) {
 			t.Errorf("%s: %v %q", c.name, ok, why)
+		}
+	}
+}
+
+// The relay says what it does after a limit: a notification of the move
+// with why that account, and a line before the hop.
+func TestLimitHopSays(t *testing.T) {
+	now := time.Now()
+	reset := now.Add(3 * time.Hour)
+	note := &handoff.Ticket{Account: "p1", Reason: handoff.Limit, Window: "five_hour", ResetsAt: reset, Chosen: "p2", Why: "12% of its 5 hours used, the least"}
+	notice, line := limitHop(note, now)
+	if want := "ccam: p1 hit its 5-hour limit (resets " + handoff.FormatReset(reset, now) + "). Moving this conversation to p2 (12% of its 5 hours used, the least)."; notice != want {
+		t.Errorf("%q, want %q", notice, want)
+	}
+	if line != "ccam: p1 hit its 5-hour limit; continuing this conversation as p2" {
+		t.Error(line)
+	}
+	note.Why, note.Window, note.ResetsAt = "", "seven_day", time.Time{}
+	if notice, line = limitHop(note, now); notice != "ccam: p1 hit its weekly limit. Moving this conversation to p2." || line != "ccam: p1 hit its weekly limit; continuing this conversation as p2" {
+		t.Errorf("%q %q", notice, line)
+	}
+}
+
+// The relay runs with relay = true, and with auto_switch = true, which
+// needs it, except on Windows, which ignores auto_switch (D6).
+func TestUseRelay(t *testing.T) {
+	for _, c := range []struct {
+		relay, auto bool
+		goos        string
+		want        bool
+	}{
+		{false, false, "linux", false},
+		{true, false, "linux", true},
+		{true, false, "windows", true},
+		{false, true, "linux", true},
+		{false, true, "darwin", true},
+		{false, true, "windows", false},
+		{true, true, "windows", true},
+	} {
+		if got := useRelay(&config.Config{Relay: c.relay, AutoSwitch: c.auto}, c.goos); got != c.want {
+			t.Errorf("relay %v, auto_switch %v on %s: %v", c.relay, c.auto, c.goos, got)
 		}
 	}
 }

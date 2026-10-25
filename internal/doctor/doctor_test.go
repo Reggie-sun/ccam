@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"slices"
 	"strings"
 	"testing"
 	"time"
@@ -964,5 +965,95 @@ func TestShortcutOfAnotherCcam(t *testing.T) {
 	}
 	if f := shortcut(false); f.Level != OK {
 		t.Fatalf("after --fix: %+v", f)
+	}
+}
+
+// With auto_switch on, doctor says what it does, quotes Anthropic's seat
+// rule for each plan that has seats among the accounts (read as the
+// automatic choice reads it: .claude.json, else the recorded login), and
+// warns about what keeps a session where it is: an account without the ccam
+// plugin turned on, whose hook would not run, and a Claude Code that gives
+// hooks no CLAUDE_PID. Windows ignores auto_switch and says only that; with
+// auto_switch off, none of these lines are there.
+func TestAutoSwitchChecks(t *testing.T) {
+	t.Setenv("CCAM_HOME", t.TempDir())
+	p := paths.FromEnv()
+	cfg := &config.Config{AutoSwitch: true, Profiles: []config.Profile{
+		{Name: "personal", Slot: 1}, {Name: "work", Slot: 2}, {Name: "lab", Slot: 3},
+		{Name: "corp", Slot: 4, Login: &config.Identity{AccountUUID: "u4", OrgUUID: "big", OrgType: "claude_enterprise"}},
+		{Name: "api", Slot: 5, API: &config.API{KeyFrom: "env:API_KEY"}},
+	}}
+	for name, org := range map[string]string{"personal": `"organizationUuid":"p","organizationType":"claude_max"`,
+		"work": `"organizationUuid":"acme","organizationName":"Acme","organizationType":"claude_team"`,
+		"lab":  `"organizationUuid":"acme","organizationName":"Acme","organizationType":"claude_team"`} {
+		os.MkdirAll(p.ProfileDir(name), 0o700)
+		os.WriteFile(filepath.Join(p.ProfileDir(name), ".claude.json"), []byte(`{"oauthAccount":{"accountUuid":"u-`+name+`",`+org+`}}`), 0o600)
+	}
+	// personal and corp have the plugin on, work has it turned off, lab has
+	// none, and an API account never moves.
+	for _, name := range []string{"personal", "work", "corp"} {
+		installPlugin(t, p.ProfileDir(name), "ccam@ccam", "{}")
+	}
+	os.WriteFile(filepath.Join(p.ProfileDir("work"), "settings.json"), []byte(`{"enabledPlugins":{"ccam@ccam":false}}`), 0o600)
+
+	check := func(claude, goos string) []string {
+		r := &report{}
+		checkAutoSwitch(r, p, cfg, claude, goos)
+		var out []string
+		for _, f := range r.out {
+			if f.Area != "auto_switch" {
+				t.Errorf("area %q: %+v", f.Area, f)
+			}
+			out = append(out, fmt.Sprintf("%d %s: %s", f.Level, f.Profile, f.Msg))
+		}
+		return out
+	}
+	on := fmt.Sprintf("%d : auto_switch is on: at a usage limit, ccam moves an interactive session it started to another account like the one it leaves (a seat of the same organization, or another personal plan) with room. Whether that fits Anthropic's terms is your call: https://ccam.dev/en/features/next/#auto-switch", Info)
+	plugins := []string{
+		fmt.Sprintf("%d work: auto_switch is on, but work has the ccam plugin turned off, so its sessions are not moved. In Claude Code as work: /plugin enable ccam@ccam", Warn),
+		fmt.Sprintf("%d lab: auto_switch is on, but lab does not have the ccam plugin, so its sessions are not moved. In Claude Code as lab: /plugin install ccam --marketplace jhyunwoo/ccam", Warn),
+	}
+	seats := []string{
+		fmt.Sprintf(`%d : Claude Team seats (work, lab): auto_switch moves a session between seats of one organization. Anthropic's help center says "Each seat on a Team plan is assigned to one named individual, and only that person may use it." and "Users can't route their work through another user's account to use that user's remaining usage." Whether you use it there is your call: https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129`, Info),
+		fmt.Sprintf(`%d : Claude Enterprise seats (corp): auto_switch moves a session between seats of one organization. Anthropic's help center says "Each Enterprise seat is assigned to one named individual, and only that person may use it." and "Users can't use another user's account to get around their own spend limits or usage limits." Whether you use it there is your call: https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0`, Info),
+	}
+	old := fmt.Sprintf("%d : auto_switch needs Claude Code 2.1.214 or later, which tells hooks its process (CLAUDE_PID); this one is 2.1.200, so no session is moved. Update it with `claude update`", Warn)
+	windows := []string{fmt.Sprintf("%d : auto_switch is ignored on Windows; with relay = true, /ccam:switch and then /exit carry a conversation on.", Info)}
+	for _, c := range []struct {
+		claude, goos string
+		want         []string
+	}{
+		{"2.1.310 (Claude Code)", "linux", slices.Concat([]string{on}, plugins, seats)},
+		{"2.1.214 (Claude Code)", "darwin", slices.Concat([]string{on}, plugins, seats)},
+		{"", "linux", slices.Concat([]string{on}, plugins, seats)}, // claude --version failed
+		{"2.1.200 (Claude Code)", "linux", slices.Concat([]string{on, old}, plugins, seats)},
+		{"2.1.200 (Claude Code)", "windows", windows},
+	} {
+		if got := check(c.claude, c.goos); !slices.Equal(got, c.want) {
+			t.Errorf("%s on %s:\n got %q\nwant %q", c.claude, c.goos, got, c.want)
+		}
+	}
+	cfg.AutoSwitch = false
+	if got := check("2.1.200 (Claude Code)", "linux"); len(got) != 0 {
+		t.Errorf("auto_switch off: %q", got)
+	}
+
+	// Run passes on what `claude --version` printed, and the platform.
+	cfg.AutoSwitch, cfg.ClaudeBin = true, stubClaude
+	want := slices.Concat([]string{on, old}, plugins, seats)
+	if runtime.GOOS == "windows" {
+		want = windows // the stub claude does not start there
+	} else {
+		cfg.ClaudeBin = filepath.Join(t.TempDir(), "claude")
+		os.WriteFile(cfg.ClaudeBin, []byte("#!/bin/sh\necho '2.1.200 (Claude Code)'\n"), 0o755)
+	}
+	var got []string
+	for _, f := range Run(p, cfg, Options{}) {
+		if f.Area == "auto_switch" {
+			got = append(got, fmt.Sprintf("%d %s: %s", f.Level, f.Profile, f.Msg))
+		}
+	}
+	if !slices.Equal(got, want) {
+		t.Errorf("Run:\n got %q\nwant %q", got, want)
 	}
 }

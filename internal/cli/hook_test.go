@@ -202,11 +202,12 @@ func TestSwitchHookUnderARelay(t *testing.T) {
 }
 
 // hookEnv makes hook tests independent of the session that runs them: an
-// attended interactive session without a relay, a terminal with OSC 9, and
-// no wait for a limit row that is not there.
+// attended interactive session without a relay or Remote Control, a
+// terminal with OSC 9, and no wait for a limit row that is not there.
 func hookEnv(t *testing.T) {
 	t.Setenv("CLAUDE_CODE_SESSION_ATTENDED", "")
 	t.Setenv("CLAUDE_CODE_ENTRYPOINT", "")
+	t.Setenv("CLAUDE_CODE_BRIDGE_SESSION_ID", "")
 	t.Setenv("CLAUDE_PROJECT_DIR", "")
 	t.Setenv("CLAUDE_PID", "")
 	t.Setenv("CLAUDE_EFFORT", "")
@@ -317,6 +318,58 @@ func TestLimitHookRecordsTheLimit(t *testing.T) {
 	limitConversation(t, conv, now.Add(-time.Second), reset, msg, bare, `"rateLimitType":"five_hour"`, `"rateLimitType":"overage"`)
 	if out, _, _ = c.run(in(bare), "hook", "stop-failure"); fileThere(record) || !strings.Contains(out, "personal hit its usage limit (resets 3pm)") {
 		t.Fatalf("overage: %q", out)
+	}
+}
+
+// `ccam hook --help` says what stop-failure does with auto_switch on.
+func TestHookHelpSaysWhatAutoSwitchDoes(t *testing.T) {
+	c := newTestCLI(t, nil)
+	out, _, _ := c.run("", "hook", "--help")
+	if !strings.Contains(strings.Join(strings.Fields(out), " "), "With auto_switch = true in config.toml (Linux, macOS), stop-failure also ends Claude Code when another account like this one has room") {
+		t.Fatal(out)
+	}
+}
+
+// When no other account may take over from the one at its limit by the
+// rule of `ccam next --continue` (its pool, or any account with cross_org;
+// logged in or not), that command would refuse: the notification says so
+// instead of sending the person there.
+func TestLimitHookSaysWhenNoOtherAccountFits(t *testing.T) {
+	hookEnv(t)
+	c := newTestCLI(t, map[string]int{"personal": 10, "work": 40}) // side is not logged in
+	cwd, _ := os.Getwd()
+	conv := filepath.Join(transcript.ProjectDir(c.p.ProfileDir("personal"), cwd), "s1.jsonl")
+	reset := time.Now().Add(3 * time.Hour)
+	limitConversation(t, conv, time.Now().Add(-time.Second), reset)
+	t.Setenv("CCAM_PROFILE", "personal")
+	hit := "ccam: personal hit its 5-hour limit (resets " + handoff.FormatReset(reset, time.Now()) + ")"
+	for _, k := range []struct {
+		name               string
+		personal, work, sd [2]string // organization, plan
+		crossOrg           bool
+		want               string
+	}{
+		{"a personal plan among seats", [2]string{"p1", "claude_max"}, [2]string{"acme", "claude_team"}, [2]string{"acme", "claude_team"}, false,
+			hit + ". You have no other personal plans to carry it on as."},
+		{"a seat alone in its organization", [2]string{"acme", "claude_team"}, [2]string{"other", "claude_team"}, [2]string{"s1", "claude_pro"}, false,
+			hit + ". You have no other accounts in Org acme to carry it on as."},
+		{"cross_org", [2]string{"p1", "claude_max"}, [2]string{"acme", "claude_team"}, [2]string{"acme", "claude_team"}, true,
+			hit + ". `ccam next --continue` carries on as another account."},
+		{"another seat, not logged in", [2]string{"acme", "claude_team"}, [2]string{"other", "claude_team"}, [2]string{"acme", "claude_team"}, false,
+			hit + ". `ccam next --continue` carries on as another account."},
+	} {
+		cfg := c.cfg()
+		cfg.CrossOrg = k.crossOrg
+		cfg.Save(c.p.ConfigFile())
+		logIn(t, c.p.ProfileDir("personal"), "u1", k.personal[0], k.personal[1])
+		logIn(t, c.p.ProfileDir("work"), "u2", k.work[0], k.work[1])
+		logIn(t, c.p.ProfileDir("side"), "u3", k.sd[0], k.sd[1])
+		out, _, _ := c.run(hookJSON(t, map[string]string{"error": "rate_limit", "last_assistant_message": "You've hit your session limit · resets 3:30am (Asia/Seoul)",
+			"session_id": "s1", "transcript_path": conv, "cwd": cwd}), "hook", "stop-failure")
+		var got map[string]string
+		if err := json.Unmarshal([]byte(out), &got); err != nil || got["terminalSequence"] != "\x1b]9;"+k.want+"\x07" {
+			t.Errorf("%s: %q, want %q", k.name, out, k.want)
+		}
 	}
 }
 

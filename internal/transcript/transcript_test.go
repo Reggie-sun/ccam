@@ -199,10 +199,14 @@ func TestPermissionMode(t *testing.T) {
 	if m := PermissionMode(path); m != "plan" {
 		t.Fatalf("a newer permission-mode row: %q", m)
 	}
-	// Prompts Claude Code sends itself do not say what the person chose.
+	// Prompts Claude Code sends itself do not say what the person chose, nor
+	// do a local command and the summary written after compacting (made-up
+	// rows of those shapes, with a mode added).
 	others := `{"type":"user","message":{"role":"user","content":"(done)"},"permissionMode":"bypassPermissions","origin":{"kind":"task-notification"}}` + "\n" +
 		`{"type":"user","isMeta":true,"message":{"role":"user","content":"(peer)"},"permissionMode":"bypassPermissions","origin":{"kind":"peer"}}` + "\n" +
-		`{"type":"user","isSidechain":true,"message":{"role":"user","content":"(task)"},"permissionMode":"bypassPermissions"}` + "\n"
+		`{"type":"user","isSidechain":true,"message":{"role":"user","content":"(task)"},"permissionMode":"bypassPermissions"}` + "\n" +
+		`{"type":"user","message":{"role":"user","content":"<command-name>/usage</command-name>\n<command-args></command-args>"},"permissionMode":"bypassPermissions"}` + "\n" +
+		`{"type":"user","isCompactSummary":true,"isVisibleInTranscriptOnly":true,"message":{"role":"user","content":"(summary)"},"permissionMode":"bypassPermissions"}` + "\n"
 	write(t, path, base+others, time.Now())
 	if m := PermissionMode(path); m != "acceptEdits" {
 		t.Fatalf("prompts not from the person: %q", m)
@@ -230,11 +234,14 @@ func TestLastLimitEndsTheLastTurn(t *testing.T) {
 	if l, ok := LastLimit(path, time.Time{}); ok {
 		t.Fatalf("a refusal before the last prompt: %+v", l)
 	}
-	// Rows Claude Code adds after a limit do not begin a turn of the person's.
+	// Rows Claude Code adds after a limit do not begin a turn of the person's,
+	// and neither do a local command (/usage), which never reaches the model,
+	// and the summary Claude Code writes after compacting.
 	after := `{"type":"user","message":{"role":"user","content":"(done)"},"origin":{"kind":"task-notification"}}` + "\n" +
 		`{"type":"user","isMeta":true,"message":{"role":"user","content":"(caveat)"}}` + "\n" +
 		`{"type":"user","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"t1","content":"ok"}]}}` + "\n" +
-		`{"type":"system","subtype":"turn_duration"}` + "\n" + `{"type":"file-history-snapshot","snapshot":{}}` + "\n"
+		`{"type":"system","subtype":"turn_duration"}` + "\n" + `{"type":"file-history-snapshot","snapshot":{}}` + "\n" +
+		usageCommand + compactSummary
 	write(t, path, base+after, time.Now())
 	l, ok := LastLimit(path, time.Time{})
 	if !ok || l.Text != "You've hit your session limit · resets 3:30am (Asia/Seoul)" {
@@ -294,5 +301,146 @@ func TestLatestSkipsSessionsWithoutAConversation(t *testing.T) {
 	write(t, filepath.Join(dir, "s4.jsonl"), `{"type":"assistant","message":{"content":[]},"timestamp":"`+now.Add(950*time.Millisecond).UTC().Format(time.RFC3339Nano)+`"}`+"\n", now)
 	if path, _, _ := Latest(dir); ID(path) != "s4" {
 		t.Fatalf("%s", path)
+	}
+}
+
+// Made-up rows of shapes Claude Code (2.1.306-2.1.310) writes, with
+// placeholder text: a local command (/usage: its caveat, the command and
+// its output) and the summary it writes after compacting a conversation.
+const (
+	usageCommand = `{"parentUuid":"l1","isSidechain":false,"type":"user","message":{"role":"user","content":"<local-command-caveat>(caveat)</local-command-caveat>"},"isMeta":true}` + "\n" +
+		`{"parentUuid":"c1","isSidechain":false,"type":"user","message":{"role":"user","content":"<command-name>/usage</command-name>\n            <command-message>usage</command-message>\n            <command-args></command-args>"}}` + "\n" +
+		`{"parentUuid":"c2","isSidechain":false,"type":"user","message":{"role":"user","content":"<local-command-stdout>(dialog dismissed)</local-command-stdout>"}}` + "\n"
+	compactSummary = `{"parentUuid":null,"isSidechain":false,"type":"user","isCompactSummary":true,"isVisibleInTranscriptOnly":true,"message":{"role":"user","content":"(summary)"},"uuid":"cs1"}` + "\n"
+)
+
+// A prompt is what a person sent; nothing Claude Code sends itself.
+func TestPrompt(t *testing.T) {
+	for row, want := range map[string]bool{
+		`{"type":"user","message":{"role":"user","content":"(prompt)"},"origin":{"kind":"human"}}`:                                 true,
+		`{"type":"user","message":{"role":"user","content":"(prompt)"}}`:                                                           true,
+		`{"type":"user","message":{"role":"user","content":[{"type":"text","text":"(prompt)"}]}}`:                                  true,
+		`{"type":"user","isCompactSummary":true,"isVisibleInTranscriptOnly":true,"message":{"role":"user","content":"(summary)"}}`: false,
+		`{"type":"user","isMeta":true,"message":{"role":"user","content":"(continue)"},"origin":{"kind":"auto-continuation"}}`:     false,
+		`{"type":"user","message":{"role":"user","content":"(done)"},"origin":{"kind":"task-notification"}}`:                       false,
+		`{"type":"user","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"t1","content":"ok"}]}}`:           false,
+		`{"type":"user","message":{"role":"user","content":"<command-name>/usage</command-name>\n<command-args></command-args>"}}`: false,
+		`{"type":"user","message":{"role":"user","content":"<local-command-stdout>(dialog dismissed)</local-command-stdout>"}}`:    false,
+		`{"type":"user","isSidechain":true,"message":{"role":"user","content":"(task)"}}`:                                          false,
+		`{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"(reply)"}]}}`:                         false,
+		// A slash command the person ran reaches the model, and so does a !
+		// command (Claude Code 2.1.310 queries the model for it by default);
+		// its output, a finished task without origin and Esc do not.
+		`{"type":"user","message":{"role":"user","content":"<command-message>review</command-message>\n<command-name>/review</command-name>"},"origin":{"kind":"human"}}`: true,
+		`{"type":"user","message":{"role":"user","content":[{"type":"image","source":{"type":"base64","data":"AAAA"}}]}}`:                                                 true,
+		`{"type":"user","message":{"role":"user","content":"<bash-input>ls</bash-input>"}}`:                                                                               true,
+		`{"type":"user","message":{"role":"user","content":"<bash-stdout>(files)</bash-stdout><bash-stderr></bash-stderr>"}}`:                                             false,
+		`{"type":"user","message":{"role":"user","content":"<task-notification>(done)</task-notification>"}}`:                                                             false,
+		`{"type":"user","message":{"role":"user","content":[{"type":"text","text":"[Request interrupted by user]"}]}}`:                                                    false,
+		`{"type":"user","message":{"role":"user","content":" "},"origin":{"kind":"human"}}`:                                                                               false,
+	} {
+		if got := prompt([]byte(row)); got != want {
+			t.Errorf("%s: %v", row, got)
+		}
+	}
+}
+
+// After a limit, only a prompt of the person's counts as moving on: the
+// rows Claude Code adds by itself do not.
+func TestPromptedAfter(t *testing.T) {
+	base := fixture(t, "limit-2.1.306-five_hour.jsonl")
+	at := time.Date(2026, 10, 21, 14, 51, 46, 515e6, time.UTC)
+	path := filepath.Join(t.TempDir(), "c.jsonl")
+	write(t, path, base, time.Now())
+	if PromptedAfter(path, at) {
+		t.Fatal("nothing after the limit")
+	}
+	// Made-up rows of the shapes Claude Code writes after a limit.
+	for name, row := range map[string]string{
+		"turn duration":     `{"type":"system","subtype":"turn_duration","durationMs":1}`,
+		"Remote Control":    `{"type":"bridge-session","sessionId":"s","bridgeSessionId":"cse_test","lastSequenceNum":3}`,
+		"cost":              `{"type":"cost-state","sessionId":"s"}`,
+		"last prompt":       `{"type":"last-prompt","lastPrompt":"(prompt)","sessionId":"s"}`,
+		"file history":      `{"type":"file-history-snapshot","messageId":"m","snapshot":{},"isSnapshotUpdate":false}`,
+		"queued":            `{"type":"queue-operation","operation":"enqueue","content":"(prompt)","sessionId":"s"}`,
+		"attachment":        `{"type":"attachment","attachment":{"type":"queued_command","prompt":"(prompt)","origin":{"kind":"human"}}}`,
+		"task notification": `{"type":"user","message":{"role":"user","content":"(done)"},"origin":{"kind":"task-notification"}}`,
+		"local command":     strings.TrimSpace(usageCommand),
+		"compact summary":   strings.TrimSpace(compactSummary),
+		"tool result":       `{"type":"user","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"t1","content":"ok"}]}}`,
+		"subagent":          `{"type":"user","isSidechain":true,"message":{"role":"user","content":"(task)"}}`,
+		"! command output":  `{"type":"user","message":{"role":"user","content":"<bash-stdout>(output)</bash-stdout><bash-stderr></bash-stderr>"}}`,
+	} {
+		write(t, path, base+row+"\n", time.Now())
+		if PromptedAfter(path, at) {
+			t.Errorf("%s: a prompt", name)
+		}
+	}
+	for name, row := range map[string]string{
+		"typed":          `{"type":"user","message":{"role":"user","content":"(go on)"},"origin":{"kind":"human"}}`,
+		"without origin": `{"type":"user","message":{"role":"user","content":"(go on)"}}`,
+		// Claude Code queries the model for it, and counts it as the
+		// person taking over its wait for the limit, as a typed prompt.
+		"! command": `{"type":"user","message":{"role":"user","content":"<bash-input>git status</bash-input>"}}`,
+	} {
+		write(t, path, base+row+"\n", time.Now())
+		if !PromptedAfter(path, at) {
+			t.Errorf("%s: no prompt", name)
+		}
+	}
+	// A prompt before the limit is the one the limit refused.
+	lines := strings.SplitAfter(base, "\n")
+	write(t, path, strings.Join(lines[:len(lines)-2], "")+`{"type":"user","message":{"role":"user","content":"(go on)"}}`+"\n"+lines[len(lines)-2], time.Now())
+	if PromptedAfter(path, at) {
+		t.Fatal("a prompt before the limit")
+	}
+	// A limit that is not in the end of the conversation: ccam cannot tell.
+	// No prompt is in the part read either: the limit row has left it, or
+	// the limit there is another one.
+	filler := strings.Repeat(`{"type":"system","subtype":"turn_duration","content":"`+strings.Repeat("x", 900)+`"}`+"\n", 1300)
+	write(t, path, base+filler, time.Now())
+	if !PromptedAfter(path, at) {
+		t.Error("a limit before the part read")
+	}
+	write(t, path, lines[len(lines)-2]+`{"type":"system","subtype":"turn_duration","durationMs":1}`+"\n", time.Now())
+	if !PromptedAfter(path, at.Add(time.Second)) {
+		t.Error("another limit")
+	}
+	if !PromptedAfter(filepath.Join(t.TempDir(), "none.jsonl"), at) {
+		t.Error("no conversation")
+	}
+}
+
+// Remote Control is on when the last bridge-session row names a bridge
+// session: Claude Code writes one with an empty id when it is turned off.
+func TestRemoteControl(t *testing.T) {
+	// Made-up rows of the shapes Claude Code 2.1.308-2.1.310 writes.
+	on := `{"type":"bridge-session","sessionId":"s","bridgeSessionId":"cse_test","lastSequenceNum":3}` + "\n"
+	off := `{"type":"bridge-session","sessionId":"s","bridgeSessionId":"","lastSequenceNum":0}` + "\n"
+	quoted := `{"type":"user","message":{"role":"user","content":"(about {\"type\":\"bridge-session\",\"bridgeSessionId\":\"cse_x\"})"}}` + "\n"
+	// A tool call's input is an object: the word is no escaped text there.
+	search := `{"isSidechain":false,"type":"assistant","message":{"id":"m9","model":"claude-opus-5-5","role":"assistant","content":[{"type":"tool_use","id":"t9","name":"Grep","input":{"pattern":"bridge-session"}}]}}` + "\n"
+	filler := strings.Repeat(`{"type":"system","subtype":"turn_duration","content":"`+strings.Repeat("x", 900)+`"}`+"\n", 1300)
+	base := fixture(t, "limit-2.1.306-five_hour.jsonl")
+	path := filepath.Join(t.TempDir(), "c.jsonl")
+	for _, c := range []struct {
+		name, body string
+		want       bool
+	}{
+		{"no bridge row", base, false},
+		{"connected", base + on, true},
+		{"connected, then turned off", base + on + off, false},
+		{"turned off, then connected", base + off + on, true},
+		{"a prompt that quotes a row", base + off + quoted, false},
+		{"connected, then a tool call that names bridge-session", base + on + search, true},
+		{"connected long before the end", on + filler, false},
+	} {
+		write(t, path, c.body, time.Now())
+		if got := RemoteControl(path); got != c.want {
+			t.Errorf("%s: %v", c.name, got)
+		}
+	}
+	if RemoteControl(filepath.Join(t.TempDir(), "none.jsonl")) {
+		t.Error("no conversation")
 	}
 }

@@ -50,6 +50,29 @@ func TestPolicyWhy(t *testing.T) {
 	}
 }
 
+// Use says what Why says without comparing the account with the others:
+// for an account taken while a better one was passed over.
+func TestPolicyUse(t *testing.T) {
+	a, b := rep("a", 12, 42*time.Minute, 41), sessions(rep("b", 30, time.Hour, 20), 1)
+	cases := []struct {
+		policy Policy
+		in     *Report
+		want   string
+	}{
+		{Policy{}, a, "12% of its 5 hours used"},
+		{Policy{Strategy: Expiring}, a, "its 5-hour window resets in 42m (12% of its 5 hours used)"},
+		{Policy{Strategy: Balance}, b, "80% of its week is left, resetting in 3d 0h; 1 running"},
+		{Policy{MaxUsage: 10}, a, "12% of its 5 hours used"},
+		{Policy{MaxUsage: 10, Strategy: Balance}, b, "30% of its 5 hours used"},
+		{Policy{}, rep("c", -1, 0, -1), ""},
+	}
+	for _, c := range cases {
+		if got := c.policy.Use(c.in, fixedNow); got != c.want {
+			t.Errorf("%+v for %s: got %q, want %q", c.policy, c.in.Name, got, c.want)
+		}
+	}
+}
+
 func repName(r *Report) string {
 	if r == nil {
 		return ""

@@ -18,7 +18,7 @@ In the JSON, `limits.five_hour.percent` and `limits.weekly.percent` are 0-100, a
 
 ## When the current account reaches its limit
 
-You cannot move this session to another account yourself; the user can. Tell them to type `/ccam:switch` (or `/ccam:switch <account>`): it notes this conversation and ends the turn. With `relay = true` in ccam's `config.toml`, ccam then ends this session and carries the conversation on as the other account by itself, with the permission mode, effort level and options such as `--add-dir` it had. Otherwise they type `/exit` and run, in this folder:
+You cannot move this session to another account yourself; the user can. Tell them to type `/ccam:switch` (or `/ccam:switch <account>`): it notes this conversation and ends the turn. With `relay = true` (or `auto_switch = true`, on Linux and macOS) in ccam's `config.toml`, ccam then ends this session and carries the conversation on as the other account by itself (on Windows, once they type `/exit`), with the permission mode, effort level and options such as `--add-dir` it had. Otherwise they type `/exit` and run, in this folder:
 
 ```sh
 ccam next --continue          # as the account /ccam:switch named, else the next one
@@ -26,6 +26,10 @@ ccam next --auto --continue   # or the account with the most room
 ```
 
 When a session stops at a usage limit, the ccam plugin notes it the same way, and `--auto` leaves that account out. If the accounts share conversation history, this very conversation continues; if not, Claude Code copies it into the new account and the original stays as it is.
+
+`ccam next --continue --brief` starts a new conversation as the other account instead, which reads a summary ccam writes of this one without a model rather than all of it: that costs the other account much less, but details are left out. Suggest it for long conversations.
+
+With `auto_switch = true` in ccam's `config.toml` (Linux, macOS; off by default), ccam carries the conversation on as another account by itself when Claude Code stops the session at a usage limit and another account like this one has room. The new session then starts with: "Your usage limit was reached and ccam moved this conversation to another account. Continue the task you were working on when the limit was reached; do not repeat work that is already complete." When you see that message, carry on from where the conversation stopped. Background shells, dev servers and agents started before the move have stopped; start again only what the task still needs.
 
 ## Run work on other accounts
 
@@ -65,3 +69,4 @@ ccam doctor         # broken share links, logins, permissions
 
 - Do not read or print `.credentials.json` or any token; ccam never needs them in a conversation.
 - Do not run `ccam add`, `ccam login`, `ccam group` (other than `ccam group` and `ccam group show`, which only read), `ccam remove` or `ccam migrate` yourself: they log in through a browser or move files. Suggest the command to the user instead.
+- Do not turn on `auto_switch` or `relay` in ccam's `config.toml` yourself; that is the user's choice. On Team and Enterprise seats `auto_switch` moves work between seats of the organization, which Anthropic's seat rules may not allow: point the user to https://ccam.dev/en/features/next/#auto-switch.

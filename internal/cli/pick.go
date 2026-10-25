@@ -83,9 +83,10 @@ func pickCmd(e *env) *cobra.Command {
 				return noRoom(org.none(base, "no logged-in account to pick"))
 			}
 			var picked *usage.Report
+			var all []*usage.Report
 			prof, err := untilRoom(e, p, d, "no account with known usage and headroom (see `ccam usage`)", func() (*config.Profile, []*usage.Report, error) {
 				prof, r, reports, err := pickOnce(e, cfg, profs, p)
-				picked = r
+				picked, all = r, reports
 				return prof, reports, err
 			})
 			if err != nil {
@@ -95,7 +96,14 @@ func pickCmd(e *env) *cobra.Command {
 				e.printf("%s\n", prof.Name)
 				return nil
 			}
-			out := pickResult{Name: prof.Name, Slot: prof.Slot, Email: prof.Email, Source: picked.Source, Reason: p.Why(picked, clock())}
+			now := clock()
+			why := p.Why(picked, now)
+			if top := p.Choose(all, now); top != picked {
+				// spread passed over top, picked a moment ago: Why would
+				// compare picked with every account.
+				why = p.Use(picked, now) + "; " + top.Name + " was picked a moment ago"
+			}
+			out := pickResult{Name: prof.Name, Slot: prof.Slot, Email: prof.Email, Source: picked.Source, Reason: why}
 			if l := picked.Limits; l != nil {
 				out.FiveHour, out.Weekly = &l.FiveHour, &l.Weekly
 			}
@@ -123,17 +131,7 @@ func pickOnce(e *env, cfg *config.Config, profs []*config.Profile, p usage.Polic
 	defer l.Unlock()
 	reports := reportsOf(e, cfg, profs, usage.Options{})
 	now := clock()
-	var fresh []*usage.Report
-	for _, r := range reports {
-		// A mark dated after now (the clock was set back) is not recent.
-		if info, err := os.Stat(pickPath(e, r.Name)); err != nil || info.ModTime().After(now) || now.Sub(info.ModTime()) >= recentPick {
-			fresh = append(fresh, r)
-		}
-	}
-	best := p.Choose(fresh, now)
-	if best == nil {
-		best = p.Choose(reports, now)
-	}
+	best := spread(e, p, reports, now)
 	if best == nil {
 		return nil, nil, reports, nil
 	}
@@ -142,6 +140,22 @@ func pickOnce(e *env, cfg *config.Config, profs []*config.Profile, p usage.Polic
 	}
 	prof, _ := cfg.Find(best.Name)
 	return prof, best, reports, nil
+}
+
+// spread chooses by p among reports, the accounts picked within recentPick
+// (by ccam pick, or by an auto_switch hook) last.
+func spread(e *env, p usage.Policy, reports []*usage.Report, now time.Time) *usage.Report {
+	var fresh []*usage.Report
+	for _, r := range reports {
+		// A mark dated after now (the clock was set back) is not recent.
+		if info, err := os.Stat(pickPath(e, r.Name)); err != nil || info.ModTime().After(now) || now.Sub(info.ModTime()) >= recentPick {
+			fresh = append(fresh, r)
+		}
+	}
+	if best := p.Choose(fresh, now); best != nil {
+		return best
+	}
+	return p.Choose(reports, now)
 }
 
 // waitLock takes the flock at path, retrying until timeout.

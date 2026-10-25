@@ -161,6 +161,34 @@ func TestReadEmailStreams(t *testing.T) {
 	}
 }
 
+// An account is logged in as its .claude.json says now, else as ccam
+// recorded; right after a login, while .claude.json has no plan yet, the
+// recorded plan of the same Claude account stands.
+func TestLoggedInAs(t *testing.T) {
+	p := testPaths(t)
+	recorded := &config.Identity{AccountUUID: "u1", OrgUUID: "o1", OrgName: "Acme", OrgType: "claude_team"}
+	prof := &config.Profile{Name: "a", Login: recorded}
+	os.MkdirAll(Dir(p, prof), 0o700)
+	if id, live := LoggedInAs(p, prof); id != recorded || live {
+		t.Fatalf("no .claude.json: %+v %v", id, live)
+	}
+	write := func(account, orgType string) {
+		os.WriteFile(filepath.Join(Dir(p, prof), ".claude.json"), []byte(`{"oauthAccount":{"accountUuid":"`+account+`","organizationUuid":"o1","organizationType":"`+orgType+`"}}`), 0o600)
+	}
+	write("u1", "")
+	if id, live := LoggedInAs(p, prof); !live || id.OrgType != "claude_team" || id.OrgName != "Acme" {
+		t.Fatalf("no plan yet: %+v %v", id, live)
+	}
+	write("u2", "")
+	if id, live := LoggedInAs(p, prof); !live || id.AccountUUID != "u2" || id.OrgType != "" {
+		t.Fatalf("another Claude account: %+v %v", id, live)
+	}
+	write("u2", "claude_max")
+	if id, _ := LoggedInAs(p, &config.Profile{Name: "a"}); id.OrgType != "claude_max" {
+		t.Fatalf("nothing recorded: %+v", id)
+	}
+}
+
 func TestRenameRewritesPluginPaths(t *testing.T) {
 	p := testPaths(t)
 	cfg := &config.Config{}

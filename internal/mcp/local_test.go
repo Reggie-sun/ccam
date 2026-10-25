@@ -126,6 +126,61 @@ func TestTrusts(t *testing.T) {
 	}
 }
 
+// A session starts without the trust dialog in a folder the account
+// trusted, or below one: inside git up to the top of the repository,
+// outside git any folder above (Claude Code 2.1.310, read from its code).
+func TestSessionTrusts(t *testing.T) {
+	root, _ := filepath.EvalSymlinks(t.TempDir())
+	repo := filepath.Join(root, "repo")
+	os.MkdirAll(filepath.Join(repo, ".git", "worktrees", "wt"), 0o700)
+	os.MkdirAll(filepath.Join(repo, "sub", "deeper"), 0o700)
+	wt := filepath.Join(root, "wt")
+	os.MkdirAll(wt, 0o700)
+	os.WriteFile(filepath.Join(wt, ".git"), []byte("gitdir: "+filepath.Join(repo, ".git", "worktrees", "wt")+"\n"), 0o600)
+	os.WriteFile(filepath.Join(repo, ".git", "worktrees", "wt", "commondir"), []byte("../..\n"), 0o600)
+	plain := filepath.Join(root, "plain", "sub")
+	os.MkdirAll(plain, 0o700)
+	prof := t.TempDir()
+	trust := func(folders ...string) {
+		p := map[string]any{}
+		for _, f := range folders {
+			p[f] = map[string]any{"hasTrustDialogAccepted": true}
+		}
+		data, _ := json.Marshal(map[string]any{"projects": p})
+		os.WriteFile(filepath.Join(prof, ".claude.json"), data, 0o600)
+	}
+	for _, c := range []struct {
+		trusted []string
+		dir     string
+		want    bool
+	}{
+		{nil, plain, false},
+		{[]string{plain}, plain, true},
+		{[]string{filepath.Dir(plain)}, plain, true}, // outside git any folder above counts
+		{[]string{root}, plain, true},
+		{[]string{filepath.Join(plain, "x")}, plain, false},
+		{[]string{repo}, filepath.Join(repo, "sub", "deeper"), true},
+		{[]string{filepath.Join(repo, "sub")}, filepath.Join(repo, "sub", "deeper"), true},
+		{[]string{root}, filepath.Join(repo, "sub"), false}, // above the repository
+		{[]string{repo}, wt, true},                          // the main worktree's trust
+		{[]string{wt}, repo, false},
+	} {
+		trust(c.trusted...)
+		if got := SessionTrusts(prof, c.dir); got != c.want {
+			t.Errorf("trusted %v, in %s: got %v", c.trusted, c.dir, got)
+		}
+	}
+	// Trusts, the rule for a project's .mcp.json, does not count a parent
+	// outside git.
+	trust(filepath.Dir(plain))
+	if Trusts(prof, plain) {
+		t.Error("Trusts counts a parent outside git")
+	}
+	if SessionTrusts(t.TempDir(), plain) {
+		t.Error("an account without .claude.json trusts nothing")
+	}
+}
+
 func TestNewLocalReportsOnceAndSkipsShared(t *testing.T) {
 	dir := t.TempDir()
 	seen := filepath.Join(t.TempDir(), "seen")

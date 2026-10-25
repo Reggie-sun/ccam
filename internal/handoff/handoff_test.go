@@ -87,8 +87,12 @@ func TestNotesPerSession(t *testing.T) {
 	if err := Save(state, Ticket{Account: "../x", SessionID: "s1"}); err == nil {
 		t.Fatal("an account that is no folder name")
 	}
+	// A note of a limit with an account chosen says why it was chosen.
+	if err := Save(state, Ticket{Account: "a", SessionID: "s1", At: now, Reason: Limit, Chosen: "b", Why: "12% of its 5 hours used, the least"}); err != nil {
+		t.Fatal(err)
+	}
 	t1, ok1 := LoadFile(state, Path(state, "a", "s1"))
-	if !ok1 || t1.SessionID != "s1" {
+	if !ok1 || t1.SessionID != "s1" || t1.Chosen != "b" || t1.Why != "12% of its 5 hours used, the least" {
 		t.Fatalf("%+v", t1)
 	}
 	Remove(t1.File())

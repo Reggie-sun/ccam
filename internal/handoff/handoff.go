@@ -48,6 +48,8 @@ type Ticket struct {
 	// Chosen is the account chosen to carry the conversation on after a
 	// limit; only the relay's own hop follows it.
 	Chosen string `json:"chosen,omitempty"`
+	// Why says why Chosen was chosen (its usage), for the relay's message.
+	Why string `json:"why,omitempty"`
 
 	file string // where the note was read from
 }

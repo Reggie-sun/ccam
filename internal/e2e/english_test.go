@@ -226,6 +226,7 @@ func TestOutputHasNoHangul(t *testing.T) {
 		{"ccam", "add", "x2", "--no-login", "--shortcut", "list"},
 		{"ccam", "migrate", "--group", "bad/group"},
 		{"ccam", "use"},
+		{"ccam", "next", "--brief"},
 		{"ccam", "bogus-command", "--bogus-flag"},
 		{"ccam", "list", "--bogus-flag"},
 		{"ccam", "update", "--version", "latest"},

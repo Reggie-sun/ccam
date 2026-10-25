@@ -122,8 +122,9 @@ func lastMessage(path string, mod time.Time) (time.Time, bool) {
 
 // message reports whether l is a prompt or reply of the main conversation,
 // and when it was made (zero when the row does not say). A local command
-// (/mcp, /usage) leaves user rows that never reach the model; they do not
-// count, and neither do rows Claude Code adds itself (isMeta).
+// (/mcp, /usage) leaves user rows that start no request (later requests
+// carry them as context, after a caveat); they do not count, and neither
+// do rows Claude Code adds itself (isMeta).
 func message(l []byte) (time.Time, bool) {
 	if !bytes.Contains(l, []byte(`"user"`)) && !bytes.Contains(l, []byte(`"assistant"`)) {
 		return time.Time{}, false
@@ -147,7 +148,7 @@ func message(l []byte) (time.Time, bool) {
 		var text string
 		if json.Unmarshal(e.Message.Content, &text) == nil {
 			text = strings.TrimSpace(text)
-			return e.At, text != "" && !strings.HasPrefix(text, "<command-name>") && !strings.HasPrefix(text, "<local-command-")
+			return e.At, text != "" && !localCommand(text)
 		}
 		var blocks []json.RawMessage
 		return e.At, json.Unmarshal(e.Message.Content, &blocks) == nil && len(blocks) > 0
@@ -354,39 +355,194 @@ func PermissionMode(path string) string {
 	return ""
 }
 
-// prompt reports whether l is a prompt a person sent: a main-thread user
-// row that is not a tool's result. Prompts Claude Code sends itself (a
-// finished task, a peer's message, a local command's caveat) do not count.
+// PromptedAfter reports whether a person sent a prompt in the conversation
+// at path after Claude Code refused a request there at a usage limit at
+// the time at (a Limit's At). The rows Claude Code adds after a limit by
+// itself (a finished task, a queued prompt, Remote Control, file history,
+// system rows, those of a local command such as /usage) do not count. A
+// limit that is no longer in the end of the conversation counts as
+// prompted after: ccam cannot tell.
+func PromptedAfter(path string, at time.Time) bool {
+	lines := tail(path)
+	for i := len(lines) - 1; i >= 0; i-- {
+		l := lines[i]
+		if prompt(l) {
+			return true
+		}
+		if !bytes.Contains(l, []byte(`"usage_limit_reached"`)) {
+			continue
+		}
+		var row struct {
+			Sidechain bool      `json:"isSidechain"`
+			At        time.Time `json:"timestamp"`
+		}
+		if json.Unmarshal(l, &row) == nil && !row.Sidechain && row.At.Equal(at) {
+			return false
+		}
+	}
+	return true
+}
+
+// RemoteControl reports whether the conversation at path was connected to
+// Remote Control when Claude Code last wrote it: the last bridge-session
+// row near the end names a bridge session. Claude Code (2.1.308-2.1.310)
+// writes that row when Remote Control connects, again with the session's
+// state every 32 KiB it writes while connected, and one with an empty
+// bridgeSessionId when Remote Control is turned off.
+func RemoteControl(path string) bool {
+	lines := tail(path)
+	for i := len(lines) - 1; i >= 0; i-- {
+		l := lines[i]
+		if !bytes.Contains(l, []byte(`"bridge-session"`)) {
+			continue
+		}
+		var e struct {
+			Type string `json:"type"`
+			ID   string `json:"bridgeSessionId"`
+		}
+		if json.Unmarshal(l, &e) == nil && e.Type == "bridge-session" {
+			return e.ID != ""
+		}
+	}
+	return false
+}
+
+// prompt reports whether l is a prompt a person sent (entry.prompt).
 func prompt(l []byte) bool {
 	if !bytes.Contains(l, []byte(`"user"`)) {
 		return false
 	}
-	var e struct {
-		Type      string `json:"type"`
-		Meta      bool   `json:"isMeta"`
-		Sidechain bool   `json:"isSidechain"`
-		Origin    *struct {
-			Kind string `json:"kind"`
-		} `json:"origin"`
-		Message struct {
-			Content json.RawMessage `json:"content"`
-		} `json:"message"`
-	}
-	if json.Unmarshal(l, &e) != nil || e.Type != "user" || e.Meta || e.Sidechain || e.Origin != nil && e.Origin.Kind != "human" {
+	var e entry
+	if json.Unmarshal(l, &e) != nil {
 		return false
+	}
+	_, ok := e.prompt()
+	return ok
+}
+
+// entry is what ccam reads of a user or assistant row of a conversation.
+type entry struct {
+	Type      string  `json:"type"`
+	Sidechain bool    `json:"isSidechain"`
+	Meta      bool    `json:"isMeta"`
+	Compact   bool    `json:"isCompactSummary"`
+	Hidden    bool    `json:"isVisibleInTranscriptOnly"`
+	Origin    *origin `json:"origin"`
+	Message   struct {
+		ID      string          `json:"id"`
+		Model   string          `json:"model"`
+		Content json.RawMessage `json:"content"`
+	} `json:"message"`
+}
+
+// origin says who sent a user row: "human", or one of Claude Code's own
+// (task-notification, peer …). Older versions write none.
+type origin struct {
+	Kind string `json:"kind"`
+}
+
+// prompt is the prompt a person sent in e, a main-thread user row that is
+// not a tool's result, as they sent it (personText); ok is false for any
+// other row. Prompts Claude Code sends itself (a finished task, a peer's
+// message, a local command's caveat, the summary it writes after
+// compacting) do not count.
+func (e *entry) prompt() (text string, ok bool) {
+	if e.Type != "user" || e.Meta || e.Sidechain || e.Compact || e.Hidden || e.Origin != nil && e.Origin.Kind != "human" {
+		return "", false
+	}
+	text, tool := contentText(e.Message.Content)
+	if tool {
+		return "", false
+	}
+	return personText(text)
+}
+
+// personText is text, of a user row or a queued prompt, as a person sent
+// it, and whether it is a person's prompt at all: not empty, and not one of
+// the texts Claude Code (2.1.303-2.1.310) writes without isMeta or origin
+// for what never reaches the model as a request (a local command or its
+// output, a ! command's output, Esc), nor a finished task's notification
+// that came without its origin. A slash command the person ran is as they
+// typed it, and a ! command is "! <command>", as Claude Code quotes it: it
+// queries the model for one unless respondToBashCommands is off (2.1.310).
+func personText(text string) (string, bool) {
+	text = strings.TrimSpace(text)
+	if text == "" || localCommand(text) {
+		return "", false
+	}
+	if cmd, ok := inside(text, "bash-input"); ok && strings.HasPrefix(text, "<bash-input>") {
+		return "! " + cmd, true
+	}
+	for _, own := range []string{"<bash-stdout>", "<bash-stderr>", "<task-notification>", "[Request interrupted by user"} {
+		if strings.HasPrefix(text, own) {
+			return "", false
+		}
+	}
+	if strings.HasPrefix(text, "<command-message>") {
+		return command(text), true
+	}
+	return text, true
+}
+
+// command is the slash command a person ran, as they typed it, from the
+// text Claude Code writes for it: <command-message>name</command-message>,
+// <command-name>/name</command-name> and, with arguments,
+// <command-args>…</command-args>.
+func command(text string) string {
+	name, ok := inside(text, "command-name")
+	if !ok {
+		return text
+	}
+	if args, _ := inside(text, "command-args"); args != "" {
+		name += " " + args
+	}
+	return name
+}
+
+// inside is the text of the first <tag>…</tag> in s, trimmed.
+func inside(s, tag string) (string, bool) {
+	_, after, ok := strings.Cut(s, "<"+tag+">")
+	if !ok {
+		return "", false
+	}
+	in, _, ok := strings.Cut(after, "</"+tag+">")
+	return strings.TrimSpace(in), ok
+}
+
+// contentText is the text of a message's content, a string or blocks: their
+// text blocks with a line break between, and a line such as [image] for
+// each other block; tool reports a tool's result among the blocks.
+func contentText(content json.RawMessage) (text string, tool bool) {
+	if json.Unmarshal(content, &text) == nil {
+		return text, false
 	}
 	var blocks []struct {
 		Type string `json:"type"`
+		Text string `json:"text"`
 	}
-	if json.Unmarshal(e.Message.Content, &blocks) == nil {
-		for _, b := range blocks {
-			if b.Type != "tool_result" {
-				return true
-			}
+	if json.Unmarshal(content, &blocks) != nil {
+		return "", false
+	}
+	lines := make([]string, 0, len(blocks))
+	for _, b := range blocks {
+		switch b.Type {
+		case "text":
+			lines = append(lines, b.Text)
+		case "tool_result":
+			tool = true
+		case "":
+		default:
+			lines = append(lines, "["+b.Type+"]")
 		}
-		return false
 	}
-	return bytes.HasPrefix(e.Message.Content, []byte(`"`))
+	return strings.Join(lines, "\n"), tool
+}
+
+// localCommand reports whether the text of a user row is a local command
+// (/mcp, /usage) or its output, which Claude Code (2.1.306-2.1.310) writes
+// without isMeta or origin.
+func localCommand(text string) bool {
+	return strings.HasPrefix(text, "<command-name>") || strings.HasPrefix(text, "<local-command-")
 }
 
 // Title is the conversation's name: the one given with /rename, else the

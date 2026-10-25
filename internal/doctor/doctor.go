@@ -108,7 +108,7 @@ const (
 // Run checks everything and, with opt.Fix, repairs safe problems.
 func Run(p paths.Paths, cfg *config.Config, opt Options) []Finding {
 	r := &report{}
-	checkClaude(r, p, cfg)
+	claude := checkClaude(r, p, cfg)
 	checkAuthEnv(r)
 	// Share links are repaired, and a stopped change of groups finished,
 	// under the lock a change of groups holds, toward the config saved by
@@ -165,6 +165,7 @@ func Run(p paths.Paths, cfg *config.Config, opt Options) []Finding {
 	checkFolders(r, cfg)
 	checkGroups(r, cfg)
 	checkIdentities(r, p, cfg)
+	checkAutoSwitch(r, p, cfg, claude, runtime.GOOS)
 	return r.out
 }
 
@@ -351,25 +352,84 @@ func Failed(fs []Finding) bool {
 	return false
 }
 
-func checkClaude(r *report, p paths.Paths, cfg *config.Config) {
+// checkClaude finds Claude Code and returns what `claude --version` printed
+// ("2.1.310 (Claude Code)"), or "" when it could not.
+func checkClaude(r *report, p paths.Paths, cfg *config.Config) string {
 	r.area = "Claude Code"
 	bin, err := launcher.ResolveClaude(p, cfg.ClaudeBin)
 	if err != nil {
 		r.add(Error, "", "%v", err)
-		return
+		return ""
 	}
 	c, err := launcher.ClaudeCommand(context.Background(), bin, "--version")
 	if err != nil {
 		r.add(Error, "", "%v", err)
-		return
+		return ""
 	}
 	out, err := c.Output()
 	if err != nil {
 		r.add(Error, "", "%s --version failed: %v", bin, err)
-		return
+		return ""
 	}
 	version := strings.TrimSpace(string(out))
 	r.add(OK, "", "Claude Code %s (%s)", version, bin)
+	return version
+}
+
+// checkAutoSwitch says, with auto_switch = true, what it does and, for the
+// plans that have seats among the accounts, what Anthropic's help center
+// says about seats (D7 b). It warns about what keeps a session where it is:
+// an account without the ccam plugin turned on, whose hook ends Claude Code,
+// and a Claude Code before 2.1.214, which tells hooks no CLAUDE_PID. Windows
+// ignores auto_switch (D6). claude is what `claude --version` printed.
+func checkAutoSwitch(r *report, p paths.Paths, cfg *config.Config, claude, goos string) {
+	if !cfg.AutoSwitch {
+		return
+	}
+	r.area = "auto_switch"
+	if goos == "windows" {
+		r.add(Info, "", "auto_switch is ignored on Windows; with relay = true, /ccam:switch and then /exit carry a conversation on.")
+		return
+	}
+	r.add(Info, "", "auto_switch is on: at a usage limit, ccam moves an interactive session it started to another account like the one it leaves (a seat of the same organization, or another personal plan) with room. Whether that fits Anthropic's terms is your call: https://ccam.dev/en/features/next/#auto-switch")
+	var v [3]int
+	if n, _ := fmt.Sscanf(claude, "%d.%d.%d", &v[0], &v[1], &v[2]); n == 3 && slices.Compare(v[:], []int{2, 1, 214}) < 0 {
+		r.add(Warn, "", "auto_switch needs Claude Code 2.1.214 or later, which tells hooks its process (CLAUDE_PID); this one is %d.%d.%d, so no session is moved. Update it with `claude update`", v[0], v[1], v[2])
+	}
+	seats := map[string][]string{} // accounts by plan
+	for i := range cfg.Profiles {
+		prof := &cfg.Profiles[i]
+		if prof.API != nil {
+			continue
+		}
+		// Who the account is as the automatic choice reads it.
+		if id, _ := profile.LoggedInAs(p, prof); id != nil {
+			seats[id.OrgType] = append(seats[id.OrgType], prof.Name)
+		}
+		var plugin ext.Item
+		for _, it := range ext.ScanAccount(prof.Name, profile.Dir(p, prof), p.GroupsRoot(), prof.Share, groupNames(cfg), "").Plugins {
+			if name, _, _ := strings.Cut(it.Name, "@"); name == "ccam" {
+				plugin = it
+			}
+		}
+		switch {
+		case plugin.Off:
+			r.add(Warn, prof.Name, "auto_switch is on, but %s has the ccam plugin turned off, so its sessions are not moved. In Claude Code as %s: /plugin enable %s", prof.Name, prof.Name, plugin.Name)
+		case plugin.Name == "" || plugin.Problem != "":
+			r.add(Warn, prof.Name, "auto_switch is on, but %s does not have the ccam plugin, so its sessions are not moved. In Claude Code as %s: /plugin install ccam --marketplace jhyunwoo/ccam", prof.Name, prof.Name)
+		}
+	}
+	// Quoted as the site quotes them (checked 2026-10-24).
+	for _, s := range []struct{ orgType, plan, says, link string }{
+		{"claude_team", "Claude Team", `"Each seat on a Team plan is assigned to one named individual, and only that person may use it." and "Users can't route their work through another user's account to use that user's remaining usage."`,
+			"https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129"},
+		{"claude_enterprise", "Claude Enterprise", `"Each Enterprise seat is assigned to one named individual, and only that person may use it." and "Users can't use another user's account to get around their own spend limits or usage limits."`,
+			"https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0"},
+	} {
+		if names := seats[s.orgType]; len(names) > 0 {
+			r.add(Info, "", "%s seats (%s): auto_switch moves a session between seats of one organization. Anthropic's help center says %s Whether you use it there is your call: %s", s.plan, strings.Join(names, ", "), s.says, s.link)
+		}
+	}
 }
 
 // checkAuthEnv warns about credentials in the environment: every account

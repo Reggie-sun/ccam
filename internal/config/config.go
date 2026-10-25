@@ -46,6 +46,10 @@ type Config struct {
 	// Relay keeps ccam running beside an interactive Claude Code, so that
 	// /ccam:switch can carry the conversation on as another account.
 	Relay bool `toml:"relay,omitempty"`
+	// AutoSwitch carries an interactive session that stopped at a usage
+	// limit on as another account with room by itself (Linux, macOS: it
+	// implies Relay there; Windows ignores it).
+	AutoSwitch bool `toml:"auto_switch,omitempty"`
 	// Theme picks the colors of ccam's screens: auto (from the terminal's
 	// background, the default), dark, light, dark-daltonized,
 	// light-daltonized, dark-ansi or light-ansi.

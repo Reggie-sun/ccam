@@ -5,8 +5,10 @@ import (
 	"cmp"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"slices"
 	"strings"
@@ -37,8 +39,12 @@ type agentEntry struct {
 	PID        int    `json:"pid,omitempty"`
 }
 
-// agentsTimeout bounds one account's `claude agents --json`.
+// agentsTimeout bounds one account's `claude agents --json` or `claude stop`.
 const agentsTimeout = 15 * time.Second
+
+// agentsWaitDelay is how long asAccount waits, once claude has ended, for a
+// process it left behind to close claude's output.
+var agentsWaitDelay = 2 * time.Second
 
 func agentsCmd(e *env) *cobra.Command {
 	var all, asJSON bool
@@ -47,7 +53,9 @@ func agentsCmd(e *env) *cobra.Command {
 		Short: "List the Claude Code sessions of every account: background agents and open sessions",
 		Long: "Runs `claude agents --json` in every account at once and lists the sessions\n" +
 			"together, with the account each belongs to. Background sessions belong to the\n" +
-			"account that started them; open one with `ccam attach <id>`.",
+			"account that started them; open one with `ccam attach <id>`.\n\n" +
+			"The dashboard (ccam on a terminal) shows the same list on its Agents tab, where\n" +
+			"enter attaches to a background session and x stops one.",
 		Example: "  ccam agents\n  ccam agents --all     # also finished background sessions\n  ccam attach 49ec0028",
 		Args:    cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -111,22 +119,13 @@ func listAgents(e *env, cfg *config.Config, all bool) (list []agentEntry, failed
 }
 
 func accountAgents(e *env, bin string, p *config.Profile, all bool) ([]agentEntry, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), agentsTimeout)
-	defer cancel()
 	args := []string{"agents", "--json"}
 	if all {
 		args = append(args, "--all")
 	}
-	c, err := launcher.ClaudeCommand(ctx, bin, args...)
+	out, err := asAccount(e, bin, p, args...)
 	if err != nil {
 		return nil, err
-	}
-	c.Env = launcher.ProfileEnv(e.paths, os.Environ(), profile.Dir(e.paths, p), p.Name)
-	var stderr bytes.Buffer
-	c.Stderr = &stderr
-	out, err := c.Output()
-	if err != nil {
-		return nil, fmt.Errorf("%w %s", err, strings.TrimSpace(stderr.String()))
 	}
 	var list []agentEntry
 	if err := json.Unmarshal(out, &list); err != nil {
@@ -138,6 +137,55 @@ func accountAgents(e *env, bin string, p *config.Profile, all bool) ([]agentEntr
 	return list, nil
 }
 
+// asAccount runs `claude args…` as account p within agentsTimeout and
+// returns what it printed; an error carries what claude wrote on stderr.
+func asAccount(e *env, bin string, p *config.Profile, args ...string) ([]byte, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), agentsTimeout)
+	defer cancel()
+	c, err := launcher.ClaudeCommand(ctx, bin, args...)
+	if err != nil {
+		return nil, err
+	}
+	c.Env = launcher.ProfileEnv(e.paths, os.Environ(), profile.Dir(e.paths, p), p.Name)
+	var stderr bytes.Buffer
+	c.Stderr = &stderr
+	// Without WaitDelay, Output would wait for a process claude leaves
+	// behind, and the dashboard with it.
+	c.WaitDelay = agentsWaitDelay
+	out, err := c.Output()
+	if errors.Is(err, exec.ErrWaitDelay) {
+		err = nil // claude itself ended well
+	}
+	if err != nil {
+		return nil, fmt.Errorf("%w %s", err, strings.TrimSpace(stderr.String()))
+	}
+	return out, nil
+}
+
+// stateText is the State column of `ccam agents` and the dashboard's Agents
+// tab: a background session's state and what its process does ("blocked,
+// idle"), or "open (busy)" for an interactive one, then what it waits for.
+func (a agentEntry) stateText() string {
+	state := cmp.Or(a.State, a.Status, "-")
+	if a.Kind == "interactive" {
+		state = "open (" + cmp.Or(a.Status, "interactive") + ")"
+	} else if a.State != "" && a.Status != "" && a.Status != a.State {
+		state += ", " + a.Status
+	}
+	if a.WaitingFor != "" {
+		state += ": " + a.WaitingFor
+	}
+	return state
+}
+
+// tildeDir writes a folder under home as ~/….
+func tildeDir(dir, home string) string {
+	if rel, err := filepath.Rel(home, dir); err == nil && home != "" && !strings.HasPrefix(rel, "..") {
+		return filepath.Join("~", rel)
+	}
+	return dir
+}
+
 func printAgents(e *env, list []agentEntry) {
 	if len(list) == 0 {
 		e.printf("No sessions. Start one in the background with `ccam <account> --bg \"…\"`.\n")
@@ -147,27 +195,31 @@ func printAgents(e *env, list []agentEntry) {
 	tw := tabwriter.NewWriter(e.stdout, 0, 0, 2, ' ', 0)
 	fmt.Fprintln(tw, "Account\tID\tName\tState\tFolder\tStarted")
 	for _, a := range list {
-		id, state := cmp.Or(a.ID, "-"), cmp.Or(a.State, a.Status, "-")
-		if a.Kind == "interactive" {
-			state = "open (" + cmp.Or(a.Status, "interactive") + ")"
-		} else if a.Status != "" && a.Status != a.State {
-			state += ", " + a.Status
-		}
-		if a.WaitingFor != "" {
-			state += ": " + a.WaitingFor
-		}
-		dir := a.Cwd
-		if rel, err := filepath.Rel(home, dir); err == nil && home != "" && !strings.HasPrefix(rel, "..") {
-			dir = filepath.Join("~", rel)
-		}
 		started := "-"
 		if a.StartedAt > 0 {
 			started = Ago(time.Since(time.UnixMilli(a.StartedAt)))
 		}
-		fmt.Fprintf(tw, "%s\t%s\t%s\t%s\t%s\t%s\n", a.Account, id, cmp.Or(a.Name, "-"), state, dir, started)
+		fmt.Fprintf(tw, "%s\t%s\t%s\t%s\t%s\t%s\n", a.Account, cmp.Or(a.ID, "-"), cmp.Or(a.Name, "-"), a.stateText(), tildeDir(a.Cwd, home), started)
 	}
 	_ = tw.Flush()
 	e.printf("Open a background session with `ccam attach <id>`.\n")
+}
+
+// stopSession stops account's background session id as `ccam <account>
+// stop <id>` does; Claude Code keeps its conversation.
+func stopSession(e *env, account, id string) error {
+	cfg, p, err := e.loadProfile(account)
+	if err != nil {
+		return err
+	}
+	bin, err := launcher.ResolveClaude(e.paths, cfg.ClaudeBin)
+	if err != nil {
+		return err
+	}
+	if _, err := asAccount(e, bin, p, "stop", id); err != nil {
+		return fmt.Errorf("could not stop %s: %w", id, err)
+	}
+	return nil
 }
 
 func attachCmd(e *env) *cobra.Command {

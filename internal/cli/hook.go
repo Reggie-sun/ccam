@@ -8,12 +8,14 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/spf13/cobra"
 
+	"github.com/jhyunwoo/ccam/internal/config"
 	"github.com/jhyunwoo/ccam/internal/fsutil"
 	"github.com/jhyunwoo/ccam/internal/handoff"
 	"github.com/jhyunwoo/ccam/internal/launcher"
@@ -51,7 +53,10 @@ func hookCmd(e *env) *cobra.Command {
 			"                notification, so `ccam next --continue` carries it on\n" +
 			"  switch        /ccam:switch [account]: note the conversation and end the turn\n\n" +
 			"In a session that ccam did not start, stop-failure does nothing and switch says why it cannot move it.\n" +
-			"stop-failure also does nothing for a subagent or a session nobody sits at (-p, background).",
+			"stop-failure also does nothing for a subagent or a session nobody sits at (-p, background).\n\n" +
+			"With auto_switch = true in config.toml (Linux, macOS), stop-failure also ends Claude Code when another\n" +
+			"account like this one has room (a seat of the same Team or Enterprise organization, or another personal\n" +
+			"plan), and the ccam waiting beside the session continues the conversation there.",
 		Args:      cobra.ExactArgs(1),
 		ValidArgs: []string{"stop-failure", "switch"},
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -79,12 +84,8 @@ func hookOutput(e *env, v map[string]any) error {
 	return nil
 }
 
-// limitNames name the limits of handoff.LimitKind, windowNames the windows
-// of Claude Code's limit row, for the notification.
-var (
-	limitNames  = map[string]string{"session": "5-hour", "weekly": "weekly", "usage": "usage", "model": "model", "spend": "spend", "org": "organization's usage"}
-	windowNames = map[string]string{"five_hour": "5-hour", "seven_day": "weekly", "seven_day_opus": "Opus", "seven_day_sonnet": "Sonnet", "seven_day_overage_included": "Fable"}
-)
+// limitNames name the limits of handoff.LimitKind for the notification.
+var limitNames = map[string]string{"session": "5-hour", "weekly": "weekly", "usage": "usage", "model": "model", "spend": "spend", "org": "organization's usage"}
 
 // limitPoll is how long stop-failure waits for the refused request to show
 // in the conversation: Claude Code writes it out every 100 ms and does not
@@ -94,10 +95,12 @@ var limitPoll = 1500 * time.Millisecond
 // hookStopFailure notes a session that stopped at a usage limit, and when
 // Claude Code wrote the limit into the conversation, records the account as
 // full until the limit resets (usage.SaveLimit), so that no automatic
-// choice takes it again before then. A short server throttle or an API
-// key's rate limit stops a turn the same way, but is not a usage limit,
-// and is left alone; so are a subagent's loop, which the main thread
-// reports too, and sessions nobody sits at (-p, background).
+// choice takes it again before then. With auto_switch on, it then ends
+// Claude Code when another account has room (autoSwitch), and the relay
+// carries the conversation on. A short server throttle or an API key's
+// rate limit stops a turn the same way, but is not a usage limit, and is
+// left alone; so are a subagent's loop, which the main thread reports too,
+// and sessions nobody sits at (-p, background).
 func hookStopFailure(e *env, in hookInput, account string) error {
 	if in.AgentID != "" {
 		return nil
@@ -107,10 +110,17 @@ func hookStopFailure(e *env, in hookInput, account string) error {
 	}
 	start := time.Now()
 	var lim transcript.Limit
-	note := func(kind string) error {
-		return handoff.Save(e.paths.State, handoff.Ticket{Account: account, SessionID: in.SessionID, Transcript: in.Transcript,
+	ticket := func(kind string) handoff.Ticket {
+		return handoff.Ticket{Account: account, SessionID: in.SessionID, Transcript: in.Transcript,
 			Cwd: in.folder(), At: time.Now(), Reason: handoff.Limit, Limit: kind, Effort: cmp.Or(in.Effort.Level, os.Getenv("CLAUDE_EFFORT")),
-			Window: lim.Window, ResetsAt: lim.ResetsAt, LimitAt: lim.At})
+			Window: lim.Window, ResetsAt: lim.ResetsAt, LimitAt: lim.At}
+	}
+	note := func(kind string) error {
+		// The note of a move under way stays: the relay follows it.
+		if cur, ok := handoff.LoadFile(e.paths.State, handoff.Path(e.paths.State, account, in.SessionID)); ok && moving(cur) {
+			return nil
+		}
+		return handoff.Save(e.paths.State, ticket(kind))
 	}
 	// The note comes first when the message says enough: Claude Code may
 	// close before the limit shows in the conversation, and end the hook.
@@ -134,23 +144,49 @@ func hookStopFailure(e *env, in hookInput, account string) error {
 	// An organization's stop (out of usage, a group at $0, an allocation
 	// turned off) is not recorded: its admins can lift it at any time.
 	own := row && handoff.Classify(in.LastMessage) != handoff.Org
+	recorded := false
 	if own && usage.LimitWindow(lim.Window) {
-		_ = usage.SaveLimit(usageStateDir(e), account, lim.Window, lim.ResetsAt, lim.At)
+		recorded = usage.SaveLimit(usageStateDir(e), account, lim.Window, lim.ResetsAt, lim.At) == nil
 	}
 	name, reset := limitNames[kind], handoff.Reset(in.LastMessage)
-	if n, ok := windowNames[lim.Window]; ok && own {
+	if n := handoff.WindowLabel(lim.Window); n != "" && own {
 		name = n
 		if !lim.ResetsAt.IsZero() {
 			reset = handoff.FormatReset(lim.ResetsAt, time.Now())
 		}
 	}
-	msg := fmt.Sprintf("ccam: %s hit its %s limit", account, name)
-	if reset != "" {
-		msg += " (resets " + reset + ")"
+	hit := handoff.HitLimit(account, name, reset)
+	msg := hit + ". `ccam next --continue` carries on as another account."
+	if none := noTakeover(e, account); none != "" {
+		// That command would refuse, and auto_switch has nowhere to go.
+		msg = hit + ". " + none
+	} else if recorded {
+		// auto_switch leaves only an account recorded as full: no session
+		// comes back to it before the reset.
+		moved, say := autoSwitch(e, in, ticket(kind), lim, start, hit)
+		if moved {
+			return nil // Claude Code is ending: nothing written now would reach the screen
+		}
+		msg = cmp.Or(say, msg)
 	}
-	msg += ". `ccam next --continue` carries on as another account."
 	// Claude Code shows nothing else a StopFailure hook prints.
-	return hookOutput(e, map[string]any{"terminalSequence": notification(msg)})
+	return hookOutput(e, map[string]any{"terminalSequence": handoff.Notification(msg)})
+}
+
+// noTakeover ends the notification when no other account may take over from
+// account by the rule of `ccam next --continue` (takeover: its pool, or with
+// cross_org any other Claude account; logged in or not), which then refuses.
+// It is "" when one may.
+func noTakeover(e *env, account string) string {
+	cfg, err := e.load()
+	if err != nil || slices.ContainsFunc(takeover(e, cfg, account), func(n string) bool { return n != account }) {
+		return ""
+	}
+	var id *config.Identity
+	if p, ok := cfg.Find(account); ok {
+		id = newOrgs(e, cfg, false).of(p)
+	}
+	return "You have no other " + poolName(id) + " to carry it on as."
 }
 
 // unattended reports whether nobody sits at the session: Claude Code sets
@@ -267,24 +303,4 @@ func hookSwitch(e *env, in hookInput, account string) error {
 		return save(carry)
 	}
 	return stop("ccam: moving this conversation to " + who + "…")
-}
-
-// notification is a desktop notification in the escape sequence the
-// terminal understands: OSC 99 for kitty, OSC 777 for Ghostty, urxvt and
-// Warp, OSC 9 for the rest (iTerm2, WezTerm, Windows Terminal …).
-func notification(msg string) string {
-	msg = strings.Map(func(r rune) rune {
-		if r < 0x20 || r == 0x7f {
-			return ' '
-		}
-		return r
-	}, msg)
-	tp := os.Getenv("TERM_PROGRAM")
-	switch {
-	case os.Getenv("KITTY_WINDOW_ID") != "":
-		return "\x1b]99;;" + msg + "\x1b\\"
-	case tp == "ghostty" || tp == "WarpTerminal" || strings.HasPrefix(os.Getenv("TERM"), "rxvt"):
-		return "\x1b]777;notify;ccam;" + msg + "\x07"
-	}
-	return "\x1b]9;" + msg + "\x07"
 }

@@ -194,6 +194,27 @@ func (p Policy) Why(r *Report, now time.Time) string {
 	return five + ", the least"
 }
 
+// Use says in a few words how far r is by what p goes by, as Why does but
+// without comparing it with other accounts: for an account taken while the
+// one Choose takes was passed over.
+func (p Policy) Use(r *Report, now time.Time) string {
+	if r == nil || !usable(r) {
+		return ""
+	}
+	five := fmt.Sprintf("%.0f%% of its 5 hours used", r.Limits.FiveHour.Percent)
+	if p.peak(r) < p.max() {
+		switch p.Strategy {
+		case Expiring:
+			if at := r.Limits.FiveHour.ResetsAt; !at.IsZero() {
+				return fmt.Sprintf("its 5-hour window resets in %s (%s)", Duration(at.Sub(now)), five)
+			}
+		case Balance:
+			return p.Why(r, now) // it names no other account
+		}
+	}
+	return five
+}
+
 // resetIn is the time until r's 5-hour window resets; a window that is not
 // running (no reset time) sorts last.
 func resetIn(r *Report, now time.Time) time.Duration {

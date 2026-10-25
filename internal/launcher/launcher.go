@@ -146,12 +146,15 @@ const secureStore = runtime.GOOS == "darwin" || runtime.GOOS == "windows"
 // buildEnv sets CLAUDE_CONFIG_DIR. defaultStore keeps an imported ~/.claude
 // on the unsuffixed secure-storage entry that plain `claude` uses (macOS
 // Keychain, Windows Credential Manager); with the file store the variable
-// names the same folder.
+// names the same folder. A Remote Control session id inherited from a Claude
+// Code that is connected is dropped: Claude Code sets it when its own
+// connects, and the hook goes by it.
 func buildEnv(environ []string, dir, name string, defaultStore bool) []string {
 	env := make([]string, 0, len(environ)+3)
 	for _, kv := range environ {
 		if strings.HasPrefix(kv, "CLAUDE_CONFIG_DIR=") || strings.HasPrefix(kv, "CCAM_PROFILE=") ||
-			strings.HasPrefix(kv, "CCAM_RELAY=") || strings.HasPrefix(kv, "CLAUDE_SECURESTORAGE_CONFIG_DIR=") {
+			strings.HasPrefix(kv, "CCAM_RELAY=") || strings.HasPrefix(kv, "CLAUDE_SECURESTORAGE_CONFIG_DIR=") ||
+			strings.HasPrefix(kv, "CLAUDE_CODE_BRIDGE_SESSION_ID=") {
 			continue
 		}
 		env = append(env, kv)

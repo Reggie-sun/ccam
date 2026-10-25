@@ -34,6 +34,8 @@ type fake struct {
 	newer   string // what NewerRelease answers
 	updErr  error
 	same    map[string]string // what SameLogin answers
+	agents  AgentList         // what Agents answers
+	stopErr error             // what StopSession answers
 }
 
 func newFake(t *testing.T) *fake {
@@ -82,6 +84,14 @@ func (f *fake) LastUsed(string) time.Time           { return time.Time{} }
 func (f *fake) SuggestShortcut(name string) string  { return "cc" + name }
 func (f *fake) CheckShortcut(name, sc string) error { return nil }
 func (f *fake) Extensions() (ExtView, error)        { return ExtView{}, nil }
+func (f *fake) Agents() AgentList {
+	f.calls = append(f.calls, "agents")
+	return f.agents
+}
+func (f *fake) StopSession(account, id string) error {
+	f.calls = append(f.calls, "stop "+account+" "+id)
+	return f.stopErr
+}
 func (f *fake) Doctor(fix bool, only string) ([]doctor.Finding, error) {
 	f.calls = append(f.calls, fmt.Sprint("doctor ", fix, " ", only))
 	return []doctor.Finding{{Level: doctor.OK, Msg: "fine"}}, nil
@@ -321,7 +331,7 @@ func TestAccountGroupsGoThroughThePlan(t *testing.T) {
 
 func TestGroupsTabCreatesAndEdits(t *testing.T) {
 	f := newFake(t)
-	m := press(t, dash(f), "right")
+	m := press(t, dash(f), "right", "right")
 	if s := screen(m); !strings.Contains(s, "default") || !strings.Contains(s, "no group") || !strings.Contains(s, "side") {
 		t.Fatal(s)
 	}
@@ -343,7 +353,7 @@ func TestGroupsTabCreatesAndEdits(t *testing.T) {
 		t.Fatalf("%+v", g)
 	}
 	// Editing team: adding settings is blocked while work gets it from default.
-	m = press(t, dash(f), "right", "down", "enter", "down", "space")
+	m = press(t, dash(f), "right", "right", "down", "enter", "down", "space")
 	if !strings.Contains(screen(m), "settings (work: from default)") {
 		t.Fatal(screen(m))
 	}
@@ -372,7 +382,7 @@ func TestRemoveStartsOnNo(t *testing.T) {
 		t.Fatal(s)
 	}
 	// A group with accounts: they leave it first.
-	m = press(t, dash(f), "right", "down", "x")
+	m = press(t, dash(f), "right", "right", "down", "x")
 	if s := screen(m); !strings.Contains(s, "Remove group team?") || !strings.Contains(s, "work leave") {
 		t.Fatal(s)
 	}
@@ -457,10 +467,12 @@ func TestScreensFit(t *testing.T) {
 	f.cfg.Default = ""
 	f.cfg.SetFolder("/home/me/code/clients/a-long-client-name/services/billing-and-invoicing/api", "work")
 	f.usage["work"] = usage.Report{Status: usage.StatusOK, Limits: &usage.Limits{FiveHour: usage.Window{Percent: 100, Known: true}}}
+	f.agents = AgentList{Sessions: longAgents(), Failed: []string{"side: could not list its sessions: " + strings.Repeat("a long reason ", 10)}}
 	screens := [][]string{
 		{}, {"?"}, {"u"}, {"o"}, {"s"}, {"x"}, {"a"}, {"e"},
-		{"right"}, {"right", "enter"}, {"right", "n"}, {"right", "down", "x"},
-		{"right", "right"}, {"right", "right", "n"}, {"left", "left"}, {"left"}, {"left", "f"},
+		{"right"}, {"right", "?"}, {"right", "x"}, {"right", "down", "x"},
+		{"right", "right"}, {"right", "right", "enter"}, {"right", "right", "n"}, {"right", "right", "down", "x"},
+		{"right", "right", "right"}, {"right", "right", "right", "n"}, {"left", "left"}, {"left"}, {"left", "f"},
 	}
 	for _, width := range []int{80, 60} {
 		for _, keys := range screens {
@@ -493,27 +505,52 @@ func TestEmptyStateOffersAdd(t *testing.T) {
 	}
 }
 
-// A shortened folder path keeps the account column under its heading.
+// A shortened folder path keeps the account column under its heading, also
+// when the cut falls inside a double-width character (at one of two
+// neighbouring widths it does).
 func TestFolderColumnsLineUp(t *testing.T) {
 	f := newFake(t)
 	f.cfg.SetFolder("/home/me/code/clients/a-long-client-name/services/billing-and-invoicing/api", "work")
 	f.cfg.SetFolder("/home/me/side", "side")
-	d := dash(f)
-	d.Update(tea.WindowSizeMsg{Width: 60, Height: 24})
-	m := press(t, drain(d, d.Init()), "right", "right")
-	col := -1
-	for _, line := range strings.Split(screen(m), "\n") {
-		switch i := strings.Index(line, "Account"); {
-		case strings.Contains(line, "Folder") && i >= 0:
-			col = ansi.StringWidth(line[:i])
-		case strings.HasSuffix(strings.TrimSpace(line), "work") || strings.HasSuffix(strings.TrimSpace(line), "side"):
-			if got := ansi.StringWidth(line[:strings.LastIndex(line, " ")+1]); got != col {
-				t.Errorf("account at column %d, heading at %d: %q", got, col, line)
+	f.cfg.SetFolder("/home/me/代码/客户/一个很长的客户名称/服务/计费和发票/接口", "side")
+	for _, width := range []int{60, 61} {
+		d := dash(f)
+		d.Update(tea.WindowSizeMsg{Width: width, Height: 24})
+		m := press(t, drain(d, d.Init()), "right", "right", "right")
+		col := -1
+		for _, line := range strings.Split(screen(m), "\n") {
+			switch i := strings.Index(line, "Account"); {
+			case strings.Contains(line, "Folder") && i >= 0:
+				col = ansi.StringWidth(line[:i])
+			case strings.HasSuffix(strings.TrimSpace(line), "work") || strings.HasSuffix(strings.TrimSpace(line), "side"):
+				if got := ansi.StringWidth(line[:strings.LastIndex(line, " ")+1]); got != col {
+					t.Errorf("%d columns: account at column %d, heading at %d: %q", width, got, col, line)
+				}
 			}
 		}
+		if col < 0 {
+			t.Fatal(screen(m))
+		}
 	}
-	if col < 0 {
-		t.Fatal(screen(m))
+}
+
+func TestCutLeft(t *testing.T) {
+	for _, c := range []struct {
+		path string
+		w    int
+		want string
+	}{
+		{"~/code/app", 10, "~/code/app"},
+		{"~/code/app", 6, "…e/app"},
+		{"~/代码/项目", 11, "~/代码/项目"},
+		{"~/代码/项目", 6, "…/项目"},
+		{"~/代码/项目", 7, "…/项目"}, // the cut falls inside 码, which goes too
+		{"~/代码/项目", 8, "…码/项目"},
+		{"~/代码/项目", 9, "…码/项目"}, // inside 代
+	} {
+		if got := cutLeft(c.path, c.w); got != c.want {
+			t.Errorf("%q in %d: %q, want %q", c.path, c.w, got, c.want)
+		}
 	}
 }
 
@@ -699,13 +736,13 @@ func TestFolderRulesThroughASymlink(t *testing.T) {
 	if r := press(t, at(f), "enter").(*Dashboard).Result(); r.Profile != "side" {
 		t.Fatalf("Enter in the linked folder starts %q, want side", r.Profile)
 	}
-	if s := screen(press(t, at(f), "right", "right")); !strings.Contains(s, "uses side") {
+	if s := screen(press(t, at(f), "right", "right", "right")); !strings.Contains(s, "uses side") {
 		t.Fatalf("the Folders tab does not see the rule:\n%s", s)
 	}
 
 	// A rule set here is the resolved folder's.
 	f = newFake(t)
-	press(t, at(f), "right", "right", "n", "down", "enter")
+	press(t, at(f), "right", "right", "right", "n", "down", "enter")
 	if len(f.cfg.Folders) != 1 || f.cfg.Folders[0].Path != resolved || f.cfg.Folders[0].Account != "work" {
 		t.Fatalf("stored %+v, want work for %s", f.cfg.Folders, resolved)
 	}
@@ -794,8 +831,9 @@ func TestKeepsAnInstalledUpdate(t *testing.T) {
 // line fits, the key line included, even with a long error.
 func TestSmallTerminals(t *testing.T) {
 	f := newFake(t)
+	f.agents = sampleAgents(time.Now())
 	for _, size := range [][2]int{{39, 24}, {30, 24}, {10, 24}, {80, 7}, {80, 3}, {20, 2}, {40, 8}, {60, 9}, {80, 10}} {
-		for _, keys := range [][]string{{}, {"?"}, {"x"}, {"right"}} {
+		for _, keys := range [][]string{{}, {"?"}, {"x"}, {"right"}, {"right", "down", "x"}} {
 			d := dash(f)
 			d.Update(tea.WindowSizeMsg{Width: size[0], Height: size[1]})
 			m := press(t, drain(d, d.Init()), keys...)
@@ -824,18 +862,27 @@ func TestSmallTerminals(t *testing.T) {
 }
 
 // ccam doctor in a narrow terminal keeps every word: the boxes stay wide
-// enough for their text, and the terminal wraps the lines.
+// enough for their text, and the terminal wraps the lines. From the
+// narrowest box up, every line fits, also auto_switch's seat line with
+// its long link.
 func TestHealthReportKeepsTextWhenNarrow(t *testing.T) {
 	fs := []doctor.Finding{
 		{Level: doctor.OK, Area: "Claude Code", Msg: "Claude Code 2.1.306 (/home/me/.local/bin/claude)"},
+		{Level: doctor.Info, Area: "auto_switch", Msg: `Claude Team seats (work): auto_switch moves a session between seats of one organization. Anthropic's help center says "Each seat on a Team plan is assigned to one named individual, and only that person may use it." and "Users can't route their work through another user's account to use that user's remaining usage." Whether you use it there is your call: https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129`},
 		{Level: doctor.Warn, Profile: "work", Area: "Share links", Msg: "settings.json is a real file, not a link to the group's copy"},
 	}
 	strip := strings.NewReplacer(" ", "", "│", "", "╭", "", "╮", "", "╰", "", "╯", "", "─", "", "\n", "")
 	for _, w := range []int{19, 20, 25, 30, 31, 40, 79, 120} {
-		out := strip.Replace(ansi.Strip(strings.Join(HealthReport(fs, w, false), "\n")))
+		lines := HealthReport(fs, w, false)
+		out := strip.Replace(ansi.Strip(strings.Join(lines, "\n")))
 		for _, f := range fs {
 			if !strings.Contains(out, strings.ReplaceAll(f.Msg, " ", "")) {
-				t.Errorf("width %d lost text of %q:\n%s", w, f.Msg, strings.Join(HealthReport(fs, w, false), "\n"))
+				t.Errorf("width %d lost text of %q:\n%s", w, f.Msg, strings.Join(lines, "\n"))
+			}
+		}
+		for _, l := range lines {
+			if w >= healthMinBoxW+2 && ansi.StringWidth(l) > w {
+				t.Errorf("width %d: a line of %d: %q", w, ansi.StringWidth(l), l)
 			}
 		}
 	}

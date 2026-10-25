@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"reflect"
 	"runtime"
+	"slices"
 	"strings"
 	"sync"
 	"testing"
@@ -102,6 +103,12 @@ var perms = runtime.GOOS != "windows"
 // exe is the file name suffix of executables.
 var exe = map[bool]string{true: ".exe"}[runtime.GOOS == "windows"]
 
+// sessionEnv are what Claude Code and ccam give the processes of a session,
+// which the developer's own may have exported: ccam's hooks and relay read
+// them, so no test inherits them.
+var sessionEnv = []string{"CCAM_PROFILE", "CCAM_RELAY", "CLAUDE_CONFIG_DIR", "CLAUDE_PID", "CLAUDE_EFFORT", "CLAUDE_PROJECT_DIR",
+	"CLAUDE_CODE_SESSION_ATTENDED", "CLAUDE_CODE_ENTRYPOINT", "CLAUDE_CODE_BRIDGE_SESSION_ID"}
+
 // harness is one isolated ccam installation.
 type harness struct {
 	t    *testing.T
@@ -117,7 +124,11 @@ func newHarness(t *testing.T) *harness {
 	h := &harness{t: t, home: home, log: filepath.Join(home, "claude.log")}
 	os.MkdirAll(filepath.Join(home, "config"), 0o700)
 	os.WriteFile(filepath.Join(home, "config", "config.toml"), []byte(fmt.Sprintf("claude_bin = %q\n", fakeBin)), 0o600)
-	h.env = append(os.Environ(),
+	env := slices.DeleteFunc(os.Environ(), func(kv string) bool {
+		name, _, _ := strings.Cut(kv, "=")
+		return slices.Contains(sessionEnv, name)
+	})
+	h.env = append(env,
 		"CCAM_HOME="+home,
 		"FAKE_CLAUDE_LOG="+h.log,
 		// Only system folders after bin: shortcut checks look for clashes on

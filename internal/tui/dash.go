@@ -50,6 +50,11 @@ type Backend interface {
 	PlanGroups(edit func(*config.Config) error) (*group.Change, error)
 	ApplyGroups(edit func(*config.Config) error, ch *group.Change) (*config.Config, error)
 	Extensions() (ExtView, error)
+	// Agents lists every account's Claude Code sessions as `ccam agents`
+	// does: each account asked at once, each within its time limit.
+	Agents() AgentList
+	// StopSession stops account's background session id (claude stop).
+	StopSession(account, id string) error
 	// Doctor runs the checks; with fix it repairs what is safe, only the
 	// findings of account only (doctor.General: of no account) when set.
 	Doctor(fix bool, only string) ([]doctor.Finding, error)
@@ -83,6 +88,25 @@ type ExtRow struct {
 	Problem bool
 }
 
+// AgentList is `ccam agents` prepared for the Agents tab: the sessions of
+// the accounts that answered, newest first, and a line for each account
+// that could not be asked.
+type AgentList struct {
+	Sessions []Agent
+	Failed   []string
+}
+
+// Agent is one session. Only a background session has an ID, the one
+// `ccam attach` opens.
+type Agent struct {
+	Account   string
+	ID        string
+	Name      string
+	State     string    // as `ccam agents` shows it: "blocked, idle", "open (busy)"
+	Folder    string    // ~ for the home folder
+	StartedAt time.Time // zero when unknown
+}
+
 // Action is what the user chose that needs the terminal; the caller does
 // it after the program has exited.
 type Action int
@@ -104,17 +128,19 @@ type Result struct {
 
 const (
 	tabAccounts = iota
+	tabAgents
 	tabGroups
 	tabFolders
 	tabExtensions
 	tabHealth
 )
 
-var tabNames = []string{"Accounts", "Groups", "Folders", "Extensions", "Health"}
+var tabNames = []string{"Accounts", "Agents", "Groups", "Folders", "Extensions", "Health"}
 
 // tabAbout says in one line what each tab is for; it shows under the tabs.
 var tabAbout = []string{
 	"Your Claude accounts and their usage limits; enter launches the selected one.",
+	"Background agents and open sessions of every account; enter attaches to one.",
 	"Groups share settings, memory, extensions, MCP or history between accounts.",
 	"A folder rule picks the account that plain `ccam` starts in that folder.",
 	"Skills, commands, agents, plugins, MCP and hooks, and which accounts see them.",
@@ -141,6 +167,10 @@ type (
 		err      error
 		fixed    bool   // the result of f or F (doctor --fix)
 		scope    string // what was repaired, for the notice
+	}
+	agentsMsg struct {
+		gen  int // the load it answers (Dashboard.agentsGen)
+		list AgentList
 	}
 	newerMsg   struct{ tag string }
 	updatedMsg struct{ err error }
@@ -171,7 +201,7 @@ type Dashboard struct {
 	width     int
 	height    int
 	tab       int
-	cursor    [5]int
+	cursor    [6]int
 
 	usage     map[string]*usage.Report
 	info      map[string]accInfo
@@ -182,12 +212,16 @@ type Dashboard struct {
 	digitAt   time.Time
 
 	groups groupsTab
+	agents *AgentList // the Agents tab's list; nil while it loads
 	ext    *ExtView
 	extErr error
 	health []doctor.Finding
 	hErr   error
-	loaded [5]bool
+	loaded [6]bool
 	newer  string // a newer ccam release, offered with U
+	// agentsGen numbers the loads of agents: only the newest one's answer
+	// counts, as an account may answer an older one late.
+	agentsGen int
 	// updated is set once U installed newer; this process still runs the
 	// old binary until it is started again.
 	updated bool
@@ -275,13 +309,17 @@ func (d *Dashboard) setConfig(cfg *config.Config) {
 	}
 	d.groups.sync(cfg)
 	// Tabs that read the disk load again when opened next.
-	d.loaded[tabExtensions], d.loaded[tabHealth] = false, false
+	d.loaded[tabAgents], d.loaded[tabExtensions], d.loaded[tabHealth] = false, false, false
 }
 
 func (d *Dashboard) rowCount(tab int) int {
 	switch tab {
 	case tabAccounts:
 		return len(d.cfg.Profiles)
+	case tabAgents:
+		if d.agents != nil {
+			return len(d.agents.Sessions)
+		}
 	case tabGroups:
 		return len(d.cfg.Groups)
 	case tabFolders:
@@ -332,7 +370,8 @@ func (d *Dashboard) loading() bool {
 			return true
 		}
 	}
-	return d.tab == tabExtensions && d.ext == nil && d.extErr == nil ||
+	return d.tab == tabAgents && d.agents == nil ||
+		d.tab == tabExtensions && d.ext == nil && d.extErr == nil ||
 		d.tab == tabHealth && d.health == nil && d.hErr == nil
 }
 
@@ -369,6 +408,14 @@ func (d *Dashboard) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return d, tea.Quit
 		}
 		return d, d.openTab()
+	case agentsMsg:
+		if msg.gen != d.agentsGen {
+			return d, nil
+		}
+		d.agents = &msg.list
+		// The list may be shorter than when the cursor last moved.
+		d.cursor[tabAgents] = max(0, min(d.cursor[tabAgents], d.rowCount(tabAgents)-1))
+		return d, nil
 	case extMsg:
 		d.ext, d.extErr = &msg.view, msg.err
 		return d, nil
@@ -473,7 +520,7 @@ func (d *Dashboard) key(k tea.KeyPressMsg) tea.Cmd {
 		d.tab = (d.tab + len(tabNames) - 1) % len(tabNames)
 		return d.openTab()
 	case "r":
-		d.loaded[tabExtensions], d.loaded[tabHealth] = false, false
+		d.loaded[tabAgents], d.loaded[tabExtensions], d.loaded[tabHealth] = false, false, false
 		d.info = map[string]accInfo{}
 		for _, p := range d.cfg.Profiles {
 			d.info[p.Name] = accInfo{last: d.be.LastUsed(p.Name), running: d.be.Running(p.Name)}
@@ -483,6 +530,8 @@ func (d *Dashboard) key(k tea.KeyPressMsg) tea.Cmd {
 	switch d.tab {
 	case tabAccounts:
 		return d.accountsKey(k)
+	case tabAgents:
+		return d.agentsKey(k)
 	case tabGroups:
 		return d.groupsKey(k)
 	case tabFolders:
@@ -516,6 +565,11 @@ func (d *Dashboard) openTab() tea.Cmd {
 	}
 	d.loaded[d.tab] = true
 	switch d.tab {
+	case tabAgents:
+		d.agents = nil
+		d.agentsGen++
+		gen := d.agentsGen
+		return tea.Batch(func() tea.Msg { return agentsMsg{gen, d.be.Agents()} }, d.tick())
 	case tabExtensions:
 		d.ext, d.extErr = nil, nil
 		return tea.Batch(func() tea.Msg { v, err := d.be.Extensions(); return extMsg{v, err} }, d.tick())
@@ -636,6 +690,8 @@ func (d *Dashboard) body(w int) ([]string, int) {
 	switch d.tab {
 	case tabAccounts:
 		return d.accountsView(w)
+	case tabAgents:
+		return d.agentsView(w)
 	case tabGroups:
 		return d.groupsView(w)
 	case tabFolders:
@@ -689,6 +745,8 @@ func (d *Dashboard) keysLine() string {
 	switch d.tab {
 	case tabAccounts:
 		keys = []string{"enter to launch", "n for most room", "a to add", "s for groups"}
+	case tabAgents:
+		keys = []string{"enter to attach", "x to stop", "r to reload"}
 	case tabGroups:
 		if d.groups.editing {
 			keys = []string{"space to toggle", "tab to switch lists", "enter for the plan", "esc to close"}
@@ -722,6 +780,8 @@ func (d *Dashboard) helpView(w int) []string {
 			{"d", "make it the default"}, {"f", "use it in this folder"},
 			{"e", "rename"}, {"c", "shortcut command"}, {"x", "remove"},
 		}...)
+	case tabAgents:
+		rows = append(rows, [][2]string{{"enter", "attach the background session"}, {"x", "stop the background session"}}...)
 	case tabGroups:
 		rows = append(rows, [][2]string{
 			{"enter", "edit items and accounts"}, {"space", "toggle while editing"},

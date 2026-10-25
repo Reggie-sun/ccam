@@ -78,3 +78,40 @@ func TestWithState(t *testing.T) {
 		}
 	}
 }
+
+// The prompt among claude args, as Claude Code 2.1.310 reads them: the
+// first argument that is no option or option's value, or the one after
+// "--"; the rest keep their order.
+func TestTakePrompt(t *testing.T) {
+	split := func(s string) []string { return strings.Fields(s) }
+	for _, c := range []struct{ in, prompt, rest string }{
+		{"", "", ""},
+		{"--model sonnet fix", "fix", "--model sonnet"},
+		{"fix --model sonnet", "fix", "--model sonnet"},
+		{"--add-dir /a /b", "", "--add-dir /a /b"}, // a variadic flag takes both, as claude does
+		{"--add-dir=/a fix", "fix", "--add-dir=/a"},
+		{"-p fix", "fix", "-p"},
+		{"--debug api fix", "fix", "--debug api"},
+		{"--resume", "", "--resume"},
+		{"--model sonnet -- -x y", "-x", "--model sonnet"}, // after "--", a prompt; what follows it goes
+		{"--", "", ""},
+		{"fix more", "fix", "more"}, // Claude Code ignores a second prompt; it stays where it was
+		{"fix -- -x", "fix", ""},
+	} {
+		in := split(c.in)
+		prompt, rest := TakePrompt(in)
+		if prompt != c.prompt || strings.Join(rest, " ") != c.rest {
+			t.Errorf("%q: prompt %q, rest %q; want %q, %q", c.in, prompt, rest, c.prompt, c.rest)
+		}
+		if strings.Join(in, " ") != c.in {
+			t.Errorf("%q: the args given changed to %q", c.in, in)
+		}
+	}
+	// A prompt with spaces and an empty one are prompts all the same.
+	if prompt, rest := TakePrompt([]string{"--verbose", "run the tests"}); prompt != "run the tests" || !reflect.DeepEqual(rest, []string{"--verbose"}) {
+		t.Fatalf("%q %q", prompt, rest)
+	}
+	if prompt, rest := TakePrompt([]string{"", "--verbose"}); prompt != "" || !reflect.DeepEqual(rest, []string{"--verbose"}) {
+		t.Fatalf("%q %q", prompt, rest)
+	}
+}

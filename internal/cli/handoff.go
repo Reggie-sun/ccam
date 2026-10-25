@@ -104,8 +104,10 @@ func ranLast(e *env, profs []*config.Profile, id string) *config.Profile {
 // line about it: --resume <id> when to sees the conversation's folder
 // (--continue could open a newer conversation there); else Claude Code
 // copies the conversation into to (--fork-session), leaving the original as
-// it is.
-func continueArgs(e *env, cfg *config.Config, conv *conversation, to *config.Profile, args []string) ([]string, string) {
+// it is. A prompt other than "" goes right after them, before args: after
+// a flag that takes several values (--add-dir a b) Claude Code would read
+// it as one of them.
+func continueArgs(e *env, cfg *config.Config, conv *conversation, to *config.Profile, prompt string, args []string) ([]string, string) {
 	what := "the last conversation"
 	if title := transcript.Title(conv.path); title != "" {
 		what = fmt.Sprintf("%q", title)
@@ -116,12 +118,18 @@ func continueArgs(e *env, cfg *config.Config, conv *conversation, to *config.Pro
 			what += "; prompt caches are not shared between organizations, so the first reply reads it all again"
 		}
 	}
-	mine, err := filepath.EvalSymlinks(transcript.ProjectDir(profile.Dir(e.paths, to), conv.cwd))
-	if err == nil && mine == filepath.Dir(conv.path) {
-		return append([]string{"--resume", transcript.ID(conv.path)}, args...), "continuing " + what
+	var resume []string
+	note := "continuing " + what
+	if mine, err := filepath.EvalSymlinks(transcript.ProjectDir(profile.Dir(e.paths, to), conv.cwd)); err == nil && mine == filepath.Dir(conv.path) {
+		resume = []string{"--resume", transcript.ID(conv.path)}
+	} else {
+		resume = []string{"--resume", conv.path, "--fork-session"}
+		note = fmt.Sprintf("continuing %s; %s does not share %s's history, so Claude Code copies it into %s", what, to.Name, conv.owner.Name, to.Name)
 	}
-	note := fmt.Sprintf("continuing %s; %s does not share %s's history, so Claude Code copies it into %s", what, to.Name, conv.owner.Name, to.Name)
-	return append([]string{"--resume", conv.path, "--fork-session"}, args...), note
+	if prompt != "" {
+		resume = append(resume, prompt)
+	}
+	return append(resume, args...), note
 }
 
 // otherOrg reports whether a and b are known to be in different

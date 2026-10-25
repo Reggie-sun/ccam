@@ -25,15 +25,21 @@ import (
 )
 
 func nextCmd(e *env) *cobra.Command {
-	var cont, auto bool
+	var cont, auto, brief bool
 	var noteFile string
 	var choice choiceFlags
 	cmd := &cobra.Command{
-		Use:   "next [--auto] [--continue] [-- claude args]",
+		Use:   "next [--auto] [--continue [--brief]] [-- claude args]",
 		Short: "Run the next account (--continue: pick up the last conversation)",
 		Long: "Opens Claude Code as the account numbered after the last one used.\n" +
 			"--continue carries on this folder's last conversation: with claude --resume <id> when the account\n" +
 			"shares its history, else Claude Code copies it over (--resume <file> --fork-session).\n" +
+			"--brief, with --continue, starts a new conversation instead, which first reads a summary ccam\n" +
+			"writes from the saved one without a model: your first and last requests, the summary Claude Code\n" +
+			"wrote when it last compacted it, Claude's last reply, the todo list, the files Claude changed and\n" +
+			"git status. That costs far less than resuming a long conversation, but details are left out.\n" +
+			"Claude says where the work stands and waits, or follows a prompt you give after --. --dry-run\n" +
+			"prints the summary instead of saving it. Claude Code's own --brief flag goes after -- as well.\n" +
 			"--auto picks by usage: the lowest 5-hour usage among accounts below auto_max_usage\n" +
 			"(config.toml, default 100), skipping full ones; --max-usage and --strategy override\n" +
 			"the config, and --wait waits for an account to reset when none has room. With no\n" +
@@ -130,7 +136,17 @@ func nextCmd(e *env) *cobra.Command {
 			}
 			if cont {
 				var note string
-				args, note = continueArgs(e, cfg, conv, to, args)
+				if brief {
+					if args, note, err = briefArgs(e, conv, args); err != nil {
+						return err
+					}
+				} else {
+					prompt := ""
+					if own != nil && own.Reason == handoff.Limit && own.Chosen != "" {
+						prompt = handoff.ContinuePrompt // the relay's hop after a limit (D3)
+					}
+					args, note = continueArgs(e, cfg, conv, to, prompt, args)
+				}
 				fmt.Fprintf(e.stderr, "  %s\n", note)
 				signInNote(e, from, to)
 			}
@@ -146,6 +162,7 @@ func nextCmd(e *env) *cobra.Command {
 	cmd.Flags().BoolVarP(&cont, "continue", "c", false, "continue this folder's last conversation on the next account")
 	cmd.Flags().StringVar(&noteFile, "note", "", "with --continue: carry on the session that left this note, as it says (the relay uses it)")
 	_ = cmd.Flags().MarkHidden("note")
+	cmd.Flags().BoolVar(&brief, "brief", false, "with --continue: start a new conversation that reads ccam's summary of the last one instead of resuming it")
 	cmd.Flags().BoolVar(&auto, "auto", false, "pick the account by usage (most room)")
 	choice.add(cmd)
 	cmd.PreRunE = func(cmd *cobra.Command, args []string) error {
@@ -154,8 +171,10 @@ func nextCmd(e *env) *cobra.Command {
 				return fmt.Errorf("--%s works with --auto", f)
 			}
 		}
-		if cmd.Flags().Changed("note") && !cont {
-			return fmt.Errorf("--note works with --continue")
+		for _, f := range []string{"note", "brief"} {
+			if cmd.Flags().Changed(f) && !cont {
+				return fmt.Errorf("--%s works with --continue", f)
+			}
 		}
 		return spacedValue(cmd, args, "wait", DefaultWait)
 	}

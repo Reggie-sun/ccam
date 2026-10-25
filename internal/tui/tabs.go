@@ -31,11 +31,7 @@ func (d *Dashboard) foldersView(w int) ([]string, int) {
 			if i == d.cursor[tabFolders] {
 				cur = t.accent().Render(symCursor) + " "
 			}
-			path := f.Path
-			if cut := ansi.StringWidth(path) - pathW; cut > 0 {
-				path = ansi.TruncateLeft(path, cut+ansi.StringWidth(symMore), symMore)
-			}
-			path = padRight(path, pathW)
+			path := padRight(cutLeft(f.Path, pathW), pathW)
 			line := " " + cur + " " + path + "  " + f.Account
 			if here != nil && here.Path == f.Path {
 				line += "  " + t.accent().Render(symHere+" this folder")
@@ -54,6 +50,22 @@ func (d *Dashboard) foldersView(w int) ([]string, int) {
 		return out, -1
 	}
 	return out, d.cursor[tabFolders] + 1
+}
+
+// cutLeft shortens path to w columns starting with symMore, keeping its
+// end. TruncateLeft keeps a double-width character the cut falls inside,
+// one column too many; then that character goes too.
+func cutLeft(path string, w int) string {
+	cut := ansi.StringWidth(path) - w
+	if cut <= 0 {
+		return path
+	}
+	n := cut + ansi.StringWidth(symMore)
+	out := ansi.TruncateLeft(path, n, symMore)
+	if ansi.StringWidth(out) > w {
+		out = ansi.TruncateLeft(path, n+1, symMore)
+	}
+	return out
 }
 
 func (d *Dashboard) foldersKey(k tea.KeyPressMsg) tea.Cmd {

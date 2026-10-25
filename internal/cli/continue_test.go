@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 	"time"
@@ -182,14 +183,20 @@ func TestNextHopFollowsItsNote(t *testing.T) {
 	handoff.Save(c.p.State, note)
 	path := handoff.Path(c.p.State, "personal", "s1")
 	resolved, _ := filepath.EvalSymlinks(conv)
+	// After a limit, the conversation goes on with ccam's prompt (D3).
+	prompt := launcher.ShellQuote(handoff.ContinuePrompt)
+	if runtime.GOOS == "windows" {
+		prompt = `"` + handoff.ContinuePrompt + `"` // the dry run shows the Windows command line
+	}
 	out, errOut, code := c.run("", "--dry-run", "next", "--continue", "--note", path, "--", "--add-dir", "/tmp", "--permission-mode", "plan")
-	if code != 0 || !strings.Contains(errOut, "→ personal → side") || !strings.Contains(out, "--resume "+resolved+" --fork-session --add-dir /tmp --permission-mode plan") {
+	if code != 0 || !strings.Contains(errOut, "→ personal → side") ||
+		!strings.Contains(out, "--resume "+resolved+" --fork-session "+prompt+" --add-dir /tmp --permission-mode plan") {
 		t.Fatalf("%d %s\n%s", code, errOut, out)
 	}
 	// By hand, Chosen is not followed: the next account, or by usage
-	// without the one the limit stopped.
-	if _, errOut, _ := c.run("", "--dry-run", "next", "--continue"); !strings.Contains(errOut, "→ personal → work") {
-		t.Fatalf("by hand: %s", errOut)
+	// without the one the limit stopped. Nor is a prompt sent.
+	if out, errOut, _ := c.run("", "--dry-run", "next", "--continue"); !strings.Contains(errOut, "→ personal → work") || strings.Contains(out, "moved this conversation") {
+		t.Fatalf("by hand: %s\n%s", errOut, out)
 	}
 	usage.SaveLimit(filepath.Join(c.p.State, "usage"), "side", "five_hour", time.Now().Add(time.Hour), time.Now())
 	if _, errOut, _ := c.run("", "--dry-run", "next", "--auto", "--continue"); !strings.Contains(errOut, "→ personal → work") {
@@ -213,6 +220,41 @@ func TestNextHopFollowsItsNote(t *testing.T) {
 	gone("an account that is gone", "the note names nobody, which is no longer an account; run `ccam next --continue` to choose one", path)
 	if _, err := os.Stat(path); err != nil {
 		t.Fatal("the hop took the note although it went nowhere")
+	}
+	// The person asked to move (/ccam:switch): no prompt either.
+	handoff.Save(c.p.State, handoff.Ticket{Account: "personal", SessionID: "s1", Transcript: conv, Cwd: cwd, At: time.Now(), Reason: handoff.Switch, Target: "side"})
+	out, errOut, code = c.run("", "--dry-run", "next", "--continue", "--note", path, "--", "--add-dir", "/tmp")
+	if code != 0 || !strings.Contains(out, "--resume "+resolved+" --fork-session --add-dir /tmp") {
+		t.Fatalf("a switch: %d %s\n%s", code, errOut, out)
+	}
+}
+
+// The prompt goes right after the conversation, before the carried
+// arguments: after a flag of several values Claude Code would read it as
+// one of them.
+func TestContinueArgsCarriesThePrompt(t *testing.T) {
+	c := newTestCLI(t, map[string]int{"personal": 10, "work": 40})
+	e, cfg := c.env()
+	cwd := t.TempDir()
+	from, _ := cfg.Find("personal")
+	to, _ := cfg.Find("work")
+	shared := filepath.Join(transcript.ProjectDir(c.p.ProfileDir("work"), cwd), "s1.jsonl")
+	writeConversation(t, shared, time.Now())
+	shared, _ = filepath.EvalSymlinks(shared)
+	other := filepath.Join(transcript.ProjectDir(c.p.ProfileDir("personal"), cwd), "s1.jsonl")
+	writeConversation(t, other, time.Now())
+	other, _ = filepath.EvalSymlinks(other)
+	for _, k := range []struct {
+		path, prompt, want string
+	}{
+		{shared, "go on", "--resume s1 go on --add-dir /tmp"},
+		{other, "go on", "--resume " + other + " --fork-session go on --add-dir /tmp"},
+		{other, "", "--resume " + other + " --fork-session --add-dir /tmp"},
+	} {
+		args, _ := continueArgs(e, cfg, &conversation{path: k.path, owner: from, cwd: cwd}, to, k.prompt, []string{"--add-dir", "/tmp"})
+		if got := strings.Join(args, " "); got != k.want {
+			t.Errorf("got %q, want %q", got, k.want)
+		}
 	}
 }
 

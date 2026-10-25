@@ -80,6 +80,38 @@ func CarryArgs(args []string) (out, dropped []string) {
 	return out, dropped
 }
 
+// TakePrompt splits claude args into their prompt, the first argument that
+// is neither an option nor an option's value (after "--", the argument
+// after it), and the rest without it. Claude Code takes one prompt and
+// ignores more (2.1.310), so a caller that sends a prompt of its own folds
+// the person's into it. "--" and what follows the prompt after it are
+// dropped, as CarryArgs drops them.
+func TakePrompt(args []string) (prompt string, rest []string) {
+	found := false
+	for i := 0; i < len(args); i++ {
+		a := args[i]
+		switch {
+		case a == "--":
+			if !found && i+1 < len(args) {
+				prompt = args[i+1]
+			}
+			return prompt, rest
+		case isFlag(a):
+			take := 0
+			if name, _, inline := strings.Cut(a, "="); !inline {
+				take = takes(args, i, arity(name))
+			}
+			rest = append(rest, args[i:i+1+take]...)
+			i += take
+		case found:
+			rest = append(rest, a)
+		default:
+			prompt, found = a, true
+		}
+	}
+	return prompt, rest
+}
+
 // knownMode reports whether claude --permission-mode takes mode (2.1.308;
 // it also takes default, and stops on anything else).
 func knownMode(mode string) bool {

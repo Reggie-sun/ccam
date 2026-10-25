@@ -1,10 +1,13 @@
 package launcher
 
 import (
+	"errors"
 	"fmt"
 	"os"
+	"runtime"
 	"strconv"
 	"strings"
+	"syscall"
 	"time"
 
 	"github.com/charmbracelet/x/term"
@@ -65,6 +68,34 @@ func RelayChild(claude, relay int) (int, bool) {
 	return parent, true
 }
 
+// Terminate ends the Claude Code process claude (its CLAUDE_PID) with
+// SIGTERM for the stop-failure hook, but only while it is still the process
+// the hook looked at: the relaying ccam's own claude (RelayChild(claude,
+// relay) gives child) that started at start (session.StartTime). On Linux
+// os.FindProcess holds the process by a pidfd taken before those checks,
+// so a pid given to another process in between is never signaled;
+// elsewhere the checks come right before the kill. Windows cannot end
+// Claude Code from here: an error. A variable so tests can stand in for it.
+var Terminate = func(claude, relay, child int, start string) error {
+	if runtime.GOOS == "windows" {
+		return errors.New("ccam cannot end Claude Code on Windows")
+	}
+	proc, err := os.FindProcess(claude)
+	if err != nil {
+		return err
+	}
+	defer func() { _ = proc.Release() }()
+	if c, ok := RelayChild(claude, relay); !ok || c != child {
+		return errors.New("the Claude Code process is no longer the relay's")
+	}
+	// An ended claude the relay has not reaped yet still has the relay as
+	// its parent, but no start time.
+	if s, ok := session.StartTime(claude); !ok || s != start {
+		return errors.New("the Claude Code process has ended")
+	}
+	return proc.Signal(syscall.SIGTERM)
+}
+
 // relayable reports whether claude args start an interactive session on a
 // terminal, the only kind /ccam:switch can come from. Not `claude
 // remote-control`: the sessions it serves are its own.
@@ -80,12 +111,13 @@ func relayable(args []string) bool {
 	return true
 }
 
-// relay runs claude as a child (relay = true in config.toml). When the
-// session asked to move on (/ccam:switch) and claude ended the way its note
-// expects (hopOK), `ccam next --continue` takes this process's place with
-// that note and carries the conversation on as the other account, with
-// the arguments claude started with that resuming does not restore
-// (CarryArgs, WithState).
+// relay runs claude as a child (relay = true in config.toml, or
+// auto_switch = true). When the session asked to move on (/ccam:switch) or
+// the hook chose an account after a usage limit (auto_switch), and claude
+// ended the way its note expects (hopOK), `ccam next --continue` takes this
+// process's place with that note and carries the conversation on as the
+// other account, with the arguments claude started with that resuming does
+// not restore (CarryArgs, WithState).
 func (pl *Plan) relay(p paths.Paths) error {
 	// The hook writes this into its note, so only this very session is
 	// carried on.
@@ -131,8 +163,34 @@ func (pl *Plan) hop(t *handoff.Ticket) error {
 	if t.Reason == handoff.Switch && t.Target == "" {
 		argv = append(argv, "--auto")
 	}
-	fmt.Fprintln(os.Stderr, "ccam: carrying the conversation on (ccam next --continue)")
+	if t.Reason == handoff.Limit {
+		// The hook ended Claude Code without a word (auto_switch): say it here.
+		notice, line := limitHop(t, time.Now())
+		if term.IsTerminal(os.Stderr.Fd()) {
+			fmt.Fprint(os.Stderr, handoff.Notification(notice))
+		}
+		fmt.Fprintln(os.Stderr, line)
+	} else {
+		fmt.Fprintln(os.Stderr, "ccam: carrying the conversation on (ccam next --continue)")
+	}
 	return execSelf(self, append(append(argv, "--"), args...))
+}
+
+// limitHop is what the relay says when it carries the conversation of the
+// limit note t on: a desktop notification, and the line before the hop.
+func limitHop(t *handoff.Ticket, now time.Time) (notice, line string) {
+	label, reset := handoff.WindowLabel(t.Window), ""
+	if label == "" {
+		label = "usage"
+	}
+	if !t.ResetsAt.IsZero() {
+		reset = handoff.FormatReset(t.ResetsAt, now)
+	}
+	notice = handoff.HitLimit(t.Account, label, reset) + ". Moving this conversation to " + t.Chosen
+	if t.Why != "" {
+		notice += " (" + t.Why + ")"
+	}
+	return notice + ".", handoff.HitLimit(t.Account, label, "") + "; continuing this conversation as " + t.Chosen
 }
 
 // hop is what the relay knows once claude has ended and its session left

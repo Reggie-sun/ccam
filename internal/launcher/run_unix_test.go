@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"github.com/jhyunwoo/ccam/internal/config"
+	"github.com/jhyunwoo/ccam/internal/session"
 )
 
 // Run records the claude process and what reached ccam: SIGHUP (passed on)
@@ -140,5 +141,63 @@ func TestDryRunLineGivesTheLaunchEnv(t *testing.T) {
 		if got, want := watched(strings.Split(strings.TrimSpace(string(data)), "\n")), watched(real.Env); !slices.Equal(got, want) {
 			t.Errorf("%s: the pasted line gives\n%q\nwant\n%q\n(line: %s)", name, got, want, line.String())
 		}
+	}
+}
+
+// The hook ends only the relay's own claude, and only while it runs: not a
+// process the relay did not start, nor one that has ended or whose pid has
+// gone to another process.
+func TestTerminateOnlyTheRelaysClaude(t *testing.T) {
+	claude := exec.Command("sleep", "5")
+	if err := claude.Start(); err != nil {
+		t.Fatal(err)
+	}
+	defer func() { claude.Process.Kill(); claude.Wait() }()
+	pid := claude.Process.Pid
+	start, ok := session.StartTime(pid)
+	if !ok {
+		t.Fatal("no start time")
+	}
+	for _, c := range []struct {
+		name         string
+		relay, child int
+		start        string
+	}{
+		{"another relay", os.Getppid(), pid, start},
+		{"another child", os.Getpid(), pid + 1, start},
+		{"another start", os.Getpid(), pid, "1"},
+	} {
+		if err := Terminate(pid, c.relay, c.child, c.start); err == nil {
+			t.Errorf("%s: ended", c.name)
+		}
+	}
+	if err := claude.Process.Signal(syscall.Signal(0)); err != nil {
+		t.Fatalf("claude ended: %v", err)
+	}
+	if err := Terminate(pid, os.Getpid(), pid, start); err != nil {
+		t.Fatal(err)
+	}
+	state, _ := claude.Process.Wait()
+	if ws, ok := state.Sys().(syscall.WaitStatus); !ok || !ws.Signaled() || ws.Signal() != syscall.SIGTERM {
+		t.Fatalf("not ended by SIGTERM: %v", state)
+	}
+	if err := Terminate(pid, os.Getpid(), pid, start); err == nil {
+		t.Fatal("ended a process that is gone")
+	}
+	// A claude that has exited but that the relay has not reaped yet.
+	done := exec.Command("sleep", "0")
+	if err := done.Start(); err != nil {
+		t.Fatal(err)
+	}
+	defer done.Wait()
+	zpid := done.Process.Pid
+	zstart, _ := session.StartTime(zpid)
+	for deadline := time.Now().Add(2 * time.Second); time.Now().Before(deadline); time.Sleep(10 * time.Millisecond) {
+		if _, running := session.StartTime(zpid); !running {
+			break
+		}
+	}
+	if err := Terminate(zpid, os.Getpid(), zpid, zstart); err == nil {
+		t.Fatal("ended a process that has exited")
 	}
 }

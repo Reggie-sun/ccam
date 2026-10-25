@@ -4,7 +4,8 @@
 // login into .credentials.json (`auth logout` deletes that file).
 // The other FAKE_* variables make it misbehave on purpose. Like Claude
 // Code, it ends with 143 on SIGTERM, and with FAKE_RECORD it lists itself
-// in its config folder while it runs (sessions/<pid>.json).
+// in its config folder while it runs (sessions/<pid>.json). With FAKE_HOOK
+// it stops a turn at a usage limit and runs the real ccam hook (hook.go).
 package main
 
 import (
@@ -38,6 +39,13 @@ func main() {
 	signal.Notify(term, syscall.SIGTERM)
 	go func() {
 		<-term
+		if path := os.Getenv("FAKE_TERMS"); path != "" {
+			// The accounts whose runs SIGTERM ended, in order.
+			if f, err := os.OpenFile(path, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0o600); err == nil {
+				fmt.Fprintln(f, os.Getenv("CCAM_PROFILE"))
+				f.Close()
+			}
+		}
 		os.Exit(143)
 	}()
 	args := ucrtArgs()
@@ -170,9 +178,11 @@ func main() {
 		if path := os.Getenv("FAKE_LOGIN_ARGS"); path != "" {
 			must(os.WriteFile(path, []byte(strings.Join(args, " ")), 0o600))
 		}
+		// A seat of Team organization org-1 unless FAKE_ORG_UUID and
+		// FAKE_ORG_TYPE say otherwise.
 		must(os.WriteFile(filepath.Join(dir, ".claude.json"), fmt.Appendf(nil,
-			`{"numStartups":1,"oauthAccount":{"emailAddress":%q,"accountUuid":%q,"organizationUuid":"org-1","organizationName":"Acme","organizationType":"claude_team"}}`,
-			email, account), 0o600))
+			`{"numStartups":1,"oauthAccount":{"emailAddress":%q,"accountUuid":%q,"organizationUuid":%q,"organizationName":"Acme","organizationType":%q}}`,
+			email, account, cmp.Or(os.Getenv("FAKE_ORG_UUID"), "org-1"), cmp.Or(os.Getenv("FAKE_ORG_TYPE"), "claude_team")), 0o600))
 		// Like Claude Code, a login replaces only the login in the login
 		// file; the MCP sign-ins there stay.
 		cred := filepath.Join(dir, ".credentials.json")
@@ -207,6 +217,9 @@ func main() {
 		data, err := io.ReadAll(os.Stdin)
 		must(err)
 		must(os.WriteFile(path, data, 0o600))
+	}
+	if os.Getenv("FAKE_HOOK") != "" && profile != "" && slices.Contains(strings.Split(os.Getenv("FAKE_HOOK_FROM"), ","), profile) {
+		stopFailure()
 	}
 	if s := os.Getenv("FAKE_SLEEP"); s != "" {
 		sleep(s)

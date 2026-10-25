@@ -24,6 +24,12 @@ func TestMain(m *testing.M) {
 	}
 	stubClaude = writeStubClaude(dir)
 	os.Setenv("PATH", dir+string(os.PathListSeparator)+os.Getenv("PATH"))
+	// A launch that is no dry run would put the stub claude in place of this
+	// test process, which exits 0: go test would report ok and skip every
+	// test after it. Reaching exec fails the run instead.
+	launcher.BeforeExec = func() {
+		panic("a test reached syscall.Exec, which would replace the test process with claude: use --dry-run, or a claude_bin that cannot be found")
+	}
 	code := m.Run()
 	os.RemoveAll(dir)
 	os.Exit(code)

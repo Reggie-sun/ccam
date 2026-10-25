@@ -178,6 +178,23 @@ func ReadIdentity(dir string) (*config.Identity, error) {
 		OrgName: acct.OrganizationName, OrgType: acct.OrganizationType}, nil
 }
 
+// LoggedInAs is who prof is logged in as: what its .claude.json says now
+// (a /login inside a session changes it), else the login ccam recorded.
+// live: .claude.json said it.
+func LoggedInAs(p paths.Paths, prof *config.Profile) (*config.Identity, bool) {
+	id := prof.Login
+	read, err := ReadIdentity(Dir(p, prof))
+	if err != nil || read == nil {
+		return id, false
+	}
+	// The plan is filled in a moment after a login; until then the
+	// recorded one of the same account stands.
+	if read.OrgType == "" && id != nil && id.AccountUUID == read.AccountUUID {
+		read.OrgType, read.OrgName = id.OrgType, id.OrgName
+	}
+	return read, true
+}
+
 // DecodeFileKey decodes one top-level key of a JSON file into v.
 func DecodeFileKey(path, key string, v any) (bool, error) {
 	data, err := os.ReadFile(path)

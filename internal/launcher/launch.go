@@ -7,6 +7,7 @@ import (
 	"maps"
 	"os"
 	"path/filepath"
+	"runtime"
 	"slices"
 	"strings"
 
@@ -62,10 +63,17 @@ func LaunchThen(p paths.Paths, cfg *config.Config, sel string, args []string, dr
 	if Unattended && discardInput(os.Stdin) {
 		fmt.Fprintln(os.Stderr, "ccam: what you typed during the switch was discarded.")
 	}
-	if cfg.Relay && relayable(pl.Argv[1:]) {
+	if useRelay(cfg, runtime.GOOS) && relayable(pl.Argv[1:]) {
 		return pl.relay(p)
 	}
 	return pl.Exec(p)
+}
+
+// useRelay says whether claude runs under the relay on the system goos:
+// with relay = true, or auto_switch = true, which needs it, except on
+// Windows, which ignores auto_switch (D6).
+func useRelay(cfg *config.Config, goos string) bool {
+	return cfg.Relay || cfg.AutoSwitch && goos != "windows"
 }
 
 // Ready does everything before claude starts: build the plan, check links,

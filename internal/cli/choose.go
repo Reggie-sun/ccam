@@ -102,23 +102,13 @@ func newOrgs(e *env, cfg *config.Config, cross bool) *orgs {
 	return &orgs{e: e, cross: cross || cfg.CrossOrg, ids: map[string]*config.Identity{}, live: map[string]bool{}}
 }
 
-// of is who p is logged in as: what its .claude.json says now (a /login
-// inside a session changes it), else the login ccam recorded.
+// of is who p is logged in as (profile.LoggedInAs), read once.
 func (o *orgs) of(p *config.Profile) *config.Identity {
 	if id, ok := o.ids[p.Name]; ok {
 		return id
 	}
-	id := p.Login
-	if read, err := profile.ReadIdentity(profile.Dir(o.e.paths, p)); err == nil && read != nil {
-		// The plan is filled in a moment after a login; until then the
-		// recorded one of the same account stands.
-		if read.OrgType == "" && id != nil && id.AccountUUID == read.AccountUUID {
-			read.OrgType, read.OrgName = id.OrgType, id.OrgName
-		}
-		id = read
-		o.live[p.Name] = true
-	}
-	o.ids[p.Name] = id
+	id, live := profile.LoggedInAs(o.e.paths, p)
+	o.ids[p.Name], o.live[p.Name] = id, live
 	return id
 }
 
@@ -247,6 +237,12 @@ func untilRoom(e *env, p usage.Policy, wait time.Duration, none string, try func
 
 // reportsOf fetches the usage of profs at once, in their order.
 func reportsOf(e *env, cfg *config.Config, profs []*config.Profile, opt usage.Options) []*usage.Report {
+	return reportsWith(context.Background(), e, e.fetcher(), cfg, profs, opt)
+}
+
+// reportsWith is reportsOf with the fetcher f, until ctx ends. The caller
+// makes f, so this may run on a goroutine that outlives it (autoTarget).
+func reportsWith(ctx context.Context, e *env, f *usage.Fetcher, cfg *config.Config, profs []*config.Profile, opt usage.Options) []*usage.Report {
 	all := usageAccounts(e, cfg)
 	var accts []usage.Account
 	for _, p := range profs {
@@ -256,7 +252,7 @@ func reportsOf(e *env, cfg *config.Config, profs []*config.Profile, opt usage.Op
 			}
 		}
 	}
-	reports := e.fetcher().FetchAll(context.Background(), accts, opt, nil)
+	reports := f.FetchAll(ctx, accts, opt, nil)
 	out := make([]*usage.Report, len(reports))
 	for i := range reports {
 		reports[i].Sessions = session.Count(launcher.SessionDir(e.paths, reports[i].Name))

@@ -72,3 +72,31 @@ func TestPickJSONDryRunAndNoRoom(t *testing.T) {
 		t.Fatalf("nobody logged in: %d %q", code, errOut)
 	}
 }
+
+// When the account the policy takes first was picked a moment ago, the
+// reason says so instead of comparing the one picked with every account.
+func TestPickJSONReasonAfterARecentPick(t *testing.T) {
+	c := newTestCLI(t, map[string]int{"personal": 30, "work": 10, "side": 50})
+	if out, _, _ := c.run("", "pick"); strings.TrimSpace(out) != "work" {
+		t.Fatalf("first pick: %q", out)
+	}
+	for _, args := range [][]string{
+		{"--dry-run", "pick", "--json"},
+		// Not "every account is at 20% or more": work is below it.
+		{"--dry-run", "pick", "--json", "--max-usage", "20"},
+	} {
+		out, errOut, code := c.run("", args...)
+		var r pickResult
+		if code != 0 || json.Unmarshal([]byte(out), &r) != nil || r.Name != "personal" || r.Reason != "30% of its 5 hours used; work was picked a moment ago" {
+			t.Errorf("%q: %d %s%s", args, code, out, errOut)
+		}
+	}
+	// Every account was picked a moment ago: the policy's own choice again.
+	c.run("", "pick")
+	c.run("", "pick")
+	out, _, _ := c.run("", "--dry-run", "pick", "--json")
+	var r pickResult
+	if json.Unmarshal([]byte(out), &r) != nil || r.Name != "work" || r.Reason != "10% of its 5 hours used, the least" {
+		t.Fatalf("every account picked: %s", out)
+	}
+}

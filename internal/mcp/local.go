@@ -206,8 +206,17 @@ func FolderLookup[V any](folders map[string]V, dir string) (V, bool) {
 // per account): for dir's ProjectKey (in another worktree, the main one's
 // folder), for dir itself or, inside a git repository, for a folder between
 // dir and the top of the repository. A folder above those does not count
-// (2.1.308).
-func Trusts(profileDir, dir string) bool {
+// (2.1.308). This is the rule for a project's .mcp.json servers.
+func Trusts(profileDir, dir string) bool { return trusts(profileDir, dir, false) }
+
+// SessionTrusts reports whether a session of the account of profileDir
+// starts in dir without Claude Code's trust dialog: as Trusts, but outside
+// git a trusted folder anywhere above dir counts too (2.1.310, read from
+// its code).
+func SessionTrusts(profileDir, dir string) bool { return trusts(profileDir, dir, true) }
+
+// trusts is Trusts, and with aboveOutsideGit SessionTrusts.
+func trusts(profileDir, dir string, aboveOutsideGit bool) bool {
 	data, err := os.ReadFile(filepath.Join(profileDir, ".claude.json"))
 	if err != nil {
 		return false
@@ -236,7 +245,7 @@ func Trusts(profileDir, dir string) bool {
 			return true
 		}
 		parent := filepath.Dir(d)
-		if !inGit || d == top || parent == d {
+		if !inGit && !aboveOutsideGit || inGit && d == top || parent == d {
 			return false
 		}
 		d = parent
