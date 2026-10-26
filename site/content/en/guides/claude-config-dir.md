@@ -1,7 +1,7 @@
 ---
 title: CLAUDE_CONFIG_DIR explained
 description: What CLAUDE_CONFIG_DIR does in Claude Code, what is stored in the folder, where macOS keeps the login, and which files can be shared between accounts.
-updated: 2026-10-23
+updated: 2026-10-26
 published: 2026-10-19
 order: 2
 translation: source
@@ -32,17 +32,17 @@ Checked with Claude Code 2.1.309:
 | `history.jsonl` | Prompt history | Yes |
 | `sessions/`, `shell-snapshots/`, `cache/` and others | Runtime state | No |
 
-## What catches people out?
+## What trips people up?
 
 **Without `CLAUDE_CONFIG_DIR`, `.claude.json` is not inside `~/.claude`.** Claude Code then keeps it at `~/.claude.json`, next to the folder. If you start using `CLAUDE_CONFIG_DIR=~/.claude`, Claude Code looks for `~/.claude/.claude.json` instead and does not find your account. `ccam import` handles this by linking the two. If `~/.claude` already has a `.claude.json` of its own, from an earlier run with `CLAUDE_CONFIG_DIR=~/.claude`, ccam leaves both files and says so, since only you know which one is right.
 
-**On macOS the login is in the Keychain, not in the folder.** Claude Code stores it under the name `Claude Code-credentials`, followed by `-` and the first 8 hex digits of the SHA-256 of the folder path when `CLAUDE_CONFIG_DIR` is set, for the account named by `$USER`. Separate folders therefore get separate Keychain entries, and a folder that is moved or renamed loses its login; that is why `ccam rename` keeps the folder's name on macOS. If the Keychain refuses the write, Claude Code falls back to `.credentials.json` in the folder, as [its documentation](https://code.claude.com/docs/en/authentication#credential-management) describes.
+**On macOS the login is in the Keychain, not in the folder.** Claude Code stores it under the name `Claude Code-credentials`. When `CLAUDE_CONFIG_DIR` is set, the name also ends with `-` and the first 8 hex digits of the SHA-256 of the folder path. The Keychain item's account name is `$USER`. Separate folders therefore get separate Keychain entries, and a folder that is moved or renamed loses its login; that is why `ccam rename` keeps the folder's name on macOS. If the Keychain refuses the write, Claude Code falls back to `.credentials.json` in the folder, as [its documentation](https://code.claude.com/docs/en/authentication#credential-management) describes.
 
-**Not every sign-in lives in the folder.** A Claude Console sign-in without an API key is stored outside it, so separate folders do not keep two of those apart. claude.ai logins and API keys are kept per folder.
+**Not every sign-in lives in the folder.** A Claude Console sign-in without an API key is stored outside it, so separate folders cannot keep two such sign-ins apart. claude.ai logins and API keys are kept per folder.
 
 ## Where is the folder on Windows?
 
-By default `%USERPROFILE%\.claude`, with the login in `.credentials.json` inside it, or in Windows Credential Manager when Claude Code is set to use it, under a name made from the folder path as on macOS. Set `CLAUDE_CONFIG_DIR` to another folder for each extra account, the same way as on Linux and macOS.
+By default it is `%USERPROFILE%\.claude`. The login is in `.credentials.json` inside it, or in Windows Credential Manager if Claude Code is set to use it, under a name derived from the folder path as on macOS. Set `CLAUDE_CONFIG_DIR` to another folder for each extra account, the same way as on Linux and macOS.
 
 ## Can folders share files?
 

@@ -1,7 +1,7 @@
 ---
 title: ccam compared with shell aliases
-description: Shell aliases with CLAUDE_CONFIG_DIR against ccam for running several Claude Code accounts, side by side.
-updated: 2026-10-20
+description: Shell aliases with CLAUDE_CONFIG_DIR compared with ccam for running several Claude Code accounts, feature by feature.
+updated: 2026-10-26
 published: 2026-10-19
 order: 1
 translation: source
@@ -37,7 +37,7 @@ ccam add work --shortcut ccwork
 | Separate logins | Yes | Yes |
 | Setup per account | Edit `~/.bashrc`, log in | `ccam add` |
 | Works in scripts and other programs | No, aliases are shell-only | Yes, `ccam work` and shortcuts such as `ccwork` are real commands |
-| Shared settings, `CLAUDE.md`, extensions | Copy or link by hand | Per item, with backups |
+| Shared settings, `CLAUDE.md`, extensions | Copy or link by hand | Yes, chosen per item, with backups |
 | Shared MCP servers | By hand, per account | `ccam mcp add` once |
 | Continue a conversation in another account | No | `ccam next --continue` |
 | Usage of every account | No | `ccam usage` |

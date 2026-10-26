@@ -1,7 +1,7 @@
 ---
 title: Use multiple Claude Code accounts on one computer
 description: Run several Claude Code accounts side by side with CLAUDE_CONFIG_DIR, by hand with shell aliases or automatically with ccam, and switch between them.
-updated: 2026-10-25
+updated: 2026-10-26
 published: 2026-10-19
 order: 1
 translation: source
@@ -17,7 +17,7 @@ This is the approach [Claude Code's documentation describes](https://code.claude
 alias claude-work='CLAUDE_CONFIG_DIR=~/.claude-work claude'
 ```
 
-Open a new terminal and run `claude-work`. Claude Code asks you to log in, because the folder is new. From then on, `claude` is your first account and `claude-work` the second. Add one alias per account, each with its own folder.
+Open a new terminal and run `claude-work`. Claude Code asks you to log in, because the folder is new. From then on, `claude` is your first account and `claude-work` the second.
 
 On Windows without WSL, a PowerShell function in your profile (`notepad $PROFILE`) does the same:
 
@@ -29,7 +29,7 @@ function claude-work { $env:CLAUDE_CONFIG_DIR = "$HOME\.claude-work"; try { clau
 
 It works well for two accounts. Things to know:
 
-- Each folder starts empty: no settings, no `CLAUDE.md`, no MCP servers, no agents or skills. You copy or link what you need, and keep the copies in step yourself.
+- Each folder starts empty: no settings, no `CLAUDE.md`, no MCP servers, no agents or skills. You copy or link what you need, and keep the copies in sync yourself.
 - Aliases exist only in interactive shells. Scripts, Makefiles and other programs do not see them.
 - MCP servers live in `.claude.json`, next to the login, so they cannot simply be linked between folders.
 - Conversations stay in the account where they started, so you cannot continue one in another account.
@@ -51,9 +51,9 @@ ccam add work --shortcut ccwork
 
 Now `ccam personal` and `ccam work` start the two accounts, and so does `ccwork`, the shortcut you gave the work account. Because they are real programs rather than aliases, they also work in scripts. Run `ccam` on its own to pick an account from a list, and `ccam use work` to make one the default.
 
-Settings, `CLAUDE.md`, MCP servers and extensions are shared from the start. `ccam next --continue` carries a conversation over to the other account, and shared conversation history, which you can turn on, keeps it one conversation. `ccam usage` shows the 5-hour and weekly usage of every account at once.
+Settings, `CLAUDE.md`, MCP servers and extensions are shared from the start. `ccam next --continue` continues a conversation on the other account. If you turn on shared conversation history, both accounts work on the same conversation instead of a copy. `ccam usage` shows the 5-hour and weekly usage of every account at once.
 
-If you already use `~/.claude`, run `ccam import` instead of adding that account again, or `ccam migrate` to copy its settings, MCP servers and extensions into the shared settings.
+If you already use `~/.claude`, run `ccam import` instead of adding that account again, or `ccam migrate` to copy its settings, MCP servers and extensions into the shared `default` group.
 
 ## How do I know which account is running?
 
@@ -75,8 +75,8 @@ Claude Code runs [natively on Windows and inside WSL](https://code.claude.com/do
 
 ## Which one should I choose?
 
-For two accounts and nothing shared, an alias is enough. When you want shared settings and MCP servers, more accounts, usage at a glance or continuing conversations, ccam saves the bookkeeping. The [comparison with aliases](/compare/aliases) lists the differences side by side, and [ccam and other account switchers](/compare/account-switchers) covers tools that swap one login instead.
+For two accounts and nothing shared, an alias is enough. When you want shared settings and MCP servers, more accounts, usage at a glance or continuing conversations, ccam saves you the bookkeeping. The [comparison with aliases](/compare/aliases) lists the differences side by side, and [ccam and other account switchers](/compare/account-switchers) covers tools that swap one login instead.
 
-Whether you may use several accounts depends on each account's terms. Check them before you do.
+Whether you may use more than one account depends on the terms that apply to each one. Read those terms before you start.
 
-**Team and Enterprise seats.** Automatic choice (`ccam next`, `--fallback`, `ccam pick`, the dashboard's `n`, and [`auto_switch`](/features/next#auto-switch) when you turn it on) also switches between seats of the same Claude Team or Enterprise organization. Anthropic's help center says "Each seat on a Team plan is assigned to one named individual, and only that person may use it" and "Users can't route their work through another user's account to use that user's remaining usage" ([Team plans](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); likewise for [Enterprise plans](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Using automatic choice between seats may therefore violate Anthropic's terms. Whether you use it there is your call: check with your organization and Anthropic before you rely on it. Personal plans (Pro, Max) are covered by the note above.
+**Team and Enterprise seats.** Automatic account selection (`ccam next`, `--fallback`, `ccam pick`, the dashboard's `n` and, once you turn it on, [`auto_switch`](/features/next#auto-switch)) also switches between seats of the same Claude Team or Enterprise organization, which may violate Anthropic's terms. Read the [FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) and check with your organization and Anthropic before you rely on it.
