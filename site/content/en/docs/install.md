@@ -1,12 +1,14 @@
 ---
 title: Install ccam
 metaTitle: Install ccam on Linux, macOS and Windows
-description: Install ccam on Linux, macOS or Windows with one command, a .deb package or from source, and update it with ccam update. Claude Code must be installed first.
-updated: 2026-10-25
+description: Install ccam on Linux, macOS or Windows with one command, a .deb package or go install, and update it with ccam update. Claude Code must be installed first.
+updated: 2026-10-26
 published: 2026-10-19
 order: 1
 translation: source
 ---
+
+ccam starts Claude Code for you, so install [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) first and make sure `claude --version` works.
 
 Run this in a terminal on Linux or macOS:
 
@@ -22,16 +24,17 @@ On Windows, run this in PowerShell:
 irm https://ccam.dev/install.ps1 | iex
 ```
 
-It downloads `ccam_windows_<arch>.zip`, checks its SHA-256 checksum, puts `ccam.exe` in `%USERPROFILE%\.local\bin`, the folder where Claude Code's installer puts `claude.exe`, and adds that folder to your user `PATH` if it is not there yet, keeping entries such as `%USERPROFILE%\bin` as they are. Open a new terminal afterwards. Running it again replaces ccam, also while a Claude Code session still runs from the old binary (that one is renamed to `ccam.exe.old`, or `ccam.exe.old-<number>` when an older one is still in use), and renews shortcuts that are hard links: `OK 2 shortcuts now run the new ccam`.
-
-ccam starts Claude Code for you, so install [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) first and make sure `claude --version` works.
+It downloads `ccam_windows_<arch>.zip`, checks its SHA-256 checksum and puts `ccam.exe` in `%USERPROFILE%\.local\bin`, the folder where Claude Code's installer puts `claude.exe`. If that folder is not on your user `PATH` yet, the script adds it and keeps entries such as `%USERPROFILE%\bin` as they are. Open a new terminal afterwards.
 
 ## Supported systems
 
 - Linux on x86-64 and ARM64: Ubuntu, Debian, Fedora, Arch, Alpine and other distributions. The binary is static and has no dependencies.
 - macOS on Apple silicon and Intel.
-- Windows 10 and 11 on x86-64 and ARM64, in PowerShell, Windows Terminal or Git Bash. Shared folders work for every user. Shared files (`settings.json`, `CLAUDE.md`, `history.jsonl`) need Developer Mode (Settings > System > For developers), because Windows lets only that mode, or an administrator, create links to files; see [sharing on Windows](/features/share#on-windows). Without it, the first `ccam add` creates group `default` with MCP servers and extensions only, and says how to add the rest once Developer Mode is on.
-- Inside WSL, ccam works like on any Linux system.
+- Windows 10 and 11 on x86-64 and ARM64, in PowerShell, Windows Terminal or Git Bash:
+  - Shared folders work without Developer Mode.
+  - Shared files (`settings.json`, `CLAUDE.md`, `history.jsonl`) need Developer Mode (Settings > System > For developers), because Windows lets only that mode, or an administrator, create links to files; see [sharing on Windows](/features/share#on-windows).
+  - Without Developer Mode, the first `ccam add` creates the `default` group with MCP servers and extensions only, and says how to add the rest once Developer Mode is on.
+- Inside WSL, ccam works as it does on any other Linux system.
 
 ## Other ways to install
 
@@ -49,7 +52,7 @@ The package installs `/usr/bin/ccam`.
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
 ```
 
-A build of a release tag (`@latest` or `@vX.Y.Z`) reports that version, so `ccam update` works for it; a build of `@main` or of a local checkout past a tag reports `dev`.
+If you install a release tag (`@latest` or `@vX.Y.Z`), ccam reports that version, and `ccam update` and the dashboard's update offer work. A build of `@main`, or of a local checkout with commits after a tag, reports `dev`, and `ccam update` refuses it unless you pass `--version`.
 
 **A specific version.** Set `CCAM_VERSION`:
 
@@ -82,7 +85,13 @@ The ccam plugin teaches Claude Code itself to use ccam: to check which account h
 /plugin install ccam --marketplace jhyunwoo/ccam
 ```
 
-It adds a skill, the commands `/ccam:usage`, `/ccam:ext` and `/ccam:switch`, and two hooks: when a session stops at a usage limit you get a terminal notification (and on Linux and macOS, with [`auto_switch`](/features/next#auto-switch) on, ccam moves the session to another account with room), and `/ccam:switch [account]` hands the conversation to another account ([details](/features/next#inside-claude-code)). The hooks run `ccam`, so it must be on the `PATH` Claude Code sees. The skill never runs commands that log in or move files; it suggests them instead.
+It adds:
+
+- a skill that suggests commands that log in or move files but never runs them;
+- the commands `/ccam:usage`, `/ccam:ext` and `/ccam:switch`;
+- two hooks ([details](/features/next#inside-claude-code)). One shows a terminal notification when a session stops at a usage limit; on Linux and macOS, with [`auto_switch`](/features/next#auto-switch) on, ccam then moves the session to another account with room. The other lets `/ccam:switch [account]` hand the conversation to another account.
+
+The hooks run `ccam`, so it must be on the `PATH` Claude Code sees.
 
 ## Check the installation
 
@@ -112,16 +121,16 @@ $ ccam update
 ccam 0.3.0 is up to date.
 ```
 
-The dashboard (`ccam` on a terminal) also looks for a new release each time it opens and, when there is one, offers it: press `U` and confirm. No other command looks, and ccam never updates without asking. To install a particular release, including an older one, pass `--version`. `ccam --dry-run update` shows what would be downloaded and replaced without changing anything.
+The dashboard (`ccam` with no arguments, in a terminal) also checks for a new release each time it opens and, when there is one, offers it: press `U` and confirm. No other command checks for updates, and ccam never updates without asking. To install a particular release, including an older one, pass `--version`. `ccam --dry-run update` shows what would be downloaded and replaced without changing anything.
 
 ```sh
 ccam update --version v0.2.0
 ccam --dry-run update
 ```
 
-Running the install script again also updates the copy in `~/.local/bin`. If you built ccam with `go install` from a release tag, `ccam update` works too, or run the same command again.
+Running the install script again also updates the copy in `~/.local/bin`. If you built ccam with `go install` from a release tag, you can run `ccam update` or the same `go install` command again.
 
-**Windows.** `ccam update` downloads the `.zip` for Windows. A running program cannot be replaced on Windows, so the old binary is renamed to `ccam.exe.old`, which the next update deletes; while a session still runs from an earlier `ccam.exe.old`, the name is `ccam.exe.old-<time>`. Shortcuts that are hard links are renewed right after.
+**Windows.** `ccam update` downloads the `.zip` for Windows. A running program cannot be replaced on Windows, so the old binary is renamed to `ccam.exe.old`, which the next update deletes; while a session is still running from an earlier `ccam.exe.old`, the name is `ccam.exe.old-<time>`. Shortcuts that are hard links are renewed right after. Running `install.ps1` again works the same way, even while a Claude Code session is still running from the old binary, and prints `OK 2 shortcuts now run the new ccam` when it renews hard-linked shortcuts.
 
 **Debian and Ubuntu package.** `ccam update` does not replace a `/usr/bin/ccam` that apt installed, and prints these steps instead. Download the new `ccam_<version>_linux_amd64.deb` from the [releases page](https://github.com/jhyunwoo/ccam/releases) and install it over the old one:
 
@@ -130,6 +139,8 @@ sudo apt install ./ccam_*_linux_amd64.deb
 ```
 
 ## Uninstall
+
+Deleting `~/.local/share/ccam` also deletes the logins and conversation history stored there. A `~/.claude` folder that you [imported](/docs/commands) stays where it is, but while it is in a group, the files it shares live in `~/.local/share/ccam/groups/`. Run `ccam remove <name>` for it (or `ccam group leave`) before you delete anything: this takes it out of its groups and puts a copy of everything it shared back into the folder.
 
 Remove the account shortcuts first, while ccam is still installed. `ccam list` shows them in the Shortcut column; remove each one with `ccam shortcut <account> --remove`, or delete those links from `~/.local/bin` yourself. Then remove the command, and the data folders if you no longer need the accounts:
 
@@ -147,5 +158,3 @@ ccam shortcut work --remove   # once for each account that has a shortcut
 Remove-Item ~\.local\bin\ccam.exe
 Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
 ```
-
-Deleting `~/.local/share/ccam` also deletes the logins and conversation history stored there. A `~/.claude` folder that you [imported](/docs/commands) stays where it is, but while it is in a group, the files it shares live in `~/.local/share/ccam/groups/`. Run `ccam remove <name>` for it first (or `ccam group leave`): it leaves its groups with a copy of everything it shared.

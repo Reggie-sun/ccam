@@ -1,13 +1,13 @@
 ---
 title: Usage limits and switching accounts
 description: See the 5-hour and weekly usage of every Claude Code account with ccam usage, and open the account with the most room with ccam next --auto.
-updated: 2026-10-25
+updated: 2026-10-26
 published: 2026-10-19
 order: 5
 translation: source
 ---
 
-`ccam usage` shows how much of the 5-hour limit, the weekly limit and each model's own weekly limit (such as Fable) every account has used. `ccam next --auto` opens the account with the most room, and `--continue` carries the current conversation over.
+`ccam usage` shows, for every account, how much of each limit is used: the 5-hour limit, the weekly limit and each model's own weekly limit (such as Fable). `ccam next --auto` opens the account with the most room, and `--continue` carries the current conversation over.
 
 ```console
 $ ccam usage
@@ -26,9 +26,9 @@ $ ccam usage
 → Most headroom: work   (open it with ccam next --auto)
 ```
 
-Each account gets a line with how old its numbers are, then one bar per limit with the time until it resets: the 5-hour window, the weekly window for all models, and each model's own weekly window, such as Fable. From 80% a bar turns yellow, and at 100% red. The last line names the account `ccam next --auto` would open; with `auto_strategy = "expiring"` or `"balance"` it reads `→ next --auto picks <name>: <reason>` instead.
+Each account gets a line with how old its numbers are, then one bar per limit with the time until it resets: the 5-hour window, the weekly window for all models, and each model's own weekly window, such as Fable. A bar turns yellow at 80% and red at 100%. The last line names the account `ccam next --auto` would open; with `auto_strategy = "expiring"` or `"balance"` it reads `→ next --auto picks <name>: <reason>` instead.
 
-**Team and Enterprise seats.** Automatic choice (`ccam next`, `--fallback`, `ccam pick`, the dashboard's `n`, and [`auto_switch`](/features/next#auto-switch) when you turn it on) also switches between seats of the same Claude Team or Enterprise organization. Anthropic's help center says "Each seat on a Team plan is assigned to one named individual, and only that person may use it" and "Users can't route their work through another user's account to use that user's remaining usage" ([Team plans](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); likewise for [Enterprise plans](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Using automatic choice between seats may therefore violate Anthropic's terms. Whether you use it there is your call: check with your organization and Anthropic before you rely on it. Personal plans (Pro, Max) are covered by the [terms note in the FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Team and Enterprise seats.** Automatic account selection (`ccam next`, `--fallback`, `ccam pick`, the dashboard's `n` and, once you turn it on, [`auto_switch`](/features/next#auto-switch)) also switches between seats of the same Claude Team or Enterprise organization, which may violate Anthropic's terms. Read the [FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) and check with your organization and Anthropic before you rely on it.
 
 ## Where the numbers come from
 
@@ -50,9 +50,9 @@ Numbers fetched less than 60 seconds ago are reused. Options:
 
 ## Expired logins
 
-When an account's access token has expired, ccam does not renew it, because renewing it while a Claude Code session uses the same login could sign that session out. The account shows ``access token expired; `ccam <name>` renews it when it starts``: start it once with `ccam <name>` and Claude Code renews it. A login that has expired as a whole, or that Claude Code cleared, shows `` login expired → `ccam login <name>` `` and needs a new login.
+When an account's access token has expired, ccam does not renew it, because renewing it while a Claude Code session uses the same login could sign that session out. The account shows ``access token expired; `ccam <name>` renews it when it starts``: start it once with `ccam <name>` and Claude Code renews it. A login that has fully expired, or that Claude Code cleared, shows `` login expired → `ccam login <name>` `` and needs a new login.
 
-`ccam usage --refresh` renews expired tokens itself, but only for accounts that are not running, however Claude Code was started. It never renews logins stored in the macOS Keychain or in an imported `~/.claude`, and a renewal may take up to 30 seconds.
+`ccam usage --refresh` renews expired tokens itself, but only for accounts with no running Claude Code session, however that session was started. It never renews logins stored in the macOS Keychain or in an imported `~/.claude`, and a renewal may take up to 30 seconds.
 
 ## Usage in the status line
 
@@ -67,12 +67,12 @@ Claude Code then shows the account name and its usage in the status line, for ex
 ```sh
 ccam next             # the account after the one you used last
 ccam next --auto      # the account with the lowest 5-hour usage
-ccam next --continue  # carry this folder's conversation on as the next account
+ccam next --continue  # continue this folder's conversation on the next account
 ```
 
-`ccam next` skips accounts that are not logged in, and `--auto` skips accounts at 100% (also a window Claude Code reported full, until its reset) and accounts of another organization. When the two accounts share conversation history, `--continue` opens the same conversation; otherwise Claude Code copies it into the new account. See [sharing](/docs/sharing) and [switching to the next account](/features/next#continue).
+`ccam next` skips accounts that are not logged in, and `--auto` skips accounts at 100% (including a window Claude Code reported full, until its reset) and accounts of another organization. When the two accounts share conversation history, `--continue` opens the same conversation; otherwise Claude Code copies it into the new account. See [sharing](/docs/sharing) and [switching to the next account](/features/next#continue).
 
-With `auto_switch = true` at the top of `config.toml` (Linux and macOS; off by default), ccam makes this switch itself when Claude Code stops an interactive session at its limit and another account like it has room. See [`auto_switch`](/features/next#auto-switch) for when it acts and what it never does.
+With `auto_switch = true` at the top of `config.toml` (Linux and macOS; off by default), ccam makes this switch itself when Claude Code stops an interactive session at its limit and another account of the same kind (a seat in the same organization, or another personal plan) has room. See [`auto_switch`](/features/next#auto-switch) for when it acts and what it never does.
 
 For scripts and scheduled jobs that run `claude -p`, put `--fallback` before the account name. When that account reaches its limit, ccam runs the same command again as the account with the most room, and only the output of the run that finished is printed:
 
