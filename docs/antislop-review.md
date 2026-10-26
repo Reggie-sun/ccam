@@ -94,3 +94,20 @@ Scope: the English text changed on 2026-10-25 (`features/next`, `launch`, `docto
 | 41 | MEDIUM | R-36 | `features/next.md`, `features/dashboard.md`, `features/doctor.md` | Example output must be real. | The `auto_switch` and `--brief` lines and the Agents tab screen come from the built binary run with a fake `claude` and synthetic accounts in a scratch folder (the tab on an 80-column tmux terminal), the doctor lines from `ccam doctor` run the same way, and the notifications from the Go source. |
 
 Checked and passing: no em or en dashes in the new English text; no buzzwords; the new FAQ question is about ccam; `auto_switch` is always written as code, so translations keep it.
+
+## Audit 007, 2026-10-26 (English copyedit)
+
+Scope: every English page in `site/content/en/` and the changed strings in `site/messages/en.json` (MSG, INS … BLG items and the shared rules P-01 to P-23 of the copyedit brief), the CLI messages the pages quote (C-01 to C-11 in `internal/`), and the plugin's descriptions. The rules were applied by reading, as in audit 005.
+
+| # | Priority | Rule | File | Finding | Action |
+|---|---|---|---|---|---|
+| 42 | HIGH | R-36 | `content/en/docs/commands.md` | The `--dry-run` paragraph said every other command that changes something refuses the flag, but `folder`, `pick` and `ccusage` support it (their own pages say so). | Fixed from `dryRunCommands` in `internal/cli/root.go`: the supported commands are listed, read-only commands accept it, and `group rename` is named among the refusals. |
+| 43 | HIGH | R-36 | `content/en/features/migrate.md` | The checklist example no longer matched the TUI (`?` prompt, `x` marks, `Enter show the plan`). | Replaced with what `tui.MigratePicker.View()` draws, rendered from the code. |
+| 44 | MEDIUM | R-36 | `messages/en.json` (`landing.flow[5].body`) | "Every change to your files keeps a backup" overstated: plugin registry rewrites are not backed up (`features/doctor.md`). | Now "Files it moves out of the way are kept in a backup." |
+| 45 | MEDIUM | R-36 | `content/en/docs/quick-start.md` | MCP servers were said to live in `~/.claude`; they are in `~/.claude.json`. The shortcut question appeared in step 4 although `ccam add` asks it in step 3. | Both fixed; step 3 shows the question and the confirmation. |
+| 46 | MEDIUM | R-17 | 11 pages with the Team and Enterprise seats note | The same long quote from the help center repeated on 12 pages and broke each page's flow. | Two sentences on 11 pages pointing to the FAQ, which keeps the quote; `features/next.md` keeps its own terms section. |
+| 47 | MEDIUM | readability | `features/*.md` How it works | Function and package names were the subjects of sentences, so the behaviour a reader needs was buried. 26 paragraphs ran over 150 words. | ccam is the subject and the names follow in parentheses (each page keeps the same inline code). Long paragraphs became lists, steps, tables or shorter paragraphs; none is over 150 words now. |
+| 48 | LOW | spelling, idiom | all pages, CLI | British spellings (honour, organisation, greyed), "carry … on", "change of groups", "another ccam", "beside" for processes, "else" in prose, "nobody sits at". | US spelling in prose; idioms replaced in the pages and in the CLI strings the pages quote. Code blocks and CLI output keep their own words (`"summarise"`, `cancelled`). |
+| 49 | LOW | R-36 | `content/en/compare/account-switchers.md` | The ccam row of the comparison table was several times longer than the others. | Shortened to the same facts, with the same inline code. |
+
+Checked and passing: no em or en dashes added (the 4 in the English pages are in quoted CLI output, as before); no serial commas added except where an item already contains "and" or "or"; no buzzwords; heading count, levels and order unchanged (three headings reworded, no links point at them); every description 70 to 160 wide; i18n-check `--strict` passes for all 29 languages.
