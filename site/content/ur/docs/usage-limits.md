@@ -1,13 +1,13 @@
 ---
 title: "استعمال کی حدیں اور اکاؤنٹ تبدیل کرنا"
 description: "ccam usage سے Claude Code کے ہر اکاؤنٹ کا 5 گھنٹے اور ہفتہ وار استعمال دیکھیں، اور ccam next --auto سے سب سے زیادہ گنجائش والا اکاؤنٹ کھولیں۔"
-updated: 2026-10-25
+updated: 2026-10-26
 order: 5
 translation: machine
-sourceHash: "7c15419446c3"
+sourceHash: 28e652ad94f8
 ---
 
-`ccam usage` دکھاتا ہے کہ ہر اکاؤنٹ نے 5 گھنٹے کی حد، ہفتہ وار حد اور ہر ماڈل کی اپنی ہفتہ وار حد (جیسے Fable) کا کتنا حصہ استعمال کر لیا ہے۔ `ccam next --auto` سب سے زیادہ گنجائش والا اکاؤنٹ کھولتا ہے، اور `--continue` موجودہ گفتگو کو ساتھ لے جاتا ہے۔
+`ccam usage` ہر اکاؤنٹ کے لیے دکھاتا ہے کہ ہر حد کا کتنا حصہ استعمال ہو چکا ہے: 5 گھنٹے کی حد، ہفتہ وار حد اور ہر ماڈل کی اپنی ہفتہ وار حد (جیسے Fable)۔ `ccam next --auto` سب سے زیادہ گنجائش والا اکاؤنٹ کھولتا ہے، اور `--continue` موجودہ گفتگو کو ساتھ لے جاتا ہے۔
 
 ```console
 $ ccam usage
@@ -26,9 +26,9 @@ $ ccam usage
 → Most headroom: work   (open it with ccam next --auto)
 ```
 
-ہر اکاؤنٹ کو ایک لائن ملتی ہے جو بتاتی ہے کہ اس کے اعداد کتنے پرانے ہیں، پھر ہر حد کے لیے ایک بار، ری سیٹ ہونے تک کے وقت کے ساتھ: 5 گھنٹے کی ونڈو، تمام ماڈلز کی ہفتہ وار ونڈو، اور ہر ماڈل کی اپنی ہفتہ وار ونڈو، جیسے Fable۔ 80% سے بار پیلی اور 100% پر سرخ ہو جاتی ہے۔ آخری لائن اس اکاؤنٹ کا نام بتاتی ہے جسے `ccam next --auto` کھولتا؛ `auto_strategy = "expiring"` یا `"balance"` کے ساتھ اس کی جگہ `→ next --auto picks <name>: <reason>` لکھا ہوتا ہے۔
+ہر اکاؤنٹ کو ایک لائن ملتی ہے جو بتاتی ہے کہ اس کے اعداد کتنے پرانے ہیں، پھر ہر حد کے لیے ایک بار، ری سیٹ ہونے تک کے وقت کے ساتھ: 5 گھنٹے کی ونڈو، تمام ماڈلز کی ہفتہ وار ونڈو، اور ہر ماڈل کی اپنی ہفتہ وار ونڈو، جیسے Fable۔ بار 80% پر پیلی اور 100% پر سرخ ہو جاتی ہے۔ آخری لائن اس اکاؤنٹ کا نام بتاتی ہے جسے `ccam next --auto` کھولتا؛ `auto_strategy = "expiring"` یا `"balance"` کے ساتھ اس کی جگہ `→ next --auto picks <name>: <reason>` لکھا ہوتا ہے۔
 
-**Team اور Enterprise سیٹیں۔** خودکار انتخاب (`ccam next`، `--fallback`، `ccam pick`، ڈیش بورڈ کی `n` کلید، اور جب آپ اسے آن کریں تو [`auto_switch`](/features/next#auto-switch)) ایک ہی Claude Team یا Enterprise تنظیم کی سیٹوں کے درمیان بھی اکاؤنٹ بدلتا ہے۔ Anthropic کا ہیلپ سینٹر کہتا ہے کہ "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (کسی Team پلان کی ہر سیٹ ایک نامزد فرد کو تفویض کی جاتی ہے، اور صرف اسی شخص کو اسے استعمال کرنے کی اجازت ہے) اور "Users can't route their work through another user's account to use that user's remaining usage" (صارفین کسی دوسرے صارف کا باقی ماندہ استعمال کام میں لانے کے لیے اپنا کام اس کے اکاؤنٹ کے ذریعے نہیں چلا سکتے) ([Team پلانز](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)؛ اسی طرح [Enterprise پلانز](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) کے لیے بھی)۔ اس لیے سیٹوں کے درمیان خودکار انتخاب استعمال کرنے سے Anthropic کی شرائط کی خلاف ورزی ہو سکتی ہے۔ وہاں اسے استعمال کرنا ہے یا نہیں، یہ آپ کا فیصلہ ہے: اس پر انحصار کرنے سے پہلے اپنی تنظیم اور Anthropic سے تصدیق کر لیں۔ ذاتی پلانز (Pro، Max) کی بات [عام سوالات میں شرائط والے نوٹ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) میں کی گئی ہے۔
+**Team اور Enterprise سیٹیں۔** خودکار اکاؤنٹ انتخاب (`ccam next`، `--fallback`، `ccam pick`، ڈیش بورڈ کی `n` کلید اور، جب آپ اسے آن کریں تو، [`auto_switch`](/features/next#auto-switch)) ایک ہی Claude Team یا Enterprise تنظیم کی سیٹوں کے درمیان بھی اکاؤنٹ بدلتا ہے، جس سے Anthropic کی شرائط کی خلاف ورزی ہو سکتی ہے۔ اس پر انحصار کرنے سے پہلے [عام سوالات](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) پڑھیں اور اپنی تنظیم اور Anthropic سے تصدیق کر لیں۔
 
 ## اعداد کہاں سے آتے ہیں
 
@@ -52,7 +52,7 @@ ccam ہر اکاؤنٹ کا اپنا لاگ اِن استعمال کرتے ہو�
 
 جب کسی اکاؤنٹ کے ایکسیس ٹوکن کی میعاد ختم ہو جائے تو ccam اس کی تجدید نہیں کرتا، کیونکہ اگر کوئی Claude Code سیشن وہی لاگ اِن استعمال کر رہا ہو تو تجدید سے وہ سیشن سائن آؤٹ ہو سکتا ہے۔ اکاؤنٹ ``access token expired; `ccam <name>` renews it when it starts`` دکھاتا ہے: اسے ایک بار `ccam <name>` سے شروع کریں، Claude Code خود اس کی تجدید کر دے گا۔ جس لاگ اِن کی پوری میعاد ختم ہو چکی ہو، یا جسے Claude Code نے مٹا دیا ہو، وہ `` login expired → `ccam login <name>` `` دکھاتا ہے اور اسے نیا لاگ اِن چاہیے۔
 
-`ccam usage --refresh` میعاد ختم ہونے والے ٹوکنز کی خود تجدید کرتا ہے، لیکن صرف ان اکاؤنٹس کے لیے جو اس وقت چل نہیں رہے، چاہے Claude Code کسی بھی طرح شروع ہوا ہو۔ یہ macOS Keychain میں یا امپورٹ کیے گئے `~/.claude` میں محفوظ لاگ اِن کی کبھی تجدید نہیں کرتا، اور ایک تجدید میں 30 سیکنڈ تک لگ سکتے ہیں۔
+`ccam usage --refresh` میعاد ختم ہونے والے ٹوکنز کی خود تجدید کرتا ہے، لیکن صرف ان اکاؤنٹس کے لیے جن کا کوئی Claude Code سیشن نہیں چل رہا، چاہے وہ سیشن کسی بھی طرح شروع ہوا ہو۔ یہ macOS Keychain میں یا امپورٹ کیے گئے `~/.claude` میں محفوظ لاگ اِن کی کبھی تجدید نہیں کرتا، اور ایک تجدید میں 30 سیکنڈ تک لگ سکتے ہیں۔
 
 ## اسٹیٹس لائن میں استعمال
 
@@ -67,12 +67,12 @@ ccam statusline install
 ```sh
 ccam next             # the account after the one you used last
 ccam next --auto      # the account with the lowest 5-hour usage
-ccam next --continue  # carry this folder's conversation on as the next account
+ccam next --continue  # continue this folder's conversation on the next account
 ```
 
 `ccam next` ان اکاؤنٹس کو چھوڑ دیتا ہے جن میں لاگ اِن نہیں کیا گیا، اور `--auto` ان اکاؤنٹس کو چھوڑ دیتا ہے جو 100% پر ہیں (ان میں وہ بھی شامل ہیں جن کی کسی ونڈو کو Claude Code نے بھری ہوئی بتایا ہو، اس کے ری سیٹ تک) اور جو کسی دوسری تنظیم کے ہیں۔ جب دونوں اکاؤنٹس گفتگو کی ہسٹری شیئر کرتے ہوں تو `--continue` وہی گفتگو کھولتا ہے؛ ورنہ Claude Code اسے نئے اکاؤنٹ میں کاپی کر دیتا ہے۔ [شیئرنگ](/docs/sharing) اور [اگلے اکاؤنٹ پر جانا](/features/next#continue) دیکھیں۔
 
-`config.toml` میں سب سے اوپر `auto_switch = true` کے ساتھ (Linux اور macOS؛ ڈیفالٹ طور پر بند)، جب Claude Code کسی انٹرایکٹو سیشن کو اس کی حد پر روک دے اور اسی طرح کے کسی دوسرے اکاؤنٹ میں گنجائش ہو تو ccam یہ تبدیلی خود کر دیتا ہے۔ یہ کب عمل کرتا ہے اور کیا کبھی نہیں کرتا، اس کے لیے [`auto_switch`](/features/next#auto-switch) دیکھیں۔
+`config.toml` میں سب سے اوپر `auto_switch = true` کے ساتھ (Linux اور macOS؛ ڈیفالٹ طور پر بند)، جب Claude Code کسی انٹرایکٹو سیشن کو اس کی حد پر روک دے اور اسی قسم کے کسی دوسرے اکاؤنٹ (اسی تنظیم کی کوئی سیٹ، یا کوئی دوسرا ذاتی پلان) میں گنجائش ہو تو ccam یہ تبدیلی خود کر دیتا ہے۔ یہ کب عمل کرتا ہے اور کیا کبھی نہیں کرتا، اس کے لیے [`auto_switch`](/features/next#auto-switch) دیکھیں۔
 
 `claude -p` چلانے والے اسکرپٹس اور شیڈول شدہ جابز کے لیے اکاؤنٹ کے نام سے پہلے `--fallback` لگائیں۔ جب وہ اکاؤنٹ اپنی حد کو پہنچ جائے تو ccam وہی کمانڈ سب سے زیادہ گنجائش والے اکاؤنٹ سے دوبارہ چلاتا ہے، اور صرف اس رن کا آؤٹ پٹ پرنٹ ہوتا ہے جو مکمل ہوا:
 

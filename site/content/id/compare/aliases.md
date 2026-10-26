@@ -1,10 +1,10 @@
 ---
 title: ccam dibandingkan dengan alias shell
-description: Perbandingan alias shell dengan CLAUDE_CONFIG_DIR dan ccam untuk menjalankan beberapa akun Claude Code, berdampingan.
-updated: 2026-10-20
+description: Perbandingan alias shell dengan CLAUDE_CONFIG_DIR dan ccam untuk menjalankan beberapa akun Claude Code, fitur demi fitur.
+updated: 2026-10-26
 order: 1
 translation: machine
-sourceHash: b9fbcb88f111
+sourceHash: "c30d84bceba0"
 ---
 
 Satu alias shell per akun adalah cara paling sederhana untuk menjalankan beberapa akun Claude Code. ccam melakukan hal yang sama di baliknya, lalu menambahkan pembagian, perpindahan akun, dan pemantauan penggunaan.
@@ -37,7 +37,7 @@ ccam add work --shortcut ccwork
 | Login terpisah | Ya | Ya |
 | Penyiapan per akun | Edit `~/.bashrc`, login | `ccam add` |
 | Berfungsi di skrip dan program lain | Tidak, alias hanya ada di shell | Ya, `ccam work` dan pintasan seperti `ccwork` adalah perintah sungguhan |
-| Pengaturan, `CLAUDE.md`, ekstensi bersama | Salin atau tautkan secara manual | Per item, dengan cadangan |
+| Pengaturan, `CLAUDE.md`, ekstensi bersama | Salin atau tautkan secara manual | Ya, dipilih per item, dengan cadangan |
 | Server MCP bersama | Manual, per akun | `ccam mcp add` sekali saja |
 | Melanjutkan percakapan di akun lain | Tidak | `ccam next --continue` |
 | Penggunaan semua akun | Tidak | `ccam usage` |

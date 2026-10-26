@@ -1,13 +1,13 @@
 ---
 title: ccam ile Remote Control kullanma
 description: "Remote Control'ü ccam <name> rc ile her hesapla başlatın: geçerli seçenekler, ccam'in paylaşılan MCP sunucularını neden kopyalamayı önerdiği ve sorun giderme."
-updated: 2026-10-23
+updated: 2026-10-26
 order: 4
 translation: machine
-sourceHash: "3e17d89f98c8"
+sourceHash: 4d46f49c5dea
 ---
 
-`ccam work rc`, Claude Code'un Remote Control özelliğini `work` hesabıyla başlatır; böylece bu bilgisayardaki oturumları claude.ai/code üzerinden veya Claude mobil uygulamasından yönetebilirsiniz. `claude rc` gibi çalışır, tek bir farkla: hesap MCP sunucularını paylaşıyorsa ccam, bunları hesabın `.claude.json` dosyasına kopyalayıp kopyalamayacağını bir kez sorar, çünkü Remote Control oturumları sunucuları başka hiçbir yerden okumaz.
+`ccam work rc`, Claude Code'un Remote Control özelliğini `work` hesabıyla başlatır; böylece bu bilgisayardaki oturumları claude.ai/code üzerinden veya Claude mobil uygulamasından denetleyebilirsiniz. `claude rc` gibi çalışır, tek bir farkla: hesap MCP sunucularını paylaşıyorsa ccam, bunları hesabın `.claude.json` dosyasına kopyalayıp kopyalamayacağını bir kez sorar, çünkü Remote Control oturumlarının sunucuları okuduğu tek yer bu dosyadır.
 
 ## Başlatma
 
@@ -31,9 +31,10 @@ Burada iki tür seçenek bir araya gelir: hesap adından önce yazılan veya cca
 | Seçenek veya ayar | Ne yapar | Varsayılan |
 | --- | --- | --- |
 | `--dry-run` (hesaptan önce) | Ortamı ve komutu, varsa MCP bildirimini de yazdırır. Ne soru sorar ne de kopyalar | kapalı |
-| `Copy them into .claude.json (a backup is kept; servers of the account's own stay)? [y/N]` | Hesap MCP sunucularını paylaştığında ve `.claude.json` dosyasında grubun güncel listesi olmadığında ya da kopyalanmış bir sunucu ondan kaybolduğunda sorulur. `y` bunları kopyalar, `N` veya Enter onlar olmadan başlatır | `N` |
 | `~/.config/ccam/config.toml` dosyasının en üstünde `mcp_strategy = "sync"` | Remote Control olsun olmasın, her başlatmadan önce grubun sunucularını `.claude.json` dosyasına kopyalar; böylece hiçbir zaman soru sorulmaz | `"flag"` |
 | `ccam group leave <group> work` | Hesabı, onunla MCP paylaşan gruptan çıkarır. Grubun sunucuları hesabın kendi sunucuları olarak `.claude.json` dosyasına kopyalanır; böylece Remote Control onlara sahip olur ve soru sorulmaz; `--fresh` ile yalnızca hesabın kendi sunucularıyla başlar | `default` içinde |
+
+Hesap MCP sunucularını paylaştığında ve `.claude.json` dosyasında grubun güncel listesi olmadığında ya da kopyalanmış bir sunucu ondan kaybolduğunda ccam `Copy them into .claude.json (a backup is kept; the account's own servers stay)? [y/N]` diye sorar. `y` bunları kopyalar; `N` veya Enter onlar olmadan başlatır.
 
 ### Remote Control seçenekleri
 
@@ -47,7 +48,7 @@ Burada iki tür seçenek bir araya gelir: hesap adından önce yazılan veya cca
 | `--session-id <id>` | Belirli bir oturuma yeniden bağlanır |
 | `--permission-mode <mode>` | Yeni oturumlar için izin modu: `acceptEdits`, `auto`, `bypassPermissions`, `default`, `dontAsk` veya `plan` |
 | `--spawn <mode>` | `same-dir` (varsayılan), `worktree` (oturum başına bir git worktree) veya `session` (tek oturum, oturum bitince çıkar) |
-| `--capacity <N>` | `same-dir` ve `worktree` modunda aynı anda en fazla oturum sayısı (varsayılan 32) |
+| `--capacity <N>` | `same-dir` ve `worktree` modunda en fazla eşzamanlı oturum sayısı (varsayılan 32) |
 | `--[no-]create-session-in-dir` | Başlangıçta geçerli klasörde ilk oturumu oluşturur (varsayılan açık) |
 | `--[no-]chrome` | Yeni oturumlar için Claude in Chrome (varsayılan kapalı) |
 | `-d`, `--debug`, `--debug-file <path>`, `-v`, `--verbose` | Hata ayıklama ve ayrıntılı çıktı |
@@ -66,10 +67,10 @@ Başlatma her zamanki yolu izler ([Claude Code'u başlatma](/features/launch)), 
    ```console
    $ ccam work rc
    ccam: Remote Control sessions only get MCP servers stored in account work's .claude.json, not the shared MCP servers (ctx, fs).
-   Copy them into .claude.json (a backup is kept; servers of the account's own stay)? [y/N]
+   Copy them into .claude.json (a backup is kept; the account's own servers stay)? [y/N]
    ```
 
-5. `y` yanıtında `.claude.json` dosyasının bir yedeğini alır, Claude Code'un kendi kilidini alır, grubun sunucularını `mcpServers` içine ekler ve hesabın diğer sunucularını korur; hesabın bir grup sunucusunun adını taşıyan kendi sunucusu hesabın olarak kalır ve ccam bunu söyler. `N` yanıtında, terminal yokken veya hesap çalışırken hiçbir şeyi değiştirmez ve bunu belirtir:
+5. `y` yanıtında `.claude.json` dosyasının bir yedeğini alır, Claude Code'un kendi kilidini alır, grubun sunucularını `mcpServers` içine ekler ve hesabın diğer sunucularını korur; hesabın bir grup sunucusuyla aynı adı taşıyan kendi sunucusu varsa ccam hesabın sunucusunu korur ve bunu söyler. `N` yanıtında, terminal yokken veya hesap çalışırken hiçbir şeyi değiştirmez ve bunu belirtir:
 
    ```console
          Starting without them. To copy them before every launch instead, set mcp_strategy = "sync" in ~/.config/ccam/config.toml
@@ -77,7 +78,7 @@ Başlatma her zamanki yolu izler ([Claude Code'u başlatma](/features/launch)), 
 
 6. Oturumu kaydeder, `CLAUDE_CONFIG_DIR` değişkenini hesap klasörüne ayarlar ve `exec` ile kendini `claude rc` ile değiştirir.
 
-Remote Control bundan sonra bir sunucu olarak çalışmaya devam eder. Sizin için başlattığı her oturum bu sürecin bir alt sürecidir, dolayısıyla `work` olarak çalışır: `work` hesabının girişi, ayarları ve konuşma geçmişiyle çalışır ve `work` hesabının kullanım sınırından düşülür. ccam'in başlattığı bir sunucu çalıştığı sürece ccam hesabı çalışıyor sayar; düz `claude remote-control` ile başlatılmış bir sunucu da oturumları olduğu sürece öyle sayılır; henüz oturumu olmayan böyle bir sunucu görülmez.
+Remote Control bundan sonra bir sunucu olarak çalışmaya devam eder. Sizin için başlattığı her oturum bu sürecin bir alt sürecidir, dolayısıyla `work` olarak çalışır: `work` hesabının girişi, ayarları ve konuşma geçmişiyle çalışır ve `work` hesabının kullanım sınırından düşülür. ccam, başlattığı bir Remote Control sunucusu çalıştığı sürece hesabı çalışıyor sayar. Düz `claude remote-control` ile başlatılmış bir sunucu yalnızca oturumları olduğu sürece sayılır; ccam henüz oturumu olmayan böyle bir sunucuyu göremez.
 
 Deneme çalıştırması farkı gösterir. Normal bir başlatma grubun sunucularını bir argüman olarak taşır, Remote Control taşımaz:
 
@@ -116,7 +117,7 @@ $ ccam mcp add ctx --url https://mcp.context7.com/mcp
 
 ### Remote Control oturumlarında paylaşılan MCP sunucuları eksik
 
-Soruya `N` yanıtı verildi, terminal yoktu veya hesap çalışıyordu. Remote Control'ü durdurun, hesabın diğer oturumlarını kapatın ve `ccam work rc` komutunu bir terminalde yeniden çalıştırın; `y` yanıtını verin. Hiç sorulmaması için `~/.config/ccam/config.toml` içinde `mcp_strategy = "sync"` ayarlayın. Bir oturumdaki sunucular oturum çalışırken değişmez; bu yüzden kopyalamadan sonra yeni bir oturum başlatın.
+Soruya `N` yanıtı verildi, terminal yoktu veya hesap çalışıyordu. Remote Control'ü durdurun, hesabın diğer oturumlarını kapatın ve `ccam work rc` komutunu bir terminalde yeniden çalıştırın; `y` yanıtını verin. Artık sorulmaması için `~/.config/ccam/config.toml` içinde `mcp_strategy = "sync"` ayarlayın. Bir oturumdaki sunucular oturum çalışırken değişmez; bu yüzden kopyalamadan sonra yeni bir oturum başlatın.
 
 ### "Account work is running, so its .claude.json is left alone"
 
@@ -128,7 +129,7 @@ Sunucuları henüz kopyalamadınız. Bir kez `y` yanıtını verin veya `mcp_str
 
 ### `ccam work rc` hemen `--mcp-config` ile ilgili bir hatayla başarısız oluyor
 
-ccam sürümünüz 0.6.0'dan eski ve Remote Control'e `--mcp-config` iletiyor. `ccam update` komutunu çalıştırın. Güncel bir ccam ile aynı hata, `rc` öncesinde ccam'in bilmediği, değer alan bir seçenek olduğu ve ccam'in değeri alt komut sandığı anlamına gelir; `rc` komutunu hesap adının hemen arkasına yazın.
+ccam sürümünüz 0.6.0'dan eski ve Remote Control'e `--mcp-config` iletiyor. `ccam update` komutunu çalıştırın. Güncel bir ccam ile aynı hata, `rc` öncesinde değer alan bilinmeyen bir seçenek olduğu ve ccam'in değeri yanlışlıkla alt komut sandığı anlamına gelir; `rc` komutunu hesap adının hemen arkasına yazın.
 
 ### `ccam mcp` ile yapılan bir değişiklik Remote Control'e ulaşmıyor
 
@@ -136,7 +137,7 @@ ccam sürümünüz 0.6.0'dan eski ve Remote Control'e `--mcp-config` iletiyor. `
 
 ### Grubunki yerine benim kendi sunucum kullanılıyor
 
-Hesabın bir grup sunucusuyla aynı adı taşıyan kendi sunucusu varsa kopya onu yerinde bırakır ve bunu söyler: `account work has its own MCP servers fs, so group default's of those names are not copied there`. Grubunkini kullanmak için hesabınkini kaldırın (`claude mcp remove -s user <name>`); kendi sürümünüzü tüm hesaplara vermek için onu `ccam mcp import work <server> --force` ile gruba taşıyın. `.claude.json` yedekleri, en yeni beş yedeği tutan `~/.local/state/ccam/mcp/work/backups/` içindedir.
+Hesabın bir grup sunucusuyla aynı adı taşıyan kendi sunucusu varsa kopya onu yerinde bırakır ve bunu söyler: `account work has its own MCP servers fs, so group default's servers with those names are not copied there`. Grubunkini kullanmak için hesabınkini kaldırın (`claude mcp remove -s user <name>`); kendi sürümünüzü tüm hesaplara vermek için onu `ccam mcp import work <server> --force` ile gruba taşıyın. `.claude.json` yedekleri, en yeni beş yedeği tutan `~/.local/state/ccam/mcp/work/backups/` içindedir.
 
 ### Kopyalanan sunucuları kaldırmak istiyorum
 
@@ -154,7 +155,7 @@ Remote Control, abonelikli bir Claude hesabıyla oturum açılmasını gerektiri
 
 Claude uygulamasında veya claude.ai/code'da farklı bir Claude hesabıyla oturum açılmış. Bunu `ccam list` komutunun `work` için gösterdiği e-postayla karşılaştırın.
 
-### ccam, bu klasörde başka bir Claude Code'un konuşma geçmişini paylaştığı konusunda uyarıyor
+### ccam, bu klasörde başka bir Claude Code oturumunun konuşma geçmişini paylaştığı konusunda uyarıyor
 
 Aynı geçmiş grubundaki başka bir hesap aynı klasörde çalışıyor. Her iki hesaptan aynı konuşmayı sürdüren oturumlar geçmişi birbirine karıştırabilir. Yalnızca farklı konuşmalar üzerinde çalışacaklarsa `y` yanıtını verin veya Remote Control'ü başka bir klasörde başlatın.
 
@@ -162,5 +163,5 @@ Aynı geçmiş grubundaki başka bir hesap aynı klasörde çalışıyor. Her ik
 
 - [Claude Code'u başlatma](/features/launch)
 - [Paylaşılan MCP sunucuları](/features/mcp)
-- [Hesaplar arasında paylaşım](/features/share)
+- [Gruplarla paylaşım](/features/share)
 - [Hesapları yönetme](/features/accounts)

@@ -1,10 +1,10 @@
 ---
 title: So sánh ccam với alias của shell
-description: "So sánh song song alias của shell dùng CLAUDE_CONFIG_DIR với ccam để chạy nhiều tài khoản Claude Code."
-updated: 2026-10-20
+description: "So sánh từng tính năng giữa alias của shell dùng CLAUDE_CONFIG_DIR và ccam để chạy nhiều tài khoản Claude Code."
+updated: 2026-10-26
 order: 1
 translation: machine
-sourceHash: b9fbcb88f111
+sourceHash: c30d84bceba0
 ---
 
 Mỗi tài khoản một alias của shell là cách đơn giản nhất để chạy Claude Code nhiều tài khoản. ccam bên dưới cũng làm điều tương tự, và bổ sung thêm việc dùng chung, chuyển đổi tài khoản và theo dõi mức sử dụng.
@@ -37,7 +37,7 @@ ccam add work --shortcut ccwork
 | Đăng nhập riêng biệt | Có | Có |
 | Thiết lập cho mỗi tài khoản | Sửa `~/.bashrc`, đăng nhập | `ccam add` |
 | Dùng được trong script và chương trình khác | Không, alias chỉ có trong shell | Có, `ccam work` và các lệnh tắt như `ccwork` là lệnh thực sự |
-| Dùng chung cài đặt, `CLAUDE.md`, tiện ích mở rộng | Sao chép hoặc liên kết thủ công | Theo từng mục, có sao lưu |
+| Dùng chung cài đặt, `CLAUDE.md`, tiện ích mở rộng | Sao chép hoặc liên kết thủ công | Có, chọn theo từng mục, có sao lưu |
 | Dùng chung máy chủ MCP | Thủ công, cho từng tài khoản | `ccam mcp add` một lần |
 | Tiếp tục cuộc hội thoại ở tài khoản khác | Không | `ccam next --continue` |
 | Mức sử dụng của mọi tài khoản | Không | `ccam usage` |

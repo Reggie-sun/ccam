@@ -1,13 +1,13 @@
 ---
 title: Erweiterungen untersuchen
 description: "ccam ext zeigt die Skills, Befehle, Plugins, MCP-Server und Hooks, die jedes Konto lädt, woher sie jeweils kommen und was defekt ist."
-updated: 2026-10-23
+updated: 2026-10-26
 order: 14
 translation: machine
-sourceHash: 45740e4efbef
+sourceHash: 7ca357a7f38a
 ---
 
-`ccam ext` beantwortet die Frage „Warum funktioniert dieser Skill (oder MCP-Server) in einem Konto und im anderen nicht?“. Es listet für jedes Konto die Erweiterungen auf, die Claude Code lädt, und woher jede kommt: eine geteilte Gruppe, der eigene Ordner des Kontos oder das Projekt, in dem du bist. Unter der Tabelle listet es auf, was verhindert, dass eine Erweiterung wie erwartet geladen wird. Es liest nur.
+`ccam ext` beantwortet die Frage „Warum funktioniert dieser Skill (oder MCP-Server) in einem Konto, aber im anderen nicht?“ Es listet für jedes Konto die Erweiterungen auf, die Claude Code lädt, und woher jede kommt: eine geteilte Gruppe, der eigene Ordner des Kontos oder das Projekt, in dem du bist. Unter der Tabelle listet es auf, was verhindert, dass eine Erweiterung wie erwartet geladen wird. Es ändert nichts.
 
 ## Verwendung
 
@@ -62,7 +62,7 @@ Eine Zelle nennt die Quelle dieses Elements in diesem Konto: die geteilte Gruppe
 
 - **Defekte Links**: ein Link in `skills/`, `commands/` oder `agents/`, dessen Ziel fehlt, oder ein geteilter Ordner (`skills`, `commands`, `agents`, `plugins`), der auf einen fehlenden Ort verweist (repariere ihn mit `ccam doctor --fix`, das einen fehlenden Gruppenordner neu anlegt).
 - **Ein Skill-Ordner ohne `SKILL.md`**: Claude Code überspringt ihn.
-- **Ein MCP-Server, der an zwei Stellen unterschiedlich definiert ist**: im `mcp.json` der Gruppe und in der `.claude.json` des Kontos oder in einem davon und in der `.mcp.json` des Projekts. Dieselben Einstellungen an beiden Stellen (was `mcp_strategy = "sync"` schreibt) sind kein Problem. Verschiebe einen eigenen Server eines Kontos mit `ccam mcp import <account> <server>` in die Gruppe.
+- **Ein MCP-Server, der an zwei Stellen unterschiedlich definiert ist**: im `mcp.json` der Gruppe und in der `.claude.json` des Kontos oder in einem davon und in der `.mcp.json` des Projekts. Identische Definitionen an beiden Stellen (was `mcp_strategy = "sync"` schreibt) sind kein Problem. Verschiebe einen eigenen Server eines Kontos mit `ccam mcp import <account> <server>` in die Gruppe.
 - **Eine `installed_plugins.json`, die kein gültiges JSON ist**, ein Plugin, das `enabledPlugins` nicht nennt, und ein Plugin, dessen Ordner fehlt.
 - **Server, die nur ein Konto lädt**: ein Server nur in der `.claude.json` dieses Kontos, den die anderen Konten seiner Gruppe nicht laden, und einer im lokalen Bereich des Kontos für diesen Ordner (was `claude mcp add` ohne `-s user` tut). Zu jedem gibt es den Befehl `ccam mcp import`, der ihn teilt. Zu Servern in der `~/.claude.json` des einfachen `claude`, die kein Konto lädt, gibt es den Befehl `ccam migrate --mcp`.
 - **Ein Projektserver, der auf Freigabe wartet**: Das Konto hat dem Ordner noch nicht vertraut, also fragt Claude Code einmal nach, und bis dahin warten die Server der `.mcp.json` des Projekts. Das Problem sagt, wo du sie freigibst: `"enabledMcpjsonServers"` in der `settings.json` der Konten der Einstellungsgruppe oder dieses Kontos. Vertrauen, das dem Haupt-Worktree eines Git-Repositorys gegeben wurde, gilt auch in seinen anderen Worktrees.
@@ -76,6 +76,6 @@ Eine Zelle nennt die Quelle dieses Elements in diesem Konto: die geteilte Gruppe
 
 ## Verwandte Themen
 
-- [Teilen zwischen Konten](/features/share)
+- [Teilen mit Gruppen](/features/share)
 - [Geteilte MCP-Server](/features/mcp)
 - [Prüfen und reparieren](/features/doctor)

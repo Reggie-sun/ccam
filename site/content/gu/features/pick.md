@@ -1,15 +1,15 @@
 ---
 title: scripts માટે એકાઉન્ટ પસંદ કરવું
 description: ccam pick script માટે સૌથી વધુ જગ્યાવાળું એકાઉન્ટ છાપે છે, એકસાથે શરૂ થતા workers ને જુદાં એકાઉન્ટ આપે છે, અને જગ્યા ન હોય ત્યારે 75 સાથે બહાર નીકળે છે.
-updated: 2026-10-25
+updated: 2026-10-26
 order: 12
 translation: machine
-sourceHash: 5c4f74db9714
+sourceHash: 321c8e351cf7
 ---
 
-`ccam pick` સૌથી વધુ જગ્યાવાળા લૉગિન થયેલા એકાઉન્ટનું નામ છાપે છે, જેથી script તેનાથી Claude Code શરૂ કરી શકે. જ્યાં સુધી જગ્યાવાળાં પૂરતાં એકાઉન્ટ હોય, ત્યાં સુધી એકસાથે શરૂ થતા દરેક worker ને જુદું એકાઉન્ટ મળે છે, તેથી `claude -p` jobs નો સમૂહ એક જ એકાઉન્ટ ખાલી કરવાને બદલે તમારાં એકાઉન્ટમાં વહેંચાય છે.
+`ccam pick` સૌથી વધુ જગ્યાવાળા લૉગિન થયેલા એકાઉન્ટનું નામ છાપે છે, જેથી script તેનાથી Claude Code શરૂ કરી શકે. જ્યાં સુધી પૂરતાં એકાઉન્ટમાં જગ્યા હોય, ત્યાં સુધી એકસાથે શરૂ થતા દરેક worker ને જુદું એકાઉન્ટ મળે છે, તેથી `claude -p` jobs નો સમૂહ એક જ એકાઉન્ટ ખાલી કરવાને બદલે તમારાં એકાઉન્ટમાં વહેંચાય છે.
 
-**Team અને Enterprise સીટ.** આપમેળે થતી પસંદગી (`ccam next`, `--fallback`, `ccam pick`, ડેશબોર્ડની `n` કી, અને તમે ચાલુ કરો ત્યારે [`auto_switch`](/features/next#auto-switch)) એક જ Claude Team કે Enterprise સંસ્થાની સીટો વચ્ચે પણ સ્વિચ કરે છે. Anthropic નું સહાય કેન્દ્ર કહે છે કે "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team પ્લાનની દરેક સીટ નામથી નક્કી કરેલી એક વ્યક્તિને ફાળવવામાં આવે છે, અને ફક્ત એ વ્યક્તિ જ તેનો ઉપયોગ કરી શકે છે) અને "Users can't route their work through another user's account to use that user's remaining usage" (વપરાશકર્તાઓ બીજા વપરાશકર્તાના એકાઉન્ટ મારફતે પોતાનું કામ ચલાવીને એ વપરાશકર્તાનો બાકી રહેલો વપરાશ વાપરી શકતા નથી) ([Team પ્લાન](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise પ્લાન](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) માટે પણ એવું જ). તેથી સીટો વચ્ચે આપમેળે થતી પસંદગી વાપરવાથી Anthropic ની શરતોનું ઉલ્લંઘન થઈ શકે છે. સીટો વચ્ચે તેને વાપરવું કે નહીં એ તમારો નિર્ણય છે: તેના પર આધાર રાખતાં પહેલાં તમારી સંસ્થા અને Anthropic પાસેથી ખાતરી કરી લો. અંગત પ્લાન (Pro, Max) [વારંવાર પૂછાતા પ્રશ્નોમાંની શરતો અંગેની નોંધ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) માં આવરી લેવાયા છે.
+**Team અને Enterprise સીટ.** આપમેળે થતી એકાઉન્ટ પસંદગી (`ccam next`, `--fallback`, `ccam pick`, ડેશબોર્ડની `n` કી અને, તમે તેને ચાલુ કરો પછી, [`auto_switch`](/features/next#auto-switch)) એક જ Claude Team કે Enterprise સંસ્થાની સીટો વચ્ચે પણ સ્વિચ કરે છે, જેનાથી Anthropic ની શરતોનું ઉલ્લંઘન થઈ શકે છે. તેના પર આધાર રાખતાં પહેલાં [વારંવાર પૂછાતા પ્રશ્નો](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) વાંચો અને તમારી સંસ્થા અને Anthropic પાસેથી ખાતરી કરી લો.
 
 ## ઉપયોગ
 
@@ -21,7 +21,7 @@ done; wait
 ccam pick --json                      # the account and its usage
 ccam pick --model opus                # also count the Opus weekly limit
 ccam pick --max-usage 80 --strategy expiring
-ccam pick --strategy balance          # spread over the weekly quota, fewer running sessions first
+ccam pick --strategy balance          # most weekly quota left per day; fewer sessions first
 ccam pick --cross-org                 # also accounts of other organizations
 ccam pick --wait=2h                   # nobody has room: wait for a reset
 ccam --fallback "$(ccam pick)" -p "…" # also switch if this account hits its limit mid-job
@@ -49,7 +49,7 @@ Exit code: standard output પર નામ સાથે `0`, કોઈ એક�
 | `--json` | એકાઉન્ટ, તેનો 5 કલાકનો અને સાપ્તાહિક વપરાશ, આંકડા ક્યાંથી આવે છે અને તે શા માટે પસંદ થયું તે છાપે છે | off |
 | `--model <model>` | એ મૉડલની સાપ્તાહિક વિન્ડો પણ ગણે છે, જેમ કે `opus` | કોઈ નહીં |
 | `--max-usage <1-100>` | આ વપરાશથી નીચેનાં એકાઉન્ટને પ્રાથમિકતા આપે છે | `auto_max_usage`, નહીં તો 100 |
-| `--strategy headroom\|expiring\|balance` | સૌથી ઓછો 5 કલાકનો વપરાશ, સૌથી વહેલો 5 કલાકનો રીસેટ, અથવા જે સાપ્તાહિક quota સૌથી પહેલાં વણવપરાયેલો રહી જાય | `auto_strategy`, નહીં તો `headroom` |
+| `--strategy headroom\|expiring\|balance` | સૌથી ઓછો 5 કલાકનો વપરાશ, સૌથી વહેલો 5 કલાકનો રીસેટ કે દરરોજ માટે સૌથી વધુ બાકી સાપ્તાહિક quota | `auto_strategy`, નહીં તો `headroom` |
 | `--cross-org` | બીજી સંસ્થાનાં એકાઉન્ટ પણ પસંદ કરે છે | `cross_org`, નહીં તો off |
 | `--wait[=<duration>]` | કોઈ એકાઉન્ટમાં જગ્યા ન હોય ત્યારે, પહેલું એકાઉન્ટ રીસેટ થાય તેની રાહ જુએ છે, વધુમાં વધુ આટલો સમય. મૂલ્ય `=` પછી આવે છે: `--wait 30m` નો `--wait takes its value after '=': --wait=30m` સૂચના સાથે ઇનકાર થાય છે | off; એકલું આપો તો `5h` |
 | `--dry-run` | પસંદગી નોંધ્યા વગર પસંદ કરે છે | off |
@@ -58,9 +58,9 @@ Exit code: standard output પર નામ સાથે `0`, કોઈ એક�
 
 1. આ ફોલ્ડર જે એકાઉન્ટ શરૂ કરે તેની સંસ્થામાં ccam લૉગિન થયેલાં એકાઉન્ટની યાદી બનાવે છે (API key એકાઉન્ટ અને Console લૉગિનને કોઈ મર્યાદા નથી, તેથી તે બહાર રહે છે; જુઓ [સંસ્થાઓ](/features/next#auto)); એ જ Claude એકાઉન્ટમાં લૉગિન થયેલું ફોલ્ડર પણ બહાર રહે છે.
 2. તે એક lock (`~/.local/state/ccam/picks.lock`) લે છે, તેથી એકસાથે ચાલતી પસંદગીઓ એક પછી એક થાય છે.
-3. તે `ccam usage` ની જેમ જ, 60 સેકન્ડના કૅશ સાથે, બધાં એકાઉન્ટનો વપરાશ એકસાથે જુએ છે. જે વિન્ડો ભરાઈ ગઈ હોવાનું Claude Code એ જણાવ્યું હોય તે તેના રીસેટ સુધી 100% ગણાય છે ([મર્યાદા રેકોર્ડ](/features/usage#the-limit-record)), તેથી હમણાં જ મર્યાદાએ પહોંચેલું એકાઉન્ટ, તેના સેવ કરેલા આંકડા જગ્યા બતાવતા હોય ત્યારે પણ, બહાર રહે છે.
-4. છેલ્લી 2 મિનિટમાં પસંદ થયેલાં એકાઉન્ટ, `ccam pick` દ્વારા કે [`auto_switch`](/features/next#auto-switch) એ ત્યાં સેશન ખસેડ્યું હોય તેથી (`~/.local/state/ccam/picks/<name>`; ઘડિયાળના સમય પછીની તારીખવાળી પસંદગી ગણાતી નથી) પહેલાં બહાર રખાય છે, અને બાકીનામાંથી `ccam next --auto` ના [પસંદગીના નિયમો](/features/next#auto) પસંદ કરે છે: પહેલાં `auto_max_usage` થી નીચેનાં, strategy પ્રમાણે, અને 100% પરનું એકાઉન્ટ ક્યારેય નહીં. જ્યારે આમાં નિયમો સૌથી પહેલાં લેત તે એકાઉન્ટ છોડી દેવાય, ત્યારે `--json` નું `reason` તે જણાવે છે: `30% of its 5 hours used; work was picked a moment ago`.
-5. જો જગ્યાવાળું દરેક એકાઉન્ટ તાજેતરમાં પસંદ થયું હોય, તો નિયમો ફરી એ બધાંમાંથી પસંદ કરે છે, તેથી ત્રણ એકાઉન્ટ પર ચોથો worker કોઈ એક એકાઉન્ટ વહેંચે છે.
+3. તે `ccam usage` ની જેમ જ, 60 સેકન્ડના કૅશ સાથે, બધાં એકાઉન્ટનો વપરાશ એકસાથે જુએ છે. જે વિન્ડો ભરાઈ ગઈ હોવાનું Claude Code એ જણાવ્યું હોય તે તેના રીસેટ સુધી 100% ગણાય છે ([મર્યાદા રેકોર્ડ](/features/usage#the-limit-record)), તેથી હમણાં જ મર્યાદાએ પહોંચેલું એકાઉન્ટ બાકાત રહે છે, ભલે તેના સેવ કરેલા આંકડા હજી જગ્યા બતાવતા હોય.
+4. છેલ્લી 2 મિનિટમાં પસંદ થયેલાં એકાઉન્ટ, `ccam pick` દ્વારા કે [`auto_switch`](/features/next#auto-switch) એ ત્યાં સેશન ખસેડ્યું હોય તેથી (`~/.local/state/ccam/picks/<name>`; ભવિષ્યના timestamp વાળી પસંદગી ગણાતી નથી) પહેલાં બહાર રખાય છે, અને બાકીનામાંથી `ccam next --auto` ના [પસંદગીના નિયમો](/features/next#auto) પસંદ કરે છે: પહેલાં `auto_max_usage` થી નીચેનાં, strategy પ્રમાણે, અને 100% પરનું એકાઉન્ટ ક્યારેય નહીં. જો આમાં નિયમો નહીં તો જે એકાઉન્ટ પસંદ કરત તે છોડી દેવાય, ત્યારે `--json` નું `reason` તે જણાવે છે: `30% of its 5 hours used; work was picked a moment ago`.
+5. જો જગ્યાવાળું દરેક એકાઉન્ટ તાજેતરમાં પસંદ થયું હોય, તો નિયમો ફરી એ બધાંમાંથી પસંદ કરે છે, તેથી ત્રણ એકાઉન્ટ સાથે, ચોથો worker તેમાંનું એક એકાઉન્ટ વહેંચે છે.
 6. પસંદગી નોંધાય છે અને lock છૂટે છે, પછી નામ છપાય છે.
 
 2 મિનિટની વિન્ડો મહત્ત્વની છે, કારણ કે નવા job નો વપરાશ આંકડામાં દેખાતાં થોડો સમય લાગે છે: તેના વગર, એકસાથે શરૂ થયેલા પાંચ workers બધા એક જ એકાઉન્ટને સૌથી વધુ જગ્યાવાળું ગણત.

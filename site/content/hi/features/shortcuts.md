@@ -1,10 +1,10 @@
 ---
 title: शॉर्टकट कमांड
 description: ccam shortcut से किसी अकाउंट को ccwork जैसी उसकी अपनी कमांड दें, और ccam shims install से ~/.local/bin में लिंक फिर से बनाएँ।
-updated: 2026-10-23
+updated: 2026-10-26
 order: 3
 translation: machine
-sourceHash: 38e2d1aba397
+sourceHash: 066e7e622517
 ---
 
 शॉर्टकट एक कमांड है जिसका नाम आप ख़ुद रखते हैं और जो Claude Code को एक अकाउंट से शुरू करती है: `ccwork --resume` वही करता है जो `ccam work --resume` करता है। यह `~/.local/bin` में ccam का एक लिंक है, इसलिए यह bash, zsh, स्क्रिप्ट और `PATH` से प्रोग्राम चलाने वाली हर चीज़ में काम करता है। शॉर्टकट वैकल्पिक हैं; उन अकाउंट्स के लिए बनाएँ जिन्हें आप अक्सर शुरू करते हैं।
@@ -45,7 +45,7 @@ work: none (add one with `ccam shortcut work ccwork`)
 | --- | --- | --- |
 | `--remove` | अकाउंट का शॉर्टकट और उसका लिंक मिटाएँ | बंद |
 | `-h`, `--help` | कमांड की help | |
-| `--dry-run` | `ccam shortcut` इसे मानता है: यह नाम जाँचता है और सेव या लिंक किए बिना `Would set the shortcut of work to ccwork.` या `Would remove ccwork, the shortcut of work.` प्रिंट करता है | बंद |
+| `--dry-run` | `ccam shortcut` इसका समर्थन करता है: यह नाम जाँचता है और सेव या लिंक किए बिना `Would set the shortcut of work to ccwork.` या `Would remove ccwork, the shortcut of work.` प्रिंट करता है | बंद |
 
 `ccam shims install` कोई आर्ग्युमेंट नहीं लेता और `--dry-run` को `` ccam: --dry-run is not supported by `ccam shims install`; nothing was changed `` के साथ अस्वीकार करता है।
 
@@ -54,10 +54,10 @@ work: none (add one with `ccam shortcut work ccwork`)
 - 1 से 64 अक्षर, जिनमें `a-z`, `0-9`, `.`, `-` और `_` आते हैं, और जो किसी अक्षर या अंक से शुरू हों;
 - `ccam`, `claude` या `run` या `usage` जैसी कोई ccam कमांड नहीं;
 - किसी दूसरे अकाउंट का शॉर्टकट नहीं;
-- `~/.local/bin` की ऐसी फ़ाइल नहीं जो पहले से ccam का लिंक (या इस अकाउंट का अपना शॉर्टकट, जिसे ccam ने बनाया) न हो;
+- `~/.local/bin` में पहले से मौजूद कोई फ़ाइल नहीं, जब तक वह ccam का बनाया लिंक न हो (जैसे इस अकाउंट का अपना शॉर्टकट);
 - आपके `PATH` पर किसी दूसरे executable का नाम नहीं।
 
-`config.toml` लोड होते समय इन्हीं नियमों से जाँचा जाता है: हाथ से बदला गया ऐसा शॉर्टकट जो pattern तोड़ता है, `claude` या `ccam` है, या दो अकाउंट्स को दिया गया है, उसके ठीक होने तक हर कमांड को अकाउंट का नाम बताने वाले संदेश के साथ विफल कर देता है।
+`config.toml` लोड होते समय इन्हीं नियमों से जाँचा जाता है। अगर आप किसी शॉर्टकट को हाथ से इस तरह बदलते हैं कि वह pattern तोड़ता है, `claude` या `ccam` है, या दो अकाउंट्स इस्तेमाल करते हैं, तो जब तक आप उसे ठीक नहीं करते, हर कमांड अकाउंट का नाम बताने वाले संदेश के साथ विफल होती है।
 
 कमांड और `--remove` एक साथ देने पर `give a command or --remove, not both` के साथ रुकता है। अकाउंट का पहले से मौजूद नाम सेट करने पर `work: ccwork (unchanged)` प्रिंट होता है और लिंक गायब हो तो फिर से बनता है।
 
@@ -69,24 +69,26 @@ work: none (add one with `ccam shortcut work ccwork`)
 
 नाम क्रम से जाँचों में नीचे जाता है। हर जाँच के बगल में एक नाम है जिसे वह अस्वीकार करती है: `Work` pattern में विफल होता है, `run` एक ccam कमांड है, `ccside` किसी दूसरे अकाउंट का है, `ccfile`, `~/.local/bin` में मौजूद एक फ़ाइल है, और `git`, `/usr/bin/git` को छिपा देता। केवल हर जाँच पास करने वाला नाम ही सेव और लिंक होता है।
 
-1. `shim.Check` नाम का मिलान `^[a-z0-9][a-z0-9._-]{0,63}$` से, फिर `config.Reserved` से, फिर `cfg.FindShortcut` से करता है। यह `~/.local/bin/<name>` पर `os.Lstat` बुलाता है, और `PATH` के हर दूसरे फ़ोल्डर के लिए `os.Stat` बुलाकर ऐसी executable फ़ाइल को अस्वीकार करता है जो ccam का लिंक नहीं है।
+1. ccam नाम का मिलान `^[a-z0-9][a-z0-9._-]{0,63}$` से, फिर `config.Reserved` से, फिर `cfg.FindShortcut` से करता है (`shim.Check`)। यह `~/.local/bin/<name>` पर `os.Lstat` बुलाता है, और `PATH` के हर दूसरे फ़ोल्डर के लिए `os.Stat` बुलाकर ऐसी executable फ़ाइल को अस्वीकार करता है जो ccam का लिंक नहीं है।
 2. ccam `fsutil.AtomicWrite` (अस्थायी फ़ाइल, `fsync`, rename) से `config.toml` सेव करता है।
-3. `shim.Remove` पुराने शॉर्टकट का लिंक मिटाता है, लेकिन केवल तभी जब वह ccam का लिंक हो।
-4. `shim.Install` हर configured शॉर्टकट से नाम के क्रम में गुज़रता है और जिसका लिंक गायब है, उसका लिंक बनाता है, ccam बाइनरी के लिए `os.Symlink` से, जिसे `os.Executable` और `filepath.EvalSymlinks` से खोजा जाता है। किसी एक शॉर्टकट के रास्ते में आई फ़ाइल बाक़ी शॉर्टकट को नहीं रोकती; त्रुटि हर एक का नाम बताती है।
+3. ccam पुराने शॉर्टकट का लिंक मिटाता है, लेकिन केवल तभी जब वह ccam का लिंक हो (`shim.Remove`)।
+4. ccam हर configured शॉर्टकट से नाम के क्रम में गुज़रता है और जिसका लिंक गायब है, उसका लिंक बनाता है (`shim.Install`), ccam बाइनरी के लिए `os.Symlink` से, जिसे `os.Executable` और `filepath.EvalSymlinks` से खोजा जाता है। किसी एक शॉर्टकट के रास्ते में आई फ़ाइल बाक़ी शॉर्टकट को नहीं रोकती; त्रुटि हर एक का नाम बताती है।
 
-ccam अपना बनाया हर लिंक, और वह बाइनरी जिसे वह लिंक चलाता है, `~/.local/state/ccam/shortcuts.json` में दर्ज करता है। कोई लिंक तब ccam का अपना माना जाता है जब `os.Readlink` ccam का पाथ लौटाए, या जब लिंक और ccam पाथ एक ही फ़ाइल पर पहुँचें। दर्ज किया गया ऐसा लिंक जिसकी बाइनरी तब से move हुई या बदली गई (किसी दूसरे फ़ोल्डर में ले जाया गया ccam, दोबारा इंस्टॉल), पुराना माना जाता है, और `shim.Install` उसे इस ccam की ओर कर देता है। किसी ऐसे दूसरे ccam का दर्ज लिंक जो अभी भी इंस्टॉल है, जैसा है वैसा छोड़ दिया जाता है। हर हटाना और हर overwrite जाँच इन्हीं परीक्षणों से गुज़रती है, इसलिए ccam उन फ़ाइलों को नहीं छूता जो उसने नहीं बनाईं, जैसे ccam की आपकी अपनी कॉपी या आपका ख़ुद बनाया लिंक।
+ccam अपना बनाया हर लिंक, और वह बाइनरी जिसे हर लिंक चलाता है, `~/.local/state/ccam/shortcuts.json` में दर्ज करता है। कोई लिंक तब ccam का अपना माना जाता है जब `os.Readlink` ccam का पाथ लौटाए, या जब लिंक और ccam पाथ एक ही फ़ाइल पर पहुँचें। दर्ज किया गया ऐसा लिंक जिसकी बाइनरी तब से move हुई या बदली गई (किसी दूसरे फ़ोल्डर में ले जाई गई ccam बाइनरी, दोबारा इंस्टॉल), पुराना माना जाता है, और ccam उसे इस ccam बाइनरी की ओर कर देता है (`shim.Install`)। ccam की किसी दूसरी इंस्टॉल की गई कॉपी का दर्ज लिंक जैसा है वैसा छोड़ दिया जाता है। हर हटाना और हर overwrite जाँच इन्हीं परीक्षणों से गुज़रती है, इसलिए ccam उन फ़ाइलों को नहीं छूता जो उसने नहीं बनाईं, जैसे ccam की आपकी अपनी कॉपी या आपका ख़ुद बनाया लिंक।
 
 जब आप शॉर्टकट चलाते हैं, तो ccam को केवल आपका टाइप किया नाम चाहिए:
 
 <!-- motion:shortcuts-link -->
 
-Shell `PATH` पर `ccwork` खोजता है, kernel लिंक का पालन करके ccam बाइनरी शुरू करता है, और `argv[0]` अब भी `ccwork` होता है। `app.Main` में `ccam` के अलावा कोई भी नाम `config.toml` एक बार लोड करता है और `shim.Lookup` को बुलाता है, जो वह अकाउंट खोजता है जिसका `shortcut`, `filepath.Base(argv[0])` के बराबर हो। फिर `launcher.LaunchWith` पहले से लोड किए गए config के साथ वही चरण अपनाता है जो [`ccam <name>`](/features/launch) अपनाता है, और `argv[1:]` को बिना छुए `claude` को देता है।
+Shell `PATH` पर `ccwork` खोजता है, kernel लिंक का पालन करके ccam बाइनरी शुरू करता है, और `argv[0]` अब भी `ccwork` होता है। `app.Main` में `ccam` के अलावा कोई भी नाम `config.toml` एक बार लोड करता है और `shim.Lookup` को बुलाता है, जो वह अकाउंट खोजता है जिसका `shortcut`, `filepath.Base(argv[0])` के बराबर हो। फिर ccam पहले से लोड किए गए config के साथ वही चरण अपनाता है जो [`ccam <name>`](/features/launch) अपनाता है, और `argv[1:]` को बिना छुए `claude` को देता है (`launcher.LaunchWith`)।
 
-Shell alias या wrapper स्क्रिप्ट की जगह symlink क्यों: symlink हर shell में और स्क्रिप्ट में काम करता है, यह कोई अतिरिक्त shell शुरुआत नहीं जोड़ता (लगभग 1 से 2 ms), और शुरुआत अब भी एक ही फ़ाइल पढ़ती है। `scripts/perf-check.sh`, `hyperfine` से शॉर्टकट को उसी 10 ms (p95) सीमा के सामने मापता है जो `ccam <name>` पर लागू है।
+Shell alias या wrapper स्क्रिप्ट की जगह symlink क्यों: symlink हर shell में और स्क्रिप्ट में काम करता है, यह एक अतिरिक्त shell शुरू करने से बचाता है, जिसमें लगभग 1 से 2 ms लगते, और शुरुआत अब भी एक ही फ़ाइल पढ़ती है। `scripts/perf-check.sh`, `hyperfine` से शॉर्टकट को उसी 10 ms (p95) सीमा के सामने मापता है जो `ccam <name>` पर लागू है।
 
 ### Windows पर
 
-शॉर्टकट `%USERPROFILE%\.local\bin` में `ccwork.exe` होता है, और `shim.Name` खोज से पहले `.exe` (किसी भी case में) हटा देता है, इसलिए `ccwork`, `ccwork.exe` और `CCWORK.EXE` सभी `work` शुरू करते हैं। ccam पहले symbolic link बनाता है, जिसकी Windows Developer Mode में या किसी administrator को अनुमति देता है। यह अधिकार न होने पर यह hard link बनाता है: उसी `ccam.exe` फ़ाइल का दूसरा नाम, जिसके लिए किसी विशेषाधिकार की ज़रूरत नहीं होती। hard link को ccam का अपना तब माना जाता है जब वह `ccam.exe` वाली ही फ़ाइल हो। hard link उसी फ़ाइल को चलाता रहता है जिससे वह बना था, इसलिए जब `ccam update`, `ccam.exe` की जगह एक नई फ़ाइल रखता है, तो यह `shim.Relink` से हर hard link वाले शॉर्टकट को नया करता है और `✓ shortcut ccwork renewed` प्रिंट करता है। `install.ps1` दोबारा चलाने पर `ccam shims install` के ज़रिए यही होता है (`OK 2 shortcuts now run the new ccam`), और `ccam shims install` और `ccam doctor --fix` भी हर उस शॉर्टकट के लिए यही करते हैं जो किसी पुराने ccam की कॉपी है। नाम की जाँच दूसरे `PATH` फ़ोल्डरों में `PATHEXT` के हर extension (`.exe`, `.cmd` वगैरह) के साथ `<name>` खोजती है।
+शॉर्टकट `%USERPROFILE%\.local\bin` में `ccwork.exe` होता है, और ccam खोज से पहले `.exe` (बड़े-छोटे अक्षरों की परवाह किए बिना) हटा देता है (`shim.Name`), इसलिए `ccwork`, `ccwork.exe` और `CCWORK.EXE` सभी `work` शुरू करते हैं। ccam पहले symbolic link बनाता है, जिसकी Windows Developer Mode में या किसी administrator को अनुमति देता है। यह अधिकार न होने पर यह hard link बनाता है: उसी `ccam.exe` फ़ाइल का दूसरा नाम, जिसके लिए किसी विशेषाधिकार की ज़रूरत नहीं होती। hard link को ccam का अपना तब माना जाता है जब वह `ccam.exe` वाली ही फ़ाइल हो।
+
+hard link हमेशा उसी फ़ाइल को चलाता है जिससे वह बना था, इसलिए जब `ccam update`, `ccam.exe` की जगह एक नई फ़ाइल रखता है, तो यह `shim.Relink` से हर hard link वाले शॉर्टकट को नया करता है और `✓ shortcut ccwork renewed` प्रिंट करता है। `install.ps1` दोबारा चलाने पर `ccam shims install` के ज़रिए यही होता है (`OK 2 shortcuts now run the new ccam`), और `ccam shims install` और `ccam doctor --fix` भी हर उस शॉर्टकट के लिए यही करते हैं जो ccam के किसी पुराने वर्ज़न की कॉपी है। नाम की जाँच दूसरे `PATH` फ़ोल्डरों में `PATHEXT` के हर extension (`.exe`, `.cmd` वगैरह) के साथ `<name>` खोजती है।
 
 शॉर्टकट किसी shell (PowerShell, cmd.exe, Git Bash) में टाइप करें। Explorer, Run dialog या `Start-Process` से खोला गया symbolic link सादे `ccam` के रूप में शुरू होता है, जो अकाउंट के बजाय डैशबोर्ड खोलता है।
 
@@ -94,10 +96,10 @@ Shell alias या wrapper स्क्रिप्ट की जगह symlink 
 
 - **ऐसा लिंक जिसे कोई अकाउंट नहीं मानता।** अगर `~/.local/bin` में ccam के किसी लिंक का नाम कोई अकाउंट इस्तेमाल नहीं करता, उदाहरण के लिए `config.toml` में `shortcut` को हाथ से बदलने के बाद, तो ccam डिफ़ॉल्ट अकाउंट पर नहीं लौटता। यह `` ccam: ccold is not the shortcut of any account (see `ccam list`, `ccam shortcut`) `` के साथ रुकता है। `ccam shortcut` से नाम फिर से सेट करें, या लिंक मिटा दें।
 - **मौजूदा फ़ाइलें।** ccam कभी ऐसी फ़ाइल नहीं बदलता जो उसने नहीं बनाई। `ccam shims install`, `<path> already exists and is not a ccam link, so it was left alone` बताता है और फिर भी बाक़ी लिंक बनाता है। तब `ccam add` और `ccam import` `shortcut: ccwork (not created; see above)` प्रिंट करते हैं।
-- **दूसरी जगह ले जाई गई ccam बाइनरी।** तब ccam के बनाए लिंक ऐसे पाथ की ओर इशारा करते हैं जो अब मौजूद नहीं है। `ccam shims install` (या `ccam doctor --fix`) उन्हें उस ccam की ओर कर देता है जिससे आप इसे चलाते हैं।
+- **दूसरी जगह ले जाई गई ccam बाइनरी।** अगर आप ccam बाइनरी को दूसरी जगह ले जाते हैं, तो ccam के बनाए लिंक ऐसे पाथ की ओर इशारा करते हैं जो अब मौजूद नहीं है। `ccam shims install` (या `ccam doctor --fix`) उन्हें उस ccam बाइनरी की ओर कर देता है जिससे आप इसे चलाते हैं।
 - **नाम बदलना और हटाना।** `ccam rename` शॉर्टकट का नाम वही रखता है, और लिंक काम करता रहता है, क्योंकि वह ccam की ओर इशारा करता है और ccam नाम को `config.toml` में खोजता है। `ccam remove` अकाउंट का लिंक मिटाता है। `ccam shortcut <account> <new>` नया लिंक बनाने से पहले पुराना लिंक मिटाता है।
 - **PATH।** जब ccam लिंक बनाता है और `~/.local/bin` आपके `PATH` पर नहीं है, तो यह `Note: /home/me/.local/bin is not in PATH. Add it to ~/.bashrc or ~/.zshrc:` और उसके बाद जोड़ने वाली `export PATH=...` पंक्ति प्रिंट करता है। Windows पर यह इसके बजाय वह PowerShell पंक्ति प्रिंट करता है जो फ़ोल्डर को आपके user `PATH` में जोड़ती है।
-- **बाद में जाँचना।** `ccam doctor`, `missing shortcuts in /home/me/.local/bin: ccwork` और किसी पुराने ccam को चलाने वाले शॉर्टकट बताता है, और फ़ोल्डर `PATH` पर न हो तो चेतावनी देता है। `ccam doctor --fix` गायब लिंक बनाता है और पुराने लिंक नए करता है, और `→ fixed` केवल उन्हीं के लिए कहता है जो उसने बनाए। ऐसा शॉर्टकट जो किसी दूसरे, अभी भी इंस्टॉल ccam को चलाता है, काम करता है और केवल जानकारी है; `ccam doctor --fix` उसे उस ccam की ओर कर देता है जिससे आप इसे चलाते हैं, और `ccam add` और `ccam import` उसे ``shortcut: ccwork (runs another ccam, <path>; `ccam doctor --fix` points it at this one)`` के रूप में दिखाते हैं।
+- **बाद में जाँचना।** `ccam doctor`, `missing shortcuts in /home/me/.local/bin: ccwork` और ccam के किसी पुराने वर्ज़न को चलाने वाले शॉर्टकट बताता है, और फ़ोल्डर `PATH` पर न हो तो चेतावनी देता है। `ccam doctor --fix` गायब लिंक बनाता है और पुराने लिंक नए करता है, और `→ fixed` केवल उन्हीं के लिए कहता है जो उसने बनाए। ऐसा शॉर्टकट जो किसी दूसरे, अभी भी इंस्टॉल ccam को चलाता है, काम करता है, इसलिए `ccam doctor` उसे केवल जानकारी के रूप में दिखाता है; `ccam doctor --fix` उसे उस ccam बाइनरी की ओर कर देता है जिससे आप इसे चलाते हैं, और `ccam add` और `ccam import` उसे ``shortcut: ccwork (runs another ccam, <path>; `ccam doctor --fix` points it at this one)`` के रूप में दिखाते हैं।
 
 ## संबंधित
 

@@ -1,13 +1,13 @@
 ---
 title: ダッシュボード
 description: ターミナルでccamを実行すると、アカウント、グループ、フォルダーのルール、拡張機能、点検結果の全画面ダッシュボードが開きます。どの変更も先に計画を示します。
-updated: 2026-10-25
+updated: 2026-10-26
 order: 15
 translation: machine
-sourceHash: "28f216a4a04f"
+sourceHash: 4e763ca8aacf
 ---
 
-引数なしの`ccam`は、標準入力と標準出力がターミナルであれば全画面のダッシュボードを開き、そうでなければ`ccam list`を出力します。ダッシュボードはすべてのアカウントを使用量とグループとともに表示し、起動、追加、ログイン、グループの変更、フォルダーのルールの設定、バックグラウンドセッションの一覧、点検と修復といった、コマンドと同じことを行えます。起動するか、バックグラウンドセッションにアタッチすると、ダッシュボードは閉じます。アカウントの追加やログインでは、いったんターミナルに切り替わり、終わるとダッシュボードに戻ります。
+引数なしの`ccam`は、標準入力と標準出力がターミナルであれば全画面のダッシュボードを開き、そうでなければ`ccam list`を出力します。ダッシュボードはすべてのアカウントを使用量とグループとともに表示し、起動、追加、ログイン、グループの変更、フォルダーのルールの設定、バックグラウンドセッションの一覧、点検と修復といった、コマンドと同じことを行えます。起動するか、バックグラウンドセッションにアタッチすると、ダッシュボードは閉じます。アカウントの追加やログインでは、少しの間ターミナルを渡し、その後ダッシュボードに戻ります。
 
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
@@ -23,7 +23,7 @@ sourceHash: "28f216a4a04f"
  enter to launch · n for most room · a to add · s for groups · ? for shortcuts
 ```
 
-タブ名の下の行は、現在のタブが何のためのものかを1文で説明します。幅の広いターミナルでは、Accountsタブに各アカウントのメールアドレスも表示されます。タブ名の行の末尾には、どのタブでも、[`auto_switch`](/features/next#auto-switch)が有効かどうかが表示されます（LinuxとmacOS。Windowsでは無視されます）。有効なときは、それにまだ必要なもの（Claudeのサブスクリプションでサインインするすべてのアカウントでオンになっているccamプラグインと、Claude Code 2.1.214以降）をHealthタブが示します。
+タブ名の下の行は、現在のタブが何のためのものかを1文で説明します。幅の広いターミナルでは、Accountsタブに各アカウントのメールアドレスも表示されます。タブ名の行の末尾には、どのタブでも、[`auto_switch`](/features/next#auto-switch)が有効かどうかが表示されます（LinuxとmacOS。Windowsでは無視されます）。有効なときは、それにまだ必要なもの（Claude Code 2.1.214以降と、Claudeのサブスクリプションでサインインするすべてのアカウントでオンになっているccamプラグイン）をHealthタブが一覧表示します。
 
 ダッシュボードは開くたびに、新しいccamのリリースがあるかどうかをバックグラウンドでGitHubに問い合わせます。最初の画面がこれを待つことはなく、オフラインのときは何も表示しません。新しいリリースがあれば、タイトルの下の行でそれを勧めます。
 
@@ -31,9 +31,9 @@ sourceHash: "28f216a4a04f"
  ● ccam 0.10.2 is available (you have 0.10.1) · press U to update
 ```
 
-`U`はまず確認を取ってから、[`ccam update`](/features/update)と同じ方法で更新します。リリースをSHA-256チェックサムと照合し、1回の操作でccamを置き換えます。開いているダッシュボードは古いバージョンのままなので、終了してから`ccam`をもう一度起動してください。`.deb`パッケージでインストールしたccamなど、ここで更新できない場合は、`ccam update`と同じ案内を表示し、提案はそのまま残します。
+`U`はまず確認を取ってから、[`ccam update`](/features/update)と同じ方法で更新します。リリースをSHA-256チェックサムと照合し、1回の操作でccamを置き換えます。開いているダッシュボードは古いバージョンのままなので、終了してから`ccam`をもう一度起動してください。`.deb`パッケージでインストールしたccamのコピーなど、ここで更新できない場合は、`ccam update`と同じ案内を表示し、提案はそのまま残します。
 
-最初の画面は`config.toml`だけから描画され、100 msを大きく下回る時間で表示されます。使用量は、各アカウントの応答があり次第表示されます。上限ごとに専用のバーがあります。5時間の枠、全モデル共通の週間の枠、Fable専用の週間の枠です。`-`はそのアカウントにその枠がないことを示します。割合は80%から黄色、100%で赤になり、取得に失敗したときにキャッシュから表示した値は薄く描画されます。Claude Codeが上限に達したと報告した時間枠は、そのリセットまで100%と表示されます。アクセストークンの期限切れは薄い`⚠ token expired`で示され（次の起動時にClaude Codeが更新します）、`⚠ login expired`はそのアカウントに`ccam login`が必要なことを示します。
+最初の画面は`config.toml`だけから描画され、100 msを大きく下回る時間で表示されます。使用量は、各アカウントの応答があり次第表示されます。上限ごとに専用のバーがあります。5時間の枠、全モデル共通の週間の枠、Fable専用の週間の枠です。`-`はそのアカウントにその枠がないことを示します。割合は80%で黄色、100%で赤になります。取得に失敗した場合は、キャッシュの値が薄く表示されます。Claude Codeが上限に達したと報告した時間枠は、そのリセットまで100%と表示されます。アクセストークンの期限切れは薄い`⚠ token expired`で示され（次の起動時にClaude Codeが更新します）、`⚠ login expired`はそのアカウントに`ccam login`が必要なことを示します。
 
 ## タブ
 
@@ -43,10 +43,10 @@ sourceHash: "28f216a4a04f"
 | Agents | [`ccam agents`](/features/agents)の一覧と同じ内容。すべてのアカウントのバックグラウンドセッションと開いているセッションを、状態、フォルダー、開始時刻とともに表示（下記） | `enter`でアタッチ（`ccam attach`と同じ）、`x`で停止、`r`で再読み込み |
 | Groups | 各グループと、その共有項目とアカウント、どのグループにも入っていないアカウント | `enter`で編集、`n`で新規作成、`e`で名前変更、`x`で削除 |
 | Folders | [`ccam folder`](/features/folder)のルールと、ここで適用されるルール。シンボリックリンクを通ってそのフォルダーに来た場合も同じです（新しいルールはリンクを解決して保存されます） | `n`でここでアカウントを使う、`enter`で変更、`x`で削除 |
-| Extensions | [`ccam ext`](/features/ext)の表示内容。各拡張機能を、出どころのグループとともに一度だけ表示。`off:`はプラグインがオンになっていないアカウント、アカウント自身のサーバーの中のこのフォルダーだけのサーバー、`This folder's project`、どのアカウントにも属さない問題も表示 | `r`で再読み込み |
+| Extensions | [`ccam ext`](/features/ext)の表示内容。各拡張機能を、出どころのグループとともに一度だけ表示。`off:`はプラグインがオンになっていないアカウント、このフォルダーだけに適用されるアカウント自身のサーバー、`This folder's project`、どのアカウントにも属さない問題も表示 | `r`で再読み込み |
 | Health | [`ccam doctor`](/features/doctor)の報告内容をアカウントごとのボックスで表示（下記） | `f`で選択中のボックスを修復、`F`ですべて修復（`doctor --fix`）、`↑`/`↓`でボックス間を移動 |
 
-`←`/`→`か`Tab`でタブを切り替え、`?`で現在のタブのキーを一覧表示し、`r`で短期キャッシュを使わずに使用量を取得し直してAgents・Extensions・Healthタブを読み込み直し、`q`か`Esc`で終了します。
+`←`/`→`か`Tab`でタブを切り替え、`?`で現在のタブのキーを一覧表示し、`r`で短期キャッシュを使わずに使用量を更新してAgents・Extensions・Healthタブを読み込み直し、`q`か`Esc`で終了します。
 
 ## Accountsタブのキー
 
@@ -67,7 +67,7 @@ sourceHash: "28f216a4a04f"
 | `c` | ショートカットコマンドを設定または削除します |
 | `x` | 削除します（先に確認し、最初はNoが選ばれています） |
 
-**TeamとEnterpriseのシート。** 自動的な選択（`ccam next`、`--fallback`、`ccam pick`、ダッシュボードの`n`、有効にした場合の[`auto_switch`](/features/next#auto-switch)）は、同じClaude TeamまたはEnterpriseの組織に属するシート間でも切り替えます。Anthropicのヘルプセンターには、「Each seat on a Team plan is assigned to one named individual, and only that person may use it」（Teamプランの各シートは1人の指定ユーザーに割り当てられ、そのユーザーのみが使用できます）、「Users can't route their work through another user's account to use that user's remaining usage」（ユーザーは別のユーザーのアカウントを通じて作業をルーティングして、そのユーザーの残りの使用量を使用することはできません）と書かれています（[Teamプラン](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)。[Enterpriseプラン](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)も同様です）。そのため、シート間で自動的な選択を使うと、Anthropicの規約に違反するおそれがあります。そこで使うかどうかはご自身の判断です。自動的な選択に頼る前に、所属する組織とAnthropicに確認してください。個人プラン（Pro、Max）については、[FAQの規約に関する説明](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)を参照してください。
+**TeamとEnterpriseのシート。** 自動的なアカウント選択（`ccam next`、`--fallback`、`ccam pick`、ダッシュボードの`n`、有効にした場合の[`auto_switch`](/features/next#auto-switch)）は、同じClaude TeamまたはEnterpriseの組織に属するシート間でも切り替えます。これはAnthropicの規約に違反するおそれがあります。頼る前に[FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)を読み、所属する組織とAnthropicに確認してください。
 
 ## Healthタブ
 
@@ -99,7 +99,7 @@ Healthタブは、開いたときに[`ccam doctor`](/features/doctor)の点検�
 
 ## Agentsタブ
 
-Agentsタブは、[`ccam agents`](/features/agents)が出力する内容、つまりすべてのアカウントのバックグラウンドセッションと開いているセッションを、それぞれが属するアカウントとともに表示します。初めてタブを開いたとき、`r`を押したとき、停止の後、設定の変更の後に、すべてのアカウントのClaude Codeに同時に問い合わせ（`claude agents --json`、それぞれ最大15秒）、すべてが応答するまで`Asking every account's Claude Code for its sessions…`と表示します。
+Agentsタブは、[`ccam agents`](/features/agents)が出力する内容、つまりすべてのアカウントのバックグラウンドセッションと開いているセッションを、それぞれが属するアカウントとともに表示します。初めてタブを開いたとき、`r`を押したとき、停止の後、設定の変更の後に、すべてのアカウントのClaude Codeに同時に問い合わせ（`claude agents --json`、それぞれ15秒のタイムアウト）、すべてが応答するまで`Asking every account's Claude Code for its sessions…`と表示します。
 
 ```console
   Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
@@ -115,9 +115,9 @@ Agentsタブは、[`ccam agents`](/features/agents)が出力する内容、つ�
  enter to attach · x to stop · r to reload · ? for shortcuts
 ```
 
-`State`は、`ccam agents`と同じく、バックグラウンドセッションの状態とそのプロセスが行っていること、または対話型のセッションなら`open`です。問い合わせられなかったアカウントには、一覧の下に`✘`の行が付き、Claude Codeの返した内容が示されます。上の`lab`がその例で、エージェントビューがオフになっています。終了したバックグラウンドセッションは表示されず（`ccam agents --all`で一覧できます）、すべてのアカウントが応答してどれにもセッションがない場合、タブには``No sessions. Start one in the background with `ccam <account> --bg "…"`.``と表示されます。幅の狭いターミナルでは、`Started`、`Name`、`Folder`の順に列を省き、長いフォルダーは左側から切り詰めます。
+`State`は、`ccam agents`と同じく、バックグラウンドセッションの状態とそのプロセスが行っていること、または対話型のセッションなら`open`です。アカウントに問い合わせられない場合は、一覧の下の`✘`の行にClaude Codeの返した内容が示されます。上の`lab`がその例で、エージェントビューがオフになっています。終了したバックグラウンドセッションは表示されず（`ccam agents --all`で一覧できます）、すべてのアカウントが応答してどれにもセッションがない場合、タブには``No sessions. Start one in the background with `ccam <account> --bg "…"`.``と表示されます。幅の狭いターミナルでは、`Started`、`Name`、`Folder`の順に列を省き、長いフォルダーのパスは左側から切り詰めます。
 
-バックグラウンドセッションで`Enter`を押すと、ダッシュボードを閉じ、`ccam attach <id>`と同じように、そのセッションをそのアカウントとしてこのターミナルで開きます。ダッシュボードには戻りません（Claude Codeでは、`←`でエージェントビューに、`Ctrl+Z`でシェルに移ります）。開いているセッションにはIDがないので、`Enter`と`x`はバックグラウンドセッションが必要だと伝えるだけです。`x`は先に確認し、`No, keep it`が選ばれた状態で始まります: ``It runs as personal. Like `ccam personal stop 49ec0028`, Claude Code stops it and keeps its conversation, which `ccam attach 49ec0028` opens again.``。「はい」を選ぶと、ccamはそのアカウントとして`claude stop <id>`を実行し、``49ec0028 (personal) stopped; `ccam attach 49ec0028` opens it again``と、または停止できなかった理由を示して、一覧を読み込み直します。
+バックグラウンドセッションで`Enter`を押すと、ダッシュボードを閉じ、`ccam attach <id>`と同じように、そのセッションをそのアカウントとしてこのターミナルで開きます。ダッシュボードには戻りません（Claude Codeでは、`←`でエージェントビューに、`Ctrl+Z`でシェルに移ります）。開いているセッションにはIDがないので、`Enter`と`x`はバックグラウンドセッションが必要だと伝えるだけです。`x`は、`No, keep it`が選ばれた状態で先に確認します: ``It runs as personal. Like `ccam personal stop 49ec0028`, Claude Code stops it and keeps its conversation, which `ccam attach 49ec0028` opens again.``。「はい」を選ぶと、ccamはそのアカウントとして`claude stop <id>`を実行し、``49ec0028 (personal) stopped; `ccam attach 49ec0028` opens it again``と、または停止できなかった理由を示して、一覧を読み込み直します。
 
 ## グループの変更
 
@@ -135,7 +135,9 @@ Groupsタブで`Enter`を押すとエディターが開きます。左に項目�
     2. No
 ```
 
-グループのコピーと内容が異なるファイルについては、先に確認があります（グループのものを残す、自分のものを使う、マージする）。その後、変更は[`ccam group`](/features/share)と同じコードでバックグラウンドで実行されます。まず設定を保存し、各アカウントのデータを順に移動し、元のファイルは`.ccam-backup/`に移します。MCPの共有から抜けるアカウントは、グループのサーバーを自分の`.claude.json`に持ち続けます。実行中のアカウントのデータを移動することになる変更は、計画を開いている間にアカウントが起動した場合も含め、そのアカウントの名前を示して拒否されます。ほかのccamによるグループの変更で古くなった計画は、`the groups changed while this plan waited; nothing was moved, make the change again`で拒否されます。ほかのccamがグループを変更している間は、新しい変更、名前の変更、削除は`another ccam is changing the groups right now`と表示します。途中で止まった変更の後は、Healthタブの`F`（または`ccam doctor --fix`）がそれを完了させるまで待ちます。
+ファイルがグループのコピーと異なる場合、ccamは先にどうするかを尋ねます（グループのものを残す、自分のものを使う、マージする）。その後、変更は[`ccam group`](/features/share)と同じコードでバックグラウンドで実行されます。まず設定を保存し、各アカウントのデータを順に移動し、元のファイルは`.ccam-backup/`に移します。MCPの共有から抜けるアカウントは、グループのサーバーを自分の`.claude.json`に持ち続けます。
+
+実行中のアカウントのデータを移動することになる変更は、計画を開いている間にアカウントが起動した場合も含め、そのアカウントの名前を示して拒否されます。ほかのccamプロセスがグループを変更したために古くなった計画は、`the groups changed while this plan waited; nothing was moved, make the change again`で拒否されます。ほかのccamプロセスがグループを変更している間は、新しい変更、名前の変更、削除は`another ccam process is changing the groups right now`と表示します。途中で止まった変更の後は、Healthタブの`F`（または`ccam doctor --fix`）がそれを完了させるまで待ちます。
 
 ## アカウントの追加
 
@@ -144,7 +146,7 @@ Groupsタブで`Enter`を押すとエディターが開きます。左に項目�
 1. アカウント名。
 2. サインインの方法: 今すぐClaudeのサブスクリプションで（ブラウザーで）、[APIキー](/features/api)、またはあとでClaudeのサブスクリプションで。
 3. APIキーの場合: 起動のたびにccamがキーを読む場所（`env:NAME`か`command:COMMAND`）、エンドポイント、キーの送り方、モデル。
-4. 加わるグループ（`default`にはチェックが入っています）。グループがまだない場合は、`default`グループが共有する項目。
+4. 加わるグループ（`default`にはチェックが入っています）。グループがまだない場合は、`default`グループが共有する予定の項目。
 5. 必要であれば、ショートカットコマンド。
 6. 確認用の概要。
 
@@ -169,7 +171,7 @@ theme = 'dark'   # auto (default), dark, light, dark-daltonized, light-daltonize
 - ダッシュボードはコマンドと同じ関数を呼び出すので、すべての規則がそのまま適用されます。データを移動する前の計画、実行中のアカウントに対する拒否、バックアップ、そしてログイントークンがアカウントの外に出ないことです。
 - ダッシュボードにはドライランがありません。名前を付けない`ccam --dry-run`は、このフォルダーのアカウントがどう起動するかを表示します。アカウントで`o`を押すと、その1回の起動だけをドライランにできます。
 - Claude Codeが起動する前やログインが開く前に、ターミナルは元の状態に戻ります。
-- ダイアログに対して画面が小さすぎる場合は、まずタブの行を減らします。行は折り返さずに`…`で切り詰めます。高さが足りない画面では、次に空行とタブの説明を省くので、キーの行は残ります。40列または8行より小さいと、ダッシュボードは`Too small: ccam needs 40x8 (now 36x7)`だけを表示します。
+- ダイアログに対して画面が小さすぎる場合は、まずタブの行を減らします。行は折り返さずに`…`で切り詰めます。高さが足りない画面では、次に空行とタブの説明を省くので、キーのヒントの行は表示されたままです。40列または8行より小さいと、ダッシュボードは`Too small: ccam needs 40x8 (now 36x7)`だけを表示します。
 - 変更、削除、アップデート、修復の適用中に`Ctrl+C`を押すと、その完了を待ちます。ステータス行には`ccam quits when it is done.`と表示されます。
 - `U`でccamをアップデートした後は、アカウントの追加やログインからダッシュボードに戻っても、アップデートの案内は再び表示されません。
 

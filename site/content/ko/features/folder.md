@@ -1,13 +1,13 @@
 ---
 title: 폴더별 계정
 description: ccam folder를 쓰면 계정 이름 없이 Claude Code를 시작할 때 폴더와 그 아래 모든 폴더에서 한 계정을 씁니다. 예를 들어 회사 코드에는 work 계정을 쓸 수 있습니다.
-updated: 2026-10-23
+updated: 2026-10-26
 order: 11
 translation: machine
-sourceHash: "48de98d42b99"
+sourceHash: "25f82da64580"
 ---
 
-`ccam folder work ~/code/company`를 실행하면 `~/code/company`와 그 아래 모든 폴더에서 계정 이름 없이 실행할 때 Claude Code가 `work`로 시작합니다. 그 밖의 폴더에서는 전처럼 기본 계정이 시작됩니다. `ccam personal`이나 `ccpersonal` 같은 단축 명령으로 계정 이름을 지정하면 언제나 그 계정이 시작됩니다.
+`ccam folder work ~/code/company`를 실행한 뒤에는 `~/code/company`나 그 하위 폴더에서 계정 이름 없이 실행하면 Claude Code가 `work`로 시작합니다. 그 밖의 폴더에서는 전처럼 기본 계정이 시작됩니다. `ccam personal`이나 `ccpersonal` 같은 단축 명령으로 계정 이름을 지정하면 언제나 그 계정이 시작됩니다.
 
 ## 사용법
 
@@ -67,7 +67,7 @@ account = 'work'
 
 - `ccam rename`은 폴더 항목을 새 이름으로 옮기고, `ccam remove`는 삭제한 계정의 항목을 지웁니다.
 - 항목의 계정이 더 이상 존재하지 않으면 그 폴더에서 이름 없이 실행할 때 `<folder> is set to account "<name>", which does not exist. Change it with ccam folder`를 출력하고 멈춥니다. `ccam doctor`는 이런 항목과, 폴더가 사라진 항목을 보고합니다.
-- 위쪽 폴더에서 계정을 물려받는 폴더 안에서 `ccam folder --remove`를 실행하면, 아무것도 지우지 않고 그 위쪽 폴더를 알려 줍니다.
+- 상위 폴더에서 계정을 물려받는 하위 폴더에서 `ccam folder --remove`를 실행하면, ccam은 그 상위 폴더를 알려 줄 뿐 아무것도 지우지 않습니다.
 - `ccam next`는 순환 순서나 사용량으로 계정을 고르며, 폴더는 보지 않습니다.
 
 ## 관련 문서

@@ -1,13 +1,13 @@
 ---
 title: Sprawdzanie rozszerzeń
 description: ccam ext pokazuje skille, polecenia, pluginy, serwery MCP i hooki ładowane przez każde konto, skąd każde z nich pochodzi i co jest zepsute.
-updated: 2026-10-23
+updated: 2026-10-26
 order: 14
 translation: machine
-sourceHash: "45740e4efbef"
+sourceHash: "7ca357a7f38a"
 ---
 
-`ccam ext` odpowiada na pytanie „dlaczego ta skill (lub ten serwer MCP) działa na jednym koncie, a na drugim nie?”. Dla każdego konta wyświetla rozszerzenia ładowane przez Claude Code i skąd każde z nich pochodzi: z grupy współdzielenia, z własnego folderu konta albo z projektu, w którym jesteś. Pod tabelą wymienia, co przeszkadza rozszerzeniu załadować się tak, jak oczekujesz. Tylko odczytuje.
+`ccam ext` odpowiada na pytanie „Dlaczego ta skill (lub ten serwer MCP) działa na jednym koncie, a na drugim nie?” Dla każdego konta wyświetla rozszerzenia ładowane przez Claude Code i skąd każde z nich pochodzi: z grupy współdzielenia, z własnego folderu konta albo z projektu, w którym jesteś. Pod tabelą wymienia, co przeszkadza rozszerzeniu załadować się tak, jak oczekujesz. Niczego nie zmienia.
 
 ## Użycie
 
@@ -60,9 +60,9 @@ Komórka podaje źródło danego elementu na danym koncie: grupę współdzielen
 
 ## Zgłaszane problemy
 
-- **Zerwane dowiązania**: dowiązanie w `skills/`, `commands/` lub `agents/`, którego cel zniknął, albo współdzielony folder (`skills`, `commands`, `agents`, `plugins`) prowadzący do nieistniejącego miejsca (napraw to przez `ccam doctor --fix`, które ponownie tworzy brakujący folder grupy).
+- **Zerwane dowiązania**: dowiązanie w `skills/`, `commands/` lub `agents/`, którego cel zniknął, albo współdzielony folder (`skills`, `commands`, `agents`, `plugins`) prowadzący do nieistniejącego miejsca (napraw to przez `ccam doctor --fix`, które odtwarza brakujący folder grupy).
 - **Folder skill bez `SKILL.md`**: Claude Code go pomija.
-- **Serwer MCP zdefiniowany inaczej w dwóch miejscach**: w `mcp.json` grupy i w `.claude.json` konta albo w jednym z nich i w `.mcp.json` projektu. Te same ustawienia w obu miejscach (takie, jakie zapisuje `mcp_strategy = "sync"`) nie są problemem. Przenieś własny serwer konta do grupy przez `ccam mcp import <account> <server>`.
+- **Serwer MCP zdefiniowany inaczej w dwóch miejscach**: w `mcp.json` grupy i w `.claude.json` konta albo w jednym z nich i w `.mcp.json` projektu. Identyczne definicje w obu miejscach (takie, jakie zapisuje `mcp_strategy = "sync"`) nie są problemem. Przenieś własny serwer konta do grupy przez `ccam mcp import <account> <server>`.
 - **`installed_plugins.json`, który nie jest poprawnym JSON**, plugin, którego `enabledPlugins` nie wymienia, i plugin, którego folderu brakuje.
 - **Serwery, które ładuje tylko jedno konto**: serwer tylko w `.claude.json` tego konta, którego pozostałe konta jego grupy nie ładują, oraz serwer w lokalnym zakresie konta dla tego folderu (tak działa `claude mcp add` bez `-s user`). Każdy ma podane polecenie `ccam mcp import`, które go udostępnia. Serwery w `~/.claude.json` zwykłego `claude`, których nie ładuje żadne konto, mają podane polecenie `ccam migrate --mcp`.
 - **Serwer projektu czekający na zatwierdzenie**: konto jeszcze nie zaufało folderowi, więc Claude Code zapyta raz, a do tego czasu serwery z `.mcp.json` projektu czekają. Problem podaje, gdzie je zatwierdzić: `"enabledMcpjsonServers"` w `settings.json` kont grupy ustawień albo tego konta. Zaufanie nadane głównemu drzewu roboczemu repozytorium git obowiązuje też w jego pozostałych drzewach roboczych.
@@ -76,6 +76,6 @@ Komórka podaje źródło danego elementu na danym koncie: grupę współdzielen
 
 ## Powiązane
 
-- [Współdzielenie między kontami](/features/share)
+- [Współdzielenie przez grupy](/features/share)
 - [Współdzielone serwery MCP](/features/mcp)
 - [Sprawdzanie i naprawa](/features/doctor)

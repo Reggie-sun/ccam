@@ -1,10 +1,10 @@
 ---
 title: 在一台電腦上使用多個 Claude Code 帳號
 description: 透過 CLAUDE_CONFIG_DIR 同時執行多個 Claude Code 帳號並在帳號之間切換，可以用 Shell 別名手動設定，或交給 ccam 自動處理。
-updated: 2026-10-25
+updated: 2026-10-26
 order: 1
 translation: machine
-sourceHash: "5c5dbd9fcd23"
+sourceHash: "381de7a473b2"
 ---
 
 為每個帳號指定獨立的設定資料夾。Claude Code 會從 `CLAUDE_CONFIG_DIR` 環境變數讀取資料夾位置，每個資料夾各自保存登入資訊、設定和對話記錄，所以每個帳號都會保持登入，你也可以同時執行它們。你可以用 Shell 別名手動設定，或交給 ccam 處理。
@@ -17,7 +17,7 @@ sourceHash: "5c5dbd9fcd23"
 alias claude-work='CLAUDE_CONFIG_DIR=~/.claude-work claude'
 ```
 
-開啟新的終端機並執行 `claude-work`。因為資料夾是新的，Claude Code 會要求你登入。之後，`claude` 是你的第一個帳號，`claude-work` 則是第二個。每個帳號各加一個別名，各用一個資料夾。
+開啟新的終端機並執行 `claude-work`。因為資料夾是新的，Claude Code 會要求你登入。之後，`claude` 是你的第一個帳號，`claude-work` 則是第二個。
 
 在沒有 WSL 的 Windows 上，可以在 PowerShell 設定檔（`notepad $PROFILE`）中加入一個函式，效果相同：
 
@@ -29,7 +29,7 @@ function claude-work { $env:CLAUDE_CONFIG_DIR = "$HOME\.claude-work"; try { clau
 
 這種做法在兩個帳號時很好用。需要注意的事項：
 
-- 每個資料夾一開始都是空的：沒有設定、沒有 `CLAUDE.md`、沒有 MCP 伺服器，也沒有 agents 或 skills。你需要自己複製或連結需要的內容，並自行讓這些副本保持一致。
+- 每個資料夾一開始都是空的：沒有設定、沒有 `CLAUDE.md`、沒有 MCP 伺服器，也沒有 agents 或 skills。你需要自己複製或連結需要的內容，並自行讓這些副本保持同步。
 - 別名只存在於互動式 Shell 中。腳本、Makefile 和其他程式都看不到它們。
 - MCP 伺服器存放在 `.claude.json` 中，和登入資訊放在一起，所以無法直接在資料夾之間連結。
 - 對話會留在開始時的帳號中，因此無法在另一個帳號接續。
@@ -51,9 +51,9 @@ ccam add work --shortcut ccwork
 
 現在 `ccam personal` 和 `ccam work` 就能啟動這兩個帳號，你為 work 帳號設定的快捷指令 `ccwork` 也可以。因為它們是真正的程式而不是別名，所以在腳本中也能使用。單獨執行 `ccam` 可以從清單中選擇帳號，執行 `ccam use work` 則可將某個帳號設為預設。
 
-設定、`CLAUDE.md`、MCP 伺服器和擴充功能從一開始就會共用。`ccam next --continue` 會把對話帶到另一個帳號，而你可以開啟的對話記錄共用則讓它保持為同一段對話。`ccam usage` 會一次顯示所有帳號的 5 小時用量和每週用量。
+設定、`CLAUDE.md`、MCP 伺服器和擴充功能從一開始就會共用。`ccam next --continue` 會在另一個帳號接續對話。如果你開啟對話記錄共用，兩個帳號會處理同一段對話，而不是一份副本。`ccam usage` 會一次顯示所有帳號的 5 小時用量和每週用量。
 
-如果你已經在使用 `~/.claude`，請執行 `ccam import`，不必再次新增該帳號；或執行 `ccam migrate`，把其中的設定、MCP 伺服器和擴充功能複製到共用設定。
+如果你已經在使用 `~/.claude`，請執行 `ccam import`，不必再次新增該帳號；或執行 `ccam migrate`，把其中的設定、MCP 伺服器和擴充功能複製到共用的 `default` 群組。
 
 ## 如何知道目前執行的是哪個帳號？
 
@@ -77,6 +77,6 @@ Claude Code [可以在 Windows 上原生執行，也可以在 WSL 中執行](htt
 
 如果只有兩個帳號，而且不需要共用任何內容，用別名就夠了。如果你想共用設定和 MCP 伺服器、使用更多帳號、一眼看到用量或接續對話，ccam 能幫你省去這些管理工作。[與別名的比較](/compare/aliases)並列了兩者的差異，[ccam 與其他帳號切換工具](/compare/account-switchers)則介紹了那些切換同一組登入資訊的工具。
 
-是否可以使用多個帳號取決於各帳號的條款。使用前請先確認。
+能否使用多個帳號，取決於適用於各帳號的條款。開始之前請先閱讀這些條款。
 
-**Team 和 Enterprise 席位。** 自動選擇（`ccam next`、`--fallback`、`ccam pick`、儀表板的 `n`，以及你開啟後的 [`auto_switch`](/features/next#auto-switch)）也會在同一個 Claude Team 或 Enterprise 組織的席位之間切換。Anthropic 說明中心關於 [Team 方案](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)的文章寫道：「Each seat on a Team plan is assigned to one named individual, and only that person may use it」（Team 方案的每個席位都指派給一位具名的個人，而且只有這個人可以使用），以及「Users can't route their work through another user's account to use that user's remaining usage」（使用者不能經由其他使用者的帳號處理自己的工作，藉此使用對方剩餘的用量）；關於 [Enterprise 方案](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)的文章也是如此。因此，在席位之間使用自動選擇可能會違反 Anthropic 的條款。要不要在這種情況下使用它由你決定：在依賴這項功能之前，請先向你所屬的組織和 Anthropic 確認。個人方案（Pro、Max）的情況請參閱上方的說明。
+**Team 和 Enterprise 席位。** 自動選擇帳號（`ccam next`、`--fallback`、`ccam pick`、儀表板的 `n`，以及你開啟後的 [`auto_switch`](/features/next#auto-switch)）也會在同一個 Claude Team 或 Enterprise 組織的席位之間切換，這可能會違反 Anthropic 的條款。在依賴這項功能之前，請先閱讀[常見問題](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)，並向你所屬的組織和 Anthropic 確認。

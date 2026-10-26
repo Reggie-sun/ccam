@@ -1,13 +1,13 @@
 ---
 title: Inspecionar extensões
 description: ccam ext mostra as skills, comandos, plugins, servidores MCP e hooks que cada conta carrega, de onde vem cada um e o que está quebrado.
-updated: 2026-10-23
+updated: 2026-10-26
 order: 14
 translation: machine
-sourceHash: "45740e4efbef"
+sourceHash: "7ca357a7f38a"
 ---
 
-`ccam ext` responde "por que esta skill (ou este servidor MCP) funciona em uma conta e não na outra?". Ele lista, para cada conta, as extensões que o Claude Code carrega e de onde vem cada uma: um grupo de compartilhamento, a pasta da própria conta ou o projeto em que você está. Abaixo da tabela, lista o que impede uma extensão de carregar como você espera. Ele só lê.
+`ccam ext` responde à pergunta "Por que esta skill (ou este servidor MCP) funciona em uma conta, mas não na outra?" Ele lista, para cada conta, as extensões que o Claude Code carrega e de onde vem cada uma: um grupo de compartilhamento, a pasta da própria conta ou o projeto em que você está. Abaixo da tabela, lista o que impede uma extensão de carregar como você espera. Ele não altera nada.
 
 ## Uso
 
@@ -60,12 +60,12 @@ Cada célula indica a origem daquele item naquela conta: o grupo de compartilham
 
 ## Problemas que ele aponta
 
-- **Links quebrados**: um link em `skills/`, `commands/` ou `agents/` cujo destino sumiu, ou uma pasta compartilhada (`skills`, `commands`, `agents`, `plugins`) que aponta para um lugar que não existe (repare com `ccam doctor --fix`, que cria de novo uma pasta de grupo ausente).
+- **Links quebrados**: um link em `skills/`, `commands/` ou `agents/` cujo destino sumiu, ou uma pasta compartilhada (`skills`, `commands`, `agents`, `plugins`) que aponta para um lugar que não existe (repare com `ccam doctor --fix`, que recria uma pasta de grupo ausente).
 - **Uma pasta de skill sem `SKILL.md`**: o Claude Code a ignora.
-- **Um servidor MCP definido de forma diferente em dois lugares**: o `mcp.json` do grupo e o `.claude.json` da conta, ou um deles e o `.mcp.json` do projeto. As mesmas configurações nos dois lugares (o que `mcp_strategy = "sync"` grava) não são um problema. Mova um servidor próprio da conta para o grupo com `ccam mcp import <account> <server>`.
+- **Um servidor MCP definido de forma diferente em dois lugares**: o `mcp.json` do grupo e o `.claude.json` da conta, ou um deles e o `.mcp.json` do projeto. Definições idênticas nos dois lugares (o que `mcp_strategy = "sync"` grava) não são um problema. Mova um servidor próprio da conta para o grupo com `ccam mcp import <account> <server>`.
 - **Um `installed_plugins.json` que não é JSON válido**, um plugin que `enabledPlugins` não menciona e um plugin cuja pasta está ausente.
 - **Servidores que só uma conta carrega**: um servidor só no `.claude.json` desta conta, que as outras contas do grupo dela não carregam, e um no escopo local da conta para esta pasta (o que `claude mcp add` faz, a menos que receba `-s user`). Cada um vem com o comando `ccam mcp import` que o compartilha. Servidores no `~/.claude.json` do `claude` simples que nenhuma conta carrega vêm com o comando `ccam migrate --mcp`.
-- **Um servidor de projeto esperando aprovação**: a conta ainda não confiou na pasta, então o Claude Code pergunta uma vez e, até lá, os servidores do `.mcp.json` do projeto ficam esperando. O problema diz onde aprová-los: `"enabledMcpjsonServers"` no `settings.json` das contas do grupo de configurações, ou desta conta. A confiança dada à worktree principal de um repositório git vale nas outras worktrees dele.
+- **Um servidor de projeto esperando aprovação**: a conta ainda não confiou na pasta, então o Claude Code pergunta uma vez e, até lá, os servidores do `.mcp.json` do projeto ficam esperando. O problema diz onde aprová-los: `"enabledMcpjsonServers"` no `settings.json` das contas do grupo de configurações, ou desta conta. A confiança dada à worktree principal de um repositório git também vale para as outras worktrees dele.
 - **Logins e conectores**: um servidor MCP que precisa de login nesta conta enquanto outra conta tem login nele (um login vale só para uma conta; entre com `/mcp`), e conectores do claude.ai que outra conta usou e esta não.
 
 ## Segurança e casos especiais
@@ -76,6 +76,6 @@ Cada célula indica a origem daquele item naquela conta: o grupo de compartilham
 
 ## Relacionados
 
-- [Compartilhamento entre contas](/features/share)
+- [Compartilhamento com grupos](/features/share)
 - [Servidores MCP compartilhados](/features/mcp)
 - [Verificar e reparar](/features/doctor)

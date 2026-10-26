@@ -1,13 +1,13 @@
 ---
 title: API 키 계정
 description: ccam add --api는 Anthropic API나 게이트웨이용 API 키 계정을 추가합니다. 키는 실행할 때 변수나 명령에서 읽으며 저장하지 않습니다.
-updated: 2026-10-23
+updated: 2026-10-26
 order: 13
 translation: machine
-sourceHash: "232a71525e42"
+sourceHash: "771d749f1f90"
 ---
 
-API 키 계정은 Claude 구독 로그인 대신 API 키로 Claude Code를 시작합니다. Anthropic API를 쓰거나, LiteLLM이나 OpenRouter 게이트웨이처럼 같은 Messages 형식을 쓰는 엔드포인트를 쓸 수 있습니다. ccam은 키를 저장하지 않습니다. 계정을 시작할 때마다 환경 변수나 비밀번호 관리자 같은 명령에서 키를 읽고, 그 Claude Code 프로세스에만 넘깁니다.
+API 키 계정은 Claude 구독 로그인 대신 API 키로 Claude Code를 시작합니다. 키는 Anthropic API용이어도 되고, LiteLLM이나 OpenRouter 게이트웨이처럼 같은 Messages 형식을 쓰는 엔드포인트용이어도 됩니다. ccam은 키를 저장하지 않습니다. 계정을 시작할 때마다 환경 변수나 비밀번호 관리자 같은 명령에서 키를 읽고, 그 Claude Code 프로세스에만 넘깁니다.
 
 ## 사용법
 
@@ -27,7 +27,7 @@ $ ccam list
    2  gw        -         (API: llm.example.com)  default  -
 ```
 
-API 키 계정도 다른 계정처럼 그룹에 들어가며(기본은 `default`: 설정, `CLAUDE.md`, 확장, MCP 서버), 단축 명령, `ccam folder`, `ccam ext`와 함께 쓸 수 있습니다.
+API 키 계정도 다른 계정처럼 그룹에 들어가며(기본은 설정, `CLAUDE.md`, 확장, MCP 서버를 공유하는 `default` 그룹), 단축 명령, `ccam folder`, `ccam ext`와 함께 쓸 수 있습니다.
 
 ## 옵션
 
@@ -58,8 +58,13 @@ model = 'claude-sonnet-5-5'
 
 계정을 시작할 때마다, 평소의 검사를 마친 뒤 Claude Code가 시작되기 전에 다음을 합니다.
 
-1. ccam이 키를 읽습니다. `env:`는 환경에서, `command:`는 30초 제한으로 명령을 실행해서 읽습니다. 명령은 터미널에서 비밀번호를 물을 수 있고, 오류 출력도 터미널로 갑니다. 키가 비어 있으면 키를 어디서 찾으려 했는지 알리는 메시지와 함께 시작을 멈춥니다.
-2. Claude Code의 로그인 방식이나 사용할 제공자를 정하는, 물려받은 변수를 모두 지웁니다. 키와 토큰(`ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN_FILE_DESCRIPTOR`, `CLAUDE_CODE_API_KEY_FILE_DESCRIPTOR`), 엔드포인트(`ANTHROPIC_BASE_URL`, `ANTHROPIC_UNIX_SOCKET`, `ANTHROPIC_MODEL`), 제공자 전환 변수(`CLAUDE_CODE_USE_BEDROCK`, `CLAUDE_CODE_USE_VERTEX`, `CLAUDE_CODE_USE_FOUNDRY`, `CLAUDE_CODE_USE_ANTHROPIC_AWS`, `CLAUDE_CODE_USE_ANTHROPIC_GOOGLE_CLOUD`, `CLAUDE_CODE_USE_MANTLE`, `CLAUDE_CODE_USE_GATEWAY`)입니다. 다른 용도로 셸에 설정한 키가 이 계정에 닿을 수 없고, 구독 로그인이 이 계정의 키보다 우선할 수도 없습니다.
+1. ccam이 키를 읽습니다. `env:`는 환경에서, `command:`는 30초 타임아웃으로 명령을 실행해서 읽습니다. 명령은 터미널에서 비밀번호를 물을 수 있고, 오류 출력도 터미널로 갑니다. 키가 비어 있으면 키를 어디서 찾으려 했는지 알리는 메시지와 함께 시작을 멈춥니다.
+2. Claude Code의 로그인 방식이나 사용할 제공자를 정하는, 물려받은 변수를 모두 지웁니다.
+   - 키와 토큰: `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN_FILE_DESCRIPTOR`, `CLAUDE_CODE_API_KEY_FILE_DESCRIPTOR`
+   - 엔드포인트: `ANTHROPIC_BASE_URL`, `ANTHROPIC_UNIX_SOCKET`, `ANTHROPIC_MODEL`
+   - 제공자 전환 변수: `CLAUDE_CODE_USE_BEDROCK`, `CLAUDE_CODE_USE_VERTEX`, `CLAUDE_CODE_USE_FOUNDRY`, `CLAUDE_CODE_USE_ANTHROPIC_AWS`, `CLAUDE_CODE_USE_ANTHROPIC_GOOGLE_CLOUD`, `CLAUDE_CODE_USE_MANTLE`, `CLAUDE_CODE_USE_GATEWAY`
+
+   다른 용도로 셸에 설정한 키가 이 계정에 닿을 수 없고, 구독 로그인이 이 계정의 키보다 우선할 수도 없습니다.
 3. 지정했다면 `ANTHROPIC_BASE_URL`과 `ANTHROPIC_MODEL`을 설정하고, 키를 `ANTHROPIC_API_KEY`나 `ANTHROPIC_AUTH_TOKEN`으로 설정합니다.
 
 구독 로그인을 쓰는 계정은 지금까지처럼 물려받은 환경을 그대로 씁니다. 대화형 세션에서는 Claude Code가 환경에서 찾은 키를 쓸지 한 번 물어볼 수 있습니다.
@@ -74,7 +79,7 @@ model = 'claude-sonnet-5-5'
   ```
 
   시작할 때 지우는 물려받은 변수는 맨 앞에 `env -u <name>`으로 표시됩니다. `env:` 소스의 변수가 비어 있으면 드라이 런도 실제 시작과 마찬가지로 실패합니다.
-- `ccam add --api`는 `env:` 소스를 바로 확인하고 변수가 비어 있으면 경고합니다. `command:` 소스는 시작할 때 처음 실행됩니다.
+- `ccam add --api`는 `env:` 소스를 바로 확인하고 변수가 비어 있으면 경고합니다. `command:` 소스는 시작할 때까지 실행하지 않습니다.
 - API 키 계정에는 로그인이 없으므로 `ccam login`과 `ccam logout`은 거부합니다. `ccam doctor`는 엔드포인트와 키 소스를 보여 주고, `env:` 변수가 비어 있으면 경고합니다.
 - `ccam usage`는 이 계정을 `no limits (API)`로 표시합니다. API 키에는 비교할 5시간·주간 한도가 없으므로, `ccam next --auto`, `--fallback`, `ccam pick`은 구독 계정 중에서만 고릅니다.
 - `env` 블록이나 `apiKeyHelper`가 들어 있는 공유 `settings.json`은 API 키 계정을 포함해 그룹의 모든 계정에 적용됩니다. 제공자 설정은 공유 설정에 넣지 말거나, API 키 계정을 `settings`를 공유하지 않는 그룹에 두세요.

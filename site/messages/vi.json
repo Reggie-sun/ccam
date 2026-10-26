@@ -2,7 +2,7 @@
   "site": {
     "name": "ccam",
     "title": "ccam: Claude Code Account Manager, công cụ đổi tài khoản",
-    "description": "ccam (Claude Code Account Manager) là công cụ miễn phí, mã nguồn mở để dùng nhiều tài khoản Claude Code trên một máy tính và đổi tài khoản bằng một lệnh.",
+    "description": "ccam (Claude Code Account Manager) là công cụ miễn phí, mã nguồn mở giúp bạn dùng nhiều tài khoản Claude Code trên một máy tính và chuyển đổi bằng một lệnh.",
     "titleSuffix": "ccam cho Claude Code"
   },
   "nav": {
@@ -14,17 +14,17 @@
     "menu": "Menu",
     "skip": "Chuyển đến nội dung",
     "language": "Ngôn ngữ",
-    "theme": "Chuyển giao diện sáng hoặc tối"
+    "theme": "Chuyển đổi giữa giao diện sáng và tối"
   },
   "facts": {
     "what": "ccam là công cụ dòng lệnh miễn phí, mã nguồn mở, giúp bạn dùng nhiều tài khoản Claude Code trên một máy tính và chuyển đổi giữa chúng bằng một lệnh.",
-    "how": "Mỗi tài khoản giữ thông tin đăng nhập riêng trong một CLAUDE_CONFIG_DIR riêng, còn máy chủ MCP, cài đặt, CLAUDE.md, tiện ích mở rộng và lịch sử hội thoại có thể dùng chung giữa các tài khoản, nên bạn có thể tiếp tục một cuộc hội thoại trên tài khoản khác khi một tài khoản chạm giới hạn sử dụng.",
+    "how": "Mỗi tài khoản giữ thông tin đăng nhập riêng trong một CLAUDE_CONFIG_DIR riêng. Máy chủ MCP, cài đặt, CLAUDE.md, tiện ích mở rộng và lịch sử hội thoại có thể dùng chung giữa các tài khoản, nên bạn có thể tiếp tục một cuộc hội thoại trên tài khoản khác khi một tài khoản chạm giới hạn sử dụng.",
     "install": "Cài đặt trên Linux, macOS hoặc Windows bằng một lệnh, sau đó chạy ccam add cho từng tài khoản.",
     "official": "ccam là dự án không chính thức, không liên kết với Anthropic và không được Anthropic xác nhận."
   },
   "landing": {
     "headline": "Nhiều tài khoản Claude Code. Một terminal.",
-    "lede": "Thêm mỗi tài khoản một lần. Chuyển đổi bằng {command} hoặc một lệnh tắt như {shortcut}. Khi một tài khoản chạm giới hạn, hãy tiếp tục ở tài khoản kế tiếp với cùng cuộc hội thoại.",
+    "lede": "Thêm mỗi tài khoản một lần. Chuyển đổi bằng {command} hoặc một lệnh tắt như {shortcut}. Khi một tài khoản chạm giới hạn, hãy tiếp tục cùng cuộc hội thoại trên tài khoản kế tiếp.",
     "installLabel": "Cài đặt trên Linux hoặc macOS",
     "installWindowsLabel": "Trên Windows, trong PowerShell",
     "thenAdd": "Sau đó thêm tài khoản đầu tiên bằng {command}.",
@@ -56,18 +56,18 @@
       "fiveHour": "5 giờ",
       "weekly": "Hàng tuần",
       "resets": "đặt lại sau {time}",
-      "mostRoom": "Còn nhiều hạn mức nhất: {name}"
+      "mostRoom": "Còn dư nhiều nhất: {name}"
     },
     "flowTitle": "Cách hoạt động",
     "flow": [
       {
         "command": "ccam add work",
-        "body": "Tạo một thư mục cấu hình riêng cho tài khoản, mở trang đăng nhập Claude trong trình duyệt và, nếu bạn muốn, gán cho tài khoản một lệnh tắt do bạn tự đặt tên, chẳng hạn ccwork."
+        "body": "Tạo một thư mục cấu hình riêng cho tài khoản và mở trang đăng nhập Claude trong trình duyệt. Lệnh này cũng có thể gán cho tài khoản một lệnh tắt do bạn chọn, chẳng hạn ccwork."
       },
       {
         "command": "ccam work",
         "also": "ccwork --resume",
-        "body": "Khởi động Claude Code bằng tài khoản đó. Mọi thứ sau tên tài khoản được chuyển nguyên vẹn cho Claude Code, và ccam thêm khoảng 4 mili giây trước khi Claude Code khởi động."
+        "body": "Khởi động Claude Code bằng tài khoản đó. Mọi thứ sau tên tài khoản được chuyển nguyên vẹn cho Claude Code, và khởi động qua ccam chỉ mất thêm khoảng 4 mili giây so với chạy claude trực tiếp."
       },
       {
         "command": "ccam group set default --add history",
@@ -83,7 +83,7 @@
       },
       {
         "command": "ccam doctor --fix",
-        "body": "Kiểm tra liên kết, quyền truy cập và thông tin đăng nhập, rồi sửa những gì có thể sửa an toàn. Mọi thay đổi trên tệp của bạn đều có bản sao lưu."
+        "body": "Kiểm tra liên kết, quyền truy cập và thông tin đăng nhập, rồi sửa những gì có thể sửa an toàn. Các tệp bị dời đi để sửa lỗi được giữ lại trong một bản sao lưu."
       }
     ],
     "guidesTitle": "Hướng dẫn",
@@ -141,19 +141,19 @@
     "next": "Mở tài khoản kế tiếp; --continue chuyển cuộc hội thoại sang, --auto chọn tài khoản còn nhiều hạn mức nhất",
     "usage": "Hiển thị mức sử dụng 5 giờ và hàng tuần của mọi tài khoản",
     "share": "Hiển thị những gì một tài khoản dùng chung, và qua nhóm nào",
-    "group": "Tạo và thay đổi nhóm: những gì một tập tài khoản dùng chung, được chuyển theo một kế hoạch",
+    "group": "Tạo và thay đổi nhóm, nơi quy định những gì các tài khoản trong nhóm dùng chung; mọi thay đổi đều hiện kế hoạch trước",
     "mcp": "Quản lý các máy chủ MCP dùng chung",
     "migrate": "Sao chép thiết lập Claude Code hiện có (~/.claude) vào một nhóm dùng chung",
     "login": "Đăng nhập lại một tài khoản; --expired đăng nhập mọi tài khoản cần đăng nhập lại",
     "logout": "Đăng xuất một tài khoản: thông tin đăng nhập và các lần đăng nhập máy chủ MCP của nó",
-    "rename": "Đổi tên một tài khoản; lệnh tắt của nó giữ nguyên tên",
+    "rename": "Đổi tên một tài khoản; lệnh tắt của nó vẫn giữ nguyên",
     "remove": "Xóa một tài khoản: tài khoản được đăng xuất, và thư mục của nó được chuyển vào thư mục thùng rác",
     "import": "Đăng ký tại chỗ một thư mục ~/.claude có sẵn",
     "doctor": "Kiểm tra liên kết, quyền truy cập, đăng nhập và phiên bản, rồi sửa chữa",
     "statusline": "Hiển thị tài khoản và mức sử dụng trên dòng trạng thái của Claude Code",
     "shims": "Tạo lại liên kết lệnh tắt của mọi tài khoản",
     "shortcut": "Xem, tạo, đổi tên hoặc xóa lệnh tắt của một tài khoản, chẳng hạn ccwork",
-    "folder": "Dùng một tài khoản trong một thư mục và các thư mục bên dưới khi không nêu tên tài khoản",
+    "folder": "Dùng một tài khoản trong một thư mục và các thư mục con của nó khi không nêu tên tài khoản",
     "pick": "In tài khoản còn nhiều hạn mức nhất, cho script và các worker chạy song song",
     "ext": "Hiện các skill, lệnh, plugin, máy chủ MCP và hook mà mỗi tài khoản nạp",
     "agents": "Liệt kê các agent chạy nền và các phiên đang mở của mọi tài khoản",
@@ -174,7 +174,7 @@
   },
   "footer": {
     "unofficial": "ccam là công cụ mã nguồn mở không chính thức. Công cụ này không liên kết với Anthropic và không được Anthropic xác nhận. Claude và Claude Code là nhãn hiệu của Anthropic.",
-    "terms": "Việc bạn có được dùng nhiều tài khoản hay không phụ thuộc vào điều khoản của từng tài khoản. Hãy kiểm tra trước khi làm vậy.",
+    "terms": "Việc bạn có được dùng nhiều hơn một tài khoản hay không phụ thuộc vào điều khoản áp dụng cho từng tài khoản. Hãy đọc các điều khoản đó trước khi bắt đầu.",
     "license": "Mã nguồn trên GitHub",
     "languages": "Tất cả ngôn ngữ",
     "analytics": "Trang này đếm lượt truy cập bằng Cloudflare Web Analytics, công cụ không đặt cookie và không thu thập dữ liệu cá nhân."

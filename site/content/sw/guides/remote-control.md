@@ -1,13 +1,13 @@
 ---
 title: Kutumia Remote Control na ccam
 description: "Remote Control ya Claude Code kama akaunti yoyote kwa ccam <name> rc: chaguo zinazotumika, kwa nini ccam hutoa kunakili seva za MCP zinazoshirikiwa, na utatuzi."
-updated: 2026-10-23
+updated: 2026-10-26
 order: 4
 translation: machine
-sourceHash: "3e17d89f98c8"
+sourceHash: "4d46f49c5dea"
 ---
 
-`ccam work rc` huanzisha Remote Control ya Claude Code kama akaunti `work`, ili uweze kuendesha vipindi kwenye kompyuta hii kutoka claude.ai/code au programu ya simu ya Claude. Hufanya kazi kama `claude rc` kwa tofauti moja tu: ikiwa akaunti inashiriki seva za MCP, ccam huuliza mara moja kama izinakili kwenda `.claude.json` ya akaunti, kwa sababu vipindi vya Remote Control havisomi seva kutoka mahali pengine popote.
+`ccam work rc` huanzisha Remote Control ya Claude Code kama akaunti ya `work`, ili uweze kudhibiti vipindi kwenye kompyuta hii kutoka claude.ai/code au programu ya simu ya Claude. Hufanya kazi kama `claude rc` kwa tofauti moja tu: ikiwa akaunti inashiriki seva za MCP, ccam huuliza mara moja kama izinakili kwenda `.claude.json` ya akaunti, kwa sababu faili hiyo ndiyo mahali pekee ambapo vipindi vya Remote Control husoma seva.
 
 ## Kuianzisha
 
@@ -31,9 +31,10 @@ Aina mbili za chaguo hukutana hapa: chaguo za ccam yenyewe, ambazo huja kabla ya
 | Chaguo au mpangilio | Inachofanya | Chaguo-msingi |
 | --- | --- | --- |
 | `--dry-run` (kabla ya akaunti) | Huchapisha mazingira na amri, pamoja na taarifa ya MCP ikiwa ipo. Haiulizi wala hainakili | imezimwa |
-| `Copy them into .claude.json (a backup is kept; servers of the account's own stay)? [y/N]` | Huulizwa wakati akaunti inashiriki seva za MCP na `.claude.json` yake haina orodha ya sasa ya kikundi, au seva iliyonakiliwa imetoweka ndani yake. `y` huzinakili, `N` au Enter huanza bila hizo | `N` |
 | `mcp_strategy = "sync"` juu kabisa ya `~/.config/ccam/config.toml` | Hunakili seva za kikundi kwenda `.claude.json` kabla ya kila uanzishaji, iwe Remote Control au la, kwa hiyo hakuna kinachoulizwa kamwe | `"flag"` |
 | `ccam group leave <group> work` | Hutoa akaunti kwenye kikundi kinachoshiriki MCP nayo. Seva za kikundi hunakiliwa katika `.claude.json` yake kama seva zake yenyewe, kwa hiyo Remote Control huwa nazo na hakuna kinachoulizwa; kwa `--fresh` huanza na seva za akaunti yenyewe tu | katika `default` |
+
+Akaunti inaposhiriki seva za MCP na `.claude.json` yake haina orodha ya sasa ya kikundi, au seva iliyonakiliwa imetoweka ndani yake, ccam huuliza `Copy them into .claude.json (a backup is kept; the account's own servers stay)? [y/N]`. `y` huzinakili; `N` au Enter huanza bila hizo.
 
 ### Chaguo za Remote Control
 
@@ -47,7 +48,7 @@ Kila kitu baada ya `rc` ni mali ya Claude Code. Hizi ni chaguo za `claude remote
 | `--session-id <id>` | Huunganisha tena kwenye kipindi mahususi |
 | `--permission-mode <mode>` | Hali ya ruhusa kwa vipindi vipya: `acceptEdits`, `auto`, `bypassPermissions`, `default`, `dontAsk` au `plan` |
 | `--spawn <mode>` | `same-dir` (chaguo-msingi), `worktree` (git worktree moja kwa kila kipindi) au `session` (kipindi kimoja, hutoka kinapoisha) |
-| `--capacity <N>` | Idadi kubwa zaidi ya vipindi kwa wakati mmoja katika hali ya `same-dir` na `worktree` (chaguo-msingi 32) |
+| `--capacity <N>` | Idadi ya juu ya vipindi vinavyoendeshwa kwa wakati mmoja katika hali ya `same-dir` na `worktree` (chaguo-msingi 32) |
 | `--[no-]create-session-in-dir` | Huunda kipindi cha kwanza katika folda ya sasa wakati wa kuanza (chaguo-msingi imewashwa) |
 | `--[no-]chrome` | Claude in Chrome kwa vipindi vipya (chaguo-msingi imezimwa) |
 | `-d`, `--debug`, `--debug-file <path>`, `-v`, `--verbose` | Matokeo ya utatuzi na ya kina |
@@ -66,10 +67,10 @@ Uanzishaji hufuata njia ya kawaida ([Kuanzisha Claude Code](/features/launch)) u
    ```console
    $ ccam work rc
    ccam: Remote Control sessions only get MCP servers stored in account work's .claude.json, not the shared MCP servers (ctx, fs).
-   Copy them into .claude.json (a backup is kept; servers of the account's own stay)? [y/N]
+   Copy them into .claude.json (a backup is kept; the account's own servers stay)? [y/N]
    ```
 
-5. Kwa `y` huhifadhi nakala rudufu ya `.claude.json`, huchukua kufuli ya Claude Code yenyewe, huongeza seva za kikundi kwenye `mcpServers` na huhifadhi seva nyingine za akaunti; seva ya akaunti yenyewe yenye jina la seva ya kikundi hubaki kuwa ya akaunti, na ccam husema hivyo. Kwa `N`, bila terminal, au wakati akaunti inaendeshwa, haibadilishi chochote na husema hivyo:
+5. Kwa `y` huhifadhi nakala rudufu ya `.claude.json`, huchukua kufuli ya Claude Code yenyewe, huongeza seva za kikundi kwenye `mcpServers` na huhifadhi seva nyingine za akaunti; ikiwa akaunti ina seva yake yenyewe yenye jina lile lile kama seva ya kikundi, ccam huhifadhi seva ya akaunti na husema hivyo. Kwa `N`, bila terminal, au wakati akaunti inaendeshwa, haibadilishi chochote na husema hivyo:
 
    ```console
          Starting without them. To copy them before every launch instead, set mcp_strategy = "sync" in ~/.config/ccam/config.toml
@@ -77,7 +78,7 @@ Uanzishaji hufuata njia ya kawaida ([Kuanzisha Claude Code](/features/launch)) u
 
 6. Hurekodi kipindi, huweka `CLAUDE_CONFIG_DIR` kuwa folda ya akaunti na hujibadilisha yenyewe kuwa `claude rc` kupitia `exec`.
 
-Kisha Remote Control huendelea kufanya kazi kama seva. Kila kipindi inachokuanzishia ni mchakato mtoto wa mchakato huo, kwa hiyo huendeshwa kama `work`: kwa taarifa za kuingia, mipangilio na historia ya mazungumzo ya `work`, na huhesabiwa dhidi ya kikomo cha matumizi cha `work`. Wakati seva iliyoanzishwa na ccam inafanya kazi, ccam huichukulia akaunti kuwa inaendeshwa, vivyo hivyo kwa seva iliyoanzishwa kwa `claude remote-control` ya kawaida inapokuwa na vipindi; seva kama hiyo ambayo bado haina kipindi haionekani.
+Kisha Remote Control huendelea kufanya kazi kama seva. Kila kipindi inachokuanzishia ni mchakato mtoto wa mchakato huo, kwa hiyo huendeshwa kama `work`: kwa taarifa za kuingia, mipangilio na historia ya mazungumzo ya `work`, na huhesabiwa dhidi ya kikomo cha matumizi cha `work`. ccam huichukulia akaunti kuwa inaendeshwa wakati seva ya Remote Control iliyoanzishwa nayo inafanya kazi. Seva iliyoanzishwa kwa `claude remote-control` ya kawaida huhesabiwa tu inapokuwa na vipindi; ccam haiwezi kuona seva ambayo bado haina kipindi.
 
 Jaribio (dry run) huonyesha tofauti. Uanzishaji wa kawaida hubeba seva za kikundi kama hoja, Remote Control haibebi:
 
@@ -116,7 +117,7 @@ $ ccam mcp add ctx --url https://mcp.context7.com/mcp
 
 ### Seva za MCP zinazoshirikiwa hazipo katika vipindi vya Remote Control
 
-Swali lilijibiwa `N`, hapakuwa na terminal, au akaunti ilikuwa inaendeshwa. Simamisha Remote Control, funga vipindi vingine vya akaunti, na uendeshe `ccam work rc` tena kwenye terminal; jibu `y`. Ili usiulizwe kamwe, weka `mcp_strategy = "sync"` katika `~/.config/ccam/config.toml`. Seva ambazo tayari ziko katika kipindi hazibadiliki wakati kinaendeshwa, kwa hiyo anzisha kipindi kipya baada ya kunakili.
+Swali lilijibiwa `N`, hapakuwa na terminal, au akaunti ilikuwa inaendeshwa. Simamisha Remote Control, funga vipindi vingine vya akaunti, na uendeshe `ccam work rc` tena kwenye terminal; jibu `y`. Ili usiulizwe tena, weka `mcp_strategy = "sync"` katika `~/.config/ccam/config.toml`. Seva ambazo tayari ziko katika kipindi hazibadiliki wakati kinaendeshwa, kwa hiyo anzisha kipindi kipya baada ya kunakili.
 
 ### "Account work is running, so its .claude.json is left alone"
 
@@ -128,7 +129,7 @@ Bado hujanakili seva. Jibu `y` mara moja, au weka `mcp_strategy = "sync"`. Ikiwa
 
 ### `ccam work rc` hushindwa mara moja kwa kosa kuhusu `--mcp-config`
 
-ccam yako ni ya zamani kuliko 0.6.0 na hupitisha `--mcp-config` kwa Remote Control. Endesha `ccam update`. Kosa lile lile kwa ccam ya sasa linamaanisha kwamba chaguo ambalo ccam hailijui, lenye thamani, lilikuja kabla ya `rc`, kwa hiyo ccam ilichukua thamani hiyo kama amri; weka `rc` mara moja baada ya jina la akaunti.
+ccam yako ni ya zamani kuliko 0.6.0 na hupitisha `--mcp-config` kwa Remote Control. Endesha `ccam update`. Kwa ccam ya sasa, kosa lile lile linamaanisha kwamba chaguo lisilojulikana lenye thamani lilikuja kabla ya `rc`, na ccam ilidhani kimakosa kwamba thamani hiyo ni amri; weka `rc` mara moja baada ya jina la akaunti.
 
 ### Badiliko lililofanywa kwa `ccam mcp` halifiki kwa Remote Control
 
@@ -136,7 +137,7 @@ ccam yako ni ya zamani kuliko 0.6.0 na hupitisha `--mcp-config` kwa Remote Contr
 
 ### Seva yangu mwenyewe hutumika badala ya ile ya kikundi
 
-Ikiwa akaunti ina seva yake yenye jina sawa na seva ya kikundi, unakili huiacha mahali pake na husema hivyo: `account work has its own MCP servers fs, so group default's of those names are not copied there`. Ili kutumia ya kikundi, ondoa ya akaunti (`claude mcp remove -s user <name>`); ili kuwapa akaunti zote toleo lako, lihamishie kwenye kikundi kwa `ccam mcp import work <server> --force`. Nakala rudufu za `.claude.json` ziko katika `~/.local/state/ccam/mcp/work/backups/`, ambayo huhifadhi tano za karibuni zaidi.
+Ikiwa akaunti ina seva yake yenye jina sawa na seva ya kikundi, unakili huiacha mahali pake na husema hivyo: `account work has its own MCP servers fs, so group default's servers with those names are not copied there`. Ili kutumia ya kikundi, ondoa ya akaunti (`claude mcp remove -s user <name>`); ili kuwapa akaunti zote toleo lako, lihamishie kwenye kikundi kwa `ccam mcp import work <server> --force`. Nakala rudufu za `.claude.json` ziko katika `~/.local/state/ccam/mcp/work/backups/`, ambayo huhifadhi tano za karibuni zaidi.
 
 ### Nataka kuondoa seva zilizonakiliwa
 
@@ -154,7 +155,7 @@ Remote Control inahitaji kuingia kwa akaunti ya Claude yenye usajili. Kagua baru
 
 Programu ya Claude au claude.ai/code imeingia kwa akaunti tofauti ya Claude. Ilinganishe na barua pepe ambayo `ccam list` huonyesha kwa `work`.
 
-### ccam huonya kwamba Claude Code nyingine inashiriki historia ya mazungumzo katika folda hii
+### ccam huonya kwamba kipindi kingine cha Claude Code kinashiriki historia ya mazungumzo katika folda hii
 
 Akaunti nyingine katika kikundi kile kile cha historia inaendeshwa katika folda ile ile. Vipindi vinavyoendeleza mazungumzo yale yale kutoka akaunti zote mbili vinaweza kuchanganya historia. Jibu `y` tu ikiwa zitafanya kazi kwenye mazungumzo tofauti, au anzisha Remote Control katika folda nyingine.
 
@@ -162,5 +163,5 @@ Akaunti nyingine katika kikundi kile kile cha historia inaendeshwa katika folda 
 
 - [Kuanzisha Claude Code](/features/launch)
 - [Seva za MCP zinazoshirikiwa](/features/mcp)
-- [Kushiriki kati ya akaunti](/features/share)
+- [Kushiriki kwa vikundi](/features/share)
 - [Kusimamia akaunti](/features/accounts)

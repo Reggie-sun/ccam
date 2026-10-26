@@ -1,13 +1,13 @@
 ---
 title: Uzantıları inceleme
 description: ccam ext her hesabın yüklediği beceri, komut, eklenti, MCP sunucusu ve hook'ları, her birinin nereden geldiğini ve neyin bozuk olduğunu gösterir.
-updated: 2026-10-23
+updated: 2026-10-26
 order: 14
 translation: machine
-sourceHash: "45740e4efbef"
+sourceHash: 7ca357a7f38a
 ---
 
-`ccam ext` şu soruyu yanıtlar: "Bu beceri (veya MCP sunucusu) neden bir hesapta çalışıyor da diğerinde çalışmıyor?". Her hesap için Claude Code'un yüklediği uzantıları ve her birinin nereden geldiğini listeler: bir paylaşım grubu, hesabın kendi klasörü ya da içinde bulunduğunuz proje. Tablonun altında, bir uzantının beklediğiniz gibi yüklenmesini engelleyen şeyleri listeler. Yalnızca okur.
+`ccam ext` şu soruyu yanıtlar: "Bu beceri (veya MCP sunucusu) neden bir hesapta çalışıyor da diğerinde çalışmıyor?". Her hesap için Claude Code'un yüklediği uzantıları ve her birinin nereden geldiğini listeler: bir paylaşım grubu, hesabın kendi klasörü ya da içinde bulunduğunuz proje. Tablonun altında, bir uzantının beklediğiniz gibi yüklenmesini engelleyen şeyleri listeler. Hiçbir şeyi değiştirmez.
 
 ## Kullanım
 
@@ -62,7 +62,7 @@ Bir hücre, o öğenin o hesaptaki kaynağını adlandırır: paylaşım grubu (
 
 - **Bozuk bağlantılar**: `skills/`, `commands/` veya `agents/` içinde hedefi kaybolmuş bir bağlantı ya da var olmayan bir yeri gösteren paylaşılan bir klasör (`skills`, `commands`, `agents`, `plugins`) (bunu, eksik bir grup klasörünü yeniden oluşturan `ccam doctor --fix` ile onarın).
 - **`SKILL.md` olmayan bir beceri klasörü**: Claude Code onu atlar.
-- **İki yerde farklı tanımlanmış bir MCP sunucusu**: grubun `mcp.json` dosyası ile hesabın `.claude.json` dosyası ya da bunlardan biri ile projenin `.mcp.json` dosyası. İki yerde de aynı ayarların olması (`mcp_strategy = "sync"` bunu yazar) sorun değildir. Bir hesabın kendi sunucusunu `ccam mcp import <account> <server>` ile gruba taşıyın.
+- **İki yerde farklı tanımlanmış bir MCP sunucusu**: grubun `mcp.json` dosyası ile hesabın `.claude.json` dosyası ya da bunlardan biri ile projenin `.mcp.json` dosyası. İki yerdeki aynı tanımlar (`mcp_strategy = "sync"` bunları yazar) sorun değildir. Bir hesabın kendi sunucusunu `ccam mcp import <account> <server>` ile gruba taşıyın.
 - **Geçerli JSON olmayan bir `installed_plugins.json`**, `enabledPlugins` içinde adı geçmeyen bir eklenti ve klasörü eksik bir eklenti.
 - **Yalnızca tek bir hesabın yüklediği sunucular**: grubundaki diğer hesapların yüklemediği, yalnızca bu hesabın `.claude.json` dosyasında bulunan bir sunucu ve hesabın bu klasör için yerel kapsamındaki bir sunucu (`-s user` verilmedikçe `claude mcp add` bunu yapar). Her biri, onu paylaşan `ccam mcp import` komutuyla birlikte gelir. Düz `claude` komutunun `~/.claude.json` dosyasında bulunup hiçbir hesabın yüklemediği sunucular `ccam migrate --mcp` komutuyla birlikte gelir.
 - **Onay bekleyen bir proje sunucusu**: hesap klasöre henüz güvenmemiştir, bu yüzden Claude Code bir kez sorar ve o zamana kadar projenin `.mcp.json` sunucuları bekler. Sorun, onları nerede onaylayacağınızı söyler: ayarlar grubunun hesaplarının ya da bu hesabın `settings.json` dosyasındaki `"enabledMcpjsonServers"`. Bir git deposunun ana çalışma ağacına verilen güven, diğer çalışma ağaçlarında da geçerlidir.
@@ -76,6 +76,6 @@ Bir hücre, o öğenin o hesaptaki kaynağını adlandırır: paylaşım grubu (
 
 ## İlgili
 
-- [Hesaplar arasında paylaşım](/features/share)
+- [Gruplarla paylaşım](/features/share)
 - [Paylaşılan MCP sunucuları](/features/mcp)
 - [Kontrol etme ve onarma](/features/doctor)

@@ -2,13 +2,15 @@
 title: البدء السريع
 metaTitle: "البدء السريع: أضف حسابات Claude Code وبدّل بينها"
 description: أضف حسابَي Claude Code باستخدام ccam add، وامنحهما أوامر مختصرة مثل ccwork، وبدّل بينهما، واختر ما يشاركانه.
-updated: 2026-10-25
+updated: 2026-10-26
 order: 2
 translation: machine
-sourceHash: "0570ef27e4ce"
+sourceHash: "bd893bbb83ab"
 ---
 
 أضف كل حساب باستخدام `ccam add`، ثم شغّل Claude Code باستخدام `ccam <name>` أو بأمر مختصر تختار اسمه بنفسك، مثل `ccwork`. هذا كل ما يحتاجه معظم الناس.
+
+هل تستخدم Claude Code بالفعل؟ اقرأ [هل تستخدم ~/.claude بالفعل؟](#already-using-claude) في آخر هذه الصفحة قبل أن تبدأ.
 
 ## 1. أضف حسابك الأول
 
@@ -16,7 +18,7 @@ sourceHash: "0570ef27e4ce"
 ccam add
 ```
 
-يسألك المعالج عن اسم مثل `personal` أو `work`، وعن العناصر التي يجب أن يشاركها الحساب مع حساباتك الأخرى، وعمّا إذا كنت تريد إنشاء أمر مختصر (راجع الخطوة 4). ثم يشغّل `claude auth login`، الذي يفتح المتصفح لتسجّل الدخول. على جهاز بعيد، قد ينتهي المتصفح عند صفحة `http://localhost:…/callback` لا تُحمَّل؛ الصق هذا العنوان في الطرفية وسيُكمل ccam تسجيل الدخول. عند الانتهاء ترى:
+يسألك المعالج عن اسم مثل `personal` أو `work`، وعن العناصر التي يجب أن يشاركها الحساب مع حساباتك الأخرى، وعمّا إذا كنت تريد إنشاء أمر مختصر (راجع الخطوة 3). ثم يشغّل `claude auth login`، الذي يفتح المتصفح لتسجّل الدخول. على جهاز بعيد، قد ينتهي متصفحك عند صفحة `http://localhost:…/callback` لا تُحمَّل؛ الصق هذا العنوان في الطرفية وسيُكمل ccam تسجيل الدخول. عند اكتمال تسجيل الدخول ترى:
 
 ```console
 ✓ personal (me@example.com) added
@@ -25,7 +27,7 @@ ccam add
 
 ## 2. انقل إعداداتك الحالية
 
-إذا كنت قد استخدمت Claude Code من قبل، فإعداداتك و`CLAUDE.md` والإضافات وخوادم MCP موجودة في `~/.claude`. انسخها إلى الإعدادات المشتركة لتحصل عليها كل الحسابات:
+إذا كنت قد استخدمت Claude Code من قبل، فإعداداتك و`CLAUDE.md` والإضافات موجودة في `~/.claude`، وخوادم MCP موجودة في `~/.claude.json`. انسخها إلى المجموعة المشتركة `default` لتحصل عليها كل الحسابات:
 
 ```sh
 ccam migrate
@@ -39,11 +41,7 @@ ccam migrate
 ccam add work
 ```
 
-سجّل الدخول بالحساب الآخر في المتصفح.
-
-## 4. بدّل بين الحسابات
-
-يشغّل `ccam work` برنامج Claude Code بحساب العمل. ولأمر أقصر، امنح الحساب أمرًا مختصرًا خاصًا به، مثل `ccwork`. بعد سؤالك عن العناصر المشتركة، يسأل المعالج:
+يتخطى المعالج سؤال الاسم، لأنك أعطيته في سطر الأوامر، ويعرض المجموعات التي يمكن الانضمام إليها مع تحديد `default`. هذه المرة، امنح الحساب أمرًا مختصرًا خاصًا به، مثل `ccwork`، لتشغّله بكلمة واحدة. بعد المجموعات، يسأل المعالج:
 
 ```console
  Create a shortcut command for work? [y/N]
@@ -57,21 +55,23 @@ ccam add work
  a-z, 0-9, '.', '-' and '_'; Enter alone uses ccwork
 ```
 
-بعد تسجيل الدخول، يؤكد ccam ذلك:
+ثم سجّل الدخول بالحساب الآخر في المتصفح. يؤكد ccam الحساب وأمره المختصر:
 
 ```console
 ✓ work (work@example.com) added
   shortcut: ccwork
 ```
 
-إذا تخطيت السؤال، يمكنك إضافة أمر مختصر في أي وقت:
+## 4. بدّل بين الحسابات
+
+يشغّل `ccam work` برنامج Claude Code بحساب العمل. إذا تخطيت سؤال الأمر المختصر، يمكنك إضافة أمر مختصر في أي وقت:
 
 ```console
 $ ccam shortcut work ccwork
 ✓ shortcut for work: ccwork
 ```
 
-الآن أيٌّ من هذه الأوامر يشغّل Claude Code بحساب العمل:
+الآن يشغّل كلٌّ من هذه الأوامر Claude Code بحساب العمل (`2` هو رقمه في `ccam list`):
 
 ```sh
 ccwork
@@ -91,7 +91,7 @@ cat error.log | ccwork -p "what caused this?"
 
 ## 5. اختر ما تريد مشاركته
 
-افتراضيًا، تُشارَك بين الحسابات عبر المجموعة `default` خوادم MCP و`settings.json` وملف `CLAUDE.md` العام، والوكلاء والأوامر والمهارات والإضافات. أما سجل المحادثات فلا يُشارَك. أضفه إلى المجموعة إذا أردت متابعة المحادثات بين الحسابات:
+افتراضيًا، تُشارَك بين الحسابات عبر المجموعة `default` خوادم MCP و`settings.json` وملف `CLAUDE.md` العام والإضافات (الوكلاء والأوامر والمهارات والمكوّنات الإضافية). أما سجل المحادثات فلا يُشارَك. أضفه إلى المجموعة إذا أردت متابعة المحادثات بين الحسابات:
 
 ```sh
 ccam group set default --add history
@@ -108,7 +108,7 @@ ccam next --continue
 
 يعرض `ccam usage` استخدام كل حساب خلال 5 ساعات وخلال الأسبوع. ويفتح `ccam next --continue` المحادثة نفسها في الحساب التالي. وفي السكربتات، يبدّل `ccam --fallback work -p "…"` الحساب بنفسه. راجع [حدود الاستخدام](/docs/usage-limits).
 
-**مقاعد Team وEnterprise.** يبدّل الاختيار التلقائي (`ccam next` و`--fallback` و`ccam pick` والمفتاح `n` في لوحة التحكم، و[`auto_switch`](/features/next#auto-switch) عند تشغيله) أيضًا بين مقاعد المؤسسة نفسها في Claude Team أو Enterprise. يقول مركز المساعدة لدى Anthropic: "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (يُخصَّص كل مقعد في خطة Team لشخص واحد محدد بالاسم، ولا يجوز أن يستخدمه إلا ذلك الشخص) و"Users can't route their work through another user's account to use that user's remaining usage" (لا يجوز للمستخدمين تمرير عملهم عبر حساب مستخدم آخر للاستفادة من الاستخدام المتبقي لذلك المستخدم) ([خطط Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)؛ وبالمثل في [خطط Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). لذا فإن استخدام الاختيار التلقائي بين المقاعد قد يخالف شروط Anthropic. وقرار استخدامه هناك يعود إليك: تحقّق من ذلك مع مؤسستك ومع Anthropic قبل أن تعتمد عليه. أما الخطط الشخصية (Pro وMax) فتتناولها [ملاحظة الشروط في الأسئلة الشائعة](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**مقاعد Team وEnterprise.** يبدّل الاختيار التلقائي للحساب (`ccam next` و`--fallback` و`ccam pick` والمفتاح `n` في لوحة التحكم، و[`auto_switch`](/features/next#auto-switch) بعد أن تشغّله) أيضًا بين مقاعد المؤسسة نفسها في Claude Team أو Enterprise، وهذا قد يخالف شروط Anthropic. اقرأ [الأسئلة الشائعة](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) وتحقّق من ذلك مع مؤسستك ومع Anthropic قبل أن تعتمد عليه.
 
 ## هل تستخدم ~/.claude بالفعل؟
 

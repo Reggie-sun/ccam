@@ -14,17 +14,17 @@
     "menu": "Menu",
     "skip": "Lumaktaw sa nilalaman",
     "language": "Wika",
-    "theme": "Lumipat sa light o dark na tema"
+    "theme": "Lumipat sa pagitan ng light at dark na tema"
   },
   "facts": {
     "what": "Ang ccam ay libre at open-source na command-line tool para gumamit ng maraming Claude Code account sa iisang computer at lumipat sa pagitan nila gamit ang isang command.",
-    "how": "May sariling login ang bawat account sa hiwalay na CLAUDE_CONFIG_DIR, habang puwedeng i-share sa pagitan ng mga account ang mga MCP server, settings, CLAUDE.md, extension at kasaysayan ng usapan, kaya maipagpapatuloy mo ang isang usapan sa ibang account kapag naabot na ng isa ang usage limit nito.",
+    "how": "May sariling login ang bawat account sa hiwalay na CLAUDE_CONFIG_DIR. Puwedeng i-share sa pagitan ng mga account ang mga MCP server, settings, CLAUDE.md, extension at kasaysayan ng usapan, kaya maipagpapatuloy mo ang isang usapan sa ibang account kapag naabot na ng isa ang usage limit nito.",
     "install": "I-install ito sa Linux, macOS o Windows gamit ang isang command, saka patakbuhin ang ccam add para sa bawat account.",
     "official": "Ang ccam ay hindi opisyal na proyekto at hindi kaanib o inendorso ng Anthropic."
   },
   "landing": {
     "headline": "Maraming Claude Code account. Iisang terminal.",
-    "lede": "Idagdag nang isang beses ang bawat account. Lumipat gamit ang {command} o ang isang shortcut gaya ng {shortcut}. Kapag naabot ng isang account ang limit nito, ituloy sa susunod na account ang parehong usapan.",
+    "lede": "Idagdag nang isang beses ang bawat account. Lumipat gamit ang {command} o ang isang shortcut gaya ng {shortcut}. Kapag naabot ng isang account ang limit nito, ituloy ang parehong usapan sa susunod na account.",
     "installLabel": "I-install sa Linux o macOS",
     "installWindowsLabel": "Sa Windows, sa PowerShell",
     "thenAdd": "Pagkatapos, idagdag ang una mong account gamit ang {command}.",
@@ -56,18 +56,18 @@
       "fiveHour": "5 oras",
       "weekly": "Lingguhan",
       "resets": "magre-reset sa loob ng {time}",
-      "mostRoom": "Pinakamaraming natitira: {name}"
+      "mostRoom": "Pinakamaraming natitirang puwang: {name}"
     },
     "flowTitle": "Paano ito gumagana",
     "flow": [
       {
         "command": "ccam add work",
-        "body": "Gumagawa ng hiwalay na config folder para sa account, binubuksan ang Claude login sa iyong browser at, kung gusto mo, binibigyan ang account ng shortcut na ikaw mismo ang nagpangalan, gaya ng ccwork."
+        "body": "Gumagawa ng hiwalay na config folder para sa account at binubuksan ang Claude login sa iyong browser. Puwede rin nitong bigyan ang account ng shortcut na ikaw ang pipili, gaya ng ccwork."
       },
       {
         "command": "ccam work",
         "also": "ccwork --resume",
-        "body": "Sinisimulan ang Claude Code bilang account na iyon. Ipinapasa nang walang pagbabago sa Claude Code ang lahat ng kasunod ng pangalan, at nagdadagdag ang ccam ng mga 4 millisecond bago ito magsimula."
+        "body": "Sinisimulan ang Claude Code bilang account na iyon. Ipinapasa nang walang pagbabago sa Claude Code ang lahat ng kasunod ng pangalan, at mga 4 millisecond lang ang idinadagdag ng pagsisimula sa pamamagitan ng ccam kumpara sa direktang pagpapatakbo ng claude."
       },
       {
         "command": "ccam group set default --add history",
@@ -83,7 +83,7 @@
       },
       {
         "command": "ccam doctor --fix",
-        "body": "Sinusuri ang mga link, permission at login, at inaayos ang kayang ayusin nang ligtas. May backup ang bawat pagbabago sa iyong mga file."
+        "body": "Sinusuri ang mga link, permission at login, at inaayos ang kayang ayusin nang ligtas. Itinatabi sa isang backup ang mga file na inaalis nito sa puwesto."
       }
     ],
     "guidesTitle": "Mga gabay",
@@ -141,19 +141,19 @@
     "next": "Buksan ang susunod na account; dinadala ng --continue ang usapan, pinipili ng --auto ang may pinakamaraming natitira",
     "usage": "Ipakita ang 5-oras at lingguhang usage ng bawat account",
     "share": "Ipakita kung ano ang shine-share ng account, at sa pamamagitan ng aling group",
-    "group": "Gumawa at baguhin ang mga group: kung ano ang shine-share ng isang hanay ng account, inililipat ayon sa plano",
+    "group": "Gumawa at baguhin ang mga group, na nagtatakda kung ano ang shine-share ng mga account nila; nagpapakita muna ng plano ang bawat pagbabago",
     "mcp": "Pamahalaan ang mga shared na MCP server",
     "migrate": "Kopyahin ang dati nang Claude Code setup (~/.claude) sa isang shared na group",
     "login": "Mag-log in muli sa isang account; ina-log in ng --expired ang bawat account na nangangailangan nito",
     "logout": "Mag-log out ng isang account: ang login nito at ang mga sign-in nito sa mga MCP server",
-    "rename": "Palitan ang pangalan ng account; hindi nagbabago ang pangalan ng shortcut nito",
+    "rename": "Palitan ang pangalan ng account; hindi nagbabago ang shortcut command nito",
     "remove": "Mag-alis ng account: ina-log out ito, at mapupunta ang folder nito sa trash folder",
     "import": "Irehistro ang umiiral na ~/.claude folder kung nasaan ito",
     "doctor": "Suriin ang mga link, permission, login at bersyon, at mag-ayos",
     "statusline": "Ipakita ang account at usage sa status line ng Claude Code",
     "shims": "Gawin muli ang mga shortcut link ng lahat ng account",
     "shortcut": "Ipakita, gawin, palitan ang pangalan o alisin ang shortcut command ng isang account, gaya ng ccwork",
-    "folder": "Gumamit ng isang account sa isang folder at sa ilalim nito kapag walang pinangalanang account",
+    "folder": "Gumamit ng isang account sa isang folder at sa mga subfolder nito kapag walang pinangalanang account",
     "pick": "I-print ang account na may pinakamaraming natitirang puwang, para sa mga script at parallel worker",
     "ext": "Ipakita ang mga skill, command, plugin, MCP server at hook na nilo-load ng bawat account",
     "agents": "Ilista ang mga background agent at bukas na session ng bawat account",
@@ -174,7 +174,7 @@
   },
   "footer": {
     "unofficial": "Ang ccam ay hindi opisyal na open-source tool. Hindi ito kaanib o inendorso ng Anthropic. Ang Claude at Claude Code ay mga trademark ng Anthropic.",
-    "terms": "Nakadepende sa terms ng bawat account kung puwede kang gumamit ng maraming account. Suriin muna ang mga ito bago mo gawin iyon.",
+    "terms": "Nakadepende sa terms na sumasaklaw sa bawat account kung puwede kang gumamit ng higit sa isang account. Basahin ang mga terms na iyon bago ka magsimula.",
     "license": "Source sa GitHub",
     "languages": "Lahat ng wika",
     "analytics": "Binibilang ng site na ito ang mga pagbisita gamit ang Cloudflare Web Analytics, na hindi naglalagay ng cookie at hindi nangongolekta ng personal na data."

@@ -1,10 +1,10 @@
 ---
 title: Polecenia skrótów
 description: Daj kontu własne polecenie, takie jak ccwork, przez ccam shortcut, a linki w ~/.local/bin odtwórz poleceniem ccam shims install.
-updated: 2026-10-23
+updated: 2026-10-26
 order: 3
 translation: machine
-sourceHash: "38e2d1aba397"
+sourceHash: "066e7e622517"
 ---
 
 Skrót to polecenie o nazwie wybranej przez ciebie, które uruchamia Claude Code jako jedno konto: `ccwork --resume` robi to samo co `ccam work --resume`. Jest to link do ccam w `~/.local/bin`, więc działa w bash, zsh, skryptach i wszędzie tam, gdzie programy są uruchamiane z `PATH`. Skróty są opcjonalne; utwórz je dla kont, które uruchamiasz często.
@@ -45,7 +45,7 @@ Skrót przekazuje każdy argument do Claude Code, tak samo jak `ccam <name>` po 
 | --- | --- | --- |
 | `--remove` | Usuwa skrót konta i jego link | wyłączone |
 | `-h`, `--help` | Pomoc dla polecenia | |
-| `--dry-run` | `ccam shortcut` ją respektuje: sprawdza nazwę i wypisuje `Would set the shortcut of work to ccwork.` lub `Would remove ccwork, the shortcut of work.` bez zapisywania i linkowania | wyłączone |
+| `--dry-run` | `ccam shortcut` ją obsługuje: sprawdza nazwę i wypisuje `Would set the shortcut of work to ccwork.` lub `Would remove ccwork, the shortcut of work.` bez zapisywania i linkowania | wyłączone |
 
 `ccam shims install` nie przyjmuje argumentów i odrzuca `--dry-run` komunikatem `` ccam: --dry-run is not supported by `ccam shims install`; nothing was changed ``.
 
@@ -54,10 +54,10 @@ Zasady nazw, sprawdzane w tej kolejności:
 - od 1 do 64 znaków spośród `a-z`, `0-9`, `.`, `-` i `_`, zaczynając od litery lub cyfry;
 - nie `ccam`, `claude` ani polecenie ccam, takie jak `run` czy `usage`;
 - nie skrót innego konta;
-- nie plik w `~/.local/bin`, który nie jest już linkiem ccam (ani własnym skrótem tego konta, utworzonym przez ccam);
+- nie istniejący plik w `~/.local/bin`, chyba że jest to link utworzony przez ccam (na przykład własny skrót tego konta);
 - nie nazwa innego pliku wykonywalnego w twoim `PATH`.
 
-`config.toml` jest sprawdzany według tych samych zasad przy wczytywaniu: skrót zmieniony ręcznie, który łamie wzorzec, jest `claude` lub `ccam` albo jest przypisany dwóm kontom, sprawia, że każde polecenie kończy się błędem wskazującym konto, dopóki nie zostanie poprawiony.
+`config.toml` jest sprawdzany według tych samych zasad przy wczytywaniu. Jeśli ręcznie zmienisz skrót tak, że łamie wzorzec, jest `claude` lub `ccam` albo używają go dwa konta, każde polecenie kończy się błędem wskazującym konto, dopóki tego nie poprawisz.
 
 Podanie polecenia razem z `--remove` kończy się błędem `give a command or --remove, not both`. Ustawienie nazwy, którą konto już ma, wypisuje `work: ccwork (unchanged)` i odtwarza link, jeśli go brakuje.
 
@@ -69,24 +69,26 @@ Ustawienie nazwy uruchamia `checkShortcut`, które wywołuje `shim.Check` z fold
 
 Nazwa przechodzi kolejno przez sprawdzenia. Obok każdego sprawdzenia jest nazwa, którą ono odrzuca: `Work` nie pasuje do wzorca, `run` jest poleceniem ccam, `ccside` należy do innego konta, `ccfile` to istniejący plik w `~/.local/bin`, a `git` przesłoniłby `/usr/bin/git`. Zapisywana i linkowana jest tylko nazwa, która przejdzie wszystkie sprawdzenia.
 
-1. `shim.Check` dopasowuje nazwę do `^[a-z0-9][a-z0-9._-]{0,63}$`, potem do `config.Reserved`, potem do `cfg.FindShortcut`. Wywołuje `os.Lstat` na `~/.local/bin/<name>`, a dla każdego innego folderu z `PATH` wywołuje `os.Stat` i odrzuca plik wykonywalny, który nie jest linkiem do ccam.
+1. ccam dopasowuje nazwę do `^[a-z0-9][a-z0-9._-]{0,63}$`, potem do `config.Reserved`, potem do `cfg.FindShortcut` (`shim.Check`). Wywołuje `os.Lstat` na `~/.local/bin/<name>`, a dla każdego innego folderu z `PATH` wywołuje `os.Stat` i odrzuca plik wykonywalny, który nie jest linkiem do ccam.
 2. ccam zapisuje `config.toml` przez `fsutil.AtomicWrite` (plik tymczasowy, `fsync`, zmiana nazwy).
-3. `shim.Remove` usuwa link starego skrótu, ale tylko jeśli jest linkiem do ccam.
-4. `shim.Install` przechodzi przez każdy skonfigurowany skrót w kolejności nazw i tworzy link każdego brakującego przez `os.Symlink` do pliku binarnego ccam, odnalezionego przez `os.Executable` i `filepath.EvalSymlinks`. Plik blokujący jeden skrót nie zatrzymuje pozostałych; błąd wymienia każdy z nich.
+3. ccam usuwa link starego skrótu, ale tylko jeśli jest linkiem do ccam (`shim.Remove`).
+4. ccam przechodzi przez każdy skonfigurowany skrót w kolejności nazw i tworzy link każdego brakującego (`shim.Install`) przez `os.Symlink` do pliku binarnego ccam, odnalezionego przez `os.Executable` i `filepath.EvalSymlinks`. Plik blokujący jeden skrót nie zatrzymuje pozostałych; błąd wymienia każdy z nich.
 
-ccam zapisuje każdy utworzony link i plik binarny, który ma on uruchamiać, w `~/.local/state/ccam/shortcuts.json`. Link uznaje się za należący do ccam, gdy `os.Readlink` zwraca ścieżkę ccam albo gdy link i ścieżka ccam prowadzą do tego samego pliku. Zapisany link, którego plik binarny został od tego czasu przeniesiony lub podmieniony (ccam przeniesiony do innego folderu, ponowna instalacja), jest nieaktualny, a `shim.Install` kieruje go na ten ccam. Zapisany link do innego ccam, który jest wciąż zainstalowany, zostaje bez zmian. Każde usunięcie i każde sprawdzenie przed nadpisaniem przechodzi przez te testy, więc ccam nie rusza plików, których nie utworzył, takich jak twoja własna kopia ccam albo link, który sam utworzyłeś.
+ccam zapisuje każdy utworzony link i plik binarny, który ten link uruchamia, w `~/.local/state/ccam/shortcuts.json`. Link uznaje się za należący do ccam, gdy `os.Readlink` zwraca ścieżkę ccam albo gdy link i ścieżka ccam prowadzą do tego samego pliku. Zapisany link, którego plik binarny został od tego czasu przeniesiony lub podmieniony (plik binarny ccam przeniesiony do innego folderu, ponowna instalacja), jest nieaktualny, a ccam kieruje go na ten plik binarny ccam (`shim.Install`). Zapisany link do innej zainstalowanej kopii ccam zostaje bez zmian. Każde usunięcie i każde sprawdzenie przed nadpisaniem przechodzi przez te testy, więc ccam nie rusza plików, których nie utworzył, takich jak twoja własna kopia ccam albo link, który sam utworzyłeś.
 
 Gdy uruchamiasz skrót, wpisana nazwa to jedyne, czego ccam potrzebuje:
 
 <!-- motion:shortcuts-link -->
 
-Powłoka znajduje `ccwork` w `PATH`, jądro podąża za linkiem i uruchamia plik binarny ccam, a `argv[0]` nadal ma wartość `ccwork`. W `app.Main` każda nazwa inna niż `ccam` raz wczytuje `config.toml` i wywołuje `shim.Lookup`, które znajduje konto, którego `shortcut` jest równy `filepath.Base(argv[0])`. `launcher.LaunchWith` wykonuje następnie te same kroki co [`ccam <name>`](/features/launch) z już wczytaną konfiguracją i przekazuje `argv[1:]` do `claude` bez zmian.
+Powłoka znajduje `ccwork` w `PATH`, jądro podąża za linkiem i uruchamia plik binarny ccam, a `argv[0]` nadal ma wartość `ccwork`. W `app.Main` każda nazwa inna niż `ccam` raz wczytuje `config.toml` i wywołuje `shim.Lookup`, które znajduje konto, którego `shortcut` jest równy `filepath.Base(argv[0])`. ccam wykonuje następnie te same kroki co [`ccam <name>`](/features/launch) z już wczytaną konfiguracją i przekazuje `argv[1:]` do `claude` bez zmian (`launcher.LaunchWith`).
 
-Dlaczego dowiązanie symboliczne, a nie alias powłoki czy skrypt opakowujący: dowiązanie działa w każdej powłoce i w skryptach, nie dodaje uruchomienia kolejnej powłoki (około 1 do 2 ms), a uruchomienie nadal odczytuje jeden plik. `scripts/perf-check.sh` mierzy skrót za pomocą `hyperfine` względem tego samego limitu 10 ms (p95) co `ccam <name>`.
+Dlaczego dowiązanie symboliczne, a nie alias powłoki czy skrypt opakowujący: dowiązanie działa w każdej powłoce i w skryptach, pozwala uniknąć uruchamiania dodatkowej powłoki, które kosztowałoby około 1 do 2 ms, a uruchomienie nadal odczytuje jeden plik. `scripts/perf-check.sh` mierzy skrót za pomocą `hyperfine` względem tego samego limitu 10 ms (p95) co `ccam <name>`.
 
 ### W Windows
 
-Skrót to `ccwork.exe` w `%USERPROFILE%\.local\bin`, a `shim.Name` przed wyszukaniem obcina `.exe` (bez względu na wielkość liter), więc `ccwork`, `ccwork.exe` i `CCWORK.EXE` uruchamiają `work`. ccam najpierw tworzy dowiązanie symboliczne, na które Windows pozwala w Trybie dewelopera albo administratorowi. Bez tego uprawnienia tworzy dowiązanie twarde: drugą nazwę tego samego pliku `ccam.exe`, która nie wymaga uprawnień. Dowiązanie twarde uznawane jest za należące do ccam, gdy jest tym samym plikiem co `ccam.exe`. Dowiązanie twarde nadal uruchamia plik, z którego powstało, więc gdy `ccam update` wstawia nowy plik w miejsce `ccam.exe`, odnawia każdy skrót będący dowiązaniem twardym przez `shim.Relink` i wypisuje `✓ shortcut ccwork renewed`. Ponowne uruchomienie `install.ps1` robi to samo przez `ccam shims install` (`OK 2 shortcuts now run the new ccam`), podobnie jak `ccam shims install` i `ccam doctor --fix` dla każdego skrótu, który jest kopią starszego ccam. Sprawdzenie nazwy szuka `<name>` z każdym rozszerzeniem z `PATHEXT` (`.exe`, `.cmd` i tak dalej) w pozostałych folderach `PATH`.
+Skrót to `ccwork.exe` w `%USERPROFILE%\.local\bin`, a ccam przed wyszukaniem obcina `.exe` bez względu na wielkość liter (`shim.Name`), więc `ccwork`, `ccwork.exe` i `CCWORK.EXE` uruchamiają `work`. ccam najpierw tworzy dowiązanie symboliczne, na które Windows pozwala w Trybie dewelopera albo administratorowi. Bez tego uprawnienia tworzy dowiązanie twarde: drugą nazwę tego samego pliku `ccam.exe`, która nie wymaga uprawnień. Dowiązanie twarde uznawane jest za należące do ccam, gdy jest tym samym plikiem co `ccam.exe`.
+
+Dowiązanie twarde zawsze uruchamia plik, z którego powstało, więc gdy `ccam update` wstawia nowy plik w miejsce `ccam.exe`, odnawia każdy skrót będący dowiązaniem twardym przez `shim.Relink` i wypisuje `✓ shortcut ccwork renewed`. Ponowne uruchomienie `install.ps1` robi to samo przez `ccam shims install` (`OK 2 shortcuts now run the new ccam`), podobnie jak `ccam shims install` i `ccam doctor --fix` dla każdego skrótu, który jest kopią starszej wersji ccam. Sprawdzenie nazwy szuka `<name>` z każdym rozszerzeniem z `PATHEXT` (`.exe`, `.cmd` i tak dalej) w pozostałych folderach `PATH`.
 
 Wpisuj skrót w powłoce (PowerShell, cmd.exe, Git Bash). Dowiązanie symboliczne otwarte z Eksploratora, okna Uruchamianie lub przez `Start-Process` startuje jako zwykłe `ccam`, które otwiera panel zamiast konta.
 
@@ -94,10 +96,10 @@ Wpisuj skrót w powłoce (PowerShell, cmd.exe, Git Bash). Dowiązanie symboliczn
 
 - **Link, do którego nie przyznaje się żadne konto.** Jeśli link do ccam w `~/.local/bin` ma nazwę, której nie używa żadne konto, na przykład po ręcznej edycji `shortcut` w `config.toml`, ccam nie przechodzi na domyślne konto. Zatrzymuje się z komunikatem `` ccam: ccold is not the shortcut of any account (see `ccam list`, `ccam shortcut`) ``. Ustaw nazwę ponownie przez `ccam shortcut` albo usuń link.
 - **Istniejące pliki.** ccam nigdy nie zastępuje pliku, którego nie utworzył. `ccam shims install` zgłasza `<path> already exists and is not a ccam link, so it was left alone` i mimo to tworzy pozostałe linki. `ccam add` i `ccam import` wypisują wtedy `shortcut: ccwork (not created; see above)`.
-- **Przeniesiony plik binarny ccam.** Linki utworzone przez ccam wskazują wtedy ścieżkę, która już nie istnieje. `ccam shims install` (albo `ccam doctor --fix`) kieruje je na ccam, którym je uruchamiasz.
+- **Przeniesiony plik binarny ccam.** Jeśli przeniesiesz plik binarny ccam, linki utworzone przez ccam wskazują ścieżkę, która już nie istnieje. `ccam shims install` (albo `ccam doctor --fix`) kieruje je na plik binarny ccam, którym je uruchamiasz.
 - **Zmiana nazwy i usuwanie.** `ccam rename` zachowuje nazwę skrótu, a link dalej działa, bo wskazuje na ccam, a ccam szuka nazwy w `config.toml`. `ccam remove` usuwa link konta. `ccam shortcut <account> <new>` usuwa stary link, zanim utworzy nowy.
 - **PATH.** Gdy ccam tworzy link, a `~/.local/bin` nie ma w twoim `PATH`, wypisuje `Note: /home/me/.local/bin is not in PATH. Add it to ~/.bashrc or ~/.zshrc:`, a po tym wiersz `export PATH=...` do dodania. W Windows wypisuje zamiast tego wiersz PowerShell, który dodaje folder do `PATH` twojego użytkownika.
-- **Późniejsze sprawdzenie.** `ccam doctor` zgłasza `missing shortcuts in /home/me/.local/bin: ccwork`, skróty, które uruchamiają starszy ccam, i ostrzega, gdy folderu nie ma w `PATH`. `ccam doctor --fix` tworzy brakujące linki i odnawia nieaktualne, a `→ fixed` wypisuje tylko dla tych, które utworzył. Skrót, który uruchamia inny ccam, wciąż zainstalowany, działa i jest tylko informacją; `ccam doctor --fix` kieruje go na ccam, którym je uruchamiasz, a `ccam add` i `ccam import` pokazują go jako ``shortcut: ccwork (runs another ccam, <path>; `ccam doctor --fix` points it at this one)``.
+- **Późniejsze sprawdzenie.** `ccam doctor` zgłasza `missing shortcuts in /home/me/.local/bin: ccwork`, skróty, które uruchamiają starszą wersję ccam, i ostrzega, gdy folderu nie ma w `PATH`. `ccam doctor --fix` tworzy brakujące linki i odnawia nieaktualne, a `→ fixed` wypisuje tylko dla tych, które utworzył. Skrót, który uruchamia inny, wciąż zainstalowany ccam, działa, więc `ccam doctor` wymienia go tylko jako informację; `ccam doctor --fix` kieruje go na plik binarny ccam, którym je uruchamiasz, a `ccam add` i `ccam import` pokazują go jako ``shortcut: ccwork (runs another ccam, <path>; `ccam doctor --fix` points it at this one)``.
 
 ## Powiązane
 

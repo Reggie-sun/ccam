@@ -1,10 +1,10 @@
 ---
 title: Bayanin CLAUDE_CONFIG_DIR
 description: Abin da CLAUDE_CONFIG_DIR ke yi a Claude Code, abin da ke cikin foldar, inda macOS ke ajiye bayanan shiga, da fayilolin da za a iya raba tsakanin asusai.
-updated: 2026-10-23
+updated: 2026-10-26
 order: 2
 translation: machine
-sourceHash: 2cf08478085f
+sourceHash: dc2fe42e11e1
 ---
 
 `CLAUDE_CONFIG_DIR` yana gaya wa Claude Code wace folda zai yi amfani da ita maimakon `~/.claude`. Duk abin da ya shafi asusu yana nan a ciki: bayanan shiga, saituna, sabobin MCP, plugins da tarihin tattaunawa. Nuna shi zuwa foldoji daban-daban yana ba ka asusai daban-daban.
@@ -36,13 +36,13 @@ An duba da Claude Code 2.1.309:
 
 **Ba tare da `CLAUDE_CONFIG_DIR` ba, `.claude.json` ba ya cikin `~/.claude`.** A wannan yanayin Claude Code yana ajiye shi a `~/.claude.json`, kusa da foldar. Idan ka fara amfani da `CLAUDE_CONFIG_DIR=~/.claude`, Claude Code yana neman `~/.claude/.claude.json` maimakon haka kuma ba ya samun asusunka. `ccam import` yana magance wannan ta hanyar haɗa su biyun da mahaɗi. Idan `~/.claude` ya riga yana da `.claude.json` nasa, daga gudu na baya da `CLAUDE_CONFIG_DIR=~/.claude`, ccam yana barin fayilolin biyu kuma yana faɗin haka, tunda kai kaɗai ka san wanne ne daidai.
 
-**A macOS bayanan shiga suna cikin Keychain, ba a cikin foldar ba.** Claude Code yana ajiye su ƙarƙashin sunan `Claude Code-credentials`, sannan `-` da lambobin hex 8 na farko na SHA-256 na hanyar foldar idan an saita `CLAUDE_CONFIG_DIR`, ga asusun da `$USER` ya ambata. Saboda haka foldoji daban-daban suna samun shigarwar Keychain daban-daban, kuma foldar da aka matsar ko aka sake mata suna tana rasa shigarta; shi ya sa `ccam rename` yake riƙe sunan foldar a macOS. Idan Keychain ya ƙi rubutun, Claude Code yana komawa ga `.credentials.json` a cikin foldar, kamar yadda [takardunsa](https://code.claude.com/docs/en/authentication#credential-management) suka bayyana.
+**A macOS bayanan shiga suna cikin Keychain, ba a cikin foldar ba.** Claude Code yana ajiye su ƙarƙashin sunan `Claude Code-credentials`. Idan an saita `CLAUDE_CONFIG_DIR`, sunan yana kuma ƙarewa da `-` da lambobin hex 8 na farko na SHA-256 na hanyar foldar. Sunan asusun abin Keychain ɗin shi ne `$USER`. Saboda haka foldoji daban-daban suna samun shigarwar Keychain daban-daban, kuma foldar da aka matsar ko aka sake mata suna tana rasa shigarta; shi ya sa `ccam rename` yake riƙe sunan foldar a macOS. Idan Keychain ya ƙi rubutun, Claude Code yana komawa ga `.credentials.json` a cikin foldar, kamar yadda [takardunsa](https://code.claude.com/docs/en/authentication#credential-management) suka bayyana.
 
-**Ba kowace shiga ce ke cikin foldar ba.** Shiga ta Claude Console ba tare da API key ba ana ajiye ta a wajen foldar, don haka foldoji daban-daban ba sa raba irin waɗannan shiga biyu. Shigar claude.ai da API keys ana ajiye su a kowace folda.
+**Ba kowace shiga ce ke cikin foldar ba.** Shiga ta Claude Console ba tare da API key ba ana ajiye ta a wajen foldar, don haka foldoji daban-daban ba za su iya ware irin waɗannan shiga biyu ba. Shigar claude.ai da API keys ana ajiye su a kowace folda.
 
 ## Ina foldar take a Windows?
 
-A tsoho (default) ita ce `%USERPROFILE%\.claude`, tare da bayanan shiga a `.credentials.json` a cikinta, ko a Windows Credential Manager idan an saita Claude Code ya yi amfani da shi, ƙarƙashin sunan da aka yi daga hanyar foldar kamar a macOS. Saita `CLAUDE_CONFIG_DIR` zuwa wata folda ga kowane ƙarin asusu, kamar yadda ake yi a Linux da macOS.
+A tsoho (default) ita ce `%USERPROFILE%\.claude`. Bayanan shiga suna a `.credentials.json` a cikinta, ko a Windows Credential Manager idan an saita Claude Code ya yi amfani da shi, ƙarƙashin sunan da aka samo daga hanyar foldar kamar a macOS. Saita `CLAUDE_CONFIG_DIR` zuwa wata folda ga kowane ƙarin asusu, kamar yadda ake yi a Linux da macOS.
 
 ## Shin foldoji za su iya raba fayiloli?
 

@@ -1,10 +1,10 @@
 ---
 title: CLAUDE_CONFIG_DIRの解説
 description: Claude CodeのCLAUDE_CONFIG_DIRの役割、フォルダーの中身、macOSでのログインの保存先、アカウント間で共有できるファイルを説明します。
-updated: 2026-10-23
+updated: 2026-10-26
 order: 2
 translation: machine
-sourceHash: "2cf08478085f"
+sourceHash: dc2fe42e11e1
 ---
 
 `CLAUDE_CONFIG_DIR`は、`~/.claude`の代わりにどのフォルダーを使うかをClaude Codeに指定します。ログイン、設定、MCPサーバー、プラグイン、会話履歴など、アカウント固有のものはすべてそこに保存されます。別々のフォルダーを指定すれば、アカウントを分けられます。
@@ -36,13 +36,13 @@ Claude Code 2.1.309で確認した内容です。
 
 **`CLAUDE_CONFIG_DIR`を設定していない場合、`.claude.json`は`~/.claude`の中にありません。** このときClaude Codeは、フォルダーの隣の`~/.claude.json`にこのファイルを置きます。`CLAUDE_CONFIG_DIR=~/.claude`を使い始めると、Claude Codeは代わりに`~/.claude/.claude.json`を探すため、アカウントが見つかりません。`ccam import`は、この2つをリンクすることでこの問題に対処します。`CLAUDE_CONFIG_DIR=~/.claude`で以前に実行したことがあり、`~/.claude`にすでに独自の`.claude.json`がある場合、どちらが正しいかはあなたにしかわからないので、ccamは両方のファイルをそのまま残し、その旨を知らせます。
 
-**macOSでは、ログインはフォルダーではなくキーチェーンにあります。** Claude Codeはログインを`Claude Code-credentials`という名前で保存し、`CLAUDE_CONFIG_DIR`が設定されている場合は、その後ろに`-`と、フォルダーパスのSHA-256の先頭16進8桁を付けます。アカウントは`$USER`で指定されたものです。そのため、フォルダーが別であればキーチェーンの項目も別になり、フォルダーを移動したり名前を変えたりするとそのログインは失われます。macOSで`ccam rename`がフォルダーの名前を変えないのはこのためです。キーチェーンへの書き込みが拒否された場合、[ドキュメント](https://code.claude.com/docs/en/authentication#credential-management)に書かれているとおり、Claude Codeは代わりにフォルダー内の`.credentials.json`を使います。
+**macOSでは、ログインはフォルダーではなくキーチェーンにあります。** Claude Codeはログインを`Claude Code-credentials`という名前で保存し、`CLAUDE_CONFIG_DIR`が設定されている場合は、名前の末尾に`-`と、フォルダーパスのSHA-256の先頭16進8桁も付きます。キーチェーン項目のアカウント名は`$USER`です。そのため、フォルダーが別であればキーチェーンの項目も別になり、フォルダーを移動したり名前を変えたりするとそのログインは失われます。macOSで`ccam rename`がフォルダーの名前を変えないのはこのためです。キーチェーンへの書き込みが拒否された場合、[ドキュメント](https://code.claude.com/docs/en/authentication#credential-management)に書かれているとおり、Claude Codeは代わりにフォルダー内の`.credentials.json`を使います。
 
 **すべてのサインインがフォルダーに保存されるわけではありません。** APIキーを使わないClaude Consoleのサインインはフォルダーの外に保存されるため、フォルダーを分けてもこの種のサインインを2つ使い分けることはできません。claude.aiのログインとAPIキーはフォルダーごとに保存されます。
 
 ## Windowsではフォルダーはどこにありますか？
 
-デフォルトでは`%USERPROFILE%\.claude`で、ログインはその中の`.credentials.json`に保存されます。Claude CodeがWindows資格情報マネージャーを使うように設定されている場合は、macOSと同じくフォルダーパスから作った名前でそこに保存されます。追加するアカウントごとに、LinuxやmacOSと同じように`CLAUDE_CONFIG_DIR`を別のフォルダーに設定します。
+デフォルトでは`%USERPROFILE%\.claude`です。ログインはその中の`.credentials.json`に保存されます。Claude CodeがWindows資格情報マネージャーを使うように設定されている場合は、macOSと同じくフォルダーパスから作った名前でそこに保存されます。追加するアカウントごとに、LinuxやmacOSと同じように`CLAUDE_CONFIG_DIR`を別のフォルダーに設定します。
 
 ## フォルダー間でファイルを共有できますか？
 

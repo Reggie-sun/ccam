@@ -1,13 +1,13 @@
 ---
 title: Kullanım limitleri ve hesap değiştirme
 description: Tüm Claude Code hesaplarının 5 saatlik ve haftalık kullanımını ccam usage ile görün, en çok pay kalan hesabı ccam next --auto ile açın.
-updated: 2026-10-25
+updated: 2026-10-26
 order: 5
 translation: machine
-sourceHash: "7c15419446c3"
+sourceHash: 28e652ad94f8
 ---
 
-`ccam usage`, her hesabın 5 saatlik limitin, haftalık limitin ve her modelin kendi haftalık limitinin (Fable gibi) ne kadarını kullandığını gösterir. `ccam next --auto` en çok pay kalan hesabı açar, `--continue` ise mevcut konuşmayı o hesaba taşır.
+`ccam usage`, her hesap için her limitin ne kadarının kullanıldığını gösterir: 5 saatlik limit, haftalık limit ve her modelin kendi haftalık limiti (Fable gibi). `ccam next --auto` en çok pay kalan hesabı açar, `--continue` ise mevcut konuşmayı o hesaba taşır.
 
 ```console
 $ ccam usage
@@ -26,9 +26,9 @@ $ ccam usage
 → Most headroom: work   (open it with ccam next --auto)
 ```
 
-Her hesap, sayılarının ne kadar eski olduğunu gösteren bir satır alır; ardından her limit için sıfırlanmaya kalan süreyle birlikte bir çubuk gelir: 5 saatlik pencere, tüm modeller için haftalık pencere ve her modelin kendi haftalık penceresi, örneğin Fable. Çubuk %80'den itibaren sarıya, %100'de kırmızıya döner. Son satır, `ccam next --auto` komutunun açacağı hesabı adlandırır; `auto_strategy = "expiring"` veya `"balance"` ile bunun yerine `→ next --auto picks <name>: <reason>` yazar.
+Her hesap, sayılarının ne kadar eski olduğunu gösteren bir satır alır; ardından her limit için sıfırlanmaya kalan süreyle birlikte bir çubuk gelir: 5 saatlik pencere, tüm modeller için haftalık pencere ve her modelin kendi haftalık penceresi, örneğin Fable. Bir çubuk %80'de sarıya, %100'de kırmızıya döner. Son satır, `ccam next --auto` komutunun açacağı hesabı adlandırır; `auto_strategy = "expiring"` veya `"balance"` ile bunun yerine `→ next --auto picks <name>: <reason>` yazar.
 
-**Team ve Enterprise koltukları.** Otomatik seçim (`ccam next`, `--fallback`, `ccam pick`, kontrol panelindeki `n` tuşu ve açtığınızda [`auto_switch`](/features/next#auto-switch)), aynı Claude Team veya Enterprise kuruluşunun koltukları arasında da geçiş yapar. Anthropic'in yardım merkezinde şöyle belirtilir: "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team planındaki her koltuk, adı belirli tek bir kişiye atanır ve onu yalnızca o kişi kullanabilir) ve "Users can't route their work through another user's account to use that user's remaining usage" (kullanıcılar, başka bir kullanıcının kalan kullanım hakkından yararlanmak için işlerini o kullanıcının hesabı üzerinden yürütemez) ([Team planları](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise planları](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) için de durum aynıdır). Bu nedenle otomatik seçimi koltuklar arasında kullanmak Anthropic'in koşullarını ihlal edebilir. Orada kullanıp kullanmamak sizin kararınızdır: buna güvenmeden önce kuruluşunuza ve Anthropic'e danışın. Kişisel planlar (Pro, Max), [SSS'deki koşullar notunda](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) ele alınır.
+**Team ve Enterprise koltukları.** Otomatik hesap seçimi (`ccam next`, `--fallback`, `ccam pick`, kontrol panelindeki `n` tuşu ve açtığınızda [`auto_switch`](/features/next#auto-switch)), aynı Claude Team veya Enterprise kuruluşunun koltukları arasında da geçiş yapar ve bu, Anthropic'in koşullarını ihlal edebilir. Buna güvenmeden önce [SSS'yi](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) okuyun ve kuruluşunuza ve Anthropic'e danışın.
 
 ## Sayılar nereden geliyor
 
@@ -52,7 +52,7 @@ Claude Code bir oturumu kullanım limitinde durdurduğunda [ccam eklentisi](/doc
 
 Bir hesabın erişim tokenının süresi dolduğunda ccam onu yenilemez; çünkü aynı giriş bilgilerini bir Claude Code oturumu kullanırken token yenilenirse o oturumdan çıkış yapılabilir. Hesap ``access token expired; `ccam <name>` renews it when it starts`` gösterir: onu bir kez `ccam <name>` ile başlatın, Claude Code tokenı yeniler. Tümüyle süresi dolmuş ya da Claude Code tarafından silinmiş bir giriş `` login expired → `ccam login <name>` `` gösterir ve yeni bir giriş gerektirir.
 
-`ccam usage --refresh` süresi dolmuş tokenları kendisi yeniler, ancak yalnızca, Claude Code nasıl başlatılmış olursa olsun, çalışmayan hesaplar için. macOS Anahtar Zinciri'nde veya içe aktarılmış bir `~/.claude` klasöründe saklanan girişleri hiçbir zaman yenilemez ve bir yenileme 30 saniyeye kadar sürebilir.
+`ccam usage --refresh` süresi dolmuş tokenları kendisi yeniler, ancak yalnızca, nasıl başlatılmış olursa olsun, çalışan bir Claude Code oturumu olmayan hesaplar için. macOS Anahtar Zinciri'nde veya içe aktarılmış bir `~/.claude` klasöründe saklanan girişleri hiçbir zaman yenilemez ve bir yenileme 30 saniyeye kadar sürebilir.
 
 ## Durum satırında kullanım
 
@@ -67,12 +67,12 @@ Bundan sonra Claude Code, durum satırında hesap adını ve kullanımını gös
 ```sh
 ccam next             # the account after the one you used last
 ccam next --auto      # the account with the lowest 5-hour usage
-ccam next --continue  # carry this folder's conversation on as the next account
+ccam next --continue  # continue this folder's conversation on the next account
 ```
 
 `ccam next` giriş yapılmamış hesapları atlar, `--auto` ise %100'deki hesapları (sıfırlanana kadar Claude Code'un dolu bildirdiği bir pencereyi de) ve başka bir kuruluşun hesaplarını atlar. İki hesap konuşma geçmişini paylaşıyorsa `--continue` aynı konuşmayı açar; paylaşmıyorsa Claude Code konuşmayı yeni hesaba kopyalar. Bkz. [paylaşım](/docs/sharing) ve [sonraki hesaba geçme](/features/next#continue).
 
-`config.toml` dosyasının en üstünde `auto_switch = true` olduğunda (Linux ve macOS; varsayılan olarak kapalı), Claude Code etkileşimli bir oturumu limitinde durdurduğunda ve ona benzer başka bir hesabın payı kaldığında ccam bu geçişi kendisi yapar. Ne zaman devreye girdiği ve asla ne yapmadığı için bkz. [`auto_switch`](/features/next#auto-switch).
+`config.toml` dosyasının en üstünde `auto_switch = true` olduğunda (Linux ve macOS; varsayılan olarak kapalı), Claude Code etkileşimli bir oturumu limitinde durdurduğunda ve aynı türden başka bir hesabın (aynı kuruluştaki bir koltuk ya da başka bir kişisel plan) payı kaldığında ccam bu geçişi kendisi yapar. Ne zaman devreye girdiği ve asla ne yapmadığı için bkz. [`auto_switch`](/features/next#auto-switch).
 
 `claude -p` çalıştıran betikler ve zamanlanmış işler için hesap adından önce `--fallback` koyun. O hesap limitine ulaştığında ccam aynı komutu en çok payı kalan hesapla yeniden çalıştırır ve yalnızca tamamlanan çalıştırmanın çıktısı yazdırılır:
 

@@ -1,10 +1,10 @@
 ---
 title: ccam ikilinganishwa na alias za shell
-description: Alias za shell zenye CLAUDE_CONFIG_DIR dhidi ya ccam kwa kuendesha akaunti kadhaa za Claude Code, zikilinganishwa sambamba.
-updated: 2026-10-20
+description: Alias za shell zenye CLAUDE_CONFIG_DIR zikilinganishwa na ccam kwa kuendesha akaunti kadhaa za Claude Code, kipengele kwa kipengele.
+updated: 2026-10-26
 order: 1
 translation: machine
-sourceHash: b9fbcb88f111
+sourceHash: "c30d84bceba0"
 ---
 
 Alias ya shell kwa kila akaunti ndiyo njia rahisi zaidi ya kuendesha akaunti kadhaa za Claude Code. ccam hufanya jambo hilo hilo kwa ndani na huongeza kushiriki, kubadili na kufuatilia matumizi.
@@ -37,7 +37,7 @@ ccam add work --shortcut ccwork
 | Kuingia tofauti kwa kila akaunti | Ndiyo | Ndiyo |
 | Usanidi wa kila akaunti | Hariri `~/.bashrc`, ingia | `ccam add` |
 | Hufanya kazi katika skripti na programu nyingine | Hapana, alias ni za shell tu | Ndiyo, `ccam work` na njia fupi kama `ccwork` ni amri halisi |
-| Mipangilio, `CLAUDE.md`, viendelezi vinavyoshirikiwa | Nakili au unganisha kwa mkono | Kwa kila kipengele, na nakala rudufu |
+| Mipangilio, `CLAUDE.md`, viendelezi vinavyoshirikiwa | Nakili au unganisha kwa mkono | Ndiyo, huchaguliwa kwa kila kipengele, na nakala rudufu |
 | Seva za MCP zinazoshirikiwa | Kwa mkono, kwa kila akaunti | `ccam mcp add` mara moja |
 | Endeleza mazungumzo kwenye akaunti nyingine | Hapana | `ccam next --continue` |
 | Matumizi ya kila akaunti | Hapana | `ccam usage` |

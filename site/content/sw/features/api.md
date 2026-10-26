@@ -1,13 +1,13 @@
 ---
 title: Akaunti za API key
 description: ccam add --api huongeza akaunti ya API key kwa API ya Anthropic au gateway; key husomwa wakati wa kuanza kutoka kwa kigezo au amri, haihifadhiwi kamwe.
-updated: 2026-10-23
+updated: 2026-10-26
 order: 13
 translation: machine
-sourceHash: "232a71525e42"
+sourceHash: "771d749f1f90"
 ---
 
-Akaunti ya API key huanzisha Claude Code kwa API key badala ya kuingia kwa usajili wa Claude: API ya Anthropic, au endpoint inayozungumza muundo ule ule wa Messages, kama gateway ya LiteLLM au OpenRouter. ccam haihifadhi key. Huisoma kila akaunti inapoanza, kutoka kwa kigezo cha mazingira au kutoka kwa amri kama kidhibiti cha nywila, na huikabidhi kwa mchakato huo wa Claude Code pekee.
+Akaunti ya API key huanzisha Claude Code kwa API key badala ya kuingia kwa usajili wa Claude. Key inaweza kuwa ya API ya Anthropic au ya endpoint yoyote inayozungumza muundo ule ule wa Messages, kama gateway ya LiteLLM au OpenRouter. ccam haihifadhi key. Huisoma kila akaunti inapoanza, kutoka kwa kigezo cha mazingira au kutoka kwa amri kama kidhibiti cha nywila, na huikabidhi kwa mchakato huo wa Claude Code pekee.
 
 ## Matumizi
 
@@ -27,7 +27,7 @@ $ ccam list
    2  gw        -         (API: llm.example.com)  default  -
 ```
 
-Akaunti ya API key hujiunga na vikundi kama akaunti nyingine yoyote (kwa chaguo-msingi `default`: mipangilio, `CLAUDE.md`, viendelezi na seva za MCP), na hufanya kazi na njia fupi, `ccam folder` na `ccam ext`.
+Akaunti ya API key hujiunga na vikundi kama akaunti nyingine yoyote (kwa chaguo-msingi kikundi cha `default`, ambacho hushiriki mipangilio, `CLAUDE.md`, viendelezi na seva za MCP), na hufanya kazi na njia fupi, `ccam folder` na `ccam ext`.
 
 ## Chaguo
 
@@ -58,8 +58,13 @@ model = 'claude-sonnet-5-5'
 
 Kila akaunti inapoanzishwa, baada ya ukaguzi wa kawaida na kabla Claude Code haijaanza:
 
-1. ccam husoma key: `env:` kutoka kwa mazingira, `command:` kwa kuendesha amri yenye kikomo cha sekunde 30. Amri inaweza kuomba nywila kwenye terminal; output yake ya makosa pia huenda kwenye terminal. Key tupu husimamisha uanzishaji kwa ujumbe unaosema key ilitarajiwa wapi.
-2. Huondoa kila kigezo kilichorithiwa kinachochagua jinsi Claude Code inavyoingia au mtoa huduma inayemtumia: keys na tokeni (`ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN_FILE_DESCRIPTOR`, `CLAUDE_CODE_API_KEY_FILE_DESCRIPTOR`), endpoint (`ANTHROPIC_BASE_URL`, `ANTHROPIC_UNIX_SOCKET`, `ANTHROPIC_MODEL`) na swichi za watoa huduma (`CLAUDE_CODE_USE_BEDROCK`, `CLAUDE_CODE_USE_VERTEX`, `CLAUDE_CODE_USE_FOUNDRY`, `CLAUDE_CODE_USE_ANTHROPIC_AWS`, `CLAUDE_CODE_USE_ANTHROPIC_GOOGLE_CLOUD`, `CLAUDE_CODE_USE_MANTLE`, `CLAUDE_CODE_USE_GATEWAY`). Key iliyowekwa kwenye shell yako kwa jambo jingine haiwezi kufikia akaunti hii, na kuingia kwa usajili hakuwezi kushinda key yake.
+1. ccam husoma key: `env:` kutoka kwa mazingira, `command:` kwa kuendesha amri yenye muda wa mwisho wa sekunde 30. Amri inaweza kuomba nywila kwenye terminal; output yake ya makosa pia huenda kwenye terminal. Key tupu husimamisha uanzishaji kwa ujumbe unaosema key ilitarajiwa wapi.
+2. Huondoa kila kigezo kilichorithiwa kinachochagua jinsi Claude Code inavyoingia au mtoa huduma inayemtumia:
+   - keys na tokeni: `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN_FILE_DESCRIPTOR`, `CLAUDE_CODE_API_KEY_FILE_DESCRIPTOR`;
+   - endpoint: `ANTHROPIC_BASE_URL`, `ANTHROPIC_UNIX_SOCKET`, `ANTHROPIC_MODEL`;
+   - swichi za watoa huduma: `CLAUDE_CODE_USE_BEDROCK`, `CLAUDE_CODE_USE_VERTEX`, `CLAUDE_CODE_USE_FOUNDRY`, `CLAUDE_CODE_USE_ANTHROPIC_AWS`, `CLAUDE_CODE_USE_ANTHROPIC_GOOGLE_CLOUD`, `CLAUDE_CODE_USE_MANTLE`, `CLAUDE_CODE_USE_GATEWAY`.
+
+   Key iliyowekwa kwenye shell yako kwa jambo jingine haiwezi kufikia akaunti hii, na kuingia kwa usajili hakuwezi kutangulizwa mbele ya key yake.
 3. Huweka `ANTHROPIC_BASE_URL` na `ANTHROPIC_MODEL` vinapotolewa, na key kama `ANTHROPIC_API_KEY` au `ANTHROPIC_AUTH_TOKEN`.
 
 Akaunti zenye kuingia kwa usajili huhifadhi mazingira zinayorithi, kama hapo awali. Katika kipindi shirikishi Claude Code inaweza kuuliza mara moja kama itumie key inayoipata katika mazingira.
@@ -74,7 +79,7 @@ Akaunti zenye kuingia kwa usajili huhifadhi mazingira zinayorithi, kama hapo awa
   ```
 
   Kigezo kilichorithiwa ambacho uanzishaji huondoa huonekana kama `env -u <name>` mwanzoni. Kwa chanzo cha `env:` ambacho kigezo chake ni tupu, dry run hushindwa kama uanzishaji ungeshindwa.
-- `ccam add --api` hukagua chanzo cha `env:` papo hapo na huonya ikiwa kigezo ni tupu; chanzo cha `command:` huendeshwa kwa mara ya kwanza wakati wa kuanzisha.
+- `ccam add --api` hukagua chanzo cha `env:` papo hapo na huonya ikiwa kigezo ni tupu; chanzo cha `command:` hakiendeshwi hadi wakati wa kuanzisha.
 - `ccam login` na `ccam logout` hukataa akaunti ya API key, kwa kuwa haina kuingia. `ccam doctor` huonyesha endpoint yake na chanzo cha key, na huonya kigezo cha `env:` kikiwa tupu.
 - `ccam usage` huonyesha `no limits (API)` kwa ajili yake. `ccam next --auto`, `--fallback` na `ccam pick` huchagua kati ya akaunti za usajili pekee, kwa sababu API key haina kikomo cha saa 5 wala cha wiki cha kulinganisha.
 - `settings.json` inayoshirikiwa yenye sehemu ya `env` au `apiKeyHelper` hutumika kwa kila akaunti katika kundi, pamoja na akaunti za API key. Weka mipangilio ya mtoa huduma nje ya mipangilio inayoshirikiwa, au weka akaunti ya API key katika kundi lisilo na `settings`.

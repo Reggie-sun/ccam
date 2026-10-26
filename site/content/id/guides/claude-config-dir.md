@@ -1,10 +1,10 @@
 ---
 title: Penjelasan CLAUDE_CONFIG_DIR
 description: Fungsi CLAUDE_CONFIG_DIR di Claude Code, isi foldernya, tempat macOS menyimpan login, dan file mana yang bisa dibagikan antarakun.
-updated: 2026-10-23
+updated: 2026-10-26
 order: 2
 translation: machine
-sourceHash: 2cf08478085f
+sourceHash: "dc2fe42e11e1"
 ---
 
 `CLAUDE_CONFIG_DIR` memberi tahu Claude Code folder mana yang dipakai sebagai pengganti `~/.claude`. Semua yang khusus untuk akun berada di sana: login, pengaturan, server MCP, plugin, dan riwayat percakapan. Mengarahkannya ke folder yang berbeda memberi Anda akun yang terpisah.
@@ -36,13 +36,13 @@ Diperiksa dengan Claude Code 2.1.309:
 
 **Tanpa `CLAUDE_CONFIG_DIR`, `.claude.json` tidak berada di dalam `~/.claude`.** Dalam hal itu, Claude Code menyimpannya di `~/.claude.json`, di sebelah folder tersebut. Jika Anda mulai menggunakan `CLAUDE_CONFIG_DIR=~/.claude`, Claude Code akan mencari `~/.claude/.claude.json` dan tidak menemukan akun Anda. `ccam import` menangani hal ini dengan menautkan keduanya. Jika `~/.claude` sudah memiliki `.claude.json` sendiri, dari proses sebelumnya dengan `CLAUDE_CONFIG_DIR=~/.claude`, ccam membiarkan kedua file itu dan memberitahukannya, karena hanya Anda yang tahu mana yang benar.
 
-**Di macOS, login berada di Rantai Kunci (Keychain), bukan di folder.** Claude Code menyimpannya dengan nama `Claude Code-credentials`, diikuti `-` dan 8 digit heksadesimal pertama dari SHA-256 path folder saat `CLAUDE_CONFIG_DIR` ditetapkan, untuk akun yang disebut oleh `$USER`. Karena itu, folder yang berbeda mendapatkan entri Rantai Kunci yang berbeda, dan folder yang dipindahkan atau diganti namanya kehilangan login-nya; itulah sebabnya `ccam rename` mempertahankan nama folder di macOS. Jika Rantai Kunci menolak penulisan, Claude Code beralih ke `.credentials.json` di dalam folder, seperti yang dijelaskan [dokumentasinya](https://code.claude.com/docs/en/authentication#credential-management).
+**Di macOS, login berada di Rantai Kunci (Keychain), bukan di folder.** Claude Code menyimpannya dengan nama `Claude Code-credentials`. Saat `CLAUDE_CONFIG_DIR` ditetapkan, nama itu juga diakhiri dengan `-` dan 8 digit heksadesimal pertama dari SHA-256 path folder. Nama akun item Rantai Kunci itu adalah `$USER`. Karena itu, folder yang berbeda mendapatkan entri Rantai Kunci yang berbeda, dan folder yang dipindahkan atau diganti namanya kehilangan login-nya; itulah sebabnya `ccam rename` mempertahankan nama folder di macOS. Jika Rantai Kunci menolak penulisan, Claude Code beralih ke `.credentials.json` di dalam folder, seperti yang dijelaskan [dokumentasinya](https://code.claude.com/docs/en/authentication#credential-management).
 
 **Tidak semua login disimpan di folder.** Login Claude Console tanpa kunci API disimpan di luar folder, sehingga folder terpisah tidak bisa memisahkan dua login semacam itu. Login claude.ai dan kunci API disimpan per folder.
 
 ## Di mana folder itu di Windows?
 
-Secara default di `%USERPROFILE%\.claude`, dengan login di `.credentials.json` di dalamnya, atau di Windows Credential Manager jika Claude Code diatur untuk memakainya, dengan nama yang dibuat dari path folder seperti di macOS. Atur `CLAUDE_CONFIG_DIR` ke folder lain untuk setiap akun tambahan, sama seperti di Linux dan macOS.
+Secara default folder itu adalah `%USERPROFILE%\.claude`. Login berada di `.credentials.json` di dalamnya, atau di Windows Credential Manager jika Claude Code diatur untuk memakainya, dengan nama yang diturunkan dari path folder seperti di macOS. Atur `CLAUDE_CONFIG_DIR` ke folder lain untuk setiap akun tambahan, sama seperti di Linux dan macOS.
 
 ## Bisakah folder berbagi file?
 

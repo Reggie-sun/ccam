@@ -2,7 +2,7 @@
   "site": {
     "name": "ccam",
     "title": "ccam: Claude Code Account Manager zum Kontowechsel",
-    "description": "ccam (Claude Code Account Manager) ist ein kostenloses Open-Source-Tool, mit dem du mehrere Claude Code-Konten auf einem Rechner nutzt und per Befehl wechselst.",
+    "description": "ccam (Claude Code Account Manager) ist ein kostenloses Open-Source-Tool: mehrere Claude Code-Konten auf einem Rechner nutzen und mit einem Befehl wechseln.",
     "titleSuffix": "ccam für Claude Code"
   },
   "nav": {
@@ -14,17 +14,17 @@
     "menu": "Menü",
     "skip": "Zum Inhalt springen",
     "language": "Sprache",
-    "theme": "Helles oder dunkles Design umschalten"
+    "theme": "Zwischen hellem und dunklem Design wechseln"
   },
   "facts": {
     "what": "ccam ist ein kostenloses Open-Source-Kommandozeilentool, mit dem du mehrere Claude Code-Konten auf einem Computer nutzt und mit einem Befehl zwischen ihnen wechselst.",
-    "how": "Jedes Konto behält seine eigene Anmeldung in einem eigenen CLAUDE_CONFIG_DIR, während MCP-Server, Einstellungen, CLAUDE.md, Erweiterungen und der Gesprächsverlauf zwischen Konten geteilt werden können. So kannst du ein Gespräch in einem anderen Konto fortsetzen, wenn eines sein Nutzungslimit erreicht.",
+    "how": "Jedes Konto behält seine eigene Anmeldung in einem eigenen CLAUDE_CONFIG_DIR. MCP-Server, Einstellungen, CLAUDE.md, Erweiterungen und der Gesprächsverlauf können zwischen Konten geteilt werden. So kannst du ein Gespräch in einem anderen Konto fortsetzen, wenn eines sein Nutzungslimit erreicht.",
     "install": "Installiere es unter Linux, macOS oder Windows mit einem Befehl und führe dann ccam add für jedes Konto aus.",
     "official": "ccam ist ein inoffizielles Projekt und steht in keiner Verbindung zu Anthropic und wird nicht von Anthropic unterstützt."
   },
   "landing": {
     "headline": "Mehrere Claude Code-Konten. Ein Terminal.",
-    "lede": "Füge jedes Konto einmal hinzu. Wechsle mit {command} oder einem Kurzbefehl wie {shortcut}. Wenn ein Konto sein Limit erreicht, machst du im nächsten mit demselben Gespräch weiter.",
+    "lede": "Füge jedes Konto einmal hinzu. Wechsle mit {command} oder einem Kurzbefehl wie {shortcut}. Wenn ein Konto sein Limit erreicht, setzt du dasselbe Gespräch im nächsten fort.",
     "installLabel": "Unter Linux oder macOS installieren",
     "installWindowsLabel": "Unter Windows, in PowerShell",
     "thenAdd": "Füge dann dein erstes Konto mit {command} hinzu.",
@@ -56,18 +56,18 @@
       "fiveHour": "5 Stunden",
       "weekly": "Woche",
       "resets": "zurückgesetzt in {time}",
-      "mostRoom": "Am meisten Spielraum: {name}"
+      "mostRoom": "Größter Spielraum: {name}"
     },
     "flowTitle": "So funktioniert es",
     "flow": [
       {
         "command": "ccam add work",
-        "body": "Legt einen eigenen Konfigurationsordner für das Konto an, öffnet die Claude-Anmeldung im Browser und gibt dem Konto auf Wunsch einen Kurzbefehl, den du selbst benennst, etwa ccwork."
+        "body": "Legt einen eigenen Konfigurationsordner für das Konto an und öffnet die Claude-Anmeldung im Browser. Auf Wunsch bekommt das Konto auch einen Kurzbefehl deiner Wahl, etwa ccwork."
       },
       {
         "command": "ccam work",
         "also": "ccwork --resume",
-        "body": "Startet Claude Code mit diesem Konto. Alles nach dem Namen geht unverändert an Claude Code, und ccam braucht vor dem Start etwa 4 Millisekunden."
+        "body": "Startet Claude Code mit diesem Konto. Alles nach dem Namen geht unverändert an Claude Code, und der Start über ccam dauert etwa 4 Millisekunden länger als ein direkter Aufruf von claude."
       },
       {
         "command": "ccam group set default --add history",
@@ -83,7 +83,7 @@
       },
       {
         "command": "ccam doctor --fix",
-        "body": "Prüft Links, Berechtigungen und Anmeldungen und repariert, was sich sicher reparieren lässt. Jede Änderung an deinen Dateien behält eine Sicherung."
+        "body": "Prüft Links, Berechtigungen und Anmeldungen und repariert, was sich sicher reparieren lässt. Dateien, die dabei aus dem Weg geräumt werden, bleiben in einer Sicherung erhalten."
       }
     ],
     "guidesTitle": "Anleitungen",
@@ -141,19 +141,19 @@
     "next": "Nächstes Konto öffnen; --continue nimmt das Gespräch mit, --auto wählt das mit dem meisten Spielraum",
     "usage": "5-Stunden- und Wochennutzung aller Konten anzeigen",
     "share": "Anzeigen, was ein Konto teilt und über welche Gruppe",
-    "group": "Gruppen anlegen und ändern: was mehrere Konten teilen, verschoben nach einem Plan",
+    "group": "Gruppen anlegen und ändern, die festlegen, was ihre Konten teilen; jede Änderung zeigt zuerst einen Plan",
     "mcp": "Geteilte MCP-Server verwalten",
     "migrate": "Eine vorhandene Claude Code-Einrichtung (~/.claude) in eine geteilte Gruppe kopieren",
     "login": "Ein Konto erneut anmelden; --expired meldet jedes Konto an, das es braucht",
     "logout": "Ein Konto abmelden: seine Anmeldung und seine Anmeldungen bei MCP-Servern",
-    "rename": "Ein Konto umbenennen; sein Kurzbefehl behält seinen Namen",
+    "rename": "Ein Konto umbenennen; sein Kurzbefehl bleibt gleich",
     "remove": "Ein Konto entfernen: Es wird abgemeldet, und sein Ordner kommt in den Papierkorbordner",
     "import": "Einen vorhandenen ~/.claude-Ordner an Ort und Stelle registrieren",
     "doctor": "Links, Berechtigungen, Anmeldungen und Versionen prüfen und reparieren",
     "statusline": "Konto und Nutzung in der Statuszeile von Claude Code anzeigen",
     "shims": "Die Kurzbefehl-Links aller Konten neu erstellen",
     "shortcut": "Den Kurzbefehl eines Kontos, etwa ccwork, anzeigen, anlegen, umbenennen oder entfernen",
-    "folder": "Ein Konto in einem Ordner und darunter verwenden, wenn kein Konto genannt wird",
+    "folder": "Ein Konto in einem Ordner und seinen Unterordnern verwenden, wenn kein Konto genannt wird",
     "pick": "Das Konto mit dem meisten Spielraum ausgeben, für Skripte und parallele Worker",
     "ext": "Die Skills, Befehle, Plugins, MCP-Server und Hooks zeigen, die jedes Konto lädt",
     "agents": "Die Hintergrund-Agents und offenen Sitzungen aller Konten auflisten",
@@ -174,7 +174,7 @@
   },
   "footer": {
     "unofficial": "ccam ist ein inoffizielles Open-Source-Tool. Es steht in keiner Verbindung zu Anthropic und wird nicht von Anthropic unterstützt. Claude und Claude Code sind Marken von Anthropic.",
-    "terms": "Ob du mehrere Konten nutzen darfst, hängt von den Bedingungen jedes Kontos ab. Prüfe sie, bevor du es tust.",
+    "terms": "Ob du mehr als ein Konto nutzen darfst, hängt von den Bedingungen ab, die für jedes einzelne gelten. Lies diese Bedingungen, bevor du anfängst.",
     "license": "Quellcode auf GitHub",
     "languages": "Alle Sprachen",
     "analytics": "Diese Website zählt Besuche mit Cloudflare Web Analytics, das keine Cookies setzt und keine personenbezogenen Daten erfasst."
@@ -187,7 +187,7 @@
   "languages": {
     "title": "Sprachen",
     "description": "ccam.dev gibt es in {count, plural, one {# Sprache} other {# Sprachen}}, jeweils mit derselben Dokumentation und denselben Anleitungen.",
-    "coverage": "Nach den Bevölkerungsdaten von Unicode CLDR machen Menschen, die mindestens eine dieser Sprachen sprechen, {low} bis {high} der Weltbevölkerung aus.",
+    "coverage": "Laut den Bevölkerungsdaten von Unicode CLDR machen Menschen, die mindestens eine dieser Sprachen sprechen, {low} bis {high} der Weltbevölkerung aus.",
     "method": "Die niedrigere Zahl zählt in jedem Land nur die meistgesprochene unterstützte Sprache; die höhere addiert alle unterstützten Sprachen und begrenzt jedes Land auf 100 %."
   },
   "notFound": {

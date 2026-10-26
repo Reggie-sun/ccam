@@ -1,12 +1,14 @@
 ---
 title: Instal ccam
 metaTitle: Instal ccam di Linux, macOS, dan Windows
-description: Instal ccam di Linux, macOS, atau Windows dengan satu perintah, paket .deb, atau kode sumber, lalu perbarui dengan ccam update. Instal Claude Code dulu.
-updated: 2026-10-25
+description: Instal ccam di Linux, macOS, atau Windows dengan satu perintah, paket .deb, atau go install, lalu perbarui dengan ccam update. Instal Claude Code dulu.
+updated: 2026-10-26
 order: 1
 translation: machine
-sourceHash: "a7f9dac24f79"
+sourceHash: "2ada7b2650d6"
 ---
+
+ccam menjalankan Claude Code untuk Anda, jadi instal [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) terlebih dahulu dan pastikan `claude --version` berfungsi.
 
 Jalankan ini di terminal pada Linux atau macOS:
 
@@ -22,16 +24,17 @@ Di Windows, jalankan ini di PowerShell:
 irm https://ccam.dev/install.ps1 | iex
 ```
 
-Skrip ini mengunduh `ccam_windows_<arch>.zip`, memeriksa checksum SHA-256-nya, menaruh `ccam.exe` di `%USERPROFILE%\.local\bin`, folder tempat installer Claude Code menaruh `claude.exe`, dan menambahkan folder itu ke `PATH` pengguna Anda jika belum ada, dengan membiarkan entri seperti `%USERPROFILE%\bin` apa adanya. Setelah itu, buka terminal baru. Menjalankannya lagi akan mengganti ccam, juga saat sesi Claude Code masih berjalan dari binary lama (binary itu diganti namanya menjadi `ccam.exe.old`, atau `ccam.exe.old-<number>` jika yang lebih lama masih dipakai), dan memperbarui pintasan yang berupa hard link: `OK 2 shortcuts now run the new ccam`.
-
-ccam menjalankan Claude Code untuk Anda, jadi instal [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) terlebih dahulu dan pastikan `claude --version` berfungsi.
+Skrip ini mengunduh `ccam_windows_<arch>.zip`, memeriksa checksum SHA-256-nya, lalu menaruh `ccam.exe` di `%USERPROFILE%\.local\bin`, folder tempat installer Claude Code menaruh `claude.exe`. Jika folder itu belum ada di `PATH` pengguna Anda, skrip akan menambahkannya dan membiarkan entri seperti `%USERPROFILE%\bin` apa adanya. Setelah itu, buka terminal baru.
 
 ## Sistem yang didukung
 
 - Linux di x86-64 dan ARM64: Ubuntu, Debian, Fedora, Arch, Alpine, dan distribusi lainnya. Binary-nya statis dan tidak memiliki dependensi.
 - macOS di Apple silicon dan Intel.
-- Windows 10 dan 11 di x86-64 dan ARM64, di PowerShell, Windows Terminal, atau Git Bash. Folder bersama berfungsi untuk semua pengguna. File bersama (`settings.json`, `CLAUDE.md`, `history.jsonl`) memerlukan Mode Pengembang (Settings > System > For developers), karena Windows hanya mengizinkan mode itu, atau administrator, untuk membuat tautan ke file; lihat [berbagi di Windows](/features/share#on-windows). Tanpa mode itu, `ccam add` pertama membuat grup `default` yang hanya berisi server MCP dan ekstensi, dan memberi tahu cara menambahkan sisanya setelah Mode Pengembang aktif.
-- Di dalam WSL, ccam berfungsi seperti di sistem Linux mana pun.
+- Windows 10 dan 11 di x86-64 dan ARM64, di PowerShell, Windows Terminal, atau Git Bash:
+  - Folder bersama berfungsi tanpa Mode Pengembang.
+  - File bersama (`settings.json`, `CLAUDE.md`, `history.jsonl`) memerlukan Mode Pengembang (Settings > System > For developers), karena Windows hanya mengizinkan mode itu, atau administrator, untuk membuat tautan ke file; lihat [berbagi di Windows](/features/share#on-windows).
+  - Tanpa Mode Pengembang, `ccam add` pertama membuat grup `default` yang hanya berisi server MCP dan ekstensi, dan memberi tahu cara menambahkan sisanya setelah Mode Pengembang aktif.
+- Di dalam WSL, ccam berfungsi sama seperti di sistem Linux lainnya.
 
 ## Cara instalasi lainnya
 
@@ -49,7 +52,7 @@ Paket ini menginstal `/usr/bin/ccam`.
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
 ```
 
-Build dari tag rilis (`@latest` atau `@vX.Y.Z`) melaporkan versi itu, sehingga `ccam update` berfungsi untuknya; build dari `@main` atau dari checkout lokal yang sudah melewati sebuah tag melaporkan `dev`.
+Jika Anda menginstal tag rilis (`@latest` atau `@vX.Y.Z`), ccam melaporkan versi itu, dan `ccam update` serta tawaran pembaruan di dasbor berfungsi. Build dari `@main`, atau dari checkout lokal yang memiliki commit setelah sebuah tag, melaporkan `dev`, dan `ccam update` menolaknya kecuali Anda memberikan `--version`.
 
 **Versi tertentu.** Tetapkan `CCAM_VERSION`:
 
@@ -82,7 +85,13 @@ Plugin ccam mengajari Claude Code sendiri cara memakai ccam: memeriksa akun mana
 /plugin install ccam --marketplace jhyunwoo/ccam
 ```
 
-Plugin ini menambahkan satu skill, perintah `/ccam:usage`, `/ccam:ext`, dan `/ccam:switch`, serta dua hook: saat sebuah sesi berhenti karena batas penggunaan, Anda mendapat notifikasi di terminal (dan di Linux dan macOS, dengan [`auto_switch`](/features/next#auto-switch) aktif, ccam memindahkan sesi itu ke akun lain yang punya ruang), dan `/ccam:switch [account]` meneruskan percakapan ke akun lain ([detail](/features/next#inside-claude-code)). Hook tersebut menjalankan `ccam`, jadi ccam harus ada di `PATH` yang dilihat Claude Code. Skill tersebut tidak pernah menjalankan perintah yang melakukan login atau memindahkan file; ia hanya menyarankannya.
+Plugin ini menambahkan:
+
+- satu skill yang menyarankan perintah yang melakukan login atau memindahkan file, tetapi tidak pernah menjalankannya;
+- perintah `/ccam:usage`, `/ccam:ext`, dan `/ccam:switch`;
+- dua hook ([detail](/features/next#inside-claude-code)). Yang satu menampilkan notifikasi di terminal saat sebuah sesi berhenti karena batas penggunaan; di Linux dan macOS, dengan [`auto_switch`](/features/next#auto-switch) aktif, ccam lalu memindahkan sesi itu ke akun lain yang punya ruang. Yang lain memungkinkan `/ccam:switch [account]` meneruskan percakapan ke akun lain.
+
+Hook tersebut menjalankan `ccam`, jadi ccam harus ada di `PATH` yang dilihat Claude Code.
 
 ## Periksa instalasi
 
@@ -112,16 +121,16 @@ $ ccam update
 ccam 0.3.0 is up to date.
 ```
 
-Dasbor (`ccam` di terminal) juga mencari rilis baru setiap kali dibuka dan, jika ada, menawarkannya: tekan `U` lalu konfirmasi. Tidak ada perintah lain yang mencarinya, dan ccam tidak pernah memperbarui diri tanpa bertanya. Untuk menginstal rilis tertentu, termasuk rilis yang lebih lama, berikan `--version`. `ccam --dry-run update` menampilkan apa yang akan diunduh dan diganti tanpa mengubah apa pun.
+Dasbor (`ccam` tanpa argumen, di terminal) juga memeriksa rilis baru setiap kali dibuka dan, jika ada, menawarkannya: tekan `U` lalu konfirmasi. Tidak ada perintah lain yang memeriksa pembaruan, dan ccam tidak pernah memperbarui diri tanpa bertanya. Untuk menginstal rilis tertentu, termasuk rilis yang lebih lama, berikan `--version`. `ccam --dry-run update` menampilkan apa yang akan diunduh dan diganti tanpa mengubah apa pun.
 
 ```sh
 ccam update --version v0.2.0
 ccam --dry-run update
 ```
 
-Menjalankan skrip instalasi lagi juga memperbarui salinan di `~/.local/bin`. Jika Anda membangun ccam dengan `go install` dari tag rilis, `ccam update` juga berfungsi, atau jalankan lagi perintah yang sama.
+Menjalankan skrip instalasi lagi juga memperbarui salinan di `~/.local/bin`. Jika Anda membangun ccam dengan `go install` dari tag rilis, Anda dapat menjalankan `ccam update` atau menjalankan lagi perintah `go install` yang sama.
 
-**Windows.** `ccam update` mengunduh `.zip` untuk Windows. Program yang sedang berjalan tidak bisa diganti di Windows, jadi binary lama diganti namanya menjadi `ccam.exe.old`, yang akan dihapus oleh pembaruan berikutnya; selama sebuah sesi masih berjalan dari `ccam.exe.old` sebelumnya, namanya menjadi `ccam.exe.old-<time>`. Pintasan yang berupa hard link langsung diperbarui setelahnya.
+**Windows.** `ccam update` mengunduh `.zip` untuk Windows. Program yang sedang berjalan tidak bisa diganti di Windows, jadi binary lama diganti namanya menjadi `ccam.exe.old`, yang akan dihapus oleh pembaruan berikutnya; selama sebuah sesi masih berjalan dari `ccam.exe.old` sebelumnya, namanya menjadi `ccam.exe.old-<time>`. Pintasan yang berupa hard link langsung diperbarui setelahnya. Menjalankan `install.ps1` lagi bekerja dengan cara yang sama, bahkan saat sesi Claude Code masih berjalan dari binary lama, dan menampilkan `OK 2 shortcuts now run the new ccam` saat memperbarui pintasan yang berupa hard link.
 
 **Paket Debian dan Ubuntu.** `ccam update` tidak mengganti `/usr/bin/ccam` yang diinstal oleh apt, dan sebagai gantinya menampilkan langkah-langkah berikut. Unduh `ccam_<version>_linux_amd64.deb` yang baru dari [halaman rilis](https://github.com/jhyunwoo/ccam/releases) lalu instal di atas versi yang lama:
 
@@ -130,6 +139,8 @@ sudo apt install ./ccam_*_linux_amd64.deb
 ```
 
 ## Menghapus instalasi
+
+Menghapus `~/.local/share/ccam` juga menghapus login dan riwayat percakapan yang tersimpan di sana. Folder `~/.claude` yang Anda [impor](/docs/commands) tetap berada di tempatnya, tetapi selama folder itu ada di sebuah grup, file yang dibagikannya berada di `~/.local/share/ccam/groups/`. Jalankan `ccam remove <name>` untuknya (atau `ccam group leave`) sebelum Anda menghapus apa pun: langkah ini mengeluarkannya dari grup-grupnya dan mengembalikan salinan dari semua yang dibagikannya ke folder itu.
 
 Hapus dulu pintasan akun selagi ccam masih terpasang. `ccam list` menampilkannya di kolom Shortcut; hapus masing-masing dengan `ccam shortcut <account> --remove`, atau hapus sendiri tautan itu dari `~/.local/bin`. Lalu hapus perintahnya, serta folder data jika Anda tidak lagi memerlukan akun-akun tersebut:
 
@@ -147,5 +158,3 @@ ccam shortcut work --remove   # once for each account that has a shortcut
 Remove-Item ~\.local\bin\ccam.exe
 Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
 ```
-
-Menghapus `~/.local/share/ccam` juga menghapus login dan riwayat percakapan yang tersimpan di sana. Folder `~/.claude` yang Anda [impor](/docs/commands) tetap berada di tempatnya, tetapi selama folder itu ada di sebuah grup, file yang dibagikannya berada di `~/.local/share/ccam/groups/`. Jalankan `ccam remove <name>` untuknya terlebih dahulu (atau `ccam group leave`): folder itu keluar dari grup-grupnya dengan membawa salinan dari semua yang dibagikannya.

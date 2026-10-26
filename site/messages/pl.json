@@ -2,7 +2,7 @@
   "site": {
     "name": "ccam",
     "title": "ccam: Claude Code Account Manager do przełączania kont",
-    "description": "ccam (Claude Code Account Manager) to darmowe narzędzie open source: kilka kont Claude Code na jednym komputerze i przełączanie między nimi jednym poleceniem.",
+    "description": "ccam (Claude Code Account Manager) to darmowe narzędzie open source do używania kilku kont Claude Code na jednym komputerze i przełączania jednym poleceniem.",
     "titleSuffix": "ccam dla Claude Code"
   },
   "nav": {
@@ -14,11 +14,11 @@
     "menu": "Menu",
     "skip": "Przejdź do treści",
     "language": "Język",
-    "theme": "Przełącz jasny lub ciemny motyw"
+    "theme": "Przełączaj między jasnym a ciemnym motywem"
   },
   "facts": {
     "what": "ccam to darmowe narzędzie wiersza poleceń o otwartym kodzie, które pozwala używać kilku kont Claude Code na jednym komputerze i przełączać się między nimi jednym poleceniem.",
-    "how": "Każde konto ma własne logowanie w osobnym CLAUDE_CONFIG_DIR, a serwery MCP, ustawienia, CLAUDE.md, rozszerzenia i historię rozmów można współdzielić między kontami, więc gdy jedno konto osiągnie limit użycia, możesz kontynuować rozmowę na innym.",
+    "how": "Każde konto ma własne logowanie w osobnym CLAUDE_CONFIG_DIR. Serwery MCP, ustawienia, CLAUDE.md, rozszerzenia i historię rozmów można współdzielić między kontami, więc gdy jedno konto osiągnie limit użycia, możesz kontynuować rozmowę na innym.",
     "install": "Zainstaluj go w systemie Linux, macOS lub Windows jednym poleceniem, a potem uruchom ccam add dla każdego konta.",
     "official": "ccam jest nieoficjalnym projektem i nie jest powiązany z Anthropic ani przez Anthropic popierany."
   },
@@ -56,18 +56,18 @@
       "fiveHour": "5 godzin",
       "weekly": "Tydzień",
       "resets": "reset za {time}",
-      "mostRoom": "Najwięcej zapasu: {name}"
+      "mostRoom": "Największy zapas: {name}"
     },
     "flowTitle": "Jak to działa",
     "flow": [
       {
         "command": "ccam add work",
-        "body": "Tworzy osobny folder konfiguracji dla konta, otwiera logowanie do Claude w przeglądarce i, jeśli chcesz, nadaje kontu skrót o nazwie wybranej przez ciebie, na przykład ccwork."
+        "body": "Tworzy osobny folder konfiguracji dla konta i otwiera logowanie do Claude w przeglądarce. Może też nadać kontu wybrany przez ciebie skrót, na przykład ccwork."
       },
       {
         "command": "ccam work",
         "also": "ccwork --resume",
-        "body": "Uruchamia Claude Code jako to konto. Wszystko po nazwie trafia do Claude Code bez zmian, a ccam dodaje około 4 milisekund przed startem."
+        "body": "Uruchamia Claude Code jako to konto. Wszystko po nazwie trafia do Claude Code bez zmian, a start przez ccam trwa około 4 milisekund dłużej niż bezpośrednie uruchomienie claude."
       },
       {
         "command": "ccam group set default --add history",
@@ -83,7 +83,7 @@
       },
       {
         "command": "ccam doctor --fix",
-        "body": "Sprawdza linki, uprawnienia i loginy oraz naprawia to, co da się bezpiecznie naprawić. Każda zmiana w twoich plikach zostawia kopię zapasową."
+        "body": "Sprawdza linki, uprawnienia i loginy oraz naprawia to, co da się bezpiecznie naprawić. Pliki, które przenosi na bok, trafiają do kopii zapasowej."
       }
     ],
     "guidesTitle": "Poradniki",
@@ -141,12 +141,12 @@
     "next": "Otwórz następne konto; --continue przenosi rozmowę, --auto wybiera konto z największym zapasem",
     "usage": "Pokaż 5-godzinne i tygodniowe użycie wszystkich kont",
     "share": "Pokaż, co konto współdzieli i przez którą grupę",
-    "group": "Twórz i zmieniaj grupy: co współdzieli zestaw kont, przenoszone według planu",
+    "group": "Twórz i zmieniaj grupy, które określają, co współdzielą ich konta; każda zmiana najpierw pokazuje plan",
     "mcp": "Zarządzaj współdzielonymi serwerami MCP",
     "migrate": "Skopiuj istniejącą konfigurację Claude Code (~/.claude) do współdzielonej grupy",
     "login": "Zaloguj konto ponownie; --expired loguje każde konto, które tego potrzebuje",
     "logout": "Wyloguj konto: jego login i logowania do serwerów MCP",
-    "rename": "Zmień nazwę konta; jego skrót zachowuje swoją nazwę",
+    "rename": "Zmień nazwę konta; jego polecenie skrótu pozostaje takie samo",
     "remove": "Usuń konto: zostaje wylogowane, a jego folder trafia do folderu kosza",
     "import": "Zarejestruj istniejący folder ~/.claude w miejscu, w którym jest",
     "doctor": "Sprawdź linki, uprawnienia, loginy i wersje oraz napraw",
@@ -174,7 +174,7 @@
   },
   "footer": {
     "unofficial": "ccam jest nieoficjalnym narzędziem o otwartym kodzie. Nie jest powiązany z Anthropic ani przez Anthropic popierany. Claude i Claude Code są znakami towarowymi Anthropic.",
-    "terms": "To, czy możesz używać kilku kont, zależy od warunków każdego konta. Sprawdź je, zanim to zrobisz.",
+    "terms": "To, czy możesz używać więcej niż jednego konta, zależy od warunków, które obowiązują każde z nich. Przeczytaj te warunki, zanim zaczniesz.",
     "license": "Kod źródłowy na GitHub",
     "languages": "Wszystkie języki",
     "analytics": "Ta strona liczy odwiedziny za pomocą Cloudflare Web Analytics, które nie zapisuje plików cookie i nie zbiera danych osobowych."

@@ -1,10 +1,10 @@
 ---
 title: CLAUDE_CONFIG_DIR explicado
 description: O que o CLAUDE_CONFIG_DIR faz no Claude Code, o que fica na pasta, onde o macOS guarda o login e quais arquivos podem ser compartilhados entre contas.
-updated: 2026-10-23
+updated: 2026-10-26
 order: 2
 translation: machine
-sourceHash: "2cf08478085f"
+sourceHash: "dc2fe42e11e1"
 ---
 
 `CLAUDE_CONFIG_DIR` diz ao Claude Code qual pasta usar no lugar de `~/.claude`. Tudo o que é específico da conta fica lá: o login, as configurações, os servidores MCP, os plugins e o histórico de conversas. Apontar a variável para pastas diferentes dá a você contas separadas.
@@ -36,13 +36,13 @@ Verificado com o Claude Code 2.1.309:
 
 **Sem `CLAUDE_CONFIG_DIR`, o `.claude.json` não fica dentro de `~/.claude`.** Nesse caso, o Claude Code o guarda em `~/.claude.json`, ao lado da pasta. Se você começar a usar `CLAUDE_CONFIG_DIR=~/.claude`, o Claude Code procura `~/.claude/.claude.json` e não encontra sua conta. `ccam import` resolve isso criando um link entre os dois. Se `~/.claude` já tem um `.claude.json` próprio, de uma execução anterior com `CLAUDE_CONFIG_DIR=~/.claude`, o ccam deixa os dois arquivos e avisa, já que só você sabe qual é o certo.
 
-**No macOS, o login fica no Acesso às Chaves, não na pasta.** O Claude Code o guarda com o nome `Claude Code-credentials`, seguido de `-` e dos 8 primeiros dígitos hexadecimais do SHA-256 do caminho da pasta quando `CLAUDE_CONFIG_DIR` está definido, para a conta indicada por `$USER`. Por isso, pastas separadas recebem entradas separadas no Acesso às Chaves, e uma pasta movida ou renomeada perde o login; é por isso que o `ccam rename` mantém o nome da pasta no macOS. Se o Acesso às Chaves recusar a gravação, o Claude Code recorre ao `.credentials.json` na pasta, como [a documentação dele](https://code.claude.com/docs/en/authentication#credential-management) descreve.
+**No macOS, o login fica no Acesso às Chaves, não na pasta.** O Claude Code o guarda com o nome `Claude Code-credentials`. Quando `CLAUDE_CONFIG_DIR` está definido, o nome também termina com `-` e os 8 primeiros dígitos hexadecimais do SHA-256 do caminho da pasta. O nome da conta do item no Acesso às Chaves é `$USER`. Por isso, pastas separadas recebem entradas separadas no Acesso às Chaves, e uma pasta movida ou renomeada perde o login; é por isso que o `ccam rename` mantém o nome da pasta no macOS. Se o Acesso às Chaves recusar a gravação, o Claude Code recorre ao `.credentials.json` na pasta, como [a documentação dele](https://code.claude.com/docs/en/authentication#credential-management) descreve.
 
-**Nem todo login fica na pasta.** Um login do Claude Console sem chave de API é guardado fora dela, então pastas separadas não mantêm dois desses logins separados. Logins do claude.ai e chaves de API são guardados por pasta.
+**Nem todo login fica na pasta.** Um login do Claude Console sem chave de API é guardado fora dela, então pastas separadas não conseguem manter dois desses logins separados. Logins do claude.ai e chaves de API são guardados por pasta.
 
 ## Onde fica a pasta no Windows?
 
-Por padrão em `%USERPROFILE%\.claude`, com o login no `.credentials.json` dentro dela, ou no Gerenciador de Credenciais do Windows quando o Claude Code está configurado para usá-lo, com um nome feito a partir do caminho da pasta, como no macOS. Defina `CLAUDE_CONFIG_DIR` com outra pasta para cada conta extra, do mesmo jeito que no Linux e no macOS.
+Por padrão, ela fica em `%USERPROFILE%\.claude`. O login fica no `.credentials.json` dentro dela, ou no Gerenciador de Credenciais do Windows se o Claude Code estiver configurado para usá-lo, com um nome derivado do caminho da pasta, como no macOS. Defina `CLAUDE_CONFIG_DIR` com outra pasta para cada conta extra, do mesmo jeito que no Linux e no macOS.
 
 ## As pastas podem compartilhar arquivos?
 

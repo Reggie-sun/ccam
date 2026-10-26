@@ -1,10 +1,10 @@
 ---
 title: CLAUDE_CONFIG_DIR explicado
 description: Qué hace CLAUDE_CONFIG_DIR en Claude Code, qué se guarda en la carpeta, dónde guarda macOS el inicio de sesión y qué archivos se pueden compartir entre cuentas.
-updated: 2026-10-23
+updated: 2026-10-26
 order: 2
 translation: machine
-sourceHash: 2cf08478085f
+sourceHash: "dc2fe42e11e1"
 ---
 
 `CLAUDE_CONFIG_DIR` le indica a Claude Code qué carpeta usar en lugar de `~/.claude`. Todo lo específico de la cuenta vive ahí: el inicio de sesión, la configuración, los servidores MCP, los plugins y el historial de conversaciones. Si lo apuntas a carpetas distintas, obtienes cuentas separadas.
@@ -36,13 +36,13 @@ Comprobado con Claude Code 2.1.309:
 
 **Sin `CLAUDE_CONFIG_DIR`, `.claude.json` no está dentro de `~/.claude`.** En ese caso, Claude Code lo guarda en `~/.claude.json`, junto a la carpeta. Si empiezas a usar `CLAUDE_CONFIG_DIR=~/.claude`, Claude Code busca `~/.claude/.claude.json` en su lugar y no encuentra tu cuenta. `ccam import` resuelve esto enlazando los dos. Si `~/.claude` ya tiene su propio `.claude.json`, de una ejecución anterior con `CLAUDE_CONFIG_DIR=~/.claude`, ccam deja ambos archivos y lo indica, ya que solo tú sabes cuál es el correcto.
 
-**En macOS, el inicio de sesión está en el Llavero, no en la carpeta.** Claude Code lo guarda con el nombre `Claude Code-credentials`, seguido de `-` y los primeros 8 dígitos hexadecimales del SHA-256 de la ruta de la carpeta cuando `CLAUDE_CONFIG_DIR` está definido, para la cuenta que indica `$USER`. Por eso, carpetas distintas obtienen entradas distintas en el Llavero, y una carpeta que se mueve o cambia de nombre pierde su inicio de sesión; por eso `ccam rename` conserva el nombre de la carpeta en macOS. Si el Llavero rechaza la escritura, Claude Code recurre a `.credentials.json` en la carpeta, como describe [su documentación](https://code.claude.com/docs/en/authentication#credential-management).
+**En macOS, el inicio de sesión está en el Llavero, no en la carpeta.** Claude Code lo guarda con el nombre `Claude Code-credentials`. Cuando `CLAUDE_CONFIG_DIR` está definido, el nombre también termina con `-` y los primeros 8 dígitos hexadecimales del SHA-256 de la ruta de la carpeta. El nombre de cuenta del elemento del Llavero es `$USER`. Por eso, carpetas distintas obtienen entradas distintas en el Llavero, y una carpeta que se mueve o cambia de nombre pierde su inicio de sesión; por eso `ccam rename` conserva el nombre de la carpeta en macOS. Si el Llavero rechaza la escritura, Claude Code recurre a `.credentials.json` en la carpeta, como describe [su documentación](https://code.claude.com/docs/en/authentication#credential-management).
 
-**No todos los inicios de sesión viven en la carpeta.** Un inicio de sesión de Claude Console sin clave de API se guarda fuera de ella, así que las carpetas separadas no mantienen dos de ellos aparte. Los inicios de sesión de claude.ai y las claves de API se guardan por carpeta.
+**No todos los inicios de sesión viven en la carpeta.** Un inicio de sesión de Claude Console sin clave de API se guarda fuera de ella, así que las carpetas separadas no pueden mantener separados dos inicios de sesión de ese tipo. Los inicios de sesión de claude.ai y las claves de API se guardan por carpeta.
 
 ## ¿Dónde está la carpeta en Windows?
 
-De forma predeterminada en `%USERPROFILE%\.claude`, con el inicio de sesión en `.credentials.json` dentro de ella, o en el Administrador de credenciales de Windows cuando Claude Code está configurado para usarlo, con un nombre formado a partir de la ruta de la carpeta como en macOS. Define `CLAUDE_CONFIG_DIR` con otra carpeta para cada cuenta adicional, igual que en Linux y macOS.
+De forma predeterminada es `%USERPROFILE%\.claude`. El inicio de sesión está en `.credentials.json` dentro de ella, o en el Administrador de credenciales de Windows si Claude Code está configurado para usarlo, con un nombre derivado de la ruta de la carpeta como en macOS. Define `CLAUDE_CONFIG_DIR` con otra carpeta para cada cuenta adicional, igual que en Linux y macOS.
 
 ## ¿Las carpetas pueden compartir archivos?
 

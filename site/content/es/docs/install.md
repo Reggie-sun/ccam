@@ -1,12 +1,14 @@
 ---
 title: Instalar ccam
 metaTitle: Instalar ccam en Linux, macOS y Windows
-description: Instala ccam en Linux, macOS o Windows con un comando, un paquete .deb o desde el código fuente, y actualízalo con ccam update. Antes necesitas Claude Code.
-updated: 2026-10-25
+description: Instala ccam en Linux, macOS o Windows con un comando, un paquete .deb o go install, y actualízalo con ccam update. Antes necesitas Claude Code.
+updated: 2026-10-26
 order: 1
 translation: machine
-sourceHash: "a7f9dac24f79"
+sourceHash: "2ada7b2650d6"
 ---
+
+ccam inicia Claude Code por ti, así que instala primero [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) y asegúrate de que `claude --version` funcione.
 
 Ejecuta esto en una terminal de Linux o macOS:
 
@@ -22,16 +24,17 @@ En Windows, ejecuta esto en PowerShell:
 irm https://ccam.dev/install.ps1 | iex
 ```
 
-Descarga `ccam_windows_<arch>.zip`, comprueba su suma de verificación SHA-256, coloca `ccam.exe` en `%USERPROFILE%\.local\bin`, la carpeta donde el instalador de Claude Code coloca `claude.exe`, y agrega esa carpeta a tu `PATH` de usuario si aún no está, sin cambiar entradas como `%USERPROFILE%\bin`. Después, abre una terminal nueva. Volver a ejecutarlo reemplaza ccam, también mientras una sesión de Claude Code sigue ejecutándose desde el binario antiguo (ese se renombra a `ccam.exe.old`, o a `ccam.exe.old-<number>` cuando uno más antiguo sigue en uso), y renueva los atajos que son enlaces duros: `OK 2 shortcuts now run the new ccam`.
-
-ccam inicia Claude Code por ti, así que instala primero [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) y asegúrate de que `claude --version` funcione.
+Descarga `ccam_windows_<arch>.zip`, comprueba su suma de verificación SHA-256 y coloca `ccam.exe` en `%USERPROFILE%\.local\bin`, la carpeta donde el instalador de Claude Code coloca `claude.exe`. Si esa carpeta aún no está en tu `PATH` de usuario, el script la agrega y deja como están entradas como `%USERPROFILE%\bin`. Después, abre una terminal nueva.
 
 ## Sistemas compatibles
 
 - Linux en x86-64 y ARM64: Ubuntu, Debian, Fedora, Arch, Alpine y otras distribuciones. El binario es estático y no tiene dependencias.
 - macOS en Apple silicon e Intel.
-- Windows 10 y 11 en x86-64 y ARM64, en PowerShell, Windows Terminal o Git Bash. Las carpetas compartidas funcionan para cualquier usuario. Los archivos compartidos (`settings.json`, `CLAUDE.md`, `history.jsonl`) requieren el modo de desarrollador (Configuración > Sistema > Para programadores), porque Windows solo permite crear enlaces a archivos en ese modo o a un administrador; consulta [compartir en Windows](/features/share#on-windows). Sin él, el primer `ccam add` crea el grupo `default` solo con servidores MCP y extensiones, e indica cómo agregar el resto una vez activado el modo de desarrollador.
-- Dentro de WSL, ccam funciona como en cualquier sistema Linux.
+- Windows 10 y 11 en x86-64 y ARM64, en PowerShell, Windows Terminal o Git Bash:
+  - Las carpetas compartidas funcionan sin el modo de desarrollador.
+  - Los archivos compartidos (`settings.json`, `CLAUDE.md`, `history.jsonl`) requieren el modo de desarrollador (Configuración > Sistema > Para programadores), porque Windows solo permite crear enlaces a archivos en ese modo o a un administrador; consulta [compartir en Windows](/features/share#on-windows).
+  - Sin el modo de desarrollador, el primer `ccam add` crea el grupo `default` solo con servidores MCP y extensiones, e indica cómo agregar el resto una vez activado el modo de desarrollador.
+- Dentro de WSL, ccam funciona igual que en cualquier otro sistema Linux.
 
 ## Otras formas de instalar
 
@@ -49,7 +52,7 @@ El paquete instala `/usr/bin/ccam`.
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
 ```
 
-Una compilación de una etiqueta de versión (`@latest` o `@vX.Y.Z`) informa esa versión, así que `ccam update` funciona con ella; una compilación de `@main` o de una copia local posterior a una etiqueta informa `dev`.
+Si instalas una etiqueta de versión (`@latest` o `@vX.Y.Z`), ccam informa esa versión, y `ccam update` y la oferta de actualización del panel funcionan. Una compilación de `@main`, o de una copia local con commits posteriores a una etiqueta, informa `dev`, y `ccam update` la rechaza a menos que pases `--version`.
 
 **Una versión específica.** Define `CCAM_VERSION`:
 
@@ -82,7 +85,13 @@ El plugin de ccam le enseña al propio Claude Code a usar ccam: a comprobar qué
 /plugin install ccam --marketplace jhyunwoo/ccam
 ```
 
-Añade un skill, los comandos `/ccam:usage`, `/ccam:ext` y `/ccam:switch`, y dos hooks: cuando una sesión se detiene en un límite de uso recibes una notificación en la terminal (y en Linux y macOS, con [`auto_switch`](/features/next#auto-switch) activado, ccam mueve la sesión a otra cuenta con margen), y `/ccam:switch [account]` pasa la conversación a otra cuenta ([detalles](/features/next#inside-claude-code)). Los hooks ejecutan `ccam`, así que debe estar en el `PATH` que ve Claude Code. El skill nunca ejecuta comandos que inician sesión o mueven archivos; en su lugar, los sugiere.
+Añade:
+
+- un skill que sugiere comandos que inician sesión o mueven archivos, pero nunca los ejecuta;
+- los comandos `/ccam:usage`, `/ccam:ext` y `/ccam:switch`;
+- dos hooks ([detalles](/features/next#inside-claude-code)). Uno muestra una notificación en la terminal cuando una sesión se detiene en un límite de uso; en Linux y macOS, con [`auto_switch`](/features/next#auto-switch) activado, ccam mueve entonces la sesión a otra cuenta con margen. El otro permite que `/ccam:switch [account]` pase la conversación a otra cuenta.
+
+Los hooks ejecutan `ccam`, así que debe estar en el `PATH` que ve Claude Code.
 
 ## Comprobar la instalación
 
@@ -112,16 +121,16 @@ $ ccam update
 ccam 0.3.0 is up to date.
 ```
 
-El panel (`ccam` en una terminal) también busca una versión nueva cada vez que se abre y, si la hay, la ofrece: pulsa `U` y confirma. Ningún otro comando la busca, y ccam nunca se actualiza sin preguntar. Para instalar una versión concreta, incluso una anterior, usa `--version`. `ccam --dry-run update` muestra qué se descargaría y qué se reemplazaría, sin cambiar nada.
+El panel (`ccam` sin argumentos, en una terminal) también busca una versión nueva cada vez que se abre y, si la hay, la ofrece: pulsa `U` y confirma. Ningún otro comando busca actualizaciones, y ccam nunca se actualiza sin preguntar. Para instalar una versión concreta, incluso una anterior, usa `--version`. `ccam --dry-run update` muestra qué se descargaría y qué se reemplazaría, sin cambiar nada.
 
 ```sh
 ccam update --version v0.2.0
 ccam --dry-run update
 ```
 
-Volver a ejecutar el script de instalación también actualiza la copia de `~/.local/bin`. Si compilaste ccam con `go install` desde una etiqueta de versión, `ccam update` también funciona, o vuelve a ejecutar el mismo comando.
+Volver a ejecutar el script de instalación también actualiza la copia de `~/.local/bin`. Si compilaste ccam con `go install` desde una etiqueta de versión, puedes ejecutar `ccam update` o volver a ejecutar el mismo comando `go install`.
 
-**Windows.** `ccam update` descarga el `.zip` para Windows. En Windows no se puede reemplazar un programa en ejecución, así que el binario antiguo se renombra a `ccam.exe.old`, que la siguiente actualización elimina; mientras una sesión sigue ejecutándose desde un `ccam.exe.old` anterior, el nombre es `ccam.exe.old-<time>`. Los atajos que son enlaces duros se renuevan justo después.
+**Windows.** `ccam update` descarga el `.zip` para Windows. En Windows no se puede reemplazar un programa en ejecución, así que el binario antiguo se renombra a `ccam.exe.old`, que la siguiente actualización elimina; mientras una sesión sigue ejecutándose desde un `ccam.exe.old` anterior, el nombre es `ccam.exe.old-<time>`. Los atajos que son enlaces duros se renuevan justo después. Volver a ejecutar `install.ps1` funciona igual, incluso mientras una sesión de Claude Code sigue ejecutándose desde el binario antiguo, e imprime `OK 2 shortcuts now run the new ccam` cuando renueva los atajos que son enlaces duros.
 
 **Paquete para Debian y Ubuntu.** `ccam update` no reemplaza un `/usr/bin/ccam` instalado con apt; en su lugar, muestra estos pasos. Descarga el nuevo `ccam_<version>_linux_amd64.deb` desde la [página de versiones](https://github.com/jhyunwoo/ccam/releases) e instálalo sobre el anterior:
 
@@ -130,6 +139,8 @@ sudo apt install ./ccam_*_linux_amd64.deb
 ```
 
 ## Desinstalar
+
+Al eliminar `~/.local/share/ccam` también se eliminan los inicios de sesión y el historial de conversaciones guardados allí. Una carpeta `~/.claude` que hayas [importado](/docs/commands) se queda donde está, pero mientras esté en un grupo, los archivos que comparte viven en `~/.local/share/ccam/groups/`. Ejecuta `ccam remove <name>` para ella (o `ccam group leave`) antes de eliminar nada: así sale de sus grupos y vuelve a colocar en la carpeta una copia de todo lo que compartía.
 
 Primero quita los atajos de las cuentas, mientras ccam sigue instalado. `ccam list` los muestra en la columna Shortcut; quita cada uno con `ccam shortcut <account> --remove`, o elimina tú mismo esos enlaces de `~/.local/bin`. Luego elimina el comando y, si ya no necesitas las cuentas, las carpetas de datos:
 
@@ -147,5 +158,3 @@ ccam shortcut work --remove   # once for each account that has a shortcut
 Remove-Item ~\.local\bin\ccam.exe
 Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
 ```
-
-Al eliminar `~/.local/share/ccam` también se eliminan los inicios de sesión y el historial de conversaciones guardados allí. Una carpeta `~/.claude` que hayas [importado](/docs/commands) se queda donde está, pero mientras esté en un grupo, los archivos que comparte viven en `~/.local/share/ccam/groups/`. Ejecuta primero `ccam remove <name>` para ella (o `ccam group leave`): sale de sus grupos con una copia de todo lo que compartía.

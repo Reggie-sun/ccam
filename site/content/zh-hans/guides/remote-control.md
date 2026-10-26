@@ -1,13 +1,13 @@
 ---
 title: 用 ccam 使用 Remote Control
 description: 用 ccam <name> rc 以任意账号启动 Claude Code 的 Remote Control：哪些选项适用、ccam 为什么提议复制共享的 MCP 服务器，以及如何解决问题。
-updated: 2026-10-23
+updated: 2026-10-26
 order: 4
 translation: machine
-sourceHash: "3e17d89f98c8"
+sourceHash: "4d46f49c5dea"
 ---
 
-`ccam work rc` 以账号 `work` 启动 Claude Code 的 Remote Control，这样你就可以在 claude.ai/code 或 Claude 移动应用中操作这台电脑上的会话。它的用法与 `claude rc` 相同，只有一处区别：如果该账号共享 MCP 服务器，ccam 会询问一次是否把它们复制到账号的 `.claude.json` 中，因为 Remote Control 的会话不会从其他任何地方读取服务器。
+`ccam work rc` 以 `work` 账号启动 Claude Code 的 Remote Control，这样你就可以在 claude.ai/code 或 Claude 移动应用中控制这台电脑上的会话。它的用法与 `claude rc` 相同，只有一处区别：如果该账号共享 MCP 服务器，ccam 会询问一次是否把它们复制到账号的 `.claude.json` 中，因为该文件是 Remote Control 会话读取服务器的唯一位置。
 
 ## 启动
 
@@ -31,9 +31,10 @@ ccam --dry-run work rc                # print the command instead of running it
 | 选项或设置 | 作用 | 默认值 |
 | --- | --- | --- |
 | `--dry-run`（写在账号之前） | 打印环境变量和命令，有 MCP 提示时也一并打印。既不询问也不复制 | 关 |
-| `Copy them into .claude.json (a backup is kept; servers of the account's own stay)? [y/N]` | 当账号共享 MCP 服务器、而其 `.claude.json` 中没有组的当前列表，或者某个已复制的服务器已从中消失时询问。`y` 复制，`N` 或回车则不复制直接启动 | `N` |
 | `~/.config/ccam/config.toml` 顶部的 `mcp_strategy = "sync"` | 每次启动前都把组的服务器复制到 `.claude.json`，无论是否为 Remote Control，因此从不询问 | `"flag"` |
 | `ccam group leave <group> work` | 把账号移出与它共享 MCP 的组。组的服务器会作为账号自己的服务器复制到它的 `.claude.json` 中，因此 Remote Control 能用上它们，也不会询问；使用 `--fresh` 时，只带账号自己的服务器启动 | 在 `default` 中 |
+
+当账号共享 MCP 服务器、而其 `.claude.json` 中没有组的当前列表，或者某个已复制的服务器已从中消失时，ccam 会询问 `Copy them into .claude.json (a backup is kept; the account's own servers stay)? [y/N]`。`y` 复制它们；`N` 或回车则不复制直接启动。
 
 ### Remote Control 选项
 
@@ -66,10 +67,10 @@ ccam 像 Claude Code 一样读取 Claude Code 的命令，跳过选项及其值�
    ```console
    $ ccam work rc
    ccam: Remote Control sessions only get MCP servers stored in account work's .claude.json, not the shared MCP servers (ctx, fs).
-   Copy them into .claude.json (a backup is kept; servers of the account's own stay)? [y/N]
+   Copy them into .claude.json (a backup is kept; the account's own servers stay)? [y/N]
    ```
 
-5. 回答 `y` 时，它会先备份 `.claude.json`，持有 Claude Code 自己的锁，把组的服务器加入 `mcpServers`，并保留账号的其他服务器；账号自己拥有的、与组服务器同名的服务器仍归账号所有，ccam 会说明这一点。回答 `N`、没有终端，或账号正在运行时，它不做任何更改，并给出提示：
+5. 回答 `y` 时，它会先备份 `.claude.json`，持有 Claude Code 自己的锁，把组的服务器加入 `mcpServers`，并保留账号的其他服务器；如果账号自己有一个与组服务器同名的服务器，ccam 会保留账号的服务器并说明这一点。回答 `N`、没有终端，或账号正在运行时，它不做任何更改，并给出提示：
 
    ```console
          Starting without them. To copy them before every launch instead, set mcp_strategy = "sync" in ~/.config/ccam/config.toml
@@ -77,7 +78,7 @@ ccam 像 Claude Code 一样读取 Claude Code 的命令，跳过选项及其值�
 
 6. 它记录会话，把 `CLAUDE_CONFIG_DIR` 设为账号文件夹，然后通过 `exec` 把自己替换为 `claude rc`。
 
-之后 Remote Control 会作为服务器持续运行。它为你启动的每个会话都是这个进程的子进程，因此都以 `work` 的身份运行：使用 `work` 的登录信息、设置和对话历史，并计入 `work` 的用量限制。由 ccam 启动的服务器运行期间，ccam 会把该账号视为正在运行；用普通的 `claude remote-control` 启动的服务器在有会话时也是如此，但还没有任何会话的这种服务器不会被发现。
+之后 Remote Control 会作为服务器持续运行。它为你启动的每个会话都是这个进程的子进程，因此都以 `work` 的身份运行：使用 `work` 的登录信息、设置和对话历史，并计入 `work` 的用量限制。由 ccam 启动的 Remote Control 服务器运行期间，ccam 会把该账号视为正在运行。用普通的 `claude remote-control` 启动的服务器只有在有会话时才算在内；还没有任何会话的这种服务器，ccam 无法发现。
 
 试运行可以看出区别。普通启动会把组的服务器作为参数传入，Remote Control 则不会：
 
@@ -116,7 +117,7 @@ $ ccam mcp add ctx --url https://mcp.context7.com/mcp
 
 ### Remote Control 会话中缺少共享的 MCP 服务器
 
-原因是询问时回答了 `N`、当时没有终端，或者账号正在运行。停止 Remote Control，关闭该账号的其他会话，然后在终端中重新运行 `ccam work rc`，并回答 `y`。如果希望永远不被询问，请在 `~/.config/ccam/config.toml` 中设置 `mcp_strategy = "sync"`。已打开会话中的服务器在运行期间不会改变，所以复制之后请启动新的会话。
+原因是询问时回答了 `N`、当时没有终端，或者账号正在运行。停止 Remote Control，关闭该账号的其他会话，然后在终端中重新运行 `ccam work rc`，并回答 `y`。如果不想再被询问，请在 `~/.config/ccam/config.toml` 中设置 `mcp_strategy = "sync"`。已打开会话中的服务器在运行期间不会改变，所以复制之后请启动新的会话。
 
 ### "Account work is running, so its .claude.json is left alone"
 
@@ -128,7 +129,7 @@ $ ccam mcp add ctx --url https://mcp.context7.com/mcp
 
 ### `ccam work rc` 立即失败，并报出与 `--mcp-config` 有关的错误
 
-你的 ccam 早于 0.6.0，会把 `--mcp-config` 传给 Remote Control。请运行 `ccam update`。如果 ccam 已是最新版本仍出现同样的错误，说明在 `rc` 之前有一个 ccam 不认识的带值选项，于是 ccam 把那个值当成了命令；请把 `rc` 紧跟在账号名之后。
+你的 ccam 早于 0.6.0，会把 `--mcp-config` 传给 Remote Control。请运行 `ccam update`。如果 ccam 已是最新版本，同样的错误说明在 `rc` 之前有一个 ccam 不认识的带值选项，于是 ccam 把那个值误当成了命令；请把 `rc` 紧跟在账号名之后。
 
 ### 用 `ccam mcp` 做的更改没有反映到 Remote Control
 
@@ -136,7 +137,7 @@ $ ccam mcp add ctx --url https://mcp.context7.com/mcp
 
 ### 使用的是我自己的服务器，而不是组的
 
-如果账号自己有一个与组中服务器同名的服务器，复制会保留它并说明这一点：`account work has its own MCP servers fs, so group default's of those names are not copied there`。要使用组的服务器，请删除账号自己的（`claude mcp remove -s user <name>`）；要让所有账号都使用你的版本，请用 `ccam mcp import work <server> --force` 把它移入组中。`.claude.json` 的备份保存在 `~/.local/state/ccam/mcp/work/backups/` 中，那里保留最新的五份。
+如果账号自己有一个与组中服务器同名的服务器，复制会保留它并说明这一点：`account work has its own MCP servers fs, so group default's servers with those names are not copied there`。要使用组的服务器，请删除账号自己的（`claude mcp remove -s user <name>`）；要让所有账号都使用你的版本，请用 `ccam mcp import work <server> --force` 把它移入组中。`.claude.json` 的备份保存在 `~/.local/state/ccam/mcp/work/backups/` 中，那里保留最新的五份。
 
 ### 我想删除复制过去的服务器
 
@@ -154,7 +155,7 @@ Remote Control 需要使用 Claude 订阅账号登录。在 `ccam list` 中查�
 
 Claude 应用或 claude.ai/code 登录的是另一个 Claude 账号。把它与 `ccam list` 为 `work` 显示的电子邮件对比一下。
 
-### ccam 警告另一个 Claude Code 在此文件夹中共享对话历史
+### ccam 警告另一个 Claude Code 会话在此文件夹中共享对话历史
 
 同一历史组中的另一个账号正在同一文件夹中运行。如果两个账号的会话继续同一段对话，历史可能会混在一起。只有在它们处理不同对话时才回答 `y`，否则请在另一个文件夹中启动 Remote Control。
 
@@ -162,5 +163,5 @@ Claude 应用或 claude.ai/code 登录的是另一个 Claude 账号。把它与 
 
 - [启动 Claude Code](/features/launch)
 - [共享的 MCP 服务器](/features/mcp)
-- [在账号之间共享](/features/share)
+- [通过组共享](/features/share)
 - [管理账号](/features/accounts)

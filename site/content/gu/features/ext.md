@@ -1,13 +1,13 @@
 ---
 title: extensions તપાસવાં
 description: ccam ext દરેક એકાઉન્ટ લોડ કરે છે તે skills, commands, plugins, MCP સર્વર અને hooks, દરેક ક્યાંથી આવે છે, અને શું તૂટેલું છે તે બતાવે છે.
-updated: 2026-10-23
+updated: 2026-10-26
 order: 14
 translation: machine
-sourceHash: 45740e4efbef
+sourceHash: 7ca357a7f38a
 ---
 
-`ccam ext` આ પ્રશ્નનો જવાબ આપે છે: "આ skill (કે MCP સર્વર) એક એકાઉન્ટમાં કેમ ચાલે છે અને બીજામાં કેમ નહીં?". તે દરેક એકાઉન્ટ માટે Claude Code લોડ કરે છે તે extensions અને દરેક ક્યાંથી આવે છે તેની યાદી આપે છે: કોઈ share group, એકાઉન્ટનું પોતાનું ફોલ્ડર, કે તમે જેમાં છો તે પ્રોજેક્ટ. table ની નીચે તે એ બધું બતાવે છે જે કોઈ extension ને તમારી અપેક્ષા મુજબ લોડ થતાં રોકે છે. તે ફક્ત વાંચે છે.
+`ccam ext` આ પ્રશ્નનો જવાબ આપે છે: "આ skill (કે MCP સર્વર) એક એકાઉન્ટમાં કેમ ચાલે છે પણ બીજામાં કેમ નહીં?" તે દરેક એકાઉન્ટ માટે Claude Code લોડ કરે છે તે extensions અને દરેક ક્યાંથી આવે છે તેની યાદી આપે છે: કોઈ share group, એકાઉન્ટનું પોતાનું ફોલ્ડર, કે તમે જેમાં છો તે પ્રોજેક્ટ. table ની નીચે તે એ બધું બતાવે છે જે કોઈ extension ને તમારી અપેક્ષા મુજબ લોડ થતાં રોકે છે. તે કંઈ બદલતું નથી.
 
 ## ઉપયોગ
 
@@ -62,10 +62,10 @@ Sources: a group name (shared), account (its own folder), local (its own, for th
 
 - **તૂટેલી લિંક**: `skills/`, `commands/` કે `agents/` માંની એવી લિંક જેનું લક્ષ્ય નથી રહ્યું, અથવા એવું શેર કરેલું ફોલ્ડર (`skills`, `commands`, `agents`, `plugins`) જે ન હોય તેવી જગ્યાએ લિંક થાય છે (`ccam doctor --fix` વડે સુધારો, જે ખૂટતું group ફોલ્ડર ફરી બનાવે છે).
 - **`SKILL.md` વગરનું skill ફોલ્ડર**: Claude Code તેને છોડી દે છે.
-- **બે જગ્યાએ જુદી રીતે વ્યાખ્યાયિત MCP સર્વર**: group ની `mcp.json` અને એકાઉન્ટની `.claude.json`, અથવા તેમાંથી એક અને પ્રોજેક્ટની `.mcp.json`. બંને જગ્યાએ એ જ સેટિંગ્સ હોય (જે `mcp_strategy = "sync"` લખે છે) તો તે સમસ્યા નથી. એકાઉન્ટના પોતાના સર્વરને `ccam mcp import <account> <server>` વડે group માં ખસેડો.
+- **બે જગ્યાએ જુદી રીતે વ્યાખ્યાયિત MCP સર્વર**: group ની `mcp.json` અને એકાઉન્ટની `.claude.json`, અથવા તેમાંથી એક અને પ્રોજેક્ટની `.mcp.json`. બંને જગ્યાએ એકસરખી વ્યાખ્યા હોય (જે `mcp_strategy = "sync"` લખે છે) તો તે સમસ્યા નથી. એકાઉન્ટના પોતાના સર્વરને `ccam mcp import <account> <server>` વડે group માં ખસેડો.
 - **માન્ય JSON ન હોય તેવી `installed_plugins.json`**, `enabledPlugins` જેનું નામ ન આપતું હોય તેવું plugin, અને જેનું ફોલ્ડર ખૂટતું હોય તેવું plugin.
 - **ફક્ત એક એકાઉન્ટ લોડ કરતું હોય તેવા સર્વર**: ફક્ત આ એકાઉન્ટની `.claude.json` માં હોય તેવો સર્વર, જે તેના group નાં બીજાં એકાઉન્ટ લોડ કરતાં નથી, અને આ ફોલ્ડર માટે એકાઉન્ટના local scope માં હોય તેવો સર્વર (`-s user` ન આપ્યું હોય તો `claude mcp add` આવું જ કરે છે). દરેક સાથે તેને શેર કરતો `ccam mcp import` કમાન્ડ આવે છે. સાદા `claude` ની `~/.claude.json` માંના જે સર્વર કોઈ એકાઉન્ટ લોડ કરતું નથી તેમની સાથે `ccam migrate --mcp` કમાન્ડ આવે છે.
-- **મંજૂરીની રાહ જોતો પ્રોજેક્ટ સર્વર**: એકાઉન્ટે હજી ફોલ્ડરને trust નથી કર્યું, તેથી Claude Code એક વાર પૂછે છે, અને ત્યાં સુધી પ્રોજેક્ટની `.mcp.json` ના સર્વર રાહ જુએ છે. સમસ્યા જણાવે છે કે તેમને ક્યાં મંજૂર કરવા: settings group નાં એકાઉન્ટની, કે આ એકાઉન્ટની `settings.json` માં `"enabledMcpjsonServers"`. git repository ના મુખ્ય worktree ને આપેલો trust તેનાં બીજાં worktrees માં પણ ગણાય છે.
+- **મંજૂરીની રાહ જોતો પ્રોજેક્ટ સર્વર**: એકાઉન્ટે હજી ફોલ્ડરને trust નથી કર્યું, તેથી Claude Code એક વાર પૂછે છે, અને ત્યાં સુધી પ્રોજેક્ટની `.mcp.json` ના સર્વર રાહ જુએ છે. સમસ્યા જણાવે છે કે તેમને ક્યાં મંજૂર કરવા: settings group નાં એકાઉન્ટની, કે આ એકાઉન્ટની `settings.json` માં `"enabledMcpjsonServers"`. git repository ના મુખ્ય worktree ને આપેલો trust તેનાં બીજાં worktrees ને પણ લાગુ પડે છે.
 - **સાઇન-ઇન અને connectors**: જે MCP સર્વરમાં બીજું એકાઉન્ટ સાઇન ઇન છે પણ આ એકાઉન્ટમાં સાઇન-ઇન જોઈએ છે (સાઇન-ઇન ફક્ત એક એકાઉન્ટ માટે જ ચાલે છે; `/mcp` વડે સાઇન ઇન કરો), અને બીજા એકાઉન્ટે વાપરેલા પણ આ એકાઉન્ટે ન વાપરેલા claude.ai connectors.
 
 ## સલામતી અને ખાસ કિસ્સા
@@ -76,6 +76,6 @@ Sources: a group name (shared), account (its own folder), local (its own, for th
 
 ## સંબંધિત
 
-- [એકાઉન્ટ વચ્ચે શેરિંગ](/features/share)
+- [ગ્રુપ વડે શેરિંગ](/features/share)
 - [શેર કરેલા MCP સર્વર](/features/mcp)
 - [તપાસ અને સમારકામ](/features/doctor)

@@ -1,17 +1,17 @@
 ---
 title: Memperkenalkan ccam
 description: Mengapa ccam dibuat, apa gunanya bagi pengguna beberapa akun Claude Code, dan bagaimana ccam tidak mengganggu pekerjaan Anda.
-updated: 2026-10-20
+updated: 2026-10-26
 order: 1
 translation: machine
-sourceHash: a555dc969142
+sourceHash: "e4370f29b818"
 ---
 
 ccam adalah alat baris perintah kecil untuk orang yang menggunakan lebih dari satu akun Claude Code di komputer yang sama: akun pribadi dan akun kerja, atau beberapa akun untuk satu proyek panjang.
 
 ## Masalahnya
 
-Claude Code mendukung beberapa akun melalui [`CLAUDE_CONFIG_DIR`](/guides/claude-config-dir): satu folder per akun. Dalam praktiknya, setiap folder berdiri sendiri. Pengaturan, `CLAUDE.md`, server MCP, agen, dan skill harus disiapkan ulang di setiap folder dan diselaraskan secara manual. Percakapan tetap berada di tempat percakapan itu dimulai. Dan saat satu akun mencapai batas penggunaannya, Anda baru tahu setelah mencobanya.
+Claude Code mendukung beberapa akun melalui [`CLAUDE_CONFIG_DIR`](/guides/claude-config-dir): satu folder per akun. Dalam praktiknya, setiap folder berdiri sendiri. Pengaturan, `CLAUDE.md`, server MCP, agen, dan skill harus disiapkan ulang di setiap folder dan dijaga tetap sinkron secara manual. Percakapan tetap berada di tempat percakapan itu dimulai. Dan saat satu akun mencapai batas penggunaannya, Anda baru tahu setelah mencobanya.
 
 ## Apa yang dilakukan ccam
 
@@ -22,7 +22,7 @@ Claude Code mendukung beberapa akun melalui [`CLAUDE_CONFIG_DIR`](/guides/claude
 
 ## Tidak mengganggu
 
-Alat yang Anda jalankan sebelum setiap sesi seharusnya tidak memakan biaya yang terasa. ccam membaca satu file konfigurasi, memeriksa setiap tautan bersama dengan satu system call, lalu menggantikan dirinya dengan `claude`. ccam hanya menambah sekitar 4 milidetik, dan tidak berjalan saat Anda bekerja.
+Alat yang Anda jalankan sebelum setiap sesi seharusnya tidak memakan biaya yang terasa. ccam membaca satu file konfigurasi, memeriksa setiap tautan bersama dengan satu atau dua system call, lalu menggantikan dirinya dengan `claude`. ccam hanya menambah sekitar 4 milidetik, dan secara bawaan tidak berjalan saat Anda bekerja.
 
 ccam juga berhati-hati dengan file Anda. Setiap perubahan pada pembagian menampilkan rencana sebelum dimulai dan menyimpan file asli di folder cadangan. `ccam doctor` memeriksa tautan, izin, dan login, lalu memperbaiki apa yang aman untuk diperbaiki.
 
@@ -35,4 +35,4 @@ ccam add
 
 [Memulai cepat](/docs/quick-start) memandu Anda menambahkan dua akun, dan [cara menggunakan beberapa akun Claude Code](/guides/multiple-claude-code-accounts) menjelaskan pendekatannya dengan maupun tanpa ccam.
 
-ccam bersifat open source dan tidak resmi: ccam tidak berafiliasi dengan atau didukung oleh Anthropic. Boleh tidaknya Anda menggunakan beberapa akun bergantung pada ketentuan setiap akun. Masukan dan terjemahan sangat diterima di [GitHub](https://github.com/jhyunwoo/ccam).
+ccam bersifat open source dan tidak resmi: ccam tidak berafiliasi dengan atau didukung oleh Anthropic. Boleh tidaknya Anda menggunakan lebih dari satu akun bergantung pada ketentuan yang berlaku untuk masing-masing akun. Masukan dan terjemahan sangat diterima di [GitHub](https://github.com/jhyunwoo/ccam).

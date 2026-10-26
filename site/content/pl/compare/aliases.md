@@ -1,10 +1,10 @@
 ---
 title: ccam w porównaniu z aliasami powłoki
-description: Aliasy powłoki z CLAUDE_CONFIG_DIR i ccam do uruchamiania kilku kont Claude Code, porównane obok siebie.
-updated: 2026-10-20
+description: Aliasy powłoki z CLAUDE_CONFIG_DIR w porównaniu z ccam do uruchamiania kilku kont Claude Code, funkcja po funkcji.
+updated: 2026-10-26
 order: 1
 translation: machine
-sourceHash: b9fbcb88f111
+sourceHash: c30d84bceba0
 ---
 
 Alias powłoki dla każdego konta to najprostszy sposób na uruchamianie kilku kont Claude Code. ccam robi pod spodem to samo i dodaje współdzielenie, przełączanie oraz śledzenie użycia.
@@ -37,7 +37,7 @@ ccam add work --shortcut ccwork
 | Osobne loginy | Tak | Tak |
 | Konfiguracja każdego konta | Edycja `~/.bashrc`, logowanie | `ccam add` |
 | Działa w skryptach i innych programach | Nie, aliasy działają tylko w powłoce | Tak, `ccam work` i skróty takie jak `ccwork` to prawdziwe polecenia |
-| Współdzielone ustawienia, `CLAUDE.md`, rozszerzenia | Ręczne kopiowanie lub linkowanie | Dla każdego elementu, z kopiami zapasowymi |
+| Współdzielone ustawienia, `CLAUDE.md`, rozszerzenia | Ręczne kopiowanie lub linkowanie | Tak, wybierane dla każdego elementu, z kopiami zapasowymi |
 | Współdzielone serwery MCP | Ręcznie, na każdym koncie | Raz przez `ccam mcp add` |
 | Kontynuacja rozmowy na innym koncie | Nie | `ccam next --continue` |
 | Użycie wszystkich kont | Nie | `ccam usage` |

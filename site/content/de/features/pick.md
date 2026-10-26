@@ -1,15 +1,15 @@
 ---
 title: Ein Konto für Skripte wählen
 description: "ccam pick gibt das Konto mit dem meisten Spielraum für Skripte aus, verteilt gleichzeitig gestartete Worker auf Konten und endet mit 75 ohne Spielraum."
-updated: 2026-10-25
+updated: 2026-10-26
 order: 12
 translation: machine
-sourceHash: "5c4f74db9714"
+sourceHash: "321c8e351cf7"
 ---
 
-`ccam pick` gibt den Namen des angemeldeten Kontos mit dem meisten Spielraum aus, damit ein Skript Claude Code damit starten kann. Gleichzeitig gestartete Worker erhalten jeweils ein anderes Konto, solange genug Konten mit Spielraum da sind, sodass sich ein Stapel von `claude -p`-Jobs auf deine Konten verteilt, statt ein einziges aufzubrauchen.
+`ccam pick` gibt den Namen des angemeldeten Kontos mit dem meisten Spielraum aus, damit ein Skript Claude Code damit starten kann. Gleichzeitig gestartete Worker erhalten jeweils ein anderes Konto, solange genug Konten Spielraum haben, sodass sich ein Stapel von `claude -p`-Jobs auf deine Konten verteilt, statt ein einziges aufzubrauchen.
 
-**Team- und Enterprise-Plätze.** Die automatische Wahl (`ccam next`, `--fallback`, `ccam pick`, `n` im Dashboard und [`auto_switch`](/features/next#auto-switch), wenn du es einschaltest) wechselt auch zwischen Plätzen derselben Claude Team- oder Enterprise-Organisation. Im Hilfe-Center von Anthropic ([Team-Tarife](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); ebenso für [Enterprise-Tarife](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)) heißt es: „Each seat on a Team plan is assigned to one named individual, and only that person may use it“ (jeder Platz in einem Team-Tarif ist einer namentlich benannten Person zugewiesen, und nur diese Person darf ihn nutzen) und „Users can't route their work through another user's account to use that user's remaining usage“ (Benutzer dürfen ihre Arbeit nicht über das Konto eines anderen Benutzers leiten, um dessen verbleibendes Nutzungskontingent zu verwenden). Wenn du die automatische Wahl zwischen Plätzen nutzt, kann das daher gegen die Bedingungen von Anthropic verstoßen. Ob du sie dort nutzt, ist deine Entscheidung: Kläre das mit deiner Organisation und mit Anthropic ab, bevor du dich darauf verlässt. Für private Tarife (Pro, Max) gilt der [Hinweis zu den Bedingungen in den FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Team- und Enterprise-Plätze.** Die automatische Kontoauswahl (`ccam next`, `--fallback`, `ccam pick`, `n` im Dashboard und, sobald du es einschaltest, [`auto_switch`](/features/next#auto-switch)) wechselt auch zwischen Plätzen derselben Claude Team- oder Enterprise-Organisation, was gegen die Bedingungen von Anthropic verstoßen kann. Lies die [FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) und kläre das mit deiner Organisation und mit Anthropic ab, bevor du dich darauf verlässt.
 
 ## Verwendung
 
@@ -21,7 +21,7 @@ done; wait
 ccam pick --json                      # the account and its usage
 ccam pick --model opus                # also count the Opus weekly limit
 ccam pick --max-usage 80 --strategy expiring
-ccam pick --strategy balance          # spread over the weekly quota, fewer running sessions first
+ccam pick --strategy balance          # most weekly quota left per day; fewer sessions first
 ccam pick --cross-org                 # also accounts of other organizations
 ccam pick --wait=2h                   # nobody has room: wait for a reset
 ccam --fallback "$(ccam pick)" -p "…" # also switch if this account hits its limit mid-job
@@ -48,9 +48,9 @@ Exit-Codes: `0` mit einem Namen auf der Standardausgabe, `75` (`EX_TEMPFAIL`), w
 | --- | --- | --- |
 | `--json` | Das Konto, seine 5-Stunden- und Wochennutzung, die Herkunft der Zahlen und den Grund der Wahl ausgeben | aus |
 | `--model <model>` | Auch das Wochenfenster dieses Modells berücksichtigen, etwa `opus` | keins |
-| `--max-usage <1-100>` | Konten unter dieser Nutzung bevorzugen | `auto_max_usage`, sonst 100 |
-| `--strategy headroom\|expiring\|balance` | Niedrigste 5-Stunden-Nutzung, die früheste 5-Stunden-Zurücksetzung oder das Wochenkontingent, das als Erstes ungenutzt verfallen würde | `auto_strategy`, sonst `headroom` |
-| `--cross-org` | Auch Konten anderer Organisationen wählen | `cross_org`, sonst aus |
+| `--max-usage <1-100>` | Konten unter dieser Nutzung bevorzugen | `auto_max_usage`, andernfalls 100 |
+| `--strategy headroom\|expiring\|balance` | Die niedrigste 5-Stunden-Nutzung, die früheste 5-Stunden-Zurücksetzung oder das meiste verbleibende Wochenkontingent pro Tag | `auto_strategy`, andernfalls `headroom` |
+| `--cross-org` | Auch Konten anderer Organisationen wählen | `cross_org`, andernfalls aus |
 | `--wait[=<duration>]` | Wenn kein Konto Spielraum hat, auf die Zurücksetzung des ersten warten, höchstens so lange. Der Wert steht nach `=`: `--wait 30m` wird mit dem Hinweis `--wait takes its value after '=': --wait=30m` abgelehnt | aus; `5h`, wenn ohne Wert angegeben |
 | `--dry-run` | Wählen, ohne die Wahl zu erfassen | aus |
 
@@ -58,9 +58,9 @@ Exit-Codes: `0` mit einem Namen auf der Standardausgabe, `75` (`EX_TEMPFAIL`), w
 
 1. ccam listet die angemeldeten Konten (API-Schlüssel-Konten und Console-Anmeldungen haben keine Limits und werden ausgelassen) in der Organisation des Kontos auf, das dieser Ordner starten würde (siehe [Organisationen](/features/next#auto)); ein Ordner, der beim selben Claude-Konto angemeldet ist wie dieses, wird ebenfalls ausgelassen.
 2. Es setzt eine Sperre (`~/.local/state/ccam/picks.lock`), sodass gleichzeitig laufende Auswahlen nacheinander erfolgen.
-3. Es fragt die Nutzung aller Konten gleichzeitig ab, genauso wie `ccam usage`, mit dem 60-Sekunden-Cache. Ein Zeitfenster, das Claude Code als voll gemeldet hat, zählt bis zu seinem Zurücksetzen als 100 % ([der Limit-Eintrag](/features/usage#the-limit-record)), sodass ein Konto, das gerade sein Limit erreicht hat, draußen bleibt, auch wenn seine gespeicherten Zahlen Spielraum zeigen.
-4. Konten, die in den letzten 2 Minuten gewählt wurden, von `ccam pick` oder von [`auto_switch`](/features/next#auto-switch), das eine Sitzung dorthin verschoben hat (`~/.local/state/ccam/picks/<name>`; eine Wahl mit einem Datum nach der aktuellen Uhrzeit zählt nicht), werden zuerst ausgelassen, und die [Auswahlregeln](/features/next#auto) von `ccam next --auto` wählen unter den übrigen: zuerst unter `auto_max_usage`, nach der Strategie, nie ein Konto bei 100 %. Wird dabei das Konto übergangen, das die Regeln als Erstes nehmen würden, sagt das der `reason` von `--json`: `30% of its 5 hours used; work was picked a moment ago`.
-5. Wurden alle Konten mit Spielraum kürzlich gewählt, wählen die Regeln wieder unter allen, sodass sich ein vierter Worker bei drei Konten eines mit einem anderen teilt.
+3. Es fragt die Nutzung aller Konten gleichzeitig ab, genauso wie `ccam usage`, mit dem 60-Sekunden-Cache. Ein Zeitfenster, das Claude Code als voll gemeldet hat, zählt bis zu seinem Zurücksetzen als 100 % ([der Limit-Eintrag](/features/usage#the-limit-record)), sodass ein Konto, das gerade sein Limit erreicht hat, ausgeschlossen wird, auch wenn seine gespeicherten Zahlen noch Spielraum zeigen.
+4. Konten, die in den letzten 2 Minuten gewählt wurden, von `ccam pick` oder von [`auto_switch`](/features/next#auto-switch), das eine Sitzung dorthin verschoben hat (`~/.local/state/ccam/picks/<name>`; eine Wahl mit einem Zeitstempel in der Zukunft zählt nicht), werden zuerst ausgelassen, und die [Auswahlregeln](/features/next#auto) von `ccam next --auto` wählen unter den übrigen: zuerst unter `auto_max_usage`, nach der Strategie, nie ein Konto bei 100 %. Überspringt das das Konto, das die Regeln sonst wählen würden, sagt das der `reason` von `--json`: `30% of its 5 hours used; work was picked a moment ago`.
+5. Wurden alle Konten mit Spielraum kürzlich gewählt, wählen die Regeln wieder unter allen, sodass sich bei drei Konten ein vierter Worker eines davon teilt.
 6. Die Wahl wird erfasst und die Sperre freigegeben, dann wird der Name ausgegeben.
 
 Das 2-Minuten-Fenster ist wichtig, weil die Nutzung eines neuen Jobs eine Weile braucht, bis sie in den Zahlen erscheint: Ohne es würden fünf gleichzeitig gestartete Worker alle dasselbe Konto als das mit dem meisten Spielraum sehen.

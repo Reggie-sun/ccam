@@ -2,7 +2,7 @@
   "site": {
     "name": "ccam",
     "title": "ccam: Claude Code Account Manager per cambiare account",
-    "description": "ccam (Claude Code Account Manager) è uno strumento gratuito e open source per usare più account Claude Code su un solo computer e alternarli con un comando.",
+    "description": "ccam (Claude Code Account Manager) è uno strumento gratuito e open source per usare più account Claude Code su un computer e cambiare account con un comando.",
     "titleSuffix": "ccam per Claude Code"
   },
   "nav": {
@@ -14,17 +14,17 @@
     "menu": "Menu",
     "skip": "Vai al contenuto",
     "language": "Lingua",
-    "theme": "Passa al tema chiaro o scuro"
+    "theme": "Passa dal tema chiaro a quello scuro e viceversa"
   },
   "facts": {
     "what": "ccam è uno strumento a riga di comando gratuito e open source che ti permette di usare più account Claude Code su un solo computer e di passare dall'uno all'altro con un solo comando.",
-    "how": "Ogni account conserva il proprio login in una CLAUDE_CONFIG_DIR separata, mentre server MCP, impostazioni, CLAUDE.md, estensioni e cronologia delle conversazioni possono essere condivisi tra gli account, così puoi continuare una conversazione su un altro account quando uno raggiunge il limite di utilizzo.",
+    "how": "Ogni account conserva il proprio login in una CLAUDE_CONFIG_DIR separata. Server MCP, impostazioni, CLAUDE.md, estensioni e cronologia delle conversazioni possono essere condivisi tra gli account, così puoi continuare una conversazione su un altro account quando uno raggiunge il limite di utilizzo.",
     "install": "Installalo su Linux, macOS o Windows con un solo comando, poi esegui ccam add per ogni account.",
     "official": "ccam è un progetto non ufficiale e non è affiliato ad Anthropic né approvato da Anthropic."
   },
   "landing": {
     "headline": "Più account Claude Code. Un solo terminale.",
-    "lede": "Aggiungi ogni account una sola volta. Passa da uno all'altro con {command} o con una scorciatoia come {shortcut}. Quando un account raggiunge il limite, prosegui nel successivo con la stessa conversazione.",
+    "lede": "Aggiungi ogni account una sola volta. Passa da uno all'altro con {command} o con una scorciatoia come {shortcut}. Quando un account raggiunge il limite, continua la stessa conversazione su quello successivo.",
     "installLabel": "Installa su Linux o macOS",
     "installWindowsLabel": "Su Windows, in PowerShell",
     "thenAdd": "Poi aggiungi il tuo primo account con {command}.",
@@ -56,18 +56,18 @@
       "fiveHour": "5 ore",
       "weekly": "Settimanale",
       "resets": "si azzera tra {time}",
-      "mostRoom": "Più margine residuo: {name}"
+      "mostRoom": "Più margine disponibile: {name}"
     },
     "flowTitle": "Come funziona",
     "flow": [
       {
         "command": "ccam add work",
-        "body": "Crea una cartella di configurazione separata per l'account, apre il login di Claude nel browser e, se vuoi, assegna all'account una scorciatoia a cui dai tu il nome, come ccwork."
+        "body": "Crea una cartella di configurazione separata per l'account e apre il login di Claude nel browser. Può anche assegnare all'account una scorciatoia a tua scelta, come ccwork."
       },
       {
         "command": "ccam work",
         "also": "ccwork --resume",
-        "body": "Avvia Claude Code con quell'account. Tutto ciò che segue il nome arriva a Claude Code invariato, e ccam aggiunge circa 4 millisecondi prima dell'avvio."
+        "body": "Avvia Claude Code con quell'account. Tutto ciò che segue il nome arriva a Claude Code invariato, e avviarlo tramite ccam richiede circa 4 millisecondi in più rispetto a eseguire claude direttamente."
       },
       {
         "command": "ccam group set default --add history",
@@ -83,7 +83,7 @@
       },
       {
         "command": "ccam doctor --fix",
-        "body": "Controlla link, permessi e login, e ripara ciò che può riparare in sicurezza. Ogni modifica ai tuoi file conserva un backup."
+        "body": "Controlla link, permessi e login, e ripara ciò che può riparare in sicurezza. I file che sposta vengono conservati in un backup."
       }
     ],
     "guidesTitle": "Guide",
@@ -141,12 +141,12 @@
     "next": "Apre l'account successivo; --continue porta con sé la conversazione, --auto sceglie quello con più margine",
     "usage": "Mostra l'utilizzo su 5 ore e settimanale di tutti gli account",
     "share": "Mostra cosa condivide un account, e tramite quale gruppo",
-    "group": "Crea e modifica i gruppi: cosa condivide un insieme di account, spostato con un piano",
+    "group": "Crea e modifica i gruppi, che stabiliscono cosa condividono i loro account; ogni modifica mostra prima un piano",
     "mcp": "Gestisce i server MCP condivisi",
     "migrate": "Copia una configurazione di Claude Code esistente (~/.claude) in un gruppo condiviso",
     "login": "Esegue di nuovo il login di un account; --expired fa il login in ogni account che ne ha bisogno",
     "logout": "Disconnette un account: il suo login e i suoi accessi ai server MCP",
-    "rename": "Rinomina un account; la sua scorciatoia mantiene il nome",
+    "rename": "Rinomina un account; il suo comando scorciatoia resta lo stesso",
     "remove": "Rimuove un account: viene disconnesso, e la sua cartella finisce nella cartella del cestino",
     "import": "Registra una cartella ~/.claude esistente dove si trova",
     "doctor": "Controlla link, permessi, login e versioni, e ripara",
@@ -174,7 +174,7 @@
   },
   "footer": {
     "unofficial": "ccam è uno strumento open source non ufficiale. Non è affiliato ad Anthropic né approvato da Anthropic. Claude e Claude Code sono marchi di Anthropic.",
-    "terms": "La possibilità di usare più account dipende dai termini di ciascun account. Controllali prima di farlo.",
+    "terms": "La possibilità di usare più di un account dipende dai termini che si applicano a ciascuno. Leggi quei termini prima di iniziare.",
     "license": "Codice sorgente su GitHub",
     "languages": "Tutte le lingue",
     "analytics": "Questo sito conta le visite con Cloudflare Web Analytics, che non usa cookie e non raccoglie dati personali."

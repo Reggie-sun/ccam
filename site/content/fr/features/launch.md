@@ -1,13 +1,13 @@
 ---
 title: "Lancer Claude Code"
 description: "Lancez Claude Code avec tout compte via ccam <name|number>, ccam run ou le tableau de bord ; les arguments passent tels quels et --dry-run affiche la commande."
-updated: 2026-10-25
+updated: 2026-10-26
 order: 1
 translation: machine
-sourceHash: afa4942cfed5
+sourceHash: cf9ef66530cd
 ---
 
-`ccam work` lance Claude Code avec le compte `work`, et tout ce qui suit le nom est transmis tel quel à `claude`. Utilisez-le partout où vous taperiez `claude` : dans un terminal, dans un script ou avec une entrée redirigée.
+`ccam work` lance Claude Code avec le compte `work`, et tout ce qui suit le nom est transmis sans modification à `claude`. Utilisez-le partout où vous taperiez `claude` : dans un terminal, dans un script ou avec une entrée redirigée.
 
 ## Utilisation
 
@@ -28,17 +28,17 @@ ccam --fallback work -p "fix the tests"   # run again as another account at the 
 
 Indiquez le nom d'un compte ou son numéro dans `ccam list`. ccam ne lit pas les arguments qui suivent le nom, donc `ccam work --help` affiche l'aide de Claude Code. Un `--` après le nom est facultatif. L'entrée standard, le code de sortie et les signaux se comportent comme avec `claude`.
 
-Quand le premier argument commence par `-` et n'est pas l'une des options propres à ccam, ccam lance un compte sans nom, avec tous les arguments. Il s'agit du compte défini pour le dossier courant avec [`ccam folder`](/features/folder), sinon du compte par défaut : celui défini avec `ccam use`, ou le compte au plus petit numéro si vous n'en avez pas défini.
+Quand le premier argument commence par `-` et n'est pas l'une des options propres à ccam, ccam choisit le compte pour vous et transmet tous les arguments à Claude Code. Il utilise le compte défini pour le dossier courant avec [`ccam folder`](/features/folder), sinon le compte par défaut : celui défini avec `ccam use`, ou le compte au plus petit numéro si vous n'en avez pas défini.
 
 ### Le tableau de bord
 
 `ccam` sans argument ouvre le [tableau de bord](/features/dashboard) quand l'entrée et la sortie standard sont un terminal, et affiche `ccam list` dans le cas contraire. Placez-vous sur un compte (avec les flèches, ou en tapant son numéro) et appuyez sur `Enter` pour le lancer ; `n` lance le compte qui a le plus de marge et `o` propose `--continue`, `--resume` ou d'autres arguments. Le tableau de bord se ferme avant le démarrage de Claude Code, si bien que le terminal est d'abord restauré.
 
-**Sièges Team et Enterprise.** Le choix automatique (`ccam next`, `--fallback`, `ccam pick`, la touche `n` du tableau de bord, et [`auto_switch`](/features/next#auto-switch) lorsque vous l'activez) passe aussi d'un siège à l'autre au sein d'une même organisation Claude Team ou Enterprise. Le centre d'aide d'Anthropic indique : « Each seat on a Team plan is assigned to one named individual, and only that person may use it » (chaque siège d'une offre Team est attribué à une personne nommément désignée, et seule cette personne peut l'utiliser) et « Users can't route their work through another user's account to use that user's remaining usage » (les utilisateurs ne peuvent pas faire passer leur travail par le compte d'un autre utilisateur pour profiter de l'utilisation restante de celui-ci) ([offres Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129) ; de même pour les [offres Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Utiliser le choix automatique entre plusieurs sièges peut donc enfreindre les conditions d'Anthropic. C'est à vous de décider si vous l'utilisez dans ce cas : renseignez-vous auprès de votre organisation et d'Anthropic avant de vous y fier. Les offres personnelles (Pro, Max) sont traitées dans la [note de la FAQ sur les conditions](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Sièges Team et Enterprise.** La sélection automatique de compte (`ccam next`, `--fallback`, `ccam pick`, la touche `n` du tableau de bord et, une fois que vous l'activez, [`auto_switch`](/features/next#auto-switch)) passe aussi d'un siège à l'autre au sein d'une même organisation Claude Team ou Enterprise, ce qui peut enfreindre les conditions d'Anthropic. Lisez la [FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) et renseignez-vous auprès de votre organisation et d'Anthropic avant de vous y fier.
 
-Quand le shell définit `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY` ou `ANTHROPIC_AUTH_TOKEN`, Claude Code utiliserait cette clé ou ce jeton au lieu de la connexion propre au compte : ccam le signale donc sur la sortie d'erreur standard avant le lancement (`ccam: $ANTHROPIC_API_KEY is set, so Claude Code may use that key instead of work's login…`). Il se contente de lire ces variables ; un [compte à clé d'API](/features/api) les efface au contraire.
+Quand le shell définit `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY` ou `ANTHROPIC_AUTH_TOKEN`, Claude Code peut utiliser cette clé ou ce jeton au lieu de la connexion propre au compte : ccam vous avertit donc sur la sortie d'erreur standard avant le lancement (`ccam: $ANTHROPIC_API_KEY is set, so Claude Code may use that key instead of work's login…`). Il se contente de lire ces variables ; un [compte à clé d'API](/features/api) les efface au contraire.
 
-Avec `relay = true`, ou [`auto_switch = true`](/features/next#auto-switch) sous Linux et macOS, en haut de `config.toml` (au-dessus du premier `[[group]]`, `[[profile]]` ou `[[folder]]`), ccam lance les sessions interactives comme processus enfant et reste à côté d'elles, pour que `/ccam:switch`, ou `auto_switch` à une limite d'utilisation, puisse poursuivre une conversation de lui-même, avec les options, le mode de permission et le niveau d'effort de la session ([détails](/features/next#relay)) ; sinon, ccam se remplace par Claude Code, et rien ne tourne à côté.
+Par défaut, ccam se remplace par Claude Code, si bien que rien d'autre ne continue de tourner. Avec `relay = true` (ou [`auto_switch = true`](/features/next#auto-switch) sous Linux et macOS) en haut de `config.toml`, au-dessus du premier `[[group]]`, `[[profile]]` ou `[[folder]]`, ccam lance plutôt les sessions interactives comme processus enfant et continue de tourner à côté d'elles. Cela permet à `/ccam:switch`, ou à `auto_switch` à une limite d'utilisation, de poursuivre la conversation sur un autre compte de lui-même, avec les options, le mode de permission et le niveau d'effort de la session ([détails](/features/next#relay)).
 
 ## Options
 
@@ -52,11 +52,11 @@ Avec `relay = true`, ou [`auto_switch = true`](/features/next#auto-switch) sous 
 Règles des arguments :
 
 - ccam ne lit ses propres options qu'avant le nom du compte. Après le nom, chaque argument appartient à Claude Code, y compris `--dry-run` et `--help`.
-- `--dry-run` fonctionne sous la forme `ccam --dry-run work`, `ccam run --dry-run work` et `ccam --dry-run` (le compte sans nom). Il est respecté, pas refusé. `--dry-run` et `--fallback` peuvent venir dans n'importe quel ordre.
+- `--dry-run` fonctionne sous la forme `ccam --dry-run work`, `ccam run --dry-run work` et `ccam --dry-run` (pour le compte du dossier ou le compte par défaut). `--dry-run` et `--fallback` peuvent venir dans n'importe quel ordre.
 - `ccam run <name|number> [claude args]` est la forme longue de `ccam <name>`. `ccam run` sans nom utilise le compte du dossier ou le compte par défaut.
 - Les noms de compte ne peuvent pas être des noms de commandes ccam comme `add`, `list`, `run` ou `usage`, si bien que `ccam <word>` n'est jamais ambigu.
 
-La simulation affiche une ligne que vous pourriez coller dans un shell, ou dans PowerShell sous Windows. Elle commence par ce que le lancement change dans l'environnement : toujours `CLAUDE_CONFIG_DIR` et `CCAM_PROFILE`, `env -u <name>` pour une variable qu'il retire (comme un `CCAM_RELAY` hérité), et pour un [compte à clé d'API](/features/api) son point de terminaison, son modèle et la clé sous la forme de sa source (`ANTHROPIC_API_KEY="$WORK_KEY"`), jamais la clé elle-même :
+La simulation affiche une ligne que vous pourriez coller dans un shell, ou dans PowerShell sous Windows. Elle commence par ce que le lancement change dans l'environnement : toujours `CLAUDE_CONFIG_DIR` et `CCAM_PROFILE`, `env -u <name>` pour une variable qu'il retire (comme un `CCAM_RELAY` hérité), et, pour un [compte à clé d'API](/features/api), son point de terminaison, son modèle et la provenance de la clé (`ANTHROPIC_API_KEY="$WORK_KEY"`), jamais la clé elle-même :
 
 ```console
 $ ccam --dry-run work -p "fix the tests"
@@ -78,22 +78,34 @@ Chaque lancement suit les mêmes étapes, de la ligne de commande jusqu'à `exec
 
 Chaque case s'allume pendant l'exécution de son étape, et les lignes en dessous sont l'environnement et les arguments avec lesquels Claude Code démarre.
 
-1. `cmd/ccam/main.go` appelle `app.Main`. Si ccam a été lancé sous un autre nom, il s'agit d'un [raccourci](/features/shortcuts), qui va directement au lanceur.
-2. `app.parse` examine `os.Args` avant toute intervention de cobra. Seuls `ccam` seul (le tableau de bord), un nom de commande ccam (`config.Reserved`), `-h`/`--help` et `-v`/`--version` vont à `cli.Execute`. Tout le reste est un lancement.
-3. `launcher.Launch` lit `~/.config/ccam/config.toml`, le seul fichier qu'il analyse.
-4. `launcher.Prepare` trouve le compte par son nom ou son numéro (sans nom, `HereProfile` prend le compte du dossier, en comparant le répertoire de travail aux entrées `[[folder]]` de `config.toml` sous forme de chaînes, sans tenir compte de la casse sous macOS et Windows), retire un éventuel `--` initial et résout l'exécutable `claude` avec `ResolveClaude`. La recherche dans le PATH est mise en cache dans `~/.local/state/ccam/claude-path` avec la date de modification du fichier et un hachage du `PATH`, si bien que ccam ne parcourt pas le `PATH` à chaque lancement. Un fichier modifié ou absent, ou un `PATH` modifié, déclenche une nouvelle recherche. Un chemin `claude_bin` dans `config.toml` (`~/` est développé) doit être un fichier exécutable ; sinon, le lancement s'arrête avec `claude_bin X is not an executable file. Check claude_bin in config.toml` avant que quoi que ce soit ne soit écrit. ccam refuse un `claude` qui serait ccam lui-même, comparé par inode, car cela tournerait en boucle.
-5. `checkLinks` compare le dossier du compte `~/.local/share/ccam/profiles/<name>/` avec ses paramètres de partage à l'aide de `share.Check`, qui n'appelle que `lstat` et `readlink`, un ou deux appels système par élément. Un lien manquant est créé sur-le-champ. Tout ce qui pourrait faire perdre des données arrête le lancement.
-6. `applyMCP` ajoute les serveurs MCP partagés (voir plus bas).
-7. `session.Register` enregistre la session. ccam écrit un marqueur nommé d'après son PID, contenant l'heure de démarrage du processus, dans `~/.local/state/ccam/locks/profile-<name>/<pid>`, quoi qu'indique `XDG_RUNTIME_DIR`, si bien que chaque shell voit les mêmes marqueurs. Pour un compte qui partage l'historique des conversations, `historyCheck` cherche d'abord une session en cours dans `history-<group>-<hash>`, où le hachage est celui du dossier courant avec les liens symboliques résolus, et s'y enregistre aussi. `exec` conserve le PID, si bien que le marqueur désigne ensuite le processus Claude Code lui-même. Un marqueur plutôt qu'un verrou tenu, car les processus lancés par Claude Code hériteraient du verrou et le garderaient après la fin de la session. Un marqueur qui ne peut pas être écrit n'arrête pas le lancement : ccam affiche `ccam: could not mark the session as running (…); starting Claude Code anyway`. Les autres vérifications de ccam qui déterminent si un compte tourne (renommage, suppression, modifications de groupes, `doctor --fix`, la synchronisation MCP) lisent aussi les propres enregistrements de Claude Code dans le dossier du compte (`sessions/<pid>.json`, `daemon.lock`), si bien qu'elles voient aussi Claude Code lancé sans ccam : `claude` seul, un IDE, les sessions en arrière-plan et leur démon.
-8. `Plan.Exec` définit le titre du terminal à `claude · <name>` (quand la sortie d'erreur standard est un terminal), écrit l'heure de lancement dans `~/.local/state/ccam/last-used/<name>` sans `fsync`, et appelle `syscall.Exec`.
+1. ccam démarre dans `app.Main`, qu'appelle `cmd/ccam/main.go`. Si ccam a été lancé sous un autre nom, il s'agit d'un [raccourci](/features/shortcuts), qui va directement au lanceur.
+2. ccam examine `os.Args` avant toute intervention de cobra (`app.parse`). Seuls `ccam` seul (le tableau de bord), un nom de commande ccam (`config.Reserved`), `-h`/`--help` et `-v`/`--version` vont à `cli.Execute`. Tout le reste est un lancement.
+3. ccam lit `~/.config/ccam/config.toml`, le seul fichier qu'il analyse (`launcher.Launch`).
+4. ccam trouve le compte par son nom ou son numéro, retire un éventuel `--` initial et résout l'exécutable `claude` (`launcher.Prepare`, `ResolveClaude`). Sans nom, il prend le compte du dossier, en comparant le répertoire de travail aux entrées `[[folder]]` de `config.toml` sous forme de chaînes, sans tenir compte de la casse sous macOS et Windows (`HereProfile`). La recherche dans le PATH est mise en cache dans `~/.local/state/ccam/claude-path` avec la date de modification du fichier et un hachage du `PATH`, si bien que ccam ne parcourt pas le `PATH` à chaque lancement. Un fichier modifié ou absent, ou un `PATH` modifié, déclenche une nouvelle recherche. Un chemin `claude_bin` dans `config.toml` (`~/` est développé) doit être un fichier exécutable ; sinon, le lancement s'arrête avec `claude_bin X is not an executable file. Check claude_bin in config.toml` avant que quoi que ce soit ne soit écrit. ccam refuse un `claude` qui serait ccam lui-même, comparé par inode, car cela tournerait en boucle.
+5. ccam compare le dossier du compte `~/.local/share/ccam/profiles/<name>/` avec ses paramètres de partage, en n'appelant que `lstat` et `readlink`, un ou deux appels système par élément (`checkLinks`, `share.Check`). Un lien manquant est créé sur-le-champ. Tout ce qui pourrait faire perdre des données arrête le lancement.
+6. ccam ajoute les serveurs MCP partagés (`applyMCP` ; voir plus bas).
+7. ccam enregistre la session (`session.Register`). Il écrit un marqueur nommé d'après son PID, contenant l'heure de démarrage du processus, dans `~/.local/state/ccam/locks/profile-<name>/<pid>`, quoi qu'indique `XDG_RUNTIME_DIR`, si bien que chaque shell voit les mêmes marqueurs. Pour un compte qui partage l'historique des conversations, ccam cherche d'abord une session en cours dans `history-<group>-<hash>`, où le hachage est celui du dossier courant avec les liens symboliques résolus, et s'y enregistre aussi (`historyCheck`).
 
-Claude Code s'exécute avec `CLAUDE_CONFIG_DIR` défini sur le dossier du compte et `CCAM_PROFILE` défini sur le nom du compte. ccam supprime toute valeur héritée de ces variables, ainsi qu'un `CCAM_RELAY` hérité. Pour un dossier `~/.claude` enregistré avec `ccam import` sous macOS, il définit aussi `CLAUDE_SECURESTORAGE_CONFIG_DIR` à une valeur vide, afin que le compte et `claude` seul utilisent la même connexion du trousseau ; sous Windows, il fait de même quand Claude Code conserve la connexion dans le Gestionnaire d'identification.
+   `exec` conserve le PID, si bien que le marqueur désigne ensuite le processus Claude Code lui-même. ccam utilise un fichier marqueur plutôt qu'un verrou tenu, car les processus lancés par Claude Code hériteraient du verrou et le garderaient après la fin de la session. Un marqueur qui ne peut pas être écrit n'arrête pas le lancement : ccam affiche `ccam: could not mark the session as running (…); starting Claude Code anyway`.
+
+   Les autres vérifications de ccam qui déterminent si un compte est en cours d'exécution (renommage, suppression, modifications de groupes, `doctor --fix`, la synchronisation MCP) lisent aussi les propres enregistrements de Claude Code dans le dossier du compte (`sessions/<pid>.json`, `daemon.lock`), si bien qu'elles voient aussi Claude Code lancé sans ccam : `claude` seul, un IDE, les sessions en arrière-plan et leur démon.
+8. ccam définit le titre du terminal à `claude · <name>` (quand la sortie d'erreur standard est un terminal), écrit l'heure de lancement dans `~/.local/state/ccam/last-used/<name>` sans `fsync`, et appelle `syscall.Exec` (`Plan.Exec`).
+
+Claude Code s'exécute avec `CLAUDE_CONFIG_DIR` défini sur le dossier du compte et `CCAM_PROFILE` défini sur le nom du compte. ccam efface toute valeur héritée de ces variables, ainsi qu'un `CCAM_RELAY` hérité. Pour un dossier `~/.claude` enregistré avec `ccam import` sous macOS, il définit aussi `CLAUDE_SECURESTORAGE_CONFIG_DIR` à une valeur vide, afin que le compte et `claude` seul utilisent la même connexion du trousseau ; sous Windows, il fait de même quand Claude Code conserve la connexion dans le Gestionnaire d'identification.
 
 ### Pourquoi exec
 
-`syscall.Exec` remplace le processus ccam par `claude` : ccam ne reste pas en mémoire, les frappes au clavier, les signaux et le code de sortie sont ceux de Claude Code, et les arguments restent un tableau, jamais une chaîne de shell.
+ccam remplace son propre processus par `claude` (`syscall.Exec`). Par conséquent :
 
-Windows n'a pas d'`exec`. Là, `Plan.Exec` démarre `claude.exe` comme processus enfant avec le même environnement, les mêmes arguments et la même console, l'attend et quitte avec son code de sortie. Un `claude.cmd` installé par npm s'exécute dans `cmd.exe` avec son chemin complet et chaque argument entre guillemets, pour que `cmd.exe` n'en lise aucun comme sa propre syntaxe (`&`, `%PATH%`) ; un argument contenant un saut de ligne ne peut pas être transmis ainsi et est refusé, avec le conseil d'installer la version native de Claude Code. Ctrl+C atteint Claude Code directement depuis la console : ccam l'ignore donc. Le marqueur de session porte le PID de ccam, qui vit exactement aussi longtemps que Claude Code, et il est supprimé quand Claude Code se termine. Pendant cette attente, ccam ne fait rien d'autre. Le travail après une session, comme repérer les serveurs ajoutés avec `claude mcp add`, a lieu au lancement suivant : ccam compare la date de modification de `.claude.json` avec `~/.local/state/ccam/mcp/<name>/seen` et n'analyse le fichier que s'il a changé.
+- ccam ne reste pas en mémoire ;
+- les frappes au clavier, les signaux et le code de sortie sont ceux de Claude Code ;
+- les arguments restent un tableau, jamais une chaîne de shell.
+
+Windows n'a pas d'`exec`. Là, ccam démarre `claude.exe` comme processus enfant avec le même environnement, les mêmes arguments et la même console, l'attend et quitte avec son code de sortie (`Plan.Exec`). Un `claude.cmd` installé par npm s'exécute dans `cmd.exe` avec son chemin complet et chaque argument entre guillemets, pour que `cmd.exe` n'en lise aucun comme sa propre syntaxe (`&`, `%PATH%`) ; un argument contenant un saut de ligne ne peut pas être transmis ainsi et est refusé, avec le conseil d'installer la version native de Claude Code.
+
+Ctrl+C atteint Claude Code directement depuis la console : ccam l'ignore donc. Le marqueur de session porte le PID de ccam, qui vit exactement aussi longtemps que Claude Code, et il est supprimé quand Claude Code se termine. Pendant cette attente, ccam ne fait rien d'autre.
+
+Le travail après une session, comme repérer les serveurs ajoutés avec `claude mcp add`, a lieu au lancement suivant : ccam compare la date de modification de `.claude.json` avec `~/.local/state/ccam/mcp/<name>/seen` et n'analyse le fichier que s'il a changé.
 
 ### Comment une ligne de commande est aiguillée
 
@@ -109,9 +121,9 @@ Avec la stratégie `flag` par défaut, ccam transmet les serveurs MCP du groupe 
 
 <!-- motion:launch-mcp -->
 
-`mcp.FlagArgs` ne renvoie un argument que si le `mcp.json` du groupe existe, et `Plan.InsertArgs` le place juste après `claude`. Vos propres `--mcp-config` ou `--strict-mcp-config` s'appliquent alors toujours par-dessus. C'est un seul argument, `--mcp-config=<path>`, car le `--mcp-config` de Claude Code accepte plusieurs valeurs : écrit en deux arguments, il lirait aussi une invite qui suit comme fichier de configuration.
+ccam n'ajoute l'argument que si le `mcp.json` du groupe existe, et le place juste après `claude` (`mcp.FlagArgs`, `Plan.InsertArgs`). Vos propres `--mcp-config` ou `--strict-mcp-config` s'appliquent alors toujours par-dessus. C'est un seul argument, `--mcp-config=<path>`, car le `--mcp-config` de Claude Code accepte plusieurs valeurs : écrit en deux arguments, il lirait aussi une invite qui suit comme fichier de configuration.
 
-`claudeVerb` décide où l'option ne peut pas aller. Il lit la sous-commande de Claude Code dans les arguments comme le fait Claude Code, en sautant les options avec leurs valeurs. `remote-control` ou `rc` ne reçoit pas l'option (voir plus bas), pas plus qu'un verbe de session en arrière-plan donné en premier (`attach`, `logs`, `stop`, `kill`, `respawn`, `rm`). `ccam work mcp list`, `get` et `remove` n'en reçoivent pas non plus, car Claude Code la refuse à cet endroit ; ccam indique plutôt sur la sortie d'erreur standard que les serveurs du groupe se chargent aussi dans les sessions du compte :
+ccam décide où l'option ne peut pas aller (`claudeVerb`). Il lit la sous-commande de Claude Code dans les arguments comme le fait Claude Code, en sautant les options avec leurs valeurs. `remote-control` ou `rc` ne reçoit pas l'option (voir plus bas), pas plus qu'un verbe de session en arrière-plan donné en premier (`attach`, `logs`, `stop`, `kill`, `respawn`, `rm`). `ccam work mcp list`, `get` et `remove` n'en reçoivent pas non plus, car Claude Code la refuse à cet endroit ; ccam indique plutôt sur la sortie d'erreur standard que les serveurs du groupe se chargent aussi dans les sessions du compte :
 
 ```console
 ccam: `claude mcp list` sees only account work's own MCP servers; its sessions also load group default's: ctx, fs
@@ -120,7 +132,7 @@ ccam: `claude mcp list` sees only account work's own MCP servers; its sessions a
 
 Toutes les autres sous-commandes et toutes les sessions gardent l'option.
 
-Avec `mcp_strategy = "sync"` dans `config.toml`, ccam écrit plutôt les serveurs dans le `.claude.json` du compte, et ne le fait pas si le compte est déjà en cours d'exécution. Un lancement saute aussi ce travail quand ni le `mcp.json` du groupe ni `.claude.json` n'ont changé depuis la dernière vérification. La synchronisation ne remplace jamais un serveur que le compte possède lui-même sous le nom d'un serveur du groupe (elle le signale une fois), remet en place une copie qui a disparu de `.claude.json` (`put back group default's MCP servers …`), et ne modifie ou ne supprime que les copies qu'elle a écrites et que personne n'a modifiées depuis.
+Avec `mcp_strategy = "sync"` dans `config.toml`, ccam écrit plutôt les serveurs dans le `.claude.json` du compte, et ne le fait pas si le compte est déjà en cours d'exécution. Un lancement saute aussi ce travail quand ni le `mcp.json` du groupe ni `.claude.json` n'ont changé depuis la dernière vérification. Si le compte possède son propre serveur portant le même nom qu'un serveur du groupe, la synchronisation garde celui du compte et le signale une fois. Elle remet aussi en place une copie qui a disparu de `.claude.json` (`put back group default's MCP servers …`), et ne modifie ou ne supprime que les copies qu'elle a écrites et que personne n'a modifiées depuis.
 
 ### Remote Control
 
@@ -128,22 +140,22 @@ Avec `mcp_strategy = "sync"` dans `config.toml`, ccam écrit plutôt les serveur
 
 <!-- motion:launch-rc -->
 
-1. `claudeVerb` trouve `remote-control` ou `rc` comme verbe de Claude Code, y compris après des options et leurs valeurs (`ccam work --model opus rc`). `mcp.FlagArgs` n'ajoute alors rien.
-2. `mcp.Synced` compare l'heure de modification du `mcp.json` du groupe avec le `sync-stamp` du compte, et vérifie que chaque serveur du groupe se trouve toujours dans `.claude.json`. Si `.claude.json` contient déjà les serveurs actuels du groupe, ou si le groupe n'en a aucun, Remote Control démarre sans poser de question.
+1. ccam trouve `remote-control` ou `rc` comme verbe de Claude Code, même après des options et leurs valeurs (`ccam work --model opus rc`), et n'ajoute aucune option (`claudeVerb`, `mcp.FlagArgs`).
+2. ccam compare l'heure de modification du `mcp.json` du groupe avec le `sync-stamp` du compte, et vérifie que chaque serveur du groupe se trouve toujours dans `.claude.json` (`mcp.Synced`). Si `.claude.json` contient déjà les serveurs actuels du groupe, ou si le groupe n'en a aucun, Remote Control démarre sans poser de question.
 3. Sinon, ccam nomme les serveurs qui manqueraient aux sessions et demande :
 
    ```console
    ccam: Remote Control sessions only get MCP servers stored in account work's .claude.json, not the shared MCP servers (ctx, fs).
-   Copy them into .claude.json (a backup is kept; servers of the account's own stay)? [y/N]
+   Copy them into .claude.json (a backup is kept; the account's own servers stay)? [y/N]
    ```
 
-4. Avec `y`, `mcp.Sync` les copie comme le fait la stratégie `sync` : sous le verrou de Claude Code, après une sauvegarde, en conservant les serveurs propres du compte. Avec `N`, ou sans terminal, Remote Control démarre sans eux, et ccam indique `mcp_strategy = "sync"`, qui les copie avant chaque lancement.
+4. Avec `y`, ccam les copie comme le fait la stratégie `sync` (`mcp.Sync`) : sous le verrou de Claude Code, après une sauvegarde, en conservant les serveurs propres du compte. Avec `N`, ou sans terminal, Remote Control démarre sans eux, et ccam indique `mcp_strategy = "sync"`, qui les copie avant chaque lancement.
 
-ccam pose la question à chaque lancement de Remote Control tant que les serveurs ne sont pas copiés, et après une copie seulement quand le `mcp.json` du groupe change de nouveau ou qu'un serveur copié a disparu de `.claude.json`. Une copie dans `.claude.json` l'emporte sur `--mcp-config` lors des lancements normaux suivants, donc `ccam mcp add`, `remove` et `import` mettent à jour les copies que détiennent les autres comptes ([Serveurs MCP partagés](/features/mcp)).
+ccam pose la question à chaque lancement de Remote Control tant que les serveurs ne sont pas copiés. Après une copie, il ne repose la question que lorsque le `mcp.json` du groupe change ou qu'un serveur copié disparaît de `.claude.json`. Une copie dans `.claude.json` l'emporte sur `--mcp-config` lors des lancements normaux suivants, donc `ccam mcp add`, `remove` et `import` mettent à jour les copies que détiennent les autres comptes ([Serveurs MCP partagés](/features/mcp)).
 
 ### Le budget de 10 ms
 
-ccam ajoute au plus 10 ms (p95) avant le démarrage de Claude Code. Le chemin de lancement ne construit jamais l'arborescence de commandes cobra, ne démarre pas Bubble Tea et n'ouvre aucune connexion réseau, et `TestPackageInitIsCheap` échoue si les fonctions `init()` des paquets prennent plus de 5 ms au total. `scripts/perf-check.sh` mesure `ccam --dry-run work`, `ccam work` et un raccourci avec `hyperfine` et échoue au-delà de 10 ms, et `BenchmarkLaunchPath` dans `internal/launcher` exécute les étapes en boucle. Pour voir le temps de chaque étape, définissez `CCAM_TRACE=1` :
+Le budget du chemin de lancement est de 10 ms au 95e centile ; en pratique, ccam ajoute environ 4 ms avant le démarrage de Claude Code. Le chemin de lancement ne construit jamais l'arborescence de commandes cobra, ne démarre pas Bubble Tea et n'ouvre aucune connexion réseau, et `TestPackageInitIsCheap` échoue si les fonctions `init()` des paquets prennent plus de 5 ms au total. `scripts/perf-check.sh` mesure `ccam --dry-run work`, `ccam work` et un raccourci avec `hyperfine` et échoue au-delà de 10 ms, et `BenchmarkLaunchPath` dans `internal/launcher` exécute les étapes en boucle. Pour voir le temps de chaque étape, définissez `CCAM_TRACE=1` :
 
 ```console
 $ CCAM_TRACE=1 ccam --dry-run work >/dev/null
@@ -158,7 +170,7 @@ ccam trace: prelaunch             0.083ms (total 3.661ms)
 
 - Un nom ou un numéro inconnu s'arrête avec `no account "<name>"` et renvoie vers `ccam list`. Sans aucun compte, ccam vous demande d'en ajouter un avec `ccam add <name>`.
 - Si un chemin partagé est devenu un fichier ordinaire ou pointe au mauvais endroit, ccam s'arrête avec `stopped because of share link problems:`, liste les problèmes et vous demande de lancer `ccam doctor --fix`. Il ne déplace pas de données sur le chemin de lancement.
-- Si un autre Claude Code qui partage l'historique des conversations avec ce compte (même groupe) s'exécute dans le même dossier, ccam avertit que l'historique peut se mélanger et demande `Run anyway? [y/N]`. Le dossier est comparé avec les liens symboliques résolus. Sans terminal (une entrée standard venant de `/dev/null` compte comme absence de terminal), ou depuis une tâche en arrière-plan, il affiche l'avertissement et continue. Une nouvelle exécution `-p` démarre sa propre conversation et ne reçoit pas d'avertissement ; `--version`, `--help` et les sous-commandes qui n'ouvrent aucune conversation, comme `mcp`, `auth` ou `plugin`, ne sont pas vérifiés du tout.
+- Si une autre session Claude Code qui partage l'historique des conversations avec ce compte (même groupe) est en cours dans le même dossier, ccam avertit que l'historique peut se mélanger et demande `Run anyway? [y/N]`. Le dossier est comparé avec les liens symboliques résolus. Sans terminal (une entrée standard venant de `/dev/null` compte comme absence de terminal), ou depuis une tâche en arrière-plan, il affiche l'avertissement et continue. Une nouvelle exécution `-p` démarre sa propre conversation et ne reçoit pas d'avertissement ; `--version`, `--help` et les sous-commandes qui n'ouvrent aucune conversation, comme `mcp`, `auth` ou `plugin`, ne sont pas vérifiés du tout.
 - `--dry-run` saute la synchronisation MCP, l'avis de nouveau serveur, la note de `mcp list`, la vérification de l'historique, le marqueur de session, le titre et l'heure de dernière utilisation, et n'exécute pas exec. Il vérifie tout de même les liens de partage, et crée un lien manquant comme le ferait un lancement normal.
 - `ccam work rc` alors que `work` est déjà en cours d'exécution laisse `.claude.json` tel quel, le signale, et démarre Remote Control sans les serveurs du groupe ; relancez-le une fois la session terminée pour les copier. Avec `--dry-run`, il affiche le message mais ne pose pas de question et ne copie rien.
 - Avec `mcp_strategy = "sync"`, une synchronisation échouée affiche `ccam: MCP sync failed (launching anyway): …` et Claude Code démarre avec les serveurs qu'il avait déjà.
@@ -170,4 +182,4 @@ ccam trace: prelaunch             0.083ms (total 3.661ms)
 - [Gérer les comptes](/features/accounts)
 - [Référence des commandes](/docs/commands)
 - [Partager les serveurs MCP, les paramètres et l'historique](/docs/sharing)
-- [Fonctionnement de CLAUDE_CONFIG_DIR](/guides/claude-config-dir)
+- [CLAUDE_CONFIG_DIR expliqué](/guides/claude-config-dir)

@@ -2,7 +2,7 @@
   "site": {
     "name": "ccam",
     "title": "ccam: Claude Code Account Manager ve hesap değiştirici",
-    "description": "ccam (Claude Code Account Manager), birden fazla Claude Code hesabını tek bilgisayarda kullanmak ve tek komutla geçmek için ücretsiz, açık kaynaklı bir araçtır.",
+    "description": "ccam (Claude Code Account Manager), birçok Claude Code hesabını tek bilgisayarda kullanıp tek komutla geçiş yapmanızı sağlayan ücretsiz, açık kaynaklı araçtır.",
     "titleSuffix": "Claude Code için ccam"
   },
   "nav": {
@@ -14,17 +14,17 @@
     "menu": "Menü",
     "skip": "İçeriğe geç",
     "language": "Dil",
-    "theme": "Açık veya koyu temaya geç"
+    "theme": "Açık ve koyu tema arasında geçiş yap"
   },
   "facts": {
     "what": "ccam, tek bilgisayarda birden fazla Claude Code hesabı kullanmanızı ve hesaplar arasında tek komutla geçiş yapmanızı sağlayan ücretsiz, açık kaynaklı bir komut satırı aracıdır.",
-    "how": "Her hesabın giriş bilgileri ayrı bir CLAUDE_CONFIG_DIR klasöründe kalır; MCP sunucuları, ayarlar, CLAUDE.md, uzantılar ve konuşma geçmişi ise hesaplar arasında paylaşılabilir. Böylece bir hesap kullanım limitine ulaştığında konuşmaya başka bir hesapta devam edebilirsiniz.",
+    "how": "Her hesabın giriş bilgileri ayrı bir CLAUDE_CONFIG_DIR klasöründe kalır. MCP sunucuları, ayarlar, CLAUDE.md, uzantılar ve konuşma geçmişi hesaplar arasında paylaşılabilir. Böylece bir hesap kullanım limitine ulaştığında konuşmaya başka bir hesapta devam edebilirsiniz.",
     "install": "Linux, macOS veya Windows üzerinde tek komutla kurun, ardından her hesap için ccam add komutunu çalıştırın.",
     "official": "ccam resmi olmayan bir projedir; Anthropic ile bağlantılı değildir ve Anthropic tarafından onaylanmamıştır."
   },
   "landing": {
     "headline": "Birden fazla Claude Code hesabı. Tek terminal.",
-    "lede": "Her hesabı bir kez ekleyin. {command} veya {shortcut} gibi bir kısayolla geçiş yapın. Bir hesap limitine ulaştığında aynı konuşmayla bir sonraki hesapta devam edin.",
+    "lede": "Her hesabı bir kez ekleyin. {command} veya {shortcut} gibi bir kısayolla geçiş yapın. Bir hesap limitine ulaştığında aynı konuşmaya bir sonraki hesapta devam edin.",
     "installLabel": "Linux veya macOS üzerine kurun",
     "installWindowsLabel": "Windows'ta, PowerShell'de",
     "thenAdd": "Ardından ilk hesabınızı {command} ile ekleyin.",
@@ -56,18 +56,18 @@
       "fiveHour": "5 saatlik",
       "weekly": "Haftalık",
       "resets": "{time} sonra sıfırlanır",
-      "mostRoom": "En çok pay kalan: {name}"
+      "mostRoom": "En çok kullanım payı kalan: {name}"
     },
     "flowTitle": "Nasıl çalışır",
     "flow": [
       {
         "command": "ccam add work",
-        "body": "Hesap için ayrı bir yapılandırma klasörü oluşturur, Claude girişini tarayıcınızda açar ve isterseniz hesaba adını kendiniz seçtiğiniz ccwork gibi bir kısayol verir."
+        "body": "Hesap için ayrı bir yapılandırma klasörü oluşturur ve Claude girişini tarayıcınızda açar. Ayrıca hesaba ccwork gibi, kendi seçtiğiniz bir kısayol da verebilir."
       },
       {
         "command": "ccam work",
         "also": "ccwork --resume",
-        "body": "Claude Code'u o hesapla başlatır. Addan sonra gelen her şey Claude Code'a değiştirilmeden iletilir ve ccam, başlatmadan önce yaklaşık 4 milisaniye ekler."
+        "body": "Claude Code'u o hesapla başlatır. Addan sonra gelen her şey Claude Code'a değiştirilmeden iletilir ve ccam üzerinden başlatmak, claude'u doğrudan çalıştırmaktan yaklaşık 4 milisaniye daha uzun sürer."
       },
       {
         "command": "ccam group set default --add history",
@@ -83,7 +83,7 @@
       },
       {
         "command": "ccam doctor --fix",
-        "body": "Bağlantıları, izinleri ve girişleri kontrol eder ve güvenle onarabildiklerini onarır. Dosyalarınızdaki her değişiklik için bir yedek tutulur."
+        "body": "Bağlantıları, izinleri ve girişleri kontrol eder ve güvenle onarabildiklerini onarır. Yolundan çektiği dosyalar bir yedekte saklanır."
       }
     ],
     "guidesTitle": "Kılavuzlar",
@@ -141,19 +141,19 @@
     "next": "Bir sonraki hesabı açar; --continue konuşmayı yanında taşır, --auto en çok pay kalanı seçer",
     "usage": "Tüm hesapların 5 saatlik ve haftalık kullanımını gösterir",
     "share": "Bir hesabın neyi, hangi grup üzerinden paylaştığını gösterir",
-    "group": "Grupları oluşturur ve değiştirir: bir hesap kümesinin paylaştıkları, bir planla taşınır",
+    "group": "Grupları oluşturur ve değiştirir; gruplar, hesaplarının neleri paylaşacağını belirler ve her değişiklik önce bir plan gösterir",
     "mcp": "Paylaşılan MCP sunucularını yönetir",
     "migrate": "Mevcut bir Claude Code kurulumunu (~/.claude) paylaşılan bir gruba kopyalar",
     "login": "Bir hesapta yeniden giriş yapar; --expired gereken her hesapta giriş yapar",
     "logout": "Bir hesabın oturumunu kapatır: girişini ve MCP sunucusu girişlerini",
-    "rename": "Bir hesabı yeniden adlandırır; kısayolu adını korur",
+    "rename": "Bir hesabı yeniden adlandırır; kısayol komutu aynı kalır",
     "remove": "Bir hesabı kaldırır: oturumu kapatılır ve klasörü çöp klasörüne taşınır",
     "import": "Mevcut bir ~/.claude klasörünü yerinde kaydeder",
     "doctor": "Bağlantıları, izinleri, girişleri ve sürümleri kontrol eder ve onarır",
     "statusline": "Hesabı ve kullanımı Claude Code'un durum satırında gösterir",
     "shims": "Tüm hesapların kısayol bağlantılarını yeniden oluşturur",
     "shortcut": "Bir hesabın ccwork gibi kısayol komutunu gösterir, oluşturur, yeniden adlandırır veya kaldırır",
-    "folder": "Hesap adı verilmediğinde bir klasörde ve altındaki klasörlerde bir hesap kullanır",
+    "folder": "Hesap adı verilmediğinde bir klasörde ve alt klasörlerinde bir hesap kullanır",
     "pick": "Betikler ve paralel çalışan süreçler için en çok payı kalan hesabı yazdırır",
     "ext": "Her hesabın yüklediği beceri, komut, eklenti, MCP sunucusu ve hook'ları gösterir",
     "agents": "Her hesabın arka plan ajanlarını ve açık oturumlarını listeler",
@@ -174,7 +174,7 @@
   },
   "footer": {
     "unofficial": "ccam resmi olmayan, açık kaynaklı bir araçtır. Anthropic ile bağlantılı değildir ve Anthropic tarafından onaylanmamıştır. Claude ve Claude Code, Anthropic'in ticari markalarıdır.",
-    "terms": "Birden fazla hesap kullanıp kullanamayacağınız her hesabın koşullarına bağlıdır. Bunu yapmadan önce koşulları kontrol edin.",
+    "terms": "Birden fazla hesap kullanıp kullanamayacağınız, her birine uygulanan koşullara bağlıdır. Başlamadan önce bu koşulları okuyun.",
     "license": "Kaynak kodu GitHub üzerinde",
     "languages": "Tüm diller",
     "analytics": "Bu site ziyaretleri, çerez kullanmayan ve kişisel veri toplamayan Cloudflare Web Analytics ile sayar."

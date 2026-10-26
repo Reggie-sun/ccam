@@ -1,10 +1,10 @@
 ---
 title: MCP 서버, 설정, 대화 내역 공유
 description: ccam 그룹이 로그인 정보는 계정마다 분리해 둔 채 MCP 서버, settings.json, CLAUDE.md, 스킬, 대화 내역을 Claude Code 계정 간에 공유하는 방법을 설명합니다.
-updated: 2026-10-23
+updated: 2026-10-26
 order: 4
 translation: machine
-sourceHash: "27e0a0e5abbd"
+sourceHash: "2d8029ad6ec8"
 ---
 
 로그인 정보는 계정마다 따로 유지됩니다. 그 밖의 항목은 **그룹**으로 공유할 수 있습니다. 그룹에는 공유할 항목과 속한 계정이 정해져 있고, ccam은 그 계정들의 파일을 그룹 폴더에 링크합니다. 그래서 한 계정에서 바꾼 내용이 그룹의 모든 계정에 반영됩니다.
@@ -47,7 +47,7 @@ ccam group add team --items history --members work,side
 
 대화 파일 이름은 세션 ID를 따르므로, 여러 계정의 대화 내역을 합쳐도 충돌하지 않습니다.
 
-Claude Code가 그 계정으로 실행 중일 때는 Claude Code를 어떻게 시작했든(백그라운드 세션 포함) ccam이 계정을 바꾸지 않습니다. 세션이 옮기려는 파일에 계속 쓰기 때문입니다. 먼저 세션을 종료하세요. ccam은 저장하기 직전에 한 번 더 확인하므로, 계획이 확인을 기다리는 동안 시작한 세션도 잡아냅니다.
+Claude Code가 그 계정으로 실행 중일 때는 Claude Code를 어떻게 시작했든(백그라운드 세션 포함) ccam이 계정을 바꾸지 않습니다. 세션이 옮기려는 파일에 계속 쓰기 때문입니다. 먼저 세션을 종료하세요. ccam은 저장하기 직전에 한 번 더 확인하므로, ccam이 사용자의 답을 기다리는 동안 시작한 세션도 잡아냅니다.
 
 ## 계정이 공유를 멈출 때
 
@@ -120,7 +120,7 @@ ccam mcp add fs -- npx -y @modelcontextprotocol/server-filesystem ~/code
 ccam mcp list
 ```
 
-세션 안에서 `claude mcp add`로 추가한 서버는 해당 계정에만, 그리고 그때 있던 폴더에만 저장됩니다(Claude Code의 local 범위이며, `-s user`를 주면 모든 폴더에서 그 계정의 서버가 됩니다). 다음에 그 계정을 시작하면 ccam이 서버 이름과 그 폴더, 그리고 그 서버를 그룹으로 옮기는 명령을 알려 줍니다.
+세션 안에서 `claude mcp add`로 추가한 서버는 해당 계정에만, 그리고 그때 있던 폴더에만 저장됩니다(Claude Code의 local 범위이며, `-s user`를 주면 그 계정이 모든 폴더에서 쓸 수 있습니다). 다음에 그 계정을 시작하면 ccam이 서버 이름과 그 폴더, 그리고 그 서버를 그룹으로 옮기는 명령을 알려 줍니다.
 
 ```sh
 ccam mcp import work gh
@@ -128,13 +128,13 @@ ccam mcp import work gh
 
 그룹에 같은 이름의 다른 서버가 이미 있으면 ccam은 그 서버를 건너뛰고 그 사실을 알려 줍니다. `--force`를 붙이면 그룹의 서버를 바꾸고, 이전 `mcp.json`은 그룹의 `.ccam-backup/` 폴더에 보관합니다.
 
-OAuth로 로그인하는 MCP 서버는 토큰을 계정의 로그인 정보와 함께 저장하므로, 계정마다 한 번씩 `/mcp`로 인증해야 합니다. `ccam ext`와 `ccam doctor`는 다른 계정은 로그인했지만 이 계정은 로그인하지 않은 서버를 알려 줍니다.
+OAuth로 로그인하는 MCP 서버는 토큰을 계정의 로그인 정보와 함께 저장하므로, 계정마다 한 번씩 `/mcp`로 로그인해야 합니다. `ccam ext`와 `ccam doctor`는 다른 계정은 로그인했지만 이 계정은 로그인하지 않은 서버를 알려 줍니다.
 
-서버를 `claude mcp list`와 `/mcp`에서 일반 사용자 서버로 보고 싶다면 `~/.config/ccam/config.toml`의 맨 위, 첫 `[[group]]`, `[[profile]]`, `[[folder]]`보다 위에 `mcp_strategy = "sync"`를 설정하세요. 그러면 ccam이 시작 전에 각 계정의 `.claude.json`에 서버를 기록합니다. 이때 Claude Code의 파일 잠금을 그대로 사용하고 백업도 남깁니다. 계정에 같은 이름의 자체 서버가 있으면 그 서버는 계정 것으로 남고, ccam이 그 사실을 알려 줍니다.
+서버를 `claude mcp list`와 `/mcp`에서 일반 사용자 서버로 보고 싶다면 `~/.config/ccam/config.toml`의 맨 위, 첫 `[[group]]`, `[[profile]]`, `[[folder]]`보다 위에 `mcp_strategy = "sync"`를 설정하세요. 그러면 ccam이 시작 전에 각 계정의 `.claude.json`에 서버를 기록합니다. 이때 Claude Code의 파일 잠금을 그대로 사용하고 백업도 남깁니다. 계정에 그룹 서버와 이름이 같은 자체 서버가 있으면 ccam은 계정의 서버를 유지하고 그 사실을 알려 줍니다.
 
 ## 같은 폴더에서 두 계정 쓰기
 
-대화 내역을 공유하는 계정들은 같은 파일에 기록합니다. 같은 그룹의 다른 계정이 이미 실행 중인 폴더에서 Claude Code를 하나 더 시작하면, ccam이 경고를 보여 주고 계속할지 묻습니다.
+대화 내역을 공유하는 계정들은 같은 파일에 기록합니다. 같은 그룹의 다른 계정이 이미 실행 중인 폴더에서 Claude Code 세션을 하나 더 시작하면, ccam이 경고를 보여 주고 계속할지 묻습니다.
 
 ## 문제가 생겼을 때
 

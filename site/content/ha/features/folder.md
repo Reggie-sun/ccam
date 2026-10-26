@@ -1,13 +1,13 @@
 ---
 title: Asusai bisa folda
 description: ccam folder yana sa folda da duk abin da ke ƙarƙashinta su yi amfani da asusu ɗaya idan ka fara Claude Code babu sunan asusu, kamar work don lambar kamfani.
-updated: 2026-10-23
+updated: 2026-10-26
 order: 11
 translation: machine
-sourceHash: 48de98d42b99
+sourceHash: 25f82da64580
 ---
 
-`ccam folder work ~/code/company` yana sa kowane farawa ba tare da sunan asusu ba a cikin `~/code/company`, da kowace folda da ke ƙarƙashinta, ya fara Claude Code a matsayin `work`. A wajenta, asusun tsoho yana farawa kamar da. Ambaton asusu, da `ccam personal` ko gajeren umarni kamar `ccpersonal`, koyaushe yana fara wannan asusun.
+Bayan `ccam folder work ~/code/company`, duk wani farawa ba tare da sunan asusu ba a `~/code/company` ko foldojin da ke cikinta yana fara Claude Code a matsayin `work`. A wajenta, asusun tsoho yana farawa kamar da. Ambaton asusu, da `ccam personal` ko gajeren umarni kamar `ccpersonal`, koyaushe yana fara wannan asusun.
 
 ## Amfani
 
@@ -43,7 +43,7 @@ Waɗannan farawa suna amfani da asusun foldar:
 | `<account>` | Suna ko lambar asusun da za a yi amfani da shi | |
 | `[folder]` | Foldar, ta dangi (relative) ko cikakkiya (absolute) | foldar yanzu |
 | `--remove` | Cire shigarwar wannan foldar daidai | a kashe |
-| `--dry-run` | Ana karɓar sa: buga canjin ba tare da ajiye shi ba | a kashe |
+| `--dry-run` | Ana tallafa masa: buga canjin ba tare da ajiye shi ba | a kashe |
 
 ## Yadda yake aiki
 
@@ -58,16 +58,16 @@ account = 'work'
 1. `ccam folder` yana mayar da foldar zuwa cikakkiyar hanya (absolute path) tare da warware symbolic links, kuma yana ajiye ta. Sake saita folda yana maye gurbin asusunta.
 2. Farawa ba tare da suna ba yana kiran `launcher.HereProfile`. Idan babu shigarwa, yana ɗaukar asusun tsoho nan take.
 3. In ba haka ba yana kwatanta foldar aiki da kowane `path` a matsayin strings: foldar kanta ko wadda ke ƙarƙashinta, ba taɓa foldar da kawai take farawa da haruffa iri ɗaya ba (`/code/company` ba ya rufe `/code/companyx`). Shigarwa mafi zurfi ce ke cin nasara, don haka `~/code` zai iya zama `personal` yayin da `~/code/company` yake `work`.
-4. Sai idan foldar aiki kamar yadda take ba ta dace da komai ba, ccam yana warware symbolic links ɗinta kuma yana sake kwatantawa sau ɗaya.
+4. Sai idan foldar aiki yadda aka bayar da ita ba ta dace da komai ba ne ccam yake warware symbolic links ɗinta kuma ya sake kwatantawa.
 5. A Windows da macOS kwatantawar ba ta kula da manyan haruffa da ƙanana, kamar yadda tsarukan fayilolinsu suka saba yi.
 
-Ba a karanta wani fayil banda `config.toml`, don haka farawa a cikin folda ba ya ɗaukar lokacin da za a iya auna (4.0 ms da shigarwa ko babu, `hyperfine`, gudu 300).
+Ba a karanta wani fayil banda `config.toml`, don haka farawa a cikin folda ba ya ƙara lokacin da za a iya auna (4.0 ms da shigarwa ko babu, `hyperfine`, gudu 300).
 
 ## Tsaro da yanayi na musamman
 
 - `ccam rename` yana ɗaukar shigarwar foldoji zuwa sabon sunan, kuma `ccam remove` yana goge shigarwar asusun da aka cire.
 - Shigarwar da asusunta ba ya nan yana dakatar da farawa ba tare da suna ba a wannan foldar: `<folder> is set to account "<name>", which does not exist. Change it with ccam folder`. `ccam doctor` yana ba da rahoton irin waɗannan shigarwa, da shigarwar da foldarsu ta ɓace.
-- `ccam folder --remove` a cikin foldar da ke samun asusunta daga folda ta sama yana ambaton waccan foldar maimakon cire komai.
+- Idan ka gudanar da `ccam folder --remove` a cikin ƙaramar folda da ke gadon asusunta daga foldar da ke samanta, ccam yana ambaton foldar ta sama kuma ba ya cire komai.
 - `ccam next` yana zaɓa ta juyawa ko amfani kuma ba ya duba foldoji.
 
 ## Masu alaƙa

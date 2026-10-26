@@ -1,10 +1,10 @@
 ---
 title: CLAUDE_CONFIG_DIR erklärt
 description: Was CLAUDE_CONFIG_DIR in Claude Code bewirkt, was im Ordner liegt, wo macOS die Anmeldung speichert und welche Dateien Konten teilen können.
-updated: 2026-10-23
+updated: 2026-10-26
 order: 2
 translation: machine
-sourceHash: 2cf08478085f
+sourceHash: dc2fe42e11e1
 ---
 
 `CLAUDE_CONFIG_DIR` sagt Claude Code, welchen Ordner es statt `~/.claude` verwenden soll. Alles Kontospezifische liegt dort: die Anmeldung, Einstellungen, MCP-Server, Plugins und der Gesprächsverlauf. Wenn du die Variable auf verschiedene Ordner zeigen lässt, bekommst du getrennte Konten.
@@ -32,17 +32,17 @@ Geprüft mit Claude Code 2.1.309:
 | `history.jsonl` | Prompt-Verlauf | Ja |
 | `sessions/`, `shell-snapshots/`, `cache/` und weitere | Laufzeitzustand | Nein |
 
-## Worüber stolpert man leicht?
+## Woran scheitert man leicht?
 
 **Ohne `CLAUDE_CONFIG_DIR` liegt `.claude.json` nicht in `~/.claude`.** Claude Code speichert die Datei dann unter `~/.claude.json`, neben dem Ordner. Wenn du anfängst, `CLAUDE_CONFIG_DIR=~/.claude` zu verwenden, sucht Claude Code stattdessen nach `~/.claude/.claude.json` und findet dein Konto nicht. `ccam import` löst das, indem es die beiden verlinkt. Hat `~/.claude` bereits eine eigene `.claude.json` aus einem früheren Lauf mit `CLAUDE_CONFIG_DIR=~/.claude`, lässt ccam beide Dateien stehen und sagt das, da nur du weißt, welche die richtige ist.
 
-**Unter macOS liegt die Anmeldung im Schlüsselbund, nicht im Ordner.** Claude Code speichert sie unter dem Namen `Claude Code-credentials`, gefolgt von `-` und den ersten 8 Hexadezimalziffern des SHA-256 des Ordnerpfads, wenn `CLAUDE_CONFIG_DIR` gesetzt ist, für den Benutzer, den `$USER` nennt. Getrennte Ordner bekommen daher getrennte Schlüsselbundeinträge, und ein Ordner, der verschoben oder umbenannt wird, verliert seine Anmeldung; deshalb behält `ccam rename` unter macOS den Namen des Ordners bei. Wenn der Schlüsselbund das Schreiben verweigert, weicht Claude Code auf `.credentials.json` im Ordner aus, wie [seine Dokumentation](https://code.claude.com/docs/en/authentication#credential-management) beschreibt.
+**Unter macOS liegt die Anmeldung im Schlüsselbund, nicht im Ordner.** Claude Code speichert sie unter dem Namen `Claude Code-credentials`. Wenn `CLAUDE_CONFIG_DIR` gesetzt ist, endet der Name zusätzlich mit `-` und den ersten 8 Hexadezimalziffern des SHA-256 des Ordnerpfads. Der Kontoname des Schlüsselbundeintrags ist `$USER`. Getrennte Ordner bekommen daher getrennte Schlüsselbundeinträge, und ein Ordner, der verschoben oder umbenannt wird, verliert seine Anmeldung; deshalb behält `ccam rename` unter macOS den Namen des Ordners bei. Wenn der Schlüsselbund das Schreiben verweigert, weicht Claude Code auf `.credentials.json` im Ordner aus, wie [seine Dokumentation](https://code.claude.com/docs/en/authentication#credential-management) beschreibt.
 
-**Nicht jede Anmeldung liegt im Ordner.** Eine Claude Console-Anmeldung ohne API-Schlüssel wird außerhalb gespeichert, getrennte Ordner halten zwei solche Anmeldungen also nicht auseinander. claude.ai-Anmeldungen und API-Schlüssel werden pro Ordner gespeichert.
+**Nicht jede Anmeldung liegt im Ordner.** Eine Claude Console-Anmeldung ohne API-Schlüssel wird außerhalb gespeichert, getrennte Ordner können zwei solche Anmeldungen also nicht auseinanderhalten. claude.ai-Anmeldungen und API-Schlüssel werden pro Ordner gespeichert.
 
 ## Wo liegt der Ordner unter Windows?
 
-Standardmäßig unter `%USERPROFILE%\.claude`, mit der Anmeldung in `.credentials.json` darin oder in der Windows-Anmeldeinformationsverwaltung, wenn Claude Code so eingestellt ist, unter einem Namen, der wie unter macOS aus dem Ordnerpfad gebildet wird. Setze `CLAUDE_CONFIG_DIR` für jedes zusätzliche Konto auf einen anderen Ordner, genau wie unter Linux und macOS.
+Standardmäßig ist es `%USERPROFILE%\.claude`. Die Anmeldung liegt in `.credentials.json` darin oder in der Windows-Anmeldeinformationsverwaltung, wenn Claude Code so eingestellt ist, unter einem Namen, der wie unter macOS aus dem Ordnerpfad abgeleitet wird. Setze `CLAUDE_CONFIG_DIR` für jedes zusätzliche Konto auf einen anderen Ordner, genau wie unter Linux und macOS.
 
 ## Können Ordner Dateien teilen?
 

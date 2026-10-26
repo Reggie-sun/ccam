@@ -1,10 +1,10 @@
 ---
 title: Sesje w tle wszystkich kont
 description: ccam agents wyświetla w jednej tabeli agentów w tle i otwarte sesje Claude Code ze wszystkich twoich kont, a ccam attach otwiera sesję po jej identyfikatorze.
-updated: 2026-10-23
+updated: 2026-10-26
 order: 16
 translation: machine
-sourceHash: "092368f63363"
+sourceHash: "06281fb13119"
 ---
 
 Claude Code przechowuje sesje w tle (`claude --bg`, widok agentów) osobno dla każdego konta: `claude agents` pokazuje tylko sesje konta, jako które działa. `ccam agents` pyta wszystkie konta naraz i wyświetla ich sesje razem, a `ccam attach <id|name>` otwiera sesję w tle jako konto, które ją uruchomiło.
@@ -17,7 +17,7 @@ ccam agents                           # every account's sessions
 ccam agents --all                     # also finished background sessions
 ccam agents --json                    # for scripts
 ccam attach 49ec0028                  # open it, as the account that started it
-ccam attach 49ec                      # a unique start of the id is enough
+ccam attach 49ec                      # a unique prefix of the ID is enough
 ccam attach probe                     # or part of the session's name
 ```
 
@@ -42,14 +42,14 @@ Open a background session with `ccam attach <id>`.
 
 ## Jak to działa
 
-1. Dla każdego konta ccam uruchamia `claude agents --json` (z `--all`, jeśli podano) z `CLAUDE_CONFIG_DIR` tego konta, dla wszystkich kont naraz, każde z limitem 15 sekund. Odczytuje to własną listę sesji konta i nie uruchamia usługi Claude Code działającej w tle.
-2. Każdy wpis dostaje nazwę konta, a lista jest sortowana według czasu uruchomienia, od najnowszych. Konto, które nie odpowiada, jest wymieniane na standardowym wyjściu błędów i pomijane, a ccam kończy wtedy działanie z kodem 1, żeby skrypt nie wziął błędu za pustą listę.
-3. `ccam attach` szuka `jobs/<id>` w folderze każdego konta, gdzie Claude Code przechowuje sesję w tle, i uruchamia `claude attach <id>` jako to konto, tak samo jak `ccam <name>` uruchamia Claude Code. Słowo, które nie jest początkiem identyfikatora, jest wyszukiwane w nazwach sesji bez względu na wielkość liter; słowo wyglądające jak identyfikator nigdy nie jest brane za nazwę.
+1. Dla każdego konta ccam uruchamia `claude agents --json` (z `--all`, jeśli podano) z `CLAUDE_CONFIG_DIR` tego konta, równolegle, każde z limitem czasu 15 sekund. Odczytuje to własną listę sesji konta i nie uruchamia usługi Claude Code działającej w tle.
+2. Każdy wpis dostaje nazwę konta, a lista jest sortowana według czasu uruchomienia, od najnowszych. Konto, które nie odpowiada, jest wymieniane na standardowym wyjściu błędów i pomijane, a ccam kończy wtedy działanie z kodem 1, żeby skrypt nie pomylił błędu z pustą listą.
+3. `ccam attach` szuka `jobs/<id>` w folderze każdego konta, gdzie Claude Code przechowuje sesję w tle, i uruchamia `claude attach <id>` jako to konto, tak samo jak `ccam <name>` uruchamia Claude Code. Słowo, które nie jest prefiksem identyfikatora, jest porównywane z nazwami sesji bez względu na wielkość liter; słowo wyglądające jak identyfikator nigdy nie jest brane za nazwę.
 
 ## Bezpieczeństwo i przypadki brzegowe
 
 - Identyfikatory sesji w tle należą do jednego konta: `claude attach` uruchomione jako inne konto ich nie znajdzie, i właśnie to rozwiązuje `ccam attach`.
-- Dwa konta mogą mieć sesje, których identyfikatory zaczynają się tak samo albo których nazwy zawierają to samo słowo; `ccam attach` wymienia je wtedy i prosi o dłuższy fragment identyfikatora lub nazwy.
+- Jeśli sesje na dwóch kontach mają wspólny prefiks identyfikatora lub słowo w nazwie, `ccam attach` wymienia je i prosi o dłuższy identyfikator lub nazwę.
 - ccam przekazuje swoje współdzielone serwery MCP do Claude Code przez `--mcp-config=<file>` w jednym argumencie, co akceptują `claude agents` i `claude attach`; sesje w tle dalej używają tego pliku, gdy się restartują.
 - Usługa w tle konta z kluczem API bierze klucz z powłoki, która ją uruchomiła. Pierwszą sesję w tle takiego konta uruchom przez ccam (`ccam gw --bg …`), żeby usługa miała klucz.
 

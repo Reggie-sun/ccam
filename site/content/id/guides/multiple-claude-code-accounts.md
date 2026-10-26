@@ -1,10 +1,10 @@
 ---
 title: Gunakan beberapa akun Claude Code di satu komputer
 description: Jalankan beberapa akun Claude Code berdampingan dengan CLAUDE_CONFIG_DIR, secara manual lewat alias shell atau otomatis dengan ccam, lalu ganti akun kapan saja.
-updated: 2026-10-25
+updated: 2026-10-26
 order: 1
 translation: machine
-sourceHash: "5c5dbd9fcd23"
+sourceHash: "381de7a473b2"
 ---
 
 Beri setiap akun folder konfigurasinya sendiri. Claude Code membaca folder itu dari variabel lingkungan `CLAUDE_CONFIG_DIR`, dan setiap folder menyimpan login, pengaturan, dan riwayatnya sendiri, sehingga setiap akun tetap login dan Anda bisa menjalankannya bersamaan. Anda bisa menyiapkannya secara manual dengan alias shell, atau membiarkan ccam melakukannya.
@@ -17,7 +17,7 @@ Ini adalah pendekatan yang [dijelaskan dalam dokumentasi Claude Code](https://co
 alias claude-work='CLAUDE_CONFIG_DIR=~/.claude-work claude'
 ```
 
-Buka terminal baru dan jalankan `claude-work`. Claude Code meminta Anda login, karena foldernya masih baru. Sejak saat itu, `claude` adalah akun pertama Anda dan `claude-work` akun kedua. Tambahkan satu alias untuk setiap akun, masing-masing dengan foldernya sendiri.
+Buka terminal baru dan jalankan `claude-work`. Claude Code meminta Anda login, karena foldernya masih baru. Sejak saat itu, `claude` adalah akun pertama Anda dan `claude-work` akun kedua.
 
 Di Windows tanpa WSL, fungsi PowerShell di profil Anda (`notepad $PROFILE`) melakukan hal yang sama:
 
@@ -29,7 +29,7 @@ function claude-work { $env:CLAUDE_CONFIG_DIR = "$HOME\.claude-work"; try { clau
 
 Cara ini berfungsi baik untuk dua akun. Hal-hal yang perlu diketahui:
 
-- Setiap folder dimulai dalam keadaan kosong: tanpa pengaturan, tanpa `CLAUDE.md`, tanpa server MCP, tanpa agen atau skill. Anda menyalin atau menautkan apa yang Anda perlukan, dan menyelaraskan salinannya sendiri.
+- Setiap folder dimulai dalam keadaan kosong: tanpa pengaturan, tanpa `CLAUDE.md`, tanpa server MCP, tanpa agen atau skill. Anda menyalin atau menautkan apa yang Anda perlukan, dan menjaga salinannya tetap sinkron sendiri.
 - Alias hanya ada di shell interaktif. Skrip, Makefile, dan program lain tidak melihatnya.
 - Server MCP berada di `.claude.json`, bersama dengan login, sehingga tidak bisa begitu saja ditautkan antarfolder.
 - Percakapan tetap berada di akun tempat percakapan itu dimulai, sehingga Anda tidak bisa melanjutkannya di akun lain.
@@ -51,9 +51,9 @@ ccam add work --shortcut ccwork
 
 Sekarang `ccam personal` dan `ccam work` menjalankan kedua akun tersebut, begitu juga `ccwork`, pintasan yang Anda berikan untuk akun kerja. Karena keduanya adalah program sungguhan, bukan alias, keduanya juga berfungsi di skrip. Jalankan `ccam` saja untuk memilih akun dari daftar, dan `ccam use work` untuk menjadikan satu akun sebagai default.
 
-Pengaturan, `CLAUDE.md`, server MCP, dan ekstensi dibagikan sejak awal. `ccam next --continue` membawa percakapan ke akun lain, dan riwayat percakapan bersama, yang bisa Anda aktifkan, menjaganya tetap satu percakapan. `ccam usage` menampilkan penggunaan 5 jam dan mingguan semua akun sekaligus.
+Pengaturan, `CLAUDE.md`, server MCP, dan ekstensi dibagikan sejak awal. `ccam next --continue` melanjutkan percakapan di akun lain. Jika Anda mengaktifkan riwayat percakapan bersama, kedua akun mengerjakan percakapan yang sama, bukan salinannya. `ccam usage` menampilkan penggunaan 5 jam dan mingguan semua akun sekaligus.
 
-Jika Anda sudah menggunakan `~/.claude`, jalankan `ccam import` alih-alih menambahkan akun itu lagi, atau `ccam migrate` untuk menyalin pengaturan, server MCP, dan ekstensinya ke pengaturan bersama.
+Jika Anda sudah menggunakan `~/.claude`, jalankan `ccam import` alih-alih menambahkan akun itu lagi, atau `ccam migrate` untuk menyalin pengaturan, server MCP, dan ekstensinya ke grup bersama `default`.
 
 ## Bagaimana saya tahu akun mana yang sedang berjalan?
 
@@ -75,8 +75,8 @@ Claude Code berjalan [secara native di Windows dan di dalam WSL](https://code.cl
 
 ## Mana yang sebaiknya dipilih?
 
-Untuk dua akun tanpa ada yang dibagikan, alias sudah cukup. Saat Anda menginginkan pengaturan dan server MCP bersama, lebih banyak akun, penggunaan yang terlihat sekilas, atau melanjutkan percakapan, ccam menghemat pekerjaan administrasinya. [Perbandingan dengan alias](/compare/aliases) mencantumkan perbedaannya secara berdampingan, dan [ccam dan pengalih akun lainnya](/compare/account-switchers) membahas alat yang justru menukar satu login.
+Untuk dua akun tanpa ada yang dibagikan, alias sudah cukup. Saat Anda menginginkan pengaturan dan server MCP bersama, lebih banyak akun, penggunaan yang terlihat sekilas, atau melanjutkan percakapan, ccam menghemat pekerjaan administrasinya untuk Anda. [Perbandingan dengan alias](/compare/aliases) mencantumkan perbedaannya secara berdampingan, dan [ccam dan pengalih akun lainnya](/compare/account-switchers) membahas alat yang justru menukar satu login.
 
-Boleh tidaknya Anda menggunakan beberapa akun bergantung pada ketentuan setiap akun. Periksa ketentuan itu sebelum melakukannya.
+Boleh tidaknya Anda menggunakan lebih dari satu akun bergantung pada ketentuan yang berlaku untuk masing-masing akun. Baca ketentuan tersebut sebelum Anda mulai.
 
-**Kursi Team dan Enterprise.** Pilihan otomatis (`ccam next`, `--fallback`, `ccam pick`, tombol `n` di dasbor, dan [`auto_switch`](/features/next#auto-switch) bila Anda mengaktifkannya) juga berganti di antara kursi dalam organisasi Claude Team atau Enterprise yang sama. Pusat bantuan Anthropic menyatakan "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (setiap kursi pada paket Team diberikan kepada satu orang tertentu, dan hanya orang itu yang boleh menggunakannya) dan "Users can't route their work through another user's account to use that user's remaining usage" (pengguna tidak boleh menyalurkan pekerjaannya melalui akun pengguna lain untuk memakai sisa kuota pengguna tersebut) ([paket Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); begitu pula untuk [paket Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Karena itu, memakai pilihan otomatis di antara kursi dapat melanggar ketentuan Anthropic. Apakah Anda memakainya di sana adalah keputusan Anda: tanyakan kepada organisasi Anda dan Anthropic sebelum Anda mengandalkannya. Paket pribadi (Pro, Max) dibahas dalam catatan di atas.
+**Kursi Team dan Enterprise.** Pemilihan akun otomatis (`ccam next`, `--fallback`, `ccam pick`, tombol `n` di dasbor, dan, setelah Anda mengaktifkannya, [`auto_switch`](/features/next#auto-switch)) juga berganti di antara kursi dalam organisasi Claude Team atau Enterprise yang sama, yang dapat melanggar ketentuan Anthropic. Baca [FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) dan tanyakan kepada organisasi Anda dan Anthropic sebelum Anda mengandalkannya.

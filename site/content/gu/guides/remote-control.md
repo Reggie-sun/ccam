@@ -1,13 +1,13 @@
 ---
 title: ccam સાથે Remote Control વાપરવું
 description: ccam <name> rc વડે કોઈ પણ એકાઉન્ટથી Claude Code Remote Control શરૂ કરો; લાગુ ઓપ્શન, ccam શેર કરેલા MCP સર્વર કૉપિ કરવાનું કેમ સૂચવે છે અને સમસ્યાના ઉકેલ.
-updated: 2026-10-23
+updated: 2026-10-26
 order: 4
 translation: machine
-sourceHash: 3e17d89f98c8
+sourceHash: 4d46f49c5dea
 ---
 
-`ccam work rc` Claude Code નું Remote Control `work` એકાઉન્ટ તરીકે શરૂ કરે છે, જેથી તમે claude.ai/code કે Claude મોબાઇલ ઍપ પરથી આ કમ્પ્યૂટર પરનાં સેશન ચલાવી શકો. તે `claude rc` જેવું જ કામ કરે છે, ફક્ત એક ફરક સાથે: જો એકાઉન્ટ MCP સર્વર શેર કરતું હોય, તો ccam એક વાર પૂછે છે કે તેમને એકાઉન્ટની `.claude.json` માં કૉપિ કરવા કે નહીં, કારણ કે Remote Control સેશન સર્વર બીજે ક્યાંયથી વાંચતાં નથી.
+`ccam work rc` Claude Code નું Remote Control `work` એકાઉન્ટ તરીકે શરૂ કરે છે, જેથી તમે claude.ai/code કે Claude મોબાઇલ ઍપ પરથી આ કમ્પ્યૂટર પરનાં સેશન નિયંત્રિત કરી શકો. તે `claude rc` જેવું જ કામ કરે છે, ફક્ત એક ફરક સાથે: જો એકાઉન્ટ MCP સર્વર શેર કરતું હોય, તો ccam એક વાર પૂછે છે કે તેમને એકાઉન્ટની `.claude.json` માં કૉપિ કરવા કે નહીં, કારણ કે Remote Control સેશન ફક્ત એ જ ફાઇલમાંથી સર્વર વાંચે છે.
 
 ## શરૂ કરો
 
@@ -31,9 +31,10 @@ ccam --dry-run work rc                # print the command instead of running it
 | ઓપ્શન કે સેટિંગ | શું કરે છે | ડિફૉલ્ટ |
 | --- | --- | --- |
 | `--dry-run` (એકાઉન્ટ પહેલાં) | environment અને કમાન્ડ છાપે છે, અને MCP સૂચના હોય તો તે પણ. ન તો પૂછે છે, ન કૉપિ કરે છે | off |
-| `Copy them into .claude.json (a backup is kept; servers of the account's own stay)? [y/N]` | જ્યારે એકાઉન્ટ MCP સર્વર શેર કરતું હોય અને તેની `.claude.json` માં ગ્રુપની હાલની યાદી ન હોય, કે કૉપિ કરેલો સર્વર તેમાંથી ગાયબ હોય, ત્યારે પુછાય છે. `y` તેમને કૉપિ કરે છે, `N` કે Enter તેમના વગર શરૂ કરે છે | `N` |
 | `~/.config/ccam/config.toml` માં સૌથી ઉપર `mcp_strategy = "sync"` | દરેક શરૂઆત પહેલાં, Remote Control હોય કે ન હોય, ગ્રુપના સર્વર `.claude.json` માં કૉપિ કરે છે, તેથી ક્યારેય કશું પુછાતું નથી | `"flag"` |
 | `ccam group leave <group> work` | એકાઉન્ટ સાથે MCP શેર કરતા ગ્રુપમાંથી તેને બહાર કાઢે છે. ગ્રુપના સર્વર તેની `.claude.json` માં તેના પોતાના સર્વર તરીકે કૉપિ થાય છે, તેથી Remote Control પાસે તે હોય છે અને કશું પુછાતું નથી; `--fresh` સાથે તે ફક્ત એકાઉન્ટના પોતાના સર્વર સાથે શરૂ થાય છે | `default` માં |
+
+જ્યારે એકાઉન્ટ MCP સર્વર શેર કરતું હોય અને તેની `.claude.json` માં ગ્રુપની હાલની યાદી ન હોય, કે કૉપિ કરેલો સર્વર તેમાંથી ગાયબ હોય, ત્યારે ccam `Copy them into .claude.json (a backup is kept; the account's own servers stay)? [y/N]` પૂછે છે. `y` તેમને કૉપિ કરે છે; `N` કે Enter તેમના વગર શરૂ કરે છે.
 
 ### Remote Control ના ઓપ્શન
 
@@ -47,7 +48,7 @@ ccam --dry-run work rc                # print the command instead of running it
 | `--session-id <id>` | ચોક્કસ સેશન સાથે ફરી જોડાય છે |
 | `--permission-mode <mode>` | નવાં સેશન માટે permission mode: `acceptEdits`, `auto`, `bypassPermissions`, `default`, `dontAsk` કે `plan` |
 | `--spawn <mode>` | `same-dir` (ડિફૉલ્ટ), `worktree` (દરેક સેશન માટે એક git worktree) કે `session` (એક સેશન, તે પૂરું થાય ત્યારે બહાર નીકળે છે) |
-| `--capacity <N>` | `same-dir` અને `worktree` mode માં એક સાથે વધુમાં વધુ સેશન (ડિફૉલ્ટ 32) |
+| `--capacity <N>` | `same-dir` અને `worktree` mode માં એકસાથે ચાલી શકતાં સેશનની મહત્તમ સંખ્યા (ડિફૉલ્ટ 32) |
 | `--[no-]create-session-in-dir` | શરૂઆતમાં હાલના ફોલ્ડરમાં પહેલું સેશન બનાવે છે (ડિફૉલ્ટ on) |
 | `--[no-]chrome` | નવાં સેશન માટે Claude in Chrome (ડિફૉલ્ટ off) |
 | `-d`, `--debug`, `--debug-file <path>`, `-v`, `--verbose` | debug અને વિગતવાર output |
@@ -66,10 +67,10 @@ ccam Claude Code ની જેમ જ Claude Code નો કમાન્ડ વ�
    ```console
    $ ccam work rc
    ccam: Remote Control sessions only get MCP servers stored in account work's .claude.json, not the shared MCP servers (ctx, fs).
-   Copy them into .claude.json (a backup is kept; servers of the account's own stay)? [y/N]
+   Copy them into .claude.json (a backup is kept; the account's own servers stay)? [y/N]
    ```
 
-5. `y` પર તે `.claude.json` નો બૅકઅપ સેવ કરે છે, Claude Code નું પોતાનું lock લે છે, ગ્રુપના સર્વર `mcpServers` માં ઉમેરે છે અને એકાઉન્ટના બીજા સર્વર જાળવી રાખે છે; ગ્રુપ સર્વરના નામવાળો એકાઉન્ટનો પોતાનો સર્વર એકાઉન્ટનો જ રહે છે, અને ccam તેમ જણાવે છે. `N` પર, ટર્મિનલ વગર, કે એકાઉન્ટ ચાલતું હોય ત્યારે, તે કશું બદલતું નથી અને એ જણાવે છે:
+5. `y` પર તે `.claude.json` નો બૅકઅપ સેવ કરે છે, Claude Code નું પોતાનું lock લે છે, ગ્રુપના સર્વર `mcpServers` માં ઉમેરે છે અને એકાઉન્ટના બીજા સર્વર જાળવી રાખે છે; જો એકાઉન્ટ પાસે ગ્રુપના સર્વર જેવા જ નામનો પોતાનો સર્વર હોય, તો ccam એકાઉન્ટનો સર્વર રાખે છે અને તેમ જણાવે છે. `N` પર, ટર્મિનલ વગર, કે એકાઉન્ટ ચાલતું હોય ત્યારે, તે કશું બદલતું નથી અને એ જણાવે છે:
 
    ```console
          Starting without them. To copy them before every launch instead, set mcp_strategy = "sync" in ~/.config/ccam/config.toml
@@ -77,7 +78,7 @@ ccam Claude Code ની જેમ જ Claude Code નો કમાન્ડ વ�
 
 6. તે સેશન નોંધે છે, `CLAUDE_CONFIG_DIR` ને એકાઉન્ટ ફોલ્ડર પર સેટ કરે છે અને `exec` વડે પોતાને `claude rc` થી બદલે છે.
 
-પછી Remote Control સર્વર તરીકે ચાલતું રહે છે. તે તમારા માટે શરૂ કરે તે દરેક સેશન એ process નું child છે, તેથી તે `work` તરીકે ચાલે છે: `work` ના લૉગિન, સેટિંગ્સ અને વાતચીતના ઇતિહાસ સાથે, અને તે `work` ની વપરાશ મર્યાદામાં ગણાય છે. ccam એ શરૂ કરેલું સર્વર ચાલે ત્યાં સુધી ccam એકાઉન્ટને ચાલતું ગણે છે, અને સાદા `claude remote-control` વડે શરૂ થયેલું સર્વર પણ, જ્યાં સુધી તેમાં સેશન હોય; હજી કોઈ સેશન વગરનું આવું સર્વર દેખાતું નથી.
+પછી Remote Control સર્વર તરીકે ચાલતું રહે છે. તે તમારા માટે શરૂ કરે તે દરેક સેશન એ process નું child છે, તેથી તે `work` તરીકે ચાલે છે: `work` ના લૉગિન, સેટિંગ્સ અને વાતચીતના ઇતિહાસ સાથે, અને તે `work` ની વપરાશ મર્યાદામાં ગણાય છે. ccam એ શરૂ કરેલું Remote Control સર્વર ચાલે ત્યાં સુધી ccam એકાઉન્ટને ચાલતું ગણે છે. સાદા `claude remote-control` વડે શરૂ થયેલું સર્વર ફક્ત તેમાં સેશન હોય ત્યાં સુધી જ ગણાય છે; જેમાં હજી કોઈ સેશન ન હોય તેવું સર્વર ccam જોઈ શકતું નથી.
 
 dry run આ ફરક બતાવે છે. સામાન્ય શરૂઆત ગ્રુપના સર્વર આર્ગ્યુમેન્ટ તરીકે સાથે લઈ જાય છે, Remote Control નહીં:
 
@@ -116,7 +117,7 @@ $ ccam mcp add ctx --url https://mcp.context7.com/mcp
 
 ### Remote Control સેશનમાં શેર કરેલા MCP સર્વર નથી
 
-પ્રશ્નનો જવાબ `N` આપવામાં આવ્યો હતો, ટર્મિનલ નહોતું, કે એકાઉન્ટ ચાલતું હતું. Remote Control બંધ કરો, એકાઉન્ટનાં બીજાં સેશન બંધ કરો, અને ટર્મિનલમાં `ccam work rc` ફરી ચલાવો; `y` જવાબ આપો. ક્યારેય ન પુછાય તે માટે `~/.config/ccam/config.toml` માં `mcp_strategy = "sync"` સેટ કરો. સેશનમાં પહેલેથી રહેલા સર્વર તે ચાલે ત્યાં સુધી બદલાતા નથી, તેથી કૉપિ પછી નવું સેશન શરૂ કરો.
+પ્રશ્નનો જવાબ `N` આપવામાં આવ્યો હતો, ટર્મિનલ નહોતું, કે એકાઉન્ટ ચાલતું હતું. Remote Control બંધ કરો, એકાઉન્ટનાં બીજાં સેશન બંધ કરો, અને ટર્મિનલમાં `ccam work rc` ફરી ચલાવો; `y` જવાબ આપો. પૂછવાનું બંધ કરાવવા માટે `~/.config/ccam/config.toml` માં `mcp_strategy = "sync"` સેટ કરો. સેશનમાં પહેલેથી રહેલા સર્વર તે ચાલે ત્યાં સુધી બદલાતા નથી, તેથી કૉપિ પછી નવું સેશન શરૂ કરો.
 
 ### "Account work is running, so its .claude.json is left alone"
 
@@ -128,7 +129,7 @@ $ ccam mcp add ctx --url https://mcp.context7.com/mcp
 
 ### `ccam work rc` તરત જ `--mcp-config` વિશેની ભૂલ સાથે નિષ્ફળ જાય છે
 
-તમારું ccam 0.6.0 કરતાં જૂનું છે અને Remote Control ને `--mcp-config` આપે છે. `ccam update` ચલાવો. હાલના ccam સાથે આ જ ભૂલનો અર્થ એ છે કે ccam ન જાણતું હોય તેવો, મૂલ્ય સાથેનો કોઈ ઓપ્શન `rc` પહેલાં આવ્યો હતો, તેથી ccam એ મૂલ્યને કમાન્ડ માની લીધું; `rc` ને એકાઉન્ટના નામ પછી તરત મૂકો.
+તમારું ccam 0.6.0 કરતાં જૂનું છે અને Remote Control ને `--mcp-config` આપે છે. `ccam update` ચલાવો. હાલના ccam સાથે, આ જ ભૂલનો અર્થ એ છે કે મૂલ્ય સાથેનો કોઈ અજાણ્યો ઓપ્શન `rc` પહેલાં આવ્યો હતો, અને ccam એ ભૂલથી એ મૂલ્યને કમાન્ડ માની લીધું; `rc` ને એકાઉન્ટના નામ પછી તરત મૂકો.
 
 ### `ccam mcp` વડે કરેલો ફેરફાર Remote Control સુધી પહોંચતો નથી
 
@@ -136,7 +137,7 @@ $ ccam mcp add ctx --url https://mcp.context7.com/mcp
 
 ### ગ્રુપના સર્વરને બદલે મારો પોતાનો સર્વર વપરાય છે
 
-જો એકાઉન્ટ પાસે ગ્રુપ સર્વર જેવા જ નામનો પોતાનો સર્વર હોય, તો કૉપિ તેને તેની જગ્યાએ રહેવા દે છે અને તેમ જણાવે છે: `account work has its own MCP servers fs, so group default's of those names are not copied there`. ગ્રુપનો સર્વર વાપરવા, એકાઉન્ટનો સર્વર દૂર કરો (`claude mcp remove -s user <name>`); તમારું વર્ઝન દરેક એકાઉન્ટને આપવા, `ccam mcp import work <server> --force` વડે તેને ગ્રુપમાં ખસેડો. `.claude.json` ના બૅકઅપ `~/.local/state/ccam/mcp/work/backups/` માં છે, જે સૌથી નવા પાંચ રાખે છે.
+જો એકાઉન્ટ પાસે ગ્રુપ સર્વર જેવા જ નામનો પોતાનો સર્વર હોય, તો કૉપિ તેને તેની જગ્યાએ રહેવા દે છે અને તેમ જણાવે છે: `account work has its own MCP servers fs, so group default's servers with those names are not copied there`. ગ્રુપનો સર્વર વાપરવા, એકાઉન્ટનો સર્વર દૂર કરો (`claude mcp remove -s user <name>`); તમારું વર્ઝન દરેક એકાઉન્ટને આપવા, `ccam mcp import work <server> --force` વડે તેને ગ્રુપમાં ખસેડો. `.claude.json` ના બૅકઅપ `~/.local/state/ccam/mcp/work/backups/` માં છે, જે સૌથી નવા પાંચ રાખે છે.
 
 ### મારે કૉપિ થયેલા સર્વર દૂર કરવા છે
 
@@ -154,7 +155,7 @@ Remote Control ને Claude subscription વાળું લૉગિન જો
 
 Claude ઍપ કે claude.ai/code બીજા Claude એકાઉન્ટથી સાઇન ઇન થયેલું છે. `work` માટે `ccam list` જે ઇમેઇલ બતાવે છે તેની સાથે તેની સરખામણી કરો.
 
-### ccam ચેતવણી આપે છે કે આ ફોલ્ડરમાં બીજું Claude Code વાતચીતનો ઇતિહાસ શેર કરે છે
+### ccam ચેતવણી આપે છે કે આ ફોલ્ડરમાં બીજું Claude Code સેશન વાતચીતનો ઇતિહાસ શેર કરે છે
 
 એ જ ઇતિહાસ ગ્રુપનું બીજું એકાઉન્ટ એ જ ફોલ્ડરમાં ચાલી રહ્યું છે. બંને એકાઉન્ટમાંથી એક જ વાતચીત આગળ ચલાવતાં સેશન ઇતિહાસને ગૂંચવી શકે છે. બંને જુદી જુદી વાતચીત પર કામ કરવાનાં હોય તો જ `y` જવાબ આપો, અથવા Remote Control બીજા ફોલ્ડરમાં શરૂ કરો.
 
@@ -162,5 +163,5 @@ Claude ઍપ કે claude.ai/code બીજા Claude એકાઉન્ટથ
 
 - [Claude Code શરૂ કરવું](/features/launch)
 - [શેર કરેલા MCP સર્વર](/features/mcp)
-- [એકાઉન્ટ વચ્ચે શેરિંગ](/features/share)
+- [ગ્રુપ વડે શેરિંગ](/features/share)
 - [એકાઉન્ટનું સંચાલન](/features/accounts)

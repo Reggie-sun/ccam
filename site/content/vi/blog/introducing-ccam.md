@@ -1,10 +1,10 @@
 ---
 title: Giới thiệu ccam
 description: "Vì sao có ccam, ccam làm gì cho người dùng nhiều tài khoản Claude Code, và cách nó không cản trở công việc của bạn."
-updated: 2026-10-20
+updated: 2026-10-26
 order: 1
 translation: machine
-sourceHash: a555dc969142
+sourceHash: e4370f29b818
 ---
 
 ccam là một công cụ dòng lệnh nhỏ dành cho người dùng nhiều hơn một tài khoản Claude Code trên cùng một máy tính: một tài khoản cá nhân và một tài khoản công việc, hoặc nhiều tài khoản cho một dự án dài.
@@ -22,7 +22,7 @@ Claude Code hỗ trợ nhiều tài khoản thông qua [`CLAUDE_CONFIG_DIR`](/gu
 
 ## Không cản trở công việc
 
-Một công cụ bạn chạy trước mỗi phiên làm việc không nên tốn thêm chi phí nào mà bạn nhận thấy. ccam đọc một tệp cấu hình, kiểm tra mỗi liên kết dùng chung bằng một lời gọi hệ thống duy nhất, rồi tự thay thế mình bằng `claude`. Nó thêm khoảng 4 mili giây và không chạy trong lúc bạn làm việc.
+Một công cụ bạn chạy trước mỗi phiên làm việc không nên tốn thêm chi phí nào mà bạn nhận thấy. ccam đọc một tệp cấu hình, kiểm tra mỗi liên kết dùng chung bằng một hoặc hai lời gọi hệ thống, rồi tự thay thế mình bằng `claude`. Nó thêm khoảng 4 mili giây và theo mặc định không chạy trong lúc bạn làm việc.
 
 ccam cũng cẩn thận với tệp của bạn. Mọi thay đổi về việc dùng chung đều in ra một kế hoạch trước khi bắt đầu và giữ bản gốc trong một thư mục sao lưu. `ccam doctor` kiểm tra liên kết, quyền truy cập và thông tin đăng nhập, rồi sửa những gì có thể sửa an toàn.
 
@@ -35,4 +35,4 @@ ccam add
 
 Phần [bắt đầu nhanh](/docs/quick-start) hướng dẫn từng bước thêm hai tài khoản, còn bài [cách dùng nhiều tài khoản Claude Code](/guides/multiple-claude-code-accounts) giải thích cách làm khi có và không có ccam.
 
-ccam là phần mềm mã nguồn mở và không chính thức: nó không liên kết với Anthropic và không được Anthropic xác nhận. Việc bạn có được dùng nhiều tài khoản hay không phụ thuộc vào điều khoản của từng tài khoản. Mọi góp ý và bản dịch đều được hoan nghênh trên [GitHub](https://github.com/jhyunwoo/ccam).
+ccam là phần mềm mã nguồn mở và không chính thức: nó không liên kết với Anthropic và không được Anthropic xác nhận. Việc bạn có được dùng nhiều hơn một tài khoản hay không phụ thuộc vào điều khoản áp dụng cho từng tài khoản. Mọi góp ý và bản dịch đều được hoan nghênh trên [GitHub](https://github.com/jhyunwoo/ccam).

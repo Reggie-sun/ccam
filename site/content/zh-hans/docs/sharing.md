@@ -1,10 +1,10 @@
 ---
 title: 共享 MCP 服务器、设置和历史记录
 description: ccam 的组如何在 Claude Code 账号之间共享 MCP 服务器、settings.json、CLAUDE.md、技能和对话历史，同时让每个登录保持独立。
-updated: 2026-10-23
+updated: 2026-10-26
 order: 4
 translation: machine
-sourceHash: "27e0a0e5abbd"
+sourceHash: "2d8029ad6ec8"
 ---
 
 每个账号都保留自己的登录。其他所有内容都可以通过**组**共享：组指定它共享的项以及其中的账号，ccam 把这些账号的文件链接到组的文件夹，因此在一个账号中所做的更改会出现在所有这些账号中。
@@ -19,7 +19,7 @@ sourceHash: "27e0a0e5abbd"
 | `extensions` | `agents/`、`commands/`、`skills/`、`plugins/`、`output-styles/`、`rules/` |
 | `history` | 对话历史：`projects/` 和 `history.jsonl` |
 
-你的第一个账号会创建组 `default`，它共享除对话历史以外的所有内容，之后添加的账号都会加入这个组。
+你的第一个账号会创建 `default` 组，它共享除对话历史以外的所有内容，之后添加的账号都会加入这个组。
 
 登录文件 `.credentials.json` 和 `.claude.json` 永远不会被共享。ccam 只链接一份固定列表中的路径，而这两个文件不在列表中。
 
@@ -47,7 +47,7 @@ ccam group add team --items history --members work,side
 
 对话文件以会话 ID 命名，因此多个账号的历史记录可以合并而不会冲突。
 
-当 Claude Code 正以某个账号运行时，无论 Claude Code 是怎样启动的（包括后台会话），ccam 都不会更改这个账号，因为会话会继续写入正在移动的文件。请先退出会话。ccam 在保存之前会再检查一次，所以在计划等待确认期间启动的会话也会被发现。
+当 Claude Code 正以某个账号运行时，无论 Claude Code 是怎样启动的（包括后台会话），ccam 都不会更改这个账号，因为会话会继续写入正在移动的文件。请先退出会话。ccam 在保存之前会再检查一次，所以在 ccam 等待你回答期间启动的会话也会被发现。
 
 ## 账号停止共享时
 
@@ -105,7 +105,7 @@ To share them:
 
 | 选项 | 作用 |
 | --- | --- |
-| `--settings`、`--memory`、`--extensions`、`--mcp`、`--history` | 只复制你指定的项，不显示清单；不指定且不在终端中时，复制除对话历史以外的所有内容 |
+| `--settings`、`--memory`、`--extensions`、`--mcp`、`--history` | 只复制指定的项，不显示清单。不在终端中且未指定任何项选项时，ccam 会复制除对话历史以外的所有内容。 |
 | `-g`、`--group <group>` | 复制到这个组，而不是 `default` |
 | `-y`、`--yes` | 不询问直接复制；文件内容不同时保留组中的副本 |
 
@@ -120,7 +120,7 @@ ccam mcp add fs -- npx -y @modelcontextprotocol/server-filesystem ~/code
 ccam mcp list
 ```
 
-在会话中用 `claude mcp add` 添加的服务器只为该账号保存，并且只对你当时所在的文件夹有效（Claude Code 的本地作用域；加上 `-s user` 则对该账号的所有文件夹有效）。下次启动该账号时，ccam 会列出这个服务器的名称及其文件夹，以及把它移到组中的命令：
+在会话中用 `claude mcp add` 添加的服务器只为该账号保存，并且只对你当时所在的文件夹有效（Claude Code 的本地作用域；加上 `-s user` 则该账号在所有文件夹中都能使用它）。下次启动该账号时，ccam 会列出这个服务器的名称及其文件夹，以及把它移到组中的命令：
 
 ```sh
 ccam mcp import work gh
@@ -128,13 +128,13 @@ ccam mcp import work gh
 
 如果组中已有同名的不同服务器，ccam 会跳过它并提示你。`--force` 会替换组中的服务器，并把旧的 `mcp.json` 保存在组的 `.ccam-backup/` 文件夹中。
 
-通过 OAuth 登录的 MCP 服务器会把令牌和账号的登录信息存放在一起，因此需要在每个账号中用 `/mcp` 分别授权一次。当某个账号未登录某个服务器、而另一个账号已登录时，`ccam ext` 和 `ccam doctor` 会列出这些服务器。
+通过 OAuth 登录的 MCP 服务器会把令牌和账号的登录信息存放在一起，因此需要在每个账号中用 `/mcp` 分别登录一次。当某个账号未登录某个服务器、而另一个账号已登录时，`ccam ext` 和 `ccam doctor` 会列出这些服务器。
 
-如果你希望这些服务器作为普通的用户级服务器出现在 `claude mcp list` 和 `/mcp` 中，请在 `~/.config/ccam/config.toml` 的顶部、第一个 `[[group]]`、`[[profile]]` 或 `[[folder]]` 之上设置 `mcp_strategy = "sync"`。这样 ccam 会在启动前把它们写入每个账号的 `.claude.json`，写入时使用 Claude Code 自己的文件锁，并保留备份。如果账号自己有同名的服务器，该服务器仍归账号所有，ccam 会说明这一点。
+如果你希望这些服务器作为普通的用户级服务器出现在 `claude mcp list` 和 `/mcp` 中，请在 `~/.config/ccam/config.toml` 的顶部、第一个 `[[group]]`、`[[profile]]` 或 `[[folder]]` 之上设置 `mcp_strategy = "sync"`。这样 ccam 会在启动前把它们写入每个账号的 `.claude.json`，写入时使用 Claude Code 自己的文件锁，并保留备份。如果账号自己有一个与组服务器同名的服务器，ccam 会保留账号的服务器并说明这一点。
 
 ## 同一文件夹中的两个账号
 
-共享对话历史的账号会写入相同的文件。如果你在某个文件夹中启动第二个 Claude Code，而同组的另一个账号已经在该文件夹中运行，ccam 会发出警告并询问是否继续。
+共享对话历史的账号会写入相同的文件。如果你在某个文件夹中启动第二个 Claude Code 会话，而同组的另一个账号已经在该文件夹中运行，ccam 会发出警告并询问是否继续。
 
 ## 出现问题时
 
@@ -143,4 +143,4 @@ ccam doctor
 ccam doctor --fix
 ```
 
-如果某个共享路径变成了普通文件（例如在你手动恢复备份之后），ccam 会在启动 Claude Code 之前停止，并提示你运行 `ccam doctor --fix`；该命令会把它重新链接到组：如果组中还没有副本，这个文件就成为组的副本；否则组保留自己的副本，你的文件放入备份，`--fix` 会指出备份的位置。中途停止的组更改也由 `ccam doctor --fix` 完成。
+如果某个共享路径变成了普通文件（例如在你手动恢复备份之后），ccam 会在启动 Claude Code 之前停止，并提示你运行 `ccam doctor --fix`。修复会把该路径重新链接到组：如果组中还没有副本，这个文件就成为组的副本；否则组保留自己的副本，你的文件放入备份，`--fix` 会指出这份备份。中途停止的组更改也由 `ccam doctor --fix` 完成。

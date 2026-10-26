@@ -1,13 +1,13 @@
 ---
 title: Bảng điều khiển
 description: "ccam trên terminal mở bảng điều khiển toàn màn hình gồm tài khoản, nhóm, quy tắc thư mục, tiện ích mở rộng và kiểm tra; mọi thay đổi đều hiện kế hoạch trước."
-updated: 2026-10-25
+updated: 2026-10-26
 order: 15
 translation: machine
-sourceHash: "28f216a4a04f"
+sourceHash: 4e763ca8aacf
 ---
 
-`ccam` không kèm đối số sẽ mở một bảng điều khiển toàn màn hình khi đầu vào và đầu ra chuẩn là terminal; nếu không, nó in ra `ccam list`. Bảng điều khiển hiển thị mọi tài khoản cùng mức sử dụng và các nhóm của chúng, và làm được những gì các lệnh làm: khởi động, thêm, đăng nhập, thay đổi nhóm, đặt quy tắc thư mục, liệt kê các phiên nền, kiểm tra và sửa chữa. Khởi động một tài khoản, hoặc gắn vào một phiên nền, sẽ đóng bảng điều khiển; thêm tài khoản hoặc đăng nhập thì tạm rời nó để dùng terminal rồi quay lại.
+`ccam` không kèm đối số sẽ mở một bảng điều khiển toàn màn hình khi đầu vào và đầu ra chuẩn là terminal; nếu không, nó in ra `ccam list`. Bảng điều khiển hiển thị mọi tài khoản cùng mức sử dụng và các nhóm của chúng, và làm được những gì các lệnh làm: khởi động, thêm, đăng nhập, thay đổi nhóm, đặt quy tắc thư mục, liệt kê các phiên nền, kiểm tra và sửa chữa. Khởi động một tài khoản, hoặc gắn vào một phiên nền, sẽ đóng bảng điều khiển; thêm tài khoản hoặc đăng nhập thì tạm nhường terminal trong chốc lát, rồi quay lại bảng điều khiển.
 
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
@@ -23,7 +23,7 @@ sourceHash: "28f216a4a04f"
  enter to launch · n for most room · a to add · s for groups · ? for shortcuts
 ```
 
-Dòng dưới tên các thẻ cho biết trong một câu thẻ hiện tại dùng để làm gì. Trên terminal rộng hơn, thẻ Accounts còn hiển thị email của từng tài khoản. Cuối dòng chứa các thẻ cho biết [`auto_switch`](/features/next#auto-switch) có đang bật hay không, trên mọi thẻ (Linux và macOS; trên Windows nó bị bỏ qua); khi nó bật, thẻ Health cho biết tính năng này còn cần gì: plugin ccam được bật trong mọi tài khoản đăng nhập bằng gói đăng ký Claude, và Claude Code 2.1.214 trở lên.
+Dòng dưới tên các thẻ cho biết trong một câu thẻ hiện tại dùng để làm gì. Trên terminal rộng hơn, thẻ Accounts còn hiển thị email của từng tài khoản. Trên mọi thẻ, cuối dòng chứa các thẻ cho biết [`auto_switch`](/features/next#auto-switch) có đang bật hay không (Linux và macOS; trên Windows nó bị bỏ qua). Khi nó bật, thẻ Health liệt kê những gì tính năng này còn cần: Claude Code 2.1.214 trở lên, và plugin ccam được bật trong mọi tài khoản đăng nhập bằng gói đăng ký Claude.
 
 Mỗi lần mở, bảng điều khiển hỏi GitHub ở chế độ nền xem có bản phát hành ccam mới hơn không; khung hình đầu tiên không bao giờ chờ việc này, và khi không có mạng thì không hiển thị gì. Khi có bản mới, một dòng dưới tiêu đề sẽ đề xuất nó:
 
@@ -31,9 +31,9 @@ Mỗi lần mở, bảng điều khiển hỏi GitHub ở chế độ nền xem 
  ● ccam 0.10.2 is available (you have 0.10.1) · press U to update
 ```
 
-`U` hỏi trước, rồi cập nhật theo cách của [`ccam update`](/features/update): bản phát hành được kiểm tra với checksum SHA-256 của nó và thay thế ccam trong một bước. Bảng điều khiển bạn đang dùng vẫn là phiên bản cũ, nên hãy thoát rồi chạy lại `ccam`. Khi không thể cập nhật tại đây, ví dụ với ccam được cài từ gói `.deb`, bảng điều khiển hiển thị cùng lời khuyên như `ccam update` và vẫn giữ lời đề nghị.
+`U` hỏi trước, rồi cập nhật theo cách của [`ccam update`](/features/update): bản phát hành được kiểm tra với checksum SHA-256 của nó và thay thế ccam trong một bước. Bảng điều khiển bạn đang dùng vẫn là phiên bản cũ, nên hãy thoát rồi chạy lại `ccam`. Khi không thể cập nhật tại đây, ví dụ với một bản ccam được cài từ gói `.deb`, bảng điều khiển hiển thị cùng lời khuyên như `ccam update` và vẫn giữ lời đề nghị.
 
-Khung hình đầu tiên được vẽ chỉ từ `config.toml`, trong chưa đến 100 ms; mức sử dụng được điền vào khi từng tài khoản phản hồi. Mỗi giới hạn có thanh riêng: khoảng 5 giờ, khoảng hàng tuần cho mọi mô hình, và khoảng hàng tuần riêng của Fable; `-` nghĩa là tài khoản không có khoảng đó. Một tỷ lệ phần trăm chuyển sang màu vàng từ 80% và màu đỏ ở 100%, và các giá trị lấy từ bộ nhớ đệm sau một lần tra cứu thất bại được vẽ mờ. Một khoảng mà Claude Code báo là đã đầy hiển thị 100% cho đến khi được đặt lại. Một access token đã hết hạn hiển thị `⚠ token expired` mờ (Claude Code gia hạn nó ở lần khởi động tiếp theo), còn `⚠ login expired` nghĩa là tài khoản cần `ccam login`.
+Khung hình đầu tiên được vẽ chỉ từ `config.toml`, trong chưa đến 100 ms; mức sử dụng được điền vào khi từng tài khoản phản hồi. Mỗi giới hạn có thanh riêng: khoảng 5 giờ, khoảng hàng tuần cho mọi mô hình, và khoảng hàng tuần riêng của Fable; `-` nghĩa là tài khoản không có khoảng đó. Một tỷ lệ phần trăm chuyển sang màu vàng ở 80% và màu đỏ ở 100%. Nếu một lần tra cứu thất bại, các giá trị từ bộ nhớ đệm được hiển thị mờ. Một khoảng mà Claude Code báo là đã đầy hiển thị 100% cho đến khi được đặt lại. Một access token đã hết hạn hiển thị `⚠ token expired` mờ (Claude Code gia hạn nó ở lần khởi động tiếp theo), còn `⚠ login expired` nghĩa là tài khoản cần `ccam login`.
 
 ## Các thẻ
 
@@ -43,10 +43,10 @@ Khung hình đầu tiên được vẽ chỉ từ `config.toml`, trong chưa đ�
 | Agents | những gì [`ccam agents`](/features/agents) liệt kê: các phiên nền và các phiên đang mở của mọi tài khoản, cùng trạng thái, thư mục và thời điểm bắt đầu của chúng (bên dưới) | `enter` gắn vào (như `ccam attach`), `x` dừng, `r` tải lại |
 | Groups | từng nhóm, những gì nhóm dùng chung và các tài khoản của nhóm, cùng các tài khoản không thuộc nhóm nào | `enter` sửa, `n` tạo mới, `e` đổi tên, `x` xóa |
 | Folders | các quy tắc [`ccam folder`](/features/folder) và quy tắc áp dụng ở đây, kể cả khi bạn đến thư mục qua một liên kết tượng trưng (quy tắc mới được lưu với các liên kết đã được phân giải) | `n` dùng một tài khoản ở đây, `enter` thay đổi, `x` xóa |
-| Extensions | những gì [`ccam ext`](/features/ext) hiển thị, mỗi tiện ích mở rộng một lần cùng các nhóm mà nó đến từ, `off:` các tài khoản mà một plugin chưa được bật, các máy chủ mà một tài khoản chỉ có cho thư mục này trong số máy chủ riêng của nó, `This folder's project`, và các vấn đề không thuộc tài khoản nào | `r` tải lại |
+| Extensions | những gì [`ccam ext`](/features/ext) hiển thị, mỗi tiện ích mở rộng một lần cùng các nhóm mà nó đến từ, `off:` các tài khoản mà một plugin chưa được bật, các máy chủ riêng của tài khoản chỉ áp dụng cho thư mục này, `This folder's project`, và các vấn đề không thuộc tài khoản nào | `r` tải lại |
 | Health | những gì [`ccam doctor`](/features/doctor) báo cáo, dưới dạng một hộp cho mỗi tài khoản (bên dưới) | `f` sửa chữa hộp đang chọn, `F` sửa chữa tất cả (`doctor --fix`), `↑`/`↓` di chuyển giữa các hộp |
 
-`←`/`→` hoặc `Tab` chuyển thẻ, `?` liệt kê các phím của thẻ hiện tại, `r` tra cứu lại mức sử dụng mà không dùng bộ nhớ đệm ngắn hạn và tải lại các thẻ Agents, Extensions và Health, và `q` hoặc `Esc` để thoát.
+`←`/`→` hoặc `Tab` chuyển thẻ, `?` liệt kê các phím của thẻ hiện tại, `r` làm mới mức sử dụng, bỏ qua bộ nhớ đệm ngắn hạn, và tải lại các thẻ Agents, Extensions và Health, và `q` hoặc `Esc` để thoát.
 
 ## Phím trên thẻ Accounts
 
@@ -65,9 +65,9 @@ Khung hình đầu tiên được vẽ chỉ từ `config.toml`, trong chưa đ�
 | `f` | Dùng nó trong thư mục hiện tại |
 | `e` | Đổi tên nó |
 | `c` | Đặt hoặc xóa lệnh tắt của nó |
-| `x` | Xóa nó (hỏi trước, con trỏ bắt đầu ở No) |
+| `x` | Xóa nó (hỏi trước, với No được chọn sẵn) |
 
-**Seat của gói Team và Enterprise.** Lựa chọn tự động (`ccam next`, `--fallback`, `ccam pick`, phím `n` trên bảng điều khiển, và [`auto_switch`](/features/next#auto-switch) khi bạn bật nó) cũng chuyển đổi giữa các seat của cùng một tổ chức Claude Team hoặc Enterprise. Trung tâm trợ giúp của Anthropic ghi rằng "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (mỗi seat của gói Team được gán cho đích danh một cá nhân, và chỉ người đó được phép sử dụng) và "Users can't route their work through another user's account to use that user's remaining usage" (người dùng không được chuyển công việc của mình qua tài khoản của một người dùng khác để dùng phần hạn mức còn lại của người đó) ([gói Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); tương tự đối với [gói Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Vì vậy, dùng lựa chọn tự động giữa các seat có thể vi phạm điều khoản của Anthropic. Có dùng nó ở đó hay không là quyết định của bạn: hãy xác nhận với tổ chức của bạn và Anthropic trước khi dựa vào nó. Các gói cá nhân (Pro, Max) được đề cập trong [ghi chú về điều khoản ở phần Câu hỏi thường gặp](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Seat của gói Team và Enterprise.** Việc tự động chọn tài khoản (`ccam next`, `--fallback`, `ccam pick`, phím `n` trên bảng điều khiển và, khi bạn bật nó, [`auto_switch`](/features/next#auto-switch)) cũng chuyển đổi giữa các seat của cùng một tổ chức Claude Team hoặc Enterprise, điều này có thể vi phạm điều khoản của Anthropic. Hãy đọc [Câu hỏi thường gặp](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) và xác nhận với tổ chức của bạn và Anthropic trước khi dựa vào nó.
 
 ## Thẻ Health
 
@@ -99,7 +99,7 @@ Thẻ Health chạy các kiểm tra của [`ccam doctor`](/features/doctor) khi 
 
 ## Thẻ Agents
 
-Thẻ Agents hiển thị những gì [`ccam agents`](/features/agents) in ra: các phiên nền và các phiên đang mở của mọi tài khoản, cùng tài khoản mà mỗi phiên thuộc về. Nó hỏi Claude Code của mọi tài khoản cùng lúc (`claude agents --json`, tối đa 15 giây cho mỗi tài khoản) khi bạn mở thẻ lần đầu, khi nhấn `r`, sau khi dừng một phiên và sau khi cấu hình thay đổi, và hiển thị `Asking every account's Claude Code for its sessions…` cho đến khi tất cả đã trả lời.
+Thẻ Agents hiển thị những gì [`ccam agents`](/features/agents) in ra: các phiên nền và các phiên đang mở của mọi tài khoản, cùng tài khoản mà mỗi phiên thuộc về. Nó hỏi Claude Code của mọi tài khoản cùng lúc (`claude agents --json`, mỗi tài khoản với thời gian chờ tối đa 15 giây) khi bạn mở thẻ lần đầu, khi nhấn `r`, sau khi dừng một phiên và sau khi cấu hình thay đổi, và hiển thị `Asking every account's Claude Code for its sessions…` cho đến khi tất cả đã trả lời.
 
 ```console
   Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
@@ -115,9 +115,9 @@ Thẻ Agents hiển thị những gì [`ccam agents`](/features/agents) in ra: c
  enter to attach · x to stop · r to reload · ? for shortcuts
 ```
 
-`State` là trạng thái của một phiên nền và việc tiến trình của nó đang làm, hoặc `open` đối với một phiên tương tác, như trong `ccam agents`. Một tài khoản không hỏi được sẽ có một dòng `✘` dưới danh sách kèm những gì Claude Code đã nói, như `lab` ở trên, tài khoản đã tắt chế độ xem agent. Các phiên nền đã kết thúc bị bỏ ra (`ccam agents --all` liệt kê chúng), và khi mọi tài khoản đã trả lời mà không có phiên nào, thẻ hiển thị ``No sessions. Start one in the background with `ccam <account> --bg "…"`.`` Trên terminal hẹp, thẻ bỏ `Started`, rồi `Name`, rồi `Folder`, và cắt bớt một thư mục dài từ bên trái.
+`State` là trạng thái của một phiên nền và việc tiến trình của nó đang làm, hoặc `open` đối với một phiên tương tác, như trong `ccam agents`. Nếu không truy vấn được một tài khoản, một dòng `✘` dưới danh sách sẽ hiển thị những gì Claude Code đã nói, như `lab` ở trên, tài khoản đã tắt chế độ xem agent. Các phiên nền đã kết thúc bị bỏ ra (`ccam agents --all` liệt kê chúng), và khi mọi tài khoản đã trả lời mà không có phiên nào, thẻ hiển thị ``No sessions. Start one in the background with `ccam <account> --bg "…"`.`` Trên terminal hẹp, thẻ bỏ `Started`, rồi `Name`, rồi `Folder`, và cắt bớt các đường dẫn thư mục dài từ bên trái.
 
-`Enter` trên một phiên nền sẽ đóng bảng điều khiển và mở phiên đó trong terminal này dưới tài khoản của nó, như `ccam attach <id>`; bảng điều khiển không quay lại (trong Claude Code, `←` đi tới chế độ xem agent của nó và `Ctrl+Z` về shell). Một phiên đang mở không có id, nên `Enter` và `x` chỉ báo rằng cần một phiên nền. `x` hỏi trước, con trỏ bắt đầu ở `No, keep it`: ``It runs as personal. Like `ccam personal stop 49ec0028`, Claude Code stops it and keeps its conversation, which `ccam attach 49ec0028` opens again.`` Nếu chọn có, ccam chạy `claude stop <id>` dưới tài khoản đó, hiển thị ``49ec0028 (personal) stopped; `ccam attach 49ec0028` opens it again`` hoặc lý do không dừng được, rồi đọc lại danh sách.
+`Enter` trên một phiên nền sẽ đóng bảng điều khiển và mở phiên đó trong terminal này dưới tài khoản của nó, như `ccam attach <id>`; bảng điều khiển không quay lại (trong Claude Code, `←` đi tới chế độ xem agent của nó và `Ctrl+Z` về shell). Một phiên đang mở không có ID, nên `Enter` và `x` chỉ báo rằng cần một phiên nền. `x` hỏi trước, với `No, keep it` được chọn sẵn: ``It runs as personal. Like `ccam personal stop 49ec0028`, Claude Code stops it and keeps its conversation, which `ccam attach 49ec0028` opens again.`` Nếu chọn có, ccam chạy `claude stop <id>` dưới tài khoản đó, hiển thị ``49ec0028 (personal) stopped; `ccam attach 49ec0028` opens it again`` hoặc lý do không dừng được, rồi đọc lại danh sách.
 
 ## Thay đổi nhóm
 
@@ -135,7 +135,9 @@ Trên thẻ Groups, `Enter` mở trình chỉnh sửa: các mục ở bên trái
     2. No
 ```
 
-Một tệp khác với bản của nhóm sẽ được hỏi trước (giữ bản của nhóm, dùng bản của tôi, hoặc gộp). Sau đó thay đổi chạy ở chế độ nền với cùng mã như [`ccam group`](/features/share): cấu hình được lưu trước, dữ liệu của từng tài khoản được di chuyển theo thứ tự, và bản gốc được đưa vào `.ccam-backup/`; một tài khoản rời việc dùng chung MCP vẫn giữ các máy chủ của nhóm trong `.claude.json` của nó. Một thay đổi sẽ di chuyển dữ liệu của một tài khoản đang chạy bị từ chối kèm tên tài khoản đó, kể cả khi tài khoản được khởi động trong lúc kế hoạch đang mở, và một kế hoạch đã bị lỗi thời do lần thay đổi nhóm của một ccam khác sẽ bị từ chối với `the groups changed while this plan waited; nothing was moved, make the change again`. Khi một ccam khác đang thay đổi các nhóm, một lần thay đổi, đổi tên hoặc xóa mới sẽ báo `another ccam is changing the groups right now`; sau một lần thay đổi bị dừng giữa chừng, chúng chờ cho đến khi `F` trên thẻ Health (hoặc `ccam doctor --fix`) hoàn tất nó.
+Nếu một tệp khác với bản của nhóm, ccam hỏi trước cách xử lý (giữ bản của nhóm, dùng bản của tôi hoặc gộp). Sau đó thay đổi chạy ở chế độ nền với cùng mã như [`ccam group`](/features/share): cấu hình được lưu trước, dữ liệu của từng tài khoản được di chuyển theo thứ tự, và bản gốc được đưa vào `.ccam-backup/`; một tài khoản rời việc dùng chung MCP vẫn giữ các máy chủ của nhóm trong `.claude.json` của nó.
+
+Một thay đổi sẽ di chuyển dữ liệu của một tài khoản đang chạy bị từ chối kèm tên tài khoản đó, kể cả khi tài khoản được khởi động trong lúc kế hoạch đang mở, và một kế hoạch đã lỗi thời vì một tiến trình ccam khác đã thay đổi các nhóm sẽ bị từ chối với `the groups changed while this plan waited; nothing was moved, make the change again`. Khi một tiến trình ccam khác đang thay đổi các nhóm, một lần thay đổi, đổi tên hoặc xóa mới sẽ báo `another ccam process is changing the groups right now`; sau một lần thay đổi bị dừng giữa chừng, chúng chờ cho đến khi `F` trên thẻ Health (hoặc `ccam doctor --fix`) hoàn tất nó.
 
 ## Thêm tài khoản
 
@@ -144,7 +146,7 @@ Một tệp khác với bản của nhóm sẽ được hỏi trước (giữ b�
 1. Tên tài khoản.
 2. Cách nó đăng nhập: một gói đăng ký Claude ngay bây giờ (trong trình duyệt), một [API key](/features/api), hoặc một gói đăng ký Claude sau.
 3. Với API key: nơi ccam đọc khóa mỗi lần khởi động (`env:NAME` hoặc `command:COMMAND`), endpoint, cách gửi khóa và mô hình.
-4. Các nhóm để tham gia, với `default` đã được đánh dấu; khi chưa có nhóm nào, đó là những gì nhóm `default` dùng chung.
+4. Các nhóm để tham gia, với `default` đã được đánh dấu (nếu chưa có nhóm nào, đó là những gì nhóm `default` sẽ dùng chung).
 5. Một lệnh tắt, nếu bạn muốn.
 6. Một bản tóm tắt để xác nhận.
 
@@ -152,7 +154,7 @@ Một tệp khác với bản của nhóm sẽ được hỏi trước (giữ b�
 
 ## Xóa tài khoản
 
-`x` hỏi trước khi có bất cứ điều gì xảy ra, con trỏ bắt đầu ở No, và cho biết việc xóa sẽ làm gì: `It is logged out first (its login is revoked), then its folder goes to ccam's trash; the groups' shared files stay.` Với tài khoản API key thì không có thông tin đăng nhập nào để thu hồi, và khi một tài khoản khác giữ cùng thông tin đăng nhập thì nó không bị đăng xuất. Một tài khoản được nhập giữ lại thư mục của nó: `It was imported, so its folder /home/me/.claude stays where it is: it leaves its groups first and keeps a copy of what they share, then ccam forgets it.`
+`x` hỏi trước khi có bất cứ điều gì xảy ra, với No được chọn sẵn, và cho biết việc xóa sẽ làm gì: `It is logged out first (its login is revoked), then its folder goes to ccam's trash; the groups' shared files stay.` Với tài khoản API key thì không có thông tin đăng nhập nào để thu hồi, và khi một tài khoản khác giữ cùng thông tin đăng nhập thì nó không bị đăng xuất. Một tài khoản được nhập giữ lại thư mục của nó: `It was imported, so its folder /home/me/.claude stays where it is: it leaves its groups first and keeps a copy of what they share, then ccam forgets it.`
 
 ## Màu sắc
 
@@ -169,7 +171,7 @@ Các chủ đề `-daltonized` dành cho người mù màu đỏ-lục, còn cá
 - Bảng điều khiển gọi cùng các hàm như các lệnh, nên mọi quy tắc đều được giữ: kế hoạch trước khi dữ liệu được di chuyển, từ chối với tài khoản đang chạy, bản sao lưu, và token đăng nhập không bao giờ rời khỏi tài khoản.
 - Bảng điều khiển không có chế độ chạy thử: `ccam --dry-run` không kèm tên sẽ in ra cách tài khoản của thư mục này sẽ khởi động, và `o` trên một tài khoản cho phép chạy thử riêng lần khởi động đó.
 - Terminal được khôi phục trước khi Claude Code khởi động hoặc việc đăng nhập mở ra.
-- Một màn hình quá nhỏ cho hộp thoại sẽ bỏ bớt các hàng của thẻ trước; các dòng bị cắt bằng `…` thay vì xuống dòng. Trên màn hình thấp, các dòng trống và phần mô tả thẻ bị bỏ tiếp theo, để dòng phím vẫn còn. Dưới 40 cột hoặc 8 hàng, bảng điều khiển chỉ hiển thị `Too small: ccam needs 40x8 (now 36x7)`.
+- Một màn hình quá nhỏ cho hộp thoại sẽ bỏ bớt các hàng của thẻ trước; các dòng bị cắt bằng `…` thay vì xuống dòng. Trên màn hình thấp, các dòng trống và phần mô tả thẻ bị bỏ tiếp theo, để dòng gợi ý phím vẫn hiển thị. Dưới 40 cột hoặc 8 hàng, bảng điều khiển chỉ hiển thị `Too small: ccam needs 40x8 (now 36x7)`.
 - `Ctrl+C` trong lúc một thay đổi, một lần xóa, một lần cập nhật hoặc một lần sửa chữa đang được áp dụng sẽ chờ nó xong: dòng trạng thái báo `ccam quits when it is done.`
 - Sau khi `U` đã cập nhật ccam, lời đề nghị không xuất hiện lại khi bảng điều khiển quay về sau khi thêm tài khoản hoặc đăng nhập.
 

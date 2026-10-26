@@ -1,13 +1,13 @@
 ---
 title: 확장 살펴보기
 description: ccam ext는 계정마다 불러오는 스킬, 명령, 플러그인, MCP 서버, 훅과 각각의 출처, 그리고 망가진 부분을 보여 줍니다.
-updated: 2026-10-23
+updated: 2026-10-26
 order: 14
 translation: machine
-sourceHash: "45740e4efbef"
+sourceHash: "7ca357a7f38a"
 ---
 
-`ccam ext`는 "이 스킬(또는 MCP 서버)이 왜 한 계정에서는 되고 다른 계정에서는 안 될까?"라는 질문에 답합니다. 계정마다 Claude Code가 불러오는 확장과 각각의 출처(공유 그룹, 계정 자체 폴더, 지금 있는 프로젝트)를 나열합니다. 표 아래에는 확장이 예상대로 로드되지 못하게 막는 문제를 나열합니다. 읽기만 합니다.
+`ccam ext`는 "이 스킬(또는 MCP 서버)이 왜 한 계정에서는 되고 다른 계정에서는 안 될까?"라는 질문에 답합니다. 계정마다 Claude Code가 불러오는 확장과 각각의 출처(공유 그룹, 계정 자체 폴더, 지금 있는 프로젝트)를 나열합니다. 표 아래에는 확장이 예상대로 로드되지 못하게 막는 문제를 나열합니다. 아무것도 바꾸지 않습니다.
 
 ## 사용법
 
@@ -60,12 +60,12 @@ Sources: a group name (shared), account (its own folder), local (its own, for th
 
 ## 알려 주는 문제
 
-- **깨진 링크**: `skills/`, `commands/`, `agents/` 안에서 대상이 사라진 링크, 또는 없는 위치를 가리키는 공유 폴더(`skills`, `commands`, `agents`, `plugins`)입니다(`ccam doctor --fix`로 복구하며, 없는 그룹 폴더도 다시 만듭니다).
+- **깨진 링크**: `skills/`, `commands/`, `agents/` 안에서 대상이 사라진 링크, 또는 없는 위치를 가리키는 공유 폴더(`skills`, `commands`, `agents`, `plugins`)입니다(`ccam doctor --fix`로 복구하며, 이 명령은 없는 그룹 폴더를 다시 만듭니다).
 - **`SKILL.md`가 없는 스킬 폴더**: Claude Code가 건너뜁니다.
-- **두 곳에서 다르게 정의된 MCP 서버**: 그룹의 `mcp.json`과 계정의 `.claude.json`, 또는 그중 하나와 프로젝트의 `.mcp.json`입니다. 두 곳의 설정이 같으면(`mcp_strategy = "sync"`가 이렇게 씁니다) 문제가 아닙니다. 계정 자체 서버를 그룹으로 옮기려면 `ccam mcp import <account> <server>`를 쓰세요.
+- **두 곳에서 다르게 정의된 MCP 서버**: 그룹의 `mcp.json`과 계정의 `.claude.json`, 또는 그중 하나와 프로젝트의 `.mcp.json`입니다. 두 곳의 정의가 똑같으면(`mcp_strategy = "sync"`가 이렇게 씁니다) 문제가 아닙니다. 계정 자체 서버를 그룹으로 옮기려면 `ccam mcp import <account> <server>`를 쓰세요.
 - **올바른 JSON이 아닌 `installed_plugins.json`**, `enabledPlugins`에 이름이 없는 플러그인, 폴더가 없는 플러그인.
 - **한 계정만 불러오는 서버**: 이 계정의 `.claude.json`에만 있어 그룹의 다른 계정은 불러오지 않는 서버, 그리고 이 폴더에 대한 계정의 local 범위에 있는 서버(`-s user`를 주지 않은 `claude mcp add`가 이렇게 추가합니다)입니다. 각각 그 서버를 공유하는 `ccam mcp import` 명령과 함께 표시됩니다. 일반 `claude`의 `~/.claude.json`에 있지만 어느 계정도 불러오지 않는 서버는 `ccam migrate --mcp` 명령과 함께 표시됩니다.
-- **승인을 기다리는 프로젝트 서버**: 계정이 아직 그 폴더를 신뢰하지 않았으므로 Claude Code가 한 번 묻고, 그때까지 프로젝트의 `.mcp.json` 서버는 기다립니다. 문제 설명에 승인할 곳이 나옵니다. 설정 그룹의 계정들 또는 이 계정의 `settings.json`에 있는 `"enabledMcpjsonServers"`입니다. git 저장소의 메인 워크트리에 준 신뢰는 다른 워크트리에서도 인정됩니다.
+- **승인을 기다리는 프로젝트 서버**: 계정이 아직 그 폴더를 신뢰하지 않았으므로 Claude Code가 한 번 묻고, 그때까지 프로젝트의 `.mcp.json` 서버는 기다립니다. 문제 설명에 승인할 곳이 나옵니다. 설정 그룹의 계정들 또는 이 계정의 `settings.json`에 있는 `"enabledMcpjsonServers"`입니다. git 저장소의 메인 워크트리에 준 신뢰는 다른 워크트리에도 적용됩니다.
 - **로그인과 커넥터**: 다른 계정은 로그인했지만 이 계정에서는 로그인이 필요한 MCP 서버(로그인은 한 계정에만 유효하니 `/mcp`로 로그인하세요), 그리고 다른 계정은 썼지만 이 계정은 쓰지 않은 claude.ai 커넥터입니다.
 
 ## 안전장치와 예외 상황
@@ -76,6 +76,6 @@ Sources: a group name (shared), account (its own folder), local (its own, for th
 
 ## 관련 문서
 
-- [계정 간 공유](/features/share)
+- [그룹으로 공유하기](/features/share)
 - [MCP 서버 공유](/features/mcp)
 - [점검과 복구](/features/doctor)

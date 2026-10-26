@@ -1,10 +1,10 @@
 ---
 title: Shiriki seva za MCP, mipangilio na historia
 description: Jinsi vikundi vya ccam vinavyoshiriki seva za MCP, settings.json, CLAUDE.md, skills na historia kati ya akaunti za Claude Code; kuingia hubaki tofauti.
-updated: 2026-10-23
+updated: 2026-10-26
 order: 4
 translation: machine
-sourceHash: "27e0a0e5abbd"
+sourceHash: "2d8029ad6ec8"
 ---
 
 Kila akaunti huhifadhi taarifa zake za kuingia. Kila kitu kingine kinaweza kushirikiwa kupitia **vikundi**: kikundi hutaja vipengele kinachoshiriki na akaunti zilizomo, na ccam huunganisha faili za kila moja ya akaunti hizo na folda ya kikundi, ili badiliko lililofanywa katika akaunti moja lionekane katika zote.
@@ -19,7 +19,7 @@ Kila akaunti huhifadhi taarifa zake za kuingia. Kila kitu kingine kinaweza kushi
 | `extensions` | `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/`, `rules/` |
 | `history` | historia ya mazungumzo: `projects/` na `history.jsonl` |
 
-Akaunti yako ya kwanza huunda kikundi `default`, ambacho hushiriki kila kitu isipokuwa historia ya mazungumzo, na akaunti zinazofuata hujiunga nacho.
+Akaunti yako ya kwanza huunda kikundi cha `default`, ambacho hushiriki kila kitu isipokuwa historia ya mazungumzo, na akaunti zinazofuata hujiunga nacho.
 
 Faili za kuingia `.credentials.json` na `.claude.json` hazishirikiwi kamwe. ccam huunganisha njia kutoka kwenye orodha maalum tu, na faili hizi mbili hazimo ndani yake.
 
@@ -47,7 +47,7 @@ Akaunti inapoanza kushiriki kipengele (inajiunga na kikundi, au kikundi chake ki
 
 Faili za mazungumzo hupewa majina kwa kufuata session ID yake, kwa hiyo historia kutoka akaunti kadhaa huungana bila migongano.
 
-ccam haibadilishi akaunti wakati Claude Code inaendeshwa kama akaunti hiyo, bila kujali Claude Code ilianzishwa vipi (pamoja na vipindi vya chinichini), kwa sababu kipindi kinaendelea kuandika kwenye faili zinazohamishwa. Kifunge kwanza. ccam hukagua tena kabla tu ya kuhifadhi, kwa hiyo kipindi kilichoanzishwa wakati mpango ukisubiri nacho hugunduliwa.
+ccam haibadilishi akaunti wakati Claude Code inaendeshwa kama akaunti hiyo, bila kujali ilianzishwa vipi (pamoja na vipindi vya chinichini), kwa sababu kipindi kinaendelea kuandika kwenye faili zinazohamishwa. Kifunge kwanza. ccam hukagua tena kabla tu ya kuhifadhi, kwa hiyo pia hugundua kipindi kilichoanzishwa wakati ccam ikisubiri jibu lako.
 
 ## Akaunti inapoacha kushiriki
 
@@ -105,7 +105,7 @@ Kikundi kikiwa tayari na nakala tofauti ya faili, ccam huuliza, kama inavyofanya
 
 | Chaguo | Athari |
 | --- | --- |
-| `--settings`, `--memory`, `--extensions`, `--mcp`, `--history` | Nakili vipengele unavyovitaja tu, bila orodha ya kuteua; bila hivyo na nje ya terminal, kila kitu isipokuwa historia ya mazungumzo |
+| `--settings`, `--memory`, `--extensions`, `--mcp`, `--history` | Nakili vipengele vilivyotajwa tu, bila orodha ya kuteua. Nje ya terminal, bila chaguo za vipengele, ccam hunakili kila kitu isipokuwa historia ya mazungumzo. |
 | `-g`, `--group <group>` | Nakili kwenye kikundi hiki badala ya `default` |
 | `-y`, `--yes` | Nakili bila kuuliza; faili ikitofautiana, hifadhi nakala ya kikundi |
 
@@ -120,7 +120,7 @@ ccam mcp add fs -- npx -y @modelcontextprotocol/server-filesystem ~/code
 ccam mcp list
 ```
 
-Seva unayoongeza ndani ya kipindi (session) kwa `claude mcp add` huhifadhiwa kwa akaunti hiyo tu, na kwa folda uliyokuwamo (local scope ya Claude Code; `-s user` huifanya iwe ya akaunti katika kila folda). Wakati ujao utakapoanzisha akaunti hiyo, ccam hutaja seva hiyo, pamoja na folda yake, na amri inayoihamisha kwenda kwenye kikundi:
+Seva unayoongeza ndani ya kipindi (session) kwa `claude mcp add` huhifadhiwa kwa akaunti hiyo tu, na kwa folda uliyokuwamo (local scope ya Claude Code; `-s user` huifanya ipatikane kwa akaunti katika kila folda). Wakati ujao utakapoanzisha akaunti hiyo, ccam hutaja seva hiyo, pamoja na folda yake, na amri inayoihamisha kwenda kwenye kikundi:
 
 ```sh
 ccam mcp import work gh
@@ -128,13 +128,13 @@ ccam mcp import work gh
 
 Ikiwa kikundi tayari kina seva tofauti yenye jina hilo, ccam huiruka na kukujulisha. `--force` hubadilisha seva ya kikundi na huhifadhi `mcp.json` ya zamani kwenye folda ya `.ccam-backup/` ya kikundi.
 
-Seva za MCP zinazoingia kwa OAuth huhifadhi tokeni zao pamoja na taarifa za kuingia za akaunti, kwa hiyo ziidhinishe mara moja katika kila akaunti kwa `/mcp`. `ccam ext` na `ccam doctor` hutaja seva ambazo akaunti haijaingia wakati akaunti nyingine imeingia.
+Seva za MCP zinazoingia kwa OAuth huhifadhi tokeni zao pamoja na taarifa za kuingia za akaunti, kwa hiyo ingia kwenye seva hizo mara moja katika kila akaunti kwa `/mcp`. `ccam ext` na `ccam doctor` hutaja seva ambazo akaunti haijaingia wakati akaunti nyingine imeingia.
 
-Ikiwa unapendelea seva zionekane katika `claude mcp list` na `/mcp` kama seva za kawaida za mtumiaji, weka `mcp_strategy = "sync"` juu kabisa ya `~/.config/ccam/config.toml`, kabla ya `[[group]]`, `[[profile]]` au `[[folder]]` ya kwanza. Kisha ccam huziandika katika `.claude.json` ya kila akaunti kabla ya kuanza, chini ya kufuli ya faili ya Claude Code yenyewe na kwa nakala rudufu. Seva ambayo akaunti inayo yenyewe kwa jina lile lile hubaki kuwa ya akaunti, na ccam husema hivyo.
+Ikiwa unapendelea seva zionekane katika `claude mcp list` na `/mcp` kama seva za kawaida za mtumiaji, weka `mcp_strategy = "sync"` juu kabisa ya `~/.config/ccam/config.toml`, kabla ya `[[group]]`, `[[profile]]` au `[[folder]]` ya kwanza. Kisha ccam huziandika katika `.claude.json` ya kila akaunti kabla ya kuanza, chini ya kufuli ya faili ya Claude Code yenyewe na kwa nakala rudufu. Ikiwa akaunti ina seva yake yenyewe yenye jina lile lile kama seva ya kikundi, ccam huhifadhi seva ya akaunti na husema hivyo.
 
 ## Akaunti mbili katika folda moja
 
-Akaunti zinazoshiriki historia ya mazungumzo huandika kwenye faili zile zile. Ukianzisha Claude Code ya pili katika folda ambamo akaunti nyingine ya kikundi hicho hicho tayari inaendeshwa, ccam hukuonya na kuuliza kama uendelee.
+Akaunti zinazoshiriki historia ya mazungumzo huandika kwenye faili zile zile. Ukianzisha kipindi cha pili cha Claude Code katika folda ambamo akaunti nyingine ya kikundi hicho hicho tayari inaendeshwa, ccam hukuonya na kuuliza kama uendelee.
 
 ## Kitu kikiharibika
 
@@ -143,4 +143,4 @@ ccam doctor
 ccam doctor --fix
 ```
 
-Ikiwa njia inayoshirikiwa imegeuka kuwa faili ya kawaida, kwa mfano baada ya kurejesha nakala rudufu kwa mkono, ccam husimama kabla ya kuanzisha Claude Code na huelekeza kwa `ccam doctor --fix`, ambayo huiunganisha tena na kikundi: faili hiyo huwa nakala ya kikundi ikiwa kikundi hakina, vinginevyo kikundi hubaki na yake na yako huenda kwenye nakala rudufu, ambayo `--fix` huitaja. Badiliko la vikundi lililosimama nusu njia pia hukamilishwa na `ccam doctor --fix`.
+Ikiwa njia inayoshirikiwa imegeuka kuwa faili ya kawaida, kwa mfano baada ya kurejesha nakala rudufu kwa mkono, ccam husimama kabla ya kuanzisha Claude Code na huelekeza kwa `ccam doctor --fix`. Marekebisho hayo huiunganisha njia hiyo tena na kikundi: faili hiyo huwa nakala ya kikundi ikiwa kikundi hakina; vinginevyo kikundi hubaki na nakala yake, na yako huenda kwenye nakala rudufu ambayo `--fix` huitaja. Badiliko la vikundi lililosimama nusu njia pia hukamilishwa na `ccam doctor --fix`.

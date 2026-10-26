@@ -1,10 +1,10 @@
 ---
 title: استخدام عدة حسابات Claude Code على حاسوب واحد
 description: شغّل عدة حسابات Claude Code جنبًا إلى جنب باستخدام CLAUDE_CONFIG_DIR، يدويًا عبر الأسماء المستعارة في الصدفة أو تلقائيًا باستخدام ccam، وبدّل بينها.
-updated: 2026-10-25
+updated: 2026-10-26
 order: 1
 translation: machine
-sourceHash: "5c5dbd9fcd23"
+sourceHash: "381de7a473b2"
 ---
 
 امنح كل حساب مجلد إعدادات خاصًا به. يقرأ Claude Code المجلد من متغير البيئة `CLAUDE_CONFIG_DIR`، ويحتوي كل مجلد على تسجيل الدخول والإعدادات والسجل الخاصة به، فيبقى كل حساب مسجّل الدخول ويمكنك تشغيل الحسابات في الوقت نفسه. يمكنك إعداد ذلك يدويًا باسم مستعار (alias) في الصدفة، أو ترك ccam يفعله.
@@ -17,7 +17,7 @@ sourceHash: "5c5dbd9fcd23"
 alias claude-work='CLAUDE_CONFIG_DIR=~/.claude-work claude'
 ```
 
-افتح طرفية جديدة وشغّل `claude-work`. سيطلب منك Claude Code تسجيل الدخول، لأن المجلد جديد. ومن ثم يصبح `claude` حسابك الأول و`claude-work` حسابك الثاني. أضف اسمًا مستعارًا لكل حساب، ولكلٍّ منها مجلده الخاص.
+افتح طرفية جديدة وشغّل `claude-work`. سيطلب منك Claude Code تسجيل الدخول، لأن المجلد جديد. ومن ثم يصبح `claude` حسابك الأول و`claude-work` حسابك الثاني.
 
 على Windows دون WSL، تؤدي دالة PowerShell في ملف التعريف الخاص بك (`notepad $PROFILE`) المهمة نفسها:
 
@@ -51,9 +51,9 @@ ccam add work --shortcut ccwork
 
 الآن يشغّل `ccam personal` و`ccam work` الحسابين، وكذلك `ccwork`، الأمر المختصر الذي منحته لحساب العمل. ولأنها برامج حقيقية وليست أسماء مستعارة، فهي تعمل في السكربتات أيضًا. شغّل `ccam` وحده لاختيار حساب من قائمة، و`ccam use work` لجعل حساب ما هو الافتراضي.
 
-تُشارَك الإعدادات و`CLAUDE.md` وخوادم MCP والإضافات منذ البداية. وينقل `ccam next --continue` المحادثة إلى الحساب الآخر، ومشاركة سجل المحادثات، التي يمكنك تفعيلها، تُبقيها محادثة واحدة. ويعرض `ccam usage` استخدام كل الحسابات خلال 5 ساعات وخلال الأسبوع دفعة واحدة.
+تُشارَك الإعدادات و`CLAUDE.md` وخوادم MCP والإضافات منذ البداية. ويتابع `ccam next --continue` المحادثة على الحساب الآخر. وإذا فعّلت مشاركة سجل المحادثات، يعمل الحسابان على المحادثة نفسها بدلًا من نسخة منها. ويعرض `ccam usage` استخدام كل الحسابات خلال 5 ساعات وخلال الأسبوع دفعة واحدة.
 
-إذا كنت تستخدم `~/.claude` بالفعل، فشغّل `ccam import` بدلًا من إضافة ذلك الحساب مرة أخرى، أو `ccam migrate` لنسخ إعداداته وخوادم MCP والإضافات إلى الإعدادات المشتركة.
+إذا كنت تستخدم `~/.claude` بالفعل، فشغّل `ccam import` بدلًا من إضافة ذلك الحساب مرة أخرى، أو `ccam migrate` لنسخ إعداداته وخوادم MCP والإضافات إلى المجموعة المشتركة `default`.
 
 ## كيف أعرف أي حساب يعمل؟
 
@@ -77,6 +77,6 @@ ccam add work --shortcut ccwork
 
 لحسابين دون مشاركة أي شيء، يكفي الاسم المستعار. وعندما تريد مشاركة الإعدادات وخوادم MCP، أو حسابات أكثر، أو رؤية الاستخدام بنظرة واحدة، أو متابعة المحادثات، يوفّر عليك ccam عناء المتابعة اليدوية. تعرض [المقارنة مع الأسماء المستعارة](/compare/aliases) الفروق جنبًا إلى جنب، ويتناول [ccam وأدوات تبديل الحسابات الأخرى](/compare/account-switchers) الأدوات التي تبدّل تسجيل دخول واحدًا بدلًا من ذلك.
 
-يعتمد السماح باستخدام عدة حسابات على شروط كل حساب. راجعها قبل أن تفعل ذلك.
+يعتمد السماح لك باستخدام أكثر من حساب على الشروط التي تنطبق على كل منها. اقرأ هذه الشروط قبل أن تبدأ.
 
-**مقاعد Team وEnterprise.** يبدّل الاختيار التلقائي (`ccam next` و`--fallback` و`ccam pick` والمفتاح `n` في لوحة التحكم، و[`auto_switch`](/features/next#auto-switch) عند تشغيله) أيضًا بين مقاعد المؤسسة نفسها في Claude Team أو Enterprise. يقول مركز المساعدة لدى Anthropic: "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (يُخصَّص كل مقعد في خطة Team لشخص واحد محدد بالاسم، ولا يجوز أن يستخدمه إلا ذلك الشخص) و"Users can't route their work through another user's account to use that user's remaining usage" (لا يجوز للمستخدمين تمرير عملهم عبر حساب مستخدم آخر للاستفادة من الاستخدام المتبقي لذلك المستخدم) ([خطط Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)؛ وبالمثل في [خطط Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). لذا فإن استخدام الاختيار التلقائي بين المقاعد قد يخالف شروط Anthropic. وقرار استخدامه هناك يعود إليك: تحقّق من ذلك مع مؤسستك ومع Anthropic قبل أن تعتمد عليه. أما الخطط الشخصية (Pro وMax) فتتناولها الملاحظة أعلاه.
+**مقاعد Team وEnterprise.** يبدّل الاختيار التلقائي للحساب (`ccam next` و`--fallback` و`ccam pick` والمفتاح `n` في لوحة التحكم، و[`auto_switch`](/features/next#auto-switch) بعد أن تشغّله) أيضًا بين مقاعد المؤسسة نفسها في Claude Team أو Enterprise، وهذا قد يخالف شروط Anthropic. اقرأ [الأسئلة الشائعة](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) وتحقّق من ذلك مع مؤسستك ومع Anthropic قبل أن تعتمد عليه.

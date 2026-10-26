@@ -1,20 +1,20 @@
 ---
 title: Atualizar o ccam
 description: ccam update troca o ccam pela versão mais recente do GitHub após verificar o SHA-256; --check só informa e --version instala uma tag de versão específica.
-updated: 2026-10-23
+updated: 2026-10-26
 order: 10
 translation: machine
-sourceHash: "000d37de5f29"
+sourceHash: "598931e4801f"
 ---
 
-`ccam update` baixa uma versão do ccam do GitHub, confere-a com o `checksums.txt` da versão e substitui o binário em execução com um único rename. Use-o quando você instalou o ccam com o script de instalação ou a partir de um arquivo compactado. O [painel](/features/dashboard) também pergunta ao GitHub pela versão mais recente toda vez que abre e a oferece com `U`, que executa os mesmos passos depois de perguntar. Nenhum outro comando contata o GitHub, então eles funcionam do mesmo jeito sem conexão.
+`ccam update` baixa uma versão do ccam do GitHub, confere-a com o `checksums.txt` da versão e substitui o binário em execução com um único rename. Use-o quando você instalou o ccam com o script de instalação ou a partir de um arquivo compactado. O [painel](/features/dashboard) também pergunta ao GitHub pela versão mais recente toda vez que abre e a oferece com `U`, que executa os mesmos passos depois de perguntar. Os outros comandos nunca contatam o GitHub, então funcionam do mesmo jeito sem conexão.
 
 ## Uso
 
 ```sh
 ccam update                    # install the latest release
 ccam update --check            # only say whether a newer release exists
-ccam update --version v0.3.0   # install that release, also an older one
+ccam update --version v0.3.0   # install that release, even an older one
 ccam --dry-run update          # show what would be downloaded and replaced
 ```
 
@@ -31,7 +31,7 @@ $ ccam update
 ✓ Updated ccam 0.4.0 → 0.5.0 (/home/you/.local/bin/ccam)
 ```
 
-Quando não existe uma versão mais nova, o ccam imprime `ccam 0.4.0 is up to date.` e não altera nada. Com `--version` e a versão que você já usa, ele imprime `ccam 0.4.0 is already installed.`
+Quando não existe uma versão mais nova, o ccam imprime `ccam 0.4.0 is up to date.` e não altera nada. Se `--version` indicar a versão que você já tem, ele imprime `ccam 0.4.0 is already installed.`
 
 ## Opções
 
@@ -39,7 +39,7 @@ Quando não existe uma versão mais nova, o ccam imprime `ccam 0.4.0 is up to da
 | --- | --- | --- |
 | `--check` | Só informa se existe uma versão mais nova | desativado |
 | `--version <tag>` | Instala esta tag de versão, como `v0.3.0`, mais nova ou mais antiga que a atual | a mais recente |
-| `--dry-run` | Respeitado: consulta a tag mais recente (a menos que `--version` indique uma), faz as mesmas verificações no binário e imprime os caminhos de download, checksum e substituição sem baixar nada | desativado |
+| `--dry-run` | Aceito: consulta a tag mais recente (a menos que `--version` indique uma), faz as mesmas verificações no binário e imprime os caminhos de download, checksum e substituição sem baixar nada | desativado |
 
 `--check` e `--version` não podem ser usados juntos. A tag precisa ter o formato `vMAJOR.MINOR.PATCH`, com um sufixo opcional de pré-lançamento ou de build; o `v` inicial pode ser omitido. Qualquer outra coisa falha, por exemplo `--version takes a release tag such as v0.3.0, not "1.2"`.
 
@@ -47,28 +47,28 @@ A variável de ambiente `CCAM_RELEASES_URL` substitui `https://github.com/jhyunw
 
 ## Como funciona
 
-O código fica em `internal/update`, que só o `ccam update` importa. O caminho de inicialização nunca o chama.
+O ccam verifica o download antes de mexer no binário instalado e substitui o binário com um único rename. O código fica em `internal/update`, que só o `ccam update` importa. O caminho de inicialização nunca o chama.
 
-1. `cli.updateCmd` encontra o binário em execução com `os.Executable` e resolve os links simbólicos com `filepath.EvalSymlinks`. Esse caminho real é o que será substituído.
-2. Sem `--version`, `Updater.Latest` solicita `<releases>/latest` sem seguir o redirecionamento e lê a tag do cabeçalho `Location` (`…/tag/v0.5.0`). Isso usa a página de versões em vez da API do GitHub, então o limite de 60 solicitações por hora da API não se aplica. A consulta tem 10 segundos.
-3. `parseVersion` confere a tag com um padrão estrito. Uma tag acaba em URLs de download e em um comando de shell impresso, então nada com `/`, `%`, espaços ou caracteres de shell passa. `compareVersions` a compara com a versão em execução; um pré-lançamento vem antes da versão final correspondente.
-4. `managed()` e `writable()` decidem se o ccam pode substituir o binário (veja abaixo).
-5. `Updater.Fetch` baixa `ccam_<os>_<arch>.tar.gz` (no Windows, `ccam_windows_<arch>.zip`) e `checksums.txt` ao mesmo tempo, com 2 minutos para os dois. Cada download é limitado a 256 MB.
+1. O ccam encontra o binário em execução com `os.Executable` e resolve os links simbólicos com `filepath.EvalSymlinks` (`cli.updateCmd`). Esse caminho real é o que será substituído.
+2. Sem `--version`, o ccam solicita `<releases>/latest` sem seguir o redirecionamento (`Updater.Latest`) e lê a tag do cabeçalho `Location` (`…/tag/v0.5.0`). Isso usa a página de versões em vez da API do GitHub, então o limite de 60 solicitações por hora da API não se aplica. A consulta tem um tempo limite de 10 segundos.
+3. O ccam confere a tag com um padrão estrito (`parseVersion`). Uma tag acaba em URLs de download e em um comando de shell impresso, então nada com `/`, `%`, espaços ou caracteres de shell passa. Depois, o ccam a compara com a versão em execução (`compareVersions`); um pré-lançamento vem antes da versão final correspondente.
+4. O ccam decide se pode substituir o binário (`managed()`, `writable()`; veja abaixo).
+5. O ccam baixa `ccam_<os>_<arch>.tar.gz` (no Windows, `ccam_windows_<arch>.zip`) e `checksums.txt` ao mesmo tempo, com 2 minutos para os dois (`Updater.Fetch`). Cada download é limitado a 256 MB.
 6. O SHA-256 do arquivo compactado precisa corresponder à linha dele no `checksums.txt` antes de qualquer outra coisa. Uma linha ausente ou um checksum diferente interrompe a atualização com `nothing was changed`.
-7. `extract()` lê o tar e pega o primeiro arquivo comum chamado `ccam` (`extractZip` pega `ccam.exe` do zip). Pastas, links e outras entradas são ignorados, e o binário também é limitado a 256 MB.
-8. `Updater.Install` grava o novo binário com `fsutil.AtomicWrite`: um arquivo temporário `.ccam.tmp*` ao lado do binário, com os bits de permissão do arquivo antigo, gravado no disco e renomeado por cima do antigo.
+7. O ccam lê o tar e pega o primeiro arquivo comum chamado `ccam` (`extract()`; `extractZip` pega `ccam.exe` do zip). Pastas, links e outras entradas são ignorados, e o binário também é limitado a 256 MB.
+8. O ccam grava o novo binário com `fsutil.AtomicWrite` (`Updater.Install`): um arquivo temporário `.ccam.tmp*` ao lado do binário, com os bits de permissão do arquivo antigo, gravado no disco e renomeado por cima do antigo.
 
 O processo inteiro, da consulta da tag até o rename:
 
 <!-- motion:update-pipeline -->
 
-O arquivo compactado e o `checksums.txt` são baixados lado a lado, e nada é gravado até que o checksum corresponda. O rename é atômico, então uma falha ou um disco cheio deixa o binário antigo ou o novo, nunca a metade de um. Atalhos como `~/.local/bin/ccwork` são links simbólicos para o binário do ccam, então executam a nova versão sem nenhuma alteração.
+O arquivo compactado e o `checksums.txt` são baixados em paralelo, e nada é gravado até que o checksum corresponda. O rename é atômico, então uma falha ou um disco cheio deixa o binário antigo ou o novo, nunca a metade de um. Atalhos como `~/.local/bin/ccwork` são links simbólicos para o binário do ccam, então executam a nova versão sem nenhuma alteração.
 
-No Windows, o arquivo de um programa em execução não pode ser substituído nem excluído, só renomeado. `Updater.Install` grava o novo binário em `ccam.exe.new`, renomeia o `ccam.exe` em execução para `ccam.exe.old` e renomeia o arquivo novo para `ccam.exe`. Se o último passo falhar, o binário antigo volta ao nome original. A próxima atualização exclui os arquivos `ccam.exe.old` que conseguir; enquanto uma sessão ainda roda a partir de um `ccam.exe.old` anterior, o binário em execução passa a ser `ccam.exe.old-<time>`. Atalhos que são hard links em vez de links simbólicos ([Atalhos](/features/shortcuts)) são renovados logo em seguida, então também executam a nova versão; isso cobre hard links de qualquer ccam mais antigo que o ccam criou, não só do binário que acabou de ser substituído.
+No Windows, o arquivo de um programa em execução não pode ser substituído nem excluído, só renomeado. O ccam grava o novo binário em `ccam.exe.new`, renomeia o `ccam.exe` em execução para `ccam.exe.old` e renomeia o arquivo novo para `ccam.exe` (`Updater.Install`). Se o último passo falhar, o binário antigo volta ao nome original. A próxima atualização exclui os arquivos `ccam.exe.old` que conseguir; enquanto uma sessão ainda roda a partir de um `ccam.exe.old` anterior, o binário em execução passa a ser `ccam.exe.old-<time>`. Atalhos que são hard links em vez de links simbólicos ([Atalhos](/features/shortcuts)) são renovados logo em seguida, então também executam a nova versão; isso cobre hard links de qualquer versão mais antiga do ccam que o ccam criou, não só do binário que acabou de ser substituído.
 
 ### Instalações gerenciadas por pacote
 
-Um ccam instalado pelo `.deb` pertence ao apt, e substituí-lo sem o apt saber deixaria o banco de dados de pacotes incorreto. Antes de baixar, o ccam verifica quem é o dono do binário:
+Uma cópia do ccam instalada pelo `.deb` pertence ao apt, e substituí-la sem o apt saber deixaria o banco de dados de pacotes dessincronizado com o arquivo. Antes de baixar, o ccam verifica quem é o dono do binário:
 
 <!-- motion:update-managed -->
 
@@ -84,14 +84,14 @@ ccam: /usr/bin/ccam was installed by a package, so `ccam update` leaves it alone
 To update the .deb, download ccam_0.5.0_linux_amd64.deb from https://github.com/jhyunwoo/ccam/releases/tag/v0.5.0 and run:
   sudo apt install ./ccam_0.5.0_linux_amd64.deb
 Or install a copy in ~/.local/bin with the install script:
-  curl -fsSL https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.sh | sh
+  curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-Em sistemas que não são Linux, só a linha do script de instalação é impressa: `irm https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.ps1 | iex` no Windows. Quando a pasta não permite gravação, o ccam sugere executar de novo o script de instalação, que instala o ccam em `~/.local/bin`.
+Em sistemas que não são Linux, só a linha do script de instalação é impressa: `irm https://ccam.dev/install.ps1 | iex` no Windows. Quando a pasta não permite gravação, o ccam sugere executar de novo o script de instalação, que instala o ccam em `~/.local/bin`.
 
 ## Segurança e casos especiais
 
-- Um build de desenvolvimento informa a versão como `dev` e não tem uma versão publicada para comparar, então `ccam update` e `ccam update --check` o recusam. `ccam update --version vX.Y.Z` instala uma versão por cima dele. Um build feito com `go install github.com/jhyunwoo/ccam/cmd/ccam@vX.Y.Z` (ou `@latest`) informa essa versão, então `ccam update` e a oferta do painel funcionam com ele; `@main` ou um build local além de uma tag continua `dev`.
+- Um build de desenvolvimento informa a versão como `dev` e não tem uma versão publicada para comparar, então `ccam update` e `ccam update --check` o recusam. `ccam update --version vX.Y.Z` instala uma versão por cima dele. Para builds feitos com `go install`, consulte [Instalar o ccam](/docs/install#other-ways-to-install).
 - Um download que falha, um arquivo ausente para a sua plataforma ou um checksum que não corresponde deixa o binário instalado como estava.
 - Uma versão que não existe falha com `there is no release <tag>`. Quando o GitHub recusa com HTTP 403 ou 429, o ccam diz que provavelmente é um limite de taxa e pede que você tente de novo mais tarde.
 - `--check` só lê. Ele não verifica se o binário é gerenciado por pacote nem se permite gravação.
@@ -99,6 +99,6 @@ Em sistemas que não são Linux, só a linha do script de instalação é impres
 
 ## Relacionados
 
-- [Instalação](/docs/install)
-- [Comandos](/docs/commands)
+- [Instalar o ccam](/docs/install)
+- [Referência de comandos](/docs/commands)
 - [Perguntas frequentes](/docs/faq)

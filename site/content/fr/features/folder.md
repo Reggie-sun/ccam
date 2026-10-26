@@ -1,13 +1,13 @@
 ---
 title: "Comptes par dossier"
 description: "ccam folder fait utiliser un compte à un dossier et à son contenu quand vous lancez Claude Code sans nom de compte, comme work pour le code de l'entreprise."
-updated: 2026-10-23
+updated: 2026-10-26
 order: 11
 translation: machine
-sourceHash: 48de98d42b99
+sourceHash: 25f82da64580
 ---
 
-`ccam folder work ~/code/company` fait que tout lancement sans nom de compte dans `~/code/company`, et dans n'importe quel dossier en dessous, démarre Claude Code avec `work`. En dehors, le compte par défaut démarre comme avant. Nommer un compte, avec `ccam personal` ou un raccourci comme `ccpersonal`, lance toujours ce compte.
+Après `ccam folder work ~/code/company`, tout lancement sans nom de compte dans `~/code/company` ou ses sous-dossiers démarre Claude Code avec `work`. En dehors, le compte par défaut démarre comme avant. Nommer un compte, avec `ccam personal` ou un raccourci comme `ccpersonal`, lance toujours ce compte.
 
 ## Utilisation
 
@@ -43,7 +43,7 @@ Ces lancements utilisent le compte du dossier :
 | `<account>` | Nom ou numéro du compte à utiliser | |
 | `[folder]` | Le dossier, relatif ou absolu | le dossier courant |
 | `--remove` | Supprimer l'entrée de ce dossier précis | désactivé |
-| `--dry-run` | Respecté : affiche la modification sans l'enregistrer | désactivé |
+| `--dry-run` | Pris en charge : affiche la modification sans l'enregistrer | désactivé |
 
 ## Fonctionnement
 
@@ -58,16 +58,16 @@ account = 'work'
 1. `ccam folder` convertit le dossier en chemin absolu, liens symboliques résolus, et l'enregistre. Définir de nouveau un dossier remplace son compte.
 2. Un lancement sans nom appelle `launcher.HereProfile`. Sans aucune entrée, il prend immédiatement le compte par défaut.
 3. Sinon, il compare le répertoire de travail à chaque `path` sous forme de chaînes : le dossier lui-même ou un dossier en dessous, jamais un dossier qui commence seulement par les mêmes lettres (`/code/company` ne couvre pas `/code/companyx`). L'entrée la plus profonde l'emporte : `~/code` peut ainsi être `personal` pendant que `~/code/company` est `work`.
-4. Seulement si le répertoire de travail tel quel ne correspond à rien, ccam résout ses liens symboliques et compare une seconde fois.
+4. Ce n'est que si le répertoire de travail, tel quel, ne correspond à rien que ccam résout ses liens symboliques et compare de nouveau.
 5. Sous Windows et macOS, la comparaison ignore les majuscules et les minuscules, comme le font généralement leurs systèmes de fichiers.
 
-Aucun fichier autre que `config.toml` n'est lu : un lancement dans un dossier ne coûte donc aucun temps mesurable (4,0 ms avec ou sans entrées, `hyperfine`, 300 exécutions).
+Aucun fichier autre que `config.toml` n'est lu : un lancement dans un dossier n'ajoute donc aucun temps mesurable (4,0 ms avec ou sans entrées, `hyperfine`, 300 exécutions).
 
 ## Sécurité et cas particuliers
 
 - `ccam rename` reporte les entrées de dossier sur le nouveau nom, et `ccam remove` supprime les entrées du compte supprimé.
 - Une entrée dont le compte n'existe plus arrête un lancement sans nom dans ce dossier : `<folder> is set to account "<name>", which does not exist. Change it with ccam folder`. `ccam doctor` signale ces entrées, ainsi que celles dont le dossier a disparu.
-- `ccam folder --remove` dans un dossier qui tient son compte d'un dossier parent nomme ce dossier parent au lieu de supprimer quoi que ce soit.
+- Si vous exécutez `ccam folder --remove` dans un sous-dossier qui hérite son compte d'un dossier parent, ccam nomme le dossier parent et ne supprime rien.
 - `ccam next` choisit par rotation ou selon l'utilisation et ne tient pas compte des dossiers.
 
 ## Voir aussi

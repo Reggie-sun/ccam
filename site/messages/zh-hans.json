@@ -2,7 +2,7 @@
   "site": {
     "name": "ccam",
     "title": "ccam：Claude Code Account Manager 与账号切换工具",
-    "description": "ccam（Claude Code Account Manager）是一个免费的开源工具，让你在一台电脑上使用多个 Claude Code 账号，并用一条命令在它们之间切换。",
+    "description": "ccam（Claude Code Account Manager）是一个免费的开源工具，让你在一台电脑上使用多个 Claude Code 账号，并用一条命令切换。",
     "titleSuffix": "适用于 Claude Code 的 ccam"
   },
   "nav": {
@@ -14,11 +14,11 @@
     "menu": "菜单",
     "skip": "跳到正文",
     "language": "语言",
-    "theme": "切换浅色或深色主题"
+    "theme": "在浅色和深色主题之间切换"
   },
   "facts": {
     "what": "ccam 是一个免费的开源命令行工具，让你在一台电脑上使用多个 Claude Code 账号，并用一条命令在它们之间切换。",
-    "how": "每个账号的登录信息保存在各自独立的 CLAUDE_CONFIG_DIR 中，而 MCP 服务器、设置、CLAUDE.md、扩展和对话历史可以在账号之间共享，因此当一个账号达到用量限制时，你可以在另一个账号上继续对话。",
+    "how": "每个账号的登录信息保存在各自独立的 CLAUDE_CONFIG_DIR 中。MCP 服务器、设置、CLAUDE.md、扩展和对话历史可以在账号之间共享，因此当一个账号达到用量限制时，你可以在另一个账号上继续对话。",
     "install": "在 Linux、macOS 或 Windows 上用一条命令安装，然后为每个账号运行 ccam add。",
     "official": "ccam 是一个非官方项目，与 Anthropic 没有关联，也未获得 Anthropic 的认可。"
   },
@@ -62,12 +62,12 @@
     "flow": [
       {
         "command": "ccam add work",
-        "body": "为该账号创建单独的配置文件夹，在浏览器中打开 Claude 登录页面；如果你需要，还会为账号设置一个你自己命名的快捷命令，例如 ccwork。"
+        "body": "为该账号创建单独的配置文件夹，并在浏览器中打开 Claude 登录页面。它还可以为账号设置一个由你选择的快捷命令，例如 ccwork。"
       },
       {
         "command": "ccam work",
         "also": "ccwork --resume",
-        "body": "以该账号启动 Claude Code。账号名之后的所有内容都原样传给 Claude Code，ccam 在启动前只增加约 4 毫秒。"
+        "body": "以该账号启动 Claude Code。账号名之后的所有内容都原样传给 Claude Code，通过 ccam 启动只比直接运行 claude 多花约 4 毫秒。"
       },
       {
         "command": "ccam group set default --add history",
@@ -83,7 +83,7 @@
       },
       {
         "command": "ccam doctor --fix",
-        "body": "检查链接、权限和登录状态，并修复可以安全修复的问题。对文件的每次更改都会保留备份。"
+        "body": "检查链接、权限和登录状态，并修复可以安全修复的问题。它移开的文件会保留在备份中。"
       }
     ],
     "guidesTitle": "指南",
@@ -141,19 +141,19 @@
     "next": "打开下一个账号；--continue 把对话带过去，--auto 选择余量最多的账号",
     "usage": "显示所有账号的 5 小时用量和每周用量",
     "share": "显示账号共享哪些内容，以及通过哪个组共享",
-    "group": "创建和更改组：一组账号共享的内容，按计划移动",
+    "group": "创建和更改组，组决定其中的账号共享哪些内容；每次更改都会先显示计划",
     "mcp": "管理共享的 MCP 服务器",
     "migrate": "把现有的 Claude Code 配置（~/.claude）复制到共享组",
     "login": "重新登录账号；--expired 会登录所有需要登录的账号",
     "logout": "让账号退出登录：包括其登录信息和 MCP 服务器的登录",
-    "rename": "重命名账号；快捷命令保持原名",
+    "rename": "重命名账号；它的快捷命令保持不变",
     "remove": "删除账号：账号会先退出登录，其文件夹会移到回收文件夹",
     "import": "在原位置注册已有的 ~/.claude 文件夹",
     "doctor": "检查链接、权限、登录和版本，并进行修复",
     "statusline": "在 Claude Code 的状态栏中显示账号和用量",
     "shims": "重新创建所有账号的快捷命令链接",
     "shortcut": "显示、创建、重命名或删除账号的快捷命令，例如 ccwork",
-    "folder": "未指定账号名时，在某个文件夹及其下文件夹中使用指定账号",
+    "folder": "未指定账号名时，在某个文件夹及其子文件夹中使用指定账号",
     "pick": "为脚本和并行任务输出余量最多的账号",
     "ext": "显示每个账号加载的技能、命令、插件、MCP 服务器和钩子",
     "agents": "列出所有账号的后台代理和打开的会话",
@@ -174,7 +174,7 @@
   },
   "footer": {
     "unofficial": "ccam 是一个非官方的开源工具，与 Anthropic 没有关联，也未获得 Anthropic 的认可。Claude 和 Claude Code 是 Anthropic 的商标。",
-    "terms": "你能否使用多个账号，取决于每个账号适用的条款。使用前请先确认。",
+    "terms": "你能否使用多个账号，取决于适用于每个账号的条款。开始之前请先阅读这些条款。",
     "license": "GitHub 上的源代码",
     "languages": "所有语言",
     "analytics": "本站使用 Cloudflare Web Analytics 统计访问量，它不设置 Cookie，也不收集个人数据。"

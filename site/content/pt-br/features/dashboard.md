@@ -1,13 +1,13 @@
 ---
 title: O painel
 description: O ccam em um terminal abre um painel em tela cheia com contas, grupos, regras de pasta, extensões e verificações; cada mudança mostra o plano antes.
-updated: 2026-10-25
+updated: 2026-10-26
 order: 15
 translation: machine
-sourceHash: "28f216a4a04f"
+sourceHash: "4e763ca8aacf"
 ---
 
-`ccam` sem argumentos abre um painel em tela cheia quando a entrada e a saída padrão são um terminal; caso contrário, imprime `ccam list`. O painel mostra todas as contas com o uso e os grupos de cada uma e faz o que os comandos fazem: iniciar, adicionar, fazer login, alterar grupos, definir regras de pasta, listar sessões em segundo plano, verificar e reparar. Iniciar uma conta, ou se conectar a uma sessão em segundo plano, fecha o painel; adicionar uma conta ou fazer login sai dele para o terminal e depois volta.
+`ccam` sem argumentos abre um painel em tela cheia quando a entrada e a saída padrão são um terminal; caso contrário, imprime `ccam list`. O painel mostra todas as contas com o uso e os grupos de cada uma e faz o que os comandos fazem: iniciar, adicionar, fazer login, alterar grupos, definir regras de pasta, listar sessões em segundo plano, verificar e reparar. Iniciar uma conta, ou se conectar a uma sessão em segundo plano, fecha o painel; adicionar uma conta ou fazer login entrega o terminal por um momento e depois volta ao painel.
 
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
@@ -23,17 +23,17 @@ sourceHash: "28f216a4a04f"
  enter to launch · n for most room · a to add · s for groups · ? for shortcuts
 ```
 
-A linha abaixo dos nomes das abas diz em uma frase para que serve a aba atual. Em um terminal mais largo, a aba Accounts também mostra o e-mail de cada conta. O fim da linha das abas diz se o [`auto_switch`](/features/next#auto-switch) está ativado, em todas as abas (Linux e macOS; no Windows, ele é ignorado); quando ele está ativado, a aba Health diz do que ele ainda precisa: o plugin do ccam, ativado, em todas as contas que fazem login com uma assinatura do Claude, e o Claude Code 2.1.214 ou posterior.
+A linha abaixo dos nomes das abas diz em uma frase para que serve a aba atual. Em um terminal mais largo, a aba Accounts também mostra o e-mail de cada conta. Em todas as abas, o fim da linha das abas mostra se o [`auto_switch`](/features/next#auto-switch) está ativado (Linux e macOS; no Windows, ele é ignorado). Quando ele está ativado, a aba Health lista do que ele ainda precisa: o Claude Code 2.1.214 ou posterior e o plugin do ccam ativado em todas as contas que fazem login com uma assinatura do Claude.
 
-Toda vez que abre, o painel pergunta ao GitHub em segundo plano se existe uma versão mais recente do ccam; o primeiro quadro nunca espera por isso e, sem conexão, nada é mostrado. Quando há uma, uma linha abaixo do título a recomenda:
+Toda vez que abre, o painel pergunta ao GitHub em segundo plano se existe uma versão mais recente do ccam; o primeiro quadro nunca espera por isso e, quando você está sem conexão, nada é mostrado. Quando há uma, uma linha abaixo do título a recomenda:
 
 ```console
  ● ccam 0.10.2 is available (you have 0.10.1) · press U to update
 ```
 
-`U` pergunta primeiro e depois atualiza do mesmo jeito que o [`ccam update`](/features/update): a versão é conferida com seus checksums SHA-256 e substitui o ccam em um único passo. O painel em que você está continua sendo a versão antiga, então saia e inicie o `ccam` de novo. Quando a atualização não pode ser feita aqui, por exemplo com um ccam instalado pelo pacote `.deb`, o painel mostra o mesmo conselho que o `ccam update` e mantém a oferta.
+`U` pergunta primeiro e depois atualiza do mesmo jeito que o [`ccam update`](/features/update): a versão é conferida com seus checksums SHA-256 e substitui o ccam em um único passo. O painel em que você está continua sendo a versão antiga, então saia e inicie o `ccam` de novo. Quando a atualização não pode ser feita aqui, por exemplo com uma cópia do ccam instalada pelo pacote `.deb`, o painel mostra o mesmo conselho que o `ccam update` e mantém a oferta.
 
-O primeiro quadro é desenhado só a partir do `config.toml`, em bem menos de 100 ms; o uso aparece à medida que cada conta responde. Cada limite tem a própria barra: a janela de 5 horas, a janela semanal de todos os modelos e a janela semanal própria do Fable; `-` significa que a conta não tem essa janela. Uma porcentagem fica amarela a partir de 80% e vermelha em 100%, e os valores vindos de um cache depois de uma consulta que falhou aparecem esmaecidos. Uma janela que o Claude Code informou como cheia mostra 100% até reiniciar. Um token de acesso expirado mostra um `⚠ token expired` esmaecido (o Claude Code o renova na próxima inicialização), enquanto `⚠ login expired` significa que a conta precisa de `ccam login`.
+O primeiro quadro é desenhado só a partir do `config.toml`, em bem menos de 100 ms; o uso aparece à medida que cada conta responde. Cada limite tem a própria barra: a janela de 5 horas, a janela semanal de todos os modelos e a janela semanal própria do Fable; `-` significa que a conta não tem essa janela. Uma porcentagem fica amarela em 80% e vermelha em 100%. Se uma consulta falhar, os valores do cache aparecem esmaecidos. Uma janela que o Claude Code informou como cheia mostra 100% até reiniciar. Um token de acesso expirado mostra um `⚠ token expired` esmaecido (o Claude Code o renova na próxima inicialização), enquanto `⚠ login expired` significa que a conta precisa de `ccam login`.
 
 ## Abas
 
@@ -42,11 +42,11 @@ O primeiro quadro é desenhado só a partir do `config.toml`, em bem menos de 10
 | Accounts | número, nome, e-mail, barras de 5 horas, semanal e do Fable, último uso, grupos; `✔` a conta padrão, `▸` a conta desta pasta, `•` em execução (inclusive o Claude Code iniciado sem o ccam: `claude` simples, uma IDE, sessões em segundo plano e o daemon delas) | abaixo |
 | Agents | o que o [`ccam agents`](/features/agents) lista: as sessões em segundo plano e as sessões abertas de todas as contas, com estado, pasta e horário de início (abaixo) | `enter` conectar (como `ccam attach`), `x` parar, `r` recarregar |
 | Groups | cada grupo, o que ele compartilha e suas contas, e as contas que não estão em nenhum grupo | `enter` editar, `n` novo, `e` renomear, `x` remover |
-| Folders | as regras do [`ccam folder`](/features/folder) e a que vale aqui, inclusive quando você chegou à pasta por um link simbólico (regras novas são guardadas com os links resolvidos) | `n` usar uma conta aqui, `enter` alterar, `x` remover |
-| Extensions | o que o [`ccam ext`](/features/ext) mostra, cada extensão uma vez, com os grupos de onde ela vem, `off:` as contas em que um plugin não está ativado, entre os servidores próprios de uma conta os que ela tem só para esta pasta, `This folder's project` e os problemas que não pertencem a nenhuma conta | `r` recarregar |
+| Folders | as regras do [`ccam folder`](/features/folder) e a que vale aqui, mesmo quando você chegou à pasta por um link simbólico (regras novas são guardadas com os links resolvidos) | `n` usar uma conta aqui, `enter` alterar, `x` remover |
+| Extensions | o que o [`ccam ext`](/features/ext) mostra, cada extensão uma vez, com os grupos de onde ela vem, `off:` as contas em que um plugin não está ativado, os servidores próprios da conta que valem só para esta pasta, `This folder's project` e os problemas que não pertencem a nenhuma conta | `r` recarregar |
 | Health | o que o [`ccam doctor`](/features/doctor) relata, com uma caixa por conta (abaixo) | `f` reparar a caixa selecionada, `F` reparar tudo (`doctor --fix`), `↑`/`↓` passar de uma caixa para outra |
 
-`←`/`→` ou `Tab` trocam de aba, `?` lista as teclas da aba atual, `r` consulta o uso de novo sem o cache curto e carrega de novo as abas Agents, Extensions e Health, e `q` ou `Esc` sai.
+`←`/`→` ou `Tab` trocam de aba, `?` lista as teclas da aba atual, `r` atualiza o uso, ignorando o cache curto, e carrega de novo as abas Agents, Extensions e Health, e `q` ou `Esc` sai.
 
 ## Teclas na aba Accounts
 
@@ -65,9 +65,9 @@ O primeiro quadro é desenhado só a partir do `config.toml`, em bem menos de 10
 | `f` | Usa a conta na pasta atual |
 | `e` | Renomeia a conta |
 | `c` | Define ou remove o comando de atalho dela |
-| `x` | Remove a conta (pergunta antes, começando em No) |
+| `x` | Remove a conta (pergunta antes, com No selecionado) |
 
-**Assentos dos planos Team e Enterprise.** A escolha automática (`ccam next`, `--fallback`, `ccam pick`, a tecla `n` do painel e o [`auto_switch`](/features/next#auto-switch), quando você o ativa) também alterna entre assentos da mesma organização Claude Team ou Enterprise. A central de ajuda da Anthropic diz "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (cada assento de um plano Team é atribuído a uma pessoa específica, e só essa pessoa pode usá-lo) e "Users can't route their work through another user's account to use that user's remaining usage" (os usuários não podem encaminhar o próprio trabalho pela conta de outro usuário para aproveitar o uso restante desse usuário) ([planos Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); o mesmo vale para os [planos Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Por isso, usar a escolha automática entre assentos pode violar os termos da Anthropic. Usá-la nesse caso é uma decisão sua: consulte a sua organização e a Anthropic antes de contar com ela. Os planos pessoais (Pro, Max) são tratados na [nota sobre os termos nas perguntas frequentes](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Assentos dos planos Team e Enterprise.** A escolha automática de conta (`ccam next`, `--fallback`, `ccam pick`, a tecla `n` do painel e, depois que você o ativa, o [`auto_switch`](/features/next#auto-switch)) também alterna entre assentos da mesma organização Claude Team ou Enterprise, o que pode violar os termos da Anthropic. Leia as [perguntas frequentes](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) e consulte a sua organização e a Anthropic antes de contar com ela.
 
 ## A aba Health
 
@@ -99,7 +99,7 @@ A aba Health executa as verificações do [`ccam doctor`](/features/doctor) quan
 
 ## A aba Agents
 
-A aba Agents mostra o que o [`ccam agents`](/features/agents) imprime: as sessões em segundo plano e as sessões abertas de todas as contas, com a conta a que cada uma pertence. Ela consulta o Claude Code de todas as contas ao mesmo tempo (`claude agents --json`, até 15 segundos cada) quando você abre a aba pela primeira vez, ao pressionar `r`, depois de parar uma sessão e depois de uma mudança na configuração, e mostra `Asking every account's Claude Code for its sessions…` até que todas tenham respondido.
+A aba Agents mostra o que o [`ccam agents`](/features/agents) imprime: as sessões em segundo plano e as sessões abertas de todas as contas, com a conta a que cada uma pertence. Ela consulta o Claude Code de todas as contas ao mesmo tempo (`claude agents --json`, cada uma com um tempo limite de 15 segundos) quando você abre a aba pela primeira vez, ao pressionar `r`, depois de parar uma sessão e depois de uma mudança na configuração, e mostra `Asking every account's Claude Code for its sessions…` até que todas tenham respondido.
 
 ```console
   Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
@@ -115,9 +115,9 @@ A aba Agents mostra o que o [`ccam agents`](/features/agents) imprime: as sessõ
  enter to attach · x to stop · r to reload · ? for shortcuts
 ```
 
-`State` é o estado de uma sessão em segundo plano e o que o processo dela está fazendo, ou `open` para uma sessão interativa, como no `ccam agents`. Uma conta que não pôde ser consultada ganha uma linha `✘` abaixo da lista com o que o Claude Code disse, como `lab` acima, cuja visualização de agentes está desativada. As sessões em segundo plano já encerradas ficam de fora (`ccam agents --all` as lista), e, quando todas as contas responderam e nenhuma tem sessões, a aba diz ``No sessions. Start one in the background with `ccam <account> --bg "…"`.`` Em um terminal estreito, a aba remove `Started`, depois `Name`, depois `Folder`, e corta uma pasta longa pela esquerda.
+`State` é o estado de uma sessão em segundo plano e o que o processo dela está fazendo, ou `open` para uma sessão interativa, como no `ccam agents`. Se uma conta não puder ser consultada, uma linha `✘` abaixo da lista mostra o que o Claude Code disse, como `lab` acima, que está com a visualização de agentes desativada. As sessões em segundo plano já encerradas ficam de fora (`ccam agents --all` as lista), e, quando todas as contas responderam e nenhuma tem sessões, a aba diz ``No sessions. Start one in the background with `ccam <account> --bg "…"`.`` Em um terminal estreito, a aba remove `Started`, depois `Name`, depois `Folder`, e corta caminhos de pasta longos pela esquerda.
 
-`Enter` em uma sessão em segundo plano fecha o painel e abre a sessão neste terminal como a conta dela, como faz o `ccam attach <id>`; o painel não volta (no Claude Code, `←` vai para a visualização de agentes e `Ctrl+Z` para o shell). Uma sessão aberta não tem id, então `Enter` e `x` só dizem que é preciso uma sessão em segundo plano. `x` pergunta antes, começando em `No, keep it`: ``It runs as personal. Like `ccam personal stop 49ec0028`, Claude Code stops it and keeps its conversation, which `ccam attach 49ec0028` opens again.`` Se a resposta for sim, o ccam executa `claude stop <id>` como essa conta, diz ``49ec0028 (personal) stopped; `ccam attach 49ec0028` opens it again`` ou por que não conseguiu, e lê a lista de novo.
+`Enter` em uma sessão em segundo plano fecha o painel e abre a sessão neste terminal como a conta dela, como faz o `ccam attach <id>`; o painel não volta (no Claude Code, `←` vai para a visualização de agentes e `Ctrl+Z` para o shell). Uma sessão aberta não tem ID, então `Enter` e `x` só dizem que é preciso uma sessão em segundo plano. `x` pergunta antes, com `No, keep it` selecionado: ``It runs as personal. Like `ccam personal stop 49ec0028`, Claude Code stops it and keeps its conversation, which `ccam attach 49ec0028` opens again.`` Se a resposta for sim, o ccam executa `claude stop <id>` como essa conta, diz ``49ec0028 (personal) stopped; `ccam attach 49ec0028` opens it again`` ou por que não conseguiu, e lê a lista de novo.
 
 ## Alterar grupos
 
@@ -135,7 +135,9 @@ Na aba Groups, `Enter` abre o editor: os itens à esquerda, as contas à direita
     2. No
 ```
 
-Primeiro, o ccam pergunta sobre cada arquivo que difere da cópia do grupo (manter o do grupo, usar o meu ou mesclar). Depois, a alteração roda em segundo plano com o mesmo código do [`ccam group`](/features/share): a configuração é salva primeiro, os dados de cada conta são movidos em ordem, e os originais vão para `.ccam-backup/`; uma conta que sai do compartilhamento de MCP mantém os servidores do grupo no `.claude.json` dela. Uma alteração que moveria os dados de uma conta em execução é recusada, com o nome da conta, inclusive quando a conta foi iniciada enquanto o plano estava aberto, e um plano que a troca de grupos de outro ccam deixou desatualizado é recusado com `the groups changed while this plan waited; nothing was moved, make the change again`. Enquanto outro ccam altera os grupos, uma nova alteração, renomeação ou remoção diz `another ccam is changing the groups right now`; depois de uma alteração que parou no meio, elas esperam até que `F` na aba Health (ou `ccam doctor --fix`) a conclua.
+Se um arquivo difere da cópia do grupo, o ccam primeiro pergunta o que fazer (manter o do grupo, usar o meu ou mesclar). Depois, a alteração roda em segundo plano com o mesmo código do [`ccam group`](/features/share): a configuração é salva primeiro, os dados de cada conta são movidos em ordem, e os originais vão para `.ccam-backup/`; uma conta que sai do compartilhamento de MCP mantém os servidores do grupo no `.claude.json` dela.
+
+Uma alteração que moveria os dados de uma conta em execução é recusada, com o nome da conta, mesmo quando a conta foi iniciada enquanto o plano estava aberto, e um plano que ficou desatualizado porque outro processo do ccam alterou os grupos é recusado com `the groups changed while this plan waited; nothing was moved, make the change again`. Enquanto outro processo do ccam altera os grupos, uma nova alteração, renomeação ou remoção diz `another ccam process is changing the groups right now`; depois de uma alteração que parou no meio, elas esperam até que `F` na aba Health (ou `ccam doctor --fix`) a conclua.
 
 ## Adicionar uma conta
 
@@ -144,7 +146,7 @@ Primeiro, o ccam pergunta sobre cada arquivo que difere da cópia do grupo (mant
 1. O nome da conta.
 2. Como ela faz login: com uma assinatura do Claude agora (no navegador), com uma [chave de API](/features/api) ou com uma assinatura do Claude depois.
 3. Para uma chave de API: de onde o ccam lê a chave a cada inicialização (`env:NAME` ou `command:COMMAND`), o endpoint, como a chave é enviada e o modelo.
-4. Os grupos em que a conta entra, com `default` marcado; antes de existirem grupos, o que o grupo `default` compartilha.
+4. Os grupos em que a conta entra, com `default` marcado (se ainda não houver grupos, o que o grupo `default` vai compartilhar).
 5. Um comando de atalho, se você quiser.
 6. Um resumo para confirmar.
 
@@ -152,7 +154,7 @@ Primeiro, o ccam pergunta sobre cada arquivo que difere da cópia do grupo (mant
 
 ## Remover uma conta
 
-`x` pergunta antes de qualquer coisa acontecer, começando em No, e diz o que a remoção faz: `It is logged out first (its login is revoked), then its folder goes to ccam's trash; the groups' shared files stay.` Para uma conta com chave de API, não há login a revogar, e, quando outra conta tem o mesmo login, ela não é desconectada. Uma conta importada mantém a pasta: `It was imported, so its folder /home/me/.claude stays where it is: it leaves its groups first and keeps a copy of what they share, then ccam forgets it.`
+`x` pergunta antes de qualquer coisa acontecer, com No selecionado, e diz o que a remoção faz: `It is logged out first (its login is revoked), then its folder goes to ccam's trash; the groups' shared files stay.` Para uma conta com chave de API, não há login a revogar, e, quando outra conta tem o mesmo login, ela não é desconectada. Uma conta importada mantém a pasta: `It was imported, so its folder /home/me/.claude stays where it is: it leaves its groups first and keeps a copy of what they share, then ccam forgets it.`
 
 ## Cores
 
@@ -169,7 +171,7 @@ Os temas `-daltonized` são para daltonismo vermelho-verde, e os temas `-ansi` u
 - O painel chama as mesmas funções que os comandos, então todas as regras valem: planos antes de mover dados, recusas para contas em execução, backups e tokens de login que nunca saem de uma conta.
 - O painel não tem simulação: `ccam --dry-run` sem um nome imprime como a conta desta pasta seria iniciada, e `o` em uma conta oferece uma simulação só daquela inicialização.
 - O terminal é restaurado antes de o Claude Code iniciar ou de o login abrir.
-- Em uma tela pequena demais para um diálogo, as linhas da aba são as primeiras a sair; as linhas são cortadas com `…` em vez de quebradas. Em uma tela baixa, as linhas em branco e a descrição da aba saem em seguida, para que a linha de teclas fique. Abaixo de 40 colunas ou 8 linhas, o painel mostra só `Too small: ccam needs 40x8 (now 36x7)`.
+- Em uma tela pequena demais para um diálogo, as linhas da aba são as primeiras a sair; as linhas são cortadas com `…` em vez de quebradas. Em uma tela baixa, as linhas em branco e a descrição da aba são removidas em seguida, para que a linha de dicas de teclas continue visível. Abaixo de 40 colunas ou 8 linhas, o painel mostra só `Too small: ccam needs 40x8 (now 36x7)`.
 - `Ctrl+C` enquanto uma alteração, uma remoção, uma atualização ou um reparo está sendo aplicado espera que termine: a linha de status diz `ccam quits when it is done.`
 - Depois que `U` atualizou o ccam, a oferta não volta quando o painel retorna de adicionar uma conta ou de um login.
 

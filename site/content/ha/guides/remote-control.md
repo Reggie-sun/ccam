@@ -1,13 +1,13 @@
 ---
 title: Amfani da Remote Control tare da ccam
 description: "Remote Control na Claude Code ga kowane asusu da ccam <name> rc: zaɓuɓɓukan da ke aiki, dalilin da ccam ke tayin kwafar sabobin MCP da aka raba, da gyara."
-updated: 2026-10-23
+updated: 2026-10-26
 order: 4
 translation: machine
-sourceHash: 3e17d89f98c8
+sourceHash: 4d46f49c5dea
 ---
 
-`ccam work rc` yana fara Remote Control na Claude Code a matsayin asusun `work`, don ka iya sarrafa zaman da ke kan wannan kwamfuta daga claude.ai/code ko manhajar Claude ta wayar hannu. Yana aiki kamar `claude rc` da bambanci guda ɗaya: idan asusun yana raba sabobin MCP, ccam yana tambaya sau ɗaya ko zai kwafe su cikin `.claude.json` na asusun, domin zaman Remote Control ba sa karanta sabobi daga ko'ina sai can.
+`ccam work rc` yana fara Remote Control na Claude Code a matsayin asusun `work`, don ka iya sarrafa zaman da ke kan wannan kwamfuta daga claude.ai/code ko manhajar Claude ta wayar hannu. Yana aiki kamar `claude rc` da bambanci guda ɗaya: idan asusun yana raba sabobin MCP, ccam yana tambaya sau ɗaya ko zai kwafe su cikin `.claude.json` na asusun, domin wannan fayil shi ne wuri ɗaya tilo da zaman Remote Control ke karanta sabobi daga gare shi.
 
 ## Fara shi
 
@@ -31,9 +31,10 @@ Iri biyu na zaɓuɓɓuka suna haɗuwa a nan: na ccam kansa, waɗanda ke zuwa kaf
 | Zaɓi ko saiti | Abin da yake yi | Tsoho |
 | --- | --- | --- |
 | `--dry-run` (kafin asusun) | Yana buga muhalli da umarnin, da sanarwar MCP idan akwai. Ba ya tambaya kuma ba ya kwafi | a kashe |
-| `Copy them into .claude.json (a backup is kept; servers of the account's own stay)? [y/N]` | Ana tambaya idan asusun yana raba sabobin MCP kuma `.claude.json` ɗinsa ba shi da jerin rukunin na yanzu, ko sabar da aka kwafa ta ɓace daga cikinsa. `y` yana kwafar su, `N` ko Enter yana farawa ba tare da su ba | `N` |
 | `mcp_strategy = "sync"` a saman `~/.config/ccam/config.toml` | Yana kwafar sabobin rukunin cikin `.claude.json` kafin kowace farawa, Remote Control ko ba haka ba, don haka ba a taɓa tambaya ba | `"flag"` |
 | `ccam group leave <group> work` | Yana cire asusun daga rukunin da ke raba MCP da shi. Ana kwafar sabobin rukunin cikin `.claude.json` nasa a matsayin nasa na kansa, don haka Remote Control yana da su kuma ba a tambayar komai; da `--fresh` yana farawa da sabobin asusun kansa kawai | a cikin `default` |
+
+Idan asusun yana raba sabobin MCP kuma `.claude.json` ɗinsa ba shi da jerin rukunin na yanzu, ko sabar da aka kwafa ta ɓace daga cikinsa, ccam yana tambaya `Copy them into .claude.json (a backup is kept; the account's own servers stay)? [y/N]`. `y` yana kwafar su; `N` ko Enter yana farawa ba tare da su ba.
 
 ### Zaɓuɓɓukan Remote Control
 
@@ -47,7 +48,7 @@ Duk abin da ke bayan `rc` na Claude Code ne. Waɗannan su ne zaɓuɓɓukan `clau
 | `--session-id <id>` | Sake haɗawa da wani takamaiman zama |
 | `--permission-mode <mode>` | Yanayin izini don sabbin zaman: `acceptEdits`, `auto`, `bypassPermissions`, `default`, `dontAsk` ko `plan` |
 | `--spawn <mode>` | `same-dir` (tsoho), `worktree` (git worktree ɗaya ga kowane zama) ko `session` (zama ɗaya, yana fita idan ya ƙare) |
-| `--capacity <N>` | Mafi yawan zaman a lokaci ɗaya a yanayin `same-dir` da `worktree` (tsoho 32) |
+| `--capacity <N>` | Matsakaicin adadin zaman da ke gudana a lokaci ɗaya a yanayin `same-dir` da `worktree` (tsoho 32) |
 | `--[no-]create-session-in-dir` | Ƙirƙiri zama na farko a foldar yanzu lokacin farawa (tsoho a kunne) |
 | `--[no-]chrome` | Claude in Chrome don sabbin zaman (tsoho a kashe) |
 | `-d`, `--debug`, `--debug-file <path>`, `-v`, `--verbose` | Fitarwa ta gyaran kurakurai da ta cikakken bayani |
@@ -66,10 +67,10 @@ Farawar tana bin hanyar da aka saba ([Fara Claude Code](/features/launch)) da ca
    ```console
    $ ccam work rc
    ccam: Remote Control sessions only get MCP servers stored in account work's .claude.json, not the shared MCP servers (ctx, fs).
-   Copy them into .claude.json (a backup is kept; servers of the account's own stay)? [y/N]
+   Copy them into .claude.json (a backup is kept; the account's own servers stay)? [y/N]
    ```
 
-5. Idan `y`, yana ajiye kwafin `.claude.json`, yana ɗaukar kullen Claude Code kansa, yana ƙara sabobin rukunin cikin `mcpServers` kuma yana riƙe sauran sabobin asusun; sabar asusun ta kansa mai sunan sabar rukuni tana zama ta asusun, kuma ccam yana faɗin haka. Idan `N`, ba tare da terminal ba, ko yayin da asusun ke aiki, ba ya canza komai kuma yana faɗin haka:
+5. Idan `y`, yana ajiye kwafin `.claude.json`, yana ɗaukar kullen Claude Code kansa, yana ƙara sabobin rukunin cikin `mcpServers` kuma yana riƙe sauran sabobin asusun; idan asusun yana da sabarsa mai suna iri ɗaya da sabar rukuni, ccam yana riƙe sabar asusun kuma yana faɗin haka. Idan `N`, ba tare da terminal ba, ko yayin da asusun ke aiki, ba ya canza komai kuma yana faɗin haka:
 
    ```console
          Starting without them. To copy them before every launch instead, set mcp_strategy = "sync" in ~/.config/ccam/config.toml
@@ -77,7 +78,7 @@ Farawar tana bin hanyar da aka saba ([Fara Claude Code](/features/launch)) da ca
 
 6. Yana rubuta zaman, yana saita `CLAUDE_CONFIG_DIR` zuwa foldar asusun kuma yana maye gurbin kansa da `claude rc` ta hanyar `exec`.
 
-Daga nan Remote Control yana ci gaba da aiki a matsayin sabar. Kowane zama da ya fara maka ɗan aiki ne (child process) na wannan aikin, don haka yana aiki a matsayin `work`: da bayanan shiga, saituna da tarihin tattaunawa na `work`, kuma ana lissafa shi a kan iyakar amfani na `work`. Yayin da sabar da ccam ya fara ke aiki, ccam yana ɗaukar asusun a matsayin mai aiki, haka ma sabar da aka fara da `claude remote-control` na yau da kullum yayin da take da zaman; irin wannan sabar da ba ta da zama tukuna ba a ganin ta.
+Daga nan Remote Control yana ci gaba da aiki a matsayin sabar. Kowane zama da ya fara maka ɗan aiki ne (child process) na wannan aikin, don haka yana aiki a matsayin `work`: da bayanan shiga, saituna da tarihin tattaunawa na `work`, kuma ana lissafa shi a kan iyakar amfani na `work`. ccam yana ɗaukar asusun a matsayin mai aiki yayin da sabar Remote Control da ya fara ke aiki. Sabar da aka fara da `claude remote-control` na yau da kullum tana ƙirguwa ne kawai yayin da take da zaman; ccam ba zai iya ganin wadda ba ta da ko ɗaya tukuna ba.
 
 Gwajin gudu (dry run) yana nuna bambancin. Farawa ta yau da kullum tana ɗauke da sabobin rukunin a matsayin argument, Remote Control ba ya ɗauka:
 
@@ -116,7 +117,7 @@ $ ccam mcp add ctx --url https://mcp.context7.com/mcp
 
 ### Sabobin MCP da aka raba ba su cikin zaman Remote Control
 
-An amsa tambayar da `N`, babu terminal, ko asusun yana aiki. Dakatar da Remote Control, rufe sauran zaman asusun, kuma sake gudanar da `ccam work rc` a terminal; amsa `y`. Don kada a sake tambayarka, saita `mcp_strategy = "sync"` a `~/.config/ccam/config.toml`. Sabobin da ke cikin zama tuni ba sa canzawa yayin da yake aiki, don haka fara sabon zama bayan kwafin.
+An amsa tambayar da `N`, babu terminal, ko asusun yana aiki. Dakatar da Remote Control, rufe sauran zaman asusun, kuma sake gudanar da `ccam work rc` a terminal; amsa `y`. Don daina tambayarka, saita `mcp_strategy = "sync"` a `~/.config/ccam/config.toml`. Sabobin da ke cikin zama tuni ba sa canzawa yayin da yake aiki, don haka fara sabon zama bayan kwafin.
 
 ### "Account work is running, so its .claude.json is left alone"
 
@@ -128,7 +129,7 @@ Ba ka kwafi sabobin ba tukuna. Amsa `y` sau ɗaya, ko saita `mcp_strategy = "syn
 
 ### `ccam work rc` yana gazawa nan take da kuskure game da `--mcp-config`
 
-ccam ɗinka ya tsufa fiye da 0.6.0 kuma yana miƙa `--mcp-config` ga Remote Control. Gudanar da `ccam update`. Kuskure iri ɗaya da ccam na yanzu yana nufin wani zaɓi da ccam bai sani ba, mai ƙima, ya zo kafin `rc`, don haka ccam ya ɗauki ƙimar a matsayin umarnin; saka `rc` kai tsaye bayan sunan asusun.
+ccam ɗinka ya tsufa fiye da 0.6.0 kuma yana miƙa `--mcp-config` ga Remote Control. Gudanar da `ccam update`. Da ccam na yanzu, kuskure iri ɗaya yana nufin cewa wani zaɓi da ba a sani ba mai ƙima ya zo kafin `rc`, kuma ccam ya yi kuskuren ɗaukar ƙimar a matsayin umarnin; saka `rc` kai tsaye bayan sunan asusun.
 
 ### Canjin da aka yi da `ccam mcp` ba ya isa Remote Control
 
@@ -136,7 +137,7 @@ ccam ɗinka ya tsufa fiye da 0.6.0 kuma yana miƙa `--mcp-config` ga Remote Cont
 
 ### Ana amfani da sabata ta kaina maimakon ta rukunin
 
-Idan asusun yana da sabarsa mai suna ɗaya da sabar rukuni, kwafin yana barin ta a wurinta kuma yana faɗin haka: `account work has its own MCP servers fs, so group default's of those names are not copied there`. Don yin amfani da ta rukunin, cire ta asusun (`claude mcp remove -s user <name>`); don ba kowane asusu sigarka, matsar da ita cikin rukunin da `ccam mcp import work <server> --force`. Kwafin ajiya na `.claude.json` suna a `~/.local/state/ccam/mcp/work/backups/`, wanda ke riƙe sabbi biyar na ƙarshe.
+Idan asusun yana da sabarsa mai suna ɗaya da sabar rukuni, kwafin yana barin ta a wurinta kuma yana faɗin haka: `account work has its own MCP servers fs, so group default's servers with those names are not copied there`. Don yin amfani da ta rukunin, cire ta asusun (`claude mcp remove -s user <name>`); don ba kowane asusu sigarka, matsar da ita cikin rukunin da `ccam mcp import work <server> --force`. Kwafin ajiya na `.claude.json` suna a `~/.local/state/ccam/mcp/work/backups/`, wanda ke riƙe sabbi biyar na ƙarshe.
 
 ### Ina son cire sabobin da aka kwafa
 
@@ -154,7 +155,7 @@ Remote Control yana buƙatar shiga da asusun Claude mai biyan kuɗi (subscriptio
 
 Manhajar Claude ko claude.ai/code an shiga da wani asusun Claude daban. Kwatanta shi da imel ɗin da `ccam list` ke nunawa don `work`.
 
-### ccam yana gargaɗin cewa wani Claude Code yana raba tarihin tattaunawa a wannan foldar
+### ccam yana gargaɗin cewa wani zaman Claude Code yana raba tarihin tattaunawa a wannan foldar
 
 Wani asusu a rukunin tarihi ɗaya yana aiki a folda ɗaya. Zaman da ke ci gaba da tattaunawa ɗaya daga asusun biyu na iya cakuɗa tarihin. Amsa `y` kawai idan za su yi aiki a kan tattaunawa daban-daban, ko fara Remote Control a wata folda.
 
@@ -162,5 +163,5 @@ Wani asusu a rukunin tarihi ɗaya yana aiki a folda ɗaya. Zaman da ke ci gaba d
 
 - [Fara Claude Code](/features/launch)
 - [Sabobin MCP da aka raba](/features/mcp)
-- [Rabawa tsakanin asusai](/features/share)
+- [Rabawa da rukunoni](/features/share)
 - [Sarrafa asusai](/features/accounts)

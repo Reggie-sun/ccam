@@ -1,12 +1,14 @@
 ---
 title: ccam ઇન્સ્ટૉલ કરો
 metaTitle: Linux, macOS અને Windows પર ccam ઇન્સ્ટૉલ કરો
-description: Linux, macOS કે Windows પર ccam એક કમાન્ડથી, .deb પેકેજથી કે સોર્સમાંથી ઇન્સ્ટૉલ કરો, અને ccam update વડે અપડેટ કરો. પહેલાં Claude Code ઇન્સ્ટૉલ હોવું જોઈએ.
-updated: 2026-10-25
+description: Linux, macOS કે Windows પર ccam એક કમાન્ડથી, .deb પેકેજથી કે go install વડે ઇન્સ્ટૉલ કરો, અને ccam update વડે અપડેટ કરો. પહેલાં Claude Code ઇન્સ્ટૉલ હોવું જોઈએ.
+updated: 2026-10-26
 order: 1
 translation: machine
-sourceHash: a7f9dac24f79
+sourceHash: 2ada7b2650d6
 ---
+
+ccam તમારા માટે Claude Code શરૂ કરે છે, તેથી પહેલાં [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) ઇન્સ્ટૉલ કરો અને ખાતરી કરો કે `claude --version` કામ કરે છે.
 
 Linux કે macOS પર ટર્મિનલમાં આ ચલાવો:
 
@@ -22,16 +24,17 @@ Windows પર, PowerShell માં આ ચલાવો:
 irm https://ccam.dev/install.ps1 | iex
 ```
 
-તે `ccam_windows_<arch>.zip` ડાઉનલોડ કરે છે, તેનો SHA-256 checksum તપાસે છે, `ccam.exe` ને `%USERPROFILE%\.local\bin` માં મૂકે છે, એ જ ફોલ્ડર જ્યાં Claude Code નું ઇન્સ્ટૉલર `claude.exe` મૂકે છે, અને જો તે ફોલ્ડર તમારા યુઝર `PATH` માં ન હોય તો તેને ઉમેરે છે, અને `%USERPROFILE%\bin` જેવી એન્ટ્રી જેમ છે તેમ રાખે છે. પછી નવું ટર્મિનલ ખોલો. તેને ફરી ચલાવવાથી ccam બદલાય છે, જૂની બાઇનરીમાંથી કોઈ Claude Code સેશન હજી ચાલતું હોય ત્યારે પણ (તે બાઇનરીનું નામ બદલીને `ccam.exe.old` કરાય છે, અથવા એનાથી જૂની બાઇનરી હજી વપરાશમાં હોય ત્યારે `ccam.exe.old-<number>`), અને hard link હોય તેવા શૉર્ટકટ નવા કરે છે: `OK 2 shortcuts now run the new ccam`.
-
-ccam તમારા માટે Claude Code શરૂ કરે છે, તેથી પહેલાં [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) ઇન્સ્ટૉલ કરો અને ખાતરી કરો કે `claude --version` કામ કરે છે.
+તે `ccam_windows_<arch>.zip` ડાઉનલોડ કરે છે, તેનો SHA-256 checksum તપાસે છે અને `ccam.exe` ને `%USERPROFILE%\.local\bin` માં મૂકે છે, એ જ ફોલ્ડર જ્યાં Claude Code નું ઇન્સ્ટૉલર `claude.exe` મૂકે છે. જો તે ફોલ્ડર હજી તમારા યુઝર `PATH` માં ન હોય, તો સ્ક્રિપ્ટ તેને ઉમેરે છે અને `%USERPROFILE%\bin` જેવી એન્ટ્રી જેમ છે તેમ રાખે છે. પછી નવું ટર્મિનલ ખોલો.
 
 ## સમર્થિત સિસ્ટમ
 
 - x86-64 અને ARM64 પર Linux: Ubuntu, Debian, Fedora, Arch, Alpine અને બીજાં ડિસ્ટ્રિબ્યુશન. બાઇનરી સ્ટેટિક છે અને તેને કોઈ ડિપેન્ડન્સીની જરૂર નથી.
 - Apple silicon અને Intel પર macOS.
-- x86-64 અને ARM64 પર Windows 10 અને 11, PowerShell, Windows Terminal કે Git Bash માં. શેર કરેલાં ફોલ્ડર દરેક યુઝર માટે કામ કરે છે. શેર કરેલી ફાઇલો (`settings.json`, `CLAUDE.md`, `history.jsonl`) માટે Developer Mode (Settings > System > For developers) જોઈએ, કારણ કે Windows ફક્ત એ મોડમાં, કે ઍડમિનિસ્ટ્રેટરને જ, ફાઇલની લિંક બનાવવા દે છે; જુઓ [Windows પર શેરિંગ](/features/share#on-windows). તેના વગર, પહેલું `ccam add` ફક્ત MCP સર્વર અને એક્સટેન્શન્સ સાથે `default` ગ્રુપ બનાવે છે, અને Developer Mode ચાલુ થાય પછી બાકીનું કેવી રીતે ઉમેરવું તે જણાવે છે.
-- WSL ની અંદર ccam કોઈ પણ Linux સિસ્ટમની જેમ કામ કરે છે.
+- x86-64 અને ARM64 પર Windows 10 અને 11, PowerShell, Windows Terminal કે Git Bash માં:
+  - શેર કરેલાં ફોલ્ડર Developer Mode વગર પણ કામ કરે છે.
+  - શેર કરેલી ફાઇલો (`settings.json`, `CLAUDE.md`, `history.jsonl`) માટે Developer Mode (Settings > System > For developers) જોઈએ, કારણ કે Windows ફક્ત એ મોડમાં, કે ઍડમિનિસ્ટ્રેટરને જ, ફાઇલની લિંક બનાવવા દે છે; જુઓ [Windows પર શેરિંગ](/features/share#on-windows).
+  - Developer Mode વગર, પહેલું `ccam add` ફક્ત MCP સર્વર અને એક્સટેન્શન્સ સાથે `default` ગ્રુપ બનાવે છે, અને Developer Mode ચાલુ થાય પછી બાકીનું કેવી રીતે ઉમેરવું તે જણાવે છે.
+- WSL ની અંદર ccam બીજી કોઈ પણ Linux સિસ્ટમની જેમ જ કામ કરે છે.
 
 ## ઇન્સ્ટૉલ કરવાની બીજી રીતો
 
@@ -49,7 +52,7 @@ sudo apt install ./ccam_*_linux_amd64.deb
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
 ```
 
-રિલીઝ tag (`@latest` કે `@vX.Y.Z`) માંથી બનાવેલી બાઇનરી એ વર્ઝન જણાવે છે, તેથી તેના માટે `ccam update` કામ કરે છે; `@main` માંથી, કે tag પછીના local checkout માંથી બનાવેલી બાઇનરી `dev` જણાવે છે.
+જો તમે રિલીઝ tag (`@latest` કે `@vX.Y.Z`) ઇન્સ્ટૉલ કરો, તો ccam એ વર્ઝન જણાવે છે, અને `ccam update` તથા ડેશબોર્ડની અપડેટ ઑફર કામ કરે છે. `@main` માંથી, કે tag પછીના commits ધરાવતા local checkout માંથી બનાવેલી બાઇનરી `dev` જણાવે છે, અને તમે `--version` ન આપો ત્યાં સુધી `ccam update` તેનો ઇનકાર કરે છે.
 
 **કોઈ ચોક્કસ વર્ઝન.** `CCAM_VERSION` સેટ કરો:
 
@@ -82,7 +85,13 @@ ccam plugin Claude Code ને પોતાને ccam વાપરતાં શ
 /plugin install ccam --marketplace jhyunwoo/ccam
 ```
 
-તે એક skill, `/ccam:usage`, `/ccam:ext` અને `/ccam:switch` commands, અને બે hooks ઉમેરે છે: કોઈ સેશન વપરાશ મર્યાદાએ અટકે ત્યારે તમને ટર્મિનલમાં સૂચના મળે છે (અને Linux અને macOS પર, [`auto_switch`](/features/next#auto-switch) ચાલુ હોય ત્યારે, ccam સેશનને જગ્યા ધરાવતા બીજા એકાઉન્ટમાં ખસેડે છે), અને `/ccam:switch [account]` વાતચીત બીજા એકાઉન્ટને સોંપે છે ([વિગતો](/features/next#inside-claude-code)). hooks `ccam` ચલાવે છે, તેથી Claude Code જે `PATH` જુએ છે તેમાં તે હોવું જોઈએ. skill ક્યારેય લૉગિન કરતા કે ફાઇલો ખસેડતા commands ચલાવતી નથી; તેના બદલે તે તેમને સૂચવે છે.
+તે આ ઉમેરે છે:
+
+- એક skill, જે લૉગિન કરતા કે ફાઇલો ખસેડતા commands સૂચવે છે પણ તેમને ક્યારેય ચલાવતી નથી;
+- `/ccam:usage`, `/ccam:ext` અને `/ccam:switch` commands;
+- બે hooks ([વિગતો](/features/next#inside-claude-code)). એક hook, કોઈ સેશન વપરાશ મર્યાદાએ અટકે ત્યારે ટર્મિનલમાં સૂચના બતાવે છે; Linux અને macOS પર, [`auto_switch`](/features/next#auto-switch) ચાલુ હોય ત્યારે, ccam પછી સેશનને જગ્યા ધરાવતા બીજા એકાઉન્ટમાં ખસેડે છે. બીજો hook `/ccam:switch [account]` ને વાતચીત બીજા એકાઉન્ટને સોંપવા દે છે.
+
+hooks `ccam` ચલાવે છે, તેથી Claude Code જે `PATH` જુએ છે તેમાં તે હોવું જોઈએ.
 
 ## ઇન્સ્ટૉલેશન તપાસો
 
@@ -112,16 +121,16 @@ $ ccam update
 ccam 0.3.0 is up to date.
 ```
 
-ડેશબોર્ડ (ટર્મિનલ પર `ccam`) પણ દરેક વખતે ખૂલે ત્યારે નવી રિલીઝ શોધે છે અને જો હોય તો તે ઑફર કરે છે: `U` દબાવો અને પુષ્ટિ કરો. બીજો કોઈ કમાન્ડ શોધતો નથી, અને ccam પૂછ્યા વગર ક્યારેય અપડેટ થતું નથી. કોઈ ચોક્કસ રિલીઝ, જૂની હોય તો પણ, ઇન્સ્ટૉલ કરવા માટે `--version` આપો. `ccam --dry-run update` કંઈ બદલ્યા વગર બતાવે છે કે શું ડાઉનલોડ થશે અને શું બદલાશે.
+ડેશબોર્ડ (આર્ગ્યુમેન્ટ વગરનું `ccam`, ટર્મિનલમાં) પણ દરેક વખતે ખૂલે ત્યારે નવી રિલીઝ તપાસે છે અને જો હોય તો તે ઑફર કરે છે: `U` દબાવો અને પુષ્ટિ કરો. બીજો કોઈ કમાન્ડ અપડેટ તપાસતો નથી, અને ccam પૂછ્યા વગર ક્યારેય અપડેટ થતું નથી. કોઈ ચોક્કસ રિલીઝ, જૂની હોય તો પણ, ઇન્સ્ટૉલ કરવા માટે `--version` આપો. `ccam --dry-run update` કંઈ બદલ્યા વગર બતાવે છે કે શું ડાઉનલોડ થશે અને શું બદલાશે.
 
 ```sh
 ccam update --version v0.2.0
 ccam --dry-run update
 ```
 
-ઇન્સ્ટૉલ સ્ક્રિપ્ટ ફરીથી ચલાવવાથી પણ `~/.local/bin` માંની કૉપી અપડેટ થાય છે. જો તમે ccam ને રિલીઝ tag માંથી `go install` વડે બનાવ્યું હોય, તો `ccam update` પણ કામ કરે છે, અથવા એ જ કમાન્ડ ફરીથી ચલાવો.
+ઇન્સ્ટૉલ સ્ક્રિપ્ટ ફરીથી ચલાવવાથી પણ `~/.local/bin` માંની કૉપી અપડેટ થાય છે. જો તમે ccam ને રિલીઝ tag માંથી `go install` વડે બનાવ્યું હોય, તો તમે `ccam update` ચલાવી શકો છો, અથવા એ જ `go install` કમાન્ડ ફરીથી ચલાવી શકો છો.
 
-**Windows.** `ccam update` Windows માટેની `.zip` ડાઉનલોડ કરે છે. Windows પર ચાલતો પ્રોગ્રામ બદલી શકાતો નથી, તેથી જૂની બાઇનરીનું નામ બદલીને `ccam.exe.old` કરાય છે, જેને આગલું અપડેટ કાઢી નાખે છે; અગાઉની `ccam.exe.old` માંથી કોઈ સેશન હજી ચાલતું હોય ત્યારે નામ `ccam.exe.old-<time>` હોય છે. hard link હોય તેવા શૉર્ટકટ તરત પછી નવા કરાય છે.
+**Windows.** `ccam update` Windows માટેની `.zip` ડાઉનલોડ કરે છે. Windows પર ચાલતો પ્રોગ્રામ બદલી શકાતો નથી, તેથી જૂની બાઇનરીનું નામ બદલીને `ccam.exe.old` કરાય છે, જેને આગલું અપડેટ કાઢી નાખે છે; અગાઉની `ccam.exe.old` માંથી કોઈ સેશન હજી ચાલતું હોય ત્યારે નામ `ccam.exe.old-<time>` હોય છે. hard link હોય તેવા શૉર્ટકટ તરત પછી નવા કરાય છે. `install.ps1` ફરી ચલાવવાથી પણ આ જ રીતે કામ થાય છે, જૂની બાઇનરીમાંથી કોઈ Claude Code સેશન હજી ચાલતું હોય ત્યારે પણ, અને hard link હોય તેવા શૉર્ટકટ નવા કરે ત્યારે તે `OK 2 shortcuts now run the new ccam` છાપે છે.
 
 **Debian અને Ubuntu પેકેજ.** apt એ ઇન્સ્ટૉલ કરેલા `/usr/bin/ccam` ને `ccam update` બદલતું નથી, અને તેના બદલે આ પગલાં છાપે છે. [રિલીઝ પેજ](https://github.com/jhyunwoo/ccam/releases) પરથી નવું `ccam_<version>_linux_amd64.deb` ડાઉનલોડ કરો અને તેને જૂના પેકેજ પર ઇન્સ્ટૉલ કરો:
 
@@ -130,6 +139,8 @@ sudo apt install ./ccam_*_linux_amd64.deb
 ```
 
 ## અનઇન્સ્ટૉલ કરો
+
+`~/.local/share/ccam` કાઢી નાખવાથી તેમાં રાખેલાં લૉગિન અને વાતચીતનો ઇતિહાસ પણ કાઢી નખાય છે. તમે [ઇમ્પોર્ટ કરેલું](/docs/commands) `~/.claude` ફોલ્ડર જ્યાં છે ત્યાં જ રહે છે, પણ તે કોઈ ગ્રુપમાં હોય ત્યાં સુધી તે જે ફાઇલો શેર કરે છે તે `~/.local/share/ccam/groups/` માં રહે છે. કંઈ પણ કાઢી નાખતાં પહેલાં તેના માટે `ccam remove <name>` (અથવા `ccam group leave`) ચલાવો: આ તેને તેનાં ગ્રુપમાંથી બહાર કાઢે છે અને તેણે શેર કરેલી દરેક વસ્તુની કૉપિ ફોલ્ડરમાં પાછી મૂકે છે.
 
 ccam ઇન્સ્ટોલ હોય ત્યારે જ પહેલાં એકાઉન્ટના શૉર્ટકટ દૂર કરો. `ccam list` તેમને Shortcut કૉલમમાં બતાવે છે; દરેકને `ccam shortcut <account> --remove` વડે દૂર કરો, અથવા એ લિંક `~/.local/bin` માંથી જાતે કાઢી નાખો. પછી કમાન્ડ દૂર કરો, અને જો હવે એકાઉન્ટની જરૂર ન હોય તો ડેટા ફોલ્ડર પણ:
 
@@ -147,5 +158,3 @@ ccam shortcut work --remove   # once for each account that has a shortcut
 Remove-Item ~\.local\bin\ccam.exe
 Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
 ```
-
-`~/.local/share/ccam` કાઢી નાખવાથી તેમાં રાખેલાં લૉગિન અને વાતચીતનો ઇતિહાસ પણ કાઢી નખાય છે. તમે [ઇમ્પોર્ટ કરેલું](/docs/commands) `~/.claude` ફોલ્ડર જ્યાં છે ત્યાં જ રહે છે, પણ તે કોઈ ગ્રુપમાં હોય ત્યાં સુધી તે જે ફાઇલો શેર કરે છે તે `~/.local/share/ccam/groups/` માં રહે છે. પહેલાં તેના માટે `ccam remove <name>` (અથવા `ccam group leave`) ચલાવો: તે પોતાનાં ગ્રુપ છોડે છે, અને પોતે શેર કરેલી દરેક વસ્તુની કૉપિ તેની પાસે રહે છે.

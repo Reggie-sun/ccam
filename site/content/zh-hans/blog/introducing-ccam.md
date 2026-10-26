@@ -1,10 +1,10 @@
 ---
 title: 介绍 ccam
 description: ccam 为什么存在，它能为拥有多个 Claude Code 账号的人做什么，以及它如何做到不打扰你的工作。
-updated: 2026-10-20
+updated: 2026-10-26
 order: 1
 translation: machine
-sourceHash: a555dc969142
+sourceHash: "e4370f29b818"
 ---
 
 ccam 是一个小型命令行工具，适合在同一台电脑上使用多个 Claude Code 账号的人：比如一个个人账号加一个工作账号，或者为一个长期项目准备的多个账号。
@@ -22,7 +22,7 @@ Claude Code 通过 [`CLAUDE_CONFIG_DIR`](/guides/claude-config-dir) 支持多个
 
 ## 不打扰你的工作
 
-每次会话前都要运行的工具，不应该带来任何能察觉到的开销。ccam 读取一个配置文件，对每个共享链接只用一次系统调用进行检查，然后用 `claude` 替换自身。它只增加约 4 毫秒，而且在你工作时它并不在运行。
+每次会话前都要运行的工具，不应该带来任何能察觉到的开销。ccam 读取一个配置文件，对每个共享链接只用一到两次系统调用进行检查，然后用 `claude` 替换自身。它只增加约 4 毫秒，而且默认情况下，在你工作时它并不在运行。
 
 它也会谨慎对待你的文件。每次更改共享设置时，它都会在开始前打印计划，并把原始文件保存在备份文件夹中。`ccam doctor` 检查链接、权限和登录状态，并修复可以安全修复的问题。
 
@@ -35,4 +35,4 @@ ccam add
 
 [快速入门](/docs/quick-start)会带你添加两个账号；[如何使用多个 Claude Code 账号](/guides/multiple-claude-code-accounts)则说明了使用和不使用 ccam 时的做法。
 
-ccam 是开源的非官方项目：它与 Anthropic 没有关联，也未获得 Anthropic 的认可。你能否使用多个账号，取决于每个账号适用的条款。欢迎在 [GitHub](https://github.com/jhyunwoo/ccam) 上提供反馈和翻译。
+ccam 是开源的非官方项目：它与 Anthropic 没有关联，也未获得 Anthropic 的认可。你能否使用多个账号，取决于适用于每个账号的条款。欢迎在 [GitHub](https://github.com/jhyunwoo/ccam) 上提供反馈和翻译。

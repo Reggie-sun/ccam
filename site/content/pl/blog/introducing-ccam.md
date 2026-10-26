@@ -1,10 +1,10 @@
 ---
 title: Przedstawiamy ccam
 description: Dlaczego powstał ccam, co daje osobom z kilkoma kontami Claude Code i jak nie przeszkadza w pracy.
-updated: 2026-10-20
+updated: 2026-10-26
 order: 1
 translation: machine
-sourceHash: a555dc969142
+sourceHash: e4370f29b818
 ---
 
 ccam to małe narzędzie wiersza poleceń dla osób, które używają więcej niż jednego konta Claude Code na tym samym komputerze: konta prywatnego i służbowego albo kilku kont do jednego długiego projektu.
@@ -22,7 +22,7 @@ Claude Code obsługuje kilka kont przez [`CLAUDE_CONFIG_DIR`](/guides/claude-con
 
 ## Bez wchodzenia w drogę
 
-Narzędzie uruchamiane przed każdą sesją nie powinno kosztować niczego, co da się zauważyć. ccam odczytuje jeden plik konfiguracyjny, sprawdza każdy współdzielony link jednym wywołaniem systemowym, a potem zastępuje się procesem `claude`. Dodaje około 4 milisekund i nie działa w czasie twojej pracy.
+Narzędzie uruchamiane przed każdą sesją nie powinno kosztować niczego, co da się zauważyć. ccam odczytuje jeden plik konfiguracyjny, sprawdza każdy współdzielony link jednym lub dwoma wywołaniami systemowymi, a potem zastępuje się procesem `claude`. Dodaje około 4 milisekund i domyślnie nie działa w czasie twojej pracy.
 
 Ostrożnie obchodzi się też z twoimi plikami. Każda zmiana współdzielenia najpierw wypisuje plan, a oryginały zachowuje w folderze kopii zapasowych. `ccam doctor` sprawdza linki, uprawnienia i loginy oraz naprawia to, co da się bezpiecznie naprawić.
 
@@ -35,4 +35,4 @@ ccam add
 
 [Szybki start](/docs/quick-start) prowadzi przez dodanie dwóch kont, a poradnik [jak używać kilku kont Claude Code](/guides/multiple-claude-code-accounts) wyjaśnia to podejście z ccam i bez niego.
 
-ccam ma otwarty kod i jest nieoficjalny: nie jest powiązany z Anthropic ani przez Anthropic popierany. To, czy możesz używać kilku kont, zależy od warunków każdego konta. Opinie i tłumaczenia są mile widziane na [GitHub](https://github.com/jhyunwoo/ccam).
+ccam ma otwarty kod i jest nieoficjalny: nie jest powiązany z Anthropic ani przez Anthropic popierany. To, czy możesz używać więcej niż jednego konta, zależy od warunków, które obowiązują każde z nich. Opinie i tłumaczenia są mile widziane na [GitHub](https://github.com/jhyunwoo/ccam).

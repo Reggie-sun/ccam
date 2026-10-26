@@ -1,10 +1,10 @@
 ---
 title: Come funziona CLAUDE_CONFIG_DIR
 description: Cosa fa CLAUDE_CONFIG_DIR in Claude Code, cosa contiene la cartella, dove macOS conserva il login e quali file si possono condividere tra account.
-updated: 2026-10-23
+updated: 2026-10-26
 order: 2
 translation: machine
-sourceHash: "2cf08478085f"
+sourceHash: dc2fe42e11e1
 ---
 
 `CLAUDE_CONFIG_DIR` indica a Claude Code quale cartella usare al posto di `~/.claude`. Tutto ciò che è specifico dell'account sta lì: il login, le impostazioni, i server MCP, i plugin e la cronologia delle conversazioni. Puntandola a cartelle diverse ottieni account separati.
@@ -36,13 +36,13 @@ Verificato con Claude Code 2.1.309:
 
 **Senza `CLAUDE_CONFIG_DIR`, `.claude.json` non si trova dentro `~/.claude`.** In quel caso Claude Code lo tiene in `~/.claude.json`, accanto alla cartella. Se inizi a usare `CLAUDE_CONFIG_DIR=~/.claude`, Claude Code cerca invece `~/.claude/.claude.json` e non trova il tuo account. `ccam import` gestisce questo caso collegando i due file. Se `~/.claude` ha già un proprio `.claude.json`, da un'esecuzione precedente con `CLAUDE_CONFIG_DIR=~/.claude`, ccam lascia entrambi i file e lo segnala, perché solo tu sai quale è quello giusto.
 
-**Su macOS il login sta nel Portachiavi, non nella cartella.** Claude Code lo salva con il nome `Claude Code-credentials`, seguito da `-` e dalle prime 8 cifre esadecimali dello SHA-256 del percorso della cartella quando `CLAUDE_CONFIG_DIR` è impostata, per l'account indicato da `$USER`. Cartelle separate ottengono quindi voci separate nel Portachiavi, e una cartella spostata o rinominata perde il suo login; per questo su macOS `ccam rename` mantiene il nome della cartella. Se il Portachiavi rifiuta la scrittura, Claude Code ripiega su `.credentials.json` nella cartella, come descrive [la sua documentazione](https://code.claude.com/docs/en/authentication#credential-management).
+**Su macOS il login sta nel Portachiavi, non nella cartella.** Claude Code lo salva con il nome `Claude Code-credentials`. Quando `CLAUDE_CONFIG_DIR` è impostata, il nome termina anche con `-` e le prime 8 cifre esadecimali dello SHA-256 del percorso della cartella. Il nome dell'account dell'elemento del Portachiavi è `$USER`. Cartelle separate ottengono quindi voci separate nel Portachiavi, e una cartella spostata o rinominata perde il suo login; per questo su macOS `ccam rename` mantiene il nome della cartella. Se il Portachiavi rifiuta la scrittura, Claude Code ripiega su `.credentials.json` nella cartella, come descrive [la sua documentazione](https://code.claude.com/docs/en/authentication#credential-management).
 
-**Non tutti i login stanno nella cartella.** Un login di Claude Console senza chiave API viene salvato fuori dalla cartella, quindi cartelle separate non ne tengono distinti due. I login di claude.ai e le chiavi API sono salvati per cartella.
+**Non tutti i login stanno nella cartella.** Un login di Claude Console senza chiave API viene salvato fuori dalla cartella, quindi cartelle separate non possono tenere distinti due login di questo tipo. I login di claude.ai e le chiavi API sono salvati per cartella.
 
 ## Dove si trova la cartella su Windows?
 
-Per impostazione predefinita in `%USERPROFILE%\.claude`, con il login in `.credentials.json` al suo interno, oppure in Gestione credenziali di Windows quando Claude Code è impostato per usarla, con un nome ricavato dal percorso della cartella come su macOS. Imposta `CLAUDE_CONFIG_DIR` su un'altra cartella per ogni account in più, come su Linux e macOS.
+Per impostazione predefinita è `%USERPROFILE%\.claude`. Il login sta in `.credentials.json` al suo interno, oppure in Gestione credenziali di Windows se Claude Code è impostato per usarla, con un nome ricavato dal percorso della cartella come su macOS. Imposta `CLAUDE_CONFIG_DIR` su un'altra cartella per ogni account in più, come su Linux e macOS.
 
 ## Le cartelle possono condividere file?
 

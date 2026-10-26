@@ -1,13 +1,13 @@
 ---
 title: Konten nach Ordner
 description: ccam folder lässt einen Ordner und alles darunter ein Konto nutzen, wenn du Claude Code ohne Kontonamen startest, etwa work für den Code deiner Firma.
-updated: 2026-10-23
+updated: 2026-10-26
 order: 11
 translation: machine
-sourceHash: 48de98d42b99
+sourceHash: 25f82da64580
 ---
 
-`ccam folder work ~/code/company` sorgt dafür, dass jeder Start ohne Kontonamen in `~/code/company` und in jedem Ordner darunter Claude Code als `work` startet. Außerhalb davon startet wie bisher das Standardkonto. Wenn du ein Konto nennst, mit `ccam personal` oder einem Kurzbefehl wie `ccpersonal`, startet immer dieses Konto.
+Nach `ccam folder work ~/code/company` öffnet jeder Start ohne Kontonamen in `~/code/company` oder seinen Unterordnern Claude Code als `work`. Außerhalb davon startet wie bisher das Standardkonto. Wenn du ein Konto nennst, mit `ccam personal` oder einem Kurzbefehl wie `ccpersonal`, startet immer dieses Konto.
 
 ## Verwendung
 
@@ -43,7 +43,7 @@ Diese Starts verwenden das Konto des Ordners:
 | `<account>` | Name oder Nummer des zu verwendenden Kontos | |
 | `[folder]` | Der Ordner, relativ oder absolut | der aktuelle Ordner |
 | `--remove` | Den Eintrag für genau diesen Ordner entfernen | aus |
-| `--dry-run` | Wird beachtet: die Änderung ausgeben, ohne sie zu speichern | aus |
+| `--dry-run` | Wird unterstützt: die Änderung ausgeben, ohne sie zu speichern | aus |
 
 ## So funktioniert es
 
@@ -58,16 +58,16 @@ account = 'work'
 1. `ccam folder` wandelt den Ordner in einen absoluten Pfad mit aufgelösten symbolischen Links um und speichert ihn. Wird ein Ordner erneut festgelegt, ersetzt das sein Konto.
 2. Ein Start ohne Namen ruft `launcher.HereProfile` auf. Ohne Einträge nimmt er sofort das Standardkonto.
 3. Andernfalls vergleicht er das Arbeitsverzeichnis als Zeichenkette mit jedem `path`: der Ordner selbst oder einer darunter, nie ein Ordner, der nur mit denselben Buchstaben beginnt (`/code/company` umfasst nicht `/code/companyx`). Der tiefste Eintrag gewinnt, sodass `~/code` `personal` sein kann, während `~/code/company` `work` ist.
-4. Nur wenn das Arbeitsverzeichnis so, wie es ist, auf nichts passt, löst ccam seine symbolischen Links auf und vergleicht noch einmal.
+4. Nur wenn das Arbeitsverzeichnis in der angegebenen Form auf nichts passt, löst ccam seine symbolischen Links auf und vergleicht erneut.
 5. Unter Windows und macOS ignoriert der Vergleich Groß- und Kleinschreibung, wie es ihre Dateisysteme meist tun.
 
-Außer `config.toml` wird keine Datei gelesen, daher kostet ein Start in einem Ordner keine messbare Zeit (4,0 ms mit oder ohne Einträge, `hyperfine`, 300 Durchläufe).
+Außer `config.toml` wird keine Datei gelesen, daher fügt ein Start in einem Ordner keine messbare Zeit hinzu (4,0 ms mit oder ohne Einträge, `hyperfine`, 300 Durchläufe).
 
 ## Sicherheit und Sonderfälle
 
 - `ccam rename` überträgt die Ordnereinträge auf den neuen Namen, und `ccam remove` löscht die Einträge des entfernten Kontos.
 - Ein Eintrag, dessen Konto nicht mehr existiert, hält einen Start ohne Namen in diesem Ordner an: `<folder> is set to account "<name>", which does not exist. Change it with ccam folder`. `ccam doctor` meldet solche Einträge und Einträge, deren Ordner verschwunden ist.
-- `ccam folder --remove` in einem Ordner, der sein Konto von einem darüberliegenden Ordner bekommt, nennt diesen Ordner, statt etwas zu entfernen.
+- Wenn du `ccam folder --remove` in einem Unterordner ausführst, der sein Konto von einem übergeordneten Ordner erbt, nennt ccam den übergeordneten Ordner und entfernt nichts.
 - `ccam next` wählt nach Rotation oder Nutzung und berücksichtigt keine Ordner.
 
 ## Verwandte Themen

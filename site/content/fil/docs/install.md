@@ -1,12 +1,14 @@
 ---
 title: I-install ang ccam
 metaTitle: I-install ang ccam sa Linux, macOS at Windows
-description: I-install ang ccam sa Linux, macOS o Windows gamit ang isang command, .deb package o source, at i-update sa ccam update. Kailangan munang may Claude Code.
-updated: 2026-10-25
+description: I-install ang ccam sa Linux, macOS o Windows gamit ang isang command, .deb package o go install, at i-update sa ccam update. Kailangan munang may Claude Code.
+updated: 2026-10-26
 order: 1
 translation: machine
-sourceHash: a7f9dac24f79
+sourceHash: "2ada7b2650d6"
 ---
+
+Ang ccam ang nagsisimula ng Claude Code para sa iyo, kaya i-install muna ang [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) at tiyaking gumagana ang `claude --version`.
 
 Patakbuhin ito sa terminal sa Linux o macOS:
 
@@ -22,16 +24,17 @@ Sa Windows, patakbuhin ito sa PowerShell:
 irm https://ccam.dev/install.ps1 | iex
 ```
 
-Dina-download nito ang `ccam_windows_<arch>.zip`, sinusuri ang SHA-256 checksum nito, inilalagay ang `ccam.exe` sa `%USERPROFILE%\.local\bin`, ang folder kung saan inilalagay ng installer ng Claude Code ang `claude.exe`, at idinadagdag ang folder na iyon sa user `PATH` mo kung wala pa ito roon, nang hindi binabago ang mga entry gaya ng `%USERPROFILE%\bin`. Magbukas ng bagong terminal pagkatapos. Kapag pinatakbo mo itong muli, papalitan nito ang ccam, pati habang may Claude Code session pang tumatakbo mula sa lumang binary (pinapalitan ang pangalan niyon ng `ccam.exe.old`, o ng `ccam.exe.old-<number>` kapag ginagamit pa ang mas luma), at nire-renew nito ang mga shortcut na hard link: `OK 2 shortcuts now run the new ccam`.
-
-Ang ccam ang nagsisimula ng Claude Code para sa iyo, kaya i-install muna ang [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) at tiyaking gumagana ang `claude --version`.
+Dina-download nito ang `ccam_windows_<arch>.zip`, sinusuri ang SHA-256 checksum nito at inilalagay ang `ccam.exe` sa `%USERPROFILE%\.local\bin`, ang folder kung saan inilalagay ng installer ng Claude Code ang `claude.exe`. Kung wala pa sa user `PATH` mo ang folder na iyon, idinadagdag ito ng script nang hindi binabago ang mga entry gaya ng `%USERPROFILE%\bin`. Magbukas ng bagong terminal pagkatapos.
 
 ## Mga suportadong system
 
 - Linux sa x86-64 at ARM64: Ubuntu, Debian, Fedora, Arch, Alpine at iba pang distribution. Static ang binary at wala itong dependency.
 - macOS sa Apple silicon at Intel.
-- Windows 10 at 11 sa x86-64 at ARM64, sa PowerShell, Windows Terminal o Git Bash. Gumagana ang mga shared na folder para sa bawat user. Kailangan ng Developer Mode (Settings > System > For developers) ang mga shared na file (`settings.json`, `CLAUDE.md`, `history.jsonl`), dahil ang mode na iyon lang, o isang administrator, ang pinapayagan ng Windows na gumawa ng mga link sa mga file; tingnan ang [sharing sa Windows](/features/share#on-windows). Kapag wala ito, ginagawa ng unang `ccam add` ang group na `default` na may mga MCP server at extension lang, at sinasabi nito kung paano idagdag ang iba kapag naka-on na ang Developer Mode.
-- Sa loob ng WSL, gumagana ang ccam gaya ng sa anumang Linux system.
+- Windows 10 at 11 sa x86-64 at ARM64, sa PowerShell, Windows Terminal o Git Bash:
+  - Gumagana ang mga shared na folder kahit walang Developer Mode.
+  - Kailangan ng Developer Mode (Settings > System > For developers) ang mga shared na file (`settings.json`, `CLAUDE.md`, `history.jsonl`), dahil ang mode na iyon lang, o isang administrator, ang pinapayagan ng Windows na gumawa ng mga link sa mga file; tingnan ang [sharing sa Windows](/features/share#on-windows).
+  - Kapag walang Developer Mode, ginagawa ng unang `ccam add` ang group na `default` na may mga MCP server at extension lang, at sinasabi nito kung paano idagdag ang iba kapag naka-on na ang Developer Mode.
+- Sa loob ng WSL, gumagana ang ccam gaya ng sa anumang ibang Linux system.
 
 ## Iba pang paraan ng pag-install
 
@@ -49,7 +52,7 @@ Ini-install ng package ang `/usr/bin/ccam`.
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
 ```
 
-Iniuulat ng build ng isang release tag (`@latest` o `@vX.Y.Z`) ang bersyong iyon, kaya gumagana para dito ang `ccam update`; `dev` ang iniuulat ng build ng `@main` o ng local checkout na lampas sa isang tag.
+Kung mag-i-install ka ng release tag (`@latest` o `@vX.Y.Z`), iniuulat ng ccam ang bersyong iyon, at gumagana ang `ccam update` at ang alok ng dashboard na mag-update. `dev` ang iniuulat ng build ng `@main`, o ng local checkout na may mga commit pagkatapos ng isang tag, at tinatanggihan ito ng `ccam update` maliban kung ipapasa mo ang `--version`.
 
 **Isang partikular na bersyon.** Itakda ang `CCAM_VERSION`:
 
@@ -82,7 +85,13 @@ Tinuturuan ng ccam plugin ang Claude Code mismo na gumamit ng ccam: alamin kung 
 /plugin install ccam --marketplace jhyunwoo/ccam
 ```
 
-Nagdadagdag ito ng isang skill, ng mga command na `/ccam:usage`, `/ccam:ext` at `/ccam:switch`, at ng dalawang hook: kapag huminto ang isang session sa usage limit, makakatanggap ka ng notification sa terminal (at sa Linux at macOS, kapag naka-on ang [`auto_switch`](/features/next#auto-switch), inililipat ng ccam ang session sa ibang account na may natitira), at ipinapasa ng `/ccam:switch [account]` ang usapan sa ibang account ([mga detalye](/features/next#inside-claude-code)). Pinapatakbo ng mga hook ang `ccam`, kaya dapat nasa `PATH` na nakikita ng Claude Code ito. Hindi kailanman nagpapatakbo ang skill ng mga command na nagla-login o naglilipat ng file; iminumungkahi lang nito ang mga iyon.
+Idinadagdag nito ang:
+
+- isang skill na nagmumungkahi ng mga command na nagla-login o naglilipat ng file pero hindi kailanman pinapatakbo ang mga iyon;
+- ang mga command na `/ccam:usage`, `/ccam:ext` at `/ccam:switch`;
+- dalawang hook ([mga detalye](/features/next#inside-claude-code)). Nagpapakita ang isa ng notification sa terminal kapag huminto ang isang session sa usage limit; sa Linux at macOS, kapag naka-on ang [`auto_switch`](/features/next#auto-switch), inililipat pagkatapos ng ccam ang session sa ibang account na may natitira. Hinahayaan naman ng isa pa ang `/ccam:switch [account]` na ipasa ang usapan sa ibang account.
+
+Pinapatakbo ng mga hook ang `ccam`, kaya dapat nasa `PATH` na nakikita ng Claude Code ito.
 
 ## Suriin ang installation
 
@@ -112,16 +121,16 @@ $ ccam update
 ccam 0.3.0 is up to date.
 ```
 
-Naghahanap din ng bagong release ang dashboard (`ccam` sa isang terminal) tuwing nagbubukas ito at, kapag mayroon, iniaalok ito: pindutin ang `U` at kumpirmahin. Walang ibang command na naghahanap, at hindi kailanman nag-a-update ang ccam nang hindi nagtatanong. Para mag-install ng partikular na release, kahit mas luma, ipasa ang `--version`. Ipinapakita ng `ccam --dry-run update` kung ano ang ida-download at papalitan, nang walang binabago.
+Naghahanap din ng bagong release ang dashboard (`ccam` nang walang argument, sa isang terminal) tuwing nagbubukas ito at, kapag mayroon, iniaalok ito: pindutin ang `U` at kumpirmahin. Walang ibang command na naghahanap ng update, at hindi kailanman nag-a-update ang ccam nang hindi nagtatanong. Para mag-install ng partikular na release, kahit mas luma, ipasa ang `--version`. Ipinapakita ng `ccam --dry-run update` kung ano ang ida-download at papalitan, nang walang binabago.
 
 ```sh
 ccam update --version v0.2.0
 ccam --dry-run update
 ```
 
-Kapag pinatakbo mong muli ang install script, maa-update din ang kopya sa `~/.local/bin`. Kung binuild mo ang ccam gamit ang `go install` mula sa isang release tag, gumagana rin ang `ccam update`, o patakbuhin muli ang parehong command.
+Kapag pinatakbo mong muli ang install script, maa-update din ang kopya sa `~/.local/bin`. Kung binuild mo ang ccam gamit ang `go install` mula sa isang release tag, puwede mong patakbuhin ang `ccam update` o muli ang parehong `go install` command.
 
-**Windows.** Dina-download ng `ccam update` ang `.zip` para sa Windows. Hindi mapapalitan sa Windows ang isang tumatakbong program, kaya pinapalitan ang pangalan ng lumang binary ng `ccam.exe.old`, na binubura ng susunod na update; habang may session pang tumatakbo mula sa mas naunang `ccam.exe.old`, `ccam.exe.old-<time>` ang pangalan. Nire-renew agad pagkatapos ang mga shortcut na hard link.
+**Windows.** Dina-download ng `ccam update` ang `.zip` para sa Windows. Hindi mapapalitan sa Windows ang isang tumatakbong program, kaya pinapalitan ang pangalan ng lumang binary ng `ccam.exe.old`, na binubura ng susunod na update; habang may session pang tumatakbo mula sa mas naunang `ccam.exe.old`, `ccam.exe.old-<time>` ang pangalan. Nire-renew agad pagkatapos ang mga shortcut na hard link. Ganoon din gumagana ang muling pagpapatakbo ng `install.ps1`, kahit may Claude Code session pang tumatakbo mula sa lumang binary, at ipi-print nito ang `OK 2 shortcuts now run the new ccam` kapag nire-renew nito ang mga shortcut na hard link.
 
 **Package para sa Debian at Ubuntu.** Hindi pinapalitan ng `ccam update` ang `/usr/bin/ccam` na in-install ng apt, at ipi-print na lang nito ang mga hakbang na ito. I-download ang bagong `ccam_<version>_linux_amd64.deb` mula sa [pahina ng mga release](https://github.com/jhyunwoo/ccam/releases) at i-install ito sa ibabaw ng luma:
 
@@ -130,6 +139,8 @@ sudo apt install ./ccam_*_linux_amd64.deb
 ```
 
 ## Pag-uninstall
+
+Kapag binura mo ang `~/.local/share/ccam`, mabubura rin ang mga login at kasaysayan ng usapan na naka-store doon. Mananatili kung nasaan ito ang `~/.claude` folder na iyong [in-import](/docs/commands), pero habang nasa isang group ito, nasa `~/.local/share/ccam/groups/` ang mga file na shine-share nito. Patakbuhin ang `ccam remove <name>` para dito (o ang `ccam group leave`) bago ka magbura ng anuman: inaalis nito ito sa mga group nito at ibinabalik sa folder ang kopya ng lahat ng shine-share nito.
 
 Alisin muna ang mga shortcut ng account habang naka-install pa ang ccam. Ipinapakita ng `ccam list` ang mga ito sa column na Shortcut; alisin ang bawat isa gamit ang `ccam shortcut <account> --remove`, o ikaw mismo ang magbura ng mga link na iyon mula sa `~/.local/bin`. Saka alisin ang command, at ang mga data folder kung hindi mo na kailangan ang mga account:
 
@@ -147,5 +158,3 @@ ccam shortcut work --remove   # once for each account that has a shortcut
 Remove-Item ~\.local\bin\ccam.exe
 Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
 ```
-
-Kapag binura mo ang `~/.local/share/ccam`, mabubura rin ang mga login at kasaysayan ng usapan na naka-store doon. Mananatili kung nasaan ito ang `~/.claude` folder na iyong [in-import](/docs/commands), pero habang nasa isang group ito, nasa `~/.local/share/ccam/groups/` ang mga file na shine-share nito. Patakbuhin muna ang `ccam remove <name>` para dito (o ang `ccam group leave`): umaalis ito sa mga group nito dala ang kopya ng lahat ng shine-share nito.

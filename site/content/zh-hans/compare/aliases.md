@@ -1,10 +1,10 @@
 ---
 title: ccam 与 shell 别名对比
-description: 并排对比两种运行多个 Claude Code 账号的方式：使用 CLAUDE_CONFIG_DIR 的 shell 别名，以及 ccam。
-updated: 2026-10-20
+description: 逐项对比两种运行多个 Claude Code 账号的方式：使用 CLAUDE_CONFIG_DIR 的 shell 别名，以及 ccam。
+updated: 2026-10-26
 order: 1
 translation: machine
-sourceHash: b9fbcb88f111
+sourceHash: "c30d84bceba0"
 ---
 
 为每个账号设置一个 shell 别名，是运行多个 Claude Code 账号最简单的方法。ccam 在底层做的是同一件事，并增加了共享、切换和用量跟踪。
@@ -37,7 +37,7 @@ ccam add work --shortcut ccwork
 | 独立的登录 | 是 | 是 |
 | 每个账号的设置步骤 | 编辑 `~/.bashrc`，然后登录 | `ccam add` |
 | 能否在脚本和其他程序中使用 | 否，别名只在 shell 中有效 | 是，`ccam work` 和 `ccwork` 这样的快捷命令都是真正的命令 |
-| 共享设置、`CLAUDE.md`、扩展 | 手动复制或链接 | 逐项设置，带备份 |
+| 共享设置、`CLAUDE.md`、扩展 | 手动复制或链接 | 是，逐项选择，带备份 |
 | 共享 MCP 服务器 | 手动，每个账号分别设置 | 只需运行一次 `ccam mcp add` |
 | 在另一个账号中继续对话 | 否 | `ccam next --continue` |
 | 查看所有账号的用量 | 否 | `ccam usage` |

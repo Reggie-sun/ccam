@@ -1,13 +1,13 @@
 ---
 title: 依資料夾使用帳號
 description: ccam folder 讓你在未指定帳號名稱就啟動 Claude Code 時，某個資料夾及其下所有資料夾都使用同一個帳號，例如公司程式碼使用 work。
-updated: 2026-10-23
+updated: 2026-10-26
 order: 11
 translation: machine
-sourceHash: "48de98d42b99"
+sourceHash: "25f82da64580"
 ---
 
-`ccam folder work ~/code/company` 會讓在 `~/code/company` 及其下任何資料夾中未指定帳號名稱的每次啟動，都以 `work` 啟動 Claude Code。在該資料夾之外，則和以前一樣啟動預設帳號。指定帳號名稱時，例如 `ccam personal` 或 `ccpersonal` 這類快捷指令，一律會啟動該帳號。
+執行 `ccam folder work ~/code/company` 之後，在 `~/code/company` 或其子資料夾中未指定帳號名稱的任何啟動，都會以 `work` 啟動 Claude Code。在該資料夾之外，則和以前一樣啟動預設帳號。指定帳號名稱時，例如 `ccam personal` 或 `ccpersonal` 這類快捷指令，一律會啟動該帳號。
 
 ## 用法
 
@@ -43,7 +43,7 @@ Here (/home/me/code/company/api): work, set for /home/me/code/company
 | `<account>` | 要使用的帳號名稱或編號 | |
 | `[folder]` | 資料夾，可以是相對路徑或絕對路徑 | 目前的資料夾 |
 | `--remove` | 移除完全相同的那個資料夾的項目 | 關閉 |
-| `--dry-run` | 會被接受：印出變更但不儲存 | 關閉 |
+| `--dry-run` | 支援：印出變更但不儲存 | 關閉 |
 
 ## 運作方式
 
@@ -67,7 +67,7 @@ account = 'work'
 
 - `ccam rename` 會把資料夾項目轉移到新名稱，`ccam remove` 會刪除被移除帳號的項目。
 - 如果項目的帳號已不存在，在該資料夾中未指定名稱的啟動會停止：`<folder> is set to account "<name>", which does not exist. Change it with ccam folder`。`ccam doctor` 會回報這類項目，以及資料夾已不存在的項目。
-- 在從上層資料夾取得帳號的資料夾中執行 `ccam folder --remove` 時，不會移除任何東西，而是告訴你是哪個上層資料夾。
+- 如果你在從上層資料夾繼承帳號的子資料夾中執行 `ccam folder --remove`，ccam 會列出那個上層資料夾，並且不會移除任何東西。
 - `ccam next` 依輪替順序或用量選擇帳號，不會參考資料夾。
 
 ## 相關內容

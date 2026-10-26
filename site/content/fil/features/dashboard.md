@@ -1,13 +1,13 @@
 ---
 title: Ang dashboard
 description: Sa terminal, nagbubukas ang ccam ng full-screen dashboard ng mga account, group, folder rule, extension at pagsusuri; may plano muna ang bawat pagbabago.
-updated: 2026-10-25
+updated: 2026-10-26
 order: 15
 translation: machine
-sourceHash: "28f216a4a04f"
+sourceHash: "4e763ca8aacf"
 ---
 
-Binubuksan ng `ccam` na walang argument ang isang full-screen dashboard kapag terminal ang standard input at output; kung hindi, ipi-print nito ang `ccam list`. Ipinapakita ng dashboard ang bawat account kasama ang usage at mga group nito, at ginagawa nito ang ginagawa ng mga command: magsimula, magdagdag, mag-log in, magbago ng mga group, magtakda ng mga folder rule, maglista ng mga background session, magsuri at mag-ayos. Nagsasara ito kapag nagsimula ang isang account o kapag kumabit ka sa isang background session; kapag nagdagdag ng account o nag-log in, iniiwan nito ang screen para sa terminal at bumabalik pagkatapos.
+Binubuksan ng `ccam` na walang argument ang isang full-screen dashboard kapag terminal ang standard input at output; kung hindi, ipi-print nito ang `ccam list`. Ipinapakita ng dashboard ang bawat account kasama ang usage at mga group nito, at ginagawa nito ang ginagawa ng mga command: magsimula, magdagdag, mag-log in, magbago ng mga group, magtakda ng mga folder rule, maglista ng mga background session, magsuri at mag-ayos. Nagsasara ito kapag nagsimula ang isang account o kapag kumabit ka sa isang background session; kapag nagdagdag ng account o nag-log in, ibinibigay muna nito sandali ang terminal, saka bumabalik sa dashboard.
 
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
@@ -23,17 +23,17 @@ Binubuksan ng `ccam` na walang argument ang isang full-screen dashboard kapag te
  enter to launch · n for most room · a to add · s for groups · ? for shortcuts
 ```
 
-Sinasabi ng linya sa ilalim ng mga pangalan ng tab, sa isang pangungusap, kung para saan ang kasalukuyang tab. Sa mas malapad na terminal, ipinapakita rin ng tab na Accounts ang email ng bawat account. Sinasabi ng dulo ng linya ng mga tab kung naka-on ang [`auto_switch`](/features/next#auto-switch), sa bawat tab (Linux at macOS; hindi ito pinapansin ng Windows); kapag naka-on ito, sinasabi ng tab na Health kung ano pa ang kailangan nito: ang ccam plugin na naka-on sa bawat account na nagsa-sign in gamit ang Claude subscription, at Claude Code 2.1.214 o mas bago.
+Sinasabi ng linya sa ilalim ng mga pangalan ng tab, sa isang pangungusap, kung para saan ang kasalukuyang tab. Sa mas malapad na terminal, ipinapakita rin ng tab na Accounts ang email ng bawat account. Sa bawat tab, ipinapakita ng dulo ng linya ng mga tab kung naka-on ang [`auto_switch`](/features/next#auto-switch) (Linux at macOS; hindi ito pinapansin ng Windows). Kapag naka-on ito, inililista ng tab na Health kung ano pa ang kailangan nito: Claude Code 2.1.214 o mas bago, at ang ccam plugin na naka-on sa bawat account na nagsa-sign in gamit ang Claude subscription.
 
-Tuwing nagbubukas ito, tinatanong ng dashboard sa GitHub sa background kung may mas bagong ccam release; hindi kailanman naghihintay rito ang unang frame, at walang ipinapakita kapag offline. Kapag mayroon, inirerekomenda ito ng isang linya sa ilalim ng pamagat:
+Tuwing nagbubukas ito, tinatanong ng dashboard sa GitHub sa background kung may mas bagong ccam release; hindi kailanman naghihintay rito ang unang frame, at walang ipinapakita kapag offline ka. Kapag mayroon, inirerekomenda ito ng isang linya sa ilalim ng pamagat:
 
 ```console
  ● ccam 0.10.2 is available (you have 0.10.1) · press U to update
 ```
 
-Nagtatanong muna ang `U`, saka nag-a-update gaya ng ginagawa ng [`ccam update`](/features/update): sinusuri ang release laban sa mga SHA-256 checksum nito at pinapalitan nito ang ccam sa isang hakbang. Lumang bersyon pa rin ang dashboard na kinaroroonan mo, kaya lumabas at simulan muli ang `ccam`. Kapag hindi magagawa rito ang update, halimbawa para sa ccam na in-install mula sa `.deb` package, ipinapakita ng dashboard ang parehong payo gaya ng `ccam update` at pinananatili ang alok.
+Nagtatanong muna ang `U`, saka nag-a-update gaya ng ginagawa ng [`ccam update`](/features/update): sinusuri ang release laban sa mga SHA-256 checksum nito at pinapalitan nito ang ccam sa isang hakbang. Lumang bersyon pa rin ang dashboard na kinaroroonan mo, kaya lumabas at simulan muli ang `ccam`. Kapag hindi magagawa rito ang update, halimbawa para sa kopya ng ccam na in-install mula sa `.deb` package, ipinapakita ng dashboard ang parehong payo gaya ng `ccam update` at pinananatili ang alok.
 
-Iginuguhit ang unang frame mula sa `config.toml` lang, sa mas mababa pa nang husto sa 100 ms; napupunan ang usage habang sumasagot ang bawat account. May sariling bar ang bawat limit: ang 5-oras na window, ang lingguhang window para sa lahat ng model, at ang sariling lingguhang window ng Fable; ang ibig sabihin ng `-` ay walang ganoong window ang account. Nagiging dilaw ang porsiyento mula 80% at pula sa 100%, at malabong iginuguhit ang mga value na galing sa cache pagkatapos ng nabigong lookup. 100% ang ipinapakita ng window na iniulat ng Claude Code na puno na hanggang sa reset nito. Nagpapakita ang expired na access token ng malabong `⚠ token expired` (nire-renew ito ng Claude Code sa susunod na pagsisimula), habang ang ibig sabihin ng `⚠ login expired` ay kailangan ng account ang `ccam login`.
+Iginuguhit ang unang frame mula sa `config.toml` lang, sa mas mababa pa nang husto sa 100 ms; napupunan ang usage habang sumasagot ang bawat account. May sariling bar ang bawat limit: ang 5-oras na window, ang lingguhang window para sa lahat ng model, at ang sariling lingguhang window ng Fable; ang ibig sabihin ng `-` ay walang ganoong window ang account. Nagiging dilaw ang porsiyento sa 80% at pula sa 100%. Kapag pumalya ang isang lookup, malabong ipinapakita ang mga naka-cache na value. 100% ang ipinapakita ng window na iniulat ng Claude Code na puno na hanggang sa reset nito. Nagpapakita ang expired na access token ng malabong `⚠ token expired` (nire-renew ito ng Claude Code sa susunod na pagsisimula), habang ang ibig sabihin ng `⚠ login expired` ay kailangan ng account ang `ccam login`.
 
 ## Mga tab
 
@@ -42,11 +42,11 @@ Iginuguhit ang unang frame mula sa `config.toml` lang, sa mas mababa pa nang hus
 | Accounts | numero, pangalan, email, mga bar ng 5-oras, lingguhan at Fable, huling paggamit, mga group; `✔` ang default, `▸` ang account ng folder na ito, `•` tumatakbo (pati ang Claude Code na sinimulan nang walang ccam: karaniwang `claude`, isang IDE, mga background session at ang daemon nila) | sa ibaba |
 | Agents | ang inililista ng [`ccam agents`](/features/agents): ang mga background session at bukas na session ng bawat account, kasama ang state, folder at oras ng pagsisimula nila (sa ibaba) | `enter` kumabit (gaya ng `ccam attach`), `x` ihinto, `r` i-reload |
 | Groups | bawat group, kung ano ang shine-share nito at ang mga account nito, at ang mga account na walang group | `enter` baguhin, `n` bago, `e` palitan ang pangalan, `x` alisin |
-| Folders | ang mga patakaran ng [`ccam folder`](/features/folder) at ang nalalapat dito, pati kapag narating mo ang folder sa pamamagitan ng symbolic link (sine-save ang mga bagong patakaran na naresolba ang mga link) | `n` gumamit ng account dito, `enter` baguhin, `x` alisin |
-| Extensions | ang ipinapakita ng [`ccam ext`](/features/ext), bawat extension nang isang beses kasama ang mga group na pinanggagalingan nito, `off:` ang mga account kung saan hindi naka-on ang isang plugin, ang mga server na mayroon ang isang account para sa folder na ito lang kasama ng sarili nitong mga server, `This folder's project`, at ang mga problemang hindi pag-aari ng anumang account | `r` i-reload |
+| Folders | ang mga patakaran ng [`ccam folder`](/features/folder) at ang nalalapat dito, kahit narating mo ang folder sa pamamagitan ng symbolic link (sine-save ang mga bagong patakaran na naresolba ang mga link) | `n` gumamit ng account dito, `enter` baguhin, `x` alisin |
+| Extensions | ang ipinapakita ng [`ccam ext`](/features/ext), bawat extension nang isang beses kasama ang mga group na pinanggagalingan nito, `off:` ang mga account kung saan hindi naka-on ang isang plugin, ang sariling mga server ng account na para lang sa folder na ito, `This folder's project`, at ang mga problemang hindi pag-aari ng anumang account | `r` i-reload |
 | Health | ang iniuulat ng [`ccam doctor`](/features/doctor), bilang isang kahon bawat account (sa ibaba) | `f` ayusin ang napiling kahon, `F` ayusin lahat (`doctor --fix`), `↑`/`↓` lumipat sa pagitan ng mga kahon |
 
-Nagpapalit ng tab ang `←`/`→` o `Tab`, inililista ng `?` ang mga key ng kasalukuyang tab, hinahanap ulit ng `r` ang usage nang hindi ginagamit ang maikling cache at nilo-load ulit ang mga tab na Agents, Extensions at Health, at lumalabas ang `q` o `Esc`.
+Nagpapalit ng tab ang `←`/`→` o `Tab`, inililista ng `?` ang mga key ng kasalukuyang tab, nire-refresh ng `r` ang usage nang nilalampasan ang maikling cache at nilo-load ulit ang mga tab na Agents, Extensions at Health, at lumalabas ang `q` o `Esc`.
 
 ## Mga key sa tab na Accounts
 
@@ -65,9 +65,9 @@ Nagpapalit ng tab ang `←`/`→` o `Tab`, inililista ng `?` ang mga key ng kasa
 | `f` | Gamitin ito sa kasalukuyang folder |
 | `e` | Palitan ang pangalan nito |
 | `c` | Itakda o alisin ang shortcut command nito |
-| `x` | Alisin ito (nagtatanong muna, nakatapat sa No) |
+| `x` | Alisin ito (nagtatanong muna, na nakapili ang No) |
 
-**Mga seat ng Team at Enterprise.** Lumilipat din ang awtomatikong pagpili (`ccam next`, `--fallback`, `ccam pick`, ang `n` ng dashboard, at ang [`auto_switch`](/features/next#auto-switch) kapag binuksan mo ito) sa pagitan ng mga seat ng iisang Claude Team o Enterprise na organisasyon. Sinasabi ng help center ng Anthropic na "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (nakatalaga ang bawat seat ng Team plan sa iisang partikular na tao, at siya lang ang puwedeng gumamit nito) at "Users can't route their work through another user's account to use that user's remaining usage" (hindi puwedeng idaan ng mga user ang trabaho nila sa account ng ibang user para magamit ang natitirang usage ng user na iyon) ([mga Team plan](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); ganoon din sa [mga Enterprise plan](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Kaya maaaring lumabag sa terms ng Anthropic ang paggamit ng awtomatikong pagpili sa pagitan ng mga seat. Ikaw ang magpapasya kung gagamitin mo ito roon: magtanong muna sa iyong organisasyon at sa Anthropic bago ka umasa rito. Saklaw ng [paalala tungkol sa terms sa FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) ang mga personal na plan (Pro, Max).
+**Mga seat ng Team at Enterprise.** Lumilipat din ang awtomatikong pagpili ng account (`ccam next`, `--fallback`, `ccam pick`, ang `n` ng dashboard at, kapag binuksan mo ito, ang [`auto_switch`](/features/next#auto-switch)) sa pagitan ng mga seat ng iisang Claude Team o Enterprise na organisasyon, na maaaring lumabag sa terms ng Anthropic. Basahin ang [FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) at magtanong muna sa iyong organisasyon at sa Anthropic bago ka umasa rito.
 
 ## Ang tab na Health
 
@@ -99,7 +99,7 @@ Lumilipat ang `↑`/`↓` mula kahon papunta sa kahon, at may border na kulay ac
 
 ## Ang tab na Agents
 
-Ipinapakita ng tab na Agents ang ipi-print ng [`ccam agents`](/features/agents): ang mga background session at bukas na session ng bawat account, kasama ang account na kinabibilangan ng bawat isa. Sabay-sabay nitong tinatanong ang Claude Code ng bawat account (`claude agents --json`, hanggang 15 segundo bawat isa) kapag una mong binuksan ang tab, sa `r`, pagkatapos ng pagpapahinto, at pagkatapos ng pagbabago sa config, at sinasabi nito ang `Asking every account's Claude Code for its sessions…` hanggang makasagot ang lahat.
+Ipinapakita ng tab na Agents ang ipi-print ng [`ccam agents`](/features/agents): ang mga background session at bukas na session ng bawat account, kasama ang account na kinabibilangan ng bawat isa. Sabay-sabay nitong tinatanong ang Claude Code ng bawat account (`claude agents --json`, bawat isa na may 15 segundong timeout) kapag una mong binuksan ang tab, sa `r`, pagkatapos ng pagpapahinto, at pagkatapos ng pagbabago sa config, at sinasabi nito ang `Asking every account's Claude Code for its sessions…` hanggang makasagot ang lahat.
 
 ```console
   Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
@@ -115,9 +115,9 @@ Ipinapakita ng tab na Agents ang ipi-print ng [`ccam agents`](/features/agents):
  enter to attach · x to stop · r to reload · ? for shortcuts
 ```
 
-Ang `State` ay ang state ng isang background session at kung ano ang ginagawa ng process nito, o `open` para sa interactive session, gaya sa `ccam agents`. Ang account na hindi matanong ay nakakakuha ng linyang `✘` sa ilalim ng listahan kasama ang sinabi ng Claude Code, gaya ng `lab` sa itaas, na naka-off ang agent view. Hindi isinasama ang mga tapos nang background session (inililista ang mga ito ng `ccam agents --all`), at kapag sumagot ang bawat account at walang may session, sinasabi ng tab ang ``No sessions. Start one in the background with `ccam <account> --bg "…"`.`` Sa makitid na terminal, tinatanggal ng tab ang `Started`, saka ang `Name`, saka ang `Folder`, at pinuputol mula sa kaliwa ang mahabang folder.
+Ang `State` ay ang state ng isang background session at kung ano ang ginagawa ng process nito, o `open` para sa interactive session, gaya sa `ccam agents`. Kung hindi matanong ang isang account, ipinapakita ng linyang `✘` sa ilalim ng listahan ang sinabi ng Claude Code, gaya ng `lab` sa itaas, na naka-off ang agent view. Hindi isinasama ang mga tapos nang background session (inililista ang mga ito ng `ccam agents --all`), at kapag sumagot ang bawat account at walang may session, sinasabi ng tab ang ``No sessions. Start one in the background with `ccam <account> --bg "…"`.`` Sa makitid na terminal, tinatanggal ng tab ang `Started`, saka ang `Name`, saka ang `Folder`, at pinuputol mula sa kaliwa ang mahahabang folder path.
 
-Isinasara ng `Enter` sa isang background session ang dashboard at binubuksan ang session sa terminal na ito bilang ang account nito, gaya ng ginagawa ng `ccam attach <id>`; hindi na bumabalik ang dashboard (sa Claude Code, pumupunta ang `←` sa agent view nito at ang `Ctrl+Z` sa shell). Walang id ang bukas na session, kaya sinasabi lang ng `Enter` at `x` na kailangan ng background session. Nagtatanong muna ang `x`, nakatapat sa `No, keep it`: ``It runs as personal. Like `ccam personal stop 49ec0028`, Claude Code stops it and keeps its conversation, which `ccam attach 49ec0028` opens again.`` Kapag oo, pinapatakbo ng ccam ang `claude stop <id>` bilang account na iyon, sinasabi ang ``49ec0028 (personal) stopped; `ccam attach 49ec0028` opens it again`` o kung bakit hindi nito nagawa, at binabasa ulit ang listahan.
+Isinasara ng `Enter` sa isang background session ang dashboard at binubuksan ang session sa terminal na ito bilang ang account nito, gaya ng ginagawa ng `ccam attach <id>`; hindi na bumabalik ang dashboard (sa Claude Code, pumupunta ang `←` sa agent view nito at ang `Ctrl+Z` sa shell). Walang ID ang bukas na session, kaya sinasabi lang ng `Enter` at `x` na kailangan ng background session. Nagtatanong muna ang `x`, na nakapili ang `No, keep it`: ``It runs as personal. Like `ccam personal stop 49ec0028`, Claude Code stops it and keeps its conversation, which `ccam attach 49ec0028` opens again.`` Kapag oo, pinapatakbo ng ccam ang `claude stop <id>` bilang account na iyon, sinasabi ang ``49ec0028 (personal) stopped; `ccam attach 49ec0028` opens it again`` o kung bakit hindi nito nagawa, at binabasa ulit ang listahan.
 
 ## Pagbabago ng mga group
 
@@ -135,7 +135,9 @@ Sa tab na Groups, binubuksan ng `Enter` ang editor: ang mga item sa kaliwa, ang 
     2. No
 ```
 
-Itinatanong muna ang file na naiiba sa kopya ng group (panatilihin ang sa group, gamitin ang akin, o pagsamahin). Pagkatapos ay tumatakbo ang pagbabago sa background gamit ang parehong code ng [`ccam group`](/features/share): sine-save muna ang config, inililipat nang sunod-sunod ang data ng bawat account, at napupunta ang mga orihinal sa `.ccam-backup/`; pinapanatili ng account na umaalis sa pag-share ng MCP ang mga server ng group sa `.claude.json` nito. Tinatanggihan, kasama ang pangalan ng account, ang pagbabagong maglilipat ng data ng tumatakbong account, pati kapag nagsimula ang account habang bukas ang plano, at tinatanggihan na may `the groups changed while this plan waited; nothing was moved, make the change again` ang planong naluma dahil sa pagpapalit ng group ng ibang ccam. Habang nagpapalit ng mga group ang ibang ccam, sinasabi ng bagong pagbabago, pagpapalit ng pangalan o pag-alis ang `another ccam is changing the groups right now`; pagkatapos ng pagbabagong huminto sa kalagitnaan, naghihintay ang mga ito hanggang matapos ito ng `F` sa tab na Health (o ng `ccam doctor --fix`).
+Kung naiiba ang isang file sa kopya ng group, itinatanong muna ng ccam kung ano ang gagawin (panatilihin ang sa group, gamitin ang akin o pagsamahin). Pagkatapos ay tumatakbo ang pagbabago sa background gamit ang parehong code ng [`ccam group`](/features/share): sine-save muna ang config, inililipat nang sunod-sunod ang data ng bawat account, at napupunta ang mga orihinal sa `.ccam-backup/`; pinapanatili ng account na umaalis sa pag-share ng MCP ang mga server ng group sa `.claude.json` nito.
+
+Tinatanggihan, kasama ang pangalan ng account, ang pagbabagong maglilipat ng data ng tumatakbong account, kahit nagsimula ang account habang bukas ang plano, at tinatanggihan na may `the groups changed while this plan waited; nothing was moved, make the change again` ang planong naluma dahil binago ng ibang ccam process ang mga group. Habang nagpapalit ng mga group ang ibang ccam process, sinasabi ng bagong pagbabago, pagpapalit ng pangalan o pag-alis ang `another ccam process is changing the groups right now`; pagkatapos ng pagbabagong huminto sa kalagitnaan, naghihintay ang mga ito hanggang matapos ito ng `F` sa tab na Health (o ng `ccam doctor --fix`).
 
 ## Pagdagdag ng account
 
@@ -144,7 +146,7 @@ Binubuksan ng `a` ang wizard na ginagamit din ng `ccam add` sa terminal:
 1. Ang pangalan ng account.
 2. Kung paano ito magsa-sign in: Claude subscription ngayon (sa browser), [API key](/features/api), o Claude subscription mamaya.
 3. Para sa API key: kung saan binabasa ng ccam ang key sa bawat pagsisimula (`env:NAME` o `command:COMMAND`), ang endpoint, kung paano ipinapadala ang key at ang model.
-4. Ang mga group na sasalihan, na naka-check ang `default`; kapag wala pang group, kung ano ang shine-share ng group na `default`.
+4. Ang mga group na sasalihan, na naka-check ang `default` (kapag wala pang group, kung ano ang ishe-share ng group na `default`).
 5. Isang shortcut command, kung gusto mo.
 6. Isang buod na kukumpirmahin.
 
@@ -152,7 +154,7 @@ Bumabalik nang isang hakbang ang `Esc`, at sa unang hakbang, isinasara nito ang 
 
 ## Pag-alis ng account
 
-Nagtatanong muna ang `x` bago may mangyari, nakatapat sa No, at sinasabi kung ano ang ginagawa ng pag-alis: `It is logged out first (its login is revoked), then its folder goes to ccam's trash; the groups' shared files stay.` Walang login na mababawi para sa API key account, at kapag hawak ng ibang account ang parehong login, hindi ito ina-log out. Pinapanatili ng in-import na account ang folder nito: `It was imported, so its folder /home/me/.claude stays where it is: it leaves its groups first and keeps a copy of what they share, then ccam forgets it.`
+Nagtatanong muna ang `x` bago may mangyari, na nakapili ang No, at sinasabi kung ano ang ginagawa ng pag-alis: `It is logged out first (its login is revoked), then its folder goes to ccam's trash; the groups' shared files stay.` Walang login na mababawi para sa API key account, at kapag hawak ng ibang account ang parehong login, hindi ito ina-log out. Pinapanatili ng in-import na account ang folder nito: `It was imported, so its folder /home/me/.claude stays where it is: it leaves its groups first and keeps a copy of what they share, then ccam forgets it.`
 
 ## Mga kulay
 
@@ -169,7 +171,7 @@ Para sa red-green color blindness ang mga theme na `-daltonized`, at ginagamit n
 - Tinatawag ng dashboard ang parehong mga function ng mga command, kaya nalalapat ang bawat patakaran: mga plano bago maglipat ng data, pagtanggi para sa mga tumatakbong account, mga backup, at mga login token na hindi kailanman umaalis sa isang account.
 - Walang dry run ang dashboard: ipi-print ng `ccam --dry-run` na walang pangalan kung paano magsisimula ang account ng folder na ito, at nag-aalok ang `o` sa isang account ng dry run ng iisang pagsisimulang iyon.
 - Naibabalik ang terminal bago magsimula ang Claude Code o bumukas ang login.
-- Sa screen na masyadong maliit para sa isang dialog, unang tinatanggal ang mga hilera ng tab; pinuputol ang mga linya gamit ang `…` sa halip na i-wrap. Sa maikling screen, ang mga blangkong linya at ang paglalarawan ng tab ang susunod na tinatanggal, kaya nananatili ang linya ng mga key. Kapag mas mababa sa 40 column o 8 hilera, `Too small: ccam needs 40x8 (now 36x7)` lang ang ipinapakita ng dashboard.
+- Sa screen na masyadong maliit para sa isang dialog, unang tinatanggal ang mga hilera ng tab; pinuputol ang mga linya gamit ang `…` sa halip na i-wrap. Sa maikling screen, ang mga blangkong linya at ang paglalarawan ng tab ang susunod na tinatanggal, kaya nananatiling nakikita ang linya ng mga pahiwatig ng key. Kapag mas mababa sa 40 column o 8 hilera, `Too small: ccam needs 40x8 (now 36x7)` lang ang ipinapakita ng dashboard.
 - Kapag pinindot ang `Ctrl+C` habang inilalapat ang isang pagbabago, pag-alis, update o pagkukumpuni, hinihintay muna nitong matapos iyon: sinasabi ng status line ang `ccam quits when it is done.`
 - Pagkatapos ma-update ng `U` ang ccam, hindi na bumabalik ang alok kapag bumalik ang dashboard mula sa pagdagdag ng account o sa isang login.
 

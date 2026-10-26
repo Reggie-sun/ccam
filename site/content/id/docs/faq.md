@@ -2,10 +2,10 @@
 title: Pertanyaan yang sering diajukan
 metaTitle: "FAQ ccam: beberapa akun Claude Code"
 description: Jawaban seputar ccam, akun Claude Code, batas penggunaan, pembagian, privasi, dan sistem yang didukung.
-updated: 2026-10-25
+updated: 2026-10-26
 order: 6
 translation: machine
-sourceHash: "8e9deca652d1"
+sourceHash: "b53878aaabc7"
 ---
 
 ## Apakah ccam alat resmi dari Anthropic?
@@ -14,9 +14,9 @@ Tidak. ccam adalah proyek open source tidak resmi dan tidak berafiliasi dengan a
 
 ## Apakah saya boleh menggunakan beberapa akun Claude Code?
 
-Itu bergantung pada ketentuan setiap akun dan, untuk akun kerja, kebijakan organisasi Anda: [Ketentuan Konsumen](https://www.anthropic.com/legal/consumer-terms) Anthropic untuk Pro dan Max, [Ketentuan Komersial](https://www.anthropic.com/legal/commercial-terms)-nya untuk Team dan Enterprise, dan [Kebijakan Penggunaan](https://www.anthropic.com/legal/aup)-nya untuk semuanya. Periksa hal tersebut sebelum Anda menggunakan beberapa akun. ccam tidak menaikkan, menggabungkan, atau menyembunyikan batas sebuah akun, dan setiap akun tetap berhenti di batasnya sendiri. ccam melanjutkan pekerjaan Anda sebagai akun Anda yang lain saat Anda memintanya, atau dengan sendirinya saat mencapai batas jika Anda mengaktifkan [`auto_switch`](/features/next#auto-switch) (Linux dan macOS). Apakah hal itu diizinkan untuk akun-akun Anda adalah keputusan Anda.
+Itu bergantung pada ketentuan setiap akun dan, untuk akun kerja, kebijakan organisasi Anda: [Ketentuan Konsumen](https://www.anthropic.com/legal/consumer-terms) Anthropic untuk Pro dan Max, [Ketentuan Komersial](https://www.anthropic.com/legal/commercial-terms)-nya untuk Team dan Enterprise, dan [Kebijakan Penggunaan](https://www.anthropic.com/legal/aup)-nya untuk semuanya. Periksa hal tersebut sebelum Anda menggunakan beberapa akun. ccam tidak menaikkan, menggabungkan, atau menyembunyikan batas sebuah akun, dan setiap akun tetap berhenti di batasnya sendiri. ccam memindahkan pekerjaan Anda ke akun Anda yang lain saat Anda memintanya, atau dengan sendirinya saat mencapai batas jika Anda mengaktifkan [`auto_switch`](/features/next#auto-switch) (Linux dan macOS). Periksa apakah hal itu diizinkan untuk akun-akun Anda sebelum menggunakannya; keputusannya ada di tangan Anda.
 
-**Kursi Team dan Enterprise.** Pilihan otomatis (`ccam next`, `--fallback`, `ccam pick`, tombol `n` di dasbor, dan [`auto_switch`](/features/next#auto-switch) bila Anda mengaktifkannya) juga berganti di antara kursi dalam organisasi Claude Team atau Enterprise yang sama. Pusat bantuan Anthropic menyatakan "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (setiap kursi pada paket Team diberikan kepada satu orang tertentu, dan hanya orang itu yang boleh menggunakannya) dan "Users can't route their work through another user's account to use that user's remaining usage" (pengguna tidak boleh menyalurkan pekerjaannya melalui akun pengguna lain untuk memakai sisa kuota pengguna tersebut) ([paket Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); begitu pula untuk [paket Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Karena itu, memakai pilihan otomatis di antara kursi dapat melanggar ketentuan Anthropic. Apakah Anda memakainya di sana adalah keputusan Anda: tanyakan kepada organisasi Anda dan Anthropic sebelum Anda mengandalkannya. Paket pribadi (Pro, Max) dibahas dalam paragraf di atas.
+**Kursi Team dan Enterprise.** Pemilihan akun otomatis (`ccam next`, `--fallback`, `ccam pick`, tombol `n` di dasbor, dan [`auto_switch`](/features/next#auto-switch) bila Anda mengaktifkannya) juga berganti di antara kursi dalam organisasi Claude Team atau Enterprise yang sama. Pusat bantuan Anthropic menyatakan "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (setiap kursi pada paket Team diberikan kepada satu orang tertentu, dan hanya orang itu yang boleh menggunakannya) dan "Users can't route their work through another user's account to use that user's remaining usage" (pengguna tidak boleh menyalurkan pekerjaannya melalui akun pengguna lain untuk memakai sisa kuota pengguna tersebut) ([paket Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); begitu pula untuk [paket Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Karena itu, memakai pemilihan otomatis di antara kursi dapat melanggar ketentuan Anthropic. Apakah Anda memakainya di sana adalah keputusan Anda: tanyakan kepada organisasi Anda dan Anthropic sebelum Anda mengandalkannya. Paket pribadi (Pro, Max) dibahas dalam paragraf di atas.
 
 ## Apakah ccam mengakali batas penggunaan?
 
@@ -24,7 +24,11 @@ Tidak melewati batas milik akun mana pun: setiap akun tetap memiliki batasnya da
 
 ## Bisakah ccam berpindah akun dengan sendirinya saat sebuah sesi mencapai batasnya?
 
-Hanya jika Anda mengaktifkannya. Dengan `auto_switch = true` di bagian atas `~/.config/ccam/config.toml` (Linux dan macOS; nonaktif secara default dan masih eksperimental), saat Claude Code menghentikan sesi interaktif yang dimulai ccam di batas 5 jam, mingguan, Opus, atau Sonnet, ccam mengakhiri sesi itu dan melanjutkan percakapan sebagai akun Anda yang lain yang punya ruang: kursi lain dari organisasi Team atau Enterprise yang sama, atau paket pribadi lain (Pro, Max). ccam tidak pernah berpindah sebelum batas tercapai, tidak pernah memantau penggunaan Anda di latar belakang, dan tidak pernah memindahkan pekerjaan keluar dari organisasi Team atau Enterprise ataupun ke dalamnya. Pada kursi, ccam memindahkan pekerjaan Anda dari satu kursi ke kursi lain, yang dapat melanggar ketentuan Anthropic (lihat Kursi Team dan Enterprise di atas), dan untuk paket pribadi ketentuan Anthropic tidak memberi jawaban pasti: Ketentuan Konsumen melarang mengakses Layanan "through automated or non-human means" (melalui cara otomatis atau non-manusia) kecuali Anthropic secara tegas mengizinkannya, dan sebuah perpindahan mengirim satu pesan atas nama Anda; mengaktifkannya adalah keputusan Anda. [`auto_switch`](/features/next#auto-switch) mencantumkan setiap syarat dan biaya sebuah perpindahan.
+Hanya jika Anda mengaktifkannya. Dengan `auto_switch = true` di bagian atas `~/.config/ccam/config.toml` (Linux dan macOS; nonaktif secara default dan masih eksperimental), saat Claude Code menghentikan sesi interaktif (yang dimulai oleh ccam) di batas 5 jam, mingguan, Opus, atau Sonnet, ccam mengakhiri sesi itu dan melanjutkan percakapan sebagai akun Anda yang lain yang punya ruang: kursi lain dari organisasi Team atau Enterprise yang sama, atau paket pribadi lain (Pro, Max). ccam tidak pernah berpindah sebelum batas tercapai, tidak pernah memantau penggunaan Anda di latar belakang, dan tidak pernah memindahkan pekerjaan keluar dari organisasi Team atau Enterprise ataupun ke dalamnya.
+
+Pada kursi, ccam memindahkan pekerjaan Anda dari satu kursi ke kursi lain, yang dapat melanggar ketentuan Anthropic (lihat Kursi Team dan Enterprise di atas). Untuk paket pribadi, ketentuan Anthropic tidak membahasnya dengan jelas: Ketentuan Konsumen melarang mengakses Layanan "through automated or non-human means" (melalui cara otomatis atau non-manusia) kecuali Anthropic secara tegas mengizinkannya, dan sebuah perpindahan mengirim satu pesan atas nama Anda. Mengaktifkannya adalah keputusan Anda.
+
+[`auto_switch`](/features/next#auto-switch) mencantumkan setiap syarat dan biaya sebuah perpindahan.
 
 ## Bagaimana cara menggunakan dua akun Claude Code di satu komputer?
 
@@ -36,7 +40,7 @@ Jalankan `ccam next --continue` di folder itu: perintah ini membawa percakapan t
 
 ## Apakah ccam melihat atau mengirim login saya?
 
-ccam tidak pernah membagikan atau menyalin login Claude Anda antarakun, dan tidak pernah menyalin info masuk server MCP. ccam membaca token akses sebuah akun hanya untuk menanyakan penggunaan akun itu ke endpoint penggunaan Anthropic: untuk `ccam usage`, dasbor, `ccam doctor`, dan pilihan otomatis (`ccam next --auto`, `ccam pick`, `--fallback`, dan `auto_switch` saat sebuah sesi mencapai batasnya). ccam memperbarui token yang kedaluwarsa hanya dengan `ccam usage --refresh`; dengan `usage_source = "claude"`, ccam tidak mengirim token ke mana pun dan membaca login yang tersimpan (file-nya, atau entri Rantai Kunci (Keychain) di macOS) hanya untuk mengetahui apakah login itu masih berfungsi. `ccam ext` dan `ccam doctor` membaca nama-nama info masuk MCP sebuah akun, tidak pernah tokennya. ccam tidak memiliki telemetri. Selain pengecekan itu, satu-satunya permintaan yang dibuatnya sendiri adalah pertanyaan dasbor ke GitHub tentang rilis ccam terbaru, yang tidak membawa apa pun tentang Anda atau akun-akun Anda.
+ccam tidak pernah membagikan atau menyalin login Claude Anda antarakun, dan tidak pernah menyalin info masuk server MCP. ccam membaca token akses sebuah akun hanya untuk menanyakan penggunaan akun itu ke endpoint penggunaan Anthropic: untuk `ccam usage`, dasbor, `ccam doctor`, dan pilihan otomatis (`ccam next --auto`, `ccam pick`, `--fallback`, dan `auto_switch` saat sebuah sesi mencapai batasnya). ccam memperbarui token yang kedaluwarsa hanya dengan `ccam usage --refresh`; dengan `usage_source = "claude"`, ccam tidak mengirim token ke mana pun dan membaca login yang tersimpan (file-nya, atau entri Rantai Kunci (Keychain) di macOS) hanya untuk mengetahui apakah login itu masih berfungsi. `ccam ext` dan `ccam doctor` membaca nama-nama info masuk MCP sebuah akun, tidak pernah tokennya. ccam tidak memiliki telemetri. Selain pengecekan itu, satu-satunya permintaan yang dibuatnya sendiri adalah pengecekan dasbor ke GitHub untuk rilis ccam yang lebih baru, yang tidak membawa apa pun tentang Anda atau akun-akun Anda.
 
 ## Bagaimana cara masuk di server jarak jauh?
 
@@ -48,7 +52,7 @@ Di `~/.local/share/ccam/profiles/<name>/`, satu folder per akun. Di macOS, Claud
 
 ## Apa yang terjadi pada ~/.claude saya yang sudah ada?
 
-Tidak ada, kecuali Anda menjalankan `ccam import` atau `ccam migrate`. Impor mendaftarkan folder itu di tempatnya, sehingga `claude` biasa dan `ccam <name>` tetap menggunakan akun dan pengaturan yang sama. `ccam migrate` menyalin pengaturan, `CLAUDE.md`, ekstensi, dan server MCP dari folder itu ke pengaturan bersama dan hanya membaca folder tersebut.
+Tidak ada, kecuali Anda menjalankan `ccam import` atau `ccam migrate`. Impor mendaftarkan folder itu di tempatnya, sehingga `claude` biasa dan `ccam <name>` tetap menggunakan akun dan pengaturan yang sama. `ccam migrate` menyalin pengaturan, `CLAUDE.md`, ekstensi, dan server MCP dari folder itu ke grup bersama `default` dan hanya membaca folder tersebut.
 
 ## Sistem apa saja yang didukung ccam?
 
@@ -60,7 +64,7 @@ Server yang ditambahkan di dalam sesi dengan `claude mcp add` hanya disimpan unt
 
 ## Apakah ccam memperlambat Claude Code?
 
-Menjalankan Claude Code melalui ccam menambah sekitar 4 milidetik, diukur dengan `scripts/perf-check.sh` di sebuah laptop. ccam membaca satu file kecil, memeriksa tautan bersama, lalu menggantikan dirinya dengan `claude`, sehingga secara default ccam tidak berjalan saat Anda bekerja. Windows tidak bisa mengganti sebuah proses, jadi di sana ccam menjalankan Claude Code dan menunggunya, tanpa melakukan hal lain. Dengan `relay` atau `auto_switch` diaktifkan, ccam menunggu dengan cara yang sama di samping setiap sesi interaktif, sehingga ccam bisa melanjutkan percakapan.
+Menjalankan Claude Code melalui ccam menambah sekitar 4 milidetik, diukur dengan `scripts/perf-check.sh` di sebuah laptop. ccam membaca satu file kecil, memeriksa tautan bersama, lalu menggantikan dirinya dengan `claude`, sehingga secara default ccam tidak berjalan saat Anda bekerja. Windows tidak bisa mengganti sebuah proses, jadi di sana ccam menjalankan Claude Code dan menunggunya, tanpa melakukan hal lain. Dengan `relay` atau `auto_switch` diaktifkan, ccam tetap berjalan dengan cara yang sama di samping setiap sesi interaktif, sehingga ccam bisa melanjutkan percakapan di akun lain.
 
 ## Bagaimana cara memperbarui ccam?
 

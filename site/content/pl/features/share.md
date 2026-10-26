@@ -1,10 +1,10 @@
 ---
 title: Współdzielenie przez grupy
 description: Grupa ccam współdzieli wybrane elementy między swoimi kontami przez jeden folder; ccam group przenosi dane z planem, kopiami i wyborem przy konfliktach.
-updated: 2026-10-23
+updated: 2026-10-26
 order: 4
 translation: machine
-sourceHash: "e4f05b0fd572"
+sourceHash: "3f94dd13dbf1"
 ---
 
 Każde konto ma własny folder, ale większość jego zawartości nie musi być osobna. **Grupa** określa, co jest współdzielone i przez kogo: każde konto w grupie linkuje te elementy do jednego folderu, `~/.local/share/ccam/groups/<group>/`, więc wszystkie czytają i zapisują tę samą kopię. Tokeny logowania nigdy nie są współdzielone.
@@ -31,11 +31,11 @@ Pierwsze dodane konto tworzy `default`, a kolejne konta do niej dołączają, ch
 ccam group                                        # the groups, what they share, their accounts
 ccam group show default                           # items, accounts, folder and MCP servers
 ccam group add team --items history --members work,side
-ccam group set default --add history              # every account in default moves together
+ccam group set default --add history              # all accounts in default start sharing history
 ccam group set default --remove history --fresh   # stop sharing; accounts start without it
-ccam group set team --items history,memory --from work   # work's CLAUDE.md goes in first
+ccam group set team --items history,memory --from work   # the group starts from work's copies
 ccam group join team personal                     # personal starts sharing team's items
-ccam group join team personal --replace           # leave the group that shares them now
+ccam group join team personal --replace           # first leave the group that shares those items now
 ccam group leave team side                        # side keeps a copy of team's items
 ccam group rename team pair                       # the folder keeps its name
 ccam group remove pair --leave                    # its accounts keep a copy; folder to the trash
@@ -76,7 +76,7 @@ work: +history (group default)
 Proceed? [y/N]
 ```
 
-Te same zmiany są dostępne na karcie **Groups** [panelu](/features/dashboard), a `s` na koncie wybiera jego grupy.
+Te same zmiany możesz wprowadzić na karcie **Groups** [panelu](/features/dashboard); naciśnij `s` na koncie, żeby wybrać jego grupy.
 
 ## Elementy
 
@@ -88,7 +88,7 @@ Te same zmiany są dostępne na karcie **Groups** [panelu](/features/dashboard),
 | `extensions` | `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/`, `rules/` |
 | `history` | `projects/` i `history.jsonl`, żeby inne konto mogło użyć `--continue` |
 
-Element, którego nie współdzieli żadna grupa konta, zostaje we własnym folderze konta.
+Jeśli żadna z grup konta nie współdzieli danego elementu, ten element zostaje we własnym folderze konta.
 
 ## Polecenia i opcje
 
@@ -128,33 +128,49 @@ Przy odczycie `config.toml` grupy każdego konta są rozwiązywane do jednego fo
 Zmiana działa na kopii konfiguracji:
 
 1. Polecenie zmienia kopię (`AddGroup`, `SetGroupItems`, `JoinGroup` …), co sprawdza zasady.
-2. `internal/group` porównuje stan stary i nowy i dla każdego konta, którego elementy się zmieniają, buduje plan przez `share.Build`. Plany są budowane jeden po drugim i każdy widzi, co wcześniejsze umieszczą w folderach grup, więc tylko pierwsze konto wnosi swoją kopię. Pierwsza kopia pochodzi z folderu grupy, jeśli już jakąś ma, potem z `--from`, potem z konta domyślnego, a potem z pozostałych według numeru.
+2. ccam porównuje stan stary i nowy i dla każdego konta, którego elementy się zmieniają, buduje plan (`internal/group`, `share.Build`). Plany są budowane jeden po drugim i każdy widzi, co wcześniejsze umieszczą w folderach grup, więc tylko pierwsze konto wnosi swoją kopię. Pierwsza kopia grupy pochodzi, w tej kolejności: z folderu grupy (jeśli już jakąś ma), z konta `--from`, z konta domyślnego, a potem z pozostałych kont według numeru.
 3. ccam odmawia, jeśli któreś z tych kont jest uruchomione, niezależnie od tego, jak uruchomiono Claude Code (``work is running; quit Claude Code there first, then change the groups (`ccam agents` lists the sessions)``), a w Windows bez Trybu dewelopera także wtedy, gdy plik wymagałby linku.
-4. Konflikty są rozstrzygane, przez pytanie lub przez `--prefer`, plan jest wypisywany, a ccam pyta o zgodę.
-5. Tuż przed zapisem ccam sprawdza ponownie: konto uruchomione w czasie, gdy pytania czekały, zatrzymuje zmianę, podobnie jak zmiana tych samych grup przez inny ccam (`the groups changed while this plan waited; nothing was moved, make the change again`). Nowa konfiguracja jest zapisywana, zanim cokolwiek zostanie przeniesione, a zmiana jest odnotowywana w `~/.local/state/ccam/group-change.json`. Jeśli krok przerwie się w połowie, notatka zostaje: `ccam doctor --fix` kończy zmianę w jej kolejności, z twoimi odpowiedziami, łącznie z krokami MCP, a do tego czasu nie rusza żadna inna zmiana grup (``the last change of groups stopped halfway; finish it with `ccam doctor --fix` first``).
-6. Najpierw wykonywane są kroki MCP. Gdy konta wyjmują rozszerzenia z grupy, listy wtyczek grupy są przestawiane na folder grupy wszędzie tam, gdzie ich ścieżki prowadzą przez folder konta (`group plugin lists:` w planie). Potem plany są wykonywane po kolei. Każdy krok przenosi dane do grupy albo do folderu kopii zapasowej; tylko pliki, które grupa ma już bajt w bajt, są odrzucane zamiast trafiać do kopii zapasowej.
+4. ccam rozstrzyga konflikty (pytając albo według `--prefer`), wypisuje plan i prosi o potwierdzenie.
+5. Tuż przed zapisem ccam sprawdza ponownie. Jeśli jakieś konto zostało uruchomione, gdy ccam czekał na twoje odpowiedzi, zmiana się zatrzymuje; zatrzymuje się też, jeśli inny proces ccam zmienił w międzyczasie te same grupy (`the groups changed while this plan waited; nothing was moved, make the change again`). Nowa konfiguracja jest zapisywana, zanim cokolwiek zostanie przeniesione, a zmiana jest odnotowywana w `~/.local/state/ccam/group-change.json`. Jeśli krok przerwie się w połowie, notatka zostaje: `ccam doctor --fix` kończy zmianę w jej kolejności, z twoimi odpowiedziami, łącznie z krokami MCP, a do tego czasu nie rusza żadna inna zmiana grup (``the last group change stopped halfway; finish it with `ccam doctor --fix` first``).
+6. Najpierw wykonywane są kroki MCP. Gdy konta wyjmują rozszerzenia z grupy, listy wtyczek grupy są przestawiane na folder grupy wszędzie tam, gdzie ich ścieżki prowadzą przez folder konta (`group plugin lists:` w planie). Potem plany są wykonywane po kolei. Każdy krok przenosi dane do grupy albo do folderu kopii zapasowej; tylko pliki identyczne z kopią grupy są usuwane zamiast trafiać do kopii zapasowej.
 
-`share.Layout` to lista dozwolonych ścieżek, które obejmuje każdy element. Nic spoza niej nigdy nie trafi do grupy. `share.Never` wymienia `.credentials.json` i `.claude.json`, a `Build` zatrzymuje się z błędem wewnętrznym, jeśli któryś z nich kiedykolwiek pojawi się w układzie. Element `mcp` nie ma ścieżek: lista serwerów jest w `.claude.json`, więc [współdzielenie MCP](/features/mcp) działa przez `mcp.json` grupy.
+ccam przechowuje listę dozwolonych ścieżek, które obejmuje każdy element (`share.Layout`). Nic spoza niej nigdy nie trafi do grupy. ccam wymienia też `.credentials.json` i `.claude.json` jako nigdy niewspółdzielone (`share.Never`) i zatrzymuje się z błędem wewnętrznym, jeśli któryś z nich kiedykolwiek pojawi się w układzie (`Build`). Element `mcp` nie ma ścieżek: lista serwerów jest w `.claude.json`, więc [współdzielenie MCP](/features/mcp) działa przez `mcp.json` grupy.
 
 Oto co dzieje się z jednym folderem, `projects/`, gdy `side` zaczyna współdzielić historię, a grupa ma już zawartość:
 
 <!-- motion:share-on -->
 
-Jeśli grupa nie ma jeszcze niczego pod tą ścieżką, konto jest pierwszym, które ją współdzieli, a jego folder zostaje tam przeniesiony bez zmian. W przeciwnym razie każdy plik, którego grupa nie ma, jest przenoszony do grupy, a pliki istniejące po obu stronach zostają w folderze konta, więc zachowywana jest wersja grupy. Pliki identyczne z plikami grupy są odrzucane, a plan wymienia te, które się różnią (`Note: projects: 1 file differs from the group's copy (…); the group's is kept, the account's stays in …`). Folder konta trafia następnie do `.ccam-backup/<time>/` w folderze konta, a na jego miejsce wstawiany jest link. Jeśli wpis grupy sam jest linkiem do własnego wpisu dołączającego konta, zawartość konta trafia do grupy na jego miejsce. Pliki rozmów mają nazwy według identyfikatora sesji, więc historie z kilku kont łączą się bez konfliktów. Rejestry `plugins/` przechowują ścieżki bezwzględne prowadzące przez folder konta; ccam przestawia je na folder grupy i scala wpisy konta z rejestrem, który grupa już ma.
+Jeśli grupa nie ma jeszcze niczego pod tą ścieżką, konto jest pierwszym, które ją współdzieli, a jego folder zostaje tam przeniesiony bez zmian. W przeciwnym razie każdy plik, którego grupa nie ma, jest przenoszony do grupy, a pliki istniejące po obu stronach zostają w folderze konta, więc zachowywana jest wersja grupy. Pliki identyczne z plikami grupy są usuwane, a plan wymienia te, które się różnią (`Note: projects: 1 file differs from the group's copy (…); the group's is kept, the account's stays in …`).
+
+Folder konta trafia następnie do `.ccam-backup/<time>/` w folderze konta, a na jego miejsce wstawiany jest link. Jeśli wpis grupy sam jest linkiem do własnego wpisu dołączającego konta, zawartość konta trafia do grupy na jego miejsce. Pliki rozmów mają nazwy według identyfikatora sesji, więc historie z kilku kont łączą się bez konfliktów. Rejestry `plugins/` przechowują ścieżki bezwzględne prowadzące przez folder konta; ccam przestawia je na folder grupy i scala wpisy konta z rejestrem, który grupa już ma.
 
 Opuszczenie grupy odwraca link:
 
 <!-- motion:share-off -->
 
-ccam najpierw kopiuje bieżącą zawartość grupy do `.ccam-backup/incomplete-<name>` w folderze konta i zastępuje link dopiero wtedy, gdy kopia jest kompletna, więc przerwane kopiowanie zostawia link na miejscu, a `ccam doctor --fix` kopiuje ponownie (plan takiego dokończenia pokazuje `restore <entry>: … (copied back from the group before a stop)`). Usuwa link tylko wtedy, gdy nadal wskazuje do folderu grup tak jak przy tworzeniu planu; ścieżka, która się od tego czasu zmieniła, na przykład zwykły plik w miejscu linku, zostaje bez zmian, a zmiana się zatrzymuje. Z `--fresh` kopiowanie jest pomijane. Grupa zachowuje swoją zawartość dla pozostałych kont. Konto, które przenosi element do grupy, której folder jest jeszcze pusty, wnosi kopię tego, co widziało, więc zachowuje swoje pliki; ta kopia jest przygotowywana w `<group>/.ccam-incomplete-<name>`, dopóki nie jest kompletna. Konto, które przestaje współdzielić MCP, zachowuje serwery grupy: trafiają one do jego własnego `.claude.json` (kopia zapasowa zostaje), obok jego własnych serwerów o tych samych nazwach, które zostają. Z `--fresh` plan wymienia zamiast tego serwery, które przestaną się ładować. Ponowne dołączenie usuwa kopie, których nikt nie zmienił. Opuszczenie `extensions` przestawia też listy wtyczek grupy na folder grupy tam, gdzie ich ścieżki prowadziły przez folder opuszczającego konta; dla pozostałych kont znaczą one to samo.
+ccam najpierw kopiuje bieżącą zawartość grupy do `.ccam-backup/incomplete-<name>` w folderze konta i zastępuje link dopiero wtedy, gdy kopia jest kompletna. Jeśli kopiowanie się przerwie, link zostaje na miejscu, a `ccam doctor --fix` kopiuje ponownie (plan takiego dokończenia pokazuje `restore <entry>: … (copied back from the group before a stop)`). Grupa zachowuje swoją zawartość dla pozostałych kont.
+
+- ccam usuwa link tylko wtedy, gdy nadal wskazuje do folderu grup tak jak przy tworzeniu planu. Ścieżka, która się od tego czasu zmieniła, na przykład zwykły plik w miejscu linku, zostaje bez zmian, a zmiana się zatrzymuje.
+- Z `--fresh` kopiowanie jest pomijane.
+- Konto, które przenosi element do grupy, której folder jest jeszcze pusty, wnosi kopię tego, co widziało, więc zachowuje swoje pliki. Ta kopia jest przygotowywana w `<group>/.ccam-incomplete-<name>`, dopóki nie jest kompletna.
+- Konto, które przestaje współdzielić MCP, zachowuje serwery grupy: trafiają one do jego własnego `.claude.json` (kopia zapasowa zostaje), z wyjątkiem sytuacji, gdy konto ma już serwer o tej samej nazwie, który pozostaje bez zmian. Z `--fresh` plan wymienia zamiast tego serwery, które przestaną się ładować. Ponowne dołączenie usuwa kopie, których nikt nie zmienił.
+- Opuszczenie `extensions` przestawia też listy wtyczek grupy na folder grupy tam, gdzie ich ścieżki prowadziły przez folder opuszczającego konta; dla pozostałych kont przepisane ścieżki prowadzą do tych samych wtyczek.
 
 Pojedynczy plik, który istnieje po obu stronach z różną zawartością, to konflikt:
 
 <!-- motion:share-conflict -->
 
-Wybierasz dla pojedynczych plików, takich jak `settings.json`; wewnątrz folderów zostaje kopia grupy, a plan wymienia pliki, które się różnią. `history.jsonl` oferuje `merge by line`, `keep group` i `use mine`, ze scalaniem na pierwszym miejscu. Inne pliki `.json` oferują `keep group`, `use mine` i `merge JSON`. Wszystkie pozostałe oferują `keep group` i `use mine`. `merge JSON` scala obiekty rekurencyjnie, łączy tablice bez duplikatów i zachowuje wartość grupy, gdy obie strony ustawiają ten sam klucz inaczej, więc pozostałe konta nie widzą żadnej zmiany. Każdy wybór oprócz `keep group` najpierw zapisuje kopię grupy w `.ccam-backup/<time>/group/` konta. Twój własny plik zawsze trafia do kopii zapasowej.
+Wybierasz dla pojedynczych plików, takich jak `settings.json`; wewnątrz folderów zostaje kopia grupy, a plan wymienia pliki, które się różnią. Dostępne wybory zależą od pliku; pierwszy jest domyślny:
 
-Przy każdym uruchomieniu `share.Check` porównuje każdą ścieżkę z układu z grupami konta, używając tylko `lstat` i `readlink`. Brakujący link jest tworzony od razu. Zwykły plik tam, gdzie powinien być link, link w złe miejsce albo nieaktualny link zatrzymują uruchomienie i odsyłają do `ccam doctor --fix`.
+| Plik | Wybory |
+| --- | --- |
+| `history.jsonl` | `merge by line`, `keep group`, `use mine` |
+| Inne pliki `.json` | `keep group`, `use mine`, `merge JSON` |
+| Wszystko inne | `keep group`, `use mine` |
+
+`merge JSON` scala obiekty rekurencyjnie, łączy tablice bez duplikatów i zachowuje wartość grupy, gdy obie strony ustawiają ten sam klucz inaczej, więc pozostałe konta nie widzą żadnej zmiany. Każdy wybór oprócz `keep group` najpierw zapisuje kopię grupy w `.ccam-backup/<time>/group/` konta. Twój własny plik zawsze trafia do kopii zapasowej.
+
+Przy każdym uruchomieniu ccam porównuje każdą ścieżkę z układu z grupami konta, używając tylko `lstat` i `readlink` (`share.Check`). Brakujący link jest tworzony od razu. Zwykły plik tam, gdzie powinien być link, link w złe miejsce albo nieaktualny link zatrzymują uruchomienie i odsyłają do `ccam doctor --fix`.
 
 ### Zmiana nazwy, usuwanie i stary format
 
@@ -171,9 +187,9 @@ Windows tworzy dowiązania symboliczne tylko w Trybie dewelopera (Ustawienia > S
 - **Działające konta.** Zmiana jest odrzucana, gdy Claude Code działa jako jedno z kont, które przenosi, bo sesja dalej zapisuje do tych plików, niezależnie od tego, czy uruchomił ją ccam (zwykłe `claude`, IDE, sesje w tle). Sprawdzenie jest powtarzane tuż przed zapisem. Opuszczenie grupy i dołączenie do niej dotyczą tylko wskazanego konta; opuszczenie `extensions` przepisuje też ścieżki w listach wtyczek grupy, nie zmieniając tego, co znaczą dla pozostałych. `--dry-run` nadal wypisuje plan.
 - **Kopie zapasowe.** Każdy plan dostaje własny folder `.ccam-backup/<time>/` w folderze konta. ccam nigdy ich nie usuwa.
 - **Twoje własne linki.** Jeśli ścieżka jest już linkiem, który sam utworzyłeś, na przykład do repozytorium dotfiles, a grupa jest pusta, ccam kopiuje cel linku do grupy, a sam link przenosi do kopii zapasowej. Cel nie jest ruszany.
-- **Zaimportowane foldery.** Konto zarejestrowane w miejscu przez `ccam import` (na przykład `~/.claude`) zmienia się w miejscu, więc zwykłe `claude` też widzi zmianę; plan o tym informuje. Gdy opuszcza grupę, zawsze zachowuje kopię, także z `--fresh`, a `ccam remove` wyjmuje je w ten sposób z jego grup, zanim zapomni konto. Dopóki jest w grupie, jego współdzielone pliki leżą w folderze grupy, więc usuń konto (albo opuść grupy), zanim usuniesz `~/.local/share/ccam`.
+- **Zaimportowane foldery.** Konto zarejestrowane w miejscu przez `ccam import` (na przykład `~/.claude`) zmienia się w miejscu, więc zwykłe `claude` też widzi zmianę; plan o tym informuje. Gdy opuszcza grupę, zawsze zachowuje kopię, nawet z `--fresh`, a `ccam remove` wyjmuje je w ten sposób z jego grup, zanim zapomni konto. Dopóki jest w grupie, jego współdzielone pliki leżą w folderze grupy, więc usuń konto (albo opuść grupy), zanim usuniesz `~/.local/share/ccam`.
 - **Dwa konta w jednym folderze.** Konta, które współdzielą historię, zapisują do tych samych plików. Gdy drugie z nich startuje w folderze, w którym jedno już działa, ccam ostrzega i pyta.
-- **Ręczne zmiany.** Członek grupy, który nie jest kontem, jest pomijany i zgłaszany przez `ccam doctor`. Nazwy `local`, `on`, `off` i `none` nie mogą być nazwami grup.
+- **Ręczne zmiany.** Jeśli `members` zawiera nazwę, która nie jest kontem, ccam ją pomija, a `ccam doctor` ją zgłasza. Nazwy `local`, `on`, `off` i `none` nie mogą być nazwami grup.
 
 ## Powiązane
 
@@ -181,4 +197,4 @@ Windows tworzy dowiązania symboliczne tylko w Trybie dewelopera (Ustawienia > S
 - [Współdzielenie serwerów MCP, ustawień i historii](/docs/sharing)
 - [Współdzielone serwery MCP](/features/mcp)
 - [Kopiowanie istniejącej konfiguracji](/features/migrate)
-- [Wszystkie polecenia](/docs/commands)
+- [Opis poleceń](/docs/commands)

@@ -1,10 +1,10 @@
 ---
 title: 共用 MCP 伺服器、設定和對話記錄
 description: ccam 群組如何在 Claude Code 帳號間共用 MCP 伺服器、settings.json、CLAUDE.md、skills 和對話記錄，登入則各自獨立。
-updated: 2026-10-23
+updated: 2026-10-26
 order: 4
 translation: machine
-sourceHash: "27e0a0e5abbd"
+sourceHash: "2d8029ad6ec8"
 ---
 
 每個帳號都保有自己的登入資訊。其他所有內容都可以透過**群組**共用：群組會指定它共用的項目和其中的帳號，ccam 會把這些帳號的檔案連結到群組的資料夾，因此在一個帳號中所做的變更，會出現在所有這些帳號中。
@@ -19,7 +19,7 @@ sourceHash: "27e0a0e5abbd"
 | `extensions` | `agents/`、`commands/`、`skills/`、`plugins/`、`output-styles/`、`rules/` |
 | `history` | 對話記錄：`projects/` 和 `history.jsonl` |
 
-你的第一個帳號會建立群組 `default`，它共用對話記錄以外的所有項目，之後的帳號都會加入它。
+你的第一個帳號會建立 `default` 群組，它共用對話記錄以外的所有項目，之後的帳號都會加入它。
 
 登入檔案 `.credentials.json` 和 `.claude.json` 永遠不會共用。ccam 只連結固定清單中的路徑，而這兩個檔案不在清單上。
 
@@ -47,7 +47,7 @@ ccam group add team --items history --members work,side
 
 對話檔案以工作階段 ID 命名，因此多個帳號的對話記錄可以合併而不會衝突。
 
-當 Claude Code 正以某個帳號執行時（不論它是如何啟動的，背景工作階段也算在內），ccam 不會變更該帳號，因為工作階段會持續寫入正在移動的檔案。請先結束工作階段。ccam 在儲存前會再檢查一次，所以在計畫等待確認期間啟動的工作階段也會被發現。
+當 Claude Code 正以某個帳號執行時（不論它是如何啟動的，背景工作階段也算在內），ccam 不會變更該帳號，因為工作階段會持續寫入正在移動的檔案。請先結束工作階段。ccam 在儲存前會再檢查一次，所以在 ccam 等待你回答期間啟動的工作階段也會被發現。
 
 ## 帳號停止共用時
 
@@ -105,7 +105,7 @@ To share them:
 
 | 選項 | 作用 |
 | --- | --- |
-| `--settings`、`--memory`、`--extensions`、`--mcp`、`--history` | 只複製你指定的項目，不顯示核取清單；不指定且不在終端機中時，複製對話記錄以外的所有內容 |
+| `--settings`、`--memory`、`--extensions`、`--mcp`、`--history` | 只複製指定的項目，不顯示核取清單。不在終端機中且沒有指定任何項目選項時，ccam 會複製對話記錄以外的所有內容。 |
 | `-g`、`--group <group>` | 複製到這個群組，而不是 `default` |
 | `-y`、`--yes` | 不詢問直接複製；檔案內容不同時保留群組中的副本 |
 
@@ -128,13 +128,13 @@ ccam mcp import work gh
 
 如果群組中已有同名的不同伺服器，ccam 會略過它並告訴你。`--force` 會取代群組的伺服器，並把舊的 `mcp.json` 保留在群組的 `.ccam-backup/` 資料夾中。
 
-使用 OAuth 登入的 MCP 伺服器會將權杖和帳號的登入資訊存放在一起，所以請在每個帳號中用 `/mcp` 各授權一次。當某個帳號尚未登入某個伺服器、而另一個帳號已登入時，`ccam ext` 和 `ccam doctor` 會列出這些伺服器。
+使用 OAuth 登入的 MCP 伺服器會將權杖和帳號的登入資訊存放在一起，所以請在每個帳號中用 `/mcp` 各登入一次。當某個帳號尚未登入某個伺服器、而另一個帳號已登入時，`ccam ext` 和 `ccam doctor` 會列出這些伺服器。
 
-如果你希望這些伺服器以一般使用者伺服器的形式出現在 `claude mcp list` 和 `/mcp` 中，請在 `~/.config/ccam/config.toml` 的最上方、第一個 `[[group]]`、`[[profile]]` 或 `[[folder]]` 之前設定 `mcp_strategy = "sync"`。ccam 會在啟動前將它們寫入每個帳號的 `.claude.json`，過程中使用 Claude Code 自己的檔案鎖，並保留備份。帳號自己擁有的同名伺服器仍屬於該帳號，ccam 會告訴你。
+如果你希望這些伺服器以一般使用者伺服器的形式出現在 `claude mcp list` 和 `/mcp` 中，請在 `~/.config/ccam/config.toml` 的最上方、第一個 `[[group]]`、`[[profile]]` 或 `[[folder]]` 之前設定 `mcp_strategy = "sync"`。ccam 會在啟動前將它們寫入每個帳號的 `.claude.json`，過程中使用 Claude Code 自己的檔案鎖，並保留備份。如果帳號自己有一個和群組伺服器同名的伺服器，ccam 會保留帳號的伺服器，並告訴你。
 
 ## 兩個帳號在同一個資料夾
 
-共用對話記錄的帳號會寫入相同的檔案。如果你在某個資料夾中啟動第二個 Claude Code，而同一群組的另一個帳號已經在該資料夾中執行，ccam 會警告你並詢問是否繼續。
+共用對話記錄的帳號會寫入相同的檔案。如果你在某個資料夾中啟動第二個 Claude Code 工作階段，而同一群組的另一個帳號已經在該資料夾中執行，ccam 會警告你並詢問是否繼續。
 
 ## 發生問題時
 
@@ -143,4 +143,4 @@ ccam doctor
 ccam doctor --fix
 ```
 
-如果某個共用路徑變成了一般檔案（例如你手動還原了備份），ccam 會在啟動 Claude Code 前停止，並提示你使用 `ccam doctor --fix`；這個指令會重新將它連結到群組：群組沒有副本時，該檔案會成為群組的副本；否則群組保留自己的副本，你的檔案則放入備份，`--fix` 會指出備份的位置。中途停止的群組變更也由 `ccam doctor --fix` 完成。
+如果某個共用路徑變成了一般檔案（例如你手動還原了備份），ccam 會在啟動 Claude Code 前停止，並提示你使用 `ccam doctor --fix`。這項修復會重新將該路徑連結到群組：群組沒有副本時，該檔案會成為群組的副本；否則群組保留自己的副本，你的檔案則放入備份，`--fix` 會指出備份的位置。中途停止的群組變更也由 `ccam doctor --fix` 完成。

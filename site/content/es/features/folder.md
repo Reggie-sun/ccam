@@ -1,13 +1,13 @@
 ---
 title: Cuentas por carpeta
 description: ccam folder hace que una carpeta y todo su contenido usen una cuenta al iniciar Claude Code sin nombre de cuenta, como work para el código de tu empresa.
-updated: 2026-10-23
+updated: 2026-10-26
 order: 11
 translation: machine
-sourceHash: 48de98d42b99
+sourceHash: "25f82da64580"
 ---
 
-`ccam folder work ~/code/company` hace que todo inicio sin nombre de cuenta dentro de `~/code/company`, y en cualquier carpeta debajo de ella, inicie Claude Code como `work`. Fuera de ella, se inicia la cuenta predeterminada como antes. Si nombras una cuenta, con `ccam personal` o un atajo como `ccpersonal`, siempre se inicia esa cuenta.
+Después de `ccam folder work ~/code/company`, cualquier inicio sin nombre de cuenta en `~/code/company` o sus subcarpetas inicia Claude Code como `work`. Fuera de ella, se inicia la cuenta predeterminada como antes. Si nombras una cuenta, con `ccam personal` o un atajo como `ccpersonal`, siempre se inicia esa cuenta.
 
 ## Uso
 
@@ -34,7 +34,7 @@ Estos inicios usan la cuenta de la carpeta:
 - `ccam -p "…"` y cualquier otro inicio cuyo primer argumento sea una opción para Claude Code
 - `ccam run` sin nombre, y `ccam --dry-run`
 - `ccam --fallback -p "…"` en su primer intento
-- el panel, `ccam` a secas, que empieza con el cursor en la cuenta de la carpeta, también cuando llegaste a la carpeta mediante un enlace simbólico
+- el panel, `ccam` a secas, que empieza con el cursor en la cuenta de la carpeta, incluso cuando llegaste a la carpeta mediante un enlace simbólico
 
 ## Opciones
 
@@ -43,7 +43,7 @@ Estos inicios usan la cuenta de la carpeta:
 | `<account>` | Nombre o número de la cuenta que se usará | |
 | `[folder]` | La carpeta, relativa o absoluta | la carpeta actual |
 | `--remove` | Quita la entrada de exactamente esa carpeta | desactivada |
-| `--dry-run` | Se respeta: imprime el cambio sin guardarlo | desactivada |
+| `--dry-run` | Se admite: imprime el cambio sin guardarlo | desactivada |
 
 ## Cómo funciona
 
@@ -58,16 +58,16 @@ account = 'work'
 1. `ccam folder` convierte la carpeta en una ruta absoluta con los enlaces simbólicos resueltos y la guarda. Volver a asignar una carpeta reemplaza su cuenta.
 2. Un inicio sin nombre llama a `launcher.HereProfile`. Sin entradas, toma la cuenta predeterminada de inmediato.
 3. Si no, compara el directorio de trabajo con cada `path` como cadenas: la propia carpeta o una debajo de ella, nunca una carpeta que solo empieza con las mismas letras (`/code/company` no abarca `/code/companyx`). Gana la entrada más profunda, así que `~/code` puede ser `personal` mientras `~/code/company` es `work`.
-4. Solo si el directorio de trabajo tal cual no coincide con nada, ccam resuelve sus enlaces simbólicos y compara una vez más.
+4. Solo si el directorio de trabajo, tal como se indica, no coincide con nada, ccam resuelve sus enlaces simbólicos y vuelve a comparar.
 5. En Windows y macOS, la comparación no distingue mayúsculas de minúsculas, como suelen hacer sus sistemas de archivos.
 
-No se lee ningún archivo aparte de `config.toml`, así que un inicio dentro de una carpeta no cuesta un tiempo medible (4,0 ms con o sin entradas, `hyperfine`, 300 ejecuciones).
+No se lee ningún archivo aparte de `config.toml`, así que un inicio dentro de una carpeta no añade un tiempo medible (4,0 ms con o sin entradas, `hyperfine`, 300 ejecuciones).
 
 ## Seguridad y casos límite
 
 - `ccam rename` traslada las entradas de carpeta al nuevo nombre, y `ccam remove` elimina las entradas de la cuenta quitada.
 - Una entrada cuya cuenta ya no existe detiene un inicio sin nombre en esa carpeta: `<folder> is set to account "<name>", which does not exist. Change it with ccam folder`. `ccam doctor` informa de esas entradas y de las entradas cuya carpeta ya no está.
-- `ccam folder --remove` dentro de una carpeta que obtiene su cuenta de una carpeta superior indica esa carpeta en lugar de quitar nada.
+- Si ejecutas `ccam folder --remove` en una subcarpeta que hereda su cuenta de una carpeta superior, ccam indica la carpeta superior y no quita nada.
 - `ccam next` elige por rotación o por uso y no tiene en cuenta las carpetas.
 
 ## Relacionado

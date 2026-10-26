@@ -1,13 +1,13 @@
 ---
 title: "ccam کے ساتھ Remote Control استعمال کرنا"
 description: "ccam <name> rc سے Claude Code کا Remote Control کسی بھی اکاؤنٹ سے چلائیں: لاگو آپشنز، ccam شیئر شدہ MCP سرورز کاپی کرنے کی پیشکش کیوں کرتا ہے اور مسائل کا حل۔"
-updated: 2026-10-23
+updated: 2026-10-26
 order: 4
 translation: machine
-sourceHash: "3e17d89f98c8"
+sourceHash: 4d46f49c5dea
 ---
 
-`ccam work rc`، Claude Code کا Remote Control اکاؤنٹ `work` کے طور پر شروع کرتا ہے، تاکہ آپ اس کمپیوٹر پر چلنے والے سیشنز کو claude.ai/code یا Claude کی موبائل ایپ سے چلا سکیں۔ یہ `claude rc` کی طرح کام کرتا ہے، بس ایک فرق کے ساتھ: اگر اکاؤنٹ MCP سرورز شیئر کرتا ہے تو ccam ایک بار پوچھتا ہے کہ کیا انہیں اکاؤنٹ کی `.claude.json` میں کاپی کیا جائے، کیونکہ Remote Control کے سیشنز سرورز کہیں اور سے نہیں پڑھتے۔
+`ccam work rc`، Claude Code کا Remote Control `work` اکاؤنٹ کے طور پر شروع کرتا ہے، تاکہ آپ اس کمپیوٹر پر چلنے والے سیشنز کو claude.ai/code یا Claude کی موبائل ایپ سے کنٹرول کر سکیں۔ یہ `claude rc` کی طرح کام کرتا ہے، بس ایک فرق کے ساتھ: اگر اکاؤنٹ MCP سرورز شیئر کرتا ہے تو ccam ایک بار پوچھتا ہے کہ کیا انہیں اکاؤنٹ کی `.claude.json` میں کاپی کیا جائے، کیونکہ یہی فائل وہ واحد جگہ ہے جہاں سے Remote Control کے سیشنز سرورز پڑھتے ہیں۔
 
 ## اسے شروع کریں
 
@@ -31,9 +31,10 @@ ccam --dry-run work rc                # print the command instead of running it
 | آپشن یا سیٹنگ | یہ کیا کرتا ہے | ڈیفالٹ |
 | --- | --- | --- |
 | `--dry-run` (اکاؤنٹ سے پہلے) | انوائرنمنٹ اور کمانڈ پرنٹ کرتا ہے، اور اگر MCP کا نوٹس ہو تو وہ بھی۔ نہ پوچھتا ہے نہ کاپی کرتا ہے | بند |
-| `Copy them into .claude.json (a backup is kept; servers of the account's own stay)? [y/N]` | تب پوچھا جاتا ہے جب اکاؤنٹ MCP سرورز شیئر کرتا ہو اور اس کی `.claude.json` میں گروپ کی موجودہ فہرست نہ ہو، یا کاپی کیا گیا کوئی سرور اس سے غائب ہو گیا ہو۔ `y` انہیں کاپی کرتا ہے، `N` یا Enter ان کے بغیر شروع کرتا ہے | `N` |
 | `~/.config/ccam/config.toml` میں سب سے اوپر `mcp_strategy = "sync"` | ہر لانچ سے پہلے، چاہے Remote Control ہو یا نہیں، گروپ کے سرورز `.claude.json` میں کاپی کرتا ہے، اس لیے کبھی کچھ نہیں پوچھا جاتا | `"flag"` |
 | `ccam group leave <group> work` | اکاؤنٹ کو اس گروپ سے نکالتا ہے جو اس کے ساتھ MCP شیئر کرتا ہے۔ گروپ کے سرورز اس کی `.claude.json` میں اس کے اپنے سرورز کے طور پر کاپی ہو جاتے ہیں، اس لیے Remote Control کو وہ مل جاتے ہیں اور کچھ نہیں پوچھا جاتا؛ `--fresh` کے ساتھ یہ صرف اکاؤنٹ کے اپنے سرورز کے ساتھ شروع ہوتا ہے | `default` میں |
+
+جب اکاؤنٹ MCP سرورز شیئر کرتا ہو اور اس کی `.claude.json` میں گروپ کی موجودہ فہرست نہ ہو، یا کاپی کیا گیا کوئی سرور اس سے غائب ہو گیا ہو، تو ccam پوچھتا ہے `Copy them into .claude.json (a backup is kept; the account's own servers stay)? [y/N]`۔ `y` انہیں کاپی کرتا ہے؛ `N` یا Enter ان کے بغیر شروع کرتا ہے۔
 
 ### Remote Control کے آپشنز
 
@@ -47,7 +48,7 @@ ccam --dry-run work rc                # print the command instead of running it
 | `--session-id <id>` | کسی مخصوص سیشن سے دوبارہ جڑتا ہے |
 | `--permission-mode <mode>` | نئے سیشنز کے لیے اجازت کا موڈ: `acceptEdits`، `auto`، `bypassPermissions`، `default`، `dontAsk` یا `plan` |
 | `--spawn <mode>` | `same-dir` (ڈیفالٹ)، `worktree` (ہر سیشن کے لیے ایک git worktree) یا `session` (ایک سیشن، جو ختم ہونے پر باہر نکل جاتا ہے) |
-| `--capacity <N>` | `same-dir` اور `worktree` موڈ میں ایک وقت میں زیادہ سے زیادہ سیشنز (ڈیفالٹ 32) |
+| `--capacity <N>` | `same-dir` اور `worktree` موڈ میں بیک وقت چلنے والے سیشنز کی زیادہ سے زیادہ تعداد (ڈیفالٹ 32) |
 | `--[no-]create-session-in-dir` | شروع میں موجودہ فولڈر میں پہلا سیشن بناتا ہے (ڈیفالٹ آن) |
 | `--[no-]chrome` | نئے سیشنز کے لیے Claude in Chrome (ڈیفالٹ بند) |
 | `-d`، `--debug`، `--debug-file <path>`، `-v`، `--verbose` | ڈیبگ اور تفصیلی آؤٹ پٹ |
@@ -66,10 +67,10 @@ ccam، Claude Code کی کمانڈ اسی طرح پڑھتا ہے جیسے Claude
    ```console
    $ ccam work rc
    ccam: Remote Control sessions only get MCP servers stored in account work's .claude.json, not the shared MCP servers (ctx, fs).
-   Copy them into .claude.json (a backup is kept; servers of the account's own stay)? [y/N]
+   Copy them into .claude.json (a backup is kept; the account's own servers stay)? [y/N]
    ```
 
-5. `y` پر وہ `.claude.json` کا بیک اپ محفوظ کرتا ہے، Claude Code کا اپنا لاک لیتا ہے، گروپ کے سرورز `mcpServers` میں شامل کرتا ہے اور اکاؤنٹ کے دوسرے سرورز برقرار رکھتا ہے؛ اکاؤنٹ کا اپنا ایسا سرور جس کا نام گروپ کے کسی سرور جیسا ہو اکاؤنٹ کا ہی رہتا ہے، اور ccam یہ بتا دیتا ہے۔ `N` پر، ٹرمینل کے بغیر، یا جب اکاؤنٹ چل رہا ہو، وہ کچھ تبدیل نہیں کرتا اور یہی بتاتا ہے:
+5. `y` پر وہ `.claude.json` کا بیک اپ محفوظ کرتا ہے، Claude Code کا اپنا لاک لیتا ہے، گروپ کے سرورز `mcpServers` میں شامل کرتا ہے اور اکاؤنٹ کے دوسرے سرورز برقرار رکھتا ہے؛ اگر اکاؤنٹ کا اپنا کوئی سرور گروپ کے کسی سرور کے نام سے ہو تو ccam اکاؤنٹ کا سرور رکھتا ہے اور یہ بتا دیتا ہے۔ `N` پر، ٹرمینل کے بغیر، یا جب اکاؤنٹ چل رہا ہو، وہ کچھ تبدیل نہیں کرتا اور یہی بتاتا ہے:
 
    ```console
          Starting without them. To copy them before every launch instead, set mcp_strategy = "sync" in ~/.config/ccam/config.toml
@@ -77,7 +78,7 @@ ccam، Claude Code کی کمانڈ اسی طرح پڑھتا ہے جیسے Claude
 
 6. وہ سیشن ریکارڈ کرتا ہے، `CLAUDE_CONFIG_DIR` کو اکاؤنٹ کے فولڈر پر سیٹ کرتا ہے اور `exec` کے ذریعے خود کو `claude rc` سے بدل دیتا ہے۔
 
-اس کے بعد Remote Control ایک سرور کے طور پر چلتا رہتا ہے۔ آپ کے لیے شروع کیا گیا ہر سیشن اسی پروسیس کا چائلڈ ہوتا ہے، اس لیے وہ `work` کے طور پر چلتا ہے: `work` کے لاگ اِن، سیٹنگز اور گفتگو کی ہسٹری کے ساتھ، اور `work` کی استعمال کی حد میں شمار ہوتا ہے۔ جب تک ccam کا شروع کیا ہوا سرور چل رہا ہے، ccam اکاؤنٹ کو چلتا ہوا مانتا ہے، اور سادہ `claude remote-control` سے شروع کیے گئے سرور کو بھی، جب تک اس کے سیشنز ہوں؛ ایسا سرور جس کا ابھی کوئی سیشن نہ ہو نظر نہیں آتا۔
+اس کے بعد Remote Control ایک سرور کے طور پر چلتا رہتا ہے۔ آپ کے لیے شروع کیا گیا ہر سیشن اسی پروسیس کا چائلڈ ہوتا ہے، اس لیے وہ `work` کے طور پر چلتا ہے: `work` کے لاگ اِن، سیٹنگز اور گفتگو کی ہسٹری کے ساتھ، اور `work` کی استعمال کی حد میں شمار ہوتا ہے۔ جب تک ccam کا شروع کیا ہوا Remote Control سرور چل رہا ہو، ccam اکاؤنٹ کو چلتا ہوا مانتا ہے۔ سادہ `claude remote-control` سے شروع کیا گیا سرور صرف تب شمار ہوتا ہے جب اس کے سیشنز ہوں؛ ccam ایسا سرور نہیں دیکھ سکتا جس کا ابھی کوئی سیشن نہ ہو۔
 
 ڈرائی رن فرق دکھاتا ہے۔ عام لانچ گروپ کے سرورز کو ایک آرگیومنٹ کے طور پر ساتھ لے جاتا ہے، Remote Control نہیں:
 
@@ -116,7 +117,7 @@ $ ccam mcp add ctx --url https://mcp.context7.com/mcp
 
 ### Remote Control کے سیشنز میں شیئر کیے گئے MCP سرورز موجود نہیں
 
-سوال کا جواب `N` دیا گیا، ٹرمینل نہیں تھا، یا اکاؤنٹ چل رہا تھا۔ Remote Control بند کریں، اکاؤنٹ کے دوسرے سیشنز بند کریں، اور ٹرمینل میں `ccam work rc` دوبارہ چلائیں؛ جواب `y` دیں۔ کبھی نہ پوچھے جانے کے لیے `~/.config/ccam/config.toml` میں `mcp_strategy = "sync"` سیٹ کریں۔ کسی سیشن میں پہلے سے موجود سرورز اس کے چلتے ہوئے نہیں بدلتے، اس لیے کاپی کے بعد نیا سیشن شروع کریں۔
+سوال کا جواب `N` دیا گیا، ٹرمینل نہیں تھا، یا اکاؤنٹ چل رہا تھا۔ Remote Control بند کریں، اکاؤنٹ کے دوسرے سیشنز بند کریں، اور ٹرمینل میں `ccam work rc` دوبارہ چلائیں؛ جواب `y` دیں۔ پوچھا جانا بند کرنے کے لیے `~/.config/ccam/config.toml` میں `mcp_strategy = "sync"` سیٹ کریں۔ کسی سیشن میں پہلے سے موجود سرورز اس کے چلتے ہوئے نہیں بدلتے، اس لیے کاپی کے بعد نیا سیشن شروع کریں۔
 
 ### "Account work is running, so its .claude.json is left alone"
 
@@ -128,7 +129,7 @@ $ ccam mcp add ctx --url https://mcp.context7.com/mcp
 
 ### `ccam work rc` فوراً `--mcp-config` سے متعلق ایرر کے ساتھ ناکام ہو جاتا ہے
 
-آپ کا ccam، 0.6.0 سے پرانا ہے اور Remote Control کو `--mcp-config` دیتا ہے۔ `ccam update` چلائیں۔ موجودہ ccam کے ساتھ یہی ایرر آنے کا مطلب ہے کہ کوئی ایسا قدر والا آپشن جسے ccam نہیں جانتا `rc` سے پہلے آیا، اس لیے ccam نے اس قدر کو کمانڈ سمجھ لیا؛ `rc` کو اکاؤنٹ کے نام کے فوراً بعد رکھیں۔
+آپ کا ccam، 0.6.0 سے پرانا ہے اور Remote Control کو `--mcp-config` دیتا ہے۔ `ccam update` چلائیں۔ موجودہ ccam کے ساتھ یہی ایرر آنے کا مطلب ہے کہ کوئی نامعلوم قدر والا آپشن `rc` سے پہلے آیا، اور ccam نے غلطی سے اس قدر کو کمانڈ سمجھ لیا؛ `rc` کو اکاؤنٹ کے نام کے فوراً بعد رکھیں۔
 
 ### `ccam mcp` سے کی گئی تبدیلی Remote Control تک نہیں پہنچتی
 
@@ -136,7 +137,7 @@ $ ccam mcp add ctx --url https://mcp.context7.com/mcp
 
 ### گروپ والے سرور کی جگہ میرا اپنا سرور استعمال ہوتا ہے
 
-اگر اکاؤنٹ کا اپنا کوئی سرور گروپ کے کسی سرور کے ہم نام ہو تو کاپی اسے اپنی جگہ رہنے دیتی ہے اور یہ بتا دیتی ہے: `account work has its own MCP servers fs, so group default's of those names are not copied there`۔ گروپ والا سرور استعمال کرنے کے لیے اکاؤنٹ والا ہٹا دیں (`claude mcp remove -s user <name>`)؛ اپنا ورژن ہر اکاؤنٹ کو دینے کے لیے اسے `ccam mcp import work <server> --force` سے گروپ میں منتقل کریں۔ `.claude.json` کے بیک اپ `~/.local/state/ccam/mcp/work/backups/` میں ہیں، جو تازہ ترین پانچ بیک اپ رکھتا ہے۔
+اگر اکاؤنٹ کا اپنا کوئی سرور گروپ کے کسی سرور کے ہم نام ہو تو کاپی اسے اپنی جگہ رہنے دیتی ہے اور یہ بتا دیتی ہے: `account work has its own MCP servers fs, so group default's servers with those names are not copied there`۔ گروپ والا سرور استعمال کرنے کے لیے اکاؤنٹ والا ہٹا دیں (`claude mcp remove -s user <name>`)؛ اپنا ورژن ہر اکاؤنٹ کو دینے کے لیے اسے `ccam mcp import work <server> --force` سے گروپ میں منتقل کریں۔ `.claude.json` کے بیک اپ `~/.local/state/ccam/mcp/work/backups/` میں ہیں، جو تازہ ترین پانچ بیک اپ رکھتا ہے۔
 
 ### میں کاپی کیے گئے سرورز ہٹانا چاہتا ہوں
 
@@ -154,7 +155,7 @@ Remote Control کو Claude سبسکرپشن والے لاگ اِن کی ضرور
 
 Claude ایپ یا claude.ai/code کسی دوسرے Claude اکاؤنٹ سے سائن اِن ہے۔ اس کا موازنہ اس ای میل سے کریں جو `ccam list`، `work` کے لیے دکھاتا ہے۔
 
-### ccam خبردار کرتا ہے کہ اس فولڈر میں کوئی دوسرا Claude Code گفتگو کی ہسٹری شیئر کر رہا ہے
+### ccam خبردار کرتا ہے کہ اس فولڈر میں کوئی دوسرا Claude Code سیشن گفتگو کی ہسٹری شیئر کر رہا ہے
 
 اسی ہسٹری گروپ کا کوئی دوسرا اکاؤنٹ اسی فولڈر میں چل رہا ہے۔ اگر دونوں اکاؤنٹس کے سیشنز ایک ہی گفتگو جاری رکھیں تو ہسٹری گڈمڈ ہو سکتی ہے۔ `y` صرف تب جواب دیں جب وہ الگ الگ گفتگو پر کام کریں گے، ورنہ Remote Control کسی دوسرے فولڈر میں شروع کریں۔
 
@@ -162,5 +163,5 @@ Claude ایپ یا claude.ai/code کسی دوسرے Claude اکاؤنٹ سے س�
 
 - [Claude Code شروع کرنا](/features/launch)
 - [شیئر کیے گئے MCP سرورز](/features/mcp)
-- [اکاؤنٹس کے درمیان شیئرنگ](/features/share)
+- [گروپس کے ساتھ شیئرنگ](/features/share)
 - [اکاؤنٹس کا انتظام](/features/accounts)

@@ -1,13 +1,13 @@
 ---
 title: 拡張機能の確認
 description: ccam extは、各アカウントが読み込むスキル、コマンド、プラグイン、MCPサーバー、フックと、それぞれの出どころ、壊れている箇所を表示します。
-updated: 2026-10-23
+updated: 2026-10-26
 order: 14
 translation: machine
-sourceHash: "45740e4efbef"
+sourceHash: 7ca357a7f38a
 ---
 
-`ccam ext`は、「このスキル（またはMCPサーバー）が、あるアカウントでは動くのに別のアカウントでは動かないのはなぜか」に答えます。アカウントごとに、Claude Codeが読み込む拡張機能と、それぞれの出どころ（共有グループ、アカウント自身のフォルダー、今いるプロジェクト）を一覧にします。表の下には、拡張機能が期待どおりに読み込まれない原因を挙げます。読み取るだけです。
+`ccam ext`は、「このスキル（またはMCPサーバー）が、あるアカウントでは動くのに別のアカウントでは動かないのはなぜか」に答えます。アカウントごとに、Claude Codeが読み込む拡張機能と、それぞれの出どころ（共有グループ、アカウント自身のフォルダー、今いるプロジェクト）を一覧にします。表の下には、拡張機能が期待どおりに読み込まれない原因を挙げます。何も変更しません。
 
 ## 使い方
 
@@ -62,7 +62,7 @@ Sources: a group name (shared), account (its own folder), local (its own, for th
 
 - **壊れたリンク**: `skills/`、`commands/`、`agents/`の中のリンク先が消えたリンク、または存在しない場所にリンクしている共有フォルダー（`skills`、`commands`、`agents`、`plugins`）です（`ccam doctor --fix`で修復できます。グループのフォルダーがなければ作り直します）。
 - **`SKILL.md`がないスキルのフォルダー**: Claude Codeはスキップします。
-- **2か所で異なる定義になっているMCPサーバー**: グループの`mcp.json`とアカウントの`.claude.json`、またはそのどちらかとプロジェクトの`.mcp.json`です。両方の設定が同じであれば（`mcp_strategy = "sync"`はそのように書き込みます）問題ではありません。アカウント独自のサーバーをグループに移すには、`ccam mcp import <account> <server>`を使います。
+- **2か所で異なる定義になっているMCPサーバー**: グループの`mcp.json`とアカウントの`.claude.json`、またはそのどちらかとプロジェクトの`.mcp.json`です。両方の定義が同一であれば（`mcp_strategy = "sync"`はそのように書き込みます）問題ではありません。アカウント独自のサーバーをグループに移すには、`ccam mcp import <account> <server>`を使います。
 - **有効なJSONではない`installed_plugins.json`**、`enabledPlugins`に名前のないプラグイン、フォルダーがないプラグイン。
 - **1つのアカウントだけが読み込むサーバー**: このアカウントの`.claude.json`にだけあり、グループのほかのアカウントが読み込まないサーバーと、このフォルダーについてアカウントのlocalスコープにあるサーバー（`-s user`を付けない`claude mcp add`がそうします）です。それぞれに、それを共有する`ccam mcp import`のコマンドが付きます。通常の`claude`の`~/.claude.json`にあり、どのアカウントも読み込まないサーバーには、`ccam migrate --mcp`のコマンドが付きます。
 - **承認待ちのプロジェクトのサーバー**: アカウントがまだそのフォルダーを信頼していないので、Claude Codeが一度確認し、それまでプロジェクトの`.mcp.json`のサーバーは待機します。問題の説明には、承認する場所が示されます。設定グループのアカウント、またはこのアカウントの`settings.json`にある`"enabledMcpjsonServers"`です。gitリポジトリのメインのワークツリーに与えた信頼は、ほかのワークツリーでも有効です。
@@ -76,6 +76,6 @@ Sources: a group name (shared), account (its own folder), local (its own, for th
 
 ## 関連項目
 
-- [アカウント間の共有](/features/share)
+- [グループによる共有](/features/share)
 - [共有MCPサーバー](/features/mcp)
 - [点検と修復](/features/doctor)

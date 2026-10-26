@@ -2,13 +2,15 @@
 title: Bắt đầu nhanh
 metaTitle: "Bắt đầu nhanh: thêm và đổi tài khoản Claude Code"
 description: Thêm hai tài khoản Claude Code bằng ccam add, đặt cho chúng lệnh tắt như ccwork, chuyển đổi giữa chúng và chọn những gì dùng chung.
-updated: 2026-10-25
+updated: 2026-10-26
 order: 2
 translation: machine
-sourceHash: "0570ef27e4ce"
+sourceHash: bd893bbb83ab
 ---
 
 Thêm từng tài khoản bằng `ccam add`, rồi khởi động Claude Code bằng `ccam <name>` hoặc bằng một lệnh tắt do bạn tự đặt tên, chẳng hạn `ccwork`. Hầu hết mọi người chỉ cần như vậy.
+
+Bạn đã dùng Claude Code? Hãy đọc [Bạn đã dùng ~/.claude?](#already-using-claude) ở cuối trang này trước khi bắt đầu.
 
 ## 1. Thêm tài khoản đầu tiên
 
@@ -16,7 +18,7 @@ Thêm từng tài khoản bằng `ccam add`, rồi khởi động Claude Code b�
 ccam add
 ```
 
-Trình hướng dẫn hỏi một cái tên, chẳng hạn `personal` hoặc `work`, những mục nào tài khoản nên dùng chung với các tài khoản khác của bạn, và có tạo lệnh tắt hay không (xem bước 4). Sau đó nó chạy `claude auth login`, lệnh này mở trình duyệt để bạn đăng nhập. Trên máy từ xa, trình duyệt có thể dừng ở một trang `http://localhost:…/callback` không tải được; hãy dán địa chỉ đó vào terminal và ccam sẽ hoàn tất việc đăng nhập. Khi hoàn tất, bạn sẽ thấy:
+Trình hướng dẫn hỏi một cái tên, chẳng hạn `personal` hoặc `work`, những mục nào tài khoản nên dùng chung với các tài khoản khác của bạn, và có tạo lệnh tắt hay không (xem bước 3). Sau đó nó chạy `claude auth login`, lệnh này mở trình duyệt để bạn đăng nhập. Trên máy từ xa, trình duyệt của bạn có thể dừng ở một trang `http://localhost:…/callback` không tải được; hãy dán địa chỉ đó vào terminal và ccam sẽ hoàn tất việc đăng nhập. Khi đăng nhập xong, bạn sẽ thấy:
 
 ```console
 ✓ personal (me@example.com) added
@@ -25,7 +27,7 @@ Trình hướng dẫn hỏi một cái tên, chẳng hạn `personal` hoặc `wo
 
 ## 2. Mang theo cài đặt hiện có
 
-Nếu bạn đã từng dùng Claude Code, cài đặt, `CLAUDE.md`, tiện ích mở rộng và máy chủ MCP của bạn nằm trong `~/.claude`. Hãy sao chép chúng vào phần cài đặt dùng chung để mọi tài khoản đều có:
+Nếu bạn đã từng dùng Claude Code, cài đặt, `CLAUDE.md` và tiện ích mở rộng của bạn nằm trong `~/.claude`, còn máy chủ MCP của bạn nằm trong `~/.claude.json`. Hãy sao chép chúng vào nhóm `default` dùng chung để mọi tài khoản đều có:
 
 ```sh
 ccam migrate
@@ -39,11 +41,7 @@ ccam cho bạn xem những gì nó sẽ sao chép và hỏi trước. Nó chỉ 
 ccam add work
 ```
 
-Đăng nhập bằng tài khoản còn lại trong trình duyệt.
-
-## 4. Chuyển đổi tài khoản
-
-`ccam work` khởi động Claude Code bằng tài khoản công việc. Nếu muốn ngắn hơn, hãy đặt cho tài khoản một lệnh tắt riêng, chẳng hạn `ccwork`. Sau phần chọn mục dùng chung, trình hướng dẫn hỏi:
+Trình hướng dẫn bỏ qua bước hỏi tên, vì bạn đã nhập tên trên dòng lệnh, và hiển thị các nhóm để tham gia, với `default` đã được đánh dấu. Lần này, hãy đặt cho tài khoản một lệnh tắt riêng, chẳng hạn `ccwork`, để bạn có thể khởi động nó chỉ bằng một từ. Sau phần chọn nhóm, trình hướng dẫn hỏi:
 
 ```console
  Create a shortcut command for work? [y/N]
@@ -57,21 +55,23 @@ Nhấn `y`, rồi gõ một cái tên, hoặc nhấn Enter để dùng tên đư
  a-z, 0-9, '.', '-' and '_'; Enter alone uses ccwork
 ```
 
-Sau khi đăng nhập, ccam xác nhận:
+Sau đó đăng nhập bằng tài khoản còn lại trong trình duyệt. ccam xác nhận tài khoản và lệnh tắt của nó:
 
 ```console
 ✓ work (work@example.com) added
   shortcut: ccwork
 ```
 
-Nếu bạn đã bỏ qua câu hỏi này, bạn có thể thêm lệnh tắt bất cứ lúc nào:
+## 4. Chuyển đổi tài khoản
+
+`ccam work` khởi động Claude Code bằng tài khoản công việc. Nếu bạn đã bỏ qua câu hỏi về lệnh tắt, bạn có thể thêm lệnh tắt bất cứ lúc nào:
 
 ```console
 $ ccam shortcut work ccwork
 ✓ shortcut for work: ccwork
 ```
 
-Giờ đây, bất kỳ lệnh nào dưới đây cũng khởi động Claude Code bằng tài khoản công việc:
+Giờ đây, mỗi lệnh dưới đây đều khởi động Claude Code bằng tài khoản công việc (`2` là số của nó trong `ccam list`):
 
 ```sh
 ccwork
@@ -91,7 +91,7 @@ cat error.log | ccwork -p "what caused this?"
 
 ## 5. Chọn những gì dùng chung
 
-Theo mặc định, máy chủ MCP, `settings.json`, `CLAUDE.md` toàn cục, cùng agent, lệnh, skill và plugin được dùng chung giữa các tài khoản qua nhóm `default`. Lịch sử hội thoại thì không. Hãy thêm nó vào nhóm nếu bạn muốn tiếp tục hội thoại qua lại giữa các tài khoản:
+Theo mặc định, máy chủ MCP, `settings.json`, `CLAUDE.md` toàn cục và tiện ích mở rộng (agent, lệnh, skill và plugin) được dùng chung giữa các tài khoản qua nhóm `default`. Lịch sử hội thoại thì không. Hãy thêm nó vào nhóm nếu bạn muốn tiếp tục hội thoại qua lại giữa các tài khoản:
 
 ```sh
 ccam group set default --add history
@@ -108,7 +108,7 @@ ccam next --continue
 
 `ccam usage` hiển thị mức sử dụng 5 giờ và hàng tuần của mọi tài khoản. `ccam next --continue` mở cùng cuộc hội thoại ở tài khoản kế tiếp. Trong script, `ccam --fallback work -p "…"` tự đổi tài khoản. Xem [giới hạn sử dụng](/docs/usage-limits).
 
-**Seat của gói Team và Enterprise.** Lựa chọn tự động (`ccam next`, `--fallback`, `ccam pick`, phím `n` trên bảng điều khiển, và [`auto_switch`](/features/next#auto-switch) khi bạn bật nó) cũng chuyển đổi giữa các seat của cùng một tổ chức Claude Team hoặc Enterprise. Trung tâm trợ giúp của Anthropic ghi rằng "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (mỗi seat của gói Team được gán cho đích danh một cá nhân, và chỉ người đó được phép sử dụng) và "Users can't route their work through another user's account to use that user's remaining usage" (người dùng không được chuyển công việc của mình qua tài khoản của một người dùng khác để dùng phần hạn mức còn lại của người đó) ([gói Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); tương tự đối với [gói Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Vì vậy, dùng lựa chọn tự động giữa các seat có thể vi phạm điều khoản của Anthropic. Có dùng nó ở đó hay không là quyết định của bạn: hãy xác nhận với tổ chức của bạn và Anthropic trước khi dựa vào nó. Các gói cá nhân (Pro, Max) được đề cập trong [ghi chú về điều khoản ở phần Câu hỏi thường gặp](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Seat của gói Team và Enterprise.** Việc tự động chọn tài khoản (`ccam next`, `--fallback`, `ccam pick`, phím `n` trên bảng điều khiển và, khi bạn bật nó, [`auto_switch`](/features/next#auto-switch)) cũng chuyển đổi giữa các seat của cùng một tổ chức Claude Team hoặc Enterprise, điều này có thể vi phạm điều khoản của Anthropic. Hãy đọc [Câu hỏi thường gặp](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) và xác nhận với tổ chức của bạn và Anthropic trước khi dựa vào nó.
 
 ## Bạn đã dùng ~/.claude?
 

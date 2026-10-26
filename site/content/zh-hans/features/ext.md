@@ -1,13 +1,13 @@
 ---
 title: 查看扩展
 description: ccam ext 显示每个账号加载的技能、命令、插件、MCP 服务器和钩子，每一项的来源，以及哪些地方出了问题。
-updated: 2026-10-23
+updated: 2026-10-26
 order: 14
 translation: machine
-sourceHash: "45740e4efbef"
+sourceHash: "7ca357a7f38a"
 ---
 
-`ccam ext` 回答这样的问题："为什么这个技能（或 MCP 服务器）在一个账号中能用，在另一个账号中却不能用？"它为每个账号列出 Claude Code 加载的扩展以及每一项的来源：某个共享组、该账号自己的文件夹，或者你所在的项目。表格下方列出会让扩展无法按预期加载的问题。它只读取。
+`ccam ext` 回答这样的问题："为什么这个技能（或 MCP 服务器）在一个账号中能用，在另一个账号中却不能用？"它为每个账号列出 Claude Code 加载的扩展以及每一项的来源：某个共享组、该账号自己的文件夹，或者你所在的项目。表格下方列出会让扩展无法按预期加载的问题。它不做任何更改。
 
 ## 用法
 
@@ -62,10 +62,10 @@ Sources: a group name (shared), account (its own folder), local (its own, for th
 
 - **损坏的链接**：`skills/`、`commands/` 或 `agents/` 中目标已不存在的链接，或者链接到不存在位置的共享文件夹（`skills`、`commands`、`agents`、`plugins`）（用 `ccam doctor --fix` 修复，它会重新创建缺少的组文件夹）。
 - **没有 `SKILL.md` 的技能文件夹**：Claude Code 会跳过它。
-- **在两个地方定义不同的 MCP 服务器**：组的 `mcp.json` 和账号的 `.claude.json`，或者其中之一和项目的 `.mcp.json`。两处设置相同（`mcp_strategy = "sync"` 就是这样写入的）不算问题。用 `ccam mcp import <account> <server>` 把账号自己的服务器移到组中。
+- **在两个地方定义不同的 MCP 服务器**：组的 `mcp.json` 和账号的 `.claude.json`，或者其中之一和项目的 `.mcp.json`。两处定义完全相同（`mcp_strategy = "sync"` 就是这样写入的）不算问题。用 `ccam mcp import <account> <server>` 把账号自己的服务器移到组中。
 - **不是有效 JSON 的 `installed_plugins.json`**、`enabledPlugins` 中没有列出的插件，以及文件夹不存在的插件。
 - **只有一个账号加载的服务器**：只在该账号的 `.claude.json` 中、其组内其他账号不加载的服务器，以及位于该账号针对当前文件夹的本地作用域中的服务器（不加 `-s user` 时 `claude mcp add` 就是这样做的）。每一项都附有共享它的 `ccam mcp import` 命令。直接运行的 `claude` 所用 `~/.claude.json` 中没有任何账号加载的服务器，附有 `ccam migrate --mcp` 命令。
-- **等待批准的项目服务器**：该账号尚未信任此文件夹，所以 Claude Code 会询问一次，在此之前项目 `.mcp.json` 中的服务器处于等待状态。问题会说明在哪里批准它们：设置组中各账号的（或该账号自己的）`settings.json` 中的 `"enabledMcpjsonServers"`。对 git 仓库主工作树给予的信任在其他工作树中同样有效。
+- **等待批准的项目服务器**：该账号尚未信任此文件夹，所以 Claude Code 会询问一次，在此之前项目 `.mcp.json` 中的服务器处于等待状态。问题会说明在哪里批准它们：设置组中各账号的（或该账号自己的）`settings.json` 中的 `"enabledMcpjsonServers"`。对 git 仓库主工作树给予的信任也适用于它的其他工作树。
 - **登录和连接器**：在此账号中需要登录、而另一个账号已登录的 MCP 服务器（登录只对一个账号有效；用 `/mcp` 登录），以及其他账号用过而此账号未用过的 claude.ai 连接器。
 
 ## 安全性与边界情况
@@ -76,6 +76,6 @@ Sources: a group name (shared), account (its own folder), local (its own, for th
 
 ## 相关内容
 
-- [在账号之间共享](/features/share)
+- [通过组共享](/features/share)
 - [共享的 MCP 服务器](/features/mcp)
 - [检查与修复](/features/doctor)

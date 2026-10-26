@@ -1,13 +1,13 @@
 ---
 title: વપરાશ મર્યાદા અને એકાઉન્ટ સ્વિચ કરવું
 description: ccam usage વડે દરેક Claude Code એકાઉન્ટનો 5 કલાકનો અને સાપ્તાહિક વપરાશ જુઓ, અને ccam next --auto વડે સૌથી વધુ જગ્યાવાળું એકાઉન્ટ ખોલો.
-updated: 2026-10-25
+updated: 2026-10-26
 order: 5
 translation: machine
-sourceHash: 7c15419446c3
+sourceHash: 28e652ad94f8
 ---
 
-`ccam usage` બતાવે છે કે દરેક એકાઉન્ટે 5 કલાકની મર્યાદા, સાપ્તાહિક મર્યાદા અને દરેક મૉડલની પોતાની સાપ્તાહિક મર્યાદા (જેમ કે Fable) માંથી કેટલું વાપર્યું છે. `ccam next --auto` સૌથી વધુ જગ્યાવાળું એકાઉન્ટ ખોલે છે, અને `--continue` હાલની વાતચીત ત્યાં લઈ જાય છે.
+`ccam usage` દરેક એકાઉન્ટ માટે બતાવે છે કે દરેક મર્યાદામાંથી કેટલું વપરાયું છે: 5 કલાકની મર્યાદા, સાપ્તાહિક મર્યાદા અને દરેક મૉડલની પોતાની સાપ્તાહિક મર્યાદા (જેમ કે Fable). `ccam next --auto` સૌથી વધુ જગ્યાવાળું એકાઉન્ટ ખોલે છે, અને `--continue` હાલની વાતચીત ત્યાં લઈ જાય છે.
 
 ```console
 $ ccam usage
@@ -26,9 +26,9 @@ $ ccam usage
 → Most headroom: work   (open it with ccam next --auto)
 ```
 
-દરેક એકાઉન્ટને એક લાઇન મળે છે જે બતાવે છે કે તેના આંકડા કેટલા જૂના છે, પછી દરેક મર્યાદા માટે એક બાર, રીસેટ થવામાં બાકી સમય સાથે: 5 કલાકની વિન્ડો, બધાં મૉડલ માટેની સાપ્તાહિક વિન્ડો, અને દરેક મૉડલની પોતાની સાપ્તાહિક વિન્ડો, જેમ કે Fable. 80% થી બાર પીળો થાય છે, અને 100% પર લાલ. છેલ્લી લાઇન તે એકાઉન્ટનું નામ આપે છે જે `ccam next --auto` ખોલશે; `auto_strategy = "expiring"` કે `"balance"` સાથે તેના બદલે તે `→ next --auto picks <name>: <reason>` બતાવે છે.
+દરેક એકાઉન્ટને એક લાઇન મળે છે જે બતાવે છે કે તેના આંકડા કેટલા જૂના છે, પછી દરેક મર્યાદા માટે એક બાર, રીસેટ થવામાં બાકી સમય સાથે: 5 કલાકની વિન્ડો, બધાં મૉડલ માટેની સાપ્તાહિક વિન્ડો, અને દરેક મૉડલની પોતાની સાપ્તાહિક વિન્ડો, જેમ કે Fable. બાર 80% પર પીળો અને 100% પર લાલ થાય છે. છેલ્લી લાઇન તે એકાઉન્ટનું નામ આપે છે જે `ccam next --auto` ખોલશે; `auto_strategy = "expiring"` કે `"balance"` સાથે તેના બદલે તે `→ next --auto picks <name>: <reason>` બતાવે છે.
 
-**Team અને Enterprise સીટ.** આપમેળે થતી પસંદગી (`ccam next`, `--fallback`, `ccam pick`, ડેશબોર્ડની `n` કી, અને તમે ચાલુ કરો ત્યારે [`auto_switch`](/features/next#auto-switch)) એક જ Claude Team કે Enterprise સંસ્થાની સીટો વચ્ચે પણ સ્વિચ કરે છે. Anthropic નું સહાય કેન્દ્ર કહે છે કે "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team પ્લાનની દરેક સીટ નામથી નક્કી કરેલી એક વ્યક્તિને ફાળવવામાં આવે છે, અને ફક્ત એ વ્યક્તિ જ તેનો ઉપયોગ કરી શકે છે) અને "Users can't route their work through another user's account to use that user's remaining usage" (વપરાશકર્તાઓ બીજા વપરાશકર્તાના એકાઉન્ટ મારફતે પોતાનું કામ ચલાવીને એ વપરાશકર્તાનો બાકી રહેલો વપરાશ વાપરી શકતા નથી) ([Team પ્લાન](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise પ્લાન](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) માટે પણ એવું જ). તેથી સીટો વચ્ચે આપમેળે થતી પસંદગી વાપરવાથી Anthropic ની શરતોનું ઉલ્લંઘન થઈ શકે છે. સીટો વચ્ચે તેને વાપરવું કે નહીં એ તમારો નિર્ણય છે: તેના પર આધાર રાખતાં પહેલાં તમારી સંસ્થા અને Anthropic પાસેથી ખાતરી કરી લો. અંગત પ્લાન (Pro, Max) [વારંવાર પૂછાતા પ્રશ્નોમાંની શરતો અંગેની નોંધ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) માં આવરી લેવાયા છે.
+**Team અને Enterprise સીટ.** આપમેળે થતી એકાઉન્ટ પસંદગી (`ccam next`, `--fallback`, `ccam pick`, ડેશબોર્ડની `n` કી અને, તમે તેને ચાલુ કરો પછી, [`auto_switch`](/features/next#auto-switch)) એક જ Claude Team કે Enterprise સંસ્થાની સીટો વચ્ચે પણ સ્વિચ કરે છે, જેનાથી Anthropic ની શરતોનું ઉલ્લંઘન થઈ શકે છે. તેના પર આધાર રાખતાં પહેલાં [વારંવાર પૂછાતા પ્રશ્નો](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) વાંચો અને તમારી સંસ્થા અને Anthropic પાસેથી ખાતરી કરી લો.
 
 ## આંકડા ક્યાંથી આવે છે
 
@@ -50,9 +50,9 @@ ccam દરેક એકાઉન્ટના પોતાના લૉગિન
 
 ## સમાપ્ત થયેલાં લૉગિન
 
-જ્યારે કોઈ એકાઉન્ટનો access token સમાપ્ત થઈ ગયો હોય, ત્યારે ccam તેને રિન્યૂ કરતું નથી, કારણ કે કોઈ Claude Code સેશન એ જ લૉગિન વાપરતું હોય ત્યારે તેને રિન્યૂ કરવાથી તે સેશન સાઇન આઉટ થઈ શકે છે. એકાઉન્ટ ``access token expired; `ccam <name>` renews it when it starts`` બતાવે છે: તેને `ccam <name>` વડે એક વાર શરૂ કરો, અને Claude Code તેને રિન્યૂ કરે છે. જે લૉગિન આખું સમાપ્ત થઈ ગયું હોય, કે જેને Claude Code એ સાફ કરી નાખ્યું હોય, તે `` login expired → `ccam login <name>` `` બતાવે છે અને તેને નવું લૉગિન જોઈએ.
+જ્યારે કોઈ એકાઉન્ટનો access token સમાપ્ત થઈ ગયો હોય, ત્યારે ccam તેને રિન્યૂ કરતું નથી, કારણ કે કોઈ Claude Code સેશન એ જ લૉગિન વાપરતું હોય ત્યારે તેને રિન્યૂ કરવાથી તે સેશન સાઇન આઉટ થઈ શકે છે. એકાઉન્ટ ``access token expired; `ccam <name>` renews it when it starts`` બતાવે છે: તેને `ccam <name>` વડે એક વાર શરૂ કરો, અને Claude Code તેને રિન્યૂ કરે છે. જે લૉગિન પૂરેપૂરું સમાપ્ત થઈ ગયું હોય, કે જેને Claude Code એ સાફ કરી નાખ્યું હોય, તે `` login expired → `ccam login <name>` `` બતાવે છે અને તેને નવું લૉગિન જોઈએ.
 
-`ccam usage --refresh` સમાપ્ત થયેલા ટોકન જાતે રિન્યૂ કરે છે, પણ ફક્ત એવાં એકાઉન્ટ માટે જે ચાલી રહ્યાં નથી, Claude Code ભલે ગમે તે રીતે શરૂ થયું હોય. તે macOS Keychain માં કે ઇમ્પોર્ટ કરેલા `~/.claude` માં રાખેલાં લૉગિન ક્યારેય રિન્યૂ કરતું નથી, અને રિન્યૂ કરવામાં 30 સેકન્ડ સુધી લાગી શકે છે.
+`ccam usage --refresh` સમાપ્ત થયેલા ટોકન જાતે રિન્યૂ કરે છે, પણ ફક્ત એવાં એકાઉન્ટ માટે જેમનું કોઈ Claude Code સેશન ચાલી રહ્યું નથી, ભલે તે સેશન ગમે તે રીતે શરૂ થયું હોય. તે macOS Keychain માં કે ઇમ્પોર્ટ કરેલા `~/.claude` માં રાખેલાં લૉગિન ક્યારેય રિન્યૂ કરતું નથી, અને રિન્યૂ કરવામાં 30 સેકન્ડ સુધી લાગી શકે છે.
 
 ## સ્ટેટસ લાઇનમાં વપરાશ
 
@@ -67,12 +67,12 @@ ccam statusline install
 ```sh
 ccam next             # the account after the one you used last
 ccam next --auto      # the account with the lowest 5-hour usage
-ccam next --continue  # carry this folder's conversation on as the next account
+ccam next --continue  # continue this folder's conversation on the next account
 ```
 
-`ccam next` લૉગિન ન થયેલાં એકાઉન્ટ છોડી દે છે, અને `--auto` 100% પર પહોંચેલાં એકાઉન્ટ (જે વિન્ડો ભરાઈ ગઈ હોવાનું Claude Code એ જણાવ્યું હોય તે પણ, તેના રીસેટ સુધી) અને બીજી સંસ્થાનાં એકાઉન્ટ છોડી દે છે. બંને એકાઉન્ટ વાતચીતનો ઇતિહાસ શેર કરતાં હોય ત્યારે `--continue` એ જ વાતચીત ખોલે છે; નહીં તો Claude Code તેની નકલ નવા એકાઉન્ટમાં કરે છે. [શેરિંગ](/docs/sharing) અને [આગલા એકાઉન્ટ પર જવું](/features/next#continue) જુઓ.
+`ccam next` લૉગિન ન થયેલાં એકાઉન્ટ છોડી દે છે, અને `--auto` 100% પર પહોંચેલાં એકાઉન્ટ (જે વિન્ડો ભરાઈ ગઈ હોવાનું Claude Code એ જણાવ્યું હોય તે સહિત, તેના રીસેટ સુધી) અને બીજી સંસ્થાનાં એકાઉન્ટ છોડી દે છે. બંને એકાઉન્ટ વાતચીતનો ઇતિહાસ શેર કરતાં હોય ત્યારે `--continue` એ જ વાતચીત ખોલે છે; નહીં તો Claude Code તેની નકલ નવા એકાઉન્ટમાં કરે છે. [શેરિંગ](/docs/sharing) અને [આગલા એકાઉન્ટ પર જવું](/features/next#continue) જુઓ.
 
-`config.toml` માં સૌથી ઉપર `auto_switch = true` સાથે (Linux અને macOS; મૂળભૂત રીતે બંધ), જ્યારે Claude Code કોઈ interactive સેશનને તેની મર્યાદાએ અટકાવે અને તેના જેવા બીજા એકાઉન્ટમાં જગ્યા હોય, ત્યારે ccam આ સ્વિચ જાતે કરે છે. તે ક્યારે કામ કરે છે અને શું ક્યારેય કરતું નથી તે માટે [`auto_switch`](/features/next#auto-switch) જુઓ.
+`config.toml` માં સૌથી ઉપર `auto_switch = true` સાથે (Linux અને macOS; મૂળભૂત રીતે બંધ), જ્યારે Claude Code કોઈ interactive સેશનને તેની મર્યાદાએ અટકાવે અને એ જ પ્રકારના બીજા એકાઉન્ટમાં (એ જ સંસ્થાની સીટ, કે બીજો અંગત પ્લાન) જગ્યા હોય, ત્યારે ccam આ સ્વિચ જાતે કરે છે. તે ક્યારે કામ કરે છે અને શું ક્યારેય કરતું નથી તે માટે [`auto_switch`](/features/next#auto-switch) જુઓ.
 
 `claude -p` ચલાવતી scripts અને શેડ્યૂલ કરેલાં jobs માટે, એકાઉન્ટના નામ પહેલાં `--fallback` મૂકો. તે એકાઉન્ટ તેની મર્યાદાએ પહોંચે ત્યારે ccam એ જ command સૌથી વધુ જગ્યાવાળા એકાઉન્ટ તરીકે ફરી ચલાવે છે, અને ફક્ત પૂરા થયેલા run નું output છપાય છે:
 

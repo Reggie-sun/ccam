@@ -1,10 +1,10 @@
 ---
 title: ccam을 소개합니다
 description: ccam을 만든 이유, 여러 Claude Code 계정을 쓰는 사람에게 ccam이 해 주는 일, 그리고 작업을 방해하지 않도록 설계한 방식을 소개합니다.
-updated: 2026-10-20
+updated: 2026-10-26
 order: 1
 translation: machine
-sourceHash: a555dc969142
+sourceHash: "e4370f29b818"
 ---
 
 ccam은 한 컴퓨터에서 Claude Code 계정을 두 개 이상 쓰는 사람을 위한 작은 명령줄 도구입니다. 개인 계정과 회사 계정을 함께 쓰거나, 긴 프로젝트 하나에 여러 계정을 쓰는 경우가 그렇습니다.
@@ -22,7 +22,7 @@ Claude Code는 [`CLAUDE_CONFIG_DIR`](/guides/claude-config-dir)로 여러 계정
 
 ## 작업을 방해하지 않는 설계
 
-세션을 시작할 때마다 실행하는 도구라면 그 비용이 체감되지 않아야 합니다. ccam은 설정 파일 하나를 읽고, 공유 링크를 하나당 시스템 호출 한 번으로 확인한 다음, 자기 프로세스를 `claude`로 바꿉니다. 추가되는 시간은 약 4밀리초이고, 작업하는 동안에는 실행되고 있지 않습니다.
+세션을 시작할 때마다 실행하는 도구라면 그 비용이 체감되지 않아야 합니다. ccam은 설정 파일 하나를 읽고, 공유 링크를 하나당 시스템 호출 한두 번으로 확인한 다음, 자기 프로세스를 `claude`로 바꿉니다. 추가되는 시간은 약 4밀리초이고, 기본적으로 작업하는 동안에는 실행되고 있지 않습니다.
 
 파일도 신중하게 다룹니다. 공유 설정을 바꿀 때는 항상 시작 전에 계획을 출력하고, 원본은 백업 폴더에 보관합니다. `ccam doctor`는 링크, 권한, 로그인을 점검하고, 안전하게 고칠 수 있는 문제는 고칩니다.
 
@@ -35,4 +35,4 @@ ccam add
 
 [빠른 시작](/docs/quick-start)에서 계정 두 개를 추가하는 과정을 따라가 볼 수 있고, [여러 Claude Code 계정을 쓰는 방법](/guides/multiple-claude-code-accounts)에서는 ccam을 쓸 때와 쓰지 않을 때의 방식을 설명합니다.
 
-ccam은 오픈소스 비공식 도구로, Anthropic과 제휴 관계가 없으며 Anthropic의 보증을 받지 않았습니다. 여러 계정을 사용해도 되는지는 각 계정의 약관에 따라 다릅니다. 의견이나 번역 기여는 [GitHub](https://github.com/jhyunwoo/ccam)에서 환영합니다.
+ccam은 오픈소스 비공식 도구로, Anthropic과 제휴 관계가 없으며 Anthropic의 보증을 받지 않았습니다. 여러 계정을 사용해도 되는지는 각 계정에 적용되는 약관에 따라 다릅니다. 의견이나 번역 기여는 [GitHub](https://github.com/jhyunwoo/ccam)에서 환영합니다.

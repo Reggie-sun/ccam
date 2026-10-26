@@ -2,13 +2,15 @@
 title: ક્વિક સ્ટાર્ટ
 metaTitle: "ક્વિક સ્ટાર્ટ: Claude Code એકાઉન્ટ ઉમેરો, સ્વિચ કરો"
 description: "ccam add વડે બે Claude Code એકાઉન્ટ ઉમેરો, તેમને ccwork જેવા શૉર્ટકટ આપો, તેમની વચ્ચે સ્વિચ કરો, અને તેઓ શું શેર કરે તે પસંદ કરો."
-updated: 2026-10-25
+updated: 2026-10-26
 order: 2
 translation: machine
-sourceHash: 0570ef27e4ce
+sourceHash: bd893bbb83ab
 ---
 
 દરેક એકાઉન્ટ `ccam add` વડે ઉમેરો, પછી `ccam <name>` વડે અથવા તમે જાતે નામ આપેલા શૉર્ટકટ, જેમ કે `ccwork`, વડે Claude Code શરૂ કરો. મોટા ભાગના લોકોને આટલું જ જોઈએ.
+
+પહેલેથી Claude Code વાપરો છો? શરૂ કરતાં પહેલાં આ પેજના અંતે [પહેલેથી ~/.claude વાપરો છો?](#already-using-claude) વાંચો.
 
 ## 1. તમારું પહેલું એકાઉન્ટ ઉમેરો
 
@@ -16,7 +18,7 @@ sourceHash: 0570ef27e4ce
 ccam add
 ```
 
-વિઝાર્ડ `personal` કે `work` જેવું નામ પૂછે છે, એકાઉન્ટ તમારાં બીજાં એકાઉન્ટ સાથે કઈ આઇટમ શેર કરે તે પૂછે છે, અને શૉર્ટકટ કમાન્ડ બનાવવો કે નહીં તે પણ પૂછે છે (પગલું 4 જુઓ). પછી તે `claude auth login` ચલાવે છે, જે સાઇન ઇન કરવા માટે બ્રાઉઝર ખોલે છે. રિમોટ મશીન પર, બ્રાઉઝર છેલ્લે લોડ ન થતા `http://localhost:…/callback` પેજ પર પહોંચી શકે છે; તે સરનામું ટર્મિનલમાં પેસ્ટ કરો અને ccam સાઇન-ઇન પૂરું કરશે. પૂરું થાય ત્યારે તમને આ દેખાય છે:
+વિઝાર્ડ `personal` કે `work` જેવું નામ પૂછે છે, એકાઉન્ટ તમારાં બીજાં એકાઉન્ટ સાથે કઈ આઇટમ શેર કરે તે પૂછે છે, અને શૉર્ટકટ કમાન્ડ બનાવવો કે નહીં તે પણ પૂછે છે (પગલું 3 જુઓ). પછી તે `claude auth login` ચલાવે છે, જે સાઇન ઇન કરવા માટે બ્રાઉઝર ખોલે છે. રિમોટ મશીન પર, તમારું બ્રાઉઝર છેલ્લે લોડ ન થતા `http://localhost:…/callback` પેજ પર પહોંચી શકે છે; તે સરનામું ટર્મિનલમાં પેસ્ટ કરો અને ccam સાઇન-ઇન પૂરું કરશે. સાઇન-ઇન પૂરું થાય ત્યારે તમને આ દેખાય છે:
 
 ```console
 ✓ personal (me@example.com) added
@@ -25,7 +27,7 @@ ccam add
 
 ## 2. તમારાં હાલનાં સેટિંગ્સ લઈ આવો
 
-જો તમે પહેલાં Claude Code વાપર્યું હોય, તો તમારાં સેટિંગ્સ, `CLAUDE.md`, એક્સટેન્શન્સ અને MCP સર્વર `~/.claude` માં છે. દરેક એકાઉન્ટને તે મળે એ માટે તેમને શેર કરેલાં સેટિંગ્સમાં કૉપિ કરો:
+જો તમે પહેલાં Claude Code વાપર્યું હોય, તો તમારાં સેટિંગ્સ, `CLAUDE.md` અને એક્સટેન્શન્સ `~/.claude` માં છે, અને તમારા MCP સર્વર `~/.claude.json` માં છે. દરેક એકાઉન્ટને તે મળે એ માટે તેમને શેર કરેલા `default` ગ્રુપમાં કૉપિ કરો:
 
 ```sh
 ccam migrate
@@ -39,11 +41,7 @@ ccam પહેલાં બતાવે છે કે તે શું કૉપ
 ccam add work
 ```
 
-બ્રાઉઝરમાં બીજા એકાઉન્ટથી સાઇન ઇન કરો.
-
-## 4. એકાઉન્ટ સ્વિચ કરો
-
-`ccam work` Claude Code ને work એકાઉન્ટ તરીકે શરૂ કરે છે. એનાથી ટૂંકું કંઈક જોઈએ, તો એકાઉન્ટને તેનો પોતાનો શૉર્ટકટ કમાન્ડ આપો, જેમ કે `ccwork`. શેર કરવાની આઇટમ પછી વિઝાર્ડ પૂછે છે:
+વિઝાર્ડ નામ પૂછતું નથી, કારણ કે તમે તે કમાન્ડ લાઇન પર આપ્યું છે, અને જોડાવા માટેનાં ગ્રુપ બતાવે છે, જેમાં `default` ચેક કરેલું હોય છે. આ વખતે, એકાઉન્ટને તેનો પોતાનો શૉર્ટકટ કમાન્ડ આપો, જેમ કે `ccwork`, જેથી તમે તેને એક શબ્દથી શરૂ કરી શકો. ગ્રુપ પછી વિઝાર્ડ પૂછે છે:
 
 ```console
  Create a shortcut command for work? [y/N]
@@ -57,21 +55,23 @@ ccam add work
  a-z, 0-9, '.', '-' and '_'; Enter alone uses ccwork
 ```
 
-લૉગિન પછી ccam તેની પુષ્ટિ કરે છે:
+પછી બ્રાઉઝરમાં બીજા એકાઉન્ટથી સાઇન ઇન કરો. ccam એકાઉન્ટ અને તેના શૉર્ટકટની પુષ્ટિ કરે છે:
 
 ```console
 ✓ work (work@example.com) added
   shortcut: ccwork
 ```
 
-જો તમે આ પ્રશ્ન છોડી દીધો હોય, તો ગમે ત્યારે શૉર્ટકટ ઉમેરી શકો છો:
+## 4. એકાઉન્ટ સ્વિચ કરો
+
+`ccam work` Claude Code ને work એકાઉન્ટ તરીકે શરૂ કરે છે. જો તમે શૉર્ટકટનો પ્રશ્ન છોડી દીધો હોય, તો ગમે ત્યારે શૉર્ટકટ ઉમેરી શકો છો:
 
 ```console
 $ ccam shortcut work ccwork
 ✓ shortcut for work: ccwork
 ```
 
-હવે આમાંથી કોઈ પણ કમાન્ડ Claude Code ને work એકાઉન્ટ તરીકે શરૂ કરે છે:
+હવે આમાંનો દરેક કમાન્ડ Claude Code ને work એકાઉન્ટ તરીકે શરૂ કરે છે (`ccam list` માં તેનો નંબર `2` છે):
 
 ```sh
 ccwork
@@ -91,7 +91,7 @@ cat error.log | ccwork -p "what caused this?"
 
 ## 5. શું શેર કરવું તે પસંદ કરો
 
-ડિફૉલ્ટ રીતે MCP સર્વર, `settings.json`, ગ્લોબલ `CLAUDE.md`, અને agents, commands, skills અને plugins `default` ગ્રુપ દ્વારા એકાઉન્ટ વચ્ચે શેર થાય છે. વાતચીતનો ઇતિહાસ શેર થતો નથી. જો તમે એકાઉન્ટ વચ્ચે વાતચીત ચાલુ રાખવા માગતા હો, તો તેને ગ્રુપમાં ઉમેરો:
+ડિફૉલ્ટ રીતે MCP સર્વર, `settings.json`, ગ્લોબલ `CLAUDE.md` અને એક્સટેન્શન્સ (agents, commands, skills અને plugins) `default` ગ્રુપ દ્વારા એકાઉન્ટ વચ્ચે શેર થાય છે. વાતચીતનો ઇતિહાસ શેર થતો નથી. જો તમે એકાઉન્ટ વચ્ચે વાતચીત ચાલુ રાખવા માગતા હો, તો તેને ગ્રુપમાં ઉમેરો:
 
 ```sh
 ccam group set default --add history
@@ -108,7 +108,7 @@ ccam next --continue
 
 `ccam usage` દરેક એકાઉન્ટનો 5 કલાકનો અને સાપ્તાહિક વપરાશ બતાવે છે. `ccam next --continue` એ જ વાતચીત આગલા એકાઉન્ટમાં ખોલે છે. scripts માં `ccam --fallback work -p "…"` જાતે સ્વિચ કરે છે. [વપરાશ મર્યાદા](/docs/usage-limits) જુઓ.
 
-**Team અને Enterprise સીટ.** આપમેળે થતી પસંદગી (`ccam next`, `--fallback`, `ccam pick`, ડેશબોર્ડની `n` કી, અને તમે ચાલુ કરો ત્યારે [`auto_switch`](/features/next#auto-switch)) એક જ Claude Team કે Enterprise સંસ્થાની સીટો વચ્ચે પણ સ્વિચ કરે છે. Anthropic નું સહાય કેન્દ્ર કહે છે કે "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team પ્લાનની દરેક સીટ નામથી નક્કી કરેલી એક વ્યક્તિને ફાળવવામાં આવે છે, અને ફક્ત એ વ્યક્તિ જ તેનો ઉપયોગ કરી શકે છે) અને "Users can't route their work through another user's account to use that user's remaining usage" (વપરાશકર્તાઓ બીજા વપરાશકર્તાના એકાઉન્ટ મારફતે પોતાનું કામ ચલાવીને એ વપરાશકર્તાનો બાકી રહેલો વપરાશ વાપરી શકતા નથી) ([Team પ્લાન](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise પ્લાન](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) માટે પણ એવું જ). તેથી સીટો વચ્ચે આપમેળે થતી પસંદગી વાપરવાથી Anthropic ની શરતોનું ઉલ્લંઘન થઈ શકે છે. સીટો વચ્ચે તેને વાપરવું કે નહીં એ તમારો નિર્ણય છે: તેના પર આધાર રાખતાં પહેલાં તમારી સંસ્થા અને Anthropic પાસેથી ખાતરી કરી લો. અંગત પ્લાન (Pro, Max) [વારંવાર પૂછાતા પ્રશ્નોમાંની શરતો અંગેની નોંધ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) માં આવરી લેવાયા છે.
+**Team અને Enterprise સીટ.** આપમેળે થતી એકાઉન્ટ પસંદગી (`ccam next`, `--fallback`, `ccam pick`, ડેશબોર્ડની `n` કી અને, તમે તેને ચાલુ કરો પછી, [`auto_switch`](/features/next#auto-switch)) એક જ Claude Team કે Enterprise સંસ્થાની સીટો વચ્ચે પણ સ્વિચ કરે છે, જેનાથી Anthropic ની શરતોનું ઉલ્લંઘન થઈ શકે છે. તેના પર આધાર રાખતાં પહેલાં [વારંવાર પૂછાતા પ્રશ્નો](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) વાંચો અને તમારી સંસ્થા અને Anthropic પાસેથી ખાતરી કરી લો.
 
 ## પહેલેથી ~/.claude વાપરો છો?
 

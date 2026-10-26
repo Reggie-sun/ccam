@@ -1,13 +1,13 @@
 ---
 title: Kukagua viendelezi
 description: ccam ext huonyesha skills, commands, plugins, seva za MCP na hooks ambazo kila akaunti hupakia, kila kimoja kinatoka wapi, na nini kimeharibika.
-updated: 2026-10-23
+updated: 2026-10-26
 order: 14
 translation: machine
-sourceHash: "45740e4efbef"
+sourceHash: "7ca357a7f38a"
 ---
 
-`ccam ext` hujibu swali "kwa nini skill hii (au seva hii ya MCP) inafanya kazi katika akaunti moja na si katika nyingine?". Huorodhesha, kwa kila akaunti, viendelezi ambavyo Claude Code hupakia na kila kimoja kinatoka wapi: kundi la kushiriki, folda ya akaunti yenyewe, au mradi ulio ndani yake. Chini ya jedwali huorodhesha kinachozuia kiendelezi kupakiwa kama unavyotarajia. Husoma tu.
+`ccam ext` hujibu swali "Kwa nini skill hii (au seva hii ya MCP) inafanya kazi katika akaunti moja lakini si katika nyingine?" Huorodhesha, kwa kila akaunti, viendelezi ambavyo Claude Code hupakia na kila kimoja kinatoka wapi: kundi la kushiriki, folda ya akaunti yenyewe, au mradi ulio ndani yake. Chini ya jedwali huorodhesha kinachozuia kiendelezi kupakiwa kama unavyotarajia. Haibadilishi chochote.
 
 ## Matumizi
 
@@ -62,10 +62,10 @@ Kila kisanduku hutaja chanzo cha kipengele hicho katika akaunti hiyo: kundi la k
 
 - **Viungo vilivyovunjika**: kiungo katika `skills/`, `commands/` au `agents/` ambacho lengo lake halipo tena, au folda inayoshirikiwa (`skills`, `commands`, `agents`, `plugins`) inayounganisha na mahali pasipokuwepo (irekebishe kwa `ccam doctor --fix`, ambayo huunda upya folda ya kundi inayokosekana).
 - **Folda ya skill bila `SKILL.md`**: Claude Code huiruka.
-- **Seva ya MCP iliyofafanuliwa tofauti katika sehemu mbili**: `mcp.json` ya kundi na `.claude.json` ya akaunti, au mojawapo yao na `.mcp.json` ya mradi. Mipangilio ile ile katika sehemu zote mbili (ambayo `mcp_strategy = "sync"` huandika) si tatizo. Hamisha seva ya akaunti yenyewe kwenda kwenye kundi kwa `ccam mcp import <account> <server>`.
+- **Seva ya MCP iliyofafanuliwa tofauti katika sehemu mbili**: `mcp.json` ya kundi na `.claude.json` ya akaunti, au mojawapo yao na `.mcp.json` ya mradi. Ufafanuzi unaofanana kabisa katika sehemu zote mbili (ambao `mcp_strategy = "sync"` huandika) si tatizo. Hamisha seva ya akaunti yenyewe kwenda kwenye kundi kwa `ccam mcp import <account> <server>`.
 - **`installed_plugins.json` ambayo si JSON halali**, plugin ambayo `enabledPlugins` haiitaji, na plugin ambayo folda yake inakosekana.
 - **Seva ambazo akaunti moja tu hupakia**: seva iliyo katika `.claude.json` ya akaunti hii pekee, ambayo akaunti nyingine za kundi lake hazipakii, na seva iliyo katika local scope ya akaunti kwa folda hii (kile ambacho `claude mcp add` hufanya isipopewa `-s user`). Kila moja huja pamoja na amri ya `ccam mcp import` inayoishiriki. Seva zilizo katika `~/.claude.json` ya `claude` ya kawaida ambazo hakuna akaunti inayozipakia huja pamoja na amri ya `ccam migrate --mcp`.
-- **Seva ya mradi inayosubiri idhini**: akaunti bado haijaiamini folda, kwa hiyo Claude Code huuliza mara moja, na hadi wakati huo seva za `.mcp.json` za mradi husubiri. Tatizo husema mahali pa kuziidhinisha: `"enabledMcpjsonServers"` katika `settings.json` ya akaunti za kundi la mipangilio, au ya akaunti hii. Imani iliyotolewa kwa worktree kuu ya hazina ya git huhesabika katika worktrees zake nyingine.
+- **Seva ya mradi inayosubiri idhini**: akaunti bado haijaiamini folda, kwa hiyo Claude Code huuliza mara moja, na hadi wakati huo seva za `.mcp.json` za mradi husubiri. Tatizo husema mahali pa kuziidhinisha: `"enabledMcpjsonServers"` katika `settings.json` ya akaunti za kundi la mipangilio, au ya akaunti hii. Imani iliyotolewa kwa worktree kuu ya hazina ya git pia hutumika kwa worktrees zake nyingine.
 - **Kuingia na connectors**: seva ya MCP inayohitaji kuingia katika akaunti hii wakati akaunti nyingine imeingia kwayo (kuingia huhusu akaunti moja tu; ingia kwa `/mcp`), na connectors za claude.ai ambazo akaunti nyingine imezitumia na hii haijazitumia.
 
 ## Usalama na hali maalum
@@ -76,6 +76,6 @@ Kila kisanduku hutaja chanzo cha kipengele hicho katika akaunti hiyo: kundi la k
 
 ## Zinazohusiana
 
-- [Kushiriki kati ya akaunti](/features/share)
+- [Kushiriki kwa vikundi](/features/share)
 - [Seva za MCP zinazoshirikiwa](/features/mcp)
 - [Kukagua na kurekebisha](/features/doctor)

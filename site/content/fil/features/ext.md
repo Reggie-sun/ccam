@@ -1,13 +1,13 @@
 ---
 title: Pagsusuri ng mga extension
 description: Ipinapakita ng ccam ext ang mga skill, command, plugin, MCP server at hook na nilo-load ng bawat account, saan galing ang bawat isa, at ano ang sira.
-updated: 2026-10-23
+updated: 2026-10-26
 order: 14
 translation: machine
-sourceHash: 45740e4efbef
+sourceHash: "7ca357a7f38a"
 ---
 
-Sinasagot ng `ccam ext` ang tanong na "bakit gumagana ang skill (o MCP server) na ito sa isang account pero hindi sa isa?". Inililista nito, para sa bawat account, ang mga extension na nilo-load ng Claude Code at kung saan galing ang bawat isa: isang share group, ang sariling folder ng account, o ang project na kinaroroonan mo. Sa ilalim ng table, inililista nito ang mga pumipigil sa isang extension na mag-load gaya ng inaasahan mo. Nagbabasa lang ito.
+Sinasagot ng `ccam ext` ang tanong na "Bakit gumagana ang skill (o MCP server) na ito sa isang account pero hindi sa isa?" Inililista nito, para sa bawat account, ang mga extension na nilo-load ng Claude Code at kung saan galing ang bawat isa: isang share group, ang sariling folder ng account, o ang project na kinaroroonan mo. Sa ilalim ng table, inililista nito ang mga pumipigil sa isang extension na mag-load gaya ng inaasahan mo. Wala itong binabago.
 
 ## Paggamit
 
@@ -60,12 +60,12 @@ Pinapangalanan ng bawat cell ang pinagmulan ng item na iyon sa account na iyon: 
 
 ## Mga problemang iniuulat nito
 
-- **Mga sirang link**: isang link sa `skills/`, `commands/` o `agents/` na wala na ang target, o isang shared na folder (`skills`, `commands`, `agents`, `plugins`) na naka-link sa lugar na wala na (ayusin ito gamit ang `ccam doctor --fix`, na gumagawa ulit ng nawawalang group folder).
+- **Mga sirang link**: isang link sa `skills/`, `commands/` o `agents/` na wala na ang target, o isang shared na folder (`skills`, `commands`, `agents`, `plugins`) na naka-link sa lugar na wala na (ayusin ito gamit ang `ccam doctor --fix`, na muling gumagawa ng nawawalang group folder).
 - **Skill folder na walang `SKILL.md`**: nilalaktawan ito ng Claude Code.
-- **MCP server na magkaiba ang depinisyon sa dalawang lugar**: ang `mcp.json` ng group at ang `.claude.json` ng account, o isa sa mga iyon at ang `.mcp.json` ng project. Hindi problema ang parehong setting sa dalawang lugar (na isinusulat ng `mcp_strategy = "sync"`). Ilipat sa group ang sariling server ng isang account gamit ang `ccam mcp import <account> <server>`.
+- **MCP server na magkaiba ang depinisyon sa dalawang lugar**: ang `mcp.json` ng group at ang `.claude.json` ng account, o isa sa mga iyon at ang `.mcp.json` ng project. Hindi problema ang magkaparehong depinisyon sa dalawang lugar (na isinusulat ng `mcp_strategy = "sync"`). Ilipat sa group ang sariling server ng isang account gamit ang `ccam mcp import <account> <server>`.
 - **`installed_plugins.json` na hindi valid na JSON**, plugin na hindi pinapangalanan ng `enabledPlugins`, at plugin na nawawala ang folder.
 - **Mga server na iisang account lang ang naglo-load**: server na nasa `.claude.json` lang ng account na ito, na hindi nilo-load ng ibang account ng group nito, at server na nasa local scope ng account para sa folder na ito (ang ginagawa ng `claude mcp add` maliban kung bibigyan ng `-s user`). May kasamang `ccam mcp import` command na nagshe-share nito ang bawat isa. May kasamang `ccam migrate --mcp` command ang mga server sa `~/.claude.json` ng karaniwang `claude` na hindi nilo-load ng anumang account.
-- **Project server na naghihintay ng pag-apruba**: hindi pa nagtitiwala ang account sa folder, kaya magtatanong nang isang beses ang Claude Code, at hanggang doon ay naghihintay ang mga server sa `.mcp.json` ng project. Sinasabi ng problema kung saan sila aaprubahan: `"enabledMcpjsonServers"` sa `settings.json` ng mga account ng settings group, o ng account na ito. Ang tiwalang ibinigay sa main worktree ng isang git repository ay binibilang sa iba pa nitong worktree.
+- **Project server na naghihintay ng pag-apruba**: hindi pa nagtitiwala ang account sa folder, kaya magtatanong nang isang beses ang Claude Code, at hanggang doon ay naghihintay ang mga server sa `.mcp.json` ng project. Sinasabi ng problema kung saan sila aaprubahan: `"enabledMcpjsonServers"` sa `settings.json` ng mga account ng settings group, o ng account na ito. Ang tiwalang ibinigay sa main worktree ng isang git repository ay nalalapat din sa iba pa nitong worktree.
 - **Mga sign-in at connector**: MCP server na nangangailangan ng sign-in sa account na ito habang naka-sign in dito ang ibang account (para sa iisang account lang ang isang sign-in; mag-sign in gamit ang `/mcp`), at mga claude.ai connector na nagamit na ng ibang account pero hindi pa ng account na ito.
 
 ## Kaligtasan at mga espesyal na kaso
@@ -76,6 +76,6 @@ Pinapangalanan ng bawat cell ang pinagmulan ng item na iyon sa account na iyon: 
 
 ## Kaugnay
 
-- [Sharing sa pagitan ng mga account](/features/share)
+- [Pag-share gamit ang mga group](/features/share)
 - [Mga shared na MCP server](/features/mcp)
 - [Pagsusuri at pagkukumpuni](/features/doctor)

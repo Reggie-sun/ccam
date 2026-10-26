@@ -1,10 +1,10 @@
 ---
 title: Tunakuletea ccam
 description: Kwa nini ccam ipo, inawafanyia nini watu wenye akaunti kadhaa za Claude Code, na jinsi inavyokaa nje ya njia yako.
-updated: 2026-10-20
+updated: 2026-10-26
 order: 1
 translation: machine
-sourceHash: a555dc969142
+sourceHash: "e4370f29b818"
 ---
 
 ccam ni zana ndogo ya mstari wa amri kwa watu wanaotumia zaidi ya akaunti moja ya Claude Code kwenye kompyuta moja: akaunti binafsi na ya kazi, au akaunti kadhaa kwa mradi mmoja mrefu.
@@ -22,7 +22,7 @@ Claude Code inaruhusu akaunti kadhaa kupitia [`CLAUDE_CONFIG_DIR`](/guides/claud
 
 ## Kukaa nje ya njia yako
 
-Zana unayoiendesha kabla ya kila kipindi haipaswi kugharimu chochote unachoweza kukigundua. ccam husoma faili moja ya usanidi, hukagua viungo vinavyoshirikiwa kwa system call moja kwa kila kiungo, kisha hujibadilisha yenyewe kuwa `claude`. Huongeza takriban milisekunde 4, na haiendeshwi wakati unafanya kazi.
+Zana unayoiendesha kabla ya kila kipindi haipaswi kugharimu chochote unachoweza kukigundua. ccam husoma faili moja ya usanidi, hukagua viungo vinavyoshirikiwa kwa system call moja au mbili kwa kila kiungo, kisha hujibadilisha yenyewe kuwa `claude`. Huongeza takriban milisekunde 4, na kwa chaguo-msingi haiendeshwi wakati unafanya kazi.
 
 Pia ni makini na faili zako. Kila badiliko la kushiriki huchapisha mpango kabla ya kuanza na huhifadhi faili asili katika folda ya nakala rudufu. `ccam doctor` hukagua viungo, ruhusa na taarifa za kuingia, na hurekebisha kile kinachoweza kurekebishwa kwa usalama.
 
@@ -35,4 +35,4 @@ ccam add
 
 Mwongozo wa [kuanza haraka](/docs/quick-start) unaonyesha jinsi ya kuongeza akaunti mbili, na [jinsi ya kutumia akaunti kadhaa za Claude Code](/guides/multiple-claude-code-accounts) unaeleza mbinu hii ukiwa na ccam na bila ccam.
 
-ccam ni open source na si rasmi: haihusiani na Anthropic wala haijaidhinishwa nayo. Iwapo unaruhusiwa kutumia akaunti kadhaa inategemea masharti ya kila akaunti. Maoni na tafsiri yanakaribishwa kwenye [GitHub](https://github.com/jhyunwoo/ccam).
+ccam ni open source na si rasmi: haihusiani na Anthropic wala haijaidhinishwa nayo. Iwapo unaruhusiwa kutumia zaidi ya akaunti moja inategemea masharti yanayohusu kila moja. Maoni na tafsiri yanakaribishwa kwenye [GitHub](https://github.com/jhyunwoo/ccam).

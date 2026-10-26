@@ -1,10 +1,10 @@
 ---
 title: आधीचा सेटअप कॉपी करणे
 description: ccam migrate ने आधीपासून असलेल्या ~/.claude मधील सेटिंग्ज, CLAUDE.md, एक्स्टेंशन्स आणि MCP सर्व्हर ccam गटात कॉपी करा.
-updated: 2026-10-23
+updated: 2026-10-26
 order: 6
 translation: machine
-sourceHash: "7bca9efb6eb0"
+sourceHash: f835fbe84ade
 ---
 
 तुम्ही ccam आधी Claude Code वापरले असेल, तर तुमचा सेटअप `~/.claude` आणि `~/.claude.json` मध्ये आहे. `ccam migrate` तो एका शेअर गटात कॉपी करते, त्यामुळे गटामार्फत ते आयटम शेअर करणारे प्रत्येक खाते तुमच्याकडे आधीपासून असलेल्या सेटअपने सुरू होते. स्रोत फोल्डर फक्त वाचला जातो, आणि साधे `claude` आधीसारखेच चालत राहते. तुमच्या पहिल्या `ccam add` नंतर ते एकदा चालवा; `~/.claude.json` मध्ये MCP सर्व्हर असतील, तर पहिले `ccam add` आपल्या सूचनेत त्यांची नावे सांगते.
@@ -25,14 +25,14 @@ ccam migrate ~/.claude-work --group work
  Copy into group default
 
  From /home/me/.claude
- ? Choose what to copy (Space to toggle)
- › [x] MCP servers
-   [x] settings.json
-   [x] global CLAUDE.md
-   [x] agents, commands, skills
+ Choose what to copy (Space to toggle)
+ ❯ [✔] MCP servers
+   [✔] settings.json
+   [✔] global CLAUDE.md
+   [✔] skills, agents, commands, plugins
    [ ] conversation history
 
- Enter show the plan · Esc cancel
+ space to toggle · enter to show the plan · esc to cancel
 ```
 
 Space (किंवा `x`) cursor खालील आयटम टॉगल करते, arrow keys किंवा `j`/`k` हलवतात, Enter योजना दाखवते, आणि Esc, `q` किंवा Ctrl+C `Cancelled.` छापतात. ज्या आयटम्ससाठी स्रोतात काहीच नाही त्यांच्यावर `not found` चिन्ह असते. तुम्ही सर्व काही अनचेक केले, तर ccam `Nothing selected.` छापून थांबते.
@@ -56,7 +56,7 @@ MCP sign-ins are not copied (a sign-in works for one account only). Sign in with
 Group default: personal, work
 ```
 
-गट फक्त त्याच्या स्वतःच्या खात्यांपर्यंत पोहोचतो, आणि तेही फक्त तो शेअर करत असलेल्या आयटम्ससाठी, म्हणून सारांश गटाच्या खात्यांची यादी देतो. कॉपी केलेल्यांपैकी एखादा आयटम गट शेअर करत नसेल, किंवा काही खाती त्यात नसतील, तर ccam ते बदलणाऱ्या `ccam group set <group> --add <items>` आणि `ccam group join <group> <accounts>` कमांड्स छापते.
+गटाचा परिणाम फक्त त्याच्या स्वतःच्या खात्यांवर होतो, आणि तोही फक्त तो शेअर करत असलेल्या आयटम्सपुरता, म्हणून सारांश गटाच्या खात्यांची यादी देतो. कॉपी केलेल्यांपैकी एखादा आयटम गट शेअर करत नसेल, किंवा काही खाती त्यात नसतील, तर ccam ते बदलणाऱ्या `ccam group set <group> --add <items>` आणि `ccam group join <group> <accounts>` कमांड्स छापते.
 
 ## पर्याय
 
@@ -68,29 +68,29 @@ Group default: personal, work
 | `--extensions` | `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/`, `rules/` कॉपी करा | बंद |
 | `--mcp` | user MCP सर्व्हर कॉपी करा (`.claude.json` मधील `mcpServers`) | बंद |
 | `--history` | संभाषण इतिहास कॉपी करा (`projects/`, `history.jsonl`) | बंद |
-| `-g`, `--group string` | ज्यात कॉपी करायचे तो शेअर गट | `default` |
+| `-g`, `--group <group>` | ज्यात कॉपी करायचे तो शेअर गट | `default` |
 | `-y`, `--yes` | न विचारता कॉपी करा; conflict असल्यास गटाची प्रत ठेवली जाते | बंद |
 | `--dry-run` (global) | योजना छापा आणि कोणताही प्रश्न किंवा कॉपीपूर्वी थांबा | बंद |
 
-कोणताही आयटम flag नसल्यास, टर्मिनलवर चेकलिस्ट ठरवते. टर्मिनलबाहेर, किंवा `--yes` सह, ccam संभाषण इतिहास सोडून सर्व काही कॉपी करते. इतिहास डीफॉल्टनुसार वगळला जातो कारण `projects/` मोठा असू शकतो.
+टर्मिनलवर, तुम्ही कोणताही आयटम flag दिला नाही, तर तुम्ही चेकलिस्टमध्ये आयटम निवडता. टर्मिनलबाहेर, किंवा `--yes` सह, ccam संभाषण इतिहास सोडून सर्व काही कॉपी करते. इतिहास डीफॉल्टनुसार वगळला जातो कारण `projects/` मोठा असू शकतो.
 
-`--group on` म्हणजे `default`. `--group off` आणि `--group local` `--group takes a group name, not "off"` देऊन नाकारले जातात. `ccam migrate` `--dry-run` पाळते, आणि dry run मध्येही चेकलिस्ट दिसते, त्यामुळे तुम्ही निवडीचे पूर्वावलोकन करू शकता.
+`--group on` म्हणजे `default`. `--group off` आणि `--group local` `--group takes a group name, not "off"` देऊन नाकारले जातात. `ccam migrate` `--dry-run` ला समर्थन देते, आणि dry run मध्येही चेकलिस्ट दिसते, त्यामुळे तुम्ही निवडीचे पूर्वावलोकन करू शकता.
 
 ## हे कसे काम करते
 
-`internal/cli/migrate.go` आयटम निवडते, मग `migrate.Build` स्रोत आणि गट वाचते आणि योजना परत देते. तुम्ही खात्री दिल्यानंतर `Plan.Apply` होईपर्यंत काहीही लिहिले जात नाही.
+काहीही कॉपी करण्यापूर्वी ccam संपूर्ण योजना तयार करते. ते आयटम निवडते (`internal/cli/migrate.go`), मग स्रोत आणि गट वाचून योजना तयार करते (`migrate.Build`). तुम्ही खात्री दिल्यानंतर `Plan.Apply` होईपर्यंत काहीही लिहिले जात नाही.
 
-1. **स्रोत शोधणे.** नसलेला, फोल्डर नसलेला किंवा Claude Code ची एकही ओळखीची नोंद नसलेला पाथ `checkSource` नाकारते. फक्त MCP सर्व्हरसाठी, `~/.claude.json` मध्ये सर्व्हर असतील तोपर्यंत रिकामा किंवा नसलेला `~/.claude` चालतो. `migrate.ClaudeJSON` फोल्डरची `.claude.json` शोधते: त्याच्या आत, किंवा आत नसलेल्या `~/.claude` साठी त्याच्या शेजारी असलेली `~/.claude.json`. `CLAUDE_CONFIG_DIR` सेट नसताना Claude Code ती तिथेच ठेवते.
+1. **स्रोत शोधणे.** नसलेला, फोल्डर नसलेला किंवा Claude Code ची एकही ओळखीची नोंद नसलेला पाथ ccam नाकारते (`checkSource`). फक्त MCP सर्व्हरसाठी, `~/.claude.json` मध्ये सर्व्हर असतील तोपर्यंत रिकामा किंवा नसलेला `~/.claude` चालतो. ccam फोल्डरची `.claude.json` शोधते (`migrate.ClaudeJSON`): त्याच्या आत, किंवा आत नसलेल्या `~/.claude` साठी त्याच्या शेजारी असलेली `~/.claude.json`. `CLAUDE_CONFIG_DIR` सेट नसताना Claude Code ती तिथेच ठेवते.
 2. **आयटम्स पाथशी जोडणे.** प्रत्येक पाथ `share.Layout` मधून येतो, गट वापरतात तीच अनुमत यादी. MCP सर्व्हर `.claude.json` मधून `mcp.LocalServers` ने वाचले जातात, जे संपूर्ण फाइल parse करण्याऐवजी `profile.TopLevelValue` scanner वापरते.
-3. **कॉपी, कधीच हलवणे नाही.** फाइल्स `fsutil.AtomicWrite` किंवा `fsutil.CopyFile` ने `~/.local/share/ccam/groups/<group>/` मध्ये जातात, जे लक्ष्यशेजारी तात्पुरती फाइल लिहून तिचे नाव बदलते, त्यामुळे थांबलेली कॉपी कधीही अर्धवट कापलेली फाइल मागे ठेवत नाही. MCP सर्व्हर गटाच्या `mcp.json` मध्ये तिच्या lock खाली जातात: दरम्यान दुसऱ्या ccam ने जोडलेला सर्व्हर तसाच राहतो, आणि [Remote Control](/guides/remote-control) साठी बनवलेल्या प्रती नंतर अद्ययावत केल्या जातात.
+3. **कॉपी, कधीच हलवणे नाही.** फाइल्स `fsutil.AtomicWrite` किंवा `fsutil.CopyFile` ने `~/.local/share/ccam/groups/<group>/` मध्ये जातात, जे लक्ष्यशेजारी तात्पुरती फाइल लिहून तिचे नाव बदलते, त्यामुळे मध्येच थांबलेली कॉपी कधीही अर्धवट फाइल मागे ठेवत नाही. MCP सर्व्हर गटाच्या `mcp.json` मध्ये तिच्या lock खाली जातात: दरम्यान दुसऱ्या ccam process ने जोडलेला सर्व्हर ठेवला जातो, आणि [Remote Control](/guides/remote-control) साठी बनवलेल्या प्रती नंतर अद्ययावत केल्या जातात.
 
 प्रत्येक आयटम एक स्रोत पाथ एका गट पाथशी जोडतो:
 
 <!-- motion:migrate-items -->
 
-इतिहासाच्या दोन ओळी तुटक आहेत कारण त्या फक्त `--history` सह कॉपी होतात. `.credentials.json` आणि `.claude.json` `share.Never` मध्ये नोंदवलेल्या आहेत आणि कधीच गटापर्यंत पोहोचत नाहीत: त्यांपैकी एखादी layout मध्ये दिसलीच तर `Build` internal error परत देते, आणि फोल्डर तपासताना त्या नावाने वगळल्या जातात.
+इतिहासाच्या दोन ओळी तुटक आहेत कारण त्या फक्त `--history` सह कॉपी होतात. `.credentials.json` आणि `.claude.json` `share.Never` मध्ये नोंदवलेल्या आहेत आणि कधीच गटापर्यंत पोहोचत नाहीत: त्यांपैकी एखादी layout मध्ये दिसलीच तर ccam internal error देऊन थांबते (`Build`), आणि फोल्डर तपासताना त्या नावाने वगळल्या जातात.
 
-`buildEntry` प्रत्येक पाथला एक स्थिती देते, आणि योजनेची प्रत्येक ओळ तेच वर्णन करते:
+ccam प्रत्येक पाथला एक स्थिती देते, आणि योजनेची प्रत्येक ओळ तेच वर्णन करते (`buildEntry`):
 
 <!-- motion:migrate-states -->
 
@@ -98,14 +98,14 @@ Group default: personal, work
 - **Linked (लिंक केलेले)**: स्रोत पाथ आधीच गटाच्या प्रतीकडे जातो, उदाहरणार्थ स्रोत ccam profile फोल्डर असतो तेव्हा.
 - **Same (सारखे)**: गटाकडे आधीच तोच मजकूर आहे.
 - **New (नवीन)**: गटाकडे ते नाही, म्हणून ते पूर्ण कॉपी होते.
-- **Merge (एकत्रीकरण)**: दोन्ही बाजूंना फोल्डर. `copyMissing` फक्त गटाकडे नसलेल्या फाइल्स जोडते; वेगळ्या असलेल्या फाइल्स गटाकडे आहेत तशाच राहतात आणि योजना `group copies kept` सांगते. `plugins/` साठी, `installed_plugins.json` आणि `known_marketplaces.json` या registries merge होतात, आणि absolute plugin पाथ गटाच्या फोल्डरकडे निर्देश करतील असे पुन्हा लिहिले जातात.
+- **Merge (एकत्रीकरण)**: दोन्ही बाजूंना फोल्डर. ccam फक्त गटाकडे नसलेल्या फाइल्स जोडते (`copyMissing`); वेगळ्या असलेल्या फाइल्स गटाकडे आहेत तशाच राहतात आणि योजना `group copies kept` सांगते. `plugins/` साठी, `installed_plugins.json` आणि `known_marketplaces.json` या registries merge होतात, आणि absolute plugin पाथ गटाच्या फोल्डरकडे निर्देश करतील असे पुन्हा लिहिले जातात.
 - **Conflict (संघर्ष)**: दोन्ही बाजूंना वेगळा मजकूर असलेली फाइल. तुम्ही प्रत्येक फाइलसाठी निवडता: `keep group`, `use mine`, आणि `.json` फाइल्ससाठी `merge JSON` (deep merge, ज्यात जुळणाऱ्या मूल्यांवर गट जिंकतो) किंवा `history.jsonl` साठी `merge by line`. ज्या MCP सर्व्हरची व्याख्या वेगळी आहे तोही conflict आहे, `keep group` किंवा `use mine` सह. Enter दाबल्यावर यादीतील पहिला पर्याय डीफॉल्ट असतो; `--yes` नेहमी गटाची प्रत ठेवतो.
 
-चेकलिस्ट स्वतः `tui.MigratePicker` आहे, जी `ccam add` वापरत असलेल्या `checklist` component वर बांधली आहे; `migrate.Found` lstat calls आणि MCP सर्व्हर यादीने नसलेल्या आयटम्सवर चिन्ह लावते.
+चेकलिस्ट स्वतः `tui.MigratePicker` आहे, जी `ccam add` वापरत असलेल्या `checklist` component वर बांधली आहे; ccam lstat calls आणि MCP सर्व्हर यादीने नसलेल्या आयटम्सवर चिन्ह लावते (`migrate.Found`).
 
 ### MCP साइन-इन्स
 
-OAuth ने साइन इन करणारे MCP सर्व्हर आपले tokens सर्व्हर यादीत नाही, तर लॉगिन फाइलमध्ये, `.credentials.json` मध्ये `mcpOAuth` खाली ठेवतात. ccam ते कॉपी करत नाही. कॉपी केलेल्या साइन-इनमध्ये मूळ साइन-इनसारखाच refresh token असतो, आणि पहिल्या नूतनीकरणाच्या वेळी सर्व्हर तो token बदलतो: तेव्हा तो असलेले इतर सर्व जण, स्रोत `~/.claude` सुद्धा, त्या सर्व्हरमधून लॉग आउट होतात. म्हणून स्रोत ज्या सर्व्हरमध्ये साइन इन आहे अशा प्रत्येक कॉपी केलेल्या सर्व्हरसाठी, योजनेतील `sign-ins` ओळ गटातील अशा खात्यांची नावे सांगते जी `/mcp` ने स्वतः साइन इन करतील, आणि सारांश तेच पुन्हा सांगतो. token नसलेली नोंद साइन-इन नसते आणि ती यादीत येत नाही, तसेच आधीच स्वतःचे साइन-इन असलेले खाते, किंवा ज्याची व्याख्या गट स्वतःची ठेवतो असा सर्व्हरही यादीत येत नाही. कोणतीही लॉगिन फाइल लिहिली जात नाही.
+OAuth ने साइन इन करणारे MCP सर्व्हर आपले tokens सर्व्हर यादीत नाही, तर लॉगिन फाइलमध्ये, `.credentials.json` मध्ये `mcpOAuth` खाली ठेवतात. ccam ते कॉपी करत नाही. कॉपी केलेल्या साइन-इनमध्ये मूळ साइन-इनसारखाच refresh token असतो, आणि पहिल्या नूतनीकरणाच्या वेळी सर्व्हर तो token बदलतो: तेव्हा तो असलेले इतर सर्व जण, स्रोत `~/.claude` सुद्धा, त्या सर्व्हरमधून लॉग आउट होतात. म्हणून स्रोत ज्या सर्व्हरमध्ये साइन इन आहे अशा प्रत्येक कॉपी केलेल्या सर्व्हरसाठी, योजनेतील `sign-ins` ओळ गटातील अशा खात्यांची यादी देते ज्यांनी `/mcp` ने स्वतः साइन इन करणे आवश्यक आहे, आणि सारांश तेच पुन्हा सांगतो. token नसलेली नोंद साइन-इन नसते आणि ती यादीत येत नाही, तसेच आधीच स्वतःचे साइन-इन असलेले खाते, किंवा ज्याची व्याख्या गट स्वतःची ठेवतो असा सर्व्हरही यादीत येत नाही. कोणतीही लॉगिन फाइल लिहिली जात नाही.
 
 ## सुरक्षितता आणि अपवादात्मक स्थिती
 
@@ -113,7 +113,7 @@ OAuth ने साइन इन करणारे MCP सर्व्हर �
 - `use mine`, merge, किंवा आधीपासून असलेल्या `mcp.json` मधील नवीन MCP सर्व्हर यांमुळे गटाची फाइल बदलण्यापूर्वी, गटाची प्रत `<group>/.ccam-backup/<time>/` मध्ये सेव्ह होते. फोल्डरचे नाव प्रत्येक run साठी वेगळे असते, त्यामुळे एकाच सेकंदातील दोन runs एकमेकांचे बॅकअप overwrite करत नाहीत. सारांश पाथ छापतो.
 - `--yes` सह प्रत्येक conflict गटाची प्रत ठेवतो, आणि ccam त्याऐवजी कसे निवडायचे ते सांगते: तीच कमांड `--yes` शिवाय चालवा.
 - काहीही बदलणार नसेल, तर ccam `Nothing to copy.` छापते; प्रत्येक conflict गटाची प्रत ठेवत असेल, तर `Nothing to copy: the group keeps its own copies.`
-- कॉपी अर्ध्यावर अयशस्वी झाली, तर ccam `The source folder was not changed. Group files replaced so far are saved in` आणि त्यानंतर बॅकअप फोल्डर छापून थांबते. पुन्हा चालवल्यास पूर्ण न पोहोचलेल्या फाइल्स कॉपी होतात.
+- कॉपी अर्ध्यावर अयशस्वी झाली, तर ccam `The source folder was not changed. Group files replaced so far are saved in` आणि त्यानंतर बॅकअप फोल्डर छापून थांबते. ते पुन्हा चालवल्यास पूर्णपणे कॉपी न झालेल्या फाइल्स कॉपी होतात.
 - अनेक गट MCP शेअर करत असतील तेव्हा, `ccam doctor`, `ccam ext` आणि `ccam mcp list` सुचवत असलेल्या कमांड्स `ccam migrate --mcp --group <a|b>` अशा असतात.
 - स्रोत नसल्यास `no Claude Code folder at <path>. Give the folder to copy from: ccam migrate <folder>` ने संपते.
 
@@ -121,5 +121,5 @@ OAuth ने साइन इन करणारे MCP सर्व्हर �
 
 - [MCP सर्व्हर, सेटिंग्ज आणि इतिहास शेअर करा](/docs/sharing)
 - [तपासणी आणि दुरुस्ती](/features/doctor)
-- [अनेक Claude Code खाती](/guides/multiple-claude-code-accounts)
-- [CLAUDE_CONFIG_DIR](/guides/claude-config-dir)
+- [एका कॉम्प्युटरवर अनेक Claude Code खाती वापरा](/guides/multiple-claude-code-accounts)
+- [CLAUDE_CONFIG_DIR समजून घ्या](/guides/claude-config-dir)

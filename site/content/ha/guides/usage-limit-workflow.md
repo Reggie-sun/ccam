@@ -1,17 +1,17 @@
 ---
 title: Claude Code ya kai iyakar amfani? Ga abin da za ka yi
 description: Jira iyakar ta sake farawa, ko ka ci gaba da tattaunawar a wani asusun Claude Code nan take. Yadda iyakar awa 5 da ta mako ke aiki, mataki-mataki.
-updated: 2026-10-25
+updated: 2026-10-26
 order: 3
 translation: machine
-sourceHash: 18ef61a68c55
+sourceHash: 96b6429c0102
 ---
 
 Idan wani asusu ya kai iyakar amfaninsa (wanda ake yawan kira rate limit), kana da zaɓi biyu: jira har iyakar ta sake farawa, ko ka ci gaba da wannan tattaunawar yanzu a wani asusun da ka mallaka. Da ccam, zaɓi na biyu yana ɗaukar umarni ɗaya, `ccam next --auto --continue`.
 
 ## Waɗanne iyakoki Claude Code yake da su?
 
-A tsare-tsaren Pro da Max, Claude Code yana da [iyakar zama ta awa biyar da iyakar mako](https://support.claude.com/en/articles/11145838-using-claude-code-with-your-pro-or-max-plan). Duka biyun ana raba su da Claude a yanar gizo da kuma a manhajoji, kuma amfani yana ƙirguwa a kan duka biyun a lokaci guda. Idan ɗaya ya ƙare, Claude Code [yana nuna saƙo](https://code.claude.com/docs/en/errors#youve-hit-your-session-limit) kamar "You've hit your session limit · resets 3:45pm". Sauya model ba ya taimaka, domin iyakokin sun shafi duk model.
+A tsare-tsaren Pro da Max, Claude Code yana da [iyakar zama ta awa 5 da iyakar mako](https://support.claude.com/en/articles/11145838-using-claude-code-with-your-pro-or-max-plan). Duka biyun ana raba su da Claude a yanar gizo da kuma a manhajoji, kuma amfani yana ƙirguwa a kan duka biyun a lokaci guda. Idan ɗaya ya ƙare, Claude Code [yana nuna saƙo](https://code.claude.com/docs/en/errors#youve-hit-your-session-limit) kamar "You've hit your session limit · resets 3:45pm". Sauya model ba ya taimaka, domin iyakokin sun shafi duk model.
 
 ## Zaɓi na 1: jira iyakar ta sake farawa
 
@@ -19,7 +19,7 @@ Idan kana da asusu ɗaya, ka jira. Sababbin nau'ikan Claude Code [suna jira a ci
 
 ## Zaɓi na 2: ci gaba a wani asusu yanzu
 
-Idan kana da asusu na biyu, za ka iya ci gaba nan take da wannan tattaunawar. Saita shi sau ɗaya:
+Idan kana da asusu na biyu, za ka iya ci gaba da wannan tattaunawar nan take. Saita shi sau ɗaya:
 
 ```sh
 curl -fsSL https://ccam.dev/install.sh | sh
@@ -53,15 +53,22 @@ Buɗe tattaunawar a asusun da ya fi sarari:
 ccam next --auto --continue
 ```
 
-Claude Code yana farawa a matsayin `work` da tattaunawa ta baya-bayan nan ta foldar yanzu, har da duk abin da aka faɗa zuwa yanzu. Raba tarihi (`ccam group set default --add history` a sama) yana sa ta zama tattaunawa ɗaya; ba tare da shi ba, Claude Code yana kwafar tattaunawar cikin `work`, kuma ccam yana gaya maka tokens nawa amsar farko za ta sake karantawa.
+Claude Code yana farawa a matsayin `work` da tattaunawa ta baya-bayan nan ta foldar yanzu, har da duk abin da aka faɗa zuwa yanzu. Raba tarihi (`ccam group set default --add history` a sama) yana nufin asusun biyu suna aiki a kan tattaunawa ɗaya; ba tare da shi ba, Claude Code yana kwafar tattaunawar cikin `work`, kuma ccam yana gaya maka tokens nawa amsar farko za ta sake karantawa.
 
-Da [plugin ɗin ccam](/docs/install#claude-code-plugin) a Claude Code, zaman da ya tsaya a iyakarsa yana nuna sanarwa kuma yana rubuta cikakkiyar tagar, don kada `ccam next --auto` ya sake zaɓar wannan asusun kafin sake saitinsa, kuma `/ccam:switch` (ko `/ccam:switch work`) yana rubuta bayanin tattaunawar don `ccam next --continue` ba tare da barin wani abu da za a yi hasashe ba.
+Da [plugin ɗin ccam](/docs/install#claude-code-plugin) a Claude Code, zaman da ya tsaya a iyakarsa yana nuna sanarwa kuma yana rubuta cikakkiyar tagar, don kada `ccam next --auto` ya sake zaɓar wannan asusun kafin sake saitinsa. `/ccam:switch` (ko `/ccam:switch work`) yana rubuta bayanin tattaunawar don `ccam next --continue`, don haka yana ci gaba da ainihin wannan tattaunawar.
 
-**Kujeru (seats) na Team da Enterprise.** Zaɓin atomatik (`ccam next`, `--fallback`, `ccam pick`, maɓallin `n` na dashboard, da [`auto_switch`](/features/next#auto-switch) idan ka kunna shi) yana kuma sauyawa tsakanin kujerun ƙungiyar Claude Team ko Enterprise iri ɗaya. Cibiyar taimako ta Anthropic ta ce "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (ana ba da kowace kujera a tsarin Team da sunan takamaiman mutum ɗaya, kuma wannan mutumin kaɗai ne aka yarda ya yi amfani da ita) da "Users can't route their work through another user's account to use that user's remaining usage" (masu amfani ba za su iya tura aikinsu ta asusun wani mai amfani ba domin su ci gajiyar ragowar amfanin wannan mai amfanin) ([Tsare-tsaren Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); haka ma ga [tsare-tsaren Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Don haka yin amfani da zaɓin atomatik tsakanin kujeru na iya saɓa wa sharuɗɗan Anthropic. Ko za ka yi amfani da shi a can ya rage naka: ka tuntuɓi ƙungiyarka da Anthropic kafin ka dogara da shi. Don tsare-tsaren kai (Pro, Max), duba [bayanin sharuɗɗa a cikin Tambayoyin da ake yawan yi](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Kujeru (seats) na Team da Enterprise.** Zaɓin asusu na atomatik (`ccam next`, `--fallback`, `ccam pick`, maɓallin `n` na dashboard kuma, da zarar ka kunna shi, [`auto_switch`](/features/next#auto-switch)) yana kuma sauyawa tsakanin kujerun ƙungiyar Claude Team ko Enterprise iri ɗaya, wanda na iya saɓa wa sharuɗɗan Anthropic. Ka karanta [Tambayoyin da ake yawan yi](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) kuma ka tuntuɓi ƙungiyarka da Anthropic kafin ka dogara da shi.
+
 
 ## Shin ccam yana sauya asusu ta atomatik?
 
-Sai idan ka kunna shi. Ta tsohuwa ccam ba ya aiki yayin da kake aiki: yana fara Claude Code kuma ya maye gurbin kansa da shi, don haka kai ne kake yanke shawarar lokacin sauyawa, kuma `ccam next --auto` yana zaɓar asusun da amfaninsa na awa 5 ya fi ƙasa, yana tsallake asusan da suka kai 100% ko waɗanda ba a shiga ba, kuma yana zama a cikin ƙungiyar (organization) Team ko Enterprise ɗaya, ko a cikin tsare-tsaren kai. Da `relay = true` a `config.toml`, ccam yana jira a gefen zaman maimakon haka, don haka `/ccam:switch` yana ci gaba da kansa, yana riƙe zaɓuɓɓukan zaman, yanayin izini (permission mode) da matakin ƙoƙari (effort level). Da `auto_switch = true` (Linux da macOS; na gwaji), ccam yana kuma yin sauyawar da kansa: idan Claude Code ya dakatar da zaman a iyakarsa kuma wani asusu irinsa yana da sarari, ccam yana kawo ƙarshen zaman kuma yana ci gaba da tattaunawar a can ([sharuɗɗa da farashi](/features/next#auto-switch)). Wasu kayan aikin kuma suna musanya bayanan shiga na zaman da ke gudana maimakon haka; [ccam da sauran masu sauya asusu](/compare/account-switchers) yana bayyana bambancin.
+Sai idan ka kunna shi.
+
+- Ta tsohuwa, ccam ba ya aiki yayin da kake aiki: yana fara Claude Code kuma ya maye gurbin kansa da shi, don haka kai ne kake yanke shawarar lokacin sauyawa. `ccam next --auto` yana zaɓar asusun da amfaninsa na awa 5 ya fi ƙasa, yana tsallake asusan da suka kai 100% ko waɗanda ba a shiga ba, kuma yana zama a cikin ƙungiyar (organization) Team ko Enterprise ɗaya, ko a cikin tsare-tsaren kai.
+- Da `relay = true` a `config.toml`, ccam yana ci gaba da aiki tare da zaman maimakon haka, don haka `/ccam:switch` yana ci gaba da tattaunawar da kansa, yana riƙe zaɓuɓɓukan zaman, yanayin izini (permission mode) da matakin ƙoƙari (effort level).
+- Da `auto_switch = true` (Linux da macOS; na gwaji), ccam yana kuma yin sauyawar da kansa: idan Claude Code ya dakatar da zaman a iyakarsa kuma wani asusu iri ɗaya yana da sarari, ccam yana kawo ƙarshen zaman kuma yana ci gaba da tattaunawar a can ([sharuɗɗa da farashi](/features/next#auto-switch)).
+
+Wasu kayan aikin kuma suna musanya bayanan shiga na zaman da ke gudana maimakon haka; [ccam da sauran masu sauya asusu](/compare/account-switchers) yana bayyana bambancin.
 
 ## Abubuwan da za ka tuna
 
@@ -69,6 +76,6 @@ Sai idan ka kunna shi. Ta tsohuwa ccam ba ya aiki yayin da kake aiki: yana fara 
 - Ka guji gudanar da asusai biyu a kan tattaunawa ɗaya a lokaci guda. ccam yana gargaɗe ka idan ka gwada.
 - Ba tare da tarihin da aka raba ba, ana kwafar tattaunawar zuwa ɗayan asusun kuma kwafin biyu suna bin hanyoyinsu daban; checkpoints da `/rewind` ke maido da lamba daga gare su suna zama tare da asusun farko.
 - Saƙon farko a sabon asusun zai iya cinye iyakarsa fiye da yadda aka saba, domin wannan asusun bai riga ya ajiye tattaunawar a cache ba. `ccam next --continue --brief` yana fara shi a kan taƙaitaccen bayani maimakon haka.
-- Ko an yarda ka sauya tsakanin asusai ta wannan hanya ya dogara da sharuɗɗan kowane asusu.
+- Ko an yarda ka sauya tsakanin asusai ta wannan hanya ya dogara da sharuɗɗan da suka shafi kowane asusu.
 
-Duba [iyakokin amfani](/docs/usage-limits) don kowane zaɓi na `ccam usage` da `ccam next`.
+Duba [Iyakokin amfani](/features/usage) da [Sauyawa zuwa asusu na gaba](/features/next) don kowane zaɓi.
