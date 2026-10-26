@@ -1,19 +1,19 @@
 ---
 title: Updating ccam
 description: ccam update replaces ccam with the latest GitHub release after a SHA-256 check; --check only reports and --version installs a given release tag.
-updated: 2026-10-23
+updated: 2026-10-26
 order: 10
 translation: source
 ---
 
-`ccam update` downloads a ccam release from GitHub, checks it against the release's `checksums.txt` and replaces the running binary in one rename. Use it when you installed ccam with the install script or from an archive. The [dashboard](/features/dashboard) also asks GitHub for the latest release each time it opens and offers it with `U`, which runs the same steps after asking. No other command contacts GitHub, so they work the same offline.
+`ccam update` downloads a ccam release from GitHub, checks it against the release's `checksums.txt` and replaces the running binary in one rename. Use it when you installed ccam with the install script or from an archive. The [dashboard](/features/dashboard) also asks GitHub for the latest release each time it opens and offers it with `U`, which runs the same steps after asking. Other commands never contact GitHub, so they work the same offline.
 
 ## Usage
 
 ```sh
 ccam update                    # install the latest release
 ccam update --check            # only say whether a newer release exists
-ccam update --version v0.3.0   # install that release, also an older one
+ccam update --version v0.3.0   # install that release, even an older one
 ccam --dry-run update          # show what would be downloaded and replaced
 ```
 
@@ -30,7 +30,7 @@ $ ccam update
 ✓ Updated ccam 0.4.0 → 0.5.0 (/home/you/.local/bin/ccam)
 ```
 
-When no newer release exists, ccam prints `ccam 0.4.0 is up to date.` and changes nothing. With `--version` and the version you already run, it prints `ccam 0.4.0 is already installed.`
+When no newer release exists, ccam prints `ccam 0.4.0 is up to date.` and changes nothing. If `--version` names the version you already have, it prints `ccam 0.4.0 is already installed.`
 
 ## Options
 
@@ -38,7 +38,7 @@ When no newer release exists, ccam prints `ccam 0.4.0 is up to date.` and change
 | --- | --- | --- |
 | `--check` | Only report whether a newer release exists | off |
 | `--version <tag>` | Install this release tag, such as `v0.3.0`, newer or older than the current one | latest |
-| `--dry-run` | Honoured: looks up the latest tag (unless `--version` names one), runs the same checks on the binary, and prints the download, checksum and replace paths without downloading | off |
+| `--dry-run` | Supported: looks up the latest tag (unless `--version` names one), runs the same checks on the binary, and prints the download, checksum and replace paths without downloading | off |
 
 `--check` and `--version` cannot be used together. The tag must look like `vMAJOR.MINOR.PATCH`, with an optional pre-release or build suffix; the leading `v` may be left out. Anything else fails, for example `--version takes a release tag such as v0.3.0, not "1.2"`.
 
@@ -49,7 +49,7 @@ The environment variable `CCAM_RELEASES_URL` replaces `https://github.com/jhyunw
 The code is in `internal/update`, which only `ccam update` imports. The launch path never calls it.
 
 1. `cli.updateCmd` finds the running binary with `os.Executable` and resolves symlinks with `filepath.EvalSymlinks`. That real path is what gets replaced.
-2. Without `--version`, `Updater.Latest` requests `<releases>/latest` without following the redirect, and reads the tag from the `Location` header (`…/tag/v0.5.0`). This uses the releases page instead of the GitHub API, so the API's limit of 60 requests an hour does not apply. The lookup has 10 seconds.
+2. Without `--version`, `Updater.Latest` requests `<releases>/latest` without following the redirect, and reads the tag from the `Location` header (`…/tag/v0.5.0`). This uses the releases page instead of the GitHub API, so the API's limit of 60 requests an hour does not apply. The lookup times out after 10 seconds.
 3. `parseVersion` checks the tag against a strict pattern. A tag ends up in download URLs and in a printed shell command, so nothing with `/`, `%`, spaces or shell characters gets through. `compareVersions` compares it with the running version; a pre-release sorts before its release.
 4. `managed()` and `writable()` decide whether ccam may replace the binary at all (see below).
 5. `Updater.Fetch` downloads `ccam_<os>_<arch>.tar.gz` (on Windows `ccam_windows_<arch>.zip`) and `checksums.txt` at the same time, with 2 minutes for both. Each download is capped at 256 MB.
@@ -61,13 +61,13 @@ The whole pipeline, from tag lookup to the rename:
 
 <!-- motion:update-pipeline -->
 
-The archive and `checksums.txt` are downloaded side by side, and nothing is written until the checksum matches. The rename is atomic, so a crash or a full disk leaves either the old binary or the new one, never half of one. Shortcut commands such as `~/.local/bin/ccwork` are symlinks to the ccam binary, so they run the new version without any change.
+The archive and `checksums.txt` are downloaded in parallel, and nothing is written until the checksum matches. The rename is atomic, so a crash or a full disk leaves either the old binary or the new one, never half of one. Shortcut commands such as `~/.local/bin/ccwork` are symlinks to the ccam binary, so they run the new version without any change.
 
-On Windows a running program's file cannot be replaced or deleted, only renamed. `Updater.Install` writes the new binary to `ccam.exe.new`, renames the running `ccam.exe` to `ccam.exe.old`, and renames the new file to `ccam.exe`. If the last step fails, the old binary is renamed back. The next update deletes the `ccam.exe.old` files it can; while a session still runs from an earlier `ccam.exe.old`, the running binary becomes `ccam.exe.old-<time>` instead. Shortcuts that are hard links instead of symbolic links ([Shortcut commands](/features/shortcuts)) are renewed right after, so they also run the new version; that covers hard links of any older ccam that ccam made, not only of the binary just replaced.
+On Windows a running program's file cannot be replaced or deleted, only renamed. `Updater.Install` writes the new binary to `ccam.exe.new`, renames the running `ccam.exe` to `ccam.exe.old`, and renames the new file to `ccam.exe`. If the last step fails, the old binary is renamed back. The next update deletes the `ccam.exe.old` files it can; while a session is still running from an earlier `ccam.exe.old`, the running binary becomes `ccam.exe.old-<time>` instead. Shortcuts that are hard links instead of symbolic links ([Shortcut commands](/features/shortcuts)) are renewed right after, so they also run the new version; that covers hard links of any older version of ccam that ccam created, not only of the binary just replaced.
 
 ### Package-managed installs
 
-A ccam installed from the `.deb` belongs to apt, and replacing it behind apt's back would leave the package database wrong. Before downloading, ccam checks who owns the binary:
+A copy of ccam installed from the `.deb` belongs to apt, and replacing it behind apt's back would leave the package database out of sync with the file. Before downloading, ccam checks who owns the binary:
 
 <!-- motion:update-managed -->
 
@@ -90,7 +90,7 @@ On systems other than Linux, only the install script line is printed: `irm https
 
 ## Safety and edge cases
 
-- A development build reports its version as `dev` and has no release to compare with, so `ccam update` and `ccam update --check` refuse it. `ccam update --version vX.Y.Z` installs a release over it. A build made with `go install github.com/jhyunwoo/ccam/cmd/ccam@vX.Y.Z` (or `@latest`) reports that release, so `ccam update` and the dashboard's offer work for it; `@main` or a local build past a tag stays `dev`.
+- A development build reports its version as `dev` and has no release to compare with, so `ccam update` and `ccam update --check` refuse it. `ccam update --version vX.Y.Z` installs a release over it. For builds made with `go install`, see [Install ccam](/docs/install#other-ways-to-install).
 - A failed download, a missing asset for your platform, or a checksum mismatch leaves the installed binary as it was.
 - A release that does not exist fails with `there is no release <tag>`. When GitHub refuses with HTTP 403 or 429, ccam says it is probably a rate limit and asks you to try again later.
 - `--check` only reads. It does not check whether the binary is package-managed or writable.
@@ -98,6 +98,6 @@ On systems other than Linux, only the install script line is printed: `irm https
 
 ## Related
 
-- [Install](/docs/install)
-- [Commands](/docs/commands)
-- [FAQ](/docs/faq)
+- [Install ccam](/docs/install)
+- [Command reference](/docs/commands)
+- [Frequently asked questions](/docs/faq)
