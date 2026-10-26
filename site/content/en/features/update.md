@@ -83,10 +83,10 @@ ccam: /usr/bin/ccam was installed by a package, so `ccam update` leaves it alone
 To update the .deb, download ccam_0.5.0_linux_amd64.deb from https://github.com/jhyunwoo/ccam/releases/tag/v0.5.0 and run:
   sudo apt install ./ccam_0.5.0_linux_amd64.deb
 Or install a copy in ~/.local/bin with the install script:
-  curl -fsSL https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.sh | sh
+  curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-On systems other than Linux, only the install script line is printed: `irm https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.ps1 | iex` on Windows. When the folder is not writable, ccam suggests rerunning the install script, which installs ccam in `~/.local/bin`.
+On systems other than Linux, only the install script line is printed: `irm https://ccam.dev/install.ps1 | iex` on Windows. When the folder is not writable, ccam suggests rerunning the install script, which installs ccam in `~/.local/bin`.
 
 ## Safety and edge cases
 

@@ -50,13 +50,13 @@ func hookCmd(e *env) *cobra.Command {
 		Long: "The ccam plugin for Claude Code runs these; you do not need to.\n\n" +
 			"  stop-failure  a turn stopped at a usage limit: note the conversation, count the\n" +
 			"                account as full until the limit resets, and show a terminal\n" +
-			"                notification, so `ccam next --continue` carries it on\n" +
+			"                notification, so `ccam next --continue` can continue it\n" +
 			"  switch        /ccam:switch [account]: note the conversation and end the turn\n\n" +
 			"In a session that ccam did not start, stop-failure does nothing and switch says why it cannot move it.\n" +
-			"stop-failure also does nothing for a subagent or a session nobody sits at (-p, background).\n\n" +
+			"stop-failure also does nothing for a subagent or an unattended session (-p, background).\n\n" +
 			"With auto_switch = true in config.toml (Linux, macOS), stop-failure also ends Claude Code when another\n" +
 			"account like this one has room (a seat of the same Team or Enterprise organization, or another personal\n" +
-			"plan), and the ccam waiting beside the session continues the conversation there.",
+			"plan), and the ccam process running alongside the session continues the conversation there.",
 		Args:      cobra.ExactArgs(1),
 		ValidArgs: []string{"stop-failure", "switch"},
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -156,7 +156,7 @@ func hookStopFailure(e *env, in hookInput, account string) error {
 		}
 	}
 	hit := handoff.HitLimit(account, name, reset)
-	msg := hit + ". `ccam next --continue` carries on as another account."
+	msg := hit + ". `ccam next --continue` continues the conversation on another account."
 	if none := noTakeover(e, account); none != "" {
 		// That command would refuse, and auto_switch has nowhere to go.
 		msg = hit + ". " + none
@@ -186,7 +186,7 @@ func noTakeover(e *env, account string) string {
 	if p, ok := cfg.Find(account); ok {
 		id = newOrgs(e, cfg, false).of(p)
 	}
-	return "You have no other " + poolName(id) + " to carry it on as."
+	return "You have no other " + poolName(id) + ", so ccam cannot move this conversation."
 }
 
 // unattended reports whether nobody sits at the session: Claude Code sets
@@ -253,15 +253,15 @@ func hookSwitch(e *env, in hookInput, account string) error {
 	}
 	if !fsutil.Exists(in.Transcript) {
 		// Nothing written yet: there is no conversation to carry on.
-		return stop("ccam: this session has no conversation yet, so there is nothing to carry on. To work as another account, type /exit and run `ccam " +
+		return stop("ccam: this session has no conversation yet, so there is nothing to continue. To work as another account, type /exit and run `ccam " +
 			cmp.Or(target, "next") + "`.")
 	}
 	t := handoff.Ticket{Account: account, SessionID: in.SessionID, Transcript: in.Transcript, Cwd: in.folder(),
 		At: time.Now(), Reason: handoff.Switch, Target: target, Effort: cmp.Or(in.Effort.Level, os.Getenv("CLAUDE_EFFORT"))}
-	exit := "ccam: type /exit, then run `ccam next --continue` to carry this conversation on as " + cmp.Or(target, "the next account") + "."
+	exit := "ccam: type /exit, then run `ccam next --continue` to continue this conversation on " + cmp.Or(target, "the next account") + "."
 	// Without a target the relay goes on with `ccam next --continue --auto`.
 	who := cmp.Or(target, "the account with the most room")
-	carry := "ccam: type /exit; ccam then carries this conversation on as " + who + "."
+	carry := "ccam: type /exit; ccam then continues this conversation on " + who + "."
 	save := func(msg string) error {
 		if err := handoff.Save(e.paths.State, t); err != nil {
 			return stop("ccam: " + err.Error())

@@ -171,7 +171,7 @@ func (pl *Plan) hop(t *handoff.Ticket) error {
 		}
 		fmt.Fprintln(os.Stderr, line)
 	} else {
-		fmt.Fprintln(os.Stderr, "ccam: carrying the conversation on (ccam next --continue)")
+		fmt.Fprintln(os.Stderr, "ccam: continuing the conversation (ccam next --continue)")
 	}
 	return execSelf(self, append(append(argv, "--"), args...))
 }
@@ -226,10 +226,10 @@ func hopOK(h hop) (ok bool, why string) {
 		since = t.LimitAt
 	}
 	if h.interrupt.After(since) {
-		return false, "ccam: switch cancelled. `ccam next --continue` carries the conversation on later."
+		return false, "ccam: switch cancelled. Run `ccam next --continue` later to continue the conversation."
 	}
 	if t.Stopped && h.code == 143 || !t.Stopped && h.code == 0 {
 		return true, ""
 	}
-	return false, "ccam: Claude Code closed before ccam moved the conversation, so it stays on " + t.Account + ". `ccam next --continue` carries it on."
+	return false, "ccam: Claude Code closed before ccam moved the conversation, so it stays on " + t.Account + ". `ccam next --continue` continues it on another account."
 }

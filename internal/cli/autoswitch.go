@@ -219,7 +219,7 @@ func poolName(id *config.Identity) string {
 
 // note is the notification when tg has no account: the accounts with room
 // that never trusted the folder or have usage credits on, or that nobody
-// has room now and who frees first; "" when nothing is known of the others
+// has room now and who frees up first; "" when nothing is known of the others
 // (the usual notification). from, logged in as id, hit its limit, which
 // resets at reset.
 func (tg target) note(hit, from string, id *config.Identity, reset, now time.Time) string {
@@ -243,7 +243,7 @@ func (tg target) note(hit, from string, id *config.Identity, reset, now time.Tim
 	msg := hit + ". None of your other " + poolName(id) + " has room now"
 	first, at := tg.first != "" && tg.freeAt.Before(reset), handoff.FormatReset(tg.freeAt, now)
 	if first {
-		msg += "; " + tg.first + " frees first, at " + at
+		msg += "; " + tg.first + " frees up first, at " + at
 	}
 	// Claude Code waits for a reset within a day; beyond, it shows a menu.
 	waits := reset.Sub(now) <= 24*time.Hour

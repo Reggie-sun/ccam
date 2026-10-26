@@ -109,7 +109,7 @@ func waitTurn(lock string, deadline time.Time) (*Flock, error) {
 		if !errors.Is(err, ErrBusy) || time.Now().After(deadline) {
 			f.Close()
 			if errors.Is(err, ErrBusy) {
-				return nil, fmt.Errorf("could not lock %s (another ccam is writing the file): %w", lock, ErrBusy)
+				return nil, fmt.Errorf("could not lock %s (another ccam process is writing the file): %w", lock, ErrBusy)
 			}
 			return nil, err
 		}

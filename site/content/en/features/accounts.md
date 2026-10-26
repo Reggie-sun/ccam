@@ -131,7 +131,7 @@ ccam does not hand your terminal to Claude Code (`runLogin`). It connects Claude
 ccam prints this before the login starts:
 
 ```text
-On a remote machine? If the browser ends on a http://localhost:…/callback page that does not load, paste that address here.
+On a remote machine? If your browser ends up on an http://localhost:…/callback page that does not load, paste that address here.
 ```
 
 On success it prints `→ Passed the sign-in to Claude Code on this machine.`
@@ -183,8 +183,8 @@ Imported accounts are in no group until you add them to one (`ccam group join <g
 ## Safety and edge cases
 
 - `ccam rename` and `ccam remove` refuse while the account is running (`refuseRunning`), with ``work is running; quit its Claude Code sessions first (`ccam agents` lists them, `ccam work stop <id>` ends a background one)``, because the session keeps writing into the folder. The check covers Claude Code however it was started: through ccam, plain `claude`, an IDE, background sessions and their daemon.
-- `ccam rename`, `ccam remove` and `ccam logout` refuse while another ccam process renews or changes that login: ``another ccam is using the login of work right now (a refresh, rename, remove or logout); try again in a moment``.
-- While a group change is in progress in another ccam process, `ccam rename` and `ccam remove` refuse with `another ccam is changing the groups right now; try again when it is done`; after one stopped halfway, with ``the last change of groups stopped halfway; finish it with `ccam doctor --fix` first``.
+- `ccam rename`, `ccam remove` and `ccam logout` refuse while another ccam process renews or changes that login: ``another ccam process is using the login of work right now (a refresh, rename, remove or logout); try again in a moment``.
+- While a group change is in progress in another ccam process, `ccam rename` and `ccam remove` refuse with `another ccam process is changing the groups right now; try again when it is done`; after one stopped halfway, with ``the last group change stopped halfway; finish it with `ccam doctor --fix` first``.
 - `ccam remove` on an imported account keeps the folder and its login, for plain `claude`. If the account is in groups, it first leaves them as `ccam group leave` does: every shared item becomes a copy of the group's in the folder, and the group's MCP servers go into its `.claude.json`. Then it is unregistered: `✓ main unregistered (folder ... left in place; it left its groups with a copy of what they share)`. The backups of its `.claude.json` that ccam created move into `<folder>/.ccam-backup/mcp-<time>`; if they cannot be moved, they stay in `~/.local/state/ccam/mcp/<name>/backups` and the message says so. Your `~/.claude` is not moved to the trash.
 - Two accounts cannot have the same folder: `config.toml` naming one folder twice fails to load.
 - `ccam add` refuses a name whose folder already exists in `profiles/`, and points to `ccam import`. On macOS it also stops when the Keychain still holds a login or MCP sign-ins for the new folder's path, left by an older version of ccam, and names the `security delete-generic-password` command that removes them. If `config.toml` cannot be saved, the new folder is removed again.

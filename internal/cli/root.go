@@ -153,7 +153,7 @@ func canSave(e *env, cfg *config.Config) error {
 func holdRefresh(e *env, prof *config.Profile) (func(), error) {
 	l, err := lock.TryFlock(usage.RefreshLock(launcher.SessionDir(e.paths, prof.Name)))
 	if errors.Is(err, lock.ErrBusy) {
-		return nil, fmt.Errorf("another ccam is using the login of %s right now (a refresh, rename, remove or logout); try again in a moment", prof.Name)
+		return nil, fmt.Errorf("another ccam process is using the login of %s right now (a refresh, rename, remove or logout); try again in a moment", prof.Name)
 	}
 	if err != nil {
 		return nil, err

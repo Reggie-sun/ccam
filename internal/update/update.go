@@ -35,9 +35,9 @@ const (
 	// it with anything laid out the same way (<url>/latest redirects to
 	// <url>/tag/<tag>, assets live at <url>/download/<tag>/<asset>).
 	DefaultReleases = "https://github.com/jhyunwoo/ccam/releases"
-	InstallScript   = "curl -fsSL https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.sh | sh"
+	InstallScript   = "curl -fsSL https://ccam.dev/install.sh | sh"
 	// InstallScriptWindows is the PowerShell install command.
-	InstallScriptWindows = "irm https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.ps1 | iex"
+	InstallScriptWindows = "irm https://ccam.dev/install.ps1 | iex"
 
 	lookupTimeout   = 10 * time.Second
 	downloadTimeout = 2 * time.Minute

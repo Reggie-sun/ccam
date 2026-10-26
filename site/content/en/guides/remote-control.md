@@ -33,7 +33,7 @@ Two kinds of options meet here: ccam's own, which go before the account name or 
 | `mcp_strategy = "sync"` at the top of `~/.config/ccam/config.toml` | Copy the group's servers into `.claude.json` before every launch, Remote Control or not, so nothing is ever asked | `"flag"` |
 | `ccam group leave <group> work` | Take the account out of the group that shares MCP with it. The group's servers are copied into its `.claude.json` as its own, so Remote Control has them and nothing is asked; with `--fresh` it starts with only the account's own servers | in `default` |
 
-When the account shares MCP servers and its `.claude.json` lacks the group's current list, or a copied server is gone from it, ccam asks `Copy them into .claude.json (a backup is kept; servers of the account's own stay)? [y/N]`. `y` copies them; `N` or Enter starts without them.
+When the account shares MCP servers and its `.claude.json` lacks the group's current list, or a copied server is gone from it, ccam asks `Copy them into .claude.json (a backup is kept; the account's own servers stay)? [y/N]`. `y` copies them; `N` or Enter starts without them.
 
 ### Remote Control options
 
@@ -66,7 +66,7 @@ The launch takes the usual path ([Launching Claude Code](/features/launch)) with
    ```console
    $ ccam work rc
    ccam: Remote Control sessions only get MCP servers stored in account work's .claude.json, not the shared MCP servers (ctx, fs).
-   Copy them into .claude.json (a backup is kept; servers of the account's own stay)? [y/N]
+   Copy them into .claude.json (a backup is kept; the account's own servers stay)? [y/N]
    ```
 
 5. On `y` it saves a backup of `.claude.json`, takes Claude Code's own lock, adds the group's servers to `mcpServers` and keeps the account's other servers; if the account has its own server with the same name as a group server, ccam keeps the account's server and says so. On `N`, without a terminal, or while the account is running, it changes nothing and says so:
@@ -136,7 +136,7 @@ Your ccam is older than 0.6.0 and passes `--mcp-config` to Remote Control. Run `
 
 ### A server of my own is used instead of the group's
 
-If the account has its own server with the same name as a group server, the copy leaves it in place and says so: `account work has its own MCP servers fs, so group default's of those names are not copied there`. To use the group's, remove the account's (`claude mcp remove -s user <name>`); to give your version to every account, move it into the group with `ccam mcp import work <server> --force`. Backups of `.claude.json` are in `~/.local/state/ccam/mcp/work/backups/`, which keeps the newest five.
+If the account has its own server with the same name as a group server, the copy leaves it in place and says so: `account work has its own MCP servers fs, so group default's servers with those names are not copied there`. To use the group's, remove the account's (`claude mcp remove -s user <name>`); to give your version to every account, move it into the group with `ccam mcp import work <server> --force`. Backups of `.claude.json` are in `~/.local/state/ccam/mcp/work/backups/`, which keeps the newest five.
 
 ### I want to remove the copied servers
 

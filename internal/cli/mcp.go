@@ -328,7 +328,7 @@ func refreshCopies(e *env, cfg *config.Config, g, except string) {
 			e.printf("✓ Updated the copy in account %s's .claude.json (made for Remote Control)\n", prof.Name)
 		}
 		if len(res.Own) > 0 {
-			e.printf("Note: account %s has its own %s, so the group's of those names are not copied there\n", prof.Name, strings.Join(res.Own, ", "))
+			e.printf("Note: account %s has its own %s, so the group's servers with those names are not copied there\n", prof.Name, strings.Join(res.Own, ", "))
 		}
 	}
 }

@@ -95,9 +95,9 @@ The `✓ Updated` line appears only when a copy changed. A copy that an older ve
 A server added inside a session with `claude mcp add` lands in that account's `.claude.json` only. Plain `claude mcp add` uses the local scope: the server loads for that one account in that one folder (`-s user` makes it available to the account in every folder). ccam cannot see this when it happens, because Claude Code has already replaced the ccam process, so it checks at the next launch. The `seen` file holds the modification time of `.claude.json` and the server names already reported. When the time differs, ccam compares the names with the group and prints a hint for each new server once, without waiting for input, with both strategies:
 
 ```console
-ccam: MCP servers only account work has: pg
+ccam: MCP servers that only account work has: pg
       To share them with other accounts: ccam mcp import work pg
-ccam: MCP servers account work has for one folder only (claude mcp add without -s user): notes (/home/me/code/app)
+ccam: MCP servers that account work has for one folder only (claude mcp add without -s user): notes (/home/me/code/app)
       To share them with other accounts, in every folder: ccam mcp import work notes
 ```
 
@@ -110,7 +110,7 @@ With `mcp_strategy = "sync"`, the servers appear in `claude mcp list` and `/mcp`
 1. ccam compares the modification time of the group's `mcp.json` with `sync-stamp`, and the account's `.claude.json` with what it saw last (`mcp.Sync`). If neither changed, nothing else happens. Otherwise it also checks that every group server is still in `.claude.json`, and puts back a copy that is gone (`put back group default's MCP servers that were gone from account work's .claude.json: ctx`).
 2. It takes Claude Code's own lock, the folder `.claude.json.lock` next to the file, created with `mkdir`. It waits up to 2 seconds and treats a lock older than 10 seconds as stale, as Claude Code's lock library does.
 3. It saves the current `.claude.json` to `backups/` in the state folder and keeps the newest 5.
-4. It sets every group server in `mcpServers`, removes servers it wrote before that the group no longer has, and writes the file atomically with its original mode, only when something changed. It changes or removes only the copies it wrote that nobody changed since. If the account has its own server with the same name as a group server, ccam keeps the account's server and says so once: `account work has its own MCP servers fs, so group default's of those names are not copied there`.
+4. It sets every group server in `mcpServers`, removes servers it wrote before that the group no longer has, and writes the file atomically with its original mode, only when something changed. It changes or removes only the copies it wrote that nobody changed since. If the account has its own server with the same name as a group server, ccam keeps the account's server and says so once: `account work has its own MCP servers fs, so group default's servers with those names are not copied there`.
 5. It records the new stamp with a hash of each copy, and Claude Code starts without `--mcp-config`.
 
 Sync is skipped, with `ccam: account work is already running, skipping MCP sync`, when a session of the account is running, however Claude Code was started, because Claude Code rewrites `.claude.json` while it runs. A failed sync prints `ccam: MCP sync failed (launching anyway): …` and launches anyway.

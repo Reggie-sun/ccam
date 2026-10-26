@@ -52,7 +52,7 @@ ccam add gw --api --base-url https://llm.example.com --auth bearer --key-from en
 
 `ccam add --api` adds an account that uses an API key instead of a Claude login; ccam reads the key at each launch and never stores it. See [API key accounts](/features/api).
 
-`ccam rename`, `ccam remove` and the `ccam group` commands refuse to change an account while Claude Code is running as that account, however it was started (including background sessions). Quit the session first. They also refuse while a group change is unfinished: ``the last change of groups stopped halfway; finish it with `ccam doctor --fix` first``.
+`ccam rename`, `ccam remove` and the `ccam group` commands refuse to change an account while Claude Code is running as that account, however it was started (including background sessions). Quit the session first. They also refuse while a group change is unfinished: ``the last group change stopped halfway; finish it with `ccam doctor --fix` first``.
 
 `ccam list --json` prints every account with its slot, shortcut, email and folder. Its `groups` array lists the account's groups, and its `share` object maps each item (`mcp`, `settings`, `memory`, `extensions`, `history`) to the group it comes from, or `local`.
 

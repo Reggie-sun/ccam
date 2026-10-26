@@ -108,14 +108,14 @@ func TestNoRoomNote(t *testing.T) {
 		reset time.Duration
 		want  string
 	}{
-		{"personal plans", full, personal, hit, soon, hit + ". None of your other personal plans has room now; p2 frees first, at " + at(time.Hour) +
+		{"personal plans", full, personal, hit, soon, hit + ". None of your other personal plans has room now; p2 frees up first, at " + at(time.Hour) +
 			". Claude Code waits for p1 here; /ccam:switch p2 after " + at(time.Hour) + " moves it sooner."},
 		{"seats", full, &config.Identity{OrgUUID: "acme", OrgName: "Acme", OrgType: "claude_team"}, hit, soon,
-			hit + ". None of your other accounts in Acme has room now; p2 frees first, at " + at(time.Hour) + ". Claude Code waits for p1 here; /ccam:switch p2 after " + at(time.Hour) + " moves it sooner."},
+			hit + ". None of your other accounts in Acme has room now; p2 frees up first, at " + at(time.Hour) + ". Claude Code waits for p1 here; /ccam:switch p2 after " + at(time.Hour) + " moves it sooner."},
 		{"seats of an unnamed organization", full, &config.Identity{OrgUUID: "big", OrgType: "claude_enterprise"}, hit, soon,
-			hit + ". None of your other accounts in this organization has room now; p2 frees first, at " + at(time.Hour) + ". Claude Code waits for p1 here; /ccam:switch p2 after " + at(time.Hour) + " moves it sooner."},
+			hit + ". None of your other accounts in this organization has room now; p2 frees up first, at " + at(time.Hour) + ". Claude Code waits for p1 here; /ccam:switch p2 after " + at(time.Hour) + " moves it sooner."},
 		{"a reset more than a day away", full, personal, weekly, later,
-			weekly + ". None of your other personal plans has room now; p2 frees first, at " + at(time.Hour) + ". /ccam:switch p2 after " + at(time.Hour) + " moves it there."},
+			weekly + ". None of your other personal plans has room now; p2 frees up first, at " + at(time.Hour) + ". /ccam:switch p2 after " + at(time.Hour) + " moves it there."},
 		{"nobody frees first", target{full: true, first: "p2", freeAt: now.Add(4 * time.Hour)}, personal, hit, soon,
 			hit + ". None of your other personal plans has room now. Claude Code waits for p1 here."},
 		{"nobody frees first, a day away", target{full: true, first: "p2", freeAt: now.Add(80 * time.Hour)}, personal, weekly, later,
@@ -468,7 +468,7 @@ func TestAutoSwitchHook(t *testing.T) {
 		return n
 	}
 	hit := "ccam: personal hit its 5-hour limit (resets " + handoff.FormatReset(reset, time.Now()) + ")"
-	usual := hit + ". `ccam next --continue` carries on as another account."
+	usual := hit + ". `ccam next --continue` continues the conversation on another account."
 	// stays checks that the hook left the session with the notification want.
 	stays := func(what, got, want string) {
 		t.Helper()
@@ -523,7 +523,7 @@ func TestAutoSwitchHook(t *testing.T) {
 	fresh(reset)
 	logInTrusting(t, c.p.ProfileDir("personal"), "u1", "acme", "claude_team", cwd)
 	logInTrusting(t, c.p.ProfileDir("work"), "u2", "other", "claude_team", cwd)
-	stays("another organization", hook(msg), hit+". You have no other accounts in Org acme to carry it on as.")
+	stays("another organization", hook(msg), hit+". You have no other accounts in Org acme, so ccam cannot move this conversation.")
 	fresh(reset)
 	cfg := c.cfg()
 	cfg.CrossOrg = true
@@ -749,7 +749,7 @@ func TestHookSkipsWhenClaudeGone(t *testing.T) {
 	msg := "You've hit your session limit · resets 3:30am (Asia/Seoul)"
 	out, _, _ := c.run(hookJSON(t, map[string]string{"error": "rate_limit", "last_assistant_message": msg, "session_id": "s1", "transcript_path": conv, "cwd": cwd}), "hook", "stop-failure")
 	n, ok := handoff.LoadFile(c.p.State, handoff.Path(c.p.State, "personal", "s1"))
-	if !strings.Contains(out, "`ccam next --continue` carries on as another account.") || len(calls) != 0 || !ok || n.Chosen != "" || n.Stopped {
+	if !strings.Contains(out, "`ccam next --continue` continues the conversation on another account.") || len(calls) != 0 || !ok || n.Chosen != "" || n.Stopped {
 		t.Fatalf("%q %v %+v", out, calls, n)
 	}
 }

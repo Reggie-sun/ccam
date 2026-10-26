@@ -28,7 +28,7 @@ var (
 
 // usual ends the notification of a session that is left to be carried on
 // by hand.
-const usual = "`ccam next --continue` carries on as another account."
+const usual = "`ccam next --continue` continues the conversation on another account."
 
 // autoHarness adds accts (default: personalMax and workMax) logged in with
 // their plans, turns auto_switch on (and only it: auto_switch turns the
@@ -226,9 +226,9 @@ func TestAutoSwitchOtherOrg(t *testing.T) {
 		crossOrg bool
 		says     string
 	}{
-		{"a seat to a seat of another organization", seat, acct{"work", "dev@company.com", "claude_team", "org-2"}, false, "You have no other accounts in Acme to carry it on as."},
-		{"a seat to a personal plan", seat, workMax, false, "You have no other accounts in Acme to carry it on as."},
-		{"a personal plan to a seat", personalMax, acct{"work", "dev@company.com", "claude_team", "org-1"}, false, "You have no other personal plans to carry it on as."},
+		{"a seat to a seat of another organization", seat, acct{"work", "dev@company.com", "claude_team", "org-2"}, false, "You have no other accounts in Acme, so ccam cannot move this conversation."},
+		{"a seat to a personal plan", seat, workMax, false, "You have no other accounts in Acme, so ccam cannot move this conversation."},
+		{"a personal plan to a seat", personalMax, acct{"work", "dev@company.com", "claude_team", "org-1"}, false, "You have no other personal plans, so ccam cannot move this conversation."},
 		{"a personal plan to a seat, cross_org on", personalMax, acct{"work", "dev@company.com", "claude_team", "org-1"}, true, usual},
 	} {
 		t.Run(c.name, func(t *testing.T) {
@@ -248,7 +248,7 @@ func TestAutoSwitchNoRoom(t *testing.T) {
 	h, project := autoHarness(t)
 	conv := h.conversation("personal", project, "s1")
 	at := handoff.FormatReset(h.usageNow(map[string]int{"personal": 5, "work": 100}), time.Now())
-	h.leftAlone(project, conv, "None of your other personal plans has room now; work frees first, at "+at+
+	h.leftAlone(project, conv, "None of your other personal plans has room now; work frees up first, at "+at+
 		". Claude Code waits for personal here; /ccam:switch work after "+at+" moves it sooner.", "FAKE_LIMIT_RESET=3h")
 }
 

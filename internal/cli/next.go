@@ -32,8 +32,8 @@ func nextCmd(e *env) *cobra.Command {
 		Use:   "next [--auto] [--continue [--brief]] [-- claude args]",
 		Short: "Run the next account (--continue: pick up the last conversation)",
 		Long: "Opens Claude Code as the account numbered after the last one used.\n" +
-			"--continue carries on this folder's last conversation: with claude --resume <id> when the account\n" +
-			"shares its history, else Claude Code copies it over (--resume <file> --fork-session).\n" +
+			"--continue resumes this folder's last conversation: with claude --resume <id> when the account\n" +
+			"shares its history, otherwise Claude Code copies it over (--resume <file> --fork-session).\n" +
 			"--brief, with --continue, starts a new conversation instead, which first reads a summary ccam\n" +
 			"writes from the saved one without a model: your first and last requests, the summary Claude Code\n" +
 			"wrote when it last compacted it, Claude's last reply, the todo list, the files Claude changed and\n" +
@@ -160,7 +160,7 @@ func nextCmd(e *env) *cobra.Command {
 		},
 	}
 	cmd.Flags().BoolVarP(&cont, "continue", "c", false, "continue this folder's last conversation on the next account")
-	cmd.Flags().StringVar(&noteFile, "note", "", "with --continue: carry on the session that left this note, as it says (the relay uses it)")
+	cmd.Flags().StringVar(&noteFile, "note", "", "with --continue: continue the session that left this note (used by the relay)")
 	_ = cmd.Flags().MarkHidden("note")
 	cmd.Flags().BoolVar(&brief, "brief", false, "with --continue: start a new conversation that reads ccam's summary of the last one instead of resuming it")
 	cmd.Flags().BoolVar(&auto, "auto", false, "pick the account by usage (most room)")
@@ -211,7 +211,7 @@ func signInNote(e *env, from, to *config.Profile) {
 		}
 	}
 	if len(need) > 0 {
-		fmt.Fprintf(e.stderr, "  %s is not signed in to MCP servers %s is: %s (sign in with /mcp there; sign-ins are not shared)\n", to.Name, from.Name, strings.Join(need, ", "))
+		fmt.Fprintf(e.stderr, "  %s is not signed in to MCP servers that %s is signed in to: %s (sign in with /mcp there; sign-ins are not shared)\n", to.Name, from.Name, strings.Join(need, ", "))
 	}
 }
 

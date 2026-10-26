@@ -85,7 +85,7 @@ func TestMCPOwnServersAndLeavingTheGroup(t *testing.T) {
 	}
 	// The hint names X and Y once.
 	r := h.runIn(project, "", nil, "ccam", "personal")
-	for _, want := range []string{"MCP servers only account personal has: X", "for one folder only (claude mcp add without -s user): Y (" + key + ")", "ccam mcp import personal Y"} {
+	for _, want := range []string{"MCP servers that only account personal has: X", "for one folder only (claude mcp add without -s user): Y (" + key + ")", "ccam mcp import personal Y"} {
 		if !strings.Contains(r.stderr, want) {
 			t.Errorf("hint lacks %q:\n%s", want, r.stderr)
 		}
@@ -143,7 +143,7 @@ func TestMCPOwnServersAndLeavingTheGroup(t *testing.T) {
 	setStrategy(t, h, "sync")
 	h.ok("ccam", "mcp", "add-json", "X", `{"type":"stdio","command":"x-group"}`)
 	r = h.run("", nil, "ccam", "personal", "-c")
-	if !strings.Contains(r.stderr, "account personal has its own MCP servers X, so group default's of those names are not copied there") {
+	if !strings.Contains(r.stderr, "account personal has its own MCP servers X, so group default's servers with those names are not copied there") {
 		t.Errorf("sync: %s", r.stderr)
 	}
 	if user, _, _ := claudeJSON(t, a, key); !reflect.DeepEqual(user, map[string]string{"X": "x-own", "Z": "z-mcp"}) {
@@ -275,10 +275,10 @@ func TestStoppedGroupChangeIsFinishedByDoctor(t *testing.T) {
 	if r := h.run("", nil, "ccam", "group", "join", "two", "personal", "--yes"); r.code == 0 || !strings.Contains(r.stderr, "finish it with `ccam doctor --fix` first") {
 		t.Fatalf("a second change: %+v", r)
 	}
-	if out := h.run("", nil, "ccam", "doctor").stdout; !strings.Contains(out, "the last change of groups stopped halfway") {
+	if out := h.run("", nil, "ccam", "doctor").stdout; !strings.Contains(out, "the last group change stopped halfway") {
 		t.Fatalf("doctor:\n%s", out)
 	}
-	if out := h.run("", nil, "ccam", "doctor", "--fix").stdout; !strings.Contains(out, "finished the last change of groups (work)") {
+	if out := h.run("", nil, "ccam", "doctor", "--fix").stdout; !strings.Contains(out, "finished the last group change (work)") {
 		t.Fatalf("doctor --fix:\n%s", out)
 	}
 	h.ok("ccam", "work", "-c")
@@ -348,7 +348,7 @@ func TestMCPSignInGaps(t *testing.T) {
 	os.MkdirAll(filepath.Dir(conv), 0o700)
 	os.WriteFile(conv, []byte(`{"type":"user","message":{"role":"user","content":"hi"},"timestamp":"2026-10-23T00:00:00Z"}`+"\n"), 0o600)
 	r := h.runIn(project, "", nil, "ccam", "next", "--continue", "--", "-p", "go on")
-	if r.code != 0 || !strings.Contains(r.stderr, "work is not signed in to MCP servers personal is: remote (sign in with /mcp there") {
+	if r.code != 0 || !strings.Contains(r.stderr, "work is not signed in to MCP servers that personal is signed in to: remote (sign in with /mcp there") {
 		t.Fatalf("next --continue: %+v", r)
 	}
 	if after, _ := os.ReadFile(filepath.Join(h.profileDir("work"), ".credentials.json")); string(after) != string(before) {

@@ -110,7 +110,7 @@ func TestSwitchHook(t *testing.T) {
 		t.Fatalf("a note for no conversation: %v", entries)
 	}
 	out, _, _ := c.run(in("3"), "hook", "switch")
-	if r := stopped(out); !strings.Contains(r, "/exit") || !strings.Contains(r, "as side") {
+	if r := stopped(out); !strings.Contains(r, "/exit") || !strings.Contains(r, "on side") {
 		t.Fatal(r)
 	}
 	tk, ok := handoff.ForFolder(c.p.State, cwd, time.Now())
@@ -170,7 +170,7 @@ func TestSwitchHookUnderARelay(t *testing.T) {
 	says, ends, most := "moving this conversation to side", []int{pid}, "moving this conversation to the account with the most room"
 	if windows {
 		// Nothing is ended there: the relay carries on after /exit.
-		says, ends, most = "type /exit; ccam then carries this conversation on as side.", nil, "type /exit; ccam then carries this conversation on as the account with the most room."
+		says, ends, most = "type /exit; ccam then continues this conversation on side.", nil, "type /exit; ccam then continues this conversation on the account with the most room."
 	}
 	if r, tk := run(me); !strings.Contains(r, says) || !reflect.DeepEqual(ended, ends) ||
 		tk.Relay != me || tk.Child != pid || tk.Stopped == windows || tk.Effort != "high" {
@@ -190,7 +190,7 @@ func TestSwitchHookUnderARelay(t *testing.T) {
 	t.Setenv("CLAUDE_CODE_SESSION_ATTENDED", "")
 	// Claude Code before 2.1.214 has no CLAUDE_PID: the relay carries on after /exit.
 	t.Setenv("CLAUDE_PID", "")
-	if r, tk := run(me); !strings.Contains(r, "type /exit; ccam then carries") || len(ended) != 0 || tk.Relay != me || tk.Child != 0 || tk.Stopped {
+	if r, tk := run(me); !strings.Contains(r, "type /exit; ccam then continues") || len(ended) != 0 || tk.Relay != me || tk.Child != 0 || tk.Stopped {
 		t.Fatalf("%q %v %+v", r, ended, tk)
 	}
 	// With no account named, the relay takes the one with the most room.
@@ -350,13 +350,13 @@ func TestLimitHookSaysWhenNoOtherAccountFits(t *testing.T) {
 		want               string
 	}{
 		{"a personal plan among seats", [2]string{"p1", "claude_max"}, [2]string{"acme", "claude_team"}, [2]string{"acme", "claude_team"}, false,
-			hit + ". You have no other personal plans to carry it on as."},
+			hit + ". You have no other personal plans, so ccam cannot move this conversation."},
 		{"a seat alone in its organization", [2]string{"acme", "claude_team"}, [2]string{"other", "claude_team"}, [2]string{"s1", "claude_pro"}, false,
-			hit + ". You have no other accounts in Org acme to carry it on as."},
+			hit + ". You have no other accounts in Org acme, so ccam cannot move this conversation."},
 		{"cross_org", [2]string{"p1", "claude_max"}, [2]string{"acme", "claude_team"}, [2]string{"acme", "claude_team"}, true,
-			hit + ". `ccam next --continue` carries on as another account."},
+			hit + ". `ccam next --continue` continues the conversation on another account."},
 		{"another seat, not logged in", [2]string{"acme", "claude_team"}, [2]string{"other", "claude_team"}, [2]string{"acme", "claude_team"}, false,
-			hit + ". `ccam next --continue` carries on as another account."},
+			hit + ". `ccam next --continue` continues the conversation on another account."},
 	} {
 		cfg := c.cfg()
 		cfg.CrossOrg = k.crossOrg

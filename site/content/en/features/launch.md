@@ -145,7 +145,7 @@ With `mcp_strategy = "sync"` in `config.toml`, ccam writes the servers into the 
 
    ```console
    ccam: Remote Control sessions only get MCP servers stored in account work's .claude.json, not the shared MCP servers (ctx, fs).
-   Copy them into .claude.json (a backup is kept; servers of the account's own stay)? [y/N]
+   Copy them into .claude.json (a backup is kept; the account's own servers stay)? [y/N]
    ```
 
 4. On `y`, ccam copies them the way the `sync` strategy does (`mcp.Sync`): under Claude Code's lock, after a backup, keeping the account's own servers. On `N`, or without a terminal, Remote Control starts without them, and ccam points to `mcp_strategy = "sync"`, which copies them before every launch.

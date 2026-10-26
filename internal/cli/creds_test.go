@@ -122,7 +122,7 @@ func TestFolderChangesWaitForARefresh(t *testing.T) {
 		t.Fatal(err)
 	}
 	for _, args := range [][]string{{"rename", "work", "job"}, {"remove", "work", "--yes"}, {"logout", "work", "--yes"}} {
-		if _, errOut, code := c.run("", args...); code == 0 || !strings.Contains(errOut, "another ccam is using the login of work right now") {
+		if _, errOut, code := c.run("", args...); code == 0 || !strings.Contains(errOut, "another ccam process is using the login of work right now") {
 			t.Errorf("%v: %d %s", args, code, errOut)
 		}
 	}

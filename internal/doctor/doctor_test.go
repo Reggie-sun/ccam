@@ -613,7 +613,7 @@ func TestFixWaitsForAStoppedChangeOfGroups(t *testing.T) {
 		if f.Area == "Share links" && f.Fixed && (f.Profile == "a" || f.Profile == "b") {
 			t.Errorf("%s repaired before the change of groups: %s", f.Profile, f.Msg)
 		}
-		waits = waits || f.Profile == "a" && strings.Contains(f.Msg, "change of groups is finished")
+		waits = waits || f.Profile == "a" && strings.Contains(f.Msg, "group change is finished")
 	}
 	if !waits {
 		t.Error("no finding says a waits for the change of groups")
@@ -867,7 +867,7 @@ func TestFixLeavesAChangeInProgressAlone(t *testing.T) {
 		if (f.Area == "Share links" || f.Area == "Groups") && f.Fixed {
 			t.Errorf("repaired during the change: %s", f.Msg)
 		}
-		said = said || strings.Contains(f.Msg, "being carried out right now")
+		said = said || strings.Contains(f.Msg, "in progress right now")
 	}
 	if !said {
 		t.Error("no finding says a change is being carried out")
@@ -1018,7 +1018,7 @@ func TestAutoSwitchChecks(t *testing.T) {
 		fmt.Sprintf(`%d : Claude Enterprise seats (corp): auto_switch moves a session between seats of one organization. Anthropic's help center says "Each Enterprise seat is assigned to one named individual, and only that person may use it." and "Users can't use another user's account to get around their own spend limits or usage limits." Whether you use it there is your call: https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0`, Info),
 	}
 	old := fmt.Sprintf("%d : auto_switch needs Claude Code 2.1.214 or later, which tells hooks its process (CLAUDE_PID); this one is 2.1.200, so no session is moved. Update it with `claude update`", Warn)
-	windows := []string{fmt.Sprintf("%d : auto_switch is ignored on Windows; with relay = true, /ccam:switch and then /exit carry a conversation on.", Info)}
+	windows := []string{fmt.Sprintf("%d : auto_switch is ignored on Windows; with relay = true, /ccam:switch followed by /exit still moves a conversation to another account.", Info)}
 	for _, c := range []struct {
 		claude, goos string
 		want         []string

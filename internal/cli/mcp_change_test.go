@@ -55,7 +55,7 @@ func TestNoGroupChangeOverAStoppedOne(t *testing.T) {
 		t.Fatalf("remove: %d %s", code, errOut)
 	}
 	out, _, _ := c.run("", "doctor", "--fix")
-	if !strings.Contains(out, "finished the last change of groups (side)") {
+	if !strings.Contains(out, "finished the last group change (side)") {
 		t.Fatalf("doctor --fix:\n%s", out)
 	}
 	if g, _ := c.cfg().FindGroup("team"); !slices.Contains(g.Members, "side") {
@@ -84,7 +84,7 @@ func TestNoGroupChangeWhileOneRuns(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer ch.Abort()
-	const want = "another ccam is changing the groups right now; try again when it is done"
+	const want = "another ccam process is changing the groups right now; try again when it is done"
 	b := backend{e: e}
 	if _, err := b.PlanGroups(func(cfg *config.Config) error { return cfg.SetGroupItems("team", []string{"history", "memory"}) }); err == nil || err.Error() != want {
 		t.Errorf("dashboard: %v", err)
@@ -94,7 +94,7 @@ func TestNoGroupChangeWhileOneRuns(t *testing.T) {
 			t.Errorf("%v: %d %s", args, code, errOut)
 		}
 	}
-	if out, _, _ := c.run("", "doctor"); !strings.Contains(out, "being carried out right now") || strings.Contains(out, "stopped halfway") {
+	if out, _, _ := c.run("", "doctor"); !strings.Contains(out, "in progress right now") || strings.Contains(out, "stopped halfway") {
 		t.Errorf("doctor:\n%s", out)
 	}
 }
