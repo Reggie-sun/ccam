@@ -30,7 +30,7 @@ How this compares with claude-swap, CCS, clauth, CAAM, cux and others: [ccam.dev
 ## Install
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.sh | sh
+curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
 Linux (Ubuntu, Debian, Fedora, Arch, Alpine, …) and macOS are supported. This installs `~/.local/bin/ccam` after verifying the release checksum.
@@ -38,7 +38,7 @@ Linux (Ubuntu, Debian, Fedora, Arch, Alpine, …) and macOS are supported. This 
 On Windows 10 or 11, in PowerShell:
 
 ```powershell
-irm https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.ps1 | iex
+irm https://ccam.dev/install.ps1 | iex
 ```
 
 This installs `%USERPROFILE%\.local\bin\ccam.exe` after verifying the checksum and adds the folder to your user `PATH`. Shared folders work as they are; sharing single files (`settings.json`, `CLAUDE.md`, `history.jsonl`) needs Developer Mode, because Windows lets only that mode (or an administrator) link files, so without it the first `ccam add` creates group `default` with MCP servers and extensions only. Running the script again updates ccam, also while a session runs from the old binary, and renews shortcuts that are hard links. Alternatives: the `.deb` from [Releases](https://github.com/jhyunwoo/ccam/releases), or `go install github.com/jhyunwoo/ccam/cmd/ccam@latest` (Go 1.26+; a build of a release tag reports its version, so `ccam update` works for it). Claude Code (`claude`) must be installed.

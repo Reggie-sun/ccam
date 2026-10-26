@@ -1,13 +1,13 @@
 ---
 title: Dashibodi
 description: ccam kwenye terminal hufungua dashibodi ya skrini nzima ya akaunti, vikundi, kanuni za folda, viendelezi na ukaguzi; kila badiliko huonyesha mpango wake kwanza.
-updated: 2026-10-25
+updated: 2026-10-26
 order: 15
 translation: machine
-sourceHash: "28f216a4a04f"
+sourceHash: "4e763ca8aacf"
 ---
 
-`ccam` bila hoja hufungua dashibodi ya skrini nzima wakati ingizo na matokeo ya kawaida ni terminal; vinginevyo huchapisha `ccam list`. Dashibodi huonyesha kila akaunti pamoja na matumizi yake na vikundi vyake, na hufanya kile ambacho amri hufanya: kuanzisha, kuongeza, kuingia, kubadilisha vikundi, kuweka kanuni za folda, kuorodhesha vipindi vya chinichini, kukagua na kurekebisha. Kuanzisha, au kuunganishwa na kipindi cha chinichini, huifunga; kuongeza akaunti au kuingia huiacha kwa ajili ya terminal kisha hurudi.
+`ccam` bila hoja hufungua dashibodi ya skrini nzima wakati ingizo na matokeo ya kawaida ni terminal; vinginevyo huchapisha `ccam list`. Dashibodi huonyesha kila akaunti pamoja na matumizi yake na vikundi vyake, na hufanya kile ambacho amri hufanya: kuanzisha, kuongeza, kuingia, kubadilisha vikundi, kuweka kanuni za folda, kuorodhesha vipindi vya chinichini, kukagua na kurekebisha. Kuanzisha, au kuunganishwa na kipindi cha chinichini, huifunga; kuongeza akaunti au kuingia hukabidhi terminal kwa muda mfupi, kisha hurudi kwenye dashibodi.
 
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
@@ -23,17 +23,17 @@ sourceHash: "28f216a4a04f"
  enter to launch · n for most room · a to add · s for groups · ? for shortcuts
 ```
 
-Mstari ulio chini ya majina ya vichupo husema kwa sentensi moja kichupo cha sasa ni cha nini. Kwenye terminal pana zaidi, kichupo cha Accounts pia huonyesha barua pepe ya kila akaunti. Mwisho wa mstari wa vichupo husema kama [`auto_switch`](/features/next#auto-switch) imewashwa, kwenye kila kichupo (Linux na macOS; kwenye Windows hupuuzwa); ikiwa imewashwa, kichupo cha Health husema bado inahitaji nini: plugin ya ccam, ikiwa imewashwa, katika kila akaunti inayoingia kwa usajili wa Claude, na Claude Code 2.1.214 au baadaye.
+Mstari ulio chini ya majina ya vichupo husema kwa sentensi moja kichupo cha sasa ni cha nini. Kwenye terminal pana zaidi, kichupo cha Accounts pia huonyesha barua pepe ya kila akaunti. Kwenye kila kichupo, mwisho wa mstari wa vichupo huonyesha kama [`auto_switch`](/features/next#auto-switch) imewashwa (Linux na macOS; kwenye Windows hupuuzwa). Ikiwa imewashwa, kichupo cha Health huorodhesha bado inahitaji nini: Claude Code 2.1.214 au baadaye, na plugin ya ccam ikiwa imewashwa katika kila akaunti inayoingia kwa usajili wa Claude.
 
-Kila inapofunguliwa, dashibodi huuliza GitHub chinichini kama kuna toleo jipya zaidi la ccam; fremu ya kwanza kamwe haisubiri jibu hilo, na bila mtandao hakuna kinachoonyeshwa. Likiwepo, mstari ulio chini ya kichwa hulipendekeza:
+Kila inapofunguliwa, dashibodi huuliza GitHub chinichini kama kuna toleo jipya zaidi la ccam; fremu ya kwanza kamwe haisubiri jibu hilo, na ukiwa nje ya mtandao, hakuna kinachoonyeshwa. Likiwepo, mstari ulio chini ya kichwa hulipendekeza:
 
 ```console
  ● ccam 0.10.2 is available (you have 0.10.1) · press U to update
 ```
 
-`U` huuliza kwanza, kisha husasisha kama [`ccam update`](/features/update) inavyofanya: toleo hukaguliwa dhidi ya checksum zake za SHA-256 na huchukua nafasi ya ccam kwa hatua moja. Dashibodi uliyomo bado ni toleo la zamani, kwa hiyo toka kisha uanzishe `ccam` tena. Sasisho lisipoweza kufanywa hapa, kwa mfano kwa ccam iliyosakinishwa kutoka kifurushi cha `.deb`, dashibodi huonyesha ushauri ule ule kama `ccam update` na huendelea kulitoa toleo hilo.
+`U` huuliza kwanza, kisha husasisha kama [`ccam update`](/features/update) inavyofanya: toleo hukaguliwa dhidi ya checksum zake za SHA-256 na huchukua nafasi ya ccam kwa hatua moja. Dashibodi uliyomo bado ni toleo la zamani, kwa hiyo toka kisha uanzishe `ccam` tena. Sasisho lisipoweza kufanywa hapa, kwa mfano kwa nakala ya ccam iliyosakinishwa kutoka kifurushi cha `.deb`, dashibodi huonyesha ushauri ule ule kama `ccam update` na huendelea kulitoa toleo hilo.
 
-Fremu ya kwanza huchorwa kutoka `config.toml` pekee, kwa muda mfupi sana chini ya 100 ms; matumizi hujazwa kadiri kila akaunti inavyojibu. Kila kikomo kina upau wake: dirisha la saa 5, dirisha la wiki kwa model zote, na dirisha la wiki la Fable lenyewe; `-` inamaanisha akaunti haina dirisha hilo. Asilimia hugeuka manjano kuanzia 80% na nyekundu kwenye 100%, na thamani kutoka kwenye akiba (cache) baada ya utafutaji kushindwa huchorwa hafifu. Dirisha ambalo Claude Code iliripoti kuwa limejaa huonyesha 100% hadi liwekwe upya. Tokeni ya ufikiaji iliyoisha muda huonyesha `⚠ token expired` hafifu (Claude Code huifanya upya katika uanzishaji unaofuata), ilhali `⚠ login expired` inamaanisha akaunti inahitaji `ccam login`.
+Fremu ya kwanza huchorwa kutoka `config.toml` pekee, kwa muda mfupi sana chini ya 100 ms; matumizi hujazwa kadiri kila akaunti inavyojibu. Kila kikomo kina upau wake: dirisha la saa 5, dirisha la wiki kwa model zote, na dirisha la wiki la Fable lenyewe; `-` inamaanisha akaunti haina dirisha hilo. Asilimia hugeuka manjano kwenye 80% na nyekundu kwenye 100%. Utafutaji ukishindwa, thamani kutoka kwenye akiba (cache) huonyeshwa kwa rangi hafifu. Dirisha ambalo Claude Code iliripoti kuwa limejaa huonyesha 100% hadi liwekwe upya. Tokeni ya ufikiaji iliyoisha muda huonyesha `⚠ token expired` hafifu (Claude Code huifanya upya katika uanzishaji unaofuata), ilhali `⚠ login expired` inamaanisha akaunti inahitaji `ccam login`.
 
 ## Vichupo
 
@@ -43,10 +43,10 @@ Fremu ya kwanza huchorwa kutoka `config.toml` pekee, kwa muda mfupi sana chini y
 | Agents | kile ambacho [`ccam agents`](/features/agents) huorodhesha: vipindi vya chinichini na vipindi vilivyo wazi vya kila akaunti, pamoja na hali yake, folda na muda wa kuanza (hapa chini) | `enter` unganisha (kama `ccam attach`), `x` simamisha, `r` pakia upya |
 | Groups | kila kikundi, kile kinachoshiriki na akaunti zake, pamoja na akaunti zisizo katika kikundi chochote | `enter` hariri, `n` kipya, `e` badilisha jina, `x` ondoa |
 | Folders | kanuni za [`ccam folder`](/features/folder) na ile inayotumika hapa, hata ulipofika kwenye folda kupitia symbolic link (kanuni mpya huhifadhiwa kwa njia halisi, viungo vikiwa vimefuatwa) | `n` tumia akaunti hapa, `enter` badilisha, `x` ondoa |
-| Extensions | kile ambacho [`ccam ext`](/features/ext) huonyesha, kila kiendelezi mara moja pamoja na vikundi kinakotoka, `off:` akaunti ambazo plugin haijawashwa, seva ambazo akaunti inazo kwa folda hii pekee miongoni mwa seva zake yenyewe, `This folder's project`, na matatizo yasiyo ya akaunti yoyote | `r` pakia upya |
+| Extensions | kile ambacho [`ccam ext`](/features/ext) huonyesha, kila kiendelezi mara moja pamoja na vikundi kinakotoka, `off:` akaunti ambazo plugin haijawashwa, seva za akaunti yenyewe zinazotumika kwa folda hii pekee, `This folder's project`, na matatizo yasiyo ya akaunti yoyote | `r` pakia upya |
 | Health | kile ambacho [`ccam doctor`](/features/doctor) huripoti, kama kisanduku kimoja kwa kila akaunti (hapa chini) | `f` rekebisha kisanduku kilichochaguliwa, `F` rekebisha vyote (`doctor --fix`), `↑`/`↓` sogea kati ya visanduku |
 
-`←`/`→` au `Tab` hubadilisha vichupo, `?` huorodhesha vitufe vya kichupo cha sasa, `r` hutafuta matumizi tena bila akiba fupi na hupakia upya vichupo vya Agents, Extensions na Health, na `q` au `Esc` hufunga.
+`←`/`→` au `Tab` hubadilisha vichupo, `?` huorodhesha vitufe vya kichupo cha sasa, `r` huonyesha upya matumizi, ikipita akiba fupi, na hupakia upya vichupo vya Agents, Extensions na Health, na `q` au `Esc` hufunga.
 
 ## Vitufe kwenye kichupo cha Accounts
 
@@ -65,9 +65,9 @@ Fremu ya kwanza huchorwa kutoka `config.toml` pekee, kwa muda mfupi sana chini y
 | `f` | Itumie katika folda ya sasa |
 | `e` | Badilisha jina lake |
 | `c` | Weka au ondoa amri yake ya njia fupi |
-| `x` | Iondoe (huuliza kwanza, ikianzia kwenye No) |
+| `x` | Iondoe (huuliza kwanza, No ikiwa imechaguliwa) |
 
-**Viti (seats) vya Team na Enterprise.** Chaguo za kiotomatiki (`ccam next`, `--fallback`, `ccam pick`, kitufe `n` cha dashibodi, na [`auto_switch`](/features/next#auto-switch) unapokiwasha) pia hubadili kati ya viti vya shirika lile lile la Claude Team au Enterprise. Kituo cha usaidizi cha Anthropic kinasema "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (kila kiti katika mpango wa Team hutolewa kwa mtu mmoja aliyetajwa kwa jina, na ni mtu huyo pekee anayeruhusiwa kukitumia) na "Users can't route their work through another user's account to use that user's remaining usage" (watumiaji hawaruhusiwi kuelekeza kazi yao kupitia akaunti ya mtumiaji mwingine ili kutumia kiasi cha matumizi kilichobaki cha mtumiaji huyo) ([mipango ya Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); vivyo hivyo kwa [mipango ya Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Kwa hiyo, kutumia chaguo za kiotomatiki kati ya viti kunaweza kukiuka masharti ya Anthropic. Kama utazitumia huko ni uamuzi wako: wasiliana na shirika lako na Anthropic kabla ya kuzitegemea. Mipango ya binafsi (Pro, Max) inaelezwa katika [dokezo la masharti kwenye Maswali yanayoulizwa mara kwa mara](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Viti (seats) vya Team na Enterprise.** Uchaguzi wa akaunti wa kiotomatiki (`ccam next`, `--fallback`, `ccam pick`, kitufe `n` cha dashibodi na, ukishakiwasha, [`auto_switch`](/features/next#auto-switch)) pia hubadili kati ya viti vya shirika lile lile la Claude Team au Enterprise, jambo ambalo linaweza kukiuka masharti ya Anthropic. Soma [Maswali yanayoulizwa mara kwa mara](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) na uwasiliane na shirika lako na Anthropic kabla ya kulitegemea.
 
 ## Kichupo cha Health
 
@@ -99,7 +99,7 @@ Kichupo cha Health huendesha ukaguzi wa [`ccam doctor`](/features/doctor) unapok
 
 ## Kichupo cha Agents
 
-Kichupo cha Agents huonyesha kile ambacho [`ccam agents`](/features/agents) huchapisha: vipindi vya chinichini na vipindi vilivyo wazi vya kila akaunti, pamoja na akaunti ambayo kila kimoja ni chake. Huuliza Claude Code ya kila akaunti kwa wakati mmoja (`claude agents --json`, hadi sekunde 15 kila moja) unapofungua kichupo kwa mara ya kwanza, kwa `r`, baada ya kusimamisha, na baada ya badiliko la config, na husema `Asking every account's Claude Code for its sessions…` hadi zote zijibu.
+Kichupo cha Agents huonyesha kile ambacho [`ccam agents`](/features/agents) huchapisha: vipindi vya chinichini na vipindi vilivyo wazi vya kila akaunti, pamoja na akaunti ambayo kila kimoja ni chake. Huuliza Claude Code ya kila akaunti kwa wakati mmoja (`claude agents --json`, kila moja ikiwa na muda wa mwisho wa sekunde 15) unapofungua kichupo kwa mara ya kwanza, kwa `r`, baada ya kusimamisha, na baada ya badiliko la config, na husema `Asking every account's Claude Code for its sessions…` hadi zote zijibu.
 
 ```console
   Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
@@ -115,9 +115,9 @@ Kichupo cha Agents huonyesha kile ambacho [`ccam agents`](/features/agents) huch
  enter to attach · x to stop · r to reload · ? for shortcuts
 ```
 
-`State` ni hali ya kipindi cha chinichini na kile ambacho mchakato wake unafanya, au `open` kwa kipindi shirikishi, kama ilivyo katika `ccam agents`. Akaunti ambayo haikuweza kuulizwa hupata mstari wa `✘` chini ya orodha pamoja na kile ambacho Claude Code ilisema, kama `lab` hapo juu, ambayo mwonekano wake wa agents (agent view) umezimwa. Vipindi vya chinichini vilivyokwisha huachwa nje (`ccam agents --all` huviorodhesha), na kila akaunti ikiwa imejibu na hakuna yenye kipindi, kichupo husema ``No sessions. Start one in the background with `ccam <account> --bg "…"`.`` Kwenye terminal nyembamba kichupo huondoa `Started`, kisha `Name`, kisha `Folder`, na hukata folda ndefu kuanzia kushoto.
+`State` ni hali ya kipindi cha chinichini na kile ambacho mchakato wake unafanya, au `open` kwa kipindi shirikishi, kama ilivyo katika `ccam agents`. Ikiwa akaunti haiwezi kuulizwa, mstari wa `✘` chini ya orodha huonyesha kile ambacho Claude Code ilisema, kama `lab` hapo juu, ambayo mwonekano wake wa agents (agent view) umezimwa. Vipindi vya chinichini vilivyokwisha huachwa nje (`ccam agents --all` huviorodhesha), na kila akaunti ikiwa imejibu na hakuna yenye kipindi, kichupo husema ``No sessions. Start one in the background with `ccam <account> --bg "…"`.`` Kwenye terminal nyembamba kichupo huondoa `Started`, kisha `Name`, kisha `Folder`, na hufupisha njia ndefu za folda kuanzia kushoto.
 
-`Enter` kwenye kipindi cha chinichini hufunga dashibodi na hufungua kipindi hicho katika terminal hii kama akaunti yake, kama `ccam attach <id>` inavyofanya; dashibodi hairudi (ndani ya Claude Code, `←` huenda kwenye mwonekano wake wa agents na `Ctrl+Z` kwenye shell). Kipindi kilicho wazi hakina id, kwa hiyo `Enter` na `x` husema tu kwamba kipindi cha chinichini kinahitajika. `x` huuliza kwanza, ikianzia kwenye `No, keep it`: ``It runs as personal. Like `ccam personal stop 49ec0028`, Claude Code stops it and keeps its conversation, which `ccam attach 49ec0028` opens again.`` Ukijibu ndiyo, ccam huendesha `claude stop <id>` kama akaunti hiyo, husema ``49ec0028 (personal) stopped; `ccam attach 49ec0028` opens it again`` au kwa nini haikuweza, na husoma orodha tena.
+`Enter` kwenye kipindi cha chinichini hufunga dashibodi na hufungua kipindi hicho katika terminal hii kama akaunti yake, kama `ccam attach <id>` inavyofanya; dashibodi hairudi (ndani ya Claude Code, `←` huenda kwenye mwonekano wake wa agents na `Ctrl+Z` kwenye shell). Kipindi kilicho wazi hakina ID, kwa hiyo `Enter` na `x` husema tu kwamba kipindi cha chinichini kinahitajika. `x` huuliza kwanza, `No, keep it` ikiwa imechaguliwa: ``It runs as personal. Like `ccam personal stop 49ec0028`, Claude Code stops it and keeps its conversation, which `ccam attach 49ec0028` opens again.`` Ukijibu ndiyo, ccam huendesha `claude stop <id>` kama akaunti hiyo, husema ``49ec0028 (personal) stopped; `ccam attach 49ec0028` opens it again`` au kwa nini haikuweza, na husoma orodha tena.
 
 ## Kubadilisha vikundi
 
@@ -135,7 +135,9 @@ Kwenye kichupo cha Groups, `Enter` hufungua kihariri: vipengele upande wa kushot
     2. No
 ```
 
-Faili inayotofautiana na nakala ya kikundi huulizwa kwanza (kuhifadhi ya kikundi, kutumia yangu, au kuunganisha). Kisha badiliko huendeshwa chinichini kwa msimbo ule ule wa [`ccam group`](/features/share): usanidi huhifadhiwa kwanza, data ya kila akaunti huhamishwa kwa mpangilio, na faili asili huenda `.ccam-backup/`; akaunti inayoacha kushiriki MCP huhifadhi seva za kikundi katika `.claude.json` yake. Badiliko ambalo lingehamisha data ya akaunti inayoendeshwa hukataliwa pamoja na jina la akaunti hiyo, hata pale akaunti ilipoanzishwa wakati mpango ulikuwa wazi, na mpango uliopitwa na wakati kwa sababu ya badiliko la vikundi la ccam nyingine hukataliwa kwa `the groups changed while this plan waited; nothing was moved, make the change again`. Wakati ccam nyingine inabadilisha vikundi, badiliko jipya, kubadilisha jina au kuondoa husema `another ccam is changing the groups right now`; baada ya badiliko lililosimama nusu njia, husubiri hadi `F` kwenye kichupo cha Health (au `ccam doctor --fix`) ilikamilishe.
+Faili ikitofautiana na nakala ya kikundi, ccam kwanza huuliza la kufanya (kuhifadhi ya kikundi, kutumia yangu au kuunganisha). Kisha badiliko huendeshwa chinichini kwa msimbo ule ule wa [`ccam group`](/features/share): usanidi huhifadhiwa kwanza, data ya kila akaunti huhamishwa kwa mpangilio, na faili asili huenda `.ccam-backup/`; akaunti inayoacha kushiriki MCP huhifadhi seva za kikundi katika `.claude.json` yake.
+
+Badiliko ambalo lingehamisha data ya akaunti inayoendeshwa hukataliwa pamoja na jina la akaunti hiyo, hata pale akaunti ilipoanzishwa wakati mpango ulikuwa wazi, na mpango uliopitwa na wakati kwa sababu mchakato mwingine wa ccam ulibadilisha vikundi hukataliwa kwa `the groups changed while this plan waited; nothing was moved, make the change again`. Wakati mchakato mwingine wa ccam unabadilisha vikundi, badiliko jipya, kubadilisha jina au kuondoa husema `another ccam process is changing the groups right now`; baada ya badiliko lililosimama nusu njia, husubiri hadi `F` kwenye kichupo cha Health (au `ccam doctor --fix`) ilikamilishe.
 
 ## Kuongeza akaunti
 
@@ -144,7 +146,7 @@ Faili inayotofautiana na nakala ya kikundi huulizwa kwanza (kuhifadhi ya kikundi
 1. Jina la akaunti.
 2. Jinsi inavyoingia: usajili wa Claude sasa (kwenye kivinjari), [API key](/features/api), au usajili wa Claude baadaye.
 3. Kwa API key: mahali ccam husoma ufunguo katika kila uanzishaji (`env:NAME` au `command:COMMAND`), endpoint, jinsi ufunguo unavyotumwa na model.
-4. Vikundi vya kujiunga, `default` ikiwa imeteuliwa; kabla ya kuwepo kwa vikundi, kile ambacho kikundi `default` hushiriki.
+4. Vikundi vya kujiunga, `default` ikiwa imeteuliwa (ikiwa bado hakuna vikundi, kile ambacho kikundi cha `default` kitashiriki).
 5. Amri ya njia fupi, ukiitaka.
 6. Muhtasari wa kuthibitisha.
 
@@ -152,7 +154,7 @@ Faili inayotofautiana na nakala ya kikundi huulizwa kwanza (kuhifadhi ya kikundi
 
 ## Kuondoa akaunti
 
-`x` huuliza kabla ya chochote kutokea, ikianzia kwenye No, na husema uondoaji hufanya nini: `It is logged out first (its login is revoked), then its folder goes to ccam's trash; the groups' shared files stay.` Kwa akaunti ya API key hakuna kuingia kunakohitaji kubatilishwa, na akaunti nyingine inaposhikilia kuingia kule kule, ccam haitoki kwenye akaunti hiyo. Akaunti iliyoingizwa huhifadhi folda yake: `It was imported, so its folder /home/me/.claude stays where it is: it leaves its groups first and keeps a copy of what they share, then ccam forgets it.`
+`x` huuliza kabla ya chochote kutokea, No ikiwa imechaguliwa, na husema uondoaji hufanya nini: `It is logged out first (its login is revoked), then its folder goes to ccam's trash; the groups' shared files stay.` Kwa akaunti ya API key hakuna kuingia kunakohitaji kubatilishwa, na akaunti nyingine inaposhikilia kuingia kule kule, ccam haitoki kwenye akaunti hiyo. Akaunti iliyoingizwa huhifadhi folda yake: `It was imported, so its folder /home/me/.claude stays where it is: it leaves its groups first and keeps a copy of what they share, then ccam forgets it.`
 
 ## Rangi
 
@@ -169,7 +171,7 @@ Mandhari ya `-daltonized` ni kwa ajili ya upofu wa rangi nyekundu na kijani, na 
 - Dashibodi huita kazi zile zile ambazo amri huita, kwa hiyo kila kanuni hubaki: mipango kabla data haijahamishwa, kukataa kwa akaunti zinazoendeshwa, nakala rudufu, na tokeni za kuingia ambazo kamwe haziondoki kwenye akaunti.
 - Dashibodi haina jaribio (dry run): `ccam --dry-run` bila jina huchapisha jinsi akaunti ya folda hii ingeanza, na `o` kwenye akaunti hutoa jaribio la uanzishaji huo mmoja tu.
 - Terminal hurejeshwa kabla Claude Code haijaanza au kuingia hakujafunguka.
-- Skrini iliyo ndogo mno kwa kidirisha huondoa kwanza safu za kichupo; mistari hukatwa kwa `…` badala ya kufungwa kwenye mstari unaofuata. Kwenye skrini fupi mistari mitupu na maelezo ya kichupo huondolewa baadaye, ili mstari wa vitufe ubaki. Chini ya safu wima 40 au mistari 8, dashibodi huonyesha tu `Too small: ccam needs 40x8 (now 36x7)`.
+- Skrini iliyo ndogo mno kwa kidirisha huondoa kwanza safu za kichupo; mistari hukatwa kwa `…` badala ya kufungwa kwenye mstari unaofuata. Kwenye skrini fupi, mistari mitupu na maelezo ya kichupo huondolewa baadaye, ili mstari wa vidokezo vya vitufe ubaki ukionekana. Chini ya safu wima 40 au mistari 8, dashibodi huonyesha tu `Too small: ccam needs 40x8 (now 36x7)`.
 - `Ctrl+C` wakati badiliko, uondoaji, sasisho au marekebisho yanatekelezwa husubiri yakamilike: mstari wa hali husema `ccam quits when it is done.`
 - Baada ya `U` kusasisha ccam, pendekezo hilo halirudi dashibodi inaporudi kutoka kuongeza akaunti au kuingia.
 

@@ -1,13 +1,13 @@
 ---
 title: 檢查擴充功能
 description: ccam ext 顯示每個帳號載入的技能、指令、外掛、MCP 伺服器和 hook，各自的來源，以及哪些已損壞。
-updated: 2026-10-23
+updated: 2026-10-26
 order: 14
 translation: machine
-sourceHash: "45740e4efbef"
+sourceHash: "7ca357a7f38a"
 ---
 
-`ccam ext` 回答「為什麼這個技能（或 MCP 伺服器）在一個帳號中能用，在另一個帳號中卻不行？」。它會為每個帳號列出 Claude Code 載入的擴充功能，以及每一項的來源：共用群組、帳號自己的資料夾，或你所在的專案。表格下方會列出讓擴充功能無法如預期載入的問題。它只會讀取。
+`ccam ext` 回答這個問題：「為什麼這個技能（或 MCP 伺服器）在一個帳號中能用，在另一個帳號中卻不行？」它會為每個帳號列出 Claude Code 載入的擴充功能，以及每一項的來源：共用群組、帳號自己的資料夾，或你所在的專案。表格下方會列出讓擴充功能無法如預期載入的問題。它不會變更任何東西。
 
 ## 用法
 
@@ -65,7 +65,7 @@ Sources: a group name (shared), account (its own folder), local (its own, for th
 - **在兩個地方定義不同的 MCP 伺服器**：群組的 `mcp.json` 和帳號的 `.claude.json`，或其中之一和專案的 `.mcp.json`。兩個地方的設定相同（`mcp_strategy = "sync"` 就會這樣寫入）並不是問題。用 `ccam mcp import <account> <server>` 把帳號自己的伺服器移到群組中。
 - **不是有效 JSON 的 `installed_plugins.json`**、`enabledPlugins` 中沒有列出的外掛，以及資料夾不存在的外掛。
 - **只有一個帳號載入的伺服器**：只在這個帳號的 `.claude.json` 中、群組中其他帳號不會載入的伺服器，以及位於該帳號針對這個資料夾的 local 範圍中的伺服器（除非加上 `-s user`，否則 `claude mcp add` 就會這樣做）。每一項都會附上可共用它的 `ccam mcp import` 指令。直接執行 `claude` 所用的 `~/.claude.json` 中、沒有任何帳號載入的伺服器，則會附上 `ccam migrate --mcp` 指令。
-- **等待核准的專案伺服器**：該帳號尚未信任這個資料夾，所以 Claude Code 會詢問一次，在那之前專案的 `.mcp.json` 伺服器都會處於等待狀態。問題會說明要在哪裡核准它們：設定群組中各帳號，或這個帳號的 `settings.json` 中的 `"enabledMcpjsonServers"`。對 git 儲存庫主要工作樹的信任，在它的其他工作樹中也有效。
+- **等待核准的專案伺服器**：該帳號尚未信任這個資料夾，所以 Claude Code 會詢問一次，在那之前專案的 `.mcp.json` 伺服器都會處於等待狀態。問題會說明要在哪裡核准它們：設定群組中各帳號，或這個帳號的 `settings.json` 中的 `"enabledMcpjsonServers"`。對 git 儲存庫主要工作樹的信任，也適用於它的其他工作樹。
 - **登入和連接器**：在這個帳號中需要登入、而另一個帳號已登入的 MCP 伺服器（登入只對一個帳號有效；請用 `/mcp` 登入），以及另一個帳號用過、這個帳號尚未用過的 claude.ai 連接器。
 
 ## 安全性和特殊情況
@@ -76,6 +76,6 @@ Sources: a group name (shared), account (its own folder), local (its own, for th
 
 ## 相關內容
 
-- [帳號之間的共用](/features/share)
+- [用群組共用](/features/share)
 - [共用的 MCP 伺服器](/features/mcp)
 - [檢查和修復](/features/doctor)

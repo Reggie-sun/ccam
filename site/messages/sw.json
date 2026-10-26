@@ -2,7 +2,7 @@
   "site": {
     "name": "ccam",
     "title": "ccam: Claude Code Account Manager na kibadilisha akaunti",
-    "description": "ccam (Claude Code Account Manager) ni zana huria ya bure ya kutumia akaunti kadhaa za Claude Code kwenye kompyuta moja na kubadili kati yao kwa amri moja.",
+    "description": "ccam (Claude Code Account Manager) ni zana huria ya bure inayokuwezesha kutumia akaunti kadhaa za Claude Code kwenye kompyuta moja na kubadili kwa amri moja.",
     "titleSuffix": "ccam kwa Claude Code"
   },
   "nav": {
@@ -14,17 +14,17 @@
     "menu": "Menyu",
     "skip": "Ruka hadi maudhui",
     "language": "Lugha",
-    "theme": "Badili mandhari ya mwanga au giza"
+    "theme": "Badili kati ya mandhari ya mwanga na ya giza"
   },
   "facts": {
     "what": "ccam ni zana ya bure ya mstari wa amri (open source) inayokuwezesha kutumia akaunti kadhaa za Claude Code kwenye kompyuta moja na kubadili kati yao kwa amri moja.",
-    "how": "Kila akaunti huhifadhi taarifa zake za kuingia katika CLAUDE_CONFIG_DIR tofauti, huku seva za MCP, mipangilio, CLAUDE.md, viendelezi na historia ya mazungumzo vikiweza kushirikiwa kati ya akaunti, ili uweze kuendelea na mazungumzo kwenye akaunti nyingine pale moja inapofikia kikomo chake cha matumizi.",
+    "how": "Kila akaunti huhifadhi taarifa zake za kuingia katika CLAUDE_CONFIG_DIR tofauti. Seva za MCP, mipangilio, CLAUDE.md, viendelezi na historia ya mazungumzo vinaweza kushirikiwa kati ya akaunti, ili uweze kuendelea na mazungumzo kwenye akaunti nyingine pale moja inapofikia kikomo chake cha matumizi.",
     "install": "Isakinishe kwenye Linux, macOS au Windows kwa amri moja, kisha endesha ccam add kwa kila akaunti.",
     "official": "ccam ni mradi usio rasmi na hauhusiani na Anthropic wala haujaidhinishwa nayo."
   },
   "landing": {
     "headline": "Akaunti kadhaa za Claude Code. Terminal moja.",
-    "lede": "Ongeza kila akaunti mara moja. Badili kwa ccam work au njia fupi kama ccwork. Akaunti moja ikifikia kikomo chake, endelea kwenye inayofuata na mazungumzo yale yale.",
+    "lede": "Ongeza kila akaunti mara moja. Badili kwa {command} au njia fupi kama {shortcut}. Akaunti moja ikifikia kikomo chake, endelea na mazungumzo yale yale kwenye akaunti inayofuata.",
     "installLabel": "Sakinisha kwenye Linux au macOS",
     "installWindowsLabel": "Kwenye Windows, katika PowerShell",
     "thenAdd": "Kisha ongeza akaunti yako ya kwanza kwa {command}.",
@@ -62,12 +62,12 @@
     "flow": [
       {
         "command": "ccam add work",
-        "body": "Huunda folda tofauti ya usanidi kwa ajili ya akaunti, hufungua ukurasa wa kuingia wa Claude kwenye kivinjari chako na, ukitaka, huipa akaunti njia fupi unayoipa jina mwenyewe, kama ccwork."
+        "body": "Huunda folda tofauti ya usanidi kwa ajili ya akaunti na hufungua ukurasa wa kuingia wa Claude kwenye kivinjari chako. Pia inaweza kuipa akaunti njia fupi unayoichagua, kama ccwork."
       },
       {
         "command": "ccam work",
         "also": "ccwork --resume",
-        "body": "Huanzisha Claude Code kama akaunti hiyo. Kila kitu baada ya jina hupelekwa kwa Claude Code bila kubadilishwa, na ccam huongeza takriban milisekunde 4 kabla ya kuanza."
+        "body": "Huanzisha Claude Code kama akaunti hiyo. Kila kitu baada ya jina hupelekwa kwa Claude Code bila kubadilishwa, na kuanza kupitia ccam huchukua takriban milisekunde 4 zaidi kuliko kuendesha claude moja kwa moja."
       },
       {
         "command": "ccam group set default --add history",
@@ -83,7 +83,7 @@
       },
       {
         "command": "ccam doctor --fix",
-        "body": "Hukagua viungo, ruhusa na taarifa za kuingia, na hurekebisha kile kinachoweza kurekebishwa kwa usalama. Kila badiliko kwenye faili zako huweka nakala rudufu."
+        "body": "Hukagua viungo, ruhusa na taarifa za kuingia, na hurekebisha kile kinachoweza kurekebishwa kwa usalama. Faili inazoziondoa njiani huhifadhiwa katika nakala rudufu."
       }
     ],
     "guidesTitle": "Miongozo",
@@ -141,19 +141,19 @@
     "next": "Fungua akaunti inayofuata; --continue huhamisha mazungumzo, --auto huchagua yenye nafasi kubwa zaidi",
     "usage": "Onyesha matumizi ya saa 5 na ya wiki ya kila akaunti",
     "share": "Onyesha kile ambacho akaunti inashiriki, na kupitia kikundi kipi",
-    "group": "Unda na ubadilishe vikundi: kile ambacho seti ya akaunti inashiriki, huhamishwa kwa mpango",
+    "group": "Unda na ubadilishe vikundi, ambavyo huamua kile akaunti zake zinashiriki; kila badiliko huonyesha mpango kwanza",
     "mcp": "Simamia seva za MCP zinazoshirikiwa",
     "migrate": "Nakili usanidi uliopo wa Claude Code (~/.claude) kwenye kikundi kinachoshirikiwa",
     "login": "Ingiza akaunti tena; --expired huingiza kila akaunti inayohitaji",
     "logout": "Toka kwenye akaunti: huondoa taarifa zake za kuingia na kuingia kwake kwenye seva za MCP",
-    "rename": "Badilisha jina la akaunti; njia yake fupi huhifadhi jina lake",
+    "rename": "Badilisha jina la akaunti; amri yake ya njia fupi hubaki ile ile",
     "remove": "Ondoa akaunti: ccam hutoka kwenye akaunti hiyo, na folda yake huhamishiwa kwenye folda ya taka",
     "import": "Sajili folda iliyopo ya ~/.claude pale ilipo",
     "doctor": "Kagua viungo, ruhusa, taarifa za kuingia na matoleo, na urekebishe",
     "statusline": "Onyesha akaunti na matumizi kwenye mstari wa hali (status line) wa Claude Code",
     "shims": "Unda upya viungo vya njia fupi vya akaunti zote",
     "shortcut": "Onyesha, unda, badilisha jina au ondoa amri ya njia fupi ya akaunti, kama ccwork",
-    "folder": "Tumia akaunti katika folda na zilizo chini yake wakati hakuna akaunti iliyotajwa",
+    "folder": "Tumia akaunti katika folda na folda zake ndogo wakati hakuna akaunti iliyotajwa",
     "pick": "Chapisha akaunti yenye nafasi kubwa zaidi, kwa script na workers wanaoendeshwa sambamba",
     "ext": "Onyesha skills, commands, plugins, seva za MCP na hooks ambazo kila akaunti hupakia",
     "agents": "Orodhesha agents wa chinichini na vipindi vilivyo wazi vya kila akaunti",
@@ -174,7 +174,7 @@
   },
   "footer": {
     "unofficial": "ccam ni zana isiyo rasmi ya open source. Haihusiani na Anthropic wala haijaidhinishwa nayo. Claude na Claude Code ni alama za biashara za Anthropic.",
-    "terms": "Iwapo unaruhusiwa kutumia akaunti kadhaa inategemea masharti ya kila akaunti. Yakague kabla ya kufanya hivyo.",
+    "terms": "Iwapo unaruhusiwa kutumia zaidi ya akaunti moja inategemea masharti yanayohusu kila moja. Soma masharti hayo kabla ya kuanza.",
     "license": "Msimbo chanzo kwenye GitHub",
     "languages": "Lugha zote",
     "analytics": "Tovuti hii huhesabu ziara kwa Cloudflare Web Analytics, ambayo haiweki vidakuzi (cookies) wala kukusanya data binafsi."

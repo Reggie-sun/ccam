@@ -1,5 +1,5 @@
 {
-  "description": "ccam: note a conversation that stops at a usage limit (with a terminal notification), carry it on as another account when auto_switch is on, and hand a conversation to another account with /ccam:switch",
+  "description": "ccam: note a conversation that stops at a usage limit (with a terminal notification), continue it on another account when auto_switch is on, and hand a conversation to another account with /ccam:switch",
   "hooks": {
     "StopFailure": [
       {

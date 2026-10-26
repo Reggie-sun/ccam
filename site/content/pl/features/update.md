@@ -1,20 +1,20 @@
 ---
 title: Aktualizacja ccam
 description: ccam update zastępuje ccam najnowszym wydaniem z GitHub po sprawdzeniu SHA-256; --check tylko informuje, a --version instaluje wskazany tag wydania.
-updated: 2026-10-23
+updated: 2026-10-26
 order: 10
 translation: machine
-sourceHash: "000d37de5f29"
+sourceHash: "598931e4801f"
 ---
 
-`ccam update` pobiera wydanie ccam z GitHub, sprawdza je względem `checksums.txt` wydania i zastępuje działający plik binarny jedną zmianą nazwy. Używaj go, jeśli zainstalowałeś ccam skryptem instalacyjnym lub z archiwum. [Panel](/features/dashboard) także pyta GitHub o najnowsze wydanie przy każdym otwarciu i proponuje je pod `U`, które po zapytaniu wykonuje te same kroki. Żadne inne polecenie nie łączy się z GitHub, więc działają one tak samo bez sieci.
+`ccam update` pobiera wydanie ccam z GitHub, sprawdza je względem `checksums.txt` wydania i zastępuje działający plik binarny jedną zmianą nazwy. Używaj go, jeśli zainstalowałeś ccam skryptem instalacyjnym lub z archiwum. [Panel](/features/dashboard) także pyta GitHub o najnowsze wydanie przy każdym otwarciu i proponuje je pod `U`, które po zapytaniu wykonuje te same kroki. Inne polecenia nigdy nie łączą się z GitHub, więc działają tak samo bez sieci.
 
 ## Użycie
 
 ```sh
 ccam update                    # install the latest release
 ccam update --check            # only say whether a newer release exists
-ccam update --version v0.3.0   # install that release, also an older one
+ccam update --version v0.3.0   # install that release, even an older one
 ccam --dry-run update          # show what would be downloaded and replaced
 ```
 
@@ -31,7 +31,7 @@ $ ccam update
 ✓ Updated ccam 0.4.0 → 0.5.0 (/home/you/.local/bin/ccam)
 ```
 
-Gdy nie ma nowszego wydania, ccam wypisuje `ccam 0.4.0 is up to date.` i niczego nie zmienia. Z `--version` i wersją, której już używasz, wypisuje `ccam 0.4.0 is already installed.`
+Gdy nie ma nowszego wydania, ccam wypisuje `ccam 0.4.0 is up to date.` i niczego nie zmienia. Jeśli `--version` podaje wersję, którą już masz, wypisuje `ccam 0.4.0 is already installed.`
 
 ## Opcje
 
@@ -39,7 +39,7 @@ Gdy nie ma nowszego wydania, ccam wypisuje `ccam 0.4.0 is up to date.` i niczego
 | --- | --- | --- |
 | `--check` | Tylko informuje, czy istnieje nowsze wydanie | wyłączone |
 | `--version <tag>` | Instaluje ten tag wydania, na przykład `v0.3.0`, nowszy lub starszy od bieżącego | najnowsze |
-| `--dry-run` | Respektowana: sprawdza najnowszy tag (chyba że `--version` podaje konkretny), wykonuje te same sprawdzenia pliku binarnego i wypisuje adresy pobrania i sumy kontrolnej oraz ścieżkę do zastąpienia, niczego nie pobierając | wyłączone |
+| `--dry-run` | Obsługiwana: sprawdza najnowszy tag (chyba że `--version` podaje konkretny), wykonuje te same sprawdzenia pliku binarnego i wypisuje adresy pobrania i sumy kontrolnej oraz ścieżkę do zastąpienia, niczego nie pobierając | wyłączone |
 
 `--check` i `--version` nie mogą być użyte razem. Tag musi mieć postać `vMAJOR.MINOR.PATCH`, z opcjonalnym przyrostkiem wersji przedpremierowej lub kompilacji; początkowe `v` można pominąć. Wszystko inne kończy się błędem, na przykład `--version takes a release tag such as v0.3.0, not "1.2"`.
 
@@ -47,16 +47,16 @@ Zmienna środowiskowa `CCAM_RELEASES_URL` zastępuje `https://github.com/jhyunwo
 
 ## Jak to działa
 
-Kod znajduje się w `internal/update`, który importuje tylko `ccam update`. Ścieżka uruchamiania nigdy go nie wywołuje.
+ccam sprawdza pobrany plik, zanim dotknie zainstalowanego pliku binarnego, i zastępuje plik binarny jedną zmianą nazwy. Kod znajduje się w `internal/update`, który importuje tylko `ccam update`. Ścieżka uruchamiania nigdy go nie wywołuje.
 
-1. `cli.updateCmd` znajduje działający plik binarny przez `os.Executable` i rozwiązuje dowiązania symboliczne przez `filepath.EvalSymlinks`. Zastępowana jest właśnie ta rzeczywista ścieżka.
-2. Bez `--version` `Updater.Latest` wysyła żądanie `<releases>/latest` bez podążania za przekierowaniem i odczytuje tag z nagłówka `Location` (`…/tag/v0.5.0`). Używa strony wydań zamiast API GitHub, więc nie obowiązuje limit API wynoszący 60 żądań na godzinę. Sprawdzenie ma 10 sekund.
-3. `parseVersion` sprawdza tag ścisłym wzorcem. Tag trafia do adresów pobierania i do wypisywanego polecenia powłoki, więc nie przechodzi nic, co zawiera `/`, `%`, spacje lub znaki powłoki. `compareVersions` porównuje go z działającą wersją; wersja przedpremierowa jest sortowana przed swoim wydaniem.
-4. `managed()` i `writable()` decydują, czy ccam w ogóle może zastąpić plik binarny (zobacz niżej).
-5. `Updater.Fetch` pobiera jednocześnie `ccam_<os>_<arch>.tar.gz` (w Windows `ccam_windows_<arch>.zip`) i `checksums.txt`, z limitem 2 minut na oba. Każde pobranie jest ograniczone do 256 MB.
+1. ccam znajduje działający plik binarny przez `os.Executable` i rozwiązuje dowiązania symboliczne przez `filepath.EvalSymlinks` (`cli.updateCmd`). Zastępowana jest właśnie ta rzeczywista ścieżka.
+2. Bez `--version` ccam wysyła żądanie `<releases>/latest` bez podążania za przekierowaniem (`Updater.Latest`) i odczytuje tag z nagłówka `Location` (`…/tag/v0.5.0`). Używa strony wydań zamiast API GitHub, więc nie obowiązuje limit API wynoszący 60 żądań na godzinę. Sprawdzenie ma limit czasu 10 sekund.
+3. ccam sprawdza tag ścisłym wzorcem (`parseVersion`). Tag trafia do adresów pobierania i do wypisywanego polecenia powłoki, więc nie przechodzi nic, co zawiera `/`, `%`, spacje lub znaki powłoki. Następnie ccam porównuje go z działającą wersją (`compareVersions`); wersja przedpremierowa jest sortowana przed swoim wydaniem.
+4. ccam decyduje, czy w ogóle może zastąpić plik binarny (`managed()`, `writable()`; zobacz niżej).
+5. ccam pobiera jednocześnie `ccam_<os>_<arch>.tar.gz` (w Windows `ccam_windows_<arch>.zip`) i `checksums.txt`, z limitem 2 minut na oba (`Updater.Fetch`). Każde pobranie jest ograniczone do 256 MB.
 6. SHA-256 archiwum musi zgadzać się z jego wierszem w `checksums.txt`, zanim stanie się cokolwiek innego. Brakujący wiersz lub inna suma kontrolna zatrzymuje aktualizację z komunikatem `nothing was changed`.
-7. `extract()` odczytuje archiwum tar i bierze pierwszy zwykły plik o nazwie `ccam` (`extractZip` bierze `ccam.exe` z archiwum zip). Foldery, linki i inne wpisy są ignorowane, a plik binarny też jest ograniczony do 256 MB.
-8. `Updater.Install` zapisuje nowy plik binarny przez `fsutil.AtomicWrite`: plik tymczasowy `.ccam.tmp*` obok pliku binarnego, z bitami uprawnień starego pliku, zrzucony na dysk i przemianowany w miejsce starego.
+7. ccam odczytuje archiwum tar i bierze pierwszy zwykły plik o nazwie `ccam` (`extract()`; `extractZip` bierze `ccam.exe` z archiwum zip). Foldery, linki i inne wpisy są ignorowane, a plik binarny też jest ograniczony do 256 MB.
+8. ccam zapisuje nowy plik binarny przez `fsutil.AtomicWrite` (`Updater.Install`): plik tymczasowy `.ccam.tmp*` obok pliku binarnego, z bitami uprawnień starego pliku, zrzucony na dysk i przemianowany w miejsce starego.
 
 Cały proces, od sprawdzenia tagu do zmiany nazwy:
 
@@ -64,11 +64,11 @@ Cały proces, od sprawdzenia tagu do zmiany nazwy:
 
 Archiwum i `checksums.txt` są pobierane równolegle i nic nie jest zapisywane, dopóki suma kontrolna się nie zgadza. Zmiana nazwy jest atomowa, więc awaria lub pełny dysk zostawia albo stary plik binarny, albo nowy, nigdy połowę. Polecenia skrótów, takie jak `~/.local/bin/ccwork`, są dowiązaniami symbolicznymi do pliku binarnego ccam, więc uruchamiają nową wersję bez żadnych zmian.
 
-W Windows pliku działającego programu nie można podmienić ani usunąć, można tylko zmienić jego nazwę. `Updater.Install` zapisuje nowy plik binarny jako `ccam.exe.new`, zmienia nazwę działającego `ccam.exe` na `ccam.exe.old`, a nowego pliku na `ccam.exe`. Jeśli ostatni krok się nie powiedzie, stary plik binarny wraca do dawnej nazwy. Następna aktualizacja usuwa te pliki `ccam.exe.old`, które może; gdy sesja wciąż działa z wcześniejszego `ccam.exe.old`, działający plik binarny dostaje zamiast tego nazwę `ccam.exe.old-<time>`. Skróty będące dowiązaniami twardymi zamiast symbolicznych ([Polecenia skrótów](/features/shortcuts)) są odnawiane zaraz potem, więc też uruchamiają nową wersję; dotyczy to dowiązań twardych każdego starszego ccam utworzonych przez ccam, nie tylko właśnie podmienionego pliku binarnego.
+W Windows pliku działającego programu nie można podmienić ani usunąć, można tylko zmienić jego nazwę. ccam zapisuje nowy plik binarny jako `ccam.exe.new`, zmienia nazwę działającego `ccam.exe` na `ccam.exe.old`, a nowego pliku na `ccam.exe` (`Updater.Install`). Jeśli ostatni krok się nie powiedzie, stary plik binarny wraca do dawnej nazwy. Następna aktualizacja usuwa te pliki `ccam.exe.old`, które może; gdy sesja wciąż działa z wcześniejszego `ccam.exe.old`, działający plik binarny dostaje zamiast tego nazwę `ccam.exe.old-<time>`. Skróty będące dowiązaniami twardymi zamiast symbolicznych ([Polecenia skrótów](/features/shortcuts)) są odnawiane zaraz potem, więc też uruchamiają nową wersję; dotyczy to utworzonych przez ccam dowiązań twardych każdej starszej wersji ccam, nie tylko właśnie podmienionego pliku binarnego.
 
 ### Instalacje zarządzane przez menedżer pakietów
 
-ccam zainstalowany z `.deb` należy do apt, a zastąpienie go za plecami apt zostawiłoby błędną bazę pakietów. Przed pobraniem ccam sprawdza, do kogo należy plik binarny:
+Kopia ccam zainstalowana z `.deb` należy do apt, a zastąpienie jej za plecami apt sprawiłoby, że baza pakietów nie zgadzałaby się z plikiem. Przed pobraniem ccam sprawdza, do kogo należy plik binarny:
 
 <!-- motion:update-managed -->
 
@@ -84,14 +84,14 @@ ccam: /usr/bin/ccam was installed by a package, so `ccam update` leaves it alone
 To update the .deb, download ccam_0.5.0_linux_amd64.deb from https://github.com/jhyunwoo/ccam/releases/tag/v0.5.0 and run:
   sudo apt install ./ccam_0.5.0_linux_amd64.deb
 Or install a copy in ~/.local/bin with the install script:
-  curl -fsSL https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.sh | sh
+  curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-W systemach innych niż Linux wypisywany jest tylko wiersz ze skryptem instalacyjnym, w Windows: `irm https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.ps1 | iex`. Gdy do folderu nie da się zapisywać, ccam proponuje ponowne uruchomienie skryptu instalacyjnego, który instaluje ccam w `~/.local/bin`.
+W systemach innych niż Linux wypisywany jest tylko wiersz ze skryptem instalacyjnym, w Windows: `irm https://ccam.dev/install.ps1 | iex`. Gdy do folderu nie da się zapisywać, ccam proponuje ponowne uruchomienie skryptu instalacyjnego, który instaluje ccam w `~/.local/bin`.
 
 ## Bezpieczeństwo i przypadki brzegowe
 
-- Wersja deweloperska zgłasza swoją wersję jako `dev` i nie ma wydania do porównania, więc `ccam update` i `ccam update --check` ją odrzucają. `ccam update --version vX.Y.Z` instaluje na niej wydanie. Kompilacja przez `go install github.com/jhyunwoo/ccam/cmd/ccam@vX.Y.Z` (lub `@latest`) podaje to wydanie, więc działają dla niej `ccam update` i propozycja w panelu; `@main` albo lokalna kompilacja za tagiem pozostaje `dev`.
+- Wersja deweloperska zgłasza swoją wersję jako `dev` i nie ma wydania do porównania, więc `ccam update` i `ccam update --check` ją odrzucają. `ccam update --version vX.Y.Z` instaluje na niej wydanie. Kompilacje przez `go install` opisuje [Instalacja ccam](/docs/install#other-ways-to-install).
 - Nieudane pobranie, brak zasobu dla twojej platformy lub niezgodna suma kontrolna zostawiają zainstalowany plik binarny bez zmian.
 - Nieistniejące wydanie kończy się błędem `there is no release <tag>`. Gdy GitHub odmawia z kodem HTTP 403 lub 429, ccam informuje, że to prawdopodobnie limit zapytań, i prosi o ponowną próbę później.
 - `--check` tylko odczytuje. Nie sprawdza, czy plik binarny jest zarządzany przez menedżer pakietów ani czy można do niego zapisywać.
@@ -99,6 +99,6 @@ W systemach innych niż Linux wypisywany jest tylko wiersz ze skryptem instalacy
 
 ## Powiązane
 
-- [Instalacja](/docs/install)
-- [Polecenia](/docs/commands)
-- [FAQ](/docs/faq)
+- [Instalacja ccam](/docs/install)
+- [Opis poleceń](/docs/commands)
+- [Najczęściej zadawane pytania](/docs/faq)

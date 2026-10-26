@@ -1,10 +1,10 @@
 ---
 title: Presentamos ccam
 description: Por qué existe ccam, qué hace por quienes tienen varias cuentas de Claude Code y cómo evita estorbar.
-updated: 2026-10-20
+updated: 2026-10-26
 order: 1
 translation: machine
-sourceHash: a555dc969142
+sourceHash: "e4370f29b818"
 ---
 
 ccam es una pequeña herramienta de línea de comandos para quienes usan más de una cuenta de Claude Code en la misma computadora: una cuenta personal y una de trabajo, o varias cuentas para un proyecto largo.
@@ -22,7 +22,7 @@ Claude Code admite varias cuentas mediante [`CLAUDE_CONFIG_DIR`](/guides/claude-
 
 ## Sin estorbar
 
-Una herramienta que ejecutas antes de cada sesión no debería tener un costo que notes. ccam lee un archivo de configuración, comprueba los enlaces compartidos con una sola llamada al sistema cada uno y luego se reemplaza a sí mismo por `claude`. Agrega unos 4 milisegundos y no se está ejecutando mientras trabajas.
+Una herramienta que ejecutas antes de cada sesión no debería tener un costo que notes. ccam lee un archivo de configuración, comprueba los enlaces compartidos con una o dos llamadas al sistema cada uno y luego se reemplaza a sí mismo por `claude`. Agrega unos 4 milisegundos y, de forma predeterminada, no se está ejecutando mientras trabajas.
 
 También es cuidadoso con tus archivos. Cada cambio en el uso compartido imprime un plan antes de empezar y guarda los originales en una carpeta de copia de seguridad. `ccam doctor` revisa enlaces, permisos e inicios de sesión, y repara lo que puede reparar de forma segura.
 
@@ -35,4 +35,4 @@ ccam add
 
 El [inicio rápido](/docs/quick-start) explica paso a paso cómo agregar dos cuentas, y [cómo usar varias cuentas de Claude Code](/guides/multiple-claude-code-accounts) explica el enfoque con ccam y sin él.
 
-ccam es de código abierto y no oficial: no está afiliado con Anthropic ni cuenta con su respaldo. Si puedes usar varias cuentas depende de los términos de cada cuenta. Los comentarios y las traducciones son bienvenidos en [GitHub](https://github.com/jhyunwoo/ccam).
+ccam es de código abierto y no oficial: no está afiliado con Anthropic ni cuenta con su respaldo. Si puedes usar más de una cuenta depende de los términos que se aplican a cada una. Los comentarios y las traducciones son bienvenidos en [GitHub](https://github.com/jhyunwoo/ccam).

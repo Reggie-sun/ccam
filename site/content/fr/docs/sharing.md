@@ -1,10 +1,10 @@
 ---
 title: "Partager serveurs MCP, paramètres et historique"
 description: "Comment les groupes ccam partagent serveurs MCP, settings.json, CLAUDE.md, skills et historique entre comptes Claude Code, chaque connexion restant séparée."
-updated: 2026-10-23
+updated: 2026-10-26
 order: 4
 translation: machine
-sourceHash: 27e0a0e5abbd
+sourceHash: 2d8029ad6ec8
 ---
 
 Chaque compte conserve sa propre connexion. Tout le reste peut être partagé par des **groupes** : un groupe nomme les éléments qu'il partage et les comptes qu'il contient, et ccam relie les fichiers de chacun de ces comptes au dossier du groupe, si bien qu'une modification faite dans un compte apparaît dans tous.
@@ -47,7 +47,7 @@ Quand un compte commence à partager un élément (il rejoint un groupe, ou son 
 
 Les fichiers de conversation portent le nom de leur ID de session : les historiques de plusieurs comptes se combinent donc sans conflit.
 
-ccam ne modifie pas un compte tant que Claude Code s'exécute avec lui, quelle que soit la façon dont Claude Code a été lancé (sessions en arrière-plan comprises), car la session continue d'écrire dans les fichiers en cours de déplacement. Quittez-la d'abord. ccam vérifie de nouveau juste avant d'enregistrer : une session lancée pendant que le plan attendait est donc détectée elle aussi.
+ccam ne modifie pas un compte tant que Claude Code s'exécute avec ce compte, quelle que soit la façon dont il a été lancé (sessions en arrière-plan comprises), car la session continue d'écrire dans les fichiers en cours de déplacement. Quittez-la d'abord. ccam vérifie de nouveau juste avant d'enregistrer : il détecte donc aussi une session lancée pendant qu'il attendait votre réponse.
 
 ## Quand un compte cesse de partager
 
@@ -77,7 +77,7 @@ Ce qui est copié :
 
 Le dossier source est seulement lu : rien n'y est déplacé, lié ni modifié, et `claude` seul continue de fonctionner comme avant. Les fichiers de connexion `.credentials.json` et `.claude.json` ne sont jamais copiés dans le groupe.
 
-Les serveurs MCP qui se connectent avec OAuth gardent leurs jetons dans la connexion, pas dans la liste des serveurs. ccam ne copie pas ces connexions : une connexion copiée contient le même jeton d'actualisation, et le premier renouvellement déconnecte de ce serveur tous les autres détenteurs, `~/.claude` compris. Le plan et le résumé nomment les comptes qui se connectent eux-mêmes aux serveurs avec `/mcp`.
+Les serveurs MCP qui se connectent avec OAuth gardent leurs jetons dans la connexion, pas dans la liste des serveurs. ccam ne copie pas ces connexions : une connexion copiée contient le même jeton d'actualisation, et le premier renouvellement déconnecte de ce serveur tous les autres détenteurs, `~/.claude` compris. Le plan et le résumé nomment les comptes qui doivent se connecter eux-mêmes à ces serveurs avec `/mcp`.
 
 ccam affiche le plan et demande confirmation avant de copier quoi que ce soit :
 
@@ -105,7 +105,7 @@ Quand le groupe possède déjà une copie différente d'un fichier, ccam vous de
 
 | Option | Effet |
 | --- | --- |
-| `--settings`, `--memory`, `--extensions`, `--mcp`, `--history` | Copier seulement les éléments indiqués, sans la liste à cocher ; sans elles et hors d'un terminal, tout sauf l'historique des conversations |
+| `--settings`, `--memory`, `--extensions`, `--mcp`, `--history` | Copier seulement les éléments indiqués, sans la liste à cocher. Hors d'un terminal et sans option d'élément, ccam copie tout sauf l'historique des conversations. |
 | `-g`, `--group <group>` | Copier dans ce groupe au lieu de `default` |
 | `-y`, `--yes` | Copier sans rien demander ; quand un fichier diffère, garder la copie du groupe |
 
@@ -120,7 +120,7 @@ ccam mcp add fs -- npx -y @modelcontextprotocol/server-filesystem ~/code
 ccam mcp list
 ```
 
-Un serveur que vous ajoutez pendant une session avec `claude mcp add` est enregistré pour ce compte uniquement, et pour le dossier où vous vous trouviez (la portée locale de Claude Code ; `-s user` le rend propre au compte dans tous les dossiers). Au prochain démarrage de ce compte, ccam indique le nom du serveur, avec son dossier, et la commande qui le déplace vers le groupe :
+Un serveur que vous ajoutez pendant une session avec `claude mcp add` est enregistré pour ce compte uniquement, et pour le dossier où vous vous trouviez (la portée locale de Claude Code ; `-s user` le rend disponible pour le compte dans tous les dossiers). Au prochain démarrage de ce compte, ccam indique le nom du serveur, avec son dossier, et la commande qui le déplace vers le groupe :
 
 ```sh
 ccam mcp import work gh
@@ -128,13 +128,13 @@ ccam mcp import work gh
 
 Si le groupe possède déjà un autre serveur portant ce nom, ccam l'ignore et vous le signale. `--force` remplace le serveur du groupe et conserve l'ancien `mcp.json` dans le dossier `.ccam-backup/` du groupe.
 
-Les serveurs MCP qui se connectent avec OAuth stockent leurs jetons avec la connexion du compte : autorisez-les donc une fois dans chaque compte avec `/mcp`. `ccam ext` et `ccam doctor` nomment les serveurs auxquels un compte n'est pas connecté alors qu'un autre compte l'est.
+Les serveurs MCP qui se connectent avec OAuth stockent leurs jetons avec la connexion du compte : connectez-vous-y donc une fois dans chaque compte avec `/mcp`. `ccam ext` et `ccam doctor` nomment les serveurs auxquels un compte n'est pas connecté alors qu'un autre compte l'est.
 
-Si vous préférez que les serveurs apparaissent dans `claude mcp list` et `/mcp` comme des serveurs utilisateur ordinaires, définissez `mcp_strategy = "sync"` en haut de `~/.config/ccam/config.toml`, au-dessus du premier `[[group]]`, `[[profile]]` ou `[[folder]]`. ccam les écrit alors dans le `.claude.json` de chaque compte avant le démarrage, sous le verrou de fichier propre à Claude Code et avec une sauvegarde. Un serveur que le compte possède lui-même sous le même nom reste celui du compte, et ccam le signale.
+Si vous préférez que les serveurs apparaissent dans `claude mcp list` et `/mcp` comme des serveurs utilisateur ordinaires, définissez `mcp_strategy = "sync"` en haut de `~/.config/ccam/config.toml`, au-dessus du premier `[[group]]`, `[[profile]]` ou `[[folder]]`. ccam les écrit alors dans le `.claude.json` de chaque compte avant le démarrage, sous le verrou de fichier propre à Claude Code et avec une sauvegarde. Si le compte possède son propre serveur portant le même nom qu'un serveur du groupe, ccam garde celui du compte et le signale.
 
 ## Deux comptes dans le même dossier
 
-Les comptes qui partagent l'historique des conversations écrivent dans les mêmes fichiers. Si vous lancez un second Claude Code dans un dossier où un autre compte du même groupe est déjà en cours d'exécution, ccam vous avertit et vous demande si vous voulez continuer.
+Les comptes qui partagent l'historique des conversations écrivent dans les mêmes fichiers. Si vous lancez une seconde session Claude Code dans un dossier où un autre compte du même groupe est déjà en cours d'exécution, ccam vous avertit et vous demande si vous voulez continuer.
 
 ## En cas de problème
 
@@ -143,4 +143,4 @@ ccam doctor
 ccam doctor --fix
 ```
 
-Si un chemin partagé est devenu un fichier ordinaire, par exemple après que vous avez restauré une sauvegarde à la main, ccam s'arrête avant de lancer Claude Code et vous renvoie vers `ccam doctor --fix`, qui le relie de nouveau au groupe : le fichier devient la copie du groupe quand le groupe n'en a pas, et sinon le groupe garde la sienne et la vôtre part dans une sauvegarde, que `--fix` nomme. Un changement de groupes arrêté à mi-chemin est lui aussi terminé par `ccam doctor --fix`.
+Si un chemin partagé est devenu un fichier ordinaire, par exemple après que vous avez restauré une sauvegarde à la main, ccam s'arrête avant de lancer Claude Code et vous renvoie vers `ccam doctor --fix`. La réparation relie de nouveau le chemin au groupe : le fichier devient la copie du groupe quand le groupe n'en a pas ; sinon, le groupe garde sa propre copie, et la vôtre part dans une sauvegarde que `--fix` nomme. Un changement de groupe arrêté à mi-chemin est lui aussi terminé par `ccam doctor --fix`.

@@ -2,13 +2,15 @@
 title: Guida rapida
 metaTitle: "Guida rapida: aggiungi e cambia account Claude Code"
 description: Aggiungi due account Claude Code con ccam add, dai loro scorciatoie come ccwork, passa dall'uno all'altro e scegli cosa condividono.
-updated: 2026-10-25
+updated: 2026-10-26
 order: 2
 translation: machine
-sourceHash: "0570ef27e4ce"
+sourceHash: bd893bbb83ab
 ---
 
 Aggiungi ogni account con `ccam add`, poi avvia Claude Code con `ccam <name>` o con una scorciatoia a cui dai tu il nome, come `ccwork`. È tutto ciò che serve alla maggior parte delle persone.
+
+Usi già Claude Code? Prima di iniziare, leggi [Usi già ~/.claude?](#already-using-claude) alla fine di questa pagina.
 
 ## 1. Aggiungi il primo account
 
@@ -16,7 +18,7 @@ Aggiungi ogni account con `ccam add`, poi avvia Claude Code con `ccam <name>` o 
 ccam add
 ```
 
-La procedura guidata chiede un nome come `personal` o `work`, quali elementi l'account deve condividere con gli altri tuoi account e se creare una scorciatoia (vedi il passo 4). Poi esegue `claude auth login`, che apre il browser per farti accedere. Su una macchina remota il browser può finire su una pagina `http://localhost:…/callback` che non si carica; incolla quell'indirizzo nel terminale e ccam completa l'accesso. Al termine vedi:
+La procedura guidata chiede un nome come `personal` o `work`, quali elementi l'account deve condividere con gli altri tuoi account e se creare una scorciatoia (vedi il passo 3). Poi esegue `claude auth login`, che apre il browser per farti accedere. Su una macchina remota il browser può finire su una pagina `http://localhost:…/callback` che non si carica; incolla quell'indirizzo nel terminale e ccam completa l'accesso. Quando l'accesso è completato, vedi:
 
 ```console
 ✓ personal (me@example.com) added
@@ -25,7 +27,7 @@ La procedura guidata chiede un nome come `personal` o `work`, quali elementi l'a
 
 ## 2. Porta con te le impostazioni esistenti
 
-Se usavi già Claude Code, le tue impostazioni, `CLAUDE.md`, le estensioni e i server MCP si trovano in `~/.claude`. Copiali nelle impostazioni condivise, così ogni account li riceve:
+Se hai già usato Claude Code, le tue impostazioni, `CLAUDE.md` e le estensioni si trovano in `~/.claude`, e i tuoi server MCP in `~/.claude.json`. Copiali nel gruppo condiviso `default`, così ogni account li riceve:
 
 ```sh
 ccam migrate
@@ -39,11 +41,7 @@ ccam mostra cosa copierà e chiede conferma prima. Si limita a leggere `~/.claud
 ccam add work
 ```
 
-Accedi con l'altro account nel browser.
-
-## 4. Cambia account
-
-`ccam work` avvia Claude Code con l'account work. Per qualcosa di più breve, dai all'account una scorciatoia tutta sua, come `ccwork`. Dopo gli elementi condivisi, la procedura guidata chiede:
+La procedura guidata salta il nome, che hai indicato nella riga di comando, e mostra i gruppi a cui unirsi con `default` selezionato. Questa volta, dai all'account una scorciatoia tutta sua, come `ccwork`, così puoi avviarlo con una sola parola. Dopo i gruppi, la procedura guidata chiede:
 
 ```console
  Create a shortcut command for work? [y/N]
@@ -57,21 +55,23 @@ Premi `y`, poi digita un nome, oppure premi Invio per usare quello suggerito:
  a-z, 0-9, '.', '-' and '_'; Enter alone uses ccwork
 ```
 
-Dopo il login, ccam la conferma:
+Poi accedi con l'altro account nel browser. ccam conferma l'account e la sua scorciatoia:
 
 ```console
 ✓ work (work@example.com) added
   shortcut: ccwork
 ```
 
-Se hai saltato la domanda, puoi aggiungere una scorciatoia in qualsiasi momento:
+## 4. Cambia account
+
+`ccam work` avvia Claude Code con l'account work. Se hai saltato la domanda sulla scorciatoia, puoi aggiungerne una in qualsiasi momento:
 
 ```console
 $ ccam shortcut work ccwork
 ✓ shortcut for work: ccwork
 ```
 
-Ora uno qualsiasi di questi comandi avvia Claude Code con l'account work:
+Ora ciascuno di questi comandi avvia Claude Code con l'account work (`2` è il suo numero in `ccam list`):
 
 ```sh
 ccwork
@@ -91,7 +91,7 @@ cat error.log | ccwork -p "what caused this?"
 
 ## 5. Scegli cosa condividere
 
-Per impostazione predefinita, i server MCP, `settings.json`, il `CLAUDE.md` globale e agenti, comandi, skill e plugin sono condivisi tra gli account tramite il gruppo `default`. La cronologia delle conversazioni no. Aggiungila al gruppo se vuoi continuare le conversazioni passando da un account all'altro:
+Per impostazione predefinita, i server MCP, `settings.json`, il `CLAUDE.md` globale e le estensioni (agenti, comandi, skill e plugin) sono condivisi tra gli account tramite il gruppo `default`. La cronologia delle conversazioni no. Aggiungila al gruppo se vuoi continuare le conversazioni passando da un account all'altro:
 
 ```sh
 ccam group set default --add history
@@ -108,7 +108,7 @@ ccam next --continue
 
 `ccam usage` mostra l'utilizzo su 5 ore e settimanale di ogni account. `ccam next --continue` apre la stessa conversazione nell'account successivo. Negli script, `ccam --fallback work -p "…"` cambia account da solo. Vedi [limiti di utilizzo](/docs/usage-limits).
 
-**Posti nei piani Team ed Enterprise.** La scelta automatica (`ccam next`, `--fallback`, `ccam pick`, il tasto `n` della dashboard e, se lo attivi, [`auto_switch`](/features/next#auto-switch)) passa anche da un posto all'altro della stessa organizzazione Claude Team o Enterprise. Il centro assistenza di Anthropic dice: "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (ogni posto di un piano Team è assegnato nominativamente a una sola persona, e solo quella persona può usarlo) e "Users can't route their work through another user's account to use that user's remaining usage" (gli utenti non possono far passare il proprio lavoro attraverso l'account di un altro utente per sfruttare l'utilizzo residuo di quell'utente) ([piani Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); lo stesso vale per i [piani Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Usare la scelta automatica tra posti diversi può quindi violare i termini di Anthropic. Decidi tu se usarla lì: verifica con la tua organizzazione e con Anthropic prima di farci affidamento. I piani personali (Pro, Max) sono trattati nella [nota sui termini nelle domande frequenti](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Posti nei piani Team ed Enterprise.** La scelta automatica dell'account (`ccam next`, `--fallback`, `ccam pick`, il tasto `n` della dashboard e, una volta attivato, [`auto_switch`](/features/next#auto-switch)) passa anche da un posto all'altro della stessa organizzazione Claude Team o Enterprise, e questo può violare i termini di Anthropic. Leggi le [domande frequenti](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) e verifica con la tua organizzazione e con Anthropic prima di farci affidamento.
 
 ## Usi già ~/.claude?
 

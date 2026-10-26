@@ -1,15 +1,15 @@
 ---
 title: "اسکرپٹس کے لیے اکاؤنٹ چننا"
 description: "ccam pick اسکرپٹ کے لیے سب سے زیادہ گنجائش والا اکاؤنٹ پرنٹ کرتا ہے، ایک ساتھ شروع ہونے والے ورکرز کو الگ اکاؤنٹس دیتا ہے، اور گنجائش نہ ہو تو 75 پر نکلتا ہے۔"
-updated: 2026-10-25
+updated: 2026-10-26
 order: 12
 translation: machine
-sourceHash: "5c4f74db9714"
+sourceHash: 321c8e351cf7
 ---
 
 `ccam pick` سب سے زیادہ گنجائش والے لاگ اِن شدہ اکاؤنٹ کا نام پرنٹ کرتا ہے، تاکہ کوئی اسکرپٹ اس سے Claude Code شروع کر سکے۔ ایک ہی وقت میں شروع ہونے والے ورکرز میں سے ہر ایک کو الگ اکاؤنٹ ملتا ہے جب تک گنجائش والے کافی اکاؤنٹس موجود ہوں، اس لیے `claude -p` جابز کا ایک بیچ ایک اکاؤنٹ کو خالی کرنے کے بجائے آپ کے اکاؤنٹس میں بٹ جاتا ہے۔
 
-**Team اور Enterprise سیٹیں۔** خودکار انتخاب (`ccam next`، `--fallback`، `ccam pick`، ڈیش بورڈ کی `n` کلید، اور جب آپ اسے آن کریں تو [`auto_switch`](/features/next#auto-switch)) ایک ہی Claude Team یا Enterprise تنظیم کی سیٹوں کے درمیان بھی اکاؤنٹ بدلتا ہے۔ Anthropic کا ہیلپ سینٹر کہتا ہے کہ "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (کسی Team پلان کی ہر سیٹ ایک نامزد فرد کو تفویض کی جاتی ہے، اور صرف اسی شخص کو اسے استعمال کرنے کی اجازت ہے) اور "Users can't route their work through another user's account to use that user's remaining usage" (صارفین کسی دوسرے صارف کا باقی ماندہ استعمال کام میں لانے کے لیے اپنا کام اس کے اکاؤنٹ کے ذریعے نہیں چلا سکتے) ([Team پلانز](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)؛ اسی طرح [Enterprise پلانز](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) کے لیے بھی)۔ اس لیے سیٹوں کے درمیان خودکار انتخاب استعمال کرنے سے Anthropic کی شرائط کی خلاف ورزی ہو سکتی ہے۔ وہاں اسے استعمال کرنا ہے یا نہیں، یہ آپ کا فیصلہ ہے: اس پر انحصار کرنے سے پہلے اپنی تنظیم اور Anthropic سے تصدیق کر لیں۔ ذاتی پلانز (Pro، Max) کی بات [عام سوالات میں شرائط والے نوٹ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) میں کی گئی ہے۔
+**Team اور Enterprise سیٹیں۔** خودکار اکاؤنٹ انتخاب (`ccam next`، `--fallback`، `ccam pick`، ڈیش بورڈ کی `n` کلید اور، جب آپ اسے آن کریں تو، [`auto_switch`](/features/next#auto-switch)) ایک ہی Claude Team یا Enterprise تنظیم کی سیٹوں کے درمیان بھی اکاؤنٹ بدلتا ہے، جس سے Anthropic کی شرائط کی خلاف ورزی ہو سکتی ہے۔ اس پر انحصار کرنے سے پہلے [عام سوالات](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) پڑھیں اور اپنی تنظیم اور Anthropic سے تصدیق کر لیں۔
 
 ## استعمال
 
@@ -21,7 +21,7 @@ done; wait
 ccam pick --json                      # the account and its usage
 ccam pick --model opus                # also count the Opus weekly limit
 ccam pick --max-usage 80 --strategy expiring
-ccam pick --strategy balance          # spread over the weekly quota, fewer running sessions first
+ccam pick --strategy balance          # most weekly quota left per day; fewer sessions first
 ccam pick --cross-org                 # also accounts of other organizations
 ccam pick --wait=2h                   # nobody has room: wait for a reset
 ccam --fallback "$(ccam pick)" -p "…" # also switch if this account hits its limit mid-job
@@ -49,7 +49,7 @@ $ ccam pick --json
 | `--json` | اکاؤنٹ، اس کا 5 گھنٹے اور ہفتہ وار استعمال، اعداد کا ماخذ اور یہ کہ اسے کیوں چنا گیا، پرنٹ کرتا ہے | بند |
 | `--model <model>` | اس ماڈل کی ہفتہ وار ونڈو بھی شمار کرتا ہے، جیسے `opus` | کوئی نہیں |
 | `--max-usage <1-100>` | اس استعمال سے کم والے اکاؤنٹس کو ترجیح دیتا ہے | `auto_max_usage`، ورنہ 100 |
-| `--strategy headroom\|expiring\|balance` | سب سے کم 5 گھنٹے کا استعمال، 5 گھنٹے کا سب سے جلد ری سیٹ، یا وہ ہفتہ وار کوٹا جو سب سے پہلے بغیر استعمال کے رہ جائے گا | `auto_strategy`، ورنہ `headroom` |
+| `--strategy headroom\|expiring\|balance` | سب سے کم 5 گھنٹے کا استعمال، 5 گھنٹے کا سب سے جلد ری سیٹ یا فی دن سب سے زیادہ بچا ہوا ہفتہ وار کوٹا | `auto_strategy`، ورنہ `headroom` |
 | `--cross-org` | دوسری تنظیموں کے اکاؤنٹس بھی چنتا ہے | `cross_org`، ورنہ بند |
 | `--wait[=<duration>]` | جب کسی اکاؤنٹ میں گنجائش نہ ہو تو پہلے اکاؤنٹ کے ری سیٹ ہونے کا انتظار کرتا ہے، زیادہ سے زیادہ اتنی دیر۔ قدر `=` کے بعد آتی ہے: `--wait 30m` اس اشارے کے ساتھ رد کر دیا جاتا ہے `--wait takes its value after '=': --wait=30m` | بند؛ اکیلا دیا جائے تو `5h` |
 | `--dry-run` | انتخاب ریکارڈ کیے بغیر چنتا ہے | بند |
@@ -58,9 +58,9 @@ $ ccam pick --json
 
 1. ccam اس اکاؤنٹ کی تنظیم کے لاگ اِن شدہ اکاؤنٹس کی فہرست بناتا ہے جو یہ فولڈر شروع کرے گا (API key اکاؤنٹس اور Console لاگ اِنز کی کوئی حد نہیں ہوتی، اس لیے وہ شامل نہیں ہوتے؛ دیکھیں [تنظیمیں](/features/next#auto))؛ جو فولڈر اسی Claude اکاؤنٹ میں لاگ اِن ہو جس میں وہ اکاؤنٹ ہے، وہ بھی شامل نہیں ہوتا۔
 2. یہ ایک لاک (`~/.local/state/ccam/picks.lock`) لیتا ہے، تاکہ ایک ساتھ چلنے والے انتخاب ایک کے بعد ایک ہوں۔
-3. یہ ہر اکاؤنٹ کا استعمال ایک ساتھ پوچھتا ہے، اسی طرح جیسے `ccam usage` پوچھتا ہے، 60 سیکنڈ کے کیش کے ساتھ۔ جس ونڈو کو Claude Code نے بھری ہوئی بتایا ہو وہ اپنے ری سیٹ تک 100% شمار ہوتی ہے ([حد کا ریکارڈ](/features/usage#the-limit-record))، اس لیے جو اکاؤنٹ ابھی اپنی حد کو پہنچا ہو وہ باہر رہتا ہے، چاہے اس کے محفوظ اعداد میں گنجائش نظر آئے۔
-4. پچھلے 2 منٹ میں چنے گئے اکاؤنٹس، چاہے `ccam pick` نے چنا ہو یا [`auto_switch`](/features/next#auto-switch) نے کوئی سیشن وہاں منتقل کیا ہو (`~/.local/state/ccam/picks/<name>`؛ جس انتخاب کی تاریخ گھڑی کے وقت کے بعد کی ہو وہ شمار نہیں ہوتا)، پہلے الگ کر دیے جاتے ہیں، اور `ccam next --auto` کے [انتخاب کے اصول](/features/next#auto) باقیوں میں سے چنتے ہیں: پہلے `auto_max_usage` سے کم والے، حکمتِ عملی کے مطابق، اور کبھی 100% والا اکاؤنٹ نہیں۔ جب اس وجہ سے وہ اکاؤنٹ چھوڑ دیا جائے جسے اصول سب سے پہلے لیتے، تو `--json` کا `reason` یہ بتاتا ہے: `30% of its 5 hours used; work was picked a moment ago`۔
-5. اگر گنجائش والے تمام اکاؤنٹس حال ہی میں چنے جا چکے ہوں تو اصول دوبارہ ان سب میں سے چنتے ہیں، اس لیے تین اکاؤنٹس پر چوتھا ورکر کسی ایک اکاؤنٹ میں شریک ہو جاتا ہے۔
+3. یہ ہر اکاؤنٹ کا استعمال ایک ساتھ پوچھتا ہے، اسی طرح جیسے `ccam usage` پوچھتا ہے، 60 سیکنڈ کے کیش کے ساتھ۔ جس ونڈو کو Claude Code نے بھری ہوئی بتایا ہو وہ اپنے ری سیٹ تک 100% شمار ہوتی ہے ([حد کا ریکارڈ](/features/usage#the-limit-record))، اس لیے جو اکاؤنٹ ابھی اپنی حد کو پہنچا ہو وہ خارج رہتا ہے، چاہے اس کے محفوظ اعداد میں اب بھی گنجائش نظر آئے۔
+4. پچھلے 2 منٹ میں چنے گئے اکاؤنٹس، چاہے `ccam pick` نے چنا ہو یا [`auto_switch`](/features/next#auto-switch) نے کوئی سیشن وہاں منتقل کیا ہو (`~/.local/state/ccam/picks/<name>`؛ مستقبل کے ٹائم اسٹیمپ والا انتخاب شمار نہیں ہوتا)، پہلے الگ کر دیے جاتے ہیں، اور `ccam next --auto` کے [انتخاب کے اصول](/features/next#auto) باقیوں میں سے چنتے ہیں: پہلے `auto_max_usage` سے کم والے، حکمتِ عملی کے مطابق، اور کبھی 100% والا اکاؤنٹ نہیں۔ اگر اس سے وہ اکاؤنٹ چھوٹ جائے جسے اصول ورنہ چنتے، تو `--json` کا `reason` یہ بتاتا ہے: `30% of its 5 hours used; work was picked a moment ago`۔
+5. اگر گنجائش والے تمام اکاؤنٹس حال ہی میں چنے جا چکے ہوں تو اصول دوبارہ ان سب میں سے چنتے ہیں، اس لیے تین اکاؤنٹس کے ساتھ چوتھا ورکر ان میں سے کسی ایک میں شریک ہو جاتا ہے۔
 6. انتخاب ریکارڈ ہوتا ہے اور لاک چھوڑ دیا جاتا ہے، پھر نام پرنٹ ہوتا ہے۔
 
 2 منٹ کی ونڈو اس لیے اہم ہے کہ نئی جاب کا استعمال اعداد میں ظاہر ہونے میں کچھ وقت لیتا ہے: اس کے بغیر، ایک ساتھ شروع ہونے والے پانچ ورکرز سب ایک ہی اکاؤنٹ کو سب سے زیادہ گنجائش والا دیکھتے۔

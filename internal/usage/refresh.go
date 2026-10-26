@@ -63,7 +63,7 @@ func (f *Fetcher) refresh(ctx context.Context, a Account) (oauthCred, error) {
 	// checked under the lock so two ccams never rotate the token twice.
 	l, err := lock.TryFlock(RefreshLock(a.SessionDir))
 	if errors.Is(err, lock.ErrBusy) {
-		return oauthCred{}, fmt.Errorf("another ccam is using this login right now (a refresh, rename, remove or logout)")
+		return oauthCred{}, fmt.Errorf("another ccam process is using this login right now (a refresh, rename, remove or logout)")
 	}
 	if err != nil {
 		return oauthCred{}, err

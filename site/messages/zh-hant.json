@@ -2,7 +2,7 @@
   "site": {
     "name": "ccam",
     "title": "ccam：Claude Code Account Manager 與帳號切換工具",
-    "description": "ccam（Claude Code Account Manager）是免費的開放原始碼工具，讓你在一台電腦上使用多個 Claude Code 帳號，並用一個指令在帳號之間切換。",
+    "description": "ccam（Claude Code Account Manager）是免費的開放原始碼工具，讓你在一台電腦上使用多個 Claude Code 帳號，並用一個指令切換。",
     "titleSuffix": "適用於 Claude Code 的 ccam"
   },
   "nav": {
@@ -14,17 +14,17 @@
     "menu": "選單",
     "skip": "跳至主要內容",
     "language": "語言",
-    "theme": "切換淺色或深色主題"
+    "theme": "在淺色和深色主題之間切換"
   },
   "facts": {
     "what": "ccam 是免費的開放原始碼命令列工具，讓你在一台電腦上使用多個 Claude Code 帳號，並用一個指令在帳號之間切換。",
-    "how": "每個帳號的登入資訊各自保存在獨立的 CLAUDE_CONFIG_DIR 中，而 MCP 伺服器、設定、CLAUDE.md、擴充功能和對話記錄可以在帳號之間共用，因此當某個帳號達到用量限制時，你可以在另一個帳號繼續同一段對話。",
+    "how": "每個帳號的登入資訊各自保存在獨立的 CLAUDE_CONFIG_DIR 中。MCP 伺服器、設定、CLAUDE.md、擴充功能和對話記錄可以在帳號之間共用，因此當某個帳號達到用量限制時，你可以在另一個帳號繼續同一段對話。",
     "install": "在 Linux、macOS 或 Windows 上用一個指令安裝，然後為每個帳號執行 ccam add。",
     "official": "ccam 是非官方專案，與 Anthropic 沒有關聯，也未獲得 Anthropic 認可。"
   },
   "landing": {
     "headline": "多個 Claude Code 帳號，一個終端機。",
-    "lede": "每個帳號只需新增一次。用 ccam work 或 ccwork 這類快捷指令切換。某個帳號達到限制時，在下一個帳號繼續同一段對話。",
+    "lede": "每個帳號只需新增一次。用 {command} 或 {shortcut} 這類快捷指令切換。某個帳號達到限制時，在下一個帳號繼續同一段對話。",
     "installLabel": "在 Linux 或 macOS 上安裝",
     "installWindowsLabel": "在 Windows 上，於 PowerShell 中",
     "thenAdd": "接著用 {command} 新增第一個帳號。",
@@ -62,12 +62,12 @@
     "flow": [
       {
         "command": "ccam add work",
-        "body": "為該帳號建立獨立的設定資料夾，在瀏覽器中開啟 Claude 登入頁面；如果你需要，還會為帳號設定一個你自己命名的快捷指令，例如 ccwork。"
+        "body": "為該帳號建立獨立的設定資料夾，並在瀏覽器中開啟 Claude 登入頁面。它也可以為帳號設定一個你自己選擇的快捷指令，例如 ccwork。"
       },
       {
         "command": "ccam work",
         "also": "ccwork --resume",
-        "body": "以該帳號啟動 Claude Code。名稱後面的所有內容都會原封不動地傳給 Claude Code，ccam 在啟動前大約只增加 4 毫秒。"
+        "body": "以該帳號啟動 Claude Code。名稱後面的所有內容都會原封不動地傳給 Claude Code，透過 ccam 啟動只比直接執行 claude 多花約 4 毫秒。"
       },
       {
         "command": "ccam group set default --add history",
@@ -83,7 +83,7 @@
       },
       {
         "command": "ccam doctor --fix",
-        "body": "檢查連結、權限和登入狀態，並修復可以安全修復的部分。對你的檔案所做的每項變更都會保留備份。"
+        "body": "檢查連結、權限和登入狀態，並修復可以安全修復的部分。被它移開的檔案會保留在備份中。"
       }
     ],
     "guidesTitle": "指南",
@@ -141,12 +141,12 @@
     "next": "開啟下一個帳號；--continue 會把對話帶過去，--auto 選擇剩餘額度最多的帳號",
     "usage": "顯示所有帳號的 5 小時用量和每週用量",
     "share": "顯示帳號共用哪些項目，以及透過哪個群組共用",
-    "group": "建立和變更群組：一組帳號共用的項目，依計畫移動",
+    "group": "建立和變更群組，群組決定其中的帳號共用哪些項目；每項變更都會先顯示計畫",
     "mcp": "管理共用的 MCP 伺服器",
     "migrate": "將現有的 Claude Code 設定（~/.claude）複製到共用群組",
     "login": "重新登入帳號；--expired 會登入所有需要重新登入的帳號",
     "logout": "將帳號登出：移除其登入資訊與 MCP 伺服器的登入",
-    "rename": "重新命名帳號；快捷指令維持原名",
+    "rename": "重新命名帳號；它的快捷指令保持不變",
     "remove": "移除帳號：先將其登出，再把其資料夾移到垃圾桶資料夾",
     "import": "在原位置登錄現有的 ~/.claude 資料夾",
     "doctor": "檢查連結、權限、登入狀態和版本，並進行修復",
@@ -174,7 +174,7 @@
   },
   "footer": {
     "unofficial": "ccam 是非官方的開放原始碼工具，與 Anthropic 沒有關聯，也未獲得 Anthropic 認可。Claude 和 Claude Code 是 Anthropic 的商標。",
-    "terms": "能否使用多個帳號取決於各帳號的條款。使用前請先確認。",
+    "terms": "能否使用多個帳號，取決於適用於各帳號的條款。開始之前請先閱讀這些條款。",
     "license": "GitHub 上的原始碼",
     "languages": "所有語言",
     "analytics": "本網站使用 Cloudflare Web Analytics 統計造訪次數，它不會設定 Cookie，也不會收集個人資料。"

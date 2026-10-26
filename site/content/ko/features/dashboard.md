@@ -1,13 +1,13 @@
 ---
 title: 대시보드
 description: 터미널에서 ccam을 실행하면 계정, 그룹, 폴더 규칙, 확장, 점검을 보여 주는 전체 화면 대시보드가 열리며, 모든 변경은 계획을 먼저 보여 줍니다.
-updated: 2026-10-25
+updated: 2026-10-26
 order: 15
 translation: machine
-sourceHash: "28f216a4a04f"
+sourceHash: "4e763ca8aacf"
 ---
 
-표준 입력과 출력이 터미널이면 인자 없는 `ccam`은 전체 화면 대시보드를 엽니다. 터미널이 아니면 `ccam list`를 출력합니다. 대시보드는 모든 계정을 사용량, 그룹과 함께 보여 주며, 명령으로 하는 일을 그대로 할 수 있습니다. 실행, 추가, 로그인, 그룹 변경, 폴더 규칙 지정, 백그라운드 세션 목록 보기, 점검과 복구가 모두 됩니다. 실행하거나 백그라운드 세션에 연결하면 대시보드가 닫히고, 계정을 추가하거나 로그인할 때는 잠시 터미널로 나갔다가 돌아옵니다.
+표준 입력과 출력이 터미널이면 인자 없는 `ccam`은 전체 화면 대시보드를 엽니다. 터미널이 아니면 `ccam list`를 출력합니다. 대시보드는 모든 계정을 사용량, 그룹과 함께 보여 주며, 명령으로 하는 일을 그대로 할 수 있습니다. 실행, 추가, 로그인, 그룹 변경, 폴더 규칙 지정, 백그라운드 세션 목록 보기, 점검과 복구가 모두 됩니다. 실행하거나 백그라운드 세션에 연결하면 대시보드가 닫히고, 계정을 추가하거나 로그인할 때는 잠시 터미널을 넘겨준 뒤 대시보드로 돌아옵니다.
 
 ```console
  ccam v0.10.0 · 3 accounts · 2 groups     ✔ default · ▸ this folder · • running
@@ -23,7 +23,7 @@ sourceHash: "28f216a4a04f"
  enter to launch · n for most room · a to add · s for groups · ? for shortcuts
 ```
 
-탭 이름 아래 줄은 현재 탭이 무엇을 하는지 한 문장으로 알려 줍니다. 터미널이 넓으면 Accounts 탭에 각 계정의 이메일도 표시됩니다. 탭 이름 줄 끝에는 어느 탭에서든 [`auto_switch`](/features/next#auto-switch)가 켜져 있는지 표시됩니다(Linux와 macOS 전용, Windows에서는 무시됨). 켜져 있으면 Health 탭이 이 기능에 아직 필요한 것(Claude 구독으로 로그인하는 모든 계정에서 켜져 있는 ccam 플러그인, Claude Code 2.1.214 이상)을 알려 줍니다.
+탭 이름 아래 줄은 현재 탭이 무엇을 하는지 한 문장으로 알려 줍니다. 터미널이 넓으면 Accounts 탭에 각 계정의 이메일도 표시됩니다. 어느 탭에서든 탭 이름 줄 끝에 [`auto_switch`](/features/next#auto-switch)가 켜져 있는지 표시됩니다(Linux와 macOS 전용, Windows에서는 무시됨). 켜져 있으면 Health 탭이 이 기능에 아직 필요한 것을 나열합니다. Claude Code 2.1.214 이상, 그리고 Claude 구독으로 로그인하는 모든 계정에서 켜져 있는 ccam 플러그인입니다.
 
 대시보드는 열릴 때마다 더 새로운 ccam 릴리스가 있는지 백그라운드에서 GitHub에 묻습니다. 첫 화면은 이 응답을 기다리지 않으며, 오프라인이면 아무것도 표시하지 않습니다. 새 릴리스가 있으면 제목 아래 줄에서 업데이트를 권합니다.
 
@@ -31,9 +31,9 @@ sourceHash: "28f216a4a04f"
  ● ccam 0.10.2 is available (you have 0.10.1) · press U to update
 ```
 
-`U`는 먼저 확인을 받은 뒤 [`ccam update`](/features/update)와 같은 방식으로 업데이트합니다. 릴리스를 SHA-256 체크섬과 대조한 뒤 한 번에 ccam을 교체합니다. 지금 보고 있는 대시보드는 여전히 이전 버전이므로, 종료한 뒤 `ccam`을 다시 실행하세요. `.deb` 패키지로 설치한 ccam처럼 여기서 업데이트할 수 없을 때는 `ccam update`와 같은 안내를 보여 주고 제안은 그대로 남겨 둡니다.
+`U`는 먼저 확인을 받은 뒤 [`ccam update`](/features/update)와 같은 방식으로 업데이트합니다. 릴리스를 SHA-256 체크섬과 대조한 뒤 한 번에 ccam을 교체합니다. 지금 보고 있는 대시보드는 여전히 이전 버전이므로, 종료한 뒤 `ccam`을 다시 실행하세요. `.deb` 패키지로 설치한 ccam 사본처럼 여기서 업데이트할 수 없을 때는 `ccam update`와 같은 안내를 보여 주고 제안은 그대로 남겨 둡니다.
 
-첫 화면은 `config.toml`만 읽어 100 ms보다 훨씬 짧은 시간에 그리며, 사용량은 계정마다 응답이 오는 대로 채워집니다. 한도마다 막대가 따로 있습니다. 5시간 구간, 모든 모델에 대한 주간 구간, Fable 전용 주간 구간이며, `-`는 그 계정에 해당 구간이 없다는 뜻입니다. 비율은 80%부터 노란색, 100%에서 빨간색으로 바뀌고, 조회에 실패해 캐시에서 가져온 값은 흐리게 표시됩니다. Claude Code가 가득 찼다고 알린 구간은 초기화될 때까지 100%로 표시됩니다. 액세스 토큰이 만료되면 흐린 `⚠ token expired`가 표시되고(다음에 시작할 때 Claude Code가 갱신합니다), `⚠ login expired`는 그 계정에 `ccam login`이 필요하다는 뜻입니다.
+첫 화면은 `config.toml`만 읽어 100 ms보다 훨씬 짧은 시간에 그리며, 사용량은 계정마다 응답이 오는 대로 채워집니다. 한도마다 막대가 따로 있습니다. 5시간 구간, 모든 모델에 대한 주간 구간, Fable 전용 주간 구간이며, `-`는 그 계정에 해당 구간이 없다는 뜻입니다. 비율은 80%에서 노란색, 100%에서 빨간색으로 바뀝니다. 조회에 실패하면 캐시된 값을 흐리게 표시합니다. Claude Code가 가득 찼다고 알린 구간은 초기화될 때까지 100%로 표시됩니다. 액세스 토큰이 만료되면 흐린 `⚠ token expired`가 표시되고(다음에 시작할 때 Claude Code가 갱신합니다), `⚠ login expired`는 그 계정에 `ccam login`이 필요하다는 뜻입니다.
 
 ## 탭
 
@@ -43,10 +43,10 @@ sourceHash: "28f216a4a04f"
 | Agents | [`ccam agents`](/features/agents)가 보여 주는 내용: 모든 계정의 백그라운드 세션과 열려 있는 세션, 그리고 각각의 상태, 폴더, 시작 시각(아래 참고) | `enter` 연결(`ccam attach`처럼), `x` 멈추기, `r` 다시 불러오기 |
 | Groups | 각 그룹, 그룹이 공유하는 항목과 계정, 어느 그룹에도 속하지 않은 계정 | `enter` 편집, `n` 새로 만들기, `e` 이름 바꾸기, `x` 삭제 |
 | Folders | [`ccam folder`](/features/folder) 규칙과 여기에 적용되는 규칙. 심볼릭 링크를 거쳐 폴더에 들어온 경우도 포함(새 규칙은 링크를 푼 경로로 저장) | `n` 여기서 쓸 계정 지정, `enter` 변경, `x` 삭제 |
-| Extensions | [`ccam ext`](/features/ext)가 보여 주는 내용. 확장마다 한 번씩, 출처 그룹과 함께 표시. 플러그인이 켜져 있지 않은 계정을 나타내는 `off:`, 계정 자체 서버 중 이 폴더에만 있는 서버, `This folder's project`, 어느 계정에도 속하지 않는 문제도 표시 | `r` 다시 불러오기 |
+| Extensions | [`ccam ext`](/features/ext)가 보여 주는 내용. 확장마다 한 번씩, 출처 그룹과 함께 표시. 플러그인이 켜져 있지 않은 계정을 나타내는 `off:`, 이 폴더에만 적용되는 계정 자체 서버, `This folder's project`, 어느 계정에도 속하지 않는 문제도 표시 | `r` 다시 불러오기 |
 | Health | [`ccam doctor`](/features/doctor)가 보고하는 내용을 계정마다 상자로 표시(아래 참고) | `f` 선택한 상자 복구, `F` 전체 복구(`doctor --fix`), `↑`/`↓` 상자 사이 이동 |
 
-`←`/`→`나 `Tab`으로 탭을 바꾸고, `?`는 현재 탭의 키를 보여 주며, `r`은 짧은 캐시를 쓰지 않고 사용량을 다시 조회하며 Agents, Extensions, Health 탭도 다시 불러오고, `q`나 `Esc`는 종료합니다.
+`←`/`→`나 `Tab`으로 탭을 바꾸고, `?`는 현재 탭의 키를 보여 주며, `r`은 짧은 캐시를 건너뛰고 사용량을 새로 고치며 Agents, Extensions, Health 탭도 다시 불러오고, `q`나 `Esc`는 종료합니다.
 
 ## Accounts 탭의 키
 
@@ -65,9 +65,9 @@ sourceHash: "28f216a4a04f"
 | `f` | 현재 폴더에서 쓸 계정으로 지정 |
 | `e` | 이름 바꾸기 |
 | `c` | 단축 명령 지정 또는 삭제 |
-| `x` | 삭제(먼저 묻고, 선택은 No에서 시작) |
+| `x` | 삭제(No가 선택된 상태로 먼저 묻습니다) |
 
-**Team·Enterprise 시트.** 자동 선택(`ccam next`, `--fallback`, `ccam pick`, 대시보드의 `n`, 그리고 켜 두었을 때의 [`auto_switch`](/features/next#auto-switch))은 같은 Claude Team이나 Enterprise 조직의 시트 사이에서도 계정을 바꿉니다. Anthropic 고객센터는 "Each seat on a Team plan is assigned to one named individual, and only that person may use it"(팀 플랜의 각 시트는 한 명의 지정된 개인에게 할당되며, 그 사람만 사용할 수 있습니다), "Users can't route their work through another user's account to use that user's remaining usage"(사용자는 다른 사용자의 계정을 통해 작업을 라우팅하여 해당 사용자의 남은 사용량을 사용할 수 없습니다)라고 안내합니다([Team 요금제](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129), [Enterprise 요금제](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)도 마찬가지). 따라서 시트 사이에서 자동 선택을 쓰면 Anthropic의 약관을 위반할 수 있습니다. 시트 사이에서 이 기능을 쓸지는 사용자가 판단할 일입니다. 의존하기 전에 소속 조직과 Anthropic에 확인하세요. 개인 요금제(Pro, Max)에 대해서는 [FAQ의 약관 안내](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)를 참고하세요.
+**Team·Enterprise 시트.** 자동 계정 선택(`ccam next`, `--fallback`, `ccam pick`, 대시보드의 `n`, 그리고 켜 두었을 때의 [`auto_switch`](/features/next#auto-switch))은 같은 Claude Team이나 Enterprise 조직의 시트 사이에서도 계정을 바꾸며, 이는 Anthropic의 약관을 위반할 수 있습니다. 의존하기 전에 [FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)를 읽고 소속 조직과 Anthropic에 확인하세요.
 
 ## Health 탭
 
@@ -99,7 +99,7 @@ Health 탭은 열 때 [`ccam doctor`](/features/doctor)의 점검을 실행하�
 
 ## Agents 탭
 
-Agents 탭은 [`ccam agents`](/features/agents)가 출력하는 내용, 곧 모든 계정의 백그라운드 세션과 열려 있는 세션을 각각 속한 계정과 함께 보여 줍니다. 탭을 처음 열 때, `r`을 누를 때, 세션을 멈춘 뒤, 설정이 바뀐 뒤에 모든 계정의 Claude Code에 한꺼번에 묻고(`claude agents --json`, 계정마다 최대 15초), 모두 답할 때까지 `Asking every account's Claude Code for its sessions…`를 표시합니다.
+Agents 탭은 [`ccam agents`](/features/agents)가 출력하는 내용, 곧 모든 계정의 백그라운드 세션과 열려 있는 세션을 각각 속한 계정과 함께 보여 줍니다. 탭을 처음 열 때, `r`을 누를 때, 세션을 멈춘 뒤, 설정이 바뀐 뒤에 모든 계정의 Claude Code에 한꺼번에 묻고(`claude agents --json`, 계정마다 타임아웃 15초), 모두 답할 때까지 `Asking every account's Claude Code for its sessions…`를 표시합니다.
 
 ```console
   Accounts   Agents   Groups   Folders   Extensions   Health    auto_switch off
@@ -115,9 +115,9 @@ Agents 탭은 [`ccam agents`](/features/agents)가 출력하는 내용, 곧 모�
  enter to attach · x to stop · r to reload · ? for shortcuts
 ```
 
-`State`는 `ccam agents`에서처럼 백그라운드 세션의 상태와 그 프로세스가 하고 있는 일이며, 대화형 세션이면 `open`입니다. 물어볼 수 없었던 계정은 목록 아래에 Claude Code가 한 말과 함께 `✘` 줄로 나옵니다. 위의 `lab`이 그런 경우로, 에이전트 보기가 꺼져 있습니다. 끝난 백그라운드 세션은 빠지며(`ccam agents --all`이 보여 줍니다), 모든 계정이 답했는데 세션이 하나도 없으면 탭에 ``No sessions. Start one in the background with `ccam <account> --bg "…"`.``가 나옵니다. 터미널이 좁으면 `Started`, `Name`, `Folder` 순서로 열을 빼고, 긴 폴더 경로는 왼쪽을 잘라 냅니다.
+`State`는 `ccam agents`에서처럼 백그라운드 세션의 상태와 그 프로세스가 하고 있는 일이며, 대화형 세션이면 `open`입니다. 계정에 물어볼 수 없으면 목록 아래 `✘` 줄에 Claude Code가 한 말이 나옵니다. 위의 `lab`이 그런 경우로, 에이전트 보기가 꺼져 있습니다. 끝난 백그라운드 세션은 빠지며(`ccam agents --all`이 보여 줍니다), 모든 계정이 답했는데 세션이 하나도 없으면 탭에 ``No sessions. Start one in the background with `ccam <account> --bg "…"`.``가 나옵니다. 터미널이 좁으면 `Started`, `Name`, `Folder` 순서로 열을 빼고, 긴 폴더 경로는 왼쪽을 잘라 냅니다.
 
-백그라운드 세션에서 `Enter`를 누르면 대시보드가 닫히고, `ccam attach <id>`처럼 그 세션을 해당 계정으로 이 터미널에서 엽니다. 대시보드는 다시 돌아오지 않습니다(Claude Code에서 `←`는 에이전트 보기로, `Ctrl+Z`는 셸로 갑니다). 열려 있는 세션에는 id가 없으므로 `Enter`와 `x`는 백그라운드 세션이어야 한다고만 알려 줍니다. `x`는 먼저 `No, keep it`이 선택된 상태로 물어봅니다: ``It runs as personal. Like `ccam personal stop 49ec0028`, Claude Code stops it and keeps its conversation, which `ccam attach 49ec0028` opens again.`` 예를 고르면 ccam은 그 계정으로 `claude stop <id>`를 실행하고, ``49ec0028 (personal) stopped; `ccam attach 49ec0028` opens it again`` 또는 멈추지 못한 이유를 알린 뒤 목록을 다시 읽습니다.
+백그라운드 세션에서 `Enter`를 누르면 대시보드가 닫히고, `ccam attach <id>`처럼 그 세션을 해당 계정으로 이 터미널에서 엽니다. 대시보드는 다시 돌아오지 않습니다(Claude Code에서 `←`는 에이전트 보기로, `Ctrl+Z`는 셸로 갑니다). 열려 있는 세션에는 ID가 없으므로 `Enter`와 `x`는 백그라운드 세션이어야 한다고만 알려 줍니다. `x`는 먼저 `No, keep it`이 선택된 상태로 물어봅니다: ``It runs as personal. Like `ccam personal stop 49ec0028`, Claude Code stops it and keeps its conversation, which `ccam attach 49ec0028` opens again.`` 예를 고르면 ccam은 그 계정으로 `claude stop <id>`를 실행하고, ``49ec0028 (personal) stopped; `ccam attach 49ec0028` opens it again`` 또는 멈추지 못한 이유를 알린 뒤 목록을 다시 읽습니다.
 
 ## 그룹 바꾸기
 
@@ -135,7 +135,9 @@ Groups 탭에서 `Enter`를 누르면 편집기가 열립니다. 왼쪽에는 �
     2. No
 ```
 
-그룹의 사본과 내용이 다른 파일이 있으면 먼저 어떻게 할지 묻습니다(그룹의 것을 유지, 내 것을 사용, 병합). 그다음 [`ccam group`](/features/share)과 같은 코드로 백그라운드에서 변경을 실행합니다. 설정을 먼저 저장하고, 계정마다 데이터를 차례로 옮기며, 원본은 `.ccam-backup/`으로 갑니다. MCP 공유에서 빠지는 계정은 그룹의 서버를 자기 `.claude.json`에 남겨 둡니다. 실행 중인 계정의 데이터를 옮기게 되는 변경은 그 계정 이름과 함께 거부되며, 계획을 열어 둔 동안 계정이 시작된 경우도 마찬가지입니다. 다른 ccam의 그룹 변경 때문에 낡은 계획은 `the groups changed while this plan waited; nothing was moved, make the change again`로 거부됩니다. 다른 ccam이 그룹을 바꾸는 동안 새 변경, 이름 바꾸기, 삭제는 `another ccam is changing the groups right now`를 표시하고, 변경이 중간에 멈춘 뒤에는 Health 탭의 `F`(또는 `ccam doctor --fix`)가 마무리할 때까지 기다립니다.
+그룹의 사본과 내용이 다른 파일이 있으면 먼저 어떻게 할지 묻습니다(그룹의 것을 유지, 내 것을 사용, 병합). 그다음 [`ccam group`](/features/share)과 같은 코드로 백그라운드에서 변경을 실행합니다. 설정을 먼저 저장하고, 계정마다 데이터를 차례로 옮기며, 원본은 `.ccam-backup/`으로 갑니다. MCP 공유에서 빠지는 계정은 그룹의 서버를 자기 `.claude.json`에 남겨 둡니다.
+
+실행 중인 계정의 데이터를 옮기게 되는 변경은 그 계정 이름과 함께 거부되며, 계획을 열어 둔 동안 계정이 시작된 경우도 마찬가지입니다. 다른 ccam 프로세스가 그룹을 바꿔서 낡은 계획은 `the groups changed while this plan waited; nothing was moved, make the change again`로 거부됩니다. 다른 ccam 프로세스가 그룹을 바꾸는 동안 새 변경, 이름 바꾸기, 삭제는 `another ccam process is changing the groups right now`를 표시하고, 변경이 중간에 멈춘 뒤에는 Health 탭의 `F`(또는 `ccam doctor --fix`)가 마무리할 때까지 기다립니다.
 
 ## 계정 추가
 
@@ -144,7 +146,7 @@ Groups 탭에서 `Enter`를 누르면 편집기가 열립니다. 왼쪽에는 �
 1. 계정 이름.
 2. 로그인 방식: 지금 Claude 구독으로 로그인(브라우저에서), [API 키](/features/api), 또는 나중에 Claude 구독으로 로그인.
 3. API 키를 고른 경우: 실행할 때마다 ccam이 키를 읽을 곳(`env:NAME` 또는 `command:COMMAND`), 엔드포인트, 키를 보내는 방식, 모델.
-4. 들어갈 그룹. `default`가 선택되어 있습니다. 아직 그룹이 없으면 `default`가 공유할 항목을 고릅니다.
+4. 들어갈 그룹. `default`가 선택되어 있습니다(아직 그룹이 없으면 `default` 그룹이 공유할 항목).
 5. 원하면 단축 명령.
 6. 확인할 요약.
 

@@ -1,15 +1,15 @@
 ---
 title: 为脚本选择账号
 description: ccam pick 为脚本输出余量最多的账号，让同时启动的并行任务各用不同的账号，并在没有账号还有余量时以 75 退出。
-updated: 2026-10-25
+updated: 2026-10-26
 order: 12
 translation: machine
-sourceHash: "5c4f74db9714"
+sourceHash: "321c8e351cf7"
 ---
 
-`ccam pick` 输出已登录账号中余量最多的那个账号的名称，供脚本用它启动 Claude Code。只要还有足够多有余量的账号，同时启动的并行任务就会各自拿到不同的账号，这样一批 `claude -p` 任务会分散到你的各个账号上，而不是耗尽其中一个。
+`ccam pick` 输出已登录账号中余量最多的那个账号的名称，这样脚本就能用它启动 Claude Code。只要有足够多的账号还有余量，同时启动的并行任务就会各自拿到不同的账号，这样一批 `claude -p` 任务会分散到你的各个账号上，而不是耗尽其中一个。
 
-**Team 和 Enterprise 席位。** 自动选择（`ccam next`、`--fallback`、`ccam pick`、仪表盘中的 `n`，以及你开启后的 [`auto_switch`](/features/next#auto-switch)）也会在同一个 Claude Team 或 Enterprise 组织的席位之间切换。Anthropic 帮助中心关于 [Team 套餐](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)的说明写道："Each seat on a Team plan is assigned to one named individual, and only that person may use it"（Team 套餐的每个席位都分配给一位指定的个人，只有此人可以使用），以及 "Users can't route their work through another user's account to use that user's remaining usage"（用户不能通过另一位用户的账号完成自己的工作，以使用该用户剩余的用量）；关于 [Enterprise 套餐](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)的说明也是如此。因此，在席位之间使用自动选择可能违反 Anthropic 的条款。在这些席位之间是否使用，由你自己决定：在依赖这项功能之前，请先向你所在的组织和 Anthropic 确认。个人套餐（Pro、Max）的情况请参见[常见问题中关于条款的说明](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)。
+**Team 和 Enterprise 席位。** 自动选择账号（`ccam next`、`--fallback`、`ccam pick`、仪表盘中的 `n`，以及你开启后的 [`auto_switch`](/features/next#auto-switch)）也会在同一个 Claude Team 或 Enterprise 组织的席位之间切换，这可能违反 Anthropic 的条款。在依赖这项功能之前，请先阅读[常见问题](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)，并向你所在的组织和 Anthropic 确认。
 
 ## 用法
 
@@ -21,7 +21,7 @@ done; wait
 ccam pick --json                      # the account and its usage
 ccam pick --model opus                # also count the Opus weekly limit
 ccam pick --max-usage 80 --strategy expiring
-ccam pick --strategy balance          # spread over the weekly quota, fewer running sessions first
+ccam pick --strategy balance          # most weekly quota left per day; fewer sessions first
 ccam pick --cross-org                 # also accounts of other organizations
 ccam pick --wait=2h                   # nobody has room: wait for a reset
 ccam --fallback "$(ccam pick)" -p "…" # also switch if this account hits its limit mid-job
@@ -49,7 +49,7 @@ $ ccam pick --json
 | `--json` | 输出账号、它的 5 小时和每周用量、这些数字的来源，以及选中它的理由 | 关闭 |
 | `--model <model>` | 同时计入该模型的每周时间窗口，例如 `opus` | 无 |
 | `--max-usage <1-100>` | 优先选择用量低于此值的账号 | `auto_max_usage`，否则为 100 |
-| `--strategy headroom\|expiring\|balance` | 5 小时用量最低的账号、5 小时时间窗口最早重置的账号，或每周配额最先会被浪费的账号 | `auto_strategy`，否则为 `headroom` |
+| `--strategy headroom\|expiring\|balance` | 5 小时用量最低的账号、5 小时时间窗口最早重置的账号，或平均每天剩余每周配额最多的账号 | `auto_strategy`，否则为 `headroom` |
 | `--cross-org` | 也选择其他组织的账号 | `cross_org`，否则为关闭 |
 | `--wait[=<duration>]` | 没有账号还有余量时，等待第一个账号重置，最多等待这么久。值写在 `=` 之后：`--wait 30m` 会被拒绝，并给出提示 `--wait takes its value after '=': --wait=30m` | 关闭；单独给出时为 `5h` |
 | `--dry-run` | 只做选择，不记录这次选择 | 关闭 |
@@ -58,9 +58,9 @@ $ ccam pick --json
 
 1. ccam 列出此文件夹将要启动的账号所属组织中已登录的账号（API 密钥账号和 Console 登录没有限制，因此不包括在内；参见[组织](/features/next#auto)）；与该账号登录到同一个 Claude 账号的文件夹也会被排除。
 2. 它获取一个锁（`~/.local/state/ccam/picks.lock`），所以同时运行的选择会一个接一个地进行。
-3. 它以与 `ccam usage` 相同的方式、使用 60 秒缓存，一次性查询每个账号的用量。Claude Code 报告已满的时间窗口在重置前按 100% 计算（[用量限制记录](/features/usage#the-limit-record)），因此刚刚达到限制的账号即使保存的数字显示还有余量，也会被排除在外。
-4. 先排除最近 2 分钟内被选中过的账号，无论是被 `ccam pick` 选中，还是被 [`auto_switch`](/features/next#auto-switch) 把会话移到那里（`~/.local/state/ccam/picks/<name>`；日期晚于当前时钟时间的选择不计算在内），再用 `ccam next --auto` 的[选择规则](/features/next#auto)在其余账号中选择：优先选择低于 `auto_max_usage` 的账号，按策略选择，从不选择已达 100% 的账号。如果因此跳过了规则本来会首先选中的账号，`--json` 的 `reason` 会说明这一点：`30% of its 5 hours used; work was picked a moment ago`。
-5. 如果每个有余量的账号最近都被选中过，规则会重新在所有这些账号中选择，因此三个账号上的第四个并行任务会与其中一个共用账号。
+3. 它以与 `ccam usage` 相同的方式、使用 60 秒缓存，一次性查询每个账号的用量。Claude Code 报告已满的时间窗口在重置前按 100% 计算（[用量限制记录](/features/usage#the-limit-record)），因此刚刚达到限制的账号即使保存的数字仍显示还有余量，也会被排除在外。
+4. 先排除最近 2 分钟内被选中过的账号，无论是被 `ccam pick` 选中，还是被 [`auto_switch`](/features/next#auto-switch) 把会话移到那里（`~/.local/state/ccam/picks/<name>`；时间戳位于未来的选择不计算在内），再用 `ccam next --auto` 的[选择规则](/features/next#auto)在其余账号中选择：优先选择低于 `auto_max_usage` 的账号，按策略选择，从不选择已达 100% 的账号。如果因此跳过了规则本来会选中的账号，`--json` 的 `reason` 会说明这一点：`30% of its 5 hours used; work was picked a moment ago`。
+5. 如果每个有余量的账号最近都被选中过，规则会重新在所有这些账号中选择，因此在三个账号的情况下，第四个并行任务会与其中一个共用账号。
 6. 记录这次选择并释放锁，然后输出名称。
 
 这 2 分钟的时间窗口很重要，因为新任务的用量需要一段时间才会体现在数字中：如果没有它，同时启动的五个并行任务都会把同一个账号看作余量最多的账号。

@@ -1,12 +1,14 @@
 ---
 title: Sakinisha ccam
 metaTitle: Sakinisha ccam kwenye Linux, macOS na Windows
-description: Sakinisha ccam kwenye Linux, macOS au Windows kwa amri moja, kifurushi cha .deb au msimbo chanzo, na uisasishe kwa ccam update. Sakinisha Claude Code kwanza.
-updated: 2026-10-25
+description: Sakinisha ccam kwenye Linux, macOS au Windows kwa amri moja, kifurushi cha .deb au go install, na uisasishe kwa ccam update. Sakinisha Claude Code kwanza.
+updated: 2026-10-26
 order: 1
 translation: machine
-sourceHash: "a7f9dac24f79"
+sourceHash: "2ada7b2650d6"
 ---
+
+ccam hukuanzishia Claude Code, kwa hiyo sakinisha [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) kwanza na uhakikishe kuwa `claude --version` inafanya kazi.
 
 Endesha hii kwenye terminal ya Linux au macOS:
 
@@ -22,16 +24,17 @@ Kwenye Windows, endesha hii katika PowerShell:
 irm https://ccam.dev/install.ps1 | iex
 ```
 
-Skripti hupakua `ccam_windows_<arch>.zip`, hukagua checksum yake ya SHA-256, huweka `ccam.exe` katika `%USERPROFILE%\.local\bin`, folda ambayo kisakinishi cha Claude Code huweka `claude.exe`, na huongeza folda hiyo kwenye `PATH` ya mtumiaji wako ikiwa haipo tayari, huku ikiacha vipengele kama `%USERPROFILE%\bin` jinsi vilivyo. Fungua terminal mpya baadaye. Kuiendesha tena hubadilisha ccam, hata wakati kipindi cha Claude Code bado kinaendeshwa kutoka binary ya zamani (hiyo hupewa jina jipya `ccam.exe.old`, au `ccam.exe.old-<number>` wakati ya zamani zaidi bado inatumika), na husasisha njia fupi ambazo ni hard links: `OK 2 shortcuts now run the new ccam`.
-
-ccam hukuanzishia Claude Code, kwa hiyo sakinisha [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) kwanza na uhakikishe kuwa `claude --version` inafanya kazi.
+Skripti hupakua `ccam_windows_<arch>.zip`, hukagua checksum yake ya SHA-256 na huweka `ccam.exe` katika `%USERPROFILE%\.local\bin`, folda ambayo kisakinishi cha Claude Code huweka `claude.exe`. Ikiwa folda hiyo haiko bado kwenye `PATH` ya mtumiaji wako, skripti huiongeza na huacha vipengele kama `%USERPROFILE%\bin` jinsi vilivyo. Fungua terminal mpya baadaye.
 
 ## Mifumo inayotumika
 
 - Linux kwenye x86-64 na ARM64: Ubuntu, Debian, Fedora, Arch, Alpine na distribution nyingine. Faili ya binary ni static na haina utegemezi wowote.
 - macOS kwenye Apple silicon na Intel.
-- Windows 10 na 11 kwenye x86-64 na ARM64, katika PowerShell, Windows Terminal au Git Bash. Folda zinazoshirikiwa hufanya kazi kwa kila mtumiaji. Faili zinazoshirikiwa (`settings.json`, `CLAUDE.md`, `history.jsonl`) zinahitaji Developer Mode (Settings > System > For developers), kwa sababu Windows huruhusu hali hiyo pekee, au msimamizi, kuunda viungo vya faili; tazama [kushiriki kwenye Windows](/features/share#on-windows). Bila hiyo, `ccam add` ya kwanza huunda kikundi `default` chenye seva za MCP na viendelezi pekee, na husema jinsi ya kuongeza vilivyobaki Developer Mode ikishawashwa.
-- Ndani ya WSL, ccam hufanya kazi kama kwenye mfumo wowote wa Linux.
+- Windows 10 na 11 kwenye x86-64 na ARM64, katika PowerShell, Windows Terminal au Git Bash:
+  - Folda zinazoshirikiwa hufanya kazi bila Developer Mode.
+  - Faili zinazoshirikiwa (`settings.json`, `CLAUDE.md`, `history.jsonl`) zinahitaji Developer Mode (Settings > System > For developers), kwa sababu Windows huruhusu hali hiyo pekee, au msimamizi, kuunda viungo vya faili; tazama [kushiriki kwenye Windows](/features/share#on-windows).
+  - Bila Developer Mode, `ccam add` ya kwanza huunda kikundi cha `default` chenye seva za MCP na viendelezi pekee, na husema jinsi ya kuongeza vilivyobaki Developer Mode ikishawashwa.
+- Ndani ya WSL, ccam hufanya kazi kama inavyofanya kwenye mfumo mwingine wowote wa Linux.
 
 ## Njia nyingine za kusakinisha
 
@@ -49,7 +52,7 @@ Kifurushi husakinisha `/usr/bin/ccam`.
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
 ```
 
-Ujenzi wa tagi ya toleo (`@latest` au `@vX.Y.Z`) huripoti toleo hilo, kwa hiyo `ccam update` hufanya kazi kwake; ujenzi wa `@main` au wa nakala ya ndani (checkout) iliyo mbele ya tagi huripoti `dev`.
+Ukisakinisha tagi ya toleo (`@latest` au `@vX.Y.Z`), ccam huripoti toleo hilo, na `ccam update` pamoja na pendekezo la sasisho la dashibodi hufanya kazi. Ujenzi wa `@main`, au wa nakala ya ndani (checkout) yenye commits baada ya tagi, huripoti `dev`, na `ccam update` huukataa isipokuwa utumie `--version`.
 
 **Toleo mahususi.** Weka `CCAM_VERSION`:
 
@@ -82,7 +85,13 @@ Plugin ya ccam humfundisha Claude Code yenyewe kutumia ccam: kuangalia akaunti i
 /plugin install ccam --marketplace jhyunwoo/ccam
 ```
 
-Huongeza skill moja, amri `/ccam:usage`, `/ccam:ext` na `/ccam:switch`, na hooks mbili: kipindi kinaposimama kwenye kikomo cha matumizi unapata arifa kwenye terminal (na kwenye Linux na macOS, [`auto_switch`](/features/next#auto-switch) ikiwa imewashwa, ccam huhamisha kipindi kwenda akaunti nyingine yenye nafasi), na `/ccam:switch [account]` hukabidhi mazungumzo kwa akaunti nyingine ([maelezo](/features/next#inside-claude-code)). Hooks huendesha `ccam`, kwa hiyo lazima iwe kwenye `PATH` ambayo Claude Code huiona. Skill hiyo kamwe haiendeshi amri zinazoingia kwenye akaunti au kuhamisha faili; badala yake huzipendekeza.
+Huongeza:
+
+- skill moja inayopendekeza amri zinazoingia kwenye akaunti au kuhamisha faili lakini kamwe haiziendeshi;
+- amri `/ccam:usage`, `/ccam:ext` na `/ccam:switch`;
+- hooks mbili ([maelezo](/features/next#inside-claude-code)). Moja huonyesha arifa kwenye terminal kipindi kinaposimama kwenye kikomo cha matumizi; kwenye Linux na macOS, [`auto_switch`](/features/next#auto-switch) ikiwa imewashwa, ccam kisha huhamisha kipindi kwenda akaunti nyingine yenye nafasi. Nyingine huiwezesha `/ccam:switch [account]` kukabidhi mazungumzo kwa akaunti nyingine.
+
+Hooks huendesha `ccam`, kwa hiyo lazima iwe kwenye `PATH` ambayo Claude Code huiona.
 
 ## Kagua usakinishaji
 
@@ -112,16 +121,16 @@ $ ccam update
 ccam 0.3.0 is up to date.
 ```
 
-Dashibodi (`ccam` kwenye terminal) pia hutafuta toleo jipya kila inapofunguliwa na, likiwepo, hulitoa: bonyeza `U` kisha uthibitishe. Hakuna amri nyingine inayotafuta, na ccam kamwe haijisasishi bila kuuliza. Ili kusakinisha toleo mahususi, hata la zamani, tumia `--version`. `ccam --dry-run update` huonyesha kile ambacho kingepakuliwa na kubadilishwa, bila kubadilisha chochote.
+Dashibodi (`ccam` bila hoja, kwenye terminal) pia hukagua kama kuna toleo jipya kila inapofunguliwa na, likiwepo, hulitoa: bonyeza `U` kisha uthibitishe. Hakuna amri nyingine inayokagua masasisho, na ccam kamwe haijisasishi bila kuuliza. Ili kusakinisha toleo mahususi, hata la zamani, tumia `--version`. `ccam --dry-run update` huonyesha kile ambacho kingepakuliwa na kubadilishwa, bila kubadilisha chochote.
 
 ```sh
 ccam update --version v0.2.0
 ccam --dry-run update
 ```
 
-Kuendesha skripti ya usakinishaji tena pia husasisha nakala iliyo katika `~/.local/bin`. Ikiwa ulijenga ccam kwa `go install` kutoka tagi ya toleo, `ccam update` hufanya kazi pia, au endesha amri ile ile tena.
+Kuendesha skripti ya usakinishaji tena pia husasisha nakala iliyo katika `~/.local/bin`. Ikiwa ulijenga ccam kwa `go install` kutoka tagi ya toleo, unaweza kuendesha `ccam update` au amri ile ile ya `go install` tena.
 
-**Windows.** `ccam update` hupakua `.zip` ya Windows. Programu inayoendeshwa haiwezi kubadilishwa kwenye Windows, kwa hiyo binary ya zamani hupewa jina jipya `ccam.exe.old`, ambalo sasisho linalofuata hulifuta; wakati kipindi bado kinaendeshwa kutoka `ccam.exe.old` ya awali, jina huwa `ccam.exe.old-<time>`. Njia fupi ambazo ni hard links husasishwa mara baada ya hapo.
+**Windows.** `ccam update` hupakua `.zip` ya Windows. Programu inayoendeshwa haiwezi kubadilishwa kwenye Windows, kwa hiyo binary ya zamani hupewa jina jipya `ccam.exe.old`, ambalo sasisho linalofuata hulifuta; wakati kipindi bado kinaendeshwa kutoka `ccam.exe.old` ya awali, jina huwa `ccam.exe.old-<time>`. Njia fupi ambazo ni hard links husasishwa mara baada ya hapo. Kuendesha `install.ps1` tena hufanya kazi kwa njia ile ile, hata wakati kipindi cha Claude Code bado kinaendeshwa kutoka binary ya zamani, na huchapisha `OK 2 shortcuts now run the new ccam` inaposasisha njia fupi zilizo hard links.
 
 **Kifurushi cha Debian na Ubuntu.** `ccam update` haibadilishi `/usr/bin/ccam` iliyosakinishwa na apt, na badala yake huchapisha hatua hizi. Pakua kifurushi kipya `ccam_<version>_linux_amd64.deb` kutoka [ukurasa wa matoleo](https://github.com/jhyunwoo/ccam/releases) na ukisakinishe juu ya kile cha zamani:
 
@@ -130,6 +139,8 @@ sudo apt install ./ccam_*_linux_amd64.deb
 ```
 
 ## Ondoa ccam
+
+Kufuta `~/.local/share/ccam` pia hufuta taarifa za kuingia na historia ya mazungumzo zilizohifadhiwa humo. Folda ya `~/.claude` ambayo [uliiingiza](/docs/commands) hubaki pale ilipo, lakini ikiwa katika kikundi, faili inazoshiriki huishi katika `~/.local/share/ccam/groups/`. Endesha `ccam remove <name>` kwa ajili yake (au `ccam group leave`) kabla ya kufuta chochote: hili huiondoa kwenye vikundi vyake na hurudisha ndani ya folda nakala ya kila kitu ilichoshiriki.
 
 Kwanza ondoa njia fupi za akaunti, wakati ccam bado imesakinishwa. `ccam list` huzionyesha katika safu ya Shortcut; ondoa kila moja kwa `ccam shortcut <account> --remove`, au futa viungo hivyo kutoka `~/.local/bin` mwenyewe. Kisha ondoa amri, na folda za data ikiwa huhitaji tena akaunti hizo:
 
@@ -147,5 +158,3 @@ ccam shortcut work --remove   # once for each account that has a shortcut
 Remove-Item ~\.local\bin\ccam.exe
 Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
 ```
-
-Kufuta `~/.local/share/ccam` pia hufuta taarifa za kuingia na historia ya mazungumzo zilizohifadhiwa humo. Folda ya `~/.claude` ambayo [uliiingiza](/docs/commands) hubaki pale ilipo, lakini ikiwa katika kikundi, faili inazoshiriki huishi katika `~/.local/share/ccam/groups/`. Kwanza endesha `ccam remove <name>` kwa ajili yake (au `ccam group leave`): huacha vikundi vyake ikiwa na nakala ya kila kitu ilichoshiriki.

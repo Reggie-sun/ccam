@@ -1,13 +1,13 @@
 ---
 title: Tài khoản theo thư mục
 description: "ccam folder cho một thư mục và mọi thư mục con dùng một tài khoản khi bạn chạy Claude Code không nêu tên tài khoản, ví dụ work cho mã công ty."
-updated: 2026-10-23
+updated: 2026-10-26
 order: 11
 translation: machine
-sourceHash: "48de98d42b99"
+sourceHash: 25f82da64580
 ---
 
-`ccam folder work ~/code/company` khiến mọi lần khởi chạy không nêu tên tài khoản bên trong `~/code/company`, và trong mọi thư mục bên dưới nó, khởi động Claude Code bằng `work`. Bên ngoài thư mục đó, tài khoản mặc định vẫn khởi động như trước. Khi nêu tên một tài khoản, bằng `ccam personal` hoặc một lệnh tắt như `ccpersonal`, tài khoản đó luôn được khởi động.
+Sau `ccam folder work ~/code/company`, mọi lần khởi chạy không nêu tên tài khoản trong `~/code/company` hoặc các thư mục con của nó đều khởi động Claude Code bằng `work`. Bên ngoài thư mục đó, tài khoản mặc định vẫn khởi động như trước. Khi nêu tên một tài khoản, bằng `ccam personal` hoặc một lệnh tắt như `ccpersonal`, tài khoản đó luôn được khởi động.
 
 ## Cách dùng
 
@@ -58,7 +58,7 @@ account = 'work'
 1. `ccam folder` chuyển thư mục thành đường dẫn tuyệt đối, đã phân giải các liên kết tượng trưng, rồi lưu lại. Đặt lại một thư mục sẽ thay tài khoản của nó.
 2. Một lần khởi chạy không nêu tên gọi `launcher.HereProfile`. Khi không có mục nào, nó lấy ngay tài khoản mặc định.
 3. Nếu không, nó so sánh thư mục làm việc với từng `path` dưới dạng chuỗi: chính thư mục đó hoặc một thư mục bên dưới, không bao giờ là một thư mục chỉ bắt đầu bằng cùng các ký tự (`/code/company` không bao gồm `/code/companyx`). Mục sâu nhất được ưu tiên, nên `~/code` có thể là `personal` trong khi `~/code/company` là `work`.
-4. Chỉ khi thư mục làm việc ở dạng nguyên bản không khớp mục nào, ccam mới phân giải các liên kết tượng trưng của nó và so sánh thêm một lần.
+4. Chỉ khi thư mục làm việc ở dạng đã cho không khớp mục nào, ccam mới phân giải các liên kết tượng trưng của nó và so sánh lại.
 5. Trên Windows và macOS, phép so sánh không phân biệt chữ hoa và chữ thường, giống như hệ thống tệp của chúng thường làm.
 
 Ngoài `config.toml` không có tệp nào khác được đọc, nên một lần khởi chạy bên trong một thư mục không tốn thêm thời gian đo được (4.0 ms dù có hay không có mục nào, `hyperfine`, 300 lần chạy).
@@ -67,7 +67,7 @@ Ngoài `config.toml` không có tệp nào khác được đọc, nên một l�
 
 - `ccam rename` chuyển các mục thư mục sang tên mới, và `ccam remove` xóa các mục của tài khoản bị xóa.
 - Một mục có tài khoản không còn tồn tại sẽ dừng lần khởi chạy không nêu tên trong thư mục đó: `<folder> is set to account "<name>", which does not exist. Change it with ccam folder`. `ccam doctor` báo cáo các mục như vậy, và cả các mục có thư mục đã mất.
-- `ccam folder --remove` bên trong một thư mục nhận tài khoản từ một thư mục phía trên sẽ nêu tên thư mục đó thay vì xóa bất cứ thứ gì.
+- Nếu bạn chạy `ccam folder --remove` trong một thư mục con thừa hưởng tài khoản từ một thư mục cha, ccam nêu tên thư mục cha đó và không xóa gì.
 - `ccam next` chọn theo vòng xoay hoặc mức sử dụng và không xét đến thư mục.
 
 ## Liên quan

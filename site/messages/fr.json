@@ -2,7 +2,7 @@
   "site": {
     "name": "ccam",
     "title": "ccam : Claude Code Account Manager et sélecteur de compte",
-    "description": "ccam (Claude Code Account Manager) est un outil open source gratuit pour utiliser plusieurs comptes Claude Code sur un ordinateur et en changer d'une commande.",
+    "description": "ccam (Claude Code Account Manager), outil open source gratuit, permet d'utiliser plusieurs comptes Claude Code sur un ordinateur et d'en changer d'une commande.",
     "titleSuffix": "ccam pour Claude Code"
   },
   "nav": {
@@ -18,13 +18,13 @@
   },
   "facts": {
     "what": "ccam est un outil en ligne de commande gratuit et open source qui permet d'utiliser plusieurs comptes Claude Code sur un seul ordinateur et de passer de l'un à l'autre avec une seule commande.",
-    "how": "Chaque compte conserve sa propre connexion dans un CLAUDE_CONFIG_DIR distinct, tandis que les serveurs MCP, les paramètres, CLAUDE.md, les extensions et l'historique des conversations peuvent être partagés entre les comptes. Vous pouvez ainsi poursuivre une conversation sur un autre compte quand l'un d'eux atteint sa limite d'utilisation.",
+    "how": "Chaque compte conserve sa propre connexion dans un CLAUDE_CONFIG_DIR distinct. Les serveurs MCP, les paramètres, CLAUDE.md, les extensions et l'historique des conversations peuvent être partagés entre les comptes. Vous pouvez ainsi poursuivre une conversation sur un autre compte quand l'un d'eux atteint sa limite d'utilisation.",
     "install": "Installez-le sous Linux, macOS ou Windows avec une seule commande, puis exécutez ccam add pour chaque compte.",
     "official": "ccam est un projet non officiel : il n'est ni affilié à Anthropic ni approuvé par Anthropic."
   },
   "landing": {
     "headline": "Plusieurs comptes Claude Code. Un seul terminal.",
-    "lede": "Ajoutez chaque compte une fois. Changez de compte avec ccam work ou un raccourci comme ccwork. Quand un compte atteint sa limite, continuez sur le suivant avec la même conversation.",
+    "lede": "Ajoutez chaque compte une fois. Changez de compte avec {command} ou un raccourci comme {shortcut}. Quand un compte atteint sa limite, poursuivez la même conversation sur le suivant.",
     "installLabel": "Installer sous Linux ou macOS",
     "installWindowsLabel": "Sous Windows, dans PowerShell",
     "thenAdd": "Ajoutez ensuite votre premier compte avec {command}.",
@@ -62,12 +62,12 @@
     "flow": [
       {
         "command": "ccam add work",
-        "body": "Crée un dossier de configuration distinct pour le compte, ouvre la connexion Claude dans votre navigateur et, si vous le souhaitez, attribue au compte un raccourci que vous nommez vous-même, par exemple ccwork."
+        "body": "Crée un dossier de configuration distinct pour le compte et ouvre la connexion Claude dans votre navigateur. Il peut aussi attribuer au compte un raccourci de votre choix, par exemple ccwork."
       },
       {
         "command": "ccam work",
         "also": "ccwork --resume",
-        "body": "Lance Claude Code avec ce compte. Tout ce qui suit le nom est transmis tel quel à Claude Code, et ccam ajoute environ 4 millisecondes avant le démarrage."
+        "body": "Lance Claude Code avec ce compte. Tout ce qui suit le nom est transmis tel quel à Claude Code, et le démarrage via ccam prend environ 4 millisecondes de plus que l'exécution directe de claude."
       },
       {
         "command": "ccam group set default --add history",
@@ -83,7 +83,7 @@
       },
       {
         "command": "ccam doctor --fix",
-        "body": "Vérifie les liens, les permissions et les connexions, et répare ce qui peut l'être sans risque. Chaque modification de vos fichiers conserve une sauvegarde."
+        "body": "Vérifie les liens, les permissions et les connexions, et répare ce qui peut l'être sans risque. Les fichiers qu'il doit déplacer sont conservés dans une sauvegarde."
       }
     ],
     "guidesTitle": "Guides",
@@ -141,12 +141,12 @@
     "next": "Ouvrir le compte suivant ; --continue emporte la conversation, --auto choisit celui qui a le plus de marge",
     "usage": "Afficher l'utilisation sur 5 heures et sur la semaine de tous les comptes",
     "share": "Afficher ce qu'un compte partage, et par quel groupe",
-    "group": "Créer et modifier les groupes : ce que partage un ensemble de comptes, déplacé selon un plan",
+    "group": "Créer et modifier les groupes, qui définissent ce que partagent leurs comptes ; chaque modification affiche d'abord un plan",
     "mcp": "Gérer les serveurs MCP partagés",
     "migrate": "Copier une configuration Claude Code existante (~/.claude) dans un groupe partagé",
     "login": "Reconnecter un compte ; --expired reconnecte tous les comptes qui en ont besoin",
     "logout": "Déconnecter un compte : sa connexion et ses connexions aux serveurs MCP",
-    "rename": "Renommer un compte ; son raccourci garde son nom",
+    "rename": "Renommer un compte ; sa commande raccourcie reste la même",
     "remove": "Supprimer un compte : il est déconnecté, et son dossier est placé dans le dossier de corbeille",
     "import": "Enregistrer un dossier ~/.claude existant sans le déplacer",
     "doctor": "Vérifier les liens, les permissions, les connexions et les versions, puis réparer",
@@ -174,7 +174,7 @@
   },
   "footer": {
     "unofficial": "ccam est un outil open source non officiel. Il n'est ni affilié à Anthropic ni approuvé par Anthropic. Claude et Claude Code sont des marques d'Anthropic.",
-    "terms": "Le droit d'utiliser plusieurs comptes dépend des conditions de chaque compte. Vérifiez-les avant de le faire.",
+    "terms": "Le droit d'utiliser plus d'un compte dépend des conditions qui s'appliquent à chacun. Lisez ces conditions avant de commencer.",
     "license": "Code source sur GitHub",
     "languages": "Toutes les langues",
     "analytics": "Ce site compte les visites avec Cloudflare Web Analytics, qui ne dépose aucun cookie et ne collecte aucune donnée personnelle."

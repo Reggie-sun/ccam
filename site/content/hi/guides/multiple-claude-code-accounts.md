@@ -1,10 +1,10 @@
 ---
 title: एक कंप्यूटर पर कई Claude Code अकाउंट इस्तेमाल करें
 description: CLAUDE_CONFIG_DIR से कई Claude Code अकाउंट साथ-साथ चलाएँ, shell aliases से हाथ से या ccam से अपने-आप, और उनके बीच स्विच करें।
-updated: 2026-10-25
+updated: 2026-10-26
 order: 1
 translation: machine
-sourceHash: "5c5dbd9fcd23"
+sourceHash: "381de7a473b2"
 ---
 
 हर अकाउंट को उसका अपना configuration फ़ोल्डर दें। Claude Code यह फ़ोल्डर `CLAUDE_CONFIG_DIR` environment variable से पढ़ता है, और हर फ़ोल्डर में उसका अपना लॉगिन, सेटिंग्स और इतिहास रहता है। इसलिए हर अकाउंट लॉग इन रहता है और आप उन्हें एक साथ चला सकते हैं। यह सेटअप आप shell alias से हाथ से कर सकते हैं, या ccam को करने दे सकते हैं।
@@ -17,7 +17,7 @@ sourceHash: "5c5dbd9fcd23"
 alias claude-work='CLAUDE_CONFIG_DIR=~/.claude-work claude'
 ```
 
-नया terminal खोलें और `claude-work` चलाएँ। Claude Code आपसे लॉगिन करने को कहता है, क्योंकि फ़ोल्डर नया है। इसके बाद `claude` आपका पहला अकाउंट है और `claude-work` दूसरा। हर अकाउंट के लिए एक alias जोड़ें, और हर alias का अपना फ़ोल्डर रखें।
+नया terminal खोलें और `claude-work` चलाएँ। Claude Code आपसे लॉगिन करने को कहता है, क्योंकि फ़ोल्डर नया है। इसके बाद `claude` आपका पहला अकाउंट है और `claude-work` दूसरा।
 
 WSL के बिना Windows पर, आपकी profile (`notepad $PROFILE`) में एक PowerShell function यही काम करता है:
 
@@ -29,7 +29,7 @@ function claude-work { $env:CLAUDE_CONFIG_DIR = "$HOME\.claude-work"; try { clau
 
 दो अकाउंट्स के लिए यह अच्छी तरह काम करता है। ध्यान रखने वाली बातें:
 
-- हर फ़ोल्डर ख़ाली शुरू होता है: कोई सेटिंग्स नहीं, कोई `CLAUDE.md` नहीं, कोई MCP सर्वर नहीं, कोई agents या skills नहीं। जो चाहिए उसे आप copy या link करते हैं, और copies को ख़ुद एक जैसा बनाए रखते हैं।
+- हर फ़ोल्डर ख़ाली शुरू होता है: कोई सेटिंग्स नहीं, कोई `CLAUDE.md` नहीं, कोई MCP सर्वर नहीं, कोई agents या skills नहीं। जो चाहिए उसे आप copy या link करते हैं, और copies को ख़ुद sync में रखते हैं।
 - Aliases केवल interactive shells में होते हैं। Scripts, Makefiles और दूसरे प्रोग्राम उन्हें नहीं देखते।
 - MCP सर्वर लॉगिन के साथ `.claude.json` में रहते हैं, इसलिए उन्हें फ़ोल्डरों के बीच सीधे लिंक नहीं किया जा सकता।
 - बातचीत उसी अकाउंट में रहती है जहाँ वह शुरू हुई थी, इसलिए आप उसे दूसरे अकाउंट में जारी नहीं रख सकते।
@@ -51,9 +51,9 @@ ccam add work --shortcut ccwork
 
 अब `ccam personal` और `ccam work` दोनों अकाउंट शुरू करते हैं, और `ccwork` भी, यानी वह शॉर्टकट जो आपने work अकाउंट को दिया। ये aliases नहीं, असली प्रोग्राम हैं, इसलिए scripts में भी काम करते हैं। सूची से अकाउंट चुनने के लिए सिर्फ़ `ccam` चलाएँ, और किसी अकाउंट को डिफ़ॉल्ट बनाने के लिए `ccam use work` चलाएँ।
 
-सेटिंग्स, `CLAUDE.md`, MCP सर्वर और एक्सटेंशन शुरू से साझा होते हैं। `ccam next --continue` किसी बातचीत को दूसरे अकाउंट पर ले जाता है, और साझा बातचीत का इतिहास, जिसे आप चालू कर सकते हैं, उसे एक ही बातचीत बनाए रखता है। `ccam usage` सभी अकाउंट्स का 5 घंटे और साप्ताहिक उपयोग एक साथ दिखाता है।
+सेटिंग्स, `CLAUDE.md`, MCP सर्वर और एक्सटेंशन शुरू से साझा होते हैं। `ccam next --continue` किसी बातचीत को दूसरे अकाउंट पर जारी रखता है। अगर आप साझा बातचीत का इतिहास चालू करते हैं, तो दोनों अकाउंट किसी कॉपी के बजाय एक ही बातचीत पर काम करते हैं। `ccam usage` सभी अकाउंट्स का 5 घंटे और साप्ताहिक उपयोग एक साथ दिखाता है।
 
-अगर आप पहले से `~/.claude` इस्तेमाल करते हैं, तो उस अकाउंट को दोबारा जोड़ने की बजाय `ccam import` चलाएँ, या उसकी सेटिंग्स, MCP सर्वर और एक्सटेंशन साझा सेटिंग्स में कॉपी करने के लिए `ccam migrate` चलाएँ।
+अगर आप पहले से `~/.claude` इस्तेमाल करते हैं, तो उस अकाउंट को दोबारा जोड़ने की बजाय `ccam import` चलाएँ, या उसकी सेटिंग्स, MCP सर्वर और एक्सटेंशन साझा `default` ग्रुप में कॉपी करने के लिए `ccam migrate` चलाएँ।
 
 ## कैसे पता करें कि कौन-सा अकाउंट चल रहा है?
 
@@ -77,6 +77,6 @@ Claude Code [Windows पर सीधे भी और WSL के अंदर �
 
 दो अकाउंट्स के लिए, जिनमें कुछ भी साझा नहीं करना है, alias काफ़ी है। जब आप साझा सेटिंग्स और MCP सर्वर, ज़्यादा अकाउंट, एक नज़र में उपयोग, या बातचीत जारी रखना चाहते हैं, तो ccam यह सारा हिसाब-किताब आपसे बचाता है। [aliases से तुलना](/compare/aliases) में अंतर साथ-साथ दिए गए हैं, और [ccam और दूसरे account switchers](/compare/account-switchers) उन टूल्स के बारे में है जो इसकी बजाय एक ही लॉगिन को बदलते हैं।
 
-कई अकाउंट इस्तेमाल करने की अनुमति है या नहीं, यह हर अकाउंट की शर्तों पर निर्भर करता है। ऐसा करने से पहले उन्हें जाँच लें।
+आप एक से ज़्यादा अकाउंट इस्तेमाल कर सकते हैं या नहीं, यह हर अकाउंट पर लागू शर्तों पर निर्भर करता है। शुरू करने से पहले वे शर्तें पढ़ लें।
 
-**Team और Enterprise सीटें।** अपने-आप होने वाला चुनाव (`ccam next`, `--fallback`, `ccam pick`, डैशबोर्ड का `n`, और चालू करने पर [`auto_switch`](/features/next#auto-switch)) एक ही Claude Team या Enterprise संगठन की सीटों के बीच भी स्विच करता है। Anthropic का सहायता केंद्र कहता है कि "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team प्लान की हर सीट एक नामित व्यक्ति को सौंपी जाती है, और केवल वही व्यक्ति उसका इस्तेमाल कर सकता है) और "Users can't route their work through another user's account to use that user's remaining usage" (उपयोगकर्ता किसी दूसरे उपयोगकर्ता के बचे हुए उपयोग का इस्तेमाल करने के लिए अपना काम उसके अकाउंट के ज़रिए नहीं चला सकते) ([Team प्लान](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise प्लान](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) के लिए भी इसी तरह)। इसलिए सीटों के बीच अपने-आप होने वाला चुनाव इस्तेमाल करना Anthropic की शर्तों का उल्लंघन हो सकता है। वहाँ इसका इस्तेमाल करना है या नहीं, यह आपका फ़ैसला है: इस पर भरोसा करने से पहले अपने संगठन और Anthropic से पता कर लें। Personal प्लान (Pro, Max) के बारे में ऊपर वाला नोट बताता है।
+**Team और Enterprise सीटें।** अपने-आप अकाउंट चुनना (`ccam next`, `--fallback`, `ccam pick`, डैशबोर्ड का `n` और, चालू करने के बाद, [`auto_switch`](/features/next#auto-switch)) एक ही Claude Team या Enterprise संगठन की सीटों के बीच भी स्विच करता है, जो Anthropic की शर्तों का उल्लंघन हो सकता है। इस पर भरोसा करने से पहले [FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) पढ़ें और अपने संगठन और Anthropic से पता कर लें।

@@ -1,10 +1,10 @@
 ---
 title: 在一台电脑上使用多个 Claude Code 账号
 description: 借助 CLAUDE_CONFIG_DIR 让多个 Claude Code 账号并行运行：可以用 shell 别名手动设置，也可以用 ccam 自动完成，并在账号之间切换。
-updated: 2026-10-25
+updated: 2026-10-26
 order: 1
 translation: machine
-sourceHash: "5c5dbd9fcd23"
+sourceHash: "381de7a473b2"
 ---
 
 为每个账号指定单独的配置文件夹。Claude Code 从 `CLAUDE_CONFIG_DIR` 环境变量中读取文件夹位置，每个文件夹都保存各自的登录信息、设置和历史记录，所以每个账号都保持登录状态，你也可以同时运行它们。你可以用 shell 别名手动设置，也可以交给 ccam 完成。
@@ -17,7 +17,7 @@ sourceHash: "5c5dbd9fcd23"
 alias claude-work='CLAUDE_CONFIG_DIR=~/.claude-work claude'
 ```
 
-打开一个新终端并运行 `claude-work`。因为文件夹是新的，Claude Code 会要求你登录。从此以后，`claude` 是你的第一个账号，`claude-work` 是第二个。每个账号添加一个别名，各用一个文件夹。
+打开一个新终端并运行 `claude-work`。因为文件夹是新的，Claude Code 会要求你登录。从此以后，`claude` 是你的第一个账号，`claude-work` 是第二个。
 
 在没有 WSL 的 Windows 上，可以在 PowerShell 配置文件（`notepad $PROFILE`）中添加一个函数，效果相同：
 
@@ -51,9 +51,9 @@ ccam add work --shortcut ccwork
 
 现在，`ccam personal` 和 `ccam work` 可以启动这两个账号，你为 work 账号设置的快捷命令 `ccwork` 也可以。因为它们是真正的程序而不是别名，所以在脚本中也能使用。单独运行 `ccam` 可以从列表中选择账号，运行 `ccam use work` 可以把某个账号设为默认账号。
 
-设置、`CLAUDE.md`、MCP 服务器和扩展从一开始就共享。`ccam next --continue` 会把对话带到另一个账号；你还可以开启对话历史共享，让它始终是同一个对话。`ccam usage` 会一次显示所有账号的 5 小时用量和每周用量。
+设置、`CLAUDE.md`、MCP 服务器和扩展从一开始就共享。`ccam next --continue` 会在另一个账号上继续对话。如果你开启对话历史共享，两个账号处理的就是同一个对话，而不是一份副本。`ccam usage` 会一次显示所有账号的 5 小时用量和每周用量。
 
-如果你已经在使用 `~/.claude`，请运行 `ccam import`，而不是再次添加该账号；或者运行 `ccam migrate`，把其中的设置、MCP 服务器和扩展复制到共享设置中。
+如果你已经在使用 `~/.claude`，请运行 `ccam import`，而不是再次添加该账号；或者运行 `ccam migrate`，把其中的设置、MCP 服务器和扩展复制到共享的 `default` 组中。
 
 ## 如何知道当前运行的是哪个账号？
 
@@ -75,8 +75,8 @@ Claude Code [可以在 Windows 上原生运行，也可以在 WSL 中运行](htt
 
 ## 该选哪一种？
 
-如果只有两个账号且不需要共享任何内容，用别名就够了。如果你想要共享设置和 MCP 服务器、使用更多账号、一眼看清用量或继续对话，ccam 可以省去这些繁琐的管理工作。[与别名的对比](/compare/aliases)并排列出了两者的差异，[ccam 与其他账号切换工具](/compare/account-switchers)则介绍了那些切换同一份登录信息的工具。
+如果只有两个账号且不需要共享任何内容，用别名就够了。如果你想要共享设置和 MCP 服务器、使用更多账号、一眼看清用量或继续对话，ccam 可以帮你省去这些繁琐的管理工作。[与别名的对比](/compare/aliases)并排列出了两者的差异，[ccam 与其他账号切换工具](/compare/account-switchers)则介绍了那些切换同一份登录信息的工具。
 
-是否可以使用多个账号取决于每个账号的条款。使用前请先确认。
+你能否使用多个账号，取决于适用于每个账号的条款。开始之前请先阅读这些条款。
 
-**Team 和 Enterprise 席位。** 自动选择（`ccam next`、`--fallback`、`ccam pick`、仪表盘中的 `n`，以及你开启后的 [`auto_switch`](/features/next#auto-switch)）也会在同一个 Claude Team 或 Enterprise 组织的席位之间切换。Anthropic 帮助中心关于 [Team 套餐](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)的说明写道："Each seat on a Team plan is assigned to one named individual, and only that person may use it"（Team 套餐的每个席位都分配给一位指定的个人，只有此人可以使用），以及 "Users can't route their work through another user's account to use that user's remaining usage"（用户不能通过另一位用户的账号完成自己的工作，以使用该用户剩余的用量）；关于 [Enterprise 套餐](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)的说明也是如此。因此，在席位之间使用自动选择可能违反 Anthropic 的条款。在这些席位之间是否使用，由你自己决定：在依赖这项功能之前，请先向你所在的组织和 Anthropic 确认。个人套餐（Pro、Max）的情况请参见上面的说明。
+**Team 和 Enterprise 席位。** 自动选择账号（`ccam next`、`--fallback`、`ccam pick`、仪表盘中的 `n`，以及你开启后的 [`auto_switch`](/features/next#auto-switch)）也会在同一个 Claude Team 或 Enterprise 组织的席位之间切换，这可能违反 Anthropic 的条款。在依赖这项功能之前，请先阅读[常见问题](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)，并向你所在的组织和 Anthropic 确认。

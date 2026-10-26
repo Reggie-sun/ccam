@@ -1,13 +1,13 @@
 ---
 title: Fara Claude Code
 description: Fara Claude Code a matsayin kowane asusu da ccam <name|number>, ccam run ko dashboard; arguments suna zuwa claude ba canji, --dry-run yana nuna umarnin.
-updated: 2026-10-25
+updated: 2026-10-26
 order: 1
 translation: machine
-sourceHash: afa4942cfed5
+sourceHash: cf9ef66530cd
 ---
 
-`ccam work` yana fara Claude Code a matsayin asusun `work`, kuma duk abin da ke bayan sunan yana zuwa `claude` kamar yadda yake. Yi amfani da shi duk inda za ka rubuta `claude`: a terminal, a rubutun (script), ko tare da shigarwa ta bututu (pipe).
+`ccam work` yana fara Claude Code a matsayin asusun `work`, kuma duk abin da ke bayan sunan yana zuwa `claude` ba tare da canji ba. Yi amfani da shi duk inda za ka rubuta `claude`: a terminal, a rubutun (script), ko tare da shigarwa ta bututu (pipe).
 
 ## Amfani
 
@@ -28,17 +28,17 @@ ccam --fallback work -p "fix the tests"   # run again as another account at the 
 
 Ba da sunan asusu ko lambarsa daga `ccam list`. ccam ba ya karanta arguments da ke bayan sunan, don haka `ccam work --help` yana nuna taimakon Claude Code. `--` bayan sunan ba dole ba ne. Standard input, exit code da signals suna aiki kamar da `claude`.
 
-Idan argument na farko ya fara da `-` kuma ba ɗaya daga cikin flags na ccam kansa ba ne, ccam yana fara asusu ba tare da suna ba, da dukkan arguments. Wannan shi ne asusun da aka saita don foldar yanzu da [`ccam folder`](/features/folder), in ba haka ba asusun tsoho: wanda aka saita da `ccam use`, ko asusun da ke da mafi ƙanƙantar lamba idan ba ka saita ɗaya ba.
+Idan argument na farko ya fara da `-` kuma ba ɗaya daga cikin flags na ccam kansa ba ne, ccam yana zaɓa maka asusun kuma yana miƙa dukkan arguments ga Claude Code. Yana amfani da asusun da aka saita don foldar yanzu da [`ccam folder`](/features/folder), in ba haka ba asusun tsoho: wanda aka saita da `ccam use`, ko asusun da ke da mafi ƙanƙantar lamba idan ba ka saita ɗaya ba.
 
 ### Dashboard
 
 `ccam` ba tare da arguments ba yana buɗe [dashboard](/features/dashboard) idan standard input da output terminal ne, kuma yana buga `ccam list` in ba haka ba. Je kan asusu (da kibiyoyi, ko ta rubuta lambarsa) kuma danna `Enter` don fara shi; `n` yana fara asusun da ya fi sarari, kuma `o` yana ba da `--continue`, `--resume` ko wasu arguments. Dashboard yana rufewa kafin Claude Code ya fara, don haka ana fara maido da terminal.
 
-**Kujeru (seats) na Team da Enterprise.** Zaɓin atomatik (`ccam next`, `--fallback`, `ccam pick`, maɓallin `n` na dashboard, da [`auto_switch`](/features/next#auto-switch) idan ka kunna shi) yana kuma sauyawa tsakanin kujerun ƙungiyar Claude Team ko Enterprise iri ɗaya. Cibiyar taimako ta Anthropic ta ce "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (ana ba da kowace kujera a tsarin Team da sunan takamaiman mutum ɗaya, kuma wannan mutumin kaɗai ne aka yarda ya yi amfani da ita) da "Users can't route their work through another user's account to use that user's remaining usage" (masu amfani ba za su iya tura aikinsu ta asusun wani mai amfani ba domin su ci gajiyar ragowar amfanin wannan mai amfanin) ([Tsare-tsaren Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); haka ma ga [tsare-tsaren Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Don haka yin amfani da zaɓin atomatik tsakanin kujeru na iya saɓa wa sharuɗɗan Anthropic. Ko za ka yi amfani da shi a can ya rage naka: ka tuntuɓi ƙungiyarka da Anthropic kafin ka dogara da shi. Don tsare-tsaren kai (Pro, Max), duba [bayanin sharuɗɗa a cikin Tambayoyin da ake yawan yi](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Kujeru (seats) na Team da Enterprise.** Zaɓin asusu na atomatik (`ccam next`, `--fallback`, `ccam pick`, maɓallin `n` na dashboard kuma, da zarar ka kunna shi, [`auto_switch`](/features/next#auto-switch)) yana kuma sauyawa tsakanin kujerun ƙungiyar Claude Team ko Enterprise iri ɗaya, wanda na iya saɓa wa sharuɗɗan Anthropic. Ka karanta [Tambayoyin da ake yawan yi](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) kuma ka tuntuɓi ƙungiyarka da Anthropic kafin ka dogara da shi.
 
-Idan harsashin (shell) yana da `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY` ko `ANTHROPIC_AUTH_TOKEN` a saita, Claude Code zai yi amfani da wannan key ko token maimakon shigar asusun kansa, don haka ccam yana faɗin haka a standard error kafin ya fara (`ccam: $ANTHROPIC_API_KEY is set, so Claude Code may use that key instead of work's login…`). Yana karanta variables ɗin ne kawai; [asusun API key](/features/api) yana share su maimakon haka.
+Idan harsashin (shell) yana da `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY` ko `ANTHROPIC_AUTH_TOKEN` a saita, Claude Code na iya amfani da wannan key ko token maimakon shigar asusun kansa, don haka ccam yana gargaɗe ka a standard error kafin ya fara (`ccam: $ANTHROPIC_API_KEY is set, so Claude Code may use that key instead of work's login…`). Yana karanta variables ɗin ne kawai; [asusun API key](/features/api) yana share su maimakon haka.
 
-Da `relay = true`, ko [`auto_switch = true`](/features/next#auto-switch) a Linux da macOS, a saman `config.toml` (kafin `[[group]]`, `[[profile]]` ko `[[folder]]` na farko), ccam yana fara zaman mu'amala a matsayin process na ƙasa (child) kuma yana zama a gefensu, don `/ccam:switch`, ko `auto_switch` a iyakar amfani, ya iya kai tattaunawa gaba da kansa, tare da zaɓuɓɓukan zaman, yanayin izini (permission mode) da matakin ƙoƙari (effort level) ([cikakken bayani](/features/next#relay)); in ba haka ba ccam yana maye gurbin kansa da Claude Code, kuma babu abin da ke gudana a gefensa.
+Ta tsohuwa, ccam yana maye gurbin kansa da Claude Code, don haka babu wani abu da ke ci gaba da gudana. Da `relay = true` (ko [`auto_switch = true`](/features/next#auto-switch) a Linux da macOS) a saman `config.toml`, kafin `[[group]]`, `[[profile]]` ko `[[folder]]` na farko, ccam yana fara zaman mu'amala a matsayin child process maimakon haka kuma yana ci gaba da aiki tare da su. Wannan yana ba `/ccam:switch`, ko `auto_switch` a iyakar amfani, damar ci gaba da tattaunawar a wani asusu da kansa, tare da zaɓuɓɓukan zaman, yanayin izini (permission mode) da matakin ƙoƙari (effort level) ([cikakken bayani](/features/next#relay)).
 
 ## Zaɓuɓɓuka
 
@@ -52,11 +52,11 @@ Da `relay = true`, ko [`auto_switch = true`](/features/next#auto-switch) a Linux
 Ƙa'idodin arguments:
 
 - ccam yana karanta flags nasa ne kawai kafin sunan asusun. Bayan sunan, kowane argument na Claude Code ne, har da `--dry-run` da `--help`.
-- `--dry-run` yana aiki a matsayin `ccam --dry-run work`, `ccam run --dry-run work` da `ccam --dry-run` (asusun da ba tare da suna ba). Ana karɓar sa, ba a ƙin sa. `--dry-run` da `--fallback` za su iya zuwa a kowane tsari.
+- `--dry-run` yana aiki a matsayin `ccam --dry-run work`, `ccam run --dry-run work` da `ccam --dry-run` (ga asusun foldar ko na tsoho). `--dry-run` da `--fallback` za su iya zuwa a kowane tsari.
 - `ccam run <name|number> [claude args]` cikakken nau'i ne na `ccam <name>`. `ccam run` ba tare da suna ba yana amfani da asusun foldar ko na tsoho.
 - Sunayen asusai ba za su iya zama sunayen umarnin ccam kamar `add`, `list`, `run` ko `usage` ba, don haka `ccam <word>` ba ya taɓa yin shubuha.
 
-Dry run yana buga layi ɗaya da za ka iya liƙawa a shell, ko a PowerShell a Windows. Yana farawa da abin da farawar ke canzawa a muhalli: `CLAUDE_CONFIG_DIR` da `CCAM_PROFILE` koyaushe, `env -u <name>` ga variable da take cirewa (kamar `CCAM_RELAY` da aka gada), kuma ga [asusun API key](/features/api) endpoint ɗinsa da model ɗinsa da key ɗin a matsayin tushensa (`ANTHROPIC_API_KEY="$WORK_KEY"`), ba key ɗin kansa ba:
+Dry run yana buga layi ɗaya da za ka iya liƙawa a shell, ko a PowerShell a Windows. Yana farawa da abin da farawar ke canzawa a muhalli: `CLAUDE_CONFIG_DIR` da `CCAM_PROFILE` koyaushe, `env -u <name>` ga variable da take cirewa (kamar `CCAM_RELAY` da aka gada), kuma, ga [asusun API key](/features/api), endpoint ɗinsa, model ɗinsa da inda key ɗin ke fitowa (`ANTHROPIC_API_KEY="$WORK_KEY"`), ba key ɗin kansa ba:
 
 ```console
 $ ccam --dry-run work -p "fix the tests"
@@ -78,22 +78,34 @@ Kowane farawa yana bin matakai iri ɗaya, daga layin umarni zuwa `exec`:
 
 Kowane akwati yana haskakawa yayin da matakinsa ke gudana, kuma layukan da ke ƙasa su ne muhalli da arguments da Claude Code ke farawa da su.
 
-1. `cmd/ccam/main.go` yana kiran `app.Main`. Idan an fara ccam da wani suna, [gajeren umarni](/features/shortcuts) ne kuma yana zuwa mai farawa (launcher) kai tsaye.
-2. `app.parse` yana duba `os.Args` kafin cobra ya shiga. `ccam` shi kaɗai (dashboard), sunan umarnin ccam (`config.Reserved`), `-h`/`--help` da `-v`/`--version` ne kawai ke zuwa `cli.Execute`. Duk sauran farawa ne.
-3. `launcher.Launch` yana karanta `~/.config/ccam/config.toml`, fayil ɗaya tilo da yake karantawa.
-4. `launcher.Prepare` yana nemo asusun ta suna ko lamba (idan babu, `HereProfile` yana ɗaukar asusun foldar, yana kwatanta foldar aiki da shigarwar `[[folder]]` na `config.toml` a matsayin strings, ba tare da la'akari da manya ko ƙananan haruffa ba a macOS da Windows), yana cire `--` ɗaya na farko, kuma yana nemo shirin `claude` da `ResolveClaude`. Ana ajiye sakamakon neman PATH a cache a `~/.local/state/ccam/claude-path` tare da lokacin gyaran fayil ɗin da hash na `PATH`, don haka ccam ba ya bincika `PATH` a kowane farawa. Fayil da ya canza ko ya ɓace, ko `PATH` da ya canza, yana sa a sake nema. Hanyar `claude_bin` a `config.toml` (ana faɗaɗa `~/`) dole ta zama fayil mai gudana (executable); in ba haka ba farawar tana tsayawa da `claude_bin X is not an executable file. Check claude_bin in config.toml` kafin a rubuta komai. ccam yana ƙin `claude` wanda ccam kansa ne, ana kwatanta su ta inode, domin hakan zai yi ta zagayawa.
-5. `checkLinks` yana kwatanta foldar asusun `~/.local/share/ccam/profiles/<name>/` da saitunan rabawarta ta amfani da `share.Check`, wanda ke kiran `lstat` da `readlink` kawai, kiran tsarin (system call) ɗaya ko biyu ga kowane abu. Ana ƙirƙirar mahaɗin da ya ɓace nan take. Duk abin da zai iya rasa bayanai yana dakatar da farawar.
-6. `applyMCP` yana ƙara sabobin MCP da aka raba (duba ƙasa).
-7. `session.Register` yana rubuta zaman. ccam yana rubuta alama mai sunan PID ɗinsa, mai ɗauke da lokacin farawar process ɗin, zuwa `~/.local/state/ccam/locks/profile-<name>/<pid>`, ko me `XDG_RUNTIME_DIR` ya ce, don kowane shell ya ga alamomi iri ɗaya. Ga asusun da ke raba tarihin tattaunawa, `historyCheck` yana fara neman zaman da ke aiki a `history-<group>-<hash>`, inda hash ɗin na foldar yanzu ne bayan warware mahaɗan alama (symbolic links), kuma yana yin rajista a can ma. `exec` yana riƙe PID ɗin, don haka alamar tana nufin process ɗin Claude Code kansa. Alama ce, ba kulle da aka riƙe ba, domin processes da Claude Code ke farawa za su gaji kulle kuma su riƙe shi bayan zaman ya ƙare. Idan ba a iya rubuta alamar ba, hakan ba ya dakatar da farawar: ccam yana cewa `ccam: could not mark the session as running (…); starting Claude Code anyway`. Sauran binciken ccam na ko asusu yana aiki (sake suna, cirewa, canjin rukunoni, `doctor --fix`, MCP sync) suna karanta bayanan Claude Code kansa a foldar asusun ma (`sessions/<pid>.json`, `daemon.lock`), don haka suna ganin Claude Code da aka fara ba ta ccam ba ma: `claude` na yau da kullum, IDE, zaman bayan fage da daemon ɗinsu.
-8. `Plan.Exec` yana saita taken terminal zuwa `claude · <name>` (idan standard error terminal ne), yana rubuta lokacin farawa zuwa `~/.local/state/ccam/last-used/<name>` ba tare da `fsync` ba, kuma yana kiran `syscall.Exec`.
+1. ccam yana farawa a `app.Main`, wanda `cmd/ccam/main.go` ke kira. Idan an fara ccam da wani suna, [gajeren umarni](/features/shortcuts) ne kuma yana zuwa mai farawa (launcher) kai tsaye.
+2. ccam yana duba `os.Args` kafin cobra ya shiga (`app.parse`). `ccam` shi kaɗai (dashboard), sunan umarnin ccam (`config.Reserved`), `-h`/`--help` da `-v`/`--version` ne kawai ke zuwa `cli.Execute`. Duk sauran farawa ne.
+3. ccam yana karanta `~/.config/ccam/config.toml`, fayil ɗaya tilo da yake karantawa (`launcher.Launch`).
+4. ccam yana nemo asusun ta suna ko lamba, yana cire `--` ɗaya na farko, kuma yana nemo shirin `claude` (`launcher.Prepare`, `ResolveClaude`). Idan babu suna, yana ɗaukar asusun foldar, yana kwatanta foldar aiki da shigarwar `[[folder]]` na `config.toml` a matsayin strings, ba tare da la'akari da manya ko ƙananan haruffa ba a macOS da Windows (`HereProfile`). Ana ajiye sakamakon neman PATH a cache a `~/.local/state/ccam/claude-path` tare da lokacin gyaran fayil ɗin da hash na `PATH`, don haka ccam ba ya bincika `PATH` a kowane farawa. Fayil da ya canza ko ya ɓace, ko `PATH` da ya canza, yana sa a sake nema. Hanyar `claude_bin` a `config.toml` (ana faɗaɗa `~/`) dole ta zama fayil mai gudana (executable); in ba haka ba farawar tana tsayawa da `claude_bin X is not an executable file. Check claude_bin in config.toml` kafin a rubuta komai. ccam yana ƙin `claude` wanda ccam kansa ne, ana kwatanta su ta inode, domin hakan zai yi ta zagayawa.
+5. ccam yana kwatanta foldar asusun `~/.local/share/ccam/profiles/<name>/` da saitunan rabawarta, yana kiran `lstat` da `readlink` kawai, kiran tsarin (system call) ɗaya ko biyu ga kowane abu (`checkLinks`, `share.Check`). Ana ƙirƙirar mahaɗin da ya ɓace nan take. Duk abin da zai iya rasa bayanai yana dakatar da farawar.
+6. ccam yana ƙara sabobin MCP da aka raba (`applyMCP`; duba ƙasa).
+7. ccam yana rubuta zaman (`session.Register`). Yana rubuta alama mai sunan PID ɗinsa, mai ɗauke da lokacin farawar process ɗin, zuwa `~/.local/state/ccam/locks/profile-<name>/<pid>`, ko me `XDG_RUNTIME_DIR` ya ce, don kowane shell ya ga alamomi iri ɗaya. Ga asusun da ke raba tarihin tattaunawa, ccam yana fara neman zaman da ke aiki a `history-<group>-<hash>`, inda hash ɗin na foldar yanzu ne bayan warware mahaɗan alama (symbolic links), kuma yana yin rajista a can ma (`historyCheck`).
 
-Claude Code yana gudana tare da `CLAUDE_CONFIG_DIR` da aka saita zuwa foldar asusun da `CCAM_PROFILE` da aka saita zuwa sunan asusun. ccam yana cire duk ƙimar waɗannan da ya gada, da kuma `CCAM_RELAY` da aka gada. Ga foldar `~/.claude` da aka yi wa rajista da `ccam import` a macOS, yana kuma saita `CLAUDE_SECURESTORAGE_CONFIG_DIR` zuwa ƙima mara komai, don asusun da `claude` na yau da kullum su yi amfani da shigar Keychain ɗaya; a Windows yana yin haka idan Claude Code yana ajiye shigar a Credential Manager.
+   `exec` yana riƙe PID ɗin, don haka alamar tana nufin process ɗin Claude Code kansa. ccam yana amfani da fayil na alama maimakon kulle da aka riƙe, domin processes da Claude Code ke farawa za su gaji kulle kuma su riƙe shi bayan zaman ya ƙare. Idan ba a iya rubuta alamar ba, hakan ba ya dakatar da farawar: ccam yana cewa `ccam: could not mark the session as running (…); starting Claude Code anyway`.
+
+   Sauran binciken ccam na ko asusu yana aiki (sake suna, cirewa, canjin rukunoni, `doctor --fix`, MCP sync) suna karanta bayanan Claude Code kansa a foldar asusun ma (`sessions/<pid>.json`, `daemon.lock`), don haka suna ganin Claude Code da aka fara ba ta ccam ba ma: `claude` na yau da kullum, IDE, zaman bayan fage da daemon ɗinsu.
+8. ccam yana saita taken terminal zuwa `claude · <name>` (idan standard error terminal ne), yana rubuta lokacin farawa zuwa `~/.local/state/ccam/last-used/<name>` ba tare da `fsync` ba, kuma yana kiran `syscall.Exec` (`Plan.Exec`).
+
+Claude Code yana gudana tare da `CLAUDE_CONFIG_DIR` da aka saita zuwa foldar asusun da `CCAM_PROFILE` da aka saita zuwa sunan asusun. ccam yana share duk ƙimomin waɗannan variables da aka gada, da kuma `CCAM_RELAY` da aka gada. Ga foldar `~/.claude` da aka yi wa rajista da `ccam import` a macOS, yana kuma saita `CLAUDE_SECURESTORAGE_CONFIG_DIR` zuwa ƙima mara komai, don asusun da `claude` na yau da kullum su yi amfani da shigar Keychain ɗaya; a Windows yana yin haka idan Claude Code yana ajiye shigar a Credential Manager.
 
 ### Me ya sa exec
 
-`syscall.Exec` yana maye gurbin process ɗin ccam da `claude`, don haka ccam ba ya zama a ƙwaƙwalwa, danna maɓallai, signals da exit code na Claude Code ne kansa, kuma arguments suna zama array, ba taɓa zama string na shell ba.
+ccam yana maye gurbin process ɗinsa da `claude` (`syscall.Exec`). Sakamakon haka:
 
-Windows ba shi da `exec`. A can, `Plan.Exec` yana fara `claude.exe` a matsayin child process da muhalli, arguments da console iri ɗaya, yana jiran sa kuma yana fita da exit code ɗinsa. `claude.cmd` da npm ya girka yana gudana a `cmd.exe` tare da cikakkiyar hanyarsa da kowane argument a cikin alamomin zance, don kada `cmd.exe` ya karanta ko ɗaya a matsayin ƙa'idar rubutunsa (`&`, `%PATH%`); argument mai karya layi ba za a iya miƙa shi ta wannan hanya ba kuma ana ƙin sa, tare da shawarar girka Claude Code na asali (native). Ctrl+C yana kai wa Claude Code daga console kai tsaye, don haka ccam yana watsi da shi. Alamar zaman tana ɗauke da PID na ccam, wanda ke rayuwa daidai tsawon Claude Code, kuma ana cire ta idan Claude Code ya fita. Yayin da yake jira, ccam ba ya yin wani abu. Aikin bayan zama, kamar lura da sabobin da aka ƙara da `claude mcp add`, yana faruwa a farawa ta gaba: ccam yana kwatanta lokacin gyaran `.claude.json` da `~/.local/state/ccam/mcp/<name>/seen` kuma yana karanta fayil ɗin ne kawai idan ya canza.
+- ccam ba ya zama a ƙwaƙwalwa;
+- danna maɓallai, signals da exit code na Claude Code ne kansa;
+- arguments suna zama array, ba taɓa zama string na shell ba.
+
+Windows ba shi da `exec`. A can, ccam yana fara `claude.exe` a matsayin child process da muhalli, arguments da console iri ɗaya, yana jiran sa kuma yana fita da exit code ɗinsa (`Plan.Exec`). `claude.cmd` da npm ya girka yana gudana a `cmd.exe` tare da cikakkiyar hanyarsa da kowane argument a cikin alamomin zance, don kada `cmd.exe` ya karanta ko ɗaya a matsayin ƙa'idar rubutunsa (`&`, `%PATH%`); argument mai karya layi ba za a iya miƙa shi ta wannan hanya ba kuma ana ƙin sa, tare da shawarar girka Claude Code na asali (native).
+
+Ctrl+C yana kai wa Claude Code daga console kai tsaye, don haka ccam yana watsi da shi. Alamar zaman tana ɗauke da PID na ccam, wanda ke rayuwa daidai tsawon Claude Code, kuma ana cire ta idan Claude Code ya fita. Yayin da yake jira, ccam ba ya yin wani abu.
+
+Aikin bayan zama, kamar lura da sabobin da aka ƙara da `claude mcp add`, yana faruwa a farawa ta gaba: ccam yana kwatanta lokacin gyaran `.claude.json` da `~/.local/state/ccam/mcp/<name>/seen` kuma yana karanta fayil ɗin ne kawai idan ya canza.
 
 ### Yadda ake tura layin umarni
 
@@ -109,9 +121,9 @@ Da tsohuwar dabarar `flag`, ccam yana miƙa sabobin MCP na rukunin ga Claude Cod
 
 <!-- motion:launch-mcp -->
 
-`mcp.FlagArgs` yana mayar da argument ne kawai idan `mcp.json` na rukunin yana nan, kuma `Plan.InsertArgs` yana saka shi kai tsaye bayan `claude`. Sannan `--mcp-config` ko `--strict-mcp-config` naka har yanzu yana aiki a saman sa. Argument ɗaya ne, `--mcp-config=<path>`, domin `--mcp-config` na Claude Code yana karɓar ƙima da dama: idan aka rubuta shi a matsayin arguments biyu, zai kuma karanta prompt da ke biye a matsayin fayil ɗin saiti.
+ccam yana ƙara argument ɗin ne kawai idan `mcp.json` na rukunin yana nan, kuma yana saka shi kai tsaye bayan `claude` (`mcp.FlagArgs`, `Plan.InsertArgs`). Sannan `--mcp-config` ko `--strict-mcp-config` naka har yanzu yana aiki a saman sa. Argument ɗaya ne, `--mcp-config=<path>`, domin `--mcp-config` na Claude Code yana karɓar ƙima da dama: idan aka rubuta shi a matsayin arguments biyu, zai kuma karanta prompt da ke biye a matsayin fayil ɗin saiti.
 
-`claudeVerb` yana yanke inda flag ɗin ba zai iya zuwa ba. Yana karanta ƙaramin umarnin (subcommand) Claude Code daga arguments kamar yadda Claude Code ke yi, yana tsallake zaɓuɓɓuka tare da ƙimominsu. `remote-control` ko `rc` ba ya samun flag (a ƙasa), haka ma aikatau na zaman bayan fage da aka ba da shi da farko (`attach`, `logs`, `stop`, `kill`, `respawn`, `rm`). `ccam work mcp list`, `get` da `remove` su ma ba sa samun ko ɗaya, tunda Claude Code yana ƙin shi a can; maimakon haka ccam yana faɗa a standard error cewa sabobin rukunin suna lodawa a zaman asusun ma:
+ccam yana yanke inda flag ɗin ba zai iya zuwa ba (`claudeVerb`). Yana karanta ƙaramin umarnin (subcommand) Claude Code daga arguments kamar yadda Claude Code ke yi, yana tsallake zaɓuɓɓuka tare da ƙimominsu. `remote-control` ko `rc` ba ya samun flag (a ƙasa), haka ma aikatau na zaman bayan fage da aka ba da shi da farko (`attach`, `logs`, `stop`, `kill`, `respawn`, `rm`). `ccam work mcp list`, `get` da `remove` su ma ba sa samun ko ɗaya, tunda Claude Code yana ƙin shi a can; maimakon haka ccam yana faɗa a standard error cewa sabobin rukunin suna lodawa a zaman asusun ma:
 
 ```console
 ccam: `claude mcp list` sees only account work's own MCP servers; its sessions also load group default's: ctx, fs
@@ -120,7 +132,7 @@ ccam: `claude mcp list` sees only account work's own MCP servers; its sessions a
 
 Kowane sauran ƙaramin umarni da kowane zama suna riƙe flag ɗin.
 
-Da `mcp_strategy = "sync"` a `config.toml`, ccam yana rubuta sabobin cikin `.claude.json` na asusun maimakon haka, kuma yana tsallake hakan idan asusun yana aiki tuni. Farawa tana tsallake aikin ma idan babu `mcp.json` na rukunin ko `.claude.json` da ya canza tun dubawa ta ƙarshe. Sync ba ya taɓa maye gurbin sabar da asusun ke da ita ta kansa mai sunan sabar rukuni (yana faɗin haka sau ɗaya), yana mayar da kwafin da ya ɓace daga `.claude.json` (`put back group default's MCP servers …`), kuma yana canzawa ko cire kwafin da shi ya rubuta waɗanda ba wanda ya canza tun daga lokacin kawai.
+Da `mcp_strategy = "sync"` a `config.toml`, ccam yana rubuta sabobin cikin `.claude.json` na asusun maimakon haka, kuma yana tsallake hakan idan asusun yana aiki tuni. Farawa tana tsallake aikin ma idan babu `mcp.json` na rukunin ko `.claude.json` da ya canza tun dubawa ta ƙarshe. Idan asusun yana da sabarsa mai suna iri ɗaya da sabar rukuni, sync yana riƙe sabar asusun kuma yana faɗin haka sau ɗaya. Sync yana kuma mayar da kwafin da ya ɓace daga `.claude.json` (`put back group default's MCP servers …`), kuma yana canzawa ko cire kwafin da shi ya rubuta waɗanda ba wanda ya canza tun daga lokacin kawai.
 
 ### Remote Control
 
@@ -128,22 +140,22 @@ Da `mcp_strategy = "sync"` a `config.toml`, ccam yana rubuta sabobin cikin `.cla
 
 <!-- motion:launch-rc -->
 
-1. `claudeVerb` yana gano `remote-control` ko `rc` a matsayin aikatau na Claude Code, har ma bayan zaɓuɓɓuka da ƙimominsu (`ccam work --model opus rc`). Sannan `mcp.FlagArgs` ba ya ƙara komai.
-2. `mcp.Synced` yana kwatanta lokacin gyaran `mcp.json` na rukunin da `sync-stamp` na asusun, kuma yana duba cewa kowace sabar rukuni har yanzu tana cikin `.claude.json`. Idan `.claude.json` yana ɗauke da sabobin rukunin na yanzu tuni, ko rukunin ba shi da ko ɗaya, Remote Control yana farawa ba tare da tambaya ba.
+1. ccam yana gano `remote-control` ko `rc` a matsayin aikatau na Claude Code, har ma bayan zaɓuɓɓuka da ƙimominsu (`ccam work --model opus rc`), kuma ba ya ƙara flag (`claudeVerb`, `mcp.FlagArgs`).
+2. ccam yana kwatanta lokacin gyaran `mcp.json` na rukunin da `sync-stamp` na asusun, kuma yana duba cewa kowace sabar rukuni har yanzu tana cikin `.claude.json` (`mcp.Synced`). Idan `.claude.json` yana ɗauke da sabobin rukunin na yanzu tuni, ko rukunin ba shi da ko ɗaya, Remote Control yana farawa ba tare da tambaya ba.
 3. In ba haka ba, ccam yana faɗin sunayen sabobin da zaman za su rasa kuma yana tambaya:
 
    ```console
    ccam: Remote Control sessions only get MCP servers stored in account work's .claude.json, not the shared MCP servers (ctx, fs).
-   Copy them into .claude.json (a backup is kept; servers of the account's own stay)? [y/N]
+   Copy them into .claude.json (a backup is kept; the account's own servers stay)? [y/N]
    ```
 
-4. Idan `y`, `mcp.Sync` yana kwafar su kamar yadda dabarar `sync` ke yi: ƙarƙashin kullen Claude Code, bayan ajiya, kuma yana riƙe sabobin asusun kansa. Idan `N`, ko babu terminal, Remote Control yana farawa ba tare da su ba, kuma ccam yana nuna `mcp_strategy = "sync"`, wanda ke kwafar su kafin kowace farawa.
+4. Idan `y`, ccam yana kwafar su kamar yadda dabarar `sync` ke yi (`mcp.Sync`): ƙarƙashin kullen Claude Code, bayan ajiya, kuma yana riƙe sabobin asusun kansa. Idan `N`, ko babu terminal, Remote Control yana farawa ba tare da su ba, kuma ccam yana nuna `mcp_strategy = "sync"`, wanda ke kwafar su kafin kowace farawa.
 
-ccam yana tambaya a kowace farawar Remote Control har sai an kwafi sabobin, kuma bayan kwafi sai kawai idan `mcp.json` na rukunin ya sake canzawa ko sabar da aka kwafa ta ɓace daga `.claude.json`. Kwafin da ke `.claude.json` yana nasara a kan `--mcp-config` a farawa ta yau da kullum na gaba, don haka `ccam mcp add`, `remove` da `import` suna sabunta kwafin da sauran asusan ke riƙe da su ([Sabobin MCP da aka raba](/features/mcp)).
+ccam yana tambaya a kowace farawar Remote Control har sai an kwafi sabobin. Bayan kwafi, yana sake tambaya ne kawai idan `mcp.json` na rukunin ya canza ko sabar da aka kwafa ta ɓace daga `.claude.json`. Kwafin da ke `.claude.json` yana nasara a kan `--mcp-config` a farawa ta yau da kullum na gaba, don haka `ccam mcp add`, `remove` da `import` suna sabunta kwafin da sauran asusan ke riƙe da su ([Sabobin MCP da aka raba](/features/mcp)).
 
 ### Kasafin 10 ms
 
-ccam yana ƙara 10 ms (p95) a mafi yawa kafin Claude Code ya fara. Hanyar farawa ba ta taɓa gina bishiyar umarnin cobra ba, ba ta fara Bubble Tea ba ko buɗe haɗin network, kuma `TestPackageInitIsCheap` yana gazawa idan ayyukan `init()` na packages sun ɗauki fiye da 5 ms gaba ɗaya. `scripts/perf-check.sh` yana auna `ccam --dry-run work`, `ccam work` da gajeren umarni da `hyperfine` kuma yana gazawa sama da 10 ms, kuma `BenchmarkLaunchPath` a `internal/launcher` yana gudanar da matakan a madauki. Don ganin lokacin kowane mataki, saita `CCAM_TRACE=1`:
+Kasafin hanyar farawa shi ne 10 ms a 95th percentile; a aikace ccam yana ƙara kusan 4 ms kafin Claude Code ya fara. Hanyar farawa ba ta taɓa gina bishiyar umarnin cobra ba, ba ta fara Bubble Tea ba ko buɗe haɗin network, kuma `TestPackageInitIsCheap` yana gazawa idan ayyukan `init()` na packages sun ɗauki fiye da 5 ms gaba ɗaya. `scripts/perf-check.sh` yana auna `ccam --dry-run work`, `ccam work` da gajeren umarni da `hyperfine` kuma yana gazawa sama da 10 ms, kuma `BenchmarkLaunchPath` a `internal/launcher` yana gudanar da matakan a madauki. Don ganin lokacin kowane mataki, saita `CCAM_TRACE=1`:
 
 ```console
 $ CCAM_TRACE=1 ccam --dry-run work >/dev/null
@@ -158,7 +170,7 @@ ccam trace: prelaunch             0.083ms (total 3.661ms)
 
 - Sunan ko lambar da ba a sani ba yana tsayawa da `no account "<name>"` kuma yana nuna `ccam list`. Idan babu asusu ko ɗaya, ccam yana roƙon ka ka ƙara ɗaya da `ccam add <name>`.
 - Idan hanyar da aka raba ta zama fayil na yau da kullum ko tana nuna wurin da bai dace ba, ccam yana tsayawa da `stopped because of share link problems:`, yana lissafa su, kuma yana roƙon ka ka gudanar da `ccam doctor --fix`. Ba ya matsar da bayanai a hanyar farawa.
-- Idan wani Claude Code da ke raba tarihin tattaunawa da wannan asusun (rukuni ɗaya) yana aiki a folda ɗaya, ccam yana gargaɗin cewa tarihin zai iya cakuɗewa kuma yana tambaya `Run anyway? [y/N]`. Ana daidaita foldar bayan warware mahaɗan alama (symbolic links). Ba tare da terminal ba (standard input daga `/dev/null` ana ƙirga shi a matsayin babu), ko daga aiki a bayan fage, yana nuna gargaɗin kuma yana ci gaba. Sabon gudun `-p` yana fara tattaunawarsa ta kansa kuma ba ya samun gargaɗi; `--version`, `--help` da ƙananan umarnin da ba sa buɗe tattaunawa, kamar `mcp`, `auth` ko `plugin`, ba a duba su kwata-kwata.
+- Idan wani zaman Claude Code da ke raba tarihin tattaunawa da wannan asusun (rukuni ɗaya) yana aiki a folda ɗaya, ccam yana gargaɗin cewa tarihin zai iya cakuɗewa kuma yana tambaya `Run anyway? [y/N]`. Ana daidaita foldar bayan warware mahaɗan alama (symbolic links). Ba tare da terminal ba (standard input daga `/dev/null` ana ƙirga shi a matsayin babu), ko daga aiki a bayan fage, yana nuna gargaɗin kuma yana ci gaba. Sabon gudun `-p` yana fara tattaunawarsa ta kansa kuma ba ya samun gargaɗi; `--version`, `--help` da ƙananan umarnin da ba sa buɗe tattaunawa, kamar `mcp`, `auth` ko `plugin`, ba a duba su kwata-kwata.
 - `--dry-run` yana tsallake daidaita MCP (sync), sanarwar sabuwar sabar, bayanin `mcp list`, duba tarihi, alamar zama, take da lokacin amfani na ƙarshe, kuma ba ya yin exec. Har yanzu yana duba mahaɗan rabawa, kuma yana ƙirƙirar mahaɗin da ya ɓace kamar yadda farawa ta yau da kullum za ta yi.
 - `ccam work rc` yayin da `work` yana aiki tuni yana barin `.claude.json` yadda yake, yana faɗin haka, kuma yana fara Remote Control ba tare da sabobin rukunin ba; sake gudanar da shi bayan zaman ya ƙare don kwafar su. Da `--dry-run` yana buga saƙon amma ba ya tambaya kuma ba ya kwafi.
 - Da `mcp_strategy = "sync"`, sync da ya gaza yana buga `ccam: MCP sync failed (launching anyway): …` kuma Claude Code yana farawa da sabobin da yake da su tuni.
@@ -170,4 +182,4 @@ ccam trace: prelaunch             0.083ms (total 3.661ms)
 - [Sarrafa asusai](/features/accounts)
 - [Bayanin umarnai](/docs/commands)
 - [Raba sabobin MCP, saituna da tarihi](/docs/sharing)
-- [Yadda CLAUDE_CONFIG_DIR ke aiki](/guides/claude-config-dir)
+- [Bayanin CLAUDE_CONFIG_DIR](/guides/claude-config-dir)

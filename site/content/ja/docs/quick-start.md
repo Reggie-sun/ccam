@@ -2,13 +2,15 @@
 title: クイックスタート
 metaTitle: "クイックスタート：Claude Codeアカウントの追加と切替"
 description: ccam addで2つのClaude Codeアカウントを追加し、ccworkのようなショートカットを付けて切り替え、共有する項目を選びます。
-updated: 2026-10-25
+updated: 2026-10-26
 order: 2
 translation: machine
-sourceHash: "0570ef27e4ce"
+sourceHash: bd893bbb83ab
 ---
 
 `ccam add`で各アカウントを追加し、`ccam <name>`、または`ccwork`のように自分で名前を付けたショートカットでClaude Codeを起動します。ほとんどの人にとって、必要なのはこれだけです。
+
+すでにClaude Codeを使っている場合は、始める前にこのページの最後にある[すでに~/.claudeを使っている場合](#already-using-claude)を読んでください。
 
 ## 1. 最初のアカウントを追加する
 
@@ -16,7 +18,7 @@ sourceHash: "0570ef27e4ce"
 ccam add
 ```
 
-ウィザードが、`personal`や`work`のような名前、そのアカウントがほかのアカウントと共有する項目、ショートカットコマンドを作成するかどうか（ステップ4を参照）を尋ねます。次に`claude auth login`を実行し、サインインできるようにブラウザーを開きます。リモートのマシンでは、ブラウザーが最後に読み込まれない`http://localhost:…/callback`のページで止まることがあります。そのアドレスをターミナルに貼り付けると、ccamがサインインを完了します。完了すると、次のように表示されます。
+ウィザードが、`personal`や`work`のような名前、そのアカウントがほかのアカウントと共有する項目、ショートカットコマンドを作成するかどうか（ステップ3を参照）を尋ねます。次に`claude auth login`を実行し、サインインできるようにブラウザーを開きます。リモートのマシンでは、ブラウザーが最後に読み込まれない`http://localhost:…/callback`のページで止まることがあります。そのアドレスをターミナルに貼り付けると、ccamがサインインを完了します。サインインが完了すると、次のように表示されます。
 
 ```console
 ✓ personal (me@example.com) added
@@ -25,7 +27,7 @@ ccam add
 
 ## 2. 既存の設定を引き継ぐ
 
-以前からClaude Codeを使っている場合、設定、`CLAUDE.md`、拡張機能、MCPサーバーは`~/.claude`にあります。これらを共有設定にコピーすると、すべてのアカウントで使えるようになります。
+以前からClaude Codeを使っている場合、設定、`CLAUDE.md`、拡張機能は`~/.claude`に、MCPサーバーは`~/.claude.json`にあります。これらを共有の`default`グループにコピーすると、すべてのアカウントで使えるようになります。
 
 ```sh
 ccam migrate
@@ -39,11 +41,7 @@ ccamは、コピーする内容を表示してから確認を求めます。`~/.
 ccam add work
 ```
 
-ブラウザーで、もう一方のアカウントでサインインします。
-
-## 4. アカウントを切り替える
-
-`ccam work`で、仕事用のアカウントでClaude Codeが起動します。もっと短くしたい場合は、`ccwork`のような専用のショートカットコマンドをアカウントに付けます。共有する項目を選んだ後、ウィザードが次のように尋ねます。
+名前はコマンドラインで指定したので、ウィザードは名前の質問を飛ばし、参加するグループを`default`にチェックが入った状態で表示します。今回は、1語で起動できるように、`ccwork`のような専用のショートカットコマンドをアカウントに付けましょう。グループを選んだ後、ウィザードが次のように尋ねます。
 
 ```console
  Create a shortcut command for work? [y/N]
@@ -57,21 +55,23 @@ ccam add work
  a-z, 0-9, '.', '-' and '_'; Enter alone uses ccwork
 ```
 
-ログインが終わると、ccamが結果を表示します。
+続いて、ブラウザーでもう一方のアカウントでサインインします。ccamがアカウントとそのショートカットを表示します。
 
 ```console
 ✓ work (work@example.com) added
   shortcut: ccwork
 ```
 
-この質問を飛ばした場合でも、いつでもショートカットを追加できます。
+## 4. アカウントを切り替える
+
+`ccam work`で、仕事用のアカウントでClaude Codeが起動します。ショートカットの質問を飛ばした場合でも、いつでもショートカットを追加できます。
 
 ```console
 $ ccam shortcut work ccwork
 ✓ shortcut for work: ccwork
 ```
 
-これで、次のどのコマンドでも、仕事用のアカウントでClaude Codeが起動します。
+これで、次のどのコマンドでも、仕事用のアカウントでClaude Codeが起動します（`2`は`ccam list`でのこのアカウントの番号です）。
 
 ```sh
 ccwork
@@ -91,7 +91,7 @@ cat error.log | ccwork -p "what caused this?"
 
 ## 5. 共有する項目を選ぶ
 
-デフォルトでは、MCPサーバー、`settings.json`、グローバルの`CLAUDE.md`、そしてエージェント、コマンド、スキル、プラグインが、`default`グループを通じてアカウント間で共有されます。会話履歴は共有されません。アカウントをまたいで会話を続けたい場合は、会話履歴をグループに追加します。
+デフォルトでは、MCPサーバー、`settings.json`、グローバルの`CLAUDE.md`、拡張機能（エージェント、コマンド、スキル、プラグイン）が、`default`グループを通じてアカウント間で共有されます。会話履歴は共有されません。アカウントをまたいで会話を続けたい場合は、会話履歴をグループに追加します。
 
 ```sh
 ccam group set default --add history
@@ -108,7 +108,7 @@ ccam next --continue
 
 `ccam usage`は、すべてのアカウントの5時間と週間の使用量を表示します。`ccam next --continue`は、次のアカウントで同じ会話を開きます。スクリプトでは、`ccam --fallback work -p "…"`が自動で切り替えます。詳しくは[使用量の上限](/docs/usage-limits)を参照してください。
 
-**TeamとEnterpriseのシート。** 自動的な選択（`ccam next`、`--fallback`、`ccam pick`、ダッシュボードの`n`、有効にした場合の[`auto_switch`](/features/next#auto-switch)）は、同じClaude TeamまたはEnterpriseの組織に属するシート間でも切り替えます。Anthropicのヘルプセンターには、「Each seat on a Team plan is assigned to one named individual, and only that person may use it」（Teamプランの各シートは1人の指定ユーザーに割り当てられ、そのユーザーのみが使用できます）、「Users can't route their work through another user's account to use that user's remaining usage」（ユーザーは別のユーザーのアカウントを通じて作業をルーティングして、そのユーザーの残りの使用量を使用することはできません）と書かれています（[Teamプラン](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)。[Enterpriseプラン](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)も同様です）。そのため、シート間で自動的な選択を使うと、Anthropicの規約に違反するおそれがあります。そこで使うかどうかはご自身の判断です。自動的な選択に頼る前に、所属する組織とAnthropicに確認してください。個人プラン（Pro、Max）については、[FAQの規約に関する説明](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)を参照してください。
+**TeamとEnterpriseのシート。** 自動的なアカウント選択（`ccam next`、`--fallback`、`ccam pick`、ダッシュボードの`n`、有効にした場合の[`auto_switch`](/features/next#auto-switch)）は、同じClaude TeamまたはEnterpriseの組織に属するシート間でも切り替えます。これはAnthropicの規約に違反するおそれがあります。頼る前に[FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)を読み、所属する組織とAnthropicに確認してください。
 
 ## すでに~/.claudeを使っている場合
 

@@ -1,10 +1,10 @@
 ---
 title: Ipinapakilala ang ccam
 description: Bakit ginawa ang ccam, ano ang naitutulong nito sa mga may maraming Claude Code account, at paano ito hindi nakakasagabal.
-updated: 2026-10-20
+updated: 2026-10-26
 order: 1
 translation: machine
-sourceHash: a555dc969142
+sourceHash: e4370f29b818
 ---
 
 Ang ccam ay maliit na command-line tool para sa mga gumagamit ng higit sa isang Claude Code account sa iisang computer: isang personal at isang work account, o ilang account para sa isang mahabang proyekto.
@@ -22,7 +22,7 @@ Sinusuportahan ng Claude Code ang maraming account sa pamamagitan ng [`CLAUDE_CO
 
 ## Hindi nakakasagabal
 
-Ang tool na pinapatakbo mo bago ang bawat session ay hindi dapat magkaroon ng gastos na mapapansin mo. Nagbabasa ang ccam ng isang configuration file, sinusuri ang mga shared na link gamit ang tig-iisang system call, at saka pinapalitan ang sarili nito ng `claude`. Nagdadagdag ito ng mga 4 millisecond, at hindi ito tumatakbo habang nagtatrabaho ka.
+Ang tool na pinapatakbo mo bago ang bawat session ay hindi dapat magkaroon ng gastos na mapapansin mo. Nagbabasa ang ccam ng isang configuration file, sinusuri ang mga shared na link gamit ang isa o dalawang system call bawat isa, at saka pinapalitan ang sarili nito ng `claude`. Nagdadagdag ito ng mga 4 millisecond, at bilang default, hindi ito tumatakbo habang nagtatrabaho ka.
 
 Maingat din ito sa iyong mga file. Bawat pagbabago sa sharing ay nagpi-print ng plano bago magsimula at iniimbak ang mga orihinal sa isang backup folder. Sinusuri ng `ccam doctor` ang mga link, permission at login, at inaayos ang kayang ayusin nang ligtas.
 
@@ -35,4 +35,4 @@ ccam add
 
 Ipinapakita ng [mabilis na pagsisimula](/docs/quick-start) kung paano magdagdag ng dalawang account, at ipinapaliwanag ng [paano gumamit ng maraming Claude Code account](/guides/multiple-claude-code-accounts) ang paraan nang may ccam at wala nito.
 
-Open source at hindi opisyal ang ccam: hindi ito kaanib o inendorso ng Anthropic. Nakadepende sa terms ng bawat account kung puwede kang gumamit ng maraming account. Malugod naming tinatanggap ang feedback at mga pagsasalin sa [GitHub](https://github.com/jhyunwoo/ccam).
+Open source at hindi opisyal ang ccam: hindi ito kaanib o inendorso ng Anthropic. Nakadepende sa terms na sumasaklaw sa bawat account kung puwede kang gumamit ng higit sa isang account. Malugod naming tinatanggap ang feedback at mga pagsasalin sa [GitHub](https://github.com/jhyunwoo/ccam).

@@ -1,13 +1,13 @@
 ---
 title: API key अकाउंट
 description: ccam add --api, Anthropic के API या किसी gateway के लिए API key अकाउंट जोड़ता है; key launch पर किसी variable या कमांड से पढ़ी जाती है, कभी सेव नहीं होती।
-updated: 2026-10-23
+updated: 2026-10-26
 order: 13
 translation: machine
-sourceHash: "232a71525e42"
+sourceHash: "771d749f1f90"
 ---
 
-API key अकाउंट Claude subscription लॉगिन के बजाय API key से Claude Code शुरू करता है: Anthropic का API, या कोई ऐसा endpoint जो वही Messages format समझता है, जैसे LiteLLM या OpenRouter gateway। ccam key सेव नहीं करता। अकाउंट जब भी शुरू होता है, यह key किसी environment variable से या password manager जैसी किसी कमांड से पढ़ता है, और उसे केवल उसी Claude Code process को देता है।
+API key अकाउंट Claude subscription लॉगिन के बजाय API key से Claude Code शुरू करता है। key Anthropic के API के लिए हो सकती है, या किसी भी ऐसे endpoint के लिए जो वही Messages format समझता है, जैसे LiteLLM या OpenRouter gateway। ccam key सेव नहीं करता। अकाउंट जब भी शुरू होता है, यह key किसी environment variable से या password manager जैसी किसी कमांड से पढ़ता है, और उसे केवल उसी Claude Code process को देता है।
 
 ## उपयोग
 
@@ -27,7 +27,7 @@ $ ccam list
    2  gw        -         (API: llm.example.com)  default  -
 ```
 
-API key अकाउंट किसी भी दूसरे अकाउंट की तरह ग्रुप में शामिल होता है (डिफ़ॉल्ट रूप से `default` में: सेटिंग्स, `CLAUDE.md`, extensions और MCP सर्वर), और शॉर्टकट, `ccam folder` और `ccam ext` के साथ काम करता है।
+API key अकाउंट किसी भी दूसरे अकाउंट की तरह ग्रुप में शामिल होता है (डिफ़ॉल्ट रूप से `default` ग्रुप में, जो सेटिंग्स, `CLAUDE.md`, extensions और MCP सर्वर साझा करता है), और शॉर्टकट, `ccam folder` और `ccam ext` के साथ काम करता है।
 
 ## विकल्प
 
@@ -58,8 +58,13 @@ model = 'claude-sonnet-5-5'
 
 अकाउंट के हर launch पर, सामान्य जाँचों के बाद और Claude Code शुरू होने से पहले:
 
-1. ccam key पढ़ता है: `env:` को environment से, `command:` को 30 सेकंड की सीमा के साथ कमांड चलाकर। कोई कमांड terminal पर password माँग सकती है; उसका error output भी terminal पर जाता है। ख़ाली key launch को रोक देती है, एक संदेश के साथ जो बताता है कि key कहाँ अपेक्षित थी।
-2. यह हर विरासत में मिला variable हटाता है जो तय करता है कि Claude Code कैसे sign in करता है या कौन-सा provider इस्तेमाल करता है: key और token (`ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN_FILE_DESCRIPTOR`, `CLAUDE_CODE_API_KEY_FILE_DESCRIPTOR`), endpoint (`ANTHROPIC_BASE_URL`, `ANTHROPIC_UNIX_SOCKET`, `ANTHROPIC_MODEL`) और provider चुनने वाले switches (`CLAUDE_CODE_USE_BEDROCK`, `CLAUDE_CODE_USE_VERTEX`, `CLAUDE_CODE_USE_FOUNDRY`, `CLAUDE_CODE_USE_ANTHROPIC_AWS`, `CLAUDE_CODE_USE_ANTHROPIC_GOOGLE_CLOUD`, `CLAUDE_CODE_USE_MANTLE`, `CLAUDE_CODE_USE_GATEWAY`)। आपके shell में किसी और काम के लिए सेट की गई key इस अकाउंट तक नहीं पहुँच सकती, और कोई subscription लॉगिन इसकी key पर हावी नहीं हो सकता।
+1. ccam key पढ़ता है: `env:` को environment से, `command:` को 30 सेकंड के timeout के साथ कमांड चलाकर। कोई कमांड terminal पर password माँग सकती है; उसका error output भी terminal पर जाता है। ख़ाली key launch को रोक देती है, एक संदेश के साथ जो बताता है कि key कहाँ अपेक्षित थी।
+2. यह हर विरासत में मिला variable हटाता है जो तय करता है कि Claude Code कैसे sign in करता है या कौन-सा provider इस्तेमाल करता है:
+   - key और token: `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN_FILE_DESCRIPTOR`, `CLAUDE_CODE_API_KEY_FILE_DESCRIPTOR`;
+   - endpoint: `ANTHROPIC_BASE_URL`, `ANTHROPIC_UNIX_SOCKET`, `ANTHROPIC_MODEL`;
+   - provider चुनने वाले switches: `CLAUDE_CODE_USE_BEDROCK`, `CLAUDE_CODE_USE_VERTEX`, `CLAUDE_CODE_USE_FOUNDRY`, `CLAUDE_CODE_USE_ANTHROPIC_AWS`, `CLAUDE_CODE_USE_ANTHROPIC_GOOGLE_CLOUD`, `CLAUDE_CODE_USE_MANTLE`, `CLAUDE_CODE_USE_GATEWAY`।
+
+   आपके shell में किसी और काम के लिए सेट की गई key इस अकाउंट तक नहीं पहुँच सकती, और कोई subscription लॉगिन इसकी key से ऊपर प्राथमिकता नहीं ले सकता।
 3. दिए जाने पर यह `ANTHROPIC_BASE_URL` और `ANTHROPIC_MODEL` सेट करता है, और key को `ANTHROPIC_API_KEY` या `ANTHROPIC_AUTH_TOKEN` के रूप में।
 
 subscription लॉगिन वाले अकाउंट पहले की तरह विरासत में मिला environment ही रखते हैं। interactive session में Claude Code एक बार पूछ सकता है कि environment में मिली key इस्तेमाल करनी है या नहीं।
@@ -74,7 +79,7 @@ subscription लॉगिन वाले अकाउंट पहले की
   ```
 
   launch जिस विरासत में मिले variable को हटाता है, वह शुरुआत में `env -u <name>` के रूप में दिखता है। ऐसे `env:` source के साथ जिसका variable ख़ाली है, dry run वैसे ही विफल होता है जैसे launch होता।
-- `ccam add --api` किसी `env:` source को तुरंत जाँचता है और variable ख़ाली होने पर चेतावनी देता है; `command:` source पहली बार launch पर चलता है।
+- `ccam add --api` किसी `env:` source को तुरंत जाँचता है और variable ख़ाली होने पर चेतावनी देता है; `command:` source launch तक नहीं चलाया जाता।
 - `ccam login` और `ccam logout` API key अकाउंट को मना कर देते हैं, क्योंकि उसका कोई लॉगिन नहीं होता। `ccam doctor` उसका endpoint और key source दिखाता है, और `env:` variable ख़ाली होने पर चेतावनी देता है।
 - `ccam usage` उसके लिए `no limits (API)` दिखाता है। `ccam next --auto`, `--fallback` और `ccam pick` केवल subscription अकाउंट्स में से चुनते हैं, क्योंकि API key की तुलना करने लायक कोई 5 घंटे या साप्ताहिक सीमा नहीं होती।
 - `env` block या `apiKeyHelper` वाला साझा `settings.json` ग्रुप के हर अकाउंट पर लागू होता है, API key अकाउंट्स पर भी। provider की सेटिंग्स को साझा सेटिंग्स से बाहर रखें, या API key अकाउंट को ऐसे ग्रुप में रखें जिसमें `settings` न हो।

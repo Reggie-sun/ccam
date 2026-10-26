@@ -2,7 +2,7 @@
   "site": {
     "name": "ccam",
     "title": "ccam: Claude Code Account Manager dan pengalih akun",
-    "description": "ccam (Claude Code Account Manager) adalah alat open source gratis untuk memakai beberapa akun Claude Code di satu komputer dan ganti akun dengan satu perintah.",
+    "description": "ccam (Claude Code Account Manager) adalah alat open source gratis untuk memakai beberapa akun Claude Code di satu komputer dan berganti dengan satu perintah.",
     "titleSuffix": "ccam untuk Claude Code"
   },
   "nav": {
@@ -14,17 +14,17 @@
     "menu": "Menu",
     "skip": "Langsung ke konten",
     "language": "Bahasa",
-    "theme": "Ganti tema terang atau gelap"
+    "theme": "Beralih antara tema terang dan gelap"
   },
   "facts": {
     "what": "ccam adalah alat baris perintah gratis dan open source untuk menggunakan beberapa akun Claude Code di satu komputer dan berpindah di antaranya dengan satu perintah.",
-    "how": "Setiap akun menyimpan login-nya sendiri di CLAUDE_CONFIG_DIR yang terpisah, sementara server MCP, pengaturan, CLAUDE.md, ekstensi, dan riwayat percakapan dapat dibagikan antarakun, sehingga Anda dapat melanjutkan percakapan di akun lain saat satu akun mencapai batas penggunaannya.",
+    "how": "Setiap akun menyimpan login-nya sendiri di CLAUDE_CONFIG_DIR yang terpisah. Server MCP, pengaturan, CLAUDE.md, ekstensi, dan riwayat percakapan dapat dibagikan antarakun, sehingga Anda dapat melanjutkan percakapan di akun lain saat satu akun mencapai batas penggunaannya.",
     "install": "Instal di Linux, macOS, atau Windows dengan satu perintah, lalu jalankan ccam add untuk setiap akun.",
     "official": "ccam adalah proyek tidak resmi dan tidak berafiliasi dengan atau didukung oleh Anthropic."
   },
   "landing": {
     "headline": "Beberapa akun Claude Code. Satu terminal.",
-    "lede": "Tambahkan setiap akun sekali saja. Berpindah dengan ccam work atau pintasan seperti ccwork. Saat satu akun mencapai batasnya, lanjutkan di akun berikutnya dengan percakapan yang sama.",
+    "lede": "Tambahkan setiap akun sekali saja. Berpindah dengan {command} atau pintasan seperti {shortcut}. Saat satu akun mencapai batasnya, lanjutkan percakapan yang sama di akun berikutnya.",
     "installLabel": "Instal di Linux atau macOS",
     "installWindowsLabel": "Di Windows, di PowerShell",
     "thenAdd": "Lalu tambahkan akun pertama Anda dengan {command}.",
@@ -56,18 +56,18 @@
       "fiveHour": "5 jam",
       "weekly": "Mingguan",
       "resets": "direset dalam {time}",
-      "mostRoom": "Sisa kuota terbanyak: {name}"
+      "mostRoom": "Ruang tersisa terbanyak: {name}"
     },
     "flowTitle": "Cara kerjanya",
     "flow": [
       {
         "command": "ccam add work",
-        "body": "Membuat folder konfigurasi terpisah untuk akun tersebut, membuka login Claude di browser, dan jika Anda mau, memberi akun itu pintasan yang namanya Anda pilih sendiri, seperti ccwork."
+        "body": "Membuat folder konfigurasi terpisah untuk akun tersebut dan membuka login Claude di browser. Perintah ini juga dapat memberi akun itu pintasan pilihan Anda, seperti ccwork."
       },
       {
         "command": "ccam work",
         "also": "ccwork --resume",
-        "body": "Menjalankan Claude Code sebagai akun tersebut. Semua yang ada setelah nama akun diteruskan ke Claude Code tanpa diubah, dan ccam hanya menambah sekitar 4 milidetik sebelum Claude Code dimulai."
+        "body": "Menjalankan Claude Code sebagai akun tersebut. Semua yang ada setelah nama akun diteruskan ke Claude Code tanpa diubah, dan memulai lewat ccam hanya sekitar 4 milidetik lebih lama daripada menjalankan claude secara langsung."
       },
       {
         "command": "ccam group set default --add history",
@@ -83,7 +83,7 @@
       },
       {
         "command": "ccam doctor --fix",
-        "body": "Memeriksa tautan, izin, dan login, lalu memperbaiki apa yang aman untuk diperbaiki. Setiap perubahan pada file Anda menyimpan cadangan."
+        "body": "Memeriksa tautan, izin, dan login, lalu memperbaiki apa yang aman untuk diperbaiki. File yang dipindahkannya akan disimpan dalam cadangan."
       }
     ],
     "guidesTitle": "Panduan",
@@ -141,19 +141,19 @@
     "next": "Membuka akun berikutnya; --continue membawa percakapan ke akun itu, --auto memilih akun dengan sisa kuota terbanyak",
     "usage": "Menampilkan penggunaan 5 jam dan mingguan semua akun",
     "share": "Menampilkan apa yang dibagikan sebuah akun, dan melalui grup mana",
-    "group": "Membuat dan mengubah grup: apa yang dibagikan sekumpulan akun, dipindahkan dengan sebuah rencana",
+    "group": "Membuat dan mengubah grup, yang menentukan apa yang dibagikan akun-akunnya; setiap perubahan menampilkan rencana terlebih dahulu",
     "mcp": "Mengelola server MCP bersama",
     "migrate": "Menyalin penyiapan Claude Code yang sudah ada (~/.claude) ke grup bersama",
     "login": "Login ulang ke sebuah akun; --expired melakukan login untuk setiap akun yang memerlukannya",
     "logout": "Me-logout sebuah akun: login-nya dan info masuk server MCP-nya",
-    "rename": "Mengganti nama akun; pintasannya tetap memakai nama yang sama",
+    "rename": "Mengganti nama akun; perintah pintasannya tetap sama",
     "remove": "Menghapus akun: akun di-logout, dan foldernya dipindahkan ke folder sampah",
     "import": "Mendaftarkan folder ~/.claude yang sudah ada di tempatnya",
     "doctor": "Memeriksa tautan, izin, login, dan versi, lalu memperbaiki",
     "statusline": "Menampilkan akun dan penggunaannya di status line Claude Code",
     "shims": "Membuat ulang tautan pintasan semua akun",
     "shortcut": "Menampilkan, membuat, mengganti nama, atau menghapus perintah pintasan akun, seperti ccwork",
-    "folder": "Memakai sebuah akun di suatu folder dan di bawahnya saat tidak ada nama akun yang disebutkan",
+    "folder": "Memakai sebuah akun di suatu folder dan subfoldernya saat tidak ada nama akun yang disebutkan",
     "pick": "Mencetak akun dengan ruang terbanyak, untuk skrip dan worker paralel",
     "ext": "Menampilkan skill, perintah, plugin, server MCP, dan hook yang dimuat setiap akun",
     "agents": "Menampilkan daftar agen latar belakang dan sesi terbuka semua akun",
@@ -174,7 +174,7 @@
   },
   "footer": {
     "unofficial": "ccam adalah alat open source tidak resmi. ccam tidak berafiliasi dengan atau didukung oleh Anthropic. Claude dan Claude Code adalah merek dagang Anthropic.",
-    "terms": "Boleh tidaknya Anda menggunakan beberapa akun bergantung pada ketentuan setiap akun. Periksa ketentuan tersebut sebelum melakukannya.",
+    "terms": "Boleh tidaknya Anda menggunakan lebih dari satu akun bergantung pada ketentuan yang berlaku untuk masing-masing akun. Baca ketentuan tersebut sebelum Anda mulai.",
     "license": "Kode sumber di GitHub",
     "languages": "Semua bahasa",
     "analytics": "Situs ini menghitung kunjungan dengan Cloudflare Web Analytics, yang tidak memasang cookie dan tidak mengumpulkan data pribadi."

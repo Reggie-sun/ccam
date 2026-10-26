@@ -1,12 +1,14 @@
 ---
 title: ติดตั้ง ccam
 metaTitle: "ติดตั้ง ccam บน Linux, macOS และ Windows"
-description: "ติดตั้ง ccam บน Linux, macOS หรือ Windows ด้วยคำสั่งเดียว แพ็กเกจ .deb หรือจากซอร์สโค้ด และอัปเดตด้วย ccam update โดยต้องติดตั้ง Claude Code ก่อน"
-updated: 2026-10-25
+description: "ติดตั้ง ccam บน Linux, macOS หรือ Windows ด้วยคำสั่งเดียว แพ็กเกจ .deb หรือ go install และอัปเดตด้วย ccam update โดยต้องติดตั้ง Claude Code ก่อน"
+updated: 2026-10-26
 order: 1
 translation: machine
-sourceHash: "a7f9dac24f79"
+sourceHash: "2ada7b2650d6"
 ---
+
+ccam เป็นตัวเริ่ม Claude Code ให้คุณ ดังนั้นให้ติดตั้ง [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) ก่อน และตรวจสอบให้แน่ใจว่า `claude --version` ทำงานได้
 
 รันคำสั่งนี้ในเทอร์มินัลบน Linux หรือ macOS:
 
@@ -22,16 +24,17 @@ curl -fsSL https://ccam.dev/install.sh | sh
 irm https://ccam.dev/install.ps1 | iex
 ```
 
-สคริปต์จะดาวน์โหลด `ccam_windows_<arch>.zip` ตรวจสอบ checksum แบบ SHA-256 วาง `ccam.exe` ไว้ใน `%USERPROFILE%\.local\bin` ซึ่งเป็นโฟลเดอร์เดียวกับที่ตัวติดตั้งของ Claude Code วาง `claude.exe` ไว้ และเพิ่มโฟลเดอร์นั้นลงใน `PATH` ของผู้ใช้หากยังไม่มี โดยคงรายการอย่าง `%USERPROFILE%\bin` ไว้ตามเดิม จากนั้นให้เปิดเทอร์มินัลใหม่ การรันสคริปต์อีกครั้งจะแทนที่ ccam ได้แม้ขณะที่ยังมีเซสชัน Claude Code ทำงานจากไบนารีเดิมอยู่ (ไบนารีนั้นจะถูกเปลี่ยนชื่อเป็น `ccam.exe.old` หรือ `ccam.exe.old-<number>` เมื่อไฟล์เก่ากว่ายังถูกใช้งานอยู่) และจะต่ออายุคำสั่งลัดที่เป็น hard link: `OK 2 shortcuts now run the new ccam`
-
-ccam เป็นตัวเริ่ม Claude Code ให้คุณ ดังนั้นให้ติดตั้ง [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) ก่อน และตรวจสอบให้แน่ใจว่า `claude --version` ทำงานได้
+สคริปต์จะดาวน์โหลด `ccam_windows_<arch>.zip` ตรวจสอบ checksum แบบ SHA-256 วาง `ccam.exe` ไว้ใน `%USERPROFILE%\.local\bin` ซึ่งเป็นโฟลเดอร์เดียวกับที่ตัวติดตั้งของ Claude Code วาง `claude.exe` ไว้ หากโฟลเดอร์นั้นยังไม่อยู่ใน `PATH` ของผู้ใช้ สคริปต์จะเพิ่มให้ และคงรายการอย่าง `%USERPROFILE%\bin` ไว้ตามเดิม จากนั้นให้เปิดเทอร์มินัลใหม่
 
 ## ระบบที่รองรับ
 
 - Linux บน x86-64 และ ARM64: Ubuntu, Debian, Fedora, Arch, Alpine และดิสทริบิวชันอื่น ๆ ไบนารีเป็นแบบ static และไม่มี dependency
 - macOS บน Apple silicon และ Intel
-- Windows 10 และ 11 บน x86-64 และ ARM64 ใน PowerShell, Windows Terminal หรือ Git Bash โฟลเดอร์ที่ใช้ร่วมกันทำงานได้กับผู้ใช้ทุกคน ส่วนไฟล์ที่ใช้ร่วมกัน (`settings.json`, `CLAUDE.md`, `history.jsonl`) ต้องเปิด Developer Mode (Settings > System > For developers) เพราะ Windows อนุญาตให้สร้างลิงก์ไปยังไฟล์ได้เฉพาะในโหมดนี้หรือโดยผู้ดูแลระบบ ดู [การใช้ร่วมกันบน Windows](/features/share#on-windows) หากไม่ได้เปิด `ccam add` ครั้งแรกจะสร้างกลุ่ม `default` ที่มีเฉพาะเซิร์ฟเวอร์ MCP และส่วนขยาย และบอกวิธีเพิ่มรายการที่เหลือเมื่อเปิด Developer Mode แล้ว
-- ภายใน WSL นั้น ccam ทำงานเหมือนบนระบบ Linux ทั่วไป
+- Windows 10 และ 11 บน x86-64 และ ARM64 ใน PowerShell, Windows Terminal หรือ Git Bash:
+  - โฟลเดอร์ที่ใช้ร่วมกันทำงานได้โดยไม่ต้องเปิด Developer Mode
+  - ไฟล์ที่ใช้ร่วมกัน (`settings.json`, `CLAUDE.md`, `history.jsonl`) ต้องเปิด Developer Mode (Settings > System > For developers) เพราะ Windows อนุญาตให้สร้างลิงก์ไปยังไฟล์ได้เฉพาะในโหมดนี้หรือโดยผู้ดูแลระบบ ดู [การใช้ร่วมกันบน Windows](/features/share#on-windows)
+  - หากไม่ได้เปิด Developer Mode `ccam add` ครั้งแรกจะสร้างกลุ่ม `default` ที่มีเฉพาะเซิร์ฟเวอร์ MCP และส่วนขยาย และบอกวิธีเพิ่มรายการที่เหลือเมื่อเปิด Developer Mode แล้ว
+- ภายใน WSL นั้น ccam ทำงานเหมือนบนระบบ Linux อื่น ๆ ทั่วไป
 
 ## วิธีติดตั้งอื่น ๆ
 
@@ -49,7 +52,7 @@ sudo apt install ./ccam_*_linux_amd64.deb
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
 ```
 
-บิลด์จากแท็กรุ่น (`@latest` หรือ `@vX.Y.Z`) จะรายงานรุ่นนั้น `ccam update` จึงใช้ได้กับบิลด์นี้ ส่วนบิลด์จาก `@main` หรือจากซอร์สในเครื่องที่เลยแท็กไปแล้วจะรายงานเป็น `dev`
+หากคุณติดตั้งจากแท็กรุ่น (`@latest` หรือ `@vX.Y.Z`) ccam จะรายงานรุ่นนั้น และ `ccam update` กับการเสนออัปเดตในแดชบอร์ดจะใช้ได้ ส่วนบิลด์จาก `@main` หรือจากซอร์สในเครื่องที่มีคอมมิตหลังแท็ก จะรายงานเป็น `dev` และ `ccam update` จะปฏิเสธบิลด์นั้น เว้นแต่คุณจะใส่ `--version`
 
 **รุ่นที่ระบุ** ตั้งค่า `CCAM_VERSION`:
 
@@ -82,7 +85,13 @@ ccam completion powershell >> $PROFILE
 /plugin install ccam --marketplace jhyunwoo/ccam
 ```
 
-ปลั๊กอินนี้เพิ่ม skill หนึ่งตัว คำสั่ง `/ccam:usage`, `/ccam:ext` และ `/ccam:switch` และ hook สองตัว: เมื่อเซสชันหยุดเพราะถึงขีดจำกัดการใช้งาน คุณจะได้รับการแจ้งเตือนในเทอร์มินัล (และบน Linux และ macOS เมื่อเปิด [`auto_switch`](/features/next#auto-switch) ไว้ ccam จะย้ายเซสชันไปยังอีกบัญชีหนึ่งที่ยังมีโควตาเหลือ) และ `/ccam:switch [account]` จะส่งต่อการสนทนาไปยังอีกบัญชีหนึ่ง ([รายละเอียด](/features/next#inside-claude-code)) hook เหล่านี้รัน `ccam` ดังนั้น ccam ต้องอยู่ใน `PATH` ที่ Claude Code มองเห็น skill นี้ไม่เคยรันคำสั่งที่เข้าสู่ระบบหรือย้ายไฟล์ แต่จะแนะนำคำสั่งเหล่านั้นให้คุณแทน
+ปลั๊กอินนี้เพิ่ม:
+
+- skill หนึ่งตัวที่แนะนำคำสั่งที่เข้าสู่ระบบหรือย้ายไฟล์ แต่ไม่เคยรันคำสั่งเหล่านั้นเอง
+- คำสั่ง `/ccam:usage`, `/ccam:ext` และ `/ccam:switch`
+- hook สองตัว ([รายละเอียด](/features/next#inside-claude-code)) ตัวแรกแสดงการแจ้งเตือนในเทอร์มินัลเมื่อเซสชันหยุดเพราะถึงขีดจำกัดการใช้งาน บน Linux และ macOS เมื่อเปิด [`auto_switch`](/features/next#auto-switch) ไว้ ccam จะย้ายเซสชันไปยังอีกบัญชีหนึ่งที่ยังมีโควตาเหลือต่อจากนั้น อีกตัวหนึ่งทำให้ `/ccam:switch [account]` ส่งต่อการสนทนาไปยังอีกบัญชีหนึ่งได้
+
+hook เหล่านี้รัน `ccam` ดังนั้น ccam ต้องอยู่ใน `PATH` ที่ Claude Code มองเห็น
 
 ## ตรวจสอบการติดตั้ง
 
@@ -112,16 +121,16 @@ $ ccam update
 ccam 0.3.0 is up to date.
 ```
 
-แดชบอร์ด (`ccam` บนเทอร์มินัล) ก็ค้นหารุ่นใหม่ทุกครั้งที่เปิดขึ้นเช่นกัน และเมื่อมีรุ่นใหม่จะเสนอให้ติดตั้ง: กด `U` แล้วยืนยัน ไม่มีคำสั่งอื่นใดค้นหา และ ccam ไม่เคยอัปเดตโดยไม่ถามก่อน หากต้องการติดตั้งรุ่นที่ระบุ รวมถึงรุ่นที่เก่ากว่า ให้ใส่ `--version` ส่วน `ccam --dry-run update` จะแสดงว่าจะดาวน์โหลดอะไรและแทนที่ไฟล์ใด โดยไม่เปลี่ยนแปลงสิ่งใดจริง
+แดชบอร์ด (`ccam` ที่ไม่มีอาร์กิวเมนต์ ในเทอร์มินัล) ก็ตรวจหารุ่นใหม่ทุกครั้งที่เปิดขึ้นเช่นกัน และเมื่อมีรุ่นใหม่จะเสนอให้ติดตั้ง: กด `U` แล้วยืนยัน ไม่มีคำสั่งอื่นใดตรวจหาการอัปเดต และ ccam ไม่เคยอัปเดตโดยไม่ถามก่อน หากต้องการติดตั้งรุ่นที่ระบุ รวมถึงรุ่นที่เก่ากว่า ให้ใส่ `--version` ส่วน `ccam --dry-run update` จะแสดงว่าจะดาวน์โหลดอะไรและแทนที่ไฟล์ใด โดยไม่เปลี่ยนแปลงสิ่งใดจริง
 
 ```sh
 ccam update --version v0.2.0
 ccam --dry-run update
 ```
 
-การรันสคริปต์ติดตั้งอีกครั้งก็จะอัปเดตสำเนาใน `~/.local/bin` เช่นกัน หากคุณติดตั้ง ccam ด้วย `go install` จากแท็กรุ่น `ccam update` ก็ใช้ได้เช่นกัน หรือรันคำสั่งเดิมอีกครั้ง
+การรันสคริปต์ติดตั้งอีกครั้งก็จะอัปเดตสำเนาใน `~/.local/bin` เช่นกัน หากคุณติดตั้ง ccam ด้วย `go install` จากแท็กรุ่น คุณจะรัน `ccam update` หรือรันคำสั่ง `go install` เดิมอีกครั้งก็ได้
 
-**Windows** `ccam update` จะดาวน์โหลดไฟล์ `.zip` สำหรับ Windows เนื่องจากบน Windows ไม่สามารถแทนที่โปรแกรมที่กำลังทำงานอยู่ได้ ไบนารีเดิมจึงถูกเปลี่ยนชื่อเป็น `ccam.exe.old` ซึ่งการอัปเดตครั้งถัดไปจะลบทิ้ง ขณะที่ยังมีเซสชันทำงานจาก `ccam.exe.old` ก่อนหน้าอยู่ ชื่อจะเป็น `ccam.exe.old-<time>` คำสั่งลัดที่เป็น hard link จะถูกต่ออายุทันทีหลังจากนั้น
+**Windows** `ccam update` จะดาวน์โหลดไฟล์ `.zip` สำหรับ Windows เนื่องจากบน Windows ไม่สามารถแทนที่โปรแกรมที่กำลังทำงานอยู่ได้ ไบนารีเดิมจึงถูกเปลี่ยนชื่อเป็น `ccam.exe.old` ซึ่งการอัปเดตครั้งถัดไปจะลบทิ้ง ขณะที่ยังมีเซสชันทำงานจาก `ccam.exe.old` ก่อนหน้าอยู่ ชื่อจะเป็น `ccam.exe.old-<time>` คำสั่งลัดที่เป็น hard link จะถูกต่ออายุทันทีหลังจากนั้น การรัน `install.ps1` อีกครั้งก็ทำงานแบบเดียวกัน แม้ขณะที่ยังมีเซสชัน Claude Code ทำงานจากไบนารีเดิมอยู่ และจะพิมพ์ `OK 2 shortcuts now run the new ccam` เมื่อต่ออายุคำสั่งลัดที่เป็น hard link
 
 **แพ็กเกจสำหรับ Debian และ Ubuntu** `ccam update` จะไม่แทนที่ `/usr/bin/ccam` ที่ติดตั้งด้วย apt แต่จะพิมพ์ขั้นตอนต่อไปนี้ออกมาแทน ดาวน์โหลด `ccam_<version>_linux_amd64.deb` รุ่นใหม่จาก[หน้ารุ่นที่เผยแพร่](https://github.com/jhyunwoo/ccam/releases) แล้วติดตั้งทับรุ่นเดิม:
 
@@ -130,6 +139,8 @@ sudo apt install ./ccam_*_linux_amd64.deb
 ```
 
 ## ถอนการติดตั้ง
+
+การลบ `~/.local/share/ccam` จะลบข้อมูลเข้าสู่ระบบและประวัติการสนทนาที่เก็บไว้ในนั้นด้วย ส่วนโฟลเดอร์ `~/.claude` ที่คุณ[นำเข้า](/docs/commands)ไว้จะยังอยู่ในตำแหน่งเดิม แต่ขณะที่โฟลเดอร์นั้นอยู่ในกลุ่ม ไฟล์ที่ใช้ร่วมกันจะอยู่ใน `~/.local/share/ccam/groups/` ให้รัน `ccam remove <name>` กับบัญชีนั้น (หรือ `ccam group leave`) ก่อนลบสิ่งใด: คำสั่งนี้จะนำบัญชีออกจากกลุ่ม และใส่สำเนาของทุกอย่างที่เคยใช้ร่วมกันกลับเข้าไปในโฟลเดอร์
 
 ลบคำสั่งลัดของบัญชีก่อน ขณะที่ ccam ยังติดตั้งอยู่ `ccam list` จะแสดงคำสั่งลัดในคอลัมน์ Shortcut ลบทีละรายการด้วย `ccam shortcut <account> --remove` หรือลบลิงก์เหล่านั้นออกจาก `~/.local/bin` ด้วยตัวเอง จากนั้นลบคำสั่ง ccam และลบโฟลเดอร์ข้อมูลหากคุณไม่ต้องการบัญชีเหล่านั้นอีกต่อไป:
 
@@ -147,5 +158,3 @@ ccam shortcut work --remove   # once for each account that has a shortcut
 Remove-Item ~\.local\bin\ccam.exe
 Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
 ```
-
-การลบ `~/.local/share/ccam` จะลบข้อมูลเข้าสู่ระบบและประวัติการสนทนาที่เก็บไว้ในนั้นด้วย ส่วนโฟลเดอร์ `~/.claude` ที่คุณ[นำเข้า](/docs/commands)ไว้จะยังอยู่ในตำแหน่งเดิม แต่ขณะที่โฟลเดอร์นั้นอยู่ในกลุ่ม ไฟล์ที่ใช้ร่วมกันจะอยู่ใน `~/.local/share/ccam/groups/` ให้รัน `ccam remove <name>` กับบัญชีนั้นก่อน (หรือ `ccam group leave`): บัญชีจะออกจากกลุ่มพร้อมสำเนาของทุกอย่างที่เคยใช้ร่วมกัน

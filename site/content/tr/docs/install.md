@@ -1,12 +1,14 @@
 ---
 title: ccam kurulumu
 metaTitle: ccam'ı Linux, macOS ve Windows üzerine kurun
-description: ccam'ı Linux, macOS veya Windows'a tek komutla, bir .deb paketiyle ya da kaynak koddan kurun, ccam update ile güncelleyin. Önce Claude Code kurulu olmalıdır.
-updated: 2026-10-25
+description: ccam'ı Linux, macOS veya Windows'a tek komutla, bir .deb paketiyle ya da go install ile kurun, ccam update ile güncelleyin. Önce Claude Code kurulu olmalıdır.
+updated: 2026-10-26
 order: 1
 translation: machine
-sourceHash: "a7f9dac24f79"
+sourceHash: 2ada7b2650d6
 ---
+
+ccam, Claude Code'u sizin için başlatır; bu nedenle önce [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) kurun ve `claude --version` komutunun çalıştığından emin olun.
 
 Linux veya macOS üzerinde bir terminalde şunu çalıştırın:
 
@@ -22,16 +24,17 @@ Windows'ta bunu PowerShell'de çalıştırın:
 irm https://ccam.dev/install.ps1 | iex
 ```
 
-Betik `ccam_windows_<arch>.zip` dosyasını indirir, SHA-256 sağlama toplamını denetler, `ccam.exe` dosyasını Claude Code yükleyicisinin `claude.exe` dosyasını koyduğu klasöre, yani `%USERPROFILE%\.local\bin` içine koyar ve henüz orada değilse bu klasörü kullanıcı `PATH` değişkeninize ekler; `%USERPROFILE%\bin` gibi girdileri olduğu gibi bırakır. Ardından yeni bir terminal açın. Betiği yeniden çalıştırmak ccam'ı değiştirir; bir Claude Code oturumu hâlâ eski ikili dosyadan çalışıyor olsa bile (o dosya `ccam.exe.old` olarak, daha eskisi hâlâ kullanımdaysa `ccam.exe.old-<number>` olarak yeniden adlandırılır) bunu yapar ve sabit bağlantı olan kısayolları yeniler: `OK 2 shortcuts now run the new ccam`.
-
-ccam, Claude Code'u sizin için başlatır; bu nedenle önce [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) kurun ve `claude --version` komutunun çalıştığından emin olun.
+Betik `ccam_windows_<arch>.zip` dosyasını indirir, SHA-256 sağlama toplamını denetler ve `ccam.exe` dosyasını Claude Code yükleyicisinin `claude.exe` dosyasını koyduğu klasöre, yani `%USERPROFILE%\.local\bin` içine koyar. Bu klasör henüz kullanıcı `PATH` değişkeninizde değilse betik onu ekler ve `%USERPROFILE%\bin` gibi girdileri olduğu gibi bırakır. Ardından yeni bir terminal açın.
 
 ## Desteklenen sistemler
 
 - x86-64 ve ARM64 üzerinde Linux: Ubuntu, Debian, Fedora, Arch, Alpine ve diğer dağıtımlar. İkili dosya statiktir ve hiçbir bağımlılığı yoktur.
 - Apple silicon ve Intel üzerinde macOS.
-- x86-64 ve ARM64 üzerinde Windows 10 ve 11; PowerShell, Windows Terminal veya Git Bash içinde. Paylaşılan klasörler her kullanıcı için çalışır. Paylaşılan dosyalar (`settings.json`, `CLAUDE.md`, `history.jsonl`) Geliştirici Modu (Ayarlar > Sistem > Geliştiriciler için) gerektirir, çünkü Windows dosyalara bağlantı oluşturmaya yalnızca bu modda veya bir yöneticiye izin verir; bkz. [Windows'ta paylaşım](/features/share#on-windows). Geliştirici Modu olmadan ilk `ccam add`, yalnızca MCP sunucuları ve uzantılarla `default` grubunu oluşturur ve Geliştirici Modu açıldığında gerisinin nasıl ekleneceğini söyler.
-- WSL içinde ccam, herhangi bir Linux sisteminde olduğu gibi çalışır.
+- x86-64 ve ARM64 üzerinde Windows 10 ve 11; PowerShell, Windows Terminal veya Git Bash içinde:
+  - Paylaşılan klasörler Geliştirici Modu olmadan çalışır.
+  - Paylaşılan dosyalar (`settings.json`, `CLAUDE.md`, `history.jsonl`) Geliştirici Modu (Ayarlar > Sistem > Geliştiriciler için) gerektirir, çünkü Windows dosyalara bağlantı oluşturmaya yalnızca bu modda veya bir yöneticiye izin verir; bkz. [Windows'ta paylaşım](/features/share#on-windows).
+  - Geliştirici Modu olmadan ilk `ccam add`, yalnızca MCP sunucuları ve uzantılarla `default` grubunu oluşturur ve Geliştirici Modu açıldığında gerisinin nasıl ekleneceğini söyler.
+- WSL içinde ccam, diğer herhangi bir Linux sisteminde olduğu gibi çalışır.
 
 ## Diğer kurulum yolları
 
@@ -49,7 +52,7 @@ Paket, `/usr/bin/ccam` dosyasını kurar.
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
 ```
 
-Bir sürüm etiketinden (`@latest` veya `@vX.Y.Z`) yapılan derleme o sürümü bildirir, böylece `ccam update` onunla da çalışır; `@main` ya da bir etiketin ötesindeki yerel bir çalışma kopyasından yapılan derleme `dev` bildirir.
+Bir sürüm etiketini (`@latest` veya `@vX.Y.Z`) kurarsanız ccam o sürümü bildirir; `ccam update` ve kontrol panelinin güncelleme önerisi çalışır. `@main` ya da bir etiketten sonra commit'leri olan yerel bir çalışma kopyasından yapılan derleme `dev` bildirir ve `--version` vermediğiniz sürece `ccam update` onu reddeder.
 
 **Belirli bir sürüm.** `CCAM_VERSION` değişkenini ayarlayın:
 
@@ -82,7 +85,13 @@ ccam eklentisi Claude Code'un kendisine ccam'i kullanmayı öğretir: hangi hesa
 /plugin install ccam --marketplace jhyunwoo/ccam
 ```
 
-Bir beceri, `/ccam:usage`, `/ccam:ext` ve `/ccam:switch` komutlarını ve iki hook ekler: bir oturum kullanım limitinde durduğunda bir terminal bildirimi alırsınız (Linux ve macOS'ta [`auto_switch`](/features/next#auto-switch) açıksa ccam oturumu payı kalan başka bir hesaba taşır) ve `/ccam:switch [account]` konuşmayı başka bir hesaba devreder ([ayrıntılar](/features/next#inside-claude-code)). Hook'lar `ccam` komutunu çalıştırır; bu yüzden ccam, Claude Code'un gördüğü `PATH` üzerinde olmalıdır. Beceri, giriş yapan veya dosya taşıyan komutları hiçbir zaman çalıştırmaz; bunun yerine onları önerir.
+Şunları ekler:
+
+- giriş yapan veya dosya taşıyan komutları öneren ama hiçbir zaman çalıştırmayan bir beceri;
+- `/ccam:usage`, `/ccam:ext` ve `/ccam:switch` komutları;
+- iki hook ([ayrıntılar](/features/next#inside-claude-code)). Biri, bir oturum kullanım limitinde durduğunda bir terminal bildirimi gösterir; Linux ve macOS'ta [`auto_switch`](/features/next#auto-switch) açıksa ccam ardından oturumu payı kalan başka bir hesaba taşır. Diğeri, `/ccam:switch [account]` komutunun konuşmayı başka bir hesaba devretmesini sağlar.
+
+Hook'lar `ccam` komutunu çalıştırır; bu yüzden ccam, Claude Code'un gördüğü `PATH` üzerinde olmalıdır.
 
 ## Kurulumu kontrol edin
 
@@ -112,16 +121,16 @@ $ ccam update
 ccam 0.3.0 is up to date.
 ```
 
-Kontrol paneli (terminalde `ccam`) de her açıldığında yeni bir sürüm arar ve varsa önerir: `U` tuşuna basıp onaylayın. Başka hiçbir komut aramaz ve ccam size sormadan asla güncellenmez. Daha eski bir sürüm de dahil olmak üzere belirli bir sürümü kurmak için `--version` seçeneğini verin. `ccam --dry-run update`, hiçbir şeyi değiştirmeden neyin indirilip neyin değiştirileceğini gösterir.
+Kontrol paneli (terminalde argümansız `ccam`) de her açıldığında yeni bir sürüm olup olmadığını denetler ve varsa önerir: `U` tuşuna basıp onaylayın. Başka hiçbir komut güncelleme denetlemez ve ccam size sormadan asla güncellenmez. Daha eski bir sürüm de dahil olmak üzere belirli bir sürümü kurmak için `--version` seçeneğini verin. `ccam --dry-run update`, hiçbir şeyi değiştirmeden neyin indirilip neyin değiştirileceğini gösterir.
 
 ```sh
 ccam update --version v0.2.0
 ccam --dry-run update
 ```
 
-Kurulum betiğini yeniden çalıştırmak da `~/.local/bin` içindeki kopyayı günceller. ccam'ı bir sürüm etiketinden `go install` ile derlediyseniz `ccam update` de çalışır; ya da aynı komutu yeniden çalıştırın.
+Kurulum betiğini yeniden çalıştırmak da `~/.local/bin` içindeki kopyayı günceller. ccam'ı bir sürüm etiketinden `go install` ile derlediyseniz `ccam update` komutunu ya da aynı `go install` komutunu yeniden çalıştırabilirsiniz.
 
-**Windows.** `ccam update`, Windows için `.zip` dosyasını indirir. Windows'ta çalışan bir program değiştirilemez; bu yüzden eski ikili dosya `ccam.exe.old` olarak yeniden adlandırılır ve bir sonraki güncelleme onu siler; daha önceki bir `ccam.exe.old` dosyasından hâlâ bir oturum çalışıyorsa ad `ccam.exe.old-<time>` olur. Sabit bağlantı olan kısayollar hemen ardından yenilenir.
+**Windows.** `ccam update`, Windows için `.zip` dosyasını indirir. Windows'ta çalışan bir program değiştirilemez; bu yüzden eski ikili dosya `ccam.exe.old` olarak yeniden adlandırılır ve bir sonraki güncelleme onu siler; daha önceki bir `ccam.exe.old` dosyasından hâlâ bir oturum çalışıyorsa ad `ccam.exe.old-<time>` olur. Sabit bağlantı olan kısayollar hemen ardından yenilenir. `install.ps1` betiğini yeniden çalıştırmak, bir Claude Code oturumu hâlâ eski ikili dosyadan çalışıyor olsa bile aynı şekilde işler ve sabit bağlantılı kısayolları yenilediğinde `OK 2 shortcuts now run the new ccam` yazdırır.
 
 **Debian ve Ubuntu paketi.** `ccam update`, apt ile kurulmuş bir `/usr/bin/ccam` dosyasını değiştirmez; bunun yerine bu adımları yazdırır. Yeni `ccam_<version>_linux_amd64.deb` dosyasını [sürümler sayfasından](https://github.com/jhyunwoo/ccam/releases) indirin ve eskisinin üzerine kurun:
 
@@ -130,6 +139,8 @@ sudo apt install ./ccam_*_linux_amd64.deb
 ```
 
 ## Kaldırma
+
+`~/.local/share/ccam` klasörünü silmek, orada saklanan giriş bilgilerini ve konuşma geçmişini de siler. [İçe aktardığınız](/docs/commands) bir `~/.claude` klasörü olduğu yerde kalır, ancak bir gruptayken paylaştığı dosyalar `~/.local/share/ccam/groups/` içinde durur. Herhangi bir şeyi silmeden önce onun için `ccam remove <name>` (veya `ccam group leave`) çalıştırın: bu, klasörü gruplarından çıkarır ve paylaştığı her şeyin bir kopyasını klasöre geri koyar.
 
 Önce, ccam hâlâ kuruluyken hesap kısayollarını kaldırın. `ccam list` bunları Shortcut sütununda gösterir; her birini `ccam shortcut <account> --remove` ile kaldırın ya da bu bağlantıları `~/.local/bin` içinden kendiniz silin. Ardından komutu ve hesaplara artık ihtiyacınız yoksa veri klasörlerini silin:
 
@@ -147,5 +158,3 @@ ccam shortcut work --remove   # once for each account that has a shortcut
 Remove-Item ~\.local\bin\ccam.exe
 Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
 ```
-
-`~/.local/share/ccam` klasörünü silmek, orada saklanan giriş bilgilerini ve konuşma geçmişini de siler. [İçe aktardığınız](/docs/commands) bir `~/.claude` klasörü olduğu yerde kalır, ancak bir gruptayken paylaştığı dosyalar `~/.local/share/ccam/groups/` içinde durur. Önce onun için `ccam remove <name>` (veya `ccam group leave`) çalıştırın: gruplarından, paylaştığı her şeyin bir kopyasıyla ayrılır.

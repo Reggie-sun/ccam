@@ -2,13 +2,13 @@
 title: مرجع فرمان‌ها
 metaTitle: مرجع فرمان‌های ccam
 description: همه فرمان‌ها و گزینه‌های ccam، از ccam add و ccam <name> تا ccam usage، ccam next و ccam doctor.
-updated: 2026-10-25
+updated: 2026-10-26
 order: 3
 translation: machine
-sourceHash: "41fb781fd146"
+sourceHash: b9ff0fe8d147
 ---
 
-برای اینکه ببینید یک فرمان چه کاری انجام می‌دهد بدون آنکه واقعاً انجامش دهد، `--dry-run` را پیش از آن بگذارید، برای مثال `ccam --dry-run work`. این گزینه هنگام اجرای Claude Code (`ccam <name>`، `ccam run`، `ccam next`، `ccam attach`) و با `group`، `migrate`، `shortcut`، `update` و `doctor --fix` کار می‌کند. فرمان‌های دیگری که چیزی را تغییر می‌دهند، به‌جای اجرا شدن آن را رد می‌کنند.
+برای اینکه ببینید یک فرمان چه کاری انجام می‌دهد بدون آنکه واقعاً انجامش دهد، `--dry-run` را پیش از آن بگذارید، برای مثال `ccam --dry-run work`. این گزینه هنگام اجرای Claude Code (`ccam <name>`، `ccam run`، `ccam next`، `ccam attach`، `ccam ccusage`) و با `group`، `migrate`، `folder`، `shortcut`، `pick`، `update` و `doctor --fix` کار می‌کند. فرمان‌هایی که فقط می‌خوانند، مانند `list`، `usage`، `share` و `ext`، آن را می‌پذیرند و در هر حال چیزی را تغییر نمی‌دهند. بقیه فرمان‌ها، از جمله `group rename`، به‌جای اجرا شدن آن را رد می‌کنند.
 
 <!-- commands -->
 
@@ -27,9 +27,9 @@ ccam --fallback work -p "fix the tests"   # run again as another account at the 
 
 `--fallback` پیش از نام حساب برای اجراهای `-p`/`--print` است. وقتی حساب به سقف مصرفش برسد، ccam همان فرمان را دوباره با حساب واردشده‌ای که بیشترین ظرفیت را دارد اجرا می‌کند و فقط خروجی اجرایی را که به پایان رسیده چاپ می‌کند. [حساب‌ها بر اساس پوشه](/features/folder) و [اجرای دوباره هنگام رسیدن به سقف](/features/next#run-again-at-the-limit) را ببینید.
 
-**صندلی‌های Team و Enterprise.** انتخاب خودکار (`ccam next`، `--fallback`، `ccam pick`، کلید `n` در داشبورد، و [`auto_switch`](/features/next#auto-switch) وقتی آن را روشن کنید) میان صندلی‌های همان سازمان Claude Team یا Enterprise هم جابه‌جا می‌شود. مرکز راهنمای Anthropic می‌گوید: «Each seat on a Team plan is assigned to one named individual, and only that person may use it» (هر صندلی در طرح Team به نام یک فرد مشخص اختصاص داده می‌شود و فقط همان شخص اجازه دارد از آن استفاده کند) و «Users can't route their work through another user's account to use that user's remaining usage» (کاربران نمی‌توانند کار خود را از طریق حساب کاربر دیگری انجام دهند تا از سهمیه مصرف باقی‌مانده آن کاربر استفاده کنند) ([طرح‌های Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)؛ و همین‌طور برای [طرح‌های Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). بنابراین استفاده از انتخاب خودکار میان صندلی‌ها ممکن است شرایط Anthropic را نقض کند. اینکه در آنجا از آن استفاده کنید یا نه، تصمیم خودتان است: پیش از آنکه به آن تکیه کنید، از سازمان خود و Anthropic بپرسید. برای طرح‌های شخصی (Pro، Max)، [توضیح شرایط در پرسش‌های متداول](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) را ببینید.
+**صندلی‌های Team و Enterprise.** انتخاب خودکار حساب (`ccam next`، `--fallback`، `ccam pick`، کلید `n` در داشبورد و، وقتی آن را روشن کنید، [`auto_switch`](/features/next#auto-switch)) میان صندلی‌های همان سازمان Claude Team یا Enterprise هم جابه‌جا می‌شود، که ممکن است شرایط Anthropic را نقض کند. پیش از آنکه به آن تکیه کنید، [پرسش‌های متداول](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) را بخوانید و از سازمان خود و Anthropic بپرسید.
 
-میان‌بری مانند `ccwork` حساب خود را به همین شکل اجرا می‌کند: `ccwork --resume` همان کاری را می‌کند که `ccam work --resume` انجام می‌دهد. [میان‌برها](/docs/commands#shortcuts) را ببینید.
+میان‌بری مانند `ccwork` حساب خود را به همین شکل اجرا می‌کند: `ccwork --resume` همان کاری را می‌کند که `ccam work --resume` انجام می‌دهد. بخش [میان‌برها](/docs/commands#shortcuts) را در ادامه ببینید.
 
 ## افزودن و حذف حساب‌ها
 
@@ -46,13 +46,13 @@ ccam import ~/.claude-old --name old
 ccam add gw --api --base-url https://llm.example.com --auth bearer --key-from env:GW_KEY
 ```
 
-`ccam import` بدون نام پوشه، به دنبال `~/.claude` و `~/.claude-*` می‌گردد و درباره هر کدام از شما می‌پرسد؛ پوشه‌ای که ناموفق باشد به‌صورت `Skipped <path>: <reason>` گزارش می‌شود و بقیه ثبت می‌شوند، و پوشه‌ای که نامش از قبل نام یک حساب است به `--name` نیاز دارد که همراه با پوشه داده می‌شود. پوشه‌های واردشده در همان جایی که هستند ثبت می‌شوند؛ ccam هرگز یک ورود را جابه‌جا یا کپی نمی‌کند.
+`ccam import` بدون نام پوشه، به دنبال `~/.claude` و `~/.claude-*` می‌گردد و درباره هر کدام از شما می‌پرسد؛ پوشه‌ای که ناموفق باشد به‌صورت `Skipped <path>: <reason>` گزارش می‌شود و بقیه ثبت می‌شوند. اگر نام یک پوشه از قبل گرفته شده باشد، آن پوشه را جداگانه با `ccam import <folder> --name <name>` وارد کنید. پوشه‌های واردشده در همان جایی که هستند ثبت می‌شوند؛ ccam هرگز یک ورود را جابه‌جا یا کپی نمی‌کند.
 
-`ccam login --expired` حساب‌هایی را هم که Claude Code ورودشان را پاک کرده است وارد می‌کند. `ccam remove` یک حساب مدیریت‌شده را پیش از آنکه پوشه‌اش به زباله‌دان برود از سیستم خارج می‌کند (نه وقتی حساب دیگری همان ورود را دارد)، و `ccam remove` برای یک حساب واردشده آن را با یک کپی از آنچه گروه‌هایش به اشتراک می‌گذارند از آن گروه‌ها بیرون می‌برد. در macOS، `ccam rename` نام پوشه را نگه می‌دارد، چون Keychain ورود را زیر مسیر پوشه نگه می‌دارد.
+`ccam login --expired` حساب‌هایی را هم که Claude Code ورودشان را پاک کرده است وارد می‌کند. `ccam remove` یک حساب مدیریت‌شده (حسابی که پوشه‌اش را ccam ساخته است، نه حسابی که با `ccam import` ثبت شده) را پیش از آنکه پوشه‌اش به زباله‌دان برود از سیستم خارج می‌کند، مگر اینکه حساب دیگری همان ورود را داشته باشد. حذف یک حساب واردشده آن را از گروه‌هایش بیرون می‌برد و از هر مورد مشترک یک کپی در پوشه‌اش به جا می‌گذارد. در macOS، `ccam rename` نام پوشه را نگه می‌دارد، چون Keychain ورود را زیر مسیر پوشه نگه می‌دارد.
 
 `ccam add --api` حسابی اضافه می‌کند که به جای ورود به Claude از کلید API استفاده می‌کند؛ ccam کلید را در هر اجرا می‌خواند و هرگز ذخیره‌اش نمی‌کند. [حساب‌های کلید API](/features/api) را ببینید.
 
-تا وقتی Claude Code با یک حساب در حال اجراست، `ccam rename`، `ccam remove` و فرمان‌های `ccam group` آن حساب را تغییر نمی‌دهند، Claude Code به هر شکلی که شروع شده باشد (نشست‌های پس‌زمینه هم). ابتدا نشست را ببندید. همچنین تا وقتی یک تغییر گروه‌ها نیمه‌تمام مانده است، سر باز می‌زنند: ``the last change of groups stopped halfway; finish it with `ccam doctor --fix` first``.
+تا وقتی Claude Code با یک حساب در حال اجراست، `ccam rename`، `ccam remove` و فرمان‌های `ccam group` آن حساب را تغییر نمی‌دهند، Claude Code به هر شکلی که شروع شده باشد (از جمله نشست‌های پس‌زمینه). ابتدا نشست را ببندید. همچنین تا وقتی یک تغییر گروه نیمه‌تمام مانده است، سر باز می‌زنند: ``the last group change stopped halfway; finish it with `ccam doctor --fix` first``.
 
 `ccam list --json` هر حساب را همراه با شماره جایگاه، میان‌بر، ایمیل و پوشه آن چاپ می‌کند. آرایه `groups` آن گروه‌های حساب را فهرست می‌کند و شیء `share` آن هر مورد (`mcp`، `settings`، `memory`، `extensions`، `history`) را به گروهی که از آن می‌آید، یا به `local`، نگاشت می‌کند.
 
@@ -77,7 +77,7 @@ ccam shortcut work --remove
 ```sh
 ccam group                                  # the groups, what they share, their accounts
 ccam group add team --items history --members work,side
-ccam group set default --add history        # every account in default changes together
+ccam group set default --add history        # every account in default starts sharing history
 ccam group join team personal
 ccam group leave team side --fresh
 ccam share work                             # what work shares, and through which group
@@ -94,7 +94,14 @@ ccam migrate ~/.claude-work --group work --settings --mcp
 ccam migrate --history --yes    # conversation history only
 ```
 
-`ccam migrate` فایل‌های `settings.json` و `CLAUDE.md`، افزونه‌ها و سرورهای MCP کاربر را از یک پوشه Claude Code در یک گروه کپی می‌کند تا همه حساب‌هایی که این موارد را به اشتراک می‌گذارند آن‌ها را داشته باشند. پوشه فقط خوانده می‌شود. گزینه‌های `--settings`، `--memory`، `--extensions`، `--mcp` و `--history` فقط مواردی را که نام می‌برید کپی می‌کنند. بدون آن‌ها، در ترمینال یک فهرست انتخاب به شما امکان انتخاب می‌دهد که در آن همه چیز به جز تاریخچه گفتگو علامت خورده است؛ در جاهای دیگر همه چیز به جز تاریخچه گفتگو کپی می‌شود. `-g` یا `--group` گروه را انتخاب می‌کند و `-y` یا `--yes` بدون پرسش کپی می‌کند و وقتی فایلی متفاوت باشد، نسخه گروه را نگه می‌دارد. ورودهای MCP کپی نمی‌شوند، چون یک ورود کپی‌شده بقیه دارندگان را از سیستم خارج می‌کند؛ برنامه حساب‌هایی را که باید با `/mcp` وارد شوند نام می‌برد. `--mcp` وقتی `~/.claude` خالی است یا وجود ندارد اما `~/.claude.json` سرور دارد هم کار می‌کند. [کپی کردن یک پیکربندی موجود](/docs/sharing#copy-an-existing-setup) را ببینید.
+`ccam migrate` فایل‌های `settings.json` و `CLAUDE.md`، افزونه‌ها و سرورهای MCP کاربر را از یک پوشه Claude Code در یک گروه کپی می‌کند تا همه حساب‌هایی که این موارد را به اشتراک می‌گذارند آن‌ها را داشته باشند. پوشه فقط خوانده می‌شود.
+
+- `--settings`، `--memory`، `--extensions`، `--mcp` و `--history` فقط مواردی را که نام می‌برید کپی می‌کنند. بدون آن‌ها، در ترمینال یک فهرست انتخاب به شما امکان انتخاب می‌دهد که در آن همه چیز به جز تاریخچه گفتگو علامت خورده است؛ در جاهای دیگر همه چیز به جز تاریخچه گفتگو کپی می‌شود.
+- `--mcp` وقتی `~/.claude` خالی است یا وجود ندارد اما `~/.claude.json` سرور دارد هم کار می‌کند.
+- `-g` یا `--group` گروه را انتخاب می‌کند.
+- `-y` یا `--yes` بدون پرسش کپی می‌کند و وقتی فایلی متفاوت باشد، نسخه گروه را نگه می‌دارد.
+
+ورودهای MCP کپی نمی‌شوند، چون یک ورود کپی‌شده بقیه دارندگان را از سیستم خارج می‌کند؛ برنامه حساب‌هایی را که باید با `/mcp` وارد شوند نام می‌برد. [کپی کردن یک پیکربندی موجود](/docs/sharing#copy-an-existing-setup) را ببینید.
 
 ## سرورهای MCP
 
@@ -129,7 +136,14 @@ ccam ccusage claude daily       # Claude Code's tokens and costs, every account 
 ccam ccusage -a work blocks --active   # one account's current 5-hour block
 ```
 
-`next --auto`، `--fallback` و `ccam pick` به یک شکل انتخاب می‌کنند: ابتدا حساب‌های زیر `auto_max_usage` (`config.toml`، پیش‌فرض ۱۰۰)، بر اساس `auto_strategy` (`headroom`، `expiring` یا `balance`)، با در نظر گرفتن پنجره هفتگی `--model`، هرگز حسابی که به ۱۰۰٪ رسیده است (پنجره‌ای که Claude Code پر گزارش کرده تا بازنشانی‌اش ۱۰۰٪ حساب می‌شود)، هرگز ورودی با کلید API، و در سازمان حسابی که از آن شروع می‌کنند (`--cross-org` یا `cross_org = true` برای جست‌وجوی فراتر از آن). `--wait` مقدارش را پس از `=` می‌گیرد (`--wait=2h`)؛ اگر با فاصله نوشته شود، با یک راهنمایی رد می‌شود. وقتی هیچ حسابی را نتوان انتخاب کرد، با کد ۷۵ خارج می‌شوند، یا با `--wait` منتظر می‌مانند تا نخستین حساب بازنشانی شود. `ccam next --continue` یک گفتگو را حتی بین حساب‌هایی که تاریخچه مشترک ندارند هم منتقل می‌کند: در این حالت Claude Code آن را در حساب جدید کپی می‌کند. با `--brief`، حساب جدید به‌جای آن گفتگوی تازه‌ای را آغاز می‌کند، از خلاصه‌ای که ccam بدون یک مدل از گفتگوی قبلی می‌نویسد ([`--brief`](/features/next#brief)). برخلاف `ccam <name>`، `ccam next` گزینه‌های خودش را می‌خواند، پس گزینه‌های Claude Code پس از `--` می‌آیند؛ بدون آن ccam با `unknown flag` متوقف می‌شود. درون Claude Code، فرمان `/ccam:switch [account]` پلاگین یک گفتگو را به حساب دیگری می‌سپارد و `ccam hook` همان چیزی است که هوک‌های آن اجرا می‌کنند. با `auto_switch = true` در `config.toml` (Linux و macOS؛ به‌طور پیش‌فرض خاموش)، هوک سقف مصرف یک نشست تعاملی را هم که ccam آغاز کرده پایان می‌دهد و آن را با حساب دیگری که ظرفیت دارد ادامه می‌دهد، فقط حسابی شبیه آن: صندلی دیگری از همان سازمان، یا طرح شخصی دیگری ([`auto_switch`](/features/next#auto-switch)). [جابه‌جایی به حساب بعدی](/features/next)، [انتخاب حساب برای اسکریپت‌ها](/features/pick) و [نشست‌های پس‌زمینه همه حساب‌ها](/features/agents) را ببینید.
+- `next --auto`، `--fallback` و `ccam pick` به یک شکل انتخاب می‌کنند: ابتدا حساب‌های زیر `auto_max_usage` (`config.toml`، پیش‌فرض ۱۰۰)، بر اساس `auto_strategy` (`headroom`، `expiring` یا `balance`)، با در نظر گرفتن پنجره هفتگی `--model`. هرگز حسابی را که به ۱۰۰٪ رسیده است (پنجره‌ای که Claude Code پر گزارش کرده تا بازنشانی‌اش ۱۰۰٪ حساب می‌شود) یا ورودی با کلید API را انتخاب نمی‌کنند و در سازمان حسابی که از آن شروع می‌کنند می‌مانند (`--cross-org` یا `cross_org = true` برای جست‌وجوی فراتر از آن).
+- `--wait` مقدارش را پس از `=` می‌گیرد (`--wait=2h`)؛ اگر با فاصله نوشته شود، با یک راهنمایی رد می‌شود. وقتی هیچ حسابی را نتوان انتخاب کرد، با کد ۷۵ خارج می‌شوند، یا با `--wait` منتظر می‌مانند تا نخستین حساب بازنشانی شود.
+- `ccam next --continue` یک گفتگو را حتی بین حساب‌هایی که تاریخچه مشترک ندارند هم منتقل می‌کند: در این حالت Claude Code آن را در حساب جدید کپی می‌کند. با `--brief`، حساب جدید به‌جای آن گفتگوی تازه‌ای را آغاز می‌کند، از خلاصه‌ای که ccam بدون یک مدل از گفتگوی قبلی می‌نویسد ([`--brief`](/features/next#brief)).
+- برخلاف `ccam <name>`، `ccam next` گزینه‌های خودش را می‌خواند، پس گزینه‌های Claude Code پس از `--` می‌آیند؛ بدون آن ccam با `unknown flag` متوقف می‌شود.
+- درون Claude Code، فرمان `/ccam:switch [account]` پلاگین یک گفتگو را به حساب دیگری می‌سپارد و `ccam hook` همان چیزی است که هوک‌های آن اجرا می‌کنند.
+- با `auto_switch = true` در `config.toml` (Linux و macOS؛ به‌طور پیش‌فرض خاموش)، هوک سقف مصرف یک نشست تعاملی را هم که ccam آغاز کرده پایان می‌دهد و آن را در حساب دیگری که ظرفیت دارد ادامه می‌دهد، اما فقط در حسابی از همان نوع: صندلی دیگری از همان سازمان، یا طرح شخصی دیگری ([`auto_switch`](/features/next#auto-switch)).
+
+[جابه‌جایی به حساب بعدی](/features/next)، [انتخاب حساب برای اسکریپت‌ها](/features/pick) و [نشست‌های پس‌زمینه همه حساب‌ها](/features/agents) را ببینید.
 
 ## نگهداری
 
@@ -145,16 +159,27 @@ ccam version         # also: ccam -v, ccam --version
 ccam completion bash # or zsh, powershell
 ```
 
-`ccam update` پیش از جایگزین کردن ccam، checksum SHA-256 نسخه را بررسی می‌کند و `--version v0.2.0` یک نسخه مشخص را نصب می‌کند. ccam نصب‌شده از بسته `.deb` را باید با apt به‌روز کنید. [به‌روزرسانی](/docs/install#update) را ببینید.
+`ccam update` پیش از جایگزین کردن ccam، checksum SHA-256 نسخه را بررسی می‌کند و `--version v0.2.0` یک نسخه مشخص را نصب می‌کند. نسخه‌ای از ccam که از بسته `.deb` نصب شده باشد را باید با apt به‌روز کنید. [به‌روزرسانی](/docs/install#update) را ببینید.
 
 ## فایل‌ها
 
 | مسیر | محتوا |
 | --- | --- |
-| `~/.config/ccam/config.toml` | حساب‌ها، گروه‌ها و تنظیمات (`theme`، `usage_source`، `relay`، `auto_switch`، `cross_org` …). تنظیمات در بالای فایل می‌آیند، بالای نخستین `[[group]]`، `[[profile]]` یا `[[folder]]`: تنظیمی که زیر یک جدول باشد به همان جدول تعلق دارد، پس ccam در هر اجرا و در `ccam doctor` نامش را می‌برد و فرمان‌هایی که پیکربندی را ذخیره می‌کنند تا جابه‌جا شدنش سر باز می‌زنند. وقتی ccam فایل را ذخیره می‌کند، توضیحات نگه داشته نمی‌شوند |
+| `~/.config/ccam/config.toml` | حساب‌ها، گروه‌ها و تنظیمات (`theme`، `usage_source`، `relay`، `auto_switch`، `cross_org` …). تنظیمات در بالای فایل می‌آیند، بالای نخستین `[[group]]`، `[[profile]]` یا `[[folder]]`: تنظیمی که زیر یک جدول باشد به همان جدول تعلق دارد، پس ccam در هر اجرا و در `ccam doctor` درباره‌اش هشدار می‌دهد و فرمان‌هایی که پیکربندی را ذخیره می‌کنند تا جابه‌جا شدنش سر باز می‌زنند. وقتی ccam فایل را ذخیره می‌کند، توضیحات نگه داشته نمی‌شوند |
 | `~/.local/share/ccam/profiles/<name>/` | `CLAUDE_CONFIG_DIR` هر حساب |
 | `~/.local/share/ccam/groups/<group>/` | تنظیمات، سرورهای MCP، افزونه‌ها و تاریخچه مشترک |
-| `~/.local/state/ccam/` | حافظه نهان مصرف و ثبت‌های سقف مصرف (`usage/<name>.json`، `usage/<name>.limit.json`)، زمان‌های آخرین استفاده، نشانگرهای نشست و قفل‌ها (`locks/`)، میان‌برهایی که ccam ساخته است (`shortcuts.json`)، تغییری در گروه‌ها که تمام نشده است (`group-change.json`)، یادداشت‌هایی که `/ccam:switch` و هوک سقف مصرف به جا می‌گذارند (`handoff/<account>/<session>.json`)، زمانی که `ccam pick` یا `auto_switch` آخرین بار هر حساب را انتخاب کرده است (`picks/<name>`؛ هر انتخاب ۲ دقیقه حساب می‌شود)، و خلاصه‌های `--brief` که ۷ روز نگه داشته می‌شوند (`brief/<session>.md`) |
+| `~/.local/state/ccam/` | حافظه نهان مصرف، ثبت‌های سقف مصرف، قفل‌ها، یادداشت‌ها و وضعیت‌های دیگر (فهرست زیر جدول را ببینید) |
 | `~/.local/bin/<shortcut>` | فرمان‌های میان‌بر مانند `ccwork`، که پیوندهایی به ccam هستند |
 
-متغیرهای `XDG_CONFIG_HOME`، `XDG_DATA_HOME` و `XDG_STATE_HOME` محل این پوشه‌ها را تغییر می‌دهند. در Windows، `~` همان `%USERPROFILE%` است و میان‌برها `<shortcut>.exe` هستند.
+پوشه وضعیت این‌ها را نگه می‌دارد:
+
+- حافظه نهان مصرف و ثبت‌های سقف مصرف (`usage/<name>.json`، `usage/<name>.limit.json`)؛
+- زمان‌های آخرین استفاده؛
+- نشانگرهای نشست و قفل‌ها (`locks/`)؛
+- میان‌برهایی که ccam ساخته است (`shortcuts.json`)؛
+- تغییر گروهی که تمام نشده است (`group-change.json`)؛
+- یادداشت‌هایی که `/ccam:switch` و هوک سقف مصرف به جا می‌گذارند (`handoff/<account>/<session>.json`)؛
+- زمانی که `ccam pick` یا `auto_switch` آخرین بار هر حساب را انتخاب کرده است (`picks/<name>`؛ هر انتخاب ۲ دقیقه حساب می‌شود)؛
+- خلاصه‌های `--brief` که ۷ روز نگه داشته می‌شوند (`brief/<session>.md`).
+
+تنظیم `XDG_CONFIG_HOME`، `XDG_DATA_HOME` یا `XDG_STATE_HOME` محل این پوشه‌ها را تغییر می‌دهد. در Windows، `~` همان `%USERPROFILE%` است و میان‌برها `<shortcut>.exe` هستند.

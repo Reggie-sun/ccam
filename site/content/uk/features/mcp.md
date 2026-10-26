@@ -1,10 +1,10 @@
 ---
 title: Спільні сервери MCP
 description: "Один список серверів MCP на групу: ccam mcp add, add-json, list, remove та import; він передається через --mcp-config або синхронізується в кожен запис."
-updated: 2026-10-23
+updated: 2026-10-26
 order: 5
 translation: machine
-sourceHash: "fefca7f8d857"
+sourceHash: "27a06ad35295"
 ---
 
 Claude Code зберігає користувацькі сервери MCP у `.claude.json`, тому самому файлі, що містить вхід облікового запису, тож цей файл не можна спільно використовувати між обліковими записами. ccam зберігає спільні сервери у файлі групи, `mcp.json`, і передає його кожному обліковому запису групи під час запуску. Використовуйте `ccam mcp`, щоб один раз додати сервер для всіх своїх облікових записів, і `ccam mcp import`, щоб перенести до інших сервер, який ви додали в межах одного сеансу.
@@ -21,7 +21,7 @@ ccam mcp add tools -g team -- tools-mcp                           # into the gro
 ccam mcp list                                                     # every group, and servers only one account or folder has
 ccam mcp remove ctx
 ccam mcp import work                                              # move work's own servers into its group
-ccam mcp import work gh --force                                   # replace the group's different gh
+ccam mcp import work gh --force                                   # replace the group's gh if it differs
 ```
 
 Зміна застосовується з наступного запуску кожного облікового запису; запущені сеанси зберігають сервери, з якими вони стартували:
@@ -37,7 +37,13 @@ only in account work: pg
 only in account side, for /home/me/code/app only: notes
 ```
 
-Під групами `ccam mcp list` називає кожен сервер, який не доходить до інших облікових записів: `only in account work: pg` для сервера, який обліковий запис додав для себе, `only in account side, for /home/me/code/app only: notes` для сервера, доданого для однієї теки (звичайний `claude mcp add`, див. нижче), `account work has its own …, used in its sessions in place of the group's`, коли власний сервер облікового запису має назву сервера групи, `.mcp.json` цієї теки з обліковими записами, схвалення яких він чекає (`waiting for approval in`), і сервери, які є `in no account, only in ~/.claude.json (plain claude's)`, разом із командою [`ccam migrate --mcp`](/features/migrate), яка їх копіює.
+Під групами `ccam mcp list` називає кожен сервер, який не доходить до інших облікових записів:
+
+- `only in account work: pg` для сервера, який обліковий запис додав для себе;
+- `only in account side, for /home/me/code/app only: notes` для сервера, доданого для однієї теки (звичайний `claude mcp add`, див. нижче);
+- `account work has its own …, used in its sessions in place of the group's`, коли власний сервер облікового запису має назву сервера групи;
+- `.mcp.json` цієї теки з обліковими записами, схвалення яких він чекає (`waiting for approval in`);
+- сервери, які є `in no account, only in ~/.claude.json (plain claude's)`, разом із командою [`ccam migrate --mcp`](/features/migrate), яка їх копіює.
 
 Додавання назви, яка вже є в групі, замінює її визначення й виводить `updated` замість `added`. Сервери потрапляють до облікового запису, лише якщо він входить до цієї групи, а група робить MCP спільним (`ccam group set <group> --add mcp`); коли група цього не робить, `add` про це повідомляє.
 
@@ -54,7 +60,7 @@ only in account side, for /home/me/code/app only: notes
 | `--force` (`import`) | замінити відмінний сервер групи з тією самою назвою; для старого `mcp.json` створюється резервна копія | вимкнено |
 | `--keep-local` (`import`) | залишити записи в `.claude.json` облікового запису | вимкнено |
 | `-h`, `--help` | довідка для кожної команди | |
-| `--dry-run` (глобальний) | враховується лише `mcp list`; `add`, `add-json`, `remove` і `import` відхиляють його й нічого не змінюють | вимкнено |
+| `--dry-run` (глобальний) | підтримується лише `mcp list`; `add`, `add-json`, `remove` і `import` відхиляють його й нічого не змінюють | вимкнено |
 
 `add` потребує або команди після `--`, або `--url`; інакше він завершується помилкою `a command to run (after --) or --url is required`. `--header` стосується серверів із `--url`, а `--env` — серверів із командою. `add-json` приймає той самий JSON, що й `claude mcp add-json`, і визначення має бути об'єктом із `command` або `url`. `import` завжди використовує групу, через яку обліковий запис спільно використовує MCP, а `list` показує всі групи, тож `-g` на них не впливає.
 
@@ -62,7 +68,7 @@ only in account side, for /home/me/code/app only: notes
 
 Задіяні файли:
 
-- `~/.local/share/ccam/groups/<group>/mcp.json`: спільні сервери, `{"mcpServers": {…}}`, формат, який читає `--mcp-config`. Він записується через `fsutil.AtomicWrite` з режимом `0600`, бо записи серверів часто містять ключі API, і лише під блокуванням `<group>/.mcp.json.lock`, тож два одночасні `ccam mcp add` обидва зберігають свій сервер.
+- `~/.local/share/ccam/groups/<group>/mcp.json`: спільні сервери, `{"mcpServers": {…}}`, формат, який читає `--mcp-config`. Він записується через `fsutil.AtomicWrite` з режимом `0600`, бо записи серверів часто містять ключі API, і лише під блокуванням `<group>/.mcp.json.lock`, тож дві команди `ccam mcp add`, запущені одночасно, обидві зберігають свої сервери.
 - `~/.local/share/ccam/profiles/<name>/.claude.json`: власний файл Claude Code із серверами облікового запису. ccam читає лише його значення `mcpServers` за допомогою сканера `profile.TopLevelValue` і ніколи не розбирає весь файл на шляху запуску.
 - `~/.local/state/ccam/mcp/<name>/`: файл `seen`, `sync-stamp` (з хешем кожної копії, яку записав ccam, щоб він міг відрізнити копію, якої ніхто не змінював, від відредагованої вами), `sync-checked` (те, що стратегія синхронізації бачила востаннє), `kept` (сервери, які обліковий запис зберіг, коли вийшов зі спільного доступу до MCP) і резервні копії `.claude.json`.
 
@@ -70,12 +76,12 @@ only in account side, for /home/me/code/app only: notes
 
 <!-- motion:mcp-flag -->
 
-1. `launcher.applyMCP` знаходить групу MCP облікового запису. `mcp.FlagArgs` одним викликом `stat` перевіряє, що `mcp.json` групи існує, не розбираючи його.
-2. `Plan.InsertArgs` ставить `--mcp-config=<path>` одразу після `claude`, перед вашими аргументами, тож ваші власні `--mcp-config` чи `--strict-mcp-config` усе одно застосовуються поверх нього.
-3. `mcp.NewLocal` перевіряє, чи змінився `.claude.json` облікового запису після останнього запуску, і лише тоді розбирає його сервери.
-4. `syscall.Exec` замінює ccam на Claude Code.
+1. ccam знаходить групу MCP облікового запису (`launcher.applyMCP`) і одним викликом `stat` перевіряє, що `mcp.json` групи існує, не розбираючи його (`mcp.FlagArgs`).
+2. ccam ставить `--mcp-config=<path>` одразу після `claude`, перед вашими аргументами, тож ваші власні `--mcp-config` чи `--strict-mcp-config` усе одно застосовуються поверх нього (`Plan.InsertArgs`).
+3. ccam перевіряє, чи змінився `.claude.json` облікового запису після останнього запуску, і лише тоді розбирає його сервери (`mcp.NewLocal`).
+4. ccam замінює себе на Claude Code (`syscall.Exec`).
 
-Шлях передається одним аргументом, `--mcp-config=<path>`, а не двома. `--mcp-config` у Claude Code приймає кілька значень, тож `claude --mcp-config a.json "prompt"` прочитав би запит як другий файл конфігурації й завершився б помилкою `MCP config file not found`. Форма з одним аргументом на цьому зупиняється, і запит чи підкоманда, що йде далі, працює. `ccam work mcp list`, `get` і `remove` не отримують прапорця, бо Claude Code там його відхиляє; натомість ccam називає сервери групи в стандартному потоці помилок ([докладніше](/features/launch#shared-mcp-servers)). Claude Code завантажує сервери з `--mcp-config` додатково до власних серверів облікового запису; у разі збігу назв перемагає запис у `.claude.json`. Стратегія прапорця записує `.claude.json` лише для Remote Control, коли обліковий запис виходить зі спільного доступу до MCP або знову приєднується до нього ([нижче](#leaving-and-joining)), і для `ccam mcp import`.
+Шлях передається одним аргументом, `--mcp-config=<path>`, а не двома. `--mcp-config` у Claude Code приймає кілька значень, тож `claude --mcp-config a.json "prompt"` прочитав би запит як другий файл конфігурації й завершився б помилкою `MCP config file not found`. Форма з одним аргументом цього уникає, тож запит чи підкоманда після неї працює. `ccam work mcp list`, `get` і `remove` не отримують прапорця, бо Claude Code там його відхиляє; натомість ccam називає сервери групи в стандартному потоці помилок ([докладніше](/features/launch#shared-mcp-servers)). Claude Code завантажує сервери з `--mcp-config` додатково до власних серверів облікового запису; у разі збігу назв перемагає запис у `.claude.json`. Стратегія прапорця записує `.claude.json` лише для Remote Control, коли обліковий запис виходить зі спільного доступу до MCP або знову приєднується до нього ([нижче](#leaving-and-joining)), і для `ccam mcp import`.
 
 `claude remote-control` (`rc`) не приймає `--mcp-config`, а його сеанси читають сервери лише з `.claude.json`. Для `ccam work rc` ccam не додає прапорець і, якщо є термінал, запитує, чи скопіювати сервери групи в `.claude.json` із резервною копією, як це робить стратегія `sync`. Він запитує, доки копії немає, а потім знову лише після зміни `mcp.json` групи або коли скопійований сервер зникає ([Remote Control](/features/launch#remote-control)). Оскільки така копія перемагає `--mcp-config` у разі збігу назв, `ccam mcp add`, `add-json`, `remove` і `import` оновлюють копії, що є в інших облікових записах групи:
 
@@ -85,14 +91,14 @@ $ ccam mcp add ctx --url https://mcp.context7.com/mcp
 ✓ Updated the copy in account side's .claude.json (made for Remote Control)
 ```
 
-Рядок `✓ Updated` з'являється, лише коли копія змінилася. Копію, створену старішим ccam, оновлюють так само, як і копію після `ccam migrate`.
+Рядок `✓ Updated` з'являється, лише коли копія змінилася. Копію, створену старішою версією ccam, оновлюють так само, як і копію після `ccam migrate`.
 
-Сервер, доданий у сеансі через `claude mcp add`, потрапляє лише до `.claude.json` цього облікового запису. Звичайний `claude mcp add` використовує локальну область: сервер завантажується для цього одного облікового запису в цій одній теці (`-s user` робить його сервером облікового запису в усіх теках). ccam не може побачити його в цей момент, бо Claude Code його замінив, тому перевіряє під час наступного запуску. Файл `seen` містить час зміни `.claude.json` і назви серверів, про які вже повідомлено. Коли час відрізняється, ccam порівнює назви з групою й один раз виводить підказку для кожного нового сервера, не чекаючи введення, за обох стратегій:
+Сервер, доданий у сеансі через `claude mcp add`, потрапляє лише до `.claude.json` цього облікового запису. Звичайний `claude mcp add` використовує локальну область: сервер завантажується для цього одного облікового запису в цій одній теці (`-s user` робить його доступним обліковому запису в усіх теках). ccam не може побачити цього в момент, коли це стається, бо Claude Code уже замінив процес ccam, тому перевіряє під час наступного запуску. Файл `seen` містить час зміни `.claude.json` і назви серверів, про які вже повідомлено. Коли час відрізняється, ccam порівнює назви з групою й один раз виводить підказку для кожного нового сервера, не чекаючи введення, за обох стратегій:
 
 ```console
-ccam: MCP servers only account work has: pg
+ccam: MCP servers that only account work has: pg
       To share them with other accounts: ccam mcp import work pg
-ccam: MCP servers account work has for one folder only (claude mcp add without -s user): notes (/home/me/code/app)
+ccam: MCP servers that account work has for one folder only (claude mcp add without -s user): notes (/home/me/code/app)
       To share them with other accounts, in every folder: ccam mcp import work notes
 ```
 
@@ -102,10 +108,10 @@ ccam: MCP servers account work has for one folder only (claude mcp add without -
 
 <!-- motion:mcp-sync -->
 
-1. `mcp.Sync` порівнює час зміни `mcp.json` групи з `sync-stamp`, а `.claude.json` облікового запису — з тим, що бачив востаннє. Якщо ніщо не змінилося, більше нічого не відбувається. Інакше він також перевіряє, що кожен сервер групи досі є в `.claude.json`, і повертає копію, яка зникла (`put back group default's MCP servers that were gone from account work's .claude.json: ctx`).
+1. ccam порівнює час зміни `mcp.json` групи з `sync-stamp`, а `.claude.json` облікового запису — з тим, що бачив востаннє (`mcp.Sync`). Якщо ніщо не змінилося, більше нічого не відбувається. Інакше він також перевіряє, що кожен сервер групи досі є в `.claude.json`, і повертає копію, яка зникла (`put back group default's MCP servers that were gone from account work's .claude.json: ctx`).
 2. Він бере власне блокування Claude Code, теку `.claude.json.lock` поруч із файлом, створену через `mkdir`. Він чекає до 2 секунд і вважає блокування, старіше за 10 секунд, застарілим, як це робить бібліотека блокувань Claude Code.
 3. Він зберігає поточний `.claude.json` до `backups/` у теці стану й залишає 5 найновіших копій.
-4. Він задає кожен сервер групи в `mcpServers`, видаляє сервери, які записав раніше і яких у групі вже немає, і атомарно записує файл з його початковим режимом, лише коли щось змінилося. Він змінює або видаляє лише ті записані ним копії, яких відтоді ніхто не змінював. Власний сервер облікового запису з назвою сервера групи лишається за обліковим записом, і ccam один раз про це повідомляє: `account work has its own MCP servers fs, so group default's of those names are not copied there`.
+4. Він задає кожен сервер групи в `mcpServers`, видаляє сервери, які записав раніше і яких у групі вже немає, і атомарно записує файл з його початковим режимом, лише коли щось змінилося. Він змінює або видаляє лише ті записані ним копії, яких відтоді ніхто не змінював. Якщо обліковий запис має власний сервер із тією самою назвою, що й сервер групи, ccam зберігає сервер облікового запису й один раз про це повідомляє: `account work has its own MCP servers fs, so group default's servers with those names are not copied there`.
 5. Він записує нову позначку часу з хешем кожної копії, і Claude Code запускається без `--mcp-config`.
 
 Синхронізація пропускається з повідомленням `ccam: account work is already running, skipping MCP sync`, коли сеанс облікового запису запущено, хоч би як було запущено Claude Code, бо Claude Code переписує `.claude.json`, поки працює. Невдала синхронізація виводить `ccam: MCP sync failed (launching anyway): …` і все одно виконує запуск.
@@ -126,12 +132,12 @@ Skipped gh: group default already has a different gh (`ccam mcp import work gh -
 ✓ Removed account work's own entries (.claude.json backed up)
 ```
 
-З `--force` сервер групи замінюється, а попередній `mcp.json` спершу зберігається до `.ccam-backup/<time>/mcp.json` усередині теки групи. Потім `mcp.Remove` видаляє скопійовані записи з `.claude.json` облікового запису, його власні й записи теки, одним записом, під тим самим блокуванням і після створення резервної копії в теці стану. `mcp.json` групи лишається заблокованим від його завантаження до зникнення цих записів, тож ніхто не видалить сервер із групи тим часом. Це потрібно, бо в разі збігу назв запис облікового запису переміг би запис групи. `--keep-local` їх залишає.
+З `--force` сервер групи замінюється, а попередній `mcp.json` спершу зберігається до `.ccam-backup/<time>/mcp.json` усередині теки групи. Потім ccam видаляє скопійовані записи з `.claude.json` облікового запису, його власні й записи теки, одним записом, під тим самим блокуванням і після створення резервної копії в теці стану (`mcp.Remove`). ccam тримає `mcp.json` групи заблокованим від моменту, коли читає файл, до видалення цих записів, тож ніхто не видалить сервер із групи тим часом. Це потрібно, бо в разі збігу назв запис облікового запису переміг би запис групи. З `--keep-local` записи лишаються в `.claude.json` облікового запису.
 
 ## Безпека та граничні випадки
 
-- **Входи.** Сервери, що виконують вхід через OAuth, зберігають свої токени в `.credentials.json` кожного облікового запису (`mcpOAuth`), а не в списку серверів, тож спільне використання сервера не робить спільним його вхід. Увійдіть один раз у кожному обліковому записі через `/mcp`. ccam ніколи не копіює входи, навіть [`ccam migrate`](/features/migrate): скопійований токен оновлення виводить із системи всіх інших власників. [`ccam ext`](/features/ext) і `ccam doctor` називають сервери, у які обліковий запис не увійшов, тоді як інший обліковий запис увійшов, а `ccam next --continue` повідомляє, яких бракує новому обліковому запису. Група ніколи не отримує файлу входу.
-- **Запущені облікові записи.** `import` копіює до групи, але залишає власні записи запущеного облікового запису й повідомляє про це; виконайте його знову після завершення сеансу. Синхронізація пропускає запущені облікові записи. Обидві враховують і Claude Code, запущений без ccam.
+- **Входи.** Сервери, що виконують вхід через OAuth, зберігають свої токени в `.credentials.json` кожного облікового запису (`mcpOAuth`), а не в списку серверів, тож спільне використання сервера не робить спільним його вхід. Увійдіть один раз у кожному обліковому записі через `/mcp`. ccam ніколи не копіює входи, і [`ccam migrate`](/features/migrate) теж: скопійований токен оновлення виводить із системи всіх інших власників. [`ccam ext`](/features/ext) і `ccam doctor` називають сервери, у які обліковий запис не увійшов, тоді як інший обліковий запис увійшов, а `ccam next --continue` повідомляє, яких бракує новому обліковому запису. Група ніколи не отримує файлу входу.
+- **Запущені облікові записи.** `import` копіює до групи, але залишає власні записи запущеного облікового запису й повідомляє про це; виконайте його знову після завершення сеансу. Синхронізація пропускає запущені облікові записи. Обидві також виявляють сеанси Claude Code, запущені без ccam.
 - **Копії для Remote Control.** Копію запущеного облікового запису не змінюють: `Note: account side is running, so the copy in its .claude.json stays as it was until its next Remote Control launch.` З `mcp_strategy = "sync"` нічого оновлювати не треба, бо кожен запуск виконує синхронізацію.
 - **Пошкоджені файли.** Якщо `.claude.json` не є дійсним JSON, синхронізація не чіпає його й повідомляє про помилку. Якщо взяти блокування за 2 секунди не вдається, ccam повідомляє `could not lock … (Claude Code is writing the file)`.
 - **Облікові записи, які не використовують MCP спільно.** `import` відмовляє й радить спершу додати обліковий запис до групи, яка робить MCP спільним (`ccam group join <group> side`).
@@ -139,8 +145,8 @@ Skipped gh: group default already has a different gh (`ccam mcp import work gh -
 
 ## Пов'язані сторінки
 
-- [Спільне використання між обліковими записами](/features/share)
+- [Спільне використання через групи](/features/share)
 - [Remote Control з ccam](/guides/remote-control)
 - [Спільні сервери MCP, налаштування та історія](/docs/sharing)
 - [Копіювання наявного налаштування](/features/migrate)
-- [Усі команди](/docs/commands)
+- [Довідник команд](/docs/commands)

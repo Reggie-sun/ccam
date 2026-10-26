@@ -1,10 +1,10 @@
 ---
 title: ccam comparado con los alias del shell
-description: Alias del shell con CLAUDE_CONFIG_DIR frente a ccam para usar varias cuentas de Claude Code, lado a lado.
-updated: 2026-10-20
+description: Alias del shell con CLAUDE_CONFIG_DIR comparados con ccam para usar varias cuentas de Claude Code, función por función.
+updated: 2026-10-26
 order: 1
 translation: machine
-sourceHash: b9fbcb88f111
+sourceHash: "c30d84bceba0"
 ---
 
 Un alias del shell por cuenta es la forma más sencilla de usar varias cuentas de Claude Code. ccam hace lo mismo por debajo y agrega uso compartido, cambio de cuenta y seguimiento del uso.
@@ -37,7 +37,7 @@ ccam add work --shortcut ccwork
 | Inicios de sesión separados | Sí | Sí |
 | Configuración por cuenta | Editar `~/.bashrc`, iniciar sesión | `ccam add` |
 | Funciona en scripts y otros programas | No, los alias solo existen en el shell | Sí, `ccam work` y los atajos como `ccwork` son comandos reales |
-| Configuración, `CLAUDE.md` y extensiones compartidos | Copiar o enlazar a mano | Por elemento, con copias de seguridad |
+| Configuración, `CLAUDE.md` y extensiones compartidos | Copiar o enlazar a mano | Sí, elegido por elemento, con copias de seguridad |
 | Servidores MCP compartidos | A mano, en cada cuenta | `ccam mcp add` una vez |
 | Continuar una conversación en otra cuenta | No | `ccam next --continue` |
 | Uso de todas las cuentas | No | `ccam usage` |

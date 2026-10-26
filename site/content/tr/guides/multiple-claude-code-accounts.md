@@ -1,10 +1,10 @@
 ---
 title: Tek bilgisayarda birden fazla Claude Code hesabı
 description: CLAUDE_CONFIG_DIR ile birden fazla Claude Code hesabını yan yana çalıştırın; elle takma adlarla ya da ccam ile otomatik kurun ve hesaplar arasında geçiş yapın.
-updated: 2026-10-25
+updated: 2026-10-26
 order: 1
 translation: machine
-sourceHash: "5c5dbd9fcd23"
+sourceHash: 381de7a473b2
 ---
 
 Her hesaba kendi yapılandırma klasörünü verin. Claude Code klasörü `CLAUDE_CONFIG_DIR` ortam değişkeninden okur ve her klasör kendi giriş bilgilerini, ayarlarını ve geçmişini tutar; böylece her hesap oturum açık kalır ve hesapları aynı anda çalıştırabilirsiniz. Bunu bir kabuk takma adıyla elle kurabilir ya da ccam'a bırakabilirsiniz.
@@ -17,7 +17,7 @@ Bu, [Claude Code belgelerinde anlatılan](https://code.claude.com/docs/en/authen
 alias claude-work='CLAUDE_CONFIG_DIR=~/.claude-work claude'
 ```
 
-Yeni bir terminal açın ve `claude-work` komutunu çalıştırın. Klasör yeni olduğu için Claude Code sizden giriş yapmanızı ister. Bundan sonra `claude` ilk hesabınız, `claude-work` ise ikinci hesabınız olur. Her hesap için kendi klasörüyle birlikte ayrı bir takma ad ekleyin.
+Yeni bir terminal açın ve `claude-work` komutunu çalıştırın. Klasör yeni olduğu için Claude Code sizden giriş yapmanızı ister. Bundan sonra `claude` ilk hesabınız, `claude-work` ise ikinci hesabınız olur.
 
 WSL olmadan Windows'ta, profilinizdeki (`notepad $PROFILE`) bir PowerShell fonksiyonu aynı işi görür:
 
@@ -51,9 +51,9 @@ ccam add work --shortcut ccwork
 
 Artık `ccam personal` ve `ccam work` iki hesabı başlatır; iş hesabına verdiğiniz kısayol olan `ccwork` da öyle. Bunlar takma ad değil gerçek programlar olduğu için betiklerde de çalışır. Listeden bir hesap seçmek için yalnızca `ccam` komutunu, bir hesabı varsayılan yapmak için `ccam use work` komutunu çalıştırın.
 
-Ayarlar, `CLAUDE.md`, MCP sunucuları ve uzantılar baştan paylaşılır. `ccam next --continue` bir konuşmayı diğer hesaba taşır; açabileceğiniz paylaşılan konuşma geçmişi ise onu tek bir konuşma olarak tutar. `ccam usage` her hesabın 5 saatlik ve haftalık kullanımını bir arada gösterir.
+Ayarlar, `CLAUDE.md`, MCP sunucuları ve uzantılar baştan paylaşılır. `ccam next --continue` bir konuşmaya diğer hesapta devam eder. Paylaşılan konuşma geçmişini açarsanız iki hesap bir kopya yerine aynı konuşma üzerinde çalışır. `ccam usage` her hesabın 5 saatlik ve haftalık kullanımını bir arada gösterir.
 
-Zaten `~/.claude` kullanıyorsanız o hesabı yeniden eklemek yerine `ccam import` komutunu çalıştırın ya da ayarlarını, MCP sunucularını ve uzantılarını paylaşılan ayarlara kopyalamak için `ccam migrate` komutunu kullanın.
+Zaten `~/.claude` kullanıyorsanız o hesabı yeniden eklemek yerine `ccam import` komutunu çalıştırın ya da ayarlarını, MCP sunucularını ve uzantılarını paylaşılan `default` grubuna kopyalamak için `ccam migrate` komutunu kullanın.
 
 ## Hangi hesabın çalıştığını nasıl anlarım?
 
@@ -77,6 +77,6 @@ Claude Code [Windows'ta yerel olarak ve WSL içinde](https://code.claude.com/doc
 
 İki hesap için ve hiçbir şeyin paylaşılmasını istemiyorsanız bir takma ad yeterlidir. Paylaşılan ayarlar ve MCP sunucuları, daha fazla hesap, kullanımı bir bakışta görmek ya da konuşmalara devam etmek istediğinizde ccam sizi bu takipten kurtarır. [Takma adlarla karşılaştırma](/compare/aliases) farkları yan yana listeler; [ccam ve diğer hesap değiştirme araçları](/compare/account-switchers) ise bunun yerine tek bir girişi değiştiren araçları ele alır.
 
-Birden fazla hesap kullanıp kullanamayacağınız her hesabın koşullarına bağlıdır. Kullanmadan önce bunları kontrol edin.
+Birden fazla hesap kullanıp kullanamayacağınız, her birine uygulanan koşullara bağlıdır. Başlamadan önce bu koşulları okuyun.
 
-**Team ve Enterprise koltukları.** Otomatik seçim (`ccam next`, `--fallback`, `ccam pick`, kontrol panelindeki `n` tuşu ve açtığınızda [`auto_switch`](/features/next#auto-switch)), aynı Claude Team veya Enterprise kuruluşunun koltukları arasında da geçiş yapar. Anthropic'in yardım merkezinde şöyle belirtilir: "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (Team planındaki her koltuk, adı belirli tek bir kişiye atanır ve onu yalnızca o kişi kullanabilir) ve "Users can't route their work through another user's account to use that user's remaining usage" (kullanıcılar, başka bir kullanıcının kalan kullanım hakkından yararlanmak için işlerini o kullanıcının hesabı üzerinden yürütemez) ([Team planları](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); [Enterprise planları](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0) için de durum aynıdır). Bu nedenle otomatik seçimi koltuklar arasında kullanmak Anthropic'in koşullarını ihlal edebilir. Orada kullanıp kullanmamak sizin kararınızdır: buna güvenmeden önce kuruluşunuza ve Anthropic'e danışın. Kişisel planlar (Pro, Max) yukarıdaki notta ele alınır.
+**Team ve Enterprise koltukları.** Otomatik hesap seçimi (`ccam next`, `--fallback`, `ccam pick`, kontrol panelindeki `n` tuşu ve açtığınızda [`auto_switch`](/features/next#auto-switch)), aynı Claude Team veya Enterprise kuruluşunun koltukları arasında da geçiş yapar ve bu, Anthropic'in koşullarını ihlal edebilir. Buna güvenmeden önce [SSS'yi](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) okuyun ve kuruluşunuza ve Anthropic'e danışın.

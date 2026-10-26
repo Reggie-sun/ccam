@@ -1,13 +1,13 @@
 ---
 title: フォルダーごとのアカウント
 description: ccam folderを使うと、アカウント名なしでClaude Codeを起動したとき、フォルダーとその下すべてで1つのアカウントが使われます。たとえば会社のコードではworkです。
-updated: 2026-10-23
+updated: 2026-10-26
 order: 11
 translation: machine
-sourceHash: "48de98d42b99"
+sourceHash: 25f82da64580
 ---
 
-`ccam folder work ~/code/company`を実行すると、`~/code/company`とその下のどのフォルダーでも、アカウント名を指定しない起動はすべて`work`としてClaude Codeを起動します。その外では、これまでどおりデフォルトのアカウントが起動します。`ccam personal`や`ccpersonal`のようなショートカットでアカウントを指定した場合は、常にそのアカウントが起動します。
+`ccam folder work ~/code/company`を実行した後は、`~/code/company`とそのサブフォルダーで、アカウント名を指定しない起動はすべて`work`としてClaude Codeを起動します。その外では、これまでどおりデフォルトのアカウントが起動します。`ccam personal`や`ccpersonal`のようなショートカットでアカウントを指定した場合は、常にそのアカウントが起動します。
 
 ## 使い方
 
@@ -67,7 +67,7 @@ account = 'work'
 
 - `ccam rename`はフォルダーのエントリーを新しい名前に引き継ぎ、`ccam remove`は削除したアカウントのエントリーを削除します。
 - アカウントがもう存在しないエントリーがあると、そのフォルダーでの名前なしの起動は停止します: `<folder> is set to account "<name>", which does not exist. Change it with ccam folder`。`ccam doctor`は、そのようなエントリーと、フォルダーがなくなったエントリーを報告します。
-- 上のフォルダーからアカウントを受け継いでいるフォルダーの中で`ccam folder --remove`を実行すると、何も削除せずに、その上のフォルダーを示します。
+- 親フォルダーからアカウントを受け継いでいるサブフォルダーで`ccam folder --remove`を実行すると、ccamはその親フォルダーを示し、何も削除しません。
 - `ccam next`はローテーションか使用量でアカウントを選び、フォルダーは考慮しません。
 
 ## 関連項目

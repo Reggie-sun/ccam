@@ -1,13 +1,13 @@
 ---
 title: Mga API key account
 description: Nagdadagdag ang ccam add --api ng API key account para sa API ng Anthropic o isang gateway; binabasa ang key sa pagsisimula at hindi iniimbak.
-updated: 2026-10-23
+updated: 2026-10-26
 order: 13
 translation: machine
-sourceHash: "232a71525e42"
+sourceHash: "771d749f1f90"
 ---
 
-Sinisimulan ng isang API key account ang Claude Code gamit ang API key sa halip na Claude subscription login: ang API ng Anthropic, o isang endpoint na gumagamit ng parehong Messages format, gaya ng LiteLLM o OpenRouter gateway. Hindi iniimbak ng ccam ang key. Binabasa nito ang key sa bawat pagsisimula ng account, mula sa isang environment variable o sa isang command gaya ng password manager, at ibinibigay lang ito sa prosesong iyon ng Claude Code.
+Sinisimulan ng isang API key account ang Claude Code gamit ang API key sa halip na Claude subscription login. Puwedeng para sa API ng Anthropic ang key, o para sa anumang endpoint na gumagamit ng parehong Messages format, gaya ng LiteLLM o OpenRouter gateway. Hindi iniimbak ng ccam ang key. Binabasa nito ang key sa bawat pagsisimula ng account, mula sa isang environment variable o sa isang command gaya ng password manager, at ibinibigay lang ito sa prosesong iyon ng Claude Code.
 
 ## Paggamit
 
@@ -27,7 +27,7 @@ $ ccam list
    2  gw        -         (API: llm.example.com)  default  -
 ```
 
-Sumasali sa mga group ang isang API key account gaya ng ibang account (bilang default sa `default`: settings, `CLAUDE.md`, mga extension at mga MCP server), at gumagana ito sa mga shortcut, sa `ccam folder` at sa `ccam ext`.
+Sumasali sa mga group ang isang API key account gaya ng ibang account (bilang default sa group na `default`, na nagshe-share ng settings, `CLAUDE.md`, mga extension at mga MCP server), at gumagana ito sa mga shortcut, sa `ccam folder` at sa `ccam ext`.
 
 ## Mga option
 
@@ -58,8 +58,13 @@ model = 'claude-sonnet-5-5'
 
 Sa bawat pagsisimula ng account, pagkatapos ng karaniwang mga pagsusuri at bago magsimula ang Claude Code:
 
-1. Binabasa ng ccam ang key: ang `env:` mula sa environment, ang `command:` sa pagpapatakbo ng command na may 30-segundong limit. Puwedeng humingi ng password sa terminal ang command; napupunta rin sa terminal ang error output nito. Pinapahinto ng walang laman na key ang pagsisimula na may mensaheng nagsasabi kung saan inaasahan ang key.
-2. Inaalis nito ang bawat minanang variable na nagpapasya kung paano magsa-sign in ang Claude Code o kung aling provider ang gagamitin nito: ang mga key at token (`ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN_FILE_DESCRIPTOR`, `CLAUDE_CODE_API_KEY_FILE_DESCRIPTOR`), ang endpoint (`ANTHROPIC_BASE_URL`, `ANTHROPIC_UNIX_SOCKET`, `ANTHROPIC_MODEL`) at ang mga switch ng provider (`CLAUDE_CODE_USE_BEDROCK`, `CLAUDE_CODE_USE_VERTEX`, `CLAUDE_CODE_USE_FOUNDRY`, `CLAUDE_CODE_USE_ANTHROPIC_AWS`, `CLAUDE_CODE_USE_ANTHROPIC_GOOGLE_CLOUD`, `CLAUDE_CODE_USE_MANTLE`, `CLAUDE_CODE_USE_GATEWAY`). Hindi makakarating sa account na ito ang key na itinakda sa shell mo para sa ibang bagay, at hindi matatalo ng subscription login ang key nito.
+1. Binabasa ng ccam ang key: ang `env:` mula sa environment, ang `command:` sa pagpapatakbo ng command na may 30-segundong timeout. Puwedeng humingi ng password sa terminal ang command; napupunta rin sa terminal ang error output nito. Pinapahinto ng walang laman na key ang pagsisimula na may mensaheng nagsasabi kung saan inaasahan ang key.
+2. Inaalis nito ang bawat minanang variable na nagpapasya kung paano magsa-sign in ang Claude Code o kung aling provider ang gagamitin nito:
+   - ang mga key at token: `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN_FILE_DESCRIPTOR`, `CLAUDE_CODE_API_KEY_FILE_DESCRIPTOR`;
+   - ang endpoint: `ANTHROPIC_BASE_URL`, `ANTHROPIC_UNIX_SOCKET`, `ANTHROPIC_MODEL`;
+   - ang mga switch ng provider: `CLAUDE_CODE_USE_BEDROCK`, `CLAUDE_CODE_USE_VERTEX`, `CLAUDE_CODE_USE_FOUNDRY`, `CLAUDE_CODE_USE_ANTHROPIC_AWS`, `CLAUDE_CODE_USE_ANTHROPIC_GOOGLE_CLOUD`, `CLAUDE_CODE_USE_MANTLE`, `CLAUDE_CODE_USE_GATEWAY`.
+
+   Hindi makakarating sa account na ito ang key na itinakda sa shell mo para sa ibang bagay, at hindi mauuna ang subscription login sa key nito.
 3. Itinatakda nito ang `ANTHROPIC_BASE_URL` at `ANTHROPIC_MODEL` kapag ibinigay, at ang key bilang `ANTHROPIC_API_KEY` o `ANTHROPIC_AUTH_TOKEN`.
 
 Pinananatili ng mga account na may subscription login ang environment na minana nila, gaya ng dati. Sa isang interactive session, puwedeng magtanong nang isang beses ang Claude Code kung gagamitin ang key na nakita nito sa environment.
@@ -74,7 +79,7 @@ Pinananatili ng mga account na may subscription login ang environment na minana 
   ```
 
   Ipinapakita sa simula bilang `env -u <name>` ang minanang variable na inaalis ng launch. Sa `env:` na source na walang laman ang variable, pumapalya ang dry run, gaya ng mangyayari sa launch.
-- Agad na sinusuri ng `ccam add --api` ang `env:` na source at nagbababala kapag walang laman ang variable; unang pinapatakbo ang `command:` na source sa pagsisimula.
+- Agad na sinusuri ng `ccam add --api` ang `env:` na source at nagbababala kapag walang laman ang variable; hindi pinapatakbo ang `command:` na source hanggang sa pagsisimula.
 - Tinatanggihan ng `ccam login` at `ccam logout` ang API key account, dahil wala itong login. Ipinapakita ng `ccam doctor` ang endpoint at key source nito, at nagbababala kapag walang laman ang `env:` na variable.
 - Ipinapakita ng `ccam usage` ang `no limits (API)` para rito. Pumipili lang ang `ccam next --auto`, `--fallback` at `ccam pick` sa mga subscription account, dahil walang 5-oras o lingguhang limit ang API key na maikukumpara.
 - Nalalapat sa bawat account sa group, kasama ang mga API key account, ang shared na `settings.json` na may `env` block o `apiKeyHelper`. Huwag ilagay ang mga setting ng provider sa shared na settings, o ilagay ang API key account sa isang group na walang `settings`.

@@ -1,10 +1,10 @@
 ---
 title: 用群組共用
 description: ccam 群組透過一個資料夾，在其中的帳號之間共用選定的項目；ccam group 會依計畫移動資料，並提供備份和衝突選擇。
-updated: 2026-10-23
+updated: 2026-10-26
 order: 4
 translation: machine
-sourceHash: "e4f05b0fd572"
+sourceHash: "3f94dd13dbf1"
 ---
 
 每個帳號都有自己的資料夾，但裡面大部分的內容並不需要分開。**群組**決定共用什麼、由誰共用：群組中的每個帳號都會把這些項目連結到同一個資料夾 `~/.local/share/ccam/groups/<group>/`，所以它們讀寫的都是同一份副本。登入權杖絕不會共用。
@@ -31,11 +31,11 @@ members = ['work', 'side']
 ccam group                                        # the groups, what they share, their accounts
 ccam group show default                           # items, accounts, folder and MCP servers
 ccam group add team --items history --members work,side
-ccam group set default --add history              # every account in default moves together
+ccam group set default --add history              # all accounts in default start sharing history
 ccam group set default --remove history --fresh   # stop sharing; accounts start without it
-ccam group set team --items history,memory --from work   # work's CLAUDE.md goes in first
+ccam group set team --items history,memory --from work   # the group starts from work's copies
 ccam group join team personal                     # personal starts sharing team's items
-ccam group join team personal --replace           # leave the group that shares them now
+ccam group join team personal --replace           # first leave the group that shares those items now
 ccam group leave team side                        # side keeps a copy of team's items
 ccam group rename team pair                       # the folder keeps its name
 ccam group remove pair --leave                    # its accounts keep a copy; folder to the trash
@@ -76,7 +76,7 @@ work: +history (group default)
 Proceed? [y/N]
 ```
 
-[儀表板](/features/dashboard)的 **Groups** 分頁也能做同樣的變更，在帳號上按 `s` 則可以選擇它的群組。
+你可以在[儀表板](/features/dashboard)的 **Groups** 分頁做同樣的變更；在帳號上按 `s` 可以選擇它的群組。
 
 ## 項目
 
@@ -88,7 +88,7 @@ Proceed? [y/N]
 | `extensions` | `agents/`、`commands/`、`skills/`、`plugins/`、`output-styles/`、`rules/` |
 | `history` | `projects/` 和 `history.jsonl`，讓另一個帳號可以 `--continue` |
 
-帳號所屬的群組都沒有共用的項目，會留在帳號自己的資料夾中。
+如果帳號所屬的群組都沒有共用某個項目，該項目會留在帳號自己的資料夾中。
 
 ## 指令和選項
 
@@ -128,33 +128,49 @@ Proceed? [y/N]
 變更是在設定的副本上進行的：
 
 1. 指令編輯副本（`AddGroup`、`SetGroupItems`、`JoinGroup` …），並由這些函式檢查規則。
-2. `internal/group` 比較新舊設定，並為每個項目有所變更的帳號用 `share.Build` 建立計畫。計畫會逐一建立，每一份都看得到前面的計畫將放入群組資料夾的內容，所以只有第一個帳號會把它的副本移進去。第一份副本的來源依序是：群組資料夾中已有的副本、`--from`、預設帳號，接著是依編號排列的其他帳號。
+2. ccam 比較新舊設定，並為每個項目有所變更的帳號建立計畫（`internal/group`、`share.Build`）。計畫會逐一建立，每一份都看得到前面的計畫將放入群組資料夾的內容，所以只有第一個帳號會把它的副本移進去。群組第一份副本的來源依序是：群組資料夾（如果它已經有副本）、`--from` 指定的帳號、預設帳號，接著是依編號排列的其他帳號。
 3. 如果其中有帳號正在執行（不論 Claude Code 是如何啟動的；``work is running; quit Claude Code there first, then change the groups (`ccam agents` lists the sessions)``），或在沒有開發人員模式的 Windows 上有檔案需要連結，ccam 會拒絕。
-4. 衝突由提示或 `--prefer` 決定，接著印出計畫，ccam 再詢問你。
-5. 在儲存之前，ccam 會再檢查一次：在等待回答期間啟動的帳號會讓變更停止，另一個 ccam 對相同群組所做的變更也會（`the groups changed while this plan waited; nothing was moved, make the change again`）。在移動任何東西之前，新的設定會先儲存，這次變更也會記錄在 `~/.local/state/ccam/group-change.json` 中。如果某個步驟中途停止，這份記錄會保留下來：`ccam doctor --fix` 會依原本的順序、以你給過的回答完成這項變更，包括 MCP 的步驟；在那之前，不會開始其他群組變更（``the last change of groups stopped halfway; finish it with `ccam doctor --fix` first``）。
-6. MCP 的步驟最先執行。當帳號把擴充功能移出群組時，群組的外掛清單中經過帳號資料夾的路徑，會改為指向群組資料夾（計畫中的 `group plugin lists:`）。接著計畫依序執行。每個步驟都是把資料移到群組或備份資料夾；只有群組中已有逐位元組相同內容的檔案會被捨棄，而不是放到備份。
+4. ccam 解決衝突（詢問你，或依 `--prefer`），印出計畫，並請你確認。
+5. 在儲存之前，ccam 會再檢查一次。如果有帳號在 ccam 等待你回答期間啟動，變更會停止；如果另一個 ccam 行程在這段期間變更了相同的群組，變更也會停止（`the groups changed while this plan waited; nothing was moved, make the change again`）。在移動任何東西之前，新的設定會先儲存，這次變更也會記錄在 `~/.local/state/ccam/group-change.json` 中。如果某個步驟中途停止，這份記錄會保留下來：`ccam doctor --fix` 會依原本的順序、以你給過的回答完成這項變更，包括 MCP 的步驟；在那之前，不會開始其他群組變更（``the last group change stopped halfway; finish it with `ccam doctor --fix` first``）。
+6. MCP 的步驟最先執行。當帳號把擴充功能移出群組時，群組的外掛清單中經過帳號資料夾的路徑，會改為指向群組資料夾（計畫中的 `group plugin lists:`）。接著計畫依序執行。每個步驟都是把資料移到群組或備份資料夾；只有和群組副本完全相同的檔案會被刪除，而不是放到備份。
 
-`share.Layout` 是每個項目涵蓋路徑的允許清單。不在清單上的東西永遠不會進入群組。`share.Never` 列出 `.credentials.json` 和 `.claude.json`，只要其中之一出現在結構清單中，`Build` 就會以內部錯誤停止。`mcp` 項目沒有路徑：伺服器清單存放在 `.claude.json` 內，所以 [MCP 共用](/features/mcp)是透過群組的 `mcp.json` 運作的。
+ccam 保有一份每個項目涵蓋路徑的允許清單（`share.Layout`）。不在清單上的東西永遠不會進入群組。ccam 也把 `.credentials.json` 和 `.claude.json` 列為絕不共用（`share.Never`），只要其中之一出現在結構清單中，就會以內部錯誤停止（`Build`）。`mcp` 項目沒有路徑：伺服器清單存放在 `.claude.json` 內，所以 [MCP 共用](/features/mcp)是透過群組的 `mcp.json` 運作的。
 
 以下是 `side` 開始共用對話記錄、而群組已經有內容時，`projects/` 這個資料夾會發生的事：
 
 <!-- motion:share-on -->
 
-如果群組在該路徑還沒有任何內容，這個帳號就是第一個共用它的帳號，它的資料夾會原樣移過去。否則群組缺少的每個檔案都會移到群組中，兩邊都有的檔案則留在帳號的資料夾中，因此保留的是群組的版本。和群組內容相同的檔案會被捨棄，計畫會列出內容不同的檔案（`Note: projects: 1 file differs from the group's copy (…); the group's is kept, the account's stays in …`）。接著帳號的資料夾會移到帳號資料夾內的 `.ccam-backup/<time>/`，並由連結取代它的位置。如果群組的項目本身就是指向這個加入帳號自己項目的連結，帳號的內容會取代它放入群組中。對話檔案以工作階段 ID 命名，因此多個帳號的對話記錄可以合併而不會衝突。`plugins/` 的登錄檔儲存的是經過帳號資料夾的絕對路徑；ccam 會把它們改為指向群組的資料夾，而且當群組已經有登錄檔時，會把帳號的項目合併進去。
+如果群組在該路徑還沒有任何內容，這個帳號就是第一個共用它的帳號，它的資料夾會原樣移過去。否則群組缺少的每個檔案都會移到群組中，兩邊都有的檔案則留在帳號的資料夾中，因此保留的是群組的版本。和群組內容相同的檔案會被刪除，計畫會列出內容不同的檔案（`Note: projects: 1 file differs from the group's copy (…); the group's is kept, the account's stays in …`）。
+
+接著帳號的資料夾會移到帳號資料夾內的 `.ccam-backup/<time>/`，並由連結取代它的位置。如果群組的項目本身就是指向這個加入帳號自己項目的連結，帳號的內容會取代它放入群組中。對話檔案以工作階段 ID 命名，因此多個帳號的對話記錄可以合併而不會衝突。`plugins/` 的登錄檔儲存的是經過帳號資料夾的絕對路徑；ccam 會把它們改為指向群組的資料夾，而且當群組已經有登錄檔時，會把帳號的項目合併進去。
 
 離開會反轉連結：
 
 <!-- motion:share-off -->
 
-ccam 會先把群組目前的內容複製到帳號資料夾中的 `.ccam-backup/incomplete-<name>`，並在複製完成後才取代連結，所以中途停止的複製會讓連結維持原狀，`ccam doctor --fix` 則會再複製一次（這種完成動作的計畫會顯示 `restore <entry>: … (copied back from the group before a stop)`）。只有當連結仍像建立計畫時那樣指向 groups 資料夾內時，它才會移除連結；之後有所變更的路徑，例如原本是連結的地方變成了實際檔案，會維持原狀，變更也會停止。加上 `--fresh` 時會略過複製。群組會為其他帳號保留其內容。帳號把某個項目移到資料夾仍是空的群組時，會帶著它看到的內容的副本過去，所以它的檔案都會保留；這份副本在完成之前會暫存在 `<group>/.ccam-incomplete-<name>` 中。停止共用 MCP 的帳號會保留群組的伺服器：它們會寫入它自己的 `.claude.json`（會保留備份），與它自己的同名伺服器並列，而那些伺服器會保留。加上 `--fresh` 時，計畫則會列出將不再載入的伺服器。再次加入時，沒有人改動過的副本會被移除。離開 `extensions` 時，群組的外掛清單中經過離開帳號資料夾的路徑也會改為指向群組資料夾；對其他帳號而言，它們的意義不變。
+ccam 會先把群組目前的內容複製到帳號資料夾中的 `.ccam-backup/incomplete-<name>`，並在複製完成後才取代連結。如果複製中途停止，連結會維持原狀，`ccam doctor --fix` 則會再複製一次（這種完成動作的計畫會顯示 `restore <entry>: … (copied back from the group before a stop)`）。群組會為其他帳號保留其內容。
+
+- 只有當連結仍像建立計畫時那樣指向 groups 資料夾內時，ccam 才會移除連結。之後有所變更的路徑，例如原本是連結的地方變成了實際檔案，會維持原狀，變更也會停止。
+- 加上 `--fresh` 時會略過複製。
+- 帳號把某個項目移到資料夾仍是空的群組時，會帶著它看到的內容的副本過去，所以它的檔案都會保留。這份副本在完成之前會暫存在 `<group>/.ccam-incomplete-<name>` 中。
+- 停止共用 MCP 的帳號會保留群組的伺服器：它們會寫入它自己的 `.claude.json`（會保留備份），但帳號已經有同名伺服器的除外，那些伺服器會維持原狀。加上 `--fresh` 時，計畫則會列出將不再載入的伺服器。再次加入時，沒有人改動過的副本會被移除。
+- 離開 `extensions` 時，群組的外掛清單中經過離開帳號資料夾的路徑也會改為指向群組資料夾；對其他帳號而言，改寫後的路徑會指向相同的外掛。
 
 兩邊都有但內容不同的單一檔案就是衝突：
 
 <!-- motion:share-conflict -->
 
-單一檔案（例如 `settings.json`）由你選擇；資料夾內則保留群組的副本，並由計畫列出內容不同的檔案。`history.jsonl` 提供 `merge by line`、`keep group` 和 `use mine`，合併排在第一個。其他 `.json` 檔案提供 `keep group`、`use mine` 和 `merge JSON`。其他所有檔案提供 `keep group` 和 `use mine`。`merge JSON` 會遞迴合併物件、合併陣列並去除重複，當兩邊對同一個鍵設定了不同的值時保留群組的值，所以其他帳號看不到任何變化。除了 `keep group` 以外的每個選擇，都會先把群組的副本儲存到帳號的 `.ccam-backup/<time>/group/`。你自己的檔案一律會放到備份。
+單一檔案（例如 `settings.json`）由你選擇；資料夾內則保留群組的副本，並由計畫列出內容不同的檔案。可用的選擇依檔案而定；第一個是預設值：
 
-每次啟動時，`share.Check` 只用 `lstat` 和 `readlink` 把結構清單中的每個路徑和帳號的群組比對。缺少的連結會當場建立。應該是連結的地方是實際檔案、連結指向錯誤的位置，或殘留過時的連結，都會中止啟動，並提示使用 `ccam doctor --fix`。
+| 檔案 | 選擇 |
+| --- | --- |
+| `history.jsonl` | `merge by line`、`keep group`、`use mine` |
+| 其他 `.json` 檔案 | `keep group`、`use mine`、`merge JSON` |
+| 其他所有檔案 | `keep group`、`use mine` |
+
+`merge JSON` 會遞迴合併物件、合併陣列並去除重複，當兩邊對同一個鍵設定了不同的值時保留群組的值，所以其他帳號看不到任何變化。除了 `keep group` 以外的每個選擇，都會先把群組的副本儲存到帳號的 `.ccam-backup/<time>/group/`。你自己的檔案一律會放到備份。
+
+每次啟動時，ccam 只用 `lstat` 和 `readlink` 把結構清單中的每個路徑和帳號的群組比對（`share.Check`）。缺少的連結會當場建立。應該是連結的地方是實際檔案、連結指向錯誤的位置，或殘留過時的連結，都會中止啟動，並提示使用 `ccam doctor --fix`。
 
 ### 重新命名、移除和舊格式
 
@@ -164,16 +180,16 @@ ccam 會先把群組目前的內容複製到帳號資料夾中的 `.ccam-backup/
 
 ### 在 Windows 上
 
-Windows 只有在開發人員模式（設定 > 系統 > 開發人員專用）下或對系統管理員才會建立符號連結。沒有這項權限時，共用的資料夾會變成目錄連接點（directory junction），對 Claude Code 來說運作方式相同。共用的檔案（`settings.json`、`CLAUDE.md`、`history.jsonl`）只能是符號連結，所以需要這種連結的群組變更會在移動任何東西之前被拒絕。基於同樣的理由，在那裡第一次 `ccam add` 建立的群組 `default` 只包含 `mcp` 和 `extensions`，並會告訴你；以 `ccam add --group` 加入共用設定、記憶或對話記錄的群組則會被拒絕。
+Windows 只有在開發人員模式（設定 > 系統 > 開發人員專用）下或對系統管理員才會建立符號連結。沒有這項權限時，共用的資料夾會變成目錄連接點（directory junction），對 Claude Code 來說運作方式相同。共用的檔案（`settings.json`、`CLAUDE.md`、`history.jsonl`）只能是符號連結，所以需要這種連結的群組變更會在移動任何東西之前被拒絕。基於同樣的理由，在那裡第一次 `ccam add` 建立的 `default` 群組只包含 `mcp` 和 `extensions`，並會告訴你；以 `ccam add --group` 加入共用設定、記憶或對話記錄的群組則會被拒絕。
 
 ## 安全性和特殊情況
 
-- **正在執行的帳號。** 當 Claude Code 正以變更所移動的其中一個帳號執行時，變更會被拒絕，因為工作階段會持續寫入這些檔案，不論它是否由 ccam 啟動（直接執行 `claude`、IDE、背景工作階段）。儲存前會再檢查一次。離開和加入只涉及所指定的帳號；離開 `extensions` 時也會改寫群組外掛清單中的路徑，但不會改變它們對其他帳號的意義。`--dry-run` 仍會印出計畫。
+- **正在執行的帳號。** 當 Claude Code 正以變更所移動的其中一個帳號執行時，變更會被拒絕，因為工作階段會持續寫入這些檔案，不論它是否由 ccam 啟動（直接執行 `claude`、IDE、背景工作階段）。儲存前會再檢查一次。離開和加入只影響所指定的帳號；離開 `extensions` 時也會改寫群組外掛清單中的路徑，但不會改變它們對其他帳號的意義。`--dry-run` 仍會印出計畫。
 - **備份。** 每份計畫在帳號資料夾中都有自己的 `.ccam-backup/<time>/` 資料夾。ccam 絕不刪除它們。
 - **你自己的連結。** 如果某個路徑已經是你建立的連結（例如指向 dotfiles 儲存庫），而群組是空的，ccam 會把連結的目標複製到群組中，並把連結本身移到備份。目標不會被碰到。
 - **匯入的資料夾。** 用 `ccam import` 在原位置登錄的帳號（例如 `~/.claude`）會在原位置變更，所以直接執行的 `claude` 也會看到變更；計畫會說明這一點。它離開群組時一定會保留一份副本，即使加上 `--fresh` 也一樣，而 `ccam remove` 在忘記這個帳號之前，也會以這種方式讓它離開群組。它在群組中時，共用的檔案位於群組資料夾中，所以在刪除 `~/.local/share/ccam` 之前，請先移除這個帳號（或離開群組）。
 - **兩個帳號在同一個資料夾。** 共用對話記錄的帳號會寫入相同的檔案。當第二個帳號在已有帳號執行的資料夾中啟動時，ccam 會警告並詢問你。
-- **手動編輯。** 不是帳號的成員會被忽略，並由 `ccam doctor` 回報。`local`、`on`、`off` 和 `none` 不能作為群組名稱。
+- **手動編輯。** 如果 `members` 列出了不是帳號的名稱，ccam 會忽略它，並由 `ccam doctor` 回報。`local`、`on`、`off` 和 `none` 不能作為群組名稱。
 
 ## 相關內容
 
@@ -181,4 +197,4 @@ Windows 只有在開發人員模式（設定 > 系統 > 開發人員專用）下
 - [共用 MCP 伺服器、設定和對話記錄](/docs/sharing)
 - [共用的 MCP 伺服器](/features/mcp)
 - [複製現有的設定](/features/migrate)
-- [所有指令](/docs/commands)
+- [指令參考](/docs/commands)

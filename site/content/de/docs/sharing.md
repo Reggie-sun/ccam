@@ -1,10 +1,10 @@
 ---
 title: MCP-Server, Einstellungen und Verlauf teilen
 description: Wie ccam-Gruppen MCP-Server, settings.json, CLAUDE.md, Skills und den Gesprächsverlauf zwischen Claude Code-Konten teilen; jede Anmeldung bleibt getrennt.
-updated: 2026-10-23
+updated: 2026-10-26
 order: 4
 translation: machine
-sourceHash: 27e0a0e5abbd
+sourceHash: 2d8029ad6ec8
 ---
 
 Jedes Konto behält seine eigene Anmeldung. Alles andere kann über **Gruppen** geteilt werden: Eine Gruppe nennt die Elemente, die sie teilt, und die Konten in ihr, und ccam verlinkt die Dateien jedes dieser Konten mit dem Ordner der Gruppe, sodass eine Änderung in einem Konto in allen erscheint.
@@ -47,7 +47,7 @@ Wenn ein Konto anfängt, ein Element zu teilen (es tritt einer Gruppe bei, oder 
 
 Gesprächsdateien sind nach ihrer Sitzungs-ID benannt, daher lassen sich Verläufe aus mehreren Konten ohne Konflikte zusammenführen.
 
-ccam ändert ein Konto nicht, solange Claude Code mit ihm läuft, egal wie Claude Code gestartet wurde (auch Hintergrundsitzungen), weil die Sitzung weiter in die Dateien schreibt, die verschoben werden. Beende sie zuerst. ccam prüft unmittelbar vor dem Speichern erneut, sodass auch eine Sitzung erkannt wird, die gestartet wurde, während der Plan wartete.
+ccam ändert ein Konto nicht, solange Claude Code mit diesem Konto läuft, egal wie es gestartet wurde (einschließlich Hintergrundsitzungen), weil die Sitzung weiter in die Dateien schreibt, die verschoben werden. Beende sie zuerst. ccam prüft unmittelbar vor dem Speichern erneut und erkennt so auch eine Sitzung, die gestartet wurde, während ccam auf deine Antwort wartete.
 
 ## Wenn ein Konto aufhört zu teilen
 
@@ -77,7 +77,7 @@ Was kopiert wird:
 
 Der Quellordner wird nur gelesen: Nichts darin wird verschoben, verlinkt oder geändert, und einfaches `claude` funktioniert weiter wie bisher. Die Anmeldedateien `.credentials.json` und `.claude.json` werden nie in die Gruppe kopiert.
 
-MCP-Server, die sich per OAuth anmelden, speichern ihre Tokens in der Anmeldung, nicht in der Serverliste. ccam kopiert diese Anmeldungen nicht: Eine kopierte Anmeldung enthält dasselbe Refresh-Token, und die erste Erneuerung meldet jeden anderen Inhaber bei diesem Server ab, `~/.claude` eingeschlossen. Der Plan und die Zusammenfassung nennen die Konten, die sich selbst mit `/mcp` bei den Servern anmelden.
+MCP-Server, die sich per OAuth anmelden, speichern ihre Tokens in der Anmeldung, nicht in der Serverliste. ccam kopiert diese Anmeldungen nicht: Eine kopierte Anmeldung enthält dasselbe Refresh-Token, und die erste Erneuerung meldet jeden anderen Inhaber bei diesem Server ab, `~/.claude` eingeschlossen. Der Plan und die Zusammenfassung nennen die Konten, die sich selbst mit `/mcp` bei diesen Servern anmelden müssen.
 
 ccam gibt den Plan aus und fragt nach, bevor es etwas kopiert:
 
@@ -105,7 +105,7 @@ Wenn die Gruppe bereits eine abweichende Kopie einer Datei hat, fragt ccam wie b
 
 | Option | Wirkung |
 | --- | --- |
-| `--settings`, `--memory`, `--extensions`, `--mcp`, `--history` | Nur die genannten Elemente kopieren, ohne Checkliste; ohne sie und außerhalb eines Terminals alles außer dem Gesprächsverlauf |
+| `--settings`, `--memory`, `--extensions`, `--mcp`, `--history` | Nur die genannten Elemente kopieren, ohne Checkliste. Außerhalb eines Terminals und ohne Element-Optionen kopiert ccam alles außer dem Gesprächsverlauf. |
 | `-g`, `--group <group>` | In diese Gruppe statt in `default` kopieren |
 | `-y`, `--yes` | Ohne Nachfrage kopieren; wenn eine Datei abweicht, die Kopie der Gruppe behalten |
 
@@ -120,7 +120,7 @@ ccam mcp add fs -- npx -y @modelcontextprotocol/server-filesystem ~/code
 ccam mcp list
 ```
 
-Ein Server, den du innerhalb einer Sitzung mit `claude mcp add` hinzufügst, wird nur für dieses Konto gespeichert, und für den Ordner, in dem du warst (der lokale Bereich von Claude Code; `-s user` macht ihn zu einem Server des Kontos in jedem Ordner). Beim nächsten Start dieses Kontos nennt ccam den Server mit seinem Ordner und den Befehl, der ihn in die Gruppe verschiebt:
+Ein Server, den du innerhalb einer Sitzung mit `claude mcp add` hinzufügst, wird nur für dieses Konto gespeichert, und für den Ordner, in dem du warst (der lokale Bereich von Claude Code; `-s user` macht ihn für das Konto in jedem Ordner verfügbar). Beim nächsten Start dieses Kontos nennt ccam den Server mit seinem Ordner und den Befehl, der ihn in die Gruppe verschiebt:
 
 ```sh
 ccam mcp import work gh
@@ -128,13 +128,13 @@ ccam mcp import work gh
 
 Hat die Gruppe bereits einen anderen Server mit diesem Namen, überspringt ccam ihn und weist darauf hin. `--force` ersetzt den Server der Gruppe und behält die alte `mcp.json` im Ordner `.ccam-backup/` der Gruppe.
 
-MCP-Server, die sich per OAuth anmelden, speichern ihre Tokens zusammen mit der Anmeldung des Kontos, autorisiere sie also in jedem Konto einmal mit `/mcp`. `ccam ext` und `ccam doctor` nennen die Server, bei denen ein Konto nicht angemeldet ist, ein anderes Konto aber schon.
+MCP-Server, die sich per OAuth anmelden, speichern ihre Tokens zusammen mit der Anmeldung des Kontos, melde dich also in jedem Konto einmal mit `/mcp` bei ihnen an. `ccam ext` und `ccam doctor` nennen die Server, bei denen ein Konto nicht angemeldet ist, ein anderes Konto aber schon.
 
-Wenn die Server in `claude mcp list` und `/mcp` als gewöhnliche Benutzer-Server erscheinen sollen, setze `mcp_strategy = "sync"` am Anfang von `~/.config/ccam/config.toml`, vor dem ersten `[[group]]`, `[[profile]]` oder `[[folder]]`. ccam schreibt sie dann vor dem Start in die `.claude.json` jedes Kontos, unter der eigenen Dateisperre von Claude Code und mit einer Sicherung. Ein eigener Server des Kontos mit demselben Namen bleibt der des Kontos, und ccam weist darauf hin.
+Wenn die Server in `claude mcp list` und `/mcp` als gewöhnliche Benutzer-Server erscheinen sollen, setze `mcp_strategy = "sync"` am Anfang von `~/.config/ccam/config.toml`, vor dem ersten `[[group]]`, `[[profile]]` oder `[[folder]]`. ccam schreibt sie dann vor dem Start in die `.claude.json` jedes Kontos, unter der eigenen Dateisperre von Claude Code und mit einer Sicherung. Hat das Konto einen eigenen Server mit demselben Namen wie ein Gruppenserver, behält ccam den Server des Kontos und weist darauf hin.
 
 ## Zwei Konten im selben Ordner
 
-Konten, die den Gesprächsverlauf teilen, schreiben in dieselben Dateien. Wenn du ein zweites Claude Code in einem Ordner startest, in dem bereits ein anderes Konto derselben Gruppe läuft, warnt ccam dich und fragt, ob du fortfahren willst.
+Konten, die den Gesprächsverlauf teilen, schreiben in dieselben Dateien. Wenn du eine zweite Claude Code-Sitzung in einem Ordner startest, in dem bereits ein anderes Konto derselben Gruppe läuft, warnt ccam dich und fragt, ob du fortfahren willst.
 
 ## Wenn etwas kaputtgeht
 
@@ -143,4 +143,4 @@ ccam doctor
 ccam doctor --fix
 ```
 
-Wenn ein geteilter Pfad zu einer gewöhnlichen Datei geworden ist, zum Beispiel nachdem du eine Sicherung von Hand wiederhergestellt hast, hält ccam vor dem Start von Claude Code an und verweist auf `ccam doctor --fix`, das sie wieder mit der Gruppe verlinkt: Die Datei wird zur Kopie der Gruppe, wenn die Gruppe keine hat, und andernfalls behält die Gruppe ihre eigene, und deine kommt in eine Sicherung, die `--fix` nennt. Eine Gruppenänderung, die auf halbem Weg stehen geblieben ist, schließt `ccam doctor --fix` ebenfalls ab.
+Wenn ein geteilter Pfad zu einer gewöhnlichen Datei geworden ist, zum Beispiel nachdem du eine Sicherung von Hand wiederhergestellt hast, hält ccam vor dem Start von Claude Code an und verweist auf `ccam doctor --fix`. Die Reparatur verlinkt den Pfad wieder mit der Gruppe: Die Datei wird zur Kopie der Gruppe, wenn die Gruppe keine hat; andernfalls behält die Gruppe ihre eigene Kopie, und deine kommt in eine Sicherung, die `--fix` nennt. Eine Gruppenänderung, die auf halbem Weg stehen geblieben ist, schließt `ccam doctor --fix` ebenfalls ab.

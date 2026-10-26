@@ -1,13 +1,13 @@
 ---
 title: Memeriksa ekstensi
 description: ccam ext menampilkan skill, perintah, plugin, server MCP, dan hook yang dimuat setiap akun, asal masing-masing, dan apa yang rusak.
-updated: 2026-10-23
+updated: 2026-10-26
 order: 14
 translation: machine
-sourceHash: 45740e4efbef
+sourceHash: "7ca357a7f38a"
 ---
 
-`ccam ext` menjawab "mengapa skill (atau server MCP) ini berfungsi di satu akun tetapi tidak di akun lain?". Untuk setiap akun, perintah ini mendaftar ekstensi yang dimuat Claude Code dan asal masing-masing: grup berbagi, folder akun itu sendiri, atau proyek tempat Anda berada. Di bawah tabel, ia mendaftar hal-hal yang membuat sebuah ekstensi tidak dimuat seperti yang Anda harapkan. Perintah ini hanya membaca.
+`ccam ext` menjawab pertanyaan "Mengapa skill (atau server MCP) ini berfungsi di satu akun tetapi tidak di akun lain?" Untuk setiap akun, perintah ini mendaftar ekstensi yang dimuat Claude Code dan asal masing-masing: grup berbagi, folder akun itu sendiri, atau proyek tempat Anda berada. Di bawah tabel, ia mendaftar hal-hal yang membuat sebuah ekstensi tidak dimuat seperti yang Anda harapkan. Perintah ini tidak mengubah apa pun.
 
 ## Penggunaan
 
@@ -62,10 +62,10 @@ Setiap sel menyebut asal item itu di akun itu: grup berbagi (`default`), `accoun
 
 - **Tautan rusak**: tautan di `skills/`, `commands/`, atau `agents/` yang targetnya sudah tidak ada, atau folder bersama (`skills`, `commands`, `agents`, `plugins`) yang menaut ke tempat yang hilang (perbaiki dengan `ccam doctor --fix`, yang membuat ulang folder grup yang hilang).
 - **Folder skill tanpa `SKILL.md`**: Claude Code melewatinya.
-- **Server MCP yang didefinisikan berbeda di dua tempat**: `mcp.json` milik grup dan `.claude.json` milik akun, atau salah satunya dan `.mcp.json` milik proyek. Pengaturan yang sama di kedua tempat (yang ditulis oleh `mcp_strategy = "sync"`) bukan masalah. Pindahkan server milik akun sendiri ke grup dengan `ccam mcp import <account> <server>`.
+- **Server MCP yang didefinisikan berbeda di dua tempat**: `mcp.json` milik grup dan `.claude.json` milik akun, atau salah satunya dan `.mcp.json` milik proyek. Definisi yang identik di kedua tempat (yang ditulis oleh `mcp_strategy = "sync"`) bukan masalah. Pindahkan server milik akun sendiri ke grup dengan `ccam mcp import <account> <server>`.
 - **`installed_plugins.json` yang bukan JSON yang valid**, plugin yang tidak disebutkan oleh `enabledPlugins`, dan plugin yang foldernya hilang.
 - **Server yang hanya dimuat satu akun**: server yang hanya ada di `.claude.json` akun ini, yang tidak dimuat akun lain dalam grupnya, dan server di cakupan lokal akun untuk folder ini (yang dilakukan `claude mcp add` kecuali diberi `-s user`). Masing-masing disertai perintah `ccam mcp import` untuk membagikannya. Server di `~/.claude.json` milik `claude` biasa yang tidak dimuat akun mana pun disertai perintah `ccam migrate --mcp`.
-- **Server proyek yang menunggu persetujuan**: akun belum memercayai folder itu, sehingga Claude Code bertanya sekali, dan sampai saat itu server `.mcp.json` proyek menunggu. Masalah ini menyebutkan di mana menyetujuinya: `"enabledMcpjsonServers"` di `settings.json` milik akun-akun grup pengaturan, atau milik akun ini. Kepercayaan yang diberikan ke worktree utama sebuah repositori git berlaku juga di worktree lainnya.
+- **Server proyek yang menunggu persetujuan**: akun belum memercayai folder itu, sehingga Claude Code bertanya sekali, dan sampai saat itu server `.mcp.json` proyek menunggu. Masalah ini menyebutkan di mana menyetujuinya: `"enabledMcpjsonServers"` di `settings.json` milik akun-akun grup pengaturan, atau milik akun ini. Kepercayaan yang diberikan ke worktree utama sebuah repositori git juga berlaku untuk worktree lainnya.
 - **Info masuk dan konektor**: server MCP yang memerlukan info masuk di akun ini sementara akun lain sudah masuk ke server itu (info masuk hanya berlaku untuk satu akun; masuk dengan `/mcp`), dan konektor claude.ai yang sudah dipakai akun lain tetapi belum oleh akun ini.
 
 ## Keamanan dan kasus khusus
@@ -76,6 +76,6 @@ Setiap sel menyebut asal item itu di akun itu: grup berbagi (`default`), `accoun
 
 ## Terkait
 
-- [Berbagi antarakun](/features/share)
+- [Berbagi dengan grup](/features/share)
 - [Server MCP bersama](/features/mcp)
 - [Memeriksa dan memperbaiki](/features/doctor)

@@ -1,13 +1,13 @@
 ---
 title: extensions की जाँच
 description: ccam ext दिखाता है कि हर अकाउंट कौन-से skills, commands, plugins, MCP सर्वर और hooks लोड करता है, हर एक कहाँ से आता है, और क्या टूटा है।
-updated: 2026-10-23
+updated: 2026-10-26
 order: 14
 translation: machine
-sourceHash: 45740e4efbef
+sourceHash: 7ca357a7f38a
 ---
 
-`ccam ext` इस सवाल का जवाब देता है: "यह skill (या MCP सर्वर) एक अकाउंट में काम करता है और दूसरे में क्यों नहीं?"। यह हर अकाउंट के लिए वे extensions दिखाता है जिन्हें Claude Code लोड करता है, और यह कि हर एक कहाँ से आता है: कोई share group, अकाउंट का अपना फ़ोल्डर, या वह प्रोजेक्ट जिसमें आप हैं। table के नीचे यह वे बातें दिखाता है जो किसी extension को आपकी उम्मीद के मुताबिक लोड होने से रोकती हैं। यह केवल पढ़ता है।
+`ccam ext` इस सवाल का जवाब देता है: "यह skill (या MCP सर्वर) एक अकाउंट में काम करता है, लेकिन दूसरे में क्यों नहीं?" यह हर अकाउंट के लिए वे extensions दिखाता है जिन्हें Claude Code लोड करता है, और यह कि हर एक कहाँ से आता है: कोई share group, अकाउंट का अपना फ़ोल्डर, या वह प्रोजेक्ट जिसमें आप हैं। table के नीचे यह वे बातें दिखाता है जो किसी extension को आपकी उम्मीद के मुताबिक लोड होने से रोकती हैं। यह कुछ नहीं बदलता।
 
 ## उपयोग
 
@@ -60,12 +60,12 @@ Sources: a group name (shared), account (its own folder), local (its own, for th
 
 ## यह कौन-सी समस्याएँ बताता है
 
-- **टूटे links**: `skills/`, `commands/` या `agents/` में कोई link जिसका target अब नहीं है, या कोई साझा फ़ोल्डर (`skills`, `commands`, `agents`, `plugins`) जो किसी ग़ायब जगह की ओर link करता है (इसे `ccam doctor --fix` से ठीक करें, जो ग़ायब group फ़ोल्डर फिर से बनाता है)।
+- **टूटे links**: `skills/`, `commands/` या `agents/` में कोई link जिसका target अब नहीं है, या कोई साझा फ़ोल्डर (`skills`, `commands`, `agents`, `plugins`) जो किसी ग़ायब जगह की ओर link करता है (इसे `ccam doctor --fix` से ठीक करें, जो ग़ायब group फ़ोल्डर को फिर से बना देता है)।
 - **`SKILL.md` के बिना skill फ़ोल्डर**: Claude Code उसे छोड़ देता है।
-- **दो जगह अलग-अलग परिभाषित MCP सर्वर**: group का `mcp.json` और अकाउंट का `.claude.json`, या इनमें से एक और प्रोजेक्ट का `.mcp.json`। दोनों जगह एक जैसी सेटिंग्स (जो `mcp_strategy = "sync"` लिखता है) कोई समस्या नहीं है। किसी अकाउंट के अपने सर्वर को `ccam mcp import <account> <server>` से group में ले जाएँ।
+- **दो जगह अलग-अलग परिभाषित MCP सर्वर**: group का `mcp.json` और अकाउंट का `.claude.json`, या इनमें से एक और प्रोजेक्ट का `.mcp.json`। दोनों जगह एक जैसी परिभाषाएँ (जो `mcp_strategy = "sync"` लिखता है) कोई समस्या नहीं हैं। किसी अकाउंट के अपने सर्वर को `ccam mcp import <account> <server>` से group में ले जाएँ।
 - **`installed_plugins.json` जो मान्य JSON नहीं है**, ऐसा plugin जिसका नाम `enabledPlugins` में नहीं है, और ऐसा plugin जिसका फ़ोल्डर ग़ायब है।
 - **ऐसे सर्वर जिन्हें केवल एक अकाउंट लोड करता है**: ऐसा सर्वर जो केवल इस अकाउंट के `.claude.json` में है, जिसे उसके group के दूसरे अकाउंट लोड नहीं करते, और ऐसा सर्वर जो इस फ़ोल्डर के लिए अकाउंट के local scope में है (जो `claude mcp add` करता है, जब तक `-s user` न दिया जाए)। हर एक के साथ वह `ccam mcp import` कमांड आती है जो उसे साझा करती है। सादे `claude` के `~/.claude.json` में ऐसे सर्वर जिन्हें कोई अकाउंट लोड नहीं करता, `ccam migrate --mcp` कमांड के साथ आते हैं।
-- **मंज़ूरी का इंतज़ार कर रहा प्रोजेक्ट सर्वर**: अकाउंट ने अभी फ़ोल्डर पर भरोसा नहीं किया है, इसलिए Claude Code एक बार पूछता है, और तब तक प्रोजेक्ट के `.mcp.json` सर्वर इंतज़ार करते हैं। समस्या बताती है कि उन्हें कहाँ मंज़ूर करें: settings group के अकाउंट्स के, या इस अकाउंट के, `settings.json` में `"enabledMcpjsonServers"`। किसी git repository के main worktree को दिया गया भरोसा उसके दूसरे worktrees में भी गिना जाता है।
+- **मंज़ूरी का इंतज़ार कर रहा प्रोजेक्ट सर्वर**: अकाउंट ने अभी फ़ोल्डर पर भरोसा नहीं किया है, इसलिए Claude Code एक बार पूछता है, और तब तक प्रोजेक्ट के `.mcp.json` सर्वर इंतज़ार करते हैं। समस्या बताती है कि उन्हें कहाँ मंज़ूर करें: settings group के अकाउंट्स के, या इस अकाउंट के, `settings.json` में `"enabledMcpjsonServers"`। किसी git repository के main worktree को दिया गया भरोसा उसके दूसरे worktrees पर भी लागू होता है।
 - **साइन-इन और connectors**: ऐसा MCP सर्वर जिसे इस अकाउंट में साइन-इन चाहिए जबकि कोई दूसरा अकाउंट उसमें साइन इन है (साइन-इन केवल एक अकाउंट के लिए होता है; `/mcp` से साइन इन करें), और claude.ai connectors जिन्हें किसी दूसरे अकाउंट ने इस्तेमाल किया है और इसने नहीं।
 
 ## सुरक्षा और विशेष स्थितियाँ
@@ -76,6 +76,6 @@ Sources: a group name (shared), account (its own folder), local (its own, for th
 
 ## संबंधित
 
-- [अकाउंट्स के बीच साझा करना](/features/share)
+- [ग्रुप के साथ साझा करना](/features/share)
 - [साझा MCP सर्वर](/features/mcp)
 - [जाँच और मरम्मत](/features/doctor)

@@ -1,12 +1,14 @@
 ---
 title: "ccam انسٹال کریں"
 metaTitle: "ccam کو Linux، macOS اور Windows پر انسٹال کریں"
-description: "ccam کو Linux، macOS یا Windows پر ایک کمانڈ، .deb پیکیج یا سورس سے انسٹال کریں اور ccam update سے اپ ڈیٹ کریں۔ اس سے پہلے Claude Code انسٹال ہونا ضروری ہے۔"
-updated: 2026-10-25
+description: "ccam کو Linux، macOS یا Windows پر ایک کمانڈ، .deb پیکیج یا go install سے انسٹال کریں اور ccam update سے اپ ڈیٹ کریں۔ پہلے Claude Code انسٹال ہونا ضروری ہے۔"
+updated: 2026-10-26
 order: 1
 translation: machine
-sourceHash: "a7f9dac24f79"
+sourceHash: 2ada7b2650d6
 ---
+
+ccam آپ کے لیے Claude Code شروع کرتا ہے، اس لیے پہلے [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) انسٹال کریں اور یقینی بنائیں کہ `claude --version` کام کرتا ہے۔
 
 Linux یا macOS پر ٹرمینل میں یہ کمانڈ چلائیں:
 
@@ -22,16 +24,17 @@ Windows پر یہ PowerShell میں چلائیں:
 irm https://ccam.dev/install.ps1 | iex
 ```
 
-یہ `ccam_windows_<arch>.zip` ڈاؤن لوڈ کرتا ہے، اس کا SHA-256 چیک سم جانچتا ہے، `ccam.exe` کو `%USERPROFILE%\.local\bin` میں رکھتا ہے، وہی فولڈر جس میں Claude Code کا انسٹالر `claude.exe` رکھتا ہے، اور اگر وہ فولڈر ابھی آپ کے یوزر `PATH` میں نہ ہو تو اسے شامل کر دیتا ہے، اور `%USERPROFILE%\bin` جیسے اندراجات کو جوں کا توں رہنے دیتا ہے۔ اس کے بعد نیا ٹرمینل کھولیں۔ اسے دوبارہ چلانے سے ccam بدل جاتا ہے، تب بھی جب کوئی Claude Code سیشن ابھی پرانی بائنری سے چل رہا ہو (اس بائنری کا نام بدل کر `ccam.exe.old` کر دیا جاتا ہے، یا `ccam.exe.old-<number>` جب اس سے پرانی کوئی بائنری ابھی استعمال میں ہو)، اور جو شارٹ کٹس hard links ہیں انہیں نیا کر دیتا ہے: `OK 2 shortcuts now run the new ccam`۔
-
-ccam آپ کے لیے Claude Code شروع کرتا ہے، اس لیے پہلے [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) انسٹال کریں اور یقینی بنائیں کہ `claude --version` کام کرتا ہے۔
+یہ `ccam_windows_<arch>.zip` ڈاؤن لوڈ کرتا ہے، اس کا SHA-256 چیک سم جانچتا ہے اور `ccam.exe` کو `%USERPROFILE%\.local\bin` میں رکھتا ہے، وہی فولڈر جس میں Claude Code کا انسٹالر `claude.exe` رکھتا ہے۔ اگر وہ فولڈر ابھی آپ کے یوزر `PATH` میں نہ ہو تو اسکرپٹ اسے شامل کر دیتا ہے اور `%USERPROFILE%\bin` جیسے اندراجات کو جوں کا توں رہنے دیتا ہے۔ اس کے بعد نیا ٹرمینل کھولیں۔
 
 ## معاون سسٹمز
 
 - x86-64 اور ARM64 پر Linux: Ubuntu، Debian، Fedora، Arch، Alpine اور دیگر ڈسٹری بیوشنز۔ بائنری اسٹیٹک ہے اور اسے کسی اور چیز کی ضرورت نہیں۔
 - Apple silicon اور Intel پر macOS۔
-- x86-64 اور ARM64 پر Windows 10 اور 11، PowerShell، Windows Terminal یا Git Bash میں۔ شیئر کیے گئے فولڈرز ہر یوزر کے لیے کام کرتے ہیں۔ شیئر کی گئی فائلوں (`settings.json`، `CLAUDE.md`، `history.jsonl`) کے لیے Developer Mode درکار ہے (Settings > System > For developers)، کیونکہ Windows فائلوں کے لنکس بنانے کی اجازت صرف اسی موڈ میں، یا ایڈمنسٹریٹر کو، دیتا ہے؛ دیکھیں [Windows پر شیئرنگ](/features/share#on-windows)۔ اس کے بغیر پہلا `ccam add` گروپ `default` صرف MCP سرورز اور ایکسٹینشنز کے ساتھ بناتا ہے، اور بتاتا ہے کہ Developer Mode آن ہونے کے بعد باقی چیزیں کیسے شامل کریں۔
-- WSL کے اندر ccam کسی بھی Linux سسٹم کی طرح کام کرتا ہے۔
+- x86-64 اور ARM64 پر Windows 10 اور 11، PowerShell، Windows Terminal یا Git Bash میں:
+  - شیئر کیے گئے فولڈرز Developer Mode کے بغیر کام کرتے ہیں۔
+  - شیئر کی گئی فائلوں (`settings.json`، `CLAUDE.md`، `history.jsonl`) کے لیے Developer Mode درکار ہے (Settings > System > For developers)، کیونکہ Windows فائلوں کے لنکس بنانے کی اجازت صرف اسی موڈ میں، یا ایڈمنسٹریٹر کو، دیتا ہے؛ دیکھیں [Windows پر شیئرنگ](/features/share#on-windows)۔
+  - Developer Mode کے بغیر پہلا `ccam add`، `default` گروپ صرف MCP سرورز اور ایکسٹینشنز کے ساتھ بناتا ہے، اور بتاتا ہے کہ Developer Mode آن ہونے کے بعد باقی چیزیں کیسے شامل کریں۔
+- WSL کے اندر ccam ویسے ہی کام کرتا ہے جیسے کسی بھی دوسرے Linux سسٹم پر۔
 
 ## انسٹال کرنے کے دوسرے طریقے
 
@@ -49,7 +52,7 @@ sudo apt install ./ccam_*_linux_amd64.deb
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
 ```
 
-کسی ریلیز ٹیگ (`@latest` یا `@vX.Y.Z`) سے بنی بائنری وہی ورژن بتاتی ہے، اس لیے اس کے لیے `ccam update` کام کرتا ہے؛ `@main` سے، یا کسی ٹیگ سے آگے بڑھ چکے لوکل checkout سے بنی بائنری `dev` بتاتی ہے۔
+اگر آپ کوئی ریلیز ٹیگ (`@latest` یا `@vX.Y.Z`) انسٹال کریں تو ccam وہی ورژن بتاتا ہے، اور `ccam update` اور ڈیش بورڈ کی اپ ڈیٹ کی پیشکش کام کرتی ہیں۔ `@main` سے، یا کسی ٹیگ کے بعد کی کمٹس والے لوکل checkout سے بنی بائنری `dev` بتاتی ہے، اور `ccam update` اسے مسترد کر دیتا ہے جب تک آپ `--version` نہ دیں۔
 
 **کوئی مخصوص ورژن۔** `CCAM_VERSION` سیٹ کریں:
 
@@ -82,7 +85,13 @@ ccam پلگ اِن خود Claude Code کو ccam استعمال کرنا سکھا
 /plugin install ccam --marketplace jhyunwoo/ccam
 ```
 
-یہ ایک اسکل، کمانڈز `/ccam:usage`، `/ccam:ext` اور `/ccam:switch`، اور دو ہُکس شامل کرتا ہے: جب کوئی سیشن استعمال کی حد پر رک جائے تو آپ کو ٹرمینل میں اطلاع ملتی ہے (اور Linux اور macOS پر، [`auto_switch`](/features/next#auto-switch) آن ہو تو، ccam سیشن کو کسی ایسے دوسرے اکاؤنٹ میں منتقل کر دیتا ہے جس میں گنجائش ہو)، اور `/ccam:switch [account]` گفتگو کسی دوسرے اکاؤنٹ کو سونپ دیتا ہے ([تفصیلات](/features/next#inside-claude-code))۔ ہُکس `ccam` چلاتے ہیں، اس لیے اسے اس `PATH` پر ہونا چاہیے جو Claude Code دیکھتا ہے۔ اسکل کبھی ایسی کمانڈز نہیں چلاتی جو لاگ اِن کریں یا فائلیں منتقل کریں؛ اس کے بجائے انہیں تجویز کرتی ہے۔
+یہ شامل کرتا ہے:
+
+- ایک اسکل جو لاگ اِن کرنے یا فائلیں منتقل کرنے والی کمانڈز تجویز کرتی ہے لیکن انہیں کبھی چلاتی نہیں؛
+- کمانڈز `/ccam:usage`، `/ccam:ext` اور `/ccam:switch`؛
+- دو ہُکس ([تفصیلات](/features/next#inside-claude-code))۔ ایک ہُک جب کوئی سیشن استعمال کی حد پر رک جائے تو ٹرمینل میں اطلاع دکھاتا ہے؛ Linux اور macOS پر، [`auto_switch`](/features/next#auto-switch) آن ہو تو، ccam پھر سیشن کو کسی ایسے دوسرے اکاؤنٹ میں منتقل کر دیتا ہے جس میں گنجائش ہو۔ دوسرا ہُک `/ccam:switch [account]` کو گفتگو کسی دوسرے اکاؤنٹ کو سونپنے دیتا ہے۔
+
+ہُکس `ccam` چلاتے ہیں، اس لیے اسے اس `PATH` پر ہونا چاہیے جو Claude Code دیکھتا ہے۔
 
 ## انسٹالیشن چیک کریں
 
@@ -112,16 +121,16 @@ $ ccam update
 ccam 0.3.0 is up to date.
 ```
 
-ڈیش بورڈ (ٹرمینل پر `ccam`) بھی ہر بار کھلنے پر نئی ریلیز ڈھونڈتا ہے اور اگر کوئی ہو تو اسے پیش کرتا ہے: `U` دبائیں اور تصدیق کریں۔ کوئی اور کمانڈ نہیں ڈھونڈتی، اور ccam پوچھے بغیر کبھی اپ ڈیٹ نہیں ہوتا۔ کوئی مخصوص ریلیز، پرانی ریلیز سمیت، انسٹال کرنے کے لیے `--version` دیں۔ `ccam --dry-run update` کچھ بھی تبدیل کیے بغیر دکھاتا ہے کہ کیا ڈاؤن لوڈ ہوگا اور کیا بدلا جائے گا۔
+ڈیش بورڈ (ٹرمینل میں بغیر آرگیومنٹس کے `ccam`) بھی ہر بار کھلنے پر نئی ریلیز چیک کرتا ہے اور اگر کوئی ہو تو اسے پیش کرتا ہے: `U` دبائیں اور تصدیق کریں۔ کوئی اور کمانڈ اپ ڈیٹس چیک نہیں کرتی، اور ccam پوچھے بغیر کبھی اپ ڈیٹ نہیں ہوتا۔ کوئی مخصوص ریلیز، پرانی ریلیز سمیت، انسٹال کرنے کے لیے `--version` دیں۔ `ccam --dry-run update` کچھ بھی تبدیل کیے بغیر دکھاتا ہے کہ کیا ڈاؤن لوڈ ہوگا اور کیا بدلا جائے گا۔
 
 ```sh
 ccam update --version v0.2.0
 ccam --dry-run update
 ```
 
-انسٹال اسکرپٹ دوبارہ چلانے سے بھی `~/.local/bin` والی کاپی اپ ڈیٹ ہو جاتی ہے۔ اگر آپ نے ccam کو کسی ریلیز ٹیگ سے `go install` کے ذریعے بنایا تھا تو `ccam update` بھی کام کرتا ہے، یا وہی کمانڈ دوبارہ چلائیں۔
+انسٹال اسکرپٹ دوبارہ چلانے سے بھی `~/.local/bin` والی کاپی اپ ڈیٹ ہو جاتی ہے۔ اگر آپ نے ccam کو کسی ریلیز ٹیگ سے `go install` کے ذریعے بنایا تھا تو آپ `ccam update` چلا سکتے ہیں یا وہی `go install` کمانڈ دوبارہ چلا سکتے ہیں۔
 
-**Windows۔** `ccam update` Windows کے لیے `.zip` ڈاؤن لوڈ کرتا ہے۔ Windows پر چلتے ہوئے پروگرام کو بدلا نہیں جا سکتا، اس لیے پرانی بائنری کا نام بدل کر `ccam.exe.old` کر دیا جاتا ہے، جسے اگلی اپ ڈیٹ حذف کر دیتی ہے؛ جب کوئی سیشن ابھی کسی پچھلی `ccam.exe.old` سے چل رہا ہو تو نام `ccam.exe.old-<time>` ہوتا ہے۔ جو شارٹ کٹس hard links ہیں وہ اس کے فوراً بعد نئے کر دیے جاتے ہیں۔
+**Windows۔** `ccam update` Windows کے لیے `.zip` ڈاؤن لوڈ کرتا ہے۔ Windows پر چلتے ہوئے پروگرام کو بدلا نہیں جا سکتا، اس لیے پرانی بائنری کا نام بدل کر `ccam.exe.old` کر دیا جاتا ہے، جسے اگلی اپ ڈیٹ حذف کر دیتی ہے؛ جب کوئی سیشن ابھی کسی پچھلی `ccam.exe.old` سے چل رہا ہو تو نام `ccam.exe.old-<time>` ہوتا ہے۔ جو شارٹ کٹس hard links ہیں وہ اس کے فوراً بعد نئے کر دیے جاتے ہیں۔ `install.ps1` دوبارہ چلانا بھی اسی طرح کام کرتا ہے، تب بھی جب کوئی Claude Code سیشن ابھی پرانی بائنری سے چل رہا ہو، اور جب یہ hard link والے شارٹ کٹس نئے کرتا ہے تو `OK 2 shortcuts now run the new ccam` پرنٹ کرتا ہے۔
 
 **Debian اور Ubuntu پیکیج۔** apt کے ذریعے انسٹال کی گئی `/usr/bin/ccam` کو `ccam update` نہیں بدلتا بلکہ اس کے بجائے یہ مراحل دکھاتا ہے۔ [ریلیزز کے صفحے](https://github.com/jhyunwoo/ccam/releases) سے نئی `ccam_<version>_linux_amd64.deb` ڈاؤن لوڈ کریں اور اسے پرانی کے اوپر انسٹال کریں:
 
@@ -130,6 +139,8 @@ sudo apt install ./ccam_*_linux_amd64.deb
 ```
 
 ## اَن انسٹال کرنا
+
+`~/.local/share/ccam` حذف کرنے سے وہاں محفوظ لاگ اِن اور گفتگو کی ہسٹری بھی حذف ہو جاتی ہے۔ جو `~/.claude` فولڈر آپ نے [امپورٹ کیا تھا](/docs/commands) وہ اپنی جگہ پر رہتا ہے، لیکن جب تک وہ کسی گروپ میں ہے، جو فائلیں وہ شیئر کرتا ہے وہ `~/.local/share/ccam/groups/` میں رہتی ہیں۔ کچھ بھی حذف کرنے سے پہلے اس کے لیے `ccam remove <name>` چلائیں (یا `ccam group leave`): یہ اسے اس کے گروپس سے نکال دیتا ہے اور ہر اس چیز کی کاپی واپس فولڈر میں رکھ دیتا ہے جو اس نے شیئر کی تھی۔
 
 پہلے، جب تک ccam انسٹال ہے، اکاؤنٹس کے شارٹ کٹس ہٹائیں۔ `ccam list` انہیں Shortcut کالم میں دکھاتا ہے؛ ہر ایک کو `ccam shortcut <account> --remove` سے ہٹائیں، یا وہ لنکس خود `~/.local/bin` سے حذف کریں۔ پھر کمانڈ ہٹائیں، اور اگر اکاؤنٹس کی ضرورت نہ رہی ہو تو ڈیٹا فولڈرز بھی:
 
@@ -147,5 +158,3 @@ ccam shortcut work --remove   # once for each account that has a shortcut
 Remove-Item ~\.local\bin\ccam.exe
 Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
 ```
-
-`~/.local/share/ccam` حذف کرنے سے وہاں محفوظ لاگ اِن اور گفتگو کی ہسٹری بھی حذف ہو جاتی ہے۔ جو `~/.claude` فولڈر آپ نے [امپورٹ کیا تھا](/docs/commands) وہ اپنی جگہ پر رہتا ہے، لیکن جب تک وہ کسی گروپ میں ہے، جو فائلیں وہ شیئر کرتا ہے وہ `~/.local/share/ccam/groups/` میں رہتی ہیں۔ پہلے اس کے لیے `ccam remove <name>` چلائیں (یا `ccam group leave`): یہ اپنے گروپس سے نکل جاتا ہے اور اس کے پاس ہر اس چیز کی کاپی رہتی ہے جو اس نے شیئر کی تھی۔

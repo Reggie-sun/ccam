@@ -2,13 +2,15 @@
 title: Memulai cepat
 metaTitle: "Memulai cepat: tambah dan ganti akun Claude Code"
 description: Tambahkan dua akun Claude Code dengan ccam add, beri pintasan seperti ccwork, berpindah di antaranya, dan pilih apa yang dibagikan.
-updated: 2026-10-25
+updated: 2026-10-26
 order: 2
 translation: machine
-sourceHash: "0570ef27e4ce"
+sourceHash: "bd893bbb83ab"
 ---
 
 Tambahkan setiap akun dengan `ccam add`, lalu jalankan Claude Code dengan `ccam <name>` atau dengan pintasan yang namanya Anda pilih sendiri, seperti `ccwork`. Bagi kebanyakan orang, itu sudah cukup.
+
+Sudah memakai Claude Code? Baca [Sudah menggunakan ~/.claude?](#already-using-claude) di akhir halaman ini sebelum Anda mulai.
 
 ## 1. Tambahkan akun pertama Anda
 
@@ -16,7 +18,7 @@ Tambahkan setiap akun dengan `ccam add`, lalu jalankan Claude Code dengan `ccam 
 ccam add
 ```
 
-Wizard akan menanyakan nama, seperti `personal` atau `work`, item apa saja yang perlu dibagikan akun ini dengan akun Anda yang lain, dan apakah perlu membuat perintah pintasan (lihat langkah 4). Lalu wizard menjalankan `claude auth login`, yang membuka browser agar Anda bisa masuk. Di mesin jarak jauh, browser mungkin berakhir di halaman `http://localhost:…/callback` yang tidak bisa dimuat; tempelkan alamat itu ke terminal dan ccam akan menyelesaikan proses masuk. Setelah selesai, Anda akan melihat:
+Wizard akan menanyakan nama, seperti `personal` atau `work`, item apa saja yang perlu dibagikan akun ini dengan akun Anda yang lain, dan apakah perlu membuat perintah pintasan (lihat langkah 3). Lalu wizard menjalankan `claude auth login`, yang membuka browser agar Anda bisa masuk. Di mesin jarak jauh, browser Anda mungkin berakhir di halaman `http://localhost:…/callback` yang tidak bisa dimuat; tempelkan alamat itu ke terminal dan ccam akan menyelesaikan proses masuk. Setelah proses masuk selesai, Anda akan melihat:
 
 ```console
 ✓ personal (me@example.com) added
@@ -25,7 +27,7 @@ Wizard akan menanyakan nama, seperti `personal` atau `work`, item apa saja yang 
 
 ## 2. Bawa pengaturan yang sudah ada
 
-Jika Anda sudah pernah memakai Claude Code, pengaturan, `CLAUDE.md`, ekstensi, dan server MCP Anda ada di `~/.claude`. Salin semuanya ke pengaturan bersama agar setiap akun mendapatkannya:
+Jika Anda sudah pernah memakai Claude Code, pengaturan, `CLAUDE.md`, dan ekstensi Anda ada di `~/.claude`, dan server MCP Anda ada di `~/.claude.json`. Salin semuanya ke grup bersama `default` agar setiap akun mendapatkannya:
 
 ```sh
 ccam migrate
@@ -39,11 +41,7 @@ ccam menampilkan apa yang akan disalin dan meminta persetujuan terlebih dahulu. 
 ccam add work
 ```
 
-Masuk dengan akun yang lain di browser.
-
-## 4. Berpindah akun
-
-`ccam work` menjalankan Claude Code sebagai akun kerja. Agar lebih singkat, beri akun itu perintah pintasannya sendiri, seperti `ccwork`. Setelah item yang dibagikan, wizard akan bertanya:
+Wizard melewati pertanyaan nama, karena Anda sudah memberikannya di baris perintah, dan menampilkan grup yang bisa diikuti dengan `default` sudah dicentang. Kali ini, beri akun itu perintah pintasannya sendiri, seperti `ccwork`, agar Anda bisa menjalankannya dengan satu kata. Setelah grup, wizard akan bertanya:
 
 ```console
  Create a shortcut command for work? [y/N]
@@ -57,21 +55,23 @@ Tekan `y`, lalu ketik nama, atau tekan Enter untuk memakai nama yang disarankan:
  a-z, 0-9, '.', '-' and '_'; Enter alone uses ccwork
 ```
 
-Setelah login, ccam mengonfirmasinya:
+Lalu masuk dengan akun yang lain di browser. ccam mengonfirmasi akun itu beserta pintasannya:
 
 ```console
 ✓ work (work@example.com) added
   shortcut: ccwork
 ```
 
-Jika Anda melewati pertanyaan itu, tambahkan pintasan kapan saja:
+## 4. Berpindah akun
+
+`ccam work` menjalankan Claude Code sebagai akun kerja. Jika Anda melewati pertanyaan pintasan, tambahkan pintasan kapan saja:
 
 ```console
 $ ccam shortcut work ccwork
 ✓ shortcut for work: ccwork
 ```
 
-Sekarang perintah mana pun di bawah ini menjalankan Claude Code sebagai akun kerja:
+Sekarang setiap perintah di bawah ini menjalankan Claude Code sebagai akun kerja (`2` adalah nomornya di `ccam list`):
 
 ```sh
 ccwork
@@ -91,7 +91,7 @@ cat error.log | ccwork -p "what caused this?"
 
 ## 5. Pilih apa yang dibagikan
 
-Secara default, server MCP, `settings.json`, `CLAUDE.md` global, serta agen, perintah, skill, dan plugin dibagikan antarakun melalui grup `default`. Riwayat percakapan tidak dibagikan. Tambahkan riwayat ke grup itu jika Anda ingin melanjutkan percakapan antarakun:
+Secara default, server MCP, `settings.json`, `CLAUDE.md` global, dan ekstensi (agen, perintah, skill, dan plugin) dibagikan antarakun melalui grup `default`. Riwayat percakapan tidak dibagikan. Tambahkan riwayat ke grup itu jika Anda ingin melanjutkan percakapan antarakun:
 
 ```sh
 ccam group set default --add history
@@ -108,7 +108,7 @@ ccam next --continue
 
 `ccam usage` menampilkan penggunaan 5 jam dan mingguan semua akun. `ccam next --continue` membuka percakapan yang sama di akun berikutnya. Di skrip, `ccam --fallback work -p "…"` berganti akun dengan sendirinya. Lihat [batas penggunaan](/docs/usage-limits).
 
-**Kursi Team dan Enterprise.** Pilihan otomatis (`ccam next`, `--fallback`, `ccam pick`, tombol `n` di dasbor, dan [`auto_switch`](/features/next#auto-switch) bila Anda mengaktifkannya) juga berganti di antara kursi dalam organisasi Claude Team atau Enterprise yang sama. Pusat bantuan Anthropic menyatakan "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (setiap kursi pada paket Team diberikan kepada satu orang tertentu, dan hanya orang itu yang boleh menggunakannya) dan "Users can't route their work through another user's account to use that user's remaining usage" (pengguna tidak boleh menyalurkan pekerjaannya melalui akun pengguna lain untuk memakai sisa kuota pengguna tersebut) ([paket Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); begitu pula untuk [paket Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Karena itu, memakai pilihan otomatis di antara kursi dapat melanggar ketentuan Anthropic. Apakah Anda memakainya di sana adalah keputusan Anda: tanyakan kepada organisasi Anda dan Anthropic sebelum Anda mengandalkannya. Paket pribadi (Pro, Max) dibahas dalam [catatan tentang ketentuan di FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Kursi Team dan Enterprise.** Pemilihan akun otomatis (`ccam next`, `--fallback`, `ccam pick`, tombol `n` di dasbor, dan, setelah Anda mengaktifkannya, [`auto_switch`](/features/next#auto-switch)) juga berganti di antara kursi dalam organisasi Claude Team atau Enterprise yang sama, yang dapat melanggar ketentuan Anthropic. Baca [FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) dan tanyakan kepada organisasi Anda dan Anthropic sebelum Anda mengandalkannya.
 
 ## Sudah menggunakan ~/.claude?
 

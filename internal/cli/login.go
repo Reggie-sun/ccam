@@ -51,7 +51,7 @@ func runLogin(e *env, cfg *config.Config, prof *config.Profile) error {
 	if err != nil {
 		return err
 	}
-	fmt.Fprintln(e.stderr, "On a remote machine? If the browser ends on a http://localhost:…/callback page that does not load, paste that address here.")
+	fmt.Fprintln(e.stderr, "On a remote machine? If your browser ends up on an http://localhost:…/callback page that does not load, paste that address here.")
 	if err := c.Start(); err != nil {
 		return err
 	}

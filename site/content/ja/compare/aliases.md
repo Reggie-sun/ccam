@@ -1,10 +1,10 @@
 ---
 title: ccamとシェルエイリアスの比較
-description: 複数のClaude Codeアカウントを使う方法として、CLAUDE_CONFIG_DIRを使うシェルエイリアスとccamを並べて比較します。
-updated: 2026-10-20
+description: 複数のClaude Codeアカウントを使う方法として、CLAUDE_CONFIG_DIRを使うシェルエイリアスとccamを機能ごとに比較します。
+updated: 2026-10-26
 order: 1
 translation: machine
-sourceHash: b9fbcb88f111
+sourceHash: c30d84bceba0
 ---
 
 アカウントごとにシェルエイリアスを作るのが、複数のClaude Codeアカウントを使う最も簡単な方法です。ccamも内部では同じことを行い、そのうえで共有、切り替え、使用量の確認の機能を加えています。
@@ -37,7 +37,7 @@ ccam add work --shortcut ccwork
 | ログインを分ける | 可 | 可 |
 | アカウントごとの設定作業 | `~/.bashrc`を編集し、ログインする | `ccam add` |
 | スクリプトやほかのプログラムからの利用 | 不可。エイリアスはシェル内でのみ有効 | 可。`ccam work`も、`ccwork`のようなショートカットも実際のコマンド |
-| 設定、`CLAUDE.md`、拡張機能の共有 | 手動でコピーまたはリンク | 項目ごとに、バックアップ付きで |
+| 設定、`CLAUDE.md`、拡張機能の共有 | 手動でコピーまたはリンク | 可、項目ごとに選択、バックアップ付き |
 | MCPサーバーの共有 | アカウントごとに手動で | `ccam mcp add`を一度実行 |
 | 別のアカウントで会話を続ける | 不可 | `ccam next --continue` |
 | すべてのアカウントの使用量 | 不可 | `ccam usage` |

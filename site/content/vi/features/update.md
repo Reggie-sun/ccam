@@ -1,20 +1,20 @@
 ---
 title: Cập nhật ccam
 description: "ccam update thay ccam bằng bản phát hành mới nhất trên GitHub sau khi kiểm tra SHA-256; --check chỉ báo cáo và --version cài một thẻ phát hành cụ thể."
-updated: 2026-10-23
+updated: 2026-10-26
 order: 10
 translation: machine
-sourceHash: "000d37de5f29"
+sourceHash: 598931e4801f
 ---
 
-`ccam update` tải một bản phát hành ccam từ GitHub, kiểm tra nó với `checksums.txt` của bản phát hành và thay tệp thực thi đang chạy bằng một lần đổi tên. Hãy dùng lệnh này khi bạn cài ccam bằng script cài đặt hoặc từ một tệp nén. [Bảng điều khiển](/features/dashboard) cũng hỏi GitHub về bản phát hành mới nhất mỗi lần mở và đề nghị cập nhật bằng `U`, phím này chạy cùng các bước sau khi hỏi. Không lệnh nào khác liên lạc với GitHub, nên chúng vẫn hoạt động như nhau khi không có mạng.
+`ccam update` tải một bản phát hành ccam từ GitHub, kiểm tra nó với `checksums.txt` của bản phát hành và thay tệp thực thi đang chạy bằng một lần đổi tên. Hãy dùng lệnh này khi bạn cài ccam bằng script cài đặt hoặc từ một tệp nén. [Bảng điều khiển](/features/dashboard) cũng hỏi GitHub về bản phát hành mới nhất mỗi lần mở và đề nghị cập nhật bằng `U`, phím này chạy cùng các bước sau khi hỏi. Các lệnh khác không bao giờ liên lạc với GitHub, nên chúng vẫn hoạt động như nhau khi không có mạng.
 
 ## Cách dùng
 
 ```sh
 ccam update                    # install the latest release
 ccam update --check            # only say whether a newer release exists
-ccam update --version v0.3.0   # install that release, also an older one
+ccam update --version v0.3.0   # install that release, even an older one
 ccam --dry-run update          # show what would be downloaded and replaced
 ```
 
@@ -31,7 +31,7 @@ $ ccam update
 ✓ Updated ccam 0.4.0 → 0.5.0 (/home/you/.local/bin/ccam)
 ```
 
-Khi không có bản phát hành mới hơn, ccam in ra `ccam 0.4.0 is up to date.` và không thay đổi gì. Với `--version` và đúng phiên bản bạn đang chạy, nó in ra `ccam 0.4.0 is already installed.`
+Khi không có bản phát hành mới hơn, ccam in ra `ccam 0.4.0 is up to date.` và không thay đổi gì. Nếu `--version` nêu đúng phiên bản bạn đang có, nó in ra `ccam 0.4.0 is already installed.`
 
 ## Tùy chọn
 
@@ -47,16 +47,16 @@ Biến môi trường `CCAM_RELEASES_URL` thay cho `https://github.com/jhyunwoo/
 
 ## Cách hoạt động
 
-Mã nằm trong `internal/update`, gói chỉ được `ccam update` import. Đường khởi động không bao giờ gọi tới nó.
+ccam kiểm tra tệp tải về trước khi động đến tệp thực thi đã cài, và thay tệp thực thi bằng một lần đổi tên. Mã nằm trong `internal/update`, gói chỉ được `ccam update` import. Đường khởi động không bao giờ gọi tới nó.
 
-1. `cli.updateCmd` tìm tệp thực thi đang chạy bằng `os.Executable` và phân giải liên kết tượng trưng bằng `filepath.EvalSymlinks`. Đường dẫn thật đó là thứ sẽ bị thay thế.
-2. Không có `--version`, `Updater.Latest` gửi yêu cầu tới `<releases>/latest` mà không đi theo chuyển hướng, và đọc thẻ từ header `Location` (`…/tag/v0.5.0`). Cách này dùng trang releases thay cho GitHub API, nên giới hạn 60 yêu cầu mỗi giờ của API không áp dụng. Việc tra cứu có 10 giây.
-3. `parseVersion` kiểm tra thẻ theo một mẫu nghiêm ngặt. Thẻ sẽ xuất hiện trong URL tải về và trong một lệnh shell được in ra, nên không có gì chứa `/`, `%`, khoảng trắng hay ký tự shell lọt qua được. `compareVersions` so sánh nó với phiên bản đang chạy; một bản pre-release được xếp trước bản phát hành của nó.
-4. `managed()` và `writable()` quyết định ccam có được phép thay tệp thực thi hay không (xem bên dưới).
-5. `Updater.Fetch` tải `ccam_<os>_<arch>.tar.gz` (trên Windows là `ccam_windows_<arch>.zip`) và `checksums.txt` cùng lúc, với 2 phút cho cả hai. Mỗi lần tải giới hạn ở 256 MB.
+1. ccam tìm tệp thực thi đang chạy bằng `os.Executable` và phân giải liên kết tượng trưng bằng `filepath.EvalSymlinks` (`cli.updateCmd`). Đường dẫn thật đó là thứ sẽ bị thay thế.
+2. Không có `--version`, ccam gửi yêu cầu tới `<releases>/latest` mà không đi theo chuyển hướng (`Updater.Latest`), và đọc thẻ từ header `Location` (`…/tag/v0.5.0`). Cách này dùng trang releases thay cho GitHub API, nên giới hạn 60 yêu cầu mỗi giờ của API không áp dụng. Việc tra cứu hết thời gian chờ sau 10 giây.
+3. ccam kiểm tra thẻ theo một mẫu nghiêm ngặt (`parseVersion`). Thẻ sẽ xuất hiện trong URL tải về và trong một lệnh shell được in ra, nên không có gì chứa `/`, `%`, khoảng trắng hay ký tự shell lọt qua được. Sau đó ccam so sánh nó với phiên bản đang chạy (`compareVersions`); một bản pre-release được xếp trước bản phát hành của nó.
+4. ccam quyết định nó có được phép thay tệp thực thi hay không (`managed()`, `writable()`; xem bên dưới).
+5. ccam tải `ccam_<os>_<arch>.tar.gz` (trên Windows là `ccam_windows_<arch>.zip`) và `checksums.txt` cùng lúc, với 2 phút cho cả hai (`Updater.Fetch`). Mỗi lần tải giới hạn ở 256 MB.
 6. SHA-256 của tệp nén phải khớp với dòng của nó trong `checksums.txt` trước khi bất cứ việc gì khác xảy ra. Thiếu dòng hoặc mã kiểm tra khác nhau sẽ dừng việc cập nhật với `nothing was changed`.
-7. `extract()` đọc tệp tar và lấy tệp thông thường đầu tiên có tên `ccam` (`extractZip` lấy `ccam.exe` từ tệp zip). Thư mục, liên kết và các mục khác bị bỏ qua, và tệp thực thi cũng bị giới hạn ở 256 MB.
-8. `Updater.Install` ghi tệp thực thi mới bằng `fsutil.AtomicWrite`: một tệp tạm `.ccam.tmp*` cạnh tệp thực thi, với các bit quyền của tệp cũ, được ghi xuống đĩa rồi đổi tên đè lên tệp cũ.
+7. ccam đọc tệp tar và lấy tệp thông thường đầu tiên có tên `ccam` (`extract()`; `extractZip` lấy `ccam.exe` từ tệp zip). Thư mục, liên kết và các mục khác bị bỏ qua, và tệp thực thi cũng bị giới hạn ở 256 MB.
+8. ccam ghi tệp thực thi mới bằng `fsutil.AtomicWrite` (`Updater.Install`): một tệp tạm `.ccam.tmp*` cạnh tệp thực thi, với các bit quyền của tệp cũ, được ghi xuống đĩa rồi đổi tên đè lên tệp cũ.
 
 Toàn bộ quy trình, từ tra thẻ đến đổi tên:
 
@@ -64,11 +64,11 @@ Toàn bộ quy trình, từ tra thẻ đến đổi tên:
 
 Tệp nén và `checksums.txt` được tải song song, và không có gì được ghi cho đến khi mã kiểm tra khớp. Việc đổi tên là nguyên tử, nên một sự cố hay đĩa đầy chỉ để lại tệp thực thi cũ hoặc mới, không bao giờ là một nửa. Các lệnh tắt như `~/.local/bin/ccwork` là liên kết tượng trưng tới tệp thực thi ccam, nên chúng chạy phiên bản mới mà không cần thay đổi gì.
 
-Trên Windows, tệp của một chương trình đang chạy không thể bị thay thế hay xóa, chỉ có thể đổi tên. `Updater.Install` ghi tệp thực thi mới vào `ccam.exe.new`, đổi tên `ccam.exe` đang chạy thành `ccam.exe.old`, rồi đổi tên tệp mới thành `ccam.exe`. Nếu bước cuối thất bại, tệp thực thi cũ được đổi tên trở lại. Lần cập nhật tiếp theo xóa các tệp `ccam.exe.old` mà nó có thể xóa; khi một phiên vẫn đang chạy từ một `ccam.exe.old` trước đó, tệp thực thi đang chạy sẽ thành `ccam.exe.old-<time>` thay vào đó. Các lệnh tắt là liên kết cứng thay vì liên kết tượng trưng ([Lệnh tắt](/features/shortcuts)) được làm mới ngay sau đó, nên chúng cũng chạy phiên bản mới; việc này bao gồm các liên kết cứng do ccam tạo tới bất kỳ ccam cũ hơn nào, không chỉ tới tệp thực thi vừa bị thay thế.
+Trên Windows, tệp của một chương trình đang chạy không thể bị thay thế hay xóa, chỉ có thể đổi tên. ccam ghi tệp thực thi mới vào `ccam.exe.new`, đổi tên `ccam.exe` đang chạy thành `ccam.exe.old`, rồi đổi tên tệp mới thành `ccam.exe` (`Updater.Install`). Nếu bước cuối thất bại, tệp thực thi cũ được đổi tên trở lại. Lần cập nhật tiếp theo xóa các tệp `ccam.exe.old` mà nó có thể xóa; khi một phiên vẫn đang chạy từ một `ccam.exe.old` trước đó, tệp thực thi đang chạy sẽ thành `ccam.exe.old-<time>` thay vào đó. Các lệnh tắt là liên kết cứng thay vì liên kết tượng trưng ([Lệnh tắt](/features/shortcuts)) được làm mới ngay sau đó, nên chúng cũng chạy phiên bản mới; việc này bao gồm các liên kết cứng do ccam tạo tới bất kỳ phiên bản ccam cũ hơn nào, không chỉ tới tệp thực thi vừa bị thay thế.
 
 ### Bản cài qua trình quản lý gói
 
-ccam được cài từ `.deb` thuộc về apt, và thay thế nó mà apt không biết sẽ khiến cơ sở dữ liệu gói bị sai. Trước khi tải về, ccam kiểm tra ai sở hữu tệp thực thi:
+Một bản ccam được cài từ `.deb` thuộc về apt, và thay thế nó mà apt không biết sẽ khiến cơ sở dữ liệu gói không còn khớp với tệp. Trước khi tải về, ccam kiểm tra ai sở hữu tệp thực thi:
 
 <!-- motion:update-managed -->
 
@@ -84,14 +84,14 @@ ccam: /usr/bin/ccam was installed by a package, so `ccam update` leaves it alone
 To update the .deb, download ccam_0.5.0_linux_amd64.deb from https://github.com/jhyunwoo/ccam/releases/tag/v0.5.0 and run:
   sudo apt install ./ccam_0.5.0_linux_amd64.deb
 Or install a copy in ~/.local/bin with the install script:
-  curl -fsSL https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.sh | sh
+  curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-Trên các hệ thống không phải Linux, chỉ dòng script cài đặt được in ra: `irm https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.ps1 | iex` trên Windows. Khi thư mục không ghi được, ccam gợi ý chạy lại script cài đặt, script này cài ccam vào `~/.local/bin`.
+Trên các hệ thống không phải Linux, chỉ dòng script cài đặt được in ra: `irm https://ccam.dev/install.ps1 | iex` trên Windows. Khi thư mục không ghi được, ccam gợi ý chạy lại script cài đặt, script này cài ccam vào `~/.local/bin`.
 
 ## An toàn và các trường hợp đặc biệt
 
-- Bản dựng phát triển báo phiên bản là `dev` và không có bản phát hành nào để so sánh, nên `ccam update` và `ccam update --check` từ chối nó. `ccam update --version vX.Y.Z` cài một bản phát hành đè lên nó. Một bản build tạo bằng `go install github.com/jhyunwoo/ccam/cmd/ccam@vX.Y.Z` (hoặc `@latest`) báo đúng bản phát hành đó, nên `ccam update` và lời đề nghị của bảng điều khiển hoạt động với nó; `@main` hoặc một bản build cục bộ đã đi quá một thẻ vẫn là `dev`.
+- Bản dựng phát triển báo phiên bản là `dev` và không có bản phát hành nào để so sánh, nên `ccam update` và `ccam update --check` từ chối nó. `ccam update --version vX.Y.Z` cài một bản phát hành đè lên nó. Với các bản build tạo bằng `go install`, xem [Cài đặt ccam](/docs/install#other-ways-to-install).
 - Tải về thất bại, thiếu tệp cho nền tảng của bạn, hoặc mã kiểm tra không khớp đều giữ nguyên tệp thực thi đã cài.
 - Bản phát hành không tồn tại sẽ thất bại với `there is no release <tag>`. Khi GitHub từ chối với HTTP 403 hoặc 429, ccam cho biết có lẽ đó là giới hạn tần suất và đề nghị bạn thử lại sau.
 - `--check` chỉ đọc. Nó không kiểm tra tệp thực thi có do trình quản lý gói quản lý hay có ghi được hay không.
@@ -99,6 +99,6 @@ Trên các hệ thống không phải Linux, chỉ dòng script cài đặt đư
 
 ## Liên quan
 
-- [Cài đặt](/docs/install)
-- [Lệnh](/docs/commands)
+- [Cài đặt ccam](/docs/install)
+- [Tham chiếu lệnh](/docs/commands)
 - [Câu hỏi thường gặp](/docs/faq)

@@ -1,10 +1,10 @@
 ---
 title: Gruplarla paylaşım
 description: Bir ccam grubu seçilen öğeleri hesapları arasında tek bir klasör üzerinden paylaşır; ccam group veriyi plan, yedek ve çakışma seçenekleriyle taşır.
-updated: 2026-10-23
+updated: 2026-10-26
 order: 4
 translation: machine
-sourceHash: "e4f05b0fd572"
+sourceHash: 3f94dd13dbf1
 ---
 
 Her hesabın kendi klasörü vardır, ancak içindekilerin çoğunun ayrı olması gerekmez. Bir **grup** neyin, kimler tarafından paylaşılacağını söyler: gruptaki her hesap bu öğeleri tek bir klasöre, `~/.local/share/ccam/groups/<group>/` klasörüne bağlar; böylece hepsi aynı kopyayı okur ve yazar. Giriş token'ları hiçbir zaman paylaşılmaz.
@@ -31,11 +31,11 @@ Eklediğiniz ilk hesap `default` grubunu oluşturur; aksini söylemediğiniz sü
 ccam group                                        # the groups, what they share, their accounts
 ccam group show default                           # items, accounts, folder and MCP servers
 ccam group add team --items history --members work,side
-ccam group set default --add history              # every account in default moves together
+ccam group set default --add history              # all accounts in default start sharing history
 ccam group set default --remove history --fresh   # stop sharing; accounts start without it
-ccam group set team --items history,memory --from work   # work's CLAUDE.md goes in first
+ccam group set team --items history,memory --from work   # the group starts from work's copies
 ccam group join team personal                     # personal starts sharing team's items
-ccam group join team personal --replace           # leave the group that shares them now
+ccam group join team personal --replace           # first leave the group that shares those items now
 ccam group leave team side                        # side keeps a copy of team's items
 ccam group rename team pair                       # the folder keeps its name
 ccam group remove pair --leave                    # its accounts keep a copy; folder to the trash
@@ -76,7 +76,7 @@ work: +history (group default)
 Proceed? [y/N]
 ```
 
-Aynı değişiklikler [kontrol panelinin](/features/dashboard) **Groups** sekmesinde de bulunur; bir hesap üzerinde `s` ise o hesabın gruplarını seçer.
+Aynı değişiklikleri [kontrol panelinin](/features/dashboard) **Groups** sekmesinde de yapabilirsiniz; bir hesabın gruplarını seçmek için onun üzerinde `s` tuşuna basın.
 
 ## Öğeler
 
@@ -88,7 +88,7 @@ Aynı değişiklikler [kontrol panelinin](/features/dashboard) **Groups** sekmes
 | `extensions` | `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/`, `rules/` |
 | `history` | `projects/` ve `history.jsonl`; böylece başka bir hesap `--continue` yapabilir |
 
-Hesabın hiçbir grubunun paylaşmadığı bir öğe hesabın kendi klasöründe kalır.
+Bir hesabın gruplarından hiçbiri bir öğeyi paylaşmıyorsa o öğe hesabın kendi klasöründe kalır.
 
 ## Komutlar ve seçenekler
 
@@ -128,33 +128,49 @@ Hesaplar adla veya numarayla, öğeler virgülle ayrılmış bir liste olarak ve
 Bir değişiklik yapılandırmanın bir kopyası üzerinde çalışır:
 
 1. Komut kopyayı düzenler (`AddGroup`, `SetGroupItems`, `JoinGroup` …); bu işlevler kuralları kontrol eder.
-2. `internal/group` eskiyle yeniyi karşılaştırır ve öğeleri değişen her hesap için `share.Build` ile bir plan oluşturur. Planlar art arda oluşturulur ve her biri öncekilerin grup klasörlerine ne koyacağını görür; böylece kopyasını gruba yalnızca ilk hesap taşır. İlk kopya, varsa grup klasörünün kendisinden, sonra `--from` hesabından, sonra varsayılan hesaptan, sonra numara sırasıyla diğer hesaplardan gelir.
+2. ccam eskiyle yeniyi karşılaştırır ve öğeleri değişen her hesap için bir plan oluşturur (`internal/group`, `share.Build`). Planlar art arda oluşturulur ve her biri öncekilerin grup klasörlerine ne koyacağını görür; böylece kopyasını gruba yalnızca ilk hesap taşır. Grubun ilk kopyası şu sırayla gelir: grup klasörü (zaten bir kopyası varsa), `--from` hesabı, varsayılan hesap, ardından numara sırasıyla diğer hesaplar.
 3. Bu hesaplardan biri, Claude Code nasıl başlatılmış olursa olsun, çalışıyorsa (``work is running; quit Claude Code there first, then change the groups (`ccam agents` lists the sessions)``) ya da Geliştirici Modu olmayan Windows'ta bir dosyanın bağlantı gerektirmesi durumunda ccam reddeder.
-4. Çakışmalara soruyla veya `--prefer` ile karar verilir, plan yazdırılır ve ccam onay ister.
-5. Kaydetmeden hemen önce ccam yeniden denetler: sorular beklerken başlatılan bir hesap değişikliği durdurur; başka bir ccam'in aynı gruplarda yaptığı bir değişiklik de öyle (`the groups changed while this plan waited; nothing was moved, make the change again`). Hiçbir şey taşınmadan önce yeni yapılandırma kaydedilir ve değişiklik `~/.local/state/ccam/group-change.json` dosyasına not edilir. Bir adım yarıda durursa not kalır: `ccam doctor --fix` değişikliği, verdiğiniz yanıtlarla ve MCP adımları dahil, kendi sırasıyla tamamlar; o zamana kadar başka hiçbir grup değişikliği başlamaz (``the last change of groups stopped halfway; finish it with `ccam doctor --fix` first``).
-6. Önce MCP adımları çalışır. Hesaplar uzantıları bir gruptan çıkardığında, grubun eklenti listeleri, yolları bir hesabın klasöründen geçtiği her yerde grup klasörüne yönlendirilir (planda `group plugin lists:`). Ardından planlar sırayla çalışır. Her adım veriyi gruba veya yedek klasörüne taşır; yalnızca grupta bayt bayt aynısı bulunan dosyalar yedeklenmek yerine bırakılır.
+4. ccam çakışmaları çözer (sorarak ya da `--prefer` ile), planı yazdırır ve onay ister.
+5. Kaydetmeden hemen önce ccam yeniden denetler. ccam yanıtlarınızı beklerken bir hesap başlatıldıysa değişiklik durur; başka bir ccam süreci bu arada aynı grupları değiştirdiyse de durur (`the groups changed while this plan waited; nothing was moved, make the change again`). Hiçbir şey taşınmadan önce yeni yapılandırma kaydedilir ve değişiklik `~/.local/state/ccam/group-change.json` dosyasına not edilir. Bir adım yarıda durursa not kalır: `ccam doctor --fix` değişikliği, verdiğiniz yanıtlarla ve MCP adımları dahil, kendi sırasıyla tamamlar; o zamana kadar başka hiçbir grup değişikliği başlamaz (``the last group change stopped halfway; finish it with `ccam doctor --fix` first``).
+6. Önce MCP adımları çalışır. Hesaplar uzantıları bir gruptan çıkardığında, grubun eklenti listeleri, yolları bir hesabın klasöründen geçtiği her yerde grup klasörüne yönlendirilir (planda `group plugin lists:`). Ardından planlar sırayla çalışır. Her adım veriyi gruba veya yedek klasörüne taşır; yalnızca grubun kopyasıyla aynı olan dosyalar yedeklenmek yerine silinir.
 
-`share.Layout`, her öğenin kapsadığı yolların bir izin listesidir. Listede olmayan hiçbir şey bir gruba ulaşamaz. `share.Never`, `.credentials.json` ve `.claude.json` dosyalarını adlandırır; bunlardan biri düzende görünürse `Build` dahili bir hatayla durur. `mcp` öğesinin yolu yoktur: sunucu listesi `.claude.json` içinde bulunur; bu yüzden [MCP paylaşımı](/features/mcp) grubun `mcp.json` dosyası üzerinden çalışır.
+ccam her öğenin kapsadığı yolların bir izin listesini tutar (`share.Layout`). Listede olmayan hiçbir şey bir gruba ulaşamaz. ccam ayrıca `.credentials.json` ve `.claude.json` dosyalarını asla paylaşılmayacak dosyalar olarak adlandırır (`share.Never`) ve bunlardan biri düzende görünürse dahili bir hatayla durur (`Build`). `mcp` öğesinin yolu yoktur: sunucu listesi `.claude.json` içinde bulunur; bu yüzden [MCP paylaşımı](/features/mcp) grubun `mcp.json` dosyası üzerinden çalışır.
 
 `side` geçmişi paylaşmaya başladığında ve grupta zaten içerik bulunduğunda tek bir klasöre, `projects/` klasörüne olanlar şunlardır:
 
 <!-- motion:share-on -->
 
-Grupta o yolda henüz hiçbir şey yoksa hesap onu paylaşan ilk hesaptır ve klasörü olduğu gibi oraya taşınır. Aksi halde grupta olmayan her dosya gruba taşınır; her iki tarafta da bulunan dosyalar hesabın klasöründe kalır, böylece grubun sürümü korunur. Grubunkiyle aynı olan dosyalar bırakılır ve plan farklı olanları adlarıyla belirtir (`Note: projects: 1 file differs from the group's copy (…); the group's is kept, the account's stays in …`). Ardından hesabın klasörü hesap klasörünün içindeki `.ccam-backup/<time>/` konumuna gider ve yerine bir bağlantı konur. Grubun girdisi, katılan hesabın kendi girdisine giden bir bağlantıysa hesabın içeriği onun yerine gruba girer. Konuşma dosyaları oturum kimliklerine göre adlandırılır; bu nedenle birden fazla hesabın geçmişi çakışma olmadan birleşir. `plugins/` kayıtları hesap klasöründen geçen mutlak yollar saklar; ccam bunları grubun klasörünü gösterecek şekilde değiştirir ve grupta zaten bir kayıt varsa hesabın girdilerini onunla birleştirir.
+Grupta o yolda henüz hiçbir şey yoksa hesap onu paylaşan ilk hesaptır ve klasörü olduğu gibi oraya taşınır. Aksi halde grupta olmayan her dosya gruba taşınır; her iki tarafta da bulunan dosyalar hesabın klasöründe kalır, böylece grubun sürümü korunur. Grubunkiyle aynı olan dosyalar silinir ve plan farklı olanları adlarıyla belirtir (`Note: projects: 1 file differs from the group's copy (…); the group's is kept, the account's stays in …`).
+
+Ardından hesabın klasörü hesap klasörünün içindeki `.ccam-backup/<time>/` konumuna gider ve yerine bir bağlantı konur. Grubun girdisi, katılan hesabın kendi girdisine giden bir bağlantıysa hesabın içeriği onun yerine gruba girer. Konuşma dosyaları oturum kimliklerine göre adlandırılır; bu nedenle birden fazla hesabın geçmişi çakışma olmadan birleşir. `plugins/` kayıtları hesap klasöründen geçen mutlak yollar saklar; ccam bunları grubun klasörünü gösterecek şekilde değiştirir ve grupta zaten bir kayıt varsa hesabın girdilerini onunla birleştirir.
 
 Ayrılmak bağlantıyı tersine çevirir:
 
 <!-- motion:share-off -->
 
-ccam önce grubun mevcut içeriğini hesap klasöründeki `.ccam-backup/incomplete-<name>` içine kopyalar ve bağlantıyı yalnızca kopya tamamlandığında değiştirir; böylece yarıda kalan bir kopyalama bağlantıyı yerinde bırakır ve `ccam doctor --fix` yeniden kopyalar (böyle bir tamamlamanın planı `restore <entry>: … (copied back from the group before a stop)` gösterir). Bağlantıyı yalnızca, plan yapıldığı zamanki gibi hâlâ gruplar klasörünü gösteriyorsa kaldırır; o zamandan beri değişmiş bir yol, örneğin bağlantının olduğu yerde gerçek bir dosya, olduğu gibi bırakılır ve değişiklik durur. `--fresh` ile kopyalama atlanır. Grup, içeriğini diğer hesaplar için korur. Bir öğeyi klasörü henüz boş olan bir gruba taşıyan hesap gördüğünün bir kopyasını getirir; böylece dosyalarını korur; bu kopya tamamlanana kadar `<group>/.ccam-incomplete-<name>` içinde hazırlanır. MCP paylaşmayı bırakan bir hesap grubun sunucularını korur: bunlar, kalan aynı adlı kendi sunucularının yanına, kendi `.claude.json` dosyasına girer (bir yedek tutulur). `--fresh` ile plan bunun yerine yüklenmesi duracak sunucuları listeler. Yeniden katılmak, kimsenin değiştirmediği kopyaları kaldırır. `extensions` paylaşımından ayrılmak da grubun eklenti listelerini, yollarının ayrılan hesabın klasöründen geçtiği yerlerde grup klasörüne yönlendirir; diğer hesaplar için anlamları aynı kalır.
+ccam önce grubun mevcut içeriğini hesap klasöründeki `.ccam-backup/incomplete-<name>` içine kopyalar ve bağlantıyı yalnızca kopya tamamlandığında değiştirir. Kopyalama yarıda kalırsa bağlantı yerinde kalır ve `ccam doctor --fix` yeniden kopyalar (böyle bir tamamlamanın planı `restore <entry>: … (copied back from the group before a stop)` gösterir). Grup, içeriğini diğer hesaplar için korur.
+
+- ccam bağlantıyı yalnızca, plan oluşturulduğu zamanki gibi hâlâ gruplar klasörünü gösteriyorsa kaldırır. O zamandan beri değişmiş bir yol, örneğin bağlantının olduğu yerde gerçek bir dosya, olduğu gibi bırakılır ve değişiklik durur.
+- `--fresh` ile kopyalama atlanır.
+- Bir öğeyi klasörü henüz boş olan bir gruba taşıyan hesap gördüğünün bir kopyasını getirir; böylece dosyalarını korur. Bu kopya tamamlanana kadar `<group>/.ccam-incomplete-<name>` içinde hazırlanır.
+- MCP paylaşmayı bırakan bir hesap grubun sunucularını korur: bunlar kendi `.claude.json` dosyasına girer (bir yedek tutulur); hesabın zaten aynı adlı bir sunucusu varsa o sunucu olduğu gibi kalır. `--fresh` ile plan bunun yerine yüklenmesi duracak sunucuları listeler. Yeniden katılmak, kimsenin değiştirmediği kopyaları kaldırır.
+- `extensions` paylaşımından ayrılmak da grubun eklenti listelerini, yollarının ayrılan hesabın klasöründen geçtiği yerlerde grup klasörüne yönlendirir; diğer hesaplar için yeniden yazılan yollar aynı eklentilere çıkar.
 
 Her iki tarafta da bulunan ve içeriği farklı olan tek bir dosya bir çakışmadır:
 
 <!-- motion:share-conflict -->
 
-`settings.json` gibi tek dosyalar için seçimi siz yaparsınız; klasörlerin içinde grubun kopyası kalır ve plan farklı olan dosyaları adlarıyla belirtir. `history.jsonl`, önce birleştirme olmak üzere `merge by line`, `keep group` ve `use mine` sunar. Diğer `.json` dosyaları `keep group`, `use mine` ve `merge JSON` sunar. Geri kalan her şey `keep group` ve `use mine` sunar. `merge JSON` nesneleri özyinelemeli olarak birleştirir, dizileri yinelenenler olmadan birleştirir ve iki taraf aynı anahtara farklı değerler verdiğinde grubun değerini korur; böylece diğer hesaplar hiçbir değişiklik görmez. `keep group` dışındaki her seçenek önce grubun kopyasını hesabın `.ccam-backup/<time>/group/` klasörüne kaydeder. Kendi dosyanız her zaman yedeğe gider.
+`settings.json` gibi tek dosyalar için seçimi siz yaparsınız; klasörlerin içinde grubun kopyası kalır ve plan farklı olan dosyaları adlarıyla belirtir. Seçenekler dosyaya bağlıdır; ilki varsayılandır:
 
-Her başlatmada `share.Check`, düzendeki her yolu yalnızca `lstat` ve `readlink` kullanarak hesabın gruplarıyla karşılaştırır. Eksik bir bağlantı anında oluşturulur. Bağlantı olması gereken yerde gerçek bir dosya, yanlış yere yönelen bir bağlantı veya bayat bir bağlantı başlatmayı durdurur ve `ccam doctor --fix` komutunu gösterir.
+| Dosya | Seçenekler |
+| --- | --- |
+| `history.jsonl` | `merge by line`, `keep group`, `use mine` |
+| Diğer `.json` dosyaları | `keep group`, `use mine`, `merge JSON` |
+| Geri kalan her şey | `keep group`, `use mine` |
+
+`merge JSON` nesneleri özyinelemeli olarak birleştirir, dizileri yinelenenler olmadan birleştirir ve iki taraf aynı anahtara farklı değerler verdiğinde grubun değerini korur; böylece diğer hesaplar hiçbir değişiklik görmez. `keep group` dışındaki her seçenek önce grubun kopyasını hesabın `.ccam-backup/<time>/group/` klasörüne kaydeder. Kendi dosyanız her zaman yedeğe gider.
+
+Her başlatmada ccam, düzendeki her yolu yalnızca `lstat` ve `readlink` kullanarak hesabın gruplarıyla karşılaştırır (`share.Check`). Eksik bir bağlantı anında oluşturulur. Bağlantı olması gereken yerde gerçek bir dosya, yanlış yere yönelen bir bağlantı veya bayat bir bağlantı başlatmayı durdurur ve `ccam doctor --fix` komutunu gösterir.
 
 ### Yeniden adlandırma, kaldırma ve eski biçim
 
@@ -168,12 +184,12 @@ Windows sembolik bağlantıları yalnızca Geliştirici Modu'nda (Ayarlar > Sist
 
 ## Güvenlik ve uç durumlar
 
-- **Çalışan hesaplar.** Claude Code, değişikliğin taşıdığı hesaplardan biriyle çalışırken değişiklik reddedilir, çünkü oturum, onu ccam başlatmış olsun ya da olmasın (düz `claude`, bir IDE, arka plan oturumları), bu dosyalara yazmaya devam eder. Denetim kaydetmeden hemen önce yinelenir. Ayrılma ve katılma yalnızca adı verilen hesabı ilgilendirir; `extensions` paylaşımından ayrılmak, diğerleri için anlamlarını değiştirmeden grubun eklenti listelerindeki yolları da yeniden yazar. `--dry-run` yine de planı yazdırır.
+- **Çalışan hesaplar.** Claude Code, değişikliğin taşıdığı hesaplardan biriyle çalışırken değişiklik reddedilir, çünkü oturum, onu ccam başlatmış olsun ya da olmasın (düz `claude`, bir IDE, arka plan oturumları), bu dosyalara yazmaya devam eder. Denetim kaydetmeden hemen önce yinelenir. Ayrılma ve katılma yalnızca adı verilen hesabı etkiler; `extensions` paylaşımından ayrılmak, diğerleri için anlamlarını değiştirmeden grubun eklenti listelerindeki yolları da yeniden yazar. `--dry-run` yine de planı yazdırır.
 - **Yedekler.** Her plan, hesap klasöründe kendi `.ccam-backup/<time>/` klasörünü alır. ccam bunları hiçbir zaman silmez.
 - **Kendi bağlantılarınız.** Bir yol zaten sizin oluşturduğunuz bir bağlantıysa, örneğin bir dotfiles deposuna, ve grup boşsa ccam bağlantının hedefini gruba kopyalar ve bağlantının kendisini yedeğe taşır. Hedefe dokunulmaz.
 - **İçe aktarılmış klasörler.** `ccam import` ile yerinde kaydedilmiş bir hesap (örneğin `~/.claude`) yerinde değişir; böylece düz `claude` da değişikliği görür. Plan bunu belirtir. Bir gruptan ayrıldığında, `--fresh` ile bile, her zaman bir kopya tutar; `ccam remove` da hesabı unutmadan önce onu bu şekilde gruplarından çıkarır. Bir gruptayken paylaşılan dosyaları grup klasöründe durur; bu yüzden `~/.local/share/ccam` klasörünü silmeden önce hesabı kaldırın (veya gruplardan ayrılın).
 - **Bir klasörde iki hesap.** Geçmiş paylaşan hesaplar aynı dosyalara yazar. Biri zaten çalışırken aynı klasörde ikinci bir hesap başladığında ccam uyarır ve sorar.
-- **Elle düzenlemeler.** Hesap olmayan bir üye yok sayılır ve `ccam doctor` tarafından bildirilir. `local`, `on`, `off` ve `none` adları grup adı olamaz.
+- **Elle düzenlemeler.** `members` hesap olmayan bir ad listelerse ccam onu yok sayar ve `ccam doctor` bunu bildirir. `local`, `on`, `off` ve `none` adları grup adı olamaz.
 
 ## İlgili
 
@@ -181,4 +197,4 @@ Windows sembolik bağlantıları yalnızca Geliştirici Modu'nda (Ayarlar > Sist
 - [MCP sunucularını, ayarları ve geçmişi paylaşma](/docs/sharing)
 - [Paylaşılan MCP sunucuları](/features/mcp)
 - [Mevcut bir kurulumu kopyalama](/features/migrate)
-- [Tüm komutlar](/docs/commands)
+- [Komut başvurusu](/docs/commands)

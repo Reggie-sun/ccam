@@ -1,10 +1,10 @@
 ---
 title: Dùng nhiều tài khoản Claude Code trên một máy tính
 description: "Chạy song song nhiều tài khoản Claude Code với CLAUDE_CONFIG_DIR, thủ công bằng alias của shell hoặc tự động bằng ccam, và đổi tài khoản khi cần."
-updated: 2026-10-25
+updated: 2026-10-26
 order: 1
 translation: machine
-sourceHash: "5c5dbd9fcd23"
+sourceHash: 381de7a473b2
 ---
 
 Hãy cho mỗi tài khoản một thư mục cấu hình riêng. Claude Code đọc thư mục này từ biến môi trường `CLAUDE_CONFIG_DIR`, và mỗi thư mục chứa thông tin đăng nhập, cài đặt và lịch sử riêng, nên mọi tài khoản đều giữ trạng thái đăng nhập và bạn có thể chạy chúng cùng lúc. Bạn có thể tự thiết lập bằng một alias của shell, hoặc để ccam làm việc đó.
@@ -17,7 +17,7 @@ Hãy cho mỗi tài khoản một thư mục cấu hình riêng. Claude Code đ�
 alias claude-work='CLAUDE_CONFIG_DIR=~/.claude-work claude'
 ```
 
-Mở một terminal mới và chạy `claude-work`. Claude Code sẽ yêu cầu bạn đăng nhập, vì thư mục này còn mới. Từ đó trở đi, `claude` là tài khoản thứ nhất và `claude-work` là tài khoản thứ hai. Mỗi tài khoản cần một alias riêng, với thư mục riêng.
+Mở một terminal mới và chạy `claude-work`. Claude Code sẽ yêu cầu bạn đăng nhập, vì thư mục này còn mới. Từ đó trở đi, `claude` là tài khoản thứ nhất và `claude-work` là tài khoản thứ hai.
 
 Trên Windows không có WSL, một hàm PowerShell trong profile của bạn (`notepad $PROFILE`) cũng làm được điều tương tự:
 
@@ -51,9 +51,9 @@ ccam add work --shortcut ccwork
 
 Giờ đây `ccam personal` và `ccam work` sẽ khởi động hai tài khoản, và `ccwork`, lệnh tắt bạn đặt cho tài khoản công việc, cũng vậy. Vì chúng là chương trình thực sự chứ không phải alias, chúng cũng hoạt động trong script. Chạy riêng `ccam` để chọn tài khoản từ danh sách, và `ccam use work` để đặt một tài khoản làm mặc định.
 
-Cài đặt, `CLAUDE.md`, máy chủ MCP và tiện ích mở rộng được dùng chung ngay từ đầu. `ccam next --continue` chuyển một cuộc hội thoại sang tài khoản kia, và lịch sử hội thoại dùng chung, thứ bạn có thể bật, giữ nó là một cuộc hội thoại duy nhất. `ccam usage` hiển thị mức sử dụng 5 giờ và hàng tuần của mọi tài khoản cùng lúc.
+Cài đặt, `CLAUDE.md`, máy chủ MCP và tiện ích mở rộng được dùng chung ngay từ đầu. `ccam next --continue` tiếp tục một cuộc hội thoại trên tài khoản kia. Nếu bạn bật lịch sử hội thoại dùng chung, cả hai tài khoản làm việc trên cùng một cuộc hội thoại thay vì một bản sao. `ccam usage` hiển thị mức sử dụng 5 giờ và hàng tuần của mọi tài khoản cùng lúc.
 
-Nếu bạn đã dùng `~/.claude`, hãy chạy `ccam import` thay vì thêm lại tài khoản đó, hoặc chạy `ccam migrate` để sao chép cài đặt, máy chủ MCP và tiện ích mở rộng của nó vào phần cài đặt dùng chung.
+Nếu bạn đã dùng `~/.claude`, hãy chạy `ccam import` thay vì thêm lại tài khoản đó, hoặc chạy `ccam migrate` để sao chép cài đặt, máy chủ MCP và tiện ích mở rộng của nó vào nhóm `default` dùng chung.
 
 ## Làm sao biết tài khoản nào đang chạy?
 
@@ -77,6 +77,6 @@ Claude Code chạy [trực tiếp trên Windows và bên trong WSL](https://code
 
 Với hai tài khoản và không dùng chung gì, một alias là đủ. Khi bạn muốn dùng chung cài đặt và máy chủ MCP, có nhiều tài khoản hơn, xem nhanh mức sử dụng hoặc tiếp tục hội thoại, ccam giúp bạn khỏi phải tự quản lý những việc đó. Phần [so sánh với alias](/compare/aliases) liệt kê song song các điểm khác biệt, còn [ccam và các công cụ đổi tài khoản khác](/compare/account-switchers) nói về những công cụ hoán đổi một lần đăng nhập.
 
-Việc bạn có được dùng nhiều tài khoản hay không phụ thuộc vào điều khoản của từng tài khoản. Hãy kiểm tra trước khi dùng.
+Việc bạn có được dùng nhiều hơn một tài khoản hay không phụ thuộc vào điều khoản áp dụng cho từng tài khoản. Hãy đọc các điều khoản đó trước khi bắt đầu.
 
-**Seat của gói Team và Enterprise.** Lựa chọn tự động (`ccam next`, `--fallback`, `ccam pick`, phím `n` trên bảng điều khiển, và [`auto_switch`](/features/next#auto-switch) khi bạn bật nó) cũng chuyển đổi giữa các seat của cùng một tổ chức Claude Team hoặc Enterprise. Trung tâm trợ giúp của Anthropic ghi rằng "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (mỗi seat của gói Team được gán cho đích danh một cá nhân, và chỉ người đó được phép sử dụng) và "Users can't route their work through another user's account to use that user's remaining usage" (người dùng không được chuyển công việc của mình qua tài khoản của một người dùng khác để dùng phần hạn mức còn lại của người đó) ([gói Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); tương tự đối với [gói Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Vì vậy, dùng lựa chọn tự động giữa các seat có thể vi phạm điều khoản của Anthropic. Có dùng nó ở đó hay không là quyết định của bạn: hãy xác nhận với tổ chức của bạn và Anthropic trước khi dựa vào nó. Các gói cá nhân (Pro, Max) được đề cập trong ghi chú ở trên.
+**Seat của gói Team và Enterprise.** Việc tự động chọn tài khoản (`ccam next`, `--fallback`, `ccam pick`, phím `n` trên bảng điều khiển và, khi bạn bật nó, [`auto_switch`](/features/next#auto-switch)) cũng chuyển đổi giữa các seat của cùng một tổ chức Claude Team hoặc Enterprise, điều này có thể vi phạm điều khoản của Anthropic. Hãy đọc [Câu hỏi thường gặp](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) và xác nhận với tổ chức của bạn và Anthropic trước khi dựa vào nó.

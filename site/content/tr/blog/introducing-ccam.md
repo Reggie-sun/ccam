@@ -1,17 +1,17 @@
 ---
 title: ccam ile tanışın
 description: ccam'ın neden var olduğu, birden fazla Claude Code hesabı olan kişiler için ne yaptığı ve işinize nasıl karışmadığı.
-updated: 2026-10-20
+updated: 2026-10-26
 order: 1
 translation: machine
-sourceHash: a555dc969142
+sourceHash: e4370f29b818
 ---
 
 ccam, aynı bilgisayarda birden fazla Claude Code hesabı kullanan kişiler için küçük bir komut satırı aracıdır: bir kişisel ve bir iş hesabı ya da uzun bir proje için birkaç hesap.
 
 ## Sorun
 
-Claude Code, [`CLAUDE_CONFIG_DIR`](/guides/claude-config-dir) aracılığıyla birden fazla hesabı destekler: her hesap için bir klasör. Pratikte her klasör bir adadır. Ayarlar, `CLAUDE.md`, MCP sunucuları, ajanlar ve beceriler her klasörde yeniden kurulmalı ve elle eşit tutulmalıdır. Konuşmalar başladıkları yerde kalır. Bir hesap kullanım limitine ulaştığında da bunu ancak deneyerek öğrenirsiniz.
+Claude Code, [`CLAUDE_CONFIG_DIR`](/guides/claude-config-dir) aracılığıyla birden fazla hesabı destekler: her hesap için bir klasör. Pratikte her klasör bir adadır. Ayarlar, `CLAUDE.md`, MCP sunucuları, ajanlar ve beceriler her klasörde yeniden kurulmalı ve elle eşitlenmelidir. Konuşmalar başladıkları yerde kalır. Bir hesap kullanım limitine ulaştığında da bunu ancak deneyerek öğrenirsiniz.
 
 ## ccam ne yapar
 
@@ -22,7 +22,7 @@ Claude Code, [`CLAUDE_CONFIG_DIR`](/guides/claude-config-dir) aracılığıyla b
 
 ## İşinize karışmamak
 
-Her oturumdan önce çalıştırdığınız bir aracın fark edeceğiniz bir maliyeti olmamalıdır. ccam bir yapılandırma dosyası okur, paylaşılan bağlantıların her birini tek bir sistem çağrısıyla kontrol eder ve ardından kendini `claude` ile değiştirir. Yaklaşık 4 milisaniye ekler ve siz çalışırken çalışır durumda değildir.
+Her oturumdan önce çalıştırdığınız bir aracın fark edeceğiniz bir maliyeti olmamalıdır. ccam bir yapılandırma dosyası okur, paylaşılan bağlantıların her birini bir veya iki sistem çağrısıyla kontrol eder ve ardından kendini `claude` ile değiştirir. Yaklaşık 4 milisaniye ekler ve varsayılan olarak siz çalışırken çalışır durumda değildir.
 
 Dosyalarınıza da özen gösterir. Paylaşımdaki her değişiklik, başlamadan önce bir plan yazdırır ve orijinalleri bir yedek klasöründe saklar. `ccam doctor` bağlantıları, izinleri ve girişleri kontrol eder ve güvenle onarabildiklerini onarır.
 
@@ -35,4 +35,4 @@ ccam add
 
 [Hızlı başlangıç](/docs/quick-start) iki hesap eklemeyi adım adım gösterir, [birden fazla Claude Code hesabı nasıl kullanılır](/guides/multiple-claude-code-accounts) kılavuzu ise yaklaşımı ccam ile ve ccam olmadan açıklar.
 
-ccam açık kaynaklıdır ve resmi değildir: Anthropic ile bağlantılı değildir ve Anthropic tarafından onaylanmamıştır. Birden fazla hesap kullanıp kullanamayacağınız her hesabın koşullarına bağlıdır. Geri bildirimlere ve çevirilere [GitHub](https://github.com/jhyunwoo/ccam) üzerinde açığız.
+ccam açık kaynaklıdır ve resmi değildir: Anthropic ile bağlantılı değildir ve Anthropic tarafından onaylanmamıştır. Birden fazla hesap kullanıp kullanamayacağınız, her birine uygulanan koşullara bağlıdır. Geri bildirimlere ve çevirilere [GitHub](https://github.com/jhyunwoo/ccam) üzerinde açığız.

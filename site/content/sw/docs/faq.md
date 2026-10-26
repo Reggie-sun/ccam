@@ -2,10 +2,10 @@
 title: Maswali yanayoulizwa mara kwa mara
 metaTitle: "Maswali kuhusu ccam: akaunti kadhaa za Claude Code"
 description: Majibu kuhusu ccam, akaunti za Claude Code, vikomo vya matumizi, kushiriki, faragha na mifumo inayotumika.
-updated: 2026-10-25
+updated: 2026-10-26
 order: 6
 translation: machine
-sourceHash: "8e9deca652d1"
+sourceHash: "b53878aaabc7"
 ---
 
 ## Je, ccam ni zana rasmi ya Anthropic?
@@ -14,9 +14,9 @@ Hapana. ccam ni mradi usio rasmi wa open source na hauhusiani na Anthropic wala 
 
 ## Je, ninaruhusiwa kutumia akaunti kadhaa za Claude Code?
 
-Hilo linategemea masharti ya kila akaunti na, kwa akaunti za kazi, sera ya shirika lako: [Consumer Terms](https://www.anthropic.com/legal/consumer-terms) za Anthropic kwa Pro na Max, [Commercial Terms](https://www.anthropic.com/legal/commercial-terms) zake kwa Team na Enterprise, na [Usage Policy](https://www.anthropic.com/legal/aup) yake kwa zote. Yakague kabla ya kutumia akaunti kadhaa. ccam haiongezi, haiunganishi wala haifichi vikomo vya akaunti, na kila akaunti bado husimama kwenye vikomo vyake yenyewe. Huendeleza kazi yako kama akaunti nyingine kati ya akaunti zako unapoomba, au yenyewe kwenye kikomo unapowasha [`auto_switch`](/features/next#auto-switch) (Linux na macOS). Kama hilo linaruhusiwa kwa akaunti zako ni uamuzi wako.
+Hilo linategemea masharti ya kila akaunti na, kwa akaunti za kazi, sera ya shirika lako: [Consumer Terms](https://www.anthropic.com/legal/consumer-terms) za Anthropic kwa Pro na Max, [Commercial Terms](https://www.anthropic.com/legal/commercial-terms) zake kwa Team na Enterprise, na [Usage Policy](https://www.anthropic.com/legal/aup) yake kwa zote. Yakague kabla ya kutumia akaunti kadhaa. ccam haiongezi, haiunganishi wala haifichi vikomo vya akaunti, na kila akaunti bado husimama kwenye vikomo vyake yenyewe. Huhamisha kazi yako kwenda akaunti nyingine kati ya akaunti zako unapoomba, au yenyewe kwenye kikomo unapowasha [`auto_switch`](/features/next#auto-switch) (Linux na macOS). Hakikisha kama hilo linaruhusiwa kwa akaunti zako kabla ya kulitumia; uamuzi ni wako.
 
-**Viti (seats) vya Team na Enterprise.** Chaguo za kiotomatiki (`ccam next`, `--fallback`, `ccam pick`, kitufe `n` cha dashibodi, na [`auto_switch`](/features/next#auto-switch) unapokiwasha) pia hubadili kati ya viti vya shirika lile lile la Claude Team au Enterprise. Kituo cha usaidizi cha Anthropic kinasema "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (kila kiti katika mpango wa Team hutolewa kwa mtu mmoja aliyetajwa kwa jina, na ni mtu huyo pekee anayeruhusiwa kukitumia) na "Users can't route their work through another user's account to use that user's remaining usage" (watumiaji hawaruhusiwi kuelekeza kazi yao kupitia akaunti ya mtumiaji mwingine ili kutumia kiasi cha matumizi kilichobaki cha mtumiaji huyo) ([mipango ya Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); vivyo hivyo kwa [mipango ya Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Kwa hiyo, kutumia chaguo za kiotomatiki kati ya viti kunaweza kukiuka masharti ya Anthropic. Kama utazitumia huko ni uamuzi wako: wasiliana na shirika lako na Anthropic kabla ya kuzitegemea. Mipango ya binafsi (Pro, Max) inaelezwa katika aya iliyo hapo juu.
+**Viti (seats) vya Team na Enterprise.** Uchaguzi wa akaunti wa kiotomatiki (`ccam next`, `--fallback`, `ccam pick`, kitufe `n` cha dashibodi na [`auto_switch`](/features/next#auto-switch) unapokiwasha) pia hubadili kati ya viti vya shirika lile lile la Claude Team au Enterprise. Kituo cha usaidizi cha Anthropic kinasema "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (kila kiti katika mpango wa Team hutolewa kwa mtu mmoja aliyetajwa kwa jina, na ni mtu huyo pekee anayeruhusiwa kukitumia) na "Users can't route their work through another user's account to use that user's remaining usage" (watumiaji hawaruhusiwi kuelekeza kazi yao kupitia akaunti ya mtumiaji mwingine ili kutumia kiasi cha matumizi kilichobaki cha mtumiaji huyo) ([mipango ya Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); vivyo hivyo kwa [mipango ya Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Kwa hiyo, kutumia uchaguzi wa kiotomatiki kati ya viti kunaweza kukiuka masharti ya Anthropic. Kama utazitumia huko ni uamuzi wako: wasiliana na shirika lako na Anthropic kabla ya kuzitegemea. Mipango ya binafsi (Pro, Max) inaelezwa katika aya iliyo hapo juu.
 
 ## Je, ccam hukwepa vikomo vya matumizi?
 
@@ -24,7 +24,11 @@ Si zaidi ya kikomo cha akaunti yoyote: kila akaunti huhifadhi vikomo vyake na hu
 
 ## Je, ccam inaweza kubadili akaunti yenyewe kipindi kinapofikia kikomo chake?
 
-Ni pale tu unapoiwasha. Kwa `auto_switch = true` juu kabisa ya `~/.config/ccam/config.toml` (Linux na macOS; imezimwa kwa chaguo-msingi na ni ya majaribio), Claude Code inaposimamisha kipindi shirikishi ambacho ccam ilianzisha kwenye kikomo cha saa 5, cha wiki, cha Opus au cha Sonnet, ccam humaliza kipindi na huendeleza mazungumzo kama akaunti nyingine kati ya akaunti zako yenye nafasi: kiti kingine cha shirika lile lile la Team au Enterprise, au mpango mwingine wa binafsi (Pro, Max). Kamwe haibadili kabla ya kikomo, kamwe haifuatilii matumizi yako chinichini, na kamwe haihamishi kazi kutoka kwenye shirika la Team au Enterprise wala kuingia ndani ya moja. Kwenye viti huhamisha kazi yako kutoka kiti kimoja kwenda kingine, jambo ambalo linaweza kukiuka masharti ya Anthropic (tazama Viti vya Team na Enterprise hapo juu), na kwa mipango ya binafsi masharti ya Anthropic hayaamui jambo hili: Consumer Terms hukataza kufikia Huduma "through automated or non-human means" (kwa njia za kiotomatiki au zisizo za binadamu) isipokuwa Anthropic iruhusu waziwazi, na uhamisho hutuma ujumbe mmoja kwa niaba yako; kuiwasha ni uamuzi wako. [`auto_switch`](/features/next#auto-switch) huorodhesha kila sharti na gharama ya uhamisho.
+Ni pale tu unapoiwasha. Kwa `auto_switch = true` juu kabisa ya `~/.config/ccam/config.toml` (Linux na macOS; imezimwa kwa chaguo-msingi na ni ya majaribio), Claude Code inaposimamisha kipindi shirikishi (kilichoanzishwa na ccam) kwenye kikomo cha saa 5, cha wiki, cha Opus au cha Sonnet, ccam humaliza kipindi na huendeleza mazungumzo kama akaunti nyingine kati ya akaunti zako yenye nafasi: kiti kingine cha shirika lile lile la Team au Enterprise, au mpango mwingine wa binafsi (Pro, Max). Kamwe haibadili kabla ya kikomo, kamwe haifuatilii matumizi yako chinichini, na kamwe haihamishi kazi kutoka kwenye shirika la Team au Enterprise wala kuingia ndani ya moja.
+
+Kwenye viti huhamisha kazi yako kutoka kiti kimoja kwenda kingine, jambo ambalo linaweza kukiuka masharti ya Anthropic (tazama Viti vya Team na Enterprise hapo juu). Kwa mipango ya binafsi, masharti ya Anthropic hayalizungumzii jambo hili waziwazi: Consumer Terms hukataza kufikia Huduma "through automated or non-human means" (kwa njia za kiotomatiki au zisizo za binadamu) isipokuwa Anthropic iruhusu waziwazi, na uhamisho hutuma ujumbe mmoja kwa niaba yako. Kuiwasha ni uamuzi wako.
+
+[`auto_switch`](/features/next#auto-switch) huorodhesha kila sharti na gharama ya uhamisho.
 
 ## Nitatumiaje akaunti mbili za Claude Code kwenye kompyuta moja?
 
@@ -36,7 +40,7 @@ Endesha `ccam next --continue` ndani ya folda: huhamisha mazungumzo ya mwisho ya
 
 ## Je, ccam huona au kutuma taarifa zangu za kuingia?
 
-ccam kamwe haishiriki wala kunakili taarifa zako za kuingia za Claude kati ya akaunti, na kamwe hainakili kuingia kwa seva za MCP. Husoma tokeni ya ufikiaji ya akaunti ili tu kuuliza endpoint ya matumizi ya Anthropic kuhusu matumizi ya akaunti hiyo: kwa `ccam usage`, dashibodi, `ccam doctor` na chaguo za kiotomatiki (`ccam next --auto`, `ccam pick`, `--fallback`, na `auto_switch` kipindi kinapofikia kikomo chake). Hufanya upya tokeni iliyokwisha muda kwa `ccam usage --refresh` pekee; kwa `usage_source = "claude"` haitumi tokeni popote na husoma taarifa za kuingia zilizohifadhiwa (faili, au kipengele cha Keychain ya macOS) ili tu kujua kama bado zinafanya kazi. `ccam ext` na `ccam doctor` husoma majina ya kuingia kwa MCP ya akaunti, kamwe si tokeni zake. ccam haina telemetry. Mbali na maswali hayo, ombi pekee inalotuma yenyewe ni swali la dashibodi kwa GitHub kuhusu toleo jipya zaidi la ccam, ambalo halibebi chochote kukuhusu wewe au akaunti zako.
+ccam kamwe haishiriki wala kunakili taarifa zako za kuingia za Claude kati ya akaunti, na kamwe hainakili kuingia kwa seva za MCP. Husoma tokeni ya ufikiaji ya akaunti ili tu kuuliza endpoint ya matumizi ya Anthropic kuhusu matumizi ya akaunti hiyo: kwa `ccam usage`, dashibodi, `ccam doctor` na chaguo za kiotomatiki (`ccam next --auto`, `ccam pick`, `--fallback`, na `auto_switch` kipindi kinapofikia kikomo chake). Hufanya upya tokeni iliyokwisha muda kwa `ccam usage --refresh` pekee; kwa `usage_source = "claude"` haitumi tokeni popote na husoma taarifa za kuingia zilizohifadhiwa (faili, au kipengele cha Keychain ya macOS) ili tu kujua kama bado zinafanya kazi. `ccam ext` na `ccam doctor` husoma majina ya kuingia kwa MCP ya akaunti, kamwe si tokeni zake. ccam haina telemetry. Mbali na maswali hayo, ombi pekee inalotuma yenyewe ni ukaguzi wa dashibodi kwenye GitHub wa toleo jipya zaidi la ccam, ambalo halibebi chochote kukuhusu wewe au akaunti zako.
 
 ## Nitaingiaje kwenye seva ya mbali?
 
@@ -48,11 +52,11 @@ Katika `~/.local/share/ccam/profiles/<name>/`, folda moja kwa kila akaunti. Kwen
 
 ## Nini kinatokea kwa ~/.claude yangu iliyopo?
 
-Hakuna kitu, isipokuwa uendeshe `ccam import` au `ccam migrate`. Import husajili folda pale ilipo, kwa hiyo `claude` ya kawaida na `ccam <name>` huendelea kutumia akaunti na mipangilio ile ile. `ccam migrate` hunakili mipangilio yake, `CLAUDE.md`, viendelezi na seva za MCP kwenye mipangilio inayoshirikiwa, na husoma folda tu.
+Hakuna kitu, isipokuwa uendeshe `ccam import` au `ccam migrate`. Import husajili folda pale ilipo, kwa hiyo `claude` ya kawaida na `ccam <name>` huendelea kutumia akaunti na mipangilio ile ile. `ccam migrate` hunakili mipangilio yake, `CLAUDE.md`, viendelezi na seva za MCP kwenye kikundi cha `default` kinachoshirikiwa, na husoma folda tu.
 
 ## ccam inatumika kwenye mifumo gani?
 
-Linux (Ubuntu, Debian, Fedora, Arch, Alpine na mingineyo), macOS na Windows 10 na 11, moja kwa moja au ndani ya WSL. Kwenye Windows, kushiriki faili kama `settings.json` kunahitaji Developer Mode; folda zinazoshirikiwa hufanya kazi bila hiyo, na bila hiyo `ccam add` ya kwanza huunda kikundi `default` chenye seva za MCP na viendelezi pekee ([kushiriki kwenye Windows](/features/share#on-windows)).
+Linux (Ubuntu, Debian, Fedora, Arch, Alpine na mingineyo), macOS na Windows 10 na 11, moja kwa moja au ndani ya WSL. Kwenye Windows, kushiriki faili kama `settings.json` kunahitaji Developer Mode; folda zinazoshirikiwa hufanya kazi bila hiyo, na bila hiyo `ccam add` ya kwanza huunda kikundi cha `default` chenye seva za MCP na viendelezi pekee ([kushiriki kwenye Windows](/features/share#on-windows)).
 
 ## Kwa nini seva ya MCP inaonekana katika akaunti moja tu?
 
@@ -60,7 +64,7 @@ Seva zilizoongezwa ndani ya kipindi kwa `claude mcp add` huhifadhiwa kwa akaunti
 
 ## Je, ccam hupunguza kasi ya Claude Code?
 
-Kuanzisha Claude Code kupitia ccam huongeza takriban milisekunde 4, zilizopimwa kwa `scripts/perf-check.sh` kwenye kompyuta mpakato. ccam husoma faili moja ndogo, hukagua viungo vinavyoshirikiwa kisha hujibadilisha yenyewe kuwa `claude`, kwa hiyo kwa chaguo-msingi haiendeshwi wakati unafanya kazi. Windows haiwezi kubadilisha mchakato, kwa hiyo huko ccam huanzisha Claude Code na kuisubiri, bila kufanya kitu kingine. `relay` au `auto_switch` ikiwa imewashwa, ccam husubiri kwa njia hiyo hiyo kando ya kila kipindi shirikishi, ili iweze kuendeleza mazungumzo.
+Kuanzisha Claude Code kupitia ccam huongeza takriban milisekunde 4, zilizopimwa kwa `scripts/perf-check.sh` kwenye kompyuta mpakato. ccam husoma faili moja ndogo, hukagua viungo vinavyoshirikiwa kisha hujibadilisha yenyewe kuwa `claude`, kwa hiyo kwa chaguo-msingi haiendeshwi wakati unafanya kazi. Windows haiwezi kubadilisha mchakato, kwa hiyo huko ccam huanzisha Claude Code na kuisubiri, bila kufanya kitu kingine. `relay` au `auto_switch` ikiwa imewashwa, ccam huendelea kuendeshwa kwa njia hiyo hiyo kando ya kila kipindi shirikishi, ili iweze kuendeleza mazungumzo kwenye akaunti nyingine.
 
 ## Nitasasishaje ccam?
 

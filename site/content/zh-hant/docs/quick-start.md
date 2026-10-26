@@ -2,13 +2,15 @@
 title: 快速入門
 metaTitle: "快速入門：新增和切換 Claude Code 帳號"
 description: 用 ccam add 新增兩個 Claude Code 帳號，為它們設定 ccwork 這類快捷指令並在帳號之間切換，再選擇要共用的項目。
-updated: 2026-10-25
+updated: 2026-10-26
 order: 2
 translation: machine
-sourceHash: "0570ef27e4ce"
+sourceHash: "bd893bbb83ab"
 ---
 
 用 `ccam add` 新增每個帳號，然後用 `ccam <name>` 或你自己命名的快捷指令（例如 `ccwork`）啟動 Claude Code。大多數人只需要這些。
+
+已經在使用 Claude Code 了嗎？開始之前，請先閱讀本頁最後的[已經在使用 ~/.claude？](#already-using-claude)。
 
 ## 1. 新增第一個帳號
 
@@ -16,7 +18,7 @@ sourceHash: "0570ef27e4ce"
 ccam add
 ```
 
-設定精靈會要求你輸入名稱，例如 `personal` 或 `work`，並詢問這個帳號要和其他帳號共用哪些項目，以及是否建立快捷指令（請見第 4 步）。接著它會執行 `claude auth login`，開啟瀏覽器讓你登入。在遠端機器上，瀏覽器可能會停在無法載入的 `http://localhost:…/callback` 頁面；把這個網址貼到終端機中，ccam 就會完成登入。完成後你會看到：
+設定精靈會要求你輸入名稱，例如 `personal` 或 `work`，並詢問這個帳號要和其他帳號共用哪些項目，以及是否建立快捷指令（請見第 3 步）。接著它會執行 `claude auth login`，開啟瀏覽器讓你登入。在遠端機器上，你的瀏覽器可能會停在無法載入的 `http://localhost:…/callback` 頁面；把這個網址貼到終端機中，ccam 就會完成登入。登入完成後，你會看到：
 
 ```console
 ✓ personal (me@example.com) added
@@ -25,7 +27,7 @@ ccam add
 
 ## 2. 移轉現有的設定
 
-如果你以前用過 Claude Code，你的設定、`CLAUDE.md`、擴充功能和 MCP 伺服器都在 `~/.claude` 中。把它們複製到共用設定，每個帳號就都能使用：
+如果你以前用過 Claude Code，你的設定、`CLAUDE.md` 和擴充功能都在 `~/.claude` 中，MCP 伺服器則在 `~/.claude.json` 中。把它們複製到共用的 `default` 群組，每個帳號就都能使用：
 
 ```sh
 ccam migrate
@@ -39,11 +41,7 @@ ccam 會先顯示要複製的內容並詢問你。它只會讀取 `~/.claude`，
 ccam add work
 ```
 
-在瀏覽器中用另一個帳號登入。
-
-## 4. 切換帳號
-
-`ccam work` 會以 work 帳號啟動 Claude Code。想要更短的指令，可以為帳號取一個專屬的快捷指令，例如 `ccwork`。選完共用項目後，設定精靈會詢問：
+設定精靈會略過名稱（你已在命令列中指定），並顯示可加入的群組，其中 `default` 已勾選。這次請為帳號取一個專屬的快捷指令，例如 `ccwork`，這樣只要一個詞就能啟動它。選完群組後，設定精靈會詢問：
 
 ```console
  Create a shortcut command for work? [y/N]
@@ -57,21 +55,23 @@ ccam add work
  a-z, 0-9, '.', '-' and '_'; Enter alone uses ccwork
 ```
 
-登入完成後，ccam 會顯示確認訊息：
+接著在瀏覽器中用另一個帳號登入。ccam 會確認帳號及其快捷指令：
 
 ```console
 ✓ work (work@example.com) added
   shortcut: ccwork
 ```
 
-如果你跳過了這個問題，隨時都可以新增快捷指令：
+## 4. 切換帳號
+
+`ccam work` 會以 work 帳號啟動 Claude Code。如果你跳過了快捷指令的問題，隨時都可以新增快捷指令：
 
 ```console
 $ ccam shortcut work ccwork
 ✓ shortcut for work: ccwork
 ```
 
-現在，以下任一指令都會以 work 帳號啟動 Claude Code：
+現在，以下每個指令都會以 work 帳號啟動 Claude Code（`2` 是它在 `ccam list` 中的編號）：
 
 ```sh
 ccwork
@@ -91,7 +91,7 @@ cat error.log | ccwork -p "what caused this?"
 
 ## 5. 選擇要共用的項目
 
-預設情況下，MCP 伺服器、`settings.json`、全域 `CLAUDE.md`，以及 agents、commands、skills 和 plugins 都會透過群組 `default` 在帳號之間共用，對話記錄則不會。如果想在帳號之間接續對話，請把它加到群組中：
+預設情況下，MCP 伺服器、`settings.json`、全域 `CLAUDE.md` 和擴充功能（agents、commands、skills 和 plugins）都會透過 `default` 群組在帳號之間共用，對話記錄則不會。如果想在帳號之間接續對話，請把它加到群組中：
 
 ```sh
 ccam group set default --add history
@@ -108,7 +108,7 @@ ccam next --continue
 
 `ccam usage` 會顯示每個帳號的 5 小時用量和每週用量。`ccam next --continue` 會在下一個帳號開啟同一段對話。在指令碼中，`ccam --fallback work -p "…"` 會自行切換。請參閱[用量限制](/docs/usage-limits)。
 
-**Team 和 Enterprise 席位。** 自動選擇（`ccam next`、`--fallback`、`ccam pick`、儀表板的 `n`，以及你開啟後的 [`auto_switch`](/features/next#auto-switch)）也會在同一個 Claude Team 或 Enterprise 組織的席位之間切換。Anthropic 說明中心關於 [Team 方案](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)的文章寫道：「Each seat on a Team plan is assigned to one named individual, and only that person may use it」（Team 方案的每個席位都指派給一位具名的個人，而且只有這個人可以使用），以及「Users can't route their work through another user's account to use that user's remaining usage」（使用者不能經由其他使用者的帳號處理自己的工作，藉此使用對方剩餘的用量）；關於 [Enterprise 方案](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)的文章也是如此。因此，在席位之間使用自動選擇可能會違反 Anthropic 的條款。要不要在這種情況下使用它由你決定：在依賴這項功能之前，請先向你所屬的組織和 Anthropic 確認。個人方案（Pro、Max）的情況請參閱[常見問題中關於條款的說明](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)。
+**Team 和 Enterprise 席位。** 自動選擇帳號（`ccam next`、`--fallback`、`ccam pick`、儀表板的 `n`，以及你開啟後的 [`auto_switch`](/features/next#auto-switch)）也會在同一個 Claude Team 或 Enterprise 組織的席位之間切換，這可能會違反 Anthropic 的條款。在依賴這項功能之前，請先閱讀[常見問題](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)，並向你所屬的組織和 Anthropic 確認。
 
 ## 已經在使用 ~/.claude？
 

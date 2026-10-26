@@ -1,13 +1,13 @@
 ---
 title: Duba extensions
 description: ccam ext yana nuna skills, commands, plugins, sabobin MCP da hooks da kowane asusu ke lodawa, inda kowanne ya fito, da abin da ya lalace.
-updated: 2026-10-23
+updated: 2026-10-26
 order: 14
 translation: machine
-sourceHash: 45740e4efbef
+sourceHash: 7ca357a7f38a
 ---
 
-`ccam ext` yana amsa tambayar "me ya sa wannan skill (ko saban MCP) yake aiki a wani asusu amma ba a ɗayan ba?". Yana lissafa, ga kowane asusu, extensions da Claude Code ke lodawa da inda kowanne ya fito: rukunin rabawa, foldar asusun kansa, ko project ɗin da kake ciki. A ƙarƙashin teburin yana lissafa abin da ke hana extension lodawa kamar yadda kake tsammani. Yana karantawa ne kawai.
+`ccam ext` yana amsa tambayar "Me ya sa wannan skill (ko saban MCP) yake aiki a wani asusu amma ba a ɗayan ba?" Yana lissafa, ga kowane asusu, extensions da Claude Code ke lodawa da inda kowanne ya fito: rukunin rabawa, foldar asusun kansa, ko project ɗin da kake ciki. A ƙarƙashin teburin yana lissafa abin da ke hana extension lodawa kamar yadda kake tsammani. Ba ya canza komai.
 
 ## Amfani
 
@@ -62,10 +62,10 @@ Kowane ɗaki yana faɗin tushen wannan abu a wannan asusu: rukunin rabawa (`defa
 
 - **Mahaɗai da suka lalace**: mahaɗi a `skills/`, `commands/` ko `agents/` wanda abin da yake nunawa ya ɓace, ko folda da aka raba (`skills`, `commands`, `agents`, `plugins`) da ke haɗawa da wurin da babu shi (gyara shi da `ccam doctor --fix`, wanda ke sake ƙirƙirar foldar rukuni da ta ɓace).
 - **Foldar skill ba tare da `SKILL.md` ba**: Claude Code yana tsallake ta.
-- **Saban MCP da aka ayyana daban a wurare biyu**: `mcp.json` na rukunin da `.claude.json` na asusun, ko ɗaya daga cikinsu da `.mcp.json` na project ɗin. Saituna iri ɗaya a wuraren biyu (waɗanda `mcp_strategy = "sync"` ke rubutawa) ba matsala ba ne. Matsar da saban asusu na kansa zuwa rukunin da `ccam mcp import <account> <server>`.
+- **Saban MCP da aka ayyana daban a wurare biyu**: `mcp.json` na rukunin da `.claude.json` na asusun, ko ɗaya daga cikinsu da `.mcp.json` na project ɗin. Ma'anoni iri ɗaya a wuraren biyu (waɗanda `mcp_strategy = "sync"` ke rubutawa) ba matsala ba ne. Matsar da saban asusu na kansa zuwa rukunin da `ccam mcp import <account> <server>`.
 - **`installed_plugins.json` da ba JSON mai inganci ba**, plugin da `enabledPlugins` bai ambata ba, da plugin wanda foldarsa ta ɓace.
 - **Sabobin da asusu ɗaya kawai ke lodawa**: saban da ke cikin `.claude.json` na wannan asusun kawai, wanda sauran asusan rukuninsa ba sa lodawa, da wanda ke cikin local scope na asusun don wannan foldar (abin da `claude mcp add` ke yi sai dai idan an ba shi `-s user`). Kowanne yana zuwa da umarnin `ccam mcp import` da ke raba shi. Sabobin da ke cikin `~/.claude.json` na `claude` na yau da kullum waɗanda babu asusun da ke lodawa suna zuwa da umarnin `ccam migrate --mcp`.
-- **Saban project da ke jiran amincewa**: asusun bai amince da foldar ba tukuna, don haka Claude Code yana tambaya sau ɗaya, kuma har zuwa lokacin sabobin `.mcp.json` na project ɗin suna jira. Matsalar tana faɗin inda za a amince da su: `"enabledMcpjsonServers"` a `settings.json` na asusan rukunin saituna, ko na wannan asusun. Amincewar da aka ba babban worktree na git repository tana aiki a sauran worktrees ɗinsa.
+- **Saban project da ke jiran amincewa**: asusun bai amince da foldar ba tukuna, don haka Claude Code yana tambaya sau ɗaya, kuma har zuwa lokacin sabobin `.mcp.json` na project ɗin suna jira. Matsalar tana faɗin inda za a amince da su: `"enabledMcpjsonServers"` a `settings.json` na asusan rukunin saituna, ko na wannan asusun. Amincewar da aka ba babban worktree na git repository tana kuma aiki a sauran worktrees ɗinsa.
 - **Shiga da connectors**: saban MCP da ke buƙatar shiga a wannan asusun alhali wani asusu ya shiga cikinsa (shiga tana aiki ga asusu ɗaya kawai; shiga da `/mcp`), da connectors na claude.ai da wani asusu ya yi amfani da su amma wannan bai yi ba.
 
 ## Tsaro da yanayi na musamman
@@ -76,6 +76,6 @@ Kowane ɗaki yana faɗin tushen wannan abu a wannan asusu: rukunin rabawa (`defa
 
 ## Masu alaƙa
 
-- [Rabawa tsakanin asusai](/features/share)
+- [Rabawa da rukunoni](/features/share)
 - [Sabobin MCP da aka raba](/features/mcp)
 - [Dubawa da gyarawa](/features/doctor)

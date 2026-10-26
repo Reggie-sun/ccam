@@ -202,7 +202,7 @@ func historyCheck(p paths.Paths, pl *Plan) error {
 		fmt.Fprintf(os.Stderr, "ccam: another Claude Code sharing conversation history (group %s) is running in this folder.\n      Continuing the same conversation from both at once can mix up the history.\n", group)
 		switch {
 		case Unattended:
-			fmt.Fprintln(os.Stderr, "      ccam is carrying its own conversation on, so it does not ask.")
+			fmt.Fprintln(os.Stderr, "      ccam is continuing its own conversation, so it does not ask.")
 		case !askTTY("Run anyway?"):
 			return fmt.Errorf("cancelled")
 		}
@@ -270,7 +270,7 @@ func remoteControlMCP(pl *Plan, group, gdir, state string, dry bool, running fun
 	case dry:
 	case running():
 		fmt.Fprintf(os.Stderr, "      Account %s is running, so its .claude.json is left alone. Run this again after it exits to copy them.\n", name)
-	case confirm("Copy them into .claude.json (a backup is kept; servers of the account's own stay)?"):
+	case confirm("Copy them into .claude.json (a backup is kept; the account's own servers stay)?"):
 		res, err := mcp.Sync(pl.Dir, gdir, state)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "ccam: copying the MCP servers failed (starting without them): %v\n", err)
@@ -284,7 +284,7 @@ func remoteControlMCP(pl *Plan, group, gdir, state string, dry bool, running fun
 // syncNotes says what Sync did besides copying.
 func syncNotes(name, group string, res mcp.Result) {
 	if len(res.Own) > 0 {
-		fmt.Fprintf(os.Stderr, "ccam: account %s has its own MCP servers %s, so group %s's of those names are not copied there\n"+
+		fmt.Fprintf(os.Stderr, "ccam: account %s has its own MCP servers %s, so group %s's servers with those names are not copied there\n"+
 			"      To use the group's, remove the account's (claude mcp remove -s user <name>); to share the account's: ccam mcp import %s <name> --force\n",
 			name, strings.Join(res.Own, ", "), group, name)
 	}
@@ -412,7 +412,7 @@ func mcpVerbNote(name, group, gdir, verb string) {
 // localHint names the servers NewLocal found that only this account has.
 func localHint(name, group string, l mcp.Local) {
 	if len(l.User) > 0 {
-		fmt.Fprintf(os.Stderr, "ccam: MCP servers only account %s has: %s\n      To share them with other accounts: ccam mcp import %s %s\n",
+		fmt.Fprintf(os.Stderr, "ccam: MCP servers that only account %s has: %s\n      To share them with other accounts: ccam mcp import %s %s\n",
 			name, strings.Join(l.User, ", "), name, strings.Join(l.User, " "))
 	}
 	if len(l.Folder) > 0 {
@@ -425,11 +425,11 @@ func localHint(name, group string, l mcp.Local) {
 				}
 			}
 		}
-		fmt.Fprintf(os.Stderr, "ccam: MCP servers account %s has for one folder only (claude mcp add without -s user): %s\n"+
+		fmt.Fprintf(os.Stderr, "ccam: MCP servers that account %s has for one folder only (claude mcp add without -s user): %s\n"+
 			"      To share them with other accounts, in every folder: ccam mcp import %s %s\n", name, strings.Join(where, ", "), name, strings.Join(names, " "))
 	}
 	if len(l.Shadow) > 0 {
-		fmt.Fprintf(os.Stderr, "ccam: account %s has its own MCP servers %s, which its sessions use instead of group %s's of those names\n"+
+		fmt.Fprintf(os.Stderr, "ccam: account %s has its own MCP servers %s, which its sessions use instead of group %s's servers with those names\n"+
 			"      To use the group's, remove the account's (claude mcp remove -s user <name>); to share the account's: ccam mcp import %s <name> --force\n",
 			name, strings.Join(l.Shadow, ", "), group, name)
 	}

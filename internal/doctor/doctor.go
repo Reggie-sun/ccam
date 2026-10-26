@@ -183,14 +183,14 @@ func checkPendingChange(r *report, p paths.Paths, cfg *config.Config, held *grou
 	r.area = "Groups"
 	if held == nil && group.Changing(p) {
 		// The note stays until that ccam is done.
-		r.add(Info, "", "a change of groups is being carried out right now; its accounts' share links are left to it")
+		r.add(Info, "", "a group change is in progress right now; its accounts' share links are left to it")
 		return group.Noted(p), linksLeave, nil
 	}
-	f := r.add(Error, "", "the last change of groups stopped halfway (ccam doctor --fix finishes it; noted in %s)", group.NotePath(p))
+	f := r.add(Error, "", "the last group change stopped halfway (ccam doctor --fix finishes it; noted in %s)", group.NotePath(p))
 	if dry {
 		ch, err := group.Preview(p, cfg)
 		if err != nil {
-			r.add(Error, "", "could not plan the rest of the last change of groups: %v", err)
+			r.add(Error, "", "could not plan the rest of the last group change: %v", err)
 			return group.Noted(p), linksWait, nil
 		}
 		previews := map[string]*share.Plan{}
@@ -208,16 +208,16 @@ func checkPendingChange(r *report, p paths.Paths, cfg *config.Config, held *grou
 	noted := group.Noted(p)
 	ch, err := group.Resume(held, cfg, group.Running(p))
 	if err != nil {
-		r.add(Error, "", "could not finish the last change of groups: %v\n"+
+		r.add(Error, "", "could not finish the last group change: %v\n"+
 			"If the cause cannot be fixed, removing %s gives up the rest of that change; ccam doctor --fix then repairs the links", err, group.NotePath(p))
 		return noted, linksWait, nil
 	}
 	f.Fixed = true
 	if ch == nil || len(ch.Accounts) == 0 {
-		r.add(OK, "", "finished the last change of groups (none of its accounts is in the config any more)")
+		r.add(OK, "", "finished the last group change (none of its accounts is in the config anymore)")
 		return nil, linksRepair, nil
 	}
-	r.add(OK, "", "finished the last change of groups (%s)", strings.Join(ch.Names(), ", "))
+	r.add(OK, "", "finished the last group change (%s)", strings.Join(ch.Names(), ", "))
 	for _, a := range ch.Accounts {
 		setAside(r, a.Name, a.Plan, true)
 	}
@@ -388,7 +388,7 @@ func checkAutoSwitch(r *report, p paths.Paths, cfg *config.Config, claude, goos 
 	}
 	r.area = "auto_switch"
 	if goos == "windows" {
-		r.add(Info, "", "auto_switch is ignored on Windows; with relay = true, /ccam:switch and then /exit carry a conversation on.")
+		r.add(Info, "", "auto_switch is ignored on Windows; with relay = true, /ccam:switch followed by /exit still moves a conversation to another account.")
 		return
 	}
 	r.add(Info, "", "auto_switch is on: at a usage limit, ccam moves an interactive session it started to another account like the one it leaves (a seat of the same organization, or another personal plan) with room. Whether that fits Anthropic's terms is your call: https://ccam.dev/en/features/next/#auto-switch")
@@ -574,7 +574,7 @@ func checkProfile(r *report, p paths.Paths, prof *config.Profile, fix, dry bool,
 			r.out[base+i].Fixed = pr.Safe()
 		}
 		if len(rest) > 0 {
-			r.add(Warn, prof.Name, "the rest of its share links are repaired when the last change of groups is finished (ccam doctor --fix)")
+			r.add(Warn, prof.Name, "the rest of its share links are repaired when the last group change is finished (ccam doctor --fix)")
 		}
 	case fix:
 		// Build with the target as both sides: it re-derives every step from
@@ -624,17 +624,17 @@ func setAside(r *report, name string, pl *share.Plan, done bool) {
 		}
 		switch {
 		case done && c.Choice == share.UseMine:
-			r.add(Info, name, "%s differed from the group's copy; the group now uses this account's, as chosen for the change of groups (the group's copy is in %s, this account's file in %s)", c.Entry.Name, c.GroupSave, saved)
+			r.add(Info, name, "%s differed from the group's copy; the group now uses this account's, as chosen for the group change (the group's copy is in %s, this account's file in %s)", c.Entry.Name, c.GroupSave, saved)
 		case done && c.Choice == share.MergeJSON:
-			r.add(Info, name, "%s differed from the group's copy; this account's settings were merged into it, as chosen for the change of groups (the group's copy is in %s, this account's file in %s)", c.Entry.Name, c.GroupSave, saved)
+			r.add(Info, name, "%s differed from the group's copy; this account's settings were merged into it, as chosen for the group change (the group's copy is in %s, this account's file in %s)", c.Entry.Name, c.GroupSave, saved)
 		case done && c.Choice == share.MergeLines:
 			r.add(Info, name, "%s differed from the group's copy; this account's lines were added to it, and its file is in %s", c.Entry.Name, saved)
 		case done:
 			r.add(Info, name, "%s differed from the group's copy, which it now uses; this account's copy is in %s", c.Entry.Name, saved)
 		case c.Choice == share.UseMine:
-			r.add(Info, name, "%s differs from the group's copy: --fix would give the group this account's, as chosen for the change of groups (the group's copy goes to %s, this account's file to %s)", c.Entry.Name, c.GroupSave, saved)
+			r.add(Info, name, "%s differs from the group's copy: --fix would give the group this account's, as chosen for the group change (the group's copy goes to %s, this account's file to %s)", c.Entry.Name, c.GroupSave, saved)
 		case c.Choice == share.MergeJSON:
-			r.add(Info, name, "%s differs from the group's copy: --fix would merge this account's settings into it, as chosen for the change of groups (the group's copy goes to %s, this account's file to %s)", c.Entry.Name, c.GroupSave, saved)
+			r.add(Info, name, "%s differs from the group's copy: --fix would merge this account's settings into it, as chosen for the group change (the group's copy goes to %s, this account's file to %s)", c.Entry.Name, c.GroupSave, saved)
 		case c.Choice == share.MergeLines:
 			r.add(Info, name, "%s differs from the group's copy: --fix would add this account's lines to it, and move its file to %s", c.Entry.Name, saved)
 		default:

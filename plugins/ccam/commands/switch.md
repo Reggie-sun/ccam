@@ -1,5 +1,5 @@
 ---
-description: Carry this conversation on as another ccam account (the next one, or the one you name)
+description: Continue this conversation on another ccam account (the next one, or the one you name)
 argument-hint: "[account]"
 ---
 

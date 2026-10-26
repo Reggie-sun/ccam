@@ -14,17 +14,17 @@
     "menu": "메뉴",
     "skip": "본문으로 건너뛰기",
     "language": "언어",
-    "theme": "밝은 테마/어두운 테마 전환"
+    "theme": "밝은 테마와 어두운 테마 간 전환"
   },
   "facts": {
     "what": "ccam은 컴퓨터 한 대에서 여러 Claude Code 계정을 쓰고, 명령 하나로 계정을 전환할 수 있게 해 주는 무료 오픈소스 명령줄 도구입니다.",
-    "how": "각 계정의 로그인 정보는 별도의 CLAUDE_CONFIG_DIR에 따로 보관하고, MCP 서버, 설정, CLAUDE.md, 확장 기능, 대화 내역은 계정 간에 공유할 수 있습니다. 그래서 한 계정이 사용량 한도에 도달하면 다른 계정에서 대화를 이어 갈 수 있습니다.",
+    "how": "각 계정의 로그인 정보는 별도의 CLAUDE_CONFIG_DIR에 따로 보관합니다. MCP 서버, 설정, CLAUDE.md, 확장 기능, 대화 내역은 계정 간에 공유할 수 있으므로, 한 계정이 사용량 한도에 도달하면 다른 계정에서 대화를 이어 갈 수 있습니다.",
     "install": "Linux, macOS, Windows에서 명령 하나로 설치한 뒤, 계정마다 ccam add를 실행하세요.",
     "official": "ccam은 비공식 프로젝트로, Anthropic과 제휴 관계가 없으며 Anthropic의 보증을 받지 않았습니다."
   },
   "landing": {
     "headline": "여러 개의 Claude Code 계정을 하나의 터미널에서 쉽게 사용하세요.",
-    "lede": "Claude 계정을 한 번 추가해두면 명령어 하나만으로 계정을 변경하여 Claude Code를 사용할 수 있습니다. 한도에 도달하면 바로 다른 계정으로 변경해 보세요.",
+    "lede": "계정은 한 번만 추가하면 됩니다. {command}나 {shortcut} 같은 단축 명령으로 계정을 전환하고, 한 계정이 한도에 도달하면 다음 계정에서 같은 대화를 이어 가세요.",
     "installLabel": "Linux 또는 macOS에 설치",
     "installWindowsLabel": "Windows에서는 PowerShell에서",
     "thenAdd": "그다음 {command} 명령으로 첫 계정을 추가하세요.",
@@ -62,12 +62,12 @@
     "flow": [
       {
         "command": "ccam add work",
-        "body": "계정 전용 설정 폴더를 만들고, 브라우저에서 Claude 로그인 화면을 연 뒤, 원하면 ccwork처럼 직접 이름을 붙인 단축 명령도 만들어 줍니다."
+        "body": "계정 전용 설정 폴더를 만들고 브라우저에서 Claude 로그인 화면을 엽니다. ccwork처럼 원하는 이름의 단축 명령도 계정에 만들어 줄 수 있습니다."
       },
       {
         "command": "ccam work",
         "also": "ccwork --resume",
-        "body": "해당 계정으로 Claude Code를 시작합니다. 이름 뒤에 쓴 내용은 모두 그대로 Claude Code에 전달되며, 시작 전에 ccam이 더하는 시간은 약 4밀리초입니다."
+        "body": "해당 계정으로 Claude Code를 시작합니다. 이름 뒤에 쓴 내용은 모두 그대로 Claude Code에 전달되며, ccam을 거쳐 시작하면 claude를 직접 실행할 때보다 약 4밀리초 더 걸립니다."
       },
       {
         "command": "ccam group set default --add history",
@@ -83,7 +83,7 @@
       },
       {
         "command": "ccam doctor --fix",
-        "body": "링크, 권한, 로그인을 점검하고, 안전하게 고칠 수 있는 문제는 고칩니다. 파일을 바꿀 때는 항상 백업을 남깁니다."
+        "body": "링크, 권한, 로그인을 점검하고, 안전하게 고칠 수 있는 문제는 고칩니다. 치워 둔 파일은 백업에 보관합니다."
       }
     ],
     "guidesTitle": "가이드",
@@ -141,19 +141,19 @@
     "next": "다음 계정 열기(--continue: 대화를 넘겨받아 이어 가기, --auto: 여유가 가장 많은 계정 선택)",
     "usage": "모든 계정의 5시간·주간 사용량 보기",
     "share": "계정이 무엇을 어느 그룹으로 공유하는지 보기",
-    "group": "그룹 만들기와 변경(여러 계정이 공유하는 항목, 계획을 보여 준 뒤 이동)",
+    "group": "그룹 만들기와 변경(그룹에 속한 계정이 무엇을 공유할지 정하며, 바꿀 때마다 계획을 먼저 보여 줌)",
     "mcp": "공유 MCP 서버 관리",
     "migrate": "기존 Claude Code 설정(~/.claude)을 공유 그룹으로 복사",
     "login": "계정에 다시 로그인(--expired: 로그인이 필요한 모든 계정에 로그인)",
     "logout": "계정 로그아웃: 로그인과 MCP 서버 로그인을 지웁니다",
-    "rename": "계정 이름 변경(단축 명령 이름은 그대로 유지)",
+    "rename": "계정 이름 변경(단축 명령은 그대로 유지)",
     "remove": "계정 삭제: 로그아웃한 뒤 폴더를 휴지통 폴더로 옮깁니다",
     "import": "기존 ~/.claude 폴더를 옮기지 않고 그대로 등록",
     "doctor": "링크, 권한, 로그인, 버전 점검 및 복구",
     "statusline": "Claude Code 상태 표시줄에 계정과 사용량 표시",
     "shims": "모든 계정의 단축 명령 링크 다시 만들기",
     "shortcut": "계정의 단축 명령(예: ccwork) 보기, 만들기, 이름 바꾸기, 삭제",
-    "folder": "계정 이름을 주지 않았을 때 폴더와 그 아래에서 쓸 계정 지정",
+    "folder": "계정 이름을 주지 않았을 때 폴더와 그 하위 폴더에서 쓸 계정 지정",
     "pick": "스크립트와 병렬 워커를 위해 여유가 가장 많은 계정 출력",
     "ext": "계정마다 불러오는 스킬, 명령, 플러그인, MCP 서버, 훅 보기",
     "agents": "모든 계정의 백그라운드 에이전트와 열린 세션 목록 보기",
@@ -174,7 +174,7 @@
   },
   "footer": {
     "unofficial": "ccam은 비공식 오픈소스 도구로, Anthropic과 제휴 관계가 없으며 Anthropic의 보증을 받지 않았습니다. Claude와 Claude Code는 Anthropic의 상표입니다.",
-    "terms": "여러 계정을 사용해도 되는지는 각 계정의 약관에 따라 다릅니다. 사용하기 전에 약관을 확인하세요.",
+    "terms": "여러 계정을 사용해도 되는지는 각 계정에 적용되는 약관에 따라 다릅니다. 시작하기 전에 해당 약관을 읽어 보세요.",
     "license": "GitHub에서 소스 코드 보기",
     "languages": "모든 언어",
     "analytics": "이 사이트는 Cloudflare Web Analytics로 방문 수를 집계합니다. 쿠키를 설정하지 않으며 개인정보를 수집하지 않습니다."

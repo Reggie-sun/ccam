@@ -528,7 +528,7 @@ func TestNotesDoNotOverlap(t *testing.T) {
 	}
 	defer func(w time.Duration) { lockWait = w }(lockWait)
 	lockWait = 50 * time.Millisecond
-	if err := second.Begin(); err == nil || !strings.Contains(err.Error(), "another ccam is changing the groups right now") {
+	if err := second.Begin(); err == nil || !strings.Contains(err.Error(), "another ccam process is changing the groups right now") {
 		t.Fatalf("begin while another runs: %v", err)
 	}
 	if !Changing(p) {

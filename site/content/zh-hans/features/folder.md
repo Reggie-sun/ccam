@@ -1,13 +1,13 @@
 ---
 title: 按文件夹使用账号
 description: ccam folder 让一个文件夹及其下所有文件夹在不指定账号名启动 Claude Code 时使用同一个账号，例如公司代码使用 work。
-updated: 2026-10-23
+updated: 2026-10-26
 order: 11
 translation: machine
-sourceHash: "48de98d42b99"
+sourceHash: "25f82da64580"
 ---
 
-`ccam folder work ~/code/company` 让 `~/code/company` 及其下任何文件夹中所有不指定账号名的启动都以 `work` 启动 Claude Code。在这个文件夹之外，照旧启动默认账号。指定账号名时，无论是用 `ccam personal` 还是 `ccpersonal` 这样的快捷命令，总是启动该账号。
+运行 `ccam folder work ~/code/company` 之后，在 `~/code/company` 或其子文件夹中所有不指定账号名的启动都会以 `work` 启动 Claude Code。在这个文件夹之外，照旧启动默认账号。指定账号名时，无论是用 `ccam personal` 还是 `ccpersonal` 这样的快捷命令，总是启动该账号。
 
 ## 用法
 
@@ -34,7 +34,7 @@ Here (/home/me/code/company/api): work, set for /home/me/code/company
 - `ccam -p "…"`，以及其他第一个参数是 Claude Code 选项的启动
 - 不带账号名的 `ccam run`，以及 `ccam --dry-run`
 - `ccam --fallback -p "…"` 的第一次尝试
-- 仪表盘，即单独的 `ccam`，打开时光标位于文件夹的账号上，通过符号链接进入该文件夹时也一样
+- 仪表盘，即单独的 `ccam`，打开时光标位于文件夹的账号上，即使通过符号链接进入该文件夹也是如此
 
 ## 选项
 
@@ -58,7 +58,7 @@ account = 'work'
 1. `ccam folder` 把文件夹解析为绝对路径（解析掉符号链接）并保存。再次设置同一个文件夹会替换它的账号。
 2. 不指定账号名的启动会调用 `launcher.HereProfile`。没有任何条目时，它会立即取默认账号。
 3. 否则，它把工作目录与每个 `path` 按字符串比较：匹配文件夹本身或其下的文件夹，绝不匹配只是开头字母相同的文件夹（`/code/company` 不包括 `/code/companyx`）。最深的条目优先，所以 `~/code` 可以是 `personal`，而 `~/code/company` 是 `work`。
-4. 只有当原样的工作目录什么都没有匹配上时，ccam 才会解析它的符号链接并再比较一次。
+4. 只有当按原样给出的工作目录什么都没有匹配上时，ccam 才会解析它的符号链接并再比较一次。
 5. 在 Windows 和 macOS 上，比较时不区分大小写，与它们的文件系统通常的行为一致。
 
 除了 `config.toml` 之外不读取任何文件，所以在文件夹中启动不会增加可测量的时间（无论有无条目都是 4.0 ms，`hyperfine`，300 次运行）。
@@ -67,7 +67,7 @@ account = 'work'
 
 - `ccam rename` 会把文件夹条目带到新名称，`ccam remove` 会删除被删除账号的条目。
 - 如果条目对应的账号已不存在，在该文件夹中不指定账号名的启动会停止：`<folder> is set to account "<name>", which does not exist. Change it with ccam folder`。`ccam doctor` 会报告这类条目，以及文件夹已不存在的条目。
-- 如果当前文件夹的账号来自上层文件夹的设置，在其中运行 `ccam folder --remove` 不会删除任何内容，而是指出那个上层文件夹。
+- 如果你在一个从上层文件夹继承账号的子文件夹中运行 `ccam folder --remove`，ccam 会指出那个上层文件夹，并且不删除任何内容。
 - `ccam next` 按轮换或用量选择账号，不考虑文件夹。
 
 ## 相关内容

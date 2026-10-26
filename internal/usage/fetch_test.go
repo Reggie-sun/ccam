@@ -235,7 +235,7 @@ func TestRefreshLockHeldSaysWhatItMayBe(t *testing.T) {
 	}
 	defer l.Unlock()
 	r := e.f.Fetch(context.Background(), a, Options{Refresh: true})
-	if r.Status != StatusExpired || e.refresh.Load() != 0 || r.Err != "token not renewed: another ccam is using this login right now (a refresh, rename, remove or logout)" {
+	if r.Status != StatusExpired || e.refresh.Load() != 0 || r.Err != "token not renewed: another ccam process is using this login right now (a refresh, rename, remove or logout)" {
 		t.Fatalf("%+v", r)
 	}
 }

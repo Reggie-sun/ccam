@@ -1,12 +1,12 @@
 ---
 title: Inspecting extensions
 description: ccam ext shows the skills, commands, plugins, MCP servers and hooks each account loads, where each comes from, and what is broken.
-updated: 2026-10-23
+updated: 2026-10-26
 order: 14
 translation: source
 ---
 
-`ccam ext` answers "why does this skill (or MCP server) work in one account and not the other?". It lists, for every account, the extensions Claude Code loads and where each one comes from: a share group, the account's own folder, or the project you are in. Below the table it lists what stops an extension from loading as you expect. It only reads.
+`ccam ext` answers the question "Why does this skill (or MCP server) work in one account but not the other?" It lists, for every account, the extensions Claude Code loads and where each one comes from: a share group, the account's own folder, or the project you are in. Below the table it lists what stops an extension from loading as you expect. It changes nothing.
 
 ## Usage
 
@@ -59,12 +59,12 @@ A cell names the source of that item in that account: the share group (`default`
 
 ## Problems it reports
 
-- **Broken links**: a link in `skills/`, `commands/` or `agents/` whose target is gone, or a shared folder (`skills`, `commands`, `agents`, `plugins`) that links to a missing place (repair it with `ccam doctor --fix`, which makes a missing group folder again).
+- **Broken links**: a link in `skills/`, `commands/` or `agents/` whose target is gone, or a shared folder (`skills`, `commands`, `agents`, `plugins`) that links to a missing place (repair it with `ccam doctor --fix`, which recreates a missing group folder).
 - **A skill folder without `SKILL.md`**: Claude Code skips it.
-- **An MCP server defined differently in two places**: the group's `mcp.json` and the account's `.claude.json`, or one of them and the project's `.mcp.json`. The same settings in both places (which `mcp_strategy = "sync"` writes) is not a problem. Move an account's own server into the group with `ccam mcp import <account> <server>`.
+- **An MCP server defined differently in two places**: the group's `mcp.json` and the account's `.claude.json`, or one of them and the project's `.mcp.json`. Identical definitions in both places (which `mcp_strategy = "sync"` writes) are not a problem. Move an account's own server into the group with `ccam mcp import <account> <server>`.
 - **`installed_plugins.json` that is not valid JSON**, a plugin that `enabledPlugins` does not name, and a plugin whose folder is missing.
 - **Servers only one account loads**: a server only in this account's `.claude.json`, which the other accounts of its group do not load, and one in the account's local scope for this folder (what `claude mcp add` does unless given `-s user`). Each comes with the `ccam mcp import` command that shares it. Servers in plain `claude`'s `~/.claude.json` that no account loads come with the `ccam migrate --mcp` command.
-- **A project server waiting for approval**: the account has not trusted the folder yet, so Claude Code asks once, and until then the project's `.mcp.json` servers wait. The problem says where to approve them: `"enabledMcpjsonServers"` in the `settings.json` of the accounts of the settings group, or of this account. Trust given to a git repository's main worktree counts in its other worktrees.
+- **A project server waiting for approval**: the account has not trusted the folder yet, so Claude Code asks once, and until then the project's `.mcp.json` servers wait. The problem says where to approve them: `"enabledMcpjsonServers"` in the `settings.json` of the accounts of the settings group, or of this account. Trust given to a git repository's main worktree also applies to its other worktrees.
 - **Sign-ins and connectors**: an MCP server that needs a sign-in in this account while another account is signed in to it (a sign-in holds for one account only; sign in with `/mcp`), and claude.ai connectors another account has used and this one has not.
 
 ## Safety and edge cases
@@ -75,6 +75,6 @@ A cell names the source of that item in that account: the share group (`default`
 
 ## Related
 
-- [Sharing between accounts](/features/share)
+- [Sharing with groups](/features/share)
 - [Shared MCP servers](/features/mcp)
 - [Checking and repairing](/features/doctor)

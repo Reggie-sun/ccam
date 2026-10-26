@@ -30,12 +30,12 @@ claude-swap, CCS, clauth, CAAM, cux 등과의 비교: [ccam.dev/ko/compare/accou
 ## 설치
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.sh | sh
+curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
 리눅스(우분투·데비안·페도라·아치·알파인 등)와 macOS를 지원합니다. `~/.local/bin/ccam`이 생깁니다. 체크섬을 확인한 뒤 설치하고, `~/.local/bin`이 `PATH`에 없으면 알려 줍니다. 그 밖의 방법:
 
-- Windows 10·11: PowerShell에서 `irm https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.ps1 | iex`. 체크섬을 확인한 뒤 `%USERPROFILE%\.local\bin\ccam.exe`를 설치하고 그 폴더를 사용자 `PATH`에 더합니다. 폴더 공유는 그대로 되고, 파일 하나를 공유하려면(`settings.json`, `CLAUDE.md`, `history.jsonl`) 개발자 모드가 필요합니다. Windows는 그 모드(또는 관리자)에서만 파일 링크를 만들게 해 주기 때문입니다. 그래서 개발자 모드가 아니면 첫 `ccam add`가 MCP 서버와 확장 기능만 공유하는 `default` 그룹을 만듭니다. 스크립트를 다시 실행하면 세션이 옛 바이너리로 돌고 있어도 업데이트되고, 하드 링크로 만든 단축 명령도 새 버전으로 바꿉니다.
+- Windows 10·11: PowerShell에서 `irm https://ccam.dev/install.ps1 | iex`. 체크섬을 확인한 뒤 `%USERPROFILE%\.local\bin\ccam.exe`를 설치하고 그 폴더를 사용자 `PATH`에 더합니다. 폴더 공유는 그대로 되고, 파일 하나를 공유하려면(`settings.json`, `CLAUDE.md`, `history.jsonl`) 개발자 모드가 필요합니다. Windows는 그 모드(또는 관리자)에서만 파일 링크를 만들게 해 주기 때문입니다. 그래서 개발자 모드가 아니면 첫 `ccam add`가 MCP 서버와 확장 기능만 공유하는 `default` 그룹을 만듭니다. 스크립트를 다시 실행하면 세션이 옛 바이너리로 돌고 있어도 업데이트되고, 하드 링크로 만든 단축 명령도 새 버전으로 바꿉니다.
 - `.deb`: [릴리스](https://github.com/jhyunwoo/ccam/releases)에서 받아 `sudo apt install ./ccam_*.deb`
 - 소스: `go install github.com/jhyunwoo/ccam/cmd/ccam@latest` (Go 1.26 이상. 릴리스 태그로 빌드하면 그 버전을 알려 주므로 `ccam update`도 됩니다)
 

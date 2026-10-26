@@ -1,13 +1,13 @@
 ---
 title: ccam으로 Remote Control 사용하기
 description: ccam <name> rc로 원하는 계정의 Claude Code Remote Control을 시작하는 방법, 적용되는 옵션, 공유 MCP 서버 복사를 제안하는 이유, 문제 해결 방법을 설명합니다.
-updated: 2026-10-23
+updated: 2026-10-26
 order: 4
 translation: machine
-sourceHash: "3e17d89f98c8"
+sourceHash: "4d46f49c5dea"
 ---
 
-`ccam work rc`는 `work` 계정으로 Claude Code의 Remote Control을 시작하므로, 이 컴퓨터의 세션을 claude.ai/code나 Claude 모바일 앱에서 조작할 수 있습니다. 동작은 `claude rc`와 같고 차이는 하나뿐입니다. 계정이 MCP 서버를 공유하고 있으면 ccam은 그 서버를 계정의 `.claude.json`에 복사할지 한 번 묻습니다. Remote Control 세션은 그 밖의 어디에서도 서버를 읽지 않기 때문입니다.
+`ccam work rc`는 `work` 계정으로 Claude Code의 Remote Control을 시작하므로, 이 컴퓨터의 세션을 claude.ai/code나 Claude 모바일 앱에서 조작할 수 있습니다. 동작은 `claude rc`와 같고 차이는 하나뿐입니다. 계정이 MCP 서버를 공유하고 있으면 ccam은 그 서버를 계정의 `.claude.json`에 복사할지 한 번 묻습니다. Remote Control 세션이 서버를 읽는 곳은 그 파일뿐이기 때문입니다.
 
 ## 시작하기
 
@@ -31,9 +31,10 @@ ccam --dry-run work rc                # print the command instead of running it
 | 옵션 또는 설정 | 동작 | 기본값 |
 | --- | --- | --- |
 | `--dry-run` (계정 앞) | 환경 변수와 명령, 그리고 MCP 안내가 있으면 그것도 출력합니다. 묻지도 복사하지도 않습니다 | 꺼짐 |
-| `Copy them into .claude.json (a backup is kept; servers of the account's own stay)? [y/N]` | 계정이 MCP 서버를 공유하고, 그 `.claude.json`에 그룹의 현재 목록이 없거나 복사한 서버가 사라졌을 때 묻습니다. `y`는 복사하고, `N`이나 Enter는 복사 없이 시작합니다 | `N` |
 | `~/.config/ccam/config.toml` 맨 위의 `mcp_strategy = "sync"` | Remote Control 여부와 관계없이 실행할 때마다 그룹의 서버를 `.claude.json`에 복사하므로, 아무것도 묻지 않습니다 | `"flag"` |
 | `ccam group leave <group> work` | MCP를 공유하는 그룹에서 이 계정을 뺍니다. 그룹의 서버가 계정 자체의 서버로 `.claude.json`에 복사되므로, Remote Control이 그 서버를 갖고 아무것도 묻지 않습니다. `--fresh`를 주면 계정 자체의 서버만으로 시작합니다 | `default`에 속함 |
+
+계정이 MCP 서버를 공유하고, 그 `.claude.json`에 그룹의 현재 목록이 없거나 복사한 서버가 사라졌으면 ccam이 `Copy them into .claude.json (a backup is kept; the account's own servers stay)? [y/N]`라고 묻습니다. `y`는 복사하고, `N`이나 Enter는 복사 없이 시작합니다.
 
 ### Remote Control 옵션
 
@@ -66,10 +67,10 @@ ccam은 Claude Code와 같은 방식으로, 옵션과 그 값을 건너뛰며 Cl
    ```console
    $ ccam work rc
    ccam: Remote Control sessions only get MCP servers stored in account work's .claude.json, not the shared MCP servers (ctx, fs).
-   Copy them into .claude.json (a backup is kept; servers of the account's own stay)? [y/N]
+   Copy them into .claude.json (a backup is kept; the account's own servers stay)? [y/N]
    ```
 
-5. `y`를 고르면 `.claude.json`을 백업하고, Claude Code 자체 잠금을 잡은 뒤, 그룹의 서버를 `mcpServers`에 추가하고 계정의 다른 서버는 그대로 둡니다. 그룹 서버와 이름이 같은 계정 자체 서버는 계정 것으로 남고, ccam이 그 사실을 알립니다. `N`을 고르거나, 터미널이 아니거나, 계정이 실행 중이면 아무것도 바꾸지 않고 그 사실을 알립니다.
+5. `y`를 고르면 `.claude.json`을 백업하고, Claude Code 자체 잠금을 잡은 뒤, 그룹의 서버를 `mcpServers`에 추가하고 계정의 다른 서버는 그대로 둡니다. 계정에 그룹 서버와 이름이 같은 자체 서버가 있으면 ccam은 계정의 서버를 유지하고 그 사실을 알립니다. `N`을 고르거나, 터미널이 아니거나, 계정이 실행 중이면 아무것도 바꾸지 않고 그 사실을 알립니다.
 
    ```console
          Starting without them. To copy them before every launch instead, set mcp_strategy = "sync" in ~/.config/ccam/config.toml
@@ -77,7 +78,7 @@ ccam은 Claude Code와 같은 방식으로, 옵션과 그 값을 건너뛰며 Cl
 
 6. 세션을 기록하고, `CLAUDE_CONFIG_DIR`을 계정 폴더로 설정한 뒤, `exec`로 자신을 `claude rc`로 바꿉니다.
 
-그 뒤 Remote Control은 서버로 계속 실행됩니다. 여러분을 위해 시작하는 모든 세션은 이 프로세스의 자식이므로 `work`로 실행됩니다. 즉 `work`의 로그인, 설정, 대화 내역을 쓰고, 사용량은 `work`의 사용량 한도에 집계됩니다. ccam이 시작한 서버가 실행되는 동안 ccam은 이 계정을 실행 중으로 보며, 그냥 `claude remote-control`로 시작한 서버도 세션이 있는 동안에는 실행 중으로 봅니다. 아직 세션이 없는 그런 서버는 알아보지 못합니다.
+그 뒤 Remote Control은 서버로 계속 실행됩니다. 여러분을 위해 시작하는 모든 세션은 이 프로세스의 자식이므로 `work`로 실행됩니다. 즉 `work`의 로그인, 설정, 대화 내역을 쓰고, 사용량은 `work`의 사용량 한도에 집계됩니다. ccam은 자신이 시작한 Remote Control 서버가 실행되는 동안 이 계정을 실행 중으로 봅니다. 그냥 `claude remote-control`로 시작한 서버는 세션이 있는 동안에만 실행 중으로 치며, 아직 세션이 없는 서버는 ccam이 알아보지 못합니다.
 
 차이는 dry run으로 확인할 수 있습니다. 일반 실행은 그룹의 서버를 인자로 넘기지만, Remote Control은 넘기지 않습니다.
 
@@ -116,7 +117,7 @@ $ ccam mcp add ctx --url https://mcp.context7.com/mcp
 
 ### Remote Control 세션에 공유 MCP 서버가 없습니다
 
-질문에 `N`으로 답했거나, 터미널이 없었거나, 계정이 실행 중이었던 경우입니다. Remote Control을 멈추고 계정의 다른 세션을 닫은 뒤, 터미널에서 `ccam work rc`를 다시 실행해 `y`로 답하세요. 아예 묻지 않게 하려면 `~/.config/ccam/config.toml`에 `mcp_strategy = "sync"`를 설정하세요. 이미 열린 세션의 서버는 실행 중에 바뀌지 않으므로, 복사한 뒤에는 새 세션을 시작하세요.
+질문에 `N`으로 답했거나, 터미널이 없었거나, 계정이 실행 중이었던 경우입니다. Remote Control을 멈추고 계정의 다른 세션을 닫은 뒤, 터미널에서 `ccam work rc`를 다시 실행해 `y`로 답하세요. 더 이상 묻지 않게 하려면 `~/.config/ccam/config.toml`에 `mcp_strategy = "sync"`를 설정하세요. 이미 열린 세션의 서버는 실행 중에 바뀌지 않으므로, 복사한 뒤에는 새 세션을 시작하세요.
 
 ### "Account work is running, so its .claude.json is left alone"
 
@@ -128,7 +129,7 @@ $ ccam mcp add ctx --url https://mcp.context7.com/mcp
 
 ### `ccam work rc`가 `--mcp-config` 관련 오류와 함께 바로 실패합니다
 
-사용 중인 ccam이 0.6.0보다 오래되어 Remote Control에 `--mcp-config`를 넘기고 있습니다. `ccam update`를 실행하세요. 최신 ccam에서도 같은 오류가 나면, ccam이 모르는 값을 받는 옵션이 `rc` 앞에 와서 ccam이 그 값을 명령으로 본 것입니다. `rc`를 계정 이름 바로 뒤에 쓰세요.
+사용 중인 ccam이 0.6.0보다 오래되어 Remote Control에 `--mcp-config`를 넘기고 있습니다. `ccam update`를 실행하세요. 최신 ccam에서 같은 오류가 나면, 값을 받는 알 수 없는 옵션이 `rc` 앞에 와서 ccam이 그 값을 명령으로 잘못 본 것입니다. `rc`를 계정 이름 바로 뒤에 쓰세요.
 
 ### `ccam mcp`로 바꾼 내용이 Remote Control에 반영되지 않습니다
 
@@ -136,7 +137,7 @@ $ ccam mcp add ctx --url https://mcp.context7.com/mcp
 
 ### 그룹 서버 대신 내 서버가 쓰입니다
 
-계정 자체에 그룹 서버와 이름이 같은 서버가 있으면, 복사는 그 서버를 그대로 두고 그 사실을 알립니다: `account work has its own MCP servers fs, so group default's of those names are not copied there`. 그룹의 서버를 쓰려면 계정의 서버를 지우세요(`claude mcp remove -s user <name>`). 내 정의를 모든 계정에 주려면 `ccam mcp import work <server> --force`로 그룹에 옮기세요. `.claude.json` 백업은 `~/.local/state/ccam/mcp/work/backups/`에 있으며, 최신 5개가 보관됩니다.
+계정 자체에 그룹 서버와 이름이 같은 서버가 있으면, 복사는 그 서버를 그대로 두고 그 사실을 알립니다: `account work has its own MCP servers fs, so group default's servers with those names are not copied there`. 그룹의 서버를 쓰려면 계정의 서버를 지우세요(`claude mcp remove -s user <name>`). 내 정의를 모든 계정에 주려면 `ccam mcp import work <server> --force`로 그룹에 옮기세요. `.claude.json` 백업은 `~/.local/state/ccam/mcp/work/backups/`에 있으며, 최신 5개가 보관됩니다.
 
 ### 복사한 서버를 지우고 싶습니다
 
@@ -154,7 +155,7 @@ Remote Control에는 Claude 구독 계정 로그인이 필요합니다. `ccam li
 
 Claude 앱이나 claude.ai/code가 다른 Claude 계정으로 로그인되어 있습니다. `ccam list`가 `work`에 대해 보여 주는 이메일과 비교해 보세요.
 
-### 다른 Claude Code가 이 폴더에서 대화 내역을 공유한다고 ccam이 경고합니다
+### 다른 Claude Code 세션이 이 폴더에서 대화 내역을 공유한다고 ccam이 경고합니다
 
 같은 대화 내역 그룹의 다른 계정이 같은 폴더에서 실행 중입니다. 두 계정에서 같은 대화를 이어 가는 세션은 대화 내역을 섞을 수 있습니다. 서로 다른 대화로 작업할 때만 `y`로 답하거나, 다른 폴더에서 Remote Control을 시작하세요.
 
@@ -162,5 +163,5 @@ Claude 앱이나 claude.ai/code가 다른 Claude 계정으로 로그인되어 �
 
 - [Claude Code 시작하기](/features/launch)
 - [MCP 서버 공유](/features/mcp)
-- [계정 간 공유](/features/share)
+- [그룹으로 공유하기](/features/share)
 - [계정 관리](/features/accounts)

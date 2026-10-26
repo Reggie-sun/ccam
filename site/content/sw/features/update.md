@@ -1,20 +1,20 @@
 ---
 title: Kusasisha ccam
 description: ccam update hubadilisha ccam kwa toleo jipya zaidi la GitHub baada ya ukaguzi wa SHA-256; --check huripoti tu na --version husakinisha tagi mahususi ya toleo.
-updated: 2026-10-23
+updated: 2026-10-26
 order: 10
 translation: machine
-sourceHash: "000d37de5f29"
+sourceHash: "598931e4801f"
 ---
 
-`ccam update` hupakua toleo la ccam kutoka GitHub, hulikagua dhidi ya `checksums.txt` ya toleo hilo na hubadilisha binary inayoendeshwa kwa kubadilisha jina mara moja. Itumie ikiwa ulisakinisha ccam kwa script ya kusakinisha au kutoka kwenye archive. [Dashibodi](/features/dashboard) pia huuliza GitHub kuhusu toleo jipya zaidi kila inapofunguliwa na hulitoa kwa `U`, ambayo hufanya hatua hizo hizo baada ya kuuliza. Hakuna amri nyingine inayowasiliana na GitHub, kwa hiyo hufanya kazi vivyo hivyo bila mtandao.
+`ccam update` hupakua toleo la ccam kutoka GitHub, hulikagua dhidi ya `checksums.txt` ya toleo hilo na hubadilisha binary inayoendeshwa kwa kubadilisha jina mara moja. Itumie ikiwa ulisakinisha ccam kwa script ya kusakinisha au kutoka kwenye archive. [Dashibodi](/features/dashboard) pia huuliza GitHub kuhusu toleo jipya zaidi kila inapofunguliwa na hulitoa kwa `U`, ambayo hufanya hatua hizo hizo baada ya kuuliza. Amri nyingine kamwe haziwasiliani na GitHub, kwa hiyo hufanya kazi vivyo hivyo bila mtandao.
 
 ## Matumizi
 
 ```sh
 ccam update                    # install the latest release
 ccam update --check            # only say whether a newer release exists
-ccam update --version v0.3.0   # install that release, also an older one
+ccam update --version v0.3.0   # install that release, even an older one
 ccam --dry-run update          # show what would be downloaded and replaced
 ```
 
@@ -31,7 +31,7 @@ $ ccam update
 ✓ Updated ccam 0.4.0 → 0.5.0 (/home/you/.local/bin/ccam)
 ```
 
-Ikiwa hakuna toleo jipya zaidi, ccam huchapisha `ccam 0.4.0 is up to date.` na haibadilishi chochote. Kwa `--version` na toleo unaloendesha tayari, huchapisha `ccam 0.4.0 is already installed.`
+Ikiwa hakuna toleo jipya zaidi, ccam huchapisha `ccam 0.4.0 is up to date.` na haibadilishi chochote. Ikiwa `--version` inataja toleo ulilo nalo tayari, huchapisha `ccam 0.4.0 is already installed.`
 
 ## Chaguo
 
@@ -39,7 +39,7 @@ Ikiwa hakuna toleo jipya zaidi, ccam huchapisha `ccam 0.4.0 is up to date.` na h
 | --- | --- | --- |
 | `--check` | Huripoti tu kama toleo jipya zaidi lipo | imezimwa |
 | `--version <tag>` | Husakinisha tagi hii ya toleo, kama `v0.3.0`, jipya au la zamani kuliko la sasa | jipya zaidi |
-| `--dry-run` | Inaheshimiwa: hutafuta tagi ya karibuni (isipokuwa `--version` imetaja moja), hufanya ukaguzi ule ule kwenye binary, na huchapisha njia za kupakua, checksum na kubadilisha bila kupakua | imezimwa |
+| `--dry-run` | Inakubaliwa: hutafuta tagi ya karibuni (isipokuwa `--version` imetaja moja), hufanya ukaguzi ule ule kwenye binary, na huchapisha njia za kupakua, checksum na kubadilisha bila kupakua | imezimwa |
 
 `--check` na `--version` haziwezi kutumiwa pamoja. Tagi lazima ionekane kama `vMAJOR.MINOR.PATCH`, ikiwa na kiambishi cha hiari cha pre-release au build; `v` ya mwanzo inaweza kuachwa. Kitu kingine chochote hushindwa, kwa mfano `--version takes a release tag such as v0.3.0, not "1.2"`.
 
@@ -47,16 +47,16 @@ Kigezo cha mazingira `CCAM_RELEASES_URL` huchukua nafasi ya `https://github.com/
 
 ## Jinsi inavyofanya kazi
 
-Msimbo uko katika `internal/update`, ambayo ni `ccam update` pekee inayoiingiza. Njia ya kuanzisha haiiiti kamwe.
+ccam hukagua kipakuliwa kabla ya kugusa binary iliyosakinishwa, na hubadilisha binary kwa kubadilisha jina mara moja. Msimbo uko katika `internal/update`, ambayo ni `ccam update` pekee inayoiingiza. Njia ya kuanzisha haiiiti kamwe.
 
-1. `cli.updateCmd` hupata binary inayoendeshwa kwa `os.Executable` na hufuata symlinks kwa `filepath.EvalSymlinks`. Njia hiyo halisi ndiyo hubadilishwa.
-2. Bila `--version`, `Updater.Latest` huomba `<releases>/latest` bila kufuata uelekezaji, na husoma tagi kutoka kichwa cha `Location` (`…/tag/v0.5.0`). Hii hutumia ukurasa wa matoleo badala ya GitHub API, kwa hiyo kikomo cha API cha maombi 60 kwa saa hakihusiki. Utafutaji una sekunde 10.
-3. `parseVersion` hukagua tagi dhidi ya mchoro mkali. Tagi huishia kwenye URL za kupakua na kwenye amri ya shell inayochapishwa, kwa hiyo hakuna kitu chenye `/`, `%`, nafasi au herufi za shell kinachopita. `compareVersions` huilinganisha na toleo linaloendeshwa; pre-release hupangwa kabla ya toleo lake.
-4. `managed()` na `writable()` huamua kama ccam inaruhusiwa kubadilisha binary hata kidogo (tazama hapa chini).
-5. `Updater.Fetch` hupakua `ccam_<os>_<arch>.tar.gz` (kwenye Windows `ccam_windows_<arch>.zip`) na `checksums.txt` kwa wakati mmoja, kwa dakika 2 kwa zote mbili. Kila upakuaji una kikomo cha MB 256.
+1. ccam hupata binary inayoendeshwa kwa `os.Executable` na hufuata symlinks kwa `filepath.EvalSymlinks` (`cli.updateCmd`). Njia hiyo halisi ndiyo hubadilishwa.
+2. Bila `--version`, ccam huomba `<releases>/latest` bila kufuata uelekezaji (`Updater.Latest`), na husoma tagi kutoka kichwa cha `Location` (`…/tag/v0.5.0`). Hii hutumia ukurasa wa matoleo badala ya GitHub API, kwa hiyo kikomo cha API cha maombi 60 kwa saa hakihusiki. Utafutaji hukoma baada ya sekunde 10.
+3. ccam hukagua tagi dhidi ya mchoro mkali (`parseVersion`). Tagi huishia kwenye URL za kupakua na kwenye amri ya shell inayochapishwa, kwa hiyo hakuna kitu chenye `/`, `%`, nafasi au herufi za shell kinachopita. Kisha ccam huilinganisha na toleo linaloendeshwa (`compareVersions`); pre-release hupangwa kabla ya toleo lake.
+4. ccam huamua kama inaruhusiwa kubadilisha binary hata kidogo (`managed()`, `writable()`; tazama hapa chini).
+5. ccam hupakua `ccam_<os>_<arch>.tar.gz` (kwenye Windows `ccam_windows_<arch>.zip`) na `checksums.txt` kwa wakati mmoja, kwa dakika 2 kwa zote mbili (`Updater.Fetch`). Kila upakuaji una kikomo cha MB 256.
 6. SHA-256 ya archive lazima ilingane na mstari wake katika `checksums.txt` kabla ya jambo lingine lolote kutokea. Mstari unaokosekana au checksum tofauti husimamisha sasisho kwa `nothing was changed`.
-7. `extract()` husoma tar na huchukua faili ya kawaida ya kwanza yenye jina `ccam` (`extractZip` huchukua `ccam.exe` kutoka kwenye zip). Folda, viungo na vitu vingine hupuuzwa, na binary nayo ina kikomo cha MB 256.
-8. `Updater.Install` huandika binary mpya kwa `fsutil.AtomicWrite`: faili ya muda `.ccam.tmp*` kando ya binary, yenye ruhusa za faili ya zamani, huandikwa kwenye diski na hubadilishwa jina juu ya ile ya zamani.
+7. ccam husoma tar na huchukua faili ya kawaida ya kwanza yenye jina `ccam` (`extract()`; `extractZip` huchukua `ccam.exe` kutoka kwenye zip). Folda, viungo na vitu vingine hupuuzwa, na binary nayo ina kikomo cha MB 256.
+8. ccam huandika binary mpya kwa `fsutil.AtomicWrite` (`Updater.Install`): faili ya muda `.ccam.tmp*` kando ya binary, yenye ruhusa za faili ya zamani, huandikwa kwenye diski na hubadilishwa jina juu ya ile ya zamani.
 
 Mchakato wote, kuanzia kutafuta tagi hadi kubadilisha jina:
 
@@ -64,11 +64,11 @@ Mchakato wote, kuanzia kutafuta tagi hadi kubadilisha jina:
 
 Archive na `checksums.txt` hupakuliwa sambamba, na hakuna kinachoandikwa hadi checksum ilingane. Kubadilisha jina ni atomiki, kwa hiyo hitilafu ya ghafla au diski iliyojaa huacha binary ya zamani au mpya, kamwe si nusu ya moja. Amri za njia fupi kama `~/.local/bin/ccwork` ni symlinks kuelekea binary ya ccam, kwa hiyo huendesha toleo jipya bila badiliko lolote.
 
-Kwenye Windows faili la programu inayoendeshwa haliwezi kubadilishwa wala kufutwa, ila kupewa jina jipya tu. `Updater.Install` huandika binary mpya kwenye `ccam.exe.new`, hubadilisha jina la `ccam.exe` inayoendeshwa kuwa `ccam.exe.old`, na hubadilisha jina la faili jipya kuwa `ccam.exe`. Hatua ya mwisho ikishindwa, binary ya zamani hurudishiwa jina lake. Sasisho linalofuata hufuta faili za `ccam.exe.old` linazoweza kufuta; wakati kipindi bado kinaendeshwa kutoka `ccam.exe.old` ya awali, binary inayoendeshwa huwa `ccam.exe.old-<time>` badala yake. Njia fupi ambazo ni hard links badala ya viungo vya ishara ([Amri za njia fupi](/features/shortcuts)) hufanywa upya mara moja baadaye, kwa hiyo nazo huendesha toleo jipya; hilo hujumuisha hard links za ccam yoyote ya zamani ambazo ccam iliunda, si za binary iliyobadilishwa sasa hivi pekee.
+Kwenye Windows faili la programu inayoendeshwa haliwezi kubadilishwa wala kufutwa, ila kupewa jina jipya tu. ccam huandika binary mpya kwenye `ccam.exe.new`, hubadilisha jina la `ccam.exe` inayoendeshwa kuwa `ccam.exe.old`, na hubadilisha jina la faili jipya kuwa `ccam.exe` (`Updater.Install`). Hatua ya mwisho ikishindwa, binary ya zamani hurudishiwa jina lake. Sasisho linalofuata hufuta faili za `ccam.exe.old` linazoweza kufuta; wakati kipindi bado kinaendeshwa kutoka `ccam.exe.old` ya awali, binary inayoendeshwa huwa `ccam.exe.old-<time>` badala yake. Njia fupi ambazo ni hard links badala ya viungo vya ishara ([Amri za njia fupi](/features/shortcuts)) hufanywa upya mara moja baadaye, kwa hiyo nazo huendesha toleo jipya; hilo hujumuisha hard links za toleo lolote la zamani la ccam ambazo ccam iliunda, si za binary iliyobadilishwa sasa hivi pekee.
 
 ### Usakinishaji unaosimamiwa na kifurushi
 
-ccam iliyosakinishwa kutoka `.deb` ni mali ya apt, na kuibadilisha bila apt kujua kungeacha hifadhidata ya vifurushi ikiwa si sahihi. Kabla ya kupakua, ccam hukagua nani anamiliki binary:
+Nakala ya ccam iliyosakinishwa kutoka `.deb` ni mali ya apt, na kuibadilisha bila apt kujua kungeacha hifadhidata ya vifurushi isilingane na faili. Kabla ya kupakua, ccam hukagua nani anamiliki binary:
 
 <!-- motion:update-managed -->
 
@@ -84,14 +84,14 @@ ccam: /usr/bin/ccam was installed by a package, so `ccam update` leaves it alone
 To update the .deb, download ccam_0.5.0_linux_amd64.deb from https://github.com/jhyunwoo/ccam/releases/tag/v0.5.0 and run:
   sudo apt install ./ccam_0.5.0_linux_amd64.deb
 Or install a copy in ~/.local/bin with the install script:
-  curl -fsSL https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.sh | sh
+  curl -fsSL https://ccam.dev/install.sh | sh
 ```
 
-Kwenye mifumo isiyo Linux, mstari wa script ya kusakinisha pekee ndio huchapishwa: `irm https://raw.githubusercontent.com/jhyunwoo/ccam/main/install.ps1 | iex` kwenye Windows. Folda isipoweza kuandikwa, ccam hupendekeza kuendesha tena script ya kusakinisha, ambayo husakinisha ccam katika `~/.local/bin`.
+Kwenye mifumo isiyo Linux, mstari wa script ya kusakinisha pekee ndio huchapishwa: `irm https://ccam.dev/install.ps1 | iex` kwenye Windows. Folda isipoweza kuandikwa, ccam hupendekeza kuendesha tena script ya kusakinisha, ambayo husakinisha ccam katika `~/.local/bin`.
 
 ## Usalama na hali maalum
 
-- Build ya maendeleo huripoti toleo lake kama `dev` na haina toleo la kulinganisha nalo, kwa hiyo `ccam update` na `ccam update --check` huikataa. `ccam update --version vX.Y.Z` husakinisha toleo juu yake. Build iliyotengenezwa kwa `go install github.com/jhyunwoo/ccam/cmd/ccam@vX.Y.Z` (au `@latest`) huripoti toleo hilo, kwa hiyo `ccam update` na pendekezo la dashibodi hufanya kazi kwake; `@main` au build ya ndani iliyo mbele ya tagi hubaki `dev`.
+- Build ya maendeleo huripoti toleo lake kama `dev` na haina toleo la kulinganisha nalo, kwa hiyo `ccam update` na `ccam update --check` huikataa. `ccam update --version vX.Y.Z` husakinisha toleo juu yake. Kwa builds zilizotengenezwa kwa `go install`, tazama [Sakinisha ccam](/docs/install#other-ways-to-install).
 - Upakuaji ulioshindwa, faili ya toleo inayokosekana kwa jukwaa lako, au checksum isiyolingana huacha binary iliyosakinishwa kama ilivyokuwa.
 - Toleo lisilokuwepo hushindwa na `there is no release <tag>`. GitHub inapokataa kwa HTTP 403 au 429, ccam husema huenda ni kikomo cha maombi na hukuomba ujaribu tena baadaye.
 - `--check` husoma tu. Haikagui kama binary inasimamiwa na kifurushi au inaweza kuandikwa.
@@ -99,6 +99,6 @@ Kwenye mifumo isiyo Linux, mstari wa script ya kusakinisha pekee ndio huchapishw
 
 ## Zinazohusiana
 
-- [Kusakinisha](/docs/install)
-- [Amri](/docs/commands)
+- [Sakinisha ccam](/docs/install)
+- [Marejeo ya amri](/docs/commands)
 - [Maswali yanayoulizwa mara kwa mara](/docs/faq)

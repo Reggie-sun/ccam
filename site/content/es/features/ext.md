@@ -1,13 +1,13 @@
 ---
 title: Inspeccionar extensiones
 description: "ccam ext muestra los skills, comandos, plugins, servidores MCP y hooks que carga cada cuenta, de dónde viene cada uno y qué está roto."
-updated: 2026-10-23
+updated: 2026-10-26
 order: 14
 translation: machine
-sourceHash: 45740e4efbef
+sourceHash: "7ca357a7f38a"
 ---
 
-`ccam ext` responde a "¿por qué este skill (o servidor MCP) funciona en una cuenta y no en la otra?". Lista, para cada cuenta, las extensiones que carga Claude Code y de dónde viene cada una: un grupo de uso compartido, la carpeta propia de la cuenta o el proyecto en el que estás. Debajo de la tabla lista lo que impide que una extensión se cargue como esperas. Solo lee.
+`ccam ext` responde a la pregunta "¿Por qué este skill (o servidor MCP) funciona en una cuenta pero no en la otra?". Lista, para cada cuenta, las extensiones que carga Claude Code y de dónde viene cada una: un grupo de uso compartido, la carpeta propia de la cuenta o el proyecto en el que estás. Debajo de la tabla lista lo que impide que una extensión se cargue como esperas. No cambia nada.
 
 ## Uso
 
@@ -62,10 +62,10 @@ Una celda indica el origen de ese elemento en esa cuenta: el grupo de uso compar
 
 - **Enlaces rotos**: un enlace en `skills/`, `commands/` o `agents/` cuyo destino ya no existe, o una carpeta compartida (`skills`, `commands`, `agents`, `plugins`) que enlaza a un lugar que falta (repárala con `ccam doctor --fix`, que vuelve a crear una carpeta de grupo que falta).
 - **Una carpeta de skill sin `SKILL.md`**: Claude Code la omite.
-- **Un servidor MCP definido de forma distinta en dos lugares**: el `mcp.json` del grupo y el `.claude.json` de la cuenta, o uno de ellos y el `.mcp.json` del proyecto. La misma configuración en ambos lugares (lo que escribe `mcp_strategy = "sync"`) no es un problema. Mueve un servidor propio de una cuenta al grupo con `ccam mcp import <account> <server>`.
+- **Un servidor MCP definido de forma distinta en dos lugares**: el `mcp.json` del grupo y el `.claude.json` de la cuenta, o uno de ellos y el `.mcp.json` del proyecto. Las definiciones idénticas en ambos lugares (lo que escribe `mcp_strategy = "sync"`) no son un problema. Mueve un servidor propio de una cuenta al grupo con `ccam mcp import <account> <server>`.
 - **Un `installed_plugins.json` que no es JSON válido**, un plugin que `enabledPlugins` no nombra y un plugin cuya carpeta falta.
 - **Servidores que solo carga una cuenta**: un servidor que solo está en el `.claude.json` de esta cuenta, que las demás cuentas de su grupo no cargan, y uno en el ámbito local de la cuenta para esta carpeta (lo que hace `claude mcp add` salvo que se le pase `-s user`). Cada uno viene con el comando `ccam mcp import` que lo comparte. Los servidores del `~/.claude.json` de `claude` a secas que ninguna cuenta carga vienen con el comando `ccam migrate --mcp`.
-- **Un servidor del proyecto pendiente de aprobación**: la cuenta todavía no ha confiado en la carpeta, así que Claude Code pregunta una vez, y hasta entonces los servidores del `.mcp.json` del proyecto esperan. El problema indica dónde aprobarlos: `"enabledMcpjsonServers"` en el `settings.json` de las cuentas del grupo de configuración, o de esta cuenta. La confianza dada al worktree principal de un repositorio git cuenta en sus otros worktrees.
+- **Un servidor del proyecto pendiente de aprobación**: la cuenta todavía no ha confiado en la carpeta, así que Claude Code pregunta una vez, y hasta entonces los servidores del `.mcp.json` del proyecto esperan. El problema indica dónde aprobarlos: `"enabledMcpjsonServers"` en el `settings.json` de las cuentas del grupo de configuración, o de esta cuenta. La confianza dada al worktree principal de un repositorio git también se aplica a sus otros worktrees.
 - **Inicios de sesión y conectores**: un servidor MCP que necesita un inicio de sesión en esta cuenta mientras otra cuenta sí lo inició (un inicio de sesión vale solo para una cuenta; inicia sesión con `/mcp`), y los conectores de claude.ai que otra cuenta ha usado y esta no.
 
 ## Seguridad y casos límite
@@ -76,6 +76,6 @@ Una celda indica el origen de ese elemento en esa cuenta: el grupo de uso compar
 
 ## Relacionado
 
-- [Compartir entre cuentas](/features/share)
+- [Compartir con grupos](/features/share)
 - [Servidores MCP compartidos](/features/mcp)
 - [Comprobar y reparar](/features/doctor)

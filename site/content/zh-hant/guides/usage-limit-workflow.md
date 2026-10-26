@@ -1,10 +1,10 @@
 ---
 title: Claude Code 達到用量限制時該怎麼辦
 description: 等待額度重置，或立即在另一個 Claude Code 帳號接續同一個對話。逐步說明 5 小時限制和每週限制如何運作。
-updated: 2026-10-25
+updated: 2026-10-26
 order: 3
 translation: machine
-sourceHash: "18ef61a68c55"
+sourceHash: "96b6429c0102"
 ---
 
 當一個帳號達到用量限制（常被稱為 rate limit）時，你有兩個選擇：等到限制重置，或現在就在你擁有的另一個帳號接續同一個對話。使用 ccam 時，第二種做法只需要一個指令：`ccam next --auto --continue`。
@@ -19,7 +19,7 @@ sourceHash: "18ef61a68c55"
 
 ## 做法 2：現在就在另一個帳號接續
 
-如果你有第二個帳號，就能立刻接著同一個對話繼續工作。只需設定一次：
+如果你有第二個帳號，就能立刻接續同一個對話。只需設定一次：
 
 ```sh
 curl -fsSL https://ccam.dev/install.sh | sh
@@ -53,15 +53,21 @@ ccam usage
 ccam next --auto --continue
 ```
 
-Claude Code 會以 `work` 帳號啟動，並開啟目前資料夾中最近的對話，包含之前的所有內容。共用對話記錄（上面的 `ccam group set default --add history`）能讓它維持同一個對話；沒有共用時，Claude Code 會把對話複製到 `work`，ccam 也會告訴你第一次回覆會重新讀取多少 token。
+Claude Code 會以 `work` 帳號啟動，並開啟目前資料夾中最近的對話，包含之前的所有內容。共用對話記錄（上面的 `ccam group set default --add history`）代表兩個帳號處理的是同一個對話；沒有共用時，Claude Code 會把對話複製到 `work`，ccam 也會告訴你第一次回覆必須重新讀取多少 token。
 
-在 Claude Code 中安裝 [ccam 外掛](/docs/install#claude-code-plugin)後，因上限而停止的工作階段會顯示通知並記錄已滿的區間，讓 `ccam next --auto` 在重設前不會再次選擇該帳號，而 `/ccam:switch`（或 `/ccam:switch work`）則會為 `ccam next --continue` 記下這個對話，什麼都不必猜。
+在 Claude Code 中安裝 [ccam 外掛](/docs/install#claude-code-plugin)後，因上限而停止的工作階段會顯示通知並記錄已滿的區間，讓 `ccam next --auto` 在重設前不會再次選擇該帳號。`/ccam:switch`（或 `/ccam:switch work`）會為 `ccam next --continue` 記下這個對話，讓它接續的正是這個對話。
 
-**Team 和 Enterprise 席位。** 自動選擇（`ccam next`、`--fallback`、`ccam pick`、儀表板的 `n`，以及你開啟後的 [`auto_switch`](/features/next#auto-switch)）也會在同一個 Claude Team 或 Enterprise 組織的席位之間切換。Anthropic 說明中心關於 [Team 方案](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)的文章寫道：「Each seat on a Team plan is assigned to one named individual, and only that person may use it」（Team 方案的每個席位都指派給一位具名的個人，而且只有這個人可以使用），以及「Users can't route their work through another user's account to use that user's remaining usage」（使用者不能經由其他使用者的帳號處理自己的工作，藉此使用對方剩餘的用量）；關於 [Enterprise 方案](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)的文章也是如此。因此，在席位之間使用自動選擇可能會違反 Anthropic 的條款。要不要在這種情況下使用它由你決定：在依賴這項功能之前，請先向你所屬的組織和 Anthropic 確認。個人方案（Pro、Max）的情況請參閱[常見問題中關於條款的說明](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)。
+**Team 和 Enterprise 席位。** 自動選擇帳號（`ccam next`、`--fallback`、`ccam pick`、儀表板的 `n`，以及你開啟後的 [`auto_switch`](/features/next#auto-switch)）也會在同一個 Claude Team 或 Enterprise 組織的席位之間切換，這可能會違反 Anthropic 的條款。在依賴這項功能之前，請先閱讀[常見問題](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)，並向你所屬的組織和 Anthropic 確認。
 
 ## ccam 會自動切換帳號嗎？
 
-只有在你開啟這項功能時才會。預設情況下，你工作時 ccam 並沒有在執行：它啟動 Claude Code 後就用 Claude Code 取代自己，所以何時切換由你決定；`ccam next --auto` 會選出 5 小時用量最低的帳號，略過用量已達 100% 或未登入的帳號，並且只在同一個 Team 或 Enterprise 組織內、或在個人方案之間選擇。在 `config.toml` 中設定 `relay = true` 時，ccam 會改為在工作階段旁等待，讓 `/ccam:switch` 能自行接續下去，並沿用工作階段的選項、權限模式和推理強度。設定 `auto_switch = true` 時（Linux 和 macOS；實驗性功能），ccam 也會自行完成切換：當 Claude Code 因上限而停止工作階段，而另一個同類帳號還有餘裕時，ccam 會結束這個工作階段，並在那個帳號接續對話（[條件和代價](/features/next#auto-switch)）。另一些工具則是替換執行中工作階段的登入資訊；[ccam 與其他帳號切換工具](/compare/account-switchers)說明了兩者的差異。
+只有在你開啟這項功能時才會。
+
+- 預設情況下，你工作時 ccam 並沒有在執行：它啟動 Claude Code 後就用 Claude Code 取代自己，所以何時切換由你決定。`ccam next --auto` 會選出 5 小時用量最低的帳號，略過用量已達 100% 或未登入的帳號，並且只在同一個 Team 或 Enterprise 組織內、或在個人方案之間選擇。
+- 在 `config.toml` 中設定 `relay = true` 時，ccam 會改為在工作階段旁持續執行，讓 `/ccam:switch` 能自行接續對話，並沿用工作階段的選項、權限模式和推理強度。
+- 設定 `auto_switch = true` 時（Linux 和 macOS；實驗性功能），ccam 也會自行完成切換：當 Claude Code 因上限而停止工作階段，而另一個同類帳號還有餘裕時，ccam 會結束這個工作階段，並在那個帳號接續對話（[條件和代價](/features/next#auto-switch)）。
+
+另一些工具則是替換執行中工作階段的登入資訊；[ccam 與其他帳號切換工具](/compare/account-switchers)說明了兩者的差異。
 
 ## 注意事項
 
@@ -69,6 +75,6 @@ Claude Code 會以 `work` 帳號啟動，並開啟目前資料夾中最近的對
 - 避免讓兩個帳號同時處理同一個對話。你這樣做時，ccam 會發出警告。
 - 沒有共用對話記錄時，對話會被複製到另一個帳號，之後兩份副本各自發展；`/rewind` 用來還原程式碼的檢查點會留在第一個帳號。
 - 新帳號上的第一則訊息可能會比平常消耗更多額度，因為該帳號還沒有快取這個對話。`ccam next --continue --brief` 則會改用一份簡短的摘要來開始。
-- 是否可以這樣在帳號之間切換，取決於各帳號的條款。
+- 是否可以這樣在帳號之間切換，取決於適用於各帳號的條款。
 
-`ccam usage` 和 `ccam next` 的所有選項請參閱[用量限制](/docs/usage-limits)。
+所有選項請參閱[用量限制](/features/usage)和[切換到下一個帳號](/features/next)。

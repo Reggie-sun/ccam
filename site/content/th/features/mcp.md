@@ -1,10 +1,10 @@
 ---
 title: เซิร์ฟเวอร์ MCP ที่ใช้ร่วมกัน
 description: "เก็บรายการเซิร์ฟเวอร์ MCP ชุดเดียวต่อกลุ่มด้วย ccam mcp add, add-json, list, remove และ import โดยส่งผ่าน --mcp-config หรือซิงก์ลงในแต่ละบัญชี"
-updated: 2026-10-23
+updated: 2026-10-26
 order: 5
 translation: machine
-sourceHash: "fefca7f8d857"
+sourceHash: "27a06ad35295"
 ---
 
 Claude Code เก็บเซิร์ฟเวอร์ MCP ของผู้ใช้ไว้ใน `.claude.json` ซึ่งเป็นไฟล์เดียวกับที่เก็บการเข้าสู่ระบบของบัญชี จึงใช้ไฟล์นี้ร่วมกันระหว่างบัญชีไม่ได้ ccam เก็บเซิร์ฟเวอร์ที่ใช้ร่วมกันไว้ในไฟล์ของกลุ่ม `mcp.json` และส่งให้ทุกบัญชีในกลุ่มตอนเริ่มทำงาน ใช้ `ccam mcp` เพื่อเพิ่มเซิร์ฟเวอร์ครั้งเดียวสำหรับทุกบัญชีของคุณ และใช้ `ccam mcp import` เพื่อย้ายเซิร์ฟเวอร์ที่คุณเพิ่มไว้ภายในเซสชันหนึ่งไปยังบัญชีอื่น
@@ -21,7 +21,7 @@ ccam mcp add tools -g team -- tools-mcp                           # into the gro
 ccam mcp list                                                     # every group, and servers only one account or folder has
 ccam mcp remove ctx
 ccam mcp import work                                              # move work's own servers into its group
-ccam mcp import work gh --force                                   # replace the group's different gh
+ccam mcp import work gh --force                                   # replace the group's gh if it differs
 ```
 
 การเปลี่ยนแปลงจะมีผลตั้งแต่การเริ่มครั้งถัดไปของแต่ละบัญชี เซสชันที่กำลังทำงานจะใช้เซิร์ฟเวอร์ชุดเดิมที่เริ่มไว้:
@@ -37,7 +37,13 @@ only in account work: pg
 only in account side, for /home/me/code/app only: notes
 ```
 
-ใต้รายการกลุ่ม `ccam mcp list` จะระบุทุกเซิร์ฟเวอร์ที่ไม่ไปถึงบัญชีอื่น: `only in account work: pg` สำหรับเซิร์ฟเวอร์ที่บัญชีเพิ่มไว้ให้ตัวเอง `only in account side, for /home/me/code/app only: notes` สำหรับเซิร์ฟเวอร์ที่เพิ่มไว้สำหรับโฟลเดอร์เดียว (`claude mcp add` แบบธรรมดา ดูด้านล่าง) `account work has its own …, used in its sessions in place of the group's` เมื่อเซิร์ฟเวอร์ของบัญชีเองมีชื่อเดียวกับเซิร์ฟเวอร์ของกลุ่ม `.mcp.json` ของโฟลเดอร์นี้พร้อมบัญชีที่ยังรอการอนุมัติ (`waiting for approval in`) และเซิร์ฟเวอร์ที่ `in no account, only in ~/.claude.json (plain claude's)` พร้อมคำสั่ง [`ccam migrate --mcp`](/features/migrate) ที่ใช้คัดลอกเซิร์ฟเวอร์เหล่านั้น
+ใต้รายการกลุ่ม `ccam mcp list` จะระบุทุกเซิร์ฟเวอร์ที่ไม่ไปถึงบัญชีอื่น:
+
+- `only in account work: pg` สำหรับเซิร์ฟเวอร์ที่บัญชีเพิ่มไว้ให้ตัวเอง
+- `only in account side, for /home/me/code/app only: notes` สำหรับเซิร์ฟเวอร์ที่เพิ่มไว้สำหรับโฟลเดอร์เดียว (`claude mcp add` แบบธรรมดา ดูด้านล่าง)
+- `account work has its own …, used in its sessions in place of the group's` เมื่อเซิร์ฟเวอร์ของบัญชีเองมีชื่อเดียวกับเซิร์ฟเวอร์ของกลุ่ม
+- `.mcp.json` ของโฟลเดอร์นี้ พร้อมบัญชีที่ยังรอการอนุมัติ (`waiting for approval in`)
+- เซิร์ฟเวอร์ที่ `in no account, only in ~/.claude.json (plain claude's)` พร้อมคำสั่ง [`ccam migrate --mcp`](/features/migrate) ที่ใช้คัดลอกเซิร์ฟเวอร์เหล่านั้น
 
 การเพิ่มชื่อที่กลุ่มมีอยู่แล้วจะแทนที่นิยามเดิม และพิมพ์ `updated` แทน `added` เซิร์ฟเวอร์จะไปถึงบัญชีก็ต่อเมื่อบัญชีนั้นอยู่ในกลุ่มนั้นและกลุ่มนั้นใช้ MCP ร่วมกัน (`ccam group set <group> --add mcp`) หากกลุ่มไม่ได้ใช้ MCP ร่วมกัน `add` จะแจ้งให้ทราบ
 
@@ -70,12 +76,12 @@ only in account side, for /home/me/code/app only: notes
 
 <!-- motion:mcp-flag -->
 
-1. `launcher.applyMCP` หากลุ่ม MCP ของบัญชี `mcp.FlagArgs` ตรวจด้วย `stat` ครั้งเดียวว่า `mcp.json` ของกลุ่มมีอยู่ โดยไม่พาร์สไฟล์
-2. `Plan.InsertArgs` วาง `--mcp-config=<path>` ไว้ต่อจาก `claude` ทันที ก่อนอาร์กิวเมนต์ของคุณ ดังนั้น `--mcp-config` หรือ `--strict-mcp-config` ของคุณเองจึงยังมีผลซ้อนทับอยู่ด้านบน
-3. `mcp.NewLocal` ตรวจว่า `.claude.json` ของบัญชีเปลี่ยนไปหรือไม่ตั้งแต่การเริ่มครั้งก่อน และพาร์สเซิร์ฟเวอร์เฉพาะเมื่อเปลี่ยนไปเท่านั้น
-4. `syscall.Exec` แทนที่ ccam ด้วย Claude Code
+1. ccam หากลุ่ม MCP ของบัญชี (`launcher.applyMCP`) และตรวจด้วย `stat` ครั้งเดียวว่า `mcp.json` ของกลุ่มมีอยู่ โดยไม่พาร์สไฟล์ (`mcp.FlagArgs`)
+2. ccam วาง `--mcp-config=<path>` ไว้ต่อจาก `claude` ทันที ก่อนอาร์กิวเมนต์ของคุณ ดังนั้น `--mcp-config` หรือ `--strict-mcp-config` ของคุณเองจึงยังมีผลซ้อนทับอยู่ด้านบน (`Plan.InsertArgs`)
+3. ccam ตรวจว่า `.claude.json` ของบัญชีเปลี่ยนไปหรือไม่ตั้งแต่การเริ่มครั้งก่อน และพาร์สเซิร์ฟเวอร์เฉพาะเมื่อเปลี่ยนไปเท่านั้น (`mcp.NewLocal`)
+4. ccam แทนที่ตัวเองด้วย Claude Code (`syscall.Exec`)
 
-พาธถูกส่งเป็นอาร์กิวเมนต์เดียว `--mcp-config=<path>` ไม่ใช่สองอาร์กิวเมนต์ `--mcp-config` ของ Claude Code รับได้หลายค่า ดังนั้น `claude --mcp-config a.json "prompt"` จะอ่านพรอมต์เป็นไฟล์การตั้งค่าไฟล์ที่สองและล้มเหลวด้วย `MCP config file not found` รูปแบบอาร์กิวเมนต์เดียวจะหยุดอยู่ตรงนั้น พรอมต์หรือคำสั่งย่อยที่ตามมาจึงทำงานได้ `ccam work mcp list`, `get` และ `remove` ไม่ได้รับ flag เพราะ Claude Code ปฏิเสธในคำสั่งเหล่านั้น ccam จะระบุเซิร์ฟเวอร์ของกลุ่มทาง standard error แทน ([รายละเอียด](/features/launch#shared-mcp-servers)) Claude Code โหลดเซิร์ฟเวอร์จาก `--mcp-config` เพิ่มเติมจากเซิร์ฟเวอร์ของบัญชีเอง เมื่อชื่อซ้ำกัน รายการใน `.claude.json` จะมีผลเหนือกว่า กลยุทธ์ flag เขียน `.claude.json` เฉพาะสำหรับ Remote Control เมื่อบัญชีออกจากหรือกลับเข้าร่วมการใช้ MCP ร่วมกัน ([ด้านล่าง](#leaving-and-joining)) และสำหรับ `ccam mcp import`
+พาธถูกส่งเป็นอาร์กิวเมนต์เดียว `--mcp-config=<path>` ไม่ใช่สองอาร์กิวเมนต์ `--mcp-config` ของ Claude Code รับได้หลายค่า ดังนั้น `claude --mcp-config a.json "prompt"` จะอ่านพรอมต์เป็นไฟล์การตั้งค่าไฟล์ที่สองและล้มเหลวด้วย `MCP config file not found` รูปแบบอาร์กิวเมนต์เดียวหลีกเลี่ยงปัญหานี้ พรอมต์หรือคำสั่งย่อยที่ตามมาจึงทำงานได้ `ccam work mcp list`, `get` และ `remove` ไม่ได้รับ flag เพราะ Claude Code ปฏิเสธในคำสั่งเหล่านั้น ccam จะระบุเซิร์ฟเวอร์ของกลุ่มทาง standard error แทน ([รายละเอียด](/features/launch#shared-mcp-servers)) Claude Code โหลดเซิร์ฟเวอร์จาก `--mcp-config` เพิ่มเติมจากเซิร์ฟเวอร์ของบัญชีเอง เมื่อชื่อซ้ำกัน รายการใน `.claude.json` จะมีผลเหนือกว่า กลยุทธ์ flag เขียน `.claude.json` เฉพาะสำหรับ Remote Control เมื่อบัญชีออกจากหรือกลับเข้าร่วมการใช้ MCP ร่วมกัน ([ด้านล่าง](#leaving-and-joining)) และสำหรับ `ccam mcp import`
 
 `claude remote-control` (`rc`) ไม่รับ `--mcp-config` และเซสชันของมันอ่านเซิร์ฟเวอร์จาก `.claude.json` เท่านั้น สำหรับ `ccam work rc` ccam จะไม่ใส่ flag นั้น และเมื่ออยู่บนเทอร์มินัลจะถามว่าจะคัดลอกเซิร์ฟเวอร์ของกลุ่มลงใน `.claude.json` หรือไม่ โดยสำรองไฟล์ไว้ก่อนเหมือนกลยุทธ์ `sync` ccam จะถามจนกว่าจะมีสำเนา จากนั้นจะถามอีกเฉพาะหลังจาก `mcp.json` ของกลุ่มเปลี่ยน หรือเมื่อเซิร์ฟเวอร์ที่คัดลอกไว้หายไป ([Remote Control](/features/launch#remote-control)) เนื่องจากสำเนาดังกล่าวมีผลเหนือกว่า `--mcp-config` เมื่อชื่อซ้ำกัน `ccam mcp add`, `add-json`, `remove` และ `import` จึงอัปเดตสำเนาที่บัญชีอื่นในกลุ่มถืออยู่:
 
@@ -85,14 +91,14 @@ $ ccam mcp add ctx --url https://mcp.context7.com/mcp
 ✓ Updated the copy in account side's .claude.json (made for Remote Control)
 ```
 
-บรรทัด `✓ Updated` จะปรากฏเฉพาะเมื่อสำเนามีการเปลี่ยนแปลง สำเนาที่ ccam รุ่นเก่าสร้างไว้จะถูกปรับให้เป็นปัจจุบันด้วยวิธีเดียวกัน รวมถึงสำเนาหลัง `ccam migrate` ด้วย
+บรรทัด `✓ Updated` จะปรากฏเฉพาะเมื่อสำเนามีการเปลี่ยนแปลง สำเนาที่ ccam เวอร์ชันเก่าสร้างไว้จะถูกปรับให้เป็นปัจจุบันด้วยวิธีเดียวกัน รวมถึงสำเนาหลัง `ccam migrate` ด้วย
 
-เซิร์ฟเวอร์ที่เพิ่มภายในเซสชันด้วย `claude mcp add` จะอยู่ใน `.claude.json` ของบัญชีนั้นเท่านั้น `claude mcp add` แบบธรรมดาใช้ขอบเขต local: เซิร์ฟเวอร์จะโหลดสำหรับบัญชีนั้นในโฟลเดอร์นั้นเท่านั้น (`-s user` จะทำให้เป็นของบัญชีในทุกโฟลเดอร์) ccam มองไม่เห็นเซิร์ฟเวอร์นั้นในขณะนั้น เพราะ Claude Code ได้แทนที่ ccam ไปแล้ว จึงตรวจในการเริ่มครั้งถัดไป ไฟล์ `seen` เก็บเวลาแก้ไขของ `.claude.json` และชื่อเซิร์ฟเวอร์ที่รายงานไปแล้ว เมื่อเวลาต่างกัน ccam จะเปรียบเทียบชื่อกับกลุ่มและพิมพ์คำแนะนำสำหรับเซิร์ฟเวอร์ใหม่แต่ละตัวหนึ่งครั้ง โดยไม่รออินพุต ในทั้งสองกลยุทธ์:
+เซิร์ฟเวอร์ที่เพิ่มภายในเซสชันด้วย `claude mcp add` จะอยู่ใน `.claude.json` ของบัญชีนั้นเท่านั้น `claude mcp add` แบบธรรมดาใช้ขอบเขต local: เซิร์ฟเวอร์จะโหลดสำหรับบัญชีนั้นในโฟลเดอร์นั้นเท่านั้น (`-s user` จะทำให้บัญชีใช้ได้ในทุกโฟลเดอร์) ccam มองไม่เห็นเรื่องนี้ขณะที่เกิดขึ้น เพราะ Claude Code ได้แทนที่โปรเซสของ ccam ไปแล้ว จึงตรวจในการเริ่มครั้งถัดไป ไฟล์ `seen` เก็บเวลาแก้ไขของ `.claude.json` และชื่อเซิร์ฟเวอร์ที่รายงานไปแล้ว เมื่อเวลาต่างกัน ccam จะเปรียบเทียบชื่อกับกลุ่มและพิมพ์คำแนะนำสำหรับเซิร์ฟเวอร์ใหม่แต่ละตัวหนึ่งครั้ง โดยไม่รออินพุต ในทั้งสองกลยุทธ์:
 
 ```console
-ccam: MCP servers only account work has: pg
+ccam: MCP servers that only account work has: pg
       To share them with other accounts: ccam mcp import work pg
-ccam: MCP servers account work has for one folder only (claude mcp add without -s user): notes (/home/me/code/app)
+ccam: MCP servers that account work has for one folder only (claude mcp add without -s user): notes (/home/me/code/app)
       To share them with other accounts, in every folder: ccam mcp import work notes
 ```
 
@@ -102,10 +108,10 @@ ccam: MCP servers account work has for one folder only (claude mcp add without -
 
 <!-- motion:mcp-sync -->
 
-1. `mcp.Sync` เปรียบเทียบเวลาแก้ไขของ `mcp.json` ของกลุ่มกับ `sync-stamp` และเปรียบเทียบ `.claude.json` ของบัญชีกับสิ่งที่เห็นครั้งล่าสุด หากไม่มีอะไรเปลี่ยน ก็จะไม่ทำอะไรต่อ มิฉะนั้นจะตรวจด้วยว่าเซิร์ฟเวอร์ของกลุ่มทุกตัวยังอยู่ใน `.claude.json` และใส่สำเนาที่หายไปกลับคืน (`put back group default's MCP servers that were gone from account work's .claude.json: ctx`)
+1. ccam เปรียบเทียบเวลาแก้ไขของ `mcp.json` ของกลุ่มกับ `sync-stamp` และเปรียบเทียบ `.claude.json` ของบัญชีกับสิ่งที่เห็นครั้งล่าสุด (`mcp.Sync`) หากไม่มีอะไรเปลี่ยน ก็จะไม่ทำอะไรต่อ มิฉะนั้นจะตรวจด้วยว่าเซิร์ฟเวอร์ของกลุ่มทุกตัวยังอยู่ใน `.claude.json` และใส่สำเนาที่หายไปกลับคืน (`put back group default's MCP servers that were gone from account work's .claude.json: ctx`)
 2. ใช้ล็อกของ Claude Code เอง ซึ่งคือโฟลเดอร์ `.claude.json.lock` ข้างไฟล์ที่สร้างด้วย `mkdir` รอได้นานสุด 2 วินาที และถือว่าล็อกที่เก่ากว่า 10 วินาทีเป็นล็อกค้าง เหมือนกับไลบรารีล็อกของ Claude Code
 3. บันทึก `.claude.json` ปัจจุบันลงใน `backups/` ในโฟลเดอร์ state และเก็บไว้ 5 ชุดล่าสุด
-4. ตั้งเซิร์ฟเวอร์ทุกตัวของกลุ่มใน `mcpServers` ลบเซิร์ฟเวอร์ที่เคยเขียนไว้ซึ่งกลุ่มไม่มีแล้ว และเขียนไฟล์แบบ atomic ด้วยโหมดเดิม เฉพาะเมื่อมีสิ่งที่เปลี่ยน โดยจะเปลี่ยนหรือลบเฉพาะสำเนาที่ตัวเองเขียนไว้และไม่มีใครเปลี่ยนตั้งแต่นั้น เซิร์ฟเวอร์ที่บัญชีมีเป็นของตัวเองภายใต้ชื่อเดียวกับเซิร์ฟเวอร์ของกลุ่มจะยังเป็นของบัญชี และ ccam จะแจ้งหนึ่งครั้ง: `account work has its own MCP servers fs, so group default's of those names are not copied there`
+4. ตั้งเซิร์ฟเวอร์ทุกตัวของกลุ่มใน `mcpServers` ลบเซิร์ฟเวอร์ที่เคยเขียนไว้ซึ่งกลุ่มไม่มีแล้ว และเขียนไฟล์แบบ atomic ด้วยโหมดเดิม เฉพาะเมื่อมีสิ่งที่เปลี่ยน โดยจะเปลี่ยนหรือลบเฉพาะสำเนาที่ตัวเองเขียนไว้และไม่มีใครเปลี่ยนตั้งแต่นั้น หากบัญชีมีเซิร์ฟเวอร์ของตัวเองที่ชื่อเดียวกับเซิร์ฟเวอร์ของกลุ่ม ccam จะเก็บเซิร์ฟเวอร์ของบัญชีไว้และแจ้งหนึ่งครั้ง: `account work has its own MCP servers fs, so group default's servers with those names are not copied there`
 5. บันทึก stamp ใหม่พร้อม hash ของแต่ละสำเนา จากนั้น Claude Code จะเริ่มโดยไม่มี `--mcp-config`
 
 การซิงก์จะถูกข้ามพร้อมข้อความ `ccam: account work is already running, skipping MCP sync` เมื่อมีเซสชันของบัญชีกำลังทำงาน ไม่ว่า Claude Code จะถูกเริ่มด้วยวิธีใด เพราะ Claude Code เขียน `.claude.json` ใหม่ระหว่างทำงาน การซิงก์ที่ล้มเหลวจะพิมพ์ `ccam: MCP sync failed (launching anyway): …` และเริ่มต่อไปตามปกติ
@@ -126,12 +132,12 @@ Skipped gh: group default already has a different gh (`ccam mcp import work gh -
 ✓ Removed account work's own entries (.claude.json backed up)
 ```
 
-เมื่อใช้ `--force` เซิร์ฟเวอร์ของกลุ่มจะถูกแทนที่ และ `mcp.json` เดิมจะถูกบันทึกไว้ที่ `.ccam-backup/<time>/mcp.json` ภายในโฟลเดอร์ของกลุ่มก่อน จากนั้น `mcp.Remove` จะลบรายการที่คัดลอกแล้วออกจาก `.claude.json` ของบัญชี ทั้งของบัญชีเองและของโฟลเดอร์ในการเขียนครั้งเดียว ภายใต้ล็อกเดียวกันและหลังจากสำรองไว้ในโฟลเดอร์ state `mcp.json` ของกลุ่มจะถูกล็อกไว้ตั้งแต่โหลดจนกว่ารายการเหล่านั้นจะหายไป เพื่อไม่ให้ใครลบเซิร์ฟเวอร์ออกจากกลุ่มในระหว่างนั้น ขั้นตอนนี้จำเป็น เพราะเมื่อชื่อซ้ำกัน รายการของบัญชีจะมีผลเหนือรายการของกลุ่ม `--keep-local` จะเก็บรายการเหล่านั้นไว้
+เมื่อใช้ `--force` เซิร์ฟเวอร์ของกลุ่มจะถูกแทนที่ และ `mcp.json` เดิมจะถูกบันทึกไว้ที่ `.ccam-backup/<time>/mcp.json` ภายในโฟลเดอร์ของกลุ่มก่อน จากนั้น ccam จะลบรายการที่คัดลอกแล้วออกจาก `.claude.json` ของบัญชี ทั้งของบัญชีเองและของโฟลเดอร์ในการเขียนครั้งเดียว ภายใต้ล็อกเดียวกันและหลังจากสำรองไว้ในโฟลเดอร์ state (`mcp.Remove`) ccam จะล็อก `mcp.json` ของกลุ่มไว้ตั้งแต่อ่านไฟล์จนกว่ารายการเหล่านั้นจะถูกลบ เพื่อไม่ให้ใครลบเซิร์ฟเวอร์ออกจากกลุ่มในระหว่างนั้น ขั้นตอนนี้จำเป็น เพราะเมื่อชื่อซ้ำกัน รายการของบัญชีจะมีผลเหนือรายการของกลุ่ม เมื่อใช้ `--keep-local` รายการเหล่านั้นจะยังอยู่ใน `.claude.json` ของบัญชี
 
 ## ความปลอดภัยและกรณีพิเศษ
 
-- **การลงชื่อเข้าใช้** เซิร์ฟเวอร์ที่ลงชื่อเข้าใช้ด้วย OAuth เก็บโทเค็นไว้ใน `.credentials.json` ของแต่ละบัญชี (`mcpOAuth`) ไม่ได้อยู่ในรายการเซิร์ฟเวอร์ การใช้เซิร์ฟเวอร์ร่วมกันจึงไม่ได้ใช้การลงชื่อเข้าใช้ร่วมกันไปด้วย ให้ลงชื่อเข้าใช้หนึ่งครั้งต่อบัญชีด้วย `/mcp` ccam ไม่เคยคัดลอกการลงชื่อเข้าใช้ แม้แต่ [`ccam migrate`](/features/migrate) ก็ไม่: refresh token ที่ถูกคัดลอกจะทำให้ผู้ถือรายอื่นทั้งหมดหลุดจากระบบ [`ccam ext`](/features/ext) และ `ccam doctor` จะระบุเซิร์ฟเวอร์ที่บัญชีหนึ่งยังไม่ได้ลงชื่อเข้าใช้ ขณะที่อีกบัญชีหนึ่งลงชื่อเข้าใช้แล้ว และ `ccam next --continue` จะบอกว่าบัญชีใหม่ยังไม่ได้ลงชื่อเข้าใช้เซิร์ฟเวอร์ใด กลุ่มจะไม่ได้รับไฟล์เข้าสู่ระบบเลย
-- **บัญชีที่กำลังทำงาน** `import` คัดลอกไปยังกลุ่ม แต่จะคงรายการของบัญชีที่กำลังทำงานไว้และแจ้งให้ทราบ ให้รันอีกครั้งหลังจากเซสชันจบ การซิงก์จะข้ามบัญชีที่กำลังทำงาน ทั้งสองอย่างนับรวม Claude Code ที่เริ่มโดยไม่ผ่าน ccam ด้วย
+- **การลงชื่อเข้าใช้** เซิร์ฟเวอร์ที่ลงชื่อเข้าใช้ด้วย OAuth เก็บโทเค็นไว้ใน `.credentials.json` ของแต่ละบัญชี (`mcpOAuth`) ไม่ได้อยู่ในรายการเซิร์ฟเวอร์ การใช้เซิร์ฟเวอร์ร่วมกันจึงไม่ได้ใช้การลงชื่อเข้าใช้ร่วมกันไปด้วย ให้ลงชื่อเข้าใช้หนึ่งครั้งต่อบัญชีด้วย `/mcp` ccam ไม่เคยคัดลอกการลงชื่อเข้าใช้ และ [`ccam migrate`](/features/migrate) ก็ไม่คัดลอกเช่นกัน: refresh token ที่ถูกคัดลอกจะทำให้ผู้ถือรายอื่นทั้งหมดหลุดจากระบบ [`ccam ext`](/features/ext) และ `ccam doctor` จะระบุเซิร์ฟเวอร์ที่บัญชีหนึ่งยังไม่ได้ลงชื่อเข้าใช้ ขณะที่อีกบัญชีหนึ่งลงชื่อเข้าใช้แล้ว และ `ccam next --continue` จะบอกว่าบัญชีใหม่ยังไม่ได้ลงชื่อเข้าใช้เซิร์ฟเวอร์ใด กลุ่มจะไม่ได้รับไฟล์เข้าสู่ระบบเลย
+- **บัญชีที่กำลังทำงาน** `import` คัดลอกไปยังกลุ่ม แต่จะคงรายการของบัญชีที่กำลังทำงานไว้และแจ้งให้ทราบ ให้รันอีกครั้งหลังจากเซสชันจบ การซิงก์จะข้ามบัญชีที่กำลังทำงาน ทั้งสองอย่างตรวจพบเซสชัน Claude Code ที่เริ่มโดยไม่ผ่าน ccam ด้วย
 - **สำเนาสำหรับ Remote Control** สำเนาของบัญชีที่กำลังทำงานจะไม่ถูกแตะ: `Note: account side is running, so the copy in its .claude.json stays as it was until its next Remote Control launch.` เมื่อใช้ `mcp_strategy = "sync"` ไม่ต้องอัปเดตอะไร เพราะการเริ่มทุกครั้งซิงก์อยู่แล้ว
 - **ไฟล์เสียหาย** หาก `.claude.json` ไม่ใช่ JSON ที่ถูกต้อง การซิงก์จะไม่แตะไฟล์และรายงานข้อผิดพลาด หากล็อกไม่ได้ภายใน 2 วินาที ccam จะรายงาน `could not lock … (Claude Code is writing the file)`
 - **บัญชีที่ไม่ได้ใช้ MCP ร่วมกัน** `import` จะปฏิเสธและบอกให้คุณนำบัญชีนั้นเข้ากลุ่มที่ใช้ MCP ร่วมกันก่อน (`ccam group join <group> side`)
@@ -139,8 +145,8 @@ Skipped gh: group default already has a different gh (`ccam mcp import work gh -
 
 ## หัวข้อที่เกี่ยวข้อง
 
-- [การใช้ร่วมกันระหว่างบัญชี](/features/share)
+- [การใช้ร่วมกันด้วยกลุ่ม](/features/share)
 - [การใช้ Remote Control กับ ccam](/guides/remote-control)
 - [ใช้เซิร์ฟเวอร์ MCP การตั้งค่า และประวัติร่วมกัน](/docs/sharing)
-- [คัดลอกการตั้งค่าที่มีอยู่](/features/migrate)
-- [คำสั่งทั้งหมด](/docs/commands)
+- [การคัดลอกการตั้งค่าที่มีอยู่](/features/migrate)
+- [ข้อมูลอ้างอิงคำสั่ง](/docs/commands)

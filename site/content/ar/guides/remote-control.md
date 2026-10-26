@@ -1,13 +1,13 @@
 ---
 title: استخدام Remote Control مع ccam
 description: شغّل Remote Control في Claude Code بأي حساب باستخدام ccam <name> rc، وتعرّف على الخيارات المتاحة، ولماذا يعرض ccam نسخ خوادم MCP المشتركة، وحلّ المشكلات.
-updated: 2026-10-23
+updated: 2026-10-26
 order: 4
 translation: machine
-sourceHash: 3e17d89f98c8
+sourceHash: 4d46f49c5dea
 ---
 
-يشغّل `ccam work rc` ميزة Remote Control في Claude Code بالحساب `work`، فتتحكم في الجلسات على هذا الحاسوب من claude.ai/code أو من تطبيق Claude على الهاتف. وهو يعمل مثل `claude rc` مع فرق واحد: إذا كان الحساب يشارك خوادم MCP، يسألك ccam مرة واحدة هل ينسخها إلى ملف `.claude.json` الخاص بالحساب، لأن جلسات Remote Control لا تقرأ الخوادم من أي مكان آخر.
+يشغّل `ccam work rc` ميزة Remote Control في Claude Code بالحساب `work`، فتتحكم في الجلسات على هذا الحاسوب من claude.ai/code أو من تطبيق Claude على الهاتف. وهو يعمل مثل `claude rc` مع فرق واحد: إذا كان الحساب يشارك خوادم MCP، يسألك ccam مرة واحدة هل ينسخها إلى ملف `.claude.json` الخاص بالحساب، لأن هذا الملف هو المكان الوحيد الذي تقرأ منه جلسات Remote Control الخوادم.
 
 ## التشغيل
 
@@ -31,9 +31,10 @@ ccam --dry-run work rc                # print the command instead of running it
 | الخيار أو الإعداد | ما يفعله | القيمة الافتراضية |
 | --- | --- | --- |
 | `--dry-run` (قبل الحساب) | يطبع البيئة والأمر، وإشعار MCP إن وُجد. لا يسأل ولا ينسخ | معطّل |
-| `Copy them into .claude.json (a backup is kept; servers of the account's own stay)? [y/N]` | يُطرح عندما يشارك الحساب خوادم MCP ولا يحتوي ملف `.claude.json` الخاص به على القائمة الحالية للمجموعة، أو عندما يختفي منه خادم منسوخ. `y` ينسخها، و`N` أو Enter يبدأ بدونها | `N` |
 | `mcp_strategy = "sync"` في أعلى `~/.config/ccam/config.toml` | ينسخ خوادم المجموعة إلى `.claude.json` قبل كل تشغيل، سواء أكان Remote Control أم لا، فلا يُطرح أي سؤال أبدًا | `"flag"` |
 | `ccam group leave <group> work` | يُخرج الحساب من المجموعة التي تشاركه MCP. وتُنسخ خوادم المجموعة إلى ملف `.claude.json` الخاص به بوصفها خوادمه الخاصة، فتحصل عليها Remote Control ولا يُطرح أي سؤال؛ ومع `--fresh` تبدأ Remote Control بخوادم الحساب نفسه فقط | في `default` |
+
+عندما يشارك الحساب خوادم MCP ولا يحتوي ملف `.claude.json` الخاص به على القائمة الحالية للمجموعة، أو عندما يختفي منه خادم منسوخ، يسأل ccam `Copy them into .claude.json (a backup is kept; the account's own servers stay)? [y/N]`. `y` ينسخها؛ و`N` أو Enter يبدأ بدونها.
 
 ### خيارات Remote Control
 
@@ -66,10 +67,10 @@ ccam --dry-run work rc                # print the command instead of running it
    ```console
    $ ccam work rc
    ccam: Remote Control sessions only get MCP servers stored in account work's .claude.json, not the shared MCP servers (ctx, fs).
-   Copy them into .claude.json (a backup is kept; servers of the account's own stay)? [y/N]
+   Copy them into .claude.json (a backup is kept; the account's own servers stay)? [y/N]
    ```
 
-5. عند `y` يحفظ نسخة احتياطية من `.claude.json`، ويأخذ قفل Claude Code نفسه، ويضيف خوادم المجموعة إلى `mcpServers` مع الإبقاء على خوادم الحساب الأخرى؛ والخادم الخاص بالحساب الذي يحمل اسم خادم من المجموعة يبقى خادم الحساب، ويخبرك ccam بذلك. وعند `N`، أو دون طرفية، أو بينما الحساب يعمل، لا يغيّر شيئًا ويخبرك بذلك:
+5. عند `y` يحفظ نسخة احتياطية من `.claude.json`، ويأخذ قفل Claude Code نفسه، ويضيف خوادم المجموعة إلى `mcpServers` مع الإبقاء على خوادم الحساب الأخرى؛ وإذا كان لدى الحساب خادمه الخاص بالاسم نفسه الذي يحمله خادم في المجموعة، يحتفظ ccam بخادم الحساب ويخبرك بذلك. وعند `N`، أو دون طرفية، أو بينما الحساب يعمل، لا يغيّر شيئًا ويخبرك بذلك:
 
    ```console
          Starting without them. To copy them before every launch instead, set mcp_strategy = "sync" in ~/.config/ccam/config.toml
@@ -77,7 +78,7 @@ ccam --dry-run work rc                # print the command instead of running it
 
 6. يسجّل الجلسة، ويعيّن `CLAUDE_CONFIG_DIR` إلى مجلد الحساب، ويستبدل نفسه بـ `claude rc` عبر `exec`.
 
-بعد ذلك تظل Remote Control تعمل بوصفها خادمًا. وكل جلسة تبدؤها لك هي عملية فرعية من تلك العملية، فتعمل بالحساب `work`: بتسجيل دخول `work` وإعداداته وسجل محادثاته، وتُحتسب من حد استخدام `work`. وما دام خادم شغّله ccam يعمل، يعدّ ccam الحساب قيد التشغيل، وكذلك الخادم الذي بدأ باستخدام `claude remote-control` العادي ما دامت لديه جلسات؛ أما مثل هذا الخادم الذي لا جلسة له بعد فلا يراه ccam.
+بعد ذلك تظل Remote Control تعمل بوصفها خادمًا. وكل جلسة تبدؤها لك هي عملية فرعية من تلك العملية، فتعمل بالحساب `work`: بتسجيل دخول `work` وإعداداته وسجل محادثاته، وتُحتسب من حد استخدام `work`. ويعدّ ccam الحساب قيد التشغيل ما دام خادم Remote Control شغّله ccam يعمل. أما الخادم الذي بدأ باستخدام `claude remote-control` العادي فلا يُحتسب إلا ما دامت لديه جلسات؛ ولا يستطيع ccam رؤية خادم لا جلسة له بعد.
 
 يُظهر التشغيل التجريبي الفرق. التشغيل العادي يحمل خوادم المجموعة بوصفها وسيطًا، أما Remote Control فلا:
 
@@ -116,7 +117,7 @@ $ ccam mcp add ctx --url https://mcp.context7.com/mcp
 
 ### خوادم MCP المشتركة مفقودة في جلسات Remote Control
 
-كانت الإجابة عن السؤال `N`، أو لم تكن هناك طرفية، أو كان الحساب يعمل. أوقف Remote Control، وأغلق جلسات الحساب الأخرى، وشغّل `ccam work rc` مرة أخرى في طرفية؛ وأجب `y`. ولكي لا تُسأل أبدًا، عيّن `mcp_strategy = "sync"` في `~/.config/ccam/config.toml`. والخوادم الموجودة في جلسة لا تتغير ما دامت تعمل، لذلك ابدأ جلسة جديدة بعد النسخ.
+كانت الإجابة عن السؤال `N`، أو لم تكن هناك طرفية، أو كان الحساب يعمل. أوقف Remote Control، وأغلق جلسات الحساب الأخرى، وشغّل `ccam work rc` مرة أخرى في طرفية؛ وأجب `y`. ولكي تتوقف عن تلقّي السؤال، عيّن `mcp_strategy = "sync"` في `~/.config/ccam/config.toml`. والخوادم الموجودة في جلسة لا تتغير ما دامت تعمل، لذلك ابدأ جلسة جديدة بعد النسخ.
 
 ### "Account work is running, so its .claude.json is left alone"
 
@@ -128,7 +129,7 @@ $ ccam mcp add ctx --url https://mcp.context7.com/mcp
 
 ### يفشل `ccam work rc` فورًا مع خطأ يتعلق بـ `--mcp-config`
 
-إصدار ccam لديك أقدم من 0.6.0 ويمرّر `--mcp-config` إلى Remote Control. شغّل `ccam update`. أما الخطأ نفسه مع إصدار حديث من ccam فيعني أن خيارًا لا يعرفه ccam، له قيمة، جاء قبل `rc`، فعدّ ccam تلك القيمة هي الأمر؛ ضع `rc` مباشرة بعد اسم الحساب.
+إصدار ccam لديك أقدم من 0.6.0 ويمرّر `--mcp-config` إلى Remote Control. شغّل `ccam update`. أما مع إصدار حديث من ccam، فالخطأ نفسه يعني أن خيارًا غير معروف له قيمة جاء قبل `rc`، فظنّ ccam خطأً أن تلك القيمة هي الأمر؛ ضع `rc` مباشرة بعد اسم الحساب.
 
 ### التغيير الذي أُجري باستخدام `ccam mcp` لا يصل إلى Remote Control
 
@@ -136,7 +137,7 @@ $ ccam mcp add ctx --url https://mcp.context7.com/mcp
 
 ### يُستخدم خادمي الخاص بدلًا من خادم المجموعة
 
-إذا كان للحساب خادم خاص يحمل اسم خادم من المجموعة نفسه، فإن النسخ يتركه في مكانه ويخبرك بذلك: `account work has its own MCP servers fs, so group default's of those names are not copied there`. ولاستخدام خادم المجموعة، أزل خادم الحساب (`claude mcp remove -s user <name>`)؛ ولإعطاء نسختك لكل الحسابات، انقلها إلى المجموعة باستخدام `ccam mcp import work <server> --force`. وتوجد النسخ الاحتياطية من `.claude.json` في `~/.local/state/ccam/mcp/work/backups/`، الذي يحتفظ بأحدث خمس نسخ.
+إذا كان للحساب خادم خاص يحمل اسم خادم من المجموعة نفسه، فإن النسخ يتركه في مكانه ويخبرك بذلك: `account work has its own MCP servers fs, so group default's servers with those names are not copied there`. ولاستخدام خادم المجموعة، أزل خادم الحساب (`claude mcp remove -s user <name>`)؛ ولإعطاء نسختك لكل الحسابات، انقلها إلى المجموعة باستخدام `ccam mcp import work <server> --force`. وتوجد النسخ الاحتياطية من `.claude.json` في `~/.local/state/ccam/mcp/work/backups/`، الذي يحتفظ بأحدث خمس نسخ.
 
 ### أريد إزالة الخوادم المنسوخة
 
@@ -154,7 +155,7 @@ $ ccam mcp add ctx --url https://mcp.context7.com/mcp
 
 تطبيق Claude أو claude.ai/code مسجَّل الدخول بحساب Claude مختلف. قارنه بالبريد الإلكتروني الذي يعرضه `ccam list` للحساب `work`.
 
-### يحذّر ccam من أن نسخة أخرى من Claude Code تشارك سجل المحادثات في هذا المجلد
+### يحذّر ccam من أن جلسة Claude Code أخرى تشارك سجل المحادثات في هذا المجلد
 
 يعمل حساب آخر من مجموعة السجل نفسها في المجلد نفسه. والجلسات التي تكمل المحادثة نفسها من الحسابين قد تخلط السجل. أجب `y` فقط إذا كانا سيعملان على محادثات مختلفة، أو ابدأ Remote Control في مجلد آخر.
 
@@ -162,5 +163,5 @@ $ ccam mcp add ctx --url https://mcp.context7.com/mcp
 
 - [تشغيل Claude Code](/features/launch)
 - [خوادم MCP المشتركة](/features/mcp)
-- [المشاركة بين الحسابات](/features/share)
+- [المشاركة عبر المجموعات](/features/share)
 - [إدارة الحسابات](/features/accounts)

@@ -1,10 +1,10 @@
 ---
 title: Usar várias contas do Claude Code no mesmo computador
 description: Execute várias contas do Claude Code lado a lado com CLAUDE_CONFIG_DIR, manualmente com aliases de shell ou automaticamente com o ccam, e troque entre elas.
-updated: 2026-10-25
+updated: 2026-10-26
 order: 1
 translation: machine
-sourceHash: "5c5dbd9fcd23"
+sourceHash: "381de7a473b2"
 ---
 
 Dê a cada conta a própria pasta de configuração. O Claude Code lê a pasta da variável de ambiente `CLAUDE_CONFIG_DIR`, e cada pasta guarda o próprio login, as configurações e o histórico, então todas as contas continuam logadas e você pode executá-las ao mesmo tempo. Você pode configurar isso manualmente com um alias de shell ou deixar o ccam fazer isso.
@@ -17,7 +17,7 @@ Esta é a abordagem que [a documentação do Claude Code descreve](https://code.
 alias claude-work='CLAUDE_CONFIG_DIR=~/.claude-work claude'
 ```
 
-Abra um novo terminal e execute `claude-work`. O Claude Code pede que você faça login, porque a pasta é nova. A partir daí, `claude` é sua primeira conta e `claude-work` a segunda. Adicione um alias por conta, cada um com a própria pasta.
+Abra um novo terminal e execute `claude-work`. O Claude Code pede que você faça login, porque a pasta é nova. A partir daí, `claude` é sua primeira conta e `claude-work` a segunda.
 
 No Windows sem WSL, uma função do PowerShell no seu perfil (`notepad $PROFILE`) faz o mesmo:
 
@@ -51,9 +51,9 @@ ccam add work --shortcut ccwork
 
 Agora `ccam personal` e `ccam work` iniciam as duas contas, assim como `ccwork`, o atalho que você deu à conta work. Como são programas de verdade e não aliases, eles também funcionam em scripts. Execute `ccam` sozinho para escolher uma conta em uma lista, e `ccam use work` para tornar uma delas a padrão.
 
-Configurações, `CLAUDE.md`, servidores MCP e extensões são compartilhados desde o início. `ccam next --continue` leva uma conversa para a outra conta, e o histórico de conversas compartilhado, que você pode ativar, a mantém como uma só conversa. `ccam usage` mostra o uso de 5 horas e semanal de todas as contas de uma vez.
+Configurações, `CLAUDE.md`, servidores MCP e extensões são compartilhados desde o início. `ccam next --continue` continua uma conversa na outra conta. Se você ativar o histórico de conversas compartilhado, as duas contas trabalham na mesma conversa em vez de em uma cópia. `ccam usage` mostra o uso de 5 horas e semanal de todas as contas de uma vez.
 
-Se você já usa `~/.claude`, execute `ccam import` em vez de adicionar essa conta de novo, ou `ccam migrate` para copiar as configurações, os servidores MCP e as extensões dela para as configurações compartilhadas.
+Se você já usa `~/.claude`, execute `ccam import` em vez de adicionar essa conta de novo, ou `ccam migrate` para copiar as configurações, os servidores MCP e as extensões dela para o grupo `default`.
 
 ## Como saber qual conta está em execução?
 
@@ -77,6 +77,6 @@ O Claude Code roda [nativamente no Windows e dentro do WSL](https://code.claude.
 
 Para duas contas sem nada compartilhado, um alias basta. Quando você quer configurações e servidores MCP compartilhados, mais contas, ver o uso de relance ou continuar conversas, o ccam poupa o trabalho de manutenção. A [comparação com aliases](/compare/aliases) lista as diferenças lado a lado, e [o ccam e outras ferramentas para trocar de conta](/compare/account-switchers) trata das ferramentas que trocam um único login.
 
-Se você pode usar várias contas depende dos termos de cada conta. Verifique-os antes.
+Se você pode usar mais de uma conta depende dos termos que se aplicam a cada uma. Leia esses termos antes de começar.
 
-**Assentos dos planos Team e Enterprise.** A escolha automática (`ccam next`, `--fallback`, `ccam pick`, a tecla `n` do painel e o [`auto_switch`](/features/next#auto-switch), quando você o ativa) também alterna entre assentos da mesma organização Claude Team ou Enterprise. A central de ajuda da Anthropic diz "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (cada assento de um plano Team é atribuído a uma pessoa específica, e só essa pessoa pode usá-lo) e "Users can't route their work through another user's account to use that user's remaining usage" (os usuários não podem encaminhar o próprio trabalho pela conta de outro usuário para aproveitar o uso restante desse usuário) ([planos Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); o mesmo vale para os [planos Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Por isso, usar a escolha automática entre assentos pode violar os termos da Anthropic. Usá-la nesse caso é uma decisão sua: consulte a sua organização e a Anthropic antes de contar com ela. Os planos pessoais (Pro, Max) são tratados na nota acima.
+**Assentos dos planos Team e Enterprise.** A escolha automática de conta (`ccam next`, `--fallback`, `ccam pick`, a tecla `n` do painel e, depois que você o ativa, o [`auto_switch`](/features/next#auto-switch)) também alterna entre assentos da mesma organização Claude Team ou Enterprise, o que pode violar os termos da Anthropic. Leia as [perguntas frequentes](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) e consulte a sua organização e a Anthropic antes de contar com ela.

@@ -1,10 +1,10 @@
 ---
 title: Kunakili usanidi uliopo
 description: Nakili mipangilio, CLAUDE.md, viendelezi na seva za MCP za ~/.claude iliyopo hadi kikundi cha ccam kwa ccam migrate.
-updated: 2026-10-23
+updated: 2026-10-26
 order: 6
 translation: machine
-sourceHash: "7bca9efb6eb0"
+sourceHash: "f835fbe84ade"
 ---
 
 Ikiwa ulitumia Claude Code kabla ya ccam, usanidi wako uko katika `~/.claude` na `~/.claude.json`. `ccam migrate` huunakili kwenye kikundi cha kushiriki, ili kila akaunti inayoshiriki vipengele hivyo kupitia kikundi ianze na usanidi ulio nao tayari. Folda chanzo husomwa tu, na `claude` ya kawaida inaendelea kufanya kazi kama awali. Iendeshe mara moja baada ya `ccam add` yako ya kwanza; `~/.claude.json` ikiwa na seva za MCP, `ccam add` ya kwanza huzitaja katika kidokezo chake.
@@ -25,14 +25,14 @@ Kwenye terminal, bila chaguo za vipengele na bila `--yes`, ccam huonyesha kwanza
  Copy into group default
 
  From /home/me/.claude
- ? Choose what to copy (Space to toggle)
- › [x] MCP servers
-   [x] settings.json
-   [x] global CLAUDE.md
-   [x] agents, commands, skills
+ Choose what to copy (Space to toggle)
+ ❯ [✔] MCP servers
+   [✔] settings.json
+   [✔] global CLAUDE.md
+   [✔] skills, agents, commands, plugins
    [ ] conversation history
 
- Enter show the plan · Esc cancel
+ space to toggle · enter to show the plan · esc to cancel
 ```
 
 Space (au `x`) hubadilisha kipengele kilicho chini ya kishale, vitufe vya mishale au `j`/`k` husogeza, Enter huonyesha mpango, na Esc, `q` au Ctrl+C huchapisha `Cancelled.`. Vipengele ambavyo chanzo hakina chochote kwavyo huwekwa alama `not found`. Ukiondoa uteuzi wa kila kitu, ccam huchapisha `Nothing selected.` na husimama.
@@ -56,7 +56,7 @@ MCP sign-ins are not copied (a sign-in works for one account only). Sign in with
 Group default: personal, work
 ```
 
-Kikundi hufikia akaunti zake tu, na kwa vipengele kinavyoshiriki tu, kwa hiyo muhtasari huorodhesha akaunti za kikundi. Kikundi kisiposhiriki mojawapo ya vipengele vilivyonakiliwa, au baadhi ya akaunti hazimo ndani yake, ccam huchapisha amri za `ccam group set <group> --add <items>` na `ccam group join <group> <accounts>` zinazobadilisha hilo.
+Kikundi huathiri akaunti zake tu, na vipengele kinavyoshiriki tu, kwa hiyo muhtasari huorodhesha akaunti za kikundi. Kikundi kisiposhiriki mojawapo ya vipengele vilivyonakiliwa, au baadhi ya akaunti hazimo ndani yake, ccam huchapisha amri za `ccam group set <group> --add <items>` na `ccam group join <group> <accounts>` zinazobadilisha hilo.
 
 ## Chaguo
 
@@ -68,29 +68,29 @@ Kikundi hufikia akaunti zake tu, na kwa vipengele kinavyoshiriki tu, kwa hiyo mu
 | `--extensions` | Hunakili `agents/`, `commands/`, `skills/`, `plugins/`, `output-styles/`, `rules/` | imezimwa |
 | `--mcp` | Hunakili seva za MCP za mtumiaji (`mcpServers` katika `.claude.json`) | imezimwa |
 | `--history` | Hunakili historia ya mazungumzo (`projects/`, `history.jsonl`) | imezimwa |
-| `-g`, `--group string` | Kikundi cha kushiriki cha kunakili ndani yake | `default` |
+| `-g`, `--group <group>` | Kikundi cha kushiriki cha kunakili ndani yake | `default` |
 | `-y`, `--yes` | Hunakili bila kuuliza; kukiwa na mgongano nakala ya kikundi huhifadhiwa | imezimwa |
 | `--dry-run` (jumla) | Huchapisha mpango na husimama kabla ya swali au unakili wowote | imezimwa |
 
-Bila chaguo la kipengele, orodha ya kuteua huamua kwenye terminal. Nje ya terminal, au kwa `--yes`, ccam hunakili kila kitu isipokuwa historia ya mazungumzo. Historia huachwa kwa chaguo-msingi kwa sababu `projects/` inaweza kuwa kubwa.
+Kwenye terminal, usipotoa chaguo za vipengele, unachagua vipengele katika orodha ya kuteua. Nje ya terminal, au kwa `--yes`, ccam hunakili kila kitu isipokuwa historia ya mazungumzo. Historia huachwa kwa chaguo-msingi kwa sababu `projects/` inaweza kuwa kubwa.
 
-`--group on` inamaanisha `default`. `--group off` na `--group local` hukataliwa kwa `--group takes a group name, not "off"`. `ccam migrate` huheshimu `--dry-run`, na orodha ya kuteua bado huonekana katika dry run ili uweze kuona uteuzi kabla.
+`--group on` inamaanisha `default`. `--group off` na `--group local` hukataliwa kwa `--group takes a group name, not "off"`. `ccam migrate` hukubali `--dry-run`, na orodha ya kuteua bado huonekana katika dry run ili uweze kuona uteuzi kabla.
 
 ## Jinsi inavyofanya kazi
 
-`internal/cli/migrate.go` huchagua vipengele, kisha `migrate.Build` husoma chanzo na kikundi na hurudisha mpango. Hakuna kinachoandikwa hadi `Plan.Apply`, baada ya wewe kuthibitisha.
+ccam huunda mpango kamili kabla ya kunakili chochote. Huchagua vipengele (`internal/cli/migrate.go`), kisha husoma chanzo na kikundi na huunda mpango (`migrate.Build`). Hakuna kinachoandikwa hadi `Plan.Apply`, baada ya wewe kuthibitisha.
 
-1. **Kupata chanzo.** `checkSource` hukataa njia inayokosekana, isiyo folda, au isiyo na kipengee chochote kinachojulikana cha Claude Code. Kwa seva za MCP pekee, `~/.claude` tupu au isiyokuwepo inakubalika mradi `~/.claude.json` ina seva. `migrate.ClaudeJSON` hupata `.claude.json` inayohusiana na folda: ndani yake, au kwa `~/.claude` isiyo na moja ndani, `~/.claude.json` kando yake. Hapo ndipo Claude Code huihifadhi wakati `CLAUDE_CONFIG_DIR` haijawekwa.
+1. **Kupata chanzo.** ccam hukataa njia inayokosekana, isiyo folda, au isiyo na kipengee chochote kinachojulikana cha Claude Code (`checkSource`). Kwa seva za MCP pekee, `~/.claude` tupu au isiyokuwepo inakubalika mradi `~/.claude.json` ina seva. ccam hupata `.claude.json` inayohusiana na folda (`migrate.ClaudeJSON`): ndani yake, au kwa `~/.claude` isiyo na moja ndani, `~/.claude.json` kando yake. Hapo ndipo Claude Code huihifadhi wakati `CLAUDE_CONFIG_DIR` haijawekwa.
 2. **Kuhusisha vipengele na njia.** Kila njia hutoka `share.Layout`, orodha ile ile ya ruhusa ambayo vikundi hutumia. Seva za MCP husomwa kutoka `.claude.json` kwa `mcp.LocalServers`, ambayo hutumia kisomaji cha `profile.TopLevelValue` badala ya kufasiri faili nzima.
-3. **Kunakili, kamwe si kuhamisha.** Faili huenda `~/.local/share/ccam/groups/<group>/` kwa `fsutil.AtomicWrite` au `fsutil.CopyFile`, ambayo huandika faili ya muda kando ya lengo na kuipa jina jipya, kwa hiyo unakili unaosimama kamwe hauachi faili iliyokatika. Seva za MCP huenda kwenye `mcp.json` ya kikundi chini ya kufuli yake: seva ambayo ccam nyingine huongeza wakati huo hubaki, na nakala zilizotengenezwa kwa ajili ya [Remote Control](/guides/remote-control) husasishwa baadaye.
+3. **Kunakili, kamwe si kuhamisha.** Faili huenda `~/.local/share/ccam/groups/<group>/` kwa `fsutil.AtomicWrite` au `fsutil.CopyFile`, ambayo huandika faili ya muda kando ya lengo na kuipa jina jipya, kwa hiyo unakili uliokatizwa kamwe hauachi faili isiyokamilika. Seva za MCP huenda kwenye `mcp.json` ya kikundi chini ya kufuli yake: seva ambayo mchakato mwingine wa ccam huongeza katikati hubaki, na nakala zilizotengenezwa kwa ajili ya [Remote Control](/guides/remote-control) husasishwa baadaye.
 
 Kila kipengele huhusisha njia moja ya chanzo na njia moja ya kikundi:
 
 <!-- motion:migrate-items -->
 
-Safu mbili za historia zina mistari ya vistari kwa sababu hunakiliwa tu kwa `--history`. `.credentials.json` na `.claude.json` zimeorodheshwa katika `share.Never` na kamwe hazifiki kwenye kikundi: `Build` hurudisha kosa la ndani ikiwa moja wapo itaonekana kwenye mpangilio, na upitiaji wa folda huziruka kwa jina.
+Safu mbili za historia zina mistari ya vistari kwa sababu hunakiliwa tu kwa `--history`. `.credentials.json` na `.claude.json` zimeorodheshwa katika `share.Never` na kamwe hazifiki kwenye kikundi: ccam husimama na kosa la ndani ikiwa moja wapo itaonekana kwenye mpangilio (`Build`), na upitiaji wa folda huziruka kwa jina.
 
-`buildEntry` huipa kila njia hali, ambayo ndiyo kila mstari wa mpango huieleza:
+ccam huipa kila njia hali, ambayo ndiyo kila mstari wa mpango huieleza (`buildEntry`):
 
 <!-- motion:migrate-states -->
 
@@ -98,14 +98,14 @@ Safu mbili za historia zina mistari ya vistari kwa sababu hunakiliwa tu kwa `--h
 - **Linked**: njia ya chanzo tayari inaelekea nakala ya kikundi, kwa mfano chanzo kinapokuwa folda ya wasifu wa ccam.
 - **Same**: kikundi tayari kina maudhui yanayofanana kabisa.
 - **New**: kikundi hakina, kwa hiyo hunakiliwa yote.
-- **Merge**: folda iliyo pande zote mbili. `copyMissing` huongeza tu faili ambazo kikundi hakina; faili zinazotofautiana hubaki kama kikundi kilivyo nazo na mpango husema `group copies kept`. Kwa `plugins/`, rejista `installed_plugins.json` na `known_marketplaces.json` huunganishwa, na njia kamili za plugins huandikwa upya ili kuelekea folda ya kikundi.
+- **Merge**: folda iliyo pande zote mbili. ccam huongeza tu faili ambazo kikundi hakina (`copyMissing`); faili zinazotofautiana hubaki kama kikundi kilivyo nazo na mpango husema `group copies kept`. Kwa `plugins/`, rejista `installed_plugins.json` na `known_marketplaces.json` huunganishwa, na njia kamili za plugins huandikwa upya ili kuelekea folda ya kikundi.
 - **Conflict**: faili iliyo pande zote mbili yenye maudhui tofauti. Unachagua kwa kila faili: `keep group`, `use mine`, pamoja na `merge JSON` kwa faili za `.json` (uunganishaji wa kina ambapo kikundi hushinda kwenye thamani zinazogongana) au `merge by line` kwa `history.jsonl`. Seva ya MCP ambayo ufafanuzi wake unatofautiana pia ni mgongano, ikiwa na `keep group` au `use mine`. Chaguo la kwanza lililoorodheshwa ndilo chaguo-msingi unapobonyeza Enter; `--yes` daima huhifadhi nakala ya kikundi.
 
-Orodha ya kuteua yenyewe ni `tui.MigratePicker` iliyojengwa juu ya kipengele cha `checklist` ambacho `ccam add` hutumia; `migrate.Found` huweka alama vipengele vinavyokosekana kwa miito ya lstat na orodha ya seva za MCP.
+Orodha ya kuteua yenyewe ni `tui.MigratePicker` iliyojengwa juu ya kipengele cha `checklist` ambacho `ccam add` hutumia; ccam huweka alama vipengele vinavyokosekana kwa miito ya lstat na orodha ya seva za MCP (`migrate.Found`).
 
 ### Taarifa za kuingia za MCP
 
-Seva za MCP zinazoingia kwa OAuth huhifadhi tokeni zao kwenye faili ya kuingia, `.credentials.json` chini ya `mcpOAuth`, si kwenye orodha ya seva. ccam haizinakili. Kuingia kulikonakiliwa hubeba refresh token ile ile kama ya asili, na seva hubadilisha tokeni hiyo inapofanywa upya kwa mara ya kwanza: hapo kila mwenye nakala nyingine, ikiwemo `~/.claude` chanzo, hutolewa nje ya seva hiyo. Kwa hiyo mstari wa mpango wa `sign-ins` hutaja, kwa kila seva iliyonakiliwa ambayo chanzo kimeingia, akaunti za kikundi zinazopaswa kuingia zenyewe kwa `/mcp`, na muhtasari hurudia hilo. Kipengele kisicho na tokeni si kuingia na hakiorodheshwi, wala akaunti ambayo tayari ina kuingia kwake yenyewe, wala seva ambayo kikundi huhifadhi ufafanuzi wake. Hakuna faili ya kuingia inayoandikwa.
+Seva za MCP zinazoingia kwa OAuth huhifadhi tokeni zao kwenye faili ya kuingia, `.credentials.json` chini ya `mcpOAuth`, si kwenye orodha ya seva. ccam haizinakili. Kuingia kulikonakiliwa hubeba refresh token ile ile kama ya asili, na seva hubadilisha tokeni hiyo inapofanywa upya kwa mara ya kwanza: hapo kila mwenye nakala nyingine, ikiwemo `~/.claude` chanzo, hutolewa nje ya seva hiyo. Kwa hiyo kwa kila seva iliyonakiliwa ambayo chanzo kimeingia, mstari wa `sign-ins` wa mpango huorodhesha akaunti za kikundi zinazopaswa kuingia zenyewe kwa `/mcp`, na muhtasari hurudia hilo. Kipengele kisicho na tokeni si kuingia na hakiorodheshwi, wala akaunti ambayo tayari ina kuingia kwake yenyewe, wala seva ambayo kikundi huhifadhi ufafanuzi wake. Hakuna faili ya kuingia inayoandikwa.
 
 ## Usalama na hali maalum
 
@@ -113,7 +113,7 @@ Seva za MCP zinazoingia kwa OAuth huhifadhi tokeni zao kwenye faili ya kuingia, 
 - Kabla ya faili ya kikundi kubadilishwa, kwa `use mine`, uunganishaji, au seva mpya za MCP katika `mcp.json` iliyopo, nakala ya kikundi huhifadhiwa katika `<group>/.ccam-backup/<time>/`. Jina la folda ni la kipekee kwa kila uendeshaji, kwa hiyo uendeshaji miwili katika sekunde ile ile haiandiki juu ya nakala rudufu za mwingine. Muhtasari huchapisha njia.
 - Kwa `--yes`, kila mgongano huhifadhi nakala ya kikundi, na ccam husema jinsi ya kuchagua badala yake: endesha amri ile ile bila `--yes`.
 - Ikiwa hakuna kitakachobadilika, ccam huchapisha `Nothing to copy.`; ikiwa kila mgongano huhifadhi nakala ya kikundi, `Nothing to copy: the group keeps its own copies.`
-- Unakili ukishindwa katikati, ccam husimama na `The source folder was not changed. Group files replaced so far are saved in` ikifuatiwa na folda ya nakala rudufu. Kuendesha tena hunakili faili ambazo hazikufika zikiwa kamili.
+- Unakili ukishindwa katikati, ccam husimama na `The source folder was not changed. Group files replaced so far are saved in` ikifuatiwa na folda ya nakala rudufu. Kuiendesha tena hunakili faili ambazo hazikunakiliwa kikamilifu.
 - Vikundi kadhaa vinaposhiriki MCP, amri ambazo `ccam doctor`, `ccam ext` na `ccam mcp list` hupendekeza husomeka `ccam migrate --mcp --group <a|b>`.
 - Chanzo kinachokosekana huishia na `no Claude Code folder at <path>. Give the folder to copy from: ccam migrate <folder>`.
 
@@ -121,5 +121,5 @@ Seva za MCP zinazoingia kwa OAuth huhifadhi tokeni zao kwenye faili ya kuingia, 
 
 - [Shiriki seva za MCP, mipangilio na historia](/docs/sharing)
 - [Kukagua na kurekebisha](/features/doctor)
-- [Akaunti kadhaa za Claude Code](/guides/multiple-claude-code-accounts)
-- [CLAUDE_CONFIG_DIR](/guides/claude-config-dir)
+- [Tumia akaunti kadhaa za Claude Code kwenye kompyuta moja](/guides/multiple-claude-code-accounts)
+- [CLAUDE_CONFIG_DIR imefafanuliwa](/guides/claude-config-dir)

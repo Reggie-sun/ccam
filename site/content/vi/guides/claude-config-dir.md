@@ -1,10 +1,10 @@
 ---
 title: Giải thích về CLAUDE_CONFIG_DIR
 description: "CLAUDE_CONFIG_DIR làm gì trong Claude Code, thư mục chứa những gì, macOS giữ đăng nhập ở đâu, và tệp nào có thể dùng chung giữa các tài khoản."
-updated: 2026-10-23
+updated: 2026-10-26
 order: 2
 translation: machine
-sourceHash: "2cf08478085f"
+sourceHash: dc2fe42e11e1
 ---
 
 `CLAUDE_CONFIG_DIR` cho Claude Code biết dùng thư mục nào thay cho `~/.claude`. Mọi thứ riêng của tài khoản đều nằm ở đó: thông tin đăng nhập, cài đặt, máy chủ MCP, plugin và lịch sử hội thoại. Trỏ biến này tới các thư mục khác nhau sẽ cho bạn các tài khoản tách biệt.
@@ -32,17 +32,17 @@ Có. Claude Code liệt kê nó trong danh sách [biến môi trường](https:/
 | `history.jsonl` | Lịch sử prompt | Có |
 | `sessions/`, `shell-snapshots/`, `cache/` và các thư mục khác | Trạng thái khi chạy | Không |
 
-## Những điểm nào dễ gây nhầm lẫn?
+## Những điểm nào dễ khiến người dùng vấp phải?
 
 **Khi không có `CLAUDE_CONFIG_DIR`, `.claude.json` không nằm trong `~/.claude`.** Khi đó Claude Code giữ tệp này ở `~/.claude.json`, cạnh thư mục. Nếu bạn bắt đầu dùng `CLAUDE_CONFIG_DIR=~/.claude`, Claude Code sẽ tìm `~/.claude/.claude.json` và không thấy tài khoản của bạn. `ccam import` xử lý việc này bằng cách liên kết hai tệp với nhau. Nếu `~/.claude` đã có `.claude.json` riêng, từ một lần chạy trước đó với `CLAUDE_CONFIG_DIR=~/.claude`, ccam để nguyên cả hai tệp và thông báo điều đó, vì chỉ bạn mới biết tệp nào là đúng.
 
-**Trên macOS, thông tin đăng nhập nằm trong Chuỗi khóa (Keychain), không nằm trong thư mục.** Claude Code lưu nó dưới tên `Claude Code-credentials`, kèm theo `-` và 8 chữ số hex đầu tiên của SHA-256 của đường dẫn thư mục khi `CLAUDE_CONFIG_DIR` được đặt, cho tài khoản được nêu tên bởi `$USER`. Do đó các thư mục riêng biệt sẽ có các mục Chuỗi khóa riêng biệt, và một thư mục bị di chuyển hoặc đổi tên sẽ mất thông tin đăng nhập; đó là lý do `ccam rename` giữ nguyên tên thư mục trên macOS. Nếu Chuỗi khóa từ chối ghi, Claude Code sẽ dùng `.credentials.json` trong thư mục để thay thế, như [tài liệu của Claude Code](https://code.claude.com/docs/en/authentication#credential-management) mô tả.
+**Trên macOS, thông tin đăng nhập nằm trong Chuỗi khóa (Keychain), không nằm trong thư mục.** Claude Code lưu nó dưới tên `Claude Code-credentials`. Khi `CLAUDE_CONFIG_DIR` được đặt, tên này còn kết thúc bằng `-` và 8 chữ số hex đầu tiên của SHA-256 của đường dẫn thư mục. Tên tài khoản của mục Chuỗi khóa là `$USER`. Do đó các thư mục riêng biệt sẽ có các mục Chuỗi khóa riêng biệt, và một thư mục bị di chuyển hoặc đổi tên sẽ mất thông tin đăng nhập; đó là lý do `ccam rename` giữ nguyên tên thư mục trên macOS. Nếu Chuỗi khóa từ chối ghi, Claude Code sẽ dùng `.credentials.json` trong thư mục để thay thế, như [tài liệu của Claude Code](https://code.claude.com/docs/en/authentication#credential-management) mô tả.
 
-**Không phải mọi kiểu đăng nhập đều nằm trong thư mục.** Đăng nhập Claude Console không dùng API key được lưu bên ngoài thư mục, nên các thư mục riêng không tách được hai đăng nhập như vậy. Đăng nhập claude.ai và API key được giữ theo từng thư mục.
+**Không phải mọi kiểu đăng nhập đều nằm trong thư mục.** Đăng nhập Claude Console không dùng API key được lưu bên ngoài thư mục, nên các thư mục riêng không thể tách hai đăng nhập như vậy. Đăng nhập claude.ai và API key được giữ theo từng thư mục.
 
 ## Trên Windows, thư mục nằm ở đâu?
 
-Mặc định là `%USERPROFILE%\.claude`, với thông tin đăng nhập nằm trong `.credentials.json` bên trong, hoặc trong Credential Manager của Windows khi Claude Code được đặt để dùng nó, dưới một tên được tạo từ đường dẫn thư mục như trên macOS. Đặt `CLAUDE_CONFIG_DIR` thành một thư mục khác cho mỗi tài khoản bổ sung, giống như trên Linux và macOS.
+Mặc định là `%USERPROFILE%\.claude`. Thông tin đăng nhập nằm trong `.credentials.json` bên trong thư mục đó, hoặc trong Credential Manager của Windows nếu Claude Code được đặt để dùng nó, dưới một tên được tạo từ đường dẫn thư mục như trên macOS. Đặt `CLAUDE_CONFIG_DIR` thành một thư mục khác cho mỗi tài khoản bổ sung, giống như trên Linux và macOS.
 
 ## Các thư mục có thể dùng chung tệp không?
 

@@ -1,13 +1,13 @@
 ---
 title: Kiểm tra tiện ích mở rộng
 description: ccam ext hiện các skill, lệnh, plugin, máy chủ MCP và hook mà mỗi tài khoản nạp, nguồn gốc của từng mục, và những gì bị hỏng.
-updated: 2026-10-23
+updated: 2026-10-26
 order: 14
 translation: machine
-sourceHash: "45740e4efbef"
+sourceHash: 7ca357a7f38a
 ---
 
-`ccam ext` trả lời câu hỏi "vì sao skill này (hay máy chủ MCP này) chạy ở tài khoản này mà không chạy ở tài khoản kia?". Với mỗi tài khoản, nó liệt kê các tiện ích mở rộng mà Claude Code nạp và nguồn gốc của từng mục: một nhóm dùng chung, thư mục riêng của tài khoản, hoặc dự án bạn đang ở. Bên dưới bảng, nó liệt kê những gì khiến một tiện ích mở rộng không được nạp như bạn mong đợi. Nó chỉ đọc.
+`ccam ext` trả lời câu hỏi "Vì sao skill này (hay máy chủ MCP này) chạy ở một tài khoản nhưng không chạy ở tài khoản kia?" Với mỗi tài khoản, nó liệt kê các tiện ích mở rộng mà Claude Code nạp và nguồn gốc của từng mục: một nhóm dùng chung, thư mục riêng của tài khoản, hoặc dự án bạn đang ở. Bên dưới bảng, nó liệt kê những gì khiến một tiện ích mở rộng không được nạp như bạn mong đợi. Nó không thay đổi gì.
 
 ## Cách dùng
 
@@ -62,7 +62,7 @@ Mỗi ô nêu nguồn của mục đó trong tài khoản đó: nhóm dùng chun
 
 - **Liên kết hỏng**: một liên kết trong `skills/`, `commands/` hoặc `agents/` có đích không còn nữa, hoặc một thư mục dùng chung (`skills`, `commands`, `agents`, `plugins`) liên kết tới một nơi không tồn tại (sửa bằng `ccam doctor --fix`, lệnh này tạo lại thư mục nhóm bị thiếu).
 - **Một thư mục skill không có `SKILL.md`**: Claude Code bỏ qua nó.
-- **Một máy chủ MCP được định nghĩa khác nhau ở hai nơi**: `mcp.json` của nhóm và `.claude.json` của tài khoản, hoặc một trong hai và `.mcp.json` của dự án. Cùng một thiết lập ở cả hai nơi (thứ mà `mcp_strategy = "sync"` ghi ra) không phải là vấn đề. Chuyển máy chủ riêng của một tài khoản vào nhóm bằng `ccam mcp import <account> <server>`.
+- **Một máy chủ MCP được định nghĩa khác nhau ở hai nơi**: `mcp.json` của nhóm và `.claude.json` của tài khoản, hoặc một trong hai và `.mcp.json` của dự án. Các định nghĩa giống hệt nhau ở cả hai nơi (thứ mà `mcp_strategy = "sync"` ghi ra) không phải là vấn đề. Chuyển máy chủ riêng của một tài khoản vào nhóm bằng `ccam mcp import <account> <server>`.
 - **`installed_plugins.json` không phải JSON hợp lệ**, một plugin mà `enabledPlugins` không nêu tên, và một plugin bị thiếu thư mục.
 - **Các máy chủ chỉ một tài khoản tải**: một máy chủ chỉ có trong `.claude.json` của tài khoản này mà các tài khoản khác trong nhóm không tải, và một máy chủ trong phạm vi local của tài khoản cho thư mục này (điều `claude mcp add` làm nếu không có `-s user`). Mỗi trường hợp đi kèm lệnh `ccam mcp import` để dùng chung nó. Các máy chủ trong `~/.claude.json` của `claude` thông thường mà không tài khoản nào tải đi kèm lệnh `ccam migrate --mcp`.
 - **Một máy chủ của dự án đang chờ phê duyệt**: tài khoản chưa tin cậy thư mục, nên Claude Code hỏi một lần, và cho đến lúc đó các máy chủ trong `.mcp.json` của dự án phải chờ. Vấn đề cho biết nơi phê duyệt chúng: `"enabledMcpjsonServers"` trong `settings.json` của các tài khoản thuộc nhóm settings, hoặc của tài khoản này. Sự tin cậy dành cho worktree chính của một kho git cũng có hiệu lực trong các worktree khác của nó.
@@ -76,6 +76,6 @@ Mỗi ô nêu nguồn của mục đó trong tài khoản đó: nhóm dùng chun
 
 ## Liên quan
 
-- [Dùng chung giữa các tài khoản](/features/share)
+- [Dùng chung bằng nhóm](/features/share)
 - [Máy chủ MCP dùng chung](/features/mcp)
 - [Kiểm tra và sửa chữa](/features/doctor)

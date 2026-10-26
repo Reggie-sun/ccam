@@ -1,10 +1,10 @@
 ---
 title: ccam ile kabuk takma adlarının karşılaştırması
-description: Birden fazla Claude Code hesabı çalıştırmak için CLAUDE_CONFIG_DIR ile kabuk takma adları ve ccam, yan yana karşılaştırma.
-updated: 2026-10-20
+description: Birden fazla Claude Code hesabı çalıştırmak için CLAUDE_CONFIG_DIR ile kabuk takma adlarının ve ccam'ın özellik özellik karşılaştırması.
+updated: 2026-10-26
 order: 1
 translation: machine
-sourceHash: b9fbcb88f111
+sourceHash: c30d84bceba0
 ---
 
 Her hesap için bir kabuk takma adı (alias), birden fazla Claude Code hesabı çalıştırmanın en basit yoludur. ccam arka planda aynı şeyi yapar ve buna paylaşım, hesap değiştirme ve kullanım takibi ekler.
@@ -37,7 +37,7 @@ ccam add work --shortcut ccwork
 | Ayrı girişler | Evet | Evet |
 | Hesap başına kurulum | `~/.bashrc` dosyasını düzenleme, giriş yapma | `ccam add` |
 | Betiklerde ve diğer programlarda çalışır | Hayır, takma adlar yalnızca kabukta çalışır | Evet, `ccam work` ve `ccwork` gibi kısayollar gerçek komutlardır |
-| Paylaşılan ayarlar, `CLAUDE.md`, uzantılar | Elle kopyalama veya bağlama | Öğe bazında, yedeklerle |
+| Paylaşılan ayarlar, `CLAUDE.md`, uzantılar | Elle kopyalama veya bağlama | Evet, öğe bazında seçilir, yedeklerle |
 | Paylaşılan MCP sunucuları | Elle, hesap başına | Bir kez `ccam mcp add` |
 | Bir konuşmaya başka hesapta devam etme | Hayır | `ccam next --continue` |
 | Tüm hesapların kullanımı | Hayır | `ccam usage` |

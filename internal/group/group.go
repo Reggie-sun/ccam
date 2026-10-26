@@ -450,7 +450,7 @@ func (ch *Change) Describe(w io.Writer) {
 			fmt.Fprintf(w, "  copy     MCP servers %s: %s → %s%s\n", strings.Join(a.KeepNames, ", "), short(mcp.Path(a.KeepMCP)), short(claudeJSON), backup)
 		}
 		if len(a.OwnMCP) > 0 {
-			fmt.Fprintf(w, "  keep     %s's own MCP servers %s (the group's of those names differ)\n", a.Name, strings.Join(a.OwnMCP, ", "))
+			fmt.Fprintf(w, "  keep     %s's own MCP servers %s (the group's servers with those names differ)\n", a.Name, strings.Join(a.OwnMCP, ", "))
 		}
 		if len(a.StopMCP) > 0 {
 			fmt.Fprintf(w, "  MCP servers %s stop loading for %s (--fresh)\n", strings.Join(a.StopMCP, ", "), a.Name)
@@ -508,7 +508,7 @@ func Pending(p paths.Paths) bool { return fsutil.Exists(NotePath(p)) }
 // ErrPending refuses a change of groups while an earlier one is unfinished:
 // its note would be lost, and a plan toward the saved config does not show
 // what is left of it.
-var ErrPending = errors.New("the last change of groups stopped halfway; finish it with `ccam doctor --fix` first")
+var ErrPending = errors.New("the last group change stopped halfway; finish it with `ccam doctor --fix` first")
 
 // lockPath is held from Begin to the end of Apply (or Abort), and by
 // doctor --fix (TryLock) while it finishes a change and repairs links: a
@@ -521,7 +521,7 @@ var lockWait = 10 * time.Second
 
 // ErrChanging means another ccam holds the lock of the changes of groups:
 // it carries one out, or doctor --fix finishes or repairs one.
-var ErrChanging = errors.New("another ccam is changing the groups right now")
+var ErrChanging = errors.New("another ccam process is changing the groups right now")
 
 // takeLock takes lockPath; then says what to do when another ccam holds it.
 func takeLock(p paths.Paths, then string) (*lock.Flock, error) {
@@ -611,7 +611,7 @@ func (ch *Change) Begin() error {
 	}
 	if err != nil {
 		l.Unlock()
-		return fmt.Errorf("could not note the change of groups, so nothing was changed: %w", err)
+		return fmt.Errorf("could not record the group change, so nothing was changed: %w", err)
 	}
 	ch.note, ch.held = data, l
 	return nil
@@ -797,7 +797,7 @@ func Resume(l *Lock, cfg *config.Config, running func(name, dir string) bool) (*
 		}
 		dir := profile.Dir(p, prof)
 		if running(prof.Name, dir) {
-			return nil, fmt.Errorf("%s is running; quit Claude Code there, then run `ccam doctor --fix` again to finish the change of groups", prof.Name)
+			return nil, fmt.Errorf("%s is running; quit Claude Code there, then run `ccam doctor --fix` again to finish the group change", prof.Name)
 		}
 		a := &Account{Name: prof.Name, Dir: dir, Imported: prof.Dir != ""}
 		// A config that was not saved as planned leads elsewhere: then the

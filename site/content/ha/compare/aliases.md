@@ -1,10 +1,10 @@
 ---
 title: ccam idan aka kwatanta da shell alias
-description: Shell alias da CLAUDE_CONFIG_DIR idan aka kwatanta da ccam don gudanar da asusun Claude Code da dama, gefe da gefe.
-updated: 2026-10-20
+description: Shell alias da CLAUDE_CONFIG_DIR idan aka kwatanta da ccam don gudanar da asusun Claude Code da dama, fasali bayan fasali.
+updated: 2026-10-26
 order: 1
 translation: machine
-sourceHash: b9fbcb88f111
+sourceHash: c30d84bceba0
 ---
 
 Shell alias ga kowane asusu ita ce hanya mafi sauƙi ta gudanar da asusun Claude Code da dama. ccam yana yin abu ɗaya a ƙarƙashi kuma yana ƙara rabawa, sauyawa da bin diddigin amfani.
@@ -37,7 +37,7 @@ ccam add work --shortcut ccwork
 | Bayanan shiga daban-daban | Ee | Ee |
 | Saitawa ga kowane asusu | Gyara `~/.bashrc`, shiga | `ccam add` |
 | Yana aiki a scripts da sauran shirye-shirye | A'a, alias na shell ne kawai | Ee, `ccam work` da gajerun umarni kamar `ccwork` umarni ne na gaske |
-| Saituna, `CLAUDE.md`, extensions da aka raba | Kwafa ko haɗa da hannu | Abu bayan abu, tare da kwafin ajiya |
+| Saituna, `CLAUDE.md`, extensions da aka raba | Kwafa ko haɗa da hannu | Ee, ana zaɓa abu bayan abu, tare da kwafin ajiya |
 | Sabobin MCP da aka raba | Da hannu, ga kowane asusu | `ccam mcp add` sau ɗaya |
 | Ci gaba da tattaunawa a wani asusu | A'a | `ccam next --continue` |
 | Amfanin kowane asusu | A'a | `ccam usage` |

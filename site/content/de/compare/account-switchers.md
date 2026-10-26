@@ -1,10 +1,10 @@
 ---
 title: "Claude Code-Konto wechseln: ccam und andere Tools"
 description: Wie sich ccam von claude-swap, CCS, clausona, clauth, CAAM, cux und anderen Tools für Claude Code-Kontowechsel unterscheidet und welcher Ansatz wozu passt.
-updated: 2026-10-25
+updated: 2026-10-26
 order: 2
 translation: machine
-sourceHash: "a6aa0409a8df"
+sourceHash: "b6143bcf3dc7"
 ---
 
 Tools zum Wechseln von Claude Code-Konten verfolgen einen von zwei Ansätzen. Die meisten tauschen die Anmeldung im einen `~/.claude`-Ordner aus, sodass immer nur ein Konto aktiv ist. Andere, darunter ccam, geben jedem Konto mit `CLAUDE_CONFIG_DIR` einen eigenen Ordner, sodass jedes Konto angemeldet bleibt und mehrere gleichzeitig laufen können. ccam ergänzt geteilte Einstellungen und MCP-Server und setzt ein Gespräch im Ordner eines anderen Kontos fort.
@@ -13,7 +13,7 @@ Tools zum Wechseln von Claude Code-Konten verfolgen einen von zwei Ansätzen. Di
 
 **Eine Anmeldung austauschen** behält einen einzigen Satz Einstellungen, MCP-Server und Verlauf, weil es nur einen Ordner gibt. Der Wechsel geht schnell, und eine laufende Sitzung kann die neue Anmeldung übernehmen. Aber es ist immer nur ein Konto aktiv, für alle Terminals und Editoren gleichzeitig.
 
-Zum Austauschen bewahrt das Tool eine Kopie der Anmeldung jedes anderen Kontos auf und schreibt sie an ihren Platz. Claude Code ersetzt beim Erneuern einer Anmeldung deren Refresh-Token, deshalb muss jede gespeicherte Kopie mit den laufenden Sitzungen Schritt halten. Konten, die nach einem Wechsel abgemeldet sind oder erneut `/login` brauchen, gehören zu den Problemen, die diese Projekte am häufigsten beheben.
+Zum Austauschen bewahrt das Tool eine Kopie der Anmeldung jedes anderen Kontos auf und schreibt sie an ihren Platz. Claude Code ersetzt beim Erneuern einer Anmeldung deren Refresh-Token, deshalb muss jede gespeicherte Kopie mit den laufenden Sitzungen synchron gehalten werden. Konten, die nach einem Wechsel abgemeldet sind oder erneut `/login` brauchen, gehören zu den Problemen, die diese Projekte am häufigsten beheben.
 
 **Getrennte Ordner** sind der Weg, den [die Dokumentation von Claude Code beschreibt](https://code.claude.com/docs/en/authentication#log-in-with-multiple-accounts). Jedes Konto bleibt angemeldet, und du kannst eine berufliche und eine private Sitzung nebeneinander laufen lassen. Jede Anmeldung bleibt in ihrem eigenen Ordner, wo Claude Code sie wie gewohnt erneuert. Der Preis: Jeder Ordner beginnt mit eigenen Einstellungen, MCP-Servern und eigenem Verlauf, sofern kein Tool sie teilt.
 
@@ -23,7 +23,7 @@ Entnommen aus der Dokumentation und dem Quellcode des jeweiligen Projekts, Stand
 
 | Tool | Ansatz | Mehrere Konten gleichzeitig | 5-Stunden- und Wochennutzung | Wenn ein Limit erreicht ist | Plattformen |
 | --- | --- | --- | --- | --- | --- |
-| ccam | Getrennte Ordner | Ja | Ja, `ccam usage` | Eine Benachrichtigung in der Sitzung; `ccam next --auto --continue` oder `/ccam:switch` bringt das Gespräch zum Konto mit dem meisten Spielraum, mit oder ohne geteilten Verlauf, und mit eingeschaltetem `auto_switch` (Linux, macOS) wandert die Sitzung von selbst dorthin; `ccam --fallback` führt `-p`-Jobs dort von selbst erneut aus, und `ccam pick` verteilt Worker | Linux, macOS, Windows |
+| ccam | Getrennte Ordner | Ja | Ja, `ccam usage` | Eine Benachrichtigung in der Sitzung; `ccam next --auto --continue` oder `/ccam:switch` verschiebt das Gespräch zum Konto mit dem meisten Spielraum, mit oder ohne geteilten Verlauf; das optionale `auto_switch` (Linux, macOS) verschiebt es von selbst; `ccam --fallback` führt `-p`-Jobs erneut aus; `ccam pick` verteilt Worker | Linux, macOS, Windows |
 | [claude-swap](https://github.com/realiti4/claude-swap) | Tauscht die Anmeldung; getrennte Ordner mit `cswap run` | Ja, mit `cswap run` | Ja | `cswap auto` tauscht die Anmeldung ab einem Schwellenwert; die laufende Sitzung geht weiter | Linux, macOS, Windows |
 | [CCS](https://github.com/kaitranntt/ccs) | Getrennte Ordner | Ja | Teilweise | Konto-Pools reichen Anfragen über einen lokalen Proxy an das nächste Konto weiter | Linux, macOS, Windows |
 | [clausona](https://github.com/larcane97/clausona) | Getrennte Ordner | Ja | Ja | Routen wählen vor jedem Lauf ein Konto mit Kontingent, können auf eine Zurücksetzung warten und verteilen verschiedene Konten an Worker | Linux, macOS, Windows |
@@ -39,7 +39,7 @@ ccswap ist ein Fork von claude-swap, der auch Codex-Anmeldungen verwaltet. [clau
 
 | Tool | Geschrieben in | Während Claude Code läuft | Kopiert Anmeldungen hin und her | Was Konten teilen können |
 | --- | --- | --- | --- | --- |
-| ccam | Go, eine statische Binärdatei | Standardmäßig nichts: ccam ersetzt sich selbst durch `claude` (unter Windows, wo das nicht geht, wartet es darauf); mit eingeschaltetem `relay` oder `auto_switch` wartet ccam neben interaktiven Sitzungen | Nein | Gruppen: Jede nennt die Elemente, die sie teilt, und ihre Konten; ein Konto kann in mehreren sein |
+| ccam | Go, eine statische Binärdatei | Standardmäßig nichts: ccam ersetzt sich selbst durch `claude` (unter Windows, wo das nicht möglich ist, wartet es, bis Claude Code beendet ist); mit eingeschaltetem `relay` oder `auto_switch` läuft ccam neben interaktiven Sitzungen weiter | Nein | Gruppen: Jede nennt die Elemente, die sie teilt, und ihre Konten; ein Konto kann in mehreren sein |
 | claude-swap | Python 3.12+, installiert mit uv oder pipx | Nichts mit `cswap run`; `cswap auto` und die Menüleisten-App laufen weiter | Ja, wenn es die Anmeldung tauscht | Mit `cswap run`: Einstellungen, `CLAUDE.md` und Erweiterungen zusammen, Verlauf optional; MCP-Server werden bei jedem Start kopiert |
 | CCS | Node.js 18+ oder Bun | CCS bleibt als Elternprozess; Pools fügen einen lokalen Proxy hinzu | Nein für seine Kontoordner; Pools haben eigene Anmeldungen | Geteilt oder lokal pro Konto, Verlauf in Kontextgruppen; MCP-Server werden kopiert |
 | clausona | TypeScript, Node.js 20+ | Einfaches `claude` läuft über eine Shell-Funktion; `clausona run` behält Node als Elternprozess; nach jedem Beenden ein Node-Prozess im Hintergrund | Nein, erneuert aber selbst die Tokens ungenutzter Konten, um deren Nutzung zu lesen | Alles außer kontoeigenen Dateien, von einem primären Konto aus; Verlauf optional; mit `claude mcp add` hinzugefügte Server werden nicht geteilt |
@@ -54,19 +54,19 @@ ccswap ist ein Fork von claude-swap, der auch Codex-Anmeldungen verwaltet. [clau
 
 ccam kopiert nie eine Claude-Anmeldung von einem Ort an einen anderen. Die Anmeldung jedes Kontos bleibt in seinem eigenen Ordner, unter macOS im eigenen Schlüsselbundeintrag dieses Ordners, und Claude Code ist das Programm, das sie erneuert. Es gibt keine gespeicherte Kopie, die aus dem Takt geraten kann. Ein bestehendes `~/.claude`, das mit `ccam import` registriert wurde, behält den Schlüsselbundeintrag, den das einfache `claude` nutzt, und bleibt so in beiden Fällen angemeldet.
 
-ccam erneuert ein abgelaufenes Token nur dann selbst, wenn du `ccam usage --refresh` ausführst. Es setzt vorher eine Sperre und verweigert den Vorgang, solange das Konto läuft, egal wie Claude Code gestartet wurde (auch Hintergrundsitzungen und ihr Daemon), und solange Claude Code selbst diese Anmeldung erneuert, rotiert also nie ein Token unter einer laufenden Sitzung.
+ccam erneuert ein abgelaufenes Token nur dann selbst, wenn du `ccam usage --refresh` ausführst. Es setzt vorher eine Sperre und verweigert den Vorgang, solange das Konto läuft, egal wie Claude Code gestartet wurde (einschließlich Hintergrundsitzungen und ihres Daemons), und solange Claude Code selbst diese Anmeldung erneuert, rotiert also nie ein Token unter einer laufenden Sitzung.
 
 ### Standardmäßig läuft nichts zwischen dir und Claude Code
 
-ccam liest eine Datei, prüft seine Links und ersetzt sich selbst durch `claude` (`exec`). Standardmäßig gibt es, während du arbeitest, keinen ccam-Prozess, keinen Wrapper, keinen Proxy und keinen Daemon: Standardeingabe, Signale und Exit-Code gehören Claude Code, und seine Anfragen gehen direkt an Anthropic. Windows kann einen Prozess nicht ersetzen, deshalb startet ccam dort Claude Code mit derselben Konsole und wartet auf dessen Exit-Code, ohne sonst etwas zu tun. Mit `relay = true` oder `auto_switch = true` wartet ccam auf dieselbe Weise neben interaktiven Sitzungen, damit es ein Gespräch als ein anderes Konto weiterführen kann; die Anfragen von Claude Code gehen weiterhin direkt an Anthropic.
+ccam liest eine Datei, prüft seine Links und ersetzt sich selbst durch `claude` (`exec`). Standardmäßig gibt es, während du arbeitest, keinen ccam-Prozess, keinen Wrapper, keinen Proxy und keinen Daemon: Standardeingabe, Signale und Exit-Code gehören Claude Code, und seine Anfragen gehen direkt an Anthropic. Windows kann einen Prozess nicht ersetzen, deshalb startet ccam dort Claude Code mit derselben Konsole und wartet auf dessen Exit-Code, ohne sonst etwas zu tun. Mit `relay = true` oder `auto_switch = true` läuft ccam auf dieselbe Weise neben interaktiven Sitzungen weiter, damit es ein Gespräch in einem anderen Konto fortsetzen kann; die Anfragen von Claude Code gehen weiterhin direkt an Anthropic.
 
 Ein Konto so zu starten kostet etwa 4 ms, unter 6 ms beim 95. Perzentil, bei 8 MB Spitzenspeicher ([`scripts/perf-check.sh`](https://github.com/jhyunwoo/ccam/blob/main/scripts/perf-check.sh) mit hyperfine, 300 Durchläufe). Auf demselben Laptop braucht allein der Start des Python-Interpreters 13 ms und der von Node.js 31 ms, bevor ein Programm überhaupt etwas tut.
 
 ### Gruppen bestimmen, was geteilt wird
 
-MCP-Server, `settings.json`, `CLAUDE.md`, Erweiterungen (Agents, Befehle, Skills, Plugins) und Gesprächsverlauf sind fünf getrennte Elemente. Eine Gruppe nennt die Elemente, die sie teilt, und die Konten in ihr. So können zwei berufliche Konten den Verlauf in einer Gruppe `work` teilen, während ein privates Konto seinen eigenen behält, und alle drei teilen über `default` dieselben MCP-Server. `ccam group set work --add memory` verschiebt jedes Konto der Gruppe in einem Plan; das [Dashboard](/features/dashboard) tut dasselbe mit Kontrollkästchen und graut ein Element aus, das ein Konto bereits von einer anderen Gruppe bekommt.
+MCP-Server, `settings.json`, `CLAUDE.md`, Erweiterungen (Agents, Befehle, Skills, Plugins) und Gesprächsverlauf sind fünf getrennte Elemente. Eine Gruppe nennt die Elemente, die sie teilt, und die Konten in ihr. So können zwei berufliche Konten den Verlauf in einer Gruppe `work` teilen, während ein privates Konto seinen eigenen behält, und alle drei teilen über `default` dieselben MCP-Server. `ccam group set work --add memory` aktualisiert jedes Konto der Gruppe in einem Plan; das [Dashboard](/features/dashboard) tut dasselbe mit Kontrollkästchen und graut ein Element aus, das ein Konto bereits von einer anderen Gruppe bekommt.
 
-- MCP-Server werden beim Start mit `--mcp-config` übergeben, daher lässt ein Start `.claude.json`, die Datei, die Claude Code während des Laufs neu schreibt, standardmäßig unverändert. ccam schreibt dort nur in Schritten, die das ankündigen, unter der Sperre von Claude Code und mit einer Sicherung: für Remote Control nach einer Rückfrage, wenn ein Konto das Teilen von MCP verlässt oder wieder aufnimmt, und für `ccam mcp import`. `ccam mcp add` fügt einen Server einmal für die ganze Gruppe hinzu.
+- MCP-Server werden beim Start mit `--mcp-config` übergeben, daher rührt ein Start standardmäßig `.claude.json` nie an, die Datei, die Claude Code während des Laufs neu schreibt. ccam schreibt dort nur in Schritten, die das ankündigen, unter der Sperre von Claude Code und mit einer Sicherung: für Remote Control nach einer Rückfrage, wenn ein Konto das Teilen von MCP verlässt oder wieder aufnimmt, und für `ccam mcp import`. `ccam mcp add` fügt einen Server einmal für die ganze Gruppe hinzu.
 - Die anderen Elemente sind Links in den Gruppenordner, sodass eine Änderung in einem Konto sofort in den anderen erscheint. Beim Start wird nichts kopiert.
 - Anmeldungen, `.claude.json` und der Laufzeitzustand werden nie geteilt.
 
@@ -76,11 +76,13 @@ MCP-Server, `settings.json`, `CLAUDE.md`, Erweiterungen (Agents, Befehle, Skills
 
 ### Dasselbe Gespräch im nächsten Konto
 
-`ccam next --auto --continue` fragt alle Konten gleichzeitig nach ihrer Nutzung, öffnet das mit dem meisten Spielraum und setzt das Gespräch fort. Mit geteiltem Verlauf ist es dasselbe Gespräch; ohne kopiert Claude Code es in das neue Konto (`--resume <file> --fork-session`), und ccam sagt, wie viele Tokens die erste Antwort erneut liest. Wenn ein Limit eine Sitzung anhält, zeigt der Hook des ccam-Plugins eine Benachrichtigung, und `/ccam:switch` gibt das Gespräch weiter. Standardmäßig entscheidest du, wann gewechselt wird. Mit eingeschaltetem `auto_switch` (Linux, macOS) verschiebt ccam die Sitzung selbst, aber nur, nachdem Claude Code sie an einem Limit gestoppt hat, und nur zu einem Konto wie dem, das sie verlässt: einem anderen Platz derselben Organisation oder einem anderen privaten Tarif ([Details](/features/next#auto-switch)). Nichts überwacht deine Nutzung im Hintergrund, und standardmäßig verschieben automatische Wahlen Arbeit nie aus einer Team- oder Enterprise-Organisation heraus oder in eine hinein, sodass ein Firmengespräch nie versehentlich in einem privaten Konto landet. Die Statuszeile schlägt den Befehl vor, sobald ein Konto 90 % erreicht.
+`ccam next --auto --continue` fragt alle Konten gleichzeitig nach ihrer Nutzung, öffnet das mit dem meisten Spielraum und setzt das Gespräch fort. Mit geteiltem Verlauf ist es dasselbe Gespräch; ohne kopiert Claude Code es in das neue Konto (`--resume <file> --fork-session`), und ccam sagt, wie viele Tokens die erste Antwort erneut liest.
+
+Wenn ein Limit eine Sitzung anhält, zeigt der Hook des ccam-Plugins eine Benachrichtigung, und `/ccam:switch` gibt das Gespräch weiter. Standardmäßig entscheidest du, wann gewechselt wird. Mit eingeschaltetem `auto_switch` (Linux, macOS) verschiebt ccam die Sitzung selbst, aber nur, nachdem Claude Code sie an einem Limit gestoppt hat, und nur zu einem Konto derselben Art wie dem, das sie verlässt: einem anderen Platz derselben Organisation oder einem anderen privaten Tarif ([Details](/features/next#auto-switch)).
+
+Nichts überwacht deine Nutzung im Hintergrund, und standardmäßig verschieben automatische Wahlen Arbeit nie aus einer Team- oder Enterprise-Organisation heraus oder in eine hinein, sodass ein Firmengespräch nie versehentlich in einem privaten Konto landet. Die Statuszeile schlägt den Befehl vor, sobald ein Konto 90 % erreicht.
 
 Skripte können nicht auf dich warten, deshalb wechselt `ccam --fallback work -p "…"` für sie: Wenn das Konto sein Limit erreicht, läuft derselbe Befehl erneut mit dem Konto mit dem meisten Spielraum, und nur die Ausgabe des Durchlaufs, der fertig wurde, wird ausgegeben. Ein Fehler, der kein Nutzungslimit ist, wird unverändert weitergegeben. Für parallele Worker gibt `ccam pick` jedem ein anderes Konto mit Spielraum, und beide beenden sich mit Code 75, wenn kein Konto mehr Spielraum hat.
-
-**Team- und Enterprise-Plätze.** Die automatische Wahl (`ccam next`, `--fallback`, `ccam pick`, `n` im Dashboard und [`auto_switch`](/features/next#auto-switch), wenn du es einschaltest) wechselt auch zwischen Plätzen derselben Claude Team- oder Enterprise-Organisation. Im Hilfe-Center von Anthropic ([Team-Tarife](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); ebenso für [Enterprise-Tarife](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)) heißt es: „Each seat on a Team plan is assigned to one named individual, and only that person may use it“ (jeder Platz in einem Team-Tarif ist einer namentlich benannten Person zugewiesen, und nur diese Person darf ihn nutzen) und „Users can't route their work through another user's account to use that user's remaining usage“ (Benutzer dürfen ihre Arbeit nicht über das Konto eines anderen Benutzers leiten, um dessen verbleibendes Nutzungskontingent zu verwenden). Wenn du die automatische Wahl zwischen Plätzen nutzt, kann das daher gegen die Bedingungen von Anthropic verstoßen. Ob du sie dort nutzt, ist deine Entscheidung: Kläre das mit deiner Organisation und mit Anthropic ab, bevor du dich darauf verlässt. Für private Tarife (Pro, Max) gilt der [Hinweis zu den Bedingungen in den FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
 
 ### Das richtige Konto in jedem Ordner
 
@@ -88,7 +90,7 @@ Skripte können nicht auf dich warten, deshalb wechselt `ccam --fallback work -p
 
 ### Eine Binärdatei, geprüfte Downloads
 
-ccam ist eine statische Binärdatei von etwa 10 MB, ohne Laufzeitumgebung, die installiert werden müsste, für Linux, macOS und Windows. Die Installationsskripte (`install.sh`, `install.ps1`) und `ccam update` prüfen jeden Download gegen die SHA-256-Prüfsummen des Releases, und ccam aktualisiert sich nie, ohne zu fragen. Es gibt keine Telemetrie: Die einzigen Anfragen sind Nutzungsabfragen bei Anthropic für deine Konten, parallel mit 3 Sekunden Zeitlimit und 60 Sekunden Cache, die Frage des Dashboards an GitHub nach dem neuesten Release, wenn es sich öffnet, und die Downloads, die du anforderst. Mit `usage_source = "claude"` laufen sogar diese über Claude Code, und ccam sendet kein Token.
+ccam ist eine statische Binärdatei von etwa 10 MB, ohne Laufzeitumgebung, die installiert werden müsste, für Linux, macOS und Windows. Die Installationsskripte (`install.sh`, `install.ps1`) und `ccam update` prüfen jeden Download gegen die SHA-256-Prüfsummen des Releases, und ccam aktualisiert sich nie, ohne zu fragen. Es gibt keine Telemetrie: Die einzigen Anfragen sind Nutzungsabfragen bei Anthropic für deine Konten, parallel mit 3 Sekunden Timeout und 60 Sekunden Cache, die Prüfung des Dashboards bei GitHub auf ein neueres Release, wenn es sich öffnet, und die Downloads, die du anforderst. Mit `usage_source = "claude"` laufen sogar diese über Claude Code, und ccam sendet kein Token.
 
 ## Wo andere Tools mehr können
 
@@ -101,6 +103,8 @@ ccam ist eine statische Binärdatei von etwa 10 MB, ohne Laufzeitumgebung, die i
 
 ## Was passt zu dir?
 
-Nimm ein Tool, das die Anmeldung austauscht, wenn du jeweils ein Konto nutzt oder laufende Sitzungen schon vor dem Limit oder durch Austausch der Anmeldung wechseln sollen. Nimm ccam, wenn du Konten nebeneinander, eine gemeinsame Einrichtung, dasselbe Gespräch im nächsten Konto und, standardmäßig, nichts willst, das neben Claude Code mitläuft, unter Linux, macOS oder Windows. Wenn du nichts teilen musst, reichen [einfache Shell-Aliase](/compare/aliases).
+Nimm ein Tool, das die Anmeldung austauscht, wenn du jeweils ein Konto nutzt oder wenn eine laufende Sitzung das Konto ohne Neustart wechseln soll, auch schon bevor sie das Limit erreicht. Nimm ccam, wenn du Konten nebeneinander, eine gemeinsame Einrichtung, dasselbe Gespräch im nächsten Konto und, standardmäßig, nichts willst, das neben Claude Code mitläuft, unter Linux, macOS oder Windows. Wenn du nichts teilen musst, reichen [einfache Shell-Aliase](/compare/aliases).
 
-Ob du mehrere Konten nutzen darfst, hängt von den Bedingungen des jeweiligen Kontos ab. Prüfe sie, bevor du loslegst.
+Ob du mehr als ein Konto nutzen darfst, hängt von den Bedingungen ab, die für jedes einzelne gelten. Lies diese Bedingungen, bevor du anfängst.
+
+**Team- und Enterprise-Plätze.** Die automatische Kontoauswahl (`ccam next`, `--fallback`, `ccam pick`, `n` im Dashboard und, sobald du es einschaltest, [`auto_switch`](/features/next#auto-switch)) wechselt auch zwischen Plätzen derselben Claude Team- oder Enterprise-Organisation, was gegen die Bedingungen von Anthropic verstoßen kann. Lies die [FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) und kläre das mit deiner Organisation und mit Anthropic ab, bevor du dich darauf verlässt.

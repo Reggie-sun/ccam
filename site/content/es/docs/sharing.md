@@ -1,10 +1,10 @@
 ---
 title: Compartir servidores MCP, configuración e historial
 description: Cómo los grupos de ccam comparten servidores MCP, settings.json, CLAUDE.md, skills e historial entre cuentas de Claude Code, con cada inicio de sesión aparte.
-updated: 2026-10-23
+updated: 2026-10-26
 order: 4
 translation: machine
-sourceHash: 27e0a0e5abbd
+sourceHash: "2d8029ad6ec8"
 ---
 
 Cada cuenta mantiene su propio inicio de sesión. Todo lo demás se puede compartir mediante **grupos**: un grupo nombra los elementos que comparte y las cuentas que contiene, y ccam enlaza los archivos de cada una de esas cuentas con la carpeta del grupo, de modo que un cambio hecho en una cuenta aparece en todas.
@@ -47,7 +47,7 @@ Cuando una cuenta empieza a compartir un elemento (se une a un grupo, o su grupo
 
 Los archivos de conversación llevan el nombre de su ID de sesión, así que los historiales de varias cuentas se combinan sin conflictos.
 
-ccam no cambia una cuenta mientras Claude Code se está ejecutando con ella, sin importar cómo se haya iniciado Claude Code (también las sesiones en segundo plano), porque la sesión sigue escribiendo en los archivos que se mueven. Ciérrala primero. ccam vuelve a comprobarlo justo antes de guardar, así que también detecta una sesión iniciada mientras el plan esperaba.
+ccam no cambia una cuenta mientras Claude Code se está ejecutando con esa cuenta, sin importar cómo se haya iniciado (incluidas las sesiones en segundo plano), porque la sesión sigue escribiendo en los archivos que se mueven. Ciérrala primero. ccam vuelve a comprobarlo justo antes de guardar, así que también detecta una sesión que se inició mientras ccam esperaba tu respuesta.
 
 ## Cuando una cuenta deja de compartir
 
@@ -77,7 +77,7 @@ Qué copia:
 
 La carpeta de origen solo se lee: nada en ella se mueve, se enlaza ni se modifica, y `claude` a secas sigue funcionando como antes. Los archivos de inicio de sesión `.credentials.json` y `.claude.json` nunca se copian al grupo.
 
-Los servidores MCP que inician sesión con OAuth guardan sus tokens en el inicio de sesión, no en la lista de servidores. ccam no copia esos inicios de sesión: un inicio de sesión copiado lleva el mismo token de actualización, y la primera renovación cierra la sesión de ese servidor para todos los demás que lo tienen, `~/.claude` incluido. El plan y el resumen nombran las cuentas que inician sesión en los servidores por sí mismas con `/mcp`.
+Los servidores MCP que inician sesión con OAuth guardan sus tokens en el inicio de sesión, no en la lista de servidores. ccam no copia esos inicios de sesión: un inicio de sesión copiado lleva el mismo token de actualización, y la primera renovación cierra la sesión de ese servidor para todos los demás que lo tienen, `~/.claude` incluido. El plan y el resumen nombran las cuentas que tienen que iniciar sesión en esos servidores por sí mismas con `/mcp`.
 
 ccam imprime el plan y pregunta antes de copiar nada:
 
@@ -105,7 +105,7 @@ Cuando el grupo ya tiene una copia distinta de un archivo, ccam pregunta, igual 
 
 | Opción | Efecto |
 | --- | --- |
-| `--settings`, `--memory`, `--extensions`, `--mcp`, `--history` | Copiar solo los elementos que indicas, sin la lista de selección; sin ellas y fuera de una terminal, todo excepto el historial de conversaciones |
+| `--settings`, `--memory`, `--extensions`, `--mcp`, `--history` | Copiar solo los elementos indicados, sin la lista de selección. Fuera de una terminal y sin opciones de elementos, ccam copia todo excepto el historial de conversaciones. |
 | `-g`, `--group <group>` | Copiar a este grupo en lugar de `default` |
 | `-y`, `--yes` | Copiar sin preguntar; cuando un archivo es distinto, conservar la copia del grupo |
 
@@ -120,7 +120,7 @@ ccam mcp add fs -- npx -y @modelcontextprotocol/server-filesystem ~/code
 ccam mcp list
 ```
 
-Un servidor que agregas dentro de una sesión con `claude mcp add` se guarda solo para esa cuenta y para la carpeta en la que estabas (el ámbito local de Claude Code; `-s user` lo hace de la cuenta en todas las carpetas). La próxima vez que inicies esa cuenta, ccam te indica el nombre del servidor, con su carpeta, y el comando que lo mueve al grupo:
+Un servidor que agregas dentro de una sesión con `claude mcp add` se guarda solo para esa cuenta y para la carpeta en la que estabas (el ámbito local de Claude Code; `-s user` lo deja disponible para la cuenta en todas las carpetas). La próxima vez que inicies esa cuenta, ccam te indica el nombre del servidor, con su carpeta, y el comando que lo mueve al grupo:
 
 ```sh
 ccam mcp import work gh
@@ -128,13 +128,13 @@ ccam mcp import work gh
 
 Si el grupo ya tiene un servidor distinto con ese nombre, ccam lo omite y te lo indica. `--force` reemplaza el servidor del grupo y guarda el `mcp.json` anterior en la carpeta `.ccam-backup/` del grupo.
 
-Los servidores MCP que inician sesión con OAuth guardan sus tokens junto con el inicio de sesión de la cuenta, así que autorízalos una vez en cada cuenta con `/mcp`. `ccam ext` y `ccam doctor` nombran los servidores en los que una cuenta no ha iniciado sesión mientras otra cuenta sí.
+Los servidores MCP que inician sesión con OAuth guardan sus tokens junto con el inicio de sesión de la cuenta, así que inicia sesión en ellos una vez en cada cuenta con `/mcp`. `ccam ext` y `ccam doctor` nombran los servidores en los que una cuenta no ha iniciado sesión mientras otra cuenta sí.
 
-Si prefieres que los servidores aparezcan en `claude mcp list` y `/mcp` como servidores de usuario normales, define `mcp_strategy = "sync"` al principio de `~/.config/ccam/config.toml`, antes del primer `[[group]]`, `[[profile]]` o `[[folder]]`. Entonces ccam los escribe en el `.claude.json` de cada cuenta antes de iniciar, con el bloqueo de archivo propio de Claude Code y con una copia de seguridad. Un servidor propio de la cuenta con el mismo nombre sigue siendo de la cuenta, y ccam lo indica.
+Si prefieres que los servidores aparezcan en `claude mcp list` y `/mcp` como servidores de usuario normales, define `mcp_strategy = "sync"` al principio de `~/.config/ccam/config.toml`, antes del primer `[[group]]`, `[[profile]]` o `[[folder]]`. Entonces ccam los escribe en el `.claude.json` de cada cuenta antes de iniciar, con el bloqueo de archivo propio de Claude Code y con una copia de seguridad. Si la cuenta tiene un servidor propio con el mismo nombre que un servidor del grupo, ccam conserva el servidor de la cuenta y lo indica.
 
 ## Dos cuentas en la misma carpeta
 
-Las cuentas que comparten el historial de conversaciones escriben en los mismos archivos. Si inicias un segundo Claude Code en una carpeta donde ya se está ejecutando otra cuenta del mismo grupo, ccam te avisa y te pregunta si quieres continuar.
+Las cuentas que comparten el historial de conversaciones escriben en los mismos archivos. Si inicias una segunda sesión de Claude Code en una carpeta donde ya se está ejecutando otra cuenta del mismo grupo, ccam te avisa y te pregunta si quieres continuar.
 
 ## Cuando algo falla
 
@@ -143,4 +143,4 @@ ccam doctor
 ccam doctor --fix
 ```
 
-Si una ruta compartida se convirtió en un archivo normal, por ejemplo después de restaurar una copia de seguridad a mano, ccam se detiene antes de iniciar Claude Code y te remite a `ccam doctor --fix`, que vuelve a enlazarlo al grupo: el archivo pasa a ser la copia del grupo cuando el grupo no tiene ninguna; si no, el grupo conserva la suya y la tuya va a una copia de seguridad, que `--fix` nombra. Un cambio de grupos que se quedó a medias también lo termina `ccam doctor --fix`.
+Si una ruta compartida se convirtió en un archivo normal, por ejemplo después de restaurar una copia de seguridad a mano, ccam se detiene antes de iniciar Claude Code y te remite a `ccam doctor --fix`. La reparación vuelve a enlazar la ruta al grupo: el archivo pasa a ser la copia del grupo cuando el grupo no tiene ninguna; si no, el grupo conserva su propia copia, y la tuya va a una copia de seguridad que `--fix` nombra. Un cambio de grupo que se quedó a medias también lo termina `ccam doctor --fix`.

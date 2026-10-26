@@ -1,10 +1,10 @@
 ---
 title: CLAUDE_CONFIG_DIR imefafanuliwa
 description: CLAUDE_CONFIG_DIR hufanya nini katika Claude Code, nini huhifadhiwa kwenye folda, macOS huweka wapi taarifa za kuingia, na faili zipi zinaweza kushirikiwa.
-updated: 2026-10-23
+updated: 2026-10-26
 order: 2
 translation: machine
-sourceHash: "2cf08478085f"
+sourceHash: "dc2fe42e11e1"
 ---
 
 `CLAUDE_CONFIG_DIR` huiambia Claude Code itumie folda ipi badala ya `~/.claude`. Kila kitu kinachohusu akaunti mahususi kiko humo: taarifa za kuingia, mipangilio, seva za MCP, plugins na historia ya mazungumzo. Kuielekeza kwenye folda tofauti hukupa akaunti tofauti.
@@ -36,13 +36,13 @@ Imekaguliwa kwa Claude Code 2.1.309:
 
 **Bila `CLAUDE_CONFIG_DIR`, `.claude.json` haimo ndani ya `~/.claude`.** Hapo Claude Code huiweka katika `~/.claude.json`, kando ya folda. Ukianza kutumia `CLAUDE_CONFIG_DIR=~/.claude`, Claude Code hutafuta `~/.claude/.claude.json` badala yake na haipati akaunti yako. `ccam import` hushughulikia hili kwa kuziunganisha hizo mbili. Ikiwa `~/.claude` tayari ina `.claude.json` yake yenyewe, kutoka uendeshaji wa awali kwa `CLAUDE_CONFIG_DIR=~/.claude`, ccam huziacha faili zote mbili na husema hivyo, kwa kuwa ni wewe tu unayejua ipi ni sahihi.
 
-**Kwenye macOS taarifa za kuingia ziko katika Keychain, si kwenye folda.** Claude Code huzihifadhi chini ya jina `Claude Code-credentials`, likifuatiwa na `-` na tarakimu 8 za kwanza za hex za SHA-256 ya njia ya folda wakati `CLAUDE_CONFIG_DIR` imewekwa, kwa akaunti inayotajwa na `$USER`. Kwa hiyo folda tofauti hupata maingizo tofauti ya Keychain, na folda inayohamishwa au kubadilishwa jina hupoteza taarifa zake za kuingia; ndiyo sababu `ccam rename` huhifadhi jina la folda kwenye macOS. Ikiwa Keychain itakataa kuandika, Claude Code hurudi kwenye `.credentials.json` ndani ya folda, kama [nyaraka zake](https://code.claude.com/docs/en/authentication#credential-management) zinavyoeleza.
+**Kwenye macOS taarifa za kuingia ziko katika Keychain, si kwenye folda.** Claude Code huzihifadhi chini ya jina `Claude Code-credentials`. `CLAUDE_CONFIG_DIR` inapowekwa, jina hilo pia huishia na `-` na tarakimu 8 za kwanza za hex za SHA-256 ya njia ya folda. Jina la akaunti la kipengele cha Keychain ni `$USER`. Kwa hiyo folda tofauti hupata maingizo tofauti ya Keychain, na folda inayohamishwa au kubadilishwa jina hupoteza taarifa zake za kuingia; ndiyo sababu `ccam rename` huhifadhi jina la folda kwenye macOS. Ikiwa Keychain itakataa kuandika, Claude Code hurudi kwenye `.credentials.json` ndani ya folda, kama [nyaraka zake](https://code.claude.com/docs/en/authentication#credential-management) zinavyoeleza.
 
 **Si kila aina ya kuingia huhifadhiwa kwenye folda.** Kuingia kwa Claude Console bila API key huhifadhiwa nje yake, kwa hiyo folda tofauti haziwezi kutenganisha kuingia mbili za aina hiyo. Kuingia kwa claude.ai na API keys huhifadhiwa kwa kila folda.
 
 ## Folda iko wapi kwenye Windows?
 
-Kwa chaguo-msingi ni `%USERPROFILE%\.claude`, na taarifa za kuingia ziko katika `.credentials.json` ndani yake, au katika Credential Manager ya Windows Claude Code inapowekwa kuitumia, chini ya jina linalotokana na njia ya folda kama kwenye macOS. Weka `CLAUDE_CONFIG_DIR` kwenye folda nyingine kwa kila akaunti ya ziada, kama kwenye Linux na macOS.
+Kwa chaguo-msingi ni `%USERPROFILE%\.claude`. Taarifa za kuingia ziko katika `.credentials.json` ndani yake, au katika Credential Manager ya Windows ikiwa Claude Code imewekwa kuitumia, chini ya jina linalotokana na njia ya folda kama kwenye macOS. Weka `CLAUDE_CONFIG_DIR` kwenye folda nyingine kwa kila akaunti ya ziada, kama kwenye Linux na macOS.
 
 ## Je, folda zinaweza kushiriki faili?
 

@@ -2,13 +2,13 @@
 title: 指令參考
 metaTitle: "ccam 指令參考"
 description: 所有 ccam 指令和選項，從 ccam add、ccam <name> 到 ccam usage、ccam next 和 ccam doctor。
-updated: 2026-10-25
+updated: 2026-10-26
 order: 3
 translation: machine
-sourceHash: "41fb781fd146"
+sourceHash: "b9ff0fe8d147"
 ---
 
-在指令前加上 `--dry-run`，就能查看它會做什麼而不實際執行，例如 `ccam --dry-run work`。它適用於啟動 Claude Code（`ccam <name>`、`ccam run`、`ccam next`、`ccam attach`）以及 `group`、`migrate`、`shortcut`、`update` 和 `doctor --fix`。其他會做出變更的指令則會拒絕它，而不會執行。
+在指令前加上 `--dry-run`，就能查看它會做什麼而不實際執行，例如 `ccam --dry-run work`。它適用於啟動 Claude Code（`ccam <name>`、`ccam run`、`ccam next`、`ccam attach`、`ccam ccusage`）以及 `group`、`migrate`、`folder`、`shortcut`、`pick`、`update` 和 `doctor --fix`。只會讀取的指令，例如 `list`、`usage`、`share` 和 `ext`，會接受它，而且本來就不會變更任何東西。其餘指令則會拒絕它，而不會執行，`group rename` 也是如此。
 
 <!-- commands -->
 
@@ -27,9 +27,9 @@ ccam --fallback work -p "fix the tests"   # run again as another account at the 
 
 帳號名稱前的 `--fallback` 用於 `-p`/`--print` 執行。帳號達到用量上限時，ccam 會以剩餘額度最多的已登入帳號再次執行同一個指令，並且只輸出完成的那次執行的結果。請參閱[依資料夾使用帳號](/features/folder)和[達到上限時重新執行](/features/next#run-again-at-the-limit)。
 
-**Team 和 Enterprise 席位。** 自動選擇（`ccam next`、`--fallback`、`ccam pick`、儀表板的 `n`，以及你開啟後的 [`auto_switch`](/features/next#auto-switch)）也會在同一個 Claude Team 或 Enterprise 組織的席位之間切換。Anthropic 說明中心關於 [Team 方案](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)的文章寫道：「Each seat on a Team plan is assigned to one named individual, and only that person may use it」（Team 方案的每個席位都指派給一位具名的個人，而且只有這個人可以使用），以及「Users can't route their work through another user's account to use that user's remaining usage」（使用者不能經由其他使用者的帳號處理自己的工作，藉此使用對方剩餘的用量）；關於 [Enterprise 方案](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)的文章也是如此。因此，在席位之間使用自動選擇可能會違反 Anthropic 的條款。要不要在這種情況下使用它由你決定：在依賴這項功能之前，請先向你所屬的組織和 Anthropic 確認。個人方案（Pro、Max）的情況請參閱[常見問題中關於條款的說明](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)。
+**Team 和 Enterprise 席位。** 自動選擇帳號（`ccam next`、`--fallback`、`ccam pick`、儀表板的 `n`，以及你開啟後的 [`auto_switch`](/features/next#auto-switch)）也會在同一個 Claude Team 或 Enterprise 組織的席位之間切換，這可能會違反 Anthropic 的條款。在依賴這項功能之前，請先閱讀[常見問題](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)，並向你所屬的組織和 Anthropic 確認。
 
-`ccwork` 這類快捷指令也會以同樣的方式啟動對應的帳號：`ccwork --resume` 的效果和 `ccam work --resume` 相同。請參閱[快捷指令](/docs/commands#shortcuts)。
+`ccwork` 這類快捷指令也會以同樣的方式啟動對應的帳號：`ccwork --resume` 的效果和 `ccam work --resume` 相同。請參閱下方的[快捷指令](/docs/commands#shortcuts)。
 
 ## 新增和移除帳號
 
@@ -46,13 +46,13 @@ ccam import ~/.claude-old --name old
 ccam add gw --api --base-url https://llm.example.com --auth bearer --key-from env:GW_KEY
 ```
 
-不指定資料夾的 `ccam import` 會尋找 `~/.claude` 和 `~/.claude-*`，並逐一詢問；失敗的資料夾會以 `Skipped <path>: <reason>` 回報，其他資料夾照樣登錄；名稱已被某個帳號使用的資料夾需要 `--name`，並與該資料夾一起指定。匯入的資料夾會在原位置登錄；ccam 絕不會移動或複製登入資訊。
+不指定資料夾的 `ccam import` 會尋找 `~/.claude` 和 `~/.claude-*`，並逐一詢問；失敗的資料夾會以 `Skipped <path>: <reason>` 回報，其他資料夾照樣登錄。如果某個資料夾的名稱已被使用，請用 `ccam import <folder> --name <name>` 單獨匯入該資料夾。匯入的資料夾會在原位置登錄；ccam 絕不會移動或複製登入資訊。
 
-`ccam login --expired` 也會登入那些登入資訊已被 Claude Code 清除的帳號。`ccam remove` 會先將受管理的帳號登出，再把它的資料夾移到垃圾桶（若另一個帳號持有同一組登入資訊則不登出）；`ccam remove` 移除匯入的帳號時，會在其群組中留下它所共用內容的副本。在 macOS 上，`ccam rename` 會保留資料夾的名稱，因為鑰匙圈是以資料夾的路徑保存登入資訊。
+`ccam login --expired` 也會登入那些登入資訊已被 Claude Code 清除的帳號。`ccam remove` 會先將受管理的帳號（由 ccam 建立資料夾的帳號，而非以 `ccam import` 登錄的帳號）登出，再把它的資料夾移到垃圾桶，除非另一個帳號持有同一組登入資訊。移除匯入的帳號時，會將它移出所屬的群組，並在它的資料夾中留下每個共用項目的副本。在 macOS 上，`ccam rename` 會保留資料夾的名稱，因為鑰匙圈是以資料夾的路徑保存登入資訊。
 
 `ccam add --api` 會新增一個使用 API 金鑰而不是 Claude 登入的帳號；ccam 會在每次啟動時讀取金鑰，絕不儲存它。請參閱 [API 金鑰帳號](/features/api)。
 
-當 Claude Code 正以某個帳號執行時（不論它是如何啟動的，背景工作階段也算在內），`ccam rename`、`ccam remove` 和 `ccam group` 系列指令會拒絕變更該帳號。請先結束該工作階段。群組變更尚未完成時，它們也會拒絕：``the last change of groups stopped halfway; finish it with `ccam doctor --fix` first``。
+當 Claude Code 正以某個帳號執行時（不論它是如何啟動的，背景工作階段也算在內），`ccam rename`、`ccam remove` 和 `ccam group` 系列指令會拒絕變更該帳號。請先結束該工作階段。群組變更尚未完成時，它們也會拒絕：``the last group change stopped halfway; finish it with `ccam doctor --fix` first``。
 
 `ccam list --json` 會輸出每個帳號及其槽位、快捷指令、電子郵件和資料夾。其中的 `groups` 陣列會列出該帳號所屬的群組，`share` 物件則會把每個項目（`mcp`、`settings`、`memory`、`extensions`、`history`）對應到它所來自的群組，或 `local`。
 
@@ -77,7 +77,7 @@ ccam shortcut work --remove
 ```sh
 ccam group                                  # the groups, what they share, their accounts
 ccam group add team --items history --members work,side
-ccam group set default --add history        # every account in default changes together
+ccam group set default --add history        # every account in default starts sharing history
 ccam group join team personal
 ccam group leave team side --fresh
 ccam share work                             # what work shares, and through which group
@@ -94,7 +94,14 @@ ccam migrate ~/.claude-work --group work --settings --mcp
 ccam migrate --history --yes    # conversation history only
 ```
 
-`ccam migrate` 會把 Claude Code 資料夾中的 `settings.json`、`CLAUDE.md`、擴充功能和使用者 MCP 伺服器複製到一個群組，讓共用這些項目的每個帳號都能使用。該資料夾只會被讀取。選項 `--settings`、`--memory`、`--extensions`、`--mcp` 和 `--history` 只會複製你指定的項目。不加這些選項時，在終端機中會顯示一份核取清單讓你選擇，除了對話記錄以外的項目都已勾選；在其他情況下，會複製對話記錄以外的所有內容。`-g` 或 `--group` 用來選擇群組；`-y` 或 `--yes` 不詢問直接複製，檔案內容不同時保留群組中的副本。MCP 的登入不會被複製，因為複製的登入會讓其他持有者被登出；計畫會列出需要用 `/mcp` 登入的帳號。即使 `~/.claude` 是空的或不存在，只要 `~/.claude.json` 中有伺服器，`--mcp` 也能運作。請參閱[複製現有的設定](/docs/sharing#copy-an-existing-setup)。
+`ccam migrate` 會把 Claude Code 資料夾中的 `settings.json`、`CLAUDE.md`、擴充功能和使用者 MCP 伺服器複製到一個群組，讓共用這些項目的每個帳號都能使用。該資料夾只會被讀取。
+
+- `--settings`、`--memory`、`--extensions`、`--mcp` 和 `--history` 只會複製你指定的項目。不加這些選項時，在終端機中會顯示一份核取清單讓你選擇，除了對話記錄以外的項目都已勾選；在其他情況下，會複製對話記錄以外的所有內容。
+- 即使 `~/.claude` 是空的或不存在，只要 `~/.claude.json` 中有伺服器，`--mcp` 也能運作。
+- `-g` 或 `--group` 用來選擇群組。
+- `-y` 或 `--yes` 不詢問直接複製，檔案內容不同時保留群組中的副本。
+
+MCP 的登入不會被複製，因為複製的登入會讓其他持有者被登出；計畫會列出需要用 `/mcp` 登入的帳號。請參閱[複製現有的設定](/docs/sharing#copy-an-existing-setup)。
 
 ## MCP 伺服器
 
@@ -129,7 +136,14 @@ ccam ccusage claude daily       # Claude Code's tokens and costs, every account 
 ccam ccusage -a work blocks --active   # one account's current 5-hour block
 ```
 
-`next --auto`、`--fallback` 和 `ccam pick` 的選擇方式相同：優先選低於 `auto_max_usage`（`config.toml`，預設 100）的帳號，依 `auto_strategy`（`headroom`、`expiring` 或 `balance`）選擇，會計入 `--model` 的每週區間，絕不選擇用量 100% 的帳號（Claude Code 回報已滿的區間在重設前都算作 100%），絕不選擇 API 金鑰登入的帳號，而且只在起始帳號所屬的組織內選擇（加上 `--cross-org` 或設定 `cross_org = true` 可擴大範圍）。`--wait` 的值要寫在 `=` 之後（`--wait=2h`）；用空格分開時會被拒絕並附上提示。無法選出帳號時，它們會以代碼 75 結束，加上 `--wait` 時則等待第一個帳號重設。即使帳號之間沒有共用對話記錄，`ccam next --continue` 也能把對話帶過去：此時 Claude Code 會把對話複製到新的帳號。加上 `--brief` 時，新帳號則會改為開始一段新的對話，內容來自 ccam 不靠模型為上一段對話寫的摘要（[`--brief`](/features/next#brief)）。和 `ccam <name>` 不同，`ccam next` 會讀取自己的選項，所以 Claude Code 的選項要放在 `--` 後面；少了它時 ccam 會以 `unknown flag` 停止。在 Claude Code 中，外掛的 `/ccam:switch [account]` 會把對話交接出去，而 `ccam hook` 就是它的 hook 所執行的指令。在 `config.toml` 中設定 `auto_switch = true`（Linux 和 macOS；預設關閉）時，上限 hook 還會結束由 ccam 啟動的互動式工作階段，並以另一個還有餘裕的帳號把它接續下去，而且只會是同類的帳號：同一個組織的另一個席位，或另一個個人方案（[`auto_switch`](/features/next#auto-switch)）。請參閱[切換到下一個帳號](/features/next)、[為指令碼選擇帳號](/features/pick)和[所有帳號的背景工作階段](/features/agents)。
+- `next --auto`、`--fallback` 和 `ccam pick` 的選擇方式相同：優先選低於 `auto_max_usage`（`config.toml`，預設 100）的帳號，依 `auto_strategy`（`headroom`、`expiring` 或 `balance`）選擇，會計入 `--model` 的每週區間。它們絕不選擇用量 100% 的帳號（Claude Code 回報已滿的區間在重設前都算作 100%）或 API 金鑰登入的帳號，而且只在起始帳號所屬的組織內選擇（加上 `--cross-org` 或設定 `cross_org = true` 可擴大範圍）。
+- `--wait` 的值要寫在 `=` 之後（`--wait=2h`）；用空格分開時會被拒絕並附上提示。無法選出帳號時，它們會以代碼 75 結束，加上 `--wait` 時則等待第一個帳號重設。
+- 即使帳號之間沒有共用對話記錄，`ccam next --continue` 也能把對話帶過去：此時 Claude Code 會把對話複製到新的帳號。加上 `--brief` 時，新帳號則會改為開始一段新的對話，內容來自 ccam 不靠模型為上一段對話寫的摘要（[`--brief`](/features/next#brief)）。
+- 和 `ccam <name>` 不同，`ccam next` 會讀取自己的選項，所以 Claude Code 的選項要放在 `--` 後面；少了它時 ccam 會以 `unknown flag` 停止。
+- 在 Claude Code 中，外掛的 `/ccam:switch [account]` 會把對話交接出去，而 `ccam hook` 就是它的 hook 所執行的指令。
+- 在 `config.toml` 中設定 `auto_switch = true`（Linux 和 macOS；預設關閉）時，上限 hook 還會結束由 ccam 啟動的互動式工作階段，並在另一個還有餘裕的帳號接續它，但只會是同類的帳號：同一個組織的另一個席位，或另一個個人方案（[`auto_switch`](/features/next#auto-switch)）。
+
+請參閱[切換到下一個帳號](/features/next)、[為指令碼選擇帳號](/features/pick)和[所有帳號的背景工作階段](/features/agents)。
 
 ## 維護
 
@@ -145,16 +159,27 @@ ccam version         # also: ccam -v, ccam --version
 ccam completion bash # or zsh, powershell
 ```
 
-`ccam update` 會在取代 ccam 之前檢查發行版本的 SHA-256 總和檢查碼，`--version v0.2.0` 則可安裝特定的發行版本。從 `.deb` 套件安裝的 ccam 則改用 apt 更新。請參閱[更新](/docs/install#update)。
+`ccam update` 會在取代 ccam 之前檢查發行版本的 SHA-256 總和檢查碼，`--version v0.2.0` 則可安裝特定的發行版本。從 `.deb` 套件安裝的 ccam 副本則改用 apt 更新。請參閱[更新](/docs/install#update)。
 
 ## 檔案
 
 | 路徑 | 內容 |
 | --- | --- |
-| `~/.config/ccam/config.toml` | 帳號、群組和設定（`theme`、`usage_source`、`relay`、`auto_switch`、`cross_org` …）。設定要放在最上方，位於第一個 `[[group]]`、`[[profile]]` 或 `[[folder]]` 之前：放在表格下方的設定會屬於該表格，因此 ccam 會在每次啟動時和 `ccam doctor` 中指出它，而會儲存設定的指令在它被移走之前都會拒絕執行。ccam 儲存檔案時不會保留註解 |
+| `~/.config/ccam/config.toml` | 帳號、群組和設定（`theme`、`usage_source`、`relay`、`auto_switch`、`cross_org` …）。設定要放在最上方，位於第一個 `[[group]]`、`[[profile]]` 或 `[[folder]]` 之前：放在表格下方的設定會屬於該表格，因此 ccam 會在每次啟動時和 `ccam doctor` 中對它發出警告，而會儲存設定的指令在它被移走之前都會拒絕執行。ccam 儲存檔案時不會保留註解 |
 | `~/.local/share/ccam/profiles/<name>/` | 每個帳號的 `CLAUDE_CONFIG_DIR` |
 | `~/.local/share/ccam/groups/<group>/` | 共用的設定、MCP 伺服器、擴充功能和對話記錄 |
-| `~/.local/state/ccam/` | 用量快取與上限記錄（`usage/<name>.json`、`usage/<name>.limit.json`）、上次使用時間、工作階段標記與鎖定（`locks/`）、ccam 建立的快捷指令（`shortcuts.json`）、尚未完成的群組變更（`group-change.json`）、`/ccam:switch` 和上限 hook 留下的記錄（`handoff/<account>/<session>.json`）、`ccam pick` 或 `auto_switch` 上次選中每個帳號的時間（`picks/<name>`；一次選擇在 2 分鐘內有效），以及 `--brief` 的摘要，保留 7 天（`brief/<session>.md`） |
+| `~/.local/state/ccam/` | 用量快取、上限記錄、鎖定、記錄和其他狀態（請見表格下方的清單） |
 | `~/.local/bin/<shortcut>` | `ccwork` 這類快捷指令，也就是指向 ccam 的連結 |
 
-`XDG_CONFIG_HOME`、`XDG_DATA_HOME` 和 `XDG_STATE_HOME` 變數可以變更這些資料夾的位置。在 Windows 上，`~` 是 `%USERPROFILE%`，快捷指令則是 `<shortcut>.exe`。
+狀態資料夾包含：
+
+- 用量快取與上限記錄（`usage/<name>.json`、`usage/<name>.limit.json`）；
+- 上次使用時間；
+- 工作階段標記與鎖定（`locks/`）；
+- ccam 建立的快捷指令（`shortcuts.json`）；
+- 尚未完成的群組變更（`group-change.json`）；
+- `/ccam:switch` 和上限 hook 留下的記錄（`handoff/<account>/<session>.json`）；
+- `ccam pick` 或 `auto_switch` 上次選中每個帳號的時間（`picks/<name>`；一次選擇在 2 分鐘內有效）；
+- `--brief` 的摘要，保留 7 天（`brief/<session>.md`）。
+
+設定 `XDG_CONFIG_HOME`、`XDG_DATA_HOME` 或 `XDG_STATE_HOME` 可以變更這些資料夾的位置。在 Windows 上，`~` 是 `%USERPROFILE%`，快捷指令則是 `<shortcut>.exe`。

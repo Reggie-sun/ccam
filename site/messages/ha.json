@@ -2,7 +2,7 @@
   "site": {
     "name": "ccam",
     "title": "ccam: Claude Code Account Manager da mai sauya asusu",
-    "description": "ccam (Claude Code Account Manager) kayan aiki ne kyauta kuma open-source don amfani da asusun Claude Code da dama a kwamfuta ɗaya da sauya su da umarni ɗaya.",
+    "description": "ccam (Claude Code Account Manager) kayan aiki ne kyauta, open-source, don ka yi amfani da asusun Claude Code da dama a kwamfuta ɗaya ka sauya da umarni ɗaya.",
     "titleSuffix": "ccam don Claude Code"
   },
   "nav": {
@@ -14,17 +14,17 @@
     "menu": "Menu",
     "skip": "Tsallaka zuwa abin da ke ciki",
     "language": "Harshe",
-    "theme": "Sauya jigo mai haske ko mai duhu"
+    "theme": "Sauya tsakanin jigo mai haske da mai duhu"
   },
   "facts": {
     "what": "ccam kayan aikin command-line ne kyauta kuma open-source wanda ke ba ka damar amfani da asusun Claude Code da dama a kwamfuta ɗaya, ka kuma sauya tsakaninsu da umarni ɗaya.",
-    "how": "Kowane asusu yana riƙe bayanan shigarsa a CLAUDE_CONFIG_DIR daban, yayin da za a iya raba sabobin MCP, saituna, CLAUDE.md, extensions da tarihin tattaunawa tsakanin asusai, don haka za ka iya ci gaba da tattaunawa a wani asusu idan ɗaya ya kai iyakar amfaninsa.",
+    "how": "Kowane asusu yana riƙe bayanan shigarsa a CLAUDE_CONFIG_DIR daban. Za a iya raba sabobin MCP, saituna, CLAUDE.md, extensions da tarihin tattaunawa tsakanin asusai, don haka za ka iya ci gaba da tattaunawa a wani asusu idan ɗaya ya kai iyakar amfaninsa.",
     "install": "Girka shi a Linux, macOS ko Windows da umarni ɗaya, sannan ka gudanar da ccam add ga kowane asusu.",
     "official": "ccam aiki ne da ba na hukuma ba, ba shi da alaƙa da Anthropic, kuma Anthropic ba ta amince da shi ba."
   },
   "landing": {
     "headline": "Asusun Claude Code da dama. Terminal ɗaya.",
-    "lede": "Ka ƙara kowane asusu sau ɗaya. Ka sauya da ccam work ko gajeren umarni kamar ccwork. Idan wani asusu ya kai iyakarsa, ka ci gaba a na gaba da wannan tattaunawar.",
+    "lede": "Ka ƙara kowane asusu sau ɗaya. Ka sauya da {command} ko gajeren umarni kamar {shortcut}. Idan wani asusu ya kai iyakarsa, ka ci gaba da wannan tattaunawar a na gaba.",
     "installLabel": "Girka a Linux ko macOS",
     "installWindowsLabel": "A Windows, a PowerShell",
     "thenAdd": "Sannan ka ƙara asusunka na farko da {command}.",
@@ -56,18 +56,18 @@
       "fiveHour": "Awa 5",
       "weekly": "Mako",
       "resets": "sake saitawa cikin {time}",
-      "mostRoom": "Wanda ya fi sauran sarari: {name}"
+      "mostRoom": "Wanda ya fi yawan sarari: {name}"
     },
     "flowTitle": "Yadda yake aiki",
     "flow": [
       {
         "command": "ccam add work",
-        "body": "Yana ƙirƙirar folda ta saituna daban don asusun, yana buɗe shigar Claude a burauzarka kuma, idan kana so, yana ba asusun gajeren umarni da kai da kanka ka sa masa suna, kamar ccwork."
+        "body": "Yana ƙirƙirar folda ta saituna daban don asusun kuma yana buɗe shigar Claude a burauzarka. Yana kuma iya ba asusun gajeren umarni da ka zaɓa, kamar ccwork."
       },
       {
         "command": "ccam work",
         "also": "ccwork --resume",
-        "body": "Yana fara Claude Code a matsayin wannan asusun. Duk abin da ke bayan sunan yana zuwa Claude Code ba tare da canji ba, kuma ccam yana ƙara kusan millisecond 4 kafin ya fara."
+        "body": "Yana fara Claude Code a matsayin wannan asusun. Duk abin da ke bayan sunan yana zuwa Claude Code ba tare da canji ba, kuma farawa ta ccam yana ɗaukar kusan millisecond 4 fiye da gudanar da claude kai tsaye."
       },
       {
         "command": "ccam group set default --add history",
@@ -83,7 +83,7 @@
       },
       {
         "command": "ccam doctor --fix",
-        "body": "Yana duba mahaɗai, izini da bayanan shiga, kuma yana gyara abin da zai iya gyarawa lafiya. Kowane canji ga fayilolinka yana ajiye kwafin ajiya."
+        "body": "Yana duba mahaɗai, izini da bayanan shiga, kuma yana gyara abin da zai iya gyarawa lafiya. Fayilolin da yake kawar da su daga hanya ana ajiye su a kwafin ajiya."
       }
     ],
     "guidesTitle": "Jagorori",
@@ -141,19 +141,19 @@
     "next": "Buɗe asusu na gaba; --continue yana kai tattaunawar gaba, --auto yana zaɓar wanda ya fi sarari",
     "usage": "Nuna amfanin awa 5 da na mako na kowane asusu",
     "share": "Nuna abin da asusu ke rabawa, da kuma ta wane rukuni",
-    "group": "Ƙirƙira da canza rukunoni: abin da wasu asusai ke rabawa, ana matsar da shi tare da shiri",
+    "group": "Ƙirƙira da canza rukunoni, waɗanda ke tsara abin da asusansu ke rabawa; kowane canji yana nuna shiri tukuna",
     "mcp": "Sarrafa sabobin MCP da aka raba",
     "migrate": "Kwafi saitin Claude Code da ke akwai (~/.claude) zuwa rukunin da aka raba",
     "login": "Sake shiga da asusu; --expired yana shiga kowane asusu da ke buƙatar hakan",
     "logout": "Fitar da asusu: bayanan shigarsa da shigarsa a sabobin MCP",
-    "rename": "Sauya sunan asusu; sunan gajeren umarninsa ba ya canzawa",
+    "rename": "Sauya sunan asusu; gajeren umarninsa ba ya canzawa",
     "remove": "Cire asusu: ana fitar da shi, kuma foldarsa tana komawa foldar shara",
     "import": "Yi rajistar foldar ~/.claude da ke akwai a inda take",
     "doctor": "Duba mahaɗai, izini, bayanan shiga da sigogi, sannan ka gyara",
     "statusline": "Nuna asusun da amfaninsa a layin matsayi na Claude Code",
     "shims": "Sake ƙirƙirar mahaɗan gajerun umarnin dukkan asusai",
     "shortcut": "Nuna, ƙirƙira, sauya suna ko cire gajeren umarnin asusu, kamar ccwork",
-    "folder": "Yi amfani da asusu a folda da ƙarƙashinta idan ba a ambaci asusu ba",
+    "folder": "Yi amfani da asusu a folda da foldojin da ke cikinta idan ba a ambaci asusu ba",
     "pick": "Buga asusun da ya fi sarari, don rubutun umarni da workers masu aiki a lokaci guda",
     "ext": "Nuna skills, commands, plugins, sabobin MCP da hooks da kowane asusu ke lodawa",
     "agents": "Lissafa background agents da zaman da ke buɗe na kowane asusu",
@@ -174,7 +174,7 @@
   },
   "footer": {
     "unofficial": "ccam kayan aikin open-source ne da ba na hukuma ba. Ba shi da alaƙa da Anthropic, kuma Anthropic ba ta amince da shi ba. Claude da Claude Code alamomin kasuwanci ne na Anthropic.",
-    "terms": "Ko an yarda ka yi amfani da asusai da dama ya dogara ne da sharuɗɗan kowane asusu. Ka duba su kafin ka yi haka.",
+    "terms": "Ko an yarda ka yi amfani da asusu fiye da ɗaya ya dogara ne da sharuɗɗan da suka shafi kowanne. Ka karanta waɗannan sharuɗɗan kafin ka fara.",
     "license": "Lambar tushe a GitHub",
     "languages": "Dukan harsuna",
     "analytics": "Wannan shafin yana ƙidaya ziyara da Cloudflare Web Analytics, wanda ba ya saka cookies kuma ba ya tattara bayanan sirri."

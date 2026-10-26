@@ -1,13 +1,13 @@
 ---
 title: "API key অ্যাকাউন্ট"
 description: "ccam add --api Anthropic-এর API বা কোনো গেটওয়ের জন্য API key অ্যাকাউন্ট যোগ করে; key চালুর সময় একটি ভেরিয়েবল বা কমান্ড থেকে পড়া হয়, কখনও সংরক্ষিত হয় না।"
-updated: 2026-10-23
+updated: 2026-10-26
 order: 13
 translation: machine
-sourceHash: 232a71525e42
+sourceHash: 771d749f1f90
 ---
 
-একটি API key অ্যাকাউন্ট Claude সাবস্ক্রিপশন লগইনের বদলে একটি API key দিয়ে Claude Code চালু করে: Anthropic-এর API, অথবা একই Messages ফরম্যাট বোঝে এমন কোনো এন্ডপয়েন্ট, যেমন LiteLLM বা OpenRouter গেটওয়ে। ccam key সংরক্ষণ করে না। প্রতিবার অ্যাকাউন্ট চালু হলে এটি একটি এনভায়রনমেন্ট ভেরিয়েবল থেকে বা পাসওয়ার্ড ম্যানেজারের মতো কোনো কমান্ড থেকে key পড়ে, এবং শুধু ওই Claude Code প্রসেসকেই দেয়।
+একটি API key অ্যাকাউন্ট Claude সাবস্ক্রিপশন লগইনের বদলে একটি API key দিয়ে Claude Code চালু করে। key-টি Anthropic-এর API-এর জন্য হতে পারে, অথবা একই Messages ফরম্যাট বোঝে এমন যেকোনো এন্ডপয়েন্টের জন্য, যেমন LiteLLM বা OpenRouter গেটওয়ে। ccam key সংরক্ষণ করে না। প্রতিবার অ্যাকাউন্ট চালু হলে এটি একটি এনভায়রনমেন্ট ভেরিয়েবল থেকে বা পাসওয়ার্ড ম্যানেজারের মতো কোনো কমান্ড থেকে key পড়ে, এবং শুধু ওই Claude Code প্রসেসকেই দেয়।
 
 ## ব্যবহার
 
@@ -27,7 +27,7 @@ $ ccam list
    2  gw        -         (API: llm.example.com)  default  -
 ```
 
-একটি API key অ্যাকাউন্ট অন্য যেকোনো অ্যাকাউন্টের মতোই গ্রুপে যোগ দেয় (ডিফল্টভাবে `default`: সেটিংস, `CLAUDE.md`, এক্সটেনশন ও MCP সার্ভার), এবং শর্টকাট, `ccam folder` ও `ccam ext`-এর সঙ্গে কাজ করে।
+একটি API key অ্যাকাউন্ট অন্য যেকোনো অ্যাকাউন্টের মতোই গ্রুপে যোগ দেয় (ডিফল্টভাবে `default` গ্রুপে, যা সেটিংস, `CLAUDE.md`, এক্সটেনশন ও MCP সার্ভার শেয়ার করে), এবং শর্টকাট, `ccam folder` ও `ccam ext`-এর সঙ্গে কাজ করে।
 
 ## অপশন
 
@@ -58,8 +58,13 @@ model = 'claude-sonnet-5-5'
 
 অ্যাকাউন্টটি প্রতিবার চালু হওয়ার সময়, সাধারণ যাচাইয়ের পরে এবং Claude Code শুরু হওয়ার আগে:
 
-1. ccam key পড়ে: `env:` এনভায়রনমেন্ট থেকে, `command:` ৩০ সেকেন্ডের সীমার মধ্যে কমান্ডটি চালিয়ে। কোনো কমান্ড টার্মিনালে পাসওয়ার্ড চাইতে পারে; তার ত্রুটির আউটপুটও টার্মিনালে যায়। খালি key চালু হওয়া থামিয়ে দেয়, এমন একটি বার্তাসহ যা বলে key কোথায় থাকার কথা ছিল।
-2. Claude Code কীভাবে সাইন ইন করবে বা কোন প্রোভাইডার ব্যবহার করবে তা ঠিক করে এমন প্রতিটি উত্তরাধিকারসূত্রে পাওয়া ভেরিয়েবল এটি সরিয়ে দেয়: key ও টোকেন (`ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN_FILE_DESCRIPTOR`, `CLAUDE_CODE_API_KEY_FILE_DESCRIPTOR`), এন্ডপয়েন্ট (`ANTHROPIC_BASE_URL`, `ANTHROPIC_UNIX_SOCKET`, `ANTHROPIC_MODEL`) এবং প্রোভাইডার বাছাইয়ের সুইচ (`CLAUDE_CODE_USE_BEDROCK`, `CLAUDE_CODE_USE_VERTEX`, `CLAUDE_CODE_USE_FOUNDRY`, `CLAUDE_CODE_USE_ANTHROPIC_AWS`, `CLAUDE_CODE_USE_ANTHROPIC_GOOGLE_CLOUD`, `CLAUDE_CODE_USE_MANTLE`, `CLAUDE_CODE_USE_GATEWAY`)। অন্য কোনো কাজের জন্য আপনার শেলে সেট করা key এই অ্যাকাউন্টে পৌঁছাতে পারে না, এবং কোনো সাবস্ক্রিপশন লগইন এর key-কে ছাপিয়ে যেতে পারে না।
+1. ccam key পড়ে: `env:` এনভায়রনমেন্ট থেকে, `command:` ৩০ সেকেন্ডের টাইমআউটসহ কমান্ডটি চালিয়ে। কোনো কমান্ড টার্মিনালে পাসওয়ার্ড চাইতে পারে; তার ত্রুটির আউটপুটও টার্মিনালে যায়। খালি key চালু হওয়া থামিয়ে দেয়, এমন একটি বার্তাসহ যা বলে key কোথায় থাকার কথা ছিল।
+2. Claude Code কীভাবে সাইন ইন করবে বা কোন প্রোভাইডার ব্যবহার করবে তা ঠিক করে এমন প্রতিটি উত্তরাধিকারসূত্রে পাওয়া ভেরিয়েবল এটি সরিয়ে দেয়:
+   - key ও টোকেন: `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN_FILE_DESCRIPTOR`, `CLAUDE_CODE_API_KEY_FILE_DESCRIPTOR`;
+   - এন্ডপয়েন্ট: `ANTHROPIC_BASE_URL`, `ANTHROPIC_UNIX_SOCKET`, `ANTHROPIC_MODEL`;
+   - প্রোভাইডার বাছাইয়ের সুইচ: `CLAUDE_CODE_USE_BEDROCK`, `CLAUDE_CODE_USE_VERTEX`, `CLAUDE_CODE_USE_FOUNDRY`, `CLAUDE_CODE_USE_ANTHROPIC_AWS`, `CLAUDE_CODE_USE_ANTHROPIC_GOOGLE_CLOUD`, `CLAUDE_CODE_USE_MANTLE`, `CLAUDE_CODE_USE_GATEWAY`।
+
+   অন্য কোনো কাজের জন্য আপনার শেলে সেট করা key এই অ্যাকাউন্টে পৌঁছাতে পারে না, এবং কোনো সাবস্ক্রিপশন লগইন এর key-এর চেয়ে অগ্রাধিকার পেতে পারে না।
 3. দেওয়া থাকলে এটি `ANTHROPIC_BASE_URL` ও `ANTHROPIC_MODEL` সেট করে, এবং key-টিকে `ANTHROPIC_API_KEY` বা `ANTHROPIC_AUTH_TOKEN` হিসেবে।
 
 সাবস্ক্রিপশন লগইন থাকা অ্যাকাউন্টগুলো আগের মতোই উত্তরাধিকারসূত্রে পাওয়া এনভায়রনমেন্ট রাখে। ইন্টারঅ্যাকটিভ সেশনে Claude Code একবার জিজ্ঞেস করতে পারে এনভায়রনমেন্টে পাওয়া key ব্যবহার করবে কি না।
@@ -74,7 +79,7 @@ model = 'claude-sonnet-5-5'
   ```
 
   চালু করার সময় সরিয়ে দেওয়া উত্তরাধিকারসূত্রে পাওয়া ভেরিয়েবল শুরুতে `env -u <name>` হিসেবে দেখায়। কোনো `env:` সোর্সের ভেরিয়েবল খালি হলে ড্রাই রান ঠিক সেভাবেই ব্যর্থ হয়, যেভাবে চালু করা হতো।
-- `ccam add --api` একটি `env:` সোর্স সঙ্গে সঙ্গে যাচাই করে এবং ভেরিয়েবলটি খালি হলে সতর্ক করে; `command:` সোর্স প্রথমবার চালুর সময় চলে।
+- `ccam add --api` একটি `env:` সোর্স সঙ্গে সঙ্গে যাচাই করে এবং ভেরিয়েবলটি খালি হলে সতর্ক করে; `command:` সোর্স চালু করার আগে পর্যন্ত চালানো হয় না।
 - `ccam login` ও `ccam logout` API key অ্যাকাউন্ট প্রত্যাখ্যান করে, কারণ এর কোনো লগইন নেই। `ccam doctor` এর এন্ডপয়েন্ট ও key সোর্স দেখায়, এবং একটি `env:` ভেরিয়েবল খালি হলে সতর্ক করে।
 - `ccam usage` এর জন্য `no limits (API)` দেখায়। `ccam next --auto`, `--fallback` ও `ccam pick` শুধু সাবস্ক্রিপশন অ্যাকাউন্টগুলোর মধ্যে থেকে বেছে নেয়, কারণ API key-এর তুলনা করার মতো কোনো ৫ ঘণ্টা বা সাপ্তাহিক সীমা নেই।
 - `env` ব্লক বা `apiKeyHelper` থাকা একটি শেয়ার করা `settings.json` গ্রুপের প্রতিটি অ্যাকাউন্টে প্রযোজ্য, API key অ্যাকাউন্টসহ। প্রোভাইডারের সেটিংস শেয়ার করা সেটিংসের বাইরে রাখুন, অথবা API key অ্যাকাউন্টটিকে এমন একটি গ্রুপে রাখুন যাতে `settings` নেই।

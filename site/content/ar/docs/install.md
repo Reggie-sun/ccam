@@ -1,12 +1,14 @@
 ---
 title: تثبيت ccam
 metaTitle: تثبيت ccam على Linux وmacOS وWindows
-description: ثبّت ccam على Linux أو macOS أو Windows بأمر واحد أو من حزمة .deb أو من الشيفرة المصدرية، وحدّثه باستخدام ccam update. يجب تثبيت Claude Code أولًا.
-updated: 2026-10-25
+description: ثبّت ccam على Linux أو macOS أو Windows بأمر واحد أو من حزمة .deb أو عبر go install، وحدّثه باستخدام ccam update. يجب تثبيت Claude Code أولًا.
+updated: 2026-10-26
 order: 1
 translation: machine
-sourceHash: "a7f9dac24f79"
+sourceHash: "2ada7b2650d6"
 ---
+
+يشغّل ccam برنامج Claude Code نيابةً عنك، لذا ثبّت [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) أولًا وتأكد من أن `claude --version` يعمل.
 
 شغّل هذا الأمر في طرفية على Linux أو macOS:
 
@@ -22,16 +24,17 @@ curl -fsSL https://ccam.dev/install.sh | sh
 irm https://ccam.dev/install.ps1 | iex
 ```
 
-ينزّل الملف `ccam_windows_<arch>.zip`، ويتحقق من مجموع SHA-256 الخاص به، ويضع `ccam.exe` في `%USERPROFILE%\.local\bin`، وهو المجلد الذي يضع فيه مثبّت Claude Code الملف `claude.exe`، ويضيف ذلك المجلد إلى `PATH` الخاص بمستخدمك إن لم يكن فيه بعد، مع إبقاء مدخلات مثل `%USERPROFILE%\bin` كما هي. افتح طرفية جديدة بعد ذلك. وتشغيله مرة أخرى يستبدل ccam، حتى أثناء عمل جلسة Claude Code من الملف التنفيذي القديم (فيُعاد تسمية ذلك الملف إلى `ccam.exe.old`، أو إلى `ccam.exe.old-<number>` عندما يكون ملف أقدم لا يزال قيد الاستخدام)، ويجدّد الأوامر المختصرة التي هي روابط صلبة: `OK 2 shortcuts now run the new ccam`.
-
-يشغّل ccam برنامج Claude Code نيابةً عنك، لذا ثبّت [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) أولًا وتأكد من أن `claude --version` يعمل.
+ينزّل الملف `ccam_windows_<arch>.zip`، ويتحقق من مجموع SHA-256 الخاص به، ويضع `ccam.exe` في `%USERPROFILE%\.local\bin`، وهو المجلد الذي يضع فيه مثبّت Claude Code الملف `claude.exe`. وإذا لم يكن ذلك المجلد ضمن `PATH` الخاص بمستخدمك بعد، يضيفه السكربت ويُبقي مدخلات مثل `%USERPROFILE%\bin` كما هي. افتح طرفية جديدة بعد ذلك.
 
 ## الأنظمة المدعومة
 
 - Linux على x86-64 وARM64: Ubuntu وDebian وFedora وArch وAlpine وتوزيعات أخرى. الملف التنفيذي ثابت (static) وليست له أي تبعيات.
 - macOS على معالجات Apple silicon وIntel.
-- Windows 10 و11 على x86-64 وARM64، في PowerShell أو Windows Terminal أو Git Bash. تعمل المجلدات المشتركة لكل مستخدم. أما الملفات المشتركة (`settings.json` و`CLAUDE.md` و`history.jsonl`) فتحتاج إلى وضع المطور (Developer Mode، في الإعدادات > النظام > للمطورين)، لأن Windows لا يسمح بإنشاء روابط إلى الملفات إلا في هذا الوضع أو للمسؤول؛ راجع [المشاركة على Windows](/features/share#on-windows). ودونه ينشئ أول `ccam add` المجموعة `default` بخوادم MCP والإضافات فقط، ويخبرك كيف تضيف البقية بعد تشغيل وضع المطور.
-- داخل WSL، يعمل ccam كما يعمل على أي نظام Linux.
+- Windows 10 و11 على x86-64 وARM64، في PowerShell أو Windows Terminal أو Git Bash:
+  - تعمل المجلدات المشتركة دون وضع المطور (Developer Mode).
+  - تحتاج الملفات المشتركة (`settings.json` و`CLAUDE.md` و`history.jsonl`) إلى وضع المطور (في الإعدادات > النظام > للمطورين)، لأن Windows لا يسمح بإنشاء روابط إلى الملفات إلا في هذا الوضع أو للمسؤول؛ راجع [المشاركة على Windows](/features/share#on-windows).
+  - دون وضع المطور، ينشئ أول `ccam add` المجموعة `default` بخوادم MCP والإضافات فقط، ويخبرك كيف تضيف البقية بعد تشغيل وضع المطور.
+- داخل WSL، يعمل ccam كما يعمل على أي نظام Linux آخر.
 
 ## طرق تثبيت أخرى
 
@@ -49,7 +52,7 @@ sudo apt install ./ccam_*_linux_amd64.deb
 go install github.com/jhyunwoo/ccam/cmd/ccam@latest
 ```
 
-البناء من وسم إصدار (`@latest` أو `@vX.Y.Z`) يُبلغ عن ذلك الإصدار، فيعمل `ccam update` معه؛ أما البناء من `@main` أو من نسخة محلية تجاوزت وسمًا فيُبلغ عن `dev`.
+إذا ثبّت من وسم إصدار (`@latest` أو `@vX.Y.Z`)، يُبلغ ccam عن ذلك الإصدار، ويعمل معه `ccam update` وعرض التحديث في لوحة التحكم. أما البناء من `@main`، أو من نسخة محلية فيها إيداعات (commits) بعد وسم، فيُبلغ عن `dev`، ويرفضه `ccam update` ما لم تمرّر `--version`.
 
 **إصدار محدد.** عيّن `CCAM_VERSION`:
 
@@ -82,7 +85,13 @@ ccam completion powershell >> $PROFILE
 /plugin install ccam --marketplace jhyunwoo/ccam
 ```
 
-يضيف مهارة، والأوامر `/ccam:usage` و`/ccam:ext` و`/ccam:switch`، وخطافين: عندما تتوقف جلسة عند حد الاستخدام يصلك إشعار في الطرفية (وعلى Linux وmacOS، مع تشغيل [`auto_switch`](/features/next#auto-switch)، ينقل ccam الجلسة إلى حساب آخر لديه متسع)، ويسلّم `/ccam:switch [account]` المحادثة إلى حساب آخر ([التفاصيل](/features/next#inside-claude-code)). تشغّل الخطافات `ccam`، لذا يجب أن يكون ضمن `PATH` الذي يراه Claude Code. ولا تشغّل المهارة أبدًا أوامر تسجّل الدخول أو تنقل الملفات؛ بل تقترحها بدلًا من ذلك.
+يضيف:
+
+- مهارة تقترح الأوامر التي تسجّل الدخول أو تنقل الملفات لكنها لا تشغّلها أبدًا؛
+- الأوامر `/ccam:usage` و`/ccam:ext` و`/ccam:switch`؛
+- خطافين ([التفاصيل](/features/next#inside-claude-code)). يعرض أحدهما إشعارًا في الطرفية عندما تتوقف جلسة عند حد الاستخدام؛ وعلى Linux وmacOS، مع تشغيل [`auto_switch`](/features/next#auto-switch)، ينقل ccam بعدها الجلسة إلى حساب آخر لديه متسع. ويتيح الآخر لـ `/ccam:switch [account]` أن يسلّم المحادثة إلى حساب آخر.
+
+تشغّل الخطافات `ccam`، لذا يجب أن يكون ضمن `PATH` الذي يراه Claude Code.
 
 ## التحقق من التثبيت
 
@@ -112,16 +121,16 @@ $ ccam update
 ccam 0.3.0 is up to date.
 ```
 
-تبحث لوحة التحكم (`ccam` في الطرفية) أيضًا عن إصدار جديد في كل مرة تُفتح فيها، وإذا وُجد إصدار عرضته عليك: اضغط `U` ثم أكّد. لا يبحث أي أمر آخر، ولا يحدّث ccam نفسه أبدًا دون أن يسألك. لتثبيت إصدار محدد، حتى لو كان أقدم، مرّر الخيار `--version`. ويعرض `ccam --dry-run update` ما سيُنزَّل وما سيُستبدَل دون تغيير أي شيء.
+تبحث لوحة التحكم (`ccam` دون وسائط، في الطرفية) أيضًا عن إصدار جديد في كل مرة تُفتح فيها، وإذا وُجد إصدار عرضته عليك: اضغط `U` ثم أكّد. لا يبحث أي أمر آخر عن تحديثات، ولا يحدّث ccam نفسه أبدًا دون أن يسألك. لتثبيت إصدار محدد، حتى لو كان أقدم، مرّر الخيار `--version`. ويعرض `ccam --dry-run update` ما سيُنزَّل وما سيُستبدَل دون تغيير أي شيء.
 
 ```sh
 ccam update --version v0.2.0
 ccam --dry-run update
 ```
 
-تشغيل سكربت التثبيت مرة أخرى يحدّث أيضًا النسخة الموجودة في `~/.local/bin`. وإذا بنيت ccam باستخدام `go install` من وسم إصدار، فيعمل `ccam update` أيضًا، أو شغّل الأمر نفسه مرة أخرى.
+تشغيل سكربت التثبيت مرة أخرى يحدّث أيضًا النسخة الموجودة في `~/.local/bin`. وإذا بنيت ccam باستخدام `go install` من وسم إصدار، فيمكنك تشغيل `ccam update` أو أمر `go install` نفسه مرة أخرى.
 
-**Windows.** ينزّل `ccam update` ملف `.zip` الخاص بـ Windows. لا يمكن استبدال برنامج قيد التشغيل على Windows، لذا يُعاد تسمية الملف التنفيذي القديم إلى `ccam.exe.old`، ويحذفه التحديث التالي؛ وما دامت جلسة لا تزال تعمل من `ccam.exe.old` سابق، يكون الاسم `ccam.exe.old-<time>`. وتُجدَّد الأوامر المختصرة التي هي روابط صلبة بعد ذلك مباشرة.
+**Windows.** ينزّل `ccam update` ملف `.zip` الخاص بـ Windows. لا يمكن استبدال برنامج قيد التشغيل على Windows، لذا يُعاد تسمية الملف التنفيذي القديم إلى `ccam.exe.old`، ويحذفه التحديث التالي؛ وما دامت جلسة لا تزال تعمل من `ccam.exe.old` سابق، يكون الاسم `ccam.exe.old-<time>`. وتُجدَّد الأوامر المختصرة التي هي روابط صلبة بعد ذلك مباشرة. وتشغيل `install.ps1` مرة أخرى يعمل بالطريقة نفسها، حتى أثناء عمل جلسة Claude Code من الملف التنفيذي القديم، ويطبع `OK 2 shortcuts now run the new ccam` عندما يجدّد الأوامر المختصرة التي هي روابط صلبة.
 
 **حزمة Debian وUbuntu.** لا يستبدل `ccam update` الملف `/usr/bin/ccam` الذي ثبّته apt، بل يطبع هذه الخطوات بدلًا من ذلك. نزّل الملف الجديد `ccam_<version>_linux_amd64.deb` من [صفحة الإصدارات](https://github.com/jhyunwoo/ccam/releases) وثبّته فوق القديم:
 
@@ -130,6 +139,8 @@ sudo apt install ./ccam_*_linux_amd64.deb
 ```
 
 ## إلغاء التثبيت
+
+حذف `~/.local/share/ccam` يحذف أيضًا تسجيلات الدخول وسجل المحادثات المخزنة فيه. أما مجلد `~/.claude` الذي [استوردته](/docs/commands) فيبقى في مكانه، لكن ما دام في مجموعة، فإن الملفات التي يشاركها موجودة في `~/.local/share/ccam/groups/`. شغّل `ccam remove <name>` له (أو `ccam group leave`) قبل أن تحذف أي شيء: فهذا يُخرجه من مجموعاته ويعيد إلى المجلد نسخة من كل ما كان يشاركه.
 
 أزل الأوامر المختصرة للحسابات أولًا، ما دام ccam مثبتًا. يعرضها `ccam list` في عمود Shortcut؛ أزل كلًّا منها باستخدام `ccam shortcut <account> --remove`، أو احذف تلك الروابط من `~/.local/bin` بنفسك. ثم أزل الأمر، ومجلدات البيانات إذا لم تعد بحاجة إلى الحسابات:
 
@@ -147,5 +158,3 @@ ccam shortcut work --remove   # once for each account that has a shortcut
 Remove-Item ~\.local\bin\ccam.exe
 Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
 ```
-
-حذف `~/.local/share/ccam` يحذف أيضًا تسجيلات الدخول وسجل المحادثات المخزنة فيه. أما مجلد `~/.claude` الذي [استوردته](/docs/commands) فيبقى في مكانه، لكن ما دام في مجموعة، فإن الملفات التي يشاركها موجودة في `~/.local/share/ccam/groups/`. شغّل `ccam remove <name>` له أولًا (أو `ccam group leave`): فيغادر مجموعاته محتفظًا بنسخة من كل ما كان يشاركه.

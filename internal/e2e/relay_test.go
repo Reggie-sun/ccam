@@ -173,7 +173,7 @@ func TestRelayHopDoesNotAsk(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if strings.Contains(shown, "Run anyway?") || !strings.Contains(shown, "ccam is carrying its own conversation on, so it does not ask.") ||
+	if strings.Contains(shown, "Run anyway?") || !strings.Contains(shown, "ccam is continuing its own conversation, so it does not ask.") ||
 		!reflect.DeepEqual(runsIn(runs), []string{"personal", "work"}) || time.Since(start) > 10*time.Second {
 		t.Fatalf("runs %q after %v:\n%s", runsIn(runs), time.Since(start), shown)
 	}
@@ -192,10 +192,10 @@ func TestRelayStopsWhenThePersonOrASignalDoes(t *testing.T) {
 		env  []string
 		says string
 	}{
-		{"/exit first", []string{"FAKE_EXIT=0"}, "ccam: Claude Code closed before ccam moved the conversation, so it stays on personal. `ccam next --continue` carries it on."},
+		{"/exit first", []string{"FAKE_EXIT=0"}, "ccam: Claude Code closed before ccam moved the conversation, so it stays on personal. `ccam next --continue` continues it on another account."},
 		{"SIGHUP", []string{"FAKE_KILL_PARENT=HUP", "FAKE_EXIT_DELAY=2"}, ""},
 		{"SIGTERM", []string{"FAKE_KILL_PARENT=TERM", "FAKE_EXIT_DELAY=2"}, ""},
-		{"Ctrl+C", []string{"FAKE_KILL_PARENT=INT", "FAKE_EXIT_DELAY=0.5"}, "ccam: switch cancelled. `ccam next --continue` carries the conversation on later."},
+		{"Ctrl+C", []string{"FAKE_KILL_PARENT=INT", "FAKE_EXIT_DELAY=0.5"}, "ccam: switch cancelled. Run `ccam next --continue` later to continue the conversation."},
 	} {
 		os.Remove(runs)
 		shown := h.onTerminal(project, ccamBin+" personal", "", h.switchEnv("personal", "work", conv, append(c.env, "FAKE_SWITCH_STOPPED=1", "FAKE_RUNS="+runs)...)...)
@@ -294,7 +294,7 @@ func TestRelayOldProtocol(t *testing.T) {
 		case ends:
 			want = "moving this conversation to work"
 		case c.ours:
-			want = "type /exit; ccam then carries this conversation on as work."
+			want = "type /exit; ccam then continues this conversation on work."
 		}
 		if !strings.Contains(r.stdout, want) {
 			t.Fatalf("CCAM_RELAY=%s: %+v", relay, r)

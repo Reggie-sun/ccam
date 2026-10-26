@@ -1,13 +1,13 @@
 ---
 title: Dùng Remote Control với ccam
 description: "Khởi động Remote Control bằng bất kỳ tài khoản nào với ccam <name> rc: tùy chọn áp dụng, vì sao ccam đề nghị sao chép máy chủ MCP dùng chung, và cách sửa sự cố."
-updated: 2026-10-23
+updated: 2026-10-26
 order: 4
 translation: machine
-sourceHash: "3e17d89f98c8"
+sourceHash: 4d46f49c5dea
 ---
 
-`ccam work rc` khởi động Remote Control của Claude Code bằng tài khoản `work`, để bạn có thể điều khiển các phiên trên máy tính này từ claude.ai/code hoặc ứng dụng Claude trên điện thoại. Lệnh này hoạt động giống `claude rc` với một khác biệt: nếu tài khoản dùng chung máy chủ MCP, ccam hỏi một lần có sao chép chúng vào `.claude.json` của tài khoản hay không, vì các phiên Remote Control không đọc máy chủ từ nơi nào khác.
+`ccam work rc` khởi động Remote Control của Claude Code bằng tài khoản `work`, để bạn có thể điều khiển các phiên trên máy tính này từ claude.ai/code hoặc ứng dụng Claude trên điện thoại. Lệnh này hoạt động giống `claude rc` với một khác biệt: nếu tài khoản dùng chung máy chủ MCP, ccam hỏi một lần có sao chép chúng vào `.claude.json` của tài khoản hay không, vì tệp đó là nơi duy nhất các phiên Remote Control đọc máy chủ.
 
 ## Khởi động
 
@@ -31,9 +31,10 @@ ccam --dry-run work rc                # print the command instead of running it
 | Tùy chọn hoặc cài đặt | Tác dụng | Mặc định |
 | --- | --- | --- |
 | `--dry-run` (trước tên tài khoản) | In ra biến môi trường và lệnh, cùng thông báo MCP nếu có. Không hỏi và không sao chép | tắt |
-| `Copy them into .claude.json (a backup is kept; servers of the account's own stay)? [y/N]` | Được hỏi khi tài khoản dùng chung máy chủ MCP và `.claude.json` của nó chưa có danh sách hiện tại của nhóm, hoặc một máy chủ đã sao chép bị mất khỏi đó. `y` sao chép chúng, `N` hoặc Enter khởi động mà không có chúng | `N` |
 | `mcp_strategy = "sync"` ở đầu `~/.config/ccam/config.toml` | Sao chép các máy chủ của nhóm vào `.claude.json` trước mỗi lần khởi động, dù có phải Remote Control hay không, nên không bao giờ phải hỏi | `"flag"` |
 | `ccam group leave <group> work` | Đưa tài khoản ra khỏi nhóm đang dùng chung MCP với nó. Các máy chủ của nhóm được sao chép vào `.claude.json` của nó như máy chủ riêng, nên Remote Control có chúng và không hỏi gì; với `--fresh`, nó khởi động chỉ với các máy chủ riêng của tài khoản | trong `default` |
+
+Khi tài khoản dùng chung máy chủ MCP và `.claude.json` của nó chưa có danh sách hiện tại của nhóm, hoặc một máy chủ đã sao chép bị mất khỏi đó, ccam hỏi `Copy them into .claude.json (a backup is kept; the account's own servers stay)? [y/N]`. `y` sao chép chúng; `N` hoặc Enter khởi động mà không có chúng.
 
 ### Tùy chọn của Remote Control
 
@@ -66,10 +67,10 @@ Lần khởi động đi theo đường thông thường ([Khởi động Claude
    ```console
    $ ccam work rc
    ccam: Remote Control sessions only get MCP servers stored in account work's .claude.json, not the shared MCP servers (ctx, fs).
-   Copy them into .claude.json (a backup is kept; servers of the account's own stay)? [y/N]
+   Copy them into .claude.json (a backup is kept; the account's own servers stay)? [y/N]
    ```
 
-5. Khi chọn `y`, nó lưu một bản sao lưu của `.claude.json`, lấy khóa riêng của Claude Code, thêm các máy chủ của nhóm vào `mcpServers` và giữ lại các máy chủ khác của tài khoản; một máy chủ riêng của tài khoản có tên của một máy chủ nhóm vẫn là của tài khoản, và ccam thông báo điều đó. Khi chọn `N`, khi không có terminal, hoặc khi tài khoản đang chạy, nó không thay đổi gì và thông báo điều đó:
+5. Khi chọn `y`, nó lưu một bản sao lưu của `.claude.json`, lấy khóa riêng của Claude Code, thêm các máy chủ của nhóm vào `mcpServers` và giữ lại các máy chủ khác của tài khoản; nếu tài khoản có máy chủ riêng trùng tên với một máy chủ nhóm, ccam giữ máy chủ của tài khoản và thông báo điều đó. Khi chọn `N`, khi không có terminal, hoặc khi tài khoản đang chạy, nó không thay đổi gì và thông báo điều đó:
 
    ```console
          Starting without them. To copy them before every launch instead, set mcp_strategy = "sync" in ~/.config/ccam/config.toml
@@ -77,7 +78,7 @@ Lần khởi động đi theo đường thông thường ([Khởi động Claude
 
 6. Nó ghi nhận phiên, đặt `CLAUDE_CONFIG_DIR` thành thư mục của tài khoản và tự thay thế mình bằng `claude rc` thông qua `exec`.
 
-Sau đó Remote Control tiếp tục chạy như một máy chủ. Mỗi phiên nó khởi động cho bạn là tiến trình con của tiến trình đó, nên chạy dưới danh nghĩa `work`: với thông tin đăng nhập, cài đặt và lịch sử hội thoại của `work`, và được tính vào giới hạn sử dụng của `work`. Trong khi một máy chủ do ccam khởi động đang chạy, ccam coi tài khoản là đang chạy, và với một máy chủ được khởi động bằng `claude remote-control` thông thường cũng vậy khi nó có phiên; một máy chủ như vậy chưa có phiên nào thì không được nhận ra.
+Sau đó Remote Control tiếp tục chạy như một máy chủ. Mỗi phiên nó khởi động cho bạn là tiến trình con của tiến trình đó, nên chạy dưới danh nghĩa `work`: với thông tin đăng nhập, cài đặt và lịch sử hội thoại của `work`, và được tính vào giới hạn sử dụng của `work`. ccam coi tài khoản là đang chạy trong khi một máy chủ Remote Control do nó khởi động đang chạy. Một máy chủ được khởi động bằng `claude remote-control` thông thường chỉ được tính khi nó có phiên; ccam không thấy được một máy chủ như vậy khi nó chưa có phiên nào.
 
 Chạy thử cho thấy sự khác biệt. Một lần khởi động bình thường mang các máy chủ của nhóm dưới dạng đối số, còn Remote Control thì không:
 
@@ -116,7 +117,7 @@ $ ccam mcp add ctx --url https://mcp.context7.com/mcp
 
 ### Các máy chủ MCP dùng chung không có trong phiên Remote Control
 
-Câu hỏi đã được trả lời `N`, không có terminal, hoặc tài khoản đang chạy. Hãy dừng Remote Control, đóng các phiên khác của tài khoản và chạy lại `ccam work rc` trong terminal; chọn `y`. Để không bao giờ bị hỏi, đặt `mcp_strategy = "sync"` trong `~/.config/ccam/config.toml`. Các máy chủ trong một phiên không thay đổi khi phiên đang chạy, nên hãy bắt đầu phiên mới sau khi sao chép.
+Câu hỏi đã được trả lời `N`, không có terminal, hoặc tài khoản đang chạy. Hãy dừng Remote Control, đóng các phiên khác của tài khoản và chạy lại `ccam work rc` trong terminal; chọn `y`. Để không bị hỏi nữa, đặt `mcp_strategy = "sync"` trong `~/.config/ccam/config.toml`. Các máy chủ trong một phiên không thay đổi khi phiên đang chạy, nên hãy bắt đầu phiên mới sau khi sao chép.
 
 ### "Account work is running, so its .claude.json is left alone"
 
@@ -128,7 +129,7 @@ Bạn chưa sao chép các máy chủ. Hãy chọn `y` một lần, hoặc đặ
 
 ### `ccam work rc` thất bại ngay với lỗi về `--mcp-config`
 
-ccam của bạn cũ hơn 0.6.0 và truyền `--mcp-config` cho Remote Control. Hãy chạy `ccam update`. Cùng lỗi đó với ccam phiên bản hiện tại có nghĩa là một tùy chọn mà ccam không biết, có giá trị, đã đứng trước `rc`, nên ccam hiểu giá trị đó là động từ; hãy đặt `rc` ngay sau tên tài khoản.
+ccam của bạn cũ hơn 0.6.0 và truyền `--mcp-config` cho Remote Control. Hãy chạy `ccam update`. Với ccam phiên bản hiện tại, cùng lỗi đó có nghĩa là một tùy chọn không xác định có giá trị đã đứng trước `rc`, và ccam đã nhầm giá trị đó là lệnh; hãy đặt `rc` ngay sau tên tài khoản.
 
 ### Thay đổi bằng `ccam mcp` không đến được Remote Control
 
@@ -136,7 +137,7 @@ ccam của bạn cũ hơn 0.6.0 và truyền `--mcp-config` cho Remote Control. 
 
 ### Một máy chủ riêng của tôi được dùng thay cho máy chủ của nhóm
 
-Nếu tài khoản có máy chủ riêng trùng tên với một máy chủ của nhóm, bản sao để nguyên nó và thông báo điều đó: `account work has its own MCP servers fs, so group default's of those names are not copied there`. Để dùng máy chủ của nhóm, hãy gỡ máy chủ của tài khoản (`claude mcp remove -s user <name>`); để đưa phiên bản của bạn cho mọi tài khoản, hãy chuyển nó vào nhóm bằng `ccam mcp import work <server> --force`. Các bản sao lưu của `.claude.json` nằm trong `~/.local/state/ccam/mcp/work/backups/`, nơi giữ năm bản mới nhất.
+Nếu tài khoản có máy chủ riêng trùng tên với một máy chủ của nhóm, bản sao để nguyên nó và thông báo điều đó: `account work has its own MCP servers fs, so group default's servers with those names are not copied there`. Để dùng máy chủ của nhóm, hãy gỡ máy chủ của tài khoản (`claude mcp remove -s user <name>`); để đưa phiên bản của bạn cho mọi tài khoản, hãy chuyển nó vào nhóm bằng `ccam mcp import work <server> --force`. Các bản sao lưu của `.claude.json` nằm trong `~/.local/state/ccam/mcp/work/backups/`, nơi giữ năm bản mới nhất.
 
 ### Tôi muốn gỡ các máy chủ đã sao chép
 
@@ -154,7 +155,7 @@ Remote Control cần đăng nhập Claude có gói đăng ký. Hãy kiểm tra e
 
 Ứng dụng Claude hoặc claude.ai/code đang đăng nhập bằng một tài khoản Claude khác. Hãy so sánh với email mà `ccam list` hiển thị cho `work`.
 
-### ccam cảnh báo rằng một Claude Code khác đang dùng chung lịch sử hội thoại trong thư mục này
+### ccam cảnh báo rằng một phiên Claude Code khác đang dùng chung lịch sử hội thoại trong thư mục này
 
 Một tài khoản khác trong cùng nhóm lịch sử đang chạy trong cùng thư mục. Các phiên tiếp tục cùng một cuộc hội thoại từ cả hai tài khoản có thể làm lẫn lộn lịch sử. Chỉ chọn `y` nếu chúng sẽ làm việc với các cuộc hội thoại khác nhau, hoặc khởi động Remote Control ở thư mục khác.
 
@@ -162,5 +163,5 @@ Một tài khoản khác trong cùng nhóm lịch sử đang chạy trong cùng 
 
 - [Khởi động Claude Code](/features/launch)
 - [Máy chủ MCP dùng chung](/features/mcp)
-- [Dùng chung giữa các tài khoản](/features/share)
+- [Dùng chung bằng nhóm](/features/share)
 - [Quản lý tài khoản](/features/accounts)

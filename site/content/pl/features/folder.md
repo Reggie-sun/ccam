@@ -1,13 +1,13 @@
 ---
 title: Konta według folderu
 description: ccam folder sprawia, że folder i wszystko w nim używa jednego konta, gdy uruchamiasz Claude Code bez nazwy konta, na przykład work dla kodu firmy.
-updated: 2026-10-23
+updated: 2026-10-26
 order: 11
 translation: machine
-sourceHash: "48de98d42b99"
+sourceHash: "25f82da64580"
 ---
 
-`ccam folder work ~/code/company` sprawia, że każde uruchomienie bez nazwy konta w `~/code/company` i w każdym folderze poniżej uruchamia Claude Code jako `work`. Poza nim konto domyślne uruchamia się jak wcześniej. Podanie nazwy konta, przez `ccam personal` albo skrót taki jak `ccpersonal`, zawsze uruchamia to konto.
+Po `ccam folder work ~/code/company` każde uruchomienie bez nazwy konta w `~/code/company` lub jego podfolderach uruchamia Claude Code jako `work`. Poza nim konto domyślne uruchamia się jak wcześniej. Podanie nazwy konta, przez `ccam personal` albo skrót taki jak `ccpersonal`, zawsze uruchamia to konto.
 
 ## Użycie
 
@@ -34,7 +34,7 @@ Te uruchomienia używają konta folderu:
 - `ccam -p "…"` i każde inne uruchomienie, którego pierwszy argument jest opcją dla Claude Code
 - `ccam run` bez nazwy oraz `ccam --dry-run`
 - `ccam --fallback -p "…"` przy pierwszej próbie
-- panel, czyli samo `ccam`, który startuje z kursorem na koncie folderu, także gdy trafiłeś do folderu przez link symboliczny
+- panel, czyli samo `ccam`, który startuje z kursorem na koncie folderu, nawet gdy trafiłeś do folderu przez link symboliczny
 
 ## Opcje
 
@@ -43,7 +43,7 @@ Te uruchomienia używają konta folderu:
 | `<account>` | Nazwa lub numer konta, którego używać | |
 | `[folder]` | Folder, ścieżka względna lub bezwzględna | bieżący folder |
 | `--remove` | Usuwa wpis dokładnie dla tego folderu | wyłączone |
-| `--dry-run` | Respektowana: wypisuje zmianę bez zapisywania jej | wyłączone |
+| `--dry-run` | Obsługiwana: wypisuje zmianę bez zapisywania jej | wyłączone |
 
 ## Jak to działa
 
@@ -58,16 +58,16 @@ account = 'work'
 1. `ccam folder` zamienia folder na ścieżkę bezwzględną z rozwiązanymi dowiązaniami symbolicznymi i ją zapisuje. Ponowne ustawienie folderu zastępuje jego konto.
 2. Uruchomienie bez nazwy wywołuje `launcher.HereProfile`. Gdy nie ma wpisów, od razu bierze konto domyślne.
 3. W przeciwnym razie porównuje katalog roboczy z każdym `path` jako ciągi znaków: sam folder albo folder poniżej, nigdy folder, który tylko zaczyna się od tych samych liter (`/code/company` nie obejmuje `/code/companyx`). Wygrywa najgłębszy wpis, więc `~/code` może być `personal`, a `~/code/company` `work`.
-4. Dopiero gdy katalog roboczy w obecnej postaci do niczego nie pasuje, ccam rozwiązuje jego dowiązania symboliczne i porównuje jeszcze raz.
+4. Dopiero gdy katalog roboczy w podanej postaci do niczego nie pasuje, ccam rozwiązuje jego dowiązania symboliczne i porównuje jeszcze raz.
 5. W Windows i macOS porównanie ignoruje wielkość liter, tak jak zwykle robią ich systemy plików.
 
-Poza `config.toml` nie jest czytany żaden plik, więc uruchomienie w folderze nie kosztuje mierzalnego czasu (4,0 ms z wpisami i bez, `hyperfine`, 300 przebiegów).
+Poza `config.toml` nie jest czytany żaden plik, więc uruchomienie w folderze nie dodaje mierzalnego czasu (4,0 ms z wpisami i bez, `hyperfine`, 300 przebiegów).
 
 ## Bezpieczeństwo i przypadki brzegowe
 
 - `ccam rename` przenosi wpisy folderów na nową nazwę, a `ccam remove` usuwa wpisy usuniętego konta.
 - Wpis, którego konto już nie istnieje, zatrzymuje uruchomienie bez nazwy w tym folderze: `<folder> is set to account "<name>", which does not exist. Change it with ccam folder`. `ccam doctor` zgłasza takie wpisy oraz wpisy, których folderu już nie ma.
-- `ccam folder --remove` w folderze, który dostaje konto od folderu wyżej, wskazuje ten folder zamiast cokolwiek usuwać.
+- Jeśli uruchomisz `ccam folder --remove` w podfolderze, który dziedziczy konto po folderze nadrzędnym, ccam wskaże folder nadrzędny i niczego nie usunie.
 - `ccam next` wybiera według rotacji lub użycia i nie patrzy na foldery.
 
 ## Powiązane

@@ -2,13 +2,15 @@
 title: Kuanza haraka
 metaTitle: "Kuanza haraka: ongeza, badili akaunti za Claude Code"
 description: Ongeza akaunti mbili za Claude Code kwa ccam add, zipe njia fupi kama ccwork, badili kati yao, na uchague zinachoshiriki.
-updated: 2026-10-25
+updated: 2026-10-26
 order: 2
 translation: machine
-sourceHash: "0570ef27e4ce"
+sourceHash: "bd893bbb83ab"
 ---
 
 Ongeza kila akaunti kwa `ccam add`, kisha anzisha Claude Code kwa `ccam <name>` au kwa njia fupi unayoipa jina mwenyewe, kama `ccwork`. Hivyo ndivyo watu wengi wanavyohitaji.
+
+Tayari unatumia Claude Code? Soma [Tayari unatumia ~/.claude?](#already-using-claude) mwishoni mwa ukurasa huu kabla ya kuanza.
 
 ## 1. Ongeza akaunti yako ya kwanza
 
@@ -16,7 +18,7 @@ Ongeza kila akaunti kwa `ccam add`, kisha anzisha Claude Code kwa `ccam <name>` 
 ccam add
 ```
 
-Mchawi wa usanidi (wizard) huuliza jina kama `personal` au `work`, ni vipengele gani akaunti inapaswa kushiriki na akaunti zako nyingine, na kama uunde amri ya njia fupi (tazama hatua ya 4). Kisha huendesha `claude auth login`, ambayo hufungua kivinjari ili uweze kuingia. Kwenye mashine ya mbali, kivinjari kinaweza kuishia kwenye ukurasa wa `http://localhost:…/callback` ambao haufunguki; bandika anwani hiyo kwenye terminal na ccam hukamilisha kuingia. Ikimaliza utaona:
+Mchawi wa usanidi (wizard) huuliza jina kama `personal` au `work`, ni vipengele gani akaunti inapaswa kushiriki na akaunti zako nyingine, na kama uunde amri ya njia fupi (tazama hatua ya 3). Kisha huendesha `claude auth login`, ambayo hufungua kivinjari ili uweze kuingia. Kwenye mashine ya mbali, kivinjari chako kinaweza kuishia kwenye ukurasa wa `http://localhost:…/callback` ambao haufunguki; bandika anwani hiyo kwenye terminal na ccam hukamilisha kuingia. Kuingia kukikamilika, utaona:
 
 ```console
 ✓ personal (me@example.com) added
@@ -25,7 +27,7 @@ Mchawi wa usanidi (wizard) huuliza jina kama `personal` au `work`, ni vipengele 
 
 ## 2. Leta mipangilio yako iliyopo
 
-Ikiwa umewahi kutumia Claude Code, mipangilio yako, `CLAUDE.md`, viendelezi na seva za MCP viko katika `~/.claude`. Vinakili kwenye mipangilio inayoshirikiwa, ili kila akaunti ivipate:
+Ikiwa umewahi kutumia Claude Code, mipangilio yako, `CLAUDE.md` na viendelezi viko katika `~/.claude`, na seva zako za MCP ziko katika `~/.claude.json`. Vinakili kwenye kikundi cha `default` kinachoshirikiwa ili kila akaunti ivipate:
 
 ```sh
 ccam migrate
@@ -39,11 +41,7 @@ ccam huonyesha kitakachonakiliwa na huuliza kwanza. Husoma `~/.claude` tu, kamwe
 ccam add work
 ```
 
-Ingia kwa akaunti nyingine kwenye kivinjari.
-
-## 4. Badili akaunti
-
-`ccam work` huanzisha Claude Code kama akaunti ya kazi. Kwa kitu kifupi zaidi, ipe akaunti amri yake ya njia fupi, kama `ccwork`. Baada ya vipengele vya kushiriki, mchawi wa usanidi huuliza:
+Mchawi wa usanidi huruka swali la jina, ulilolitoa kwenye mstari wa amri, na huonyesha vikundi vya kujiunga huku `default` ikiwa imeteuliwa. Safari hii, ipe akaunti amri yake ya njia fupi, kama `ccwork`, ili uweze kuianzisha kwa neno moja. Baada ya vikundi, mchawi wa usanidi huuliza:
 
 ```console
  Create a shortcut command for work? [y/N]
@@ -57,21 +55,23 @@ Bonyeza `y`, kisha andika jina, au bonyeza Enter kutumia jina lililopendekezwa:
  a-z, 0-9, '.', '-' and '_'; Enter alone uses ccwork
 ```
 
-Baada ya kuingia, ccam huthibitisha:
+Kisha ingia kwa akaunti nyingine kwenye kivinjari. ccam huthibitisha akaunti na njia yake fupi:
 
 ```console
 ✓ work (work@example.com) added
   shortcut: ccwork
 ```
 
-Ikiwa uliruka swali hilo, ongeza njia fupi wakati wowote:
+## 4. Badili akaunti
+
+`ccam work` huanzisha Claude Code kama akaunti ya kazi. Ikiwa uliruka swali la njia fupi, ongeza njia fupi wakati wowote:
 
 ```console
 $ ccam shortcut work ccwork
 ✓ shortcut for work: ccwork
 ```
 
-Sasa yoyote kati ya hizi huanzisha Claude Code kama akaunti ya kazi:
+Sasa kila moja ya amri hizi huanzisha Claude Code kama akaunti ya kazi (`2` ni namba yake katika `ccam list`):
 
 ```sh
 ccwork
@@ -91,7 +91,7 @@ cat error.log | ccwork -p "what caused this?"
 
 ## 5. Chagua cha kushiriki
 
-Kwa chaguo-msingi, seva za MCP, `settings.json`, `CLAUDE.md` ya jumla, pamoja na agents, commands, skills na plugins hushirikiwa kati ya akaunti kupitia kikundi `default`. Historia ya mazungumzo haishirikiwi. Iongeze kwenye kikundi ikiwa unataka kuendeleza mazungumzo kati ya akaunti:
+Kwa chaguo-msingi, seva za MCP, `settings.json`, `CLAUDE.md` ya jumla na viendelezi (agents, commands, skills na plugins) hushirikiwa kati ya akaunti kupitia kikundi cha `default`. Historia ya mazungumzo haishirikiwi. Iongeze kwenye kikundi ikiwa unataka kuendeleza mazungumzo kati ya akaunti:
 
 ```sh
 ccam group set default --add history
@@ -108,7 +108,7 @@ ccam next --continue
 
 `ccam usage` huonyesha matumizi ya saa 5 na ya wiki ya kila akaunti. `ccam next --continue` hufungua mazungumzo yale yale kwenye akaunti inayofuata. Katika script, `ccam --fallback work -p "…"` hubadili yenyewe. Tazama [vikomo vya matumizi](/docs/usage-limits).
 
-**Viti (seats) vya Team na Enterprise.** Chaguo za kiotomatiki (`ccam next`, `--fallback`, `ccam pick`, kitufe `n` cha dashibodi, na [`auto_switch`](/features/next#auto-switch) unapokiwasha) pia hubadili kati ya viti vya shirika lile lile la Claude Team au Enterprise. Kituo cha usaidizi cha Anthropic kinasema "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (kila kiti katika mpango wa Team hutolewa kwa mtu mmoja aliyetajwa kwa jina, na ni mtu huyo pekee anayeruhusiwa kukitumia) na "Users can't route their work through another user's account to use that user's remaining usage" (watumiaji hawaruhusiwi kuelekeza kazi yao kupitia akaunti ya mtumiaji mwingine ili kutumia kiasi cha matumizi kilichobaki cha mtumiaji huyo) ([mipango ya Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); vivyo hivyo kwa [mipango ya Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Kwa hiyo, kutumia chaguo za kiotomatiki kati ya viti kunaweza kukiuka masharti ya Anthropic. Kama utazitumia huko ni uamuzi wako: wasiliana na shirika lako na Anthropic kabla ya kuzitegemea. Mipango ya binafsi (Pro, Max) inaelezwa katika [dokezo la masharti kwenye Maswali yanayoulizwa mara kwa mara](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Viti (seats) vya Team na Enterprise.** Uchaguzi wa akaunti wa kiotomatiki (`ccam next`, `--fallback`, `ccam pick`, kitufe `n` cha dashibodi na, ukishakiwasha, [`auto_switch`](/features/next#auto-switch)) pia hubadili kati ya viti vya shirika lile lile la Claude Team au Enterprise, jambo ambalo linaweza kukiuka masharti ya Anthropic. Soma [Maswali yanayoulizwa mara kwa mara](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) na uwasiliane na shirika lako na Anthropic kabla ya kulitegemea.
 
 ## Tayari unatumia ~/.claude?
 

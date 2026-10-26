@@ -1,10 +1,10 @@
 ---
 title: ccam과 다른 Claude Code 계정 전환 도구 비교
 description: claude-swap, CCS, clausona, clauth, CAAM, cux 등 Claude Code 계정 전환 도구와 ccam을 비교하고, 어떤 방식이 어떤 용도에 맞는지 설명합니다.
-updated: 2026-10-25
+updated: 2026-10-26
 order: 2
 translation: machine
-sourceHash: "a6aa0409a8df"
+sourceHash: "b6143bcf3dc7"
 ---
 
 Claude Code 계정을 전환하는 도구는 두 가지 방식 중 하나를 씁니다. 대부분은 하나뿐인 `~/.claude` 폴더 안에서 로그인을 바꿔 끼우므로, 한 번에 한 계정만 활성화됩니다. ccam을 비롯한 나머지는 `CLAUDE_CONFIG_DIR`로 계정마다 폴더를 따로 두므로, 모든 계정이 로그인 상태를 유지하고 여러 계정을 동시에 실행할 수 있습니다. ccam은 여기에 설정과 MCP 서버 공유를 더하고, 다른 계정의 폴더에서 대화를 이어 갈 수 있게 합니다.
@@ -23,7 +23,7 @@ Claude Code 계정을 전환하는 도구는 두 가지 방식 중 하나를 씁
 
 | 도구 | 방식 | 동시에 여러 계정 | 5시간·주간 사용량 | 한도에 도달했을 때 | 플랫폼 |
 | --- | --- | --- | --- | --- | --- |
-| ccam | 폴더 분리 | 예 | 예, `ccam usage` | 세션 안에 알림이 뜸. `ccam next --auto --continue`나 `/ccam:switch`가 대화 내역 공유 여부와 관계없이 여유가 가장 많은 계정으로 대화를 넘기고, `auto_switch`를 켜 두면(Linux, macOS) 세션이 스스로 그 계정으로 옮겨 감. `-p` 작업은 `ccam --fallback`이 그 계정에서 알아서 다시 실행하고, `ccam pick`은 워커를 여러 계정에 나눔 | Linux, macOS, Windows |
+| ccam | 폴더 분리 | 예 | 예, `ccam usage` | 세션 안에 알림이 뜸. `ccam next --auto --continue`나 `/ccam:switch`가 대화 내역 공유 여부와 관계없이 여유가 가장 많은 계정으로 대화를 옮김. 선택 사항인 `auto_switch`(Linux, macOS)는 대화를 스스로 옮김. `ccam --fallback`은 `-p` 작업을 다시 실행하고, `ccam pick`은 워커를 여러 계정에 나눔 | Linux, macOS, Windows |
 | [claude-swap](https://github.com/realiti4/claude-swap) | 로그인 교체, `cswap run`으로 폴더 분리 | 예, `cswap run` 사용 시 | 예 | `cswap auto`가 임계값에서 로그인을 바꾸며, 실행 중인 세션은 계속됨 | Linux, macOS, Windows |
 | [CCS](https://github.com/kaitranntt/ccs) | 폴더 분리 | 예 | 일부 | 계정 풀이 로컬 프록시를 거쳐 요청을 다음 계정으로 넘김 | Linux, macOS, Windows |
 | [clausona](https://github.com/larcane97/clausona) | 폴더 분리 | 예 | 예 | 실행할 때마다 라우트가 할당량이 남은 계정을 먼저 고르며, 초기화를 기다릴 수 있고, 워커마다 다른 계정을 나눠 줌 | Linux, macOS, Windows |
@@ -39,7 +39,7 @@ ccswap은 Codex 로그인도 관리하는 claude-swap의 포크입니다. [claud
 
 | 도구 | 작성 언어 | Claude Code 실행 중 | 로그인을 다른 곳으로 복사 | 계정끼리 공유할 수 있는 것 |
 | --- | --- | --- | --- | --- |
-| ccam | Go, 정적 바이너리 하나 | 기본적으로 없음: ccam이 자신을 `claude`로 대체(대체할 수 없는 Windows에서는 종료를 기다림). `relay`나 `auto_switch`를 켜면 ccam이 대화형 세션 옆에서 기다림 | 아니요 | 그룹: 그룹마다 공유할 항목과 계정을 정하며, 한 계정이 여러 그룹에 속할 수 있음 |
+| ccam | Go, 정적 바이너리 하나 | 기본적으로 없음: ccam이 자신을 `claude`로 대체(그럴 수 없는 Windows에서는 Claude Code가 종료될 때까지 기다림). `relay`나 `auto_switch`를 켜면 ccam이 대화형 세션과 함께 계속 실행됨 | 아니요 | 그룹: 그룹마다 공유할 항목과 계정을 정하며, 한 계정이 여러 그룹에 속할 수 있음 |
 | claude-swap | Python 3.12+, uv 또는 pipx로 설치 | `cswap run`에서는 없음, `cswap auto`와 메뉴 막대 앱은 계속 실행 | 예, 로그인을 바꿔 끼울 때 | `cswap run` 사용 시: 설정, `CLAUDE.md`, 확장을 한꺼번에, 대화 내역은 선택; MCP 서버는 실행할 때마다 복사 |
 | CCS | Node.js 18+ 또는 Bun | CCS가 부모 프로세스로 남음, 풀은 로컬 프록시를 추가 | 계정 폴더는 아니요, 풀은 자체 로그인을 보관 | 계정별로 공유 또는 로컬, 대화 내역은 컨텍스트 그룹으로; MCP 서버는 복사 |
 | clausona | TypeScript, Node.js 20+ | 그냥 실행한 `claude`는 셸 함수를 거침, `clausona run`은 Node가 부모 프로세스로 남음, 종료할 때마다 백그라운드 Node 프로세스 실행 | 아니요, 다만 사용량을 읽으려고 쉬고 있는 계정의 토큰을 직접 갱신 | 계정별 파일을 뺀 모든 것을 기본 계정 하나에서, 대화 내역은 선택; `claude mcp add`로 추가한 서버는 공유하지 않음 |
@@ -58,13 +58,13 @@ ccam이 만료된 토큰을 직접 갱신하는 것은 `ccam usage --refresh`를
 
 ### 기본적으로 사용자와 Claude Code 사이에서 아무것도 실행되지 않습니다
 
-ccam은 파일 하나를 읽고, 링크를 확인한 뒤, 자신을 `claude`로 대체합니다(`exec`). 기본적으로 작업하는 동안에는 ccam 프로세스도, 래퍼도, 프록시도, 데몬도 없습니다. 표준 입력, 시그널, 종료 코드는 Claude Code의 것이고, 요청은 곧바로 Anthropic으로 갑니다. Windows에서는 프로세스를 대체할 수 없으므로, ccam은 같은 콘솔로 Claude Code를 시작하고 종료 코드를 기다릴 뿐 다른 일은 하지 않습니다. `relay = true`나 `auto_switch = true`를 설정하면 ccam은 대화를 다른 계정으로 이어 갈 수 있도록 대화형 세션 옆에서 같은 방식으로 기다리며, 이때도 Claude Code의 요청은 곧바로 Anthropic으로 갑니다.
+ccam은 파일 하나를 읽고, 링크를 확인한 뒤, 자신을 `claude`로 대체합니다(`exec`). 기본적으로 작업하는 동안에는 ccam 프로세스도, 래퍼도, 프록시도, 데몬도 없습니다. 표준 입력, 시그널, 종료 코드는 Claude Code의 것이고, 요청은 곧바로 Anthropic으로 갑니다. Windows에서는 프로세스를 대체할 수 없으므로, ccam은 같은 콘솔로 Claude Code를 시작하고 종료 코드를 기다릴 뿐 다른 일은 하지 않습니다. `relay = true`나 `auto_switch = true`를 설정하면 ccam은 다른 계정에서 대화를 이어 갈 수 있도록 같은 방식으로 대화형 세션과 함께 계속 실행되며, 이때도 Claude Code의 요청은 곧바로 Anthropic으로 갑니다.
 
 이렇게 계정을 시작할 때 늘어나는 시간은 약 4 ms, 95번째 백분위수에서도 6 ms 미만이며, 최대 메모리는 8 MB입니다(hyperfine으로 [`scripts/perf-check.sh`](https://github.com/jhyunwoo/ccam/blob/main/scripts/perf-check.sh) 300회 실행). 같은 노트북에서 프로그램이 아무 일도 하기 전, 인터프리터가 시작하는 데만 Python은 13 ms, Node.js는 31 ms가 걸립니다.
 
 ### 무엇을 공유할지는 그룹이 정합니다
 
-MCP 서버, `settings.json`, `CLAUDE.md`, 확장(에이전트, 명령, 스킬, 플러그인), 대화 내역은 서로 별개인 다섯 항목입니다. 그룹에는 공유할 항목과 속한 계정이 정해져 있으므로, 업무 계정 두 개는 `work` 그룹에서 대화 내역을 공유하고 개인 계정은 자기 내역을 따로 두면서도, 세 계정 모두 `default`를 통해 같은 MCP 서버를 쓸 수 있습니다. `ccam group set work --add memory`는 그룹의 모든 계정을 계획 하나로 옮깁니다. [대시보드](/features/dashboard)에서는 같은 일을 체크박스로 하며, 계정이 이미 다른 그룹에서 받는 항목은 흐리게 표시합니다.
+MCP 서버, `settings.json`, `CLAUDE.md`, 확장(에이전트, 명령, 스킬, 플러그인), 대화 내역은 서로 별개인 다섯 항목입니다. 그룹에는 공유할 항목과 속한 계정이 정해져 있으므로, 업무 계정 두 개는 `work` 그룹에서 대화 내역을 공유하고 개인 계정은 자기 내역을 따로 두면서도, 세 계정 모두 `default`를 통해 같은 MCP 서버를 쓸 수 있습니다. `ccam group set work --add memory`는 그룹의 모든 계정을 계획 하나로 바꿉니다. [대시보드](/features/dashboard)에서는 같은 일을 체크박스로 하며, 계정이 이미 다른 그룹에서 받는 항목은 흐리게 표시합니다.
 
 - MCP 서버는 실행할 때 `--mcp-config`로 넘기므로, 기본적으로 실행할 때는 Claude Code가 실행 중에 다시 쓰는 파일인 `.claude.json`을 건드리지 않습니다. ccam이 이 파일에 쓰는 것은 그렇다고 밝힌 단계뿐이며, Claude Code의 잠금을 건 채 백업을 남기고 씁니다. Remote Control을 위해 확인을 받은 뒤, 계정이 MCP 공유에서 빠지거나 다시 들어올 때, 그리고 `ccam mcp import`를 실행할 때입니다. `ccam mcp add`는 서버를 그룹 전체에 한 번에 추가합니다.
 - 나머지 항목은 그룹 폴더를 가리키는 링크이므로, 한 계정에서 바꾼 내용이 다른 계정에도 바로 나타납니다. 실행할 때 복사하는 것은 없습니다.
@@ -76,11 +76,13 @@ MCP 서버, `settings.json`, `CLAUDE.md`, 확장(에이전트, 명령, 스킬, �
 
 ### 다음 계정에서 같은 대화를
 
-`ccam next --auto --continue`는 모든 계정의 사용량을 한꺼번에 조회하고, 여유가 가장 많은 계정을 열어 대화를 이어 갑니다. 대화 내역을 공유하면 같은 대화를 그대로 열고, 공유하지 않으면 Claude Code가 대화를 새 계정으로 복사하며(`--resume <file> --fork-session`), ccam은 첫 응답이 토큰을 얼마나 다시 읽는지 알려 줍니다. 한도 때문에 세션이 멈추면 ccam 플러그인의 훅이 알림을 띄우고, `/ccam:switch`로 대화를 넘길 수 있습니다. 기본적으로 언제 전환할지는 사용자가 정합니다. `auto_switch`를 켜 두면(Linux, macOS) ccam이 세션을 직접 옮기지만, Claude Code가 한도에서 세션을 멈춘 뒤에만, 그리고 떠나는 계정과 같은 종류의 계정, 곧 같은 조직의 다른 시트나 다른 개인 요금제로만 옮깁니다([자세히](/features/next#auto-switch)). 백그라운드에서 사용량을 지켜보는 것은 없으며, 기본적으로 자동 선택은 Team이나 Enterprise 조직 밖으로 또는 그 안으로 작업을 옮기지 않으므로 회사 대화가 실수로 개인 계정에 넘어가는 일은 없습니다. 계정이 90%에 도달하면 상태 표시줄이 이 명령을 제안합니다.
+`ccam next --auto --continue`는 모든 계정의 사용량을 한꺼번에 조회하고, 여유가 가장 많은 계정을 열어 대화를 이어 갑니다. 대화 내역을 공유하면 같은 대화를 그대로 열고, 공유하지 않으면 Claude Code가 대화를 새 계정으로 복사하며(`--resume <file> --fork-session`), ccam은 첫 응답이 토큰을 얼마나 다시 읽는지 알려 줍니다.
+
+한도 때문에 세션이 멈추면 ccam 플러그인의 훅이 알림을 띄우고, `/ccam:switch`로 대화를 넘길 수 있습니다. 기본적으로 언제 전환할지는 사용자가 정합니다. `auto_switch`를 켜 두면(Linux, macOS) ccam이 세션을 직접 옮기지만, Claude Code가 한도에서 세션을 멈춘 뒤에만, 그리고 떠나는 계정과 같은 종류의 계정, 곧 같은 조직의 다른 시트나 다른 개인 요금제로만 옮깁니다([자세히](/features/next#auto-switch)).
+
+백그라운드에서 사용량을 지켜보는 것은 없으며, 기본적으로 자동 선택은 Team이나 Enterprise 조직 밖으로 또는 그 안으로 작업을 옮기지 않으므로 회사 대화가 실수로 개인 계정에 넘어가는 일은 없습니다. 계정이 90%에 도달하면 상태 표시줄이 이 명령을 제안합니다.
 
 스크립트는 사용자를 기다릴 수 없으므로, `ccam --fallback work -p "…"`가 대신 전환합니다. 계정이 한도에 도달하면 여유가 가장 많은 계정으로 같은 명령을 다시 실행하고, 끝까지 실행된 쪽의 출력만 표시합니다. 사용량 한도가 아닌 실패는 그대로 전달합니다. 병렬 워커에는 `ccam pick`이 여유가 있는 서로 다른 계정을 하나씩 나눠 주며, 여유가 남은 계정이 없으면 둘 다 종료 코드 75로 끝납니다.
-
-**Team·Enterprise 시트.** 자동 선택(`ccam next`, `--fallback`, `ccam pick`, 대시보드의 `n`, 그리고 켜 두었을 때의 [`auto_switch`](/features/next#auto-switch))은 같은 Claude Team이나 Enterprise 조직의 시트 사이에서도 계정을 바꿉니다. Anthropic 고객센터는 "Each seat on a Team plan is assigned to one named individual, and only that person may use it"(팀 플랜의 각 시트는 한 명의 지정된 개인에게 할당되며, 그 사람만 사용할 수 있습니다), "Users can't route their work through another user's account to use that user's remaining usage"(사용자는 다른 사용자의 계정을 통해 작업을 라우팅하여 해당 사용자의 남은 사용량을 사용할 수 없습니다)라고 안내합니다([Team 요금제](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129), [Enterprise 요금제](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)도 마찬가지). 따라서 시트 사이에서 자동 선택을 쓰면 Anthropic의 약관을 위반할 수 있습니다. 시트 사이에서 이 기능을 쓸지는 사용자가 판단할 일입니다. 의존하기 전에 소속 조직과 Anthropic에 확인하세요. 개인 요금제(Pro, Max)에 대해서는 [FAQ의 약관 안내](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)를 참고하세요.
 
 ### 폴더마다 맞는 계정
 
@@ -88,7 +90,7 @@ MCP 서버, `settings.json`, `CLAUDE.md`, 확장(에이전트, 명령, 스킬, �
 
 ### 바이너리 하나, 검증된 다운로드
 
-ccam은 약 10 MB의 정적 바이너리이며, 따로 설치할 런타임이 없고, Linux, macOS, Windows를 지원합니다. 설치 스크립트(`install.sh`, `install.ps1`)와 `ccam update`는 모든 다운로드를 릴리스의 SHA-256 체크섬과 대조하며, ccam이 묻지 않고 업데이트하는 일은 없습니다. 텔레메트리도 없습니다. ccam이 보내는 요청은 내 계정의 사용량을 Anthropic에 조회하는 것(병렬, 3초 제한, 60초 캐시), 대시보드가 열릴 때 최신 릴리스를 GitHub에 묻는 것, 사용자가 요청한 다운로드뿐입니다. `usage_source = "claude"`로 설정하면 이 조회도 Claude Code를 거치므로, ccam은 토큰을 보내지 않습니다.
+ccam은 약 10 MB의 정적 바이너리이며, 따로 설치할 런타임이 없고, Linux, macOS, Windows를 지원합니다. 설치 스크립트(`install.sh`, `install.ps1`)와 `ccam update`는 모든 다운로드를 릴리스의 SHA-256 체크섬과 대조하며, ccam이 묻지 않고 업데이트하는 일은 없습니다. 텔레메트리도 없습니다. ccam이 보내는 요청은 내 계정의 사용량을 Anthropic에 조회하는 것(병렬, 3초 타임아웃, 60초 캐시), 대시보드가 열릴 때 GitHub에서 새 릴리스가 있는지 확인하는 것, 사용자가 요청한 다운로드뿐입니다. `usage_source = "claude"`로 설정하면 이 조회도 Claude Code를 거치므로, ccam은 토큰을 보내지 않습니다.
 
 ## 다른 도구가 더 잘하는 점
 
@@ -101,6 +103,8 @@ ccam은 약 10 MB의 정적 바이너리이며, 따로 설치할 런타임이 �
 
 ## 어떤 도구가 맞을까요?
 
-한 번에 한 계정만 쓰거나, 실행 중인 세션이 한도 전에 또는 로그인을 바꿔 끼우는 방식으로 전환되길 원한다면 로그인을 바꿔 끼우는 도구를 고르세요. Linux, macOS, Windows에서 계정을 나란히 쓰고, 하나의 설정을 공유하고, 다음 계정에서 같은 대화를 이어 가면서, 기본적으로 Claude Code 옆에서 아무것도 실행되지 않기를 원한다면 ccam을 고르세요. 아무것도 공유할 필요가 없다면 [평범한 셸 별칭](/compare/aliases)으로 충분합니다.
+한 번에 한 계정만 쓰거나, 실행 중인 세션이 다시 시작하지 않고, 한도에 도달하기 전이라도 계정을 전환하길 원한다면 로그인을 바꿔 끼우는 도구를 고르세요. Linux, macOS, Windows에서 계정을 나란히 쓰고, 하나의 설정을 공유하고, 다음 계정에서 같은 대화를 이어 가면서, 기본적으로 Claude Code와 함께 아무것도 실행되지 않기를 원한다면 ccam을 고르세요. 아무것도 공유할 필요가 없다면 [평범한 셸 별칭](/compare/aliases)으로 충분합니다.
 
-여러 계정을 써도 되는지는 각 계정의 약관에 따라 다릅니다. 사용하기 전에 확인하세요.
+여러 계정을 써도 되는지는 각 계정에 적용되는 약관에 따라 다릅니다. 시작하기 전에 해당 약관을 읽어 보세요.
+
+**Team·Enterprise 시트.** 자동 계정 선택(`ccam next`, `--fallback`, `ccam pick`, 대시보드의 `n`, 그리고 켜 두었을 때의 [`auto_switch`](/features/next#auto-switch))은 같은 Claude Team이나 Enterprise 조직의 시트 사이에서도 계정을 바꾸며, 이는 Anthropic의 약관을 위반할 수 있습니다. 의존하기 전에 [FAQ](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)를 읽고 소속 조직과 Anthropic에 확인하세요.

@@ -1,10 +1,10 @@
 ---
 title: ccam 与其他 Claude Code 账号切换工具对比
 description: ccam 与 claude-swap、CCS、clausona、clauth、CAAM、cux 等 Claude Code 账号切换工具的对比，以及哪种方式适合哪种用途。
-updated: 2026-10-25
+updated: 2026-10-26
 order: 2
 translation: machine
-sourceHash: "a6aa0409a8df"
+sourceHash: "b6143bcf3dc7"
 ---
 
 切换 Claude Code 账号的工具采用两种方式之一。大多数工具在同一个 `~/.claude` 文件夹中替换登录信息，所以同一时间只有一个账号处于活动状态。另一些工具（包括 ccam）用 `CLAUDE_CONFIG_DIR` 为每个账号提供单独的文件夹，所以每个账号都保持登录状态，并且可以同时运行多个账号。ccam 还提供共享的设置和 MCP 服务器，并能在另一个账号的文件夹中继续对话。
@@ -23,7 +23,7 @@ sourceHash: "a6aa0409a8df"
 
 | 工具 | 方式 | 同时使用多个账号 | 5 小时和每周用量 | 达到限制时 | 平台 |
 | --- | --- | --- | --- | --- | --- |
-| ccam | 单独的文件夹 | 是 | 是，`ccam usage` | 会话中弹出通知；`ccam next --auto --continue` 或 `/ccam:switch` 会把对话带到余量最多的账号，无论是否共享历史，开启 `auto_switch`（Linux、macOS）后会话会自行移到那里；`ccam --fallback` 会自动在那里重新运行 `-p` 任务，`ccam pick` 把并行任务分散到各个账号 | Linux、macOS、Windows |
+| ccam | 单独的文件夹 | 是 | 是，`ccam usage` | 会话中弹出通知；`ccam next --auto --continue` 或 `/ccam:switch` 会把对话移到余量最多的账号，无论是否共享历史；可选的 `auto_switch`（Linux、macOS）会自行移动对话；`ccam --fallback` 重新运行 `-p` 任务；`ccam pick` 把并行任务分散到各个账号 | Linux、macOS、Windows |
 | [claude-swap](https://github.com/realiti4/claude-swap) | 替换登录信息；用 `cswap run` 时使用单独的文件夹 | 是，使用 `cswap run` | 是 | `cswap auto` 在达到阈值时切换登录信息；正在运行的会话继续进行 | Linux、macOS、Windows |
 | [CCS](https://github.com/kaitranntt/ccs) | 单独的文件夹 | 是 | 部分支持 | 账号池通过本地代理把请求转给下一个账号 | Linux、macOS、Windows |
 | [clausona](https://github.com/larcane97/clausona) | 单独的文件夹 | 是 | 是 | 每次运行前由路由选出还有配额的账号，可以等待重置，并给各个并行任务分配不同的账号 | Linux、macOS、Windows |
@@ -39,7 +39,7 @@ ccswap 是 claude-swap 的一个分支，还能管理 Codex 的登录。[claude-
 
 | 工具 | 编写语言 | Claude Code 运行时 | 是否在不同位置之间复制登录信息 | 账号之间可以共享什么 |
 | --- | --- | --- | --- | --- |
-| ccam | Go，单个静态二进制文件 | 默认什么也没有：ccam 用 `claude` 替换自身（Windows 无法这样做，ccam 会等待它结束）；开启 `relay` 或 `auto_switch` 后，ccam 会在交互式会话旁边等待 | 否 | 组：每个组指定它共享的项和它的账号；一个账号可以属于多个组 |
+| ccam | Go，单个静态二进制文件 | 默认什么也没有：ccam 用 `claude` 替换自身（在无法这样做的 Windows 上，ccam 会等待 Claude Code 退出）；开启 `relay` 或 `auto_switch` 后，ccam 会在交互式会话旁边持续运行 | 否 | 组：每个组指定它共享的项和它的账号；一个账号可以属于多个组 |
 | claude-swap | Python 3.12+，用 uv 或 pipx 安装 | 用 `cswap run` 时什么也没有；`cswap auto` 和菜单栏应用会持续运行 | 是，在替换登录信息时 | 用 `cswap run` 时：设置、`CLAUDE.md` 和扩展一起共享，历史记录可选；MCP 服务器在每次启动时复制 |
 | CCS | Node.js 18+ 或 Bun | CCS 作为父进程留着；账号池会加一个本地代理 | 账号文件夹不复制；账号池保存自己的登录信息 | 每个账号选择共享或本地，历史记录按上下文分组；MCP 服务器会被复制 |
 | clausona | TypeScript，Node.js 20+ | 直接运行的 `claude` 经过一个 shell 函数；`clausona run` 让 Node 作为父进程留着；每次退出后有一个后台 Node 进程 | 否，但它会自行为闲置账号的令牌续期，以读取它们的用量 | 除每个账号自己的文件外，全部来自一个主账号；历史记录可选；用 `claude mcp add` 添加的服务器不共享 |
@@ -58,15 +58,15 @@ ccam 从不把 Claude 的登录信息从一个地方复制到另一个地方。�
 
 ### 默认情况下，你和 Claude Code 之间没有任何东西在运行
 
-ccam 读取一个文件，检查它的链接，然后用 `claude` 替换自身（`exec`）。默认情况下，你工作时没有 ccam 进程、包装器、代理或守护进程：标准输入、信号和退出码都属于 Claude Code，它的请求直接发往 Anthropic。Windows 无法替换进程，所以在 Windows 上 ccam 用同一个控制台启动 Claude Code，并等待它的退出码，除此之外什么也不做。设置 `relay = true` 或 `auto_switch = true` 后，ccam 会以同样的方式在交互式会话旁边等待，以便以另一个账号继续对话；Claude Code 的请求仍然直接发往 Anthropic。
+ccam 读取一个文件，检查它的链接，然后用 `claude` 替换自身（`exec`）。默认情况下，你工作时没有 ccam 进程、包装器、代理或守护进程：标准输入、信号和退出码都属于 Claude Code，它的请求直接发往 Anthropic。Windows 无法替换进程，所以在 Windows 上 ccam 用同一个控制台启动 Claude Code，并等待它的退出码，除此之外什么也不做。设置 `relay = true` 或 `auto_switch = true` 后，ccam 会以同样的方式在交互式会话旁边持续运行，以便在另一个账号上继续对话；Claude Code 的请求仍然直接发往 Anthropic。
 
 以这种方式启动账号大约只多花 4 ms，第 95 百分位低于 6 ms，峰值内存 8 MB（用 hyperfine 运行 [`scripts/perf-check.sh`](https://github.com/jhyunwoo/ccam/blob/main/scripts/perf-check.sh) 300 次）。在同一台笔记本电脑上，仅启动 Python 解释器就要 13 ms，Node.js 要 31 ms，这还是在程序做任何事情之前。
 
 ### 由组决定共享什么
 
-MCP 服务器、`settings.json`、`CLAUDE.md`、扩展（agents、commands、skills、插件）和对话历史是五个独立的项目。组指定它共享的项以及其中的账号，所以两个工作账号可以在 `work` 组中共享历史记录，个人账号保留自己的历史记录，而三个账号都通过 `default` 使用同样的 MCP 服务器。`ccam group set work --add memory` 会在一个计划中移动该组的所有账号；[仪表盘](/features/dashboard)用复选框完成同样的操作，并把账号已经从另一个组获得的项显示为灰色。
+MCP 服务器、`settings.json`、`CLAUDE.md`、扩展（agents、commands、skills、插件）和对话历史是五个独立的项目。组指定它共享的项以及其中的账号，所以两个工作账号可以在 `work` 组中共享历史记录，个人账号保留自己的历史记录，而三个账号都通过 `default` 使用同样的 MCP 服务器。`ccam group set work --add memory` 会在一个计划中更新该组的所有账号；[仪表盘](/features/dashboard)用复选框完成同样的操作，并把账号已经从另一个组获得的项显示为灰色。
 
-- MCP 服务器在启动时通过 `--mcp-config` 传入，所以默认情况下，启动时不会改动 `.claude.json`，也就是 Claude Code 运行时会改写的那个文件。ccam 只在明确说明的步骤中写入该文件，并且会在 Claude Code 的锁下进行、先做备份：在询问后为 Remote Control 写入、在账号退出或重新加入 MCP 共享时写入，以及执行 `ccam mcp import` 时写入。`ccam mcp add` 一次就能为整个组添加一个服务器。
+- MCP 服务器在启动时通过 `--mcp-config` 传入，所以默认情况下，启动时从不触碰 `.claude.json`，也就是 Claude Code 运行时会改写的那个文件。ccam 只在明确说明的步骤中写入该文件，并且会在 Claude Code 的锁下进行、先做备份：在询问后为 Remote Control 写入、在账号退出或重新加入 MCP 共享时写入，以及执行 `ccam mcp import` 时写入。`ccam mcp add` 一次就能为整个组添加一个服务器。
 - 其他项目是指向组文件夹的链接，所以在一个账号中做的修改会立即出现在其他账号中。启动时不复制任何东西。
 - 登录信息、`.claude.json` 和运行状态从不共享。
 
@@ -76,11 +76,13 @@ MCP 服务器、`settings.json`、`CLAUDE.md`、扩展（agents、commands、ski
 
 ### 在下一个账号中继续同一个对话
 
-`ccam next --auto --continue` 会同时查询所有账号的用量，打开余量最多的账号并继续对话。共享历史时，这就是同一个对话；不共享时，Claude Code 会把它复制到新账号中（`--resume <file> --fork-session`），ccam 会告诉你第一次回复要重新读取多少 token。当用量限制使会话停止时，ccam 插件的钩子会显示一条通知，`/ccam:switch` 会把对话交接过去。默认情况下，何时切换由你决定。开启 `auto_switch`（Linux、macOS）后，ccam 会自己移动会话，但只在 Claude Code 因用量限制停止该会话之后，而且只移到与原账号同类的账号：同一组织的另一个席位，或另一个个人套餐（[详情](/features/next#auto-switch)）。没有任何东西在后台监视你的用量，而且默认情况下，自动选择从不把工作移出或移入一个 Team 或 Enterprise 组织，所以公司的对话绝不会意外落到私人账号上。账号用量达到 90% 时，状态栏会提示这个命令。
+`ccam next --auto --continue` 会同时查询所有账号的用量，打开余量最多的账号并继续对话。共享历史时，这就是同一个对话；不共享时，Claude Code 会把它复制到新账号中（`--resume <file> --fork-session`），ccam 会告诉你第一次回复要重新读取多少 token。
+
+当用量限制使会话停止时，ccam 插件的钩子会显示一条通知，`/ccam:switch` 会把对话交接过去。默认情况下，何时切换由你决定。开启 `auto_switch`（Linux、macOS）后，ccam 会自己移动会话，但只在 Claude Code 因用量限制停止该会话之后，而且只移到与原账号同类的账号：同一组织的另一个席位，或另一个个人套餐（[详情](/features/next#auto-switch)）。
+
+没有任何东西在后台监视你的用量，而且默认情况下，自动选择从不把工作移出或移入一个 Team 或 Enterprise 组织，所以公司的对话绝不会意外落到私人账号上。账号用量达到 90% 时，状态栏会提示这个命令。
 
 脚本无法等你操作，所以 `ccam --fallback work -p "…"` 会替它们切换：当账号达到限制时，同一个命令会以余量最多的账号重新运行，并且只打印最终完成的那次运行的输出。不是用量限制造成的失败会原样传递。对于并行任务，`ccam pick` 会给每个任务分配一个还有余量的不同账号；当没有账号还有余量时，两者都以退出码 75 退出。
-
-**Team 和 Enterprise 席位。** 自动选择（`ccam next`、`--fallback`、`ccam pick`、仪表盘中的 `n`，以及你开启后的 [`auto_switch`](/features/next#auto-switch)）也会在同一个 Claude Team 或 Enterprise 组织的席位之间切换。Anthropic 帮助中心关于 [Team 套餐](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129)的说明写道："Each seat on a Team plan is assigned to one named individual, and only that person may use it"（Team 套餐的每个席位都分配给一位指定的个人，只有此人可以使用），以及 "Users can't route their work through another user's account to use that user's remaining usage"（用户不能通过另一位用户的账号完成自己的工作，以使用该用户剩余的用量）；关于 [Enterprise 套餐](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)的说明也是如此。因此，在席位之间使用自动选择可能违反 Anthropic 的条款。在这些席位之间是否使用，由你自己决定：在依赖这项功能之前，请先向你所在的组织和 Anthropic 确认。个人套餐（Pro、Max）的情况请参见[常见问题中关于条款的说明](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)。
 
 ### 每个文件夹使用合适的账号
 
@@ -88,7 +90,7 @@ MCP 服务器、`settings.json`、`CLAUDE.md`、扩展（agents、commands、ski
 
 ### 单个二进制文件，经过校验的下载
 
-ccam 是一个约 10 MB 的静态二进制文件，无需安装任何运行时，支持 Linux、macOS 和 Windows。安装脚本（`install.sh`、`install.ps1`）和 `ccam update` 会用发布版本的 SHA-256 校验和检查每个下载，ccam 也从不未经询问就更新。它没有遥测：它发出的请求只有向 Anthropic 查询你的账号用量（并行，3 秒超时，60 秒缓存）、仪表盘打开时向 GitHub 询问最新版本，以及你要求的下载。使用 `usage_source = "claude"` 时，连这些请求也通过 Claude Code 发出，ccam 不发送任何令牌。
+ccam 是一个约 10 MB 的静态二进制文件，无需安装任何运行时，支持 Linux、macOS 和 Windows。安装脚本（`install.sh`、`install.ps1`）和 `ccam update` 会用发布版本的 SHA-256 校验和检查每个下载，ccam 也从不未经询问就更新。它没有遥测：它发出的请求只有向 Anthropic 查询你的账号用量（并行，3 秒超时，60 秒缓存）、仪表盘打开时向 GitHub 检查是否有更新的版本，以及你要求的下载。使用 `usage_source = "claude"` 时，连这些请求也通过 Claude Code 发出，ccam 不发送任何令牌。
 
 ## 其他工具做得更多的地方
 
@@ -101,6 +103,8 @@ ccam 是一个约 10 MB 的静态二进制文件，无需安装任何运行时�
 
 ## 哪种适合你？
 
-如果你一次只用一个账号，或者希望正在运行的会话在达到限制之前或通过替换登录信息来切换，选择替换登录信息的工具。如果你想让多个账号并行运行、共用一套配置、在下一个账号中继续同一个对话，并且默认情况下没有任何东西在 Claude Code 旁边运行，无论在 Linux、macOS 还是 Windows 上，都选择 ccam。如果什么都不需要共享，[普通的 shell 别名](/compare/aliases)就够了。
+如果你一次只用一个账号，或者希望正在运行的会话无需重启就能切换账号，甚至在达到限制之前就切换，选择替换登录信息的工具。如果你想让多个账号并行运行、共用一套配置、在下一个账号中继续同一个对话，并且默认情况下没有任何东西在 Claude Code 旁边运行，无论在 Linux、macOS 还是 Windows 上，都选择 ccam。如果什么都不需要共享，[普通的 shell 别名](/compare/aliases)就够了。
 
-是否可以使用多个账号取决于每个账号的条款。使用前请先确认。
+你能否使用多个账号，取决于适用于每个账号的条款。开始之前请先阅读这些条款。
+
+**Team 和 Enterprise 席位。** 自动选择账号（`ccam next`、`--fallback`、`ccam pick`、仪表盘中的 `n`，以及你开启后的 [`auto_switch`](/features/next#auto-switch)）也会在同一个 Claude Team 或 Enterprise 组织的席位之间切换，这可能违反 Anthropic 的条款。在依赖这项功能之前，请先阅读[常见问题](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts)，并向你所在的组织和 Anthropic 确认。

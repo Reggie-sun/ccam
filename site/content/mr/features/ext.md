@@ -1,13 +1,13 @@
 ---
 title: extensions तपासणे
 description: ccam ext प्रत्येक खाते कोणते skills, commands, plugins, MCP सर्व्हर आणि hooks लोड करते, प्रत्येक कुठून येते आणि काय बिघडले आहे ते दाखवते.
-updated: 2026-10-23
+updated: 2026-10-26
 order: 14
 translation: machine
-sourceHash: "45740e4efbef"
+sourceHash: "7ca357a7f38a"
 ---
 
-`ccam ext` या प्रश्नाचे उत्तर देते: "हे skill (किंवा MCP सर्व्हर) एका खात्यात चालते आणि दुसऱ्यात का नाही?". ते प्रत्येक खात्यासाठी Claude Code लोड करत असलेली extensions आणि प्रत्येक कुठून येते ते दाखवते: एखादा share group, खात्याचा स्वतःचा फोल्डर, किंवा तुम्ही ज्या प्रकल्पात आहात तो. table खाली ते अशा गोष्टींची यादी देते ज्या एखादे extension तुमच्या अपेक्षेप्रमाणे लोड होण्यापासून रोखतात. ते फक्त वाचते.
+`ccam ext` या प्रश्नाचे उत्तर देते: "हे skill (किंवा MCP सर्व्हर) एका खात्यात चालते पण दुसऱ्यात का नाही?" ते प्रत्येक खात्यासाठी Claude Code लोड करत असलेली extensions आणि प्रत्येक कुठून येते ते दाखवते: एखादा share group, खात्याचा स्वतःचा फोल्डर, किंवा तुम्ही ज्या प्रकल्पात आहात तो. table खाली ते अशा गोष्टींची यादी देते ज्या एखादे extension तुमच्या अपेक्षेप्रमाणे लोड होण्यापासून रोखतात. ते काहीही बदलत नाही.
 
 ## वापर
 
@@ -62,7 +62,7 @@ Sources: a group name (shared), account (its own folder), local (its own, for th
 
 - **तुटलेल्या links**: `skills/`, `commands/` किंवा `agents/` मधील अशी link जिचे target आता नाही, किंवा अस्तित्वात नसलेल्या जागेकडे link करणारा शेअर केलेला फोल्डर (`skills`, `commands`, `agents`, `plugins`) (`ccam doctor --fix` ने दुरुस्त करा, जे नसलेला group फोल्डर पुन्हा तयार करते).
 - **`SKILL.md` नसलेला skill फोल्डर**: Claude Code तो वगळते.
-- **दोन ठिकाणी वेगवेगळ्या प्रकारे परिभाषित केलेला MCP सर्व्हर**: group चा `mcp.json` आणि खात्याचा `.claude.json`, किंवा त्यांपैकी एक आणि प्रकल्पाचा `.mcp.json`. दोन्ही ठिकाणी सारख्याच सेटिंग्ज (ज्या `mcp_strategy = "sync"` लिहिते) ही समस्या नाही. खात्याचा स्वतःचा सर्व्हर `ccam mcp import <account> <server>` ने group मध्ये हलवा.
+- **दोन ठिकाणी वेगवेगळ्या प्रकारे परिभाषित केलेला MCP सर्व्हर**: group चा `mcp.json` आणि खात्याचा `.claude.json`, किंवा त्यांपैकी एक आणि प्रकल्पाचा `.mcp.json`. दोन्ही ठिकाणी एकसारख्या व्याख्या (ज्या `mcp_strategy = "sync"` लिहिते) ही समस्या नाही. खात्याचा स्वतःचा सर्व्हर `ccam mcp import <account> <server>` ने group मध्ये हलवा.
 - **वैध JSON नसलेली `installed_plugins.json`**, `enabledPlugins` ज्याचे नाव घेत नाही असे plugin, आणि ज्याचा फोल्डर नाही असे plugin.
 - **फक्त एकच खाते लोड करते असे सर्व्हर**: फक्त या खात्याच्या `.claude.json` मधील सर्व्हर, जो त्याच्या group ची इतर खाती लोड करत नाहीत, आणि या फोल्डरसाठी खात्याच्या local scope मधील सर्व्हर (`-s user` दिल्याशिवाय `claude mcp add` हेच करते). प्रत्येकासोबत तो शेअर करणारी `ccam mcp import` कमांड येते. साध्या `claude` च्या `~/.claude.json` मधील, कोणतेही खाते लोड करत नाही असे सर्व्हर `ccam migrate --mcp` कमांडसह येतात.
 - **मंजुरीची वाट पाहणारा प्रकल्प सर्व्हर**: खात्याने अजून फोल्डरवर विश्वास दाखवलेला नाही, म्हणून Claude Code एकदा विचारते, आणि तोपर्यंत प्रकल्पाचे `.mcp.json` सर्व्हर थांबून राहतात. त्यांना कुठे मंजुरी द्यायची ते समस्या सांगते: settings group मधील खात्यांच्या, किंवा या खात्याच्या, `settings.json` मध्ये `"enabledMcpjsonServers"`. git repository च्या main worktree ला दिलेला विश्वास त्याच्या इतर worktrees मध्येही लागू होतो.
@@ -76,6 +76,6 @@ Sources: a group name (shared), account (its own folder), local (its own, for th
 
 ## संबंधित
 
-- [खात्यांमध्ये शेअरिंग](/features/share)
+- [गटांसह शेअरिंग](/features/share)
 - [शेअर केलेले MCP सर्व्हर](/features/mcp)
 - [तपासणी आणि दुरुस्ती](/features/doctor)

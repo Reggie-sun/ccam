@@ -2,13 +2,15 @@
 title: Início rápido
 metaTitle: "Início rápido: crie e troque contas do Claude Code"
 description: Adicione duas contas do Claude Code com ccam add, dê a elas atalhos como ccwork, alterne entre elas e escolha o que elas compartilham.
-updated: 2026-10-25
+updated: 2026-10-26
 order: 2
 translation: machine
-sourceHash: "0570ef27e4ce"
+sourceHash: "bd893bbb83ab"
 ---
 
 Adicione cada conta com `ccam add` e depois inicie o Claude Code com `ccam <name>` ou com um atalho que você mesmo nomeia, como `ccwork`. Isso é tudo de que a maioria das pessoas precisa.
+
+Já usa o Claude Code? Leia [Já usa ~/.claude?](#already-using-claude) no fim desta página antes de começar.
 
 ## 1. Adicione sua primeira conta
 
@@ -16,7 +18,7 @@ Adicione cada conta com `ccam add` e depois inicie o Claude Code com `ccam <name
 ccam add
 ```
 
-O assistente pede um nome, como `personal` ou `work`, quais itens a conta deve compartilhar com suas outras contas e se deve criar um atalho (veja o passo 4). Depois ele executa `claude auth login`, que abre o navegador para você entrar. Em uma máquina remota, o navegador pode parar em uma página `http://localhost:…/callback` que não carrega; cole esse endereço no terminal e o ccam conclui o login. Quando ele termina, você vê:
+O assistente pede um nome, como `personal` ou `work`, quais itens a conta deve compartilhar com suas outras contas e se deve criar um atalho (veja o passo 3). Depois ele executa `claude auth login`, que abre o navegador para você entrar. Em uma máquina remota, o seu navegador pode acabar em uma página `http://localhost:…/callback` que não carrega; cole esse endereço no terminal e o ccam conclui o login. Quando o login termina, você vê:
 
 ```console
 ✓ personal (me@example.com) added
@@ -25,7 +27,7 @@ O assistente pede um nome, como `personal` ou `work`, quais itens a conta deve c
 
 ## 2. Traga suas configurações atuais
 
-Se você já usava o Claude Code, suas configurações, o `CLAUDE.md`, as extensões e os servidores MCP estão em `~/.claude`. Copie-os para as configurações compartilhadas, para que todas as contas os recebam:
+Se você já usava o Claude Code, suas configurações, o `CLAUDE.md` e as extensões estão em `~/.claude`, e os seus servidores MCP estão em `~/.claude.json`. Copie-os para o grupo compartilhado `default`, para que todas as contas os recebam:
 
 ```sh
 ccam migrate
@@ -39,11 +41,7 @@ O ccam mostra o que vai copiar e pergunta antes. Ele só lê `~/.claude`, nunca 
 ccam add work
 ```
 
-Entre com a outra conta no navegador.
-
-## 4. Troque de conta
-
-`ccam work` inicia o Claude Code como a conta work. Para algo mais curto, dê à conta um atalho próprio, como `ccwork`. Depois dos itens compartilhados, o assistente pergunta:
+O assistente pula o nome, que você já informou na linha de comando, e mostra os grupos dos quais participar, com `default` marcado. Desta vez, dê à conta um atalho próprio, como `ccwork`, para iniciá-la com uma só palavra. Depois dos grupos, o assistente pergunta:
 
 ```console
  Create a shortcut command for work? [y/N]
@@ -57,21 +55,23 @@ Pressione `y` e digite um nome, ou pressione Enter para usar o sugerido:
  a-z, 0-9, '.', '-' and '_'; Enter alone uses ccwork
 ```
 
-Depois do login, o ccam confirma o atalho:
+Depois, entre com a outra conta no navegador. O ccam confirma a conta e o atalho dela:
 
 ```console
 ✓ work (work@example.com) added
   shortcut: ccwork
 ```
 
-Se você pulou a pergunta, pode adicionar um atalho a qualquer momento:
+## 4. Troque de conta
+
+`ccam work` inicia o Claude Code como a conta work. Se você pulou a pergunta do atalho, pode adicionar um a qualquer momento:
 
 ```console
 $ ccam shortcut work ccwork
 ✓ shortcut for work: ccwork
 ```
 
-Agora qualquer um destes comandos inicia o Claude Code como a conta work:
+Agora cada um destes comandos inicia o Claude Code como a conta work (`2` é o número dela em `ccam list`):
 
 ```sh
 ccwork
@@ -91,7 +91,7 @@ cat error.log | ccwork -p "what caused this?"
 
 ## 5. Escolha o que compartilhar
 
-Por padrão, os servidores MCP, o `settings.json`, o `CLAUDE.md` global e os agentes, comandos, skills e plugins são compartilhados entre as contas por meio do grupo `default`. O histórico de conversas não é. Adicione-o ao grupo se você quiser continuar conversas de uma conta na outra:
+Por padrão, os servidores MCP, o `settings.json`, o `CLAUDE.md` global e as extensões (agentes, comandos, skills e plugins) são compartilhados entre as contas por meio do grupo `default`. O histórico de conversas não é. Adicione-o ao grupo se você quiser continuar conversas de uma conta na outra:
 
 ```sh
 ccam group set default --add history
@@ -108,7 +108,7 @@ ccam next --continue
 
 `ccam usage` mostra o uso de 5 horas e o uso semanal de todas as contas. `ccam next --continue` abre a mesma conversa na próxima conta. Em scripts, `ccam --fallback work -p "…"` faz a troca sozinho. Consulte [limites de uso](/docs/usage-limits).
 
-**Assentos dos planos Team e Enterprise.** A escolha automática (`ccam next`, `--fallback`, `ccam pick`, a tecla `n` do painel e o [`auto_switch`](/features/next#auto-switch), quando você o ativa) também alterna entre assentos da mesma organização Claude Team ou Enterprise. A central de ajuda da Anthropic diz "Each seat on a Team plan is assigned to one named individual, and only that person may use it" (cada assento de um plano Team é atribuído a uma pessoa específica, e só essa pessoa pode usá-lo) e "Users can't route their work through another user's account to use that user's remaining usage" (os usuários não podem encaminhar o próprio trabalho pela conta de outro usuário para aproveitar o uso restante desse usuário) ([planos Team](https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans#h_b8a7d07129); o mesmo vale para os [planos Enterprise](https://support.claude.com/en/articles/13393991-purchase-and-manage-seats-on-enterprise-plans#h_fa6b9cade0)). Por isso, usar a escolha automática entre assentos pode violar os termos da Anthropic. Usá-la nesse caso é uma decisão sua: consulte a sua organização e a Anthropic antes de contar com ela. Os planos pessoais (Pro, Max) são tratados na [nota sobre os termos nas perguntas frequentes](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts).
+**Assentos dos planos Team e Enterprise.** A escolha automática de conta (`ccam next`, `--fallback`, `ccam pick`, a tecla `n` do painel e, depois que você o ativa, o [`auto_switch`](/features/next#auto-switch)) também alterna entre assentos da mesma organização Claude Team ou Enterprise, o que pode violar os termos da Anthropic. Leia as [perguntas frequentes](/docs/faq#am-i-allowed-to-use-several-claude-code-accounts) e consulte a sua organização e a Anthropic antes de contar com ela.
 
 ## Já usa ~/.claude?
 

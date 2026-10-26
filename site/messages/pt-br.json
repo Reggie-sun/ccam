@@ -2,7 +2,7 @@
   "site": {
     "name": "ccam",
     "title": "ccam: Claude Code Account Manager para trocar de conta",
-    "description": "O ccam (Claude Code Account Manager) é gratuito e de código aberto. Use várias contas do Claude Code em um computador e troque entre elas com um comando.",
+    "description": "O ccam (Claude Code Account Manager) é gratuito e de código aberto. Ele permite usar várias contas do Claude Code em um computador e trocar com um comando.",
     "titleSuffix": "ccam para Claude Code"
   },
   "nav": {
@@ -14,17 +14,17 @@
     "menu": "Menu",
     "skip": "Pular para o conteúdo",
     "language": "Idioma",
-    "theme": "Alternar entre tema claro e escuro"
+    "theme": "Alternar entre os temas claro e escuro"
   },
   "facts": {
     "what": "ccam é uma ferramenta de linha de comando gratuita e de código aberto que permite usar várias contas do Claude Code no mesmo computador e trocar entre elas com um comando.",
-    "how": "Cada conta mantém o próprio login em um CLAUDE_CONFIG_DIR separado, enquanto servidores MCP, configurações, CLAUDE.md, extensões e histórico de conversas podem ser compartilhados entre as contas, para que você possa continuar uma conversa em outra conta quando uma delas atingir o limite de uso.",
+    "how": "Cada conta mantém o próprio login em um CLAUDE_CONFIG_DIR separado. Servidores MCP, configurações, CLAUDE.md, extensões e histórico de conversas podem ser compartilhados entre as contas, para que você possa continuar uma conversa em outra conta quando uma delas atingir o limite de uso.",
     "install": "Instale no Linux, no macOS ou no Windows com um comando e depois execute ccam add para cada conta.",
     "official": "ccam é um projeto não oficial e não é afiliado à Anthropic nem endossado por ela."
   },
   "landing": {
     "headline": "Várias contas do Claude Code. Um terminal.",
-    "lede": "Adicione cada conta uma vez. Troque com ccam work ou com um atalho como ccwork. Quando uma conta atingir o limite, continue na próxima com a mesma conversa.",
+    "lede": "Adicione cada conta uma vez. Troque com {command} ou com um atalho como {shortcut}. Quando uma conta atingir o limite, continue a mesma conversa na próxima.",
     "installLabel": "Instalar no Linux ou no macOS",
     "installWindowsLabel": "No Windows, no PowerShell",
     "thenAdd": "Depois adicione sua primeira conta com {command}.",
@@ -56,18 +56,18 @@
       "fiveHour": "5 horas",
       "weekly": "Semanal",
       "resets": "reinicia em {time}",
-      "mostRoom": "Mais espaço livre: {name}"
+      "mostRoom": "Mais folga: {name}"
     },
     "flowTitle": "Como funciona",
     "flow": [
       {
         "command": "ccam add work",
-        "body": "Cria uma pasta de configuração separada para a conta, abre o login do Claude no navegador e, se você quiser, dá à conta um atalho que você mesmo nomeia, como ccwork."
+        "body": "Cria uma pasta de configuração separada para a conta e abre o login do Claude no navegador. Também pode dar à conta um atalho escolhido por você, como ccwork."
       },
       {
         "command": "ccam work",
         "also": "ccwork --resume",
-        "body": "Inicia o Claude Code como essa conta. Tudo o que vem depois do nome vai para o Claude Code sem alterações, e o ccam acrescenta cerca de 4 milissegundos antes da inicialização."
+        "body": "Inicia o Claude Code como essa conta. Tudo o que vem depois do nome vai para o Claude Code sem alterações, e iniciar pelo ccam leva cerca de 4 milissegundos a mais do que executar o claude diretamente."
       },
       {
         "command": "ccam group set default --add history",
@@ -83,7 +83,7 @@
       },
       {
         "command": "ccam doctor --fix",
-        "body": "Verifica links, permissões e logins, e corrige o que puder corrigir com segurança. Toda alteração nos seus arquivos mantém um backup."
+        "body": "Verifica links, permissões e logins, e corrige o que puder corrigir com segurança. Os arquivos que ele tira do caminho ficam guardados em um backup."
       }
     ],
     "guidesTitle": "Guias",
@@ -141,19 +141,19 @@
     "next": "Abrir a próxima conta; --continue leva a conversa junto, --auto escolhe a que tem mais espaço",
     "usage": "Mostrar o uso de 5 horas e o uso semanal de todas as contas",
     "share": "Mostrar o que uma conta compartilha e por meio de qual grupo",
-    "group": "Criar e alterar grupos: o que um conjunto de contas compartilha, movido com um plano",
+    "group": "Criar e alterar grupos, que definem o que as contas deles compartilham; toda alteração mostra um plano antes",
     "mcp": "Gerenciar servidores MCP compartilhados",
     "migrate": "Copiar uma configuração existente do Claude Code (~/.claude) para um grupo compartilhado",
     "login": "Fazer login em uma conta novamente; --expired faz login em todas as contas que precisam",
     "logout": "Desconectar uma conta: o login dela e os logins dos servidores MCP dela",
-    "rename": "Renomear uma conta; o atalho dela mantém o nome",
+    "rename": "Renomear uma conta; o comando de atalho dela continua o mesmo",
     "remove": "Remover uma conta: ela é desconectada, e a pasta dela vai para a pasta de lixeira",
     "import": "Registrar uma pasta ~/.claude existente no lugar onde ela está",
     "doctor": "Verificar links, permissões, logins e versões, e corrigir",
     "statusline": "Mostrar a conta e o uso na linha de status do Claude Code",
     "shims": "Recriar os links dos atalhos de todas as contas",
     "shortcut": "Mostrar, criar, renomear ou remover o atalho de uma conta, como ccwork",
-    "folder": "Usa uma conta em uma pasta e nas subpastas quando nenhuma conta é informada",
+    "folder": "Usa uma conta em uma pasta e nas subpastas dela quando nenhuma conta é informada",
     "pick": "Imprime a conta com mais folga, para scripts e workers em paralelo",
     "ext": "Mostra as skills, comandos, plugins, servidores MCP e hooks que cada conta carrega",
     "agents": "Listar os agentes em segundo plano e as sessões abertas de todas as contas",
@@ -174,7 +174,7 @@
   },
   "footer": {
     "unofficial": "ccam é uma ferramenta de código aberto não oficial. Ela não é afiliada à Anthropic nem endossada por ela. Claude e Claude Code são marcas registradas da Anthropic.",
-    "terms": "Se você pode usar várias contas depende dos termos de cada conta. Verifique-os antes de fazer isso.",
+    "terms": "Se você pode usar mais de uma conta depende dos termos que se aplicam a cada uma. Leia esses termos antes de começar.",
     "license": "Código-fonte no GitHub",
     "languages": "Todos os idiomas",
     "analytics": "Este site conta as visitas com o Cloudflare Web Analytics, que não usa cookies nem coleta dados pessoais."
@@ -187,7 +187,7 @@
   "languages": {
     "title": "Idiomas",
     "description": "O ccam.dev está disponível em {count, plural, one {# idioma} many {# de idiomas} other {# idiomas}}, com a mesma documentação e os mesmos guias em cada um deles.",
-    "coverage": "Segundo os dados de população do Unicode CLDR, as pessoas que falam pelo menos um destes idiomas representam de {low} a {high} da população mundial.",
+    "coverage": "De acordo com os dados de população do Unicode CLDR, as pessoas que falam pelo menos um destes idiomas representam de {low} a {high} da população mundial.",
     "method": "O número menor conta apenas o idioma suportado mais falado de cada país; o maior soma todos os idiomas suportados e limita cada país a 100%."
   },
   "notFound": {
