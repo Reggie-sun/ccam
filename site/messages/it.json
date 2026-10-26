@@ -24,7 +24,7 @@
   },
   "landing": {
     "headline": "Più account Claude Code. Un solo terminale.",
-    "lede": "Aggiungi ogni account una sola volta. Passa da uno all'altro con ccam work o con una scorciatoia come ccwork. Quando un account raggiunge il limite, prosegui nel successivo con la stessa conversazione.",
+    "lede": "Aggiungi ogni account una sola volta. Passa da uno all'altro con {command} o con una scorciatoia come {shortcut}. Quando un account raggiunge il limite, prosegui nel successivo con la stessa conversazione.",
     "installLabel": "Installa su Linux o macOS",
     "installWindowsLabel": "Su Windows, in PowerShell",
     "thenAdd": "Poi aggiungi il tuo primo account con {command}.",

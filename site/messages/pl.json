@@ -24,7 +24,7 @@
   },
   "landing": {
     "headline": "Kilka kont Claude Code. Jeden terminal.",
-    "lede": "Dodaj każde konto raz. Przełączaj się poleceniem ccam work lub skrótem takim jak ccwork. Gdy jedno konto dojdzie do limitu, kontynuuj tę samą rozmowę na następnym.",
+    "lede": "Dodaj każde konto raz. Przełączaj się poleceniem {command} lub skrótem takim jak {shortcut}. Gdy jedno konto dojdzie do limitu, kontynuuj tę samą rozmowę na następnym.",
     "installLabel": "Instalacja na Linux lub macOS",
     "installWindowsLabel": "W Windows, w PowerShell",
     "thenAdd": "Następnie dodaj pierwsze konto poleceniem {command}.",

@@ -24,7 +24,7 @@
   },
   "landing": {
     "headline": "Asusun Claude Code da dama. Terminal ɗaya.",
-    "lede": "Ka ƙara kowane asusu sau ɗaya. Ka sauya da ccam work ko gajeren umarni kamar ccwork. Idan wani asusu ya kai iyakarsa, ka ci gaba a na gaba da wannan tattaunawar.",
+    "lede": "Ka ƙara kowane asusu sau ɗaya. Ka sauya da {command} ko gajeren umarni kamar {shortcut}. Idan wani asusu ya kai iyakarsa, ka ci gaba a na gaba da wannan tattaunawar.",
     "installLabel": "Girka a Linux ko macOS",
     "installWindowsLabel": "A Windows, a PowerShell",
     "thenAdd": "Sannan ka ƙara asusunka na farko da {command}.",

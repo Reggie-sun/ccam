@@ -24,7 +24,7 @@
   },
   "landing": {
     "headline": "Akaunti kadhaa za Claude Code. Terminal moja.",
-    "lede": "Ongeza kila akaunti mara moja. Badili kwa ccam work au njia fupi kama ccwork. Akaunti moja ikifikia kikomo chake, endelea kwenye inayofuata na mazungumzo yale yale.",
+    "lede": "Ongeza kila akaunti mara moja. Badili kwa {command} au njia fupi kama {shortcut}. Akaunti moja ikifikia kikomo chake, endelea kwenye inayofuata na mazungumzo yale yale.",
     "installLabel": "Sakinisha kwenye Linux au macOS",
     "installWindowsLabel": "Kwenye Windows, katika PowerShell",
     "thenAdd": "Kisha ongeza akaunti yako ya kwanza kwa {command}.",

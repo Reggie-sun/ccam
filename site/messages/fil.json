@@ -24,7 +24,7 @@
   },
   "landing": {
     "headline": "Maraming Claude Code account. Iisang terminal.",
-    "lede": "Idagdag nang isang beses ang bawat account. Lumipat gamit ang ccam work o ang isang shortcut gaya ng ccwork. Kapag naabot ng isang account ang limit nito, ituloy sa susunod na account ang parehong usapan.",
+    "lede": "Idagdag nang isang beses ang bawat account. Lumipat gamit ang {command} o ang isang shortcut gaya ng {shortcut}. Kapag naabot ng isang account ang limit nito, ituloy sa susunod na account ang parehong usapan.",
     "installLabel": "I-install sa Linux o macOS",
     "installWindowsLabel": "Sa Windows, sa PowerShell",
     "thenAdd": "Pagkatapos, idagdag ang una mong account gamit ang {command}.",

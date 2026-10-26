@@ -24,7 +24,7 @@
   },
   "landing": {
     "headline": "複数のClaude Codeアカウントを、1つのターミナルで。",
-    "lede": "各アカウントを一度追加すれば、ccam workやccworkのようなショートカットで切り替えられます。あるアカウントが上限に達したら、次のアカウントで同じ会話を続けられます。",
+    "lede": "各アカウントを一度追加すれば、{command}や{shortcut}のようなショートカットで切り替えられます。あるアカウントが上限に達したら、次のアカウントで同じ会話を続けられます。",
     "installLabel": "LinuxまたはmacOSにインストール",
     "installWindowsLabel": "Windowsでは、PowerShellで",
     "thenAdd": "次に、{command}で最初のアカウントを追加します。",

@@ -24,7 +24,7 @@
   },
   "landing": {
     "headline": "여러 개의 Claude Code 계정을 하나의 터미널에서 쉽게 사용하세요.",
-    "lede": "Claude 계정을 한 번 추가해두면 명령어 하나만으로 계정을 변경하여 Claude Code를 사용할 수 있습니다. 한도에 도달하면 바로 다른 계정으로 변경해 보세요.",
+    "lede": "계정은 한 번만 추가하면 됩니다. {command}나 {shortcut} 같은 단축 명령으로 계정을 전환하고, 한 계정이 한도에 도달하면 다음 계정에서 같은 대화를 이어 가세요.",
     "installLabel": "Linux 또는 macOS에 설치",
     "installWindowsLabel": "Windows에서는 PowerShell에서",
     "thenAdd": "그다음 {command} 명령으로 첫 계정을 추가하세요.",

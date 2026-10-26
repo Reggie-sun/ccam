@@ -23,6 +23,7 @@ export function Landing({ locale }: { locale: string }) {
   const guides = getPages(locale, "guides");
   const add = <code dir="ltr">ccam add</code>;
   const [before, after] = m.landing.thenAdd.split("{command}");
+  const ledeCode: Record<string, React.ReactNode> = { "{command}": <code dir="ltr">ccam work</code>, "{shortcut}": <code dir="ltr">ccwork</code> };
   // Each word rises out of its own clip; languages without spaces rise as one line.
   // "Claude Code" rises as one word so it never breaks across lines.
   const words = m.landing.headline.replace("Claude Code", "Claude\u00a0Code").split(" ");
@@ -40,7 +41,11 @@ export function Landing({ locale }: { locale: string }) {
               </Fragment>
             ))}
           </h1>
-          <p className="lede focus-in d1">{m.landing.lede}</p>
+          <p className="lede focus-in d1">
+            {m.landing.lede.split(/(\{command\}|\{shortcut\})/).map((part, i) => (
+              <Fragment key={i}>{ledeCode[part] ?? part}</Fragment>
+            ))}
+          </p>
           <div className="focus-in d2">
             <p className="install-label">
               <a href={pagePath(locale, "docs", "install")}>{m.landing.installLabel}</a>

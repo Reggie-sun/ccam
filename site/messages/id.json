@@ -24,7 +24,7 @@
   },
   "landing": {
     "headline": "Beberapa akun Claude Code. Satu terminal.",
-    "lede": "Tambahkan setiap akun sekali saja. Berpindah dengan ccam work atau pintasan seperti ccwork. Saat satu akun mencapai batasnya, lanjutkan di akun berikutnya dengan percakapan yang sama.",
+    "lede": "Tambahkan setiap akun sekali saja. Berpindah dengan {command} atau pintasan seperti {shortcut}. Saat satu akun mencapai batasnya, lanjutkan di akun berikutnya dengan percakapan yang sama.",
     "installLabel": "Instal di Linux atau macOS",
     "installWindowsLabel": "Di Windows, di PowerShell",
     "thenAdd": "Lalu tambahkan akun pertama Anda dengan {command}.",

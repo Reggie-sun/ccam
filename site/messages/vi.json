@@ -24,7 +24,7 @@
   },
   "landing": {
     "headline": "Nhiều tài khoản Claude Code. Một terminal.",
-    "lede": "Thêm mỗi tài khoản một lần. Chuyển đổi bằng ccam work hoặc một lệnh tắt như ccwork. Khi một tài khoản chạm giới hạn, hãy tiếp tục ở tài khoản kế tiếp với cùng cuộc hội thoại.",
+    "lede": "Thêm mỗi tài khoản một lần. Chuyển đổi bằng {command} hoặc một lệnh tắt như {shortcut}. Khi một tài khoản chạm giới hạn, hãy tiếp tục ở tài khoản kế tiếp với cùng cuộc hội thoại.",
     "installLabel": "Cài đặt trên Linux hoặc macOS",
     "installWindowsLabel": "Trên Windows, trong PowerShell",
     "thenAdd": "Sau đó thêm tài khoản đầu tiên bằng {command}.",

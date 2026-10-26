@@ -24,7 +24,7 @@
   },
   "landing": {
     "headline": "Varias cuentas de Claude Code. Una terminal.",
-    "lede": "Agrega cada cuenta una vez. Cambia con ccam work o con un atajo como ccwork. Cuando una cuenta llega a su límite, sigue en la siguiente con la misma conversación.",
+    "lede": "Agrega cada cuenta una vez. Cambia con {command} o con un atajo como {shortcut}. Cuando una cuenta llega a su límite, sigue en la siguiente con la misma conversación.",
     "installLabel": "Instalar en Linux o macOS",
     "installWindowsLabel": "En Windows, en PowerShell",
     "thenAdd": "Luego agrega tu primera cuenta con {command}.",

@@ -24,7 +24,7 @@
   },
   "landing": {
     "headline": "多個 Claude Code 帳號，一個終端機。",
-    "lede": "每個帳號只需新增一次。用 ccam work 或 ccwork 這類快捷指令切換。某個帳號達到限制時，在下一個帳號繼續同一段對話。",
+    "lede": "每個帳號只需新增一次。用 {command} 或 {shortcut} 這類快捷指令切換。某個帳號達到限制時，在下一個帳號繼續同一段對話。",
     "installLabel": "在 Linux 或 macOS 上安裝",
     "installWindowsLabel": "在 Windows 上，於 PowerShell 中",
     "thenAdd": "接著用 {command} 新增第一個帳號。",

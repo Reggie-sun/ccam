@@ -24,7 +24,7 @@
   },
   "landing": {
     "headline": "Birden fazla Claude Code hesabı. Tek terminal.",
-    "lede": "Her hesabı bir kez ekleyin. ccam work veya ccwork gibi bir kısayolla geçiş yapın. Bir hesap limitine ulaştığında aynı konuşmayla bir sonraki hesapta devam edin.",
+    "lede": "Her hesabı bir kez ekleyin. {command} veya {shortcut} gibi bir kısayolla geçiş yapın. Bir hesap limitine ulaştığında aynı konuşmayla bir sonraki hesapta devam edin.",
     "installLabel": "Linux veya macOS üzerine kurun",
     "installWindowsLabel": "Windows'ta, PowerShell'de",
     "thenAdd": "Ardından ilk hesabınızı {command} ile ekleyin.",

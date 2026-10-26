@@ -24,7 +24,7 @@
   },
   "landing": {
     "headline": "多个 Claude Code 账号，一个终端。",
-    "lede": "每个账号只需添加一次。用 ccam work 或 ccwork 这样的快捷命令切换。一个账号达到用量限制时，在下一个账号中继续同一段对话。",
+    "lede": "每个账号只需添加一次。用 {command} 或 {shortcut} 这样的快捷命令切换。一个账号达到用量限制时，在下一个账号中继续同一段对话。",
     "installLabel": "在 Linux 或 macOS 上安装",
     "installWindowsLabel": "在 Windows 上，在 PowerShell 中运行",
     "thenAdd": "然后用 {command} 添加你的第一个账号。",

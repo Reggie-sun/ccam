@@ -24,7 +24,7 @@
   },
   "landing": {
     "headline": "Plusieurs comptes Claude Code. Un seul terminal.",
-    "lede": "Ajoutez chaque compte une fois. Changez de compte avec ccam work ou un raccourci comme ccwork. Quand un compte atteint sa limite, continuez sur le suivant avec la même conversation.",
+    "lede": "Ajoutez chaque compte une fois. Changez de compte avec {command} ou un raccourci comme {shortcut}. Quand un compte atteint sa limite, continuez sur le suivant avec la même conversation.",
     "installLabel": "Installer sous Linux ou macOS",
     "installWindowsLabel": "Sous Windows, dans PowerShell",
     "thenAdd": "Ajoutez ensuite votre premier compte avec {command}.",
