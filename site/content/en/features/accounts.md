@@ -82,19 +82,19 @@ Account names are 1 to 32 characters of `a-z`, `0-9`, `-` and `_`, starting with
 
 ## How it works
 
-`ccam add work --shortcut ccwork` runs these steps in `addProfile` (`internal/cli/profiles.go`):
+Adding an account creates its folder, joins its groups, saves the config, signs in and creates the shortcut, in that order. When you run `ccam add work --shortcut ccwork`, ccam takes these steps (`addProfile` in `internal/cli/profiles.go`):
 
 <!-- motion:accounts-add -->
 
-1. `config.ValidateName` checks the name, and `shim.Check` checks the shortcut before anything is created.
-2. `profile.Add` creates `~/.local/share/ccam/profiles/work/` with mode `0700` and gives the account the lowest free slot number (`Config.NextSlot`), so a removed account's number is reused. The first account becomes the default.
-3. The account joins its groups (`default` unless `--group` or `--no-group` says otherwise; the first account creates `default`), and `applyShare` links the new, empty folder into them with `share.Build` and then `Apply`, for example `settings.json` to `groups/default/settings.json`. If this fails, the new folder is removed, because a leftover folder would block every retry with `folder already exists`.
+1. ccam checks the name (`config.ValidateName`) and the shortcut (`shim.Check`) before it creates anything.
+2. ccam creates `~/.local/share/ccam/profiles/work/` with mode `0700` and gives the account the lowest free slot number, so a removed account's number is reused (`profile.Add`, `Config.NextSlot`). The first account becomes the default.
+3. The account joins its groups (`default` unless `--group` or `--no-group` says otherwise; the first account creates `default`), and ccam links the new, empty folder into them, for example `settings.json` to `groups/default/settings.json` (`applyShare`, with `share.Build` and then `Apply`). If this fails, the new folder is removed, because a leftover folder would block every retry with `folder already exists`.
 4. The account is saved to `~/.config/ccam/config.toml` through `fsutil.AtomicWrite`: a temporary file, `fsync`, then `rename`, so a crash never leaves a half-written config.
-5. `runLogin` starts `claude auth login` with `CLAUDE_CONFIG_DIR` set to the account folder, and `--email` with the account's last email so the login page is filled in. If the login fails, the account stays, and ccam prints the error and tells you to run `ccam login work` later.
-6. `profile.ReadIdentity` takes `oauthAccount` out of `profiles/work/.claude.json`: the email, the account and organization IDs, the organization's name and the plan (`claude_max`, `claude_team` …). That file can be several megabytes, so `TopLevelValue` scans for the one key instead of parsing the whole file. ccam stores these details in `[profile.login]` in `config.toml`.
-7. `shim.Install` links `~/.local/bin/ccwork` to the ccam binary, which looks up `argv[0]` in `config.toml` when it starts, and records the link in `~/.local/state/ccam/shortcuts.json`. If the link cannot be created, the account is still added, ccam says why (`Could not create shortcuts: …`) and the summary shows `shortcut: ccwork (not created; see above)`.
+5. ccam starts `claude auth login` with `CLAUDE_CONFIG_DIR` set to the account folder, and `--email` with the account's last email so the login page is filled in (`runLogin`). If the login fails, the account stays, and ccam prints the error and tells you to run `ccam login work` later.
+6. ccam reads `oauthAccount` from `profiles/work/.claude.json` (`profile.ReadIdentity`): the email, the account and organization IDs, the organization's name and the plan (`claude_max`, `claude_team` …). That file can be several megabytes, so ccam scans for the one key instead of parsing the whole file (`TopLevelValue`). ccam stores these details in `[profile.login]` in `config.toml`.
+7. ccam links `~/.local/bin/ccwork` to the ccam binary, which looks up `argv[0]` in `config.toml` when it starts, and records the link in `~/.local/state/ccam/shortcuts.json` (`shim.Install`). If the link cannot be created, the account is still added, ccam says why (`Could not create shortcuts: …`) and the summary shows `shortcut: ccwork (not created; see above)`.
 
-A login can take minutes, and another ccam process may save the config meanwhile. So commands that wait save through `env.update`, which reloads `config.toml`, applies the one change (here, the email) and saves. `ccam remove` reloads after its prompt for the same reason.
+A login can take minutes, and another ccam process may save the config meanwhile. So commands that wait reload `config.toml`, apply the one change (here, the email) and save (`env.update`). `ccam remove` reloads after its prompt for the same reason.
 
 `ccam login` runs steps 5 and 6 for an existing account. Claude Code takes the email only as a hint for the login page, so you can end up signed in to a different Claude account than before; ccam compares the new login with `[profile.login]` and says so (`ccam: this login is other@company.com, but work was dev@company.com before.`). It keeps the new login and tells you how to undo it: ``To undo it, run `ccam login work` again and sign in as dev@company.com.``
 
@@ -126,7 +126,7 @@ Over SSH, the browser half of `claude auth login` can break. Claude Code waits f
 
 <!-- motion:accounts-relay -->
 
-`runLogin` does not hand your terminal to Claude Code. It connects Claude Code's standard input to a pipe and `relayLogin` copies each line you type into it, so a code pasted at Claude Code's `Paste code here` prompt still arrives. When a line is a callback address, `callbackURL` accepts it only if the host is `localhost`, `127.0.0.1` or `[::1]`, a port is given, the path is `/callback` and both `code` and `state` are present; `http://` may be left out. `deliverCallback` then requests that address on the server with a 10-second timeout and without following redirects, the way the browser would have. The request reaches the callback server of the waiting `claude auth login` (the dashed line in the diagram). Claude Code receives the code and saves the login, on Linux in `.credentials.json` in the account folder. A pasted line can never make ccam contact another host.
+ccam does not hand your terminal to Claude Code (`runLogin`). It connects Claude Code's standard input to a pipe and copies each line you type into it (`relayLogin`), so a code pasted at Claude Code's `Paste code here` prompt still arrives. When a line is a callback address, ccam accepts it only if the host is `localhost`, `127.0.0.1` or `[::1]`, a port is given, the path is `/callback` and both `code` and `state` are present; `http://` may be left out (`callbackURL`). ccam then requests that address on the server with a 10-second timeout and without following redirects, the way the browser would have (`deliverCallback`). The request reaches the callback server of the waiting `claude auth login` (the dashed line in the diagram). Claude Code receives the code and saves the login, on Linux in `.credentials.json` in the account folder. A pasted line can never make ccam contact another host.
 
 ccam prints this before the login starts:
 
@@ -136,11 +136,11 @@ On a remote machine? If the browser ends on a http://localhost:…/callback page
 
 On success it prints `→ Passed the sign-in to Claude Code on this machine.`
 
-While the login waits for input on a terminal, ccam turns off the terminal's echo and line mode and shows a `*` for each character you type, so a pasted code or callback address does not appear on screen. `readLine` does the line editing itself: `Enter` sends the line, `Backspace` erases one character, and `Ctrl+D` on an empty line ends the input. The terminal is restored when the login ends, and also on `Ctrl+C`, `SIGTERM` or `SIGHUP`, which still end ccam. Without a terminal on standard input and standard error, lines are copied as they come.
+While the login waits for input on a terminal, ccam turns off the terminal's echo and line mode and shows a `*` for each character you type, so a pasted code or callback address does not appear on screen. ccam does the line editing itself (`readLine`): `Enter` sends the line, `Backspace` erases one character, and `Ctrl+D` on an empty line ends the input. The terminal is restored when the login ends, and also on `Ctrl+C`, `SIGTERM` or `SIGHUP`, which still end ccam. Without a terminal on standard input and standard error, lines are copied as they come.
 
 ### Rename, remove and import
 
-`ccam rename` and `ccam remove` act on the account's folder and on what ccam keeps under the account's name elsewhere. `nameState` lists those paths:
+`ccam rename` and `ccam remove` act on the account's folder and on what ccam keeps under the account's name elsewhere. ccam lists those paths in `nameState`:
 
 - `~/.local/state/ccam/last-used/<name>`;
 - `~/.local/state/ccam/mcp/<name>`;
@@ -154,9 +154,9 @@ While the login waits for input on a terminal, ccam turns off the terminal's ech
 
 1. `ccam remove` first refuses if the account is running, then asks, and checks again after you answer (this catches a session started while the prompt was open).
 2. It checks that `config.toml` can be saved before it changes anything.
-3. If the account shares extensions, `RewritePluginPaths` rewrites the group's `installed_plugins.json` and `known_marketplaces.json`, because Claude Code stores absolute plugin paths that may run through this account's folder.
+3. If the account shares extensions, ccam rewrites the group's `installed_plugins.json` and `known_marketplaces.json` (`RewritePluginPaths`), because Claude Code stores absolute plugin paths that may run through this account's folder.
 4. A managed account (one whose folder ccam created, as opposed to one registered with `ccam import`) is logged out next: `claude auth logout` runs in its folder, so no working login waits in the trash (or, on macOS, in a Keychain item named after the folder, which a later account of that name would inherit). That is skipped for an API key account and when another account's folder holds the same login, which the logout would revoke too. A logout that fails is reported, and the removal goes on.
-5. `profile.Trash` moves the folder to `~/.local/share/ccam/trash/<name>-<time>/`, the account leaves `config.toml`, the `nameState` paths are deleted so a later account with the same name does not inherit them, and the shortcut link is removed: `✓ side removed (folder moved to /home/you/.local/share/ccam/trash/side-20261023-212306; logged out first)`.
+5. ccam moves the folder to `~/.local/share/ccam/trash/<name>-<time>/` (`profile.Trash`), the account leaves `config.toml`, the `nameState` paths are deleted so a later account with the same name does not inherit them, and the shortcut link is removed: `✓ side removed (folder moved to /home/you/.local/share/ccam/trash/side-20261023-212306; logged out first)`.
 
 If `config.toml` cannot be saved after all, the folder comes back from the trash. To recover a removed account, move the folder back from the trash and log in again.
 

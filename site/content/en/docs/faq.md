@@ -24,7 +24,11 @@ Not past any account's own limit: each account keeps its limits and stops at the
 
 ## Can ccam switch accounts by itself when a session hits its limit?
 
-Only if you turn it on. With `auto_switch = true` at the top of `~/.config/ccam/config.toml` (Linux and macOS; off by default and experimental), when Claude Code stops an interactive session (one that ccam started) at a 5-hour, weekly, Opus or Sonnet limit, ccam ends the session and continues the conversation as another of your accounts with room: another seat of the same Team or Enterprise organization, or another personal plan (Pro, Max). It never switches before the limit, never watches your usage in the background, and never moves work out of a Team or Enterprise organization or into one. On seats it moves your work from one seat to another, which may violate Anthropic's terms (see Team and Enterprise seats above), and for personal plans Anthropic's terms do not clearly address it: the Consumer Terms forbid accessing the Services "through automated or non-human means" unless Anthropic explicitly permits it, and a move sends one message on your behalf; turning it on is your call. [`auto_switch`](/features/next#auto-switch) lists every condition and what a move costs.
+Only if you turn it on. With `auto_switch = true` at the top of `~/.config/ccam/config.toml` (Linux and macOS; off by default and experimental), when Claude Code stops an interactive session (one that ccam started) at a 5-hour, weekly, Opus or Sonnet limit, ccam ends the session and continues the conversation as another of your accounts with room: another seat of the same Team or Enterprise organization, or another personal plan (Pro, Max). It never switches before the limit, never watches your usage in the background, and never moves work out of a Team or Enterprise organization or into one.
+
+On seats it moves your work from one seat to another, which may violate Anthropic's terms (see Team and Enterprise seats above). For personal plans, Anthropic's terms do not clearly address it: the Consumer Terms forbid accessing the Services "through automated or non-human means" unless Anthropic explicitly permits it, and a move sends one message on your behalf. Turning it on is your call.
+
+[`auto_switch`](/features/next#auto-switch) lists every condition and what a move costs.
 
 ## How do I use two Claude Code accounts on one computer?
 

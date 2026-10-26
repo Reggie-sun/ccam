@@ -75,10 +75,10 @@ There are two strategies, set by `mcp_strategy` in `~/.config/ccam/config.toml`.
 
 <!-- motion:mcp-flag -->
 
-1. `launcher.applyMCP` finds the account's MCP group. `mcp.FlagArgs` checks with one `stat` that the group's `mcp.json` exists, without parsing it.
-2. `Plan.InsertArgs` puts `--mcp-config=<path>` right after `claude`, before your own arguments, so your own `--mcp-config` or `--strict-mcp-config` still apply on top.
-3. `mcp.NewLocal` checks whether the account's `.claude.json` changed since the last launch, and only then parses its servers.
-4. `syscall.Exec` replaces ccam with Claude Code.
+1. ccam finds the account's MCP group (`launcher.applyMCP`) and checks with one `stat` that the group's `mcp.json` exists, without parsing it (`mcp.FlagArgs`).
+2. ccam puts `--mcp-config=<path>` right after `claude`, before your own arguments, so your own `--mcp-config` or `--strict-mcp-config` still apply on top (`Plan.InsertArgs`).
+3. ccam checks whether the account's `.claude.json` changed since the last launch, and only then parses its servers (`mcp.NewLocal`).
+4. ccam replaces itself with Claude Code (`syscall.Exec`).
 
 The path is passed as one argument, `--mcp-config=<path>`, not as two. Claude Code's `--mcp-config` takes several values, so `claude --mcp-config a.json "prompt"` would read the prompt as a second config file and fail with `MCP config file not found`. The one-argument form avoids this, so a prompt or subcommand after it works. `ccam work mcp list`, `get` and `remove` get no flag, since Claude Code refuses it there; ccam names the group's servers on standard error instead ([details](/features/launch#shared-mcp-servers)). Claude Code loads `--mcp-config` servers in addition to the account's own; on a name clash the entry in `.claude.json` wins. The flag strategy writes `.claude.json` only for Remote Control, when an account leaves MCP sharing or joins it again ([below](#leaving-and-joining)), and for `ccam mcp import`.
 
@@ -107,7 +107,7 @@ With `mcp_strategy = "sync"`, the servers appear in `claude mcp list` and `/mcp`
 
 <!-- motion:mcp-sync -->
 
-1. `mcp.Sync` compares the modification time of the group's `mcp.json` with `sync-stamp`, and the account's `.claude.json` with what it saw last. If neither changed, nothing else happens. Otherwise it also checks that every group server is still in `.claude.json`, and puts back a copy that is gone (`put back group default's MCP servers that were gone from account work's .claude.json: ctx`).
+1. ccam compares the modification time of the group's `mcp.json` with `sync-stamp`, and the account's `.claude.json` with what it saw last (`mcp.Sync`). If neither changed, nothing else happens. Otherwise it also checks that every group server is still in `.claude.json`, and puts back a copy that is gone (`put back group default's MCP servers that were gone from account work's .claude.json: ctx`).
 2. It takes Claude Code's own lock, the folder `.claude.json.lock` next to the file, created with `mkdir`. It waits up to 2 seconds and treats a lock older than 10 seconds as stale, as Claude Code's lock library does.
 3. It saves the current `.claude.json` to `backups/` in the state folder and keeps the newest 5.
 4. It sets every group server in `mcpServers`, removes servers it wrote before that the group no longer has, and writes the file atomically with its original mode, only when something changed. It changes or removes only the copies it wrote that nobody changed since. If the account has its own server with the same name as a group server, ccam keeps the account's server and says so once: `account work has its own MCP servers fs, so group default's of those names are not copied there`.
@@ -131,7 +131,7 @@ Skipped gh: group default already has a different gh (`ccam mcp import work gh -
 ✓ Removed account work's own entries (.claude.json backed up)
 ```
 
-With `--force` the group's server is replaced, and the previous `mcp.json` is first saved to `.ccam-backup/<time>/mcp.json` inside the group folder. Then `mcp.Remove` removes the copied entries from the account's `.claude.json`, its own and the folder's in one write, under the same lock and after a backup in the state folder. ccam keeps the group's `mcp.json` locked from when it reads the file until those entries are removed, so nobody removes the server from the group in between. This is needed because the account's entry would win over the group's on a name clash. With `--keep-local`, the entries stay in the account's `.claude.json`.
+With `--force` the group's server is replaced, and the previous `mcp.json` is first saved to `.ccam-backup/<time>/mcp.json` inside the group folder. Then ccam removes the copied entries from the account's `.claude.json`, its own and the folder's in one write, under the same lock and after a backup in the state folder (`mcp.Remove`). ccam keeps the group's `mcp.json` locked from when it reads the file until those entries are removed, so nobody removes the server from the group in between. This is needed because the account's entry would win over the group's on a name clash. With `--keep-local`, the entries stay in the account's `.claude.json`.
 
 ## Safety and edge cases
 

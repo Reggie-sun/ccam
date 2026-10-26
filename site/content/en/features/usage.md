@@ -110,38 +110,40 @@ ccam reads its own options first: `-a` (`--account`) takes account names or numb
 
 The numbers of `ccam usage` come from two places: Anthropic's undocumented usage endpoint, `GET https://api.anthropic.com/api/oauth/usage`, called with each account's own login, and the values Claude Code hands to its status line command. All of it lives in `internal/usage`.
 
-1. `cli.usageCmd` loads `config.toml` and builds one `usage.Account` per account: its folder `~/.local/share/ccam/profiles/<name>/`, its session markers (with Claude Code's own records in the account folder, they tell whether it is running) and whether it was imported in place.
-2. `Fetcher.FetchAll` starts one goroutine per account. All of them share one `http.Client`, so connections to the endpoint are reused. Connecting may take 2 s, and each account gets 3 s in total. The client does not follow redirects, since a redirect would resend the token somewhere else, and reads at most 1 MB of the answer.
+1. ccam loads `config.toml` and builds one `usage.Account` per account (`cli.usageCmd`): its folder `~/.local/share/ccam/profiles/<name>/`, its session markers (with Claude Code's own records in the account folder, they tell whether it is running) and whether it was imported in place.
+2. ccam looks up every account at once, one goroutine per account (`Fetcher.FetchAll`). All of them share one `http.Client`, so connections to the endpoint are reused. Connecting may take 2 s, and each account gets 3 s in total. The client does not follow redirects, since a redirect would resend the token somewhere else, and reads at most 1 MB of the answer.
 3. As each account finishes, its row is redrawn. An account that fails or does not answer in time falls back to saved numbers, so one slow account never holds up the others.
 
 In the diagram, each account is looked up in its own goroutine, and the one that times out shows its saved numbers instead:
 
 <!-- motion:usage-fetch -->
 
-`personal` and `work` answer in time and show live numbers. `side` takes longer than 3 s, so `fallback()` shows its saved numbers instead. `usage.Table()` draws a block per account and `usage.Best()` picks the account named on the last line.
+`personal` and `work` answer in time and show live numbers. `side` takes longer than 3 s, so ccam shows its saved numbers instead (`fallback()`). ccam then draws a block per account (`usage.Table()`) and picks the account named on the last line (`usage.Best()`).
 
-For one account, `Fetcher.Fetch` makes these checks in order:
+For one account, ccam makes these checks in order (`Fetcher.Fetch`):
 
 <!-- motion:usage-cache -->
 
 1. With `--source cache`, it goes straight to `fallback()`.
 2. Unless `--no-cache` is set, a live result in `~/.local/state/ccam/usage/<name>.json` measured less than 60 seconds ago (`CacheTTL`) is used, judged as of now: a window that has reset since shows 0%, and a file dated ahead of the clock does not count as fresh. Running `ccam usage` twice in a row costs one request per account.
-3. `readCredentials()` reads `.credentials.json` (or the macOS Keychain) without changing it, and only the `claudeAiOauth` key is decoded. No subscription login means `not logged in`, or `no limits (API)` when `.claude.json` holds an API key. A login whose refresh token has expired, or that Claude Code cleared, is `` login expired → `ccam login <name>` `` and is not looked up.
+3. ccam reads `.credentials.json` (or the macOS Keychain) without changing it and decodes only the `claudeAiOauth` key (`readCredentials()`). No subscription login means `not logged in`, or `no limits (API)` when `.claude.json` holds an API key. A login whose refresh token has expired, or that Claude Code cleared, is `` login expired → `ccam login <name>` `` and is not looked up.
 4. An expired access token is not used. Without `--refresh`, the account shows its saved numbers with ``access token expired; `ccam <name>` renews it when it starts``.
 5. Otherwise ccam calls the endpoint. A 401 or 403 counts as an expired login (`login expired: authentication failed (401)`), any other status or a body it cannot read counts as an error, and both fall back to saved numbers. A lookup ended by Ctrl+C says `cancelled`. A 429 means the endpoint has received too many requests for this account: ccam writes `<name>.pause` with the time to ask again (`Retry-After`, or 5 minutes, at most an hour), shows saved numbers with `rate limited by the usage endpoint; asking again after 15:10`, and does not call the endpoint for that account until then, even with `--no-cache`. Retrying immediately would only prolong the rate limit.
 6. A good answer is written to `<name>.json` with the time it was measured.
 
-`fallback()` takes the newest saved lookup (`<name>.json`, or `<name>.claude.json` from Claude Code's lookups) and, when `<name>.statusline.json` was written after it, overlays the status line's 5-hour and weekly windows on it; the model windows, which the status line does not have, stay as the lookup saved them. Before it shows saved numbers, it checks each window's reset time: a window that has reset since the numbers were saved shows 0%, because the old percentage no longer holds. That is why `personal` above shows `0%` with no reset time.
+For saved numbers, ccam takes the newest saved lookup (`<name>.json`, or `<name>.claude.json` from Claude Code's lookups) and, when `<name>.statusline.json` was written after it, overlays the status line's 5-hour and weekly windows on it (`fallback()`); the model windows, which the status line does not have, stay as the lookup saved them. Before it shows saved numbers, it checks each window's reset time: a window that has reset since the numbers were saved shows 0%, because the old percentage no longer holds. That is why `personal` above shows `0%` with no reset time.
 
-The endpoint has two response formats. The newer one has a `limits` array with `session` (5-hour), `weekly_all` and `weekly_scoped` (per model) entries. The older one has `five_hour`, `seven_day`, `seven_day_opus` and `seven_day_sonnet` objects. `ParseLive` reads both: the `limits` array wins, and the old objects fill in what it does not cover. A body with no limits at all is reported as a changed format, which `ccam doctor` tells you about.
+The endpoint has two response formats. The newer one has a `limits` array with `session` (5-hour), `weekly_all` and `weekly_scoped` (per model) entries. The older one has `five_hour`, `seven_day`, `seven_day_opus` and `seven_day_sonnet` objects. ccam reads both (`ParseLive`): the `limits` array wins, and the old objects fill in what it does not cover. A body with no limits at all is reported as a changed format, which `ccam doctor` tells you about.
 
 ### The limit record
 
-When Claude Code stops a turn at a usage limit, the [ccam plugin](/docs/install#claude-code-plugin)'s hook reads the refused request from the conversation: which window was full (5-hour, weekly, Opus or Sonnet) and when it resets. It writes that to `~/.local/state/ccam/usage/<name>.limit.json`. `Fetch` applies the record on top of whatever else it knows, from every source: each window in it counts as 100% until its reset, however old or low the saved numbers are, so `ccam next --auto`, `ccam pick`, `--fallback` and [`auto_switch`](/features/next#auto-switch) do not choose the account again before then. With nothing else known, the record alone is what the account shows (`source: the usage limit Claude Code reported` with `-v`). Unattended sessions (`-p` runs and background sessions) write no record, nor does a stop set by an organization (for example, when it is out of usage or a group's limit is $0), which its admins can lift at any time. `ccam login` into another Claude account drops the record; deleting the file clears it too.
+When Claude Code stops a turn at a usage limit, the [ccam plugin](/docs/install#claude-code-plugin)'s hook reads the refused request from the conversation: which window was full (5-hour, weekly, Opus or Sonnet) and when it resets. It writes that to `~/.local/state/ccam/usage/<name>.limit.json`. ccam applies the record on top of whatever else it knows, from every source (`Fetch`): each window in it counts as 100% until its reset, however old or low the saved numbers are, so `ccam next --auto`, `ccam pick`, `--fallback` and [`auto_switch`](/features/next#auto-switch) do not choose the account again before then.
+
+With nothing else known, the record alone is what the account shows (`source: the usage limit Claude Code reported` with `-v`). Unattended sessions (`-p` runs and background sessions) write no record, nor does a stop set by an organization (for example, when it is out of usage or a group's limit is $0), which its admins can lift at any time. `ccam login` into another Claude account drops the record; deleting the file clears it too.
 
 ### Renewing tokens
 
-Refresh tokens rotate: renewing one gives you a new refresh token and invalidates the old one. If ccam renewed the login while Claude Code was running as the same account, that session would be signed out. So `ccam usage` reads tokens and never writes them, unless you pass `--refresh`. Then `Fetcher.refresh`:
+Refresh tokens rotate: renewing one gives you a new refresh token and invalidates the old one. If ccam renewed the login while Claude Code was running as the same account, that session would be signed out. So `ccam usage` reads tokens and never writes them, unless you pass `--refresh`. Then ccam (`Fetcher.refresh`):
 
 1. refuses accounts registered in place with `ccam import`, since plain `claude` may use that login without ccam knowing;
 2. refuses logins stored in the macOS Keychain;
@@ -159,15 +161,17 @@ Claude Code runs the status line command and pipes it a JSON document. ccam read
 
 <!-- motion:usage-statusline -->
 
-1. `runStatusline` finds the account from `CCAM_PROFILE`, which ccam sets when it starts Claude Code, or else by matching `CLAUDE_CONFIG_DIR` against the account folders.
-2. `ParseStatusLine` reads `rate_limits.five_hour` and `rate_limits.seven_day`. The JSON has no rate limits for API key accounts, or before the session's first response; then nothing is saved.
-3. `SaveStatusLine` writes `~/.local/state/ccam/usage/<name>.statusline.json`. `ccam usage` uses it when the endpoint does not answer.
+1. ccam finds the account from `CCAM_PROFILE`, which ccam sets when it starts Claude Code, or otherwise by matching `CLAUDE_CONFIG_DIR` against the account folders (`runStatusline`).
+2. ccam reads `rate_limits.five_hour` and `rate_limits.seven_day` (`ParseStatusLine`). The JSON has no rate limits for API key accounts, or before the session's first response; then nothing is saved.
+3. ccam writes `~/.local/state/ccam/usage/<name>.statusline.json` (`SaveStatusLine`). `ccam usage` uses it when the endpoint does not answer.
 4. ccam prints `[name] · model · 5h N% · 7d N%`. With `--wrap`, it runs your command through `sh -c` with the same input and prints its output the way Claude Code shows a status line: every line that is not blank, with `[name]` in front of the first. A command that fails shows the account name alone. On Windows it runs the command the way Claude Code does: with Git Bash when it is installed, otherwise with PowerShell.
 5. When the 5-hour or weekly usage is at 90% or more and there is another account, the line ends with `→ ccam next --auto --continue`, for example `[work] · Opus · 5h 93% · 7d 41% · → ccam next --auto --continue`.
 
 The wrapped command has no time limit of its own: Claude Code gives a status line command 10 minutes and stops a run when a newer update starts, so a slow command shows as it would without ccam. When Claude Code ends ccam, the command ends too (on Linux and macOS with every process it started).
 
-`ccam statusline install` writes `statusLine` into each account's `settings.json` and keeps the object's other keys, such as `padding`, `refreshInterval` and `hideVimModeIndicator`. When an account already has a status line command, ccam keeps it as `--wrap '<old command>'`; on Windows as `--wrap-base64 <base64>`, which needs no quoting in either shell. If the status line already runs ccam (from another path, or quoted the way an older version wrote it), ccam replaces it instead of wrapping it, and keeps the command it wraps. On Windows the path to ccam is written with forward slashes and `~` for the home folder (`~/.local/bin/ccam.exe statusline`), which both Git Bash and PowerShell understand. A path that needs quotes is written in full for the shell Claude Code uses: `'…'` for Git Bash, `& '…'` for PowerShell. A `settings.json` shared through a group is written once, through its link, so every account in the group gets it. Running it again prints `(already set)` for files that already use ccam.
+`ccam statusline install` writes `statusLine` into each account's `settings.json` and keeps the object's other keys, such as `padding`, `refreshInterval` and `hideVimModeIndicator`. When an account already has a status line command, ccam keeps it as `--wrap '<old command>'`; on Windows as `--wrap-base64 <base64>`, which needs no quoting in either shell. If the status line already runs ccam (from another path, or quoted the way an older version wrote it), ccam replaces it instead of wrapping it, and keeps the command it wraps.
+
+On Windows the path to ccam is written with forward slashes and `~` for the home folder (`~/.local/bin/ccam.exe statusline`), which both Git Bash and PowerShell understand. A path that needs quotes is written in full for the shell Claude Code uses: `'…'` for Git Bash, `& '…'` for PowerShell. A `settings.json` shared through a group is written once, through its link, so every account in the group gets it. Running it again prints `(already set)` for files that already use ccam.
 
 ## Safety and edge cases
 

@@ -127,19 +127,21 @@ When `config.toml` is read, each account's groups are resolved into one folder p
 A change works on a copy of the config:
 
 1. The command edits the copy (`AddGroup`, `SetGroupItems`, `JoinGroup` …), which checks the rules.
-2. `internal/group` compares old and new and, for each account whose items change, builds a plan with `share.Build`. The plans are built one after another, and each sees what the earlier ones will put into the group folders, so only the first account moves its copy in. The group's first copy comes from, in this order: the group folder (if it already has one), the `--from` account, the default account, then the other accounts by number.
+2. ccam compares old and new and, for each account whose items change, builds a plan (`internal/group`, `share.Build`). The plans are built one after another, and each sees what the earlier ones will put into the group folders, so only the first account moves its copy in. The group's first copy comes from, in this order: the group folder (if it already has one), the `--from` account, the default account, then the other accounts by number.
 3. ccam refuses if one of those accounts is running, however Claude Code was started (``work is running; quit Claude Code there first, then change the groups (`ccam agents` lists the sessions)``), and on Windows without Developer Mode if a file would need a link.
 4. ccam resolves conflicts (by asking, or with `--prefer`), prints the plan and asks for confirmation.
 5. Right before saving, ccam checks again. If an account started while ccam waited for your answers, the change stops; it also stops if another ccam process changed the same groups in the meantime (`the groups changed while this plan waited; nothing was moved, make the change again`). The new config is saved before anything moves, and the change is noted in `~/.local/state/ccam/group-change.json`. If a step stops halfway, the note stays: `ccam doctor --fix` finishes the change in its order, with the answers you gave, MCP steps included, and until then no other group change starts (``the last change of groups stopped halfway; finish it with `ccam doctor --fix` first``).
 6. The MCP steps run first. When accounts take extensions out of a group, the group's plugin lists are pointed at the group folder wherever their paths run through an account's folder (`group plugin lists:` in the plan). Then the plans run in order. Every step moves data into the group or into the backup folder; only files identical to the group's copy are deleted instead of backed up.
 
-`share.Layout` is an allow list of the paths each item covers. Anything not on it can never reach a group. `share.Never` names `.credentials.json` and `.claude.json`, and `Build` stops with an internal error if either ever appears in the layout. The `mcp` item has no paths: the server list lives inside `.claude.json`, so [MCP sharing](/features/mcp) works through the group's `mcp.json`.
+ccam keeps an allow list of the paths each item covers (`share.Layout`). Anything not on it can never reach a group. ccam also names `.credentials.json` and `.claude.json` as never shared (`share.Never`), and stops with an internal error if either ever appears in the layout (`Build`). The `mcp` item has no paths: the server list lives inside `.claude.json`, so [MCP sharing](/features/mcp) works through the group's `mcp.json`.
 
 This is what happens to one folder, `projects/`, when `side` starts sharing history and the group already has content:
 
 <!-- motion:share-on -->
 
-If the group has nothing at that path yet, the account is the first to share it and its folder is moved there as it is. Otherwise each file the group lacks is moved into the group, and files that exist on both sides stay in the account's folder, so the group's version is kept. Files identical to the group's are dropped, and the plan names the ones that differ (`Note: projects: 1 file differs from the group's copy (…); the group's is kept, the account's stays in …`). The account's folder then goes to `.ccam-backup/<time>/` inside the account folder, and a link takes its place. If the group's entry is itself a link to the joining account's own entry, the account's content goes into the group in its place. Conversation files are named after their session ID, so histories from several accounts combine without clashes. The `plugins/` registries store absolute paths through the account folder; ccam points them at the group's folder and merges the account's entries into a registry the group already has.
+If the group has nothing at that path yet, the account is the first to share it and its folder is moved there as it is. Otherwise each file the group lacks is moved into the group, and files that exist on both sides stay in the account's folder, so the group's version is kept. Files identical to the group's are deleted, and the plan names the ones that differ (`Note: projects: 1 file differs from the group's copy (…); the group's is kept, the account's stays in …`).
+
+The account's folder then goes to `.ccam-backup/<time>/` inside the account folder, and a link takes its place. If the group's entry is itself a link to the joining account's own entry, the account's content goes into the group in its place. Conversation files are named after their session ID, so histories from several accounts combine without clashes. The `plugins/` registries store absolute paths through the account folder; ccam points them at the group's folder and merges the account's entries into a registry the group already has.
 
 Leaving reverses the link:
 
@@ -167,7 +169,7 @@ You choose for single files such as `settings.json`; inside folders the group's 
 
 `merge JSON` merges objects recursively, joins arrays without duplicates, and keeps the group's value when both sides set the same key differently, so the other accounts see no change. Every choice except `keep group` first saves the group's copy in the account's `.ccam-backup/<time>/group/`. Your own file always goes to the backup.
 
-At every launch, `share.Check` compares each path in the layout with the account's groups using `lstat` and `readlink` only. A missing link is created on the spot. A real file where a link belongs, a link to the wrong place, or a stale link stops the launch and points to `ccam doctor --fix`.
+At every launch, ccam compares each path in the layout with the account's groups using `lstat` and `readlink` only (`share.Check`). A missing link is created on the spot. A real file where a link belongs, a link to the wrong place, or a stale link stops the launch and points to `ccam doctor --fix`.
 
 ### Renaming, removing and the old format
 

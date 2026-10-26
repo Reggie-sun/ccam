@@ -134,7 +134,9 @@ On the Groups tab, `Enter` opens the editor: the items on the left, the accounts
     2. No
 ```
 
-If a file differs from the group's copy, ccam first asks what to do (keep the group's, use mine or merge). Then the change runs in the background with the same code as [`ccam group`](/features/share): the config is saved first, each account's data moves in order, and the originals go to `.ccam-backup/`; an account that leaves MCP sharing keeps the group's servers in its `.claude.json`. A change that would move the data of a running account is refused with the account's name, even when the account started while the plan was open, and a plan that became outdated because another ccam process changed the groups is refused with `the groups changed while this plan waited; nothing was moved, make the change again`. While another ccam process changes the groups, a new change, rename or remove says `another ccam is changing the groups right now`; after a change that stopped halfway, they wait until `F` on the Health tab (or `ccam doctor --fix`) has finished it.
+If a file differs from the group's copy, ccam first asks what to do (keep the group's, use mine or merge). Then the change runs in the background with the same code as [`ccam group`](/features/share): the config is saved first, each account's data moves in order, and the originals go to `.ccam-backup/`; an account that leaves MCP sharing keeps the group's servers in its `.claude.json`.
+
+A change that would move the data of a running account is refused with the account's name, even when the account started while the plan was open, and a plan that became outdated because another ccam process changed the groups is refused with `the groups changed while this plan waited; nothing was moved, make the change again`. While another ccam process changes the groups, a new change, rename or remove says `another ccam is changing the groups right now`; after a change that stopped halfway, they wait until `F` on the Health tab (or `ccam doctor --fix`) has finished it.
 
 ## Adding an account
 

@@ -77,9 +77,9 @@ On a terminal, if you give no item flags, you choose the items in the checklist.
 
 ## How it works
 
-`internal/cli/migrate.go` picks the items, then `migrate.Build` reads the source and the group and returns a plan. Nothing is written until `Plan.Apply`, after you confirm.
+ccam builds a complete plan before it copies anything. It picks the items (`internal/cli/migrate.go`), then reads the source and the group and builds the plan (`migrate.Build`). Nothing is written until `Plan.Apply`, after you confirm.
 
-1. **Find the source.** `checkSource` refuses a path that is missing, not a folder, or holds no known Claude Code entry. For MCP servers alone, an empty or missing `~/.claude` is fine as long as `~/.claude.json` has servers. `migrate.ClaudeJSON` finds the `.claude.json` that belongs to the folder: inside it, or for `~/.claude` without one inside, `~/.claude.json` next to it. That is where Claude Code keeps it when `CLAUDE_CONFIG_DIR` is not set.
+1. **Find the source.** ccam refuses a path that is missing, not a folder, or holds no known Claude Code entry (`checkSource`). For MCP servers alone, an empty or missing `~/.claude` is fine as long as `~/.claude.json` has servers. ccam finds the `.claude.json` that belongs to the folder (`migrate.ClaudeJSON`): inside it, or for `~/.claude` without one inside, `~/.claude.json` next to it. That is where Claude Code keeps it when `CLAUDE_CONFIG_DIR` is not set.
 2. **Map items to paths.** Every path comes from `share.Layout`, the same allow list groups use. The MCP servers are read out of `.claude.json` with `mcp.LocalServers`, which uses the `profile.TopLevelValue` scanner rather than parsing the whole file.
 3. **Copy, never move.** Files go to `~/.local/share/ccam/groups/<group>/` with `fsutil.AtomicWrite` or `fsutil.CopyFile`, which writes a temporary file beside the target and renames it, so an interrupted copy never leaves a partial file. MCP servers go into the group's `mcp.json` under its lock: a server that another ccam process adds in the meantime is kept, and the copies made for [Remote Control](/guides/remote-control) are updated afterwards.
 
@@ -87,9 +87,9 @@ Each item maps one source path to one group path:
 
 <!-- motion:migrate-items -->
 
-The two history rows are dashed because they are copied only with `--history`. `.credentials.json` and `.claude.json` are listed in `share.Never` and never reach the group: `Build` returns an internal error if one ever shows up in the layout, and the folder walk skips them by name.
+The two history rows are dashed because they are copied only with `--history`. `.credentials.json` and `.claude.json` are listed in `share.Never` and never reach the group: ccam stops with an internal error if one ever shows up in the layout (`Build`), and the folder walk skips them by name.
 
-`buildEntry` gives every path a state, which is what each plan line describes:
+ccam gives every path a state, which is what each plan line describes (`buildEntry`):
 
 <!-- motion:migrate-states -->
 
@@ -97,10 +97,10 @@ The two history rows are dashed because they are copied only with `--history`. `
 - **Linked**: the source path already resolves to the group's copy, for example when the source is a ccam profile folder.
 - **Same**: the group already has identical content.
 - **New**: the group lacks it, so it is copied whole.
-- **Merge**: a folder on both sides. `copyMissing` adds only the files the group lacks; files that differ stay as the group has them and the plan says `group copies kept`. For `plugins/`, the registries `installed_plugins.json` and `known_marketplaces.json` are merged, and the absolute plugin paths are rewritten to point at the group's folder.
+- **Merge**: a folder on both sides. ccam adds only the files the group lacks (`copyMissing`); files that differ stay as the group has them and the plan says `group copies kept`. For `plugins/`, the registries `installed_plugins.json` and `known_marketplaces.json` are merged, and the absolute plugin paths are rewritten to point at the group's folder.
 - **Conflict**: a file on both sides with different content. You choose per file: `keep group`, `use mine`, plus `merge JSON` for `.json` files (a deep merge in which the group wins on clashing values) or `merge by line` for `history.jsonl`. An MCP server whose definition differs is a conflict too, with `keep group` or `use mine`. The first choice listed is the default when you press Enter; `--yes` always keeps the group's copy.
 
-The checklist itself is `tui.MigratePicker` built on the `checklist` component that `ccam add` uses; `migrate.Found` marks missing items with lstat calls and the MCP server list.
+The checklist itself is `tui.MigratePicker` built on the `checklist` component that `ccam add` uses; ccam marks missing items with lstat calls and the MCP server list (`migrate.Found`).
 
 ### MCP sign-ins
 
