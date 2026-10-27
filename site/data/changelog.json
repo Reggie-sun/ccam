@@ -1,5 +1,11 @@
 [
   {
+    "tag": "v0.12.3",
+    "date": "2026-10-27",
+    "url": "https://github.com/jhyunwoo/ccam/releases/tag/v0.12.3",
+    "notes": "<p>Changes to know about: nothing behaves differently. Some messages are reworded to match the rewritten English docs on ccam.dev, so a script that matches ccam&#39;s exact output text may need updating. When <code>ccam update</code> cannot replace the binary itself, it now suggests the install script at <a href=\"https://ccam.dev/install.sh\">https://ccam.dev/install.sh</a> (or install.ps1 on Windows) instead of the GitHub raw address. The Claude Code plugin is now 0.3.1, with the same wording in its command, hook and skill descriptions.</p>\n<h3>Fixed</h3>\n<ul>\n<li>Plainer wording in the messages of <code>ccam next</code>, the relay, <code>auto_switch</code>, <code>ccam mcp</code>, groups, <code>ccam doctor</code> and the lock, matching the docs that quote them</li>\n<li><code>ccam update</code> and the READMEs give the install commands from ccam.dev</li>\n</ul>\n"
+  },
+  {
     "tag": "v0.12.2",
     "date": "2026-10-25",
     "url": "https://github.com/jhyunwoo/ccam/releases/tag/v0.12.2",
