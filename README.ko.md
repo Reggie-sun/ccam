@@ -101,9 +101,10 @@ SSH로 접속한 원격 서버에서 로그인할 때는 내 컴퓨터의 브라
 | `ccam doctor [--fix]` | 링크·권한·로그인·버전·사용량 형식 점검과 수리 |
 | `ccam statusline install` | Claude Code 상태줄에 `[account] · model · 5h N%` 표시 |
 | `ccam update [--check] [--version vX.Y.Z]` | 최신(또는 지정한) 릴리스로 업데이트, 체크섬 확인 |
+| `ccam uninstall` | 모든 계정(먼저 로그아웃), 단축 명령, ccam 폴더, ccam 자신을 지움. 가져온 폴더는 그대로 |
 | `ccam completion bash\|zsh\|powershell` | 자동완성 |
 
-앞에 `--dry-run`을 붙이면 실행하지 않고 할 일만 보여줍니다 (`ccam --dry-run work`). 실행(`ccam <이름>`, `run`, `next`), `group`, `migrate`, `shortcut`, `update`, `doctor --fix`에서 쓸 수 있고, 무언가를 바꾸는 다른 명령은 실제로 실행하는 대신 거절합니다.
+앞에 `--dry-run`을 붙이면 실행하지 않고 할 일만 보여줍니다 (`ccam --dry-run work`). 실행(`ccam <이름>`, `run`, `next`), `group`, `migrate`, `shortcut`, `update`, `uninstall`, `doctor --fix`에서 쓸 수 있고, 무언가를 바꾸는 다른 명령은 실제로 실행하는 대신 거절합니다.
 
 ## 공유
 

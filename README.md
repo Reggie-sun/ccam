@@ -103,9 +103,10 @@ Signing in on a remote machine over SSH: the browser on your computer ends on a 
 | `ccam doctor [--fix]` | Check links, permissions, login, version, usage format; repair |
 | `ccam statusline install` | Show `[account] · model · 5h N%` in Claude Code's status line |
 | `ccam update [--check] [--version vX.Y.Z]` | Update ccam to the latest (or that) release, checksum verified |
+| `ccam uninstall` | Remove every account (logged out first), the shortcuts, ccam's folders and ccam itself; an imported folder stays |
 | `ccam completion bash\|zsh\|powershell` | Shell completion |
 
-Put `--dry-run` first to print what would happen (`ccam --dry-run work`). It works for launching (`ccam <name>`, `run`, `next`), `group`, `migrate`, `shortcut`, `update` and `doctor --fix`; other commands that change something refuse it rather than run for real.
+Put `--dry-run` first to print what would happen (`ccam --dry-run work`). It works for launching (`ccam <name>`, `run`, `next`), `group`, `migrate`, `shortcut`, `update`, `uninstall` and `doctor --fix`; other commands that change something refuse it rather than run for real.
 
 ## Sharing
 

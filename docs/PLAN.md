@@ -810,3 +810,13 @@ clausona(larcane97/clausona v0.12.0-beta) 조사에서 나온 단점을 보완�
 - 소유자 요청으로 대시보드(터미널에서 `ccam`)가 auto_switch가 켜졌는지 보여 줍니다. 탭 이름 줄의 오른쪽 끝, 모든 탭에서 `auto_switch on`(강조색) 또는 `auto_switch off`(흐리게)입니다. 처음에는 제목 줄(`ccam <버전> · N accounts · N groups`)에 붙였지만 80열에서 Accounts 탭의 기호 설명(`✔ default · ▸ this folder · • running`)이 밀려나서, 80열에서 19칸이 비는 탭 줄로 옮겼습니다. 자리가 모자라면(on은 78열, off는 79열 미만) 자르지 않고 빼며, 기호 설명과 같은 규칙입니다. Windows는 auto_switch를 무시하므로 아무것도 보이지 않고 Health 탭이 그렇다고 말합니다. 켜져 있을 때 아직 필요한 것(켜진 ccam 플러그인, Claude Code 2.1.214 이상)은 지금처럼 Health 탭이 알립니다. 대시보드에서 켜고 끄는 키는 두지 않았습니다(요청은 확인). `Dashboard.goos`(runtime.GOOS, 테스트가 바꿈)를 더했습니다.
 - 대시보드는 config.toml을 열 때 읽고 대시보드 안의 변경 뒤에만 다시 읽으므로(`r`은 사용량만), 밖에서 고친 auto_switch는 다시 열어야 보입니다. 리뷰가 지적했지만 다른 설정과 같은 기존 동작이라 반박되어 그대로 둡니다.
 - 테스트 `TestTabLineSaysWhetherAutoSwitchIsOn`: 모든 탭, 오른쪽 정렬과 비운 마지막 열(줄 폭 w-1), 색(on은 accent, off는 dim), 78·79열 경계, 80열에서 기호 설명 유지, Windows. 리뷰가 확정한 "잘린 표시(`auto_s…`)를 잡지 못하는 검사"를 이렇게 고쳤고, 항상 붙이기·마지막 열 안 비우기·색 바꾸기·Windows에서 보이기 돌연변이가 모두 실패합니다. 사이트 대시보드 페이지의 두 화면 예시와 한 문장(30개 언어)도 고쳤습니다.
+
+## 2026-10-28: ccam uninstall
+
+- 소유자 요청으로 ccam 자체를 지우는 `ccam uninstall [--yes]`를 더했습니다(`--dry-run`은 계획만). 전에는 설치 문서의 손 단계(단축 명령 지우기, 제자리 폴더는 `ccam remove`로 그룹에서 빼기, 바이너리와 세 폴더 지우기)뿐이었습니다.
+- 순서: 진행 중인 그룹 변경(`group.Unfinished`)이나 실행 중인 계정이 있으면 묻기 전에 거절 → 계획 출력 → 확인 → 계정마다 `removeAccount`(`ccam remove`와 같은 경로: 관리 폴더는 로그아웃 뒤 휴지통, 같은 로그인을 plain claude가 가지면 로그아웃하지 않음; 제자리 폴더는 그룹을 떠나 사본을 받고 등록만 지움; 단축 명령도 여기서 지움) → 제자리 폴더의 settings.json에서 ccam status line을 빼고 감쌌던 명령(`--wrap`, `--wrap-base64`)을 되돌림(읽을 수 없으면 그대로) → ccam 플러그인이 남아 있으면 `/plugin uninstall` 안내 → config·data(휴지통 포함)·state·locks 폴더 삭제 → 바이너리 삭제. 계정 하나가 실패하면 거기서 멈추고 나머지는 지우지 않습니다(다시 실행하면 이어서 함).
+- 같은 로그인의 복사본을 가진 관리 계정 둘은 순서대로 지우므로 앞 계정은 로그아웃하지 않고 마지막 계정이 로그아웃합니다(`sameLogin`이 남은 계정만 봄).
+- 바이너리: `.deb`(시스템 폴더나 dpkg 소유, `update.Updater.Managed`를 내보냄)는 남기고 `sudo apt remove ccam`을 안내합니다. Windows는 실행 중인 프로그램이 자신을 지울 수 없어 `Remove-Item` 명령을 출력합니다(e2e는 Windows에서 건너뜀).
+- 폴더 목록은 계정을 지운 뒤 다시 구합니다: 지우는 동안 잡는 잠금이 locks 폴더를 만들 수 있습니다(CCAM_HOME에서는 state 밖).
+- `uninstall`은 예약 이름이 되었습니다(`config.Reserved`, 사이트 계정 페이지 30개 언어). 문서: README 두 개, 사이트 install의 제거 절, faq, 명령 참조, `messages/<언어>.json`의 `commands.uninstall`.
+- 테스트: `TestUninstall`(e2e, 바이너리 사본으로: dry run, 취소, 관리 계정 로그아웃, 단축 명령·폴더·바이너리 삭제, 그룹에 든 제자리 폴더의 로그인 유지와 감싼 status line 복원), `TestRemoveStatusLineRestoresTheWrappedOne`.
