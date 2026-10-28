@@ -1,5 +1,11 @@
 [
   {
+    "tag": "v0.13.0",
+    "date": "2026-10-28",
+    "url": "https://github.com/jhyunwoo/ccam/releases/tag/v0.13.0",
+    "notes": "<p>Changes to know about: <code>uninstall</code> is now a ccam command, so new accounts cannot take that name. An account already called <code>uninstall</code> keeps working, but <code>ccam uninstall</code> now runs the new command: start that account with <code>ccam run uninstall</code>, its number or its shortcut, or rename it with <code>ccam rename uninstall &lt;new-name&gt;</code>. Nothing else behaves differently.</p>\n<h3>New</h3>\n<ul>\n<li><code>ccam uninstall</code> removes ccam in one step: every account as <code>ccam remove</code> does (logged out first), the shortcut commands, <code>~/.config/ccam</code>, <code>~/.local/share/ccam</code>, <code>~/.local/state/ccam</code> and the <code>ccam</code> binary. It lists what goes and asks first, and <code>ccam --dry-run uninstall</code> only lists it. An imported <code>~/.claude</code> stays for plain claude, with a copy of what it shared in its groups and the status line it had before ccam. A <code>.deb</code> install is left to apt (<code>sudo apt remove ccam</code>); on Windows it prints the <code>Remove-Item</code> command for <code>ccam.exe</code></li>\n</ul>\n"
+  },
+  {
     "tag": "v0.12.3",
     "date": "2026-10-27",
     "url": "https://github.com/jhyunwoo/ccam/releases/tag/v0.12.3",
