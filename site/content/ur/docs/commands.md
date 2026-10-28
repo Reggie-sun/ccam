@@ -2,13 +2,13 @@
 title: "کمانڈز کا حوالہ"
 metaTitle: "ccam کمانڈز کا حوالہ"
 description: "ccam کی ہر کمانڈ اور آپشن، ccam add اور ccam <name> سے لے کر ccam usage، ccam next اور ccam doctor تک۔"
-updated: 2026-10-26
+updated: 2026-10-28
 order: 3
 translation: machine
-sourceHash: b9ff0fe8d147
+sourceHash: f4e7679d37de
 ---
 
-کسی کمانڈ کو اصل میں چلائے بغیر یہ دیکھنے کے لیے کہ وہ کیا کرے گی، اس سے پہلے `--dry-run` لگائیں، مثلاً `ccam --dry-run work`۔ یہ Claude Code شروع کرتے وقت (`ccam <name>`، `ccam run`، `ccam next`، `ccam attach`، `ccam ccusage`) اور `group`، `migrate`، `folder`، `shortcut`، `pick`، `update` اور `doctor --fix` کے ساتھ کام کرتا ہے۔ صرف پڑھنے والی کمانڈز، جیسے `list`، `usage`، `share` اور `ext`، اسے قبول کر لیتی ہیں اور ویسے بھی کچھ نہیں بدلتیں۔ باقی کمانڈز، بشمول `group rename`، چلنے کے بجائے اسے مسترد کر دیتی ہیں۔
+کسی کمانڈ کو اصل میں چلائے بغیر یہ دیکھنے کے لیے کہ وہ کیا کرے گی، اس سے پہلے `--dry-run` لگائیں، مثلاً `ccam --dry-run work`۔ یہ Claude Code شروع کرتے وقت (`ccam <name>`، `ccam run`، `ccam next`، `ccam attach`، `ccam ccusage`) اور `group`، `migrate`، `folder`، `shortcut`، `pick`، `update`، `uninstall` اور `doctor --fix` کے ساتھ کام کرتا ہے۔ صرف پڑھنے والی کمانڈز، جیسے `list`، `usage`، `share` اور `ext`، اسے قبول کر لیتی ہیں اور ویسے بھی کچھ نہیں بدلتیں۔ باقی کمانڈز، بشمول `group rename`، چلنے کے بجائے اسے مسترد کر دیتی ہیں۔
 
 <!-- commands -->
 
@@ -155,11 +155,14 @@ ccam ext             # skills, commands, MCP servers and hooks of every account,
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam uninstall       # remove every account, ccam's folders and ccam itself
 ccam version         # also: ccam -v, ccam --version
 ccam completion bash # or zsh, powershell
 ```
 
 `ccam update`، ccam کو بدلنے سے پہلے ریلیز کا SHA-256 چیک سم جانچتا ہے، اور `--version v0.2.0` کوئی مخصوص ریلیز انسٹال کرتا ہے۔ `.deb` پیکیج سے انسٹال کی گئی ccam کی کاپی اس کے بجائے apt سے اپ ڈیٹ ہوتا ہے۔ [اپ ڈیٹ کرنا](/docs/install#update) دیکھیں۔
+
+`ccam uninstall` فہرست دکھاتا ہے کہ وہ کیا ہٹائے گا اور پہلے پوچھتا ہے: ہر اکاؤنٹ، اسی طرح جیسے `ccam remove` کرتا ہے، شارٹ کٹ کمانڈز، ccam کے فولڈرز اور `ccam` کمانڈ۔ امپورٹ کیا گیا فولڈر اپنی جگہ پر رہتا ہے۔ [اَن انسٹال کرنا](/docs/install#uninstall) دیکھیں۔
 
 ## فائلیں
 

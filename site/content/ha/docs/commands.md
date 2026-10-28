@@ -2,13 +2,13 @@
 title: Bayanin umarnai
 metaTitle: Bayanin umarnan ccam
 description: Kowane umarni da zaɓi na ccam, daga ccam add da ccam <name> zuwa ccam usage, ccam next da ccam doctor.
-updated: 2026-10-26
+updated: 2026-10-28
 order: 3
 translation: machine
-sourceHash: b9ff0fe8d147
+sourceHash: f4e7679d37de
 ---
 
-Saka `--dry-run` kafin umarni don ganin abin da zai yi ba tare da ya yi shi ba, misali `ccam --dry-run work`. Yana aiki lokacin fara Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`, `ccam ccusage`) da kuma tare da `group`, `migrate`, `folder`, `shortcut`, `pick`, `update` da `doctor --fix`. Umarnan da ke karantawa kawai, kamar `list`, `usage`, `share` da `ext`, suna karɓar sa kuma ba sa canza komai ko ta yaya. Sauran suna ƙin shi maimakon su gudana, har da `group rename`.
+Saka `--dry-run` kafin umarni don ganin abin da zai yi ba tare da ya yi shi ba, misali `ccam --dry-run work`. Yana aiki lokacin fara Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`, `ccam ccusage`) da kuma tare da `group`, `migrate`, `folder`, `shortcut`, `pick`, `update`, `uninstall` da `doctor --fix`. Umarnan da ke karantawa kawai, kamar `list`, `usage`, `share` da `ext`, suna karɓar sa kuma ba sa canza komai ko ta yaya. Sauran suna ƙin shi maimakon su gudana, har da `group rename`.
 
 <!-- commands -->
 
@@ -155,11 +155,14 @@ ccam ext             # skills, commands, MCP servers and hooks of every account,
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam uninstall       # remove every account, ccam's folders and ccam itself
 ccam version         # also: ccam -v, ccam --version
 ccam completion bash # or zsh, powershell
 ```
 
 `ccam update` yana duba checksum na SHA-256 na sakin kafin ya maye gurbin ccam, kuma `--version v0.2.0` yana girka takamaiman saki. Kwafin ccam da aka girka daga kunshin `.deb` ana sabunta shi da apt a maimakon haka. Duba [sabuntawa](/docs/install#update).
+
+`ccam uninstall` yana lissafa abin da yake cirewa kuma yana tambaya tukuna: kowane asusu kamar yadda `ccam remove` ke yi, gajerun umarnin, foldojin ccam da umarnin `ccam`. Foldar da aka shigo da ita tana nan a inda take. Duba [cirewa](/docs/install#uninstall).
 
 ## Fayiloli
 

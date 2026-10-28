@@ -2,10 +2,10 @@
 title: ติดตั้ง ccam
 metaTitle: "ติดตั้ง ccam บน Linux, macOS และ Windows"
 description: "ติดตั้ง ccam บน Linux, macOS หรือ Windows ด้วยคำสั่งเดียว แพ็กเกจ .deb หรือ go install และอัปเดตด้วย ccam update โดยต้องติดตั้ง Claude Code ก่อน"
-updated: 2026-10-26
+updated: 2026-10-28
 order: 1
 translation: machine
-sourceHash: "2ada7b2650d6"
+sourceHash: "193df30c9d9a"
 ---
 
 ccam เป็นตัวเริ่ม Claude Code ให้คุณ ดังนั้นให้ติดตั้ง [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) ก่อน และตรวจสอบให้แน่ใจว่า `claude --version` ทำงานได้
@@ -140,21 +140,15 @@ sudo apt install ./ccam_*_linux_amd64.deb
 
 ## ถอนการติดตั้ง
 
-การลบ `~/.local/share/ccam` จะลบข้อมูลเข้าสู่ระบบและประวัติการสนทนาที่เก็บไว้ในนั้นด้วย ส่วนโฟลเดอร์ `~/.claude` ที่คุณ[นำเข้า](/docs/commands)ไว้จะยังอยู่ในตำแหน่งเดิม แต่ขณะที่โฟลเดอร์นั้นอยู่ในกลุ่ม ไฟล์ที่ใช้ร่วมกันจะอยู่ใน `~/.local/share/ccam/groups/` ให้รัน `ccam remove <name>` กับบัญชีนั้น (หรือ `ccam group leave`) ก่อนลบสิ่งใด: คำสั่งนี้จะนำบัญชีออกจากกลุ่ม และใส่สำเนาของทุกอย่างที่เคยใช้ร่วมกันกลับเข้าไปในโฟลเดอร์
-
-ลบคำสั่งลัดของบัญชีก่อน ขณะที่ ccam ยังติดตั้งอยู่ `ccam list` จะแสดงคำสั่งลัดในคอลัมน์ Shortcut ลบทีละรายการด้วย `ccam shortcut <account> --remove` หรือลบลิงก์เหล่านั้นออกจาก `~/.local/bin` ด้วยตัวเอง จากนั้นลบคำสั่ง ccam และลบโฟลเดอร์ข้อมูลหากคุณไม่ต้องการบัญชีเหล่านั้นอีกต่อไป:
+`ccam uninstall` จะลบ ccam และทุกอย่างที่ ccam สร้างขึ้น โดยจะแสดงรายการสิ่งที่จะถูกลบก่อน แล้วถามยืนยัน:
 
 ```sh
-ccam list
-ccam shortcut work --remove   # once for each account that has a shortcut
-rm ~/.local/bin/ccam
-rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
+ccam --dry-run uninstall   # only show what would be removed
+ccam uninstall
 ```
 
-บน Windows ใน PowerShell:
+- ทุกบัญชีจะถูกลบแบบเดียวกับที่ `ccam remove` ทำ บัญชีที่อยู่ในโฟลเดอร์ของ ccam จะถูกออกจากระบบก่อน แล้วลบไปพร้อมกับโฟลเดอร์ รวมถึงประวัติการสนทนาและการตั้งค่าของบัญชีนั้นด้วย
+- โฟลเดอร์ `~/.claude` ที่คุณ[นำเข้า](/docs/commands)ไว้จะยังอยู่ในตำแหน่งเดิมเพื่อใช้กับ `claude` แบบปกติ หากโฟลเดอร์นั้นอยู่ในกลุ่ม จะได้สำเนาของทุกอย่างที่เคยใช้ร่วมกันกลับคืนมา แถบสถานะของ ccam ใน `settings.json` ของโฟลเดอร์นั้นจะหลีกทางให้แถบสถานะเดิมที่ ccam ครอบไว้ หากมี และหากโฟลเดอร์นั้นมีปลั๊กอิน ccam อยู่ ccam จะพิมพ์คำสั่ง `/plugin uninstall` ไว้ให้รันใน Claude Code
+- คำสั่งลัด, `~/.config/ccam`, `~/.local/share/ccam` (รวมถึงถังขยะของ ccam) และ `~/.local/state/ccam` จะถูกลบ จากนั้นจึงลบคำสั่ง `ccam` เอง
 
-```powershell
-ccam shortcut work --remove   # once for each account that has a shortcut
-Remove-Item ~\.local\bin\ccam.exe
-Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
-```
+ccam จะปฏิเสธขณะที่มีบัญชีใดกำลังทำงานอยู่ ให้ปิดเซสชัน Claude Code ของบัญชีนั้นก่อน ส่วน `/usr/bin/ccam` ที่ติดตั้งด้วย apt จะยังอยู่ ให้ลบภายหลังด้วย `sudo apt remove ccam` บน Windows โปรแกรมที่กำลังทำงานไม่สามารถลบตัวเองได้ ดังนั้น `ccam uninstall` จะจบด้วยการพิมพ์คำสั่ง `Remove-Item` สำหรับ `ccam.exe`

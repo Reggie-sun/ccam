@@ -2,13 +2,13 @@
 title: Sanggunian ng mga command
 metaTitle: Sanggunian ng mga command ng ccam
 description: Bawat command at option ng ccam, mula sa ccam add at ccam <name> hanggang ccam usage, ccam next at ccam doctor.
-updated: 2026-10-26
+updated: 2026-10-28
 order: 3
 translation: machine
-sourceHash: b9ff0fe8d147
+sourceHash: f4e7679d37de
 ---
 
-Ilagay ang `--dry-run` bago ang isang command para makita kung ano ang gagawin nito nang hindi ito talagang ginagawa, halimbawa `ccam --dry-run work`. Gumagana ito kapag sinisimulan ang Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`, `ccam ccusage`) at sa `group`, `migrate`, `folder`, `shortcut`, `pick`, `update` at `doctor --fix`. Tinatanggap ito ng mga command na nagbabasa lang, gaya ng `list`, `usage`, `share` at `ext`, pero wala naman silang binabago. Tinatanggihan ito ng iba sa halip na tumakbo, kasama ang `group rename`.
+Ilagay ang `--dry-run` bago ang isang command para makita kung ano ang gagawin nito nang hindi ito talagang ginagawa, halimbawa `ccam --dry-run work`. Gumagana ito kapag sinisimulan ang Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`, `ccam ccusage`) at sa `group`, `migrate`, `folder`, `shortcut`, `pick`, `update`, `uninstall` at `doctor --fix`. Tinatanggap ito ng mga command na nagbabasa lang, gaya ng `list`, `usage`, `share` at `ext`, pero wala naman silang binabago. Tinatanggihan ito ng iba sa halip na tumakbo, kasama ang `group rename`.
 
 <!-- commands -->
 
@@ -155,11 +155,14 @@ ccam ext             # skills, commands, MCP servers and hooks of every account,
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam uninstall       # remove every account, ccam's folders and ccam itself
 ccam version         # also: ccam -v, ccam --version
 ccam completion bash # or zsh, powershell
 ```
 
 Sinusuri ng `ccam update` ang SHA-256 checksum ng release bago nito palitan ang ccam, at nag-i-install ang `--version v0.2.0` ng partikular na release. Ang kopya ng ccam na in-install mula sa `.deb` package ay ina-update na lang gamit ang apt. Tingnan ang [pag-update](/docs/install#update).
+
+Inililista ng `ccam uninstall` ang mga aalisin nito at nagtatanong muna: ang bawat account gaya ng ginagawa ng `ccam remove`, ang mga shortcut command, ang mga folder ng ccam at ang command na `ccam`. Mananatili kung nasaan ito ang in-import na folder. Tingnan ang [pag-uninstall](/docs/install#uninstall).
 
 ## Mga file
 

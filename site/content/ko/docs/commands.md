@@ -2,13 +2,13 @@
 title: 명령어 레퍼런스
 metaTitle: "ccam 명령어 레퍼런스"
 description: ccam add, ccam <name>부터 ccam usage, ccam next, ccam doctor까지 ccam의 모든 명령과 옵션을 정리했습니다.
-updated: 2026-10-26
+updated: 2026-10-28
 order: 3
 translation: machine
-sourceHash: "b9ff0fe8d147"
+sourceHash: "f4e7679d37de"
 ---
 
-명령 앞에 `--dry-run`을 붙이면 실제로 실행하지 않고 무엇을 할지만 보여 줍니다(예: `ccam --dry-run work`). Claude Code를 시작할 때(`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`, `ccam ccusage`)와 `group`, `migrate`, `folder`, `shortcut`, `pick`, `update`, `doctor --fix`에서 쓸 수 있습니다. `list`, `usage`, `share`, `ext`처럼 읽기만 하는 명령은 이 옵션을 받아들이지만 어차피 아무것도 바꾸지 않습니다. 나머지 명령은 `group rename`을 포함해 실행하지 않고 이 옵션을 거부합니다.
+명령 앞에 `--dry-run`을 붙이면 실제로 실행하지 않고 무엇을 할지만 보여 줍니다(예: `ccam --dry-run work`). Claude Code를 시작할 때(`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`, `ccam ccusage`)와 `group`, `migrate`, `folder`, `shortcut`, `pick`, `update`, `uninstall`, `doctor --fix`에서 쓸 수 있습니다. `list`, `usage`, `share`, `ext`처럼 읽기만 하는 명령은 이 옵션을 받아들이지만 어차피 아무것도 바꾸지 않습니다. 나머지 명령은 `group rename`을 포함해 실행하지 않고 이 옵션을 거부합니다.
 
 <!-- commands -->
 
@@ -155,11 +155,14 @@ ccam ext             # skills, commands, MCP servers and hooks of every account,
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam uninstall       # remove every account, ccam's folders and ccam itself
 ccam version         # also: ccam -v, ccam --version
 ccam completion bash # or zsh, powershell
 ```
 
 `ccam update`는 ccam을 교체하기 전에 릴리스의 SHA-256 체크섬을 확인하고, `--version v0.2.0`을 주면 특정 릴리스를 설치합니다. `.deb` 패키지로 설치한 ccam은 apt로 업데이트합니다. 자세한 내용은 [업데이트](/docs/install#update)를 참고하세요.
+
+`ccam uninstall`은 지울 항목을 보여 주고 먼저 확인을 받습니다. `ccam remove`와 같은 방식으로 모든 계정을 지우고, 단축 명령, ccam의 폴더, `ccam` 명령도 지웁니다. 가져온 폴더는 원래 위치에 남습니다. 자세한 내용은 [제거](/docs/install#uninstall)를 참고하세요.
 
 ## 파일
 

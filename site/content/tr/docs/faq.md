@@ -2,10 +2,10 @@
 title: Sık sorulan sorular
 metaTitle: "ccam SSS: birden fazla Claude Code hesabı"
 description: ccam, Claude Code hesapları, kullanım limitleri, paylaşım, gizlilik ve desteklenen sistemler hakkında yanıtlar.
-updated: 2026-10-26
+updated: 2026-10-28
 order: 6
 translation: machine
-sourceHash: b53878aaabc7
+sourceHash: 64cd522eb711
 ---
 
 ## ccam resmi bir Anthropic aracı mı?
@@ -72,4 +72,4 @@ Claude Code'u ccam üzerinden başlatmak yaklaşık 4 milisaniye ekler; bu süre
 
 ## ccam'ı nasıl kaldırırım?
 
-Her hesabın kısayolunu `ccam shortcut <account> --remove` ile kaldırın. `~/.claude` klasörünü içe aktardıysanız ve bir gruptaysa, paylaştığı şeylerin bir kopyasını geri alması için önce onun için `ccam remove <name>` çalıştırın. Ardından `ccam` komutunu `~/.local/bin` içinden silin ve hesaplara artık ihtiyacınız yoksa `~/.config/ccam`, `~/.local/share/ccam` ve `~/.local/state/ccam` klasörlerini de silin. [Kurulum](/docs/install#uninstall) sayfasına bakın.
+`ccam uninstall` çalıştırın. Nelerin silineceğini listeler ve önce sorar, ardından her hesabı (önce oturumunu kapatarak), kısayol komutlarını, `~/.config/ccam`, `~/.local/share/ccam`, `~/.local/state/ccam` klasörlerini ve `ccam` komutunu kaldırır. İçe aktarılmış bir `~/.claude` yerinde kalır ve gruplarında paylaştığı şeylerin bir kopyası ona geri konur. [Kurulum](/docs/install#uninstall) sayfasına bakın.

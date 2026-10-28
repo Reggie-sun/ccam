@@ -2,13 +2,13 @@
 title: Marejeo ya amri
 metaTitle: Marejeo ya amri za ccam
 description: Kila amri na chaguo la ccam, kuanzia ccam add na ccam <name> hadi ccam usage, ccam next na ccam doctor.
-updated: 2026-10-26
+updated: 2026-10-28
 order: 3
 translation: machine
-sourceHash: "b9ff0fe8d147"
+sourceHash: "f4e7679d37de"
 ---
 
-Weka `--dry-run` kabla ya amri ili kuona itakachofanya bila kukifanya, kwa mfano `ccam --dry-run work`. Inafanya kazi unapoanzisha Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`, `ccam ccusage`) na pamoja na `group`, `migrate`, `folder`, `shortcut`, `pick`, `update` na `doctor --fix`. Amri zinazosoma tu, kama `list`, `usage`, `share` na `ext`, huikubali na hata hivyo hazibadilishi chochote. Zilizobaki huikataa badala ya kufanya kazi, ikiwemo `group rename`.
+Weka `--dry-run` kabla ya amri ili kuona itakachofanya bila kukifanya, kwa mfano `ccam --dry-run work`. Inafanya kazi unapoanzisha Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`, `ccam ccusage`) na pamoja na `group`, `migrate`, `folder`, `shortcut`, `pick`, `update`, `uninstall` na `doctor --fix`. Amri zinazosoma tu, kama `list`, `usage`, `share` na `ext`, huikubali na hata hivyo hazibadilishi chochote. Zilizobaki huikataa badala ya kufanya kazi, ikiwemo `group rename`.
 
 <!-- commands -->
 
@@ -155,11 +155,14 @@ ccam ext             # skills, commands, MCP servers and hooks of every account,
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam uninstall       # remove every account, ccam's folders and ccam itself
 ccam version         # also: ccam -v, ccam --version
 ccam completion bash # or zsh, powershell
 ```
 
 `ccam update` hukagua checksum ya SHA-256 ya toleo kabla ya kubadilisha ccam, na `--version v0.2.0` husakinisha toleo mahususi. Nakala ya ccam iliyosakinishwa kutoka kifurushi cha `.deb` husasishwa kwa apt badala yake. Tazama [kusasisha ccam](/docs/install#update).
+
+`ccam uninstall` huorodhesha itakachoondoa na huuliza kwanza: kila akaunti kama `ccam remove` inavyofanya, amri za njia fupi, folda za ccam na amri ya `ccam`. Folda iliyoingizwa hubaki pale ilipo. Tazama [ondoa ccam](/docs/install#uninstall).
 
 ## Faili
 

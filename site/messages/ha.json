@@ -161,6 +161,7 @@
     "ccusage": "Nuna rahotannin ccusage na token da kuɗi na tattaunawar kowane asusu",
     "hook": "Hooks na plugin ɗin ccam a Claude Code ne ke gudanar da shi (iyakokin amfani, /ccam:switch)",
     "update": "Sabunta ccam zuwa sakin baya-bayan nan bayan duba checksum nasa",
+    "uninstall": "Cire kowane asusu, gajerun umarnin, foldojin ccam da ccam kansa",
     "completion": "Buga completion na bash, zsh ko PowerShell"
   },
   "copy": {

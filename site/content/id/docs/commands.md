@@ -2,13 +2,13 @@
 title: Referensi perintah
 metaTitle: Referensi perintah ccam
 description: Semua perintah dan opsi ccam, dari ccam add dan ccam <name> hingga ccam usage, ccam next, dan ccam doctor.
-updated: 2026-10-26
+updated: 2026-10-28
 order: 3
 translation: machine
-sourceHash: "b9ff0fe8d147"
+sourceHash: "f4e7679d37de"
 ---
 
-Letakkan `--dry-run` sebelum perintah untuk melihat apa yang akan dilakukannya tanpa benar-benar menjalankannya, misalnya `ccam --dry-run work`. Opsi ini berfungsi saat menjalankan Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`, `ccam ccusage`) dan dengan `group`, `migrate`, `folder`, `shortcut`, `pick`, `update`, serta `doctor --fix`. Perintah yang hanya membaca, seperti `list`, `usage`, `share`, dan `ext`, menerimanya dan memang tidak mengubah apa pun. Perintah lainnya menolaknya alih-alih berjalan, termasuk `group rename`.
+Letakkan `--dry-run` sebelum perintah untuk melihat apa yang akan dilakukannya tanpa benar-benar menjalankannya, misalnya `ccam --dry-run work`. Opsi ini berfungsi saat menjalankan Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`, `ccam ccusage`) dan dengan `group`, `migrate`, `folder`, `shortcut`, `pick`, `update`, `uninstall`, serta `doctor --fix`. Perintah yang hanya membaca, seperti `list`, `usage`, `share`, dan `ext`, menerimanya dan memang tidak mengubah apa pun. Perintah lainnya menolaknya alih-alih berjalan, termasuk `group rename`.
 
 <!-- commands -->
 
@@ -155,11 +155,14 @@ ccam ext             # skills, commands, MCP servers and hooks of every account,
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam uninstall       # remove every account, ccam's folders and ccam itself
 ccam version         # also: ccam -v, ccam --version
 ccam completion bash # or zsh, powershell
 ```
 
 `ccam update` memeriksa checksum SHA-256 rilis sebelum mengganti ccam, dan `--version v0.2.0` menginstal rilis tertentu. Salinan ccam yang diinstal dari paket `.deb` diperbarui dengan apt. Lihat [pembaruan](/docs/install#update).
+
+`ccam uninstall` menampilkan apa saja yang dihapusnya dan bertanya terlebih dahulu: setiap akun seperti yang dilakukan `ccam remove`, perintah pintasan, folder ccam, dan perintah `ccam`. Folder yang diimpor tetap berada di tempatnya. Lihat [menghapus instalasi](/docs/install#uninstall).
 
 ## File
 

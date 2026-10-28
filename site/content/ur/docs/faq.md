@@ -2,10 +2,10 @@
 title: "اکثر پوچھے جانے والے سوالات"
 metaTitle: "ccam سوالات: Claude Code کے کئی اکاؤنٹس"
 description: "ccam، Claude Code اکاؤنٹس، استعمال کی حدوں، شیئرنگ، پرائیویسی اور معاون سسٹمز کے بارے میں سوالات کے جوابات۔"
-updated: 2026-10-26
+updated: 2026-10-28
 order: 6
 translation: machine
-sourceHash: b53878aaabc7
+sourceHash: 64cd522eb711
 ---
 
 ## کیا ccam، Anthropic کا سرکاری ٹول ہے؟
@@ -72,4 +72,4 @@ ccam کے ذریعے Claude Code شروع کرنے میں تقریباً 4 مل�
 
 ## میں ccam کو اَن انسٹال کیسے کروں؟
 
-ہر اکاؤنٹ کا شارٹ کٹ `ccam shortcut <account> --remove` سے ہٹائیں۔ اگر آپ نے `~/.claude` امپورٹ کیا تھا اور وہ کسی گروپ میں ہے تو پہلے اس کے لیے `ccam remove <name>` چلائیں، تاکہ اسے اس چیز کی کاپی واپس مل جائے جو وہ شیئر کرتا ہے۔ پھر `~/.local/bin` سے `ccam` حذف کریں، اور اگر اکاؤنٹس کی مزید ضرورت نہیں تو `~/.config/ccam`، `~/.local/share/ccam` اور `~/.local/state/ccam` ہٹا دیں۔ [انسٹال](/docs/install#uninstall) دیکھیں۔
+`ccam uninstall` چلائیں۔ یہ فہرست دکھاتا ہے کہ کیا کچھ ہٹے گا اور پہلے پوچھتا ہے، پھر ہر اکاؤنٹ (پہلے لاگ آؤٹ کر کے)، شارٹ کٹ کمانڈز، `~/.config/ccam`، `~/.local/share/ccam`، `~/.local/state/ccam` اور `ccam` کمانڈ ہٹا دیتا ہے۔ امپورٹ کیا گیا `~/.claude` رہ جاتا ہے، اور اسے اس چیز کی کاپی مل جاتی ہے جو اس نے اپنے گروپس میں شیئر کی تھی۔ [انسٹال](/docs/install#uninstall) دیکھیں۔

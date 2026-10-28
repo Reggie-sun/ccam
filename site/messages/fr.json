@@ -161,6 +161,7 @@
     "ccusage": "Afficher les rapports de jetons et de coûts de ccusage pour les conversations de tous les comptes",
     "hook": "Exécuté par les hooks du plugin ccam dans Claude Code (limites d'utilisation, /ccam:switch)",
     "update": "Mettre à jour ccam vers la dernière version après avoir vérifié sa somme de contrôle",
+    "uninstall": "Supprimer tous les comptes, les raccourcis, les dossiers de ccam et ccam lui-même",
     "completion": "Afficher la complétion bash, zsh ou PowerShell"
   },
   "copy": {

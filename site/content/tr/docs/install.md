@@ -2,10 +2,10 @@
 title: ccam kurulumu
 metaTitle: ccam'ı Linux, macOS ve Windows üzerine kurun
 description: ccam'ı Linux, macOS veya Windows'a tek komutla, bir .deb paketiyle ya da go install ile kurun, ccam update ile güncelleyin. Önce Claude Code kurulu olmalıdır.
-updated: 2026-10-26
+updated: 2026-10-28
 order: 1
 translation: machine
-sourceHash: 2ada7b2650d6
+sourceHash: 193df30c9d9a
 ---
 
 ccam, Claude Code'u sizin için başlatır; bu nedenle önce [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) kurun ve `claude --version` komutunun çalıştığından emin olun.
@@ -140,21 +140,15 @@ sudo apt install ./ccam_*_linux_amd64.deb
 
 ## Kaldırma
 
-`~/.local/share/ccam` klasörünü silmek, orada saklanan giriş bilgilerini ve konuşma geçmişini de siler. [İçe aktardığınız](/docs/commands) bir `~/.claude` klasörü olduğu yerde kalır, ancak bir gruptayken paylaştığı dosyalar `~/.local/share/ccam/groups/` içinde durur. Herhangi bir şeyi silmeden önce onun için `ccam remove <name>` (veya `ccam group leave`) çalıştırın: bu, klasörü gruplarından çıkarır ve paylaştığı her şeyin bir kopyasını klasöre geri koyar.
-
-Önce, ccam hâlâ kuruluyken hesap kısayollarını kaldırın. `ccam list` bunları Shortcut sütununda gösterir; her birini `ccam shortcut <account> --remove` ile kaldırın ya da bu bağlantıları `~/.local/bin` içinden kendiniz silin. Ardından komutu ve hesaplara artık ihtiyacınız yoksa veri klasörlerini silin:
+`ccam uninstall`, ccam'ı ve oluşturduğu her şeyi kaldırır. Önce nelerin silineceğini listeler ve sorar:
 
 ```sh
-ccam list
-ccam shortcut work --remove   # once for each account that has a shortcut
-rm ~/.local/bin/ccam
-rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
+ccam --dry-run uninstall   # only show what would be removed
+ccam uninstall
 ```
 
-Windows'ta, PowerShell'de:
+- Her hesap `ccam remove` komutunun yaptığı gibi kaldırılır. ccam'in klasörlerindeki bir hesabın önce oturumu kapatılır, ardından hesap klasörüyle birlikte, konuşma geçmişi ve ayarları da dahil silinir.
+- [İçe aktardığınız](/docs/commands) bir `~/.claude` klasörü, düz `claude` için olduğu yerde kalır. Bir gruptaysa paylaştığı her şeyin bir kopyasını geri alır. `settings.json` dosyasındaki ccam durum satırı, varsa ccam'in sarmaladığı durum satırına yerini bırakır. ccam eklentisi kuruluysa ccam, Claude Code içinde çalıştırılacak `/plugin uninstall` komutunu yazdırır.
+- Kısayol komutları, `~/.config/ccam`, `~/.local/share/ccam` (ccam'in çöp klasörüyle birlikte) ve `~/.local/state/ccam` silinir, ardından `ccam` komutunun kendisi.
 
-```powershell
-ccam shortcut work --remove   # once for each account that has a shortcut
-Remove-Item ~\.local\bin\ccam.exe
-Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
-```
+Bir hesap çalışırken ccam bunu reddeder; önce o hesabın Claude Code oturumlarını kapatın. apt'nin kurduğu bir `/usr/bin/ccam` yerinde kalır; onu sonradan `sudo apt remove ccam` ile kaldırın. Windows'ta çalışan bir program kendini silemez, bu yüzden `ccam uninstall` son olarak `ccam.exe` için `Remove-Item` komutunu yazdırır.

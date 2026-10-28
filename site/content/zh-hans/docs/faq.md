@@ -2,10 +2,10 @@
 title: 常见问题
 metaTitle: "ccam 常见问题：Claude Code 多账号"
 description: 关于 ccam、Claude Code 多账号、用量限制、共享、隐私和支持的操作系统的常见问题解答。
-updated: 2026-10-26
+updated: 2026-10-28
 order: 6
 translation: machine
-sourceHash: "b53878aaabc7"
+sourceHash: "64cd522eb711"
 ---
 
 ## ccam 是 Anthropic 的官方工具吗？
@@ -72,4 +72,4 @@ Linux（Ubuntu、Debian、Fedora、Arch、Alpine 等）、macOS 以及 Windows 1
 
 ## 如何卸载 ccam？
 
-用 `ccam shortcut <account> --remove` 删除每个账号的快捷命令。如果你导入了 `~/.claude` 并且它在某个组中，请先对它运行 `ccam remove <name>`，让它拿回一份所共享内容的副本。然后从 `~/.local/bin` 中删除 `ccam`；如果不再需要这些账号，再删除 `~/.config/ccam`、`~/.local/share/ccam` 和 `~/.local/state/ccam`。参见[安装](/docs/install#uninstall)。
+运行 `ccam uninstall`。它会先列出将要删除的内容并征求确认，然后删除每个账号（先退出登录）、快捷命令、`~/.config/ccam`、`~/.local/share/ccam`、`~/.local/state/ccam` 和 `ccam` 命令。导入的 `~/.claude` 会保留，并拿回一份它在各个组中共享过的内容的副本。参见[安装](/docs/install#uninstall)。

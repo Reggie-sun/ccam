@@ -2,10 +2,10 @@
 title: Часті запитання
 metaTitle: "FAQ про ccam: кілька облікових записів Claude Code"
 description: Відповіді про ccam, облікові записи Claude Code, ліміти використання, спільне використання, конфіденційність і підтримувані системи.
-updated: 2026-10-26
+updated: 2026-10-28
 order: 6
 translation: machine
-sourceHash: "b53878aaabc7"
+sourceHash: "64cd522eb711"
 ---
 
 ## Чи є ccam офіційним інструментом Anthropic?
@@ -72,4 +72,4 @@ Linux (Ubuntu, Debian, Fedora, Arch, Alpine та інші), macOS і Windows 10 
 
 ## Як видалити ccam?
 
-Видаліть коротку команду кожного облікового запису командою `ccam shortcut <account> --remove`. Якщо ви імпортували `~/.claude` і вона входить до групи, спершу виконайте для неї `ccam remove <name>`, щоб вона отримала назад копію того, що має спільним. Потім видаліть `ccam` з `~/.local/bin`, а також `~/.config/ccam`, `~/.local/share/ccam` і `~/.local/state/ccam`, якщо облікові записи вам більше не потрібні. Див. [встановлення](/docs/install#uninstall).
+Виконайте `ccam uninstall`. Вона показує, що буде видалено, і спершу питає, а потім видаляє кожен обліковий запис (спершу виконавши вихід), короткі команди, `~/.config/ccam`, `~/.local/share/ccam`, `~/.local/state/ccam` і команду `ccam`. Імпортована `~/.claude` залишається й отримує копію того, що мала спільним у своїх групах. Див. [встановлення](/docs/install#uninstall).

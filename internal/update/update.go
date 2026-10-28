@@ -140,7 +140,7 @@ func Run(ctx context.Context, u *Updater, o Options, out io.Writer) error {
 		fmt.Fprintf(out, "ccam %s is available (you have %s). Run `ccam update`.\n", want, orDev(u.Current))
 		return nil
 	}
-	if u.managed() {
+	if u.Managed() {
 		return u.managedError(tag)
 	}
 	if err := writable(filepath.Dir(u.Exe)); err != nil {
@@ -401,8 +401,8 @@ func extract(archive []byte) ([]byte, error) {
 	}
 }
 
-// managed reports whether a package manager owns the binary.
-func (u *Updater) managed() bool {
+// Managed reports whether a package manager owns the binary.
+func (u *Updater) Managed() bool {
 	dir := filepath.Dir(u.Exe)
 	for _, d := range u.SystemDirs {
 		if dir == d {

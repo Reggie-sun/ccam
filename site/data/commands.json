@@ -108,6 +108,10 @@
     "usage": "ccam statusline"
   },
   {
+    "key": "uninstall",
+    "usage": "ccam uninstall"
+  },
+  {
     "key": "update",
     "usage": "ccam update"
   },

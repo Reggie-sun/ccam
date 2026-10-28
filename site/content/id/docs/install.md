@@ -2,10 +2,10 @@
 title: Instal ccam
 metaTitle: Instal ccam di Linux, macOS, dan Windows
 description: Instal ccam di Linux, macOS, atau Windows dengan satu perintah, paket .deb, atau go install, lalu perbarui dengan ccam update. Instal Claude Code dulu.
-updated: 2026-10-26
+updated: 2026-10-28
 order: 1
 translation: machine
-sourceHash: "2ada7b2650d6"
+sourceHash: "193df30c9d9a"
 ---
 
 ccam menjalankan Claude Code untuk Anda, jadi instal [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) terlebih dahulu dan pastikan `claude --version` berfungsi.
@@ -140,21 +140,15 @@ sudo apt install ./ccam_*_linux_amd64.deb
 
 ## Menghapus instalasi
 
-Menghapus `~/.local/share/ccam` juga menghapus login dan riwayat percakapan yang tersimpan di sana. Folder `~/.claude` yang Anda [impor](/docs/commands) tetap berada di tempatnya, tetapi selama folder itu ada di sebuah grup, file yang dibagikannya berada di `~/.local/share/ccam/groups/`. Jalankan `ccam remove <name>` untuknya (atau `ccam group leave`) sebelum Anda menghapus apa pun: langkah ini mengeluarkannya dari grup-grupnya dan mengembalikan salinan dari semua yang dibagikannya ke folder itu.
-
-Hapus dulu pintasan akun selagi ccam masih terpasang. `ccam list` menampilkannya di kolom Shortcut; hapus masing-masing dengan `ccam shortcut <account> --remove`, atau hapus sendiri tautan itu dari `~/.local/bin`. Lalu hapus perintahnya, serta folder data jika Anda tidak lagi memerlukan akun-akun tersebut:
+`ccam uninstall` menghapus ccam dan semua yang dibuatnya. Perintah ini lebih dulu menampilkan apa saja yang akan dihapus, lalu bertanya:
 
 ```sh
-ccam list
-ccam shortcut work --remove   # once for each account that has a shortcut
-rm ~/.local/bin/ccam
-rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
+ccam --dry-run uninstall   # only show what would be removed
+ccam uninstall
 ```
 
-Di Windows, di PowerShell:
+- Setiap akun dihapus seperti yang dilakukan `ccam remove`. Akun di folder ccam di-logout terlebih dahulu lalu dihapus bersama foldernya, termasuk riwayat percakapan dan pengaturannya.
+- Folder `~/.claude` yang Anda [impor](/docs/commands) tetap berada di tempatnya untuk `claude` biasa. Jika folder itu ada di sebuah grup, folder itu mendapatkan kembali salinan dari semua yang dibagikannya. Status line ccam di `settings.json` miliknya digantikan oleh status line yang dibungkus ccam, jika ada. Jika folder itu memiliki plugin ccam, ccam mencetak perintah `/plugin uninstall` untuk dijalankan di Claude Code.
+- Perintah pintasan, `~/.config/ccam`, `~/.local/share/ccam` (beserta sampah ccam), dan `~/.local/state/ccam` dihapus, lalu perintah `ccam` itu sendiri.
 
-```powershell
-ccam shortcut work --remove   # once for each account that has a shortcut
-Remove-Item ~\.local\bin\ccam.exe
-Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
-```
+ccam menolak selama ada akun yang sedang berjalan; keluar dulu dari sesi Claude Code akun itu. `/usr/bin/ccam` yang diinstal oleh apt tetap ada; hapus setelahnya dengan `sudo apt remove ccam`. Di Windows, program yang sedang berjalan tidak dapat menghapus dirinya sendiri, jadi `ccam uninstall` diakhiri dengan mencetak perintah `Remove-Item` untuk `ccam.exe`.

@@ -2,10 +2,10 @@
 title: Pertanyaan yang sering diajukan
 metaTitle: "FAQ ccam: beberapa akun Claude Code"
 description: Jawaban seputar ccam, akun Claude Code, batas penggunaan, pembagian, privasi, dan sistem yang didukung.
-updated: 2026-10-26
+updated: 2026-10-28
 order: 6
 translation: machine
-sourceHash: "b53878aaabc7"
+sourceHash: "64cd522eb711"
 ---
 
 ## Apakah ccam alat resmi dari Anthropic?
@@ -72,4 +72,4 @@ Jalankan `ccam update`. Perintah ini mengunduh rilis terbaru, memeriksa checksum
 
 ## Bagaimana cara menghapus instalasi ccam?
 
-Hapus pintasan setiap akun dengan `ccam shortcut <account> --remove`. Jika Anda mengimpor `~/.claude` dan folder itu ada di sebuah grup, jalankan `ccam remove <name>` untuknya terlebih dahulu, agar folder itu mendapatkan kembali salinan dari apa yang dibagikannya. Lalu hapus `ccam` dari `~/.local/bin`, dan hapus `~/.config/ccam`, `~/.local/share/ccam`, dan `~/.local/state/ccam` jika Anda tidak lagi memerlukan akun-akun tersebut. Lihat [instalasi](/docs/install#uninstall).
+Jalankan `ccam uninstall`. Perintah ini menampilkan apa saja yang akan dihapus dan bertanya terlebih dahulu, lalu menghapus setiap akun (di-logout terlebih dahulu), perintah pintasan, `~/.config/ccam`, `~/.local/share/ccam`, `~/.local/state/ccam`, dan perintah `ccam`. `~/.claude` yang diimpor tetap ada, dengan salinan dari apa yang dibagikannya di grup-grupnya. Lihat [instalasi](/docs/install#uninstall).

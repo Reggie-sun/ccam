@@ -2,13 +2,13 @@
 title: "কমান্ড রেফারেন্স"
 metaTitle: "ccam কমান্ড রেফারেন্স"
 description: "ccam add ও ccam <name> থেকে ccam usage, ccam next ও ccam doctor পর্যন্ত ccam-এর প্রতিটি কমান্ড ও অপশন।"
-updated: 2026-10-26
+updated: 2026-10-28
 order: 3
 translation: machine
-sourceHash: b9ff0fe8d147
+sourceHash: f4e7679d37de
 ---
 
-কোনো কমান্ড আসলে না চালিয়ে সেটি কী করবে তা দেখতে কমান্ডের আগে `--dry-run` দিন, যেমন `ccam --dry-run work`। এটি Claude Code চালু করার সময় (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`, `ccam ccusage`) এবং `group`, `migrate`, `folder`, `shortcut`, `pick`, `update` ও `doctor --fix`-এর সঙ্গে কাজ করে। যে কমান্ডগুলো শুধু পড়ে, যেমন `list`, `usage`, `share` ও `ext`, সেগুলো এটি গ্রহণ করে এবং এমনিতেও কিছু বদলায় না। বাকিগুলো চলার বদলে এটি প্রত্যাখ্যান করে, `group rename`-সহ।
+কোনো কমান্ড আসলে না চালিয়ে সেটি কী করবে তা দেখতে কমান্ডের আগে `--dry-run` দিন, যেমন `ccam --dry-run work`। এটি Claude Code চালু করার সময় (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`, `ccam ccusage`) এবং `group`, `migrate`, `folder`, `shortcut`, `pick`, `update`, `uninstall` ও `doctor --fix`-এর সঙ্গে কাজ করে। যে কমান্ডগুলো শুধু পড়ে, যেমন `list`, `usage`, `share` ও `ext`, সেগুলো এটি গ্রহণ করে এবং এমনিতেও কিছু বদলায় না। বাকিগুলো চলার বদলে এটি প্রত্যাখ্যান করে, `group rename`-সহ।
 
 <!-- commands -->
 
@@ -155,11 +155,14 @@ ccam ext             # skills, commands, MCP servers and hooks of every account,
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam uninstall       # remove every account, ccam's folders and ccam itself
 ccam version         # also: ccam -v, ccam --version
 ccam completion bash # or zsh, powershell
 ```
 
 ccam বদলানোর আগে `ccam update` রিলিজের SHA-256 চেকসাম যাচাই করে, আর `--version v0.2.0` একটি নির্দিষ্ট রিলিজ ইনস্টল করে। `.deb` প্যাকেজ থেকে ইনস্টল করা ccam এর বদলে apt দিয়ে আপডেট করুন। [আপডেট](/docs/install#update) দেখুন।
+
+`ccam uninstall` কী কী সরাবে তার তালিকা দেখায় এবং আগে জিজ্ঞেস করে: `ccam remove`-এর মতো করে প্রতিটি অ্যাকাউন্ট, শর্টকাট কমান্ডগুলো, ccam-এর ফোল্ডারগুলো আর `ccam` কমান্ডটি। ইমপোর্ট করা ফোল্ডার যেখানে আছে সেখানেই থাকে। [আনইনস্টল](/docs/install#uninstall) দেখুন।
 
 ## ফাইল
 

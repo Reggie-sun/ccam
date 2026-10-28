@@ -161,6 +161,7 @@
     "ccusage": "显示 ccusage 根据所有账号的对话生成的 token 和费用报告",
     "hook": "由 ccam 插件在 Claude Code 中的钩子运行（用量限制、/ccam:switch）",
     "update": "校验校验和后，将 ccam 更新到最新版本",
+    "uninstall": "删除所有账号、快捷命令、ccam 的文件夹以及 ccam 本身",
     "completion": "输出 bash、zsh 或 PowerShell 的补全脚本"
   },
   "copy": {

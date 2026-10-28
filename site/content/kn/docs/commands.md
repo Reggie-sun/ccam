@@ -2,13 +2,13 @@
 title: ಕಮಾಂಡ್ ಉಲ್ಲೇಖ
 metaTitle: ccam ಕಮಾಂಡ್ ಉಲ್ಲೇಖ
 description: ccam add ಮತ್ತು ccam <name> ನಿಂದ ccam usage, ccam next ಮತ್ತು ccam doctor ವರೆಗೆ, ccam ನ ಎಲ್ಲಾ ಕಮಾಂಡ್‌ಗಳು ಮತ್ತು ಆಯ್ಕೆಗಳು.
-updated: 2026-10-26
+updated: 2026-10-28
 order: 3
 translation: machine
-sourceHash: "b9ff0fe8d147"
+sourceHash: "f4e7679d37de"
 ---
 
-ಕಮಾಂಡ್ ಏನು ಮಾಡುತ್ತದೆ ಎಂಬುದನ್ನು ನಿಜವಾಗಿ ಮಾಡದೆಯೇ ನೋಡಲು, ಅದರ ಮುಂದೆ `--dry-run` ಹಾಕಿ. ಉದಾಹರಣೆಗೆ `ccam --dry-run work`. ಇದು Claude Code ಆರಂಭಿಸುವಾಗ (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`, `ccam ccusage`) ಮತ್ತು `group`, `migrate`, `folder`, `shortcut`, `pick`, `update` ಹಾಗೂ `doctor --fix` ಜೊತೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ. `list`, `usage`, `share` ಮತ್ತು `ext` ನಂತಹ ಓದುವ ಕಮಾಂಡ್‌ಗಳು ಇದನ್ನು ಸ್ವೀಕರಿಸುತ್ತವೆ, ಹೇಗಿದ್ದರೂ ಅವು ಏನನ್ನೂ ಬದಲಾಯಿಸುವುದಿಲ್ಲ. ಉಳಿದವು, `group rename` ಸೇರಿದಂತೆ, ಚಾಲನೆಯಾಗುವ ಬದಲು ಇದನ್ನು ನಿರಾಕರಿಸುತ್ತವೆ.
+ಕಮಾಂಡ್ ಏನು ಮಾಡುತ್ತದೆ ಎಂಬುದನ್ನು ನಿಜವಾಗಿ ಮಾಡದೆಯೇ ನೋಡಲು, ಅದರ ಮುಂದೆ `--dry-run` ಹಾಕಿ. ಉದಾಹರಣೆಗೆ `ccam --dry-run work`. ಇದು Claude Code ಆರಂಭಿಸುವಾಗ (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`, `ccam ccusage`) ಮತ್ತು `group`, `migrate`, `folder`, `shortcut`, `pick`, `update`, `uninstall` ಹಾಗೂ `doctor --fix` ಜೊತೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ. `list`, `usage`, `share` ಮತ್ತು `ext` ನಂತಹ ಓದುವ ಕಮಾಂಡ್‌ಗಳು ಇದನ್ನು ಸ್ವೀಕರಿಸುತ್ತವೆ, ಹೇಗಿದ್ದರೂ ಅವು ಏನನ್ನೂ ಬದಲಾಯಿಸುವುದಿಲ್ಲ. ಉಳಿದವು, `group rename` ಸೇರಿದಂತೆ, ಚಾಲನೆಯಾಗುವ ಬದಲು ಇದನ್ನು ನಿರಾಕರಿಸುತ್ತವೆ.
 
 <!-- commands -->
 
@@ -155,11 +155,14 @@ ccam ext             # skills, commands, MCP servers and hooks of every account,
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam uninstall       # remove every account, ccam's folders and ccam itself
 ccam version         # also: ccam -v, ccam --version
 ccam completion bash # or zsh, powershell
 ```
 
 ccam ಅನ್ನು ಬದಲಾಯಿಸುವ ಮೊದಲು `ccam update` ಬಿಡುಗಡೆಯ SHA-256 ಚೆಕ್‌ಸಮ್ ಅನ್ನು ಪರಿಶೀಲಿಸುತ್ತದೆ, ಮತ್ತು `--version v0.2.0` ಒಂದು ನಿರ್ದಿಷ್ಟ ಬಿಡುಗಡೆಯನ್ನು ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡುತ್ತದೆ. `.deb` ಪ್ಯಾಕೇಜ್‌ನಿಂದ ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಿದ ccam ಪ್ರತಿಯನ್ನು ಬದಲಿಗೆ apt ಮೂಲಕ ಅಪ್‌ಡೇಟ್ ಮಾಡಲಾಗುತ್ತದೆ. [ಅಪ್‌ಡೇಟ್](/docs/install#update) ನೋಡಿ.
+
+`ccam uninstall` ತಾನು ಏನನ್ನು ತೆಗೆದುಹಾಕುತ್ತದೆ ಎಂದು ಪಟ್ಟಿ ಮಾಡಿ ಮೊದಲು ಕೇಳುತ್ತದೆ: `ccam remove` ಮಾಡುವಂತೆ ಪ್ರತಿ ಖಾತೆ, ಶಾರ್ಟ್‌ಕಟ್ ಕಮಾಂಡ್‌ಗಳು, ccam ನ ಫೋಲ್ಡರ್‌ಗಳು ಮತ್ತು `ccam` ಕಮಾಂಡ್. ಇಂಪೋರ್ಟ್ ಮಾಡಿದ ಫೋಲ್ಡರ್ ಇದ್ದಲ್ಲೇ ಉಳಿಯುತ್ತದೆ. [ಅನ್‌ಇನ್‌ಸ್ಟಾಲ್](/docs/install#uninstall) ನೋಡಿ.
 
 ## ಫೈಲ್‌ಗಳು
 

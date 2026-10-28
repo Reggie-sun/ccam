@@ -2,13 +2,13 @@
 title: Tham chiếu lệnh
 metaTitle: "Tham chiếu lệnh ccam"
 description: "Mọi lệnh và tùy chọn của ccam, từ ccam add và ccam <name> đến ccam usage, ccam next và ccam doctor."
-updated: 2026-10-26
+updated: 2026-10-28
 order: 3
 translation: machine
-sourceHash: b9ff0fe8d147
+sourceHash: f4e7679d37de
 ---
 
-Đặt `--dry-run` trước một lệnh để xem lệnh đó sẽ làm gì mà không thực sự thực hiện, ví dụ `ccam --dry-run work`. Tùy chọn này dùng được khi khởi động Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`, `ccam ccusage`) và với `group`, `migrate`, `folder`, `shortcut`, `pick`, `update` và `doctor --fix`. Các lệnh chỉ đọc, chẳng hạn `list`, `usage`, `share` và `ext`, chấp nhận tùy chọn này và vốn dĩ không thay đổi gì. Các lệnh còn lại từ chối tùy chọn này thay vì chạy, kể cả `group rename`.
+Đặt `--dry-run` trước một lệnh để xem lệnh đó sẽ làm gì mà không thực sự thực hiện, ví dụ `ccam --dry-run work`. Tùy chọn này dùng được khi khởi động Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`, `ccam ccusage`) và với `group`, `migrate`, `folder`, `shortcut`, `pick`, `update`, `uninstall` và `doctor --fix`. Các lệnh chỉ đọc, chẳng hạn `list`, `usage`, `share` và `ext`, chấp nhận tùy chọn này và vốn dĩ không thay đổi gì. Các lệnh còn lại từ chối tùy chọn này thay vì chạy, kể cả `group rename`.
 
 <!-- commands -->
 
@@ -155,11 +155,14 @@ ccam ext             # skills, commands, MCP servers and hooks of every account,
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam uninstall       # remove every account, ccam's folders and ccam itself
 ccam version         # also: ccam -v, ccam --version
 ccam completion bash # or zsh, powershell
 ```
 
 `ccam update` kiểm tra mã băm SHA-256 của bản phát hành trước khi thay thế ccam, còn `--version v0.2.0` cài một bản phát hành cụ thể. Bản ccam được cài từ gói `.deb` thì cập nhật bằng apt. Xem [cập nhật](/docs/install#update).
+
+`ccam uninstall` liệt kê những gì nó sẽ xóa và hỏi trước: mọi tài khoản theo cách `ccam remove` làm, các lệnh tắt, các thư mục của ccam và lệnh `ccam`. Thư mục đã nhập vẫn nằm nguyên tại chỗ. Xem [gỡ cài đặt](/docs/install#uninstall).
 
 ## Tệp
 

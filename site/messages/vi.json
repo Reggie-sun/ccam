@@ -161,6 +161,7 @@
     "ccusage": "Hiển thị báo cáo token và chi phí của ccusage cho các cuộc hội thoại của mọi tài khoản",
     "hook": "Được các hook của plugin ccam trong Claude Code gọi (giới hạn sử dụng, /ccam:switch)",
     "update": "Cập nhật ccam lên bản phát hành mới nhất sau khi kiểm tra mã băm",
+    "uninstall": "Xóa mọi tài khoản, các lệnh tắt, các thư mục của ccam và chính ccam",
     "completion": "In mã tự động hoàn thành cho bash, zsh hoặc PowerShell"
   },
   "copy": {

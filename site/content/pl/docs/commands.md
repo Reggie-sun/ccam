@@ -2,13 +2,13 @@
 title: Opis poleceń
 metaTitle: "Opis poleceń ccam"
 description: Wszystkie polecenia i opcje ccam, od ccam add i ccam <name> po ccam usage, ccam next i ccam doctor.
-updated: 2026-10-26
+updated: 2026-10-28
 order: 3
 translation: machine
-sourceHash: "b9ff0fe8d147"
+sourceHash: "f4e7679d37de"
 ---
 
-Wpisz `--dry-run` przed poleceniem, żeby zobaczyć, co by zrobiło, bez wykonywania go, na przykład `ccam --dry-run work`. Działa to przy uruchamianiu Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`, `ccam ccusage`) oraz z `group`, `migrate`, `folder`, `shortcut`, `pick`, `update` i `doctor --fix`. Polecenia, które tylko odczytują, takie jak `list`, `usage`, `share` i `ext`, przyjmują tę opcję i i tak niczego nie zmieniają. Pozostałe odrzucają ją zamiast się wykonać, w tym `group rename`.
+Wpisz `--dry-run` przed poleceniem, żeby zobaczyć, co by zrobiło, bez wykonywania go, na przykład `ccam --dry-run work`. Działa to przy uruchamianiu Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`, `ccam ccusage`) oraz z `group`, `migrate`, `folder`, `shortcut`, `pick`, `update`, `uninstall` i `doctor --fix`. Polecenia, które tylko odczytują, takie jak `list`, `usage`, `share` i `ext`, przyjmują tę opcję i i tak niczego nie zmieniają. Pozostałe odrzucają ją zamiast się wykonać, w tym `group rename`.
 
 <!-- commands -->
 
@@ -155,11 +155,14 @@ ccam ext             # skills, commands, MCP servers and hooks of every account,
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam uninstall       # remove every account, ccam's folders and ccam itself
 ccam version         # also: ccam -v, ccam --version
 ccam completion bash # or zsh, powershell
 ```
 
 `ccam update` sprawdza sumę kontrolną SHA-256 wydania, zanim podmieni ccam, a `--version v0.2.0` instaluje konkretne wydanie. Kopię ccam zainstalowaną z pakietu `.deb` aktualizujesz przez apt. Szczegóły znajdziesz w części [aktualizacja](/docs/install#update).
+
+`ccam uninstall` wypisuje, co usunie, i najpierw pyta o zgodę: każde konto tak jak `ccam remove`, skróty, foldery ccam i polecenie `ccam`. Zaimportowany folder zostaje tam, gdzie jest. Szczegóły znajdziesz w części [odinstalowanie](/docs/install#uninstall).
 
 ## Pliki
 

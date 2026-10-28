@@ -161,6 +161,7 @@
     "ccusage": "نمایش گزارش‌های توکن و هزینهٔ ccusage برای گفتگوهای همه حساب‌ها",
     "hook": "اجرا توسط هوک‌های پلاگین ccam در Claude Code (سقف‌های مصرف، /ccam:switch)",
     "update": "به‌روزرسانی ccam به آخرین نسخه پس از بررسی checksum آن",
+    "uninstall": "حذف همه حساب‌ها، میان‌برها، پوشه‌های ccam و خود ccam",
     "completion": "چاپ تکمیل خودکار bash، zsh یا PowerShell"
   },
   "copy": {

@@ -2,10 +2,10 @@
 title: ccam ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಿ
 metaTitle: Linux, macOS ಮತ್ತು Windows ನಲ್ಲಿ ccam ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಿ
 description: Linux, macOS ಅಥವಾ Windows ನಲ್ಲಿ ಒಂದೇ ಕಮಾಂಡ್, .deb ಪ್ಯಾಕೇಜ್ ಅಥವಾ go install ಮೂಲಕ ccam ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಿ, ccam update ಮೂಲಕ ಅಪ್‌ಡೇಟ್ ಮಾಡಿ. ಮೊದಲು Claude Code ಬೇಕು.
-updated: 2026-10-26
+updated: 2026-10-28
 order: 1
 translation: machine
-sourceHash: "2ada7b2650d6"
+sourceHash: "193df30c9d9a"
 ---
 
 ccam ನಿಮಗಾಗಿ Claude Code ಅನ್ನು ಆರಂಭಿಸುತ್ತದೆ. ಆದ್ದರಿಂದ ಮೊದಲು [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಿ ಮತ್ತು `claude --version` ಕೆಲಸ ಮಾಡುತ್ತದೆಯೇ ಎಂದು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ.
@@ -140,21 +140,15 @@ sudo apt install ./ccam_*_linux_amd64.deb
 
 ## ಅನ್‌ಇನ್‌ಸ್ಟಾಲ್
 
-`~/.local/share/ccam` ಅನ್ನು ಅಳಿಸಿದರೆ ಅಲ್ಲಿ ಸಂಗ್ರಹವಾಗಿರುವ ಲಾಗಿನ್‌ಗಳು ಮತ್ತು ಸಂಭಾಷಣೆಯ ಇತಿಹಾಸವೂ ಅಳಿಸಿಹೋಗುತ್ತವೆ. ನೀವು [ಇಂಪೋರ್ಟ್ ಮಾಡಿದ](/docs/commands) `~/.claude` ಫೋಲ್ಡರ್ ಇದ್ದಲ್ಲೇ ಉಳಿಯುತ್ತದೆ, ಆದರೆ ಅದು ಒಂದು ಗುಂಪಿನಲ್ಲಿರುವವರೆಗೆ, ಅದು ಹಂಚಿಕೊಳ್ಳುವ ಫೈಲ್‌ಗಳು `~/.local/share/ccam/groups/` ನಲ್ಲಿ ಇರುತ್ತವೆ. ಏನನ್ನಾದರೂ ಅಳಿಸುವ ಮೊದಲು ಅದಕ್ಕಾಗಿ `ccam remove <name>` ರನ್ ಮಾಡಿ (ಅಥವಾ `ccam group leave`): ಇದು ಅದನ್ನು ಅದರ ಗುಂಪುಗಳಿಂದ ಹೊರತೆಗೆದು, ಅದು ಹಂಚಿಕೊಂಡ ಎಲ್ಲದರ ಒಂದು ಪ್ರತಿಯನ್ನು ಮತ್ತೆ ಫೋಲ್ಡರ್‌ಗೆ ಇರಿಸುತ್ತದೆ.
-
-ccam ಇನ್ನೂ ಇನ್‌ಸ್ಟಾಲ್ ಆಗಿರುವಾಗಲೇ ಮೊದಲು ಖಾತೆಯ ಶಾರ್ಟ್‌ಕಟ್‌ಗಳನ್ನು ತೆಗೆದುಹಾಕಿ. `ccam list` ಅವುಗಳನ್ನು Shortcut ಕಾಲಂನಲ್ಲಿ ತೋರಿಸುತ್ತದೆ; ಪ್ರತಿಯೊಂದನ್ನೂ `ccam shortcut <account> --remove` ಮೂಲಕ ತೆಗೆದುಹಾಕಿ, ಅಥವಾ ಆ ಲಿಂಕ್‌ಗಳನ್ನು `~/.local/bin` ನಿಂದ ನೀವೇ ಅಳಿಸಿ. ನಂತರ ಕಮಾಂಡ್ ಅನ್ನು, ಮತ್ತು ಖಾತೆಗಳು ಇನ್ನು ಬೇಡವಾದರೆ ಡೇಟಾ ಫೋಲ್ಡರ್‌ಗಳನ್ನು ತೆಗೆದುಹಾಕಿ:
+`ccam uninstall` ccam ಅನ್ನು ಮತ್ತು ಅದು ರಚಿಸಿದ ಎಲ್ಲವನ್ನೂ ತೆಗೆದುಹಾಕುತ್ತದೆ. ಅದು ಮೊದಲು ಏನೇನು ಹೋಗುತ್ತದೆ ಎಂದು ಪಟ್ಟಿ ಮಾಡುತ್ತದೆ, ಮತ್ತು ಕೇಳುತ್ತದೆ:
 
 ```sh
-ccam list
-ccam shortcut work --remove   # once for each account that has a shortcut
-rm ~/.local/bin/ccam
-rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
+ccam --dry-run uninstall   # only show what would be removed
+ccam uninstall
 ```
 
-Windows ನಲ್ಲಿ, PowerShell ನಲ್ಲಿ:
+- ಪ್ರತಿ ಖಾತೆಯನ್ನು `ccam remove` ಮಾಡುವಂತೆಯೇ ತೆಗೆದುಹಾಕಲಾಗುತ್ತದೆ. ccam ನ ಫೋಲ್ಡರ್‌ಗಳಲ್ಲಿರುವ ಖಾತೆಯನ್ನು ಮೊದಲು ಲಾಗ್ ಔಟ್ ಮಾಡಿ, ಅದರ ಫೋಲ್ಡರ್ ಜೊತೆಗೆ ಅಳಿಸಲಾಗುತ್ತದೆ, ಅದರ ಸಂಭಾಷಣೆಯ ಇತಿಹಾಸ ಮತ್ತು ಸೆಟ್ಟಿಂಗ್‌ಗಳೂ ಸೇರಿ.
+- ನೀವು [ಇಂಪೋರ್ಟ್ ಮಾಡಿದ](/docs/commands) `~/.claude` ಫೋಲ್ಡರ್ ಸಾಮಾನ್ಯ `claude` ಗಾಗಿ ಇದ್ದಲ್ಲೇ ಉಳಿಯುತ್ತದೆ. ಅದು ಒಂದು ಗುಂಪಿನಲ್ಲಿದ್ದರೆ, ಅದು ಹಂಚಿಕೊಂಡ ಎಲ್ಲದರ ಒಂದು ಪ್ರತಿ ಅದಕ್ಕೆ ಮರಳಿ ಸಿಗುತ್ತದೆ. ಅದರ `settings.json` ನಲ್ಲಿರುವ ccam ಸ್ಟೇಟಸ್ ಲೈನ್‌ನ ಜಾಗಕ್ಕೆ, ccam ಸುತ್ತಿದ್ದ ಸ್ಟೇಟಸ್ ಲೈನ್ ಮರಳುತ್ತದೆ, ಅಂಥದ್ದು ಇದ್ದರೆ. ಅದರಲ್ಲಿ ccam ಪ್ಲಗಿನ್ ಇದ್ದರೆ, Claude Code ನಲ್ಲಿ ರನ್ ಮಾಡಬೇಕಾದ `/plugin uninstall` ಕಮಾಂಡ್ ಅನ್ನು ccam ಮುದ್ರಿಸುತ್ತದೆ.
+- ಶಾರ್ಟ್‌ಕಟ್ ಕಮಾಂಡ್‌ಗಳು, `~/.config/ccam`, `~/.local/share/ccam` (ccam ನ ಕಸದ ಫೋಲ್ಡರ್ ಸಹಿತ) ಮತ್ತು `~/.local/state/ccam` ಅಳಿಸಲ್ಪಡುತ್ತವೆ, ನಂತರ `ccam` ಕಮಾಂಡ್ ಸ್ವತಃ.
 
-```powershell
-ccam shortcut work --remove   # once for each account that has a shortcut
-Remove-Item ~\.local\bin\ccam.exe
-Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
-```
+ಯಾವುದಾದರೂ ಖಾತೆ ಚಾಲನೆಯಲ್ಲಿರುವಾಗ ccam ನಿರಾಕರಿಸುತ್ತದೆ; ಮೊದಲು ಅದರ Claude Code ಸೆಷನ್‌ಗಳಿಂದ ನಿರ್ಗಮಿಸಿ. apt ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಿದ `/usr/bin/ccam` ಉಳಿಯುತ್ತದೆ; ನಂತರ ಅದನ್ನು `sudo apt remove ccam` ಮೂಲಕ ತೆಗೆದುಹಾಕಿ. Windows ನಲ್ಲಿ ಚಾಲನೆಯಲ್ಲಿರುವ ಪ್ರೋಗ್ರಾಂ ತನ್ನನ್ನು ತಾನೇ ಅಳಿಸಲಾರದು, ಆದ್ದರಿಂದ `ccam uninstall` ಕೊನೆಯಲ್ಲಿ `ccam.exe` ಗಾಗಿ `Remove-Item` ಕಮಾಂಡ್ ಅನ್ನು ಮುದ್ರಿಸುತ್ತದೆ.

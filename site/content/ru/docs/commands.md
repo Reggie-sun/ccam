@@ -2,13 +2,13 @@
 title: Справочник команд
 metaTitle: Справочник команд ccam
 description: Все команды и параметры ccam, от ccam add и ccam <name> до ccam usage, ccam next и ccam doctor.
-updated: 2026-10-26
+updated: 2026-10-28
 order: 3
 translation: machine
-sourceHash: "b9ff0fe8d147"
+sourceHash: "f4e7679d37de"
 ---
 
-Поставьте `--dry-run` перед командой, чтобы увидеть, что она сделает, ничего не выполняя, например `ccam --dry-run work`. Это работает при запуске Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`, `ccam ccusage`) и с `group`, `migrate`, `folder`, `shortcut`, `pick`, `update` и `doctor --fix`. Команды, которые только читают, например `list`, `usage`, `share` и `ext`, принимают этот флаг и в любом случае ничего не меняют. Остальные отклоняют его и не выполняются, в том числе `group rename`.
+Поставьте `--dry-run` перед командой, чтобы увидеть, что она сделает, ничего не выполняя, например `ccam --dry-run work`. Это работает при запуске Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`, `ccam ccusage`) и с `group`, `migrate`, `folder`, `shortcut`, `pick`, `update`, `uninstall` и `doctor --fix`. Команды, которые только читают, например `list`, `usage`, `share` и `ext`, принимают этот флаг и в любом случае ничего не меняют. Остальные отклоняют его и не выполняются, в том числе `group rename`.
 
 <!-- commands -->
 
@@ -155,11 +155,14 @@ ccam ext             # skills, commands, MCP servers and hooks of every account,
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam uninstall       # remove every account, ccam's folders and ccam itself
 ccam version         # also: ccam -v, ccam --version
 ccam completion bash # or zsh, powershell
 ```
 
 `ccam update` проверяет контрольную сумму SHA-256 выпуска, прежде чем заменить ccam, а `--version v0.2.0` устанавливает определённый выпуск. Копия ccam, установленная из пакета `.deb`, обновляется через apt. Подробности в разделе [обновление](/docs/install#update).
+
+`ccam uninstall` показывает, что удалит, и сначала спрашивает подтверждение: каждый аккаунт, как это делает `ccam remove`, короткие команды, папки ccam и команду `ccam`. Импортированная папка остаётся на месте. Подробности в разделе [удаление](/docs/install#uninstall).
 
 ## Файлы
 

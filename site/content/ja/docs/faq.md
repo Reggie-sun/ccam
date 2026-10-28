@@ -2,10 +2,10 @@
 title: よくある質問
 metaTitle: "ccamのよくある質問：Claude Codeの複数アカウント"
 description: ccam、Claude Codeのアカウント、使用量の上限、共有、プライバシー、対応システムについての回答です。
-updated: 2026-10-26
+updated: 2026-10-28
 order: 6
 translation: machine
-sourceHash: b53878aaabc7
+sourceHash: 64cd522eb711
 ---
 
 ## ccamはAnthropicの公式ツールですか？
@@ -72,4 +72,4 @@ ccam経由でClaude Codeを起動すると、起動時間が約4ミリ秒増え�
 
 ## ccamをアンインストールするにはどうすればよいですか？
 
-各アカウントのショートカットを`ccam shortcut <account> --remove`で削除します。`~/.claude`をインポートしていて、それがグループに入っている場合は、先にそのアカウントに対して`ccam remove <name>`を実行してください。共有しているもののコピーがそのアカウントに戻ります。次に`~/.local/bin`から`ccam`を削除し、アカウントが不要になった場合は`~/.config/ccam`、`~/.local/share/ccam`、`~/.local/state/ccam`も削除します。詳しくは[インストール](/docs/install#uninstall)を参照してください。
+`ccam uninstall`を実行します。削除するものを一覧で表示して確認を求めたうえで、すべてのアカウント（先にログアウトします）、ショートカットコマンド、`~/.config/ccam`、`~/.local/share/ccam`、`~/.local/state/ccam`、`ccam`コマンドを削除します。インポートした`~/.claude`は残り、グループで共有していたもののコピーがそこに戻ります。詳しくは[インストール](/docs/install#uninstall)を参照してください。

@@ -2,10 +2,10 @@
 title: ccam-ஐ நிறுவுதல்
 metaTitle: Linux, macOS, Windows-இல் ccam-ஐ நிறுவுதல்
 description: Linux, macOS அல்லது Windows-இல் ccam-ஐ ஒரே கட்டளை, .deb தொகுப்பு அல்லது go install மூலம் நிறுவி, ccam update-ஆல் புதுப்பியுங்கள். முதலில் Claude Code தேவை.
-updated: 2026-10-26
+updated: 2026-10-28
 order: 1
 translation: machine
-sourceHash: 2ada7b2650d6
+sourceHash: 193df30c9d9a
 ---
 
 ccam உங்களுக்காக Claude Code-ஐத் தொடங்குகிறது, அதனால் முதலில் [Claude Code](https://docs.claude.com/en/docs/claude-code/overview)-ஐ நிறுவி, `claude --version` வேலை செய்கிறதா என்று உறுதிசெய்யுங்கள்.
@@ -140,21 +140,15 @@ sudo apt install ./ccam_*_linux_amd64.deb
 
 ## நீக்குதல்
 
-`~/.local/share/ccam`-ஐ நீக்கினால், அங்கே சேமிக்கப்பட்ட உள்நுழைவுகளும் உரையாடல் வரலாறும் நீக்கப்படும். நீங்கள் [இறக்குமதி செய்த](/docs/commands) `~/.claude` கோப்புறை அது இருக்கும் இடத்திலேயே இருக்கும், ஆனால் அது ஒரு குழுவில் இருக்கும்வரை, அது பகிரும் கோப்புகள் `~/.local/share/ccam/groups/`-இல் இருக்கும். எதையும் நீக்கும் முன் அதற்கு `ccam remove <name>` இயக்குங்கள் (அல்லது `ccam group leave`): இது அதைத் தன் குழுக்களிலிருந்து நீக்கி, அது பகிர்ந்த எல்லாவற்றின் நகலையும் மீண்டும் அந்தக் கோப்புறைக்குள் வைக்கிறது.
-
-ccam நிறுவப்பட்டிருக்கும்போதே முதலில் கணக்குக் குறுக்குவழிகளை நீக்குங்கள். `ccam list` அவற்றை Shortcut நெடுவரிசையில் காட்டும்; ஒவ்வொன்றையும் `ccam shortcut <account> --remove` மூலம் நீக்குங்கள், அல்லது அந்த இணைப்புகளை `~/.local/bin`-இலிருந்து நீங்களே நீக்குங்கள். பிறகு கட்டளையை நீக்குங்கள், கணக்குகள் இனி தேவையில்லை என்றால் தரவுக் கோப்புறைகளையும் நீக்குங்கள்:
+`ccam uninstall`, ccam-ஐயும் அது உருவாக்கிய எல்லாவற்றையும் நீக்குகிறது. முதலில் எவை நீக்கப்படும் என்று பட்டியலிட்டுக் காட்டி, உறுதிப்படுத்தக் கேட்கிறது:
 
 ```sh
-ccam list
-ccam shortcut work --remove   # once for each account that has a shortcut
-rm ~/.local/bin/ccam
-rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
+ccam --dry-run uninstall   # only show what would be removed
+ccam uninstall
 ```
 
-Windows-இல், PowerShell-இல்:
+- ஒவ்வொரு கணக்கும் `ccam remove` செய்வது போலவே நீக்கப்படும். ccam-இன் கோப்புறைகளில் உள்ள கணக்கு முதலில் வெளியேற்றப்பட்டு, அதன் கோப்புறையுடன் சேர்த்து நீக்கப்படும்; அதன் உரையாடல் வரலாறும் அமைப்புகளும் கூட நீக்கப்படும்.
+- நீங்கள் [இறக்குமதி செய்த](/docs/commands) `~/.claude` கோப்புறை, சாதாரண `claude`-க்காக அது இருக்கும் இடத்திலேயே இருக்கும். அது ஒரு குழுவில் இருந்தால், அது பகிர்ந்த எல்லாவற்றின் நகலையும் திரும்பப் பெறும். ccam சுற்றியிருந்த (wrap செய்த) நிலை வரி ஏதேனும் இருந்தால், அதன் `settings.json`-இல் உள்ள ccam நிலை வரி அதற்கு இடம் கொடுக்கும். அதில் ccam plugin இருந்தால், Claude Code-இல் இயக்க வேண்டிய `/plugin uninstall` கட்டளையை ccam அச்சிடும்.
+- குறுக்குவழிக் கட்டளைகள், `~/.config/ccam`, `~/.local/share/ccam` (ccam-இன் குப்பைக் கோப்புறையுடன்), `~/.local/state/ccam` ஆகியவை நீக்கப்படும், பிறகு `ccam` கட்டளையும் நீக்கப்படும்.
 
-```powershell
-ccam shortcut work --remove   # once for each account that has a shortcut
-Remove-Item ~\.local\bin\ccam.exe
-Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
-```
+ஒரு கணக்கு இயங்கிக்கொண்டிருக்கும்போது ccam மறுக்கும்; முதலில் அதன் Claude Code அமர்வுகளை மூடுங்கள். apt நிறுவிய `/usr/bin/ccam` அப்படியே இருக்கும்; பிறகு அதை `sudo apt remove ccam` மூலம் நீக்குங்கள். Windows-இல் இயங்கும் நிரல் தன்னைத்தானே நீக்க முடியாது, அதனால் `ccam uninstall` இறுதியில் `ccam.exe`-க்கான `Remove-Item` கட்டளையை அச்சிடும்.

@@ -161,6 +161,7 @@
     "ccusage": "모든 계정의 대화로 ccusage의 토큰·비용 보고서 보기",
     "hook": "Claude Code에서 ccam 플러그인의 훅이 실행하는 명령(사용량 한도, /ccam:switch)",
     "update": "체크섬을 확인한 뒤 ccam을 최신 릴리스로 업데이트",
+    "uninstall": "모든 계정, 단축 명령, ccam 폴더와 ccam 자체를 삭제",
     "completion": "bash, zsh 또는 PowerShell 자동완성 스크립트 출력"
   },
   "copy": {

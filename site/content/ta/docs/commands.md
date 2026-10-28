@@ -2,13 +2,13 @@
 title: கட்டளைக் குறிப்பு
 metaTitle: ccam கட்டளைக் குறிப்பு
 description: ccam add, ccam <name> முதல் ccam usage, ccam next, ccam doctor வரை, ccam-இன் ஒவ்வொரு கட்டளையும் option-உம்.
-updated: 2026-10-26
+updated: 2026-10-28
 order: 3
 translation: machine
-sourceHash: b9ff0fe8d147
+sourceHash: f4e7679d37de
 ---
 
-ஒரு கட்டளை உண்மையில் எதையும் செய்யாமல் என்ன செய்யும் என்று பார்க்க, அதற்கு முன் `--dry-run` வையுங்கள், எடுத்துக்காட்டாக `ccam --dry-run work`. Claude Code-ஐத் தொடங்கும்போது (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`, `ccam ccusage`) மற்றும் `group`, `migrate`, `folder`, `shortcut`, `pick`, `update`, `doctor --fix` ஆகியவற்றுடன் இது வேலை செய்யும். `list`, `usage`, `share`, `ext` போன்ற படிக்க மட்டுமே செய்யும் கட்டளைகள் இதை ஏற்றுக்கொள்கின்றன, எப்படியும் எதையும் மாற்றுவதில்லை. மற்றவை, `group rename` உட்பட, இயங்குவதற்குப் பதிலாக இதை மறுக்கும்.
+ஒரு கட்டளை உண்மையில் எதையும் செய்யாமல் என்ன செய்யும் என்று பார்க்க, அதற்கு முன் `--dry-run` வையுங்கள், எடுத்துக்காட்டாக `ccam --dry-run work`. Claude Code-ஐத் தொடங்கும்போது (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`, `ccam ccusage`) மற்றும் `group`, `migrate`, `folder`, `shortcut`, `pick`, `update`, `uninstall`, `doctor --fix` ஆகியவற்றுடன் இது வேலை செய்யும். `list`, `usage`, `share`, `ext` போன்ற படிக்க மட்டுமே செய்யும் கட்டளைகள் இதை ஏற்றுக்கொள்கின்றன, எப்படியும் எதையும் மாற்றுவதில்லை. மற்றவை, `group rename` உட்பட, இயங்குவதற்குப் பதிலாக இதை மறுக்கும்.
 
 <!-- commands -->
 
@@ -155,11 +155,14 @@ ccam ext             # skills, commands, MCP servers and hooks of every account,
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam uninstall       # remove every account, ccam's folders and ccam itself
 ccam version         # also: ccam -v, ccam --version
 ccam completion bash # or zsh, powershell
 ```
 
 `ccam update` ccam-ஐ மாற்றுவதற்கு முன் வெளியீட்டின் SHA-256 checksum-ஐச் சரிபார்க்கிறது, `--version v0.2.0` ஒரு குறிப்பிட்ட வெளியீட்டை நிறுவுகிறது. `.deb` தொகுப்பிலிருந்து நிறுவிய ccam நகல் அதற்குப் பதிலாக apt மூலம் புதுப்பிக்கப்படும். [புதுப்பித்தல்](/docs/install#update) பகுதியைப் பாருங்கள்.
+
+`ccam uninstall` எவற்றை நீக்கும் என்று பட்டியலிட்டு முதலில் கேட்கிறது: `ccam remove` செய்வது போல ஒவ்வொரு கணக்கும், குறுக்குவழிக் கட்டளைகள், ccam-இன் கோப்புறைகள், `ccam` கட்டளை. இறக்குமதி செய்த கோப்புறை அது இருக்கும் இடத்திலேயே இருக்கும். [நீக்குதல்](/docs/install#uninstall) பகுதியைப் பாருங்கள்.
 
 ## கோப்புகள்
 

@@ -2,10 +2,10 @@
 title: 安装 ccam
 metaTitle: "在 Linux、macOS 和 Windows 上安装 ccam"
 description: 用一条命令在 Linux、macOS 或 Windows 上安装 ccam，也可以使用 .deb 软件包或 go install 安装，并用 ccam update 保持最新。需要先安装 Claude Code。
-updated: 2026-10-26
+updated: 2026-10-28
 order: 1
 translation: machine
-sourceHash: "2ada7b2650d6"
+sourceHash: "193df30c9d9a"
 ---
 
 ccam 会为你启动 Claude Code，所以请先安装 [Claude Code](https://docs.claude.com/en/docs/claude-code/overview)，并确认 `claude --version` 可以正常运行。
@@ -140,21 +140,15 @@ sudo apt install ./ccam_*_linux_amd64.deb
 
 ## 卸载
 
-删除 `~/.local/share/ccam` 也会删除其中存储的登录信息和对话历史。你[导入](/docs/commands)的 `~/.claude` 文件夹会保留在原位置，但只要它在某个组中，它所共享的文件就存放在 `~/.local/share/ccam/groups/` 中。在删除任何东西之前，请先对它运行 `ccam remove <name>`（或 `ccam group leave`）：这会把它移出所在的组，并把它共享过的全部内容复制一份放回该文件夹。
-
-趁 ccam 还在，先删除账号的快捷命令。`ccam list` 会在 Shortcut 列中显示它们；用 `ccam shortcut <account> --remove` 逐个删除，或者自己从 `~/.local/bin` 中删除这些链接。然后删除 ccam 命令；如果不再需要这些账号，再删除数据文件夹：
+`ccam uninstall` 会删除 ccam 及其创建的一切。它会先列出将要删除的内容，并征求确认：
 
 ```sh
-ccam list
-ccam shortcut work --remove   # once for each account that has a shortcut
-rm ~/.local/bin/ccam
-rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
+ccam --dry-run uninstall   # only show what would be removed
+ccam uninstall
 ```
 
-在 Windows 上，在 PowerShell 中运行：
+- 每个账号都会像 `ccam remove` 那样被删除。位于 ccam 文件夹中的账号会先退出登录，然后连同其文件夹一起删除，其中的对话历史和设置也会一并删除。
+- 你[导入](/docs/commands)的 `~/.claude` 文件夹会保留在原位置，供直接运行的 `claude` 使用。如果它在某个组中，它会拿回一份它共享过的全部内容的副本。它的 `settings.json` 中的 ccam 状态栏会让位给 ccam 所包装的原状态栏（如果有）。如果它装有 ccam 插件，ccam 会打印需要在 Claude Code 中运行的 `/plugin uninstall` 命令。
+- 快捷命令、`~/.config/ccam`、`~/.local/share/ccam`（包括 ccam 的回收文件夹）和 `~/.local/state/ccam` 会被删除，最后删除 `ccam` 命令本身。
 
-```powershell
-ccam shortcut work --remove   # once for each account that has a shortcut
-Remove-Item ~\.local\bin\ccam.exe
-Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
-```
+只要有账号正在运行，ccam 就会拒绝执行；请先退出该账号的 Claude Code 会话。由 apt 安装的 `/usr/bin/ccam` 会保留；之后请用 `sudo apt remove ccam` 删除它。在 Windows 上，正在运行的程序无法删除自身，因此 `ccam uninstall` 最后会打印删除 `ccam.exe` 的 `Remove-Item` 命令。

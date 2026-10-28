@@ -2,10 +2,10 @@
 title: Girka ccam
 metaTitle: Girka ccam a Linux, macOS da Windows
 description: Girka ccam a Linux, macOS ko Windows da umarni ɗaya, kunshin .deb ko go install, ka kuma sabunta shi da ccam update. Fara girka Claude Code tukuna.
-updated: 2026-10-26
+updated: 2026-10-28
 order: 1
 translation: machine
-sourceHash: 2ada7b2650d6
+sourceHash: 193df30c9d9a
 ---
 
 ccam ne ke fara maka Claude Code, don haka ka fara girka [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) kuma ka tabbata `claude --version` yana aiki.
@@ -140,21 +140,15 @@ sudo apt install ./ccam_*_linux_amd64.deb
 
 ## Cire ccam
 
-Share `~/.local/share/ccam` yana share bayanan shiga da tarihin tattaunawa da aka ajiye a can ma. Foldar `~/.claude` da ka [shigo da ita](/docs/commands) tana nan a inda take, amma yayin da take cikin rukuni, fayilolin da take rabawa suna zaune a `~/.local/share/ccam/groups/`. Gudanar da `ccam remove <name>` a kanta (ko `ccam group leave`) kafin ka goge komai: wannan yana fitar da ita daga rukunoninta kuma yana mayar da kwafin duk abin da ta raba cikin foldar.
-
-Da farko ka cire gajerun umarnin asusai, tun ccam yana nan a kwamfutarka. `ccam list` yana nuna su a ginshiƙin Shortcut; cire kowanne da `ccam shortcut <account> --remove`, ko ka goge waɗannan mahaɗai daga `~/.local/bin` da kanka. Sannan ka cire umarnin, da foldojin bayanai idan ba ka buƙatar asusan kuma:
+`ccam uninstall` yana cire ccam da duk abin da ya ƙirƙira. Da farko yana lissafa abin da za a cire, kuma yana tambaya:
 
 ```sh
-ccam list
-ccam shortcut work --remove   # once for each account that has a shortcut
-rm ~/.local/bin/ccam
-rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
+ccam --dry-run uninstall   # only show what would be removed
+ccam uninstall
 ```
 
-A Windows, a PowerShell:
+- Ana cire kowane asusu kamar yadda `ccam remove` ke yi. Asusun da ke cikin foldojin ccam ana fitar da shi daga shiga tukuna, sannan a goge shi tare da foldarsa, har da tarihin tattaunawarsa da saitunansa.
+- Foldar `~/.claude` da ka [shigo da ita](/docs/commands) tana nan a inda take domin `claude` na yau da kullum. Idan tana cikin rukuni, tana dawo da kwafin duk abin da ta raba. Layin matsayi na ccam a cikin `settings.json` nata yana ba da wuri ga layin matsayin da ccam ya naɗe, idan akwai shi. Idan tana da plugin ɗin ccam, ccam yana buga umarnin `/plugin uninstall` da za ka gudanar a Claude Code.
+- Ana goge gajerun umarnin, `~/.config/ccam`, `~/.local/share/ccam` (tare da sharar ccam) da `~/.local/state/ccam`, sannan umarnin `ccam` kansa.
 
-```powershell
-ccam shortcut work --remove   # once for each account that has a shortcut
-Remove-Item ~\.local\bin\ccam.exe
-Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
-```
+ccam yana ƙi yayin da wani asusu ke gudana; ka rufe zaman Claude Code nasa tukuna. `/usr/bin/ccam` da apt ya girka yana nan; ka cire shi daga baya da `sudo apt remove ccam`. A Windows shirin da ke gudana ba zai iya goge kansa ba, don haka `ccam uninstall` yana ƙarewa da buga umarnin `Remove-Item` na `ccam.exe`.

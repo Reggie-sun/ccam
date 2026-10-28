@@ -2,13 +2,13 @@
 title: مرجع فرمان‌ها
 metaTitle: مرجع فرمان‌های ccam
 description: همه فرمان‌ها و گزینه‌های ccam، از ccam add و ccam <name> تا ccam usage، ccam next و ccam doctor.
-updated: 2026-10-26
+updated: 2026-10-28
 order: 3
 translation: machine
-sourceHash: b9ff0fe8d147
+sourceHash: f4e7679d37de
 ---
 
-برای اینکه ببینید یک فرمان چه کاری انجام می‌دهد بدون آنکه واقعاً انجامش دهد، `--dry-run` را پیش از آن بگذارید، برای مثال `ccam --dry-run work`. این گزینه هنگام اجرای Claude Code (`ccam <name>`، `ccam run`، `ccam next`، `ccam attach`، `ccam ccusage`) و با `group`، `migrate`، `folder`، `shortcut`، `pick`، `update` و `doctor --fix` کار می‌کند. فرمان‌هایی که فقط می‌خوانند، مانند `list`، `usage`، `share` و `ext`، آن را می‌پذیرند و در هر حال چیزی را تغییر نمی‌دهند. بقیه فرمان‌ها، از جمله `group rename`، به‌جای اجرا شدن آن را رد می‌کنند.
+برای اینکه ببینید یک فرمان چه کاری انجام می‌دهد بدون آنکه واقعاً انجامش دهد، `--dry-run` را پیش از آن بگذارید، برای مثال `ccam --dry-run work`. این گزینه هنگام اجرای Claude Code (`ccam <name>`، `ccam run`، `ccam next`، `ccam attach`، `ccam ccusage`) و با `group`، `migrate`، `folder`، `shortcut`، `pick`، `update`، `uninstall` و `doctor --fix` کار می‌کند. فرمان‌هایی که فقط می‌خوانند، مانند `list`، `usage`، `share` و `ext`، آن را می‌پذیرند و در هر حال چیزی را تغییر نمی‌دهند. بقیه فرمان‌ها، از جمله `group rename`، به‌جای اجرا شدن آن را رد می‌کنند.
 
 <!-- commands -->
 
@@ -155,11 +155,14 @@ ccam ext             # skills, commands, MCP servers and hooks of every account,
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam uninstall       # remove every account, ccam's folders and ccam itself
 ccam version         # also: ccam -v, ccam --version
 ccam completion bash # or zsh, powershell
 ```
 
 `ccam update` پیش از جایگزین کردن ccam، checksum SHA-256 نسخه را بررسی می‌کند و `--version v0.2.0` یک نسخه مشخص را نصب می‌کند. نسخه‌ای از ccam که از بسته `.deb` نصب شده باشد را باید با apt به‌روز کنید. [به‌روزرسانی](/docs/install#update) را ببینید.
+
+`ccam uninstall` فهرست چیزهایی را که حذف می‌کند نشان می‌دهد و ابتدا می‌پرسد: همه حساب‌ها همان‌طور که `ccam remove` حذف می‌کند، فرمان‌های میان‌بر، پوشه‌های ccam و فرمان `ccam`. پوشه واردشده در جای خود باقی می‌ماند. [حذف نصب](/docs/install#uninstall) را ببینید.
 
 ## فایل‌ها
 
