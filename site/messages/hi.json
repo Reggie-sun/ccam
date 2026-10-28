@@ -161,6 +161,7 @@
     "ccusage": "सभी अकाउंट्स की बातचीत के लिए ccusage की token और लागत रिपोर्ट दिखाएँ",
     "hook": "Claude Code में ccam plugin के hooks इसे चलाते हैं (उपयोग सीमाएँ, /ccam:switch)",
     "update": "checksum जाँचने के बाद ccam को नवीनतम रिलीज़ पर अपडेट करें",
+    "uninstall": "हर अकाउंट, शॉर्टकट, ccam के फ़ोल्डर और खुद ccam को हटाएँ",
     "completion": "bash, zsh या PowerShell completion प्रिंट करें"
   },
   "copy": {

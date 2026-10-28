@@ -2,13 +2,13 @@
 title: コマンドリファレンス
 metaTitle: "ccamコマンドリファレンス"
 description: ccam addやccam <name>から、ccam usage、ccam next、ccam doctorまで、ccamのすべてのコマンドとオプションを説明します。
-updated: 2026-10-26
+updated: 2026-10-28
 order: 3
 translation: machine
-sourceHash: b9ff0fe8d147
+sourceHash: f4e7679d37de
 ---
 
-コマンドの前に`--dry-run`を付けると、実際には実行せずに何をするかを確認できます。たとえば`ccam --dry-run work`のように使います。これが使えるのは、Claude Codeを起動するとき（`ccam <name>`、`ccam run`、`ccam next`、`ccam attach`、`ccam ccusage`）と、`group`、`migrate`、`folder`、`shortcut`、`pick`、`update`、`doctor --fix`です。`list`、`usage`、`share`、`ext`のように読み取るだけのコマンドは、このオプションを受け付けますが、どのみち何も変更しません。それ以外のコマンドは、`group rename`も含め、実行せずにこのオプションを拒否します。
+コマンドの前に`--dry-run`を付けると、実際には実行せずに何をするかを確認できます。たとえば`ccam --dry-run work`のように使います。これが使えるのは、Claude Codeを起動するとき（`ccam <name>`、`ccam run`、`ccam next`、`ccam attach`、`ccam ccusage`）と、`group`、`migrate`、`folder`、`shortcut`、`pick`、`update`、`uninstall`、`doctor --fix`です。`list`、`usage`、`share`、`ext`のように読み取るだけのコマンドは、このオプションを受け付けますが、どのみち何も変更しません。それ以外のコマンドは、`group rename`も含め、実行せずにこのオプションを拒否します。
 
 <!-- commands -->
 
@@ -155,11 +155,14 @@ ccam ext             # skills, commands, MCP servers and hooks of every account,
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam uninstall       # remove every account, ccam's folders and ccam itself
 ccam version         # also: ccam -v, ccam --version
 ccam completion bash # or zsh, powershell
 ```
 
 `ccam update`は、ccamを置き換える前にリリースのSHA-256チェックサムを検証します。`--version v0.2.0`を指定すると、特定のリリースをインストールします。`.deb`パッケージからインストールしたccamのコピーは、代わりにaptで更新します。詳しくは[アップデート](/docs/install#update)を参照してください。
+
+`ccam uninstall`は、削除するものを一覧で表示し、先に確認を求めます。対象は、`ccam remove`と同じように削除されるすべてのアカウント、ショートカットコマンド、ccamのフォルダー、`ccam`コマンドです。インポートしたフォルダーはその場所に残ります。詳しくは[アンインストール](/docs/install#uninstall)を参照してください。
 
 ## ファイル
 

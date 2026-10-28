@@ -2,13 +2,13 @@
 title: Befehlsreferenz
 metaTitle: "ccam-Befehlsreferenz"
 description: Alle ccam-Befehle und -Optionen, von ccam add und ccam <name> bis zu ccam usage, ccam next und ccam doctor.
-updated: 2026-10-26
+updated: 2026-10-28
 order: 3
 translation: machine
-sourceHash: "b9ff0fe8d147"
+sourceHash: "f4e7679d37de"
 ---
 
-Setze `--dry-run` vor einen Befehl, um zu sehen, was er tun würde, ohne es zu tun, zum Beispiel `ccam --dry-run work`. Das funktioniert beim Starten von Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`, `ccam ccusage`) sowie mit `group`, `migrate`, `folder`, `shortcut`, `pick`, `update` und `doctor --fix`. Befehle, die nur lesen, etwa `list`, `usage`, `share` und `ext`, nehmen die Option an und ändern ohnehin nichts. Die übrigen lehnen sie ab, statt zu laufen, auch `group rename`.
+Setze `--dry-run` vor einen Befehl, um zu sehen, was er tun würde, ohne es zu tun, zum Beispiel `ccam --dry-run work`. Das funktioniert beim Starten von Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`, `ccam ccusage`) sowie mit `group`, `migrate`, `folder`, `shortcut`, `pick`, `update`, `uninstall` und `doctor --fix`. Befehle, die nur lesen, etwa `list`, `usage`, `share` und `ext`, nehmen die Option an und ändern ohnehin nichts. Die übrigen lehnen sie ab, statt zu laufen, auch `group rename`.
 
 <!-- commands -->
 
@@ -155,11 +155,14 @@ ccam ext             # skills, commands, MCP servers and hooks of every account,
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam uninstall       # remove every account, ccam's folders and ccam itself
 ccam version         # also: ccam -v, ccam --version
 ccam completion bash # or zsh, powershell
 ```
 
 `ccam update` prüft die SHA-256-Prüfsumme des Releases, bevor es ccam ersetzt, und `--version v0.2.0` installiert ein bestimmtes Release. Eine aus dem `.deb`-Paket installierte Kopie von ccam aktualisierst du stattdessen mit apt. Siehe [Aktualisieren](/docs/install#update).
+
+`ccam uninstall` listet auf, was es entfernt, und fragt zuerst: jedes Konto so wie `ccam remove`, die Kurzbefehle, die Ordner von ccam und den Befehl `ccam`. Ein importierter Ordner bleibt, wo er ist. Siehe [Deinstallieren](/docs/install#uninstall).
 
 ## Dateien
 

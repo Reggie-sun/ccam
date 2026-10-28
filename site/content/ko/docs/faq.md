@@ -2,10 +2,10 @@
 title: 자주 묻는 질문
 metaTitle: "ccam FAQ: Claude Code 여러 계정 쓰기"
 description: ccam, Claude Code 계정, 사용량 한도, 공유, 개인정보, 지원 시스템에 관한 질문과 답변입니다.
-updated: 2026-10-26
+updated: 2026-10-28
 order: 6
 translation: machine
-sourceHash: "b53878aaabc7"
+sourceHash: "64cd522eb711"
 ---
 
 ## ccam은 Anthropic 공식 도구인가요?
@@ -72,4 +72,4 @@ ccam을 거쳐 Claude Code를 시작하면 약 4밀리초가 더 걸립니다. �
 
 ## ccam은 어떻게 제거하나요?
 
-계정마다 `ccam shortcut <account> --remove`로 단축 명령을 지우세요. `~/.claude`를 가져왔고 그 계정이 그룹에 속해 있다면, 먼저 그 계정에 `ccam remove <name>`을 실행해 공유하던 항목의 사본을 돌려받으세요. 그다음 `~/.local/bin`에서 `ccam`을 삭제하고, 계정이 더 이상 필요 없다면 `~/.config/ccam`, `~/.local/share/ccam`, `~/.local/state/ccam`도 삭제하세요. 자세한 내용은 [설치](/docs/install#uninstall)를 참고하세요.
+`ccam uninstall`을 실행하세요. 지울 항목을 보여 주고 먼저 확인을 받은 뒤, 모든 계정(먼저 로그아웃), 단축 명령, `~/.config/ccam`, `~/.local/share/ccam`, `~/.local/state/ccam`, `ccam` 명령을 지웁니다. 가져온 `~/.claude`는 남고, 그룹에서 공유하던 항목의 사본을 돌려받습니다. 자세한 내용은 [설치](/docs/install#uninstall)를 참고하세요.

@@ -161,6 +161,7 @@
     "ccusage": "Onyesha ripoti za ccusage za tokeni na gharama za mazungumzo ya kila akaunti",
     "hook": "Huendeshwa na hooks za plugin ya ccam ndani ya Claude Code (vikomo vya matumizi, /ccam:switch)",
     "update": "Sasisha ccam hadi toleo jipya zaidi baada ya kukagua checksum yake",
+    "uninstall": "Ondoa kila akaunti, njia fupi, folda za ccam na ccam yenyewe",
     "completion": "Chapisha ukamilishaji wa bash, zsh au PowerShell"
   },
   "copy": {

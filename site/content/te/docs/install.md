@@ -2,10 +2,10 @@
 title: ccam ను ఇన్‌స్టాల్ చేయండి
 metaTitle: Linux, macOS, Windows లో ccam ఇన్‌స్టాల్ చేయండి
 description: Linux, macOS లేదా Windows లో ccam ను ఒకే కమాండ్, .deb ప్యాకేజీ లేదా go install తో ఇన్‌స్టాల్ చేసి, ccam update తో అప్‌డేట్ చేయండి. ముందుగా Claude Code ఉండాలి.
-updated: 2026-10-26
+updated: 2026-10-28
 order: 1
 translation: machine
-sourceHash: "2ada7b2650d6"
+sourceHash: "193df30c9d9a"
 ---
 
 ccam మీ కోసం Claude Code ను ప్రారంభిస్తుంది, కాబట్టి ముందుగా [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) ను ఇన్‌స్టాల్ చేసి, `claude --version` పనిచేస్తోందని నిర్ధారించుకోండి.
@@ -140,21 +140,15 @@ sudo apt install ./ccam_*_linux_amd64.deb
 
 ## అన్‌ఇన్‌స్టాల్ చేయడం
 
-`~/.local/share/ccam` ను తొలగిస్తే, అక్కడ నిల్వ ఉన్న లాగిన్‌లు, సంభాషణ చరిత్ర కూడా తొలగిపోతాయి. మీరు [ఇంపోర్ట్ చేసిన](/docs/commands) `~/.claude` ఫోల్డర్ ఉన్న చోటే ఉంటుంది, కానీ అది ఒక గ్రూప్‌లో ఉన్నంతవరకు, అది షేర్ చేసే ఫైల్‌లు `~/.local/share/ccam/groups/` లో ఉంటాయి. ఏదైనా తొలగించే ముందు దాని కోసం `ccam remove <name>` (లేదా `ccam group leave`) రన్ చేయండి: ఇది దాన్ని తన గ్రూప్‌ల నుంచి బయటకు తీసి, అది షేర్ చేసిన ప్రతిదాని కాపీని తిరిగి ఆ ఫోల్డర్‌లో ఉంచుతుంది.
-
-ccam ఇంకా ఇన్‌స్టాల్ అయి ఉండగానే, ముందుగా ఖాతా షార్ట్‌కట్‌లను తీసివేయండి. `ccam list` వాటిని Shortcut కాలమ్‌లో చూపిస్తుంది; ప్రతిదాన్ని `ccam shortcut <account> --remove` తో తీసివేయండి, లేదా ఆ లింక్‌లను `~/.local/bin` నుంచి మీరే తొలగించండి. తర్వాత కమాండ్‌ను, ఖాతాలు ఇక అవసరం లేకపోతే డేటా ఫోల్డర్‌లను తొలగించండి:
+`ccam uninstall` ccam ను, అది సృష్టించిన ప్రతిదాన్ని తొలగిస్తుంది. ముందుగా ఏమేమి తొలగిపోతాయో జాబితాగా చూపించి, అడుగుతుంది:
 
 ```sh
-ccam list
-ccam shortcut work --remove   # once for each account that has a shortcut
-rm ~/.local/bin/ccam
-rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
+ccam --dry-run uninstall   # only show what would be removed
+ccam uninstall
 ```
 
-Windows లో, PowerShell లో:
+- `ccam remove` చేసే విధంగానే ప్రతి ఖాతా తొలగించబడుతుంది. ccam ఫోల్డర్‌లలోని ఖాతా ముందుగా లాగ్ అవుట్ అయి, దాని ఫోల్డర్‌తో పాటు, దాని సంభాషణ చరిత్ర, సెట్టింగ్‌లతో సహా తొలగించబడుతుంది.
+- మీరు [ఇంపోర్ట్ చేసిన](/docs/commands) `~/.claude` ఫోల్డర్ సాధారణ `claude` కోసం ఉన్న చోటే ఉంటుంది. అది ఒక గ్రూప్‌లో ఉంటే, అది షేర్ చేసిన ప్రతిదాని కాపీ దానికి తిరిగి అందుతుంది. దాని `settings.json` లోని ccam స్టేటస్ లైన్ స్థానంలో, ccam వ్రాప్ చేసిన స్టేటస్ లైన్ ఏదైనా ఉంటే అది తిరిగి వస్తుంది. దానిలో ccam plugin ఉంటే, Claude Code లో రన్ చేయాల్సిన `/plugin uninstall` కమాండ్‌ను ccam ప్రింట్ చేస్తుంది.
+- షార్ట్‌కట్ కమాండ్‌లు, `~/.config/ccam`, `~/.local/share/ccam` (ccam ట్రాష్‌తో సహా), `~/.local/state/ccam` తొలగించబడతాయి, ఆ తర్వాత `ccam` కమాండ్ కూడా.
 
-```powershell
-ccam shortcut work --remove   # once for each account that has a shortcut
-Remove-Item ~\.local\bin\ccam.exe
-Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
-```
+ఏదైనా ఖాతా రన్ అవుతుండగా ccam తిరస్కరిస్తుంది; ముందుగా దాని Claude Code సెషన్‌లను ముగించండి. apt ఇన్‌స్టాల్ చేసిన `/usr/bin/ccam` అలాగే ఉంటుంది; తర్వాత దాన్ని `sudo apt remove ccam` తో తొలగించండి. Windows లో రన్ అవుతున్న ప్రోగ్రామ్ తనను తాను తొలగించుకోలేదు, కాబట్టి `ccam uninstall` చివరగా `ccam.exe` కోసం `Remove-Item` కమాండ్‌ను ప్రింట్ చేస్తుంది.

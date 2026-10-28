@@ -2,10 +2,10 @@
 title: Sakinisha ccam
 metaTitle: Sakinisha ccam kwenye Linux, macOS na Windows
 description: Sakinisha ccam kwenye Linux, macOS au Windows kwa amri moja, kifurushi cha .deb au go install, na uisasishe kwa ccam update. Sakinisha Claude Code kwanza.
-updated: 2026-10-26
+updated: 2026-10-28
 order: 1
 translation: machine
-sourceHash: "2ada7b2650d6"
+sourceHash: "193df30c9d9a"
 ---
 
 ccam hukuanzishia Claude Code, kwa hiyo sakinisha [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) kwanza na uhakikishe kuwa `claude --version` inafanya kazi.
@@ -140,21 +140,15 @@ sudo apt install ./ccam_*_linux_amd64.deb
 
 ## Ondoa ccam
 
-Kufuta `~/.local/share/ccam` pia hufuta taarifa za kuingia na historia ya mazungumzo zilizohifadhiwa humo. Folda ya `~/.claude` ambayo [uliiingiza](/docs/commands) hubaki pale ilipo, lakini ikiwa katika kikundi, faili inazoshiriki huishi katika `~/.local/share/ccam/groups/`. Endesha `ccam remove <name>` kwa ajili yake (au `ccam group leave`) kabla ya kufuta chochote: hili huiondoa kwenye vikundi vyake na hurudisha ndani ya folda nakala ya kila kitu ilichoshiriki.
-
-Kwanza ondoa njia fupi za akaunti, wakati ccam bado imesakinishwa. `ccam list` huzionyesha katika safu ya Shortcut; ondoa kila moja kwa `ccam shortcut <account> --remove`, au futa viungo hivyo kutoka `~/.local/bin` mwenyewe. Kisha ondoa amri, na folda za data ikiwa huhitaji tena akaunti hizo:
+`ccam uninstall` huondoa ccam na kila kitu ilichounda. Kwanza huorodhesha kitakachoondolewa, na huuliza:
 
 ```sh
-ccam list
-ccam shortcut work --remove   # once for each account that has a shortcut
-rm ~/.local/bin/ccam
-rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
+ccam --dry-run uninstall   # only show what would be removed
+ccam uninstall
 ```
 
-Kwenye Windows, katika PowerShell:
+- Kila akaunti huondolewa kama `ccam remove` inavyofanya. Kwa akaunti iliyo katika folda za ccam, ccam hutoka kwanza kwenye akaunti hiyo, kisha huifuta pamoja na folda yake, ikiwemo historia yake ya mazungumzo na mipangilio yake.
+- Folda ya `~/.claude` ambayo [uliiingiza](/docs/commands) hubaki pale ilipo kwa ajili ya `claude` ya kawaida. Ikiwa iko katika kikundi, hupata tena nakala ya kila kitu ilichoshiriki. Mstari wa hali wa ccam katika `settings.json` yake huupisha mstari wa hali ambao ccam iliufunika, ikiwa ulikuwepo. Ikiwa ina plugin ya ccam, ccam huchapisha amri ya `/plugin uninstall` ya kuendesha ndani ya Claude Code.
+- Amri za njia fupi, `~/.config/ccam`, `~/.local/share/ccam` (pamoja na folda ya taka ya ccam) na `~/.local/state/ccam` hufutwa, kisha amri ya `ccam` yenyewe.
 
-```powershell
-ccam shortcut work --remove   # once for each account that has a shortcut
-Remove-Item ~\.local\bin\ccam.exe
-Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
-```
+ccam hukataa wakati akaunti inaendeshwa; funga kwanza vipindi vyake vya Claude Code. `/usr/bin/ccam` iliyosakinishwa na apt hubaki; iondoe baadaye kwa `sudo apt remove ccam`. Kwenye Windows programu inayoendeshwa haiwezi kujifuta yenyewe, kwa hiyo `ccam uninstall` humalizia kwa kuchapisha amri ya `Remove-Item` ya `ccam.exe`.

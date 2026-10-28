@@ -2,10 +2,10 @@
 title: ccam installieren
 metaTitle: "ccam unter Linux, macOS und Windows installieren"
 description: "ccam unter Linux, macOS oder Windows per Befehl, .deb-Paket oder go install installieren und mit ccam update aktualisieren. Claude Code vorher installieren."
-updated: 2026-10-26
+updated: 2026-10-28
 order: 1
 translation: machine
-sourceHash: "2ada7b2650d6"
+sourceHash: "193df30c9d9a"
 ---
 
 ccam startet Claude Code für dich, also installiere zuerst [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) und stelle sicher, dass `claude --version` funktioniert.
@@ -140,21 +140,15 @@ sudo apt install ./ccam_*_linux_amd64.deb
 
 ## Deinstallieren
 
-Wenn du `~/.local/share/ccam` löschst, werden auch die dort gespeicherten Anmeldungen und Gesprächsverläufe gelöscht. Ein `~/.claude`-Ordner, den du [importiert](/docs/commands) hast, bleibt, wo er ist, doch solange er in einer Gruppe ist, liegen die Dateien, die er teilt, in `~/.local/share/ccam/groups/`. Führe `ccam remove <name>` für ihn aus (oder `ccam group leave`), bevor du etwas löschst: Damit verlässt er seine Gruppen, und eine Kopie von allem, was er geteilt hat, kommt zurück in den Ordner.
-
-Entferne zuerst die Kurzbefehle der Konten, solange ccam noch installiert ist. `ccam list` zeigt sie in der Spalte Shortcut; entferne jeden mit `ccam shortcut <account> --remove` oder lösche diese Links selbst aus `~/.local/bin`. Entferne dann den Befehl und die Datenordner, wenn du die Konten nicht mehr brauchst:
+`ccam uninstall` entfernt ccam und alles, was es angelegt hat. Es listet zuerst auf, was wegkommt, und fragt nach:
 
 ```sh
-ccam list
-ccam shortcut work --remove   # once for each account that has a shortcut
-rm ~/.local/bin/ccam
-rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
+ccam --dry-run uninstall   # only show what would be removed
+ccam uninstall
 ```
 
-Unter Windows, in PowerShell:
+- Jedes Konto wird so entfernt, wie `ccam remove` es tut. Ein Konto in den Ordnern von ccam wird zuerst abgemeldet und mit seinem Ordner gelöscht, samt Gesprächsverlauf und Einstellungen.
+- Ein `~/.claude`-Ordner, den du [importiert](/docs/commands) hast, bleibt für das normale `claude`, wo er ist. Ist er in einer Gruppe, bekommt er eine Kopie von allem zurück, was er geteilt hat. Die ccam-Statuszeile in seiner `settings.json` weicht der Statuszeile, die ccam umschlossen hat, falls es eine gab. Hat er das ccam-Plugin, gibt ccam den Befehl `/plugin uninstall` aus, den du in Claude Code ausführst.
+- Die Kurzbefehle, `~/.config/ccam`, `~/.local/share/ccam` (samt dem Papierkorb von ccam) und `~/.local/state/ccam` werden gelöscht, danach der Befehl `ccam` selbst.
 
-```powershell
-ccam shortcut work --remove   # once for each account that has a shortcut
-Remove-Item ~\.local\bin\ccam.exe
-Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
-```
+ccam verweigert das, solange ein Konto läuft; beende zuerst seine Claude Code-Sitzungen. Ein `/usr/bin/ccam`, das apt installiert hat, bleibt; entferne es danach mit `sudo apt remove ccam`. Unter Windows kann sich ein laufendes Programm nicht selbst löschen, daher gibt `ccam uninstall` zum Schluss den Befehl `Remove-Item` für `ccam.exe` aus.

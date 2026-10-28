@@ -2,10 +2,10 @@
 title: Cài đặt ccam
 metaTitle: "Cài đặt ccam trên Linux, macOS và Windows"
 description: "Cài đặt ccam trên Linux, macOS hoặc Windows bằng một lệnh, gói .deb hoặc go install, và cập nhật bằng ccam update. Cần cài Claude Code trước."
-updated: 2026-10-26
+updated: 2026-10-28
 order: 1
 translation: machine
-sourceHash: 2ada7b2650d6
+sourceHash: 193df30c9d9a
 ---
 
 ccam khởi động Claude Code cho bạn, vì vậy hãy cài [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) trước và đảm bảo `claude --version` chạy được.
@@ -140,21 +140,15 @@ sudo apt install ./ccam_*_linux_amd64.deb
 
 ## Gỡ cài đặt
 
-Xóa `~/.local/share/ccam` cũng xóa luôn thông tin đăng nhập và lịch sử hội thoại được lưu ở đó. Thư mục `~/.claude` mà bạn đã [nhập](/docs/commands) vẫn nằm nguyên tại chỗ, nhưng khi nó còn nằm trong một nhóm, các tệp nó dùng chung nằm trong `~/.local/share/ccam/groups/`. Hãy chạy `ccam remove <name>` cho nó (hoặc `ccam group leave`) trước khi xóa bất cứ thứ gì: việc này đưa nó ra khỏi các nhóm và đặt lại vào thư mục một bản sao của mọi thứ nó đã dùng chung.
-
-Trước tiên, hãy xóa các lệnh tắt của tài khoản khi ccam vẫn còn được cài. `ccam list` hiển thị chúng trong cột Shortcut; xóa từng lệnh bằng `ccam shortcut <account> --remove`, hoặc tự xóa các liên kết đó khỏi `~/.local/bin`. Sau đó xóa lệnh ccam, và xóa các thư mục dữ liệu nếu bạn không còn cần các tài khoản:
+`ccam uninstall` gỡ bỏ ccam và mọi thứ nó đã tạo. Trước tiên nó liệt kê những gì sẽ bị xóa, rồi hỏi:
 
 ```sh
-ccam list
-ccam shortcut work --remove   # once for each account that has a shortcut
-rm ~/.local/bin/ccam
-rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
+ccam --dry-run uninstall   # only show what would be removed
+ccam uninstall
 ```
 
-Trên Windows, trong PowerShell:
+- Mọi tài khoản đều bị xóa theo cách `ccam remove` làm. Một tài khoản nằm trong các thư mục của ccam được đăng xuất trước, rồi bị xóa cùng thư mục của nó, kể cả lịch sử hội thoại và phần cài đặt.
+- Thư mục `~/.claude` mà bạn đã [nhập](/docs/commands) vẫn nằm nguyên tại chỗ để dùng với `claude` thông thường. Nếu nó nằm trong một nhóm, nó nhận lại một bản sao của mọi thứ nó đã dùng chung. Dòng trạng thái của ccam trong `settings.json` của nó nhường chỗ cho dòng trạng thái mà ccam đã bao bọc, nếu có. Nếu nó có plugin ccam, ccam in ra lệnh `/plugin uninstall` để bạn chạy trong Claude Code.
+- Các lệnh tắt, `~/.config/ccam`, `~/.local/share/ccam` (cùng thùng rác của ccam) và `~/.local/state/ccam` bị xóa, sau đó đến chính lệnh `ccam`.
 
-```powershell
-ccam shortcut work --remove   # once for each account that has a shortcut
-Remove-Item ~\.local\bin\ccam.exe
-Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
-```
+ccam từ chối chạy khi có tài khoản đang chạy; hãy thoát các phiên Claude Code của tài khoản đó trước. `/usr/bin/ccam` do apt cài vẫn được giữ lại; hãy gỡ nó sau bằng `sudo apt remove ccam`. Trên Windows, một chương trình đang chạy không thể tự xóa chính nó, nên `ccam uninstall` kết thúc bằng việc in ra lệnh `Remove-Item` cho `ccam.exe`.

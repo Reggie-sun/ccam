@@ -2,13 +2,13 @@
 title: ข้อมูลอ้างอิงคำสั่ง
 metaTitle: "ข้อมูลอ้างอิงคำสั่ง ccam"
 description: "ทุกคำสั่งและตัวเลือกของ ccam ตั้งแต่ ccam add และ ccam <name> ไปจนถึง ccam usage, ccam next และ ccam doctor"
-updated: 2026-10-26
+updated: 2026-10-28
 order: 3
 translation: machine
-sourceHash: "b9ff0fe8d147"
+sourceHash: "f4e7679d37de"
 ---
 
-ใส่ `--dry-run` ไว้หน้าคำสั่งเพื่อดูว่าคำสั่งนั้นจะทำอะไรโดยไม่ลงมือทำจริง เช่น `ccam --dry-run work` ตัวเลือกนี้ใช้ได้เมื่อเริ่ม Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`, `ccam ccusage`) และกับ `group`, `migrate`, `folder`, `shortcut`, `pick`, `update` และ `doctor --fix` คำสั่งที่อ่านอย่างเดียว เช่น `list`, `usage`, `share` และ `ext` รับตัวเลือกนี้ได้และไม่เปลี่ยนแปลงอะไรอยู่แล้ว ส่วนคำสั่งที่เหลือจะปฏิเสธตัวเลือกนี้แทนที่จะทำงาน รวมถึง `group rename`
+ใส่ `--dry-run` ไว้หน้าคำสั่งเพื่อดูว่าคำสั่งนั้นจะทำอะไรโดยไม่ลงมือทำจริง เช่น `ccam --dry-run work` ตัวเลือกนี้ใช้ได้เมื่อเริ่ม Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`, `ccam ccusage`) และกับ `group`, `migrate`, `folder`, `shortcut`, `pick`, `update`, `uninstall` และ `doctor --fix` คำสั่งที่อ่านอย่างเดียว เช่น `list`, `usage`, `share` และ `ext` รับตัวเลือกนี้ได้และไม่เปลี่ยนแปลงอะไรอยู่แล้ว ส่วนคำสั่งที่เหลือจะปฏิเสธตัวเลือกนี้แทนที่จะทำงาน รวมถึง `group rename`
 
 <!-- commands -->
 
@@ -155,11 +155,14 @@ ccam ext             # skills, commands, MCP servers and hooks of every account,
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam uninstall       # remove every account, ccam's folders and ccam itself
 ccam version         # also: ccam -v, ccam --version
 ccam completion bash # or zsh, powershell
 ```
 
 `ccam update` จะตรวจสอบ checksum แบบ SHA-256 ของรุ่นนั้นก่อนแทนที่ ccam และ `--version v0.2.0` จะติดตั้งรุ่นที่ระบุ ส่วน ccam ชุดที่ติดตั้งจากแพ็กเกจ `.deb` ให้อัปเดตด้วย apt แทน ดูที่ [การอัปเดต](/docs/install#update)
+
+`ccam uninstall` จะแสดงรายการสิ่งที่จะลบและถามก่อน: ทุกบัญชีแบบเดียวกับที่ `ccam remove` ทำ คำสั่งลัด โฟลเดอร์ของ ccam และคำสั่ง `ccam` ส่วนโฟลเดอร์ที่นำเข้าจะยังอยู่ในตำแหน่งเดิม ดูที่ [การถอนการติดตั้ง](/docs/install#uninstall)
 
 ## ไฟล์
 

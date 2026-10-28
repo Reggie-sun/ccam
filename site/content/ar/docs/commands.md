@@ -2,13 +2,13 @@
 title: مرجع الأوامر
 metaTitle: مرجع أوامر ccam
 description: كل أوامر ccam وخياراتها، من ccam add وccam <name> إلى ccam usage وccam next وccam doctor.
-updated: 2026-10-26
+updated: 2026-10-28
 order: 3
 translation: machine
-sourceHash: "b9ff0fe8d147"
+sourceHash: "f4e7679d37de"
 ---
 
-ضع `--dry-run` قبل أمر لترى ما سيفعله دون أن يفعله، مثلًا `ccam --dry-run work`. يعمل ذلك عند تشغيل Claude Code (`ccam <name>` و`ccam run` و`ccam next` و`ccam attach` و`ccam ccusage`) ومع `group` و`migrate` و`folder` و`shortcut` و`pick` و`update` و`doctor --fix`. أما الأوامر التي تقرأ فقط، مثل `list` و`usage` و`share` و`ext`، فتقبله ولا تغيّر شيئًا في كل الأحوال. وترفضه بقية الأوامر بدلًا من أن تعمل، ومنها `group rename`.
+ضع `--dry-run` قبل أمر لترى ما سيفعله دون أن يفعله، مثلًا `ccam --dry-run work`. يعمل ذلك عند تشغيل Claude Code (`ccam <name>` و`ccam run` و`ccam next` و`ccam attach` و`ccam ccusage`) ومع `group` و`migrate` و`folder` و`shortcut` و`pick` و`update` و`uninstall` و`doctor --fix`. أما الأوامر التي تقرأ فقط، مثل `list` و`usage` و`share` و`ext`، فتقبله ولا تغيّر شيئًا في كل الأحوال. وترفضه بقية الأوامر بدلًا من أن تعمل، ومنها `group rename`.
 
 <!-- commands -->
 
@@ -155,11 +155,14 @@ ccam ext             # skills, commands, MCP servers and hooks of every account,
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam uninstall       # remove every account, ccam's folders and ccam itself
 ccam version         # also: ccam -v, ccam --version
 ccam completion bash # or zsh, powershell
 ```
 
 يتحقق `ccam update` من مجموع SHA-256 الخاص بالإصدار قبل أن يستبدل ccam، ويثبّت `--version v0.2.0` إصدارًا محددًا. أما نسخة ccam المثبّتة من حزمة `.deb` فتُحدَّث باستخدام apt. راجع [التحديث](/docs/install#update).
+
+يعرض `ccam uninstall` ما سيزيله ويسأل أولًا: كل الحسابات كما يفعل `ccam remove`، والأوامر المختصرة، ومجلدات ccam، والأمر `ccam`. أما المجلد المستورد فيبقى في مكانه. راجع [إلغاء التثبيت](/docs/install#uninstall).
 
 ## الملفات
 

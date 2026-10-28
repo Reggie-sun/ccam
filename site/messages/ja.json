@@ -161,6 +161,7 @@
     "ccusage": "すべてのアカウントの会話について、ccusageのトークンとコストのレポートを表示する",
     "hook": "Claude Code内でccamプラグインのフックが実行する（使用量の上限、/ccam:switch）",
     "update": "チェックサムを確認したうえで、ccamを最新のリリースに更新する",
+    "uninstall": "すべてのアカウント、ショートカット、ccamのフォルダー、ccam自体を削除する",
     "completion": "bash、zsh、PowerShellの補完スクリプトを出力する"
   },
   "copy": {

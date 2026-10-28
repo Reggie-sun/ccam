@@ -2,10 +2,10 @@
 title: ccamのインストール
 metaTitle: "Linux、macOS、Windowsにccamをインストール"
 description: Linux、macOS、Windowsにccamを1つのコマンド、.debパッケージ、go installでインストールし、ccam updateで更新します。Claude Codeを先に入れてください。
-updated: 2026-10-26
+updated: 2026-10-28
 order: 1
 translation: machine
-sourceHash: 2ada7b2650d6
+sourceHash: 193df30c9d9a
 ---
 
 ccamがClaude Codeを起動するので、先に[Claude Code](https://docs.claude.com/en/docs/claude-code/overview)をインストールし、`claude --version`が動作することを確認してください。
@@ -140,21 +140,15 @@ sudo apt install ./ccam_*_linux_amd64.deb
 
 ## アンインストール
 
-`~/.local/share/ccam`を削除すると、そこに保存されているログインと会話履歴も削除されます。[インポートした](/docs/commands)`~/.claude`フォルダーは、その場所に残ります。ただし、グループに入っている間は、共有しているファイルが`~/.local/share/ccam/groups/`にあります。何かを削除する前に、そのアカウントに対して`ccam remove <name>`（または`ccam group leave`）を実行してください。これでアカウントがグループから外れ、共有していたものすべてのコピーがフォルダーに戻ります。
-
-まず、ccamがインストールされているうちに、アカウントのショートカットを削除します。`ccam list`のShortcut列にショートカットが表示されます。それぞれ`ccam shortcut <account> --remove`で削除するか、`~/.local/bin`からそれらのリンクを自分で削除してください。続いてコマンドを削除し、アカウントが不要になった場合はデータフォルダーも削除します。
+`ccam uninstall`は、ccamとccamが作ったものをすべて削除します。最初に削除するものを一覧で表示し、確認を求めます。
 
 ```sh
-ccam list
-ccam shortcut work --remove   # once for each account that has a shortcut
-rm ~/.local/bin/ccam
-rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
+ccam --dry-run uninstall   # only show what would be removed
+ccam uninstall
 ```
 
-Windowsでは、PowerShellで次を実行します。
+- すべてのアカウントが、`ccam remove`と同じように削除されます。ccamのフォルダーにあるアカウントは、先にログアウトしてからフォルダーごと削除され、会話履歴と設定も削除されます。
+- [インポートした](/docs/commands)`~/.claude`フォルダーは、普通の`claude`で使えるように、その場所に残ります。グループに入っている場合は、共有していたものすべてのコピーがフォルダーに戻ります。`settings.json`にあるccamのステータスラインは、ccamがラップしていたステータスラインがあれば、それに戻ります。ccamプラグインが入っている場合は、Claude Codeで実行する`/plugin uninstall`コマンドをccamが表示します。
+- ショートカットコマンド、`~/.config/ccam`、`~/.local/share/ccam`（ccamのごみ箱を含む）、`~/.local/state/ccam`を削除し、最後に`ccam`コマンド自体を削除します。
 
-```powershell
-ccam shortcut work --remove   # once for each account that has a shortcut
-Remove-Item ~\.local\bin\ccam.exe
-Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
-```
+アカウントが実行中の間、ccamは削除を拒否します。先にそのアカウントのClaude Codeのセッションを終了してください。aptでインストールした`/usr/bin/ccam`は残るので、後で`sudo apt remove ccam`で削除してください。Windowsでは実行中のプログラムが自分自身を削除できないため、`ccam uninstall`は最後に`ccam.exe`を削除する`Remove-Item`コマンドを表示します。

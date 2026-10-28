@@ -2,13 +2,13 @@
 title: "Référence des commandes"
 metaTitle: "Référence des commandes ccam"
 description: "Toutes les commandes et options de ccam, de ccam add et ccam <name> à ccam usage, ccam next et ccam doctor."
-updated: 2026-10-26
+updated: 2026-10-28
 order: 3
 translation: machine
-sourceHash: b9ff0fe8d147
+sourceHash: f4e7679d37de
 ---
 
-Placez `--dry-run` avant une commande pour voir ce qu'elle ferait sans l'exécuter, par exemple `ccam --dry-run work`. Cela fonctionne au démarrage de Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`, `ccam ccusage`) et avec `group`, `migrate`, `folder`, `shortcut`, `pick`, `update` et `doctor --fix`. Les commandes qui ne font que lire, comme `list`, `usage`, `share` et `ext`, l'acceptent et ne modifient rien de toute façon. Les autres la refusent au lieu de s'exécuter, y compris `group rename`.
+Placez `--dry-run` avant une commande pour voir ce qu'elle ferait sans l'exécuter, par exemple `ccam --dry-run work`. Cela fonctionne au démarrage de Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`, `ccam ccusage`) et avec `group`, `migrate`, `folder`, `shortcut`, `pick`, `update`, `uninstall` et `doctor --fix`. Les commandes qui ne font que lire, comme `list`, `usage`, `share` et `ext`, l'acceptent et ne modifient rien de toute façon. Les autres la refusent au lieu de s'exécuter, y compris `group rename`.
 
 <!-- commands -->
 
@@ -155,11 +155,14 @@ ccam ext             # skills, commands, MCP servers and hooks of every account,
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam uninstall       # remove every account, ccam's folders and ccam itself
 ccam version         # also: ccam -v, ccam --version
 ccam completion bash # or zsh, powershell
 ```
 
 `ccam update` vérifie la somme de contrôle SHA-256 de la version avant de remplacer ccam, et `--version v0.2.0` installe une version précise. Une copie de ccam installée depuis le paquet `.deb` se met à jour avec apt. Voir [Mettre à jour](/docs/install#update).
+
+`ccam uninstall` liste ce qu'il supprime et demande d'abord confirmation : tous les comptes, comme le fait `ccam remove`, les raccourcis, les dossiers de ccam et la commande `ccam`. Un dossier importé reste là où il se trouve. Voir [Désinstaller](/docs/install#uninstall).
 
 ## Fichiers
 

@@ -2,10 +2,10 @@
 title: Mga madalas itanong
 metaTitle: "ccam FAQ: maraming Claude Code account"
 description: Mga sagot tungkol sa ccam, mga Claude Code account, usage limit, sharing, privacy at mga suportadong system.
-updated: 2026-10-26
+updated: 2026-10-28
 order: 6
 translation: machine
-sourceHash: b53878aaabc7
+sourceHash: 64cd522eb711
 ---
 
 ## Opisyal bang tool ng Anthropic ang ccam?
@@ -72,4 +72,4 @@ Patakbuhin ang `ccam update`. Dina-download nito ang pinakabagong release, sinus
 
 ## Paano i-uninstall ang ccam?
 
-Alisin ang shortcut ng bawat account gamit ang `ccam shortcut <account> --remove`. Kung in-import mo ang `~/.claude` at nasa isang group ito, patakbuhin muna ang `ccam remove <name>` para dito, para maibalik dito ang kopya ng mga shine-share nito. Saka burahin ang `ccam` mula sa `~/.local/bin`, at alisin ang `~/.config/ccam`, `~/.local/share/ccam` at `~/.local/state/ccam` kung hindi mo na kailangan ang mga account. Tingnan ang [install](/docs/install#uninstall).
+Patakbuhin ang `ccam uninstall`. Inililista nito ang mga aalisin at nagtatanong muna, saka inaalis ang bawat account (ina-log out muna), ang mga shortcut command, `~/.config/ccam`, `~/.local/share/ccam`, `~/.local/state/ccam` at ang command na `ccam`. Nananatili ang in-import na `~/.claude`, kasama ang kopya ng shine-share nito sa mga group nito. Tingnan ang [install](/docs/install#uninstall).

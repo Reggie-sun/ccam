@@ -2,10 +2,10 @@
 title: پرسش‌های متداول
 metaTitle: "پرسش‌های متداول ccam: چند حساب Claude Code"
 description: پاسخ به پرسش‌هایی درباره ccam، حساب‌های Claude Code، سقف مصرف، اشتراک‌گذاری، حریم خصوصی و سیستم‌های پشتیبانی‌شده.
-updated: 2026-10-26
+updated: 2026-10-28
 order: 6
 translation: machine
-sourceHash: b53878aaabc7
+sourceHash: 64cd522eb711
 ---
 
 ## آیا ccam ابزار رسمی Anthropic است؟
@@ -72,4 +72,4 @@ Linux (Ubuntu، Debian، Fedora، Arch، Alpine و توزیع‌های دیگر)
 
 ## چگونه ccam را حذف کنم؟
 
-میان‌بر هر حساب را با `ccam shortcut <account> --remove` حذف کنید. اگر `~/.claude` را وارد کرده‌اید و در یک گروه است، اول `ccam remove <name>` را برای آن اجرا کنید تا یک کپی از آنچه به اشتراک می‌گذارد پس بگیرد. سپس `ccam` را از `~/.local/bin` پاک کنید، و اگر دیگر به حساب‌ها نیاز ندارید، `~/.config/ccam`، `~/.local/share/ccam` و `~/.local/state/ccam` را حذف کنید. [نصب](/docs/install#uninstall) را ببینید.
+`ccam uninstall` را اجرا کنید. فهرست چیزهایی را که حذف می‌شوند نشان می‌دهد و ابتدا می‌پرسد، سپس همه حساب‌ها (پس از خروج از سیستم)، فرمان‌های میان‌بر، `~/.config/ccam`، `~/.local/share/ccam`، `~/.local/state/ccam` و فرمان `ccam` را حذف می‌کند. `~/.claude` واردشده باقی می‌ماند، همراه با یک کپی از آنچه در گروه‌هایش به اشتراک می‌گذاشت. [نصب](/docs/install#uninstall) را ببینید.

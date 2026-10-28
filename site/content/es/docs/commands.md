@@ -2,13 +2,13 @@
 title: Referencia de comandos
 metaTitle: Referencia de comandos de ccam
 description: Todos los comandos y opciones de ccam, desde ccam add y ccam <name> hasta ccam usage, ccam next y ccam doctor.
-updated: 2026-10-26
+updated: 2026-10-28
 order: 3
 translation: machine
-sourceHash: "b9ff0fe8d147"
+sourceHash: "f4e7679d37de"
 ---
 
-Pon `--dry-run` antes de un comando para ver lo que haría sin hacerlo, por ejemplo `ccam --dry-run work`. Funciona al iniciar Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`, `ccam ccusage`) y con `group`, `migrate`, `folder`, `shortcut`, `pick`, `update` y `doctor --fix`. Los comandos que solo leen, como `list`, `usage`, `share` y `ext`, la aceptan y de todos modos no cambian nada. Los demás la rechazan en lugar de ejecutarse, incluido `group rename`.
+Pon `--dry-run` antes de un comando para ver lo que haría sin hacerlo, por ejemplo `ccam --dry-run work`. Funciona al iniciar Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`, `ccam ccusage`) y con `group`, `migrate`, `folder`, `shortcut`, `pick`, `update`, `uninstall` y `doctor --fix`. Los comandos que solo leen, como `list`, `usage`, `share` y `ext`, la aceptan y de todos modos no cambian nada. Los demás la rechazan en lugar de ejecutarse, incluido `group rename`.
 
 <!-- commands -->
 
@@ -155,11 +155,14 @@ ccam ext             # skills, commands, MCP servers and hooks of every account,
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam uninstall       # remove every account, ccam's folders and ccam itself
 ccam version         # also: ccam -v, ccam --version
 ccam completion bash # or zsh, powershell
 ```
 
 `ccam update` comprueba la suma de verificación SHA-256 de la versión antes de reemplazar ccam, y `--version v0.2.0` instala una versión concreta. Si instalaste ccam desde el paquete `.deb`, actualízalo con apt. Consulta [actualizar](/docs/install#update).
+
+`ccam uninstall` lista lo que quita y pregunta primero: todas las cuentas, como hace `ccam remove`, los atajos, las carpetas de ccam y el comando `ccam`. Una carpeta importada se queda donde está. Consulta [desinstalar](/docs/install#uninstall).
 
 ## Archivos
 

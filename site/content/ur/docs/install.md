@@ -2,10 +2,10 @@
 title: "ccam انسٹال کریں"
 metaTitle: "ccam کو Linux، macOS اور Windows پر انسٹال کریں"
 description: "ccam کو Linux، macOS یا Windows پر ایک کمانڈ، .deb پیکیج یا go install سے انسٹال کریں اور ccam update سے اپ ڈیٹ کریں۔ پہلے Claude Code انسٹال ہونا ضروری ہے۔"
-updated: 2026-10-26
+updated: 2026-10-28
 order: 1
 translation: machine
-sourceHash: 2ada7b2650d6
+sourceHash: 193df30c9d9a
 ---
 
 ccam آپ کے لیے Claude Code شروع کرتا ہے، اس لیے پہلے [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) انسٹال کریں اور یقینی بنائیں کہ `claude --version` کام کرتا ہے۔
@@ -140,21 +140,15 @@ sudo apt install ./ccam_*_linux_amd64.deb
 
 ## اَن انسٹال کرنا
 
-`~/.local/share/ccam` حذف کرنے سے وہاں محفوظ لاگ اِن اور گفتگو کی ہسٹری بھی حذف ہو جاتی ہے۔ جو `~/.claude` فولڈر آپ نے [امپورٹ کیا تھا](/docs/commands) وہ اپنی جگہ پر رہتا ہے، لیکن جب تک وہ کسی گروپ میں ہے، جو فائلیں وہ شیئر کرتا ہے وہ `~/.local/share/ccam/groups/` میں رہتی ہیں۔ کچھ بھی حذف کرنے سے پہلے اس کے لیے `ccam remove <name>` چلائیں (یا `ccam group leave`): یہ اسے اس کے گروپس سے نکال دیتا ہے اور ہر اس چیز کی کاپی واپس فولڈر میں رکھ دیتا ہے جو اس نے شیئر کی تھی۔
-
-پہلے، جب تک ccam انسٹال ہے، اکاؤنٹس کے شارٹ کٹس ہٹائیں۔ `ccam list` انہیں Shortcut کالم میں دکھاتا ہے؛ ہر ایک کو `ccam shortcut <account> --remove` سے ہٹائیں، یا وہ لنکس خود `~/.local/bin` سے حذف کریں۔ پھر کمانڈ ہٹائیں، اور اگر اکاؤنٹس کی ضرورت نہ رہی ہو تو ڈیٹا فولڈرز بھی:
+`ccam uninstall` ccam کو اور ہر وہ چیز ہٹا دیتا ہے جو اس نے بنائی ہو۔ پہلے یہ فہرست دکھاتا ہے کہ کیا کچھ ہٹے گا، اور پوچھتا ہے:
 
 ```sh
-ccam list
-ccam shortcut work --remove   # once for each account that has a shortcut
-rm ~/.local/bin/ccam
-rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
+ccam --dry-run uninstall   # only show what would be removed
+ccam uninstall
 ```
 
-Windows پر، PowerShell میں:
+- ہر اکاؤنٹ اسی طرح ہٹایا جاتا ہے جیسے `ccam remove` کرتا ہے۔ ccam کے فولڈرز میں موجود اکاؤنٹ کو پہلے لاگ آؤٹ کیا جاتا ہے، پھر اسے اس کے فولڈر کے ساتھ، گفتگو کی ہسٹری اور سیٹنگز سمیت حذف کر دیا جاتا ہے۔
+- جو `~/.claude` فولڈر آپ نے [امپورٹ کیا تھا](/docs/commands) وہ عام `claude` کے لیے اپنی جگہ پر رہتا ہے۔ اگر وہ کسی گروپ میں ہے تو اسے ہر اس چیز کی کاپی واپس مل جاتی ہے جو اس نے شیئر کی تھی۔ اس کی `settings.json` میں ccam کی اسٹیٹس لائن کی جگہ وہ اسٹیٹس لائن واپس آ جاتی ہے جسے ccam نے لپیٹا تھا، اگر کوئی تھی۔ اگر اس میں ccam پلگ اِن ہے تو ccam وہ `/plugin uninstall` کمانڈ پرنٹ کرتا ہے جو Claude Code میں چلانی ہے۔
+- شارٹ کٹ کمانڈز، `~/.config/ccam`، `~/.local/share/ccam` (ccam کے ٹریش سمیت) اور `~/.local/state/ccam` حذف کیے جاتے ہیں، پھر خود `ccam` کمانڈ۔
 
-```powershell
-ccam shortcut work --remove   # once for each account that has a shortcut
-Remove-Item ~\.local\bin\ccam.exe
-Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
-```
+جب کوئی اکاؤنٹ چل رہا ہو تو ccam انکار کر دیتا ہے؛ پہلے اس کے Claude Code سیشنز بند کریں۔ apt کا انسٹال کیا ہوا `/usr/bin/ccam` رہ جاتا ہے؛ اسے بعد میں `sudo apt remove ccam` سے ہٹائیں۔ Windows پر چلتا ہوا پروگرام خود کو حذف نہیں کر سکتا، اس لیے `ccam uninstall` آخر میں `ccam.exe` کے لیے `Remove-Item` کمانڈ پرنٹ کرتا ہے۔

@@ -2,13 +2,13 @@
 title: కమాండ్ రిఫరెన్స్
 metaTitle: ccam కమాండ్ రిఫరెన్స్
 description: ccam add, ccam <name> నుంచి ccam usage, ccam next, ccam doctor వరకు ccam యొక్క ప్రతి కమాండ్, ఆప్షన్.
-updated: 2026-10-26
+updated: 2026-10-28
 order: 3
 translation: machine
-sourceHash: "b9ff0fe8d147"
+sourceHash: "f4e7679d37de"
 ---
 
-ఒక కమాండ్ అసలు చేయకుండా అది ఏమి చేస్తుందో చూడటానికి, దాని ముందు `--dry-run` పెట్టండి, ఉదాహరణకు `ccam --dry-run work`. ఇది Claude Code ను ప్రారంభించేటప్పుడు (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`, `ccam ccusage`), అలాగే `group`, `migrate`, `folder`, `shortcut`, `pick`, `update`, `doctor --fix` తో పనిచేస్తుంది. `list`, `usage`, `share`, `ext` వంటి చదవడం మాత్రమే చేసే కమాండ్‌లు దాన్ని అంగీకరిస్తాయి, ఎలాగూ ఏమీ మార్చవు. మిగతావి, `group rename` తో సహా, రన్ అవ్వకుండా దాన్ని తిరస్కరిస్తాయి.
+ఒక కమాండ్ అసలు చేయకుండా అది ఏమి చేస్తుందో చూడటానికి, దాని ముందు `--dry-run` పెట్టండి, ఉదాహరణకు `ccam --dry-run work`. ఇది Claude Code ను ప్రారంభించేటప్పుడు (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`, `ccam ccusage`), అలాగే `group`, `migrate`, `folder`, `shortcut`, `pick`, `update`, `uninstall`, `doctor --fix` తో పనిచేస్తుంది. `list`, `usage`, `share`, `ext` వంటి చదవడం మాత్రమే చేసే కమాండ్‌లు దాన్ని అంగీకరిస్తాయి, ఎలాగూ ఏమీ మార్చవు. మిగతావి, `group rename` తో సహా, రన్ అవ్వకుండా దాన్ని తిరస్కరిస్తాయి.
 
 <!-- commands -->
 
@@ -155,11 +155,14 @@ ccam ext             # skills, commands, MCP servers and hooks of every account,
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam uninstall       # remove every account, ccam's folders and ccam itself
 ccam version         # also: ccam -v, ccam --version
 ccam completion bash # or zsh, powershell
 ```
 
 `ccam update` ccam ను మార్చే ముందు రిలీజ్ SHA-256 చెక్‌సమ్‌ను తనిఖీ చేస్తుంది, `--version v0.2.0` ఒక నిర్దిష్ట రిలీజ్‌ను ఇన్‌స్టాల్ చేస్తుంది. `.deb` ప్యాకేజీ నుంచి ఇన్‌స్టాల్ చేసిన ccam కాపీని బదులుగా apt తో అప్‌డేట్ చేయండి. వివరాల కోసం [అప్‌డేట్ చేయడం](/docs/install#update) చూడండి.
+
+`ccam uninstall` తాను తొలగించే వాటిని జాబితాగా చూపించి, ముందుగా అడుగుతుంది: `ccam remove` చేసే విధంగా ప్రతి ఖాతా, షార్ట్‌కట్ కమాండ్‌లు, ccam ఫోల్డర్‌లు, `ccam` కమాండ్. ఇంపోర్ట్ చేసిన ఫోల్డర్ ఉన్న చోటే ఉంటుంది. [అన్‌ఇన్‌స్టాల్ చేయడం](/docs/install#uninstall) చూడండి.
 
 ## ఫైళ్లు
 

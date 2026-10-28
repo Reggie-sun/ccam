@@ -2,10 +2,10 @@
 title: ccam 설치
 metaTitle: "Linux, macOS, Windows에 ccam 설치하기"
 description: "Linux, macOS, Windows에서 명령 하나, .deb 패키지 또는 go install로 ccam을 설치하고 ccam update로 업데이트합니다. Claude Code를 먼저 설치해야 합니다."
-updated: 2026-10-26
+updated: 2026-10-28
 order: 1
 translation: machine
-sourceHash: "2ada7b2650d6"
+sourceHash: "193df30c9d9a"
 ---
 
 ccam은 Claude Code를 대신 실행해 주는 도구이므로, 먼저 [Claude Code](https://docs.claude.com/en/docs/claude-code/overview)를 설치하고 `claude --version`이 제대로 실행되는지 확인하세요.
@@ -140,21 +140,15 @@ sudo apt install ./ccam_*_linux_amd64.deb
 
 ## 제거
 
-`~/.local/share/ccam`을 지우면 그 안에 저장된 로그인 정보와 대화 내역도 함께 지워집니다. [가져온](/docs/commands) `~/.claude` 폴더는 원래 위치에 그대로 남지만, 그룹에 속해 있는 동안에는 공유하는 파일이 `~/.local/share/ccam/groups/`에 있습니다. 무엇이든 지우기 전에 그 계정에 `ccam remove <name>`(또는 `ccam group leave`)을 실행하세요. 그러면 계정이 그룹에서 빠지고, 공유하던 모든 항목의 사본이 폴더로 돌아옵니다.
-
-ccam이 아직 설치되어 있을 때 계정 단축 명령부터 지웁니다. `ccam list`의 Shortcut 열에서 단축 명령을 확인하고, 하나씩 `ccam shortcut <account> --remove`로 지우거나 `~/.local/bin`에서 해당 링크를 직접 지우세요. 그다음 ccam 명령을 지우고, 계정이 더 이상 필요 없다면 데이터 폴더도 지웁니다.
+`ccam uninstall`은 ccam과 ccam이 만든 모든 것을 지웁니다. 먼저 지울 항목을 보여 주고 확인을 받습니다.
 
 ```sh
-ccam list
-ccam shortcut work --remove   # once for each account that has a shortcut
-rm ~/.local/bin/ccam
-rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
+ccam --dry-run uninstall   # only show what would be removed
+ccam uninstall
 ```
 
-Windows에서는 PowerShell에서 다음을 실행합니다.
+- 모든 계정을 `ccam remove`와 같은 방식으로 제거합니다. ccam 폴더에 있는 계정은 먼저 로그아웃한 뒤 폴더째 삭제하므로, 대화 내역과 설정도 함께 지워집니다.
+- [가져온](/docs/commands) `~/.claude` 폴더는 일반 `claude`용으로 원래 위치에 그대로 남습니다. 그룹에 속해 있었다면 공유하던 모든 항목의 사본을 돌려받습니다. 그 폴더의 `settings.json`에 있는 ccam 상태 표시줄은, ccam이 감싸고 있던 상태 표시줄이 있으면 그것으로 되돌아갑니다. ccam 플러그인이 설치되어 있으면 ccam이 Claude Code에서 실행할 `/plugin uninstall` 명령을 출력합니다.
+- 단축 명령, `~/.config/ccam`, `~/.local/share/ccam`(ccam의 휴지통 포함), `~/.local/state/ccam`을 삭제하고, 마지막으로 `ccam` 명령 자체를 삭제합니다.
 
-```powershell
-ccam shortcut work --remove   # once for each account that has a shortcut
-Remove-Item ~\.local\bin\ccam.exe
-Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
-```
+실행 중인 계정이 있으면 ccam은 제거를 거부하므로, 먼저 그 계정의 Claude Code 세션을 종료하세요. apt로 설치한 `/usr/bin/ccam`은 남으므로, 그다음 `sudo apt remove ccam`으로 지우세요. Windows에서는 실행 중인 프로그램이 자기 자신을 지울 수 없으므로, `ccam uninstall`은 마지막에 `ccam.exe`를 지우는 `Remove-Item` 명령을 출력합니다.

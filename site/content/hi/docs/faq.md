@@ -2,10 +2,10 @@
 title: अक्सर पूछे जाने वाले प्रश्न
 metaTitle: "ccam FAQ: कई Claude Code अकाउंट"
 description: ccam, Claude Code अकाउंट, उपयोग सीमाएँ, साझा करना, निजता और समर्थित सिस्टम के बारे में जवाब।
-updated: 2026-10-26
+updated: 2026-10-28
 order: 6
 translation: machine
-sourceHash: "b53878aaabc7"
+sourceHash: "64cd522eb711"
 ---
 
 ## क्या ccam, Anthropic का आधिकारिक टूल है?
@@ -72,4 +72,4 @@ ccam के ज़रिए Claude Code शुरू करने में ल�
 
 ## ccam को अनइंस्टॉल कैसे करें?
 
-हर अकाउंट का शॉर्टकट `ccam shortcut <account> --remove` से हटाएँ। अगर आपने `~/.claude` import किया है और वह किसी ग्रुप में है, तो पहले उसके लिए `ccam remove <name>` चलाएँ, ताकि उसे वह सब वापस कॉपी के रूप में मिल जाए जो वह साझा करता है। फिर `ccam` को `~/.local/bin` से मिटाएँ, और अगर अब अकाउंट्स की ज़रूरत नहीं है तो `~/.config/ccam`, `~/.local/share/ccam` और `~/.local/state/ccam` हटाएँ। [इंस्टॉल](/docs/install#uninstall) देखें।
+`ccam uninstall` चलाएँ। यह दिखाता है कि क्या हटेगा और पहले पूछता है, फिर हर अकाउंट (पहले लॉग आउट करके), शॉर्टकट कमांड, `~/.config/ccam`, `~/.local/share/ccam`, `~/.local/state/ccam` और `ccam` कमांड हटा देता है। import किया गया `~/.claude` बना रहता है, और उसके ग्रुप में उसने जो साझा किया था उसकी एक कॉपी उसमें आ जाती है। [इंस्टॉल](/docs/install#uninstall) देखें।

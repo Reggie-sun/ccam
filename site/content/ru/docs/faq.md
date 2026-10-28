@@ -2,10 +2,10 @@
 title: Часто задаваемые вопросы
 metaTitle: "FAQ по ccam: несколько аккаунтов Claude Code"
 description: Ответы о ccam, аккаунтах Claude Code, лимитах использования, общем доступе, конфиденциальности и поддерживаемых системах.
-updated: 2026-10-26
+updated: 2026-10-28
 order: 6
 translation: machine
-sourceHash: "b53878aaabc7"
+sourceHash: "64cd522eb711"
 ---
 
 ## Является ли ccam официальным инструментом Anthropic?
@@ -72,4 +72,4 @@ Linux (Ubuntu, Debian, Fedora, Arch, Alpine и другие), macOS и Windows 1
 
 ## Как удалить ccam?
 
-Удалите короткую команду каждого аккаунта командой `ccam shortcut <account> --remove`. Если вы импортировали `~/.claude` и он входит в группу, сначала выполните для него `ccam remove <name>`, чтобы он получил обратно копию того, что делает общим. Затем удалите `ccam` из `~/.local/bin` и удалите `~/.config/ccam`, `~/.local/share/ccam` и `~/.local/state/ccam`, если аккаунты вам больше не нужны. См. раздел [установка](/docs/install#uninstall).
+Выполните `ccam uninstall`. Он показывает, что будет удалено, и сначала спрашивает подтверждение, а затем удаляет каждый аккаунт (предварительно выполнив выход), короткие команды, `~/.config/ccam`, `~/.local/share/ccam`, `~/.local/state/ccam` и команду `ccam`. Импортированный `~/.claude` остаётся и получает копию того, что он делал общим в своих группах. См. раздел [установка](/docs/install#uninstall).

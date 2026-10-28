@@ -2,13 +2,13 @@
 title: Command reference
 metaTitle: ccam command reference
 description: Every ccam command and option, from ccam add and ccam <name> to ccam usage, ccam next and ccam doctor.
-updated: 2026-10-26
+updated: 2026-10-28
 published: 2026-10-19
 order: 3
 translation: source
 ---
 
-Put `--dry-run` before a command to see what it would do without doing it, for example `ccam --dry-run work`. It works when starting Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`, `ccam ccusage`) and with `group`, `migrate`, `folder`, `shortcut`, `pick`, `update` and `doctor --fix`. Commands that only read, such as `list`, `usage`, `share` and `ext`, accept it and change nothing anyway. The rest refuse it instead of running, including `group rename`.
+Put `--dry-run` before a command to see what it would do without doing it, for example `ccam --dry-run work`. It works when starting Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`, `ccam ccusage`) and with `group`, `migrate`, `folder`, `shortcut`, `pick`, `update`, `uninstall` and `doctor --fix`. Commands that only read, such as `list`, `usage`, `share` and `ext`, accept it and change nothing anyway. The rest refuse it instead of running, including `group rename`.
 
 <!-- commands -->
 
@@ -155,11 +155,14 @@ ccam ext             # skills, commands, MCP servers and hooks of every account,
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam uninstall       # remove every account, ccam's folders and ccam itself
 ccam version         # also: ccam -v, ccam --version
 ccam completion bash # or zsh, powershell
 ```
 
 `ccam update` checks the release's SHA-256 checksum before it replaces ccam, and `--version v0.2.0` installs a particular release. A copy of ccam installed from the `.deb` package is updated with apt instead. See [update](/docs/install#update).
+
+`ccam uninstall` lists what it removes and asks first: every account as `ccam remove` does, the shortcut commands, ccam's folders and the `ccam` command. An imported folder stays where it is. See [uninstall](/docs/install#uninstall).
 
 ## Files
 

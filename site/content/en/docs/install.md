@@ -2,7 +2,7 @@
 title: Install ccam
 metaTitle: Install ccam on Linux, macOS and Windows
 description: Install ccam on Linux, macOS or Windows with one command, a .deb package or go install, and update it with ccam update. Claude Code must be installed first.
-updated: 2026-10-26
+updated: 2026-10-28
 published: 2026-10-19
 order: 1
 translation: source
@@ -140,21 +140,15 @@ sudo apt install ./ccam_*_linux_amd64.deb
 
 ## Uninstall
 
-Deleting `~/.local/share/ccam` also deletes the logins and conversation history stored there. A `~/.claude` folder that you [imported](/docs/commands) stays where it is, but while it is in a group, the files it shares live in `~/.local/share/ccam/groups/`. Run `ccam remove <name>` for it (or `ccam group leave`) before you delete anything: this takes it out of its groups and puts a copy of everything it shared back into the folder.
-
-Remove the account shortcuts first, while ccam is still installed. `ccam list` shows them in the Shortcut column; remove each one with `ccam shortcut <account> --remove`, or delete those links from `~/.local/bin` yourself. Then remove the command, and the data folders if you no longer need the accounts:
+`ccam uninstall` removes ccam and everything it made. It first lists what goes, and asks:
 
 ```sh
-ccam list
-ccam shortcut work --remove   # once for each account that has a shortcut
-rm ~/.local/bin/ccam
-rm -r ~/.config/ccam ~/.local/share/ccam ~/.local/state/ccam
+ccam --dry-run uninstall   # only show what would be removed
+ccam uninstall
 ```
 
-On Windows, in PowerShell:
+- Every account is removed as `ccam remove` does. An account in ccam's folders is logged out first and deleted with its folder, its conversation history and settings too.
+- A `~/.claude` folder that you [imported](/docs/commands) stays where it is for plain `claude`. If it is in a group, it gets back a copy of everything it shared. The ccam status line in its `settings.json` gives way to the status line ccam wrapped, if there was one. If it has the ccam plugin, ccam prints the `/plugin uninstall` command to run in Claude Code.
+- The shortcut commands, `~/.config/ccam`, `~/.local/share/ccam` (with ccam's trash) and `~/.local/state/ccam` are deleted, then the `ccam` command itself.
 
-```powershell
-ccam shortcut work --remove   # once for each account that has a shortcut
-Remove-Item ~\.local\bin\ccam.exe
-Remove-Item -Recurse ~\.config\ccam, ~\.local\share\ccam, ~\.local\state\ccam
-```
+ccam refuses while an account is running; quit its Claude Code sessions first. A `/usr/bin/ccam` that apt installed stays; remove it afterwards with `sudo apt remove ccam`. On Windows a running program cannot delete itself, so `ccam uninstall` ends by printing the `Remove-Item` command for `ccam.exe`.

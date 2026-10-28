@@ -2,13 +2,13 @@
 title: 命令参考
 metaTitle: "ccam 命令参考"
 description: ccam 的所有命令和选项，从 ccam add、ccam <name> 到 ccam usage、ccam next 和 ccam doctor。
-updated: 2026-10-26
+updated: 2026-10-28
 order: 3
 translation: machine
-sourceHash: "b9ff0fe8d147"
+sourceHash: "f4e7679d37de"
 ---
 
-在命令前加上 `--dry-run`，可以查看它会做什么而不实际执行，例如 `ccam --dry-run work`。它适用于启动 Claude Code（`ccam <name>`、`ccam run`、`ccam next`、`ccam attach`、`ccam ccusage`）以及 `group`、`migrate`、`folder`、`shortcut`、`pick`、`update` 和 `doctor --fix`。只读取内容的命令（例如 `list`、`usage`、`share` 和 `ext`）也接受它，反正它们不会更改任何东西。其余命令会拒绝它，而不会执行，`group rename` 也是如此。
+在命令前加上 `--dry-run`，可以查看它会做什么而不实际执行，例如 `ccam --dry-run work`。它适用于启动 Claude Code（`ccam <name>`、`ccam run`、`ccam next`、`ccam attach`、`ccam ccusage`）以及 `group`、`migrate`、`folder`、`shortcut`、`pick`、`update`、`uninstall` 和 `doctor --fix`。只读取内容的命令（例如 `list`、`usage`、`share` 和 `ext`）也接受它，反正它们不会更改任何东西。其余命令会拒绝它，而不会执行，`group rename` 也是如此。
 
 <!-- commands -->
 
@@ -155,11 +155,14 @@ ccam ext             # skills, commands, MCP servers and hooks of every account,
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam uninstall       # remove every account, ccam's folders and ccam itself
 ccam version         # also: ccam -v, ccam --version
 ccam completion bash # or zsh, powershell
 ```
 
 `ccam update` 在替换 ccam 之前会校验版本的 SHA-256 校验和，`--version v0.2.0` 用于安装特定版本。通过 `.deb` 软件包安装的 ccam 副本则用 apt 更新。参见[更新](/docs/install#update)。
+
+`ccam uninstall` 会先列出要删除的内容并征求确认：像 `ccam remove` 那样删除每个账号，以及快捷命令、ccam 的文件夹和 `ccam` 命令。导入的文件夹会保留在原位置。参见[卸载](/docs/install#uninstall)。
 
 ## 文件
 

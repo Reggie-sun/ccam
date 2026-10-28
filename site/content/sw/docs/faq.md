@@ -2,10 +2,10 @@
 title: Maswali yanayoulizwa mara kwa mara
 metaTitle: "Maswali kuhusu ccam: akaunti kadhaa za Claude Code"
 description: Majibu kuhusu ccam, akaunti za Claude Code, vikomo vya matumizi, kushiriki, faragha na mifumo inayotumika.
-updated: 2026-10-26
+updated: 2026-10-28
 order: 6
 translation: machine
-sourceHash: "b53878aaabc7"
+sourceHash: "64cd522eb711"
 ---
 
 ## Je, ccam ni zana rasmi ya Anthropic?
@@ -72,4 +72,4 @@ Endesha `ccam update`. Hupakua toleo jipya zaidi, hukagua checksum yake na hubad
 
 ## Nitaondoaje ccam?
 
-Ondoa njia fupi ya kila akaunti kwa `ccam shortcut <account> --remove`. Ikiwa uliingiza `~/.claude` na iko katika kikundi, kwanza endesha `ccam remove <name>` kwa ajili yake, ili ipate tena nakala ya kile inachoshiriki. Kisha futa `ccam` kutoka `~/.local/bin`, na uondoe `~/.config/ccam`, `~/.local/share/ccam` na `~/.local/state/ccam` ikiwa huhitaji tena akaunti hizo. Tazama [usakinishaji](/docs/install#uninstall).
+Endesha `ccam uninstall`. Huorodhesha kitakachoondolewa na huuliza kwanza, kisha huondoa kila akaunti (baada ya kutoka kwanza kwenye akaunti hiyo), amri za njia fupi, `~/.config/ccam`, `~/.local/share/ccam`, `~/.local/state/ccam` na amri ya `ccam`. `~/.claude` iliyoingizwa hubaki, ikiwa na nakala ya kile ilichoshiriki katika vikundi vyake. Tazama [usakinishaji](/docs/install#uninstall).

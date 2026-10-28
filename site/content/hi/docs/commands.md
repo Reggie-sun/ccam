@@ -2,13 +2,13 @@
 title: कमांड संदर्भ
 metaTitle: "ccam कमांड संदर्भ"
 description: ccam की हर कमांड और विकल्प, ccam add और ccam <name> से लेकर ccam usage, ccam next और ccam doctor तक।
-updated: 2026-10-26
+updated: 2026-10-28
 order: 3
 translation: machine
-sourceHash: "b9ff0fe8d147"
+sourceHash: "f4e7679d37de"
 ---
 
-किसी कमांड को असल में चलाए बिना यह देखने के लिए कि वह क्या करेगी, उसके आगे `--dry-run` लगाएँ, उदाहरण के लिए `ccam --dry-run work`। यह Claude Code शुरू करते समय (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`, `ccam ccusage`) और `group`, `migrate`, `folder`, `shortcut`, `pick`, `update` तथा `doctor --fix` के साथ काम करता है। केवल पढ़ने वाली कमांड, जैसे `list`, `usage`, `share` और `ext`, इसे स्वीकार करती हैं और वैसे भी कुछ नहीं बदलतीं। बाक़ी कमांड इसे स्वीकार नहीं करतीं और चलने से मना कर देती हैं, जिनमें `group rename` भी शामिल है।
+किसी कमांड को असल में चलाए बिना यह देखने के लिए कि वह क्या करेगी, उसके आगे `--dry-run` लगाएँ, उदाहरण के लिए `ccam --dry-run work`। यह Claude Code शुरू करते समय (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`, `ccam ccusage`) और `group`, `migrate`, `folder`, `shortcut`, `pick`, `update`, `uninstall` तथा `doctor --fix` के साथ काम करता है। केवल पढ़ने वाली कमांड, जैसे `list`, `usage`, `share` और `ext`, इसे स्वीकार करती हैं और वैसे भी कुछ नहीं बदलतीं। बाक़ी कमांड इसे स्वीकार नहीं करतीं और चलने से मना कर देती हैं, जिनमें `group rename` भी शामिल है।
 
 <!-- commands -->
 
@@ -155,11 +155,14 @@ ccam ext             # skills, commands, MCP servers and hooks of every account,
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam uninstall       # remove every account, ccam's folders and ccam itself
 ccam version         # also: ccam -v, ccam --version
 ccam completion bash # or zsh, powershell
 ```
 
 ccam को बदलने से पहले `ccam update` रिलीज़ का SHA-256 checksum जाँचता है, और `--version v0.2.0` कोई खास रिलीज़ इंस्टॉल करता है। `.deb` पैकेज से इंस्टॉल की गई ccam की कॉपी इसके बजाय apt से अपडेट होता है। [अपडेट](/docs/install#update) देखें।
+
+`ccam uninstall` दिखाता है कि वह क्या हटाएगा और पहले पूछता है: `ccam remove` की तरह हर अकाउंट, शॉर्टकट कमांड, ccam के फ़ोल्डर और `ccam` कमांड। import किया गया फ़ोल्डर अपनी जगह पर बना रहता है। [अनइंस्टॉल](/docs/install#uninstall) देखें।
 
 ## फ़ाइलें
 

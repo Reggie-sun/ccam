@@ -2,7 +2,7 @@
 title: Frequently asked questions
 metaTitle: "ccam FAQ: multiple Claude Code accounts"
 description: Answers about ccam, Claude Code accounts, usage limits, sharing, privacy and supported systems.
-updated: 2026-10-26
+updated: 2026-10-28
 published: 2026-10-19
 order: 6
 translation: source
@@ -72,4 +72,4 @@ Run `ccam update`. It downloads the latest release, checks its checksum and repl
 
 ## How do I uninstall ccam?
 
-Remove each account's shortcut with `ccam shortcut <account> --remove`. If you imported `~/.claude` and it is in a group, run `ccam remove <name>` for it first, so it gets back a copy of what it shares. Then delete `ccam` from `~/.local/bin`, and remove `~/.config/ccam`, `~/.local/share/ccam` and `~/.local/state/ccam` if you no longer need the accounts. See [install](/docs/install#uninstall).
+Run `ccam uninstall`. It lists what goes and asks first, then removes every account (logged out first), the shortcut commands, `~/.config/ccam`, `~/.local/share/ccam`, `~/.local/state/ccam` and the `ccam` command. An imported `~/.claude` stays, with a copy of what it shared in its groups. See [install](/docs/install#uninstall).

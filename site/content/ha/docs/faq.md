@@ -2,10 +2,10 @@
 title: Tambayoyin da ake yawan yi
 metaTitle: "Tambayoyi game da ccam: asusun Claude Code da dama"
 description: Amsoshi game da ccam, asusun Claude Code, iyakokin amfani, rabawa, sirri da tsarukan da ake tallafawa.
-updated: 2026-10-26
+updated: 2026-10-28
 order: 6
 translation: machine
-sourceHash: b53878aaabc7
+sourceHash: 64cd522eb711
 ---
 
 ## Shin ccam kayan aikin Anthropic ne na hukuma?
@@ -72,4 +72,4 @@ Gudanar da `ccam update`. Yana sauke sakin baya-bayan nan, yana duba checksum na
 
 ## Ta yaya zan cire ccam?
 
-Cire gajeren umarnin kowane asusu da `ccam shortcut <account> --remove`. Idan ka shigo da `~/.claude` kuma yana cikin rukuni, fara gudanar da `ccam remove <name>` a kansa, don ya dawo da kwafin abin da yake rabawa. Sannan ka goge `ccam` daga `~/.local/bin`, kuma ka cire `~/.config/ccam`, `~/.local/share/ccam` da `~/.local/state/ccam` idan ba ka buƙatar asusan kuma. Duba [shigarwa](/docs/install#uninstall).
+Gudanar da `ccam uninstall`. Yana lissafa abin da za a cire kuma yana tambaya tukuna, sannan yana cire kowane asusu (bayan fitar da shi daga shiga), gajerun umarnin, `~/.config/ccam`, `~/.local/share/ccam`, `~/.local/state/ccam` da umarnin `ccam`. `~/.claude` da aka shigo da shi yana nan, tare da kwafin abin da ya raba a rukunoninsa. Duba [shigarwa](/docs/install#uninstall).

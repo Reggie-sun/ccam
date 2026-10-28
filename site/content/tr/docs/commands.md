@@ -2,13 +2,13 @@
 title: Komut başvurusu
 metaTitle: ccam komut başvurusu
 description: ccam add ve ccam <name> komutlarından ccam usage, ccam next ve ccam doctor komutlarına kadar tüm ccam komutları ve seçenekleri.
-updated: 2026-10-26
+updated: 2026-10-28
 order: 3
 translation: machine
-sourceHash: b9ff0fe8d147
+sourceHash: f4e7679d37de
 ---
 
-Bir komutun ne yapacağını, yapmadan görmek için komuttan önce `--dry-run` yazın, örneğin `ccam --dry-run work`. Bu, Claude Code başlatılırken (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`, `ccam ccusage`) ve `group`, `migrate`, `folder`, `shortcut`, `pick`, `update` ile `doctor --fix` komutlarında çalışır. `list`, `usage`, `share` ve `ext` gibi yalnızca okuyan komutlar bunu kabul eder ve zaten hiçbir şeyi değiştirmez. Geri kalanlar, `group rename` de dahil, çalışmak yerine bunu reddeder.
+Bir komutun ne yapacağını, yapmadan görmek için komuttan önce `--dry-run` yazın, örneğin `ccam --dry-run work`. Bu, Claude Code başlatılırken (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`, `ccam ccusage`) ve `group`, `migrate`, `folder`, `shortcut`, `pick`, `update`, `uninstall` ile `doctor --fix` komutlarında çalışır. `list`, `usage`, `share` ve `ext` gibi yalnızca okuyan komutlar bunu kabul eder ve zaten hiçbir şeyi değiştirmez. Geri kalanlar, `group rename` de dahil, çalışmak yerine bunu reddeder.
 
 <!-- commands -->
 
@@ -155,11 +155,14 @@ ccam ext             # skills, commands, MCP servers and hooks of every account,
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam uninstall       # remove every account, ccam's folders and ccam itself
 ccam version         # also: ccam -v, ccam --version
 ccam completion bash # or zsh, powershell
 ```
 
 `ccam update`, ccam'ı değiştirmeden önce sürümün SHA-256 sağlama toplamını kontrol eder; `--version v0.2.0` ise belirli bir sürümü kurar. `.deb` paketinden kurulan bir ccam kopyası bunun yerine apt ile güncellenir. [Güncelleme](/docs/install#update) bölümüne bakın.
+
+`ccam uninstall`, neleri kaldıracağını listeler ve önce sorar: `ccam remove` komutunun yaptığı gibi her hesap, kısayol komutları, ccam'in klasörleri ve `ccam` komutu. İçe aktarılmış bir klasör olduğu yerde kalır. [Kaldırma](/docs/install#uninstall) bölümüne bakın.
 
 ## Dosyalar
 

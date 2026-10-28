@@ -161,6 +161,7 @@
     "ccusage": "Mostra i report di token e costi di ccusage per le conversazioni di tutti gli account",
     "hook": "Eseguito dagli hook del plugin ccam in Claude Code (limiti di utilizzo, /ccam:switch)",
     "update": "Aggiorna ccam all'ultima release dopo averne verificato il checksum",
+    "uninstall": "Rimuove ogni account, le scorciatoie, le cartelle di ccam e ccam stesso",
     "completion": "Stampa il completamento per bash, zsh o PowerShell"
   },
   "copy": {

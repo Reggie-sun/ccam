@@ -161,6 +161,7 @@
     "ccusage": "Tüm hesapların konuşmaları için ccusage'ın token ve maliyet raporlarını gösterir",
     "hook": "Claude Code'da ccam eklentisinin hook'ları tarafından çalıştırılır (kullanım limitleri, /ccam:switch)",
     "update": "Sağlama toplamını kontrol ettikten sonra ccam'ı en son sürüme günceller",
+    "uninstall": "Her hesabı, kısayolları, ccam'in klasörlerini ve ccam'in kendisini kaldırır",
     "completion": "bash, zsh veya PowerShell tamamlama betiğini yazdırır"
   },
   "copy": {

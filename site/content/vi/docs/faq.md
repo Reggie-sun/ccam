@@ -2,10 +2,10 @@
 title: Câu hỏi thường gặp
 metaTitle: "ccam FAQ: dùng nhiều tài khoản Claude Code"
 description: "Giải đáp về ccam, tài khoản Claude Code, giới hạn sử dụng, việc dùng chung, quyền riêng tư và các hệ điều hành được hỗ trợ."
-updated: 2026-10-26
+updated: 2026-10-28
 order: 6
 translation: machine
-sourceHash: b53878aaabc7
+sourceHash: 64cd522eb711
 ---
 
 ## ccam có phải là công cụ chính thức của Anthropic không?
@@ -72,4 +72,4 @@ Chạy `ccam update`. Lệnh này tải về bản phát hành mới nhất, ki�
 
 ## Làm sao để gỡ cài đặt ccam?
 
-Xóa lệnh tắt của từng tài khoản bằng `ccam shortcut <account> --remove`. Nếu bạn đã nhập `~/.claude` và nó nằm trong một nhóm, hãy chạy `ccam remove <name>` cho nó trước, để nó nhận lại một bản sao của những gì nó dùng chung. Sau đó xóa `ccam` khỏi `~/.local/bin`, và xóa `~/.config/ccam`, `~/.local/share/ccam` và `~/.local/state/ccam` nếu bạn không còn cần các tài khoản. Xem [cài đặt](/docs/install#uninstall).
+Chạy `ccam uninstall`. Lệnh này liệt kê những gì sẽ bị xóa và hỏi trước, sau đó xóa mọi tài khoản (đăng xuất trước), các lệnh tắt, `~/.config/ccam`, `~/.local/share/ccam`, `~/.local/state/ccam` và lệnh `ccam`. `~/.claude` đã nhập vẫn được giữ lại, kèm một bản sao của những gì nó đã dùng chung trong các nhóm. Xem [cài đặt](/docs/install#uninstall).

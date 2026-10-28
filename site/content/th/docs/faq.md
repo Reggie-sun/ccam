@@ -2,10 +2,10 @@
 title: คำถามที่พบบ่อย
 metaTitle: "ccam FAQ: ใช้ Claude Code หลายบัญชี"
 description: "คำตอบเกี่ยวกับ ccam บัญชี Claude Code ขีดจำกัดการใช้งาน การใช้ร่วมกัน ความเป็นส่วนตัว และระบบที่รองรับ"
-updated: 2026-10-26
+updated: 2026-10-28
 order: 6
 translation: machine
-sourceHash: "b53878aaabc7"
+sourceHash: "64cd522eb711"
 ---
 
 ## ccam เป็นเครื่องมืออย่างเป็นทางการของ Anthropic หรือไม่?
@@ -72,4 +72,4 @@ Linux (Ubuntu, Debian, Fedora, Arch, Alpine และอื่น ๆ), macOS �
 
 ## จะถอนการติดตั้ง ccam ได้อย่างไร?
 
-ลบคำสั่งลัดของแต่ละบัญชีด้วย `ccam shortcut <account> --remove` หากคุณนำเข้า `~/.claude` และโฟลเดอร์นั้นอยู่ในกลุ่ม ให้รัน `ccam remove <name>` กับบัญชีนั้นก่อน เพื่อให้ได้สำเนาของสิ่งที่ใช้ร่วมกันกลับคืนมา จากนั้นลบ `ccam` ออกจาก `~/.local/bin` แล้วลบ `~/.config/ccam`, `~/.local/share/ccam` และ `~/.local/state/ccam` หากคุณไม่ต้องการบัญชีเหล่านั้นอีกต่อไป ดูที่ [การติดตั้ง](/docs/install#uninstall)
+รัน `ccam uninstall` คำสั่งนี้จะแสดงรายการสิ่งที่จะถูกลบและถามก่อน จากนั้นจึงลบทุกบัญชี (โดยออกจากระบบก่อน) คำสั่งลัด `~/.config/ccam`, `~/.local/share/ccam`, `~/.local/state/ccam` และคำสั่ง `ccam` ส่วน `~/.claude` ที่นำเข้าไว้จะยังอยู่ พร้อมสำเนาของสิ่งที่เคยใช้ร่วมกันในกลุ่ม ดูที่ [การติดตั้ง](/docs/install#uninstall)

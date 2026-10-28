@@ -2,13 +2,13 @@
 title: Довідник команд
 metaTitle: Довідник команд ccam
 description: Усі команди та параметри ccam, від ccam add і ccam <name> до ccam usage, ccam next і ccam doctor.
-updated: 2026-10-26
+updated: 2026-10-28
 order: 3
 translation: machine
-sourceHash: "b9ff0fe8d147"
+sourceHash: "f4e7679d37de"
 ---
 
-Додайте `--dry-run` перед командою, щоб побачити, що вона зробила б, не виконуючи її, наприклад `ccam --dry-run work`. Це працює під час запуску Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`, `ccam ccusage`) і з `group`, `migrate`, `folder`, `shortcut`, `pick`, `update` та `doctor --fix`. Команди, які лише читають, як-от `list`, `usage`, `share` і `ext`, приймають його й однаково нічого не змінюють. Решта відхиляють його й не виконуються, зокрема `group rename`.
+Додайте `--dry-run` перед командою, щоб побачити, що вона зробила б, не виконуючи її, наприклад `ccam --dry-run work`. Це працює під час запуску Claude Code (`ccam <name>`, `ccam run`, `ccam next`, `ccam attach`, `ccam ccusage`) і з `group`, `migrate`, `folder`, `shortcut`, `pick`, `update`, `uninstall` та `doctor --fix`. Команди, які лише читають, як-от `list`, `usage`, `share` і `ext`, приймають його й однаково нічого не змінюють. Решта відхиляють його й не виконуються, зокрема `group rename`.
 
 <!-- commands -->
 
@@ -155,11 +155,14 @@ ccam ext             # skills, commands, MCP servers and hooks of every account,
 ccam shims install   # recreate the shortcut links
 ccam update          # install the latest ccam release
 ccam update --check  # only check for a newer release
+ccam uninstall       # remove every account, ccam's folders and ccam itself
 ccam version         # also: ccam -v, ccam --version
 ccam completion bash # or zsh, powershell
 ```
 
 `ccam update` перевіряє контрольну суму SHA-256 випуску, перш ніж замінити ccam, а `--version v0.2.0` встановлює певний випуск. Копія ccam, встановлена з пакета `.deb`, натомість оновлюється через apt. Див. [оновлення](/docs/install#update).
+
+`ccam uninstall` показує, що саме видалить, і спершу питає: кожен обліковий запис (так, як це робить `ccam remove`), короткі команди, теки ccam і команду `ccam`. Імпортована тека залишається там, де вона є. Див. [видалення](/docs/install#uninstall).
 
 ## Файли
 

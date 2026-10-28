@@ -2,10 +2,10 @@
 title: الأسئلة الشائعة
 metaTitle: "أسئلة شائعة عن ccam: عدة حسابات Claude Code"
 description: إجابات عن ccam وحسابات Claude Code وحدود الاستخدام والمشاركة والخصوصية والأنظمة المدعومة.
-updated: 2026-10-26
+updated: 2026-10-28
 order: 6
 translation: machine
-sourceHash: "b53878aaabc7"
+sourceHash: "64cd522eb711"
 ---
 
 ## هل ccam أداة رسمية من Anthropic؟
@@ -72,4 +72,4 @@ Linux (Ubuntu وDebian وFedora وArch وAlpine وغيرها) وmacOS وWindows 
 
 ## كيف ألغي تثبيت ccam؟
 
-أزل الأمر المختصر لكل حساب باستخدام `ccam shortcut <account> --remove`. وإذا كنت قد استوردت `~/.claude` وكان في مجموعة، فشغّل `ccam remove <name>` له أولًا، ليستعيد نسخة مما يشاركه. ثم احذف `ccam` من `~/.local/bin`، واحذف `~/.config/ccam` و`~/.local/share/ccam` و`~/.local/state/ccam` إذا لم تعد بحاجة إلى الحسابات. راجع [التثبيت](/docs/install#uninstall).
+شغّل `ccam uninstall`. يعرض ما سيُزال ويسأل أولًا، ثم يزيل كل الحسابات (بعد تسجيل خروجها أولًا)، والأوامر المختصرة، و`~/.config/ccam` و`~/.local/share/ccam` و`~/.local/state/ccam` والأمر `ccam`. أما `~/.claude` المستورد فيبقى، ومعه نسخة مما كان يشاركه في مجموعاته. راجع [التثبيت](/docs/install#uninstall).
