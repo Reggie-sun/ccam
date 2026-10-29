@@ -129,6 +129,10 @@ func gatherOne(e *env, from, target *config.Profile, dir, tdir string, s liveSes
 	if !ok {
 		return ""
 	}
+	if processStopped(s.PID) {
+		// A stopped Claude Code (Ctrl+Z) handles no SIGTERM until it goes on.
+		return "left here: Claude Code is stopped (Ctrl+Z)"
+	}
 	path := filepath.Join(transcript.ProjectDir(dir, s.Cwd), s.SessionID+".jsonl")
 	if !fsutil.Exists(path) || transcript.RemoteControl(path) {
 		return ""
@@ -152,11 +156,35 @@ func gatherOne(e *env, from, target *config.Profile, dir, tdir string, s liveSes
 	if err := handoff.Save(e.paths.State, t); err != nil {
 		return "left here: " + err.Error()
 	}
+	ticket := handoff.Path(e.paths.State, from.Name, s.SessionID)
 	if err := launcher.Terminate(s.PID, relay, child, started); err != nil {
-		handoff.Remove(handoff.Path(e.paths.State, from.Name, s.SessionID))
+		handoff.Remove(ticket)
 		return "left here: " + err.Error()
 	}
-	return "moved to " + target.Name
+	// Only a Claude Code that ended is carried on by its relay: one that did
+	// not keeps its account, and its note must not wait for a later exit.
+	for deadline := time.Now().Add(gatherExitWait); time.Now().Before(deadline); time.Sleep(100 * time.Millisecond) {
+		if now, ok := session.StartTime(s.PID); !ok || now != started {
+			return "moved to " + target.Name
+		}
+	}
+	handoff.Remove(ticket)
+	return "left here: Claude Code did not end"
+}
+
+// gatherExitWait is how long gather waits for Claude Code to end after
+// SIGTERM. Tests change it.
+var gatherExitWait = 5 * time.Second
+
+// processStopped reports whether process pid is stopped (Linux: state T or
+// t in /proc/<pid>/stat).
+func processStopped(pid int) bool {
+	data, err := os.ReadFile(fmt.Sprintf("/proc/%d/stat", pid))
+	if err != nil {
+		return false
+	}
+	_, rest, ok := strings.Cut(string(data), ") ")
+	return ok && len(rest) > 0 && (rest[0] == 'T' || rest[0] == 't')
 }
 
 // processEnv is the value of the environment variable name of process pid
