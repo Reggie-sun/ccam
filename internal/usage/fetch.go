@@ -81,7 +81,7 @@ type Options struct {
 	// does, see ProbeRequest), "cache" (saved values only), or "" for the
 	// Fetcher's Source.
 	Source  string
-	Refresh bool // refresh expired tokens (only when the profile is not running)
+	Refresh bool // refresh expired tokens, also of a profile Claude Code runs on
 }
 
 // Fetcher queries accounts in parallel over one shared HTTP client.

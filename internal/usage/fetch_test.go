@@ -240,28 +240,19 @@ func TestRefreshLockHeldSaysWhatItMayBe(t *testing.T) {
 	}
 }
 
-func TestRefreshOnlyWhenNotRunning(t *testing.T) {
+func TestRefreshWhileRunning(t *testing.T) {
 	e := newEnv(t)
 	past := time.Now().Add(-time.Hour).UnixMilli()
 	a := e.account("x", "stale", past)
 
-	// This test process stands in for a running claude.
+	// This test process stands in for a running claude, which reads the
+	// renewed login from the file when it next needs one.
 	if err := session.Register(a.SessionDir); err != nil {
 		t.Fatal(err)
 	}
 	r := e.f.Fetch(context.Background(), a, Options{Refresh: true})
-	if r.Status != StatusExpired || e.refresh.Load() != 0 || !strings.Contains(r.Err, "running") {
-		t.Fatalf("refresh while running: %+v", r)
-	}
-	// The login works: Claude Code renews the token itself.
-	if out := strings.Join(Table([]*Report{&r}, RenderOptions{Now: time.Now()}), "\n"); strings.Contains(out, "login expired") || !strings.Contains(out, "token not renewed: a session is running") {
-		t.Fatalf("table: %s", out)
-	}
-	os.RemoveAll(a.SessionDir)
-
-	r = e.f.Fetch(context.Background(), a, Options{Refresh: true})
 	if r.Status != StatusOK || e.refresh.Load() != 1 {
-		t.Fatalf("refresh: %+v", r)
+		t.Fatalf("refresh while running: %+v", r)
 	}
 	data, _ := os.ReadFile(filepath.Join(a.Dir, ".credentials.json"))
 	var doc struct {
@@ -281,9 +272,9 @@ func TestRefreshOnlyWhenNotRunning(t *testing.T) {
 }
 
 // Claude Code running on the folder without ccam (plain claude, or the
-// daemon behind background sessions, which renews the login itself) holds
-// the same refresh token: ccam does not rotate it under it.
-func TestRefreshNotUnderClaudeCodeStartedElsewhere(t *testing.T) {
+// daemon behind background sessions) takes the renewed login from the file
+// when it next needs one, so ccam renews it under it too.
+func TestRefreshUnderClaudeCodeStartedElsewhere(t *testing.T) {
 	if _, ok := session.StartTime(os.Getpid()); !ok {
 		t.Skip("no process start times on this platform")
 	}
@@ -291,13 +282,8 @@ func TestRefreshNotUnderClaudeCodeStartedElsewhere(t *testing.T) {
 	a := e.account("x", "stale", time.Now().Add(-time.Hour).UnixMilli())
 	daemon := filepath.Join(a.Dir, "daemon.lock") // as Claude Code's daemon writes it; this process stands in
 	os.WriteFile(daemon, fmt.Appendf(nil, `{"pid":%d,"version":"2.1.308","origin":"transient","startedAt":%d}`, os.Getpid(), time.Now().UnixMilli()), 0o600)
-	r := e.f.Fetch(context.Background(), a, Options{Refresh: true})
-	if r.Status != StatusExpired || e.refresh.Load() != 0 || !strings.Contains(r.Err, "running") {
-		t.Fatalf("refresh under the daemon: %+v", r)
-	}
-	os.Remove(daemon)
 	if r := e.f.Fetch(context.Background(), a, Options{Refresh: true}); r.Status != StatusOK || e.refresh.Load() != 1 {
-		t.Fatalf("refresh once it ended: %+v", r)
+		t.Fatalf("refresh under the daemon: %+v", r)
 	}
 }
 
@@ -374,12 +360,13 @@ func TestTokenURLIsClaudeCodes(t *testing.T) {
 	}
 }
 
-func TestRefreshRefusedForImportedProfile(t *testing.T) {
+// An account registered in place may be used by plain claude as well; it
+// takes the renewed login from the file like any other Claude Code.
+func TestRefreshForImportedProfile(t *testing.T) {
 	e := newEnv(t)
 	a := e.account("x", "stale", time.Now().Add(-time.Hour).UnixMilli())
 	a.Imported = true
-	r := e.f.Fetch(context.Background(), a, Options{Refresh: true})
-	if r.Status != StatusExpired || e.refresh.Load() != 0 || !strings.Contains(r.Err, "claude") {
+	if r := e.f.Fetch(context.Background(), a, Options{Refresh: true}); r.Status != StatusOK || e.refresh.Load() != 1 {
 		t.Fatalf("%+v", r)
 	}
 }

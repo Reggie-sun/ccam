@@ -19,7 +19,6 @@ import (
 	"github.com/jhyunwoo/ccam/internal/creds"
 	"github.com/jhyunwoo/ccam/internal/fsutil"
 	"github.com/jhyunwoo/ccam/internal/lock"
-	"github.com/jhyunwoo/ccam/internal/session"
 )
 
 // TokenURL and clientID are what Claude Code uses to refresh its OAuth
@@ -50,15 +49,14 @@ const (
 // folder; rename, remove and logout take it too.
 func RefreshLock(sessionDir string) string { return sessionDir + ".refresh.lock" }
 
-// refresh renews an expired access token. Refresh tokens rotate, so doing
-// this while Claude Code runs on the profile would log it out: it is
-// refused while a session ccam started, or any Claude Code process that
-// lists itself in the folder (a background session, its daemon), runs, and
-// while one holds the lock it renews the login under.
+// refresh renews an expired access token. Refresh tokens rotate, so it is
+// done under the locks Claude Code renews the login under, and it is safe
+// while Claude Code runs on the profile: before renewing, Claude Code
+// (2.1.311) drops its cached login, reads the file again and takes the token
+// it finds there when another process has renewed it already, as two
+// sessions of one account do. An idle session never renews its own token, so
+// without this its account stays expired until someone opens it.
 func (f *Fetcher) refresh(ctx context.Context, a Account) (oauthCred, error) {
-	if a.Imported {
-		return oauthCred{}, fmt.Errorf("not refreshing an account registered in place, since plain claude may also be using it")
-	}
 	// Serialize ccam's own refreshes of this account; everything below is
 	// checked under the lock so two ccams never rotate the token twice.
 	l, err := lock.TryFlock(RefreshLock(a.SessionDir))
@@ -69,9 +67,6 @@ func (f *Fetcher) refresh(ctx context.Context, a Account) (oauthCred, error) {
 		return oauthCred{}, err
 	}
 	defer l.Unlock()
-	if session.InUse(a.SessionDir, a.Dir) {
-		return oauthCred{}, fmt.Errorf("a session is running")
-	}
 	release, err := claudeRefreshLock(a.Dir)
 	if err != nil {
 		return oauthCred{}, err
