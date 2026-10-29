@@ -209,7 +209,7 @@ func newRoot(e *env) *cobra.Command {
 	root.ValidArgsFunction = profileNames(e) // `ccam <tab>` lists accounts
 	root.AddCommand(
 		addCmd(e), listCmd(e), runCmd(e), useCmd(e), removeCmd(e), renameCmd(e),
-		loginCmd(e), logoutCmd(e), shimsCmd(e), versionCmd(e), shareCmd(e), doctorCmd(e), mcpCmd(e), nextCmd(e), usageCmd(e), statuslineCmd(e), importCmd(e), migrateCmd(e), shortcutCmd(e), folderCmd(e), pickCmd(e), extCmd(e), groupCmd(e), hookCmd(e), agentsCmd(e), attachCmd(e), ccusageCmd(e), updateCmd(e), uninstallCmd(e), completionCmd(e),
+		loginCmd(e), logoutCmd(e), shimsCmd(e), versionCmd(e), shareCmd(e), doctorCmd(e), mcpCmd(e), nextCmd(e), usageCmd(e), statuslineCmd(e), importCmd(e), migrateCmd(e), shortcutCmd(e), folderCmd(e), pickCmd(e), extCmd(e), groupCmd(e), hookCmd(e), agentsCmd(e), attachCmd(e), ccusageCmd(e), updateCmd(e), uninstallCmd(e), completionCmd(e), gatherCmd(e),
 	)
 	for _, c := range root.Commands() {
 		switch c.Name() {
@@ -227,7 +227,7 @@ var dryRunCommands = map[string]bool{
 	"ccam shortcut": true, "ccam folder": true, "ccam pick": true, "ccam ext": true, "ccam update": true, "ccam doctor": true, "ccam usage": true,
 	"ccam list": true, "ccam uninstall": true, "ccam mcp list": true, "ccam agents": true, "ccam attach": true, "ccam ccusage": true, "ccam group": true, "ccam group list": true, "ccam group show": true,
 	"ccam group add": true, "ccam group set": true, "ccam group join": true, "ccam group leave": true, "ccam group remove": true, "ccam version": true, "ccam completion": true,
-	"ccam help": true, "ccam __complete": true, "ccam __completeNoDesc": true,
+	"ccam gather": true, "ccam help": true, "ccam __complete": true, "ccam __completeNoDesc": true,
 }
 
 func versionCmd(e *env) *cobra.Command {
