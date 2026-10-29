@@ -6,7 +6,9 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/jhyunwoo/ccam/internal/config"
 	"github.com/jhyunwoo/ccam/internal/fsutil"
+	"github.com/jhyunwoo/ccam/internal/paths"
 )
 
 // PluginFiles store absolute paths under the config dir that installed them
@@ -71,6 +73,26 @@ func PluginPathsUnder(pluginsDir, prefix string) int {
 		})
 	}
 	return n
+}
+
+// GroupPluginPaths counts the plugin paths in the group folder groupDir
+// that go through an account's own plugins folder (Claude Code writes the
+// path of the folder it ran in, e.g. for a project-scope install), and with
+// fix rewrites them to the group's folder, which every account shares.
+func GroupPluginPaths(p paths.Paths, cfg *config.Config, groupDir string, fix bool) (n int, err error) {
+	pluginsDir := filepath.Join(groupDir, "plugins")
+	sep := string(filepath.Separator)
+	for i := range cfg.Profiles {
+		pre := filepath.Join(Dir(p, &cfg.Profiles[i]), "plugins") + sep
+		found := PluginPathsUnder(pluginsDir, pre)
+		n += found
+		if fix && found > 0 {
+			if _, e := RewritePluginPaths(pluginsDir, pre, pluginsDir+sep); e != nil {
+				err = e
+			}
+		}
+	}
+	return n, err
 }
 
 // RewriteStrings applies fn to every string value in a decoded JSON document.

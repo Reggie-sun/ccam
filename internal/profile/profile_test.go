@@ -265,3 +265,31 @@ func TestRenameOverAStaleMember(t *testing.T) {
 		t.Fatalf("%v", cfg.Groups[0].Members)
 	}
 }
+
+func TestGroupPluginPathsHealsAccountPaths(t *testing.T) {
+	p := testPaths(t)
+	cfg := &config.Config{}
+	Add(p, cfg, "work")
+	group := p.GroupDir("default")
+	os.MkdirAll(filepath.Join(group, "plugins"), 0o700)
+	through := filepath.Join(p.ProfileDir("work"), "plugins", "cache", "m", "x", "1")
+	file := filepath.Join(group, "plugins", "installed_plugins.json")
+	os.WriteFile(file, []byte(`{"plugins":{"x@m":[{"installPath":"`+through+`"}]}}`), 0o600)
+
+	if n, _ := GroupPluginPaths(p, cfg, group, false); n != 1 {
+		t.Fatalf("counted %d, want 1", n)
+	}
+	if data, _ := os.ReadFile(file); !strings.Contains(string(data), through) {
+		t.Fatalf("counting changed the file: %s", data)
+	}
+	if _, err := GroupPluginPaths(p, cfg, group, true); err != nil {
+		t.Fatal(err)
+	}
+	data, _ := os.ReadFile(file)
+	if want := filepath.Join(group, "plugins", "cache", "m", "x", "1"); !strings.Contains(string(data), want) || strings.Contains(string(data), through) {
+		t.Fatalf("not rewritten to the group folder: %s", data)
+	}
+	if n, _ := GroupPluginPaths(p, cfg, group, false); n != 0 {
+		t.Fatalf("still %d paths through an account", n)
+	}
+}

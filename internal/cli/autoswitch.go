@@ -4,6 +4,7 @@ import (
 	"cmp"
 	"context"
 	"os"
+	"path/filepath"
 	"runtime"
 	"slices"
 	"strconv"
@@ -147,7 +148,7 @@ func autoTarget(ctx context.Context, e *env, cfg *config.Config, from *config.Pr
 	done := make(chan target, 1)
 	go func() {
 		var tg target
-		var ok []*usage.Report
+		var ok, strangers []*usage.Report
 		for _, r := range reportsWith(ctx, e, f, cfg, profs, opt) {
 			room := p.Choose([]*usage.Report{r}, now) != nil
 			switch {
@@ -159,33 +160,41 @@ func autoTarget(ctx context.Context, e *env, cfg *config.Config, from *config.Pr
 				if room {
 					tg.untrusted = append(tg.untrusted, r.Name)
 				}
+				strangers = append(strangers, r)
 			default:
 				ok = append(ok, r)
 			}
 		}
-		for {
-			best := spread(e, p, ok, now)
-			if best == nil {
-				break
-			}
-			// Nobody may be there to log in again: an account whose login
-			// Claude Code cannot renew is left out.
-			if to, _ := cfg.Find(best.Name); creds.Has(profile.Dir(e.paths, to), e.paths.Home) {
-				tg.to, tg.why = to, p.Why(best, now)
-				if top := p.Choose(ok, now); top != best {
-					// spread passed over top, which another session took a
-					// moment ago: Why would compare best with every account.
-					tg.why = p.Use(best, now) + "; " + top.Name + " was taken by another session a moment ago"
+		// Accounts that trust the folder first. Only when none of them has
+		// room, one that never trusted it: Claude Code then asks once, at a
+		// terminal where the person is, rather than the session waiting
+		// hours for its own account.
+		lists := [][]*usage.Report{ok, strangers}
+		for i := range lists {
+			for {
+				best := spread(e, p, lists[i], now)
+				if best == nil {
+					break
 				}
-				if best.Source != "live" && !best.At.IsZero() && best.At.Before(now) {
-					tg.why += "; saved " + usage.Duration(now.Sub(best.At)) + " ago"
+				// Nobody may be there to log in again: an account whose login
+				// Claude Code cannot renew is left out.
+				if to, _ := cfg.Find(best.Name); creds.Has(profile.Dir(e.paths, to), e.paths.Home) {
+					tg.to, tg.why = to, p.Why(best, now)
+					if top := p.Choose(lists[i], now); top != best {
+						// spread passed over top, which another session took a
+						// moment ago: Why would compare best with every account.
+						tg.why = p.Use(best, now) + "; " + top.Name + " was taken by another session a moment ago"
+					}
+					if best.Source != "live" && !best.At.IsZero() && best.At.Before(now) {
+						tg.why += "; saved " + usage.Duration(now.Sub(best.At)) + " ago"
+					}
+					done <- tg
+					return
 				}
-				done <- tg
-				return
+				lists[i] = slices.DeleteFunc(lists[i], func(r *usage.Report) bool { return r == best })
 			}
-			ok = slices.DeleteFunc(ok, func(r *usage.Report) bool { return r == best })
 		}
-		for _, r := range ok {
+		for _, r := range slices.Concat(lists...) {
 			tg.full = tg.full || p.Full(r)
 			if at := p.FreeAt([]*usage.Report{r}, now); !at.IsZero() && (tg.first == "" || at.Before(tg.freeAt)) {
 				tg.first, tg.freeAt = r.Name, at
@@ -339,6 +348,13 @@ func autoSwitch(e *env, in hookInput, t handoff.Ticket, lim transcript.Limit, st
 	if cur, ok := handoff.LoadFile(e.paths.State, path); ok && (cur.Reason == handoff.Switch && cur.At.After(lim.At) || moving(cur)) {
 		return false, ""
 	}
+	// The person trusted this folder when this session started in it: the
+	// account taking over trusts it too, so Claude Code does not ask again.
+	// Not the home folder or above it, whose trust would cover every folder
+	// below it outside git.
+	if dir := profile.Dir(e.paths, tg.to); !mcp.SessionTrusts(dir, t.Cwd) && !holdsHome(t.Cwd, e.paths.Home) {
+		_ = mcp.Trust(dir, t.Cwd)
+	}
 	plain := t
 	t.Relay, t.Child, t.Stopped, t.Chosen, t.Why = os.Getenv("CCAM_RELAY"), child, true, tg.to.Name, tg.why
 	if handoff.Save(e.paths.State, t) != nil {
@@ -355,6 +371,21 @@ func autoSwitch(e *env, in hookInput, t handoff.Ticket, lim transcript.Limit, st
 		return false, ""
 	}
 	return true, ""
+}
+
+// holdsHome reports whether the folder dir is the home folder or above it.
+func holdsHome(dir, home string) bool {
+	if home == "" {
+		return true
+	}
+	if real, err := filepath.EvalSymlinks(dir); err == nil {
+		dir = real
+	}
+	if real, err := filepath.EvalSymlinks(home); err == nil {
+		home = real
+	}
+	rel, err := filepath.Rel(dir, home)
+	return err == nil && (rel == "." || !strings.HasPrefix(rel, ".."))
 }
 
 // moving reports whether the note t says that this session's Claude Code

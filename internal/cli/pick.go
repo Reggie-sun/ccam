@@ -145,6 +145,9 @@ func pickOnce(e *env, cfg *config.Config, profs []*config.Profile, p usage.Polic
 // spread chooses by p among reports, the accounts picked within recentPick
 // (by ccam pick, or by an auto_switch hook) last.
 func spread(e *env, p usage.Policy, reports []*usage.Report, now time.Time) *usage.Report {
+	if p.Strategy == usage.Drain {
+		return p.Choose(reports, now) // drain uses one account up first
+	}
 	var fresh []*usage.Report
 	for _, r := range reports {
 		// A mark dated after now (the clock was set back) is not recent.

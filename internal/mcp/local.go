@@ -215,6 +215,44 @@ func Trusts(profileDir, dir string) bool { return trusts(profileDir, dir, false)
 // its code).
 func SessionTrusts(profileDir, dir string) bool { return trusts(profileDir, dir, true) }
 
+// Trust records in the account of profileDir that the folder dir is trusted
+// (projects[dir].hasTrustDialogAccepted), as answering Claude Code's trust
+// question there would. Only dir itself: outside git a trusted folder counts
+// for every folder below it, so the caller must not pass a folder that holds
+// the home folder.
+func Trust(profileDir, dir string) error {
+	if real, err := filepath.EvalSymlinks(dir); err == nil {
+		dir = real
+	}
+	path := filepath.Join(profileDir, ".claude.json")
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return err
+	}
+	dec := json.NewDecoder(strings.NewReader(string(data)))
+	dec.UseNumber() // keeps ids and timestamps exactly as Claude Code wrote them
+	var doc map[string]any
+	if err := dec.Decode(&doc); err != nil {
+		return err
+	}
+	projects, _ := doc["projects"].(map[string]any)
+	if projects == nil {
+		projects = map[string]any{}
+		doc["projects"] = projects
+	}
+	entry, _ := projects[dir].(map[string]any)
+	if entry == nil {
+		entry = map[string]any{}
+		projects[dir] = entry
+	}
+	entry["hasTrustDialogAccepted"] = true
+	out, err := fsutil.MarshalJSON(doc)
+	if err != nil {
+		return err
+	}
+	return fsutil.AtomicWrite(path, out, 0o600)
+}
+
 // trusts is Trusts, and with aboveOutsideGit SessionTrusts.
 func trusts(profileDir, dir string, aboveOutsideGit bool) bool {
 	data, err := os.ReadFile(filepath.Join(profileDir, ".claude.json"))

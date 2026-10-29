@@ -240,9 +240,9 @@ func TestAutoTarget(t *testing.T) {
 		{"an account that never trusted the folder", nil, func(t *testing.T, c *testCLI) {
 			logInTrusting(t, c.p.ProfileDir("side"), "u3", "s1", "claude_pro")
 		}, "work", []string{"side"}, "", nil, ""},
-		{"only an account that never trusted the folder has room", map[string]int{"personal": 90, "work": 100, "side": 10}, func(t *testing.T, c *testCLI) {
+		{"only an account that never trusted the folder has room: it takes over, Claude Code asks", map[string]int{"personal": 90, "work": 100, "side": 10}, func(t *testing.T, c *testCLI) {
 			logInTrusting(t, c.p.ProfileDir("side"), "u3", "s1", "claude_pro")
-		}, "", []string{"side"}, "work", nil, ""},
+		}, "side", []string{"side"}, "", nil, ""},
 		{"trust of a folder above, outside git", nil, func(t *testing.T, c *testCLI) {
 			logInTrusting(t, c.p.ProfileDir("side"), "u3", "s1", "claude_pro", filepath.Dir(folder))
 		}, "side", nil, "", nil, ""},
@@ -751,5 +751,24 @@ func TestHookSkipsWhenClaudeGone(t *testing.T) {
 	n, ok := handoff.LoadFile(c.p.State, handoff.Path(c.p.State, "personal", "s1"))
 	if !strings.Contains(out, "`ccam next --continue` continues the conversation on another account.") || len(calls) != 0 || !ok || n.Chosen != "" || n.Stopped {
 		t.Fatalf("%q %v %+v", out, calls, n)
+	}
+}
+
+func TestHoldsHome(t *testing.T) {
+	home := t.TempDir()
+	for _, c := range []struct {
+		dir  string
+		want bool
+	}{
+		{home, true},
+		{filepath.Dir(home), true},
+		{"/", true},
+		{filepath.Join(home, "app"), false},
+		{filepath.Join(home, "app", "sub"), false},
+		{filepath.Join(filepath.Dir(home), "elsewhere"), false},
+	} {
+		if got := holdsHome(c.dir, home); got != c.want {
+			t.Errorf("holdsHome(%q) = %v, want %v", c.dir, got, c.want)
+		}
 	}
 }

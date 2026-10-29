@@ -170,3 +170,44 @@ func TestPolicyFull(t *testing.T) {
 		}
 	}
 }
+
+func TestPolicyChooseWeeklyReset(t *testing.T) {
+	p := Policy{Strategy: WeeklyReset}
+	soon := weekIn(rep("soon", 90, time.Hour, 80), 6*time.Hour)
+	later := weekIn(rep("later", 0, time.Hour, 0), 48*time.Hour)
+	tieLow := weekIn(rep("tie-low", 50, time.Hour, 10), 6*time.Hour)
+	full := weekIn(rep("full", 100, time.Hour, 10), time.Hour)
+	unknown := rep("unknown", 0, time.Hour, -1)
+	for _, c := range []struct {
+		name string
+		in   []*Report
+		want string
+	}{
+		{"soonest weekly reset first", []*Report{later, soon}, "soon"},
+		{"equal reset: most weekly left", []*Report{soon, tieLow}, "tie-low"},
+		{"full account skipped", []*Report{full, later}, "later"},
+		{"unknown week last", []*Report{unknown, later}, "later"},
+		{"idle before running", []*Report{sessions(weekIn(rep("busy", 0, time.Hour, 0), time.Hour), 1), later}, "later"},
+		{"all running: soonest weekly reset", []*Report{sessions(weekIn(rep("few", 0, time.Hour, 0), 96*time.Hour), 1), sessions(weekIn(rep("many", 0, time.Hour, 0), 6*time.Hour), 3)}, "many"},
+	} {
+		if got := p.Choose(c.in, fixedNow); got == nil || got.Name != c.want {
+			t.Errorf("%s: got %v, want %s", c.name, got, c.want)
+		}
+	}
+}
+
+func TestPolicyChooseDrain(t *testing.T) {
+	p := Policy{Strategy: Drain}
+	busy := sessions(weekIn(rep("busy", 60, time.Hour, 50), 6*time.Hour), 2)
+	idle := weekIn(rep("idle", 0, time.Hour, 0), 48*time.Hour)
+	if got := p.Choose([]*Report{idle, busy}, fixedNow); got == nil || got.Name != "busy" {
+		t.Errorf("drain keeps the running account whose week resets first: got %v", got)
+	}
+	full := sessions(weekIn(rep("full", 100, time.Hour, 50), 6*time.Hour), 1)
+	if got := p.Choose([]*Report{full, idle}, fixedNow); got == nil || got.Name != "idle" {
+		t.Errorf("drain moves on once the account is full: got %v", got)
+	}
+	if err := p.Check(); err != nil {
+		t.Error(err)
+	}
+}

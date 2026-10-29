@@ -757,14 +757,8 @@ func checkUnknownEntries(r *report, prof *config.Profile, dir string) {
 func checkPlugins(r *report, p paths.Paths, cfg *config.Config, fix bool) {
 	r.area = "Plugins"
 	groups, _ := os.ReadDir(p.GroupsRoot())
-	sep := string(filepath.Separator)
 	for _, g := range groups {
-		pluginsDir := filepath.Join(p.GroupDir(g.Name()), "plugins")
-		n := 0
-		for i := range cfg.Profiles {
-			pre := filepath.Join(profile.Dir(p, &cfg.Profiles[i]), "plugins") + sep
-			n += profile.PluginPathsUnder(pluginsDir, pre)
-		}
+		n, _ := profile.GroupPluginPaths(p, cfg, p.GroupDir(g.Name()), false)
 		if n == 0 {
 			continue
 		}
@@ -772,13 +766,8 @@ func checkPlugins(r *report, p paths.Paths, cfg *config.Config, fix bool) {
 		if !fix {
 			continue
 		}
-		f.Fixed = true
-		for i := range cfg.Profiles {
-			pre := filepath.Join(profile.Dir(p, &cfg.Profiles[i]), "plugins") + sep
-			if _, err := profile.RewritePluginPaths(pluginsDir, pre, pluginsDir+sep); err != nil {
-				f.Fixed = false
-			}
-		}
+		_, err := profile.GroupPluginPaths(p, cfg, p.GroupDir(g.Name()), true)
+		f.Fixed = err == nil
 	}
 }
 

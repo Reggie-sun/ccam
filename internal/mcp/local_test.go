@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"reflect"
 	"slices"
+	"strings"
 	"testing"
 	"time"
 )
@@ -238,5 +239,27 @@ func TestSignedIn(t *testing.T) {
 	}
 	if got := SignedIn(t.TempDir(), t.TempDir()); len(got) != 0 {
 		t.Fatalf("no login: %v", got)
+	}
+}
+
+func TestTrust(t *testing.T) {
+	dir, _ := filepath.EvalSymlinks(t.TempDir())
+	prof := t.TempDir()
+	path := filepath.Join(prof, ".claude.json")
+	os.WriteFile(path, []byte(`{"userID":"u","numStartups":12345678901234,"projects":{"/other":{"allowedTools":["x"]}}}`), 0o600)
+	if SessionTrusts(prof, dir) {
+		t.Fatal("trusted before Trust")
+	}
+	if err := Trust(prof, dir); err != nil {
+		t.Fatal(err)
+	}
+	if !SessionTrusts(prof, dir) {
+		t.Fatal("not trusted after Trust")
+	}
+	data, _ := os.ReadFile(path)
+	for _, keep := range []string{`"userID": "u"`, `"numStartups": 12345678901234`, `"allowedTools"`} {
+		if !strings.Contains(string(data), keep) {
+			t.Fatalf("lost %s: %s", keep, data)
+		}
 	}
 }

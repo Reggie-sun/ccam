@@ -10,6 +10,14 @@ import (
 const (
 	Headroom = "headroom" // the lowest 5-hour usage (default)
 	Expiring = "expiring" // the soonest 5-hour reset, so its quota is not left unused
+	// WeeklyReset takes the account whose weekly window resets soonest, so
+	// its quota is not left unused; on equal resets, the one with the most
+	// weekly quota left. Accounts with fewer running sessions come first.
+	WeeklyReset = "weekly-reset"
+	// Drain stays on one account until it is full: the one whose weekly
+	// window resets soonest, running sessions or not, and ccam pick does
+	// not spread sessions over the accounts. For quota about to reset.
+	Drain = "drain"
 	// Balance takes the account whose weekly quota would go unused first:
 	// the most left per day until its reset, less for each running session.
 	Balance = "balance"
@@ -32,8 +40,8 @@ func (p Policy) Check() error {
 	if p.MaxUsage < 0 || p.MaxUsage > 100 {
 		return fmt.Errorf("auto_max_usage must be between 1 and 100, not %g", p.MaxUsage)
 	}
-	if p.Strategy != "" && p.Strategy != Headroom && p.Strategy != Expiring && p.Strategy != Balance {
-		return fmt.Errorf("auto_strategy must be %q, %q or %q, not %q", Headroom, Expiring, Balance, p.Strategy)
+	if p.Strategy != "" && p.Strategy != Headroom && p.Strategy != Expiring && p.Strategy != Balance && p.Strategy != WeeklyReset && p.Strategy != Drain {
+		return fmt.Errorf("auto_strategy must be %q, %q, %q, %q or %q, not %q", Headroom, Expiring, Balance, WeeklyReset, Drain, p.Strategy)
 	}
 	return nil
 }
@@ -135,6 +143,19 @@ func (p Policy) before(a, b *Report, now time.Time) bool {
 		if ra != rb {
 			return ra < rb
 		}
+	case WeeklyReset, Drain:
+		// WeeklyReset puts an account already running a session after idle
+		// ones (how many it runs does not count); Drain keeps using it.
+		if ia, ib := a.Sessions == 0, b.Sessions == 0; p.Strategy == WeeklyReset && ia != ib {
+			return ia
+		}
+		ra, rb := weeklyResetIn(a, now), weeklyResetIn(b, now)
+		if ra != rb {
+			return ra < rb
+		}
+		if pa, pb := weeklyUsed(a), weeklyUsed(b); pa != pb {
+			return pa < pb
+		}
 	case Balance:
 		ua, ub := urgency(a, now), urgency(b, now)
 		if ua != ub {
@@ -177,6 +198,11 @@ func (p Policy) Why(r *Report, now time.Time) string {
 		if at := r.Limits.FiveHour.ResetsAt; !at.IsZero() {
 			return fmt.Sprintf("its 5-hour window resets first, in %s (%s)", Duration(at.Sub(now)), five)
 		}
+	case WeeklyReset, Drain:
+		w := r.Limits.Weekly
+		if w.Known && !w.ResetsAt.IsZero() {
+			return fmt.Sprintf("its week resets first, in %s (%.0f%% of the week left)", Duration(w.ResetsAt.Sub(now)), 100-w.Percent)
+		}
 	case Balance:
 		w := r.Limits.Weekly
 		why := "its weekly use is unknown"
@@ -208,11 +234,29 @@ func (p Policy) Use(r *Report, now time.Time) string {
 			if at := r.Limits.FiveHour.ResetsAt; !at.IsZero() {
 				return fmt.Sprintf("its 5-hour window resets in %s (%s)", Duration(at.Sub(now)), five)
 			}
-		case Balance:
+		case WeeklyReset, Drain, Balance:
 			return p.Why(r, now) // it names no other account
 		}
 	}
 	return five
+}
+
+// weeklyResetIn is the time until r's weekly window resets; an unknown week
+// sorts last.
+func weeklyResetIn(r *Report, now time.Time) time.Duration {
+	w := r.Limits.Weekly
+	if !w.Known || w.ResetsAt.IsZero() {
+		return 1<<63 - 1
+	}
+	return w.ResetsAt.Sub(now)
+}
+
+// weeklyUsed is r's weekly usage; an unknown week counts as untouched.
+func weeklyUsed(r *Report) float64 {
+	if !r.Limits.Weekly.Known {
+		return 0
+	}
+	return r.Limits.Weekly.Percent
 }
 
 // resetIn is the time until r's 5-hour window resets; a window that is not

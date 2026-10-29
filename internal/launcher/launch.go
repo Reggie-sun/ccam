@@ -16,6 +16,7 @@ import (
 	"github.com/jhyunwoo/ccam/internal/config"
 	"github.com/jhyunwoo/ccam/internal/mcp"
 	"github.com/jhyunwoo/ccam/internal/paths"
+	"github.com/jhyunwoo/ccam/internal/profile"
 	"github.com/jhyunwoo/ccam/internal/session"
 	"github.com/jhyunwoo/ccam/internal/trace"
 )
@@ -146,6 +147,12 @@ func prelaunch(p paths.Paths, cfg *config.Config, pl *Plan, dry bool) error {
 	}
 	if err := historyCheck(p, pl); err != nil {
 		return err
+	}
+	// A plugin installed in a session (project scope) is recorded with the
+	// path through that account's folder: point it at the shared group's.
+	groups, _ := os.ReadDir(p.GroupsRoot())
+	for _, g := range groups {
+		_, _ = profile.GroupPluginPaths(p, cfg, p.GroupDir(g.Name()), true)
 	}
 	pl.register(SessionDir(p, pl.Profile.Name))
 	return nil

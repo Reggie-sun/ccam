@@ -267,14 +267,35 @@ func TestAutoSwitchRemoteControl(t *testing.T) {
 	h.hopped(h.onTerminal(project, ccamBin+" personal", "", h.limitEnv("personal", conv, "FAKE_BRIDGE=off")...), "personal", "work")
 }
 
-// An account that has not trusted the folder is no target: Claude Code
-// would stop at its trust question with nobody there.
+// An account that has not trusted the folder still takes over when no
+// account that trusts it has room, and is made to trust it: the person
+// trusted the folder when the session started there.
 func TestAutoSwitchUntrusted(t *testing.T) {
 	h, project := autoHarness(t)
 	h.trust("work", project, false)
 	conv := h.conversation("personal", project, "s1")
 	h.usageNow(map[string]int{"personal": 5, "work": 12})
-	h.leftAlone(project, conv, "work has not trusted this folder yet, so the conversation was not moved there. Open the folder once as work to allow it.")
+	h.hopped(h.onTerminal(project, ccamBin+" personal", "", h.limitEnv("personal", conv)...), "personal", "work")
+	// It now trusts the folder, so Claude Code does not ask there.
+	data, _ := os.ReadFile(filepath.Join(h.profileDir("work"), ".claude.json"))
+	var doc struct {
+		Projects map[string]struct {
+			Trusted bool `json:"hasTrustDialogAccepted"`
+		} `json:"projects"`
+	}
+	if json.Unmarshal(data, &doc) != nil || !doc.Projects[project].Trusted {
+		t.Fatalf("work does not trust %s after taking over: %s", project, data)
+	}
+}
+
+// An account that trusts the folder is still preferred over one with more
+// room that never trusted it.
+func TestAutoSwitchPrefersTrusted(t *testing.T) {
+	h, project := autoHarness(t, personalMax, workMax, sidePro)
+	h.trust("side", project, false)
+	conv := h.conversation("personal", project, "s1")
+	h.usageNow(map[string]int{"personal": 5, "work": 30, "side": 12})
+	h.hopped(h.onTerminal(project, ccamBin+" personal", "", h.limitEnv("personal", conv)...), "personal", "work")
 }
 
 // An account whose login Claude Code cannot renew (it emptied the refresh
