@@ -26,7 +26,10 @@ const Endpoint = "https://api.anthropic.com/api/oauth/usage"
 const (
 	CacheTTL       = 60 * time.Second
 	connectTimeout = 2 * time.Second
-	accountTimeout = 3 * time.Second
+	// tokenConnectTimeout bounds connecting to the token endpoint, within
+	// refreshTimeout.
+	tokenConnectTimeout = 20 * time.Second
+	accountTimeout      = 3 * time.Second
 )
 
 // LookupTimeout bounds one account's live lookup.
@@ -82,6 +85,10 @@ type Options struct {
 	// Fetcher's Source.
 	Source  string
 	Refresh bool // refresh expired tokens, also of a profile Claude Code runs on
+	// RefreshAhead, with Refresh, also renews a token that expires within
+	// this long, so a slow or failed renewal still leaves time to try again
+	// before the login lapses.
+	RefreshAhead time.Duration
 }
 
 // Fetcher queries accounts in parallel over one shared HTTP client.
@@ -116,6 +123,11 @@ func NewFetcher(stateDir string) *Fetcher {
 	noRedirect := func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }
 	token := tr.Clone()
 	token.ResponseHeaderTimeout = 0
+	// The 2 s of a usage lookup are too short to reach the token endpoint
+	// over a slow first connection (a proxy, a VPN): refreshTimeout bounds
+	// the whole renewal, so the connection gets most of it.
+	token.DialContext = (&net.Dialer{Timeout: tokenConnectTimeout}).DialContext
+	token.TLSHandshakeTimeout = tokenConnectTimeout
 	return &Fetcher{
 		Client:      &http.Client{Transport: tr, CheckRedirect: noRedirect},
 		TokenClient: &http.Client{Transport: token, CheckRedirect: noRedirect},
@@ -206,6 +218,12 @@ func (f *Fetcher) fetch(ctx context.Context, a Account, opt Options) Report {
 	case err != nil:
 		return f.fallback(a, r, StatusError, err.Error())
 	}
+	if early := opt.Refresh && !cred.expired(f.Now()) && cred.expiresWithin(f.Now(), opt.RefreshAhead); early && src != creds.Keychain {
+		// A failed early renewal changes nothing: the token still works.
+		if renewed, err := f.refresh(ctx, a, opt.RefreshAhead); err == nil {
+			cred = renewed
+		}
+	}
 	if cred.expired(f.Now()) {
 		if !opt.Refresh {
 			return f.fallback(a, r, StatusExpired, fmt.Sprintf("access token expired; `ccam %s` renews it when it starts", a.Name))
@@ -215,7 +233,7 @@ func (f *Fetcher) fetch(ctx context.Context, a Account, opt Options) Report {
 		}
 		// Not bounded by the lookup's 3 s: a renewal may take as long as
 		// Claude Code lets its own (refreshTimeout).
-		if cred, err = f.refresh(ctx, a); err != nil {
+		if cred, err = f.refresh(ctx, a, 0); err != nil {
 			// Most refusals leave a working login (Claude Code renews it);
 			// a renewal ccam lost says so itself.
 			why := err.Error()
@@ -451,6 +469,11 @@ func loginExpired(name string) string {
 
 func (c oauthCred) expired(now time.Time) bool {
 	return c.ExpiresAt > 0 && now.UnixMilli() >= c.ExpiresAt
+}
+
+// expiresWithin reports whether c expires within d from now (or has).
+func (c oauthCred) expiresWithin(now time.Time, d time.Duration) bool {
+	return d > 0 && c.ExpiresAt > 0 && now.Add(d).UnixMilli() >= c.ExpiresAt
 }
 
 // readCredentials reads only; ccam never rewrites the token file except

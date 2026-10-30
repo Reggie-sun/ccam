@@ -56,7 +56,7 @@ func RefreshLock(sessionDir string) string { return sessionDir + ".refresh.lock"
 // it finds there when another process has renewed it already, as two
 // sessions of one account do. An idle session never renews its own token, so
 // without this its account stays expired until someone opens it.
-func (f *Fetcher) refresh(ctx context.Context, a Account) (oauthCred, error) {
+func (f *Fetcher) refresh(ctx context.Context, a Account, ahead time.Duration) (oauthCred, error) {
 	// Serialize ccam's own refreshes of this account; everything below is
 	// checked under the lock so two ccams never rotate the token twice.
 	l, err := lock.TryFlock(RefreshLock(a.SessionDir))
@@ -82,7 +82,7 @@ func (f *Fetcher) refresh(ctx context.Context, a Account) (oauthCred, error) {
 	if !ok {
 		return oauthCred{}, fmt.Errorf("the login file holds no login")
 	}
-	if current.AccessToken != "" && !current.expired(f.Now()) {
+	if current.AccessToken != "" && !current.expired(f.Now()) && !current.expiresWithin(f.Now(), ahead) {
 		return current, nil // refreshed by someone else meanwhile
 	}
 	rt := current.RefreshToken

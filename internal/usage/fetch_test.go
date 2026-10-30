@@ -509,3 +509,37 @@ func TestSaveStatusLineKeepsTheHigherOfOneWindow(t *testing.T) {
 		t.Fatalf("a new window kept the old number: %+v", got)
 	}
 }
+
+// A token that has not expired yet is renewed early when asked, and a
+// failed early renewal leaves it as it is, still working.
+func TestRefreshAhead(t *testing.T) {
+	e := newEnv(t)
+	soon := time.Now().Add(30 * time.Minute).UnixMilli()
+	a := e.account("x", "ok-new-format.json", soon)
+	if r := e.f.Fetch(context.Background(), a, Options{Refresh: true, NoCache: true}); r.Status != StatusOK || e.refresh.Load() != 0 {
+		t.Fatalf("renewed without RefreshAhead: %+v", r)
+	}
+	if r := e.f.Fetch(context.Background(), a, Options{Refresh: true, RefreshAhead: 45 * time.Minute, NoCache: true}); r.Status != StatusOK || e.refresh.Load() != 1 {
+		t.Fatalf("not renewed 30 min before expiry: %+v", r)
+	}
+	data, _ := os.ReadFile(filepath.Join(a.Dir, ".credentials.json"))
+	if !strings.Contains(string(data), "rt-new") {
+		t.Fatalf("login file not rewritten: %s", data)
+	}
+	if r := e.f.Fetch(context.Background(), a, Options{Refresh: true, RefreshAhead: 45 * time.Minute, NoCache: true}); e.refresh.Load() != 1 || r.Status != StatusOK {
+		t.Fatalf("a fresh token was renewed again: %+v", r)
+	}
+}
+
+// Renewing a token must not give up on a slow first connection as a usage
+// lookup does: the 2 s of connectTimeout timed out over a proxy.
+func TestTokenClientWaitsForASlowConnection(t *testing.T) {
+	f := NewFetcher(t.TempDir())
+	tr := f.TokenClient.Transport.(*http.Transport)
+	if tr.TLSHandshakeTimeout < 10*time.Second || tr.TLSHandshakeTimeout >= refreshTimeout {
+		t.Fatalf("token TLS handshake timeout %v", tr.TLSHandshakeTimeout)
+	}
+	if lookup := f.Client.Transport.(*http.Transport); lookup.TLSHandshakeTimeout != connectTimeout {
+		t.Fatalf("usage lookups lost their short timeout: %v", lookup.TLSHandshakeTimeout)
+	}
+}

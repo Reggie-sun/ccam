@@ -120,6 +120,7 @@ func usageCmd(e *env) *cobra.Command {
 	cmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "show where the numbers came from")
 	cmd.Flags().StringVar(&opt.Source, "source", "", "live (ccam asks the usage endpoint), claude (Claude Code does, slower) or cache (saved values) (config: usage_source)")
 	cmd.Flags().BoolVar(&opt.NoCache, "no-cache", false, "ignore the 60-second cache")
+	cmd.Flags().DurationVar(&opt.RefreshAhead, "refresh-ahead", 0, "with --refresh, also renew tokens that expire within this long, e.g. 3h")
 	cmd.Flags().BoolVar(&opt.Refresh, "refresh", false, "refresh expired tokens, also of accounts Claude Code runs on (a refresh may take up to 30 s)")
 	return cmd
 }

@@ -336,7 +336,7 @@ func TestRefreshUsesALoginRenewedMeanwhile(t *testing.T) {
 	srv, calls := rotatingServer(t, nil)
 	e.f.TokenURL = srv.URL
 	a := e.account("x", "ok-renewed", time.Now().Add(time.Hour).UnixMilli())
-	got, err := e.f.refresh(context.Background(), a)
+	got, err := e.f.refresh(context.Background(), a, 0)
 	if err != nil || calls.Load() != 0 || got.AccessToken != "ok-renewed" {
 		t.Fatalf("%+v %v, %d token requests", got, err, calls.Load())
 	}
