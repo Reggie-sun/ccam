@@ -192,7 +192,37 @@ func LoggedInAs(p paths.Paths, prof *config.Profile) (*config.Identity, bool) {
 	if read.OrgType == "" && id != nil && id.AccountUUID == read.AccountUUID {
 		read.OrgType, read.OrgName = id.OrgType, id.OrgName
 	}
+	if read.OrgType == "" {
+		read.OrgType = subscriptionOrgType(Dir(p, prof))
+	}
 	return read, true
+}
+
+// subscriptionOrgType is the plan the login file names in subscriptionType
+// ("pro", "max"), as the OrgType values of Identity; "" when it names none.
+// Claude Code leaves organizationType out of .claude.json for some logins,
+// and without a plan auto_switch will not move a session to or from the
+// account. Only that one field is read, nothing else of the login.
+func subscriptionOrgType(dir string) string {
+	data, err := os.ReadFile(filepath.Join(dir, ".credentials.json"))
+	if err != nil {
+		return ""
+	}
+	var doc struct {
+		OAuth struct {
+			Subscription string `json:"subscriptionType"`
+		} `json:"claudeAiOauth"`
+	}
+	if json.Unmarshal(data, &doc) != nil {
+		return ""
+	}
+	switch doc.OAuth.Subscription {
+	case "pro":
+		return "claude_pro"
+	case "max":
+		return "claude_max"
+	}
+	return "" // team and enterprise name an organization: not guessed here
 }
 
 // DecodeFileKey decodes one top-level key of a JSON file into v.

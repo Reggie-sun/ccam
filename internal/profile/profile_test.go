@@ -293,3 +293,25 @@ func TestGroupPluginPathsHealsAccountPaths(t *testing.T) {
 		t.Fatalf("still %d paths through an account", n)
 	}
 }
+
+// Claude Code leaves organizationType out of .claude.json for some logins:
+// the plan then comes from subscriptionType in the login file.
+func TestLoggedInAsReadsThePlanFromTheLogin(t *testing.T) {
+	p := testPaths(t)
+	prof := &config.Profile{Name: "a"}
+	dir := Dir(p, prof)
+	os.MkdirAll(dir, 0o700)
+	os.WriteFile(filepath.Join(dir, ".claude.json"), []byte(`{"oauthAccount":{"accountUuid":"u1","emailAddress":"a@x"}}`), 0o600)
+	for sub, want := range map[string]string{"pro": "claude_pro", "max": "claude_max", "team": "", "": ""} {
+		os.WriteFile(filepath.Join(dir, ".credentials.json"), []byte(`{"claudeAiOauth":{"accessToken":"t","subscriptionType":"`+sub+`"}}`), 0o600)
+		if id, _ := LoggedInAs(p, prof); id.OrgType != want {
+			t.Errorf("subscriptionType %q: OrgType %q, want %q", sub, id.OrgType, want)
+		}
+	}
+	// A plan in .claude.json is not overridden.
+	os.WriteFile(filepath.Join(dir, ".claude.json"), []byte(`{"oauthAccount":{"accountUuid":"u1","organizationType":"claude_team"}}`), 0o600)
+	os.WriteFile(filepath.Join(dir, ".credentials.json"), []byte(`{"claudeAiOauth":{"subscriptionType":"pro"}}`), 0o600)
+	if id, _ := LoggedInAs(p, prof); id.OrgType != "claude_team" {
+		t.Errorf("overrode the plan of .claude.json: %q", id.OrgType)
+	}
+}
