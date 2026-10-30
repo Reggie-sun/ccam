@@ -173,9 +173,11 @@ func TestPolicyFull(t *testing.T) {
 
 func TestPolicyChooseWeeklyReset(t *testing.T) {
 	p := Policy{Strategy: WeeklyReset}
-	soon := weekIn(rep("soon", 90, time.Hour, 80), 6*time.Hour)
-	later := weekIn(rep("later", 0, time.Hour, 0), 48*time.Hour)
-	tieLow := weekIn(rep("tie-low", 50, time.Hour, 10), 6*time.Hour)
+	soon := weekIn(rep("soon", 20, time.Hour, 80), 6*time.Hour)      // 80% of the five hours left
+	later := weekIn(rep("later", 0, time.Hour, 0), 48*time.Hour)     // all left
+	tieLow := weekIn(rep("tie-low", 20, time.Hour, 10), 6*time.Hour) // resets with soon, less used
+	tight := weekIn(rep("tight", 70, time.Hour, 0), 6*time.Hour)     // 30% left: resets first, no room
+	tightLater := weekIn(rep("tight-later", 80, time.Hour, 0), 96*time.Hour)
 	full := weekIn(rep("full", 100, time.Hour, 10), time.Hour)
 	unknown := rep("unknown", 0, time.Hour, -1)
 	for _, c := range []struct {
@@ -185,14 +187,22 @@ func TestPolicyChooseWeeklyReset(t *testing.T) {
 	}{
 		{"soonest weekly reset first", []*Report{later, soon}, "soon"},
 		{"equal reset: most weekly left", []*Report{soon, tieLow}, "tie-low"},
+		{"five-hour room before an earlier reset", []*Report{tight, later}, "later"},
+		{"59% left is no room, 60% is", []*Report{weekIn(rep("p41", 41, time.Hour, 0), 6*time.Hour), weekIn(rep("p40", 40, time.Hour, 0), 48*time.Hour)}, "p40"},
+		{"nobody has room: soonest weekly reset", []*Report{tightLater, tight}, "tight"},
 		{"full account skipped", []*Report{full, later}, "later"},
 		{"unknown week last", []*Report{unknown, later}, "later"},
-		{"idle before running", []*Report{sessions(weekIn(rep("busy", 0, time.Hour, 0), time.Hour), 1), later}, "later"},
+		{"a running account is still taken when its week resets first", []*Report{sessions(weekIn(rep("busy", 0, time.Hour, 0), 6*time.Hour), 1), later}, "busy"},
+		{"equal resets: idle first", []*Report{sessions(weekIn(rep("busy", 0, time.Hour, 0), 6*time.Hour), 1), weekIn(rep("idle", 0, time.Hour, 0), 6*time.Hour)}, "idle"},
 		{"all running: soonest weekly reset", []*Report{sessions(weekIn(rep("few", 0, time.Hour, 0), 96*time.Hour), 1), sessions(weekIn(rep("many", 0, time.Hour, 0), 6*time.Hour), 3)}, "many"},
 	} {
 		if got := p.Choose(c.in, fixedNow); got == nil || got.Name != c.want {
 			t.Errorf("%s: got %v, want %s", c.name, got, c.want)
 		}
+	}
+	// Drain ignores the five-hour room.
+	if got := (Policy{Strategy: Drain}).Choose([]*Report{tight, later}, fixedNow); got == nil || got.Name != "tight" {
+		t.Errorf("drain: got %v, want tight", got)
 	}
 }
 
@@ -217,8 +227,9 @@ func TestPolicyChooseSkipsCrowdedAccounts(t *testing.T) {
 	first := func(sess int, five float64) *Report {
 		return sessions(weekIn(rep("first", five, time.Hour, 10), 6*time.Hour), sess)
 	}
-	// Both run a session, so weekly-reset's idle-first rule does not decide.
-	other := sessions(weekIn(rep("other", 5, time.Hour, 10), 48*time.Hour), 1)
+	// Over 40% of the five hours used for both accounts, so weekly-reset's
+	// five-hour room rule does not decide either.
+	other := sessions(weekIn(rep("other", 55, time.Hour, 10), 48*time.Hour), 1)
 	for _, strategy := range []string{WeeklyReset, Drain} {
 		p := Policy{Strategy: strategy}
 		for _, c := range []struct {

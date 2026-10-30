@@ -10,9 +10,11 @@ import (
 const (
 	Headroom = "headroom" // the lowest 5-hour usage (default)
 	Expiring = "expiring" // the soonest 5-hour reset, so its quota is not left unused
-	// WeeklyReset takes the account whose weekly window resets soonest, so
-	// its quota is not left unused; on equal resets, the one with the most
-	// weekly quota left. Accounts with fewer running sessions come first.
+	// WeeklyReset takes, among accounts with at least 60% of their five-hour
+	// window left, the one whose weekly window resets soonest, so its quota
+	// is not left unused; accounts with less room come after them. On equal
+	// resets idle accounts come first, then the one with the most weekly
+	// quota left.
 	WeeklyReset = "weekly-reset"
 	// Drain stays on one account until it is full: the one whose weekly
 	// window resets soonest, running sessions or not, and ccam pick does
@@ -171,14 +173,19 @@ func (p Policy) before(a, b *Report, now time.Time) bool {
 			return ra < rb
 		}
 	case WeeklyReset, Drain:
-		// WeeklyReset puts an account already running a session after idle
-		// ones (how many it runs does not count); Drain keeps using it.
-		if ia, ib := a.Sessions == 0, b.Sessions == 0; p.Strategy == WeeklyReset && ia != ib {
-			return ia
+		// WeeklyReset first takes accounts whose five-hour window has room
+		// left; Drain keeps using an account whatever its window holds.
+		if ka, kb := a.fiveHourRoomy(), b.fiveHourRoomy(); p.Strategy == WeeklyReset && ka != kb {
+			return ka
 		}
 		ra, rb := weeklyResetIn(a, now), weeklyResetIn(b, now)
 		if ra != rb {
 			return ra < rb
+		}
+		// Equal resets: WeeklyReset puts an account already running a session
+		// after idle ones (how many it runs does not count).
+		if ia, ib := a.Sessions == 0, b.Sessions == 0; p.Strategy == WeeklyReset && ia != ib {
+			return ia
 		}
 		if pa, pb := weeklyUsed(a), weeklyUsed(b); pa != pb {
 			return pa < pb
@@ -266,6 +273,16 @@ func (p Policy) Use(r *Report, now time.Time) string {
 		}
 	}
 	return five
+}
+
+// roomyFiveHour is the share of the five-hour window that must be left for
+// weekly-reset to take an account before the others.
+const roomyFiveHour = 60.0
+
+// fiveHourRoomy reports whether at least roomyFiveHour percent of r's
+// five-hour window is left.
+func (r *Report) fiveHourRoomy() bool {
+	return 100-r.Limits.FiveHour.Percent >= roomyFiveHour
 }
 
 // weeklyResetIn is the time until r's weekly window resets; an unknown week
