@@ -407,13 +407,24 @@ func (f *Fetcher) writeCache(name, src string, c cached) {
 	_ = fsutil.WriteFast(f.cachePath(name, src), data)
 }
 
-// SaveStatusLine stores values captured by the status line collector.
+// SaveStatusLine stores values captured by the status line collector. Every
+// session of an account reports the numbers of its own last request, so an
+// idle session reports old ones: within one window usage only grows, and a
+// lower number for the same window is such an old one, which is not stored.
 func SaveStatusLine(stateDir, name string, l Limits, at time.Time) error {
+	path := filepath.Join(stateDir, name+".statusline.json")
+	if data, err := os.ReadFile(path); err == nil {
+		var old cached
+		if json.Unmarshal(data, &old) == nil && old.Limits != nil {
+			l.FiveHour = l.FiveHour.nolower(old.Limits.FiveHour)
+			l.Weekly = l.Weekly.nolower(old.Limits.Weekly)
+		}
+	}
 	data, err := json.Marshal(cached{At: at, Limits: &l})
 	if err != nil {
 		return err
 	}
-	return fsutil.WriteFast(filepath.Join(stateDir, name+".statusline.json"), data)
+	return fsutil.WriteFast(path, data)
 }
 
 var (

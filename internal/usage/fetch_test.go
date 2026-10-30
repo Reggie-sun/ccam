@@ -480,3 +480,32 @@ func TestStatusLineAddsToTheSavedLookup(t *testing.T) {
 		}
 	}
 }
+
+// An idle session reports the numbers of its own last request, which are
+// older than those a busy session of the same account stored.
+func TestSaveStatusLineKeepsTheHigherOfOneWindow(t *testing.T) {
+	dir := t.TempDir()
+	reset := time.Date(2026, 10, 29, 23, 30, 0, 0, time.UTC)
+	week := time.Date(2026, 11, 3, 15, 0, 0, 0, time.UTC)
+	save := func(five, wk float64, fiveReset time.Time) Limits {
+		l := Limits{FiveHour: Window{Percent: five, ResetsAt: fiveReset, Known: true}, Weekly: Window{Percent: wk, ResetsAt: week, Known: true}}
+		if err := SaveStatusLine(dir, "x", l, time.Now()); err != nil {
+			t.Fatal(err)
+		}
+		data, _ := os.ReadFile(filepath.Join(dir, "x.statusline.json"))
+		var c cached
+		json.Unmarshal(data, &c)
+		return *c.Limits
+	}
+	save(89, 38, reset)
+	if got := save(86, 37, reset.Add(300*time.Millisecond)); got.FiveHour.Percent != 89 || got.Weekly.Percent != 38 {
+		t.Fatalf("a stale lower reading replaced the newer one: %+v", got)
+	}
+	if got := save(91, 38, reset); got.FiveHour.Percent != 91 {
+		t.Fatalf("a higher reading was not stored: %+v", got)
+	}
+	// A new window starts over: its lower number is the real one.
+	if got := save(2, 38, reset.Add(5*time.Hour)); got.FiveHour.Percent != 2 {
+		t.Fatalf("a new window kept the old number: %+v", got)
+	}
+}

@@ -17,6 +17,16 @@ type Window struct {
 	Known    bool      `json:"known"`
 }
 
+// nolower is w, or old when old is the same window (reset times a minute
+// apart or less, as the server rounds them) with more used: within a window
+// usage never falls, so the lower number is stale.
+func (w Window) nolower(old Window) Window {
+	if w.Known && old.Known && old.Percent > w.Percent && w.ResetsAt.Sub(old.ResetsAt).Abs() < time.Minute {
+		w.Percent = old.Percent
+	}
+	return w
+}
+
 // as returns w as it stands at now. A window whose reset time has passed
 // has started over, so a percentage saved before the reset no longer holds.
 func (w Window) as(now time.Time) Window {
