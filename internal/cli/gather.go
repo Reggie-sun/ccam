@@ -43,6 +43,7 @@ func (s liveSession) quiet(now time.Time, idle time.Duration) bool {
 func gatherCmd(e *env) *cobra.Command {
 	var to string
 	var idle time.Duration
+	var maxTokens int
 	cmd := &cobra.Command{
 		Use:   "gather [--to <account>] [--idle 3m]",
 		Short: "Move idle sessions of other accounts to the account drain uses",
@@ -51,6 +52,9 @@ func gatherCmd(e *env) *cobra.Command {
 			"/ccam:switch does: the conversation goes on there. Busy sessions, sessions waiting\n" +
 			"for an answer, background sessions and Remote Control are left alone, and so is a\n" +
 			"session in a folder the account would first ask to trust (the home folder).\n" +
+			"The first reply on another account reads the whole conversation again, since\n" +
+			"prompt caches are not shared between accounts, so a conversation longer than\n" +
+			"--max-tokens stays where it is until it reaches its account's limit.\n" +
 			"--to names the account instead, whatever auto_strategy says.",
 		Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -76,7 +80,7 @@ func gatherCmd(e *env) *cobra.Command {
 					if data, err := os.ReadFile(meta); err != nil || json.Unmarshal(data, &s) != nil || !s.quiet(now, idle) {
 						continue
 					}
-					if why := gatherOne(e, from, target, dir, tdir, s); why != "" {
+					if why := gatherOne(e, from, target, dir, tdir, s, maxTokens); why != "" {
 						e.printf("%s %s (%s): %s\n", from.Name, s.SessionID[:min(8, len(s.SessionID))], s.Cwd, why)
 					}
 				}
@@ -86,6 +90,7 @@ func gatherCmd(e *env) *cobra.Command {
 	}
 	cmd.Flags().StringVar(&to, "to", "", "move them to this account instead of the one drain chooses")
 	cmd.Flags().DurationVar(&idle, "idle", 3*time.Minute, "how long a session must have waited for a prompt")
+	cmd.Flags().IntVar(&maxTokens, "max-tokens", 300000, "leave a conversation alone when its next reply would read more tokens than this")
 	return cmd
 }
 
@@ -115,7 +120,7 @@ func gatherTarget(e *env, cfg *config.Config, to string) (*config.Profile, error
 
 // gatherOne hands the session s of from to target through its relay, as
 // /ccam:switch does, and says what happened ("" for nothing worth saying).
-func gatherOne(e *env, from, target *config.Profile, dir, tdir string, s liveSession) string {
+func gatherOne(e *env, from, target *config.Profile, dir, tdir string, s liveSession, maxTokens int) string {
 	relayVar := processEnv(s.PID, "CCAM_RELAY")
 	relay, ok := launcher.RelayPID(relayVar)
 	if !ok {
@@ -136,6 +141,12 @@ func gatherOne(e *env, from, target *config.Profile, dir, tdir string, s liveSes
 	path := filepath.Join(transcript.ProjectDir(dir, s.Cwd), s.SessionID+".jsonl")
 	if !fsutil.Exists(path) || transcript.RemoteControl(path) {
 		return ""
+	}
+	// Unknown (0) counts as too long: moving costs a full re-read.
+	if n := transcript.Size(path); n == 0 {
+		return "left here: its size is unknown, and moving it makes " + target.Name + " read the whole conversation again"
+	} else if n > maxTokens {
+		return fmt.Sprintf("left here: moving it makes %s read the conversation again (%dk tokens, over %dk)", target.Name, n/1000, maxTokens/1000)
 	}
 	if !mcp.SessionTrusts(tdir, s.Cwd) {
 		if holdsHome(s.Cwd, e.paths.Home) {
