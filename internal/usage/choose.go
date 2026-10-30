@@ -120,9 +120,36 @@ func (p Policy) Choose(reports []*Report, now time.Time) *Report {
 		}
 	}
 	if len(free) > 0 {
-		return p.best(free, now)
+		return p.best(p.uncrowded(free), now)
 	}
 	return Policy{}.best(over, now)
+}
+
+// A crowded account runs at least crowdedSessions sessions and has used more
+// than crowdedUsed percent of its five-hour window: one more session there
+// would run the window out for all of them.
+const (
+	crowdedSessions = 3
+	crowdedUsed     = 50.0
+)
+
+// uncrowded drops the crowded accounts under WeeklyReset and Drain, which
+// otherwise pile every session on one account, unless every account is
+// crowded: then the strategy picks among them all.
+func (p Policy) uncrowded(rs []*Report) []*Report {
+	if p.Strategy != WeeklyReset && p.Strategy != Drain {
+		return rs
+	}
+	var roomy []*Report
+	for _, r := range rs {
+		if r.Sessions < crowdedSessions || r.Limits.FiveHour.Percent <= crowdedUsed {
+			roomy = append(roomy, r)
+		}
+	}
+	if len(roomy) == 0 {
+		return rs
+	}
+	return roomy
 }
 
 func (p Policy) best(rs []*Report, now time.Time) *Report {

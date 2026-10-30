@@ -211,3 +211,33 @@ func TestPolicyChooseDrain(t *testing.T) {
 		t.Error(err)
 	}
 }
+
+func TestPolicyChooseSkipsCrowdedAccounts(t *testing.T) {
+	// "first" resets its week soonest, so both strategies prefer it.
+	first := func(sess int, five float64) *Report {
+		return sessions(weekIn(rep("first", five, time.Hour, 10), 6*time.Hour), sess)
+	}
+	// Both run a session, so weekly-reset's idle-first rule does not decide.
+	other := sessions(weekIn(rep("other", 5, time.Hour, 10), 48*time.Hour), 1)
+	for _, strategy := range []string{WeeklyReset, Drain} {
+		p := Policy{Strategy: strategy}
+		for _, c := range []struct {
+			name string
+			in   []*Report
+			want string
+		}{
+			{"many sessions and over half used: skipped", []*Report{first(3, 60), other}, "other"},
+			{"many sessions, half or less used: kept", []*Report{first(3, 50), other}, "first"},
+			{"few sessions, over half used: kept", []*Report{first(2, 90), other}, "first"},
+			{"every account crowded: the strategy decides", []*Report{first(4, 70), sessions(weekIn(rep("other", 60, time.Hour, 10), 48*time.Hour), 3)}, "first"},
+		} {
+			if got := p.Choose(c.in, fixedNow); got == nil || got.Name != c.want {
+				t.Errorf("%s / %s: got %v, want %s", strategy, c.name, got, c.want)
+			}
+		}
+	}
+	// Other strategies are left as they were.
+	if got := (Policy{Strategy: Balance}).Choose([]*Report{sessions(weekIn(rep("first", 60, time.Hour, 0), 6*time.Hour), 3), weekIn(rep("other", 5, time.Hour, 90), 48*time.Hour)}, fixedNow); got == nil || got.Name != "first" {
+		t.Errorf("balance changed: %v", got)
+	}
+}
