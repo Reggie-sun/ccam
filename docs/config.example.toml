@@ -1,0 +1,109 @@
+# Example ccam config.toml (identifiers replaced with placeholders)
+default = 'work'
+auto_strategy = 'headroom'
+auto_switch = true
+
+[[group]]
+name = 'default'
+items = ['mcp', 'settings', 'memory', 'extensions']
+members = ['work', 'work2', 'work3', 'main', 'work4', 'work5', 'work6', 'work7']
+
+[[profile]]
+name = 'main'
+slot = 1
+email = 'user@example.com'
+dir = '/home/reggie/.claude'
+shortcut = 'ccmain'
+
+[profile.login]
+account_uuid = '00000000-0000-0000-0000-000000000000'
+email = 'user@example.com'
+org_uuid = '00000000-0000-0000-0000-000000000000'
+org_type = 'claude_pro'
+
+[[profile]]
+name = 'work'
+slot = 2
+email = 'user@example.com'
+shortcut = 'ccwork'
+
+[profile.login]
+account_uuid = '00000000-0000-0000-0000-000000000000'
+email = 'user@example.com'
+org_uuid = '00000000-0000-0000-0000-000000000000'
+org_name = "user@example.com's Organization"
+org_type = 'claude_pro'
+
+[[profile]]
+name = 'work2'
+slot = 3
+email = 'user@example.com'
+shortcut = 'ccwork2'
+
+[profile.login]
+account_uuid = '00000000-0000-0000-0000-000000000000'
+email = 'user@example.com'
+org_uuid = '00000000-0000-0000-0000-000000000000'
+org_name = "user@example.com's Organization"
+org_type = 'claude_pro'
+
+[[profile]]
+name = 'work3'
+slot = 4
+email = 'user@example.com'
+shortcut = 'ccwork3'
+
+[profile.login]
+account_uuid = '00000000-0000-0000-0000-000000000000'
+email = 'user@example.com'
+org_uuid = '00000000-0000-0000-0000-000000000000'
+org_name = "user@example.com's Organization"
+org_type = 'claude_pro'
+
+[[profile]]
+name = 'work4'
+slot = 5
+shortcut = 'ccwork4'
+
+[profile.login]
+account_uuid = '00000000-0000-0000-0000-000000000000'
+email = 'user@example.com'
+org_uuid = '00000000-0000-0000-0000-000000000000'
+org_name = "user@example.com's Organization"
+org_type = 'claude_pro'
+
+[[profile]]
+name = 'work5'
+slot = 6
+email = 'user@example.com'
+shortcut = 'work5'
+
+[profile.login]
+account_uuid = '00000000-0000-0000-0000-000000000000'
+email = 'user@example.com'
+org_uuid = '00000000-0000-0000-0000-000000000000'
+org_name = "user@example.com's Organization"
+
+[[profile]]
+name = 'work6'
+slot = 7
+email = 'user@example.com'
+shortcut = 'work6'
+
+[profile.login]
+account_uuid = '00000000-0000-0000-0000-000000000000'
+email = 'user@example.com'
+org_uuid = '00000000-0000-0000-0000-000000000000'
+org_name = "user@example.com's Organization"
+
+[[profile]]
+name = 'work7'
+slot = 8
+email = 'user@example.com'
+shortcut = 'work7'
+
+[profile.login]
+account_uuid = '00000000-0000-0000-0000-000000000000'
+email = 'user@example.com'
+org_uuid = '00000000-0000-0000-0000-000000000000'
+org_name = "user@example.com's Organization"
