@@ -37,6 +37,10 @@ type hookInput struct {
 	Error       string `json:"error"`
 	LastMessage string `json:"last_assistant_message"`
 	CommandArgs string `json:"command_args"`
+	Event       string `json:"hook_event_name"`
+	ToolInput   struct {
+		FilePath string `json:"file_path"`
+	} `json:"tool_input"`
 }
 
 // folder is where the session started. The hook's cwd follows a cd in
@@ -45,20 +49,22 @@ func (in hookInput) folder() string { return cmp.Or(os.Getenv("CLAUDE_PROJECT_DI
 
 func hookCmd(e *env) *cobra.Command {
 	return &cobra.Command{
-		Use:   "hook stop-failure|switch",
+		Use:   "hook stop-failure|switch|handoff",
 		Short: "Run by the ccam plugin's hooks inside Claude Code (reads the hook's JSON on stdin)",
 		Long: "The ccam plugin for Claude Code runs these; you do not need to.\n\n" +
 			"  stop-failure  a turn stopped at a usage limit: note the conversation, count the\n" +
 			"                account as full until the limit resets, and show a terminal\n" +
 			"                notification, so `ccam next --continue` can continue it\n" +
-			"  switch        /ccam:switch [account]: note the conversation and end the turn\n\n" +
+			"  switch        /ccam:switch [account]: note the conversation and end the turn\n" +
+			"  handoff       before a prompt and after a tool call, once the account's usage is past handoff_at\n" +
+			"                (default 85%), ask the session to keep a detailed handoff file up to date\n\n" +
 			"In a session that ccam did not start, stop-failure does nothing and switch says why it cannot move it.\n" +
 			"stop-failure also does nothing for a subagent or an unattended session (-p, background).\n\n" +
 			"With auto_switch = true in config.toml (Linux, macOS), stop-failure also ends Claude Code when another\n" +
 			"account like this one has room (a seat of the same Team or Enterprise organization, or another personal\n" +
 			"plan), and the ccam process running alongside the session continues the conversation there.",
 		Args:      cobra.ExactArgs(1),
-		ValidArgs: []string{"stop-failure", "switch"},
+		ValidArgs: []string{"stop-failure", "switch", "handoff"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			var in hookInput
 			_ = json.NewDecoder(io.LimitReader(e.stdin, 1<<20)).Decode(&in)
@@ -68,8 +74,10 @@ func hookCmd(e *env) *cobra.Command {
 				return hookStopFailure(e, in, account)
 			case "switch":
 				return hookSwitch(e, in, account)
+			case "handoff":
+				return hookHandoff(e, in, account)
 			}
-			return fmt.Errorf("unknown hook %q (stop-failure or switch)", args[0])
+			return fmt.Errorf("unknown hook %q (stop-failure, switch or handoff)", args[0])
 		},
 	}
 }

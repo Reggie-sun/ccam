@@ -54,6 +54,10 @@ type Config struct {
 	// of the old one (next --continue --brief) instead of resuming it
 	// whole, which costs the next account far fewer tokens.
 	AutoBrief bool `toml:"auto_brief,omitempty"`
+	// HandoffAt is the percent of the 5-hour or weekly window at which
+	// sessions of the account are asked to keep a detailed handoff up to
+	// date (ccam hook handoff); 0 means 85, above 100 never.
+	HandoffAt float64 `toml:"handoff_at,omitempty"`
 	// Theme picks the colors of ccam's screens: auto (from the terminal's
 	// background, the default), dark, light, dark-daltonized,
 	// light-daltonized, dark-ansi or light-ansi.

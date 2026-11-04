@@ -21,6 +21,7 @@ import (
 // summary (briefPrompt).
 const (
 	briefAsk  = `Read %s, the summary ccam wrote of my earlier Claude Code conversation, which is not loaded here.`
+	briefLive = " Also read %s, the detailed handoff that session kept while its account ran low; where it differs from the summary, trust it."
 	briefWait = " Then reply with one or two sentences on where the work stands, and wait for my next message."
 	briefThen = " Then: "
 )
@@ -90,8 +91,14 @@ func briefArgs(e *env, conv *conversation, args []string) ([]string, string, err
 		note += fmt.Sprintf(" (about %s tokens)", tokens(n))
 	}
 	note += fmt.Sprintf("\n  summary (%s characters): %s", tokens(utf8.RuneCountInString(text)), file)
+	live := livePath(e, transcript.ID(conv.path))
+	if info, err := os.Stat(live); err != nil || info.IsDir() {
+		live = ""
+	} else {
+		note += fmt.Sprintf("\n  handoff kept by that session (updated %s ago): %s", clock().Sub(info.ModTime()).Round(time.Second), live)
+	}
 	prompt, rest := launcher.TakePrompt(args)
-	return append([]string{briefPrompt(file, dir, prompt)}, rest...), note, nil
+	return append([]string{briefPromptWith(file, live, dir, prompt)}, rest...), note, nil
 }
 
 // briefPrompt is the first prompt for the summary at file, ending in the
@@ -103,7 +110,24 @@ func briefArgs(e *env, conv *conversation, args []string) ([]string, string, err
 // has one too, or no path leads from dir (another drive), it names the file
 // for Claude to read with its Read tool, which asks first outside the
 // working folders (a -p run in Manual mode denies it).
-func briefPrompt(file, dir, prompt string) string {
+func briefPrompt(file, dir, prompt string) string { return briefPromptWith(file, "", dir, prompt) }
+
+// briefPromptWith is briefPrompt for a summary that comes with live, the
+// detailed handoff the earlier session kept (livePath), "" when it kept none.
+func briefPromptWith(file, live, dir, prompt string) string {
+	ask := fmt.Sprintf(briefAsk, fileRef(file, dir))
+	if live != "" {
+		ask += fmt.Sprintf(briefLive, fileRef(live, dir))
+	}
+	if prompt == "" {
+		return ask + briefWait
+	}
+	return ask + briefThen + prompt
+}
+
+// fileRef is how a prompt names file: an @-mention, or its path when that
+// has a character a mention cannot hold (see briefPrompt).
+func fileRef(file, dir string) string {
 	name := `@"` + file + `"`
 	if strings.ContainsAny(file, `"#`) {
 		name = "the file " + file
@@ -111,11 +135,7 @@ func briefPrompt(file, dir, prompt string) string {
 			name = `@"` + rel + `"`
 		}
 	}
-	ask := fmt.Sprintf(briefAsk, name)
-	if prompt == "" {
-		return ask + briefWait
-	}
-	return ask + briefThen + prompt
+	return name
 }
 
 // writeBrief is the summary of conversation d, whose transcript is at path
