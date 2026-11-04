@@ -136,13 +136,14 @@ func nextCmd(e *env) *cobra.Command {
 			}
 			if cont {
 				var note string
-				if brief {
+				limitHop := own != nil && own.Reason == handoff.Limit && own.Chosen != ""
+				if brief || cfg.AutoBrief && limitHop {
 					if args, note, err = briefArgs(e, conv, args); err != nil {
 						return err
 					}
 				} else {
 					prompt := ""
-					if own != nil && own.Reason == handoff.Limit && own.Chosen != "" {
+					if limitHop {
 						prompt = handoff.ContinuePrompt // the relay's hop after a limit (D3)
 					}
 					args, note = continueArgs(e, cfg, conv, to, prompt, args)

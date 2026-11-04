@@ -275,3 +275,29 @@ func TestNextHopChoosesByTheConversationsModel(t *testing.T) {
 		t.Fatalf("%d %s", code, errOut)
 	}
 }
+
+// With auto_brief on, the relay's hop after a limit starts a new conversation
+// on ccam's summary instead of resuming the old one whole; without it the
+// hop resumes, as TestNextHopFollowsItsNote shows.
+func TestNextHopAutoBrief(t *testing.T) {
+	c := newTestCLI(t, map[string]int{"personal": 10, "side": 30})
+	trueClaude(t, c)
+	t.Cleanup(func() { launcher.Unattended = false })
+	cfg, err := config.Load(c.p.ConfigFile())
+	if err != nil {
+		t.Fatal(err)
+	}
+	cfg.AutoBrief = true
+	if err := cfg.Save(c.p.ConfigFile()); err != nil {
+		t.Fatal(err)
+	}
+	cwd, _ := os.Getwd()
+	conv := filepath.Join(transcript.ProjectDir(c.p.ProfileDir("personal"), cwd), "s1.jsonl")
+	writeConversation(t, conv, time.Now())
+	handoff.Save(c.p.State, handoff.Ticket{Account: "personal", SessionID: "s1", Transcript: conv, Cwd: cwd, At: time.Now(), Reason: handoff.Limit, Limit: "session", Chosen: "side"})
+	path := handoff.Path(c.p.State, "personal", "s1")
+	out, errOut, code := c.run("", "--dry-run", "next", "--continue", "--note", path)
+	if code != 0 || !strings.Contains(errOut, "→ personal → side") || !strings.Contains(errOut, "ccam's summary") || strings.Contains(out, "--resume") {
+		t.Fatalf("%d %s\n%s", code, errOut, out)
+	}
+}

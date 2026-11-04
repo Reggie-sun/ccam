@@ -50,6 +50,10 @@ type Config struct {
 	// limit on as another account with room by itself (Linux, macOS: it
 	// implies Relay there; Windows ignores it).
 	AutoSwitch bool `toml:"auto_switch,omitempty"`
+	// AutoBrief makes that hop start a new conversation on ccam's summary
+	// of the old one (next --continue --brief) instead of resuming it
+	// whole, which costs the next account far fewer tokens.
+	AutoBrief bool `toml:"auto_brief,omitempty"`
 	// Theme picks the colors of ccam's screens: auto (from the terminal's
 	// background, the default), dark, light, dark-daltonized,
 	// light-daltonized, dark-ansi or light-ansi.
